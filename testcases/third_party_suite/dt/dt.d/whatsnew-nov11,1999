@@ -1,0 +1,138 @@
+November 11th, 1999 Robin Miller
+
+	The following changes were made to 'dt' Version 12.10:
+
+     o	Support for logging diagnostic message to the event logger.
+	This, of course, only applies to Tru64 Unix.  You must be root
+	in order to log events to the binary error logger.  This support
+	can be enabled one of two ways:
+	- "enable=diag" option.
+	- defining the DT_LOG_DIAG environment variable.
+
+	If you aren't running as root, nothing gets logged, and no errors
+	are reported by 'dt' (unless you turn on debug).
+
+	Like other exercisers, Q-VET/diskx/tapex, the start and finish of
+	each test is logged, as well as any errors encountered.
+
+     o	Fixed a problem in the AIO module when testing with the IOT disc,
+	and the CD-ROM block size was 2048.  The block size on the IOT disc
+	is always 512 bytes.  This only effected Tru64 Unix.
+
+     o	Fixed minor problem where "dispose=delete" wasn't parsed correctly.
+
+     o	Fixed problem with setting stderr stream buffered (garbled output).
+
+	Within Compaq, the updated 'dt' kits are located @ URL:
+
+		http://www.zk3.dec.com/~rmiller/dt.html
+
+	External to Compaq, you can obtain 'dt' kits from URL:
+
+		http://www.bit-net.com/~rmiller/dt.html
+
+Cheers,
+Robin
+================================================================================
+
+tru64% dia -R -o full
+	.
+	.
+	.
+******************************** ENTRY    2 ******************************** 
+
+
+Logging OS                        2. Digital UNIX 
+System Architecture               2. Alpha 
+Event sequence number          1485. 
+Timestamp of occurrence              11-NOV-1999 16:13:22   
+Host name                            tru64 
+
+System type register      x0000001B  AlphaServer 800 or 1000A 
+Number of CPUs (mpnum)    x00000001 
+CPU logging event (mperr) x00000000 
+
+Event validity                    1. O/S claims event is valid 
+Event severity                    5. Low Priority 
+Entry type                      350. Diagnostic ASCII Message Type 
+
+SWI Minor class                   9. ASCII Message 
+SWI Minor sub class               5. Diagnostic 
+
+ASCII Message                        Finished: dt if=/dev/rrz12c bs=4k count=3 
+                                     position=1m  
+
+******************************** ENTRY    3 ******************************** 
+
+
+Logging OS                        2. Digital UNIX 
+System Architecture               2. Alpha 
+Event sequence number          1484. 
+Timestamp of occurrence              11-NOV-1999 16:13:22   
+Host name                            tru64 
+
+System type register      x0000001B  AlphaServer 800 or 1000A 
+Number of CPUs (mpnum)    x00000001 
+CPU logging event (mperr) x00000000 
+
+Event validity                    1. O/S claims event is valid 
+Event severity                    5. Low Priority 
+Entry type                      350. Diagnostic ASCII Message Type 
+
+SWI Minor class                   9. ASCII Message 
+SWI Minor sub class               5. Diagnostic 
+
+ASCII Message 
+    dt: Data compare error at byte 0 in record number 1 
+    dt: Data expected = 0x39, data found = 0, byte count = 4096 
+
+
+
+******************************** ENTRY    4 ******************************** 
+
+
+Logging OS                        2. Digital UNIX 
+System Architecture               2. Alpha 
+Event sequence number          1483. 
+Timestamp of occurrence              11-NOV-1999 16:13:22   
+Host name                            tru64 
+
+System type register      x0000001B  AlphaServer 800 or 1000A 
+Number of CPUs (mpnum)    x00000001 
+CPU logging event (mperr) x00000000 
+
+Event validity                    1. O/S claims event is valid 
+Event severity                    5. Low Priority 
+Entry type                      350. Diagnostic ASCII Message Type 
+
+SWI Minor class                   9. ASCII Message 
+SWI Minor sub class               5. Diagnostic 
+
+ASCII Message                        dt: Relative block number where the error 
+                                     occcured is 512 
+
+******************************** ENTRY    5 ******************************** 
+
+
+Logging OS                        2. Digital UNIX 
+System Architecture               2. Alpha 
+Event sequence number          1482. 
+Timestamp of occurrence              11-NOV-1999 16:13:21   
+Host name                            tru64 
+
+System type register      x0000001B  AlphaServer 800 or 1000A 
+Number of CPUs (mpnum)    x00000001 
+CPU logging event (mperr) x00000000 
+
+Event validity                    1. O/S claims event is valid 
+Event severity                    5. Low Priority 
+Entry type                      350. Diagnostic ASCII Message Type 
+
+SWI Minor class                   9. ASCII Message 
+SWI Minor sub class               5. Diagnostic 
+
+ASCII Message                        Starting: dt if=/dev/rrz12c bs=4k count=3 
+                                     position=1m  
+	.
+	.
+	.

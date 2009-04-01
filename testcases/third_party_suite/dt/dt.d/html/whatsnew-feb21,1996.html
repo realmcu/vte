@@ -1,0 +1,144 @@
+<HTML>
+<HEAD>
+<TITLE>Data Test Program (dt) February 21, 1996</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#E9C2A6">
+
+<CENTER><H2><STRONG>What's New as of February 21, 1996</STRONG></H2></CENTER>
+
+<H2>Changes For This Release</H2>
+The following changes have been made to <I>dt</I> Version 9.4:
+<UL>
+<LI>An option has been added to allow random I/O to be selected instead
+of the default sequential I/O.  This is accomplished via:
+<P>
+<PRE>
+	iotype=type	Set I/O type to: {random or sequential}.
+</PRE>
+The seeks are limited to the data limited specified or calculated
+from the <I>dt</I> command line.  If data limits aren't specified, seeks
+are limited to the size of existing files, or to the entire disk
+(obtained via ioctl() Digital Unix for raw devices).  If the data
+limits exceed the capacity of the media/partition/file under test,
+a premature end-of-file will be encountered on reads or writes.
+<P>
+<LI>An option was added to control checking of inverted data bytes when
+doing long reads of short tape records.  Previously, certain DME's
+would transfer garbage data at the end of short records, but since
+this garbage is not included in the read() count returned, is not
+normally accessed by programs, and does not exceed users' buffers,
+this was deemed acceptable.
+[ Reference QAR 40101 for more information. ]
+<P>
+By default, this check is now disabled, but can be re-enabled via
+the "enable=spad" option (short pad check) if desired.
+<P>
+<LI>Makefile and source conditionalized so <I>dt</I> now builds on LINUX.
+</UL>
+<P>
+The latest version of <I>dt</I> is available on our production machines
+in the following account:
+<P>
+<CENTER><B>Location:</B> <I>wasted:~rmiller/dt.d/{dt,dt-ptos}</I></CENTER>
+<CENTER>or via</CENTER>
+<CENTER><A HREF="../dt.html"><B>URL:</B> <I>http://www.zk3.dec.com/~rmiller/dt.html</I></A></CENTER>
+<HR>
+<A HREF="mailto:rmiller@zk3.dec.com"><IMG SRC="../gifs/mailbox.gif" ALT="Mail"></A>
+Send mail to admin of this page: <EM>rmiller@zk3.dec.com</EM> 
+<A HREF="../index.html"><IMG SRC="../gifs/home04.gif" ALT="Home"></A>
+To Robin's home page.
+<P>
+Last modified: February 22, 1996
+<HR>
+
+<H2>Examples:</H2>
+<HR SIZE=5 NOSHADE>
+<PRE>
+% <B>disklabel rz8c</B>
+Invalid disk label (label is corrupted, or disk is unlabeled)
+% <B>scu -f /dev/rrz8c show capacity</B>
+
+Disk Capacity Information:
+
+                  Maximum Capacity: 1046206 (510.843 megabytes)
+                      Block Length: 512
+
+% <B>dt of=/dev/rrz8c bs=64k limit=100m iotype=random</B>
+Write Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 1703617 bytes/sec, 1663.688 Kbytes/sec
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m01.55s
+           Total system time: 00m00.36s
+             Total user time: 00m07.16s
+
+Read Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 1344616 bytes/sec, 1313.101 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m17.98s
+           Total system time: 00m00.35s
+             Total user time: 00m25.36s
+
+Total Statistics:
+     Output device/file name: /dev/rrz8c (Device: RZ25M, type=disk)
+   Data pattern read/written: 0x39c39c39
+     Total records processed: 3200 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 209715200 (204800.000 Kbytes, 200.000 Mbytes)
+      Average transfer rates: 1502796 bytes/sec, 1467.574 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 02m19.55s
+           Total system time: 00m00.71s
+             Total user time: 00m32.53s
+               Starting time: Fri Feb 23 16:10:46 1996
+                 Ending time: Fri Feb 23 16:13:05 1996
+<HR NOSHADE>
+% <B>dt if=/dev/rrz8c bs=64k records=10 iotype=random disable=compare enable=Debug</B>
+dt: Attempting to open input file '/dev/rrz8c', mode = 00...
+dt: Input file '/dev/rrz8c' successfully opened, fd = 3
+dt: Allocated buffer at address 0x140014000 of 65540 bytes, using offset 0
+dt: Seeking to random block 951 at byte position 486912...
+dt: Record #1, Reading 65536 bytes into buffer at address 0x140014000...
+dt: Seeking to random block 953 at byte position 487936...
+dt: Record #2, Reading 65536 bytes into buffer at address 0x140014000...
+dt: Seeking to random block 818 at byte position 418816...
+dt: Record #3, Reading 65536 bytes into buffer at address 0x140014000...
+dt: Seeking to random block 124 at byte position 63488...
+dt: Record #4, Reading 65536 bytes into buffer at address 0x140014000...
+dt: Seeking to random block 664 at byte position 339968...
+dt: Record #5, Reading 65536 bytes into buffer at address 0x140014000...
+dt: Seeking to random block 70 at byte position 35840...
+dt: Record #6, Reading 65536 bytes into buffer at address 0x140014000...
+dt: Seeking to random block 68 at byte position 34816...
+dt: Record #7, Reading 65536 bytes into buffer at address 0x140014000...
+dt: Seeking to random block 206 at byte position 105472...
+dt: Record #8, Reading 65536 bytes into buffer at address 0x140014000...
+dt: Seeking to random block 444 at byte position 227328...
+dt: Record #9, Reading 65536 bytes into buffer at address 0x140014000...
+dt: Seeking to random block 914 at byte position 467968...
+dt: Record #10, Reading 65536 bytes into buffer at address 0x140014000...
+Total Statistics:
+      Input device/file name: /dev/rrz8c (Device: RZ25M, type=disk)
+           Data pattern read: 0x39c39c39 (data compare disabled)
+     Total records processed: 10 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 655360 (640.000 Kbytes, 0.625 Mbytes)
+      Average transfer rates: 1572864 bytes/sec, 1536.000 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.41s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Fri Feb 23 16:13:47 1996
+                 Ending time: Fri Feb 23 16:13:48 1996
+
+dt: Closing file '/dev/rrz8c', fd = 3...
+% 
+</PRE>
+</BODY>
+</HTML>

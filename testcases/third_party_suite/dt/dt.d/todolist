@@ -1,0 +1,16 @@
+				'dt' To Do List:
+				----------------
+
+     o	Rewrite test scripts to use Tcl (as opposed to 'csh').
+
+     o	Consider adding support for testing pseudo-terminals (ptys).
+
+     o	Consider adding support for testing via threads packages.
+	- for systems without AIO, mimic AIO via threads.
+
+     o	Consider adding support to test streams, System V shared memory,
+	and POSIX message queues.
+
+     o	Add scripting capability to allow users to roll-your-own tests.
+
+     o	Add ability for single 'dt' process to test multiple devices.

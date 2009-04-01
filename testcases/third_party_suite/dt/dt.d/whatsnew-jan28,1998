@@ -1,0 +1,64 @@
+January 28, 1998 Robin Miller
+
+	The following changes have been made to 'dt' Version 10.12:
+
+     o	Add dtaio_close() function, to wait for queued I/O's when we're
+	aborting, to avoid kernel I/O AIO rundown problem, which panic's
+	the system if we close the CAM disk driver device descriptor,
+	prior to AIO's completing (fixed in steelos by Anton Verhulst).
+	[ Refernce QAR Number 57040 for more information. ]
+
+	NOTE:  This problem is very prevalent when doing "cable pulls"
+		or otherwise forcing CAM disk I/O's into error recovery
+		and then aborting running 'dt's.  This I/O waiting only
+		occurs once, as a 2nd signal (i.e. "kill" or <Ctrl/C>
+		simply exits the program.  Beware of "kill -9" :-)
+
+     o	Don't initialize data buffer being written for "disable=compare"
+	which yields better performance.  Also correct a problem referencing
+	memory map (mmap) data due to compiler optimization (reference_data()
+	use static volatile). [ Changes requested by Marcus Barrow, thanks! ]
+
+	The latest version of 'dt' is available on our production machines
+in the following account or from my web page, shown below:
+
+		Location: wasted:~rmiller/dt.d/{dt-ptos,dt-dlm,dt-V3.2}
+				or via
+		URL: http://www.zk3.dec.com/~rmiller/dt.html
+
+	NOTE: DLM version of 'dt' hasn't been recompiled yet!
+
+Cheers,
+Robin
+================================================================================
+
+im2fast% dt if=/dev/rrz0c iotype=random disable=compare runtime=3m enable=debug aios=250
+dt: Attempting to open input file '/dev/rrz0c', mode = 00...
+dt: Input file '/dev/rrz0c' successfully opened, fd = 9
+dt: Data limit set to 1050040320 bytes, 2050860 blocks...
+dt: Allocated buffer at address 0x14002e000 of 516 bytes, using offset 0
+dt: Allocated buffer at address 0x140030000 of 516 bytes, using offset 0
+dt: Allocated buffer at address 0x140034000 of 516 bytes, using offset 0
+				.
+				.
+				.
+	    [ <Ctrl/C> entered here to abort test... ]
+
+Total Statistics:
+      Input device/file name: /dev/rrz0c (Device: RZ26B, type=disk)
+           Data pattern read: 0x39c39c39 (data compare disabled)
+     Total records processed: 1080 @ 512 bytes/record (0.500 Kbytes)
+     Total bytes transferred: 552960 (540.000 Kbytes, 0.527 Mbytes)
+      Average transfer rates: 35829 bytes/sec, 34.989 Kbytes/sec
+     Number I/O's per second: 69.978
+      Total passes completed: 0
+       Total errors detected: 0/1
+          Total elapsed time: 00m15.43s
+           Total system time: 00m00.08s
+             Total user time: 00m00.01s
+               Starting time: Wed Jan 28 10:17:32 1998
+                 Ending time: Wed Jan 28 10:17:48 1998
+
+dt: All requests completed before cancel...
+dt: Closing file '/dev/rrz0c', fd = 9...
+im2fast% 

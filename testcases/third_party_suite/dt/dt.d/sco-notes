@@ -1,0 +1,258 @@
+August 18th, 1999
+
+	SCO UnixWare 7.1 Specific Notes:
+	--------------------------------
+     o	Device names are:
+
+	/dev/cdrom/cdromN		CD-ROM devices.
+	/dev/{dsk,rdsk}/cNbNtNdNXN	Disk devices.
+	/dev/fd/*			Floppy diskettes.
+	/dev/mc/mcN			Medium changers.
+	/dev/rmt/{ctapeN,ntapeN,...}	Tape devices.
+   
+  SCSI and non-SCSI disks
+  
+   Disk device filenames have either of the two following forms:
+   /dev/[r]dsk/cCbBtTdDsS
+   /dev/[r]dsk/cCbBtTdDpP
+   
+   [r]dsk
+          /rdsk denotes a raw (character) device; /dsk indicates a block
+          device.
+   cC
+          C is the occurrence of the host adapter board or IDE controller
+          in the system (that is, card number). C can range from 0 to 31.
+   bB
+          B is the HBA bus number, ranging from 0 to 7 (dependent on the
+          add-on adapter). This is always 0 for IDE disks.
+   tT
+          T is the SCSI target controller number (ID). The value of T can
+          range from 0 to 31. The first IDE disk is target 0, and the
+          second is target 1.
+   dD
+          D is the logical unit number of the disk device, ranging from 0
+          to 31. This is always 0 for IDE disks.
+   sS
+          S is the disk slice number, ranging from 0 to b7 (hex).
+   pP
+          P is the fdisk(1M) partition number. P can range from 0 to 4,
+          to specify an entry in the fdisk partition table. The p0 node
+          corresponds to the whole disk, the p1 to p4 nodes correspond to
+          partitions as they are displayed by the fdisk command.
+          
+	Note:  Device names are NOT zero based, they start at '1'!
+
+     o	Manual pages for reference:
+
+	sdi (7)		- Storage Device Interface subsystem
+	mc01 (7)	- Storage Device Interface (SDI) medium changer target driver
+	sc01 (7)	- CD-ROM Target Driver
+	sd01 (7)	- Storage Device Interface (SDI) disk target driver
+	st01 (7)	- Storage Device Interface (SDI) tape target driver
+	sw01 (7)	- Storage Device Interface (SDI) WORM Target Driver
+	sdiconfig (1M)	- determine which SDI disk, tape, and SCSI controllers are present
+	sdi_timeout	- query or change SDI device timeout tunables and more
+	fd (7)		- floppy disk driver
+	disk (7)	- disk device file
+	tape (1)	- magnetic tape maintenance
+	tape (7)	- tape devices
+	tapecntl (1)	- tape control for tape device
+	mt (1)		- portable tape device control
+	mccntl (1M)	- medium changer control
+
+	Note: 'mt' on SCO is very limited (only 2 commands), so use
+		'tape' and/or 'tapecntl' utilities.
+
+	'mccntl' provides medium changer support.
+	( and I didn't have to load a CLC kit :-)
+
+     o	Use 'sdiconfig' to list SCSI devices found at boot:
+
+	sco# sdiconfig -l
+	0:0,7,0: HBA     : (cpqsc,1) Compaq SCSI-2
+	  0,3,0: TAPE    : HP      C1557A          U709
+	  0,3,1: CHANGER : HP      C1557A          U709
+	  0,8,0: DISK    : COMPAQ  DDRS-34560W     S97A
+	2:0,7,0: HBA     : (cpqsc,2) Compaq SCSI-2
+	  0,3,0: CDROM   : DEC     RRD42   (C) DEC 4.5d
+	sco# 
+
+     o	Kernel messages are located in /var/adm/log/osmlog
+
+     o	Default file system is VERITAS File System.  References:
+
+	diskadd(1M)	- disk set up utility
+	disksetup(1M)	- disk set up utility 
+	emergency_disk(1M) - create emergency recovery diskettes
+	fdisk (1M)	- create or modify hard disk partition table
+	fstyp (1M)	- determine filesystem type (generic)
+	fsadm_vxfs(1M)	- resize or reorganize a VERITAS File System
+	labelit (1M)	- provide labels for VERITAS File Systems
+	mkfs (1M)	- construct a VERITAS File System
+	mount (1M)	- mount a VERITAS File System
+	edvtoc (1M)	- VTOC (Volume Table of Contents) editing utility
+	prtvtoc (1M)	- disk information display utility
+	vtoc (7)	- fdisk disk partition and UnixWare slices
+
+sco# prtvtoc /dev/rdsk/c0b0t8d0s0
+slice 0:        DISK            permissions:    VALID UNMOUNTABLE 
+        starting sector:        63 (cyl 0)              length: 8369802 (521.00 cyls)
+slice 1:        ROOT            permissions:    VALID 
+        starting sector:        498015 (cyl 31)         length: 7743330 (482.00 cyls)
+slice 2:        SWAP            permissions:    VALID UNMOUNTABLE 
+        starting sector:        64260 (cyl 4)           length: 433755 (27.00 cyls)
+slice 7:        BOOT            permissions:    VALID UNMOUNTABLE 
+        starting sector:        63 (cyl 0)              length: 34 (0.00 cyls)
+slice 8:        ALT SEC/TRK     permissions:    VALID UNMOUNTABLE 
+        starting sector:        97 (cyl 0)              length: 15968 (0.99 cyls)
+slice 10:       STAND           permissions:    VALID 
+        starting sector:        16065 (cyl 1)           length: 48195 (3.00 cyls)
+slice 15:       VOLPRIVATE      permissions:    VALID UNMOUNTABLE 
+        starting sector:        8241345 (cyl 513)               length: 16065 (1.00 cyls)
+sco# 
+
+	Notes:
+	- A disk 'slice' is a contiguous section of a partition.
+	- There's a maximum of 4 partitions and 184 slices per partition.
+	- There's a maximum of 256 slices (minor numbers) per disk.
+	- Partition 0 is the entire disk.  See disk(7) for more info.
+	- Slice 0 is the whole partition.  See vtoc(7) for other slices.
+	- You cannot do I/O to a disk unless a partition exists.
+	  Accessing non-existant partitions results in "No such device",
+	  and accessing non-existant slices results in an EOF:
+
+	sco# dt if=/dev/rdsk/c2b0t2d0p0 bs=64k pattern=0 limit=1g
+	dt: open -> dt: '/dev/rdsk/c2b0t2d0p0' - No such device
+
+	- You can use a non-existant slice to access the disk with 'scu':
+
+	sco# scu -f /dev/rdsk/c2b0t2d0p0
+	scu: Unable to open device '/dev/rdsk/c2b0t2d0p0', errno = 19 - No such device
+	sco# scu -f /dev/rdsk/c2b0t2d0s0
+	scu> sho nexus
+	Device: HC0183172A, Bus: 2, Target: 2, Lun: 0, Type: Direct Access
+	scu> 
+
+     o	POSIX asynchronous I/O (AIO) is fully supported (yea!).
+
+     o	Tape I/O requests must be in length a multiple of the tape block
+	length.  The default value is 512 bytes.
+
+     o	The largest tape block size appears to be 60KB.  Anything larger
+	returns "Invalid argument" (EINVAL).
+
+
+	Known Problems:
+	---------------
+     o	I'm unable to write/read more than 2Gbytes with AIO enabled:
+
+	sco% dt of=/dev/rmt/ctape1 bs=32k limit=4g pattern=iot aios=10     
+	dt: 'aio_return' - No such device or address
+	dt: Error number 1 occurred on Sat Aug  7 14:22:29 1999
+	Total Statistics:
+	     Output device/file name: /dev/rmt/ctape1
+	    Data pattern string used: 'IOT Pattern'
+	     Total records processed: 65536 @ 32768 bytes/record (32.000 Kbytes)
+	     Total bytes transferred: 2147483648 (2097152.000 Kbytes, 2048.000 Mbytes)
+	      Average transfer rates: 1275425 bytes/sec, 1245.532 Kbytes/sec
+	     Asynchronous I/O's used: 10
+	     Number I/O's per second: 38.923
+	      Total passes completed: 0/1
+	       Total errors detected: 1/1
+	          Total elapsed time: 28m03.74s
+	           Total system time: 00m11.88s
+	             Total user time: 00m31.30s
+	               Starting time: Sat Aug  7 13:55:01 1999
+	                 Ending time: Sat Aug  7 14:23:05 1999
+
+	sco% 
+
+     o	There's also a problem, or anomoly, with the way UnixWare handles the
+	end of media condition.  Here ENXIO is returned, instead of ENOSPC
+	which is what 'dt' expects.  Note:  The aio_read() reference page
+	does not describe the error returned at EOM, and does not list either
+	of these errno codes.  As you can see, non-AIO works just fine :-)
+
+	sco# dt if=/dev/rdsk/c0b0t8d0s0 bs=64k disable=compare aios=8
+	dt: WARNING: Record #65390, attempted to read 65536 bytes, read only 5120 bytes.
+	dt: 'aio_return' - No such device or address
+	dt: Error number 1 occurred on Tue Aug 10 19:51:48 1999
+	Total Statistics:
+	      Input device/file name: /dev/rdsk/c0b0t8d0s0 (device type=disk)
+	           Data pattern read: 0x39c39c39 (data compare disabled)
+	     Total records processed: 65389 @ 65536 bytes/record, 1 partial
+	     Total bytes transferred: 4285338624 (4184901.000 Kbytes, 4086.817 Mbytes)
+	      Average transfer rates: 3538619 bytes/sec, 3455.683 Kbytes/sec
+	     Asynchronous I/O's used: 8
+	     Number I/O's per second: 53.996
+	      Total passes completed: 0/1
+	       Total errors detected: 1/1
+	          Total elapsed time: 20m11.02s
+	           Total system time: 00m11.57s
+	             Total user time: 00m03.54s
+	               Starting time: Tue Aug 10 19:31:37 1999
+	                 Ending time: Tue Aug 10 19:51:48 1999
+
+	sco# 
+	sco# dt if=/dev/rdsk/c0b0t8d0s0 bs=64k disable=compare       
+	dt: WARNING: Record #65390, attempted to read 65536 bytes, read only 5120 bytes.
+	Total Statistics:
+	      Input device/file name: /dev/rdsk/c0b0t8d0s0 (device type=disk)
+	           Data pattern read: 0x39c39c39 (data compare disabled)
+	     Total records processed: 65389 @ 65536 bytes/record, 1 partial
+	     Total bytes transferred: 4285338624 (4184901.000 Kbytes, 4086.817 Mbytes)
+	      Average transfer rates: 3538064 bytes/sec, 3455.141 Kbytes/sec
+	     Number I/O's per second: 53.987
+	      Total passes completed: 1/1
+	       Total errors detected: 0/1
+	          Total elapsed time: 20m11.21s
+	           Total system time: 00m06.67s
+	             Total user time: 00m00.24s
+	               Starting time: Wed Aug 11 09:08:32 1999
+	                 Ending time: Wed Aug 11 09:28:43 1999
+
+	sco#   
+
+     o	There's a long delay when closing files after the read pass,
+	which causes the total transfer rates to be lower than expected:
+
+	sco% dt of=dt.data bs=32k limit=50m pattern=iot                       
+	Write Statistics:
+	     Total records processed: 1600 @ 32768 bytes/record (32.000 Kbytes)
+	     Total bytes transferred: 52428800 (51200.000 Kbytes, 50.000 Mbytes)
+	      Average transfer rates: 1720670 bytes/sec, 1680.341 Kbytes/sec
+	     Number I/O's per second: 52.511
+	      Total passes completed: 0/1
+	       Total errors detected: 0/1
+	          Total elapsed time: 00m30.47s
+	           Total system time: 00m00.48s
+	             Total user time: 00m00.67s
+
+	Read Statistics:
+	     Total records processed: 1600 @ 32768 bytes/record (32.000 Kbytes)
+	     Total bytes transferred: 52428800 (51200.000 Kbytes, 50.000 Mbytes)
+	      Average transfer rates: 10043831 bytes/sec, 9808.429 Kbytes/sec
+	     Number I/O's per second: 306.513
+	      Total passes completed: 1/1
+	       Total errors detected: 0/1
+	          Total elapsed time: 00m05.22s
+	           Total system time: 00m00.37s
+	             Total user time: 00m02.17s
+
+	Total Statistics:
+	     Output device/file name: dt.data
+	    Data pattern string used: 'IOT Pattern'
+	     Total records processed: 3200 @ 32768 bytes/record (32.000 Kbytes)
+	     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+	      Average transfer rates: 2108538 bytes/sec, 2059.119 Kbytes/sec
+	     Number I/O's per second: 64.347
+	      Total passes completed: 1/1
+	       Total errors detected: 0/1
+	          Total elapsed time: 00m49.73s
+	           Total system time: 00m00.87s
+	             Total user time: 00m02.84s
+	               Starting time: Sat Aug  7 14:36:14 1999
+	                 Ending time: Sat Aug  7 14:37:04 1999
+
+	sco% 
+

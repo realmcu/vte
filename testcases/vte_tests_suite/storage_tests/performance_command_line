@@ -1,0 +1,16 @@
+# read performance
+# performance_test.sh device_name volume dd if=/dev/* of=/dev/null bs=* count=*
+performance_test.sh nor 10240 dd if=/dev/mtdblock2 of=/dev/null bs=1024k count=10
+performance_test.sh nand 51200 dd if=/dev/mtdblock10 of=/dev/null bs=1024k count=50
+performance_test.sh sd 51200 dd if=/dev/mmcblk0p1 of=/dev/null bs=1024k count=50
+performance_test.sh ata 51200 dd if=/dev/sda1 of=/dev/null bs=1024k count=50
+performance_test.sh usbh 51200 dd if=/dev/sda1 of=/dev/null bs=1024k count=50
+
+# write performance
+# performance_test.sh dd if=/dev/zero of=/mnt/*/tempfile bs=* count=*
+# performance_test.sh dd if=/dev/urandom of=/mnt/*/tempfile bs=* count=*
+performance_test.sh dd if=/dev/zero of=/mnt/flb/tempfile bs=1024k count=10
+performance_test.sh dd if=/dev/zero of=/mnt/flc/tempfile bs=1024k count=50
+performance_test.sh dd if=/dev/zero of=/mnt/mmcblk0p1/tempfile bs=1024k count=50
+performance_test.sh dd if=/dev/zero of=/mnt/ata1/tempfile bs=1024k count=50
+performance_test.sh dd if=/dev/zero of=/mnt/msc/tempfile bs=1024k count=50

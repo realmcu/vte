@@ -1,0 +1,974 @@
+Command Line:
+
+    % dt of=/dev/rmt0h bs=64k limit=10m files=3 enable=debug,lbdata,resets log=rmt0h.log 
+
+	--> Date: December 23, 1998, Version: 11.0, Author: Robin T. Miller <--
+
+dt: Attempting to open output file '/dev/rmt0h', open flags = 01...
+dt: Output file '/dev/rmt0h' successfully opened, fd = 3
+dt: Clearing EEI data...
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TLZ7
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		3
+dev_name		tz
+unit_num		3
+soft_count		0
+hard_count		75
+stat			0x1
+			DEV_BOM 
+category_stat		0x20400
+			DEV_LOADER DEV_61000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x10001
+                        BOM POS_VALID 
+unit_status             0x1a9
+                        Ready Loader 2_FM_Close Rewind Compacting Buffered 
+record_size             0
+density (current)       61000 BPI
+density (on write)      0 BPI
+Filemark Cnt            0
+Record Cnt              0
+Class                   0 - <unspecified>
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x1
+			DEV_BOM 
+mt_erreg		0x0 (NO SENSE - No error or no sense information)
+mt_resid		0
+mt_fileno		0 
+mt_blkno		0 
+
+CAM Extended Error Information:
+
+                       EEI Version: 0x2
+                        EEI Status: EEI_NO_STATUS (0) - No EEI status available
+                   EEI Valid Flags: 0x1000000 - CAM_DATA
+                        CAM Status: <Not Valid>
+                       SCSI Status: <Not Valid>
+                   SCSI Sense Data: <Not Valid>
+
+dt: Allocated buffer at address 0x14002c000 of 65540 bytes, using offset 0
+dt: Issuing 'write file mark' command, count = 1 (0x1)
+dt: Processing reset condition (EEI_DEVBIO_FAILURE) - file 1, record 83
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TLZ7
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		3
+dev_name		tz
+unit_num		3
+soft_count		0
+hard_count		75
+stat			0x20
+			DEV_WRITTEN 
+category_stat		0x20400
+			DEV_LOADER DEV_61000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x20
+                        Written 
+unit_status             0x1a9
+                        Ready Loader 2_FM_Close Rewind Compacting Buffered 
+record_size             0
+density (current)       61000 BPI
+density (on write)      0 BPI
+Filemark Cnt            <Not Valid>
+Record Cnt              <Not Valid>
+Class                   0 - <unspecified>
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x20
+			DEV_WRITTEN 
+mt_erreg		0x0 (NO SENSE - No error or no sense information)
+mt_resid		0
+mt_fileno		1 
+mt_blkno		83 
+
+CAM Extended Error Information:
+
+                       EEI Version: 0x2
+                        EEI Status: EEI_DEVBIO_FAILURE (0x2400) - Device/bus I/O error (retriable)
+                   EEI Valid Flags: 0x1000001 - CAM_STATUS CAM_DATA
+                        CAM Status: CAM_BDR_SENT (0x17) - A SCSI BDR msg was sent to target
+                       SCSI Status: <Not Valid>
+                   SCSI Sense Data: <Not Valid>
+
+dt: Record count sanity check failed, mt_blkno = 83, my count = 82
+dt: Issuing 'rewind tape' command, count = 0 (0)
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TLZ7
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		3
+dev_name		tz
+unit_num		3
+soft_count		0
+hard_count		79
+stat			0x1
+			DEV_BOM 
+category_stat		0x20400
+			DEV_LOADER DEV_61000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x10001
+                        BOM POS_VALID 
+unit_status             0x1a9
+                        Ready Loader 2_FM_Close Rewind Compacting Buffered 
+record_size             0
+density (current)       61000 BPI
+density (on write)      0 BPI
+Filemark Cnt            1
+Record Cnt              83
+Class                   0 - <unspecified>
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x1
+			DEV_BOM 
+mt_erreg		0x0 (NO SENSE - No error or no sense information)
+mt_resid		0
+mt_fileno		1 
+mt_blkno		83 
+
+CAM Extended Error Information:
+
+                       EEI Version: 0x2
+                        EEI Status: EEI_CNTBUSY_FAILURE (0x600) - HBA/Controller Busy (retriable)
+                   EEI Valid Flags: 0x1000001 - CAM_STATUS CAM_DATA
+                        CAM Status: CAM_BUSY (0x5) - CAM subsystem is busy
+                       SCSI Status: <Not Valid>
+                   SCSI Sense Data: <Not Valid>
+
+dt: Retry 1 after EEI_CNTBUSY_FAILURE status...
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TLZ7
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		3
+dev_name		tz
+unit_num		3
+soft_count		0
+hard_count		83
+stat			0x1
+			DEV_BOM 
+category_stat		0x20400
+			DEV_LOADER DEV_61000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x1
+                        BOM 
+unit_status             0x1a9
+                        Ready Loader 2_FM_Close Rewind Compacting Buffered 
+record_size             0
+density (current)       61000 BPI
+density (on write)      0 BPI
+Filemark Cnt            <Not Valid>
+Record Cnt              <Not Valid>
+Class                   0 - <unspecified>
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x1
+			DEV_BOM 
+mt_erreg		0x0 (NO SENSE - No error or no sense information)
+mt_resid		0
+mt_fileno		0 
+mt_blkno		0 
+
+CAM Extended Error Information:
+
+                       EEI Version: 0x2
+                        EEI Status: EEI_DEVPATH_RESET (0x6400) - Device/bus reset occured
+                   EEI Valid Flags: 0x1000000 - CAM_DATA
+                        CAM Status: <Not Valid>
+                       SCSI Status: <Not Valid>
+                   SCSI Sense Data: <Not Valid>
+
+dt: Retry 2 after EEI_DEVPATH_RESET status...
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TLZ7
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		3
+dev_name		tz
+unit_num		3
+soft_count		0
+hard_count		84
+stat			0x1
+			DEV_BOM 
+category_stat		0x20400
+			DEV_LOADER DEV_61000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x10001
+                        BOM POS_VALID 
+unit_status             0x1a9
+                        Ready Loader 2_FM_Close Rewind Compacting Buffered 
+record_size             0
+density (current)       61000 BPI
+density (on write)      0 BPI
+Filemark Cnt            0
+Record Cnt              0
+Class                   0 - <unspecified>
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x1
+			DEV_BOM 
+mt_erreg		0x6 (UNIT ATTENTION - Medium changed or target reset)
+mt_resid		0
+mt_fileno		0 
+mt_blkno		0 
+
+CAM Extended Error Information:
+
+                       EEI Version: 0x2
+                        EEI Status: EEI_DEVPATH_RESET (0x6400) - Device/bus reset occured
+                   EEI Valid Flags: 0x1000007 - CAM_STATUS SCSI_STATUS SCSI_SENSE CAM_DATA
+                        CAM Status: CAM_REQ_CMP_ERR (0x4) - CCB request completed with an error
+                       SCSI Status: SCSI_STAT_CHECK_CONDITION (0x2) - Error, exception, or abnormal condition
+
+SCSI Request Sense Information:
+
+                        Error Code: 0x70 (Current Error)
+                         Valid Bit: 0
+                    Segment Number: 0
+                         Sense Key: 0x6 (UNIT ATTENTION - Medium changed or target reset)
+                    Illegal Length: 0
+                      End Of Media: 0
+                         File Mark: 0
+                 Information Field: 0
+           Additional Sense Length: 0xa
+      Command Specific Information: 0
+   Additional Sense Code/Qualifier: (0x29, 0) = Power on, reset, or bus device reset occurred
+       Field Replaceable Unit Code: 0
+              Sense Specific Bytes: 00 00 00 
+
+dt: Retry 3 after EEI_DEVPATH_RESET status...
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TLZ7
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		3
+dev_name		tz
+unit_num		3
+soft_count		0
+hard_count		85
+stat			0x1
+			DEV_BOM 
+category_stat		0x20400
+			DEV_LOADER DEV_61000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x10001
+                        BOM POS_VALID 
+unit_status             0x1a9
+                        Ready Loader 2_FM_Close Rewind Compacting Buffered 
+record_size             0
+density (current)       61000 BPI
+density (on write)      0 BPI
+Filemark Cnt            0
+Record Cnt              0
+Class                   0 - <unspecified>
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x1
+			DEV_BOM 
+mt_erreg		0x0 (NO SENSE - No error or no sense information)
+mt_resid		0
+mt_fileno		0 
+mt_blkno		0 
+
+CAM Extended Error Information:
+
+                       EEI Version: 0x2
+                        EEI Status: EEI_DEVBUSY_FAILURE (0x2200) - Device is busy (retriable)
+                   EEI Valid Flags: 0x1000003 - CAM_STATUS SCSI_STATUS CAM_DATA
+                        CAM Status: CAM_REQ_CMP_ERR (0x4) - CCB request completed with an error
+                       SCSI Status: SCSI_STAT_BUSY (0x8) - Target is BUSY
+                   SCSI Sense Data: <Not Valid>
+
+dt: Retry 4 after EEI_DEVBUSY_FAILURE status...
+dt: Closing file '/dev/rmt0h', fd = 3...
+dt: Attemping to reopen file '/dev/rmt0h', open flags = 01...
+dt: File '/dev/rmt0h' successfully reopened, fd = 3
+dt: Clearing EEI data...
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TLZ7
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		3
+dev_name		tz
+unit_num		3
+soft_count		0
+hard_count		85
+stat			0x1
+			DEV_BOM 
+category_stat		0x20400
+			DEV_LOADER DEV_61000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x10001
+                        BOM POS_VALID 
+unit_status             0x1a9
+                        Ready Loader 2_FM_Close Rewind Compacting Buffered 
+record_size             0
+density (current)       61000 BPI
+density (on write)      0 BPI
+Filemark Cnt            0
+Record Cnt              0
+Class                   0 - <unspecified>
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x1
+			DEV_BOM 
+mt_erreg		0x0 (NO SENSE - No error or no sense information)
+mt_resid		0
+mt_fileno		0 
+mt_blkno		0 
+
+CAM Extended Error Information:
+
+                       EEI Version: 0x2
+                        EEI Status: EEI_NO_STATUS (0) - No EEI status available
+                   EEI Valid Flags: 0x1000000 - CAM_DATA
+                        CAM Status: <Not Valid>
+                       SCSI Status: <Not Valid>
+                   SCSI Sense Data: <Not Valid>
+
+dt: Positioning to file 1...
+dt: Issuing 'forward space file' command, count = 1 (0x1)
+dt: Positioning to record 82...
+dt: Issuing 'forward space record' command, count = 82 (0x52)
+dt: Issuing 'write file mark' command, count = 1 (0x1)
+Write Statistics:
+     Total records processed: 480 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 31457280 (30720.000 Kbytes, 30.000 Mbytes)
+      Average transfer rates: 391828 bytes/sec, 382.645 Kbytes/sec
+     Number I/O's per second: 5.979
+      Total passes completed: 0/1
+       Total files processed: 3/3
+       Total errors detected: 0/1
+          Total elapsed time: 01m20.28s
+           Total system time: 00m00.06s
+             Total user time: 00m00.93s
+
+dt: Closing file '/dev/rmt0h', fd = 3...
+dt: Attemping to reopen file '/dev/rmt0h', open flags = 00...
+dt: File '/dev/rmt0h' successfully reopened, fd = 3
+dt: Clearing EEI data...
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TLZ7
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		3
+dev_name		tz
+unit_num		3
+soft_count		0
+hard_count		86
+stat			0x1
+			DEV_BOM 
+category_stat		0x20400
+			DEV_LOADER DEV_61000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x10001
+                        BOM POS_VALID 
+unit_status             0x1a9
+                        Ready Loader 2_FM_Close Rewind Compacting Buffered 
+record_size             0
+density (current)       61000 BPI
+density (on write)      0 BPI
+Filemark Cnt            0
+Record Cnt              0
+Class                   0 - <unspecified>
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x1
+			DEV_BOM 
+mt_erreg		0x6 (UNIT ATTENTION - Medium changed or target reset)
+mt_resid		0
+mt_fileno		0 
+mt_blkno		0 
+
+CAM Extended Error Information:
+
+                       EEI Version: 0x2
+                        EEI Status: EEI_DEVPATH_RESET (0x6400) - Device/bus reset occured
+                   EEI Valid Flags: 0x1000007 - CAM_STATUS SCSI_STATUS SCSI_SENSE CAM_DATA
+                        CAM Status: CAM_REQ_CMP_ERR (0x4) - CCB request completed with an error
+                       SCSI Status: SCSI_STAT_CHECK_CONDITION (0x2) - Error, exception, or abnormal condition
+
+SCSI Request Sense Information:
+
+                        Error Code: 0x70 (Current Error)
+                         Valid Bit: 0
+                    Segment Number: 0
+                         Sense Key: 0x6 (UNIT ATTENTION - Medium changed or target reset)
+                    Illegal Length: 0
+                      End Of Media: 0
+                         File Mark: 0
+                 Information Field: 0
+           Additional Sense Length: 0xa
+      Command Specific Information: 0
+   Additional Sense Code/Qualifier: (0x29, 0) = Power on, reset, or bus device reset occurred
+       Field Replaceable Unit Code: 0
+              Sense Specific Bytes: 00 00 00 
+
+dt: End of media detected, count = 0, errno = 5
+dt: Clearing EEI data...
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TLZ7
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		3
+dev_name		tz
+unit_num		3
+soft_count		0
+hard_count		86
+stat			0x0
+category_stat		0x20401
+			DEV_TPMARK DEV_LOADER DEV_61000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x11000
+                        TPmark POS_VALID 
+unit_status             0x1a9
+                        Ready Loader 2_FM_Close Rewind Compacting Buffered 
+record_size             0
+density (current)       61000 BPI
+density (on write)      0 BPI
+Filemark Cnt            1
+Record Cnt              0
+Class                   0 - <unspecified>
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x1000
+			TPMARK 
+mt_erreg		0x80 (NO SENSE - No error or no sense information)
+			FILE_MARK 
+mt_resid		65536
+mt_fileno		1 
+mt_blkno		0 
+
+CAM Extended Error Information:
+
+                       EEI Version: 0x2
+                        EEI Status: EEI_NO_STATUS (0) - No EEI status available
+                   EEI Valid Flags: 0x1000007 - CAM_STATUS SCSI_STATUS SCSI_SENSE CAM_DATA
+                        CAM Status: CAM_REQ_CMP_ERR (0x4) - CCB request completed with an error
+                       SCSI Status: SCSI_STAT_CHECK_CONDITION (0x2) - Error, exception, or abnormal condition
+
+SCSI Request Sense Information:
+
+                        Error Code: 0x70 (Current Error)
+                         Valid Bit: 0x1 (Information field is valid)
+                    Segment Number: 0
+                         Sense Key: 0 (NO SENSE - No error or no sense information)
+                    Illegal Length: 0
+                      End Of Media: 0
+                         File Mark: 0x1
+                 Information Field: 0x10000 (65536)
+           Additional Sense Length: 0xa
+      Command Specific Information: 0
+   Additional Sense Code/Qualifier: (0, 0x1) = Filemark detected
+       Field Replaceable Unit Code: 0
+              Sense Specific Bytes: 00 00 00 
+
+dt: End of media detected, count = 0, errno = 5
+dt: Clearing EEI data...
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TLZ7
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		3
+dev_name		tz
+unit_num		3
+soft_count		0
+hard_count		86
+stat			0x0
+category_stat		0x20401
+			DEV_TPMARK DEV_LOADER DEV_61000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x11000
+                        TPmark POS_VALID 
+unit_status             0x1a9
+                        Ready Loader 2_FM_Close Rewind Compacting Buffered 
+record_size             0
+density (current)       61000 BPI
+density (on write)      0 BPI
+Filemark Cnt            2
+Record Cnt              0
+Class                   0 - <unspecified>
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x1000
+			TPMARK 
+mt_erreg		0x80 (NO SENSE - No error or no sense information)
+			FILE_MARK 
+mt_resid		65536
+mt_fileno		2 
+mt_blkno		0 
+
+CAM Extended Error Information:
+
+                       EEI Version: 0x2
+                        EEI Status: EEI_NO_STATUS (0) - No EEI status available
+                   EEI Valid Flags: 0x1000007 - CAM_STATUS SCSI_STATUS SCSI_SENSE CAM_DATA
+                        CAM Status: CAM_REQ_CMP_ERR (0x4) - CCB request completed with an error
+                       SCSI Status: SCSI_STAT_CHECK_CONDITION (0x2) - Error, exception, or abnormal condition
+
+SCSI Request Sense Information:
+
+                        Error Code: 0x70 (Current Error)
+                         Valid Bit: 0x1 (Information field is valid)
+                    Segment Number: 0
+                         Sense Key: 0 (NO SENSE - No error or no sense information)
+                    Illegal Length: 0
+                      End Of Media: 0
+                         File Mark: 0x1
+                 Information Field: 0x10000 (65536)
+           Additional Sense Length: 0xa
+      Command Specific Information: 0
+   Additional Sense Code/Qualifier: (0, 0x1) = Filemark detected
+       Field Replaceable Unit Code: 0
+              Sense Specific Bytes: 00 00 00 
+
+dt: Processing reset condition (EEI_DEVBIO_FAILURE) - file 2, record 13
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TLZ7
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		3
+dev_name		tz
+unit_num		3
+soft_count		0
+hard_count		86
+stat			0x0
+category_stat		0x20400
+			DEV_LOADER DEV_61000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x0
+unit_status             0x1a9
+                        Ready Loader 2_FM_Close Rewind Compacting Buffered 
+record_size             0
+density (current)       61000 BPI
+density (on write)      0 BPI
+Filemark Cnt            <Not Valid>
+Record Cnt              <Not Valid>
+Class                   0 - <unspecified>
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x0
+mt_erreg		0x0 (NO SENSE - No error or no sense information)
+mt_resid		0
+mt_fileno		2 
+mt_blkno		13 
+
+CAM Extended Error Information:
+
+                       EEI Version: 0x2
+                        EEI Status: EEI_DEVBIO_FAILURE (0x2400) - Device/bus I/O error (retriable)
+                   EEI Valid Flags: 0x1000001 - CAM_STATUS CAM_DATA
+                        CAM Status: CAM_BDR_SENT (0x17) - A SCSI BDR msg was sent to target
+                       SCSI Status: <Not Valid>
+                   SCSI Sense Data: <Not Valid>
+
+dt: Record count sanity check failed, mt_blkno = 13, my count = 12
+dt: Issuing 'rewind tape' command, count = 0 (0)
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TLZ7
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		3
+dev_name		tz
+unit_num		3
+soft_count		0
+hard_count		90
+stat			0x1
+			DEV_BOM 
+category_stat		0x20400
+			DEV_LOADER DEV_61000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x10001
+                        BOM POS_VALID 
+unit_status             0x1a9
+                        Ready Loader 2_FM_Close Rewind Compacting Buffered 
+record_size             0
+density (current)       61000 BPI
+density (on write)      0 BPI
+Filemark Cnt            2
+Record Cnt              13
+Class                   0 - <unspecified>
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x1
+			DEV_BOM 
+mt_erreg		0x0 (NO SENSE - No error or no sense information)
+mt_resid		0
+mt_fileno		2 
+mt_blkno		13 
+
+CAM Extended Error Information:
+
+                       EEI Version: 0x2
+                        EEI Status: EEI_CNTBUSY_FAILURE (0x600) - HBA/Controller Busy (retriable)
+                   EEI Valid Flags: 0x1000001 - CAM_STATUS CAM_DATA
+                        CAM Status: CAM_BUSY (0x5) - CAM subsystem is busy
+                       SCSI Status: <Not Valid>
+                   SCSI Sense Data: <Not Valid>
+
+dt: Retry 1 after EEI_CNTBUSY_FAILURE status...
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TLZ7
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		3
+dev_name		tz
+unit_num		3
+soft_count		0
+hard_count		94
+stat			0x1
+			DEV_BOM 
+category_stat		0x20400
+			DEV_LOADER DEV_61000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x1
+                        BOM 
+unit_status             0x1a9
+                        Ready Loader 2_FM_Close Rewind Compacting Buffered 
+record_size             0
+density (current)       61000 BPI
+density (on write)      0 BPI
+Filemark Cnt            <Not Valid>
+Record Cnt              <Not Valid>
+Class                   0 - <unspecified>
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x1
+			DEV_BOM 
+mt_erreg		0x0 (NO SENSE - No error or no sense information)
+mt_resid		0
+mt_fileno		0 
+mt_blkno		0 
+
+CAM Extended Error Information:
+
+                       EEI Version: 0x2
+                        EEI Status: EEI_DEVPATH_RESET (0x6400) - Device/bus reset occured
+                   EEI Valid Flags: 0x1000000 - CAM_DATA
+                        CAM Status: <Not Valid>
+                       SCSI Status: <Not Valid>
+                   SCSI Sense Data: <Not Valid>
+
+dt: Retry 2 after EEI_DEVPATH_RESET status...
+dt: Closing file '/dev/rmt0h', fd = 3...
+dt: Attemping to reopen file '/dev/rmt0h', open flags = 00...
+dt: File '/dev/rmt0h' successfully reopened, fd = 3
+dt: Clearing EEI data...
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TLZ7
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		3
+dev_name		tz
+unit_num		3
+soft_count		0
+hard_count		94
+stat			0x1
+			DEV_BOM 
+category_stat		0x20400
+			DEV_LOADER DEV_61000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x10001
+                        BOM POS_VALID 
+unit_status             0x1a9
+                        Ready Loader 2_FM_Close Rewind Compacting Buffered 
+record_size             0
+density (current)       61000 BPI
+density (on write)      0 BPI
+Filemark Cnt            0
+Record Cnt              0
+Class                   0 - <unspecified>
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x1
+			DEV_BOM 
+mt_erreg		0x6 (UNIT ATTENTION - Medium changed or target reset)
+mt_resid		0
+mt_fileno		0 
+mt_blkno		0 
+
+CAM Extended Error Information:
+
+                       EEI Version: 0x2
+                        EEI Status: EEI_DEVPATH_RESET (0x6400) - Device/bus reset occured
+                   EEI Valid Flags: 0x1000007 - CAM_STATUS SCSI_STATUS SCSI_SENSE CAM_DATA
+                        CAM Status: CAM_REQ_CMP_ERR (0x4) - CCB request completed with an error
+                       SCSI Status: SCSI_STAT_CHECK_CONDITION (0x2) - Error, exception, or abnormal condition
+
+SCSI Request Sense Information:
+
+                        Error Code: 0x70 (Current Error)
+                         Valid Bit: 0
+                    Segment Number: 0
+                         Sense Key: 0x6 (UNIT ATTENTION - Medium changed or target reset)
+                    Illegal Length: 0
+                      End Of Media: 0
+                         File Mark: 0
+                 Information Field: 0
+           Additional Sense Length: 0xa
+      Command Specific Information: 0
+   Additional Sense Code/Qualifier: (0x29, 0) = Power on, reset, or bus device reset occurred
+       Field Replaceable Unit Code: 0
+              Sense Specific Bytes: 00 00 00 
+
+dt: Positioning to file 2...
+dt: Issuing 'forward space file' command, count = 2 (0x2)
+dt: Positioning to record 12...
+dt: Issuing 'forward space record' command, count = 12 (0xc)
+dt: End of media detected, count = 0, errno = 5
+dt: Clearing EEI data...
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TLZ7
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		3
+dev_name		tz
+unit_num		3
+soft_count		0
+hard_count		94
+stat			0x0
+category_stat		0x20401
+			DEV_TPMARK DEV_LOADER DEV_61000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x11000
+                        TPmark POS_VALID 
+unit_status             0x1a9
+                        Ready Loader 2_FM_Close Rewind Compacting Buffered 
+record_size             0
+density (current)       61000 BPI
+density (on write)      0 BPI
+Filemark Cnt            3
+Record Cnt              0
+Class                   0 - <unspecified>
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x1000
+			TPMARK 
+mt_erreg		0x80 (NO SENSE - No error or no sense information)
+			FILE_MARK 
+mt_resid		65536
+mt_fileno		3 
+mt_blkno		0 
+
+CAM Extended Error Information:
+
+                       EEI Version: 0x2
+                        EEI Status: EEI_NO_STATUS (0) - No EEI status available
+                   EEI Valid Flags: 0x1000007 - CAM_STATUS SCSI_STATUS SCSI_SENSE CAM_DATA
+                        CAM Status: CAM_REQ_CMP_ERR (0x4) - CCB request completed with an error
+                       SCSI Status: SCSI_STAT_CHECK_CONDITION (0x2) - Error, exception, or abnormal condition
+
+SCSI Request Sense Information:
+
+                        Error Code: 0x70 (Current Error)
+                         Valid Bit: 0x1 (Information field is valid)
+                    Segment Number: 0
+                         Sense Key: 0 (NO SENSE - No error or no sense information)
+                    Illegal Length: 0
+                      End Of Media: 0
+                         File Mark: 0x1
+                 Information Field: 0x10000 (65536)
+           Additional Sense Length: 0xa
+      Command Specific Information: 0
+   Additional Sense Code/Qualifier: (0, 0x1) = Filemark detected
+       Field Replaceable Unit Code: 0
+              Sense Specific Bytes: 00 00 00 
+
+Read Statistics:
+     Total records processed: 480 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 31457280 (30720.000 Kbytes, 30.000 Mbytes)
+      Average transfer rates: 410938 bytes/sec, 401.306 Kbytes/sec
+     Number I/O's per second: 6.270
+      Total passes completed: 1/1
+       Total files processed: 3/3
+       Total errors detected: 0/1
+          Total elapsed time: 01m16.55s
+           Total system time: 00m00.10s
+             Total user time: 00m03.48s
+
+dt: Exiting with status code 254...
+dt: Closing file '/dev/rmt0h', fd = 3...
+Total Statistics:
+     Output device/file name: /dev/rmt0h (Device: TLZ7, type=tape)
+   Data pattern read/written: 0x39c39c39
+     Total records processed: 960 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 62914560 (61440.000 Kbytes, 60.000 Mbytes)
+      Average transfer rates: 346892 bytes/sec, 338.761 Kbytes/sec
+     Number I/O's per second: 5.293
+      Total passes completed: 1/1
+       Total files processed: 6/6
+       Total errors detected: 0/1
+          Total elapsed time: 03m01.36s
+           Total system time: 00m00.16s
+             Total user time: 00m04.41s
+               Starting time: Wed Dec 23 18:30:55 1998
+                 Ending time: Wed Dec 23 18:34:02 1998
+

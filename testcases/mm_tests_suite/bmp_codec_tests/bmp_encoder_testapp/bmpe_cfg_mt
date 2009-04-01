@@ -1,0 +1,5 @@
+799   308  rgb RGB888  400 ./input/sample_test_cases/panel2.ppm ./bmpe_output/panel2_T1.bmp ./reference/sample_test_cases/panel2_T1.bmp                   
+799   308  rgb RGB888  114 ./input/sample_test_cases/panel2.ppm ./bmpe_output/panel2_T2.bmp ./reference/sample_test_cases/panel2_T2.bmp                                               
+799   308  rgb RGB888   14 ./input/sample_test_cases/panel2.ppm ./bmpe_output/panel2_T3.bmp ./reference/sample_test_cases/panel2_T3.bmp                                              
+799   308  rgb RGB888    2 ./input/sample_test_cases/panel2.ppm ./bmpe_output/panel2_T4.bmp ./reference/sample_test_cases/panel2_T4.bmp                                              
+799   308  rgb GRAY   1200 ./input/sample_test_cases/panel2.pgm ./bmpe_output/panel2_T6.bmp ./reference/sample_test_cases/panel2_T6.bmp                                              

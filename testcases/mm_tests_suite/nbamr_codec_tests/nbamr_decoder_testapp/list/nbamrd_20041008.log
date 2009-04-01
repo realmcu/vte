@@ -1,0 +1,14 @@
+[2004/10/08 09:33:03.953] mvfs: Ok: INFO: IoCreateSymlink failed: MVFS drive symlink already exists.
+[2004/10/08 09:33:04.031] mvfs: Ok: INFO: MVFS: Setting mvfs_largeinit to 2 based on physical memory size of 1048112KB
+[2004/10/08 09:33:04.046] mvfs: Ok: INFO: MVFS version 2002.05.00+ (Mar  8 2004 14:13:28)
+Copyright (c) 1990-1999, Rational Software Corporation.
+Covered by U.S. patent No 5,574,898.
+Other U.S. and foreign patents pending.
+[2004/10/08 09:33:04.062] mvfs: Ok: INFO: MVFS Case INSENSITIVE and Case PRESERVING mode
+[2004/10/08 09:44:32.703] mvfs: Ok: INFO: IoCreateSymlink failed: MVFS drive symlink already exists.
+[2004/10/08 09:44:32.750] mvfs: Ok: INFO: MVFS: Setting mvfs_largeinit to 2 based on physical memory size of 1048112KB
+[2004/10/08 09:44:32.812] mvfs: Ok: INFO: MVFS version 2002.05.00+ (Mar  8 2004 14:13:28)
+Copyright (c) 1990-1999, Rational Software Corporation.
+Covered by U.S. patent No 5,574,898.
+Other U.S. and foreign patents pending.
+[2004/10/08 09:44:32.890] mvfs: Ok: INFO: MVFS Case INSENSITIVE and Case PRESERVING mode

@@ -1,0 +1,47 @@
+Command Line:
+
+    % dt of=/dev/rmt0h bs=64k limit=10m aios=16 files=2 enable=lbdata log=lbdata.log 
+
+	--> Date: January 13, 1999, Version: 11.2, Author: Robin T. Miller <--
+
+Write Statistics:
+     Total records processed: 320 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 20971520 (20480.000 Kbytes, 20.000 Mbytes)
+      Average transfer rates: 1442994 bytes/sec, 1409.174 Kbytes/sec
+     Number I/O's per second: 22.018
+      Total passes completed: 0/1
+       Total files processed: 2/2
+       Total errors detected: 0/1
+          Total elapsed time: 00m14.53s
+           Total system time: 00m00.03s
+             Total user time: 00m00.65s
+
+Read Statistics:
+     Total records processed: 320 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 20971520 (20480.000 Kbytes, 20.000 Mbytes)
+      Average transfer rates: 1273574 bytes/sec, 1243.725 Kbytes/sec
+     Number I/O's per second: 19.433
+      Total passes completed: 1/1
+       Total files processed: 2/2
+       Total errors detected: 0/1
+          Total elapsed time: 00m16.46s
+           Total system time: 00m00.03s
+             Total user time: 00m02.40s
+
+Total Statistics:
+     Output device/file name: /dev/rmt0h (Device: TLZ7, type=tape)
+   Data pattern read/written: 0x39c39c39
+     Total records processed: 640 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 41943040 (40960.000 Kbytes, 40.000 Mbytes)
+      Average transfer rates: 799677 bytes/sec, 780.934 Kbytes/sec
+     Asynchronous I/O's used: 16
+     Number I/O's per second: 12.202
+      Total passes completed: 1/1
+       Total files processed: 4/4
+       Total errors detected: 0/1
+          Total elapsed time: 00m52.45s
+           Total system time: 00m00.06s
+             Total user time: 00m03.05s
+               Starting time: Wed Jan 13 19:36:47 1999
+                 Ending time: Wed Jan 13 19:37:50 1999
+

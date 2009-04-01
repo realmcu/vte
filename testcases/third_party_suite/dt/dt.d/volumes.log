@@ -1,0 +1,124 @@
+Description:  This log file shows an example of using the "volumes="
+and "vrecords=" options.  Basically, we will write 2 volumes, with 100
+records being written on the last (2nd) volume.  This option is useful
+when you don't know the capacity of the media, or when data compression
+affects the total capacity, like it does with most tapes.  Please also
+notice the new logic when requesting volumes... errors are now detected
+and the user has the option of retrying, rather than exiting with a
+failure on this lengthy test.  Enjoy, Robin.
+
+meda# dt of=/dev/rmt0 bs=64k pf=../data/pattern_all enable=lbdata volumes=2 vrecords=100
+
+Please insert volume #2 in drive /dev/rmt0, press ENTER when ready to proceed:
+rewind tape: no medium
+
+dt: Error number 1 occurred on Mon Jan 15 14:05:07 2001
+The drive is NOT ready or encountered an error, Retry operation (Yes):
+    [ Continuing in file #1, record #30277, bytes written so far 1984167936... ]
+
+Write Statistics:
+     Total records processed: 30376 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 1990721536 (1944064.000 Kbytes, 1898.500 Mbytes)
+      Average transfer rates: 4473682 bytes/sec, 4368.830 Kbytes/sec
+     Number I/O's per second: 68.263
+     Total volumes completed: 2/2
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 07m24.98s
+           Total system time: 00m00.56s
+             Total user time: 00m34.23s
+
+Please insert volume #1 in drive /dev/rmt0, press ENTER when ready to proceed:
+
+Please insert volume #2 in drive /dev/rmt0, press ENTER when ready to proceed:
+    [ Continuing in file #1, record #30277, bytes read so far 1984167936... ]
+
+Read Statistics:
+     Total records processed: 30376 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 1990721536 (1944064.000 Kbytes, 1898.500 Mbytes)
+      Average transfer rates: 4748995 bytes/sec, 4637.690 Kbytes/sec
+     Number I/O's per second: 72.464
+     Total volumes completed: 2/2
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 06m59.18s
+           Total system time: 00m00.68s
+             Total user time: 02m40.50s
+
+Total Statistics:
+     Output device/file name: /dev/rmt0 (device type=tape)
+     Type of I/O's performed: sequential
+      Data pattern file used: ../data/pattern_all (15360 bytes)
+   Data pattern read/written: 0x00000000 (first 4 bytes)
+     Total records processed: 60752 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 3981443072 (3888128.000 Kbytes, 3797.000 Mbytes)
+      Average transfer rates: 4250767 bytes/sec, 4151.140 Kbytes/sec
+     Number I/O's per second: 64.862
+     Total volumes completed: 2/2
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 15m36.64s
+           Total system time: 00m01.25s
+             Total user time: 03m14.73s
+               Starting time: Mon Jan 15 13:59:30 2001
+                 Ending time: Mon Jan 15 14:15:07 2001
+
+meda# echo $?
+0
+meda#
+
+==============================================================================
+
+tru64% dt of=/dev/rfd0c bs=32k volumes=2 enable=lbdata vrecords=5 aios=4
+
+Please insert volume #2 in drive /dev/rfd0c, press ENTER when ready to proceed: 
+    [ Continuing at record #46, bytes written so far 1474560... ]
+
+Write Statistics:
+     Total records processed: 50 @ 32768 bytes/record (32.000 Kbytes)
+     Total bytes transferred: 1638400 (1600.000 Kbytes, 1.562 Mbytes)
+      Average transfer rates: 8004 bytes/sec, 7.816 Kbytes/sec
+     Number I/O's per second: 0.244
+     Total volumes completed: 2/2
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 03m24.70s
+           Total system time: 00m00.00s
+             Total user time: 00m00.01s
+
+Please insert volume #1 in drive /dev/rfd0c, press ENTER when ready to proceed: 
+
+Please insert volume #2 in drive /dev/rfd0c, press ENTER when ready to proceed: 
+    [ Continuing at record #46, bytes read so far 1474560... ]
+
+Read Statistics:
+     Total records processed: 50 @ 32768 bytes/record (32.000 Kbytes)
+     Total bytes transferred: 1638400 (1600.000 Kbytes, 1.562 Mbytes)
+      Average transfer rates: 13859 bytes/sec, 13.534 Kbytes/sec
+     Number I/O's per second: 0.423
+     Total volumes completed: 2/2
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m58.21s
+           Total system time: 00m00.01s
+             Total user time: 00m00.16s
+
+Total Statistics:
+     Output device/file name: /dev/rfd0c (Device: floppy, type=disk)
+     Type of I/O's performed: sequential
+   Data pattern read/written: 0x39c39c39 (w/lbdata, lba 0, size 512 bytes)
+     Total records processed: 100 @ 32768 bytes/record (32.000 Kbytes)
+     Total bytes transferred: 3276800 (3200.000 Kbytes, 3.125 Mbytes)
+      Average transfer rates: 9373 bytes/sec, 9.153 Kbytes/sec
+     Asynchronous I/O's used: 4
+     Number I/O's per second: 0.286
+     Total volumes completed: 2/2
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 05m49.61s
+           Total system time: 00m00.01s
+             Total user time: 00m00.18s
+               Starting time: Mon Jan 15 13:56:41 2001
+                 Ending time: Mon Jan 15 14:02:30 2001
+
+tru64% 

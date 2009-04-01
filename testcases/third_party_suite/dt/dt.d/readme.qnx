@@ -1,0 +1,37 @@
+File:		dt-qnx.tar.gz
+Description:	A generic diagnostic test tool.
+Keywords:	test performance disk tape serial diagnostic
+Version:	13.1
+Entered-date:   January 22nd, 2000
+Author:         Robin T. Miller
+Ported-by:      
+Original-site:  
+Copying-policy: Free to copy provided copyright is included.
+Supplemental:   
+
+Program Abstract:
+
+    'dt' is a generic data test program used to verify proper operation of
+peripherals and for obtaining performance information.  Since verification
+of data is performed, 'dt' can be thought of as a generic diagnostic tool.
+
+    'dt' command lines are similar to the 'dd' program, which is popular on
+most UNIX systems.  It contains numerous options to give the user complete
+control of the test parameters.
+
+    'dt' has been used to successfully test disks, tapes, serial lines,
+parallel lines, pipes, and memory mapped files.  In fact, 'dt' can be used
+for any device which allows the standard open, read, write, & close system
+calls.  Special support is necessary for some devices, such as serial lines,
+for setting up the speed, parity, data bits, etc.
+
+	A full users manual is available in file dt-UsersGuide.ps, and
+online help is available by typing "dt help".
+
+Have fun,
+Robin Miller
+The Author of 'dt',		Work: rmiller@zk3.dec.com
+Robin T. Miller		or	Home: rmiller@bit-net.com
+2 Paradise Lane    		QUICS Login: rtmiller
+Hudson, N.H. 03051
+(603) 883-2355		Work:	(603) 881-0565

@@ -1,0 +1,424 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>buttons_page</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>buttons_page</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>460</width>
+            <height>354</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Buttons page</string>
+    </property>
+    <widget class="QGroupBox">
+        <property name="name">
+            <cstring>groupBox1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>160</x>
+                <y>10</y>
+                <width>141</width>
+                <height>91</height>
+            </rect>
+        </property>
+        <property name="title">
+            <string>do the same selection</string>
+        </property>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>pushButton1</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>91</width>
+                    <height>21</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Red</string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>pushButton2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>40</y>
+                    <width>91</width>
+                    <height>21</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Green</string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>pushButton3</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>60</y>
+                    <width>91</width>
+                    <height>21</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Blue</string>
+            </property>
+        </widget>
+    </widget>
+    <widget class="QCheckBox">
+        <property name="name">
+            <cstring>checkBox_tri</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>170</y>
+                <width>150</width>
+                <height>20</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Tri state checkbox exmpale</string>
+        </property>
+        <property name="tristate">
+            <bool>true</bool>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>pushButton_auto</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>200</y>
+                <width>100</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Auto repeat</string>
+        </property>
+        <property name="autoRepeat">
+            <bool>true</bool>
+        </property>
+    </widget>
+    <widget class="QButtonGroup">
+        <property name="name">
+            <cstring>buttonGroup3</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>320</x>
+                <y>11</y>
+                <width>130</width>
+                <height>90</height>
+            </rect>
+        </property>
+        <property name="title">
+            <string>exlusive button group</string>
+        </property>
+        <property name="exclusive">
+            <bool>true</bool>
+        </property>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>checkBox2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>39</y>
+                    <width>78</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Green</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>checkBox3</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>60</y>
+                    <width>78</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Blue</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>checkBox1</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>111</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Red</string>
+            </property>
+        </widget>
+    </widget>
+    <widget class="QButtonGroup">
+        <property name="name">
+            <cstring>buttonGroup1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>10</y>
+                <width>130</width>
+                <height>90</height>
+            </rect>
+        </property>
+        <property name="title">
+            <string>Button group</string>
+        </property>
+        <widget class="QRadioButton">
+            <property name="name">
+                <cstring>radioButton2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>40</y>
+                    <width>81</width>
+                    <height>21</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Green</string>
+            </property>
+        </widget>
+        <widget class="QRadioButton">
+            <property name="name">
+                <cstring>radioButton3</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>60</y>
+                    <width>81</width>
+                    <height>21</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Blue</string>
+            </property>
+        </widget>
+        <widget class="QRadioButton">
+            <property name="name">
+                <cstring>radioButton1</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>111</width>
+                    <height>21</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Red</string>
+            </property>
+            <property name="checked">
+                <bool>false</bool>
+            </property>
+        </widget>
+    </widget>
+    <widget class="QFrame">
+        <property name="name">
+            <cstring>frame1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>80</x>
+                <y>110</y>
+                <width>290</width>
+                <height>50</height>
+            </rect>
+        </property>
+        <property name="frameShape">
+            <enum>Box</enum>
+        </property>
+        <property name="frameShadow">
+            <enum>Raised</enum>
+        </property>
+    </widget>
+    <widget class="QProgressBar">
+        <property name="name">
+            <cstring>progressBar1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>130</x>
+                <y>200</y>
+                <width>320</width>
+                <height>22</height>
+            </rect>
+        </property>
+        <property name="progress">
+            <number>0</number>
+        </property>
+    </widget>
+    <widget class="QFrame">
+        <property name="name">
+            <cstring>frame2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>130</x>
+                <y>230</y>
+                <width>290</width>
+                <height>20</height>
+            </rect>
+        </property>
+        <property name="frameShape">
+            <enum>NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+            <enum>Raised</enum>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>reset</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>220</y>
+                <width>100</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Reset</string>
+        </property>
+    </widget>
+    <widget class="QButtonGroup">
+        <property name="name">
+            <cstring>toggleGroup</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>250</y>
+                <width>451</width>
+                <height>80</height>
+            </rect>
+        </property>
+        <property name="frameShape">
+            <enum>GroupBoxPanel</enum>
+        </property>
+        <property name="title">
+            <string>toggle button group</string>
+        </property>
+        <property name="exclusive">
+            <bool>true</bool>
+        </property>
+    </widget>
+</widget>
+<connections>
+    <connection>
+        <sender>buttonGroup1</sender>
+        <signal>clicked(int)</signal>
+        <receiver>buttons_page</receiver>
+        <slot>bg_clicked(int)</slot>
+    </connection>
+    <connection>
+        <sender>buttonGroup3</sender>
+        <signal>clicked(int)</signal>
+        <receiver>buttons_page</receiver>
+        <slot>ebg_clicked(int)</slot>
+    </connection>
+    <connection>
+        <sender>pushButton1</sender>
+        <signal>clicked()</signal>
+        <receiver>buttons_page</receiver>
+        <slot>red_clicked()</slot>
+    </connection>
+    <connection>
+        <sender>pushButton2</sender>
+        <signal>clicked()</signal>
+        <receiver>buttons_page</receiver>
+        <slot>green_clicked()</slot>
+    </connection>
+    <connection>
+        <sender>pushButton3</sender>
+        <signal>clicked()</signal>
+        <receiver>buttons_page</receiver>
+        <slot>blue_clicked()</slot>
+    </connection>
+    <connection>
+        <sender>pushButton_auto</sender>
+        <signal>clicked()</signal>
+        <receiver>buttons_page</receiver>
+        <slot>auto_clicked()</slot>
+    </connection>
+    <connection>
+        <sender>pushButton_auto</sender>
+        <signal>pressed()</signal>
+        <receiver>buttons_page</receiver>
+        <slot>auto_pressed()</slot>
+    </connection>
+    <connection>
+        <sender>pushButton_auto</sender>
+        <signal>released()</signal>
+        <receiver>buttons_page</receiver>
+        <slot>auto_released()</slot>
+    </connection>
+    <connection>
+        <sender>reset</sender>
+        <signal>clicked()</signal>
+        <receiver>buttons_page</receiver>
+        <slot>reset_clicked()</slot>
+    </connection>
+</connections>
+<includes>
+    <include location="local" impldecl="in implementation">buttons_page.ui.h</include>
+</includes>
+<slots>
+    <slot>bg_clicked( int nid )</slot>
+    <slot>ebg_clicked( int nid )</slot>
+    <slot>auto_clicked()</slot>
+    <slot>red_clicked()</slot>
+    <slot>green_clicked()</slot>
+    <slot>blue_clicked()</slot>
+    <slot>auto_pressed()</slot>
+    <slot>auto_released()</slot>
+    <slot>reset_clicked()</slot>
+</slots>
+<functions>
+    <function>set_red()</function>
+    <function>set_green()</function>
+    <function>set_blue()</function>
+</functions>
+<pixmapinproject/>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

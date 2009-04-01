@@ -1,0 +1,198 @@
+	Use 'disklabel' to obtain the partition information:
+	  (for our test example, we're using partition 'b')
+
+nkinfuts% disklabel rz0
+# /dev/rrz0a:
+type: SCSI
+disk: rz28
+label: 
+flags:
+bytes/sector: 512
+sectors/track: 99
+tracks/cylinder: 16
+sectors/cylinder: 1584
+cylinders: 2595
+sectors/unit: 4110480
+rpm: 3600
+interleave: 1
+trackskew: 0
+cylinderskew: 0
+headswitch: 0           # milliseconds
+track-to-track seek: 0  # milliseconds
+drivedata: 0 
+
+8 partitions:
+#        size   offset    fstype   [fsize bsize   cpg]
+  a:   131072        0    4.2BSD     1024  8192    16   # (Cyl.    0 - 82*)
+  b:   401408   131072    unused     1024  8192         # (Cyl.   82*- 336*)
+  c:  4110480        0    4.2BSD     1024  8192    16   # (Cyl.    0 - 2594)
+  d:  1191936   532480    unused     1024  8192         # (Cyl.  336*- 1088*)
+  e:  1191936  1724416    unused     1024  8192         # (Cyl. 1088*- 1841*)
+  f:  1194128  2916352    unused     1024  8192         # (Cyl. 1841*- 2594*)
+  g:  1787904   532480    4.2BSD     1024  8192    16   # (Cyl.  336*- 1464*)
+  h:  1790096  2320384    unused     1024  8192         # (Cyl. 1464*- 2594*)
+nkinfuts% 
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+	Use 'scu' to create a hard error for testing purposes:
+
+scu> mbad lba 131500 hard
+Making HARD Error @ Logical Block 131500 on device /dev/rrz0b (RZ28)...
+scu> read media lba 131500 compare off
+Reading 1 block (131500 - 131500) on /dev/rrz0b (RZ28)...
+scu: Read error at logical block number 131500 (0x201ac).
+scu: 'direct read' failed on device 'RZ28' at nexus [0/0/0]
+scu: Sense Key = 0x3 = MEDIUM ERROR - Nonrecoverable medium error,
+     Sense Code/Qualifier = (0x11, 0) = Unrecovered read error
+scu: Error number 1 occurred on Fri Mar  7 08:51:15 1997
+scu> 
+scu> show sense
+
+Request Sense Information:
+
+                  Device Name/Type: RZ28 (Direct Access)
+                 Nexus Information: Bus 0, Target 0, Lun 0
+                  Erroring Command: direct read
+                        Error Code: 0x70 (Current Error)
+                         Valid Bit: 0x1 (Information field is valid)
+                    Segment Number: 0
+                         Sense Key: 0x3 (MEDIUM ERROR - Nonrecoverable medium error)
+                    Illegal Length: 0
+                      End Of Media: 0
+                         File Mark: 0
+                 Information Field: 0x201ac (131500)
+           Additional Sense Length: 0xa
+      Command Specific Information: 0
+   Additional Sense Code/Qualifier: (0x11, 0) = Unrecovered read error
+       Field Replaceable Unit Code: 0x3
+              Sense Specific Bytes: 00 00 00 
+
+scu> 
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+	Show size of partition to be copied 'b', which is 196MBytes:
+
+scu> eval 401408b
+Expression Values:
+
+            Decimal: 205520896
+        Hexadecimal: 0xc400000
+    512 byte Blocks: 401408.000000
+          Kilobytes: 200704.000000
+          Megabytes: 196.000000
+          Gigabytes: 0.191406
+scu> 
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+	Copy the partition with the bad block to another disk:
+	( NOTE: For Digital UNIX, use default 512 byte block size. )
+
+% dt if=/dev/rrz0b of=/dev/rrz3b iomode=copy errors=10 limit=5m
+dt: 'read' - I/O error
+dt: Relative block number where the error occcured is 428
+dt: Error number 1 occurred on Fri Mar  7 10:53:15 1997
+Copy Statistics:
+    Data operation performed: Copied '/dev/rrz0b' to '/dev/rrz3b'.
+     Total records processed: 20478 @ 512 bytes/record (0.500 Kbytes)
+     Total bytes transferred: 10484736 (10239.000 Kbytes, 9.999 Mbytes)
+      Average transfer rates: 87677 bytes/sec, 85.622 Kbytes/sec
+      Total passes completed: 0/1
+       Total errors detected: 1/10
+          Total elapsed time: 01m59.58s
+           Total system time: 00m06.26s
+             Total user time: 00m00.35s
+
+dt: 'read' - I/O error
+dt: Relative block number where the error occcured is 428
+dt: Error number 1 occurred on Fri Mar  7 10:55:11 1997
+Verify Statistics:
+    Data operation performed: Verified '/dev/rrz0b' with '/dev/rrz3b'.
+     Total records processed: 20478 @ 512 bytes/record (0.500 Kbytes)
+     Total bytes transferred: 10484736 (10239.000 Kbytes, 9.999 Mbytes)
+      Average transfer rates: 359477 bytes/sec, 351.051 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 1/10
+          Total elapsed time: 00m29.16s
+           Total system time: 00m06.68s
+             Total user time: 00m01.76s
+
+Total Statistics:
+      Input device/file name: /dev/rrz0b (Device: RZ28, type=disk)
+     Total records processed: 40956 @ 512 bytes/record (0.500 Kbytes)
+     Total bytes transferred: 20969472 (20478.000 Kbytes, 19.998 Mbytes)
+      Average transfer rates: 140940 bytes/sec, 137.636 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 2/10
+          Total elapsed time: 02m28.78s
+           Total system time: 00m12.96s
+             Total user time: 00m02.13s
+               Starting time: Fri Mar  7 10:53:06 1997
+                 Ending time: Fri Mar  7 10:55:35 1997
+
+%
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+	Verify the relative block number equals the logical bad block:
+
+scu> eval 131072+428
+Expression Values:
+
+            Decimal: 131500
+        Hexadecimal: 0x201ac
+    512 byte Blocks: 256.835937
+          Kilobytes: 128.417969
+          Megabytes: 0.125408
+          Gigabytes: 0.000122
+scu> 
+
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+	Here's what to expect of verify data compare errors:
+	   ( expect this if copying mounted file systems )
+
+% scu -f /dev/rrz3b write media lba 131072+500
+Writing 1 block (131572 - 131572) on /dev/rrz3b (RZ28B) with pattern 0x39c39c39...
+% dt if=/dev/rrz0b of=/dev/rrz3b iomode=verify errors=10 limit=5m
+dt: 'read' - I/O error
+dt: Relative block number where the error occcured is 428
+dt: Error number 1 occurred on Fri Mar  7 11:01:49 1997
+dt: Error number 2 occurred on Fri Mar  7 11:01:49 1997
+dt: Data compare error at byte 0 in record number 1000
+dt: Relative block number where the error occcured is 500
+dt: Data expected = 0x39, data found = 0, byte count = 512
+dt: The incorrect data starts at address 0x140016000 (marked by asterisk '*')
+dt: Dumping Pattern Buffer (base = 0x140016000, offset = 0, limit = 64 bytes):
+
+0x140016000 *39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39
+0x140016010  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39
+0x140016020  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39
+0x140016030  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39
+
+dt: The incorrect data starts at address 0x140012000 (marked by asterisk '*')
+dt: Dumping Data Buffer (base = 0x140012000, offset = 0, limit = 64 bytes):
+
+0x140012000 *00 00 00 00 00 00 00 00 02 00 00 00 01 00 00 00
+0x140012010  c0 19 51 00 00 fc ff ff 00 00 00 00 00 00 00 00
+0x140012020  02 00 00 00 01 00 00 00 50 30 4b 00 00 fc ff ff
+0x140012030  00 00 00 00 00 00 00 00 02 00 00 00 01 00 00 00
+
+Total Statistics:
+      Input device/file name: /dev/rrz0b (Device: RZ28, type=disk)
+    Data operation performed: Verified '/dev/rrz0b' with '/dev/rrz3b'.
+     Total records processed: 20478 @ 512 bytes/record (0.500 Kbytes)
+     Total bytes transferred: 10484736 (10239.000 Kbytes, 9.999 Mbytes)
+      Average transfer rates: 361543 bytes/sec, 353.069 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 2/10
+          Total elapsed time: 00m29.00s
+           Total system time: 00m06.88s
+             Total user time: 00m01.66s
+               Starting time: Fri Mar  7 11:01:44 1997
+                 Ending time: Fri Mar  7 11:02:13 1997
+
+% 

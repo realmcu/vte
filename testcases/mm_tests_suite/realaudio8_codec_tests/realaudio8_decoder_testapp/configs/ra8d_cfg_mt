@@ -1,0 +1,8 @@
+1024  0  1 1  1024 0  47  44100  input/vibr_05.enc         ra8d_output/vibr_05.pcm   ref/reffixed/vibr_05.pcm    
+1488  0  1 2  1024 0  37  44100  input/chor_12.enc         ra8d_output/chor_12.pcm   ref/reffixed/chor_12.pcm    
+ 744  2  2 2   512 4  24  22050  input/gspi_20.enc         ra8d_output/gspi_20.pcm   ref/reffixed/gspi_20.pcm    
+2240  8  2 2  1024 5  37  44100  input/synth/rawbin.enc    ra8d_output/rawbin.pcm    ref/reffixed/rawbin.pcm
+
+
+
+            

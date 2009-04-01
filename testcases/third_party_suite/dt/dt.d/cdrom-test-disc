@@ -1,0 +1,376 @@
+==============================================================================
+TITLE:   DISC, COMPACT MEDIA
+
+
+Proprietary Information:
+This document contains proprietary information of Digital Equipment 
+Corporation.  This document and the information it contains may only be 
+used in the design, production, or manufacture of products for Digital 
+Equipment Corporation.
+
+Default Tolerances:  Unless otherwise specified, dimensions are in:
+ ___
+|   |     Inches:  One place + 0.1, two places + 0.02, three places
+                   + 0.005, Fractional + 1/64
+ ___
+| x |     Millimeters:
+                           _______________________________________________
+                   Check  | Over  | Over  | Over  | Over  | Over  | Over  |
+                    One   |  1    |  5    |  30   | 100   | 300   | 1000  |
+                          |  to   |  to   |  to   | to    | to    |  to   |
+                    ______|  5    |  30   | 100   | 300   | 1000  | 3000  |
+                   |   x  | + 0.1 | + 0.2 | + 0.3 | + 0.4 | + 0.6 | + 1.0 |
+                   |------|-------|-------|-------|-------|-------|-------|
+                   |      | + 0.3 | + 0.4 | + 0.6 | + 1.0 | + 1.6 | + 2.5 |
+                    ------------------------------------------------------
+
+                   Angle Tolerance is + 0o30'
+
+Approved Vendor:
+Approved vendors are designated in Digital's Qualified Vendor Listing.
+
+
+___________________________________________________________________________
+___________________________________________________________________________
+Document Approvals and Date:
+Design Engineer    Component Engineer     Writer           Approval Date
+
+Chris Williams     Chris Williams         M.L. Hoey        30 MAY 89
+
+Document Revision History:
+Approval Name  Responsible Engr. Component Engr. ECO No. Doc. Rev Date
+
+J. Millar                                        00001   B        23 JUN 89
+
+ _______________________________________________________
+
+|   DIGITAL PART  ||   DIGITAL PART  ||   DIGITAL PART  |
+|                 ||                 ||                 |
+|  NUMBER   | REV ||  NUMBER   | REV ||  NUMBER   | REV |
+|           |     ||           |     ||           |     |
+|30-23507-01| A01 ||30-23507-02| A01 ||30-23507-03| C01 |
+
+
+
+                                  TABLE I
+
+                            ITEM IDENTIFICATION
+
+
+     ----------------------------------------------------------------
+    |   DIGITAL   |             DESCRIPTION                | DIGITAL |
+    |    PART     |                                        | OPTION  |
+    |   NUMBER    |                                        | NUMBER  |
+    |----------------------------------------------------------------|
+    | 30-23507-01 |  Disc, Compact Media                   |         |
+    |----------------------------------------------------------------|
+    | 30-23507-02 |  RRD50 Test Disc                       |         |
+    |----------------------------------------------------------------|
+    | 30-23507-03 |  RRD40 Test Disc                       |         |
+     ----------------------------------------------------------------
+
+    
+                                     
+                             TABLE OF CONTENTS
+
+    1.0       GENERAL DESCRIPTION
+
+    2.0       APPLICABLE DOCUMENTS
+
+    3.0       REQUIREMENTS
+    3.1         Mechanical
+    3.1.1         Disc Outer Edge Specification
+    3.2         Electrical
+    3.2.1         Recording Format
+    3.2.2         Maximum Bytes of Storage per Disc
+    3.3         Performance
+    3.3.1         BLER on Manufactured Discs
+    3.3.2         Level 3 Uncorrectable Errors on the Master
+    3.3.3         Level 3 Uncorrectable Errors on Manufactured Discs
+    3.3.4         Level 3 Correctable Errors on Manufactured Discs
+    3.3.5         Linear Velocity
+    3.3.6         Track Pitch
+    3.3.7         Aging
+    3.4         Test Discs
+
+    APPENDIX A  RRD40 Test Disc Specifications
+
+1.0  GENERAL DESCRIPTION:
+
+     This specification defines the detail requirements for the general, 
+     physical, data structure, and electrical requirements for the Compact 
+     Disc Read Only Memory (CDROM), 4.7 inch (120 mm) diameter, replicated 
+     disc. The requirements herein are applicable to the purchase of new 
+     discs only, except where otherwise indicated. The disc is intended 
+     specifically for use with compact disc players employing read only 
+     memory laser technology and constant linear velocity.
+
+
+2.0  APPLICABLE DOCUMENTS (Per latest revision on date of order):
+
+     Digital Equipment Corporation:
+
+     DEC-STD-092                  Finish and Color Standard
+
+     DEC-STD-102                  Environmental Standard for Computers and 
+                                  Peripherals
+
+     A-SP-RRD40-0-DBT             RRD Test Disc Pattern Specifications
+
+     A-PS-3030656-0-0             5.25 Inch, 600 Mbyte, CDROM Drive
+                                  Purchase Specification
+
+     ECMA:
+
+     ECMA-130                     Data Interchange on Read-Only 120 mm 
+                                  Optical Data Discs (CDROM), 1988
+
+     Military:
+
+     MIL-STD-105                  Sampling Procedures and Tables for 
+                                  Inspection by Attributes
+3.0  REQUIREMENTS:
+     
+     Discs shall meet all ECMA-130 Specifications. In addition, discs 
+     manufactured for DIGITAL shall meet the following criteria:
+
+3.1   Mechanical:
+
+3.1.1   Disk Outer Edge Specification: The outside surface of the disc may 
+        be either beveled or cylindrical.
+
+        If the outside surface of the disk is cylindrical, it must not 
+        contain a lip on the label edge of the disc, as shown in the 
+        following diagram:
+
+               Label Side
+             ------------------------------------
+           Center Hole                        |   \
+             ---------------------------------     \
+                                                  Outer Edge Showing Lip
+        
+        If this lip is present, the disc may stick or jam in a DIGITAL 
+        drive during normal use.
+
+        Disks can be tested for this condition by examining the outer edge 
+        with an appropriate tool to visually inspect for the presence or 
+        absence of a lip. If the labeled side is more than 30 microns 
+        larger in diameter than the unlabeled side, the disc shall be said 
+        to contain a lip.
+
+3.2   Electrical:
+
+3.2.1   Recording Format:  DIGITAL shall use only the mode 1 recording 
+        format as specified in the ECMA-130 standard.
+
+3.2.2   Maximum Bytes of Storage per Disc:  Discs shall not be manufactured 
+        with more than 72 minutes of playing time. This translates into no 
+        more than 635 megabytes of digital data storage using mode 1 
+        recording format.
+3.3   Performance:
+
+        Performance measurements are based on "as manufactured" quality,       
+        and do not include user induced errors.
+        
+3.3.1   Raw Error Rate on Manufactured Discs:
+
+        The frame error rate as specified in ECMA-130, section 12.5.2,
+        averaged over any 10 second interval, shall be less than 3 X 102. 
+
+3.3.2   Level 3 Uncorrectable Errors on the Master:  
+
+        There shall be no level 3 uncorrectable errors on the father as 
+        played on the master player during the mastering process. 
+
+3.3.3   Level 3 Uncorrectable Errors on Manufactured Discs:
+
+        There shall be no uncorrectable level 3 errors on discs produced. 
+        This measurement shall be taken from a statistically valid sample 
+        of production discs.
+
+3.3.4   3 Bit Errors in the C2 Decoder (E32) on the Manufactured Discs:
+        
+        There shall be no more than 5% of any particular manufacturing lot 
+        with an E32 count greater than 0. This measurement shall be taken 
+        from a statistically valid sample of production discs.
+
+        An E32 error causes invocation of level 3 ECC, which degrades
+        performance greatly. A number of errors on any one disc will render 
+        that disc unuseable by DIGITAL and it's customers due to 
+        performance degradation.
+
+        It shall be understood by DIGITAL and its vendors that a goal of 
+        zero errors shall be the objective. It shall be the responsibility 
+        of DIGITAL and vendor manufacturing to keep the error count per 
+        disc and per batch as low as possible.
+        
+3.3.5   Linear Velocity:  Discs shall be mastered such that the linear 
+        velocity shall not be lower than 1.25 meters per second.
+
+3.3.6   Track Pitch:  Nominal track pitch consistent with maximum data 
+        reliability shall be used in all cases when mastering discs.
+
+3.3.7   Aging:  Discs shall be manufactured for an expected life time of 10 
+        years under normal use.
+
+3.4   Test Discs:
+
+      30-23507-02 and 30-23507-03 are test discs for the RRD50 and the 
+      RRD40, respectively. Information on test disc data patterns, CDROM 
+      disc structure, and the macro program used to generate data patterns 
+      are found in the DIGITAL engineering specification A-SP-RRD40-0-DBT. 
+      Information on the RRD40 test disc specifications are in Appendix A 
+      of A-PS-3023507-0-0. The major differences between the two test discs 
+      are as follows:
+
+      1. Logical Block Number 0 (00:02:00) has a slightly different header.
+
+      2. The RRD50 test disc has a forced error at sectors 64:55:73 and 
+         64:55:74 while the RRD40 test disc has a number of forced errors 
+         occurring in the disc range from 60:00:00 minutes to the end of 
+         the disc. (This is described in Appendix A.)
+
+      3. There is slightly less capacity on the RRD40 test disc.
+
+      APPLICATION NOTE: The CD disc uses the Minute:Second:Frac (mm:ss:ff) 
+      format.
+
+         One Logical Block Number (LBN) contains 512 bytes of data.
+         One frame contains four LBNs.
+         One second contains 75 fracs.
+         One minute contains 60 seconds.
+
+      The first sector of the test disc is composed on LBNs 0, 1, 2, and 3. 
+      LBNs 0-3 are located at 00::02::00 on the disk in mm:ss:ff format.
+                                                                           
+
+                                APPENDIX A
+
+                      RRD40 TEST DISC SPECIFICATIONS
+
+                                30-23507-03
+
+
+1.0  DATA PATTERNS:
+
+     Use RRD40 data patterns, specified in A-SP-RRD40-0-DBT:
+
+1.1  Revision B Mastering Parameters:
+
+       Track Pitch:       1.55 microns
+       Scan Speed:        1.25 meters/sec.
+
+1.2  Revision C Mastering Parameters:
+
+       Track Pitch:       1.6 microns 
+       Scan Speed         1.3 meters/sec.                                  
+
+1.3  If a new master must be created for any reason, it should be created 
+     using the revision B track pitch and linear velocity. The revision of 
+     the disc should be updated on the label. All new masters for this disc 
+     require requalification by DIGITAL to verify proper function in the 
+     RRD40. 
+
+2.0  ERROR CHARACTERISTICS:
+
+2.1  Revision B:
+
+       Burst Error:       2.0 microseconds +/- 2%
+       Duty Cycle:        34% +/- 2%
+       Dropout Length:    0.70 microseconds +/- 2%                         
+
+2.2  Revision C:
+
+       The mastered errors must be of sufficient size to be flagged as     
+       uncorrectable C2 errors by the RRD40, but shall not cause detracking
+       or other player errors. 
+
+3.0  DATA/ERROR MAP:
+
+3.1  Revision B:
+
+       Start Time           End Time             Defect Length
+       MM:SS:FF             MM:SS:FF             (one defect per range)
+       ----------           --------             ----------------------
+
+       Start of disc        00:01:74             TOC and Lead-In
+
+       00:02:00             60:29:74             Clean Data - No Errors
+
+       60:30:00             60:40:00             1.3 msec.
+
+       61:00:00             61:10:00             1.75 msec.
+
+       61:30:00             61:40:00             2.6 msec.
+
+       62:00:00             62:10:00             3.5 msec. *
+       (LBN 1115400)        (LBN 1118400)        
+
+       62:30:00             62:40:00             3.5 msec.
+
+       63:00:00             63:10:00             5.2 msec.
+
+       63:30:00             63:40:00             7.0 msec.
+
+       64:00:00             64:10:00             10.5 msec.
+
+       64:30:00             --------             Start of Lead-Out
+
+       * This is the only error that is guananteed to be on the test disc.
+3.2  Revision C:
+
+     Data/Error Map:
+
+     Start Time             End Time             Comment
+     MM:SS:FF               MM:SS:FF             
+     ----------             ----------           -----------------
+     Start of disc          00:01:74             TOC and Lead-in
+
+     00:02:00               60:00:00             Clean Data - No Errors
+
+     60:00:01               Start of Leadout     Forced error section
+                            (Beyond 64:40:00)              
+      
+     There must be at least one error conforming to the above error
+     characteristics between 62:00:00 and 62:10:00. Error placement
+     in the reminder of the Forced Error section is unspecified.
+
+4.0  SEQUENTIAL DATA PATTERNS:
+
+     There are 10 data patterns in sequential order that are repeated for 
+     the entire disc. These patterns are fully defined in A-SP-RRD40-0-DBT.
+
+     0.  Sector x:x0:xx - 75 sectors of psuedo-random pattern2
+
+     1.  Sector x:x1:xx - 75 sectors of psuedo-random pattern3 alternating 
+                          with 0's sector
+
+     2.  Sector x:x2:xx - 75 sectors of all 0s. *
+
+     3.  Sector x:x3:xx - 75 sectors of all 1s (FFH)
+
+     4.  Sector x:x4:xx - 75 sectors of 16 bit shifting 1 in a field of 0s 
+
+     5.  Sector x:x5:xx - 75 sectors of 16 bit shifting 0 in a field of 1s.
+
+     6.  Sector x:x6:xx - 75 sectors of alternating 01 pattern (AAH)
+
+     7.  Sector x:x7:xx - 75 sectors of byte incrementing (OOH - FFH)
+
+     8.  Sector x:x8:xx - 75 sectors of encrypted data pattern 
+
+     9.  Sector x:x9:xx - 75 sectors of psuedo-random pattern1 alternating 
+                          with 0's sector 
+     NOTES: 
+
+     x      Indicates any valid value for the CD address in 
+            Minute:Second:Frame (mm:ss:ff) format.
+
+     *      Sector 00:02:00 has the DIGITAL disc header on it. The 
+            difference between the RRD50 test disc and the RRD40 test disc 
+            is that the RRD40 will indicate that it is an "RRD40 TEST DISC" 
+            and will have a "REV 2.0" revision, Reference A-SP-RRD40-0-DBT.
+
+
+
+

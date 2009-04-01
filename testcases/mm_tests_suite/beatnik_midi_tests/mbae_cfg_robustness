@@ -1,0 +1,4 @@
+beatnik_midi_testapp.mid mbae_output/beatnik_midi_testapp.wav n/a 32 44100 Mobile_0300_base_classic.dls
+mbae_cfg.imy             mbae_output/mbae_cfg.wav             n/a 32 44100 Mobile_0300_base_classic.dls
+mbae_cfg_robustness.xmf  mbae_output/mbae_cfg_robustness.wav  n/a 32 44100 Mobile_0300_base_classic.dls
+

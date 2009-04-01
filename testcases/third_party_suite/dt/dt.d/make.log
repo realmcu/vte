@@ -1,0 +1,17 @@
+cc -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -c dt.c
+cc -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -c dteei.c
+cc -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -c dtgen.c
+cc -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -c dtinfo.c
+cc -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -c dtread.c
+cc -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -c dtwrite.c
+cc -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -c dtstats.c
+cc -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -c dttty.c
+cc -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -c dtutil.c
+cc -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -c dtusage.c
+cc -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -c dtprocs.c
+cc -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -c dttape.c
+cc -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -c dtaio.c
+cc -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -c dtmmap.c
+cc -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -c dtfifo.c
+cc -o dt -O2 -g3 -std -DAIO -DDEC -DEEI -DMMAP -DFIFO -DRAND48 -DPTOS -non_shared dt.o		 dteei.o		 dtgen.o		 dtinfo.o	 dtread.o	 dtwrite.o	 dtstats.o	 dttty.o		 dtutil.o	 dtusage.o	 dtprocs.o	 dttape.o	 dtaio.o		 dtmmap.o	 dtfifo.o  -laio_raw -lbinlog
+done

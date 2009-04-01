@@ -1,0 +1,39 @@
+sco% dt of=/dev/rmt/ctape1 bs=32k limit=Inf pattern=iot                          
+Write Statistics:
+     Total records processed: 487715 @ 32768 bytes/record (32.000 Kbytes)
+     Total bytes transferred: 15981445120 (15606880.000 Kbytes, 15241.094 Mbytes)
+      Average transfer rates: 1327899 bytes/sec, 1296.776 Kbytes/sec
+     Number I/O's per second: 40.524
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 3h20m35.14s
+           Total system time: 00m44.67s
+             Total user time: 03m25.71s
+
+Read Statistics:
+     Total records processed: 487715 @ 32768 bytes/record (32.000 Kbytes)
+     Total bytes transferred: 15981445120 (15606880.000 Kbytes, 15241.094 Mbytes)
+      Average transfer rates: 1326516 bytes/sec, 1295.426 Kbytes/sec
+     Number I/O's per second: 40.482
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 3h20m47.68s
+           Total system time: 00m46.93s
+             Total user time: 12m40.88s
+
+Total Statistics:
+     Output device/file name: /dev/rmt/ctape1
+    Data pattern string used: 'IOT Pattern'
+     Total records processed: 975430 @ 32768 bytes/record (32.000 Kbytes)
+     Total bytes transferred: 31962890240 (31213760.000 Kbytes, 30482.188 Mbytes)
+      Average transfer rates: 1316156 bytes/sec, 1285.308 Kbytes/sec
+     Number I/O's per second: 40.166
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 6h44m45.04s
+           Total system time: 01m31.60s
+             Total user time: 16m06.59s
+               Starting time: Fri Aug  6 20:14:16 1999
+                 Ending time: Sat Aug  7 02:58:59 1999
+
+sco% 

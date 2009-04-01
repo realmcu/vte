@@ -1,0 +1,145 @@
+<HTML>
+<HEAD>
+<TITLE>Data Test Program (dt) March 30, 1996</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#E9C2A6">
+
+<CENTER><H2><STRONG>What's New as of May 14, 1997</STRONG></H2></CENTER>
+
+<H2>Changes For This Release</H2>
+The following changes have been made to 'dt' Version 10.8:
+<UL>
+<LI>Ali Eghlima added a "munsa={cr,pr,cw,pw,ex}" options which
+uses DLM for MUNSA testing.  Here's the 'dt' help text:
+<P>
+<PRE>
+MUNSA Lock Options:
+    cr = Concurrent Read (permits read access, cr/pr/cw by others)
+    pr = Protected Read (permits cr/pr read access to all, no write)
+    cw = Concurrent Write (permits write and cr access to resource by all)
+    pw = Protected Write (permits write access, cr by others)
+    ex = Exclusive Mode (permits read/write access, no access to others)
+
+        For more details, please refer to the dlm(4) reference page.
+</PRE>
+<P>
+<LI>If a "skip=" count is specified with an output file "of=",
+open the file for R/W access since skips are accompished via
+read()'s of record size.
+<BR>
+[ Per Olov Wahlstrom reported this problem. ]
+<P>
+<LI>If a copy or verify operation is selected, and a data limit
+is specified, then double the data limit to account for double
+the I/O's.  Previously, only half of the desired data limit was
+copied and/or verified.
+<P>
+<LI>Check status from closing file descriptor, and if it's not
+SUCCESS, use this for the exit status.  For tapes, deferred
+writes and failure to write file marks occur at close time.
+<BR>
+[ Roger Richardson reported this problem. ]
+<P>
+<LI>If we encounter a ENOSPC error and no data has been transferred,
+flag this as an error.  This normally indicates a zero length
+partition or the user may have seek'ed past eom or eop.
+<BR>
+[ George Bittner reported this problem. ]
+<P>
+<LI>Removed use of undocumented AIO_SEEK_CUR in aio_offset.
+Also fixed bug where random I/O offset was clobbered, thus
+resulting in sequential I/O.
+<BR>
+[ Jeff Denham reported this problem. ]
+<P>
+<LI>Report number of I/O's per second (some people desire this).
+</UL>
+<P>
+The latest version of <I>dt</I> is available on our production machines
+in the following account:
+<P>
+<CENTER><B>Location:</B> <I>wasted:~rmiller/dt.d/{dt-ptos,dt-dlm,dt-V3.2}</I></CENTER>
+<CENTER>or via</CENTER>
+<CENTER><A HREF="../dt.html"><B>URL:</B> <I>http://www.zk3.dec.com/~rmiller/dt.html</I></A></CENTER>
+<HR>
+<A HREF="mailto:rmiller@zk3.dec.com"><IMG SRC="../gifs/mailbox.gif" ALT="Mail"></A>
+Send mail to admin of this page: <EM>rmiller@zk3.dec.com</EM> 
+<A HREF="../index.html"><IMG SRC="../gifs/home04.gif" ALT="Home"></A>
+To Robin's home page.
+<P>
+Last modified: May 14, 1997
+<HR>
+
+<H2>Examples:</H2>
+<HR SIZE=5 NOSHADE>
+<PRE>
+    [ This example shows the new handling of ENOSPC error code. ]
+
+% <B>dt of=/dev/rrz2b position=393216b records=1 disable=verify</B>
+dt: 'write' - No space left on device
+dt: Error number 1 occurred on Wed May 14 14:27:45 1997
+Total Statistics:
+     Output device/file name: /dev/rrz2b (Device: RZ25, type=disk)
+        Data pattern written: 0x39c39c39 (read verify disabled)
+     Total records processed: 0 @ 512 bytes/record (0.500 Kbytes)
+     Total bytes transferred: 0 (0.000 Kbytes, 0.000 Mbytes)
+      Average transfer rates: 0 bytes/sec, 0.000 Kbytes/sec
+     Number I/O's per second: 0.000
+      Total passes completed: 1/1
+       Total errors detected: 1/1
+          Total elapsed time: 00m00.03s
+           Total system time: 00m00.01s
+             Total user time: 00m00.00s
+               Starting time: Wed May 14 14:27:45 1997
+                 Ending time: Wed May 14 14:27:45 1997
+
+% <B>echo $status</B>
+-1
+% 
+
+<HR NOSHADE>
+    [ This example shows the "Number I/O's per second" addition. ]
+
+im2fast% <B>dt of=/var/tmp/dt.data bs=8k limit=25m</B>
+Write Statistics:
+     Total records processed: 3200 @ 8192 bytes/record (8.000 Kbytes)
+     Total bytes transferred: 26214400 (25600.000 Kbytes, 25.000 Mbytes)
+      Average transfer rates: 2021676 bytes/sec, 1974.293 Kbytes/sec
+     Number I/O's per second: 246.787
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m12.96s
+           Total system time: 00m00.95s
+             Total user time: 00m01.70s
+
+Read Statistics:
+     Total records processed: 3200 @ 8192 bytes/record (8.000 Kbytes)
+     Total bytes transferred: 26214400 (25600.000 Kbytes, 25.000 Mbytes)
+      Average transfer rates: 4239526 bytes/sec, 4140.162 Kbytes/sec
+     Number I/O's per second: 517.520
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m06.18s
+           Total system time: 00m00.61s
+             Total user time: 00m05.50s
+
+Total Statistics:
+     Output device/file name: /var/tmp/dt.data
+   Data pattern read/written: 0x39c39c39
+     Total records processed: 6400 @ 8192 bytes/record (8.000 Kbytes)
+     Total bytes transferred: 52428800 (51200.000 Kbytes, 50.000 Mbytes)
+      Average transfer rates: 2737796 bytes/sec, 2673.629 Kbytes/sec
+     Number I/O's per second: 334.204
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m19.15s
+           Total system time: 00m01.56s
+             Total user time: 00m07.20s
+               Starting time: Wed May 14 15:45:18 1997
+                 Ending time: Wed May 14 15:45:37 1997
+
+im2fast% 
+</PRE>
+</BODY>
+</HTML>

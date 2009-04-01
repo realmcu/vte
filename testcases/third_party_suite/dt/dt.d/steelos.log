@@ -1,0 +1,109 @@
+tcr3b# dt of=/dev/rdisk/dsk0b bs=64k                                    
+Write Statistics:
+     Total records processed: 3136 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 205520896 (200704.000 Kbytes, 196.000 Mbytes)
+      Average transfer rates: 2600433 bytes/sec, 2539.485 Kbytes/sec
+     Number I/O's per second: 39.679
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m19.03s
+           Total system time: 00m01.95s
+             Total user time: 00m16.73s
+
+Read Statistics:
+     Total records processed: 3136 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 205520896 (200704.000 Kbytes, 196.000 Mbytes)
+      Average transfer rates: 2495195 bytes/sec, 2436.714 Kbytes/sec
+     Number I/O's per second: 38.074
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m22.36s
+           Total system time: 00m01.98s
+             Total user time: 00m49.88s
+
+Total Statistics:
+     Output device/file name: /dev/rdisk/dsk0b (Device: RZ28, type=disk)
+   Data pattern read/written: 0x39c39c39
+     Total records processed: 6272 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 411041792 (401408.000 Kbytes, 392.000 Mbytes)
+      Average transfer rates: 2545413 bytes/sec, 2485.755 Kbytes/sec
+     Number I/O's per second: 38.840
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 02m41.48s
+           Total system time: 00m03.96s
+             Total user time: 01m06.61s
+               Starting time: Thu Oct 29 17:14:02 1998
+                 Ending time: Thu Oct 29 17:16:44 1998
+
+tcr3b# 
+tcr3b# dt of=/dev/rdisk/dsk0b bs=64k aios=64
+Write Statistics:
+     Total records processed: 3136 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 205520896 (200704.000 Kbytes, 196.000 Mbytes)
+      Average transfer rates: 5004567 bytes/sec, 4887.273 Kbytes/sec
+     Number I/O's per second: 76.364
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m41.06s
+           Total system time: 00m02.75s
+             Total user time: 00m18.90s
+
+Read Statistics:
+     Total records processed: 3136 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 205520896 (200704.000 Kbytes, 196.000 Mbytes)
+      Average transfer rates: 3617264 bytes/sec, 3532.485 Kbytes/sec
+     Number I/O's per second: 55.195
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m56.81s
+           Total system time: 00m02.75s
+             Total user time: 00m52.45s
+
+Total Statistics:
+     Output device/file name: /dev/rdisk/dsk0b (Device: RZ28, type=disk)
+   Data pattern read/written: 0x39c39c39
+     Total records processed: 6272 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 411041792 (401408.000 Kbytes, 392.000 Mbytes)
+      Average transfer rates: 4197874 bytes/sec, 4099.486 Kbytes/sec
+     Number I/O's per second: 64.054
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m37.91s
+           Total system time: 00m05.53s
+             Total user time: 01m11.36s
+               Starting time: Thu Oct 29 17:17:43 1998
+                 Ending time: Thu Oct 29 17:19:21 1998
+
+tcr3b# 
+tcr3b# scu -f /dev/rdisk/dsk0b
+scu> show paths all
+
+Path Inquiry Information:
+
+    Bus  Initiator  HBA Vendor ID    Version  Targets  LUNs
+    ---  ---------  -------------    -------  -------  ----
+     0       7      NCR 53C810  02     2.5       8      8   
+     1       6      DEC  N01  A11      4.7       16     8   
+     2       6      DEC  N01  A11      4.7       16     8   
+
+scu> set stats on
+scu> read media bs 64k limit 200m compare off starting 0
+Reading 409600 blocks (0 - 409599) on /dev/rdisk/dsk0b (RZ28)...
+
+Total Statistics:
+
+            Device Name/Type: RZ28 (Direct Access)
+           Nexus Information: Bus 0, Target 0, Lun 0
+     Total Records Processed: 3200 @ 65536 bytes/record (64.000 Kbytes)
+     Total Bytes Transferred: 209715200 (204800.000 Kbytes, 200.000 Mbytes)
+      Average Transfer Rates: 4869548 bytes/sec, 4755.418 Kbytes/sec
+      Total Passes Completed: 1/1
+       Total Errors Detected: 0/1
+          Total Elapsed Time: 00m43.06s
+           Total System Time: 00m02.36s
+             Total User Time: 00m02.56s
+               Starting time: Thu Oct 29 16:53:51 1998
+                 Ending time: Thu Oct 29 16:54:34 1998
+
+scu> 

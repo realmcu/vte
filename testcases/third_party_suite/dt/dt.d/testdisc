@@ -1,0 +1,31 @@
+sloaf# disklabel rz29c                                                                                        
+# /dev/rrz29c:
+type: SCSI
+disk: rz28d
+label: 
+flags:
+bytes/sector: 512
+sectors/track: 99
+tracks/cylinder: 16
+sectors/cylinder: 1376
+cylinders: 2595
+sectors/unit: 4110480
+rpm: 7200
+interleave: 1
+trackskew: 8
+cylinderskew: 16
+headswitch: 0           # milliseconds
+track-to-track seek: 0  # milliseconds
+drivedata: 0 
+
+8 partitions:
+#        size   offset    fstype   [fsize bsize   cpg]
+  a:       64        0    unused     1024  8192         # (Cyl.    0 - 0*)
+  b:   204800       64    unused     1024  8192         # (Cyl.    0*- 148*)
+  c:  1228864        0    unused     1024  8192         # (Cyl.    0 - 893*)
+  d:   204800   204864    unused     1024  8192         # (Cyl.  148*- 297*)
+  e:   204800   409664    unused     1024  8192         # (Cyl.  297*- 446*)
+  f:   204800   614464    unused     1024  8192         # (Cyl.  446*- 595*)
+  g:   204800   819264    unused     1024  8192         # (Cyl.  595*- 744*)
+  h:   204800  1024064    unused     1024  8192         # (Cyl.  744*- 893*)
+sloaf# 

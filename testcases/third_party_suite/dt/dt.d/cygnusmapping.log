@@ -1,0 +1,51 @@
+administrator@MEDA /d/rmiller/dt.d
+$ ./dt if=//./PhysicalDrive3 count=1 disable=compare enable=debug
+dt: Attempting to open input file '/dev/PhysicalDrive3', open flags = 0200000 (0x10000)...
+dt: Input file '/dev/PhysicalDrive3' successfully opened, fd = 3
+dt: Allocated buffer at address 0xa021000 of 516 bytes, using offset 0
+dt: Closing file '/dev/PhysicalDrive3', fd = 3...
+
+Total Statistics:
+      Input device/file name: //./PhysicalDrive3 (device type=disk)
+     Type of I/O's performed: sequential (forward)
+           Data pattern read: 0x39c39c39 (data compare disabled)
+     Total records processed: 1 @ 512 bytes/record (0.500 Kbytes)
+     Total bytes transferred: 512 (0.500 Kbytes, 0 Mbytes)
+      Average transfer rates: 0 bytes/sec, 0.000 Kbytes/sec
+     Number I/O's per second: 0.000
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.00s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Tue Feb  6 14:57:22 2001
+                 Ending time: Tue Feb  6 14:57:22 2001
+
+
+administrator@MEDA /d/rmiller/dt.d
+$ ./dt if='\\.\PhysicalDrive3' count=1 disable=compare enable=debug
+dt: Attempting to open input file '/dev/PhysicalDrive3', open flags = 0200000 (0x10000)...
+dt: Input file '/dev/PhysicalDrive3' successfully opened, fd = 3
+dt: Allocated buffer at address 0xa021000 of 516 bytes, using offset 0
+dt: Closing file '/dev/PhysicalDrive3', fd = 3...
+
+Total Statistics:
+      Input device/file name: \\.\PhysicalDrive3 (device type=disk)
+     Type of I/O's performed: sequential (forward)
+           Data pattern read: 0x39c39c39 (data compare disabled)
+     Total records processed: 1 @ 512 bytes/record (0.500 Kbytes)
+     Total bytes transferred: 512 (0.500 Kbytes, 0 Mbytes)
+      Average transfer rates: 32000 bytes/sec, 31.250 Kbytes/sec
+     Number I/O's per second: 62.500
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.01s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Tue Feb  6 14:59:09 2001
+                 Ending time: Tue Feb  6 14:59:09 2001
+
+
+administrator@MEDA /d/rmiller/dt.d
+$
+

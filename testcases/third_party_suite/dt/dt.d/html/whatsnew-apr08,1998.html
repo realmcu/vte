@@ -1,0 +1,65 @@
+<HTML>
+<HEAD>
+<TITLE>Data Test Program (dt) April 8th, 1998</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#D19275">
+
+<CENTER><H2><STRONG>What's New as of April 8th, 1998</STRONG></H2></CENTER>
+
+<H2>Changes For This Release</H2>
+The following changes have been made to <I>dt</I> Version 10.15:
+<UL>
+<LI>When terminating, call close function before reporting stats,
+since in the case of AIO the I/O rundown updates statistics
+with outstanding requests, when we're aborted by a signal.
+<LI>Setup the pattern as a pattern string, so non-modulo sizeof(u_int)
+read counts will data compare properly.  Also fixed reopen code
+so it properly handles piping of stdin and stdout file descriptors.
+[ see example attached below ]
+</UL>
+<HR>
+<A HREF="mailto:Robin.Miller@compaq.com"><IMG SRC="../gifs/mailbox.gif" ALT="Mail"></A>
+Send mail to admin of this page: <EM>Robin.Miller@compaq.com</EM> 
+<A HREF="../index.html"><IMG SRC="../gifs/home04.gif" ALT="Home"></A>
+To Robin's home page.
+<P>
+Last modified: December 8th, 1999
+<HR>
+
+<H2>Examples:</H2>
+<HR SIZE=5 NOSHADE>
+<PRE>
+im2fast% <B>dt of=- bs=8k count=1 disable=stats passes=12 | \
+			dt if=- bs=1 count=8k passes=12 disable=pstats</B>
+dt: End of Read pass 1, records = 8192, errors = 0, elapsed time = 00m00.23s
+dt: End of Read pass 2, records = 8192, errors = 0, elapsed time = 00m00.23s
+dt: End of Read pass 3, records = 8192, errors = 0, elapsed time = 00m00.23s
+dt: End of Read pass 4, records = 8192, errors = 0, elapsed time = 00m00.25s
+dt: End of Read pass 5, records = 8192, errors = 0, elapsed time = 00m00.23s
+dt: End of Read pass 6, records = 8192, errors = 0, elapsed time = 00m00.23s
+dt: End of Read pass 7, records = 8192, errors = 0, elapsed time = 00m00.21s
+dt: End of Read pass 8, records = 8192, errors = 0, elapsed time = 00m00.23s
+dt: End of Read pass 9, records = 8192, errors = 0, elapsed time = 00m00.25s
+dt: End of Read pass 10, records = 8192, errors = 0, elapsed time = 00m00.20s
+dt: End of Read pass 11, records = 8192, errors = 0, elapsed time = 00m00.20s
+dt: End of Read pass 12, records = 8192, errors = 0, elapsed time = 00m00.20s
+Total Statistics:
+      Input device/file name: -
+           Data pattern read: 0x71c7c71c
+     Total records processed: 98304 @ 1 bytes/record (0.001 Kbytes)
+     Total bytes transferred: 98304 (96.000 Kbytes, 0.094 Mbytes)
+      Average transfer rates: 34292 bytes/sec, 33.488 Kbytes/sec
+     Number I/O's per second: 34292.093
+      Total passes completed: 12/12
+       Total errors detected: 0/1
+          Total elapsed time: 00m02.86s
+           Total system time: 00m01.81s
+             Total user time: 00m00.63s
+               Starting time: Wed Apr  8 17:59:07 1998
+                 Ending time: Wed Apr  8 17:59:10 1998
+
+im2fast% 
+</PRE>
+</BODY>
+</HTML>

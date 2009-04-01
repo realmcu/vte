@@ -1,0 +1,155 @@
+/****************************************************************************
+ *									    *
+ *			  COPYRIGHT (c) 1990 - 1996			    *
+ *			   This Software Provided			    *
+ *				     By					    *
+ *			   MILLER W J & ASSOCIATES			    *
+ *			     108 1/2 Dracut Road			    *
+ *			      Hudson, NH 03051				    *
+ *			       (603) 883-2355				    *
+ *									    *
+ * Permission to use, copy, modify, distribute and sell this software and   *
+ * its documentation for any purpose and without fee is hereby granted,	    *
+ * provided that the above copyright notice appear in all copies and that   *
+ * both that copyright notice and this permission notice appear in the	    *
+ * supporting documentation, and that the name of the author not be used    *
+ * in advertising or publicity pertaining to distribution of the software   *
+ * without specific, written prior permission.				    *
+ *									    *
+ * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, 	    *
+ * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN	    *
+ * NO EVENT SHALL HE BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL   *
+ * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR    *
+ * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS  *
+ * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF   *
+ * THIS SOFTWARE.							    *
+ *									    *
+ ****************************************************************************/
+
+    'dt' is a generic data test program used to verify proper operation of
+peripherals and for obtaining performance information.  Since verification
+of data is performed, 'dt' can be thought of as a generic diagnostic tool.
+
+    'dt' is conditionalized to run on SUN, ULTRIX, OSF, and QNX operating
+systems.  This conditionalization tends to make the source look rather ugly,
+but I've purposely left this in for other people to see porting differences
+between these systems.  UNIX is NOT as portable as some people think, but
+the POSIX standard is finally changing this.
+
+    'dt' command lines are similar to the 'dd' program, which is popular on
+most UNIX systems.  It contains numerous options to give the user complete
+control of the test parameters.
+
+    'dt' has been used to successfully test disks, tapes, serial lines,
+parallel lines, pipes, and memory mapped files.  In fact, 'dt' can be used
+for any device which allows the standard open, read, write, & close system
+calls.  Special support is necessary for some devices, such as serial lines,
+for setting up the speed, parity, data bits, etc.
+
+    Those features which 'dt' does not support, such as random disk I/O,
+are usually supplied by using a shell script, or by running multiple copies
+of 'dt'.  Several shell scripts I use for testing disks, tapes, and serial
+lines are supplied with this kit.
+
+    Specific system features have been purposely avoided to keep 'dt' as
+generic as possible.  Testing of memory mapped files on SUN & OSF and serial
+line setup are exceptions to this rule.  'dt' does NOT perform any sanity
+checking of the output device specified.  This means if you are running as
+ 'root' and you specify a raw disk device, 'dt' will overwrite existing file
+systems, so please be careful.
+
+    The file 'dt.help' contains additional information about the history
+of 'dt', followed by the help text, which is also contained within the 'dt'
+program for easy access.  The file 'dt.examples' shows various 'dt' commands
+for testing disks, tapes, and serial lines and the output you can expect.
+
+	Those people with an imagination can find many uses for 'dt', but
+I'll list a few just to whet your appetite:
+
+     o	Testing of tape devices using different block sizes to determine
+	the best blocking factor for optimum performance and capacity.
+	This is very important for streaming tapes devices.
+
+     o	Write tapes to end of tape, to determine the total tape capacity.
+	This gives the total data capacity of tapes, after inter-record
+	gaps, preamble/postambles, or pad blocks are written on the tape.
+
+     o	Read existing tapes with data comparison disabled, to determine
+	the amount of data on the tape.  This is useful to determine how
+	much disk space is required to read in a tape, or to simply verify
+	the tape can be read without errors.
+
+     o	Reading/writing an entire tape to ensure device drivers properly
+	sense and handle end of tape error conditions.
+
+     o	Write a tape and ensure it can be read on another tape drive to
+	test drive compatibility (also referred to as transportability).
+
+     o	Read multiple tape files to ensure file marks and end of tape are
+	reported and handled properly by tape drivers.
+
+     o	I/O to disks using the raw device interface, to determine the
+	optimum performance of the controller.  This usually gives a
+	good indication of how well the controller cache or read-ahead
+	improves I/O performance for sequential file access.
+
+     o	I/O to disk files through the file system, to determine the affect
+	the buffer cache has on write and read performance.  You must know
+	the characteristics of your O/S's buffer cache to select file sizes
+	to either get optimum performance from the cache, or to defeat the
+	affect of the buffer cache.
+
+     o	Reading/writing of entire disks, to ensure the media capacity and
+	error handling is properly reported by device drivers.
+
+     o	Test memory mapped files to compare I/O performance against raw
+	and file system I/O.  Typically, memory mapped I/O approaches the
+	raw device performance.
+
+     o	Testing I/O to files on NFS mounted file systems.  This will give
+	you a good indication of your ethernet performance to remote files.
+
+     o	Writing/reading pipes to verify pipe operation and performance.
+
+     o	Initiating multiple processes to test optimizations of buffer cache,
+	device drivers, and/or intelligent controllers.  This is also useful
+	to test multiple device access and for loading the I/O sub-system.
+
+     o	Force mis-aligned data buffers to ensure data exception fixup code
+	in the kernel works properly (RISC systems like MIPS/Alpha).
+
+     o	Force I/O at different memory boundaries to test low level driver
+	handling.  Using the align option, you can set memory alignment for
+	testing specialized device driver DMA code.  This is very useful
+	when developing new I/O sub-systems.
+
+	[ NOTE: This option is most useful for virtual memory systems. ]
+
+     o	Do loopback testing of parallel or serial lines on either the same
+	system of different systems.  This is a useful compatibility test
+	when running different machines running different operating systems.
+
+     o	Enable POSIX Asynchronous I/O to verify proper operation of this API
+	and to determine performance gains (over standard synchronous I/O).
+	This is also useful for queuing multiple I/O requests to drivers and
+	for testing SCSI tag queuing and RAID configurations.
+
+     o	Specify variable record options for testing variable tape devices.
+
+    Although I've started to add specific testing of serial lines with modem
+control, this support is incomplete and untested.
+
+    I hope you find 'dt' as useful as I have.  This is usually one of the first
+tools I port to a new operating system, since it's an excellent diagnostic and
+performance tool.
+
+    Please send me mail on any problems or suggestions you may have, and I'll
+try to help you out.  The future development of 'dt' will probably depend on
+user interest.
+
+Regards,
+The Author of 'dt',
+Robin T. Miller		or	rmiller@wasted.zk3.dec.com
+108 1/2 Dracut Road,		QUICS Login: rtmiller
+Hudson, NH 03051
+(603) 883-2355		Work:	(603) 881-0565 or DTN 381-0565

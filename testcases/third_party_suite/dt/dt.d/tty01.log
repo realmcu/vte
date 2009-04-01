@@ -1,0 +1,1136 @@
+/dev/tty01:	character special (35/1) ACE_SLU #0 terminal #1 modem_control off
+/dev/tty01:	character special (35/1) ACE_SLU #0 terminal #1 modem_control off
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=none speed=115200 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16222): Closing file '/dev/tty01', fd = 3...
+dt (16222): Parent PID (Writer) = 16222, Child PID (Reader) = 16229
+dt (16222): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16229): Closing file '/dev/tty01', fd = 4...
+dt (16229): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16222): Characters remaining in output queue = 1405
+dt (16222): Waiting for output queue to drain...
+dt (16229): Restoring saved terminal characteristics, fd = 3...
+dt (16229): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16229):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=none, speed=115200
+           Data pattern read: 0x39c39c39
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 9035 bytes/sec, 8.824 Kbytes/sec
+     Number I/O's per second: 141.176
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.56s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:25 2000
+                 Ending time: Wed Jan 12 09:30:26 2000
+
+dt (16222): Output queue finished draining...
+dt (16222): Restoring saved terminal characteristics, fd = 4...
+dt (16222): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16222):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=none, speed=115200
+        Data pattern written: 0x39c39c39 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 9035 bytes/sec, 8.824 Kbytes/sec
+     Number I/O's per second: 141.176
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.56s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:25 2000
+                 Ending time: Wed Jan 12 09:30:26 2000
+
+dt (16222): Waiting for child PID 16229 to exit...
+dt (16222): Child PID 16229, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=none speed=57600 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16204): Closing file '/dev/tty01', fd = 3...
+dt (16204): Parent PID (Writer) = 16204, Child PID (Reader) = 16228
+dt (16204): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16228): Closing file '/dev/tty01', fd = 4...
+dt (16228): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16204): Characters remaining in output queue = 1407
+dt (16204): Waiting for output queue to drain...
+dt (16204): Output queue finished draining...
+dt (16204): Restoring saved terminal characteristics, fd = 4...
+dt (16204): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16204):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=none, speed=57600
+        Data pattern written: 0x39c39c39 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 5207 bytes/sec, 5.085 Kbytes/sec
+     Number I/O's per second: 81.356
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.98s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:27 2000
+                 Ending time: Wed Jan 12 09:30:28 2000
+
+dt (16204): Waiting for child PID 16228 to exit...
+dt (16228): Restoring saved terminal characteristics, fd = 3...
+dt (16228): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16228):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=none, speed=57600
+           Data pattern read: 0x39c39c39
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 5207 bytes/sec, 5.085 Kbytes/sec
+     Number I/O's per second: 81.356
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.98s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:27 2000
+                 Ending time: Wed Jan 12 09:30:28 2000
+
+dt (16204): Child PID 16228, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=none speed=38400 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (15993): Closing file '/dev/tty01', fd = 3...
+dt (15993): Parent PID (Writer) = 15993, Child PID (Reader) = 16224
+dt (15993): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16224): Closing file '/dev/tty01', fd = 4...
+dt (16224): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (15993): Characters remaining in output queue = 1408
+dt (15993): Waiting for output queue to drain...
+dt (15993): Output queue finished draining...
+dt (15993): Restoring saved terminal characteristics, fd = 4...
+dt (15993): Closing file '/dev/tty01', fd = 4...
+Total Statistics (15993):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=none, speed=38400
+        Data pattern written: 0x39c39c39 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 3491 bytes/sec, 3.409 Kbytes/sec
+     Number I/O's per second: 54.545
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m01.46s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:29 2000
+                 Ending time: Wed Jan 12 09:30:31 2000
+
+dt (15993): Waiting for child PID 16224 to exit...
+dt (16224): Restoring saved terminal characteristics, fd = 3...
+dt (16224): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16224):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=none, speed=38400
+           Data pattern read: 0x39c39c39
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 3491 bytes/sec, 3.409 Kbytes/sec
+     Number I/O's per second: 54.545
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m01.46s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:29 2000
+                 Ending time: Wed Jan 12 09:30:31 2000
+
+dt (15993): Child PID 16224, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=none speed=19200 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16227): Closing file '/dev/tty01', fd = 3...
+dt (16227): Parent PID (Writer) = 16227, Child PID (Reader) = 16226
+dt (16227): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16226): Closing file '/dev/tty01', fd = 4...
+dt (16226): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16227): Characters remaining in output queue = 1408
+dt (16227): Waiting for output queue to drain...
+dt (16227): Output queue finished draining...
+dt (16227): Restoring saved terminal characteristics, fd = 4...
+dt (16227): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16227):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=none, speed=19200
+        Data pattern written: 0x39c39c39 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 1920 bytes/sec, 1.875 Kbytes/sec
+     Number I/O's per second: 30.000
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m02.66s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:32 2000
+                 Ending time: Wed Jan 12 09:30:34 2000
+
+dt (16227): Waiting for child PID 16226 to exit...
+dt (16226): Restoring saved terminal characteristics, fd = 3...
+dt (16226): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16226):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=none, speed=19200
+           Data pattern read: 0x39c39c39
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 1920 bytes/sec, 1.875 Kbytes/sec
+     Number I/O's per second: 30.000
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m02.66s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:32 2000
+                 Ending time: Wed Jan 12 09:30:34 2000
+
+dt (16227): Child PID 16226, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=none speed=9600 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16232): Closing file '/dev/tty01', fd = 3...
+dt (16232): Parent PID (Writer) = 16232, Child PID (Reader) = 16215
+dt (16232): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16215): Closing file '/dev/tty01', fd = 4...
+dt (16215): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16232): Characters remaining in output queue = 1024
+dt (16232): Waiting for output queue to drain...
+dt (16232): Output queue finished draining...
+dt (16232): Restoring saved terminal characteristics, fd = 4...
+dt (16232): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16232):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=none, speed=9600
+        Data pattern written: 0x39c39c39 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 960 bytes/sec, 0.938 Kbytes/sec
+     Number I/O's per second: 15.000
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m05.33s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:35 2000
+                 Ending time: Wed Jan 12 09:30:41 2000
+
+dt (16232): Waiting for child PID 16215 to exit...
+dt (16215): Restoring saved terminal characteristics, fd = 3...
+dt (16215): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16215):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=none, speed=9600
+           Data pattern read: 0x39c39c39
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 960 bytes/sec, 0.938 Kbytes/sec
+     Number I/O's per second: 15.000
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m05.33s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:35 2000
+                 Ending time: Wed Jan 12 09:30:41 2000
+
+dt (16232): Child PID 16215, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=none speed=4800 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16234): Closing file '/dev/tty01', fd = 3...
+dt (16234): Parent PID (Writer) = 16234, Child PID (Reader) = 16233
+dt (16234): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16233): Closing file '/dev/tty01', fd = 4...
+dt (16233): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16234): Characters remaining in output queue = 496
+dt (16234): Waiting for output queue to drain...
+dt (16234): Output queue finished draining...
+dt (16234): Restoring saved terminal characteristics, fd = 4...
+dt (16234): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16234):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=none, speed=4800
+        Data pattern written: 0x39c39c39 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 481 bytes/sec, 0.469 Kbytes/sec
+     Number I/O's per second: 7.512
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m10.65s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:42 2000
+                 Ending time: Wed Jan 12 09:30:52 2000
+
+dt (16234): Waiting for child PID 16233 to exit...
+dt (16233): Restoring saved terminal characteristics, fd = 3...
+dt (16233): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16233):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=none, speed=4800
+           Data pattern read: 0x39c39c39
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 481 bytes/sec, 0.469 Kbytes/sec
+     Number I/O's per second: 7.512
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m10.65s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:42 2000
+                 Ending time: Wed Jan 12 09:30:52 2000
+
+dt (16234): Child PID 16233, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=even speed=115200 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16235): Closing file '/dev/tty01', fd = 3...
+dt (16235): Parent PID (Writer) = 16235, Child PID (Reader) = 16154
+dt (16235): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16154): Closing file '/dev/tty01', fd = 4...
+dt (16154): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16235): Characters remaining in output queue = 1405
+dt (16235): Waiting for output queue to drain...
+dt (16154): Restoring saved terminal characteristics, fd = 3...
+dt (16154): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16154):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=even, speed=115200
+           Data pattern read: 0x41424344
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 9035 bytes/sec, 8.824 Kbytes/sec
+     Number I/O's per second: 141.176
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.56s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:53 2000
+                 Ending time: Wed Jan 12 09:30:54 2000
+
+dt (16235): Output queue finished draining...
+dt (16235): Restoring saved terminal characteristics, fd = 4...
+dt (16235): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16235):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=even, speed=115200
+        Data pattern written: 0x41424344 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 9035 bytes/sec, 8.824 Kbytes/sec
+     Number I/O's per second: 141.176
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.56s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:53 2000
+                 Ending time: Wed Jan 12 09:30:54 2000
+
+dt (16235): Waiting for child PID 16154 to exit...
+dt (16235): Child PID 16154, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=even speed=57600 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16217): Closing file '/dev/tty01', fd = 3...
+dt (16217): Parent PID (Writer) = 16217, Child PID (Reader) = 16241
+dt (16217): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16241): Closing file '/dev/tty01', fd = 4...
+dt (16241): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16217): Characters remaining in output queue = 1407
+dt (16217): Waiting for output queue to drain...
+dt (16217): Output queue finished draining...
+dt (16217): Restoring saved terminal characteristics, fd = 4...
+dt (16217): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16217):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=even, speed=57600
+        Data pattern written: 0x41424344 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 5297 bytes/sec, 5.172 Kbytes/sec
+     Number I/O's per second: 82.759
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.96s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:55 2000
+                 Ending time: Wed Jan 12 09:30:56 2000
+
+dt (16217): Waiting for child PID 16241 to exit...
+dt (16241): Restoring saved terminal characteristics, fd = 3...
+dt (16241): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16241):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=even, speed=57600
+           Data pattern read: 0x41424344
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 5207 bytes/sec, 5.085 Kbytes/sec
+     Number I/O's per second: 81.356
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.98s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:55 2000
+                 Ending time: Wed Jan 12 09:30:56 2000
+
+dt (16217): Child PID 16241, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=even speed=38400 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16244): Closing file '/dev/tty01', fd = 3...
+dt (16244): Parent PID (Writer) = 16244, Child PID (Reader) = 16144
+dt (16244): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16144): Closing file '/dev/tty01', fd = 4...
+dt (16144): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16244): Characters remaining in output queue = 1408
+dt (16244): Waiting for output queue to drain...
+dt (16244): Output queue finished draining...
+dt (16244): Restoring saved terminal characteristics, fd = 4...
+dt (16244): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16244):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=even, speed=38400
+        Data pattern written: 0x41424344 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 3491 bytes/sec, 3.409 Kbytes/sec
+     Number I/O's per second: 54.545
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m01.46s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:57 2000
+                 Ending time: Wed Jan 12 09:30:58 2000
+
+dt (16244): Waiting for child PID 16144 to exit...
+dt (16144): Restoring saved terminal characteristics, fd = 3...
+dt (16144): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16144):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=even, speed=38400
+           Data pattern read: 0x41424344
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 3531 bytes/sec, 3.448 Kbytes/sec
+     Number I/O's per second: 55.172
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m01.45s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:57 2000
+                 Ending time: Wed Jan 12 09:30:58 2000
+
+dt (16244): Child PID 16144, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=even speed=19200 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16239): Closing file '/dev/tty01', fd = 3...
+dt (16239): Parent PID (Writer) = 16239, Child PID (Reader) = 16240
+dt (16239): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16240): Closing file '/dev/tty01', fd = 4...
+dt (16240): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16239): Characters remaining in output queue = 1407
+dt (16239): Waiting for output queue to drain...
+dt (16239): Output queue finished draining...
+dt (16239): Restoring saved terminal characteristics, fd = 4...
+dt (16239): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16239):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=even, speed=19200
+        Data pattern written: 0x41424344 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 1920 bytes/sec, 1.875 Kbytes/sec
+     Number I/O's per second: 30.000
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m02.66s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:59 2000
+                 Ending time: Wed Jan 12 09:31:02 2000
+
+dt (16239): Waiting for child PID 16240 to exit...
+dt (16240): Restoring saved terminal characteristics, fd = 3...
+dt (16240): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16240):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=even, speed=19200
+           Data pattern read: 0x41424344
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 1908 bytes/sec, 1.863 Kbytes/sec
+     Number I/O's per second: 29.814
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m02.68s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:30:59 2000
+                 Ending time: Wed Jan 12 09:31:02 2000
+
+dt (16239): Child PID 16240, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=even speed=9600 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16246): Closing file '/dev/tty01', fd = 3...
+dt (16246): Parent PID (Writer) = 16246, Child PID (Reader) = 16243
+dt (16246): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16243): Closing file '/dev/tty01', fd = 4...
+dt (16243): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16246): Characters remaining in output queue = 1024
+dt (16246): Waiting for output queue to drain...
+dt (16246): Output queue finished draining...
+dt (16246): Restoring saved terminal characteristics, fd = 4...
+dt (16246): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16246):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=even, speed=9600
+        Data pattern written: 0x41424344 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 960 bytes/sec, 0.938 Kbytes/sec
+     Number I/O's per second: 15.000
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m05.33s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:03 2000
+                 Ending time: Wed Jan 12 09:31:08 2000
+
+dt (16246): Waiting for child PID 16243 to exit...
+dt (16243): Restoring saved terminal characteristics, fd = 3...
+dt (16243): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16243):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=even, speed=9600
+           Data pattern read: 0x41424344
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 960 bytes/sec, 0.938 Kbytes/sec
+     Number I/O's per second: 15.000
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m05.33s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:03 2000
+                 Ending time: Wed Jan 12 09:31:08 2000
+
+dt (16246): Child PID 16243, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=even speed=4800 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (15543): Closing file '/dev/tty01', fd = 3...
+dt (15543): Parent PID (Writer) = 15543, Child PID (Reader) = 16250
+dt (15543): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16250): Closing file '/dev/tty01', fd = 4...
+dt (16250): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (15543): Characters remaining in output queue = 496
+dt (15543): Waiting for output queue to drain...
+dt (15543): Output queue finished draining...
+dt (15543): Restoring saved terminal characteristics, fd = 4...
+dt (15543): Closing file '/dev/tty01', fd = 4...
+Total Statistics (15543):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=even, speed=4800
+        Data pattern written: 0x41424344 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 481 bytes/sec, 0.469 Kbytes/sec
+     Number I/O's per second: 7.512
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m10.65s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:09 2000
+                 Ending time: Wed Jan 12 09:31:20 2000
+
+dt (15543): Waiting for child PID 16250 to exit...
+dt (16250): Restoring saved terminal characteristics, fd = 3...
+dt (16250): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16250):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=even, speed=4800
+           Data pattern read: 0x41424344
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 481 bytes/sec, 0.469 Kbytes/sec
+     Number I/O's per second: 7.512
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m10.65s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:09 2000
+                 Ending time: Wed Jan 12 09:31:20 2000
+
+dt (15543): Child PID 16250, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=odd speed=115200 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16247): Closing file '/dev/tty01', fd = 3...
+dt (16247): Parent PID (Writer) = 16247, Child PID (Reader) = 16257
+dt (16247): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16257): Closing file '/dev/tty01', fd = 4...
+dt (16257): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16247): Characters remaining in output queue = 1406
+dt (16247): Waiting for output queue to drain...
+dt (16257): Restoring saved terminal characteristics, fd = 3...
+dt (16257): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16257):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=odd, speed=115200
+           Data pattern read: 0x41424344
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 9309 bytes/sec, 9.091 Kbytes/sec
+     Number I/O's per second: 145.455
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.55s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:21 2000
+                 Ending time: Wed Jan 12 09:31:22 2000
+
+dt (16247): Output queue finished draining...
+dt (16247): Restoring saved terminal characteristics, fd = 4...
+dt (16247): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16247):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=odd, speed=115200
+        Data pattern written: 0x41424344 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 9309 bytes/sec, 9.091 Kbytes/sec
+     Number I/O's per second: 145.455
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.55s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:21 2000
+                 Ending time: Wed Jan 12 09:31:22 2000
+
+dt (16247): Waiting for child PID 16257 to exit...
+dt (16247): Child PID 16257, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=odd speed=57600 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16248): Closing file '/dev/tty01', fd = 3...
+dt (16248): Parent PID (Writer) = 16248, Child PID (Reader) = 16253
+dt (16248): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16253): Closing file '/dev/tty01', fd = 4...
+dt (16253): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16248): Characters remaining in output queue = 1407
+dt (16248): Waiting for output queue to drain...
+dt (16248): Output queue finished draining...
+dt (16248): Restoring saved terminal characteristics, fd = 4...
+dt (16248): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16248):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=odd, speed=57600
+        Data pattern written: 0x41424344 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 5207 bytes/sec, 5.085 Kbytes/sec
+     Number I/O's per second: 81.356
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.98s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:23 2000
+                 Ending time: Wed Jan 12 09:31:24 2000
+
+dt (16248): Waiting for child PID 16253 to exit...
+dt (16253): Restoring saved terminal characteristics, fd = 3...
+dt (16253): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16253):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=odd, speed=57600
+           Data pattern read: 0x41424344
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 5207 bytes/sec, 5.085 Kbytes/sec
+     Number I/O's per second: 81.356
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.98s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:23 2000
+                 Ending time: Wed Jan 12 09:31:24 2000
+
+dt (16248): Child PID 16253, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=odd speed=38400 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16258): Closing file '/dev/tty01', fd = 3...
+dt (16258): Parent PID (Writer) = 16258, Child PID (Reader) = 16260
+dt (16258): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16260): Closing file '/dev/tty01', fd = 4...
+dt (16260): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16258): Characters remaining in output queue = 1408
+dt (16258): Waiting for output queue to drain...
+dt (16258): Output queue finished draining...
+dt (16258): Restoring saved terminal characteristics, fd = 4...
+dt (16258): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16258):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=odd, speed=38400
+        Data pattern written: 0x41424344 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 3491 bytes/sec, 3.409 Kbytes/sec
+     Number I/O's per second: 54.545
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m01.46s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:25 2000
+                 Ending time: Wed Jan 12 09:31:26 2000
+
+dt (16258): Waiting for child PID 16260 to exit...
+dt (16260): Restoring saved terminal characteristics, fd = 3...
+dt (16260): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16260):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=odd, speed=38400
+           Data pattern read: 0x41424344
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 3491 bytes/sec, 3.409 Kbytes/sec
+     Number I/O's per second: 54.545
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m01.46s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:25 2000
+                 Ending time: Wed Jan 12 09:31:26 2000
+
+dt (16258): Child PID 16260, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=odd speed=19200 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16265): Closing file '/dev/tty01', fd = 3...
+dt (16265): Parent PID (Writer) = 16265, Child PID (Reader) = 16263
+dt (16265): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16263): Closing file '/dev/tty01', fd = 4...
+dt (16263): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16265): Characters remaining in output queue = 1408
+dt (16265): Waiting for output queue to drain...
+dt (16265): Output queue finished draining...
+dt (16265): Restoring saved terminal characteristics, fd = 4...
+dt (16265): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16265):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=odd, speed=19200
+        Data pattern written: 0x41424344 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 1920 bytes/sec, 1.875 Kbytes/sec
+     Number I/O's per second: 30.000
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m02.66s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:27 2000
+                 Ending time: Wed Jan 12 09:31:30 2000
+
+dt (16265): Waiting for child PID 16263 to exit...
+dt (16263): Restoring saved terminal characteristics, fd = 3...
+dt (16263): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16263):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=odd, speed=19200
+           Data pattern read: 0x41424344
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 1920 bytes/sec, 1.875 Kbytes/sec
+     Number I/O's per second: 30.000
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m02.66s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:27 2000
+                 Ending time: Wed Jan 12 09:31:30 2000
+
+dt (16265): Child PID 16263, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=odd speed=9600 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16245): Closing file '/dev/tty01', fd = 3...
+dt (16245): Parent PID (Writer) = 16245, Child PID (Reader) = 16266
+dt (16245): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16266): Closing file '/dev/tty01', fd = 4...
+dt (16266): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16245): Characters remaining in output queue = 1024
+dt (16245): Waiting for output queue to drain...
+dt (16245): Output queue finished draining...
+dt (16245): Restoring saved terminal characteristics, fd = 4...
+dt (16245): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16245):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=odd, speed=9600
+        Data pattern written: 0x41424344 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 960 bytes/sec, 0.938 Kbytes/sec
+     Number I/O's per second: 15.000
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m05.33s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:31 2000
+                 Ending time: Wed Jan 12 09:31:36 2000
+
+dt (16245): Waiting for child PID 16266 to exit...
+dt (16266): Restoring saved terminal characteristics, fd = 3...
+dt (16266): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16266):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=odd, speed=9600
+           Data pattern read: 0x41424344
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 960 bytes/sec, 0.938 Kbytes/sec
+     Number I/O's per second: 15.000
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m05.33s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:31 2000
+                 Ending time: Wed Jan 12 09:31:36 2000
+
+dt (16245): Child PID 16266, exited with status = 0
+
+*** End of Test ***
+
+Command Line:
+
+    % dt if=/dev/tty01 of=/dev/tty01 limit=5k bs=64 flow=xon_xoff parity=odd speed=4800 log=tty01.log enable=debug,dump dtype=terminal 
+
+	--> Date: January 11th, 2000, Version: 13.0, Author: Robin T. Miller <--
+
+dt: Attempting to open input file '/dev/tty01', open flags = 00...
+dt: Input file '/dev/tty01' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', open flags = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt (16264): Closing file '/dev/tty01', fd = 3...
+dt (16264): Parent PID (Writer) = 16264, Child PID (Reader) = 16262
+dt (16264): Allocated buffer at address 0x140032000 of 68 bytes, using offset 0
+dt (16262): Closing file '/dev/tty01', fd = 4...
+dt (16262): Allocated buffer at address 0x14003c000 of 68 bytes, using offset 0
+dt (16264): Characters remaining in output queue = 496
+dt (16264): Waiting for output queue to drain...
+dt (16264): Output queue finished draining...
+dt (16264): Restoring saved terminal characteristics, fd = 4...
+dt (16264): Closing file '/dev/tty01', fd = 4...
+Total Statistics (16264):
+     Output device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=odd, speed=4800
+        Data pattern written: 0x41424344 (read verify disabled)
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 481 bytes/sec, 0.469 Kbytes/sec
+     Number I/O's per second: 7.512
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m10.65s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:37 2000
+                 Ending time: Wed Jan 12 09:31:48 2000
+
+dt (16264): Waiting for child PID 16262 to exit...
+dt (16262): Restoring saved terminal characteristics, fd = 3...
+dt (16262): Closing file '/dev/tty01', fd = 3...
+Total Statistics (16262):
+      Input device/file name: /dev/tty01 (device type=terminal)
+     Type of I/O's performed: sequential
+    Terminal characteristics: flow=xon_xoff, parity=odd, speed=4800
+           Data pattern read: 0x41424344
+     Total records processed: 80 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 5120 (5.000 Kbytes, 0.005 Mbytes)
+      Average transfer rates: 481 bytes/sec, 0.469 Kbytes/sec
+     Number I/O's per second: 7.512
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m10.65s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 12 09:31:37 2000
+                 Ending time: Wed Jan 12 09:31:48 2000
+
+dt (16264): Child PID 16262, exited with status = 0
+
+*** End of Test ***
+

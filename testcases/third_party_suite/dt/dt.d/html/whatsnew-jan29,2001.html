@@ -1,0 +1,525 @@
+<HTML>
+<HEAD>
+<TITLE>Data Test Program (dt) February 2nd, 2001</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#D19275">
+
+<CENTER><H2><STRONG>What's New as of February 2nd, 2001</STRONG></H2></CENTER>
+
+<H2>Changes For This Release</H2>
+This is a major release of <I>dt</I>.  Many new features have been
+added, and the code has been restructured quite a bit to accomodate
+these changes and future enhancements.
+<P>
+The following changes were made to <I>dt</I> Version 14.0:
+<UL>
+<LI>
+Slice & Dice:  A powerful new option (IMHO) has been added
+for random access devices.  A slices=value option was added
+which divides the media into slices.  Each slice contains a
+a range of blocks to operate on.  If no pattern is specified,
+each slice is started with a different data pattern.  Each
+subsequent pass alternates through the 12 internal patterns.
+<P>
+Furthermore, each slice can have multiple processes and/or
+async I/O's (aios=value).  So with a single command, you can
+generate a very heavy I/O load, great for stress testing!
+<P>
+Note: AIO is only supported on Tru64 Unix and SCO UnixWare.
+<LI>
+You can now enable variable length request sizes, by using
+incr=var{iable} with the min/max= options.  The request size
+calcualated will (of course) be between the min/max values
+and be device size bytes aligned. (see example below)
+<LI>
+It is now possible to specify the I/O direction for random
+access devices (disks, CD-ROM's, file system, etc).  The new
+iodir={forward,reverse} option controls this.  When reverse
+I/O reaches the beginning of media, <I>dt</I> will exit with 254,
+which is its' normal end of file (EOF) status code.
+<LI>
+Random I/O options (iotype=random or iodir=reverse) is now
+supported with regular files (i.e., files on a file system).
+The only caveat is that you must specify a data limit using
+the limit/records= options, since my find capacity algorthm
+won't work with regular files :-)
+<LI>
+The hard coded 512 byte blocking previously imposed with the
+IOT test pattern (pattern=iot) has been lifted. The blocking
+used is setup from 1) dsize=value option, 2) lbs=value option,
+3) device IOCTL (Tru64 only), or 4) defaults to 512 bytes.
+This restriction was lifted, since the Windows IOT test discs
+are blocked at 2048 bytes (native CD-ROM 2K block size).
+<LI>
+Windows enhancements were made to recognize physical devices
+and Cygnus mounted tape names (/dev/rmtN and /dev/nrmtN),
+which is necessary for proper tape operation.
+<LI>
+The "volumes=" and "vrecords=" options have been added to aid
+with multi-volume testing, esp. for tapes.  With these options
+you simply tell <I>dt</I> how many volumes to write, and the number
+of records to write on the last volume.  This resolves capacity
+guessing problems with tapes, where data compression and varying
+media capacities, were problematic for our test scripts.
+<P>
+Also Note:  After changing media and continuing, if using a tape
+device, a rewind operation is performed to ensure the device is
+ready before continuing.  This latter check is esp. important when
+changing tapes on Linux and Windows.
+<LI>
+Additional checking to catch illegal or dangerous combinations
+of options.  For example, for IOT or Lbdata options, the block
+size must be greater than sizeof(u_int32), which is the size
+of the lba encoded at the beginning of each record.
+<LI>
+Better sanity checking for random access device options. The
+major checks in this area are to ensure block sizes are modulo
+the device size.  This additional checking can be bypassed by
+using the new "enable=bypass" option (this latter option may
+by of interest to those of you on Tru64 Unix doing non-modulo
+disk block access).  In general, these sanity checks prevent
+unexpected test failures.
+<LI>
+When using multiple processes (procs=) with regular files, a
+different pattern is used for each file, unless you specify a
+pattern to use.  Use the disable=unique to avoid this action.
+This pattern usage is consistent with that implemented with
+The new slices= option (i.e. different pattern for each slice).
+<LI>
+The "rseed=value" no longer enabled random I/O automatically.
+This option simply sets the random number generator seed now,
+since this option is necessary for variable request sizes too.
+<LI>
+When "enable=Debug" is specified, when using rotating media
+or the IOT/Lbdata options, the lba is now reported with record
+information.
+<LI>
+Extended statistics are reported when random I/O and/or slices
+options were specified.
+<LI>
+When aborting child processes, a SIGINT is now sent instead
+of SIGTERM, so the child process can report its' statistics.
+This was important for long running tests.  If SIGINT is
+problematic, I'll add an option to specify the kill signal.
+<LI>
+Some functions were converted to macros to inline code, which
+hopefully improves performance a little.
+<LI>
+Existing output files are no longer deleted automatically.
+Only files created by <I>dt</I> get deleted.  Use dispose=delete,
+*if* you want existing output files deleted.
+<LI>
+When using multiple slices to an existing output file, the
+file is *not* deleted to avoid races with multiple procs.
+</UL>
+<P>
+Please see attached examples for use of these new options.
+<P>
+<CENTER>Within Compaq, the updated <I>dt</I> kits are located @ URL:</CENTER>
+<P>
+<CENTER><A HREF="http://www.zk3.dec.com/~rmiller/dt.html">http://www.zk3.dec.com/~rmiller/dt.html</A></CENTER>
+<CENTER>or</CENTER>
+<CENTER><A HREF="http://leto.shr.dec.com/~rmiller/dt.html">http://leto.shr.dec.com/~rmiller/dt.html</A></CENTER>
+<P>
+<CENTER>External to Compaq, you can obtain <I>dt</I> kits from URL:</CENTER>
+<P>
+<CENTER><A HREF="http://www.bit-net.com/~rmiller/dt.html">http://www.bit-net.com/~rmiller/dt.html</A></CENTER>
+</UL>
+<HR>
+<A HREF="mailto:Robin.Miller@compaq.com"><IMG SRC="../gifs/mailbox.gif" ALT="Mail"></A>
+Send mail to admin of this page: <EM>Robin.Miller@compaq.com</EM> 
+<A HREF="../index.html"><IMG SRC="../gifs/home04.gif" ALT="Home"></A>
+To Robin's home page.
+<P>
+Last modified: February 2nd, 2001
+<HR>
+
+<H2>Examples:</H2>
+<HR SIZE=5 NOSHADE>
+<PRE>
+tru64% <B>dt of=/dev/rrz1c bs=256k capacity=12g limit=1m slices=12 enable=debug,lbdata,raw</B>
+dt: Data limit set to 12884901888 bytes (12288.000 Mbytes), 25165824 blocks.
+dt: Started process 18122...
+dt: Started process 18121...
+dt: Started process 18127...
+dt: Started process 18126...
+dt: Started process 18128...
+dt: Started process 18115...
+dt: Started process 18133...
+dt: Started process 18134...
+dt: Started process 18132...
+dt: Started process 18131...
+dt (18122): Start Position 0 (lba 0), Limit 1048576, Pattern 0x39c39c39
+dt (18122): Attempting to open output file '/dev/rrz1c', open flags = 02 (0x2)...
+dt (18121): Start Position 1073741824 (lba 2097152), Limit 1048576 bytes
+dt (18121): Attempting to open output file '/dev/rrz1c', open flags = 02 (0x2)...
+dt (18127): Start Position 2147483648 (lba 4194304), Limit 1048576 bytes
+dt (18127): Attempting to open output file '/dev/rrz1c', open flags = 02 (0x2)...
+dt (18126): Start Position 3221225472 (lba 6291456), Limit 1048576 bytes
+dt (18126): Attempting to open output file '/dev/rrz1c', open flags = 02 (0x2)...
+dt (18128): Start Position 4294967296 (lba 8388608), Limit 1048576 bytes
+dt (18128): Attempting to open output file '/dev/rrz1c', open flags = 02 (0x2)...
+dt (18115): Start Position 5368709120 (lba 10485760), Limit 1048576 bytes
+dt (18115): Attempting to open output file '/dev/rrz1c', open flags = 02 (0x2)...
+dt (18133): Start Position 6442450944 (lba 12582912), Limit 1048576 bytes
+dt (18133): Attempting to open output file '/dev/rrz1c', open flags = 02 (0x2)...
+dt (18134): Start Position 7516192768 (lba 14680064), Limit 1048576 bytes
+dt (18134): Attempting to open output file '/dev/rrz1c', open flags = 02 (0x2)...
+dt (18132): Start Position 8589934592 (lba 16777216), Limit 1048576 bytes
+dt (18132): Attempting to open output file '/dev/rrz1c', open flags = 02 (0x2)...
+dt (18131): Start Position 9663676416 (lba 18874368), Limit 1048576 bytes
+dt (18131): Attempting to open output file '/dev/rrz1c', open flags = 02 (0x2)...
+		.
+		.
+		.
+Total Statistics (18138):
+     Output device/file name: /dev/rrz1c (Device: BB01811C, type=disk)
+     Type of I/O's performed: sequential (forward, read-after-write)
+      Slice Range Parameters: position=11811160064 (lba 23068672), limit=1048576
+      Current Slice Reported: 12/12
+   Data pattern read/written: 0xffffffff (w/lbdata, lba 0, size 512 bytes)
+     Total records processed: 8 @ 262144 bytes/record (256.000 Kbytes)
+     Total bytes transferred: 2097152 (2048.000 Kbytes, 2.000 Mbytes)
+      Average transfer rates: 1797559 bytes/sec, 1755.429 Kbytes/sec
+     Number I/O's per second: 6.857
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m01.16s
+           Total system time: 00m00.00s
+             Total user time: 00m00.05s
+               Starting time: Mon Jan 29 14:38:49 2001
+                 Ending time: Mon Jan 29 14:38:51 2001
+
+dt: Child process 18138, exiting with status 0
+tru64% 
+
+<HR>
+tru64% <B>dt of=/dev/rrz1c bs=64k capacity=10g procs=2 slices=4 enable=debug,lbdata</B>
+dt (21933): Data limit set to 10737418240 bytes (10240.000 Mbytes), 20971520 blocks.
+dt: Started process 21930...
+dt: Started process 21937...
+dt: Started process 21938...
+dt: Started process 21939...
+dt: Waiting for 4 child processes to complete...
+dt (21930): Start Position 0 (lba 0), Limit 2684354560 bytes
+dt: Started process 21940...
+dt: Started process 21936...
+dt: Started process 21935...
+dt: Started process 21942...
+dt: Waiting for 4 child processes to complete...
+dt (21937): Start Position 2684354560 (lba 5242880), Limit 2684354560 bytes
+dt: Started process 21943...
+dt: Started process 21941...
+dt: Started process 21946...
+dt: Started process 21947...
+dt: Waiting for 4 child processes to complete...
+dt (21938): Start Position 5368709120 (lba 10485760), Limit 2684354560 bytes
+dt: Started process 21945...
+dt: Started process 21953...
+dt: Started process 21954...
+dt: Started process 21956...
+dt: Waiting for 4 child processes to complete...
+dt (21939): Start Position 8053063680 (lba 15728640), Limit 2684354560 bytes
+dt: Started process 21955...
+dt: Started process 21952...
+dt: Started process 21951...
+dt: Started process 21950...
+dt: Waiting for 4 child processes to complete...
+dt (21940): Attempting to open output file '/dev/rrz1c', open flags = 01 (0x1)...
+dt (21936): Attempting to open output file '/dev/rrz1c', open flags = 01 (0x1)...
+dt (21935): Attempting to open output file '/dev/rrz1c', open flags = 01 (0x1)...
+dt (21942): Attempting to open output file '/dev/rrz1c', open flags = 01 (0x1)...
+dt (21943): Attempting to open output file '/dev/rrz1c', open flags = 01 (0x1)...
+dt (21941): Attempting to open output file '/dev/rrz1c', open flags = 01 (0x1)...
+dt (21946): Attempting to open output file '/dev/rrz1c', open flags = 01 (0x1)...
+dt (21947): Attempting to open output file '/dev/rrz1c', open flags = 01 (0x1)...
+dt (21940): Output file '/dev/rrz1c' successfully opened, fd = 3
+		.
+		.
+		.
+Total Statistics (21942):
+     Output device/file name: /dev/rrz1c (Device: BB01811C, type=disk)
+     Type of I/O's performed: sequential (forward)
+    Current Process Reported: 4/4
+   Data pattern read/written: 0x39c39c39 (w/lbdata, lba 0, size 512 bytes)
+     Total records processed: 81920 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 5368709120 (5242880.000 Kbytes, 5120.000 Mbytes)
+      Average transfer rates: 464246 bytes/sec, 453.365 Kbytes/sec
+     Number I/O's per second: 7.084
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 3h12m44.36s
+           Total system time: 00m13.71s
+             Total user time: 04m49.36s
+               Starting time: Tue Jan 30 08:51:00 2001
+                 Ending time: Tue Jan 30 12:03:44 2001
+
+dt: Child process 21942, exiting with status 0
+dt: Child process 21930, exiting with status 0
+tru64% 
+
+<HR>
+tru64% <B>dt of=/dev/rrz1c min=4k max=256k incr=variable enable=Debug,lbdata disable=pstats count=3</B>
+dt: Attempting to open output file '/dev/rrz1c', open flags = 01 (0x1)...
+dt: Output file '/dev/rrz1c' successfully opened, fd = 3
+dt: Allocated buffer at address 0x140036000 of 262148 bytes, using offset 0
+dt: Record #1 (lba 0), Writing 4096 bytes from buffer 0x140036000...
+dt: Record #2 (lba 8), Writing 235520 bytes from buffer 0x140036000...
+dt: Record #3 (lba 468), Writing 225280 bytes from buffer 0x140036000...
+dt: End of Write pass 0, records = 3, errors = 0, elapsed time = 00m00.05s
+dt: Closing file '/dev/rrz1c', fd = 3...
+dt: Attempting to reopen file '/dev/rrz1c', open flags = 00 (0)...
+dt: File '/dev/rrz1c' successfully reopened, fd = 3
+dt: Record #1 (lba 0), Reading 4096 bytes into buffer 0x140036000...
+dt: Record #2 (lba 8), Reading 235520 bytes into buffer 0x140036000...
+dt: Record #3 (lba 468), Reading 225280 bytes into buffer 0x140036000...
+dt: End of Read pass 1, records = 3, errors = 0, elapsed time = 00m00.10s
+dt: Closing file '/dev/rrz1c', fd = 3...
+
+Total Statistics:
+     Output device/file name: /dev/rrz1c (Device: BB01811C, type=disk)
+     Type of I/O's performed: sequential (forward, rseed=0xf41e15)
+   Data pattern read/written: 0x39c39c39 (w/lbdata, lba 0, size 512 bytes)
+     Total records processed: 6 with min=4096, max=262144, incr=variable
+     Total bytes transferred: 929792 (908.000 Kbytes, 0.887 Mbytes)
+      Average transfer rates: 6198613 bytes/sec, 6053.333 Kbytes/sec
+     Number I/O's per second: 40.000
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.15s
+           Total system time: 00m00.00s
+             Total user time: 00m00.06s
+               Starting time: Mon Jan 29 14:30:08 2001
+                 Ending time: Mon Jan 29 14:30:08 2001
+
+tru64% 
+
+<HR>
+tru64% <B>dt of=/dev/rrz1c bs=256k capacity=1m enable=Debug,lbdata,raw iodir=reverse</B>
+dt: Attempting to open output file '/dev/rrz1c', open flags = 02 (0x2)...
+dt: Output file '/dev/rrz1c' successfully opened, fd = 3
+dt: Random data limit set to 1048576 bytes (1.000 Mbytes), 2048 blocks.
+dt: Allocated buffer at address 0x140036000 of 262148 bytes, using offset 0
+dt: Allocated buffer at address 0x140078000 of 262148 bytes, using offset 0
+dt: Seeked to block 2048 (0x800) at byte position 1048576.
+dt: Seeked to block 1536 (0x600) at byte position 786432.
+dt: Record #1 (lba 1536), Writing 262144 bytes from buffer 0x140078000...
+dt: Seeked to block 1536 (0x600) at byte position 786432.
+dt: Record #1 (lba 1536), Reading 262144 bytes into buffer 0x140036000...
+dt: Seeked to block 1024 (0x400) at byte position 524288.
+dt: Record #2 (lba 1024), Writing 262144 bytes from buffer 0x140078000...
+dt: Seeked to block 1024 (0x400) at byte position 524288.
+dt: Record #2 (lba 1024), Reading 262144 bytes into buffer 0x140036000...
+dt: Seeked to block 512 (0x200) at byte position 262144.
+dt: Record #3 (lba 512), Writing 262144 bytes from buffer 0x140078000...
+dt: Seeked to block 512 (0x200) at byte position 262144.
+dt: Record #3 (lba 512), Reading 262144 bytes into buffer 0x140036000...
+dt: Seeked to block 0 (0) at byte position 0.
+dt: Record #4 (lba 0), Writing 262144 bytes from buffer 0x140078000...
+dt: Seeked to block 0 (0) at byte position 0.
+dt: Record #4 (lba 0), Reading 262144 bytes into buffer 0x140036000...
+dt: Beginning of media detected [file #1, record #4]
+dt: Exiting with status code 254...
+dt: Closing file '/dev/rrz1c', fd = 3...
+
+Total Statistics:
+     Output device/file name: /dev/rrz1c (Device: BB01811C, type=disk)
+     Type of I/O's performed: sequential (reverse, read-after-write)
+   Data pattern read/written: 0x39c39c39 (w/lbdata, lba 0, size 512 bytes)
+     Total records processed: 8 @ 262144 bytes/record (256.000 Kbytes)
+     Total bytes transferred: 2097152 (2048.000 Kbytes, 2.000 Mbytes)
+      Average transfer rates: 9679163 bytes/sec, 9452.308 Kbytes/sec
+     Number I/O's per second: 36.923
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.21s
+           Total system time: 00m00.00s
+             Total user time: 00m00.05s
+               Starting time: Mon Jan 29 14:36:36 2001
+                 Ending time: Mon Jan 29 14:36:37 2001
+
+tru64% 
+
+<HR>
+tru64% <B>dt of=/usr/tmp/dt.data bs=256k iotype=random procs=2 limit=1m enable=Debug disable=pstats</B>
+dt: Started process 18206...
+dt: Started process 18207...
+dt: Waiting for 2 child processes to complete...
+dt (18206): Attempting to open output file '/usr/tmp/dt.data-18206', open flags = 01001 (0x201)...
+dt (18206): Output file '/usr/tmp/dt.data-18206' successfully opened, fd = 3
+dt (18206): Random data limit set to 1048576 bytes (1.000 Mbytes), 2048 blocks.
+dt (18206): Allocated buffer at address 0x14003e000 of 262148 bytes, using offset 0
+dt (18206): Seeked to block 309 (0x135) at byte position 158208.
+dt (18207): Attempting to open output file '/usr/tmp/dt.data-18207', open flags = 01001 (0x201)...
+dt (18207): Output file '/usr/tmp/dt.data-18207' successfully opened, fd = 3
+dt (18207): Random data limit set to 1048576 bytes (1.000 Mbytes), 2048 blocks.
+dt (18207): Allocated buffer at address 0x14003e000 of 262148 bytes, using offset 0
+dt (18207): Seeked to block 424 (0x1a8) at byte position 217088.
+dt (18206): Record #1 (lba 309), Writing 262144 bytes from buffer 0x14003e000...
+dt (18206): Seeked to block 1023 (0x3ff) at byte position 523776.
+dt (18207): Record #1 (lba 424), Writing 262144 bytes from buffer 0x14003e000...
+dt (18207): Seeked to block 104 (0x68) at byte position 53248.
+dt (18206): Record #2 (lba 1023), Writing 262144 bytes from buffer 0x14003e000...
+dt (18206): Seeked to block 496 (0x1f0) at byte position 253952.
+dt (18207): Record #2 (lba 104), Writing 262144 bytes from buffer 0x14003e000...
+dt (18207): Seeked to block 338 (0x152) at byte position 173056.
+dt (18207): Record #3 (lba 338), Writing 262144 bytes from buffer 0x14003e000...
+dt (18206): Record #3 (lba 496), Writing 262144 bytes from buffer 0x14003e000...
+dt (18206): Seeked to block 360 (0x168) at byte position 184320.
+dt (18207): Seeked to block 121 (0x79) at byte position 61952.
+dt (18207): Record #4 (lba 121), Writing 262144 bytes from buffer 0x14003e000...
+dt (18207): Flushing data to file '/usr/tmp/dt.data-18207'...
+dt (18206): Record #4 (lba 360), Writing 262144 bytes from buffer 0x14003e000...
+dt (18206): Flushing data to file '/usr/tmp/dt.data-18206'...
+dt (18207): End of Write pass 0, records = 4, errors = 0, elapsed time = 00m00.23s
+dt (18207): Closing file '/usr/tmp/dt.data-18207', fd = 3...
+dt (18207): Attempting to reopen file '/usr/tmp/dt.data-18207', open flags = 00 (0)...
+dt (18207): File '/usr/tmp/dt.data-18207' successfully reopened, fd = 3
+dt (18207): Seeked to block 424 (0x1a8) at byte position 217088.
+dt (18207): Record #1 (lba 424), Reading 262144 bytes into buffer 0x14003e000...
+dt (18206): End of Write pass 0, records = 4, errors = 0, elapsed time = 00m00.25s
+dt (18206): Closing file '/usr/tmp/dt.data-18206', fd = 3...
+dt (18206): Attempting to reopen file '/usr/tmp/dt.data-18206', open flags = 00 (0)...
+dt (18206): File '/usr/tmp/dt.data-18206' successfully reopened, fd = 3
+dt (18206): Seeked to block 309 (0x135) at byte position 158208.
+dt (18206): Record #1 (lba 309), Reading 262144 bytes into buffer 0x14003e000...
+dt (18206): Seeked to block 1023 (0x3ff) at byte position 523776.
+dt (18206): Record #2 (lba 1023), Reading 262144 bytes into buffer 0x14003e000...
+dt (18207): Seeked to block 104 (0x68) at byte position 53248.
+dt (18207): Record #2 (lba 104), Reading 262144 bytes into buffer 0x14003e000...
+dt (18206): Seeked to block 496 (0x1f0) at byte position 253952.
+dt (18206): Record #3 (lba 496), Reading 262144 bytes into buffer 0x14003e000...
+dt (18207): Seeked to block 338 (0x152) at byte position 173056.
+dt (18207): Record #3 (lba 338), Reading 262144 bytes into buffer 0x14003e000...
+dt (18206): Seeked to block 360 (0x168) at byte position 184320.
+dt (18206): Record #4 (lba 360), Reading 262144 bytes into buffer 0x14003e000...
+dt (18207): Seeked to block 121 (0x79) at byte position 61952.
+dt (18207): Record #4 (lba 121), Reading 262144 bytes into buffer 0x14003e000...
+dt (18206): End of Read pass 1, records = 4, errors = 0, elapsed time = 00m00.15s
+dt (18206): Closing file '/usr/tmp/dt.data-18206', fd = 3...
+
+Total Statistics (18206):
+     Output device/file name: /usr/tmp/dt.data-18206 (device type=regular)
+     Type of I/O's performed: random (rseed=0xf594ce)
+       Random I/O Parameters: position=0, ralign=0, rlimit=1048576
+    Current Process Reported: 1/2
+   Data pattern read/written: 0x39c39c39
+     Total records processed: 8 @ 262144 bytes/record (256.000 Kbytes)
+     Total bytes transferred: 2097152 (2048.000 Kbytes, 2.000 Mbytes)
+      Average transfer rates: 5033165 bytes/sec, 4915.200 Kbytes/sec
+     Number I/O's per second: 19.200
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.41s
+           Total system time: 00m00.03s
+             Total user time: 00m00.08s
+               Starting time: Mon Jan 29 14:56:44 2001
+                 Ending time: Mon Jan 29 14:56:45 2001
+
+dt (18207): End of Read pass 1, records = 4, errors = 0, elapsed time = 00m00.16s
+dt (18207): Closing file '/usr/tmp/dt.data-18207', fd = 3...
+
+Total Statistics (18207):
+     Output device/file name: /usr/tmp/dt.data-18207 (device type=regular)
+     Type of I/O's performed: random (rseed=0xf594d0)
+       Random I/O Parameters: position=0, ralign=0, rlimit=1048576
+    Current Process Reported: 2/2
+   Data pattern read/written: 0x00ff00ff
+     Total records processed: 8 @ 262144 bytes/record (256.000 Kbytes)
+     Total bytes transferred: 2097152 (2048.000 Kbytes, 2.000 Mbytes)
+      Average transfer rates: 5242880 bytes/sec, 5120.000 Kbytes/sec
+     Number I/O's per second: 20.000
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.40s
+           Total system time: 00m00.01s
+             Total user time: 00m00.08s
+               Starting time: Mon Jan 29 14:56:44 2001
+                 Ending time: Mon Jan 29 14:56:45 2001
+
+dt: Child process 18207, exiting with status 0
+dt: Child process 18206, exiting with status 0
+tru64% 
+
+<HR>
+Ok, so I didn't have a tape drive for testing :-)
+-------------------------------------------------
+
+tru64% <B>dt of=/dev/rfd0c bs=32k volumes=2 enable=lbdata vrecords=5 aios=4</B>
+
+Please insert volume #2 in drive /dev/rfd0c, press ENTER when ready to proceed: 
+    [ Continuing at record #46, bytes written so far 1474560... ]
+
+Write Statistics:
+     Total records processed: 50 @ 32768 bytes/record (32.000 Kbytes)
+     Total bytes transferred: 1638400 (1600.000 Kbytes, 1.562 Mbytes)
+      Average transfer rates: 8004 bytes/sec, 7.816 Kbytes/sec
+     Number I/O's per second: 0.244
+     Total volumes completed: 2/2
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 03m24.70s
+           Total system time: 00m00.00s
+             Total user time: 00m00.01s
+
+Please insert volume #1 in drive /dev/rfd0c, press ENTER when ready to proceed: 
+
+Please insert volume #2 in drive /dev/rfd0c, press ENTER when ready to proceed: 
+    [ Continuing at record #46, bytes read so far 1474560... ]
+
+Read Statistics:
+     Total records processed: 50 @ 32768 bytes/record (32.000 Kbytes)
+     Total bytes transferred: 1638400 (1600.000 Kbytes, 1.562 Mbytes)
+      Average transfer rates: 13859 bytes/sec, 13.534 Kbytes/sec
+     Number I/O's per second: 0.423
+     Total volumes completed: 2/2
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m58.21s
+           Total system time: 00m00.01s
+             Total user time: 00m00.16s
+
+Total Statistics:
+     Output device/file name: /dev/rfd0c (Device: floppy, type=disk)
+     Type of I/O's performed: sequential
+   Data pattern read/written: 0x39c39c39 (w/lbdata, lba 0, size 512 bytes)
+     Total records processed: 100 @ 32768 bytes/record (32.000 Kbytes)
+     Total bytes transferred: 3276800 (3200.000 Kbytes, 3.125 Mbytes)
+      Average transfer rates: 9373 bytes/sec, 9.153 Kbytes/sec
+     Asynchronous I/O's used: 4
+     Number I/O's per second: 0.286
+     Total volumes completed: 2/2
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 05m49.61s
+           Total system time: 00m00.01s
+             Total user time: 00m00.18s
+               Starting time: Mon Jan 15 13:56:41 2001
+                 Ending time: Mon Jan 15 14:02:30 2001
+
+tru64% 
+
+<HR>
+meda# <B>./dt if=e:iot.iot bs=64k pattern=iot dsize=2k limit=1m</B>
+
+Total Statistics:
+      Input device/file name: e:iot.iot
+     Type of I/O's performed: sequential
+    Data pattern str<B>ing used: 'IOT Pattern' (blocking is 2048 bytes)</B>
+     Total records processed: 16 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 1048576 (1024.000 Kbytes, 1.000 Mbytes)
+      Average transfer rates: 1398101 bytes/sec, 1365.333 Kbytes/sec
+     Number I/O's per second: 21.333
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m00.75s
+           Total system time: 00m00.01s
+             Total user time: 00m00.07s
+               Starting time: Mon Jan 29 14:33:49 2001
+                 Ending time: Mon Jan 29 14:33:55 2001
+
+meda#
+</PRE>
+</BODY>
+</HTML>

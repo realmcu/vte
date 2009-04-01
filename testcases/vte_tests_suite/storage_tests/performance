@@ -1,0 +1,130 @@
+#!/bin/sh
+################################################################################
+#
+#    @file   performance
+#
+#    @brief  this file is used to test the storage read&write performance.
+#            nand, nor, sd/mmc, ata, usbh
+#
+################################################################################
+# 
+# Copyright 2004-2008 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+# The code contained herein is licensed under the GNU Lesser General
+#
+# Public License.  You may obtain a copy of the GNU Lesser General
+#
+# Public License Version 2.1 or later at the following locations: 
+# 
+# http://www.opensource.org/licenses/lgpl-license.html 
+# http://www.gnu.org/copyleft/lgpl.html 
+# 
+################################################################################
+#Revision History: 
+#                            Modification     ClearQuest 
+#Author                          Date          Number    Description of Changes 
+#-------------------------   ------------    ----------  -----------------------
+#Victor Cui/b19309            18/12/2007      N/A          Initial version 
+#  
+################################################################################
+ 
+ 
+ 
+# Function:     setup 
+# 
+# Description:  - Check if required commands exits 
+#               - Export global variables 
+#               - Check if required config files exits 
+#               - Create temporary files and directories 
+# 
+# Return        - zero on success 
+#               - non zero on failure. return value from commands ($RC) 
+setup() 
+{ 
+	#TODO Total test case 
+	RC=0 
+	trap "cleanup" 0 
+ 
+	#TODO add setup scripts 
+	PATH_PERFORMANCE=/home/performance_test
+	export PATH_PERFORMANCE
+
+	PATH=$PATH:$PATH_PERFORMANCE
+	export PATH
+	
+	return $RC 
+}
+# Function:     cleanup 
+# 
+# Description   - remove temporary files and directories. 
+# 
+# Return        - zero on success 
+#               - non zero on failure. return value from commands ($RC) 
+cleanup() 
+{ 
+	RC=0 
+	#TODO add cleanup code here 
+
+	return $RC 
+} 
+ 
+ 
+################################################################################
+# Function:     ***_test 
+# Description   
+#
+################################################################################ 
+performance() 
+{
+	RC=0 
+	#TODO add function test scripte here
+	total_line=`cat $PATH_PERFORMANCE/performance_command_line_tmp | wc -l`
+	i=0
+	cat $PATH_PERFORMANCE/performance_command_line_tmp | while read line
+	do
+       		i=`expr $i "+" 1`		
+       		case $line in
+                	\#*)
+				if [ $i -eq $total_line ]; then
+                        		echo "********clean up environment!********"
+                        		sed -i "4s/performance//" /etc/rc.d/rc.conf
+                        		rm /etc/rc.d/init.d/performance
+
+					rm $PATH_PERFORMANCE/performance*
+					rm $PATH_PERFORMANCE/*real*
+					rm $PATH_PERFORMANCE/auto_prepare.sh
+				fi
+				;;
+               		*) 
+                   		line_tmp=`echo $line | sed "s/\&/\//g"`
+                  		$line_tmp
+                   		sed -i ""$i"s/^/#/g" $PATH_PERFORMANCE/performance_command_line_tmp
+                   		sleep 5
+                   		reboot
+                   		exit 0
+                    		;;
+       		esac
+	done
+
+	#echo "********clean up environment!********"
+	#sed -i "4s/performance//" /etc/rc.d/rc.conf
+	#rm /etc/rc.d/init.d/performance
+} 
+
+################################################################################
+# Function:     usage() 
+# Description   
+# give out how to and using example
+################################################################################ 
+usage()
+{
+	echo  "usage"	
+} 
+ 
+# main function 
+RC=0  
+echo "******do performace auto test******"
+
+
+setup || exit $RC 
+performance || exit $RC

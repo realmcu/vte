@@ -1,0 +1,89 @@
+Script started on Sat Sep 13 16:48:06 1997
+$ dt if=/dev/rmt0h bs=16k limit=10m disable=compare
+dt: 'read' - I/O error
+
+DEVIOGET ELEMENT	CONTENTS
+----------------	--------
+category		DEV_TAPE
+bus			DEV_SCSI
+interface		SCSI
+device			TZK10
+adpt_num		0
+nexus_num		0
+bus_num			0
+ctlr_num		0
+slave_num		5
+dev_name		tz
+unit_num		5
+soft_count		0
+hard_count		16
+stat			0x108
+			DEV_WRTLCK DEV_HARDERR 
+category_stat		0x8000
+			DEV_10000_BPI
+
+DEVGETINFO ELEMENT      CONTENTS
+------------------      --------
+media_status            0x10108
+                        WrtProt HardERR POS_VALID 
+unit_status             0x131
+                        Ready 1_FM_Close Rewind Buffered 
+record_size             512
+density (current)       10000 BPI
+density (on write)      16000 BPI
+Filemark Cnt            0
+Record Cnt              673
+Class                   4 - QIC
+
+MTIOCGET ELEMENT	CONTENTS
+----------------	--------
+mt_type			MT_ISSCSI
+mt_dsreg		0x108
+			DEV_WRTLCK DEV_HARDERR 
+mt_erreg		0x3 Nonrecoverable medium error.
+mt_resid		31
+mt_fileno		0 
+mt_blkno		673 
+DEV_EEI_STATUS
+	version		0x1
+	status		0x15  Device hardware error (hard error)   
+	flags		0x1000007
+			CAM_STATUS SCSI_STATUS SCSI_SENSE CAM_DATA
+	cam_status	0x4  CCB request completed with an err
+	scsi_status	0x2  SCSI_STAT_CHECK_CONDITION
+	scsi_sense_data
+                        Error Code: 0x70 (Current Error)
+                         Valid Bit: 0x1 (Information field is valid)
+                    Segment Number: 0
+                         Sense Key: 0x3 (MEDIUM ERROR - Nonrecoverable medium error)
+                    Illegal Length: 0
+                      End Of Media: 0
+                         File Mark: 0
+                 Information Field: 0x1f (31)
+           Additional Sense Length: 0x16
+      Command Specific Information: 0
+   Additional Sense Code/Qualifier: (0x3a, 0) = Medium not present
+       Field Replaceable Unit Code: 0
+              Sense Specific Bytes: 00 00 00 
+            Additional Sense Bytes: 00 02 a1 00 00 00 00 00 00 00 00 04 
+
+
+dt: Error number 1 occurred on Sat Sep 13 16:48:40 1997
+Total Statistics:
+      Input device/file name: /dev/rmt0h (Device: TZK10, type=tape)
+           Data pattern read: 0x39c39c39 (data compare disabled)
+     Total records processed: 21 @ 16384 bytes/record (16.000 Kbytes)
+     Total bytes transferred: 344064 (336.000 Kbytes, 0.328 Mbytes)
+      Average transfer rates: 70941 bytes/sec, 69.278 Kbytes/sec
+     Number I/O's per second: 4.330
+      Total passes completed: 0/1
+       Total errors detected: 1/1
+          Total elapsed time: 00m04.85s
+           Total system time: 00m00.01s
+             Total user time: 00m00.00s
+               Starting time: Sat Sep 13 16:48:26 1997
+                 Ending time: Sat Sep 13 16:48:40 1997
+
+$ exit
+
+script done on Sat Sep 13 16:48:52 1997

@@ -1,0 +1,188 @@
+<HTML>
+<HEAD>
+<TITLE>Data Test Program (dt) July 26, 1995</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#DB70DB">
+
+<CENTER><H2><STRONG>What's New as of July 26, 1995</STRONG></H2></CENTER>
+
+<H2>Changes For This Release</H2>
+The following changes have been made to <I>dt</I> Version 8.0:
+<UL>
+<LI>On compare errors, data dumping now occurs by default.  The
+"dlimit=value" option can be used to override the default dump
+limit of 64 bytes (use "disable=dump" to turn dumping off).
+<LI>On compare errors, the relative block number is reported for
+disk devices (see example below).
+<LI>The "align=rotate" option is now effective when selecting
+AIO testing (was being ignored before).  Also corrected AIO
+end of media error handling (wasn't done consistently).
+<LI>Added "oncerr={abort|continue}" option to control child process
+errors.  By default, <I>dt</I> waits for all child processes to exit,
+regardless of whether an error is detected.  When "oncerr=abort"
+is specified, <I>dt</I> aborts all child prcoesses when _any_ child
+exits with an error status (effectively a halt on error).
+<LI>Added special mapping of pattern strings as shown below:
+<PRE>
+	Pattern String Input:
+            \\ = Backslash   \a = Alert (bell)   \b = Backspace
+            \f = Formfeed    \n = Newline        \r = Carriage Return
+            \t = Tab         \v = Vertical Tab   \e or \E = Escape
+            \ddd = Octal Value    \xdd or \Xdd = Hexadecimal Value
+</PRE>
+This addition makes testing of terminals and printers easier.
+<LI>Minor changes were made to allow modem control testing to work.
+Normally, <I>dt</I> disables modem control (aka "stty local"), but
+specifying "enable=modem" sets modem control (aka "stty -local"),
+On DEC systems, asserted modem signals get displayed at start of
+test, when debug is enabled.
+<LI>On ptos BL7 or later, you can now use "flow=cts_rts" to select
+hardware flow control.  While <I>dt</I> always accepted this option,
+the OSF tty driver did not support hardware flow control before.
+<BLOCKQUOTE>
+NOTE: Ensure the cable used for testing supports modem 	signals
+(DSR, CD, CTS, & RTS) or loss of data or partial reads may occur,
+especially at high speeds.  The terminal driver may simply block
+read/write requests waiting for assertion of certain modem signals.
+</BLOCKQUOTE>
+<LI>The "Total Statistics" report has been enhanced to display the
+pattern string "pattern=string" or the pattern file size "pf="
+when these options are used.
+</UL>
+As always, send me mail directly "rmiller@wasted.zk3.dec.com" if
+you encounter any problems.  Please do _not_ QAR it (the Desk Top folks
+who also use the name <I>dt</I>, won't appreciate it and won't help you).
+<HR>
+The latest version of <I>dt</I> is available on our production machines
+in the following account:
+<P>
+<CENTER><B>Location:</B> <I>wasted:~rmiller/dt.d/{dt,dt-ptos}</I></CENTER>
+<CENTER>or via</CENTER>
+<CENTER><A HREF="../dt.html"><B>URL:</B> <I>http://www.zk3.dec.com/~rmiller/dt.html</I></A></CENTER>
+<HR>
+<A HREF="mailto:rmiller@zk3.dec.com"><IMG SRC="../gifs/mailbox.gif" ALT="Mail"></A>
+Send mail to admin of this page: <EM>rmiller@zk3.dec.com</EM> 
+<A HREF="../index.html"><IMG SRC="../gifs/home04.gif" ALT="Home"></A>
+To Robin's home page.
+<P>
+Last modified: February 22, 1996
+<HR>
+
+<H2>Examples:</H2>
+<HR SIZE=5 NOSHADE>
+<PRE>
+Example 1: Shows new pattern string mapping, a data compare error reporting:
+<HR>
+% <B>dt if=/dev/rrz1b records=3 pattern="This is \xFF my test \a ^c^q^s^z pattern\r\n"</B>
+dt: Data compare error at byte 0 in record number 1
+dt: Relative block number where the error occcured is 0
+dt: Data expected = 0x54, data found = 0x61, byte count = 512
+dt: Pattern buffer pointer = 0x14000e000, data buffer pointer = 0x140012000
+dt: The incorrect data starts at address 0x14000e000 (marked by asterisk '*')
+dt: Dumping Pattern Buffer (base = 0x14000e000, offset = 0, limit = 34 bytes):
+
+0x14000e000 *54 68 69 73 20 69 73 20 ff 20 6d 79 20 74 65 73
+0x14000e010  74 20 07 20 03 11 13 1a 20 70 61 74 74 65 72 6e
+0x14000e020  0d 0a
+
+dt: The incorrect data starts at address 0x140012000 (marked by asterisk '*')
+dt: Dumping Data Buffer (base = 0x140012000, offset = 0, limit = 64 bytes):
+
+0x140012000 *61 62 63 64 65 66 68 68 69 6a 6b 6c 6d 6e 6f 70
+0x140012010  71 72 73 74 75 76 77 78 79 7a 30 31 32 33 34 35
+0x140012020  36 37 38 39 30 0d 0a 61 62 63 64 65 66 68 68 69
+0x140012030  6a 6b 6c 6d 6e 6f 70 71 72 73 74 75 76 77 78 79
+
+dt: Error number 1 occurred on Sat Jul 22 13:02:04 1995
+Total Statistics:
+      Input device/file name: /dev/rrz1b (Device: RZ26L, type=disk)
+    Data pattern string used: 'This is \xFF my test \a ^c^q^s^z pattern\r\n'
+           Data pattern read: 0x73696854 (first 4 bytes)
+     Total records processed: 1 @ 512 bytes/record (0.500 Kbytes)
+     Total bytes transferred: 512 (0.500 Kbytes, 0.000 Mbytes)
+      Average transfer rates: 30720 bytes/sec, 30.000 Kbytes/sec
+      Total passes completed: 0/1
+       Total errors detected: 1/1
+          Total elapsed time: 00m00.01s
+           Total system time: 00m00.00s
+             Total user time: 00m00.00s
+               Starting time: Sat Jul 22 13:02:04 1995
+                 Ending time: Sat Jul 22 13:02:04 1995
+
+%
+<HR NOSHADE>
+Example 2: Show modem control testing using hardware (CTS/RTS) flow control:
+<HR>
+im2fast% <B>dt if=/dev/tty01 of=/dev/tty00 bs=64 limit=100k pattern="^SRobin's Test Pattern\n^Q" enable=debug,modem speed=38400 flow=cts_rts</B>
+dt: Attempting to open input file '/dev/tty01', mode = 04...
+dt: Input file '/dev/tty01' successfully opened, fd = 4
+dt: Saving current terminal characteristics, fd = 4...
+dt: Setting up test terminal characteristics, fd = 4...
+--------------------------------------------------
+Modem Signals Set: 0x6
+   0x2 = TIOCM_DTR = Data Terminal Ready.
+   0x4 = TIOCM_RTS = Request To Send.
+--------------------------------------------------
+dt: Attempting to open output file '/dev/tty00', mode = 05...
+dt: Output file '/dev/tty00' successfully opened, fd = 10
+dt: Saving current terminal characteristics, fd = 10...
+dt: Setting up test terminal characteristics, fd = 10...
+--------------------------------------------------
+Modem Signals Set: 0x166
+   0x2 = TIOCM_DTR = Data Terminal Ready.
+   0x4 = TIOCM_RTS = Request To Send.
+   0x20 = TIOCM_CTS = Clear To Send.
+   0x40 = TIOCM_CAR = Carrier Detect.
+   0x100 = TIOCM_DSR = Data Set Ready.
+--------------------------------------------------
+dt (24197): Closing file '/dev/tty01', fd = 4...
+dt (24197): Parent PID (Writer) = 24197, Child PID (Reader) = 10042
+dt (10042): Closing file '/dev/tty00', fd = 10...
+dt (10042): Allocated buffer at address 0x140012000 of 68 bytes, using offset 0
+dt (24197): Allocated buffer at address 0x140012000 of 68 bytes, using offset 0
+dt (24197): Characters remaining in output queue = 320
+dt (24197): Waiting for output queue to drain...
+dt (24197): Output queue finished draining...
+Total Statistics (24197):
+     Output device/file name: /dev/tty00 (device type=terminal)
+    Terminal characteristics: flow=cts_rts, parity=none, speed=38400
+    Data pattern string used: '^SRobin's Test Pattern\n^Q'
+        Data pattern written: 0x626f5213 (read verify disabled)
+     Total records processed: 1600 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 102400 (100.000 Kbytes, 0.098 Mbytes)
+      Average transfer rates: 3497 bytes/sec, 3.415 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m29.28s
+           Total system time: 00m00.05s
+             Total user time: 00m00.01s
+               Starting time: Mon Jul 24 14:26:02 1995
+                 Ending time: Mon Jul 24 14:26:32 1995
+
+dt (24197): Waiting for child PID 10042 to exit...
+Total Statistics (10042):
+      Input device/file name: /dev/tty01 (device type=terminal)
+    Terminal characteristics: flow=cts_rts, parity=none, speed=38400
+    Data pattern string used: '^SRobin's Test Pattern\n^Q'
+           Data pattern read: 0x626f5213 (first 4 bytes)
+     Total records processed: 1600 @ 64 bytes/record (0.062 Kbytes)
+     Total bytes transferred: 102400 (100.000 Kbytes, 0.098 Mbytes)
+      Average transfer rates: 3383 bytes/sec, 3.304 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m30.26s
+           Total system time: 00m00.15s
+             Total user time: 00m00.06s
+               Starting time: Mon Jul 24 14:26:02 1995
+                 Ending time: Mon Jul 24 14:26:32 1995
+
+dt (10042): Restoring saved terminal characteristics, fd = 4...
+dt (10042): Closing file '/dev/tty01', fd = 4...
+dt (24197): Child PID 10042, exited with status = 0
+dt (24197): Restoring saved terminal characteristics, fd = 10...
+dt (24197): Closing file '/dev/tty00', fd = 10...
+im2fast% 
+</PRE>
+</BODY>
+</HTML>

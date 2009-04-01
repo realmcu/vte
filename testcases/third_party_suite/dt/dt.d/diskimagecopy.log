@@ -1,0 +1,72 @@
+
+administrator@MEDA /d/rmiller/dt.d
+$ mount -f -b //./PhysicalDrive5 /dev/PhysicalDrive5
+
+administrator@MEDA /d/rmiller/dt.d
+$ mount -f -b //./PhysicalDrive6 /dev/PhysicalDrive6
+
+administrator@MEDA /d/rmiller/dt.d
+$ mount
+Device              Directory           Type         Flags
+\\.\PhysicalDrive3  /dev/PhysicalDrive3  user         binmode
+\\.\PhysicalDrive5  /dev/PhysicalDrive5  user         binmode
+\\.\PhysicalDrive6  /dev/PhysicalDrive6  user         binmode
+C:\Cygwin\bin       /usr/bin            user         binmode
+C:\Cygwin\lib       /usr/lib            user         binmode
+C:\Cygwin           /                   user         binmode
+\\.\tape0           /dev/nrmt0          user         binmode
+\\.\tape0           /dev/rmt0           user         textmode
+d:                  /d                  user         textmode
+
+administrator@MEDA /d/rmiller/dt.d
+$ ./dt if=/dev/PhysicalDrive6 bs=64k of=/dev/PhysicalDrive5 iomode=copy
+
+Copy Statistics:
+    Data operation performed: Copied '/dev/PhysicalDrive6' to '/dev/PhysicalDrive5'.
+     Total records processed: 555704 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 18209308672 (17782528.000 Kbytes, 17365.750 Mbytes)
+      Average transfer rates: 1093637 bytes/sec, 1068.005 Kbytes/sec
+     Number I/O's per second: 33.375
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 4h37m30.23s
+           Total system time: 00m16.78s
+             Total user time: 00m48.01s
+
+Verify Statistics:
+    Data operation performed: Verified '/dev/PhysicalDrive6' with '/dev/PhysicalDrive5'.
+     Total records processed: 555704 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 18209308672 (17782528.000 Kbytes, 17365.750 Mbytes)
+      Average transfer rates: 1048937 bytes/sec, 1024.352 Kbytes/sec
+     Number I/O's per second: 32.011
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 4h49m19.78s
+           Total system time: 00m16.82s
+             Total user time: 10m01.89s
+
+Total Statistics:
+      Input device/file name: /dev/PhysicalDrive6 (device type=disk)
+     Type of I/O's performed: sequential (forward)
+     Total records processed: 1111408 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 91046543360 (88912640.000 Kbytes, 86828.750 Mbytes)
+      Average transfer rates: 2677046 bytes/sec, 2614.303 Kbytes/sec
+     Number I/O's per second: 32.679
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 9h26m50.07s
+           Total system time: 00m33.61s
+             Total user time: 10m49.90s
+               Starting time: Sat Feb 10 11:53:44 2001
+                 Ending time: Sat Feb 10 21:20:34 2001
+
+
+administrator@MEDA /d/rmiller/dt.d
+$ umount /dev/PhysicalDrive6
+
+administrator@MEDA /d/rmiller/dt.d
+$ umount /dev/PhysicalDrive5
+
+administrator@MEDA /d/rmiller/dt.d
+$
+

@@ -1,0 +1,43 @@
+	QNX Specific Notes:
+	-------------------
+     o	The Makefile is setup for building 'dt' using the flat memory
+	model.  This can be changed to compact model for running on
+	non-32bit QNX systems (also remove -D_QNX_32BIT).
+
+     o	There are numerous 'dt' scripts used to help automate testing,
+	but they were written to use C-Shell which is not shipped with
+	QNX.  I downloaded 'tcsh' from QUICS, which appears to work Ok.
+	[ BTW:  None of these scripts are required to run 'dt'. ]
+
+     o	Some 'dt' tests are not built into the QNX version at this
+	time, since these features are not currently supported.  This
+	includes POSIX AIO (-DAIO), memory mapped files (-DMMAP), and
+	tape specific tests (in dttape.c), which require the MTIOCTOP
+	ioctl() command.
+
+------------------------------------------------------------------------------
+
+November 21, 1994 - Robin Miller.
+
+	Finally upgraded to QNX 4.2 and built 'dt' with Watcom 9.52 compiler
+kit.  The default build is flat memory model, for 32-bit systems.
+
+	Fixed problem waiting for child processes.  Turns out, POSIX allows
+SIGCHLD to be handled differently depending on SIG_IGN or SIG_DFL setting.
+For QNX, SIGCHLD signal had to be set to SIG_DFL to work properly for 'dt'.
+
+-------------------------------------------------------------------------------
+
+October 6, 1993 - Robin Miller
+
+	The "files=" option can only be used to read multiple tape files,
+since no support exists for writing file marks in this version of 'dt'.  I
+haven't actually tested this on QNX tape devices, since I don't have any,
+but it has been tested on SunOS, ULTRIX, and DEC OSF/1 systems.
+
+	The scripts supplied with 'dt' are written to use C-shell, but work
+just fine with 'tcsh' which is available on QUICS.  I just create a link
+from 'tcsh' to 'csh' in /bin.  Some of the scripts may need changed a little
+to run properly on QNX, since they were written for BSD-Unix like systems.
+They should serve as good templates however, incase you're not a shell script
+writing expert (neither am I).

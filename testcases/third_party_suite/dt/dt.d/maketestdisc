@@ -1,0 +1,28 @@
+#/bin/ksh
+
+TEST_NAME=${0##*/}
+DEVICE_NAME=${1:-$DT_DEVICE}
+LOG_FILE=${2:-"${TEST_NAME}-${DEVICE_NAME}.log"}
+
+[[ $DEVICE_NAME = "" ]] &&
+{
+    print - "Usage: $TEST_NAME device [ log_file ] "
+    exit 1
+}
+
+DISK_NAME=/dev/r${DEVICE_NAME}
+#
+# Layout Notes:
+#  'a' not used to preserve the disklabel.
+#  'c' not used so entire data area can be accessed.
+#
+date > $LOG_FILE
+file ${DISK_NAME}c >> $LOG_FILE
+dt of=${DISK_NAME}b log=$LOG_FILE bs=64k limit=204800b pf=pattern_4 lba=64
+dt of=${DISK_NAME}d log=$LOG_FILE bs=64k limit=204800b pf=pattern_5 lba=204864
+dt of=${DISK_NAME}e log=$LOG_FILE bs=64k limit=204800b pf=pattern_6 lba=409664
+dt of=${DISK_NAME}f log=$LOG_FILE bs=64k limit=204800b pf=pattern_7 lba=614464
+dt of=${DISK_NAME}g log=$LOG_FILE bs=64k limit=204800b pf=pattern_8 lba=819264
+dt of=${DISK_NAME}h log=$LOG_FILE bs=64k limit=204800b pf=pattern_9 lba=1024064
+date >> $LOG_FILE
+

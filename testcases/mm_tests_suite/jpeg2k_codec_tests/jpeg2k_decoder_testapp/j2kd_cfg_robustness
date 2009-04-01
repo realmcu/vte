@@ -1,0 +1,3 @@
+input/p0_02_corrupt.j2k j2kd_output/test1r input/p0_02.raw n/a n/a 4
+jpeg2k_decoder_testapp j2kd_output/test2r n/a n/a n/a 129
+j2kd_cfg j2k_output/test3r n/a n/a n/a 10

@@ -1,0 +1,19 @@
+test_vectors/T_660/T00_660.cod     wbamrd_output/T00_660.raw     test_vectors/T_660/T00_660.out
+test_vectors/T_885/T00_885.cod     wbamrd_output/T00_885.raw     test_vectors/T_885/T00_885.out
+test_vectors/T_1425/T00_1425.cod   wbamrd_output/T00_1425.raw    test_vectors/T_1425/T00_1425.out
+test_vectors/T_1585/T00_1585.cod   wbamrd_output/T00_1585.raw    test_vectors/T_1585/T00_1585.out
+test_vectors/T_1825/T00_1825.cod   wbamrd_output/T00_1825.raw    test_vectors/T_1825/T00_1825.out
+test_vectors/T_1985/T00_1985.cod   wbamrd_output/T00_1985.raw    test_vectors/T_1985/T00_1985.out
+test_vectors/T_2305/T00_2305.cod   wbamrd_output/T00_2305.raw    test_vectors/T_2305/T00_2305.out
+test_vectors/T_2305/T01_2305.cod   wbamrd_output/T01_2305.raw    test_vectors/T_2305/T01_2305.out   
+test_vectors/T_2305/T02_2305.cod   wbamrd_output/T02_2305.raw    test_vectors/T_2305/T02_2305.out   
+test_vectors/T_2305/T03_2305.cod   wbamrd_output/T03_2305.raw    test_vectors/T_2305/T03_2305.out   
+test_vectors/T_2305/T04_2305.cod   wbamrd_output/T04_2305.raw    test_vectors/T_2305/T04_2305.out   
+test_vectors/T_2305/T05_2305.cod   wbamrd_output/T05_2305.raw    test_vectors/T_2305/T05_2305.out   
+test_vectors/DTX_test_vectors/T_660/Dtx3_660.cod        wbamrd_output/Dtx3_660.raw      test_vectors/DTX_test_vectors/T_660/Dtx3_660.out  
+test_vectors/DTX_test_vectors/T_885/Dtx3_885.cod        wbamrd_output/Dtx3_885.raw      test_vectors/DTX_test_vectors/T_885/Dtx3_885.out  
+test_vectors/DTX_test_vectors/T_1265/Dtx3_1265.cod      wbamrd_output/Dtx3_1265.raw     test_vectors/DTX_test_vectors/T_1265/Dtx3_1265.out
+
+
+
+
