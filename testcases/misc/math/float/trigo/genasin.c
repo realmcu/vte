@@ -37,6 +37,12 @@
 
 #define M_PIl	3.1415926535897932384626433832795029L
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> vte 20080401
 int create_Result_file()
 {
 
@@ -46,13 +52,23 @@ int create_Result_file()
 	int fp;
 
 	F_name = "rasin";
+<<<<<<< HEAD
 	nbVal = 20000;
 
 	Inc = 2/nbVal;
+=======
+	nbVal = 20000; 
+
+	Inc = 2/nbVal; 
+>>>>>>> vte 20080401
 
 	for (i=0; i<nbVal; i++)
 		tabRasin[i] = asin( (Inc * i) -1);
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> vte 20080401
 	fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
         if (!fp)
         {
@@ -62,16 +78,28 @@ int create_Result_file()
 	}
 	else
 	{
+<<<<<<< HEAD
 		for (i = 0; i<nbVal; i++)
 		{
 			write(fp,&tabRasin[i],sizeof(double));
 		}
 
+=======
+		for (i = 0; i<nbVal; i++ ) 
+		{
+			write(fp,&tabRasin[i],sizeof(double));
+		}
+	
+>>>>>>> vte 20080401
 		close(fp);
 		return 0;
 	}
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> vte 20080401
 int create_Data_file()
 {
 	int i, nbVal;
@@ -80,13 +108,23 @@ int create_Data_file()
 	int fp;
 
 	F_name = "dasin";
+<<<<<<< HEAD
 	nbVal = 20000;
 
 	Inc = 2/nbVal;
+=======
+	nbVal = 20000; 
+
+	Inc = 2/nbVal;  
+>>>>>>> vte 20080401
 
 	for (i=0; i<nbVal; i++)
 		tabDasin[i] = (Inc * i) -1;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> vte 20080401
 	fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
         if (!fp)
         {
@@ -95,8 +133,13 @@ int create_Data_file()
 	    	return -1;
         }
         else
+<<<<<<< HEAD
         {
 		for (i = 0; i<nbVal; i++)
+=======
+        {	
+		for (i = 0; i<nbVal; i++ ) 
+>>>>>>> vte 20080401
 		{
 			write(fp,&tabDasin[i],sizeof(double));
 		}
@@ -105,10 +148,18 @@ int create_Data_file()
 	}
 }
 
+<<<<<<< HEAD
 int main(int argc, char  *argv[])
 {
 
 	if (argc > 1)
+=======
+
+int main(int argc, char  *argv[])
+{
+
+	if (argc > 1) 
+>>>>>>> vte 20080401
 	{
 		switch ( atoi(argv[1]) )
 		{
@@ -141,4 +192,8 @@ int main(int argc, char  *argv[])
 
   return(0);
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> vte 20080401

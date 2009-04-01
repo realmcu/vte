@@ -1,0 +1,824 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/darren@hiebert.com/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://darren.hiebert.com/ctags/	/official site/
+!_TAG_PROGRAM_VERSION	3.3.3	/with C, C++, Eiffel, Fortran, and Java  support/
+ABORT	dt.h	/^enum onerrors {ABORT, CONTINUE};$/;"	e	enum:onerrors
+ADEV_LEN	dt.h	370;"	d
+ADEV_LEN	dt.h	375;"	d
+ADEV_PREFIX	dt.h	369;"	d
+ADEV_PREFIX	dt.h	374;"	d
+AIO_BUFS	dtaio.c	199;"	d	file:
+AIO_NotQed	dtaio.c	200;"	d	file:
+AIO_PRIO_DFL	dtaio.c	45;"	d	file:
+ANY_RADIX	dt.h	457;"	d
+ASCII_FIELD	dteei.c	1524;"	d	file:
+ASCII_PATTERN	dt.h	312;"	d
+ASCII_PATTERN	dt.h	342;"	d
+BLOCK_SIZE	dt.h	295;"	d
+CAM_StatusTable	dteei.c	/^struct CAM_StatusTable {$/;"	s	file:
+CDBG_BRIEF	dteei.c	105;"	d	file:
+CDBG_FULL	dteei.c	106;"	d	file:
+CDROM_NAME	dt.h	384;"	d
+CDROM_NAME	dt.h	388;"	d
+CDROM_NAME	dt.h	392;"	d
+CDROM_NAME	dt.h	395;"	d
+CDROM_NAME	dt.h	398;"	d
+CLK_TCK	dt.h	142;"	d
+CONSOLE_LEN	dt.h	381;"	d
+CONSOLE_NAME	dt.h	380;"	d
+CONTINUE	dt.h	/^enum onerrors {ABORT, CONTINUE};$/;"	e	enum:onerrors
+COPY_MODE	dt.h	/^enum iomode {COPY_MODE, TEST_MODE, VERIFY_MODE};$/;"	e	enum:iomode
+COPY_STATS	dt.h	/^enum stats {COPY_STATS, READ_STATS, RAW_STATS, WRITE_STATS, TOTAL_STATS, VERIFY_STATS};$/;"	e	enum:stats
+CTS_RTS	dt.h	/^enum flow {FLOW_NONE, CTS_RTS, XON_XOFF};$/;"	e	enum:flow
+CalculateDumpSize	dtutil.c	/^CalculateDumpSize (size_t size)$/;"	f	file:
+Ctime	dtutil.c	/^Ctime (time_t timer)$/;"	f
+CvtStrtoLarge	dtutil.c	/^CvtStrtoLarge (char *nstr, char **eptr, int base)$/;"	f
+CvtStrtoValue	dtutil.c	/^CvtStrtoValue (char *nstr, char **eptr, int base)$/;"	f
+CvtTimetoValue	dtutil.c	/^CvtTimetoValue (char *nstr, char **eptr)$/;"	f
+D	dtusage.c	128;"	d	file:
+DCF_ACTIVE	dt.h	593;"	d
+DEC_RADIX	dt.h	458;"	d
+DEFAULT_PATTERN	dt.h	311;"	d
+DEFAULT_PATTERN	dt.h	341;"	d
+DEFAULT_WIDTH	dteei.c	1529;"	d	file:
+DEF_LOG_BUFSIZE	dt.h	449;"	d
+DELETE_FILE	dt.h	/^enum dispose {DELETE_FILE, KEEP_FILE};$/;"	e	enum:dispose
+DEV_LEN	dt.h	364;"	d
+DEV_PREFIX	dt.h	363;"	d
+DISK_NAME	dt.h	403;"	d
+DISK_NAME	dt.h	406;"	d
+DISK_NAME	dt.h	410;"	d
+DISK_NAME	dt.h	413;"	d
+DISK_NAME	dt.h	416;"	d
+DNL	dteei.c	99;"	d	file:
+DT_AUDIO	dt.h	/^enum devtype {DT_AUDIO, DT_BLOCK, DT_CHARACTER, DT_COMM, DT_DISK,$/;"	e	enum:devtype
+DT_BLOCK	dt.h	/^enum devtype {DT_AUDIO, DT_BLOCK, DT_CHARACTER, DT_COMM, DT_DISK,$/;"	e	enum:devtype
+DT_CHARACTER	dt.h	/^enum devtype {DT_AUDIO, DT_BLOCK, DT_CHARACTER, DT_COMM, DT_DISK,$/;"	e	enum:devtype
+DT_COMM	dt.h	/^enum devtype {DT_AUDIO, DT_BLOCK, DT_CHARACTER, DT_COMM, DT_DISK,$/;"	e	enum:devtype
+DT_DISK	dt.h	/^enum devtype {DT_AUDIO, DT_BLOCK, DT_CHARACTER, DT_COMM, DT_DISK,$/;"	e	enum:devtype
+DT_FIFO	dt.h	/^	      DT_FIFO, DT_PIPE, DT_PRINTER, DT_PROCESSOR, DT_REGULAR,$/;"	e	enum:devtype
+DT_GRAPHICS	dt.h	/^	      DT_GRAPHICS, DT_MEMORY, DT_MMAP, DT_MOUSE, DT_NETWORK,$/;"	e	enum:devtype
+DT_MEMORY	dt.h	/^	      DT_GRAPHICS, DT_MEMORY, DT_MMAP, DT_MOUSE, DT_NETWORK,$/;"	e	enum:devtype
+DT_MMAP	dt.h	/^	      DT_GRAPHICS, DT_MEMORY, DT_MMAP, DT_MOUSE, DT_NETWORK,$/;"	e	enum:devtype
+DT_MOUSE	dt.h	/^	      DT_GRAPHICS, DT_MEMORY, DT_MMAP, DT_MOUSE, DT_NETWORK,$/;"	e	enum:devtype
+DT_NETWORK	dt.h	/^	      DT_GRAPHICS, DT_MEMORY, DT_MMAP, DT_MOUSE, DT_NETWORK,$/;"	e	enum:devtype
+DT_PIPE	dt.h	/^	      DT_FIFO, DT_PIPE, DT_PRINTER, DT_PROCESSOR, DT_REGULAR,$/;"	e	enum:devtype
+DT_PRINTER	dt.h	/^	      DT_FIFO, DT_PIPE, DT_PRINTER, DT_PROCESSOR, DT_REGULAR,$/;"	e	enum:devtype
+DT_PROCESSOR	dt.h	/^	      DT_FIFO, DT_PIPE, DT_PRINTER, DT_PROCESSOR, DT_REGULAR,$/;"	e	enum:devtype
+DT_REGULAR	dt.h	/^	      DT_FIFO, DT_PIPE, DT_PRINTER, DT_PROCESSOR, DT_REGULAR,$/;"	e	enum:devtype
+DT_SOCKET	dt.h	/^	      DT_SOCKET, DT_SPECIAL, DT_STREAMS, DT_TAPE, DT_TERMINAL,$/;"	e	enum:devtype
+DT_SPECIAL	dt.h	/^	      DT_SOCKET, DT_SPECIAL, DT_STREAMS, DT_TAPE, DT_TERMINAL,$/;"	e	enum:devtype
+DT_STREAMS	dt.h	/^	      DT_SOCKET, DT_SPECIAL, DT_STREAMS, DT_TAPE, DT_TERMINAL,$/;"	e	enum:devtype
+DT_TAPE	dt.h	/^	      DT_SOCKET, DT_SPECIAL, DT_STREAMS, DT_TAPE, DT_TERMINAL,$/;"	e	enum:devtype
+DT_TERMINAL	dt.h	/^	      DT_SOCKET, DT_SPECIAL, DT_STREAMS, DT_TAPE, DT_TERMINAL,$/;"	e	enum:devtype
+DT_UNKNOWN	dt.h	/^	      DT_UNKNOWN };$/;"	e	enum:devtype
+Debug_flag	dt.c	/^bool	Debug_flag = FALSE;		\/* Verbose debug output flag.	*\/$/;"	v
+DoBackwardSpaceFile	dttape.c	/^DoBackwardSpaceFile (dinfo_t *dip, daddr_t count)$/;"	f
+DoBackwardSpaceRecord	dttape.c	/^DoBackwardSpaceRecord (dinfo_t *dip, daddr_t count)$/;"	f
+DoEraseTape	dttape.c	/^DoEraseTape (dinfo_t *dip)$/;"	f
+DoForwardSpaceFile	dttape.c	/^DoForwardSpaceFile (dinfo_t *dip, daddr_t count)$/;"	f
+DoForwardSpaceRecord	dttape.c	/^DoForwardSpaceRecord (dinfo_t *dip, daddr_t count)$/;"	f
+DoIoctl	dttape.c	/^DoIoctl (dinfo_t *dip, int cmd, caddr_t argp, caddr_t msgp)$/;"	f
+DoIoctl	dttape.c	/^DoIoctl (dinfo_t *dip, int cmd, int count, caddr_t msgp)$/;"	f
+DoLoadTape	dttape.c	/^DoLoadTape (dinfo_t *dip)$/;"	f
+DoMtOp	dttape.c	/^DoMtOp (dinfo_t *dip, short cmd, daddr_t count, caddr_t msgp)$/;"	f
+DoRetensionTape	dttape.c	/^DoRetensionTape (dinfo_t *dip)$/;"	f
+DoRewindTape	dttape.c	/^DoRewindTape (dinfo_t *dip)$/;"	f
+DoSpaceEndOfData	dttape.c	/^DoSpaceEndOfData (dinfo_t *dip)$/;"	f
+DoTapeOffline	dttape.c	/^DoTapeOffline (dinfo_t *dip)$/;"	f
+DoTapeOnline	dttape.c	/^DoTapeOnline (dinfo_t *dip)$/;"	f
+DoUnloadTape	dttape.c	/^DoUnloadTape (dinfo_t *dip)$/;"	f
+DoWriteFileMark	dttape.c	/^DoWriteFileMark (dinfo_t *dip, daddr_t count)$/;"	f
+EEI_OPEN_RETRIES	dt.h	652;"	d
+EEI_RESET	dt.h	649;"	d
+EEI_RETRIES	dt.h	651;"	d
+EEI_SLEEP	dt.h	650;"	d
+EEI_StatusTable	dteei.c	/^struct EEI_StatusTable {$/;"	s	file:
+EMPTY_FIELD	dteei.c	1525;"	d	file:
+END_OF_FILE	dt.h	528;"	d
+EOM	dteei.c	96;"	d	file:
+EQ	dt.h	348;"	d
+EQL	dt.h	349;"	d
+EQS	dt.h	354;"	d
+EQSC	dt.h	355;"	d
+FAILURE	dt.h	288;"	d
+FALSE	dt.h	291;"	d
+FATAL_ERROR	dt.h	529;"	d
+FIELD_WIDTH	dteei.c	1528;"	d	file:
+FILE_MARK	dteei.c	97;"	d	file:
+FLOW_NONE	dt.h	/^enum flow {FLOW_NONE, CTS_RTS, XON_XOFF};$/;"	e	enum:flow
+FORWARD	dt.h	/^enum iodir {FORWARD, REVERSE};$/;"	e	enum:iodir
+FUF	dt.h	214;"	d
+FUF	dt.h	235;"	d
+FUF	dt.h	238;"	d
+FUF	dt.h	253;"	d
+FUF	dt.h	267;"	d
+FXF	dt.h	215;"	d
+FXF	dt.h	236;"	d
+FXF	dt.h	239;"	d
+FXF	dt.h	254;"	d
+FXF	dt.h	268;"	d
+FindCapacity	dtread.c	/^FindCapacity (struct dinfo *dip)$/;"	f
+Fprint	dtutil.c	/^Fprint (char *format, ...)$/;"	f
+Fprintf	dtutil.c	/^Fprintf (char *format, ...)$/;"	f
+Fputs	dtutil.c	/^Fputs (char *str, FILE *stream)$/;"	f
+GBYTE_SIZE	dt.h	298;"	d
+GetModemSignals	dttty.c	/^GetModemSignals (int fd)$/;"	f
+HEX_FIELD	dteei.c	1527;"	d	file:
+HEX_RADIX	dt.h	459;"	d
+HOURS_PER_DAY	dt.h	113;"	d
+HZ	dt.h	136;"	d
+HZ	dt.h	139;"	d
+HandleMultiVolume	dt.c	/^HandleMultiVolume (struct dinfo *dip)$/;"	f
+HandleTapeResets	dteei.c	/^HandleTapeResets(struct dinfo *dip)$/;"	f
+HangupModem	dttty.c	/^HangupModem (int fd)$/;"	f
+ILI	dteei.c	95;"	d	file:
+INFINITY	dt.h	305;"	d
+INFINITY	dt.h	310;"	d
+INFINITY	dt.h	325;"	d
+INFINITY	dt.h	329;"	d
+INFINITY	dt.h	335;"	d
+INFINITY	dt.h	337;"	d
+INLINE_FUNCS	dt.h	713;"	d
+INPUT_FILE	dt.h	/^enum file_type {INPUT_FILE, OUTPUT_FILE};$/;"	e	enum:file_type
+IS_HexString	dtutil.c	/^IS_HexString (char *s)$/;"	f
+IsDriveLetter	dtinfo.c	/^IsDriveLetter(char *bufptr)$/;"	f	file:
+KBYTE_SIZE	dt.h	296;"	d
+KEEP_FILE	dt.h	/^enum dispose {DELETE_FILE, KEEP_FILE};$/;"	e	enum:dispose
+LDF	dt.h	212;"	d
+LDF	dt.h	226;"	d
+LDF	dt.h	230;"	d
+LDF	dt.h	251;"	d
+LDF	dt.h	265;"	d
+LOG_BUFSIZE	dt.h	452;"	d
+LOG_BUFSIZE	dt.h	454;"	d
+LOG_DIAG_INFO	dt.h	154;"	d
+LUF	dt.h	211;"	d
+LUF	dt.h	225;"	d
+LUF	dt.h	229;"	d
+LUF	dt.h	250;"	d
+LUF	dt.h	264;"	d
+LXF	dt.h	213;"	d
+LXF	dt.h	227;"	d
+LXF	dt.h	231;"	d
+LXF	dt.h	252;"	d
+LXF	dt.h	266;"	d
+Lflush	dtutil.c	/^Lflush(void)$/;"	f
+LogDiagMsg	dtutil.c	/^LogDiagMsg(char *msg)$/;"	f
+Lprintf	dtutil.c	/^Lprintf (char *format, ...)$/;"	f
+MACHINE_64BITS	dt.h	158;"	d
+MAP_FILE	dtmmap.c	71;"	d	file:
+MAX	dt.h	182;"	d
+MAX_LONG	dt.h	308;"	d
+MAX_LONG	dt.h	315;"	d
+MAX_PROCS	dt.h	302;"	d
+MAX_SEEK	dt.h	307;"	d
+MAX_SEEK	dt.h	318;"	d
+MAX_SEEK	dt.h	320;"	d
+MAX_SLICES	dt.h	303;"	d
+MAX_ULONG	dt.h	309;"	d
+MAX_ULONG	dt.h	316;"	d
+MAX_ULONG_LONG	dt.h	324;"	d
+MAX_ULONG_LONG	dt.h	328;"	d
+MBYTE_SIZE	dt.h	297;"	d
+MIN	dt.h	179;"	d
+MINS_PER_HOUR	dt.h	112;"	d
+Malloc	dtutil.c	/^Malloc (size_t size)$/;"	f
+NDEV_LEN	dt.h	372;"	d
+NDEV_LEN	dt.h	377;"	d
+NDEV_PREFIX	dt.h	371;"	d
+NDEV_PREFIX	dt.h	376;"	d
+NE	dt.h	351;"	d
+NEL	dt.h	352;"	d
+NES	dt.h	357;"	d
+NESC	dt.h	358;"	d
+NOFUNC	dt.h	558;"	d
+NO_LBA	dt.h	293;"	d
+NTAPE_NAME	dt.h	431;"	d
+NTAPE_NAME	dt.h	434;"	d
+NTAPE_NAME	dt.h	437;"	d
+NTAPE_NAME	dt.h	440;"	d
+NTAPE_NAME	dt.h	443;"	d
+NTAPE_NAME	dt.h	446;"	d
+NUMERIC_FIELD	dteei.c	1526;"	d	file:
+NoFd	dt.h	559;"	d
+OFF	dt.h	/^enum opt {OFF, ON, OPT_NONE};$/;"	e	enum:opt
+ON	dt.h	/^enum opt {OFF, ON, OPT_NONE};$/;"	e	enum:opt
+OPT_NONE	dt.h	/^enum opt {OFF, ON, OPT_NONE};$/;"	e	enum:opt
+OUTPUT_FILE	dt.h	/^enum file_type {INPUT_FILE, OUTPUT_FILE};$/;"	e	enum:file_type
+OutputRadix	dteei.c	/^int OutputRadix = DEC_RADIX;		\/* Default to decimal output.	*\/$/;"	v
+P	dttty.c	921;"	d	file:
+P	dtusage.c	127;"	d	file:
+P1	dttty.c	922;"	d	file:
+PADBUFR_SIZE	dt.h	514;"	d
+PNL	dteei.c	100;"	d	file:
+PROC_ALLOC	dtprocs.c	93;"	d	file:
+PrintAscii	dteei.c	/^PrintAscii (char *field_str, char *ascii_str, int nl_flag)$/;"	f
+PrintDecimal	dteei.c	/^PrintDecimal (char *field_str, u_long numeric_value, int nl_flag)$/;"	f
+PrintFields	dteei.c	/^PrintFields (u_char *bptr, int length)$/;"	f
+PrintHex	dteei.c	/^PrintHex (char *field_str, u_long numeric_value, int nl_flag)$/;"	f
+PrintNumeric	dteei.c	/^PrintNumeric (char *field_str, u_long numeric_value, int nl_flag)$/;"	f
+QuadIsDouble	dt.h	258;"	d
+QuadIsLong	dt.h	206;"	d
+QuadIsLongLong	dt.h	219;"	d
+QuadIsLongLong	dt.h	244;"	d
+RANDOM_IO	dt.h	/^enum iotype {SEQUENTIAL_IO, RANDOM_IO};$/;"	e	enum:iotype
+RAW_STATS	dt.h	/^enum stats {COPY_STATS, READ_STATS, RAW_STATS, WRITE_STATS, TOTAL_STATS, VERIFY_STATS};$/;"	e	enum:stats
+RCDROM_NAME	dt.h	385;"	d
+RCDROM_NAME	dt.h	389;"	d
+RCDROM_NAME	dt.h	393;"	d
+RCDROM_NAME	dt.h	396;"	d
+RCDROM_NAME	dt.h	399;"	d
+RDISK_NAME	dt.h	404;"	d
+RDISK_NAME	dt.h	407;"	d
+RDISK_NAME	dt.h	411;"	d
+RDISK_NAME	dt.h	414;"	d
+RDISK_NAME	dt.h	417;"	d
+READ_MODE	dt.h	/^enum test_mode {READ_MODE, WRITE_MODE};$/;"	e	enum:test_mode
+READ_STATS	dt.h	/^enum stats {COPY_STATS, READ_STATS, RAW_STATS, WRITE_STATS, TOTAL_STATS, VERIFY_STATS};$/;"	e	enum:stats
+REVERSE	dt.h	/^enum iodir {FORWARD, REVERSE};$/;"	e	enum:iodir
+ROTATE_SIZE	dt.h	523;"	d
+RecordError	dtutil.c	/^RecordError(void)$/;"	f
+RecordWarning	dtutil.c	/^RecordWarning(u_long record)$/;"	f
+ReportCompareError	dtutil.c	/^ReportCompareError ($/;"	f
+ReportDeviceInfo	dtutil.c	/^ReportDeviceInfo ($/;"	f
+ReportLbdataError	dtutil.c	/^ReportLbdataError ($/;"	f
+RequestFirstVolume	dt.c	/^RequestFirstVolume (struct dinfo *dip, int oflags)$/;"	f
+RequestMultiVolume	dt.c	/^RequestMultiVolume (struct dinfo *dip, bool reopen, int oflags)$/;"	f
+SCSI_StatusTable	dteei.c	/^struct SCSI_StatusTable {$/;"	s	file:
+SECS_PER_DAY	dt.h	115;"	d
+SECS_PER_HOUR	dt.h	114;"	d
+SECS_PER_MIN	dt.h	111;"	d
+SEQUENTIAL_IO	dt.h	/^enum iotype {SEQUENTIAL_IO, RANDOM_IO};$/;"	e	enum:iotype
+STRING_BUFFER_SIZE	dt.h	300;"	d
+SUCCESS	dt.h	287;"	d
+SenseCodeEntrys	dteei.c	/^int SenseCodeEntrys = sizeof(SenseCodeTable) \/ sizeof(struct sense_entry);$/;"	v
+SenseCodeTable	dteei.c	/^struct sense_entry SenseCodeTable[] = {$/;"	v
+SetBlockingMode	dttty.c	/^SetBlockingMode (int fd)$/;"	f
+SetModemSignals	dttty.c	/^SetModemSignals (int fd, int msigs)$/;"	f
+SetupRegularFile	dtinfo.c	/^SetupRegularFile (struct dinfo *dip, struct stat *sbp)$/;"	f	file:
+ShowModemSignals	dttty.c	/^ShowModemSignals (int fd)$/;"	f
+Sprintf	dtutil.c	/^Sprintf(char *bufptr, char *msg, ...)$/;"	f
+StrCopy	dtutil.c	/^StrCopy (void *to_buffer, void *from_buffer, size_t length)$/;"	f
+TAPE_NAME	dt.h	430;"	d
+TAPE_NAME	dt.h	433;"	d
+TAPE_NAME	dt.h	436;"	d
+TAPE_NAME	dt.h	439;"	d
+TAPE_NAME	dt.h	442;"	d
+TAPE_NAME	dt.h	445;"	d
+TBYTE_SIZE	dt.h	313;"	d
+TBYTE_SIZE	dt.h	326;"	d
+TBYTE_SIZE	dt.h	330;"	d
+TBYTE_SIZE	dt.h	339;"	d
+TEST_MODE	dt.h	/^enum iomode {COPY_MODE, TEST_MODE, VERIFY_MODE};$/;"	e	enum:iomode
+TOTAL_STATS	dt.h	/^enum stats {COPY_STATS, READ_STATS, RAW_STATS, WRITE_STATS, TOTAL_STATS, VERIFY_STATS};$/;"	e	enum:stats
+TRUE	dt.h	290;"	d
+TTY_LEN	dt.h	427;"	d
+TTY_NAME	dt.h	421;"	d
+TTY_NAME	dt.h	423;"	d
+TTY_NAME	dt.h	425;"	d
+TimerActive	dt.c	/^bool	TimerActive;			\/* Set after timer activated.	*\/$/;"	v
+TimerExpired	dt.c	/^bool	TimerExpired;			\/* Set after timer has expired.	*\/$/;"	v
+UNINITIALIZED	dt.h	292;"	d
+USE_STDARG	dt.h	150;"	d
+USE_VARARGS	dt.h	148;"	d
+VERIFY_MODE	dt.h	/^enum iomode {COPY_MODE, TEST_MODE, VERIFY_MODE};$/;"	e	enum:iomode
+VERIFY_STATS	dt.h	/^enum stats {COPY_STATS, READ_STATS, RAW_STATS, WRITE_STATS, TOTAL_STATS, VERIFY_STATS};$/;"	e	enum:stats
+VMIN_MAX	dttty.c	49;"	d	file:
+VMIN_MAX	dttty.c	52;"	d	file:
+VTIME_MAX	dttty.c	50;"	d	file:
+VTIME_MAX	dttty.c	53;"	d	file:
+WARNING	dt.h	289;"	d
+WRITE_MODE	dt.h	/^enum test_mode {READ_MODE, WRITE_MODE};$/;"	e	enum:test_mode
+WRITE_STATS	dt.h	/^enum stats {COPY_STATS, READ_STATS, RAW_STATS, WRITE_STATS, TOTAL_STATS, VERIFY_STATS};$/;"	e	enum:stats
+WaitForCarrier	dttty.c	/^WaitForCarrier (int fd)$/;"	f
+WhichBlock	dt.h	189;"	d
+XON_XOFF	dt.h	/^enum flow {FLOW_NONE, CTS_RTS, XON_XOFF};$/;"	e	enum:flow
+abort_procs	dtprocs.c	/^abort_procs(void)$/;"	f
+acbs	dtaio.c	/^struct aiocb	*acbs;			\/* Pointer to AIO control blocks. *\/$/;"	v
+active_dinfo	dt.c	/^struct dinfo *active_dinfo;		\/* Active device information.	*\/$/;"	v
+aio_bufs	dtaio.c	/^int	aio_bufs = AIO_BUFS;		\/* The number of AIO buffers.	*\/$/;"	v
+aio_data_adjust	dtaio.c	/^u_long	aio_data_adjust;		\/* # of data bytes to adjust.	*\/$/;"	v
+aio_data_bytes	dtaio.c	/^v_large	aio_data_bytes;			\/* Total data bytes per pass.	*\/$/;"	v
+aio_file_adjust	dtaio.c	/^u_long	aio_file_adjust;		\/* # of tape files to adjust.	*\/$/;"	v
+aio_file_bytes	dtaio.c	/^v_large	aio_file_bytes;			\/* # of tape bytes processed.	*\/$/;"	v
+aio_flag	dt.c	/^bool	aio_flag = FALSE;		\/* Asynchronous I\/O (AIO) flag.	*\/$/;"	v
+aio_funcs	dtaio.c	/^struct dtfuncs aio_funcs = {$/;"	v
+aio_index	dtaio.c	/^int	aio_index;			\/* Index to AIO control block.	*\/$/;"	v
+aio_lba	dtaio.c	/^u_int32	aio_lba;			\/* AIO logical block address.	*\/$/;"	v
+aio_offset	dtaio.c	/^volatile off_t aio_offset;		\/* AIO offset (we maintain).	*\/$/;"	v
+aio_record_adjust	dtaio.c	/^u_long	aio_record_adjust;		\/* # of tape record to adjust.	*\/$/;"	v
+aio_record_count	dtaio.c	/^vu_long	aio_record_count;		\/* # of records to processed.	*\/$/;"	v
+aiobufs	dtaio.c	/^u_char		**aiobufs;		\/* Pointer to base buffer addrs.  *\/$/;"	v
+align_offset	dt.c	/^int	align_offset = 0;		\/* Align buffer at this offset.	*\/$/;"	v
+await_procs	dtprocs.c	/^await_procs(void)$/;"	f
+bad_conversion_str	dtutil.c	/^static char *bad_conversion_str =$/;"	v	file:
+base_buffer	dt.c	/^u_char	*base_buffer;			\/* Base address of data buffer.	*\/$/;"	v
+baud_rate	dt.c	/^speed_t	baud_rate;			\/* The user selected baud rate.	*\/$/;"	v
+baud_rate_code	dttty.c	/^speed_t baud_rate_code = B9600;		\/* Default baud rate is 9600.	*\/$/;"	v
+baud_rate_tbl	dttty.c	/^struct tty_baud_rate baud_rate_tbl[] = {$/;"	v
+block_size	dt.c	/^size_t	block_size = BLOCK_SIZE;	\/* Default block size to use.	*\/$/;"	v
+bool	dt.h	/^typedef unsigned char		bool;$/;"	t
+bool	dt.h	/^typedef unsigned int		bool;$/;"	t
+bypass_flag	dt.c	/^bool	bypass_flag = FALSE;		\/* Bypass (some) sanity checks.	*\/$/;"	v
+bzero	dtutil.c	/^bzero (char *buffer, size_t length)$/;"	f
+caddr_t	dt.h	/^typedef char *			caddr_t;$/;"	t
+cam_StatusEntrys	dteei.c	/^static int cam_StatusEntrys =$/;"	v	file:
+cam_StatusTable	dteei.c	/^} cam_StatusTable[] = {$/;"	v
+cam_status	dteei.c	/^	u_char	cam_status;$/;"	m	struct:CAM_StatusTable
+cdbg_CamStatus	dteei.c	/^cdbg_CamStatus (u_char cam_status, int report_format)$/;"	f
+cdbg_EEIStatus	dteei.c	/^cdbg_EEIStatus (u_int eei_status, int report_format)$/;"	f
+cdbg_ScsiStatus	dteei.c	/^cdbg_ScsiStatus (u_char scsi_status, int report_format)$/;"	f
+cdbg_SenseKeyTable	dteei.c	/^char *cdbg_SenseKeyTable[] = {$/;"	v
+cdbg_SenseKeyTable	dteei.c	/^char *cdbg_SenseKeyTable[];$/;"	v
+cdbg_SenseMessage	dteei.c	/^cdbg_SenseMessage (struct all_req_sns_data *sdp)$/;"	f
+cdelay_count	dt.c	/^u_int	cdelay_count = 0;		\/* Delay before closing file.	*\/$/;"	v
+cerrors_flag	dt.c	/^bool	cerrors_flag = TRUE;		\/* Report device close errors.	*\/$/;"	v
+check_eei_status	dteei.c	/^check_eei_status(struct dinfo *dip, bool retry)$/;"	f
+check_read	dtread.c	/^check_read (struct dinfo *dip, ssize_t count, size_t size)$/;"	f
+check_write	dtwrite.c	/^check_write (struct dinfo *dip, ssize_t count, size_t size)$/;"	f
+child_pid	dt.c	/^pid_t	child_pid;			\/* For the child process ID.	*\/$/;"	v
+child_status	dt.c	/^int	child_status;			\/* For child exit status.	*\/$/;"	v
+child_status	dt.c	/^union wait child_status;		\/* For child exit status.	*\/$/;"	v
+clear_eei_status	dteei.c	/^clear_eei_status(int fd, bool startup)$/;"	f
+close_file	dtgen.c	/^close_file (struct dinfo *dip)$/;"	f
+cmd_line	dt.c	/^char	*cmd_line;			\/* Copy of our command line.	*\/$/;"	v
+cmdname	dt.c	/^char	*cmdname;			\/* Pointer to our program name.	*\/$/;"	v
+compare_error_str	dtutil.c	/^static char *compare_error_str =	"Data compare error at byte";$/;"	v	file:
+compare_flag	dt.c	/^bool	compare_flag = TRUE;		\/* Controls data comparisions.	*\/$/;"	v
+copy_pattern	dtutil.c	/^copy_pattern (u_int32 pattern, u_char *buffer)$/;"	f
+copy_record	dtwrite.c	/^copy_record (	struct dinfo	*dip,$/;"	f
+core_dump	dt.c	/^bool	core_dump = FALSE;		\/* Generate core dump on errors	*\/$/;"	v
+cur_proc	dtprocs.c	/^int cur_proc = 0;			\/* Current count of processes.	*\/$/;"	v
+current_acb	dtaio.c	/^struct aiocb	*current_acb;		\/* Current acb for error reports. *\/$/;"	v
+daddr_t	dt.h	/^typedef unsigned long		daddr_t;$/;"	t
+data_bits_code	dttty.c	/^unsigned data_bits_code = CS8;		\/* Default data bits = 8.	*\/$/;"	v
+data_buffer	dt.c	/^u_char	*data_buffer;			\/* Pointer to data buffer.	*\/$/;"	v
+data_limit	dt.c	/^large_t	data_limit;			\/* Total data limit per pass.	*\/$/;"	v
+data_op_str	dtstats.c	/^static char *data_op_str = "Data operation performed: ";$/;"	v	file:
+data_patterns	dt.c	/^u_int32 data_patterns[] = {$/;"	v
+data_size	dt.c	/^size_t	data_size;			\/* Data buffer size + pad bytes	*\/$/;"	v
+data_str	dtutil.c	/^static char *data_str =		"Data";$/;"	v	file:
+debug_flag	dt.c	/^bool	debug_flag = FALSE;		\/* Enable debug output flag.	*\/$/;"	v
+dec_system_device_info	dtinfo.c	/^dec_system_device_info (struct dinfo *dip)$/;"	f
+delete_file	dtutil.c	/^delete_file (struct dinfo *dip)$/;"	f
+device_size	dt.c	/^u_int32	device_size = 0;		\/* Default device block size.	*\/$/;"	v
+devtype	dt.h	/^enum devtype {DT_AUDIO, DT_BLOCK, DT_CHARACTER, DT_COMM, DT_DISK,$/;"	g
+di_capacity	dt.h	/^	u_int32	di_capacity;		\/* The device capacity (blocks)	*\/$/;"	m	struct:dinfo
+di_closing	dt.h	/^	bool	di_closing;		\/* The device is being closed.	*\/$/;"	m	struct:dinfo
+di_data_limit	dt.h	/^	large_t	di_data_limit;		\/* The data limit (in bytes).	*\/$/;"	m	struct:dinfo
+di_dbytes_read	dt.h	/^	v_large	di_dbytes_read;		\/* Number of data bytes read.	*\/$/;"	m	struct:dinfo
+di_dbytes_written	dt.h	/^	v_large	di_dbytes_written;	\/* Number of data bytes written.*\/$/;"	m	struct:dinfo
+di_device	dt.h	/^	char	*di_device;		\/* The real device name.	*\/$/;"	m	struct:dinfo
+di_devpath_failure	dt.h	/^	bool	di_devpath_failure;	\/* Path failure condition.	*\/$/;"	m	struct:dinfo
+di_dname	dt.h	/^	char	*di_dname;		\/* The \/dev device name.	*\/$/;"	m	struct:dinfo
+di_dsize	dt.h	/^	u_int32	di_dsize;		\/* The device block size.	*\/$/;"	m	struct:dinfo
+di_dtype	dt.h	/^	struct dtype *di_dtype;		\/* The device type information.	*\/$/;"	m	struct:dinfo
+di_eei_retries	dt.h	/^	int	di_eei_retries;		\/* The number of EEI retries.	*\/$/;"	m	struct:dinfo
+di_eei_sleep	dt.h	/^	int	di_eei_sleep;		\/* Time to sleep between retry.	*\/$/;"	m	struct:dinfo
+di_end_of_file	dt.h	/^	v_bool	di_end_of_file;		\/* End of file was detected.	*\/$/;"	m	struct:dinfo
+di_end_of_logical	dt.h	/^	v_bool	di_end_of_logical;	\/* End of logical tape detected	*\/$/;"	m	struct:dinfo
+di_end_of_media	dt.h	/^	v_bool	di_end_of_media;	\/* End of media was detected.	*\/$/;"	m	struct:dinfo
+di_eof_processing	dt.h	/^	bool	di_eof_processing;	\/* End of file proessing.	*\/$/;"	m	struct:dinfo
+di_eom_processing	dt.h	/^	bool	di_eom_processing;	\/* End of media processing.	*\/$/;"	m	struct:dinfo
+di_errno	dt.h	/^	v_int	di_errno;		\/* The last errno encountered.	*\/$/;"	m	struct:dinfo
+di_fbytes_read	dt.h	/^	v_large	di_fbytes_read;		\/* Number of file bytes read.	*\/$/;"	m	struct:dinfo
+di_fbytes_written	dt.h	/^	v_large	di_fbytes_written;	\/* Number of file bytes written.*\/$/;"	m	struct:dinfo
+di_fd	dt.h	/^	int	di_fd;			\/* The file descriptor.		*\/$/;"	m	struct:dinfo
+di_files_read	dt.h	/^	vu_long	di_files_read;		\/* Number of tape files read.	*\/$/;"	m	struct:dinfo
+di_files_written	dt.h	/^	vu_long	di_files_written;	\/* Number of tape files written.*\/$/;"	m	struct:dinfo
+di_flags	dt.h	/^	int	di_flags;		\/* The file control flags.	*\/$/;"	m	struct:dinfo
+di_ftype	dt.h	/^	enum file_type di_ftype;	\/* The file access type.	*\/$/;"	m	struct:dinfo
+di_funcs	dt.h	/^	struct dtfuncs *di_funcs;	\/* The test functions to use.	*\/$/;"	m	struct:dinfo
+di_mode	dt.h	/^	enum test_mode di_mode;		\/* The current test mode.	*\/$/;"	m	struct:dinfo
+di_mt	dt.h	/^	struct mtget *di_mt;		\/* The tape error information.	*\/$/;"	m	struct:dinfo
+di_offset	dt.h	/^volatile off_t	di_offset;		\/* The device\/file offset.	*\/$/;"	m	struct:dinfo
+di_oflags	dt.h	/^	int	di_oflags;		\/* The last file open flags.	*\/$/;"	m	struct:dinfo
+di_proc_eei	dt.h	/^	bool	di_proc_eei;		\/* Processing EEI data flag.	*\/$/;"	m	struct:dinfo
+di_random_access	dt.h	/^	bool	di_random_access;	\/* Random access device flag.	*\/$/;"	m	struct:dinfo
+di_random_io	dt.h	/^	bool	di_random_io;		\/* Random I\/O selected flag.	*\/$/;"	m	struct:dinfo
+di_read_errors	dt.h	/^	vu_long di_read_errors;		\/* Number of read errors.	*\/$/;"	m	struct:dinfo
+di_records_read	dt.h	/^	vu_long	di_records_read;	\/* Number of records read.	*\/$/;"	m	struct:dinfo
+di_records_written	dt.h	/^	vu_long	di_records_written;	\/* Number of records written.	*\/$/;"	m	struct:dinfo
+di_reset_condition	dt.h	/^	bool	di_reset_condition;	\/* Reset condition detected.	*\/$/;"	m	struct:dinfo
+di_vbytes_read	dt.h	/^	v_large	di_vbytes_read;		\/* Number of volume bytes read.	*\/$/;"	m	struct:dinfo
+di_vbytes_written	dt.h	/^	v_large	di_vbytes_written;	\/* Number of volume bytes wrote.*\/$/;"	m	struct:dinfo
+di_volume_bytes	dt.h	/^	large_t	di_volume_bytes;	\/* Accumulated volume bytes.	*\/$/;"	m	struct:dinfo
+di_volume_records	dt.h	/^	vu_long	di_volume_records;	\/* Number of volume records.	*\/$/;"	m	struct:dinfo
+di_write_errors	dt.h	/^	vu_long di_write_errors;	\/* Number of write errors.	*\/$/;"	m	struct:dinfo
+dinfo	dt.h	/^typedef struct dinfo {$/;"	s
+dinfo_t	dt.h	/^} dinfo_t;$/;"	t
+dispose	dt.h	/^enum dispose {DELETE_FILE, KEEP_FILE};$/;"	g
+dispose_mode	dt.c	/^enum dispose dispose_mode = DELETE_FILE; \/* Output file dispose mode.	*\/$/;"	v
+dlm_error	dt.c	/^dlm_error(dlm_lkid_t *lk, dlm_status_t err_stat)$/;"	f
+do_random	dtutil.c	/^do_random (struct dinfo *dip, bool doseek, size_t xfer_size)$/;"	f
+dopad_verify	dtutil.c	/^dopad_verify ($/;"	f	file:
+drain_tty	dttty.c	/^drain_tty (int fd)$/;"	f
+dt_active	dtprocs.c	/^	bool	dt_active;		\/* The process active flag.	*\/$/;"	m	struct:dt_procs
+dt_dtype	dt.h	/^	enum	devtype dt_dtype;$/;"	m	struct:dtype
+dt_pid	dtprocs.c	/^	pid_t	dt_pid;			\/* The child process ID.	*\/$/;"	m	struct:dt_procs
+dt_procs	dtprocs.c	/^struct dt_procs {$/;"	s	file:
+dt_status	dtprocs.c	/^	int	dt_status;		\/* The child exit status.	*\/$/;"	m	struct:dt_procs
+dt_type	dt.h	/^	char	*dt_type;$/;"	m	struct:dtype
+dtaio_cancel	dtaio.c	/^dtaio_cancel (struct dinfo *dip)$/;"	f
+dtaio_cancel_reads	dtaio.c	/^dtaio_cancel_reads (struct dinfo *dip)$/;"	f
+dtaio_close_file	dtaio.c	/^dtaio_close_file (struct dinfo *dip)$/;"	f
+dtaio_initialize	dtaio.c	/^dtaio_initialize (struct dinfo *dip)$/;"	f
+dtaio_process_read	dtaio.c	/^dtaio_process_read (struct dinfo *dip, struct aiocb *acbp)$/;"	f	file:
+dtaio_process_write	dtaio.c	/^dtaio_process_write (struct dinfo *dip, struct aiocb *acbp)$/;"	f	file:
+dtaio_read_data	dtaio.c	/^dtaio_read_data (struct dinfo *dip)$/;"	f
+dtaio_restart	dtaio.c	/^dtaio_restart(struct dinfo *dip, struct aiocb *first_acbp)$/;"	f	file:
+dtaio_wait	dtaio.c	/^dtaio_wait (struct dinfo *dip, struct aiocb *acbp)$/;"	f	file:
+dtaio_wait_reads	dtaio.c	/^dtaio_wait_reads (struct dinfo *dip)$/;"	f	file:
+dtaio_wait_writes	dtaio.c	/^dtaio_wait_writes (struct dinfo *dip)$/;"	f	file:
+dtaio_waitall	dtaio.c	/^dtaio_waitall(struct dinfo *dip, bool canceling)$/;"	f	file:
+dtaio_write_data	dtaio.c	/^dtaio_write_data (struct dinfo *dip)$/;"	f
+dtfuncs	dt.h	/^struct dtfuncs {$/;"	s
+dthelp	dtusage.c	/^dthelp(void)$/;"	f
+dtusage	dtusage.c	/^dtusage(void)$/;"	f
+dtversion	dtusage.c	/^dtversion(void)$/;"	f
+dtype	dt.h	/^struct dtype {$/;"	s
+dtype_table	dtinfo.c	/^struct dtype dtype_table[] = {$/;"	v
+dump_buffer	dtutil.c	/^dump_buffer (	char		*name,$/;"	f
+dump_flag	dt.c	/^bool	dump_flag = TRUE;		\/* Dump data buffer on errors.	*\/$/;"	v
+dump_limit	dt.c	/^size_t	dump_limit = 64;		\/* The dump buffer data limit.	*\/$/;"	v
+eDebugFlag	dt.c	/^bool	eDebugFlag = FALSE;		\/* End of file debug flag.	*\/$/;"	v
+e_table	dt.c	/^struct tbl_sysinfo s_table, p_table, e_table;	\/* Table information.	*\/$/;"	v
+edelay_count	dt.c	/^u_int	edelay_count = 0;		\/* Delay between multiple passes*\/$/;"	v
+eei_StatusEntrys	dteei.c	/^static int eei_StatusEntrys =$/;"	v	file:
+eei_StatusTable	dteei.c	/^} eei_StatusTable[] = {$/;"	v
+eei_flag	dt.c	/^bool	eei_flag = TRUE;		\/* Extended Error Information.	*\/$/;"	v
+eei_resets	dt.c	/^bool	eei_resets = FALSE;		\/* Handle device reset errors.	*\/$/;"	v
+eei_status	dteei.c	/^	u_int	eei_status;$/;"	m	struct:EEI_StatusTable
+elapsed_time	dt.c	/^time_t	elapsed_time;			\/* Amount of time program ran.	*\/$/;"	v
+end_of_file	dt.c	/^v_bool	end_of_file = FALSE;		\/* End of file detected.	*\/$/;"	v
+end_time	dt.c	/^clock_t start_time, end_time, pass_time; \/* Per pass elapsed time.	*\/$/;"	v
+error_count	dt.c	/^vu_long	error_count;			\/* Number of errors detected.	*\/$/;"	v
+error_limit	dt.c	/^u_long	error_limit = 1;		\/* Number of errors tolerated.	*\/$/;"	v
+error_time	dt.c	/^time_t	error_time;			\/* Time last error occurred.	*\/$/;"	v
+etimes	dt.c	/^struct tms stimes, ptimes, etimes;	\/* For user \/ system times.	*\/$/;"	v
+exit_status	dt.c	/^int	exit_status = SUCCESS;		\/* Normal success exit status.	*\/$/;"	v
+fifo_funcs	dtfifo.c	/^struct dtfuncs fifo_funcs = {$/;"	v
+fifo_open	dtfifo.c	/^fifo_open (struct dinfo *dip, int oflags)$/;"	f
+file_limit	dt.c	/^u_long	file_limit;			\/* # of tape files to process.	*\/$/;"	v
+file_position	dt.c	/^off_t	file_position;			\/* File position to lseek to.	*\/$/;"	v
+file_type	dt.h	/^enum file_type {INPUT_FILE, OUTPUT_FILE};$/;"	g
+fill_buffer	dtutil.c	/^fill_buffer (	u_char		*buffer,$/;"	f
+flow	dt.h	/^enum flow {FLOW_NONE, CTS_RTS, XON_XOFF};$/;"	g
+flow_str	dttty.c	/^char *flow_str = "xon_xoff";$/;"	v
+flow_type	dt.c	/^enum flow flow_type = XON_XOFF;		\/* Terminal flow type to use.	*\/$/;"	v
+flush_file	dtgen.c	/^flush_file (struct dinfo *dip)$/;"	f
+flush_flag	dt.c	/^bool	flush_flag = TRUE;		\/* Flush tty input\/output queue	*\/$/;"	v
+flush_tty	dttty.c	/^flush_tty (int fd)$/;"	f
+fork_process	dtprocs.c	/^fork_process(void)$/;"	f
+forked_flag	dt.c	/^bool	forked_flag = FALSE;		\/* Forked child process flag.	*\/$/;"	v
+format_ltime	dtutil.c	/^format_ltime (long time, int tps)$/;"	f
+format_time	dtutil.c	/^format_time (clock_t time)$/;"	f
+fsync_flag	dt.c	/^bool	fsync_flag = UNINITIALIZED;	\/* fsync() after writes flag.	*\/$/;"	v
+gather_stats	dtstats.c	/^gather_stats(struct dinfo *dip)$/;"	f
+gather_totals	dtstats.c	/^gather_totals(void)$/;"	f
+gen_stat	dtgen.c	/^dlm_status_t gen_stat;$/;"	v
+generic_funcs	dtgen.c	/^struct dtfuncs generic_funcs = {$/;"	v
+get_eei_status	dteei.c	/^get_eei_status(int fd, struct mtget *mt)$/;"	f
+get_lba	dtutil.c	/^get_lba (struct dinfo *dip)$/;"	f
+get_lbn	dt.h	531;"	d
+get_position	dt.h	728;"	d
+get_position	dt.h	730;"	d
+get_position	dtutil.c	/^get_position (struct dinfo *dip)$/;"	f
+get_random	dtutil.c	/^get_random(void)$/;"	f
+get_variable	dtutil.c	/^get_variable (struct dinfo *dip)$/;"	f
+header_flag	dt.c	/^bool	header_flag = TRUE;		\/* The log file header flag.	*\/$/;"	v
+howmany	dt.h	166;"	d
+htos	dtutil.c	/^htos (u_char *bp, u_long value, size_t size)$/;"	f
+hz	dt.c	/^clock_t	hz = HZ;			\/* Default clock ticks \/ second	*\/$/;"	v
+hz	dt.c	/^clock_t hz;$/;"	v
+i	dt.c	/^int	     resnlen, i;$/;"	v
+incr_count	dt.c	/^size_t	incr_count;			\/* Record increment byte count.	*\/$/;"	v
+incr_position	dtutil.c	/^incr_position (struct dinfo *dip, off_t offset)$/;"	f
+init_buffer	dtutil.c	/^init_buffer (	u_char		*buffer,$/;"	f
+init_file	dtgen.c	/^init_file (struct dinfo *dip)$/;"	f
+init_iotdata	dtutil.c	/^init_iotdata ($/;"	f
+init_lbdata	dtutil.c	/^init_lbdata ($/;"	f
+init_padbytes	dtutil.c	/^init_padbytes (	u_char		*buffer,$/;"	f
+init_stats	dtstats.c	/^init_stats(struct dinfo *dip)$/;"	f
+initialize	dtgen.c	/^initialize (struct dinfo *dip)$/;"	f
+input_dinfo	dt.c	/^struct dinfo *input_dinfo;		\/* Input device information.	*\/$/;"	v
+input_dtype	dt.c	/^struct dtype *input_dtype;		\/* The input device type info.	*\/$/;"	v
+input_file	dt.c	/^char	*input_file;			\/* Pointer to input file name.	*\/$/;"	v
+input_munsa_lock_type	dt.c	/^dlm_lock_mode_t  input_munsa_lock_type = DLM_PRMODE; \/* lock for input file*\/$/;"	v
+int32	dt.h	/^typedef int			int32;$/;"	t
+io_dir	dt.c	/^enum iodir  io_dir  = FORWARD;		\/* Default is forward I\/O.	*\/$/;"	v
+io_mode	dt.c	/^enum iomode io_mode = TEST_MODE;	\/* Default to testing mode.	*\/$/;"	v
+io_type	dt.c	/^enum iotype io_type = SEQUENTIAL_IO;	\/* Default to sequential I\/O.	*\/$/;"	v
+iodir	dt.h	/^enum iodir {FORWARD, REVERSE};$/;"	g
+iomode	dt.h	/^enum iomode {COPY_MODE, TEST_MODE, VERIFY_MODE};$/;"	g
+iot_pattern	dt.c	/^bool	iot_pattern = FALSE;		\/* IOT test pattern selected.	*\/$/;"	v
+iotype	dt.h	/^enum iotype {SEQUENTIAL_IO, RANDOM_IO};$/;"	g
+is_Eof	dtutil.c	/^is_Eof (struct dinfo *dip, size_t count, int *status)$/;"	f
+is_ResetCondition	dteei.c	/^is_ResetCondition($/;"	f
+is_StatusRetryable	dteei.c	/^is_StatusRetryable($/;"	f
+keep_existing	dt.c	/^bool	keep_existing = TRUE;		\/* Don't delete existing files.	*\/$/;"	v
+l_stat	dt.c	/^dlm_status_t l_stat;$/;"	v
+large_number	dt.c	/^large_number(int base)$/;"	f	file:
+large_t	dt.h	/^typedef double			large_t;$/;"	t
+large_t	dt.h	/^typedef u_quad_t		large_t;$/;"	t
+large_t	dt.h	/^typedef unsigned long		large_t;$/;"	t
+large_t	dt.h	/^typedef unsigned long long int	large_t;$/;"	t
+last_position	dt.c	/^off_t	last_position;			\/* Last position lseeked to.	*\/$/;"	v
+lbdata_addr	dt.c	/^u_int32	lbdata_addr = 0;		\/* Starting logical block addr.	*\/$/;"	v
+lbdata_flag	dt.c	/^bool	lbdata_flag = FALSE;		\/* Logical block data flag.	*\/$/;"	v
+lbdata_size	dt.c	/^size_t	lbdata_size = 0;		\/* Logical block data size.	*\/$/;"	v
+lkid	dt.c	/^dlm_lkid_t   lkid;$/;"	v
+log_buffer	dt.c	/^char	*log_buffer;			\/* Pointer to log file buffer.	*\/$/;"	v
+log_bufptr	dt.c	/^char	*log_bufptr;			\/* Pointer into log buffer.	*\/$/;"	v
+log_file	dt.c	/^char	*log_file;			\/* Pointer to log file name.	*\/$/;"	v
+logdiag_flag	dt.c	/^bool	logdiag_flag = FALSE;		\/* Log diagnostic messages.	*\/$/;"	v
+loopback	dt.c	/^bool	loopback = FALSE;		\/* Loopback to the same device.	*\/$/;"	v
+main	dt.c	/^main (int argc, char **argv)$/;"	f
+make_lba	dt.h	717;"	d
+make_lba	dtutil.c	/^make_lba($/;"	f
+make_lbdata	dt.h	722;"	d
+make_lbdata	dtutil.c	/^make_lbdata($/;"	f
+make_offset	dt.h	720;"	d
+make_offset	dtutil.c	/^make_offset(struct dinfo *dip, u_int32 lba)$/;"	f
+make_position	dt.h	725;"	d
+make_position	dtutil.c	/^make_position(struct dinfo *dip, u_int32 lba)$/;"	f
+match	dt.c	/^match (char *s)$/;"	f
+max_procs	dtprocs.c	/^int max_procs = 0;			\/* Maximum processes started.	*\/$/;"	v
+max_size	dt.c	/^size_t	max_size;			\/* The maximum record size.	*\/$/;"	v
+media_changed	dt.c	/^bool	media_changed = FALSE;		\/* Shows when media changed.	*\/$/;"	v
+micro_flag	dt.c	/^bool	micro_flag = FALSE;		\/* Controls micro-second delay.	*\/$/;"	v
+min_size	dt.c	/^size_t	min_size;			\/* The minimum record size.	*\/$/;"	v
+mmap_buffer	dt.c	/^u_char	*mmap_buffer;			\/* Pointer to mmapped buffer.	*\/$/;"	v
+mmap_bufptr	dt.c	/^u_char	*mmap_bufptr;			\/* Pointer into mmapped buffer.	*\/$/;"	v
+mmap_file	dtmmap.c	/^mmap_file (struct dinfo *dip)$/;"	f
+mmap_flag	dt.c	/^bool	mmap_flag = FALSE;		\/* Do memory mapped file I\/O.	*\/$/;"	v
+mmap_flush	dtmmap.c	/^mmap_flush (struct dinfo *dip)$/;"	f
+mmap_funcs	dtmmap.c	/^struct dtfuncs mmap_funcs = {$/;"	v
+mmap_read_data	dtmmap.c	/^mmap_read_data (struct dinfo *dip)$/;"	f
+mmap_reopen_file	dtmmap.c	/^mmap_reopen_file (struct dinfo *dip, int oflags)$/;"	f
+mmap_validate_opts	dtmmap.c	/^mmap_validate_opts (struct dinfo *dip)$/;"	f
+mmap_write_data	dtmmap.c	/^mmap_write_data (struct dinfo *dip)$/;"	f
+modem_flag	dt.c	/^bool	modem_flag = FALSE;		\/* Testing tty modem control.	*\/$/;"	v
+msg_buffer	dt.c	/^char	*msg_buffer;			\/* Diagnostic message buffer.	*\/$/;"	v
+mt_blkno	dteei.c	/^long	mt_blkno;			\/* Starting tape block number.	*\/$/;"	v
+mt_fileno	dteei.c	/^long	mt_fileno;			\/* Starting tape file number.	*\/$/;"	v
+multi_flag	dt.c	/^bool	multi_flag = FALSE;		\/* Multi-volume media flag.	*\/$/;"	v
+multi_nready	dt.c	/^static char *multi_nready =$/;"	v	file:
+multi_prompt	dt.c	/^static char *multi_prompt = $/;"	v	file:
+multi_volume	dt.c	/^v_int	multi_volume = 1;		\/* Multi-volume media count.	*\/$/;"	v
+munsa_flag	dt.c	/^bool	munsa_flag = FALSE;		\/* if TRUE enable MUNSA features*\/$/;"	v
+munsa_lock	dt.h	/^dlm_lock_mode_t    munsa_lock;$/;"	v
+munsa_lock_type	dt.c	/^dlm_lock_mode_t  munsa_lock_type = DLM_NLMODE; \/* default munsa lock type*\/$/;"	v
+mySleep	dtutil.c	/^mySleep(unsigned int sleep_time)$/;"	f
+myalloc	dtutil.c	/^myalloc (size_t size, int offset)$/;"	f
+nofunc	dt.c	/^nofunc (struct dinfo *dip)$/;"	f
+not_valid_str	dteei.c	/^static char *not_valid_str	= "<Not Valid>";$/;"	v	file:
+npatterns	dt.c	/^int npatterns = sizeof(data_patterns) \/ sizeof(u_int32);$/;"	v
+nsp	dt.c	/^dlm_nsp_t    nsp;$/;"	v
+num_baud_rates	dttty.c	/^int num_baud_rates = (sizeof(baud_rate_tbl) \/ sizeof(baud_rate_tbl[0])) - 1;$/;"	v
+num_dtypes	dtinfo.c	/^int num_dtypes = sizeof(dtype_table) \/ sizeof(dtype_table[0]);$/;"	v
+num_procs	dtprocs.c	/^int num_procs = 0;			\/* Number of procs to create.	*\/$/;"	v
+num_slices	dtprocs.c	/^int num_slices = 0;			\/* Number of slices to create.	*\/$/;"	v
+number	dt.c	/^number (int base)$/;"	f	file:
+oncerr_action	dt.c	/^enum onerrors oncerr_action = CONTINUE;	\/* The child error action.	*\/$/;"	v
+onerrors	dt.h	/^enum onerrors {ABORT, CONTINUE};$/;"	g
+open_file	dtgen.c	/^open_file (struct dinfo *dip, int oflags)$/;"	f
+open_flags	dt.c	/^int	open_flags = 0;			\/* Common file open flags.	*\/$/;"	v
+opt	dt.h	/^enum opt {OFF, ON, OPT_NONE};$/;"	g
+output_dinfo	dt.c	/^struct dinfo *output_dinfo;		\/* Output device information.	*\/$/;"	v
+output_dtype	dt.c	/^struct dtype *output_dtype;		\/* The output device type info.	*\/$/;"	v
+output_file	dt.c	/^char	*output_file;			\/* Pointer to output file name.	*\/$/;"	v
+output_munsa_lock_type	dt.c	/^dlm_lock_mode_t  output_munsa_lock_type = DLM_PWMODE; \/* lock for output file*\/$/;"	v
+p_table	dt.c	/^struct tbl_sysinfo s_table, p_table, e_table;	\/* Table information.	*\/$/;"	v
+pad_check	dt.c	/^bool	pad_check = TRUE;		\/* Check data buffer pad bytes.	*\/$/;"	v
+page_size	dt.c	/^int	page_size = 0;			\/* Define number of bytes\/page.	*\/$/;"	v
+parity_code	dttty.c	/^unsigned parity_code = 0;		\/* Default parity = none.	*\/$/;"	v
+parity_str	dttty.c	/^char *parity_str = "none";$/;"	v
+parse_args	dt.c	/^parse_args (int argc, char **argv)$/;"	f
+partial_records	dt.c	/^vu_long	partial_records;		\/* # of partial records proc'ed	*\/$/;"	v
+pass_count	dt.c	/^u_long	pass_count;			\/* Number of passes completed.	*\/$/;"	v
+pass_limit	dt.c	/^u_long	pass_limit = 1UL;		\/* Default number of passes.	*\/$/;"	v
+pass_time	dt.c	/^clock_t start_time, end_time, pass_time; \/* Per pass elapsed time.	*\/$/;"	v
+patbuf_size	dt.c	/^size_t	patbuf_size;			\/* The pattern buffer size.	*\/$/;"	v
+pattern	dt.c	/^u_int32 pattern = DEFAULT_PATTERN;	\/* Default data pattern.	*\/$/;"	v
+pattern_bufend	dt.c	/^u_char	*pattern_bufend;		\/* Pointer to end of pat buffer	*\/$/;"	v
+pattern_buffer	dt.c	/^u_char	*pattern_buffer;		\/* Pointer to pattern buffer.	*\/$/;"	v
+pattern_bufptr	dt.c	/^u_char	*pattern_bufptr;		\/* Pointer into pattern buffer.	*\/$/;"	v
+pattern_file	dt.c	/^char	*pattern_file;			\/* Pointer to pattern file name	*\/$/;"	v
+pattern_size	dt.c	/^int	pattern_size;			\/* User specified pattern size.	*\/$/;"	v
+pattern_str	dtutil.c	/^static char *pattern_str =	"Pattern";$/;"	v	file:
+pattern_string	dt.c	/^char	*pattern_string;		\/* Pointer to pattern string.	*\/$/;"	v
+pfd	dt.c	/^int	pfd = NoFd;			\/* Pattern file descriptor.	*\/$/;"	v
+print_cam_status	dteei.c	/^print_cam_status(u_int cam_status)$/;"	f
+print_category	dteei.c	/^print_category(long stat, device_info_t *devinfop)$/;"	f
+print_devio	dteei.c	/^print_devio(int fd)$/;"	f
+print_eei	dteei.c	/^print_eei(DEV_EEI_STATUS *eei)$/;"	f
+print_eei_status	dteei.c	/^print_eei_status(u_int eei_status)$/;"	f
+print_erreg	dteei.c	/^print_erreg(short erreg)$/;"	f
+print_mtio	dteei.c	/^print_mtio(int fd, struct mtget *mt)$/;"	f
+print_mtstatus	dteei.c	/^print_mtstatus(int fd, struct mtget *mt, bool print_all)$/;"	f
+print_scsi_status	dteei.c	/^print_scsi_status(u_char scsi_status)$/;"	f
+print_sense_data	dteei.c	/^print_sense_data(u_char *scsi_sense_ptr)$/;"	f
+print_stat	dteei.c	/^print_stat(long stat)$/;"	f
+print_status	dteei.c	/^print_status( v1_device_info_t *p_info )$/;"	f
+print_time	dtutil.c	/^print_time (clock_t time)$/;"	f
+process_pfile	dtutil.c	/^process_pfile (int *fd, char *file, int mode)$/;"	f
+procs_active	dtprocs.c	/^int procs_active = 0;			\/* Number of active processes.	*\/$/;"	v
+program_end	dt.c	/^time_t	program_start, program_end;	\/* Program start & end times,	*\/$/;"	v
+program_start	dt.c	/^time_t	program_start, program_end;	\/* Program start & end times,	*\/$/;"	v
+pstats_flag	dt.c	/^bool	pstats_flag = TRUE;		\/* Display per pass statistics.	*\/$/;"	v
+ptable	dtprocs.c	/^struct dt_procs *ptable;		\/* Multiple 'dt' procs table.	*\/$/;"	v
+ptimes	dt.c	/^struct tms stimes, ptimes, etimes;	\/* For user \/ system times.	*\/$/;"	v
+ptr_t	dt.h	/^typedef unsigned int		ptr_t;$/;"	t
+ptr_t	dt.h	/^typedef unsigned long		ptr_t;$/;"	t
+rDebugFlag	dt.c	/^bool	rDebugFlag = FALSE;		\/* Random (seek) debug flag.	*\/$/;"	v
+random_align	dt.c	/^u_long	random_align = 0UL;		\/* Random I\/O offset alignment.	*\/$/;"	v
+random_seed	dt.c	/^u_int	random_seed = 0;		\/* Seed for random # generator.	*\/$/;"	v
+raw_flag	dt.c	/^bool	raw_flag = FALSE;		\/* The read after write flag.	*\/$/;"	v
+rdata_limit	dt.c	/^large_t	rdata_limit = 0;		\/* The random I\/O data limit.	*\/$/;"	v
+rdelay_count	dt.c	/^u_int	rdelay_count = 0;		\/* Delay before reading record.	*\/$/;"	v
+read_data	dtread.c	/^read_data (struct dinfo *dip)$/;"	f
+read_eof	dtread.c	/^read_eof(struct dinfo *dip)$/;"	f
+read_eom	dtread.c	/^read_eom(struct dinfo *dip)$/;"	f
+read_file	dtgen.c	/^read_file (struct dinfo *dip)$/;"	f
+read_record	dtread.c	/^read_record (	struct dinfo	*dip,$/;"	f
+record_limit	dt.c	/^large_t	record_limit;			\/* Max # of records to process.	*\/$/;"	v
+records_processed	dt.c	/^vu_long records_processed;		\/* # of full records processed.	*\/$/;"	v
+reference_data	dtmmap.c	/^reference_data (u_char *buffer, size_t count)$/;"	f
+reopen_file	dtgen.c	/^reopen_file (struct dinfo *dip, int oflags)$/;"	f
+report_error	dt.c	/^report_error($/;"	f
+report_pass	dtstats.c	/^report_pass(struct dinfo *dip, enum stats stats_type)$/;"	f
+report_record	dt.c	/^report_record($/;"	f
+report_stats	dtstats.c	/^report_stats(struct dinfo *dip, enum stats stats_type)$/;"	f
+resnam	dt.c	/^char	     *resnam;$/;"	v
+resnlen	dt.c	/^int	     resnlen, i;$/;"	v
+restore_tty	dttty.c	/^restore_tty (int fd)$/;"	f
+ropen_mode	dt.c	/^int	ropen_mode = O_RDONLY;		\/* The read open mode to use.	*\/$/;"	v
+rotate_flag	dt.c	/^bool	rotate_flag = FALSE;		\/* Force data buffer rotating.	*\/$/;"	v
+rotate_offset	dt.c	/^int	rotate_offset = 0;		\/* Current rotate buffer offset	*\/$/;"	v
+rounddown	dt.h	172;"	d
+roundup	dt.h	169;"	d
+runtime	dt.c	/^time_t	runtime;			\/* The program run time.	*\/$/;"	v
+s_table	dt.c	/^struct tbl_sysinfo s_table, p_table, e_table;	\/* Table information.	*\/$/;"	v
+save_tty	dttty.c	/^save_tty (int fd)$/;"	f
+saved_ldisc	dttty.c	/^int saved_ldisc;			\/* For saving line discipline.	*\/$/;"	v
+saved_tmodes	dttty.c	/^struct termios saved_tmodes;		\/* For saving terminal modes.	*\/$/;"	v
+scale	dtutil.c	/^scale (struct timeval *tvp)$/;"	f	file:
+scsi_StatusEntrys	dteei.c	/^static int scsi_StatusEntrys =$/;"	v	file:
+scsi_StatusTable	dteei.c	/^} scsi_StatusTable[] = {$/;"	v
+scsi_status	dteei.c	/^	u_char	scsi_status;$/;"	m	struct:SCSI_StatusTable
+sdelay_count	dt.c	/^u_int	sdelay_count = 0;		\/* Delay before starting test.	*\/$/;"	v
+seek_count	dt.c	/^u_long	seek_count;			\/* # of output records to seek.	*\/$/;"	v
+seek_file	dtutil.c	/^seek_file (int fd, u_long records, off_t size, int whence)$/;"	f
+seek_position	dtutil.c	/^seek_position (struct dinfo *dip, off_t offset, int whence)$/;"	f
+sense_code	dteei.c	/^	u_char	sense_code;		\/* Additional sense code.	*\/$/;"	m	struct:sense_entry
+sense_entry	dteei.c	/^struct sense_entry {$/;"	s	file:
+sense_message	dteei.c	/^	char	*sense_message;		\/* Error message text.		*\/$/;"	m	struct:sense_entry
+sense_qualifier	dteei.c	/^	u_char	sense_qualifier;	\/* Sense code qualifier.	*\/$/;"	m	struct:sense_entry
+set_Eof	dtutil.c	/^set_Eof(struct dinfo *dip)$/;"	f
+set_position	dtutil.c	/^set_position (struct dinfo *dip, off_t offset)$/;"	f
+set_rseed	dtutil.c	/^set_rseed(u_int seed)$/;"	f
+setup_baud_rate	dttty.c	/^setup_baud_rate (u_int32 baud)$/;"	f
+setup_device_defaults	dtinfo.c	/^setup_device_defaults (struct dtype *dtp)$/;"	f	file:
+setup_device_info	dtinfo.c	/^setup_device_info (char *dname, struct dtype *dtp)$/;"	f
+setup_device_type	dtinfo.c	/^setup_device_type (char *str)$/;"	f
+setup_pattern	dtutil.c	/^setup_pattern (u_char *buffer, size_t size)$/;"	f
+setup_tty	dttty.c	/^setup_tty (int fd, int flushing)$/;"	f
+show_position	dtutil.c	/^show_position (struct dinfo *dip, off_t pos)$/;"	f
+skip_count	dt.c	/^u_long	skip_count;			\/* # of input record to skip.	*\/$/;"	v
+skip_records	dtutil.c	/^skip_records (	struct dinfo	*dip,$/;"	f
+slarge_t	dt.h	/^typedef double			slarge_t;$/;"	t
+slarge_t	dt.h	/^typedef quad_t			slarge_t;$/;"	t
+slarge_t	dt.h	/^typedef signed long		slarge_t;$/;"	t
+slarge_t	dt.h	/^typedef signed long long int	slarge_t;$/;"	t
+slice_info	dtprocs.c	/^typedef struct slice_info {$/;"	s	file:
+slice_info_t	dtprocs.c	/^} slice_info_t;$/;"	t	file:
+slice_length	dtprocs.c	/^	large_t	slice_length;		\/* The slice data length.	*\/$/;"	m	struct:slice_info
+slice_position	dtprocs.c	/^	large_t	slice_position;		\/* Starting slice position.	*\/$/;"	m	struct:slice_info
+softcar_opt	dt.c	/^enum opt softcar_opt = OPT_NONE;	\/* Leave tty soft carrier alone.*\/$/;"	v
+spad_check	dt.c	/^bool	spad_check = FALSE;		\/* Check short record pad bytes.*\/$/;"	v
+speed_str	dttty.c	/^char *speed_str = "9600";$/;"	v
+ssize_t	dt.h	/^typedef int			ssize_t;$/;"	t
+start_procs	dtprocs.c	/^start_procs(void)$/;"	f
+start_slices	dtprocs.c	/^start_slices(void)$/;"	f
+start_time	dt.c	/^clock_t start_time, end_time, pass_time; \/* Per pass elapsed time.	*\/$/;"	v
+stats	dt.h	/^enum stats {COPY_STATS, READ_STATS, RAW_STATS, WRITE_STATS, TOTAL_STATS, VERIFY_STATS};$/;"	g
+stats_flag	dt.c	/^bool	stats_flag = TRUE;		\/* Display total statistics.	*\/$/;"	v
+stats_names	dtstats.c	/^static char *stats_names[] = {$/;"	v	file:
+status_msg_brief	dteei.c	/^	caddr_t	status_msg_brief;$/;"	m	struct:CAM_StatusTable
+status_msg_brief	dteei.c	/^	caddr_t	status_msg_brief;$/;"	m	struct:EEI_StatusTable
+status_msg_brief	dteei.c	/^	caddr_t	status_msg_brief;$/;"	m	struct:SCSI_StatusTable
+status_msg_full	dteei.c	/^	caddr_t	status_msg_full;$/;"	m	struct:CAM_StatusTable
+status_msg_full	dteei.c	/^	caddr_t	status_msg_full;$/;"	m	struct:EEI_StatusTable
+status_msg_full	dteei.c	/^	caddr_t	status_msg_full;$/;"	m	struct:SCSI_StatusTable
+stdin_flag	dt.c	/^bool	stdin_flag = FALSE;		\/* Presume not reading stdin.	*\/$/;"	v
+stdout_flag	dt.c	/^bool	stdout_flag = FALSE;		\/* Presume not writing stdout.	*\/$/;"	v
+step_offset	dt.c	/^off_t	step_offset;			\/* Step offset for disk seeks.	*\/$/;"	v
+stimes	dt.c	/^struct tms stimes, ptimes, etimes;	\/* For user \/ system times.	*\/$/;"	v
+stoh	dtutil.c	/^stoh (u_char *bp, size_t size)$/;"	f
+string	dt.c	/^char	*string;			\/* Pointer to argument string.	*\/$/;"	v
+strtoul	dtutil.c	55;"	d	file:
+system_device_info	dtinfo.c	/^system_device_info (struct dinfo *dip)$/;"	f
+table_flag	dt.c	/^bool table_flag = FALSE;		\/* Table control flag.		*\/$/;"	v
+tdelay_count	dt.c	/^u_int	tdelay_count = 1;		\/* Child terminate delay count.	*\/$/;"	v
+terminate	dt.c	/^terminate (int code)$/;"	f
+terminating_flag	dt.c	/^bool	terminating_flag = FALSE;	\/* Program terminating flag.	*\/$/;"	v
+test_mode	dt.h	/^enum test_mode {READ_MODE, WRITE_MODE};$/;"	g
+tf_cancel_reads	dt.h	/^	int	(*tf_cancel_reads)(struct dinfo *dip);$/;"	m	struct:dtfuncs
+tf_cancel_writes	dt.h	/^	int	(*tf_cancel_writes)(struct dinfo *dip);$/;"	m	struct:dtfuncs
+tf_cleanup	dt.h	/^	int	(*tf_cleanup)(struct dinfo *dip);$/;"	m	struct:dtfuncs
+tf_close	dt.h	/^	int	(*tf_close)(struct dinfo *dip);$/;"	m	struct:dtfuncs
+tf_end_test	dt.h	/^	int	(*tf_end_test)(struct dinfo *dip);$/;"	m	struct:dtfuncs
+tf_flush_data	dt.h	/^	int	(*tf_flush_data)(struct dinfo *dip);$/;"	m	struct:dtfuncs
+tf_initialize	dt.h	/^	int	(*tf_initialize)(struct dinfo *dip);$/;"	m	struct:dtfuncs
+tf_open	dt.h	/^	int	(*tf_open)(struct dinfo	*dip, int oflags);$/;"	m	struct:dtfuncs
+tf_read_data	dt.h	/^	int	(*tf_read_data)(struct dinfo *dip);$/;"	m	struct:dtfuncs
+tf_read_file	dt.h	/^	int	(*tf_read_file)(struct dinfo *dip);$/;"	m	struct:dtfuncs
+tf_reopen_file	dt.h	/^	int	(*tf_reopen_file)(struct dinfo *dip, int oflags);$/;"	m	struct:dtfuncs
+tf_start_test	dt.h	/^	int	(*tf_start_test)(struct dinfo *dip);$/;"	m	struct:dtfuncs
+tf_startup	dt.h	/^	int	(*tf_startup)(struct dinfo *dip);$/;"	m	struct:dtfuncs
+tf_validate_opts	dt.h	/^	int	(*tf_validate_opts)(struct dinfo *dip);$/;"	m	struct:dtfuncs
+tf_verify_data	dt.h	/^	int	(*tf_verify_data)(	struct dinfo	*dip,$/;"	m	struct:dtfuncs
+tf_write_data	dt.h	/^	int	(*tf_write_data)(struct dinfo *dip);$/;"	m	struct:dtfuncs
+tf_write_file	dt.h	/^	int	(*tf_write_file)(struct dinfo *dip);$/;"	m	struct:dtfuncs
+time_value	dt.c	/^time_value(void)$/;"	f	file:
+times	dtutil.c	/^times (struct tms *tmsp)$/;"	f
+total_bytes	dt.c	/^large_t	total_bytes;			\/* Total bytes transferred.	*\/$/;"	v
+total_bytes_read	dt.c	/^large_t total_bytes_read;		\/* Total bytes read.		*\/$/;"	v
+total_bytes_written	dt.c	/^large_t total_bytes_written;		\/* Total bytes written.		*\/$/;"	v
+total_errors	dt.c	/^vu_long	total_errors;			\/* Total errors (all passes).	*\/$/;"	v
+total_files	dt.c	/^large_t	total_files;			\/* Total files (all passes).	*\/$/;"	v
+total_files_read	dt.c	/^large_t total_files_read;		\/* Total files read.		*\/$/;"	v
+total_files_written	dt.c	/^large_t total_files_written;		\/* Total files written.		*\/$/;"	v
+total_partial	dt.c	/^u_long	total_partial;			\/* Total partial records.	*\/$/;"	v
+total_records	dt.c	/^large_t	total_records;			\/* Total records (all passes).	*\/$/;"	v
+tty_baud_rate	dt.h	/^struct tty_baud_rate {$/;"	s
+tty_close	dttty.c	/^tty_close (struct dinfo *dip)$/;"	f
+tty_flush_data	dttty.c	/^tty_flush_data (struct dinfo *dip)$/;"	f
+tty_funcs	dttty.c	/^struct dtfuncs tty_funcs = {$/;"	v
+tty_minflag	dt.c	/^bool	tty_minflag = FALSE;		\/* User specified VMIN value.	*\/$/;"	v
+tty_minimum	dt.c	/^u_short	tty_minimum = 0;		\/* The tty minimum (VMIN) value	*\/$/;"	v
+tty_open	dttty.c	/^tty_open (struct dinfo *dip, int oflags)$/;"	f
+tty_reopen	dttty.c	/^tty_reopen (struct dinfo *dip, int oflags)$/;"	f
+tty_saved	dttty.c	/^bool tty_saved;				\/* tty characteristics saved.	*\/$/;"	v
+tty_speed	dt.h	/^	speed_t	tty_speed;		\/* Parameter for tty driver.	*\/$/;"	m	struct:tty_baud_rate
+tty_timeout	dt.c	/^u_short	tty_timeout = 3*10;		\/* Default tty timeout (3 sec).	*\/$/;"	v
+ttyport_flag	dt.c	/^bool	ttyport_flag = FALSE;		\/* Input\/output is a terminal.	*\/$/;"	v
+u_char	dt.h	/^typedef	unsigned char		u_char;$/;"	t
+u_int	dt.h	/^typedef	unsigned int		u_int;$/;"	t
+u_int32	dt.h	/^typedef unsigned int		u_int32;$/;"	t
+u_long	dt.h	/^typedef unsigned long		u_long;$/;"	t
+u_short	dt.h	/^typedef	unsigned short		u_short;$/;"	t
+unique_pattern	dt.c	/^bool	unique_pattern = TRUE;		\/* Unique pattern per process.	*\/$/;"	v
+user_capacity	dt.c	/^large_t	user_capacity;			\/* The user set drive capacity.	*\/$/;"	v
+user_incr	dt.c	/^bool	user_incr = FALSE;		\/* User specified incr count.	*\/$/;"	v
+user_lbdata	dt.c	/^bool	user_lbdata = FALSE;		\/* User specified starting lba.	*\/$/;"	v
+user_lbsize	dt.c	/^bool	user_lbsize = FALSE;		\/* User specified lbdata size.	*\/$/;"	v
+user_max	dt.c	/^bool	user_max = FALSE;		\/* User specified max size.	*\/$/;"	v
+user_min	dt.c	/^bool	user_min = FALSE;		\/* User specified min size.	*\/$/;"	v
+user_pattern	dt.c	/^bool	user_pattern = FALSE;		\/* Flags user specified pattern	*\/$/;"	v
+user_position	dt.c	/^bool	user_position = FALSE;		\/* User specified file position.*\/$/;"	v
+user_rseed	dt.c	/^bool	user_rseed = FALSE;		\/* Flags user specified rseed.	*\/$/;"	v
+user_runtime	dt.c	/^char	*user_runtime;			\/* User specific runtime string	*\/$/;"	v
+usr_speed	dt.h	/^	u_int32	usr_speed;		\/* User entered speed value.	*\/$/;"	m	struct:tty_baud_rate
+vSprintf	dtutil.c	/^vSprintf(char *bufptr, const char *msg, va_list ap)$/;"	f
+v_bool	dt.h	/^typedef volatile unsigned char	v_bool;$/;"	t
+v_bool	dt.h	/^typedef volatile unsigned int	v_bool;$/;"	t
+v_char	dt.h	/^typedef	volatile char	v_char;$/;"	t
+v_int	dt.h	/^typedef	volatile int	v_int;$/;"	t
+v_large	dt.h	/^typedef volatile large_t	v_large;$/;"	t
+v_long	dt.h	/^typedef volatile long	v_long;$/;"	t
+v_short	dt.h	/^typedef	volatile short	v_short;$/;"	t
+v_slarge	dt.h	/^typedef volatile slarge_t	v_slarge;$/;"	t
+validate_opts	dtgen.c	/^validate_opts (struct dinfo *dip)$/;"	f
+variable_flag	dt.c	/^bool	variable_flag = FALSE;		\/* Variable block size flag.	*\/$/;"	v
+verbose_flag	dt.c	/^bool	verbose_flag = TRUE;		\/* Verbose messages output.	*\/$/;"	v
+verify_buffer	dt.c	/^u_char	*verify_buffer;			\/* The data verification buffer.*\/$/;"	v
+verify_buffers	dtutil.c	/^verify_buffers(	struct dinfo	*dip,$/;"	f
+verify_data	dtutil.c	/^verify_data (	struct dinfo	*dip,$/;"	f
+verify_flag	dt.c	/^bool	verify_flag = TRUE;		\/* Verify the read\/write data.	*\/$/;"	v
+verify_lbdata	dtutil.c	/^verify_lbdata(	struct dinfo	*dip,$/;"	f
+verify_only	dt.c	/^bool	verify_only = FALSE;		\/* Verify of copied data flag.	*\/$/;"	v
+verify_padbytes	dtutil.c	/^verify_padbytes ($/;"	f
+verify_record	dtread.c	/^verify_record (	struct dinfo	*dip,$/;"	f
+verify_str	dtutil.c	/^static char *verify_str =	"Verify";$/;"	v	file:
+version_str	dtusage.c	/^char *version_str = "Date: February 6th, 2001, Version: 14.3, Author: Robin T. Miller";$/;"	v
+volume_limit	dt.c	/^int	volume_limit = 0;		\/* Number of volumes to process.*\/$/;"	v
+volume_records	dt.c	/^vu_long	volume_records = 1;		\/* The last volume record limit.*\/$/;"	v
+volumes_flag	dt.c	/^bool	volumes_flag = FALSE;		\/* Flags the volumes option.	*\/$/;"	v
+vu_char	dt.h	/^typedef	volatile unsigned char	vu_char;$/;"	t
+vu_int	dt.h	/^typedef	volatile unsigned int	vu_int;$/;"	t
+vu_long	dt.h	/^typedef volatile unsigned long	vu_long;$/;"	t
+vu_short	dt.h	/^typedef	volatile unsigned short	vu_short;$/;"	t
+warning_errors	dt.c	/^u_long	warning_errors;			\/* Total non-fatal error count.	*\/$/;"	v
+wdelay_count	dt.c	/^u_int	wdelay_count = 0;		\/* Delay before writing record.	*\/$/;"	v
+winit_lbdata	dtutil.c	/^winit_lbdata($/;"	f
+wopen_flags	dt.c	/^int	wopen_flags = 0;		\/* Additional write open flags.	*\/$/;"	v
+wopen_mode	dt.c	/^int	wopen_mode = O_WRONLY;		\/* The write open mode to use.	*\/$/;"	v
+write_data	dtwrite.c	/^write_data (struct dinfo *dip)$/;"	f
+write_file	dtgen.c	/^write_file (struct dinfo *dip)$/;"	f
+write_record	dtwrite.c	/^write_record($/;"	f
+write_verify	dtwrite.c	/^write_verify($/;"	f

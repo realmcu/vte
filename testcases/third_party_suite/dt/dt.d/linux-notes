@@ -1,0 +1,235 @@
+     Subject: Linux 'dt' test #37
+        Date: Wed, 12 Apr 2000 22:25:57 -0400
+        From: "Robin T. Miller" <Robin.Miller@compaq.com>
+Organization: Data Products Group (DPG)
+          To: Rose Chaput-Nichols <Rose.Chaput-Nichols@compaq.com>,
+	      Roger Richardson <rer@zk3.dec.com>
+          CC: Gerard Wernicki <Gerard.Wernicki@compaq.com>
+
+Hi Folks,
+        I've spent most of today running different variations of this
+test.  The basic test which fails is:
+
+        # dt of=/dev/sdX min=b max=128k incr=b pattern=iot
+
+        Each time I see the failure, the data is wrong on the disk.
+I verify the data via "scu -f /dev/sdX dump media lba N".
+
+        To understand this problem you must understand the buffer
+cache to an extent.  The buffer cache is comprised of pagesize buffers.
+On Alpha the pagesize is 8K, where on Intel it is 4K.  When a transfer
+of less then pagesize bytes is requested, the entire cache buffer of
+4 or 8K is written/read (at least on Tru64 Unix it is).
+
+        Writing sequentially to a disk, doesn't necessarily mean the
+writes will be ordered.  This can be affected by 1) device driver I/O
+sorts (there are a couple), and 2) tag queuing.  Frankly, I don't know
+if the Linux SCSI disk driver sorts I/O like Tru64 Unix.  I do know that
+most host adapters support tag queuing, and I think this is the one
+biting us.
+
+        Most adapter issue simple tagged requests, vs. ordered tags.
+From what I remember, this is because most drives don't support ordered
+tags correctly (although newer driver might).  Since tags are not ordered,
+the drive firmware is free to order it's writes any way it determines is
+most efficient for performance.
+
+        Since each file system block being written is not a complete
+4K of data, it's possible out of order writes can overwrite previous
+data blocks.  At least this is my theory.  We saw this last year when
+with an new Adaptec driver using AIO and writing partial disk sectors.
+[ the test was slightly different, using raw devices, but the tag
+  ordering caught on an analyzer clearly showed the write re-ordering. ]
+
+        In any case, I've been able to resolve data compare errors using
+two methods. 1) ensure min= and incr= values are modulo the pagesize,
+( 'dt' allows 'p' to multiply by the pagesize ), 2) add the flags=sync
+option which ensures data is written to disk before completing the write
+syscall. The latter defeats tag queuing and results in poor performance.
+
+        Also, notice my alternating between the IOT pattern and the
+default pattern with the lbdata option enabled, to ensure previously
+written patterns don't affect the current test.
+
+        My adapter, a SYMBIOS dual-channel NCR53C876 Ultra3 SCSI adapter,
+allows control over tag queue depth, so I plan to set this to 1 and run
+the test over night.  I found the README.ncr53c8xx, found in the driver
+source directory very interesting, so I'm attaching that as well.  We
+should be using the sym53c8xx driver instead of the generic ncr53c8xx
+driver (I made this mistake when installing, since I didn't know better).
+
+        This can all be verified with an analyzer (I think).  If my
+theory is wrong, then we still have a cache coherency problem, so we
+still need to use a workaround to avoid false data compare errors.
+
+
+        Conclusion:
+        -----------
+        I suggest using flags=sync for most tests.  Although this will
+ensure data is sync'ed on writes, there is no facility to invalidate
+the buffer cache, so reads may still come from cached data instead of
+the physical disk.  True if small amounts of data is written.  When
+writing giga-bytes of data, old buffers are invalidated and reused.
+The read-after-write option is probably useless with the buffer cache :-)
+
+        A future release of Linux will support character (raw) devices
+and may support the direct I/O flag (O_DIRECT) which allows bypassing
+the buffer cache (direct I/O to user buffer).
+
+        For now, we must try to design tests to defeat the affects of
+the buffer cache.  hmmm... 'scu' bypasses the buffer cache, but also
+the device driver :-)
+
+        Also note the last example where I modified the sync speed.
+My adapter is set to FAST-10 SCSI at boot time, even though my adapter
+and disks support faster speeds.  I'm not sure why a higher speed
+wasn't negotiated, but options can be added to /etc/conf.modules,
+my drivers are all modules, or you can manually set it using /proc.
+
+Regards,
+Robin
+========================================================================
+Linux Note:
+-----------
+RESTRICTIONS
+       There are many infelicities  in  the  protocol  underlying
+       NFS, affecting amongst others O_SYNC and O_NDELAY.
+
+       POSIX  provides  for  three different variants of synchro-
+       nised I/O, corresponding to the flags O_SYNC, O_DSYNC  and
+       O_RSYNC.   Currently  (2.1.130)  these  are all synonymous
+       under Linux.
+
+---------------------------------------------------------------------------
+Description of flags from Tru64 Unix: (better documentation)
+-------------------------------------
+  O_SYNC
+      If set, updates and writes to regular files and block devices are syn-
+      chronous updates for data and file attribute information.  On return
+      from a function that performs an O_SYNC synchronous update (a write()
+      system call when O_SYNC is set), the calling process is assured that
+      all data and file attribute information for the file has been written
+      to permanent storage, even if the file is also open for deferred
+      update.
+
+  O_DSYNC
+      If set, updates and writes to regular files and block devices are syn-
+      chronous updates for data only.  On return from a function that per-
+      forms an O_DSYNC synchronous update (a write() system call when O_DSYNC
+      is set), the calling process is assured that all data for the file has
+      been written to permanent storage.  Use of O_DSYNC does not guarantee
+      that file-control information such as owner and modification time are
+      updated to permanent storage.
+
+  O_RSYNC
+      If set in combination with O_DSYNC, applies synchronized I/O data
+      integrity completion to read operations.  The calling process is
+      assured that all pending writes of file data will have been written to
+      permanent storage prior to a read, and that the data image has been
+      successfully transferred to the calling process.
+
+      If set in combination with O_SYNC, applies synchronized I/O file
+      integrity completion to read operations.  The calling process is
+      assured that all data and file attribute information will have been
+      written to permanent storage prior to a read, and that the data image
+      has been successfully transferred to the calling process.
+
+      If O_RSYNC is used alone, it has no effect.
+
+=============================================================================
+
+Linux# echo "setsync all 10" >/proc/scsi/ncr53c8xx/1 
+Linux# dmesg | tail
+        .
+        .
+        .
+ncr53c876-1-<1,*>: FAST-20 WIDE SCSI 40.0 MB/s (50 ns, offset 15)
+Linux# 
+
+=============================================================================
+
+linux% dt of=/dev/sdc min=b max=128k incr=b pattern=iot flags=sync 
+dt: WARNING: Record #138379, attempted to write 71168 bytes, wrote only 35328 bytes.
+Write Statistics:
+     Total records processed: 138379 with min=512, max=131072, incr=512
+     Total bytes transferred: 9100032000 (8886750.000 Kbytes, 8678.467 Mbytes)
+      Average transfer rates: 3342245 bytes/sec, 3263.912 Kbytes/sec
+     Number I/O's per second: 50.824
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 45m22.73s
+           Total system time: 01m25.61s
+             Total user time: 05m15.58s
+
+dt: WARNING: Record #138379, attempted to read 71168 bytes, read only 35328 bytes.
+Read Statistics:
+     Total records processed: 138379 with min=512, max=131072, incr=512
+     Total bytes transferred: 9100032000 (8886750.000 Kbytes, 8678.467 Mbytes)
+      Average transfer rates: 5631731 bytes/sec, 5499.737 Kbytes/sec
+     Number I/O's per second: 85.639
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 26m55.85s
+           Total system time: 01m23.34s
+             Total user time: 19m08.32s
+
+Total Statistics:
+     Output device/file name: /dev/sdc (device type=disk)
+     Type of I/O's performed: sequential
+    Data pattern string used: 'IOT Pattern'
+     Total records processed: 276758 with min=512, max=131072, incr=512
+     Total bytes transferred: 18200064000 (17773500.000 Kbytes, 17356.934 Mbytes)
+      Average transfer rates: 4194897 bytes/sec, 4096.579 Kbytes/sec
+     Number I/O's per second: 63.789
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 1h12m18.62s
+           Total system time: 02m48.95s
+             Total user time: 24m23.90s
+               Starting time: Wed Apr 12 20:11:07 2000
+                 Ending time: Wed Apr 12 21:23:26 2000
+
+linux% 
+
+linux% dt of=/dev/sdc min=p max=128k incr=p enable=lbdata
+dt: WARNING: Record #134652, attempted to write 114688 bytes, wrote only 55296 bytes.
+Write Statistics:
+     Total records processed: 134652 with min=4096, max=131072, incr=4096
+     Total bytes transferred: 9100032000 (8886750.000 Kbytes, 8678.467 Mbytes)
+      Average transfer rates: 16014135 bytes/sec, 15638.803 Kbytes/sec
+     Number I/O's per second: 236.959
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 09m28.25s
+           Total system time: 01m21.92s
+             Total user time: 04m13.69s
+
+dt: WARNING: Record #134652, attempted to read 114688 bytes, read only 55296 bytes.
+Read Statistics:
+     Total records processed: 134652 with min=4096, max=131072, incr=4096
+     Total bytes transferred: 9100032000 (8886750.000 Kbytes, 8678.467 Mbytes)
+      Average transfer rates: 5716460 bytes/sec, 5582.480 Kbytes/sec
+     Number I/O's per second: 84.586
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 26m31.90s
+           Total system time: 01m19.08s
+             Total user time: 18m55.14s
+
+Total Statistics:
+     Output device/file name: /dev/sdc (device type=disk)
+     Type of I/O's performed: sequential
+   Data pattern read/written: 0x39c39c39 (w/lbdata, starting lba 0)
+     Total records processed: 269304 with min=4096, max=131072, incr=4096
+     Total bytes transferred: 18200064000 (17773500.000 Kbytes, 17356.934 Mbytes)
+      Average transfer rates: 8425136 bytes/sec, 8227.672 Kbytes/sec
+     Number I/O's per second: 124.666
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 36m00.21s
+           Total system time: 02m41.03s
+             Total user time: 23m08.83s
+               Starting time: Wed Apr 12 21:25:46 2000
+                 Ending time: Wed Apr 12 22:01:46 2000
+
+linux%

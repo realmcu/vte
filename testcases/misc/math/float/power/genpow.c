@@ -35,6 +35,11 @@
 #include        <sys/signal.h>
 #include        <math.h>
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> vte 20080401
 int create_Result_file()
 {
 
@@ -46,11 +51,19 @@ int create_Result_file()
 	F_name = "pow_out.ref";
 	F_namei = "pow_inp.ref";
 	F_namei1 = "1pow_inp.ref";
+<<<<<<< HEAD
 	nbVal = 20000;
 
 	fpi = open(F_namei,O_RDONLY,0777);
 	fpi1 = open(F_namei1,O_RDONLY,0777);
         if (!fpi || !fpi1)
+=======
+	nbVal = 20000; 
+
+	fpi = open(F_namei,O_RDONLY,0777);
+	fpi1 = open(F_namei1,O_RDONLY,0777);
+        if ( !fpi || !fpi1 )
+>>>>>>> vte 20080401
         {
             	printf("error opening file");
 		close(fpi);
@@ -69,7 +82,11 @@ int create_Result_file()
 		close(fpi1);
 
 		fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
+<<<<<<< HEAD
         	if (!fp)
+=======
+        	if ( !fp)
+>>>>>>> vte 20080401
         	{
         	    	printf("error opening file");
 			close(fp);
@@ -77,17 +94,29 @@ int create_Result_file()
 		}
 		else
 		{
+<<<<<<< HEAD
 			for (i = 0; i<nbVal; i++)
 			{
 				write(fp,&tabR[i],sizeof(double));
 			}
 
+=======
+			for (i = 0; i<nbVal; i++ ) 
+			{
+				write(fp,&tabR[i],sizeof(double));
+			}
+	
+>>>>>>> vte 20080401
 			close(fp);
 			return 0;
 		}
 	}
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> vte 20080401
 int create_Data_file()
 {
 	int i, nbVal;
@@ -97,7 +126,11 @@ int create_Data_file()
 
 	F_name = "pow_inp.ref";
 	F_name_pow = "1pow_inp.ref";
+<<<<<<< HEAD
 	nbVal = 20000;
+=======
+	nbVal = 20000; 
+>>>>>>> vte 20080401
 
 	Inc = exp(1);
 	Inc_pow = exp(1)/100;
@@ -118,8 +151,13 @@ int create_Data_file()
 	    	return -1;
         }
         else
+<<<<<<< HEAD
         {
 		for (i = 0; i<nbVal; i++)
+=======
+        {	
+		for (i = 0; i<nbVal; i++ ) 
+>>>>>>> vte 20080401
 		{
 			write(fp,&tabD[i],sizeof(double));
 			write(fp2,&tabD_pow[i],sizeof(double));
@@ -130,10 +168,18 @@ int create_Data_file()
 	}
 }
 
+<<<<<<< HEAD
 int main(int argc, char  *argv[])
 {
 
 	if (argc > 1)
+=======
+
+int main(int argc, char  *argv[])
+{
+
+	if (argc > 1) 
+>>>>>>> vte 20080401
 	{
 		switch ( atoi(argv[1]) )
 		{
@@ -166,4 +212,8 @@ int main(int argc, char  *argv[])
 
   return(0);
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> vte 20080401

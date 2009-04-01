@@ -1,0 +1,266 @@
+December 9, 1995 by Robin Miller
+
+	The following changes have been made to 'dt' Version 9.0:
+
+     o	Fixed a problem checking pad bytes when doing long reads of
+	short records (this was discovered by someone testing tapes).
+
+     o	For systems which support higher serial line speeds, you can now
+	select baud rates of 57600, 76800, and 115200.  Platinum (ptos)
+	now supports 57600 and 115200 (thank-you Dennis Paradis).
+
+     o	Added the ability to read/write blocks using logical block data
+	(lbdata) option.  While this new feature was added specifically
+	as a counterpart to SCSI Write Same (disks) lbdata option, this
+	option can be used with any device and/or data stream.
+
+	What is Logical Block Data (lbdata) Format?
+
+	This feature allows reading/writing of a 4-byte (32-bit) logical
+	block address at the beginning of each data block tested.  At the
+	present time, the block number is stored using SCSI byte ordering
+	(big-endian), which matches what the SCSI Write Same command does.
+
+	Several new 'dt' options have been added for this feature:
+
+        lba=value	Set starting block used w/lbdata option.
+        lbs=value	Set logical block size for lbdata option.
+		[ ...as well as... ]
+	enable=lbdata	Logical block data.    (Default: disabled)
+
+	If this feature is enabled without specifying other options, the
+	block size (lbs) defaults to 512, and the starting block address
+	(lba) defaults to 0.  Specifying "lba" or "lbs" implicitly turns
+	on the "lbdata" feature.
+
+	NOTES:  The logical block # is *always* inserted starting at the
+	beginning of each data block, not every "lbs" bytes (WRT to variable
+	length opts).  Also, the block number overwrites what the previous
+	pattern bytes would have been (again matching the SCSI Write Same
+	method).  Also, enabling this feature will cause a degradation in
+	performance statistics.
+
+	If people would like an option to have the logical block stored in
+	little-endian format, I'll consider adding an option *if* requested.
+
+	Of course, the data verification routines have been modified to
+	verify the logical block # matches the expected, and reports any
+	mis-matches.
+
+     o	For disk devices, the "min=" and "incr=" values now default to 512,
+	when variable length transfers are requested (previously defaulted
+	to 1 which was great for tapes, but not so good for block devices).
+	[ A future version of 'dt' will obtain the device block size via
+	  the new DEVGETINFO ioctl() now available in Platinum (ptos). ]
+
+     o	Removed "enable=ade" (Address Data Exception) test option.
+	This was used to test kernel unaligned data exception fixups,
+	but it's seldom (if ever) used, and it's time to cleanup code.
+
+     o	Added "ttymin=" option for setting the VMIN value for serial line
+	testing.  Also fixed problem where VMIN got set incorrectly if the
+	block size was greater than 255 (VMIN is a u_char on Digital Unix).
+
+	The "lbdata" feature has seen limited testing, but I know many people
+have requested this ability in the past (sorry 'jag', you won't see it...).
+
+	As usual, if you encounter any problems with 'dt', send mail directly
+to me rmiller@zk3.dec.com (this is not a supported utility, so no QARs please!).
+
+	BTW:  I've taken the liberty of adding names to my 'dt' mail alias, of
+people who have expressed interest in the past.  Please let me know if you do
+not wish to be on this mailing list *or* of others who might want to be added.
+
+		Location: wasted:~rmiller/dt.d/{dt,dt-ptos}
+
+	NOTE the 'ptos' version necessary for Platinum (AIO library changes).
+
+	Attached are examples using 'dt' -> 'od' which show the data stream.
+
+Enjoy,
+Robin
+================================================================================
+NOTE: The "lbs" values used here are for 'od's benifit (any value is valid).
+--------------------------------------------------------------------------------
+
+% dt of=- pattern="Just Testing Man" count=3 enable=lbdata disable=stats | od -c +0.
+0000000   \0  \0  \0  \0       T   e   s   t   i   n   g       M   a   n
+0000016    J   u   s   t       T   e   s   t   i   n   g       M   a   n
+*
+0000512   \0  \0  \0 001       T   e   s   t   i   n   g       M   a   n
+0000528    J   u   s   t       T   e   s   t   i   n   g       M   a   n
+*
+0001024   \0  \0  \0 002       T   e   s   t   i   n   g       M   a   n
+0001040    J   u   s   t       T   e   s   t   i   n   g       M   a   n
+*
+0001536
+% 
+
+--------------------------------------------------------------------------------
+
+% dt of=- count=1 lbs=64 disable=stats | od -x +0.
+0000000  0000 0000 9c39 39c3 9c39 39c3 9c39 39c3
+0000016  9c39 39c3 9c39 39c3 9c39 39c3 9c39 39c3
+*
+0000064  0000 0100 9c39 39c3 9c39 39c3 9c39 39c3
+0000080  9c39 39c3 9c39 39c3 9c39 39c3 9c39 39c3
+*
+0000128  0000 0200 9c39 39c3 9c39 39c3 9c39 39c3
+0000144  9c39 39c3 9c39 39c3 9c39 39c3 9c39 39c3
+*
+0000192  0000 0300 9c39 39c3 9c39 39c3 9c39 39c3
+0000208  9c39 39c3 9c39 39c3 9c39 39c3 9c39 39c3
+*
+0000256  0000 0400 9c39 39c3 9c39 39c3 9c39 39c3
+0000272  9c39 39c3 9c39 39c3 9c39 39c3 9c39 39c3
+*
+0000320  0000 0500 9c39 39c3 9c39 39c3 9c39 39c3
+0000336  9c39 39c3 9c39 39c3 9c39 39c3 9c39 39c3
+*
+0000384  0000 0600 9c39 39c3 9c39 39c3 9c39 39c3
+0000400  9c39 39c3 9c39 39c3 9c39 39c3 9c39 39c3
+*
+0000448  0000 0700 9c39 39c3 9c39 39c3 9c39 39c3
+0000464  9c39 39c3 9c39 39c3 9c39 39c3 9c39 39c3
+*
+0000512
+% 
+
+--------------------------------------------------------------------------------
+
+% dt of=- count=1 lba=100 lbs=16 pattern=incr disable=stats | od -txC
+0000000  00 00 00 64 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f
+0000020  00 00 00 65 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f
+0000040  00 00 00 66 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f
+0000060  00 00 00 67 34 35 36 37 38 39 3a 3b 3c 3d 3e 3f
+0000100  00 00 00 68 44 45 46 47 48 49 4a 4b 4c 4d 4e 4f
+0000120  00 00 00 69 54 55 56 57 58 59 5a 5b 5c 5d 5e 5f
+0000140  00 00 00 6a 64 65 66 67 68 69 6a 6b 6c 6d 6e 6f
+0000160  00 00 00 6b 74 75 76 77 78 79 7a 7b 7c 7d 7e 7f
+0000200  00 00 00 6c 84 85 86 87 88 89 8a 8b 8c 8d 8e 8f
+0000220  00 00 00 6d 94 95 96 97 98 99 9a 9b 9c 9d 9e 9f
+0000240  00 00 00 6e a4 a5 a6 a7 a8 a9 aa ab ac ad ae af
+0000260  00 00 00 6f b4 b5 b6 b7 b8 b9 ba bb bc bd be bf
+0000300  00 00 00 70 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
+0000320  00 00 00 71 d4 d5 d6 d7 d8 d9 da db dc dd de df
+0000340  00 00 00 72 e4 e5 e6 e7 e8 e9 ea eb ec ed ee ef
+0000360  00 00 00 73 f4 f5 f6 f7 f8 f9 fa fb fc fd fe ff
+0000400  00 00 00 74 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f
+0000420  00 00 00 75 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f
+0000440  00 00 00 76 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f
+0000460  00 00 00 77 34 35 36 37 38 39 3a 3b 3c 3d 3e 3f
+0000500  00 00 00 78 44 45 46 47 48 49 4a 4b 4c 4d 4e 4f
+0000520  00 00 00 79 54 55 56 57 58 59 5a 5b 5c 5d 5e 5f
+0000540  00 00 00 7a 64 65 66 67 68 69 6a 6b 6c 6d 6e 6f
+0000560  00 00 00 7b 74 75 76 77 78 79 7a 7b 7c 7d 7e 7f
+0000600  00 00 00 7c 84 85 86 87 88 89 8a 8b 8c 8d 8e 8f
+0000620  00 00 00 7d 94 95 96 97 98 99 9a 9b 9c 9d 9e 9f
+0000640  00 00 00 7e a4 a5 a6 a7 a8 a9 aa ab ac ad ae af
+0000660  00 00 00 7f b4 b5 b6 b7 b8 b9 ba bb bc bd be bf
+0000700  00 00 00 80 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
+0000720  00 00 00 81 d4 d5 d6 d7 d8 d9 da db dc dd de df
+0000740  00 00 00 82 e4 e5 e6 e7 e8 e9 ea eb ec ed ee ef
+0000760  00 00 00 83 f4 f5 f6 f7 f8 f9 fa fb fc fd fe ff
+0001000
+% 
+
+--------------------------------------------------------------------------------
+	Example showing compatability between 'scu' and 'dt':
+--------------------------------------------------------------------------------
+% disklabel rz0
+Invalid disk label (label is corrupted, or disk is unlabeled)
+% dt of=/dev/rrz0c min=10k max=64k count=500 enable=lbdata
+Write Statistics:
+     Total records processed: 500 with min=10240, max=65536, incr=512
+     Total bytes transferred: 18206720 (17780.000 Kbytes, 17.363 Mbytes)
+      Average transfer rates: 1933457 bytes/sec, 1888.142 Kbytes/sec
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m09.41s
+           Total system time: 00m00.26s
+             Total user time: 00m00.93s
+
+Read Statistics:
+     Total records processed: 500 with min=10240, max=65536, incr=512
+     Total bytes transferred: 18206720 (17780.000 Kbytes, 17.363 Mbytes)
+      Average transfer rates: 1667791 bytes/sec, 1628.702 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m10.91s
+           Total system time: 00m00.26s
+             Total user time: 00m07.63s
+
+Total Statistics:
+     Output device/file name: /dev/rrz0c (Device: RZ28, type=disk)
+   Data pattern read/written: 0x39c39c39
+     Total records processed: 1000 with min=10240, max=65536, incr=512
+     Total bytes transferred: 36413440 (35560.000 Kbytes, 34.727 Mbytes)
+      Average transfer rates: 1786432 bytes/sec, 1744.563 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m20.38s
+           Total system time: 00m00.53s
+             Total user time: 00m08.56s
+               Starting time: Mon Nov 20 14:34:20 1995
+                 Ending time: Mon Nov 20 14:34:40 1995
+
+% scu -f /dev/rrz0c dump media lba 100
+Reading 1 block (100 - 100) on /dev/rrz0c (RZ28)...
+
+Record Number 1 (Starting Block 100)
+
+00000000  00 00 00 64 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000028  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000056  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000084  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000112  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000140  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000168  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000196  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000224  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000252  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000280  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000308  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000336  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000364  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000392  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000420  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000448  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000476  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39 
+00000504  39 9c c3 39 39 9c c3 39 
+% 
+% scu -f /dev/rrz0c read media limit 18206720 popts lbdata
+Reading 35560 blocks (0 - 35559) on /dev/rrz0c (RZ28) using pattern 0x39c39c39...
+% 
+
+--------------------------------------------------------------------------------
+		Forced errors to demonstrate error report formats:
+--------------------------------------------------------------------------------
+
+% dt if=/dev/rrz0c count=1 disable=stats
+dt: Error number 1 occurred on Sat Dec  9 15:18:49 1995
+dt: Data compare error at byte 0 in record number 1
+dt: Relative block number where the error occcured is 0
+dt: Data expected = 0x39, data found = 0, byte count = 512
+dt: The incorrect data starts at address 0x140010000 (marked by asterisk '*')
+dt: Dumping Data Buffer (base = 0x140010000, offset = 0, limit = 64 bytes):
+
+0x140010000 *00 00 00 00 39 9c c3 39 39 9c c3 39 39 9c c3 39
+0x140010010  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39
+0x140010020  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39
+0x140010030  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39
+
+% dt if=/dev/rrz0c lbs=100 count=1 disable=stats
+dt: Error number 1 occurred on Sat Dec  9 15:19:58 1995
+dt: Data compare error at byte 100 in record number 1
+dt: Relative block number where the error occcured is 1
+dt: Block expected = 0x00000001, block found = 0x399cc339, byte count = 512
+dt: The incorrect data starts at address 0x140010064 (marked by asterisk '*')
+dt: Dumping Data Buffer (base = 0x140010000, offset = 100, limit = 64 bytes):
+
+0x140010044  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39
+0x140010054  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39
+0x140010064 *39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39
+0x140010074  39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3 39
+
+% 

@@ -18,6 +18,7 @@
  */
 
 /******************************************************************************/
+<<<<<<< HEAD
 /*									    */
 /* Dec-03-2001  Created: Jacky Malcles & Jean Noel Cordenner		  */
 /*	      These tests are adapted from AIX float PVT tests.	     */
@@ -43,6 +44,33 @@
  * create file:
  *
  * func_name is the name of the function
+=======
+/*                                                                            */
+/* Dec-03-2001  Created: Jacky Malcles & Jean Noel Cordenner                  */
+/*              These tests are adapted from AIX float PVT tests.             */
+/*                                                                            */
+/******************************************************************************/
+#include	<sys/types.h>
+#include	<sys/wait.h>
+#include 	<float.h>
+#include 	<stdio.h>
+#include 	<stdlib.h>
+#include 	<string.h>
+#include 	<errno.h>
+#include        <limits.h>
+#include        <unistd.h>
+#include        <fcntl.h>
+#include        <errno.h>
+#include        <sys/signal.h>
+#include        <math.h>
+
+
+
+/*****************************************************************
+ * create file: 
+ * 	
+ * func_name is the name of the function 
+>>>>>>> vte 20080401
  *
  * code can take 2 values: DATA_CREATE to create a input data file
  *			   RESULT_CREATE for output result file
@@ -51,6 +79,7 @@
 int create_file(char *func_name, int NbVal)
 {
 	pid_t myproc;
+<<<<<<< HEAD
 
 	switch (myproc = fork()) {
 	case -1:
@@ -92,3 +121,39 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
+=======
+	           
+        if (( myproc = fork() )!=0)
+                return myproc;
+        else {
+		char *arglist[] = { func_name, NULL};
+	     	execvp(arglist[0], arglist);
+
+	     	fprintf(stderr, "ERROR %s\n", strerror(errno));
+	     	abort();
+	}
+} 
+
+
+
+
+int main(int argc, char *argv[])
+{
+	char *funct;
+	pid_t child;
+	
+	funct = "./gencosh";
+	child=create_file(funct, 0);
+	waitpid(child,NULL,0);
+
+	funct = "./gensinh";
+	child=create_file(funct, 0);
+	waitpid(child,NULL,0);
+
+	funct = "./gentanh";
+	child=create_file(funct, 0);
+	waitpid(child,NULL,0);
+
+	return 0;
+}
+>>>>>>> vte 20080401

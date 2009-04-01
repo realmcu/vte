@@ -42,4 +42,8 @@ const TH_FUNC th_func[] = {
 
 #define GENERATOR "genbessel"
 #include "main.c"
+<<<<<<< HEAD
 #include "thread_code.c"
+=======
+#include "thread_code.c"
+>>>>>>> vte 20080401

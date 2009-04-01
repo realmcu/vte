@@ -34,9 +34,17 @@
 #include        <sys/signal.h>
 #include        <math.h>
 
+<<<<<<< HEAD
 int create_Result_file()
 {
 
+=======
+
+
+int create_Result_file()
+{
+	
+>>>>>>> vte 20080401
 	int signgam = 0;
 	int i, nbVal, tabSign[20000];
 	double	tabR[20000], Inc;
@@ -45,7 +53,11 @@ int create_Result_file()
 
 	F_name = "gamma_out.ref";
 	F_namesign = "gamma_sign.ref";
+<<<<<<< HEAD
 	nbVal = 20000;
+=======
+	nbVal = 20000; 
+>>>>>>> vte 20080401
 
 	Inc = sqrt(3);
 
@@ -66,12 +78,20 @@ int create_Result_file()
 	}
 	else
 	{
+<<<<<<< HEAD
 		for (i = 0; i<nbVal; i++)
+=======
+		for (i = 0; i<nbVal; i++ ) 
+>>>>>>> vte 20080401
 		{
 			write(fp,&tabR[i],sizeof(double));
 			write(fpsi,&tabSign[i],sizeof(int));
 		}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> vte 20080401
 		close(fp);
 		close(fpsi);
 		return 0;
@@ -79,6 +99,10 @@ int create_Result_file()
 	return(0);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> vte 20080401
 int create_Data_file()
 {
 	int i, nbVal;
@@ -87,13 +111,21 @@ int create_Data_file()
 	int fp;
 
 	F_name = "gamma_inp.ref";
+<<<<<<< HEAD
 	nbVal = 20000;
+=======
+	nbVal = 20000; 
+>>>>>>> vte 20080401
 
 	Inc = sqrt(3);
 
 	for (i=0; i<nbVal; i++)
 		tabD[i] = (1+Inc*i);
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> vte 20080401
 	fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
         if (!fp)
         {
@@ -102,8 +134,13 @@ int create_Data_file()
 	    	return -1;
         }
         else
+<<<<<<< HEAD
         {
 		for (i = 0; i<nbVal; i++)
+=======
+        {	
+		for (i = 0; i<nbVal; i++ ) 
+>>>>>>> vte 20080401
 		{
 			write(fp,&tabD[i],sizeof(double));
 		}
@@ -113,10 +150,18 @@ int create_Data_file()
 	return(0);
 }
 
+<<<<<<< HEAD
 int main(int argc, char  *argv[])
 {
 
 	if (argc > 1)
+=======
+
+int main(int argc, char  *argv[])
+{
+
+	if (argc > 1) 
+>>>>>>> vte 20080401
 	{
 		switch ( atoi(argv[1]) )
 		{
@@ -147,4 +192,8 @@ int main(int argc, char  *argv[])
 			printf("problem during %s result file creation\n", argv[0]);
 	}
 	return(0);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> vte 20080401

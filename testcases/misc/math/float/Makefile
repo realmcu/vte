@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #
 #    misc/math/float test suite Makefile.
 #
@@ -30,3 +31,25 @@ LDLIBS		+= -lpthread -lm
 MAKE_TARGETS	:= $(patsubst $(abs_srcdir)/%.c,%,$(wildcard $(abs_srcdir)/float*.c))
 
 include $(top_srcdir)/include/mk/generic_trunk_target.mk
+=======
+CFLAGS+= -I../../../../include -Wall -g 
+LOADLIBES+= -lpthread -lm -L../../../../lib -lltp
+
+SRCS=$(wildcard float*.c)
+TARGETS=$(patsubst %.c,%,$(SRCS))
+
+SUBDIRS=bessel exp_log iperb power trigo
+
+all: $(TARGETS)
+	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
+
+install:
+	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
+	@set -e; for i in $(TARGETS); do ln -f $$i ../../../bin/$$i; done
+
+clean: 
+	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
+	rm -f $(TARGETS) 
+	@set -e; for i in $(TARGETS); do rm -rf ../../../bin/$$i ; done
+
+>>>>>>> vte 20080401

@@ -9,6 +9,7 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
+<<<<<<< HEAD
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,6 +19,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA	02111-1307, USA.
+=======
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+>>>>>>> vte 20080401
  */
 
 /*
@@ -44,13 +56,21 @@ CAUTION: running this program may crash your system, your disk and all
 	Running as user nobody and with all your filesystems
 	remounted to readonly may be wise..
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> vte 20080401
 TODO:
 	* in rand_long(), stuff in some real pointers to random data
 	* Does a syscall is supposed to send SIGSEGV?
 */
 
+<<<<<<< HEAD
 #define _GNU_SOURCE
 #include <sys/syscall.h>
+=======
+
+>>>>>>> vte 20080401
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -67,6 +87,10 @@ TODO:
 
 char *TCID="crash02";
 int TST_TOTAL=1;
+<<<<<<< HEAD
+=======
+extern int Tst_count;
+>>>>>>> vte 20080401
 
 static int x_opt = 0;
 static int v_opt = 0;
@@ -89,6 +113,11 @@ int ntries = 100;
 /* max time allowed per try, in seconds */
 #define MAX_TRY_TIME 5
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> vte 20080401
 void cleanup()
 {
 	/*
@@ -99,6 +128,10 @@ void cleanup()
 
 	tst_rmdir();
 
+<<<<<<< HEAD
+=======
+	tst_exit();
+>>>>>>> vte 20080401
 }
 
 void setup()
@@ -116,11 +149,19 @@ void setup()
 
 void help()
 {
+<<<<<<< HEAD
 	printf("	-x		dry run, hexdump random code instead\n");
 	printf("	-l x		max syscall no\n");
 	printf("	-v x		verbose level\n");
 	printf("	-s x		random seed\n");
 	printf("	-n x		ntries\n");
+=======
+	printf("  -x      dry run, hexdump random code instead\n");
+	printf("  -l x    max syscall no\n");
+	printf("  -v x    verbose level\n");
+	printf("  -s x    random seed\n");
+	printf("  -n x    ntries\n");
+>>>>>>> vte 20080401
 }
 
 /*
@@ -136,12 +177,17 @@ option_t options[] =
 	{ NULL, NULL, NULL }
 };
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> vte 20080401
 void badboy_fork ();
 void badboy_loop ();
 
 void summarize_errno ();
 void record_errno(unsigned int n);
 
+<<<<<<< HEAD
 int
 main (int argc, char *argv[])
 {
@@ -174,6 +220,43 @@ main (int argc, char *argv[])
 
 		srand(nseed);
 		badboy_fork();
+=======
+
+int
+main (int argc, char *argv[])
+{
+  char *msg;
+  int lc;
+
+  if ( (msg=parse_opts(argc, argv, options, help)) != (char *) NULL )
+	tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+
+  if (v_opt)
+	  verbose_level = atoi(v_copt);
+
+  if (n_opt)
+	  ntries = atoi(n_copt);
+
+  if (l_opt)
+	  sysno_max = atoi(l_copt);
+
+  if (s_opt)
+	  nseed = atoi(s_copt);
+  else
+	  nseed = time(NULL);
+
+   setup();
+
+   for (lc=0; TEST_LOOPING(lc); lc++)
+    {
+		Tst_count=0;
+
+		tst_resm(TINFO, "crashme02 %d %d %d",
+	   		sysno_max, nseed, ntries);
+
+  		srand (nseed);
+		badboy_fork ();
+>>>>>>> vte 20080401
 
 		/* still there? */
 		tst_resm(TPASS, "we're still here, OS seems to be robust");
@@ -181,7 +264,11 @@ main (int argc, char *argv[])
 		nseed++;
 	}
 	cleanup();
+<<<<<<< HEAD
 	tst_exit();
+=======
+	return 0;
+>>>>>>> vte 20080401
 }
 
 /* ************************* */
@@ -189,6 +276,7 @@ int badboy_pid;
 
 void my_signal (int sig, void (*func) ());
 
+<<<<<<< HEAD
 void monitor_fcn(int sig)
 {
 	int status;
@@ -240,6 +328,64 @@ badboy_fork()
 #endif
 		}
 	}
+=======
+
+void monitor_fcn (int sig)
+{
+  int status;
+
+ if (verbose_level >= 3) 
+	    printf ("time limit reached on pid. using kill.\n");
+
+  status = kill (badboy_pid, SIGKILL);
+  if (status < 0)
+    {
+	if (verbose_level >= 3) 
+      		printf ("failed to kill process\n");
+    }
+}
+
+
+void
+badboy_fork ()
+{
+	int status, pid;
+
+      status = fork ();
+      badboy_pid = status;
+      if (status == 0)	/* badboy */
+	{
+#ifdef DEBUG_LATE_BADBOY
+	  sleep(ntries*MAX_TRY_TIME+10);
+#else
+	  badboy_loop ();
+#endif
+	  exit (0);	/* tough guy */
+	}
+      else if (status < 0)
+	perror ("fork");
+      else			/* parent watching over badboy */
+	{
+	  if (verbose_level > 3)
+	  	printf ("badboy pid = %d\n", badboy_pid);
+
+/* don't trust the child to return at night */
+      my_signal (SIGALRM, monitor_fcn);
+      alarm (ntries*MAX_TRY_TIME);
+
+	  pid = wait (&status);
+	  if (pid <= 0)
+	  {
+		  perror ("wait");
+	  } else {
+	  	if (verbose_level > 3)
+		  printf ("pid %d exited with status %d\n", pid, status);
+		#if 0
+		record_status(status);
+		#endif
+	   }
+	}	/* parent */
+>>>>>>> vte 20080401
 	alarm(0);
 }
 
@@ -261,6 +407,7 @@ void record_errno(unsigned int n)
 void
 summarize_errno ()
 {
+<<<<<<< HEAD
 	int i;
 
 	if (x_opt || verbose_level < 2)
@@ -273,16 +420,39 @@ summarize_errno ()
 	}
 }
 
+=======
+  int i;
+
+  if (x_opt || verbose_level < 2) 
+		  return;
+
+  printf ("errno status ... number of cases\n");
+  for (i = 0; i < STATUS_MAX; i++)
+    {
+      if (errno_table[i])
+      	printf ( "%12d ... %5d\n", i, errno_table[i]);
+    }
+}
+
+
+>>>>>>> vte 20080401
 /* ************* badboy ******************************************* */
 
 jmp_buf again_buff;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> vte 20080401
 unsigned char * bad_malloc (int n);
 void my_signal (int sig, void (*func) ());
 void again_handler (int sig);
 void try_one_crash (int try_num);
 void set_up_signals ();
+<<<<<<< HEAD
 int in_blacklist (int sysno);
+=======
+>>>>>>> vte 20080401
 
 /* badboy "entry" point */
 
@@ -292,6 +462,7 @@ int in_blacklist (int sysno);
 void
 badboy_loop ()
 {
+<<<<<<< HEAD
 	int i;
 
 	for (i = 0; i < ntries; ++i) {
@@ -311,10 +482,37 @@ badboy_loop ()
 		}
 	}
 	summarize_errno();
+=======
+  int i;
+
+
+  for (i = 0; i < ntries; ++i)
+    {
+	  /* level 5 */
+
+  if (!x_opt && verbose_level >= 5) {
+		printf ("try %d\n", i);
+  }
+
+      if (setjmp (again_buff) == 3)
+	{
+  	  if (verbose_level >= 5)
+	  	printf ("Barfed\n");
+	}
+      else
+	{
+	  set_up_signals ();
+	  alarm (MAX_TRY_TIME);
+	  try_one_crash (i);
+	}
+  }
+  summarize_errno();
+>>>>>>> vte 20080401
 }
 
 void again_handler (int sig)
 {
+<<<<<<< HEAD
 	char *ss;
 
 	switch (sig) {
@@ -362,21 +560,81 @@ void again_handler (int sig)
 		printf ("Got signal %d%s\n", sig, ss);
 
 	longjmp (again_buff, 3);
+=======
+  char *ss;
+
+  switch (sig)
+    {
+    case SIGILL:
+      ss = " illegal instruction";
+      break;
+#ifdef SIGTRAP
+    case SIGTRAP:
+      ss = " trace trap";
+      break;
+#endif
+    case SIGFPE:
+      ss = " arithmetic exception";
+      break;
+#ifdef SIGBUS
+    case SIGBUS:
+      ss = " bus error";
+      break;
+#endif
+    case SIGSEGV:
+      ss = " segmentation violation";
+      break;
+#ifdef SIGIOT
+    case SIGIOT:
+      ss = " IOT instruction";
+      break;
+#endif
+#ifdef SIGEMT
+    case SIGEMT:
+      ss = " EMT instruction";
+      break;
+#endif
+#ifdef SIGALRM
+    case SIGALRM:
+      ss = " alarm clock";
+      break;
+#endif
+    case SIGINT:
+      ss = " interrupt";
+      break;
+    default:
+      ss = "";
+    }
+  if (verbose_level >= 5) 
+  	printf ("Got signal %d%s\n", sig, ss);
+
+  longjmp (again_buff, 3);
+>>>>>>> vte 20080401
 }
 
 void my_signal (int sig, void (*func) ())
 {
+<<<<<<< HEAD
 	struct sigaction act;
 
 	act.sa_handler = func;
 	memset (&act.sa_mask, 0x00, sizeof (sigset_t));
 	act.sa_flags = SA_NOMASK|SA_RESTART;
 	sigaction (sig, &act, 0);
+=======
+  struct sigaction act;
+
+  act.sa_handler = func;
+  memset (&act.sa_mask, 0x00, sizeof (sigset_t));
+  act.sa_flags = SA_NOMASK|SA_RESTART;
+  sigaction (sig, &act, 0);
+>>>>>>> vte 20080401
 }
 
 void
 set_up_signals ()
 {
+<<<<<<< HEAD
 	my_signal (SIGILL, again_handler);
 #ifdef SIGTRAP
 	my_signal (SIGTRAP, again_handler);
@@ -396,22 +654,52 @@ set_up_signals ()
 	my_signal (SIGALRM, again_handler);
 #endif
 	my_signal (SIGINT, again_handler);
+=======
+  my_signal (SIGILL, again_handler);
+#ifdef SIGTRAP
+  my_signal (SIGTRAP, again_handler);
+#endif
+  my_signal (SIGFPE, again_handler);
+#ifdef SIGBUS
+  my_signal (SIGBUS, again_handler);
+#endif
+  my_signal (SIGSEGV, again_handler);
+#ifdef SIGIOT
+  my_signal (SIGIOT, again_handler);
+#endif
+#ifdef SIGEMT
+  my_signal (SIGEMT, again_handler);
+#endif
+#ifdef SIGALRM
+  my_signal (SIGALRM, again_handler);
+#endif
+  my_signal (SIGINT, again_handler);
+>>>>>>> vte 20080401
 }
 
 /*
  * NB: rand() (ie. RAND_MAX) might be on 31bits only!
  *
+<<<<<<< HEAD
  * FIXME: 64-bit systems
  *
  * TODO: improve arg mixing (16bits and 8bits values, NULLs, etc.).
  *	big values as returned by rand() are no so interresting
  *	(except when used as pointers) because they may fall too
+=======
+ * FIXME: 64bits systems
+ *
+ * TODO: improve arg mixing (16bits and 8bits values, NULLs, etc.).
+ *	big values as returned by rand() are no so interresting 
+ *	(except when used as pointers) because they may fall too 
+>>>>>>> vte 20080401
  *	quickly in the invalid parameter sieve. Smaller values,
  *	will be more insidious because they may refer to existing
  *	objects (pids, fd, etc.).
  */
 long int rand_long()
 {
+<<<<<<< HEAD
 		int r1, r2;
 
 		r1 = rand();
@@ -425,11 +713,27 @@ long int rand_long()
 			r2 &= 0x00ffL;
 
 		return (long int) ((r1 & 0xffffL) << 16) | (r2 & 0xffffL);
+=======
+    int r1, r2;
+
+    r1 = rand();
+    r2 = rand();
+    
+    if (r1 & 0x10000L)
+    	r1 = 0;
+    if (!r1 && (r2 & 0x50000L))
+    	r2 = 0;
+    else if (!r1 && (r2 & 0x20000L))
+    	r2 &= 0x00ffL;
+
+    return (long int) ((r1 & 0xffffL) << 16) | (r2 & 0xffffL);
+>>>>>>> vte 20080401
 }
 
 void
 try_one_crash (int try_num)
 {
+<<<<<<< HEAD
 	long int sysno, arg1, arg2, arg3, arg4, arg5, arg6, arg7;
 
 	do {
@@ -497,3 +801,27 @@ in_blacklist (int sysno)
 
 	return 0;
 }
+=======
+  long int sysno, arg1, arg2, arg3, arg4, arg5, arg6, arg7;
+
+  sysno = rand()%sysno_max;
+  arg1 = rand_long();
+  arg2 = rand_long();
+  arg3 = rand_long();
+  arg4 = rand_long();
+  arg5 = rand_long();
+  arg6 = rand_long();
+  arg7 = rand_long();
+
+  if (x_opt) {
+      if (verbose_level >= 1) 
+  	printf("%04d: syscall(%ld, %#lx, %#lx, %#lx, %#lx, %#lx, %#lx, %#lx)\n",
+		try_num, sysno, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+  } else {
+    syscall (sysno, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+    record_errno(errno);
+  }
+}
+
+
+>>>>>>> vte 20080401

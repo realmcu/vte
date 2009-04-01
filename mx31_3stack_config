@@ -1,0 +1,9 @@
+#Update /home/VTE/vte-3.3/mx31_3stack_config at 20080825
+KLINUX_SRCDIR=/home/vobs/linux_2.6.26_imx31stack_3.4.0
+KLINUX_BLTDIR=/home/vobs/linux_2.6.26_imx31stack_3.4.0
+ARCH_CPU=arm
+ARCH_PLATFORM=imx31stack
+export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM
+CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-
+export CFLAGS=-DPROJECT_LPDK=1
+export CROSS_COMPILER

@@ -29,7 +29,11 @@
  * This is similar to fptest1.  Random values are used for some of the
  * math in routine "gauss".  The value "avgspd" computed in routine
  * "term()" should come out to a known value.  If this happens this
+<<<<<<< HEAD
  * program prints a "passed" message and exits 0, otherwise a "failed"
+=======
+ * program prints a "passed" message and exits 0, otherwise a "failed" 
+>>>>>>> vte 20080401
  * message is printed and it exits with value 1.
  *
  */
@@ -64,8 +68,15 @@
 
 char *TCID="fptest02";          /* Test program identifier.    */
 int TST_TOTAL=1;                /* Total number of test cases. */
+<<<<<<< HEAD
 /**************/
 
+=======
+extern int Tst_count;           /* Test Case counter for tst_* routines */
+/**************/
+
+
+>>>>>>> vte 20080401
 int init();
 int doevent();
 int term();
@@ -110,13 +121,24 @@ char *argv[];
 
 	init();
 
+<<<<<<< HEAD
 	while ((ev=nextevent()) != NULL) {
+=======
+	while ( (ev=nextevent()) != (struct event *)NULL) {
+>>>>>>> vte 20080401
 		doevent(ev);
 	}
 
 	term();
 	tst_resm(TPASS,"PASS");
 	tst_exit();
+<<<<<<< HEAD
+=======
+
+	/**NOT REACHED**/
+                 return(0);
+
+>>>>>>> vte 20080401
 }
 
 /*
@@ -192,10 +214,19 @@ double t;
 			break;
 			}
 		}
+<<<<<<< HEAD
 	if (ok)
 		return(0);
 	else
 		tst_brkm(TBROK, NULL, "No room for event");
+=======
+	if (ok) 
+		return(0);
+	else{
+                                 tst_resm(TBROK,"No room for event");
+                                 tst_exit();
+                 }
+>>>>>>> vte 20080401
 
 	return(0);
 }
@@ -209,12 +240,20 @@ struct event *nextevent()
 	int i;
 
 	for (i=1; i<=nproc; i++) {
+<<<<<<< HEAD
           if ((eventtab[i].type!=NULLEVENT) && (eventtab[i].time<mintime)) {
+=======
+          if ((eventtab[i].type!=NULLEVENT) && (eventtab[i].time<mintime) ) {
+>>>>>>> vte 20080401
 		imin=i;
 		mintime=eventtab[i].time;
 		}
 	  }
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> vte 20080401
 	if (imin) {
 		rtrevent.type = eventtab[imin].type;
 		rtrevent.proc = eventtab[imin].proc;
@@ -274,7 +313,11 @@ struct event *ev;
 
 	switch (ev->type) {
 		case TRYCRIT :
+<<<<<<< HEAD
 			if (critfree==TRUE)
+=======
+			if (critfree==TRUE) 
+>>>>>>> vte 20080401
 				addevent(ENTERCRIT,proc,sgtime);
 			else
 				addwaiting(proc);
@@ -313,7 +356,12 @@ struct event *ev;
 			addevent(TRYCRIT,proc,sgtime);
 			break;
 		default:
+<<<<<<< HEAD
 			tst_brkm(TBROK, NULL, "Illegal event");
+=======
+					tst_resm(TBROK,"Illegal event");
+					tst_exit();
+>>>>>>> vte 20080401
 			break;
 		}
 	return(0);
@@ -336,7 +384,11 @@ int seed;
 	twopi=2.*acos((double)-1.0);
 	return;
 }
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> vte 20080401
 double gauss()
 {
 	double x1,x2;
@@ -353,4 +405,9 @@ double gauss()
 		x2 = sqrt(-2.0*log(u1))*sin(twopi*u2);
 		return(mean + stdev*x2);
 		}
+<<<<<<< HEAD
 }
+=======
+}
+
+>>>>>>> vte 20080401

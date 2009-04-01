@@ -35,6 +35,7 @@
 #include        <sys/signal.h>
 #include        <math.h>
 
+<<<<<<< HEAD
 /* **************************************
  *   create result file
  *
@@ -43,6 +44,17 @@
  * 1 double which is the integral part of the input: tabRI
  *
  */
+=======
+
+/* **************************************
+ *   create result file
+ *
+ *  the result is divided into 2 files 
+ * 1 double frationnal part of the input result of modf
+ * 1 double which is the integral part of the input: tabRI
+ *
+ */ 
+>>>>>>> vte 20080401
 int create_Result_file()
 {
 
@@ -54,7 +66,11 @@ int create_Result_file()
 
 	F_name =  "modf_out.ref";
 	F_name1 =  "modf1_out.ref";
+<<<<<<< HEAD
 	nbVal = 20000;
+=======
+	nbVal = 20000; 
+>>>>>>> vte 20080401
 
 	Inc = log( exp(1)/10 );
 
@@ -62,13 +78,21 @@ int create_Result_file()
 		TestInputValue = ((Inc*i) + Inc);
 		tabR[i] = modf(TestInputValue, &tabRI[i]);
 		// tabR[i] = modf( ((Inc*i) + Inc), &tabRI[i]);
+<<<<<<< HEAD
 		if ((TestChkSum = tabR[i] + tabRI[i]) != TestInputValue)
+=======
+		if( (TestChkSum = tabR[i] + tabRI[i]) != TestInputValue)
+>>>>>>> vte 20080401
 		  {
 		    return -1;
 		  }
 
 	}
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> vte 20080401
 	fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
 	fp1 = open(F_name1,O_RDWR|O_CREAT|O_TRUNC,0777);
         if (!fp || !fp1)
@@ -80,18 +104,30 @@ int create_Result_file()
 	}
 	else
 	{
+<<<<<<< HEAD
 		for (i = 0; i<nbVal; i++)
+=======
+		for (i = 0; i<nbVal; i++ ) 
+>>>>>>> vte 20080401
 		{
 			write(fp,&tabR[i],sizeof(double));
 			write(fp1,&tabRI[i],sizeof(double));
 		}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> vte 20080401
 		close(fp);
 		close(fp1);
 		return 0;
 	}
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> vte 20080401
 int create_Data_file()
 {
 	int i, nbVal;
@@ -100,13 +136,21 @@ int create_Data_file()
 	int fp;
 
 	F_name = "modf_inp.ref";
+<<<<<<< HEAD
 	nbVal = 20000;
+=======
+	nbVal = 20000; 
+>>>>>>> vte 20080401
 
 	Inc = log( exp(1)/10 );
 
 	for (i=0; i<nbVal; i++)
 		tabD[i] = (Inc * i) + Inc;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> vte 20080401
 	fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
         if (!fp)
         {
@@ -115,8 +159,13 @@ int create_Data_file()
 	    	return -1;
         }
         else
+<<<<<<< HEAD
         {
 		for (i = 0; i<nbVal; i++)
+=======
+        {	
+		for (i = 0; i<nbVal; i++ ) 
+>>>>>>> vte 20080401
 		{
 			write(fp,&tabD[i],sizeof(double));
 		}
@@ -125,10 +174,18 @@ int create_Data_file()
 	}
 }
 
+<<<<<<< HEAD
 int main(int argc, char  *argv[])
 {
 
 	if (argc > 1)
+=======
+
+int main(int argc, char  *argv[])
+{
+
+	if (argc > 1) 
+>>>>>>> vte 20080401
 	{
 		switch ( atoi(argv[1]) )
 		{
@@ -161,4 +218,8 @@ int main(int argc, char  *argv[])
 
   return(0);
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> vte 20080401

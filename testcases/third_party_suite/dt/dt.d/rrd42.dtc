@@ -1,0 +1,81 @@
+Mon Jan 27 15:33:30 EST 1997
+
+dt if=/dev/rrz4c records=14 bs=10240 log=rrd42.dtc pf=pattern_0 seek=1 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=15 bs=10240 log=rrd42.dtc pf=pattern_1 seek=15 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=15 bs=10240 log=rrd42.dtc pf=pattern_2 seek=30 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=15 bs=10240 log=rrd42.dtc pf=pattern_3 seek=45 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=15 bs=10240 log=rrd42.dtc pf=pattern_4 seek=60 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=15 bs=10240 log=rrd42.dtc pf=pattern_5 seek=75 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=15 bs=10240 log=rrd42.dtc pf=pattern_6 seek=90 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=15 bs=10240 log=rrd42.dtc pf=pattern_7 seek=105 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=15 bs=10240 log=rrd42.dtc pf=pattern_8 seek=120 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=15 bs=10240 log=rrd42.dtc pf=pattern_9 seek=135 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=15 bs=10240 log=rrd42.dtc pf=pattern_0 seek=150 aios=3 align=rotate disable=stats passes=1 enable=dump
+
+*** End of Test ***
+
+Mon Jan 27 15:33:51 EST 1997
+
+dt if=/dev/rrz4c records=29 bs=5120 log=rrd42.dtc pf=pattern_0 seek=1 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=30 bs=5120 log=rrd42.dtc pf=pattern_1 seek=30 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=30 bs=5120 log=rrd42.dtc pf=pattern_2 seek=60 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=30 bs=5120 log=rrd42.dtc pf=pattern_3 seek=90 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=30 bs=5120 log=rrd42.dtc pf=pattern_4 seek=120 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=30 bs=5120 log=rrd42.dtc pf=pattern_5 seek=150 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=30 bs=5120 log=rrd42.dtc pf=pattern_6 seek=180 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=30 bs=5120 log=rrd42.dtc pf=pattern_7 seek=210 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=30 bs=5120 log=rrd42.dtc pf=pattern_8 seek=240 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=30 bs=5120 log=rrd42.dtc pf=pattern_9 seek=270 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=30 bs=5120 log=rrd42.dtc pf=pattern_0 seek=300 aios=3 align=rotate disable=stats passes=1 enable=dump
+
+*** End of Test ***
+
+Mon Jan 27 15:34:11 EST 1997
+
+dt if=/dev/rrz4c records=74 bs=2048 log=rrd42.dtc pf=pattern_0 seek=1 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=75 bs=2048 log=rrd42.dtc pf=pattern_1 seek=75 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=75 bs=2048 log=rrd42.dtc pf=pattern_2 seek=150 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=75 bs=2048 log=rrd42.dtc pf=pattern_3 seek=225 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=75 bs=2048 log=rrd42.dtc pf=pattern_4 seek=300 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=75 bs=2048 log=rrd42.dtc pf=pattern_5 seek=375 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=75 bs=2048 log=rrd42.dtc pf=pattern_6 seek=450 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=75 bs=2048 log=rrd42.dtc pf=pattern_7 seek=525 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=75 bs=2048 log=rrd42.dtc pf=pattern_8 seek=600 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=75 bs=2048 log=rrd42.dtc pf=pattern_9 seek=675 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=75 bs=2048 log=rrd42.dtc pf=pattern_0 seek=750 aios=3 align=rotate disable=stats passes=1 enable=dump
+
+*** End of Test ***
+
+Mon Jan 27 15:34:31 EST 1997
+
+dt if=/dev/rrz4c records=149 bs=1024 log=rrd42.dtc pf=pattern_0 seek=1 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=150 bs=1024 log=rrd42.dtc pf=pattern_1 seek=150 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=150 bs=1024 log=rrd42.dtc pf=pattern_2 seek=300 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=150 bs=1024 log=rrd42.dtc pf=pattern_3 seek=450 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=150 bs=1024 log=rrd42.dtc pf=pattern_4 seek=600 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=150 bs=1024 log=rrd42.dtc pf=pattern_5 seek=750 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=150 bs=1024 log=rrd42.dtc pf=pattern_6 seek=900 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=150 bs=1024 log=rrd42.dtc pf=pattern_7 seek=1050 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=150 bs=1024 log=rrd42.dtc pf=pattern_8 seek=1200 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=150 bs=1024 log=rrd42.dtc pf=pattern_9 seek=1350 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=150 bs=1024 log=rrd42.dtc pf=pattern_0 seek=1500 aios=3 align=rotate disable=stats passes=1 enable=dump
+
+*** End of Test ***
+
+Mon Jan 27 15:34:50 EST 1997
+
+dt if=/dev/rrz4c records=299 bs=512 log=rrd42.dtc pf=pattern_0 seek=1 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=300 bs=512 log=rrd42.dtc pf=pattern_1 seek=300 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=300 bs=512 log=rrd42.dtc pf=pattern_2 seek=600 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=300 bs=512 log=rrd42.dtc pf=pattern_3 seek=900 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=300 bs=512 log=rrd42.dtc pf=pattern_4 seek=1200 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=300 bs=512 log=rrd42.dtc pf=pattern_5 seek=1500 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=300 bs=512 log=rrd42.dtc pf=pattern_6 seek=1800 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=300 bs=512 log=rrd42.dtc pf=pattern_7 seek=2100 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=300 bs=512 log=rrd42.dtc pf=pattern_8 seek=2400 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=300 bs=512 log=rrd42.dtc pf=pattern_9 seek=2700 aios=3 align=rotate disable=stats passes=1 enable=dump
+dt if=/dev/rrz4c records=300 bs=512 log=rrd42.dtc pf=pattern_0 seek=3000 aios=3 align=rotate disable=stats passes=1 enable=dump
+
+*** End of Test ***
+
+Mon Jan 27 15:35:17 EST 1997

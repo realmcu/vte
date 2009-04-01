@@ -1,0 +1,39 @@
+#
+# @DEC_COPYRIGHT@
+#
+#
+# HISTORY
+# $Log:	Makefile,v $
+# Revision 4.2  91/09/20  00:21:02  devbld
+# Adding ODE Headers
+# 
+# $EndLog$
+#
+#
+#	@(#)$RCSfile: Makefile,v $ $Revision: 4.2 $ (DEC) $Date: 91/09/20 00:21:02 $
+# (c) Copyright 1990, OPEN SOFTWARE FOUNDATION, INC.
+# ALL RIGHTS RESERVED
+#
+#
+# OSF/1 Release 1.0
+
+PROGRAMS		= dt
+MSGHDRS			= 
+CATFILES		= 
+
+CFLAGS                  = -std1
+
+USE_STATIC_LIBRARIES	= 
+
+ILIST			= dt
+IDIR			= /usr/bin/
+
+HFILES			= ${MSGHDRS}
+OFILES			= dt.o dtgen.o dtinfo.o dtread.o dtwrite.o \
+			  dtstats.o dttty.o dtutil.o dtusage.o dtprocs.o \
+			  dtaio.o dtmmap.o
+LIBS			= 
+
+include ${MAKEFILEPATH}/standard.mk
+include ${MAKEFILEPATH}/programs.mk
+include ${MAKEFILEPATH}/objects.mk

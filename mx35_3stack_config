@@ -1,0 +1,21 @@
+# To override them from the make commandline, do something like this:
+# $ CROSS_COMPILER=/opt/cegl-1.4/hardhat/devkit/ppc/405/bin/powerpc-linux-
+# $ make \
+#     CROSS_CFLAGS="-mcpu=403 -D__PPC405__" \
+#     CC=${CROSS_COMPILER}gcc \
+#     AR=${CROSS_COMPILER}ar \
+#     LDFLAGS=-static \
+#     LOADLIBES="-lpthread -lc -lresolv -lnss_dns -lnss_files -lm -lc"
+#
+# Alternately, to override them by editing this file, uncomment the 
+# following lines:
+
+KLINUX_SRCDIR=/home/vobs/linux_2.6.26_imx35stack_3.4.0
+KLINUX_BLTDIR=/home/vobs/linux_2.6.26_imx35stack_3.4.0
+ARCH_CPU=arm
+ARCH_PLATFORM=imx35stack
+export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM
+
+CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-
+export CFLAGS=-DPROJECT_RINGO=1
+export CROSS_COMPILER

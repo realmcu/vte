@@ -1,0 +1,177 @@
+	System: Alpha Server 800 (EV5-6) @ 500Mhz, Q-Logic FW Adapter
+	-------------------------------------------------------------
+
+	[ Compressed Mode]
+
+tru64% dt of=/dev/rmt0h bs=64k limit=100g aios=8 pattern=iot
+Write Statistics:
+     Total records processed: 511795 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 33540997120 (32754880.000 Kbytes, 31987.188 Mbytes)
+      Average transfer rates: 4801838 bytes/sec, 4689.295 Kbytes/sec
+     Number I/O's per second: 73.270
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 1h56m25.03s
+           Total system time: 00m59.68s
+             Total user time: 11m46.60s
+
+Read Statistics:
+     Total records processed: 511795 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 33540997120 (32754880.000 Kbytes, 31987.188 Mbytes)
+      Average transfer rates: 2812639 bytes/sec, 2746.717 Kbytes/sec
+     Number I/O's per second: 42.917
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 3h18m45.10s
+           Total system time: 01m11.15s
+             Total user time: 47m46.26s
+
+Total Statistics:
+     Output device/file name: /dev/rmt0h (Device: TZ89, type=tape)
+    Data pattern string used: 'IOT Pattern'
+     Total records processed: 1023590 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 67081994240 (65509760.000 Kbytes, 63974.375 Mbytes)
+      Average transfer rates: 3539701 bytes/sec, 3456.739 Kbytes/sec
+     Asynchronous I/O's used: 8
+     Number I/O's per second: 54.012
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 5h15m51.31s
+           Total system time: 02m10.83s
+             Total user time: 59m32.86s
+               Starting time: Tue Dec  7 15:52:03 1999
+                 Ending time: Tue Dec  7 21:08:00 1999
+
+tru64% 
+
+	[ Uncompressed Mode ]
+
+tru64% dt of=/dev/rmt0m bs=64k limit=1t aios=8 pattern=iot
+Write Statistics:
+     Total records processed: 539664 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 35367419904 (34538496.000 Kbytes, 33729.000 Mbytes)
+      Average transfer rates: 5049855 bytes/sec, 4931.499 Kbytes/sec
+     Number I/O's per second: 77.055
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 1h56m43.65s
+           Total system time: 01m01.91s
+             Total user time: 12m08.81s
+
+Read Statistics:
+     Total records processed: 539664 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 35367419904 (34538496.000 Kbytes, 33729.000 Mbytes)
+      Average transfer rates: 5060513 bytes/sec, 4941.907 Kbytes/sec
+     Number I/O's per second: 77.217
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 1h56m28.90s
+           Total system time: 01m04.65s
+             Total user time: 49m47.73s
+
+Total Statistics:
+     Output device/file name: /dev/rmt0m (Device: TZ89, type=tape)
+    Data pattern string used: 'IOT Pattern'
+     Total records processed: 1079328 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 70734839808 (69076992.000 Kbytes, 67458.000 Mbytes)
+      Average transfer rates: 5040188 bytes/sec, 4922.059 Kbytes/sec
+     Asynchronous I/O's used: 8
+     Number I/O's per second: 76.907
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 3h53m54.16s
+           Total system time: 02m06.56s
+             Total user time: 1h01m56.55s
+               Starting time: Wed Dec  8 18:57:56 1999
+                 Ending time: Wed Dec  8 22:51:54 1999
+
+tru64% 
+
+==============================================================================
+
+	System: Proliant 800 (P3) @ 500Mhz, NCR 53C876 FW Adapter
+	---------------------------------------------------------
+
+	[ Compressed Mode ]
+
+linux% dt of=/dev/st0 bs=64k limit=25g pattern=iot
+Write Statistics:
+     Total records processed: 244176 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 16002318336 (15627264.000 Kbytes, 15261.000 Mbytes)
+      Average transfer rates: 1329366 bytes/sec, 1298.209 Kbytes/sec
+     Number I/O's per second: 20.285
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 3h20m37.56s
+           Total system time: 00m59.71s
+             Total user time: 09m12.94s
+
+Read Statistics:
+     Total records processed: 244176 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 16002318336 (15627264.000 Kbytes, 15261.000 Mbytes)
+      Average transfer rates: 1328766 bytes/sec, 1297.623 Kbytes/sec
+     Number I/O's per second: 20.275
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 3h20m42.99s
+           Total system time: 01m10.17s
+             Total user time: 19m19.70s
+
+Total Statistics:
+     Output device/file name: /dev/st0 (device type=tape) [HP C1557A DAT]
+    Data pattern string used: 'IOT Pattern'
+     Total records processed: 488352 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 32004636672 (31254528.000 Kbytes, 30522.000 Mbytes)
+      Average transfer rates: 1317979 bytes/sec, 1287.089 Kbytes/sec
+     Number I/O's per second: 20.111
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 6h44m43.11s
+           Total system time: 02m09.88s
+             Total user time: 28m32.64s
+               Starting time: Tue Dec  7 16:44:58 1999
+                 Ending time: Tue Dec  7 23:29:41 1999
+
+linux% 
+
+	[ Uncompressed Mode ]
+
+linux% dt of=/dev/st0 bs=64k limit=25g pattern=iot
+Write Statistics:
+     Total records processed: 187711 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 12301828096 (12013504.000 Kbytes, 11731.938 Mbytes)
+      Average transfer rates: 1018282 bytes/sec, 994.416 Kbytes/sec
+     Number I/O's per second: 15.538
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 3h21m20.96s
+           Total system time: 01m13.75s
+             Total user time: 07m18.40s
+
+Read Statistics:
+     Total records processed: 187711 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 12301828096 (12013504.000 Kbytes, 11731.938 Mbytes)
+      Average transfer rates: 1022118 bytes/sec, 998.162 Kbytes/sec
+     Number I/O's per second: 15.596
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 3h20m35.63s
+           Total system time: 00m54.09s
+             Total user time: 14m50.87s
+
+Total Statistics:
+     Output device/file name: /dev/st0 (device type=tape)
+    Data pattern string used: 'IOT Pattern'
+     Total records processed: 375422 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 24603656192 (24027008.000 Kbytes, 23463.875 Mbytes)
+      Average transfer rates: 1011242 bytes/sec, 987.541 Kbytes/sec
+     Number I/O's per second: 15.430
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 6h45m30.13s
+           Total system time: 02m07.85s
+             Total user time: 22m09.27s
+               Starting time: Wed Dec  8 10:44:02 1999
+                 Ending time: Wed Dec  8 17:29:32 1999
+
+linux% 

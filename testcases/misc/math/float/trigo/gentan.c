@@ -37,6 +37,12 @@
 
 #define M_PIl	3.1415926535897932384626433832795029L
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> vte 20080401
 int create_Result_file()
 {
 
@@ -46,13 +52,21 @@ int create_Result_file()
 	int fp;
 
 	F_name = "rtan";
+<<<<<<< HEAD
 	nbVal = 20000;
+=======
+	nbVal = 20000; 
+>>>>>>> vte 20080401
 
 	Inc = (2*M_PIl)/nbVal;  /* condering a period of 2 pi rad */
 
 	for (i=0; i<nbVal; i++)
 	{
+<<<<<<< HEAD
 		if ((Inc*i) != (M_PIl/2))
+=======
+		if ( (Inc*i) != (M_PIl/2) )
+>>>>>>> vte 20080401
 			tabRtan[i] = tan (Inc * i);
 		else
 			tabRtan[i] = tan (0);
@@ -67,16 +81,28 @@ int create_Result_file()
 	}
 	else
 	{
+<<<<<<< HEAD
 		for (i = 0; i<nbVal; i++)
 		{
 			write(fp,&tabRtan[i],sizeof(double));
 		}
 
+=======
+		for (i = 0; i<nbVal; i++ ) 
+		{
+			write(fp,&tabRtan[i],sizeof(double));
+		}
+	
+>>>>>>> vte 20080401
 		close(fp);
 		return 0;
 	}
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> vte 20080401
 int create_Data_file()
 {
 	int i, nbVal;
@@ -85,18 +111,30 @@ int create_Data_file()
 	int fp;
 
 	F_name = "dtan";
+<<<<<<< HEAD
 	nbVal = 20000;
+=======
+	nbVal = 20000; 
+>>>>>>> vte 20080401
 
 	Inc = (2*M_PIl)/nbVal;  /* condering a period of 2 pi rad */
 
 	for (i=0; i<nbVal; i++)
 	{
+<<<<<<< HEAD
 		if ((Inc*i) != (M_PIl/2))
+=======
+		if ( (Inc*i) != (M_PIl/2) )
+>>>>>>> vte 20080401
 			tabDtan[i] = (Inc * i);
                 else
 			tabDtan[i] = 0;
 	}
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> vte 20080401
 	fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
         if (!fp)
         {
@@ -105,8 +143,13 @@ int create_Data_file()
 	    	return -1;
         }
         else
+<<<<<<< HEAD
         {
 		for (i = 0; i<nbVal; i++)
+=======
+        {	
+		for (i = 0; i<nbVal; i++ ) 
+>>>>>>> vte 20080401
 		{
 			write(fp,&tabDtan[i],sizeof(double));
 		}
@@ -115,10 +158,18 @@ int create_Data_file()
 	}
 }
 
+<<<<<<< HEAD
 int main(int argc, char  *argv[])
 {
 
 	if (argc > 1)
+=======
+
+int main(int argc, char  *argv[])
+{
+
+	if (argc > 1) 
+>>>>>>> vte 20080401
 	{
 		switch ( atoi(argv[1]) )
 		{
@@ -151,4 +202,8 @@ int main(int argc, char  *argv[])
 
   return(0);
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> vte 20080401

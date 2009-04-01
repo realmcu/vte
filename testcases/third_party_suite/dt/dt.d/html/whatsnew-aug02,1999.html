@@ -1,0 +1,112 @@
+<HTML>
+<HEAD>
+<TITLE>Data Test Program (dt) August 2nd, 1999</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#D19275">
+
+<CENTER><H2><STRONG>What's New as of August 2nd, 1999</STRONG></H2></CENTER>
+
+<H2>Changes For This Release</H2>
+The following changes have been made to <I>dt</I> Version 12.3:
+<UL>
+<LI>Updated <I>dt</I> User's Manual. Postscript file in <I>dt</I> kit.
+<LI>Ported <I>dt</I> to Linux and FreeBSD operating systems.
+<LI>On 32-bit systems, either "long long" or "double" is used for
+larger data and record limits, as well as total statistics.
+This is necessary for large capacity disks and tapes.
+<LI>Added "<I>pattern=iot</I>" option which encodes the logical block address
+in the first 4 bytes, then uses (lba += 0x01010101) to seed the
+remaining data bytes in each 512 byte block.
+<LI><I>dt</I> now accepts 't' or 'T' for terabyte on numeric values.
+<LI>The option "enable=microdelay" enables micro-second values for
+various delays, instead of the default of seconds.
+</UL>
+<P>
+<CENTER>Within Compaq, the updated <I>dt</I> kits are located @ URL:</CENTER>
+<P>
+<CENTER><A HREF="http://www.zk3.dec.com/~rmiller/dt.html">http://www.zk3.dec.com/~rmiller/dt.html</A></CENTER>
+<P>
+<CENTER>External to Compaq, you can obtain <I>dt</I> kits from URL:</CENTER>
+<P>
+<CENTER><A HREF="http://www.bit-net.com/~rmiller/dt.html">http://www.bit-net.com/~rmiller/dt.html</A></CENTER>
+</UL>
+<HR>
+<A HREF="mailto:Robin.Miller@compaq.com"><IMG SRC="../gifs/mailbox.gif" ALT="Mail"></A>
+Send mail to admin of this page: <EM>Robin.Miller@compaq.com</EM> 
+<A HREF="../index.html"><IMG SRC="../gifs/home04.gif" ALT="Home"></A>
+To Robin's home page.
+<P>
+Last modified: December 8th, 1999
+<HR>
+
+<H2>Examples:</H2>
+<HR SIZE=5 NOSHADE>
+<PRE>
+        Here's an example of 'dt' reading and comparing the first
+        100 megabytes of the IOT test disc.  Slow I/O due to RRD42!
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+linux% <B>dt if=/dev/scd0 bs=32k pattern=iot limit=100m</B>
+Total Statistics:
+      Input device/file name: /dev/scd0 (device type=disk)
+    Data pattern string used: 'IOT Pattern'
+     Total records processed: 3200 @ 32768 bytes/record (32.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 153137 bytes/sec, 149.548 Kbytes/sec
+     Number I/O's per second: 4.673
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 11m24.73s
+           Total system time: 00m00.82s
+             Total user time: 00m07.68s
+               Starting time: Thu Jul 22 14:52:45 1999
+                 Ending time: Thu Jul 22 15:04:10 1999
+
+linux%
+
+<HR>
+        The IOT data pattern can be used with any device/file.
+        Here's an example of what the IOT data pattern looks like.
+        The logical block address (lba) is placed in the first 4 bytes,
+        then each remaining u_int gets (lba += 0x01010101).
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+linux% <B>dt of=- count=1 pattern=iot lba=0x64 disable=stats | od -Ax -tx1</B>
+000000 64 00 00 00 65 01 01 01 66 02 02 02 67 03 03 03
+000010 68 04 04 04 69 05 05 05 6a 06 06 06 6b 07 07 07
+000020 6c 08 08 08 6d 09 09 09 6e 0a 0a 0a 6f 0b 0b 0b
+000030 70 0c 0c 0c 71 0d 0d 0d 72 0e 0e 0e 73 0f 0f 0f
+000040 74 10 10 10 75 11 11 11 76 12 12 12 77 13 13 13
+000050 78 14 14 14 79 15 15 15 7a 16 16 16 7b 17 17 17
+000060 7c 18 18 18 7d 19 19 19 7e 1a 1a 1a 7f 1b 1b 1b
+000070 80 1c 1c 1c 81 1d 1d 1d 82 1e 1e 1e 83 1f 1f 1f
+000080 84 20 20 20 85 21 21 21 86 22 22 22 87 23 23 23
+000090 88 24 24 24 89 25 25 25 8a 26 26 26 8b 27 27 27
+0000a0 8c 28 28 28 8d 29 29 29 8e 2a 2a 2a 8f 2b 2b 2b
+0000b0 90 2c 2c 2c 91 2d 2d 2d 92 2e 2e 2e 93 2f 2f 2f
+0000c0 94 30 30 30 95 31 31 31 96 32 32 32 97 33 33 33
+0000d0 98 34 34 34 99 35 35 35 9a 36 36 36 9b 37 37 37
+0000e0 9c 38 38 38 9d 39 39 39 9e 3a 3a 3a 9f 3b 3b 3b
+0000f0 a0 3c 3c 3c a1 3d 3d 3d a2 3e 3e 3e a3 3f 3f 3f
+000100 a4 40 40 40 a5 41 41 41 a6 42 42 42 a7 43 43 43
+000110 a8 44 44 44 a9 45 45 45 aa 46 46 46 ab 47 47 47
+000120 ac 48 48 48 ad 49 49 49 ae 4a 4a 4a af 4b 4b 4b
+000130 b0 4c 4c 4c b1 4d 4d 4d b2 4e 4e 4e b3 4f 4f 4f
+000140 b4 50 50 50 b5 51 51 51 b6 52 52 52 b7 53 53 53
+000150 b8 54 54 54 b9 55 55 55 ba 56 56 56 bb 57 57 57
+000160 bc 58 58 58 bd 59 59 59 be 5a 5a 5a bf 5b 5b 5b
+000170 c0 5c 5c 5c c1 5d 5d 5d c2 5e 5e 5e c3 5f 5f 5f
+000180 c4 60 60 60 c5 61 61 61 c6 62 62 62 c7 63 63 63
+000190 c8 64 64 64 c9 65 65 65 ca 66 66 66 cb 67 67 67
+0001a0 cc 68 68 68 cd 69 69 69 ce 6a 6a 6a cf 6b 6b 6b
+0001b0 d0 6c 6c 6c d1 6d 6d 6d d2 6e 6e 6e d3 6f 6f 6f
+0001c0 d4 70 70 70 d5 71 71 71 d6 72 72 72 d7 73 73 73
+0001d0 d8 74 74 74 d9 75 75 75 da 76 76 76 db 77 77 77
+0001e0 dc 78 78 78 dd 79 79 79 de 7a 7a 7a df 7b 7b 7b
+0001f0 e0 7c 7c 7c e1 7d 7d 7d e2 7e 7e 7e e3 7f 7f 7f
+000200
+linux%
+</PRE>
+</BODY>
+</HTML>

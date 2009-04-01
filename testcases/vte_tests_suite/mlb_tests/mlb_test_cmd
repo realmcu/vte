@@ -1,0 +1,10 @@
+MLB-CTRL-0010	mlb-test -f 256 -t ctrl -b
+MLB-CTRL-0020	mlb-test -f 512 -t ctrl -b
+MLB-CTRL-0030	mlb-test -f 1024 -t ctrl -b
+MLB-CTRL-0040	mlb-test -f 256 -t ctrl
+MLB-CTRL-0050	mlb-test -f 512 -t ctrl
+MLB-ASYNC-0010	mlb-test -f 256 -t async -b
+MLB-ASYNC-0020	mlb-test -f 512 -t async -b
+MLB-ASYNC-0030	mlb-test -f 1024 -t async -b
+MLB-ASYNC-0040	mlb-test -f 256 -t async
+MLB-ASYNC-0050  mlb-test -f 512 -t async

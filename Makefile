@@ -215,4 +215,34 @@ menuconfig:
 package: 
 	@$(RPMBUILD) -ba ltp-devel.spec
 
+vte: pan utils tools libs
+	@echo
+	@echo "***********************************************"
+	@echo "** MAKE ALL - VTE tests suite                **"
+	@echo "***********************************************"
+	@echo
+	@$(MAKE) -C testcases/vte_tests_suite all
+	@echo
+	@echo "***********************************************"
+	@echo "** MAKE INSTALL - VTE tests suite            **"
+	@echo "***********************************************"
+	@echo
+	@$(MAKE) -C testcases/vte_tests_suite install
+	@echo
+	@echo "***********************************************"
+	@echo "** VTE tests suite is available              **"
+	@echo "***********************************************"
+	@echo
+	@echo "***********************************************"
+	@echo "** MAKE ALL - third party suite               **"
+	@echo "** including bonnie++ dt and iozone           **"
+	@echo "***********************************************"
+	@echo
+	@$(MAKE) -C testcases/third_party_suite all
+	@$(MAKE) -C testcases/third_party_suite install
+	@echo
+	@echo "***********************************************"
+	@echo "** bonnie++ dt and iozone are available      **"
+	@echo "***********************************************"
+
 ## End misc targets.

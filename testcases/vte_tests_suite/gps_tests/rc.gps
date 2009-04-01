@@ -1,0 +1,39 @@
+#!/bin/sh
+
+#rc.gps gl gps driver initialization & monitor
+
+load_gps()
+{
+	if ! /sbin/modprobe gps_gpiodrv; then return 1; fi
+	/bin/rm -f /dev/agpsgpio
+	mknod /dev/agpsgpio c 100 1
+	/usr/local/bin/glgps_freescaleLinux /usr/local/bin/glconfig.xml normal &
+	echo "Loaded GPS services."
+	return 0;
+}
+
+unload_gps()
+{
+	echo '$pglirm,quit' >/var/run/glgpsctrl
+	sleep 3
+	/bin/rm -f /dev/agpsgpio
+	if /sbin/rmmod gps_gpiodrv; then 
+		echo "Unloaded GPS services."
+		return 0
+	else 
+		echo "Warning: Could not unload gpiodrv"
+		return 1;	
+	fi
+}
+
+case "$1" in
+start)
+	load_gps
+	;;
+stop)
+	unload_gps
+	;;
+*)
+	echo "$0: unknown argument $1." >&2;
+        ;;
+esac

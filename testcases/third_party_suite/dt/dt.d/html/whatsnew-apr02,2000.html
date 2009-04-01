@@ -1,0 +1,74 @@
+<HTML>
+<HEAD>
+<TITLE>Data Test Program (dt) April 2nd, 2000</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#D19275">
+
+<CENTER><H2><STRONG>What's New as of April 2nd, 2000</STRONG></H2></CENTER>
+
+<H2>Changes For This Release</H2>
+The following changes have been made to <I>dt</I> Version 13.10:
+<UL>
+<P>
+<B>13.6 -> 13.7</B>
+<P>
+<LI>
+In HandleMultiVolume(), reset the exit status to SUCCESS, since
+this got set to END_OF_FILE earlier.  Failure to do this meant we
+exited with an END_OF_FILE (254) status on the read pass instead
+of SUCCESS (0).
+<P>
+<B>13.7 -> 13.8</B>
+<P>
+<LI>Fixed parsing of flags=direct for Tru64 Clusters.
+<LI>Don't permit passes=0, as this caused segmentation fault.
+<LI>Don't create unique file names with procs= to named FIFO.
+<P>
+<B>13.8 -> 13.9</B>
+<P>
+<LI>Added "capacity=value" option, and ignore read errors in
+FindCapacity() called for iotype=random option.
+<LI>Fixed problem with "position=value" truncating file position
+to 32 bits, since the file offset may be a 64-bit entity (off_t).
+<LI>Improved file position functions to provide better debug output.
+Also, only scale the random position upwards by the device size
+every other record, so low blocks gets utilized more often.
+Note: These changes degrade random I/O performance slightly.
+[ for "best" performance, all debug really needs omitted, but
+currently there's no way to permit this (future consideration). ]
+<LI>Fixed exit status when "runtime=" option used.  This exit path
+only looked at error_count to set FAILURE exit status, while
+non-runtime exit path looked at exit_status variable.
+<P>
+Note: The ignoring of read error in FindCapacity(), was added
+for reading ATAPI CD's on Linux, since this driver does *not*
+properly handle seek/reads past the end of media.  The last good
+read gets used when the read error occurs.  Use "capacity=value"
+to avoid this error condition. [ occurs on RedHat Linux V6.1 ]
+<P>
+<B>13.9 -> 13.10</B>
+<P>
+<LI>
+Minor change for QNX operating system.  Stat'ing block devices
+returns the number of blocks in st_size field, which needed scaled
+by the block size (512 bytes), before setting the random data limit
+and disk capacity.  This only affected random I/O tests.
+</UL>
+<P>
+<CENTER>Within Compaq, the updated <I>dt</I> kits are located @ URL:</CENTER>
+<P>
+<CENTER><A HREF="http://www.zk3.dec.com/~rmiller/dt.html">http://www.zk3.dec.com/~rmiller/dt.html</A></CENTER>
+<P>
+<CENTER>External to Compaq, you can obtain <I>dt</I> kits from URL:</CENTER>
+<P>
+<CENTER><A HREF="http://www.bit-net.com/~rmiller/dt.html">http://www.bit-net.com/~rmiller/dt.html</A></CENTER>
+</UL>
+<HR>
+<A HREF="mailto:Robin.Miller@compaq.com"><IMG SRC="../gifs/mailbox.gif" ALT="Mail"></A>
+Send mail to admin of this page: <EM>Robin.Miller@compaq.com</EM> 
+<A HREF="../index.html"><IMG SRC="../gifs/home04.gif" ALT="Home"></A>
+To Robin's home page.
+<P>
+Last modified: April 3rd, 2000
+<HR>

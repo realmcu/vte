@@ -1,0 +1,303 @@
+January 12th, 2000 Robin Miller		    Last Updated: February 19th, 2000
+
+	The following changes were made to 'dt' Version 13.6:
+
+     o	For Tru64 cluster systems, make the EEI reset handling more
+	bullet proof.  The new logic retries open() attempts, does not
+	fail close() when processing resets, and retries operations
+	failed with EEI_NO_STATUS while processing reset conditions.
+
+     o	For Tru64 Unix (zulu), added "flags=direct" to enable direct
+	I/O (disables file system caching).
+
+     o	Added multi-volume media support via "enable=multi" option.
+	A single large file can be written to span multiple tapes, or
+	you can specify "files=value" to write multiple tape files
+	that span multiple tapes.  This support is general enough to
+	be used with any removable media.
+
+     o	Added read-after-write support via "enable=raw".  This can also
+	be used with tapes (backspace/read done after each record written).
+	Note:  This may become the default for random access devices.
+
+     o	Fixed problem with random I/O data limits being exceeded.  The
+	upper and lower random I/O limits are now enforced, and a sanity
+	check is done at startup to ensure your data limits are alright.
+
+     o	The "lba=" option now seeks to specified block address.  This
+	lba is relative to the start of the partition used (of course).
+	This still enables the lbdata option, which means the lba gets
+	stored in the first 4 bytes of each data block.  You can use
+	"disable=lbdata" after if you don't want this lba encoding.
+	Note: "position=" option takes precedence over "lba=" option.
+
+     o	The IOT and Lbdata options now work with seek or skip options
+	when testing disk devices (lba is determined from the file offset).
+
+     o	Writes of zero length now get flagged as a error, instead of EOF.
+
+     o	New "enable=rdebug" option to enable random I/O debug only.
+
+     o	New "rseed=value" option to specify the random I/O seed.  This
+	allows you to repeat random I/O sequences.  When random I/O is
+	enabled, the total statistics displays the seed used.
+
+     o	IOT pattern now works properly with AIO to multiple tape files.
+
+     o	IOT logical block number now reported on data compare errors.
+
+     o	When testing multiple tape files with the IOT or Lbdata options,
+	the block number is now continued from the previous tape file.
+	This provides better verification in case file position is lost.
+
+     o	Specifying ralign, rlimit, or rseed options now automatically
+	enables random I/O, thus iotype=random is not necessary too.
+
+     o	Added checks at EOF with/multi-volume enabled, so Copy/Verify
+	operations properly prompt for the next volume.  This allows 'dt'
+	to be used as a general purpose multi-volume tool w/other utilities.
+
+	Within Compaq, the updated 'dt' kits are located @ URL:
+
+		http://www.zk3.dec.com/~rmiller/dt.html
+
+	External to Compaq, you can obtain 'dt' kits from URL:
+
+		http://www.bit-net.com/~rmiller/dt.html
+
+Cheers,
+Robin
+================================================================================
+Example showing read-after-write option:
+----------------------------------------
+
+tru64% dt of=/dev/rfd0c min=b max=64k incr=7b iotype=random enable=raw runtime=3m
+Read After Write Statistics:
+     Total records processed: 100 with min=512, max=65536, incr=3584
+     Total bytes transferred: 2949120 (2880.000 Kbytes, 2.812 Mbytes)
+      Average transfer rates: 16923 bytes/sec, 16.526 Kbytes/sec
+     Number I/O's per second: 0.574
+      Total passes completed: 1
+       Total errors detected: 0/1
+          Total elapsed time: 02m54.26s
+           Total system time: 00m00.01s
+             Total user time: 00m00.16s
+
+Total Statistics:
+     Output device/file name: /dev/rfd0c (Device: floppy, type=disk)
+     Type of I/O's performed: random (seed 0xa775f81)
+   Data pattern read/written: 0x00ff00ff
+     Total records processed: 109 with min=512, max=65536, incr=3584
+     Total bytes transferred: 3011072 (2940.500 Kbytes, 2.872 Mbytes)
+      Average transfer rates: 16642 bytes/sec, 16.252 Kbytes/sec
+     Number I/O's per second: 0.602
+      Total passes completed: 1
+       Total errors detected: 0/1
+          Total elapsed time: 03m00.93s
+           Total system time: 00m00.01s
+             Total user time: 00m00.16s
+               Starting time: Wed Jan 12 16:38:38 2000
+                 Ending time: Wed Jan 12 16:41:43 2000
+
+tru64% 
+
+================================================================================
+Example showing multi-volume option:
+------------------------------------
+
+linux% dt of=/dev/st0 bs=32k files=4 limit=50m pattern=iot enable=multi
+Please insert volume #2 in drive /dev/st0... Press ENTER when ready to proceed: 
+        [ Continuing in file #3, record #1425, bytes written so far 151519232... ]
+Write Statistics:
+     Total records processed: 6400 @ 32768 bytes/record (32.000 Kbytes)
+     Total bytes transferred: 209715200 (204800.000 Kbytes, 200.000 Mbytes)
+      Average transfer rates: 510529 bytes/sec, 498.564 Kbytes/sec
+     Number I/O's per second: 15.580
+      Total passes completed: 0/1
+       Total files processed: 4/4
+       Total errors detected: 0/1
+          Total elapsed time: 06m50.78s
+           Total system time: 00m00.75s
+             Total user time: 00m06.90s
+
+Please insert volume #1 in drive /dev/st0... Press ENTER when ready to proceed: 
+Please insert volume #2 in drive /dev/st0... Press ENTER when ready to proceed: 
+        [ Continuing in file #3, record #1425, bytes read so far 151519232... ]
+Read Statistics:
+     Total records processed: 6400 @ 32768 bytes/record (32.000 Kbytes)
+     Total bytes transferred: 209715200 (204800.000 Kbytes, 200.000 Mbytes)
+      Average transfer rates: 489657 bytes/sec, 478.181 Kbytes/sec
+     Number I/O's per second: 14.943
+      Total passes completed: 1/1
+       Total files processed: 4/4
+       Total errors detected: 0/1
+          Total elapsed time: 07m08.29s
+           Total system time: 00m00.91s
+             Total user time: 00m26.53s
+
+Total Statistics:
+     Output device/file name: /dev/st0 (device type=tape)
+     Type of I/O's performed: sequential
+    Data pattern string used: 'IOT Pattern'
+     Total records processed: 12800 @ 32768 bytes/record (32.000 Kbytes)
+     Total bytes transferred: 419430400 (409600.000 Kbytes, 400.000 Mbytes)
+      Average transfer rates: 434589 bytes/sec, 424.403 Kbytes/sec
+     Number I/O's per second: 13.263
+      Total passes completed: 1/1
+       Total files processed: 8/8
+       Total errors detected: 0/1
+          Total elapsed time: 16m05.12s
+           Total system time: 00m01.66s
+             Total user time: 00m33.43s
+               Starting time: Fri Feb 18 18:48:22 2000
+                 Ending time: Fri Feb 18 19:04:28 2000
+
+linux% 
+
+================================================================================
+Example showing proper operation of IOT pattern with lba option:
+----------------------------------------------------------------
+
+tru64% dt if=/dev/rrz4c min=1b max=64k incr=7k lba=1000 limit=100m pattern=iot
+Total Statistics:
+      Input device/file name: /dev/rrz4c (Device: RRD47, type=disk)
+     Type of I/O's performed: sequential
+    Data pattern string used: 'IOT Pattern'
+     Total records processed: 3200 with min=512, max=65536, incr=7168
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 878695 bytes/sec, 858.101 Kbytes/sec
+     Number I/O's per second: 26.816
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m59.33s
+           Total system time: 00m00.35s
+             Total user time: 00m14.05s
+               Starting time: Thu Jan 13 14:46:32 2000
+                 Ending time: Thu Jan 13 14:48:33 2000
+
+tru64% 
+
+================================================================================
+Example showing proper operation with mutliple tape files:
+----------------------------------------------------------
+
+linux% dt of=/dev/st0 bs=64k limit=10m enable=lbdata files=10
+Write Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 1559917 bytes/sec, 1523.356 Kbytes/sec
+     Number I/O's per second: 23.802
+      Total passes completed: 0/1
+       Total files processed: 10/10
+       Total errors detected: 0/1
+          Total elapsed time: 01m07.22s
+           Total system time: 00m00.45s
+             Total user time: 00m02.90s
+
+Read Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 2359532 bytes/sec, 2304.230 Kbytes/sec
+     Number I/O's per second: 36.004
+      Total passes completed: 1/1
+       Total files processed: 10/10
+       Total errors detected: 0/1
+          Total elapsed time: 00m44.44s
+           Total system time: 00m00.56s
+             Total user time: 00m13.07s
+
+Total Statistics:
+     Output device/file name: /dev/st0 (device type=tape)
+     Type of I/O's performed: sequential
+   Data pattern read/written: 0x39c39c39 (w/lbdata, starting lba 0)
+     Total records processed: 3200 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 209715200 (204800.000 Kbytes, 200.000 Mbytes)
+      Average transfer rates: 1661374 bytes/sec, 1622.435 Kbytes/sec
+     Number I/O's per second: 25.351
+      Total passes completed: 1/1
+       Total files processed: 20/20
+       Total errors detected: 0/1
+          Total elapsed time: 02m06.23s
+           Total system time: 00m01.01s
+             Total user time: 00m15.98s
+               Starting time: Thu Jan 13 14:50:51 2000
+                 Ending time: Thu Jan 13 14:52:57 2000
+
+linux% 
+
+================================================================================
+Example showing multi-volume capability with 'tar':
+---------------------------------------------------
+
+tru64% tar cf - dt.d | dt if=- of=/dev/rfd0c bs=10k iomode=copy enable=multi
+Please insert volume #2 in drive /dev/rfd0c... Press ENTER when ready to proceed: 
+        [ Continuing at record #145, bytes written so far 1474560... ]
+Total Statistics:
+      Input device/file name: - (device type=pipe)
+     Type of I/O's performed: sequential
+     Total records processed: 392 @ 10240 bytes/record (10.000 Kbytes)
+     Total bytes transferred: 4014080 (3920.000 Kbytes, 3.828 Mbytes)
+      Average transfer rates: 39961 bytes/sec, 39.024 Kbytes/sec
+     Number I/O's per second: 3.902
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m40.45s
+           Total system time: 00m00.06s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 19 17:10:43 2000
+                 Ending time: Wed Jan 19 17:12:24 2000
+
+tru64% 
+tru64% tar cf - dt.d | dt if=- of=/dev/rfd0c bs=10k iomode=verify enable=multi
+Please insert volume #2 in drive /dev/rfd0c... Press ENTER when ready to proceed: 
+        [ Continuing at record #145, bytes read so far 1474560... ]
+Total Statistics:
+      Input device/file name: - (device type=pipe)
+     Type of I/O's performed: sequential
+    Data operation performed: Verified '-' with '/dev/rfd0c'.
+     Total records processed: 392 @ 10240 bytes/record (10.000 Kbytes)
+     Total bytes transferred: 4014080 (3920.000 Kbytes, 3.828 Mbytes)
+      Average transfer rates: 38486 bytes/sec, 37.584 Kbytes/sec
+     Number I/O's per second: 3.758
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m44.30s
+           Total system time: 00m00.05s
+             Total user time: 00m00.15s
+               Starting time: Wed Jan 19 17:14:16 2000
+                 Ending time: Wed Jan 19 17:16:03 2000
+
+tru64% 
+tru64% mv dt.d dtx.d
+tru64% dt if=/dev/rfd0c of=- bs=10k iomode=copy enable=multi | tar xvf -
+blocksize = 20
+x dt.d
+x dt.d/dt.c, 79238 bytes, 155 tape blocks
+		.
+		.
+		.
+x dt.d/tape0c.log, 6447 bytes, 13 tape blocks
+Please insert volume #2 in drive /dev/rfd0c... Press ENTER when ready to proceed: 
+        [ Continuing at record #145, bytes read so far 1474560... ]
+x dt.d/rmt0h.log, 28482 bytes, 56 tape blocks
+		.
+		.
+		.
+Total Statistics:
+      Input device/file name: /dev/rfd0c (Device: floppy, type=disk)
+     Type of I/O's performed: sequential
+    Data operation performed: Copied '/dev/rfd0c' to '-'.
+     Total records processed: 393 @ 10240 bytes/record (10.000 Kbytes)
+     Total bytes transferred: 2017280 (1970.000 Kbytes, 1.924 Mbytes)
+      Average transfer rates: 20793 bytes/sec, 20.306 Kbytes/sec
+     Number I/O's per second: 4.051
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m37.01s
+           Total system time: 00m00.06s
+             Total user time: 00m00.00s
+               Starting time: Wed Jan 19 17:18:10 2000
+                 Ending time: Wed Jan 19 17:19:50 2000
+
+tru64% diff -r dt.d dtx.d
+tru64% 

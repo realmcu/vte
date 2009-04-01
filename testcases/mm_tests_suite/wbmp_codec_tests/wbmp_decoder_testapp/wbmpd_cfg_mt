@@ -1,0 +1,4 @@
+n/a  0  0  ./input/birds18.wbmp    ./wbmpd_output/birds18_s.ppm     ./reference/birds18_l.ppm
+n/a  0  0  ./input/birds20.wbmp    ./wbmpd_output/birds20_s.ppm     ./reference/birds20_l.ppm  
+n/a  0  0  ./input/animal21.wbmp   ./wbmpd_output/animal21.ppm     ./reference/animal21_l.ppm
+n/a  0  0  ./input/animal24.wbmp   ./wbmpd_output/animal24.ppm     ./reference/animal24_l.ppm

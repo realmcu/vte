@@ -1,0 +1,25 @@
+# list of platforms which want this test case
+#CC = arm-none-linux-gnueabi-gcc
+#KLINUX_SRCDIR = /home/vobs/linux-2.6-imx/
+
+SRCS = mxc_ipu_dev.c mxc_ipu_lib.c
+OBJDIR = ../../bin/
+INC = -I$(KLINUX_SRCDIR)/include 
+
+SCRIPTS = ipu_test.sh
+
+TARGET = ipu_dev_test
+
+$(TARGET): $(SRCS)
+	$(VERBOSE) $(CC) $(INC) $(CFLAGS) $^ -o $@
+	
+install:
+	ln -f  $(TARGET) $(OBJDIR)
+	ln -f $(SCRIPTS) $(OBJDIR)
+
+all: $(TARGET)
+
+.PHONY: clean
+clean:
+	rm -f $(TARGET)
+

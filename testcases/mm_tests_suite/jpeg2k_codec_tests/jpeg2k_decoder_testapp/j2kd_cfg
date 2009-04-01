@@ -1,0 +1,13 @@
+input/p0_01.j2k j2kd_output/test1 input/p0_01.raw n/a n/a 4
+input/p0_02.j2k j2kd_output/test2 input/p0_02.raw n/a n/a 4
+input/p0_16.j2k j2kd_output/test3 input/p0_16.raw n/a n/a 4
+input/p0_01_multitile.j2k j2kd_output/test4 input/p0_01.raw n/a n/a 6
+input/p0_04.j2k j2kd_output/test5 input/mountain__y_ref.raw input/mountain__u_ref.raw input/mountain__v_ref.raw 7
+input/p0_01cprl.j2k j2kd_output/test6 input/p0_01.raw n/a n/a 6
+input/p0_01rpcl.j2k j2kd_output/test7 input/p0_01.raw n/a n/a 6
+input/p0_01pcrl.j2k j2kd_output/test8 input/p0_01.raw n/a n/a 6
+input/file4.jp2 j2kd_output/test9 input/file4jp2.raw n/a n/a 6
+input/fslJpeg2000_3105x107.j2k j2kd_output/test10 input/fslJpeg2000_3105x107_ref_y.raw n/a n/a 3
+
+
+

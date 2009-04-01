@@ -1,0 +1,460 @@
+
+	This file contains various 'dt' examples used to show its'
+capabilities and to help get new users started.  A short description
+prefaces each test to describe the nature of the test being performed.
+Several of the latter tests, are real life problems which were either
+uncovered directly by 'dt', or were easily reproduced using a specific 'dt'
+command line which helps trouble-shooting problems.
+
+	On DEC systems, next to the device name in the total statistics,
+you'll notice the device name and device type.  This information is obtained
+by using the DEC specific DEVIOCGET I/O control command.  This is very for
+identifying the device under test, especially since performance and various
+problems are device specific.  For non-Digital systems you'll only see the
+device type displayed, not the real device name, which is setup based on known
+system dependent device naming conventions (i.e., "/dev/ser" prefix for QNX
+serial ports).
+------------------------------------------------------------------------------
+
+TEST DESCRIPTION:  This test does read testing of a raw disk partition with
+data comparisons disabled, using the POSIX Asynchronous I/O API (AIO is only
+supported on DEC OSF/1 at this time).
+
+% dt if=/dev/rrz3c bs=8k limit=50m disable=compare enable=aio
+Total Statistics:
+      Input device/file name: /dev/rrz3c (Device: RZ25, type=disk)
+           Data pattern read: 0x39c39c39 (data compare disabled)
+     Total records processed: 6400 @ 8192 bytes/record (8.000 Kbytes)
+     Total bytes transferred: 52428800 (51200.000 Kbytes, 50.000 Mbytes)
+      Average transfer rates: 2227853 bytes/sec, 2175.637 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m23.53s
+           Total system time: 00m01.36s
+             Total user time: 00m00.20s
+               Starting time: Wed Sep 15 12:47:55 1993
+                 Ending time: Wed Sep 15 12:48:18 1993
+
+% 
+------------------------------------------------------------------------------
+
+TEST DESCRIPTION:  This test does a write/read verify pass of a 50Mb file
+through the UFS file system, with the file disposition set to "keep", so
+the test file is not deleted.  Normally, 'dt' deletes the test files
+created before exiting.
+
+% dt of=/usr/tmp/x bs=8k limit=50m dispose=keep
+Write Statistics:
+     Total records processed: 6400 @ 8192 bytes/record (8.000 Kbytes)
+     Total bytes transferred: 52428800 (51200.000 Kbytes, 50.000 Mbytes)
+      Average transfer rates: 1530768 bytes/sec, 1494.891 Kbytes/sec
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m34.25s
+           Total system time: 00m03.48s
+             Total user time: 00m06.70s
+
+Read Statistics:
+     Total records processed: 6400 @ 8192 bytes/record (8.000 Kbytes)
+     Total bytes transferred: 52428800 (51200.000 Kbytes, 50.000 Mbytes)
+      Average transfer rates: 2243743 bytes/sec, 2191.155 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m23.36s
+           Total system time: 00m02.05s
+             Total user time: 00m13.95s
+
+Total Statistics:
+     Output device/file name: /usr/tmp/x
+   Data pattern read/written: 0x39c39c39
+     Total records processed: 12800 @ 8192 bytes/record (8.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 1819918 bytes/sec, 1777.264 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m57.61s
+           Total system time: 00m05.55s
+             Total user time: 00m20.65s
+               Starting time: Wed Sep 15 13:42:05 1993
+                 Ending time: Wed Sep 15 13:43:03 1993
+
+% ls -ls /usr/tmp/x
+51240 -rw-r--r--   1 rmiller  system   52428800 Sep 15 13:42 /usr/tmp/x
+% od -x < /usr/tmp/x
+0000000  9c39 39c3 9c39 39c3 9c39 39c3 9c39 39c3
+*
+310000000
+% 
+------------------------------------------------------------------------------
+
+TEST DESCRIPTION:  This test does a read verify pass of the 50Mb file
+created in the previous test, using the memory mapped I/O API (mmap is only
+supported on SUN/OS and DEC OSF/1 at this time).
+
+% dt if=/usr/tmp/x bs=8k limit=50m enable=mmap
+Total Statistics:
+      Input device/file name: /usr/tmp/x
+           Data pattern read: 0x39c39c39
+     Total records processed: 6400 @ 8192 bytes/record (8.000 Kbytes)
+     Total bytes transferred: 52428800 (51200.000 Kbytes, 50.000 Mbytes)
+      Average transfer rates: 2282821 bytes/sec, 2229.318 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m22.96s
+           Total system time: 00m01.13s
+             Total user time: 00m07.73s
+               Starting time: Wed Sep 15 13:49:10 1993
+                 Ending time: Wed Sep 15 13:49:33 1993
+% rm /usr/tmp/x
+
+------------------------------------------------------------------------------
+
+TEST DESCRIPTION:  This test does a write/read verify pass to a QIC-320 1/4"
+tape drive.  Please notice the total average transfer rate.  This lower rate
+is caused by the tape rewind performed after writing the tape.  This rewind
+time is not included in the write/read times, but is part of the total time.
+
+% dt of=/dev/rmt0h bs=64k limit=10m
+Write Statistics:
+     Total records processed: 160 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 10485760 (10240.000 Kbytes, 10.000 Mbytes)
+      Average transfer rates: 157365 bytes/sec, 153.677 Kbytes/sec
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m06.63s
+           Total system time: 00m00.10s
+             Total user time: 00m01.33s
+
+Read Statistics:
+     Total records processed: 160 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 10485760 (10240.000 Kbytes, 10.000 Mbytes)
+      Average transfer rates: 194842 bytes/sec, 190.276 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m53.81s
+           Total system time: 00m00.08s
+             Total user time: 00m02.78s
+
+Total Statistics:
+     Output device/file name: /dev/rmt0h (Device: TZK10, type=tape)
+   Data pattern read/written: 0x39c39c39
+     Total records processed: 320 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 20971520 (20480.000 Kbytes, 20.000 Mbytes)
+      Average transfer rates: 115950 bytes/sec, 113.233 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 03m00.86s
+           Total system time: 00m00.18s
+             Total user time: 00m04.11s
+               Starting time: Wed Sep 15 11:50:36 1993
+                 Ending time: Wed Sep 15 11:53:50 1993
+% 
+------------------------------------------------------------------------------
+
+TEST DESCRIPTION:  This test does a write/read verify pass of 2 tape files
+to a DEC TZ86 tape drive using variable length records ranging from 10 Kbytes
+to 100 Kbytes using the default increment value of 1 byte.
+
+% dt of=/dev/rmt1h min=10k max=100k limit=5m files=2
+Write Statistics:
+     Total records processed: 1000 with min=10240, max=102400, incr=1
+     Total bytes transferred: 10485760 (10240.000 Kbytes, 10.000 Mbytes)
+      Average transfer rates: 642641 bytes/sec, 627.579 Kbytes/sec
+      Total passes completed: 0/1
+       Total files processed: 2/2
+       Total errors detected: 0/1
+          Total elapsed time: 00m16.31s
+           Total system time: 00m00.28s
+             Total user time: 00m01.26s
+
+Read Statistics:
+     Total records processed: 1000 with min=10240, max=102400, incr=1
+     Total bytes transferred: 10485760 (10240.000 Kbytes, 10.000 Mbytes)
+      Average transfer rates: 214725 bytes/sec, 209.693 Kbytes/sec
+      Total passes completed: 1/1
+       Total files processed: 2/2
+       Total errors detected: 0/1
+          Total elapsed time: 00m48.83s
+           Total system time: 00m00.45s
+             Total user time: 00m30.95s
+
+Total Statistics:
+     Output device/file name: /dev/rmt1h (Device: TZ86, type=tape)
+   Data pattern read/written: 0x39c39c39
+     Total records processed: 2000 with min=10240, max=102400, incr=1
+     Total bytes transferred: 20971520 (20480.000 Kbytes, 20.000 Mbytes)
+      Average transfer rates: 229322 bytes/sec, 223.948 Kbytes/sec
+      Total passes completed: 1/1
+       Total files processed: 4/4
+       Total errors detected: 0/1
+          Total elapsed time: 01m31.45s
+           Total system time: 00m00.75s
+             Total user time: 00m32.21s
+               Starting time: Mon Sep 13 15:29:23 1993
+                 Ending time: Mon Sep 13 15:31:00 1993
+% 
+------------------------------------------------------------------------------
+
+TEST DESCRIPTION:  This test does writing/reading through a pipe.  Notice
+the special character '-' which indicates write standard out/read standard in.
+
+% dt of=- bs=8k limit=1g disable=stats | dt if=- bs=8k limit=1g
+Total Statistics:
+      Input device/file name: -
+           Data pattern read: 0x39c39c39
+     Total records processed: 131072 @ 8192 bytes/record (8.000 Kbytes)
+     Total bytes transferred: 1073741824 (1048576.000 Kbytes, 1024.000 Mbytes)
+      Average transfer rates: 2334644 bytes/sec, 2279.926 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 07m39.91s
+           Total system time: 00m17.65s
+             Total user time: 04m44.66s
+               Starting time: Wed Sep 15 11:40:08 1993
+                 Ending time: Wed Sep 15 11:47:48 1993
+
+% 
+------------------------------------------------------------------------------
+TEST DESCRIPTION:  This test does writing/reading through a fifo (named pipe).
+This is similar to the previous test, except a fifo file is created, and a
+single invocation of 'dt' is used for testing.
+
+% mkfifo NamedPipe
+% ls -ls NamedPipe
+0 prw-r--r--   1 rmiller  system         0 Sep 16 09:52 NamedPipe
+% dt of=NamedPipe bs=8k limit=1g enable=loopback
+Total Statistics:
+     Output device/file name: NamedPipe (device type=fifo)
+        Data pattern written: 0x39c39c39 (read verify disabled)
+     Total records processed: 131072 @ 8192 bytes/record (8.000 Kbytes)
+     Total bytes transferred: 1073741824 (1048576.000 Kbytes, 1024.000 Mbytes)
+      Average transfer rates: 2264402 bytes/sec, 2211.330 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 07m54.18s
+           Total system time: 00m21.80s
+             Total user time: 02m14.96s
+               Starting time: Thu Sep 16 09:42:24 1993
+                 Ending time: Thu Sep 16 09:50:18 1993
+
+Total Statistics:
+      Input device/file name: NamedPipe (device type=fifo)
+           Data pattern read: 0x39c39c39
+     Total records processed: 131072 @ 8192 bytes/record (8.000 Kbytes)
+     Total bytes transferred: 1073741824 (1048576.000 Kbytes, 1024.000 Mbytes)
+      Average transfer rates: 2264402 bytes/sec, 2211.330 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 07m54.18s
+           Total system time: 00m19.90s
+             Total user time: 04m44.01s
+               Starting time: Thu Sep 16 09:42:24 1993
+                 Ending time: Thu Sep 16 09:50:19 1993
+
+% rm NamedPipe
+% 
+------------------------------------------------------------------------------
+
+TEST DESCRIPTION:  This test performs a loopback test between two serial
+lines.  Debug was enabled to display additional test information, which is
+useful if serial line testing hangs. 'dt' does not use a watchdog timer.
+
+Also notice the number of bytes allocated was 68, not 64 as 'bs='
+indicates.  Pad bytes are allocated at the end of data buffers and
+checked after reads to ensure drivers/file system code do not write
+too many bytes (this has uncovered DMA FIFO flush problems in device
+drivers in the past).
+
+% dt if=/dev/tty00 of=/dev/tty01 bs=64 limit=100k flow=xon_xoff parity=none speed=38400 enable=debug
+dt: Attempting to open input file '/dev/tty00', mode = 00...
+dt: Input file '/dev/tty00' successfully opened, fd = 3
+dt: Saving current terminal characteristics, fd = 3...
+dt: Setting up test terminal characteristics, fd = 3...
+dt: Attempting to open output file '/dev/tty01', mode = 01...
+dt: Output file '/dev/tty01' successfully opened, fd = 4
+dt: Saving current terminal characteristics, fd = 4...
+dt: Setting up test terminal characteristics, fd = 4...
+dt: Parent PID = 1809, Child PID = 1810
+dt: Allocated buffer at address 0x4a000 of 68 bytes, using offset 0
+dt: Allocated buffer at address 0x4a000 of 68 bytes, using offset 0
+dt: Characters remaining in output queue = 304
+dt: Waiting for output queue to drain...
+dt: Output queue finished draining...
+Total Statistics:
+     Output device/file name: /dev/tty01 (device type=terminal)
+    Terminal characteristics: flow=xon_xoff, parity=none, speed=38400
+        Data pattern written: 0x39c39c39 (read verify disabled)
+     Total records processed: 1600 @ 64 bytes/record (0.063 Kbytes)
+     Total bytes transferred: 102400 (100.000 Kbytes, 0.098 Mbytes)
+      Average transfer rates: 3840 bytes/sec, 3.750 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m26.66s
+           Total system time: 00m00.06s
+             Total user time: 00m00.01s
+               Starting time: Wed Sep 15 11:37:39 1993
+                 Ending time: Wed Sep 15 11:38:07 1993
+
+Total Statistics:
+      Input device/file name: /dev/tty00 (device type=terminal)
+    Terminal characteristics: flow=xon_xoff, parity=none, speed=38400
+           Data pattern read: 0x39c39c39
+     Total records processed: 1600 @ 64 bytes/record (0.063 Kbytes)
+     Total bytes transferred: 102400 (100.000 Kbytes, 0.098 Mbytes)
+      Average transfer rates: 3703 bytes/sec, 3.617 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m27.65s
+           Total system time: 00m00.28s
+             Total user time: 00m00.05s
+               Starting time: Wed Sep 15 11:37:39 1993
+                 Ending time: Wed Sep 15 11:38:07 1993
+
+dt: Restoring saved terminal characteristics, fd = 3...
+dt: Closing file '/dev/tty00', fd = 3...
+dt: Waiting for child PID 1810 to exit...
+dt: Child PID 1810, exited with status = 0
+dt: Restoring saved terminal characteristics, fd = 4...
+dt: Closing file '/dev/tty01', fd = 4...
+% 
+------------------------------------------------------------------------------
+
+TEST DESCRIPTION:  This test does write/reads testing to a raw device
+starting 2 processes each of which will execute 2 passes.  Notice a
+different pattern gets used for each pass.  There are 12 different
+patterns built into the program which get cycled through which get cycled
+through when multiple passes are performed.
+
+% dt of=/dev/rrz11a bs=64k limit=5m procs=2 passes=2
+Write Statistics (1797):
+        Data pattern written: 0x39c39c39
+     Total records processed: 80 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 5242880 (5120.000 Kbytes, 5.000 Mbytes)
+      Average transfer rates: 598047 bytes/sec, 584.030 Kbytes/sec
+      Total passes completed: 0/2
+       Total errors detected: 0/1
+          Total elapsed time: 00m08.76s
+           Total system time: 00m00.05s
+             Total user time: 00m00.65s
+
+Write Statistics (1796):
+        Data pattern written: 0x39c39c39
+     Total records processed: 80 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 5242880 (5120.000 Kbytes, 5.000 Mbytes)
+      Average transfer rates: 600330 bytes/sec, 586.260 Kbytes/sec
+      Total passes completed: 0/2
+       Total errors detected: 0/1
+          Total elapsed time: 00m08.73s
+           Total system time: 00m00.05s
+             Total user time: 00m00.66s
+
+Read Statistics (1797):
+           Data pattern read: 0x39c39c39
+     Total records processed: 80 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 5242880 (5120.000 Kbytes, 5.000 Mbytes)
+      Average transfer rates: 534079 bytes/sec, 521.562 Kbytes/sec
+      Total passes completed: 1/2
+       Total errors detected: 0/1
+          Total elapsed time: 00m09.81s
+           Total system time: 00m00.06s
+             Total user time: 00m01.38s
+
+Read Statistics (1796):
+           Data pattern read: 0x39c39c39
+     Total records processed: 80 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 5242880 (5120.000 Kbytes, 5.000 Mbytes)
+      Average transfer rates: 534988 bytes/sec, 522.449 Kbytes/sec
+      Total passes completed: 1/2
+       Total errors detected: 0/1
+          Total elapsed time: 00m09.80s
+           Total system time: 00m00.05s
+             Total user time: 00m01.40s
+	.
+	.
+	.
+Total Statistics (1797):
+     Output device/file name: /dev/rrz11a (Device: RZ56, type=disk)
+   Data pattern read/written: 0x00ff00ff
+     Total records processed: 320 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 20971520 (20480.000 Kbytes, 20.000 Mbytes)
+      Average transfer rates: 562239 bytes/sec, 549.062 Kbytes/sec
+      Total passes completed: 2/2
+       Total errors detected: 0/1
+          Total elapsed time: 00m37.30s
+           Total system time: 00m00.23s
+             Total user time: 00m04.10s
+               Starting time: Wed Sep 15 11:32:45 1993
+                 Ending time: Wed Sep 15 11:33:22 1993
+
+Total Statistics (1796):
+     Output device/file name: /dev/rrz11a (Device: RZ56, type=disk)
+   Data pattern read/written: 0x00ff00ff
+     Total records processed: 320 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 20971520 (20480.000 Kbytes, 20.000 Mbytes)
+      Average transfer rates: 562490 bytes/sec, 549.307 Kbytes/sec
+      Total passes completed: 2/2
+       Total errors detected: 0/1
+          Total elapsed time: 00m37.28s
+           Total system time: 00m00.25s
+             Total user time: 00m04.13s
+               Starting time: Wed Sep 15 11:32:45 1993
+                 Ending time: Wed Sep 15 11:33:22 1993
+
+% 
+------------------------------------------------------------------------------
+
+TEST DESCRIPTION:  This test attempts to write to a DEC OSF/1 raw disk
+which contains a valid label block, and the action necessary to destroy
+this label block before writes are possible.  As you can see, the first
+disk block (block 0) is write protected (all other blocks are not however).
+Since many people, including myself, have been burned (mis-lead) by this
+wonderful feature, I thought it was worth documenting here.
+
+# file /dev/rrz11c
+/dev/rrz11c:	character special (8/19458) SCSI #1 RZ56 disk #88 (SCSI ID #3) 
+# disklabel -r -w /dev/rrz11c rz56
+# ls -ls /dev/rrz11a
+0 crw-rw-rw-   1 root     system     8,19456 Sep 15 11:33 /dev/rrz11a
+# dt of=/dev/rrz11c bs=64k limit=1m disable=stats
+dt: 'write' - Read-only file system
+dt: Error number 1 occurred on Thu Sep 16 10:53:54 1993
+# dt of=/dev/rrz11a position=1b bs=64k limit=1m disable=stats
+# disklabel -z /dev/rrz11c
+# dt of=/dev/rrz11c bs=64k limit=1m disable=stats
+#
+------------------------------------------------------------------------------
+
+TEST DESCRIPTION:  This test shows a real life problem discovered on a
+DEC 3000-500 (Flamingo) system using DEC OSF/1 V1.3.  This test uncovers
+a data corruption problem that occurs at the end of data buffers on read
+requests.  The problem results from the FIFO being improperly flushed when
+DMA transfers abort on certain boundaries (residual bytes left in FIFO).
+This failure is uncovered by performing large reads of short records and
+verifying the pad bytes, allocated at the end of data buffers, do *not*
+get inadvertantly overwritten.  This example also illustrates the format
+of dumped data buffers (when enabled via the "enable=dump" option).
+
+% dt of=/dev/rmt0h min=1k max=25k incr=p-1 limit=1m disable=stats,verify
+% dt if=/dev/rmt0h min=1k+25 max=25k incr=p-1 limit=1m disable=stats
+dt: WARNING: Record #1, attempted to read 1049 bytes, read only 1024 bytes.
+dt: WARNING: Record #2, attempted to read 9240 bytes, read only 9215 bytes.
+dt: Data compare error at pad byte 0 in record number 2
+dt: Data expected = 0xc6, data found = 0xff
+dt: Error number 1 occurred on Sat Sep 18 11:15:08 1993
+% dt if=/dev/rmt0h min=1k+25 max=25k incr=p-1 limit=1m disable=stats enable=dump
+dt: WARNING: Record #1, attempted to read 1049 bytes, read only 1024 bytes.
+dt: WARNING: Record #2, attempted to read 9240 bytes, read only 9215 bytes.
+dt: Data compare error at pad byte 0 in record number 2
+dt: Data expected = 0xc6, data found = 0xff
+dt: Data buffer pointer = 0x3e3ff, buffer offset = 9215
+
+Dumping Buffer (base = 0x3c000, offset = 9215, size = 9219 bytes):
+
+0x3e3df  39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3
+0x3e3ef  39 39 9c c3 39 39 9c c3 39 39 9c c3 39 39 9c c3
+0x3e3ff  ff c6 63 3c c6 c6 63 3c c6 c6 63 3c c6 c6 63 3c
+0x3e40f  c6 c6 63 3c c6 c6 63 3c c6 c6 63 3c c6 c6 63 3c
+dt: Error number 1 occurred on Sat Sep 18 11:15:31 1993
+% echo $status
+-1
+% 

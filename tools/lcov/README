@@ -1,0 +1,33 @@
+Kernel patches:
+===============
+ - linux-L26.1.5-gcov-2.6.5.patch
+        This is the original gcov-2.6.5.patch adapted to L26_1_5
+        kernel tree.
+ - linux-L26.1.5-gcov-arm.patch
+        This one add gcov support for ARM architecture
+ - linux-L26.1.5-gcov-mxc.patch
+        This one add gcov support to MXC architectures
+ - linux-L26.1.5-gcov-read_proc.patch
+        This (very) ugly one fix (turnaround) a kernel freeze when
+        reading /proc gcov entries   
+ - linux-L26.1.5-gcov-vpath.patch
+        This one fix a VPATH build problem with gcov-2.6.5.patch
+ - linux-L26.1.5-gcov-freescale.patch
+        This one add a "Profile all freescale drivers" option to the
+        build process
+
+Target scripts:
+===============
+ Due to the lack of perl support on the target, lcov tools can't be
+used on it, so these scripts do the job:
+ - lcov-capture.sh: capture coverage data on target
+ - lcov-reset.sh: reset coverage counter on target.
+ - lcovize-runtest.sed: add lcov support to an LTP runtest file.
+
+Host scripts:
+=============
+ There are 2 wrapper scripts that can be used to process target's
+coverage data:
+ - vte-lcov.sh: run lcov on tar'ed coverage data (and fix busybox's
+tar problems)
+ - vte-genhtml.sh: a very simple wrapper script to genhtml.

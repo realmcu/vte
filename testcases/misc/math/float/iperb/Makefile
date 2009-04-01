@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #
 #    testcases/misc/math/float/iperb test suite Makefile.
 #
@@ -30,3 +31,22 @@ CLEAN_TARGETS		:= [rd]*sin [rd]sinh [rd]*cos [rd]cosh [rd]*tan [rd]*tan2		\
 LDLIBS			+= -lm
 
 include $(top_srcdir)/include/mk/generic_leaf_target.mk
+=======
+CFLAGS += -Wall
+LOADLIBES = -lm
+
+BIN = gensinh gencosh gentanh geniperb
+DATA = dsinh rsinh dcosh rcosh dtanh rtanh
+
+all:	$(BIN)
+
+
+clean:
+	rm -f $(BIN)
+	@set -e; for i in $(BIN); do rm -f ../../../../bin/$$i ; done
+	rm -f $(DATA)
+	@set -e; for i in $(DATA); do rm -f ../../../../bin/$$i ; done
+
+install:
+	@set -e; for i in $(BIN); do ln -f $$i ../../../../bin/$$i ; done
+>>>>>>> vte 20080401

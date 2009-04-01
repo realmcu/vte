@@ -35,6 +35,7 @@
 #include        <sys/signal.h>
 #include        <math.h>
 
+<<<<<<< HEAD
 /* **************************************
  *   create result file
  *
@@ -43,6 +44,17 @@
  * 1 double which is the integral part of the input: tabRI
  *
  */
+=======
+
+/* **************************************
+ *   create result file
+ *
+ *  the result is divided into 2 files 
+ * 1 double frationnal part of the input result of modf
+ * 1 double which is the integral part of the input: tabRI
+ *
+ */ 
+>>>>>>> vte 20080401
 int create_Result_file()
 {
 
@@ -54,7 +66,11 @@ int create_Result_file()
 	F_name =  "fmod_out.ref";
 	F_namei =  "fmod_inp.ref";
 	F_namei1 =  "1fmod_inp.ref";
+<<<<<<< HEAD
 	nbVal = 20000;
+=======
+	nbVal = 20000; 
+>>>>>>> vte 20080401
 
 	fpi = open(F_namei,O_RDONLY,0777);
 	fpi1 = open(F_namei1,O_RDONLY,0777);
@@ -85,17 +101,29 @@ int create_Result_file()
 		}
 		else
 		{
+<<<<<<< HEAD
 			for (i = 0; i<nbVal; i++)
 			{
 		    	    write(fp,&tabR[i],sizeof(double));
 			}
 
+=======
+			for (i = 0; i<nbVal; i++ ) 
+			{
+		    	    write(fp,&tabR[i],sizeof(double));
+			}
+	
+>>>>>>> vte 20080401
 			close(fp);
 			return 0;
 		}
 	}
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> vte 20080401
 int create_Data_file()
 {
 	int i, nbVal;
@@ -105,7 +133,11 @@ int create_Data_file()
 
 	F_name = "fmod_inp.ref";
 	F_name1 = "1fmod_inp.ref";
+<<<<<<< HEAD
 	nbVal = 20000;
+=======
+	nbVal = 20000; 
+>>>>>>> vte 20080401
 
 	Inc =  exp(1)/10;
 
@@ -125,8 +157,13 @@ int create_Data_file()
 	    	return -1;
         }
         else
+<<<<<<< HEAD
         {
 		for (i = 0; i<nbVal; i++)
+=======
+        {	
+		for (i = 0; i<nbVal; i++ ) 
+>>>>>>> vte 20080401
 		{
 			write(fp,&tabD[i],sizeof(double));
 			write(fp1,&tabD1[i],sizeof(double));
@@ -137,10 +174,18 @@ int create_Data_file()
 	}
 }
 
+<<<<<<< HEAD
 int main(int argc, char  *argv[])
 {
 
 	if (argc > 1)
+=======
+
+int main(int argc, char  *argv[])
+{
+
+	if (argc > 1) 
+>>>>>>> vte 20080401
 	{
 		switch ( atoi(argv[1]) )
 		{
@@ -173,4 +218,8 @@ int main(int argc, char  *argv[])
 
   return(0);
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> vte 20080401

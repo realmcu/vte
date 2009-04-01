@@ -1,0 +1,309 @@
+Command Line:
+
+    % dt of=/dev/sdf bs=64k passes=12 log=sdf.log 
+
+	--> Date: July 5, 1999, Version: 11.12, Author: Robin T. Miller <--
+
+dt: WARNING: Record #277860, attempted to write 65536 bytes, wrote only 24576 bytes.
+Write Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 16137853 bytes/sec, 15759.622 Kbytes/sec
+     Number I/O's per second: 246.245
+      Total passes completed: 0/12
+       Total errors detected: 0/1
+          Total elapsed time: 18m48.39s
+           Total system time: 02m26.40s
+             Total user time: 08m26.21s
+
+dt: WARNING: Record #277860, attempted to read 65536 bytes, read only 24576 bytes.
+Read Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 8697256 bytes/sec, 8493.414 Kbytes/sec
+     Number I/O's per second: 132.710
+      Total passes completed: 1/12
+       Total errors detected: 0/1
+          Total elapsed time: 34m53.74s
+           Total system time: 02m06.63s
+             Total user time: 19m25.25s
+
+dt: WARNING: Record #277860, attempted to write 65536 bytes, wrote only 24576 bytes.
+Write Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 16141000 bytes/sec, 15762.695 Kbytes/sec
+     Number I/O's per second: 246.293
+      Total passes completed: 1/12
+       Total errors detected: 0/1
+          Total elapsed time: 18m48.17s
+           Total system time: 02m26.66s
+             Total user time: 08m23.38s
+
+dt: WARNING: Record #277860, attempted to read 65536 bytes, read only 24576 bytes.
+Read Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 8867426 bytes/sec, 8659.596 Kbytes/sec
+     Number I/O's per second: 135.306
+      Total passes completed: 2/12
+       Total errors detected: 0/1
+          Total elapsed time: 34m13.56s
+           Total system time: 02m58.67s
+             Total user time: 21m01.68s
+
+dt: WARNING: Record #277860, attempted to write 65536 bytes, wrote only 24576 bytes.
+Write Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 16141715 bytes/sec, 15763.394 Kbytes/sec
+     Number I/O's per second: 246.304
+      Total passes completed: 2/12
+       Total errors detected: 0/1
+          Total elapsed time: 18m48.12s
+           Total system time: 02m28.47s
+             Total user time: 08m25.99s
+
+dt: WARNING: Record #277860, attempted to read 65536 bytes, read only 24576 bytes.
+Read Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 9443248 bytes/sec, 9221.921 Kbytes/sec
+     Number I/O's per second: 144.093
+      Total passes completed: 3/12
+       Total errors detected: 0/1
+          Total elapsed time: 32m08.34s
+           Total system time: 02m05.91s
+             Total user time: 19m23.29s
+
+dt: WARNING: Record #277860, attempted to write 65536 bytes, wrote only 24576 bytes.
+Write Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 13494932 bytes/sec, 13178.645 Kbytes/sec
+     Number I/O's per second: 205.917
+      Total passes completed: 3/12
+       Total errors detected: 0/1
+          Total elapsed time: 22m29.38s
+           Total system time: 02m39.85s
+             Total user time: 09m03.55s
+
+dt: WARNING: Record #277860, attempted to read 65536 bytes, read only 24576 bytes.
+Read Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 8592605 bytes/sec, 8391.216 Kbytes/sec
+     Number I/O's per second: 131.113
+      Total passes completed: 4/12
+       Total errors detected: 0/1
+          Total elapsed time: 35m19.24s
+           Total system time: 02m10.82s
+             Total user time: 17m20.84s
+
+dt: WARNING: Record #277860, attempted to write 65536 bytes, wrote only 24576 bytes.
+Write Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 16138854 bytes/sec, 15760.600 Kbytes/sec
+     Number I/O's per second: 246.260
+      Total passes completed: 4/12
+       Total errors detected: 0/1
+          Total elapsed time: 18m48.32s
+           Total system time: 02m27.70s
+             Total user time: 08m21.90s
+
+dt: WARNING: Record #277860, attempted to read 65536 bytes, read only 24576 bytes.
+Read Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 9661136 bytes/sec, 9434.703 Kbytes/sec
+     Number I/O's per second: 147.418
+      Total passes completed: 5/12
+       Total errors detected: 0/1
+          Total elapsed time: 31m24.85s
+           Total system time: 01m53.60s
+             Total user time: 18m09.07s
+
+dt: WARNING: Record #277860, attempted to write 65536 bytes, wrote only 24576 bytes.
+Write Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 16146009 bytes/sec, 15767.587 Kbytes/sec
+     Number I/O's per second: 246.369
+      Total passes completed: 5/12
+       Total errors detected: 0/1
+          Total elapsed time: 18m47.82s
+           Total system time: 02m27.60s
+             Total user time: 08m21.59s
+
+dt: WARNING: Record #277860, attempted to read 65536 bytes, read only 24576 bytes.
+Read Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 9662469 bytes/sec, 9436.005 Kbytes/sec
+     Number I/O's per second: 147.438
+      Total passes completed: 6/12
+       Total errors detected: 0/1
+          Total elapsed time: 31m24.59s
+           Total system time: 01m56.23s
+             Total user time: 18m27.08s
+
+dt: WARNING: Record #277860, attempted to write 65536 bytes, wrote only 24576 bytes.
+Write Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 16144005 bytes/sec, 15765.630 Kbytes/sec
+     Number I/O's per second: 246.339
+      Total passes completed: 6/12
+       Total errors detected: 0/1
+          Total elapsed time: 18m47.96s
+           Total system time: 02m29.54s
+             Total user time: 08m20.17s
+
+dt: WARNING: Record #277860, attempted to read 65536 bytes, read only 24576 bytes.
+Read Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 9652277 bytes/sec, 9426.051 Kbytes/sec
+     Number I/O's per second: 147.282
+      Total passes completed: 7/12
+       Total errors detected: 0/1
+          Total elapsed time: 31m26.58s
+           Total system time: 01m56.86s
+             Total user time: 18m06.75s
+
+dt: WARNING: Record #277860, attempted to write 65536 bytes, wrote only 24576 bytes.
+Write Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 16143146 bytes/sec, 15764.791 Kbytes/sec
+     Number I/O's per second: 246.325
+      Total passes completed: 7/12
+       Total errors detected: 0/1
+          Total elapsed time: 18m48.02s
+           Total system time: 02m30.33s
+             Total user time: 08m19.86s
+
+dt: WARNING: Record #277860, attempted to read 65536 bytes, read only 24576 bytes.
+Read Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 9670782 bytes/sec, 9444.123 Kbytes/sec
+     Number I/O's per second: 147.565
+      Total passes completed: 8/12
+       Total errors detected: 0/1
+          Total elapsed time: 31m22.97s
+           Total system time: 02m00.17s
+             Total user time: 18m12.61s
+
+dt: WARNING: Record #277860, attempted to write 65536 bytes, wrote only 24576 bytes.
+Write Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 16143290 bytes/sec, 15764.931 Kbytes/sec
+     Number I/O's per second: 246.328
+      Total passes completed: 8/12
+       Total errors detected: 0/1
+          Total elapsed time: 18m48.01s
+           Total system time: 02m29.07s
+             Total user time: 08m22.44s
+
+dt: WARNING: Record #277860, attempted to read 65536 bytes, read only 24576 bytes.
+Read Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 9665289 bytes/sec, 9438.759 Kbytes/sec
+     Number I/O's per second: 147.481
+      Total passes completed: 9/12
+       Total errors detected: 0/1
+          Total elapsed time: 31m24.04s
+           Total system time: 01m58.27s
+             Total user time: 18m26.91s
+
+dt: WARNING: Record #277860, attempted to write 65536 bytes, wrote only 24576 bytes.
+Write Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 16143146 bytes/sec, 15764.791 Kbytes/sec
+     Number I/O's per second: 246.325
+      Total passes completed: 9/12
+       Total errors detected: 0/1
+          Total elapsed time: 18m48.02s
+           Total system time: 02m30.04s
+             Total user time: 08m22.39s
+
+dt: WARNING: Record #277860, attempted to read 65536 bytes, read only 24576 bytes.
+Read Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 9665289 bytes/sec, 9438.759 Kbytes/sec
+     Number I/O's per second: 147.481
+      Total passes completed: 10/12
+       Total errors detected: 0/1
+          Total elapsed time: 31m24.04s
+           Total system time: 01m59.70s
+             Total user time: 18m20.22s
+
+dt: WARNING: Record #277860, attempted to write 65536 bytes, wrote only 24576 bytes.
+Write Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 16143003 bytes/sec, 15764.652 Kbytes/sec
+     Number I/O's per second: 246.323
+      Total passes completed: 10/12
+       Total errors detected: 0/1
+          Total elapsed time: 18m48.03s
+           Total system time: 02m26.50s
+             Total user time: 08m23.24s
+
+dt: WARNING: Record #277860, attempted to read 65536 bytes, read only 24576 bytes.
+Read Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 9663905 bytes/sec, 9437.407 Kbytes/sec
+     Number I/O's per second: 147.460
+      Total passes completed: 11/12
+       Total errors detected: 0/1
+          Total elapsed time: 31m24.31s
+           Total system time: 01m54.88s
+             Total user time: 18m11.70s
+
+dt: WARNING: Record #277860, attempted to write 65536 bytes, wrote only 24576 bytes.
+Write Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 16147441 bytes/sec, 15768.985 Kbytes/sec
+     Number I/O's per second: 246.391
+      Total passes completed: 11/12
+       Total errors detected: 0/1
+          Total elapsed time: 18m47.72s
+           Total system time: 02m27.80s
+             Total user time: 08m22.36s
+
+dt: WARNING: Record #277860, attempted to read 65536 bytes, read only 24576 bytes.
+Read Statistics:
+     Total records processed: 277859 @ 65536 bytes/record, 1 partial
+     Total bytes transferred: 18209792000 (17783000.000 Kbytes, 17366.211 Mbytes)
+      Average transfer rates: 9654835 bytes/sec, 9428.550 Kbytes/sec
+     Number I/O's per second: 147.321
+      Total passes completed: 12/12
+       Total errors detected: 0/1
+          Total elapsed time: 31m26.08s
+           Total system time: 02m01.34s
+             Total user time: 18m12.39s
+
+Total Statistics:
+     Output device/file name: /dev/sdf (device type=disk)
+   Data pattern read/written: 0x71c7c71c
+     Total records processed: 6668616 @ 65536 bytes/record, 24 partial
+     Total bytes transferred: 437035008000 (426792000.000 Kbytes, 416789.062 Mbytes)
+      Average transfer rates: 11802012 bytes/sec, 11525.403 Kbytes/sec
+     Number I/O's per second: 180.085
+      Total passes completed: 12/12
+       Total errors detected: 0/1
+          Total elapsed time: 10h17m10.55s
+           Total system time: 54m53.28s
+             Total user time: 5h24m30.87s
+               Starting time: Mon Jul  5 15:27:35 1999
+                 Ending time: Tue Jul  6 01:44:46 1999
+

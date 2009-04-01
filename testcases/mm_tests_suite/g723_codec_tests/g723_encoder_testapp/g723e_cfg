@@ -1,0 +1,13 @@
+./test_vectors/dtx/dtx53mix.tin      ./g723e_output/dtx53.xco       ./test_vectors/dtx/dtx53.rco          53   F0 V0
+./test_vectors/dtx/dtx63.tin         ./g723e_output/dtx63.xco       ./test_vectors/dtx/dtx63.rco          63   F0 V0
+./test_vectors/no_dtx/pathc53.tin    ./g723e_output/pathc53.pco     ./test_vectors/no_dtx/pathc53.rco     53   F1 V1
+./test_vectors/no_dtx/overc63.tin    ./g723e_output/overc63.pco     ./test_vectors/no_dtx/overc63.rco     63   F1 V1
+./test_vectors/no_dtx/overc53h.tin   ./g723e_output/overc53h.pco    ./test_vectors/no_dtx/overc53h.rco    53   F0 V1
+./test_vectors/no_dtx/codec63.tin    ./g723e_output/codec63.pco     ./test_vectors/no_dtx/codec63.rco     63   F1 V1
+./test_vectors/no_dtx/ineqc53.tin    ./g723e_output/ineqc53.pco     ./test_vectors/no_dtx/ineqc53.rco     53   F1 V1
+./test_vectors/no_dtx/tamec63h.tin   ./g723e_output/tamec63h.pco    ./test_vectors/no_dtx/tamec63h.rco    63   F0 V1
+./test_vectors/no_dtx/pathc63h.tin   ./g723e_output/pathc63h.pco    ./test_vectors/no_dtx/pathc63h.rco    63   F0 V1
+
+
+
+ 

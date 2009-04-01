@@ -1,0 +1,48 @@
+n/a                  BIT_RATE_16KBPS PCM_ULAW    test_vectors/mu-law/NRM.M    test_vectors/mu-law/RN16FM.I~ test_vectors/mu-law/RN16FM.I
+n/a                  BIT_RATE_24KBPS PCM_ULAW    test_vectors/mu-law/NRM.M    test_vectors/mu-law/RN24FM.I~ test_vectors/mu-law/RN24FM.I
+n/a                  BIT_RATE_32KBPS PCM_ULAW    test_vectors/mu-law/NRM.M    test_vectors/mu-law/RN32FM.I~ test_vectors/mu-law/RN32FM.I
+n/a                  BIT_RATE_40KBPS PCM_ULAW    test_vectors/mu-law/NRM.M    test_vectors/mu-law/RN40FM.I~ test_vectors/mu-law/RN40FM.I
+ 		
+n/a                  BIT_RATE_16KBPS PCM_ULAW    test_vectors/mu-law/OVR.M    test_vectors/mu-law/RV16FM.I~ test_vectors/mu-law/RV16FM.I
+n/a                  BIT_RATE_24KBPS PCM_ULAW    test_vectors/mu-law/OVR.M    test_vectors/mu-law/RV24FM.I~ test_vectors/mu-law/RV24FM.I
+n/a                  BIT_RATE_32KBPS PCM_ULAW    test_vectors/mu-law/OVR.M    test_vectors/mu-law/RV32FM.I~ test_vectors/mu-law/RV32FM.I
+n/a                  BIT_RATE_40KBPS PCM_ULAW    test_vectors/mu-law/OVR.M    test_vectors/mu-law/RV40FM.I~ test_vectors/mu-law/RV40FM.I
+
+test_vectors/mu-law/PCM_INIT.M  BIT_RATE_16KBPS PCM_ULAW    test_vectors/mu-law/NRM.M    test_vectors/mu-law/HN16FM.I~ test_vectors/mu-law/HN16FM.I
+test_vectors/mu-law/PCM_INIT.M  BIT_RATE_24KBPS PCM_ULAW    test_vectors/mu-law/NRM.M    test_vectors/mu-law/HN24FM.I~ test_vectors/mu-law/HN24FM.I
+test_vectors/mu-law/PCM_INIT.M  BIT_RATE_32KBPS PCM_ULAW    test_vectors/mu-law/NRM.M    test_vectors/mu-law/HN32FM.I~ test_vectors/mu-law/HN32FM.I
+test_vectors/mu-law/PCM_INIT.M  BIT_RATE_40KBPS PCM_ULAW    test_vectors/mu-law/NRM.M    test_vectors/mu-law/HN40FM.I~ test_vectors/mu-law/HN40FM.I
+
+test_vectors/mu-law/PCM_INIT.M  BIT_RATE_16KBPS PCM_ULAW    test_vectors/mu-law/OVR.M    test_vectors/mu-law/HV16FM.I~ test_vectors/mu-law/HV16FM.I
+test_vectors/mu-law/PCM_INIT.M  BIT_RATE_24KBPS PCM_ULAW    test_vectors/mu-law/OVR.M    test_vectors/mu-law/HV24FM.I~ test_vectors/mu-law/HV24FM.I
+test_vectors/mu-law/PCM_INIT.M  BIT_RATE_32KBPS PCM_ULAW    test_vectors/mu-law/OVR.M    test_vectors/mu-law/HV32FM.I~ test_vectors/mu-law/HV32FM.I
+test_vectors/mu-law/PCM_INIT.M  BIT_RATE_40KBPS PCM_ULAW    test_vectors/mu-law/OVR.M    test_vectors/mu-law/HV40FM.I~ test_vectors/mu-law/HV40FM.I
+ 		
+n/a                  BIT_RATE_16KBPS PCM_ALAW    test_vectors/a-law/NRM.A     test_vectors/a-law/RN16FA.I~  test_vectors/a-law/RN16FA.I
+n/a                  BIT_RATE_24KBPS PCM_ALAW    test_vectors/a-law/NRM.A     test_vectors/a-law/RN24FA.I~  test_vectors/a-law/RN24FA.I
+n/a                  BIT_RATE_32KBPS PCM_ALAW    test_vectors/a-law/NRM.A     test_vectors/a-law/RN32FA.I~  test_vectors/a-law/RN32FA.I
+n/a                  BIT_RATE_40KBPS PCM_ALAW    test_vectors/a-law/NRM.A     test_vectors/a-law/RN40FA.I~  test_vectors/a-law/RN40FA.I 
+
+n/a                  BIT_RATE_16KBPS PCM_ALAW    test_vectors/a-law/OVR.A     test_vectors/a-law/RV16FA.I~  test_vectors/a-law/RV16FA.I
+n/a                  BIT_RATE_24KBPS PCM_ALAW    test_vectors/a-law/OVR.A     test_vectors/a-law/RV24FA.I~  test_vectors/a-law/RV24FA.I
+n/a                  BIT_RATE_32KBPS PCM_ALAW    test_vectors/a-law/OVR.A     test_vectors/a-law/RV32FA.I~  test_vectors/a-law/RV32FA.I
+n/a        	     BIT_RATE_40KBPS PCM_ALAW    test_vectors/a-law/OVR.A     test_vectors/a-law/RV40FA.I~  test_vectors/a-law/RV40FA.I
+
+test_vectors/a-law/PCM_INIT.A   BIT_RATE_16KBPS PCM_ALAW    test_vectors/a-law/NRM.A     test_vectors/a-law/HN16FA.I~  test_vectors/a-law/HN16FA.I
+test_vectors/a-law/PCM_INIT.A   BIT_RATE_24KBPS PCM_ALAW    test_vectors/a-law/NRM.A     test_vectors/a-law/HN24FA.I~  test_vectors/a-law/HN24FA.I
+test_vectors/a-law/PCM_INIT.A   BIT_RATE_32KBPS PCM_ALAW    test_vectors/a-law/NRM.A     test_vectors/a-law/HN32FA.I~  test_vectors/a-law/HN32FA.I
+test_vectors/a-law/PCM_INIT.A   BIT_RATE_40KBPS PCM_ALAW    test_vectors/a-law/NRM.A     test_vectors/a-law/HN40FA.I~  test_vectors/a-law/HN40FA.I
+
+test_vectors/a-law/PCM_INIT.A   BIT_RATE_16KBPS PCM_ALAW    test_vectors/a-law/OVR.A     test_vectors/a-law/HV16FA.I~  test_vectors/a-law/HV16FA.I
+test_vectors/a-law/PCM_INIT.A   BIT_RATE_24KBPS PCM_ALAW    test_vectors/a-law/OVR.A     test_vectors/a-law/HV24FA.I~  test_vectors/a-law/HV24FA.I
+test_vectors/a-law/PCM_INIT.A   BIT_RATE_32KBPS PCM_ALAW    test_vectors/a-law/OVR.A     test_vectors/a-law/HV32FA.I~  test_vectors/a-law/HV32FA.I
+test_vectors/a-law/PCM_INIT.A   BIT_RATE_40KBPS PCM_ALAW    test_vectors/a-law/OVR.A     test_vectors/a-law/HV40FA.I~  test_vectors/a-law/HV40FA.I
+
+n/a                  BIT_RATE_16KBPS PCM_LINEAR  test_vectors/linear/T09.INP  test_vectors/linear/T09_16.I~ test_vectors/linear/T09_16.I
+n/a                  BIT_RATE_24KBPS PCM_LINEAR  test_vectors/linear/T09.INP  test_vectors/linear/T09_24.I~ test_vectors/linear/T09_24.I
+n/a                  BIT_RATE_32KBPS PCM_LINEAR  test_vectors/linear/T09.INP  test_vectors/linear/T09_32.I~ test_vectors/linear/T09_32.I
+n/a        	     BIT_RATE_40KBPS PCM_LINEAR  test_vectors/linear/T09.INP  test_vectors/linear/T09_40.I~ test_vectors/linear/T09_40.I
+
+
+
+

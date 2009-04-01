@@ -1,0 +1,56 @@
+April 3rd, 2000 Robin Miller
+
+	The following changes were made to 'dt' Version 13.10:
+
+    13.6 -> 13.7
+
+     o	In HandleMultiVolume(), reset the exit status to SUCCESS, since
+	this got set to END_OF_FILE earlier.  Failure to do this meant we
+	exited with an END_OF_FILE (254) status on the read pass instead
+	of SUCCESS (0).
+
+    13.7 -> 13.8
+
+     o	Fixed parsing of flags=direct for Tru64 Clusters.
+     o	Don't permit passes=0, as this caused segmentation fault.
+     o	Don't create unique file names with procs= to named FIFO.
+
+    13.8 -> 13.9
+
+     o	Added "capacity=value" option, and ignore read errors in
+	FindCapacity() called for iotype=random option.
+     o	Fixed problem with "position=value" truncating file position
+	to 32 bits, since the file offset may be a 64-bit entity (off_t).
+     o	Improved file position functions to provide better debug output.
+	Also, only scale the random position upwards by the device size
+	every other record, so low blocks gets utilized more often.
+	Note: These changes degrade random I/O performance slightly.
+	[ for "best" performance, all debug really needs omitted, but
+	  currently there's no way to permit this (future consideration). ]
+     o	Fixed exit status when "runtime=" option used.  This exit path
+	only looked at error_count to set FAILURE exit status, while
+	non-runtime exit path looked at exit_status variable.
+
+	Note: The ignoring of read error in FindCapacity(), was added
+	for reading ATAPI CD's on Linux, since this driver does *not*
+	properly handle seek/reads past the end of media.  The last good
+	read gets used when the read error occurs.  Use "capacity=value"
+	to avoid this error condition. [ occurs on RedHat Linux V6.1 ]
+
+    13.9 -> 13.10
+
+     o	Minor change for QNX operating system.  Stat'ing block devices
+	returns the number of blocks in st_size field, which needed scaled
+	by the block size (512 bytes), before setting the random data limit
+	and disk capacity.  This only affected random I/O tests.
+
+	Within Compaq, the updated 'dt' kits are located @ URL:
+
+		http://www.zk3.dec.com/~rmiller/dt.html
+
+	External to Compaq, you can obtain 'dt' kits from URL:
+
+		http://www.bit-net.com/~rmiller/dt.html
+
+Cheers,
+Robin

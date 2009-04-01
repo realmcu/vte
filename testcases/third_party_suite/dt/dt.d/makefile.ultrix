@@ -1,0 +1,370 @@
+#
+# %Z%%M% %I% %E% 1990 by Robin Miller
+#
+#/****************************************************************************
+# *									     *
+# *			  COPYRIGHT (c) 1990 - 1999			     *
+# *			   This Software Provided			     *
+# *				     By					     *
+# *			  Robin's Nest Software Inc.			     *
+# *			       2 Paradise Lane  			     *
+# *			       Hudson, NH 03051				     *
+# *			       (603) 883-2355				     *
+# *									     *
+# * Permission to use, copy, modify, distribute and sell this software and   *
+# * its documentation for any purpose and without fee is hereby granted	     *
+# * provided that the above copyright notice appear in all copies and that   *
+# * both that copyright notice and this permission notice appear in the	     *
+# * supporting documentation, and that the name of the author not be used    *
+# * in advertising or publicity pertaining to distribution of the software   *
+# * without specific, written prior permission.				     *
+# *									     *
+# * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, 	     *
+# * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN	     *
+# * NO EVENT SHALL HE BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL   *
+# * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR    *
+# * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS  *
+# * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF   *
+# * THIS SOFTWARE.							     *
+# *									     *
+# ****************************************************************************/
+#
+# Makefile -- makefile for program 'dt'
+#	
+
+### MKMF:DEFINITIONS ###
+
+
+# System makefile definitions for program makefiles
+
+.SUFFIXES:	.ln
+
+.c.ln:
+		@lint -i $(LINTFLAGS) $<
+
+.c~.ln:
+		@echo $<
+		@$(GET) -G$*.c $(GFLAGS) $<
+		@lint -i $(LINTFLAGS) $*.c
+		@rm -f $*.c
+
+PRINTER=	lpr
+
+PR_FLAGS=	-p -P28
+
+TR_PRINTER=	$(PRINTER)
+
+TR_FLAGS=	-t -P28
+
+# Libraries the program links to which are considered volatile
+
+LIBS=
+
+# Libraries considered static
+
+EXTLIBS= 
+
+LINTLIBS=
+
+# P or G flag ( override on command line by invoking make PORG=-g )
+
+PORG=	-O
+
+AWK=	awk
+CFLAGS= $(PORG) -D_BSD -D_NO_PROTO -DFIFO
+CPP=	/lib/cpp
+CPPOPTS= -P
+#LDFLAGS= -non_shared
+
+# end of system makefile definitions
+
+
+HDRS=		dt.h
+
+### MKMF:SOURCES ###
+
+
+CFILES=		\
+    		dt.c	\
+		dtgen.c		\
+		dtinfo.c	\
+    		dtread.c	\
+    		dtwrite.c	\
+		dtstats.c	\
+		dttty.c		\
+    		dtutil.c	\
+		dtusage.c	\
+		dtprocs.c	\
+		dttape.c	\
+		dtfifo.c
+
+
+### MKMF:OBJECTS ###
+
+OBJS=		\
+		dt.o		\
+		dtgen.o		\
+		dtinfo.o	\
+		dtread.o	\
+		dtwrite.o	\
+		dtstats.o	\
+		dttty.o		\
+		dtutil.o	\
+		dtusage.o	\
+		dtprocs.o	\
+		dttape.o	\
+		dtfifo.o
+
+
+### MKMF:LINTOBJS ###
+
+LINTOBJS=		\
+		dt.ln		\
+		dtgen.ln	\
+		dtinfo.ln	\
+		dtread.ln	\
+		dtwrite.ln	\
+		dtstats.ln	\
+		dttty.ln	\
+		dtutil.ln	\
+		dtusage.ln	\
+		dtprocs.ln	\
+		dttape.ln	\
+		dtfifo.ln
+
+
+### MKMF:TARGETS ###
+
+
+PROGRAM=	dt
+
+
+# system targets for program makefile
+
+
+$(PROGRAM):	$(OBJS) $(XOBJS) $(LIBS)
+		@echo -n loading $(PROGRAM) ... 
+		@$(CC) -o $(PROGRAM) $(CFLAGS) $(LDFLAGS) $(OBJS) $(LIBS) $(EXTLIBS)
+		@echo done
+
+print:;
+		@$(PRINTER) $(PRINTFLAGS) $(CFILES)
+
+prettyprint:;
+		@vgrind $(CFILES) | $(TROFFPRINTER) $(TROFFPRINTERFLAGS)
+
+lint:		$(LINTOBJS)
+		lint $(LINTFLAGS) $(LINTOBJS) $(LINTLIBS)
+		touch lint
+
+clean:;
+		@rm -f $(OBJS) $(PROGRAM)
+
+tags:	$(CFILES) $(HDRS)
+	ctags -wt $(CFILES) $(HDRS)
+
+# end of system targets for program makefile
+
+
+depend: makedep
+	echo '/^# DO NOT DELETE THIS LINE/+1,$$d' >eddep
+	echo '$$r makedep' >>eddep
+	echo 'w' >>eddep
+	cp Makefile Makefile.bak
+	ex - Makefile < eddep
+	rm eddep makedep makedep1 makedeperrs
+
+makedep: ${CFILES}
+	@cat /dev/null >makedep
+	-(for i in ${CFILES} ; do \
+		${CPP} -M ${CPPOPTS} $$i >> makedep; done) \
+		2>makedeperrs
+	sed \
+		-e 's,^.*genassym\.o:,assym.s assym.L:,' \
+		-e 's,^\(.*\)\.o:,\1.o \1.ln:,' makedep > makedep1
+	${AWK} ' { if ($$1 != prev) { print rec; rec = $$0; prev = $$1; } \
+		else { if (length(rec $$3) > 78) { print rec; rec = $$0; } \
+		       else rec = rec " " $$3 } } \
+	      END { print rec } ' makedep1 > makedep
+	@cat makedeperrs
+	@(if [ -s makedeperrs ]; then false; fi)
+
+
+# DO NOT DELETE THIS LINE
+
+dt.o dt.ln: dt.c ./dt.h /usr/include/stdio.h /usr/include/ansi_compat.h
+dt.o dt.ln: /usr/include/stdlib.h /usr/include/ansi_compat.h
+dt.o dt.ln: /usr/include/string.h /usr/include/termios.h
+dt.o dt.ln: /usr/include/sys/termios.h /usr/include/sys/termio.h
+dt.o dt.ln: /usr/include/ansi_compat.h /usr/include/sys/ioctl.h
+dt.o dt.ln: /usr/include/ansi_compat.h /usr/include/sys/ttychars.h
+dt.o dt.ln: /usr/include/sys/ttydev.h /usr/include/sys/ttyio.h
+dt.o dt.ln: /usr/include/sgtty.h /usr/include/ansi_compat.h /usr/include/time.h
+dt.o dt.ln: /usr/include/ansi_compat.h /usr/include/unistd.h
+dt.o dt.ln: /usr/include/errno.h /usr/include/sys/types.h
+dt.o dt.ln: /usr/include/ansi_compat.h /usr/include/sys/times.h
+dt.o dt.ln: /usr/include/ansi_compat.h /usr/include/ctype.h
+dt.o dt.ln: /usr/include/fcntl.h /usr/include/sys/file.h
+dt.o dt.ln: /usr/include/ansi_compat.h /usr/include/sys/types.h
+dt.o dt.ln: /usr/include/signal.h /usr/include/ansi_compat.h
+dt.o dt.ln: /usr/include/sys/ioctl.h /usr/include/sys/file.h
+dt.o dt.ln: /usr/include/sys/param.h /usr/include/ansi_compat.h
+dt.o dt.ln: /usr/include/machine/param.h /usr/include/signal.h
+dt.o dt.ln: /usr/include/sys/types.h /usr/include/sys/smp_lock.h
+dt.o dt.ln: /usr/include/ansi_compat.h /usr/include/sys/wait.h
+dt.o dt.ln: /usr/include/ansi_compat.h /usr/include/sys/types.h
+dtgen.o dtgen.ln: dtgen.c ./dt.h /usr/include/stdio.h
+dtgen.o dtgen.ln: /usr/include/ansi_compat.h /usr/include/stdlib.h
+dtgen.o dtgen.ln: /usr/include/ansi_compat.h /usr/include/string.h
+dtgen.o dtgen.ln: /usr/include/termios.h /usr/include/sys/termios.h
+dtgen.o dtgen.ln: /usr/include/sys/termio.h /usr/include/ansi_compat.h
+dtgen.o dtgen.ln: /usr/include/sys/ioctl.h /usr/include/ansi_compat.h
+dtgen.o dtgen.ln: /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h
+dtgen.o dtgen.ln: /usr/include/sys/ttyio.h /usr/include/sgtty.h
+dtgen.o dtgen.ln: /usr/include/ansi_compat.h /usr/include/time.h
+dtgen.o dtgen.ln: /usr/include/ansi_compat.h /usr/include/unistd.h
+dtgen.o dtgen.ln: /usr/include/errno.h /usr/include/sys/types.h
+dtgen.o dtgen.ln: /usr/include/ansi_compat.h /usr/include/sys/times.h
+dtgen.o dtgen.ln: /usr/include/ansi_compat.h /usr/include/sys/file.h
+dtgen.o dtgen.ln: /usr/include/ansi_compat.h /usr/include/sys/types.h
+dtinfo.o dtinfo.ln: dtinfo.c ./dt.h /usr/include/stdio.h
+dtinfo.o dtinfo.ln: /usr/include/ansi_compat.h /usr/include/stdlib.h
+dtinfo.o dtinfo.ln: /usr/include/ansi_compat.h /usr/include/string.h
+dtinfo.o dtinfo.ln: /usr/include/termios.h /usr/include/sys/termios.h
+dtinfo.o dtinfo.ln: /usr/include/sys/termio.h /usr/include/ansi_compat.h
+dtinfo.o dtinfo.ln: /usr/include/sys/ioctl.h /usr/include/ansi_compat.h
+dtinfo.o dtinfo.ln: /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h
+dtinfo.o dtinfo.ln: /usr/include/sys/ttyio.h /usr/include/sgtty.h
+dtinfo.o dtinfo.ln: /usr/include/ansi_compat.h /usr/include/time.h
+dtinfo.o dtinfo.ln: /usr/include/ansi_compat.h /usr/include/unistd.h
+dtinfo.o dtinfo.ln: /usr/include/errno.h /usr/include/sys/types.h
+dtinfo.o dtinfo.ln: /usr/include/ansi_compat.h /usr/include/sys/times.h
+dtinfo.o dtinfo.ln: /usr/include/ansi_compat.h /usr/include/sys/ioctl.h
+dtinfo.o dtinfo.ln: /usr/include/sys/devio.h /usr/include/sys/ioctl.h
+dtread.o dtread.ln: dtread.c ./dt.h /usr/include/stdio.h
+dtread.o dtread.ln: /usr/include/ansi_compat.h /usr/include/stdlib.h
+dtread.o dtread.ln: /usr/include/ansi_compat.h /usr/include/string.h
+dtread.o dtread.ln: /usr/include/termios.h /usr/include/sys/termios.h
+dtread.o dtread.ln: /usr/include/sys/termio.h /usr/include/ansi_compat.h
+dtread.o dtread.ln: /usr/include/sys/ioctl.h /usr/include/ansi_compat.h
+dtread.o dtread.ln: /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h
+dtread.o dtread.ln: /usr/include/sys/ttyio.h /usr/include/sgtty.h
+dtread.o dtread.ln: /usr/include/ansi_compat.h /usr/include/time.h
+dtread.o dtread.ln: /usr/include/ansi_compat.h /usr/include/unistd.h
+dtread.o dtread.ln: /usr/include/errno.h /usr/include/sys/types.h
+dtread.o dtread.ln: /usr/include/ansi_compat.h /usr/include/sys/times.h
+dtread.o dtread.ln: /usr/include/ansi_compat.h /usr/include/sys/file.h
+dtread.o dtread.ln: /usr/include/ansi_compat.h /usr/include/sys/types.h
+dtwrite.o dtwrite.ln: dtwrite.c ./dt.h /usr/include/stdio.h
+dtwrite.o dtwrite.ln: /usr/include/ansi_compat.h /usr/include/stdlib.h
+dtwrite.o dtwrite.ln: /usr/include/ansi_compat.h /usr/include/string.h
+dtwrite.o dtwrite.ln: /usr/include/termios.h /usr/include/sys/termios.h
+dtwrite.o dtwrite.ln: /usr/include/sys/termio.h /usr/include/ansi_compat.h
+dtwrite.o dtwrite.ln: /usr/include/sys/ioctl.h /usr/include/ansi_compat.h
+dtwrite.o dtwrite.ln: /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h
+dtwrite.o dtwrite.ln: /usr/include/sys/ttyio.h /usr/include/sgtty.h
+dtwrite.o dtwrite.ln: /usr/include/ansi_compat.h /usr/include/time.h
+dtwrite.o dtwrite.ln: /usr/include/ansi_compat.h /usr/include/unistd.h
+dtwrite.o dtwrite.ln: /usr/include/errno.h /usr/include/sys/types.h
+dtwrite.o dtwrite.ln: /usr/include/ansi_compat.h /usr/include/sys/times.h
+dtwrite.o dtwrite.ln: /usr/include/ansi_compat.h /usr/include/sys/file.h
+dtwrite.o dtwrite.ln: /usr/include/ansi_compat.h /usr/include/sys/types.h
+dtstats.o dtstats.ln: dtstats.c ./dt.h /usr/include/stdio.h
+dtstats.o dtstats.ln: /usr/include/ansi_compat.h /usr/include/stdlib.h
+dtstats.o dtstats.ln: /usr/include/ansi_compat.h /usr/include/string.h
+dtstats.o dtstats.ln: /usr/include/termios.h /usr/include/sys/termios.h
+dtstats.o dtstats.ln: /usr/include/sys/termio.h /usr/include/ansi_compat.h
+dtstats.o dtstats.ln: /usr/include/sys/ioctl.h /usr/include/ansi_compat.h
+dtstats.o dtstats.ln: /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h
+dtstats.o dtstats.ln: /usr/include/sys/ttyio.h /usr/include/sgtty.h
+dtstats.o dtstats.ln: /usr/include/ansi_compat.h /usr/include/time.h
+dtstats.o dtstats.ln: /usr/include/ansi_compat.h /usr/include/unistd.h
+dtstats.o dtstats.ln: /usr/include/errno.h /usr/include/sys/types.h
+dtstats.o dtstats.ln: /usr/include/ansi_compat.h /usr/include/sys/times.h
+dtstats.o dtstats.ln: /usr/include/ansi_compat.h
+dttty.o dttty.ln: dttty.c ./dt.h /usr/include/stdio.h
+dttty.o dttty.ln: /usr/include/ansi_compat.h /usr/include/stdlib.h
+dttty.o dttty.ln: /usr/include/ansi_compat.h /usr/include/string.h
+dttty.o dttty.ln: /usr/include/termios.h /usr/include/sys/termios.h
+dttty.o dttty.ln: /usr/include/sys/termio.h /usr/include/ansi_compat.h
+dttty.o dttty.ln: /usr/include/sys/ioctl.h /usr/include/ansi_compat.h
+dttty.o dttty.ln: /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h
+dttty.o dttty.ln: /usr/include/sys/ttyio.h /usr/include/sgtty.h
+dttty.o dttty.ln: /usr/include/ansi_compat.h /usr/include/time.h
+dttty.o dttty.ln: /usr/include/ansi_compat.h /usr/include/unistd.h
+dttty.o dttty.ln: /usr/include/errno.h /usr/include/sys/types.h
+dttty.o dttty.ln: /usr/include/ansi_compat.h /usr/include/sys/times.h
+dttty.o dttty.ln: /usr/include/ansi_compat.h /usr/include/sys/ioctl.h
+dttty.o dttty.ln: /usr/include/sys/file.h /usr/include/ansi_compat.h
+dttty.o dttty.ln: /usr/include/sys/types.h /usr/include/sys/param.h
+dttty.o dttty.ln: /usr/include/ansi_compat.h /usr/include/machine/param.h
+dttty.o dttty.ln: /usr/include/signal.h /usr/include/ansi_compat.h
+dttty.o dttty.ln: /usr/include/sys/types.h /usr/include/sys/smp_lock.h
+dttty.o dttty.ln: /usr/include/ansi_compat.h
+dtutil.o dtutil.ln: dtutil.c ./dt.h /usr/include/stdio.h
+dtutil.o dtutil.ln: /usr/include/ansi_compat.h /usr/include/stdlib.h
+dtutil.o dtutil.ln: /usr/include/ansi_compat.h /usr/include/string.h
+dtutil.o dtutil.ln: /usr/include/termios.h /usr/include/sys/termios.h
+dtutil.o dtutil.ln: /usr/include/sys/termio.h /usr/include/ansi_compat.h
+dtutil.o dtutil.ln: /usr/include/sys/ioctl.h /usr/include/ansi_compat.h
+dtutil.o dtutil.ln: /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h
+dtutil.o dtutil.ln: /usr/include/sys/ttyio.h /usr/include/sgtty.h
+dtutil.o dtutil.ln: /usr/include/ansi_compat.h /usr/include/time.h
+dtutil.o dtutil.ln: /usr/include/ansi_compat.h /usr/include/unistd.h
+dtutil.o dtutil.ln: /usr/include/errno.h /usr/include/sys/types.h
+dtutil.o dtutil.ln: /usr/include/ansi_compat.h /usr/include/sys/times.h
+dtutil.o dtutil.ln: /usr/include/ansi_compat.h /usr/include/fcntl.h
+dtutil.o dtutil.ln: /usr/include/sys/file.h /usr/include/ansi_compat.h
+dtutil.o dtutil.ln: /usr/include/sys/types.h /usr/include/malloc.h
+dtutil.o dtutil.ln: /usr/include/tzfile.h /usr/include/varargs.h
+dtutil.o dtutil.ln: /usr/include/ansi_compat.h /usr/include/stamp.h
+dtutil.o dtutil.ln: /usr/include/ansi_compat.h /usr/include/sys/ioctl.h
+dtutil.o dtutil.ln: /usr/include/sys/param.h /usr/include/ansi_compat.h
+dtutil.o dtutil.ln: /usr/include/machine/param.h /usr/include/signal.h
+dtutil.o dtutil.ln: /usr/include/ansi_compat.h /usr/include/sys/types.h
+dtutil.o dtutil.ln: /usr/include/sys/smp_lock.h /usr/include/ansi_compat.h
+dtutil.o dtutil.ln: /usr/include/sys/resource.h /usr/include/sys/stat.h
+dtutil.o dtutil.ln: /usr/include/ansi_compat.h
+dtusage.o dtusage.ln: dtusage.c ./dt.h /usr/include/stdio.h
+dtusage.o dtusage.ln: /usr/include/ansi_compat.h /usr/include/stdlib.h
+dtusage.o dtusage.ln: /usr/include/ansi_compat.h /usr/include/string.h
+dtusage.o dtusage.ln: /usr/include/termios.h /usr/include/sys/termios.h
+dtusage.o dtusage.ln: /usr/include/sys/termio.h /usr/include/ansi_compat.h
+dtusage.o dtusage.ln: /usr/include/sys/ioctl.h /usr/include/ansi_compat.h
+dtusage.o dtusage.ln: /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h
+dtusage.o dtusage.ln: /usr/include/sys/ttyio.h /usr/include/sgtty.h
+dtusage.o dtusage.ln: /usr/include/ansi_compat.h /usr/include/time.h
+dtusage.o dtusage.ln: /usr/include/ansi_compat.h /usr/include/unistd.h
+dtusage.o dtusage.ln: /usr/include/errno.h /usr/include/sys/types.h
+dtusage.o dtusage.ln: /usr/include/ansi_compat.h /usr/include/sys/times.h
+dtusage.o dtusage.ln: /usr/include/ansi_compat.h /usr/include/tzfile.h
+dtprocs.o dtprocs.ln: dtprocs.c ./dt.h /usr/include/stdio.h
+dtprocs.o dtprocs.ln: /usr/include/ansi_compat.h /usr/include/stdlib.h
+dtprocs.o dtprocs.ln: /usr/include/ansi_compat.h /usr/include/string.h
+dtprocs.o dtprocs.ln: /usr/include/termios.h /usr/include/sys/termios.h
+dtprocs.o dtprocs.ln: /usr/include/sys/termio.h /usr/include/ansi_compat.h
+dtprocs.o dtprocs.ln: /usr/include/sys/ioctl.h /usr/include/ansi_compat.h
+dtprocs.o dtprocs.ln: /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h
+dtprocs.o dtprocs.ln: /usr/include/sys/ttyio.h /usr/include/sgtty.h
+dtprocs.o dtprocs.ln: /usr/include/ansi_compat.h /usr/include/time.h
+dtprocs.o dtprocs.ln: /usr/include/ansi_compat.h /usr/include/unistd.h
+dtprocs.o dtprocs.ln: /usr/include/errno.h /usr/include/sys/types.h
+dtprocs.o dtprocs.ln: /usr/include/ansi_compat.h /usr/include/sys/times.h
+dtprocs.o dtprocs.ln: /usr/include/ansi_compat.h /usr/include/signal.h
+dtprocs.o dtprocs.ln: /usr/include/ansi_compat.h /usr/include/sys/stat.h
+dtprocs.o dtprocs.ln: /usr/include/ansi_compat.h /usr/include/sys/wait.h
+dtprocs.o dtprocs.ln: /usr/include/ansi_compat.h /usr/include/sys/types.h
+dttape.o dttape.ln: dttape.c ./dt.h /usr/include/stdio.h
+dttape.o dttape.ln: /usr/include/ansi_compat.h /usr/include/stdlib.h
+dttape.o dttape.ln: /usr/include/ansi_compat.h /usr/include/string.h
+dttape.o dttape.ln: /usr/include/termios.h /usr/include/sys/termios.h
+dttape.o dttape.ln: /usr/include/sys/termio.h /usr/include/ansi_compat.h
+dttape.o dttape.ln: /usr/include/sys/ioctl.h /usr/include/ansi_compat.h
+dttape.o dttape.ln: /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h
+dttape.o dttape.ln: /usr/include/sys/ttyio.h /usr/include/sgtty.h
+dttape.o dttape.ln: /usr/include/ansi_compat.h /usr/include/time.h
+dttape.o dttape.ln: /usr/include/ansi_compat.h /usr/include/unistd.h
+dttape.o dttape.ln: /usr/include/errno.h /usr/include/sys/types.h
+dttape.o dttape.ln: /usr/include/ansi_compat.h /usr/include/sys/times.h
+dttape.o dttape.ln: /usr/include/ansi_compat.h /usr/include/sys/ioctl.h
+dttape.o dttape.ln: /usr/include/sys/mtio.h

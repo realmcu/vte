@@ -1,0 +1,57 @@
+iluvqnx% dt if=/dev/hd0 of=/dev/hd2 bs=16k iomode=copy errors=5
+Copy Statistics:
+    Data operation performed: Copied '/dev/hd0' to '/dev/hd2'.
+     Total records processed: 40565 @ 16384 bytes/record, 1 partial
+     Total bytes transferred: 664616960 (649040.000 Kbytes, 633.828 Mbytes)
+      Average transfer rates: 717779 bytes/sec, 700.956 Kbytes/sec
+      Total passes completed: 0/1
+       Total errors detected: 0/5
+          Total elapsed time: 15m25.93s
+           Total system time: 00m03.09s
+             Total user time: 00m03.79s
+
+dt: Error number 1 occurred on Mon Mar  4 22:50:24 1996
+dt: Data compare error at byte 14184 in record number 1538
+dt: Relative block number where the error occcured is 24604
+dt: Data expected = 0x56, data found = 0xfa, byte count = 16384
+dt: The incorrect data starts at address 0x21768 (marked by asterisk '*')
+dt: Dumping Pattern Buffer (base = 0x1e000, offset = 14184, limit = 64 bytes):
+
+0x21748  00 00 00 00 00 00 00 00 00 08 00 00 46 07 00 00
+0x21758  04 00 00 00 00 00 00 00 aa 47 80 2e 87 4b 84 2e
+0x21768 *56 b6 3b 31 87 4b 84 2e 01 00 fd 41 00 00 00 00
+0x21778  02 00 00 00 00 00 00 03 72 77 68 6f 00 00 00 00
+
+dt: The incorrect data starts at address 0x1c768 (marked by asterisk '*')
+dt: Dumping Data Buffer (base = 0x19000, offset = 14184, limit = 64 bytes):
+
+0x1c748  00 00 00 00 00 00 00 00 00 08 00 00 46 07 00 00
+0x1c758  04 00 00 00 00 00 00 00 aa 47 80 2e 87 4b 84 2e
+0x1c768 *fa b9 3b 31 87 4b 84 2e 01 00 fd 41 00 00 00 00
+0x1c778  02 00 00 00 00 00 00 03 72 77 68 6f 00 00 00 00
+
+Verify Statistics:
+    Data operation performed: Verified '/dev/hd0' with '/dev/hd2'.
+     Total records processed: 40565 @ 16384 bytes/record, 1 partial
+     Total bytes transferred: 664616960 (649040.000 Kbytes, 633.828 Mbytes)
+      Average transfer rates: 808493 bytes/sec, 789.544 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 1/5
+          Total elapsed time: 13m42.04s
+           Total system time: 00m03.61s
+             Total user time: 07m12.96s
+
+Total Statistics:
+      Input device/file name: /dev/hd0 (device type=disk)
+     Total records processed: 81130 @ 16384 bytes/record, 2 partial
+     Total bytes transferred: 1329233920 (1298080.000 Kbytes, 1267.656 Mbytes)
+      Average transfer rates: 759211 bytes/sec, 741.417 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 1/5
+          Total elapsed time: 29m10.81s
+           Total system time: 00m06.70s
+             Total user time: 07m16.76s
+               Starting time: Mon Mar  4 22:34:24 1996
+                 Ending time: Mon Mar  4 23:03:35 1996
+
+iluvqnx% 

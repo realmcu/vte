@@ -1,0 +1,34 @@
+/*
+ * fourcc
+ *  RGB565->RGBP
+ *  BGR24 ->BGR3
+ *  RGB24 ->RGB3
+ *  BGR32 ->BGR4
+ *  BGRA32->BGRA
+ *  RGB32 ->RGB4
+ *  RGBA32->RGBA
+ *  ABGR32->ABGR
+ *  YUYV  ->YUYV
+ *  UYVY  ->UYVY
+ *  YUV444->Y444
+ *  NV12  ->NV12
+ *  YUV420P->I420
+ *  YUV422P->422P
+ *  YVU422P->YV16
+ * */
+/*
+ * m: mode, TASK_ENC = 0x1, TASK_VF = 0x2, TASK_PP = 0x4,
+ *          NORMAL_MODE = 0x10, STREAM_MODE = 0x20
+ *    should combine or TASK and MODE
+ * f: frame count
+ * E: output1 enable
+ * i: w,h,f input width,height,format
+ * c: x,y,w,h crop x,y,width,height
+ * o: w,h,fi,r output0 width,height,format,rotation
+ * s: tofb,fbid,posx,posy, enable o0 to fb,fb id,position x/y
+ * n: output0 file name
+ * O: w,h,f,r output1 width,height,format,rotation
+ * S: tofb,fbid,posx,posy, enable o1 to fb, fb id,position x/y
+ * N: output1 file name
+ * */
+

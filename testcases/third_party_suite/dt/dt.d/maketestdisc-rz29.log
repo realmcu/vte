@@ -1,0 +1,213 @@
+Mon Feb 24 14:17:55 EST 1997
+/dev/rrz29c:	character special (8/54274) SCSI #3 RZ28D disk #232 (SCSI ID #5) (SCSI LUN #0) 
+Write Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 3705216 bytes/sec, 3618.375 Kbytes/sec
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m28.30s
+           Total system time: 00m00.23s
+             Total user time: 00m04.85s
+
+Read Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 3141016 bytes/sec, 3067.399 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m33.38s
+           Total system time: 00m00.23s
+             Total user time: 00m17.06s
+
+Total Statistics:
+     Output device/file name: /dev/rrz29b (Device: RZ28D, type=disk)
+      Data pattern file used: pattern_4 (512 bytes)
+   Data pattern read/written: 0xaaaaaaaa (first 4 bytes)
+     Total records processed: 3200 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 209715200 (204800.000 Kbytes, 200.000 Mbytes)
+      Average transfer rates: 3398950 bytes/sec, 3319.287 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m01.70s
+           Total system time: 00m00.46s
+             Total user time: 00m21.91s
+               Starting time: Mon Feb 24 14:17:55 1997
+                 Ending time: Mon Feb 24 14:18:57 1997
+
+Write Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 3703035 bytes/sec, 3616.245 Kbytes/sec
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m28.31s
+           Total system time: 00m00.23s
+             Total user time: 00m04.85s
+
+Read Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 3055588 bytes/sec, 2983.973 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m34.31s
+           Total system time: 00m00.26s
+             Total user time: 00m17.08s
+
+Total Statistics:
+     Output device/file name: /dev/rrz29d (Device: RZ28D, type=disk)
+      Data pattern file used: pattern_5 (512 bytes)
+   Data pattern read/written: 0x03020100 (first 4 bytes)
+     Total records processed: 3200 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 209715200 (204800.000 Kbytes, 200.000 Mbytes)
+      Average transfer rates: 3347409 bytes/sec, 3268.955 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m02.65s
+           Total system time: 00m00.50s
+             Total user time: 00m21.93s
+               Starting time: Mon Feb 24 14:18:57 1997
+                 Ending time: Mon Feb 24 14:19:59 1997
+
+Write Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 3713965 bytes/sec, 3626.919 Kbytes/sec
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m28.23s
+           Total system time: 00m00.21s
+             Total user time: 00m05.55s
+
+Read Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 3094666 bytes/sec, 3022.135 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m33.88s
+           Total system time: 00m00.23s
+             Total user time: 00m17.51s
+
+Total Statistics:
+     Output device/file name: /dev/rrz29e (Device: RZ28D, type=disk)
+      Data pattern file used: pattern_6 (2048 bytes)
+   Data pattern read/written: 0xa26138a1 (first 4 bytes)
+     Total records processed: 3200 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 209715200 (204800.000 Kbytes, 200.000 Mbytes)
+      Average transfer rates: 3375245 bytes/sec, 3296.137 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m02.13s
+           Total system time: 00m00.45s
+             Total user time: 00m23.06s
+               Starting time: Mon Feb 24 14:19:59 1997
+                 Ending time: Mon Feb 24 14:21:02 1997
+
+Write Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 3705216 bytes/sec, 3618.375 Kbytes/sec
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m28.30s
+           Total system time: 00m00.28s
+             Total user time: 00m06.40s
+
+Read Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 3091625 bytes/sec, 3019.165 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m33.91s
+           Total system time: 00m00.23s
+             Total user time: 00m18.21s
+
+Total Statistics:
+     Output device/file name: /dev/rrz29f (Device: RZ28D, type=disk)
+      Data pattern file used: pattern_7 (4096 bytes)
+   Data pattern read/written: 0x461819fe (first 4 bytes)
+     Total records processed: 3200 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 209715200 (204800.000 Kbytes, 200.000 Mbytes)
+      Average transfer rates: 3369821 bytes/sec, 3290.841 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m02.23s
+           Total system time: 00m00.51s
+             Total user time: 00m24.61s
+               Starting time: Mon Feb 24 14:21:02 1997
+                 Ending time: Mon Feb 24 14:22:04 1997
+
+Write Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 3659951 bytes/sec, 3574.171 Kbytes/sec
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m28.65s
+           Total system time: 00m00.26s
+             Total user time: 00m05.46s
+
+Read Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 3055588 bytes/sec, 2983.973 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m34.31s
+           Total system time: 00m00.28s
+             Total user time: 00m17.55s
+
+Total Statistics:
+     Output device/file name: /dev/rrz29g (Device: RZ28D, type=disk)
+      Data pattern file used: pattern_8 (2048 bytes)
+   Data pattern read/written: 0x486a3386 (first 4 bytes)
+     Total records processed: 3200 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 209715200 (204800.000 Kbytes, 200.000 Mbytes)
+      Average transfer rates: 3327932 bytes/sec, 3249.934 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m03.01s
+           Total system time: 00m00.55s
+             Total user time: 00m23.01s
+               Starting time: Mon Feb 24 14:22:04 1997
+                 Ending time: Mon Feb 24 14:23:07 1997
+
+Write Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 3655698 bytes/sec, 3570.017 Kbytes/sec
+      Total passes completed: 0/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m28.68s
+           Total system time: 00m00.26s
+             Total user time: 00m06.38s
+
+Read Statistics:
+     Total records processed: 1600 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 104857600 (102400.000 Kbytes, 100.000 Mbytes)
+      Average transfer rates: 3063026 bytes/sec, 2991.237 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 00m34.23s
+           Total system time: 00m00.20s
+             Total user time: 00m18.21s
+
+Total Statistics:
+     Output device/file name: /dev/rrz29h (Device: RZ28D, type=disk)
+      Data pattern file used: pattern_9 (4096 bytes)
+   Data pattern read/written: 0xd3458a6d (first 4 bytes)
+     Total records processed: 3200 @ 65536 bytes/record (64.000 Kbytes)
+     Total bytes transferred: 209715200 (204800.000 Kbytes, 200.000 Mbytes)
+      Average transfer rates: 3331457 bytes/sec, 3253.376 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 01m02.95s
+           Total system time: 00m00.46s
+             Total user time: 00m24.60s
+               Starting time: Mon Feb 24 14:23:07 1997
+                 Ending time: Mon Feb 24 14:24:10 1997
+
+Mon Feb 24 14:24:10 EST 1997

@@ -35,6 +35,11 @@
 #include        <sys/signal.h>
 #include        <math.h>
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> vte 20080401
 int create_Result_file()
 {
 
@@ -44,11 +49,20 @@ int create_Result_file()
 	int fp;
 
 	F_name = "sqrt_out.ref";
+<<<<<<< HEAD
 	nbVal = 20000;
 
 	for (i=0; i<nbVal; i++) {
 		Inc = exp(2);
    		tabR[i] = sqrt(Inc*i+Inc);
+=======
+	nbVal = 20000; 
+
+
+	for (i=0; i<nbVal; i++) {
+		Inc = exp(2);
+   		tabR[i] = sqrt(Inc*i+Inc); 
+>>>>>>> vte 20080401
 	}
 
 	fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
@@ -60,7 +74,11 @@ int create_Result_file()
 	}
 	else
 	{
+<<<<<<< HEAD
 		for (i = 0; i<nbVal; i++)
+=======
+		for (i = 0; i<nbVal; i++ ) 
+>>>>>>> vte 20080401
 		{
 		    write(fp,&tabR[i],sizeof(double));
 		}
@@ -85,11 +103,19 @@ int create_Data_file()
 	int fp;
 
 	F_name = "sqrt_inp.ref";
+<<<<<<< HEAD
 	nbVal = 20000;
 
 	Inc = exp(2);
 
 	for (i=0; i<(nbVal); i++) {
+=======
+	nbVal = 20000; 
+
+	Inc = exp(2);
+
+	for (i=0; i<(nbVal); i++) {	
+>>>>>>> vte 20080401
 		tabD[i] = (Inc * i) + Inc;
 	}
 
@@ -101,8 +127,13 @@ int create_Data_file()
 	    	return -1;
         }
         else
+<<<<<<< HEAD
         {
 		for (i = 0; i<nbVal; i++)
+=======
+        {	
+		for (i = 0; i<nbVal; i++ ) 
+>>>>>>> vte 20080401
 		{
 			write(fp,&tabD[i],sizeof(double));
 		}
@@ -111,10 +142,18 @@ int create_Data_file()
 	}
 }
 
+<<<<<<< HEAD
 int main(int argc, char  *argv[])
 {
 
 	if (argc > 1)
+=======
+
+int main(int argc, char  *argv[])
+{
+
+	if (argc > 1) 
+>>>>>>> vte 20080401
 	{
 		switch ( atoi(argv[1]) )
 		{
@@ -147,4 +186,8 @@ int main(int argc, char  *argv[])
 
   return(0);
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> vte 20080401

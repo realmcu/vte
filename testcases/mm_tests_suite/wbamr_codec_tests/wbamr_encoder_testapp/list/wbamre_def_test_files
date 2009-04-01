@@ -1,0 +1,15 @@
+./test_vectors/T_inp/T00.inp   0   0    ./wbamre_output/T00_660.cod       ./test_vectors/T_660/T00_660.cod  
+./test_vectors/T_inp/T00.inp   1   0    ./wbamre_output/T00_885.cod       ./test_vectors/T_885/T00_885.cod
+./test_vectors/T_inp/T00.inp   3   0    ./wbamre_output/T00_1425.cod      ./test_vectors/T_1425/T00_1425.cod
+./test_vectors/T_inp/T00.inp   4   0    ./wbamre_output/T00_1585.cod      ./test_vectors/T_1585/T00_1585.cod
+./test_vectors/T_inp/T00.inp   5   0    ./wbamre_output/T00_1825.cod      ./test_vectors/T_1825/T00_1825.cod
+./test_vectors/T_inp/T00.inp   6   0    ./wbamre_output/T00_1985.cod      ./test_vectors/T_1985/T00_1985.cod
+./test_vectors/T_inp/T00.inp   7   0    ./wbamre_output/T00_2305.cod      ./test_vectors/T_2305/T00_2305.cod
+./test_vectors/T_inp/T01.inp   7   0    ./wbamre_output/T01_2305.cod      ./test_vectors/T_2305/T01_2305.cod
+./test_vectors/T_inp/T02.inp   7   0    ./wbamre_output/T02_2305.cod      ./test_vectors/T_2305/T02_2305.cod
+./test_vectors/T_inp/T03.inp   7   0    ./wbamre_output/T03_2305.cod      ./test_vectors/T_2305/T03_2305.cod
+./test_vectors/T_inp/T04.inp   7   0    ./wbamre_output/T04_2305.cod      ./test_vectors/T_2305/T04_2305.cod
+./test_vectors/T_inp/T05.inp   7   0    ./wbamre_output/T05_2305.cod      ./test_vectors/T_2305/T05_2305.cod
+./test_vectors/DTX_test_vectors/T_inp/Dtx3.inp   0   1   ./wbamre_output/Dtx3_660.cod      ./test_vectors/DTX_test_vectors/T_660/Dtx3_660.cod  
+./test_vectors/DTX_test_vectors/T_inp/Dtx3.inp   1   1   ./wbamre_output/Dtx3_885.cod      ./test_vectors/DTX_test_vectors/T_885/Dtx3_885.cod
+./test_vectors/DTX_test_vectors/T_inp/Dtx3.inp   2   1   ./wbamre_output/Dtx3_1265.cod     ./test_vectors/DTX_test_vectors/T_1265/Dtx3_1265.cod

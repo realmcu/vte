@@ -1,0 +1,18 @@
+tru64% dt of=/dev/rmt1h min=b max=512k incr=7k+12 limit=1g pattern=iot enable=raw
+Total Statistics:
+     Output device/file name: /dev/rmt1h (Device: TZ89, type=tape)
+     Type of I/O's performed: sequential
+    Data pattern string used: 'IOT Pattern'
+     Total records processed: 8308 with min=512, max=524288, incr=7180
+     Total bytes transferred: 2147513344 (2097181.000 Kbytes, 2048.028 Mbytes)
+      Average transfer rates: 32516 bytes/sec, 31.754 Kbytes/sec
+     Number I/O's per second: 0.126
+      Total passes completed: 1/1
+       Total errors detected: 0/1
+          Total elapsed time: 18h20m44.36s
+           Total system time: 00m02.60s
+             Total user time: 01m56.40s
+               Starting time: Sat Jan  1 17:25:20 2000
+                 Ending time: Sun Jan  2 11:46:10 2000
+
+tru64% 

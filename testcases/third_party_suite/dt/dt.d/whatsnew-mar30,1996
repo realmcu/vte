@@ -1,0 +1,129 @@
+March 30, 1996 by Robin Miller
+
+	The following changes have been made to 'dt' Version 10.1:
+
+     o	An I/O mode option "iomode={copy, test, or verify}" has been added.
+	The default mode is "test", so existing functionality does not change.
+	The "copy" mode allows you to specify both input and output devices,
+	the same as 'dd', for copying data from one device to another.  After
+	the copy operation completes the data is automatically verified, unless
+	disabled via specify "disable=verify".  The "verify" mode simply does
+	a data verification of the two devices (or files) specified.
+
+	Why was this option added? (my little story)
+
+	In the past, I've purposely omitted 'dd' functionality, since they serve
+	different needs (copy versus testing).  Well, one of my disks developed
+	a bad block which could not be reassigned.  Since the bad block was in
+	/etc, I decided to copy the root partition to salvage what I could.  It
+	was then, that I discovered the 'dd's "conv=noerror,sync" options did
+	not work as advertised (yes, I took the time to QAR 'dd').  Well, to
+	make a long story shorter, I added the necessary logic to 'dt' to copy
+	and properly skip bad blocks, and since 'dt' already did verification,
+	this was an added bonus.
+
+	Caveats:
+
+	-  writes get done synchronously when AIO is chosen (read are async).
+	-  the seek, skip, and block size options apply to both devices.
+
+	These new options open a new realm of possibilities over 'dd' (IMHO):
+
+	-  performance statistics can be obtained for device copy operations.
+	-  the copy w/verify gives you that "warm and cozy" feeling when done.
+	-  if errors occur during a copy, better error information is available.
+
+     o	In conjuction with the above, proper handling of bad blocks is now done.
+	Hmmm, what does that mean?  Well, of course EIO doesn't tell you a whole
+	lot, but if you're testing a random I/O device, and you specify an error
+	limit greater than 1, 'dt' will attempt to lseek() past the erroring lba
+	to continue the copy/test/verify operation (this is 'dd' bug w/noerror).
+
+     o	When random I/O is selected, it's no longer necessary to specify a data
+	limit or record count with random access devices.  'dt' automatically
+	uses an algorithm using lseek()/read()'s to find the maximum capacity.
+
+     o	When selecting random I/O and executing multiple processes, 'dt' now
+	uses both time(0) and the pid to ensure each process gets a different
+	seed for random number generator.
+
+	The latest version of 'dt' is available on our production machines
+in the following account:
+
+		Location: wasted:~rmiller/dt.d/{dt,dt-ptos}
+				or via
+		URL: http://www.zk3.dec.com/~rmiller/dt.html
+
+Cheers,
+Robin
+================================================================================
+   [ For those who don't know, here's how SCSI disk bad blocks can be made. ]
+
+imfaster% scu -f /dev/rrz8c
+scu> write media lba 1897 count 1
+Writing 1 block (1897 - 1897) on /dev/rrz8c (RZ25M) with pattern 0x39c39c39...
+scu> show nexus
+Device: RZ25M, Bus: 1, Target: 0, Lun: 0, Type: Direct Access
+scu> mbad lba 1897 hard
+Making HARD Error @ Logical Block 1897 on device /dev/rrz8c (RZ25M)...
+scu> verify media
+Verifying 1046206 blocks (0 - 1046205) on /dev/rrz8c (RZ25M), please be patient...
+scu: Verify error at logical block number 1897 (0x769).
+scu: Sense Key = 0x3 = MEDIUM ERROR - Nonrecoverable medium error,
+     Sense Code/Qualifier = (0x11, 0) = Unrecovered read error
+scu: Error number 1 occurred on Sat Mar 30 07:45:42 1996
+scu> read media lba 1897
+Reading 1 block (1897 - 1897) on /dev/rrz8c (RZ25M) using pattern 0x39c39c39...
+scu: Read error at logical block number 1897 (0x769).
+scu: Sense Key = 0x3 = MEDIUM ERROR - Nonrecoverable medium error,
+     Sense Code/Qualifier = (0x11, 0) = Unrecovered read error
+scu: Error number 1 occurred on Sat Mar 30 07:45:54 1996
+scu> quit
+imfaster%
+
+================================================================================
+   [ This example shows a copy w/verify using the bad block generated above. ]
+
+imfaster% dt if=/dev/rrz8a of=/dev/rrz8b iomode=copy limit=5m errors=5
+dt: 'read' - I/O error
+dt: Relative block number where the error occcured is 1897
+dt: Error number 1 occurred on Sat Mar 30 08:10:41 1996
+Copy Statistics:
+    Data operation performed: Copied '/dev/rrz8a' to '/dev/rrz8b'.
+     Total records processed: 10240 @ 512 bytes/record (0.500 Kbytes)
+     Total bytes transferred: 5242880 (5120.000 Kbytes, 5.000 Mbytes)
+      Average transfer rates: 30039 bytes/sec, 29.335 Kbytes/sec
+      Total passes completed: 0/1
+       Total errors detected: 1/5
+          Total elapsed time: 02m54.53s
+           Total system time: 00m01.66s
+             Total user time: 00m00.08s
+
+dt: 'read' - I/O error
+dt: Relative block number where the error occcured is 1897
+dt: Error number 1 occurred on Sat Mar 30 08:13:35 1996
+Verify Statistics:
+    Data operation performed: Verified '/dev/rrz8a' with '/dev/rrz8b'.
+     Total records processed: 10240 @ 512 bytes/record (0.500 Kbytes)
+     Total bytes transferred: 5242880 (5120.000 Kbytes, 5.000 Mbytes)
+      Average transfer rates: 29809 bytes/sec, 29.110 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 1/5
+          Total elapsed time: 02m55.88s
+           Total system time: 00m01.66s
+             Total user time: 00m00.70s
+
+Total Statistics:
+      Input device/file name: /dev/rrz8a (Device: RZ25M, type=disk)
+     Total records processed: 20480 @ 512 bytes/record (0.500 Kbytes)
+     Total bytes transferred: 10485760 (10240.000 Kbytes, 10.000 Mbytes)
+      Average transfer rates: 29924 bytes/sec, 29.222 Kbytes/sec
+      Total passes completed: 1/1
+       Total errors detected: 2/5
+          Total elapsed time: 05m50.41s
+           Total system time: 00m03.33s
+             Total user time: 00m00.78s
+               Starting time: Sat Mar 30 08:09:25 1996
+                 Ending time: Sat Mar 30 08:15:16 1996
+
+imfaster%
