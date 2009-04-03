@@ -20,14 +20,34 @@
 /*
 *  For backward kernel compatible
 */
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28))
+
+#ifndef class_device_destroy
+#define class_device_destroy  device_destroy
+#endif
+#ifndef class_device_create
+#define class_device_create(cs, NULL, dev, parent, fmt,args...)  device_create(cs, parent, dev, NULL, fmt, ##args)
+#endif
+#ifndef class_device
+#define class_device device
+#endif
+
+#else
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,26))
+
 #ifndef class_device_destroy
 #define class_device_destroy  device_destroy
 #endif
 #ifndef class_device_create
 #define class_device_create(cs, NULL, dev, parent, fmt,args...)  device_create(cs, parent, dev, fmt, ##args)
 #endif
+#ifndef class_device
+#define class_device device
 #endif
+
+#endif
+#endif
+
 
 /*
  * Our parameters which can be set at load time.

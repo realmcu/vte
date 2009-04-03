@@ -4348,8 +4348,13 @@ static int __init sahara_test_init(void)
                 printk(KERN_ALERT "class simple created failed\n");
                 goto err_out;
         }
-        if (IS_ERR(device_create(sahara_class, NULL,
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28))
+		if (IS_ERR(device_create(sahara_class, NULL,
                 MKDEV(231, 0),"sahara_test")))
+#else
+        if (IS_ERR(device_create(sahara_class, NULL,
+                MKDEV(231, 0),NULL,"sahara_test")))
+#endif
         {
                 printk(KERN_ALERT "class simple add failed\n");
                 goto err_out;

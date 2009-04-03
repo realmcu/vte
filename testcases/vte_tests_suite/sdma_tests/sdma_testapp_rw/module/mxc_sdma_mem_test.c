@@ -11,6 +11,12 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+/* Update History
+ * 3/4/09, 1. Fix driver upgrade from 2.6.26 -> 28
+ * Spring, 2. Comment hardware.h for no such file available
+ *
+ */
+
 /* THIS_MODULE, */
 #include <linux/module.h>
 #include <linux/slab.h>
@@ -46,7 +52,8 @@
 #include <linux/delay.h>
 
 /* include asm/arch/hardware.h */
-#include <asm/hardware.h>
+/* Comment below line for nk28 no file include/asm/hardware.h
+#include <asm/hardware.h>*/
 /* IO_ADDRESS,  */
 /* #include <asm/arch/hardware.h> */
 
@@ -56,18 +63,30 @@
 /*
  * For backward kernel compatible
  */
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,26))
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28))
+
 #ifndef class_device_destroy
 #define class_device_destroy  device_destroy
 #endif
-
 #ifndef class_device_create
-#define class_device_create(cs, NULL, dev, parent, fmt,args...)  device_create(cs, parent, dev, fmt, ##args)
+#define class_device_create(cs, NULL, dev, parent, fmt,args...)  device_create(cs, parent, dev, NULL, fmt, ##args)
 #endif
-
 #ifndef class_device
 #define class_device device
 #endif
+
+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,26))
+
+#ifndef class_device_destroy
+#define class_device_destroy  device_destroy
+#endif
+#ifndef class_device_create
+#define class_device_create(cs, NULL, dev, parent, fmt,args...)  device_create(cs, parent, dev, fmt, ##args)
+#endif
+#ifndef class_device
+#define class_device device
+#endif
+
 #endif
 
 static int gMajor; /* major number of device */

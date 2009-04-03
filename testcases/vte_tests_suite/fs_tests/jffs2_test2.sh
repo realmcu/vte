@@ -57,7 +57,7 @@ setup()
     export TCID="TGE_LV_FS_0502"       # Test case identifier
     export TST_COUNT=0   # Set up is initialized as test 0
     BIN_DIR=`dirname $0`
-    #export PATH=$PATH:$BIN_DIR
+    export PATH=$PATH:$BIN_DIR
 
     if [ -z $LTPTMP ]
     then
@@ -116,6 +116,7 @@ setup()
 cleanup() 
 {
     echo "clean up environment..."
+    umount $device && sleep 1
     umount $mount_dir && sleep 1
     echo "clean up environment end"
 }

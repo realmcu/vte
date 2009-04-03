@@ -90,6 +90,8 @@ return $RC
 
 check_platform()
 {
+LOCAL=0
+if [ $LOCAL -eq 1 ]; then
   PLATFORM="31 35 37 51"
 #  CPU_REV=$(cat /proc/cpuinfo | grep "Revision")
   CPU_REV=$(platfm.sh)
@@ -101,6 +103,10 @@ check_platform()
      TARGET=$i
     fi
   done
+else
+  platfm.sh
+  TARGET=$?
+fi
 }
 
 # Function:     test_dec_exec
@@ -125,10 +131,12 @@ return $RC
 fi
 echo "decode 1 frame to lcd with deblock"
 ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -d 1" || return $RC
-echo "decode 1 frame to lcd with debering"
-${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -e 1" || return $RC
-echo "decode 1 frame to lcd with debering & deblock"
-${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -e 1 -d 1" || return $RC
+if [ $FORMAT == 0 ] || [ $FORMAT == 2 ]; then
+ echo "decode 1 frame to lcd with debering"
+ ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -e 1" || return $RC
+ echo "decode 1 frame to lcd with debering & deblock"
+ ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -e 1 -d 1" || return $RC
+fi
 echo "decode with ROTATION"
 
 for l in $CHINT
@@ -149,12 +157,14 @@ echo "following is chroma interleave mode $l"
       echo "IPU is used $k"
       echo "rotation"
       ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -r $i -m $j -u $k -t $l" || return $RC
-      echo "rotation with deblocking"
-      ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -d 1 -r $i -m $j -u $k -t $l" || return $RC
-      echo "rotation with debering"
-      ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -e 1 -r $i -m $j -u $k -t $l" || return $RC
-      echo "rotation with debering & deblock"
+      if [ $FORMAT == 0 ] || [ $FORMAT == 2 ]; then
+       echo "rotation with deblocking"
+       ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -d 1 -r $i -m $j -u $k -t $l" || return $RC
+       echo "rotation with debering"
+       ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -e 1 -r $i -m $j -u $k -t $l" || return $RC
+       echo "rotation with debering & deblock"
       ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -e 1 -d 1 -r $i -m $j -u $k -t $l" || return $RC
+      fi
       sleep 1
       echo "now change to different size"
       for n in $SIZELIST
@@ -199,7 +209,7 @@ RC=1
 if [ $TARGET = "51" ]
 then
  echo "encode $srcfile in format $FORMAT to out_enc.dat"
- $TSTCMD -E "-i $srcfile -f $FORMAT -o /tmp/out_enc.dat" || return $RC
+ $TSTCMD -E "-i $srcfile $ESIZE -f $FORMAT -o /tmp/out_enc.dat" || return $RC
  $TSTCMD -D "-f $FORMAT -i /tmp/out_enc.dat" || return $RC
  rm -rf /tmp/out_enc.dat
 
@@ -278,6 +288,7 @@ srcfile=${STREAM_PATH}/video/SD720x480.vc1.rcv
 FORMAT=3
 test_dec_exec || return $RC
 srcfile=${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv
+ESIZE="-w 352 -h 288"
 test_enc_exec || return $RC
 
 RC=0
@@ -328,6 +339,7 @@ srcfile=${STREAM_PATH}/video/akiyo.mp4
 FORMAT=0
 test_dec_exec || return $RC
 srcfile=${STREAM_PATH}/video/akiyomp4.yuv
+ESIZE="-w 176 -h 144"
 test_enc_exec || return $RC
 
 RC=0
@@ -352,6 +364,7 @@ srcfile=${STREAM_PATH}/video/HPCV_BRCM_A.264
 FORMAT=2
 test_dec_exec || return $RC
 srcfile=${STREAM_PATH}/video/akiyomp4.yuv
+ESIZE="-w 176 -h 144"
 test_enc_exec || return $RC
 
 RC=0
@@ -398,6 +411,7 @@ srcfile=${STREAM_PATH}/video/stream.263
 FORMAT=1
 test_dec_exec || return $RC
 srcfile=${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv
+ESIZE="-w 352 -h 288"
 test_enc_exec || return $RC
 
 RC=0
@@ -421,6 +435,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 # main function
 FORMAT=7
 srcfile=${STREAM_PATH}/video/akiyomp4.yuv
+ESIZE="-w 176 -h 144"
 test_enc_exec || return $RC
 
 RC=0
@@ -456,6 +471,7 @@ ROTATION="0 90 180 270"
 MIRROR="0 1 2 3"
 UIPU="0 1"
 CHINT="0 1"
+ESIZE=
 
 TARGET=
 

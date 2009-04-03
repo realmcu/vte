@@ -24,7 +24,7 @@
 #ifdef __KERNEL__
 
 #include <sahara2/include/linux_port.h>
-#include <asm/arch/hardware.h>
+/*#include <asm/arch/hardware.h>*/
 
 #endif /* kernel */
 

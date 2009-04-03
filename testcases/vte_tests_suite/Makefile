@@ -80,8 +80,8 @@ endif
 ifneq ($(ARCH_PLATFORM), mxc27520evb)
 SUBDIRS += mtd_tests
 endif
-
-ifneq ($(ARCH_PLATFORM), $(filter imx32ads mxc30031ads stmp3780, $(ARCH_PLATFORM)))
+# Updated by Blake, drop this directory
+ifeq ($(ARCH_PLATFORM), $(filter imx32ads mxc30031ads, $(ARCH_PLATFORM)))
 SUBDIRS += dvfs_dptc_tests
 endif
 
