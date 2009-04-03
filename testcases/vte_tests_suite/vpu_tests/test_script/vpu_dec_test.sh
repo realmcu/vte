@@ -90,7 +90,9 @@ return $RC
 
 check_platform()
 {
-  PLATFORM="31 35 37 51"
+LOCAL=0
+if [ $LOCAL -eq 1 ]; then
+PLATFORM="31 35 37 51"
 #  CPU_REV=$(cat /proc/cpuinfo | grep "Revision")
   CPU_REV=$(platfm.sh)
   for i in $PLATFORM
@@ -101,6 +103,10 @@ check_platform()
      TARGET=$i
     fi
   done
+else
+ platfm.sh
+ TARGET=$?
+fi
 }
 
 # Function:     test_case_01

@@ -22,6 +22,7 @@
 # Spring                28/11/2008       n/a        Modify COPYRIGHT header
 # Spring                15/01/2008       n/a        Add MX35TO2 judgement,
 #                                                   move to tools/
+# Spring                02/04/2009       n/a        Add MX51Babbage support
 #############################################################################
 # Usage1(return string):
 #   platform=`platfm.sh`
@@ -35,6 +36,7 @@
 #   IMX35_3STACK IMX35_3STACK
 #   IMX37_3STACK IMX37_3STACK
 #   IMX51_3STACK IMX51_3STACK
+#   IMX51_BABBAGE IMX51_BABBAGE
 #
 #
 # Usage2(return number): 
@@ -46,6 +48,7 @@
 #     rt value  Board
 # e.g.  31       mx31
 #       35       mx35
+#       41       mx51 babbage
 #
 # 2. 378%256(=122) for SMTP378X board.(for return value is 0~255)
 #       rt value    Board
@@ -81,10 +84,18 @@ determine_platform()
         p=IMX37_3STACK
     fi
 
+    # MX51 TO2.0: Revision: 51020
     find=`cat /proc/cpuinfo | grep "Revision" | grep " 51.*" | wc -l`;
     if [ $find -eq 1 ]
     then
         p=IMX51_3STACK
+    fi
+
+    # MX51 Babbage TO1.1: Revision: 51011
+    find=`cat /proc/cpuinfo | grep "Hardware" | grep "Babbage" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+        p=IMX51_BABBAGE
     fi
 
     #find STMP378X
@@ -110,6 +121,10 @@ determine_platform()
     then
         #echo  "Platform MX51" 
         RC=51
+    elif [ $p = "IMX51_BABBAGE" ]
+    then
+        #echo  "Platform MX51 Babbage"
+        RC=41
     elif [ $p = "SMTP378X" ]
     then
         #echo  "Platform SMTP378X" 
@@ -140,3 +155,5 @@ else
 fi
 
 exit $RC
+
+
