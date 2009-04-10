@@ -29,6 +29,7 @@ extern "C"{
 #endif
 
 #include <stdio.h>
+#include <linux/types.h>
 #include <linux/serial.h> 
 /*======================================================================================
                                         INCLUDE FILES

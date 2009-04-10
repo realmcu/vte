@@ -33,6 +33,8 @@ Portability: ARM GCC
 ==================================================================================================*/
 
 /* Verification Test Environment Include Files */
+#include <string.h>
+#include <errno.h>
 #include "ipu_pf_test.h"
 #include "stuff/fb_draw_api.h"
 #include "stuff/ycbcr.h"
@@ -76,6 +78,7 @@ Portability: ARM GCC
     if( (ioctl_cmd) < 0 )\
     {\
         tst_resm( TFAIL, "%s : %s fails #%d [File: %s, line: %d]", __FUNCTION__, "ioctl", errno, __FILE__, __LINE__-2);\
+        perror("ioctl"); \
         return TFAIL;\
     }\
 }
@@ -272,6 +275,9 @@ int VT_ipu_pf_cleanup( void )
         /* Unmap. */
         if( MAP_FAILED != gpInp )
         {
+		/*flush the output*/
+		/*Hake 20090403 for sync driver test. not necessary*/
+	        msync(gpInp, gPfStartParams.in.size,MS_SYNC);
                 munmap( gpInp, gPfStartParams.in.size );
                 gpInp = MAP_FAILED;
         }
@@ -320,6 +326,9 @@ int VT_ipu_pf_test(void)
         case 4:
                 gPfInitParams.pf_mode = PF_H264_DEBLOCK;
                 break;
+	case 5:
+                gPfInitParams.pf_mode = PF_H264_DEBLOCK;
+	       break;
         default:
                 gPfInitParams.pf_mode = PF_DISABLE_ALL;
         }
@@ -433,19 +442,47 @@ int VT_ipu_pf_test(void)
         /*********************/
         /* Start processing. */
         /*********************/
-
-        gPfStartParams.h264_pause_row = 0;
+        if ( gTestappConfig.mTestCase == 5)
+        {
+         printf("this parameter has to be 0!");
+	/* gPfStartParams.h264_pause_row =  gTestappConfig.mH264PauseRow;*/
+	}else
+	 gPfStartParams.h264_pause_row = 0;
         gPfStartParams.wait           = 1;
 
         for ( i = 0; i < gTestappConfig.mNumFilterCycle; i++ )
         {
+           /*code to test the poll system call*/
+	   /*not necessary for function */
+	   /* Hake 20090402*/
+	   {
+              fd_set rfds;
+	      struct timeval tv;
+	      int retval;
+	      FD_ZERO(&rfds);
+	      FD_SET(gIpuPfFd, &rfds);
+              tv.tv_sec = 1;
+	      tv.tv_usec = 0;
+	      retval = select(gIpuPfFd+1, &rfds, NULL, NULL, &tv);
+	      if (retval == -1)
+		   perror("select()");
+	       else if (retval)
+		   printf("Data is available now.\n");
+		 /* FD_ISSET(0, &rfds) will be true. */
+		else
+		 printf("No data within one seconds.\n");
+	   }
+
                 if ( gPfInitParams.pf_mode == PF_MPEG4_DERING )
                         Register_conf();
-
                 CALL_IOCTL( ioctl( gIpuPfFd, PF_IOCTL_START, (void*)&gPfStartParams ) );
+		if ( gTestappConfig.mTestCase == 5 ) /* PF_H264_DEBLOCK_RESUME MCU decode does nothing*/
+		{
+		     int row = 0;
+                     /* CALL_IOCTL(ioctl( gIpuPfFd, PF_IOCTL_RESUME , (void *)&row)); */
+		}
                 CALL_IOCTL( ioctl( gIpuPfFd, PF_IOCTL_WAIT , PF_WAIT_ALL) );
-
-                if ( gPfInitParams.pf_mode == PF_MPEG4_DERING )
+		if ( gPfInitParams.pf_mode == PF_MPEG4_DERING )
                         Register_conf();
 
                 if ( gPfInitParams.pf_mode != PF_H264_DEBLOCK ) /* In case PF_H264_DEBLOCK input buffer is equal output buffer */
@@ -581,8 +618,8 @@ int Register_conf( void )
 
         if( MAP_FAILED != pIPUReg )
         {
-                munmap( pIPUReg, 16 );
-                pIPUReg = MAP_FAILED;
+	   munmap( pIPUReg, 16 );
+           pIPUReg = MAP_FAILED;
         }
 
         if( (gmap_fd > 0) && (close(gmap_fd) < 0) )

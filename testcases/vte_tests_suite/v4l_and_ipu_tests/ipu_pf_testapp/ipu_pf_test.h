@@ -20,6 +20,7 @@ A.Smirnov                    26/05/2005      TLSbo49894  Initial version
 D.Simakov/smkd001c           21/09/2005      TLSbo55077  Re-written
 D.Kardakov                   30/08/2006      TLSbo75997  The new field in sTestappConfig struct was added
 D.Kardakov                   02/01/2007      TLsbo87909  Bug with unit16_t type was fixed
+Hake.H                       07/04/2009      n/a         add case for ipu pf pause and resume case in h264 process according to the ipu spec.
 ==================================================================================================*/
 #ifndef _IPU_PF_TEST_H_
 #define _IPU_PF_TEST_H_
@@ -88,6 +89,7 @@ typedef struct
         const char * mOutputFileName;   /*!< Filename of the filtered image. */
         int          mVerbose;          /*!< Verbose mode. */
         int          mNumFilterCycle;   /*!< Number of image filtering*/
+	int          mH264PauseRow;     /*!< H264 pause resume mode rows to pause*/
 } sTestappConfig;
 
 /*==================================================================================================

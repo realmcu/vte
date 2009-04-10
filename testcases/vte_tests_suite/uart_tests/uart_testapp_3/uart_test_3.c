@@ -45,6 +45,7 @@ extern "C"{
 #include <pthread.h>
 #include <math.h>
 #include <signal.h>
+#include <linux/types.h>
 #include <linux/serial.h>
 #include <sys/time.h>   // timer usage for reading
 
