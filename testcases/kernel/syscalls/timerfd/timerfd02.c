@@ -59,20 +59,12 @@
 #include <time.h>
 #include <unistd.h>
 #include <sys/syscall.h>
+#include <errno.h>
 
 /* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
-
-#ifndef __NR_timerfd_create
-# ifdef __x86_64__
-#  define __NR_timerfd_create 283
-# elif defined __i386__
-#  define __NR_timerfd_create 322
-# else
-#  error "need __NR_timerfd_create"
-# endif
-#endif
+#include "linux_syscall_numbers.h"
 
 #ifndef O_CLOEXEC
 # define O_CLOEXEC 02000000

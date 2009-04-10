@@ -144,6 +144,7 @@ void help( void )
         printf( "                        2 - MPEG4 dering\n" );
         printf( "                        3 - MPEG4 deblock dering\n" );
         printf( "                        4 - H.264 deblock\n" );
+        printf( "                        5 - H.264 deblock with pause and resume\n" );
         printf( "-F <filename>     Name of an input yuv420 file\n" );
         printf( "-O <filename>     Name of an output yuv420 file\n" );
         printf( "-N                Number of image filtering\n");
@@ -176,10 +177,12 @@ int main( int argc, char ** argv )
         int    inpFileFlag      = 0;
         int    outFileFlag      = 0;
         int    numFilteringFlag = 0;
+        int    numH264PauseRowFlag = 0;
         char * testcaseOpt;
         char * inpFileOpt;
         char * outFileOpt;
         char * numFilteringOpt;
+	char * numH264PauseRowOpt;
         char * msg;
         
         option_t options[] = 
@@ -189,6 +192,7 @@ int main( int argc, char ** argv )
                 { "O:",  &outFileFlag,              &outFileOpt      },
                 { "V",   &gTestappConfig.mVerbose,  NULL             },
                 { "N:",  &numFilteringFlag,         &numFilteringOpt },
+                { "R:",  &numH264PauseRowFlag,      &numH264PauseRowOpt},
                 { NULL,  NULL,                      NULL             }
         };
         
@@ -203,6 +207,7 @@ int main( int argc, char ** argv )
         gTestappConfig.mInputFileName = inpFileFlag ? inpFileOpt : NULL;
         gTestappConfig.mOutputFileName = outFileFlag ? outFileOpt : NULL;
         gTestappConfig.mNumFilterCycle = numFilteringFlag ? atoi(numFilteringOpt) : 1;
+	gTestappConfig.mH264PauseRow = numH264PauseRowFlag ? atoi(numH264PauseRowOpt) : 0;
         
         /* Check if all of the required arguments were presented. */
         if( !gTestappConfig.mInputFileName )
@@ -227,7 +232,10 @@ int main( int argc, char ** argv )
                 break;
         case PF_H264_DEBLOCK:
                 TCID = strdup( "PF_H264_DEBLOCK" );
-                break;        
+                break;
+	case  5:
+	        TCID = strdup("PF_H264_DEBLOCK_RESUME");
+		break;
         default:
                 assert( !"unknown test case" );
         }

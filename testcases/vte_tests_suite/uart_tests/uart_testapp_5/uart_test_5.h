@@ -40,6 +40,7 @@ extern "C"{
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <termios.h>
+#include <linux/types.h>
 #include <linux/serial_core.h>
 #include <linux/serial.h>
 
