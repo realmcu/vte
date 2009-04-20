@@ -33,7 +33,7 @@
 ###############################################################################
 
 
-SUBDIRS = bonnie++ dt iozone
+SUBDIRS = bonnie++ dt iozone network
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
