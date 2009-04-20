@@ -3,6 +3,8 @@
 #Author                          Date        Description of Changes
 #-------------------------   ------------    -------------------------------------------
 #Victor Cui                   31/07/2008     Prepare for hardware connection and filesystem
+#Spring Zhang                 20/04/2009     add return value in preparation
+#                                            used by Linux plugin
 #notes:
 # -I insert modules(SD, ATA, V4L, BT, USBH or ALL)          
 # 	eg. ./auto_prepare.sh -I SD
@@ -205,12 +207,12 @@ insmod_ATA()
 				line_num2=`cat /proc/partitions | wc -l`;
 
 				if [ $line_num1 -lt $line_num2 ]; then
-       					echo "ata: insmod modules success!";
+					echo "ata: insmod modules success!";
 					let line=$line_num1-$line_num2;
 					dev_node_ata=`cat /proc/partitions | tail -n $line | head -n 1 | awk '{print $4}'`;
 					echo "the device node is:$dev_node_ata";
 				else
-        				echo "ata: insmod modules fail!";
+					echo "ata: insmod modules fail!";
 				fi
 			fi
 		else
@@ -311,6 +313,13 @@ insmod_V4L()
 		sleep 2;
 	fi
 
+	find=`find /lib/modules/$sys_name -name ov3640_camera.ko | wc -l`;
+	lsmod | grep ov3640_camera;
+	if [ $? -ne 0 ] && [ $find -eq 1 ]; then
+	        modprobe ov3640_camera;
+		sleep 2;
+	fi
+
 	find=`find /lib/modules/$sys_name -name mxc_v4l2_capture.ko | wc -l`;
 	lsmod | grep mxc_v4l2_capture;
 	if [ $? -ne 0 ] && [ $find -eq 1 ]; then
@@ -318,6 +327,7 @@ insmod_V4L()
 		sleep 2;
 	fi
 
+    # fix it, /dev/video0 existing can not know ov2640/3640 inserted.
 	if [ -e /dev/video0 ]; then
 	 	echo "v4l: insmod modules success!"
 	else 
@@ -464,6 +474,7 @@ prepare_nand()
 		echo "It is right!";
 	else
 		echo "not found right mtd number!";
+        return 1
 	fi
 
 	# mount
@@ -492,8 +503,10 @@ prepare_nand()
 	if [ $? -eq 0 ]; then
 		echo "the /dev/mtdblock${mtd_nand_number} mount to $mount_point success!";
 		sleep 3;
+        return 0
 	else
 		echo "the /dev/mtdblock${mtd_nand_number} mount to $mount_point fail!"
+        return 1
 	fi
 }
 
@@ -536,10 +549,14 @@ prepare_nor()
 			sleep 3;
 		else
 			echo "the /dev/mtdblock${mtd_nor_number} mount to $mount_point fail!"
+            return 1
 		fi
 	else
 		echo "Only Mx35 platform has nor device"
+        return 1
 	fi	
+
+    return 0
 }
 
 
@@ -661,6 +678,7 @@ prepare_sd()
 			echo "mount partition 1 succeed!";
 		else
 			echo "mount partition 1 fail!";
+            return 1
 		fi
 		sleep 3;
 
@@ -673,14 +691,17 @@ prepare_sd()
 		sleep 3;		
 	else
 		echo "not found the sd device!";
+        return 1
 	fi	
+
+    return 0
 }
 
 prepare_ata()
 {
 	device_total=0;
       
-        prepare_platform;
+    prepare_platform;
 	insmod_ATA;
 	
 	if [ -e format_command_ata ]; then
@@ -688,7 +709,7 @@ prepare_ata()
         fi
 
 
-        device_total=`ls /dev/ | grep $ata_dev_point | wc -l`;
+    device_total=`ls /dev/ | grep $ata_dev_point | wc -l`;
 	if [ $device_total -gt 0 ]; then
 		# umount devices
 		cat /proc/mounts | grep "$ata_dev_point*" | awk '{print $1}'| while read line
@@ -815,6 +836,7 @@ prepare_ata()
 			echo "mount ata partition 1 succeed!";
 		else 
 			echo "mount ata partition 1 fail!";
+            return 1
 		fi
 		sleep 3;
 
@@ -827,8 +849,8 @@ prepare_ata()
 		fi
 		sleep 3;
                 
-                #mount -t vfat /dev/${ata_dev_point}3 /mnt/${ata_dev_point}3;
-                mount -t vfat /dev/${ata_dev_point}3 /mnt/ata3;
+		#mount -t vfat /dev/${ata_dev_point}3 /mnt/${ata_dev_point}3;
+		mount -t vfat /dev/${ata_dev_point}3 /mnt/ata3;
 		if [ $? -eq 0 ]; then
 			echo "mount ata partition 3 succeed!";
 		else 
@@ -837,7 +859,10 @@ prepare_ata()
 		sleep 3;		
 	else
 		echo "not found the ata device!";
+        return 1
 	fi	
+
+    return 0
 }
 
 prepare_usbh()
@@ -911,7 +936,10 @@ prepare_usbh()
 		echo "usbh: prepare usbh success!";
 	else
 		echo "usbh: prepare usbh fail!"
+        return 1
 	fi
+
+    return 0
 }
 
 scp_vte()
@@ -940,6 +968,7 @@ help()
 	echo "		eg. ./auto_prepare.sh -C /mnt/flc";
 	echo "-H print help docement"
 	echo "--------------------------------------------------------------------------------";
+    return 1
 }
 
 echo "--------------------------------------------------------------------------------";
@@ -958,7 +987,7 @@ case $# in
 		help;
 	   fi
            ;;
-        2) case $1 in
+    2) case $1 in
 		"-I") case $2 in
 				"sd" | "SD" | "mmc" | "MMC") insmod_SD;
 					;;
@@ -1002,7 +1031,7 @@ case $# in
 		      esac
 		      ;;
 		"-P") case $2 in
-		                "nand" | "NAND") prepare_nand;
+				"nand" | "NAND") prepare_nand;
 					;;
 				"nor" | "NOR") prepare_nor;
 					;;
@@ -1021,6 +1050,7 @@ case $# in
 				*) help;
 					;;
 		      esac
+              exit $?
 		      ;;
 		"-C") vte_path=$2;
 			if [ -d $vte_path ]; then
@@ -1035,7 +1065,7 @@ case $# in
            ;;
      4) if [ $1 = "-P" ] && [ $3 = "-C" ]; then
      		 case $2 in
-		                "nand" | "NAND") prepare_nand;
+				"nand" | "NAND") prepare_nand;
 					;;
 				"nor" | "NOR") prepare_nor;
 					;;
