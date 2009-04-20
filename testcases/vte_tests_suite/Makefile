@@ -85,6 +85,8 @@ ifeq ($(ARCH_PLATFORM), $(filter imx32ads mxc30031ads, $(ARCH_PLATFORM)))
 SUBDIRS += dvfs_dptc_tests
 endif
 
+#Hake mxc fb test extension
+SUBDIRS += fb_test
 SUBDIRS += mmc_tests
 #tina changed SUBDIRS += irda_tests
 SUBDIRS += usb_otg_tests
