@@ -33,7 +33,7 @@
 ###############################################################################
 
 
-SUBDIRS = bonnie++ dt iozone network
+SUBDIRS = bonnie++ dt iozone network nand-tests
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
