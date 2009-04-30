@@ -88,13 +88,12 @@ setup()
     fi
     mkdir $mount_dir
 
-    #mount -t jffs2 /dev/mtdblock2 /tmp/nand   
     mount -t $device_type $device $mount_dir || RC=$?
     sleep 2
     if [ $RC -ne 0 ]
     then
         tst_resm TFAIL "Test #1: mount failed, please examine the args, \
-            if device name($1) or device type($2) is wrong?"
+            if device name($2) or device type($1) is wrong?"
         return $RC
     fi
 

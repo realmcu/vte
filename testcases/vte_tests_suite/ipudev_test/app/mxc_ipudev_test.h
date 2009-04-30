@@ -42,7 +42,7 @@ typedef struct {
 	ipu_lib_output_param_t output1;
 } ipu_test_handle_t;
 
-int parse_config_file(char *file_name, ipu_test_handle_t *test_handle);
+extern int parse_config_file(char *file_name, ipu_test_handle_t *test_handle);
 int run_test_pattern(int pattern, ipu_test_handle_t * test_handle);
 extern int parse_cmd_input(int argc, char ** argv, ipu_test_handle_t *test_handle);
 

@@ -1,15 +1,12 @@
-#CROSS_COMPILE = arm-none-linux-gnueabi-
-#KLINUX_SRCDIR = /home/vobs/linux-2.6-imx
-
 CC=$(CROSS_COMPILER)gcc
 AR=$(CROSS_COMPILER)ar
 
-OBJS = mxc_ipu_hl_lib.o mxc_ipu_lib.o
-
-LIBNAME=libipu
-
 INCLUDE = -I$(KLINUX_SRCDIR)/include
+INC = $(INCLUDE) -I../ipu
 
+OBJS = ScreenLayer.o
+
+LIBNAME=libIpuScreenLayer
 
 all: $(LIBNAME).so
 
@@ -17,10 +14,10 @@ install:
 	echo "Caution !!! need check with unit test library version"
 
 $(LIBNAME).so: $(OBJS)
-	-$(CC) -shared -nostartfiles -Wl,-soname,$@ -o $@ $^ -lpthread
+	$(CC) -shared -nostartfiles -Wl,-soname,$@ -o $@ $^ -L../ipu -lipu
 
 %.o: %.c
-	-$(CC)  $(INCLUDE) -Wall -O2 -c $^ -o $@
+	$(CC) $(INC) -Wall -O2 -c $^ -o $@
 
 .PHONY: clean
 clean:
