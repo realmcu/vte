@@ -26,10 +26,10 @@
 #Portability: ARM GCC
 #
 ###################################################################################################
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack imx37stack imx51stack, $(ARCH_PLATFORM)))
+#ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack imx37stack imx51stack, $(ARCH_PLATFORM)))
 SUBDIRS = watchdog_testapp_2 \
 watchdog_testapp_3
-endif
+#endif
 
 #       Kernel_driver \
 #	watchdog_testapp_1 \

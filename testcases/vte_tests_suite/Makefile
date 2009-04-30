@@ -95,7 +95,7 @@ SUBDIRS += pm_tests
 #SUBDIRS += rm_tests
 SUBDIRS += GPT_tests
 SUBDIRS += rtc_tests
-SUBDIRS += security_tests
+#SUBDIRS += security_tests
 #SUBDIRS += spi_tests
 #SUBDIRS += ssi_dam_tests
 SUBDIRS += uart_tests
@@ -187,7 +187,7 @@ ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx37stack, $(ARCH_PLATFORM)))
 SUBDIRS += dptc_tests
 endif
 #added by Blake
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack imx51stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx35stack imx51stack, $(ARCH_PLATFORM)))
 SUBDIRS += dvfs_tests
 endif
 #added by Blake

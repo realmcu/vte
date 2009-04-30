@@ -57,7 +57,7 @@ echo 1100 > /sys/class/regulator/regulator_1_SW2/uV
 fi
 fi
 
-if [ $TARGET == "37"] || [ $TARGET == "51"  ]
+if [ $TARGET == "37" ] || [ $TARGET == "51"  ]
 then
  echo 1 > /proc/sys/vm/lowmem_reserve_ratio
 fi

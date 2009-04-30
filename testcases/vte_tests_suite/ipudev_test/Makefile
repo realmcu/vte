@@ -1,13 +1,13 @@
 # list of platforms which want this test case
 
-LIB = ipu
+LIB = ipu screenlayer
 SUBDIRS = app
 
 SUBDIRS += scripts
 
 
 all:
-	$(MAKE) -C $(LIB)
+	@set -e; for i in $(LIB); do $(MAKE) -C $$i ; done
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
 
 install:
@@ -15,4 +15,5 @@ install:
 
 clean:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
+	@set -e; for i in $(LIB); do $(MAKE) -C $$i clean ; done
 
