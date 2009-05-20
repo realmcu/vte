@@ -18,23 +18,23 @@
 #                          Modification     Tracking
 # Author                       Date          Number    Description of Changes
 #-----------------------   ------------    ----------  ---------------------
-# Spring Zhang               03/07/2008       n/a        Initial ver. 
+# Spring Zhang               03/07/2008       n/a        Initial ver.
 # Spring                     30/10/2008       n/a        Add NAND erase
 # Spring                     28/11/2008       n/a      Modify COPYRIGHT header
 #############################################################################
-# Portability:  ARM sh bash 
+# Portability:  ARM sh bash
 #
 # File Name:    jffs2_2.sh
 # Total Tests:      1
 # Test Strategy: file system stress test
-# 
-# Input:	- $1 - device type
-#		    - $2 - device name
-#		    - $3 - mount point(dir)
 #
-# Return:       - 
+# Input: - $1 - device type
+#      - $2 - device name
+#      - $3 - mount point(dir)
 #
-# Use command "./jffs2_test2.sh [device type] [device name] [mount point]" 
+# Return:       -
+#
+# Use command "./jffs2_test2.sh [device type] [device name] [mount point]"
 #               to test jffs2, yaffs, jffs3 file system
 
 
@@ -95,7 +95,7 @@ setup()
     fi
     mkdir $mount_dir
 
-    #mount -t jffs2 /dev/mtdblock2 /tmp/nand   
+    #mount -t jffs2 /dev/mtdblock2 /tmp/nand
     mount -t $device_type $device $mount_dir || RC=$?
     sleep 2
     if [ $RC -ne 0 ]
@@ -113,7 +113,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup() 
+cleanup()
 {
     echo "clean up environment..."
     umount $device && sleep 1
@@ -159,7 +159,7 @@ grow_files()
 # Return        - none
 usage()
 {
-    cat <<-EOF 
+    cat <<-EOF
 
     Use this command to test jffs2/3, yaffs, nfs file system stress test.
     usage: ./${0##*/} [device type] [device name] [mount point]

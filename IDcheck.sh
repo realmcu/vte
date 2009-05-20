@@ -64,7 +64,7 @@ prompt_for_create() {
 }
 
 if [ -z ${EUID} ] ; then
-	EUID=$(id -u)
+ EUID=$(id -u)
 fi
 
 for i in "$passwd" "$group"; do
@@ -135,13 +135,13 @@ make_user_group bin 1 $NO_BIN_ID $NO_BIN_GRP
 make_user_group daemon 2 $NO_DAEMON_ID $NO_DAEMON_GRP
 
 if [ $NO_USERS_GRP -eq 0 ] ; then
-	echo "Users group found."
+ echo "Users group found."
 elif [ $CREATE_ENTRIES -ne 0 ] ; then
 	echo 'users:x:100:' >> "$group"
 fi
 
 if [ $NO_SYS_GRP -eq 0 ] ; then
-	echo "Sys group found."
+ echo "Sys group found."
 elif [ $CREATE_ENTRIES -ne 0 ] ; then
 	echo 'sys:x:3:' >> "$group"
 fi

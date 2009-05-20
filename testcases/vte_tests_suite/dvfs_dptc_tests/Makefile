@@ -16,7 +16,7 @@
 #                            Modification     Tracking
 #Author/core ID                  Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-#D.Simakov/smkd001c           10/09/2004     TLSbo41777  Initial version 
+#D.Simakov/smkd001c           10/09/2004     TLSbo41777  Initial version
 #D.Simakov/smkd001c           27/09/2004     TLSbo41777  Add dtpc_module
 #L.Delaspre/rc149c            08/12/2004     TLSbo40142  update with Freescale identity
 #L.Delaspre/rc149c            14/12/2004     TLSbo45361  mxc_kpp_interrupt build issue

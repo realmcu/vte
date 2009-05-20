@@ -17,22 +17,22 @@ Description of the file
         If not, indicate specific reasons why is it not portable.
 */
 
-/*======================== REVISION HISTORY ==================================
+/*======== REVISION HISTORY ==========
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
 S.ZAVJALOV/zvjs001c   04/04/2005   tlsbo45047   Initial version
 
-=============================================================================*/
+=================*/
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*======================== INCLUDE FILES ====================================*/
+/*======== INCLUDE FILES ========*/
 /* Standard Include Files */
 #include <errno.h>
-    
+
 /* Harness Specific Include Files. */
 #include "test.h"
 
@@ -46,36 +46,36 @@ extern "C"{
 #include <termios.h>
 #include <time.h>
 
-/*======================== LOCAL CONSTANTS ==================================*/
+/*======== LOCAL CONSTANTS ==========*/
 
-/*======================== LOCAL MACROS =====================================*/
+/*======== LOCAL MACROS =========*/
 
-/*======================== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) =======*/
+/*======== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) ===*/
 
-/*======================== LOCAL VARIABLES ==================================*/
+/*======== LOCAL VARIABLES ==========*/
 
 struct termios stored_settings;
 int fd_device = 0;
 unsigned char *tmp_buf = NULL;
 
-/*======================== GLOBAL CONSTANTS =================================*/
+/*======== GLOBAL CONSTANTS =========*/
 
-/*======================== GLOBAL VARIABLES =================================*/
+/*======== GLOBAL VARIABLES =========*/
 
 extern int vb_mode;
 extern char *device_name;
 extern unsigned long bcount;
 extern BOOLEAN read_flag;
 
-/*======================== LOCAL FUNCTION PROTOTYPES ========================*/
+/*======== LOCAL FUNCTION PROTOTYPES ========*/
 
 void set_terminal(void);
 void restore_terminal(void);
 BOOLEAN kbhit(void);
 
-/*======================== LOCAL FUNCTIONS ==================================*/
+/*======== LOCAL FUNCTIONS ==========*/
 
-/*===== set_terminal =====*/
+/*= set_terminal =*/
 /**
 @brief  Template test scenario X function
 
@@ -103,7 +103,7 @@ void set_terminal(void)
     return;
 }
 
-/*===== restore_terminal =====*/
+/*= restore_terminal =*/
 /**
 @brief  Template test scenario X function
 
@@ -118,7 +118,7 @@ void restore_terminal(void)
     return;
 }
 
-/*===== kbhit =====*/
+/*= kbhit =*/
 /**
 @brief  Template test scenario X function
 
@@ -147,9 +147,9 @@ BOOLEAN kbhit(void)
   return nSelect > 0;
 }
 
-/*======================== GLOBAL FUNCTIONS =================================*/
+/*======== GLOBAL FUNCTIONS =========*/
 
-/*===== VT_erw_mmc_setup =====*/
+/*= VT_erw_mmc_setup =*/
 /**
 Description of the function
 @brief  assumes the pre-condition of the test case execution
@@ -184,7 +184,7 @@ int VT_erw_mmc_setup()
     return TPASS;
 }
 
-/*===== VT_tempalte_cleanup =====*/
+/*= VT_tempalte_cleanup =*/
 /**
 Description of the function
 @brief  assumes the post-condition of the test case execution
@@ -215,12 +215,12 @@ int VT_erw_mmc_cleanup(void)
     return TPASS;
 }
 
-/*===== VT_erw_mmc_test =====*/
+/*= VT_erw_mmc_test =*/
 /**
 @brief  Template test scenario X function
 
 @param  None
-  
+
 @return On success - return TPASS
         On failure - return the error code
 */
@@ -231,15 +231,15 @@ int VT_erw_mmc_test()
     ssize_t rv;
 
     if (read_flag)
-	tst_resm(TINFO, "Start reading, please remove card, or press Esc to cancel");
+ tst_resm(TINFO, "Start reading, please remove card, or press Esc to cancel");
     else
     {
         if (vb_mode)
-	    tst_resm(TINFO, "Filling pattern");
+     tst_resm(TINFO, "Filling pattern");
 
-	for (ul = 0; ul < bcount; ul++)
-	    tmp_buf[ul] = (unsigned char) (random() * 0xFF);
-	tst_resm(TINFO, "Start writing, please remove card, or press Esc to cancel");
+ for (ul = 0; ul < bcount; ul++)
+     tmp_buf[ul] = (unsigned char) (random() * 0xFF);
+ tst_resm(TINFO, "Start writing, please remove card, or press Esc to cancel");
     }
 
     do{
@@ -248,33 +248,33 @@ int VT_erw_mmc_test()
             if (getchar() == 27)
                 return TFAIL;
         }
-	switch(read_flag)
-	{
-	    case FALSE:	rv = write(fd_device, tmp_buf, bcount);
-			break;
-	    case TRUE:	rv = read(fd_device, tmp_buf, bcount);
-			break;
-	}
+ switch(read_flag)
+ {
+     case FALSE: rv = write(fd_device, tmp_buf, bcount);
+   break;
+     case TRUE: rv = read(fd_device, tmp_buf, bcount);
+   break;
+ }
 
-	if (rv != bcount)
-	{
-	    if(stat(device_name, &MMC_insertion) != -1 )
-	    {
-		if (read_flag)
-		    tst_resm(TFAIL, "Problem with read. Extraction event not detected.");
-		else
-		    tst_resm(TFAIL, "Problem with write. Extraction event not detected.");
-		return TFAIL;
-	    }
-	    else
-	    {
-		if (read_flag)
-		    tst_resm(TINFO, "Read fails while extracting the MMC card ");
-		else
-		    tst_resm(TINFO, "Write fails while extracting the MMC card ");
-		return TPASS;
-	    }
-	}
+ if (rv != bcount)
+ {
+     if(stat(device_name, &MMC_insertion) != -1 )
+     {
+  if (read_flag)
+      tst_resm(TFAIL, "Problem with read. Extraction event not detected.");
+  else
+      tst_resm(TFAIL, "Problem with write. Extraction event not detected.");
+  return TFAIL;
+     }
+     else
+     {
+  if (read_flag)
+      tst_resm(TINFO, "Read fails while extracting the MMC card ");
+  else
+      tst_resm(TINFO, "Write fails while extracting the MMC card ");
+  return TPASS;
+     }
+ }
     }while(TRUE);
 
     return TPASS;

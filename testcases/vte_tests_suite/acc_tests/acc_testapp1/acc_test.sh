@@ -6,69 +6,69 @@
 #    @brief  this shell script is used to test the acc_module.
 #
 ################################################################################
-# 
+#
 # Copyright 2004-2008 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # The code contained herein is licensed under the GNU Lesser General
 #
 # Public License.  You may obtain a copy of the GNU Lesser General
 #
-# Public License Version 2.1 or later at the following locations: 
-# 
-# http://www.opensource.org/licenses/lgpl-license.html 
-# http://www.gnu.org/copyleft/lgpl.html 
-# 
+# Public License Version 2.1 or later at the following locations:
+#
+# http://www.opensource.org/licenses/lgpl-license.html
+# http://www.gnu.org/copyleft/lgpl.html
+#
 ################################################################################
-#Revision History: 
-#                            Modification     ClearQuest 
-#Author                          Date          Number    Description of Changes 
+#Revision History:
+#                            Modification     ClearQuest
+#Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -----------------------
-#Gamma                        17/12/2007      N/A          Initial version 
-#Ziye Yang/b21182             17/12/2008      N/A          N/A 
-#  
+#Gamma                        17/12/2007      N/A          Initial version
+#Ziye Yang/b21182             17/12/2008      N/A          N/A
+#
 ################################################################################
- 
- 
- 
-# Function:     setup 
-# 
-# Description:  - Check if required commands exits 
-#               - Export global variables 
-#               - Check if required config files exits 
-#               - Create temporary files and directories 
-# 
-# Return        - zero on success 
-#               - non zero on failure. return value from commands ($RC) 
-setup() 
-{ 
-#TODO Total test case 
-RC=0 
-trap "cleanup" 0 
- 
-#TODO add setup scripts 
+
+
+
+# Function:     setup
+#
+# Description:  - Check if required commands exits
+#               - Export global variables
+#               - Check if required config files exits
+#               - Create temporary files and directories
+#
+# Return        - zero on success
+#               - non zero on failure. return value from commands ($RC)
+setup()
+{
+#TODO Total test case
+RC=0
+trap "cleanup" 0
+
+#TODO add setup scripts
 modprobe mxc_mma7450
 sleep 1
 rm -rf acc_result
 MMA7450_CTL=/sys/class/i2c-adapter/i2c-0/0-001d/mma7450_ctl
-return $RC 
+return $RC
 }
-# Function:     cleanup 
-# 
-# Description   - remove temporary files and directories. 
-# 
-# Return        - zero on success 
-#               - non zero on failure. return value from commands ($RC) 
-cleanup() 
-{ 
-RC=0 
-#TODO add cleanup code here 
+# Function:     cleanup
+#
+# Description   - remove temporary files and directories.
+#
+# Return        - zero on success
+#               - non zero on failure. return value from commands ($RC)
+cleanup()
+{
+RC=0
+#TODO add cleanup code here
 rm -rf acc_temp
-return $RC 
-} 
- 
- 
-# Function:     acc_test 
-# Description   - test scenario 
+return $RC
+}
+
+
+# Function:     acc_test
+# Description   - test scenario
 #Record 8g Data:
 #reg0x00: XL 10 bits output value X LSB X[7] X[6] X[5] X[4] X[3] X[2] X[1] X[0]
 #reg0x01: XH 10 bits output value X MSB -- -- -- -- -- -- X[9] X[8]
@@ -80,10 +80,10 @@ return $RC
 #reg0x06: X8 8 bits output value X X[7] X[6] X[5] X[4] X[3] XT[2] X[1] X[0]
 #reg0x07: Y8 8 bits output value Y Y[7] Y[6] Y[5] Y[4] Y[3] YT[2] Y[1] Y[0]
 #reg0x08: Z8 8 bits output value Z Z[7] Z[6] Z[5] Z[4] Z[3] ZT[2] Z[1] Z[0]
-################################################################################  
-acc_test() 
+################################################################################
+acc_test()
 {
-RC=0 
+RC=0
 #TODO add function test scripte here
 if [ $MODE -eq 0 ]
 then
@@ -100,7 +100,7 @@ echo "SET pulse detection mode"
 else
 echo "mode parameter error!"
 fi
- 
+
 echo setmod $MODE > $MMA7450_CTL
 sleep 1
 
@@ -126,13 +126,13 @@ do
 dmesg -c
 cat $MMA7450_CTL
 dmesg > acc_temp
-awk '{if($3~/reg0x0[0-8]:/) printf("%s\t",$4);}; 
-	END {printf("\n");}' acc_temp >> acc_result
+awk '{if($3~/reg0x0[0-8]:/) printf("%s\t",$4);};
+ END {printf("\n");}' acc_temp >> acc_result
 echo " "
 usleep 100000 #sleep 0.1s
 i=`expr $i + 1`
-done 
-} 
+done
+}
 usage()
 {
  echo "First Parameter should be: 0, 1, 2, 3"
@@ -144,19 +144,19 @@ usage()
  echo "0: 0-8g"
  echo "1: 2-4g"
  echo "2: 1-2g"
-} 
- 
-# main function 
- 
-RC=0  
-#TODO check parameter 
-if [ $# -ne 2 ] 
-then 
+}
+
+# main function
+
+RC=0
+#TODO check parameter
+if [ $# -ne 2 ]
+then
 usage
-exit 1  
+exit 1
 fi
 MODE=$1
-G_SELECT=$2 
-setup || exit $RC 
+G_SELECT=$2
+setup || exit $RC
 acc_test || exit $RC
- 
+

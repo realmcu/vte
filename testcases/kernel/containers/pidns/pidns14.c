@@ -15,9 +15,9 @@
 ***************************************************************************
 * * Assertion:
 * * kill -USR1 container_init from outside a container
-* * 	$ Where init has not defined a custom handler for USR1
-* * 	$ Should kill the container
-* * 	$ else the test fails.
+* * $ Where init has not defined a custom handler for USR1
+* * $ Should kill the container
+* * $ else the test fails.
 * *
 * * Description:
 * *  This testcase creates container and waits till it is awakened by parent.
@@ -27,7 +27,7 @@
 * *  If yes then Test is Passed else Test is Failed.
 * *
 * * History:
-* *  DATE	  NAME				   DESCRIPTION
+* *  DATE   NAME       DESCRIPTION
 * *  14/11/08  Veerendra C  <vechandr@in.ibm.com> Verifying kill -USR1 in pidns
 *
 ******************************************************************************/
@@ -46,44 +46,44 @@
 #if defined(HAVE_SYS_CAPABILITY)
 #include <sys/capability.h>
 
-char *TCID = "pidns14";
-int TST_TOTAL = 1;
+char *TCID  "pidns14";
+int TST_TOTAL  1;
 
 int child_fn(void *);
 void cleanup(void);
 
-#define CHILD_PID	1
-#define PARENT_PID	0
+#define CHILD_PID 1
+#define PARENT_PID 0
 
 /*
  * child_fn() - Inside container
  */
 int child_fn(void *ttype)
 {
-	pid_t pid, ppid;
+ pid_t pid, ppid;
 
-	/* Set process id and parent pid */
-	pid = getpid();
-	ppid = getppid();
+ /* Set process id and parent pid */
+ pid  getpid();
+ ppid  getppid();
 
-	if ((pid != CHILD_PID) || (ppid != PARENT_PID)) {
-		tst_resm(TBROK, "pidns is not created.");
-		cleanup();
-	}
-	pause();
-	tst_resm(TFAIL, "Oops! Container init resumed after receiving SIGUSR1");
-	return -1;
+ if ((pid ! CHILD_PID) || (ppid ! PARENT_PID)) {
+  tst_resm(TBROK, "pidns is not created.");
+  cleanup();
+ }
+ pause();
+ tst_resm(TFAIL, "Oops! Container init resumed after receiving SIGUSR1");
+ return -1;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *			 completion or premature exit.
+ *    completion or premature exit.
  */
 void cleanup()
 {
-	/* Clean the test testcase as LTP wants*/
-	TEST_CLEANUP;
-	tst_exit();
+ /* Clean the test testcase as LTP wants*/
+ TEST_CLEANUP;
+ tst_exit();
 
 }
 
@@ -93,41 +93,41 @@ void cleanup()
 
 int main(int argc, char *argv[])
 {
-	int status;
-	pid_t cpid;
+ int status;
+ pid_t cpid;
 
-	cpid = do_clone(CLONE_NEWPID | SIGCHLD, child_fn, NULL);
+ cpid  do_clone(CLONE_NEWPID | SIGCHLD, child_fn, NULL);
 
-	if (cpid < 0) {
-		tst_resm(TBROK, "clone() failed.");
-		cleanup();
-	}
+ if (cpid < 0) {
+  tst_resm(TBROK, "clone() failed.");
+  cleanup();
+ }
 
-	sleep(1);
-	/* Passing the SIGUSR1 to the container init */
-	if (kill(cpid, SIGUSR1) != 0) {
-		tst_resm(TBROK, "kill(SIGUSR1) fails.");
-		cleanup();
-	}
+ sleep(1);
+ /* Passing the SIGUSR1 to the container init */
+ if (kill(cpid, SIGUSR1) ! 0) {
+  tst_resm(TBROK, "kill(SIGUSR1) fails.");
+  cleanup();
+ }
 
-	sleep(1);
-	if (waitpid(cpid, &status, 0) < 0)
-		tst_resm(TWARN, "waitpid() failed.");
+ sleep(1);
+ if (waitpid(cpid, &status, 0) < 0)
+  tst_resm(TWARN, "waitpid() failed.");
 
-	if ((WIFSIGNALED(status)) && (WTERMSIG(status) == SIGUSR1))
-		tst_resm(TPASS, "Container init is killed as expected, "
-				" when the SIGUSR1 is passed from parent\n");
-	 else
-		tst_resm(TFAIL, "After sending signal kill -USR1, "
-				"returned unexpected error\n");
+ if ((WIFSIGNALED(status)) && (WTERMSIG(status)  SIGUSR1))
+  tst_resm(TPASS, "Container init is killed as expected, "
+    " when the SIGUSR1 is passed from parent\n");
+  else
+  tst_resm(TFAIL, "After sending signal kill -USR1, "
+    "returned unexpected error\n");
 
-	return 0;
-}	/* End main */
+ return 0;
+} /* End main */
 
 #else
 
-char *TCID = "pidns14";
-int TST_TOTAL = 0;              /* Total number of test cases. */
+char *TCID  "pidns14";
+int TST_TOTAL  0;              /* Total number of test cases. */
 
 int
 main()

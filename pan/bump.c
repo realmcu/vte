@@ -42,72 +42,72 @@
 pid_t
 read_active( FILE *fp, char *name );
 
-int 
+int
 main( int argc, char **argv ){
-	extern char *optarg;
-	extern int optind;
-	int c;
-	char *active = NULL;
-	pid_t nanny;
-	zoo_t zoo;
-	int sig = SIGINT;
+ extern char *optarg;
+ extern int optind;
+ int c;
+ char *active  NULL;
+ pid_t nanny;
+ zoo_t zoo;
+ int sig  SIGINT;
 
-	while( (c = getopt(argc, argv, "a:s:12")) != -1 ){
-		switch(c){
-			case 'a':
-				active = (char*)malloc(strlen(optarg)+1);
-				strcpy( active, optarg );
-				break;
-			case 's':
-				sig = atoi( optarg );
-				break;
-			case '1':
-				sig = SIGUSR1;
-				break;
-			case '2':
-				sig = SIGUSR2;
-				break;
-		}
-	}
+ while( (c  getopt(argc, argv, "a:s:12")) ! -1 ){
+  switch(c){
+   case 'a':
+    active  (char*)malloc(strlen(optarg)+1);
+    strcpy( active, optarg );
+    break;
+   case 's':
+    sig  atoi( optarg );
+    break;
+   case '1':
+    sig  SIGUSR1;
+    break;
+   case '2':
+    sig  SIGUSR2;
+    break;
+  }
+ }
 
-	if( active == NULL ){
-		active = zoo_getname();
-		if( active == NULL ){
-			fprintf(stderr, "bump: Must supply -a or set ZOO env variable\n");
-			exit(1);
-		}
-	}
-	if( optind == argc ){
-		fprintf( stderr, "bump: Must supply names\n");
-		exit(1);
-	}
+ if( active  NULL ){
+  active  zoo_getname();
+  if( active  NULL ){
+   fprintf(stderr, "bump: Must supply -a or set ZOO env variable\n");
+   exit(1);
+  }
+ }
+ if( optind  argc ){
+  fprintf( stderr, "bump: Must supply names\n");
+  exit(1);
+ }
 
-	/* need r+ here because we're using write-locks */
-	if( (zoo = zoo_open(active)) == NULL ){
-		fprintf(stderr, "bump: %s\n", zoo_error);
-		exit(1);
-	}
-	while( optind < argc ){
-		/*printf("argv[%d] = (%s)\n", optind, argv[optind] );*/
-		nanny = zoo_getpid(zoo, argv[optind]);
-		if( nanny == -1 ){
-			fprintf(stderr, "bump: Did not find tag '%s'\n",
-				argv[optind] );
-		}
-		else{
-			if (kill( nanny, sig ) == -1){
-				if (errno == ESRCH){
-					fprintf(stderr,"bump: Tag %s (pid %d) seems to be dead already.\n",
-						argv[optind], nanny );
-					if (zoo_clear(zoo, nanny))
-						fprintf(stderr,"bump: %s\n", zoo_error);
-				}
-			}
-		}
-		++optind;
-	}
-	zoo_close(zoo);
+ /* need r+ here because we're using write-locks */
+ if( (zoo  zoo_open(active))  NULL ){
+  fprintf(stderr, "bump: %s\n", zoo_error);
+  exit(1);
+ }
+ while( optind < argc ){
+  /*printf("argv[%d]  (%s)\n", optind, argv[optind] );*/
+  nanny  zoo_getpid(zoo, argv[optind]);
+  if( nanny  -1 ){
+   fprintf(stderr, "bump: Did not find tag '%s'\n",
+    argv[optind] );
+  }
+  else{
+   if (kill( nanny, sig )  -1){
+    if (errno  ESRCH){
+     fprintf(stderr,"bump: Tag %s (pid %d) seems to be dead already.\n",
+      argv[optind], nanny );
+     if (zoo_clear(zoo, nanny))
+      fprintf(stderr,"bump: %s\n", zoo_error);
+    }
+   }
+  }
+  ++optind;
+ }
+ zoo_close(zoo);
 
-	exit(0);
+ exit(0);
 }
 

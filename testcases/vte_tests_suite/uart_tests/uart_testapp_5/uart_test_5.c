@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
     @file   uart_test_5.c
 
     @brief Tests the ability of MXC and External drivers to manage flow control
 */
-/*==================================================================================================
+/*======================
 
 Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
 THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
@@ -20,18 +20,18 @@ I. Inkina / nknl001       07/04/2005     TLSbo48749   Initial version
 I. Inkina / nknl001       07/04/2005     TLSbo49644    minor fix
 I. Inkina / nknl001       07/04/2005     TLSbo52650    update code
 E.Gromazina               03/10/2005     TLSbo52626   verification of invariance of the UART interrupts, base address and register offsets
-====================================================================================================
+====================
 Portability:  ARM GCC  gnu compiler
-==================================================================================================*/
+======================*/
 
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -43,50 +43,50 @@ extern "C"{
 
  #include <linux/capability.h>
  #include <linux/types.h>
-/*============================================================================
+/*================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
 #define THS_INFO(fmt, args...) tst_resm(TINFO, "  [   S] " fmt, ##args)
 
-/*==================================================================================================
+/*======================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 static param_drv  driver_thread[DRIVER_THREAD];
 
-/*==================================================================================================
+/*======================
                                    LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 int uart_close(void* ptr);
 int uart_open(void *ptr);
 int config_test(void *ptr);
 void print_uart_config(param_drv * uart_conf, int fl);
 
-/*================================================================================================*/
-/*===== VT_mxc_uart_test5 _setup =====*/
+/*====================*/
+/*= VT_mxc_uart_test5 _setup =*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
@@ -94,7 +94,7 @@ void print_uart_config(param_drv * uart_conf, int fl);
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 
 int VT_mxc_uart_test5_setup(void)
 {
@@ -105,8 +105,8 @@ int VT_mxc_uart_test5_setup(void)
         return rv;
 }
 
-/*================================================================================================*/
-/*===== VT_mxc_uart_test5 _cleanup =====*/
+/*====================*/
+/*= VT_mxc_uart_test5 _cleanup =*/
 /**
 @brief  assumes the post-condition of the test case execution
 
@@ -115,7 +115,7 @@ int VT_mxc_uart_test5_setup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_mxc_uart_test5_cleanup(void)
 {
         int rv = TFAIL;
@@ -130,8 +130,8 @@ int VT_mxc_uart_test5_cleanup(void)
         return rv;
 }
 
-/*================================================================================================*/
-/*=====uart_open =====*/
+/*====================*/
+/*=uart_open =*/
 /**
 @brief  open UART
 
@@ -141,7 +141,7 @@ int VT_mxc_uart_test5_cleanup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int uart_open(void *ptr )
 {
         int rv = TFAIL;
@@ -162,8 +162,8 @@ int uart_open(void *ptr )
 
         return rv;
 }
-/*================================================================================================*/
-/*===== th_block_signals =====*/
+/*====================*/
+/*= th_block_signals =*/
 /**
 @brief  set up signals
 
@@ -173,7 +173,7 @@ int uart_open(void *ptr )
 @return On success -
         On failure -
 */
-/*================================================================================================*/
+/*====================*/
 void th_block_signals(void)
 {
         sigset_t mask;
@@ -184,7 +184,7 @@ void th_block_signals(void)
 }
 
 
-/*================================================================================================*/
+/*====================*/
 void* VT_th_signal(void *param)
 {
         sigset_t mask;
@@ -211,8 +211,8 @@ void* VT_th_signal(void *param)
         }
 }
 
-/*================================================================================================*/
-/*===== VT_mxc_uart_test5 =====*/
+/*====================*/
+/*= VT_mxc_uart_test5 =*/
 /**
 @brief  mxc_uart get and set UART parameters
 
@@ -222,7 +222,7 @@ void* VT_th_signal(void *param)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_mxc_uart_test5(char *driver_name_1, int type_1 )
 
 {
@@ -268,8 +268,8 @@ int VT_mxc_uart_test5(char *driver_name_1, int type_1 )
 
 }
 
-/*================================================================================================*/
-/*===== config_test =====*/
+/*====================*/
+/*= config_test =*/
 /**
 @brief  mxc_uart get and set UART parameters
 
@@ -279,14 +279,14 @@ int VT_mxc_uart_test5(char *driver_name_1, int type_1 )
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 
 int config_test(void *ptr)
 {
         int     rv = TPASS;
         int     ret;
-	//pid_t pid;
-	//cap_t cap;
+ //pid_t pid;
+ //cap_t cap;
 
         // unsigned int line_value = 0;
 
@@ -321,9 +321,9 @@ int config_test(void *ptr)
         /*uart_driver->tty_mxc_serial.type = 52; */
         uart_driver->tty_mxc_serial.baud_base = 115200;
         uart_driver->tty_mxc_serial.xmit_fifo_size = 16;
-	/*uart_driver->tty_mxc_serial.custom_divisor = 1;*/
-	/*custom_divisor cannot be changed */
-	uart_driver->tty_mxc_serial.close_delay = 10;
+ /*uart_driver->tty_mxc_serial.custom_divisor = 1;*/
+ /*custom_divisor cannot be changed */
+ uart_driver->tty_mxc_serial.close_delay = 10;
 
 
         // Set MXC Tortolla UART port configuration with tty_mxc_serial structure
@@ -395,8 +395,8 @@ printf("fail\n");
 
 }
 
-/*================================================================================================*/
-/*===== mxc_uart_close =====*/
+/*====================*/
+/*= mxc_uart_close =*/
 /**
 @brief  close UART
 
@@ -405,7 +405,7 @@ printf("fail\n");
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int uart_close(void *ptr)
 {
         int rv = TFAIL;
@@ -433,9 +433,9 @@ void print_uart_config(param_drv * uart_conf, int fl)
 {
         if (fl)
         {
-                tst_resm(TINFO, "/=================================\\");
+                tst_resm(TINFO, "/=========\\");
                 tst_resm(TINFO, "|       UART configure old         |");
-                tst_resm(TINFO, "+============+====================+");
+                tst_resm(TINFO, "+====+====+");
                 tst_resm(TINFO, "| device            | %-10s |", uart_conf->driver_name);
                 tst_resm(TINFO, "+------------+--------------------+");
                 tst_resm(TINFO, "|  baud_base        | %-10d |",
@@ -465,9 +465,9 @@ void print_uart_config(param_drv * uart_conf, int fl)
         }
         else
         {
-                tst_resm(TINFO, "/=================================\\");
+                tst_resm(TINFO, "/=========\\");
                 tst_resm(TINFO, "|       UART configure new        |");
-                tst_resm(TINFO, "+============+====================+");
+                tst_resm(TINFO, "+====+====+");
                 tst_resm(TINFO, "| device            | %-10s |", uart_conf->driver_name);
                 tst_resm(TINFO, "+------------+--------------------+");
                 tst_resm(TINFO, "|  baud_base        | %-10d |",

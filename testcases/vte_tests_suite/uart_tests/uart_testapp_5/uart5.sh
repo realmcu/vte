@@ -1,4 +1,4 @@
-#!/bin/sh  
+#!/bin/sh
 
  LTPROOT=`cd \`dirname $0\` && echo $PWD`
 
@@ -27,7 +27,7 @@
 
  if [ $# -eq 1 ]
  then
-  $TESTAPP5 -s $1 
+  $TESTAPP5 -s $1
   anal_res
  else exit 1
  fi
@@ -41,8 +41,8 @@
 
   else
     echo "uart5.sh          TFAIL    "
- fi    
-  
+ fi
+
   echo""
 
  exit $rc

@@ -74,15 +74,15 @@ char *mbuffer;
 #define _STAT_READ 12
 #define _NUM_STATS 14
 struct stat_struct {
-	double starttime;
-	double endtime;
-	double speed;
-	double best;
-	double worst;
-	double dummy;
-	double total_time;
-	double dummy1;
-	long long counter;
+ double starttime;
+ double endtime;
+ double speed;
+ double best;
+ double worst;
+ double dummy;
+ double total_time;
+ double dummy1;
+ long long counter;
 } volatile stats[_NUM_STATS];
 
 
@@ -118,13 +118,13 @@ int dirlen;
 
 int main(int argc, char **argv)
 {
-	if(argc == 1)
-	{
-		usage();
-		exit(1);
-	}
-	while((cret = getopt(argc,argv,"hbwetvf:s:l:u:d: ")) != EOF){
-		switch(cret){
+ if(argc == 1)
+ {
+  usage();
+  exit(1);
+ }
+ while((cret = getopt(argc,argv,"hbwetvf:s:l:u:d: ")) != EOF){
+  switch(cret){
                 case 'h':
                         usage();
                         exit(0);
@@ -138,12 +138,12 @@ int main(int argc, char **argv)
                           strncpy(thedir, optarg, dirlen);
                         }
                         break;
-		case 'f':	/* Force factor */
-			x=atoi(optarg);
-			if(x < 0)
-				x=1;
-			break;
-		case 's':	/* Size of files */
+  case 'f': /* Force factor */
+   x=atoi(optarg);
+   if(x < 0)
+    x=1;
+   break;
+  case 's': /* Size of files */
                         sz=atoi(optarg);
                         if(optarg[strlen(optarg)-1]=='k' ||
                                 optarg[strlen(optarg)-1]=='K'){
@@ -153,892 +153,892 @@ int main(int argc, char **argv)
                                 optarg[strlen(optarg)-1]=='M'){
                                 sz = (1024 * 1024 * atoi(optarg));
                         }
-			if(sz < 0)
-				sz=1;
-			break;
-		case 'l':	/* lower force value */
-			lower=atoi(optarg);
-			range=1;
-			if(lower < 0)
-				lower=1;
-			break;
-		case 'v':	/* version */
-			splash();
-			exit(0);
-			break;
-		case 'u':	/* upper force value */
-			upper=atoi(optarg);
-			range=1;
-			if(upper < 0)
-				upper=1;
-			break;
-		case 't':	/* verbose */
-			verbose=1;
-			break;
-		case 'e':	/* Excel */
-			excel=1;
-			break;
-		case 'b':	/* Best */
-			best=1;
-			break;
-		case 'w':	/* Worst */
-			worst=1;
-			break;
-		}
-	}
-	mbuffer=(char *)malloc(sz);
-	memset(mbuffer,'a',sz);
-	if(!excel)
-	  printf("\nFileop:  File size is %d,  Output is in Ops/sec. (A=Avg, B=Best, W=Worst)\n",sz);
-	if(!verbose)
-	{
+   if(sz < 0)
+    sz=1;
+   break;
+  case 'l': /* lower force value */
+   lower=atoi(optarg);
+   range=1;
+   if(lower < 0)
+    lower=1;
+   break;
+  case 'v': /* version */
+   splash();
+   exit(0);
+   break;
+  case 'u': /* upper force value */
+   upper=atoi(optarg);
+   range=1;
+   if(upper < 0)
+    upper=1;
+   break;
+  case 't': /* verbose */
+   verbose=1;
+   break;
+  case 'e': /* Excel */
+   excel=1;
+   break;
+  case 'b': /* Best */
+   best=1;
+   break;
+  case 'w': /* Worst */
+   worst=1;
+   break;
+  }
+ }
+ mbuffer=(char *)malloc(sz);
+ memset(mbuffer,'a',sz);
+ if(!excel)
+   printf("\nFileop:  File size is %d,  Output is in Ops/sec. (A=Avg, B=Best, W=Worst)\n",sz);
+ if(!verbose)
+ {
 #ifdef Windows
-	   	printf(" .     %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s %12s\n",
-       	   	"mkdir","rmdir","create","read","write","close","stat",
-		"access","chmod","readdir","delete"," Total_files");
+    printf(" .     %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s %12s\n",
+          "mkdir","rmdir","create","read","write","close","stat",
+  "access","chmod","readdir","delete"," Total_files");
 #else
 
-	   	printf(" .     %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s %12s\n",
-       	   	"mkdir","rmdir","create","read","write","close","stat",
-		"access","chmod","readdir","link  ","unlink","delete",
-		" Total_files");
+    printf(" .     %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s %12s\n",
+          "mkdir","rmdir","create","read","write","close","stat",
+  "access","chmod","readdir","link  ","unlink","delete",
+  " Total_files");
 #endif
-	}
-	if(x==0)
-		x=1;
-	if(range==0)
-		lower=upper=x;
-	for(i=lower;i<=upper;i++)
-	{
-		clear_stats();
-		x=i;
-	   /*
-	    * Dir Create test 
-	    */
-	   dir_create(x);
+ }
+ if(x==0)
+  x=1;
+ if(range==0)
+  lower=upper=x;
+ for(i=lower;i<=upper;i++)
+ {
+  clear_stats();
+  x=i;
+    /*
+     * Dir Create test
+     */
+    dir_create(x);
 
-	   if(verbose)
-	   {
-	      printf("mkdir:   Dirs = %9lld ",stats[_STAT_DIR_CREATE].counter);
-	      printf("Total Time = %12.9f seconds\n", stats[_STAT_DIR_CREATE].total_time);
-	      printf("         Avg mkdir(s)/sec     = %12.2f (%12.9f seconds/op)\n",
-			stats[_STAT_DIR_CREATE].counter/stats[_STAT_DIR_CREATE].total_time,
-			stats[_STAT_DIR_CREATE].total_time/stats[_STAT_DIR_CREATE].counter);
-	      printf("         Best mkdir(s)/sec    = %12.2f (%12.9f seconds/op)\n",1/stats[_STAT_DIR_CREATE].best,stats[_STAT_DIR_CREATE].best);
-	      printf("         Worst mkdir(s)/sec   = %12.2f (%12.9f seconds/op)\n\n",1/stats[_STAT_DIR_CREATE].worst,stats[_STAT_DIR_CREATE].worst);
-	   }
-	   /*
-	    * Dir delete test
-	    */
-	   dir_delete(x);
+    if(verbose)
+    {
+       printf("mkdir:   Dirs = %9lld ",stats[_STAT_DIR_CREATE].counter);
+       printf("Total Time = %12.9f seconds\n", stats[_STAT_DIR_CREATE].total_time);
+       printf("         Avg mkdir(s)/sec     = %12.2f (%12.9f seconds/op)\n",
+   stats[_STAT_DIR_CREATE].counter/stats[_STAT_DIR_CREATE].total_time,
+   stats[_STAT_DIR_CREATE].total_time/stats[_STAT_DIR_CREATE].counter);
+       printf("         Best mkdir(s)/sec    = %12.2f (%12.9f seconds/op)\n",1/stats[_STAT_DIR_CREATE].best,stats[_STAT_DIR_CREATE].best);
+       printf("         Worst mkdir(s)/sec   = %12.2f (%12.9f seconds/op)\n\n",1/stats[_STAT_DIR_CREATE].worst,stats[_STAT_DIR_CREATE].worst);
+    }
+    /*
+     * Dir delete test
+     */
+    dir_delete(x);
 
-	   if(verbose)
-	   {
-	   printf("rmdir:   Dirs = %9lld ",stats[_STAT_DIR_DELETE].counter);
-	   printf("Total Time = %12.9f seconds\n",stats[_STAT_DIR_DELETE].total_time);
-	   printf("         Avg rmdir(s)/sec     = %12.2f (%12.9f seconds/op)\n",
-			stats[_STAT_DIR_DELETE].counter/stats[_STAT_DIR_DELETE].total_time,
-			stats[_STAT_DIR_DELETE].total_time/stats[_STAT_DIR_DELETE].counter);
-	   printf("         Best rmdir(s)/sec    = %12.2f (%12.9f seconds/op)\n",1/stats[_STAT_DIR_DELETE].best,stats[_STAT_DIR_DELETE].best);
-	   printf("         Worst rmdir(s)/sec   = %12.2f (%12.9f seconds/op)\n\n",1/stats[_STAT_DIR_DELETE].worst,stats[_STAT_DIR_DELETE].worst);
-	   }
+    if(verbose)
+    {
+    printf("rmdir:   Dirs = %9lld ",stats[_STAT_DIR_DELETE].counter);
+    printf("Total Time = %12.9f seconds\n",stats[_STAT_DIR_DELETE].total_time);
+    printf("         Avg rmdir(s)/sec     = %12.2f (%12.9f seconds/op)\n",
+   stats[_STAT_DIR_DELETE].counter/stats[_STAT_DIR_DELETE].total_time,
+   stats[_STAT_DIR_DELETE].total_time/stats[_STAT_DIR_DELETE].counter);
+    printf("         Best rmdir(s)/sec    = %12.2f (%12.9f seconds/op)\n",1/stats[_STAT_DIR_DELETE].best,stats[_STAT_DIR_DELETE].best);
+    printf("         Worst rmdir(s)/sec   = %12.2f (%12.9f seconds/op)\n\n",1/stats[_STAT_DIR_DELETE].worst,stats[_STAT_DIR_DELETE].worst);
+    }
 
-	   /*
-	    * Create test 
-	    */
-	   file_create(x);
-	   if(verbose)
-	   {
-	      printf("create:  Files = %9lld ",stats[_STAT_CREATE].counter);
-	      printf("Total Time = %12.9f seconds\n", stats[_STAT_CREATE].total_time);
-	      printf("         Avg create(s)/sec    = %12.2f (%12.9f seconds/op)\n",
-			stats[_STAT_CREATE].counter/stats[_STAT_CREATE].total_time,
-			stats[_STAT_CREATE].total_time/stats[_STAT_CREATE].counter);
-	      printf("         Best create(s)/sec   = %12.2f (%12.9f seconds/op)\n",
-			1/stats[_STAT_CREATE].best,stats[_STAT_CREATE].best);
-	      printf("         Worst create(s)/sec  = %12.2f (%12.9f seconds/op)\n\n",
-			1/stats[_STAT_CREATE].worst,stats[_STAT_CREATE].worst);
-	      printf("write:   Files = %9lld ",stats[_STAT_WRITE].counter);
-	      printf("Total Time = %12.9f seconds\n", stats[_STAT_WRITE].total_time);
-	      printf("         Avg write(s)/sec     = %12.2f (%12.9f seconds/op)\n",
-			stats[_STAT_WRITE].counter/stats[_STAT_WRITE].total_time,
-			stats[_STAT_WRITE].total_time/stats[_STAT_WRITE].counter);
-	      printf("         Best write(s)/sec    = %12.2f (%12.9f seconds/op)\n",
-			1/stats[_STAT_WRITE].best,stats[_STAT_WRITE].best);
-   	      printf("         Worst write(s)/sec   = %12.2f (%12.9f seconds/op)\n\n",
-			1/stats[_STAT_WRITE].worst,stats[_STAT_WRITE].worst);
-	      printf("close:   Files = %9lld ",stats[_STAT_CLOSE].counter);
-	      printf("Total Time = %12.9f seconds\n", stats[_STAT_CLOSE].total_time);
-	      printf("         Avg close(s)/sec     = %12.2f (%12.9f seconds/op)\n",
-			stats[_STAT_CLOSE].counter/stats[_STAT_CLOSE].total_time,
-			stats[_STAT_CLOSE].total_time/stats[_STAT_CLOSE].counter);
-	      printf("         Best close(s)/sec    = %12.2f (%12.9f seconds/op)\n",
-			1/stats[_STAT_CLOSE].best,stats[_STAT_CLOSE].best);
-	      printf("         Worst close(s)/sec   = %12.2f (%12.9f seconds/op)\n\n",
-			1/stats[_STAT_CLOSE].worst,stats[_STAT_CLOSE].worst);
-	   }
+    /*
+     * Create test
+     */
+    file_create(x);
+    if(verbose)
+    {
+       printf("create:  Files = %9lld ",stats[_STAT_CREATE].counter);
+       printf("Total Time = %12.9f seconds\n", stats[_STAT_CREATE].total_time);
+       printf("         Avg create(s)/sec    = %12.2f (%12.9f seconds/op)\n",
+   stats[_STAT_CREATE].counter/stats[_STAT_CREATE].total_time,
+   stats[_STAT_CREATE].total_time/stats[_STAT_CREATE].counter);
+       printf("         Best create(s)/sec   = %12.2f (%12.9f seconds/op)\n",
+   1/stats[_STAT_CREATE].best,stats[_STAT_CREATE].best);
+       printf("         Worst create(s)/sec  = %12.2f (%12.9f seconds/op)\n\n",
+   1/stats[_STAT_CREATE].worst,stats[_STAT_CREATE].worst);
+       printf("write:   Files = %9lld ",stats[_STAT_WRITE].counter);
+       printf("Total Time = %12.9f seconds\n", stats[_STAT_WRITE].total_time);
+       printf("         Avg write(s)/sec     = %12.2f (%12.9f seconds/op)\n",
+   stats[_STAT_WRITE].counter/stats[_STAT_WRITE].total_time,
+   stats[_STAT_WRITE].total_time/stats[_STAT_WRITE].counter);
+       printf("         Best write(s)/sec    = %12.2f (%12.9f seconds/op)\n",
+   1/stats[_STAT_WRITE].best,stats[_STAT_WRITE].best);
+         printf("         Worst write(s)/sec   = %12.2f (%12.9f seconds/op)\n\n",
+   1/stats[_STAT_WRITE].worst,stats[_STAT_WRITE].worst);
+       printf("close:   Files = %9lld ",stats[_STAT_CLOSE].counter);
+       printf("Total Time = %12.9f seconds\n", stats[_STAT_CLOSE].total_time);
+       printf("         Avg close(s)/sec     = %12.2f (%12.9f seconds/op)\n",
+   stats[_STAT_CLOSE].counter/stats[_STAT_CLOSE].total_time,
+   stats[_STAT_CLOSE].total_time/stats[_STAT_CLOSE].counter);
+       printf("         Best close(s)/sec    = %12.2f (%12.9f seconds/op)\n",
+   1/stats[_STAT_CLOSE].best,stats[_STAT_CLOSE].best);
+       printf("         Worst close(s)/sec   = %12.2f (%12.9f seconds/op)\n\n",
+   1/stats[_STAT_CLOSE].worst,stats[_STAT_CLOSE].worst);
+    }
 
-	   /*
-	    * Stat test 
-	    */
-	   file_stat(x);
+    /*
+     * Stat test
+     */
+    file_stat(x);
 
-	   if(verbose)
-	   {
-	      printf("stat:    Files = %9lld ",stats[_STAT_STAT].counter);
-	      printf("Total Time = %12.9f seconds\n", stats[_STAT_STAT].total_time);
-	      printf("         Avg stat(s)/sec      = %12.2f (%12.9f seconds/op)\n",
-			stats[_STAT_STAT].counter/stats[_STAT_STAT].total_time,
-			stats[_STAT_STAT].total_time/stats[_STAT_STAT].counter);
-	      printf("         Best stat(s)/sec     = %12.2f (%12.9f seconds/op)\n",
-			1/stats[_STAT_STAT].best,stats[_STAT_STAT].best);
-	      printf("         Worst stat(s)/sec    = %12.2f (%12.9f seconds/op)\n\n",
-			1/stats[_STAT_STAT].worst,stats[_STAT_STAT].worst);
-	   }
-	   /*
-	    * Read test 
-	    */
-	   file_read(x);
+    if(verbose)
+    {
+       printf("stat:    Files = %9lld ",stats[_STAT_STAT].counter);
+       printf("Total Time = %12.9f seconds\n", stats[_STAT_STAT].total_time);
+       printf("         Avg stat(s)/sec      = %12.2f (%12.9f seconds/op)\n",
+   stats[_STAT_STAT].counter/stats[_STAT_STAT].total_time,
+   stats[_STAT_STAT].total_time/stats[_STAT_STAT].counter);
+       printf("         Best stat(s)/sec     = %12.2f (%12.9f seconds/op)\n",
+   1/stats[_STAT_STAT].best,stats[_STAT_STAT].best);
+       printf("         Worst stat(s)/sec    = %12.2f (%12.9f seconds/op)\n\n",
+   1/stats[_STAT_STAT].worst,stats[_STAT_STAT].worst);
+    }
+    /*
+     * Read test
+     */
+    file_read(x);
 
-	   if(verbose)
-	   {
-	      printf("read:    Files = %9lld ",stats[_STAT_READ].counter);
-	      printf("Total Time = %12.9f seconds\n", stats[_STAT_READ].total_time);
-	      printf("         Avg read(s)/sec      = %12.2f (%12.9f seconds/op)\n",
-			stats[_STAT_READ].counter/stats[_STAT_READ].total_time,
-			stats[_STAT_READ].total_time/stats[_STAT_READ].counter);
-	      printf("         Best read(s)/sec     = %12.2f (%12.9f seconds/op)\n",
-			1/stats[_STAT_READ].best,stats[_STAT_READ].best);
-	      printf("         Worst read(s)/sec    = %12.2f (%12.9f seconds/op)\n\n",
-			1/stats[_STAT_READ].worst,stats[_STAT_READ].worst);
-	   }
+    if(verbose)
+    {
+       printf("read:    Files = %9lld ",stats[_STAT_READ].counter);
+       printf("Total Time = %12.9f seconds\n", stats[_STAT_READ].total_time);
+       printf("         Avg read(s)/sec      = %12.2f (%12.9f seconds/op)\n",
+   stats[_STAT_READ].counter/stats[_STAT_READ].total_time,
+   stats[_STAT_READ].total_time/stats[_STAT_READ].counter);
+       printf("         Best read(s)/sec     = %12.2f (%12.9f seconds/op)\n",
+   1/stats[_STAT_READ].best,stats[_STAT_READ].best);
+       printf("         Worst read(s)/sec    = %12.2f (%12.9f seconds/op)\n\n",
+   1/stats[_STAT_READ].worst,stats[_STAT_READ].worst);
+    }
 
-	   /*
-	    * Access test 
-	    */
-	   file_access(x);
-	   if(verbose)
-	   {
-	      printf("access:  Files = %9lld ",stats[_STAT_ACCESS].counter);
-	      printf("Total Time = %12.9f seconds\n", stats[_STAT_ACCESS].total_time);
-	      printf("         Avg access(s)/sec    = %12.2f (%12.9f seconds/op)\n",
-			stats[_STAT_ACCESS].counter/stats[_STAT_ACCESS].total_time,
-			stats[_STAT_ACCESS].total_time/stats[_STAT_ACCESS].counter);
-	      printf("         Best access(s)/sec   = %12.2f (%12.9f seconds/op)\n",
-			1/stats[_STAT_ACCESS].best,stats[_STAT_ACCESS].best);
-	      printf("         Worst access(s)/sec  = %12.2f (%12.9f seconds/op)\n\n",
-			1/stats[_STAT_ACCESS].worst,stats[_STAT_ACCESS].worst);
-	   }
-	   /*
-	    * Chmod test 
-	    */
-	   file_chmod(x);
+    /*
+     * Access test
+     */
+    file_access(x);
+    if(verbose)
+    {
+       printf("access:  Files = %9lld ",stats[_STAT_ACCESS].counter);
+       printf("Total Time = %12.9f seconds\n", stats[_STAT_ACCESS].total_time);
+       printf("         Avg access(s)/sec    = %12.2f (%12.9f seconds/op)\n",
+   stats[_STAT_ACCESS].counter/stats[_STAT_ACCESS].total_time,
+   stats[_STAT_ACCESS].total_time/stats[_STAT_ACCESS].counter);
+       printf("         Best access(s)/sec   = %12.2f (%12.9f seconds/op)\n",
+   1/stats[_STAT_ACCESS].best,stats[_STAT_ACCESS].best);
+       printf("         Worst access(s)/sec  = %12.2f (%12.9f seconds/op)\n\n",
+   1/stats[_STAT_ACCESS].worst,stats[_STAT_ACCESS].worst);
+    }
+    /*
+     * Chmod test
+     */
+    file_chmod(x);
 
-	   if(verbose)
-	   {
-	      printf("chmod:   Files = %9lld ",stats[_STAT_CHMOD].counter);
-	      printf("Total Time = %12.9f seconds\n", stats[_STAT_CHMOD].total_time);
-	      printf("         Avg chmod(s)/sec     = %12.2f (%12.9f seconds/op)\n",
-			stats[_STAT_CHMOD].counter/stats[_STAT_CHMOD].total_time,
-			stats[_STAT_CHMOD].total_time/stats[_STAT_CHMOD].counter);
-	      printf("         Best chmod(s)/sec    = %12.2f (%12.9f seconds/op)\n",
-			1/stats[_STAT_CHMOD].best,stats[_STAT_CHMOD].best);
-	      printf("         Worst chmod(s)/sec   = %12.2f (%12.9f seconds/op)\n\n",
-			1/stats[_STAT_CHMOD].worst,stats[_STAT_CHMOD].worst);
-	   }
-	   /*
-	    * readdir test 
-	    */
-	   file_readdir(x);
+    if(verbose)
+    {
+       printf("chmod:   Files = %9lld ",stats[_STAT_CHMOD].counter);
+       printf("Total Time = %12.9f seconds\n", stats[_STAT_CHMOD].total_time);
+       printf("         Avg chmod(s)/sec     = %12.2f (%12.9f seconds/op)\n",
+   stats[_STAT_CHMOD].counter/stats[_STAT_CHMOD].total_time,
+   stats[_STAT_CHMOD].total_time/stats[_STAT_CHMOD].counter);
+       printf("         Best chmod(s)/sec    = %12.2f (%12.9f seconds/op)\n",
+   1/stats[_STAT_CHMOD].best,stats[_STAT_CHMOD].best);
+       printf("         Worst chmod(s)/sec   = %12.2f (%12.9f seconds/op)\n\n",
+   1/stats[_STAT_CHMOD].worst,stats[_STAT_CHMOD].worst);
+    }
+    /*
+     * readdir test
+     */
+    file_readdir(x);
 
-	   if(verbose)
-	   {
-	      printf("readdir: Files = %9lld ",stats[_STAT_READDIR].counter);
-	      printf("Total Time = %12.9f seconds\n", stats[_STAT_READDIR].total_time);
-	      printf("         Avg readdir(s)/sec   = %12.2f (%12.9f seconds/op)\n",
-			stats[_STAT_READDIR].counter/stats[_STAT_READDIR].total_time,
-			stats[_STAT_READDIR].total_time/stats[_STAT_READDIR].counter);
-	      printf("         Best readdir(s)/sec  = %12.2f (%12.9f seconds/op)\n",
-			1/stats[_STAT_READDIR].best,stats[_STAT_READDIR].best);
-	      printf("         Worst readdir(s)/sec = %12.2f (%12.9f seconds/op)\n\n",
-			1/stats[_STAT_READDIR].worst,stats[_STAT_READDIR].worst);
-	   }
+    if(verbose)
+    {
+       printf("readdir: Files = %9lld ",stats[_STAT_READDIR].counter);
+       printf("Total Time = %12.9f seconds\n", stats[_STAT_READDIR].total_time);
+       printf("         Avg readdir(s)/sec   = %12.2f (%12.9f seconds/op)\n",
+   stats[_STAT_READDIR].counter/stats[_STAT_READDIR].total_time,
+   stats[_STAT_READDIR].total_time/stats[_STAT_READDIR].counter);
+       printf("         Best readdir(s)/sec  = %12.2f (%12.9f seconds/op)\n",
+   1/stats[_STAT_READDIR].best,stats[_STAT_READDIR].best);
+       printf("         Worst readdir(s)/sec = %12.2f (%12.9f seconds/op)\n\n",
+   1/stats[_STAT_READDIR].worst,stats[_STAT_READDIR].worst);
+    }
 #if !defined(Windows)
-	   /*
-	    * link test 
-	    */
-	   file_link(x);
-	   if(verbose)
-	   {
-	      printf("link:    Files = %9lld ",stats[_STAT_LINK].counter);
-	      printf("Total Time = %12.9f seconds\n",stats[_STAT_LINK].total_time);
-	      printf("         Avg link(s)/sec      = %12.2f (%12.9f seconds/op)\n",
-			stats[_STAT_LINK].counter/stats[_STAT_LINK].total_time,
-			stats[_STAT_LINK].total_time/stats[_STAT_LINK].counter);
-	      printf("         Best link(s)/sec     = %12.2f (%12.9f seconds/op)\n",
-			1/stats[_STAT_LINK].best,stats[_STAT_LINK].best);
-	      printf("         Worst link(s)/sec    = %12.2f (%12.9f seconds/op)\n\n",
-			1/stats[_STAT_LINK].worst,stats[_STAT_LINK].worst);
-	   }
-	   /*
-	    * unlink test 
-	    */
-	   file_unlink(x);
-	   if(verbose)
-	   {
-	      printf("unlink:  Files = %9lld ",stats[_STAT_UNLINK].counter);
-	      printf("Total Time = %12.9f seconds\n", stats[_STAT_UNLINK].total_time);
-	      printf("         Avg unlink(s)/sec    = %12.2f (%12.9f seconds/op)\n",
-			stats[_STAT_UNLINK].counter/stats[_STAT_UNLINK].total_time,
-			stats[_STAT_UNLINK].total_time/stats[_STAT_UNLINK].counter);
-	      printf("         Best unlink(s)/sec   = %12.2f (%12.9f seconds/op)\n",
-			1/stats[_STAT_UNLINK].best,stats[_STAT_UNLINK].best);
-	      printf("         Worst unlink(s)/sec  = %12.2f (%12.9f seconds/op)\n\n",
-			1/stats[_STAT_UNLINK].worst,stats[_STAT_UNLINK].worst);
-	   }
+    /*
+     * link test
+     */
+    file_link(x);
+    if(verbose)
+    {
+       printf("link:    Files = %9lld ",stats[_STAT_LINK].counter);
+       printf("Total Time = %12.9f seconds\n",stats[_STAT_LINK].total_time);
+       printf("         Avg link(s)/sec      = %12.2f (%12.9f seconds/op)\n",
+   stats[_STAT_LINK].counter/stats[_STAT_LINK].total_time,
+   stats[_STAT_LINK].total_time/stats[_STAT_LINK].counter);
+       printf("         Best link(s)/sec     = %12.2f (%12.9f seconds/op)\n",
+   1/stats[_STAT_LINK].best,stats[_STAT_LINK].best);
+       printf("         Worst link(s)/sec    = %12.2f (%12.9f seconds/op)\n\n",
+   1/stats[_STAT_LINK].worst,stats[_STAT_LINK].worst);
+    }
+    /*
+     * unlink test
+     */
+    file_unlink(x);
+    if(verbose)
+    {
+       printf("unlink:  Files = %9lld ",stats[_STAT_UNLINK].counter);
+       printf("Total Time = %12.9f seconds\n", stats[_STAT_UNLINK].total_time);
+       printf("         Avg unlink(s)/sec    = %12.2f (%12.9f seconds/op)\n",
+   stats[_STAT_UNLINK].counter/stats[_STAT_UNLINK].total_time,
+   stats[_STAT_UNLINK].total_time/stats[_STAT_UNLINK].counter);
+       printf("         Best unlink(s)/sec   = %12.2f (%12.9f seconds/op)\n",
+   1/stats[_STAT_UNLINK].best,stats[_STAT_UNLINK].best);
+       printf("         Worst unlink(s)/sec  = %12.2f (%12.9f seconds/op)\n\n",
+   1/stats[_STAT_UNLINK].worst,stats[_STAT_UNLINK].worst);
+    }
 #endif
-	   /*
-	    * Delete test 
-	    */
-	   file_delete(x);
-	   if(verbose)
-	   {
-	      printf("delete:  Files = %9lld ",stats[_STAT_DELETE].counter);
-	      printf("Total Time = %12.9f seconds\n", stats[_STAT_DELETE].total_time);
-	      printf("         Avg delete(s)/sec    = %12.2f (%12.9f seconds/op)\n",
-			stats[_STAT_DELETE].counter/stats[_STAT_DELETE].total_time,
-			stats[_STAT_DELETE].total_time/stats[_STAT_DELETE].counter);
-	      printf("         Best delete(s)/sec   = %12.2f (%12.9f seconds/op)\n",
-			1/stats[_STAT_DELETE].best,stats[_STAT_DELETE].best);
-	      printf("         Worst delete(s)/sec  = %12.2f (%12.9f seconds/op)\n\n",
-			1/stats[_STAT_DELETE].worst,stats[_STAT_DELETE].worst);
-	   }
-	   if(!verbose)
-	   {
-	         printf("%c %4d %6.0f ",'A',x,stats[_STAT_DIR_CREATE].counter/stats[_STAT_DIR_CREATE].total_time);
-	         printf("%6.0f ",stats[_STAT_DIR_DELETE].counter/stats[_STAT_DIR_DELETE].total_time);
-	         printf("%6.0f ",stats[_STAT_CREATE].counter/stats[_STAT_CREATE].total_time);
-	         printf("%6.0f ",stats[_STAT_READ].counter/stats[_STAT_READ].total_time);
-	         printf("%6.0f ",stats[_STAT_WRITE].counter/stats[_STAT_WRITE].total_time);
-	         printf("%6.0f ",stats[_STAT_CLOSE].counter/stats[_STAT_CLOSE].total_time);
-	         printf("%6.0f ",stats[_STAT_STAT].counter/stats[_STAT_STAT].total_time);
-	         printf("%6.0f ",stats[_STAT_ACCESS].counter/stats[_STAT_ACCESS].total_time);
-	         printf("%6.0f ",stats[_STAT_CHMOD].counter/stats[_STAT_CHMOD].total_time);
-	         printf("%6.0f ",stats[_STAT_READDIR].counter/stats[_STAT_READDIR].total_time);
+    /*
+     * Delete test
+     */
+    file_delete(x);
+    if(verbose)
+    {
+       printf("delete:  Files = %9lld ",stats[_STAT_DELETE].counter);
+       printf("Total Time = %12.9f seconds\n", stats[_STAT_DELETE].total_time);
+       printf("         Avg delete(s)/sec    = %12.2f (%12.9f seconds/op)\n",
+   stats[_STAT_DELETE].counter/stats[_STAT_DELETE].total_time,
+   stats[_STAT_DELETE].total_time/stats[_STAT_DELETE].counter);
+       printf("         Best delete(s)/sec   = %12.2f (%12.9f seconds/op)\n",
+   1/stats[_STAT_DELETE].best,stats[_STAT_DELETE].best);
+       printf("         Worst delete(s)/sec  = %12.2f (%12.9f seconds/op)\n\n",
+   1/stats[_STAT_DELETE].worst,stats[_STAT_DELETE].worst);
+    }
+    if(!verbose)
+    {
+          printf("%c %4d %6.0f ",'A',x,stats[_STAT_DIR_CREATE].counter/stats[_STAT_DIR_CREATE].total_time);
+          printf("%6.0f ",stats[_STAT_DIR_DELETE].counter/stats[_STAT_DIR_DELETE].total_time);
+          printf("%6.0f ",stats[_STAT_CREATE].counter/stats[_STAT_CREATE].total_time);
+          printf("%6.0f ",stats[_STAT_READ].counter/stats[_STAT_READ].total_time);
+          printf("%6.0f ",stats[_STAT_WRITE].counter/stats[_STAT_WRITE].total_time);
+          printf("%6.0f ",stats[_STAT_CLOSE].counter/stats[_STAT_CLOSE].total_time);
+          printf("%6.0f ",stats[_STAT_STAT].counter/stats[_STAT_STAT].total_time);
+          printf("%6.0f ",stats[_STAT_ACCESS].counter/stats[_STAT_ACCESS].total_time);
+          printf("%6.0f ",stats[_STAT_CHMOD].counter/stats[_STAT_CHMOD].total_time);
+          printf("%6.0f ",stats[_STAT_READDIR].counter/stats[_STAT_READDIR].total_time);
 #ifndef Windows
-	         printf("%6.0f ",stats[_STAT_LINK].counter/stats[_STAT_LINK].total_time);
-	         printf("%6.0f ",stats[_STAT_UNLINK].counter/stats[_STAT_UNLINK].total_time);
+          printf("%6.0f ",stats[_STAT_LINK].counter/stats[_STAT_LINK].total_time);
+          printf("%6.0f ",stats[_STAT_UNLINK].counter/stats[_STAT_UNLINK].total_time);
 #endif
-	         printf("%6.0f ",stats[_STAT_DELETE].counter/stats[_STAT_DELETE].total_time);
-	         printf("%12d ",x*x*x);
-	         printf("\n");
-  	   	 fflush(stdout);
+          printf("%6.0f ",stats[_STAT_DELETE].counter/stats[_STAT_DELETE].total_time);
+          printf("%12d ",x*x*x);
+          printf("\n");
+      fflush(stdout);
 
-		if(best)
-		{
-	         printf("%c %4d %6.0f ",'B',x, 1/stats[_STAT_DIR_CREATE].best);
-	         printf("%6.0f ",1/stats[_STAT_DIR_DELETE].best);
-	         printf("%6.0f ",1/stats[_STAT_CREATE].best);
-	         printf("%6.0f ",1/stats[_STAT_READ].best);
-	         printf("%6.0f ",1/stats[_STAT_WRITE].best);
-	         printf("%6.0f ",1/stats[_STAT_CLOSE].best);
-	         printf("%6.0f ",1/stats[_STAT_STAT].best);
-	         printf("%6.0f ",1/stats[_STAT_ACCESS].best);
-	         printf("%6.0f ",1/stats[_STAT_CHMOD].best);
-	         printf("%6.0f ",1/stats[_STAT_READDIR].best);
+  if(best)
+  {
+          printf("%c %4d %6.0f ",'B',x, 1/stats[_STAT_DIR_CREATE].best);
+          printf("%6.0f ",1/stats[_STAT_DIR_DELETE].best);
+          printf("%6.0f ",1/stats[_STAT_CREATE].best);
+          printf("%6.0f ",1/stats[_STAT_READ].best);
+          printf("%6.0f ",1/stats[_STAT_WRITE].best);
+          printf("%6.0f ",1/stats[_STAT_CLOSE].best);
+          printf("%6.0f ",1/stats[_STAT_STAT].best);
+          printf("%6.0f ",1/stats[_STAT_ACCESS].best);
+          printf("%6.0f ",1/stats[_STAT_CHMOD].best);
+          printf("%6.0f ",1/stats[_STAT_READDIR].best);
 #ifndef Windows
-	         printf("%6.0f ",1/stats[_STAT_LINK].best);
-	         printf("%6.0f ",1/stats[_STAT_UNLINK].best);
+          printf("%6.0f ",1/stats[_STAT_LINK].best);
+          printf("%6.0f ",1/stats[_STAT_UNLINK].best);
 #endif
-	         printf("%6.0f ",1/stats[_STAT_DELETE].best);
-	         printf("%12d ",x*x*x);
-		 printf("\n");
-  	   	 fflush(stdout);
-		}
-		if(worst)
-		{
-	         printf("%c %4d %6.0f ",'W',x, 1/stats[_STAT_DIR_CREATE].worst);
-	         printf("%6.0f ",1/stats[_STAT_DIR_DELETE].worst);
-	         printf("%6.0f ",1/stats[_STAT_CREATE].worst);
-	         printf("%6.0f ",1/stats[_STAT_READ].worst);
-	         printf("%6.0f ",1/stats[_STAT_WRITE].worst);
-	         printf("%6.0f ",1/stats[_STAT_CLOSE].worst);
-	         printf("%6.0f ",1/stats[_STAT_STAT].worst);
-	         printf("%6.0f ",1/stats[_STAT_ACCESS].worst);
-	         printf("%6.0f ",1/stats[_STAT_CHMOD].worst);
-	         printf("%6.0f ",1/stats[_STAT_READDIR].worst);
+          printf("%6.0f ",1/stats[_STAT_DELETE].best);
+          printf("%12d ",x*x*x);
+   printf("\n");
+      fflush(stdout);
+  }
+  if(worst)
+  {
+          printf("%c %4d %6.0f ",'W',x, 1/stats[_STAT_DIR_CREATE].worst);
+          printf("%6.0f ",1/stats[_STAT_DIR_DELETE].worst);
+          printf("%6.0f ",1/stats[_STAT_CREATE].worst);
+          printf("%6.0f ",1/stats[_STAT_READ].worst);
+          printf("%6.0f ",1/stats[_STAT_WRITE].worst);
+          printf("%6.0f ",1/stats[_STAT_CLOSE].worst);
+          printf("%6.0f ",1/stats[_STAT_STAT].worst);
+          printf("%6.0f ",1/stats[_STAT_ACCESS].worst);
+          printf("%6.0f ",1/stats[_STAT_CHMOD].worst);
+          printf("%6.0f ",1/stats[_STAT_READDIR].worst);
 #ifndef Windows
-	         printf("%6.0f ",1/stats[_STAT_LINK].worst);
-	         printf("%6.0f ",1/stats[_STAT_UNLINK].worst);
+          printf("%6.0f ",1/stats[_STAT_LINK].worst);
+          printf("%6.0f ",1/stats[_STAT_UNLINK].worst);
 #endif
-	         printf("%6.0f ",1/stats[_STAT_DELETE].worst);
-	         printf("%12d ",x*x*x);
-		 printf("\n");
-  	   	 fflush(stdout);
-		}
-	   }
-	}
-	return(0);
+          printf("%6.0f ",1/stats[_STAT_DELETE].worst);
+          printf("%12d ",x*x*x);
+   printf("\n");
+      fflush(stdout);
+  }
+    }
+ }
+ return(0);
 }
 
-void 
+void
 dir_create(int x)
 {
-	int i,j;
-	int ret;
-	char buf[100];
-	stats[_STAT_DIR_CREATE].best=(double)99999.9;
-	stats[_STAT_DIR_CREATE].worst=(double)0.00000000;
-	chdir(thedir); /* change starting point */
-	for(i=0;i<x;i++)
-	{
-	  sprintf(buf,"iozone_L1_%d",i);
-	  stats[_STAT_DIR_CREATE].starttime=time_so_far();
-	  ret=mkdir(buf,0777);
-	  if(ret < 0)
-	  {
-	      printf("Mkdir failed\n");
-	      exit(1);
-	  }
-	  stats[_STAT_DIR_CREATE].endtime=time_so_far();
-	  stats[_STAT_DIR_CREATE].speed=stats[_STAT_DIR_CREATE].endtime-stats[_STAT_DIR_CREATE].starttime;
-	  if(stats[_STAT_DIR_CREATE].speed < (double)0.0)
-		stats[_STAT_DIR_CREATE].speed=(double)0.0;
-	  stats[_STAT_DIR_CREATE].total_time+=stats[_STAT_DIR_CREATE].speed;
-	  stats[_STAT_DIR_CREATE].counter++;
-	  if(stats[_STAT_DIR_CREATE].speed < stats[_STAT_DIR_CREATE].best)
-	 	stats[_STAT_DIR_CREATE].best=stats[_STAT_DIR_CREATE].speed;
-	  if(stats[_STAT_DIR_CREATE].speed > stats[_STAT_DIR_CREATE].worst)
-		 stats[_STAT_DIR_CREATE].worst=stats[_STAT_DIR_CREATE].speed;
-	  chdir(buf);
-	  for(j=0;j<x;j++)
-	  {
-	    sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
-	    stats[_STAT_DIR_CREATE].starttime=time_so_far();
-	    ret=mkdir(buf,0777);
-	    if(ret < 0)
-	    {
-	      printf("Mkdir failed\n");
-	      exit(1);
-	    }
-	    stats[_STAT_DIR_CREATE].endtime=time_so_far();
-	    stats[_STAT_DIR_CREATE].speed=stats[_STAT_DIR_CREATE].endtime-stats[_STAT_DIR_CREATE].starttime;
-	    if(stats[_STAT_DIR_CREATE].speed < (double)0.0)
-		stats[_STAT_DIR_CREATE].speed=(double) 0.0;
-	    stats[_STAT_DIR_CREATE].total_time+=stats[_STAT_DIR_CREATE].speed;
-	    stats[_STAT_DIR_CREATE].counter++;
-	    if(stats[_STAT_DIR_CREATE].speed < stats[_STAT_DIR_CREATE].best)
-		 stats[_STAT_DIR_CREATE].best=stats[_STAT_DIR_CREATE].speed;
-	    if(stats[_STAT_DIR_CREATE].speed > stats[_STAT_DIR_CREATE].worst)
-		 stats[_STAT_DIR_CREATE].worst=stats[_STAT_DIR_CREATE].speed;
-	    chdir(buf);
-	    chdir("..");
-	  }
-	  chdir("..");
-	}
+ int i,j;
+ int ret;
+ char buf[100];
+ stats[_STAT_DIR_CREATE].best=(double)99999.9;
+ stats[_STAT_DIR_CREATE].worst=(double)0.00000000;
+ chdir(thedir); /* change starting point */
+ for(i=0;i<x;i++)
+ {
+   sprintf(buf,"iozone_L1_%d",i);
+   stats[_STAT_DIR_CREATE].starttime=time_so_far();
+   ret=mkdir(buf,0777);
+   if(ret < 0)
+   {
+       printf("Mkdir failed\n");
+       exit(1);
+   }
+   stats[_STAT_DIR_CREATE].endtime=time_so_far();
+   stats[_STAT_DIR_CREATE].speed=stats[_STAT_DIR_CREATE].endtime-stats[_STAT_DIR_CREATE].starttime;
+   if(stats[_STAT_DIR_CREATE].speed < (double)0.0)
+  stats[_STAT_DIR_CREATE].speed=(double)0.0;
+   stats[_STAT_DIR_CREATE].total_time+=stats[_STAT_DIR_CREATE].speed;
+   stats[_STAT_DIR_CREATE].counter++;
+   if(stats[_STAT_DIR_CREATE].speed < stats[_STAT_DIR_CREATE].best)
+  stats[_STAT_DIR_CREATE].best=stats[_STAT_DIR_CREATE].speed;
+   if(stats[_STAT_DIR_CREATE].speed > stats[_STAT_DIR_CREATE].worst)
+   stats[_STAT_DIR_CREATE].worst=stats[_STAT_DIR_CREATE].speed;
+   chdir(buf);
+   for(j=0;j<x;j++)
+   {
+     sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
+     stats[_STAT_DIR_CREATE].starttime=time_so_far();
+     ret=mkdir(buf,0777);
+     if(ret < 0)
+     {
+       printf("Mkdir failed\n");
+       exit(1);
+     }
+     stats[_STAT_DIR_CREATE].endtime=time_so_far();
+     stats[_STAT_DIR_CREATE].speed=stats[_STAT_DIR_CREATE].endtime-stats[_STAT_DIR_CREATE].starttime;
+     if(stats[_STAT_DIR_CREATE].speed < (double)0.0)
+  stats[_STAT_DIR_CREATE].speed=(double) 0.0;
+     stats[_STAT_DIR_CREATE].total_time+=stats[_STAT_DIR_CREATE].speed;
+     stats[_STAT_DIR_CREATE].counter++;
+     if(stats[_STAT_DIR_CREATE].speed < stats[_STAT_DIR_CREATE].best)
+   stats[_STAT_DIR_CREATE].best=stats[_STAT_DIR_CREATE].speed;
+     if(stats[_STAT_DIR_CREATE].speed > stats[_STAT_DIR_CREATE].worst)
+   stats[_STAT_DIR_CREATE].worst=stats[_STAT_DIR_CREATE].speed;
+     chdir(buf);
+     chdir("..");
+   }
+   chdir("..");
+ }
 }
 
-void 
+void
 file_create(int x)
 {
-	int i,j,k;
-	int fd;
-	int ret;
-	char buf[100];
-	char value;
-	stats[_STAT_CREATE].best=(double)999999.9;
-	stats[_STAT_CREATE].worst=(double)0.0;
-	stats[_STAT_WRITE].best=(double)999999.9;
-	stats[_STAT_WRITE].worst=(double)0.0;
-	stats[_STAT_CLOSE].best=(double)999999.9;
-	stats[_STAT_CLOSE].worst=(double)0.0;
-	for(i=0;i<x;i++)
-	{
-	  sprintf(buf,"iozone_L1_%d",i);
-	  ret=mkdir(buf,0777);
-	  if(ret < 0)
-	  {
-	      printf("Mkdir failed\n");
-	      exit(1);
-	  }
-	  chdir(buf);
-	  for(j=0;j<x;j++)
-	  {
-	    sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
-	    ret=mkdir(buf,0777);
-	    if(ret < 0)
-	    {
-	      printf("Mkdir failed\n");
-	      exit(1);
-	    }
-	    chdir(buf);
-	    for(k=0;k<x;k++)
-	    {
-	      sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
-	      value=(char) ((i^j^k) & 0xff);
-	      memset(mbuffer,value,sz);
-	      stats[_STAT_CREATE].starttime=time_so_far();
-	      fd=creat(buf,O_RDWR|0600);
-	      if(fd < 0)
-	      {
-	        printf("Create failed\n");
-	        exit(1);
-	      }
-	      stats[_STAT_CREATE].endtime=time_so_far();
-	      stats[_STAT_CREATE].speed=stats[_STAT_CREATE].endtime-stats[_STAT_CREATE].starttime;
-	      if(stats[_STAT_CREATE].speed < (double)0.0)
-		stats[_STAT_CREATE].speed=(double)0.0;
-	      stats[_STAT_CREATE].total_time+=stats[_STAT_CREATE].speed;
-	      stats[_STAT_CREATE].counter++;
-	      if(stats[_STAT_CREATE].speed < stats[_STAT_CREATE].best)
-		 stats[_STAT_CREATE].best=stats[_STAT_CREATE].speed;
-	      if(stats[_STAT_CREATE].speed > stats[_STAT_CREATE].worst)
-		 stats[_STAT_CREATE].worst=stats[_STAT_CREATE].speed;
+ int i,j,k;
+ int fd;
+ int ret;
+ char buf[100];
+ char value;
+ stats[_STAT_CREATE].best=(double)999999.9;
+ stats[_STAT_CREATE].worst=(double)0.0;
+ stats[_STAT_WRITE].best=(double)999999.9;
+ stats[_STAT_WRITE].worst=(double)0.0;
+ stats[_STAT_CLOSE].best=(double)999999.9;
+ stats[_STAT_CLOSE].worst=(double)0.0;
+ for(i=0;i<x;i++)
+ {
+   sprintf(buf,"iozone_L1_%d",i);
+   ret=mkdir(buf,0777);
+   if(ret < 0)
+   {
+       printf("Mkdir failed\n");
+       exit(1);
+   }
+   chdir(buf);
+   for(j=0;j<x;j++)
+   {
+     sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
+     ret=mkdir(buf,0777);
+     if(ret < 0)
+     {
+       printf("Mkdir failed\n");
+       exit(1);
+     }
+     chdir(buf);
+     for(k=0;k<x;k++)
+     {
+       sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
+       value=(char) ((i^j^k) & 0xff);
+       memset(mbuffer,value,sz);
+       stats[_STAT_CREATE].starttime=time_so_far();
+       fd=creat(buf,O_RDWR|0600);
+       if(fd < 0)
+       {
+         printf("Create failed\n");
+         exit(1);
+       }
+       stats[_STAT_CREATE].endtime=time_so_far();
+       stats[_STAT_CREATE].speed=stats[_STAT_CREATE].endtime-stats[_STAT_CREATE].starttime;
+       if(stats[_STAT_CREATE].speed < (double)0.0)
+  stats[_STAT_CREATE].speed=(double)0.0;
+       stats[_STAT_CREATE].total_time+=stats[_STAT_CREATE].speed;
+       stats[_STAT_CREATE].counter++;
+       if(stats[_STAT_CREATE].speed < stats[_STAT_CREATE].best)
+   stats[_STAT_CREATE].best=stats[_STAT_CREATE].speed;
+       if(stats[_STAT_CREATE].speed > stats[_STAT_CREATE].worst)
+   stats[_STAT_CREATE].worst=stats[_STAT_CREATE].speed;
 
-	      stats[_STAT_WRITE].starttime=time_so_far();
-	      write(fd,mbuffer,sz);
-	      stats[_STAT_WRITE].endtime=time_so_far();
-	      stats[_STAT_WRITE].counter++;
-	      stats[_STAT_WRITE].speed=stats[_STAT_WRITE].endtime-stats[_STAT_WRITE].starttime;
-	      if(stats[_STAT_WRITE].speed < (double)0.0)
-		stats[_STAT_WRITE].speed=(double)0.0;
-	      stats[_STAT_WRITE].total_time+=stats[_STAT_WRITE].speed;
-	      if(stats[_STAT_WRITE].speed < stats[_STAT_WRITE].best)
-		 stats[_STAT_WRITE].best=stats[_STAT_WRITE].speed;
-	      if(stats[_STAT_WRITE].speed > stats[_STAT_WRITE].worst)
-		 stats[_STAT_WRITE].worst=stats[_STAT_WRITE].speed;
+       stats[_STAT_WRITE].starttime=time_so_far();
+       write(fd,mbuffer,sz);
+       stats[_STAT_WRITE].endtime=time_so_far();
+       stats[_STAT_WRITE].counter++;
+       stats[_STAT_WRITE].speed=stats[_STAT_WRITE].endtime-stats[_STAT_WRITE].starttime;
+       if(stats[_STAT_WRITE].speed < (double)0.0)
+  stats[_STAT_WRITE].speed=(double)0.0;
+       stats[_STAT_WRITE].total_time+=stats[_STAT_WRITE].speed;
+       if(stats[_STAT_WRITE].speed < stats[_STAT_WRITE].best)
+   stats[_STAT_WRITE].best=stats[_STAT_WRITE].speed;
+       if(stats[_STAT_WRITE].speed > stats[_STAT_WRITE].worst)
+   stats[_STAT_WRITE].worst=stats[_STAT_WRITE].speed;
 
-	      fsync(fd);
-	      stats[_STAT_CLOSE].starttime=time_so_far();
-	      close(fd);
-	      stats[_STAT_CLOSE].endtime=time_so_far();
-	      stats[_STAT_CLOSE].speed=stats[_STAT_CLOSE].endtime-stats[_STAT_CLOSE].starttime;
-	      if(stats[_STAT_CLOSE].speed < (double)0.0)
-		stats[_STAT_CLOSE].speed=(double)0.0;
-	      stats[_STAT_CLOSE].total_time+=stats[_STAT_CLOSE].speed;
-	      stats[_STAT_CLOSE].counter++;
-	      if(stats[_STAT_CLOSE].speed < stats[_STAT_CLOSE].best)
-		 stats[_STAT_CLOSE].best=stats[_STAT_CLOSE].speed;
-	      if(stats[_STAT_CLOSE].speed > stats[_STAT_CLOSE].worst)
-		 stats[_STAT_CLOSE].worst=stats[_STAT_CLOSE].speed;
-	    }
-	    chdir("..");
-	  }
-	  chdir("..");
-	}
+       fsync(fd);
+       stats[_STAT_CLOSE].starttime=time_so_far();
+       close(fd);
+       stats[_STAT_CLOSE].endtime=time_so_far();
+       stats[_STAT_CLOSE].speed=stats[_STAT_CLOSE].endtime-stats[_STAT_CLOSE].starttime;
+       if(stats[_STAT_CLOSE].speed < (double)0.0)
+  stats[_STAT_CLOSE].speed=(double)0.0;
+       stats[_STAT_CLOSE].total_time+=stats[_STAT_CLOSE].speed;
+       stats[_STAT_CLOSE].counter++;
+       if(stats[_STAT_CLOSE].speed < stats[_STAT_CLOSE].best)
+   stats[_STAT_CLOSE].best=stats[_STAT_CLOSE].speed;
+       if(stats[_STAT_CLOSE].speed > stats[_STAT_CLOSE].worst)
+   stats[_STAT_CLOSE].worst=stats[_STAT_CLOSE].speed;
+     }
+     chdir("..");
+   }
+   chdir("..");
+ }
 }
 
-void 
+void
 file_stat(int x)
 {
-	int i,j,k,y;
-	char buf[100];
-	struct stat mystat;
-	stats[_STAT_STAT].best=(double)99999.9;
-	stats[_STAT_STAT].worst=(double)0.00000000;
-	for(i=0;i<x;i++)
-	{
-	  sprintf(buf,"iozone_L1_%d",i);
-	  chdir(buf);
-	  for(j=0;j<x;j++)
-	  {
-	    sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
-	    chdir(buf);
-	    for(k=0;k<x;k++)
-	    {
-	      sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
-	      stats[_STAT_STAT].starttime=time_so_far();
-	      y=stat(buf,&mystat);
-	      if(y < 0)
-	      {
-	        printf("Stat failed\n");
-	        exit(1);
-	      }
-	      stats[_STAT_STAT].endtime=time_so_far();
-	      stats[_STAT_STAT].speed=stats[_STAT_STAT].endtime-stats[_STAT_STAT].starttime;
-	      if(stats[_STAT_STAT].speed < (double)0.0)
-		stats[_STAT_STAT].speed=(double)0.0;
-	      stats[_STAT_STAT].total_time+=stats[_STAT_STAT].speed;
-	      stats[_STAT_STAT].counter++;
-	      if(stats[_STAT_STAT].speed < stats[_STAT_STAT].best)
-		 stats[_STAT_STAT].best=stats[_STAT_STAT].speed;
-	      if(stats[_STAT_STAT].speed > stats[_STAT_STAT].worst)
-		 stats[_STAT_STAT].worst=stats[_STAT_STAT].speed;
-	    }
-	    chdir("..");
-	  }
-	  chdir("..");
-	}
+ int i,j,k,y;
+ char buf[100];
+ struct stat mystat;
+ stats[_STAT_STAT].best=(double)99999.9;
+ stats[_STAT_STAT].worst=(double)0.00000000;
+ for(i=0;i<x;i++)
+ {
+   sprintf(buf,"iozone_L1_%d",i);
+   chdir(buf);
+   for(j=0;j<x;j++)
+   {
+     sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
+     chdir(buf);
+     for(k=0;k<x;k++)
+     {
+       sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
+       stats[_STAT_STAT].starttime=time_so_far();
+       y=stat(buf,&mystat);
+       if(y < 0)
+       {
+         printf("Stat failed\n");
+         exit(1);
+       }
+       stats[_STAT_STAT].endtime=time_so_far();
+       stats[_STAT_STAT].speed=stats[_STAT_STAT].endtime-stats[_STAT_STAT].starttime;
+       if(stats[_STAT_STAT].speed < (double)0.0)
+  stats[_STAT_STAT].speed=(double)0.0;
+       stats[_STAT_STAT].total_time+=stats[_STAT_STAT].speed;
+       stats[_STAT_STAT].counter++;
+       if(stats[_STAT_STAT].speed < stats[_STAT_STAT].best)
+   stats[_STAT_STAT].best=stats[_STAT_STAT].speed;
+       if(stats[_STAT_STAT].speed > stats[_STAT_STAT].worst)
+   stats[_STAT_STAT].worst=stats[_STAT_STAT].speed;
+     }
+     chdir("..");
+   }
+   chdir("..");
+ }
 }
 
-void 
+void
 file_access(int x)
 {
-	int i,j,k,y;
-	char buf[100];
-	stats[_STAT_ACCESS].best=(double)999999.9;
-	stats[_STAT_ACCESS].worst=(double)0.0;
-	for(i=0;i<x;i++)
-	{
-	  sprintf(buf,"iozone_L1_%d",i);
-	  chdir(buf);
-	  for(j=0;j<x;j++)
-	  {
-	    sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
-	    chdir(buf);
-	    for(k=0;k<x;k++)
-	    {
-	      sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
-	      stats[_STAT_ACCESS].starttime=time_so_far();
-	      y=access(buf,W_OK|F_OK);
-	      if(y < 0)
-	      {
-	        printf("access failed\n");
-		perror("what");
-	        exit(1);
-	      }
-	      stats[_STAT_ACCESS].endtime=time_so_far();
-	      stats[_STAT_ACCESS].speed=stats[_STAT_ACCESS].endtime-stats[_STAT_ACCESS].starttime;
-	      if(stats[_STAT_ACCESS].speed < (double)0.0)
-		stats[_STAT_ACCESS].speed=(double)0.0;
-	      stats[_STAT_ACCESS].total_time+=stats[_STAT_ACCESS].speed;
-	      stats[_STAT_ACCESS].counter++;
-	      if(stats[_STAT_ACCESS].speed < stats[_STAT_ACCESS].best)
-		 stats[_STAT_ACCESS].best=stats[_STAT_ACCESS].speed;
-	      if(stats[_STAT_ACCESS].speed > stats[_STAT_ACCESS].worst)
-		 stats[_STAT_ACCESS].worst=stats[_STAT_ACCESS].speed;
-	    }
-	    chdir("..");
-	  }
-	  chdir("..");
-	}
+ int i,j,k,y;
+ char buf[100];
+ stats[_STAT_ACCESS].best=(double)999999.9;
+ stats[_STAT_ACCESS].worst=(double)0.0;
+ for(i=0;i<x;i++)
+ {
+   sprintf(buf,"iozone_L1_%d",i);
+   chdir(buf);
+   for(j=0;j<x;j++)
+   {
+     sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
+     chdir(buf);
+     for(k=0;k<x;k++)
+     {
+       sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
+       stats[_STAT_ACCESS].starttime=time_so_far();
+       y=access(buf,W_OK|F_OK);
+       if(y < 0)
+       {
+         printf("access failed\n");
+  perror("what");
+         exit(1);
+       }
+       stats[_STAT_ACCESS].endtime=time_so_far();
+       stats[_STAT_ACCESS].speed=stats[_STAT_ACCESS].endtime-stats[_STAT_ACCESS].starttime;
+       if(stats[_STAT_ACCESS].speed < (double)0.0)
+  stats[_STAT_ACCESS].speed=(double)0.0;
+       stats[_STAT_ACCESS].total_time+=stats[_STAT_ACCESS].speed;
+       stats[_STAT_ACCESS].counter++;
+       if(stats[_STAT_ACCESS].speed < stats[_STAT_ACCESS].best)
+   stats[_STAT_ACCESS].best=stats[_STAT_ACCESS].speed;
+       if(stats[_STAT_ACCESS].speed > stats[_STAT_ACCESS].worst)
+   stats[_STAT_ACCESS].worst=stats[_STAT_ACCESS].speed;
+     }
+     chdir("..");
+   }
+   chdir("..");
+ }
 }
 
-void 
+void
 file_chmod(int x)
 {
-	int i,j,k,y;
-	char buf[100];
-	stats[_STAT_CHMOD].best=(double)999999.9;
-	stats[_STAT_CHMOD].worst=(double)0.0;
-	for(i=0;i<x;i++)
-	{
-	  sprintf(buf,"iozone_L1_%d",i);
-	  chdir(buf);
-	  for(j=0;j<x;j++)
-	  {
-	    sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
-	    chdir(buf);
-	    for(k=0;k<x;k++)
-	    {
-	      sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
-	      stats[_STAT_CHMOD].starttime=time_so_far();
-	      y=chmod(buf,0666);
-	      if(y < 0)
-	      {
-	        printf("chmod failed\n");
-		perror("what");
-	        exit(1);
-	      }
-	      stats[_STAT_CHMOD].endtime=time_so_far();
-	      stats[_STAT_CHMOD].speed=stats[_STAT_CHMOD].endtime-stats[_STAT_CHMOD].starttime;
-	      if(stats[_STAT_CHMOD].speed < (double)0.0)
-		stats[_STAT_CHMOD].speed=(double)0.0;
-	      stats[_STAT_CHMOD].total_time+=stats[_STAT_CHMOD].speed;
-	      stats[_STAT_CHMOD].counter++;
-	      if(stats[_STAT_CHMOD].speed < stats[_STAT_CHMOD].best)
-		 stats[_STAT_CHMOD].best=stats[_STAT_CHMOD].speed;
-	      if(stats[_STAT_CHMOD].speed > stats[_STAT_CHMOD].worst)
-		 stats[_STAT_CHMOD].worst=stats[_STAT_CHMOD].speed;
-	    }
-	    chdir("..");
-	  }
-	  chdir("..");
-	}
+ int i,j,k,y;
+ char buf[100];
+ stats[_STAT_CHMOD].best=(double)999999.9;
+ stats[_STAT_CHMOD].worst=(double)0.0;
+ for(i=0;i<x;i++)
+ {
+   sprintf(buf,"iozone_L1_%d",i);
+   chdir(buf);
+   for(j=0;j<x;j++)
+   {
+     sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
+     chdir(buf);
+     for(k=0;k<x;k++)
+     {
+       sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
+       stats[_STAT_CHMOD].starttime=time_so_far();
+       y=chmod(buf,0666);
+       if(y < 0)
+       {
+         printf("chmod failed\n");
+  perror("what");
+         exit(1);
+       }
+       stats[_STAT_CHMOD].endtime=time_so_far();
+       stats[_STAT_CHMOD].speed=stats[_STAT_CHMOD].endtime-stats[_STAT_CHMOD].starttime;
+       if(stats[_STAT_CHMOD].speed < (double)0.0)
+  stats[_STAT_CHMOD].speed=(double)0.0;
+       stats[_STAT_CHMOD].total_time+=stats[_STAT_CHMOD].speed;
+       stats[_STAT_CHMOD].counter++;
+       if(stats[_STAT_CHMOD].speed < stats[_STAT_CHMOD].best)
+   stats[_STAT_CHMOD].best=stats[_STAT_CHMOD].speed;
+       if(stats[_STAT_CHMOD].speed > stats[_STAT_CHMOD].worst)
+   stats[_STAT_CHMOD].worst=stats[_STAT_CHMOD].speed;
+     }
+     chdir("..");
+   }
+   chdir("..");
+ }
 }
 
-void 
+void
 file_readdir(int x)
 {
-	int i,j,ret1;
-	char buf[100];
-	DIR *dirbuf;
-	struct dirent *y;
-	stats[_STAT_READDIR].best=(double)999999.9;
-	stats[_STAT_READDIR].worst=(double)0.0;
-	for(i=0;i<x;i++)
-	{
-	  sprintf(buf,"iozone_L1_%d",i);
-	  chdir(buf);
-	  for(j=0;j<x;j++)
-	  {
-	    sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
-	    chdir(buf);
-	    dirbuf=opendir(".");
-	    if(dirbuf==0)
-	    {
-		printf("opendir failed\n");
-		exit(1);
-	    }
-	    stats[_STAT_READDIR].starttime=time_so_far();
-	    y=readdir(dirbuf);
-	    if(y == 0)
-	    {
-	      printf("readdir failed\n");
-	      exit(1);
-	    }
-	    stats[_STAT_READDIR].endtime=time_so_far();
-	    stats[_STAT_READDIR].speed=stats[_STAT_READDIR].endtime-stats[_STAT_READDIR].starttime;
-	      if(stats[_STAT_READDIR].speed < (double)0.0)
-		stats[_STAT_READDIR].speed=(double)0.0;
-	    stats[_STAT_READDIR].total_time+=stats[_STAT_READDIR].speed;
-	    stats[_STAT_READDIR].counter++;
-	    if(stats[_STAT_READDIR].speed < stats[_STAT_READDIR].best)
-		 stats[_STAT_READDIR].best=stats[_STAT_READDIR].speed;
-	    if(stats[_STAT_READDIR].speed > stats[_STAT_READDIR].worst)
-		 stats[_STAT_READDIR].worst=stats[_STAT_READDIR].speed;
-	    ret1=closedir(dirbuf);
-	    if(ret1 < 0)
-	    {
-	      printf("closedir failed\n");
-	      exit(1);
-	    }
-	    chdir("..");
-	  }
-	  chdir("..");
-	}
+ int i,j,ret1;
+ char buf[100];
+ DIR *dirbuf;
+ struct dirent *y;
+ stats[_STAT_READDIR].best=(double)999999.9;
+ stats[_STAT_READDIR].worst=(double)0.0;
+ for(i=0;i<x;i++)
+ {
+   sprintf(buf,"iozone_L1_%d",i);
+   chdir(buf);
+   for(j=0;j<x;j++)
+   {
+     sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
+     chdir(buf);
+     dirbuf=opendir(".");
+     if(dirbuf==0)
+     {
+  printf("opendir failed\n");
+  exit(1);
+     }
+     stats[_STAT_READDIR].starttime=time_so_far();
+     y=readdir(dirbuf);
+     if(y == 0)
+     {
+       printf("readdir failed\n");
+       exit(1);
+     }
+     stats[_STAT_READDIR].endtime=time_so_far();
+     stats[_STAT_READDIR].speed=stats[_STAT_READDIR].endtime-stats[_STAT_READDIR].starttime;
+       if(stats[_STAT_READDIR].speed < (double)0.0)
+  stats[_STAT_READDIR].speed=(double)0.0;
+     stats[_STAT_READDIR].total_time+=stats[_STAT_READDIR].speed;
+     stats[_STAT_READDIR].counter++;
+     if(stats[_STAT_READDIR].speed < stats[_STAT_READDIR].best)
+   stats[_STAT_READDIR].best=stats[_STAT_READDIR].speed;
+     if(stats[_STAT_READDIR].speed > stats[_STAT_READDIR].worst)
+   stats[_STAT_READDIR].worst=stats[_STAT_READDIR].speed;
+     ret1=closedir(dirbuf);
+     if(ret1 < 0)
+     {
+       printf("closedir failed\n");
+       exit(1);
+     }
+     chdir("..");
+   }
+   chdir("..");
+ }
 }
 
-void 
+void
 file_link(int x)
 {
-	int i,j,k,y;
-	char buf[100];
-	char bufn[100];
-	stats[_STAT_LINK].best=(double)999999.9;
-	stats[_STAT_LINK].worst=(double)0.0;
-	for(i=0;i<x;i++)
-	{
-	  sprintf(buf,"iozone_L1_%d",i);
-	  chdir(buf);
-	  for(j=0;j<x;j++)
-	  {
-	    sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
-	    chdir(buf);
-	    for(k=0;k<x;k++)
-	    {
-	      sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
-	      sprintf(bufn,"iozone_file_%d_%d_%dL",i,j,k);
-	      stats[_STAT_LINK].starttime=time_so_far();
-	      y=link(buf,bufn);
-	      if(y < 0)
-	      {
-	        printf("Link failed\n");
-	        exit(1);
-	      }
-	      stats[_STAT_LINK].endtime=time_so_far();
-	      stats[_STAT_LINK].speed=stats[_STAT_LINK].endtime-stats[_STAT_LINK].starttime;
-	      if(stats[_STAT_LINK].speed < (double)0.0)
-		stats[_STAT_LINK].speed=(double)0.0;
-	      stats[_STAT_LINK].total_time+=stats[_STAT_LINK].speed;
-	      stats[_STAT_LINK].counter++;
-	      if(stats[_STAT_LINK].speed < stats[_STAT_LINK].best)
-		 stats[_STAT_LINK].best=stats[_STAT_LINK].speed;
-	      if(stats[_STAT_LINK].speed > stats[_STAT_LINK].worst)
-		 stats[_STAT_LINK].worst=stats[_STAT_LINK].speed;
-	    }
-	    chdir("..");
-	  }
-	  chdir("..");
-	}
+ int i,j,k,y;
+ char buf[100];
+ char bufn[100];
+ stats[_STAT_LINK].best=(double)999999.9;
+ stats[_STAT_LINK].worst=(double)0.0;
+ for(i=0;i<x;i++)
+ {
+   sprintf(buf,"iozone_L1_%d",i);
+   chdir(buf);
+   for(j=0;j<x;j++)
+   {
+     sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
+     chdir(buf);
+     for(k=0;k<x;k++)
+     {
+       sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
+       sprintf(bufn,"iozone_file_%d_%d_%dL",i,j,k);
+       stats[_STAT_LINK].starttime=time_so_far();
+       y=link(buf,bufn);
+       if(y < 0)
+       {
+         printf("Link failed\n");
+         exit(1);
+       }
+       stats[_STAT_LINK].endtime=time_so_far();
+       stats[_STAT_LINK].speed=stats[_STAT_LINK].endtime-stats[_STAT_LINK].starttime;
+       if(stats[_STAT_LINK].speed < (double)0.0)
+  stats[_STAT_LINK].speed=(double)0.0;
+       stats[_STAT_LINK].total_time+=stats[_STAT_LINK].speed;
+       stats[_STAT_LINK].counter++;
+       if(stats[_STAT_LINK].speed < stats[_STAT_LINK].best)
+   stats[_STAT_LINK].best=stats[_STAT_LINK].speed;
+       if(stats[_STAT_LINK].speed > stats[_STAT_LINK].worst)
+   stats[_STAT_LINK].worst=stats[_STAT_LINK].speed;
+     }
+     chdir("..");
+   }
+   chdir("..");
+ }
 }
 
-void 
+void
 file_unlink(int x)
 {
-	int i,j,k,y;
-	char buf[100];
-	char bufn[100];
-	stats[_STAT_UNLINK].best=(double)999999.9;
-	stats[_STAT_UNLINK].worst=(double)0.0;
-	for(i=0;i<x;i++)
-	{
-	  sprintf(buf,"iozone_L1_%d",i);
-	  chdir(buf);
-	  for(j=0;j<x;j++)
-	  {
-	    sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
-	    chdir(buf);
-	    for(k=0;k<x;k++)
-	    {
-	      sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
-	      sprintf(bufn,"iozone_file_%d_%d_%dL",i,j,k);
-	      stats[_STAT_UNLINK].starttime=time_so_far();
-	      y=unlink(bufn);
-	      if(y < 0)
-	      {
-	        printf("Unlink failed\n");
-	        exit(1);
-	      }
-	      stats[_STAT_UNLINK].endtime=time_so_far();
-	      stats[_STAT_UNLINK].speed=stats[_STAT_UNLINK].endtime-stats[_STAT_UNLINK].starttime;
-	      if(stats[_STAT_UNLINK].speed < (double)0.0)
-		stats[_STAT_UNLINK].speed=(double)0.0;
-	      stats[_STAT_UNLINK].total_time+=stats[_STAT_UNLINK].speed;
-	      stats[_STAT_UNLINK].counter++;
-	      if(stats[_STAT_UNLINK].speed < stats[_STAT_UNLINK].best)
-		 stats[_STAT_UNLINK].best=stats[_STAT_UNLINK].speed;
-	      if(stats[_STAT_UNLINK].speed > stats[_STAT_UNLINK].worst)
-		 stats[_STAT_UNLINK].worst=stats[_STAT_UNLINK].speed;
-	    }
-	    chdir("..");
-	  }
-	  chdir("..");
-	}
+ int i,j,k,y;
+ char buf[100];
+ char bufn[100];
+ stats[_STAT_UNLINK].best=(double)999999.9;
+ stats[_STAT_UNLINK].worst=(double)0.0;
+ for(i=0;i<x;i++)
+ {
+   sprintf(buf,"iozone_L1_%d",i);
+   chdir(buf);
+   for(j=0;j<x;j++)
+   {
+     sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
+     chdir(buf);
+     for(k=0;k<x;k++)
+     {
+       sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
+       sprintf(bufn,"iozone_file_%d_%d_%dL",i,j,k);
+       stats[_STAT_UNLINK].starttime=time_so_far();
+       y=unlink(bufn);
+       if(y < 0)
+       {
+         printf("Unlink failed\n");
+         exit(1);
+       }
+       stats[_STAT_UNLINK].endtime=time_so_far();
+       stats[_STAT_UNLINK].speed=stats[_STAT_UNLINK].endtime-stats[_STAT_UNLINK].starttime;
+       if(stats[_STAT_UNLINK].speed < (double)0.0)
+  stats[_STAT_UNLINK].speed=(double)0.0;
+       stats[_STAT_UNLINK].total_time+=stats[_STAT_UNLINK].speed;
+       stats[_STAT_UNLINK].counter++;
+       if(stats[_STAT_UNLINK].speed < stats[_STAT_UNLINK].best)
+   stats[_STAT_UNLINK].best=stats[_STAT_UNLINK].speed;
+       if(stats[_STAT_UNLINK].speed > stats[_STAT_UNLINK].worst)
+   stats[_STAT_UNLINK].worst=stats[_STAT_UNLINK].speed;
+     }
+     chdir("..");
+   }
+   chdir("..");
+ }
 }
 
 void
 dir_delete(int x)
 {
-	int i,j;
-	char buf[100];
-	stats[_STAT_DIR_DELETE].best=(double)99999.9;
-	stats[_STAT_DIR_DELETE].worst=(double)0.00000000;
-	for(i=0;i<x;i++)
-	{
-	  sprintf(buf,"iozone_L1_%d",i);
-	  chdir(buf);
-	  for(j=0;j<x;j++)
-	  {
-	    sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
-	    chdir(buf);
-	    chdir("..");
-	    sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
-	    stats[_STAT_DIR_DELETE].starttime=time_so_far();
-	    rmdir(buf);
-	    stats[_STAT_DIR_DELETE].endtime=time_so_far();
-	    stats[_STAT_DIR_DELETE].speed=stats[_STAT_DIR_DELETE].endtime-stats[_STAT_DIR_DELETE].starttime;
-	      if(stats[_STAT_DIR_DELETE].speed < (double)0.0)
-		stats[_STAT_DIR_DELETE].speed=(double)0.0;
-	    stats[_STAT_DIR_DELETE].total_time+=stats[_STAT_DIR_DELETE].speed;
-	    stats[_STAT_DIR_DELETE].counter++;
-	    if(stats[_STAT_DIR_DELETE].speed < stats[_STAT_DIR_DELETE].best)
-		 stats[_STAT_DIR_DELETE].best=stats[_STAT_DIR_DELETE].speed;
-	    if(stats[_STAT_DIR_DELETE].speed > stats[_STAT_DIR_DELETE].worst)
-		 stats[_STAT_DIR_DELETE].worst=stats[_STAT_DIR_DELETE].speed;
-	  }
-	  chdir("..");
-	  sprintf(buf,"iozone_L1_%d",i);
-	  stats[_STAT_DIR_DELETE].starttime=time_so_far();
-	  rmdir(buf);
-	  stats[_STAT_DIR_DELETE].endtime=time_so_far();
-	  stats[_STAT_DIR_DELETE].speed=stats[_STAT_DIR_DELETE].endtime-stats[_STAT_DIR_DELETE].starttime;
-	  if(stats[_STAT_DIR_DELETE].speed < (double)0.0)
-		stats[_STAT_DIR_DELETE].speed=(double)0.0;
-	  stats[_STAT_DIR_DELETE].total_time+=stats[_STAT_DIR_DELETE].speed;
-	  stats[_STAT_DIR_DELETE].counter++;
-	  if(stats[_STAT_DIR_DELETE].speed < stats[_STAT_DIR_DELETE].best)
-		 stats[_STAT_DIR_DELETE].best=stats[_STAT_DIR_DELETE].speed;
-	  if(stats[_STAT_DIR_DELETE].speed > stats[_STAT_DIR_DELETE].worst)
-		 stats[_STAT_DIR_DELETE].worst=stats[_STAT_DIR_DELETE].speed;
-	}
+ int i,j;
+ char buf[100];
+ stats[_STAT_DIR_DELETE].best=(double)99999.9;
+ stats[_STAT_DIR_DELETE].worst=(double)0.00000000;
+ for(i=0;i<x;i++)
+ {
+   sprintf(buf,"iozone_L1_%d",i);
+   chdir(buf);
+   for(j=0;j<x;j++)
+   {
+     sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
+     chdir(buf);
+     chdir("..");
+     sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
+     stats[_STAT_DIR_DELETE].starttime=time_so_far();
+     rmdir(buf);
+     stats[_STAT_DIR_DELETE].endtime=time_so_far();
+     stats[_STAT_DIR_DELETE].speed=stats[_STAT_DIR_DELETE].endtime-stats[_STAT_DIR_DELETE].starttime;
+       if(stats[_STAT_DIR_DELETE].speed < (double)0.0)
+  stats[_STAT_DIR_DELETE].speed=(double)0.0;
+     stats[_STAT_DIR_DELETE].total_time+=stats[_STAT_DIR_DELETE].speed;
+     stats[_STAT_DIR_DELETE].counter++;
+     if(stats[_STAT_DIR_DELETE].speed < stats[_STAT_DIR_DELETE].best)
+   stats[_STAT_DIR_DELETE].best=stats[_STAT_DIR_DELETE].speed;
+     if(stats[_STAT_DIR_DELETE].speed > stats[_STAT_DIR_DELETE].worst)
+   stats[_STAT_DIR_DELETE].worst=stats[_STAT_DIR_DELETE].speed;
+   }
+   chdir("..");
+   sprintf(buf,"iozone_L1_%d",i);
+   stats[_STAT_DIR_DELETE].starttime=time_so_far();
+   rmdir(buf);
+   stats[_STAT_DIR_DELETE].endtime=time_so_far();
+   stats[_STAT_DIR_DELETE].speed=stats[_STAT_DIR_DELETE].endtime-stats[_STAT_DIR_DELETE].starttime;
+   if(stats[_STAT_DIR_DELETE].speed < (double)0.0)
+  stats[_STAT_DIR_DELETE].speed=(double)0.0;
+   stats[_STAT_DIR_DELETE].total_time+=stats[_STAT_DIR_DELETE].speed;
+   stats[_STAT_DIR_DELETE].counter++;
+   if(stats[_STAT_DIR_DELETE].speed < stats[_STAT_DIR_DELETE].best)
+   stats[_STAT_DIR_DELETE].best=stats[_STAT_DIR_DELETE].speed;
+   if(stats[_STAT_DIR_DELETE].speed > stats[_STAT_DIR_DELETE].worst)
+   stats[_STAT_DIR_DELETE].worst=stats[_STAT_DIR_DELETE].speed;
+ }
 }
 
 void
 file_delete(int x)
 {
-	int i,j,k;
-	char buf[100];
-	stats[_STAT_DELETE].best=(double)999999.9;
-	stats[_STAT_DELETE].worst=(double)0.0;
-	for(i=0;i<x;i++)
-	{
-	  sprintf(buf,"iozone_L1_%d",i);
-	  chdir(buf);
-	  for(j=0;j<x;j++)
-	  {
-	    sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
-	    chdir(buf);
-	    for(k=0;k<x;k++)
-	    {
-	      sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
-	      stats[_STAT_DELETE].starttime=time_so_far();
-	      unlink(buf);
-	      stats[_STAT_DELETE].endtime=time_so_far();
-	      stats[_STAT_DELETE].speed=stats[_STAT_DELETE].endtime-stats[_STAT_DELETE].starttime;
-	      if(stats[_STAT_DELETE].speed < (double)0.0)
-		stats[_STAT_DELETE].speed=(double)0.0;
-	      stats[_STAT_DELETE].total_time+=stats[_STAT_DELETE].speed;
-	      stats[_STAT_DELETE].counter++;
-	      if(stats[_STAT_DELETE].speed < stats[_STAT_DELETE].best)
-		 stats[_STAT_DELETE].best=stats[_STAT_DELETE].speed;
-	      if(stats[_STAT_DELETE].speed > stats[_STAT_DELETE].worst)
-		 stats[_STAT_DELETE].worst=stats[_STAT_DELETE].speed;
-	    }
-	    chdir("..");
-	    sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
-	    rmdir(buf);
-	  }
-	  chdir("..");
-	  sprintf(buf,"iozone_L1_%d",i);
-	  rmdir(buf);
-	}
+ int i,j,k;
+ char buf[100];
+ stats[_STAT_DELETE].best=(double)999999.9;
+ stats[_STAT_DELETE].worst=(double)0.0;
+ for(i=0;i<x;i++)
+ {
+   sprintf(buf,"iozone_L1_%d",i);
+   chdir(buf);
+   for(j=0;j<x;j++)
+   {
+     sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
+     chdir(buf);
+     for(k=0;k<x;k++)
+     {
+       sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
+       stats[_STAT_DELETE].starttime=time_so_far();
+       unlink(buf);
+       stats[_STAT_DELETE].endtime=time_so_far();
+       stats[_STAT_DELETE].speed=stats[_STAT_DELETE].endtime-stats[_STAT_DELETE].starttime;
+       if(stats[_STAT_DELETE].speed < (double)0.0)
+  stats[_STAT_DELETE].speed=(double)0.0;
+       stats[_STAT_DELETE].total_time+=stats[_STAT_DELETE].speed;
+       stats[_STAT_DELETE].counter++;
+       if(stats[_STAT_DELETE].speed < stats[_STAT_DELETE].best)
+   stats[_STAT_DELETE].best=stats[_STAT_DELETE].speed;
+       if(stats[_STAT_DELETE].speed > stats[_STAT_DELETE].worst)
+   stats[_STAT_DELETE].worst=stats[_STAT_DELETE].speed;
+     }
+     chdir("..");
+     sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
+     rmdir(buf);
+   }
+   chdir("..");
+   sprintf(buf,"iozone_L1_%d",i);
+   rmdir(buf);
+ }
 }
-void 
+void
 file_read(int x)
 {
-	int i,j,k,y,fd;
-	char buf[100];
-	char value;
-	stats[_STAT_READ].best=(double)99999.9;
-	stats[_STAT_READ].worst=(double)0.00000000;
-	for(i=0;i<x;i++)
-	{
-	  sprintf(buf,"iozone_L1_%d",i);
-	  chdir(buf);
-	  for(j=0;j<x;j++)
-	  {
-	    sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
-	    chdir(buf);
-	    for(k=0;k<x;k++)
-	    {
-	      sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
-	      value=(char)((i^j^k) &0xff);
-	      fd=open(buf,O_RDONLY);
-	      if(fd < 0)
-	      {
-	        printf("Open failed\n");
-	        exit(1);
-	      }
-	      stats[_STAT_READ].starttime=time_so_far();
-	      y=read(fd,mbuffer,sz);
-	      if(y < 0)
-	      {
-	        printf("Read failed\n");
-	        exit(1);
-	      }
-	      if(validate(mbuffer,sz, value) !=0)
-		printf("Error: Data Mis-compare\n");;
-	      stats[_STAT_READ].endtime=time_so_far();
-	      close(fd);
-	      stats[_STAT_READ].speed=stats[_STAT_READ].endtime-stats[_STAT_READ].starttime;
-	      if(stats[_STAT_READ].speed < (double)0.0)
-		stats[_STAT_READ].speed=(double)0.0;
-	      stats[_STAT_READ].total_time+=stats[_STAT_READ].speed;
-	      stats[_STAT_READ].counter++;
-	      if(stats[_STAT_READ].speed < stats[_STAT_READ].best)
-		 stats[_STAT_READ].best=stats[_STAT_READ].speed;
-	      if(stats[_STAT_READ].speed > stats[_STAT_READ].worst)
-		 stats[_STAT_READ].worst=stats[_STAT_READ].speed;
-	    }
-	    chdir("..");
-	  }
-	  chdir("..");
-	}
+ int i,j,k,y,fd;
+ char buf[100];
+ char value;
+ stats[_STAT_READ].best=(double)99999.9;
+ stats[_STAT_READ].worst=(double)0.00000000;
+ for(i=0;i<x;i++)
+ {
+   sprintf(buf,"iozone_L1_%d",i);
+   chdir(buf);
+   for(j=0;j<x;j++)
+   {
+     sprintf(buf,"iozone_L1_%d_L2_%d",i,j);
+     chdir(buf);
+     for(k=0;k<x;k++)
+     {
+       sprintf(buf,"iozone_file_%d_%d_%d",i,j,k);
+       value=(char)((i^j^k) &0xff);
+       fd=open(buf,O_RDONLY);
+       if(fd < 0)
+       {
+         printf("Open failed\n");
+         exit(1);
+       }
+       stats[_STAT_READ].starttime=time_so_far();
+       y=read(fd,mbuffer,sz);
+       if(y < 0)
+       {
+         printf("Read failed\n");
+         exit(1);
+       }
+       if(validate(mbuffer,sz, value) !=0)
+  printf("Error: Data Mis-compare\n");;
+       stats[_STAT_READ].endtime=time_so_far();
+       close(fd);
+       stats[_STAT_READ].speed=stats[_STAT_READ].endtime-stats[_STAT_READ].starttime;
+       if(stats[_STAT_READ].speed < (double)0.0)
+  stats[_STAT_READ].speed=(double)0.0;
+       stats[_STAT_READ].total_time+=stats[_STAT_READ].speed;
+       stats[_STAT_READ].counter++;
+       if(stats[_STAT_READ].speed < stats[_STAT_READ].best)
+   stats[_STAT_READ].best=stats[_STAT_READ].speed;
+       if(stats[_STAT_READ].speed > stats[_STAT_READ].worst)
+   stats[_STAT_READ].worst=stats[_STAT_READ].speed;
+     }
+     chdir("..");
+   }
+   chdir("..");
+ }
 }
 
 /************************************************************************/
-/* Time measurement routines. Thanks to Iozone :-)			*/
+/* Time measurement routines. Thanks to Iozone :-)   */
 /************************************************************************/
 
 #ifdef HAVE_ANSIC_C
@@ -1052,10 +1052,10 @@ time_so_far()
 #ifdef Windows
    LARGE_INTEGER freq,counter;
    double wintime,bigcounter;
-	/* For Windows the time_of_day() is useless. It increments in 55 milli second   */
-	/* increments. By using the Win32api one can get access to the high performance */
-	/* measurement interfaces. With this one can get back into the 8 to 9  		*/
-	/* microsecond resolution.							*/
+ /* For Windows the time_of_day() is useless. It increments in 55 milli second   */
+ /* increments. By using the Win32api one can get access to the high performance */
+ /* measurement interfaces. With this one can get back into the 8 to 9 */
+ /* microsecond resolution.       */
         QueryPerformanceFrequency(&freq);
         QueryPerformanceCounter(&counter);
         bigcounter=(double)counter.HighPart *(double)0xffffffff +
@@ -1084,19 +1084,19 @@ time_so_far()
 void
 splash(void)
 {
-	printf("\n");
-	printf("     --------------------------------------\n");
-	printf("     |              Fileop                | \n");
-	printf("     | %s          | \n",version);
-	printf("     |                                    | \n");
-	printf("     |                by                  |\n");
-	printf("     |                                    | \n");
-	printf("     |             Don Capps              |\n");
-	printf("     --------------------------------------\n");
-	printf("\n");
+ printf("\n");
+ printf("     --------------------------------------\n");
+ printf("     |              Fileop                | \n");
+ printf("     | %s          | \n",version);
+ printf("     |                                    | \n");
+ printf("     |                by                  |\n");
+ printf("     |                                    | \n");
+ printf("     |             Don Capps              |\n");
+ printf("     --------------------------------------\n");
+ printf("\n");
 }
 
-void 
+void
 usage(void)
 {
   splash();
@@ -1131,25 +1131,25 @@ usage(void)
 void
 clear_stats()
 {
-	int i;
-	for(i=0;i<_NUM_STATS;i++)
-		bzero((char *)&stats[i],sizeof(struct stat_struct));
+ int i;
+ for(i=0;i<_NUM_STATS;i++)
+  bzero((char *)&stats[i],sizeof(struct stat_struct));
 }
 int
 validate(char *buffer, int size, char value)
 {
-	register int i;
-	register char *cp;
-	register int size1;
-	register char v1;
-	v1=value;
-	cp = buffer;
-	size1=size;
-	for(i=0;i<size;i++)
-	{
-		if(*cp++ != v1)
-			return(1);
-	}
-	return(0);
+ register int i;
+ register char *cp;
+ register int size1;
+ register char v1;
+ v1=value;
+ cp = buffer;
+ size1=size;
+ for(i=0;i<size;i++)
+ {
+  if(*cp++ != v1)
+   return(1);
+ }
+ return(0);
 }
 

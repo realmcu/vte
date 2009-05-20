@@ -1,23 +1,23 @@
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2007, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/Core ID                  Date          Number     Description of Changes
 -------------------------   ------------    -----------  -------------------------------------------
 A.Ozerov/b00320              29/05/2007      ENGR37685   Initial version
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
 #include <stdlib.h>
@@ -34,9 +34,9 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "systest4_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 #define MAX_THREADS 5
 
 /* MMC/SD environment */
@@ -44,26 +44,26 @@ Portability: ARM GCC
 #define MMC_SD_BLOCK_COUNT       0x100
 #define MMC_SD_OFFSET            0x100
 
-/*==================================================================================================
+/*======================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
-typedef struct 
-{               
+======================*/
+typedef struct
+{
         pthread_t mThreadID;  // Thread ID
         size_t    mIndex;     // Thread index
-        int       mLtpRetval; // Thread's LTP return status       
+        int       mLtpRetval; // Thread's LTP return status
         int       mErrCount;
 } sThreadContext;
 
 typedef void* (*tThreadProc)(void*);
 
-/*==================================================================================================
+/*======================
                                        LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Common stuff */
 static tThreadProc        gThreadProc[MAX_THREADS] = {0};
 static sThreadContext     gThreadContext[MAX_THREADS];
-static int                gNumThreads = 0; 
+static int                gNumThreads = 0;
 static pthread_mutex_t    gMutex = PTHREAD_MUTEX_INITIALIZER;
 
 /* MMC/SD stuff */
@@ -75,23 +75,23 @@ unsigned char             *Dev0_patten_buf = NULL,
                           *Dev0_read_buf = NULL,
                           *Dev1_read_buf = NULL;
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 extern sTestappConfig gTestappConfig;
 
-/*==================================================================================================
+/*======================
                                     FUNCTION PROTOTYPES
-==================================================================================================*/
-void* Thread1( void * pContext ); // AP: captures images and save the captured images onto FFS 
+======================*/
+void* Thread1( void * pContext ); // AP: captures images and save the captured images onto FFS
 void* Thread2( void * pContext ); // AP: Sahara crypt/decrypt smth
 
 int RunTest           ( void );
 int VerificateResults ( void );
 
-/*==================================================================================================
+/*======================
                                          FUNCTIONS
-==================================================================================================*/
+======================*/
 int read_mmc_device(int fd_device, unsigned long start_offset, unsigned long size_to_read, unsigned long bs,
                     unsigned char *read_buf)
 {
@@ -112,7 +112,7 @@ int read_mmc_device(int fd_device, unsigned long start_offset, unsigned long siz
         return TPASS;
 }
 
-/*================================================================================================*/
+/*====================*/
 int write_mmc_device(int fd_device, unsigned long start_offset, unsigned long size_to_write, unsigned long bs,
                      unsigned char *write_buf)
 {
@@ -133,7 +133,7 @@ int write_mmc_device(int fd_device, unsigned long start_offset, unsigned long si
         return TPASS;
 }
 
-/*================================================================================================*/
+/*====================*/
 void* Thread1( void * pContext )
 {
         unsigned long i;
@@ -168,11 +168,11 @@ void* Thread1( void * pContext )
         pthread_mutex_lock(&gMutex);
         tst_resm( TINFO, "Working with MMC/SD 0 is stopped. Errors count: %d", pCtx->mErrCount );
         pthread_mutex_unlock(&gMutex);
-        
-        return 0;                    
+
+        return 0;
 }
 
-/*================================================================================================*/
+/*====================*/
 void* Thread2( void * pContext )
 {
         unsigned long i;
@@ -211,51 +211,51 @@ void* Thread2( void * pContext )
         return 0;
 }
 
-/*================================================================================================*/
+/*====================*/
 int RunTest( void )
 {
         int i;
-        int rv = TPASS;    
-        sThreadContext * pContext;        
+        int rv = TPASS;
+        sThreadContext * pContext;
 
         for(i = 0; i < gNumThreads; ++i)
-        {        
+        {
                 if(gTestappConfig.mThreadToExecute != -1 && gTestappConfig.mThreadToExecute != i)
                         continue;
                 pContext = gThreadContext + i;
                 memset( pContext, 0, sizeof(sThreadContext) );
                 pContext->mIndex = i;
-                
+
                 if( pthread_create( &pContext->mThreadID, NULL, (void* (*)(void*))(gThreadProc[i]), pContext ) )
                 {
                         tst_resm( TWARN, "%s : error creating thread %d", __FUNCTION__, i );
-                        return TFAIL;	    
+                        return TFAIL;
                 }
-        }    
-    
+        }
+
         /* Wait for the each thread. */
         for( i = 0; i < gNumThreads; ++i )
         {
                 if(gTestappConfig.mThreadToExecute != -1 && gTestappConfig.mThreadToExecute != i)
-                        continue;    
-                pContext = gThreadContext + i;     
+                        continue;
+                pContext = gThreadContext + i;
                 pthread_join( pContext->mThreadID, NULL );
         }
         for( i = 0; i < gNumThreads; ++i )
         {
                 if(gTestappConfig.mThreadToExecute != -1 && gTestappConfig.mThreadToExecute != i)
-                        continue;    
-                pContext = gThreadContext + i;     
+                        continue;
+                pContext = gThreadContext + i;
                 rv += pContext->mLtpRetval;
         }
-    
+
         if( TPASS == rv )
-                rv = VerificateResults();                     
+                rv = VerificateResults();
 
         return rv;
 }
 
-/*================================================================================================*/
+/*====================*/
 int VerificateResults( void )
 {
         /* verificate Dev0 */
@@ -275,7 +275,7 @@ int VerificateResults( void )
         return TPASS;
 }
 
-/*================================================================================================*/
+/*====================*/
 int VT_systest2_setup( void )
 {
         gNumThreads = 2;
@@ -331,9 +331,9 @@ int VT_systest2_setup( void )
         return TPASS;
 }
 
-/*================================================================================================*/
+/*====================*/
 int VT_systest2_cleanup( void )
-{       
+{
         /* cleanup for Dev0 */
         if(Dev0_patten_buf != NULL)
                 free(Dev0_patten_buf);
@@ -367,10 +367,10 @@ int VT_systest2_cleanup( void )
         return TPASS;
 }
 
-/*================================================================================================*/
+/*====================*/
 int VT_systest2_test( void )
-{                          
+{
         return RunTest();
 }
 
-/*================================================================================================*/
+/*====================*/

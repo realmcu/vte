@@ -29,16 +29,16 @@
  **/
 int main(int argc, char **argv)
 {
-        RPTable *rptable = (RPTable *)g_malloc0(sizeof(RPTable));
-        SaHpiRptEntryT *tmpentry = NULL;
-        guint i = 0;
+        RPTable *rptable  (RPTable *)g_malloc0(sizeof(RPTable));
+        SaHpiRptEntryT *tmpentry  NULL;
+        guint i  0;
 
-        for (i = 0; rptentries[i].ResourceId != 0; i++) {
+        for (i  0; rptentries[i].ResourceId ! 0; i++) {
                 if (oh_add_resource(rptable, rptentries + i, NULL, 0))
                         return 1;
         }
 
-        for (i = 0; i < 5; i++) {
+        for (i  0; i < 5; i++) {
                 if (oh_add_rdr(rptable, RPT_ENTRY_BEGIN, rdrs + i, NULL,0))
                         return 1;
         }
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
         }
 
         oh_remove_resource(rptable, rptentries[0].ResourceId);
-        tmpentry = oh_get_resource_by_ep(rptable,
+        tmpentry  oh_get_resource_by_ep(rptable,
                         &(rptentries[0].ResourceEntity));
         if (tmpentry) return 1;
 

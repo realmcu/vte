@@ -18,7 +18,7 @@ extern "C" {
 
 #define PATH_LEN    128
 
-typedef struct 
+typedef struct
 {
 #ifdef DUMP_CODE_REF
         int                 outfd[Chans];
@@ -26,12 +26,12 @@ typedef struct
         int                 PS_file_opened;
 #else
         FILE                outfd[Chans];
-#endif    
+#endif
         unsigned char       outFileOpend;
-#if defined(USE_AUDIOLIB) || defined(USELIB_AF)    
+#if defined(USE_AUDIOLIB) || defined(USELIB_AF)
         AACPD_OutputFmtType aTimeDataPcm[4* AAC_FRAME_SIZE];
 #endif
-        
+
 #ifdef USE_AUDIOLIB
         hAudioChannel       audioOutChannel;
         AuChanInfo          outInfo;
@@ -41,7 +41,7 @@ typedef struct
 #elif defined(USELIB_AF)
         AFILE             * file_AF;
 #endif
-        
+
         char                outpath[PATH_LEN];
 } sPortIO;
 

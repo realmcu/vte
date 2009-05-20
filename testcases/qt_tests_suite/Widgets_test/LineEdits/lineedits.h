@@ -50,7 +50,7 @@ public slots:
    void keyPressEvent(QKeyEvent *e);
    void exitFail();
    void exitPass();
-   
+
  public:
  int VT_rv;
     LineEdits( QWidget *parent = 0, const char *name = 0 );
@@ -68,7 +68,7 @@ protected slots:
  private:
 
     void contextMenuEvent( QContextMenuEvent * );
-    
+
 };
 
 #endif

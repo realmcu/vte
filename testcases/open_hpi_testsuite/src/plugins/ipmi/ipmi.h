@@ -65,7 +65,7 @@ void ohoi_setup_done(ipmi_domain_t *domain, int err, unsigned int  conn_num,
 /* implemented in ipmi_sensor.c	*/
 int ohoi_get_sensor_data(ipmi_sensor_id_t sensor_id, SaHpiSensorReadingT *data);
 int ohoi_get_sensor_thresholds(ipmi_sensor_id_t sensor_id, SaHpiSensorThresholdsT *thres);
-int ohoi_set_sensor_thresholds(ipmi_sensor_id_t                 sensor_id, 
+int ohoi_set_sensor_thresholds(ipmi_sensor_id_t                 sensor_id,
                                const SaHpiSensorThresholdsT     *thres);
 int ohoi_get_sensor_event_enables(ipmi_sensor_id_t              sensor_id,
 			          SaHpiSensorEvtEnablesT        *enables);
@@ -81,11 +81,11 @@ void ohoi_get_sel_support_del(ipmi_mcid_t mc_id, char *support_del);
 SaErrorT ohoi_clear_sel(ipmi_mcid_t mc_id);
 void ohoi_get_sel_first_entry(ipmi_mcid_t mc_id, ipmi_event_t *event);
 void ohoi_get_sel_last_entry(ipmi_mcid_t mc_id, ipmi_event_t *event);
-void ohoi_get_sel_next_recid(ipmi_mcid_t mc_id, 
+void ohoi_get_sel_next_recid(ipmi_mcid_t mc_id,
                              const ipmi_event_t *event,
                              unsigned int *record_id);
-void ohoi_get_sel_prev_recid(ipmi_mcid_t mc_id, 
-                             const ipmi_event_t *event, 
+void ohoi_get_sel_prev_recid(ipmi_mcid_t mc_id,
+                             const ipmi_event_t *event,
                              unsigned int *record_id);
 void ohoi_get_sel_by_recid(ipmi_mcid_t mc_id, SaHpiSelEntryIdT entry_id, ipmi_event_t *event);
 
@@ -94,11 +94,11 @@ int ohoi_loop(int *done_flag);
  * loop_indicator_cb:
  * @cb_data: callback data
  *
- * Use to indicate if the loop 
+ * Use to indicate if the loop
  * can end
  *
- * Return value: non-zero means 
+ * Return value: non-zero means
  * end.
  **/
 typedef int (*loop_indicator_cb)(const void *cb_data);
-int ohoi_loop_until(loop_indicator_cb indicator, const void *cb_data, int timeout); 
+int ohoi_loop_until(loop_indicator_cb indicator, const void *cb_data, int timeout);

@@ -37,7 +37,7 @@
 * *
 * * History:
 * *  DATE      NAME                             DESCRIPTION
-* *  13/11/08  Gowrishankar M 			Creation of this test.
+* *  13/11/08  Gowrishankar M Creation of this test.
 * *            <gowrishankar.m@in.ibm.com>
 *
 ******************************************************************************/
@@ -52,8 +52,8 @@
 #include <test.h>
 #include <libclone.h>
 
-char *TCID = "pidns21";
-int TST_TOTAL = 1;
+char *TCID  "pidns21";
+int TST_TOTAL  1;
 
 int errno;
 int parent_cinit[2];
@@ -68,11 +68,11 @@ int cinit_parent[2];
  */
 void cleanup()
 {
-	/* Clean the test testcase as LTP wants*/
-	TEST_CLEANUP;
+ /* Clean the test testcase as LTP wants*/
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }
 
 /*
@@ -80,11 +80,11 @@ void cleanup()
  */
 static void child_signal_handler(int sig, siginfo_t *si, void *unused)
 {
-	if (si->si_signo == SIGUSR1)
-		tst_resm(TWARN, "cinit: should have not called handler");
-	else
-		tst_resm(TBROK, "cinit: recieved unexpectedly %s",
-				strsignal(si->si_signo));
+ if (si->si_signo  SIGUSR1)
+  tst_resm(TWARN, "cinit: should have not called handler");
+ else
+  tst_resm(TBROK, "cinit: recieved unexpectedly %s",
+    strsignal(si->si_signo));
 }
 
 /*
@@ -92,78 +92,78 @@ static void child_signal_handler(int sig, siginfo_t *si, void *unused)
  */
 int child_fn(void *arg)
 {
-	pid_t pid, ppid;
-	sigset_t newset;
-	struct sigaction sa;
-	char buf[5];
+ pid_t pid, ppid;
+ sigset_t newset;
+ struct sigaction sa;
+ char buf[5];
 
-	/* Set process id and parent pid */
-	pid = getpid();
-	ppid = getppid();
+ /* Set process id and parent pid */
+ pid  getpid();
+ ppid  getppid();
 
-	if (pid != CHILD_PID || ppid != PARENT_PID) {
-		tst_resm(TBROK, "cinit: pidns is not created");
-		cleanup();
-	}
+ if (pid ! CHILD_PID || ppid ! PARENT_PID) {
+  tst_resm(TBROK, "cinit: pidns is not created");
+  cleanup();
+ }
 
-	/* Setup pipe read and write ends */
-	close(cinit_parent[0]);
-	close(parent_cinit[1]);
+ /* Setup pipe read and write ends */
+ close(cinit_parent[0]);
+ close(parent_cinit[1]);
 
-	/* Define handler for SIGUSR1 */
-	sa.sa_flags = SA_SIGINFO;
-	sigfillset(&sa.sa_mask);
-	sa.sa_sigaction = child_signal_handler;
-	if (sigaction(SIGUSR1, &sa, NULL) == -1) {
-		tst_resm(TBROK, "cinit: sigaction() failed(%s)",\
-				strerror(errno));
-		cleanup();
-	}
+ /* Define handler for SIGUSR1 */
+ sa.sa_flags  SA_SIGINFO;
+ sigfillset(&sa.sa_mask);
+ sa.sa_sigaction  child_signal_handler;
+ if (sigaction(SIGUSR1, &sa, NULL)  -1) {
+  tst_resm(TBROK, "cinit: sigaction() failed(%s)",\
+    strerror(errno));
+  cleanup();
+ }
 
-	/* Block SIGUSR1 signal */
-	sigemptyset(&newset);
-	sigaddset(&newset, SIGUSR1);
-	if (sigprocmask(SIG_BLOCK, &newset, 0) == -1) {
-		tst_resm(TBROK, "cinit: sigprocmask() failed(%s)",\
-				strerror(errno));
-		cleanup();
-	}
-	tst_resm(TINFO, "cinit: blocked SIGUSR1");
+ /* Block SIGUSR1 signal */
+ sigemptyset(&newset);
+ sigaddset(&newset, SIGUSR1);
+ if (sigprocmask(SIG_BLOCK, &newset, 0)  -1) {
+  tst_resm(TBROK, "cinit: sigprocmask() failed(%s)",\
+    strerror(errno));
+  cleanup();
+ }
+ tst_resm(TINFO, "cinit: blocked SIGUSR1");
 
-	/* Let parent to queue SIGUSR1 in pending */
-	if (write(cinit_parent[1], "c:go", 5) != 5) {
-		tst_resm(TBROK, "cinit: pipe is broken(%s)",\
-				strerror(errno));
-		cleanup();
-	}
+ /* Let parent to queue SIGUSR1 in pending */
+ if (write(cinit_parent[1], "c:go", 5) ! 5) {
+  tst_resm(TBROK, "cinit: pipe is broken(%s)",\
+    strerror(errno));
+  cleanup();
+ }
 
-	/* Check if parent has queued up SIGUSR1 */
-	read(parent_cinit[0], buf, 5);
-	if (strcmp(buf, "p:go") != 0) {
-		tst_resm(TBROK, "cinit: parent did not respond!");
-		cleanup();
-	}
+ /* Check if parent has queued up SIGUSR1 */
+ read(parent_cinit[0], buf, 5);
+ if (strcmp(buf, "p:go") ! 0) {
+  tst_resm(TBROK, "cinit: parent did not respond!");
+  cleanup();
+ }
 
-	/* Redefine signal handler */
-	sa.sa_handler = SIG_DFL;
-	if (sigaction(SIGUSR1, &sa, NULL) == -1) {
-		tst_resm(TBROK, "cinit: sigaction() failed(%s)",\
-				strerror(errno));
-		cleanup();
-	}
+ /* Redefine signal handler */
+ sa.sa_handler  SIG_DFL;
+ if (sigaction(SIGUSR1, &sa, NULL)  -1) {
+  tst_resm(TBROK, "cinit: sigaction() failed(%s)",\
+    strerror(errno));
+  cleanup();
+ }
 
-	/* Unblock traffic on SIGUSR1 queue */
-	tst_resm(TINFO, "cinit: unblocking SIGUSR1");
-	sigprocmask(SIG_UNBLOCK, &newset, 0);
+ /* Unblock traffic on SIGUSR1 queue */
+ tst_resm(TINFO, "cinit: unblocking SIGUSR1");
+ sigprocmask(SIG_UNBLOCK, &newset, 0);
 
-	/* This process should have been killed by now */
-	tst_resm(TWARN, "cinit: alive still! it should not be.");
+ /* This process should have been killed by now */
+ tst_resm(TWARN, "cinit: alive still! it should not be.");
 
-	/* Cleanup and exit */
-	close(cinit_parent[1]);
-	close(parent_cinit[0]);
-	cleanup();
-	exit(0);
+ /* Cleanup and exit */
+ close(cinit_parent[1]);
+ close(parent_cinit[0]);
+ cleanup();
+ exit(0);
 }
 
 /***********************************************************************
@@ -172,62 +172,62 @@ int child_fn(void *arg)
 
 int main(int argc, char *argv[])
 {
-	int status;
-	char buf[5];
-	pid_t cpid;
+ int status;
+ char buf[5];
+ pid_t cpid;
 
-	/* Create pipe for intercommunication */
-	if (pipe(parent_cinit) == -1 || pipe(cinit_parent) == -1) {
-		tst_resm(TBROK, "parent: pipe() failed. aborting!");
-		cleanup();
-	}
+ /* Create pipe for intercommunication */
+ if (pipe(parent_cinit)  -1 || pipe(cinit_parent)  -1) {
+  tst_resm(TBROK, "parent: pipe() failed. aborting!");
+  cleanup();
+ }
 
-	cpid = do_clone(CLONE_NEWPID|SIGCHLD, child_fn, NULL);
-	if (cpid < 0) {
-		tst_resm(TBROK, "parent: clone() failed(%s)",\
-				strerror(errno));
-		cleanup();
-	}
+ cpid  do_clone(CLONE_NEWPID|SIGCHLD, child_fn, NULL);
+ if (cpid < 0) {
+  tst_resm(TBROK, "parent: clone() failed(%s)",\
+    strerror(errno));
+  cleanup();
+ }
 
-	/* Setup pipe read and write ends */
-	close(cinit_parent[1]);
-	close(parent_cinit[0]);
+ /* Setup pipe read and write ends */
+ close(cinit_parent[1]);
+ close(parent_cinit[0]);
 
-	/* Is container ready */
-	read(cinit_parent[0], buf, 5);
-	if (strcmp(buf, "c:go") != 0) {
-		tst_resm(TBROK, "parent: container did not respond!");
-		cleanup();
-	}
+ /* Is container ready */
+ read(cinit_parent[0], buf, 5);
+ if (strcmp(buf, "c:go") ! 0) {
+  tst_resm(TBROK, "parent: container did not respond!");
+  cleanup();
+ }
 
-	/* Enqueue SIGUSR1 in pending signals of container */
-	if (kill(cpid, SIGUSR1) == -1) {
-		tst_resm(TBROK, "parent: kill() failed(%s)",\
-				strerror(errno));
-		cleanup();
-	}
+ /* Enqueue SIGUSR1 in pending signals of container */
+ if (kill(cpid, SIGUSR1)  -1) {
+  tst_resm(TBROK, "parent: kill() failed(%s)",\
+    strerror(errno));
+  cleanup();
+ }
 
-	tst_resm(TINFO, "parent: signalled SIGUSR1 on container");
-	if (write(parent_cinit[1], "p:go", 5) != 5) {
-		tst_resm(TBROK, "parent: pipe is broken to write(%s)",\
-				strerror(errno));
-		cleanup();
-	}
+ tst_resm(TINFO, "parent: signalled SIGUSR1 on container");
+ if (write(parent_cinit[1], "p:go", 5) ! 5) {
+  tst_resm(TBROK, "parent: pipe is broken to write(%s)",\
+    strerror(errno));
+  cleanup();
+ }
 
-	/* collect exit status of child */
-	if (wait(&status) == -1) {
-		tst_resm(TBROK, "parent: wait() failed(%s)",\
-				strerror(errno));
-		cleanup();
-	}
+ /* collect exit status of child */
+ if (wait(&status)  -1) {
+  tst_resm(TBROK, "parent: wait() failed(%s)",\
+    strerror(errno));
+  cleanup();
+ }
 
-	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGUSR1)
-		tst_resm(TPASS, "parent: cinit is terminated as expected");
-	else
-		tst_resm(TFAIL, "parent: cinit is not terminated");
+ if (WIFSIGNALED(status) && WTERMSIG(status)  SIGUSR1)
+  tst_resm(TPASS, "parent: cinit is terminated as expected");
+ else
+  tst_resm(TFAIL, "parent: cinit is not terminated");
 
-	cleanup();
-	close(parent_cinit[1]);
-	close(cinit_parent[0]);
-	exit(0);
-}	/* End main */
+ cleanup();
+ close(parent_cinit[1]);
+ close(cinit_parent[0]);
+ exit(0);
+} /* End main */

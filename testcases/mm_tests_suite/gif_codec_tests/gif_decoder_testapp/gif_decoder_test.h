@@ -22,10 +22,10 @@ Description of the file
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
  E.Gromazina          25/02/2005   TLSbo47116   Initial version
- D.Simakov / smkd001c 06/04/2005   TLSbo47116   The endurance and load test cases 
+ D.Simakov / smkd001c 06/04/2005   TLSbo47116   The endurance and load test cases
                                                 were added
  A.Pshenichnikov      07/12/2005   TLSbo59709   bugs with the preemptive and
-						reentrance test cases were fixed 
+						reentrance test cases were fixed
 =============================================================================*/
 
 
@@ -38,15 +38,15 @@ extern "C"{
 
 /*======================== INCLUDE FILES ====================================*/
 
-#include <sys/types.h>  	// fork usage for reentrance test
-#include <unistd.h> 		// fork usage for reentrance test
-#include <pthread.h> 		// fork usage for reentrance test
+#include <sys/types.h>  // fork usage for reentrance test
+#include <unistd.h> // fork usage for reentrance test
+#include <pthread.h> // fork usage for reentrance test
 #include <sys/time.h>		// timer usage for preemptivity
 #include <math.h>           // for sqrt in hogcpu
 
 #include <sys/stat.h>
 #include <fcntl.h>
-	       
+
 
 #include <gif_dec_interface.h>
 
@@ -57,7 +57,7 @@ extern "C"{
 #endif
 #if !defined(FALSE)
     #define FALSE 0
-#endif        
+#endif
 
 /*======================== DEFINES AND MACROS ===============================*/
 
@@ -67,11 +67,11 @@ extern "C"{
 #ifdef DEBUG_TEST
 #include "sub/mem_stat.h"
 #define alloc_fast(A)        MemStat_Alloc(A)
-#define alloc_slow(A) 	     MemStat_Alloc(A)
-#else  
+#define alloc_slow(A)      MemStat_Alloc(A)
+#else
 #define alloc_fast(A)        malloc(A)
 #define alloc_slow(A)        malloc(A)
-#endif 
+#endif
 
 /*==================================ENUMS====================================*/
 

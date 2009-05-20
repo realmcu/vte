@@ -56,8 +56,8 @@ rm -f tmp.txt
 for i in `cat tested_cases`
 do
   sed "s/^\($i\)/#\1/" $cmdlist_file > tmp_cmdlist
-  cp tmp_cmdlist $cmdlist_file 
-done 
+  cp tmp_cmdlist $cmdlist_file
+done
 
 rm -f tmp_cmdlist
 

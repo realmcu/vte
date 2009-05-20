@@ -1,5 +1,5 @@
-/* 
-* Copyright (C) 2004, Freescale Semiconductor, Inc. 
+/*
+* Copyright (C) 2004, Freescale Semiconductor, Inc.
 * All Rights Reserved THIS SOURCE CODE IS
 * CONFIDENTIAL AND PROPRIETARY AND MAY NOT BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 * Freescale Semiconductor, Inc. */
@@ -13,20 +13,20 @@ Description of the file
 
 @par Portability: arm, gcc, montavista */
 
-/*======================== REVISION HISTORY ==================================
+/*======== REVISION HISTORY ==========
 
 Author (core ID)             Date         CR Number       Description of Changes
 -------------------   ----------   ----------   ------------------------------
 S.ZAVJALOV/zvjs001c   22/03/2005   tlsbo46706    Initial version
-I.Inkina/nknl001      25/07/2005   TLSbo50891   Update open device  
+I.Inkina/nknl001      25/07/2005   TLSbo50891   Update open device
 E.Gromazina           14/10/2005    TLSbo56643  Update for the first MMC
-=============================================================================*/
+=================*/
 
 #ifdef __cplusplus
-extern "C"{ 
+extern "C"{
 #endif
 
-/*======================== INCLUDE FILES ====================================*/
+/*======== INCLUDE FILES ========*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -42,33 +42,33 @@ extern "C"{
 
 #include <termios.h>
 
-/*======================== LOCAL CONSTANTS ==================================*/
+/*======== LOCAL CONSTANTS ==========*/
 
-/*======================== LOCAL MACROS =====================================*/
+/*======== LOCAL MACROS =========*/
 
-/*======================== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) =======*/
+/*======== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) ===*/
 
-/*======================== LOCAL VARIABLES ==================================*/
+/*======== LOCAL VARIABLES ==========*/
 
-/*======================== GLOBAL CONSTANTS =================================*/
+/*======== GLOBAL CONSTANTS =========*/
 
-/*======================== GLOBAL VARIABLES =================================*/
+/*======== GLOBAL VARIABLES =========*/
 
 extern int vb_mode;
 struct termios stored_settings;
 
-/*======================== LOCAL FUNCTION PROTOTYPES ========================*/
+/*======== LOCAL FUNCTION PROTOTYPES ========*/
 
 void    set_terminal(void);
 void    restore_terminal(void);
 BOOLEAN kbhit(void);
 int     ir_event(char *event, char *slot_number, char *device_name);
 
-/*======================== LOCAL FUNCTIONS ==================================*/
+/*======== LOCAL FUNCTIONS ==========*/
 
-/*======================== GLOBAL FUNCTIONS =================================*/
+/*======== GLOBAL FUNCTIONS =========*/
 
-/*===== VT_eject_mmc_setup =====*/
+/*= VT_eject_mmc_setup =*/
 /**
 Description of the function
 @brief  assumes the pre-condition of the test case execution
@@ -77,7 +77,7 @@ Description of the function
         Output: None.
 @return On success - return TPASS
         On failure - return the error code
-=============================================================================*/
+=================*/
 
 int VT_eject_mmc_setup(void)
 {
@@ -85,7 +85,7 @@ int VT_eject_mmc_setup(void)
         return TPASS;
 }
 
-/*===== VT_tempalte_cleanup =====*/
+/*= VT_tempalte_cleanup =*/
 /**
 Description of the function
 @brief  assumes the post-condition of the test case execution
@@ -93,7 +93,7 @@ Description of the function
         Output: None.
 @return On success - return TPASS
         On failure - return the error code
-=============================================================================*/
+=================*/
 
 int VT_eject_mmc_cleanup(void)
 {
@@ -101,15 +101,15 @@ int VT_eject_mmc_cleanup(void)
         return TPASS;
 }
 
-/*===== VT_eject_mmc_test =====*/
+/*= VT_eject_mmc_test =*/
 /**
 @brief  Template test scenario X function
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
-=============================================================================*/
+=================*/
 
 int VT_eject_mmc_test(param_mmc * par)
 {
@@ -149,15 +149,15 @@ int VT_eject_mmc_test(param_mmc * par)
         return TPASS;
 }
 
-/*===== ir_event =====*/
+/*= ir_event =*/
 /**
 @brief  Template test scenario X function
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
-=============================================================================*/
+=================*/
 
 int ir_event(char *event, char *slot_number, char *device_name)
 {
@@ -183,15 +183,15 @@ int ir_event(char *event, char *slot_number, char *device_name)
         return TPASS;
 }
 
-/*===== set_terminal =====*/
+/*= set_terminal =*/
 /**
 @brief  Template test scenario X function
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
-=============================================================================*/
+=================*/
 
 void set_terminal(void)
 {
@@ -208,20 +208,20 @@ void set_terminal(void)
          BUFF = 1
          new_settings.c_cc[VTIME] = 0;
          new_settings.c_cc[VMIN] = 1;*/
-         
+
         tcsetattr(0, TCSANOW, &new_settings);
         return;
 }
 
-/*===== restore_terminal =====*/
+/*= restore_terminal =*/
 /**
 @brief  Template test scenario X function
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
-=============================================================================*/
+=================*/
 
 void restore_terminal(void)
 {
@@ -229,15 +229,15 @@ void restore_terminal(void)
         return;
 }
 
-/*===== kbhit =====*/
+/*= kbhit =*/
 /**
 @brief  Template test scenario X function
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
-=============================================================================*/
+=================*/
 
 BOOLEAN kbhit(void)
 {
@@ -260,5 +260,5 @@ BOOLEAN kbhit(void)
 }
 
 #ifdef __cplusplus
-} 
+}
 #endif

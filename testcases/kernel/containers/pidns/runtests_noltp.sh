@@ -23,17 +23,17 @@
 exit_code=0
 ./pidns01_noltp
 if [ $? -ne 0 ]; then
-	exit_code=$?
-	exit $exit_code
+ exit_code=$?
+ exit $exit_code
 fi
 ./pidns02_noltp
 if [ $? -ne 0 ]; then
-	exit_code=$?
-	exit $exit_code
+ exit_code=$?
+ exit $exit_code
 fi
 ./pidns03_noltp
 if [ $? -ne 0 ]; then
-	exit_code=$?
-	exit $exit_code
+ exit_code=$?
+ exit $exit_code
 fi
 exit $exit_code

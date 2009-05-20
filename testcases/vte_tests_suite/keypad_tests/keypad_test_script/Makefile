@@ -13,7 +13,7 @@
 #
 #        http://www.opensource.org/licenses/lgpl-license.html
 #        http://www.gnu.org/copyleft/lgpl.html
-#     
+#
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
@@ -28,9 +28,9 @@
 LTP_DIR = ../../../../
 BIN_DIR = $(LTP_DIR)testcases/
 
-ifeq ($(ARCH_PLATFORM), $(filter stmp3780 imx25stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx233 imx25stack, $(ARCH_PLATFORM)))
 TARGET = $(wildcard *.sh)
-DATA = keymap_stmp3780.txt
+DATA = keymap_mx233.txt
 endif
 
 

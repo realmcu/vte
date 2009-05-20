@@ -21,5 +21,5 @@
 
 int square(int arg)
 {
-	return (arg*arg);
+ return (arg*arg);
 }

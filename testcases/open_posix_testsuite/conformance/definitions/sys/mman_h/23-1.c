@@ -1,4 +1,4 @@
-/* 
+/*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -20,7 +20,7 @@ typedef int (*shm_open_test)(const char *, int, mode_t);
 
 int dummyfcn (void)
 {
-	shm_open_test dummyvar;
-	dummyvar = shm_open;
-	return 0;
+ shm_open_test dummyvar;
+ dummyvar  shm_open;
+ return 0;
 }

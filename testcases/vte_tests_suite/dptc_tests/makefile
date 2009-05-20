@@ -17,7 +17,7 @@
 #Author/core ID                  Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Blake
-all: 
+all:
 install:
 	ln -f dptc.sh ../../bin
 	@echo "***********************************************"

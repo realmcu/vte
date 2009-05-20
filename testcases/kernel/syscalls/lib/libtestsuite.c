@@ -19,14 +19,14 @@
 
 /*
  * NAME
- *	libtestsuite.c
+ * libtestsuite.c
  *
  * DESCRIPTION
- *	file containing generic routines which are used by some of the LTP
- *	testsuite tests. Currently, the following routines are present in
- *	this library:
+ * file containing generic routines which are used by some of the LTP
+ * testsuite tests. Currently, the following routines are present in
+ * this library:
  *
- *	my_getpwnam(), do_file_setup()
+ * my_getpwnam(), do_file_setup()
  *
  * HISTORY
  *      11/03/2008 Renaud Lottiaux (Renaud.Lottiaux@kerlabs.com)
@@ -46,65 +46,65 @@
 struct passwd *
 my_getpwnam(char *name)
 {
-	struct passwd *saved_pwent;
-	struct passwd *pwent;
+ struct passwd *saved_pwent;
+ struct passwd *pwent;
 
-	if ((pwent = getpwnam(name)) == NULL) {
-		perror("getpwnam");
-		tst_brkm(TBROK, NULL, "getpwnam() failed");
-	}
-	saved_pwent = (struct passwd *)malloc(sizeof(struct passwd));
+ if ((pwent  getpwnam(name))  NULL) {
+  perror("getpwnam");
+  tst_brkm(TBROK, NULL, "getpwnam() failed");
+ }
+ saved_pwent  (struct passwd *)malloc(sizeof(struct passwd));
 
-	*saved_pwent = *pwent;
+ *saved_pwent  *pwent;
 
-	return(saved_pwent);
+ return(saved_pwent);
 }
 
 void
 do_file_setup(char *fname)
 {
-	int fd;
+ int fd;
 
-	if ((fd = open(fname,O_RDWR|O_CREAT,0700)) == -1) {
-		tst_resm(TBROK, "open(%s, O_RDWR|O_CREAT,0700) Failed, "
-			 "errno=%d : %s", fname, errno, strerror(errno));
-	}
+ if ((fd  open(fname,O_RDWR|O_CREAT,0700))  -1) {
+  tst_resm(TBROK, "open(%s, O_RDWR|O_CREAT,0700) Failed, "
+    "errno%d : %s", fname, errno, strerror(errno));
+ }
 
-	if (close(fd) == -1) {
-		tst_resm(TWARN, "close(%s) Failed on file create, errno=%d : "
-			 "%s", fname, errno, strerror(errno));
-	}
+ if (close(fd)  -1) {
+  tst_resm(TWARN, "close(%s) Failed on file create, errno%d : "
+    "%s", fname, errno, strerror(errno));
+ }
 }
 
 int create_sync_pipes(int fd[])
 {
-	return pipe (fd);
+ return pipe (fd);
 }
 
 int wait_son_startup (int fd[])
 {
-	char buf;
-	int r;
-	
-	r = read (fd[0], &buf, 1);
-	close (fd[0]);
-	close (fd[1]);
-	
-	if ((r != 1) || (buf != 'A'))
-		return -1;
-	return 0;
+ char buf;
+ int r;
+
+ r  read (fd[0], &buf, 1);
+ close (fd[0]);
+ close (fd[1]);
+
+ if ((r ! 1) || (buf ! 'A'))
+  return -1;
+ return 0;
 }
 
 int notify_startup (int fd[])
 {
-	char buf = 'A';
-	int r;
+ char buf  'A';
+ int r;
 
-	r = write (fd[1], &buf, 1);
-	close (fd[0]);
-	close (fd[1]);
+ r  write (fd[1], &buf, 1);
+ close (fd[0]);
+ close (fd[1]);
 
-	if (r != 1)
-		return -1;
-	return 0;
+ if (r ! 1)
+  return -1;
+ return 0;
 }

@@ -31,10 +31,6 @@ SOFTWARE.
 
 */
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 /*
 
 A signal handler is set up so that in most cases the machine exception
@@ -54,10 +50,6 @@ benchmark.
 
 */
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -73,10 +65,6 @@ benchmark.
 
 char *TCID="crash01";
 int TST_TOTAL=1;
-<<<<<<< HEAD
-=======
-extern int Tst_count;
->>>>>>> vte 20080401
 
 static int x_opt = 0;
 static int v_opt = 0;
@@ -91,11 +79,7 @@ static char *n_copt;
 int verbose_level = 2;
 
 /* Also, it may spend more time trapping and less time computing random bytes
-<<<<<<< HEAD
  * by using the smallest incptr (while not executing already tested bits).
-=======
- * by using the smallest incptr (while not executing already tested bits).  
->>>>>>> vte 20080401
  */
 int incptr = 80;
 
@@ -108,17 +92,9 @@ const int nbytes = 2000;
 /* max time allowed per try, in seconds */
 #define MAX_TRY_TIME 5
 
-<<<<<<< HEAD
 /* in % */
 #define BLOCK_TRIGGER 80
 
-=======
-
-/* in % */
-#define BLOCK_TRIGGER 80
-
-
->>>>>>> vte 20080401
 void cleanup()
 {
 	/*
@@ -129,10 +105,6 @@ void cleanup()
 
 	tst_rmdir();
 
-<<<<<<< HEAD
-=======
-	tst_exit();
->>>>>>> vte 20080401
 }
 
 void setup()
@@ -175,35 +147,20 @@ option_t options[] =
 	{ NULL, NULL, NULL }
 };
 
-<<<<<<< HEAD
 int malloc_flag = 1; /* to be phased out */
 
-=======
-
-int malloc_flag = 1; /* to be phased out */
-
-
->>>>>>> vte 20080401
 void badboy_fork ();
 void badboy_loop ();
 void summarize_status ();
 void record_status(unsigned int n);
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 int
 main (int argc, char *argv[])
 {
   char *msg;
   int lc;
 
-<<<<<<< HEAD
   if ((msg=parse_opts(argc, argv, options, help)) != (char *) NULL)
-=======
-  if ( (msg=parse_opts(argc, argv, options, help)) != (char *) NULL )
->>>>>>> vte 20080401
 	tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 
   if (v_opt)
@@ -227,11 +184,6 @@ main (int argc, char *argv[])
 		tst_brkm(TBROK, cleanup, "Invalid arg for -b (max: %u): %s", nbytes/2, b_copt);
   }
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> vte 20080401
    	setup();
 
 	for (lc=0; TEST_LOOPING(lc); lc++)
@@ -251,11 +203,7 @@ main (int argc, char *argv[])
 	}
 	summarize_status();
 	cleanup();
-<<<<<<< HEAD
 	tst_exit();
-=======
-	return 0;
->>>>>>> vte 20080401
 }
 
 /* ************************* */
@@ -263,37 +211,21 @@ int badboy_pid;
 
 void my_signal (int sig, void (*func) ());
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 void monitor_fcn (int sig)
 {
   int status;
 
-<<<<<<< HEAD
  if (verbose_level >= 3)
-=======
- if (verbose_level >= 3) 
->>>>>>> vte 20080401
 	    printf ("time limit reached on pid. using kill.\n");
 
   status = kill (badboy_pid, SIGKILL);
   if (status < 0)
     {
-<<<<<<< HEAD
 	if (verbose_level >= 3)
-=======
-	if (verbose_level >= 3) 
->>>>>>> vte 20080401
       		printf ("failed to kill process\n");
     }
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 void
 badboy_fork ()
 {
@@ -353,11 +285,7 @@ summarize_status ()
 {
   int i;
 
-<<<<<<< HEAD
   if (verbose_level < 2)
-=======
-  if (verbose_level < 2) 
->>>>>>> vte 20080401
 		  return;
 
   printf ("exit status ... number of cases\n");
@@ -368,10 +296,6 @@ summarize_status ()
     }
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 /* ************* badboy ******************************************* */
 
 jmp_buf again_buff;
@@ -379,21 +303,12 @@ jmp_buf again_buff;
 typedef void (*BADBOY) ();
 
 BADBOY badboy;
-<<<<<<< HEAD
 char *the_data;
-=======
-unsigned char *the_data;
->>>>>>> vte 20080401
 
 int offset = 0;
 int next_offset = 0;
 
-<<<<<<< HEAD
 char * bad_malloc (int n);
-=======
-
-unsigned char * bad_malloc (int n);
->>>>>>> vte 20080401
 void my_signal (int sig, void (*func) ());
 void again_handler (int sig);
 void compute_block_badboy (int n);
@@ -415,10 +330,6 @@ badboy_loop ()
 	      printf ("Badboy at %p\n", badboy);
 	    }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
   for (i = 0; i < ntries; ++i)
     {
       compute_badboy ();
@@ -449,18 +360,10 @@ badboy_loop ()
   }
 }
 
-<<<<<<< HEAD
 char * bad_malloc (int n)
 {
   char *data;
   data = (char *) malloc (n);
-=======
-
-unsigned char * bad_malloc (int n)
-{
-  unsigned char *data;
-  data = (unsigned char *) malloc (n);
->>>>>>> vte 20080401
 #ifdef pyr
   if (mprotect (((int) data / PAGSIZ) * PAGSIZ, (n / PAGSIZ + 1) * PAGSIZ,
 		PROT_READ | PROT_WRITE | PROT_EXEC))
@@ -469,10 +372,6 @@ unsigned char * bad_malloc (int n)
   return (data);
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 void again_handler (int sig)
 {
   char *ss;
@@ -519,11 +418,7 @@ void again_handler (int sig)
     default:
       ss = "";
     }
-<<<<<<< HEAD
   if (verbose_level >= 5)
-=======
-  if (verbose_level >= 5) 
->>>>>>> vte 20080401
   	printf ("Got signal %d%s\n", sig, ss);
 
   longjmp (again_buff, 3);
@@ -563,10 +458,6 @@ set_up_signals ()
   my_signal (SIGINT, again_handler);
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 void compute_block_badboy (int n)
 {
   int j;
@@ -591,11 +482,7 @@ void compute_block_badboy (int n)
   /* was (nbytes < 0) */
   if (x_opt)
     {
-<<<<<<< HEAD
       if (verbose_level >= 1)
-=======
-      if (verbose_level >= 1) 
->>>>>>> vte 20080401
       		printf ("Dump of %d bytes of data\n", n);
       for (j = 0; j < n; ++j)
 	{
@@ -646,10 +533,4 @@ try_one_crash ()
     (*badboy) ();
   else if (nbytes == 0)
     while (1);
-<<<<<<< HEAD
 }
-=======
-}
-
-
->>>>>>> vte 20080401

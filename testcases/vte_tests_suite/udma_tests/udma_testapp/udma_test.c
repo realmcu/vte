@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   udma_test.c
 
         @brief  Source file for Unified DMA driver test
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -20,36 +20,36 @@ A.Ozerov/b00320              03/10/2006     TLSbo78550  Initial version.
 A.Ozerov/b00320              01/11/2006     TLSbo81158  UDMA module was fixed for working with all platforms.
 A.Ozerov/b00320              05/02/2007     TLSbo87473  One of testcases was removed.
 
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Verification Test Environment Include Files */
 #include "udma_test.h"
 
-/*==================================================================================================
-                                        GLOBAL VARIABLES 
-===================================================================================================*/
+/*======================
+                                        GLOBAL VARIABLES
+=======================*/
 int     fd = 0;
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== VT_udma_test_setup =====*/
+/*====================*/
+/*= VT_udma_test_setup =*/
 /**
 @brief  This function assumes the pre-condition of the test case execution
- 
+
 @param  None.
- 
+
 @return On success - return TPASS.
         On failure - return the error code.
 */
-/*================================================================================================*/
+/*====================*/
 int VT_udma_test_setup(void)
 {
         int     rv = TFAIL;
@@ -65,16 +65,16 @@ int VT_udma_test_setup(void)
         return rv;
 }
 
-/*================================================================================================*/
-/*===== VT_udma_test_cleanup =====*/
-/** 
+/*====================*/
+/*= VT_udma_test_cleanup =*/
+/**
 @brief  This function assumes the post-condition of the test case execution
- 
+
 @param  None.
- 
+
 @return None.
 */
-/*================================================================================================*/
+/*====================*/
 int VT_udma_test_cleanup(void)
 {
         int     ret;
@@ -90,18 +90,18 @@ int VT_udma_test_cleanup(void)
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== VT_udma_test =====*/
+/*====================*/
+/*= VT_udma_test =*/
 /**
 @brief  Unified DMA driver test scenario
- 
+
 @param  test_num
         Number test case.
- 
+
 @return On success - return TPASS.
-        On failure - return the error code. 
+        On failure - return the error code.
 */
-/*================================================================================================*/
+/*====================*/
 int VT_udma_test(int test_num, int t_tranfer)
 {
         int ret = TPASS;

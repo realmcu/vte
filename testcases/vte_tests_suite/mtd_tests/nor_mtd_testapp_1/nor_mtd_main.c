@@ -1,42 +1,42 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   nor_mtd_main.c
 
         @brief  NOR MTD test 1 main function.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-V.Becker/rc023c              04/05/2004     TLSbo39142  Initial version 
-V.Becker/rc023c              18/06/2004     TLSbo39142  Code reviewed 
+V.Becker/rc023c              04/05/2004     TLSbo39142  Initial version
+V.Becker/rc023c              18/06/2004     TLSbo39142  Code reviewed
 S.ZAVJALOV/zvjs001c          22/09/2004     TLSbo42376  Print MTD Flash info without any key
 E.Gromazina/NONE             07/07/2005     TLSbo50888  minor fixes
 A.Urusov/NONE                13/02/2006     TLSbo61868  Warnings fixup, code formatting
 
-====================================================================================================
+====================
 Portability:  ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
 Total Tests: 1
 
 Test Executable Name:  nor_mtd_testapp_1
 
 Test Strategy:  Test of basic operations on the NOR MTD Flash device driver
-=================================================================================================*/
+=====================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -47,9 +47,9 @@ Test Strategy:  Test of basic operations on the NOR MTD Flash device driver
 /* Verification Test Environment Include Files */
 #include "nor_mtd_test_1.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Binary flags : option is set or not */
 int     flag_size_to_write = 0;
 int     flag_dev = 0;
@@ -59,9 +59,9 @@ char    *Sizeopt;
 char    *dev_opt;
 char    device_name[128];
 
-/*==================================================================================================
+/*======================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 /* Options given to the NOR Flash test.
  * Arguments are not required, we just need to know the length
  * of the pattern that will be witten and read to/from NOR Flash :
@@ -73,9 +73,9 @@ option_t write_options[] = {
         {NULL, NULL, NULL}
 };
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Extern Global Variables */
 extern int Tst_count;   /* counter for tst_xxx routines.  */
 extern char *TESTDIR;   /* temporary dir created by tst_tmpdir(void) */
@@ -85,17 +85,17 @@ char    *TCID = "nor_mtd_testapp_1";     /* test program identifier.  */
 int     TST_TOTAL = 1;  /* total number of tests in this file.  */
 int     flag_get_flash_information = 0;
 
-/*==================================================================================================
+/*======================
                                     GLOBALover 17KB  FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void    cleanup(void);
 void    setup(void);
 int     main(int argc, char **argv);
 
-/*==================================================================================================
+/*======================
                                         GLOBAL FUNCTIONS
-==================================================================================================*/
-/*===== cleanup =====*/
+======================*/
+/*= cleanup =*/
 /**
 @brief  Performs all one time clean up for this test on successful
         completion, premature exit or failure. Closes all temporary
@@ -103,10 +103,10 @@ int     main(int argc, char **argv);
         appropriate return code by calling tst_exit(void) function.cleanup
 
 @param
-    
+
 @return
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
         /* VTE : Actions needed to get a stable target environment */
@@ -121,23 +121,23 @@ void cleanup(void)
         tst_exit();
 }
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== setup =====*/
+/*====================*/
+/*= setup =*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
         and temporary files that may be used in the course of this test.
 
-@param 
-    
+@param
+
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
         /* VTE : Actions needed to prepare the test running */
@@ -151,8 +151,8 @@ void setup(void)
         return;
 }
 
-/*================================================================================================*/
-/*===== help =====*/
+/*====================*/
+/*= help =*/
 /**
 @brief  Displays help message to user
             Usage :  nor_mtd_testapp_1 -h
@@ -161,15 +161,15 @@ void setup(void)
 
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void help(void)
 {
         printf("-T <size to write or read>   size of data in bytes to program in NOR Flash\n");
         printf("\t\t\t or size of data in bytes to read when NOR Flash is read only\n");
 }
 
-/*================================================================================================*/
-/*===== main =====*/
+/*====================*/
+/*= main =*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -183,11 +183,11 @@ void help(void)
                                 -l - Number of iteration
                                 -v - Prints verbose output
                                 -V - Prints the version number
-    
+
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
         int     VT_rv = TFAIL;

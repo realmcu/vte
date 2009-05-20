@@ -1,5 +1,5 @@
 /*
- *  $Id: lib.h 788 2008-06-20 09:19:13Z hartkopp $
+ *  $Id: lib.h 788 2008-06-20 09:19:13Z hartkopp
  */
 
 /*
@@ -103,7 +103,7 @@ int parse_canframe(char *cs, struct can_frame *cf);
  * - 8 digits: extendend frame format OR error frame
  * - 8 digits with CAN_ERR_FLAG (0x2000000) set: error frame
  * - an error frame is never a RTR frame
- * 
+ *
  */
 
 void fprint_canframe(FILE *stream , struct can_frame *cf, char *eol, int sep);

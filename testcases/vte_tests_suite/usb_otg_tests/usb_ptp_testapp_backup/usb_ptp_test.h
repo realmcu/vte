@@ -54,7 +54,7 @@ extern "C"{
                                     FUNCTION PROTOTYPES
 ==================================================================================================*/
 int VT_usb_ptp_test_cleanup(void);
-int VT_usb_ptp_test_setup(void);  
+int VT_usb_ptp_test_setup(void);
 int VT_usb_ptp_test(int switch_fct);
 
 #ifdef __cplusplus

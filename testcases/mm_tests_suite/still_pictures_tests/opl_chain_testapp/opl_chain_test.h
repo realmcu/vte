@@ -10,13 +10,13 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-     
+
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-D.SIMAKOV/smkd001c          14/07/2004      TLSbo41679  Initial version 
+D.SIMAKOV/smkd001c          14/07/2004      TLSbo41679  Initial version
 
 ==================================================================================================*/
 

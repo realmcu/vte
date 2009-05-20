@@ -59,10 +59,10 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-host_alias = 
+host_alias =
 host_triplet = i686-pc-linux-gnu
 
-EXEEXT = 
+EXEEXT =
 OBJEXT = o
 PATH_SEPARATOR = :
 AMTAR = ${SHELL} /root/epoll/libpcl/missing --run tar
@@ -81,7 +81,7 @@ RANLIB = ranlib
 STRIP = strip
 VERSION = 1.2
 am__include = include
-am__quote = 
+am__quote =
 install_sh = /root/epoll/libpcl/install-sh
 
 include_HEADERS = pcl.h

@@ -30,24 +30,24 @@
  **/
 int main(int argc, char **argv)
 {
-        RPTable *rptable = (RPTable *)g_malloc0(sizeof(RPTable));
+        RPTable *rptable  (RPTable *)g_malloc0(sizeof(RPTable));
         SaHpiEntryIdT record_id;
-        SaHpiRdrT *tmprdr = NULL;
-        guint i = 0;
-        
-        for (i = 0; rptentries[i].ResourceId != 0; i++) {
+        SaHpiRdrT *tmprdr  NULL;
+        guint i  0;
+
+        for (i  0; rptentries[i].ResourceId ! 0; i++) {
                 if (oh_add_resource(rptable, rptentries + i, NULL, 0))
-                        return 1;                
+                        return 1;
         }
 
         if (oh_add_rdr(rptable, RPT_ENTRY_BEGIN, rdrs, NULL,0))
                 return 1;
 
-        record_id =
+        record_id 
                 get_rdr_uid(rdrs[0].RdrType, rdrs[0].RdrTypeUnion.SensorRec.Num);
-        rdrs[0].RecordId = record_id;
-                
-        tmprdr = oh_get_rdr_by_id(rptable, RPT_ENTRY_BEGIN, record_id);
+        rdrs[0].RecordId  record_id;
+
+        tmprdr  oh_get_rdr_by_id(rptable, RPT_ENTRY_BEGIN, record_id);
         if (!tmprdr ||
             memcmp(rdrs, tmprdr, sizeof(SaHpiRdrT)))
                 return 1;

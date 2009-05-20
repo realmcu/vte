@@ -9,13 +9,13 @@
     THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
     BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
     Freescale Semiconductor, Inc.
-    
+
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Smirnov Artyom                10/04/05      TLSbo49894  BRIEF description of changes made 
+Smirnov Artyom                10/04/05      TLSbo49894  BRIEF description of changes made
 Bezrukov.S/SBAZR1C            08/17/2005    TLSbo53919  Remove the Brightness feature
 KHOROSHEV.D		      09/29/2005    TLSbo55077  Review version
 
@@ -25,7 +25,7 @@ KHOROSHEV.D		      09/29/2005    TLSbo55077  Review version
 #define _V4L_OUTPUT_TEST_H_
 
 #ifdef __cplusplus
-extern "C"{ 
+extern "C"{
 #endif
 
 /*==================================================================================================
@@ -76,22 +76,22 @@ extern "C"{
 
 #define MAX_BUFF_NUM       5
 
-/* 
+/*
 * Dump file structure:
-* 
-*          Data offset | 
-* Content -------------+---------------------------------------------- 
-*        0x0000-0x000F | Image format as C string: 
-*                      | - "RGB565" 
-*                      | - "BGR24" 
-*                      | - "RGB24" 
-*                      | - "BGR32" 
-*                      | - "RGB32" 
-*                      | - "YUV422P" 
-*                      | - "YUV420" 
-*        0x0010-0x001F | Image X size as C string 
-*        0x0020-0x002F | Image Y size as C string 
-*        0x0030-0x00FF | <RESERVED_AREA> 
+*
+*          Data offset |
+* Content -------------+----------------------------------------------
+*        0x0000-0x000F | Image format as C string:
+*                      | - "RGB565"
+*                      | - "BGR24"
+*                      | - "RGB24"
+*                      | - "BGR32"
+*                      | - "RGB32"
+*                      | - "YUV422P"
+*                      | - "YUV420"
+*        0x0010-0x001F | Image X size as C string
+*        0x0020-0x002F | Image Y size as C string
+*        0x0030-0x00FF | <RESERVED_AREA>
 *        0x0100-0xXXXX | Raw data to/from IPU, V4L(2) or FB buffers */
 
 #define FIELDS_LENGTH            0x0010
@@ -121,7 +121,7 @@ extern "C"{
 /*==================================================================================================
                                 STRUCTURES AND OTHER TYPEDEFS
 ==================================================================================================*/
-/* 
+/*
 * typedef unsigned char u8; typedef unsigned short u16; typedef unsigned long u32; */
 
 typedef struct
@@ -181,7 +181,7 @@ int     VT_v4l_output_cleanup(void);
 int     VT_v4l_output_test(void);
 
 #ifdef __cplusplus
-} 
+}
 #endif
 
 #endif                          /* _V4L_OUTPUT_TEST_H_ */

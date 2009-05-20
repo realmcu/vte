@@ -36,7 +36,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 /* oh_plugin_config, currently with only one item.  There are thoughts of
    having explicit path to the plugin, but I'm not sure this is a good plan */

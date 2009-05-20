@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   pmic_convity_module.c
 
         @brief  PMIC CONNECTIVITY dirver API
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number     Description of Changes
@@ -21,14 +21,14 @@ V.Khalabuda/hlbv001          02/09/2005     TLSbo58397   Update for linux-2.6.10
 A.Ozerov/b00320              15/05/2006     TLSbo64237   4, 6, 9, 12, 14 testcases were changed.
 A.Ozerov/b00320              05/07/2006     TLSbo64237   12, 14 testcases were fixed.
 
-====================================================================================================
+====================
 Portability:    ARM GCC
 
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 //#include <linux/config.h>
 #include <linux/module.h>
 #include <linux/device.h>      /* Added on 05/03/06 by RAKESH S JOSHI */
@@ -55,28 +55,28 @@ Portability:    ARM GCC
 #endif /* DEBUG */
 #endif /* TRACEMSG */
 
-/*==================================================================================================
+/*======================
                                         DEFINES AND MACROS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 
 static struct class *pmic_convity_class;    /* added on 05/03/06 RAKESH S JOSHI */
 
 
-/*==================================================================================================
+/*======================
                                     FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 int usbCallback(const PMIC_CONVITY_EVENTS event)
 {
         return 0;
 }
 
-/*================================================================================================*/
-/*================================================================================================*/
-/*===== VT_pmic_convity_test_reset =====*/
+/*====================*/
+/*====================*/
+/*= VT_pmic_convity_test_reset =*/
 /**
 @brief  Implementation of the PMIC Connectivity reset with call pmic_convity_reset()
 
@@ -85,7 +85,7 @@ int usbCallback(const PMIC_CONVITY_EVENTS event)
 @return On success - return pass
         On failure - return the error code of last error
 */
-/*================================================================================================*/
+/*====================*/
 PMIC_STATUS VT_pmic_convity_test_reset(PMIC_CONVITY_HANDLE handle)
 {
         PMIC_STATUS status = PMIC_SUCCESS;
@@ -95,8 +95,8 @@ PMIC_STATUS VT_pmic_convity_test_reset(PMIC_CONVITY_HANDLE handle)
         return status;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_convity_test_mode =====*/
+/*====================*/
+/*= VT_pmic_convity_test_mode =*/
 /**
 @brief  Implementation of the PMIC Connectivity with call pmic_convity_set_mode() and
                 pmic_convity_get_mode() to set mode (USB, RS232) after initially opening with mode (RS232, USB)
@@ -107,7 +107,7 @@ PMIC_STATUS VT_pmic_convity_test_reset(PMIC_CONVITY_HANDLE handle)
 @return On success - return pass
         On failure - return the error code of last error
 */
-/*================================================================================================*/
+/*====================*/
 PMIC_STATUS VT_pmic_convity_test_mode(PMIC_CONVITY_HANDLE handle, PMIC_CONVITY_MODE mode)
 {
         PMIC_CONVITY_MODE mod;
@@ -135,8 +135,8 @@ PMIC_STATUS VT_pmic_convity_test_mode(PMIC_CONVITY_HANDLE handle, PMIC_CONVITY_M
         return status;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_convity_test_callback =====*/
+/*====================*/
+/*= VT_pmic_convity_test_callback =*/
 /**
 @brief  Implementation of the PMIC Connectivity with call pmic_convity_set_callback(),
                 pmic_convity_get_callback() and pmic_convity_clear_callback
@@ -146,7 +146,7 @@ PMIC_STATUS VT_pmic_convity_test_mode(PMIC_CONVITY_HANDLE handle, PMIC_CONVITY_M
 @return On success - return pass
         On failure - return the error code of last error
 */
-/*================================================================================================*/
+/*====================*/
 PMIC_STATUS VT_pmic_convity_test_callback(PMIC_CONVITY_HANDLE handle)
 {
         int     mask = 1;
@@ -196,8 +196,8 @@ PMIC_STATUS VT_pmic_convity_test_callback(PMIC_CONVITY_HANDLE handle)
         return status;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_convity_test_usb_speed =====*/
+/*====================*/
+/*= VT_pmic_convity_test_usb_speed =*/
 /**
 @brief  Implementation of the PMIC Connectivity with call pmic_convity_usb_set_speed() and
                 pmic_convity_usb_get_speed() for get speed and mode settings.
@@ -207,7 +207,7 @@ PMIC_STATUS VT_pmic_convity_test_callback(PMIC_CONVITY_HANDLE handle)
 @return On success - return pass
         On failure - return the error code of last error
 */
-/*================================================================================================*/
+/*====================*/
 PMIC_STATUS VT_pmic_convity_test_usb_speed(PMIC_CONVITY_HANDLE handle)
 {
         PMIC_CONVITY_USB_SPEED speed_s ,speed = 0;
@@ -240,8 +240,8 @@ PMIC_STATUS VT_pmic_convity_test_usb_speed(PMIC_CONVITY_HANDLE handle)
         return status;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_convity_test_usb_power_source =====*/
+/*====================*/
+/*= VT_pmic_convity_test_usb_power_source =*/
 /**
 @brief  Implementation of the PMIC Connectivity with call pmic_convity_usb_set_power_source() and
                 pmic_convity_usb_get_power_source() to retrieve the current configuration.
@@ -251,7 +251,7 @@ PMIC_STATUS VT_pmic_convity_test_usb_speed(PMIC_CONVITY_HANDLE handle)
 @return On success - return pass
         On failure - return the error code of last error
 */
-/*================================================================================================*/
+/*====================*/
 PMIC_STATUS VT_pmic_convity_test_usb_power_source(PMIC_CONVITY_HANDLE handle)
 {
         PMIC_CONVITY_USB_POWER_IN pwrin_s, pwrin = 0;
@@ -286,8 +286,8 @@ PMIC_STATUS VT_pmic_convity_test_usb_power_source(PMIC_CONVITY_HANDLE handle)
         return status;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_convity_test_usb_xcvr =====*/
+/*====================*/
+/*= VT_pmic_convity_test_usb_xcvr =*/
 /**
 @brief  Implementation of the PMIC Connectivity with call pmic_convity_usb_set_xcvr() and
                 pmic_convity_usb_get_xcvr() to retrieve the current configuration.
@@ -297,7 +297,7 @@ PMIC_STATUS VT_pmic_convity_test_usb_power_source(PMIC_CONVITY_HANDLE handle)
 @return On success - return pass
         On failure - return the error code of last error
 */
-/*================================================================================================*/
+/*====================*/
 PMIC_STATUS VT_pmic_convity_test_usb_xcvr(PMIC_CONVITY_HANDLE handle)
 {
         PMIC_CONVITY_USB_TRANSCEIVER_MODE mode = 0;
@@ -449,8 +449,8 @@ PMIC_STATUS VT_pmic_convity_test_usb_xcvr(PMIC_CONVITY_HANDLE handle)
         return status;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_convity_test_usb_otg_dlp_duration =====*/
+/*====================*/
+/*= VT_pmic_convity_test_usb_otg_dlp_duration =*/
 /**
 @brief  Implementation of the PMIC Connectivity with call pmic_convity_usb_otg_set_dlp_duration() and
                 pmic_convity_usb_otg_get_dlp_duration() to retrieve the current configuration.
@@ -460,7 +460,7 @@ PMIC_STATUS VT_pmic_convity_test_usb_xcvr(PMIC_CONVITY_HANDLE handle)
 @return On success - return pass
         On failure - return the error code of last error
 */
-/*================================================================================================*/
+/*====================*/
 PMIC_STATUS VT_pmic_convity_test_usb_otg_dlp_duration(PMIC_CONVITY_HANDLE handle)
 {
         unsigned int setDlpDuration;
@@ -511,8 +511,8 @@ PMIC_STATUS VT_pmic_convity_test_usb_otg_dlp_duration(PMIC_CONVITY_HANDLE handle
         return status;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_convity_test_usb_otg_config =====*/
+/*====================*/
+/*= VT_pmic_convity_test_usb_otg_config =*/
 /**
 @brief  Implementation of the PMIC Connectivity with call pmic_convity_usb_otg_set_config(),
                 pmic_convity_usb_otg_clear_config() and pmic_convity_usb_otg_get_config()
@@ -523,7 +523,7 @@ PMIC_STATUS VT_pmic_convity_test_usb_otg_dlp_duration(PMIC_CONVITY_HANDLE handle
 @return On success - return pass
         On failure - return the error code of last error
 */
-/*================================================================================================*/
+/*====================*/
 PMIC_STATUS VT_pmic_convity_test_usb_otg_config(PMIC_CONVITY_HANDLE handle)
 {
         PMIC_CONVITY_USB_OTG_CONFIG config = 0;
@@ -605,8 +605,8 @@ PMIC_STATUS VT_pmic_convity_test_usb_otg_config(PMIC_CONVITY_HANDLE handle)
         return status;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_convity_test_rs232_config =====*/
+/*====================*/
+/*= VT_pmic_convity_test_rs232_config =*/
 /**
 @brief  Implementation of the PMIC Connectivity with call pmic_convity_rs232_set_config() and
                 pmic_convity_rs232_get_config() - Functions for controlling RS-232 serial connectivity
@@ -616,7 +616,7 @@ PMIC_STATUS VT_pmic_convity_test_usb_otg_config(PMIC_CONVITY_HANDLE handle)
 @return On success - return pass
         On failure - return the error code of last error
 */
-/*================================================================================================*/
+/*====================*/
 PMIC_STATUS VT_pmic_convity_test_rs232_config(PMIC_CONVITY_HANDLE handle)
 {
         PMIC_CONVITY_RS232_INTERNAL cfgInternal_s, cfgInternal = 0;
@@ -663,8 +663,8 @@ PMIC_STATUS VT_pmic_convity_test_rs232_config(PMIC_CONVITY_HANDLE handle)
         return status;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_convity_test_cea936_exit_signal =====*/
+/*====================*/
+/*= VT_pmic_convity_test_cea936_exit_signal =*/
 /**
 @brief  Implementation of the PMIC Connectivity CEA936 exit signal
                 with call pmic_convity_cea936_exit_signal()
@@ -674,7 +674,7 @@ PMIC_STATUS VT_pmic_convity_test_rs232_config(PMIC_CONVITY_HANDLE handle)
 @return On success - return pass
         On failure - return the error code of last error
 */
-/*================================================================================================*/
+/*====================*/
 PMIC_STATUS VT_pmic_convity_test_cea936_exit_signal(PMIC_CONVITY_HANDLE handle)
 {
         PMIC_CONVITY_CEA936_EXIT_SIGNAL i = 0;
@@ -718,8 +718,8 @@ PMIC_STATUS VT_pmic_convity_test_cea936_exit_signal(PMIC_CONVITY_HANDLE handle)
         return rv;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_convity_test_open =====*/
+/*====================*/
+/*= VT_pmic_convity_test_open =*/
 /**
 @brief  Implementation of the PMIC Connectivity pmic_convity_open() API unit tests.
 
@@ -728,7 +728,7 @@ PMIC_STATUS VT_pmic_convity_test_cea936_exit_signal(PMIC_CONVITY_HANDLE handle)
 @return On success - return pass
         On failure - return the error code of last error
 */
-/*================================================================================================*/
+/*====================*/
 PMIC_STATUS VT_pmic_convity_test_open(PMIC_CONVITY_HANDLE * handle, PMIC_CONVITY_MODE mode)
 {
         PMIC_STATUS status;
@@ -743,8 +743,8 @@ PMIC_STATUS VT_pmic_convity_test_open(PMIC_CONVITY_HANDLE * handle, PMIC_CONVITY
         return status;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_convity_test_close =====*/
+/*====================*/
+/*= VT_pmic_convity_test_close =*/
 /**
 @brief  Implementation of the PMIC Connectivity pmic_convity_close() API unit tests.
 
@@ -753,7 +753,7 @@ PMIC_STATUS VT_pmic_convity_test_open(PMIC_CONVITY_HANDLE * handle, PMIC_CONVITY
 @return On success - return pass
         On failure - return the error code of last error
 */
-/*================================================================================================*/
+/*====================*/
 PMIC_STATUS VT_pmic_convity_test_close(PMIC_CONVITY_HANDLE handle)
 {
         PMIC_STATUS status;
@@ -768,7 +768,7 @@ PMIC_STATUS VT_pmic_convity_test_close(PMIC_CONVITY_HANDLE handle)
         return status;
 }
 
-/*================================================================================================*/
+/*====================*/
 static int pmic_test_open(struct inode *inode, struct file *filp)
 {
         return 0;
@@ -784,7 +784,7 @@ static ssize_t pmic_test_write(struct file *filp, const char *buf, size_t count,
         return 0;
 }
 
-/*================================================================================================*/
+/*====================*/
 static int pmic_test_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
                          unsigned long arg)
 {
@@ -1073,15 +1073,15 @@ static int pmic_test_ioctl(struct inode *inode, struct file *file, unsigned int 
         return 0;
 }
 
-/*================================================================================================*/
+/*====================*/
 static int pmic_test_release(struct inode *inode, struct file *filp)
 {
         return 0;
 }
 
-/*==================================================================================================
+/*======================
                                 GLOBAL VARIABLE DECLARATIONS
-==================================================================================================*/
+======================*/
 static struct file_operations pmic_test_fops =
 {
         owner:THIS_MODULE,
@@ -1092,7 +1092,7 @@ static struct file_operations pmic_test_fops =
         ioctl:pmic_test_ioctl,
 };
 
-/*================================================================================================*/
+/*====================*/
 static int __init pmic_test_init(void)
 {
         int     res;
@@ -1130,7 +1130,7 @@ static int __init pmic_test_init(void)
         return -1;
 }
 
-/*================================================================================================*/
+/*====================*/
 static void __exit pmic_test_exit(void)
 {
         unregister_chrdev(231, PMIC_CONVITY_DEV);
@@ -1140,7 +1140,7 @@ static void __exit pmic_test_exit(void)
         TRACEMSG(KERN_INFO "PMIC Connectivity Test: removing virtual device\n");
 }
 
-/*================================================================================================*/
+/*====================*/
 
 module_init(pmic_test_init);
 module_exit(pmic_test_exit);

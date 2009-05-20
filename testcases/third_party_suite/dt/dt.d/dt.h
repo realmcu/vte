@@ -4,7 +4,7 @@
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
+ *			       2 Paradise Lane  	    *
  *			       Hudson, NH 03051				    *
  *			       (603) 883-2355				    *
  *									    *
@@ -16,7 +16,7 @@
  * in advertising or publicity pertaining to distribution of the software   *
  * without specific, written prior permission.				    *
  *									    *
- * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, 	    *
+ * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,     *
  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN	    *
  * NO EVENT SHALL HE BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL   *
  * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR    *
@@ -59,7 +59,7 @@
  *
  * July 22nd, 1999 by Robin Miller.
  *	Added support for IOT (DJ's) test pattern.
- * 
+ *
  * May 27, 1999 by Robin Miller.
  *	Added support for micro-second delays.
  *
@@ -97,7 +97,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <termios.h>
-#include <time.h> 				/* CLK_TCK defined here */
+#include <time.h> 		/* CLK_TCK defined here */
 #include <unistd.h>
 #include <math.h>
 #include <errno.h>
@@ -336,7 +336,7 @@ typedef volatile unsigned long	vu_long;
 #      define MAX_ULONG_LONG 0xffffffffffffffffui64
 #      define INFINITY	 MAX_ULONG_LONG	/* Maximum possible large value */
 #      define TBYTE_SIZE 1099511627776i64       /* Terabytes value.	*/
-#    else 
+#    else
 #      define MAX_ULONG_LONG 0xffffffffffffffffULL
 #      define INFINITY	 MAX_ULONG_LONG	/* Maximum possible large value */
 #      define TBYTE_SIZE 1099511627776LL	/* Terabytes value.	*/

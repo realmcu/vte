@@ -1,40 +1,40 @@
-/*================================================================================================*/
+/*====================*/
 /**
     @file   hacc_main.c
 
     @brief   hacc API test main function.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
-     
-====================================================================================================
+
+====================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-S.ZAVJALOV/zvjs001c          10/08/2004     TLSbo40418   Initial version 
+S.ZAVJALOV/zvjs001c          10/08/2004     TLSbo40418   Initial version
 S.ZAVJALOV/zvjs001c          01/10/2004     TLSbo40649   Version after inspection
 S.ZAVJALOV/zvjs001c          04/07/2005     TLSbo51629   Change hacc test strategy
 A.URUSOV                     14/09/2005     TLSbo53754   Eliminated initialization from incompatible
                                                          pointer type in line 203
 A.URUSOV                     18/10/2005     TLSbo57061   New test functions keys are added
-====================================================================================================*/
+====================*/
 
-/*==================================================================================================
+/*======================
 Total Tests: 1
 
 Test Executable Name:  hacc_test
 
 Test Strategy: Examine the HAC module functions
-=================================================================================================*/
+=====================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -45,9 +45,9 @@ Test Strategy: Examine the HAC module functions
 /* Verification Test Environment Include Files */
 #include "hacc_test.h"
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Extern Global Variables */
 extern int Tst_count;   /* Counter for tst_xxx routines */
 extern char *TESTDIR;   /* Temporary dir created by tst_tmpdir */
@@ -62,23 +62,23 @@ int     data2hash_len = 0;
 int     verbose_mode = 0;       /* Verbose mode flag */
 short int stop_flag = 0;        /* Stop process flag */
 
-/*==================================================================================================
+/*======================
                                    GLOBAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void    cleanup(void);
 void    setup(void);
 int     main(int argc, char **argv);
 
-/*==================================================================================================
+/*======================
                                    LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
 void    help(void);
 
-/*==================================================================================================
+/*======================
                                        GLOBAL FUNCTIONS
-==================================================================================================*/
-/*===== cleanup =====*/
+======================*/
+/*= cleanup =*/
 /**
 @brief  Performs all one time clean up for this test on successful
         completion,  premature exit or  failure. Closes all temporary
@@ -86,10 +86,10 @@ void    help(void);
         appropriate return code by calling tst_exit() function.cleanup
 
 @param
-  
+
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
         /* VTE : Actions needed to get a stable target environment */
@@ -105,19 +105,19 @@ void cleanup(void)
         tst_exit();
 }
 
-/*================================================================================================*/
-/*===== setup =====*/
+/*====================*/
+/*= setup =*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
         and temporary files that may be used in the course of this test.
 
 @param
-  
+
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
         int     VT_rv = TFAIL;
@@ -133,8 +133,8 @@ void setup(void)
 }
 
 
-/*================================================================================================*/
-/*===== main =====*/
+/*====================*/
+/*= main =*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -148,11 +148,11 @@ void setup(void)
                         -l - Number of iteration
                         -v - Prints verbose output
                         -V - Prints the version number
-  
+
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
         int     VT_rv = TFAIL;

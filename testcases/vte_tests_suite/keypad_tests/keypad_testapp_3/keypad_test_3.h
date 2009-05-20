@@ -10,7 +10,7 @@
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
-    
+
 ====================================================================================================
 Revision History:
                             Modification     Tracking
@@ -18,7 +18,7 @@ Author/Core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 V. Becker/rc023c             30/04/2004     TLSbo38735   Initial version
 V. Becker/rc023c             25/05/2004     TLSbo38735   Change file name
-L. DELASPRE / rc149c         16/08/2004     TLSbo40891   VTE 1.4 integration 
+L. DELASPRE / rc149c         16/08/2004     TLSbo40891   VTE 1.4 integration
 C.Gagneraud cgag1c           08/11/2004     TLSbo44474   Fix #include issues.
 A.Ozerov/NONE                10/01/2006     TLSbo61037   Update in accordance with linux-2.6.10-rel-L26_1_15
 

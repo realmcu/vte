@@ -19,11 +19,7 @@
 
 /* Group Bull & IBM Corporation */
 /* 11/20/2002	Port to LTP	robbiew@us.ibm.com */
-<<<<<<< HEAD
 /*                                               jacky.malcles@bull.net */
-=======
-/*                                               jacky.malcles@bull.net */                   
->>>>>>> vte 20080401
 /* IBM Corporation */
 /* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
 
@@ -68,15 +64,8 @@
 
 char *TCID="fptest01";          /* Test program identifier.    */
 int TST_TOTAL=1;                /* Total number of test cases. */
-<<<<<<< HEAD
 /**************/
 
-=======
-extern int Tst_count;           /* Test Case counter for tst_* routines */
-/**************/
-
-
->>>>>>> vte 20080401
 int init();
 int doevent();
 int term();
@@ -93,11 +82,7 @@ struct event eventtab[EVENTMX];
 struct event rtrevent;
 int waiting[EVENTMX];	/* array of waiting processors */
 int nwaiting;		/* number of waiting processors */
-<<<<<<< HEAD
 double global_time;		/* global clock */
-=======
-double stime;		/* global clock */
->>>>>>> vte 20080401
 double lsttime;		/* time used for editing */
 double dtc, dts, alpha;	/* timing parameters */
 int nproc;		/* number of processors */
@@ -110,13 +95,7 @@ int gcount;		/* # calls to gauss */
 struct event *nextevent();
 
 int
-<<<<<<< HEAD
 main(int argc, char **argv)
-=======
-main(argc,argv)
-int argc;
-char *argv[];
->>>>>>> vte 20080401
 {
 	struct event *ev;
 
@@ -128,23 +107,13 @@ char *argv[];
 
 	init();
 
-<<<<<<< HEAD
 	while ((ev=nextevent()) != NULL) {
-=======
-	while ( (ev=nextevent()) != (struct event *)NULL) {
->>>>>>> vte 20080401
 		doevent(ev);
 	}
 
 	term();
 	tst_resm(TPASS,"PASS");
 	tst_exit();
-<<<<<<< HEAD
-=======
-
-	/**NOT REACHED**/
-	return(0);
->>>>>>> vte 20080401
 }
 
 /*
@@ -157,11 +126,7 @@ init()
 	double dtw, dtwsig;
 
 	ncycle=0;
-<<<<<<< HEAD
 	global_time=0;
-=======
-	stime=0;
->>>>>>> vte 20080401
 	lsttime=0;
 	barcnt=0;
 	nwaiting=0;
@@ -173,19 +138,11 @@ init()
 
 	for (p=1; p<=nproc; p++) {
 		eventtab[p].type = NULLEVENT;
-<<<<<<< HEAD
 	}
 
 	for (p=1; p<=nproc; p++) {
 		addevent(ENTERWORK,p,global_time);
 	}
-=======
-		}
-
-	for (p=1; p<=nproc; p++) {
-		addevent(ENTERWORK,p,stime);
-		}
->>>>>>> vte 20080401
 
 	return(0);
 }
@@ -203,11 +160,7 @@ term()
 	for (i=0; i < nproc; i++)
 		t_total += eventtab[i].time;
 
-<<<<<<< HEAD
 	avgspd=ncycle/global_time;
-=======
-	avgspd=ncycle/stime;
->>>>>>> vte 20080401
 
 	v = t_total - MAGIC1;
 	if (v < 0.0)
@@ -219,11 +172,7 @@ term()
 		tst_resm(TINFO,"t_total = %.15f\n", t_total);
 		tst_resm(TINFO,"expected  %.15f\n", MAGIC1);
 		tst_resm(TINFO,"diff = %.15f\n", v);
-<<<<<<< HEAD
 		tst_exit();
-=======
-			tst_exit();
->>>>>>> vte 20080401
 	}
 
 	v = avgspd - MAGIC2;
@@ -244,13 +193,7 @@ term()
 	add an event to the event queue
 */
 int
-<<<<<<< HEAD
 addevent(int type,int proc, double t)
-=======
-addevent(type,proc,t)
-int type, proc;
-double t;
->>>>>>> vte 20080401
 {
 	int i;
 	int ok=FALSE;
@@ -262,23 +205,12 @@ double t;
 			eventtab[i].time=t;
 			ok=TRUE;
 			break;
-<<<<<<< HEAD
 		}
 	}
 	if (ok)
 		return(0);
 	else
 		tst_brkm(TBROK, NULL, "No room for event");
-=======
-			}
-		}
-	if (ok) 
-		return(0);
-	else{
-		tst_resm(TBROK,"No room for event");
-			tst_exit();
-                 }
->>>>>>> vte 20080401
 	return(0);
 }
 /*
@@ -291,7 +223,6 @@ struct event *nextevent()
 	int i;
 
 	for (i=1; i<=nproc; i++) {
-<<<<<<< HEAD
 		if (eventtab[i].type != NULLEVENT &&
 		    eventtab[i].time<mintime) {
 			imin=i;
@@ -299,26 +230,13 @@ struct event *nextevent()
 		}
 	}
 
-=======
-          if ((eventtab[i].type!=NULLEVENT) && (eventtab[i].time<mintime) ) {
-		imin=i;
-		mintime=eventtab[i].time;
-		}
-	  }
-	
->>>>>>> vte 20080401
 	if (imin) {
 		rtrevent.type = eventtab[imin].type;
 		rtrevent.proc = eventtab[imin].proc;
 		rtrevent.time = eventtab[imin].time;
 		eventtab[imin].type=NULLEVENT;
 		return(&rtrevent);
-<<<<<<< HEAD
 	} else
-=======
-		}
-	else
->>>>>>> vte 20080401
 		return((struct event *)NULL);
 }
 /*
@@ -365,7 +283,6 @@ struct event *ev;
 	double nxttime;
 	int i, p, proc;
 
-<<<<<<< HEAD
 	global_time = ev->time;
 	proc = ev->proc;
 
@@ -413,56 +330,6 @@ struct event *ev;
 		tst_brkm(TBROK, NULL, "Illegal event");
 		break;
 	}
-=======
-	stime = ev->time;
-	proc = ev->proc;
-
-	switch (ev->type) {
-		case TRYCRIT :
-			if (critfree==TRUE) 
-				addevent(ENTERCRIT,proc,stime);
-			else
-				addwaiting(proc);
-			break;
-		case ENTERCRIT :
-			critfree = FALSE;
-			nxttime=stime+dtcrit();
-			addevent(LEAVECRIT,proc,nxttime);
-			break;
-		case LEAVECRIT :
-			critfree = TRUE;
-			addevent(ATBARRIER,proc,stime);
-			if ((p=getwaiting())!=0) {
-				nxttime=stime;
-				addevent(ENTERCRIT,p,nxttime);
-				}
-			break;
-		case ATBARRIER :
-			barcnt++;
-			if (barcnt==nproc) {
-				nxttime=stime;
-				for (i=1; i<=nproc; i++) {
-					nxttime+=dtspinoff();
-					addevent(ENTERWORK,i,nxttime);
-					}
-				barcnt=0;
-				ncycle++;
-				}
-			break;
-		case ENTERWORK :
-			nxttime=stime+dtwork();
-			if (ncycle<ncycmax)
-				addevent(LEAVEWORK,proc,nxttime);
-			break;
-		case LEAVEWORK :
-			addevent(TRYCRIT,proc,stime);
-			break;
-		default:
-			tst_resm(TBROK,"Illegal event");
-					tst_exit();
-			break;
-		}
->>>>>>> vte 20080401
 	return(0);
 }
 
@@ -472,26 +339,15 @@ static double stdev;
 static double u1,u2;
 static double twopi;
 
-<<<<<<< HEAD
 void gaussinit(double m, double s)
-=======
-void gaussinit(m,s)
-double m,s;
->>>>>>> vte 20080401
 {
 	mean=m;
 	stdev=s;
 	twopi=2.*acos((double)-1.0);
 	u1 = twopi / 400.0;
 	u2 = twopi / 500.0;
-<<<<<<< HEAD
 }
 
-=======
-	return;
-}
-	
->>>>>>> vte 20080401
 double gauss()
 {
 	double x1,x2;
@@ -509,20 +365,9 @@ double gauss()
 		alternator = -1;
 		x1 = sqrt(-2.0*log(u1))*cos(twopi*u2);
 		return(mean + stdev*x1);
-<<<<<<< HEAD
 	} else {
 		alternator = 1;
 		x2 = sqrt(-2.0*log(u1))*sin(twopi*u2);
 		return(mean + stdev*x2);
 	}
 }
-=======
-		}
-	else {
-		alternator = 1;
-		x2 = sqrt(-2.0*log(u1))*sin(twopi*u2);
-		return(mean + stdev*x2);
-		}
-}
-
->>>>>>> vte 20080401

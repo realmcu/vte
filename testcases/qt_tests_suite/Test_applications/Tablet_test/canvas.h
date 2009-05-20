@@ -29,7 +29,7 @@ public:
     virtual ~Canvas() {};
 
     void setPenColor( const QColor &c )
-    { 	saveColor = c;
+    { saveColor = c;
 	pen.setColor( saveColor ); }
 
     void setPenWidth( int w )

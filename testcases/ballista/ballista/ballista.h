@@ -15,7 +15,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef _BALLISTIC_H_ 
+#ifndef _BALLISTIC_H_
 #define _BALLISTIC_H_
 
 // we have to use BOOL_TRUE and BOOL_FALSE since
@@ -30,9 +30,9 @@ typedef int BOOL_TYPE;
 
 typedef char b_param[255];
 
-// extra elements are required to ensure null termination of both 
+// extra elements are required to ensure null termination of both
 // lists of test value attributes and lists of dial settings
-typedef b_param MARSHAL_DATA_TYPE[MAXP+1][MAXD+1]; 
+typedef b_param MARSHAL_DATA_TYPE[MAXP+1][MAXD+1];
 
 #endif // _BALLISTIC_H_
 

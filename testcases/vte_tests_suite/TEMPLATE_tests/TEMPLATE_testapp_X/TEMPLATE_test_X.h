@@ -21,7 +21,7 @@ Description of the file
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
-Developer Name/ID     DD/MM/YYYY   TLSboXXXXX   BRIEF desc. of changes 
+Developer Name/ID     DD/MM/YYYY   TLSboXXXXX   BRIEF desc. of changes
 Delaspre/rc149c       07/12/2004   TLSbo40142   update copyrights with Freescale
 
 =============================================================================*/
@@ -45,7 +45,7 @@ extern "C"{
 /*======================== ENUMS ============================================*/
 
 /** TEMPLATE_EX type */
-typedef enum 
+typedef enum
 {
     TEMPLATE_EX_0 = 0,   /**< Example stuff 0. */
     TEMPLATE_EX_1        /**< Example stuff 1. */

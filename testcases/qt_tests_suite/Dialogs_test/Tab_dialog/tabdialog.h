@@ -43,11 +43,11 @@ public:
     TabDialog( QWidget *parent, const char *name, const QString &_filename );
 
     QPushButton* Test_Q;
-    
+
 public slots:
 	void exitPass();
 	void exitFail();
-    
+
 protected:
     QString filename;
     QFileInfo fileinfo;

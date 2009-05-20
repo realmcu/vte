@@ -1,26 +1,26 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   pmic_adc_module.c
 
         @brief  PMIC ADC test module header file
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         reescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 D.Khoroshev/B00313           07/06/2006     TLSbo64235  Initial version
 
-====================================================================================================
+====================
 Portability:  ARM GCC
-==================================================================================================*/
+======================*/
 #include <asm/ioctl.h>
 #include <linux/config.h>
 #include <linux/module.h>

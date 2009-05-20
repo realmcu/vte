@@ -10,20 +10,20 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-# D.Simakov / smkd001c        12/10/2004     TLSbo43519   Initial version 
+# D.Simakov / smkd001c        12/10/2004     TLSbo43519   Initial version
 # D.Simakov / smkd001c        19/02/2005     TLSbo47113   Update
 # L.Delaspre\rc149c           16/03/2005     TLSbo48584   ARM11 codecs P1 tests
 # D.Simakov/smkd001c          18/10/2005     TLSbo57009   Rework
 # A.Pshenichnikov             13/01/2006     TLSbo61033   Makefiles / shared libraries
 #
 ###################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms. 
+#Portability: Indicate if this module is portable to other compilers or platforms.
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################
@@ -55,8 +55,8 @@ install:
 	cp -rf $(MP3D_INPUT) $(LTP_BIN)
 	cp -rf $(MP3D_REF) $(LTP_BIN)
 	mkdir -p $(LTP_BIN)/mp3d_output
-	mkdir -p $(LTP_BIN)/sharedlibs   
-	cp -rf $(MP3D_LIBDIR)/lib$(MP3D_LIBRARY).so $(LTP_BIN)/sharedlibs        
+	mkdir -p $(LTP_BIN)/sharedlibs
+	cp -rf $(MP3D_LIBDIR)/lib$(MP3D_LIBRARY).so $(LTP_BIN)/sharedlibs
 	@echo "***********************************"
 	@echo "** INSTALL : mp3_decoder_testapp **"
 	@echo "***********************************"

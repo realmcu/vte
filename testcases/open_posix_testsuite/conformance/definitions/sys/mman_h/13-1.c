@@ -1,4 +1,4 @@
-/* 
+/*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -22,7 +22,7 @@ typedef void* (*mmap_test)(void *, size_t, int, int, int, off_t);
 
 int dummyfcn (void)
 {
-	mmap_test dummyvar;
-	dummyvar = mmap;
-	return 0;
+ mmap_test dummyvar;
+ dummyvar  mmap;
+ return 0;
 }

@@ -1,6 +1,6 @@
 /*================================================================================================*/
 /**
-        @file   sahara_module.h 
+        @file   sahara_module.h
 
         @brief  Sahara module header file
 */
@@ -19,7 +19,7 @@ Author/Core ID                  Date          Number    Description of Changes
 A.Ozerov/NONE                01/12/2005     TLSbo58662  Initial version for linux-2.6.10-rel-L26_1_14
 A.Ozerov/NONE                19/12/2005     TLSbo58662  Version for linux-2.6.10-rel-L26_1_15
 D.Simakov/smkd001c           21/09/2006     TLSbo76069  fsl_shw* kernel api can not work with a static
-                                                        data.                                                        
+                                                        data.
 ====================================================================================================
 Portability:  ARM GCC
 ==================================================================================================*/
@@ -55,7 +55,7 @@ extern "C"{
         { \
         printk(KERN_WARNING "Error in sahara test: "#a); \
         } \
-}        
+}
 
 /*================================ For sahara_callback_test ======================================*/
 /* ! The maximum number of results to request at once */
@@ -87,7 +87,7 @@ typedef enum
 DPD_HASH_LDCTX_HMAC_ULCTX_GROUP;
 
 /*=================================== For sahara_hash_test =======================================*/
-#define PARTIAL_SIZE 128 
+#define PARTIAL_SIZE 128
 
 typedef enum
 {
@@ -134,7 +134,7 @@ typedef enum
         DPD_SHA224_LDCTX_IDGS_HASH_PAD_ULCTX_CMP
 }
 DPD_HASH_LDCTX_HASH_PAD_ULCTX_GROUP;
- 
+
 /*=================================== For sahara_results_test ====================================*/
 /* ! The maximum number of results to request at once */
 #define RESULTS_SIZE 10
@@ -168,7 +168,7 @@ DPD_HASH_LDCTX_HASH_PAD_ULCTX_GROUP;
 /*==================================================================================================
                                             ENUMS
 ==================================================================================================*/
-/*=================================== For sahara_sym_test ========================================*/ 
+/*=================================== For sahara_sym_test ========================================*/
 typedef enum
 {
         DPD_AES_CTR_ENC,

@@ -29,7 +29,7 @@
 #endif /* kernel */
 
 #include <linux/version.h>
- 
+
 #if(LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,26))
 #include <linux/mxc_scc2_driver.h>
 #else

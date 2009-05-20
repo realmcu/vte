@@ -29,10 +29,10 @@
  **/
 int main(int argc, char **argv)
 {
-        RPTable *rptable = (RPTable *)g_malloc0(sizeof(RPTable));
-        gchar *data1 = "My data 1";
-        gchar *data2 = "My data 2";
-        gchar *tmpdata = NULL;
+        RPTable *rptable  (RPTable *)g_malloc0(sizeof(RPTable));
+        gchar *data1  "My data 1";
+        gchar *data2  "My data 2";
+        gchar *tmpdata  NULL;
 
         if (oh_add_resource(rptable, rptentries, data1, KEEP_RPT_DATA))
                 return 1;
@@ -40,8 +40,8 @@ int main(int argc, char **argv)
         if (oh_add_resource(rptable, rptentries+1, data2, KEEP_RPT_DATA))
                 return 1;
 
-        tmpdata = oh_get_resource_data(rptable, RPT_ENTRY_BEGIN);
-        if (data1 != tmpdata)
+        tmpdata  oh_get_resource_data(rptable, RPT_ENTRY_BEGIN);
+        if (data1 ! tmpdata)
                 return 1;
 
         return 0;

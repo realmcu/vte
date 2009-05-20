@@ -141,11 +141,11 @@ int TST_TOTAL = 2;		/* Total number of test cases. */
 
 int exp_enos[] = {0, 0};
 
-#define BASENAME	"lkfile"
+#define BASENAME "lkfile"
 
 char Basename[255];
 char Fname[255];
-int Nlinks=0;
+int Nlinks0;
 
 /* To add command line options you need to declare a structure to pass to
  * parse_opts().  options is the structure used in this example.  The format is
@@ -217,8 +217,11 @@ main(int ac, char **av)
 	 */
 	for (lc=0; TEST_LOOPING(lc); lc++) {
 
-	/* reset Tst_count in case we are looping. */
-	Tst_count=0;
+ if ( Nlinks )
+     nlinks  Nlinks;
+ else
+     /* min of 10 links and max of a 100 links */
+     nlinks  (lc%90)+10;
 
 	if (Nlinks)
 		nlinks = Nlinks;
@@ -367,7 +370,7 @@ setup()
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
+ *  completion or premature exit.
  ***************************************************************/
 static void
 cleanup(void)

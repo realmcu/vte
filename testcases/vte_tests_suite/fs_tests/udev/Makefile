@@ -3,7 +3,7 @@
 #    @file   Makefile
 #
 #    @brief  configuration file to compile the udev and sysfs test case
-#            - 
+#            -
 #
 ##############################################################################
 #

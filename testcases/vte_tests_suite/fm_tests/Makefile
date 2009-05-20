@@ -19,20 +19,19 @@
 # Z.Spring            11/12/2008        N/A         Initial version
 #
 ###############################################################################
-#Portability: Indicate if this module is portable to other compilers 
+#Portability: Indicate if this module is portable to other compilers
 #             or platforms.
 #             If not, indicate specific reasons why is it not portable.
 #
 ###############################################################################
 
-SUBDIRS=
-TARGETS=fm_basic.sh 
+SUBDIRS = fmtools-1.0.2 
+TARGETS = fm_basic.sh 
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
 
 install:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
 	@for i in $(TARGETS); do \
 		ln -f $$i ../../bin/ ;\
 		echo "***********************************************" ; \
@@ -40,6 +39,8 @@ install:
 		echo "***********************************************" ; \
 	done
 	@echo
+	-ln -f fmtools-1.0.2/fm ../../bin/
+	-ln -f fmtools-1.0.2/fmscan ../../bin/
 
 clean:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done

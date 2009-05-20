@@ -18,17 +18,17 @@
 #                          Modification     Tracking
 # Author                       Date          Number    Description of Changes
 #-----------------------   ------------    ----------  ---------------------
-# Spring Zhang               25/07/2008       n/a        Initial ver. 
+# Spring Zhang               25/07/2008       n/a        Initial ver.
 # Spring                     21/10/2008       n/a    Add support for auto cases
 # Spring                     28/11/2008       n/a      Modify COPYRIGHT header
 #############################################################################
-# Portability:  ARM sh 
+# Portability:  ARM sh
 #
-# File Name:    
+# File Name:
 # Total Tests:        1
 # Test Strategy: record & play audio streams to check
-# 
-# Input:	 $1 - "-D"
+#
+# Input:  $1 - "-D"
 #            $2 - device name, e.g. hw:0,0
 #            $3 - "-f"
 #            $4 - sample format, like S16_LE, S24_LE
@@ -39,7 +39,7 @@
 #            $9 - "-r"
 #            ${10} - sample frequency, e.g. 44100
 #
-# Return:       - 
+# Return:       -
 #
 # Use command "./adc_test1.sh" -D [device name] -f [sample format]
 #      -d [interrupt after #seconds] -c [channel number] -r [sample rate]
@@ -71,7 +71,7 @@ setup()
     fi
 
     while getopts D:f:d:c:r:A arg
-    do 
+    do
         case $arg in
         D) DEVICE=$OPTARG;;
         f) SAM_FMT=$OPTARG;;
@@ -80,7 +80,7 @@ setup()
         r) SAM_FREQ=$OPTARG;;
         A) AUTO="true";;
         \?) usage
-        exit 67 
+        exit 67
         ;;
         esac
     done
@@ -114,14 +114,14 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup() 
+cleanup()
 {
     echo "clean up environment..."
     #rm -f audio.wav record.info
     echo "clean up environment end"
 }
 
-# Function:    adc_record 
+# Function:    adc_record
 #
 # Description:  - Alsa ADC test, record a audio and play to check if it is right
 #
@@ -133,7 +133,7 @@ adc_record()
     RC=0    # Return value from setup, and test functions.
 
     tst_resm TINFO "Test #1: record audio stream with format $SAM_FMT, channel $CHANNEL, \
- sample rate $SAM_FREQ, $DURATION seconds, please speak to the microphone" 
+ sample rate $SAM_FREQ, $DURATION seconds, please speak to the microphone"
     args=`echo $@|sed 's/-A//g'`
     arecord $args audio.wav 2> record.info || RC=$?
     if [ $RC -ne 0 ]
@@ -163,10 +163,10 @@ adc_record()
         return $RC
     fi
 
-    if echo $SAM_FMT |grep "S" >/dev/null 
+    if echo $SAM_FMT |grep "S" >/dev/null
     then
         grep "Signed" record.info >/dev/null || RC=$?
-    elif echo $SAM_FMT |grep "U" >/dev/null 
+    elif echo $SAM_FMT |grep "U" >/dev/null
     then
         grep "Unsigned" record.info >/dev/null || RC=$?
     fi
@@ -176,10 +176,10 @@ adc_record()
         return $RC
     fi
 
-    if echo $SAM_FMT |grep "LE" >/dev/null 
+    if echo $SAM_FMT |grep "LE" >/dev/null
     then
         grep "Little Endian" record.info >/dev/null || RC=$?
-    elif echo $SAM_FMT |grep "BE" >/dev/null 
+    elif echo $SAM_FMT |grep "BE" >/dev/null
     then
         grep "Big Endian" record.info >/dev/null || RC=$?
     fi
@@ -189,10 +189,10 @@ adc_record()
         return $RC
     fi
 
-    if echo $SAM_FMT |grep "16" >/dev/null 
+    if echo $SAM_FMT |grep "16" >/dev/null
     then
         grep "16 bit" record.info >/dev/null || RC=$?
-    elif echo $SAM_FMT |grep "24" >/dev/null 
+    elif echo $SAM_FMT |grep "24" >/dev/null
     then
         grep "24 bit" record.info >/dev/null || RC=$?
     fi
@@ -233,10 +233,10 @@ adc_record()
         return $RC
     fi
 
-    if echo $SAM_FMT |grep "S" >/dev/null 
+    if echo $SAM_FMT |grep "S" >/dev/null
     then
         grep "Signed" play.info >/dev/null || RC=$?
-    elif echo $SAM_FMT |grep "U" >/dev/null  
+    elif echo $SAM_FMT |grep "U" >/dev/null
     then
         grep "Unsigned" play.info >/dev/null || RC=$?
     fi
@@ -246,10 +246,10 @@ adc_record()
         return $RC
     fi
 
-    if echo $SAM_FMT |grep "LE" >/dev/null 
+    if echo $SAM_FMT |grep "LE" >/dev/null
     then
         grep "Little Endian" play.info >/dev/null || RC=$?
-    elif echo $SAM_FMT |grep "BE" >/dev/null 
+    elif echo $SAM_FMT |grep "BE" >/dev/null
     then
         grep "Big Endian" play.info >/dev/null || RC=$?
     fi
@@ -259,10 +259,10 @@ adc_record()
         return $RC
     fi
 
-    if echo $SAM_FMT |grep "16" >/dev/null 
+    if echo $SAM_FMT |grep "16" >/dev/null
     then
         grep "16 bit" play.info >/dev/null || RC=$?
-    elif echo $SAM_FMT |grep "24" >/dev/null 
+    elif echo $SAM_FMT |grep "24" >/dev/null
     then
         grep "24 bit" play.info >/dev/null || RC=$?
     fi
@@ -301,7 +301,7 @@ adc_record()
 # Return        - none
 usage()
 {
-    cat <<-EOF 
+    cat <<-EOF
 
     Use this command to test ALSA ADC record functions. -A is auto without confirm
     usage: ./${0##*/} -D [device name] -f [sample format] -d [interrupt \

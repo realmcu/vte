@@ -26,7 +26,7 @@
 #                                           testscripts to vte_test_suite
 #
 ###############################################################################
-#Portability: Indicate if this module is portable to other compilers 
+#Portability: Indicate if this module is portable to other compilers
 #             or platforms.
 #             If not, indicate specific reasons why is it not portable.
 #

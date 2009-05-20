@@ -14,11 +14,11 @@ echo "Checking for One wire master"
 CHECK_MASTER="/sys/devices/w1_bus_master1"
 if [ ! -e $CHECK_MASTER ]; then
     echo "$script: FAIL One wire Master Not Found $CHECK_MASTER"
-	echo ""
-	exit 
+ echo ""
+ exit
 else
     echo "$script: PASS One Wire Master Found $CHECK_MASTER"
-	echo ""
+ echo ""
 fi
 
 echo "Checking for Slave device"
@@ -28,29 +28,29 @@ CHECK_SLAVE="/sys/devices/w1_bus_master1/$(cat /sys/devices/w1_bus_master1/w1_ma
 
 if [ ! -e $CHECK_SLAVE ]; then
     echo "$script: FAIL : One wire Slave Not Found"
-	echo ""
-	exit 
+ echo ""
+ exit
 else
     echo "$script: PASS : One Wire Slave Found $CHECK_SLAVE"
-	echo ""
+ echo ""
 
-	cd $CHECK_SLAVE
+ cd $CHECK_SLAVE
     echo "Wrting \"$MESSAGE\" to eeprom"
-	echo ""
+ echo ""
     echo "$MESSAGE" > eeprom
     echo "Reading EEPROM"
-	echo ""
+ echo ""
     read_back="$(cat eeprom | grep "$MESSAGE")"
-    echo "Value got from eeprom ..." 
-	echo "$read_back"
-	echo "" 
+    echo "Value got from eeprom ..."
+ echo "$read_back"
+ echo ""
     if [ "$read_back" == "$MESSAGE" ]; then
         echo "$script: PASS EEPROM Read Correctly"
-		echo "" 
+  echo ""
     else
         echo "String read from eeprom was:"
         echo "$read_back"
         echo "$script: FAIL To Read EEPROM"
-		exit 
+  exit
     fi
 fi

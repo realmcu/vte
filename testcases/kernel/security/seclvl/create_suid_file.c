@@ -32,13 +32,13 @@
 
 int main()
 {
-	int fd;
-	fd = open( "suid_file", O_CREAT, 04777 );
-	if (fd == -1) {
-		printf( "Error creating suid file\n" );
-		return 1;
-	}
-	printf( "Success creating suid file\n" );
-	close( fd );
-	return 0;
+ int fd;
+ fd  open( "suid_file", O_CREAT, 04777 );
+ if (fd  -1) {
+  printf( "Error creating suid file\n" );
+  return 1;
+ }
+ printf( "Success creating suid file\n" );
+ close( fd );
+ return 0;
 }

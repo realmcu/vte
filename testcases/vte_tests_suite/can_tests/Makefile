@@ -10,26 +10,22 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ###################################################################################################
 #Revision History:
 #                              Modification     Tracking
 #Author (core ID)                  Date          Number    Description of Changes
 #---------------------------   ------------    ----------  ------------------------------------------
-#hake huang                   07/28/2008     N/A   Initial version 
+#hake huang                   07/28/2008     N/A   Initial version
 #
 ###################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms. 
+#Portability: Indicate if this module is portable to other compilers or platforms.
 #             If not, indicate specific reasons why is it not portable.
 #
-#  GNU GCC 
+#  GNU GCC
 ###################################################################################################
 
-SUBDIRS = 
-
-ifeq ($(ARCH_PLATFORM), $(filter imx35stack ,$(ARCH_PLATFORM)))
-SUBDIRS += cansocket
-endif
+SUBDIRS = cansocket
  
 
 all:

@@ -30,11 +30,7 @@
  * http://oss.sgi.com/projects/GenInfo/NoticeExplan/
  *
  */
-<<<<<<< HEAD
 /* $Id: f00f.c,v 1.5 2008/04/24 06:36:14 subrata_modak Exp $ */
-=======
-/* $Id: f00f.c,v 1.4 2006/02/11 05:00:32 vapier Exp $ */
->>>>>>> vte 20080401
 /*
  * This is a simple test for handling of the pentium f00f bug.
  * It is an example of a catistrophic test case.  If the system
@@ -51,15 +47,6 @@ int TST_TOTAL=1;
 
 #ifdef __i386__
 
-<<<<<<< HEAD
-=======
-
-/*
- * an f00f instruction
- */
-char x[5] = { 0xf0, 0x0f, 0xc7, 0xc8 };
-
->>>>>>> vte 20080401
 void
 sigill (int sig)
 {
@@ -67,7 +54,6 @@ sigill (int sig)
   tst_exit();
 }
 
-<<<<<<< HEAD
 int
 main ()
 {
@@ -81,17 +67,6 @@ main ()
 		".byte	0x0f\n"
 		".byte	0xc7\n"
 		".byte	0xc8\n");
-=======
-int 
-main ()
-{
-  void (*f) () = (void *) x;
-
-  signal (SIGILL, sigill);
-  tst_resm(TINFO, "Testing for proper f00f instruction handling.");
-
-  f ();
->>>>>>> vte 20080401
 
   /*
    * we shouldn't get here, the f00f instruction should trigger
@@ -108,14 +83,7 @@ main ()
 {
   tst_resm(TCONF, "f00f bug test only for i386");
   tst_exit();
-<<<<<<< HEAD
         return 0;
 }
 
 #endif /* __i386__ */
-=======
-  return 0;
-}
-
-#endif /* __i386__ */
->>>>>>> vte 20080401

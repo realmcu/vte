@@ -16,7 +16,6 @@
  *   along with this program;  if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-<<<<<<< HEAD
 
 // Use gcc -o xmm xmm.c -pthread -lm to compile.
 #include "test.h"
@@ -29,12 +28,6 @@ extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 char *TCID     = "tcore";            /* test program identifier.              */
 
 #if defined __i386__ || defined(__x86_64__)
-=======
- 
-
-// Use gcc -o xmm xmm.c -pthread -lm to compile.
-
->>>>>>> vte 20080401
 #include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -43,11 +36,8 @@ char *TCID     = "tcore";            /* test program identifier.              */
 
 #define BUFFER_SIZE 16
 
-<<<<<<< HEAD
 int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 
-=======
->>>>>>> vte 20080401
 /* Circular buffer of integers. */
 
 struct prodcons
@@ -130,19 +120,11 @@ producer (void *data)
   a3 += b3;
   a3 *= pow(b3, 2);
   pid = getpid();
-<<<<<<< HEAD
   tst_resm(TINFO,"producer pid=%d", pid);
   sleep(1);
   for (n = 0; n < 10000; n++)
     {
       tst_resm(TINFO,"%d --->", n);
-=======
-  printf("producer pid=%d\n", pid);
-  sleep(1);
-  for (n = 0; n < 10000; n++)
-    {
-      printf ("%d --->\n", n);
->>>>>>> vte 20080401
       put (&buffer, n);
 
       if (n==7686) {
@@ -154,11 +136,7 @@ producer (void *data)
  	{
 	char buf[16];
 	sprintf(buf, "%d%d\n", pid, pid);
-<<<<<<< HEAD
         asm volatile ("movups (%0), %%xmm1;"::"r" (buf):"memory");
-=======
-	__asm__ ("movups %0, %%xmm1;"::"m"(buf));
->>>>>>> vte 20080401
 	}
 	    sleep(1);
       }
@@ -174,28 +152,17 @@ consumer (void *data)
   char *junk = NULL;
   pid_t pid;
   long double a2 = 10002.5, b2 = 2888883.5;
-<<<<<<< HEAD
   long double d2, e2, f2;
   a2 += b2;
   pid = getpid();
   tst_resm(TINFO,"consumer pid=%d", pid);
-=======
-  long double c2, d2, e2, f2;
-  a2 += b2;
-  pid = getpid();
-  printf("consumer pid=%d\n", pid);
->>>>>>> vte 20080401
   sleep(1);
   while (1)
     {
       d = get (&buffer);
       if (d == OVER)
 	break;
-<<<<<<< HEAD
       tst_resm(TINFO,"---> %d", d);
-=======
-      printf ("---> %d\n", d);
->>>>>>> vte 20080401
       if (d==7688) {
 	    system("ps ax | grep ex");
 	    d2 = pid * a2 / b2;
@@ -205,15 +172,9 @@ consumer (void *data)
 	char buf[16];
 	char buf1[16];
 	sprintf(buf, "%d%d\n", pid, pid);
-<<<<<<< HEAD
 	sprintf(buf1,"%Lf",d2);
         asm volatile ("movups (%0), %%xmm2;":: "r" (buf):"memory");
         asm volatile ("movups (%0), %%xmm5;":: "r" (buf):"memory");
-=======
-	sprintf(buf1,"%d",d2);
-	__asm__ ("movups %0,%%xmm2;"::"m"(buf));
-	__asm__ ("movups %0, %%xmm5;"::"m"(buf));
->>>>>>> vte 20080401
 	}
 	    *junk = 0;
       }
@@ -227,11 +188,7 @@ main (void)
   pthread_t th_a, th_b;
   void *retval;
   double a1 = 1.5, b1 = 2.5;
-<<<<<<< HEAD
   long double c1 ;
-=======
-  long double c1, d1, e1;
->>>>>>> vte 20080401
   pid_t pid;
   a1 += b1;
 
@@ -241,16 +198,11 @@ main (void)
   /* Create the threads */
   pthread_create (&th_a, NULL, producer, 0);
   pthread_create (&th_b, NULL, consumer, 0);
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> vte 20080401
   c1 = exp(pid);
   /* Wait until producer and consumer finish. */
   pthread_join (th_a, &retval);
   pthread_join (th_b, &retval);
-<<<<<<< HEAD
         return 0;
 }
 
@@ -264,7 +216,3 @@ int main() {
 }
 
 #endif /* __i386__ */
-=======
-  return 0;
-}
->>>>>>> vte 20080401

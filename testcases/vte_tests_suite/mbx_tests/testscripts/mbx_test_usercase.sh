@@ -17,7 +17,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake.Huang/-----             07/28/2008     N/A          Initial version
-# 
+#
 ###################################################################################################
 #!/bin/sh
 
@@ -54,7 +54,7 @@ tst_resm TINFO "MBx script installed"
 else
 tst_resm TINFO "MBx initial script not found on /etc/rc.d/init.d"
 RC=1
-return $RC 
+return $RC
 fi
 
 echo U:480x640p-67 > /sys/class/graphics/fb0/mode
@@ -125,8 +125,8 @@ return $TST_COUNT
 
 # Function:     test_mbx_usercase_02
 # Description   - Test the MBX module functionality
-#                 switch to TVout channel while playing 
-#  
+#                 switch to TVout channel while playing
+#
 test_mbx_usercase_02()
 {
 TCID="test_mbx_usercase_02"
@@ -139,7 +139,7 @@ tst_resm TINFO "test #2: usercase test 2"
 egl_test 1000 &
 
 sleep 3
- 
+
 echo U:640x480p-60 > /sys/class/graphics/fb0/mode
 
 read -p "Did the TV display normal y/n?" RC
@@ -159,7 +159,7 @@ return $TST_COUNT
 # Function:     test_mbx_usercase_03
 # Description   - Test the MBX module functionality
 #                 when diaplaying in TVout
-#  
+#
 test_mbx_usercase_03()
 {
 TCID="test_mbx_usercase_03"
@@ -171,10 +171,10 @@ tst_resm TINFO "test #3: usercase 03"
 
 cleanup
 
-echo U:640x480p-60 > /sys/class/graphics/fb0/mode 
+echo U:640x480p-60 > /sys/class/graphics/fb0/mode
 
 
-#reinitial the MBX module 
+#reinitial the MBX module
 /etc/rc.d/init.d/rc.pvr start
 
 egl_test 1000
@@ -193,7 +193,7 @@ return $TST_COUNT
 # Function:     test_mbx_usercase_04
 # Description   - Test the MBX module functionality
 #                 in TVout->play->powersave->resume->play
-#  
+#
 test_mbx_usercase_04()
 {
 TCID="test_mbx_usercase_04"
@@ -203,8 +203,8 @@ RC=0
 #print test info
 tst_resm TINFO "test #3: usercase 04"
 
-#enable TV out 
-echo U:640x480p-60 > /sys/class/graphics/fb0/mode 
+#enable TV out
+echo U:640x480p-60 > /sys/class/graphics/fb0/mode
 
 #display the 3D image
 egl_test 1000 &
@@ -242,14 +242,14 @@ RC=0
 if [ $# -ne 1 ]
 then
 echo "usage $0 <1/2/3>"
-exit 1 
+exit 1
 fi
 
 setup || exit $RC
 
 case "$1" in
 1)
-  test_mbx_usercase_01 || exit $RC 
+  test_mbx_usercase_01 || exit $RC
   ;;
 2)
   test_mbx_usercase_02 || exit $RC

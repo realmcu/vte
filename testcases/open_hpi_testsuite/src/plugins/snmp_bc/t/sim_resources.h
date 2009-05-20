@@ -20,10 +20,10 @@ typedef union {
 	char string[MAX_ASN_STR_LEN];
         long integer;
 } SnmpValueT;
- 
+
 typedef struct {
 	int type;
-	SnmpValueT value;  
+	SnmpValueT value;
 } SnmpMibInfoT;
 
 struct snmp_bc_data {

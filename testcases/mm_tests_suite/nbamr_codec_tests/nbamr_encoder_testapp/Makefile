@@ -4,7 +4,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ##############################################################################
 #
 #   @file   Makefile
@@ -24,7 +24,7 @@
 # I. Semenchukov/smng001c  23/03/2005   TLSbo48795   Made changes to reflect with new version
 #                                                    to libraries and header files location.
 # L.Delaspre/rc149c        29/03/2005   TLSbo49055   ARM11 codecs P2 tests
-# D.Simakov/smkd001c       03/11/2005   TLSbo57009   Rework 
+# D.Simakov/smkd001c       03/11/2005   TLSbo57009   Rework
 # A.Pshenichnikov          13/01/2006   TLSbo61033   Makefiles / shared libraries
 #
 ##############################################################################
@@ -56,8 +56,8 @@ install:
 	cp -rf $(NBAMRE_INPUT) $(LTP_BIN)
 	cp -rf $(NBAMRE_REF) $(LTP_BIN)
 	mkdir -p $(LTP_BIN)/nbamre_output
-	mkdir -p $(LTP_BIN)/sharedlibs   
-	cp -rf $(NBAMRE_LIBDIR)/lib$(NBAMRE_LIBRARY).so $(LTP_BIN)/sharedlibs                
+	mkdir -p $(LTP_BIN)/sharedlibs
+	cp -rf $(NBAMRE_LIBDIR)/lib$(NBAMRE_LIBRARY).so $(LTP_BIN)/sharedlibs
 	@echo "***********************************************"
 	@echo "** INSTALL : nbamr_encoder_testapp set       **"
 	@echo "***********************************************"

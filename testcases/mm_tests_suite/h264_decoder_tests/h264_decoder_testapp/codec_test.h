@@ -56,98 +56,98 @@ D.Simakov             26/02/2006   TLSbo61035   Centralization of common feature
 ==================================================================================================*/
 
 /* Test cases. */
-enum 
+enum
 {
-        NOMINAL_FUNCTIONALITY, 
+        NOMINAL_FUNCTIONALITY,
         ROBUSTNESS,
         RELOCATABILITY,
         RE_ENTRANCE,
-        PRE_EMPTION,    
+        PRE_EMPTION,
         ENDURANCE,
-        LOAD        
+        LOAD
 };
 
 /*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
 ==================================================================================================*/
 
-/* Testapp configuration. */ 
+/* Testapp configuration. */
 typedef struct
 {
         int              mTestCase;
         int              mNumIter;
         const char *     mConfigFilename;
-        int              mVerbose;    
-        int              mSlowBitMatching;         
+        int              mVerbose;
+        int              mSlowBitMatching;
         int              mDelay;
         int              mDisableLCD;
 } sTestappConfig;
 
 /* Set of parameters for each codec handler. */
-typedef struct 
+typedef struct
 {
-        unsigned int     mNoEntry;    
+        unsigned int     mNoEntry;
         char             mInpFileName[MAX_STR_LEN];
         char             mOutFileName[MAX_STR_LEN];
-        char             mRefFileName[MAX_STR_LEN]; 
-        
-        
-        int              mIsReadyForBitMatching;     
+        char             mRefFileName[MAX_STR_LEN];
+
+
+        int              mIsReadyForBitMatching;
 
 } sHandlerParams;
 
 /* Codec handler. */
 typedef struct
-{                          
+{
         /****************************************/
         /* Input and output (streams, buffers). */
         /****************************************/
 
         FILE                  * mpInpStream;
-        struct hKevFile       * mpOutKev;        
-        unsigned char         * mpInpBufferRef;        
+        struct hKevFile       * mpOutKev;
+        unsigned char         * mpInpBufferRef;
         size_t                  mNumBytesInTheInput;
         unsigned char         * mpRGBFrame;
         size_t                  mRGBFrameSz;
-        
+
 
         /********************/
         /* Decoder's stuff. */
         /********************/
 
-        sAVCDecoderConfig       mDecObject;        
-        eAVCDRetType            mLastCodecError;                        
+        sAVCDecoderConfig       mDecObject;
+        eAVCDRetType            mLastCodecError;
 
-        
+
         /***************/
         /* Other data. */
         /***************/
-        
+
         unsigned long           mIndex;
-        sHandlerParams        * mpParams;                    
-        pthread_t               mThreadID;                  
-        int                     mLtpRetval;    
-        
-        
+        sHandlerParams        * mpParams;
+        pthread_t               mThreadID;
+        int                     mLtpRetval;
+
+
         /**********/
         /* Cache. */
         /**********/
-        
+
         struct
         {
                 unsigned char mcBuf[CACHE_BUF_SZ];
                 size_t        mcIndex;
-                size_t        mcBytes;  
+                size_t        mcBytes;
                 int           mcEof;
         } mInputCache;
-                
+
 } sCodecHandler;
 
 /*==================================================================================================
                                  GLOBAL VARIABLE DECLARATIONS
 ==================================================================================================*/
 
-extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */        
+extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */
 
 
 /*==================================================================================================
@@ -170,4 +170,4 @@ int VT_codec_setup    ( void );
 int VT_codec_cleanup  ( void );
 int VT_codec_test     ( void );
 
-#endif //__CODEC_TEST_H__  
+#endif //__CODEC_TEST_H__

@@ -10,6 +10,6 @@ echo "Run $test_dir tests"
 echo "=============================="
 echo ""
         cd $CURRENT_DIR/$test_dir;
-	./run.sh
+ ./run.sh
 done
 

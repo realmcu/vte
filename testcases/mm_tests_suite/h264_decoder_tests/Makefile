@@ -4,7 +4,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ##############################################################################
 #
 #   @file   Makefile
@@ -20,7 +20,7 @@
 #Author (core ID)      Date         CR Number    Description of Changes
 #-------------------   ----------   ----------   ------------------------------
 #A.Geniatov/gntl002    16/12/2004   TLSbo45066   Initial version
-#I.Inkina/nknl001      01/07/2005   Tlsbo52105   Initial version  
+#I.Inkina/nknl001      01/07/2005   Tlsbo52105   Initial version
 #
 ##############################################################################
 

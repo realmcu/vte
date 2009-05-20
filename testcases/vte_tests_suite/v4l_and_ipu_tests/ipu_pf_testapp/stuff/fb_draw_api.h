@@ -37,18 +37,18 @@ typedef enum
 /*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
 ==================================================================================================*/
-typedef struct 
+typedef struct
 {
     float a, r, g, b;
 } argb_color_t;
 
-typedef void (*draw_scanline_t)(unsigned char*, int, int, int, pixel_format_e); 
+typedef void (*draw_scanline_t)(unsigned char*, int, int, int, pixel_format_e);
 typedef void (*draw_rect_t)    (int, int, int, int, const argb_color_t*);
 typedef void (*clear_screen_t) (const argb_color_t*);
 typedef void (*set_pixel_t)    (const argb_color_t*);
 typedef void (*get_pixel_t)    (argb_color_t*);
 
-typedef struct 
+typedef struct
 {
         /* methods */
         draw_scanline_t draw_scanline;
@@ -56,12 +56,12 @@ typedef struct
         clear_screen_t  clear_screen;
         set_pixel_t     set_pixel;
         get_pixel_t     get_pixel;
-        
+
         /* fields */
         int width;
         int height;
-        pixel_format_e pixel_format;    
-        
+        pixel_format_e pixel_format;
+
         /* Unsafe... */
         unsigned char * _fb_direct_ptr;
         int             _fb_pitch;

@@ -18,8 +18,8 @@
 
 gchar * snmp_derive_objid(SaHpiEntityPathT ep, const gchar *oid);
 
-int get_interpreted_value(gchar *string, 
-			  SaHpiSensorInterpretedTypeT type, 
-			  SaHpiSensorInterpretedUnionT *value); 
+int get_interpreted_value(gchar *string,
+			  SaHpiSensorInterpretedTypeT type,
+			  SaHpiSensorInterpretedUnionT *value);
 
 #endif /* SNMP_BC_UTILS_H */

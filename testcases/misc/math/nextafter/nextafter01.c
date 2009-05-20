@@ -20,16 +20,9 @@
 /* 01/02/2003	Port to LTP	avenkat@us.ibm.com */
 /* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
 
-<<<<<<< HEAD
 /*
  * NAME
  *      scalb
-=======
-
-/*
- * NAME
- *      scalb 
->>>>>>> vte 20080401
  *
  * CALLS
  *      nextafter(3C)
@@ -41,21 +34,12 @@
  * 	Checks for basic functionality, nothing fancy
  */
 
-<<<<<<< HEAD
 #include <errno.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "test.h"
 #include "usctest.h"
-=======
-#include	<stdio.h>
-#include	<math.h>
-#include	<errno.h>
-#include	<stdlib.h>
-#include	"test.h"
-#include	"usctest.h"
->>>>>>> vte 20080401
 
 #define	FAILED 0
 #define	PASSED 1
@@ -67,18 +51,10 @@ int block_number;
 int errno;
 FILE *temp;
 int TST_TOTAL = 1;
-<<<<<<< HEAD
 
 void setup();
 void blenter();
 void blexit();
-=======
-extern int Tst_count;
-
-void setup();
-int blenter();
-int blexit();
->>>>>>> vte 20080401
 
 /*--------------------------------------------------------------*/
 int main()
@@ -88,11 +64,7 @@ int main()
 
 	setup();		/* temp file is now open */
 /*--------------------------------------------------------------*/
-<<<<<<< HEAD
 	blenter();
-=======
- blenter();
->>>>>>> vte 20080401
 
 	answer = nextafter(1.0, 1.1);
 	check = (answer + 1.0) / 2;
@@ -104,11 +76,7 @@ int main()
 
         blexit();
 /*--------------------------------------------------------------*/
-<<<<<<< HEAD
 	blenter();
-=======
- blenter();
->>>>>>> vte 20080401
 
 	answer = nextafter(1.0, 0.9);
 	if ((check != answer) && (check != 1.0)) {
@@ -119,11 +87,7 @@ int main()
 
         blexit();
 /*--------------------------------------------------------------*/
-<<<<<<< HEAD
 	blenter();
-=======
- blenter();
->>>>>>> vte 20080401
 
 	answer = nextafter(1.0, 1.0);
 	if (answer != 1.0) {
@@ -135,12 +99,7 @@ int main()
         blexit();
 /*--------------------------------------------------------------*/
 
-<<<<<<< HEAD
 	tst_exit();
-=======
-        tst_exit();      /* THIS CALL DOES NOT RETURN - EXITS!!  */
-	return(0);
->>>>>>> vte 20080401
 }
 /*--------------------------------------------------------------*/
 
@@ -150,7 +109,6 @@ int main()
 
 void setup()
 {
-<<<<<<< HEAD
 	temp = stderr;
 }
 
@@ -168,24 +126,3 @@ void blexit()
 }
 
 /*****	*****		*****/
-=======
-  temp = stderr;
-}
-
-
-int blenter()
-{
-  local_flag = PASSED;
-  return(0);
-}
-
-
-int blexit()
-{
-  (local_flag == PASSED ) ? tst_resm(TPASS, "Test passed") : tst_resm(TFAIL, "Test failed");
-  return(0);
-}
-
-
-/*****	*****		*****/
->>>>>>> vte 20080401

@@ -11,10 +11,10 @@ extern "C" {
 /************************************************************************/
 /* Simple linked list                                                   */
 /************************************************************************/
-        
+
 typedef struct LinkedList
 {
-        void * mpContent;    
+        void * mpContent;
         struct LinkedList * mpNext;
 } sLinkedList;
 

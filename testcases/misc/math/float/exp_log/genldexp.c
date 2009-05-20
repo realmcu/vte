@@ -36,26 +36,15 @@
 #include        <math.h>
 
 /******************************************************************
-<<<<<<< HEAD
  *
  *	genldexp
  *
-=======
- * 
- *	genldexp
- * 
->>>>>>> vte 20080401
  * generate input and output file  for the ldexp function
  * double x multiplied by 2 raised to the power y
  *
  *
  */
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> vte 20080401
 int create_Result_file()
 {
 
@@ -69,20 +58,12 @@ int create_Result_file()
 	F_name = "ldexp_out.ref";
 	F_namini = "ildexp_inp.ref";
 	F_namind = "ldexp_inp.ref";
-<<<<<<< HEAD
 	nbVal = 20000;
-=======
-	nbVal = 20000; 
->>>>>>> vte 20080401
 
 	fpi = open(F_namini,O_RDONLY,0777);
 	fpd = open(F_namind,O_RDONLY,0777);
 
-<<<<<<< HEAD
 	if (!fpi || !fpd) {
-=======
-	if ( !fpi || !fpd) {
->>>>>>> vte 20080401
             	printf("error opening file");
 		close(fpi);
 		close(fpd);
@@ -93,11 +74,7 @@ int create_Result_file()
 		for (i=0; i<nbVal; i++) {
 		    read(fpi, &(tabInpi[i]), sizeof(int) );
 		    read(fpd, &(tabInpd[i]), sizeof(double) );
-<<<<<<< HEAD
 		    tabR[i] = ldexp (tabInpd[i], tabInpi[i]);
-=======
-		    tabR[i] = ldexp (tabInpd[i], tabInpi[i]); 
->>>>>>> vte 20080401
 		}
 		close(fpi);
 		close(fpd);
@@ -111,19 +88,11 @@ int create_Result_file()
 		}
 		else
 		{
-<<<<<<< HEAD
 			for (i = 0; i<nbVal; i++)
 			{
 			    write(fp,&tabR[i],sizeof(double));
 			}
 
-=======
-			for (i = 0; i<nbVal; i++ ) 
-			{
-			    write(fp,&tabR[i],sizeof(double));
-			}
-	
->>>>>>> vte 20080401
 			close(fp);
 			return 0;
 		}
@@ -146,19 +115,11 @@ int create_Data_file()
 
 	F_named = "ldexp_inp.ref";
 	F_namei = "ildexp_inp.ref";
-<<<<<<< HEAD
 	nbVal = 20000;
 
 	Inc = exp(1)/10;
 
 	for (i=0; i<(nbVal); i++) {
-=======
-	nbVal = 20000; 
-
-	Inc = exp(1)/10;
-
-	for (i=0; i<(nbVal); i++) {	
->>>>>>> vte 20080401
 		tabDD[i] = (Inc * i) + Inc;
 		tabDI[i] = nbVal -i;
 	}
@@ -173,13 +134,8 @@ int create_Data_file()
 	    	return -1;
         }
         else
-<<<<<<< HEAD
         {
 		for (i = 0; i<nbVal; i++)
-=======
-        {	
-		for (i = 0; i<nbVal; i++ ) 
->>>>>>> vte 20080401
 		{
 			write(fp,&tabDD[i],sizeof(double));
 			write(fpi,&tabDI[i],sizeof(int));
@@ -190,18 +146,10 @@ int create_Data_file()
 	}
 }
 
-<<<<<<< HEAD
 int main(int argc, char  *argv[])
 {
 
 	if (argc > 1)
-=======
-
-int main(int argc, char  *argv[])
-{
-
-	if (argc > 1) 
->>>>>>> vte 20080401
 	{
 		switch ( atoi(argv[1]) )
 		{
@@ -234,8 +182,4 @@ int main(int argc, char  *argv[])
 
   return(0);
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> vte 20080401

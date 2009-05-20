@@ -24,7 +24,7 @@ public:
 
 signals:
     void switchStyle();
-    
+
 protected:
     void updateMask();
     void paintEvent( QPaintEvent *);
@@ -33,7 +33,7 @@ protected:
     void drawClock( QPainter* );
 
     void mouseDoubleClickEvent(QMouseEvent *e);
-    
+
 private slots:
     void timeout();
 

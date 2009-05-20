@@ -57,4 +57,3 @@ vpath %.c $(abs_srcdir):$(abs_builddir)))
 vpath %.l $(abs_srcdir)	
 
 include $(top_srcdir)/include/mk/generic_leaf_target.mk
-

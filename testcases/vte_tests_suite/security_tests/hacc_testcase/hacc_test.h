@@ -16,7 +16,7 @@ Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-S.ZAVJALOV/zvjs001c          10/08/2004     TLSbo40418   Initial version 
+S.ZAVJALOV/zvjs001c          10/08/2004     TLSbo40418   Initial version
 S.ZAVJALOV/zvjs001c          01/10/2004     TLSbo40649   Version after inspection
 A.URUSOV                     14/09/2005     TLSbo53754   Line 43 include path deleted
 ==================================================================================================*/

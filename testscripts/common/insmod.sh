@@ -20,12 +20,12 @@
 ## Enable ATA
 ##########################################################
 ##File:      insmod.sh
-# Description: This script just enalbe usbotg and SD module 
+# Description: This script just enalbe usbotg and SD module
 #              for ringo platform.If the paltform changed,
 #              please change the script soon.
 #
 # To run the script,please connect your hardware and SD to board
-# in advance.  
+# in advance.
 #
 D_path="lib/modules/`uname -r`/kernel/drivers"
 MC_path="mmc/core"
@@ -39,7 +39,7 @@ BT_path="lib/modules/`uname -r`/kernel/drivers/mxc/bt/
 # insmod mxc_bt.ko
 
 enable_bt()
-{ 
+{
      echo "###### start to insert BT modular #######"
      insmod mxc_bt.ko
      sleep 1
@@ -53,7 +53,7 @@ enable_v4l2()
     ipu_still=0
     mxc_v4l2_capture=0
     ov2640_camera=0
-    
+
      ipu_prp_enc='lsmod | grep "ipu_prp_enc" | wc -l'
      ipu_prp_vf_sdc='lsmod | grep "ipu_prp_vf_sdc" | wc -l'
      ipu_prp_vf_sdc_bg='lsmod | grep "ipu_prp_vf_sdc_bg" | wc -l'
@@ -67,12 +67,12 @@ enable_v4l2()
     insmod ipu_prp_enc.ko
     sleep 1
     fi
-  
+
     if [ $ipu_prp_vf_sdc -eq 0 ]
     insmod ipu_prp_vf_sdc.ko
     sleep 1
     fi
-  
+
     if [ $ipu_prp_vf_sdc_bg -eq 0 ]
     insmod ipu_prp_vf_sdc_bg.ko
     sleep 1
@@ -87,17 +87,17 @@ enable_v4l2()
     insmod ov2640_camera.ko
     sleep 1
     fi
- 
+
     if [ $mxc_v4l2_capture -eq 0 ]
     insmod mxc_v4l2_capture.ko
     sleep 1
     fi
   echo "### V4L2 is OK ###################"
 
-  
+
 }
 mount_SD()
-{ 
+{
      echo "#### star to mount SD ####"
      if [ -e /mnt/mmcblkp01 ]; then
            umount /$M_path/mmcblk0p1
@@ -140,8 +140,8 @@ mount_SD()
             sleep 4
             echo "mmcblk0p1 is mounted"
             fi
-            
-          
+
+
           if [ -e /dev/mmcblk0p2 ]; then
             mkfs.vfat /dev/mmcblk0p2
             sleep 15
@@ -152,8 +152,8 @@ mount_SD()
             sleep 4
             echo "mmcblk0p2 is mounted"
             fi
-   
-          
+
+
           if [ -e /dev/mmcblk0p3 ]; then
             mkfs.vfat /dev/mmcblk0p3
             sleep 10
@@ -164,8 +164,8 @@ mount_SD()
             sleep 4
             echo "mmcblk0p3 is mounted"
             fi
- 
-          
+
+
           if [ -e /dev/mmcblk0p4 ]; then
             mkfs.vfat /dev/mmcblk0p4
             sleep 10
@@ -177,7 +177,7 @@ mount_SD()
             echo "mmcblk0p4 is mounted"
             fi
 
-          
+
           if [ -e /dev/mmcblk0p5 ]; then
             mkfs.vfat /dev/mmcblk0p5
             sleep 10
@@ -199,7 +199,7 @@ mount_ata()
            sleep 2
            rm -rf /$M_path/hda1
            sleep 1
-          fi 
+          fi
         if [ -e /$M_path/hda2 ]; then
            umount /$M_path/hda2
            sleep 2
@@ -213,7 +213,7 @@ mount_ata()
            sleep 1
            fi
         if [ -e /$M_path/hda4 ]; then
-           umount /$M_path/hda4	
+           umount /$M_path/hda4
            sleep 2
            rm -rf /$M_path/hda4
            sleep 1
@@ -224,9 +224,9 @@ mount_ata()
            rm -rf /$M_path/hda5
            sleep 1
         fi
-     
-        
-          
+
+
+
         if [ -e /dev/hda2 ]; then
             mkfs.vfat /dev/hda2
             sleep 10
@@ -290,10 +290,10 @@ if [ $# -eq 1 ]; then
       sleep 2
        enable_v4l2
        sleep 1
-     
-  
 
-          
+
+
+
      elif [ $platform = "mx31_3stack" ]; then
        M_path="tmp"
        echo "## mx31 platform ##"
@@ -302,7 +302,7 @@ if [ $# -eq 1 ]; then
        echo U:720x576i-50 > /sys/class/graphics/fb0/mode
        sleep 1
        cd /
-         
+
         enable_v4l2
         sleep 1
 
@@ -324,11 +324,11 @@ if [ $# -eq 1 ]; then
       mount_SD
       sleep 2
 
-      echo "enalbe tvout module" 
-      echo U:720x576i-50 > /sys/class/graphics/fb0/mode   
+      echo "enalbe tvout module"
+      echo U:720x576i-50 > /sys/class/graphics/fb0/mode
       sleep 1
       cd /
-  
+
        enable_v4l2
        sleep 1
 

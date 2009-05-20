@@ -92,7 +92,7 @@ typedef t_sense_bits t_sensor_bits;
 #endif
 */
 
-#define MAX_REG       			50
+#define MAX_REG       	50
 
 typedef struct
 {

@@ -1,18 +1,18 @@
-/*================================================================================================*/
+/*====================*/
 /**
 
     @file   rtic_test.c
 
     @brief  rtic API test
 */
-/*==================================================================================================
+/*======================
 
         Copyright 2004, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                 Modification     Tracking
 Author                          Date          Number    Description of Changes
@@ -22,20 +22,20 @@ I.Inkina\nknl001             30/08/2005     TLSbo53743   The pointer size was ch
 A.URUSOV                     13/09/2005     TLSbo55076   Fix compilation issue and warnings
 A.URUSOV                     27/10/2005     TLSbo57063   New tests is added
 A.URUSOV                     01/11/2005     TLSbo57063   Compile under L26.1.14
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
 Total Tests: 1
 
 Test Executable Name:  rtic_test
 
 Test Strategy: Examine the RTIC module functions
-=================================================================================================*/
+=====================*/
 #include <sys/mman.h>
 #include <sys/stat.h>
 
 #include "rtic_test.h"
-/*================================================================================================*/
+/*====================*/
 
 extern char *TCID;
 extern char *data_file_path;
@@ -44,7 +44,7 @@ extern int runtime_mode;
 
 int fd = 0;
 
-/*================================================================================================*/
+/*====================*/
 int VT_rtic_test (void)
 {
         int data_file;
@@ -126,7 +126,7 @@ int VT_rtic_test (void)
         /*free(rtic_data); */
         return ret_Vl;
 }
-/*================================================================================================*/
+/*====================*/
 int VT_rtic_test_setup(void)
 {
         char f_name[256]="/dev/";
@@ -146,13 +146,13 @@ int VT_rtic_test_setup(void)
 
         return TPASS;
 }
-/*================================================================================================*/
+/*====================*/
 int VT_rtic_test_cleanup(void)
 {
         if (fd > 0) close (fd);
         return TPASS;
 }
-/*================================================================================================*/
+/*====================*/
 void help(void)
 {
         printf("  -M  x   Hashing type (RUNTIME or ONTIME)\n");

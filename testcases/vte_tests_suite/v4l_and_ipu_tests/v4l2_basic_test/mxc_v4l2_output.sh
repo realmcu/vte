@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake Huang/-----             20090217        N/A          Initial version
-# 
+#
 ###################################################################################################
 
 
@@ -80,10 +80,10 @@ return $RC
 
 # Function:     test_case_01
 # Description   - Test if output size ok
-#  
+#
 test_case_01()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="test_size_output"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -115,7 +115,7 @@ do
    OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
    ${TSTCMD}  -iw 128 -ih 128 -ow $OWD -oh $OHT -ol $i -oh $i -d $DISPLAY -r 0 || return $RC
    sleep 1
- done 
+ done
 done
 
 
@@ -127,10 +127,10 @@ return $RC
 
 # Function:     test_case_02
 # Description   - Test if input size ok
-#  
+#
 test_case_02()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="input_test"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -172,10 +172,10 @@ return $RC
 
 # Function:     test_case_03
 # Description   - Test if rotation ok
-#  
+#
 test_case_03()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="rotation"
 #TODO give TST_COUNT
 TST_COUNT=3
@@ -215,10 +215,10 @@ return $RC
 
 # Function:     test_case_04
 # Description   - Test if rotation with offset ok
-#  
+#
 test_case_04()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="rotation_offset_test"
 #TODO give TST_COUNT
 TST_COUNT=4
@@ -244,7 +244,7 @@ do
    OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
    ${TSTCMD}  -iw 128 -ih 128 -ow $OWD -oh $OHT -ol $i -oh $i -d $DISPLAY -r $k || return $RC
    sleep 1
-  done 
+  done
  done
 done
 #TODO add function test scripte here
@@ -256,10 +256,10 @@ return $RC
 
 # Function:     test_case_05
 # Description   - Test if <TODO test function> ok
-#  
+#
 test_case_05()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="test_demo5_test"
 #TODO give TST_COUNT
 TST_COUNT=5
@@ -306,7 +306,7 @@ RC=0
 if [ $# -ne 1 ]
 then
 usage
-exit 1 
+exit 1
 fi
 
 TARGET=
@@ -317,7 +317,7 @@ setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC 
+  test_case_01 || exit $RC
   ;;
 2)
   test_case_02 || exit $RC

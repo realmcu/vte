@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #<Hake Huang>/-----             <2008/11/24>     N/A          Initial version
-# 
+#
 ###################################################################################################
 
 
@@ -45,7 +45,7 @@ trap "cleanup" 0
 
 #TODO add setup scripts
 #add camera support
-modprobe mxc_v4l2_capture 
+modprobe mxc_v4l2_capture
 modprobe ov3640_camera
 
 echo 1 > /proc/sys/vm/lowmem_reserve_ratio
@@ -75,10 +75,10 @@ return $RC
 
 # Function:     test_case_01
 # Description   - Test if multi encode ok
-#  
+#
 test_case_01()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="vpu_unit_test"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -102,10 +102,10 @@ return $RC
 
 # Function:     test_case_02
 # Description   - Test if encode + decode  ok
-#  
+#
 test_case_02()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="vpu_enc_dec_process"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -138,10 +138,10 @@ return $RC
 
 # Function:     test_case_03
 # Description   - Test if encode + decode in one app ok
-#  
+#
 test_case_03()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="vpu_enc_dec_app"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -177,7 +177,7 @@ done
 # for j in $SIZELIST
 # do
 #   OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
-#   OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')	 
+#   OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
 #   echo "loopback on format $i for size $j"
 #   ${TSTCMD} -L "-f $i -w $OWD -h ${OHT} -t 1" || return $RC
 # done
@@ -189,10 +189,10 @@ return $RC
 
 # Function:     test_case_04
 # Description   - Test if H263 encode + H263 decode + other format ok
-#  
+#
 test_case_04()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="vpu_enc_h263_app"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -267,10 +267,10 @@ return $RC
 
 # Function:     test_case_05
 # Description   - Test if H264 encode + H264 decode + other format ok
-#  
+#
 test_case_05()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="vpu_enc_h264_app"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -292,7 +292,7 @@ STIME=$(expr ${YY} \* 365 + ${MM} \* 31 + ${DD})
 GOON=1
 while [ $GOON = "1" ]
 do
-#file test 
+#file test
  for i in $SRCLIST
  do
   srcfile=$(echo $i | sed "s/+/ /g" | awk '{print $2}')
@@ -340,7 +340,7 @@ return $RC
 if [ $# -ne 1 ]
 then
 echo "usage $0 <1/2/3/4/5>"
-exit 1 
+exit 1
 fi
 
 
@@ -348,7 +348,7 @@ fi
 setup || exit $RC
 case "$1" in
 1)
-  test_case_01 || exit $RC 
+  test_case_01 || exit $RC
   ;;
 2)
   test_case_02 || exit $RC

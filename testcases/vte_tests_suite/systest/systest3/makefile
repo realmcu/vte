@@ -10,7 +10,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ########################### REVISION HISTORY #################################
 #
 #Author (core ID)      Date         CR Number    Description of Changes
@@ -40,7 +40,7 @@ CFLAGS += -Wall -DLINUX -I$(LTP_DIR)/include -I$(MODULE_DIR) -I$(MODULE_DIR1) -I
 
 LOADLIBES  += -L$(LTP_DIR)/lib -lltp -pthread
 
-PROGRAM = 
+PROGRAM =
 LIBRARY =
 
 SRCS = $(wildcard *.c)

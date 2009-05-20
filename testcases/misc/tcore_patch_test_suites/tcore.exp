@@ -43,11 +43,7 @@ proc check_threads {} {
 	set buf $expect_out(0,string)
     	}
 	timeout {
-<<<<<<< HEAD
 		puts stderr "timeout while  run info threads"
-=======
-		fail "timeout while  run info threads"
->>>>>>> vte 20080401
 		return 1
 	}
     }
@@ -115,11 +111,7 @@ proc check_fpu {num} {
 			set buf $expect_out(0,string)
 		}
 		timeout {
-<<<<<<< HEAD
 	            puts stderr "fail to check the xmm value(timeout)"
-=======
-	            fail "fail to check the xmm value(timeout)"
->>>>>>> vte 20080401
         	    return 1
         	}
 	}

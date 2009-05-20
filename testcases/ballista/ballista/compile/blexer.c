@@ -1,16 +1,16 @@
 /* blexer.c : Ballista lexer - Compiler
    Copyright (C) 1998-2001  Carnegie Mellon University
-  
+
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License
    as published by the Free Software Foundation; either version 2
    of the License, or (at your option) any later version.
-  
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-  
+
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -23,7 +23,7 @@
 #include "blexer.h"
 
 struct jlist symTable;
-int init=0;
+int init0;
 
 int yywrap()
 {
@@ -32,15 +32,15 @@ int yywrap()
 
 int myCompare(struct jelement *el1,struct jelement *el2)
 {
-  int i=0;
-  if (el1==NULL || el2==NULL)
+  int i0;
+  if (el1NULL || el2NULL)
     jerror ("Error jlist compare function called with null ptr");
 
 #ifdef DEBUG
   printf("Comparing %s and %s \n",((struct tableData *)el1->theData)->lexeme,((struct tableData*)el2->theData)->lexeme);
 #endif
 
-  i = strcmp(((struct tableData *)el1->theData)->lexeme,((struct tableData*)el2->theData)->lexeme);
+  i  strcmp(((struct tableData *)el1->theData)->lexeme,((struct tableData*)el2->theData)->lexeme);
 
 #ifdef DEBUG
   printf ("strcmp returned %i\n",i);
@@ -53,12 +53,12 @@ int myCompare(struct jelement *el1,struct jelement *el2)
 void myCopy(struct jelement *el1,struct jelement *el2)
 {
   struct tableData *t1,*t2;
-  if (el1==NULL ||el2==NULL) 
+  if (el1NULL ||el2NULL)
     jerror("Error, jlist copy function called with null ptr");
-  t1 = (struct tableData *) el1->theData;
-  t2 = (struct tableData *) el2->theData;
+  t1  (struct tableData *) el1->theData;
+  t2  (struct tableData *) el2->theData;
   strcpy (t2->lexeme,t1->lexeme);
-  strcpy (t2->owner,t1->owner);  
+  strcpy (t2->owner,t1->owner);
 }
 
 void initSym()
@@ -66,17 +66,17 @@ void initSym()
 #ifdef DEBUG
   printf ("Initializing list: symTable\n");
 #endif
-  init=1;
-  symTable.compare = &myCompare;
-  symTable.copydata = &myCopy;
-  symTable.sort_ascending = 1;
-  symTable.i_am_sorted = 1;
-  symTable.stay_sorted = 1;
-  symTable.circular = 0;
-  symTable.insert_mode = insert_in_order;
-  symTable.data_size = sizeof(struct tableData);
-  symTable.head = NULL;
-  symTable.tail = NULL;
+  init1;
+  symTable.compare  &myCompare;
+  symTable.copydata  &myCopy;
+  symTable.sort_ascending  1;
+  symTable.i_am_sorted  1;
+  symTable.stay_sorted  1;
+  symTable.circular  0;
+  symTable.insert_mode  insert_in_order;
+  symTable.data_size  sizeof(struct tableData);
+  symTable.head  NULL;
+  symTable.tail  NULL;
 }
 
 struct tableData *symLook(char sym[255])
@@ -85,23 +85,23 @@ struct tableData *symLook(char sym[255])
   struct jelement *rel;
   struct tableData *data;
 
-  data = malloc (sizeof(struct tableData));
-  
+  data  malloc (sizeof(struct tableData));
+
   if (!init) initSym();
-  
-  el = (struct jelement *)malloc (sizeof(struct jelement));
+
+  el  (struct jelement *)malloc (sizeof(struct jelement));
 
   strcpy (data->lexeme,sym);
 
-  el->theData = data;
+  el->theData  data;
 
 #ifdef DEBUG
   printf("looking for %s \n",sym);
 #endif
-  
-  rel = find_element(&symTable,el);
-  
-  if (rel!=NULL) 
+
+  rel  find_element(&symTable,el);
+
+  if (rel!NULL)
     {
 #ifdef DEBUG
       printf("found: %s",((struct tableData *)rel->theData)->lexeme);

@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file  perform_mmc_test.c
 
         @brief MMC driver test scenario
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -20,13 +20,13 @@ S.ZAVJALOV/zvjs001c          22/03/2005     TLSbo46706  Initial version
 A.Ozerov/b00320              20/02/2006     TLSbo61899  Testapp was cast to coding standarts
 A.Ozerov/b00320              11/12/2006     TLSbo84161  Minor changes.
 
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -36,36 +36,36 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "perform_mmc_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 int     fd_device = 0;
 unsigned char *patten_buf = NULL,
     *read_buf = NULL;
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 extern int vb_mode;
 extern unsigned long block_size,
         block_count,
         offset_address;
 extern char *device_name;
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
-/*================================================================================================*/
-/*===== VT_rw_mmc_setup =====*/
-/** 
+======================*/
+/*====================*/
+/*= VT_rw_mmc_setup =*/
+/**
 @brief  This function assumes the pre-condition of the test case execution
 
 @param  none
 
-@return On success - return TPASS 
-        On failure - return TFAIL 
+@return On success - return TPASS
+        On failure - return TFAIL
 */
-/*================================================================================================*/
+/*====================*/
 int VT_perform_mmc_setup(void)
 {
         fd_device = open(device_name, O_RDWR);
@@ -93,17 +93,17 @@ int VT_perform_mmc_setup(void)
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== VT_rw_mmc_cleanup =====*/
+/*====================*/
+/*= VT_rw_mmc_cleanup =*/
 /**
 @brief  This function assumes the post-condition of the test case execution
 
 @param  none
 
-@return On success - return TPASS 
-        On failure - return TFAIL 
+@return On success - return TPASS
+        On failure - return TFAIL
 */
-/*================================================================================================*/
+/*====================*/
 int VT_perform_mmc_cleanup(void)
 {
         if (patten_buf != NULL)
@@ -121,8 +121,8 @@ int VT_perform_mmc_cleanup(void)
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== read_mmc_device =====*/
+/*====================*/
+/*= read_mmc_device =*/
 /**
 @brief  This function reads a data from the mmc device
 
@@ -141,52 +141,52 @@ int VT_perform_mmc_cleanup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int readperform_mmc_device(unsigned long start_offset, unsigned long size_to_read, unsigned long bs,
                     unsigned char *read_buf)
 {
         unsigned long bytes2read;
-	 long interval,suminterval;
-	 struct timeval tv2,tv1;
-	 double readspeed;
-	 double kbyte=1000000/1024;
-	 int loopcount=5;
-	 int i;
+  long interval,suminterval;
+  struct timeval tv2,tv1;
+  double readspeed;
+  double kbyte=1000000/1024;
+  int loopcount=5;
+  int i;
 
-	 for(i=0;i<loopcount;i++)
-	 {
-	        if (lseek(fd_device, start_offset * bs, SEEK_SET) != (start_offset * bs))
-	        {
-	                tst_resm(TFAIL,
-	                         "read_mmc_device() Failed repositions the offset of the file descriptor");
-	                return TFAIL;
-	        }
-		gettimeofday(&tv1, NULL);
-	        bytes2read = read(fd_device, read_buf, size_to_read * bs);
-		gettimeofday(&tv2,NULL);
-		interval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
-		
-	        if (interval <=0 ||bytes2read != (size_to_read * bs))
-	        {
-	                tst_resm(TFAIL, "read_mmc_device() Failed read from device");
-	                return TFAIL;
-	        }
-		 else
-		 	{
-			suminterval+=interval;
-		 }
-		
-	 }
-	readspeed=(kbyte*((double)bytes2read*loopcount)/suminterval)/1024;
-	tst_resm(TINFO,"MMC read speed %lf MByte/sec",readspeed);
-	
+  for(i=0;i<loopcount;i++)
+  {
+         if (lseek(fd_device, start_offset * bs, SEEK_SET) != (start_offset * bs))
+         {
+                 tst_resm(TFAIL,
+                          "read_mmc_device() Failed repositions the offset of the file descriptor");
+                 return TFAIL;
+         }
+  gettimeofday(&tv1, NULL);
+         bytes2read = read(fd_device, read_buf, size_to_read * bs);
+  gettimeofday(&tv2,NULL);
+  interval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
+
+         if (interval <=0 ||bytes2read != (size_to_read * bs))
+         {
+                 tst_resm(TFAIL, "read_mmc_device() Failed read from device");
+                 return TFAIL;
+         }
+   else
+   {
+   suminterval+=interval;
+   }
+
+  }
+ readspeed=(kbyte*((double)bytes2read*loopcount)/suminterval)/1024;
+ tst_resm(TINFO,"MMC read speed %lf MByte/sec",readspeed);
+
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== write_mmc_device =====*/
+/*====================*/
+/*= write_mmc_device =*/
 /**
-@brief  This function writes a data to the mmc device 
+@brief  This function writes a data to the mmc device
 
 @param  start_offset
         Offset start_offset
@@ -203,60 +203,60 @@ int readperform_mmc_device(unsigned long start_offset, unsigned long size_to_rea
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int writeperform_mmc_device(unsigned long start_offset, unsigned long size_to_write, unsigned long bs,
                      unsigned char *write_buf)
 {
         unsigned long bytes2write;
-	long interval,suminterval;
-	 struct timeval tv2,tv1;
-	 double writespeed;
-	 double kbyte=1000000/1024;
-	 int loopcount=5;
-	 int i;
+ long interval,suminterval;
+  struct timeval tv2,tv1;
+  double writespeed;
+  double kbyte=1000000/1024;
+  int loopcount=5;
+  int i;
 
-	 for(i=0;i<loopcount;i++)
-	 {
-	        if (lseek(fd_device, start_offset * bs, SEEK_SET) != (start_offset * bs))
-	        {
-	                tst_resm(TFAIL,
-	                         "write_mmc_device() Failed repositions the offset of the file descriptor");
-	                return TFAIL;
-	        }
-		gettimeofday(&tv1, NULL);
-	        bytes2write = write(fd_device, write_buf, size_to_write * bs);
-		gettimeofday(&tv2,NULL);
-		interval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
-		
-	        if (interval<=0 || bytes2write != (size_to_write * bs))
-	        {
-	                tst_resm(TFAIL, "write_mmc_device() Failed write to device");
-	                return TFAIL;
-	        }
-		else
-		{
-			suminterval+=interval;	
-		}
-			
-	 }
-	
-		writespeed=(kbyte*((double)bytes2write*loopcount)/suminterval)/1024;	
-		tst_resm(TINFO,"MMC write speed %lf MByte/sec",writespeed);
-	
+  for(i=0;i<loopcount;i++)
+  {
+         if (lseek(fd_device, start_offset * bs, SEEK_SET) != (start_offset * bs))
+         {
+                 tst_resm(TFAIL,
+                          "write_mmc_device() Failed repositions the offset of the file descriptor");
+                 return TFAIL;
+         }
+  gettimeofday(&tv1, NULL);
+         bytes2write = write(fd_device, write_buf, size_to_write * bs);
+  gettimeofday(&tv2,NULL);
+  interval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
+
+         if (interval<=0 || bytes2write != (size_to_write * bs))
+         {
+                 tst_resm(TFAIL, "write_mmc_device() Failed write to device");
+                 return TFAIL;
+         }
+  else
+  {
+   suminterval+=interval;
+  }
+
+  }
+
+  writespeed=(kbyte*((double)bytes2write*loopcount)/suminterval)/1024;
+  tst_resm(TINFO,"MMC write speed %lf MByte/sec",writespeed);
+
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== VT_rw_mmc_test =====*/
+/*====================*/
+/*= VT_rw_mmc_test =*/
 /**
 @brief  MMC Driver test scenario function
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_perform_mmc_test(void)
 {
         unsigned long i;
@@ -288,7 +288,7 @@ int VT_perform_mmc_test(void)
                 return TFAIL;
         }
 
-	 */
+  */
 
         return TPASS;
 }

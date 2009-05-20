@@ -1,4 +1,4 @@
-/* 
+/*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -18,7 +18,7 @@ typedef int (*shmget_test)(key_t, size_t, int);
 
 int dummyfcn (void)
 {
-	shmget_test dummyvar;
-	dummyvar = shmget;
-	return 0;
+ shmget_test dummyvar;
+ dummyvar  shmget;
+ return 0;
 }

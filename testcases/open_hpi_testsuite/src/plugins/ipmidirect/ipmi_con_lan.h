@@ -111,9 +111,9 @@ protected:
 
 public:
   cIpmiConLan( unsigned int timeout, unsigned int atca_timeout,
-               unsigned int max_outstanding, 
+               unsigned int max_outstanding,
                struct in_addr addr, int port,
-               tIpmiAuthType auth, tIpmiPrivilege priv, 
+               tIpmiAuthType auth, tIpmiPrivilege priv,
                char *user, char *passwd );
   virtual ~cIpmiConLan();
 

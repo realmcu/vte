@@ -10,18 +10,18 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-#D.SIMAKOV/smkd001c           11/07/2004     TLSbo41679   Initial version 
-#Ludovic Delaspre / rc149c    17/09/2004     TLSbo42022   VTE 1.5 integration 
+#D.SIMAKOV/smkd001c           11/07/2004     TLSbo41679   Initial version
+#Ludovic Delaspre / rc149c    17/09/2004     TLSbo42022   VTE 1.5 integration
 #Ludovic DELASPRE/RC149C      02/12/2004     TLSbo45299   CHUCK drop2.5 W449 test campaign
 #
 ###################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms. 
+#Portability: Indicate if this module is portable to other compilers or platforms.
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################
@@ -44,7 +44,7 @@ all: $(TARGET)
 	@echo "***********************************************"
 	@echo "** ALL : opl_chain_testapp test application  **"
 	@echo "***********************************************"
-	@echo 
+	@echo
 
 install:
 	@echo "***********************************************"

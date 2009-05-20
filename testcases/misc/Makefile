@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #
 #    misc test suite Makefile.
 #
@@ -30,16 +29,3 @@ endif
 
 include $(top_srcdir)/include/mk/env_pre.mk
 include $(top_srcdir)/include/mk/generic_trunk_target.mk
-=======
-SUBDIRS = crash f00f math 
-
-all:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
-
-install:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
-
-clean:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
-
->>>>>>> vte 20080401

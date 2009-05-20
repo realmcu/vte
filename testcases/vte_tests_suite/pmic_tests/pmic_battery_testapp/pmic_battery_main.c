@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   pmic_battery_main.c
 
         @brief  Main file for PMIC Battery driver test.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -20,13 +20,13 @@ A.Ozerov/NONE                18/01/2006     TLSbo61037  Initial version
 A.Ozerov/b00320              12/07/2006     TLSbo64238  Changes for L26_1_19 release.
 Pradeep K /b01016            09/25/2006     TLSboXXXX   Updated for PMIC API's
 
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,27 +39,27 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "pmic_battery_test.h"
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 char   *TCID = "pmic_battery_testapp";
 
 int     fd;     /* PMIC test device descriptor */
 int     TST_TOTAL = 5;  /* total number of tests in this file. */
 
-/*==================================================================================================
+/*======================
                                     GLOBAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void    cleanup(void);
 void    setup(void);
 int     main(int argc, char **argv);
 void    help(void);
 
-/*==================================================================================================
+/*======================
                                     GLOBAL FUNCTIONS
-==================================================================================================*/
-/*================================================================================================*/
-/*===== cleanup =====*/
+======================*/
+/*====================*/
+/*= cleanup =*/
 /**
 @brief This function performs all one time clean up for this test on successful completion,
        premature exit or failure. Closes all temporary files, removes all temporary directories exits
@@ -69,7 +69,7 @@ void    help(void);
 
 @return None.
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
         int     rv = TFAIL;
@@ -82,8 +82,8 @@ void cleanup(void)
         tst_exit();
 }
 
-/*================================================================================================*/
-/*===== setup =====*/
+/*====================*/
+/*= setup =*/
 /**
 @brief Performs all one time setup for this test. This function is typically used to capture
        signals, create temporary dirs and temporary files that may be used in the course of this test.
@@ -92,7 +92,7 @@ void cleanup(void)
 
 @return None.
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
         int     rv = TFAIL;
@@ -104,8 +104,8 @@ void setup(void)
         }
 }
 
-/*================================================================================================*/
-/*===== main =====*/
+/*====================*/
+/*= main =*/
 /**
 @brief Entry point to this test-case. It parses all the command line inputs, calls the global
        setup and executes the test. It logs the test status and results appropriately using the LTP API's
@@ -118,7 +118,7 @@ void setup(void)
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
         int     rv = TFAIL;
@@ -199,10 +199,10 @@ int main(int argc, char **argv)
                    int c_voltage;
                    PMIC_STATUS status;
                    if(status = ioctl(fd, PMIC_BATT_GET_BATTERY_VOLTAGE, &c_voltage)!=PMIC_SUCCESS)
-			   tst_resm(TFAIL, "Error in pmic_batt_get_battery_voltage. Error code: %d", status);
-		      else if(c_voltage==2400)
-				{    
-                                   printf("battery port's voltage:%d \n",c_voltage/1000);          
+      tst_resm(TFAIL, "Error in pmic_batt_get_battery_voltage. Error code: %d", status);
+        else if(c_voltage==2400)
+    {
+                                   printf("battery port's voltage:%d \n",c_voltage/1000);
                                    tst_resm(TFAIL, "battery isn't linked to board,please connect battery to board!");
                             }
 
@@ -214,7 +214,7 @@ int main(int argc, char **argv)
                           printf("battery voltage : %d v.\n", c_voltage/1000);
                       rv = VT_pmic_battery_test(change_test_case, file);
                        tst_resm(TINFO, "Testing %s_%s test case is OK", TCID, ch_test_case);
-          
+
                  if (rv == PMIC_SUCCESS)
                  {
                         tst_resm(TPASS, "%s_%s test case working as expected", TCID, ch_test_case);
@@ -223,7 +223,7 @@ int main(int argc, char **argv)
                  {
                         tst_resm(TFAIL, "%s_%s test case didn't work as expected", TCID, ch_test_case);
                  }
-                   } 
+                   }
         }
         else
         {
@@ -250,8 +250,8 @@ int main(int argc, char **argv)
         return rv;
 }
 
-/*================================================================================================*/
-/*===== help =====*/
+/*====================*/
+/*= help =*/
 /**
 @brief  Print help information.
 
@@ -259,10 +259,10 @@ int main(int argc, char **argv)
 
 @return None.
 */
-/*================================================================================================*/
+/*====================*/
 void help(void)
 {
-        printf("\n===========================================================================\n");
+        printf("\n===============\n");
         printf("PMIC Battery Driver option\n");
 //#ifdef CONFIG_MXC_PMIC_SC55112
 //#ifdef CONFIG_MXC_MC13783_PMIC
@@ -279,6 +279,6 @@ void help(void)
         printf("Call without any parameters\t  Check all of MC13783 Battery driver functions");
 #endif
 */
-        printf("\n===========================================================================\n");
+        printf("\n===============\n");
 
 }

@@ -10,7 +10,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
@@ -21,9 +21,9 @@
 #Portability: ARM GCC
 ###################################################################################################
 
-CFLAGS       += -Wall -I ../../../../include 
+CFLAGS       += -Wall -I ../../../../include
 LOADLIBES    += -L../../../../lib -lltp -lm
-PROGRAM = 
+PROGRAM =
 LIBRARY =
 
 SRCS = $(wildcard *.c)

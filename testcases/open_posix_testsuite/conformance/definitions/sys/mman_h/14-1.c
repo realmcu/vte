@@ -1,4 +1,4 @@
-/* 
+/*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -20,7 +20,7 @@ typedef int (*mprotect_test)(void *, size_t, int);
 
 int dummyfcn (void)
 {
-	mprotect_test dummyvar;
-	dummyvar = mprotect;
-	return 0;
+ mprotect_test dummyvar;
+ dummyvar  mprotect;
+ return 0;
 }

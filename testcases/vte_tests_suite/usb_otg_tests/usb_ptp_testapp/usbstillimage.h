@@ -22,29 +22,29 @@
 
 #define USBSIDEV_GET_DEVICE_LIST    _IOR(PTP_IOC_MAGIC, 0, char *)
 #define USBSIDEV_GET_DEVICE_INFO   _IOR(PTP_IOC_MAGIC, 1, char *)
-#define USBSIDEV_OPEN_SESSION 		_IOW(PTP_IOC_MAGIC, 2, unsigned int )
+#define USBSIDEV_OPEN_SESSION _IOW(PTP_IOC_MAGIC, 2, unsigned int )
 
-#define USBSIDEV_CLOSE_SESSION 	_IOW(PTP_IOC_MAGIC, 3, unsigned int )
+#define USBSIDEV_CLOSE_SESSION _IOW(PTP_IOC_MAGIC, 3, unsigned int )
 #define USBSIDEV_GET_NUM_OBJECTS  _IOR(PTP_IOC_MAGIC, 4, unsigned int )
 
-#define USBSIDEV_GET_STORAGE_IDS  		_IOR(PTP_IOC_MAGIC, 5, char* )
-#define USBSIDEV_GET_STORAGE_INFO  	_IOR(PTP_IOC_MAGIC, 6, char* )
+#define USBSIDEV_GET_STORAGE_IDS  _IOR(PTP_IOC_MAGIC, 5, char* )
+#define USBSIDEV_GET_STORAGE_INFO  _IOR(PTP_IOC_MAGIC, 6, char* )
 #define USBSIDEV_GET_OBJECT_HANDLES   _IOR(PTP_IOC_MAGIC, 7, char* )
-#define USBSIDEV_GET_OBJECT_INFO  	       _IOR(PTP_IOC_MAGIC, 8, char*)
-#define USBSIDEV_GET_THUMB		  	_IOR(PTP_IOC_MAGIC, 9, char*)
-#define USBSIDEV_START_GET_OBJECT  	_IOR(PTP_IOC_MAGIC, 10, char* )
-#define USBSIDEV_GET_OBJECT		  	_IOR(PTP_IOC_MAGIC, 11, char*)
-#define USBSIDEV_END_GET_OBJECT	  	_IOR(PTP_IOC_MAGIC, 12, unsigned int )
+#define USBSIDEV_GET_OBJECT_INFO         _IOR(PTP_IOC_MAGIC, 8, char*)
+#define USBSIDEV_GET_THUMB		  _IOR(PTP_IOC_MAGIC, 9, char*)
+#define USBSIDEV_START_GET_OBJECT  _IOR(PTP_IOC_MAGIC, 10, char* )
+#define USBSIDEV_GET_OBJECT		  _IOR(PTP_IOC_MAGIC, 11, char*)
+#define USBSIDEV_END_GET_OBJECT	  _IOR(PTP_IOC_MAGIC, 12, unsigned int )
 
 #define USBSIDEV_GET_WHOLE_OBJECT	_IOR(PTP_IOC_MAGIC, 13, char*)
 #define USBSIDEV_START_SEND_OBJECT	_IOR(PTP_IOC_MAGIC, 14, char*)
-#define USBSIDEV_SEND_OBJECT		  	_IOR(PTP_IOC_MAGIC, 15, char*)
+#define USBSIDEV_SEND_OBJECT		  _IOR(PTP_IOC_MAGIC, 15, char*)
 #define USBSIDEV_END_SEND_OBJECT		 _IOR(PTP_IOC_MAGIC, 16, unsigned int)
 
-#define USBSIDEV_SET_OBJECT_PROTECTION  	_IOW(PTP_IOC_MAGIC, 17, char*)
-#define USBSIDEV_DELETE_OBJECT		  		_IOW(PTP_IOC_MAGIC, 18, char*)
-#define USBSIDEV_FORMAT_STORE		  		_IOW(PTP_IOC_MAGIC, 19, char*)
-#define USBSIDEV_RESET_DEVICE		  		_IOR(PTP_IOC_MAGIC, 20,  unsigned int)
+#define USBSIDEV_SET_OBJECT_PROTECTION  _IOW(PTP_IOC_MAGIC, 17, char*)
+#define USBSIDEV_DELETE_OBJECT		  _IOW(PTP_IOC_MAGIC, 18, char*)
+#define USBSIDEV_FORMAT_STORE		  _IOW(PTP_IOC_MAGIC, 19, char*)
+#define USBSIDEV_RESET_DEVICE		  _IOR(PTP_IOC_MAGIC, 20,  unsigned int)
 
 #define USBSIDEV_SELF_TEST				 _IOR(PTP_IOC_MAGIC, 21, unsigned int)
 #define USBSIDEV_POWER_DOWN			 _IOR(PTP_IOC_MAGIC, 22, unsigned int)
@@ -242,5 +242,5 @@ typedef struct {
 
 } usbsidev_para_format_store;
 
-#endif				/* 
+#endif				/*
 				 */

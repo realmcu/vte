@@ -10,7 +10,7 @@
 #        THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #        BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #        Freescale Semiconductor, Inc.
-#     
+#
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
@@ -54,5 +54,5 @@ $(TARGET_BIN): $(OBJ)
 
 .PHONY: clean
 clean:
-	rm -f $(TARGET_BIN) $(OBJ) 
+	rm -f $(TARGET_BIN) $(OBJ)
 

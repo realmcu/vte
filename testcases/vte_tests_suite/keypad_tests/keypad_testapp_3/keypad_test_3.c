@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   keypad_test_3.c
 
         @brief  Test scenario C source template.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
-    
-====================================================================================================
+
+====================
 Revision History:
                             Modification     Tracking
 Author/Core ID                  Date          Number    Description of Changes
@@ -23,45 +23,45 @@ C. Gagneraud                 08/11/2004     TLSbo44474   Warning fixup.
 L.Delaspre/rc149c            22/03/2005     TLSbo48665   Update mapcode
 A.Ozerov/NONE                10/01/2006     TLSbo61037   Update in accordance with linux-2.6.10-rel-L26_1_15
 
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
-/*==================================================================================================
+======================*/
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
-    
+
 /* Harness Specific Include Files. */
 #include <test.h>
 
 /* Verification Test Environment Include Files */
 #include "keypad_test_3.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 /* Keypad ioctl arguments */
 kbd_arg keypad_args = {0,0};
 
-/*==================================================================================================
+/*======================
                                         LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 #define K_RAWMODE  0x00 /* Configure keypad in raw mode */
 #define K_MAPMODE  0x01 /* Configure keypad in map mode */
 #define KDGKBMODE  0x4B44 /* Gets current Keypad mode */
 #define KDSKBMODE  0x4B45 /* Sets current Keypad mode */
 #define KDSKBMAXCO 0x4B73 /* Sets keypad matrix configuration */
 
-#define NUMBER_OF_KEYS    65  /* total count of the keys */   
+#define NUMBER_OF_KEYS    65  /* total count of the keys */
 #define LOW_KEYS          32  /* */
 #define HIGH_KEYS         16  /* */
 #define STOP_SCANCODE      6  /* scan code for exit */
-        
+
 #define MAX_SIM_KEYS 3
 
 char keyarray[NUMBER_OF_KEYS][8] =
@@ -75,48 +75,48 @@ char keyarray[NUMBER_OF_KEYS][8] =
         "b", "h", "n", "m", "j", "k", "u", "i",
         "space", "On/Off", ".", "Enter", "l", "bs", "p", "o",
 };
-                        
+
 char *mode_string[] = {"RAW","MAP" };
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 int            driver_file = -1;           /* keypad's driver file name */
 unsigned short scan_buffer[MAX_SIM_KEYS];  /**/
 int            is_finished = FALSE;        /**/
 int            num_keys_pressed = 0;
 
-/*==================================================================================================
+/*======================
                                         GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                     LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void process_keypad(void);
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
-/*================================================================================================*/
-/*===== VT_keypad_test_3_setup =====*/
+======================*/
+/*====================*/
+/*= VT_keypad_test_3_setup =*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_keypad_test_3_setup(void)
 {
         int rv = TFAIL;
-    
+
         /* open keypad driver */
         driver_file = open( KEYPAD_DRIVER, O_RDONLY );
         sleep( 1 );
@@ -128,22 +128,22 @@ int VT_keypad_test_3_setup(void)
         else
         {
                 rv = TPASS;
-        }        
-    
+        }
+
         return rv;
 }
 
-/*================================================================================================*/
-/*===== VT_keypad_test_3_cleanup =====*/
+/*====================*/
+/*= VT_keypad_test_3_cleanup =*/
 /**
 @brief  assumes the post-condition of the test case execution
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_keypad_test_3_cleanup(void)
 {
         int rv = TFAIL;
@@ -160,26 +160,26 @@ int VT_keypad_test_3_cleanup(void)
         {
                 rv = TPASS;
         }
-    
+
         return rv;
 }
 
-/*================================================================================================*/
-/*===== VT_keypad_test_3 =====*/
+/*====================*/
+/*= VT_keypad_test_3 =*/
 /**
 @brief  keypad test scenario 3 function
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code*/
-/*================================================================================================*/
+/*====================*/
 int VT_keypad_test_3(void)
 {
         int rv = TFAIL;
         int res = -EFAULT;
         unsigned int keypad_mode = 0;
-    
+
         /* Configure keypad matrix to a normal value (8 by 8) */
         printf("Configure keypad matrix to a normal value (8 by 8)\n");
         keypad_args.arg1 = 8;
@@ -216,38 +216,38 @@ int VT_keypad_test_3(void)
             return rv;
         }
 
-        printf( "press %d keys\n", MAX_SIM_KEYS );  
+        printf( "press %d keys\n", MAX_SIM_KEYS );
         process_keypad();
 
         rv = TPASS;
-    
+
         return rv;
 }
 
-/*================================================================================================*/
-/*===== process_keypad =====*/
+/*====================*/
+/*= process_keypad =*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 void process_keypad(void)
 {
-        int rb;        
+        int rb;
         int fail_timeout_count = 0;
         int i;
-        
+
         while( !is_finished )
         {
                 if( driver_file != -1 )
                 {
                         if( fail_timeout_count > 10 )
-                        {        
-                                is_finished = TRUE; 
+                        {
+                                is_finished = TRUE;
                                 continue;
                         }
 
@@ -258,15 +258,15 @@ void process_keypad(void)
                                 printf( "%s, ", keyarray[ scan_buffer[i] & 0x3f ] );
                                 if( (scan_buffer[i] & 0x3f) == STOP_SCANCODE )
                                 is_finished = TRUE;
-                        }    
+                        }
                         printf( "%s\n", keyarray[ scan_buffer[MAX_SIM_KEYS-1] & 0x3f ] );
                         if( (scan_buffer[MAX_SIM_KEYS-1] & 0x3f) == STOP_SCANCODE )
                         is_finished = TRUE;
-            
+
                         if( rb < 0 && errno != EAGAIN )
-                        {                                
+                        {
                                 tst_resm( TFAIL, "ERROR : read scan codes from queue failed" );
-                                perror( "read fails" );                                
+                                perror( "read fails" );
                                 ++fail_timeout_count;
                         }
                 }

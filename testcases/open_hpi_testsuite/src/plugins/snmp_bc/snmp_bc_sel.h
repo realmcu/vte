@@ -33,7 +33,7 @@ typedef struct {
 } bc_sel_entry;
 
 
-/* 
+/*
  * Function Prototyping
  */
 int snmp_bc_parse_sel_entry(struct snmp_session *,char * text, bc_sel_entry * sel);

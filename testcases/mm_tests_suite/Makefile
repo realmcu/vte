@@ -10,7 +10,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ###################################################################################################
 #
 #    @file   Makefile
@@ -23,7 +23,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
@@ -39,7 +39,7 @@
 #Irina INKINA/RC149C          15/02/2005     TLSbo47117   Added G.723.1 codec tests
 #Dmitry SIMAKOV/smkd001c      15/02/2005     TLSbo47117   Added MP3 and jpeg codec tests
 #Dmitry SIMAKOV/smkd001c      24/02/2005     TLSbo47117   Added PNG tests
-#Dmitry SIMAKOV/smkd001c      03/03/2005     TLSbo47117   Added WBMP and BMP codecs 
+#Dmitry SIMAKOV/smkd001c      03/03/2005     TLSbo47117   Added WBMP and BMP codecs
 #L.Delaspre\rc149c            15/03/2005     TLSbo47726   VTE 1.8 integration
 #L.Delaspre\rc149c            16/03/2005     TLSbo48584   ARM11 codecs P1 tests
 #L.Delaspre\rc149c            29/03/2005     TLSbo49055   ARM11 codecs P2 tests
@@ -55,9 +55,9 @@
 #S. V-Guilhou/svan01c	      09/09/2005     TLSbo54090   ARM11 codecs P6 tests
 #D.Simakov/smkd001c           14/10/2005     TLSbo57009   Update
 #S. V-Guilhou/svan01c	      23/11/2005     TLSbo57360   Replace AACLC_ by AACD_
-#D. Simakov                   17/02/2005     TLSbo61033   Update 
+#D. Simakov                   17/02/2005     TLSbo61033   Update
 ###################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms. 
+#Portability: Indicate if this module is portable to other compilers or platforms.
 #             If not, indicate specific reasons why is it not portable.
 #//
 ###################################################################################################
@@ -449,30 +449,30 @@ AACPD_INPUT \
 AACPD_REF \
 AACPD_LIBRARY \
 
-SUBDIRS += aacplus_codec_tests 
-SUBDIRS += jpeg2k_codec_tests 
-#SUBDIRS += beatnik_midi_tests 
-SUBDIRS += h264_decoder_tests 
+SUBDIRS += aacplus_codec_tests
+SUBDIRS += jpeg2k_codec_tests
+#SUBDIRS += beatnik_midi_tests
+SUBDIRS += h264_decoder_tests
 SUBDIRS += aac_codec_tests/aaclc_decoder_testapp
-SUBDIRS += realvideo_codec_tests 
-SUBDIRS += realaudio8_codec_tests 
-SUBDIRS += midi_parser_tests 
-SUBDIRS += wma_codec_tests 
-SUBDIRS += wmv9_codec_tests 
-SUBDIRS += bmp_codec_tests 
-SUBDIRS += g723_codec_tests 
-SUBDIRS += wbmp_codec_tests 
-SUBDIRS += wbamr_codec_tests 
-SUBDIRS += imy_converter_tests 
-SUBDIRS += gif_codec_tests 
-SUBDIRS += png_codec_tests 
-#SUBDIRS += still_pictures_tests 
-#SUBDIRS += amr_codec_tests 
-SUBDIRS += mp3_codec_tests 
-SUBDIRS += jpeg_codec_tests 
-SUBDIRS += mpeg4_codec_tests 
-SUBDIRS += nbamr_codec_tests 
-SUBDIRS += g726_codec_test 
+SUBDIRS += realvideo_codec_tests
+SUBDIRS += realaudio8_codec_tests
+SUBDIRS += midi_parser_tests
+SUBDIRS += wma_codec_tests
+SUBDIRS += wmv9_codec_tests
+SUBDIRS += bmp_codec_tests
+SUBDIRS += g723_codec_tests
+SUBDIRS += wbmp_codec_tests
+SUBDIRS += wbamr_codec_tests
+SUBDIRS += imy_converter_tests
+SUBDIRS += gif_codec_tests
+SUBDIRS += png_codec_tests
+#SUBDIRS += still_pictures_tests
+#SUBDIRS += amr_codec_tests
+SUBDIRS += mp3_codec_tests
+SUBDIRS += jpeg_codec_tests
+SUBDIRS += mpeg4_codec_tests
+SUBDIRS += nbamr_codec_tests
+SUBDIRS += g726_codec_test
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

@@ -9,19 +9,19 @@ extern "C" {
 #endif
 
 
-typedef struct 
+typedef struct
 {
         int            mAppAdifHeaderPresent;
         int            mAppAdtsHeaderPresent;
-        
+
         char *         mpBitstreamBuf;
         int            mBitstreamBufIndex;
         int            mBitstreamCount;
         int            mInBufDone;
         int            mBytesSupplied;
-        
+
         int            mBitsInHeader;
-        
+
         unsigned char  mAppIbsBuf[INTERNAL_BS_BUFSIZE];
         BitstreamParam mAppBsParam;
 } sBitstream;

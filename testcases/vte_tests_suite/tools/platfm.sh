@@ -18,7 +18,7 @@
 #                      Modification     Tracking
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
-# Spring Zhang          27/11/2008       n/a        Initial ver. 
+# Spring Zhang          27/11/2008       n/a        Initial ver.
 # Spring                28/11/2008       n/a        Modify COPYRIGHT header
 # Spring                15/01/2008       n/a        Add MX35TO2 judgement,
 #                                                   move to tools/
@@ -39,7 +39,7 @@
 #   IMX51_BABBAGE IMX51_BABBAGE
 #
 #
-# Usage2(return number): 
+# Usage2(return number):
 #   platfm.sh || platform=$?
 #   Then use $platform to judge the platform
 #
@@ -64,7 +64,7 @@
 determine_platform()
 {
     local find=0
-    
+
     # Determine the platform
     find=`cat /proc/cpuinfo | grep "Revision" | grep " 31.*" | wc -l`;
     if [ $find -eq 1 ]
@@ -111,15 +111,15 @@ determine_platform()
         RC=31
     elif [ $p = "IMX35_3STACK" ]
     then
-        #echo  "Platform MX35" 
+        #echo  "Platform MX35"
         RC=35
     elif [ $p = "IMX37_3STACK" ]
     then
-        #echo  "Platform MX37" 
+        #echo  "Platform MX37"
         RC=37
     elif [ $p = "IMX51_3STACK" ]
     then
-        #echo  "Platform MX51" 
+        #echo  "Platform MX51"
         RC=51
     elif [ $p = "IMX51_BABBAGE" ]
     then
@@ -127,7 +127,7 @@ determine_platform()
         RC=41
     elif [ $p = "SMTP378X" ]
     then
-        #echo  "Platform SMTP378X" 
+        #echo  "Platform SMTP378X"
         let RC=378%256
     else
         #echo  "Platform not recognized!"
@@ -140,10 +140,10 @@ determine_platform()
 
 # main
 RC=0
-if [ -e /unit_tests/test-utils.sh ] 
+if [ -e /unit_tests/test-utils.sh ]
 then
     #source unit test, align to Dev.
-    source /unit_tests/test-utils.sh 
+    source /unit_tests/test-utils.sh
     p=`platform`
     echo "$p"
     # get $RC to exit

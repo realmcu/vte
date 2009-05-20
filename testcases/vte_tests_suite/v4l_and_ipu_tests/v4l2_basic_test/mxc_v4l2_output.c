@@ -22,9 +22,9 @@
 extern "C"{
 #endif
 
-/*=======================================================================
+/*===============
                                         INCLUDE FILES
-=======================================================================*/
+===============*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,8 +47,8 @@ extern "C"{
 //#include <asm/arch/mxc_v4l2.h>
 
 struct v4l2_mxc_offset {
-	uint32_t u_offset;
-	uint32_t v_offset;
+ uint32_t u_offset;
+ uint32_t v_offset;
 };
 
 #define TFAIL -1
@@ -100,62 +100,62 @@ struct testbuffer buffers[5];
 
 void gen_fill_pattern(char * buf, int frame_num)
 {
-	int y_size = g_in_width * g_in_height;
-	int h_step = g_in_height / 16;
-	int w_step = g_in_width / 16;
-	int h, w;
-	uint32_t y_color = 0;
-	int32_t u_color = 0;
-	int32_t v_color = 0;
-	uint32_t rgb = 0;
-	static int32_t alpha = 0;
-	static int inc_alpha = 1;
+ int y_size = g_in_width * g_in_height;
+ int h_step = g_in_height / 16;
+ int w_step = g_in_width / 16;
+ int h, w;
+ uint32_t y_color = 0;
+ int32_t u_color = 0;
+ int32_t v_color = 0;
+ uint32_t rgb = 0;
+ static int32_t alpha = 0;
+ static int inc_alpha = 1;
 
-	for (h = 0; h < g_in_height; h++) {
-		int32_t rgb_temp = rgb;
+ for (h = 0; h < g_in_height; h++) {
+  int32_t rgb_temp = rgb;
 
-		for (w = 0; w < g_in_width; w++) {
-			if (w % w_step == 0) {
-				y_color = y(rgb_temp);
-				y_color = (y_color * alpha) / 255;
+  for (w = 0; w < g_in_width; w++) {
+   if (w % w_step == 0) {
+    y_color = y(rgb_temp);
+    y_color = (y_color * alpha) / 255;
 
-				u_color = u(rgb_temp);
-				u_color = (u_color * alpha) / 255;
-				u_color += 128;
+    u_color = u(rgb_temp);
+    u_color = (u_color * alpha) / 255;
+    u_color += 128;
 
-				v_color = v(rgb_temp);
-				v_color = (v_color * alpha) / 255;
-				v_color += 128;
+    v_color = v(rgb_temp);
+    v_color = (v_color * alpha) / 255;
+    v_color += 128;
 
-				rgb_temp++;
-				if (rgb_temp > 255)
-					rgb_temp = 0;
-//				printf("y = %8d, u = %08x, v = %08x\n", y_color, u_color, v_color);
-			}
-			buf[(h*g_in_width) + w] = y_color;
-			if (!(h & 0x1) && !(w & 0x1)) {
-				buf[y_size + (((h*g_in_width)/4) + (w/2)) ] = u_color;
-				buf[y_size + y_size/4 + (((h*g_in_width)/4) + (w/2))] = v_color;
-			}
-		}
-		if ((h > 0) && (h % h_step == 0)) {
-			rgb += 16;
-			if (rgb > 255)
-				rgb = 0;
-		}
+    rgb_temp++;
+    if (rgb_temp > 255)
+     rgb_temp = 0;
+//    printf("y = %8d, u = %08x, v = %08x\n", y_color, u_color, v_color);
+   }
+   buf[(h*g_in_width) + w] = y_color;
+   if (!(h & 0x1) && !(w & 0x1)) {
+    buf[y_size + (((h*g_in_width)/4) + (w/2)) ] = u_color;
+    buf[y_size + y_size/4 + (((h*g_in_width)/4) + (w/2))] = v_color;
+   }
+  }
+  if ((h > 0) && (h % h_step == 0)) {
+   rgb += 16;
+   if (rgb > 255)
+    rgb = 0;
+  }
 
-	}
-	if (inc_alpha) {
-		alpha+=4;
-		if (alpha >= 255) {
-			inc_alpha = 0;
-		}
-	} else {
-		alpha-=4;
-		if (alpha <= 0) {
-			inc_alpha = 1;
-		}
-	}
+ }
+ if (inc_alpha) {
+  alpha+=4;
+  if (alpha >= 255) {
+   inc_alpha = 0;
+  }
+ } else {
+  alpha-=4;
+  if (alpha <= 0) {
+   inc_alpha = 1;
+  }
+ }
 }
 
 int
@@ -168,7 +168,7 @@ mxc_v4l_output_test(FILE *in)
         struct v4l2_buffer buf;
         int y_size = (g_frame_size * 2) / 3;
         __u32 total_time;
-	int count = 100;
+ int count = 100;
         struct timeval tv_start, tv_current;
 
         memset(&buf, 0, sizeof(buf));
@@ -182,7 +182,7 @@ mxc_v4l_output_test(FILE *in)
                 if (ioctl(fd_v4l, VIDIOC_QUERYBUF, &buf) < 0)
                 {
                         printf("VIDIOC_QUERYBUF error\n");
-			retval = -1;
+   retval = -1;
                         goto cleanup;
                 }
 
@@ -194,7 +194,7 @@ mxc_v4l_output_test(FILE *in)
                                          fd_v4l, buffers[i].offset);
                 if (buffers[i].start == NULL) {
                         printf("v4l2_out test: mmap failed\n");
-			retval = -1;
+   retval = -1;
                 }
         }
 
@@ -209,7 +209,7 @@ mxc_v4l_output_test(FILE *in)
                         if (ioctl(fd_v4l, VIDIOC_QUERYBUF, &buf) < 0)
                         {
                                 printf("VIDIOC_QUERYBUF failed\n");
-				retval = -1;
+    retval = -1;
                                 break;
                         }
                 }
@@ -219,7 +219,7 @@ mxc_v4l_output_test(FILE *in)
                         if (ioctl(fd_v4l, VIDIOC_DQBUF, &buf) < 0)
                         {
                                 printf("VIDIOC_DQBUF failed\n");
-				retval = -1;
+    retval = -1;
                                 break;
                         }
                 }
@@ -244,12 +244,12 @@ mxc_v4l_output_test(FILE *in)
                         }
                 }
                 else {
-			if (count-- == 0) {
-				if (g_loop_count-- == 0) {
-					break;
-				}
-				count = 100;
-			}
+   if (count-- == 0) {
+    if (g_loop_count-- == 0) {
+     break;
+    }
+    count = 100;
+   }
                         gen_fill_pattern(buffers[buf.index].start, i);
                 }
                 //sleep(1);
@@ -258,13 +258,13 @@ mxc_v4l_output_test(FILE *in)
                 buf.timestamp.tv_usec = tv_start.tv_usec + (g_frame_period * i);
                 //printf("buffer timestamp = %d s, %d us\n", buf.timestamp.tv_sec, buf.timestamp.tv_usec);
                 if (g_extra_pixel) {
-                	buf.m.offset = buffers[buf.index].offset + g_extra_pixel *
-                		(g_in_width + 2 * g_extra_pixel) + g_extra_pixel;
-				}
+                buf.m.offset = buffers[buf.index].offset + g_extra_pixel *
+               (g_in_width + 2 * g_extra_pixel) + g_extra_pixel;
+    }
                 if (ioctl(fd_v4l, VIDIOC_QBUF, &buf) < 0)
                 {
                         printf("VIDIOC_QBUF failed\n");
-			retval = -1;
+   retval = -1;
                         break;
                 }
 
@@ -272,7 +272,7 @@ mxc_v4l_output_test(FILE *in)
                         type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
                         if (ioctl (fd_v4l, VIDIOC_STREAMON, &type) < 0) {
                                 printf("Could not start stream\n");
-				retval = -1;
+    retval = -1;
                                 break;
                         }
                 }
@@ -291,7 +291,7 @@ cleanup:
         {
                 munmap (buffers[i].start, buffers[i].length);
         }
-	return retval;
+ return retval;
 }
 
 int
@@ -355,15 +355,15 @@ int fb_setup(void)
                 if ( ioctl(fd_fb, FBIOGET_FSCREENINFO, &fb_fix) < 0) {
                         goto err1;
                 }
-		if ((g_output == 5) && (strcmp(fb_fix.id, "DISP3 BG - DI1") == 0)) {
-			break;
-		} else if ((g_output == 4) && (strcmp(fb_fix.id, "DISP3 BG") == 0)) {
-			break;
-		} else if ((g_output == 3) && (strcmp(fb_fix.id, "DISP3 FG") == 0)) {
-			break;
-		} else if (fb_fix.id[4] == ('0' + g_output)) {
+  if ((g_output == 5) && (strcmp(fb_fix.id, "DISP3 BG - DI1") == 0)) {
+   break;
+  } else if ((g_output == 4) && (strcmp(fb_fix.id, "DISP3 BG") == 0)) {
+   break;
+  } else if ((g_output == 3) && (strcmp(fb_fix.id, "DISP3 FG") == 0)) {
+   break;
+  } else if (fb_fix.id[4] == ('0' + g_output)) {
                         break;
-		}
+  }
                 close(fd_fb);
         }
 
@@ -524,7 +524,7 @@ main(int argc, char **argv)
         struct v4l2_crop crop;
         FILE * fd_in;
         int retval = TPASS;
-		struct v4l2_mxc_offset off;
+  struct v4l2_mxc_offset off;
 
         if (process_cmdline(argc, argv) < 0) {
                 printf("MXC Video4Linux Output Device Test\n\n" \
@@ -604,21 +604,21 @@ main(int argc, char **argv)
         fmt.fmt.pix.width=g_in_width;
         fmt.fmt.pix.height=g_in_height;
         fmt.fmt.pix.pixelformat = g_in_fmt;
-		if (g_extra_pixel) {
-			off.u_offset = (2 * g_extra_pixel + g_in_width) * (g_in_height + g_extra_pixel)
-				 - g_extra_pixel + (g_extra_pixel / 2) * ((g_in_width / 2)
-				 + g_extra_pixel) + g_extra_pixel / 2;
-			off.v_offset = off.u_offset + (g_extra_pixel + g_in_width / 2) *
-				((g_in_height / 2) + g_extra_pixel);
-        	fmt.fmt.pix.bytesperline = g_in_width + g_extra_pixel * 2;
-			fmt.fmt.pix.priv = (uint32_t) &off;
-        	fmt.fmt.pix.sizeimage = (g_in_width + g_extra_pixel * 2 )
-        		* (g_in_height + g_extra_pixel * 2) * 3 / 2;
+  if (g_extra_pixel) {
+   off.u_offset = (2 * g_extra_pixel + g_in_width) * (g_in_height + g_extra_pixel)
+     - g_extra_pixel + (g_extra_pixel / 2) * ((g_in_width / 2)
+     + g_extra_pixel) + g_extra_pixel / 2;
+   off.v_offset = off.u_offset + (g_extra_pixel + g_in_width / 2) *
+    ((g_in_height / 2) + g_extra_pixel);
+        fmt.fmt.pix.bytesperline = g_in_width + g_extra_pixel * 2;
+   fmt.fmt.pix.priv = (uint32_t) &off;
+        fmt.fmt.pix.sizeimage = (g_in_width + g_extra_pixel * 2 )
+       * (g_in_height + g_extra_pixel * 2) * 3 / 2;
         } else {
-        	fmt.fmt.pix.bytesperline = g_in_width;
-			fmt.fmt.pix.priv = 0;
-        	fmt.fmt.pix.sizeimage = 0;
-		}
+        fmt.fmt.pix.bytesperline = g_in_width;
+   fmt.fmt.pix.priv = 0;
+        fmt.fmt.pix.sizeimage = 0;
+  }
         mxc_v4l_output_setup(&fmt);
         g_frame_size = fmt.fmt.pix.sizeimage;
 

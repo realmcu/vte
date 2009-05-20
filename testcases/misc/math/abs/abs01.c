@@ -57,11 +57,6 @@ int block_number;
 int errno;
 FILE * temp;
 int TST_TOTAL =1;
-<<<<<<< HEAD
-=======
-extern int Tst_count;
-
->>>>>>> vte 20080401
 
 void setup();
 int blenter();
@@ -82,20 +77,12 @@ int main (argc, argv)
 	blenter();
 
 	i = llabs(MININT) + (long long)MININT;
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> vte 20080401
 	if (i != 0) {
 		fprintf(temp, "abs of minimum integer failed.");
 		local_flag = FAILED;
 	}
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 	blexit();
 /*--------------------------------------------------------------*/
 	blenter();
@@ -122,12 +109,7 @@ int main (argc, argv)
 /*--------------------------------------------------------------*/
 /* Clean up any files created by test before call to anyfail.	*/
 
-<<<<<<< HEAD
 	tst_exit();
-=======
-	tst_exit();	/* THIS CALL DOES NOT RETURN - EXITS!!	*/
-	return(0);
->>>>>>> vte 20080401
 }
 /*--------------------------------------------------------------*/
 
@@ -137,29 +119,16 @@ void setup()
   temp = stderr;
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 int blenter()
 {
   local_flag = PASSED;
   return(0);
 }
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> vte 20080401
 int blexit()
 {
   (local_flag == PASSED ) ? tst_resm(TPASS, "Test passed") : tst_resm(TFAIL, "Test failed");
   return(0);
 }
 
-<<<<<<< HEAD
 /******			*****/
-=======
-/******			*****/
->>>>>>> vte 20080401

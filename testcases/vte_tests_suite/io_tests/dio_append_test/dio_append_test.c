@@ -1,34 +1,34 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   dio_append_test.c
 
         @brief  GPIO dio_append test scenario C source.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
-    
-====================================================================================================
+
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Igor Semenchukov             10/06/2004     TLSbo39741  Initial version 
-A.Ozerov/b00320              11/12/2006     TLSbo84161  Minor changes. 
+Igor Semenchukov             10/06/2004     TLSbo39741  Initial version
+A.Ozerov/b00320              11/12/2006     TLSbo84161  Minor changes.
 
-====================================================================================================
-Portability: Indicate if this module is portable to other compilers or platforms. 
+====================
+Portability: Indicate if this module is portable to other compilers or platforms.
             If not, indicate specific reasons why is it not portable.
 
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
 #include <stdlib.h>
@@ -43,7 +43,7 @@ Portability: Indicate if this module is portable to other compilers or platforms
 #ifdef __cplusplus
 extern "C"{
 #endif
-    
+
 /* Harness Specific Include Files. */
 #include "test.h"
 #ifdef __cplusplus
@@ -54,90 +54,90 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "dio_append_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                     LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
 
-/*================================================================================================*/
-/*===== VT_dio_append_setup =====*/
+/*====================*/
+/*= VT_dio_append_setup =*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_dio_append_setup(void)
 {
     return TPASS;
 }
 
 
-/*================================================================================================*/
-/*===== VT_dio_append_cleanup =====*/
+/*====================*/
+/*= VT_dio_append_cleanup =*/
 /**
 @brief  assumes the post-condition of the test case execution
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_dio_append_cleanup(void)
 {
     return TPASS;
 }
 
 
-/*================================================================================================*/
-/*===== VT_dio_append_test =====*/
+/*====================*/
+/*= VT_dio_append_test =*/
 /**
 @brief  Template test scenario X function
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_dio_append_test(int argc, char** argv)
 {
     int   pid[NUM_CHILDREN];
@@ -186,24 +186,24 @@ int VT_dio_append_test(int argc, char** argv)
         if (status == 1) errflag = -1;
     }
     if (errflag < 0) return TFAIL;
-    
-    
+
+
     unlink(filename);
     return TPASS;
 }
 
-/*================================================================================================*/
-/*===== read_eof =====*/
+/*====================*/
+/*= read_eof =*/
 /**
 @brief  Do buffered read from child from a file created by parent direct write.
         Compares read values with zero via check_zero().
 
 @param  filename - name of file to create
-    
+
 @return On success - return 0
         On failure - return -1
 */
-/*================================================================================================*/
+/*====================*/
 int read_eof(char *filename, int childnum)
 {
     int fd;
@@ -235,18 +235,18 @@ int read_eof(char *filename, int childnum)
     exit(0);
 }
 
-/*================================================================================================*/
-/*===== check_zero =====*/
+/*====================*/
+/*= check_zero =*/
 /**
 @brief  Checks that buffer contents will be all zeroes.
 
 @param  Input:  buf - pointer to checked buffer
                 size - buffer size
-        Output: None 
+        Output: None
 @return On success - return 0
         On failure - return mismatch value
 */
-/*================================================================================================*/
+/*====================*/
 unsigned char *check_zero(unsigned char *buf, int size)
 {
     unsigned char *cur = buf;
@@ -269,31 +269,31 @@ unsigned char *check_zero(unsigned char *buf, int size)
     return 0;        /* all zeros */
 }
 
-/*================================================================================================*/
-/*===== append_to_file =====*/
+/*====================*/
+/*= append_to_file =*/
 /**
 @brief  Creates a file of length MEMSIZE * iter and fills it with zeroes
 
 @param  filename - name of file to create
-    
+
 @return On success - return 0
         On failure - return -1
 */
-/*================================================================================================*/
+/*====================*/
 int append_to_file(char *filename)
 {
     int fd;
     void *bufptr;       /* Address of allocated memory with posix_memalign() */
     int idx;
     int ret;
-    
+
     fd = open(filename, O_DIRECT|O_WRONLY|O_CREAT, 0666);
     if (fd < 0)
     {
         perror("cannot create file");
         return -1;
     }
-    
+
     /* Align memory, set with zeroes */
     if (posix_memalign(&bufptr, 4096, MEMSIZE))
     {
@@ -301,14 +301,14 @@ int append_to_file(char *filename)
         return -1;
     }
     memset(bufptr, 0, MEMSIZE);
-    
+
     /* Write iter blocks of size MEMSIZE into file. Close file */
     for (idx = 0; idx < 3000; idx++)
     {
         if ((ret = write(fd, bufptr, MEMSIZE)) != MEMSIZE)
         {
             fprintf(stderr, "write %d block returned %d instead of %d\n", idx, ret, MEMSIZE);
-            return -1; 
+            return -1;
         }
     }
     if (close(fd) < 0)

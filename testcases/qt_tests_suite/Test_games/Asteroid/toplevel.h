@@ -51,7 +51,7 @@ public:
 public slots:
   void exitFail();
   void exitPass();
-    
+
 private:
     void playSound( const char *snd );
     void readSoundMapping();

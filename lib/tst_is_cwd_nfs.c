@@ -38,5 +38,5 @@ tst_is_cwd_nfs()
        statfs(".", &sf);
 
        /* Verify that the file is not on a nfs filesystem */
-       return sf.f_type == NFS_MAGIC?1:0;
+       return sf.f_type  NFS_MAGIC?1:0;
 }

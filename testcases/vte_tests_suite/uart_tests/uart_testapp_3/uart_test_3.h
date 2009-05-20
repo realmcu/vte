@@ -1,21 +1,21 @@
 /*================================================================================================*/
-/** 
-    @file   uart_test_3.h 
+/**
+    @file   uart_test_3.h
 
     @brief  UART test3 header file */
-/*================================================================================================== 
+/*==================================================================================================
 
-    Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved 
-    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT 
-    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF 
-    Freescale Semiconductor, Inc. 
+    Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
+    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
+    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
+    Freescale Semiconductor, Inc.
 
 =========================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  ---------------------------------
-C.GAGNERAUD/cgag1c           01/06/2005    TLSbo45060   Rework and improve UART test 
+C.GAGNERAUD/cgag1c           01/06/2005    TLSbo45060   Rework and improve UART test
                                                         application
 I.Inkina/nknl001             22/08/2005    TLSbo52626    Update Uart test
 D.Kardakov                   04/06/2007    ENGR30041     New transfer data test was added
@@ -25,12 +25,12 @@ D.Kardakov                   04/06/2007    ENGR30041     New transfer data test 
 #define UART_TEST3_H
 
 #ifdef __cplusplus
-extern "C"{ 
+extern "C"{
 #endif
 
 #include <stdio.h>
 #include <linux/types.h>
-#include <linux/serial.h> 
+#include <linux/serial.h>
 /*======================================================================================
                                         INCLUDE FILES
     ======================================================================================*/
@@ -96,13 +96,13 @@ extern int VT_uart_test3_setup(uart_config_t * src_cfg, uart_config_t * dst_cfg,
                                int transfert_length, flow_ctrl_t flow_type, int baud_rate);
 extern int VT_uart_test3_cleanup(void);
 extern int VT_uart_test3(int testcase);
-extern int VT_setup_uart(uart_config_t * cfg, uart_test_t * uart, 
+extern int VT_setup_uart(uart_config_t * cfg, uart_test_t * uart,
                          char *desc, int open_flag);
 extern int VT_cleanup_uart(uart_test_t * uart);
 
 
 #ifdef __cplusplus
-} 
+}
 #endif
 
 #endif                          /* UART_TEST3_H */

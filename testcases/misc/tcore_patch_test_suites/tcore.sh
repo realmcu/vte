@@ -17,15 +17,10 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 # Test suite for the t-core kernel patch 
-<<<<<<< HEAD
 export TCID=tcore01
 PTHREAD_DIR="/lib/i686"
 BIN_DIR=$LTPROOT/testcases/bin/
 TEST_DIR=$(mktemp -dt)
-=======
-PTHREAD_DIR="/lib/686"
-TEST_DIR="."
->>>>>>> vte 20080401
 OSTYPE="redhat"
 # Do some preparation to generate the correct core dump
 # files
@@ -48,7 +43,6 @@ os_check()
 	fi
 }
 
-<<<<<<< HEAD
 cleanup()
 {
 		rm -rf $TEST_DIR
@@ -57,8 +51,6 @@ cleanup()
 		exit $1
 }
 
-=======
->>>>>>> vte 20080401
 prepare_dump()
 {
 	ulimit -c 20000000 >/dev/null 2>&1
@@ -69,7 +61,6 @@ prepare_dump()
 			echo "1">/proc/sys/kernel/core_dumps_threads
 		fi
 	fi
-<<<<<<< HEAD
 	if [ -f /proc/sys/kernel/core_pattern ]; then
 			OLD_PATTERN=$(cat /proc/sys/kernel/core_pattern)
 			echo 'core.%p' > /proc/sys/kernel/core_pattern
@@ -87,48 +78,23 @@ prepare_dump()
 			fi
 			cd -
 		}
-=======
-	#Recover the lipthread.so.0 lib to generate the correct
-	#core dump file
-	os_check
-	if [ $OSTYPE == "redhat" ];then
-		cd $PTHREAD_DIR
-		if [ -f libpthread.so.0.orig ];then
-			test=`ls -l libpthread.so.0.orig|awk '{print $11}'`
-			if [ $test == "libpthread-0.9.so"  ];then
-				mv libpthread.so.0.orig libpthread.so.0
-			fi
-		fi
-		cd -
->>>>>>> vte 20080401
 	fi
 }
 #Prepare for the gdb dump 
 prepare_gdb()
 {
 	os_check
-<<<<<<< HEAD
 	if [ $OSTYPE = "redhat" ];then
 		cd $PTHREAD_DIR && {
 		if [ -f libpthread.so.0 ];then
 			test=`ls -l libpthread.so.0|awk '{print $11}'`
 			if [ $test = "libpthread-0.9.so"  ];then
-=======
-	if [ $OSTYPE == "redhat" ];then
-		cd $PTHREAD_DIR
-		if [ -f libpthread.so.0 ];then
-			test=`ls -l libpthread.so.0|awk '{print $11}'`
-			if [ $test == "libpthread-0.9.so"  ];then
->>>>>>> vte 20080401
 				mv libpthread.so.0 libpthread.so.0.orig
 			fi
 		fi
 		ln -s /lib/libpthread.so.0 libpthread.so.0 >/dev/null 2>&1
 		cd -
-<<<<<<< HEAD
     }
-=======
->>>>>>> vte 20080401
 	fi
 }
 #Test whether the system can generate the needed core files
@@ -140,7 +106,6 @@ Test_gen_core()
 	if [ -f core.* ];then
 		rm -f core.*
 	fi
-<<<<<<< HEAD
 	pid=`$BIN_DIR/tcore |grep "consumer pid"|awk '{print $2}'|cut -d = -f 2`
 	echo "Test whether we can generate the needed core file"
 	if [ -f core.* ];then
@@ -149,16 +114,6 @@ Test_gen_core()
 		return 0
 	else
 		echo "FAIL"
-=======
-	pid=`$TEST_DIR/tcore |grep "consumer pid"|awk '{print $2}'|cut -d = -f 2`
-	echo -e "Test whether we can generate the needed core file"
-	if [ -f core.* ];then
-		echo -e "PASS"
-		pass=`expr $pass + 1`
-		return 0
-	else
-		echo -e "FAIL"
->>>>>>> vte 20080401
 		fail=`expr $fail + 1`
 		return 1
 	fi	
@@ -169,34 +124,21 @@ Test_core_file()
 	cd $TEST_DIR
 	prepare_gdb
 	mv -f $TEST_DIR/core.* $TEST_DIR/corefile >/dev/null 2>&1
-<<<<<<< HEAD
 	echo "Test whether the core support bt,fpu and threads commands "
 	expect $BIN_DIR/tcore.exp
-=======
-	echo -e "Test whether the core support bt,fpu and threads commands "
-	expect ./tcore.exp >/dev/null 2>&1
->>>>>>> vte 20080401
 	return=$?
 	pass=`expr $pass + $return`
 	fail=`expr 3 - $return + $fail`
 }
 
-<<<<<<< HEAD
 echo "Test Tcore patch "
-=======
-echo -e "Test Tcore patch "
->>>>>>> vte 20080401
 check_install
 Test_gen_core
 Test_core_file
 echo "Linux Tcore test results" > results
 echo "Total pass fail" >>  results
 echo "  5	$pass	$fail" >> results
-<<<<<<< HEAD
 cleanup $fail 
-=======
-exit $fail 
->>>>>>> vte 20080401
 
 	
 	

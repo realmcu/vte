@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   socket_server_test.c
 
         @brief  UDP/TCP server socket which recive client connections and send message back
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -19,25 +19,25 @@ Author/core ID                  Date          Number    Description of Changes
 S.ZAVJALOV/                  10/06/2004     TLSbo39738  Initial version
 A.Ozerov/b00320              11/12/2006     TLSbo84161  Minor changes.
 
-====================================================================================================
+====================
 Portability:  ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
 Total Tests: 1
 
 Test Executable Name:  socket_server_test
 
 Test Strategy:  A test for send and receive message by use sockets
-=================================================================================================*/
+=====================*/
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -47,14 +47,14 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "socket_server_test.h"
 
-/*==================================================================================================
+/*======================
                                 GLOBAL VARIABLE DECLARATIONS
-==================================================================================================*/
+======================*/
 
 int                 soc=0;
 unsigned char       *buf_rcv=0;
 
-int VT_socket_server_test (int argc, char **argv) 
+int VT_socket_server_test (int argc, char **argv)
 {
     struct sockaddr_in  clnt_addr;
     struct sockaddr_in  serv_addr;
@@ -69,7 +69,7 @@ int VT_socket_server_test (int argc, char **argv)
                 switch(i)
                 {
                     case 't':
-                                if(strcmp(optarg, "UDP") == 0) 
+                                if(strcmp(optarg, "UDP") == 0)
                             prtc_family = SOCK_DGRAM;
                         if(strcmp(optarg, "TCP") == 0)
                             prtc_family = SOCK_STREAM;
@@ -88,13 +88,13 @@ int VT_socket_server_test (int argc, char **argv)
                     default:
                                 break;
                 }
-    }    
+    }
 
-    if(optind != 9) 
-    {  
-                fprintf(stderr,"\nUsage: %s -t <porotocol(UDP|TCP)> -p <listen_port> -s <packet_size> -v <verbose_mode (on|off)>\n\n", argv[0]); 
-                return TFAIL;; 
-    }   
+    if(optind != 9)
+    {
+                fprintf(stderr,"\nUsage: %s -t <porotocol(UDP|TCP)> -p <listen_port> -s <packet_size> -v <verbose_mode (on|off)>\n\n", argv[0]);
+                return TFAIL;;
+    }
 
     if (! (buf_rcv=(unsigned char *) malloc (sizeof(unsigned char)*ps)))
         {
@@ -107,7 +107,7 @@ int VT_socket_server_test (int argc, char **argv)
     serv_addr.sin_addr.s_addr=htonl(INADDR_ANY);
     serv_addr.sin_port=htons(portnum);
     bzero((unsigned char*)&clnt_addr,sizeof(clnt_addr));
-//Create socket   
+//Create socket
     if((soc=socket(AF_INET, prtc_family, 0))==-1)
     {
                 perror("Socket for data msgs cannot be created");
@@ -119,9 +119,9 @@ int VT_socket_server_test (int argc, char **argv)
                 perror("Data socket cannot be binded to OS");
                 return TFAIL;
     }
-        
+
     caddrlen = sizeof(clnt_addr);
-    switch(prtc_family) 
+    switch(prtc_family)
     {
 //UDP
         case SOCK_DGRAM:
@@ -129,7 +129,7 @@ int VT_socket_server_test (int argc, char **argv)
             for(;;)
             {
                         rs = recvfrom(soc, buf_rcv, ps, 0,(struct sockaddr *)&clnt_addr, (socklen_t *)&caddrlen);
-                        if(rs == -1 ) 
+                        if(rs == -1 )
                         {
                             perror("Error recvfrom()");
                                 return TFAIL;
@@ -148,20 +148,20 @@ int VT_socket_server_test (int argc, char **argv)
                 printf("Server ready...\n");
             for (;;)
             {
-                        if(listen(soc, 10) == -1) 
+                        if(listen(soc, 10) == -1)
                         {
-                                perror("Error listen() call");                
+                                perror("Error listen() call");
                                 return TFAIL;
                         }
                         ns = accept(soc,(struct sockaddr *)&clnt_addr, (socklen_t *)&caddrlen);
-                        if(ns == -1) 
+                        if(ns == -1)
                         {
                                 perror("Error accept() call");
                                 return TFAIL;
                         }
                     if (verbose_mode)
                                 printf("Source addr: %s, send echo\n", inet_ntoa(clnt_addr.sin_addr));
-                        if((pid = fork()) == -1) 
+                        if((pid = fork()) == -1)
                         {
                                 perror("Error fork() call");
                                 return TFAIL;
@@ -172,7 +172,7 @@ int VT_socket_server_test (int argc, char **argv)
                             close(soc);
                             while ((rs = read(ns, buf_rcv, ps)) > 0)
                             {
-                                        if ((write(ns, buf_rcv, rs)) < 0)  
+                                        if ((write(ns, buf_rcv, rs)) < 0)
                                         {
                                             perror("Error write to socket");
                                                 return TFAIL;

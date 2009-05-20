@@ -10,16 +10,16 @@
 # Helper functions
 RunTest()
 {
-	echo "TEST: " $1
-	TOTAL=$TOTAL+1
-	./$1
-	if [ $? == 0 ]; then
-		PASS=$PASS+1
-		echo -ne "\t\t\t***TEST PASSED***\n\n"
-	else
-		FAIL=$FAIL+1
-		echo -ne "\t\t\t***TEST FAILED***\n\n"
-	fi
+ echo "TEST: " $1
+ TOTAL=$TOTAL+1
+ ./$1
+ if [ $? == 0 ]; then
+  PASS=$PASS+1
+  echo -ne "\t\t\t***TEST PASSED***\n\n"
+ else
+  FAIL=$FAIL+1
+  echo -ne "\t\t\t***TEST FAILED***\n\n"
+ fi
 }
 
 # Main program
@@ -34,8 +34,8 @@ TESTS="sem_conpro.test sem_lock.test sem_philosopher.test sem_readerwriter.test 
 echo "Run the semaphore functional tests"
 echo "=========================================="
 
-for test in $TESTS; do 
-	RunTest $test
+for test in $TESTS; do
+ RunTest $test
 done
 
 echo

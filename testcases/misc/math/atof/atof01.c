@@ -17,10 +17,6 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 /* 01/02/2003	Port to LTP	avenkat@us.ibm.com */
 /* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
 
@@ -38,10 +34,6 @@
  * RESTRICTIONS
  */
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 #include <stdio.h>
 #include <ctype.h>
 #include <math.h>
@@ -58,10 +50,6 @@
 /*****		*****/
 #define ERR		0.0000001
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 double pi;
 
 double atof();
@@ -75,18 +63,10 @@ int block_number;
 int errno;
 FILE *temp;
 int TST_TOTAL = 1;
-<<<<<<< HEAD
 
 void setup();
 void blenter();
 void blexit();
-=======
-extern int Tst_count;  /* Test Case counter for tst_routines */
-
-void setup();
-int blenter();
-int blexit();
->>>>>>> vte 20080401
 int numin(char*, double*);
 int checkbuf(char*, int, int);
 
@@ -97,20 +77,12 @@ int main (int argc, char *argv[])
 	double r1, r2, x;
 	char buf[100];
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 	setup();		/* temp file is now open	*/
 	pi = 4.0 * atan(1.0);
 
 /*--------------------------------------------------------------*/
 	blenter();
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> vte 20080401
 	for (i=0; i < 30; i++)
 		for (j=0; j < 30; j++) {
 			sprintf(buf, "%*.*f", i, j, pi);
@@ -191,10 +163,6 @@ int main (int argc, char *argv[])
 			break;
 	}
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 	blexit();
 /*--------------------------------------------------------------*/
 	blenter();
@@ -220,11 +188,7 @@ int main (int argc, char *argv[])
 			fprintf(temp, "\tcompare fails, %.15f vs %.15f\n",
 			  r1, r2);
 			x = r1 - r2;
-<<<<<<< HEAD
 			if (x == 0.0)
-=======
-			if ( x == 0.0)
->>>>>>> vte 20080401
 				fprintf(temp, "\tx == 0.0)\n");
 			else
 				fprintf(temp, "\tx != 0.0\n");
@@ -235,19 +199,9 @@ int main (int argc, char *argv[])
 			break;
 	}
 
-<<<<<<< HEAD
 	blexit();
 /*--------------------------------------------------------------*/
 	tst_exit();
-=======
-
-	blexit();
-/*--------------------------------------------------------------*/
-
-	tst_exit();	/* THIS CALL DOES NOT RETURN - EXITS!!	*/
-/*--------------------------------------------------------------*/
-	return(0);
->>>>>>> vte 20080401
 }
 /* FUNCTIONS GO HERE */
 
@@ -421,7 +375,6 @@ int checkbuf(str, n1, n2)
 /**	LTP Port	**/
 void setup()
 {
-<<<<<<< HEAD
 	temp = stderr;
 }
 
@@ -437,22 +390,3 @@ void blexit()
 	else
 		tst_resm(TFAIL, "Test failed");
 }
-=======
-  temp = stderr;
-}
-
-
-int blenter()
-{
-  local_flag = PASSED;
-  return(0);
-}
-
-
-int blexit()
-{
-  (local_flag == PASSED ) ? tst_resm(TPASS, "Test passed") : tst_resm(TFAIL, "Test failed");
-  return(0);
-}
-
->>>>>>> vte 20080401

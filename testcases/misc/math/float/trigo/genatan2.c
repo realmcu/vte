@@ -37,12 +37,6 @@
 
 #define M_PIl	3.1415926535897932384626433832795029L
 
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> vte 20080401
 int create_Result_file()
 {
 
@@ -52,19 +46,11 @@ int create_Result_file()
 	int fp;
 
 	F_name = "ratan2";
-<<<<<<< HEAD
 	nbVal = 20000;
 
 	Inc = (2*M_PIl)/nbVal;
 
 	for (i=0; i<nbVal; i++)
-=======
-	nbVal = 20000; 
-
-	Inc = (2*M_PIl)/nbVal;
-
-	for (i=0; i<nbVal; i++) 
->>>>>>> vte 20080401
 	{
 		tabRatan2[i] = atan2 (sin(Inc*i), cos(Inc*i));
 	}
@@ -78,28 +64,16 @@ int create_Result_file()
 	}
 	else
 	{
-<<<<<<< HEAD
 		for (i = 0; i<nbVal; i++)
 		{
 			write(fp,&tabRatan2[i],sizeof(double));
 		}
 
-=======
-		for (i = 0; i<nbVal; i++ ) 
-		{
-			write(fp,&tabRatan2[i],sizeof(double));
-		}
-	
->>>>>>> vte 20080401
 		close(fp);
 		return 0;
 	}
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 int create_Data_file()
 {
 	int i, nbVal;
@@ -108,11 +82,7 @@ int create_Data_file()
 	int fp;
 
 	F_name = "datan2";
-<<<<<<< HEAD
 	nbVal = 20000;
-=======
-	nbVal = 20000; 
->>>>>>> vte 20080401
 
 	Inc = (2*M_PIl)/nbVal;
 
@@ -129,11 +99,7 @@ int create_Data_file()
         }
         else
         {
-<<<<<<< HEAD
 		for (i = 0; i<nbVal; i++)
-=======
-		for (i = 0; i<nbVal; i++ ) 
->>>>>>> vte 20080401
 		{
 			write(fp,&tabD[i],sizeof(double));
 		}
@@ -142,18 +108,10 @@ int create_Data_file()
 	}
 }
 
-<<<<<<< HEAD
 int main(int argc, char  *argv[])
 {
 
 	if (argc > 1)
-=======
-
-int main(int argc, char  *argv[])
-{
-
-	if (argc > 1) 
->>>>>>> vte 20080401
 	{
 		switch ( atoi(argv[1]) )
 		{
@@ -186,8 +144,4 @@ int main(int argc, char  *argv[])
 
   return(0);
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> vte 20080401

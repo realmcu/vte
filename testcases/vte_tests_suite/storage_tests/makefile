@@ -47,7 +47,7 @@ TARGET += gserial.inf linux.inf usbser.sys
 #performance
 TARGET += performance performance_command_line performance_prepare.sh performance_test.sh
 
-#ubi 
+#ubi
 TARGET += ubi_test.sh
 
 #usb ptp

@@ -95,6 +95,7 @@
 #include <sys/types.h>
 #include <sys/file.h>
 #include <signal.h>
+#include <stdint.h>
 #ifdef CRAY
 #include <sys/secparm.h>
 #include <sys/iosw.h>
@@ -126,9 +127,7 @@
 #endif
 
 
-#ifndef __linux__
 static void lio_async_signal_handler();
-#endif
 #ifdef sgi
 static void lio_async_callback_handler();
 #endif
@@ -417,7 +416,6 @@ lio_help2(char *prefix)
     return;
 }
 
-#ifndef __linux__
 /***********************************************************************
  * This is an internal signal handler.
  * If the handler is called, it will increment the Received_signal
@@ -434,7 +432,6 @@ lio_async_signal_handler(int sig)
 
 	return;
 }
-#endif
 
 #if defined(sgi) || (defined(__linux__) && !defined(__UCLIBC__))
 /***********************************************************************
@@ -447,7 +444,7 @@ lio_async_callback_handler(sigval_t sigval)
 {
 	if (Debug_level)
 	    printf("DEBUG %s/%d: received callback, nbytes=%ld, a callback called %d times\n",
-		__FILE__, __LINE__, sigval.sival_int, Received_callback+1);
+		__FILE__, __LINE__, (long)sigval.sival_int, Received_callback+1);
 
 	Received_callback++;
 
@@ -485,6 +482,15 @@ lio_random_methods(long curr_mask)
     mask = mask | random_bit(curr_mask & LIO_WAIT_TYPES);
 
     return mask;
+}
+
+static void wait4sync_io(int fd, int read)
+{
+  fd_set s;
+  FD_ZERO(&s);
+  FD_SET(fd, &s);
+
+  select(fd+1, read ? &s : NULL, read ? NULL : &s, NULL, NULL);
 }
 
 /***********************************************************************
@@ -539,10 +545,8 @@ long wrd;	/* to allow future features, use zero for now */
 {
     int ret = 0;	/* syscall return or used to get random method */
     char *io_type;		/* Holds string of type of io */
-#ifndef __linux__
     int omethod = method;
     int listio_cmd;		/* Holds the listio/lio_listio cmd */
-#endif
 #ifdef  CRAY
     struct listreq request;	/* Used when a listio is wanted */
     struct iosw status, *statptr[1];
@@ -550,7 +554,7 @@ long wrd;	/* to allow future features, use zero for now */
     /* for linux or sgi */
     struct iovec iov;	/* iovec for writev(2) */
 #endif
-#ifdef sgi
+#if defined (sgi)
     aiocb_t aiocbp;	/* POSIX aio control block */
     aiocb_t *aiolist[1]; /* list of aio control blocks for lio_listio */
     off64_t poffset;	/* pwrite(2) offset */
@@ -592,12 +596,16 @@ long wrd;	/* to allow future features, use zero for now */
 #if defined(sgi) || (defined(__linux__) && !defined(__UCLIBC__))
 #if defined(sgi)
     memset(&aiocbp, 0x00, sizeof(aiocb_t));
+#else
+	memset(&aiocbp, 0x00, sizeof(struct aiocb));
+#endif
     aiocbp.aio_fildes = fd;
     aiocbp.aio_nbytes = size;
     aiocbp.aio_buf = buffer;
 /*    aiocbp.aio_offset = lseek( fd, 0, SEEK_CUR ); -- set below */
     aiocbp.aio_sigevent.sigev_notify = SIGEV_NONE;
     aiocbp.aio_sigevent.sigev_signo = 0;
+#ifdef sgi
     aiocbp.aio_sigevent.sigev_func = NULL;
     aiocbp.aio_sigevent.sigev_value.sival_int = 0;
 #elif defined(__linux__) && !defined(__UCLIBC__)
@@ -636,6 +644,7 @@ long wrd;	/* to allow future features, use zero for now */
     }
 #if defined(sgi) || (defined(__linux__) && !defined(__UCLIBC__))
     poffset = (off64_t)ret;
+#endif
     aiocbp.aio_offset = ret;
 
 #endif
@@ -744,11 +753,6 @@ long wrd;	/* to allow future features, use zero for now */
           }
           wait4sync_io(fd, 0);
         }
-        else if ( Debug_level > 1 )
-            printf("DEBUG %s/%d: write completed without error (ret %d)\n",
-                __FILE__, __LINE__, ret);
-
-        return ret;
 
     }
 
@@ -971,7 +975,7 @@ long wrd;	/* to allow future features, use zero for now */
 	if ((ret = pwrite(fd, buffer, size, poffset)) == -1) {
 	    sprintf(Errormsg, "%s/%d pwrite(%d, buf, %d, %lld) ret:-1, errno=%d %s",
 		    __FILE__, __LINE__,
-		fd, size, poffset, errno, strerror(errno));
+							fd, size, (long long)poffset, errno, strerror(errno));
 	    return -errno;
 	}
 
@@ -979,7 +983,7 @@ long wrd;	/* to allow future features, use zero for now */
             sprintf(Errormsg,
 		"%s/%d pwrite(%d, buf, %d, %lld) returned=%d",
 		    __FILE__, __LINE__,
-		    fd, size, poffset, ret);
+							fd, size, (long long)poffset, ret);
         }
         else if (Debug_level > 1)
             printf("DEBUG %s/%d: pwrite completed without error (ret %d)\n",
@@ -1090,10 +1094,8 @@ long wrd;	/* to allow future features, use zero for now */
 {
     int ret = 0;	/* syscall return or used to get random method */
     char *io_type;		/* Holds string of type of io */
-#ifndef __linux__
     int listio_cmd;		/* Holds the listio/lio_listio cmd */
     int omethod = method;
-#endif
 #ifdef  CRAY
     struct listreq request;	/* Used when a listio is wanted */
     struct iosw status, *statptr[1];
@@ -1144,12 +1146,16 @@ long wrd;	/* to allow future features, use zero for now */
 #if defined(sgi) || (defined(__linux__) && !defined(__UCLIBC__))
 #if defined(sgi)
     memset(&aiocbp, 0x00, sizeof(aiocb_t));
+#else
+	memset(&aiocbp, 0x00, sizeof(struct aiocb));
+#endif
     aiocbp.aio_fildes = fd;
     aiocbp.aio_nbytes = size;
     aiocbp.aio_buf = buffer;
 /*    aiocbp.aio_offset = lseek( fd, 0, SEEK_CUR ); -- set below */
     aiocbp.aio_sigevent.sigev_notify = SIGEV_NONE;
     aiocbp.aio_sigevent.sigev_signo = 0;
+#ifdef sgi
     aiocbp.aio_sigevent.sigev_func = NULL;
     aiocbp.aio_sigevent.sigev_value.sival_int = 0;
 #elif defined(__linux__) && !defined(__UCLIBC__)
@@ -1188,6 +1194,7 @@ long wrd;	/* to allow future features, use zero for now */
     }
 #if defined(sgi) || (defined(__linux__) && !defined(__UCLIBC__))
     poffset = (off64_t)ret;
+#endif
     aiocbp.aio_offset = ret;
 
 #endif
@@ -1299,11 +1306,6 @@ long wrd;	/* to allow future features, use zero for now */
           }
           wait4sync_io(fd, 1);
         }
-        else if ( Debug_level > 1 )
-            printf("DEBUG %s/%d: read completed without error (ret %d)\n",
-                __FILE__, __LINE__, ret);
-
-        return ret;
 
     }
 
@@ -1524,7 +1526,7 @@ long wrd;	/* to allow future features, use zero for now */
 	if ((ret = pread(fd, buffer, size, poffset)) == -1) {
 	    sprintf(Errormsg, "%s/%d pread(%d, buf, %d, %lld) ret:-1, errno=%d %s",
 		    __FILE__, __LINE__,
-		fd, size, poffset, errno, strerror(errno));
+							fd, size, (long long)poffset, errno, strerror(errno));
 	    return -errno;
 	}
 
@@ -1532,7 +1534,7 @@ long wrd;	/* to allow future features, use zero for now */
             sprintf(Errormsg,
 		"%s/%d pread(%d, buf, %d, %lld) returned=%d",
 		    __FILE__, __LINE__,
-		    fd, size, poffset, ret);
+							fd, size, (long long)poffset, ret);
         }
         else if (Debug_level > 1)
             printf("DEBUG %s/%d: pread completed without error (ret %d)\n",
@@ -1593,7 +1595,7 @@ long wrd;	/* to allow future features, use zero for now */
 }	/* end of lio_read_buffer */
 
 
-#if !defined(__linux__) && !defined(__sun) && !defined(__hpux) && !defined(_AIX)
+#if !defined(__sun) && !defined(__hpux) && !defined(_AIX)
 /***********************************************************************
  * This function will check that async io was successful.
  * It can also be used to check sync listio since it uses the

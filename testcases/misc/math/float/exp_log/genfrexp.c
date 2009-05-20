@@ -35,11 +35,6 @@
 #include        <sys/signal.h>
 #include        <math.h>
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> vte 20080401
 int create_Result_file()
 {
 
@@ -50,11 +45,7 @@ int create_Result_file()
 
 	F_name = "frexp_out.ref";
 	F_name1 = "frexp1_out.ref";
-<<<<<<< HEAD
 	nbVal = 20000;
-=======
-	nbVal = 20000; 
->>>>>>> vte 20080401
 
 	Inc = exp(1);
 
@@ -66,11 +57,7 @@ int create_Result_file()
 
 	fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
 	fp1 = open(F_name1,O_RDWR|O_CREAT|O_TRUNC,0777);
-<<<<<<< HEAD
         if (!fp || !fp1)
-=======
-        if ( !fp || !fp1 )
->>>>>>> vte 20080401
         {
             	printf("error opening file");
 		close(fp);
@@ -79,30 +66,18 @@ int create_Result_file()
 	}
 	else
 	{
-<<<<<<< HEAD
 		for (i = 0; i<nbVal; i++)
-=======
-		for (i = 0; i<nbVal; i++ ) 
->>>>>>> vte 20080401
 		{
 			write(fp,&tabR[i],sizeof(double));
 			write(fp1,&tabRI[i],sizeof(int));
 		}
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> vte 20080401
 		close(fp);
 		close(fp1);
 		return 0;
 	}
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 int create_Data_file()
 {
 	int i, nbVal;
@@ -111,21 +86,13 @@ int create_Data_file()
 	int fp;
 
 	F_name = "frexp_inp.ref";
-<<<<<<< HEAD
 	nbVal = 20000;
-=======
-	nbVal = 20000; 
->>>>>>> vte 20080401
 
 	Inc = exp(1);
 
 	for (i=0; i<nbVal; i++)
 		tabD[i] = (Inc * i) + Inc;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> vte 20080401
 	fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
         if (!fp)
         {
@@ -134,13 +101,8 @@ int create_Data_file()
 	    	return -1;
         }
         else
-<<<<<<< HEAD
         {
 		for (i = 0; i<nbVal; i++)
-=======
-        {	
-		for (i = 0; i<nbVal; i++ ) 
->>>>>>> vte 20080401
 		{
 			write(fp,&tabD[i],sizeof(double));
 		}
@@ -149,18 +111,10 @@ int create_Data_file()
 	}
 }
 
-<<<<<<< HEAD
 int main(int argc, char  *argv[])
 {
 
 	if (argc > 1)
-=======
-
-int main(int argc, char  *argv[])
-{
-
-	if (argc > 1) 
->>>>>>> vte 20080401
 	{
 		switch ( atoi(argv[1]) )
 		{
@@ -193,8 +147,4 @@ int main(int argc, char  *argv[])
 
   return(0);
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> vte 20080401

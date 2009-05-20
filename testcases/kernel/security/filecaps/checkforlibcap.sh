@@ -20,11 +20,11 @@
 ################################################################################
 
 if [ "x$CC" = "x" ]; then
-	export CC=gcc
+ export CC=gcc
 fi
 yesno=0
 if [ "$1" = "yesno" ]; then
-	yesno=1
+ yesno=1
 fi
 
 SETCAP=`which setcap`
@@ -35,11 +35,11 @@ else
 fi
 
 if [ $ret -eq 0 ]; then
-	#also test for -lcap
-	$CC -o check_simple_capset check_simple_capset.c -lcap \
+ #also test for -lcap
+ $CC -o check_simple_capset check_simple_capset.c -lcap \
          2>/dev/null
 
-	ret=$?
+ ret=$?
 fi
 
 if [ $ret -eq 0 ]; then
@@ -52,15 +52,15 @@ if [ $ret -eq 0 ]; then
 fi
 
 if [ $ret -ne 0 ]; then
-	if [ $yesno -eq 1 ]; then
-		echo no
-	else
-		exit 1
-	fi
+ if [ $yesno -eq 1 ]; then
+  echo no
+ else
+  exit 1
+ fi
 else
-	if [ $yesno -eq 1 ]; then
-		echo yes
-	else
-		exit 0
-	fi
+ if [ $yesno -eq 1 ]; then
+  echo yes
+ else
+  exit 0
+ fi
 fi

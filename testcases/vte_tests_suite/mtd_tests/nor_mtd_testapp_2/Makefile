@@ -10,18 +10,18 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-#V Becker/rc023c           04/05/2004   TLSbo39142   Initial version 
-#V Becker/rc023c           26/07/2004   TLSbo39142   Update include path 
+#V Becker/rc023c           04/05/2004   TLSbo39142   Initial version
+#V Becker/rc023c           26/07/2004   TLSbo39142   Update include path
 #L.Delaspre/rc149c            08/12/2004     TLSbo40142   update with Freescale identity
 #
 ###################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms. 
+#Portability: Indicate if this module is portable to other compilers or platforms.
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################

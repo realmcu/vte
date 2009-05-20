@@ -18,22 +18,23 @@
 #                          Modification     Tracking
 # Author                       Date          Number    Description of Changes
 #-----------------------   ------------    ----------  ---------------------
-# Spring Zhang               24/07/2008       n/a        Initial ver. 
+# Spring Zhang               24/07/2008       n/a        Initial ver.
 # Spring                     02/09/2008       n/a        Add MX51 support
 # Spring                     22/10/2008       n/a        Modify MX51 enable
 # Spring                     28/11/2008       n/a        Modify COPYRIGHT header
+# Spring                     18/05/2009       n/a        Add BBG2 support
 #############################################################################
-# Portability:  ARM sh bash 
+# Portability:  ARM sh bash
 #
-# File Name:    
+# File Name:
 # Total Tests:        1
 # Test Strategy: basic speaker function test
-# 
-# Input:	- $1 - audio stream
 #
-# Return:       - 
+# Input: - $1 - audio stream
 #
-# Use command "./speaker_test1.sh [audio stream]" 
+# Return:       -
+#
+# Use command "./speaker_test1.sh [audio stream]"
 
 # Function:     setup
 #
@@ -93,7 +94,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup() 
+cleanup()
 {
     RC=0
     echo "clean up environment..."
@@ -112,26 +113,13 @@ speaker_basic_test()
 {
     RC=0    # Return value from setup, and test functions.
 
-
-    find=0
-    
     # Determine the platform
-    find=`cat /proc/cpuinfo | grep "Revision" | grep "31.*" | wc -l`;
-    if [ $find -eq 1 ]
-    then
-        platform=mx31
-    fi
-
-    find=`cat /proc/cpuinfo | grep "Revision" | grep "51.*" | wc -l`;
-    if [ $find -eq 1 ]
-    then
-        platform=mx51
-    fi
-
+    platfm.sh || platform=$?
+    
     # enable speaker
-    if [ $platform = "mx31" ]
+    if [ $platform -eq 31 ]
     then
-        amixer -c 0 cset numid=1,iface=MIXER,name='Master Output Playback Volume' 2 ||RC=$?
+        amixer -c 0 cset name='Master Output Playback Volume' 2 ||RC=$?
         if [ $RC -ne 0 ]
         then
             tst_resm TFAIL "Test #1:adjust mixer volume failed..."
@@ -139,7 +127,7 @@ speaker_basic_test()
         fi
     fi
 
-    if [ $platform = "mx51" ]
+    if [ $platform -eq 51 ] || [ $platform -eq 41 ]
     then
         amixer cset name='Speaker Function' 1 ||RC=$?
         if [ $RC -ne 0 ]
@@ -152,23 +140,17 @@ speaker_basic_test()
 
     tst_resm TINFO "Test #1: adjust mixer volumn..."
 
-    if [ $platform = "mx31" ]
+    if [ $platform -eq 31 ]
     then
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 80||RC=$?
+        amixer -c 0 cset name='Master Playback Volume' 80||RC=$?
         if [ $RC -ne 0 ]
         then
             tst_resm TFAIL "Test #1:adjust mixer volume failed..."
             return $RC
         fi
-    elif [ $platform = "mx51" ] 
+    elif [ $platform -eq 51 ] || [ $platform -eq 41 ]
     then
         :
-#        amixer -c 0 cset numid=44,iface=MIXER,name='Speaker Volume' 40 ||RC=$?
-#        if [ $RC -ne 0 ]
-#        then
-#            tst_resm TFAIL "Test #1:adjust mixer volume failed..."
-#            return $RC
-#        fi
     fi
     sleep 2
 

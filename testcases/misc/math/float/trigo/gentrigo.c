@@ -38,19 +38,11 @@
 #include        <math.h>
 
 #define 	M_PIl	3.1415926535897932384626433832795029L L
-<<<<<<< HEAD
 #define		MAX_FNAME_LEN	16
 
 /*****************************************************************
  * create file:
  *
-=======
-
-
-/*****************************************************************
- * create file: 
- * 	
->>>>>>> vte 20080401
  * func_name is the name of the trigo function (sin, cos, tan...)
  *
  * code can take 2 values: DATA_CREATE to create a input data file
@@ -60,11 +52,7 @@
 int create_file(char *func_name, int NbVal)
 {
 	pid_t myproc;
-<<<<<<< HEAD
 
-=======
-	           
->>>>>>> vte 20080401
         if (( myproc = fork() )!=0)
                 return myproc;
         else {
@@ -74,7 +62,6 @@ int create_file(char *func_name, int NbVal)
 	     	fprintf(stderr, "ERROR %s\n", strerror(errno));
 	     	abort();
 	}
-<<<<<<< HEAD
 }
 
 int main(int argc, char *argv[])
@@ -115,49 +102,8 @@ int main(int argc, char *argv[])
 	waitpid(child,NULL,0);
 
 	sprintf (funct, "%s/genasin", bin_path);
-=======
-} 
-
-
-
-
-int main(int argc, char *argv[])
-{
-	char *funct;
-	pid_t  child;
-	
-	funct = "./gencos";
-	child=create_file(funct, 0);
-	waitpid(child,NULL,0);
-
-	funct = "./gensin";
-	child=create_file(funct, 0);
-	waitpid(child,NULL,0);
-
-	funct = "./gentan";
-	child=create_file(funct, 0);
-	waitpid(child,NULL,0);
-
-	funct = "./genatan";
-	child=create_file(funct, 0);
-	waitpid(child,NULL,0);
-		
-	funct = "./genatan2";
-	child=create_file(funct, 0);
-	waitpid(child,NULL,0);
-
-	funct = "./genacos";
-	child=create_file(funct, 0);
-	waitpid(child,NULL,0);
-
-	funct = "./genasin";
->>>>>>> vte 20080401
 	child=create_file(funct, 0);
 	waitpid(child,NULL,0);
 
 	return 0;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> vte 20080401

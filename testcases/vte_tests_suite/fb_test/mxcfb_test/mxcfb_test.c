@@ -1,4 +1,4 @@
-/*================================================================================================*/
+/*====================*/
 /**
     @file   mxcfb_test.c
 
@@ -170,9 +170,9 @@ BOOL pan_test()
    for (y = 0; y <= mode_info.yres; y += mode_info.yres / 2)
    {
         mode_info.yoffset = y;
-	printf("\r offset at %d", y);
+ printf("\r offset at %d", y);
         CALL_IOCTL(ioctl(fb_fd, FBIOPAN_DISPLAY, &mode_info));
-	sleep(1);
+ sleep(1);
   }
  mode_info.yres_virtual = old_yvres;
  CALL_IOCTL(ioctl(fb_fd, FBIOPUT_VSCREENINFO, &mode_info));
@@ -342,7 +342,7 @@ BOOL vsync_test()
  return TRUE;
 }
 
-/*===== VT_fb_setup =====*/
+/*= VT_fb_setup =*/
 /**
 @brief  assumes the pre-condition of the test case execution. Opens the framebuffer device,
         gets information into the fb_fix_screeninfo structure, and maps fb device into memory.
@@ -400,7 +400,7 @@ int VT_fb_setup(void)
 }
 
 
-/*===== VT_sleep_cleanup =====*/
+/*= VT_sleep_cleanup =*/
 /**
 @brief  assumes the post-condition of the test case execution. Closes the framebuffer device.
 
@@ -545,7 +545,7 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
     #endif
     return rv;
 }
-/*===== draw_px =====*/
+/*= draw_px =*/
 /**
 @brief  Computes byte values from given color values depending on color depth and draws one pixel
 

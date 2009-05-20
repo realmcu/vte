@@ -131,7 +131,7 @@ public:
 
     if ( m_num_outstanding || m_queue )
          rv = true;
-    
+
     m_queue_lock.Unlock();
 
     return rv;

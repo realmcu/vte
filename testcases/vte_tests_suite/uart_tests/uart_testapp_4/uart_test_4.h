@@ -10,13 +10,13 @@ Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
 THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 Freescale Semiconductor, Inc.
-     
+
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-I.Inkina\nknl001           07/04/2005    TLSbo49644      minor fix    
+I.Inkina\nknl001           07/04/2005    TLSbo49644      minor fix
 
 ==================================================================================================*/
 
@@ -54,8 +54,8 @@ extern "C"{
 ==================================================================================================*/
 /* UART settings constants */
 #define RTS_AND_DTR         0x006
-#define SET_ALL 	                0x8006
-#define CTS_AND_RTS        	0x026
+#define SET_ALL                 0x8006
+#define CTS_AND_RTS        0x026
 
 /* Default parameters */
 

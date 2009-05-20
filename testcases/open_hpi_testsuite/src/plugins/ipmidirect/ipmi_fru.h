@@ -150,7 +150,7 @@ class cIpmiFru
   int GetFruInventoryAreaInfo( unsigned int &size, tFruAccessMode &byte_access );
   int ReadFruData( unsigned short offset, unsigned int num, unsigned int &n, unsigned char *data );
 
-  int CreateRecord( const char *name, tIpmiFruItemDesc *desc, 
+  int CreateRecord( const char *name, tIpmiFruItemDesc *desc,
                     unsigned char *data, unsigned int len );
 
   int CreateInventory( unsigned char *data );
@@ -180,7 +180,7 @@ public:
   cIpmiFruRecord *GetRecord( int idx )
   {
     assert( idx >= 0 && idx < m_num );
-    return m_array[idx]; 
+    return m_array[idx];
   }
 
   // HPI record id to find the rdr

@@ -27,7 +27,7 @@ Portability:  ARM GCC
 /*==================================================================================================
                                         INCLUDE FILES
  ==================================================================================================*/
-                                        
+
 #include <linux/ioctl.h>
 #include <dma_test_module.h>
 #include <test.h>
@@ -61,14 +61,14 @@ Portability:  ARM GCC
 /*==================================================================================================
                                 STRUCTURES AND OTHER TYPEDEFS
  ==================================================================================================*/
-                                                                                                    
-/* Testapp configuration. */ 
+
+/* Testapp configuration. */
 typedef struct
 {
         int     mTestCase;
         int     mVerbose;
         char  * mCustumParams; /* "srcmode dstmode srcport dstport X Y W count direction burstlength repeat" */
-} sTestappConfig; 
+} sTestappConfig;
 
 
 /*==================================================================================================

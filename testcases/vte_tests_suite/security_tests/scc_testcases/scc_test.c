@@ -1,53 +1,53 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   scc_test.c
 
         @brief  scc API test
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 A.Urusov/NONE                27/09/2005     TLSbo55835  Initial version
-A.Urusov/NONE                17/11/2005     TLSbo58839  The status variable is added into 
+A.Urusov/NONE                17/11/2005     TLSbo58839  The status variable is added into
                                                         read_scc_register and write_scc_register
                                                         routines
 A.Urusov/NONE                18/11/2005     TLSbo58839  Decrypt failed error is fixed
-D.Simakov                    13/11/2006     TLSbo80386  SCC : tests are unable to access registers for i.MX27ADS 
+D.Simakov                    13/11/2006     TLSbo80386  SCC : tests are unable to access registers for i.MX27ADS
 A.Ozerov/b00320              23/11/2006     TLSbo80386  call of VT_scc_test_cleanup was removed.
-==================================================================================================
+======================
 Total Tests: 1
 
 Test Executable Name:  scc_test
 
 Test Strategy: Examine the SCC driver common software operations
-=================================================================================================
+=====================
 
-==================================================================================================
+======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 #include "scc_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
-/*===== init_plaintext =====*/
+======================*/
+/*= init_plaintext =*/
 /**
 @brief  Performs plaintext initialization.
 
 @param
-  
+
 @return
 */
-/*================================================================================================*/
+/*====================*/
 void init_plaintext(void)
 {
         int     i;
@@ -59,24 +59,24 @@ void init_plaintext(void)
         }
 }
 
-/*================================================================================================*/
-/*===== VT_scc_test_setup =====*/
+/*====================*/
+/*= VT_scc_test_setup =*/
 /**
 @brief  Performs all one time setup for this test.
 
-@param  
-  
+@param
+
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int VT_scc_test_setup(void)
 {
         char    f_name[256] = "/dev/";
         int     VT_rv = TPASS;
 
         strcat(f_name, SCC_TEST_DEVICE_NAME);
-        
+
         if ((scc_fd = open(f_name, O_RDWR)) < 0)
         {
                 VT_rv = TFAIL;
@@ -89,17 +89,17 @@ int VT_scc_test_setup(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== VT_scc_test_cleanup =====*/
+/*====================*/
+/*= VT_scc_test_cleanup =*/
 /**
 @brief  Performs all one time clean up for this test.
 
-@param  
-  
+@param
+
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int VT_scc_test_cleanup(void)
 {
         int     VT_rv = TPASS;
@@ -117,17 +117,17 @@ int VT_scc_test_cleanup(void)
         return VT_rv;
 }
 
-/*=================================================================================================================*/
-/*===== VT_scc_test =====*/
+/*=========================*/
+/*= VT_scc_test =*/
 /**
 @brief  Performs loop through all of the requested tests, running each in turn.
 
-@param 
-  
+@param
+
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int VT_scc_test(void)
 {
         int     VT_rv = TPASS;
@@ -188,17 +188,17 @@ int VT_scc_test(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== display_configuration =====*/
+/*====================*/
+/*= display_configuration =*/
 /**
 @brief  Configuration of SCC displaying.
 
 @param
-  
+
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int display_configuration_test(void)
 {
         scc_configuration_access        *config;
@@ -225,17 +225,17 @@ int display_configuration_test(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== check_safe_registers =====*/
+/*====================*/
+/*= check_safe_registers =*/
 /**
 @brief  Performs print values and verify access of all 'always available' registers
 
 @param
-  
+
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int check_safe_registers_test(void)
 {
         int             VT_rv = TPASS;
@@ -327,17 +327,17 @@ int check_safe_registers_test(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== dump_registers =====*/
+/*====================*/
+/*= dump_registers =*/
 /**
 @brief  Performs print values of SCM and SMN registers
 
-@param 
-  
+@param
+
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int dump_registers_test(void)
 {
         int             VT_rv = TPASS;
@@ -621,17 +621,17 @@ int dump_registers_test(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== run_cipher_tests =====*/
+/*====================*/
+/*= run_cipher_tests =*/
 /**
 @brief  Performs Encryption and Decryption Tests
 
-@param 
-  
+@param
+
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int run_cipher_tests(void)
 {
         scc_encrypt_decrypt     cipher_control;
@@ -905,38 +905,38 @@ int run_cipher_tests(void)
         return VT_rv;
 }
 
-/*================================================================================================================*/
-/*===== check_register_safe_after_operation =====*/
+/*========================*/
+/*= check_register_safe_after_operation =*/
 /**
 @brief  Check Register safe after do encryption and decryption
 
 @param
-  
+
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int check_register_safe_after_operation(void)
 {
       int     VT_rv = TPASS;
       tst_resm(TINFO, "Do encryption and decryption once again and check the register safe");
       VT_rv = run_cipher_tests();
       VT_rv = check_safe_registers_test();
-      
+
 }
 
 
-/*================================================================================================*/
-/*===== set_software_alarm_test =====*/
+/*====================*/
+/*= set_software_alarm_test =*/
 /**
 @brief  Performs test signal a software alarm to the SCC
 
 @param
-  
+
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int set_software_alarm_test(void)
 {
         int     VT_rv = TPASS;
@@ -953,17 +953,17 @@ int set_software_alarm_test(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== run_timer_tests =====*/
+/*====================*/
+/*= run_timer_tests =*/
 /**
 @brief  Performs Timer tests
 
 @param  Input :      timer_iv - timer initial value
-  
+
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int run_timer_tests(uint32_t timer_iv)
 {
         uint32_t        value;
@@ -1017,7 +1017,7 @@ int run_timer_tests(uint32_t timer_iv)
                          SMN_TIMER_CONTROL);
         }
 
-        /* 
+        /*
          * Kill some time - Only if compiler doesn't optimize this away!
          */
         for (i = 0; i < 100000; i++);
@@ -1058,17 +1058,17 @@ int run_timer_tests(uint32_t timer_iv)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== run_aic_tests =====*/
+/*====================*/
+/*= run_aic_tests =*/
 /**
 @brief  Performs AIC tests
 
 @param
-  
+
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int run_aic_tests(void)
 {
         uint32_t        value;
@@ -1129,17 +1129,17 @@ int run_aic_tests(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== run_zeroize_tests =====*/
+/*====================*/
+/*= run_zeroize_tests =*/
 /**
 @brief  Performs Zeroize tests
 
 @param
-  
+
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int run_zeroize_tests(void)
 {
         int             VT_rv = TPASS;
@@ -1293,27 +1293,27 @@ int run_zeroize_tests(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== write_scc_resgister =====*/
+/*====================*/
+/*= write_scc_resgister =*/
 /**
 @brief  Performs write data into SCC register
 
 @param  Input :      reg   - the register to be written
                      value - the value to store
-  
+
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int write_scc_register(uint32_t reg, uint32_t value)
 {
         scc_reg_access  register_access;
         int             VT_rv = TPASS;
         int             status;
-        
+
         register_access.reg_offset = reg;
         register_access.reg_data = value;
-        
+
         status = ioctl(scc_fd, SCC_TEST_WRITE_REG, &register_access);
         if ( status != SCC_RET_OK)
         {
@@ -1323,25 +1323,25 @@ int write_scc_register(uint32_t reg, uint32_t value)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== read_scc_resgister =====*/
+/*====================*/
+/*= read_scc_resgister =*/
 /**
 @brief  Performs read data from SCC register
 
 @param  Input :      reg -   the register to be read
                      value - the location for return value
         Output:      register_access.reg_data - the return value
-  
+
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int read_scc_register(uint32_t reg, uint32_t * value)
 {
         scc_reg_access  register_access;
         int             VT_rv = TPASS;
         int             status;
-        
+
         register_access.reg_offset = reg;
         status = ioctl(scc_fd, SCC_TEST_READ_REG, &register_access);
 
@@ -1357,16 +1357,16 @@ int read_scc_register(uint32_t reg, uint32_t * value)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== get_scc_configuration =====*/
+/*====================*/
+/*= get_scc_configuration =*/
 /**
 @brief  Performs get SCC configuration
 
 @param  Input :      scc_fd - the SCC device file descriptor
-  
+
 @return              config - the location for SCC configuration data
 */
-/*================================================================================================*/
+/*====================*/
 scc_configuration_access *get_scc_configuration(int scc_fd)
 {
         static scc_configuration_access         *config = NULL;
@@ -1391,8 +1391,8 @@ scc_configuration_access *get_scc_configuration(int scc_fd)
         return config;
 }
 
-/*================================================================================================*/
-/*===== print_ram_data =====*/
+/*====================*/
+/*= print_ram_data =*/
 /**
 @brief  Performs print eight words per line, starting at ram, as though they
         started at address, until count words have been printed
@@ -1400,10 +1400,10 @@ scc_configuration_access *get_scc_configuration(int scc_fd)
 @param  Input :      ram    -  start
                      address - byte address
                      count   - word counter
-  
-@return 
+
+@return
 */
-/*================================================================================================*/
+/*====================*/
 void print_ram_data(uint32_t * ram, uint32_t address, int count)
 {
         int     i;
@@ -1433,16 +1433,16 @@ void print_ram_data(uint32_t * ram, uint32_t address, int count)
         }
 }
 
-/*================================================================================================*/
-/*===== print_smn_status_register =====*/
+/*====================*/
+/*= print_smn_status_register =*/
 /**
 @brief Interpret the SMN Status register and print out the 'on' bits and State
 
 @param  Input :      status -  the status register address
-  
+
 @return 0
 */
-/*================================================================================================*/
+/*====================*/
 int print_smn_status_register(uint32_t status)
 {
         int             version_id;
@@ -1479,16 +1479,16 @@ int print_smn_status_register(uint32_t status)
         return 0;
 }
 
-/*================================================================================================*/
-/*===== get_smn_state_name =====*/
+/*====================*/
+/*= get_smn_state_name =*/
 /**
-@brief Interpret the SMN Status 
+@brief Interpret the SMN Status
 
 @param  Input :      state -  the register status
-  
+
 @return char*
 */
-/*================================================================================================*/
+/*====================*/
 char   *get_smn_state_name(const uint8_t state)
 {
         switch (state)
@@ -1510,16 +1510,16 @@ char   *get_smn_state_name(const uint8_t state)
         }
 }
 
-/*================================================================================================*/
-/*===== print_scm_status_register =====*/
+/*====================*/
+/*= print_scm_status_register =*/
 /**
 @brief  Interpret the SCM Status register and print out the 'on' bits
 
 @param  Input :      status -  the register status
-  
+
 @return
 */
-/*================================================================================================*/
+/*====================*/
 void print_scm_status_register(uint32_t status)
 {
         printf( "%s%s%s%s%s%s%s%s%s%s%s%s\n",
@@ -1537,16 +1537,16 @@ void print_scm_status_register(uint32_t status)
                  (status & SCM_STATUS_BUSY) ? ", BUSY" : "");
 }
 
-/*================================================================================================*/
-/*===== print_scm_control_register =====*/
+/*====================*/
+/*= print_scm_control_register =*/
 /**
 @brief  Interpret the SCM Control register and print its meaning
 
 @param  Input :      control - SCM control register
-  
+
 @return
 */
-/*================================================================================================*/
+/*====================*/
 void print_scm_control_register(uint32_t control)
 {
         printf( "%s%s%s\n",
@@ -1556,16 +1556,16 @@ void print_scm_control_register(uint32_t control)
                  "CBC " : "ECB ", (control & SCM_CONTROL_START_CIPHER) ? "CipherStart" : "");
 }
 
-/*================================================================================================*/
-/*===== print_scc_error_status_register =====*/
+/*====================*/
+/*= print_scc_error_status_register =*/
 /**
 @brief  Interpret the SCC Error Status register and print its meaning
 
 @param  Input :      error - error register
-  
+
 @return
 */
-/*================================================================================================*/
+/*====================*/
 void print_scc_error_status_register(uint32_t error)
 {
         printf(  "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n",
@@ -1586,16 +1586,16 @@ void print_scc_error_status_register(uint32_t error)
                  (error & SCM_ERR_BUSY) ? ", BUSY" : "");
 }
 
-/*================================================================================================*/
-/*===== print_smn_command_register =====*/
+/*====================*/
+/*= print_smn_command_register =*/
 /**
 @brief  Interpret the SMN Command register and print its meaning
 
 @param  Input :      command - command register
-  
+
 @return
 */
-/*================================================================================================*/
+/*====================*/
 void print_smn_command_register(uint32_t command)
 {
         if (command & SMN_COMMAND_ZEROS_MASK)
@@ -1609,16 +1609,16 @@ void print_smn_command_register(uint32_t command)
                  (command & SMN_COMMAND_SET_SOFTWARE_ALARM) ? " SET_SOFWARE_ALARM" : "");
 }
 
-/*================================================================================================*/
-/*===== print_smn_timer_control_register =====*/
+/*====================*/
+/*= print_smn_timer_control_register =*/
 /**
 @brief  Interpret the SMN Timer Control register and print its meaning
 
 @param  Input :      control - timer control register
-  
+
 @return
 */
-/*================================================================================================*/
+/*====================*/
 void print_smn_timer_control_register(uint32_t control)
 {
         if (control & SMN_TIMER_CTRL_ZEROS_MASK)
@@ -1632,16 +1632,16 @@ void print_smn_timer_control_register(uint32_t control)
         return;
 }
 
-/*================================================================================================*/
-/*===== print_scc_debug_detector_register =====*/
+/*====================*/
+/*= print_scc_debug_detector_register =*/
 /**
 @brief  generate human-readable interpretation of the SMN Debug Detector Register
 
 @param  Input :      debug - debug detector register
-  
+
 @return
 */
-/*================================================================================================*/
+/*====================*/
 void print_scc_debug_detector_register(uint32_t debug)
 {
         if (debug & SMN_DBG_ZEROS_MASK)
@@ -1662,16 +1662,16 @@ void print_scc_debug_detector_register(uint32_t debug)
                  (debug & SMN_DBG_D11) ? " D11" : "", (debug & SMN_DBG_D12) ? " D12" : "");
 }
 
-/*================================================================================================*/
-/*===== print_scc_return_code =====*/
+/*====================*/
+/*= print_scc_return_code =*/
 /**
 @brief  Print an interpretation (the symbol name) of @c code
 
 @param  Input :      code - the @c code
-  
+
 @return
 */
-/*================================================================================================*/
+/*====================*/
 void print_scc_return_code(scc_return_t code)
 {
         char   *msg = NULL;
@@ -1710,16 +1710,16 @@ void print_scc_return_code(scc_return_t code)
         }
 }
 
-/*================================================================================================*/
-/*===== dump_cipher_control_block =====*/
+/*====================*/
+/*= dump_cipher_control_block =*/
 /**
 @brief  Print out various values of the Cipher Control Block
 
 @param  Input :      cipher_control
-  
+
 @return
 */
-/*================================================================================================*/
+/*====================*/
 void dump_cipher_control_block(scc_encrypt_decrypt * cipher_control)
 {
         printf("data_out_length: %ld", (long) cipher_control->data_out_length);
@@ -1730,8 +1730,8 @@ void dump_cipher_control_block(scc_encrypt_decrypt * cipher_control)
         }
 }
 
-/*================================================================================================*/
-/*===== scc_test_monitor_security_failure =====*/
+/*====================*/
+/*= scc_test_monitor_security_failure =*/
 /**
 @brief  Registering a function to be called should a Security Failure be signaled by the SCC
 
@@ -1740,7 +1740,7 @@ void dump_cipher_control_block(scc_encrypt_decrypt * cipher_control)
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int scc_test_monitor_security_failure(void)
 {
         int     VT_rv = TPASS;
@@ -1760,17 +1760,17 @@ int scc_test_monitor_security_failure(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== scc_test_stop_monitoring_security_failure =====*/
+/*====================*/
+/*= scc_test_stop_monitoring_security_failure =*/
 /**
 @brief  Unregistering a function to be called should a Security Failure be signaled by the SCC
 
-@param 
-  
+@param
+
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int scc_test_stop_monitoring_security_failure(void)
 {
         int     VT_rv = TPASS;

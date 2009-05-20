@@ -16,7 +16,7 @@
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
-D.Simakov/smkd001c    10/06/2005   TLSbo51185	Initial version		
+D.Simakov/smkd001c    10/06/2005   TLSbo51185	Initial version
 D.Simakov/smkd001c    23/06/2005   TLSbo51185   Working version
 D.Simakov/smkd001c    22/07/2005   TLSbo52362   Relocatability test caes was added
 D.Simakov             10/05/2006   TLSbo66283   Phase2
@@ -51,7 +51,7 @@ D.Simakov             10/05/2006   TLSbo66283   Phase2
 
 #define DM__() {printf("%s:%d %s()\n", __FILE__, __LINE__, __FUNCTION__); fflush(stdout);}
 
-#define NBINS   	  20
+#define NBINS     20
 #define DEF_NSAMPLES 512
 
 /*==================================================================================================
@@ -59,87 +59,87 @@ D.Simakov             10/05/2006   TLSbo66283   Phase2
 ==================================================================================================*/
 
 /* Test cases. */
-enum 
+enum
 {
-        NOMINAL_FUNCTIONALITY, 
+        NOMINAL_FUNCTIONALITY,
         RELOCATABILITY,
         RE_ENTRANCE,
-        PRE_EMPTION,    
+        PRE_EMPTION,
         ENDURANCE,
-        LOAD        
+        LOAD
 };
 
 /*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
 ==================================================================================================*/
 
-/* Testapp configuration. */ 
+/* Testapp configuration. */
 typedef struct
 {
         int              mTestCase;
         int              mNumIter;
         const char *     mConfigFilename;
-        int              mVerbose;    
-        int              mSlowBitMatching;         
+        int              mVerbose;
+        int              mSlowBitMatching;
         int              mDelay;
         int              mDisableLCD;
 } sTestappConfig;
 
 /* Set of parameters for each codec handler. */
-typedef struct 
+typedef struct
 {
-        unsigned int     mNoEntry;    
+        unsigned int     mNoEntry;
         char             mInpFileName[MAX_STR_LEN];
         char             mOutFileName[MAX_STR_LEN];
-        char             mRefFileName[MAX_STR_LEN]; 
-                
+        char             mRefFileName[MAX_STR_LEN];
+
         int              mnSamples;
         int              mnFrameBits;
         int              mSampRate;
         int              mnRegions;
-        int              mnChannels;	
+        int              mnChannels;
         int              mLossRate;
         int              mCplStart;
         int              mCplQbits;
-        int              mGeckoMode;	/* GECKO1 or GECKO2 */	
+        int              mGeckoMode;	/* GECKO1 or GECKO2 */
 
-        int              mIsReadyForBitMatching;     
+        int              mIsReadyForBitMatching;
 
 } sHandlerParams;
 
 /* Codec handler. */
 typedef struct
-{                          
+{
         /****************************************/
         /* Input and output (streams, buffers). */
         /****************************************/
-        
-        FILE                  * mpInpStream;  
+
+        FILE                  * mpInpStream;
         FILE                  * mpOutStream;
         short                 * mpOutBuffer;
-        unsigned char         * mpInpBuffer;    
+        unsigned char         * mpInpBuffer;
         size_t                  mOutBufferSz;
-        size_t                  mInpBufferSz;    
-        
+        size_t                  mInpBufferSz;
+
 
         /********************/
         /* Decoder's stuff. */
         /********************/
 
         Gecko2_Decoder_Config   mDecConfig;
-        int                     mLastCodecError; 
+        int                     mLastCodecError;
         unsigned long           mFramesCount;
 
-        
+
         /***************/
         /* Other data. */
         /***************/
-        
+
         unsigned long           mIndex;
-        sHandlerParams        * mpParams;                    
-        pthread_t               mThreadID;                  
-        int                     mLtpRetval;      
-                
+        sHandlerParams        * mpParams;
+        pthread_t               mThreadID;
+        int                     mLtpRetval;
+
 } sCodecHandler;
 
 
@@ -147,7 +147,7 @@ typedef struct
                                  GLOBAL VARIABLE DECLARATIONS
 ==================================================================================================*/
 
-extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */        
+extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */
 
 
 /*==================================================================================================
@@ -170,4 +170,4 @@ int VT_codec_setup    ( void );
 int VT_codec_cleanup  ( void );
 int VT_codec_test     ( void );
 
-#endif //__CODEC_TEST_H__  
+#endif //__CODEC_TEST_H__

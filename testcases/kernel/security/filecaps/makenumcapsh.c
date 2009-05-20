@@ -9,13 +9,13 @@
 
 int main(int argc, char *argv[])
 {
-	int i, ret = 0;
+ int i, ret  0;
 
-	for (i=0; ret != -1; i++) {
-		ret = prctl(PR_CAPBSET_READ, i);
-		if (ret == -1)
-			break;
-	}
-	printf("#define NUM_CAPS %d\n", i);
-	return 0;
+ for (i0; ret ! -1; i++) {
+  ret  prctl(PR_CAPBSET_READ, i);
+  if (ret  -1)
+   break;
+ }
+ printf("#define NUM_CAPS %d\n", i);
+ return 0;
 }

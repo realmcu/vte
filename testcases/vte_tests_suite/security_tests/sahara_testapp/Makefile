@@ -20,9 +20,9 @@
 #A.Urusov/NONE                09/11/2005     TLSbo57926   APIINCDIR is added
 #A.Ozerov/NONE                01/12/2005     TLSbo58662   Update for linux-2.6.10-rel-L26_1_14
 #D.Simakov/smkd001c           21/09/2006     TLSbo76069   Compilation issue
-#                                                        
+#
 ###################################################################################################
-#Portability: ARM GCC 
+#Portability: ARM GCC
 #
 ###################################################################################################
 LTP_DIR = ../../../..

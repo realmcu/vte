@@ -34,7 +34,7 @@ CFLAGS    += -Wall -I../../../../include -I$(MMAPI_HDIR) -I$(WBAMRE_HDIR)
 LOADLIBES += -L../../../../lib -lltp -lpthread -lm -Bdynamic -L$(WBAMRE_LIBDIR) -l$(WBAMRE_LIBRARY)
 
 CFLAGS+= -g -mcpu=arm1136j-s -mabi=aapcs -DFILEIO -DLITTLE_ENDIAN
-LOADLIBES+= -Wl,--no-warn-mismatch -mcpu=arm1136j-s -lm -lc -lrt 
+LOADLIBES+= -Wl,--no-warn-mismatch -mcpu=arm1136j-s -lm -lc -lrt
 
 SRCS=$(wildcard *.c)
 OBJS=$(patsubst %.c,%.o,$(SRCS))
@@ -51,11 +51,11 @@ all: $(TARGET)
 # we only copy WBAMRD_INPUT because WBAMRD_REF is the same
 install:
 	ln -f $(TARGET) $(LTP_BIN)
-	cp -f $(CONFIGS) $(LTP_BIN) 
+	cp -f $(CONFIGS) $(LTP_BIN)
 	cp -rf $(WBAMRE_INPUT) $(LTP_BIN)
-	mkdir -p $(LTP_BIN)/wbamre_output   
-	mkdir -p $(LTP_BIN)/sharedlibs   
-	cp -rf $(WBAMRE_LIBDIR)/lib$(WBAMRE_LIBRARY).so $(LTP_BIN)/sharedlibs                        
+	mkdir -p $(LTP_BIN)/wbamre_output
+	mkdir -p $(LTP_BIN)/sharedlibs
+	cp -rf $(WBAMRE_LIBDIR)/lib$(WBAMRE_LIBRARY).so $(LTP_BIN)/sharedlibs
 	@echo "***************************************************"
 	@echo "** INSTALL : wbamr_encoder_testapp               **"
 	@echo "***************************************************"

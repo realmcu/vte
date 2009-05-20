@@ -32,7 +32,7 @@
 #               02/08/01        Jay Inman               Modified to run standalone on Linux
 #               05/24/01        Jay Inman               Added command line args
 #               06/27/01        Jay Inman               Ported from Korn to Bash
-# 
+#
 #***********************************************************************
 
 
@@ -71,7 +71,7 @@ make_subdirs()
         }
         let i="$i + 1"
     done;
-} 
+}
 
 
 #=============================================================================
@@ -92,7 +92,7 @@ touch_files()
         cd dir$j
         k=0;
 
-        while [ "$k" -lt "$numfiles" ]; do  
+        while [ "$k" -lt "$numfiles" ]; do
             >file$j$k || err_log ">file$j$k FAILED"
             let k="$k + 1"
         done
@@ -121,7 +121,7 @@ rm_files()
         cd dir$j
         k=0;
 
-        while [ "$k" -lt "$numfiles" ]; do  
+        while [ "$k" -lt "$numfiles" ]; do
             rm -f file$j$k || err_log "rm -f file$j$k FAILED"
             let k="$k + 1"
         done
@@ -141,8 +141,8 @@ rm_files()
 #
 # RETURNS:              None.
 #=============================================================================
-step1() 
-{ 
+step1()
+{
     echo "=============================================="
     echo "MULTIPLE PROCESSES CREATING AND DELETING FILES"
     echo "=============================================="
@@ -161,10 +161,10 @@ step1()
     }
     cd dir1 || err_log "cd dir1 FAILED"
     make_subdirs || err_log "make_subdirs on dir1 FAILED"
-    touch_files 
+    touch_files
     pid1=$!
-    
-    i=1;   
+
+    i=1;
     while [ "$i" -le "$numloops" ]; do
         echo "Executing loop $i of $numloops..."
 
@@ -172,13 +172,13 @@ step1()
 
         echo "$0: cd ../dir1 & creating files"
         cd ../dir1
-        wait $pid1 
+        wait $pid1
         touch_files &
         pid1=$!
-        
+
         echo "$0: cd ../dir1 & removing files"
         cd ../dir1
-        wait $pid1 
+        wait $pid1
         rm_files &
         pid1=$!
 
@@ -190,7 +190,7 @@ step1()
 
         echo "$0: cd ../dir2 & removing files"
         cd ../dir2
-        wait $pid2 
+        wait $pid2
         rm_files &
         pid2=$!
 
@@ -198,14 +198,14 @@ step1()
     done
 
     # wait for all background processes to complete execution
-    wait        
+    wait
     return $step_errors
 }
 
 
 #=============================================================================
-# MAIN 
-#     See the description, purpose, and design of this test under TEST 
+# MAIN
+#     See the description, purpose, and design of this test under TEST
 #     in this test's prolog.
 #=============================================================================
     USAGE="Usage: ./fs_inod [volumename] [numsubdirectories] [numfiles] [numloops]"
@@ -222,7 +222,7 @@ step1()
     numloops=$4
 
     cd $testvol || exit 2
-    
+
     echo "FS_INODE: File system stress - inode allocation/deallocation"
     echo "Volume under test: $testvol"
     echo "Number of subdirectories: $numsubdirs"
@@ -239,7 +239,7 @@ step1()
          if [ $? != 0 ]; then
             error "step$I failed - see above errors"
          fi
-    done   
+    done
 
 # Clean up and timestamp
     rm -rf $testvol/dir*

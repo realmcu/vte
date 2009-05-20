@@ -68,7 +68,7 @@ extern "C"{
 
 /*======================== DEFINES AND MACROS ===============================*/
 
-#if !defined(TRUE) 
+#if !defined(TRUE)
 #define TRUE    1
 #endif
 
@@ -77,7 +77,7 @@ extern "C"{
 #endif
 
 /*======================== ENUMS ============================================*/
-typedef enum 
+typedef enum
 {
         PRP_VF = 1,
         PRP_ENC_ON_D,
@@ -85,7 +85,7 @@ typedef enum
 } eCases;
 
 /*======================== STRUCTURES AND OTHER TYPEDEFS ====================*/
-typedef struct 
+typedef struct
 {
         const char * mV4LDevice;
         const char * mOutputDevice;
@@ -94,7 +94,7 @@ typedef struct
         int mHeight;
         int mCount;
         int mCaseNum;
-        int mRotationMode; 
+        int mRotationMode;
         int mOutputFormat;
         int mCrop;
         struct v4l2_rect mCropRect;
@@ -106,7 +106,7 @@ typedef struct
         const char * mPixFormat;
         int mOverlayType;
 	int mFrameRate;
-} sV4LTestConfig; 
+} sV4LTestConfig;
 /*======================== GLOBAL VARIABLE DECLARATIONS =====================*/
 
 extern sV4LTestConfig gV4LTestConfig;

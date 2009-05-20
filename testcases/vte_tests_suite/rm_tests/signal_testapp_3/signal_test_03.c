@@ -1,4 +1,4 @@
-/* 
+/*
 *
 *   Copyright (c) International Business Machines  Corp., 2001
 *
@@ -17,7 +17,7 @@
 *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-/* 
+/*
 * Copyright (C) Bull S.A. 1996
 * Level 1,5 Years Bull Confidential and Proprietary Information
 */
@@ -25,7 +25,7 @@
 
 /*---------------------------------------------------------------------+
 |                           signal_test_03                             |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Description:  Block a critical section from receiving signals.       |
 |                                                                      |
@@ -77,7 +77,7 @@
 #define MAXTIME        2        /* MAX timeout (minutes) */
 
 #ifdef _LINUX_
-// bits/signum.h defines _NSIG as 64 
+// bits/signum.h defines _NSIG as 64
 #define SIGMAX 64
 #endif
 
@@ -96,7 +96,7 @@ int     signals_received = 0;
 
 /*---------------------------------------------------------------------+
 |                               main ()                                |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Main program  (see prolog for more details)               |
 |                                                                      |
@@ -112,16 +112,16 @@ int RM_main(int argc, char **argv)
         /* Set up our signal handlers */
         init_sig_vec();
 
-        /* 
+        /*
         * Critical section - block SIGILL signal
-        *  
+        *
         * Block the SIGILL interrupt from interrupting the process
         * with the sigblock () system function call.
-        *  
-        * Send the SIGILL interrupt to the process in an attempt to 
+        *
+        * Send the SIGILL interrupt to the process in an attempt to
         * disrupt the critial section -- the signal should be blocked.
         * Wait one second to insure that the signal has plenty of time
-        * to reach the process.  
+        * to reach the process.
         */
 #ifdef _LINUX_
         sigemptyset(&mask);
@@ -137,12 +137,12 @@ int RM_main(int argc, char **argv)
         /* Critial section */
         sleep(1);
 
-        /* 
+        /*
         * End of critical section - ensure SIGILL signal was not received
-        * 
+        *
         * Check to insure that the signal handler has not caught any signals,
-        * and then unblock all of the signals with the sigsetmask system 
-        * function call.  
+        * and then unblock all of the signals with the sigsetmask system
+        * function call.
         */
         if (signals_received > 0)
                 error("received an unexpected signal during the critical section", __LINE__);
@@ -159,7 +159,7 @@ int RM_main(int argc, char **argv)
 #endif
         raise(SIGILL);
 
-        /* 
+        /*
         * Upon unblocking the signals, should receive the SIGILL signal.
         * Verify that it indeed is caught.
         */
@@ -181,7 +181,7 @@ int RM_main(int argc, char **argv)
 
 /*---------------------------------------------------------------------+
 |                           init_sig_vec ()                            |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Initialize the signal vector for ALL possible signals     |
 |            (as defined in /usr/include/sys/signal.h) except for      |
@@ -231,7 +231,7 @@ void init_sig_vec(void)
 
 /*---------------------------------------------------------------------+
 |                             handler ()                               |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Signal catching function.  This function is called each   |
 |            time a non-blocked signal is received by the process.     |
@@ -252,7 +252,7 @@ void handler(int signal)
 
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Creates system error message and calls error ()           |
 |                                                                      |
@@ -268,7 +268,7 @@ void sys_error(const char *msg, int line)
 
 /*---------------------------------------------------------------------+
 |                               error ()                               |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Prints out message and exits...                           |
 |                                                                      |

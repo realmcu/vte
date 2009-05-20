@@ -10,13 +10,13 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-     
+
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-D.Simakov/smkd001c           12/07/2004     TLSbo40263  Initial version 
+D.Simakov/smkd001c           12/07/2004     TLSbo40263  Initial version
 D.Simakov/smkd001c           08/12/2004     TLSbo41675  Ported to read sources
 
 ==================================================================================================*/
@@ -31,9 +31,9 @@ extern "C"{
 /*==================================================================================================
                                          INCLUDE FILES
 ==================================================================================================*/
-#include <sys/types.h>  	// fork usage for reentrance test
-#include <unistd.h> 		// fork usage for reentrance test
-#include <pthread.h> 		// fork usage for reentrance test
+#include <sys/types.h>  // fork usage for reentrance test
+#include <unistd.h> // fork usage for reentrance test
+#include <pthread.h> // fork usage for reentrance test
 #include <sys/time.h>		// timer usage for preemptivity
 #include <math.h>               // for sqrt in hogcpu
 #include <assert.h>             // for assert
@@ -43,7 +43,7 @@ extern "C"{
 
 #include <sys/stat.h>
 #include <fcntl.h>
-	       
+
 
 #include <wbmp_interface.h>  // wbmp decoder
 
@@ -59,7 +59,7 @@ extern "C"{
 #endif
 #if !defined(FALSE)
     #define FALSE 0
-#endif        
+#endif
 
 /*==================================================================================================
                                        DEFINES AND MACROS
@@ -70,13 +70,13 @@ extern "C"{
                                              ENUMS
 ==================================================================================================*/
 /** Different test cases in the single application */
-typedef enum 
+typedef enum
 {
     NOMINAL_FUNCTIONALITY = 0,  /**< Nominal encoding/decoding */
     ROBUSTNESS,                 /**< React to a bad input bit-stream, i.e. pdf document */
-    ENDURANCE,		        	/**< Endurance test */
-    LOAD,                       
-    RE_ENTRANCE,        		/**< Re-entrance */
+    ENDURANCE,		        /**< Endurance test */
+    LOAD,
+    RE_ENTRANCE,        /**< Re-entrance */
     PRE_EMPTION,		        /**< Pre-emption */
 } wbmp_decoder_testcase_t;
 

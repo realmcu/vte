@@ -49,7 +49,7 @@ public slots:
    void keyPressEvent(QKeyEvent *e);
    void exitFail();
    void exitPass();
-   
+
  public:
  int VT_rv;
     ButtonsGroups( QWidget *parent = 0, const char *name = 0 );
@@ -58,7 +58,7 @@ protected:
     QCheckBox *state;
     QRadioButton *rb21, *rb22, *rb23;
 
-protected slots:    
+protected slots:
     void slotChangeGrp3State();
 private:
    void contextMenuEvent( QContextMenuEvent * );

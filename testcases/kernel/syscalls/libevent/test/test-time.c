@@ -15,54 +15,54 @@
 
 #include <event.h>
 
-int called = 0;
+int called  0;
 
-#define NEVENT	20000
+#define NEVENT 20000
 
 struct event *ev[NEVENT];
 
 void
 time_cb(int fd, short event, void *arg)
 {
-	struct timeval tv;
-	int i, j;
+ struct timeval tv;
+ int i, j;
 
-	called++;
+ called++;
 
-	if (called < 10*NEVENT) {
-		for (i = 0; i < 10; i++) {
-			j = random() % NEVENT;
-			tv.tv_sec = 0;
-			tv.tv_usec = random() % 50000L;
-			if (tv.tv_usec % 2)
-				evtimer_add(ev[j], &tv);
-			else
-				evtimer_del(ev[j]);
-		}
-	}
+ if (called < 10*NEVENT) {
+  for (i  0; i < 10; i++) {
+   j  random() % NEVENT;
+   tv.tv_sec  0;
+   tv.tv_usec  random() % 50000L;
+   if (tv.tv_usec % 2)
+    evtimer_add(ev[j], &tv);
+   else
+    evtimer_del(ev[j]);
+  }
+ }
 }
 
 int
 main (int argc, char **argv)
 {
-	struct timeval tv;
-	int i;
+ struct timeval tv;
+ int i;
 
-	/* Initalize the event library */
-	event_init();
+ /* Initalize the event library */
+ event_init();
 
-	for (i = 0; i < NEVENT; i++) {
-		ev[i] = malloc(sizeof(struct event));
+ for (i  0; i < NEVENT; i++) {
+  ev[i]  malloc(sizeof(struct event));
 
-		/* Initalize one event */
-		evtimer_set(ev[i], time_cb, ev[i]);
-		tv.tv_sec = 0;
-		tv.tv_usec = random() % 50000L;
-		evtimer_add(ev[i], &tv);
-	}
+  /* Initalize one event */
+  evtimer_set(ev[i], time_cb, ev[i]);
+  tv.tv_sec  0;
+  tv.tv_usec  random() % 50000L;
+  evtimer_add(ev[i], &tv);
+ }
 
-	event_dispatch();
+ event_dispatch();
 
-	return (called < NEVENT);
+ return (called < NEVENT);
 }
 

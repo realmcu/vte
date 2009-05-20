@@ -10,18 +10,18 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-#E.Gromazina                07/04/2005     TLSbo48747   Initial version 
-#L.Delaspre/rc149c          14/04/2005     TLSbo48760   VTE 1.9 integration 
-#E.Gromazina   		    14/06/2005	   TLSbo50931	add script	
+#E.Gromazina                07/04/2005     TLSbo48747   Initial version
+#L.Delaspre/rc149c          14/04/2005     TLSbo48760   VTE 1.9 integration
+#E.Gromazina       14/06/2005	   TLSbo50931	add script
 #
 ##################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms. 
+#Portability: Indicate if this module is portable to other compilers or platforms.
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################

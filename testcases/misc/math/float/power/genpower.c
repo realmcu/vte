@@ -37,21 +37,12 @@
 #include        <sys/signal.h>
 #include        <math.h>
 
-<<<<<<< HEAD
 #define		MAX_FNAME_LEN	16
 
 /*****************************************************************
  * create file:
  *
  * func_name is the name of the function
-=======
-
-
-/*****************************************************************
- * create file: 
- * 	
- * func_name is the name of the function 
->>>>>>> vte 20080401
  *
  * code can take 2 values: DATA_CREATE to create a input data file
  *			   RESULT_CREATE for output result file
@@ -60,11 +51,7 @@
 int create_file(char *func_name, int NbVal)
 {
 	pid_t myproc;
-<<<<<<< HEAD
 
-=======
-	           
->>>>>>> vte 20080401
         if (( myproc = fork() )!=0)
                 return myproc;
         else {
@@ -74,7 +61,6 @@ int create_file(char *func_name, int NbVal)
 	     	fprintf(stderr, "ERROR %s\n", strerror(errno));
 	     	abort();
 	}
-<<<<<<< HEAD
 }
 
 int main(int argc, char *argv[])
@@ -111,46 +97,8 @@ int main(int argc, char *argv[])
 	waitpid(child,NULL,0);
 
 	sprintf (funct, "%s/gensqrt", bin_path);
-=======
-} 
-
-
-
-
-int main(int argc, char *argv[])
-{
-	char *funct;
-	pid_t  child;
-
-	
-	funct = "./genceil";
-	child=create_file(funct, 0);
-	waitpid(child,NULL,0);
-
-	funct = "./genfabs";
-	child=create_file(funct, 0);
-	waitpid(child,NULL,0);
-
-	funct = "./genfloor";
-	child=create_file(funct, 0);
-	waitpid(child,NULL,0);
-
-	funct = "./genfmod";
-	child=create_file(funct, 0);
-	waitpid(child,NULL,0);
-		
-	funct = "./genpow";
-	child=create_file(funct, 0);
-	waitpid(child,NULL,0);
-
-	funct = "./gensqrt";
->>>>>>> vte 20080401
 	child=create_file(funct, 0);
 	waitpid(child,NULL,0);
 
 	return 0;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> vte 20080401

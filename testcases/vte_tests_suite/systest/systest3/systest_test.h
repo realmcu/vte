@@ -44,7 +44,7 @@ D.Khoroshev                  06/05/2007     ENGR37697   Initial version
 typedef struct
 {
         int          mThreadToExecute;          /*!< Number of thread to execute. */
-        int          mVerbose;                  /*!< Verbose mode. */        
+        int          mVerbose;                  /*!< Verbose mode. */
         char         mV4LDevName[MAX_STR_LEN];  /*!< V4L device name. */
         char         mV4LDevOName[MAX_STR_LEN]; /*!< V4L output device name. */
         char         mMountPoint[MAX_STR_LEN];  /*!< FFS mount point. */

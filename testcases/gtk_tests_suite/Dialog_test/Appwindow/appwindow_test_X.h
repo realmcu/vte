@@ -10,7 +10,7 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-     
+
 ====================================================================================================
 Revision History:
                             Modification     Tracking
@@ -46,7 +46,7 @@ extern "C"{
                                              ENUMS
 ==================================================================================================*/
 /** appwindow_EX type */
-typedef enum 
+typedef enum
 {
 	APPWINDOW_EX_0 = 0,   /**< Example stuff 0. */
 	APPWINDOW_EX_1        /**< Example stuff 1. */

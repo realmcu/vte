@@ -19,7 +19,6 @@
 ###########################################################################
 # name of file	: Makefile						  #
 ###########################################################################
-<<<<<<< HEAD
 
 top_srcdir		?= ../../../..
 
@@ -28,20 +27,3 @@ include $(top_srcdir)/include/mk/testcases.mk
 LDLIBS			+= -lm
 
 include $(top_srcdir)/include/mk/generic_leaf_target.mk
-=======
-CFLAGS+=	-I../../../../include -O -g -Wall
-LOADLIBES+=	-lm -L../../../../lib -lltp 
-
-SRCS=$(wildcard *.c)
-TARGETS=$(patsubst %.c,%,$(SRCS))
-
-all: $(TARGETS)
-
-install:
-	@set -e; for i in $(TARGETS); do ln -f $$i ../../../bin/$$i ; done
-
-clean:
-	rm -f $(TARGETS)
-
-
->>>>>>> vte 20080401

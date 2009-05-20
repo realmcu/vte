@@ -70,7 +70,7 @@ protected:
 private:
     void contextMenuEvent( QContextMenuEvent * );
 
-    
+
 protected slots:
     void keyChanged( const QString & );
     void dataChanged( const QString & );

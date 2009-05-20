@@ -51,7 +51,7 @@ public slots:
    void keyPressEvent(QKeyEvent *e);
    void exitFail();
    void exitPass();
- 
+
  public:
  int VT_rv;
     ListBoxDemo();
@@ -67,14 +67,14 @@ private slots:
     void setMultiSelection( bool );
     void sortAscending();
     void sortDescending();
-    
+
 private:
     QListBox * l;
     QSpinBox * columns;
     QSpinBox * rows;
     QButtonGroup * bg;
     void contextMenuEvent( QContextMenuEvent * );
-    
+
 };
 
 

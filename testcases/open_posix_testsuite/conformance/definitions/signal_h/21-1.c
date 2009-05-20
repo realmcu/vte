@@ -18,15 +18,15 @@ union sigval tvalue;
 
 int dummyfcn (void)
 {
-	tsigno = t.si_signo;
-	terrno = t.si_errno;
-	tcode = t.si_code;
-	tpid = t.si_pid;
-	tuid = t.si_uid;
-	taddr = t.si_addr;
-	tstatus = t.si_status;
-	tband = t.si_band;
-	tvalue = t.si_value;
+ tsigno  t.si_signo;
+ terrno  t.si_errno;
+ tcode  t.si_code;
+ tpid  t.si_pid;
+ tuid  t.si_uid;
+ taddr  t.si_addr;
+ tstatus  t.si_status;
+ tband  t.si_band;
+ tvalue  t.si_value;
 
-	return 0;
+ return 0;
 }

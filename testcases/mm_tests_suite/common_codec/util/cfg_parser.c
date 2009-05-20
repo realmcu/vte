@@ -12,15 +12,15 @@
         ARM GCC
 */
 
-/*======================== REVISION HISTORY ==================================
+/* REVISION HISTORY 
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
 D.Simakov / smkd001c  24/01/2006   TLSbo61035   Initial version
-=============================================================================*/
+*/
 
-/* MUST BE COMPILED WITH THE -DWORDS_IN_ENTRY=<...>*/
-/* MUST BE COMPILED WITH THE -DMAX_STR_LEN=<...>*/
+/* MUST BE COMPILED WITH THE -DWORDS_IN_ENTRY<...>*/
+/* MUST BE COMPILED WITH THE -DMAX_STR_LEN<...>*/
 #include "cfg_parser.h"
 #include "llist.h"
 #include <stdio.h>
@@ -34,29 +34,29 @@ D.Simakov / smkd001c  24/01/2006   TLSbo61035   Initial version
 
 /*---------------------------------------------------------------------*/
 /*---------------------------------------------------------------------*/
-int ParseConfig( const char * fileName ) 
-{        
+int ParseConfig( const char * fileName )
+{
         FILE * in;
         char entry[WORDS_IN_ENTRY][MAX_STR_LEN];
-        unsigned int n = 0, nEntry = 0;                       
+        unsigned int n  0, nEntry  0;
 
-        if( (in = fopen( fileName, "rt" )) )
+        if( (in  fopen( fileName, "rt" )) )
         {
                 while( !feof(in) )
                 {
                         fscanf( in, "%s", entry[n] );
-                        
-                        if( n == WORDS_IN_ENTRY-1 )
+
+                        if( n  WORDS_IN_ENTRY-1 )
                         {
                                 MakeEntry( entry, nEntry );
                         }
                         ++n;
-                        n %= WORDS_IN_ENTRY;
+                        n % WORDS_IN_ENTRY;
                         !n ? ++nEntry : 0;
                 }
                 return TRUE;
-        }  
-        
+        }
+
         return FALSE;
 }
 

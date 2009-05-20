@@ -1,49 +1,49 @@
-/*================================================================================================*/
-/**  
-        @file   ycbcr.c  
-  
+/*====================*/
+/**
+        @file   ycbcr.c
+
         @brief  Contains functions for conversion YCbCr format to RGB format
 */
-/*==================================================================================================  
-  
-        Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved  
-        THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT  
-        BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF  
-        Freescale Semiconductor, Inc.  
+/*======================
 
-====================================================================================================
+        Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
+        THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
+        BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
+        Freescale Semiconductor, Inc.
+
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 Kardakov Dmitriy/ID          18/12/2006     TLSbo80545   Initial version
 
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                          INCLUDE FILES
-==================================================================================================*/
+======================*/
 #include <stdlib.h>
 #include <stdio.h>
 #include "ycbcr.h"
 
-/*==================================================================================================
+/*======================
                                        DEFINES AND MACROS
-==================================================================================================*/
+======================*/
 #define SUPPORT_RGB_888     0
 #define SUPPORT_RGB_565     1
 #define SUPPORT_RGB_444     0
 
-/*==================================================================================================
+/*======================
         Conversion Algorithm:
         Currently only look-up table based color conversion is supported.
         If equation based computation is required, uncoment RGB_LOOKUP
-==================================================================================================*/
+======================*/
 #define RGB_LOOKUP
 
 #ifdef RGB_LOOKUP
 
-const short int r_cr[256] = 
+const short int r_cr[256] =
 {
             -204, -202, -200, -199, -197, -196, -194, -192,
             -191, -189, -188, -186, -184, -183, -181, -180,
@@ -79,7 +79,7 @@ const short int r_cr[256] =
             191, 192, 194, 196, 197, 199, 200, 202
 };
 
-const short int g_cr[256] = 
+const short int g_cr[256] =
 {
             104, 103, 103, 102, 101, 100, 99, 99,
             98, 97, 96, 95, 95, 94, 93, 92,
@@ -115,7 +115,7 @@ const short int g_cr[256] =
             -98, -99, -99, -100, -101, -102, -103, -103
 };
 
-const short int g_cb[256] = 
+const short int g_cb[256] =
 {
             50, 49, 49, 49, 48, 48, 47, 47,
             47, 46, 46, 45, 45, 45, 44, 44,
@@ -151,7 +151,7 @@ const short int g_cb[256] =
             -47, -47, -47, -48, -48, -49, -49, -49
 };
 
-const short int b_cb[256] = 
+const short int b_cb[256] =
 {
             -258, -256, -254, -252, -250, -248, -246, -244,
             -242, -240, -238, -236, -234, -232, -230, -228,
@@ -188,11 +188,11 @@ const short int b_cb[256] =
 };
 
 #if (SUPPORT_RGB_444)
-/*==================================================================================================
+/*======================
         Use this clipping array when 4-bit output is required.
         These values are calculated using clipitArr4[i] = clipitArr[i] >> 4
-==================================================================================================*/
-const unsigned char clipitArr4[832] = 
+======================*/
+const unsigned char clipitArr4[832] =
 {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -272,10 +272,10 @@ const unsigned char clipitArr4[832] =
             15, 15, 15, 15, 15, 15, 15, 15
 };
 
-/*==================================================================================================
+/*======================
         YCbCrToRGB16bpp()
         Optimized and re-organized function
-==================================================================================================*/
+======================*/
 /* Set up the macro to pack into the desired output RGB format */
 
 /* (0000 rrrr gggg bbbb) */
@@ -296,12 +296,12 @@ void YCbCrToRGB_444(unsigned char *Y, int xsize,
         const unsigned char *clipitPtrR = clipitArr4 + 288;
         const unsigned char *clipitPtrG = clipitArr4 + 288;
         const unsigned char *clipitPtrB = clipitArr4 + 288;
-        
+
         linePitch = width * 2;
         topLuminancePtr = Y;
         chromBluePtr = Cb;
         chromRedPtr = Cr;
-        
+
         if (rgbOrientation == RGB_ORIENT_NORMAL)
         {
                 // Normal Top-to-Bottom raster
@@ -317,7 +317,7 @@ void YCbCrToRGB_444(unsigned char *Y, int xsize,
                         (unsigned short *) (rgbPixelPtr + linePitch * (height - 1));
                 bottomOutputPtr = topOutputPtr - width;
         }
-        
+
         for (row = height - 1; row > 0; row -= 2)
         {
                 bottomLuminancePtr = topLuminancePtr + xsize;
@@ -329,21 +329,21 @@ void YCbCrToRGB_444(unsigned char *Y, int xsize,
                         clipR = clipitPtrR + r_cr[r];
                         clipB = clipitPtrB + b_cb[b];
                         clipG = clipitPtrG + g_cr[r] + g_cb[b];
-                        
+
                         yy = topLuminancePtr[0];
                         AVCD_MakeRGB_444(topOutputPtr[0], clipR[yy], clipG[yy], clipB[yy]);
-                        
+
                         yy = topLuminancePtr[1];
                         AVCD_MakeRGB_444(topOutputPtr[1], clipR[yy], clipG[yy], clipB[yy]);
-                        
+
                         yy = bottomLuminancePtr[0];
                         AVCD_MakeRGB_444(bottomOutputPtr[0], clipR[yy], clipG[yy],
                                 clipB[yy]);
-                        
+
                         yy = bottomLuminancePtr[1];
                         AVCD_MakeRGB_444(bottomOutputPtr[1], clipR[yy], clipG[yy],
                                 clipB[yy]);
-                        
+
                         topLuminancePtr += 2;
                         bottomLuminancePtr += 2;
                         topOutputPtr += 2;
@@ -360,11 +360,11 @@ void YCbCrToRGB_444(unsigned char *Y, int xsize,
 #endif
 
 #if (SUPPORT_RGB_565)
-/*==================================================================================================
+/*======================
         Use this clipping array when 5-bit output is required.
         These values are calculated using clipitArr5[i] = clipitArr[i] >> 3
-==================================================================================================*/
-const unsigned char clipitArr5[832] = 
+======================*/
+const unsigned char clipitArr5[832] =
 {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -448,11 +448,11 @@ const unsigned char clipitArr5[832] =
             31, 31, 31, 31, 31, 31, 31, 31
 };
 
-/*==================================================================================================
+/*======================
         Use this clipping array when 6-bit output is required.
         These values are calculated using clipitArr6[i] = clipitArr[i] >> 2
-==================================================================================================*/
-const unsigned char clipitArr6[832] = 
+======================*/
+const unsigned char clipitArr6[832] =
 {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -536,10 +536,10 @@ const unsigned char clipitArr6[832] =
             63, 63, 63, 63, 63, 63, 63, 63
 };
 
-/*==================================================================================================
+/*======================
         YCbCrToRGB16bpp()
         Optimized and re-organized function
-==================================================================================================*/
+======================*/
 /* Set up the macro to pack into the desired output RGB format */
 
 /* (rrrr rggg gggb bbbb) */
@@ -560,12 +560,12 @@ void YCbCrToRGB_565(unsigned char *Y, int xsize,
         const unsigned char *clipitPtrR = clipitArr5 + 288;
         const unsigned char *clipitPtrG = clipitArr6 + 288;
         const unsigned char *clipitPtrB = clipitArr5 + 288;
-        
+
         linePitch = width * 2;
         topLuminancePtr = Y;
         chromBluePtr = Cb;
         chromRedPtr = Cr;
-        
+
         if (rgbOrientation == RGB_ORIENT_NORMAL)
         {
                 // Normal Top-to-Bottom raster
@@ -581,7 +581,7 @@ void YCbCrToRGB_565(unsigned char *Y, int xsize,
                         (unsigned short *) (rgbPixelPtr + linePitch * (height - 1));
                 bottomOutputPtr = topOutputPtr - width;
         }
-        
+
         for (row = height - 1; row > 0; row -= 2)
         {
                 bottomLuminancePtr = topLuminancePtr + xsize;
@@ -593,21 +593,21 @@ void YCbCrToRGB_565(unsigned char *Y, int xsize,
                         clipR = clipitPtrR + r_cr[r];
                         clipB = clipitPtrB + b_cb[b];
                         clipG = clipitPtrG + g_cr[r] + g_cb[b];
-                        
+
                         yy = topLuminancePtr[0];
                         AVCD_MakeRGB_565(topOutputPtr[0], clipR[yy], clipG[yy], clipB[yy]);
-                        
+
                         yy = topLuminancePtr[1];
                         AVCD_MakeRGB_565(topOutputPtr[1], clipR[yy], clipG[yy], clipB[yy]);
-                        
+
                         yy = bottomLuminancePtr[0];
                         AVCD_MakeRGB_565(bottomOutputPtr[0], clipR[yy], clipG[yy],
                                 clipB[yy]);
-                        
+
                         yy = bottomLuminancePtr[1];
                         AVCD_MakeRGB_565(bottomOutputPtr[1], clipR[yy], clipG[yy],
                                 clipB[yy]);
-                        
+
                         topLuminancePtr += 2;
                         bottomLuminancePtr += 2;
                         topOutputPtr += 2;
@@ -624,7 +624,7 @@ void YCbCrToRGB_565(unsigned char *Y, int xsize,
 #endif
 
 #if (SUPPORT_RGB_888)
-static const unsigned char clipitArr[832] = 
+static const unsigned char clipitArr[832] =
 {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -726,7 +726,7 @@ void YCbCrToRGB_888(unsigned char *Y, int xsize,
         topLuminancePtr = Y;
         chromBluePtr = Cb;
         chromRedPtr = Cr;
-        
+
         if (rgbOrientation == RGB_ORIENT_NORMAL)
         {
                 // Normal Top-to-Bottom raster
@@ -741,7 +741,7 @@ void YCbCrToRGB_888(unsigned char *Y, int xsize,
                 topOutputPtr = rgbPixelPtr + linePitch * (height - 1);
                 bottomOutputPtr = topOutputPtr - linePitch;
         }
-        
+
         for (row = height - 1; row > 0; row -= 2)
         {
                 bottomLuminancePtr = topLuminancePtr + xsize;
@@ -753,27 +753,27 @@ void YCbCrToRGB_888(unsigned char *Y, int xsize,
                         clipR = clipitPtr + r_cr[r];
                         clipB = clipitPtr + b_cb[b];
                         clipG = clipitPtr + g_cr[r] + g_cb[b];
-                        
+
                         yy = topLuminancePtr[0];
                         topOutputPtr[0] = clipB[yy];        //blue
                         topOutputPtr[1] = clipG[yy];        // green
                         topOutputPtr[2] = clipR[yy];        // red
-                        
+
                         yy = topLuminancePtr[1];
                         topOutputPtr[3] = clipB[yy];        //blue
                         topOutputPtr[4] = clipG[yy];        // green
                         topOutputPtr[5] = clipR[yy];        // red
-                        
+
                         yy = bottomLuminancePtr[0];
                         bottomOutputPtr[0] = clipB[yy];     // blue
                         bottomOutputPtr[1] = clipG[yy];     //green
                         bottomOutputPtr[2] = clipR[yy];     // red
-                        
+
                         yy = bottomLuminancePtr[1];
                         bottomOutputPtr[3] = clipB[yy];     // blue
                         bottomOutputPtr[4] = clipG[yy];     //green
                         bottomOutputPtr[5] = clipR[yy];     // red
-                        
+
                         topLuminancePtr += 2;
                         bottomLuminancePtr += 2;
                         topOutputPtr += 6;
@@ -821,7 +821,7 @@ int YCbCrToRGB(unsigned char *Y, int xsize,
         }
 }
 
-int YCbYCrToRGB (unsigned char * YCbYCr, int stride,  unsigned char *rgbPixelPtr, 
+int YCbYCrToRGB (unsigned char * YCbYCr, int stride,  unsigned char *rgbPixelPtr,
                  int width, int height, int rgbOrientation, int colorFormat)
 {
         char *YPtr, *CbPtr, *CrPtr;
@@ -836,18 +836,18 @@ int YCbYCrToRGB (unsigned char * YCbYCr, int stride,  unsigned char *rgbPixelPtr
             for (i = 0; i < width; i++)
             {
                     *(YPtr + j * width + i) = *(YCbYCr + j * stride + 2*i);
-                    if (j % 2 == 0 && i % 2 == 0) 
+                    if (j % 2 == 0 && i % 2 == 0)
                     {
                             * (CbPtr + (width / 2)* j / 2 + i / 2) = * (YCbYCr + stride * j + 4 * (i / 2) + 1);
                             * (CrPtr + (width / 2)* j / 2 + i / 2) = * (YCbYCr + stride * j + 4 * (i / 2) + 3);
                     }
             }
-            
-        err = YCbCrToRGB(YPtr, width, 
-                   CbPtr, CrPtr, width / 2, 
-                   rgbPixelPtr, width, height, 
+
+        err = YCbCrToRGB(YPtr, width,
+                   CbPtr, CrPtr, width / 2,
+                   rgbPixelPtr, width, height,
                    rgbOrientation, colorFormat);
-        
+
         free (YPtr);
         return err;
 }

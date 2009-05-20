@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   ipu_pf_test.c
 
         @brief  Test scenario
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2005, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
@@ -20,17 +20,17 @@ Artyom Smirnov              26/05/2005      TLSbo49894   Initial version
 D.Simakov / smkd001c        21/09/2005      TLSbo55077   Re-written
 A.Pshenichnikov             23/11/2005      TLSbo58740   some bugs were fixed
 E.Gromazina/NONE            10/01/2006      TLSbo61481   Clean the LCD after testing
-D.Kardakov                  30/08/2006      TLSbo75997   some bugs were fixed, 
-                                                         option the number of image filtering was added 
+D.Kardakov                  30/08/2006      TLSbo75997   some bugs were fixed,
+                                                         option the number of image filtering was added
 D.Kardakov                  02/01/2007      TLsbo87909   Register_conf( void )
-====================================================================================================
+====================
 Portability: ARM GCC
 
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 
 /* Verification Test Environment Include Files */
 #include <string.h>
@@ -40,9 +40,9 @@ Portability: ARM GCC
 #include "stuff/ycbcr.h"
 #include <assert.h>
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 #define IPU_PF_DEVICE_FILE "/dev/mxc_ipu_pf"
 
 /************************************************************************/
@@ -92,9 +92,9 @@ Portability: ARM GCC
     #define DPRINTF(fmt,...) do {} while(0)
 #endif
 
-/*==================================================================================================
+/*======================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 typedef struct
 {
         char mFormat[FIELDS_LENGTH];
@@ -103,9 +103,9 @@ typedef struct
         char mReserved[RAW_DATA_OFFSET - RESERVED_AREA_OFFSET];
 } sDumpFileHeader;
 
-/*==================================================================================================
+/*======================
                                        LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 static int               gIpuPfFd          = -1;         /* IPU post-filter device. */
 static pf_init_params    gPfInitParams;                  /* Init post filter parameters. */
 static pf_reqbufs_params gPfReqbufsParams;               /* Request buffers for processing. */
@@ -122,22 +122,22 @@ static unsigned char   * pFb_saved         = NULL;       /* Pointer to framebuff
 static unsigned long     sizeFb_saved      = 0;          /* Size of framebuffer memory */
 static void            * gpInpStat         = NULL;       /* Buffer for initial image data*/
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 extern sTestappConfig gTestappConfig;
 
-/*==================================================================================================
+/*======================
                                    LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 int DisplayImage( unsigned char * pYuv, int width, int height, int left, int top );
 int Register_conf( void );
-/*==================================================================================================
+/*======================
                                        LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== VT_ipu_pf__setup =====*/
+/*====================*/
+/*= VT_ipu_pf__setup =*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
@@ -146,7 +146,7 @@ int Register_conf( void );
 @return On success - return TPASS
         On failure - return TFAIL
 */
-/*================================================================================================*/
+/*====================*/
 int VT_ipu_pf_setup( void )
 {
         assert( gTestappConfig.mInputFileName && gTestappConfig.mOutputFileName );
@@ -217,8 +217,8 @@ int VT_ipu_pf_setup( void )
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== VT_ipu_pf_cleanup =====*/
+/*====================*/
+/*= VT_ipu_pf_cleanup =*/
 /**
 @brief  assumes the post-condition of the test case execution
 
@@ -226,7 +226,7 @@ int VT_ipu_pf_setup( void )
 
 @return TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int VT_ipu_pf_cleanup( void )
 {
         /* Clean the LCD  */
@@ -275,9 +275,9 @@ int VT_ipu_pf_cleanup( void )
         /* Unmap. */
         if( MAP_FAILED != gpInp )
         {
-		/*flush the output*/
-		/*Hake 20090403 for sync driver test. not necessary*/
-	        msync(gpInp, gPfStartParams.in.size,MS_SYNC);
+  /*flush the output*/
+  /*Hake 20090403 for sync driver test. not necessary*/
+         msync(gpInp, gPfStartParams.in.size,MS_SYNC);
                 munmap( gpInp, gPfStartParams.in.size );
                 gpInp = MAP_FAILED;
         }
@@ -290,8 +290,8 @@ int VT_ipu_pf_cleanup( void )
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== VT_ipu_pf_test =====*/
+/*====================*/
+/*= VT_ipu_pf_test =*/
 /**
 @brief  Initialisation IPU,  filtering image and display original and filtered image
 
@@ -300,7 +300,7 @@ int VT_ipu_pf_cleanup( void )
 @return On success - return TPASS
         On failure - return the error code and TFAIL
 */
-/*================================================================================================*/
+/*====================*/
 int VT_ipu_pf_test(void)
 {
         assert( gTestappConfig.mInputFileName && gTestappConfig.mOutputFileName );
@@ -326,9 +326,9 @@ int VT_ipu_pf_test(void)
         case 4:
                 gPfInitParams.pf_mode = PF_H264_DEBLOCK;
                 break;
-	case 5:
+ case 5:
                 gPfInitParams.pf_mode = PF_H264_DEBLOCK;
-	       break;
+        break;
         default:
                 gPfInitParams.pf_mode = PF_DISABLE_ALL;
         }
@@ -410,7 +410,7 @@ int VT_ipu_pf_test(void)
                       MAP_SHARED,
                       gIpuPfFd,
                       gPfStartParams.out.offset );
-        
+
         if( MAP_FAILED == gpOut )
         {
                 tst_resm( TBROK, "%s : Can't map output buffer", __FUNCTION__ );
@@ -429,7 +429,7 @@ int VT_ipu_pf_test(void)
         /*********************/
         /* Init the framebuffer. */
         /*********************/
-        
+
         const framebuffer_t * pFb = get_framebuffer();
         assert( pFb );
         pFb_saved = pFb->_fb_direct_ptr;
@@ -445,44 +445,44 @@ int VT_ipu_pf_test(void)
         if ( gTestappConfig.mTestCase == 5)
         {
          printf("this parameter has to be 0!");
-	/* gPfStartParams.h264_pause_row =  gTestappConfig.mH264PauseRow;*/
-	}else
-	 gPfStartParams.h264_pause_row = 0;
+ /* gPfStartParams.h264_pause_row =  gTestappConfig.mH264PauseRow;*/
+ }else
+  gPfStartParams.h264_pause_row = 0;
         gPfStartParams.wait           = 1;
 
         for ( i = 0; i < gTestappConfig.mNumFilterCycle; i++ )
         {
            /*code to test the poll system call*/
-	   /*not necessary for function */
-	   /* Hake 20090402*/
-	   {
+    /*not necessary for function */
+    /* Hake 20090402*/
+    {
               fd_set rfds;
-	      struct timeval tv;
-	      int retval;
-	      FD_ZERO(&rfds);
-	      FD_SET(gIpuPfFd, &rfds);
+       struct timeval tv;
+       int retval;
+       FD_ZERO(&rfds);
+       FD_SET(gIpuPfFd, &rfds);
               tv.tv_sec = 1;
-	      tv.tv_usec = 0;
-	      retval = select(gIpuPfFd+1, &rfds, NULL, NULL, &tv);
-	      if (retval == -1)
-		   perror("select()");
-	       else if (retval)
-		   printf("Data is available now.\n");
-		 /* FD_ISSET(0, &rfds) will be true. */
-		else
-		 printf("No data within one seconds.\n");
-	   }
+       tv.tv_usec = 0;
+       retval = select(gIpuPfFd+1, &rfds, NULL, NULL, &tv);
+       if (retval == -1)
+     perror("select()");
+        else if (retval)
+     printf("Data is available now.\n");
+   /* FD_ISSET(0, &rfds) will be true. */
+  else
+   printf("No data within one seconds.\n");
+    }
 
                 if ( gPfInitParams.pf_mode == PF_MPEG4_DERING )
                         Register_conf();
                 CALL_IOCTL( ioctl( gIpuPfFd, PF_IOCTL_START, (void*)&gPfStartParams ) );
-		if ( gTestappConfig.mTestCase == 5 ) /* PF_H264_DEBLOCK_RESUME MCU decode does nothing*/
-		{
-		     int row = 0;
+  if ( gTestappConfig.mTestCase == 5 ) /* PF_H264_DEBLOCK_RESUME MCU decode does nothing*/
+  {
+       int row = 0;
                      /* CALL_IOCTL(ioctl( gIpuPfFd, PF_IOCTL_RESUME , (void *)&row)); */
-		}
+  }
                 CALL_IOCTL( ioctl( gIpuPfFd, PF_IOCTL_WAIT , PF_WAIT_ALL) );
-		if ( gPfInitParams.pf_mode == PF_MPEG4_DERING )
+  if ( gPfInitParams.pf_mode == PF_MPEG4_DERING )
                         Register_conf();
 
                 if ( gPfInitParams.pf_mode != PF_H264_DEBLOCK ) /* In case PF_H264_DEBLOCK input buffer is equal output buffer */
@@ -531,8 +531,8 @@ int VT_ipu_pf_test(void)
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== DisplayImage =====*/
+/*====================*/
+/*= DisplayImage =*/
 /**
 @brief  Draws image
 
@@ -544,7 +544,7 @@ int VT_ipu_pf_test(void)
 @return 0 if test passed
         1 if test failed
 */
-/*================================================================================================*/
+/*====================*/
 int DisplayImage( unsigned char * pYuv, int width, int height, int left, int top )
 {
         int i;
@@ -574,7 +574,7 @@ int DisplayImage( unsigned char * pYuv, int width, int height, int left, int top
 
         return TRUE;
 }
-/*===== Register_conf =====*/
+/*= Register_conf =*/
 /**
 @brief Configure the IPU_CHA_BUF0_RDY register, clear eight high-order bits in IPU_CHA_BUF0_RDY register.
 
@@ -583,7 +583,7 @@ int DisplayImage( unsigned char * pYuv, int width, int height, int left, int top
 @return On success - return TPASS
         On failure - return the error
 */
-/*================================================================================================*/
+/*====================*/
 int Register_conf( void )
 {
         int gmap_fd                          = 0;
@@ -618,7 +618,7 @@ int Register_conf( void )
 
         if( MAP_FAILED != pIPUReg )
         {
-	   munmap( pIPUReg, 16 );
+    munmap( pIPUReg, 16 );
            pIPUReg = MAP_FAILED;
         }
 

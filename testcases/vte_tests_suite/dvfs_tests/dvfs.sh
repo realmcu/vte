@@ -3,18 +3,18 @@
 #
 # File :        dvfs_test.sh
 #
-# Description: enable/disable dvfs 
+# Description: enable/disable dvfs
 #
 #======================================================================
 #
 #   Freescale SemiconductorConfidential Proprietary
-#  (c) Copyright 2004, Freescale Semiconductor, Inc.  All rights reserved.  
-#            
-#Presence of a copyright notice is not an acknowledgement of publication.  
-#This software file listing contains information of Freescale Semiconductor, Inc. that is of a confidential and 
-#proprietary nature and any viewing or use of this file is prohibited without specific written 
+#  (c) Copyright 2004, Freescale Semiconductor, Inc.  All rights reserved.
+#
+#Presence of a copyright notice is not an acknowledgement of publication.
+#This software file listing contains information of Freescale Semiconductor, Inc. that is of a confidential and
+#proprietary nature and any viewing or use of this file is prohibited without specific written
 #permission from Freescale Semiconductor, Inc.
-     
+
 #=====================================================================================
 #Revision History:
 #                            Modification     Tracking
@@ -27,20 +27,20 @@
 #export PATH=${PATH}:${TESTCASES_HOME}
 
 # Function:     setup
-#        
+#
 # Description:  - Check if required commands exits
 #               - Export global variables
 #               - Check if required config files exits
 #               - Create temporary files and directories
-#   
+#
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
 setup()
 {
-    # Total number of test cases in this file. 
+    # Total number of test cases in this file.
     export TST_TOTAL=1
 
-    # The TCID and TST_COUNT variables are required by the LTP 
+    # The TCID and TST_COUNT variables are required by the LTP
     # command line harness APIs, these variables are not local to this program.
 
     # Test case identifier
@@ -78,19 +78,19 @@ env_test()
     DVFS_DIR=/sys/devices/system/dvfs/dvfs0
     fi
 
-	#surpport imx37 platform , added by blake , 2009-02-17
-	result=`cat /proc/cpuinfo | grep "Revision" | grep " 37.*" | wc -l`
+ #surpport imx37 platform , added by blake , 2009-02-17
+ result=`cat /proc/cpuinfo | grep "Revision" | grep " 37.*" | wc -l`
     if [ $result -eq 1 ];then
     PLATFORM=37
     DVFS_DIR=/sys/devices/platform/mxc_dvfs_core.0
     fi
-    
-	result=`cat /proc/cpuinfo | grep "Revision" | grep " 51.*" | wc -l`
+
+ result=`cat /proc/cpuinfo | grep "Revision" | grep " 51.*" | wc -l`
     if [ $result -eq 1 ];then
     PLATFORM=51
     #DVFS_DIR=/sys/devices/system/dvfs/dvfs0
-	#modified dvfs dir, developer restructure DVFS CORE to common driver. added by blake , 2009-02-17
-	DVFS_DIR=/sys/devices/platform/mxc_dvfs_core.0
+ #modified dvfs dir, developer restructure DVFS CORE to common driver. added by blake , 2009-02-17
+ DVFS_DIR=/sys/devices/platform/mxc_dvfs_core.0
     fi
 
     if [ $PLATFORM -eq 0 ]
@@ -107,7 +107,7 @@ dvfs_test()
 {
     RC=0
 
-    # For imx31/35/37/51 
+    # For imx31/35/37/51
     if [ $PLATFORM -eq 31 ];then
         echo 1 > $DVFS_DIR/enable
         res=`cat $DVFS_DIR/status | grep "enabled" | wc -l`
@@ -116,10 +116,10 @@ dvfs_test()
         else
             tst_resm TFAIL "fail to enable dvfs"
             RC=1
-			return $RC
+   return $RC
         fi
-        sleep 3 
-        
+        sleep 3
+
         echo 0 > $DVFS_DIR/enable
         res=`cat $DVFS_DIR/status | grep "disabled" | wc -l`
         if [ $res -eq 1 ];then
@@ -129,9 +129,9 @@ dvfs_test()
             RC=1
         fi
     fi
-	
-	#For imx35
-	if [ $PLATFORM -eq 35 ];then
+
+ #For imx35
+ if [ $PLATFORM -eq 35 ];then
         echo 1 > $DVFS_DIR/enable
         res=`cat $DVFS_DIR/status | grep "enabled" | wc -l`
         if [ $res -eq 1 ];then
@@ -139,10 +139,10 @@ dvfs_test()
         else
             tst_resm TFAIL "fail to enable dvfs"
             RC=1
-			return $RC
+   return $RC
         fi
-        sleep 3 
-        
+        sleep 3
+
         echo 0 > $DVFS_DIR/enable
         res=`cat $DVFS_DIR/status | grep "disabled" | wc -l`
         if [ $res -eq 1 ];then
@@ -152,8 +152,8 @@ dvfs_test()
             RC=1
         fi
     fi
-	# For imx37
-	if [ $PLATFORM -eq 37 ];then
+ # For imx37
+ if [ $PLATFORM -eq 37 ];then
         echo 1 > $DVFS_DIR/enable
         res=`cat $DVFS_DIR/enable | grep "enabled" | wc -l`
         if [ $res -eq 1 ];then
@@ -161,10 +161,10 @@ dvfs_test()
         else
             tst_resm TFAIL "fail to enable dvfs"
             RC=1
-			return $RC
+   return $RC
         fi
-        sleep 3 
-        
+        sleep 3
+
         echo 0 > $DVFS_DIR/enable
         res=`cat $DVFS_DIR/enable | grep "disabled" | wc -l`
         if [ $res -eq 1 ];then
@@ -174,8 +174,8 @@ dvfs_test()
             RC=1
         fi
     fi
-	# For imx51
-	if [ $PLATFORM -eq 51 ];then
+ # For imx51
+ if [ $PLATFORM -eq 51 ];then
         echo 1 > $DVFS_DIR/enable
         res=`cat $DVFS_DIR/enable | grep "enabled" | wc -l`
         if [ $res -eq 1 ];then
@@ -183,10 +183,10 @@ dvfs_test()
         else
             tst_resm TFAIL "fail to enable dvfs"
             RC=1
-			return $RC
+   return $RC
         fi
-        sleep 3 
-        
+        sleep 3
+
         echo 0 > $DVFS_DIR/enable
         res=`cat $DVFS_DIR/enable | grep "disabled" | wc -l`
         if [ $res -eq 1 ];then

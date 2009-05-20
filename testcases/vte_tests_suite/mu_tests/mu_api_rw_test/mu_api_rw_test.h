@@ -11,15 +11,15 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-     
+
 ====================================================================================================
 Revision History:
                               Modification     Tracking
 Author (Core ID)                  Date          Number    Description of Changes
 ---------------------------   ------------    ----------  ------------------------------------------
-Igor Semenchukov (smng001c)    23/08/2004     TLSbo40411   Initial version 
+Igor Semenchukov (smng001c)    23/08/2004     TLSbo40411   Initial version
 Igor Semenchukov (smng001c)    08/12/2004     TLSbo43804   Rework after heavy MU drv modification;
-                                                           merge two test cases in the one 
+                                                           merge two test cases in the one
 
 ==================================================================================================*/
 

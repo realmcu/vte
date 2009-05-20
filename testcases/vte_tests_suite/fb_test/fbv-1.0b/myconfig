@@ -1,0 +1,7 @@
+cd libpng-1.2.20 && ./configure --host=arm-none-linux-gnueabi && make 
+cd ..
+./configure \
+--without-libungif \
+--without-libjpeg \
+--without-bmp \
+--libs="./libpng-1.2.20/.libs/libpng.a -lz -lm"

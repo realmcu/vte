@@ -59,10 +59,10 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-host_alias = 
+host_alias =
 host_triplet = i686-pc-linux-gnu
 
-EXEEXT = 
+EXEEXT =
 OBJEXT = o
 PATH_SEPARATOR = :
 AMTAR = ${SHELL} /root/epoll/libpcl/missing --run tar
@@ -81,7 +81,7 @@ RANLIB = ranlib
 STRIP = strip
 VERSION = 1.2
 am__include = include
-am__quote = 
+am__quote =
 install_sh = /root/epoll/libpcl/install-sh
 
 INCLUDES = -I../include
@@ -101,9 +101,9 @@ libpcl_la_OBJECTS = $(am_libpcl_la_OBJECTS)
 
 DEFS = -DHAVE_CONFIG_H
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
-CPPFLAGS = 
-LDFLAGS = 
-LIBS = 
+CPPFLAGS =
+LDFLAGS =
+LIBS =
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 DEP_FILES = ./$(DEPDIR)/pcl.Plo ./$(DEPDIR)/pcl_version.Plo
@@ -156,7 +156,7 @@ clean-libLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libpcl.la: $(libpcl_la_OBJECTS) $(libpcl_la_DEPENDENCIES) 
+libpcl.la: $(libpcl_la_OBJECTS) $(libpcl_la_DEPENDENCIES)
 	$(LINK) -rpath $(libdir) $(libpcl_la_LDFLAGS) $(libpcl_la_OBJECTS) $(libpcl_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:

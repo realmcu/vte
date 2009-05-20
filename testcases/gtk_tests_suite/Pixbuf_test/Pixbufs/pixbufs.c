@@ -1,25 +1,25 @@
-/*================================================================================================*/
+/**/
 /**^M
     @file   pixbufs.c^M
-*==================================================================================================
+*
 
   Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
 
-====================================================================================================
+
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
    Inkina irina               10/09/2004     ??????      Initial version
 
-==================================================================================================
+
 Portability: Indicate if this module is portable to other compilers or platforms.
              If not, indicate specific reasons why is it not portable.
 
-==================================================================================================*/
+*/
 
 
 /* Pixbufs
@@ -46,8 +46,8 @@ Portability: Indicate if this module is portable to other compilers or platforms
 #define FRAME_DELAY 50
 
 #define BACKGROUND_NAME "background.jpg"
-gint vt=FALSE;
-static const char *image_names[] = {
+gint vtFALSE;
+static const char *image_names[]  {
   "apple-red.png",
   "gnome-applets.png",
   "gnome-calendar.png",
@@ -61,7 +61,7 @@ static const char *image_names[] = {
 #define N_IMAGES G_N_ELEMENTS (image_names)
 
 /* demo window */
-static GtkWidget *window ;//= NULL;
+static GtkWidget *window ;// NULL;
 
 /* Current frame */
 static GdkPixbuf *frame;
@@ -78,25 +78,25 @@ static GtkWidget *da;
 
 void destroy_Quit( GtkWidget *widget,gpointer data )
 {
-    vt=FALSE;
+    vtFALSE;
     g_print("Test Pass Exiting with test pass");
     gtk_main_quit ();
 }
 void destroy_Exit( GtkWidget *widget,gpointer data )
 {
-    vt=TRUE;
+    vtTRUE;
     g_print("Test Fail Exiting with test fail");
     gtk_main_quit ();
 }
 
-static GtkItemFactoryEntry menu_items[] =
+static GtkItemFactoryEntry menu_items[] 
 {
-  { "/_File",		 NULL,	       0,		      0, "<Branch>" },
-  { "/File/sep1",	 NULL,	       0,	      0, "<Separator>" },
-  { "/File/_Quit - Pass","<control>Q", destroy_Quit,	      0 },
-  { "/File/_Exit - Fail","<control>E", destroy_Exit,	      0 },
-  { "/_Help",		 NULL,	       0,		      0, "<Branch>" },
-  { "/Help/_About","<control>H",	0,	      0 },
+  { "/_File",   NULL,        0,        0, "<Branch>" },
+  { "/File/sep1",  NULL,        0,       0, "<Separator>" },
+  { "/File/_Quit - Pass","<control>Q", destroy_Quit,       0 },
+  { "/File/_Exit - Fail","<control>E", destroy_Exit,       0 },
+  { "/_Help",   NULL,        0,        0, "<Branch>" },
+  { "/Help/_About","<control>H", 0,       0 },
 };
 
 
@@ -109,7 +109,7 @@ load_pixbufs (GError **error)
 {
   gint i;
   char *filename;
- 
+
   if (background)
     return TRUE; /* already loaded earlier */
 
@@ -117,58 +117,58 @@ load_pixbufs (GError **error)
    * so you can run gtk-demo without installing GTK, then looks
    * in the location where the file is installed.
    */
-//  filename = demo_find_file (BACKGROUND_NAME, error);
+//  filename  demo_find_file (BACKGROUND_NAME, error);
 
-  filename = BACKGROUND_NAME;//, error);
+  filename  BACKGROUND_NAME;//, error);
   if (!filename)
     return FALSE; /* note that "error" was filled in and returned */
 
-  background = gdk_pixbuf_new_from_file (filename, error);
+  background  gdk_pixbuf_new_from_file (filename, error);
 
-  
+
   if (!background)
     return FALSE; /* Note that "error" was filled with a GError */
 
-  back_width = gdk_pixbuf_get_width (background);
-  back_height = gdk_pixbuf_get_height (background);
-   back_width=240;
-   back_height=320;
-  for (i = 0; i < N_IMAGES; i++)
-    {     
+  back_width  gdk_pixbuf_get_width (background);
+  back_height  gdk_pixbuf_get_height (background);
+   back_width240;
+   back_height320;
+  for (i  0; i < N_IMAGES; i++)
+    {
 
-      filename =image_names[i];
+      filename image_names[i];
       if (!filename)
-	return FALSE; /* Note that "error" was filled with a GError */
-     
-      images[i] = gdk_pixbuf_new_from_file (filename, error);
+ return FALSE; /* Note that "error" was filled with a GError */
+
+      images[i]  gdk_pixbuf_new_from_file (filename, error);
       if (!images[i])
-	return FALSE; /* Note that "error" was filled with a GError */
-    } 
-           
+ return FALSE; /* Note that "error" was filled with a GError */
+    }
+
   return TRUE;
 }
 
 /* Expose callback for the drawing area */
 static gint
-expose_cb (GtkWidget	  *widget,
-	   GdkEventExpose *event,
-	   gpointer	   data)
+expose_cb (GtkWidget   *widget,
+    GdkEventExpose *event,
+    gpointer    data)
 {
   guchar *pixels;
   int rowstride;
 
-  rowstride = gdk_pixbuf_get_rowstride (frame);
+  rowstride  gdk_pixbuf_get_rowstride (frame);
 
-  pixels = gdk_pixbuf_get_pixels (frame) + rowstride * event->area.y + event->area.x * 3;
+  pixels  gdk_pixbuf_get_pixels (frame) + rowstride * event->area.y + event->area.x * 3;
 
   gdk_draw_rgb_image_dithalign (widget->window,
-				widget->style->black_gc,
-				event->area.x, event->area.y,
-				event->area.width, event->area.height,
-				GDK_RGB_DITHER_NORMAL,
-				pixels, rowstride,
-				event->area.x, event->area.y);
-                
+    widget->style->black_gc,
+    event->area.x, event->area.y,
+    event->area.width, event->area.height,
+    GDK_RGB_DITHER_NORMAL,
+    pixels, rowstride,
+    event->area.x, event->area.y);
+
   return TRUE;
 }
 
@@ -186,16 +186,16 @@ timeout (gpointer data)
   double radius;
 
   gdk_pixbuf_copy_area (background, 0, 0, back_width, back_height,
-			frame, 0, 0);
+   frame, 0, 0);
 
-  f = (double) (frame_num % CYCLE_LEN) / CYCLE_LEN;
+  f  (double) (frame_num % CYCLE_LEN) / CYCLE_LEN;
 
-  xmid = back_width / 2.0;
-  ymid = back_height / 2.0;
+  xmid  back_width / 2.0;
+  ymid  back_height / 2.0;
 
-  radius = MIN (xmid, ymid) / 2.0;
+  radius  MIN (xmid, ymid) / 2.0;
 
-  for (i = 0; i < N_IMAGES; i++)
+  for (i  0; i < N_IMAGES; i++)
     {
       double ang;
       int xpos, ypos;
@@ -204,41 +204,41 @@ timeout (gpointer data)
       GdkRectangle r1, r2, dest;
       double k;
 
-      ang = 2.0 * G_PI * (double) i / N_IMAGES - f * 2.0 * G_PI;
+      ang  2.0 * G_PI * (double) i / N_IMAGES - f * 2.0 * G_PI;
 
-      iw = gdk_pixbuf_get_width (images[i]);
-      ih = gdk_pixbuf_get_height (images[i]);
+      iw  gdk_pixbuf_get_width (images[i]);
+      ih  gdk_pixbuf_get_height (images[i]);
 
-      r = radius + (radius / 3.0) * sin (f * 2.0 * G_PI);
+      r  radius + (radius / 3.0) * sin (f * 2.0 * G_PI);
 
-      xpos = floor (xmid + r * cos (ang) - iw / 2.0 + 0.5);
-      ypos = floor (ymid + r * sin (ang) - ih / 2.0 + 0.5);
+      xpos  floor (xmid + r * cos (ang) - iw / 2.0 + 0.5);
+      ypos  floor (ymid + r * sin (ang) - ih / 2.0 + 0.5);
 
-      k = (i & 1) ? sin (f * 2.0 * G_PI) : cos (f * 2.0 * G_PI);
-      k = 2.0 * k * k;
-      k = MAX (0.25, k);
+      k  (i & 1) ? sin (f * 2.0 * G_PI) : cos (f * 2.0 * G_PI);
+      k  2.0 * k * k;
+      k  MAX (0.25, k);
 
-      r1.x = xpos;
-      r1.y = ypos;
-      r1.width = iw * k;
-      r1.height = ih * k;
+      r1.x  xpos;
+      r1.y  ypos;
+      r1.width  iw * k;
+      r1.height  ih * k;
 
-      r2.x = 0;
-      r2.y = 0;
-      r2.width = back_width;
-      r2.height = back_height;
+      r2.x  0;
+      r2.y  0;
+      r2.width  back_width;
+      r2.height  back_height;
 
       if (gdk_rectangle_intersect (&r1, &r2, &dest))
-	gdk_pixbuf_composite (images[i],
-			      frame,
-			      dest.x, dest.y,
-			      dest.width, dest.height,
-			      xpos, ypos,
-			      k, k,
-			      GDK_INTERP_NEAREST,
-			      ((i & 1)
-			       ? MAX (127, fabs (255 * sin (f * 2.0 * G_PI)))
-			       : MAX (127, fabs (255 * cos (f * 2.0 * G_PI)))));
+ gdk_pixbuf_composite (images[i],
+         frame,
+         dest.x, dest.y,
+         dest.width, dest.height,
+         xpos, ypos,
+         k, k,
+         GDK_INTERP_NEAREST,
+         ((i & 1)
+          ? MAX (127, fabs (255 * sin (f * 2.0 * G_PI)))
+          : MAX (127, fabs (255 * cos (f * 2.0 * G_PI)))));
     }
 
   gtk_widget_queue_draw (da);
@@ -251,10 +251,10 @@ static guint timeout_id;
 
 static void
 cleanup_callback (GtkObject *object,
-		  gpointer   data)
+    gpointer   data)
 {
   g_source_remove (timeout_id);
-  timeout_id = 0;
+  timeout_id  0;
 }
 
 int pixbufs_main(int argc, char *argv[])
@@ -264,72 +264,72 @@ int pixbufs_main(int argc, char *argv[])
       GtkItemFactory *item_factory;
       GtkWidget *separator;
       GtkWidget *box1;
-      
+
       gtk_init(&argc,&argv);
-      window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+      window  gtk_window_new (GTK_WINDOW_TOPLEVEL);
       gtk_window_set_title (GTK_WINDOW (window), "Pixbufs");
       gtk_window_set_resizable (GTK_WINDOW (window), FALSE);
 
       g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), &window);
       g_signal_connect (window, "destroy", G_CALLBACK (cleanup_callback), NULL);
-      accel_group = gtk_accel_group_new ();
-      item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
+      accel_group  gtk_accel_group_new ();
+      item_factory  gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
       g_object_set_data_full (G_OBJECT (window), "<main>",item_factory, (GDestroyNotify) g_object_unref);
       gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
 
       gtk_container_set_border_width (GTK_CONTAINER (window), 0);//8
 ///////////
       gtk_item_factory_create_items (item_factory,G_N_ELEMENTS(menu_items), menu_items, NULL);
-      box1 = gtk_vbox_new (FALSE, 0);
+      box1  gtk_vbox_new (FALSE, 0);
       gtk_container_add (GTK_CONTAINER (window), box1);
 
       gtk_box_pack_start (GTK_BOX (box1),gtk_item_factory_get_widget (item_factory, "<main>"),
-			  FALSE, FALSE, 0);
+     FALSE, FALSE, 0);
 
-      separator = gtk_hseparator_new ();
+      separator  gtk_hseparator_new ();
       gtk_box_pack_start (GTK_BOX (box1), separator, FALSE, TRUE, 0);
 
 /////////
 
 
-      error = NULL;
+      error  NULL;
       if (!load_pixbufs (&error))
-	{
-	  GtkWidget *dialog;
+ {
+   GtkWidget *dialog;
 
-	  dialog = gtk_message_dialog_new (GTK_WINDOW (window),
-					   GTK_DIALOG_DESTROY_WITH_PARENT,
-					   GTK_MESSAGE_ERROR,
-					   GTK_BUTTONS_CLOSE,
-					   "Failed to load an image: %s",
-					   error->message);
+   dialog  gtk_message_dialog_new (GTK_WINDOW (window),
+        GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_ERROR,
+        GTK_BUTTONS_CLOSE,
+        "Failed to load an image: %s",
+        error->message);
 
-	  g_error_free (error);
+   g_error_free (error);
 
-	  g_signal_connect (dialog, "response",
-			    G_CALLBACK (gtk_widget_destroy), NULL);
+   g_signal_connect (dialog, "response",
+       G_CALLBACK (gtk_widget_destroy), NULL);
 
-	  gtk_widget_show (dialog);
-	}
+   gtk_widget_show (dialog);
+ }
       else
-	{
-	  gtk_widget_set_size_request (box1, back_width, back_height);
+ {
+   gtk_widget_set_size_request (box1, back_width, back_height);
 
-	  frame = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, back_width, back_height);
+   frame  gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, back_width, back_height);
 
-	  da = gtk_drawing_area_new ();
+   da  gtk_drawing_area_new ();
 
-	  g_signal_connect (da, "expose_event",
-			    G_CALLBACK (expose_cb), NULL);
+   g_signal_connect (da, "expose_event",
+       G_CALLBACK (expose_cb), NULL);
 
-	  gtk_container_add (GTK_CONTAINER (box1), da);
+   gtk_container_add (GTK_CONTAINER (box1), da);
 
-	  timeout_id = g_timeout_add (FRAME_DELAY, timeout, NULL);
-	}
+   timeout_id  g_timeout_add (FRAME_DELAY, timeout, NULL);
+ }
 
       gtk_widget_show_all (window);
- 
+
       gtk_main();
       return (vt);
-  
+
 }

@@ -17,7 +17,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake.Huang/-----             08/01/2008     N/A          Initial version
-# 
+#
 ###################################################################################################
 #!/bin/sh
 
@@ -52,7 +52,7 @@ trap "cleanup" 0
 echo U:480x640p-67 > /sys/class/graphics/fb0/mode
 #echo U:640x480p-50 > /sys/class/graphics/fb0/mode
 #wake up the system
-echo -e "\033[9;0]" > /dev/tty0 
+echo -e "\033[9;0]" > /dev/tty0
 
 return $RC
 }
@@ -121,7 +121,7 @@ echo U:640x480p-60 > /sys/class/graphics/fb0/mode
 MODE=$(cat /sys/class/graphics/fb0/mode)
 
 if [ $MODE != "U:640x480p-60" ]
-then 
+then
 RC=1
 return $TST_COUNT
 fi
@@ -147,12 +147,12 @@ setup || exit $RC
 if [ $# -ne 1 ]
 then
 echo "usage $0 <1/2>"
-exit 1 
+exit 1
 fi
 
 case "$1" in
 1)
-  test_tvout_usercase_01 || exit $RC 
+  test_tvout_usercase_01 || exit $RC
     ;;
 2)
   test_tvout_usercase_02 || exit $RC
