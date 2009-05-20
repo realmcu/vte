@@ -2,18 +2,18 @@
  * Copyright (c) 2004, Bull SA. All rights reserved.
  * Created by:  Laurent.Vivier@bull.net
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
  */
 
 /*
  * assertion:
  *
- *	LIO_READ, LIO_WRITE and LIO_NOP are defined in &lt;aio.h&gt;.
+ * LIO_READ, LIO_WRITE and LIO_NOP are defined in &lt;aio.h&gt;.
  *
  * method:
  *
- *	- Check opcodes are defined when including aio.h
+ * - Check opcodes are defined when including aio.h
  *
  */
 
@@ -34,25 +34,25 @@
 
 int main()
 {
-#if _POSIX_ASYNCHRONOUS_IO != 200112L
-	exit(PTS_UNSUPPORTED);
+#if _POSIX_ASYNCHRONOUS_IO ! 200112L
+ exit(PTS_UNSUPPORTED);
 #endif
 
 #ifndef LIO_READ
-	printf(TNAME " LIO_READ not defined\n");
-	exit(PTS_FAIL);
+ printf(TNAME " LIO_READ not defined\n");
+ exit(PTS_FAIL);
 #endif
 
 #ifndef LIO_WRITE
-	printf(TNAME " LIO_WRITE not defined\n");
-	exit(PTS_FAIL);
+ printf(TNAME " LIO_WRITE not defined\n");
+ exit(PTS_FAIL);
 #endif
 
 #ifndef LIO_WRITE
-	printf(TNAME " LIO_WRITE not defined\n");
-	exit(PTS_FAIL);
+ printf(TNAME " LIO_WRITE not defined\n");
+ exit(PTS_FAIL);
 #endif
 
-	printf ("Test PASSED\n");
-	return PTS_PASS;
+ printf ("Test PASSED\n");
+ return PTS_PASS;
 }

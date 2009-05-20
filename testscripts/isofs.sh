@@ -32,7 +32,7 @@
 #      06/27/2003 Prakash Narayana (prakashn@us.ibm.com)
 #      07/28/2005 Michael Reed (mreed10@us.ibm.com)
 #      - Changed the directory where the filesytems were being created
-#        from /etc to copying /etc to /tmp/for_isofs_test/etc and 
+#        from /etc to copying /etc to /tmp/for_isofs_test/etc and
 #        creating the file systems there
 #      - Added the -n option to not remove the directories created for
 #        debugging purposes
@@ -67,22 +67,22 @@ NO_CLEANUP=""
 
    while getopts :hnd: arg
       do  case $arg in
-	  d)
+   d)
              COPY_DIR=$OPTARG
-    	     MAKE_FILE_SYS_DIR="/tmp/for_isofs_test"$COPY_DIR
-	    ;;
-	  h)
-	    echo ""
+        MAKE_FILE_SYS_DIR="/tmp/for_isofs_test"$COPY_DIR
+     ;;
+   h)
+     echo ""
             echo "n - The directories created will not be removed"
             echo "d - Specify a directory to copy into /tmp"
-	    echo "h - Help options"
-	    echo ""
-	    usage
-	    echo ""
-	    ;;
-	  n)
-	    NO_CLEANUP="no"
-	    ;;
+     echo "h - Help options"
+     echo ""
+     usage
+     echo ""
+     ;;
+   n)
+     NO_CLEANUP="no"
+     ;;
         esac
     done
 
@@ -96,8 +96,8 @@ NO_CLEANUP=""
 
 if [ $UID != 0 ]
 then
-	echo "FAILED: Must have root access to execute this script"
-	exit 1
+ echo "FAILED: Must have root access to execute this script"
+ exit 1
 fi
 
 
@@ -105,15 +105,15 @@ fi
       mkdir -p $MAKE_FILE_SYS_DIR
 
 
-	if [ -e "$COPY_DIR" ]; then
-   		cp -rf $COPY_DIR* $MAKE_FILE_SYS_DIR
-	else
-    		echo "$COPY_DIR not found"
-    		echo "use the -d option to copy a different directory into"
-    		echo "/tmp to makethe ISO9660 file system with different"
+ if [ -e "$COPY_DIR" ]; then
+ cp -rf $COPY_DIR* $MAKE_FILE_SYS_DIR
+ else
+  echo "$COPY_DIR not found"
+  echo "use the -d option to copy a different directory into"
+  echo "/tmp to makethe ISO9660 file system with different"
                 echo "options"
-    		usage
-	fi
+  usage
+ fi
 
 
 
@@ -121,50 +121,50 @@ fi
 # Mount the ISO9660 file system with different mount options.
 
 for mkisofs_opt in \
-	" " \
-	"-J" \
-	"-hfs -D" \
-	" -R " \
-	"-R -J" \
-	"-f -l -D -J -L -R" \
-	"-allow-lowercase -allow-multidot -iso-level 3 -f -l -D -J -L -R"
+ " " \
+ "-J" \
+ "-hfs -D" \
+ " -R " \
+ "-R -J" \
+ "-f -l -D -J -L -R" \
+ "-allow-lowercase -allow-multidot -iso-level 3 -f -l -D -J -L -R"
 do
         echo "Running mkisofs -o isofs.iso -quiet $mkisofs_opt $MAKE_FILE_SYS_DIR  Command"
-	mkisofs -o isofs.iso -quiet $mkisofs_opt $MAKE_FILE_SYS_DIR 
-	if [ $? != 0 ]
-	then
-		rm -rf isofs.iso $MNT_POINT
-		echo "FAILED: mkisofs -o isofs.iso $mkisofs_opt $MAKE_FILE_SYS_DIR failed"
-		exit 1
-	fi
-	for mount_opt in \
-		"loop" \
-		"loop,norock" \
-		"loop,nojoliet" \
-		"loop,block=512,unhide" \
-		"loop,block=1024,cruft" \
-		"loop,block=2048,nocompress" \
-		"loop,check=strict,map=off,gid=bin,uid=bin" \
-		"loop,check=strict,map=acorn,gid=bin,uid=bin" \
-		"loop,check=relaxed,map=normal" \
-		"loop,block=512,unhide,session=2"
-		# "loop,sbsector=32"
-	do
-		echo "Running mount -o $mount_opt isofs.iso $MNT_POINT Command"
-		mount -t iso9660 -o $mount_opt isofs.iso $MNT_POINT
-		if [ $? != 0 ]
-		then
-			rm -rf isofs.iso $MNT_POINT
-			echo "FAILED: mount -t iso9660 -o $mount_opt isofs.iso $MNT_POINT failed"
-			exit 1
-		fi
-		echo "Running ls -lR $MNT_POINT Command"
-		ls -lR $MNT_POINT
-		exportfs -i -o no_root_squash,rw *:$MNT_POINT
-		exportfs -u :$MNT_POINT
-		umount $MNT_POINT
-	done
-	rm -rf isofs.iso
+ mkisofs -o isofs.iso -quiet $mkisofs_opt $MAKE_FILE_SYS_DIR
+ if [ $? != 0 ]
+ then
+  rm -rf isofs.iso $MNT_POINT
+  echo "FAILED: mkisofs -o isofs.iso $mkisofs_opt $MAKE_FILE_SYS_DIR failed"
+  exit 1
+ fi
+ for mount_opt in \
+  "loop" \
+  "loop,norock" \
+  "loop,nojoliet" \
+  "loop,block=512,unhide" \
+  "loop,block=1024,cruft" \
+  "loop,block=2048,nocompress" \
+  "loop,check=strict,map=off,gid=bin,uid=bin" \
+  "loop,check=strict,map=acorn,gid=bin,uid=bin" \
+  "loop,check=relaxed,map=normal" \
+  "loop,block=512,unhide,session=2"
+  # "loop,sbsector=32"
+ do
+  echo "Running mount -o $mount_opt isofs.iso $MNT_POINT Command"
+  mount -t iso9660 -o $mount_opt isofs.iso $MNT_POINT
+  if [ $? != 0 ]
+  then
+   rm -rf isofs.iso $MNT_POINT
+   echo "FAILED: mount -t iso9660 -o $mount_opt isofs.iso $MNT_POINT failed"
+   exit 1
+  fi
+  echo "Running ls -lR $MNT_POINT Command"
+  ls -lR $MNT_POINT
+  exportfs -i -o no_root_squash,rw *:$MNT_POINT
+  exportfs -u :$MNT_POINT
+  umount $MNT_POINT
+ done
+ rm -rf isofs.iso
 done
 
 #######################################################

@@ -19,10 +19,10 @@
 
 /*
  * Description: This is a program invoked as nobody that will
- *		creat a testfile and a symlink to that testfile.
+ *  creat a testfile and a symlink to that testfile.
  *
- *		This program exits with 0 or 1 depending upon the
- *		success or failure of each system call.
+ *  This program exits with 0 or 1 depending upon the
+ *  success or failure of each system call.
  */
 #include <unistd.h>
 #include <fcntl.h>
@@ -36,25 +36,25 @@
 int
 main(int ac, char **av)
 {
-	int fd;				/* file handle for testfile */
+ int fd;    /* file handle for testfile */
 
-	/* Create a testfile under temporary directory */
-        if ((fd = open(av[1], O_RDWR|O_CREAT, FILE_MODE)) == -1) {
-		perror("creat_slink: open() failed");
-		exit(1);
+ /* Create a testfile under temporary directory */
+        if ((fd  open(av[1], O_RDWR|O_CREAT, FILE_MODE))  -1) {
+  perror("creat_slink: open() failed");
+  exit(1);
         }
 
-	/* Close the testfile created */
-        if (close(fd) == -1) {
-		perror("creat_slink: close() failed");
-		exit(1);
+ /* Close the testfile created */
+        if (close(fd)  -1) {
+  perror("creat_slink: close() failed");
+  exit(1);
         }
 
         /* Create a symlink of testfile under temporary directory */
         if (symlink(av[1], av[2]) < 0) {
-		perror("creat_slink: symlink() failed");
-		exit(1);
+  perror("creat_slink: symlink() failed");
+  exit(1);
         }
 
-	exit(0);
+ exit(0);
 }

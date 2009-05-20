@@ -15,48 +15,48 @@
  *
  */
 /**************************************************************************
- * 
- *    TEST IDENTIFIER	: socketcall04
- * 
- *    EXECUTED BY	: All user
- * 
- *    TEST TITLE	: Basic test for socketcall(2) for listen(2)
- * 
- *    TEST CASE TOTAL	: 1
- * 
- *    AUTHOR		: sowmya adiga<sowmya.adiga@wipro.com>
- * 
+ *
+ *    TEST IDENTIFIER : socketcall04
+ *
+ *    EXECUTED BY : All user
+ *
+ *    TEST TITLE : Basic test for socketcall(2) for listen(2)
+ *
+ *    TEST CASE TOTAL : 1
+ *
+ *    AUTHOR  : sowmya adiga<sowmya.adiga@wipro.com>
+ *
  *    SIGNALS
- * 	Uses SIGUSR1 to pause before test if option set.
- * 	(See the parse_opts(3) man page).
+ * Uses SIGUSR1 to pause before test if option set.
+ * (See the parse_opts(3) man page).
  *
  *    DESCRIPTION
- *	This is a phase I test for the socketcall(2) system call.
- *	It is intended to provide a limited exposure of the system call.
- *	
- * 	Setup:
- *	  Setup signal handling.
- *	  Pause for SIGUSR1 if option specified.
- * 
- * 	Test:
+ * This is a phase I test for the socketcall(2) system call.
+ * It is intended to provide a limited exposure of the system call.
+ *
+ * Setup:
+ *   Setup signal handling.
+ *   Pause for SIGUSR1 if option specified.
+ *
+ * Test:
  *        Execute system call
- *	  Check return code, if system call failed (return=-1)
- *	  Log the errno and Issue a FAIL message.
- *	  Otherwise, Issue a PASS message.
- * 
- * 	Cleanup:
- * 	  Print errno log and/or timing stats if options given
- * 
+ *   Check return code, if system call failed (return-1)
+ *   Log the errno and Issue a FAIL message.
+ *   Otherwise, Issue a PASS message.
+ *
+ * Cleanup:
+ *   Print errno log and/or timing stats if options given
+ *
  * USAGE:  <for command-line>
  *  socketcall04 [-c n] [-e] [-i n] [-I x] [-p x] [-t]
- *		where,		-c n : Run n copies concurrently
- *	               		-e   : Turn on errno logging.
- *				-h   : Show this help screen
- *				-i n : Execute test n times.
- *				-I x : Execute test for x seconds.
- *				-p   : Pause for SIGUSR1 before starting
- *                      	-P x : Pause for x seconds between iterations.
- *                       	 t   : Turn on syscall timing.
+ *  where,  -c n : Run n copies concurrently
+ *               -e   : Turn on errno logging.
+ *    -h   : Show this help screen
+ *    -i n : Execute test n times.
+ *    -I x : Execute test for x seconds.
+ *    -p   : Pause for SIGUSR1 before starting
+ *                      -P x : Pause for x seconds between iterations.
+ *                        t   : Turn on syscall timing.
  *
  * RESTRICTIONS
  * None
@@ -75,7 +75,7 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "socketcall04";		 		 /* Test program identifier.    */
+char *TCID  "socketcall04";   /* Test program identifier.    */
 
 #ifdef __NR_socketcall
 
@@ -85,107 +85,107 @@ void setup();
 void cleanup();
 void setup1(void);
 
-int TST_TOTAL = 1;			/* Total number of test cases. */
-extern int Tst_count;			/* TestCase counter for tst_* routine */
+int TST_TOTAL  1;   /* Total number of test cases. */
+extern int Tst_count;   /* TestCase counter for tst_* routine */
 int i,s;
 unsigned long args[3];
 struct sockaddr_in si;
 
 struct test_case_t {
-	int domain;
-	int type;
-	int pro;
-	int call;
-	void (*setupfunc)(void);
-	char *desc;
-}TC = { AF_INET, SOCK_STREAM, 6, SYS_LISTEN, setup1,"listen call"};
+ int domain;
+ int type;
+ int pro;
+ int call;
+ void (*setupfunc)(void);
+ char *desc;
+}TC  { AF_INET, SOCK_STREAM, 6, SYS_LISTEN, setup1,"listen call"};
 
 int main(int ac, char **av) {
-	int lc;		 		/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+ int lc;  /* loop counter */
+ char *msg;   /* message returned from parse_opts */
 
-	if ((msg = parse_opts(ac, av, NULL, NULL)) != (char *) NULL) {
-		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
+ if ((msg  parse_opts(ac, av, NULL, NULL)) ! (char *) NULL) {
+  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+  tst_exit();
+ }
 
-	/* perform global setup for test */
-	setup();
+ /* perform global setup for test */
+ setup();
 
-	/* check looping state */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* check looping state */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping. */
+  Tst_count  0;
 
-		TC.setupfunc();
+  TC.setupfunc();
 
-		TEST(socketcall(TC.call,args));
+  TEST(socketcall(TC.call,args));
 
-		/* check return code */
-		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL, "socketcall() Failed "
-				" with return=%d,errno=%d: %s",
-				TEST_RETURN, TEST_ERRNO,
-				strerror(TEST_ERRNO));
-		} else {
-			tst_resm(TPASS, "socketcall() passed " 
-				"for %s with return=%d ",
-				TC.desc,TEST_RETURN);
-			close(s);
-		}
-	}
+  /* check return code */
+  if (TEST_RETURN  -1) {
+   tst_resm(TFAIL, "socketcall() Failed "
+    " with return%d,errno%d: %s",
+    TEST_RETURN, TEST_ERRNO,
+    strerror(TEST_ERRNO));
+  } else {
+   tst_resm(TPASS, "socketcall() passed "
+    "for %s with return%d ",
+    TC.desc,TEST_RETURN);
+   close(s);
+  }
+ }
 
-	/* cleanup and exit */
-	cleanup();
+ /* cleanup and exit */
+ cleanup();
 
-	return 0;
-}					/* End main */
+ return 0;
+}     /* End main */
 
 /*setup1()*/
 void setup1(void)
 {
-	if((s = socket(TC.domain, TC.type, TC.pro)) == -1) {
-		tst_brkm(TBROK, tst_exit, "socket creation failed");
-	}
-	args[0] = s;
-	args[1] = 1;	
+ if((s  socket(TC.domain, TC.type, TC.pro))  -1) {
+  tst_brkm(TBROK, tst_exit, "socket creation failed");
+ }
+ args[0]  s;
+ args[1]  1;
  }
 
 /* setup() - performs all ONE TIME setup for this test. */
 void setup()
 {
 
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* pause if that option was specified*/
-	TEST_PAUSE;
+ /* pause if that option was specified*/
+ TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
+ *  completion or premature exit.
  */
 void cleanup()
 {
-	TEST_CLEANUP;
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }
 
 #else
 
 
-int TST_TOTAL = 0;              /* Total number of test cases. */
+int TST_TOTAL  0;              /* Total number of test cases. */
 
 int
 main()
 {
         tst_resm(TPASS, "socket call test on this architecture disabled.");
         tst_exit();
-		 return 0;
+   return 0;
 }
 
 #endif

@@ -10,7 +10,7 @@ typedef int (*pthread_kill_test)(pthread_t, int);
 
 int dummyfcn (void)
 {
-	pthread_kill_test dummyvar;
-	dummyvar = pthread_kill;
-	return 0;
+ pthread_kill_test dummyvar;
+ dummyvar  pthread_kill;
+ return 0;
 }

@@ -26,16 +26,16 @@
  *
  * Usage:  <for command-line>
  *  get_robust_list01 [-c n] [-e][-i n] [-I x] [-p x] [-t]
- *	where,  -c n : Run n copies concurrently.
- *		-e   : Turn on errno logging.
- *		-i n : Execute test n times.
- *		-I x : Execute test for x seconds.
- *		-P x : Pause for x seconds between iterations.
- *		-t   : Turn on syscall timing.
+ * where,  -c n : Run n copies concurrently.
+ *  -e   : Turn on errno logging.
+ *  -i n : Execute test n times.
+ *  -I x : Execute test for x seconds.
+ *  -P x : Pause for x seconds between iterations.
+ *  -t   : Turn on syscall timing.
  *
  * History
- *	07/2008 Ramon de Carvalho Valle <rcvalle@br.ibm.com>
- *		-Created
+ * 07/2008 Ramon de Carvalho Valle <rcvalle@br.ibm.com>
+ *  -Created
  *
  * Restrictions:
  *  None.
@@ -52,8 +52,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "get_robust_list01";    /* test program identifier.              */
-int TST_TOTAL = 5;                   /* total number of tests in this file.   */
+char *TCID  "get_robust_list01";    /* test program identifier.              */
+int TST_TOTAL  5;                   /* total number of tests in this file.   */
 
 #ifdef __NR_get_robust_list
 
@@ -70,7 +70,7 @@ struct robust_list_head {
 
 extern int Tst_count;                /* counter for tst_xxx routines.         */
 
-int exp_enos[] = {ESRCH, EPERM, EFAULT, 0};
+int exp_enos[]  {ESRCH, EPERM, EFAULT, 0};
 
 void setup(void);
 void cleanup(void);
@@ -78,24 +78,24 @@ void cleanup(void);
 int
 main(int argc, char **argv)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
     struct robust_list_head head;
     size_t len_ptr; /* size of structure struct robust_list_head */
     int retval;
 
-	msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
-	if (msg != (char *) NULL) {
-		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
+ msg  parse_opts(argc, argv, (option_t *) NULL, NULL);
+ if (msg ! (char *) NULL) {
+  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+  tst_exit();
+ }
 
-	setup();
+ setup();
 
-    len_ptr = sizeof(struct robust_list_head);
+    len_ptr  sizeof(struct robust_list_head);
 
-	for (lc = 0; TEST_LOOPING(lc); ++lc) {
-		Tst_count = 0;
+ for (lc  0; TEST_LOOPING(lc); ++lc) {
+  Tst_count  0;
 
         /*
          * The get_robust_list function fails with EFAULT if the size of the
@@ -105,41 +105,41 @@ main(int argc, char **argv)
          * argument.
          */
 
-        TEST(retval = syscall(__NR_get_robust_list, 0,
+        TEST(retval  syscall(__NR_get_robust_list, 0,
             (struct robust_list_head *)&head, (size_t *)NULL));
 
         if (TEST_RETURN) {
-            if (TEST_ERRNO == EFAULT)
-                tst_resm(TPASS, "get_robust_list: retval = %d (expected %d), "
-                    "errno = %d (expected %d)",
+            if (TEST_ERRNO  EFAULT)
+                tst_resm(TPASS, "get_robust_list: retval  %d (expected %d), "
+                    "errno  %d (expected %d)",
                     TEST_RETURN, -1, TEST_ERRNO, EFAULT);
             else
-                tst_resm(TFAIL, "get_robust_list: retval = %d (expected %d), "
-                    "errno = %d (expected %d)",
+                tst_resm(TFAIL, "get_robust_list: retval  %d (expected %d), "
+                    "errno  %d (expected %d)",
                     TEST_RETURN, -1, TEST_ERRNO, EFAULT);
         }
         else {
-            tst_resm(TFAIL, "get_robust_list: retval = %d (expected %d), "
-                "errno = %d (expected %d)",
+            tst_resm(TFAIL, "get_robust_list: retval  %d (expected %d), "
+                "errno  %d (expected %d)",
                 TEST_RETURN, -1, TEST_ERRNO, EFAULT);
         }
 
-        TEST(retval = syscall(__NR_get_robust_list, 0,
+        TEST(retval  syscall(__NR_get_robust_list, 0,
             (struct robust_list_head **)NULL, &len_ptr));
 
         if (TEST_RETURN) {
-            if (TEST_ERRNO == EFAULT)
-                tst_resm(TPASS, "get_robust_list: retval = %d (expected %d), "
-                    "errno = %d (expected %d)",
+            if (TEST_ERRNO  EFAULT)
+                tst_resm(TPASS, "get_robust_list: retval  %d (expected %d), "
+                    "errno  %d (expected %d)",
                     TEST_RETURN, -1, TEST_ERRNO, EFAULT);
             else
-                tst_resm(TFAIL, "get_robust_list: retval = %d (expected %d), "
-                    "errno = %d (expected %d)",
+                tst_resm(TFAIL, "get_robust_list: retval  %d (expected %d), "
+                    "errno  %d (expected %d)",
                     TEST_RETURN, -1, TEST_ERRNO, EFAULT);
         }
         else {
-            tst_resm(TFAIL, "get_robust_list: retval = %d (expected %d), "
-                "errno = %d (expected %d)",
+            tst_resm(TFAIL, "get_robust_list: retval  %d (expected %d), "
+                "errno  %d (expected %d)",
                 TEST_RETURN, -1, TEST_ERRNO, EFAULT);
         }
 
@@ -149,22 +149,22 @@ main(int argc, char **argv)
          * pid argument.
          */
 
-        TEST(retval = syscall(__NR_get_robust_list, 65535,
+        TEST(retval  syscall(__NR_get_robust_list, 65535,
             (struct robust_list_head *)&head, &len_ptr));
 
         if (TEST_RETURN) {
-            if (TEST_ERRNO == ESRCH)
-                tst_resm(TPASS, "get_robust_list: retval = %d (expected %d), "
-                    "errno = %d (expected %d)",
+            if (TEST_ERRNO  ESRCH)
+                tst_resm(TPASS, "get_robust_list: retval  %d (expected %d), "
+                    "errno  %d (expected %d)",
                     TEST_RETURN, -1, TEST_ERRNO, ESRCH);
             else
-                tst_resm(TFAIL, "get_robust_list: retval = %d (expected %d), "
-                    "errno = %d (expected %d)",
+                tst_resm(TFAIL, "get_robust_list: retval  %d (expected %d), "
+                    "errno  %d (expected %d)",
                     TEST_RETURN, -1, TEST_ERRNO, ESRCH);
         }
         else {
-            tst_resm(TFAIL, "get_robust_list: retval = %d (expected %d), "
-                "errno = %d (expected %d)",
+            tst_resm(TFAIL, "get_robust_list: retval  %d (expected %d), "
+                "errno  %d (expected %d)",
                 TEST_RETURN, -1, TEST_ERRNO, ESRCH);
         }
 
@@ -180,22 +180,22 @@ main(int argc, char **argv)
          */
         seteuid(1);
 
-        TEST(retval = syscall(__NR_get_robust_list, 1,
+        TEST(retval  syscall(__NR_get_robust_list, 1,
             (struct robust_list_head *)&head, &len_ptr));
 
         if (TEST_RETURN) {
-            if (TEST_ERRNO == EPERM)
-                tst_resm(TPASS, "get_robust_list: retval = %d (expected %d), "
-                    "errno = %d (expected %d)",
+            if (TEST_ERRNO  EPERM)
+                tst_resm(TPASS, "get_robust_list: retval  %d (expected %d), "
+                    "errno  %d (expected %d)",
                     TEST_RETURN, -1, TEST_ERRNO, EPERM);
             else
-                tst_resm(TFAIL, "get_robust_list: retval = %d (expected %d), "
-                    "errno = %d (expected %d)",
+                tst_resm(TFAIL, "get_robust_list: retval  %d (expected %d), "
+                    "errno  %d (expected %d)",
                     TEST_RETURN, -1, TEST_ERRNO, EPERM);
         }
         else {
-            tst_resm(TFAIL, "get_robust_list: retval = %d (expected %d), "
-                "errno = %d (expected %d)",
+            tst_resm(TFAIL, "get_robust_list: retval  %d (expected %d), "
+                "errno  %d (expected %d)",
                 TEST_RETURN, -1, TEST_ERRNO, EPERM);
         }
 
@@ -208,23 +208,23 @@ main(int argc, char **argv)
          * This call to get_robust_list function should be sucessful.
          */
 
-        TEST(retval = syscall(__NR_get_robust_list, 0,
+        TEST(retval  syscall(__NR_get_robust_list, 0,
             (struct robust_list_head **)&head, &len_ptr));
 
-        if (TEST_RETURN == 0) {
-            tst_resm(TPASS, "get_robust_list: retval = %d (expected %d), "
-                "errno = %d (expected %d)",
+        if (TEST_RETURN  0) {
+            tst_resm(TPASS, "get_robust_list: retval  %d (expected %d), "
+                "errno  %d (expected %d)",
                 TEST_RETURN, 0, TEST_ERRNO, 0);
         }
         else {
-            tst_resm(TFAIL, "get_robust_list: retval = %d (expected %d), "
-                "errno = %d (expected %d)",
+            tst_resm(TFAIL, "get_robust_list: retval  %d (expected %d), "
+                "errno  %d (expected %d)",
                 TEST_RETURN, 0, TEST_ERRNO, 0);
         }
 
-	}
+ }
 
-	cleanup();
+ cleanup();
 
     exit(EXIT_SUCCESS);
 }
@@ -232,7 +232,7 @@ main(int argc, char **argv)
 void
 setup(void)
 {
-	TEST_EXP_ENOS(exp_enos);
+ TEST_EXP_ENOS(exp_enos);
 
     TEST_PAUSE;
 }
@@ -249,8 +249,8 @@ cleanup(void)
 
 int main()
 {
-	tst_resm(TCONF, "get_robust_list: system call not available");
-	tst_exit();
+ tst_resm(TCONF, "get_robust_list: system call not available");
+ tst_exit();
 }
 
 #endif

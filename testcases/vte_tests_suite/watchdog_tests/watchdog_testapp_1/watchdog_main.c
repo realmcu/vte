@@ -1,40 +1,40 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   watchdog_main.c
 
         @brief  watchdog test main function.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-V.Becker/rc023c              23/07/2004     TLSbo40889  Initial version 
+V.Becker/rc023c              23/07/2004     TLSbo40889  Initial version
 S.V-Guilhou/svan01c          24/08/2005     TLSbo53364  Adapt test suite for MXC91131
 V.Khalabuda/b00306           06/07/2006     TLSbo63552  Update for ArgonLV support
 
-====================================================================================================
+====================
 Portability:  ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
 Total Tests: 1
 
 Test Executable Name:  watchdog_testapp_1
 
 Test Strategy:  Test of the second watchdog. OS interrupts will be disabled to trigger the second watchdog
-=================================================================================================*/
+=====================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -45,23 +45,23 @@ Test Strategy:  Test of the second watchdog. OS interrupts will be disabled to t
 /* Verification Test Environment Include Files */
 #include "watchdog_test_1.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Binary flags : option is set or not */
 int     flag_watchdog_number;
 
 /* Option arguments */
 char   *Watchdogopt;
 
-/*==================================================================================================
+/*======================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 /* Options given to the Watchdog test. Argument is required for number of watchdog to be tested. */
 option_t Watchdog_options[] =
 {
@@ -69,17 +69,17 @@ option_t Watchdog_options[] =
         {NULL, NULL, NULL}
 };
 
-/*==================================================================================================
+/*======================
                                         LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Extern Global Variables */
 extern int     Tst_count;        /* counter for tst_xxx routines.  */
 extern char   *TESTDIR;          /* temporary dir created by tst_tmpdir */
@@ -88,23 +88,23 @@ extern char   *TESTDIR;          /* temporary dir created by tst_tmpdir */
 char   *TCID = "watchdog_testapp_1";        /* test program identifier.  */
 int     TST_TOTAL = 1;                      /* total number of tests in this file.  */
 
-/*==================================================================================================
+/*======================
                                     GLOBALover 17KB  FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void    cleanup(void);
 void    setup(void);
 int     main(int argc, char **argv);
 
-/*==================================================================================================
+/*======================
                                     LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== cleanup =====*/
+/*====================*/
+/*= cleanup =*/
 /**
 @brief  Performs all one time clean up for this test on successful completion,
         premature exit or failure. Closes all temporary files,
@@ -113,10 +113,10 @@ int     main(int argc, char **argv);
 
 @param  Input :      None.
         Output:      None.
-    
+
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
         /* VTE : Actions needed to get a stable target environment */
@@ -132,12 +132,12 @@ void cleanup(void)
         tst_exit();
 }
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== setup =====*/
+/*====================*/
+/*= setup =*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -145,11 +145,11 @@ void cleanup(void)
 
 @param  Input :      None.
         Output:      None.
-    
+
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
         int     VT_rv = TFAIL;
@@ -164,18 +164,18 @@ void setup(void)
         return;
 }
 
-/*================================================================================================*/
-/*===== help =====*/
+/*====================*/
+/*= help =*/
 /**
 @brief  Inform of the available options and the associated parameters
 
 @param  Input :      None.
         Output:      None.
-    
+
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 void help(void)
 {
         printf("Options:\n\n");
@@ -189,8 +189,8 @@ void help(void)
         printf("4  ->  Both watchogs enabled but watchdog 2 not serviced. It times out and system hangs. [N/A for MXC91131]\n");
 }
 
-/*================================================================================================*/
-/*===== main =====*/
+/*====================*/
+/*= main =*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -204,11 +204,11 @@ void help(void)
                                 -l - Number of iteration
                                 -v - Prints verbose output
                                 -V - Prints the version number
-    
+
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
         int     VT_rv = TFAIL;

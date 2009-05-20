@@ -3,15 +3,15 @@
  * Copyright (c) 2002-2003, Intel Corporation. All rights reserved.
  * Created by:  rusty.lynch REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
-  Test case for assertion #22 of the sigaction system call that verifies 
-  that if the SA_NODEFER flag is set for a given signal, then when the 
-  sa_sigaction signal-catching function is entered, then the signal that 
-  was caught is not added to the signal mask by raising that signal in the 
+  Test case for assertion #22 of the sigaction system call that verifies
+  that if the SA_NODEFER flag is set for a given signal, then when the
+  sa_sigaction signal-catching function is entered, then the signal that
+  was caught is not added to the signal mask by raising that signal in the
   signal handler and verifying that the handler is reentered.
-  
+
   Steps:
   1. Fork a new process
   2. (parent) wait for child
@@ -39,66 +39,66 @@ int handler_count = 0;
 
 void handler(int signo)
 {
-	static int inside_handler = 0;
+ static int inside_handler = 0;
 
-	printf("SIGTTIN caught\n");
-	if (inside_handler) {
-		printf("Signal caught while inside handler\n");
-		exit(0);
-	}
+ printf("SIGTTIN caught\n");
+ if (inside_handler) {
+  printf("Signal caught while inside handler\n");
+  exit(0);
+ }
 
-	inside_handler++;
-	handler_count++;
+ inside_handler++;
+ handler_count++;
 
-	if (handler_count == 1) {
-		printf("Raising SIGTTIN\n");
-		raise(SIGTTIN);
-		printf("Returning from raising SIGTTIN\n");
-	}
+ if (handler_count == 1) {
+  printf("Raising SIGTTIN\n");
+  raise(SIGTTIN);
+  printf("Returning from raising SIGTTIN\n");
+ }
 
-	inside_handler--;
+ inside_handler--;
 }
 
 int main()
 {
-	if (fork() == 0) {
-		/* child */
+ if (fork() == 0) {
+  /* child */
 
-		struct sigaction act;
+  struct sigaction act;
 
-		act.sa_handler = handler;
-		act.sa_flags = SA_NODEFER;
-		sigemptyset(&act.sa_mask);
-		if (sigaction(SIGTTIN,  &act, 0) == -1) {
-			perror("Unexpected error while attempting to "
-			       "setup test pre-conditions");
-			return PTS_UNRESOLVED;
-		}
-		
-		if (raise(SIGTTIN) == -1) {
-			perror("Unexpected error while attempting to "
-			       "setup test pre-conditions");
-			return PTS_UNRESOLVED;
-		}
+  act.sa_handler = handler;
+  act.sa_flags = SA_NODEFER;
+  sigemptyset(&act.sa_mask);
+  if (sigaction(SIGTTIN,  &act, 0) == -1) {
+   perror("Unexpected error while attempting to "
+          "setup test pre-conditions");
+   return PTS_UNRESOLVED;
+  }
 
-		return PTS_FAIL;
-	} else {
-		int s; 
+  if (raise(SIGTTIN) == -1) {
+   perror("Unexpected error while attempting to "
+          "setup test pre-conditions");
+   return PTS_UNRESOLVED;
+  }
 
-		/* parent */
-		if (wait(&s) == -1) {
-			perror("Unexpected error while setting up test "
-			       "pre-conditions");
-			return PTS_UNRESOLVED;
-		}
+  return PTS_FAIL;
+ } else {
+  int s;
 
-		if (!WEXITSTATUS(s)) {
-			printf("Test PASSED\n");
-			return PTS_PASS;
-		}
-	}
+  /* parent */
+  if (wait(&s) == -1) {
+   perror("Unexpected error while setting up test "
+          "pre-conditions");
+   return PTS_UNRESOLVED;
+  }
 
-	printf("Test FAILED\n");
-	return PTS_FAIL;	
+  if (!WEXITSTATUS(s)) {
+   printf("Test PASSED\n");
+   return PTS_PASS;
+  }
+ }
+
+ printf("Test FAILED\n");
+ return PTS_FAIL;
 }
 

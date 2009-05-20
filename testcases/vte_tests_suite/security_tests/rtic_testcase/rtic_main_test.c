@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
     @file   rtic_main.c
 
     @brief   rtic API test main function.
 */
-/*==================================================================================================
+/*======================
 
         Copyright 2004, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
-     
-====================================================================================================
+
+====================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
@@ -20,27 +20,27 @@ S.ZAVJALOV/zvjs001c          19/10/2004     TLSbo43475   Initial version
 A.URUSOV                     13/09/2005     TLSbo55076   Fix compilation issue and warnings
 A.URUSOV                     01/11/2005     TLSbo57063   Compile under L26.1.14
 S.V-Guilhou/svan01c          08/11/2005     TLSbo53743   Bus error (bad string allocation)
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
 Total Tests: 1
 
 Test Executable Name:  rtic_test
 
 Test Strategy: Examine the RTIC module functions
-=================================================================================================*/
+=====================*/
 
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
-    
+
 /* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
@@ -48,48 +48,48 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "rtic_test.h"
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Extern Global Variables */
 extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir */
 
 /* Global Variables */
-char *TCID     = "rtic_test"; 	     /* test program identifier.          */
+char *TCID     = "rtic_test";      /* test program identifier.          */
 int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 
 char *data_file_path = 0;
 rtic_test_param arg;
 int runtime_mode = CASE_TEST_RTIC_ONETIME;
 
-/*==================================================================================================
+/*======================
                                    GLOBAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void cleanup(void);
 void setup(void);
 int main(int argc, char **argv);
 
-/*==================================================================================================
+/*======================
                                    LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
 void help(void);
 
-/*================================================================================================*/
-/*===== cleanup =====*/
+/*====================*/
+/*= cleanup =*/
 /**
 @brief  Performs all one time clean up for this test on successful
         completion,  premature exit or  failure. Closes all temporary
         files, removes all temporary directories exits the test with
         appropriate return code by calling tst_exit() function.cleanup
 
-@param  Input :      
-        Output:      
-  
-@return 
+@param  Input :
+        Output:
+
+@return
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
     /* VTE : Actions needed to get a stable target environment */
@@ -105,24 +105,24 @@ void cleanup(void)
         tst_exit();
 }
 
-/*==================================================================================================
+/*======================
                                        LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== setup =====*/
+/*====================*/
+/*= setup =*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
         and temporary files that may be used in the course of this test.
 
-@param  Input :      
-        Output:      
-  
+@param  Input :
+        Output:
+
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
         int VT_rv = TFAIL;
@@ -136,8 +136,8 @@ void setup(void)
 }
 
 
-/*================================================================================================*/
-/*===== main =====*/
+/*====================*/
+/*= main =*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -151,11 +151,11 @@ void setup(void)
                         -l - Number of iteration
                         -v - Prints verbose output
                         -V - Prints the version number
-  
+
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
         int VT_rv = TFAIL;
@@ -165,11 +165,11 @@ int main(int argc, char **argv)
         char *msg;
 
         if(1 == argc)
-        {       
+        {
                 help();
                 return TPASS;
         }
-        
+
         option_t options[] = {
         { "F:", &f_num, &f_copt},                       /* Data file */
         { "M:", &m_num, &m_copt},                       /* Hashing mode */
@@ -197,7 +197,7 @@ int main(int argc, char **argv)
                 else if (strcmp(b_copt, "C2") == 0) arg.block_memory = RTIC_C2;
                 else if (strcmp(b_copt, "D1") == 0) arg.block_memory = RTIC_D1;
                 else if (strcmp(b_copt, "D2") == 0) arg.block_memory = RTIC_D2;
-                else 
+                else
                 {
                         tst_resm(TFAIL, "OPTION PARSING ERROR - %s", b_copt);
                         return TFAIL;
@@ -267,19 +267,19 @@ int main(int argc, char **argv)
         {
                 arg.verbose_mode = 0;
         }
-        
-        /* Reads the control register of the RTIC */    
+
+        /* Reads the control register of the RTIC */
         if (c_num)
         {
                 runtime_mode = CASE_TEST_RTIC_GET_CONTROL;
         }
-        
+
         /* Reads the fault address register of the RTIC */
         if (d_num)
         {
                 runtime_mode = CASE_TEST_RTIC_GET_FAULTADDRESS;
         }
-        
+
         /* perform global test setup, call setup() function. */
         setup();
 
@@ -298,8 +298,8 @@ int main(int argc, char **argv)
                 tst_resm(TFAIL, "test case %s did NOT work as expected", TCID);
         }
 
-        /* cleanup test allocated ressources */	
-        cleanup(); 
+        /* cleanup test allocated ressources */
+        cleanup();
 
         return VT_rv;
 }

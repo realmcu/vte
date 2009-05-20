@@ -22,17 +22,17 @@
 #include <epath_utils.h>
 
 int main (int argc, char **argv) {
-	SaHpiEntityPathT  ep;
-	gchar *test_string;
-	int   err;
+ SaHpiEntityPathT  ep;
+ gchar *test_string;
+ int   err;
 
         // this is not allowd
-        test_string = "{17string,11}";
+        test_string  "{17string,11}";
 
-	err = string2entitypath(test_string, &ep);
-	if (!err) {
-		return 1;
-	}
+ err  string2entitypath(test_string, &ep);
+ if (!err) {
+  return 1;
+ }
 
         return 0;
 }

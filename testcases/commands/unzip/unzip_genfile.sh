@@ -14,20 +14,20 @@
 ## for more details.                                                          ##
 ##                                                                            ##
 ## You should have received a copy of the GNU General Public License          ##
-## along with this program;  if not, write to the Free Software		      ##
+## along with this program;  if not, write to the Free Software        ##
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA    ##
-##									      ##
+##               ##
 ################################################################################
 #
-# File:			unzip_genfile.sh
+# File:   unzip_genfile.sh
 #
-# Description:	This program will generate the zip file that will be used to
-#               test the unzip program. 
-# 
-# Author:		Manoj Iyer manjo@mail.utexas.edu
+# Description: This program will generate the zip file that will be used to
+#               test the unzip program.
+#
+# Author:  Manoj Iyer manjo@mail.utexas.edu
 #
 # History:
-# 	Mar 03 2003 - Created - Manoj Iyer.
+#Mar 03 2003 - Created - Manoj Iyer.
 
 # Create directories and fill them with files.
 
@@ -40,25 +40,25 @@ RC=0                          # return value from commands
 
 while [ $dircnt -lt $numdirs ]
 do
-	dirname=$dirname/d.$dircnt
-	mkdir -p $dirname || RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "unzip_genfile.sh: ERROR: while creating $numdirs dirs." 1>&2
-		exit $RC
-	fi
-	fcnt=0
-	while [ $fcnt -lt $numfiles ]
-	do
-		touch $dirname/f.$fcnt
-		if [ $RC -ne 0 ]
-		then
-			echo "unzip_genfile.sh: ERROR: creating $numdirs dirs." 1>&2
-			exit $RC
-		fi
-		fcnt=$(($fcnt+1))
-	done
-	dircnt=$(($dircnt+1))
+ dirname=$dirname/d.$dircnt
+ mkdir -p $dirname || RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "unzip_genfile.sh: ERROR: while creating $numdirs dirs." 1>&2
+  exit $RC
+ fi
+ fcnt=0
+ while [ $fcnt -lt $numfiles ]
+ do
+  touch $dirname/f.$fcnt
+  if [ $RC -ne 0 ]
+  then
+   echo "unzip_genfile.sh: ERROR: creating $numdirs dirs." 1>&2
+   exit $RC
+  fi
+  fcnt=$(($fcnt+1))
+ done
+ dircnt=$(($dircnt+1))
 done
 
 # Create ZIP file.
@@ -66,15 +66,15 @@ done
 zip -r tst_unzip_file.zip /tmp/tst_unzip.dir || RC=$?
 if [ $RC -ne 0 ]
 then
-	echo "unzip_genfile.sh: ERROR: creating tst_unzip_file.zip archive." 1>&2
-	exit $RC
+ echo "unzip_genfile.sh: ERROR: creating tst_unzip_file.zip archive." 1>&2
+ exit $RC
 fi
 
 rm -fr /tmp/tst_unzip.* || RC=$?
 if [ $RC -ne 0 ]
 then
-	echo "unzip_genfile.sh: ERROR: deleting tempory files." 1>&2
-	exit $RC
+ echo "unzip_genfile.sh: ERROR: deleting tempory files." 1>&2
+ exit $RC
 fi
 
 exit $RC

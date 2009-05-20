@@ -20,7 +20,7 @@
 # Z.Spring            11/27/2008     n/a      Rename bt_sanity.sh to bt-smoke.sh
 #
 ###############################################################################
-#Portability: Indicate if this module is portable to other compilers 
+#Portability: Indicate if this module is portable to other compilers
 #             or platforms.
 #             If not, indicate specific reasons why is it not portable.
 #

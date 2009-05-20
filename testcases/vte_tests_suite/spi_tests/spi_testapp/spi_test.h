@@ -15,7 +15,7 @@ Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-A.Smirnov/ID                 16/06/2005     TLSbo51450  BRIEF description of changes made 
+A.Smirnov/ID                 16/06/2005     TLSbo51450  BRIEF description of changes made
 V.Khalabuda/b00306           17/04/2006     TLSbo67010  Update version for linux-2.6.10-rel-L26_1_17
 D.Khoroshev/b00313           02/01/2006     TLSbo86657  Adaptation to new spi interface
 

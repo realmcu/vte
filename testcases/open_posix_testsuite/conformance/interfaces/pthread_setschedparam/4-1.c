@@ -17,7 +17,7 @@
 
 * This sample test aims to check the following assertion:
 *
-* If the function fails, the policy and parameter of the target thread 
+* If the function fails, the policy and parameter of the target thread
 * shall not be modified.
 
 * The steps are:
@@ -49,23 +49,23 @@
 /***********************   Test framework   ***********************************/
 /******************************************************************************/
 #include "testfrmw.h"
- #include "testfrmw.c" 
+ #include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -83,117 +83,117 @@
 /* This function checks the thread policy & priority */
 void check_param( pthread_t thread, int policy, int priority )
 {
-	int ret = 0;
+ int ret  0;
 
-	int t_pol;
+ int t_pol;
 
-	struct sched_param t_parm;
+ struct sched_param t_parm;
 
-	/* Check the priority is valid */
+ /* Check the priority is valid */
 
-	if ( priority == -1 )
-	{
-		UNRESOLVED( errno, "Wrong priority value" );
-	}
+ if ( priority  -1 )
+ {
+  UNRESOLVED( errno, "Wrong priority value" );
+ }
 
-	/* Get the thread's parameters */
-	ret = pthread_getschedparam( thread, &t_pol, &t_parm );
+ /* Get the thread's parameters */
+ ret  pthread_getschedparam( thread, &t_pol, &t_parm );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to get thread's parameters" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to get thread's parameters" );
+ }
 
-	if ( t_pol != policy )
-	{
-		FAILED( "The thread's policy is not as expected" );
-	}
+ if ( t_pol ! policy )
+ {
+  FAILED( "The thread's policy is not as expected" );
+ }
 
-	if ( t_parm.sched_priority != priority )
-	{
-		FAILED( "The thread's priority is not as expected" );
-	}
+ if ( t_parm.sched_priority ! priority )
+ {
+  FAILED( "The thread's priority is not as expected" );
+ }
 }
 
 /* thread function */
 void * threaded ( void * arg )
 {
-	int ret = 0;
+ int ret  0;
 
-	struct sched_param sp;
+ struct sched_param sp;
 
-	/* Set priority to a known value */
-	sp.sched_priority = sched_get_priority_max( SCHED_RR );
+ /* Set priority to a known value */
+ sp.sched_priority  sched_get_priority_max( SCHED_RR );
 
-	ret = pthread_setschedparam( pthread_self(), SCHED_RR, &sp );
+ ret  pthread_setschedparam( pthread_self(), SCHED_RR, &sp );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to set thread policy -- need to be root?" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to set thread policy -- need to be root?" );
+ }
 
-	/* check the thread attributes have been applied
-	  (we only check what is reported, not the real behavior) 
-	 */
-	check_param( pthread_self(), SCHED_RR, sp.sched_priority );
+ /* check the thread attributes have been applied
+   (we only check what is reported, not the real behavior)
+  */
+ check_param( pthread_self(), SCHED_RR, sp.sched_priority );
 
-	/* Now set the priority to an invalid value. */
-	sp.sched_priority++;
+ /* Now set the priority to an invalid value. */
+ sp.sched_priority++;
 
-	ret = pthread_setschedparam( pthread_self(), SCHED_RR, &sp );
+ ret  pthread_setschedparam( pthread_self(), SCHED_RR, &sp );
 
-	if ( ret != 0 )
-	{
-		/* check the thread attributes have been applied
-		  (we only check what is reported, not the real behavior) 
-		 */
-		check_param( pthread_self(), SCHED_RR, sp.sched_priority - 1 );
+ if ( ret ! 0 )
+ {
+  /* check the thread attributes have been applied
+    (we only check what is reported, not the real behavior)
+   */
+  check_param( pthread_self(), SCHED_RR, sp.sched_priority - 1 );
 #if VERBOSE > 0
-		output( "Setting to a wrong priority failed with error %d (%s).\n",
-		        ret,
-		        strerror( ret ) );
-	}
-	else
-	{
-		output( "UNTESTED: setting to max prio + 1 did not fail.\n" );
+  output( "Setting to a wrong priority failed with error %d (%s).\n",
+          ret,
+          strerror( ret ) );
+ }
+ else
+ {
+  output( "UNTESTED: setting to max prio + 1 did not fail.\n" );
 #endif
 
-	}
+ }
 
-	return NULL;
+ return NULL;
 }
 
 
 /* The main test function. */
 int main( int argc, char *argv[] )
 {
-	int ret = 0;
-	pthread_t child;
+ int ret  0;
+ pthread_t child;
 
-	/* Initialize output routine */
-	output_init();
+ /* Initialize output routine */
+ output_init();
 
-	/* Create the controler thread */
-	ret = pthread_create( &child, NULL, threaded, NULL );
+ /* Create the controler thread */
+ ret  pthread_create( &child, NULL, threaded, NULL );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "thread creation failed" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "thread creation failed" );
+ }
 
-	ret = pthread_join( child, NULL );
+ ret  pthread_join( child, NULL );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to join the thread" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to join the thread" );
+ }
 
 #if VERBOSE > 0
-	output( "Test PASSED.\n" );
+ output( "Test PASSED.\n" );
 
 #endif
 
-	PASSED;
+ PASSED;
 }
 
 

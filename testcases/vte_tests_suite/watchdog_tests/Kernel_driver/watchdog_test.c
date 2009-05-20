@@ -1,10 +1,10 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   watchdog_test.c
 
         @brief  This file contains the implementation for the /dev interface.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
@@ -18,7 +18,7 @@
         http://www.opensource.org/licenses/gpl-license.html
         http://www.gnu.org/copyleft/gpl.html
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -27,13 +27,13 @@ C.Gagneraud/cgag1c           09/11/2004     TLSbo44474  Warnings fixup.
 S.V-Guilhou/svan01c          19/08/2005     TLSbo53364  Adapt test suite for MXC9113
 V.Khalabuda/b00306           06/07/2006     TLSbo63552  Update for ArgonLV support
 
-====================================================================================================
+====================
 Portability:  ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 //lily #include <linux/config.h>
 #include <linux/module.h>
@@ -48,20 +48,20 @@ Portability:  ARM GCC
 
 #include "watchdog_test.h"
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 extern volatile unsigned short g_wdog1_enabled;
 extern volatile unsigned short g_wdog2_enabled;
 extern void mxc_wd_init(int port);
 static struct class *wdog_class;
 
-/*==================================================================================================
+/*======================
                                     FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== watchdog_test_open =====*/
+/*====================*/
+/*= watchdog_test_open =*/
 /**
 @brief  This function implements the open method on a WATCHDOG_TEST device.
 
@@ -70,7 +70,7 @@ static struct class *wdog_class;
 
 @return This function returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 static int watchdog_test_open(struct inode *inode, struct file *file)
 {
         printk("watchdog_test : watchdog_test_open()\n");
@@ -89,8 +89,8 @@ static ssize_t watchdog_test_write(struct file *filp, const char *buf,
         return 0;
 }
 
-/*================================================================================================*/
-/*===== watchdog_test_free =====*/
+/*====================*/
+/*= watchdog_test_free =*/
 /**
 @brief  This function implements the release method on a WATCHDOG_TEST device.
 
@@ -99,7 +99,7 @@ static ssize_t watchdog_test_write(struct file *filp, const char *buf,
 
 @return This function returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 static int watchdog_test_free(struct inode *inode, struct file *file)
 {
         printk("watchdog_test : watchdog_test_free()\n");
@@ -112,8 +112,8 @@ static struct class *wdog_class; /* added on 05/01/06 Bunloeur Sean */
 //static int major_watchdog_test1;
 
 #if defined(CONFIG_2_WDG)
-/*================================================================================================*/
-/*===== mxc_wdog_int =====*/
+/*====================*/
+/*= mxc_wdog_int =*/
 /**
 @brief  This is the interrupt service routine for the watchdog timer.
         It occurs only when a watchdog is enabled but not gets serviced in time.
@@ -125,7 +125,7 @@ static struct class *wdog_class; /* added on 05/01/06 Bunloeur Sean */
 
 @return always returns \b IRQ_HANDLED as defined in include/linux/interrupt.h.
 */
-/*================================================================================================*/
+/*====================*/
 static irqreturn_t mxc_wdog_int(int irq, void *dev_id, struct pt_regs *regs)
 {
         printk("\nWATCHDOG times out: %d\n", irq);
@@ -222,8 +222,8 @@ static int mxc_watchdog_test(int *arg)
         return result;
 }
 
-/*================================================================================================*/
-/*===== watchdog_test_ioctl =====*/
+/*====================*/
+/*= watchdog_test_ioctl =*/
 /**
 @brief  This function implements IOCTL for second watchdog test
 
@@ -234,7 +234,7 @@ static int mxc_watchdog_test(int *arg)
 
 @return This function returns 0 if successful.
 */
-/*================================================================================================*/
+/*====================*/
 static int watchdog_test_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
                                unsigned long arg)
 {
@@ -263,9 +263,9 @@ static int watchdog_test_ioctl(struct inode *inode, struct file *file, unsigned 
         return result;
 }
 
-/*==================================================================================================
+/*======================
                                 GLOBAL VARIABLE DECLARATIONS
-==================================================================================================*/
+======================*/
 /* This structure defines file operations for a WATCHDOG_TEST device */
 static struct file_operations watchdog_test_fops =
 {
@@ -277,8 +277,8 @@ static struct file_operations watchdog_test_fops =
         ioctl:        watchdog_test_ioctl,
 };
 
-/*================================================================================================*/
-/*===== watchdog_test_init =====*/
+/*====================*/
+/*= watchdog_test_init =*/
 /**
 @brief  This function implements the init function of the WATCHDOG_TEST device.
         This function is called when the module is loaded.
@@ -287,7 +287,7 @@ static struct file_operations watchdog_test_fops =
 
 @return This function returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 static int __init watchdog_test_init(void)
 {
         struct class_device *temp_class;
@@ -327,8 +327,8 @@ static int __init watchdog_test_init(void)
         return 0;
 }
 
-/*================================================================================================*/
-/*===== watchdog_test_exit =====*/
+/*====================*/
+/*= watchdog_test_exit =*/
 /**
 @brief  This function implements the exit function of the WATCHDOG_TEST device.
         This function is called when the module is unloaded.
@@ -337,7 +337,7 @@ static int __init watchdog_test_init(void)
 
 @return This function returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 static void __exit watchdog_test_exit(void)
 {
         unregister_chrdev(MXC_WDOG_TM_MAJOR, "wd_tst");
@@ -348,7 +348,7 @@ static void __exit watchdog_test_exit(void)
 }
 
 
-/*================================================================================================*/
+/*====================*/
 /* Module entry points */
 module_init(watchdog_test_init);
 module_exit(watchdog_test_exit);

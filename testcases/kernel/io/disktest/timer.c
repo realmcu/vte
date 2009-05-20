@@ -22,7 +22,7 @@
 *  questions or comments.
 *
 *  Project Website:  TBD
-* 
+*
 * $Id: timer.c,v 1.5 2008/12/22 07:33:03 subrata_modak Exp $
 *
 */
@@ -70,131 +70,131 @@ void *ChildTimer(void *vtest)
 #endif
 {
 #ifndef WINDOWS
-	test_ll_t *test = (test_ll_t *)vtest;
+ test_ll_t *test  (test_ll_t *)vtest;
 #endif
-	time_t ioTimeoutCount = 0;
-	time_t total_time = 0;
-	OFF_T cur_total_io_count = 0;
-	OFF_T last_total_io_count = 0;
+ time_t ioTimeoutCount  0;
+ time_t total_time  0;
+ OFF_T cur_total_io_count  0;
+ OFF_T last_total_io_count  0;
 
-	OFF_T tmp_io_count = 0;
-	time_t run_time = 0;
+ OFF_T tmp_io_count  0;
+ time_t run_time  0;
 
-	lvl_t msg_level = WARN;
+ lvl_t msg_level  WARN;
 
-	child_args_t *args = test->args;
-	test_env_t *env = test->env;
+ child_args_t *args  test->args;
+ test_env_t *env  test->env;
 
-	extern int signal_action;
-	extern unsigned long glb_run;
+ extern int signal_action;
+ extern unsigned long glb_run;
 
 #ifdef _DEBUG
-	PDBG3(DBUG, args, "In timer %lu, %d\n", time(NULL), env->bContinue);
+ PDBG3(DBUG, args, "In timer %lu, %d\n", time(NULL), env->bContinue);
 #endif
-	do {
-		Sleep(1000);
-		run_time++;
+ do {
+  Sleep(1000);
+  run_time++;
 #ifdef _DEBUG
-		PDBG3(DBUG, args, "Continue timing %lu, %lu, %d\n", time(NULL), run_time, env->bContinue);
+  PDBG3(DBUG, args, "Continue timing %lu, %lu, %d\n", time(NULL), run_time, env->bContinue);
 #endif
-		if(args->flags & CLD_FLG_W) {
-			if((args->flags & CLD_FLG_LINEAR) && !(args->flags & CLD_FLG_NTRLVD)) {
-				if(TST_OPER(args->test_state) == WRITER) {
-					env->hbeat_stats.wtime++;
-				}
-			} else {
-				env->hbeat_stats.wtime++;
-			}
-		} 
-		if(args->flags & CLD_FLG_R) {
-			if((args->flags & CLD_FLG_LINEAR) && !(args->flags & CLD_FLG_NTRLVD)) {
-				if(TST_OPER(args->test_state) == READER) {
-					env->hbeat_stats.rtime++;
-				}
-			} else {
-				env->hbeat_stats.rtime++;
-			}
-		}
+  if(args->flags & CLD_FLG_W) {
+   if((args->flags & CLD_FLG_LINEAR) && !(args->flags & CLD_FLG_NTRLVD)) {
+    if(TST_OPER(args->test_state)  WRITER) {
+     env->hbeat_stats.wtime++;
+    }
+   } else {
+    env->hbeat_stats.wtime++;
+   }
+  }
+  if(args->flags & CLD_FLG_R) {
+   if((args->flags & CLD_FLG_LINEAR) && !(args->flags & CLD_FLG_NTRLVD)) {
+    if(TST_OPER(args->test_state)  READER) {
+     env->hbeat_stats.rtime++;
+    }
+   } else {
+    env->hbeat_stats.rtime++;
+   }
+  }
 
-		/*
-		 * Check to see if we have made any IO progress in the last interval,
-		 * if not incremment the ioTimeout timer, otherwise, clear it
-		 */
-		cur_total_io_count = env->global_stats.wcount	\
-						+ env->cycle_stats.wcount		\
-						+ env->hbeat_stats.wcount		\
-						+ env->global_stats.rcount		\
-						+ env->cycle_stats.rcount		\
-						+ env->hbeat_stats.rcount;
+  /*
+   * Check to see if we have made any IO progress in the last interval,
+   * if not incremment the ioTimeout timer, otherwise, clear it
+   */
+  cur_total_io_count  env->global_stats.wcount \
+      + env->cycle_stats.wcount  \
+      + env->hbeat_stats.wcount  \
+      + env->global_stats.rcount  \
+      + env->cycle_stats.rcount  \
+      + env->hbeat_stats.rcount;
 
-		if(cur_total_io_count == 0) {
-			tmp_io_count = 1;
-		} else {
-			tmp_io_count = cur_total_io_count;
-		}
+  if(cur_total_io_count  0) {
+   tmp_io_count  1;
+  } else {
+   tmp_io_count  cur_total_io_count;
+  }
 
-		total_time = env->global_stats.rtime	\
-					+ env->cycle_stats.rtime	\
-					+ env->hbeat_stats.rtime	\
-					+ env->global_stats.wtime	\
-					+ env->cycle_stats.wtime	\
-					+ env->hbeat_stats.wtime;
+  total_time  env->global_stats.rtime \
+     + env->cycle_stats.rtime \
+     + env->hbeat_stats.rtime \
+     + env->global_stats.wtime \
+     + env->cycle_stats.wtime \
+     + env->hbeat_stats.wtime;
 
 #ifdef _DEBUG
-		PDBG3(DBUG, args, "average number of seconds per IO: %0.8lf\n", ((double)(total_time)/(double)(tmp_io_count)));
+  PDBG3(DBUG, args, "average number of seconds per IO: %0.8lf\n", ((double)(total_time)/(double)(tmp_io_count)));
 #endif
 
-		if(cur_total_io_count == last_total_io_count) { /* no IOs completed in interval */
-			if(0 == (++ioTimeoutCount % args->ioTimeout)) {	/* no progress after modulo ioTimeout interval */
-				if(args->flags & CLD_FLG_TMO_ERROR) {
-					args->test_state = SET_STS_FAIL(args->test_state);
-					env->bContinue = FALSE;
-					msg_level = ERR;
-				}
-				pMsg(msg_level, args, "Possible IO hang condition, IO timeout reached, %lu seconds\n", args->ioTimeout);
-			}
+  if(cur_total_io_count  last_total_io_count) { /* no IOs completed in interval */
+   if(0  (++ioTimeoutCount % args->ioTimeout)) { /* no progress after modulo ioTimeout interval */
+    if(args->flags & CLD_FLG_TMO_ERROR) {
+     args->test_state  SET_STS_FAIL(args->test_state);
+     env->bContinue  FALSE;
+     msg_level  ERR;
+    }
+    pMsg(msg_level, args, "Possible IO hang condition, IO timeout reached, %lu seconds\n", args->ioTimeout);
+   }
 #ifdef _DEBUG
-			PDBG3(DBUG, args, "io timeout count: %lu\n", ioTimeoutCount);
+   PDBG3(DBUG, args, "io timeout count: %lu\n", ioTimeoutCount);
 #endif
-		} else {
-			ioTimeoutCount = 0;
-			last_total_io_count = cur_total_io_count;
+  } else {
+   ioTimeoutCount  0;
+   last_total_io_count  cur_total_io_count;
 #ifdef _DEBUG
-			PDBG3(DBUG, args, "io timeout reset\n");
+   PDBG3(DBUG, args, "io timeout reset\n");
 #endif
-		} 
+  }
 
-		if(((args->hbeat > 0) && ((run_time % args->hbeat) == 0)) || (signal_action & SIGNAL_STAT)) {
-			print_stats(args, env, HBEAT);
-			update_cyc_stats(env);
-			clear_stat_signal();
-		}
+  if(((args->hbeat > 0) && ((run_time % args->hbeat)  0)) || (signal_action & SIGNAL_STAT)) {
+   print_stats(args, env, HBEAT);
+   update_cyc_stats(env);
+   clear_stat_signal();
+  }
 
-		if(glb_run == 0) { break; }					/* global run flag cleared */
-		if(signal_action & SIGNAL_STOP) { break; }	/* user request to stop */
+  if(glb_run  0) { break; }     /* global run flag cleared */
+  if(signal_action & SIGNAL_STOP) { break; } /* user request to stop */
 
-		if(args->flags & CLD_FLG_TMD) {			/* if timing */
-			if(run_time >= args->run_time) {	/* and run time exceeded */
-				break;
-			}
-		} else {					/* if not timing */
-			if(env->kids <= 1) {	/* and the timer is the only child */
-				break;
-			}
-		}
-	} while(TRUE);
+  if(args->flags & CLD_FLG_TMD) {   /* if timing */
+   if(run_time > args->run_time) { /* and run time exceeded */
+    break;
+   }
+  } else {     /* if not timing */
+   if(env->kids < 1) { /* and the timer is the only child */
+    break;
+   }
+  }
+ } while(TRUE);
 #ifdef _DEBUG
-	PDBG3(DBUG, args, "Out of timer %lu, %lu, %d, %d\n", time(NULL), run_time, env->bContinue, env->kids);
+ PDBG3(DBUG, args, "Out of timer %lu, %lu, %d, %d\n", time(NULL), run_time, env->bContinue, env->kids);
 #endif
 
-	if(args->flags & CLD_FLG_TMD) { /* timed test, timer exit needs to stop io threads */
+ if(args->flags & CLD_FLG_TMD) { /* timed test, timer exit needs to stop io threads */
 #ifdef _DEBUG
-		PDBG3(DBUG, args, "Setting bContinue to FALSE, timed test & timer exit\n");
+  PDBG3(DBUG, args, "Setting bContinue to FALSE, timed test & timer exit\n");
 #endif
-		env->bContinue = FALSE;
-	}
+  env->bContinue  FALSE;
+ }
 
-	TEXIT((uintptr_t)GETLASTERROR());
+ TEXIT((uintptr_t)GETLASTERROR());
 }
 
 #ifdef _DEBUG
@@ -203,29 +203,29 @@ DWORD startTime;
 DWORD endTime;
 
 void setStartTime(void) {
-	startTime = GetTickCount();
+ startTime  GetTickCount();
 }
 
 void setEndTime(void) {
-	endTime = GetTickCount();
+ endTime  GetTickCount();
 }
 
 unsigned long getTimeDiff(void) {
-	return((endTime - startTime) * 1000); /* since we report in usecs, and windows is msec, multiply by 1000 */
+ return((endTime - startTime) * 1000); /* since we report in usecs, and windows is msec, multiply by 1000 */
 }
 #else
 struct timeval tv_start; struct timeval tv_end;
 
 void setStartTime(void) {
-	gettimeofday(&tv_start, NULL);
+ gettimeofday(&tv_start, NULL);
 }
 
 void setEndTime(void) {
-	gettimeofday(&tv_end, NULL);
+ gettimeofday(&tv_end, NULL);
 }
 
 unsigned long getTimeDiff(void) {
-	return(tv_end.tv_usec - tv_start.tv_usec);
+ return(tv_end.tv_usec - tv_start.tv_usec);
 }
 
 

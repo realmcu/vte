@@ -1,4 +1,4 @@
-/* 
+/*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -20,9 +20,9 @@ struct posix_typed_mem_info this_type_should_exist, t;
 
 int dummyfcn(void)
 {
-	size_t sz = 0;
+ size_t sz  0;
 
-	t.posix_tmi_length = sz;
+ t.posix_tmi_length  sz;
 
-	return 0;
+ return 0;
 }

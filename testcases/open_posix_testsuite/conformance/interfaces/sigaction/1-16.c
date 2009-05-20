@@ -2,7 +2,7 @@
  * Copyright (c) 2002-2003, Intel Corporation. All rights reserved.
  * Created by:  Rusty.Lnch REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
   Test case for assertion #1 of the sigaction system call that shows
@@ -11,9 +11,9 @@
 
   Steps:
   1. Initialize a global variable to indicate the signal
-     handler has not been called. (A signal handler of the 
+     handler has not been called. (A signal handler of the
      prototype "void func(int signo);" will set the global
-     variable to indicate otherwise. 
+     variable to indicate otherwise.
   2. Use sigaction to setup a signal handler for SIGTTOU
   3. Raise SIGTTOU.
   4. Verify the global indicates the signal was called.
@@ -23,38 +23,38 @@
 #include <stdio.h>
 #include "posixtest.h"
 
-int handler_called = 0;
+int handler_called  0;
 
 void handler(int signo)
 {
-	handler_called = 1;
+ handler_called  1;
 }
 
 int main()
 {
-	struct sigaction act;
-	
-	act.sa_handler = handler;
-	act.sa_flags = 0;
-	sigemptyset(&act.sa_mask);
-	if (sigaction(SIGTTOU,  &act, 0) == -1) {
-		perror("Unexpected error while attempting to setup test "
-		       "pre-conditions");
-		return PTS_UNRESOLVED;
-	}
-	
-	if (raise(SIGTTOU) == -1) {
-		perror("Unexpected error while attempting to setup test "
-		       "pre-conditions");
-		return PTS_UNRESOLVED;
-	}
+ struct sigaction act;
 
-	if (handler_called) {
-		printf("Test PASSED\n");
-		return PTS_PASS;
-	}
+ act.sa_handler  handler;
+ act.sa_flags  0;
+ sigemptyset(&act.sa_mask);
+ if (sigaction(SIGTTOU,  &act, 0)  -1) {
+  perror("Unexpected error while attempting to setup test "
+         "pre-conditions");
+  return PTS_UNRESOLVED;
+ }
 
-	printf("Test FAILED\n");
-	return PTS_FAIL;	
+ if (raise(SIGTTOU)  -1) {
+  perror("Unexpected error while attempting to setup test "
+         "pre-conditions");
+  return PTS_UNRESOLVED;
+ }
+
+ if (handler_called) {
+  printf("Test PASSED\n");
+  return PTS_PASS;
+ }
+
+ printf("Test FAILED\n");
+ return PTS_FAIL;
 }
 

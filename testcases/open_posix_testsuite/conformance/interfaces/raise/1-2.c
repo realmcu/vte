@@ -1,11 +1,11 @@
-/*   
+/*
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  julie.n.fleischer REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
- *  Test that the raise(<signal>) function shall send the signal 
+ *  Test that the raise(<signal>) function shall send the signal
  *  to the executing process when the executing process is a child
  *  process.
  *  1) Set up a signal handler for a signal in the parent process.
@@ -34,73 +34,73 @@
 
 void parenthandler(int signo)
 {
-	printf("Caught signal from parent!\n");
-	exit(-1);
+ printf("Caught signal from parent!\n");
+ exit(-1);
 }
 
 void childhandler(int signo)
 {
-	printf("Caught signal from child!\n");
-	exit(0);
+ printf("Caught signal from child!\n");
+ exit(0);
 }
 
 int main()
 {
-	struct sigaction parentact;
-		
-	parentact.sa_handler=parenthandler;
-	parentact.sa_flags=0;
-	if (sigemptyset(&parentact.sa_mask) == -1) {
-		perror("Error calling sigemptyset\n");
-		return PTS_UNRESOLVED;
-	}
-	if (sigaction(SIGTOTEST, &parentact, 0) == -1) {
-		perror("Error calling sigaction\n");
-		return PTS_UNRESOLVED;
-	}
+ struct sigaction parentact;
 
-	if (fork() == 0) {
-		/* child here */
-		struct sigaction childact;
-		
-		childact.sa_handler=childhandler;
-		childact.sa_flags=0;
-		if (sigemptyset(&childact.sa_mask) == -1) {
-			perror("Error calling sigemptyset\n");
-			return PTS_UNRESOLVED;
-		}
-		if (sigaction(SIGTOTEST, &childact, 0) == -1) {
-			perror("Error calling sigaction\n");
-			return PTS_UNRESOLVED;
-		}
-		if (raise(SIGTOTEST) != 0) {
-			printf("Could not raise signal being tested\n");
-			return PTS_FAIL;
-		}
-	
-		printf("Should have exited from signal handler\n");
-		return PTS_FAIL;
-	} else {
-		/* parent here */
-		int i;
+ parentact.sa_handlerparenthandler;
+ parentact.sa_flags0;
+ if (sigemptyset(&parentact.sa_mask)  -1) {
+  perror("Error calling sigemptyset\n");
+  return PTS_UNRESOLVED;
+ }
+ if (sigaction(SIGTOTEST, &parentact, 0)  -1) {
+  perror("Error calling sigaction\n");
+  return PTS_UNRESOLVED;
+ }
 
-		if (wait(&i) == -1) {
-			perror("Error waiting for child to exit\n");
-			return PTS_UNRESOLVED;
-		}
-		if (!WEXITSTATUS(i)) {
-			printf("Child exited normally\n");
-			printf("Test PASSED\n");
-			return PTS_PASS;
-		}
-		else {
-			printf("Child did not exit normally.\n");
-			printf("Test FAILED\n");
-			return PTS_FAIL;
-		}
-	}
-	
-	printf("Should not make it here.\n");
-	return PTS_UNRESOLVED;
+ if (fork()  0) {
+  /* child here */
+  struct sigaction childact;
+
+  childact.sa_handlerchildhandler;
+  childact.sa_flags0;
+  if (sigemptyset(&childact.sa_mask)  -1) {
+   perror("Error calling sigemptyset\n");
+   return PTS_UNRESOLVED;
+  }
+  if (sigaction(SIGTOTEST, &childact, 0)  -1) {
+   perror("Error calling sigaction\n");
+   return PTS_UNRESOLVED;
+  }
+  if (raise(SIGTOTEST) ! 0) {
+   printf("Could not raise signal being tested\n");
+   return PTS_FAIL;
+  }
+
+  printf("Should have exited from signal handler\n");
+  return PTS_FAIL;
+ } else {
+  /* parent here */
+  int i;
+
+  if (wait(&i)  -1) {
+   perror("Error waiting for child to exit\n");
+   return PTS_UNRESOLVED;
+  }
+  if (!WEXITSTATUS(i)) {
+   printf("Child exited normally\n");
+   printf("Test PASSED\n");
+   return PTS_PASS;
+  }
+  else {
+   printf("Child did not exit normally.\n");
+   printf("Test FAILED\n");
+   return PTS_FAIL;
+  }
+ }
+
+ printf("Should not make it here.\n");
+ return PTS_UNRESOLVED;
 }
 

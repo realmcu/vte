@@ -37,14 +37,14 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return=-1)
- *   	Log the errno and Issue a FAIL message.
+ *   Check return code, if system call failed (return-1)
+ *   Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *   Verify the Functionality of system call
  *      if successful,
- *      	Issue Functionality-Pass message.
+ *      Issue Functionality-Pass message.
  *      Otherwise,
- *		Issue Functionality-Fail message.
+ *  Issue Functionality-Fail message.
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
  *   Delete the temporary directory created.
@@ -53,13 +53,13 @@
  *  access04 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -f   : Turn off functionality Testing.
- *	       -i n : Execute test n times.
- *	       -I x : Execute test for x seconds.
- *	       -P x : Pause for x seconds between iterations.
- *	       -t   : Turn on syscall timing.
+ *        -i n : Execute test n times.
+ *        -I x : Execute test for x seconds.
+ *        -P x : Pause for x seconds between iterations.
+ *        -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS:
  *  None.
@@ -79,82 +79,82 @@
 #include "test.h"
 #include "usctest.h"
 
-#define TESTDIR		"testdir"
-#define TESTFILE	"testdir/testfile"
-#define DIR_MODE	S_IRWXU | S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP
-#define FILE_MODE	S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
+#define TESTDIR  "testdir"
+#define TESTFILE "testdir/testfile"
+#define DIR_MODE S_IRWXU | S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP
+#define FILE_MODE S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 
-char *TCID="access04";		/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-char nobody_uid[] = "nobody";
+char *TCID"access04";  /* Test program identifier.    */
+int TST_TOTAL1;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
+char nobody_uid[]  "nobody";
 struct passwd *ltpuser;
 
-void setup();			/* Main setup function of test */
-void cleanup();			/* cleanup function for the test */
+void setup();   /* Main setup function of test */
+void cleanup();   /* cleanup function for the test */
 
 int
 main(int ac, char **av)
 {
-	struct stat stat_buf;	/* struct buffer for stat(2) */
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-    
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ struct stat stat_buf; /* struct buffer for stat(2) */
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
 
-	/* Perform global setup for test */
-	setup();
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(ac, av, (option_t *)NULL, NULL);
+ if (msg ! (char *)NULL) {
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	/* Check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
+ /* Perform global setup for test */
+ setup();
 
-		/* 
-		 * Call access(2) to check the existence of a
-		 * file under specified path.
-		 */
-		TEST(access(TESTFILE, F_OK));
+ /* Check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* Reset Tst_count in case we are looping. */
+  Tst_count0;
 
-		/* check return code of access(2) */
-		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL,
-				 "access(%s, F_OK) Failed, errno=%d : %s",
-				 TESTFILE, TEST_ERRNO, strerror(TEST_ERRNO));
-			continue;
-		}
+  /*
+   * Call access(2) to check the existence of a
+   * file under specified path.
+   */
+  TEST(access(TESTFILE, F_OK));
 
-		/*
-		 * Perform functional verification if test
-		 * executed without (-f) option.
-		 */
-		if (STD_FUNCTIONAL_TEST) {
-			/*
-			 * Use stat(2) to cross-check the
-			 * existance of testfile under
-			 * specified path.
-			 */
-			if (stat(TESTFILE, &stat_buf) < 0) {
-				tst_resm(TFAIL, "stat() on %s Failed, errno=%d",
-					 TESTFILE, TEST_ERRNO);
-			} else {
-				tst_resm(TPASS, "Functionality of access(%s, "
-					 "F_OK) successful", TESTFILE);
-			}
-		} else {
-			tst_resm(TPASS, "call succeeded");
-		}
-	}	/* End for TEST_LOOPING */
+  /* check return code of access(2) */
+  if (TEST_RETURN  -1) {
+   tst_resm(TFAIL,
+     "access(%s, F_OK) Failed, errno%d : %s",
+     TESTFILE, TEST_ERRNO, strerror(TEST_ERRNO));
+   continue;
+  }
 
-	/* Call cleanup() to undo setup done for the test. */
-	cleanup();
+  /*
+   * Perform functional verification if test
+   * executed without (-f) option.
+   */
+  if (STD_FUNCTIONAL_TEST) {
+   /*
+    * Use stat(2) to cross-check the
+    * existance of testfile under
+    * specified path.
+    */
+   if (stat(TESTFILE, &stat_buf) < 0) {
+    tst_resm(TFAIL, "stat() on %s Failed, errno%d",
+      TESTFILE, TEST_ERRNO);
+   } else {
+    tst_resm(TPASS, "Functionality of access(%s, "
+      "F_OK) successful", TESTFILE);
+   }
+  } else {
+   tst_resm(TPASS, "call succeeded");
+  }
+ } /* End for TEST_LOOPING */
 
-	return 0;
-	/*NOTREACHED*/
+ /* Call cleanup() to undo setup done for the test. */
+ cleanup();
+
+ return 0;
+ /*NOTREACHED*/
 }
 
 /*
@@ -164,66 +164,66 @@ main(int ac, char **av)
  *  Create a test directory and a file under test directory.
  *  Modify the mode permissions of testfile.
  */
-void 
+void
 setup()
 {
-	int fd;			/* File handle for testfile */
+ int fd;   /* File handle for testfile */
 
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Switch to nobody user for correct error code collection */
-        if (geteuid() != 0) {
+ /* Switch to nobody user for correct error code collection */
+        if (geteuid() ! 0) {
                 tst_brkm(TBROK, tst_exit, "Test must be run as root");
         }
-        ltpuser = getpwnam(nobody_uid);
-        if (setuid(ltpuser->pw_uid) == -1) {
+        ltpuser  getpwnam(nobody_uid);
+        if (setuid(ltpuser->pw_uid)  -1) {
                 tst_resm(TINFO, "setuid failed to "
                          "to set the effective uid to %d",
                          ltpuser->pw_uid);
                 perror("setuid");
         }
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
-	tst_tmpdir();
+ /* make a temp directory and cd to it */
+ tst_tmpdir();
 
-	/* Creat a test directory under temporary directory */
-	if (mkdir(TESTDIR, DIR_MODE) < 0) {
-		tst_brkm(TBROK, cleanup,
-			 "mkdir(%s, %#o) Failed, errno=%d : %s",
-			 TESTDIR, DIR_MODE, errno, strerror(errno));
-	}
+ /* Creat a test directory under temporary directory */
+ if (mkdir(TESTDIR, DIR_MODE) < 0) {
+  tst_brkm(TBROK, cleanup,
+    "mkdir(%s, %#o) Failed, errno%d : %s",
+    TESTDIR, DIR_MODE, errno, strerror(errno));
+ }
 
-	/* Make sure test directory has search permissions set */
-	if (chmod(TESTDIR, DIR_MODE) < 0) {
-		tst_brkm(TBROK, cleanup,
-			 "chmod(%s, %#o) Failed, errno=%d : %s",
-			 TESTDIR, DIR_MODE, errno, strerror(errno));
-	}
+ /* Make sure test directory has search permissions set */
+ if (chmod(TESTDIR, DIR_MODE) < 0) {
+  tst_brkm(TBROK, cleanup,
+    "chmod(%s, %#o) Failed, errno%d : %s",
+    TESTDIR, DIR_MODE, errno, strerror(errno));
+ }
 
-	/* Creat a test file under above directory created */
-	if ((fd = open(TESTFILE, O_RDWR|O_CREAT, FILE_MODE)) == -1) {
-		tst_brkm(TBROK, cleanup,
-			 "open(%s, O_RDWR|O_CREAT, %#o) Failed, errno=%d :%s",
-			 TESTFILE, FILE_MODE, errno, strerror(errno));
-	}
+ /* Creat a test file under above directory created */
+ if ((fd  open(TESTFILE, O_RDWR|O_CREAT, FILE_MODE))  -1) {
+  tst_brkm(TBROK, cleanup,
+    "open(%s, O_RDWR|O_CREAT, %#o) Failed, errno%d :%s",
+    TESTFILE, FILE_MODE, errno, strerror(errno));
+ }
 
-	/* Close the testfile created above */
-	if (close(fd) == -1) {
-		tst_brkm(TBROK, cleanup,
-			 "close(%s) Failed, errno=%d : %s",
-			 TESTFILE, errno, strerror(errno));
-	}
+ /* Close the testfile created above */
+ if (close(fd)  -1) {
+  tst_brkm(TBROK, cleanup,
+    "close(%s) Failed, errno%d : %s",
+    TESTFILE, errno, strerror(errno));
+ }
 
-	/* Change the mode permissions on the testfile */
-	if (chmod(TESTFILE, 0) < 0) {
-		tst_brkm(TBROK, cleanup,
-			 "chmod(%s, 0) Failed, errno=%d : %s",
-			 TESTFILE, errno, strerror(errno));
-	}
+ /* Change the mode permissions on the testfile */
+ if (chmod(TESTFILE, 0) < 0) {
+  tst_brkm(TBROK, cleanup,
+    "chmod(%s, 0) Failed, errno%d : %s",
+    TESTFILE, errno, strerror(errno));
+ }
 }
 
 
@@ -233,21 +233,21 @@ setup()
  *
  *  Remove the test directory and testfile created in the setup.
  */
-void 
+void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/*
-	 * Delete the test directory/file and temporary directory
-	 * created in the setup.
-	 */
-	tst_rmdir();
+ /*
+  * Delete the test directory/file and temporary directory
+  * created in the setup.
+  */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

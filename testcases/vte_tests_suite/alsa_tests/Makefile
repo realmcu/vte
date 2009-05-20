@@ -20,7 +20,7 @@
 # Z.Spring            11/24/2008        N/A       Add platform identify script
 #
 ###############################################################################
-#Portability: Indicate if this module is portable to other compilers 
+#Portability: Indicate if this module is portable to other compilers
 #             or platforms.
 #             If not, indicate specific reasons why is it not portable.
 #

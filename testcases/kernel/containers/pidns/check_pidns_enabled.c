@@ -33,7 +33,7 @@
 *
 * History:
 *
-* FLAG DATE     	NAME           		DESCRIPTION
+* FLAG DATE     NAME          DESCRIPTION
 * 27/12/07  RISHIKESH K RAJAK <risrajak@in.ibm.com> Created this test
 *
 *******************************************************************************************/
@@ -44,7 +44,7 @@
 
 int dummy(void *v)
 {
-	/* Simply return from the child */
+ /* Simply return from the child */
         return 0;
 }
 
@@ -53,16 +53,16 @@ int main()
 {
         int pid;
 
-	/* Test for the running kernel version
-	 * provided by LTP library API
-	 */
+ /* Test for the running kernel version
+  * provided by LTP library API
+  */
         if (tst_kvercmp(2,6,24) < 0)
                 return 1;
 
-        pid = do_clone(CLONE_NEWPID, dummy, NULL);
+        pid  do_clone(CLONE_NEWPID, dummy, NULL);
 
-	/* Check for the clone function return value */
-        if (pid == -1)
+ /* Check for the clone function return value */
+        if (pid  -1)
                 return 3;
         return 0;
 }

@@ -19,16 +19,16 @@ int main() {
     time_t current_time;
     struct tm *timeptr;
 
-    current_time = time(NULL);
-    timeptr = NULL;
-    timeptr = localtime(&current_time);
+    current_time  time(NULL);
+    timeptr  NULL;
+    timeptr  localtime(&current_time);
 
-    if (timeptr != NULL) {
-	    printf("date: %s", (asctime(localtime((&current_time)))));
-	    puts("Test PASSED");
-	    return PTS_PASS;
+    if (timeptr ! NULL) {
+     printf("date: %s", (asctime(localtime((&current_time)))));
+     puts("Test PASSED");
+     return PTS_PASS;
     } else {
-	    puts("Test FAILED: localtime failed");
-	    return PTS_FAIL;
+     puts("Test FAILED: localtime failed");
+     return PTS_FAIL;
     }
 }

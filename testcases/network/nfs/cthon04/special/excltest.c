@@ -1,6 +1,6 @@
 /*
- *	@(#)excltest.c	1.2 98/10/26 Connectathon Testsuite
- *	1.3 Lachman ONC Test Suite source
+ * @(#)excltest.c 1.2 98/10/26 Connectathon Testsuite
+ * 1.3 Lachman ONC Test Suite source
  *
  * test exclusive create
  */
@@ -25,40 +25,40 @@
 
 int
 main(argc, argv)
-	int argc;
-	char *argv[];
+ int argc;
+ char *argv[];
 {
-	char *testfile = "exctest.file";
-	int count;
-	int res, i;
+ char *testfile  "exctest.file";
+ int count;
+ int res, i;
 
-	if (argc > 2) {
-		fprintf(stderr, "usage: %s [count]\n", argv[0]);
-		exit(1);
-	}
-	if (argc == 2) 
-		count = atoi(argv[1]);
-	else
-		count = 2;
+ if (argc > 2) {
+  fprintf(stderr, "usage: %s [count]\n", argv[0]);
+  exit(1);
+ }
+ if (argc  2)
+  count  atoi(argv[1]);
+ else
+  count  2;
 
-	unlink(testfile);
-	for (i = 0; i < count; i++) {
-		res = open(testfile, O_CREAT | O_EXCL, 0777);
-		if (i == 0) {
-			if (res < 0) {
-				perror(testfile);
-				exit(1);
-			}
-		} else {
-			if (res >= 0) {
-				fprintf(stderr, "exclusive create succeeded\n");
-				exit(1);
-			} else if (errno != EEXIST) {
-				perror(testfile);
-				exit(1);
-			}
-		}
-	}
+ unlink(testfile);
+ for (i  0; i < count; i++) {
+  res  open(testfile, O_CREAT | O_EXCL, 0777);
+  if (i  0) {
+   if (res < 0) {
+    perror(testfile);
+    exit(1);
+   }
+  } else {
+   if (res > 0) {
+    fprintf(stderr, "exclusive create succeeded\n");
+    exit(1);
+   } else if (errno ! EEXIST) {
+    perror(testfile);
+    exit(1);
+   }
+  }
+ }
 
-	exit(0);
+ exit(0);
 }

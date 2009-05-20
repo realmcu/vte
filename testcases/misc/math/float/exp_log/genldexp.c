@@ -23,11 +23,11 @@
 /*              These tests are adapted from AIX float PVT tests.             */
 /*                                                                            */
 /******************************************************************************/
-#include 	<float.h>
-#include 	<stdio.h>
-#include 	<stdlib.h>
-#include 	<string.h>
-#include 	<errno.h>
+#include <float.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 #include        <limits.h>
 #include        <unistd.h>
 #include        <fcntl.h>
@@ -36,9 +36,9 @@
 #include        <math.h>
 
 /******************************************************************
- * 
- *	genldexp
- * 
+ *
+ * genldexp
+ *
  * generate input and output file  for the ldexp function
  * double x multiplied by 2 raised to the power y
  *
@@ -50,138 +50,138 @@
 int create_Result_file()
 {
 
-	int i, nbVal, tabInpi[20000];
-	double	tabR[20000], tabInpd[20000];
-	char *F_name;
-	char *F_namini;
-	char *F_namind;
-	int fp, fpi, fpd;
+ int i, nbVal, tabInpi[20000];
+ double tabR[20000], tabInpd[20000];
+ char *F_name;
+ char *F_namini;
+ char *F_namind;
+ int fp, fpi, fpd;
 
-	F_name = "ldexp_out.ref";
-	F_namini = "ildexp_inp.ref";
-	F_namind = "ldexp_inp.ref";
-	nbVal = 20000; 
+ F_name  "ldexp_out.ref";
+ F_namini  "ildexp_inp.ref";
+ F_namind  "ldexp_inp.ref";
+ nbVal  20000;
 
-	fpi = open(F_namini,O_RDONLY,0777);
-	fpd = open(F_namind,O_RDONLY,0777);
+ fpi  open(F_namini,O_RDONLY,0777);
+ fpd  open(F_namind,O_RDONLY,0777);
 
-	if ( !fpi || !fpd) {
-            	printf("error opening file");
-		close(fpi);
-		close(fpd);
-		return -1;
-	}
-	else
-	{
-		for (i=0; i<nbVal; i++) {
-		    read(fpi, &(tabInpi[i]), sizeof(int) );
-		    read(fpd, &(tabInpd[i]), sizeof(double) );
-		    tabR[i] = ldexp (tabInpd[i], tabInpi[i]); 
-		}
-		close(fpi);
-		close(fpd);
+ if ( !fpi || !fpd) {
+            printf("error opening file");
+  close(fpi);
+  close(fpd);
+  return -1;
+ }
+ else
+ {
+  for (i0; i<nbVal; i++) {
+      read(fpi, &(tabInpi[i]), sizeof(int) );
+      read(fpd, &(tabInpd[i]), sizeof(double) );
+      tabR[i]  ldexp (tabInpd[i], tabInpi[i]);
+  }
+  close(fpi);
+  close(fpd);
 
-		fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
-        	if (!fp)
-        	{
-        	    	printf("error opening file");
-			close(fp);
-			return -1;
-		}
-		else
-		{
-			for (i = 0; i<nbVal; i++ ) 
-			{
-			    write(fp,&tabR[i],sizeof(double));
-			}
-	
-			close(fp);
-			return 0;
-		}
-	}
+  fp  open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
+        if (!fp)
+        {
+            printf("error opening file");
+   close(fp);
+   return -1;
+  }
+  else
+  {
+   for (i  0; i<nbVal; i++ )
+   {
+       write(fp,&tabR[i],sizeof(double));
+   }
+
+   close(fp);
+   return 0;
+  }
+ }
 }
 
 /*********************************************************************
  *
- *	create input data file
+ * create input data file
  *
- *	the format of the data is double x   int y
+ * the format of the data is double x   int y
  */
 
 int create_Data_file()
 {
-	int i, nbVal;
-	double	tabDD[20000], tabDI[20000], Inc;
-	char *F_named, *F_namei;
-	int fp, fpi;
+ int i, nbVal;
+ double tabDD[20000], tabDI[20000], Inc;
+ char *F_named, *F_namei;
+ int fp, fpi;
 
-	F_named = "ldexp_inp.ref";
-	F_namei = "ildexp_inp.ref";
-	nbVal = 20000; 
+ F_named  "ldexp_inp.ref";
+ F_namei  "ildexp_inp.ref";
+ nbVal  20000;
 
-	Inc = exp(1)/10;
+ Inc  exp(1)/10;
 
-	for (i=0; i<(nbVal); i++) {	
-		tabDD[i] = (Inc * i) + Inc;
-		tabDI[i] = nbVal -i;
-	}
+ for (i0; i<(nbVal); i++) {
+  tabDD[i]  (Inc * i) + Inc;
+  tabDI[i]  nbVal -i;
+ }
 
-	fp = open(F_named,O_RDWR|O_CREAT|O_TRUNC,0777);
-	fpi = open(F_namei,O_RDWR|O_CREAT|O_TRUNC,0777);
+ fp  open(F_named,O_RDWR|O_CREAT|O_TRUNC,0777);
+ fpi  open(F_namei,O_RDWR|O_CREAT|O_TRUNC,0777);
         if (!fp || !fpi)
         {
-            	printf("error opening file");
-	    	close(fp);
-	    	close(fpi);
-	    	return -1;
+            printf("error opening file");
+     close(fp);
+     close(fpi);
+     return -1;
         }
         else
-        {	
-		for (i = 0; i<nbVal; i++ ) 
-		{
-			write(fp,&tabDD[i],sizeof(double));
-			write(fpi,&tabDI[i],sizeof(int));
-		}
-		close(fp);
-		close(fpi);
-		return 0;
-	}
+        {
+  for (i  0; i<nbVal; i++ )
+  {
+   write(fp,&tabDD[i],sizeof(double));
+   write(fpi,&tabDI[i],sizeof(int));
+  }
+  close(fp);
+  close(fpi);
+  return 0;
+ }
 }
 
 
 int main(int argc, char  *argv[])
 {
 
-	if (argc > 1) 
-	{
-		switch ( atoi(argv[1]) )
-		{
-		case 1:
-			if (create_Data_file() == 0)
-				printf("Data file created\n");
-			else
-				printf("problem during %s data file creation\n", argv[0]);
-			break;
+ if (argc > 1)
+ {
+  switch ( atoi(argv[1]) )
+  {
+  case 1:
+   if (create_Data_file()  0)
+    printf("Data file created\n");
+   else
+    printf("problem during %s data file creation\n", argv[0]);
+   break;
 
-		case 2:
-			if (create_Result_file() == 0)
-				printf("Result file created\n");
-			else
-				printf("problem during %s result file creation\n", argv[0]);
-			break;
-		default:
-			printf("Bad arglist code for: '%s'\n", argv[0]);
-			return -1;
-			break;
-		}
-	}
-	else
-	{
-		if (create_Data_file() != 0)
-			printf("problem during %s data file creation\n", argv[0]);
-		if (create_Result_file() != 0)
-			printf("problem during %s result file creation\n", argv[0]);
-	}
+  case 2:
+   if (create_Result_file()  0)
+    printf("Result file created\n");
+   else
+    printf("problem during %s result file creation\n", argv[0]);
+   break;
+  default:
+   printf("Bad arglist code for: '%s'\n", argv[0]);
+   return -1;
+   break;
+  }
+ }
+ else
+ {
+  if (create_Data_file() ! 0)
+   printf("problem during %s data file creation\n", argv[0]);
+  if (create_Result_file() ! 0)
+   printf("problem during %s result file creation\n", argv[0]);
+ }
 
   return(0);
 

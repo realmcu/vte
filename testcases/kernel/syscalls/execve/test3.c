@@ -19,7 +19,7 @@
 
 /*
  * test3.c
- *	dummy program which is used by execve03.c testcase
+ * dummy program which is used by execve03.c testcase
  */
 
 #include <stdlib.h>
@@ -27,6 +27,6 @@
 
 int main()
 {
-	printf("Hello World\n");
-	exit(0);
+ printf("Hello World\n");
+ exit(0);
 }

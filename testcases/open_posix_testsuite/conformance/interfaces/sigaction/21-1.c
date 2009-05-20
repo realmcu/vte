@@ -17,7 +17,7 @@
 
 void handler(int signo)
 {
-	printf("Caught SIGCHLD\n");
+ printf("Caught SIGCHLD\n");
 }
 
 
@@ -30,26 +30,26 @@ int main()
           return PTS_UNSUPPORTED;
         #endif
 
-	struct sigaction act;
+ struct sigaction act;
 
-	act.sa_handler = handler;
-	act.sa_flags = SA_NOCLDWAIT;
-	sigemptyset(&act.sa_mask);
-	sigaction(SIGCHLD,  &act, 0);     
+ act.sa_handler = handler;
+ act.sa_flags = SA_NOCLDWAIT;
+ sigemptyset(&act.sa_mask);
+ sigaction(SIGCHLD,  &act, 0);
 
-	if (fork() == 0) {
-		/* child */
-		return 0;
-	} else {
-		/* parent */
-		int s; 		
-		if (wait(&s) == -1 && errno == ECHILD) {
-			printf("Test PASSED\n");
-			return PTS_PASS;
-		}
-	}
+ if (fork() == 0) {
+  /* child */
+  return 0;
+ } else {
+  /* parent */
+  int s;
+  if (wait(&s) == -1 && errno == ECHILD) {
+   printf("Test PASSED\n");
+   return PTS_PASS;
+  }
+ }
 
-	printf("Test FAILED\n");
-	return PTS_FAIL;
+ printf("Test FAILED\n");
+ return PTS_FAIL;
 }
 

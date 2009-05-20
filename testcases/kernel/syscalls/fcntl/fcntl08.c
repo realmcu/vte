@@ -32,81 +32,81 @@
  */
 /* $Id: fcntl08.c,v 1.2 2005/01/04 21:04:18 mridge Exp $ */
 /**********************************************************
- * 
+ *
  *    OS Test - Silicon Graphics, Inc.
- * 
- *    TEST IDENTIFIER	: fcntl08
- * 
- *    EXECUTED BY	: anyone
- * 
- *    TEST TITLE	: Basic test for fcntl(2) using F_SETFL argument.
- * 
- *    PARENT DOCUMENT	: usctpl01
- * 
- *    TEST CASE TOTAL	: 1
- * 
- *    WALL CLOCK TIME	: 1
- * 
- *    CPU TYPES		: ALL
- * 
- *    AUTHOR		: William Roske
- * 
- *    CO-PILOT		: Dave Fenner
- * 
- *    DATE STARTED	: 03/30/92
- * 
- *    INITIAL RELEASE	: UNICOS 7.0
- * 
+ *
+ *    TEST IDENTIFIER : fcntl08
+ *
+ *    EXECUTED BY : anyone
+ *
+ *    TEST TITLE : Basic test for fcntl(2) using F_SETFL argument.
+ *
+ *    PARENT DOCUMENT : usctpl01
+ *
+ *    TEST CASE TOTAL : 1
+ *
+ *    WALL CLOCK TIME : 1
+ *
+ *    CPU TYPES  : ALL
+ *
+ *    AUTHOR  : William Roske
+ *
+ *    CO-PILOT  : Dave Fenner
+ *
+ *    DATE STARTED : 03/30/92
+ *
+ *    INITIAL RELEASE : UNICOS 7.0
+ *
  *    TEST CASES
- * 
- * 	1.) fcntl(2) returns...(See Description)
- *	
+ *
+ * 1.) fcntl(2) returns...(See Description)
+ *
  *    INPUT SPECIFICATIONS
- * 	The standard options for system call tests are accepted.
- *	(See the parse_opts(3) man page).
- * 
+ * The standard options for system call tests are accepted.
+ * (See the parse_opts(3) man page).
+ *
  *    OUTPUT SPECIFICATIONS
- * 	
+ *
  *    DURATION
- * 	Terminates - with frequency and infinite modes.
- * 
+ * Terminates - with frequency and infinite modes.
+ *
  *    SIGNALS
- * 	Uses SIGUSR1 to pause before test if option set.
- * 	(See the parse_opts(3) man page).
+ * Uses SIGUSR1 to pause before test if option set.
+ * (See the parse_opts(3) man page).
  *
  *    RESOURCES
- * 	None
- * 
+ * None
+ *
  *    ENVIRONMENTAL NEEDS
  *      No run-time environmental needs.
- * 
+ *
  *    SPECIAL PROCEDURAL REQUIREMENTS
- * 	None
- * 
+ * None
+ *
  *    INTERCASE DEPENDENCIES
- * 	None
- * 
+ * None
+ *
  *    DETAILED DESCRIPTION
- *	This is a Phase I test for the fcntl(2) system call.  It is intended
- *	to provide a limited exposure of the system call, for now.  It
- *	should/will be extended when full functional tests are written for
- *	fcntl(2).
- * 
- * 	Setup:
- * 	  Setup signal handling.
- *	  Pause for SIGUSR1 if option specified.
- * 
- * 	Test:
- *	 Loop if the proper options are given.
- * 	  Execute system call
- *	  Check return code, if system call failed (return=-1)
- *		Log the errno and Issue a FAIL message.
- *	  Otherwise, Issue a PASS message.
- * 
- * 	Cleanup:
+ * This is a Phase I test for the fcntl(2) system call.  It is intended
+ * to provide a limited exposure of the system call, for now.  It
+ * should/will be extended when full functional tests are written for
+ * fcntl(2).
+ *
+ * Setup:
+ *   Setup signal handling.
+ *   Pause for SIGUSR1 if option specified.
+ *
+ * Test:
+ *  Loop if the proper options are given.
+ *   Execute system call
+ *   Check return code, if system call failed (return-1)
+ *  Log the errno and Issue a FAIL message.
+ *   Otherwise, Issue a PASS message.
+ *
+ * Cleanup:
  *        close file
  *        remove temp directory
- * 
+ *
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
 #include <sys/types.h>
@@ -124,9 +124,9 @@ void cleanup();
 
 
 
-char *TCID="fcntl08"; 		/* Test program identifier.    */
-int TST_TOTAL=1;    		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID"fcntl08";/* Test program identifier.    */
+int TST_TOTAL1;   /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 
 char fname[255];
 int arg, fd;
@@ -134,15 +134,15 @@ int arg, fd;
 int
 main(int ac, char **av)
 {
-    int lc;		/* loop counter */
-    char *msg;		/* message returned from parse_opts */
-    
+    int lc;  /* loop counter */
+    char *msg;  /* message returned from parse_opts */
+
     /***************************************************************
      * parse standard options
      ***************************************************************/
-    if ( (msg=parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *) NULL ) {
-	tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	tst_exit();
+    if ( (msgparse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *) NULL ) {
+ tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+ tst_exit();
     }
 
     /***************************************************************
@@ -153,33 +153,33 @@ main(int ac, char **av)
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc=0; TEST_LOOPING(lc); lc++) {
+    for (lc0; TEST_LOOPING(lc); lc++) {
 
-	/* reset Tst_count in case we are looping. */
-	Tst_count=0;
+ /* reset Tst_count in case we are looping. */
+ Tst_count0;
 
-	/* 
-	 * Call fcntl(2) with F_SETFL argument on fname
-	 */
-	TEST(fcntl(fd, F_SETFL, arg));
-	
-	/* check return code */
-	if ( TEST_RETURN == -1 ) {
-	    tst_resm(TFAIL, "fcntl(%s, F_SETFL, %d) Failed, errno=%d : %s", 
-		fname, arg, TEST_ERRNO, strerror(TEST_ERRNO));
-	} else {
-	    
-	    /***************************************************************
-	     * only perform functional verification if flag set (-f not given)
-	     ***************************************************************/
-	    if ( STD_FUNCTIONAL_TEST ) {
-		/* No Verification test, yet... */
-		tst_resm(TPASS, "fcntl(%s, F_SETFL, %d) returned %d", 
-		    fname, arg, TEST_RETURN);
-	    } 
-	}
+ /*
+  * Call fcntl(2) with F_SETFL argument on fname
+  */
+ TEST(fcntl(fd, F_SETFL, arg));
 
-    }	/* End for TEST_LOOPING */
+ /* check return code */
+ if ( TEST_RETURN  -1 ) {
+     tst_resm(TFAIL, "fcntl(%s, F_SETFL, %d) Failed, errno%d : %s",
+  fname, arg, TEST_ERRNO, strerror(TEST_ERRNO));
+ } else {
+
+     /***************************************************************
+      * only perform functional verification if flag set (-f not given)
+      ***************************************************************/
+     if ( STD_FUNCTIONAL_TEST ) {
+  /* No Verification test, yet... */
+  tst_resm(TPASS, "fcntl(%s, F_SETFL, %d) returned %d",
+      fname, arg, TEST_RETURN);
+     }
+ }
+
+    } /* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -187,12 +187,12 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-}	/* End main */
+} /* End main */
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void 
+void
 setup()
 {
     /* capture signals */
@@ -205,33 +205,33 @@ setup()
     tst_tmpdir();
 
     sprintf(fname,"tfile_%d",getpid());
-    if ((fd = open(fname,O_RDWR|O_CREAT,0700)) == -1) {
+    if ((fd  open(fname,O_RDWR|O_CREAT,0700))  -1) {
        tst_brkm(TBROK, cleanup,
-		"open(%s, O_RDWR|O_CREAT,0700) Failed, errno=%d : %s",
-		fname, errno, strerror(errno));
+  "open(%s, O_RDWR|O_CREAT,0700) Failed, errno%d : %s",
+  fname, errno, strerror(errno));
     }
 
     /* set the flags to be used */
 #ifdef CRAY
-    arg = (O_NDELAY | O_APPEND | O_RAW | O_NONBLOCK);
+    arg  (O_NDELAY | O_APPEND | O_RAW | O_NONBLOCK);
 #else /* ! CRAY */
 #ifdef __hpux
     /* HP-UX doesn't allow O_NDELAY and O_NONBLOCK;
        we choose O_NONBLOCK (POSIX style) */
-    arg = (O_APPEND | O_NONBLOCK);
+    arg  (O_APPEND | O_NONBLOCK);
 #else /* ! __hpux */
-    arg = (O_NDELAY | O_APPEND | O_NONBLOCK);
+    arg  (O_NDELAY | O_APPEND | O_NONBLOCK);
 #endif /* ! __hpux */
 #endif   /* ! CRAY */
 
-}	/* End setup() */
+} /* End setup() */
 
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
+ *  completion or premature exit.
  ***************************************************************/
-void 
+void
 cleanup()
 {
     /*
@@ -241,9 +241,9 @@ cleanup()
     TEST_CLEANUP;
 
     /* close the file we have open */
-    if (close(fd) == -1) {
-       tst_resm(TWARN, "close(%s) Failed, errno=%d : %s", 
-	  fname, errno, strerror(errno));
+    if (close(fd)  -1) {
+       tst_resm(TWARN, "close(%s) Failed, errno%d : %s",
+   fname, errno, strerror(errno));
     }
 
     /* Remove tmp dir and all files in it */
@@ -252,4 +252,4 @@ cleanup()
     /* exit with return code appropriate for results */
     tst_exit();
 
-}	/* End cleanup() */
+} /* End cleanup() */

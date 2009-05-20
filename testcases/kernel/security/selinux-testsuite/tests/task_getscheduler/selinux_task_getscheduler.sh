@@ -11,61 +11,61 @@
 
 setup()
 {
-	export TCID="setup"
-	export TST_COUNT=0
-	export TST_TOTAL=2
+ export TCID="setup"
+ export TST_COUNT=0
+ export TST_TOTAL=2
 
-	# Start the target process.
-	runcon -t test_getsched_target_t selinux_task_getscheduler_target &
-	PID=$!
-	sleep 1 # Give it a second to start
+ # Start the target process.
+ runcon -t test_getsched_target_t selinux_task_getscheduler_target &
+ PID=$!
+ sleep 1 # Give it a second to start
 }
 
 test01()
 {
-	TCID="test01"
-	TST_COUNT=1
-	RC=0
+ TCID="test01"
+ TST_COUNT=1
+ RC=0
 
-	# Verify that test_getsched_yes_t can get the scheduling.
-	# SCHED_OTHER	0	priority must == 0
-	# SCHED_FIFO	1	priority 1..99
-	# SCHED_RR	2	priority 1..99
-	runcon -t test_getsched_yes_t -- selinux_task_getscheduler_source $PID 2>&1
-	RC=$?
-	if [ $RC -eq 0 ]
-	then
-		echo "$TCID   PASS : task_getscheduler passed."
-	else
-		echo "$TCID   FAIL : task_getscheduler failed."
-	fi
-	return $RC
+ # Verify that test_getsched_yes_t can get the scheduling.
+ # SCHED_OTHER 0 priority must == 0
+ # SCHED_FIFO 1 priority 1..99
+ # SCHED_RR 2 priority 1..99
+ runcon -t test_getsched_yes_t -- selinux_task_getscheduler_source $PID 2>&1
+ RC=$?
+ if [ $RC -eq 0 ]
+ then
+  echo "$TCID   PASS : task_getscheduler passed."
+ else
+  echo "$TCID   FAIL : task_getscheduler failed."
+ fi
+ return $RC
 }
 
 test02()
 {
-	TCID="test02"
-	TST_COUNT=2
-	RC=0
+ TCID="test02"
+ TST_COUNT=2
+ RC=0
 
-	# Verify that test_getsched_no_t cannot get the scheduling.
-	runcon -t test_getsched_no_t -- selinux_task_getscheduler_source $PID 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   PASS : task_getscheduler passed."
-		RC=0
-	else
-		echo "$TCID   FAIL : task_getscheduler failed."
-		RC=1
-	fi
-	return $RC
+ # Verify that test_getsched_no_t cannot get the scheduling.
+ runcon -t test_getsched_no_t -- selinux_task_getscheduler_source $PID 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   PASS : task_getscheduler passed."
+  RC=0
+ else
+  echo "$TCID   FAIL : task_getscheduler failed."
+  RC=1
+ fi
+ return $RC
 }
 
 cleanup()
 {
-	# Kill the target
-	kill -s KILL $PID
+ # Kill the target
+ kill -s KILL $PID
 }
 
 # Function:     main
@@ -78,7 +78,7 @@ cleanup()
 RC=0    # Return value from setup, and test functions.
 EXIT_VAL=0
 
-setup 
+setup
 test01 || EXIT_VAL=$RC
 test02 || EXIT_VAL=$RC
 cleanup

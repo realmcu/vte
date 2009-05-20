@@ -1,13 +1,13 @@
 /*
     Copyright (c) 2003, Intel Corporation. All rights reserved.
     Created by:  majid.awad REMOVE-THIS AT intel DOT com
-    This file is licensed under the GPL license.  For the full content 
-    of this license, see the COPYING file at the top level of this 
+    This file is licensed under the GPL license.  For the full content
+    of this license, see the COPYING file at the top level of this
     source tree.
  */
 
 /*
- * Trying to unlink a semaphore which it doesn't exist.  It give an ERROR: 
+ * Trying to unlink a semaphore which it doesn't exist.  It give an ERROR:
  * ENOENT.
  */
 
@@ -29,16 +29,16 @@
 
 int main() {
 
-	char semname[20];
+ char semname[20];
 
-	sem_unlink(semname);
+ sem_unlink(semname);
 
-	if (errno == ENOENT) {
-		puts("TEST PASSED");
-		return PTS_PASS;
-	} else {
-		puts("TEST FAILED: semaphore does exist");
-		return PTS_FAIL;
-	}
+ if (errno  ENOENT) {
+  puts("TEST PASSED");
+  return PTS_PASS;
+ } else {
+  puts("TEST FAILED: semaphore does exist");
+  return PTS_FAIL;
+ }
 }
 

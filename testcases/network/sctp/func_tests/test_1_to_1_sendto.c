@@ -2,7 +2,7 @@
  * Copyright (c) 2003 Hewlett-Packard Development Company, L.P
  * (C) Copyright IBM Corp. 2004
  *
- * This file has test cases to test the sendto () call 
+ * This file has test cases to test the sendto () call
  * for 1-1 style sockets
  *
  * TEST1: Sending data from client socket to server socket
@@ -53,112 +53,112 @@
 #include <linux/socket.h>
 #include <sctputil.h>
 
-char *TCID = __FILE__;
-int TST_TOTAL = 4;
-int TST_CNT = 0;
+char *TCID  __FILE__;
+int TST_TOTAL  4;
+int TST_CNT  0;
 
 int
 main(int argc, char *argv[])
 {
         int msg_count;
-	socklen_t len;
-	int sk,sk1,pf_class,lstn_sk,acpt_sk,flag;
-        char *message = "hello, world!\n";
+ socklen_t len;
+ int sk,sk1,pf_class,lstn_sk,acpt_sk,flag;
+        char *message  "hello, world!\n";
         char *message_rcv;
         int count;
-	
+
         struct sockaddr_in conn_addr,lstn_addr,svr_addr;
 
-	/* Rather than fflush() throughout the code, set stdout to
+ /* Rather than fflush() throughout the code, set stdout to
          * be unbufferd
          */
         setvbuf(stdout, NULL, _IONBF, 0);
         setvbuf(stderr, NULL, _IONBF, 0);
 
-        pf_class = PF_INET;
+        pf_class  PF_INET;
 
-        sk = test_socket(pf_class, SOCK_STREAM, IPPROTO_SCTP);
+        sk  test_socket(pf_class, SOCK_STREAM, IPPROTO_SCTP);
 
-        lstn_sk = test_socket(pf_class, SOCK_STREAM, IPPROTO_SCTP);
+        lstn_sk  test_socket(pf_class, SOCK_STREAM, IPPROTO_SCTP);
 
-	message_rcv = malloc(512);
-	conn_addr.sin_family = AF_INET;
-        conn_addr.sin_addr.s_addr = SCTP_IP_LOOPBACK;
-        conn_addr.sin_port = htons(SCTP_TESTPORT_1);
+ message_rcv  malloc(512);
+ conn_addr.sin_family  AF_INET;
+        conn_addr.sin_addr.s_addr  SCTP_IP_LOOPBACK;
+        conn_addr.sin_port  htons(SCTP_TESTPORT_1);
 
-	lstn_addr.sin_family = AF_INET;
-        lstn_addr.sin_addr.s_addr = SCTP_IP_LOOPBACK;
-        lstn_addr.sin_port = htons(SCTP_TESTPORT_1);
+ lstn_addr.sin_family  AF_INET;
+        lstn_addr.sin_addr.s_addr  SCTP_IP_LOOPBACK;
+        lstn_addr.sin_port  htons(SCTP_TESTPORT_1);
 
-	/*Binding the listen socket*/
+ /*Binding the listen socket*/
         test_bind(lstn_sk, (struct sockaddr *) &lstn_addr, sizeof(lstn_addr));
 
         /*Listening the socket*/
         test_listen(lstn_sk, 10);
 
-	len = sizeof(struct sockaddr_in);
-	flag = MSG_NOSIGNAL;
-	
-	test_connect(sk, (struct sockaddr *) &conn_addr, len);
+ len  sizeof(struct sockaddr_in);
+ flag  MSG_NOSIGNAL;
 
-	acpt_sk = test_accept(lstn_sk, (struct sockaddr *)&svr_addr, &len);
+ test_connect(sk, (struct sockaddr *) &conn_addr, len);
 
-	msg_count = strlen(message) + 1;
+ acpt_sk  test_accept(lstn_sk, (struct sockaddr *)&svr_addr, &len);
 
-	/*sendto() TEST1: Sending data from client socket to server socket*/
-	count = sendto(sk, message, msg_count, flag,
-		       (const struct sockaddr *) &conn_addr, len);
-	if (count != msg_count)
-		tst_brkm(TBROK, tst_exit, "sendto from client to server "
+ msg_count  strlen(message) + 1;
+
+ /*sendto() TEST1: Sending data from client socket to server socket*/
+ count  sendto(sk, message, msg_count, flag,
+         (const struct sockaddr *) &conn_addr, len);
+ if (count ! msg_count)
+  tst_brkm(TBROK, tst_exit, "sendto from client to server "
                          "count:%d, errno:%d", count, errno);
 
-	tst_resm(TPASS, "sendto() from client to server - SUCCESS");
+ tst_resm(TPASS, "sendto() from client to server - SUCCESS");
 
-	test_recv(acpt_sk, message_rcv, msg_count, flag);
+ test_recv(acpt_sk, message_rcv, msg_count, flag);
 
-	strncpy(message_rcv,"\0",512);
+ strncpy(message_rcv,"\0",512);
 
-	/*sendto() TEST2: Sending data from accept socket to client socket*/
-	count = sendto(acpt_sk, message, msg_count, flag,
-		       (const struct sockaddr *) &svr_addr, len);
-	if (count != msg_count)
-		tst_brkm(TBROK, tst_exit, "sendto from accept socket to client "
+ /*sendto() TEST2: Sending data from accept socket to client socket*/
+ count  sendto(acpt_sk, message, msg_count, flag,
+         (const struct sockaddr *) &svr_addr, len);
+ if (count ! msg_count)
+  tst_brkm(TBROK, tst_exit, "sendto from accept socket to client "
                          "count:%d, errno:%d", count, errno);
 
-	tst_resm(TPASS, "sendto() from accept socket to client - SUCCESS");
+ tst_resm(TPASS, "sendto() from accept socket to client - SUCCESS");
 
-	test_recv(sk, message_rcv, msg_count, flag);
+ test_recv(sk, message_rcv, msg_count, flag);
 
         close(sk);
         close(acpt_sk);
 
-        sk1 = test_socket(pf_class, SOCK_STREAM, IPPROTO_SCTP);
+        sk1  test_socket(pf_class, SOCK_STREAM, IPPROTO_SCTP);
 
-	/*sendto() TEST3: Sending data from unconnected client socket to
+ /*sendto() TEST3: Sending data from unconnected client socket to
         server socket*/
-        count = sendto(sk1, message, msg_count, flag,
-		       (const struct sockaddr *) &conn_addr, len);
-        if (count != msg_count)
-		tst_brkm(TBROK, tst_exit, "sendto from unconnected client to "
-			 "server count:%d, errno:%d", count, errno);
+        count  sendto(sk1, message, msg_count, flag,
+         (const struct sockaddr *) &conn_addr, len);
+        if (count ! msg_count)
+  tst_brkm(TBROK, tst_exit, "sendto from unconnected client to "
+    "server count:%d, errno:%d", count, errno);
 
-	tst_resm(TPASS, "sendto() from unconnected client to server - SUCCESS");
+ tst_resm(TPASS, "sendto() from unconnected client to server - SUCCESS");
 
-        acpt_sk = test_accept(lstn_sk, (struct sockaddr *)&svr_addr, &len);
+        acpt_sk  test_accept(lstn_sk, (struct sockaddr *)&svr_addr, &len);
 
         test_recv(acpt_sk, message_rcv, msg_count, flag);
 
-	/*send() TEST4: Sending less number of data from the buffer*/
-	/*Sending only 5 bytes so that only hello is received*/
-	test_sendto(sk, message, 5 , flag, (const struct sockaddr *)&conn_addr,
-		    len);
-	test_recv(acpt_sk, message_rcv, 5, flag);
-	
-	tst_resm(TPASS, "sendto() partial data from a buffer - SUCCESS");
+ /*send() TEST4: Sending less number of data from the buffer*/
+ /*Sending only 5 bytes so that only hello is received*/
+ test_sendto(sk, message, 5 , flag, (const struct sockaddr *)&conn_addr,
+      len);
+ test_recv(acpt_sk, message_rcv, 5, flag);
 
-	close(sk1);
-	close(lstn_sk);
-	close(acpt_sk);
-	return 0;
-	
+ tst_resm(TPASS, "sendto() partial data from a buffer - SUCCESS");
+
+ close(sk1);
+ close(lstn_sk);
+ close(acpt_sk);
+ return 0;
+
 }

@@ -24,9 +24,9 @@
 
 while [ 1 ]
 do
-	NPtcp -sar >/dev/null 2>/dev/null &
-	NPtcp -sth localhost >/dev/null 2>/dev/null 
-	sleep 1
+ NPtcp -sar >/dev/null 2>/dev/null &
+ NPtcp -sth localhost >/dev/null 2>/dev/null
+ sleep 1
 done
 
 

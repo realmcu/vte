@@ -78,7 +78,7 @@ LOADLIBES=
 TARGET = rng_test_module.ko
 obj-m= rng_test_module.o
 
-all: 
+all:
 	echo $(CFLAGS)
 	@make -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
 	@rm -f *.mod.ko *.mod.c .*.cmd *.o

@@ -109,13 +109,13 @@ void interleaveSamples(AACPD_OutputFmtType *pTimeCh0, AACPD_OutputFmtType *pTime
 {
         int i;
         AACPD_OutputFmtType tmp;
-        
-        for (i=0; i<frameSize; i++)
+
+        for (i0; i<frameSize; i++)
         {
-                *pTimeOut++ = tmp = *pTimeCh0++;
-                
-                if(channels == 2)
-                        *pTimeOut++ = *pTimeCh1++;
+                *pTimeOut++  tmp  *pTimeCh0++;
+
+                if(channels  2)
+                        *pTimeOut++  *pTimeCh1++;
         }
 }
 #endif
@@ -167,69 +167,69 @@ AACD_open_output_files1(sPortIO * pPortIo, AACPD_Decoder_info *dec_info, MC_Info
                 j;
         char            file[PATH_LEN];
         char            *outpath;
-        
+
 #if defined(USELIB_AF) || defined(USE_AUDIOLIB)
-        outpath = dec_info->output_path;
+        outpath  dec_info->output_path;
 #else
-        outpath = ptr->out_ptr;
+        outpath  ptr->out_ptr;
 #endif
-        
-        outpath = pPortIo->outpath;
-        
+
+        outpath  pPortIo->outpath;
+
         /* following code is used for speaker configuration
         * used in wave format
         */
-        j = 0;
-        /* if FCenter == 1 (center speaker present)
+        j  0;
+        /* if FCenter  1 (center speaker present)
         *   position    index   extension
         * left        1       01
         * center      0       00
         * right       2       02
-        * if FCenter == 0 (center speaker absent)
+        * if FCenter  0 (center speaker absent)
         * position    index   extension
         * left        0       01
         * right       1       02
         */
         /* following line
-        * for (i = ((FCenter==1) ? 0 : 1); i < FChans; i++)
+        * for (i  ((FCenter1) ? 0 : 1); i < FChans; i++)
         * changed so that in output file gets suffixed by _f00
         * instead of _f01, This is done because total number of
         * channels have been changed to 2
         */
-        for (i = 0; i < FChans; i++)
+        for (i  0; i < FChans; i++)
         {
                 write_fext(&mip->ch_info[j], 'f', i, ptr);
                 j++;
         }
-        for (i = 0; i < SChans; i++)
+        for (i  0; i < SChans; i++)
         {
                 write_fext(&mip->ch_info[j], 's', i, ptr);
                 j++;
         }
-        /* if BFCenter == 1 (center speaker present) position    index
+        /* if BFCenter  1 (center speaker present) position    index
         * extension left       3       00 center       5       02 right 4 01
-        * if BCenter == 0 (center speaker absent) position index extension
+        * if BCenter  0 (center speaker absent) position index extension
         * left     3       00 right        4       01 */
-        for (i = 0; i < BChans; i++)
+        for (i  0; i < BChans; i++)
         {
                 write_fext(&mip->ch_info[j], 'b', i, ptr);
                 j++;
         }
-        for (i = 0; i < LChans; i++)
+        for (i  0; i < LChans; i++)
         {
                 write_fext(&mip->ch_info[j], 'l', i, ptr);
                 j++;
         }
 #if defined(USELIB_AF) || defined(USE_AUDIOLIB)
         /* open file */
-        if (outFileOpend != 1)
+        if (outFileOpend ! 1)
         {
                 strcpy (file, outpath);
 #ifdef USELIB_AF
 #ifdef OUTPUT_24BITS
-                file_AF = AFopenWrite(file, (256*2)+6, 2 /*dec_info->aacpd_num_channels*/, dec_info->aacpd_sampling_frequency, msgout);
+                file_AF  AFopenWrite(file, (256*2)+6, 2 /*dec_info->aacpd_num_channels*/, dec_info->aacpd_sampling_frequency, msgout);
 #else
-                file_AF = AFopenWrite(file, (256*2)+5, 2 /*dec_info->aacpd_num_channels*/, dec_info->aacpd_sampling_frequency, msgout);
+                file_AF  AFopenWrite(file, (256*2)+5, 2 /*dec_info->aacpd_num_channels*/, dec_info->aacpd_sampling_frequency, msgout);
 #endif
                 if(!file_AF)
                 {
@@ -238,19 +238,19 @@ AACD_open_output_files1(sPortIO * pPortIo, AACPD_Decoder_info *dec_info, MC_Info
                 }
                 else
                 {
-                        outFileOpend = 1;
+                        outFileOpend  1;
                 }
 #else
-                outType = TYPE_AUTODETECT;
-                outInfo.fpScaleFactor = 1.0f;
-                outInfo.sampleRate = dec_info->aacpd_sampling_frequency;
-                outInfo.nChannels = 2;
-                outInfo.valid = 1;
-                outInfo.bitsPerSample = 16;
-                outInfo.nSamples = 0;
-                outInfo.isLittleEndian = 1;
-                
-                err =  AuChannelOpen(&audioOutChannel,
+                outType  TYPE_AUTODETECT;
+                outInfo.fpScaleFactor  1.0f;
+                outInfo.sampleRate  dec_info->aacpd_sampling_frequency;
+                outInfo.nChannels  2;
+                outInfo.valid  1;
+                outInfo.bitsPerSample  16;
+                outInfo.nSamples  0;
+                outInfo.isLittleEndian  1;
+
+                err   AuChannelOpen(&audioOutChannel,
                         file,
                         AU_CHAN_WRITE,
                         &outType,
@@ -259,21 +259,21 @@ AACD_open_output_files1(sPortIO * pPortIo, AACPD_Decoder_info *dec_info, MC_Info
                 {
                         fprintf( stderr, "\n AuChannelOpen(AU_CHAN_WRITE) failed\n");
                 }
-                if (err == AU_CHAN_OPEN_FAILED)
+                if (err  AU_CHAN_OPEN_FAILED)
                 {
                         return (-1);
                 }
                 else
                 {
-                        outFileOpend = 1;
+                        outFileOpend  1;
                 }
 #endif
         }
 #else /* either PCM or HEX */
-        for (i = 0; i < Chans; i++)
+        for (i  0; i < Chans; i++)
         {
                 if (!(mip->ch_info[i].present)
-                        || (mip->ch_info[i].file_opened == 1))
+                        || (mip->ch_info[i].file_opened  1))
                 {
                         continue;
                 }
@@ -281,26 +281,26 @@ AACD_open_output_files1(sPortIO * pPortIo, AACPD_Decoder_info *dec_info, MC_Info
                 strcat(file, mip->ch_info[i].fext);
 #if defined(DUMP_CODE_REF)
                 strcat(file, ".pcm");
-                outfd[i] = creat(file, 0666);
+                outfd[i]  creat(file, 0666);
                 if (outfd[i] < 0)
                 {
                         return(-1);
                 }
                 else
                 {
-                        mip->ch_info[i].file_opened = 1;
+                        mip->ch_info[i].file_opened  1;
                 }
 #else
                 strcat(file, ".hex");
                 /* open file for hex data */
-                outfd[i] = fopen(file, "w");
-                if (outfd[i] == NULL)
+                outfd[i]  fopen(file, "w");
+                if (outfd[i]  NULL)
                 {
                         return(-1);
                 }
                 else
                 {
-                        mip->ch_info[i].file_opened = 1;
+                        mip->ch_info[i].file_opened  1;
                 }
 #endif
         }
@@ -315,36 +315,36 @@ int PS_open_output_file1(sPortIO * pPortIo, AACD_global_struct *ptr)
         char file[PATH_LEN];
         short data;
         close(outfd[0]);
-        outpath = ptr->out_ptr;
-        
+        outpath  ptr->out_ptr;
+
         strcpy (file, outpath);
         strcat(file, "_f01");
         strcat(file, ".pcm");
-        outfd[1] = creat(file, 0666);
+        outfd[1]  creat(file, 0666);
         if (outfd[1] < 0)
         {
                 return(-1);
         }
         /* copy the content of first file in second file */
-        
+
         strcpy (file, outpath);
         strcat(file, "_f00");
         strcat(file, ".pcm");
-        fp1 = fopen(file, "rb");
-        if (fp1 == NULL)
+        fp1  fopen(file, "rb");
+        if (fp1  NULL)
         {
                 return(-1);
         }
         while(!feof(fp1))
         {
-                if(fread(&data, sizeof(short), 1, fp1) == 1)
+                if(fread(&data, sizeof(short), 1, fp1)  1)
                 {
                         write(outfd[1], &data, 2);
                 }
         };
         fclose(fp1);
-        
-        outfd[0] = open(file, O_WRONLY|O_APPEND);
+
+        outfd[0]  open(file, O_WRONLY|O_APPEND);
         if (outfd[0] < 0)
         {
                 return(-1);
@@ -379,31 +379,31 @@ int AACD_writeout1(sPortIO * pPortIo, AACPD_Decoder_info *dec_info,
         int             i;
         int             size;
         int                num_chans;
-        
+
 #if defined(USE_AUDIOLIB) || defined(USELIB_AF)
         int             j;
         int localVar[Chans];
-#endif     
+#endif
 #ifdef USELIB_AF
         AACPD_OutputFmtType pcmData;
         short int  nNumWrite;
         float fl[1];
 #endif
-        if (AACD_open_output_files1(pPortIo, dec_info, mip, ptr)!=0)
+        if (AACD_open_output_files1(pPortIo, dec_info, mip, ptr)!0)
                 return(-1);
-        
-        num_chans = Chans;
-        
-        if (*ShouldClose == 1)
+
+        num_chans  Chans;
+
+        if (*ShouldClose  1)
         {
 #ifdef USE_AUDIOLIB
                 AuChannelClose(audioOutChannel);
 #elif defined(USELIB_AF)
                 AFclose(file_AF);
 #else
-                if (PS_file_opened != 1)
+                if (PS_file_opened ! 1)
                 {
-                        for (i=0; i < num_chans; i++)
+                        for (i0; i < num_chans; i++)
                         {
                                 if (mip->ch_info[i].present)
                                 {
@@ -421,15 +421,15 @@ int AACD_writeout1(sPortIO * pPortIo, AACPD_Decoder_info *dec_info,
                         close (outfd[1]);
                 }
 #endif
-                *ShouldClose = 0;
+                *ShouldClose  0;
                 return(0);
         }
 #if defined(USE_AUDIOLIB) || defined(USELIB_AF)
-        if (dec_info->aacpd_num_channels == 1)
+        if (dec_info->aacpd_num_channels  1)
         {
                 interleaveSamples(&data[0][0], &data[0][0], aTimeDataPcm, dec_info->aacpd_len, 2);
         }
-        else if(dec_info->aacpd_len != AACP_FRAME_SIZE)
+        else if(dec_info->aacpd_len ! AACP_FRAME_SIZE)
         {
         /* this is possible for AAC LC test vectors
         * This check is done so that parametric stereo
@@ -438,8 +438,8 @@ int AACD_writeout1(sPortIO * pPortIo, AACPD_Decoder_info *dec_info,
         * data[0] and data[1] whereas in PS it will be in
         * data[0] and data[1]
                 */
-                j = 0;
-                for (i=0; i < num_chans; i++)
+                j  0;
+                for (i0; i < num_chans; i++)
                 {
                         if (!(mip->ch_info[i].present))
                         {
@@ -447,7 +447,7 @@ int AACD_writeout1(sPortIO * pPortIo, AACPD_Decoder_info *dec_info,
                         }
                         else
                         {
-                                localVar[j] = i;
+                                localVar[j]  i;
                                 j++;
                         }
                 }
@@ -459,29 +459,29 @@ int AACD_writeout1(sPortIO * pPortIo, AACPD_Decoder_info *dec_info,
                 interleaveSamples(&data[0][0], &data[1][0], aTimeDataPcm, dec_info->aacpd_len, 2);
         }
 #ifdef USE_AUDIOLIB
-        err = AuChannelWriteShort(audioOutChannel,&aTimeDataPcm[0],(2*dec_info->aacpd_len),&writeS);
+        err  AuChannelWriteShort(audioOutChannel,&aTimeDataPcm[0],(2*dec_info->aacpd_len),&writeS);
 #else
-        for(nNumWrite = 0; nNumWrite < 2*dec_info->aacpd_len; nNumWrite++)
+        for(nNumWrite  0; nNumWrite < 2*dec_info->aacpd_len; nNumWrite++)
         {
-                pcmData = aTimeDataPcm[nNumWrite];
+                pcmData  aTimeDataPcm[nNumWrite];
 #ifdef OUTPUT_24BITS
-                fl[0] = (float)pcmData/256.;
+                fl[0]  (float)pcmData/256.;
 #else
-                fl[0] = (float)pcmData;
+                fl[0]  (float)pcmData;
 #endif
                 AFfWriteData(file_AF,fl,1);
         }
 #endif
 #elif defined(DUMP_CODE_REF) /* PCM */
-        if ((dec_info->sbrd_ps_present != 1) && (PS_file_opened != 1)) 
+        if ((dec_info->sbrd_ps_present ! 1) && (PS_file_opened ! 1))
         {
                 /* this is true for SBR as well as AAC LC decoder */
-                size = dec_info->aacpd_len * sizeof(short);
-                for (i = 0; i < num_chans; i++)
+                size  dec_info->aacpd_len * sizeof(short);
+                for (i  0; i < num_chans; i++)
                 {
                         if (!(mip->ch_info[i].present))
                                 continue;
-                        if (write(outfd[i], &data[i][0], size) != size)
+                        if (write(outfd[i], &data[i][0], size) ! size)
                         {
                                 return(-1);
                         }
@@ -490,23 +490,23 @@ int AACD_writeout1(sPortIO * pPortIo, AACPD_Decoder_info *dec_info,
         else
         {
                 /* parametric stereo detected */
-                if (PS_file_opened == 0)
+                if (PS_file_opened  0)
                 {
                 /* open one more file to write right channel data and
                 * copy collected left channel data to this file
                 * this is done so that file sizes are same
                         */
-                        if(PS_open_output_file1(pPortIo,ptr) != 0)
+                        if(PS_open_output_file1(pPortIo,ptr) ! 0)
                         {
                                 return -1;
                         }
                         else
                         {
-                                PS_file_opened = 1;
-                                size = dec_info->aacpd_len * sizeof(short);
-                                for (i = 0; i < 2; i++)
+                                PS_file_opened  1;
+                                size  dec_info->aacpd_len * sizeof(short);
+                                for (i  0; i < 2; i++)
                                 {
-                                        if (write(outfd[i], &data[i][0], size) != size)
+                                        if (write(outfd[i], &data[i][0], size) ! size)
                                         {
                                                 return(-1);
                                         }
@@ -515,10 +515,10 @@ int AACD_writeout1(sPortIO * pPortIo, AACPD_Decoder_info *dec_info,
                 }
                 else
                 {
-                        size = dec_info->aacpd_len * sizeof(short);
-                        for (i = 0; i < 2; i++)
+                        size  dec_info->aacpd_len * sizeof(short);
+                        for (i  0; i < 2; i++)
                         {
-                                if (write(outfd[i], &data[i][0], size) != size)
+                                if (write(outfd[i], &data[i][0], size) ! size)
                                 {
                                         return(-1);
                                 }
@@ -526,13 +526,13 @@ int AACD_writeout1(sPortIO * pPortIo, AACPD_Decoder_info *dec_info,
                 }
         }
 #else /* hex o/p */
-        size = dec_info->aacpd_len * sizeof(short);
-        for (i = 0; i < num_chans; i++)
+        size  dec_info->aacpd_len * sizeof(short);
+        for (i  0; i < num_chans; i++)
         {
                 int j;
                 if (!(mip->ch_info[i].present))
                         continue;
-                for (j = 0; j < size/2; j++)
+                for (j  0; j < size/2; j++)
                 {
                         fprintf(outfd[i], "%08x\n", (AACPD_OutputFmtType)data[i][j]);
                 }

@@ -21,13 +21,13 @@
 # File:        runalltests.sh
 #
 # Description:  This script just calls runltp now, and is being phased out.
-#		If you rely on this script for automation reasons, please
-#		change your scripts soon
+#  If you rely on this script for automation reasons, please
+#  change your scripts soon
 temp_str=`pwd`
 echo "current dir is $temp_str"
 
- 
-# script for preparation 
+
+# script for preparation
 # 20080711 by b08445
 # remove@spring, signed@victor, replaced by auto_prepare.sh
 #./testscripts/common/insmod.sh
@@ -55,8 +55,8 @@ cd $temp_str
 #echo -e "\033[0m"
 for i in 1 2
 do
-#	echo -en "\a"
-	sleep 1
+# echo -en "\a"
+ sleep 1
 done
 
 ./runltp $*

@@ -1,8 +1,8 @@
-/*   
+/*
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  julie.n.fleischer REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
  * Test that a timer is in the disarmed state when it is first created.
@@ -26,39 +26,39 @@
 
 void handler(int signo)
 {
-	printf("Caught signal\n");
+ printf("Caught signal\n");
 }
 
 int main(int argc, char *argv[])
 {
-	struct sigevent ev;
-	struct sigaction act;
-	timer_t tid;
-	struct timespec ts;
-	
-	act.sa_handler=handler;
-	act.sa_flags=0;
-	sigemptyset(&act.sa_mask);
-	if (sigaction(SIGTOTEST, &act, 0) == -1) {
-		perror("Error calling sigaction\n");
-		return PTS_UNRESOLVED;
-	}
+ struct sigevent ev;
+ struct sigaction act;
+ timer_t tid;
+ struct timespec ts;
 
-	ev.sigev_notify = SIGEV_SIGNAL;
-	ev.sigev_signo = SIGTOTEST;
-	if (timer_create(CLOCK_REALTIME, &ev, &tid) != 0) {
-		perror("timer_create() did not return success\n");
-		return PTS_FAIL;
-	}
+ act.sa_handler=handler;
+ act.sa_flags=0;
+ sigemptyset(&act.sa_mask);
+ if (sigaction(SIGTOTEST, &act, 0) == -1) {
+  perror("Error calling sigaction\n");
+  return PTS_UNRESOLVED;
+ }
 
-	ts.tv_sec=SLEEPTIME;
-	ts.tv_nsec=0;
-	if (nanosleep(&ts, NULL) == -1) {
-		perror("nanosleep() interrupted\n");
-		return PTS_FAIL;
-	}
+ ev.sigev_notify = SIGEV_SIGNAL;
+ ev.sigev_signo = SIGTOTEST;
+ if (timer_create(CLOCK_REALTIME, &ev, &tid) != 0) {
+  perror("timer_create() did not return success\n");
+  return PTS_FAIL;
+ }
 
-	//Sleep not interrupted
-	printf("Test PASSED\n");
-	return PTS_PASS;
+ ts.tv_sec=SLEEPTIME;
+ ts.tv_nsec=0;
+ if (nanosleep(&ts, NULL) == -1) {
+  perror("nanosleep() interrupted\n");
+  return PTS_FAIL;
+ }
+
+ //Sleep not interrupted
+ printf("Test PASSED\n");
+ return PTS_PASS;
 }

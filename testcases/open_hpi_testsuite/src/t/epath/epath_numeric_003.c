@@ -22,20 +22,20 @@
 #include <epath_utils.h>
 
 int main (int argc, char **argv) {
-	SaHpiEntityPathT  ep;
-	gchar *test_string, *expected_string;
-	const int MAX_STRING_SIZE = 512;
-	gchar returned_string[MAX_STRING_SIZE];
-	int   err;
+ SaHpiEntityPathT  ep;
+ gchar *test_string, *expected_string;
+ const int MAX_STRING_SIZE  512;
+ gchar returned_string[MAX_STRING_SIZE];
+ int   err;
 
-        test_string = "{217,11}";
-        expected_string = "{217,11}";
+        test_string  "{217,11}";
+        expected_string  "{217,11}";
 
-	err = string2entitypath(test_string, &ep);
-	if (err)
-		return 1;
+ err  string2entitypath(test_string, &ep);
+ if (err)
+  return 1;
 
-        err = entitypath2string(&ep, returned_string, MAX_STRING_SIZE);
+        err  entitypath2string(&ep, returned_string, MAX_STRING_SIZE);
         if (err < 0)
                 return 1;
 

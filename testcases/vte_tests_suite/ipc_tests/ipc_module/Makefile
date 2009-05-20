@@ -19,7 +19,7 @@
 #A.Ozerov/b00320              26/04/2006     TLSbo61791  Initial version
 #
 ####################################################################################################
-CFLAGS += -Wall 
+CFLAGS += -Wall
 
 SRCS = $(wildcard *.c)
 OBJS = $(patsubst %.c,%.o,$(SRCS))

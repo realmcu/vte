@@ -58,7 +58,7 @@ typedef signed char s8;
 #define PS_SAVE_SIZE		0x028000
 #define SLICE_SAVE_SIZE		0x02D800
 
-#define STREAM_ENC_PIC_RESET 	1
+#define STREAM_ENC_PIC_RESET 1
 
 #define PATH_V4L2	0
 #define PATH_FILE	1

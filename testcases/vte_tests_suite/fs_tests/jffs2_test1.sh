@@ -18,22 +18,22 @@
 #                          Modification     Tracking
 # Author                       Date          Number    Description of Changes
 #-----------------------   ------------    ----------  ---------------------
-# Spring Zhang               28/05/2008       n/a        Initial ver. 
+# Spring Zhang               28/05/2008       n/a        Initial ver.
 # Spring                     28/11/2008       n/a      Modify COPYRIGHT header
 #############################################################################
-# Portability:  ARM sh bash 
+# Portability:  ARM sh bash
 #
 # File Name:    jffs2_test1.sh
 # Total Tests:        1
 # Test Strategy: basic file operation such as copy, remove.
-# 
-# Input:	- $1 - device type
-#		    - $2 - device name
-#		    - $3 - mount point(dir)
 #
-# Return:       - 
+# Input: - $1 - device type
+#      - $2 - device name
+#      - $3 - mount point(dir)
 #
-# Use command "./basic_file_ops.sh [device type] [device name] [mount point]" 
+# Return:       -
+#
+# Use command "./basic_file_ops.sh [device type] [device name] [mount point]"
 #               to test jffs2, yaffs, jffs3 file system
 
 
@@ -118,7 +118,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup() 
+cleanup()
 {
     echo "clean up environment..."
     umount $mount_dir && sleep 1
@@ -189,7 +189,7 @@ file_ops()
 # Return        - none
 usage()
 {
-    cat <<-EOF 
+    cat <<-EOF
 
     Use this command to test jffs2/3, yaffs, nfs file system basic functions.
     usage: ./${0##*/} [device type] [device name] [mount point]

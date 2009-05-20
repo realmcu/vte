@@ -17,9 +17,9 @@
 
 int main()
 {
-	printf("Will not test mq_open() failing with EINVAL if mq_open()\n");
-	printf("is not supported for the name parameter as\n");
-	printf("unsupported names are implementation defined.\n");
-	return PTS_UNTESTED;
+ printf("Will not test mq_open() failing with EINVAL if mq_open()\n");
+ printf("is not supported for the name parameter as\n");
+ printf("unsupported names are implementation defined.\n");
+ return PTS_UNTESTED;
 }
 

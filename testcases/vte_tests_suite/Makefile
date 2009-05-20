@@ -17,8 +17,8 @@
 #Author/core ID                  Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Francois GAFFIE/RB657C       03/05/2004     TLSbo39140  add SHARP LCD test application
-#Tony THOMASSIN/RB595C        18/05/2004     TLSbo39490  SPI test development 
-#Ludovic DELASPRE/RC149C      28/05/2004     TLSbo39713  VTE 1.2 integration 
+#Tony THOMASSIN/RB595C        18/05/2004     TLSbo39490  SPI test development
+#Ludovic DELASPRE/RC149C      28/05/2004     TLSbo39713  VTE 1.2 integration
 #Dmitriy Kazachkov/E1403C     16/06/2004     TLSbo39741  emi_tests fs_tests io_tests pm_tests rm_tests
 #Ludovic DELASPRE/RC149C      29/06/2004     TLSbo39941  VTE 1.3 integration
 #François GAFFIE/RB657C       20/07/2004     TLSbo40898  OSS sound driver test development
@@ -48,7 +48,7 @@
 #D.Khoroshev/b00313           07/22/2007     engr42278   Added imx32ads and mxc30031ads
 #Z.Spring                           11/24/2008      n/a             Add GPS module test cases
 #Z.Spring                           11/27/2008      ENGR100588  Reconstruct Wifi test cases
-#                                                        platforms    
+#                                                        platforms
 ###############################################################################
 #Portability: ARM GCC
 #
@@ -58,11 +58,11 @@
 #add tools(platfm.sh), 2009.1.15, by Spring
 SUBDIRS += tools
 
-ifneq ($(ARCH_PLATFORM), $(filter imx27ads stmp3780 imx27evb imx32ads, $(ARCH_PLATFORM)))
+ifneq ($(ARCH_PLATFORM), $(filter imx27ads mx233 imx27evb imx32ads, $(ARCH_PLATFORM)))
 SUBDIRS += v4l_and_ipu_tests
 endif
 
-ifneq ($(ARCH_PLATFORM), $(filter imx27ads stmp3780 imx27evb imx32ads, $(ARCH_PLATFORM)))
+ifneq ($(ARCH_PLATFORM), $(filter imx27ads imx233 imx27evb imx32ads, $(ARCH_PLATFORM)))
 SUBDIRS += sdma_tests
 endif
 
@@ -115,6 +115,11 @@ SUBDIRS += owire
 SUBDIRS += systest
 SUBDIRS += ata_tests
 
+
+ifeq ($(ARCH_PLATFORM), $(filter imx25stack, $(ARCH_PLATFORM)))
+SUBDIRS += can_tests
+endif
+
 ifeq ($(ARCH_PLATFORM), $(filter imx35stack, $(ARCH_PLATFORM)))
 SUBDIRS += asrc_tests
 SUBDIRS += cdrom_tests
@@ -144,6 +149,10 @@ endif
 ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx51stack, $(ARCH_PLATFORM)))
 SUBDIRS += camera_test
 endif
+
+ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx51stack, $(ARCH_PLATFORM)))
+SUBDIRS += gpu_test
+endif
 SUBDIRS += emi_tests
 SUBDIRS += network_tests
 #tina changed SUBDIRS += dpm_tests
@@ -166,8 +175,8 @@ endif
 #SUBDIRS += v4l_and_emma_tests
 #endif
 
-#added by Spring, 2008.7.25, 
-#add GPS, 2008.11.24, add BT, 2008.11.26, add WIFI, 2008.11.27, 
+#added by Spring, 2008.7.25,
+#add GPS, 2008.11.24, add BT, 2008.11.26, add WIFI, 2008.11.27,
 #add FM, 2008.12.11
 SUBDIRS += alsa_tests
 SUBDIRS += fs_tests
@@ -182,7 +191,7 @@ ifeq ($(ARCH_PLATFORM), $(filter imx31stack, $(ARCH_PLATFORM)))
 SUBDIRS += libata_tests
 endif
 
-#added by Blake 
+#added by Blake
 ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx37stack, $(ARCH_PLATFORM)))
 SUBDIRS += dptc_tests
 endif

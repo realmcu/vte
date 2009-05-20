@@ -10,13 +10,13 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-     
+
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-D.Simakov / smkd001c        12/10/2004      TLSbo43522  Initial version 
+D.Simakov / smkd001c        12/10/2004      TLSbo43522  Initial version
 D.Simakov / smkd001c        04/04/2005      TLSbo47116  The endurence and load testcases are added.
 
 ==================================================================================================*/
@@ -31,9 +31,9 @@ extern "C"{
 /*==================================================================================================
                                          INCLUDE FILES
 ==================================================================================================*/
-#include <sys/types.h>  	// fork usage for reentrance test
-#include <unistd.h> 		// fork usage for reentrance test
-#include <pthread.h> 		// fork usage for reentrance test
+#include <sys/types.h>  // fork usage for reentrance test
+#include <unistd.h> // fork usage for reentrance test
+#include <pthread.h> // fork usage for reentrance test
 #include <sys/time.h>		// timer usage for preemptivity
 #include <math.h>               // for sqrt in hogcpu
 
@@ -41,7 +41,7 @@ extern "C"{
 #include <fcntl.h>
 
 #include <sys/mman.h>
-	       
+
 
 #include <g726_dec_api.h>  // G.726 decoder
 
@@ -57,7 +57,7 @@ extern "C"{
 #endif
 #if !defined(FALSE)
     #define FALSE 0
-#endif        
+#endif
 
 /*==================================================================================================
                                        DEFINES AND MACROS
@@ -68,13 +68,13 @@ extern "C"{
                                              ENUMS
 ==================================================================================================*/
 /** Different test cases in the single application */
-typedef enum 
+typedef enum
 {
     NOMINAL_FUNCTIONALITY = 0,  /**< Nominal encoding/decoding */
     RE_ENTRANCE,		        /**< Re-entrance */
     RE_LOCATABILITY,            /**< Re-locatability */
     ENDURANCE,
-    LOAD    
+    LOAD
 } g726_decoder_testcase_t;
 
 

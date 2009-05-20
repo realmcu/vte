@@ -1,4 +1,4 @@
-/*================================================================================================*/
+/*====================*/
 /**
     @file   mxcfb_main.c
 
@@ -55,7 +55,7 @@ void setup(void);
 int main(int argc, char **argv);
 
 
-/*===== cleanup =====*/
+/*= cleanup =*/
 /**
 @brief  Performs all one time clean up for this test on successful
         completion,  premature exit or  failure. Closes all temporary
@@ -81,7 +81,7 @@ void cleanup(void)
         tst_exit();
 }
 
-/*===== setup =====*/
+/*= setup =*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -107,7 +107,7 @@ void setup(void)
 }
 
 
-/*===== main =====*/
+/*= main =*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -147,7 +147,7 @@ int main(int argc, char **argv)
         return VT_rv;
 }
 
-/*===== help =====*/
+/*= help =*/
 /**
 @brief  Displays the program usage
 

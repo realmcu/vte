@@ -7,7 +7,7 @@
 CFLAGS := -Wall -I../../../include -O2
 LDFLAGS := -lpthread -lrt
 
-TARGETS := 1-1 1-2 
+TARGETS := 1-1 1-2
 
 all: $(TARGETS)
 

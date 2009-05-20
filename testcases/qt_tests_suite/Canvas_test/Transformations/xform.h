@@ -38,7 +38,7 @@ Portability: Indicate if this module is portable to other compilers or platforms
 #include <qslider.h>
 #include <qmenubar.h>
 #include <qfontdialog.h>
-#include <qlayout.h> 
+#include <qlayout.h>
 #include <qvbox.h>
 #include <qwidgetstack.h>
 

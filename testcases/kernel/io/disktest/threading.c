@@ -122,18 +122,18 @@
  */
 void cleanUpTestChildren(test_ll_t *test)
 {
-	thread_struct_t *pTmpThread = NULL, *pTmpThreadLast = NULL;
- 
-	while(test->env->pThreads) {
-		pTmpThread = test->env->pThreads->next;
-		pTmpThreadLast = test->env->pThreads;
+ thread_struct_t *pTmpThread  NULL, *pTmpThreadLast  NULL;
 
-		closeThread(pTmpThreadLast->hThread);
+ while(test->env->pThreads) {
+  pTmpThread  test->env->pThreads->next;
+  pTmpThreadLast  test->env->pThreads;
 
-		test->env->pThreads = pTmpThread;
-		FREE(pTmpThreadLast);
-		test->env->kids--;
-	}
+  closeThread(pTmpThreadLast->hThread);
+
+  test->env->pThreads  pTmpThread;
+  FREE(pTmpThreadLast);
+  test->env->kids--;
+ }
 }
 
 /*
@@ -143,82 +143,82 @@ void cleanUpTestChildren(test_ll_t *test)
  */
 void CreateTestChild(void *function, test_ll_t *test)
 {
-	thread_struct_t *pNewThread;
-	hThread_t hTmpThread;
+ thread_struct_t *pNewThread;
+ hThread_t hTmpThread;
 
-	hTmpThread = spawnThread(function, test);
+ hTmpThread  spawnThread(function, test);
 
-	if(ISTHREADVALID(hTmpThread)) {
-		if((pNewThread = (thread_struct_t *) ALLOC(sizeof(thread_struct_t))) == NULL) {
-			pMsg(ERR, test->args, "%d : Could not allocate memory for child thread...\n", GETLASTERROR());
-			exit(GETLASTERROR());
-		}
-		test->env->kids++;
-		memset(pNewThread, 0, sizeof(thread_struct_t));
-		pNewThread->next = test->env->pThreads;
-		test->env->pThreads = pNewThread;
-		test->env->pThreads->hThread = hTmpThread;
-	} else {
-		pMsg(ERR, test->args, "%d : Could not create all child threads.\n", GETLASTERROR());
-		pMsg(INFO, test->args, "Total Number of Threads created was %u\n", test->env->kids);
-		exit(GETLASTERROR());
-	}
+ if(ISTHREADVALID(hTmpThread)) {
+  if((pNewThread  (thread_struct_t *) ALLOC(sizeof(thread_struct_t)))  NULL) {
+   pMsg(ERR, test->args, "%d : Could not allocate memory for child thread...\n", GETLASTERROR());
+   exit(GETLASTERROR());
+  }
+  test->env->kids++;
+  memset(pNewThread, 0, sizeof(thread_struct_t));
+  pNewThread->next  test->env->pThreads;
+  test->env->pThreads  pNewThread;
+  test->env->pThreads->hThread  hTmpThread;
+ } else {
+  pMsg(ERR, test->args, "%d : Could not create all child threads.\n", GETLASTERROR());
+  pMsg(INFO, test->args, "Total Number of Threads created was %u\n", test->env->kids);
+  exit(GETLASTERROR());
+ }
 }
 
 void createChild(void *function, test_ll_t *test) {
-	hThread_t hTmpThread;
+ hThread_t hTmpThread;
 
-	hTmpThread = spawnThread(function, test);
+ hTmpThread  spawnThread(function, test);
 
-	if(ISTHREADVALID(hTmpThread)) {
-		test->hThread = hTmpThread;
-	} else {
-		pMsg(ERR, test->args, "%d : Could not create child thread...\n", GETLASTERROR());
-		exit(GETLASTERROR());
-	}
+ if(ISTHREADVALID(hTmpThread)) {
+  test->hThread  hTmpThread;
+ } else {
+  pMsg(ERR, test->args, "%d : Could not create child thread...\n", GETLASTERROR());
+  exit(GETLASTERROR());
+ }
 }
 
 void cleanUp(test_ll_t *test) {
-	test_ll_t *pTmpTest = test;
-	test_ll_t *pLastTest;
-	while (pTmpTest != NULL) {
-		pLastTest = pTmpTest;
-		pTmpTest = pTmpTest->next;
-		closeThread(pLastTest->hThread);
-		FREE(pLastTest->env->action_list);
-		FREE(pLastTest->args);
-		FREE(pLastTest->env);
-		FREE(pLastTest);
-	}
+ test_ll_t *pTmpTest  test;
+ test_ll_t *pLastTest;
+ while (pTmpTest ! NULL) {
+  pLastTest  pTmpTest;
+  pTmpTest  pTmpTest->next;
+  closeThread(pLastTest->hThread);
+  FREE(pLastTest->env->action_list);
+  FREE(pLastTest->args);
+  FREE(pLastTest->env);
+  FREE(pLastTest);
+ }
 }
 
 hThread_t spawnThread(void *function, void *param) {
-	hThread_t hTmpThread;
+ hThread_t hTmpThread;
 
 #ifdef WINDOWS
-	hTmpThread = CreateThread(NULL, 0, function, param, 0, NULL);
+ hTmpThread  CreateThread(NULL, 0, function, param, 0, NULL);
 #else
-	if(pthread_create(&hTmpThread, NULL, function, param) != 0) {
-		hTmpThread = 0;
-	}
+ if(pthread_create(&hTmpThread, NULL, function, param) ! 0) {
+  hTmpThread  0;
+ }
 #endif
-	
-	return hTmpThread;
+
+ return hTmpThread;
 }
 
 void closeThread(hThread_t hThread) {
 #ifdef WINDOWS
-	DWORD dwExitCode = 0;
+ DWORD dwExitCode  0;
 
-	do {
-		GetExitCodeThread(hThread, &dwExitCode);
-		/*
-		 * Sleep(0) will force this thread to
-		 * relinquish the remainder of its time slice
-		 */
-		if(dwExitCode == STILL_ACTIVE) Sleep(0);
-	} while(dwExitCode == STILL_ACTIVE);
+ do {
+  GetExitCodeThread(hThread, &dwExitCode);
+  /*
+   * Sleep(0) will force this thread to
+   * relinquish the remainder of its time slice
+   */
+  if(dwExitCode  STILL_ACTIVE) Sleep(0);
+ } while(dwExitCode  STILL_ACTIVE);
 #else
-	pthread_join(hThread, NULL);
+ pthread_join(hThread, NULL);
 #endif
 }

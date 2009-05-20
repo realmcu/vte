@@ -5,7 +5,7 @@
  * Copyright (c) 2001 Intel Corp.
  * Copyright (c) 2001 Nokia, Inc.
  * Copyright (c) 2001 La Monte H.P. Yarroll
- * 
+ *
  * The SCTP reference implementation is free software;
  * you can redistribute it and/or modify it under the terms of
  * the GNU General Public License as published by
@@ -56,9 +56,9 @@
 #include <string.h>
 
 typedef union {
-	struct sockaddr_in v4;	
+	struct sockaddr_in v4;
 	struct sockaddr_in6 v6;
-	struct sockaddr sa;	
+	struct sockaddr sa;
 } sockaddr_storage_t;
 
 
@@ -68,11 +68,11 @@ typedef union {
 #ifdef PROT_SOCK
 #define SCTP_TESTPORT_1 PROT_SOCK
 #else
-#define SCTP_TESTPORT_1 1024 
+#define SCTP_TESTPORT_1 1024
 #endif
 #define SCTP_TESTPORT_2 (SCTP_TESTPORT_1+1)
 
-#define SCTP_IP_BCAST  	htonl(0xffffffff)
+#define SCTP_IP_BCAST  htonl(0xffffffff)
 #define SCTP_IP_LOOPBACK  htonl(0x7f000001)
 
 /* These are stolen from <netinet/in.h>.  */
@@ -97,7 +97,7 @@ typedef union {
         ntohs((addr).s6_addr16[6]), \
         ntohs((addr).s6_addr16[7])
 
-#define DUMP_CORE { 					 \
+#define DUMP_CORE { 			 \
 	char *diediedie = 0;				 \
 	printf("DUMP_CORE %s: %d\n", __FILE__, __LINE__);\
 	*diediedie = 0;					 \
@@ -274,22 +274,22 @@ static inline int test_sctp_sendmsg(int s, const void *msg, size_t len,
 				    uint32_t context)
 {
 	int error = sctp_sendmsg(s, msg, len, to, tolen, ppid, flags, stream_no,
-	  		         timetolive, context);
+	           timetolive, context);
 	if (len != error)
 		tst_brkm(TBROK, tst_exit, "sctp_sendmsg: error:%d errno:%d",
 			 error, errno);
-	return error;			
+	return error;
 }
 
 static inline int test_sctp_send(int s, const void *msg, size_t len,
-				 const struct sctp_sndrcvinfo *sinfo, 
+				 const struct sctp_sndrcvinfo *sinfo,
 				 int flags)
 {
 	int error = sctp_send(s, msg, len, sinfo, flags);
 	if (len != error)
 		tst_brkm(TBROK, tst_exit, "sctp_send: error:%d errno:%d",
 			 error, errno);
-	return error;			
+	return error;
 }
 
 static inline int test_sctp_recvmsg(int sk, void *msg, size_t len,
@@ -300,7 +300,7 @@ static inline int test_sctp_recvmsg(int sk, void *msg, size_t len,
 	int error = sctp_recvmsg(sk, msg, len, from, fromlen, sinfo, msg_flags);
 	if (-1 == error)
 		tst_brkm(TBROK, tst_exit, "sctp_recvmsg: %s", strerror(errno));
-	return error;			
+	return error;
 }
 
 static inline void *test_malloc(size_t size)

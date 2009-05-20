@@ -23,7 +23,7 @@ SRCS    = $(wildcard *.c)
 TARGETS = $(patsubst %.c,%,$(SRCS))
 
 #Spring, 2009.2.10, Add back prevoius Macro check, for the macro check has been
-# put to $ltproot/include/config.h, finished by autoconf, but our framework 
+# put to $ltproot/include/config.h, finished by autoconf, but our framework
 # doesn't adopt autoconf.
 #sys/inotify.h not exist in $kernel/include, but in glibc, that means, ./arm-none-linux-gnueabi/sysroot/usr/include/sys/inotify.h
 check_header = $(shell \

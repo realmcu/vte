@@ -7,10 +7,10 @@
  */
 
 /*
- * Test that mq_open() fails with ENAMETOOLONG if a component of the 
+ * Test that mq_open() fails with ENAMETOOLONG if a component of the
  * name is greater than NAME_MAX.
  *
- * Since a component == the full name, this test will be identical to
+ * Since a component  the full name, this test will be identical to
  * 27-1.c for NAME_MAX.
  */
 
@@ -29,37 +29,37 @@ int main()
 {
         char qname[NAME_MAX*2];
         mqd_t queue;
-	int i;
+ int i;
 
         sprintf(qname, "/mq_open_27-1_%d", getpid());
 
-	//Ensures queue name will have > NAME_MAX chars
-	for(i=0;i<NAME_MAX;i++) {
-		strcat(qname, "0");
-	}
+ //Ensures queue name will have > NAME_MAX chars
+ for(i0;i<NAME_MAX;i++) {
+  strcat(qname, "0");
+ }
 
-        queue = mq_open(qname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, NULL);
-        if (queue != (mqd_t)-1) {
-		printf("mq_open() should have failed with queue name %s\n",
-				qname);
-		printf("Test FAILED\n");
-		mq_close(queue);
-		mq_unlink(qname);
+        queue  mq_open(qname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, NULL);
+        if (queue ! (mqd_t)-1) {
+  printf("mq_open() should have failed with queue name %s\n",
+    qname);
+  printf("Test FAILED\n");
+  mq_close(queue);
+  mq_unlink(qname);
                 return PTS_FAIL;
         }
 
 #ifdef DEBUG
-	printf("mq_open() failed as expected\n");
+ printf("mq_open() failed as expected\n");
 #endif
-	
-	if (errno != ENAMETOOLONG) {
-		printf("errno != ENAMETOOLONG\n");
-		printf("Test FAILED\n");
-		return PTS_FAIL;
-	}
+
+ if (errno ! ENAMETOOLONG) {
+  printf("errno ! ENAMETOOLONG\n");
+  printf("Test FAILED\n");
+  return PTS_FAIL;
+ }
 
 #ifdef DEBUG
-	printf("errno == ENAMETOOLONG\n");
+ printf("errno  ENAMETOOLONG\n");
 #endif
 
         printf("Test PASSED\n");

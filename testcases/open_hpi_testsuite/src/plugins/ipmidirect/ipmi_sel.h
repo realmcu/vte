@@ -104,7 +104,7 @@ public:
   int AddAsyncEvent( cIpmiEvent *event );
 
   // get an event
-  int GetSelEntry( unsigned short rid, unsigned short &prev, 
+  int GetSelEntry( unsigned short rid, unsigned short &prev,
                    unsigned short &next, cIpmiEvent &event );
 
   // delete SEL entry

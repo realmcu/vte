@@ -16,47 +16,47 @@ Description of the file
 
 */
 
-/*======================== REVISION HISTORY ==================================
+/*======== REVISION HISTORY ==========
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
 A.Geniatov/gntl002    20/07/2004   TLSbo40898   Initial version
-A.Geniatov/gntl002    27/09/2004   TLSbo40898   Change after review 
+A.Geniatov/gntl002    27/09/2004   TLSbo40898   Change after review
 Filinova Natalya      15/02/2005   TLSbo47117   Added -T flag
-Filinova Natalya      11/04/2005   TLSbo48417   Added new flags and options and 
+Filinova Natalya      11/04/2005   TLSbo48417   Added new flags and options and
                                                 new global variabals.
                                                 Updated functions bodies.
 Delaspre/rc149c       07/12/2004   TLSbo40142   update copyrights with Freescale
 Bezrukov.S/SBAZR1C    08/17/2005   TLSbo53919   Remove the Brightness feature
 N.Filinova/nfili1c    27/09/2005   TLSbo54946   Change after review
 N.Filinova/nfili1c    20/10/2005   TLSbo56683   Change after review
-N.Filinova/nfili1c    23/11/2005   TLSbo58746   Add the settings of cropping restangle via four new options: 
+N.Filinova/nfili1c    23/11/2005   TLSbo58746   Add the settings of cropping restangle via four new options:
                                                 left corner, top corner, width, height
 Hake Huang            2/18/2009    NA           Add capture frame rate setting
-=============================================================================*/
+=================*/
 
-/*============================================================================
+/*================
 Total Tests: 1
 
 Test Name:   IPU capture test
 
 Test Assertion
-& Strategy:    
+& Strategy:
 
-=============================================================================*/
+=================*/
 
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*======================== INCLUDE FILES ====================================*/
+/*======== INCLUDE FILES ========*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <pthread.h>
-    
+
 /* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
@@ -64,20 +64,20 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "v4l_capture_test.h"
 
-/*======================== LOCAL CONSTANTS ==================================*/
+/*======== LOCAL CONSTANTS ==========*/
 
 
-/*======================== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) =======*/
+/*======== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) ===*/
 
 
-/*======================== LOCAL MACROS =====================================*/
+/*======== LOCAL MACROS =========*/
 
-/*======================== LOCAL VARIABLES ==================================*/
+/*======== LOCAL VARIABLES ==========*/
 
-/*======================== GLOBAL CONSTANTS =================================*/
+/*======== GLOBAL CONSTANTS =========*/
 
 
-/*======================== GLOBAL VARIABLES =================================*/
+/*======== GLOBAL VARIABLES =========*/
 /* Extern Global Variables */
 extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir */
@@ -90,15 +90,15 @@ int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 
 sV4LTestConfig gV4LTestConfig;
 
-/*======================== LOCAL FUNCTION PROTOTYPES ========================*/
+/*======== LOCAL FUNCTION PROTOTYPES ========*/
 
 void setup(void);
 void help(void);
 int main(int argc, char **argv);
 
-/*======================== LOCAL FUNCTIONS ==================================*/
+/*======== LOCAL FUNCTIONS ==========*/
 
-/*===== setup =====*/
+/*= setup =*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -106,20 +106,20 @@ int main(int argc, char **argv);
 
 @param  Input :      None.
         Output:      None.
-  
+
 @return Nothing.
 */
 
 void setup(void)
 {
-        int VT_rv = VT_v4l_capture_setup();  
- 
+        int VT_rv = VT_v4l_capture_setup();
+
         if(VT_rv != TPASS)
-        {                
+        {
                 tst_brkm(TBROK , cleanup, "VT_setup() Failed : error code = %d", VT_rv);
         }
 }
-/*===== help =====*/
+/*= help =*/
 
 /**
 @brief  Inform of the available options and the associated parameters
@@ -145,16 +145,16 @@ void help(void)
         printf("\t-C <1>:\tTo get video overlay device test\n");
         printf("\t-C <2>:\tTo get video capture device test and to display video on frame buffer device\n");
         printf("\t-C <3>:\tTo get video capture device test and to write snapshort to dump file\n");
-        printf("\t-C other value:\t to get TBROK result\n"); 
+        printf("\t-C other value:\t to get TBROK result\n");
         printf("Usage : -o <output file>.  To put output file(full path)\n");
         printf("Usage : -O <pixel_format>. To put pixel format\n");
-        printf("Usage : -u <output device>. To put output device\n");  
-        printf("Usage : -Y <overlay_type>. 1=V4L2_FBUF_FLAG_PRIMARY, 2=V4L2_FBUF_FLAG_OVERLAY\n");  
-        printf("Usage : -r capture frame rate setting. <15 to 30 > default is  30\n");  
-        
+        printf("Usage : -u <output device>. To put output device\n");
+        printf("Usage : -Y <overlay_type>. 1=V4L2_FBUF_FLAG_PRIMARY, 2=V4L2_FBUF_FLAG_OVERLAY\n");
+        printf("Usage : -r capture frame rate setting. <15 to 30 > default is  30\n");
+
 }
 
-/*===== main =====*/
+/*= main =*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -164,7 +164,7 @@ void help(void)
 
 @param  Input :      argc - number of command line parameters.
         Output:      **argv - pointer to the array of the command line parameters.
-  
+
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
@@ -172,12 +172,12 @@ void help(void)
 int main(int argc, char **argv)
 {
         int VT_rv = TFAIL;
-        int ret=0; 
-        
+        int ret=0;
+
        // const int heightTable[3]     =  {  240, 120, 10 };
        // const int widthTable[3]      =  {  320, 200, 20 };
 
-	const int heightTable[3]     =  {  640, 320, 200 };
+ const int heightTable[3]     =  {  640, 320, 200 };
        const int widthTable[3]      =  {  480, 240, 120 };
 
 
@@ -185,35 +185,35 @@ int main(int argc, char **argv)
                                             "biggest size",
                                             "middle size",
                                             "smallest size"
-                                        };        
-        
-        /* parse options. */  
+                                        };
+
+        /* parse options. */
         char *msg;
 
-        int Dflag = 0, 
-            Hflag = 0, 
-            Wflag = 0, 
-            Rflag = 0, 
+        int Dflag = 0,
+            Hflag = 0,
+            Wflag = 0,
+            Rflag = 0,
             Sflag = 0,
             Bflag = 0,
             Tflag = 0,
             oflag = 0,
             Oflag = 0,
             Cflag = 0,
-            uflag = 0, 
-            Eflag = 0, 
+            uflag = 0,
+            Eflag = 0,
 #ifndef MAD_TEST_MODIFY
-	     Xflag = 0,
-	     Nflag = 0,
-#endif  
-	     Yflag = 0,
+      Xflag = 0,
+      Nflag = 0,
+#endif
+      Yflag = 0,
             vflag = 0,
-	    rflag = 0;
+     rflag = 0;
 
 
-        char *Dopt, 
-             *Hopt, 
-             *Wopt, 
+        char *Dopt,
+             *Hopt,
+             *Wopt,
              *Ropt,
              *Topt,
              *oopt,
@@ -222,11 +222,11 @@ int main(int argc, char **argv)
              *uopt,
              *Yopt,
 #ifndef MAD_TEST_MODIFY
-	      *Nopt,
+       *Nopt,
 #endif
-	      *ropt,
-	      *Bopt;  
-	    
+       *ropt,
+       *Bopt;
+
 
 
         option_t options[] =
@@ -245,25 +245,25 @@ int main(int argc, char **argv)
                 { "Y:", &Yflag,         &Yopt },        /* Overlay Type (for Overlay only)      */
                 { "E",  &Eflag,         NULL  },        /* Error cases                          */
 #ifndef MAD_TEST_MODIFY
-		  { "X",  &Xflag,         NULL  },        /* Disable asking user                    */
-		  { "N",  &Nflag,         &Nopt},        /* Capture times                     */
+    { "X",  &Xflag,         NULL  },        /* Disable asking user                    */
+    { "N",  &Nflag,         &Nopt},        /* Capture times                     */
 
 #endif
-		  { "v",  &vflag,         NULL  },        /* Verbose mode                         */
+    { "v",  &vflag,         NULL  },        /* Verbose mode                         */
                   {"r", &rflag,         &ropt },
-  		  { NULL, NULL,           NULL  }         /* NULL required to end array           */
+   { NULL, NULL,           NULL  }         /* NULL required to end array           */
         };
 
         if((msg=parse_opts(argc, argv, options, help)) != NULL)
         {
                 tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-        }       
-        
+        }
+
         /* Init struct sV4LTestConfig*/
-//#ifdef PROJECT_MARLEY        
+//#ifdef PROJECT_MARLEY
        // gV4LTestConfig.mV4LDevice =  Dflag ? Dopt : "/dev/v4l/video16";
 //#eles
-	gV4LTestConfig.mV4LDevice =  Dflag ? Dopt : "/dev/video0";
+ gV4LTestConfig.mV4LDevice =  Dflag ? Dopt : "/dev/video0";
 //#endif
         gV4LTestConfig.mOutputDevice =  uflag ? uopt : "/dev/fb0";
         gV4LTestConfig.mOutputFile = NULL;
@@ -288,12 +288,12 @@ int main(int argc, char **argv)
         gV4LTestConfig.mOverlayType = Yflag ? atoi(Yopt) : V4L2_FBUF_FLAG_OVERLAY;
         gV4LTestConfig.mFrameRate = rflag ? atoi(ropt) : 30;
 
-	if (gV4LTestConfig.mFrameRate > 30 || gV4LTestConfig.mFrameRate < 15)
-	{
-	  tst_resm(TINFO, "the frame rate is not within the recommanded range! 15-30\n");
-	}
-        
-	if((gV4LTestConfig.mCaseNum > 3)||(gV4LTestConfig.mCaseNum < 1))
+ if (gV4LTestConfig.mFrameRate > 30 || gV4LTestConfig.mFrameRate < 15)
+ {
+   tst_resm(TINFO, "the frame rate is not within the recommanded range! 15-30\n");
+ }
+
+ if((gV4LTestConfig.mCaseNum > 3)||(gV4LTestConfig.mCaseNum < 1))
         {
                 tst_resm(TBROK, "Invalid option for -C flag : %d", gV4LTestConfig.mCaseNum);
                 return TFAIL;
@@ -307,46 +307,46 @@ int main(int argc, char **argv)
                        &gV4LTestConfig.mCropRect.top,
                        &gV4LTestConfig.mCropRect.width,
                        &gV4LTestConfig.mCropRect.height);
-                       
+
                 if(gV4LTestConfig.mCropRect.left < 0)
                 {
                         tst_resm(TBROK, "Invalid left corner for -B (Cropping): %d", gV4LTestConfig.mCropRect.left);
                         return TFAIL;
                 }
-                        
+
                 if(gV4LTestConfig.mCropRect.top < 0)
                 {
                         tst_resm(TBROK, "Invalid top corner for -B (Cropping): %d", gV4LTestConfig.mCropRect.top);
                         return TFAIL;
                 }
-                        
+
                 if(gV4LTestConfig.mCropRect.width < 0)
                 {
                         tst_resm(TBROK, "Invalid width for -B (Cropping): %d", gV4LTestConfig.mCropRect.width);
-                        return TFAIL;        
+                        return TFAIL;
                 }
-                        
+
                 if(gV4LTestConfig.mCropRect.height < 0)
                 {
                         tst_resm(TBROK, "Invalid height for -B (Cropping): %d", gV4LTestConfig.mCropRect.height);
                         return TFAIL;
-                } 
-                        
+                }
+
                 if(gV4LTestConfig.mCropRect.left + gV4LTestConfig.mCropRect.width > 640)
                 {
-                        tst_resm(TBROK, "Invalid right bound for -B (Cropping): left = %d and width = %d.It must be > 640", 
+                        tst_resm(TBROK, "Invalid right bound for -B (Cropping): left = %d and width = %d.It must be > 640",
                                  gV4LTestConfig.mCropRect.left, gV4LTestConfig.mCropRect.width);
-                        return TFAIL; 
+                        return TFAIL;
                 }
-                                 
+
                 if(gV4LTestConfig.mCropRect.top + gV4LTestConfig.mCropRect.height > 480)
                 {
-                        tst_resm(TBROK, "Invalid bottom bound for -B (Cropping): top = %d and height = %d.It must be > 480", 
-                                 gV4LTestConfig.mCropRect.top, gV4LTestConfig.mCropRect.height);   
-                        return TFAIL;             
-                }                
+                        tst_resm(TBROK, "Invalid bottom bound for -B (Cropping): top = %d and height = %d.It must be > 480",
+                                 gV4LTestConfig.mCropRect.top, gV4LTestConfig.mCropRect.height);
+                        return TFAIL;
+                }
         }
-        
+
         if(oflag)
         {
                 gV4LTestConfig.mOutputFile = malloc(strlen(oopt)*sizeof(char));
@@ -357,7 +357,7 @@ int main(int argc, char **argv)
                 gV4LTestConfig.mOutputFile = malloc(9*sizeof(char));
                 strcpy(gV4LTestConfig.mOutputFile,"./output");
         }
-        
+
         if(vflag)
         {
                 tst_resm(TINFO, "V4L2 device = %s", gV4LTestConfig.mV4LDevice);
@@ -366,29 +366,29 @@ int main(int argc, char **argv)
                 tst_resm(TINFO, "Width = %d", gV4LTestConfig.mWidth);
                 tst_resm(TINFO, "Case number = %d", gV4LTestConfig.mCaseNum);
                 tst_resm(TINFO, "Path to output file : %s", gV4LTestConfig.mOutputFile);
-               
+
                 if(Bflag)
-                        tst_resm(TINFO, 
-                                 "Crop to image: left = %d, top = %d, width = %d, height = %d", 
+                        tst_resm(TINFO,
+                                 "Crop to image: left = %d, top = %d, width = %d, height = %d",
                                  gV4LTestConfig.mCropRect.left,
                                  gV4LTestConfig.mCropRect.top,
                                  gV4LTestConfig.mCropRect.width,
                                  gV4LTestConfig.mCropRect.height);
-              
+
         }
-        
+
         /* Rotations tests */
         if(gV4LTestConfig.mRotation)
         {
-         
+
                 if((gV4LTestConfig.mRotationMode < 0) || (gV4LTestConfig.mRotationMode > 8))
                 {
-                        tst_resm(TBROK, "You are entered wrong rotation option");    
-                        return TFAIL;      
+                        tst_resm(TBROK, "You are entered wrong rotation option");
+                        return TFAIL;
                 }
-    
+
                 if(gV4LTestConfig.mRotationMode == 8)  /* ask user in cycle and perform a rotation */
-                {       
+                {
                         char rot_num[9];
                         do
                         {
@@ -399,13 +399,13 @@ int main(int argc, char **argv)
                                 fflush(stdout);
                                 fgets( rot_num, 9, stdin );
                                 gV4LTestConfig.mRotationMode = atoi(rot_num);
-                        
+
                                 if(gV4LTestConfig.mRotationMode == 8 || gV4LTestConfig.mRotationMode > 9 || gV4LTestConfig.mRotationMode <0)
-                                {           
-                                        tst_resm(TINFO,"Please specify the rotation type again... [0-7].To exit press 9.");                                                                                                     
+                                {
+                                        tst_resm(TINFO,"Please specify the rotation type again... [0-7].To exit press 9.");
                                         continue;
-                                }        
-                                
+                                }
+
                                 if(gV4LTestConfig.mRotationMode == 9)
                                         break;
 #ifdef MAD_TEST_MODIFY
@@ -416,15 +416,15 @@ int main(int argc, char **argv)
                                 /* Test Case Body. */
 
                                 ret |= VT_v4l_capture_test();
-                        
+
                                 gExitCleanup = 0;
-#endif                        
-                                cleanup();           
+#endif
+                                cleanup();
                         }
                         while(gV4LTestConfig.mRotationMode != 9);
 
 #ifdef MAD_TEST_MODIFY
-                        
+
                         if(ret == TPASS)
                                 tst_resm(TPASS, "%s test case worked as expected", TCID);
                         else
@@ -434,59 +434,59 @@ int main(int argc, char **argv)
                 } /* else go on - perform the trivial test call */
 
 #ifndef MAD_TEST_MODIFY
-		    if (Nflag)
-		    {
-			int i,j;
-			j = 10;
-			//j = atoi(Nopt);
+      if (Nflag)
+      {
+   int i,j;
+   j = 10;
+   //j = atoi(Nopt);
                      tst_resm(TINFO, "Capture %d times", j);
 
-			for (i = 0; i < j; i++)
-			{
+   for (i = 0; i < j; i++)
+   {
 
-			    //tst_resm(TINFO, "Rotate time is %d \n", gV4LTestConfig.mCount);
-			   // tst_resm(TINFO, "Rotate now is %d , mode is %d\n", i, gV4LTestConfig.mRotationMode);
+       //tst_resm(TINFO, "Rotate time is %d \n", gV4LTestConfig.mCount);
+      // tst_resm(TINFO, "Rotate now is %d , mode is %d\n", i, gV4LTestConfig.mRotationMode);
                         /* Perform the test*/
 
-			   setup();
+      setup();
 
                         /* Test Case Body. */
 
                         ret |= VT_v4l_capture_test();
-			   if (ret)
-			   {
-			       tst_resm(TINFO, "Error!!! on Rotate now is %d , mode is %d\n", i, gV4LTestConfig.mRotationMode);
-			   	break;
-			   }
+      if (ret)
+      {
+          tst_resm(TINFO, "Error!!! on Rotate now is %d , mode is %d\n", i, gV4LTestConfig.mRotationMode);
+      break;
+      }
                         gExitCleanup = 0;
-                    
 
-			    gV4LTestConfig.mRotationMode++;
-			    if ( gV4LTestConfig.mRotationMode > 7 )
-		    	    {
-				gV4LTestConfig.mRotationMode = 0;
-				tst_resm(TINFO, "Rotate from position 0 \n", TCID);
-		    	    }
 
-			    cleanup();
-			}
+       gV4LTestConfig.mRotationMode++;
+       if ( gV4LTestConfig.mRotationMode > 7 )
+          {
+    gV4LTestConfig.mRotationMode = 0;
+    tst_resm(TINFO, "Rotate from position 0 \n", TCID);
+          }
 
-			
-		    }
-		    else
-		    {
-	                        /* Perform the test*/
-	                        setup();
+       cleanup();
+   }
 
-	                        /* Test Case Body. */
 
-	                        ret |= VT_v4l_capture_test();
-	                
-	                        gExitCleanup = 0;
-	                
-	                        cleanup();				    	
-		    }
-                        
+      }
+      else
+      {
+                         /* Perform the test*/
+                         setup();
+
+                         /* Test Case Body. */
+
+                         ret |= VT_v4l_capture_test();
+
+                         gExitCleanup = 0;
+
+                         cleanup();
+      }
+
                         if(ret == TPASS)
                                 tst_resm(TPASS, "%s test case worked as expected", TCID);
                         else
@@ -498,22 +498,22 @@ int main(int argc, char **argv)
         }
 
         /* Resizing test */
-        
+
         if((Sflag)&&(gV4LTestConfig.mCaseNum == 1))
         {
-                
+
                 /* Print test Assertion using tst_resm() function with argument TINFO. */
 
                 tst_resm(TINFO, "Testing if %s test case is OK", TCID);
 
                 int i;
-        
+
                 for(i = 0; i < 3; i++)
                 {
                         tst_resm(TINFO,"Performing resizing to the %s\n", userOutput[i]);
                         gV4LTestConfig.mHeight = heightTable[i];
                         gV4LTestConfig.mWidth  = widthTable[i];
-                                                                                                        
+
                         /* Perform global test setup, call setup() function. */
 
                         setup();
@@ -521,56 +521,56 @@ int main(int argc, char **argv)
                         /* Test Case Body. */
 
                         ret |= VT_v4l_capture_test();
-                        
+
                         gExitCleanup = 0;
-                        
+
                         cleanup();
                 }
                 if(ret == TPASS)
                         tst_resm(TPASS, "%s test case worked as expected", TCID);
                 else
                         tst_resm(TFAIL, "%s test case did NOT work as expected", TCID);
-                                
+
                 return ret;
         }
         else
                 if((Sflag)&&(gV4LTestConfig.mCaseNum != 1))
                 {
                         tst_resm(TBROK, "Rotation not supported while capturing");
-                        return TFAIL;                             
+                        return TFAIL;
                 }
-        
-            
+
+
         /* Perform global test setup, call setup() function. */
         setup();
-                
+
         /* Print test Assertion using tst_resm() function with argument TINFO. */
         tst_resm(TINFO, "Testing if %s test case is OK", TCID);
-                        
+
         /* Test Case Body. */
         VT_rv = VT_v4l_capture_test();
         gExitCleanup = 0;
-        
+
         if(Eflag)   /* threat error as PASS */
         {
-                if(VT_rv == TFAIL)                        
+                if(VT_rv == TFAIL)
                         VT_rv = TPASS;
                 else
                         VT_rv = TFAIL;
-        }   
-                             
+        }
+
         if(VT_rv == TPASS)
                 tst_resm(TPASS, "%s test case worked as expected", TCID);
         else
                 tst_resm(TFAIL, "%s test case did NOT work as expected", TCID);
-                                                                                
-        cleanup();        
+
+        cleanup();
 
         return VT_rv;
-        
+
 }
-/*======================== GLOBAL FUNCTIONS =================================*/
-/*===== cleanup =====*/
+/*======== GLOBAL FUNCTIONS =========*/
+/*= cleanup =*/
 /**
 @brief  Performs all one time clean up for this test on successful
                                 completion,  premature exit or  failure. Closes all temporary
@@ -586,24 +586,24 @@ int main(int argc, char **argv)
 void cleanup(void)
 {
         int VT_rv;
-        
+
         if(gV4LTestConfig.mOutputFile)
                 free(gV4LTestConfig.mOutputFile);
-        
+
         gV4LTestConfig.mOutputFile = NULL;
-          
+
         VT_rv = VT_v4l_capture_cleanup();
-        
+
         if(gExitCleanup)
         {
                 if (VT_rv != TPASS)
                 {
                         tst_resm(TWARN, "VT_cleanup() Failed : error code = %d", VT_rv);
                 }
-        
+
                 tst_exit(VT_rv);
         }
-}       
+}
 
 #ifdef __cplusplus
 }

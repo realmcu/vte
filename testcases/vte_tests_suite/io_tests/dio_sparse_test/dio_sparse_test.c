@@ -1,34 +1,34 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   dio_sparse_test.c
 
         @brief  GPIO dio_sparse test scenario C source.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Igor Semenchukov             10/06/2004     TLSbo39741  Initial version 
+Igor Semenchukov             10/06/2004     TLSbo39741  Initial version
 A.Ozerov/b00320              11/12/2006     TLSbo84161  Minor changes.
 
-====================================================================================================
-Portability: Indicate if this module is portable to other compilers or platforms. 
+====================
+Portability: Indicate if this module is portable to other compilers or platforms.
             If not, indicate specific reasons why is it not portable.
 
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
 #include <stdlib.h>
@@ -45,7 +45,7 @@ Portability: Indicate if this module is portable to other compilers or platforms
 #ifdef __cplusplus
 extern "C"{
 #endif
-    
+
 /* Harness Specific Include Files. */
 #include "test.h"
 #ifdef __cplusplus
@@ -56,95 +56,95 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "dio_sparse_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 volatile int got_signal;
 
-/*==================================================================================================
+/*======================
                                         GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                     LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
 
-/*================================================================================================*/
-/*===== VT_dio_sparse_setup =====*/
+/*====================*/
+/*= VT_dio_sparse_setup =*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_dio_sparse_setup(void)
 {
     int rv = TPASS;
-    
+
     /** insert your code here */
-    
+
     return rv;
 }
 
 
-/*================================================================================================*/
-/*===== VT_dio_sparse_cleanup =====*/
+/*====================*/
+/*= VT_dio_sparse_cleanup =*/
 /**
 @brief  assumes the post-condition of the test case execution
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_dio_sparse_cleanup(void)
 {
     return TPASS;
 }
 
 
-/*================================================================================================*/
-/*===== VT_dio_sparse_test =====*/
+/*====================*/
+/*= VT_dio_sparse_test =*/
 /**
 @brief  Template dio_sparse test scenario function
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_dio_sparse_test(int argc, char** argv)
 {
         int pid[NUM_CHILDREN];
@@ -244,20 +244,20 @@ int VT_dio_sparse_test(int argc, char** argv)
     }
     if (children_errors)
         return TFAIL;
-        
+
     return TPASS;
 }
 
-/*================================================================================================*/
-/*===== usage =====*/
+/*====================*/
+/*= usage =*/
 /**
 @brief  Prints usage information and exit.
 
 @param  Input:  None
-        Output: None 
-@return Returns 1 
+        Output: None
+@return Returns 1
 */
-/*================================================================================================*/
+/*====================*/
 int usage(void)
 {
     fprintf(stderr, "usage: dio_sparse [-n children] [-s filesize]"
@@ -265,17 +265,17 @@ int usage(void)
     exit(1);
 }
 
-/*================================================================================================*/
-/*===== scale_by_kmg =====*/
+/*====================*/
+/*= scale_by_kmg =*/
 /**
 @brief  Scale value by kilo, mega, or giga.
 
 @param  Input:  value - value scaled
                 scale - scale character
-        Output: None 
+        Output: None
 @return Scaled value
 */
-/*================================================================================================*/
+/*====================*/
 long long scale_by_kmg(long long value, char scale)
 {
     switch (scale)
@@ -299,17 +299,17 @@ long long scale_by_kmg(long long value, char scale)
     return value;
 }
 
-/*================================================================================================*/
-/*===== dirty_freeblocks =====*/
+/*====================*/
+/*= dirty_freeblocks =*/
 /**
 @brief  Creates some dirty free blocks on disk.
 
 @param  Input:  size - size of blocks created
-        Output: None 
+        Output: None
 @return On success - return 0
         On failure - return -1
 */
-/*================================================================================================*/
+/*====================*/
 int dirty_freeblocks(int size)
 {
     int fd;
@@ -353,8 +353,8 @@ int dirty_freeblocks(int size)
     return 0;
 }
 
-/*================================================================================================*/
-/*===== dio_sparse =====*/
+/*====================*/
+/*= dio_sparse =*/
 /**
 @brief  Do DIO writes to a sparse file
 
@@ -362,11 +362,11 @@ int dirty_freeblocks(int size)
                 align - alignment of address of memory allocated
                 writesize - size of write blocks
                 filesize - size of created file
-        Output: None 
+        Output: None
 @return On success - return 0
         On failure - return -1
 */
-/*================================================================================================*/
+/*====================*/
 int dio_sparse(char *filename, int align, int writesize, int filesize)
 {
     int fd;
@@ -408,18 +408,18 @@ int dio_sparse(char *filename, int align, int writesize, int filesize)
     return 0;
 }
 
-/*================================================================================================*/
-/*===== read_sparse =====*/
+/*====================*/
+/*= read_sparse =*/
 /**
 @brief  Do buffered read from a sparse file.
 
 @param  Input:  filename - name of file
                 filesize - size of created file
-        Output: None 
+        Output: None
 @return On success - return 0
         On failure - return 10
 */
-/*================================================================================================*/
+/*====================*/
 int read_sparse(char *filename, int filesize)
 {
     int fd;
@@ -437,7 +437,7 @@ int read_sparse(char *filename, int filesize)
     {
         off_t offset = 0;
         unsigned char *badbuf;
-    
+
         lseek(fd, offset, SEEK_SET);
         for (off = 0; off < filesize + 1; off += sizeof(buf))
         {
@@ -461,18 +461,18 @@ void sig_term_func(int i, siginfo_t *si, void *p)
     got_signal++;
 }
 
-/*================================================================================================*/
-/*===== check_zero =====*/
+/*====================*/
+/*= check_zero =*/
 /**
 @brief  Checks that buffer contents will be all zeroes.
 
 @param  Input:  buf - pointer to checked buffer
                 size - buffer size
-        Output: None 
+        Output: None
 @return On success - return 0
         On failure - return mismatch value
 */
-/*================================================================================================*/
+/*====================*/
 unsigned char *check_zero(unsigned char *buf, int size)
 {
     unsigned char *cur = buf;

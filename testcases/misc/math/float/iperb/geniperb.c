@@ -23,13 +23,13 @@
 /*              These tests are adapted from AIX float PVT tests.             */
 /*                                                                            */
 /******************************************************************************/
-#include	<sys/types.h>
-#include	<sys/wait.h>
-#include 	<float.h>
-#include 	<stdio.h>
-#include 	<stdlib.h>
-#include 	<string.h>
-#include 	<errno.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <float.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 #include        <limits.h>
 #include        <unistd.h>
 #include        <fcntl.h>
@@ -40,48 +40,48 @@
 
 
 /*****************************************************************
- * create file: 
- * 	
- * func_name is the name of the function 
+ * create file:
+ *
+ * func_name is the name of the function
  *
  * code can take 2 values: DATA_CREATE to create a input data file
- *			   RESULT_CREATE for output result file
+ *      RESULT_CREATE for output result file
  */
 
 int create_file(char *func_name, int NbVal)
 {
-	pid_t myproc;
-	           
-        if (( myproc = fork() )!=0)
+ pid_t myproc;
+
+        if (( myproc  fork() )!0)
                 return myproc;
         else {
-		char *arglist[] = { func_name, NULL};
-	     	execvp(arglist[0], arglist);
+  char *arglist[]  { func_name, NULL};
+      execvp(arglist[0], arglist);
 
-	     	fprintf(stderr, "ERROR %s\n", strerror(errno));
-	     	abort();
-	}
-} 
+      fprintf(stderr, "ERROR %s\n", strerror(errno));
+      abort();
+ }
+}
 
 
 
 
 int main(int argc, char *argv[])
 {
-	char *funct;
-	pid_t child;
-	
-	funct = "./gencosh";
-	child=create_file(funct, 0);
-	waitpid(child,NULL,0);
+ char *funct;
+ pid_t child;
 
-	funct = "./gensinh";
-	child=create_file(funct, 0);
-	waitpid(child,NULL,0);
+ funct  "./gencosh";
+ childcreate_file(funct, 0);
+ waitpid(child,NULL,0);
 
-	funct = "./gentanh";
-	child=create_file(funct, 0);
-	waitpid(child,NULL,0);
+ funct  "./gensinh";
+ childcreate_file(funct, 0);
+ waitpid(child,NULL,0);
 
-	return 0;
+ funct  "./gentanh";
+ childcreate_file(funct, 0);
+ waitpid(child,NULL,0);
+
+ return 0;
 }

@@ -1,5 +1,5 @@
 /*
- *  $Id: tst-bcm-server.c 753 2008-06-03 08:46:57Z hartkopp $
+ *  $Id: tst-bcm-server.c 753 2008-06-03 08:46:57Z hartkopp
  */
 
 /*
@@ -92,166 +92,166 @@
 
 void readmsg(int sock, char *buf, int maxlen) {
 
-	int ptr = 0;
+ int ptr = 0;
 
-	while (read(sock, buf+ptr, 1) == 1) {
+ while (read(sock, buf+ptr, 1) == 1) {
 
-		if (ptr) {
-			if (*(buf+ptr) == '>') {
-				*(buf+ptr+1) = 0;
-				return;
-			}
-			if (++ptr > maxlen-2)
-				ptr = 0;
-		}
-		else
-			if (*(buf+ptr) == '<')
-				ptr++;
-	}
+  if (ptr) {
+   if (*(buf+ptr) == '>') {
+    *(buf+ptr+1) = 0;
+    return;
+   }
+   if (++ptr > maxlen-2)
+    ptr = 0;
+  }
+  else
+   if (*(buf+ptr) == '<')
+    ptr++;
+ }
 
-	*buf = 0;
+ *buf = 0;
 }
 
 
 int main(int argc, char **argv)
 {
 
-	int sl, sa, sc;
-	struct sockaddr_in  saddr, clientaddr;
-	struct sockaddr_can caddr;
-	struct ifreq ifr;
-	socklen_t sin_size = sizeof(clientaddr);
+ int sl, sa, sc;
+ struct sockaddr_in  saddr, clientaddr;
+ struct sockaddr_can caddr;
+ struct ifreq ifr;
+ socklen_t sin_size = sizeof(clientaddr);
 
-	char buf[100];
+ char buf[100];
 
-	struct {
-		struct bcm_msg_head msg_head;
-		struct can_frame frame;
-	} msg;
+ struct {
+  struct bcm_msg_head msg_head;
+  struct can_frame frame;
+ } msg;
 
-	if((sl = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
-		perror("inetsocket");
-		exit(1);
-	}
+ if((sl = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
+  perror("inetsocket");
+  exit(1);
+ }
 
-	saddr.sin_family = AF_INET;
-	saddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	saddr.sin_port = htons(28600);
+ saddr.sin_family = AF_INET;
+ saddr.sin_addr.s_addr = htonl(INADDR_ANY);
+ saddr.sin_port = htons(28600);
 
-	while(bind(sl,(struct sockaddr*)&saddr, sizeof(saddr)) < 0) {
-		printf(".");fflush(NULL);
-		usleep(100000);
-	}
+ while(bind(sl,(struct sockaddr*)&saddr, sizeof(saddr)) < 0) {
+  printf(".");fflush(NULL);
+  usleep(100000);
+ }
 
-	if (listen(sl,3) != 0) {
-		perror("listen");
-		exit(1);
-	}
+ if (listen(sl,3) != 0) {
+  perror("listen");
+  exit(1);
+ }
 
-	while (1) { 
-		sa = accept(sl,(struct sockaddr *)&clientaddr, &sin_size);
-		if (sa > 0 ){
+ while (1) {
+  sa = accept(sl,(struct sockaddr *)&clientaddr, &sin_size);
+  if (sa > 0 ){
 
-			if (fork())
-				close(sa);
-			else
-				break;
-		}
-		else {
-			if (errno != EINTR) {
-				/*
-				 * If the cause for the error was NOT the signal from
-				 * a dying child, than give an error
-				 */
-				perror("accept");
-				exit(1);
-			}
-		}
-	}
+   if (fork())
+    close(sa);
+   else
+    break;
+  }
+  else {
+   if (errno != EINTR) {
+    /*
+     * If the cause for the error was NOT the signal from
+     * a dying child, than give an error
+     */
+    perror("accept");
+    exit(1);
+   }
+  }
+ }
 
-	/* open BCM socket */
+ /* open BCM socket */
 
-	if ((sc = socket(PF_CAN, SOCK_DGRAM, CAN_BCM)) < 0) {
-		perror("bcmsocket");
-		return 1;
-	}
+ if ((sc = socket(PF_CAN, SOCK_DGRAM, CAN_BCM)) < 0) {
+  perror("bcmsocket");
+  return 1;
+ }
 
-	caddr.can_family = PF_CAN;
-	caddr.can_ifindex = 0; /* any device => need for sendto() */
+ caddr.can_family = PF_CAN;
+ caddr.can_ifindex = 0; /* any device => need for sendto() */
 
-	if (connect(sc, (struct sockaddr *)&caddr, sizeof(caddr)) < 0) {
-		perror("connect");
-		return 1;
-	}
+ if (connect(sc, (struct sockaddr *)&caddr, sizeof(caddr)) < 0) {
+  perror("connect");
+  return 1;
+ }
 
-	/* prepare stable settings */
-	msg.msg_head.nframes       = 1;
-	msg.msg_head.count         = 0;
-	msg.msg_head.ival1.tv_sec  = 0;
-	msg.msg_head.ival1.tv_usec = 0;
+ /* prepare stable settings */
+ msg.msg_head.nframes       = 1;
+ msg.msg_head.count         = 0;
+ msg.msg_head.ival1.tv_sec  = 0;
+ msg.msg_head.ival1.tv_usec = 0;
 
-	while (1) {
+ while (1) {
 
-		char cmd;
-		int items;
+  char cmd;
+  int items;
 
-		readmsg(sa, buf, sizeof(buf));
+  readmsg(sa, buf, sizeof(buf));
 
-		// printf("read '%s'\n", buf);
+  // printf("read '%s'\n", buf);
 
-		items = sscanf(buf, "< %6s %c %lu %lu %x %hhu "
-			       "%hhx %hhx %hhx %hhx %hhx %hhx %hhx %hhx >",
-			       ifr.ifr_name,
-			       &cmd, 
-			       &msg.msg_head.ival2.tv_sec,
-			       &msg.msg_head.ival2.tv_usec,
-			       &msg.msg_head.can_id,
-			       &msg.frame.can_dlc,
-			       &msg.frame.data[0],
-			       &msg.frame.data[1],
-			       &msg.frame.data[2],
-			       &msg.frame.data[3],
-			       &msg.frame.data[4],
-			       &msg.frame.data[5],
-			       &msg.frame.data[6],
-			       &msg.frame.data[7]);
+  items = sscanf(buf, "< %6s %c %lu %lu %x %hhu "
+          "%hhx %hhx %hhx %hhx %hhx %hhx %hhx %hhx >",
+          ifr.ifr_name,
+          &cmd,
+          &msg.msg_head.ival2.tv_sec,
+          &msg.msg_head.ival2.tv_usec,
+          &msg.msg_head.can_id,
+          &msg.frame.can_dlc,
+          &msg.frame.data[0],
+          &msg.frame.data[1],
+          &msg.frame.data[2],
+          &msg.frame.data[3],
+          &msg.frame.data[4],
+          &msg.frame.data[5],
+          &msg.frame.data[6],
+          &msg.frame.data[7]);
 
-		if (items < 6)
-			break;
-		if (msg.frame.can_dlc > 8)
-			break;
-		if (items != 6 + msg.frame.can_dlc)
-			break;
+  if (items < 6)
+   break;
+  if (msg.frame.can_dlc > 8)
+   break;
+  if (items != 6 + msg.frame.can_dlc)
+   break;
 
-		msg.frame.can_id = msg.msg_head.can_id;
+  msg.frame.can_id = msg.msg_head.can_id;
 
-		switch (cmd) {
-		case 'S':
-			msg.msg_head.opcode = TX_SEND;
-			break;
-		case 'A':
-			msg.msg_head.opcode = TX_SETUP;
-			msg.msg_head.flags |= SETTIMER|STARTTIMER;
-			break;
-		case 'D':
-			msg.msg_head.opcode = TX_DELETE;
-			break;
+  switch (cmd) {
+  case 'S':
+   msg.msg_head.opcode = TX_SEND;
+   break;
+  case 'A':
+   msg.msg_head.opcode = TX_SETUP;
+   msg.msg_head.flags |= SETTIMER|STARTTIMER;
+   break;
+  case 'D':
+   msg.msg_head.opcode = TX_DELETE;
+   break;
 
-		default:
-			printf("unknown command '%c'.\n", cmd);
-			exit(1);
-		}
+  default:
+   printf("unknown command '%c'.\n", cmd);
+   exit(1);
+  }
 
-		if (!ioctl(sc, SIOCGIFINDEX, &ifr)) {
-			caddr.can_ifindex = ifr.ifr_ifindex;
-			sendto(sc, &msg, sizeof(msg), 0,
-			       (struct sockaddr*)&caddr, sizeof(caddr));
-		}
+  if (!ioctl(sc, SIOCGIFINDEX, &ifr)) {
+   caddr.can_ifindex = ifr.ifr_ifindex;
+   sendto(sc, &msg, sizeof(msg), 0,
+          (struct sockaddr*)&caddr, sizeof(caddr));
+  }
 
-	}
+ }
 
-	close(sc);
-	close(sa);
+ close(sc);
+ close(sa);
 
-	return 0;
+ return 0;
 }

@@ -13,9 +13,9 @@ setup()
 {
         export TCID="setup"
         export TST_COUNT=0
-	export TST_TOTAL=2
+ export TST_TOTAL=2
 
-	# run tests in $LTPROOT/testcases/bin directory
+ # run tests in $LTPROOT/testcases/bin directory
         SAVEPWD=${PWD}
         cd ${LTPBIN}
         CURRENTDIR="."
@@ -27,11 +27,11 @@ test01()
         TST_COUNT=1
         RC=0
 
-	# Verify that test_exectrace_child_t can be traced across an exec
-	# by test_exectrace_parent_t.
-	runcon -t test_exectrace_parent_t -- $CURRENTDIR/selinux_exectrace_parent test_exectrace_child_t $CURRENTDIR/selinux_exectrace_child 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
+ # Verify that test_exectrace_child_t can be traced across an exec
+ # by test_exectrace_parent_t.
+ runcon -t test_exectrace_parent_t -- $CURRENTDIR/selinux_exectrace_parent test_exectrace_child_t $CURRENTDIR/selinux_exectrace_child 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
         then
                 echo "$TCID   FAIL : exectrace failed."
         else
@@ -46,26 +46,26 @@ test02()
         TST_COUNT=2
         RC=0
 
-	# Verify that test_exectrace_notchild_t cannot be traced
-	# across an exec by test_exectrace_parent_t.
-	# Should fail on ptrace permission.
-	runcon -t test_exectrace_parent_t -- $CURRENTDIR/selinux_exectrace_parent test_exectrace_notchild_t $CURRENTDIR/selinux_exectrace_child 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
+ # Verify that test_exectrace_notchild_t cannot be traced
+ # across an exec by test_exectrace_parent_t.
+ # Should fail on ptrace permission.
+ runcon -t test_exectrace_parent_t -- $CURRENTDIR/selinux_exectrace_parent test_exectrace_notchild_t $CURRENTDIR/selinux_exectrace_child 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
         then
                 echo "$TCID   PASS : exectrace passed."
-		RC=0
+  RC=0
         else
                 echo "$TCID   FAIL : exectrace failed."
-		RC=1
+  RC=1
         fi
-	return $RC
+ return $RC
 }
 
 cleanup()
 {
-	# return to $LTPROOT directory.
-	cd $SAVEPWD
+ # return to $LTPROOT directory.
+ cd $SAVEPWD
 }
 
 # Function:     main
@@ -82,4 +82,4 @@ setup
 test01 || EXIT_VAL=$RC
 test02 || EXIT_VAL=$RC
 cleanup
-exit $EXIT_VAL 
+exit $EXIT_VAL

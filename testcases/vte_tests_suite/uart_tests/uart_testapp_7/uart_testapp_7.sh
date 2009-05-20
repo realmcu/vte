@@ -67,7 +67,7 @@ exit
 
 if [ $# -eq 0 ]
 then
-	usage
+ usage
 fi
 
 
@@ -75,18 +75,18 @@ dev_entry_check ()
 {
 if [ ! -b /dev/mmcblk0p5 ]
 then
-	tst_resm WARN "/dev/mmcblk0p5 Not present
-		 MMC/SD card may not be inserted or
-		 the MMC/SD card partition may not be present"
-	tst_resm ""
-	tst_resm WARN "BASICALLY THE SCRIPT IS LOOKING FOR \"/dev/mmcblk0p5\" "
-	tst_resm ""
-	exit
+ tst_resm WARN "/dev/mmcblk0p5 Not present
+   MMC/SD card may not be inserted or
+   the MMC/SD card partition may not be present"
+ tst_resm ""
+ tst_resm WARN "BASICALLY THE SCRIPT IS LOOKING FOR \"/dev/mmcblk0p5\" "
+ tst_resm ""
+ exit
 fi
 if [ ! -c /dev/ttymxc0 ] & [ ! -c /dev/ttymxc2 ]
 then
-	tst_resm WARN "/dev/ttymxc0 OR /dev/ttymxc2 Does not exists"
-	exit
+ tst_resm WARN "/dev/ttymxc0 OR /dev/ttymxc2 Does not exists"
+ exit
 fi
 }
 
@@ -101,9 +101,9 @@ uart_rx_setup ()
 ps -o pid= > $pid_file_1
 if [ "$platform" == "MXC300-30 EVB" ]
 then
-	cat < /dev/ttymxc0 > /dev/null &
+ cat < /dev/ttymxc0 > /dev/null &
 else
-	cat < /dev/ttymxc2 > /dev/null &
+ cat < /dev/ttymxc2 > /dev/null &
 fi
 }
 
@@ -134,11 +134,11 @@ for i in $(cat $pid_file_diff)
 do
     for j in $(cat $pid_file_3)
     do
-		if [ $i -eq $j ]
-		then
-			kill $i
-		fi
-	done
+  if [ $i -eq $j ]
+  then
+   kill $i
+  fi
+ done
 done
 
 rm $pid_file_1
@@ -150,9 +150,9 @@ tst_resm ""
 tst_resm ""
 if [ $test_result -eq 1 ]
 then
-	tst_resm PASS "TEST PASS"
+ tst_resm PASS "TEST PASS"
 else
-	tst_resm FAIL "TEST FAIL"
+ tst_resm FAIL "TEST FAIL"
 fi
 tst_resm ""
 tst_resm ""
@@ -163,9 +163,9 @@ uart_tx_setup ()
 {
 if [ "$platform" == "MXC300-30 EVB" ]
 then
-	(while [ ! -f /tmp/stop ]; do cat $file > /dev/ttymxc2; done; echo "finished cat") &
+ (while [ ! -f /tmp/stop ]; do cat $file > /dev/ttymxc2; done; echo "finished cat") &
 else
-	(while [ ! -f /tmp/stop ]; do cat $file > /dev/ttymxc0; done; echo "finished cat") &
+ (while [ ! -f /tmp/stop ]; do cat $file > /dev/ttymxc0; done; echo "finished cat") &
 fi
 }
 
@@ -174,12 +174,12 @@ mmc_setup ()
 tst_resm INFO "Mount MMC"
 mkdir -p /mnt/mmc
 mount -t vfat /dev/mmcblk0p5 /mnt/mmc
-#rm -rf /mnt/mmc/$file 
+#rm -rf /mnt/mmc/$file
 if [ $run -eq 1 ]
 then
-	tst_resm INFO "Copy file $1 to /mnt/mmc"
-	cp -rf $file /mnt/mmc
-	cp -rf /mnt/mmc/$file /mnt/mmc/tmp_$file
+ tst_resm INFO "Copy file $1 to /mnt/mmc"
+ cp -rf $file /mnt/mmc
+ cp -rf /mnt/mmc/$file /mnt/mmc/tmp_$file
 fi
 tst_resm INFO "Compare two files "
 cmp /mnt/mmc/$file /mnt/mmc/tmp_$file
@@ -197,64 +197,64 @@ tst_resm INFO "UART is setup"
 echo "$0 test Log" > $log_file
 while [ $run -lt $count ]
 do
-	cat /proc/tty/driver/ttymxc > $result_file
-	cat $result_file >> $log_file
-	if [ $debug -eq 1 ]
-	then 
-		tst_resm ""
-		tst_resm DEBUG 
-		cat $result_file 
-		tst_resm ""
-	fi
-	if [ "$platform" == "MXC300-30 EVB" ]
-	then
-		tx_cnt=$(cat $result_file | tail -n 1 | cut -d':' -f6 | cut -d' ' -f1)
-		rx_cnt=$(cat $result_file | head -n 2 | tail -n 1 | cut -d':' -f7 | cut -d' ' -f1)
-	else
-		tx_cnt=$(cat $result_file | head -n 2 | tail -n 1 | cut -d':' -f6 | cut -d' ' -f1)
-		rx_cnt=$(cat $result_file | tail -n 1 | cut -d':' -f7 | cut -d' ' -f1)
-	fi
-	tst_resm ""
-	tst_resm INFO "Sample $run : TX count is $tx_cnt"
-	tst_resm "RX count is $rx_cnt"
-	tst_resm ""
-	if [ $run -gt 1 ]
-	then
-		if [ $rx_cnt -eq 0 ] 
-		then
-			tst_resm ""
-	    	tst_resm FAIL "Rx count is equals to zero" 
-			tst_resm ""
-			stop
-		fi
-		if [ $tx_cnt -eq 0 ]
-		then
-			tst_resm ""
-    		tst_resm FAIL "Tx count is equals to zero" 
-			tst_resm ""
-			stop
-		fi
-		if [ $tx_cnt -eq $tx_cnt_old ]  
-		then
-			tst_resm ""
-			tst_resm FAIL "Tx count is not incrementing "
-			tst_resm FAIL "TX count_1 = $tx_cnt 		count_2 = $tx_cnt_old"
-			tst_resm ""
-			stop
-		fi
-		if [ $rx_cnt -eq $rx_cnt_old ] 
-		then
-			tst_resm ""
-			tst_resm FAIL "Rx count is not incrementing "
-			tst_resm FAIL "RX count_1 = $rx_cnt 		count_2 = $rx_cnt_old" 
-			tst_resm ""
-			stop
-		fi
-	fi
-	tx_cnt_old=$tx_cnt
-	rx_cnt_old=$rx_cnt
-	mmc_setup
-	run=$((run+1))
+ cat /proc/tty/driver/ttymxc > $result_file
+ cat $result_file >> $log_file
+ if [ $debug -eq 1 ]
+ then
+  tst_resm ""
+  tst_resm DEBUG
+  cat $result_file
+  tst_resm ""
+ fi
+ if [ "$platform" == "MXC300-30 EVB" ]
+ then
+  tx_cnt=$(cat $result_file | tail -n 1 | cut -d':' -f6 | cut -d' ' -f1)
+  rx_cnt=$(cat $result_file | head -n 2 | tail -n 1 | cut -d':' -f7 | cut -d' ' -f1)
+ else
+  tx_cnt=$(cat $result_file | head -n 2 | tail -n 1 | cut -d':' -f6 | cut -d' ' -f1)
+  rx_cnt=$(cat $result_file | tail -n 1 | cut -d':' -f7 | cut -d' ' -f1)
+ fi
+ tst_resm ""
+ tst_resm INFO "Sample $run : TX count is $tx_cnt"
+ tst_resm "RX count is $rx_cnt"
+ tst_resm ""
+ if [ $run -gt 1 ]
+ then
+  if [ $rx_cnt -eq 0 ]
+  then
+   tst_resm ""
+    tst_resm FAIL "Rx count is equals to zero"
+   tst_resm ""
+   stop
+  fi
+  if [ $tx_cnt -eq 0 ]
+  then
+   tst_resm ""
+ tst_resm FAIL "Tx count is equals to zero"
+   tst_resm ""
+   stop
+  fi
+  if [ $tx_cnt -eq $tx_cnt_old ]
+  then
+   tst_resm ""
+   tst_resm FAIL "Tx count is not incrementing "
+   tst_resm FAIL "TX count_1 = $tx_cnt count_2 = $tx_cnt_old"
+   tst_resm ""
+   stop
+  fi
+  if [ $rx_cnt -eq $rx_cnt_old ]
+  then
+   tst_resm ""
+   tst_resm FAIL "Rx count is not incrementing "
+   tst_resm FAIL "RX count_1 = $rx_cnt count_2 = $rx_cnt_old"
+   tst_resm ""
+   stop
+  fi
+ fi
+ tx_cnt_old=$tx_cnt
+ rx_cnt_old=$rx_cnt
+ mmc_setup
+ run=$((run+1))
 done
 }
 
@@ -262,13 +262,13 @@ main ()
 {
 if [ $user_def -eq 0 ]
 then
-	count=10
+ count=10
 else
-	count=$cnt_arg
-fi	
+ count=$cnt_arg
+fi
 if [ $count -lt 0 ]
 then
-	count=10
+ count=10
 fi
 dev_entry_check
 baudrate_setup
@@ -282,25 +282,25 @@ stop
 
 while getopts hc:f:d param
 do
-case "$param" in 
-	h)
-		tst_resm INFO "Help"
-		usage
-		;;
-	c) 
-		user_def=1
-		cnt_arg=$OPTARG		
-		tst_resm INFO "Count is set to $cnt_arg"
-		;;
-	f)
-		file=$OPTARG
-		;;
-	d)
-		debug=1
-		;;
-	\?) 
-		tst_info INFO "Wrong Parameters"
-		;;
+case "$param" in
+ h)
+  tst_resm INFO "Help"
+  usage
+  ;;
+ c)
+  user_def=1
+  cnt_arg=$OPTARG
+  tst_resm INFO "Count is set to $cnt_arg"
+  ;;
+ f)
+  file=$OPTARG
+  ;;
+ d)
+  debug=1
+  ;;
+ \?)
+  tst_info INFO "Wrong Parameters"
+  ;;
 esac
 done
 main

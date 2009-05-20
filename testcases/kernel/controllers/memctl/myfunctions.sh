@@ -42,80 +42,80 @@
 #                                                                               #
 #################################################################################
 
-	# Write the cleanup function
+ # Write the cleanup function
 cleanup ()
 {
-	echo "Cleanup called";
-	rm -f memctl_task_* 2>/dev/null
-	rmdir /dev/memctl/group* 2> /dev/null
-	umount /dev/memctl 2> /dev/null
-	rmdir /dev/memctl 2> /dev/null
+ echo "Cleanup called";
+ rm -f memctl_task_* 2>/dev/null
+ rmdir /dev/memctl/group* 2> /dev/null
+ umount /dev/memctl 2> /dev/null
+ rmdir /dev/memctl 2> /dev/null
 }
-	# Create /dev/memctl &  mount the cgroup file system with memory controller
-	#clean any group created eralier (if any)
+ # Create /dev/memctl &  mount the cgroup file system with memory controller
+ #clean any group created eralier (if any)
 
 setup ()
 {
-	if [ -e /dev/memctl ]
-	then
-		echo "WARN:/dev/memctl already exist..overwriting";
-		cleanup;
-		mkdir /dev/memctl;
-	else
-		mkdir /dev/memctl
-	fi
-	mount -t cgroup -omemory cgroup /dev/memctl 2> /dev/null
-	if [ $? -ne 0 ]
-	then
-		echo "ERROR: Could not mount cgroup filesystem on /dev/memctl..Exiting test";
-		cleanup;
-		exit -1;
-	fi
+ if [ -e /dev/memctl ]
+ then
+  echo "WARN:/dev/memctl already exist..overwriting";
+  cleanup;
+  mkdir /dev/memctl;
+ else
+  mkdir /dev/memctl
+ fi
+ mount -t cgroup -omemory cgroup /dev/memctl 2> /dev/null
+ if [ $? -ne 0 ]
+ then
+  echo "ERROR: Could not mount cgroup filesystem on /dev/memctl..Exiting test";
+  cleanup;
+  exit -1;
+ fi
 
-	# Group created earlier may again be visible if not cleaned properly...so clean them
-	if [ -e /dev/memctl/group_1 ]
-	then
-		rmdir /dev/memctl/group*
-		echo "WARN: Earlier groups found and removed...";
-	fi
+ # Group created earlier may again be visible if not cleaned properly...so clean them
+ if [ -e /dev/memctl/group_1 ]
+ then
+  rmdir /dev/memctl/group*
+  echo "WARN: Earlier groups found and removed...";
+ fi
 
-	# Create different groups
-	for i in $(seq 1 $NUM_GROUPS)
-	do
-		group=group_$i;
-		mkdir /dev/memctl/$group;# 2>/dev/null
-		if [ $? -ne 0 ]
-		then
-			echo "ERROR: Can't create $group...Check your permissions..Exiting test";
-			cleanup;
-			exit -1;
-		fi
-	done
+ # Create different groups
+ for i in $(seq 1 $NUM_GROUPS)
+ do
+  group=group_$i;
+  mkdir /dev/memctl/$group;# 2>/dev/null
+  if [ $? -ne 0 ]
+  then
+   echo "ERROR: Can't create $group...Check your permissions..Exiting test";
+   cleanup;
+   exit -1;
+  fi
+ done
 }
 
 # The usage of the script file
 usage()
 {
-	echo "Could not start memory controller test";
-	echo "usage: run_memctl_test.sh test_num";
-	echo "Skipping the memory controller test...";
+ echo "Could not start memory controller test";
+ echo "usage: run_memctl_test.sh test_num";
+ echo "Skipping the memory controller test...";
 }
 
 # Function to set memory limits for different groups
 setmemlimits()
 {
-	for i in $(seq 1 $NUM_GROUPS)
-	do
-		limit=MEMLIMIT_GROUP_${i};
-		eval limit=\$$limit;
-		echo -n $limit >/dev/memctl/group_$i/memory.limit_in_bytes;
-		if [ $? -ne 0 ]
-		then
-			echo "Error in setting the memory limits for group_$i"
-			cleanup;
-			exit -1;
-		fi;
-	done
+ for i in $(seq 1 $NUM_GROUPS)
+ do
+  limit=MEMLIMIT_GROUP_${i};
+  eval limit=\$$limit;
+  echo -n $limit >/dev/memctl/group_$i/memory.limit_in_bytes;
+  if [ $? -ne 0 ]
+  then
+   echo "Error in setting the memory limits for group_$i"
+   cleanup;
+   exit -1;
+  fi;
+ done
 }
 
 

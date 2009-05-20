@@ -36,7 +36,7 @@ libclone.a: $(OBJS)
 	$(AR) -cr $@ libclone.o
 
 libnetns.a: $(OBJS)
-	$(AR) -cr $@ libnetns.o 
+	$(AR) -cr $@ libnetns.o
 #	$(AR) -cr $@ $^
 
 clean:

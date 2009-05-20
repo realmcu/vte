@@ -16,7 +16,7 @@ Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Tony THOMASSIN/RB595C        18/05/2004     TLSbo39490  SPI test development 
+Tony THOMASSIN/RB595C        18/05/2004     TLSbo39490  SPI test development
 V.Khalabuda/b00306           17/04/2006     TLSbo67010  Update version for linux-2.6.10-rel-L26_1_17
 D.Khoroshev/b00313           02/01/2006     TLSbo86657  Adaptation to new spi interface
 
@@ -71,7 +71,7 @@ extern "C"{
                                             ENUMS
 ==================================================================================================*/
 /** TEMPLATE_EX type */
-typedef enum 
+typedef enum
 {
         TEMPLATE_EX_0 = 0,   /**< Example stuff 0. */
         TEMPLATE_EX_1        /**< Example stuff 1. */

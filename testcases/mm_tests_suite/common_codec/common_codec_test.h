@@ -35,7 +35,7 @@ D.Simakov             27/02/2006   TLSbo61035   Util_Realloc was added
     tst_resm((s), (format), ##__VA_ARGS__);\
     if( LOAD != gTestappConfig.mTestCase ) \
         pthread_mutex_unlock( &gMutex );\
-} 
+}
 
 #define NA "n/a"
 
@@ -59,14 +59,14 @@ int    ExtraTestCases           ( void );
 
 /* Test cases. */
 int    NominalFunctionalityTest ( void );
-int    ReLocatabilityTest       ( void );  
+int    ReLocatabilityTest       ( void );
 int    ReEntranceTest           ( void );
 int    PreEmptionTest           ( void );
 int    EnduranceTest            ( void );
 int    LoadTest                 ( void );
 
 /* Helper. */
-int     Util_StrICmp            ( const char * s1, const char *s2 ); 
+int     Util_StrICmp            ( const char * s1, const char *s2 );
 void *  Util_Malloc             ( size_t bytes );
 void    Util_Free               ( void * pPtr );
 void *  Util_Realloc            ( void * pPtr, size_t bytes );
@@ -77,10 +77,10 @@ void    Util_SwapBytes          ( short * pWords, int count );
                                  GLOBAL VARIABLE DECLARATIONS
 ==================================================================================================*/
 
-extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */        
+extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */
 extern sCodecHandler   gCodecHandler[MAX_THREADS]; /* defined in the common_codec_test.c */
-extern sLinkedList   * gpParamsList;               /* defined in the common_codec_test.c */       
-extern pthread_mutex_t gMutex;                     /* defined in the common_codec_test.c */     
+extern sLinkedList   * gpParamsList;               /* defined in the common_codec_test.c */
+extern pthread_mutex_t gMutex;                     /* defined in the common_codec_test.c */
 extern int             gNumThreads;                /* defined in the common_codec_test.c */
 extern int (*CompareFiles)( sCodecHandler * pHandler, const char*, const char* ); /* defined in the common_codec_test.c */
 

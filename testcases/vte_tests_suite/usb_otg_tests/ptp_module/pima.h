@@ -295,5 +295,5 @@ unsigned int pima_cancel_trans(unsigned int deviceID,
 
 unsigned int pima_handle_stall(unsigned int deviceID);
 
-#endif				/* 
+#endif				/*
 				 */

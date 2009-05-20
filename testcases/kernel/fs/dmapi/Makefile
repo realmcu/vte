@@ -29,11 +29,11 @@ std_cflags = -I. -g -Wall -D$(dmapi_imp)
 
 #	Define USER_SPACE_FAULTS if DMAPI implementation handles user space
 #	  faults (JFS has plenty of handle code in user space, which causes
-#	  faults when invalid pointers are passed in)	
+#	  faults when invalid pointers are passed in)
 #	Define DIRECTORY_LINKS if DMAPI FS supports links on directories (JFS
 #	  does not)
 #	Define INTERIOR_HOLES if DMAPI implementation supports probing/punching
-#	  interior holes (JFS does); if not defined, only probing/punching 
+#	  interior holes (JFS does); if not defined, only probing/punching
 #	  holes to end-of-file is supported
 #	Define MULTIPLE_REGIONS if DMAPI implementation supports multiple
 #	  interior regions (JFS does); if not defined, only one region
@@ -124,6 +124,6 @@ mmapfile: mmapfile.c dm_test.h Makefile
 event	: event.c dm_test.h Makefile dm_test.o
 	cc $(cflags) -o event event.c dm_test.o $(lflags_thd)
 
-clean	: 
+clean	:
 	rm -f *.o
 	rm -f $(progs)

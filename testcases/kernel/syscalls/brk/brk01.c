@@ -32,69 +32,69 @@
  */
 /* $Id: brk01.c,v 1.4 2006/02/27 04:29:21 vapier Exp $ */
 /**********************************************************
- * 
+ *
  *    OS Test - Silicon Graphics, Inc.
- * 
- *    TEST IDENTIFIER	: brk01
- * 
- *    EXECUTED BY	: anyone
- * 
- *    TEST TITLE	: Basic test for brk(2)
- * 
- *    PARENT DOCUMENT	: usctpl01
- * 
- *    TEST CASE TOTAL	: 1
- * 
- *    WALL CLOCK TIME	: 1
- * 
- *    CPU TYPES		: ALL
- * 
- *    AUTHOR		: William Roske
- * 
- *    CO-PILOT		: Dave Fenner
- * 
- *    DATE STARTED	: 03/30/92
- * 
- *    INITIAL RELEASE	: UNICOS 7.0
- * 
+ *
+ *    TEST IDENTIFIER : brk01
+ *
+ *    EXECUTED BY : anyone
+ *
+ *    TEST TITLE : Basic test for brk(2)
+ *
+ *    PARENT DOCUMENT : usctpl01
+ *
+ *    TEST CASE TOTAL : 1
+ *
+ *    WALL CLOCK TIME : 1
+ *
+ *    CPU TYPES  : ALL
+ *
+ *    AUTHOR  : William Roske
+ *
+ *    CO-PILOT  : Dave Fenner
+ *
+ *    DATE STARTED : 03/30/92
+ *
+ *    INITIAL RELEASE : UNICOS 7.0
+ *
  *    TEST CASES
- * 
- * 	1.) brk(2) returns...(See Description)
- *	
+ *
+ * 1.) brk(2) returns...(See Description)
+ *
  *    INPUT SPECIFICATIONS
- * 	The standard options for system call tests are accepted.
- *	(See the parse_opts(3) man page).
- * 
+ * The standard options for system call tests are accepted.
+ * (See the parse_opts(3) man page).
+ *
  *    OUTPUT SPECIFICATIONS
- * 	
+ *
  *    ENVIRONMENTAL NEEDS
- * 	The libcuts.a and libsys.a libraries must be included in 
- *	the compilation of this test.
- * 
+ * The libcuts.a and libsys.a libraries must be included in
+ * the compilation of this test.
+ *
  *    SPECIAL PROCEDURAL REQUIREMENTS
- * 	None
- * 
+ * None
+ *
  *    DETAILED DESCRIPTION
- *	This is a Phase I test for the brk(2) system call.  It is intended
- *	to provide a limited exposure of the system call, for now.  It
- *	should/will be extended when full functional tests are written for
- *	brk(2).
- * 
- * 	Setup:
- * 	  Setup signal handling.
- *	  Pause for SIGUSR1 if option specified.
- * 
- * 	Test:
- *	 Loop if the proper options are given.
- * 	  Execute system call
- *	  Check return code, if system call failed (return=-1)
- *		Log the errno and Issue a FAIL message.
- *	  Otherwise, Issue a PASS message.
- * 
- * 	Cleanup:
- * 	  Print errno log and/or timing stats if options given
- * 
- * 
+ * This is a Phase I test for the brk(2) system call.  It is intended
+ * to provide a limited exposure of the system call, for now.  It
+ * should/will be extended when full functional tests are written for
+ * brk(2).
+ *
+ * Setup:
+ *   Setup signal handling.
+ *   Pause for SIGUSR1 if option specified.
+ *
+ * Test:
+ *  Loop if the proper options are given.
+ *   Execute system call
+ *   Check return code, if system call failed (return-1)
+ *  Log the errno and Issue a FAIL message.
+ *   Otherwise, Issue a PASS message.
+ *
+ * Cleanup:
+ *   Print errno log and/or timing stats if options given
+ *
+ *
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
 #include <unistd.h>
@@ -115,11 +115,11 @@ void setup();
 void cleanup();
 
 
-#define MAX_SIZE_LC	1000	/* loop count test will reach max size */
+#define MAX_SIZE_LC 1000 /* loop count test will reach max size */
 
-char *TCID="brk01"; 		/* Test program identifier.    */
-int TST_TOTAL=1;    		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID"brk01";/* Test program identifier.    */
+int TST_TOTAL1;   /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 
 long Max_brk_byte_size;
 long Beg_brk_val;
@@ -133,19 +133,19 @@ long Beg_brk_val;
 int
 main(int ac, char **av)
 {
-    int lc;		/* loop counter */
-    char *msg;		/* message returned from parse_opts */
-    int incr;		/* increment */
-    long nbrkpt;		/* new brk point value */
-    long cur_brk_val;	/* current size returned by sbrk */
-    long aft_brk_val;	/* current size returned by sbrk */
+    int lc;  /* loop counter */
+    char *msg;  /* message returned from parse_opts */
+    int incr;  /* increment */
+    long nbrkpt;  /* new brk point value */
+    long cur_brk_val; /* current size returned by sbrk */
+    long aft_brk_val; /* current size returned by sbrk */
 
     /***************************************************************
      * parse standard options
      ***************************************************************/
-    if ( (msg=parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *) NULL ) {
-	tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	tst_exit();
+    if ( (msgparse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *) NULL ) {
+ tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+ tst_exit();
     }
 
     /***************************************************************
@@ -157,88 +157,88 @@ main(int ac, char **av)
      * Attempt to control how fast we get to test max size.
      * Every MAX_SIZE_LC'th lc will be fastest test will reach max size.
      */
-    incr = (Max_brk_byte_size - Beg_brk_val)/(MAX_SIZE_LC/2);
+    incr  (Max_brk_byte_size - Beg_brk_val)/(MAX_SIZE_LC/2);
 
-    if ( (incr * 2) < 4096 )	/* make sure that process will grow */
-	incr += 4096/2;	
+    if ( (incr * 2) < 4096 ) /* make sure that process will grow */
+ incr + 4096/2;
 
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc=0; TEST_LOOPING(lc); lc++) {
+    for (lc0; TEST_LOOPING(lc); lc++) {
 
-	/* reset Tst_count in case we are looping. */
-	Tst_count=0;
+ /* reset Tst_count in case we are looping. */
+ Tst_count0;
 
-	/*
-	 * Determine new value to give brk
-	 * Every even lc value, grow by 2 incr and
-	 * every odd lc value, strink by one incr.
-	 * If lc is equal to 3, no change, special case.
-	 */
-	cur_brk_val=(long)sbrk(0);
-	if ( lc == 3 ) {
-	    nbrkpt = cur_brk_val;	/* no change, special one time case */
-	}
-	else if ( (lc % 2) == 0 ) {
-	    /*
-	     * grow
-	     */
-	    nbrkpt = cur_brk_val + (2 * incr);
+ /*
+  * Determine new value to give brk
+  * Every even lc value, grow by 2 incr and
+  * every odd lc value, strink by one incr.
+  * If lc is equal to 3, no change, special case.
+  */
+ cur_brk_val(long)sbrk(0);
+ if ( lc  3 ) {
+     nbrkpt  cur_brk_val; /* no change, special one time case */
+ }
+ else if ( (lc % 2)  0 ) {
+     /*
+      * grow
+      */
+     nbrkpt  cur_brk_val + (2 * incr);
 
-	    if ( nbrkpt > Max_brk_byte_size )
-	        nbrkpt=Beg_brk_val;	/* start over */
+     if ( nbrkpt > Max_brk_byte_size )
+         nbrkptBeg_brk_val; /* start over */
 
-	}
-	else {
-	    /*
-	     * shrink
-	     */
-	    nbrkpt = cur_brk_val - incr;
-	}
+ }
+ else {
+     /*
+      * shrink
+      */
+     nbrkpt  cur_brk_val - incr;
+ }
 
 /****
-    printf("cur_brk_val = %d, nbrkpt = %d, incr = %d, lc = %d\n",
-	cur_brk_val, nbrkpt, incr, lc);
+    printf("cur_brk_val  %d, nbrkpt  %d, incr  %d, lc  %d\n",
+ cur_brk_val, nbrkpt, incr, lc);
 ****/
 
-	/* 
-	 * Call brk(2)
-	 */
-	TEST(brk((char *)nbrkpt));
-	
-	/* check return code */
-	if ( TEST_RETURN == -1 ) {
+ /*
+  * Call brk(2)
+  */
+ TEST(brk((char *)nbrkpt));
 
-	    aft_brk_val=(long)sbrk(0);
-	    tst_resm(TFAIL,
-		"brk(%d) Failed, errno=%d : %s\n size before %d, after %d",
-		nbrkpt, TEST_ERRNO, strerror(TEST_ERRNO), cur_brk_val,
-		aft_brk_val);
+ /* check return code */
+ if ( TEST_RETURN  -1 ) {
 
-	} else {
+     aft_brk_val(long)sbrk(0);
+     tst_resm(TFAIL,
+  "brk(%d) Failed, errno%d : %s\n size before %d, after %d",
+  nbrkpt, TEST_ERRNO, strerror(TEST_ERRNO), cur_brk_val,
+  aft_brk_val);
 
-	    /***************************************************************
-	     * only perform functional verification if flag set (-f not given)
-	     ***************************************************************/
-	    if ( STD_FUNCTIONAL_TEST ) {
+ } else {
 
-		aft_brk_val=(long)sbrk(0);
-		if ( aft_brk_val == nbrkpt ) {
-		
-		    tst_resm(TPASS,
-			"brk(%d) returned %d, new size verified by sbrk",
-		        nbrkpt, TEST_RETURN);
-		}
-		else {
-		    tst_resm(TFAIL,
-			"brk(%d) returned %d, sbrk before %d, after %d",
-		        nbrkpt, TEST_RETURN, cur_brk_val, aft_brk_val);
-		}
-	    } 
-	}
+     /***************************************************************
+      * only perform functional verification if flag set (-f not given)
+      ***************************************************************/
+     if ( STD_FUNCTIONAL_TEST ) {
 
-    }	/* End for TEST_LOOPING */
+  aft_brk_val(long)sbrk(0);
+  if ( aft_brk_val  nbrkpt ) {
+
+      tst_resm(TPASS,
+   "brk(%d) returned %d, new size verified by sbrk",
+          nbrkpt, TEST_RETURN);
+  }
+  else {
+      tst_resm(TFAIL,
+   "brk(%d) returned %d, sbrk before %d, after %d",
+          nbrkpt, TEST_RETURN, cur_brk_val, aft_brk_val);
+  }
+     }
+ }
+
+    } /* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -246,12 +246,12 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-}	/* End main */
+} /* End main */
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void 
+void
 setup()
 {
     unsigned long max_size;
@@ -263,37 +263,37 @@ setup()
     /* capture signals */
     tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-    /*if ((ulim_sz=ulimit(3,0)) == -1)
-	tst_brkm(TBROK, cleanup, "ulimit(3,0) Failed, errno=%d : %s",
-	    errno, strerror(errno));*/
+    /*if ((ulim_szulimit(3,0))  -1)
+ tst_brkm(TBROK, cleanup, "ulimit(3,0) Failed, errno%d : %s",
+     errno, strerror(errno));*/
 
-    if (getrlimit(RLIMIT_DATA,&lim) == -1)
-	tst_brkm(TBROK, cleanup, "getrlimit(RLIMIT_DATA,0x%lld) Failed, errno=%d : %s",
-	    (void*)&lim,errno, strerror(errno));
-    ulim_sz = lim.rlim_cur;
+    if (getrlimit(RLIMIT_DATA,&lim)  -1)
+ tst_brkm(TBROK, cleanup, "getrlimit(RLIMIT_DATA,0x%lld) Failed, errno%d : %s",
+     (void*)&lim,errno, strerror(errno));
+    ulim_sz  lim.rlim_cur;
 
 #ifdef CRAY
-    if ((usr_mem_sz=sysconf(_SC_CRAY_USRMEM)) == -1)
-	tst_brkm(TBROK, cleanup, "sysconf(_SC_CRAY_USRMEM) Failed, errno=%d : %s",
-	    errno, strerror(errno));
+    if ((usr_mem_szsysconf(_SC_CRAY_USRMEM))  -1)
+ tst_brkm(TBROK, cleanup, "sysconf(_SC_CRAY_USRMEM) Failed, errno%d : %s",
+     errno, strerror(errno));
 
-    usr_mem_sz *= 8;	/* convert to bytes */
+    usr_mem_sz * 8; /* convert to bytes */
 #else
-    /* 
+    /*
      * On IRIX, which is a demand paged system, memory is managed
      * different than on Crays systems.  For now, pick some value.
      */
-    usr_mem_sz = 1024 * 1024 * sizeof(long);
+    usr_mem_sz  1024 * 1024 * sizeof(long);
 #endif
 
 
 #ifdef __linux__
 #define _SC_NPROC_ONLN _SC_NPROCESSORS_ONLN
 #endif
-    if ((ncpus=sysconf(_SC_NPROC_ONLN)) == -1)
-	tst_brkm(TBROK, cleanup, 
-	    "sysconf(_SC_NPROC_ONLN) Failed, errno=%d : %s",
-	    errno, strerror(errno));
+    if ((ncpussysconf(_SC_NPROC_ONLN))  -1)
+ tst_brkm(TBROK, cleanup,
+     "sysconf(_SC_NPROC_ONLN) Failed, errno%d : %s",
+     errno, strerror(errno));
 
     /*
      * allow 2*ncpus copies to run.
@@ -301,38 +301,38 @@ setup()
      */
 
     if ( ulim_sz < usr_mem_sz )
-	max_size = ulim_sz;
+ max_size  ulim_sz;
     else
-	max_size = usr_mem_sz;
+ max_size  usr_mem_sz;
 
-    max_size = max_size / (2 * ncpus); 
+    max_size  max_size / (2 * ncpus);
 
     if ( max_size > (usr_mem_sz/4) )
-	max_size = usr_mem_sz/4;	/* only fourth mem by single test */
+ max_size  usr_mem_sz/4; /* only fourth mem by single test */
 
-    Beg_brk_val=(long)sbrk(0);
+    Beg_brk_val(long)sbrk(0);
 
     /*
      * allow at least 4 times a big as current.
      * This will override above code.
      */
-    if ( max_size < Beg_brk_val*4 )	/* running on small mem and/or high # cpus */
-	max_size = Beg_brk_val*4;	
+    if ( max_size < Beg_brk_val*4 ) /* running on small mem and/or high # cpus */
+ max_size  Beg_brk_val*4;
 
-    Max_brk_byte_size = max_size;
+    Max_brk_byte_size  max_size;
 
     /* Pause if that option was specified */
     TEST_PAUSE;
 
 
-}	/* End setup() */
+} /* End setup() */
 
 #else
 
 int main()
 {
-	tst_resm(TINFO, "test is not available on uClinux");
-	return 0;
+ tst_resm(TINFO, "test is not available on uClinux");
+ return 0;
 }
 
 
@@ -340,9 +340,9 @@ int main()
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
+ *  completion or premature exit.
  ***************************************************************/
-void 
+void
 cleanup()
 {
     /*
@@ -354,4 +354,4 @@ cleanup()
     /* exit with return code appropriate for results */
     tst_exit();
 
-}	/* End cleanup() */
+} /* End cleanup() */

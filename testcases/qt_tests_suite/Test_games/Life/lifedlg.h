@@ -86,7 +86,7 @@ private:
     QComboBox	*cb;
     QLabel	*sp;
     QSlider	*scroll;
-   void contextMenuEvent( QContextMenuEvent * );    
+   void contextMenuEvent( QContextMenuEvent * );
 };
 
 

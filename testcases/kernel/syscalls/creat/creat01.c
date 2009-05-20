@@ -19,17 +19,17 @@
 
 /*
  * NAME
- * 	creat01.c
+ * creat01.c
  *
  * DESCRIPTION
- *	Testcase to check the basic functionality of the creat(2) system call.
+ * Testcase to check the basic functionality of the creat(2) system call.
  *
  * ALGORITHM
- * 	1.	creat() a file using 0444 mode, write to the fildes, write
- * 		should return a positive count.
+ * 1. creat() a file using 0444 mode, write to the fildes, write
+ *should return a positive count.
  *
- * 	2.	creat() should truncate a file to 0 bytes if it already
- *		exists, and should not fail.
+ * 2. creat() should truncate a file to 0 bytes if it already
+ *  exists, and should not fail.
  *
  * USAGE:  <for command-line>
  *  creat01 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
@@ -41,10 +41,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * 	None
+ * None
  */
 
 #include <stdio.h>
@@ -61,10 +61,10 @@ void cleanup(void);
 void functest1(void);
 void functest2(void);
 
-char *TCID = "creat01";
-int TST_TOTAL = 2;
+char *TCID  "creat01";
+int TST_TOTAL  2;
 extern int Tst_count;
-char nobody_uid[] = "nobody";
+char nobody_uid[]  "nobody";
 struct passwd *ltpuser;
 
 char filename[40];
@@ -74,94 +74,94 @@ int fd[2];
 #define MODE2 0444
 
 struct test_case_t {
-	char *fname;
-	int mode;
-	void (*functest)();
-} TC[] = {
-	/* creat() the file and write to it */
-	{filename, MODE1, functest1},
+ char *fname;
+ int mode;
+ void (*functest)();
+} TC[]  {
+ /* creat() the file and write to it */
+ {filename, MODE1, functest1},
 
-	/* creat() the same file and check that it is now 0 length */
-	{filename, MODE2, functest2}
+ /* creat() the same file and check that it is now 0 length */
+ {filename, MODE2, functest2}
 };
 
 int
 main(int ac, char **av)
 {
-	int i;
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+ int i;
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	setup();		/* set "tstdir", and "testfile" variables */
+ setup();  /* set "tstdir", and "testfile" variables */
 
-	/* check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		/* loop through the test cases */
+  /* loop through the test cases */
 
-		for (i=0; i<TST_TOTAL; i++) {
-			TEST(fd[i] = creat(filename, TC[i].mode));
+  for (i0; i<TST_TOTAL; i++) {
+   TEST(fd[i]  creat(filename, TC[i].mode));
 
-			if (TEST_RETURN == -1) {
-				tst_resm(TFAIL, "Could not creat file %s",
-					 filename);
-				continue;
-			}
+   if (TEST_RETURN  -1) {
+    tst_resm(TFAIL, "Could not creat file %s",
+      filename);
+    continue;
+   }
 
-			if (STD_FUNCTIONAL_TEST) {
-				(*TC[i].functest)();
-			} else {
-				tst_resm(TPASS, "call succeeded");
-			}
-		}
-	}
-	cleanup();
+   if (STD_FUNCTIONAL_TEST) {
+    (*TC[i].functest)();
+   } else {
+    tst_resm(TPASS, "call succeeded");
+   }
+  }
+ }
+ cleanup();
 
-	return 0;
-	/*NOTREACHED*/
+ return 0;
+ /*NOTREACHED*/
 }
 
 /*
  * functest1() - check the functionality of the first test by making sure
- *		 that a write to the file succeeds
+ *   that a write to the file succeeds
  */
 void
 functest1()
 {
-	if (write(TEST_RETURN, "A", 1) != 1) {
-		tst_resm(TFAIL, "write was unsuccessful");
-	} else {
-		tst_resm(TPASS, "file was created and written to successfully");
-	}
+ if (write(TEST_RETURN, "A", 1) ! 1) {
+  tst_resm(TFAIL, "write was unsuccessful");
+ } else {
+  tst_resm(TPASS, "file was created and written to successfully");
+ }
 }
 
 /*
  * functest2() - check the functionality of the second test by making sure
- *		 that the file is now 0 length
+ *   that the file is now 0 length
  */
 void
 functest2()
 {
-	struct stat buf;
+ struct stat buf;
 
-	if (stat(filename, &buf) < 0) {
-		tst_brkm(TBROK, cleanup, "failed to stat test file");
-		/*NOTREACHED*/
-	}
-	if (buf.st_size != 0) {
-		tst_resm(TFAIL, "creat() FAILED to truncate "
-			 "file to zero bytes");
-	} else {
-		tst_resm(TPASS, "creat() truncated existing file to 0 bytes");
-	}
+ if (stat(filename, &buf) < 0) {
+  tst_brkm(TBROK, cleanup, "failed to stat test file");
+  /*NOTREACHED*/
+ }
+ if (buf.st_size ! 0) {
+  tst_resm(TFAIL, "creat() FAILED to truncate "
+    "file to zero bytes");
+ } else {
+  tst_resm(TPASS, "creat() truncated existing file to 0 bytes");
+ }
 }
 
 /*
@@ -170,12 +170,12 @@ functest2()
 void
 setup()
 {
-	/* Switch to nobody user for correct error code collection */
-        if (geteuid() != 0) {
+ /* Switch to nobody user for correct error code collection */
+        if (geteuid() ! 0) {
                 tst_brkm(TBROK, tst_exit, "Test must be run as root");
         }
-         ltpuser = getpwnam(nobody_uid);
-         if (setuid(ltpuser->pw_uid) == -1) {
+         ltpuser  getpwnam(nobody_uid);
+         if (setuid(ltpuser->pw_uid)  -1) {
                 tst_resm(TINFO, "setuid failed to "
                          "to set the effective uid to %d",
                          ltpuser->pw_uid);
@@ -183,42 +183,42 @@ setup()
          }
 
 
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	umask(0);
+ umask(0);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	tst_tmpdir();
+ tst_tmpdir();
 
-	sprintf(filename, "creat01.%d", getpid());
+ sprintf(filename, "creat01.%d", getpid());
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
+ *        completion or premature exit.
  */
 void
 cleanup()
 {
-	int i;
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ int i;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	for (i=0; i<TST_TOTAL; i++) {
-		close(fd[i]);
-	}
+ for (i0; i<TST_TOTAL; i++) {
+  close(fd[i]);
+ }
 
-	unlink(filename);
+ unlink(filename);
 
-	/* delete the test directory created in setup() */
-	tst_rmdir();
+ /* delete the test directory created in setup() */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

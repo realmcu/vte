@@ -14,16 +14,16 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 ***************************************************************************/
-/*=========================================================================
-* This testcase creates the network namespace. 
+/*
+* This testcase creates the network namespace.
 * It creates veth pair . Also assigns IP addresses to the childNS.
 * Also it starts the sshd daemon @ port 7890
 *
 * Scripts Used: paripv6.sh childipv6.sh
-* 
-* Author: Veerendra C <vechandr@in.ibm.com> 
+*
+* Author: Veerendra C <vechandr@in.ibm.com>
 *                      31/07/2008
-=========================================================================*/
+*/
 
 #include <sys/utsname.h>
 #include <sched.h>
@@ -42,15 +42,15 @@
 #include <sys/wait.h>
 #include <test.h>
 
-char *TCID = "netns_ipv6";
-int TST_TOTAL=1;
- 
+char *TCID  "netns_ipv6";
+int TST_TOTAL1;
+
 extern pid_t getpgid(pid_t pid);
 extern pid_t getsid(pid_t pid);
 
 int crtchild(char *s1)
 {
-    char *cmd[] = { "/bin/bash", s1, (char *)0 };
+    char *cmd[]  { "/bin/bash", s1, (char *)0 };
     execve("/bin/bash", cmd, __environ);
     tst_resm(TFAIL, "The code would not reach here on success\n");
     perror("execve");
@@ -59,29 +59,29 @@ int crtchild(char *s1)
 
 int main()
 {
-    int pid, status=0, ret ;
-    long int flags = 0;
+    int pid, status0, ret ;
+    long int flags  0;
     char *ltproot, *par, *child;
 
-    flags |= CLONE_NEWNS;
-    flags |= CLONE_NEWNET;
- 
+    flags | CLONE_NEWNS;
+    flags | CLONE_NEWNET;
+
 
     if (tst_kvercmp(2,6,19) < 0)
-	return 1;
+ return 1;
 
-    ltproot = getenv("LTPROOT");
+    ltproot  getenv("LTPROOT");
 
     if ( ! ltproot) {
         tst_resm(TINFO,"LTPROOT env variable is not set\n");
         tst_resm(TINFO,"Please set LTPROOT and re-run the test.. Thankyou\n");
         return -1;
-    } 
+    }
 
-    par = malloc (FILENAME_MAX);
-    child = malloc (FILENAME_MAX);
+    par  malloc (FILENAME_MAX);
+    child  malloc (FILENAME_MAX);
 
-    if (par == NULL || child == NULL ) {
+    if (par  NULL || child  NULL ) {
         tst_resm(TFAIL, "error while allocating mem");
         exit(1);
     }
@@ -90,13 +90,13 @@ ltproot);
     sprintf(child, "%s/testcases/kernel/containers/netns/childipv6.sh" , \
 ltproot);
 
-    if ((pid = fork()) == 0) {
+    if ((pid  fork())  0) {
 
         // Child.
-        ret = unshare(flags);
+        ret  unshare(flags);
         if (ret < 0) {
             perror("unshare");
-	    tst_resm(TFAIL, "Error:Unshare syscall failed for network namespace\n");
+     tst_resm(TFAIL, "Error:Unshare syscall failed for network namespace\n");
             return 1;
         }
     return crtchild(child);
@@ -104,9 +104,9 @@ ltproot);
     else{
 
         //parent
-        ret = system(par);
-        status = WEXITSTATUS(ret);
-        if (ret == -1 || status != 0) {
+        ret  system(par);
+        status  WEXITSTATUS(ret);
+        if (ret  -1 || status ! 0) {
             tst_resm(TFAIL, "Error: While running the IPv6 tests between \
 parent & child NS\n");
             fflush(stdout);
@@ -114,11 +114,11 @@ parent & child NS\n");
         }
     fflush(stdout);
 
-    ret = waitpid(pid, &status, __WALL);
-    status = WEXITSTATUS(status);
-    if (status != 0 || ret == -1){
+    ret  waitpid(pid, &status, __WALL);
+    status  WEXITSTATUS(status);
+    if (status ! 0 || ret  -1){
         tst_resm(TFAIL, "waitpid() returns %d, errno %d\n", ret, errno);
-        status =  errno;
+        status   errno;
     }
     return status;
     }

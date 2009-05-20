@@ -23,7 +23,7 @@ ifconfig eth1 192.168.1.122
 ifconfig eth1 up
 sleep 3
 
-iwconfig eth1 mode ad-hoc 
+iwconfig eth1 mode ad-hoc
 sleep 3
 
 iwconfig eth1 key off

@@ -56,139 +56,139 @@
 #include <linux/socket.h>
 #include <sctputil.h>
 
-char *TCID = __FILE__;
-int TST_TOTAL = 7;
-int TST_CNT = 0;
+char *TCID  __FILE__;
+int TST_TOTAL  7;
+int TST_CNT  0;
 
 int
 main(int argc, char *argv[])
 {
         int ret, msg_count;
-	socklen_t len;
-	int sk,pf_class,lstn_sk,acpt_sk, flag;
-        char *message = "hello, world!\n";
-	char *message_rcv;
+ socklen_t len;
+ int sk,pf_class,lstn_sk,acpt_sk, flag;
+        char *message  "hello, world!\n";
+ char *message_rcv;
         int count;
 
         struct sockaddr_in conn_addr,lstn_addr,svr_addr;
 
-	/* Rather than fflush() throughout the code, set stdout to
+ /* Rather than fflush() throughout the code, set stdout to
          * be unbuffered.
          */
         setvbuf(stdout, NULL, _IONBF, 0);
         setvbuf(stderr, NULL, _IONBF, 0);
 
-	message_rcv = malloc(512);
+ message_rcv  malloc(512);
 
-        pf_class = PF_INET;
+        pf_class  PF_INET;
 
-        sk = test_socket(pf_class, SOCK_STREAM, IPPROTO_SCTP);
+        sk  test_socket(pf_class, SOCK_STREAM, IPPROTO_SCTP);
 
-        lstn_sk = test_socket(pf_class, SOCK_STREAM, IPPROTO_SCTP);
+        lstn_sk  test_socket(pf_class, SOCK_STREAM, IPPROTO_SCTP);
 
-	conn_addr.sin_family = AF_INET;
-        conn_addr.sin_addr.s_addr = SCTP_IP_LOOPBACK;
-        conn_addr.sin_port = htons(SCTP_TESTPORT_1);
+ conn_addr.sin_family  AF_INET;
+        conn_addr.sin_addr.s_addr  SCTP_IP_LOOPBACK;
+        conn_addr.sin_port  htons(SCTP_TESTPORT_1);
 
-	lstn_addr.sin_family = AF_INET;
-        lstn_addr.sin_addr.s_addr = SCTP_IP_LOOPBACK;
-        lstn_addr.sin_port = htons(SCTP_TESTPORT_1);
+ lstn_addr.sin_family  AF_INET;
+        lstn_addr.sin_addr.s_addr  SCTP_IP_LOOPBACK;
+        lstn_addr.sin_port  htons(SCTP_TESTPORT_1);
 
-	/*Binding the listen socket*/
+ /*Binding the listen socket*/
         test_bind(lstn_sk, (struct sockaddr *) &lstn_addr, sizeof(lstn_addr));
 
         /*Listening the socket*/
         test_listen(lstn_sk, 10);
 
-	len = sizeof(struct sockaddr_in);
-	
-	test_connect(sk, (struct sockaddr *) &conn_addr, len);
+ len  sizeof(struct sockaddr_in);
 
-	acpt_sk = test_accept(lstn_sk, (struct sockaddr *)&svr_addr, &len);
-	
-	msg_count = (strlen(message) + 1);
+ test_connect(sk, (struct sockaddr *) &conn_addr, len);
 
-	flag = MSG_NOSIGNAL;
-	/*Sending the message*/
-	count = test_send(sk, message, msg_count, flag);
+ acpt_sk  test_accept(lstn_sk, (struct sockaddr *)&svr_addr, &len);
 
-	/*recvfrom () TEST1: Bad socket descriptor, EBADF Expected error*/
-	count = recvfrom(-1, message_rcv, msg_count, flag,
-			 (struct sockaddr *)&svr_addr, &len);
-	if (count != -1 || errno != EBADF)
-		tst_brkm(TBROK, tst_exit, "recvfrom with a bad socket "
-			 "descriptor count:%d, errno:%d", count, errno);
+ msg_count  (strlen(message) + 1);
 
-	tst_resm(TPASS, "recvfrom() with a bad socket descriptor - EBADF");
+ flag  MSG_NOSIGNAL;
+ /*Sending the message*/
+ count  test_send(sk, message, msg_count, flag);
 
-	/*recvfrom () TEST2: Invalid socket , ENOTSOCK Expected error*/
-	count = recvfrom(0, message_rcv, msg_count, flag,
-			 (struct sockaddr *)&svr_addr, &len);
-	if (count != -1 || errno != ENOTSOCK)
-		tst_brkm(TBROK, tst_exit, "recvfrom with invalid socket "
-			 "count:%d, errno:%d", count, errno);
+ /*recvfrom () TEST1: Bad socket descriptor, EBADF Expected error*/
+ count  recvfrom(-1, message_rcv, msg_count, flag,
+    (struct sockaddr *)&svr_addr, &len);
+ if (count ! -1 || errno ! EBADF)
+  tst_brkm(TBROK, tst_exit, "recvfrom with a bad socket "
+    "descriptor count:%d, errno:%d", count, errno);
 
-	tst_resm(TPASS, "recvfrom() with invalid socket - ENOTSOCK");
+ tst_resm(TPASS, "recvfrom() with a bad socket descriptor - EBADF");
 
-	/*recvfrom () TEST3: Invalid message pointer EFAULT, Expected error*/
-	count = recvfrom(acpt_sk, (char *)-1, msg_count, flag,
-			 (struct sockaddr *)&svr_addr, &len);
-	if (count != -1 || errno != EFAULT)
-		tst_brkm(TBROK, tst_exit, "recvfrom with invalid message "
-			 "pointer count:%d, errno:%d", count, errno);
+ /*recvfrom () TEST2: Invalid socket , ENOTSOCK Expected error*/
+ count  recvfrom(0, message_rcv, msg_count, flag,
+    (struct sockaddr *)&svr_addr, &len);
+ if (count ! -1 || errno ! ENOTSOCK)
+  tst_brkm(TBROK, tst_exit, "recvfrom with invalid socket "
+    "count:%d, errno:%d", count, errno);
 
-	tst_resm(TPASS, "recvfrom() with invalid message ptr - EFAULT");
+ tst_resm(TPASS, "recvfrom() with invalid socket - ENOTSOCK");
 
-	/*TEST4: recvfrom on listening socket,ENOTCONN Expected error*/
-	count = recvfrom(lstn_sk, message_rcv, msg_count, flag,
-			 (struct sockaddr *)&svr_addr, &len);
-	if (count != -1 || errno != ENOTCONN)
-		tst_brkm(TBROK, tst_exit, "recvfrom on listening socket "
-			 "count:%d, errno:%d", count, errno);
+ /*recvfrom () TEST3: Invalid message pointer EFAULT, Expected error*/
+ count  recvfrom(acpt_sk, (char *)-1, msg_count, flag,
+    (struct sockaddr *)&svr_addr, &len);
+ if (count ! -1 || errno ! EFAULT)
+  tst_brkm(TBROK, tst_exit, "recvfrom with invalid message "
+    "pointer count:%d, errno:%d", count, errno);
 
-	tst_resm(TPASS, "recvfrom() on listening socket - ENOTCONN");
+ tst_resm(TPASS, "recvfrom() with invalid message ptr - EFAULT");
 
-	count = test_send(acpt_sk, message, msg_count, flag);
+ /*TEST4: recvfrom on listening socket,ENOTCONN Expected error*/
+ count  recvfrom(lstn_sk, message_rcv, msg_count, flag,
+    (struct sockaddr *)&svr_addr, &len);
+ if (count ! -1 || errno ! ENOTCONN)
+  tst_brkm(TBROK, tst_exit, "recvfrom on listening socket "
+    "count:%d, errno:%d", count, errno);
 
-	ret = test_shutdown(sk, SHUT_WR);
+ tst_resm(TPASS, "recvfrom() on listening socket - ENOTCONN");
 
-	/*recvfrom () TEST5:reading on a socket that received SHUTDOWN*/
-	count = recvfrom(acpt_sk, message_rcv, msg_count, flag,
-			 (struct sockaddr *)&svr_addr, &len);
-	if (count < 0)
-		tst_brkm(TBROK, tst_exit, "recvfrom on a socket that has "
-			 "received shutdown count:%d, errno:%d", count, errno);
+ count  test_send(acpt_sk, message, msg_count, flag);
 
-	tst_resm(TPASS, "recvfrom() on a socket that has received shutdown - "
-		 "EOF");
+ ret  test_shutdown(sk, SHUT_WR);
 
-	/*recvfrom () TEST6:reading the pending message on socket that sent 
-	SHUTDOWN*/
-	count = recvfrom(sk, message_rcv, msg_count, flag,
-			 (struct sockaddr *)&svr_addr, &len);
-	if (count < 0)
-		tst_brkm(TBROK, tst_exit, "recvfrom on a socket with pending "
-			 "message that has sent shutdown count:%d, errno:%d",
-			 count, errno);
+ /*recvfrom () TEST5:reading on a socket that received SHUTDOWN*/
+ count  recvfrom(acpt_sk, message_rcv, msg_count, flag,
+    (struct sockaddr *)&svr_addr, &len);
+ if (count < 0)
+  tst_brkm(TBROK, tst_exit, "recvfrom on a socket that has "
+    "received shutdown count:%d, errno:%d", count, errno);
 
-	tst_resm(TPASS, "recvfrom() on a socket with pending message that has "
-		 "sent shutdown - SUCCESS");
+ tst_resm(TPASS, "recvfrom() on a socket that has received shutdown - "
+   "EOF");
 
-	/*recvfrom () TEST7: No more message and association is shutdown,
-	ENOTCONN Expected error*/
-	count = recvfrom(sk, message_rcv, msg_count, flag,
-			 (struct sockaddr *)&svr_addr, &len);
-	if (count != -1 || errno != ENOTCONN)
-		tst_brkm(TBROK, tst_exit, "recvfrom on a socket with no "
-			 "pending messages and has sent shutdown count:%d, "
-			 "errno:%d", count, errno);
+ /*recvfrom () TEST6:reading the pending message on socket that sent
+ SHUTDOWN*/
+ count  recvfrom(sk, message_rcv, msg_count, flag,
+    (struct sockaddr *)&svr_addr, &len);
+ if (count < 0)
+  tst_brkm(TBROK, tst_exit, "recvfrom on a socket with pending "
+    "message that has sent shutdown count:%d, errno:%d",
+    count, errno);
 
-	tst_resm(TPASS, "recvfrom() on a socket with no pending messages and "
-		 " has sent shutdown - ENOTCONN");
+ tst_resm(TPASS, "recvfrom() on a socket with pending message that has "
+   "sent shutdown - SUCCESS");
 
-	close(sk);
-	close(lstn_sk);
-	close(acpt_sk);
-	return 0;
-	
+ /*recvfrom () TEST7: No more message and association is shutdown,
+ ENOTCONN Expected error*/
+ count  recvfrom(sk, message_rcv, msg_count, flag,
+    (struct sockaddr *)&svr_addr, &len);
+ if (count ! -1 || errno ! ENOTCONN)
+  tst_brkm(TBROK, tst_exit, "recvfrom on a socket with no "
+    "pending messages and has sent shutdown count:%d, "
+    "errno:%d", count, errno);
+
+ tst_resm(TPASS, "recvfrom() on a socket with no pending messages and "
+   " has sent shutdown - ENOTCONN");
+
+ close(sk);
+ close(lstn_sk);
+ close(acpt_sk);
+ return 0;
+
 }

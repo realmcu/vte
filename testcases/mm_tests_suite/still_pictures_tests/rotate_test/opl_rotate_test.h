@@ -10,17 +10,17 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-     
+
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Smirnov,Kazachkov           09/09/2004     TLSbo41679  BRIEF description of changes made 
+Smirnov,Kazachkov           09/09/2004     TLSbo41679  BRIEF description of changes made
 
 ==================================================================================================*/
 
-#ifndef _OPL_MIRROR_TEST_H_ 
+#ifndef _OPL_MIRROR_TEST_H_
 #define _OPL_MIRROR_TEST_H_
 
 #ifdef __cplusplus
@@ -32,24 +32,24 @@ extern "C"{
 ==================================================================================================*/
 
 #include <stdio.h>
-#include <stdlib.h> 
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
 
 
-#include <pthread.h> 
+#include <pthread.h>
 #include <unistd.h>
 #include <linux/fb.h>
-#include <asm/ioctls.h> 
-#include <asm/fcntl.h> 
-#include <asm/mman.h> 
+#include <asm/ioctls.h>
+#include <asm/fcntl.h>
+#include <asm/mman.h>
 #include <sys/types.h>
 
 #include "oplTypes.h"
 #include "oplIP.h"
-/* #include "opl_debug.h" */ 
- 
+/* #include "opl_debug.h" */
+
 
 /*==================================================================================================
                                            CONSTANTS
@@ -73,7 +73,7 @@ extern "C"{
 #define PTHREADED       2
 #define PREEMPTIVE      4       /* concurrency test - lib preemptivity    */
 #define RESTITUTION     5       /* functional tets - even transformations */
-	
+
 #define ITERATIONS      1
 
 #define NO_BMP		0
@@ -86,7 +86,7 @@ extern "C"{
                                              ENUMS
 ==================================================================================================*/
 
-	
+
 
 /*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS

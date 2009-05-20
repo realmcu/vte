@@ -17,31 +17,31 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
- 
-/*================================================================================================*/
+
+/**/
 /**^M
     @file  tictactoe.c^M
-*==================================================================================================
+*
 
   Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
 
-====================================================================================================
+
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
    Inkina irina               10/09/2004     ??????      Initial version
 
-==================================================================================================
+
 Portability: Indicate if this module is portable to other compilers or platforms.
              If not, indicate specific reasons why is it not portable.
 
-==================================================================================================*/
+*/
 
- 
+
 #include "gtk/gtksignal.h"
 #include "gtk/gtktable.h"
 #include "gtk/gtktogglebutton.h"
@@ -56,29 +56,29 @@ static void tictactoe_class_init          (TictactoeClass *klass);
 static void tictactoe_init                (Tictactoe      *ttt);
 static void tictactoe_toggle              (GtkWidget *widget, Tictactoe *ttt);
 
-static gint tictactoe_signals[LAST_SIGNAL] = { 0 };
+static gint tictactoe_signals[LAST_SIGNAL]  { 0 };
 
 GType
 tictactoe_get_type ()
 {
-  static GType ttt_type = 0;
+  static GType ttt_type  0;
 
   if (!ttt_type)
     {
-      static const GTypeInfo ttt_info =
+      static const GTypeInfo ttt_info 
       {
-	sizeof (TictactoeClass),
-	NULL,
+ sizeof (TictactoeClass),
+ NULL,
         NULL,
-	(GClassInitFunc) tictactoe_class_init,
+ (GClassInitFunc) tictactoe_class_init,
         NULL,
-	NULL,
+ NULL,
         sizeof (Tictactoe),
-	0,
-	(GInstanceInitFunc) tictactoe_init,
+ 0,
+ (GInstanceInitFunc) tictactoe_init,
       };
 
-      ttt_type = g_type_register_static (GTK_TYPE_VBOX, "Tictactoe", &ttt_info, 0);
+      ttt_type  g_type_register_static (GTK_TYPE_VBOX, "Tictactoe", &ttt_info, 0);
     }
 
   return ttt_type;
@@ -89,19 +89,19 @@ tictactoe_class_init (TictactoeClass *class)
 {
   GtkObjectClass *object_class;
 
-  object_class = (GtkObjectClass*) class;
-  
-  tictactoe_signals[TICTACTOE_SIGNAL] = g_signal_new ("tictactoe",
-					 G_TYPE_FROM_CLASS (object_class),
-	                                 G_SIGNAL_RUN_FIRST,
-	                                 0,
-                                         NULL, 
-                                         NULL,                
-					 g_cclosure_marshal_VOID__VOID,
+  object_class  (GtkObjectClass*) class;
+
+  tictactoe_signals[TICTACTOE_SIGNAL]  g_signal_new ("tictactoe",
+      G_TYPE_FROM_CLASS (object_class),
+                                  G_SIGNAL_RUN_FIRST,
+                                  0,
+                                         NULL,
+                                         NULL,
+      g_cclosure_marshal_VOID__VOID,
                                          G_TYPE_NONE, 0, NULL);
 
 
-  class->tictactoe = NULL;
+  class->tictactoe  NULL;
 }
 
 static void
@@ -109,21 +109,21 @@ tictactoe_init (Tictactoe *ttt)
 {
   GtkWidget *table;
   gint i,j;
-  
-  table = gtk_table_new (4, 3, TRUE);
+
+  table  gtk_table_new (4, 3, TRUE);
   gtk_container_add (GTK_CONTAINER (ttt), table);
   gtk_widget_show (table);
 
-  for (i = 0; i < 3; i++)
-    for (j = 0; j < 3; j++)
+  for (i  0; i < 3; i++)
+    for (j  0; j < 3; j++)
       {
-	ttt->buttons[i][j] = gtk_toggle_button_new ();
-	gtk_table_attach_defaults (GTK_TABLE (table), ttt->buttons[i][j], 
-				   i, i+1, j, j+1);
-	g_signal_connect (G_OBJECT (ttt->buttons[i][j]), "toggled",
-			  G_CALLBACK (tictactoe_toggle), (gpointer) ttt);
-	gtk_widget_set_size_request (ttt->buttons[i][j], 10, 10);
-	gtk_widget_show (ttt->buttons[i][j]);
+ ttt->buttons[i][j]  gtk_toggle_button_new ();
+ gtk_table_attach_defaults (GTK_TABLE (table), ttt->buttons[i][j],
+       i, i+1, j, j+1);
+ g_signal_connect (G_OBJECT (ttt->buttons[i][j]), "toggled",
+     G_CALLBACK (tictactoe_toggle), (gpointer) ttt);
+ gtk_widget_set_size_request (ttt->buttons[i][j], 10, 10);
+ gtk_widget_show (ttt->buttons[i][j]);
       }
 }
 
@@ -133,19 +133,19 @@ tictactoe_new ()
   return GTK_WIDGET (g_object_new (tictactoe_get_type (), NULL));
 }
 
-void	       
+void
 tictactoe_clear (Tictactoe *ttt)
 {
   int i,j;
 
-  for (i = 0; i < 3; i++)
-    for (j = 0; j < 3; j++)
+  for (i  0; i < 3; i++)
+    for (j  0; j < 3; j++)
       {
-	g_signal_handlers_block_by_func (G_OBJECT (ttt->buttons[i][j]), 
+ g_signal_handlers_block_by_func (G_OBJECT (ttt->buttons[i][j]),
                                          NULL, ttt);
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (ttt->buttons[i][j]),
-				      FALSE);
-	g_signal_handlers_unblock_by_func (G_OBJECT (ttt->buttons[i][j]), 
+ gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (ttt->buttons[i][j]),
+          FALSE);
+ g_signal_handlers_unblock_by_func (G_OBJECT (ttt->buttons[i][j]),
                                            NULL, ttt);
       }
 }
@@ -155,34 +155,34 @@ tictactoe_toggle (GtkWidget *widget, Tictactoe *ttt)
 {
   int i,k;
 
-  static int rwins[8][3] = { { 0, 0, 0 }, { 1, 1, 1 }, { 2, 2, 2 },
-			     { 0, 1, 2 }, { 0, 1, 2 }, { 0, 1, 2 },
-			     { 0, 1, 2 }, { 0, 1, 2 } };
-  static int cwins[8][3] = { { 0, 1, 2 }, { 0, 1, 2 }, { 0, 1, 2 },
-			     { 0, 0, 0 }, { 1, 1, 1 }, { 2, 2, 2 },
-			     { 0, 1, 2 }, { 2, 1, 0 } };
+  static int rwins[8][3]  { { 0, 0, 0 }, { 1, 1, 1 }, { 2, 2, 2 },
+        { 0, 1, 2 }, { 0, 1, 2 }, { 0, 1, 2 },
+        { 0, 1, 2 }, { 0, 1, 2 } };
+  static int cwins[8][3]  { { 0, 1, 2 }, { 0, 1, 2 }, { 0, 1, 2 },
+        { 0, 0, 0 }, { 1, 1, 1 }, { 2, 2, 2 },
+        { 0, 1, 2 }, { 2, 1, 0 } };
 
   int success, found;
 
-  for (k = 0; k < 8; k++)
+  for (k  0; k < 8; k++)
     {
-      success = TRUE;
-      found = FALSE;
+      success  TRUE;
+      found  FALSE;
 
-      for (i = 0; i < 3; i++)
-	{
-	  success = success && 
-	    GTK_TOGGLE_BUTTON (ttt->buttons[rwins[k][i]][cwins[k][i]])->active;
-	  found = found ||
-	    ttt->buttons[rwins[k][i]][cwins[k][i]] == widget;
-	}
-      
+      for (i  0; i < 3; i++)
+ {
+   success  success &&
+     GTK_TOGGLE_BUTTON (ttt->buttons[rwins[k][i]][cwins[k][i]])->active;
+   found  found ||
+     ttt->buttons[rwins[k][i]][cwins[k][i]]  widget;
+ }
+
       if (success && found)
-	{
-	  g_signal_emit (G_OBJECT (ttt), 
-	                 tictactoe_signals[TICTACTOE_SIGNAL], 0);
-	  break;
-	}
+ {
+   g_signal_emit (G_OBJECT (ttt),
+                  tictactoe_signals[TICTACTOE_SIGNAL], 0);
+   break;
+ }
     }
 }
 

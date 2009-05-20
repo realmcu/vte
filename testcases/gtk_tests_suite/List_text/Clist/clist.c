@@ -1,52 +1,52 @@
-/*================================================================================================*/
+/**/
 /**^M
     @file   clist.c^M
-*==================================================================================================
+*
 
   Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
 
-====================================================================================================
+
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
    Inkina irina               10/09/2004     ??????      Initial version
 
-==================================================================================================
+
 Portability: Indicate if this module is portable to other compilers or platforms.
              If not, indicate specific reasons why is it not portable.
 
-==================================================================================================*/
+*/
 
 
 #include <gtk/gtk.h>
-gint vt=FALSE;
+gint vtFALSE;
 
 
 void destroy_Quit( GtkWidget *widget,gpointer data )
 {
-    vt=FALSE;
+    vtFALSE;
     g_print("Test Pass Exiting with test pass");
     gtk_main_quit ();
 }
 void destroy_Exit( GtkWidget *widget,gpointer data )
 {
-    vt=TRUE;
+    vtTRUE;
     g_print("Test Fail Exiting with test fail");
     gtk_main_quit ();
 }
 
-static GtkItemFactoryEntry menu_items[] =
+static GtkItemFactoryEntry menu_items[] 
 {
-  { "/_File",		 NULL,	       0,		      0, "<Branch>" },
-  { "/File/sep1",	 NULL,	       0,	      0, "<Separator>" },
-  { "/File/_Quit - Pass","<control>Q", destroy_Quit,	      0 },
-  { "/File/_Exit - Fail","<control>E", destroy_Exit,	      0 },
-  { "/_Help",		 NULL,	       0,		      0, "<Branch>" },
-  { "/Help/_About",	  "<control>H",	0,	      0 },
+  { "/_File",   NULL,        0,        0, "<Branch>" },
+  { "/File/sep1",  NULL,        0,       0, "<Separator>" },
+  { "/File/_Quit - Pass","<control>Q", destroy_Quit,       0 },
+  { "/File/_Exit - Fail","<control>E", destroy_Exit,       0 },
+  { "/_Help",   NULL,        0,        0, "<Branch>" },
+  { "/Help/_About",   "<control>H", 0,       0 },
 };
 
 
@@ -54,9 +54,9 @@ static GtkItemFactoryEntry menu_items[] =
 void button_add_clicked( gpointer data )
 {
     int indx;
- 
+
     /* Something silly to add to the list. 4 rows of 2 columns each */
-    gchar *drink[4][2] = { { "Milk",    "3 Oz" },
+    gchar *drink[4][2]  { { "Milk",    "3 Oz" },
                            { "Water",   "6 l" },
                            { "Carrots", "2" },
                            { "Snakes",  "55" } };
@@ -64,8 +64,8 @@ void button_add_clicked( gpointer data )
     /* Here we do the actual adding of the text. It's done once for
      * each row.
      */
-    for (indx = 0; indx < 4; indx++)
-	gtk_clist_append ((GtkCList *)data, drink[indx]);
+    for (indx  0; indx < 4; indx++)
+ gtk_clist_append ((GtkCList *)data, drink[indx]);
 
     return;
 }
@@ -84,20 +84,20 @@ void button_clear_clicked( gpointer data )
 /* The user clicked the "Hide/Show titles" button. */
 void button_hide_show_clicked( gpointer data )
 {
-    /* Just a flag to remember the status. 0 = currently visible */
-    static short int flag = 0;
+    /* Just a flag to remember the status. 0  currently visible */
+    static short int flag  0;
 
-    if (flag == 0)
+    if (flag  0)
     {
         /* Hide the titles and set the flag to 1 */
-	gtk_clist_column_titles_hide ((GtkCList *)data);
-	flag++;
+ gtk_clist_column_titles_hide ((GtkCList *)data);
+ flag++;
     }
     else
     {
         /* Show the titles and reset flag to 0 */
-	gtk_clist_column_titles_show ((GtkCList *)data);
-	flag--;
+ gtk_clist_column_titles_show ((GtkCList *)data);
+ flag--;
     }
 
     return;
@@ -107,7 +107,7 @@ void button_hide_show_clicked( gpointer data )
 void selection_made( GtkWidget      *clist,
                      gint            row,
                      gint            column,
-		     GdkEventButton *event,
+       GdkEventButton *event,
                      gpointer        data )
 {
     gchar *text;
@@ -121,62 +121,62 @@ void selection_made( GtkWidget      *clist,
     /* Just prints some information about the selected row */
     g_print ("You selected row %d. More specifically you clicked in "
              "column %d, and the text in this cell is %s\n\n",
-	     row, column, text);
+      row, column, text);
 
     return;
 }
 
 int clist_main( int    argc,gchar *argv[] )
-{                                  
+{
     GtkWidget *window;
     GtkWidget *vbox, *hbox, *box1;
     GtkWidget *scrolled_window, *clist;
-    GtkWidget *button_add, *button_clear, *button_hide_show;    
-    gchar *titles[2] = { "Ingredients", "Amount" };
+    GtkWidget *button_add, *button_clear, *button_hide_show;
+    gchar *titles[2]  { "Ingredients", "Amount" };
       GtkAccelGroup *accel_group;
       GtkItemFactory *item_factory;
       GtkWidget *separator;
 
     gtk_init(&argc, &argv);
-    
-    window=gtk_window_new (GTK_WINDOW_TOPLEVEL);
+
+    windowgtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_size_request (GTK_WIDGET (window), 240, 320);
 
     gtk_window_set_title (GTK_WINDOW (window), "GtkCList Example");
     g_signal_connect (G_OBJECT (window), "destroy",G_CALLBACK (gtk_main_quit),&window);
-      accel_group = gtk_accel_group_new ();
-      item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
+      accel_group  gtk_accel_group_new ();
+      item_factory  gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
       g_object_set_data_full (G_OBJECT (window), "<main>",item_factory, (GDestroyNotify) g_object_unref);
       gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
 
       gtk_container_set_border_width (GTK_CONTAINER (window), 0);//8
 ///////////
       gtk_item_factory_create_items (item_factory,G_N_ELEMENTS(menu_items), menu_items, NULL);
-      box1 = gtk_vbox_new (FALSE, 0);
+      box1  gtk_vbox_new (FALSE, 0);
       gtk_container_add (GTK_CONTAINER (window), box1);
 
       gtk_box_pack_start (GTK_BOX (box1),gtk_item_factory_get_widget (item_factory, "<main>"),
-			  FALSE, FALSE, 0);
+     FALSE, FALSE, 0);
 
-      separator = gtk_hseparator_new ();
+      separator  gtk_hseparator_new ();
       gtk_box_pack_start (GTK_BOX (box1), separator, FALSE, TRUE, 0);
 
 /////////
 
-        
-    vbox=gtk_vbox_new (FALSE, 5);
+
+    vboxgtk_vbox_new (FALSE, 5);
     gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
     gtk_container_add (GTK_CONTAINER (box1), vbox);
-    
+
     /* Create a scrolled window to pack the CList widget into */
-    scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+    scrolled_window  gtk_scrolled_window_new (NULL, NULL);
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
                                     GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 
     gtk_box_pack_start (GTK_BOX (vbox), scrolled_window, TRUE, TRUE, 0);
 
     /* Create the CList. For this example we use 2 columns */
-    clist = gtk_clist_new_with_titles (2, titles);
+    clist  gtk_clist_new_with_titles (2, titles);
 
     /* When a selection is made, we want to know about it. The callback
      * used is selection_made, and its code can be found further down */
@@ -199,12 +199,12 @@ int clist_main( int    argc,gchar *argv[] )
     /* Create the buttons and add them to the window. See the button
      * tutorial for more examples and comments on this.
      */
-    hbox = gtk_hbox_new (FALSE, 0);
+    hbox  gtk_hbox_new (FALSE, 0);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 0);
 
-    button_add = gtk_button_new_with_label ("Add List");
-    button_clear = gtk_button_new_with_label ("Clear List");
-    button_hide_show = gtk_button_new_with_label ("Hide/Show titles");
+    button_add  gtk_button_new_with_label ("Add List");
+    button_clear  gtk_button_new_with_label ("Clear List");
+    button_hide_show  gtk_button_new_with_label ("Hide/Show titles");
 
     gtk_box_pack_start (GTK_BOX (hbox), button_add, TRUE, TRUE, 0);
     gtk_box_pack_start (GTK_BOX (hbox), button_clear, TRUE, TRUE, 0);
@@ -213,7 +213,7 @@ int clist_main( int    argc,gchar *argv[] )
     /* Connect our callbacks to the three buttons */
     g_signal_connect_swapped (G_OBJECT (button_add), "clicked",
                               G_CALLBACK (button_add_clicked),
-			      clist);
+         clist);
     g_signal_connect_swapped (G_OBJECT (button_clear), "clicked",
                               G_CALLBACK (button_clear_clicked),
                               clist);
@@ -228,6 +228,6 @@ int clist_main( int    argc,gchar *argv[] )
     gtk_widget_show_all (window);
 
     gtk_main();
-    
+
     return (vt);
 }

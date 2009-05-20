@@ -19,15 +19,15 @@
 
 /*
  * NAME
- * 	setpgrp02.c
+ * setpgrp02.c
  *
  * DESCRIPTION
- *	Testcase to check the basic functionality of the setpgrp(2) syscall.
+ * Testcase to check the basic functionality of the setpgrp(2) syscall.
  *
  * ALGORITHM
- * 	Check the values that setpgrp() and getpgrp() return. The setpgrp()
- *	returns 0 on success in Linux, but, in DYNIX/ptx this call returns
- *	the new pgid.
+ * Check the values that setpgrp() and getpgrp() return. The setpgrp()
+ * returns 0 on success in Linux, but, in DYNIX/ptx this call returns
+ * the new pgid.
  *
  * USAGE:  <for command-line>
  *  setpgrp02 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
@@ -39,18 +39,18 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * 	None
+ * None
  */
 #include <errno.h>
 #include <wait.h>
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "setpgrp02";
-int TST_TOTAL = 1;
+char *TCID  "setpgrp02";
+int TST_TOTAL  1;
 extern int Tst_count;
 
 void setup(void);
@@ -58,70 +58,70 @@ void cleanup(void);
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned by parse_opts */
+ int lc;    /* loop counter */
+ char *msg;   /* message returned by parse_opts */
 
-	int pid, oldpgrp;
-	int e_code, status, retval=0;
+ int pid, oldpgrp;
+ int e_code, status, retval0;
 
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	setup();
+ setup();
 
-	/* check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		if ((pid = FORK_OR_VFORK()) == -1) {
-			tst_brkm(TBROK, cleanup, "fork() failed");
-		}
+  if ((pid  FORK_OR_VFORK())  -1) {
+   tst_brkm(TBROK, cleanup, "fork() failed");
+  }
 
-		if (pid == 0) {			/* child */
-			oldpgrp = getpgrp();
+  if (pid  0) {   /* child */
+   oldpgrp  getpgrp();
 
-			TEST(setpgrp());
+   TEST(setpgrp());
 
-			if (TEST_RETURN != 0) {
-				retval=1;
-				tst_resm(TFAIL, "setpgrp() FAILED, errno:%d",
-					 errno);
-				continue;
-			}
+   if (TEST_RETURN ! 0) {
+    retval1;
+    tst_resm(TFAIL, "setpgrp() FAILED, errno:%d",
+      errno);
+    continue;
+   }
 
-			if (!STD_FUNCTIONAL_TEST) {
-				tst_resm(TPASS, "call succeeded");
-				continue;
-			}
+   if (!STD_FUNCTIONAL_TEST) {
+    tst_resm(TPASS, "call succeeded");
+    continue;
+   }
 
-			if (getpgrp() == oldpgrp) {
-				retval=1;
-				tst_resm(TFAIL, "setpgrp() FAILED to set "
-					 "new group id");
-				continue;
-			} else {
-				tst_resm(TPASS, "functionality is correct");
-			}
-			exit(retval);
-		} else {			/* parent */
-			/* wait for the child to finish */
-            		wait(&status);
-            		/* make sure the child returned a good exit status */
-            		e_code = status >> 8;
-            		if ((e_code != 0) || (retval != 0)) {
-                	tst_resm(TFAIL, "Failures reported above");
-            		}
-			cleanup();
-		}
-	}
+   if (getpgrp()  oldpgrp) {
+    retval1;
+    tst_resm(TFAIL, "setpgrp() FAILED to set "
+      "new group id");
+    continue;
+   } else {
+    tst_resm(TPASS, "functionality is correct");
+   }
+   exit(retval);
+  } else {   /* parent */
+   /* wait for the child to finish */
+           wait(&status);
+           /* make sure the child returned a good exit status */
+           e_code  status >> 8;
+           if ((e_code ! 0) || (retval ! 0)) {
+                tst_resm(TFAIL, "Failures reported above");
+           }
+   cleanup();
+  }
+ }
 
-	/*NOTREACHED*/
-	return(0);
+ /*NOTREACHED*/
+ return(0);
 }
 
 /*
@@ -130,26 +130,26 @@ int main(int ac, char **av)
 void
 setup()
 {
-	/* capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
+ *        completion or premature exit.
  */
 void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

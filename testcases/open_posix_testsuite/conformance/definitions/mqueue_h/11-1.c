@@ -10,6 +10,6 @@ line 9696 of the Base Definitions document
 
 int main()
 {
-	fprintf(stderr, "Test not implemented!\n");
+ fprintf(stderr, "Test not implemented!\n");
         return PTS_UNTESTED;
 }

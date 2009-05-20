@@ -9,50 +9,50 @@
 # any later version.
 #
 
-setup() 
+setup()
 {
-	export TCID="setup"
-	export TST_COUNT=0
-	export TST_TOTAL=2
+ export TCID="setup"
+ export TST_COUNT=0
+ export TST_TOTAL=2
 }
 
 test01()
 {
-	TCID="test01"
-	TST_COUNT=1
-	RC=0
+ TCID="test01"
+ TST_COUNT=1
+ RC=0
 
-	# Verify that test_create_yes_t can fork.
-	runcon -t test_create_yes_t -- selinux_task_create_parent 2>&1
-	RC=$?
-	if [ $RC -eq 0 ]
-	then
-		echo "$TCID   PASS : task_create passed."
-	else
-		echo "$TCID   FAIL : task_create failed."
-	fi
-	return $RC
+ # Verify that test_create_yes_t can fork.
+ runcon -t test_create_yes_t -- selinux_task_create_parent 2>&1
+ RC=$?
+ if [ $RC -eq 0 ]
+ then
+  echo "$TCID   PASS : task_create passed."
+ else
+  echo "$TCID   FAIL : task_create failed."
+ fi
+ return $RC
 }
 
 test02()
 {
 
-	TCID="test02"
-	TST_COUNT=2
-	RC=0
+ TCID="test02"
+ TST_COUNT=2
+ RC=0
 
-	# Verify that test_create_no_t cannot fork.
-	runcon -t test_create_no_t -- selinux_task_create_parent 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   PASS : task_create passed."
-		RC=0
-	else
-		echo "$TCID   FAIL : task_create failed."
-		RC=1
-	fi
-	return $RC
+ # Verify that test_create_no_t cannot fork.
+ runcon -t test_create_no_t -- selinux_task_create_parent 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   PASS : task_create passed."
+  RC=0
+ else
+  echo "$TCID   FAIL : task_create failed."
+  RC=1
+ fi
+ return $RC
 }
 
 # Function:     main

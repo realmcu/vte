@@ -7,7 +7,7 @@
  */
 
 /*
- * Test that EMSGSIZE is returned if msg_len is not <= mq_attr->mq_msgsize.
+ * Test that EMSGSIZE is returned if msg_len is not < mq_attr->mq_msgsize.
  */
 
 #include <stdio.h>
@@ -25,61 +25,61 @@
 #define MSGSTR "01234567890123456789"
 #define NUMINVALID 3
 
-static long messagesize[NUMINVALID] = {
-	19, 2, 1 
+static long messagesize[NUMINVALID]  {
+ 19, 2, 1
 };
 
 
 int main()
 {
         char qname[NAMESIZE];
-        const char *msgptr = MSGSTR;
+        const char *msgptr  MSGSTR;
         mqd_t queue;
-	int unresolved=0, failure=0, i;
-	struct mq_attr attr;
+ int unresolved0, failure0, i;
+ struct mq_attr attr;
 
         sprintf(qname, "/mq_send_14-1_%d", getpid());
 
-	for (i=0; i<NUMINVALID; i++) {
-		attr.mq_msgsize = messagesize[i];
-		attr.mq_maxmsg  = messagesize[i];
+ for (i0; i<NUMINVALID; i++) {
+  attr.mq_msgsize  messagesize[i];
+  attr.mq_maxmsg   messagesize[i];
 
-        	queue = mq_open(qname, O_CREAT|O_RDWR, S_IRUSR|S_IWUSR, &attr);
-        	if (queue == (mqd_t)-1) {
-                	perror("mq_open() did not return success");
-                	return PTS_UNRESOLVED;
-        	}
+        queue  mq_open(qname, O_CREAT|O_RDWR, S_IRUSR|S_IWUSR, &attr);
+        if (queue  (mqd_t)-1) {
+                perror("mq_open() did not return success");
+                return PTS_UNRESOLVED;
+        }
 
-        	if (mq_send(queue, msgptr, strlen(msgptr), 1) != -1) {
-                	printf("mq_send() did not return -1 for EMSGSIZE\n");
-			failure=1;
-        	}
-		
-		if (errno != EMSGSIZE) {
-			printf("errno != EMSGSIZE\n");
-			failure=1;
-		}
+        if (mq_send(queue, msgptr, strlen(msgptr), 1) ! -1) {
+                printf("mq_send() did not return -1 for EMSGSIZE\n");
+   failure1;
+        }
 
-        	if (mq_close(queue) != 0) {
-			perror("mq_close() did not return success");
-			unresolved=1;
-        	}
+  if (errno ! EMSGSIZE) {
+   printf("errno ! EMSGSIZE\n");
+   failure1;
+  }
 
-        	if (mq_unlink(qname) != 0) {
-			perror("mq_unlink() did not return success");
-			unresolved=1;
-        	}
-	}
+        if (mq_close(queue) ! 0) {
+   perror("mq_close() did not return success");
+   unresolved1;
+        }
 
-	if (failure==1) {
-		printf("Test FAILED\n");
-		return PTS_FAIL;
-	}
+        if (mq_unlink(qname) ! 0) {
+   perror("mq_unlink() did not return success");
+   unresolved1;
+        }
+ }
 
-	if (unresolved==1) {
-		printf("Test UNRESOLVED\n");
-		return PTS_UNRESOLVED;
-	}
+ if (failure1) {
+  printf("Test FAILED\n");
+  return PTS_FAIL;
+ }
+
+ if (unresolved1) {
+  printf("Test UNRESOLVED\n");
+  return PTS_UNRESOLVED;
+ }
 
         printf("Test PASSED\n");
         return PTS_PASS;

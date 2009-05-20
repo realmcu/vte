@@ -21,9 +21,9 @@
 #define NB_BITS_MAX   NBBITS_24k
 
 
-#define WBAMR_SIZE_MAX  		(3+NB_BITS_MAX)          /* serial size max */
-#define TX_FRAME_TYPE 	(WBAMR_S16)0x6b21
-#define RX_FRAME_TYPE 	(WBAMR_S16)0x6b20
+#define WBAMR_SIZE_MAX  (3+NB_BITS_MAX)          /* serial size max */
+#define TX_FRAME_TYPE (WBAMR_S16)0x6b21
+#define RX_FRAME_TYPE (WBAMR_S16)0x6b20
 
 #define TX_SPEECH 0
 #define TX_SID_FIRST 1

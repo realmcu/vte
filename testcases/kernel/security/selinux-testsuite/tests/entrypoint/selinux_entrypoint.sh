@@ -13,7 +13,7 @@ setup()
 {
         export TCID="setup"
         export TST_COUNT=0
-	export TST_TOTAL=2
+ export TST_TOTAL=2
 
         # Clean up from a previous run
         rm -f $SELINUXTMPDIR/true 2>&1
@@ -25,19 +25,19 @@ test01()
         TST_COUNT=1
         RC=0
 
-	# Verify that test_entrypoint_t cannot be entered 
-	# via an ordinary program.
-	runcon -t test_entrypoint_t true 2>&1
-	RC=$?   # this should fail
+ # Verify that test_entrypoint_t cannot be entered
+ # via an ordinary program.
+ runcon -t test_entrypoint_t true 2>&1
+ RC=$?   # this should fail
         if [ $RC -ne 0 ]
         then
-		echo "$TCID   PASS : entrypoint passed."
-		RC=0
-	else
-		echo "$TCID   FAIL : entrypoint failed."
-		RC=1
-	fi
-	return $RC
+  echo "$TCID   PASS : entrypoint passed."
+  RC=0
+ else
+  echo "$TCID   FAIL : entrypoint failed."
+  RC=1
+ fi
+ return $RC
 }
 
 test02()
@@ -46,25 +46,25 @@ test02()
         TST_COUNT=2
         RC=0
 
-	# Set up a program with the entrypoint type for this domain.
-	cp /bin/true $SELINUXTMPDIR/true
-	chcon -t test_entrypoint_execute_t $SELINUXTMPDIR/true
+ # Set up a program with the entrypoint type for this domain.
+ cp /bin/true $SELINUXTMPDIR/true
+ chcon -t test_entrypoint_execute_t $SELINUXTMPDIR/true
 
-	# Verify that test_entrypoint_t can be entered via this program.
-	runcon -t test_entrypoint_t $SELINUXTMPDIR/true
+ # Verify that test_entrypoint_t can be entered via this program.
+ runcon -t test_entrypoint_t $SELINUXTMPDIR/true
         if [ $RC -ne 0 ]
         then
-		echo "$TCID   FAIL : entrypoint failed."
-	else
-		echo "$TCID   PASS : entrypoint passed."
-	fi
-	return $RC
+  echo "$TCID   FAIL : entrypoint failed."
+ else
+  echo "$TCID   PASS : entrypoint passed."
+ fi
+ return $RC
 }
 
 cleanup()
 {
-	# Cleanup.
-	rm -f $SELINUXTMPDIR/true
+ # Cleanup.
+ rm -f $SELINUXTMPDIR/true
 }
 
 # Function:     main
@@ -77,8 +77,8 @@ cleanup()
 RC=0    # Return value from setup, and test functions.
 EXIT_VAL=0
 
-setup 
+setup
 test01 || EXIT_VAL=$RC
 test02 || EXIT_VAL=$RC
 cleanup
-exit $EXIT_VAL 
+exit $EXIT_VAL

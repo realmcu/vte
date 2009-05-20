@@ -1,25 +1,25 @@
-/*================================================================================================*/
+/**/
 /**^M
     @file   appwindow.c^M
-*==================================================================================================
+*
 
   Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
 
-====================================================================================================
+
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
    Inkina irina               10/09/2004     ??????      Initial version
 
-==================================================================================================
+
 Portability: Indicate if this module is portable to other compilers or platforms.
              If not, indicate specific reasons why is it not portable.
 
-==================================================================================================*/
+*/
 
 
 /*
@@ -38,9 +38,9 @@ static GtkWidget *text;
 static GtkTextBuffer *buffer;
 static GtkTextIter    iter;
 char *file_name;
-gboolean save_key=FALSE;
-gint vt=FALSE;
-static FILE *text_stream = NULL;
+gboolean save_keyFALSE;
+gint vtFALSE;
+static FILE *text_stream  NULL;
 static void create_FileSelection(gpointer);
 void store_filename (GtkFileSelection *filesel, gpointer user_data);
 void button_new( gpointer );
@@ -51,38 +51,38 @@ void button_save_as( gpointer);
 void button_blue(GtkWidget *widget,gpointer data)
 {
    GtkTextIter  iter,start,end;
-   static size_t bytes_read=NULL;
+   static size_t bytes_readNULL;
    guchar *buf;
 
    gtk_text_buffer_get_bounds(buffer,&start,&end);
-   buf=gtk_text_buffer_get_text (buffer,&start,&end,TRUE);
-   bytes_read=gtk_text_buffer_get_char_count  (buffer);
+   bufgtk_text_buffer_get_text (buffer,&start,&end,TRUE);
+   bytes_readgtk_text_buffer_get_char_count  (buffer);
    gtk_text_buffer_delete(buffer,&start,&end);
-    
+
     gtk_text_buffer_create_tag (buffer, "blue_foreground",
-			      "foreground", "blue", NULL);
+         "foreground", "blue", NULL);
     gtk_text_buffer_get_iter_at_offset (buffer, &iter, 0);
     gtk_text_buffer_insert_with_tags_by_name (buffer, &iter,
-					    buf,bytes_read,"blue_foreground", NULL);
+         buf,bytes_read,"blue_foreground", NULL);
     gtk_text_view_set_buffer(GTK_TEXT_VIEW (text),buffer);
-                           
+
 }
 
 void button_red( GtkWidget *widget,gpointer data)
 {
    GtkTextIter  iter,start,end;
-   static size_t bytes_read=NULL;
+   static size_t bytes_readNULL;
    guchar *buf;
 
    gtk_text_buffer_get_bounds(buffer,&start,&end);
-   buf=gtk_text_buffer_get_text (buffer,&start,&end,TRUE);
-   bytes_read=gtk_text_buffer_get_char_count  (buffer);
+   bufgtk_text_buffer_get_text (buffer,&start,&end,TRUE);
+   bytes_readgtk_text_buffer_get_char_count  (buffer);
    gtk_text_buffer_delete(buffer,&start,&end);
    gtk_text_buffer_create_tag (buffer, "red_foreground",
-			      "foreground", "red", NULL);
+         "foreground", "red", NULL);
     gtk_text_buffer_get_iter_at_offset (buffer, &iter, 0);
     gtk_text_buffer_insert_with_tags_by_name (buffer, &iter,
-					    buf,bytes_read,"red_foreground", NULL);
+         buf,bytes_read,"red_foreground", NULL);
     gtk_text_view_set_buffer(GTK_TEXT_VIEW (text),buffer);
 
 }
@@ -90,18 +90,18 @@ void button_red( GtkWidget *widget,gpointer data)
 void button_green( GtkWidget *widget,gpointer data)
 {
    GtkTextIter  iter,start,end;
-   static size_t bytes_read=NULL;
+   static size_t bytes_readNULL;
    guchar *buf;
 
    gtk_text_buffer_get_bounds(buffer,&start,&end);
-   buf=gtk_text_buffer_get_text (buffer,&start,&end,TRUE);
-   bytes_read=gtk_text_buffer_get_char_count  (buffer);
+   bufgtk_text_buffer_get_text (buffer,&start,&end,TRUE);
+   bytes_readgtk_text_buffer_get_char_count  (buffer);
    gtk_text_buffer_delete(buffer,&start,&end);
    gtk_text_buffer_create_tag (buffer, "green_foreground",
-			      "foreground", "green", NULL);
+         "foreground", "green", NULL);
     gtk_text_buffer_get_iter_at_offset (buffer, &iter, 0);
     gtk_text_buffer_insert_with_tags_by_name (buffer, &iter,
-					    buf,bytes_read,"green_foreground", NULL);
+         buf,bytes_read,"green_foreground", NULL);
     gtk_text_view_set_buffer(GTK_TEXT_VIEW (text),buffer);
 
 }
@@ -109,14 +109,14 @@ void button_green( GtkWidget *widget,gpointer data)
 
 void  destroy_Quit( GtkWidget *widget,gpointer data )
 {
-    vt=FALSE;    
+    vtFALSE;
     g_print("Test Pass Exiting with test pass");
     gtk_main_quit ();
 
 }
 void destroy_Exit( GtkWidget *widget,gpointer data )
 {
-    vt=TRUE;                                            
+    vtTRUE;
     g_print("Test Fail Exiting with test fail");
     gtk_main_quit ();
 
@@ -129,8 +129,8 @@ menuitem_cb (gpointer             callback_data,
              GtkWidget           *widget)
 {
   GtkWidget *dialog;
-  
-  dialog = gtk_message_dialog_new (GTK_WINDOW (callback_data),
+
+  dialog  gtk_message_dialog_new (GTK_WINDOW (callback_data),
                                    GTK_DIALOG_DESTROY_WITH_PARENT,
                                    GTK_MESSAGE_INFO,
                                    GTK_BUTTONS_CLOSE,
@@ -144,12 +144,12 @@ menuitem_cb (gpointer             callback_data,
                     "response",
                     G_CALLBACK (gtk_widget_destroy),
                     NULL);
-  
+
   gtk_widget_show (dialog);
 }
 
 
-static GtkItemFactoryEntry menu_items[] =
+static GtkItemFactoryEntry menu_items[] 
 {
   { "/_File",            NULL,         0,                     0, "<Branch>" },
   { "/File/_New",        "<control>N", button_new,       0, "<StockItem>", GTK_STOCK_NEW },
@@ -186,24 +186,24 @@ static void create_FileSelection(gpointer data)
   GtkWidget *filesel;
   gint response;
   const gchar *selected_filename;
-   filesel=gtk_file_selection_new ("Changing_file");
+   fileselgtk_file_selection_new ("Changing_file");
    gtk_window_set_default_size (GTK_WINDOW (filesel), 230, 310);
    gtk_window_set_policy(GTK_WINDOW (filesel),TRUE,TRUE,TRUE);
- 
+
    g_signal_connect_swapped (GTK_OBJECT (GTK_FILE_SELECTION (filesel)->ok_button),
                      "clicked",G_CALLBACK (store_filename),filesel);
    g_signal_connect_swapped (GTK_OBJECT (GTK_FILE_SELECTION (filesel)->cancel_button),
                      "clicked",G_CALLBACK (gtk_widget_destroy),(gpointer) filesel);
    gtk_widget_show(filesel);
-      
-   response = gtk_dialog_run (GTK_DIALOG (filesel));
-   if (response == GTK_RESPONSE_OK)
+
+   response  gtk_dialog_run (GTK_DIALOG (filesel));
+   if (response  GTK_RESPONSE_OK)
     {
-     selected_filename = gtk_file_selection_get_filename (GTK_FILE_SELECTION (filesel));
-     file_name=selected_filename;
+     selected_filename  gtk_file_selection_get_filename (GTK_FILE_SELECTION (filesel));
+     file_nameselected_filename;
      button_save( data);
      gtk_widget_destroy(filesel);
-   }         
+   }
 }
 
 
@@ -212,14 +212,14 @@ void store_filename (GtkFileSelection *filesel, gpointer user_data)
    GtkTextIter    start,end;
    long size;
    struct stat s;
-   static size_t bytes_read=NULL;
+   static size_t bytes_readNULL;
    guchar *buf;
-   static int i=0;
+   static int i0;
 
    const gchar *selected_filename;
-if(save_key==FALSE)
- {  
-     selected_filename = gtk_file_selection_get_filename (GTK_FILE_SELECTION (filesel));
+if(save_keyFALSE)
+ {
+     selected_filename  gtk_file_selection_get_filename (GTK_FILE_SELECTION (filesel));
    if(gtk_text_buffer_get_char_count(buffer))
      {
               gtk_text_buffer_get_bounds(buffer,&start,&end);
@@ -228,11 +228,11 @@ if(save_key==FALSE)
    if (selected_filename)
        {
         stat(selected_filename,&s);
-        if(size=s.st_size)
+        if(sizes.st_size)
           {
-            buf=(gchar *)calloc(size,1);
-    	      if (text_stream=fopen (selected_filename, "r"))
-            bytes_read = fread (buf,sizeof(char), size, text_stream);
+            buf(gchar *)calloc(size,1);
+          if (text_streamfopen (selected_filename, "r"))
+            bytes_read  fread (buf,sizeof(char), size, text_stream);
             gtk_text_buffer_get_iter_at_offset (buffer, &iter, 0);
             gtk_text_buffer_insert(buffer, &iter, buf,bytes_read);
             gtk_text_view_set_buffer(GTK_TEXT_VIEW (text),buffer);
@@ -248,16 +248,16 @@ if(save_key==FALSE)
 void button_new( gpointer data)
 {
    GtkTextIter    start,end;
-  file_name=NULL;
+  file_nameNULL;
   gtk_text_buffer_get_bounds(buffer,&start,&end);
   gtk_text_buffer_delete(buffer,&start,&end);
   gtk_text_view_set_buffer(GTK_TEXT_VIEW (text),buffer);
- return;  
+ return;
 }
 
 void button_save_as( gpointer data)
 {
-  file_name=NULL;
+  file_nameNULL;
    button_save(data);
  return;
 }
@@ -267,22 +267,22 @@ void button_save( gpointer data)
 {
    guchar *buf;
    GtkTextIter start,end;
-   size_t bytes_read=NULL; 
+   size_t bytes_readNULL;
 //   gtk_text_buffer_get_modified(buffer);
-// g_print("file_name=%s\n",file_name);
-   save_key=FALSE;
-// g_print("sav 2 key=%d\n",save_key);
- if (file_name) 
+// g_print("file_name%s\n",file_name);
+   save_keyFALSE;
+// g_print("sav 2 key%d\n",save_key);
+ if (file_name)
   {
    gtk_text_buffer_get_bounds(buffer,&start,&end);
-   buf=gtk_text_buffer_get_text (buffer,&start,&end,TRUE);  
-   bytes_read=gtk_text_buffer_get_char_count  (buffer);
-   if (text_stream=fopen (file_name, "w"))
+   bufgtk_text_buffer_get_text (buffer,&start,&end,TRUE);
+   bytes_readgtk_text_buffer_get_char_count  (buffer);
+   if (text_streamfopen (file_name, "w"))
    fwrite (buf ,sizeof(char),bytes_read,text_stream);
-   fclose(text_stream);    
+   fclose(text_stream);
   }
- else {save_key=TRUE; create_FileSelection(data);} 
- return; 
+ else {save_keyTRUE; create_FileSelection(data);}
+ return;
 }
 
 
@@ -297,16 +297,16 @@ update_statusbar (GtkTextBuffer *buffer1,
 
   gtk_statusbar_pop (statusbar, 0); /* clear any previous message, underflow is allowed */
 
-  count = gtk_text_buffer_get_char_count (buffer1);
+  count  gtk_text_buffer_get_char_count (buffer1);
 
   gtk_text_buffer_get_iter_at_mark (buffer1,
                                     &iter,
                                     gtk_text_buffer_get_insert (buffer1));
 
-  row = gtk_text_iter_get_line (&iter);
-  col = gtk_text_iter_get_line_offset (&iter);
+  row  gtk_text_iter_get_line (&iter);
+  col  gtk_text_iter_get_line_offset (&iter);
 
-  msg = g_strdup_printf ("Cursor at row %d column %d - %d chars in document",
+  msg  g_strdup_printf ("Cursor at row %d column %d - %d chars in document",
                          row, col, count);
 
   gtk_statusbar_push (statusbar, 0, msg);
@@ -334,33 +334,33 @@ int appwindow_main(int argc, char **argv)
       GtkWidget *statusbar;
       GtkWidget *sw;
       GtkTextBuffer *buffer1;
-      GtkAccelGroup *accel_group;      
+      GtkAccelGroup *accel_group;
       GtkItemFactory *item_factory;
-      
+
      //11 register_stock_icons ();
-      
+
       /* Create the toplevel window*/
       gtk_init(&argc,&argv);
-      
-      window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+
+      window  gtk_window_new (GTK_WINDOW_TOPLEVEL);
       gtk_window_set_title (GTK_WINDOW (window), "Application Window");
       gtk_window_set_default_size (GTK_WINDOW (window),240,320);
       /* NULL window variable when window is closed */
       gtk_signal_connect (GTK_OBJECT (window), "destroy",
         GTK_SIGNAL_FUNC (gtk_main_quit), &window);
 
-      table = gtk_table_new (1, 5, FALSE);
-      
+      table  gtk_table_new (1, 5, FALSE);
+
       gtk_container_add (GTK_CONTAINER (window), table);
       gtk_window_set_policy(GTK_WINDOW (window),TRUE,TRUE,TRUE);
-      
-      
+
+
       /* Create the menubar*/
-      
-      accel_group = gtk_accel_group_new ();
+
+      accel_group  gtk_accel_group_new ();
       gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
       g_object_unref (accel_group);
-      item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
+      item_factory  gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
 
       /* Set up item factory to go away with the window */
       g_object_ref (item_factory);
@@ -375,14 +375,14 @@ int appwindow_main(int argc, char **argv)
                                      menu_items, window);
 
       gtk_table_attach (GTK_TABLE (table),
-			gtk_item_factory_get_widget (item_factory, "<main>"),
+   gtk_item_factory_get_widget (item_factory, "<main>"),
                         /* X direction */          /* Y direction */
                         0, 1,                      0, 1,
                         GTK_EXPAND | GTK_FILL,     0,
                         0,                         0);
 
- 
-      item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
+
+      item_factory  gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
 
       /* Set up item factory to go away with the window */
       g_object_ref (item_factory);
@@ -397,7 +397,7 @@ int appwindow_main(int argc, char **argv)
                                      menu_items, window);
 
       gtk_table_attach (GTK_TABLE (table),
-			gtk_item_factory_get_widget (item_factory, "<main>"),
+   gtk_item_factory_get_widget (item_factory, "<main>"),
                         /* X direction */          /* Y direction */
                         0, 1,                      0, 1,
                         GTK_EXPAND | GTK_FILL,     0,
@@ -405,7 +405,7 @@ int appwindow_main(int argc, char **argv)
 
       /* Create the toolbar
        */
-      toolbar = gtk_toolbar_new ();
+      toolbar  gtk_toolbar_new ();
 
       gtk_toolbar_insert_stock (GTK_TOOLBAR (toolbar),
                                 GTK_STOCK_OPEN,
@@ -430,7 +430,7 @@ int appwindow_main(int argc, char **argv)
                                 G_CALLBACK (gtk_main_quit),
                                 window, /* user data for callback */
                                 -1);  /* -1 means "append" */
-                                 
+
 
       gtk_table_attach (GTK_TABLE (table),
                         toolbar,
@@ -442,7 +442,7 @@ int appwindow_main(int argc, char **argv)
 
       /* Create document*/
 
-      sw = gtk_scrolled_window_new (NULL, NULL);
+      sw  gtk_scrolled_window_new (NULL, NULL);
 
       gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
                                       GTK_POLICY_AUTOMATIC,
@@ -457,12 +457,12 @@ int appwindow_main(int argc, char **argv)
                         0, 1,                   2, 3,
                         GTK_EXPAND | GTK_FILL,  GTK_EXPAND | GTK_FILL,
                         0,                      0);
-     buffer=gtk_text_buffer_new (NULL);
-     text = gtk_text_view_new_with_buffer (buffer);
+     buffergtk_text_buffer_new (NULL);
+     text  gtk_text_view_new_with_buffer (buffer);
      gtk_container_add (GTK_CONTAINER (sw),text);
       /* Create statusbar */
 
-      statusbar = gtk_statusbar_new ();
+      statusbar  gtk_statusbar_new ();
       gtk_table_attach (GTK_TABLE (table),
                         statusbar,
                         /* X direction */       /* Y direction */
@@ -471,7 +471,7 @@ int appwindow_main(int argc, char **argv)
                         0,                      0);
 
       /* Show text widget info in the statusbar */
-      buffer1 = gtk_text_view_get_buffer (GTK_TEXT_VIEW (text));
+      buffer1  gtk_text_view_get_buffer (GTK_TEXT_VIEW (text));
 
       g_signal_connect_object (buffer1,
                                "changed",
@@ -486,10 +486,10 @@ int appwindow_main(int argc, char **argv)
                                0);
 
       update_statusbar (buffer1, GTK_STATUSBAR (statusbar));
-       
+
       gtk_widget_show_all (window);
       gtk_main();
-      return (vt);  
+      return (vt);
 }
 
 

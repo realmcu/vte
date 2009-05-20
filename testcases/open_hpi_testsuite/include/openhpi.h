@@ -33,11 +33,11 @@
 #include <sel_utils.h>
 
 /*
- * Common OpenHPI implementation specific definitions 
+ * Common OpenHPI implementation specific definitions
  * --------------------------------------------------
  *
  * plugin - software component contained in a shared library that exports
- *          a function named 'get_interface'.  Loading a plugin entails 
+ *          a function named 'get_interface'.  Loading a plugin entails
  *          performing a dlopen on the library, finding 'get_interface' with
  *          dl_sym, and calling 'get_interface' to get an interface pointer
  *          (referred to as the 'abi'.)
@@ -48,7 +48,7 @@
  *       instance (known as a handler), and the OpenHPI infrastructure.
  *
  * handler - an instance of a plugin represented by a structure of type
- *           oh_handler which contains an abi and a pointer to an instance 
+ *           oh_handler which contains an abi and a pointer to an instance
  *           specific data structure that is private to the plug-in.
  */
 
@@ -59,28 +59,28 @@
  * When an HPI application initializes OpenHPI by calling saHpiInitialize(),
  * the OpenHPI infrastructure will seek out all configured plug-ins
  * (see oh_config.h for details on how a plug-in is configured), and:
- * 1. load the plug-in into memory 
+ * 1. load the plug-in into memory
  * 2. extract an abi from the plug-in
  * 3. create a new oh_plugin containing the name of the plugin and
  *    the abi extracted from the plugin
  * 4. add the oh_plugin to the global list of plugins
  *
- * The first time the HPI application creates a new session by calling 
+ * The first time the HPI application creates a new session by calling
  * saHpiSessionOpen(), the OpenHPI infrastructure will once again examine
  * the implementation configuration and create new plug-in instances
- * (i.e. a handler) as the configuration dictates.  
- * 
+ * (i.e. a handler) as the configuration dictates.
+ *
  * Each handler configuration item will specify:
  * 1. name of plugin in question
  * 2. additional arguments understood by the plug-in
  *
  * Each new handler is created by:
- * 1. finding the oh_plugin containing the same plugin name as the 
+ * 1. finding the oh_plugin containing the same plugin name as the
  *    configuration item
  * 2. using the abi found in the oh_plugin to call abi->open(), passing
- *    the additional plug-in specific arguments to the open function.  
- *    The open call will return a void* pointer (known as hnd) that is 
- *    required to be passed back to the plug-in for all further abi 
+ *    the additional plug-in specific arguments to the open function.
+ *    The open call will return a void* pointer (known as hnd) that is
+ *    required to be passed back to the plug-in for all further abi
  *    function calls.
  * 3. creating a new oh_handler that contains a pointer to the associated
  *    abi, and the hnd returned by the open function.
@@ -102,7 +102,7 @@
  *    socket to the remote machine
  * 2. the plugin requires that handler configuration entries for this
  *    plugin to contain the IP address of the remote machine to connect
- * 3. when open() is called, the plugin 
+ * 3. when open() is called, the plugin
  *    - opens a socket to the new machine
  *    - allocates a new event queue
  *    - allocates a new instance structure
@@ -110,14 +110,14 @@
  *    - returns a pointer to the structure as 'hnd'.
  * 4. as other abi functions are called, the 'hnd' passed in with those
  *    functions is cast back to a pointer to the instance data, and then
- *    communicates over the socket in that structure to service the given 
+ *    communicates over the socket in that structure to service the given
  *    request.
  *
  */
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 /*
  * Representation of an domain
@@ -127,7 +127,7 @@ struct oh_domain {
          * to identy domain
          */
         SaHpiDomainIdT domain_id;
-        
+
         /* System Event Log */
         oh_sel *sel;
 };
@@ -140,12 +140,12 @@ struct oh_session {
           Session ID as returned by saHpiSessionOpen()
         */
         SaHpiSessionIdT session_id;
-        
+
         /*
           A session is always associated with exactly one domain
         */
         SaHpiDomainIdT domain_id;
-         
+
         enum {
                 OH_EVENT_UNSUBSCRIBE=0,
                 OH_EVENT_SUBSCRIBE,
@@ -155,7 +155,7 @@ struct oh_session {
           Even if multiple sessions are opened for the same domain,
           each session could receive different events depending on what
           events the caller signs up for.
-          
+
           This is the session specific event queue
           (sld: changed to GSList, as GQueue isn't in glib-1.2)
         */
@@ -171,11 +171,11 @@ struct oh_handler {
          */
         GHashTable *config;
 
-        /* 
+        /*
            pointer to associated plugin interface
         */
         struct oh_abi_v2 *abi;
-        
+
         /*
           private pointer used by plugin implementations to distinguish
           between different instances
@@ -186,7 +186,7 @@ struct oh_handler {
           This is the list of resources which the handler reports
          */
         GSList *resource_list;
-        
+
 };
 
 /*
@@ -203,7 +203,7 @@ struct oh_resource_data
         struct oh_handler *handler;
 
         /*
-         * The two fields are valid when resource is 
+         * The two fields are valid when resource is
          * CAPABILITY_HOTSWAP
          */
 
@@ -220,16 +220,16 @@ struct oh_resource {
           RPT entry visible by the HPI caller
         */
         SaHpiRptEntryT          entry;
-     
+
         /*
-         * The two fields are valid when resource is 
+         * The two fields are valid when resource is
          * CAPABILITY_HOTSWAP
          */
         int controlled;
         SaHpiTimeoutT auto_extract_timeout;
-        
+
         /*
-         * The two fields are valid when resource is 
+         * The two fields are valid when resource is
          * CAPABILITY_SYSTEM_EVENT_LOG
          */
         int sel_counter;
@@ -239,7 +239,7 @@ struct oh_resource {
            The handler of the resource
         */
         struct oh_handler *handler;
-        
+
         /*
           This is the list of domain ids which contain the handler
          */
@@ -247,7 +247,7 @@ struct oh_resource {
 
         /*
           When the SAHPI_CAPABILITY_RDR flag is set in the
-          ResourceCapabilities member of the RPT entry, this 
+          ResourceCapabilities member of the RPT entry, this
           contains the list of associated RDR entries
         */
         GSList *rdr_list;
@@ -258,7 +258,7 @@ struct oh_resource {
           is domain id which is conatined by this
          */
         SaHpiDomainIdT domain_id;
-        
+
         /*
           this is counter for rdr
          */
@@ -287,8 +287,8 @@ struct oh_dsel {
 extern GSList *global_plugin_list;
 
 /*
- *  Global listing of handler configs (GHashTable).  This list is 
- *  populated during config file parse, and used to build 
+ *  Global listing of handler configs (GHashTable).  This list is
+ *  populated during config file parse, and used to build
  *  global_handler_list
  */
 extern GSList *global_handler_configs;
@@ -300,7 +300,7 @@ extern GSList *global_handler_configs;
 extern GSList *global_handler_list;
 
 /*
- *  Global listing of all active sessions (oh_session).  This list is 
+ *  Global listing of all active sessions (oh_session).  This list is
  *  populated and depopulated by calls to saHpiSessionOpen() and
  *  saHpiSessionClose()
  */
@@ -312,7 +312,7 @@ extern GSList *global_session_list;
  *  This list contains all resources (wrapped as oh_resource structures),
  *  regardless of whether an HPI caller can see the resources for the given
  *  permission level or domain view used.
- * 
+ *
  *  This list is populated by calls to saHpiDiscoverResources()
  */
 
@@ -341,7 +341,7 @@ int resource_is_in_domain(struct oh_resource *res, SaHpiDomainIdT sid);
 int init_plugin(void);
 void uninit_plugin(void);
 int load_plugin(struct oh_plugin_config *);
-void unload_plugin(struct oh_plugin_config *config);        
+void unload_plugin(struct oh_plugin_config *config);
 int load_handler(GHashTable *handler_config);
 void unload_handler( struct oh_handler *handler );
 
@@ -363,7 +363,7 @@ int dsel_clr(SaHpiDomainIdT domain_id);
 int rsel_add(SaHpiResourceIdT res_id, SaHpiSelEntryT *entry);
 /*int rsel_add2(struct oh_resource *d, struct oh_rsel_event *e);*/
 int rsel_del(SaHpiResourceIdT res_id, SaHpiSelEntryIdT id);
-int rsel_clr(SaHpiResourceIdT res_id); 
+int rsel_clr(SaHpiResourceIdT res_id);
 
 
 /* event handler */
@@ -373,7 +373,7 @@ int get_events(void);
 /* howswap */
 void process_hotswap_policy(struct oh_handler *h);
 int hotswap_push_event(struct oh_hpi_event *e);
-int hotswap_pop_event(struct oh_hpi_event *e); 
+int hotswap_pop_event(struct oh_hpi_event *e);
 int hotswap_has_event(void);
 SaHpiTimeoutT get_hotswap_auto_insert_timeout(void);
 void set_hotswap_auto_insert_timeout(SaHpiTimeoutT);
@@ -394,12 +394,12 @@ static inline void gettimeofday1(SaHpiTimeT *t)
 {
         struct timeval now;
         gettimeofday(&now, NULL);
-        *t = (SaHpiTimeT) now.tv_sec * 1000000000 + now.tv_usec*1000;   
+        *t = (SaHpiTimeT) now.tv_sec * 1000000000 + now.tv_usec*1000;
 }
 
 void data_access_lock(void);
 void data_access_unlock(void);
-int data_access_block_times(void); 
+int data_access_block_times(void);
 
 #define dbg(format, ...)                                      \
         do {                                                                          \

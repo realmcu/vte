@@ -19,14 +19,14 @@
 
 /*
  * NAME
- *	pipe05.c
+ * pipe05.c
  *
  * DESCRIPTION
- *	Check what happens when pipe is passed a bad file descriptor.
+ * Check what happens when pipe is passed a bad file descriptor.
  *
  * ALGORITHM
- *	Issue the pipe call with a bad file descriptor.
- *	Check that we get EFAULT.
+ * Issue the pipe call with a bad file descriptor.
+ * Check that we get EFAULT.
  *
  * USAGE:  <for command-line>
  *  pipe05 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -38,10 +38,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- *	None
+ * None
  */
 #include <fcntl.h>
 #include <errno.h>
@@ -49,11 +49,11 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "pipe05";
-int TST_TOTAL = 1;
+char *TCID  "pipe05";
+int TST_TOTAL  1;
 extern int Tst_count;
 
-int exp_enos[] = {EFAULT, 0};
+int exp_enos[]  {EFAULT, 0};
 
 intptr_t pipes;
 void setup(void);
@@ -64,59 +64,59 @@ void sig11_handler(int sig);
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
-	struct sigaction sa, osa;
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
+ struct sigaction sa, osa;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-		/*NOTREACHED*/
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+  /*NOTREACHED*/
+ }
 
-	setup();
+ setup();
 
-	TEST_EXP_ENOS(exp_enos);
+ TEST_EXP_ENOS(exp_enos);
 
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
                 /* special sig11 case */
-                sa.sa_handler = &sig11_handler;
+                sa.sa_handler  &sig11_handler;
                 sigemptyset(&sa.sa_mask);
-                sa.sa_flags = 0;
+                sa.sa_flags  0;
 
                 sigaction(SIGSEGV, NULL, &osa);
                 sigaction(SIGSEGV, &sa, NULL);
 
                 if (setjmp(sig11_recover)) {
-                    TEST_RETURN = -1;
-                    TEST_ERRNO = EFAULT;
+                    TEST_RETURN  -1;
+                    TEST_ERRNO  EFAULT;
                 } else {
-		TEST(pipe((int *)pipes));
+  TEST(pipe((int *)pipes));
                 }
                 sigaction(SIGSEGV, &osa, NULL);
-	
-		if (TEST_RETURN != -1) {
-			tst_resm(TFAIL, "call succeeded unexpectedly");
-		}
 
-		TEST_ERROR_LOG(TEST_ERRNO);
+  if (TEST_RETURN ! -1) {
+   tst_resm(TFAIL, "call succeeded unexpectedly");
+  }
 
-		if (TEST_ERRNO != EFAULT) {
-			tst_resm(TFAIL, "unexpected error - %d : %s - "
-				 "expected EMFILE", TEST_ERRNO,
-				 strerror(TEST_ERRNO));
-		} else {
-			tst_resm(TPASS, "expected failure - "
-				 "errno = %d : %s", TEST_ERRNO,
-	 			 strerror(TEST_ERRNO));
-		}
+  TEST_ERROR_LOG(TEST_ERRNO);
 
-	}
-	cleanup();
-	return(0);
+  if (TEST_ERRNO ! EFAULT) {
+   tst_resm(TFAIL, "unexpected error - %d : %s - "
+     "expected EMFILE", TEST_ERRNO,
+     strerror(TEST_ERRNO));
+  } else {
+   tst_resm(TPASS, "expected failure - "
+     "errno  %d : %s", TEST_ERRNO,
+   strerror(TEST_ERRNO));
+  }
+
+ }
+ cleanup();
+ return(0);
 }
 
 /*
@@ -125,11 +125,11 @@ int main(int ac, char **av)
 void
 setup()
 {
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 }
 /******************************************************************
  * sig11_handler() - our segfault recover hack
@@ -143,18 +143,18 @@ sig11_handler(int sig)
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
+ *        completion or premature exit.
  */
 void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }
 

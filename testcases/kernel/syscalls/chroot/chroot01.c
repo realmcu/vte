@@ -19,14 +19,14 @@
 
 /*
  * NAME
- * 	chroot01.c
+ * chroot01.c
  *
  * DESCRIPTION
- *	Testcase to check the whether chroot sets errno to EPERM.
+ * Testcase to check the whether chroot sets errno to EPERM.
  *
  * ALGORITHM
- *	As a non-root user attempt to perform chroot() to a directory. The
- *	chroot() call should fail with EPERM
+ * As a non-root user attempt to perform chroot() to a directory. The
+ * chroot() call should fail with EPERM
  *
  * USAGE:  <for command-line>
  *  chroot01 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -38,10 +38,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * 	Must be run as non-root user.
+ * Must be run as non-root user.
  */
 
 #include <stdio.h>
@@ -50,14 +50,14 @@
 #include "usctest.h"
 #include <pwd.h>
 
-char *TCID = "chroot01";
-int TST_TOTAL = 1;
+char *TCID  "chroot01";
+int TST_TOTAL  1;
 extern int Tst_count;
 int fail;
 
-char path[] = "/tmp";
-int exp_enos[] = {EPERM, 0};
-char nobody_uid[] = "nobody";
+char path[]  "/tmp";
+int exp_enos[]  {EPERM, 0};
+char nobody_uid[]  "nobody";
 struct passwd *ltpuser;
 
 void setup(void);
@@ -66,41 +66,41 @@ void cleanup(void);
 int
 main(int ac, char **av)
 {
-	int lc;
-	char *msg;
+ int lc;
+ char *msg;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	setup();
+ setup();
 
-	/* set up expected errnos */
-	TEST_EXP_ENOS(exp_enos);
+ /* set up expected errnos */
+ TEST_EXP_ENOS(exp_enos);
 
-	/* Check for looping state if -i option is given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* Check for looping state if -i option is given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		TEST(chroot(path));
+  TEST(chroot(path));
 
-		if (TEST_RETURN != -1) {
-			tst_resm(TFAIL, "call succeeded on expected fail");
-		} else if (errno != EPERM) {
-			tst_resm(TFAIL, "Received unexpected error - %d : %s",
-					 TEST_ERRNO, strerror(TEST_ERRNO));
-		} else {
-			TEST_ERROR_LOG(TEST_ERRNO);
-			tst_resm(TPASS, "chroot set errno to EPERM.");
-		}
-	}
-	cleanup();
+  if (TEST_RETURN ! -1) {
+   tst_resm(TFAIL, "call succeeded on expected fail");
+  } else if (errno ! EPERM) {
+   tst_resm(TFAIL, "Received unexpected error - %d : %s",
+      TEST_ERRNO, strerror(TEST_ERRNO));
+  } else {
+   TEST_ERROR_LOG(TEST_ERRNO);
+   tst_resm(TPASS, "chroot set errno to EPERM.");
+  }
+ }
+ cleanup();
 
-	return 0;
-	/*NOTREACHED*/
+ return 0;
+ /*NOTREACHED*/
 }
 
 /*
@@ -110,12 +110,12 @@ void
 setup()
 {
 
-	/* Switch to nobody user for correct error code collection */
-        if (geteuid() != 0) {
+ /* Switch to nobody user for correct error code collection */
+        if (geteuid() ! 0) {
                 tst_brkm(TBROK, tst_exit, "Test must be run as root");
         }
-         ltpuser = getpwnam(nobody_uid);
-         if (seteuid(ltpuser->pw_uid) == -1) {
+         ltpuser  getpwnam(nobody_uid);
+         if (seteuid(ltpuser->pw_uid)  -1) {
                 tst_resm(TINFO, "seteuid failed to "
                          "to set the effective uid to %d",
                          ltpuser->pw_uid);
@@ -123,34 +123,34 @@ setup()
          }
 
 
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* make a temporary directory and cd to it */
-	tst_tmpdir();
+ /* make a temporary directory and cd to it */
+ tst_tmpdir();
 }
 
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
+ *        completion or premature exit.
  */
 void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* delete the test directory created in setup() */
-	tst_rmdir();
+ /* delete the test directory created in setup() */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }
 

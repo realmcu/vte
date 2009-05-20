@@ -15,17 +15,17 @@ signals:
 class FunnyBox:public QWidget{
 Q_OBJECT
 protected:
-	
+
 	QColor curColor;
 	int curLen;
 	void calc(double t);
 public:
 	QColor beginColor,endColor;
 	QCString text;
-	
+
 	FunnyBox(QWidget *parent=NULL,const char *name=NULL);
 	virtual void paintEvent(QPaintEvent *pe);
-	
+
 public slots:
 	void setProgress(double t);
 };

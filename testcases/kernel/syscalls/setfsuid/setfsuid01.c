@@ -19,16 +19,16 @@
 
 /*
  * NAME
- *	setfsuid01.c
+ * setfsuid01.c
  *
  * DESCRIPTION
- *	Testcase to test the basic functionality of the setfsuid(2) system
- *	call.
+ * Testcase to test the basic functionality of the setfsuid(2) system
+ * call.
  *
  * ALGORITHM
- *	Call setfsuid(2) and test the uid returned by setfsuid(2).
- *	If the returned value doesn't match the uid of the process,
- *	then the testcase fails.
+ * Call setfsuid(2) and test the uid returned by setfsuid(2).
+ * If the returned value doesn't match the uid of the process,
+ * then the testcase fails.
  *
  * USAGE:  <for command-line>
  *  setfsuid01 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
@@ -40,10 +40,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- *	None
+ * None
  */
 #include <sys/types.h>
 #include <sys/fsuid.h>
@@ -56,57 +56,57 @@
 void setup(void);
 void cleanup(void);
 
-char *TCID = "setfsuid01";
-int TST_TOTAL = 1;
+char *TCID  "setfsuid01";
+int TST_TOTAL  1;
 extern int Tst_count;
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
 
-	uid_t uid;
-	
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ uid_t uid;
 
-	setup();
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	uid = geteuid();
+ setup();
 
-	/* Check for looping state if -i option is given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ uid  geteuid();
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+ /* Check for looping state if -i option is given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		TEST(setfsuid(uid));
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL, "call failed unexpectedly - errno %d",
-				 TEST_ERRNO);
-			continue;
-		}
+  TEST(setfsuid(uid));
 
-		if (!STD_FUNCTIONAL_TEST) {
-			tst_resm(TPASS, "call succeeded");
-			continue;
-		}
+  if (TEST_RETURN  -1) {
+   tst_resm(TFAIL, "call failed unexpectedly - errno %d",
+     TEST_ERRNO);
+   continue;
+  }
 
-		if (TEST_RETURN != uid) {
-			tst_resm(TFAIL, "setfsuid() returned %d, expected %d",
-				 TEST_RETURN, uid);
-		} else {
-			tst_resm(TPASS, "setfsuid() returned expected value : "
-				 "%d", uid);
-		}
-	}
-	cleanup();
+  if (!STD_FUNCTIONAL_TEST) {
+   tst_resm(TPASS, "call succeeded");
+   continue;
+  }
 
-	/*NOTREACHED*/
-	return(0);
+  if (TEST_RETURN ! uid) {
+   tst_resm(TFAIL, "setfsuid() returned %d, expected %d",
+     TEST_RETURN, uid);
+  } else {
+   tst_resm(TPASS, "setfsuid() returned expected value : "
+     "%d", uid);
+  }
+ }
+ cleanup();
+
+ /*NOTREACHED*/
+ return(0);
 }
 
 /*
@@ -115,23 +115,23 @@ int main(int ac, char **av)
 void
 setup()
 {
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
+ *        completion or premature exit.
  */
 void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 }

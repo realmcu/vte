@@ -23,7 +23,7 @@
 #define DEVICE_NAME		"/dev/tpci"
 #define MAX_DEVFN		256
 #define MAX_BUS			256
-#define MAG_NUM 		'k'
+#define MAG_NUM 'k'
 #define AER_CAP_ID_VALUE	0x14011
 
 #define PCI_PROBE		_IO(MAG_NUM, 1)
@@ -56,11 +56,11 @@
  * structures for PCI test driver
  */
 struct tpci_interface {
-	int 	in_len;		// input data length
+	int in_len;		// input data length
 	caddr_t	in_data;	// input data
-	int 	out_rc;		// return code from the test 
-	int 	out_len;	// output data length 
-	caddr_t	out_data;	// output data 
+	int out_rc;		// return code from the test
+	int out_len;	// output data length
+	caddr_t	out_data;	// output data
 };
 typedef struct tpci_interface tpci_interface_t;
 

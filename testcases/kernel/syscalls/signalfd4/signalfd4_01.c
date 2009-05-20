@@ -24,7 +24,7 @@
 /*                                                                            */
 /* Description: This Program tests the new system call introduced in 2.6.27.  */
 /*              Ulrich´s comment as in:                                       */
-/* http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=9deb27baedb79759c3ab9435a7d8b841842d56e9 */
+/* http://git.kernel.org/?plinux/kernel/git/torvalds/linux-2.6.git;acommit;h9deb27baedb79759c3ab9435a7d8b841842d56e9 */
 /*              says:                                                         */
 /* This patch adds the new signalfd4 syscall.  It extends the old signalfd    */
 /* syscall by one parameter which is meant to hold a flag value.  In this     */
@@ -84,9 +84,9 @@ extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
-char *TCID     = "signalfd4_01";        /* test program identifier.              */
+char *TCID      "signalfd4_01";        /* test program identifier.              */
 int  testno;
-int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
+int  TST_TOTAL  1;                  /* total number of tests in this file.   */
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -147,8 +147,8 @@ int main (int argc, char *argv[]) {
   char *msg;              /* message returned from parse_opts */
 
   /* Parse standard options given to run the test. */
-  msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
-  if (msg != (char *) NULL) {
+  msg  parse_opts(argc, argv, (option_t *) NULL, NULL);
+  if (msg ! (char *) NULL) {
       tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
       tst_exit();
   }
@@ -159,19 +159,19 @@ int main (int argc, char *argv[]) {
   setup();
 
    /* Check looping state if -i option given */
-  for (lc = 0; TEST_LOOPING(lc); ++lc) {
-       Tst_count = 0;
-       for (testno=0; testno < TST_TOTAL; ++testno) {
+  for (lc  0; TEST_LOOPING(lc); ++lc) {
+       Tst_count  0;
+       for (testno0; testno < TST_TOTAL; ++testno) {
             sigemptyset (&ss);
             sigaddset (&ss, SIGUSR1);
-            fd = syscall (__NR_signalfd4, -1, &ss, 8, 0);
-            if (fd == -1) {
+            fd  syscall (__NR_signalfd4, -1, &ss, 8, 0);
+            if (fd  -1) {
                 tst_resm(TFAIL, "signalfd4(0) failed");
                 cleanup();
                 tst_exit();
             }
-            coe = fcntl (fd, F_GETFD);
-            if (coe == -1) {
+            coe  fcntl (fd, F_GETFD);
+            if (coe  -1) {
                 tst_brkm(TBROK, cleanup, "fcntl failed");
                 tst_exit();
             }
@@ -182,18 +182,18 @@ int main (int argc, char *argv[]) {
             }
             close (fd);
 
-            fd = syscall (__NR_signalfd4, -1, &ss, 8, SFD_CLOEXEC);
-            if (fd == -1) {
+            fd  syscall (__NR_signalfd4, -1, &ss, 8, SFD_CLOEXEC);
+            if (fd  -1) {
                 tst_resm(TFAIL, "signalfd4(SFD_CLOEXEC) failed");
                 cleanup();
                 tst_exit();
             }
-            coe = fcntl (fd, F_GETFD);
-            if (coe == -1) {
+            coe  fcntl (fd, F_GETFD);
+            if (coe  -1) {
                 tst_brkm(TBROK, cleanup, "fcntl failed");
                 tst_exit();
             }
-            if ((coe & FD_CLOEXEC) == 0) {
+            if ((coe & FD_CLOEXEC)  0) {
                  tst_resm(TFAIL, "signalfd4(SFD_CLOEXEC) does not set close-on-exec flag");
                  cleanup();
                  tst_exit();

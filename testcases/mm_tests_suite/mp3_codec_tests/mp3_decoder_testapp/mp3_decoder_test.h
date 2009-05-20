@@ -10,15 +10,15 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-     
+
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-D.Simakov / smkd001c        12/10/2004      TLSbo43519  Initial version 
+D.Simakov / smkd001c        12/10/2004      TLSbo43519  Initial version
 D.Simakov / smkd001c        15/02/2005      TLSbo47113  Update
-D.Simakov / smkd001c        21/07/2005      TLSbo52628  Relocatability test case was added 
+D.Simakov / smkd001c        21/07/2005      TLSbo52628  Relocatability test case was added
 
 ==================================================================================================*/
 
@@ -32,16 +32,16 @@ extern "C"{
 /*==================================================================================================
                                          INCLUDE FILES
 ==================================================================================================*/
-#include <sys/types.h>  	// fork usage for reentrance test
-#include <unistd.h> 		// fork usage for reentrance test
-#include <pthread.h> 		// fork usage for reentrance test
+#include <sys/types.h>  // fork usage for reentrance test
+#include <unistd.h> // fork usage for reentrance test
+#include <pthread.h> // fork usage for reentrance test
 #include <sys/time.h>		// timer usage for preemptivity
 #include <math.h>               // for sqrt in hogcpu
 
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <assert.h>
-	       
+
 
 #include <mp3_dec_interface.h>  // mp3 decoder
 
@@ -57,7 +57,7 @@ extern "C"{
 #endif
 #if !defined(FALSE)
     #define FALSE 0
-#endif        
+#endif
 
 /*==================================================================================================
                                        DEFINES AND MACROS
@@ -68,7 +68,7 @@ extern "C"{
                                              ENUMS
 ==================================================================================================*/
 /** Different test cases in the single application */
-typedef enum 
+typedef enum
 {
     NOMINAL_FUNCTIONALITY = 0,  /**< Nominal encoding/decoding */
     ENDURANCE,			/**< Endurance test */

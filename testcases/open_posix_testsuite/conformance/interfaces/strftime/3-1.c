@@ -6,7 +6,7 @@
  * source tree.
  *
  *
- * strftime shall return the number of bytes placed into the array.  
+ * strftime shall return the number of bytes placed into the array.
  * Otherwise, it should return 0.
  */
 
@@ -26,11 +26,11 @@ int main()
     result = strftime(buf, 256, "%A %d %B, %I:%S %p", tm_ptr);
 
     if (result != 0) {
-    	printf("strftime gives: %s\n", buf);
-	puts ("PASS");
-	return PTS_PASS;
+    printf("strftime gives: %s\n", buf);
+ puts ("PASS");
+ return PTS_PASS;
     } else {
-	puts ("FAIL");
-	return PTS_FAIL;
+ puts ("FAIL");
+ return PTS_FAIL;
     }
-} 
+}

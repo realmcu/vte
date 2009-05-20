@@ -13,7 +13,7 @@
  * Test for a message queue opened twice in the same process.
  *
  * 3/13/03 - Added fix from Gregoire Pichon for specifying an attr
- *           with a mq_maxmsg >= BUFFER.
+ *           with a mq_maxmsg > BUFFER.
  */
 
 #include <stdio.h>
@@ -32,85 +32,85 @@
 int main()
 {
         char qname[NAMESIZE], msgrcd[BUFFER];
-        const char *msgptr = MSGSTR;
+        const char *msgptr  MSGSTR;
         mqd_t woqueue, woqueue2;
-	struct mq_attr attr;
-	int pri;
+ struct mq_attr attr;
+ int pri;
 
         sprintf(qname, "/mq_open_8-1_%d", getpid());
 
-	attr.mq_msgsize = BUFFER;
-	attr.mq_maxmsg = BUFFER;
-        woqueue = mq_open(qname, O_CREAT |O_WRONLY, S_IRUSR | S_IWUSR, &attr);
-        if (woqueue == (mqd_t)-1) {
+ attr.mq_msgsize  BUFFER;
+ attr.mq_maxmsg  BUFFER;
+        woqueue  mq_open(qname, O_CREAT |O_WRONLY, S_IRUSR | S_IWUSR, &attr);
+        if (woqueue  (mqd_t)-1) {
                 perror("mq_open() for write-only queue did not return success");
-		printf("Test UNRESOLVED\n");
+  printf("Test UNRESOLVED\n");
                 return PTS_UNRESOLVED;
         }
 
-        if (mq_send(woqueue, msgptr, strlen(msgptr), 1) != 0) {
+        if (mq_send(woqueue, msgptr, strlen(msgptr), 1) ! 0) {
                 perror("mq_send() did not return success");
-		printf("Test UNRESOLVED\n");
-		/* close queue and exit */
-		mq_close(woqueue);
-		mq_unlink(qname);
-		return PTS_UNRESOLVED;
+  printf("Test UNRESOLVED\n");
+  /* close queue and exit */
+  mq_close(woqueue);
+  mq_unlink(qname);
+  return PTS_UNRESOLVED;
         }
 #ifdef DEBUG
-	printf("Message %s sent\n", msgptr);
+ printf("Message %s sent\n", msgptr);
 #endif
 
-        if (mq_receive(woqueue, msgrcd, BUFFER, &pri) != -1) {
-		printf("mq_receive() returned success on write only queue\n");
-		printf("Test FAILED\n");
-		/* close queue and exit */
-		mq_close(woqueue);
-		mq_unlink(qname);
-		return PTS_FAIL;
-	}
+        if (mq_receive(woqueue, msgrcd, BUFFER, &pri) ! -1) {
+  printf("mq_receive() returned success on write only queue\n");
+  printf("Test FAILED\n");
+  /* close queue and exit */
+  mq_close(woqueue);
+  mq_unlink(qname);
+  return PTS_FAIL;
+ }
 #ifdef DEBUG
-	printf("Message receive failed, as expected\n");
+ printf("Message receive failed, as expected\n");
 #endif
 
-        woqueue2 = mq_open(qname, O_WRONLY, S_IRUSR | S_IWUSR, &attr);
-        if (woqueue2 == (mqd_t)-1) {
+        woqueue2  mq_open(qname, O_WRONLY, S_IRUSR | S_IWUSR, &attr);
+        if (woqueue2  (mqd_t)-1) {
                 perror("mq_open() did not return success");
-		printf("Test UNRESOLVED\n");
-		/* close woqueue and exit */
-		mq_close(woqueue);
-		mq_unlink(qname);
+  printf("Test UNRESOLVED\n");
+  /* close woqueue and exit */
+  mq_close(woqueue);
+  mq_unlink(qname);
                 return PTS_UNRESOLVED;
         }
 
-        if (mq_send(woqueue2, msgptr, strlen(msgptr), 1) != 0) {
+        if (mq_send(woqueue2, msgptr, strlen(msgptr), 1) ! 0) {
                 perror("mq_send() did not return success");
-		printf("Test UNRESOLVED\n");
-		/* close queues and exit */
-		mq_close(woqueue);
-		mq_close(woqueue2);
-		mq_unlink(qname);
-		return PTS_UNRESOLVED;
+  printf("Test UNRESOLVED\n");
+  /* close queues and exit */
+  mq_close(woqueue);
+  mq_close(woqueue2);
+  mq_unlink(qname);
+  return PTS_UNRESOLVED;
         }
 #ifdef DEBUG
-	printf("Message %s sent to second queue\n", msgptr);
+ printf("Message %s sent to second queue\n", msgptr);
 #endif
 
-        if (mq_receive(woqueue2, msgrcd, BUFFER, &pri) != -1) {
-		printf("mq_receive() returned success on write only queue\n");
-		printf("Test FAILED\n");
-		/* close queues and exit */
-		mq_close(woqueue);
-		mq_close(woqueue2);
-		mq_unlink(qname);
-		return PTS_FAIL;
-	}
+        if (mq_receive(woqueue2, msgrcd, BUFFER, &pri) ! -1) {
+  printf("mq_receive() returned success on write only queue\n");
+  printf("Test FAILED\n");
+  /* close queues and exit */
+  mq_close(woqueue);
+  mq_close(woqueue2);
+  mq_unlink(qname);
+  return PTS_FAIL;
+ }
 #ifdef DEBUG
-	printf("Message receive failed, as expected, on second queue\n");
+ printf("Message receive failed, as expected, on second queue\n");
 #endif
 
-	mq_close(woqueue);
-	mq_close(woqueue2);
-	mq_unlink(qname);
+ mq_close(woqueue);
+ mq_close(woqueue2);
+ mq_unlink(qname);
 
         printf("Test PASSED\n");
         return PTS_PASS;

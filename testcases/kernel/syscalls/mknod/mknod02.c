@@ -19,16 +19,16 @@
 
 /*
  * Test Name: mknod02
- * 
+ *
  * Test Description:
- *  Verify that mknod(2) succeeds when used to create a filesystem 
+ *  Verify that mknod(2) succeeds when used to create a filesystem
  *  node with set group-ID bit set on a directory without set group-ID bit set.
- *  The node created should have set group-ID bit set and its gid should be 
+ *  The node created should have set group-ID bit set and its gid should be
  *  equal to that of its parent directory.
  *
  * Expected Result:
  *  mknod() should return value 0 on success and node created should have
- *  set group-ID bit set, its gid should be equal to that of its parent 
+ *  set group-ID bit set, its gid should be equal to that of its parent
  *  directory.
  *
  * Algorithm:
@@ -40,14 +40,14 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return=-1)
- *   	Log the errno and Issue a FAIL message.
+ *   Check return code, if system call failed (return-1)
+ *   Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *   Verify the Functionality of system call
  *      if successful,
- *      	Issue Functionality-Pass message.
+ *      Issue Functionality-Pass message.
  *      Otherwise,
- *		Issue Functionality-Fail message.
+ *  Issue Functionality-Fail message.
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
  *   Delete the temporary directory created.
@@ -56,13 +56,13 @@
  *  mknod02 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -f   : Turn off functionality Testing.
- *	       -i n : Execute test n times.
- *	       -I x : Execute test for x seconds.
- *	       -P x : Pause for x seconds between iterations.
- *	       -t   : Turn on syscall timing.
+ *        -i n : Execute test n times.
+ *        -I x : Execute test for x seconds.
+ *        -P x : Pause for x seconds between iterations.
+ *        -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS:
  *  This test should be run by 'super-user' (root) only.
@@ -82,264 +82,264 @@
 #include "test.h"
 #include "usctest.h"
 
-#define LTPUSER		"nobody"
-#define MODE_RWX	S_IFIFO | S_IRWXU | S_IRWXG | S_IRWXO
+#define LTPUSER  "nobody"
+#define MODE_RWX S_IFIFO | S_IRWXU | S_IRWXG | S_IRWXO
 #define MODE_SGID       S_IFIFO | S_ISGID | S_IRWXU | S_IRWXG | S_IRWXO
-#define DIR_TEMP	"testdir_2"
-#define TNODE		"tnode_%d"
+#define DIR_TEMP "testdir_2"
+#define TNODE  "tnode_%d"
 
-struct stat buf;		/* struct. to hold stat(2) o/p contents */
-struct passwd *user1;		/* struct. to hold getpwnam(3) o/p contents */
+struct stat buf;  /* struct. to hold stat(2) o/p contents */
+struct passwd *user1;  /* struct. to hold getpwnam(3) o/p contents */
 
-char *TCID="mknod02";           /* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
-char node_name[PATH_MAX];	/* buffer to hold node name created */
+char *TCID"mknod02";           /* Test program identifier.    */
+int TST_TOTAL  1;  /* Total number of test cases. */
+char node_name[PATH_MAX]; /* buffer to hold node name created */
 extern int Tst_count;           /* Test Case counter for tst_* routines */
 
-gid_t group1_gid, group2_gid, mygid;	/* user and process group id's */
-uid_t save_myuid, user1_uid;	/* user and process user id's */
-pid_t mypid;			/* process id */
+gid_t group1_gid, group2_gid, mygid; /* user and process group id's */
+uid_t save_myuid, user1_uid; /* user and process user id's */
+pid_t mypid;   /* process id */
 
-void setup();			/* setup function for the test */
-void cleanup();			/* cleanup function for the test */
+void setup();   /* setup function for the test */
+void cleanup();   /* cleanup function for the test */
 
 int
 main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	int fflag;		/* functionality flag variable */
-	char *msg;		/* message returned from parse_opts */
+ int lc;   /* loop counter */
+ int fflag;  /* functionality flag variable */
+ char *msg;  /* message returned from parse_opts */
 
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *) NULL) {
-		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(ac, av, (option_t *) NULL, NULL);
+ if (msg ! (char *) NULL) {
+  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+  tst_exit();
+ }
 
-	/* Perform global setup for test */
-	setup();
+ /* Perform global setup for test */
+ setup();
 
-	/* Check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
+ /* Check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* Reset Tst_count in case we are looping. */
+  Tst_count0;
 
-		/*
-		 *  Attempt to create a filesystem node with group-id bit set
-		 *  on a directory without group id bit set such that,
-		 *  the node created by mknod(2) should have group-id (sgid)
-		 *  bit set and node's gid should be equal to that of its
-		 *  parent directory.
-		 */
-		TEST(mknod(node_name, MODE_SGID, 0));
-	
-		/* Check return code from mknod(2) */
-		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL,
-				 "mknod(%s, %#o, 0)  failed, errno=%d : %s",
-				 node_name, MODE_SGID, TEST_ERRNO,
-				 strerror(TEST_ERRNO));
-			continue;
-		}
-		/*
-		 * Perform functional verification if test executed
-		 * without (-f) option.
-		 */
-		if (STD_FUNCTIONAL_TEST) {
-			/* Set the functionality flag */
-			fflag = 1;
+  /*
+   *  Attempt to create a filesystem node with group-id bit set
+   *  on a directory without group id bit set such that,
+   *  the node created by mknod(2) should have group-id (sgid)
+   *  bit set and node's gid should be equal to that of its
+   *  parent directory.
+   */
+  TEST(mknod(node_name, MODE_SGID, 0));
 
-			/* Check for node's creation */
-	 		if (stat(node_name, &buf) < 0) {
-				tst_resm(TFAIL, "stat() of %s failed, errno:%d",
-					 node_name, TEST_ERRNO);
+  /* Check return code from mknod(2) */
+  if (TEST_RETURN  -1) {
+   tst_resm(TFAIL,
+     "mknod(%s, %#o, 0)  failed, errno%d : %s",
+     node_name, MODE_SGID, TEST_ERRNO,
+     strerror(TEST_ERRNO));
+   continue;
+  }
+  /*
+   * Perform functional verification if test executed
+   * without (-f) option.
+   */
+  if (STD_FUNCTIONAL_TEST) {
+   /* Set the functionality flag */
+   fflag  1;
 
-				/* unset functionality flag */
-				fflag = 0;
-			}
+   /* Check for node's creation */
+ if (stat(node_name, &buf) < 0) {
+    tst_resm(TFAIL, "stat() of %s failed, errno:%d",
+      node_name, TEST_ERRNO);
 
-			/* Verify mode permissions of node */
-			if (!(buf.st_mode & S_ISGID)) {
-				tst_resm(TFAIL, "%s: Incorrect modes, setgid "
-					 "bit not set", node_name);
-				/* unset flag as functionality fails */
-				fflag = 0;
-			}
+    /* unset functionality flag */
+    fflag  0;
+   }
 
-			/* Verify group ID of node */
-			if (buf.st_gid != mygid) {
-				tst_resm(TFAIL, "%s: Incorrect group",
-					 node_name);
-				/* unset flag as functionality fails */
-				fflag = 0;
-			}
-			if (fflag) {
-				tst_resm(TPASS, "Functionality of mknod(%s, "
-					 "%#o, 0) successful",
-					 node_name, MODE_SGID);
-			}
-		} else {
-			tst_resm(TPASS, "call succeeded");
-		}
+   /* Verify mode permissions of node */
+   if (!(buf.st_mode & S_ISGID)) {
+    tst_resm(TFAIL, "%s: Incorrect modes, setgid "
+      "bit not set", node_name);
+    /* unset flag as functionality fails */
+    fflag  0;
+   }
 
-		/* Remove the node for the next go `round */
-		if (unlink(node_name) == -1) {
-			tst_resm(TWARN, "unlink(%s) failed, errno:%d %s",
-				 node_name, errno, strerror(errno));
-		}
-   	}
+   /* Verify group ID of node */
+   if (buf.st_gid ! mygid) {
+    tst_resm(TFAIL, "%s: Incorrect group",
+      node_name);
+    /* unset flag as functionality fails */
+    fflag  0;
+   }
+   if (fflag) {
+    tst_resm(TPASS, "Functionality of mknod(%s, "
+      "%#o, 0) successful",
+      node_name, MODE_SGID);
+   }
+  } else {
+   tst_resm(TPASS, "call succeeded");
+  }
 
-	/* Change the directory back to temporary directory */
-	chdir("..");
+  /* Remove the node for the next go `round */
+  if (unlink(node_name)  -1) {
+   tst_resm(TWARN, "unlink(%s) failed, errno:%d %s",
+     node_name, errno, strerror(errno));
+  }
+   }
 
-	/*
-	 * Invoke cleanup() to delete the test directories created
-	 * in the setup() and exit main().
-	 */
-	cleanup();
+ /* Change the directory back to temporary directory */
+ chdir("..");
 
-	/*NOTREACHED*/
-	return(0);
-}	/* End main */
+ /*
+  * Invoke cleanup() to delete the test directories created
+  * in the setup() and exit main().
+  */
+ cleanup();
+
+ /*NOTREACHED*/
+ return(0);
+} /* End main */
 
 /*
  * setup(void) - performs all ONE TIME setup for this test.
- * 	Exit the test program on receipt of unexpected signals.
- *	Create a temporary directory used to hold test directories created
- *	and change the directory to it.
- *	Verify that pid of process executing the test is root.
- *	Create a test directory on temporary directory and set the ownership
- *	of test directory to ltp user and process.
- *	Set the effective uid/gid of the process to that of ltp user.
+ * Exit the test program on receipt of unexpected signals.
+ * Create a temporary directory used to hold test directories created
+ * and change the directory to it.
+ * Verify that pid of process executing the test is root.
+ * Create a test directory on temporary directory and set the ownership
+ * of test directory to ltp user and process.
+ * Set the effective uid/gid of the process to that of ltp user.
  */
 void
 setup()
 {
-	/* Capture unexpected signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* Capture unexpected signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Check that the test process id is super/root  */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, NULL, "Must be super/root for this test!"); 
-		tst_exit();
-	}
+ /* Check that the test process id is super/root  */
+ if (geteuid() ! 0) {
+  tst_brkm(TBROK, NULL, "Must be super/root for this test!");
+  tst_exit();
+ }
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* Make a temp dir and cd to it */
-	tst_tmpdir();
+ /* Make a temp dir and cd to it */
+ tst_tmpdir();
 
-	/* fix permissions on the tmpdir */
-        if (chmod(".", 0711) != 0) {
+ /* fix permissions on the tmpdir */
+        if (chmod(".", 0711) ! 0) {
                 tst_brkm(TBROK, cleanup, "chmod() failed");
         }
 
-	/* Save the real user id of the current test process */
-        save_myuid = getuid();
+ /* Save the real user id of the current test process */
+        save_myuid  getuid();
 
-	/* Save the process id of the current test process */
-        mypid = getpid();
+ /* Save the process id of the current test process */
+        mypid  getpid();
 
-	/* Get the node name to be created in the test */
-	sprintf(node_name, TNODE, mypid);
+ /* Get the node name to be created in the test */
+ sprintf(node_name, TNODE, mypid);
 
-	/* Get the uid/gid of ltpuser */
-	if ((user1 = getpwnam(LTPUSER)) == NULL) {
-		tst_brkm(TBROK, cleanup, "%s not in /etc/passwd", LTPUSER);
-	}
-	user1_uid = user1->pw_uid;
-	group1_gid = user1->pw_gid;
+ /* Get the uid/gid of ltpuser */
+ if ((user1  getpwnam(LTPUSER))  NULL) {
+  tst_brkm(TBROK, cleanup, "%s not in /etc/passwd", LTPUSER);
+ }
+ user1_uid  user1->pw_uid;
+ group1_gid  user1->pw_gid;
 
-	/* Get the effective group id of the test process */
-        group2_gid = getegid();
+ /* Get the effective group id of the test process */
+        group2_gid  getegid();
 
-	/*
-	 * Create a test directory under temporary directory with the
-	 * specified mode permissions, with uid/gid set to that of guest
-	 * user and the test process.
-	 */
-	if (mkdir(DIR_TEMP, MODE_RWX) < 0) {
-		tst_brkm(TBROK, cleanup, "mkdir(2) of %s failed", DIR_TEMP);
-	}
-	if (chown(DIR_TEMP, user1_uid, group2_gid) < 0) {
-		tst_brkm(TBROK, cleanup, "chown(2) of %s failed", DIR_TEMP);
-	}
+ /*
+  * Create a test directory under temporary directory with the
+  * specified mode permissions, with uid/gid set to that of guest
+  * user and the test process.
+  */
+ if (mkdir(DIR_TEMP, MODE_RWX) < 0) {
+  tst_brkm(TBROK, cleanup, "mkdir(2) of %s failed", DIR_TEMP);
+ }
+ if (chown(DIR_TEMP, user1_uid, group2_gid) < 0) {
+  tst_brkm(TBROK, cleanup, "chown(2) of %s failed", DIR_TEMP);
+ }
 
-	/*
-	 * Verify that test directory created with expected permission modes
-	 * and ownerships.
-	 */
-	if (stat(DIR_TEMP, &buf) < 0) {
-		tst_brkm(TBROK, cleanup, "stat(2) of %s failed", DIR_TEMP);
-	}
+ /*
+  * Verify that test directory created with expected permission modes
+  * and ownerships.
+  */
+ if (stat(DIR_TEMP, &buf) < 0) {
+  tst_brkm(TBROK, cleanup, "stat(2) of %s failed", DIR_TEMP);
+ }
 
-	/* Verify modes of test directory */
-	if (buf.st_mode & S_ISGID) {
-		tst_brkm(TBROK, cleanup,
-			 "%s: Incorrect modes, setgid bit set", DIR_TEMP);
-	}
+ /* Verify modes of test directory */
+ if (buf.st_mode & S_ISGID) {
+  tst_brkm(TBROK, cleanup,
+    "%s: Incorrect modes, setgid bit set", DIR_TEMP);
+ }
 
-	/* Verify group ID of test directory */
-	if (buf.st_gid != group2_gid) {
-		tst_brkm(TBROK, cleanup, "%s: Incorrect group", DIR_TEMP);
-	}
-	
-   	/* 
-	 * Set the effective group id and user id of the test process 
-	 * to that of guest user.
-	 */
-	if (setgid(group1_gid) < 0) {
-		tst_brkm(TBROK, cleanup,
-			 "Unable to set process gid to that of ltpuser");
-	}
-	if (setreuid(-1, user1_uid) < 0) {
-		tst_brkm(TBROK, cleanup,
-			 "Unable to set process uid to that of ltp user");
-	}
+ /* Verify group ID of test directory */
+ if (buf.st_gid ! group2_gid) {
+  tst_brkm(TBROK, cleanup, "%s: Incorrect group", DIR_TEMP);
+ }
 
-	/* Save the real group ID of the current process */
-	mygid = getgid();
+   /*
+  * Set the effective group id and user id of the test process
+  * to that of guest user.
+  */
+ if (setgid(group1_gid) < 0) {
+  tst_brkm(TBROK, cleanup,
+    "Unable to set process gid to that of ltpuser");
+ }
+ if (setreuid(-1, user1_uid) < 0) {
+  tst_brkm(TBROK, cleanup,
+    "Unable to set process uid to that of ltp user");
+ }
 
-	/* Change directory to DIR_TEMP */
-	if (chdir(DIR_TEMP) < 0) {
-		tst_brkm(TBROK, cleanup,
-			 "Unable to change to %s directory", DIR_TEMP);
-	}
+ /* Save the real group ID of the current process */
+ mygid  getgid();
+
+ /* Change directory to DIR_TEMP */
+ if (chdir(DIR_TEMP) < 0) {
+  tst_brkm(TBROK, cleanup,
+    "Unable to change to %s directory", DIR_TEMP);
+ }
 }
 
 /*
  * cleanup() - Performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
- *	Print test timing stats and errno log if test executed with options.
- *	Restore the real/effective user id of the process changed during
- *	setup().
- *	Remove temporary directory and sub-directories/files under it
- *	created during setup().
- *	Exit the test program with normal exit code.
+ * Print test timing stats and errno log if test executed with options.
+ * Restore the real/effective user id of the process changed during
+ * setup().
+ * Remove temporary directory and sub-directories/files under it
+ * created during setup().
+ * Exit the test program with normal exit code.
  */
 void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/*
-	 * Restore the effective uid of the process changed in the
-	 * setup().
-	 */
-	if (setreuid(-1, save_myuid) < 0) {
-		tst_brkm(TBROK, NULL,
-			 "resetting process real/effective uid failed");
-	}
+ /*
+  * Restore the effective uid of the process changed in the
+  * setup().
+  */
+ if (setreuid(-1, save_myuid) < 0) {
+  tst_brkm(TBROK, NULL,
+    "resetting process real/effective uid failed");
+ }
 
-	/* Remove files and temporary directory created */
-	tst_rmdir();
-  
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* Remove files and temporary directory created */
+ tst_rmdir();
+
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

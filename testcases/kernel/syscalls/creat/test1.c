@@ -19,7 +19,7 @@
 
 /*
  * test1.c
- *	dummy program which is used by the creat07.c test
+ * dummy program which is used by the creat07.c test
  */
 
 #include <stdio.h>
@@ -28,8 +28,8 @@
 int
 main()
 {
-	for (;;) {
-		sleep(1);
-	}
-	return 0;
+ for (;;) {
+  sleep(1);
+ }
+ return 0;
 }

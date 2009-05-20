@@ -35,10 +35,10 @@ typedef Uint32 PhysicalAddress;
 
 #define BIT_REG_MARGIN			0x1000
 
-#define PRJ_TRISTAN     		0xF000
+#define PRJ_TRISTAN     0xF000
 #define PRJ_TRISTAN_REV			0xF001
 #define PRJ_PRISM_CX			0xF002
-#define PRJ_SHIVA       		0xF003
+#define PRJ_SHIVA       0xF003
 #define PRJ_PRISM_EX			0xF004
 #define PRJ_BODA_CX_4			0xF005
 #define PRJ_CODA_DX_6M			0xF100
@@ -463,9 +463,9 @@ typedef struct vpu_versioninfo {
 
 extern unsigned int system_rev;
 
-#define CHIP_REV_1_0            	0x10
+#define CHIP_REV_1_0            0x10
 #define CHIP_REV_2_0			0x20
-#define CHIP_REV_2_1            	0x21
+#define CHIP_REV_2_1            0x21
 
 #define mxc_cpu()               (system_rev >> 12)
 #define mxc_is_cpu(part)        ((mxc_cpu() == part) ? 1 : 0)

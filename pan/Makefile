@@ -1,7 +1,7 @@
 
 LOADLIBES += -lm
 LFLAGS += -l -w
-CFLAGS += -w 
+CFLAGS += -w
 PREFIX = /opt/ltp
 
 all: pan bump scanner

@@ -24,7 +24,7 @@
 # Description:  Tests basic functions of mail system. The aim of the test is to
 #               make sure that certain basic functionality of mail is expected
 #               to work as per man page. There are 4 - 5 operations that are
-#               done on a regular basis wrt mail. ie. 
+#               done on a regular basis wrt mail. ie.
 #               mail send to an user@domain - received by that user@domain
 #               mail is send to nosuchuser@domain - mail delivery failure
 #               mail is send to user@nosuchdomain - mail delivery failure
@@ -36,7 +36,7 @@
 # History:      Jan 07 2003 - Created - Manoj Iyer.
 #               Jan 09 2003 - Added Test #2 #3 #4 and #5.
 #                Jan 10 2002 - Fixed various bugs I had introduced in the test.
-#                           - Added SETUP and CLEANUP sections 
+#                           - Added SETUP and CLEANUP sections
 #
 
 export TST_TOTAL=5
@@ -111,7 +111,7 @@ then
 else
     # check if root received a new email with Test as subject
     # but wait for the mail to arrive.
-    
+
     sleep 10s
     echo "d" | mail -u root > $LTPTMP/tst_mail.res 2>&1
     mailsub=$(awk '/^>N/ {print match($9, "Test")}' $LTPTMP/tst_mail.res)
@@ -129,7 +129,7 @@ fi
 
 # Test #2
 # Test that mail user@bad-domain will result in a warning from the mailer
-# daemon that the domain does not exist. 
+# daemon that the domain does not exist.
 
 export TCID=mail02
 export TST_COUNT=2
@@ -155,27 +155,27 @@ then
         "Test #2: mail command failed. Reason: "
     TFAILCNT=$(( $TFAILCNT+1 ))
 else
-    # check if Mailer-Deamon reported any delivery failure.    
+    # check if Mailer-Deamon reported any delivery failure.
     # but wait for the mail to arrive first, sleep 5s.
     sleep 5s
     echo "d" | mail -u root > $LTPTMP/tst_mail.res 2>&1
     RC1=$(awk '/^>N/ {IGNORECASE=1; print match($3, "Mailer-Daemon")}' \
-	$LTPTMP/tst_mail.res)
+ $LTPTMP/tst_mail.res)
     RC2=$(awk '/^>N/ {print match($9 $10 $11, "Maildeliveryfailed:")}' \
         $LTPTMP/tst_mail.res)
 #####
-# Some mailers (e.g., Red Hat's sendmail) print different messages 
+# Some mailers (e.g., Red Hat's sendmail) print different messages
 #####
-if [ -f /etc/redhat-release ] 
-then 
+if [ -f /etc/redhat-release ]
+then
   [ -z "$RC2" -o "X$RC2" = "X0" ] && \
      RC2=$(awk '/^>N/ {print match($9 $10, "Returnedmail:")}' \
              $LTPTMP/tst_mail.res)
-else 
+else
   [ -z "$RC2" -o "X$RC2" = "X0" ] && \
      RC2=$(awk '/^>N/ {print match($9 $10 $11, "UndeliveredMailReturned")}' \
              $LTPTMP/tst_mail.res)
-fi 
+fi
     if [ -z "$RC1" -a -z "$RC2" ]
     then
         $LTPBIN/tst_res TFAIL $LTPTMP/tst_mail.res \
@@ -193,7 +193,7 @@ fi
         fi
     fi
 fi
-    
+
 
 # Test #3
 # Test that mail non_existant_user@localhost will result in delivery failure.
@@ -222,27 +222,27 @@ then
         "Test #3: mail command failed. Reason: "
     TFAILCNT=$(( $TFAILCNT+1 ))
 else
-    # check if Mailer-Deamon reported any delivery failure.    
+    # check if Mailer-Deamon reported any delivery failure.
     # but wait for the mail to arrive first, sleep 5s.
     sleep 5s
     echo "d" | mail -u root > $LTPTMP/tst_mail.res 2>&1
     RC1=$(awk '/^>N/ {IGNORECASE=1; print match($3, "Mailer-Daemon")}' \
-	$LTPTMP/tst_mail.res)
+ $LTPTMP/tst_mail.res)
     RC2=$(awk '/^>N/ {print match($9 $10 $11, "Maildeliveryfailed:")}' \
         $LTPTMP/tst_mail.res)
 #####
-# Some mailers (e.g., Red Hat's sendmail) print different messages 
+# Some mailers (e.g., Red Hat's sendmail) print different messages
 #####
-if [ -f /etc/redhat-release ] 
-then 
+if [ -f /etc/redhat-release ]
+then
    [ -z "$RC2" -o "X$RC2" = "X0" ] && \
       RC2=$(awk '/^>N/ {print match($9 $10, "Returnedmail:")}' \
               $LTPTMP/tst_mail.res)
-else 
+else
     [ -z "$RC2" -o "X$RC2" = "X0" ] && \
         RC2=$(awk '/^>N/ {print match($9 $10 $11, "UndeliveredMailReturned")}' \
                 $LTPTMP/tst_mail.res)
-fi 
+fi
     if [ -z "$RC1" -a -z "$RC2" ]
     then
         $LTPBIN/tst_res TFAIL $LTPTMP/tst_mail.res \
@@ -261,7 +261,7 @@ fi
     fi
 fi
 
-# Test #4 
+# Test #4
 # Test that mail -c user@domain option will carbon copy that user.
 
 export TCID=mail04
@@ -271,7 +271,7 @@ RC=0
 $LTPBIN/tst_resm TINFO "Test #4: Test that mail -c user@domain will"
 $LTPBIN/tst_resm TINFO "Test #4: carbon copy user@domain"
 
-# send mail to root and carbon copy mail_test 
+# send mail to root and carbon copy mail_test
 mail -s "Test" root@localhost -c mail_test@localhost < \
     $LTPTMP/tst_mail.in > $LTPTMP/tst_mail.out 2>&1 || RC=$?
 if [ $RC -ne 0 ]
@@ -280,7 +280,7 @@ then
         "Test #4: mail command failed. Reason:"
     TFAILCNT=$(( $TFAILCNT+1 ))
 else
-    # Check if mail_test received the mail and 
+    # Check if mail_test received the mail and
     # also if root received the main copy of the email.
     sleep 5s
     echo "d" | mail -u root > $LTPTMP/tst_mail.res 2>&1
@@ -299,7 +299,7 @@ else
 fi
 
 
-# Test #5 
+# Test #5
 # Test that mail -b user@domain option will blind carbon copy that user.
 
 export TCID=mail05
@@ -309,7 +309,7 @@ RC=0
 $LTPBIN/tst_resm TINFO "Test #5: Test that mail -b user@domain will"
 $LTPBIN/tst_resm TINFO "Test #5: blind carbon copy user@domain"
 
-# send mail to root and carbon copy mail_test 
+# send mail to root and carbon copy mail_test
 mail -s "Test" root@localhost -c mail_test@localhost < \
     $LTPTMP/tst_mail.in > $LTPTMP/tst_mail.out 2>&1 || RC=$?
 if [ $RC -ne 0 ]
@@ -318,7 +318,7 @@ then
         "Test #5: mail command failed. Reason:"
     TFAILCNT=$(( $TFAILCNT+1 ))
 else
-    # Check if mail_test received the mail and 
+    # Check if mail_test received the mail and
     # also if root received the main copy of the email.
     sleep 5s
     echo "d" | mail -u root > $LTPTMP/tst_mail.res 2>&1
@@ -335,7 +335,7 @@ else
         TFAILCNT=$(( $TFAILCNT+1 ))
     fi
 fi
-    
+
 
 #CLEANUP & EXIT
 # remove all the temporary files created by this test.
@@ -343,7 +343,7 @@ export TCID=CLEANUP
 export TST_COUNT=1
 
 $LTPBIN/tst_resm TINFO "Test CLEAN: Removing temporary files from $LTPTMP"
-rm -fr $LTPTMP/tst_mail* 
+rm -fr $LTPTMP/tst_mail*
 
 $LTPBIN/tst_resm TINFO "Test CLEAN: Removing temporary user mail_test"
 userdel -r mail_test > /dev/null 2>&1

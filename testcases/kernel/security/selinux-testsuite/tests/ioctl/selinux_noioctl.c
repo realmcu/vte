@@ -18,7 +18,7 @@
 #include<linux/ext2_fs.h>
 
 /*
- * Test the ioctl() calls on a file whose name is given as the first 
+ * Test the ioctl() calls on a file whose name is given as the first
  * argument. This version of the program expects some of the ioctl()
  * calls to fail, so if one does succeed, we exit with a bad return code.
  * This program expects the domain it is running as to have only read
@@ -30,36 +30,36 @@ int main(int argc, char **argv) {
   int rc;
   int val;
 
-  fd = open(argv[1], O_RDONLY, 0);
-  
-  if(fd == -1) {
+  fd  open(argv[1], O_RDONLY, 0);
+
+  if(fd  -1) {
     perror("test_noioctl:open");
     exit(1);
   }
 
   /* This one should hit the normal file descriptor use test; expect success */
-  rc = ioctl(fd, FIONBIO, &val);
-  if( rc != 0 ) {
+  rc  ioctl(fd, FIONBIO, &val);
+  if( rc ! 0 ) {
     perror("test_noioctl:FIONBIO");
     exit(1);
   }
 
   /* This one should hit the FILE__GETATTR test; expect failure */
-  rc = ioctl(fd, FIGETBSZ, &val);
-  if( rc == 0 ) {
+  rc  ioctl(fd, FIGETBSZ, &val);
+  if( rc  0 ) {
     exit(1);
   }
 
   /* This one should hit the FILE__IOCTL test */
-  rc = ioctl(fd, FIOCLEX);
-  if( rc == 0 ) {
+  rc  ioctl(fd, FIOCLEX);
+  if( rc  0 ) {
     exit(1);
   }
 
-  val = 0;
+  val  0;
   /* This one should hit the FILE__SETATTR test; expect failure */
-  rc = ioctl(fd, EXT2_IOC_SETVERSION, &val);
-  if( rc == 0 ) {
+  rc  ioctl(fd, EXT2_IOC_SETVERSION, &val);
+  if( rc  0 ) {
     exit(1);
   }
 

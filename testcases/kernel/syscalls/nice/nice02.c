@@ -37,14 +37,14 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return=-1)
- *   	Log the errno and Issue a FAIL message.
+ *   Check return code, if system call failed (return-1)
+ *   Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *   Verify the Functionality of system call
  *      if successful,
- *      	Issue Functionality-Pass message.
+ *      Issue Functionality-Pass message.
  *      Otherwise,
- *		Issue Functionality-Fail message.
+ *  Issue Functionality-Fail message.
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
  *
@@ -52,13 +52,13 @@
  *  nice02 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -f   : Turn off functionality Testing.
- *	       -i n : Execute test n times.
- *	       -I x : Execute test for x seconds.
- *	       -P x : Pause for x seconds between iterations.
- *	       -t   : Turn on syscall timing.
+ *        -i n : Execute test n times.
+ *        -I x : Execute test for x seconds.
+ *        -P x : Pause for x seconds between iterations.
+ *        -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS:
  *  none
@@ -72,103 +72,103 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID="nice02";		/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID"nice02";  /* Test program identifier.    */
+int TST_TOTAL1;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 
-#define	NICEINC		50
+#define NICEINC  50
 
-void setup();			/* Main setup function of test */
-void cleanup();			/* cleanup function for the test */
+void setup();   /* Main setup function of test */
+void cleanup();   /* cleanup function for the test */
 
 int
 main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-	int New_nice;		/* priority of process after nice() */
-	int max_val;		/* Maximum nice value per OS. */
-    
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
+ int New_nice;  /* priority of process after nice() */
+ int max_val;  /* Maximum nice value per OS. */
 
-	/* Perform global setup for test */
-	setup();
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(ac, av, (option_t *)NULL, NULL);
+ if (msg ! (char *)NULL) {
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	/* Check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* Perform global setup for test */
+ setup();
 
-		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
+ /* Check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* 
-		 * Call nice(2) with an 'incr' parameter set
-		 * to a higher +ve value.
-		 */
-		TEST(nice(NICEINC));
+  /* Reset Tst_count in case we are looping. */
+  Tst_count0;
 
-		/* check return code */
-		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL, "nice(%d) Failed, errno=%d : %s",
-				 NICEINC, TEST_ERRNO, strerror(TEST_ERRNO));
-			continue;
-		}
+  /*
+   * Call nice(2) with an 'incr' parameter set
+   * to a higher +ve value.
+   */
+  TEST(nice(NICEINC));
 
-		/*
-		 * Perform functional verification if test
-		 * executed without (-f) option.
-		 */
-		if (STD_FUNCTIONAL_TEST) {
-			/*
-			 * Get the current priority of the test process.
-			 */
-			errno = 0;
-			New_nice = getpriority(PRIO_PROCESS, 0);
-			if (New_nice == -1 && errno != 0) {
-				tst_brkm(TFAIL, cleanup, "Fail to get priority "
-					 "of process after nice()");
-			}
+  /* check return code */
+  if (TEST_RETURN  -1) {
+   tst_resm(TFAIL, "nice(%d) Failed, errno%d : %s",
+     NICEINC, TEST_ERRNO, strerror(TEST_ERRNO));
+   continue;
+  }
 
-			/*
-			 * Validate functionality of the nice().
-			 *
-			 * Default priority is 0, Max is 20.
-			 */
-			max_val = 20;
+  /*
+   * Perform functional verification if test
+   * executed without (-f) option.
+   */
+  if (STD_FUNCTIONAL_TEST) {
+   /*
+    * Get the current priority of the test process.
+    */
+   errno  0;
+   New_nice  getpriority(PRIO_PROCESS, 0);
+   if (New_nice  -1 && errno ! 0) {
+    tst_brkm(TFAIL, cleanup, "Fail to get priority "
+      "of process after nice()");
+   }
 
-			if (New_nice != (max_val - 1)) {
-				tst_resm(TFAIL, "Priority of process : %d "
-					 "doesn't match the expected:%d",
-					 New_nice, (max_val - 1));
-			} else {
-				tst_resm(TPASS, "Functionality of nice(%d)"
-					 " successful", NICEINC);
-			}
-		} else {
-			tst_resm(TPASS, "call succeeded");
-		}
-	}	/* End for TEST_LOOPING */
+   /*
+    * Validate functionality of the nice().
+    *
+    * Default priority is 0, Max is 20.
+    */
+   max_val  20;
 
-	/* Call cleanup() to undo setup done for the test. */
-	cleanup();
+   if (New_nice ! (max_val - 1)) {
+    tst_resm(TFAIL, "Priority of process : %d "
+      "doesn't match the expected:%d",
+      New_nice, (max_val - 1));
+   } else {
+    tst_resm(TPASS, "Functionality of nice(%d)"
+      " successful", NICEINC);
+   }
+  } else {
+   tst_resm(TPASS, "call succeeded");
+  }
+ } /* End for TEST_LOOPING */
 
-	return(0);
-}	/* End main */
+ /* Call cleanup() to undo setup done for the test. */
+ cleanup();
+
+ return(0);
+} /* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void 
+void
 setup()
 {
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 }
 
 /*
@@ -176,15 +176,15 @@ setup()
  *             completion or premature exit.
  *  Remove the test directory and testfile created in the setup.
  */
-void 
+void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

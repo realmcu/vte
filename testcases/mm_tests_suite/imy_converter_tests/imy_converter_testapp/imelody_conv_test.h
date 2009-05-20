@@ -24,7 +24,7 @@ Author (core ID)      Date         CR Number    Description of Changes
 S.ZAVJALOV/zvjs001c   19/10/2004   TLSbo47116   Initial version
 D.Simakov/smkd001c    07/04/2005   TLSbo47116   Imroved, endurance, load and
                                                 robustness test cases were added.
-D.Simakov/smkd001c    24/10/2005   TLSbo57009   Update                                                                                                   
+D.Simakov/smkd001c    24/10/2005   TLSbo57009   Update
 =============================================================================*/
 
 #ifndef IMELODY_CONV_TEST_H
@@ -58,7 +58,7 @@ extern "C"{
 /*======================== ENUMS ============================================*/
 
 /** imelody_conv_EX type */
-typedef enum 
+typedef enum
 {
     imelody_conv_EX_0 = 0,   /**< Example stuff 0. */
     imelody_conv_EX_1        /**< Example stuff 1. */
@@ -70,7 +70,7 @@ typedef enum
     iMY_REENTER,
     iMY_ENDURANCE,
     iMY_LOAD,
-    iMY_ROBUSTNESS    
+    iMY_ROBUSTNESS
 }iMY_TEST_CASES;
 
 /*======================== STRUCTURES AND OTHER TYPEDEFS ====================*/

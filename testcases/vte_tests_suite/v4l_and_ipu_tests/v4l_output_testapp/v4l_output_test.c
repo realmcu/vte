@@ -1,34 +1,34 @@
-/*================================================================================================*/
+/*====================*/
 /**
     @file   v4l_output_test.c
 
     @brief  v4l output Test scenario*/
-/*==================================================================================================
+/*======================
 
     Copyright (C) 2005, Freescale Semiconductor, Inc. All Rights Reserved
     THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
     BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
     Freescale Semiconductor, Inc.
-    
-====================================================================================================
+
+====================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Smirnov Artyom/ID            07/05/2005     TLSbo49894   BRIEF description of changes made 
+Smirnov Artyom/ID            07/05/2005     TLSbo49894   BRIEF description of changes made
 KHOROSHEV.D                  09/29/2005     TLSbo55077   Review version
 
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
 #ifdef __cplusplus
-extern "C"{ 
+extern "C"{
 #endif
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard header files */
 #include <string.h>
 #include <time.h>
@@ -38,20 +38,20 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "v4l_output_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
 #define SLEEP_TIME 10
 
-/*==================================================================================================
+/*======================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 const char user_output[3][40] = {
         "biggest size",
         "middle size",
@@ -61,9 +61,9 @@ const char user_output[3][40] = {
 const int height_table[3] = { 320, 200, 20 };
 const int width_table[3] = { 240, 100, 10 };
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
 static int v4l_output_fd = 0;
 static int input_fd = 0;
@@ -78,20 +78,20 @@ static struct v4l2_requestbuffers buf_req;
 
 static video_buffer buffers[MAX_BUFF_NUM];
 
-/*==================================================================================================
+/*======================
                                         GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 
 extern params p;
 
-/*==================================================================================================
+/*======================
                                     LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
 int     parse_file(int in_fd, int *width, int *height, char **image_fmt);
 int     configure(void);
@@ -104,19 +104,19 @@ int     write_file(char *format_name, char *start);
 void    write_zero_to_file(FILE * pf, int bytes);
 int     do_resizing(void);
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
-/*================================================================================================*/
-/*===== pixel_format =====*/
+======================*/
+/*====================*/
+/*= pixel_format =*/
 /**
 @brief  Detects pixel format.
-        
+
 @param  Input:        string - pointer to string which contains format name.
 
 @return On success - Format number.
         On failure - zero value.*/
-/*================================================================================================*/
+/*====================*/
 
 int pixel_format(char *string)
 {
@@ -157,16 +157,16 @@ int pixel_format(char *string)
         return format;
 }
 
-/*================================================================================================*/
-/*===== VT_v4l_output_setup =====*/
+/*====================*/
+/*= VT_v4l_output_setup =*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code*/
-/*================================================================================================*/
+/*====================*/
 int VT_v4l_output_setup(void)
 {
         int     rv = TFAIL;
@@ -204,16 +204,16 @@ int VT_v4l_output_setup(void)
 }
 
 
-/*================================================================================================*/
-/*===== VT_v4l_output_cleanup =====*/
+/*====================*/
+/*= VT_v4l_output_cleanup =*/
 /**
 @brief  assumes the post-condition of the test case execution
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code*/
-/*================================================================================================*/
+/*====================*/
 int VT_v4l_output_cleanup(void)
 {
         int     rv = TPASS;
@@ -239,15 +239,15 @@ int VT_v4l_output_cleanup(void)
 }
 
 
-/*================================================================================================*/
-/*===== VT_v4l_output_test =====*/
-/* 
+/*====================*/
+/*= VT_v4l_output_test =*/
+/*
 * @brief This function executes v4l output test scenario.
-* 
+*
 * @param None
-* 
+*
 * @return On success - return TPASS On failure - return the error code */
-/*================================================================================================*/
+/*====================*/
 int VT_v4l_output_test(void)
 {
         int     rv = TFAIL;
@@ -281,15 +281,15 @@ int VT_v4l_output_test(void)
 }
 
 
-/*================================================================================================*/
-/*===== parse_file =====*/
-/* 
+/*====================*/
+/*= parse_file =*/
+/*
 * @brief
-* 
+*
 * @param
-* 
+*
 * @return On success - return TPASS On failure - return the error code */
-/*================================================================================================*/
+/*====================*/
 int parse_file(int in_fd, int *width, int *height, char **image_fmt)
 {
         dump_file_header hdr;
@@ -310,15 +310,15 @@ int parse_file(int in_fd, int *width, int *height, char **image_fmt)
 
 
 
-/*================================================================================================*/
-/*===== configure =====*/
-/* 
+/*====================*/
+/*= configure =*/
+/*
 * @brief
-* 
+*
 * @param None
-* 
+*
 * @return On success - return TPASS On failure - return the error code */
-/*================================================================================================*/
+/*====================*/
 int configure(void)
 {
         int     rv = TFAIL,
@@ -363,12 +363,12 @@ int configure(void)
         crop.c.width = p.x_size_dst;
         crop.c.height = p.y_size_dst;
 
-	if (2 == p.crop_on)
-	{
-	  /*offset crop*/
+ if (2 == p.crop_on)
+ {
+   /*offset crop*/
           crop.c.top = p.y_offset;
           crop.c.left = p.x_offset;
-	}
+ }
 
         /* ignore if cropping is not supported (EINVAL) */
         if (ioctl(v4l_output_fd, VIDIOC_S_CROP, &crop) < 0 && errno != EINVAL)
@@ -436,15 +436,15 @@ int configure(void)
 }
 
 
-/*================================================================================================*/
-/*===== process_image =====*/
-/* 
+/*====================*/
+/*= process_image =*/
+/*
 * @brief
-* 
+*
 * @param None
-* 
+*
 * @return On success - return TPASS On failure - return the error code */
-/*================================================================================================*/
+/*====================*/
 int process_image(void)
 {
         int     i, type, err = 0, g_frame_period = 33333;
@@ -591,25 +591,25 @@ int process_image(void)
         return rv;
 }
 
-/*================================================================================================*/
-/*===== resize =====*/
-/* 
+/*====================*/
+/*= resize =*/
+/*
 * @brief
-* 
+*
 * @param None
-* 
+*
 * @return On success - return TPASS On failure - return the error code */
-/*================================================================================================*/
+/*====================*/
 int resize(void)
 {
         p.x_size_dst = (int) ((float) p.x_ratio / 100.0f * p.x_size_src);
         p.y_size_dst = (int) ((float) p.y_ratio / 100.0f * p.y_size_src);
 
         if (2 == p.crop_on)
-	{
-	  /*offset crop enbaled*/
-	  p.x_size_dst = p.x_size_crop > p.x_size_dst ? p.x_size_dst : p.x_size_crop ;
-	  p.y_size_dst = p.y_size_crop > p.y_size_dst ? p.y_size_dst : p.y_size_crop ;
+ {
+   /*offset crop enbaled*/
+   p.x_size_dst = p.x_size_crop > p.x_size_dst ? p.x_size_dst : p.x_size_crop ;
+   p.y_size_dst = p.y_size_crop > p.y_size_dst ? p.y_size_dst : p.y_size_crop ;
         }
 
         if (!p.x_size_dst || !p.y_size_dst)
@@ -622,8 +622,8 @@ int resize(void)
 }
 
 
-/*================================================================================================*/
-/*===== ask_user =====*/
+/*====================*/
+/*= ask_user =*/
 /**
 @brief  Asks user to answer the question: is the drawn picture right?
 
@@ -632,7 +632,7 @@ int resize(void)
 
 @return 1 - if user asks "No,  wrong"
         0 - if user asks "Yes, right"*/
-/*================================================================================================*/
+/*====================*/
 
 int ask_user(void)
 {
@@ -660,15 +660,15 @@ int ask_user(void)
         return rv;
 }
 
-/*================================================================================================*/
-/*===== kbhit =====*/
+/*====================*/
+/*= kbhit =*/
 /**
 @brief  Checks state of stdin input stream. This function wait for changing state of stdin with timeout
         SLEEP_TIME.
 @param  Output: pnSleepTime - returns elapsed time in milliseconds.
 
 @return Returns true if stream contains unread symbols, unless return false.*/
-/*================================================================================================*/
+/*====================*/
 int kbhit(int *pnSleepTime)
 {
         fd_set  rset;
@@ -688,7 +688,7 @@ int kbhit(int *pnSleepTime)
         if (nSelect == -1)
                 return 0;
 
-        /* 
+        /*
         * Calculate the elapsed time
         */
         *pnSleepTime = SLEEP_TIME;
@@ -698,7 +698,7 @@ int kbhit(int *pnSleepTime)
         return nSelect > 0;
 }
 
-/*===== write_file_header =====*/
+/*= write_file_header =*/
 /**
 @brief  Writting dump file header
 
@@ -755,7 +755,7 @@ int write_file(char *pix_fmt_name, char *start)
         return TPASS;
 }
 
-/*===== write_zero_to_file =====*/
+/*= write_zero_to_file =*/
 /**
 @brief  Writting zero to dump file
 
@@ -805,5 +805,5 @@ int do_resizing(void)
 }
 
 #ifdef __cplusplus
-} 
+}
 #endif

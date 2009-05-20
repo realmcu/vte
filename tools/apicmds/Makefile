@@ -9,7 +9,7 @@ all: $(TARGETS)
 
 install:
 	@ln -f $(TARGETS) ../../testcases/bin/tst_brk
-	@ln -f $(TARGETS) ../../testcases/bin/tst_brkm 
+	@ln -f $(TARGETS) ../../testcases/bin/tst_brkm
 	@ln -f $(TARGETS) ../../testcases/bin/tst_res
 	@ln -f $(TARGETS) ../../testcases/bin/tst_resm
 	@ln -f $(TARGETS) ../../testcases/bin/tst_exit

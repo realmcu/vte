@@ -1,8 +1,8 @@
-/*   
+/*
  * Copyright (c) 2002-2003, Intel Corporation. All rights reserved.
  * Created by:  salwan.searty REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
     Test that sigtimedwait() returns -1 upon unsuccessful completion.
@@ -41,21 +41,21 @@
 #include "posixtest.h"
 
 void myhandler (int signo) {
-	printf("Test FAILED: %d seconds have elapsed and sigtimedwait() has not yet returned.\n", TIMERSEC);
-	exit (PTS_FAIL);
+ printf("Test FAILED: %d seconds have elapsed and sigtimedwait() has not yet returned.\n", TIMERSEC);
+ exit (PTS_FAIL);
 }
 
 int main()
 {
-	struct sigaction act;
+ struct sigaction act;
 
-	sigset_t selectset;
-	struct timespec ts;
+ sigset_t selectset;
+ struct timespec ts;
 /*
-	struct sigevent ev;
-	timer_t tid;
-	struct itimerspec its;
-	
+ struct sigevent ev;
+ timer_t tid;
+ struct itimerspec its;
+
         its.it_interval.tv_sec = 0;
         its.it_interval.tv_nsec = 0;
         its.it_value.tv_sec = TIMERSEC;
@@ -64,13 +64,13 @@ int main()
         ev.sigev_notify = SIGEV_SIGNAL;
         ev.sigev_signo = TIMERSIGNAL;
 */
-	act.sa_flags=0;
-	act.sa_handler=myhandler;
-	sigemptyset(&act.sa_mask);
-	sigaction(TIMERSIGNAL, &act, 0);
+ act.sa_flags=0;
+ act.sa_handler=myhandler;
+ sigemptyset(&act.sa_mask);
+ sigaction(TIMERSIGNAL, &act, 0);
 
-	sigemptyset(&selectset);
-	sigaddset(&selectset, SIGTOTEST);
+ sigemptyset(&selectset);
+ sigaddset(&selectset, SIGTOTEST);
 
         ts.tv_sec=SIGTIMEDWAITSEC;
         ts.tv_nsec=0;
@@ -85,11 +85,11 @@ int main()
                 return PTS_UNRESOLVED;
         }
 */
-	if (sigtimedwait(&selectset, NULL, &ts) != -1) {
-		printf ("Test FAILED: sigtimedwait() did not return with an error\n");
-		return PTS_FAIL;
-	}
+ if (sigtimedwait(&selectset, NULL, &ts) != -1) {
+  printf ("Test FAILED: sigtimedwait() did not return with an error\n");
+  return PTS_FAIL;
+ }
 
-	printf("Test PASSED\n");
-	return PTS_PASS;
+ printf("Test PASSED\n");
+ return PTS_PASS;
 }

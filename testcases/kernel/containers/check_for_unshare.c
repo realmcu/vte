@@ -31,25 +31,25 @@
 
 int main(int argc, char **argv)
 {
-	void *handle;
-	void *ret;
-	char *error;
-	if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 16))
-	return 1;
+ void *handle;
+ void *ret;
+ char *error;
+ if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 16))
+ return 1;
 
-	handle = dlopen(NULL, RTLD_LAZY);
-	if (!handle) {
-		fprintf(stderr, "%s\n", dlerror());
-		exit(1);
-	}
+ handle  dlopen(NULL, RTLD_LAZY);
+ if (!handle) {
+  fprintf(stderr, "%s\n", dlerror());
+  exit(1);
+ }
 
-	dlerror();    /* Clear any existing error */
-	ret = dlsym(handle, "unshare");
-	if ((error = dlerror()) != NULL)  {
-		fprintf(stderr, "Error: %s\n", error);
-		exit(1);
-	}
+ dlerror();    /* Clear any existing error */
+ ret  dlsym(handle, "unshare");
+ if ((error  dlerror()) ! NULL)  {
+  fprintf(stderr, "Error: %s\n", error);
+  exit(1);
+ }
 
-	dlclose(handle);
-	return 0;
+ dlclose(handle);
+ return 0;
 }

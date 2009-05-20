@@ -19,16 +19,16 @@
 
 /*
  * NAME
- *	setfsuid03.c
+ * setfsuid03.c
  *
  * DESCRIPTION
- *	Testcase to test the basic functionality of the setfsuid(2) system
- *	call when called by a user other than root.
+ * Testcase to test the basic functionality of the setfsuid(2) system
+ * call when called by a user other than root.
  *
  * ALGORITHM
- *	Call setfsuid(2) and test the uid returned by setfsuid(2).
- *	If the action are allowed,
- *	then the testcase fails.
+ * Call setfsuid(2) and test the uid returned by setfsuid(2).
+ * If the action are allowed,
+ * then the testcase fails.
  *
  * USAGE:  <for command-line>
  *  setfsuid01 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
@@ -40,11 +40,11 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *      04/2003 Adapted by Dustin Kirkland (k1rkland@us.ibm.com)
  *
  * RESTRICTIONS
- *	None
+ * None
  */
 #include <stdio.h>
 #include <unistd.h>
@@ -60,64 +60,64 @@
 void setup(void);
 void cleanup(void);
 
-char *TCID = "setfsuid03";
-int TST_TOTAL = 1;
+char *TCID  "setfsuid03";
+int TST_TOTAL  1;
 extern int Tst_count;
-char nobody_uid[] = "nobody";
+char nobody_uid[]  "nobody";
 struct passwd *ltpuser;
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
 
-	uid_t uid;
-	
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ uid_t uid;
 
-	setup();
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	uid = geteuid();
-        uid = 1;
+ setup();
+
+ uid  geteuid();
+        uid  1;
         while (!getpwuid(uid)) {
                 uid++;
         }
 
-	/* Check for looping state if -i option is given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* Check for looping state if -i option is given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		TEST(setfsuid(uid));
+  TEST(setfsuid(uid));
 
-		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL, "call failed unexpectedly - errno %d",
-				 TEST_ERRNO);
-			continue;
-		}
+  if (TEST_RETURN  -1) {
+   tst_resm(TFAIL, "call failed unexpectedly - errno %d",
+     TEST_ERRNO);
+   continue;
+  }
 
-		if (!STD_FUNCTIONAL_TEST) {
-			tst_resm(TPASS, "call succeeded");
-			continue;
-		}
+  if (!STD_FUNCTIONAL_TEST) {
+   tst_resm(TPASS, "call succeeded");
+   continue;
+  }
 
-		if (TEST_RETURN == uid) {
-			tst_resm(TFAIL, "setfsuid() returned %d, expected anything but %d",
-				 TEST_RETURN, uid);
-		} else {
-			tst_resm(TPASS, "setfsuid() returned expected value : "
-				 "%d", TEST_RETURN);
-		}
-	}
-	cleanup();
+  if (TEST_RETURN  uid) {
+   tst_resm(TFAIL, "setfsuid() returned %d, expected anything but %d",
+     TEST_RETURN, uid);
+  } else {
+   tst_resm(TPASS, "setfsuid() returned expected value : "
+     "%d", TEST_RETURN);
+  }
+ }
+ cleanup();
 
-	return 0;
+ return 0;
 
-	/*NOTREACHED*/
+ /*NOTREACHED*/
 }
 
 /*
@@ -127,34 +127,34 @@ void
 setup()
 {
         /* Switch to nobody user for correct error code collection */
-        if (geteuid() != 0) {
+        if (geteuid() ! 0) {
                 tst_brkm(TBROK, tst_exit, "Test must be run as root");
         }
-         ltpuser = getpwnam(nobody_uid);
-         if (setuid(ltpuser->pw_uid) == -1) {
+         ltpuser  getpwnam(nobody_uid);
+         if (setuid(ltpuser->pw_uid)  -1) {
                 tst_resm(TINFO, "setuid failed to "
                          "to set the effective uid to %d",
                          ltpuser->pw_uid);
                 perror("setuid");
          }
 
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
+ *        completion or premature exit.
  */
 void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 }

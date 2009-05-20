@@ -18,7 +18,7 @@
  */
 /*---------------------------------------------------------------------+
 |                     message_queue_test_02_snd                        |
-| ==================================================================== |
+|  |
 |                                                                      |
 | Description:  Create a message queue to send messages between two    |
 |               processes.                                             |
@@ -69,16 +69,16 @@
 
 /*
  * Defines
- * 
+ *
  * BUF_SIZE: size of message buffer...
  */
-#define BUF_SIZE		256
-#define DEFAULT_MESSAGE 	"<< Message Queue test default message >>"
-//#define DEFAULT_MESSAGE 	""
-#define DEFAULT_PROJECT_NAME 	"/tmp/message_queue_test"
-#define DEFAULT_PROJECT_ID	20
-#define USAGE	"\nUsage: %s [-f project_name ] [-i project_id ] \n" \
-	        "          {-m msg | -b bytes} \n\n"
+#define BUF_SIZE  256
+#define DEFAULT_MESSAGE "<< Message Queue test default message >>"
+//#define DEFAULT_MESSAGE ""
+#define DEFAULT_PROJECT_NAME "/tmp/message_queue_test"
+#define DEFAULT_PROJECT_ID 20
+#define USAGE "\nUsage: %s [-f project_name ] [-i project_id ] \n" \
+         "          {-m msg | -b bytes} \n\n"
 
 
 /*
@@ -95,19 +95,19 @@ static void error (const char *, int);
 
 /*
  * Global variables
- * 
- * message:	 Message to store in queue
+ *
+ * message:  Message to store in queue
  * project_name: Unique path used to create key (ftok)
  * project_id:   Unique number used to create key (ftok)
  */
-size_t	bytes = 0;
-char	*message = DEFAULT_MESSAGE;
-char	*project_name = DEFAULT_PROJECT_NAME;
-char	project_id = DEFAULT_PROJECT_ID;
+size_t bytes  0;
+char *message  DEFAULT_MESSAGE;
+char *project_name  DEFAULT_PROJECT_NAME;
+char project_id  DEFAULT_PROJECT_ID;
 
 /*---------------------------------------------------------------------+
 |                               main                                   |
-| ==================================================================== |
+|  |
 |                                                                      |
 | Function:  Main program  (see prolog for more details)               |
 |                                                                      |
@@ -117,53 +117,53 @@ char	project_id = DEFAULT_PROJECT_ID;
 +---------------------------------------------------------------------*/
 int main (int argc, char **argv)
 {
-	struct msgbuf *buf;		/* Message buffer */
-	key_t	key;			/* Unique key */
-	int	msqid;			/* Message queue identifier */
-	size_t	size;			/* Size of message buffer */
+ struct msgbuf *buf;  /* Message buffer */
+ key_t key;   /* Unique key */
+ int msqid;   /* Message queue identifier */
+ size_t size;   /* Size of message buffer */
 
-	/*
-	 * Parse command line options
-	 */
-	parse_args (argc, argv);
-	
-	if ((key = ftok (project_name, project_id)) < 0)
-		sys_error ("ftok failed", __LINE__);
+ /*
+  * Parse command line options
+  */
+ parse_args (argc, argv);
 
-	if ((msqid = msgget (key, S_IRUSR|S_IWUSR)) < 0)
-		sys_error ("msgget failed", __LINE__);
+ if ((key  ftok (project_name, project_id)) < 0)
+  sys_error ("ftok failed", __LINE__);
 
-	if (bytes) {
-		buf = (struct msgbuf *) calloc (bytes + sizeof(struct msgbuf),
-			sizeof (char));
-		buf->mtype = 1L;
+ if ((msqid  msgget (key, S_IRUSR|S_IWUSR)) < 0)
+  sys_error ("msgget failed", __LINE__);
 
-		if (msgsnd (msqid, buf, bytes, 0) < 0)
-			sys_error ("msgsnd failed", __LINE__);
+ if (bytes) {
+  buf  (struct msgbuf *) calloc (bytes + sizeof(struct msgbuf),
+   sizeof (char));
+  buf->mtype  1L;
 
-		free (buf);
+  if (msgsnd (msqid, buf, bytes, 0) < 0)
+   sys_error ("msgsnd failed", __LINE__);
 
-	} else {
-		size = strlen (message) + 1;
-		buf = (struct msgbuf *) calloc (size + sizeof(struct msgbuf),
-			sizeof (char));
+  free (buf);
 
-		buf->mtype = 1L;
-		strcpy (buf->mtext, message);
+ } else {
+  size  strlen (message) + 1;
+  buf  (struct msgbuf *) calloc (size + sizeof(struct msgbuf),
+   sizeof (char));
 
-		if (msgsnd (msqid, buf, size, 0) < 0)
-			sys_error ("msgsnd failed", __LINE__);
+  buf->mtype  1L;
+  strcpy (buf->mtext, message);
 
-		free (buf);
-	}
+  if (msgsnd (msqid, buf, size, 0) < 0)
+   sys_error ("msgsnd failed", __LINE__);
 
-	return (0);
+  free (buf);
+ }
+
+ return (0);
 }
 
 
 /*---------------------------------------------------------------------+
 |                             parse_args ()                            |
-| ==================================================================== |
+|  |
 |                                                                      |
 | Function:  Parse the command line arguments & initialize global      |
 |            variables.                                                |
@@ -181,65 +181,65 @@ int main (int argc, char **argv)
 +---------------------------------------------------------------------*/
 static void parse_args (int argc, char **argv)
 {
-	int	opt;
-	int	errflag = 0;
-	char	*program_name = *argv;
-	extern char 	*optarg;	/* Command line option */
+ int opt;
+ int errflag  0;
+ char *program_name  *argv;
+ extern char *optarg; /* Command line option */
 
-	/*
-	 * Parse command line options.
-	 */
-	while ((opt = getopt(argc, argv, "b:m:f:i:")) != EOF) {
-		switch (opt) {
-			case 'b':	/* number of bytes to send */
-				bytes = atoi (optarg);
-				break;
-			case 'm':	/* message to send */
-				message = optarg;
-				break;
-			case 'f':	/* project file */
-				project_name = optarg;
-				break;
-			case 'i':	/* project id */
-				project_id = *optarg;
-				break;
-			default:
-				errflag++;
-				break;
-		}
-	}
-	if (errflag) {
-		fprintf (stderr, USAGE, program_name);
-		exit (2);
-	}
+ /*
+  * Parse command line options.
+  */
+ while ((opt  getopt(argc, argv, "b:m:f:i:")) ! EOF) {
+  switch (opt) {
+   case 'b': /* number of bytes to send */
+    bytes  atoi (optarg);
+    break;
+   case 'm': /* message to send */
+    message  optarg;
+    break;
+   case 'f': /* project file */
+    project_name  optarg;
+    break;
+   case 'i': /* project id */
+    project_id  *optarg;
+    break;
+   default:
+    errflag++;
+    break;
+  }
+ }
+ if (errflag) {
+  fprintf (stderr, USAGE, program_name);
+  exit (2);
+ }
 }
 
 
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
-| ==================================================================== |
+|  |
 |                                                                      |
 | Function:  Creates system error message and calls error ()           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 static void sys_error (const char *msg, int line)
 {
-	char syserr_msg [256];
+ char syserr_msg [256];
 
-	sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
-	error (syserr_msg, line);
+ sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
+ error (syserr_msg, line);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               error ()                               |
-| ==================================================================== |
+|  |
 |                                                                      |
 | Function:  Prints out message and exits...                           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 static void error (const char *msg, int line)
 {
-	fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
-	exit (-1);
+ fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
+ exit (-1);
 }

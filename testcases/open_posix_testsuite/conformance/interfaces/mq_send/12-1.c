@@ -7,10 +7,10 @@
  */
 
 /*
- * Test mq_send() will set errno == EINTR if it is interrupted by a signal.
+ * Test mq_send() will set errno  EINTR if it is interrupted by a signal.
  *
  * Have a child send signals until it starts to block.  At that point, have
- * the parent send a signal to interrupt the child.  Test passes if errno ==
+ * the parent send a signal to interrupt the child.  Test passes if errno 
  * EINVAL.
  *
  * Test very similar to 5-2.c except we don't have the additional test to
@@ -48,87 +48,87 @@ mqd_t gqueue;
  */
 void justreturn_handler(int signo)
 {
-	return;
+ return;
 }
 
 int main()
 {
-	int pid;
-        const char *msgptr = MSGSTR;
-	struct mq_attr attr;
-	struct sigaction act;
+ int pid;
+        const char *msgptr  MSGSTR;
+ struct mq_attr attr;
+ struct sigaction act;
 
         sprintf(gqname, "/mq_send_12-1_%d", getpid());
 
-	attr.mq_maxmsg = MAXMSG;
-	attr.mq_msgsize = BUFFER;
-        gqueue = mq_open(gqname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, &attr);
-        if (gqueue == (mqd_t)-1) {
+ attr.mq_maxmsg  MAXMSG;
+ attr.mq_msgsize  BUFFER;
+        gqueue  mq_open(gqname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, &attr);
+        if (gqueue  (mqd_t)-1) {
                 perror("mq_open() did not return success");
                 return PTS_UNRESOLVED;
         }
 
-	/* parent and child use justreturn_handler to just return out of
-	 * situations -- parent uses to stop it's sleep and wait again for
-	 * the child; child uses to stop its mq_send
-	 */
-	act.sa_handler=justreturn_handler;
-	act.sa_flags=0;
-	sigemptyset(&act.sa_mask);
-	sigaction(SIGABRT, &act, 0);
+ /* parent and child use justreturn_handler to just return out of
+  * situations -- parent uses to stop it's sleep and wait again for
+  * the child; child uses to stop its mq_send
+  */
+ act.sa_handlerjustreturn_handler;
+ act.sa_flags0;
+ sigemptyset(&act.sa_mask);
+ sigaction(SIGABRT, &act, 0);
 
-	if ((pid = fork()) == 0) {
-		/* child here */
-		int i;
+ if ((pid  fork())  0) {
+  /* child here */
+  int i;
 
-		sleep(1);  // give parent time to set up handler
-		for (i=0; i<MAXMSG+1; i++) {
-        		if (mq_send(gqueue, msgptr, strlen(msgptr), 1) == -1) {
-				if (errno == EINTR) {
-				printf("mq_send interrupted by signal\n");
-					return CHILDPASS;
-				} else {
-				printf("mq_send not interrupted by signal\n");
-					return CHILDFAIL;
-				}
-        		}
-			/* send signal to parent each time message is sent */
-			kill(getppid(), SIGABRT);
-		}
+  sleep(1);  // give parent time to set up handler
+  for (i0; i<MAXMSG+1; i++) {
+       if (mq_send(gqueue, msgptr, strlen(msgptr), 1)  -1) {
+    if (errno  EINTR) {
+    printf("mq_send interrupted by signal\n");
+     return CHILDPASS;
+    } else {
+    printf("mq_send not interrupted by signal\n");
+     return CHILDFAIL;
+    }
+       }
+   /* send signal to parent each time message is sent */
+   kill(getppid(), SIGABRT);
+  }
 
-		printf("Child never blocked\n");
-		return CHILDFAIL;
-	} else {
-		/* parent here */
-		int j,k;
+  printf("Child never blocked\n");
+  return CHILDFAIL;
+ } else {
+  /* parent here */
+  int j,k;
 
-		for (j=0; j<MAXMSG+1; j++) {
-			if (sleep(3) == 0) {
-			/* If sleep finished, child is probably blocking */
-				kill(pid, SIGABRT); //signal child
-				break;
-			}
-		}
-		mq_close(gqueue);
-		if (mq_unlink(gqname) != 0) {
-			perror("mq_unlink()");
-			return PTS_UNRESOLVED;
-		}
+  for (j0; j<MAXMSG+1; j++) {
+   if (sleep(3)  0) {
+   /* If sleep finished, child is probably blocking */
+    kill(pid, SIGABRT); //signal child
+    break;
+   }
+  }
+  mq_close(gqueue);
+  if (mq_unlink(gqname) ! 0) {
+   perror("mq_unlink()");
+   return PTS_UNRESOLVED;
+  }
 
-		if (wait(&k) == -1) {
-			perror("Error waiting for child to exit\n");
-			kill(pid, SIGKILL); //kill child if not gone
-			return PTS_UNRESOLVED;
-		}
-		if (!WIFEXITED(k) || !WEXITSTATUS(k)) {
-			printf("Test FAILED\n");
-			return PTS_FAIL;
-		}
+  if (wait(&k)  -1) {
+   perror("Error waiting for child to exit\n");
+   kill(pid, SIGKILL); //kill child if not gone
+   return PTS_UNRESOLVED;
+  }
+  if (!WIFEXITED(k) || !WEXITSTATUS(k)) {
+   printf("Test FAILED\n");
+   return PTS_FAIL;
+  }
 
-		printf("Test PASSED\n");
-		return PTS_PASS;
-	}
-	
-	return PTS_UNRESOLVED;
+  printf("Test PASSED\n");
+  return PTS_PASS;
+ }
+
+ return PTS_UNRESOLVED;
 }
 

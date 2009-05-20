@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   keypad_main.c
 
         @brief  keypad test 2 main function.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
-    
-====================================================================================================
+
+====================
 Revision History:
                             Modification     Tracking
 Author/Core ID                  Date          Number    Description of Changes
@@ -20,20 +20,20 @@ V. BECKER/rc023c             30/04/2004     TLSbo38735  Initial version. MAP mod
 V. BECKER/rc023c             25/05/2004     TLSbo38735  Change file name
 A.Ozerov/NONE                10/01/2006     TLSbo61037  Update in accordance with linux-2.6.10-rel-L26_1_15
 
-====================================================================================================
+====================
 Portability:  ARM GCC
-==================================================================================================*/
-/*==================================================================================================
+======================*/
+/*======================
 Total Tests: 1
 
 Test Executable Name:  keypad_testapp_2
 
 Test Strategy:  A test for MX31 (Tortolla) keypad press and release in MAP mode!
 
-=================================================================================================*/
-/*==================================================================================================
+=====================*/
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,9 +45,9 @@ Test Strategy:  A test for MX31 (Tortolla) keypad press and release in MAP mode!
 
 /* Verification Test Environment Include Files */
 #include "keypad_test_2.h"
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Extern Global Variables */
 extern int Tst_count;   /* counter for tst_xxx routines.  */
 extern char *TESTDIR;   /* temporary dir created by tst_tmpdir(void) */
@@ -56,18 +56,18 @@ extern char *TESTDIR;   /* temporary dir created by tst_tmpdir(void) */
 char   *TCID = "keypad_testapp_2";      /* test program identifier.  */
 int     TST_TOTAL = 1;  /* total number of tests in this file.  */
 
-/*==================================================================================================
+/*======================
                                     GLOBAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void    cleanup(void);
 void    setup(void);
 int     main(int argc, char **argv);
 
-/*==================================================================================================
+/*======================
                                         GLOBAL FUNCTIONS
-==================================================================================================*/
-/*================================================================================================*/
-/*===== cleanup =====*/
+======================*/
+/*====================*/
+/*= cleanup =*/
 /**
 @brief  Performs all one time clean up for this test on successful
                                 completion,  premature exit or  failure. Closes all temporary
@@ -76,9 +76,9 @@ int     main(int argc, char **argv);
 
 @param  Input :      None.
         Output:      None.
-    
+
 @return Nothing*/
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
         /* VTE : Actions needed to get a stable target environment */
@@ -94,11 +94,11 @@ void cleanup(void)
         tst_exit();
 }
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
-/*================================================================================================*/
-/*===== setup =====*/
+======================*/
+/*====================*/
+/*= setup =*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -106,11 +106,11 @@ void cleanup(void)
 
 @param  Input :      None.
         Output:      None.
-    
+
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
         int     VT_rv = TFAIL;
@@ -125,8 +125,8 @@ void setup(void)
         return;
 }
 
-/*================================================================================================*/
-/*===== main =====*/
+/*====================*/
+/*= main =*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -140,11 +140,11 @@ void setup(void)
                                 -l - Number of iteration
                                 -v - Prints verbose output
                                 -V - Prints the version number
-    
+
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
         int     VT_rv = TFAIL;

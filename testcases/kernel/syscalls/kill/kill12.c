@@ -1,6 +1,6 @@
 /* IBM Corporation */
-/* 01/02/2003	Port to LTP avenkat@us.ibm.com */
-/* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
+/* 01/02/2003 Port to LTP avenkat@us.ibm.com */
+/* 06/30/2001 Port to Linux nsharoff@us.ibm.com */
 
 /*
  *
@@ -22,18 +22,18 @@
  */
 
                            /*kill2.c*/
-/*======================================================================
+/*
 >KEYS:  < kill(), wait(), signal()
->WHAT:  < Check that when a child is killed by its parent, it returns the 
-   	< correct values to the waiting parent--the child sets signal to 
-   	< ignore the kill							
+>WHAT:  < Check that when a child is killed by its parent, it returns the
+   < correct values to the waiting parent--the child sets signal to
+   < ignore the kill
 >HOW:   < For each signal: Send that signal to a child that has elected
-	< to catch the signal, check that the correct status was returned
-	< to the waiting parent.
-	< NOTE: Signal 9 (kill) is not catchable, and must be dealt with
-	< separately.
->BUGS:  < None known 
-======================================================================*/
+ < to catch the signal, check that the correct status was returned
+ < to the waiting parent.
+ < NOTE: Signal 9 (kill) is not catchable, and must be dealt with
+ < separately.
+>BUGS:  < None known
+*/
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE 1
 #endif
@@ -47,7 +47,7 @@
 #include <sys/wait.h>
 #include <errno.h>
 
-//char progname[] = "kill2()";
+//char progname[]  "kill2()";
 /*****  LTP Port        *****/
 #include "test.h"
 #include "usctest.h"
@@ -56,13 +56,13 @@
 #define PASSED 1
 
 
-char *TCID = "kill12";
+char *TCID  "kill12";
 
 
-int local_flag = PASSED;
+int local_flag  PASSED;
 int block_number;
 FILE *temp;
-int TST_TOTAL = 1;
+int TST_TOTAL  1;
 extern int Tst_count;
 static int sig;
 
@@ -83,148 +83,148 @@ void do_child();
 int chflag;
 
 /*--------------------------------------------------------------------*/
-int main(int argc, char **argv)				/***** BEGINNING OF MAIN. *****/
+int main(int argc, char **argv)    /***** BEGINNING OF MAIN. *****/
 {
-	int pid, npid;
+ int pid, npid;
         int nsig, exno, nexno, status;
-	int ret_val = 0;
-	int core;
-	void chsig();
+ int ret_val  0;
+ int core;
+ void chsig();
 
 #ifdef UCLINUX
-	char *msg;
+ char *msg;
 
-	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(argc, argv, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	maybe_run_child(&do_child, "dd", &temp, &sig);
+ maybe_run_child(&do_child, "dd", &temp, &sig);
 #endif
 
-	setup();
-	//tempdir();		/* move to new directory */ 12/20/2003
+ setup();
+ //tempdir();  /* move to new directory */ 12/20/2003
 /*--------------------------------------------------------------------*/
-	blenter();			/*<<<<<ENTER DATA HERE<<<<<<<<*/
+ blenter();   /*<<<<<ENTER DATA HERE<<<<<<<<*/
 
-	exno = 1;
+ exno  1;
 
-	if (sigset(SIGCLD, chsig) == SIG_ERR) {
-		fprintf(temp, "\tsigset failed, errno = %d\n", errno);
-		fail_exit();
-	}
+ if (sigset(SIGCLD, chsig)  SIG_ERR) {
+  fprintf(temp, "\tsigset failed, errno  %d\n", errno);
+  fail_exit();
+ }
 
-	for(sig = 1; sig < 14; sig++) {
-		fflush(temp);
-		chflag = 0;
+ for(sig  1; sig < 14; sig++) {
+  fflush(temp);
+  chflag  0;
 
-		pid = FORK_OR_VFORK();
-		if (pid < 0) {
-			forkfail();
-		}
+  pid  FORK_OR_VFORK();
+  if (pid < 0) {
+   forkfail();
+  }
 
-		if (pid == 0) {
+  if (pid  0) {
 #ifdef UCLINUX
-			if (self_exec(argv[0], "dd", temp, sig) < 0) {
-				tst_resm(TBROK, "self_exec FAILED - "
-					 "terminating test.");
-				tst_exit();
-				return(0);
-			}
+   if (self_exec(argv[0], "dd", temp, sig) < 0) {
+    tst_resm(TBROK, "self_exec FAILED - "
+      "terminating test.");
+    tst_exit();
+    return(0);
+   }
 #else
-			do_child();
+   do_child();
 #endif
-		} else {
-			//fprintf(temp, "Testing signal %d\n", sig);
+  } else {
+   //fprintf(temp, "Testing signal %d\n", sig);
 
-			while (!chflag)		/* wait for child */
-				sleep(1);
+   while (!chflag)  /* wait for child */
+    sleep(1);
 
-			kill (pid, sig);	/* child should ignroe this sig */
-			kill(pid, SIGCLD);	/* child should exit */
+   kill (pid, sig); /* child should ignroe this sig */
+   kill(pid, SIGCLD); /* child should exit */
 
 #ifdef BCS
-			while((npid = wait(&status)) != pid || (npid == -1 && errno == EINTR))
-					;
-			if( npid != pid ) {
-				fprintf(temp, "wait error: wait returned wrong pid\n");
-				ret_val = 1;
-			}
+   while((npid  wait(&status)) ! pid || (npid  -1 && errno  EINTR))
+     ;
+   if( npid ! pid ) {
+    fprintf(temp, "wait error: wait returned wrong pid\n");
+    ret_val  1;
+   }
 #else
-			while((npid = waitpid(pid, &status, 0)) != -1 || errno == EINTR)
-					;
+   while((npid  waitpid(pid, &status, 0)) ! -1 || errno  EINTR)
+     ;
 #endif
 
-			/*
-			nsig = status & 0177;
-			core = status & 0200;
-			nexno = (status & 0xff00) >> 8;
-			*/
-                	/*****  LTP Port        *****/
-                	nsig = WTERMSIG(status);
-                	#ifdef WCOREDUMP
-                        	core = WCOREDUMP(status);
-                	#endif
-                	nexno = WIFEXITED(status);
-                	/*****  **      **      *****/
+   /*
+   nsig  status & 0177;
+   core  status & 0200;
+   nexno  (status & 0xff00) >> 8;
+   */
+                /*****  LTP Port        *****/
+                nsig  WTERMSIG(status);
+                #ifdef WCOREDUMP
+                        core  WCOREDUMP(status);
+                #endif
+                nexno  WIFEXITED(status);
+                /*****  **      **      *****/
 
 
-		/* nsig is the signal number returned by wait 
-                   it should be 0, except when sig = 9		*/
+  /* nsig is the signal number returned by wait
+                   it should be 0, except when sig  9  */
 
-			if ((sig == 9) && (nsig != sig)) { 
-				fprintf(temp, "wait error: unexpected signal"
-					" returned when the signal sent was 9"
-				        " The status of the process is %d \n",	
-					 status);
-				ret_val = 1;
-			}
-			if ((sig != 9) && (nsig != 0)) {
-				fprintf(temp, "wait error: unexpected signal " 
-				       "returned, the status of the process is "
-					"%d  \n",status);
-				ret_val = 1;
-			}
+   if ((sig  9) && (nsig ! sig)) {
+    fprintf(temp, "wait error: unexpected signal"
+     " returned when the signal sent was 9"
+            " The status of the process is %d \n",
+      status);
+    ret_val  1;
+   }
+   if ((sig ! 9) && (nsig ! 0)) {
+    fprintf(temp, "wait error: unexpected signal "
+           "returned, the status of the process is "
+     "%d  \n",status);
+    ret_val  1;
+   }
 
-		/* nexno is the exit number returned by wait
-		   it should be 1, except when sig = 9          */
+  /* nexno is the exit number returned by wait
+     it should be 1, except when sig  9          */
 
-			if (sig == 9) 
-				if (nexno != 0) {
-					fprintf(temp, "signal error: unexpected"
-						" exit number returned when" 
-						" signal sent was 9, the status"
-						" of the process is %d \n",
-						status);
-				       ret_val = 1;
-				}
-				else; 
-			else if (nexno != 1) {
-				fprintf(temp, "signal error: unexpected exit "
-					"number returned,the status of the"
-					" process is %d\n",status);
-				ret_val = 1;
-			}
-		}
-	}
-	if(ret_val)
-		local_flag = FAILED;
+   if (sig  9)
+    if (nexno ! 0) {
+     fprintf(temp, "signal error: unexpected"
+      " exit number returned when"
+      " signal sent was 9, the status"
+      " of the process is %d \n",
+      status);
+           ret_val  1;
+    }
+    else;
+   else if (nexno ! 1) {
+    fprintf(temp, "signal error: unexpected exit "
+     "number returned,the status of the"
+     " process is %d\n",status);
+    ret_val  1;
+   }
+  }
+ }
+ if(ret_val)
+  local_flag  FAILED;
 
 /*--------------------------------------------------------------------*/
-	anyfail();	
-	return(0);
-}					/******** END OF MAIN. ********/
+ anyfail();
+ return(0);
+}     /******** END OF MAIN. ********/
 /*--------------------------------------------------------------------*/
 
 void chsig()
 {
-	chflag++;
+ chflag++;
 }
 
 /****** LTP Port        *****/
 int anyfail()
 {
-  (local_flag == FAILED)? tst_resm(TFAIL, "Test failed"): tst_resm(TPASS, "Test passed");
+  (local_flag  FAILED)? tst_resm(TFAIL, "Test failed"): tst_resm(TPASS, "Test passed");
   tst_exit();
   return(0);
 }
@@ -232,32 +232,32 @@ int anyfail()
 void
 do_child()
 {
-	int exno = 1;
+ int exno  1;
 
 #ifdef UCLINUX
-	if (sigset(SIGCLD, chsig) == SIG_ERR) {
-		fprintf(temp, "\tsigset failed, errno = %d\n", errno);
-		fail_exit();
-	}
+ if (sigset(SIGCLD, chsig)  SIG_ERR) {
+  fprintf(temp, "\tsigset failed, errno  %d\n", errno);
+  fail_exit();
+ }
 #endif
 
-	sigset(sig, SIG_IGN);		/* set to ignore signal */
-	kill(getppid(), SIGCLD);	/* tell parent we are ready */
-	while (!chflag)
-		sleep(1);		/* wait for parent */
-	
-	exit(exno);
+ sigset(sig, SIG_IGN);  /* set to ignore signal */
+ kill(getppid(), SIGCLD); /* tell parent we are ready */
+ while (!chflag)
+  sleep(1);  /* wait for parent */
+
+ exit(exno);
 }
 
 void setup()
 {
- temp = stderr;
+ temp  stderr;
 }
 
 int blenter()
 {
    //tst_resm(TINFO, "Enter block %d", block_number);
-   local_flag = PASSED;
+   local_flag  PASSED;
    return(0);
 }
 
@@ -269,7 +269,7 @@ void terror(char * message)
 
 void fail_exit()
 {
-  local_flag = FAILED;
+  local_flag  FAILED;
   anyfail();
 
 }

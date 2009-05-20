@@ -19,137 +19,137 @@
 
 /*
  * NAME
- *	hugeshmget01.c
+ * hugeshmget01.c
  *
  * DESCRIPTION
- *	hugeshmget01 - test that shmget() correctly creates a large shared memory segment
+ * hugeshmget01 - test that shmget() correctly creates a large shared memory segment
  *
  * ALGORITHM
- *	loop if that option was specified
- *	use the TEST() macro to call shmget()
- *	check the return code
- *	  if failure, issue a FAIL message.
- *	otherwise,
- *	  if doing functionality testing
- *		stat the shared memory resource
- *		check the size, creator pid and mode
- *	  	if correct,
- *			issue a PASS message
- *		otherwise
- *			issue a FAIL message
- *	  else issue a PASS message
- *	call cleanup
+ * loop if that option was specified
+ * use the TEST() macro to call shmget()
+ * check the return code
+ *   if failure, issue a FAIL message.
+ * otherwise,
+ *   if doing functionality testing
+ *  stat the shared memory resource
+ *  check the size, creator pid and mode
+ *   if correct,
+ *   issue a PASS message
+ *  otherwise
+ *   issue a FAIL message
+ *   else issue a PASS message
+ * call cleanup
  *
  * USAGE:  <for command-line>
  *  shmget01 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -f   : Turn off functionality Testing.
- *	       -i n : Execute test n times.
- *	       -I x : Execute test for x seconds.
- *	       -P x : Pause for x seconds between iterations.
- *	       -t   : Turn on syscall timing.
+ *        -i n : Execute test n times.
+ *        -I x : Execute test for x seconds.
+ *        -P x : Pause for x seconds between iterations.
+ *        -t   : Turn on syscall timing.
  *
  * HISTORY
- *	03/2001 - Written by Wayne Boyer
- *	04/2004 - Updated by Robbie Williamson
+ * 03/2001 - Written by Wayne Boyer
+ * 04/2004 - Updated by Robbie Williamson
  *
  * RESTRICTIONS
- *	none
+ * none
  */
 
 #include "ipcshm.h"
 #include "system_specific_hugepages_info.h"
 
-char *TCID = "hugeshmget01";
-int TST_TOTAL = 1;
+char *TCID  "hugeshmget01";
+int TST_TOTAL  1;
 extern int Tst_count;
 
-int shm_id_1 = -1;
+int shm_id_1  -1;
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
-	struct shmid_ds buf;
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
+ struct shmid_ds buf;
         unsigned long huge_pages_shm_to_be_allocated;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	setup();			/* global setup */
+ setup();   /* global setup */
 
-	/* The following loop checks looping state if -i option given */
-        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 ) 
+ /* The following loop checks looping state if -i option given */
+        if ( get_no_of_hugepages() < 0 || hugepages_size() < 0 )
              tst_brkm(TBROK, cleanup, "Test cannot be continued owning to sufficient availability of Hugepages on the system");
-        else              
-              huge_pages_shm_to_be_allocated = ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
-         
-        for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+        else
+              huge_pages_shm_to_be_allocated  ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
 
-		/*
-		 * Use TEST macro to make the call
-		 */
-	
+        for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
+
+  /*
+   * Use TEST macro to make the call
+   */
+
                 TEST(shmget(shmkey, huge_pages_shm_to_be_allocated, (SHM_HUGETLB | IPC_CREAT | IPC_EXCL | SHM_RW)));
-	
-		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL, "%s call failed - errno = %d : %s",
-				 TCID, TEST_ERRNO, strerror(TEST_ERRNO));
-		} else {
-			shm_id_1 = TEST_RETURN;
-			if (STD_FUNCTIONAL_TEST) {
-				/* do a STAT and check some info */
-				if (shmctl(shm_id_1, IPC_STAT, &buf) == -1) {
-					tst_resm(TBROK, "shmctl failed in "
-						 "functional test");
-					continue;
-				}
-				/* check the seqment size */
-				if (buf.shm_segsz != HUGE_SHM_SIZE) {
-					tst_resm(TFAIL, "seqment size is not "
-						 "correct");
-					continue;
-				}
-				/* check the pid of the creator */
-				if (buf.shm_cpid != getpid()) {
-					tst_resm(TFAIL, "creator pid is not "
-						 "correct");
-					continue;
-				}
-				/*
-				 * check the mode of the seqment
-				 * mask out all but the lower 9 bits
-				 */
-				if ((buf.shm_perm.mode & MODE_MASK) !=
-				    ((SHM_RW) & MODE_MASK)) {
-					tst_resm(TFAIL, "segment mode is not "
-						 "correct");
-					continue;
-				}
-				/* if we get here, everything looks good */
-				tst_resm(TPASS, "size, pid & mode are correct");
-			} else {
-				tst_resm(TPASS, "call succeeded");
-			}
-		}
 
-		/*
-		 * clean up things in case we are looping
-		 */
-		if (shmctl(shm_id_1, IPC_RMID, NULL) == -1) {
-			tst_resm(TBROK, "couldn't remove shared memory");
-		} else {
-			shm_id_1 = -1;
-		}
-	}
+  if (TEST_RETURN  -1) {
+   tst_resm(TFAIL, "%s call failed - errno  %d : %s",
+     TCID, TEST_ERRNO, strerror(TEST_ERRNO));
+  } else {
+   shm_id_1  TEST_RETURN;
+   if (STD_FUNCTIONAL_TEST) {
+    /* do a STAT and check some info */
+    if (shmctl(shm_id_1, IPC_STAT, &buf)  -1) {
+     tst_resm(TBROK, "shmctl failed in "
+       "functional test");
+     continue;
+    }
+    /* check the seqment size */
+    if (buf.shm_segsz ! HUGE_SHM_SIZE) {
+     tst_resm(TFAIL, "seqment size is not "
+       "correct");
+     continue;
+    }
+    /* check the pid of the creator */
+    if (buf.shm_cpid ! getpid()) {
+     tst_resm(TFAIL, "creator pid is not "
+       "correct");
+     continue;
+    }
+    /*
+     * check the mode of the seqment
+     * mask out all but the lower 9 bits
+     */
+    if ((buf.shm_perm.mode & MODE_MASK) !
+        ((SHM_RW) & MODE_MASK)) {
+     tst_resm(TFAIL, "segment mode is not "
+       "correct");
+     continue;
+    }
+    /* if we get here, everything looks good */
+    tst_resm(TPASS, "size, pid & mode are correct");
+   } else {
+    tst_resm(TPASS, "call succeeded");
+   }
+  }
 
-	cleanup();
+  /*
+   * clean up things in case we are looping
+   */
+  if (shmctl(shm_id_1, IPC_RMID, NULL)  -1) {
+   tst_resm(TBROK, "couldn't remove shared memory");
+  } else {
+   shm_id_1  -1;
+  }
+ }
 
-	/*NOTREACHED*/
+ cleanup();
+
+ /*NOTREACHED*/
         return(0);
 }
 
@@ -159,43 +159,43 @@ int main(int ac, char **av)
 void
 setup(void)
 {
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/*
-	 * Create a temporary directory and cd into it.
-	 * This helps to ensure that a unique msgkey is created.
-	 * See ../lib/libipc.c for more information.
-	 */
-	tst_tmpdir();
+ /*
+  * Create a temporary directory and cd into it.
+  * This helps to ensure that a unique msgkey is created.
+  * See ../lib/libipc.c for more information.
+  */
+ tst_tmpdir();
 
-	/* get an IPC resource key */
-	shmkey = getipckey();
+ /* get an IPC resource key */
+ shmkey  getipckey();
 }
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- * 	       or premature exit.
+ *        or premature exit.
  */
 void
 cleanup(void)
 {
-	/* if it exists, remove the shared memory resource */
-	rm_shm(shm_id_1);
+ /* if it exists, remove the shared memory resource */
+ rm_shm(shm_id_1);
 
-	/* Remove the temporary directory */
-	tst_rmdir();
+ /* Remove the temporary directory */
+ tst_rmdir();
 
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }
 

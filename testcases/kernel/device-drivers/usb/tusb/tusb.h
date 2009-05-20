@@ -23,7 +23,7 @@
 #define TUSB_MAJOR      252
 
 
-#define MAG_NUM 		's'
+#define MAG_NUM 's'
 #define FIND_DEV		_IO(MAG_NUM, 1)
 #define TEST_FIND_HCD		_IO(MAG_NUM, 2)
 #define TEST_HCD_PROBE		_IO(MAG_NUM, 3)

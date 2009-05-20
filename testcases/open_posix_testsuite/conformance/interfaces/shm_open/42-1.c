@@ -7,7 +7,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- * Test that the shm_open() function sets errno =  ENOSPC if there is
+ * Test that the shm_open() function sets errno   ENOSPC if there is
  * insufficient space for the creation of the new shared memory object.
  */
 

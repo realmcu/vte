@@ -7,6 +7,6 @@
 
 #
 #   Test various methods of passing invalid signals to sigignore().
-# 
+#
 
 conformance/interfaces/sigignore/5-core-buildonly.test 1

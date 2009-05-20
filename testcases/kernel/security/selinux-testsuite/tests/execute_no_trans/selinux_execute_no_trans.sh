@@ -13,7 +13,7 @@ setup()
 {
         export TCID="setup"
         export TST_COUNT=0
-	export TST_TOTAL=2
+ export TST_TOTAL=2
 
         # Clean up from a previous run
         rm -f $SELINUXTMPDIR/true 2>&1
@@ -25,22 +25,22 @@ test01()
         TST_COUNT=1
         RC=0
 
-	# Set up a program with the denied type for this domain.
-	cp /bin/true $SELINUXTMPDIR/true
-	chcon -t test_execute_notrans_denied_t $SELINUXTMPDIR/true
+ # Set up a program with the denied type for this domain.
+ cp /bin/true $SELINUXTMPDIR/true
+ chcon -t test_execute_notrans_denied_t $SELINUXTMPDIR/true
 
-	# Verify that test_execute_notrans_t cannot execute the denied type.
-	runcon -t test_execute_notrans_t -- bash -c $SELINUXTMPDIR/true 2>&1
-	RC=$?		# this should fail
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   PASS : execute_no_trans passed."
-		RC=0
+ # Verify that test_execute_notrans_t cannot execute the denied type.
+ runcon -t test_execute_notrans_t -- bash -c $SELINUXTMPDIR/true 2>&1
+ RC=$?  # this should fail
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   PASS : execute_no_trans passed."
+  RC=0
         else
                 echo "$TCID   FAIL : execute_no_trans failed."
-		RC=1
+  RC=1
         fi
-	return $RC
+ return $RC
 }
 
 test02()
@@ -49,25 +49,25 @@ test02()
         TST_COUNT=2
         RC=0
 
-	# Set up a program with the allowed type for this domain.
-	chcon -t test_execute_notrans_allowed_t $SELINUXTMPDIR/true
+ # Set up a program with the allowed type for this domain.
+ chcon -t test_execute_notrans_allowed_t $SELINUXTMPDIR/true
 
-	# Verify that test_execute_notrans_t can execute the allowed type.
-	runcon -t test_execute_notrans_t -- bash -c $SELINUXTMPDIR/true 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   FAIL : execute_no_trans failed."
+ # Verify that test_execute_notrans_t can execute the allowed type.
+ runcon -t test_execute_notrans_t -- bash -c $SELINUXTMPDIR/true 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   FAIL : execute_no_trans failed."
         else
                 echo "$TCID   PASS : execute_no_trans passed."
         fi
-	return $RC
+ return $RC
 }
 
 cleanup()
 {
-	# Cleanup.
-	rm -f $SELINUXTMPDIR/true
+ # Cleanup.
+ rm -f $SELINUXTMPDIR/true
 }
 
 # Function:     main
@@ -80,7 +80,7 @@ cleanup()
 RC=0    # Return value from setup, and test functions.
 EXIT_VAL=0
 
-setup 
+setup
 test01 || EXIT_VAL=$RC
 test02 || EXIT_VAL=$RC
 cleanup

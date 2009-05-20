@@ -19,15 +19,15 @@
 
 /****************************************************************************
  *
- *    TEST IDENTIFIER	: sethostname02
+ *    TEST IDENTIFIER : sethostname02
  *
- *    EXECUTED BY	: root / superuser
+ *    EXECUTED BY : root / superuser
  *
- *    TEST TITLE	: test for checking error conditions for sethostname(2)
+ *    TEST TITLE : test for checking error conditions for sethostname(2)
  *
- *    TEST CASE TOTAL	: 3
+ *    TEST CASE TOTAL : 3
  *
- *    AUTHOR		: Suresh Babu V. <suresh.babu@wipro.com>
+ *    AUTHOR  : Suresh Babu V. <suresh.babu@wipro.com>
  *
  *    SIGNALS
  *      Uses SIGUSR1 to pause before test if option set.
@@ -36,44 +36,44 @@
  * DESCRIPTION
  *      Verify that,
  *   1) sethostname(2) returns -1 and sets errno to EINVAL if the parameter,
- *	len is less than zero.
- *   2) sethostname(2) returns -1 and sets errno to EINVAL if len is greater 
- *	than the maximum allowed size.
- *   3) sethostname(2) returns -1 and sets errno to EFAULT if an invalid 
- *	address is given for name.
+ * len is less than zero.
+ *   2) sethostname(2) returns -1 and sets errno to EINVAL if len is greater
+ * than the maximum allowed size.
+ *   3) sethostname(2) returns -1 and sets errno to EFAULT if an invalid
+ * address is given for name.
  *
  * Setup:
  *   Setup signal handling.
  *   Save current hostname
  *   Pause for SIGUSR1 if option specified.
- * 
+ *
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed and errno set == expected errno
- *		Issue sys call fails with expected return value and errno.
+ *   Check return code, if system call failed and errno set  expected errno
+ *  Issue sys call fails with expected return value and errno.
  *      Otherwise,
- *		Issue sys call failed to produce expected error.
+ *  Issue sys call failed to produce expected error.
  *
  *   Cleanup:
- *	Restore old hostname.
- *	Print errno log and/or timing stats if options given
+ * Restore old hostname.
+ * Print errno log and/or timing stats if options given
  *
  *   Side Effects :
- *	sethostname() is resetting value to NULL, if an invalid address 
- *	is given for name. So, to overcome this problem, hostname is 
- *	resetting to original value as part of cleanup() routine.
+ * sethostname() is resetting value to NULL, if an invalid address
+ * is given for name. So, to overcome this problem, hostname is
+ * resetting to original value as part of cleanup() routine.
  *
  * USAGE:  <for command-line>
  *  sethostname02 [-c n] [-e] [-i n] [-I x] [-P x] [-p] [-t] [-h]
  *     where,  -c n  : Run n copies concurrently.
- *		-e   : Turn on errno logging.
- *		-i n : Execute test n times.
- *		-I x : Execute test for x seconds.
- *		-P x : Pause for x seconds between iterations.
- *		-p   : Pause for SIGUSR1 before startingt
- *		-t   : Turn on syscall timing.
- *		-h   : Display usage information.
+ *  -e   : Turn on errno logging.
+ *  -i n : Execute test n times.
+ *  -I x : Execute test for x seconds.
+ *  -P x : Pause for x seconds between iterations.
+ *  -p   : Pause for SIGUSR1 before startingt
+ *  -t   : Turn on syscall timing.
+ *  -h   : Display usage information.
  *
  ***************************************************************************/
 #include <stdio.h>
@@ -91,74 +91,74 @@ extern int Tst_count;
 static void cleanup(void);
 static void setup(void);
 
-char *TCID = "sethostname02";
+char *TCID  "sethostname02";
 static char hostname[MAX_LENGTH];
 static char hname[MAX_LENGTH];
 static char largehost[LARGE_LENGTH];
 static struct test_case_t {
-	char *err_desc;		/* error description 		*/
-	int exp_errno;		/* Expected error no 		*/
-	char *exp_errval;	/* Expected error value string 	*/
-	char *name;		/* hostname 			*/
-	int len;		/* length 			*/
-} testcases[] = {
-	{ "Length is -ve", EINVAL, "EINVAL", hostname, -1 },
-	{ "Length > max allowed size", EINVAL, "EINVAL", largehost, 
-		sizeof(largehost)},
+ char *err_desc;  /* error description*/
+ int exp_errno;  /* Expected error no*/
+ char *exp_errval; /* Expected error value string */
+ char *name;  /* hostname */
+ int len;  /* length */
+} testcases[]  {
+ { "Length is -ve", EINVAL, "EINVAL", hostname, -1 },
+ { "Length > max allowed size", EINVAL, "EINVAL", largehost,
+  sizeof(largehost)},
 #ifndef UCLINUX
-	/* Skip since uClinux does not implement memory protection */
-	{ "Invalid address ", EFAULT, "EFAULT", (void *)-1, sizeof(hostname)}
+ /* Skip since uClinux does not implement memory protection */
+ { "Invalid address ", EFAULT, "EFAULT", (void *)-1, sizeof(hostname)}
 #endif
 };
 
-static int exp_enos[] = {EINVAL, EINVAL, EFAULT, 0};
+static int exp_enos[]  {EINVAL, EINVAL, EFAULT, 0};
 
-int TST_TOTAL = sizeof(testcases)/sizeof(*testcases);
+int TST_TOTAL  sizeof(testcases)/sizeof(*testcases);
 
 int
 main(int ac, char **av)
 {
-	int i;
-	int lc;				/* loop counter */
-	char *msg;			/* parse_opts() return message */
+ int i;
+ int lc;    /* loop counter */
+ char *msg;   /* parse_opts() return message */
 
-	/* Parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
+ /* Parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+  tst_exit();
+ }
 
-	/* Do initial setup */
-	setup();
+ /* Do initial setup */
+ setup();
 
-	/* check for looping state if -i option is given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+ /* check for looping state if -i option is given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  Tst_count  0;
 
-		for (i=0; i<TST_TOTAL; ++i) {
+  for (i0; i<TST_TOTAL; ++i) {
 
-			/*
-			 * Test the system call.
-			 */
-			TEST(sethostname(testcases[i].name, testcases[i].len));
- 
-			if ((TEST_RETURN == -1) && 
-			    (TEST_ERRNO == testcases[i].exp_errno)) {
-				tst_resm(TPASS, "expected failure; Got %s",
-					testcases[i].exp_errval);
-			}
-			else {
-				tst_resm(TFAIL, "call failed to produce "
-					"expected error;  errno: %d : %s",
-					TEST_ERRNO, strerror(TEST_ERRNO));
-			}
-			TEST_ERROR_LOG(TEST_ERRNO);
-		}
-	}
-	/* do cleanup and exit */
-	cleanup();
+   /*
+    * Test the system call.
+    */
+   TEST(sethostname(testcases[i].name, testcases[i].len));
 
-	return 0;
+   if ((TEST_RETURN  -1) &&
+       (TEST_ERRNO  testcases[i].exp_errno)) {
+    tst_resm(TPASS, "expected failure; Got %s",
+     testcases[i].exp_errval);
+   }
+   else {
+    tst_resm(TFAIL, "call failed to produce "
+     "expected error;  errno: %d : %s",
+     TEST_ERRNO, strerror(TEST_ERRNO));
+   }
+   TEST_ERROR_LOG(TEST_ERRNO);
+  }
+ }
+ /* do cleanup and exit */
+ cleanup();
+
+ return 0;
 }
 
 /*
@@ -167,50 +167,50 @@ main(int ac, char **av)
 void
 setup()
 {
-	int ret;
+ int ret;
 
-	/* set up expected error numbers */
-	TEST_EXP_ENOS(exp_enos);
+ /* set up expected error numbers */
+ TEST_EXP_ENOS(exp_enos);
 
-	/* capture the signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture the signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Test should be executed as root user */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
-	}
+ /* Test should be executed as root user */
+ if (geteuid() ! 0) {
+  tst_brkm(TBROK, tst_exit, "Test must be run as root");
+ }
 
-	/* Keep the host name before starting the test */
-	if((ret = gethostname (hname, sizeof(hname))) < 0 ) {
-		tst_brkm(TBROK, tst_exit, "gethostname() failed while"
-				" getting current host name");
-	}
+ /* Keep the host name before starting the test */
+ if((ret  gethostname (hname, sizeof(hname))) < 0 ) {
+  tst_brkm(TBROK, tst_exit, "gethostname() failed while"
+    " getting current host name");
+ }
 
-	/* Pause if the option was specified */
-	TEST_PAUSE;
+ /* Pause if the option was specified */
+ TEST_PAUSE;
 }
 
 /*
  * cleanup()  - performs all one time cleanup for this test
- *		completion or premature exit.
+ *  completion or premature exit.
  */
 void
 cleanup()
 {
-	int ret;
+ int ret;
 
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* Set the host name back to original name */
-	if( (ret = sethostname (hname, strlen(hname))) < 0 ) {
-		tst_resm(TWARN, "sethostname() failed while restoring"
-			" hostname to \"%s\"", hname);
-	} 
+ /* Set the host name back to original name */
+ if( (ret  sethostname (hname, strlen(hname))) < 0 ) {
+  tst_resm(TWARN, "sethostname() failed while restoring"
+   " hostname to \"%s\"", hname);
+ }
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

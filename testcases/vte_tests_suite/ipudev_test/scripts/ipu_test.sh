@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake Huang/-----             <20081209>     N/A          Initial version
-# 
+#
 ###################################################################################################
 
 
@@ -169,10 +169,10 @@ esac
 
 # Function:     test_case_01
 # Description   - Test if pattern test ok
-#  
+#
 test_case_01()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="ipu_dev_pattern_test"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -194,6 +194,11 @@ if [ $TARGET == "37" ] || [ $TARGET == "51" ]; then
 echo "TST INFO: ipu v3 only"
 echo "TST INFO: video pattern with user define dma buffer queue, with two output"
 ipu_dev_test -P 2 -bw $i || return $RC
+
+ipu_dev_test -P 5 -bw $i || return $RC
+ipu_dev_test -P 6 -bw $i || return $RC
+ipu_dev_test -P 7 -bw $i || return $RC
+ipu_dev_test -P 8 -bw $i || return $RC
 fi
 
 done
@@ -212,10 +217,10 @@ return $RC
 
 # Function:     test_case_02
 # Description   - Test ipu_ENC_dev ok
-#  
+#
 test_case_02()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="IPU_ENC_dev"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -224,7 +229,7 @@ RC=1
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-echo "TST INFO: ENC task" 
+echo "TST INFO: ENC task"
 
 MODELIST="0x11 0x21 "
 
@@ -232,7 +237,7 @@ for MODE in $MODELIST
 do
 #TODO add function test scripte here
  echo "TST INFO: mode is $MODE"
- for CRP in $CROPLIST 
+ for CRP in $CROPLIST
  do
    echo "TST INFO: CROP is $CRP"
    #for r in $ROTATION
@@ -258,10 +263,10 @@ return $RC
 
 # Function:     test_case_03
 # Description   - Test if IPU_PP_test ok
-#  
+#
 test_case_03()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="IPU_PP_TEST"
 #TODO give TST_COUNT
 TST_COUNT=3
@@ -275,7 +280,7 @@ for MODE in $MODELIST
 do
 #TODO add function test scripte here
  echo "TST INFO: mode is $MODE"
- for CRP in $CROPLIST 
+ for CRP in $CROPLIST
  do
    echo "TST INFO: CROP is $CRP"
    #for r in $ROTATION
@@ -300,10 +305,10 @@ return $RC
 
 # Function:     test_case_04
 # Description   - Test if IPU_VF_test ok
-#  
+#
 test_case_04()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="IPU_VF_TEST"
 #TODO give TST_COUNT
 TST_COUNT=4
@@ -319,7 +324,7 @@ for MODE in $MODELIST
 do
 #TODO add function test scripte here
  echo "TST INFO: mode is $MODE"
- for CRP in $CROPLIST 
+ for CRP in $CROPLIST
  do
    echo "TST INFO: CROP is $CRP"
    #for r in $ROTATION
@@ -361,6 +366,8 @@ mkdir -p /tmp/ipu_dev
      WD=$(echo $j | sed "s/+/ /g" | awk '{print $1}' )
      HT=$(echo $j | sed "s/+/ /g" | awk '{print $2}' )
      INFILE=$(echo $j | sed "s/+/ /g"| awk '{print $3}')
+     echo "${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},I420 \
+     -o  ${WD},${HT},${i} -n /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}"
      ${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},I420 \
      -o  ${WD},${HT},${i} -n /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}
      if [ $? != 0 ]; then
@@ -369,44 +376,51 @@ mkdir -p /tmp/ipu_dev
         for k in $RESLIST
         do
           echo "TST INFO: output $k"
-	  w=$(echo $k | sed "s/,/ /g" | awk '{print $1}')
-	  h=$(echo $k | sed "s/,/ /g" | awk '{print $2}')
+   w=$(echo $k | sed "s/,/ /g" | awk '{print $1}')
+   h=$(echo $k | sed "s/,/ /g" | awk '{print $2}')
           if [ $w -gt $FB0XRES ] || [ $h -gt $FB0YRES ]; then
               echo "TST INFO: skip this resolution for fb not support\n"
           else
             for l in $FBPOS ; do
-	    echo "TST INFO: output fb pos $l" 
-	    echo "TST INFO: output1 disable"
-	    efb0=1
+     echo "TST INFO: output fb pos $l"
+     echo "TST INFO: output1 disable"
+     efb0=1
             check_format_bits $tf
             if [ $? -ne $FB0BITS ]; then
-	     efb0=0
+      efb0=0
              echo "TST INFO: mute fb0 out"
 	    fi
+	    echo "${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},${i} -c ${CRP} \
+            -o  ${k},${tf},$r -s ${efb0},0,$l -n /dev/null /tmp/ipu_dev/tmp.dat \
+	    || RC=$(expr $RC + 1)"
 	    ${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},${i} -c ${CRP} \
             -o  ${k},${tf},$r -s ${efb0},0,$l -n /dev/null /tmp/ipu_dev/tmp.dat \
-	    || RC=$(expr $RC + 1)
-	    if [ $MODE == "0x13"  ] || [ $MODE == "0x23"  ]; then
+     || RC=$(expr $RC + 1)
+     if [ $MODE == "0x13"  ] || [ $MODE == "0x23"  ]; then
              echo "TST INFO: output1 enable"
               if [ $w -gt $FB1XRES ] || [ $h -gt $FB1YRES ]; then
                  echo "TST INFO: skip this resolution for fb not support\n"
               else
-	         efb2=1
+          efb2=1
                  check_format_bits $tf
                  if [ $? -ne $FB2BITS ]; then
                    efb2=0
                    echo "TST INFO: mute fb2"
 		 fi
-	    ${TST_CMD} -m $MODE -E 1 -f $fc -i ${WD},${HT},${i} -c ${CRP} \
+	    echo "${TST_CMD} -m $MODE -E 1 -f $fc -i ${WD},${HT},${i} -c ${CRP} \
             -o  ${k},${tf},$r -s ${efb0},0,${l} -n /dev/null \
 	    -O ${k},${tf},$r -S ${efb2},2,${l} -N /dev/null /tmp/ipu_dev/tmp.dat \
-	    || RC=$(expr $RC + 1)
-	      fi
-	    fi
+	    || RC=$(expr $RC + 1)"
+	    ${TST_CMD} -m $MODE -E 1 -f $fc -i ${WD},${HT},${i} -c ${CRP} \
+            -o  ${k},${tf},$r -s ${efb0},0,${l} -n /dev/null \
+     -O ${k},${tf},$r -S ${efb2},2,${l} -N /dev/null /tmp/ipu_dev/tmp.dat \
+     || RC=$(expr $RC + 1)
+       fi
+     fi
             sleep 1
-	#end for l fb pos
-	   done
-	 fi
+ #end for l fb pos
+    done
+  fi
       #end for k out res
        done
      fi
@@ -423,10 +437,10 @@ return $RC
 
 # Function:     test_case_05
 # Description   - Test if IPU_ENC+VF_test ok
-#  
+#
 test_case_05()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="IPU_ENC+VF_TEST"
 #TODO give TST_COUNT
 TST_COUNT=5
@@ -442,7 +456,7 @@ for MODE in $MODELIST
 do
 #TODO add function test scripte here
  echo "TST INFO: mode is $MODE"
- for CRP in $CROPLIST 
+ for CRP in $CROPLIST
  do
    echo "TST INFO: CROP is $CRP"
    #for r in $ROTATION
@@ -467,10 +481,10 @@ return $RC
 
 # Function:     test_case_06
 # Description   - Test if rotation ok
-#  
+#
 test_case_06()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="IPU_Rotation_TEST"
 #TODO give TST_COUNT
 TST_COUNT=6
@@ -546,7 +560,7 @@ usage()
 if [ $# -ne 1 ]
 then
 usage
-exit 1 
+exit 1
 fi
 
 check_platform
@@ -556,7 +570,7 @@ setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC 
+  test_case_01 || exit $RC
   ;;
 2)
   test_case_02 || exit $RC

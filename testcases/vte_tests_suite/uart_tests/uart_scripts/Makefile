@@ -13,7 +13,7 @@
 #
 #        http://www.opensource.org/licenses/lgpl-license.html
 #        http://www.gnu.org/copyleft/lgpl.html
-#     
+#
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
@@ -28,7 +28,7 @@
 LTP_DIR = ../../../../
 BIN_DIR = $(LTP_DIR)testcases/
 
-ifeq ($(ARCH_PLATFORM), $(filter stmp3780, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx233, $(ARCH_PLATFORM)))
 #TARGET = $(wildcard *.sh)
 TARGET = uart_test.sh
 endif

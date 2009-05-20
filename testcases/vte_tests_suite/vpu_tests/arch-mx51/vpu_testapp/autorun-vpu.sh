@@ -8,7 +8,7 @@ source /unit_tests/test-utils.sh
 STATUS=0
 
 if [ "$(platform)" = IMX31ADS ]; then
-	exit $STATUS
+ exit $STATUS
 fi
 
 # devnode test

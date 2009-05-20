@@ -28,7 +28,7 @@ sleep 3
 iwconfig eth1 essid TestAdhoc007
 sleep 10
 
-ping -c 4 192.168.1.100 ||RC=$? 
+ping -c 4 192.168.1.100 ||RC=$?
 
 echo "========================================"
 if [ $RC -eq 0 ]

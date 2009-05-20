@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   oss_sound_driver_main.c
 
         @brief  OSS Audio Record test mainfile.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -21,25 +21,25 @@ RB657C/gsch1c                20/07/2004     TLSbo43102  Application Enhance and 
 D.Simakov/smkd001c           25/07/2005     TLSbo52891  Test case asks final result to user (yes or
                                                         no) before printing PASS or FAIL status.
 D.Khoroshev/B00313           02/08/2006     TLSbo61044  PMIC master mode is the only supported mode
-D.Khoroshev/B00313           02/22/2006     TLSbo62323  Update according to the new OSS specifications 
+D.Khoroshev/B00313           02/22/2006     TLSbo62323  Update according to the new OSS specifications
                                                         for PMIC.
 
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
 Total Tests: 1
 
 Test Name:   OSS Audio Record
 
 Test Assertion
 & Strategy:  Try to record audio stream from SSI1 or SSI2 to file.
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,29 +52,29 @@ Test Assertion
 /* Verification Test Environment Include Files */
 #include "oss_sound_driver_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Global Variables */
 char   *TCID = "oss_testapp_rec_0";     /* test program identifier.  */
 int     TST_TOTAL = 1;  /* total number of tests in this file.  */
@@ -93,7 +93,7 @@ char   *ByteNumopt;     /* ByteNum option arguments */
 char   *Fileopt;        /* File option arguments */
 char   *Sourceopt;      /* Source option arguments */
 
-option_t options[] = 
+option_t options[] =
 {
         {"C:", &Chanflag, &Chanopt},                /* argument required */
         {"S:", &Speedflag, &Speedopt},              /* argument required */
@@ -106,23 +106,23 @@ option_t options[] =
 
 static char audiofile[] = "/tmp/input.wav";
 
-/*==================================================================================================
+/*======================
                                     GLOBAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void    cleanup(void);
 void    setup(void);
 int     main(int argc, char **argv);
 
-/*==================================================================================================
+/*======================
                                     LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== cleanup =====*/
+/*====================*/
+/*= cleanup =*/
 /**
 @brief  Performs all one time clean up for this test on successful
         completion,  premature exit or  failure. Closes all temporary
@@ -131,10 +131,10 @@ int     main(int argc, char **argv);
 
 @param  Input :      None.
         Output:      None.
-    
+
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
         int     VT_rv = TFAIL;
@@ -148,21 +148,21 @@ void cleanup(void)
         tst_exit();
 }
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== help =====*/
+/*====================*/
+/*= help =*/
 /**
 @brief  Inform of the available options and the associated parameters
 
 @param  Input :      None.
         Output:      None.
-    
+
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void help(void)
 {
         printf("Switches \n\n");
@@ -177,8 +177,8 @@ void help(void)
         printf("                    s: 3 for line in\n");
 }
 
-/*================================================================================================*/
-/*===== setup =====*/
+/*====================*/
+/*= setup =*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -186,11 +186,11 @@ void help(void)
 
 @param  Input :      None.
         Output:      None.
-    
+
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
         int     VT_rv = TFAIL;
@@ -202,8 +202,8 @@ void setup(void)
         }
 }
 
-/*================================================================================================*/
-/*===== ask_user =====*/
+/*====================*/
+/*= ask_user =*/
 /**
 @brief  Shows question message and read answer(Y/N).
 
@@ -212,7 +212,7 @@ void setup(void)
 
 @return TPASS or TFAIL according to users answer.
 */
-/*================================================================================================*/
+/*====================*/
 int ask_user(char *question)
 {
         unsigned char answer;
@@ -232,8 +232,8 @@ int ask_user(char *question)
         return ret;
 }
 
-/*================================================================================================*/
-/*===== main =====*/
+/*====================*/
+/*= main =*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -251,11 +251,11 @@ int ask_user(char *question)
                                 -Id - Id of the test according to the test plan
                                 -Case N - If exist, the test case number associated with the test Id
                                 -Iter - Inform the iteration of the loop in case of an endurance/stress test
-    
+
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
         int     VT_rv = TFAIL;

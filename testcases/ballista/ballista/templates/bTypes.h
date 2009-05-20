@@ -25,7 +25,7 @@ CLASSES
 
 ABSTRACT
    This file provides data types common to ballista modules.
-   paramAccess is the root data type for the entire ballista 
+   paramAccess is the root data type for the entire ballista
    object hierarchy.
 
 
@@ -37,19 +37,19 @@ Date            Engineer        Change
 1. Provides general definitions for ballista data types
 
 2. Many methods describe here take a typeName parameter.  This is to allow
-   the objects to know which object in the inheritance tree is being 
+   the objects to know which object in the inheritance tree is being
    addressed.
- 
+
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
 
 NAME
-  
+
    paramAccess();
 
 DESCRIPTION
-   
-   This is the object constructor.  It initializes the type name varible 
+
+   This is the object constructor.  It initializes the type name varible
    _rootName to be ROOT_PARAMETER.
 
 PARAMETERS
@@ -66,7 +66,7 @@ RETURNED VALUE
 
 NOTES
 
-   Derived classes will initialize string equivalent variables for dial 
+   Derived classes will initialize string equivalent variables for dial
    settings here, as well as any other type-specific initialization.
 
 -----------------------------------------------------------------------------
@@ -83,19 +83,19 @@ DESCRIPTION
 
 PARAMETERS
 
-   b_param        *in*           data[]   - Type name in 0, followed by 
+   b_param        *in*           data[]   - Type name in 0, followed by
                                             dial setting strings
 
 REQUIREMENTS
 
    Valid type name in position 0 of the array.
-   All required dial setting strings for the type in the subsequent array 
+   All required dial setting strings for the type in the subsequent array
    slots.
 
 RETURNED VALUE
 
    void pointer to the actual variable being returned.  Note then that if
-   the type is itself a pointer, it returns a pointer to the pointer, or 
+   the type is itself a pointer, it returns a pointer to the pointer, or
    as some might term is, a handle to the actual data type.
 
 NOTES
@@ -107,12 +107,12 @@ NOTES
 -----------------------------------------------------------------------------
 
 NAME
-   
+
    virtual int paramAccess::commit(b_param tname)
 
 DESCRIPTION
 
-   This is "phase two" of the variable creation - or as Phil Koopman 
+   This is "phase two" of the variable creation - or as Phil Koopman
    euphamisticly says, it is the "mangle phase".  This phase performs any
    actions necsarry to change the variable prior to its use.  Note that in
    order to implement this phase, the data object must keep a copy of the
@@ -127,11 +127,11 @@ PARAMETERS
 
 REQUIREMENTS
 
-   Name to a type in the objects inheritance tree to be mangled exists 
+   Name to a type in the objects inheritance tree to be mangled exists
    as a type in its class inheritance path.
 
-   For each call to commit(), there must be exactly one sucessful call 
-   to access() preceeding it, with no other interveneing calls to 
+   For each call to commit(), there must be exactly one sucessful call
+   to access() preceeding it, with no other interveneing calls to
    commit(), or cleanup().
 
 RETURNED VALUE
@@ -152,11 +152,11 @@ NAME
 
 DESCRIPTION
 
-   This is the final phase in the life of a generated parameter.  This 
-   method is responsible for freeing any resources created during the 
+   This is the final phase in the life of a generated parameter.  This
+   method is responsible for freeing any resources created during the
    parameter generation phase.  Note that this means that the "unmangled"
    should be saved for freeing.  Of course, creation mangling and freeing
-   are done in the forked process, so theoretically the resources should 
+   are done in the forked process, so theoretically the resources should
    be freed when the process terminates.
 
 PARAMETERS
@@ -168,8 +168,8 @@ REQUIREMENTS
    Name to a type in the objects inheritance tree to be freed exists as
    a type in its class inheritance path.
 
-   For each call to cleanup(), there must be exactly one sucessful call 
-   to access() preceeding it, with no other interveneing calls to 
+   For each call to cleanup(), there must be exactly one sucessful call
+   to access() preceeding it, with no other interveneing calls to
    cleanup().
 
 RETURNED VALUE
@@ -190,7 +190,7 @@ NAME
 
 DESCRIPTION
 
-   This method must return the integer value of the number of dials 
+   This method must return the integer value of the number of dials
    associated with the data type it represents.
 
    The base class paramAccess returns 0.
@@ -201,7 +201,7 @@ PARAMETERS
 
 REQUIREMENTS
 
-   Name to a type in the objects inheritance tree to be freed exists 
+   Name to a type in the objects inheritance tree to be freed exists
    as a type in its class inheritance path.
 
 RETURNED VALUE
@@ -232,7 +232,7 @@ PARAMETERS
 
 REQUIREMENTS
 
-   Name to a type in the objects inheritance tree to be freed exists 
+   Name to a type in the objects inheritance tree to be freed exists
    as a type in its class inheritance path.
 
    The dial indicated exists for the specified data type.
@@ -272,10 +272,10 @@ NOTES
 
    Must be implemented by each derived class.
 
-   This is *NOT* a virtual function.  THis is so that the typeName() 
-   for the scope currently in execution will be dispatched.  Otherwise, 
-   when calling inherited virtual methods that check typenames, the 
-   typename string of the class actually instantiated would be called.  
+   This is *NOT* a virtual function.  THis is so that the typeName()
+   for the scope currently in execution will be dispatched.  Otherwise,
+   when calling inherited virtual methods that check typenames, the
+   typename string of the class actually instantiated would be called.
    That would be bad, bad bad.
 
 -----------------------------------------------------------------------------
@@ -287,13 +287,13 @@ NAME
 
 DESCRIPTION
 
-   This method returns the integer value representing the instantiated 
+   This method returns the integer value representing the instantiated
    class' distance from the root class paramAccess.
 
    Obviously, this being the root class, it returns 0.
 
-   In derived classes this method functions using a recursive descent 
-   into the class hierarchy.  In practice, if simply returns the value 
+   In derived classes this method functions using a recursive descent
+   into the class hierarchy.  In practice, if simply returns the value
    of its immediate parent class' distanceFromBase() method +1.
 
 PARAMETERS
@@ -311,7 +311,7 @@ RETURNED VALUE
 NOTES
 
    As with access(), numDials() MUST BE OVERRIDDEN by each derived class.
-     
+
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
 
@@ -321,15 +321,15 @@ NAME
 
 DESCRIPTION
 
-   This method returns an array with the typename of it, and each of 
-   its parent classes.  
+   This method returns an array with the typename of it, and each of
+   its parent classes.
 
    The num parameter is used to tell the method which array slot to place
    the typename in.  The first outside call to this method should be called
    with num = 0, thus the name of the instantiated class' data type is in
    index 0, and the root classes type name is in list[distanceFromRoot()-1].
 
-   The caller is responsible for creating an appropriately sized array, 
+   The caller is responsible for creating an appropriately sized array,
    and is most easily done as follows:
 
    b_param *theList= new b_param[distanceFromRoot()];
@@ -371,11 +371,11 @@ NOTES
 */
 
 #ifndef BTYPES_H
-#define BTYPES_H 
+#define BTYPES_H
 
 #ifdef SUN
 extern char *sys_errlist[ ];    //bug in aix and sunos errno.h ( at least )
-#endif 
+#endif
 
 #define B_PARAM_LENGTH 255
 
@@ -390,10 +390,10 @@ class paramAccess
 public:
 
   b_param _rootName;   //identifies the type associated with the object.
-  
-  
+
+
   paramAccess();
-  
+
   virtual void *access(b_param data[]);
   virtual int commit(b_param tname);
   virtual int cleanup(b_param tname);

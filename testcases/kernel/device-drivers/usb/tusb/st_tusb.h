@@ -35,13 +35,13 @@ extern int usb_hcd_pci_resume(struct pci_dev *);
 	        int (*get_frame_number) (struct usb_device *dev);
 	        int (*submit_urb) (struct urb *urb);
 	        int (*unlink_urb) (struct urb *urb);
-		
+
 		/* allocate dma-consistent buffer for URB_DMA_NOMAPPING */
 	        void *(*buffer_alloc)(struct usb_bus *bus, size_t size,
-        	                int mem_flags,
-        	                dma_addr_t *dma);
-        	void (*buffer_free)(struct usb_bus *bus, size_t size,
-                	        void *addr, dma_addr_t dma);
+                        int mem_flags,
+                        dma_addr_t *dma);
+        void (*buffer_free)(struct usb_bus *bus, size_t size,
+                        void *addr, dma_addr_t dma);
 	};
 #endif
 
@@ -70,19 +70,19 @@ extern int usb_hcd_pci_resume(struct pci_dev *);
 #ifndef hc_driver
 	struct hc_driver {
 		const char      *description;   /* "ehci-hcd" etc */
-        	void    (*irq) (struct usb_hcd *hcd, struct pt_regs *regs);
+        void    (*irq) (struct usb_hcd *hcd, struct pt_regs *regs);
 	        int     flags;
-        	int     (*start) (struct usb_hcd *hcd);
-        	int     (*suspend) (struct usb_hcd *hcd, __u32 state);
-        	int     (*resume) (struct usb_hcd *hcd);
-        	void    (*stop) (struct usb_hcd *hcd);
-        	int     (*get_frame_number) (struct usb_hcd *hcd);
-        	struct usb_hcd  *(*hcd_alloc) (void);
-        	void            (*hcd_free) (struct usb_hcd *hcd);
+        int     (*start) (struct usb_hcd *hcd);
+        int     (*suspend) (struct usb_hcd *hcd, __u32 state);
+        int     (*resume) (struct usb_hcd *hcd);
+        void    (*stop) (struct usb_hcd *hcd);
+        int     (*get_frame_number) (struct usb_hcd *hcd);
+        struct usb_hcd  *(*hcd_alloc) (void);
+        void            (*hcd_free) (struct usb_hcd *hcd);
 	        int     (*urb_enqueue) (struct usb_hcd *hcd, struct urb *urb,
 				int mem_flags);
-        	int     (*urb_dequeue) (struct usb_hcd *hcd, struct urb *urb);
-        	void            (*free_config) (struct usb_hcd *hcd,
+        int     (*urb_dequeue) (struct usb_hcd *hcd, struct urb *urb);
+        void            (*free_config) (struct usb_hcd *hcd,
                                 struct usb_device *dev);
 
 		int     (*hub_status_data) (struct usb_hcd *hcd, char *buf);

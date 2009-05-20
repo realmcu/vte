@@ -17,56 +17,56 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* 01/02/2003	Port to LTP avenkat@us.ibm.com*/
-/* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
+/* 01/02/2003 Port to LTP avenkat@us.ibm.com*/
+/* 06/30/2001 Port to Linux nsharoff@us.ibm.com */
 
 /*
  * NAME
- *	syscall1.c -- test syscall
+ * syscall1.c -- test syscall
  *
  * CALLS
- *	syscall
+ * syscall
  *
  * ALGORITHM
- *	Use syscall to simulate some section 2 calls and make sure
- *	things work as expected.  Pretty simple, but if it works
- *	for a few it should work for all.
+ * Use syscall to simulate some section 2 calls and make sure
+ * things work as expected.  Pretty simple, but if it works
+ * for a few it should work for all.
  *
  * RESTRICTIONS
- *	The syscall numbers are system dependent!!  They represent
- *	entries in a table and can be changed from kernel to kernel.
- *	They ARE differnet between vax 4.2BSD and our ported system.
+ * The syscall numbers are system dependent!!  They represent
+ * entries in a table and can be changed from kernel to kernel.
+ * They ARE differnet between vax 4.2BSD and our ported system.
  */
 
-#include <stdio.h>		/* needed by testhead.h		*/
+#include <stdio.h>  /* needed by testhead.h  */
 #include <syscall.h>
 #include <errno.h>
 
-/*****	LTP Port	*****/
+/***** LTP Port *****/
 #include "test.h"
 #include "usctest.h"
 
 #define FAILED 0
 #define PASSED 1
 
-char *TCID = "syscall01";
-int local_flag = PASSED;
+char *TCID  "syscall01";
+int local_flag  PASSED;
 int block_number;
 int errno;
 FILE *temp;
-int TST_TOTAL = 1;
+int TST_TOTAL  1;
 extern int Tst_count;
-/*****	**	**	*****/
+/***** ** ** *****/
 
-//char progname[]= "syscall1()";
+//char progname[] "syscall1()";
 
-#define ITER		500
+#define ITER  500
 
 
 int t_flag;
 int errno;
 
-/*****	LTP Port	*****/
+/***** LTP Port *****/
 void setup();
 int blenter();
 int blexit();
@@ -74,84 +74,84 @@ int anyfail();
 void cleanup();
 void do_setpg();
 void fail_exit();
-/*****	**	**	*****/
+/***** ** ** *****/
 
 /*--------------------------------------------------------------*/
 int main (int argc, char *argv[])
 {
-	register int i;
-	int v1, v2;
+ register int i;
+ int v1, v2;
 
-	setup();		/* temp file is now open	*/
+ setup();  /* temp file is now open */
 /*--------------------------------------------------------------*/
-	blenter();
+ blenter();
 
 #if defined(SYS_getpid)
-	for (i=0; i < ITER; i++) {
-		v1 = getpid();
-		v2 = syscall(SYS_getpid);
-		if (v1 != v2) {
-			fprintf(temp, "\tgetpid syscall failed.\n");
-			fprintf(temp, "\t  iteration %d\n", i);
-			local_flag = FAILED;
-			break;
-		}
-	}
+ for (i0; i < ITER; i++) {
+  v1  getpid();
+  v2  syscall(SYS_getpid);
+  if (v1 ! v2) {
+   fprintf(temp, "\tgetpid syscall failed.\n");
+   fprintf(temp, "\t  iteration %d\n", i);
+   local_flag  FAILED;
+   break;
+  }
+ }
 #else
-	fprintf(temp,"\tgetpid syscall failed.\n");
-	fprintf(temp,"\tSYS_getpid not defined\n");
-	local_flag = FAILED;
+ fprintf(temp,"\tgetpid syscall failed.\n");
+ fprintf(temp,"\tSYS_getpid not defined\n");
+ local_flag  FAILED;
 #endif
-	blexit();
+ blexit();
 /*--------------------------------------------------------------*/
-	blenter();
+ blenter();
 
 #if defined(SYS_getuid) || defined(SYS_getuid32)
-	for (i=0; i < ITER; i++) {
-		v1 = getuid();
+ for (i0; i < ITER; i++) {
+  v1  getuid();
 #if defined(SYS_getuid)
-		v2 = syscall(SYS_getuid);
+  v2  syscall(SYS_getuid);
 #else
-		v2 = syscall(SYS_getuid32);
+  v2  syscall(SYS_getuid32);
 #endif
-		if (v1 != v2) {
-			fprintf(temp, "\tgetuid syscall failed.\n");
-			fprintf(temp, "\t  iteration %d\n", i);
-			local_flag = FAILED;
-			break;
-		}
-	}
+  if (v1 ! v2) {
+   fprintf(temp, "\tgetuid syscall failed.\n");
+   fprintf(temp, "\t  iteration %d\n", i);
+   local_flag  FAILED;
+   break;
+  }
+ }
 #else
-	 fprintf(temp,"\tgetuid syscall failed.\n");
+  fprintf(temp,"\tgetuid syscall failed.\n");
          fprintf(temp,"\tSYS_getuid and SYS_getuid32 not defined\n");
-         local_flag = FAILED;
+         local_flag  FAILED;
 #endif
-	blexit();
+ blexit();
 /*--------------------------------------------------------------*/
-	blenter();
+ blenter();
 
 #if defined(SYS_getgid) || defined(SYS_getgid32)
-	for (i=0; i < ITER; i++) {
-		v1 = getgid();
+ for (i0; i < ITER; i++) {
+  v1  getgid();
 #if defined(SYS_getgid)
-		v2 = syscall(SYS_getgid);
+  v2  syscall(SYS_getgid);
 #else
-		v2 = syscall(SYS_getgid32);
+  v2  syscall(SYS_getgid32);
 #endif
-		if (v1 != v2) {
-			fprintf(temp, "\tgetgid syscall failed.\n");
-			fprintf(temp, "\t  iteration %d\n", i);
-			local_flag = FAILED;
-			break;
-		}
-	}
+  if (v1 ! v2) {
+   fprintf(temp, "\tgetgid syscall failed.\n");
+   fprintf(temp, "\t  iteration %d\n", i);
+   local_flag  FAILED;
+   break;
+  }
+ }
 #else
-	         fprintf(temp,"\tgetgid syscall failed.\n");
-		 fprintf(temp,"\tSYS_getgid and SYS_getgid32 not defined\n");
-                 local_flag = FAILED; 
+          fprintf(temp,"\tgetgid syscall failed.\n");
+   fprintf(temp,"\tSYS_getgid and SYS_getgid32 not defined\n");
+                 local_flag  FAILED;
 #endif
 
-	blexit();
+ blexit();
 /*--------------------------------------------------------------*/
 
     /***************************************************************
@@ -159,12 +159,12 @@ int main (int argc, char *argv[])
      ***************************************************************/
         cleanup();
 
-	anyfail();	/* THIS CALL DOES NOT RETURN - EXITS!!	*/
-	return(0);
+ anyfail(); /* THIS CALL DOES NOT RETURN - EXITS!! */
+ return(0);
 }
 /*--------------------------------------------------------------*/
 
-/*****	LTP Port	*****/
+/***** LTP Port *****/
 /* functions */
 
 
@@ -184,21 +184,21 @@ void cleanup()
 void setup()
 {
 
-    temp = stderr;
+    temp  stderr;
 
 }
 
 
 int blenter()
 {
-    local_flag = PASSED;
+    local_flag  PASSED;
     return(0);
 }
 
 
 int blexit()
 {
-    (local_flag == PASSED) ?
+    (local_flag  PASSED) ?
         tst_resm(TPASS, "Test passed")
      :  tst_resm(TFAIL, "Test failed");
     return(0);
@@ -212,10 +212,10 @@ int anyfail()
 
 void fail_exit()
 {
-     local_flag = FAILED;
+     local_flag  FAILED;
      blexit();
      anyfail();
 }
 
 
-/*****	**	**	*****/
+/***** ** ** *****/

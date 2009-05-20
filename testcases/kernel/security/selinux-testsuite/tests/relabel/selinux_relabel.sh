@@ -12,26 +12,26 @@
 setup()
 {
         export TCID="setup"
-	export TST_COUNT=0
-	export TST_TOTAL=3
+ export TST_COUNT=0
+ export TST_TOTAL=3
 
-	# Remove any leftover test file from prior failed runs.
-	rm -rf $SELINUXTMPDIR/test_file
+ # Remove any leftover test file from prior failed runs.
+ rm -rf $SELINUXTMPDIR/test_file
 
-	# Create a test file with the test_relabel_oldtype_t
-	# type for use in the tests.
-	touch $SELINUXTMPDIR/test_file
-	chcon -t test_relabel_oldtype_t $SELINUXTMPDIR/test_file
+ # Create a test file with the test_relabel_oldtype_t
+ # type for use in the tests.
+ touch $SELINUXTMPDIR/test_file
+ chcon -t test_relabel_oldtype_t $SELINUXTMPDIR/test_file
 }
 
 test01()
 {
-	TCID="test01"
-	TST_COUNT=1
-	RC=0
+ TCID="test01"
+ TST_COUNT=1
+ RC=0
 
-	# Verify that test_relabel_t can relabel the file.
-	runcon -t test_relabel_t chcon system_u:object_r:test_relabel_newtype_t $SELINUXTMPDIR/test_file 2>&1
+ # Verify that test_relabel_t can relabel the file.
+ runcon -t test_relabel_t chcon system_u:object_r:test_relabel_newtype_t $SELINUXTMPDIR/test_file 2>&1
         RC=$?
         if [ $RC -eq 0 ]
         then
@@ -44,54 +44,54 @@ test01()
 
 test02()
 {
-	TCID="test02"
-	TST_COUNT=2
-	RC=0
+ TCID="test02"
+ TST_COUNT=2
+ RC=0
 
-	# Revert.
-	chcon -t test_relabel_oldtype_t $SELINUXTMPDIR/test_file
+ # Revert.
+ chcon -t test_relabel_oldtype_t $SELINUXTMPDIR/test_file
 
-	# Verify that test_norelabelfrom_t cannot relabel the file.
-	# Should fail on the relabelfrom permission check to the original type.
-	runcon -t test_norelabelfrom_t -- chcon -t test_relabel_newtype_t $SELINUXTMPDIR/test_file 2>&1
+ # Verify that test_norelabelfrom_t cannot relabel the file.
+ # Should fail on the relabelfrom permission check to the original type.
+ runcon -t test_norelabelfrom_t -- chcon -t test_relabel_newtype_t $SELINUXTMPDIR/test_file 2>&1
         RC=$?
         if [ $RC -ne 0 ]
         then
                 echo "$TCID   PASS : relabel passed."
-		RC=0
+  RC=0
         else
                 echo "$TCID   FAIL : relabel failed."
-		RC=1
+  RC=1
         fi
-	return $RC
+ return $RC
 }
 
 test03()
 {
-	TCID="test03"
-	TST_COUNT=3
-	RC=0
+ TCID="test03"
+ TST_COUNT=3
+ RC=0
 
-	# Verify that test_norelabelto_t cannot relabel
-	# the file to the new type.
-	# Should fail on the relabelto permission check to the new type.
-	runcon -t test_norelabelto_t -- chcon -t test_relabel_newtype_t $SELINUXTMPDIR/test_file 2>&1
+ # Verify that test_norelabelto_t cannot relabel
+ # the file to the new type.
+ # Should fail on the relabelto permission check to the new type.
+ runcon -t test_norelabelto_t -- chcon -t test_relabel_newtype_t $SELINUXTMPDIR/test_file 2>&1
         RC=$?
         if [ $RC -ne 0 ]
         then
                 echo "$TCID   PASS : relabel passed."
-		RC=0
+  RC=0
         else
                 echo "$TCID   FAIL : relabel failed."
-		RC=1
+  RC=1
         fi
-	return $RC
+ return $RC
 }
 
 cleanup()
 {
-	# Cleanup.
-	rm -rf $SELINUXTMPDIR/test_file
+ # Cleanup.
+ rm -rf $SELINUXTMPDIR/test_file
 }
 
 # Function:     main
@@ -104,7 +104,7 @@ cleanup()
 RC=0    # Return value from setup, and test functions.
 EXIT_VAL=0
 
-setup  
+setup
 test01 || EXIT_VAL=$RC
 test02 || EXIT_VAL=$RC
 test03 || EXIT_VAL=$RC

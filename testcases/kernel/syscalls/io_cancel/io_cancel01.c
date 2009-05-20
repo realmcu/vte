@@ -24,10 +24,10 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "io_cancel01";	/* Test program identifier.    */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID  "io_cancel01"; /* Test program identifier.    */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 
-int TST_TOTAL = 1;
+int TST_TOTAL  1;
 
 #ifdef HAVE_LIBAIO_H
 #include <libaio.h>
@@ -38,25 +38,25 @@ int TST_TOTAL = 1;
 
 /*
  * cleanup()
- * 	performs all the ONE TIME cleanup for this test at completion or
- * 	premature exit
+ * performs all the ONE TIME cleanup for this test at completion or
+ * premature exit
  */
 void
 cleanup(void)
 {
-	/*
-	 * print timing status if that option was specified
-	 * print errno log if that option was specified
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing status if that option was specified
+  * print errno log if that option was specified
+  */
+ TEST_CLEANUP;
 
-	tst_exit();
+ tst_exit();
 }
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void 
+void
 setup()
 {
     /* capture signals */
@@ -65,84 +65,84 @@ setup()
     /* Pause if that option was specified */
     TEST_PAUSE;
 
-}	/* End setup() */
+} /* End setup() */
 
 int
 main(int argc, char** argv)
 {
-	int   lc;			/* loop counter */
-	char *msg;			/* parse_opts() return message */
+ int   lc;   /* loop counter */
+ char *msg;   /* parse_opts() return message */
 
-	io_context_t ctx;
-	long expected_return;
-
-	
-	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-		/*NOTREACHED*/
-	}
-
-	setup();
-
-	/* Check for looping state if -i option is given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
-
-		/*
-		  DESCRIPTION
-		  io_cancel attempts to cancel an asynchronous I/O operation  previously
-		  submitted  with  the io_submit system call.  ctx_id is the AIO context
-		  ID of the operation to be cancelled.  If the AIO context is found, the
-		  event  will be cancelled and then copied into the memory pointed to by
-		  result without being placed into the completion queue.
-
-		  RETURN VALUE
-		  io_cancel returns 0 on success; otherwise, it returns one of  the  er-
-		  rors listed in the "Errors" section.
-
-		  ERRORS
-		  EINVAL The AIO context specified by ctx_id is invalid.
-
-		  EFAULT One of the data structures points to invalid data.
-		*/
-		expected_return = -EFAULT;
-		TEST(io_cancel( ctx, NULL, NULL ));
+ io_context_t ctx;
+ long expected_return;
 
 
-		if (TEST_RETURN == 0) {
-			tst_resm(TFAIL, "call succeeded unexpectedly");
-			continue;
-		}
+ if ((msg  parse_opts(argc, argv, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+  /*NOTREACHED*/
+ }
+
+ setup();
+
+ /* Check for looping state if -i option is given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
+
+  /*
+    DESCRIPTION
+    io_cancel attempts to cancel an asynchronous I/O operation  previously
+    submitted  with  the io_submit system call.  ctx_id is the AIO context
+    ID of the operation to be cancelled.  If the AIO context is found, the
+    event  will be cancelled and then copied into the memory pointed to by
+    result without being placed into the completion queue.
+
+    RETURN VALUE
+    io_cancel returns 0 on success; otherwise, it returns one of  the  er-
+    rors listed in the "Errors" section.
+
+    ERRORS
+    EINVAL The AIO context specified by ctx_id is invalid.
+
+    EFAULT One of the data structures points to invalid data.
+  */
+  expected_return  -EFAULT;
+  TEST(io_cancel( ctx, NULL, NULL ));
 
 
-		if (TEST_RETURN == expected_return) {
-			tst_resm(TPASS, "expected failure - "
-				 "returned value = %d : %s", TEST_RETURN,
-				 strerror(-1 * TEST_RETURN));
-		} else {
-			tst_resm(TFAIL, "unexpected returned value - %d - "
-				 "expected %d", TEST_RETURN,
-				 expected_return);
-		}
+  if (TEST_RETURN  0) {
+   tst_resm(TFAIL, "call succeeded unexpectedly");
+   continue;
+  }
 
-		/*
-		  EAGAIN The iocb specified was not cancelled.
 
-		  ENOSYS io_cancel is not implemented on this architecture.
-		*/
-		/* Crackerjack has a test case for ENOSYS. But Testing for ENOSYS
-		   is not meaningful for LTP, I think.
-		   -- Masatake */
-	}
-	cleanup();
+  if (TEST_RETURN  expected_return) {
+   tst_resm(TPASS, "expected failure - "
+     "returned value  %d : %s", TEST_RETURN,
+     strerror(-1 * TEST_RETURN));
+  } else {
+   tst_resm(TFAIL, "unexpected returned value - %d - "
+     "expected %d", TEST_RETURN,
+     expected_return);
+  }
 
-	return 0;
+  /*
+    EAGAIN The iocb specified was not cancelled.
+
+    ENOSYS io_cancel is not implemented on this architecture.
+  */
+  /* Crackerjack has a test case for ENOSYS. But Testing for ENOSYS
+     is not meaningful for LTP, I think.
+     -- Masatake */
+ }
+ cleanup();
+
+ return 0;
 }
 #else
 int main(int argc, char **argv)
 {
-	tst_resm(TCONF, "System doesn't support execution of the test");
-	return 0;
+ tst_resm(TCONF, "System doesn't support execution of the test");
+ return 0;
 }
 #endif

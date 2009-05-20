@@ -23,7 +23,7 @@
  * Test Description:
  *  Verify that,
  *   1) getpriority() sets errno to ESRCH  if no process was located
- *	was located for 'which' and 'who' arguments.
+ * was located for 'which' and 'who' arguments.
  *   2) getpriority() sets errno to EINVAL if 'which' argument was
  *      not one of PRIO_PROCESS, PRIO_PGRP, or PRIO_USER.
  *
@@ -38,13 +38,13 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return=-1)
- *   	if errno set == expected errno
- *   		Issue sys call fails with expected return value and errno.
- *   	Otherwise,
- *		Issue sys call fails with unexpected errno.
+ *   Check return code, if system call failed (return-1)
+ *   if errno set  expected errno
+ *  Issue sys call fails with expected return value and errno.
  *   Otherwise,
- *	Issue sys call returns unexpected value.
+ *  Issue sys call fails with unexpected errno.
+ *   Otherwise,
+ * Issue sys call returns unexpected value.
  *
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
@@ -53,13 +53,13 @@
  *  getpriority02 [-c n] [-e] [-i n] [-I x] [-p x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -e   : Turn on errno logging.
- *	       -i n : Execute test n times.
- *	       -I x : Execute test for x seconds.
- *	       -P x : Pause for x seconds between iterations.
- *	       -t   : Turn on syscall timing.
+ *        -i n : Execute test n times.
+ *        -I x : Execute test for x seconds.
+ *        -P x : Pause for x seconds between iterations.
+ *        -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS:
  *  None.
@@ -79,130 +79,130 @@
 #include "test.h"
 #include "usctest.h"
 
-#define INVAL_PID	-1
+#define INVAL_PID -1
 #define INVAL_FLAG      -1
 
-char *TCID="getpriority02";	/* Test program identifier.    */
-int TST_TOTAL=4;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-int exp_enos[]={EINVAL, ESRCH, 0};
+char *TCID"getpriority02"; /* Test program identifier.    */
+int TST_TOTAL4;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
+int exp_enos[]{EINVAL, ESRCH, 0};
 
-struct test_case_t {		/* test case struct. to hold ref. test cond's*/
-	int pro_which;
-	uid_t pro_uid;
-	char *desc;
-	int exp_errno;
-} Test_cases[] = {
-	{ INVAL_FLAG, 0, "Invalid 'which' value specified", EINVAL },
-	{ PRIO_PROCESS, INVAL_PID, "Invalid 'who' value specified", ESRCH },
-	{ PRIO_PGRP, INVAL_PID, "Invalid 'who' value specified", ESRCH },
-	{ PRIO_USER, INVAL_PID, "Invalid 'who' value specified", ESRCH },
-	{ 0, 0, NULL, 0 }
+struct test_case_t {  /* test case struct. to hold ref. test cond's*/
+ int pro_which;
+ uid_t pro_uid;
+ char *desc;
+ int exp_errno;
+} Test_cases[]  {
+ { INVAL_FLAG, 0, "Invalid 'which' value specified", EINVAL },
+ { PRIO_PROCESS, INVAL_PID, "Invalid 'who' value specified", ESRCH },
+ { PRIO_PGRP, INVAL_PID, "Invalid 'who' value specified", ESRCH },
+ { PRIO_USER, INVAL_PID, "Invalid 'who' value specified", ESRCH },
+ { 0, 0, NULL, 0 }
 };
 
-void setup();			/* Main setup function of test */
-void cleanup();			/* cleanup function for the test */
+void setup();   /* Main setup function of test */
+void cleanup();   /* cleanup function for the test */
 
 int
 main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-	int ind;		/* counter variable for test case looping */
-	char *test_desc; 	/* test specific error message */
-	int which;		/* process priority category */
-	uid_t who;		/* process uid of the test process */
-    
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *) NULL) {
-		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
+ int ind;  /* counter variable for test case looping */
+ char *test_desc; /* test specific error message */
+ int which;  /* process priority category */
+ uid_t who;  /* process uid of the test process */
 
-	/* Perform global setup for test */
-	setup();
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(ac, av, (option_t *) NULL, NULL);
+ if (msg ! (char *) NULL) {
+  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+  tst_exit();
+ }
 
-	/* set the expected errnos... */
-	TEST_EXP_ENOS(exp_enos);
+ /* Perform global setup for test */
+ setup();
 
-	/* Check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
+ /* set the expected errnos... */
+ TEST_EXP_ENOS(exp_enos);
 
-		for (ind = 0; ind < TST_TOTAL; ind++) {
-			which = Test_cases[ind].pro_which;
-			who = Test_cases[ind].pro_uid;
-			test_desc = Test_cases[ind].desc;
+ /* Check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* Reset Tst_count in case we are looping. */
+  Tst_count0;
 
-			if (who == 0) {
-				/* Get the actual uid of the process */
-				who = getuid();
-			}
+  for (ind  0; ind < TST_TOTAL; ind++) {
+   which  Test_cases[ind].pro_which;
+   who  Test_cases[ind].pro_uid;
+   test_desc  Test_cases[ind].desc;
 
-			/* 
-			 * Invoke getpriority with the specified
-			 * 'which' and 'who' arguments and verify
-			 * that it fails with expected errno.
-			 */
-			TEST(getpriority(which, who));
+   if (who  0) {
+    /* Get the actual uid of the process */
+    who  getuid();
+   }
 
-			/* check return code from getpriority(2) */
-			if (TEST_RETURN < 0) {
-				TEST_ERROR_LOG(TEST_ERRNO);
-				if (TEST_ERRNO == Test_cases[ind].exp_errno) {
-					tst_resm(TPASS, "getpriority(2) fails, "
-						 "%s, errno:%d",
-						 test_desc, TEST_ERRNO);
-				} else {
-					tst_resm(TFAIL, "getpriority() fails, "
-						 "%s, errno:%d, expected errno:"
-						 "%d", test_desc, TEST_ERRNO,
-						 Test_cases[ind].exp_errno);
-				}
-			} else {
-				tst_resm(TFAIL, "getpriority() returned %d, "
-					 "expected -1, errno:%d", TEST_RETURN,
-					 Test_cases[ind].exp_errno);
-			}
-		}	/* End of TEST CASE LOOPING. */
+   /*
+    * Invoke getpriority with the specified
+    * 'which' and 'who' arguments and verify
+    * that it fails with expected errno.
+    */
+   TEST(getpriority(which, who));
 
-	}	/* End for TEST_LOOPING */
+   /* check return code from getpriority(2) */
+   if (TEST_RETURN < 0) {
+    TEST_ERROR_LOG(TEST_ERRNO);
+    if (TEST_ERRNO  Test_cases[ind].exp_errno) {
+     tst_resm(TPASS, "getpriority(2) fails, "
+       "%s, errno:%d",
+       test_desc, TEST_ERRNO);
+    } else {
+     tst_resm(TFAIL, "getpriority() fails, "
+       "%s, errno:%d, expected errno:"
+       "%d", test_desc, TEST_ERRNO,
+       Test_cases[ind].exp_errno);
+    }
+   } else {
+    tst_resm(TFAIL, "getpriority() returned %d, "
+      "expected -1, errno:%d", TEST_RETURN,
+      Test_cases[ind].exp_errno);
+   }
+  } /* End of TEST CASE LOOPING. */
 
-	/* Call cleanup() to undo setup done for the test. */
-	cleanup();
+ } /* End for TEST_LOOPING */
 
-	/*NOTREACHED*/
-	return(0);
-}	/* End main */
+ /* Call cleanup() to undo setup done for the test. */
+ cleanup();
+
+ /*NOTREACHED*/
+ return(0);
+} /* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void 
+void
 setup()
 {
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
  */
-void 
+void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

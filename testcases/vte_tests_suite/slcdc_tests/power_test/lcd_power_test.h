@@ -12,13 +12,13 @@ Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
 THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 Freescale Semiconductor, Inc.
-     
+
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-I. Semenchukov/smng001c      21/09/2004     TLSbo41672   Initial version 
+I. Semenchukov/smng001c      21/09/2004     TLSbo41672   Initial version
 L.Delaspre/rc149c            15/12/2004     TLSbo44058   Invalid argument issue investigation
 E.Gromazina					19.08.2005	TLSbo53875	renaming test
 
@@ -67,7 +67,7 @@ struct pixel
     int xres;                   /* X resolution in pixels          */
     int yres;                   /* Y resolution in pixels          */
     unsigned char   r_color;    /* Red color value to be written   */
-    struct px_field r_field;    
+    struct px_field r_field;
     unsigned char   g_color;    /* Green color value to be written */
     struct px_field g_field;
     unsigned char   b_color;    /* Blue color value to be written  */

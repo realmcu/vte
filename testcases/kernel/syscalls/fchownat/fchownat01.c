@@ -20,8 +20,8 @@
  *      fchownat01.c
  *
  * DESCRIPTION
- *	This test case will verify basic function of fchownat
- *	added by kernel 2.6.16 or up.
+ * This test case will verify basic function of fchownat
+ * added by kernel 2.6.16 or up.
  *
  * USAGE:  <for command-line>
  * fchownat01 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-p]
@@ -35,7 +35,7 @@
  *      -t   : Turn on syscall timing.
  *
  * Author
- *	Yi Yang <yyangcdl@cn.ibm.com> 
+ * Yi Yang <yyangcdl@cn.ibm.com>
  *
  * History
  *      08/23/2006      Created first by Yi Yang <yyangcdl@cn.ibm.com>
@@ -65,9 +65,9 @@ void setup();
 void cleanup();
 void setup_every_copy();
 
-char *TCID = "fchownat01";	/* Test program identifier.    */
-int TST_TOTAL = TEST_CASES;	/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID  "fchownat01"; /* Test program identifier.    */
+int TST_TOTAL  TEST_CASES; /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 char pathname[256];
 char testfile[256];
 char testfile2[256];
@@ -75,22 +75,22 @@ char testfile3[256];
 int dirfd, fd, ret;
 int fds[TEST_CASES];
 char *filenames[TEST_CASES];
-int expected_errno[TEST_CASES] = { 0, 0, ENOTDIR, EBADF, EINVAL, 0 };
-int flags[TEST_CASES] = { 0, 0, 0, 0, 9999, 0 };
+int expected_errno[TEST_CASES]  { 0, 0, ENOTDIR, EBADF, EINVAL, 0 };
+int flags[TEST_CASES]  { 0, 0, 0, 0, 9999, 0 };
 uid_t uid;
 gid_t gid;
 
 int myfchownat(int dirfd, const char *filename, uid_t owner, gid_t group,
-	       int flags)
+        int flags)
 {
-	return syscall(__NR_fchownat, dirfd, filename, owner, group, flags);
+ return syscall(__NR_fchownat, dirfd, filename, owner, group, flags);
 }
 
 int main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-	int i;
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
+ int i;
 
        /* Disable test if the version of the kernel is less than 2.6.16 */
         if((tst_kvercmp(2,6,16)) < 0)
@@ -101,111 +101,111 @@ int main(int ac, char **av)
           }
 
 
-	/***************************************************************
-	 * parse standard options
-	 ***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+ /***************************************************************
+  * parse standard options
+  ***************************************************************/
+ if ((msg  parse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *)NULL)
+  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 
-	/***************************************************************
-	 * perform global setup for test
-	 ***************************************************************/
-	setup();
+ /***************************************************************
+  * perform global setup for test
+  ***************************************************************/
+ setup();
 
-	/***************************************************************
-	 * check looping state if -c option given
-	 ***************************************************************/
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		setup_every_copy();
+ /***************************************************************
+  * check looping state if -c option given
+  ***************************************************************/
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  setup_every_copy();
 
-		/* reset Tst_count in case we are looping. */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping. */
+  Tst_count  0;
 
-		/* 
-		 * Call fchownat 
-		 */
-		for (i = 0; i < TST_TOTAL; i++) {
-			TEST(myfchownat
-				 (fds[i], filenames[i], uid, gid, flags[i]));
+  /*
+   * Call fchownat
+   */
+  for (i  0; i < TST_TOTAL; i++) {
+   TEST(myfchownat
+     (fds[i], filenames[i], uid, gid, flags[i]));
 
-			/* check return code */
-			if (TEST_ERRNO == expected_errno[i]) {
+   /* check return code */
+   if (TEST_ERRNO  expected_errno[i]) {
 
-				/***************************************************************
-				 * only perform functional verification if flag set (-f not given)
-				 ***************************************************************/
-				if (STD_FUNCTIONAL_TEST) {
-					/* No Verification test, yet... */
-					tst_resm(TPASS,
-						 "fchownat() returned the expected  errno %d: %s",
-						 TEST_ERRNO,
-						 strerror(TEST_ERRNO));
-				}
-			} else {
-				TEST_ERROR_LOG(TEST_ERRNO);
-				tst_resm(TFAIL,
-					 "fchownat() Failed, errno=%d : %s",
-					 TEST_ERRNO, strerror(TEST_ERRNO));
-			}
-		}
+    /***************************************************************
+     * only perform functional verification if flag set (-f not given)
+     ***************************************************************/
+    if (STD_FUNCTIONAL_TEST) {
+     /* No Verification test, yet... */
+     tst_resm(TPASS,
+       "fchownat() returned the expected  errno %d: %s",
+       TEST_ERRNO,
+       strerror(TEST_ERRNO));
+    }
+   } else {
+    TEST_ERROR_LOG(TEST_ERRNO);
+    tst_resm(TFAIL,
+      "fchownat() Failed, errno%d : %s",
+      TEST_ERRNO, strerror(TEST_ERRNO));
+   }
+  }
 
-	}			/* End for TEST_LOOPING */
+ }   /* End for TEST_LOOPING */
 
-	/***************************************************************
-	 * cleanup and exit
-	 ***************************************************************/
-	cleanup();
+ /***************************************************************
+  * cleanup and exit
+  ***************************************************************/
+ cleanup();
 
-	return (0);
-}				/* End main */
+ return (0);
+}    /* End main */
 
 void setup_every_copy()
 {
-	/* Initialize test dir and file names */
-	sprintf(pathname, "fchownattestdir%d", getpid());
-	sprintf(testfile, "fchownattestfile%d.txt", getpid());
-	sprintf(testfile2, "/tmp/fchownattestfile%d.txt", getpid());
-	sprintf(testfile3, "fchownattestdir%d/fchownattestfile%d.txt", getpid(),
-		getpid());
+ /* Initialize test dir and file names */
+ sprintf(pathname, "fchownattestdir%d", getpid());
+ sprintf(testfile, "fchownattestfile%d.txt", getpid());
+ sprintf(testfile2, "/tmp/fchownattestfile%d.txt", getpid());
+ sprintf(testfile3, "fchownattestdir%d/fchownattestfile%d.txt", getpid(),
+  getpid());
 
-	ret = mkdir(pathname, 0700);
-	if (ret < 0) {
-		perror("mkdir: ");
-		exit(-1);
-	}
+ ret  mkdir(pathname, 0700);
+ if (ret < 0) {
+  perror("mkdir: ");
+  exit(-1);
+ }
 
-	dirfd = open(pathname, O_DIRECTORY);
-	if (dirfd < 0) {
-		perror("open: ");
-		exit(-1);
-	}
+ dirfd  open(pathname, O_DIRECTORY);
+ if (dirfd < 0) {
+  perror("open: ");
+  exit(-1);
+ }
 
-	fd = open(testfile, O_CREAT | O_RDWR, 0600);
-	if (fd < 0) {
-		perror("open: ");
-		exit(-1);
-	}
+ fd  open(testfile, O_CREAT | O_RDWR, 0600);
+ if (fd < 0) {
+  perror("open: ");
+  exit(-1);
+ }
 
-	fd = open(testfile2, O_CREAT | O_RDWR, 0600);
-	if (fd < 0) {
-		perror("open: ");
-		exit(-1);
-	}
+ fd  open(testfile2, O_CREAT | O_RDWR, 0600);
+ if (fd < 0) {
+  perror("open: ");
+  exit(-1);
+ }
 
-	fd = open(testfile3, O_CREAT | O_RDWR, 0600);
-	if (fd < 0) {
-		perror("open: ");
-		exit(-1);
-	}
+ fd  open(testfile3, O_CREAT | O_RDWR, 0600);
+ if (fd < 0) {
+  perror("open: ");
+  exit(-1);
+ }
 
-	fds[0] = fds[1] = fds[4] = dirfd;
-	fds[2] = fd;
-	fds[3] = 100;
-	fds[5] = AT_FDCWD;
+ fds[0]  fds[1]  fds[4]  dirfd;
+ fds[2]  fd;
+ fds[3]  100;
+ fds[5]  AT_FDCWD;
 
-	filenames[0] = filenames[2] = filenames[3] = filenames[4] =
-	    filenames[5] = testfile;
-	filenames[1] = testfile2;
+ filenames[0]  filenames[2]  filenames[3]  filenames[4] 
+     filenames[5]  testfile;
+ filenames[1]  testfile2;
 }
 
 /***************************************************************
@@ -213,39 +213,39 @@ void setup_every_copy()
  ***************************************************************/
 void setup()
 {
-	/* Set uid and gid */
-	uid = geteuid();
-	gid = getegid();
+ /* Set uid and gid */
+ uid  geteuid();
+ gid  getegid();
 
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
-}				/* End setup() */
+ /* Pause if that option was specified */
+ TEST_PAUSE;
+}    /* End setup() */
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
+ *  completion or premature exit.
  ***************************************************************/
 void cleanup()
 {
-	/* Remove them */
-	char tmppathname[256];
-	strcpy(tmppathname, pathname);
+ /* Remove them */
+ char tmppathname[256];
+ strcpy(tmppathname, pathname);
 
-	close (fd);
-	unlink(testfile);
-	unlink(testfile2);
-	unlink(testfile3);
-	rmdir(pathname);
+ close (fd);
+ unlink(testfile);
+ unlink(testfile2);
+ unlink(testfile3);
+ rmdir(pathname);
 
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+ /* exit with return code appropriate for results */
+ tst_exit();
+}    /* End cleanup() */

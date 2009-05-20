@@ -746,7 +746,7 @@ void identify(__u16 * id_supplied, const char *devname)
                         if (like_std < 3)
                                 like_std = 3;
                 }
-                /* Figure out what standard the device is using if it hasn't told us.  If we know the 
+                /* Figure out what standard the device is using if it hasn't told us.  If we know the
                 * std, check if the device is using any of the words from the next level up.  It
                 * happens. */
                 if (like_std < std)
@@ -1068,7 +1068,7 @@ void identify(__u16 * id_supplied, const char *devname)
                 }
                 if ((like_std > 3) && (val[CMDS_SUPP_1] & 0x0008))
                 {
-                        /* We print out elsewhere whether the APM feature is enabled or not.  If it's 
+                        /* We print out elsewhere whether the APM feature is enabled or not.  If it's
                         * not enabled, let's not repeat the info; just print nothing here. */
                         printf("\tAdvanced power management level: ");
                         if ((val[ADV_PWR] & 0xFF00) == 0x4000)

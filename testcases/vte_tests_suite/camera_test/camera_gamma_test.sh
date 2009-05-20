@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake Huang/-----             camera gamma     N/A          Initial version
-# 
+#
 ###################################################################################################
 
 
@@ -66,10 +66,10 @@ return $RC
 
 # Function:     test_case_01
 # Description   - Test if camera gamma brightness ok
-#  
+#
 test_case_01()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="camera_gamma_brightness_test"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -85,11 +85,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 /unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ow 240 -oh 320 -r 4 -fr 30 -t 10 -v 1 || exit $RC
 
 for ROT in 0 1 2 3 4 5 6 7; do
-	/unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ow 240 -oh 184 -r $ROT -fr 30 -fg -t 5 -v 1 || exit $RC
+ /unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ow 240 -oh 184 -r $ROT -fr 30 -fg -t 5 -v 1 || exit $RC
 done
 
 for POS in 0 4 8 16 32 64 128; do
-	/unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ot $POS -ol $POS -ow 80 -oh 60 -fr 30 -fg -t 5 -v 1 || exit $RC
+ /unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ot $POS -ol $POS -ow 80 -oh 60 -fr 30 -fg -t 5 -v 1 || exit $RC
 done
 
 RC=0
@@ -100,10 +100,10 @@ return $RC
 
 # Function:     test_case_02
 # Description   - Test if camera gamma saturation ok
-#  
+#
 test_case_02()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="camera_gamma_saturation_test"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -119,11 +119,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 /unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ow 240 -oh 320 -r 4 -fr 30 -t 10 -v 2 || exit $RC
 
 for ROT in 0 1 2 3 4 5 6 7; do
-	/unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ow 240 -oh 184 -r $ROT -fr 30 -fg -t 5 -v 2 || exit $RC
+ /unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ow 240 -oh 184 -r $ROT -fr 30 -fg -t 5 -v 2 || exit $RC
 done
 
 for POS in 0 4 8 16 32 64 128; do
-	/unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ot $POS -ol $POS -ow 80 -oh 60 -fr 30 -fg -t 5 -v 2 || exit $RC
+ /unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ot $POS -ol $POS -ow 80 -oh 60 -fr 30 -fg -t 5 -v 2 || exit $RC
 done
 
 RC=0
@@ -132,10 +132,10 @@ return $RC
 
 # Function:     test_case_03
 # Description   - Test if camera gamma red balance ok
-#  
+#
 test_case_03()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="camera_gamma_redbalance_test"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -151,11 +151,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 /unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ow 240 -oh 320 -r 4 -fr 30 -t 10 -v 3 || exit $RC
 
 for ROT in 0 1 2 3 4 5 6 7; do
-	/unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ow 240 -oh 184 -r $ROT -fr 30 -fg -t 5 -v 3 || exit $RC
+ /unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ow 240 -oh 184 -r $ROT -fr 30 -fg -t 5 -v 3 || exit $RC
 done
 
 for POS in 0 4 8 16 32 64 128; do
-	/unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ot $POS -ol $POS -ow 80 -oh 60 -fr 30 -fg -t 5 -v 3 || exit $RC
+ /unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ot $POS -ol $POS -ow 80 -oh 60 -fr 30 -fg -t 5 -v 3 || exit $RC
 done
 
 RC=0
@@ -165,10 +165,10 @@ return $RC
 
 # Function:     test_case_04
 # Description   - Test if camera gamma blue balance ok
-#  
+#
 test_case_04()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="camera_gamma_bluebalance_test"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -184,11 +184,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 /unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ow 240 -oh 320 -r 4 -fr 30 -t 10 -v 4 || exit $RC
 
 for ROT in 0 1 2 3 4 5 6 7; do
-	/unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ow 240 -oh 184 -r $ROT -fr 30 -fg -t 5 -v 4 || exit $RC
+ /unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ow 240 -oh 184 -r $ROT -fr 30 -fg -t 5 -v 4 || exit $RC
 done
 
 for POS in 0 4 8 16 32 64 128; do
-	/unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ot $POS -ol $POS -ow 80 -oh 60 -fr 30 -fg -t 5 -v 4 || exit $RC
+ /unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ot $POS -ol $POS -ow 80 -oh 60 -fr 30 -fg -t 5 -v 4 || exit $RC
 done
 
 RC=0
@@ -198,10 +198,10 @@ return $RC
 
 # Function:     test_case_05
 # Description   - Test if camera gamma black level ok
-#  
+#
 test_case_05()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="camera_gamma_blacklevel_test"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -217,11 +217,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 /unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ow 240 -oh 320 -r 4 -fr 30 -t 10 -v 5 || exit $RC
 
 for ROT in 0 1 2 3 4 5 6 7; do
-	/unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ow 240 -oh 184 -r $ROT -fr 30 -fg -t 5 -v 5 || exit $RC
+ /unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ow 240 -oh 184 -r $ROT -fr 30 -fg -t 5 -v 5 || exit $RC
 done
 
 for POS in 0 4 8 16 32 64 128; do
-	/unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ot $POS -ol $POS -ow 80 -oh 60 -fr 30 -fg -t 5 -v 5 || exit $RC
+ /unit_tests/mxc_v4l2_overlay.out  -iw 640 -ih 480 -ot $POS -ol $POS -ow 80 -oh 60 -fr 30 -fg -t 5 -v 5 || exit $RC
 done
 
 RC=0
@@ -238,14 +238,14 @@ RC=0
 if [ $# -ne 1 ]
 then
 echo "usage $0 <1/2/3/4/5>"
-exit 1 
+exit 1
 fi
 
 setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC 
+  test_case_01 || exit $RC
   ;;
 2)
   test_case_02 || exit $RC

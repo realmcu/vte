@@ -11,7 +11,7 @@ typedef void (*(*bsd_signal_test)(int, void (*)(int)))(int);
 
 int dummyfcn (void)
 {
-	bsd_signal_test dummyvar;
-	dummyvar=bsd_signal;
-	return 0;
+ bsd_signal_test dummyvar;
+ dummyvarbsd_signal;
+ return 0;
 }

@@ -19,37 +19,37 @@
 
 /*
  * NAME
- *	setpriority02.c
+ * setpriority02.c
  *
  * DESCRIPTION
- *	setpriority02 - test for an expected failure by trying to raise
- *			the priority for the test process while not having
- *			permissions to do so.
+ * setpriority02 - test for an expected failure by trying to raise
+ *   the priority for the test process while not having
+ *   permissions to do so.
  *
  * ALGORITHM
- *	loop if that option was specified
- *	issue the system call
- *	check the errno value
- *	  issue a PASS message if we get EACCESS - errno 13
- *	otherwise, the tests fails
- *	  issue a FAIL message
- *	  break any remaining tests
- *	  call cleanup
+ * loop if that option was specified
+ * issue the system call
+ * check the errno value
+ *   issue a PASS message if we get EACCESS - errno 13
+ * otherwise, the tests fails
+ *   issue a FAIL message
+ *   break any remaining tests
+ *   call cleanup
  *
  * USAGE:  <for command-line>
  *  setpriority02 [-c n] [-e] [-i n] [-I x] [-p x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -e   : Turn on errno logging.
- *	       -i n : Execute test n times.
- *	       -I x : Execute test for x seconds.
- *	       -P x : Pause for x seconds between iterations.
- *	       -t   : Turn on syscall timing.
+ *        -i n : Execute test n times.
+ *        -I x : Execute test for x seconds.
+ *        -P x : Pause for x seconds between iterations.
+ *        -t   : Turn on syscall timing.
  *
  * HISTORY
- *	03/2001 - Written by Wayne Boyer
+ * 03/2001 - Written by Wayne Boyer
  *
  * RESTRICTIONS
- *	none
+ * none
  */
 
 #include "test.h"
@@ -63,64 +63,64 @@
 void cleanup(void);
 void setup(void);
 
-char *TCID= "setpriority02";
-int TST_TOTAL = 1;
+char *TCID "setpriority02";
+int TST_TOTAL  1;
 extern int Tst_count;
-char nobody_uid[] = "nobody";
+char nobody_uid[]  "nobody";
 struct passwd *ltpuser;
 
-int exp_enos[] = {EACCES, 0};
+int exp_enos[]  {EACCES, 0};
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
-	int new_val = -2;
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
+ int new_val  -2;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	setup();			/* global setup */
+ setup();   /* global setup */
 
-	/* The following loop checks looping state if -i option given */
+ /* The following loop checks looping state if -i option given */
 
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		/*
-		 * Try to raise the priority of this process from a default of
-		 * 0 to a new value of -2.  This should give an EACCES error.
-		 */
-	
-		/* call the system call with the TEST() macro */
-		TEST(setpriority(PRIO_PROCESS, 0, new_val));
-	
-		if (TEST_RETURN == 0) {
-	                tst_resm(TFAIL, "call failed to produce expected error "
-				 "- errno = %d - %s", TEST_ERRNO,
-				 strerror(TEST_ERRNO));
-			continue;
-		}
-	
-		TEST_ERROR_LOG(TEST_ERRNO);
+  /*
+   * Try to raise the priority of this process from a default of
+   * 0 to a new value of -2.  This should give an EACCES error.
+   */
 
-		switch (TEST_ERRNO) {
-		case EACCES:
-			tst_resm(TPASS, "expected failure - errno = %d - %s",
-				 TEST_ERRNO, strerror(TEST_ERRNO));
-			break;
-		default:
-			tst_resm(TFAIL, "call failed to produce expected error "
-				 "- errno = %d - %s", TEST_ERRNO,
-				 strerror(TEST_ERRNO));
-		}
-	}
-	cleanup();
+  /* call the system call with the TEST() macro */
+  TEST(setpriority(PRIO_PROCESS, 0, new_val));
 
-	/*NOTREACHED*/
+  if (TEST_RETURN  0) {
+                 tst_resm(TFAIL, "call failed to produce expected error "
+     "- errno  %d - %s", TEST_ERRNO,
+     strerror(TEST_ERRNO));
+   continue;
+  }
+
+  TEST_ERROR_LOG(TEST_ERRNO);
+
+  switch (TEST_ERRNO) {
+  case EACCES:
+   tst_resm(TPASS, "expected failure - errno  %d - %s",
+     TEST_ERRNO, strerror(TEST_ERRNO));
+   break;
+  default:
+   tst_resm(TFAIL, "call failed to produce expected error "
+     "- errno  %d - %s", TEST_ERRNO,
+     strerror(TEST_ERRNO));
+  }
+ }
+ cleanup();
+
+ /*NOTREACHED*/
 
   return(0);
 
@@ -133,11 +133,11 @@ void
 setup(void)
 {
 /* Switch to nobody user for correct error code collection */
-        if (geteuid() != 0) {
+        if (geteuid() ! 0) {
                 tst_brkm(TBROK, tst_exit, "Test must be run as root");
         }
-         ltpuser = getpwnam(nobody_uid);
-         if (seteuid(ltpuser->pw_uid) == -1) {
+         ltpuser  getpwnam(nobody_uid);
+         if (seteuid(ltpuser->pw_uid)  -1) {
                 tst_resm(TINFO, "setreuid failed to "
                          "to set the effective uid to %d",
                          ltpuser->pw_uid);
@@ -145,29 +145,29 @@ setup(void)
          }
 
 
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Set up the expected error numbers for -e option */
-	TEST_EXP_ENOS(exp_enos);
+ /* Set up the expected error numbers for -e option */
+ TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- * 	       or premature exit.
+ *        or premature exit.
  */
 void
 cleanup(void)
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

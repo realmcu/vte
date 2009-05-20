@@ -31,26 +31,26 @@
 /* invalid ioctls */
 
 static void do_invalid_ioctl(int f, int request) {
-	int ret;
+ int ret;
 
-	ret = ioctl(f, request, NULL);
+ ret  ioctl(f, request, NULL);
 
-	CU_ASSERT_EQUAL(ret, -1);
-	CU_ASSERT_EQUAL(errno, EINVAL);
+ CU_ASSERT_EQUAL(ret, -1);
+ CU_ASSERT_EQUAL(errno, EINVAL);
 }
 
 void test_invalid_ioctl_1() {
-	do_invalid_ioctl(get_video_fd(), _IO(0, 0));
+ do_invalid_ioctl(get_video_fd(), _IO(0, 0));
 }
 
 void test_invalid_ioctl_2() {
-	do_invalid_ioctl(get_video_fd(), _IO(0xFF, 0xFF));
+ do_invalid_ioctl(get_video_fd(), _IO(0xFF, 0xFF));
 }
 
 void test_invalid_ioctl_3() {
-	do_invalid_ioctl(get_video_fd(), _IO('v', 0xFF));
+ do_invalid_ioctl(get_video_fd(), _IO('v', 0xFF));
 }
 
 void test_invalid_ioctl_4() {
-	do_invalid_ioctl(get_video_fd(), _IO('V', 0xFF));
+ do_invalid_ioctl(get_video_fd(), _IO('V', 0xFF));
 }

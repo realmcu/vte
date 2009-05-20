@@ -19,123 +19,123 @@
 
 setup()
 {
-	RC=0				# Return code from commands.
+ RC=0    # Return code from commands.
 
-	if [ -z "$LTPTMP" ] && [ -z "$TMPBASE" ]
-	then
-		LTPTMP="/tmp"
-	else
-		LTPTMP="$TMPBASE"
-	fi
+ if [ -z "$LTPTMP" ] && [ -z "$TMPBASE" ]
+ then
+  LTPTMP="/tmp"
+ else
+  LTPTMP="$TMPBASE"
+ fi
 
-	export TPM_TMPFILE="$LTPTMP/tst_tpm.err"
-	rm -f $TPM_TMPFILE 2>&1
+ export TPM_TMPFILE="$LTPTMP/tst_tpm.err"
+ rm -f $TPM_TMPFILE 2>&1
 
-	# Set known password values
-	if [ -z "$OWN_PWD" ]
-	then
-		export OWN_PWD="OWN PWD"
-	fi
-	if [ -z "$SRK_PWD" ]
-	then
-		export SRK_PWD="SRK PWD"
-	fi
-	if [ -z "$NEW_OWN_PWD" ]
-	then
-		export NEW_OWN_PWD="NEW OWN PWD"
-	fi
-	if [ -z "$NEW_SRK_PWD" ]
-	then
-		export NEW_SRK_PWD="NEW SRK PWD"
-	fi
+ # Set known password values
+ if [ -z "$OWN_PWD" ]
+ then
+  export OWN_PWD="OWN PWD"
+ fi
+ if [ -z "$SRK_PWD" ]
+ then
+  export SRK_PWD="SRK PWD"
+ fi
+ if [ -z "$NEW_OWN_PWD" ]
+ then
+  export NEW_OWN_PWD="NEW OWN PWD"
+ fi
+ if [ -z "$NEW_SRK_PWD" ]
+ then
+  export NEW_SRK_PWD="NEW SRK PWD"
+ fi
 
-	tst_resm TINFO "INIT: Inititalizing tests."
+ tst_resm TINFO "INIT: Inititalizing tests."
 
-	which tpm_changeownerauth 1>$TPM_TMPFILE 2>&1 || RC=$?
-	if [ $RC -ne 0 ]
-	then
-		tst_brk TBROK $TPM_TMPFILE NULL \
-			"Setup: tpm_changeownerauth command does not exist. Reason:"
-		return $RC
-	fi
+ which tpm_changeownerauth 1>$TPM_TMPFILE 2>&1 || RC=$?
+ if [ $RC -ne 0 ]
+ then
+  tst_brk TBROK $TPM_TMPFILE NULL \
+   "Setup: tpm_changeownerauth command does not exist. Reason:"
+  return $RC
+ fi
 
-	return $RC
+ return $RC
 }
 
 test01()
 {
-	RC=0				# Return value from commands
-	export TCID=tpm_changeauth01	# Test ID
-	export TST_COUNT=1		# Test number
+ RC=0    # Return value from commands
+ export TCID=tpm_changeauth01 # Test ID
+ export TST_COUNT=1  # Test number
 
-	tpm_changeauth_tests_exp01.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
-	if [ $RC -eq 0 ]
-	then
-		tst_resm TPASS "'tpm_changeauth -o' passed."
-		RC=0
-	else
-		tst_res TFAIL $TPM_TMPFILE "'tpm_changeauth -o' failed."
-		RC=1
-	fi
-	return $RC
+ tpm_changeauth_tests_exp01.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
+ if [ $RC -eq 0 ]
+ then
+  tst_resm TPASS "'tpm_changeauth -o' passed."
+  RC=0
+ else
+  tst_res TFAIL $TPM_TMPFILE "'tpm_changeauth -o' failed."
+  RC=1
+ fi
+ return $RC
 }
 
 test02()
 {
-	RC=0				# Return value from commands
-	export TCID=tpm_changeauth02	# Test ID
-	export TST_COUNT=2		# Test number
+ RC=0    # Return value from commands
+ export TCID=tpm_changeauth02 # Test ID
+ export TST_COUNT=2  # Test number
 
-	tpm_changeauth_tests_exp02.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
-	if [ $RC -eq 0 ]
-	then
-		tst_resm TPASS "'tpm_changeauth -s' passed."
-		RC=0
-	else
-		tst_res TFAIL $TPM_TMPFILE "'tpm_changeauth -s' failed."
-		RC=1
-	fi
-	return $RC
+ tpm_changeauth_tests_exp02.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
+ if [ $RC -eq 0 ]
+ then
+  tst_resm TPASS "'tpm_changeauth -s' passed."
+  RC=0
+ else
+  tst_res TFAIL $TPM_TMPFILE "'tpm_changeauth -s' failed."
+  RC=1
+ fi
+ return $RC
 }
 
 test03()
 {
-	RC=0				# Return value from commands
-	export TCID=tpm_changeauth03	# Test ID
-	export TST_COUNT=3		# Test number
+ RC=0    # Return value from commands
+ export TCID=tpm_changeauth03 # Test ID
+ export TST_COUNT=3  # Test number
 
-	tpm_changeauth_tests_exp03.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
-	if [ $RC -eq 0 ]
-	then
-		tst_resm TPASS "'tpm_changeauth -s -o' passed."
-		RC=0
-	else
-		tst_res TFAIL $TPM_TMPFILE "'tpm_changeauth -s -o' failed."
-		RC=1
-	fi
-	return $RC
+ tpm_changeauth_tests_exp03.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
+ if [ $RC -eq 0 ]
+ then
+  tst_resm TPASS "'tpm_changeauth -s -o' passed."
+  RC=0
+ else
+  tst_res TFAIL $TPM_TMPFILE "'tpm_changeauth -s -o' failed."
+  RC=1
+ fi
+ return $RC
 }
 
 cleanup()
 {
-	rm -f $TPM_TMPFILE 2>&1
+ rm -f $TPM_TMPFILE 2>&1
 }
 
-# Function:	main
+# Function: main
 #
-# Description:	- Execute all tests, report results.
+# Description: - Execute all tests, report results.
 #
-# Exit:		- zero on success
-# 		- non-zero on failure.
+# Exit:  - zero on success
+# - non-zero on failure.
 
-TFAILCNT=0			# Set TFAILCNT to 0, increment on failure.
-RC=0				# Return code from tests.
+TFAILCNT=0   # Set TFAILCNT to 0, increment on failure.
+RC=0    # Return code from tests.
 
-export TCID=tpm_changeauth	# Test ID
-export TST_TOTAL=3		# Total numner of tests in this file.
-export TST_COUNT=0		# Initialize identifier
+export TCID=tpm_changeauth # Test ID
+export TST_TOTAL=3  # Total numner of tests in this file.
+export TST_COUNT=0  # Initialize identifier
 
-setup || exit $RC		# Exit if initializing testcases fails.
+setup || exit $RC  # Exit if initializing testcases fails.
 
 test01 || TFAILCNT=$(($TFAILCNT+1))
 test02 || TFAILCNT=$(($TFAILCNT+1))

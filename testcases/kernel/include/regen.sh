@@ -25,50 +25,50 @@ cat << EOF > ${output}
 static void cleanup(void);
 
 #define syscall(NR, ...) ({ \\
-	int __ret; \\
-	if (NR == 0) { \\
-		tst_brkm(TCONF, cleanup, "syscall " #NR " not supported on your arch"); \\
-		errno = ENOSYS; \\
-		__ret = -1; \\
-	} else \\
-		__ret = syscall(NR, ##__VA_ARGS__); \\
-	__ret; \\
+ int __ret; \\
+ if (NR == 0) { \\
+  tst_brkm(TCONF, cleanup, "syscall " #NR " not supported on your arch"); \\
+  errno = ENOSYS; \\
+  __ret = -1; \\
+ } else \\
+  __ret = syscall(NR, ##__VA_ARGS__); \\
+ __ret; \\
 })
 EOF
 
 for arch in `cat order` ; do
-	echo -n "Generating data for arch $arch ... "
+ echo -n "Generating data for arch $arch ... "
 
-	echo "" >> ${output}
-	echo "#ifdef __${arch}__" >> ${output}
-	while read line ; do
-		set -- $line
-		nr=$1
-		shift
-		if [ -z "$*" ] ; then
-			echo "invalid line found"
-			exit 1
-		fi
-		cat <<-EOF >> ${output}
-		# ifndef $nr
-		#  define $nr $*
-		# endif
-		EOF
-	done < ${arch}.in
-	echo "#endif" >> ${output}
-	echo "" >> ${output}
+ echo "" >> ${output}
+ echo "#ifdef __${arch}__" >> ${output}
+ while read line ; do
+  set -- $line
+  nr=$1
+  shift
+  if [ -z "$*" ] ; then
+   echo "invalid line found"
+   exit 1
+  fi
+  cat <<-EOF >> ${output}
+  # ifndef $nr
+  #  define $nr $*
+  # endif
+  EOF
+ done < ${arch}.in
+ echo "#endif" >> ${output}
+ echo "" >> ${output}
 
-	echo "OK!"
+ echo "OK!"
 done
 
 echo -n "Generating stub list ... "
 echo "" >> ${output}
 for nr in $(awk '{print $1}' *.in | sort -u) ; do
-	cat <<-EOF >> ${output}
-	# ifndef $nr
-	#  define $nr 0
-	# endif
-	EOF
+ cat <<-EOF >> ${output}
+ # ifndef $nr
+ #  define $nr 0
+ # endif
+ EOF
 done
 echo "" >> ${output}
 echo "OK!"

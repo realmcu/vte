@@ -8,12 +8,12 @@
  * Copyright 2002 Albert Cahalan
  */
 
-#include <string.h>		/* for strcmp */
-#include <stdio.h>		/* for parse error output */
+#include <string.h>  /* for strcmp */
+#include <stdio.h>  /* for parse error output */
 
-#include "readproc.h"	/* for proc_t */
+#include "readproc.h" /* for proc_t */
 
-#include "compare.h"	/* for this code */
+#include "compare.h" /* for this code */
 
 
 /*
@@ -209,7 +209,7 @@ const char *parse_sort_opt(const char* opt) {
         if (*opt == '-' || *opt == '+') {
             if (*opt == '-')
                 next_dir = -1;
-	    opt++;
+     opt++;
             continue;
         }
         for (i = 0; cmp[i].letter; i++)
@@ -224,9 +224,9 @@ const char *parse_sort_opt(const char* opt) {
             return "Unknown sort key.";
         } else {
 #ifdef DEBUG
-	    fprintf(stderr,
-		    "sort level %d: key %s, direction % d\n",
-		    sort_depth, cmp[i].name, next_dir);
+     fprintf(stderr,
+      "sort level %d: key %s, direction % d\n",
+      sort_depth, cmp[i].name, next_dir);
 #endif
             sort_function[sort_depth] = (cmp_t)cmp[i].fun;
             sort_direction[sort_depth++] = next_dir;
@@ -248,7 +248,7 @@ const char *parse_long_sort(const char* opt) {
             continue;
         }
         more_keys = ((comma=index(opt,',')) != NULL);
-	                      /* keys are ',' delimited */
+                       /* keys are ',' delimited */
         if (more_keys)
             *comma='\0';      /* terminate for strcmp() */
         for(i = 0; cmp[i].letter; ++i)
@@ -263,9 +263,9 @@ const char *parse_long_sort(const char* opt) {
             return "Unknown sort key.";
         } else {
 #ifdef DEBUG
-	    fprintf(stderr,
-		    "sort level %d: key %s, direction % d\n",
-		    sort_depth, cmp[i].name, next_dir);
+     fprintf(stderr,
+      "sort level %d: key %s, direction % d\n",
+      sort_depth, cmp[i].name, next_dir);
 #endif
             sort_function[sort_depth] = (cmp_t)cmp[i].fun;
             sort_direction[sort_depth++] = next_dir;

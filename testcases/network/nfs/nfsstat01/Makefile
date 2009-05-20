@@ -1,4 +1,4 @@
-all: 
+all:
 
 install:
 	ln -f nfsstat01 ../../../bin

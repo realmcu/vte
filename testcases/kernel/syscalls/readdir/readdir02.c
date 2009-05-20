@@ -47,16 +47,16 @@
  *             -t   : Turn on syscall timing.
  *
  * NOTE
- *	The POSIX standard says:
- *	  The readdir() function may fail if:
- *	  [EBADF] The dirp argument does not refer to an open directory stream.	
- *	  (Note that readdir() is not _required_ to fail in this case.)
+ * The POSIX standard says:
+ *   The readdir() function may fail if:
+ *   [EBADF] The dirp argument does not refer to an open directory stream.
+ *   (Note that readdir() is not _required_ to fail in this case.)
  *
  * HISTORY
  *      04/2002 - Written by Jacky Malcles
  *
  *      06/2003 - Added code to catch SIGSEGV and return TCONF.
- *		Robbie Williamson<robbiew@us.ibm.com>
+ *  Robbie Williamson<robbiew@us.ibm.com>
  *
  * RESTRICTIONS
  *      none
@@ -78,14 +78,14 @@
 #include "test.h"
 #include "usctest.h"
 
-void setup(); 
+void setup();
 void cleanup();
 
-char *TCID="readdir02";		/* Test program identifier.    */
-int TST_TOTAL=1;    		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID"readdir02";  /* Test program identifier.    */
+int TST_TOTAL1;   /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 
-int exp_enos[]={EBADF, 0};
+int exp_enos[]{EBADF, 0};
 
 
 /***********************************************************************
@@ -94,14 +94,14 @@ int exp_enos[]={EBADF, 0};
 int
 main(int ac, char **av)
 {
-    int lc;		/* loop counter */
-    char *msg;		/* message returned from parse_opts */
+    int lc;  /* loop counter */
+    char *msg;  /* message returned from parse_opts */
     DIR *test_dir;
     struct dirent *dptr;
 
 
         /* parse standard options */
-        if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+        if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
                 tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
         }
 
@@ -115,44 +115,44 @@ main(int ac, char **av)
     TEST_EXP_ENOS(exp_enos);
 
     /***************************************************************
-     * check looping state 
+     * check looping state
      ***************************************************************/
     /* TEST_LOOPING() is a macro that will make sure the test continues
-     * looping according to the standard command line args. 
+     * looping according to the standard command line args.
      */
-    for (lc=0; TEST_LOOPING(lc); lc++) {
+    for (lc0; TEST_LOOPING(lc); lc++) {
 
-	/* reset Tst_count in case we are looping. */
-	Tst_count=0;
+ /* reset Tst_count in case we are looping. */
+ Tst_count0;
 
-        if ((test_dir = opendir(".")) == NULL) {
-           tst_resm(TFAIL, "opendir(\".\") Failed, errno=%d : %s",
+        if ((test_dir  opendir("."))  NULL) {
+           tst_resm(TFAIL, "opendir(\".\") Failed, errno%d : %s",
                             errno, strerror(errno));
         } else { if (closedir(test_dir) < 0) {
-		tst_resm(TFAIL, "closedir(\".\") Failed, errno=%d : %s",
-			    errno, strerror(errno));
-		} else {
-                dptr=readdir(test_dir);
+  tst_resm(TFAIL, "closedir(\".\") Failed, errno%d : %s",
+       errno, strerror(errno));
+  } else {
+                dptrreaddir(test_dir);
                 switch(errno) {
                 case EBADF:
-                        tst_resm(TPASS, "expected failure - errno = %d : %s",
+                        tst_resm(TPASS, "expected failure - errno  %d : %s",
                                  errno, strerror(errno));
                         break;
                 default:
-		   	if (dptr != NULL){
+     if (dptr ! NULL){
                         tst_brkm(TFAIL, cleanup, "call failed with an "
                                  "unexpected error - %d : %s", errno,
                                  strerror(errno));
-			} else {
-			tst_resm(TINFO,"readdir() is not _required_ to fail, "
-				 "errno = %d  ", errno);
-			}
+   } else {
+   tst_resm(TINFO,"readdir() is not _required_ to fail, "
+     "errno  %d  ", errno);
+   }
                 }
                 }
 
         }
 
-    }	/* End for TEST_LOOPING */
+    } /* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -160,34 +160,34 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-}	/* End main */
+} /* End main */
 
 void
 sigsegv_handler(int sig)
 {
         tst_resm(TCONF, "This system's implementation of closedir() will not allow this test to execute properly.");
-	cleanup();
+ cleanup();
 }
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void 
+void
 setup()
 {
 
     struct sigaction act;
-    
+
     /* You will want to enable some signal handling so you can capture
-     * unexpected signals like SIGSEGV. 
+     * unexpected signals like SIGSEGV.
      */
     tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-    act.sa_handler = sigsegv_handler;
+    act.sa_handler  sigsegv_handler;
     (void)sigaction(SIGSEGV, &act, NULL);
 
     /* Pause if that option was specified */
-	TEST_PAUSE;
+ TEST_PAUSE;
 
     /* If you are doing any file work, you should use a temporary directory.  We
      * provide tst_tmpdir() which will create a uniquely named temporary
@@ -200,9 +200,9 @@ setup()
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
+ *  completion or premature exit.
  ***************************************************************/
-void 
+void
 cleanup()
 {
     /*
@@ -212,7 +212,7 @@ cleanup()
     TEST_CLEANUP;
 
     /* If you use a temporary directory, you need to be sure you remove it. Use
-     * tst_rmdir() to do it automatically.  
+     * tst_rmdir() to do it automatically.
      */
     tst_rmdir();
 

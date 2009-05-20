@@ -6,22 +6,22 @@
 #======================================================================
 #
 #                             Freescale SemiconductorConfidential Proprietary
-#                   (c) Copyright 2004, Freescale Semiconductor, Inc.  All rights reserved.  
-#            
-#Presence of a copyright notice is not an acknowledgement of publication.  
-#This software file listing contains information of Freescale Semiconductor, Inc. that is of a confidential and 
-#proprietary nature and any viewing or use of this file is prohibited without specific written 
+#                   (c) Copyright 2004, Freescale Semiconductor, Inc.  All rights reserved.
+#
+#Presence of a copyright notice is not an acknowledgement of publication.
+#This software file listing contains information of Freescale Semiconductor, Inc. that is of a confidential and
+#proprietary nature and any viewing or use of this file is prohibited without specific written
 #permission from Freescale Semiconductor, Inc.
-     
+
 #=====================================================================================
 #Revision History:
-#                       Modification	Tracking
-# Author		        Date		    Number		Description of Changes
-#------------------	    ------------	----------	------------------------------
-#V. Becker/rc023c	    31/08/2004	    TLSbo40417	Initial version 
-#V. Becker/rc023c   	27/09/2004	    TLSbo40417	Inspection TLS941 
-#V. Becker/rc023c	    25/10/2004	    TLSbo44073	Minor changes 
-#V.HALABUDA/HLBV001	    12/04/2005	    TLSbo40417	control, mandate and limit IrDA stack
+#                       Modification Tracking
+# Author          Date      Number  Description of Changes
+#------------------     ------------ ---------- ------------------------------
+#V. Becker/rc023c     31/08/2004     TLSbo40417 Initial version
+#V. Becker/rc023c  27/09/2004     TLSbo40417 Inspection TLS941
+#V. Becker/rc023c     25/10/2004     TLSbo44073 Minor changes
+#V.HALABUDA/HLBV001     12/04/2005     TLSbo40417 control, mandate and limit IrDA stack
 #Rakesh S Joshi/R65956  19/02/2007      TLSbo87888  Added irxfer
 
 #Set path variable to add vte binaries
@@ -33,12 +33,12 @@ tst_resm()
 }
 
 # Function:     setup
-#        
+#
 # Description:  - Check if required commands exits
 #               - Export global variables
 #               - Check if required config files exits
 #               - Create temporary files and directories
-#   
+#
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
 setup()
@@ -195,9 +195,9 @@ IrDA_FIR_send()
 }
 
 # Function:     main
-# 
+#
 # Description:  - Execute all tests, exit with test status.
-#               
+#
 # Exit:         - zero on success
 #               - non-zero on failure.
 #

@@ -18,12 +18,12 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA    ##
 ##                                                                            ##
 ################################################################################
-#                                                                              
+#
 # File:           file_test.sh
 #
 # Description: This program tests the file command. The tests are aimed at
 #              testing if the file command can recognize some of the commonly
-#              used file formats like, tar, tar.gz, rpm, C, ASCII, ELF etc. 
+#              used file formats like, tar, tar.gz, rpm, C, ASCII, ELF etc.
 #
 # Author:      Manoj Iyer, manjo@mail.utexas.edu
 #
@@ -42,20 +42,20 @@
 export TST_TOTAL=10                # Number of tests in this testcase
 
 if [ -z "$LTPTMP" -a -z "$TMPBASE" ]
-then 
+then
     LTPTMP=/tmp/
 else
-	LTPTMP=$TMPBASE
+ LTPTMP=$TMPBASE
 fi
 
 if [ -z "$LTPBIN" -a -z "$LTPROOT" ]
 then
     LTPBIN=./
 else
-	LTPBIN=$LTPROOT/testcases/bin/
+ LTPBIN=$LTPROOT/testcases/bin/
 fi
 
-# set return code RC variable to 0, it will be set with a non-zero return code 
+# set return code RC variable to 0, it will be set with a non-zero return code
 # in case of error. Set TFAILCNT to 0, increment if there occures a failure.
 
 TFAILCNT=0
@@ -70,7 +70,7 @@ export TST_COUNT=7
 $LTPBIN/tst_resm TINFO "TEST #1: file commad recogizes ASCII text files"
 
 cat > $LTPTMP/test_file.txt <<EOF
-This is a text file 
+This is a text file
 to test file command.
 EOF
 
@@ -235,7 +235,7 @@ then
         $LTPBIN/tst_res TFAIL $LTPTMP/file.out \
              "file: Failed to Recognize C program text correctly. Reason:"
         TFAILCNT=$(( $TFAILCNT+1 ))
-        
+
     fi
 else
     $LTPBIN/tst_resm TFAIL "file: Failed to recognize C programi text"
@@ -351,14 +351,14 @@ then
     $LTPBIN/tst_brk TBROK $LTPTMP/file.out NULL \
         "file: tar failed unexpectedly. Reason:"
 fi
-    
+
 gzip -f $LTPTMP/files.tar
 if [ $? -ne 0 ]
 then
     $LTPBIN/tst_brk TBROK $LTPTMP/file.out NULL \
         "file: gzip failed unexpectedly. Reason:"
 fi
-    
+
 file $LTPTMP/files.tar.gz > $LTPTMP/file.out 2>&1
 if [ $? -eq 0 ]
 then
@@ -391,11 +391,11 @@ export TST_COUNT=9
 
 $LTPBIN/tst_resm TINFO "TEST #9: file command recognizes RPM files"
 if [ -f /etc/redhat-release ]; then
-	bDIR=/usr/src/redhat
-	bCMD=rpmbuild
+ bDIR=/usr/src/redhat
+ bCMD=rpmbuild
 else
-	bDIR=/usr/src/packages
-	bCMD=rpmbuild
+ bDIR=/usr/src/packages
+ bCMD=rpmbuild
 fi
 
 rpmversion=`rpm --version | awk -F ' ' '{print $3}' | cut -d '.' -f1 `
@@ -414,7 +414,7 @@ Name: cprog
 Version: 0.0.7
 Release: 3
 $gpl
-Group: LillB test case 
+Group: LillB test case
 Source: ./cprog.c
 BuildRoot: /var/tmp/%{name}-buildroot
 
@@ -486,7 +486,7 @@ then
         $LTPBIN/tst_res TFAIL $LTPTMP/file.out \
              "file: Failed to Recognize RPM file. Reason:"
         TFAILCNT=$(( $TFAILCNT+1 ))
-        
+
     fi
 else
     $LTPBIN/tst_resm TFAIL "file: Failed to recognize RPM file"

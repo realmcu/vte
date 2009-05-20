@@ -4,7 +4,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ##############################################################################
 #
 #   @file   Makefile
@@ -19,7 +19,7 @@
 #
 #Author (core ID)      Date         CR Number    Description of Changes
 #-------------------   ----------   ----------   ------------------------------
-#D.Simakov / smkd001c  30/08/2005   TLSbo53250   Initial version 
+#D.Simakov / smkd001c  30/08/2005   TLSbo53250   Initial version
 #
 ##############################################################################
 

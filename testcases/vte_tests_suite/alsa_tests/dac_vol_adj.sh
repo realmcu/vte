@@ -18,18 +18,18 @@
 #                       Modification     Tracking
 # Author                    Date          Number    Description of Changes
 #--------------------   ------------    ----------  ---------------------
-# Spring Zhang           06/08/2008       n/a      Initial ver. 
+# Spring Zhang           06/08/2008       n/a      Initial ver.
 # Spring                 05/09/2008       n/a      Add mx51 support
 # Spring                 26/09/2008       n/a      Fix some volume 0 bug
-# Spring                 27/10/2008       n/a      Add mx35&mx37 support  
+# Spring                 27/10/2008       n/a      Add mx35&mx37 support
 # Spring                 28/11/2008       n/a      Modify COPYRIGHT header
 #############################################################################
-# Portability:   ARM sh 
-# File Name:     dac_vol_adj.sh   
+# Portability:   ARM sh
+# File Name:     dac_vol_adj.sh
 # Total Tests:   1
 # Test Strategy: play audio streams with volume up and down
-# 
-# Use command "./dac_vol_adj.sh [audio stream]" 
+#
+# Use command "./dac_vol_adj.sh [audio stream]"
 # Tested on : i.MX51&35&37
 # Support: i.MX31&MX51&MX35&MX37
 
@@ -91,14 +91,14 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup() 
+cleanup()
 {
     RC=0
     echo "clean up environment..."
     if [ $platform = "mx31" ]
     then
         amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 50 >/dev/null
-    elif [ $platform == "mx35" ] || [ $platform = "mx51" ]  #sgtl5k
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
     then
         amixer -c 0 cset name='Headphone Volume' 120 > /dev/null
     elif [ $platform == "mx37" ]
@@ -120,20 +120,20 @@ adj_vol()
 {
     RC=0    # Return value from setup, and test functions.
 
-    platfm.sh || platform=$?
-    if [ $platform -eq 67 ]
+    platfm.sh || platfm=$?
+    if [ $platfm -eq 67 ]
     then
-        RC=$platform
+        RC=$platfm
         return $RC
     fi
-    platform="mx$platform"
+    platform="mx$platfm"
 
     tst_resm TINFO "Test #1: play the audio stream, please check the HEADPHONE,\
  hear if the voice is from MIN(0) to MAX(MX31:100, MX51:128)."
     if [ $platform = "mx31" ]
     then
         amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 0
-    elif [ $platform == "mx35" ] || [ $platform = "mx51" ]  #sgtl5k
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
     then
         #Min:0, Max:127
         amixer -c 0 cset name='Headphone Volume' 0
@@ -152,7 +152,7 @@ adj_vol()
     if [ $platform = "mx31" ]
     then
         amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 10
-    elif [ $platform == "mx35" ] || [ $platform = "mx51" ]  #sgtl5k
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
     then
         amixer -c 0 cset name='Headphone Volume' 30
     elif [ $platform == "mx37" ]
@@ -169,7 +169,7 @@ adj_vol()
     if [ $platform = "mx31" ]
     then
         amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 30
-    elif [ $platform == "mx35" ] || [ $platform = "mx51" ]  #sgtl5k
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
     then
         amixer -c 0 cset name='Headphone Volume' 60
     elif [ $platform == "mx37" ]
@@ -186,7 +186,7 @@ adj_vol()
     if [ $platform = "mx31" ]
     then
         amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 50
-    elif [ $platform == "mx35" ] || [ $platform = "mx51" ]  #sgtl5k
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
     then
         amixer -c 0 cset name='Headphone Volume' 90
     elif [ $platform == "mx37" ]
@@ -203,7 +203,7 @@ adj_vol()
     if [ $platform = "mx31" ]
     then
         amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 80
-    elif [ $platform == "mx35" ] || [ $platform = "mx51" ]  #sgtl5k
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
     then
         amixer -c 0 cset name='Headphone Volume' 110
     elif [ $platform == "mx37" ]
@@ -220,7 +220,7 @@ adj_vol()
     if [ $platform = "mx31" ]
     then
         amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 100
-    elif [ $platform == "mx35" ] || [ $platform = "mx51" ]  #sgtl5k
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
     then
         amixer -c 0 cset name='Headphone Volume' 127
     elif [ $platform == "mx37" ]
@@ -249,7 +249,7 @@ adj_vol()
     if [ $platform = "mx31" ]
     then
         amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 100
-    elif [ $platform == "mx35" ] || [ $platform = "mx51" ]  #sgtl5k
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
     then
         amixer -c 0 cset name='Headphone Volume' 127
     elif [ $platform == "mx37" ]
@@ -266,7 +266,7 @@ adj_vol()
     if [ $platform = "mx31" ]
     then
         amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 80
-    elif [ $platform == "mx35" ] || [ $platform = "mx51" ]  #sgtl5k
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
     then
         amixer -c 0 cset name='Headphone Volume' 110
     elif [ $platform == "mx37" ]
@@ -283,7 +283,7 @@ adj_vol()
     if [ $platform = "mx31" ]
     then
         amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 50
-    elif [ $platform == "mx35" ] || [ $platform = "mx51" ]  #sgtl5k
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
     then
         amixer -c 0 cset name='Headphone Volume' 90 
     elif [ $platform == "mx37" ]
@@ -300,7 +300,7 @@ adj_vol()
     if [ $platform = "mx31" ]
     then
         amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 30
-    elif [ $platform == "mx35" ] || [ $platform = "mx51" ]  #sgtl5k
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
     then
         amixer -c 0 cset name='Headphone Volume' 60
     elif [ $platform == "mx37" ]
@@ -317,7 +317,7 @@ adj_vol()
     if [ $platform = "mx31" ]
     then
         amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 15
-    elif [ $platform == "mx35" ] || [ $platform = "mx51" ]  #sgtl5k
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
     then
         amixer -c 0 cset name='Headphone Volume' 30
     elif [ $platform == "mx37" ]
@@ -334,7 +334,7 @@ adj_vol()
     if [ $platform = "mx31" ]
     then
         amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 0
-    elif [ $platform == "mx35" ] || [ $platform = "mx51" ]  #sgtl5k
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
     then
         amixer -c 0 cset name='Headphone Volume' 0
     elif [ $platform == "mx37" ]

@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   pmic_audio_main.c
 
         @brief  Main file for PMIC audio driver test
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -19,31 +19,31 @@ Author/core ID                  Date          Number    Description of Changes
 S.Bezrukov/SBAZR1C           31/08/2005     TLSbo52697  Initial version
 A.Ozerov/b00320              08/08/2006     TLSbo73745  Review version(in accordance to L26_1_19 release).
 
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Verification Test Environment Include Files */
 #include "pmic_audio_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 int     num_arg,
         n_num = 0;
 char   *n_copt;
@@ -54,13 +54,13 @@ option_t options[] =
         {NULL, NULL, NULL}      /* NULL required to end array */
 };
 
-/*==================================================================================================
+/*======================
                                         GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Extern Global Variables */
 extern int Tst_count;   /* counter for tst_xxx routines.  */
 extern char *TESTDIR;   /* temporary dir created by tst_tmpdir(...) */
@@ -69,19 +69,19 @@ extern char *TESTDIR;   /* temporary dir created by tst_tmpdir(...) */
 char   *TCID = "pmic_testapp_audio";   /* test program identifier.  */
 int     TST_TOTAL = 5;  /* total number of tests in this file.  */
 
-/*==================================================================================================
+/*======================
                                     GLOBAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void    setup(void);
 void    help(void);
 void    cleanup(void);
 int     main(int argc, char **argv);
 
-/*==================================================================================================
+/*======================
                                     LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
-/*================================================================================================*/
-/*===== setup =====*/
+======================*/
+/*====================*/
+/*= setup =*/
 /**
 @brief Performs all one time setup for this test. This function is typically used to capture
        signals, create temporary dirs and temporary files that may be used in the course of this test.
@@ -90,7 +90,7 @@ int     main(int argc, char **argv);
 
 @return None.
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
         int     VT_rv = TFAIL;
@@ -106,8 +106,8 @@ void setup(void)
         return;
 }
 
-/*================================================================================================*/
-/*===== cleanup =====*/
+/*====================*/
+/*= cleanup =*/
 /**
 @brief This function performs all one time clean up for this test on successful completion,
        premature exit or failure. Closes all temporary files, removes all temporary directories exits
@@ -117,7 +117,7 @@ void setup(void)
 
 @return None.
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
         /* VTE : Actions needed to get a stable target environment */
@@ -133,8 +133,8 @@ void cleanup(void)
         tst_exit();
 }
 
-/*================================================================================================*/
-/*===== main =====*/
+/*====================*/
+/*= main =*/
 /**
 @brief Entry point to this test-case. It parses all the command line inputs, calls the global
        setup and executes the test. It logs the test status and results appropriately using the LTP API's
@@ -147,7 +147,7 @@ void cleanup(void)
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
         int     VT_rv = TFAIL;
@@ -203,8 +203,8 @@ int main(int argc, char **argv)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== help =====*/
+/*====================*/
+/*= help =*/
 /**
 @brief  Print help information.
 
@@ -212,28 +212,28 @@ int main(int argc, char **argv)
 
 @return None.
 */
-/*================================================================================================*/
+/*====================*/
 void help(void)
 {
 #ifdef CONFIG_MXC_PMIC_SC55112
-        printf("=================================================\n");
+        printf("=============\n");
         printf("SC55112 audio driver test options\n");
         printf("\t  '-T 0'     Test OUTPUT functions\n");
         printf("\t  '-T 1'     Test INPUT functions\n");
         printf("\t  '-T 2'     Test SDAC functions\n");
         printf("\t  '-T 3'     Test CODEC functions\n");
         printf("\t  '-T 4'     Test BUS functions\n");
-        printf("=================================================\n");
+        printf("=============\n");
 #endif
 
 #ifdef CONFIG_MXC_PMIC_MC13783
-        printf("=================================================\n");
+        printf("=============\n");
         printf("MC13783 audio driver test options\n");
         printf("\t  '-T 0'     Test all MC13783 audio\n");
         printf("\t  '-T 1'     Test output audio functions of MC13783\n");
         printf("\t  '-T 2'     Test input audio functions of MC13783\n");
         printf("\t  '-T 3'     Test STDAC audio functions of MC13783\n");
         printf("\t  '-T 4'     Test VOICE CODEC audio functions of MC13783\n");
-        printf("=================================================\n");
+        printf("=============\n");
 #endif
 }

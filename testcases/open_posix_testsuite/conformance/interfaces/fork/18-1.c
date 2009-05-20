@@ -52,22 +52,22 @@
 /******************************   Test framework   *****************************************/
 /********************************************************************************************/
 #include "testfrmw.h"
- #include "testfrmw.c" 
+ #include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
+ * UNRESOLVED(ret, descr);
  *    where descr is a description of the error and ret is an int (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -88,111 +88,111 @@ int notified;
 /* Notification routine */
 void notification( union sigval sv )
 {
-	if ( sv.sival_int != SIGUSR1 )
-	{
-		output( "Got signal %d, expected %d\n", sv.sival_int, SIGUSR1 );
-		UNRESOLVED( 1, "Unexpected notification" );
-	}
+ if ( sv.sival_int ! SIGUSR1 )
+ {
+  output( "Got signal %d, expected %d\n", sv.sival_int, SIGUSR1 );
+  UNRESOLVED( 1, "Unexpected notification" );
+ }
 
-	notified = ( int ) getpid();
+ notified  ( int ) getpid();
 }
 
 /* The main test function. */
 int main( int argc, char * argv[] )
 {
-	int ret, status;
-	pid_t child, ctl;
+ int ret, status;
+ pid_t child, ctl;
 
-	timer_t tmr;
+ timer_t tmr;
 
-	struct sigevent se;
+ struct sigevent se;
 
-	struct itimerspec it;
+ struct itimerspec it;
 
-	/* Initialize output */
-	output_init();
+ /* Initialize output */
+ output_init();
 
-	notified = 0;
+ notified  0;
 
-	/* Create the timer */
-	se.sigev_notify = SIGEV_THREAD;
-	se.sigev_signo = 0;
-	se.sigev_value.sival_int = SIGUSR1;
-	se.sigev_notify_function = &notification;
-	se.sigev_notify_attributes = NULL; /* default detached thread */
+ /* Create the timer */
+ se.sigev_notify  SIGEV_THREAD;
+ se.sigev_signo  0;
+ se.sigev_value.sival_int  SIGUSR1;
+ se.sigev_notify_function  &notification;
+ se.sigev_notify_attributes  NULL; /* default detached thread */
 
-	ret = timer_create( CLOCK_REALTIME, &se, &tmr );
+ ret  timer_create( CLOCK_REALTIME, &se, &tmr );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( errno, "Failed to create a timer" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( errno, "Failed to create a timer" );
+ }
 
-	/* Arm the timer */
-	it.it_interval.tv_nsec = 0;
+ /* Arm the timer */
+ it.it_interval.tv_nsec  0;
 
-	it.it_interval.tv_sec = 0;
+ it.it_interval.tv_sec  0;
 
-	it.it_value.tv_sec = 0;
+ it.it_value.tv_sec  0;
 
-	it.it_value.tv_nsec = 500000000; /* 0.5 sec */
+ it.it_value.tv_nsec  500000000; /* 0.5 sec */
 
-	ret = timer_settime( tmr, 0, &it, NULL );
+ ret  timer_settime( tmr, 0, &it, NULL );
 
-	/* Create the child */
-	child = fork();
+ /* Create the child */
+ child  fork();
 
-	if ( child == ( pid_t ) - 1 )
-	{
-		UNRESOLVED( errno, "Failed to fork" );
-	}
+ if ( child  ( pid_t ) - 1 )
+ {
+  UNRESOLVED( errno, "Failed to fork" );
+ }
 
-	/* child */
-	if ( child == ( pid_t ) 0 )
-	{
+ /* child */
+ if ( child  ( pid_t ) 0 )
+ {
 
-		sleep( 1 );
+  sleep( 1 );
 
-		if ( notified != 0 )
-		{
-			if ( notified == ( int ) getpid() )
-			{
-				FAILED( "Per-Process Timer was inherited in child" );
-			}
-			else
-			{
-				output( "Notification occured before the child forked" );
-			}
-		}
+  if ( notified ! 0 )
+  {
+   if ( notified  ( int ) getpid() )
+   {
+    FAILED( "Per-Process Timer was inherited in child" );
+   }
+   else
+   {
+    output( "Notification occured before the child forked" );
+   }
+  }
 
-		/* We're done */
-		exit( PTS_PASS );
-	}
+  /* We're done */
+  exit( PTS_PASS );
+ }
 
-	/* Parent joins the child */
-	ctl = waitpid( child, &status, 0 );
+ /* Parent joins the child */
+ ctl  waitpid( child, &status, 0 );
 
-	if ( ctl != child )
-	{
-		UNRESOLVED( errno, "Waitpid returned the wrong PID" );
-	}
+ if ( ctl ! child )
+ {
+  UNRESOLVED( errno, "Waitpid returned the wrong PID" );
+ }
 
-	if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) != PTS_PASS ) )
-	{
-		FAILED( "Child exited abnormally" );
-	}
+ if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) ! PTS_PASS ) )
+ {
+  FAILED( "Child exited abnormally" );
+ }
 
-	if ( notified != ( int ) getpid() )
-	{
-		output( "Notified value: %d\n", notified );
-		UNRESOLVED( -1, "No notification occured -- per process timers do not work?" );
-	}
+ if ( notified ! ( int ) getpid() )
+ {
+  output( "Notified value: %d\n", notified );
+  UNRESOLVED( -1, "No notification occured -- per process timers do not work?" );
+ }
 
-	/* Test passed */
+ /* Test passed */
 #if VERBOSE > 0
-	output( "Test passed\n" );
+ output( "Test passed\n" );
 
 #endif
-	PASSED;
+ PASSED;
 }
 

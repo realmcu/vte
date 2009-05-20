@@ -12,13 +12,13 @@ Copyright (C) 2005, Freescale Semiconductor, Inc. All Rights Reserved
 THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 Freescale Semiconductor, Inc.
-     
+
 ====================================================================================================
 Revision History:
                                             Modification     Tracking
 Author (core ID)                         Date          Number         Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-I. Semenchukov/smng001c      16/09/2004     TLSbo41672   Initial version 
+I. Semenchukov/smng001c      16/09/2004     TLSbo41672   Initial version
 E.Gromazina                          22/08/2005     TLSbo53875   Test enhancement
 E.Gromazina                          21/10/2005     TLSbo56740    Update to Epson LCD
 ==================================================================================================*/
@@ -29,7 +29,7 @@ E.Gromazina                          21/10/2005     TLSbo56740    Update to Epso
 #ifdef __cplusplus
 extern "C"{
 #endif
-        
+
 /*==================================================================================================
 INCLUDE FILES
         ==================================================================================================*/
@@ -68,14 +68,14 @@ struct pixel
         int xres;                   /* X resolution in pixels          */
         int yres;                   /* Y resolution in pixels          */
         unsigned char   r_color;    /* Red color value to be written   */
-        struct px_field r_field;    
+        struct px_field r_field;
         unsigned char   g_color;    /* Green color value to be written */
         struct px_field g_field;
         unsigned char   b_color;    /* Blue color value to be written  */
         struct px_field b_field;
         unsigned char   trans;    /* Transparency value   */
         struct px_field t_field;
-        int line_length;            /* length of a line in px  */ 
+        int line_length;            /* length of a line in px  */
 };
 
 /*==================================================================================================
@@ -100,7 +100,7 @@ unsigned char *draw_px(unsigned char *where, struct pixel *p);
 int           ask_user(void);
 void          sig_hand(int sig);
 void          help(void);
-        
+
 #ifdef __cplusplus
 }
 #endif

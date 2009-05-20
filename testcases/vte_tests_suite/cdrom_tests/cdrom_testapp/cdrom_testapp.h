@@ -19,7 +19,7 @@
 #define CDROM_DRIVER_TESTAPP_H
 
 #ifdef __cplusplus
-extern "C"{ 
+extern "C"{
 #endif
 
 /*==================================================================================================
@@ -53,7 +53,7 @@ int VT_cdrom_driver_test(char *devname, int testcase, int volume);
 
 
 #ifdef __cplusplus
-} 
+}
 #endif
 
 #endif /* CDROM_DRIVER_TESTAPP_H */

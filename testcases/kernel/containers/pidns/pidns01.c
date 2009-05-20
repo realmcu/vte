@@ -42,7 +42,7 @@
 *
 * History:
 *
-* FLAG DATE     	NAME           		DESCRIPTION
+* FLAG DATE     NAME          DESCRIPTION
 * 27/12/07  RISHIKESH K RAJAK <risrajak@in.ibm.com> Created this test
 *
 *******************************************************************************************/
@@ -58,8 +58,8 @@
 #include <test.h>
 #include <libclone.h>
 
-char *TCID = "pid_namespace1";
-int TST_TOTAL=1;
+char *TCID  "pid_namespace1";
+int TST_TOTAL1;
 
 void cleanup(void);
 
@@ -72,25 +72,25 @@ void cleanup(void);
  */
 int child_fn1(void *ttype)
 {
-	pid_t cpid, ppid;
-	cpid = getpid();
-	ppid = getppid();
+ pid_t cpid, ppid;
+ cpid  getpid();
+ ppid  getppid();
 
-	tst_resm(TINFO, "PIDNS test is running inside container\n");
-	if(( cpid == CHILD_PID) &&
-		( ppid == PARENT_PID ) )
-	{
+ tst_resm(TINFO, "PIDNS test is running inside container\n");
+ if(( cpid  CHILD_PID) &&
+  ( ppid  PARENT_PID ) )
+ {
                 tst_resm(TPASS, "Success:" );
-	}
-	else
-	{
-		tst_resm(TFAIL, "FAIL: Got unexpected result of"
-			" cpid=%d ppid=%d\n", cpid, ppid);
-	}
-	cleanup();
+ }
+ else
+ {
+  tst_resm(TFAIL, "FAIL: Got unexpected result of"
+   " cpid%d ppid%d\n", cpid, ppid);
+ }
+ cleanup();
 
-	/* NOT REACHED */
-	return 0;
+ /* NOT REACHED */
+ return 0;
 }
 
 /***********************************************************************
@@ -99,39 +99,39 @@ int child_fn1(void *ttype)
 
 int main(int argc, char *argv[])
 {
-	int ret, status;
+ int ret, status;
 
-	ret = do_clone_unshare_test(T_CLONE,
-				CLONE_NEWPID, child_fn1, NULL);
+ ret  do_clone_unshare_test(T_CLONE,
+    CLONE_NEWPID, child_fn1, NULL);
 
-	/* check return code */
-	if (ret == -1) {
-		tst_resm(TFAIL, "clone() Failed, errno = %d :"
-			" %s", ret, strerror(ret));
-		/* Cleanup & continue with next test case */
-		cleanup();
-	}
+ /* check return code */
+ if (ret  -1) {
+  tst_resm(TFAIL, "clone() Failed, errno  %d :"
+   " %s", ret, strerror(ret));
+  /* Cleanup & continue with next test case */
+  cleanup();
+ }
 
-	/* Wait for child to finish */
-	if ((wait(&status)) < 0) {
-		tst_resm(TWARN, "wait() failed, skipping this"
-			" test case");
-		/* Cleanup & continue with next test case */
-		cleanup();
-	}
+ /* Wait for child to finish */
+ if ((wait(&status)) < 0) {
+  tst_resm(TWARN, "wait() failed, skipping this"
+   " test case");
+  /* Cleanup & continue with next test case */
+  cleanup();
+ }
 
-	if (WTERMSIG(status)) {
-		tst_resm(TWARN, "child exited with signal %d",
-			 WTERMSIG(status));
-	}
+ if (WTERMSIG(status)) {
+  tst_resm(TWARN, "child exited with signal %d",
+    WTERMSIG(status));
+ }
 
         /* cleanup and exit */
-	cleanup();
+ cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+ /*NOTREACHED*/
+ return 0;
 
-}	/* End main */
+} /* End main */
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
@@ -141,9 +141,9 @@ void
 cleanup()
 {
 
-	/* Clean the test testcase as LTP wants*/
-	TEST_CLEANUP;
+ /* Clean the test testcase as LTP wants*/
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

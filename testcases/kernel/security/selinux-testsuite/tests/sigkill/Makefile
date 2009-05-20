@@ -7,4 +7,4 @@ install:
 	ln -f selinux_sigkill.sh ../../../../../bin/
 
 clean:
-	rm -f $(TARGETS) 
+	rm -f $(TARGETS)

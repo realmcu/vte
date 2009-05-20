@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   pmic_adc_test.c
 
         @brief  Test scenario C source for PMIC(SC55112 and MC13783) ADC driver.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core id                  Date          Number     Description of Changes
@@ -23,35 +23,35 @@ D. Khoroshev/b00313          05/18/2006     TLSbo64235   Added callback for comp
                                                          removed timeout for touch screen tests
 D. Khoroshev/b00313          07/06/2006     TLSbo64235   Added PMIC ADC test module
 D. Khoroshev/b00313          07/26/2006     TLSbo64235   Added mc13783 legacy support
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Verification Test Environment Include Files */
 #include "ts_test.h"
 
-/*==================================================================================================
+/*======================
                                       GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 extern char *TCID;
 extern int adc_testcase;
 extern char adc_device[128];
 extern sig_atomic_t sig_count;
 extern int verbose_flag;
 extern int mode;
-/*==================================================================================================
+/*======================
                                        LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 unsigned int argument;
 int fd = 0;
 #if defined(CONFIG_MXC_PMIC_SC55112) || defined( CONFIG_MXC_PMIC_MC13783 )
 static t_adc_convert_param adc_config;
 #endif
 
-/*================================================================================================*/
+/*====================*/
 static char *CHANNELS[]=
 {
         "BATTERY_VOLTAGE",
@@ -81,12 +81,12 @@ static char *CHANNELS[]=
         "DIE_TEMP"
 };
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== kbhit =====*/
+/*====================*/
+/*= kbhit =*/
 /**
 @brief  Checks state of stdin input stream. This function wait for changing state of stdin with timeout
         SLEEP_TIME.
@@ -94,7 +94,7 @@ static char *CHANNELS[]=
 
 @return Returns true if stream contains unread symbols, unless return false.
 */
-/*================================================================================================*/
+/*====================*/
 int kbhit(int *pnSleepTime)
 {
         fd_set rset;
@@ -123,8 +123,8 @@ int kbhit(int *pnSleepTime)
 }
 
 #if defined(CONFIG_MXC_PMIC_SC55112) || defined( CONFIG_MXC_PMIC_MC13783 )
-/*================================================================================================*/
-/*===== comparator_cb =====*/
+/*====================*/
+/*= comparator_cb =*/
 /**
 @brief  Checks state of stdin input stream. This function wait for changing state of stdin with timeout
         SLEEP_TIME.
@@ -132,7 +132,7 @@ int kbhit(int *pnSleepTime)
 
 @return Returns true if stream contains unread symbols, unless return false.
 */
-/*================================================================================================*/
+/*====================*/
 void comparator_cb(t_comp_exception reason)
 {
         switch(reason)
@@ -149,8 +149,8 @@ void comparator_cb(t_comp_exception reason)
 }
 #endif
 
-/*================================================================================================*/
-/*===== VT_pmic_adc_test_setup =====*/
+/*====================*/
+/*= VT_pmic_adc_test_setup =*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
@@ -159,7 +159,7 @@ void comparator_cb(t_comp_exception reason)
 @return On success - return TPASS
         On failure - return TFAIL
 */
-/*================================================================================================*/
+/*====================*/
 int VT_pmic_adc_test_setup(void)
 {
         int VT_rv = TPASS;
@@ -180,8 +180,8 @@ int VT_pmic_adc_test_setup(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_adc_test_cleanup =====*/
+/*====================*/
+/*= VT_pmic_adc_test_cleanup =*/
 /**
 @brief  assumes the post-condition of the test case execution
 
@@ -190,7 +190,7 @@ int VT_pmic_adc_test_setup(void)
 @return On success - return TPASS
         On failure - return TFAIL
 */
-/*================================================================================================*/
+/*====================*/
 int VT_pmic_adc_test_cleanup(void)
 {
         int VT_rv = TPASS;
@@ -207,8 +207,8 @@ int VT_pmic_adc_test_cleanup(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== ask_user =====*/
+/*====================*/
+/*= ask_user =*/
 /**
 @brief  Asks user to answer the question and read the answer y/n?
 
@@ -218,7 +218,7 @@ int VT_pmic_adc_test_cleanup(void)
 @return 1 - if user asks "No,  wrong"
         0 - if user asks "Yes, right"
 */
-/*================================================================================================*/
+/*====================*/
 int ask_user(char *msg)
 {
         int retValue = TFAIL;
@@ -249,8 +249,8 @@ int ask_user(char *msg)
         return retValue;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_adc_test =====*/
+/*====================*/
+/*= VT_pmic_adc_test =*/
 /**
 @brief  SC55112 test scenario convert, touch, battery and comparator functions
 
@@ -259,7 +259,7 @@ int ask_user(char *msg)
 @return On success - return TPASS
         On failure - return the error code and TFAIL
 */
-/*================================================================================================*/
+/*====================*/
 int VT_pmic_adc_test(void)
 {
         int trv;
@@ -327,7 +327,7 @@ int VT_pmic_adc_test(void)
                 }
                 break;
         case PMIC_ADC_SET_TOUCH_MODE_T:
-	 case TS_SET_GET_MODE_T:
+  case TS_SET_GET_MODE_T:
                 tst_resm(TINFO, "Set touch screen operation mode");
                 for (i = TS_X_POSITION; i <= TS_NONE; i++)
                 {
@@ -373,10 +373,10 @@ int VT_pmic_adc_test(void)
                 break;
 
         case PMIC_ADC_GET_TOUCH_SAMPLE_T:
-	 case TS_GET_TOUCH_SAMPLE_T:
-        {      
-		  printf("Set touch mode first:\n TouchMode is %d\n",mode);
-		  if (ioctl(fd, PMIC_ADC_SET_TOUCH_MODE, mode) < 0)
+  case TS_GET_TOUCH_SAMPLE_T:
+        {
+    printf("Set touch mode first:\n TouchMode is %d\n",mode);
+    if (ioctl(fd, PMIC_ADC_SET_TOUCH_MODE, mode) < 0)
                         {
                                 VT_rv = TFAIL;
                                 tst_resm(VT_rv, "Failed to set touch screen operation mode %s. ERROR CODE is %s",
@@ -391,7 +391,7 @@ int VT_pmic_adc_test(void)
                 }
                 else if (verbose_flag)
                 {
-			tst_resm(TINFO,"X position   is %d", samp.x_position);
+   tst_resm(TINFO,"X position   is %d", samp.x_position);
                         tst_resm(TINFO,"X position 1 is %d", samp.x_position1);
                         tst_resm(TINFO,"X position 2 is %d", samp.x_position2);
                         tst_resm(TINFO,"X position 3 is %d", samp.x_position3);
@@ -465,7 +465,7 @@ int VT_pmic_adc_test(void)
                 }
                 VT_rv = ask_user("Does the test worked right [Y/N]?");
                 break;
-	
+
         }
 
         return VT_rv;

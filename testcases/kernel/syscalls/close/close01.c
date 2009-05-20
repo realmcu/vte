@@ -19,26 +19,26 @@
 
 /*
  * NAME
- * 	close01.c
+ * close01.c
  *
  * DESCRIPTION
- * 	Test that closing a regular file and a pipe works correctly
+ * Test that closing a regular file and a pipe works correctly
  *
  * ALGORITHM
- * 	Creat a file, and dup() a fildes
- * 	Open a pipe
- *	call close() using the TEST macro
- *	if the call fails
- *	   issue a FAIL message and continue
- *	else if STD_FUNCTIONAL_TEST
- *	   attempt to close the file/pipe again
- *	   if there is an error
- *	      issue a PASS message
- *	   else
- *	      issue a FAIL message
- *	else
- *	   issue a PASS message
- *	
+ * Creat a file, and dup() a fildes
+ * Open a pipe
+ * call close() using the TEST macro
+ * if the call fails
+ *    issue a FAIL message and continue
+ * else if STD_FUNCTIONAL_TEST
+ *    attempt to close the file/pipe again
+ *    if there is an error
+ *       issue a PASS message
+ *    else
+ *       issue a FAIL message
+ * else
+ *    issue a PASS message
+ *
  *
  * USAGE:  <for command-line>
  *  close01 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
@@ -50,10 +50,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * 	None
+ * None
  */
 
 #include <stdio.h>
@@ -66,22 +66,22 @@
 void cleanup(void);
 void setup(void);
 
-char *TCID = "close01";
-int TST_TOTAL = 2;
+char *TCID  "close01";
+int TST_TOTAL  2;
 extern int Tst_count;
 
-char fname[40] = "";
+char fname[40]  "";
 
 int fild, newfd, pipefildes[2];
 
 struct test_case_t {
         int *fd;
-	char *type;
-} TC[] = {
-	/* file descriptor for a regular file */
+ char *type;
+} TC[]  {
+ /* file descriptor for a regular file */
         {&newfd, "file"},
 
-	/* file descriptor for a pipe */
+ /* file descriptor for a pipe */
         {&pipefildes[0], "pipe"}
 };
 
@@ -89,67 +89,67 @@ int
 main(int ac, char **av)
 {
 
-	int i;
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+ int i;
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-		/*NOTREACHED*/
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+  /*NOTREACHED*/
+ }
 
-	setup();			/* global setup */
+ setup();   /* global setup */
 
-	/* The following loop checks looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* The following loop checks looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		/* set up the file and pipe for the test */
-		if ((fild = creat(fname, 0777)) == -1) {
-			tst_brkm(TBROK, cleanup, "can't open file %s", fname);
-		}
+  /* set up the file and pipe for the test */
+  if ((fild  creat(fname, 0777))  -1) {
+   tst_brkm(TBROK, cleanup, "can't open file %s", fname);
+  }
 
-		if ((newfd = dup(fild)) == -1) {
-			tst_brkm(TBROK, cleanup, "can't dup the file des");
-		}
+  if ((newfd  dup(fild))  -1) {
+   tst_brkm(TBROK, cleanup, "can't dup the file des");
+  }
 
-		if (pipe(pipefildes) == -1) {
-			tst_brkm(TBROK, cleanup, "can't open pipe");
-		}
+  if (pipe(pipefildes)  -1) {
+   tst_brkm(TBROK, cleanup, "can't open pipe");
+  }
 
-		/* loop through the test cases */
+  /* loop through the test cases */
 
-		for (i = 0; i < TST_TOTAL; i++) {
+  for (i  0; i < TST_TOTAL; i++) {
 
-			TEST(close(*TC[i].fd));
+   TEST(close(*TC[i].fd));
 
-                        if (TEST_RETURN == -1) {
+                        if (TEST_RETURN  -1) {
                                 tst_resm(TFAIL, "call failed unexpectedly");
                                 continue;
                         }
 
-			if (STD_FUNCTIONAL_TEST) {
-				/* attempt to close the fd again */
-				if (close(*TC[i].fd) == -1) {
-					tst_resm(TPASS, "%s appears closed",
-						 TC[i].type);
-				} else {
-					tst_resm(TFAIL, "%s close succeeded on"
-						 "second attempt", TC[i].type);
-				}
-			} else {
-				tst_resm(TPASS, "call succeeded");
-			}
-		}
+   if (STD_FUNCTIONAL_TEST) {
+    /* attempt to close the fd again */
+    if (close(*TC[i].fd)  -1) {
+     tst_resm(TPASS, "%s appears closed",
+       TC[i].type);
+    } else {
+     tst_resm(TFAIL, "%s close succeeded on"
+       "second attempt", TC[i].type);
+    }
+   } else {
+    tst_resm(TPASS, "call succeeded");
+   }
+  }
 
-	}
-	cleanup();
-	
-	return 0;
-	/*NOTREACHED*/
+ }
+ cleanup();
+
+ return 0;
+ /*NOTREACHED*/
 }
 
 /*
@@ -158,41 +158,41 @@ main(int ac, char **av)
 void
 setup(void)
 {
-	int mypid;
+ int mypid;
 
-	/* capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	umask(0);
+ umask(0);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
-	tst_tmpdir();
+ /* make a temp directory and cd to it */
+ tst_tmpdir();
 
-	mypid = getpid();
-	sprintf(fname, "fname.%d\n", mypid);
+ mypid  getpid();
+ sprintf(fname, "fname.%d\n", mypid);
 }
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- * 	       or premature exit.
+ *        or premature exit.
  */
 void
 cleanup(void)
 {
-	/*
-	 * print timing status if that option was specified.
-	 * print errno log if that option was specified
-	 */
+ /*
+  * print timing status if that option was specified.
+  * print errno log if that option was specified
+  */
     close(fild);
 
-	TEST_CLEANUP;
+ TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
-	tst_rmdir();
+ /* Remove tmp dir and all files in it */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

@@ -1,25 +1,25 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   cdrom_driver_main.c
 
-        @brief  Main file for ATA Disk driver test. 
+        @brief  Main file for ATA Disk driver test.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
-    
-====================================================================================================
 
-====================================================================================================
+====================
+
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,27 +31,27 @@ Portability: ARM GCC
 
 #include "cdrom_testapp.h"
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 char   *TCID = "cdrom_driver_testapp";
 int     TST_TOTAL = 1;  /* total number of tests in this file. */
 
-/*==================================================================================================
+/*======================
                                     GLOBAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void    cleanup(void);
 void    setup(void);
 void    help(void);
 int     main(int argc, char **argv);
 
-/*==================================================================================================
+/*======================
                                     GLOBAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== cleanup =====*/
-/** 
+/*====================*/
+/*= cleanup =*/
+/**
 @brief This function performs all one time clean up for this test on successful completion,
         premature exit or failure. Closes all temporary files, removes all temporary directories exits
         the test with appropriate return code by calling tst_exit() function.
@@ -60,7 +60,7 @@ int     main(int argc, char **argv);
 
 @return None.
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
         int     rv = TFAIL;
@@ -73,17 +73,17 @@ void cleanup(void)
         tst_exit();
 }
 
-/*================================================================================================*/
-/*===== setup =====*/
-/** 
+/*====================*/
+/*= setup =*/
+/**
 @brief Performs all one time setup for this test. This function is typically used to capture
         signals, create temporary dirs and temporary files that may be used in the course of this test.
 
 @param None.
 
-@return None. 
+@return None.
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
         int     rv = TFAIL;
@@ -95,8 +95,8 @@ void setup(void)
         }
 }
 
-/*================================================================================================*/
-/*===== help =====*/
+/*====================*/
+/*= help =*/
 /**
 @brief  Print help information.
 
@@ -104,40 +104,40 @@ void setup(void)
 
 @return None.
 */
-/*================================================================================================*/
+/*====================*/
 void help(void)
 {
-        printf("\n===========================================================================\n");
+        printf("\n===============\n");
         printf("CDROM driver option\n");
         printf("'-D device'                  Device for testing\n\n");
         printf("\t  '-T 0                    eject CD\n");
-		printf("\t  '-T 1                    pendant eject CD\n");
-		printf("\t  '-T 2                    get start and end tracks \n");
-		printf("\t  '-T 3                    get all track's info\n");
-		printf("\t  '-T 4 -V volume value    volume control setting\n");
-		printf("\t  '-T 5                    Play CD\n");
-		printf("\t  '-T 6                    pause CD\n");
+  printf("\t  '-T 1                    pendant eject CD\n");
+  printf("\t  '-T 2                    get start and end tracks \n");
+  printf("\t  '-T 3                    get all track's info\n");
+  printf("\t  '-T 4 -V volume value    volume control setting\n");
+  printf("\t  '-T 5                    Play CD\n");
+  printf("\t  '-T 6                    pause CD\n");
         printf("\t  '-T 7'                   resume CD\n");
-		printf("\t  '-T 8'                   stop CD \n");
-		printf("\t  '-T 9'                   read sub channel info \n");
-        printf("\n===========================================================================\n");
+  printf("\t  '-T 8'                   stop CD \n");
+  printf("\t  '-T 9'                   read sub channel info \n");
+        printf("\n===============\n");
 }
 
-/*================================================================================================*/
-/*===== main =====*/
-/** 
+/*====================*/
+/*= main =*/
+/**
 @brief Entry point to this test-case. It parses all the command line inputs, calls the global
         setup and executes the test. It logs the test status and results appropriately using the LTP API's
         On successful completion or premature failure, cleanup() func is called and test exits with an
         appropriate return code.
 
-@param Input : argc - number of command line parameters. 
+@param Input : argc - number of command line parameters.
         Output: **argv - pointer to the array of the command line parameters.
-        
-@return On failure - Exits by calling cleanup(). 
-        On success - exits with 0 exit value. 
+
+@return On failure - Exits by calling cleanup().
+        On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
         // char c, *p ;
@@ -147,7 +147,7 @@ int main(int argc, char **argv)
         int     rv = TFAIL,
             volume=0,
             testcase = 0;
-		
+
 
         /* parse options. */
         int tflag = 0,
@@ -162,7 +162,7 @@ int main(int argc, char **argv)
             *dopt = 0,
             *vopt = 0;
 
-        option_t options[] = 
+        option_t options[] =
         {
                 {"D:", &dflag, &dopt},
                 {"T:", &tflag, &topt},
@@ -204,8 +204,8 @@ int main(int argc, char **argv)
                 return rv;
         }
 
-        
-        
+
+
 
         /*  -------------------------------   V   -------------------------------  */
         if (vflag != 0)
@@ -216,10 +216,10 @@ int main(int argc, char **argv)
                         tst_resm(TFAIL, "Arg -V: possible values are 0 ~256 ");
                         help();
                         return rv;
-                }                 
+                }
         }
         else
-        {    
+        {
                 if(testcase == 4) /* it is mandatory to set -F arg for testcase #1 */
                 {
                         tst_resm(TFAIL, "Arg -V (dma flag) is not set");
@@ -228,7 +228,7 @@ int main(int argc, char **argv)
                 }
         }
 
-        
+
 
 
 
@@ -245,7 +245,7 @@ int main(int argc, char **argv)
         {
                 tst_resm(TFAIL, "%s %d test case didn't work as expected", TCID, testcase);
         }
- 
+
         cleanup();
         return rv;
 }

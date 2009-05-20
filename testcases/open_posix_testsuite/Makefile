@@ -17,7 +17,7 @@
 # Added patch from dank REMOVE-THIS AT kegel DOT com
 #
 
-# Added tests timeout from Sebastien Decugis (http://nptl.bullopensource.org) 
+# Added tests timeout from Sebastien Decugis (http://nptl.bullopensource.org)
 # Expiration delay is 120 seconds
 TIMEOUT_VAL = 120
 # The following value is the shell return value of a timedout application.
@@ -45,7 +45,7 @@ PWD := $(shell pwd)
 TIMEOUT = $(top_builddir)/t0 $(TIMEOUT_VAL)
 
 
-all: build-tests run-tests 
+all: build-tests run-tests
 
 build-tests: $(BUILD_TESTS:.c=.test)
 run-tests: $(RUN_TESTS:.test=.run-test)
@@ -148,7 +148,7 @@ $(top_builddir)/t0: $(top_builddir)/t0.c
 	@echo Building timeout helper files; \
 	$(CC) -O2 -o $@ $< ; \
 	echo `$(top_builddir)/t0 0; echo $$?` > $(top_builddir)/t0.val
-	
+
 %.run-test: %.sh $(top_builddir)/t0
 	@COMPLOG=$(LOGFILE).$$$$; \
 	chmod +x $<; \
@@ -190,7 +190,7 @@ functional-make:
 
 functional-run: $(FUNCTIONAL_RUN)
 
-$(FUNCTIONAL_RUN): 
+$(FUNCTIONAL_RUN):
 	cd $@; ./run.sh
 	cd $(PWD)
 
@@ -201,6 +201,6 @@ stress-make:
 
 stress-run: $(STRESS_RUN)
 
-$(STRESS_RUN): 
+$(STRESS_RUN):
 	cd $@; ./run.sh
 	cd $(PWD)

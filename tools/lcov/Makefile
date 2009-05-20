@@ -7,9 +7,9 @@
 ##########################################################################################
 #
 #                         Freescale Semiconductor Confidential Proprietary
-#                 (c) Copyright 2004, Freescale Semiconductor.  All rights reserved.  
-#            
-# Presence of a copyright notice is not an acknowledgement of publication.  
+#                 (c) Copyright 2004, Freescale Semiconductor.  All rights reserved.
+#
+# Presence of a copyright notice is not an acknowledgement of publication.
 # This software file listing contains information of Freescale
 # Semiconductor. that is of a confidential and proprietary nature and
 # any viewing or use of this file is prohibited without specific
@@ -22,7 +22,7 @@
 #-------------------------   ------------    ----------  ----------------------------
 #C.GAGNERAUD cgag1c          2004/11/04      Tlsbo42836  Creation
 ##########################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms. 
+#Portability: Indicate if this module is portable to other compilers or platforms.
 #             If not, indicate specific reasons why is it not portable.
 #
 ##########################################################################################
@@ -67,11 +67,11 @@ host-install:
 		echo "*** [ERROR] Usage: make $@ BINDIR=<...>"; \
 		echo "***"; \
 		exit 1; \
-	fi 
+	fi
 	cp -f $(HOST_FILES) $(BINDIR)
 	cd $(BINDIR) && chmod a+x $(HOST_FILES)
 
-distclean: clean 
+distclean: clean
 	find . -name '*~' -o -name '#*#' -exec rm {} \;
 
 patch-kernel:

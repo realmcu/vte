@@ -77,7 +77,7 @@ typedef void (cIpmiDomain::*tIpmiDiscoverTask)( void *userdata );
 
 
 // cThread is the discover thread.
-class cIpmiDomain : public cThread 
+class cIpmiDomain : public cThread
 {
 public:
   unsigned int m_con_timeout;
@@ -194,7 +194,7 @@ public:
   void Cleanup();
 
   cIpmiEntityInfo &Entities() { return *m_entities; }
-  
+
   cIpmiMc *FindMcByAddr( const cIpmiAddr &addr );
   cIpmiMc *FindOrCreateMcBySlaveAddr( unsigned int slave_addr );
   cIpmiMc *ScanMc( unsigned int channel, unsigned int addr );

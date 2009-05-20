@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   sahara_module.c
 
         @brief  Sahara module implementation.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/Core ID                  Date          Number    Description of Changes
@@ -21,20 +21,20 @@ A.Ozerov/NONE                19/12/2005     TLSbo58662  Version for linux-2.6.10
 A.Ozerov/NONE                31/01/2006     TLSbo61952  Problem with fsl_shw_register_user was fixed
 D.Simakov/smkd001c           21/09/2006     TLSbo76069  fsl_shw* kernel api can not work with a static
                                                         data.
-====================================================================================================
+====================
 Portability:  ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
 Total Tests: 1
 
 Test Executable Name:  sahara_module.ko
 
-=================================================================================================*/
+=====================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 //#include <linux/config.h>
 #include <linux/module.h>
@@ -49,25 +49,25 @@ Test Executable Name:  sahara_module.ko
 /* Verification Test Environment Include Files */
 #include "sahara_module.h"
 
-/*==================================================================================================
+/*======================
                                         DEFINES AND MACROS
-==================================================================================================*/
+======================*/
 #ifdef DEBUG
 #define TRACEMSG(fmt,args...)  printk(fmt,##args)
 #else
 #define TRACEMSG(fmt,args...)
 #endif
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 
 static struct class *sahara_class;    /* added on 05/03/06 RAKESH S JOSHI */
 
-/*==================================================================================================
+/*======================
                                             STRUCTURES
-==================================================================================================*/
-/*================================ For sahara_callback_test ======================================*/
+======================*/
+/*======== For sahara_callback_test ==========*/
 struct rand_test
 {
         unsigned initiated;
@@ -75,7 +75,7 @@ struct rand_test
         uint8_t random[RAND_SIZE];
 };
 
-/*=================================== For sahara_hash_test =======================================*/
+/*======= For sahara_hash_test ===========*/
 typedef struct
 {
         unsigned long opId;
@@ -86,7 +86,7 @@ typedef struct
         char    testDesc[30];
 } HASHTESTTYPE;
 
-/*=================================== For sahara_hmac1_test ======================================*/
+/*======= For sahara_hmac1_test ==========*/
 typedef struct
 {
         unsigned long opId;
@@ -103,7 +103,7 @@ typedef struct
         char    testDesc[34];
 } HMACTESTTYPE;
 
-/*=================================== For sahara_sym_test ========================================*/
+/*======= For sahara_sym_test ========*/
 typedef struct
 {
         unsigned long opId;
@@ -122,7 +122,7 @@ typedef struct
         char    testDesc[50];
 } SYMTESTTYPE;
 
-/*======================================= For anything ===========================================*/
+/*=========== For anything ===========*/
 /* VT_show_capabilities stuffs */
 struct interpret
 {
@@ -164,9 +164,9 @@ struct interpret hashalgs[] =
 };        /* End of VT_show_capabilities stuffs */
 
 
-/*==================================================================================================
+/*======================
                                             ARRAYS
-==================================================================================================*/
+======================*/
 /* this result came from the vl test. It is the "golden" multi-step case */
 uint8_t actual_vl[] =
 {
@@ -231,7 +231,7 @@ TEST    test[] =
         {2, FSL_HASH_ALG_SHA256, {3, 2, 1, 0}, actual_sw, 32}
 };      /* End of VT_run_hmac2 stuffs */
 
-/*======================================= For anything ===========================================*/
+/*=========== For anything ===========*/
 /* VT_run_wrap stuffs */
 static const unsigned char cleartext1[] =
 {
@@ -279,7 +279,7 @@ static const unsigned char known_ciphertext[] =
         0x87, 0x42, 0x35, 0xCB, 0x11, 0xDE, 0xEB, 0xC3
 };
 
-/*================================ For sahara_callback_test ======================================*/
+/*======== For sahara_callback_test ==========*/
 /* SHA1 test vectors from FIPS PUB 180-1 */
 static const unsigned char sha1padplaintext1[] = "abc";
 
@@ -613,7 +613,7 @@ static HASHTESTTYPE hashTest[ /* NUM_HASHTESTS */ ] =
         },
 };
 
-/*=================================== For sahara_hmac1_test ======================================*/
+/*======= For sahara_hmac1_test ==========*/
 static const unsigned char sha1testkey1[] =
 {
         0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B,
@@ -914,7 +914,7 @@ static const HMACTESTTYPE hmactests[] =
         }
 };
 
-/*=================================== For sahara_sym_test ========================================*/
+/*======= For sahara_sym_test ========*/
 static unsigned char symtestkey1[] =
 {
         0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6,
@@ -1735,17 +1735,17 @@ static SYMTESTTYPE symTest[] =
         }
 };
 
-/*==================================================================================================
+/*======================
                                             CONSTANTS
-==================================================================================================*/
+======================*/
 static const unsigned NUM_HASHTESTS = sizeof(hashTest) / sizeof(HASHTESTTYPE);
 static const unsigned NUM_SYMTESTS = sizeof(symTest) / sizeof(SYMTESTTYPE);
 static const unsigned NUM_HMACTESTS = sizeof(hmactests) / sizeof(HMACTESTTYPE);
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
-/*================================ For sahara_callback_test ======================================*/
+======================*/
+/*======== For sahara_callback_test ==========*/
 static unsigned char callback_complete;
 static unsigned callback_passed;
 static unsigned callback_test_count;
@@ -1754,15 +1754,15 @@ static unsigned callback_test_count;
 struct rand_test * tests;
 fsl_shw_result_t * results;
 
-/*==================================================================================================
+/*======================
                                       FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 int compare_result(const uint8_t * model, const uint8_t * result,
                    uint32_t length, const uint8_t * name);
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 static int sahara_test_open(struct inode *inode, struct file *filp)
 {
         return 0;
@@ -1783,8 +1783,8 @@ static int sahara_test_release(struct inode *inode, struct file *filp)
         return 0;
 }
 
-/*================================================================================================*/
-/*===== fsl_error_string =====*/
+/*====================*/
+/*= fsl_error_string =*/
 /**
 @brief  Error code interpreteur
 
@@ -1792,7 +1792,7 @@ static int sahara_test_release(struct inode *inode, struct file *filp)
 
 @return Return a (non-allocated) string containing an interpretation of an FSL SHW API error code.
 */
-/*================================================================================================*/
+/*====================*/
 char   *fsl_error_string(fsl_shw_return_t code)
 {
         char   *str;
@@ -1843,9 +1843,9 @@ char   *fsl_error_string(fsl_shw_return_t code)
         return str;
 }
 
-/*================================================================================================*/
-/*===== VT_register_user =====*/
-/*================================================================================================*/
+/*====================*/
+/*= VT_register_user =*/
+/*====================*/
 int VT_register_user(fsl_shw_uco_t * my_ctx)
 {
         fsl_shw_return_t code;
@@ -1875,9 +1875,9 @@ int VT_register_user(fsl_shw_uco_t * my_ctx)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== VT_deregister_user =====*/
-/*================================================================================================*/
+/*====================*/
+/*= VT_deregister_user =*/
+/*====================*/
 int VT_deregister_user(fsl_shw_uco_t * my_ctx)
 {
         fsl_shw_return_t code;
@@ -1894,7 +1894,7 @@ int VT_deregister_user(fsl_shw_uco_t * my_ctx)
         return VT_rv;
 }
 
-/*==================================================================================================*/
+/*======================*/
 static int check_one(uint8_t random[RAND_SIZE])
 {
         if ((random[0] == 0) && (random[1] == 0) &&
@@ -1911,14 +1911,14 @@ static int check_one(uint8_t random[RAND_SIZE])
         }
 }
 
-/*==================================================================================================*/
-/*===== test_callback1 =====*/
+/*======================*/
+/*= test_callback1 =*/
 /**
 @param  uco User Context Object
 
 @return Nothing
 */
-/*==================================================================================================*/
+/*======================*/
 static void test_callback1(fsl_shw_uco_t * uco)
 {
         fsl_shw_return_t code;  /* value returned from API call */
@@ -2022,14 +2022,14 @@ static void test_callback1(fsl_shw_uco_t * uco)
         kfree(actual);
 }
 
-/*==================================================================================================*/
-/*===== test_callback2 =====*/
+/*======================*/
+/*= test_callback2 =*/
 /**
 @param  uco User Context Object
 
 @return Nothing
 */
-/*==================================================================================================*/
+/*======================*/
 static void test_callback2(fsl_shw_uco_t * uco)
 {
         fsl_shw_return_t code;  /* value returned from API call */
@@ -2110,8 +2110,8 @@ static void test_callback2(fsl_shw_uco_t * uco)
         kfree(actual);
 }
 
-/*==================================================================================================*/
-/*===== VT_run_callback =====*/
+/*======================*/
+/*= VT_run_callback =*/
 /**
 @brief  Tests the get results operation
 
@@ -2119,7 +2119,7 @@ static void test_callback2(fsl_shw_uco_t * uco)
 
 @return On success - return 0 On failure - return -1
 */
-/*==================================================================================================*/
+/*======================*/
 int VT_run_callback(fsl_shw_uco_t * my_ctx)
 {
         fsl_shw_return_t code;  /* value returned from API call */
@@ -2310,8 +2310,8 @@ int VT_run_callback(fsl_shw_uco_t * my_ctx)
 }
 
 
-/*==================================================================================================*/
-/*===== run_hash_test =====*/
+/*======================*/
+/*= run_hash_test =*/
 /**
 @brief  All hashing tests
 
@@ -2325,7 +2325,7 @@ int VT_run_callback(fsl_shw_uco_t * my_ctx)
 
 @return On success - return 1 On failure - return 0
 */
-/*==================================================================================================*/
+/*======================*/
 static int run_hash_test(fsl_shw_uco_t * user_ctx, fsl_shw_hash_alg_t alg,
                          unsigned pad, HASHTESTTYPE * test1)
 {
@@ -2431,8 +2431,8 @@ static int run_hash_test(fsl_shw_uco_t * user_ctx, fsl_shw_hash_alg_t alg,
         return failed;
 }
 
-/*==================================================================================================*/
-/*===== VT_run_hash =====*/
+/*======================*/
+/*= VT_run_hash =*/
 /**
 @brief  Test code to perform Cryptographic Hashing
 
@@ -2440,7 +2440,7 @@ static int run_hash_test(fsl_shw_uco_t * user_ctx, fsl_shw_hash_alg_t alg,
 
 @return On success - return 0 On failure - return -1
 */
-/*==================================================================================================*/
+/*======================*/
 int VT_run_hash(fsl_shw_uco_t * my_ctx)
 {
         unsigned testno;
@@ -2511,8 +2511,8 @@ int VT_run_hash(fsl_shw_uco_t * my_ctx)
         return VT_rv;
 }
 
-/*==================================================================================================*/
-/*===== run_hmac1_test =====*/
+/*======================*/
+/*= run_hmac1_test =*/
 /**
 @brief  All HMAC tests
 
@@ -2524,7 +2524,7 @@ int VT_run_hash(fsl_shw_uco_t * my_ctx)
 
 @return On success - return 1 On failure - return 0
 */
-/*==================================================================================================*/
+/*======================*/
 static int run_hmac1_test(fsl_shw_uco_t * my_ctx, fsl_shw_hash_alg_t algorithm,
                           const HMACTESTTYPE * test1)
 {
@@ -2634,7 +2634,7 @@ static int run_hmac1_test(fsl_shw_uco_t * my_ctx, fsl_shw_hash_alg_t algorithm,
         return passed;
 }
 
-/*==================================================================================================*/
+/*======================*/
 /**
 @brief  Sample code to calculate an HMAC in one operation
 
@@ -2642,7 +2642,7 @@ static int run_hmac1_test(fsl_shw_uco_t * my_ctx, fsl_shw_hash_alg_t algorithm,
 
 @return On success - return 0 On failure - return -1
 */
-/*==================================================================================================*/
+/*======================*/
 int VT_run_hmac1(fsl_shw_uco_t * my_ctx)
 {
         unsigned testno;
@@ -2719,7 +2719,7 @@ int VT_run_hmac1(fsl_shw_uco_t * my_ctx)
         return VT_rv;
 }
 
-/*==================================================================================================*/
+/*======================*/
 /**
 @brief  Tests the get results operation
 
@@ -2727,7 +2727,7 @@ int VT_run_hmac1(fsl_shw_uco_t * my_ctx)
 
 @return On success - return 0 On failure - return -1
 */
-/*==================================================================================================*/
+/*======================*/
 int VT_run_result(fsl_shw_uco_t * my_ctx)
 {
         fsl_shw_return_t code;  /* value returned from API call */
@@ -2849,8 +2849,8 @@ int VT_run_result(fsl_shw_uco_t * my_ctx)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== run_symmetric_test =====*/
+/*====================*/
+/*= run_symmetric_test =*/
 /**
 @brief  All symmetric tests
 
@@ -2860,7 +2860,7 @@ int VT_run_result(fsl_shw_uco_t * my_ctx)
 
 @return On success - return 1 On failure - return 0
 */
-/*================================================================================================*/
+/*====================*/
 int run_symmetric_test(fsl_shw_uco_t * my_ctx, SYMTESTTYPE * test1)
 {
         fsl_shw_return_t code;
@@ -3185,8 +3185,8 @@ int run_symmetric_test(fsl_shw_uco_t * my_ctx, SYMTESTTYPE * test1)
         return passed;
 }
 
-/*=================================================================================================*/
-/*===== VT_run_symmetric =====*/
+/*=====================*/
+/*= VT_run_symmetric =*/
 /**
 @brief  Run a series of tests on Symmetric cryptography routines.
 
@@ -3194,7 +3194,7 @@ int run_symmetric_test(fsl_shw_uco_t * my_ctx, SYMTESTTYPE * test1)
 
 @return On success - return 0 On failure - return -1
 */
-/*=================================================================================================*/
+/*=====================*/
 int VT_run_symmetric(fsl_shw_uco_t * my_ctx)
 {
         int     passed_count = 0;
@@ -3224,8 +3224,8 @@ int VT_run_symmetric(fsl_shw_uco_t * my_ctx)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== VT_run_gen_encrypt =====*/
+/*====================*/
+/*= VT_run_gen_encrypt =*/
 /**
 @brief  This function generates an authentication code and encrypt data
 
@@ -3234,7 +3234,7 @@ int VT_run_symmetric(fsl_shw_uco_t * my_ctx)
 
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void VT_run_gen_encrypt(fsl_shw_uco_t * my_ctx)
 {
         uint8_t pt[] =
@@ -3285,8 +3285,8 @@ void VT_run_gen_encrypt(fsl_shw_uco_t * my_ctx)
         TRACEMSG("VT_run_gen_encrypt: gen code %d", code);
 }
 
-/*================================================================================================*/
-/*===== VT_run_auth_decrypt =====*/
+/*====================*/
+/*= VT_run_auth_decrypt =*/
 /**
 @brief  This function verify an authentication code and decrypts data
 
@@ -3295,7 +3295,7 @@ void VT_run_gen_encrypt(fsl_shw_uco_t * my_ctx)
 
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void VT_run_auth_decrypt(fsl_shw_uco_t * my_ctx)
 {
         /* ct includes the MAC as last four octets */
@@ -3341,8 +3341,8 @@ void VT_run_auth_decrypt(fsl_shw_uco_t * my_ctx)
         TRACEMSG("VT_run_auth_decrypt: auth code %d", code);
 }
 
-/*================================================================================================*/
-/*===== VT_show_capabilities =====*/
+/*====================*/
+/*= VT_show_capabilities =*/
 /**
 @brief  Query the Platform Capabilities Object test
 
@@ -3352,7 +3352,7 @@ void VT_run_auth_decrypt(fsl_shw_uco_t * my_ctx)
 @return On success - return 0
         On failure - return -1
 */
-/*================================================================================================*/
+/*====================*/
 int VT_show_capabilities(fsl_shw_uco_t * my_ctx)
 {
         fsl_shw_pco_t *cap = fsl_shw_get_capabilities(my_ctx);
@@ -3430,8 +3430,8 @@ int VT_show_capabilities(fsl_shw_uco_t * my_ctx)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== VT_run_hmac2 =====*/
+/*====================*/
+/*= VT_run_hmac2 =*/
 /**
 @brief  This function calculates an HMAC in init/update/final operations
 
@@ -3441,7 +3441,7 @@ int VT_show_capabilities(fsl_shw_uco_t * my_ctx)
 @return On success - return 0
         On failure - return -1
 */
-/*================================================================================================*/
+/*====================*/
 int VT_run_hmac2(fsl_shw_uco_t * my_ctx)
 {
         fsl_shw_return_t code;
@@ -3597,8 +3597,8 @@ int VT_run_hmac2(fsl_shw_uco_t * my_ctx)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== VT_run_random =====*/
+/*====================*/
+/*= VT_run_random =*/
 /**
 @brief  This function tests generating random data function
 
@@ -3608,7 +3608,7 @@ int VT_run_hmac2(fsl_shw_uco_t * my_ctx)
 @return On success - return 0
         On failure - return -1
 */
-/*================================================================================================*/
+/*====================*/
 int VT_run_random(fsl_shw_uco_t * my_ctx)
 {
         int     VT_rv = 0;
@@ -3645,7 +3645,7 @@ int VT_run_random(fsl_shw_uco_t * my_ctx)
         return VT_rv;
 }
 
-/*================================================================================================*/
+/*====================*/
 static int create_key(fsl_shw_uco_t * my_ctx, fsl_shw_sko_t * key_info,
                       fsl_shw_scco_t * sym_ctx, const uint8_t * plaintext,
                       uint32_t len, uint8_t * encrypt_output)
@@ -3708,7 +3708,7 @@ static int create_key(fsl_shw_uco_t * my_ctx, fsl_shw_sko_t * key_info,
         return passed;
 }
 
-/*================================================================================================*/
+/*====================*/
 static int extract_reestablish_key(fsl_shw_uco_t * my_ctx,
                                    uint32_t ownerid, uint32_t handle,
                                    fsl_shw_scco_t * sym_ctx,
@@ -3813,8 +3813,8 @@ static int extract_reestablish_key(fsl_shw_uco_t * my_ctx,
         return passed;
 }
 
-/*================================================================================================*/
-/*===== VT_run_wrap =====*/
+/*====================*/
+/*= VT_run_wrap =*/
 /**
 @brief  Test Key-Wrapping routines.
 
@@ -3822,7 +3822,7 @@ static int extract_reestablish_key(fsl_shw_uco_t * my_ctx,
 
 @return On success - return 0 On failure - return -1
 */
-/*================================================================================================*/
+/*====================*/
 int VT_run_wrap(fsl_shw_uco_t * my_ctx, uint32_t * total_passed_count,
                 uint32_t * total_failed_count)
 {
@@ -4075,8 +4075,8 @@ int VT_run_wrap(fsl_shw_uco_t * my_ctx, uint32_t * total_passed_count,
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== compare_result =====*/
+/*====================*/
+/*= compare_result =*/
 /**
 @brief  Compare two strings. Print debug information if they do not compare.
 
@@ -4090,7 +4090,7 @@ int VT_run_wrap(fsl_shw_uco_t * my_ctx, uint32_t * total_passed_count,
 
 @return If the strings compare - 0 Otherwise - -1
 */
-/*================================================================================================*/
+/*====================*/
 int compare_result(const uint8_t * model, const uint8_t * result,
                    uint32_t length, const uint8_t * name)
 {
@@ -4137,7 +4137,7 @@ int compare_result(const uint8_t * model, const uint8_t * result,
         return VT_rv;
 }
 
-/*================================================================================================*/
+/*====================*/
 static int sahara_test_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
                              unsigned long arg)
 {
@@ -4314,9 +4314,9 @@ static int sahara_test_ioctl(struct inode *inode, struct file *file, unsigned in
         return error;
 }
 
-/*==================================================================================================
+/*======================
                                 GLOBAL VARIABLE DECLARATIONS
-==================================================================================================*/
+======================*/
 static struct file_operations sahara_test_fops =
 {
         owner:        THIS_MODULE,
@@ -4327,7 +4327,7 @@ static struct file_operations sahara_test_fops =
         ioctl:        sahara_test_ioctl,
 };
 
-/*================================================================================================*/
+/*====================*/
 static int __init sahara_test_init(void)
 {
         int     res;
@@ -4349,7 +4349,7 @@ static int __init sahara_test_init(void)
                 goto err_out;
         }
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,28))
-		if (IS_ERR(device_create(sahara_class, NULL,
+  if (IS_ERR(device_create(sahara_class, NULL,
                 MKDEV(231, 0),"sahara_test")))
 #else
         if (IS_ERR(device_create(sahara_class, NULL,
@@ -4374,7 +4374,7 @@ static int __init sahara_test_init(void)
 
 }
 
-/*================================================================================================*/
+/*====================*/
 static void __exit sahara_test_exit(void)
 {
         unregister_chrdev(231, SAHARA_TEST_DEVICE);
@@ -4384,7 +4384,7 @@ static void __exit sahara_test_exit(void)
         TRACEMSG(KERN_INFO "Sahara Test: removing virtual device\n");
 }
 
-/*================================================================================================*/
+/*====================*/
 module_init(sahara_test_init);
 module_exit(sahara_test_exit);
 

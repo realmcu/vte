@@ -27,7 +27,7 @@
 LTP_DIR=../../../..
 BIN_DIR=../../../bin
 
-EXTRA_CFLAGS+=        -Wall -I$(KLINUX_SRCDIR)/include -I$(KLINUX_BLTDIR)/include -I$(LTP_DIR)/include 
+EXTRA_CFLAGS+=        -Wall -I$(KLINUX_SRCDIR)/include -I$(KLINUX_BLTDIR)/include -I$(LTP_DIR)/include
 LOADLIBES+=     -L$(LTP_DIR)/lib -lltp -lpthread
 
 SRCS=$(wildcard *.c)
@@ -50,7 +50,7 @@ install:
 	@echo
 
 clean:
-	rm -f $(OBJS) $(TARGET) 
+	rm -f $(OBJS) $(TARGET)
 	@echo "***********************************************"
 	@echo "** CLEAN : $(TARGET)             **"
 	@echo "***********************************************"

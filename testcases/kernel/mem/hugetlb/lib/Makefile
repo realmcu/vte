@@ -18,7 +18,7 @@
 
 #########################################################################
 # name of file	: Makefile						#
-# description	: make(1) description file to build a library for the 	#
+# description	: make(1) description file to build a library for the #
 #		  common routines in the ipc(2) tests.			#
 #########################################################################
 SRCS=libipc.c

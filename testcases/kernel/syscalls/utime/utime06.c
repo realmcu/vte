@@ -24,11 +24,11 @@
  * 1. Verify that the system call utime() fails to set the modification
  *    and access times of a file to the current time, under the following
  *    constraints,
- *	 - The times argument is null.
- *	 - The user ID of the process is not "root".
- *	 - The file is not owned by the user ID of the process.
- *	 - The user ID of the process does not have write access to the
- *	   file.
+ *  - The times argument is null.
+ *  - The user ID of the process is not "root".
+ *  - The file is not owned by the user ID of the process.
+ *  - The user ID of the process does not have write access to the
+ *    file.
  * 2. Verify that the system call utime() fails to set the modification
  *    and access times of a file if the specified file doesn't exist.
  *
@@ -45,13 +45,13 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return=-1)
- *   	if errno set == expected errno
- *   		Issue sys call fails with expected return value and errno.
- *   	Otherwise,
- *		Issue sys call fails with unexpected errno.
+ *   Check return code, if system call failed (return-1)
+ *   if errno set  expected errno
+ *  Issue sys call fails with expected return value and errno.
  *   Otherwise,
- *	Issue sys call returns unexpected value.
+ *  Issue sys call fails with unexpected errno.
+ *   Otherwise,
+ * Issue sys call returns unexpected value.
  *
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
@@ -59,16 +59,16 @@
  *
  * Usage:  <for command-line>
  *  utime06 [-c n] [-e] [-i n] [-I x] [-p x] [-t]
- *	where,  -c n : Run n copies concurrently.
- *		-e   : Turn on errno logging.
- *		-i n : Execute test n times.
- *		-I x : Execute test for x seconds.
- *		-P x : Pause for x seconds between iterations.
- *		-t   : Turn on syscall timing.
+ * where,  -c n : Run n copies concurrently.
+ *  -e   : Turn on errno logging.
+ *  -i n : Execute test n times.
+ *  -I x : Execute test for x seconds.
+ *  -P x : Pause for x seconds between iterations.
+ *  -t   : Turn on syscall timing.
  *
  * History
- *	07/2001 John George
- *		-Ported
+ * 07/2001 John George
+ *  -Ported
  *
  * Restrictions:
  *  This test must be executed by root.
@@ -93,138 +93,138 @@
 
 #define LTPUSER1        "nobody"
 #define LTPUSER2        "bin"
-#define TEMP_FILE	"tmp_file"
-#define FILE_MODE	S_IRUSR | S_IRGRP | S_IROTH
+#define TEMP_FILE "tmp_file"
+#define FILE_MODE S_IRUSR | S_IRGRP | S_IROTH
 
-char *TCID="utime06";		/* Test program identifier.    */
-int TST_TOTAL=2;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-time_t curr_time;		/* current time in seconds */
-time_t tloc;			/* argument var. for time() */
-int exp_enos[]={EACCES, ENOENT, 0};
+char *TCID"utime06";  /* Test program identifier.    */
+int TST_TOTAL2;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
+time_t curr_time;  /* current time in seconds */
+time_t tloc;   /* argument var. for time() */
+int exp_enos[]{EACCES, ENOENT, 0};
 
 struct passwd *ltpuser;         /* password struct for ltpusers */
 uid_t user_uid;                 /* user id of ltpuser */
 gid_t group_gid;                /* group id of ltpuser */
 int status;
 
-int setup1();			/* setup function to test error EACCES */
+int setup1();   /* setup function to test error EACCES */
 int no_setup();
 
-struct test_case_t {		/* test case struct. to hold ref. test cond's*/
-	char *pathname;
-	char *desc;
-	int exp_errno;
-	int (*setupfunc)();
-} Test_cases[] = {
-	{ TEMP_FILE, "Permission denied to modify file time", EACCES, setup1 },
-	{ "", "Specified file doesn't exist", ENOENT, no_setup },
-	{ NULL, NULL, 0, NULL}
+struct test_case_t {  /* test case struct. to hold ref. test cond's*/
+ char *pathname;
+ char *desc;
+ int exp_errno;
+ int (*setupfunc)();
+} Test_cases[]  {
+ { TEMP_FILE, "Permission denied to modify file time", EACCES, setup1 },
+ { "", "Specified file doesn't exist", ENOENT, no_setup },
+ { NULL, NULL, 0, NULL}
 };
 
-void setup();			/* Main setup function of test */
-void cleanup();			/* cleanup function for the test */
+void setup();   /* Main setup function of test */
+void cleanup();   /* cleanup function for the test */
 
 int
 main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-	char *file_name;	/* testfile name */
-	char *test_desc;	/* test specific error message */
-	int ind;		/* counter to test different test conditions */
-	int pid;
-    
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *) NULL) {
-		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
+ char *file_name; /* testfile name */
+ char *test_desc; /* test specific error message */
+ int ind;  /* counter to test different test conditions */
+ int pid;
 
-	/* Perform global setup for test */
-	setup();
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(ac, av, (option_t *) NULL, NULL);
+ if (msg ! (char *) NULL) {
+  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+  tst_exit();
+ }
 
-	/* set the expected errnos... */
-	TEST_EXP_ENOS(exp_enos);
+ /* Perform global setup for test */
+ setup();
 
-	pid = FORK_OR_VFORK();
+ /* set the expected errnos... */
+ TEST_EXP_ENOS(exp_enos);
 
-	if (pid == -1) {
-		tst_brkm(TBROK, cleanup, "fork() failed");
-		/*NOTREACHED*/
-	} else if (pid == 0) {
-		if ((ltpuser = getpwnam(LTPUSER1)) == NULL) {
-			tst_brkm(TBROK,cleanup,"%s not found in /etc/passwd",
-				LTPUSER1);
-			/*NOTREACHED*/
-		}
+ pid  FORK_OR_VFORK();
 
-		/* get uid of user */
-		user_uid = ltpuser->pw_uid;
+ if (pid  -1) {
+  tst_brkm(TBROK, cleanup, "fork() failed");
+  /*NOTREACHED*/
+ } else if (pid  0) {
+  if ((ltpuser  getpwnam(LTPUSER1))  NULL) {
+   tst_brkm(TBROK,cleanup,"%s not found in /etc/passwd",
+    LTPUSER1);
+   /*NOTREACHED*/
+  }
 
-		seteuid(user_uid);
+  /* get uid of user */
+  user_uid  ltpuser->pw_uid;
 
-		/* Check looping state if -i option given */
-		for (lc = 0; TEST_LOOPING(lc); lc++) {
-			/* Reset Tst_count in case we are looping. */
-			Tst_count=0;
+  seteuid(user_uid);
 
-			for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
-				file_name = Test_cases[ind].pathname;
-				test_desc = Test_cases[ind].desc;
+  /* Check looping state if -i option given */
+  for (lc  0; TEST_LOOPING(lc); lc++) {
+   /* Reset Tst_count in case we are looping. */
+   Tst_count0;
 
-				/*
-				 * Call utime(2) to test different test
-				 * conditions. Verify that it fails with -1
-				 * return value and sets appropriate errno.
-				 */
-				TEST(utime(file_name, NULL));
+   for (ind  0; Test_cases[ind].desc ! NULL; ind++) {
+    file_name  Test_cases[ind].pathname;
+    test_desc  Test_cases[ind].desc;
 
-				/* Check return code from utime(2) */
-				if (TEST_RETURN == -1) {
-					TEST_ERROR_LOG(TEST_ERRNO);
-					if (TEST_ERRNO ==
-						Test_cases[ind].exp_errno) {
-						tst_resm(TPASS, "utime() "
-							"fails, %s, errno:%d",
-							test_desc, TEST_ERRNO);
-					} else {
-						tst_resm(TFAIL, "utime(2) "
-							"fails, %s, errno:%d, "
-							"expected errno:%d",
-							test_desc, TEST_ERRNO,
-							Test_cases[ind].exp_errno);
-					}
-				} else {
-					tst_resm(TFAIL, "utime(2) returned %d, "
-						"expected -1, errno:%d",
-						TEST_RETURN,
-						Test_cases[ind].exp_errno);
-				}
-			}	/* End of TEST CASE LOOPING. */
+    /*
+     * Call utime(2) to test different test
+     * conditions. Verify that it fails with -1
+     * return value and sets appropriate errno.
+     */
+    TEST(utime(file_name, NULL));
 
-			Tst_count++;		/* incr TEST_LOOP counter */
+    /* Check return code from utime(2) */
+    if (TEST_RETURN  -1) {
+     TEST_ERROR_LOG(TEST_ERRNO);
+     if (TEST_ERRNO 
+      Test_cases[ind].exp_errno) {
+      tst_resm(TPASS, "utime() "
+       "fails, %s, errno:%d",
+       test_desc, TEST_ERRNO);
+     } else {
+      tst_resm(TFAIL, "utime(2) "
+       "fails, %s, errno:%d, "
+       "expected errno:%d",
+       test_desc, TEST_ERRNO,
+       Test_cases[ind].exp_errno);
+     }
+    } else {
+     tst_resm(TFAIL, "utime(2) returned %d, "
+      "expected -1, errno:%d",
+      TEST_RETURN,
+      Test_cases[ind].exp_errno);
+    }
+   } /* End of TEST CASE LOOPING. */
 
-		}	/* End for TEST_LOOPING */
-	} else {
-		waitpid(pid, &status, 0);
-		_exit(0);       /*
-				 * Exit here and let the child clean up.
-				 * This allows the errno information set
-				 * by the TEST_ERROR_LOG macro and the
-				 * PASS/FAIL status to be preserved for
-				 * use during cleanup.
-				 */
-	}
-	/* Call cleanup() to undo setup done for the test. */
-	cleanup();
-	/*NOTREACHED*/
+   Tst_count++;  /* incr TEST_LOOP counter */
+
+  } /* End for TEST_LOOPING */
+ } else {
+  waitpid(pid, &status, 0);
+  _exit(0);       /*
+     * Exit here and let the child clean up.
+     * This allows the errno information set
+     * by the TEST_ERROR_LOG macro and the
+     * PASS/FAIL status to be preserved for
+     * use during cleanup.
+     */
+ }
+ /* Call cleanup() to undo setup done for the test. */
+ cleanup();
+ /*NOTREACHED*/
 
 
   return(0);
 
-}	/* End main */
+} /* End main */
 
 /*
  * void
@@ -233,31 +233,31 @@ main(int ac, char **av)
  *  Invoke individual test setup functions according to the order
  *  set in test struct. definition.
  */
-void 
+void
 setup()
 {
-	int ind;			/* counter for setup functions */
+ int ind;   /* counter for setup functions */
 
-	/* capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Check that the test process id is non-super/root  */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, NULL, "Must be root for this test!");
-		tst_exit();
-	}
+ /* Check that the test process id is non-super/root  */
+ if (geteuid() ! 0) {
+  tst_brkm(TBROK, NULL, "Must be root for this test!");
+  tst_exit();
+ }
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
-	tst_tmpdir();
+ /* make a temp directory and cd to it */
+ tst_tmpdir();
 
-	/* call individual setup functions */
-	for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
-		Test_cases[ind].setupfunc();
-	}
-}	/* End setup() */
+ /* call individual setup functions */
+ for (ind  0; Test_cases[ind].desc ! NULL; ind++) {
+  Test_cases[ind].setupfunc();
+ }
+} /* End setup() */
 
 /*
  * int
@@ -267,51 +267,51 @@ setup()
 int
 no_setup()
 {
-	return 0;
+ return 0;
 }
 
 /*
  * int
  * setup1() - setup function for a test condition for which utime(2)
- *		returns -1 and sets errno to EACCES.
+ *  returns -1 and sets errno to EACCES.
  *  Create a testfile under temporary directory and change the ownership of
  *  testfile to "bin".
  */
 int
 setup1()
 {
-	int fildes;			/* file handle for temp file */
+ int fildes;   /* file handle for temp file */
 
-	/* Creat a temporary file under above directory */
-	if ((fildes = creat(TEMP_FILE, FILE_MODE)) == -1) {
-		tst_brkm(TBROK, cleanup, "creat(%s, %#o) Failed, errno=%d :%s",
-			 TEMP_FILE, FILE_MODE, errno, strerror(errno));
-	}
+ /* Creat a temporary file under above directory */
+ if ((fildes  creat(TEMP_FILE, FILE_MODE))  -1) {
+  tst_brkm(TBROK, cleanup, "creat(%s, %#o) Failed, errno%d :%s",
+    TEMP_FILE, FILE_MODE, errno, strerror(errno));
+ }
 
-	/* Close the temporary file created */
-	if (close(fildes) < 0) {
-		tst_brkm(TBROK, cleanup, "close(%s) Failed, errno=%d : %s:",
-				 TEMP_FILE, errno, strerror(errno));
-	}
+ /* Close the temporary file created */
+ if (close(fildes) < 0) {
+  tst_brkm(TBROK, cleanup, "close(%s) Failed, errno%d : %s:",
+     TEMP_FILE, errno, strerror(errno));
+ }
 
-	if ((ltpuser = getpwnam(LTPUSER2)) == NULL) {
-		tst_brkm(TBROK, cleanup, "%s not found in /etc/passwd",
-				LTPUSER2);
-		/*NOTREACHED*/
-	}
+ if ((ltpuser  getpwnam(LTPUSER2))  NULL) {
+  tst_brkm(TBROK, cleanup, "%s not found in /etc/passwd",
+    LTPUSER2);
+  /*NOTREACHED*/
+ }
 
-	/* get uid/gid of user accordingly */
-	user_uid = ltpuser->pw_uid;
-	group_gid = ltpuser->pw_gid;
+ /* get uid/gid of user accordingly */
+ user_uid  ltpuser->pw_uid;
+ group_gid  ltpuser->pw_gid;
 
-	if (chown(TEMP_FILE, user_uid, group_gid) < 0) {
-		tst_brkm(TBROK, cleanup, "chown() of %s failed, error %d",
-			TEMP_FILE, errno);
-		/*NOTREACHED*/
-	}
+ if (chown(TEMP_FILE, user_uid, group_gid) < 0) {
+  tst_brkm(TBROK, cleanup, "chown() of %s failed, error %d",
+   TEMP_FILE, errno);
+  /*NOTREACHED*/
+ }
 
-	return 0;
-}	/* End of setup1 */
+ return 0;
+} /* End of setup1 */
 
 /*
  * void
@@ -319,19 +319,19 @@ setup1()
  *             completion or premature exit.
  *  Remove the test directory and testfile created in the setup.
  */
-void 
+void
 cleanup()
 {
-	seteuid(0);
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ seteuid(0);
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
-	tst_rmdir();
+ /* Remove tmp dir and all files in it */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}	/* End cleanup() */
+ /* exit with return code appropriate for results */
+ tst_exit();
+} /* End cleanup() */

@@ -37,7 +37,7 @@
  *
  *     Setup:
  *       1. Global:
- *       2. Create a file, do a normal mmap with MAP_SHARED flag 
+ *       2. Create a file, do a normal mmap with MAP_SHARED flag
  *
  *     Test:
  *       1. Test with a valid mmap but without MAP_SHARED flag
@@ -62,7 +62,7 @@
  *     02/11/2008 - Removed the pgoff test case, as the latest kernels doesn't
  *     verify the page offset (http://lkml.org/lkml/2007/11/29/325) - Ricardo
  *     Salveti de Araujo, <rsalvetidev@gmail.com>
- * 
+ *
  *     19/10/2007 - Created by Ricardo Salveti de Araujo, <rsalvetidev@gmail.com>
  */
 
@@ -97,41 +97,41 @@ static int setup03(int test);
 static int setup04(int test);
 static void cleanup();
 
-char *TCID = "remap_file_pages02";      /* Test program identifier.    */
-int TST_TOTAL = 4;                      /* Total number of test cases. */
+char *TCID  "remap_file_pages02";      /* Test program identifier.    */
+int TST_TOTAL  4;                      /* Total number of test cases. */
 extern int Tst_count;                   /* Test Case counter for tst_* routines */
-static int exp_enos[] = { EINVAL, 0 };
+static int exp_enos[]  { EINVAL, 0 };
 
 static char *cache_contents;
-int fd;					/* File descriptor used at the test */
-char *data = NULL;
-char *data01 = NULL;
+int fd;     /* File descriptor used at the test */
+char *data  NULL;
+char *data01  NULL;
 
 static struct test_case_t {
-	char *err_desc;			/* Error description */
-	int exp_errno;			/* Expected error number */
-	char *exp_errval;		/* Expected error value string */
-	int (*setupfunc)(int);		/* Test setup function */
-	int (*cleanfunc)(int);		/* Test clean function */
-	void *start;			/* Start argument */
-	size_t size;			/* Size argument */
-	int prot;			/* Prot argument */
-	ssize_t pgoff;			/* Pgoff argument */
-	int flags;			/* Flags argument */
-} testcase[] = {
-	{ "start does not refer to a valid mapping created with the "
+ char *err_desc;   /* Error description */
+ int exp_errno;   /* Expected error number */
+ char *exp_errval;  /* Expected error value string */
+ int (*setupfunc)(int);  /* Test setup function */
+ int (*cleanfunc)(int);  /* Test clean function */
+ void *start;   /* Start argument */
+ size_t size;   /* Size argument */
+ int prot;   /* Prot argument */
+ ssize_t pgoff;   /* Pgoff argument */
+ int flags;   /* Flags argument */
+} testcase[]  {
+ { "start does not refer to a valid mapping created with the "
           "MAP_SHARED flag", EINVAL, "EINVAL", setup01, NULL, NULL, 0, 0, 2, 0 },
-	{ "start is invalid", EINVAL, "EINVAL", setup02, NULL, NULL, 0, 0, 2, 0 },
+ { "start is invalid", EINVAL, "EINVAL", setup02, NULL, NULL, 0, 0, 2, 0 },
 
-	{ "size is invalid", EINVAL, "EINVAL", setup03, NULL, NULL, 0, 0, 0, 0 },
-	{ "prot is invalid", EINVAL, "EINVAL", setup04, NULL, NULL, 0, 0, 2, 0 }
+ { "size is invalid", EINVAL, "EINVAL", setup03, NULL, NULL, 0, 0, 0, 0 },
+ { "prot is invalid", EINVAL, "EINVAL", setup04, NULL, NULL, 0, 0, 2, 0 }
 };
 
 int
 main(int ac, char **av)
 {
-	int lc, i;	/* loop counter */
-	char *msg;	/* message returned from parse_opts */
+ int lc, i; /* loop counter */
+ char *msg; /* message returned from parse_opts */
 
 #if defined (__s390__) || (__s390x__) || (__ia64__)
         /* Disables the test in case the kernel version is lower than 2.6.12 and arch is s390 */
@@ -142,63 +142,63 @@ main(int ac, char **av)
         }
 #endif
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL))
-			!= (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL))
+   ! (char *)NULL) {
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	/* perform global setup for test */
-	setup();
+ /* perform global setup for test */
+ setup();
 
-	/* check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping. */
+  Tst_count  0;
 
-		for (i = 0; i < TST_TOTAL; i++) {
-			/* do the setup if the test have one */
-			if (testcase[i].setupfunc && testcase[i].setupfunc(i) == -1) {
-				tst_resm(TWARN, "Failed to setup test %d"
-						" Skipping test", i);
-				continue;
-			}
+  for (i  0; i < TST_TOTAL; i++) {
+   /* do the setup if the test have one */
+   if (testcase[i].setupfunc && testcase[i].setupfunc(i)  -1) {
+    tst_resm(TWARN, "Failed to setup test %d"
+      " Skipping test", i);
+    continue;
+   }
 
-			/* run the test */
-			TEST(remap_file_pages(testcase[i].start, testcase[i].size,
-						testcase[i].prot, testcase[i].pgoff,
-						testcase[i].flags));
+   /* run the test */
+   TEST(remap_file_pages(testcase[i].start, testcase[i].size,
+      testcase[i].prot, testcase[i].pgoff,
+      testcase[i].flags));
 
-			/* do the cleanup if the test have one */
-			if (testcase[i].cleanfunc && testcase[i].cleanfunc(i) == -1) {
-				tst_brkm(TBROK, cleanup, "Failed to cleanup test %d,"
-						" quitting the test", i);
-			}
+   /* do the cleanup if the test have one */
+   if (testcase[i].cleanfunc && testcase[i].cleanfunc(i)  -1) {
+    tst_brkm(TBROK, cleanup, "Failed to cleanup test %d,"
+      " quitting the test", i);
+   }
 
-			/* verify the return code */
-			if ((TEST_RETURN == -1) && (TEST_ERRNO == testcase[i].exp_errno)) {
-				tst_resm(TPASS, "remap_file_pages(2) expected failure;"
-						" Got errno - %s : %s",
-						testcase[i].exp_errval,
-						testcase[i].err_desc);
-			} else {
-				tst_resm(TFAIL, "remap_file_pages(2) failed to produce"
-						" expected error: %d, errno: %s."
-						" because got error %d",
-						testcase[i].exp_errno,
-						testcase[i].exp_errval,
-						TEST_ERRNO);
-			}
-			TEST_ERROR_LOG(TEST_ERRNO);
-		} /* end of test loops */
-	} /* end of  test looping */
+   /* verify the return code */
+   if ((TEST_RETURN  -1) && (TEST_ERRNO  testcase[i].exp_errno)) {
+    tst_resm(TPASS, "remap_file_pages(2) expected failure;"
+      " Got errno - %s : %s",
+      testcase[i].exp_errval,
+      testcase[i].err_desc);
+   } else {
+    tst_resm(TFAIL, "remap_file_pages(2) failed to produce"
+      " expected error: %d, errno: %s."
+      " because got error %d",
+      testcase[i].exp_errno,
+      testcase[i].exp_errval,
+      TEST_ERRNO);
+   }
+   TEST_ERROR_LOG(TEST_ERRNO);
+  } /* end of test loops */
+ } /* end of  test looping */
 
-	/* clean up and exit */
-	cleanup();
+ /* clean up and exit */
+ cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+ /*NOTREACHED*/
+ return 0;
 }
 
 /*
@@ -208,19 +208,19 @@ main(int ac, char **av)
 int
 setup01(int test)
 {
-	data01 = mmap(NULL, cache_sz, PROT_READ|PROT_WRITE,
-			MAP_PRIVATE, fd, 0);
+ data01  mmap(NULL, cache_sz, PROT_READ|PROT_WRITE,
+   MAP_PRIVATE, fd, 0);
 
-	if (data01 == MAP_FAILED) {
-		tst_resm(TWARN, "mmap Error, errno=%d : %s", errno, strerror(errno));
-		return -1;
-	}
+ if (data01  MAP_FAILED) {
+  tst_resm(TWARN, "mmap Error, errno%d : %s", errno, strerror(errno));
+  return -1;
+ }
 
-	/* set up the test case struct for this test */
-	testcase[test].start = data01;
-	testcase[test].size = page_sz;
+ /* set up the test case struct for this test */
+ testcase[test].start  data01;
+ testcase[test].size  page_sz;
 
-	return 0;
+ return 0;
 }
 
 /*
@@ -229,11 +229,11 @@ setup01(int test)
 int
 setup02(int test)
 {
-	/* set up the test case struct for this test */
-	testcase[test].start = data + cache_sz;
-	testcase[test].size = page_sz;
+ /* set up the test case struct for this test */
+ testcase[test].start  data + cache_sz;
+ testcase[test].size  page_sz;
 
-	return 0;
+ return 0;
 }
 
 /*
@@ -242,11 +242,11 @@ setup02(int test)
 int
 setup03(int test)
 {
-	/* set up the test case struct for this test */
-	testcase[test].start = data;
-	testcase[test].size = cache_sz + page_sz;
+ /* set up the test case struct for this test */
+ testcase[test].start  data;
+ testcase[test].size  cache_sz + page_sz;
 
-	return 0;
+ return 0;
 }
 
 /*
@@ -255,12 +255,12 @@ setup03(int test)
 int
 setup04(int test)
 {
-	/* set up the test case struct for this test */
-	testcase[test].start = data;
-	testcase[test].size = page_sz;
-	testcase[test].prot = -1;
+ /* set up the test case struct for this test */
+ testcase[test].start  data;
+ testcase[test].size  page_sz;
+ testcase[test].prot  -1;
 
-	return 0;
+ return 0;
 }
 
 /*
@@ -270,62 +270,62 @@ setup04(int test)
 void
 setup()
 {
-	int i, j;
+ int i, j;
 
-	/* capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(FORK, DEF_HANDLER, cleanup);
 
         /* set the expected erronos */
         TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
-	tst_tmpdir();
+ /* make a temp directory and cd to it */
+ tst_tmpdir();
 
-	/* Get page size */
-	if ((page_sz = getpagesize()) < 0) {
-		tst_brkm(TFAIL, cleanup,
-				"getpagesize() fails to get system page size");
-	}
+ /* Get page size */
+ if ((page_sz  getpagesize()) < 0) {
+  tst_brkm(TFAIL, cleanup,
+    "getpagesize() fails to get system page size");
+ }
 
-	page_words = (page_sz/sizeof(char));
+ page_words  (page_sz/sizeof(char));
 
-	/* Set the cache size */
-	cache_pages = 32;
-	cache_sz = cache_pages*page_sz;
-	cache_contents = (char *) malloc(cache_sz * sizeof(char));
+ /* Set the cache size */
+ cache_pages  32;
+ cache_sz  cache_pages*page_sz;
+ cache_contents  (char *) malloc(cache_sz * sizeof(char));
 
-	for (i = 0; i < cache_pages; i++) {
-                char *page = cache_contents + i*page_sz;
+ for (i  0; i < cache_pages; i++) {
+                char *page  cache_contents + i*page_sz;
 
-		for (j = 0; j < page_words; j++)
-			page[j] = i;
-	}
+  for (j  0; j < page_words; j++)
+   page[j]  i;
+ }
 
-	if ((fd = open("cache", O_RDWR|O_CREAT|O_TRUNC,S_IRWXU)) < 0) {
-		tst_brkm(TBROK, cleanup,
-                        "open(%s, O_RDWR|O_CREAT|O_TRUNC,S_IRWXU) Failed, errno=%d : %s",
+ if ((fd  open("cache", O_RDWR|O_CREAT|O_TRUNC,S_IRWXU)) < 0) {
+  tst_brkm(TBROK, cleanup,
+                        "open(%s, O_RDWR|O_CREAT|O_TRUNC,S_IRWXU) Failed, errno%d : %s",
                         "cache", errno, strerror(errno));
-	}
+ }
 
-	if (write(fd, cache_contents, cache_sz) != cache_sz) {
-		tst_resm(TFAIL, "Write Error for \"cache_contents\" to \"cache_sz\" of %d (errno=%d : %s)",
+ if (write(fd, cache_contents, cache_sz) ! cache_sz) {
+  tst_resm(TFAIL, "Write Error for \"cache_contents\" to \"cache_sz\" of %d (errno%d : %s)",
                          cache_sz, errno, strerror(errno));
-		cleanup();
-	}
+  cleanup();
+ }
 
-	data = mmap((void *)WINDOW_START,
-			cache_sz,
-			PROT_READ|PROT_WRITE,
-			MAP_FIXED | MAP_SHARED,
-			fd, 0);
+ data  mmap((void *)WINDOW_START,
+   cache_sz,
+   PROT_READ|PROT_WRITE,
+   MAP_FIXED | MAP_SHARED,
+   fd, 0);
 
-	if (data == MAP_FAILED) {
-		tst_resm(TFAIL, "mmap Error, errno=%d : %s", errno, strerror(errno));
-		cleanup();
-	}
+ if (data  MAP_FAILED) {
+  tst_resm(TFAIL, "mmap Error, errno%d : %s", errno, strerror(errno));
+  cleanup();
+ }
 
 }  /* End setup() */
 
@@ -336,24 +336,24 @@ setup()
 void
 cleanup()
 {
-	/* Close the file descriptor */
-	close(fd);
+ /* Close the file descriptor */
+ close(fd);
 
-	if (data)
-		munmap (data, cache_sz);
-	if (data01)
-		munmap (data01, cache_sz);
+ if (data)
+  munmap (data, cache_sz);
+ if (data01)
+  munmap (data01, cache_sz);
 
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* Remove tmp dir and all files inside it*/
-	tst_rmdir();
+ /* Remove tmp dir and all files inside it*/
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 
 }  /* End cleanup() */

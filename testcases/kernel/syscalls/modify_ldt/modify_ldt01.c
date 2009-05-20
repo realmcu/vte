@@ -19,34 +19,34 @@
 
 /*
  * NAME
- *	modify_ldt01.c
+ * modify_ldt01.c
  *
  * DESCRIPTION
- *	Testcase to check the error conditions for modify_ldt(2)
+ * Testcase to check the error conditions for modify_ldt(2)
  *
  * CALLS
- *	modify_ldt()
+ * modify_ldt()
  *
  * ALGORITHM
- *	block1:
- *		Invoke modify_ldt() with a func value which is neither
- *		0 or 1. Verify that ENOSYS is set.
- *	block2:
- *		Invoke mprotect() with ptr == NULL. Verify that EINVAL
- *		is set.
- *	block3:
- *		Create an LDT segment.
- *		Try to read from an invalid pointer.
- *		Verify that EFAULT is set.
+ * block1:
+ *  Invoke modify_ldt() with a func value which is neither
+ *  0 or 1. Verify that ENOSYS is set.
+ * block2:
+ *  Invoke mprotect() with ptr  NULL. Verify that EINVAL
+ *  is set.
+ * block3:
+ *  Create an LDT segment.
+ *  Try to read from an invalid pointer.
+ *  Verify that EFAULT is set.
  *
  * USAGE
- *	modify_ldt01
+ * modify_ldt01
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- *	None
+ * None
  */
 
 #include "config.h"
@@ -54,7 +54,7 @@
 #include "usctest.h"
 
 TCID_DEFINE(modify_ldt01);
-int TST_TOTAL = 1;
+int TST_TOTAL  1;
 extern int Tst_count;
 
 
@@ -73,7 +73,7 @@ extern int modify_ldt(int, void*, unsigned long);
 #ifdef HAVE_STRUCT_USER_DESC
 typedef struct user_desc modify_ldt_s;
 #elif  HAVE_STRUCT_MODIFY_LDT_LDT_S
-typedef struct modify_ldt_ldt_s modify_ldt_s; 
+typedef struct modify_ldt_ldt_s modify_ldt_s;
 #else
 typedef struct modify_ldt_ldt_t
 {
@@ -99,148 +99,148 @@ void setup(void);
 
 int main(int ac, char **av)
 {
-	int lc;                         /* loop counter */
-	char *msg;                      /* message returned from parse_opts */
+ int lc;                         /* loop counter */
+ char *msg;                      /* message returned from parse_opts */
 
-	void *ptr;
-	int retval, func;
+ void *ptr;
+ int retval, func;
 
-	int flag;
-	int seg[4];
+ int flag;
+ int seg[4];
 
         /* parse standard options */
-        if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-		/*NOTREACHED*/
+        if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+  /*NOTREACHED*/
         }
 
         setup();                        /* global setup */
 
-	/* The following loop checks looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* The following loop checks looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
                 /* reset Tst_count in case we are looping */
-                Tst_count = 0;
+                Tst_count  0;
 
 //block1:
-		/*
-		 * Check for ENOSYS.
-		 */
-		tst_resm(TINFO, "Enter block 1");
-		flag = 0;
-		ptr=(void *)malloc(10);
-		func = 100;
-		retval = modify_ldt(func, ptr, sizeof(ptr));
-		if (retval < 0) {
-			if (errno != ENOSYS) {
-				tst_resm(TFAIL, "modify_ldt() set invalid "
+  /*
+   * Check for ENOSYS.
+   */
+  tst_resm(TINFO, "Enter block 1");
+  flag  0;
+  ptr(void *)malloc(10);
+  func  100;
+  retval  modify_ldt(func, ptr, sizeof(ptr));
+  if (retval < 0) {
+   if (errno ! ENOSYS) {
+    tst_resm(TFAIL, "modify_ldt() set invalid "
                                          "errno, expected ENOSYS, got: %d",
-					 errno);
-				flag = FAILED;
-			}
-		} else {
-			tst_resm(TFAIL, "modify_ldt error: "
-				 "unexpected return value %d", retval);
-			flag = FAILED;
-		}
+      errno);
+    flag  FAILED;
+   }
+  } else {
+   tst_resm(TFAIL, "modify_ldt error: "
+     "unexpected return value %d", retval);
+   flag  FAILED;
+  }
 
-		if (flag) {
-			tst_resm(TINFO, "block 1 FAILED");
-		} else {
-			tst_resm(TINFO, "block 1 PASSED");
-		}
-		tst_resm(TINFO, "Exit block 1");
-		free(ptr);
+  if (flag) {
+   tst_resm(TINFO, "block 1 FAILED");
+  } else {
+   tst_resm(TINFO, "block 1 PASSED");
+  }
+  tst_resm(TINFO, "Exit block 1");
+  free(ptr);
 
 //block2:
-		/*
-		 * Check for EINVAL
-		 */
-		tst_resm(TINFO, "Enter block 2");
-		flag = 0;
+  /*
+   * Check for EINVAL
+   */
+  tst_resm(TINFO, "Enter block 2");
+  flag  0;
 
-		ptr = 0;
+  ptr  0;
 
-		retval = modify_ldt(1, ptr, sizeof(ptr));
-		if (retval < 0) {
-			if (errno != EINVAL) {
-				tst_resm(TFAIL, "modify_ldt() set invalid "
+  retval  modify_ldt(1, ptr, sizeof(ptr));
+  if (retval < 0) {
+   if (errno ! EINVAL) {
+    tst_resm(TFAIL, "modify_ldt() set invalid "
                                          "errno, expected EINVAL, got: %d",
-					 errno);
-				flag = FAILED;
-			}
-		} else {
-			tst_resm(TFAIL, "modify_ldt error: "
-				 "unexpected return value %d", retval);
-			flag = FAILED;
-		}
+      errno);
+    flag  FAILED;
+   }
+  } else {
+   tst_resm(TFAIL, "modify_ldt error: "
+     "unexpected return value %d", retval);
+   flag  FAILED;
+  }
 
-		if (flag) {
-			tst_resm(TINFO, "block 2 FAILED");
-		} else {
-			tst_resm(TINFO, "block 2 PASSED");
-		}
-		tst_resm(TINFO, "Exit block 2");
+  if (flag) {
+   tst_resm(TINFO, "block 2 FAILED");
+  } else {
+   tst_resm(TINFO, "block 2 PASSED");
+  }
+  tst_resm(TINFO, "Exit block 2");
 
 //block3:
 
-		/*
-		 * Create a new LDT segment.
-		 */
-		if (create_segment(seg, sizeof(seg)) == -1) {
-			tst_brkm(TINFO, cleanup, "Creation of segment failed");
-			/*NOTREACHED*/
-		}
+  /*
+   * Create a new LDT segment.
+   */
+  if (create_segment(seg, sizeof(seg))  -1) {
+   tst_brkm(TINFO, cleanup, "Creation of segment failed");
+   /*NOTREACHED*/
+  }
 
-		/*
-		 * Check for EFAULT
-		 */
-		ptr = sbrk(0);
+  /*
+   * Check for EFAULT
+   */
+  ptr  sbrk(0);
 
-		retval = modify_ldt(0, ptr + 0xFFF, sizeof(ptr));
-		if (retval < 0) {
-			if (errno != EFAULT) {
-				tst_resm(TFAIL, "modify_ldt() set invalid "
+  retval  modify_ldt(0, ptr + 0xFFF, sizeof(ptr));
+  if (retval < 0) {
+   if (errno ! EFAULT) {
+    tst_resm(TFAIL, "modify_ldt() set invalid "
                                          "errno, expected EFAULT, got: %d",
-					 errno);
-				flag = FAILED;
-			}
-		} else {
-			tst_resm(TFAIL, "modify_ldt error: "
-				 "unexpected return value %d", retval);
-			flag = FAILED;
-		}
+      errno);
+    flag  FAILED;
+   }
+  } else {
+   tst_resm(TFAIL, "modify_ldt error: "
+     "unexpected return value %d", retval);
+   flag  FAILED;
+  }
 
-		if (flag) {
-			tst_resm(TINFO, "block 3 FAILED");
-		} else {
-			tst_resm(TINFO, "block 3 PASSED");
-		}
-		tst_resm(TINFO, "Exit block 3");
+  if (flag) {
+   tst_resm(TINFO, "block 3 FAILED");
+  } else {
+   tst_resm(TINFO, "block 3 PASSED");
+  }
+  tst_resm(TINFO, "Exit block 3");
 
         }
         cleanup();
-	return(0);
+ return(0);
 }
 
 /*
- * create_segment() - 
+ * create_segment() -
  */
 int
 create_segment(void *seg, size_t size)
 {
-	modify_ldt_s entry;
+ modify_ldt_s entry;
 
-	entry.entry_number = 0;
-	entry.base_addr = (unsigned long)seg;
-	entry.limit = size;
-	entry.seg_32bit = 1;
-	entry.contents = 0;
-	entry.read_exec_only = 0;
-	entry.limit_in_pages = 0;
-	entry.seg_not_present = 0;
+ entry.entry_number  0;
+ entry.base_addr  (unsigned long)seg;
+ entry.limit  size;
+ entry.seg_32bit  1;
+ entry.contents  0;
+ entry.read_exec_only  0;
+ entry.limit_in_pages  0;
+ entry.seg_not_present  0;
 
-	return modify_ldt(1, &entry, sizeof(entry));
+ return modify_ldt(1, &entry, sizeof(entry));
 }
 
 /*
@@ -249,11 +249,11 @@ create_segment(void *seg, size_t size)
 void
 setup(void)
 {
-	/* capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 }
 
 /*
@@ -263,28 +263,28 @@ setup(void)
 void
 cleanup(void)
 {
-	/*
-	 * print timing status if that option was specified.
-	 * print errno log if that option was specified
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing status if that option was specified.
+  * print errno log if that option was specified
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }
 
 #elif HAVE_MODIFY_LDT
 int main()
 {
-	tst_resm(TCONF, "modify_ldt is available but not tested on the platform than __i386__");
-	return 0;
+ tst_resm(TCONF, "modify_ldt is available but not tested on the platform than __i386__");
+ return 0;
 }
 
 #else
 int main()
 {
-	tst_resm(TINFO, "modify_ldt01 test only for ix86");
-	return 0;
+ tst_resm(TINFO, "modify_ldt01 test only for ix86");
+ return 0;
 }
 
 #endif /* defined(__i386__) */

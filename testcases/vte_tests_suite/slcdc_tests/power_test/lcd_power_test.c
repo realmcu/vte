@@ -1,39 +1,39 @@
-/*================================================================================================*/
+/*====================*/
 /**
     @file   lcd_power_test.c
 
     @brief  C source file of the sleep test application that checks SLCDC driver by
             putting device to the various VESA blanking levels.
 */
-/*==================================================================================================
+/*======================
 
 Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
 THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 Freescale Semiconductor, Inc.
-     
-====================================================================================================
+
+====================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-I. Semenchukov/smng001c      21/09/2004     TLSbo41672   Initial version 
+I. Semenchukov/smng001c      21/09/2004     TLSbo41672   Initial version
 L.Delaspre/rc149c            15/12/2004     TLSbo44058   Invalid argument issue investigation
-E.Gromazina					19/08/2005	TLSbo53875	renaming test
+E.Gromazina     19/08/2005 TLSbo53875 renaming test
 
-====================================================================================================
-Portability: Indicate if this module is portable to other compilers or platforms. 
+====================
+Portability: Indicate if this module is portable to other compilers or platforms.
              If not, indicate specific reasons why is it not portable.
 
-==================================================================================================*/
+======================*/
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <sys/types.h>  /* open()                          */
 #include <sys/stat.h>   /* open()                          */
@@ -46,73 +46,73 @@ extern "C"{
 #include <sys/mman.h>   /* mmap(), munmap()                */
 #include <linux/fb.h>   /* framebuffer related information */
 #include <asm/types.h>
-    
+
 /* Harness Specific Include Files. */
 #include "test.h"
 
 /* Verification Test Environment Include Files */
 #include "lcd_power_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 char                     fb_path[PATH_LEN] =
                             "/dev/fb0"; /* Path to the framebuffer device file           */
 int                      fb_fd;         /* Framebuffer device file descriptor            */
 struct fb_fix_screeninfo fb_info;       /* Framebuffer constant information              */
 unsigned char            *fb_mem_ptr;   /* Pointer to the mapped momory of the fb device */
 
-/*==================================================================================================
+/*======================
                                        GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 extern char *F_opt;
 
-/*==================================================================================================
+/*======================
                                    LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 int get_modeinfo(struct fb_var_screeninfo *info);
 int blank_test(int blank_mode);
 void print_fbinfo(void);
 unsigned char *draw_px(unsigned char *where, struct pixel *p);
 
 
-/*==================================================================================================
+/*======================
                                        LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
 
-/*================================================================================================*/
-/*===== VT_sleep_setup =====*/
+/*====================*/
+/*= VT_sleep_setup =*/
 /**
 @brief  assumes the pre-condition of the test case execution. Opens the framebuffer device,
         gets information into the fb_fix_screeninfo structure, and maps fb device into memory.
 
 @param  Input:  None
         Output: None
-  
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_power_setup(void)
 {
     int rv = TFAIL;
@@ -145,18 +145,18 @@ int VT_power_setup(void)
 }
 
 
-/*================================================================================================*/
-/*===== VT_sleep_cleanup =====*/
+/*====================*/
+/*= VT_sleep_cleanup =*/
 /**
 @brief  assumes the post-condition of the test case execution. Closes the framebuffer device.
 
 @param  Input:  None
         Output: None
-  
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_power_cleanup(void)
 {
     munmap(fb_mem_ptr, fb_info.smem_len);
@@ -166,8 +166,8 @@ int VT_power_cleanup(void)
 }
 
 
-/*================================================================================================*/
-/*===== VT_sleep_test =====*/
+/*====================*/
+/*= VT_sleep_test =*/
 /**
 @brief  Prints framebuffer constant information. Gets current video mode information. Assigns
         corresponding values to the members of the pixel structure. Applies three blanking modes
@@ -175,11 +175,11 @@ int VT_power_cleanup(void)
 
 @param  Input:  None
         Output: None
-  
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_power_test(void)
 {
     struct
@@ -216,7 +216,7 @@ int VT_power_test(void)
     px.b_field.offset = mode_info.blue.offset;
     px.b_field.length = mode_info.blue.length;
     size = px.xres * px.yres;
-    
+
     /* Clear screen and fill it with some pattern */
     tst_resm(TINFO, "Clearing the LCD...");
     px.r_color = px.g_color = px.b_color = 0; /* Set color values */
@@ -236,7 +236,7 @@ int VT_power_test(void)
     fb_wr_ptr = fb_mem_ptr;
     for (i = 0; i < size; i++)
         fb_wr_ptr = draw_px(fb_wr_ptr, &px);
-#endif    
+#endif
     /* Standby mode. Spend some time before and after it */
     tst_resm(TINFO, "Go to the standby mode...");
     sleep(1);
@@ -249,7 +249,7 @@ int VT_power_test(void)
     {
         tst_resm(TPASS, "standby mode test OK");
     }
-    
+
     /* Suspend mode. Spend some time before and after it */
     tst_resm(TINFO, "Go to the suspend mode...");
     sleep(1);
@@ -262,7 +262,7 @@ int VT_power_test(void)
     {
         tst_resm(TPASS, "suspend mode test OK");
     }
-    
+
     /* Poweroff mode. Spend some time before and after it */
     tst_resm(TINFO, "Go to the power off mode...");
     sleep(1);
@@ -275,7 +275,7 @@ int VT_power_test(void)
     {
         tst_resm(TPASS, "power off mode test OK");
     }
-    
+
     /* Restore activation flag */
     mode_info.activate = act_mode;
     ioctl(fb_fd, FBIOPUT_VSCREENINFO, &mode_info);
@@ -283,18 +283,18 @@ int VT_power_test(void)
     return rv;
 }
 
-/*================================================================================================*/
-/*===== get_modeinfo =====*/
+/*====================*/
+/*= get_modeinfo =*/
 /**
 @brief  Gets video mode parameters. If successful, prints some of them.
 
 @param  Input:  None
         Output: info  - pointer to the structure where video mode info will be stored
-  
+
 @return  0 on success
         -1 if cannot get mode info via ioctl()
 */
-/*================================================================================================*/
+/*====================*/
 int get_modeinfo(struct fb_var_screeninfo *info)
 {
     if (!info)
@@ -313,18 +313,18 @@ int get_modeinfo(struct fb_var_screeninfo *info)
     return 0;
 };
 
-/*================================================================================================*/
-/*===== blank_test =====*/
+/*====================*/
+/*= blank_test =*/
 /**
 @brief  Sets blank mode. If successful, restores normal mode.
 
 @param  Input:  blank_mode - which blank mode will be applied
         Output: None
-  
+
 @return  0 on success
         -1 if cannot set blank mode via ioctl()
 */
-/*================================================================================================*/
+/*====================*/
 int blank_test(int blank_mode)
 {
     if (ioctl(fb_fd, FBIOBLANK, blank_mode))
@@ -342,20 +342,20 @@ int blank_test(int blank_mode)
         return -1;
     }
     sleep(2);
-    
+
     return 0;
 }
-/*================================================================================================*/
-/*===== print_fbinfo =====*/
+/*====================*/
+/*= print_fbinfo =*/
 /**
 @brief  Prints some fb unchangeable parameters
 
 @param  Input:  None
         Output: None
-  
+
 @return None
 */
-/*================================================================================================*/
+/*====================*/
 void print_fbinfo(void)
 {
     printf("Frame buffer device information:\n");
@@ -419,18 +419,18 @@ void print_fbinfo(void)
     return;
 }
 
-/*================================================================================================*/
-/*===== draw_px =====*/
+/*====================*/
+/*= draw_px =*/
 /**
 @brief  Computes byte values from given color values depending on color depth and draws one pixel
 
 @param  Input:  where - pointer to the pixel that will be drawn
                 p     - pointer to struct pixel that contains color values and screen color info
         Output: None
-  
+
 @return pointer to the next pixel that will be drawn
 */
-/*================================================================================================*/
+/*====================*/
 unsigned char *draw_px(unsigned char *where, struct pixel *p)
 {
 #ifdef MAD_TEST
@@ -465,7 +465,7 @@ unsigned char *draw_px(unsigned char *where, struct pixel *p)
 
         case 32:
             /* Don't use transparency byte; this byte always equals 0 */
-            *where++; 
+            *where++;
             *where++ = *((unsigned char *)&value + 2);
             *where++ = *((unsigned char *)&value + 1);
             *where++ = *((unsigned char *)&value);
@@ -477,7 +477,7 @@ unsigned char *draw_px(unsigned char *where, struct pixel *p)
     return where;
 #else
         __u32 value;
-        
+
         if (!where)
         {
                 tst_resm(TFAIL, "where isn't a valid pointer to 'unsigned char' ");
@@ -488,12 +488,12 @@ unsigned char *draw_px(unsigned char *where, struct pixel *p)
                 tst_resm(TFAIL, "p isn't a valid pointer to 'struct pixel' ");
                 return where;
         }
-        
+
         /* Convert pixel color represented by 3 bytes to appropriate color depth */
         value = (p->r_color * (1 << p->r_field.length) / (1 << 8) ) << p->r_field.offset;
         value |= (p->g_color * (1 << p->g_field.length) / (1 << 8) ) << p->g_field.offset;
         value |= (p->b_color * (1 << p->b_field.length) / (1 << 8) ) << p->b_field.offset;
-        
+
 /*        if ( p->t_field.length != 0)
         {
                value |= (p->trans * (1 << p->t_field.length) / (1 << 8) ) << p->t_field.offset;
@@ -504,24 +504,24 @@ unsigned char *draw_px(unsigned char *where, struct pixel *p)
                 *where++ = *((unsigned char *)&value);
                 *where++ = *((unsigned char *)&value + 1);
                 break;
-                
+
         case 24:
                 *where++ = *((unsigned char *)&value);
                 *where++ = *((unsigned char *)&value + 1);
                 *where++ = *((unsigned char *)&value + 2);
                 break;
-                
+
         case 32:
                 *where++ = *((unsigned char *)&value);
-                *where++ = *((unsigned char *)&value + 1); 
+                *where++ = *((unsigned char *)&value + 1);
                 *where++ = *((unsigned char *)&value + 2);
                 *where++ = *((unsigned char *)&value + 3);
                 break;
-                
+
         default:
                 break;
         }
-        
+
         return where;
 #endif
 }

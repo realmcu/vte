@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   hacc_test_module.c
 
         @brief  hacc API
 */
-/*==================================================================================================*/
+/*======================*/
 /**
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 */
-/*====================================================================================================
+/*====================
 Revision History:
                 Modification     Tracking
 Author                          Date          Number    Description of Changes
@@ -25,17 +25,17 @@ S.ZAVJALOV/zvjs001c          04/07/2005     TLSbo51629   Change hacc test strate
 A.URUSOV                     18/10/2005     TLSbo57061   New test functions are added
 A.Ozerov/b00320              11/12/2006     TLSbo84161   Minor changes.
 
-==================================================================================================
+======================
 Total Tests: 1
 
 Test Executable Name:  hacc_test_module.ko
 
 Test Strategy: Examine the HAC module functions
-=================================================================================================*/
+=====================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 
 #include <linux/module.h>
 #include <linux/device.h>
@@ -46,16 +46,16 @@ Test Strategy: Examine the HAC module functions
 
 #include "hacc_test_module.h"
 
-/*==================================================================================================
+/*======================
                                     LOCAL VARIABLE DECLARATIONS
-==================================================================================================*/
+======================*/
 
 static __u32 major_dev_num;
 static struct class *hacc_class;        /* Added by Pradeep K */
 
-/*==================================================================================================
+/*======================
                                     LOCAL  FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
 static int hacc_test_ioctl(struct inode *inode,
                            struct file *file, unsigned int cmd, unsigned long ularg);
@@ -69,19 +69,19 @@ void    hacc_test_burst_read_nature(void);
 void    hacc_test_suspend(void);
 void    hacc_test_resume(void);
 
-/*==================================================================================================
+/*======================
                                 STRUCTURES AND OTHER TYPEDEFS
-==================================================================================================*/
+======================*/
 
-static struct file_operations hacc_test_fops = 
+static struct file_operations hacc_test_fops =
 {
         owner:THIS_MODULE,
         ioctl:hacc_test_ioctl,
 };
 
-/*================================================================================================
+/*====================
                                         LOCAL  FUNCTIONS
-==================================================================================================*/
+======================*/
 /***********************************************************************
 * hacc_test_init()                                                    *
 **********************************************************************/
@@ -96,7 +96,7 @@ static struct file_operations hacc_test_fops =
 * code on failure.
 *
 */
-/*=================================================================================================================*/
+/*=========================*/
 static int hacc_test_init(void)
 {
         if ((major_dev_num = register_chrdev(0, HACC_DEVICE_NAME, &hacc_test_fops)) < 0)
@@ -134,7 +134,7 @@ static int hacc_test_init(void)
         return -1;
 }
 
-/*=================================================================================================================*/
+/*=========================*/
 /***********************************************************************
 * hacc_test_exit()                                                    *
 **********************************************************************/
@@ -151,7 +151,7 @@ static int hacc_test_init(void)
 * during error handling from #scc_test_init().
 *
 */
-/*=================================================================================================================*/
+/*=========================*/
 static void hacc_test_exit(void)
 {
         unregister_chrdev(major_dev_num, HACC_DEVICE_NAME);
@@ -161,7 +161,7 @@ static void hacc_test_exit(void)
         printk(KERN_INFO "Module unload successful\n");
 }
 
-/*=================================================================================================================*/
+/*=========================*/
 /***********************************************************************
 * hacc_test_ioctl()                                                    *
 **********************************************************************/
@@ -190,7 +190,7 @@ static void hacc_test_exit(void)
 *
 * @return 0 or an error
 */
-/*=================================================================================================================*/
+/*=========================*/
 static int hacc_test_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
                            unsigned long ularg)
 {
@@ -403,7 +403,7 @@ static int hacc_test_ioctl(struct inode *inode, struct file *file, unsigned int 
         return 0;
 }
 
-/*=================================================================================================================*/
+/*=========================*/
 /***********************************************************************
 * hacc_test_get_status()                                              *
 **********************************************************************/
@@ -415,7 +415,7 @@ static int hacc_test_ioctl(struct inode *inode, struct file *file, unsigned int 
 *
 * @return
 */
-/*=================================================================================================================*/
+/*=========================*/
 void hacc_test_get_status(void)
 {
         printk("HACC Module Test:  INFO: HAC_CTL register value: %lu\n", hac_get_status());
@@ -439,7 +439,7 @@ void hacc_test_get_status(void)
         printk("unknown.\n");
 }
 
-/*=================================================================================================================*/
+/*=========================*/
 /***********************************************************************
 * hacc_test_stop()                                                    *
 **********************************************************************/
@@ -450,7 +450,7 @@ void hacc_test_get_status(void)
 *
 * @return
 */
-/*=================================================================================================================*/
+/*=========================*/
 void hacc_test_stop(void)
 {
         int     hac_stop_flag = 0;
@@ -470,15 +470,15 @@ void hacc_test_stop(void)
         }
 }
 
-/*=================================================================================================================*/
+/*=========================*/
 /***********************************************************************
 * hacc_test_get_swrst()                                               *
 **********************************************************************/
 /* ! Test of initiates software reset of the entire HAC module. It resets all state machine to their
 * default values. All status bits (BUSY/ERROR/DONE) and any pending interrupts are cleared. @return
-* HAC_SUCCESS Successfully in doing software reset.\n HAC_FAILURE Error in doing software reset. 
+* HAC_SUCCESS Successfully in doing software reset.\n HAC_FAILURE Error in doing software reset.
 */
-/*=================================================================================================================*/
+/*=========================*/
 hac_ret hacc_test_swrst(void)
 {
         hac_ret ret_val;
@@ -487,17 +487,17 @@ hac_ret hacc_test_swrst(void)
         return ret_val;
 }
 
-/*=================================================================================================================*/
+/*=========================*/
 /***********************************************************************
 * hacc_test_burst_mode()                                              *
 **********************************************************************/
 /* ! Test of configures the burst mode of the HAC. When Burst mode set in HAC Control register then
 * ARM9 is configured for a 16-WORD burst, while Burst mode is cleared then ARM9 is configured for a
-* incremental burst. 
-@param 
-@return 
+* incremental burst.
+@param
+@return
 */
-/*=================================================================================================================*/
+/*=========================*/
 void hacc_test_burst_mode(void)
 {
         ulong   ret_val = 0;
@@ -531,15 +531,15 @@ void hacc_test_burst_mode(void)
         }
 }
 
-/*=================================================================================================================*/
+/*=========================*/
 /***********************************************************************
 * hacc_test_burst_read_nature()                                       *
 **********************************************************************/
-/* ! This test is trying to configure HAC burst read nature. 
-@param 
-@return 
+/* ! This test is trying to configure HAC burst read nature.
+@param
+@return
 */
-/*=================================================================================================================*/
+/*=========================*/
 void hacc_test_burst_read_nature(void)
 {
         ulong   ret_val = 0;
@@ -603,21 +603,21 @@ void hacc_test_burst_read_nature(void)
         }
 }
 
-/*=================================================================================================================*/
+/*=========================*/
 #ifdef CONFIG_PM
-/*=================================================================================================================*/
+/*=========================*/
 /***********************************************************************
 * hacc_test_suspend()                                                 *
 **********************************************************************/
-/* ! This function is called to test the put of HAC in a low power state. 
-@param 
-@param 
+/* ! This function is called to test the put of HAC in a low power state.
+@param
+@param
 */
-/*=================================================================================================================*/
+/*=========================*/
 void hacc_test_suspend(void)
-{ /* 
+{ /*
     * ulong state = 0; hac_ret ret_val = HAC_SUCCESS; struct device dev;
-    * 
+    *
     * printk("HACC Module Test: INFO: Trying to put the HAC Module in a low power state.\n"); */
         /* Test the suspend disable level */
         // ret_val = hac_suspend(&dev, state, SUSPEND_DISABLE);
@@ -639,20 +639,20 @@ void hacc_test_suspend(void)
         * printk("HACC Module Test: INFO: HAC module are busy in hash process.\n"); break; } */
 }
 
-/*=================================================================================================================*/
+/*=========================*/
 /***********************************************************************
 * hacc_test_resume()                                                  *
 **********************************************************************/
-/* ! This function is called to test the bring of HAC from a low power state. 
-@param 
-@param 
+/* ! This function is called to test the bring of HAC from a low power state.
+@param
+@param
 */
-/*=================================================================================================================*/
+/*=========================*/
 void hacc_test_resume(void)
 {
-        /* 
+        /*
         * hac_ret ret_val = HAC_SUCCESS; struct device dev;
-        * 
+        *
         * printk("HACC Module Test: INFO: Trying to bring the HAC Module from a low power
         * state.\n"); */
         /* Test the resume power on level */
@@ -664,7 +664,7 @@ void hacc_test_resume(void)
         /* Test the resume restore state level */
         /* ret_val = hac_resume(&dev, RESUME_RESTORE_STATE); switch (ret_val) { case HAC_SUCCESS:
         * printk ("HACC Module Test: INFO: The resume restore state level set is successfull.\n");
-        * break; case HAC_FAILURE: printk("HACC Module Test: INFO: Error in the resume restore state 
+        * break; case HAC_FAILURE: printk("HACC Module Test: INFO: Error in the resume restore state
         * level set.\n"); break; case HAC_HASH_BUSY: printk("HACC Module Test: INFO: HAC module are
         * busy in hash process.\n"); break; } */
         /* Test resume enable level */
@@ -675,7 +675,7 @@ void hacc_test_resume(void)
         * in hash process.\n"); break; } */
 }
 
-/*=================================================================================================================*/
+/*=========================*/
 
 #endif                          /* CONFIG_PM */
 

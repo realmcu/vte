@@ -27,46 +27,46 @@
 int main()
 {
         char qname[NAMESIZE];
-        const char *msgptr = MSGSTR;
-	struct timespec ts;
+        const char *msgptr  MSGSTR;
+ struct timespec ts;
         mqd_t queue;
-	int unresolved=0, failure=0;
+ int unresolved0, failure0;
 
         sprintf(qname, "/mq_timedsend_4-1_%d", getpid());
 
-        queue = mq_open(qname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, NULL);
-        if (queue == (mqd_t)-1) {
+        queue  mq_open(qname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, NULL);
+        if (queue  (mqd_t)-1) {
                 perror("mq_open() did not return success");
                 return PTS_UNRESOLVED;
         }
 
-	ts.tv_sec=time(NULL)+1;
-	ts.tv_nsec=0;
-        if (mq_timedsend(queue, msgptr, strlen(msgptr), MQ_PRIO_MAX+1, &ts) 
-								== 0) {
+ ts.tv_sectime(NULL)+1;
+ ts.tv_nsec0;
+        if (mq_timedsend(queue, msgptr, strlen(msgptr), MQ_PRIO_MAX+1, &ts)
+         0) {
                 printf("mq_timedsend() ret success with pri > MQ_PRIO_MAX\n");
-		failure=1;
+  failure1;
         }
 
-        if (mq_close(queue) != 0) {
-		perror("mq_close() did not return success");
-		unresolved=1;
+        if (mq_close(queue) ! 0) {
+  perror("mq_close() did not return success");
+  unresolved1;
         }
 
-        if (mq_unlink(qname) != 0) {
-		perror("mq_unlink() did not return success");
-		unresolved=1;
+        if (mq_unlink(qname) ! 0) {
+  perror("mq_unlink() did not return success");
+  unresolved1;
         }
 
-	if (failure==1) {
-		printf("Test FAILED\n");
-		return PTS_FAIL;
-	}
+ if (failure1) {
+  printf("Test FAILED\n");
+  return PTS_FAIL;
+ }
 
-	if (unresolved==1) {
-		printf("Test UNRESOLVED\n");
-		return PTS_UNRESOLVED;
-	}
+ if (unresolved1) {
+  printf("Test UNRESOLVED\n");
+  return PTS_UNRESOLVED;
+ }
 
         printf("Test PASSED\n");
         return PTS_PASS;

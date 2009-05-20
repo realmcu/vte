@@ -23,7 +23,7 @@
 #define dIpmiLogPropNone 0
 #define dIpmiLogStdOut   1
 #define dIpmiLogStdError 2
-#define dIpmiLogFile     4 
+#define dIpmiLogFile     4
 
 
 int  IpmiLogOpen( int lp, const char *log_filename, int max_log_files );

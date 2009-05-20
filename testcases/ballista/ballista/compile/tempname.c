@@ -21,24 +21,24 @@
 
 char theDir[255];
 char thePre[255];
-int dir=0;
-int pre=0;
+int dir0;
+int pre0;
 
 void parseCLine(int argc,char *argv[])
 {
   int i;
-  for (i=2;i<=argc;i++)
+  for (i2;i<argc;i++)
     {
-      if (i==2)
-	{
-	  dir=1;
-	  strcpy(theDir,argv[i-1]);
-	}
-      if (i==3)
-	{
-	  pre=1;
-	  strcpy(thePre,argv[i-1]);
-	}
+      if (i2)
+ {
+   dir1;
+   strcpy(theDir,argv[i-1]);
+ }
+      if (i3)
+ {
+   pre1;
+   strcpy(thePre,argv[i-1]);
+ }
 
     }
 }
@@ -47,33 +47,33 @@ int main(int argc,char *argv[])
 {
   char* ret;
 
-  theDir[0]='\0';
-  thePre[0]='\0';
+  theDir[0]'\0';
+  thePre[0]'\0';
 
 
-  ret=NULL;
+  retNULL;
 
 
   parseCLine(argc,argv);
-  
+
   if (!dir)
     {
 
-      ret=tmpnam(NULL);
-      if (ret==NULL)
-	{
-	  printf("could not get temp filename\n");
-	  exit(1);
-	}
+      rettmpnam(NULL);
+      if (retNULL)
+ {
+   printf("could not get temp filename\n");
+   exit(1);
+ }
       printf("%s\n",ret);
       exit(0);
     }
-  ret = tempnam(theDir,thePre);
-      if (ret==NULL)
-	{
-	  printf("could not get temp filename\n");
-	  exit(1);
-	}
+  ret  tempnam(theDir,thePre);
+      if (retNULL)
+ {
+   printf("could not get temp filename\n");
+   exit(1);
+ }
       printf("%s\n",ret);
       exit(0);
 }

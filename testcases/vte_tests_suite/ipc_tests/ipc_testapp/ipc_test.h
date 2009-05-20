@@ -2,7 +2,7 @@
 /**
         @file   ipc_test.h
 
-        @brief  Header file for IPC TTY test application. 
+        @brief  Header file for IPC TTY test application.
 */
 /*==================================================================================================
 
@@ -73,7 +73,7 @@ typedef enum
                                             ENUMS
 ==================================================================================================*/
 /* test case id names */
-typedef enum 
+typedef enum
 {
         PACKET_DATA_EXCHANGE_1 = 0,
         PACKET_DATA_EXCHANGE_2,

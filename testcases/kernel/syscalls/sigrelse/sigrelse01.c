@@ -33,69 +33,69 @@
 /* $Id: sigrelse01.c,v 1.8 2006/08/24 04:16:34 vapier Exp $ */
 /*****************************************************************************
  * OS Test - Silicon Graphics, Inc.  Eagan, Minnesota
- * 
+ *
  * TEST IDENTIFIER : sigrelse01 Releasing held signals.
- * 
+ *
  * PARENT DOCUMENT : sgrtds01  sigrelse system call
- * 
+ *
  * AUTHOR          : Bob Clark
- *		   : Rewrote 12/92 by Richard Logan
- * 
+ *     : Rewrote 12/92 by Richard Logan
+ *
  * CO-PILOT        : Dave Baumgartner
- * 
+ *
  * DATE STARTED    : 10/08/86
- * 
+ *
  * TEST ITEMS
- * 
- * 	1. sigrelse turns on the receipt of signals held by sighold.
- * 
+ *
+ * 1. sigrelse turns on the receipt of signals held by sighold.
+ *
  * SPECIAL PROCEDURAL REQUIRMENTS
- * 	None
- * 
+ * None
+ *
  * DETAILED DESCRIPTION
- * 	set up pipe for parent/child communications
- * 	fork off a child process
- * 
- * 	parent():
- * 		set up for unexpected signals
- * 		wait for child to send ready message over pipe
- * 		send all catchable signals to child process
- *		send alarm signal to speed up timeout
- * 		wait for child to terminate and check exit value
- * 
- * 		if exit value is EXIT_OK
- * 		  get message from pipe (contains array of signal counters)
- * 		  loop through array of signal counters and record any
- * 			signals which were not caught once.
- * 		  record PASS or FAIL depending on what was found in the array.
- * 
- * 		else if exit is SIG_CAUGHT then BROK (signal caught
- *		  before released)
- * 		else if exit is WRITE_BROK then BROK (write() to pipe failed)
- * 		else if exit is HANDLE_ERR then BROK (error in child's
- *		  signal handler)
- * 		else unexpected exit value - BROK
- * 
- * 	child():
- * 	  phase 1:
- * 		set up to catch all catchable signals (exit SIG_CAUGHT
- *		  if caught)
- * 		hold each signal with sighold()
- * 		send parent ready message if setup went ok.
- * 		wait for signals to arrive - timeout if they don't
- * 
- * 	  phase 2:
- * 		release each signal and wait a second for the handler to
- *		  catch it.
- * 		(the handler will record each signal it catches in an array 
- * 		and exit HANDLE_ERR if an error occurs)
- * 
- * 		send array of counters back to parent for processing.
- * 		exit EXIT_OK
+ * set up pipe for parent/child communications
+ * fork off a child process
+ *
+ * parent():
+ *set up for unexpected signals
+ *wait for child to send ready message over pipe
+ *send all catchable signals to child process
+ *  send alarm signal to speed up timeout
+ *wait for child to terminate and check exit value
+ *
+ *if exit value is EXIT_OK
+ *  get message from pipe (contains array of signal counters)
+ *  loop through array of signal counters and record any
+ * signals which were not caught once.
+ *  record PASS or FAIL depending on what was found in the array.
+ *
+ *else if exit is SIG_CAUGHT then BROK (signal caught
+ *    before released)
+ *else if exit is WRITE_BROK then BROK (write() to pipe failed)
+ *else if exit is HANDLE_ERR then BROK (error in child's
+ *    signal handler)
+ *else unexpected exit value - BROK
+ *
+ * child():
+ *   phase 1:
+ *set up to catch all catchable signals (exit SIG_CAUGHT
+ *    if caught)
+ *hold each signal with sighold()
+ *send parent ready message if setup went ok.
+ *wait for signals to arrive - timeout if they don't
+ *
+ *   phase 2:
+ *release each signal and wait a second for the handler to
+ *    catch it.
+ *(the handler will record each signal it catches in an array
+ *and exit HANDLE_ERR if an error occurs)
+ *
+ *send array of counters back to parent for processing.
+ *exit EXIT_OK
  * NOTES
- *	since child is executing system calls under test, no
- *	system call times are printed.
- * 
+ * since child is executing system calls under test, no
+ * system call times are printed.
+ *
 ***************************************************************************/
 
 #include <errno.h>
@@ -144,13 +144,13 @@ int choose_sig(int sig);
 #endif
 
 #define CHILD_EXIT(VAL) ((VAL >> 8) & 0377) /* exit value of child process */
-#define CHILD_SIG(VAL)   (VAL & 0377)	/* signal value of child proc */
+#define CHILD_SIG(VAL)   (VAL & 0377) /* signal value of child proc */
 
-#define MAXMESG 512		/* the size of the message string */
+#define MAXMESG 512  /* the size of the message string */
 
-#define READY "ready"		/* signal to parent that child is set up */
+#define READY "ready"  /* signal to parent that child is set up */
 
-#define TIMEOUT 30		/* time (sec) used in the alarm calls */
+#define TIMEOUT 30  /* time (sec) used in the alarm calls */
 
 /* child exit values */
 #define EXIT_OK    0
@@ -158,18 +158,18 @@ int choose_sig(int sig);
 #define WRITE_BROK 16
 #define HANDLE_ERR 32
 
-int  TST_TOTAL = 1;		/* number of test items */
+int  TST_TOTAL  1;  /* number of test items */
 extern int Tst_count;           /* Test Case counter for tst_* routines */
 
-char *TCID = "sigrelse01";	/* test case identifier */
-static char mesg[MAXMESG];	/* message buffer for tst_res */
-static int pid;			/* process id of child */
-static int pipe_fd[2];		/* file descriptors for pipe parent read*/
-static int pipe_fd2[2];		/* file descriptors for pipe child read */
-static int phase;		/* flag for phase1 or phase2 of */
-				/* signal handler */
-static int sig_caught;		/* flag TRUE if signal caught */
-				/* (see wait_a_while()) */
+char *TCID  "sigrelse01"; /* test case identifier */
+static char mesg[MAXMESG]; /* message buffer for tst_res */
+static int pid;   /* process id of child */
+static int pipe_fd[2];  /* file descriptors for pipe parent read*/
+static int pipe_fd2[2];  /* file descriptors for pipe child read */
+static int phase;  /* flag for phase1 or phase2 of */
+    /* signal handler */
+static int sig_caught;  /* flag TRUE if signal caught */
+    /* (see wait_a_while()) */
 
 /* ensure that NUMSIGS is defined. */
 #ifndef NUMSIGS
@@ -191,14 +191,14 @@ main(int argc, char **argv)
 
     /* gcc -Wall complains about sig_caught not being ref'd because of the
        external declarations. */
-    sig_caught = FALSE;
+    sig_caught  FALSE;
 
     /*
      * parse standard options
      */
-    if ( (msg=parse_opts(argc, argv, (option_t *) NULL, NULL)) != (char *) NULL ) {
+    if ( (msgparse_opts(argc, argv, (option_t *) NULL, NULL)) ! (char *) NULL ) {
         tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	tst_exit();
+ tst_exit();
     }
 
 #ifdef UCLINUX
@@ -213,32 +213,32 @@ main(int argc, char **argv)
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc=0; TEST_LOOPING(lc); lc++) {
+    for (lc0; TEST_LOOPING(lc); lc++) {
 
         /* reset Tst_count in case we are looping. */
-        Tst_count=0;
+        Tst_count0;
 
-	/*
-	 * fork off a child process
-	 */
-	if ((pid = FORK_OR_VFORK()) < 0) {
-	    (void) sprintf(mesg, "fork() failed. errno:%d %s.",
-		errno, strerror(errno));
-	    tst_brkm(TBROK, cleanup, mesg);
+ /*
+  * fork off a child process
+  */
+ if ((pid  FORK_OR_VFORK()) < 0) {
+     (void) sprintf(mesg, "fork() failed. errno:%d %s.",
+  errno, strerror(errno));
+     tst_brkm(TBROK, cleanup, mesg);
 
-	} else if (pid > 0) {
-	    parent();
+ } else if (pid > 0) {
+     parent();
 
-	} else {
+ } else {
 #ifdef UCLINUX
-	    if (self_exec(argv[0], "dd", pipe_fd[1], pipe_fd2[0]) < 0) {
-		(void) sprintf(mesg, "self_exec failed");
-		tst_brkm(TBROK, cleanup, mesg);
-	    }
+     if (self_exec(argv[0], "dd", pipe_fd[1], pipe_fd2[0]) < 0) {
+  (void) sprintf(mesg, "self_exec failed");
+  tst_brkm(TBROK, cleanup, mesg);
+     }
 #else
-	    child();
+     child();
 #endif
-	}
+ }
 
     }   /* End for TEST_LOOPING */
 
@@ -248,7 +248,7 @@ main(int argc, char **argv)
     cleanup();
 
     return 0;
-}	/* end main */
+} /* end main */
 
 
 /****************************************************************************
@@ -258,151 +258,151 @@ main(int argc, char **argv)
 static void
 parent()
 {
-    int term_stat;		/* child return status */
-    int rv;			/* function return value */
-    int sig;			/* current signal number */
-    char *str;			/* string returned from read_pipe() */
-    int *array;			/* pointer to sig_array returned from child */
-    int fail = FALSE;	/* flag indicating test item failure */
-    char big_mesg[MAXMESG*6];	/* storage for big failure message */
+    int term_stat;  /* child return status */
+    int rv;   /* function return value */
+    int sig;   /* current signal number */
+    char *str;   /* string returned from read_pipe() */
+    int *array;   /* pointer to sig_array returned from child */
+    int fail  FALSE; /* flag indicating test item failure */
+    char big_mesg[MAXMESG*6]; /* storage for big failure message */
     int caught_sigs;
 
     /* wait for "ready" message from child */
-    if ((str = read_pipe(pipe_fd[0])) == NULL) {
-	/* read_pipe() failed. */
-	tst_brkm(TBROK, getout, mesg);
+    if ((str  read_pipe(pipe_fd[0]))  NULL) {
+ /* read_pipe() failed. */
+ tst_brkm(TBROK, getout, mesg);
     }
 
-    if (strcmp(str, READY) != 0) {
-	/* child setup did not go well */
-	tst_brkm(TBROK, getout, str);
+    if (strcmp(str, READY) ! 0) {
+ /* child setup did not go well */
+ tst_brkm(TBROK, getout, str);
     }
 
     /*
-     * send signals to child and see if it holds them 
+     * send signals to child and see if it holds them
      */
 
-    for (sig = 1; sig < NUMSIGS; sig++) {
-	if ( choose_sig(sig) ) {
-	    if (kill(pid, sig) < 0) {
-		if ( errno == ESRCH ) {
-		    if ( kill(pid, SIGTERM) < 0 ) {
-		        (void) sprintf(mesg,
-			    "kill(%d, %d) failed. error:%d %s.\n\
+    for (sig  1; sig < NUMSIGS; sig++) {
+ if ( choose_sig(sig) ) {
+     if (kill(pid, sig) < 0) {
+  if ( errno  ESRCH ) {
+      if ( kill(pid, SIGTERM) < 0 ) {
+          (void) sprintf(mesg,
+       "kill(%d, %d) failed. error:%d %s.\n\
 kill(%d, SIGTERM) also failed.\n",
-		             pid, sig, ESRCH, strerror(ESRCH), pid);
-		    } else {
-		        (void) sprintf(mesg,
-			    "kill(%d, %d) failed. error:%d %s.\n\
+               pid, sig, ESRCH, strerror(ESRCH), pid);
+      } else {
+          (void) sprintf(mesg,
+       "kill(%d, %d) failed. error:%d %s.\n\
 UT kill(%d, SIGTERM) was successful\n",
-		             pid, sig, ESRCH, strerror(ESRCH), pid);
-		    }
-		} else {
-		    (void) sprintf(mesg, "kill(%d, %d) failed. error:%d %s.",
-		        pid, sig, errno, strerror(errno));
-		}
-		tst_brkm(TBROK, getout, mesg);
-	    } 
-	}
+               pid, sig, ESRCH, strerror(ESRCH), pid);
+      }
+  } else {
+      (void) sprintf(mesg, "kill(%d, %d) failed. error:%d %s.",
+          pid, sig, errno, strerror(errno));
+  }
+  tst_brkm(TBROK, getout, mesg);
+     }
+ }
     }
 
     if (write_pipe(pipe_fd2[1], READY) < 0) {
-	/*
-	 * write_pipe() failed.  
-	 */
-	(void) sprintf(mesg, "Unable to tell child to go, write to pipe failed");
-	tst_brkm(TBROK, getout, mesg);
+ /*
+  * write_pipe() failed.
+  */
+ (void) sprintf(mesg, "Unable to tell child to go, write to pipe failed");
+ tst_brkm(TBROK, getout, mesg);
     }
 
     /*
      * child is now releasing signals, wait and check exit value
      */
     if (wait(&term_stat) < 0) {
-	(void) sprintf(mesg, "wait() failed. error:%d %s.",
-	    errno, strerror(errno));
-	tst_brkm(TBROK, getout, mesg);
+ (void) sprintf(mesg, "wait() failed. error:%d %s.",
+     errno, strerror(errno));
+ tst_brkm(TBROK, getout, mesg);
     }
 
     /* check child's signal exit value */
-    if ((sig = CHILD_SIG(term_stat)) != 0) {
-	/* the child was zapped by a signal */
-	(void) sprintf(mesg, "Unexpected signal killed child. sig:%d.", sig);
-	tst_brkm(TBROK, cleanup, mesg);
+    if ((sig  CHILD_SIG(term_stat)) ! 0) {
+ /* the child was zapped by a signal */
+ (void) sprintf(mesg, "Unexpected signal killed child. sig:%d.", sig);
+ tst_brkm(TBROK, cleanup, mesg);
     }
 
     /* get child exit value */
 
-    rv = CHILD_EXIT(term_stat);
+    rv  CHILD_EXIT(term_stat);
 
     switch ( rv ) {
     case EXIT_OK:
-	/* sig_array sent back on pipe, check it out */
-	if ((array = (int *) read_pipe(pipe_fd[0])) == NULL) {
-	    /* read_pipe() failed. */
-	    tst_resm(TBROK, mesg);
-	    break;
-	}
+ /* sig_array sent back on pipe, check it out */
+ if ((array  (int *) read_pipe(pipe_fd[0]))  NULL) {
+     /* read_pipe() failed. */
+     tst_resm(TBROK, mesg);
+     break;
+ }
 #if DEBUG > 1
-	for (sig = 1; sig < NUMSIGS; sig++) {
-	    printf("array[%d] = %d\n", sig, array[sig]);
-	}
+ for (sig  1; sig < NUMSIGS; sig++) {
+     printf("array[%d]  %d\n", sig, array[sig]);
+ }
 #endif
-	caught_sigs=0;
-	for (sig = 1; sig < NUMSIGS; sig++) {
-	    if ( choose_sig(sig) ) {
-		if (array[sig] != 1) {
-		    /* sig was not caught or caught too many times */
-		    (void) sprintf(mesg,
-			"\tsignal %d caught %d times (expected 1).\n",
-			sig, array[sig]);
-		    (void) strcat(big_mesg, mesg);
-		    fail = TRUE;
-		}
-		else {
-		    caught_sigs++;
-		}
-	    }
-	} /* endfor */
+ caught_sigs0;
+ for (sig  1; sig < NUMSIGS; sig++) {
+     if ( choose_sig(sig) ) {
+  if (array[sig] ! 1) {
+      /* sig was not caught or caught too many times */
+      (void) sprintf(mesg,
+   "\tsignal %d caught %d times (expected 1).\n",
+   sig, array[sig]);
+      (void) strcat(big_mesg, mesg);
+      fail  TRUE;
+  }
+  else {
+      caught_sigs++;
+  }
+     }
+ } /* endfor */
 
-	if (fail == TRUE)
-	    tst_resm(TFAIL, big_mesg);
-	else
-	    tst_resm(TPASS, "sigrelse() released all %d signals under test.",
-		caught_sigs);
-	break;
+ if (fail  TRUE)
+     tst_resm(TFAIL, big_mesg);
+ else
+     tst_resm(TPASS, "sigrelse() released all %d signals under test.",
+  caught_sigs);
+ break;
 
     case TBROK:
-	/* get BROK message from pipe */
-	if ((str = read_pipe(pipe_fd[0])) == NULL) {
-	    /* read_pipe() failed. */
-	    tst_resm(TBROK, mesg);
-	    break;
-	}
+ /* get BROK message from pipe */
+ if ((str  read_pipe(pipe_fd[0]))  NULL) {
+     /* read_pipe() failed. */
+     tst_resm(TBROK, mesg);
+     break;
+ }
 
-	/* call tst_res: str contains the message */
-	tst_resm(TBROK, str);
-	break;
+ /* call tst_res: str contains the message */
+ tst_resm(TBROK, str);
+ break;
     case SIG_CAUGHT:
-	/* a signal was caught before it was released */
-	tst_resm(TBROK, "A signal was caught before being released.");
-	break;
+ /* a signal was caught before it was released */
+ tst_resm(TBROK, "A signal was caught before being released.");
+ break;
     case WRITE_BROK:
-	/* the write() call failed in child's write_pipe */
-	tst_resm(TBROK, "write() pipe failed for child.");
-	break;
+ /* the write() call failed in child's write_pipe */
+ tst_resm(TBROK, "write() pipe failed for child.");
+ break;
     case HANDLE_ERR:
-	/* more than one signal tried to be handled at the same time */
-	tst_resm(TBROK, "Error occured in signal handler.");
-	break;
+ /* more than one signal tried to be handled at the same time */
+ tst_resm(TBROK, "Error occured in signal handler.");
+ break;
     default:
-	(void) sprintf(mesg, "Unexpected return from child. Exit:%d.", rv);
-	tst_resm(TBROK, mesg);
-	break;
+ (void) sprintf(mesg, "Unexpected return from child. Exit:%d.", rv);
+ tst_resm(TBROK, mesg);
+ break;
     }
 
     cleanup();
 
-}	/* end of parent */
+} /* end of parent */
 
 
 /****************************************************************************
@@ -414,39 +414,39 @@ UT kill(%d, SIGTERM) was successful\n",
 static void
 child()
 {
-    int rv;			/* return value from sighold() and sigrelse() */
-    int sig;			/* signal value */
-    int exit_val;		/* exit value to send to parent */
-    char note[MAXMESG];		/* message buffer for pipe */
+    int rv;   /* return value from sighold() and sigrelse() */
+    int sig;   /* signal value */
+    int exit_val;  /* exit value to send to parent */
+    char note[MAXMESG];  /* message buffer for pipe */
     char *str;
 
-    phase = 1;	/* tell handler that we do not want to catch signals */
+    phase  1; /* tell handler that we do not want to catch signals */
 
     /* set note to READY and if an error occurs, overwrite it */
     (void) strcpy(note, READY);
 
     /* set alarm in case something hangs */
     if (set_timeout() < 0) {
-	/* an error occured - put mesg in note and send it back to parent */
-	(void) strcpy(note, mesg);
+ /* an error occured - put mesg in note and send it back to parent */
+ (void) strcpy(note, mesg);
 
     } else if (setup_sigs() < 0) {
-	/* an error occured - put mesg in note and send it back to parent */
-	(void) strcpy(note, mesg);
+ /* an error occured - put mesg in note and send it back to parent */
+ (void) strcpy(note, mesg);
 
     } else {
-	/* all set up to catch signals, now hold them */
+ /* all set up to catch signals, now hold them */
 
-	for (sig = 1; sig < NUMSIGS; sig++) {
-	    if ( choose_sig(sig) ) {
-		if ((rv = sighold(sig)) != 0) {
-		    /* THEY say sighold ALWAYS returns 0 */
-		    (void) sprintf(note,
-			"sighold did not return 0. rv:%d", rv);
-		    break;
-		}
-	    }
-	}
+ for (sig  1; sig < NUMSIGS; sig++) {
+     if ( choose_sig(sig) ) {
+  if ((rv  sighold(sig)) ! 0) {
+      /* THEY say sighold ALWAYS returns 0 */
+      (void) sprintf(note,
+   "sighold did not return 0. rv:%d", rv);
+      break;
+  }
+     }
+ }
 
     }
 
@@ -459,12 +459,12 @@ child()
      * value of SIG_CAUGHT.
      */
     if (write_pipe(pipe_fd[1], note) < 0) {
-	/*
-	 * write_pipe() failed.  Set exit value to WRITE_BROK to let
-	 * parent know what happened
-	 */
-	clear_timeout();
-	exit(WRITE_BROK);
+ /*
+  * write_pipe() failed.  Set exit value to WRITE_BROK to let
+  * parent know what happened
+  */
+ clear_timeout();
+ exit(WRITE_BROK);
     }
 
     /*
@@ -474,17 +474,17 @@ child()
      * sigrelse passed, else it failed.
      */
 
-    phase = 2;	/* let handler know we are now expecting signals */
+    phase  2; /* let handler know we are now expecting signals */
 
 #if DEBUG > 0
     printf("child: PHASE II\n");
 #endif
 
     /* assume success and overwrite exit_val if an error occurs */
-    exit_val = EXIT_OK;
+    exit_val  EXIT_OK;
 
 #if DEBUG > 0
-    printf("child: pid=%d waiting for parent's ready...\n", getpid());
+    printf("child: pid%d waiting for parent's ready...\n", getpid());
 #endif
 
     /*
@@ -492,37 +492,37 @@ child()
      */
 
     /* wait for "ready" message from parent */
-    if ((str = read_pipe(pipe_fd2[0])) == NULL) {
-	/* read_pipe() failed. */
+    if ((str  read_pipe(pipe_fd2[0]))  NULL) {
+ /* read_pipe() failed. */
 printf(" child: read_pipe failed\n");
-	exit(TBROK);
+ exit(TBROK);
     }
 
-    if (strcmp(str, READY) != 0) {
-	/* parent/pipe problem */
+    if (strcmp(str, READY) ! 0) {
+ /* parent/pipe problem */
 printf("child: didn't proper ready message\n");
-	exit(TBROK);
+ exit(TBROK);
     }
 
-    for (sig = 1; sig < NUMSIGS; sig++) {
-	if ( choose_sig(sig) ) {
+    for (sig  1; sig < NUMSIGS; sig++) {
+ if ( choose_sig(sig) ) {
 
-	    /* all set up, release and catch a signal */
+     /* all set up, release and catch a signal */
 
-	    sig_caught = FALSE;  /* handler sets it to TRUE when caught */
+     sig_caught  FALSE;  /* handler sets it to TRUE when caught */
 #if DEBUG > 1
-	    printf("child: releasing sig %d...\n", sig);
+     printf("child: releasing sig %d...\n", sig);
 #endif
-	    if ((rv = sigrelse(sig)) != 0) {
-		/* THEY say sigrelse ALWAYS returns 0 */
-		(void) sprintf(note, "sigrelse did not return 0. rv:%d", rv);
-		exit_val = TBROK;
-		break;
-	    }
+     if ((rv  sigrelse(sig)) ! 0) {
+  /* THEY say sigrelse ALWAYS returns 0 */
+  (void) sprintf(note, "sigrelse did not return 0. rv:%d", rv);
+  exit_val  TBROK;
+  break;
+     }
 
-	    /* give signal handler some time to process signal */
-	    wait_a_while();
-	}
+     /* give signal handler some time to process signal */
+     wait_a_while();
+ }
 
     } /* endfor */
 
@@ -533,22 +533,22 @@ printf("child: didn't proper ready message\n");
      * then PASS, otherwise FAIL.
      */
 
-    if (exit_val == EXIT_OK) {
-	(void) memcpy(note, (char *) sig_array, sizeof(sig_array));
+    if (exit_val  EXIT_OK) {
+ (void) memcpy(note, (char *) sig_array, sizeof(sig_array));
     }
 
     /* send note to parent and exit */
     if (write_pipe(pipe_fd[1], note) < 0) {
-	/*
-	 * write_pipe() failed.  Set exit value to WRITE_BROK to let
-	 * parent know what happened
-	 */
-	exit(WRITE_BROK);
+ /*
+  * write_pipe() failed.  Set exit value to WRITE_BROK to let
+  * parent know what happened
+  */
+ exit(WRITE_BROK);
     }
 
     exit(exit_val);
 
-}	/* end of child */
+} /* end of child */
 
 
 /*****************************************************************************
@@ -566,21 +566,21 @@ setup_sigs()
     int sig;
 
     /* set up signal handler routine */
-    for (sig = 1; sig < NUMSIGS; sig++) {
-	if ( choose_sig(sig) ) {
-	    if (signal(sig, handler) == SIG_ERR) {
-		/* set up mesg to send back to parent */
-		(void) sprintf(mesg,
-		    "signal() failed for signal %d. error:%d %s.",
-		    sig, errno, strerror(errno));
-		return(-1);
-	    }
-	}
+    for (sig  1; sig < NUMSIGS; sig++) {
+ if ( choose_sig(sig) ) {
+     if (signal(sig, handler)  SIG_ERR) {
+  /* set up mesg to send back to parent */
+  (void) sprintf(mesg,
+      "signal() failed for signal %d. error:%d %s.",
+      sig, errno, strerror(errno));
+  return(-1);
+     }
+ }
     }
     return(0);
 
-}	/* end of setup_sigs  */
-	
+} /* end of setup_sigs  */
+
 /*****************************************************************************
  *  handler() : child's interrupt handler for all signals.  The phase variable
  *      is set in the child process indicating what action is to be taken.
@@ -593,35 +593,35 @@ setup_sigs()
  ****************************************************************************/
 static void
 handler(sig)
-int sig;	/* the signal causing the execution of this handler */
+int sig; /* the signal causing the execution of this handler */
 {
-    static int s = 0;		/* semaphore so that we don't handle 2 */
-				/* sigs at once */
+    static int s  0;  /* semaphore so that we don't handle 2 */
+    /* sigs at once */
 #if DEBUG > 1
     printf("child: handler phase%d: caught signal %d.\n", phase, sig);
 #endif
 
-    if (phase == 1) {
-	/* exit the child process with a value of -1 */
-	exit(SIG_CAUGHT);
+    if (phase  1) {
+ /* exit the child process with a value of -1 */
+ exit(SIG_CAUGHT);
 
     } else {
-	/* phase 2 (error if s gets incremented twice) */
-	++s;
+ /* phase 2 (error if s gets incremented twice) */
+ ++s;
 
-	if (s > 1) {
-	    exit(HANDLE_ERR);
-	}
+ if (s > 1) {
+     exit(HANDLE_ERR);
+ }
 
-	/* increment the array element for this signal */
-	++sig_array[sig];
-	sig_caught = TRUE;		/* flag for wait_a_while() */
-	--s;
+ /* increment the array element for this signal */
+ ++sig_array[sig];
+ sig_caught  TRUE;  /* flag for wait_a_while() */
+ --s;
     }
 
     return;
 
-}	/* end of handler */
+} /* end of handler */
 
 
 /*****************************************************************************
@@ -633,37 +633,37 @@ static char *
 read_pipe(fd)
 int fd;
 {
-    static char buf[MAXMESG];	/* buffer for pipe read */
+    static char buf[MAXMESG]; /* buffer for pipe read */
     int ret;
 
 #if DEBUG > 0
-    printf("read_pipe: pid=%d waiting...\n", getpid());
-#endif 
+    printf("read_pipe: pid%d waiting...\n", getpid());
+#endif
 
     /* set timeout alarm in case the pipe is blocked */
     if (set_timeout() < 0) {
-	/* an error occured, message in mesg */
-	return(NULL);
+ /* an error occured, message in mesg */
+ return(NULL);
     }
 
-    ret = -1;
-    while ( ret == -1 ) { 	/* while empty reads */
-        if ((ret=read(fd, buf, MAXMESG)) == 0) {
-	    (void) sprintf(mesg, "read() pipe failed. error:%d %s.", 
-	        errno, strerror(errno));
-	
-	    clear_timeout();
-	    return(NULL);
+    ret  -1;
+    while ( ret  -1 ) { /* while empty reads */
+        if ((retread(fd, buf, MAXMESG))  0) {
+     (void) sprintf(mesg, "read() pipe failed. error:%d %s.",
+         errno, strerror(errno));
+
+     clear_timeout();
+     return(NULL);
         }
     }
     clear_timeout();
 
 #if DEBUG > 0
-    printf("read_pipe: pid=%d received: %s.\n", getpid(), buf);
+    printf("read_pipe: pid%d received: %s.\n", getpid(), buf);
 #endif
     return(buf);
 
-}	/* end of read_pipe */
+} /* end of read_pipe */
 
 
 /*****************************************************************************
@@ -673,22 +673,22 @@ int fd;
 static int
 write_pipe(fd, msg)
 int fd;
-char *msg;		/* expected message from pipe */
+char *msg;  /* expected message from pipe */
 {
 
 #if DEBUG > 0
-	printf("write_pipe: pid=%d, sending %s.\n", getpid(), msg);
+ printf("write_pipe: pid%d, sending %s.\n", getpid(), msg);
 #endif
 
     if (write(fd, msg, MAXMESG) < 0) {
-	(void) sprintf(mesg, "write() pipe failed. error:%d %s.",
-	    errno, strerror(errno));
-	
-	return(-1);
+ (void) sprintf(mesg, "write() pipe failed. error:%d %s.",
+     errno, strerror(errno));
+
+ return(-1);
     }
     return(0);
 
-}	/* end of write_pipe */
+} /* end of write_pipe */
 
 /*****************************************************************************
  *  set_timeout() : set alarm to signal process after the period of time
@@ -699,16 +699,16 @@ char *msg;		/* expected message from pipe */
 static int
 set_timeout()
 {
-    if (signal(SIGALRM, timeout) == SIG_ERR) {
-	(void) sprintf(mesg, "signal() failed for signal %d. error:%d %s.",
-	    SIGALRM, errno, strerror(errno));
-	return(-1);
+    if (signal(SIGALRM, timeout)  SIG_ERR) {
+ (void) sprintf(mesg, "signal() failed for signal %d. error:%d %s.",
+     SIGALRM, errno, strerror(errno));
+ return(-1);
     }
 
     (void) alarm(TIMEOUT);
     return(0);
 
-}	/* end of set_timeout */
+} /* end of set_timeout */
 
 /*****************************************************************************
  *  clear_timeout() : turn off the alarm so that SIGALRM will not get sent.
@@ -718,21 +718,21 @@ clear_timeout()
 {
     (void) alarm(0);
 
-}	/* end of clear_timeout */
+} /* end of clear_timeout */
 
 /*****************************************************************************
- *  timeout() : this routine is executed when the SIGALRM signal is 
+ *  timeout() : this routine is executed when the SIGALRM signal is
  *      caught.  It does nothing but return - the read() on the pipe
  *      will fail.
  ****************************************************************************/
 static void
-timeout() 
+timeout()
 {
 #if DEBUG > 0
-	printf("timeout: pid=%d sigalrm caught.\n", getpid());
+ printf("timeout: pid%d sigalrm caught.\n", getpid());
 #endif
 }
-	
+
 
 /*****************************************************************************
  *  wait_a_while() : wait a while before returning.
@@ -742,15 +742,15 @@ wait_a_while()
 {
     long btime;
 
-    btime = time((long *) 0);
+    btime  time((long *) 0);
     while (time((long *) 0) - btime < (long) TIMEOUT) {
-	if (sig_caught == TRUE)
-	    break;
+ if (sig_caught  TRUE)
+     break;
     }
 
     return;
 
-}	/* end of wait_a_while */
+} /* end of wait_a_while */
 
 
 /*****************************************************************************
@@ -761,15 +761,15 @@ getout()
 {
     if ( pid > 0 ) {
         if (kill(pid, SIGKILL) < 0) {
-	    (void) sprintf(mesg,
-	        "kill(%d, SIGKILL) failed. Child may not have been killed. error:%d %s.",
-	        pid, errno, strerror(errno));
-	    tst_resm(TWARN, mesg);
+     (void) sprintf(mesg,
+         "kill(%d, SIGKILL) failed. Child may not have been killed. error:%d %s.",
+         pid, errno, strerror(errno));
+     tst_resm(TWARN, mesg);
         }
     }
     cleanup();
 
-}	/* end of getout */
+} /* end of getout */
 
 
 #ifdef VAX
@@ -780,7 +780,7 @@ static int
 sighold(signo)
 int signo;
 {
-	return(0);
+ return(0);
 }
 
 
@@ -788,7 +788,7 @@ static int
 sigrelse(signo)
 int signo;
 {
-	return(0);
+ return(0);
 }
 #endif
 
@@ -801,35 +801,35 @@ int sig;
 {
     switch(sig) {
 
-	case SIGKILL:
-	case SIGSTOP:
-	case SIGTSTP:
-	case SIGCONT:
-	case SIGALRM:
-	case SIGCANCEL:
-	case SIGTIMER:
+ case SIGKILL:
+ case SIGSTOP:
+ case SIGTSTP:
+ case SIGCONT:
+ case SIGALRM:
+ case SIGCANCEL:
+ case SIGTIMER:
 #ifdef SIGNOBDM
-	case SIGNOBDM:
+ case SIGNOBDM:
 #endif
 #ifdef SIGTTIN
-	case SIGTTIN:
+ case SIGTTIN:
 #endif
 #ifdef SIGTTOU
-	case SIGTTOU:
+ case SIGTTOU:
 #endif
 #ifdef  SIGPTINTR
-	case SIGPTINTR:
+ case SIGPTINTR:
 #endif
 #ifdef  SIGSWAP
-	case SIGSWAP:
+ case SIGSWAP:
 #endif
-		return 0;
+  return 0;
 
     }
 
-    return 1;	/* choose signal */
+    return 1; /* choose signal */
 
-}	/* end of choose_sig */
+} /* end of choose_sig */
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
@@ -849,7 +849,7 @@ setup()
     /* set up pipe for parent/child communications */
     if (pipe(pipe_fd) < 0) {
         (void) sprintf(mesg, "pipe() failed. errno:%d %s.",
-	    errno, strerror(errno));
+     errno, strerror(errno));
         tst_resm(TBROK, mesg);
         cleanup();
     }
@@ -858,15 +858,15 @@ setup()
      * Cause the read to return 0 once EOF is encountered and the
      * read to return -1 if pipe is empty.
      */
-    if ( fcntl(pipe_fd[0], F_SETFL, O_NONBLOCK) == -1 )
+    if ( fcntl(pipe_fd[0], F_SETFL, O_NONBLOCK)  -1 )
         tst_brkm(TBROK, cleanup,
-            "fcntl(Fds[0], F_SETFL, O_NONBLOCK) failed: errno=%d",
+            "fcntl(Fds[0], F_SETFL, O_NONBLOCK) failed: errno%d",
             errno);
 
     /* set up pipe for parent/child communications */
     if (pipe(pipe_fd2) < 0) {
         (void) sprintf(mesg, "pipe() failed. errno:%d %s.",
-	    errno, strerror(errno));
+     errno, strerror(errno));
         tst_resm(TBROK, mesg);
         cleanup();
     }
@@ -875,9 +875,9 @@ setup()
      * Cause the read to return 0 once EOF is encountered and the
      * read to return -1 if pipe is empty.
      */
-    if ( fcntl(pipe_fd2[0], F_SETFL, O_NONBLOCK) == -1 )
+    if ( fcntl(pipe_fd2[0], F_SETFL, O_NONBLOCK)  -1 )
         tst_brkm(TBROK, cleanup,
-            "fcntl(Fds[0], F_SETFL, O_NONBLOCK) failed: errno=%d",
+            "fcntl(Fds[0], F_SETFL, O_NONBLOCK) failed: errno%d",
             errno);
 }       /* End setup() */
 

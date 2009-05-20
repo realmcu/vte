@@ -20,11 +20,11 @@ const char * status(const proc_t *restrict task) {
         buf[1] = ' ';
 
     if (task->nice < 0)
-	buf[2] = '<';
+ buf[2] = '<';
     else if (task->nice > 0)
-	buf[2] = 'N';
+ buf[2] = 'N';
     else
-	buf[2] = ' ';
+ buf[2] = ' ';
 
     return(buf);
 }

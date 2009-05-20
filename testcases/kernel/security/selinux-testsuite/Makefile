@@ -1,4 +1,4 @@
-SUBDIRS = tests 
+SUBDIRS = tests
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

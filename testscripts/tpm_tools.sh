@@ -22,8 +22,8 @@
 # Must be root to run the testsuite
 #if [ $UID != 0 ]
 #then
-#	echo "FAILED: Must be root to execute this script"
-#	exit 1
+# echo "FAILED: Must be root to execute this script"
+# exit 1
 #fi
 
 # Set the LTPROOT directory
@@ -32,8 +32,8 @@ export LTPROOT=${PWD}
 echo $LTPROOT | grep testscripts > /dev/null 2>&1
 if [ $? -eq 0 ]
 then
-	cd ..
-	export LTPROOT=${PWD}
+ cd ..
+ export LTPROOT=${PWD}
 fi
 
 # Set the PATH to include testcase/bin
@@ -45,7 +45,7 @@ export PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin:$LTPBIN
 # it exists.
 if [ ! -d $LTPROOT/results ]
 then
-	mkdir $LTPROOT/results
+ mkdir $LTPROOT/results
 fi
 
 # Check for programs/daemons/groups...
@@ -53,9 +53,9 @@ USER="`whoami`"
 RC=0
 if [ -z "$LTPTMP" ] && [ -z "$TMPBASE" ]
 then
-	LTPTMP="/tmp"
+ LTPTMP="/tmp"
 else
-	LTPTMP="$TMPBASE"
+ LTPTMP="$TMPBASE"
 fi
 export TPM_TMPFILE="$LTPTMP/tst_tpm.err"
 rm -f $TPM_TMPFILE 1>/dev/null 2>&1
@@ -65,8 +65,8 @@ rm -f $TPM_TMPFILE 1>/dev/null 2>&1
 which expect 1>$TPM_TMPFILE 2>&1
 if [ $? -ne 0 ]
 then
-	echo "The 'expect' command is not available.  Be sure the expect package has been installed properly"
-	RC=1
+ echo "The 'expect' command is not available.  Be sure the expect package has been installed properly"
+ RC=1
 fi
 
 # Check for TrouSerS and that it is running
@@ -74,86 +74,86 @@ rm -f $TPM_TMPFILE 1>/dev/null 2>&1
 which tcsd 1>$TPM_TMPFILE 2>&1
 if [ $? -ne 0 ]
 then
-	echo "The trousers TSS stack is not available.  Be sure trousers has been installed properly"
-	if [ -f $TPM_TMPFILE ]
-	then
-		cat $TPM_TMPFILE
-	fi
-	RC=1
+ echo "The trousers TSS stack is not available.  Be sure trousers has been installed properly"
+ if [ -f $TPM_TMPFILE ]
+ then
+  cat $TPM_TMPFILE
+ fi
+ RC=1
 else
-	rm -f $TPM_TMPFILE 1>/dev/null 2>&1
-	ps -ef 1>$TPM_TMPFILE
-	grep tcsd $TPM_TMPFILE 1>/dev/null
-	if [ $? -ne 0 ]
-	then
-		echo "The trousers TSS stack is not running.  Be sure to start the trousers daemon (tcsd)"
-		RC=1
-	fi
+ rm -f $TPM_TMPFILE 1>/dev/null 2>&1
+ ps -ef 1>$TPM_TMPFILE
+ grep tcsd $TPM_TMPFILE 1>/dev/null
+ if [ $? -ne 0 ]
+ then
+  echo "The trousers TSS stack is not running.  Be sure to start the trousers daemon (tcsd)"
+  RC=1
+ fi
 fi
 
 # Make the opencryptoki testing optional
 if [ -z "$TPM_NOPKCS11" ]
 then
 
-	# Check for the pkcs11 group and that the user is a member of it
-	grep -q ^pkcs11: /etc/group
-	if [ $? -ne 0 ]
-	then
-		echo "The 'pkcs11' group does not exist.  Be sure openCryptoki has been installed properly"
-		RC=1
-	fi
+ # Check for the pkcs11 group and that the user is a member of it
+ grep -q ^pkcs11: /etc/group
+ if [ $? -ne 0 ]
+ then
+  echo "The 'pkcs11' group does not exist.  Be sure openCryptoki has been installed properly"
+  RC=1
+ fi
 
-	groups | grep pkcs11 1>/dev/null 2>&1
-	if [ $? -ne 0 ]
-	then
-		echo "User '$USER' is not a member of the 'pkcs11' group"
-		RC=1
-	fi
+ groups | grep pkcs11 1>/dev/null 2>&1
+ if [ $? -ne 0 ]
+ then
+  echo "User '$USER' is not a member of the 'pkcs11' group"
+  RC=1
+ fi
 
-	# Check for openCryptoki and that it is running
-	#   Additionally, delete the user's TPM token data store.
-	rm -f $TPM_TMPFILE 1>/dev/null 2>&1
-	which pkcsslotd 1>$TPM_TMPFILE 2>&1
-	if [ $? -ne 0 ]
-	then
-		echo "The openCryptoki PKCS#11 slot daemon is not available.  Be sure openCryptoki has been installed properly"
-		if [ -f $TPM_TMPFILE ]
-		then
-			cat $TPM_TMPFILE
-		fi
-		RC=1
-	else
-		rm -f $TPM_TMPFILE 1>/dev/null 2>&1
-		ps -ef 1>$TPM_TMPFILE
-		grep pkcsslotd $TPM_TMPFILE 1>/dev/null
-		if [ $? -ne 0 ]
-		then
-			echo "The openCryptoki PKCS#11 slot daemon is not running.  Be sure to start the openCryptoki slot daemon (pkcsslotd)"
-			RC=1
-		else
-			P11DIR=`which pkcsslotd | sed s-/sbin/pkcsslotd--`
-			if [ "$P11DIR" == "/usr" ]
-			then
-				P11DIR=""
-			fi
+ # Check for openCryptoki and that it is running
+ #   Additionally, delete the user's TPM token data store.
+ rm -f $TPM_TMPFILE 1>/dev/null 2>&1
+ which pkcsslotd 1>$TPM_TMPFILE 2>&1
+ if [ $? -ne 0 ]
+ then
+  echo "The openCryptoki PKCS#11 slot daemon is not available.  Be sure openCryptoki has been installed properly"
+  if [ -f $TPM_TMPFILE ]
+  then
+   cat $TPM_TMPFILE
+  fi
+  RC=1
+ else
+  rm -f $TPM_TMPFILE 1>/dev/null 2>&1
+  ps -ef 1>$TPM_TMPFILE
+  grep pkcsslotd $TPM_TMPFILE 1>/dev/null
+  if [ $? -ne 0 ]
+  then
+   echo "The openCryptoki PKCS#11 slot daemon is not running.  Be sure to start the openCryptoki slot daemon (pkcsslotd)"
+   RC=1
+  else
+   P11DIR=`which pkcsslotd | sed s-/sbin/pkcsslotd--`
+   if [ "$P11DIR" == "/usr" ]
+   then
+    P11DIR=""
+   fi
 
-			grep libpkcs11_tpm $P11DIR/var/lib/opencryptoki/pk_config_data 1>/dev/null
-			if [ $? -ne 0 ]
-			then
-				echo "The TPM PKCS#11 token is not active.  Be sure openCryptoki has been installed properly"
-				RC=1
-			fi
-			if [ -d $P11DIR/var/lib/opencryptoki/tpm/$USER ]
-			then
-				rm -rf $P11DIR/var/lib/opencryptoki/tpm/$USER
-			fi
-		fi
-	fi
+   grep libpkcs11_tpm $P11DIR/var/lib/opencryptoki/pk_config_data 1>/dev/null
+   if [ $? -ne 0 ]
+   then
+    echo "The TPM PKCS#11 token is not active.  Be sure openCryptoki has been installed properly"
+    RC=1
+   fi
+   if [ -d $P11DIR/var/lib/opencryptoki/tpm/$USER ]
+   then
+    rm -rf $P11DIR/var/lib/opencryptoki/tpm/$USER
+   fi
+  fi
+ fi
 fi
 
 if [ $RC -ne 0 ]
 then
-	exit 1
+ exit 1
 fi
 
 # Set known password values

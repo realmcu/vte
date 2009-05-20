@@ -1,27 +1,27 @@
-################################################################################################### 
-# 
+###################################################################################################
+#
 #    @file   scc_scr.sh
-# 
+#
 #    @brief  xxx
-# 
-################################################################################################### 
+#
+###################################################################################################
 #
 #    Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
 #    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #    Freescale Semiconductor, Inc.
-#     
-################################################################################################### 
-#Revision History: 
-#                            Modification     Tracking 
-#Author/core ID                  Date          Number    Description of Changes 
+#
+###################################################################################################
+#Revision History:
+#                            Modification     Tracking
+#Author/core ID                  Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-#S.Zavjalov/zvjs001c          23/11/2004     TLSbo39738  Initial version 
+#S.Zavjalov/zvjs001c          23/11/2004     TLSbo39738  Initial version
 #A.Ozerov/b00320              23/11/2006     TLSbo80386  logical error was fixed.
-# 
+#
 ###################################################################################################
 
-#!/bin/sh  
+#!/bin/sh
 
 LTPROOT=`cd \`dirname $0\` && echo $PWD`
 
@@ -48,7 +48,7 @@ anal_res()
                echo " ----------- --------- -----------"
                echo " scc_test      TFAIL       1"
         fi
-               echo""                             
+               echo""
 }
 
 anal_res_inv()
@@ -70,7 +70,7 @@ anal_res_inv()
 }
 
 $TESTAPPSCC -La
-anal_res                          
+anal_res
 $TESTAPPSCC -Lr
 anal_res_inv
 $TESTAPPSCC -T -Lt
@@ -81,7 +81,7 @@ anal_res_inv
 echo""
 echo " final script      RESULT   "
 echo " ------------ ----------------"
- 
+
 if [ $rc -eq 0 ];
 then
         echo " scc_scr.sh        TPASS    "
@@ -97,5 +97,5 @@ then
         echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!I!!"
 fi
         echo""
- 
+
 exit $rc

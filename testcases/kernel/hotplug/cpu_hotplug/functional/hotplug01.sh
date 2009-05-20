@@ -26,13 +26,13 @@ echo "Desc:   What happens to disk controller interrupts when offlining CPUs?"
 echo
 
 # Time delay after an online of cpu
-TM_ONLINE=${HOTPLUG01_TM_ONLINE:-1} 
+TM_ONLINE=${HOTPLUG01_TM_ONLINE:-1}
 
 # Time delay after offline of cpu
-TM_OFFLINE=${HOTPLUG01_TM_OFFLINE:-1} 
+TM_OFFLINE=${HOTPLUG01_TM_OFFLINE:-1}
 
 # Time delay before start of entire new cycle.
-TM_DLY=${HOTPLUG01_TM_DLY:-6}    
+TM_DLY=${HOTPLUG01_TM_DLY:-6}
 
 # Validate the specified CPU exists
 if ! cpu_is_valid "${CPU_TO_TEST}" ; then
@@ -64,11 +64,11 @@ do_clean()
 
     # Turns off the cpus that were off before the test start
     echo "Return to previous state.  CPU count = ${CPU_COUNT}"
-    until [ $CPU_COUNT = 0 ]; do    
-    	echo "CPU = $CPU_COUNT @on = ${OFFLINE_CPU[${CPU_COUNT}]}"
+    until [ $CPU_COUNT = 0 ]; do
+   echo "CPU = $CPU_COUNT @on = ${OFFLINE_CPU[${CPU_COUNT}]}"
         offline_cpu ${OFFLINE_CPU[${CPU_COUNT}]}
         let "CPU_COUNT = CPU_COUNT - 1"
-    done			
+    done
     if [ ${cpustate} = 1 ]; then
         online_cpu ${CPU_TO_TEST}
     else
@@ -101,7 +101,7 @@ do_offline()
 
 # do_online(CPU)
 #
-#  Onlines the CPU and then sets the smp_affinity of all IRQs to 
+#  Onlines the CPU and then sets the smp_affinity of all IRQs to
 #  this CPU.
 #
 do_online()

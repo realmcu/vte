@@ -1,5 +1,5 @@
 /*      -*- linux-c -*-
- * 
+ *
  * Copyright (c) 2003 by Intel Corp.
  * (C) Copyright IBM Corp. 2003
  *
@@ -14,7 +14,7 @@
  *     Louis Zhuang <louis.zhuang@linux.intel.com>
  *     Sean Dague <http://dague.net/sean>
  * Contributors:
- *     David Judkovics <djudkovi@us.ibm.com> 
+ *     David Judkovics <djudkovi@us.ibm.com>
  */
 
 #include <stdio.h>
@@ -33,28 +33,28 @@
 
 int init_plugin()
 {
-        char * path = NULL;
+        char * path  NULL;
         int err;
-        
-        err = lt_dlinit();
-        if (err != 0) {
+
+        err  lt_dlinit();
+        if (err ! 0) {
                 dbg("Can not init ltdl");
                 goto err1;
         }
-        
-        path = getenv("OPENHPI_PATH");
-        if(path == NULL) {
-                path = OH_PLUGIN_PATH;
+
+        path  getenv("OPENHPI_PATH");
+        if(path  NULL) {
+                path  OH_PLUGIN_PATH;
         }
 
-        err = lt_dlsetsearchpath(path);
-        if (err != 0) {
+        err  lt_dlsetsearchpath(path);
+        if (err ! 0) {
                 dbg("Can not set lt_dl search path");
                 goto err2;
         }
-        
+
         return 0;
-        
+
  err2:
         lt_dlexit();
  err1:
@@ -65,7 +65,7 @@ void uninit_plugin(void)
 {
         int rv;
 
-        rv = lt_dlexit();
+        rv  lt_dlexit();
         if (rv < 0)
                 dbg("Can not exit ltdl right");
 }
@@ -82,12 +82,12 @@ int load_plugin(struct oh_plugin_config *config)
 {
         int (*get_interface) (struct oh_abi_v2 ** pp, const uuid_t uuid);
         int err;
-        struct oh_static_plugin *p = static_plugins;
+        struct oh_static_plugin *p  static_plugins;
 
         /* first take search plugin in the array of static plugin */
         while( p->name ) {
                 if ( !strcmp( config->name, p->name ) ) {
-                        err = (*p->get_interface)( (void **)&config->abi, UUID_OH_ABI_V2);
+                        err  (*p->get_interface)( (void **)&config->abi, UUID_OH_ABI_V2);
 
                         if (err < 0 || !config->abi || !config->abi->open) {
                                 dbg("Can not get ABI V1");
@@ -96,7 +96,7 @@ int load_plugin(struct oh_plugin_config *config)
 
                         dbg( "found static plugin %s", p->name );
 
-                        config->dl_handle = 0;
+                        config->dl_handle  0;
 
                         return 0;
                 }
@@ -104,29 +104,29 @@ int load_plugin(struct oh_plugin_config *config)
                 p++;
         }
 
-        config->dl_handle = lt_dlopenext(config->name);
-        if (config->dl_handle == NULL) {
+        config->dl_handle  lt_dlopenext(config->name);
+        if (config->dl_handle  NULL) {
                 dbg("Can not find %s plugin", config->name);
                 goto err1;
         }
 
-        get_interface = lt_dlsym(config->dl_handle, "get_interface");
+        get_interface  lt_dlsym(config->dl_handle, "get_interface");
         if (!get_interface) {
                 dbg("Can not get 'get_interface' symbol, is it a plugin?!");
                 goto err1;
         }
-        
-        err = get_interface(&config->abi, UUID_OH_ABI_V2);
+
+        err  get_interface(&config->abi, UUID_OH_ABI_V2);
         if (err < 0 || !config->abi || !config->abi->open) {
                 dbg("Can not get ABI V1");
                 goto err1;
         }
-        
+
         return 0;
  err1:
         if (config->dl_handle) {
                 lt_dlclose(config->dl_handle);
-                config->dl_handle = 0;
+                config->dl_handle  0;
         }
 
         return -1;
@@ -138,10 +138,10 @@ void unload_plugin(struct oh_plugin_config *config)
         if (config->dl_handle)
         {
                 lt_dlclose(config->dl_handle);
-                config->dl_handle = 0;
+                config->dl_handle  0;
         }
 
-        global_plugin_list = g_slist_remove(global_plugin_list, config);
+        global_plugin_list  g_slist_remove(global_plugin_list, config);
 
         if (config->name)
                 free(config->name);
@@ -156,20 +156,20 @@ int load_handler (GHashTable *handler_config)
 
         data_access_lock();
 
-        handler = new_handler(handler_config);
+        handler  new_handler(handler_config);
 
-        if(handler == NULL) {
+        if(handler  NULL) {
                 data_access_unlock();
                 return -1;
         }
-        
-        global_handler_list = g_slist_append(
+
+        global_handler_list  g_slist_append(
                 global_handler_list,
                 (gpointer) handler
                 );
-        
+
         data_access_unlock();
-        
+
         return 0;
 }
 
@@ -182,32 +182,32 @@ struct oh_handler *new_handler(GHashTable *handler_config)
 {
         struct oh_plugin_config *p_config;
         struct oh_handler *handler;
-        
-        handler = malloc(sizeof(*handler));
+
+        handler  malloc(sizeof(*handler));
         if (!handler) {
                 dbg("Out of Memory!");
                 goto err;
         }
         memset(handler, '\0', sizeof(*handler));
-        
+
         if(plugin_refcount((char *)g_hash_table_lookup(handler_config, "plugin")) < 1) {
                 dbg("Attempt to create handler for unknown plugin %s",
                         (char *)g_hash_table_lookup(handler_config, "plugin"));
                 goto err;
         }
 
-        p_config = plugin_config((char *)g_hash_table_lookup(handler_config, "plugin"));
-        if(p_config == NULL) {
+        p_config  plugin_config((char *)g_hash_table_lookup(handler_config, "plugin"));
+        if(p_config  NULL) {
                 dbg("No such plugin config");
                 goto err;
         }
-        
-        handler->abi = p_config->abi;
-        handler->config = handler_config;
+
+        handler->abi  p_config->abi;
+        handler->config  handler_config;
 
         /* this should be done elsewhere.  if 0 it for now to make it
            easier to migrate */
-        handler->hnd = handler->abi->open(handler->config);
+        handler->hnd  handler->abi->open(handler->config);
         if (!handler->hnd) {
                 dbg("The plugin can not work");
                 goto err;
@@ -225,7 +225,7 @@ void unload_handler(struct oh_handler *handler)
         if (handler->abi && handler->abi->close)
                 handler->abi->close(handler->hnd);
 
-        global_handler_list = g_slist_remove(
+        global_handler_list  g_slist_remove(
                 global_handler_list,
                 (gpointer) handler
                 );

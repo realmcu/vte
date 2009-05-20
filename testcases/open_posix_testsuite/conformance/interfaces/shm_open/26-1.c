@@ -16,7 +16,7 @@
  *     mode.
  *  3. Check that the mode is unchanged.
  */
-  
+
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -29,44 +29,44 @@
 
 
 int main(){
-	int fd;
-	struct stat stat_buf;
-	mode_t old_mode;
+ int fd;
+ struct stat stat_buf;
+ mode_t old_mode;
 
-	fd = shm_open(SHM_NAME, O_RDWR|O_CREAT, CREATION_MODE);
-	if(fd == -1) {
-		perror("An error occurs when calling shm_open()");
-		return PTS_UNRESOLVED;
-	}
+ fd  shm_open(SHM_NAME, O_RDWR|O_CREAT, CREATION_MODE);
+ if(fd  -1) {
+  perror("An error occurs when calling shm_open()");
+  return PTS_UNRESOLVED;
+ }
 
-	if(fstat(fd, &stat_buf) != 0) {
-		perror("An error occurs when calling fstat()");
-		shm_unlink(SHM_NAME);
-		return PTS_UNRESOLVED;
-	}	
-	old_mode = stat_buf.st_mode;	
+ if(fstat(fd, &stat_buf) ! 0) {
+  perror("An error occurs when calling fstat()");
+  shm_unlink(SHM_NAME);
+  return PTS_UNRESOLVED;
+ }
+ old_mode  stat_buf.st_mode;
 
-	fd = shm_open(SHM_NAME, O_RDWR|O_TRUNC, OPEN_MODE);
-	if(fd == -1) {
-		perror("An error occurs when calling shm_open()");
-		shm_unlink(SHM_NAME);
-		return PTS_UNRESOLVED;
-	}
+ fd  shm_open(SHM_NAME, O_RDWR|O_TRUNC, OPEN_MODE);
+ if(fd  -1) {
+  perror("An error occurs when calling shm_open()");
+  shm_unlink(SHM_NAME);
+  return PTS_UNRESOLVED;
+ }
 
-	if(fstat(fd, &stat_buf) != 0) {
-		perror("An error occurs when calling fstat()");
-		shm_unlink(SHM_NAME);
-		return PTS_UNRESOLVED;
-	}
+ if(fstat(fd, &stat_buf) ! 0) {
+  perror("An error occurs when calling fstat()");
+  shm_unlink(SHM_NAME);
+  return PTS_UNRESOLVED;
+ }
 
-	shm_unlink(SHM_NAME);
+ shm_unlink(SHM_NAME);
 
-	if(stat_buf.st_mode == old_mode) {
-		printf("Test PASSED\n");
-		return PTS_PASS;
-	}
+ if(stat_buf.st_mode  old_mode) {
+  printf("Test PASSED\n");
+  return PTS_PASS;
+ }
 
-	printf("The mode has changed.\n");
-	return PTS_FAIL;
+ printf("The mode has changed.\n");
+ return PTS_FAIL;
 }
-       
+

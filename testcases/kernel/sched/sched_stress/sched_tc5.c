@@ -21,7 +21,7 @@
 
 /*---------------------------------------------------------------------+
 |                               sched_tc5                              |
-| ==================================================================== |
+|  |
 |                                                                      |
 | Description:  Creates short-term disk I/O bound process              |
 |                                                                      |
@@ -40,7 +40,7 @@
 |                                                                      |
 |   Version  Date    Name  Reason                                      |
 |    0.1     050689  CTU   Initial version                             |
-|    0.2     010402  Manoj Iyer Ported to Linux		               |
+|    0.2     010402  Manoj Iyer Ported to Linux                 |
 |                                                                      |
 +---------------------------------------------------------------------*/
 
@@ -53,7 +53,7 @@
 
 /*
  * Defines:
- * 
+ *
  * USAGE: usage statement
  *
  * DEFAULT_PRIORITY_TYPE: default priority
@@ -63,10 +63,10 @@
  * TIMES: number of times preform calculations
  *
  */
-#define DEFAULT_PRIORITY_TYPE	"variable"
-#define DEFAULT_LOGFILE		"sched_tc5.log"
-#define TIMES			20
-#define MATRIX_SIZE    		50
+#define DEFAULT_PRIORITY_TYPE "variable"
+#define DEFAULT_LOGFILE  "sched_tc5.log"
+#define TIMES   20
+#define MATRIX_SIZE   50
 #define USAGE "Usage:  %s  [-l log] [-t type] [-p priority] [-v] [-d]\n" \
               "        -l log      log file                             \n" \
               "        -t type     priority type 'variable' or 'fixed'  \n" \
@@ -92,44 +92,44 @@ void invert_matrix ();
  *
  * priority: process type (fixed priority, variable priority)
  */
-int	verbose   = 0;
-int	debug     = 0;
-int 	priority  = DEFAULT_PRIORITY;
-char	*logfile  = DEFAULT_LOGFILE;
-char 	*priority_type = DEFAULT_PRIORITY_TYPE;
+int verbose    0;
+int debug      0;
+int priority   DEFAULT_PRIORITY;
+char *logfile   DEFAULT_LOGFILE;
+char *priority_type  DEFAULT_PRIORITY_TYPE;
 
 
 /*---------------------------------------------------------------------+
 |                                 main                                 |
-| ==================================================================== |
+|  |
 |                                                                      |
 | Function:  ...                                                       |
 |                                                                      |
 +---------------------------------------------------------------------*/
 int main (int argc, char **argv)
 {
-	FILE	*statfile;
-	int	i;
-	clock_t	start_time;		/* start & stop times */
-	clock_t	stop_time;
-	float	elapsed_time;
-	struct tms timer_info;		/* time accounting info */
+ FILE *statfile;
+ int i;
+ clock_t start_time;  /* start & stop times */
+ clock_t stop_time;
+ float elapsed_time;
+ struct tms timer_info;  /* time accounting info */
 
-	/*
-	 * Process command line arguments...
-	 */
-	parse_args (argc, argv);
-	if (verbose) printf ("%s: Scheduler TestSuite program\n\n", *argv);
-	if (debug) {
-		printf ("\tpriority type:  %s\n", priority_type);
-		printf ("\tpriority:       %d\n", priority);
-		printf ("\tlogfile:        %s\n", logfile);
-	}
+ /*
+  * Process command line arguments...
+  */
+ parse_args (argc, argv);
+ if (verbose) printf ("%s: Scheduler TestSuite program\n\n", *argv);
+ if (debug) {
+  printf ("\tpriority type:  %s\n", priority_type);
+  printf ("\tpriority:       %d\n", priority);
+  printf ("\tlogfile:        %s\n", logfile);
+ }
 
-	/* 
-	 * Adjust the priority of this process if the real time flag is set
-	 */
-	if (!strcmp (priority_type, "fixed")) {
+ /*
+  * Adjust the priority of this process if the real time flag is set
+  */
+ if (!strcmp (priority_type, "fixed")) {
 #ifndef __linux__
                 if (setpri (0, DEFAULT_PRIORITY) < 0)
                         sys_error ("setpri failed", __FILE__, __LINE__);
@@ -137,42 +137,42 @@ int main (int argc, char **argv)
                 if (setpriority(PRIO_PROCESS, 0, 0) < 0)
                         sys_error ("setpri failed", __FILE__, __LINE__);
 #endif
-	} else {
-		if (nice ((priority - 50) - (nice (0) + 20)) < 0 && errno != 0)
-			sys_error ("nice failed", __FILE__, __LINE__);
-	}
+ } else {
+  if (nice ((priority - 50) - (nice (0) + 20)) < 0 && errno ! 0)
+   sys_error ("nice failed", __FILE__, __LINE__);
+ }
 
-	/* 
-	 * Read from raw I/O device and record elapsed time...
-	 */
-	start_time = time ((time_t*)&timer_info);
+ /*
+  * Read from raw I/O device and record elapsed time...
+  */
+ start_time  time ((time_t*)&timer_info);
 
-	for (i=0; i < TIMES; i++)
-		invert_matrix ();
+ for (i0; i < TIMES; i++)
+  invert_matrix ();
 
-	stop_time = time ((time_t*)&timer_info);
-	elapsed_time = (float) (stop_time - start_time) / 100.0;
+ stop_time  time ((time_t*)&timer_info);
+ elapsed_time  (float) (stop_time - start_time) / 100.0;
 
-	if ((statfile = fopen (logfile, "w")) == NULL)
-		sys_error ("fopen failed", __FILE__, __LINE__);
+ if ((statfile  fopen (logfile, "w"))  NULL)
+  sys_error ("fopen failed", __FILE__, __LINE__);
 
-	fprintf (statfile, "%f\n", elapsed_time);
-	if (debug) printf ("\n\telapsed time: %f\n", elapsed_time);
+ fprintf (statfile, "%f\n", elapsed_time);
+ if (debug) printf ("\n\telapsed time: %f\n", elapsed_time);
 
-	if (fclose (statfile) < 0)
-		sys_error ("fclose failed", __FILE__, __LINE__);
-   
-	/*
-	 * Exit with success!
-	 */
-	if (verbose) printf ("\nsuccessful!\n");
-	return (0);
+ if (fclose (statfile) < 0)
+  sys_error ("fclose failed", __FILE__, __LINE__);
+
+ /*
+  * Exit with success!
+  */
+ if (verbose) printf ("\nsuccessful!\n");
+ return (0);
 }
 
 
 /*---------------------------------------------------------------------+
 |                           invert_matrix ()                           |
-| ==================================================================== |
+|  |
 |                                                                      |
 | Function:  o  Randomly assign values to a matrix and then calculate  |
 |               inverse..                                              |
@@ -180,59 +180,59 @@ int main (int argc, char **argv)
 +---------------------------------------------------------------------*/
 void invert_matrix ()
 {
-	int     i, j, k;
-	float   t1;
-	float	matrix_1 [MATRIX_SIZE][MATRIX_SIZE];
-	float	matrix_2 [MATRIX_SIZE][MATRIX_SIZE];
+ int     i, j, k;
+ float   t1;
+ float matrix_1 [MATRIX_SIZE][MATRIX_SIZE];
+ float matrix_2 [MATRIX_SIZE][MATRIX_SIZE];
 
-	/* 
-	 * Fill the first matrix to be inverted with random values 
-	 */
+ /*
+  * Fill the first matrix to be inverted with random values
+  */
 printf("sched_tc5: invert_matrix: before first matrix inversion\n");
-	for (i = 0; i < MATRIX_SIZE; i++)
-		for (j = 0; j < MATRIX_SIZE; j++)
-		{
-			matrix_1[i][j] = (float) (rand () % 100);
-		}
+ for (i  0; i < MATRIX_SIZE; i++)
+  for (j  0; j < MATRIX_SIZE; j++)
+  {
+   matrix_1[i][j]  (float) (rand () % 100);
+  }
 
-	/*
-	 * Now calculate the inverse of the random matrix first, create an
-	 * identity matrix in the result matrix
-	 */
+ /*
+  * Now calculate the inverse of the random matrix first, create an
+  * identity matrix in the result matrix
+  */
 printf("sched_tc5: invert_matrix: before second matrix inversion\n");
-	for ( i = 0; i < MATRIX_SIZE; i++ )
-		for ( j = 0; j < MATRIX_SIZE; j++ )
-			if ( i == j )
-				matrix_2[i][j] = 1;
-			else
-				matrix_2[i][j] = 0;
+ for ( i  0; i < MATRIX_SIZE; i++ )
+  for ( j  0; j < MATRIX_SIZE; j++ )
+   if ( i  j )
+    matrix_2[i][j]  1;
+   else
+    matrix_2[i][j]  0;
 
 printf("sched_tc5: invert_matrix: before form identity matrix\n");
-	/* 
-	 * Form an identity matrix in the random matrix
-	 */
-	for ( i = 0; i < MATRIX_SIZE; i++ ) {
-		t1 = matrix_1[i][j];
-		for ( j = 0; j < MATRIX_SIZE; j++ ) {
-			matrix_1[i][j] /= t1;
-			matrix_2[i][j] /= t1;
-		}
-		for ( j = 0; j < MATRIX_SIZE; j++ )
-			if ( i != j ) {
-				t1 = - matrix_1[j][i];
-				for ( k = 0; k < MATRIX_SIZE; k++ ) {
-					matrix_1[j][k] += ( matrix_1[i][k] * t1 );
-					matrix_2[j][k] += ( matrix_2[i][k] * t1 );
-				}
-			}
-	}
+ /*
+  * Form an identity matrix in the random matrix
+  */
+ for ( i  0; i < MATRIX_SIZE; i++ ) {
+  t1  matrix_1[i][j];
+  for ( j  0; j < MATRIX_SIZE; j++ ) {
+   matrix_1[i][j] / t1;
+   matrix_2[i][j] / t1;
+  }
+  for ( j  0; j < MATRIX_SIZE; j++ )
+   if ( i ! j ) {
+    t1  - matrix_1[j][i];
+    for ( k  0; k < MATRIX_SIZE; k++ ) {
+     matrix_1[j][k] + ( matrix_1[i][k] * t1 );
+     matrix_2[j][k] + ( matrix_2[i][k] * t1 );
+    }
+   }
+ }
 printf("sched_tc5: invert_matrix: after form identity matrix\n");
 }
 
 
 /*---------------------------------------------------------------------+
 |                             parse_args ()                            |
-| ==================================================================== |
+|  |
 |                                                                      |
 | Function:  Parse the command line arguments & initialize global      |
 |            variables.                                                |
@@ -248,65 +248,65 @@ printf("sched_tc5: invert_matrix: after form identity matrix\n");
 +---------------------------------------------------------------------*/
 void parse_args (int argc, char **argv)
 {
-	int	opt;
-	int 	lflg = 0, pflg = 0, tflg = 0;
-	int	errflag = 0;
-	char	*program_name = *argv;
-	extern char 	*optarg;	/* Command line option */
+ int opt;
+ int lflg  0, pflg  0, tflg  0;
+ int errflag  0;
+ char *program_name  *argv;
+ extern char *optarg; /* Command line option */
 
-	/*
-	 * Parse command line options.
-	 */
+ /*
+  * Parse command line options.
+  */
         if (argc < 2) {
                 fprintf (stderr, USAGE, program_name);
                 exit (0);
         }
 
-	while ((opt = getopt(argc, argv, "l:t:p:vd")) != EOF)
-	{
-		switch (opt)
-		{
-		case 'l':	/* log file */
-			lflg++;
-			logfile = optarg;
-			break;
-		case 't':	/* process type */
-			tflg++;
-			priority_type = optarg;
-			break;
-		case 'p':	/* process priority */
-			pflg++;
-			priority = atoi (optarg);
-			break;
-		case 'v':	/* verbose */
-			verbose++;
-			break;
-		case 'd':	/* enable debugging messages */
-			verbose++;
-			debug++;
-			break;
-		default:
-			errflag++;
-			break;
-		}
-	}
-debug=1;
+ while ((opt  getopt(argc, argv, "l:t:p:vd")) ! EOF)
+ {
+  switch (opt)
+  {
+  case 'l': /* log file */
+   lflg++;
+   logfile  optarg;
+   break;
+  case 't': /* process type */
+   tflg++;
+   priority_type  optarg;
+   break;
+  case 'p': /* process priority */
+   pflg++;
+   priority  atoi (optarg);
+   break;
+  case 'v': /* verbose */
+   verbose++;
+   break;
+  case 'd': /* enable debugging messages */
+   verbose++;
+   debug++;
+   break;
+  default:
+   errflag++;
+   break;
+  }
+ }
+debug1;
 
-	/*
-	 * Check percentage and process slots...
- 	 */
-	if (tflg) { 
-		if (strcmp (priority_type, "fixed") && 
-		    strcmp (priority_type, "variable"))
-			errflag++;
-	}
-	if (pflg) { 
-		if (priority < 50 || priority > 100)
-			errflag++;
-	}
-	if (errflag) {
-		fprintf (stderr, USAGE, program_name);
-		exit (2);
-	}
+ /*
+  * Check percentage and process slots...
+  */
+ if (tflg) {
+  if (strcmp (priority_type, "fixed") &&
+      strcmp (priority_type, "variable"))
+   errflag++;
+ }
+ if (pflg) {
+  if (priority < 50 || priority > 100)
+   errflag++;
+ }
+ if (errflag) {
+  fprintf (stderr, USAGE, program_name);
+  exit (2);
+ }
 }
 

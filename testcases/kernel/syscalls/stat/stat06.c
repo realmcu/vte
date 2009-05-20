@@ -32,83 +32,83 @@
  */
 /* $Id: stat06.c,v 1.6 2007/02/09 20:48:24 vapier Exp $ */
 /**********************************************************
- * 
+ *
  *    OS Test - Silicon Graphics, Inc.
- * 
- *    TEST IDENTIFIER	: stat06
- * 
- *    EXECUTED BY	: anyone
- * 
- *    TEST TITLE	: stat(2) negative path testcases
- * 
- *    PARENT DOCUMENT	: None
- * 
- *    TEST CASE TOTAL	: 7
- * 
- *    WALL CLOCK TIME	: 1
- * 
- *    CPU TYPES		: ALL
- * 
- *    AUTHOR		: Richard Logan
- * 
- *    CO-PILOT		: William Roske
- * 
- *    DATE STARTED	: 03/30/94
- * 
- *    INITIAL RELEASE	: UNICOS 7.0
- * 
+ *
+ *    TEST IDENTIFIER : stat06
+ *
+ *    EXECUTED BY : anyone
+ *
+ *    TEST TITLE : stat(2) negative path testcases
+ *
+ *    PARENT DOCUMENT : None
+ *
+ *    TEST CASE TOTAL : 7
+ *
+ *    WALL CLOCK TIME : 1
+ *
+ *    CPU TYPES  : ALL
+ *
+ *    AUTHOR  : Richard Logan
+ *
+ *    CO-PILOT  : William Roske
+ *
+ *    DATE STARTED : 03/30/94
+ *
+ *    INITIAL RELEASE : UNICOS 7.0
+ *
  *    TEST CASES
- * 
- * 	1-7) See Testcases structure below.
- *	
+ *
+ * 1-7) See Testcases structure below.
+ *
  *    INPUT SPECIFICATIONS
- * 	The standard options for system call tests are accepted.
- *	(See the parse_opts(3) man page).
+ * The standard options for system call tests are accepted.
+ * (See the parse_opts(3) man page).
  *      -h  : print help and exit
- * 
+ *
  *    OUTPUT SPECIFICATIONS
- * 	
+ *
  *    DURATION
- * 	Terminates - with frequency and infinite modes.
- * 
+ * Terminates - with frequency and infinite modes.
+ *
  *    SIGNALS
- * 	Uses SIGUSR1 to pause before test if option set.
- * 	(See the parse_opts(3) man page).
+ * Uses SIGUSR1 to pause before test if option set.
+ * (See the parse_opts(3) man page).
  *
  *    RESOURCES
- * 	None
- * 
+ * None
+ *
  *    ENVIRONMENTAL NEEDS
- * 	The libcuts.a and libsys.a libraries must be included in 
- *	the compilation of this test.
- * 
+ * The libcuts.a and libsys.a libraries must be included in
+ * the compilation of this test.
+ *
  *    SPECIAL PROCEDURAL REQUIREMENTS
- * 	None
- * 
+ * None
+ *
  *    INTERCASE DEPENDENCIES
- * 	None
- * 
+ * None
+ *
  *    DETAILED DESCRIPTION
- *	This is a Phase I test for the stat(2) system call.  It is intended
- *	to provide a limited exposure of the system call, for now.  It
- *	should/will be extended when full functional tests are written for
- *	stat(2).
- * 
- * 	Setup:
- * 	  Setup signal handling.
- *	  Pause for SIGUSR1 if option specified.
- * 
- * 	Test:
- *	 Loop if the proper options are given.
- * 	  Execute system call
- *	  Check return code, if system call failed (return=-1)
- *		Log the errno and Issue a FAIL message.
- *	  Otherwise, Issue a PASS message.
- * 
- * 	Cleanup:
- * 	  Print errno log and/or timing stats if options given
- * 
- * 
+ * This is a Phase I test for the stat(2) system call.  It is intended
+ * to provide a limited exposure of the system call, for now.  It
+ * should/will be extended when full functional tests are written for
+ * stat(2).
+ *
+ * Setup:
+ *   Setup signal handling.
+ *   Pause for SIGUSR1 if option specified.
+ *
+ * Test:
+ *  Loop if the proper options are given.
+ *   Execute system call
+ *   Check return code, if system call failed (return-1)
+ *  Log the errno and Issue a FAIL message.
+ *   Otherwise, Issue a PASS message.
+ *
+ * Cleanup:
+ *   Print errno log and/or timing stats if options given
+ *
+ *
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
 #include <sys/types.h>
@@ -126,12 +126,12 @@
 void setup();
 void cleanup();
 
-char *TCID="stat06";		/* Test program identifier.    */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID"stat06";  /* Test program identifier.    */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 
-int exp_enos[]={0, 0};
+int exp_enos[]{0, 0};
 
-char * bad_addr = 0;
+char * bad_addr  0;
 
 #if !defined(UCLINUX)
 int high_address_setup();
@@ -151,13 +151,13 @@ struct test_case_t {
    char *desc;
    int exp_errno;
    int (*setupfunc)();
-} Test_cases[] = {
+} Test_cases[]  {
     { "nonexistfile", &statbuf, "non-existent file", ENOENT, no_setup},
     { "", &statbuf, "path is empty string", ENOENT, no_setup},
     { "nefile/file", &statbuf, "path contains a non-existent file",
-		ENOENT, no_setup },
+  ENOENT, no_setup },
     { "file/file", &statbuf, "path contains a regular file",
-		ENOTDIR, filepath_setup },
+  ENOTDIR, filepath_setup },
     { Longpathname, &statbuf, "pathname too long", ENAMETOOLONG, longpath_setup },
 #if !defined(UCLINUX)
     { High_address, &statbuf, "address beyond address space", EFAULT, high_address_setup },
@@ -165,7 +165,7 @@ struct test_case_t {
 #endif
     { NULL, NULL, NULL, 0, no_setup }
 };
-int TST_TOTAL = sizeof(Test_cases) / sizeof(*Test_cases);
+int TST_TOTAL  sizeof(Test_cases) / sizeof(*Test_cases);
 
 /***********************************************************************
  * Main
@@ -173,20 +173,20 @@ int TST_TOTAL = sizeof(Test_cases) / sizeof(*Test_cases);
 int
 main(int ac, char **av)
 {
-    int lc;		/* loop counter */
-    char *msg;		/* message returned from parse_opts */
+    int lc;  /* loop counter */
+    char *msg;  /* message returned from parse_opts */
     char *fname;
     char *desc;
     int ind;
     struct stat *stbuf;
     struct sigaction sa, osa;
-    
+
     /***************************************************************
      * parse standard options
      ***************************************************************/
-    if ( (msg=parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *) NULL ) {
-	tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	tst_exit();
+    if ( (msgparse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *) NULL ) {
+ tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+ tst_exit();
     }
 
     /***************************************************************
@@ -200,63 +200,63 @@ main(int ac, char **av)
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc=0; TEST_LOOPING(lc); lc++) {
+    for (lc0; TEST_LOOPING(lc); lc++) {
 
-	/* reset Tst_count in case we are looping. */
-	Tst_count=0;
-	
+ /* reset Tst_count in case we are looping. */
+ Tst_count0;
 
-        for (ind=0; Test_cases[ind].desc != NULL; ind++ ) {
 
-	    fname = Test_cases[ind].pathname;
-	    desc = Test_cases[ind].desc;
-	    stbuf = Test_cases[ind].stbuf;
-       
-	    if (stbuf == (struct stat *)-1) {
-		/* special sig11 case */
-		sa.sa_handler = &sig11_handler;
-		sigemptyset(&sa.sa_mask);
-		sa.sa_flags = 0;
+        for (ind0; Test_cases[ind].desc ! NULL; ind++ ) {
 
-		sigaction(SIGSEGV, NULL, &osa);
-		sigaction(SIGSEGV, &sa, NULL);
+     fname  Test_cases[ind].pathname;
+     desc  Test_cases[ind].desc;
+     stbuf  Test_cases[ind].stbuf;
 
-		if (setjmp(sig11_recover)) {
-		    TEST_RETURN = -1;
-		    TEST_ERRNO = EFAULT;
-		} else {
-		    TEST(stat(fname, stbuf));
-		}
-		sigaction(SIGSEGV, &osa, NULL);
-	    } else {
-		/*
-		 *  Call stat(2)
-		 */
+     if (stbuf  (struct stat *)-1) {
+  /* special sig11 case */
+  sa.sa_handler  &sig11_handler;
+  sigemptyset(&sa.sa_mask);
+  sa.sa_flags  0;
 
-		TEST(stat(fname, stbuf));
-	    }
-	
-	    /* check return code */
-	    if ( TEST_RETURN == -1 ) {
-	        if ( STD_FUNCTIONAL_TEST ) {
-		    if ( TEST_ERRNO == Test_cases[ind].exp_errno )
-	                tst_resm(TPASS, "stat(<%s>, &stbuf) Failed, errno=%d",
-			    desc, TEST_ERRNO);
-		    else
-			tst_resm(TFAIL,
-			    "stat(<%s>, &stbuf) Failed, errno=%d, expected errno:%d",
+  sigaction(SIGSEGV, NULL, &osa);
+  sigaction(SIGSEGV, &sa, NULL);
+
+  if (setjmp(sig11_recover)) {
+      TEST_RETURN  -1;
+      TEST_ERRNO  EFAULT;
+  } else {
+      TEST(stat(fname, stbuf));
+  }
+  sigaction(SIGSEGV, &osa, NULL);
+     } else {
+  /*
+   *  Call stat(2)
+   */
+
+  TEST(stat(fname, stbuf));
+     }
+
+     /* check return code */
+     if ( TEST_RETURN  -1 ) {
+         if ( STD_FUNCTIONAL_TEST ) {
+      if ( TEST_ERRNO  Test_cases[ind].exp_errno )
+                 tst_resm(TPASS, "stat(<%s>, &stbuf) Failed, errno%d",
+       desc, TEST_ERRNO);
+      else
+   tst_resm(TFAIL,
+       "stat(<%s>, &stbuf) Failed, errno%d, expected errno:%d",
                             desc, TEST_ERRNO, Test_cases[ind].exp_errno);
-	        }
-		else
-		   Tst_count++;
-	    } else  {
-	        tst_resm(TFAIL,
-		    "stat(<%s>, &stbuf) returned %d, expected -1, errno:%d",
-		    desc, TEST_RETURN, Test_cases[ind].exp_errno);
-	    }
-	}
-	
-    }	/* End for TEST_LOOPING */
+         }
+  else
+     Tst_count++;
+     } else  {
+         tst_resm(TFAIL,
+      "stat(<%s>, &stbuf) returned %d, expected -1, errno:%d",
+      desc, TEST_RETURN, Test_cases[ind].exp_errno);
+     }
+ }
+
+    } /* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -264,12 +264,12 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-}	/* End main */
+} /* End main */
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void 
+void
 setup()
 {
     int ind;
@@ -284,26 +284,26 @@ setup()
     tst_tmpdir();
 
 #if !defined(UCLINUX)
-    bad_addr = mmap(0, 1, PROT_NONE,
-		    MAP_PRIVATE_EXCEPT_UCLINUX|MAP_ANONYMOUS, 0, 0);
-    if (bad_addr == MAP_FAILED) {
-	tst_brkm(TBROK, cleanup, "mmap failed");
+    bad_addr  mmap(0, 1, PROT_NONE,
+      MAP_PRIVATE_EXCEPT_UCLINUX|MAP_ANONYMOUS, 0, 0);
+    if (bad_addr  MAP_FAILED) {
+ tst_brkm(TBROK, cleanup, "mmap failed");
     }
-    Test_cases[6].pathname = bad_addr;
+    Test_cases[6].pathname  bad_addr;
 #endif
 
-    for (ind=0; Test_cases[ind].desc != NULL; ind++ ) {
-	Test_cases[ind].setupfunc();
+    for (ind0; Test_cases[ind].desc ! NULL; ind++ ) {
+ Test_cases[ind].setupfunc();
     }
 
-}	/* End setup() */
+} /* End setup() */
 
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
+ *  completion or premature exit.
  ***************************************************************/
-void 
+void
 cleanup()
 {
     /*
@@ -318,7 +318,7 @@ cleanup()
     /* exit with return code appropriate for results */
     tst_exit();
 
-}	/* End cleanup() */
+} /* End cleanup() */
 
 /******************************************************************
  * no_setup() - does nothing
@@ -339,12 +339,12 @@ high_address_setup()
 {
     int ind;
 
-    for (ind=0; Test_cases[ind].desc != NULL; ind++ ) {
-	if ( Test_cases[ind].pathname == High_address ) {
-	/*if ( strcmp(Test_cases[ind].pathname, HIGH_ADDRESS) == 0 ) { ***/
-	    Test_cases[ind].pathname = (char *)(sbrk(0)+5);
-	    break;
-	}
+    for (ind0; Test_cases[ind].desc ! NULL; ind++ ) {
+ if ( Test_cases[ind].pathname  High_address ) {
+ /*if ( strcmp(Test_cases[ind].pathname, HIGH_ADDRESS)  0 ) { ***/
+     Test_cases[ind].pathname  (char *)(sbrk(0)+5);
+     break;
+ }
     }
     return 0;
 
@@ -359,8 +359,8 @@ longpath_setup()
 {
    int ind;
 
-    for(ind=0; ind<= PATH_MAX+1; ind++) {
-	Longpathname[ind] = 'a';
+    for(ind0; ind< PATH_MAX+1; ind++) {
+ Longpathname[ind]  'a';
     }
     return 0;
 
@@ -374,9 +374,9 @@ filepath_setup()
 {
     int fd;
 
-    if ( (fd=creat("file", 0777)) == -1 ) {
-	tst_brkm(TBROK, cleanup, "creat(file) failed, errno:%d %s",
-	    errno, strerror(errno));
+    if ( (fdcreat("file", 0777))  -1 ) {
+ tst_brkm(TBROK, cleanup, "creat(file) failed, errno:%d %s",
+     errno, strerror(errno));
     }
     close(fd);
     return 0;
@@ -385,7 +385,7 @@ filepath_setup()
 /******************************************************************
  * sig11_handler() - our segfault recover hack
  ******************************************************************/
-void 
+void
 sig11_handler(int sig)
 {
     longjmp(sig11_recover, 1);

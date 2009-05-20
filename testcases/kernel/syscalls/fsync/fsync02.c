@@ -19,15 +19,15 @@
 
 /*
  * NAME
- *	fsync02.c
+ * fsync02.c
  *
  * DESCRIPTION
- *	Create a sparse file, fsync it, and time the fsync
+ * Create a sparse file, fsync it, and time the fsync
  *
  * ALGORITHM
- *	1. Create a file.
- *	2. Write to the file at equally spaced intervals up to a max block
- *	3. Check if time limit exceeded.
+ * 1. Create a file.
+ * 2. Write to the file at equally spaced intervals up to a max block
+ * 3. Check if time limit exceeded.
  *
  * USAGE:  <for command-line>
  *  fsync02 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
@@ -39,10 +39,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- *	None
+ * None
  */
 
 #include <stdio.h>
@@ -60,103 +60,103 @@
 #define MAXBLKS 262144
 #define TIME_LIMIT 120
 
-char *TCID = "fsync02";
-int TST_TOTAL = 1;
+char *TCID  "fsync02";
+int TST_TOTAL  1;
 extern int Tst_count;
 
 void setup(void);
 void cleanup(void);
 
-char tempfile[40] = "";
+char tempfile[40]  "";
 int fd, pid;
-off_t max_blks = MAXBLKS;
+off_t max_blks  MAXBLKS;
 
 struct statvfs stat_buf;
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
 
-	off_t offsetret, offset;
-	char pbuf[BUFSIZ];
-	int ret, max_block=0;
-	int i;
-	time_t time_start, time_end;
-	double time_delta;
-	int data_blocks=0;
-	long int random_number;
-	
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+ off_t offsetret, offset;
+ char pbuf[BUFSIZ];
+ int ret, max_block0;
+ int i;
+ time_t time_start, time_end;
+ double time_delta;
+ int data_blocks0;
+ long int random_number;
 
-	setup();
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	/* check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping. */
-		Tst_count = 0;
+ setup();
 
-		while (max_block <= data_blocks) {
-			random_number = random();
-			max_block = random_number % max_blks;
-			data_blocks = random_number % 1000 + 1;
-		}
+ /* check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* reset Tst_count in case we are looping. */
+  Tst_count  0;
 
-		for (i = 0; i < data_blocks; i++) {
-			if ((offsetret = lseek(fd, offset = BLOCKSIZE
-				    * max_block / data_blocks * (i + 1)
-				    - BUFSIZ, SEEK_SET)) != offset) {
-				tst_brkm(TBROK, cleanup,"lseek failed");
-			}
-			if ((ret = write(fd, pbuf, BUFSIZ)) != BUFSIZ) {
-				tst_brkm(TBROK, cleanup, "Cannot write "
-					 "to file");
-			}
-		}
-		time(&time_start);
+  while (max_block < data_blocks) {
+   random_number  random();
+   max_block  random_number % max_blks;
+   data_blocks  random_number % 1000 + 1;
+  }
 
-		TEST(fsync(fd));
+  for (i  0; i < data_blocks; i++) {
+   if ((offsetret  lseek(fd, offset  BLOCKSIZE
+        * max_block / data_blocks * (i + 1)
+        - BUFSIZ, SEEK_SET)) ! offset) {
+    tst_brkm(TBROK, cleanup,"lseek failed");
+   }
+   if ((ret  write(fd, pbuf, BUFSIZ)) ! BUFSIZ) {
+    tst_brkm(TBROK, cleanup, "Cannot write "
+      "to file");
+   }
+  }
+  time(&time_start);
 
-		time(&time_end);
+  TEST(fsync(fd));
 
-		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL, "fsync failed - %d : %s",
-				 TEST_ERRNO, strerror(TEST_ERRNO));
-			continue;
-		}
+  time(&time_end);
 
-		if (STD_FUNCTIONAL_TEST) {
-			if (time_end < time_start) { 
-				tst_resm(TFAIL, "timer broken end %ld < start %ld",
-						time_end, time_start); 
-			}
-	
+  if (TEST_RETURN  -1) {
+   tst_resm(TFAIL, "fsync failed - %d : %s",
+     TEST_ERRNO, strerror(TEST_ERRNO));
+   continue;
+  }
 
-			if((time_delta = difftime(time_end,time_start)) > TIME_LIMIT) {
-				tst_resm(TFAIL, "fsync took too long: %d "
-					 "seconds; max_block: %d; data_blocks: "
-					 "%d", (int)time_delta, max_block,
-					 data_blocks);
-			} else {
-				tst_resm(TPASS, "fsync() succeeded in an "
-					 "acceptable amount of time");
-			}
-		} else {
-			tst_resm(TPASS, "call succeeded");
-		}
+  if (STD_FUNCTIONAL_TEST) {
+   if (time_end < time_start) {
+    tst_resm(TFAIL, "timer broken end %ld < start %ld",
+      time_end, time_start);
+   }
 
-		if (ftruncate(fd, 0) < 0) {
-			tst_brkm(TBROK, cleanup, "ftruncate failed");
-		}
-	}
-	close(fd);
-	sync();
-	cleanup();
-	/*NOTREACHED*/
-	return(0);
+
+   if((time_delta  difftime(time_end,time_start)) > TIME_LIMIT) {
+    tst_resm(TFAIL, "fsync took too long: %d "
+      "seconds; max_block: %d; data_blocks: "
+      "%d", (int)time_delta, max_block,
+      data_blocks);
+   } else {
+    tst_resm(TPASS, "fsync() succeeded in an "
+      "acceptable amount of time");
+   }
+  } else {
+   tst_resm(TPASS, "call succeeded");
+  }
+
+  if (ftruncate(fd, 0) < 0) {
+   tst_brkm(TBROK, cleanup, "ftruncate failed");
+  }
+ }
+ close(fd);
+ sync();
+ cleanup();
+ /*NOTREACHED*/
+ return(0);
 }
 
 /*
@@ -165,60 +165,60 @@ int main(int ac, char **av)
 void
 setup()
 {
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* make a temporary directory and cd to it */
-	tst_tmpdir();
+ /* make a temporary directory and cd to it */
+ tst_tmpdir();
 
-	sprintf(tempfile, "%s.%d", TCID, pid = getpid());
-	srand48(pid);
+ sprintf(tempfile, "%s.%d", TCID, pid  getpid());
+ srand48(pid);
 
-	if ((fd = open(tempfile , O_RDWR | O_CREAT | O_TRUNC, 0777)) == -1) {
-		tst_brkm(TBROK, cleanup, "Can't open temp file");
-	}
+ if ((fd  open(tempfile , O_RDWR | O_CREAT | O_TRUNC, 0777))  -1) {
+  tst_brkm(TBROK, cleanup, "Can't open temp file");
+ }
 
-	if (fstatvfs(fd, &stat_buf) != 0) {
-		tst_brkm(TBROK, cleanup, "Can't get the information about the "
-			 "file system");
-	}
+ if (fstatvfs(fd, &stat_buf) ! 0) {
+  tst_brkm(TBROK, cleanup, "Can't get the information about the "
+    "file system");
+ }
 
-	if ((stat_buf.f_bavail / (BLOCKSIZE / stat_buf.f_frsize)) <  MAXBLKS) {
-		max_blks = stat_buf.f_bavail / (BLOCKSIZE / stat_buf.f_frsize);
-	}
+ if ((stat_buf.f_bavail / (BLOCKSIZE / stat_buf.f_frsize)) <  MAXBLKS) {
+  max_blks  stat_buf.f_bavail / (BLOCKSIZE / stat_buf.f_frsize);
+ }
 
 #ifdef LARGEFILE
-	if ((fcntl(fd, F_SETFL, O_LARGEFILE)) == -1) {
-		tst_brkm(TBROK, cleanup, "fcntl failed to O_LARGEFILE");
-	}
+ if ((fcntl(fd, F_SETFL, O_LARGEFILE))  -1) {
+  tst_brkm(TBROK, cleanup, "fcntl failed to O_LARGEFILE");
+ }
 
-	if (write(fd, pbuf, BUFSIZ) != BUFSIZ) {
-		tst_brkm(TBROK, cleanup, "Cannot write to tempfile");
-	}
+ if (write(fd, pbuf, BUFSIZ) ! BUFSIZ) {
+  tst_brkm(TBROK, cleanup, "Cannot write to tempfile");
+ }
 #endif
 }
 
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
+ *        completion or premature exit.
  */
 void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* delete the test directory created in setup() */
-	tst_rmdir();
+ /* delete the test directory created in setup() */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }
 

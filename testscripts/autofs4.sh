@@ -53,36 +53,36 @@
 
 if [ $UID != 0 ]
 then
-	echo "FAILED: Must have root access to execute this script"
-	exit 1
+ echo "FAILED: Must have root access to execute this script"
+ exit 1
 fi
 
 if [ $# != 1 ]
 then
-	echo "FAILED: Usage $0 <disk_partition>"
-	exit 1
+ echo "FAILED: Usage $0 <disk_partition>"
+ exit 1
 else
-	disk_partition=$1
-	if [ ! -b $disk_partition ]
-	then
-		echo "FAILED: Usage $0 <block special disk_partition>"
-		exit 1
-	fi
-	mkfs -t ext2 $disk_partition 2>&1 > /dev/null
+ disk_partition=$1
+ if [ ! -b $disk_partition ]
+ then
+  echo "FAILED: Usage $0 <block special disk_partition>"
+  exit 1
+ fi
+ mkfs -t ext2 $disk_partition 2>&1 > /dev/null
 fi
 
 rpm -q -a | grep autofs 2>&1 > /dev/null
 if [ $? != 0 ]
 then
-	echo "FAILED: autofs package is not installed"
-	exit 1
+ echo "FAILED: autofs package is not installed"
+ exit 1
 fi
 
 grep autofs /proc/filesystems 2>&1 > /dev/null
 if [ $? != 0 ]
 then
-	echo "FAILED: autofs module is not built into the kernel or loaded"
-	exit 1
+ echo "FAILED: autofs module is not built into the kernel or loaded"
+ exit 1
 fi
 
 
@@ -100,21 +100,21 @@ floppy_dev=`grep floppy /etc/fstab | awk '{print $1}'`
 
 if [ $floppy_dev != "" ]
 then
-	/sbin/mkfs -t ext2 $floppy_dev 2>&1 > /dev/null
-	if [ $? != 0 ]
-	then
-		echo "FAILED: mkfs -t ext2 $floppy_dev failed"
-		exit 1
-	fi
+ /sbin/mkfs -t ext2 $floppy_dev 2>&1 > /dev/null
+ if [ $? != 0 ]
+ then
+  echo "FAILED: mkfs -t ext2 $floppy_dev failed"
+  exit 1
+ fi
 fi
 
 if [ ! -d /AUTOFS ]
 then
-	mkdir -m 755 /AUTOFS
+ mkdir -m 755 /AUTOFS
 fi
 
-echo "/AUTOFS/MEDIA	/etc/auto.media		" > /etc/auto.master
-echo "floppy	-fstype=ext2					:$floppy_dev" > /etc/auto.media
+echo "/AUTOFS/MEDIA /etc/auto.media  " > /etc/auto.master
+echo "floppy -fstype=ext2     :$floppy_dev" > /etc/auto.media
 
 
 ##############################################################
@@ -129,9 +129,9 @@ echo "floppy	-fstype=ext2					:$floppy_dev" > /etc/auto.media
 /etc/init.d/autofs start 2>&1 > /dev/null
 if [ $? != 0 ]
 then
-	rm -rf /etc/auto.master /etc/auto.media /AUTOFS
-	echo "FAILED: "/etc/init.d/autofs start""
-	exit 1
+ rm -rf /etc/auto.master /etc/auto.media /AUTOFS
+ echo "FAILED: "/etc/init.d/autofs start""
+ exit 1
 fi
 echo "Resuming test, please wait..."
 sleep 15
@@ -139,21 +139,21 @@ sleep 15
 /etc/init.d/autofs stop 2>&1 > /dev/null
 if [ $? != 0 ]
 then
-	rm -rf /etc/auto.master /etc/auto.media /AUTOFS
-	echo "FAILED: "/etc/init.d/autofs stop""
-	exit 1
+ rm -rf /etc/auto.master /etc/auto.media /AUTOFS
+ echo "FAILED: "/etc/init.d/autofs stop""
+ exit 1
 else
-	/etc/init.d/autofs start 2>&1 > /dev/null
+ /etc/init.d/autofs start 2>&1 > /dev/null
 fi
 sleep 15
 
 /etc/init.d/autofs restart 2>&1 > /dev/null
 if [ $? != 0 ]
 then
-	/etc/init.d/autofs stop 2>&1 > /dev/null
-	rm -rf /etc/auto.master /etc/auto.media /AUTOFS
-	echo "FAILED: "/etc/init.d/autofs restart""
-	exit 1
+ /etc/init.d/autofs stop 2>&1 > /dev/null
+ rm -rf /etc/auto.master /etc/auto.media /AUTOFS
+ echo "FAILED: "/etc/init.d/autofs restart""
+ exit 1
 fi
 echo "Resuming test, please wait..."
 sleep 15
@@ -161,19 +161,19 @@ sleep 15
 /etc/init.d/autofs status 2>&1 > /dev/null
 if [ $? != 0 ]
 then
-	/etc/init.d/autofs stop 2>&1 > /dev/null
-	rm -rf /etc/auto.master /etc/auto.media /AUTOFS
-	echo "FAILED: "/etc/init.d/autofs status""
-	exit 1
+ /etc/init.d/autofs stop 2>&1 > /dev/null
+ rm -rf /etc/auto.master /etc/auto.media /AUTOFS
+ echo "FAILED: "/etc/init.d/autofs status""
+ exit 1
 fi
 
 /etc/init.d/autofs reload 2>&1 > /dev/null
 if [ $? != 0 ]
 then
-	/etc/init.d/autofs stop 2>&1 > /dev/null
-	rm -rf /etc/auto.master /etc/auto.media /AUTOFS
-	echo "FAILED: "/etc/init.d/autofs reload""
-	exit 1
+ /etc/init.d/autofs stop 2>&1 > /dev/null
+ rm -rf /etc/auto.master /etc/auto.media /AUTOFS
+ echo "FAILED: "/etc/init.d/autofs reload""
+ exit 1
 fi
 
 
@@ -206,8 +206,8 @@ rm -rf /AUTOFS 2>&1 > /dev/null
 #
 ##############################################################
 
-echo "/AUTOFS/DISK	/etc/auto.disk		" >> /etc/auto.master
-echo "disk		-fstype=ext2					:$disk_partition " > /etc/auto.disk
+echo "/AUTOFS/DISK /etc/auto.disk  " >> /etc/auto.master
+echo "disk  -fstype=ext2     :$disk_partition " > /etc/auto.disk
 /etc/init.d/autofs reload 2>&1 > /dev/null
 echo "Resuming test, please wait..."
 sleep 30
@@ -218,24 +218,24 @@ sync; sync
 echo "Resuming test, please wait..."
 sleep 60
 
-cd /AUTOFS/DISK/disk/test 
+cd /AUTOFS/DISK/disk/test
 umount /AUTOFS/DISK/disk/ 2>&1 > /dev/null
 if [ $? = 0 ]
 then
-	/etc/init.d/autofs stop 2>&1 > /dev/null
-	rm -rf /etc/auto.master /etc/auto.media /etc/auto.disk /AUTOFS
-	echo "FAILED: unmounted a busy file system!"
-	exit 1
+ /etc/init.d/autofs stop 2>&1 > /dev/null
+ rm -rf /etc/auto.master /etc/auto.media /etc/auto.disk /AUTOFS
+ echo "FAILED: unmounted a busy file system!"
+ exit 1
 fi
-cd 
+cd
 
 umount /AUTOFS/DISK/disk/ 2>&1 > /dev/null
 if [ $? != 0 ]
 then
-	/etc/init.d/autofs stop 2>&1 > /dev/null
-	rm -rf /etc/auto.master /etc/auto.media /etc/auto.disk /AUTOFS
-	echo "FAILED: Could not unmount automounted file system"
-	exit 1
+ /etc/init.d/autofs stop 2>&1 > /dev/null
+ rm -rf /etc/auto.master /etc/auto.media /etc/auto.disk /AUTOFS
+ echo "FAILED: Could not unmount automounted file system"
+ exit 1
 fi
 
 #

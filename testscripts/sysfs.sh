@@ -23,8 +23,8 @@
 #  USAGE       : sysfs.sh [ -k <kernel_module> ]
 #
 #  DESCRIPTION : A script that will test sysfs on Linux system.
-#  REQUIREMENTS: CONFIG_DUMMY must have been used to build kernel, and the 
-#		 dummy network module must exist.
+#  REQUIREMENTS: CONFIG_DUMMY must have been used to build kernel, and the
+#   dummy network module must exist.
 #
 #  HISTORY     :
 #      06/24/2003 Prakash Narayana (prakashn@us.ibm.com)
@@ -57,23 +57,23 @@ USAGE="$0 [ -k <kernel_module> ]"
 
 if [ $UID != 0 ]
 then
-	echo "FAILED: Must have root access to execute this script"
-	exit 1
+ echo "FAILED: Must have root access to execute this script"
+ exit 1
 fi
 
 while getopts k: args
 do
-	case $args in
-	k)	KERN_MODULE=$OPTARG ;;
-	\?)	echo $USAGE ; exit 1 ;;
-	esac
+ case $args in
+ k) KERN_MODULE=$OPTARG ;;
+ \?) echo $USAGE ; exit 1 ;;
+ esac
 done
 
 if [ -z "$KERN_MODULE" ]
 then
-	echo $USAGE
-	echo "FAILED: kernel module to insert not specified"
-	exit 1
+ echo $USAGE
+ echo "FAILED: kernel module to insert not specified"
+ exit 1
 fi
 
 # Here is the code coverage for fs/sysfs
@@ -85,26 +85,26 @@ mkdir -p -m 777 $MNT_POINT
 mount -t sysfs sysfs $MNT_POINT
 if [ $? != 0 ]
 then
-	echo "FAILED: sysfs mount failed"
-	exit 1
+ echo "FAILED: sysfs mount failed"
+ exit 1
 fi
 
 insmod $KERN_MODULE
 if [ $? != 0 ]
 then
-	umount $MNT_POINT
-	rm -rf $MNT_POINT
-	echo "FAILED: insmod failed"
-	exit 1
+ umount $MNT_POINT
+ rm -rf $MNT_POINT
+ echo "FAILED: insmod failed"
+ exit 1
 fi
 
 rmmod $KERN_MODULE
 if [ $? != 0 ]
 then
-	umount $MNT_POINT
-	rm -rf $MNT_POINT
-	echo "FAILED: rmmod failed"
-	exit 1
+ umount $MNT_POINT
+ rm -rf $MNT_POINT
+ echo "FAILED: rmmod failed"
+ exit 1
 fi
 
 

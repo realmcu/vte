@@ -8,14 +8,14 @@ echo "Starting test, please wait.... Ctrl-C to exit"
 
 for i in 1 2 3 4 5
 do
-	./adp_children.sh &
+ ./adp_children.sh &
 done
 
 sleep 2
 
 for i in 1 2 3 4 5
 do
-	./adp_test.sh &
+ ./adp_test.sh &
 done
 
 top

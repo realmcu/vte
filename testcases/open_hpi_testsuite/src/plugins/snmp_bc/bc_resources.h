@@ -22,7 +22,7 @@
  * The BCE has the following entity hierarchy:
  *
  *  {CHASSIS,X}
- *      |  
+ *      |
  *      +-- {SUBCHASSIS,1}  (Power Distribution Sub-System)
  *      |   |
  *      |   +-- {SYS_MGMNT_MODULE,[1-2]}  (Management Module)
@@ -31,7 +31,7 @@
  *      |   |
  *      |   +-- {SBC_BLADE,[1-6]}  (Blade)
  *      |   |    |
- *      |   |    +-- {ADD_IN_CARD,1}  (Blade daughter card e.g. BSE card)     
+ *      |   |    +-- {ADD_IN_CARD,1}  (Blade daughter card e.g. BSE card)
  *      |   |
  *      |   +-- {PERIPHERAL_BAY,1}  (Control Panel/Media Tray)
  *      |   |
@@ -51,8 +51,8 @@
 /*************************************************************************
  * RESTRICTIONS!!!
  *
- * - If IsThreshold=SAHPI_TRUE for an interpreted sensor, 
- *   Range.Max.Interpreted.Type must be defined for snmp_bc.c 
+ * - If IsThreshold=SAHPI_TRUE for an interpreted sensor,
+ *   Range.Max.Interpreted.Type must be defined for snmp_bc.c
  *   get_interpreted_thresholds to work.
  * - Digital controls must be integers and depend on SaHpiStateDigitalT
  *************************************************************************/
@@ -210,7 +210,7 @@ extern struct snmp_bc_control snmp_bc_mediatray_controls[];
 extern struct snmp_bc_control snmp_bc_fan_controls[];
 extern struct snmp_bc_control snmp_bc_power_controls[];
 extern struct snmp_bc_control snmp_bc_switch_controls[];
- 
+
 /*************************************************************************
  *                   Inventory Definitions
  *************************************************************************/

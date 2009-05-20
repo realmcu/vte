@@ -17,18 +17,18 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* 01/02/2003	Port to LTP	avenkat@us.ibm.com */
-/* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
+/* 01/02/2003 Port to LTP avenkat@us.ibm.com */
+/* 06/30/2001 Port to Linux nsharoff@us.ibm.com */
 
 /*
  * NAME
- *	memset1.c -- test setting of  buffer
+ * memset1.c -- test setting of  buffer
  *
  * CALLS
- *	memset(3)
+ * memset(3)
  *
  * ALGORITHM
- *	Check boundary conditions, go through 64 byte window.
+ * Check boundary conditions, go through 64 byte window.
  *
  * RESTRICTIONS
  */
@@ -39,34 +39,34 @@
 #include <stdlib.h>
 #include <errno.h>
 
-/*****	LTP Port *****/
+/***** LTP Port *****/
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "memset01";
+char *TCID  "memset01";
 
-/*****	**	**	*****/
+/***** ** ** *****/
 #undef BSIZE
-#define BSIZE	4096
-#define LEN	100
+#define BSIZE 4096
+#define LEN 100
 #define FAILED 0
 #define PASSED 1
 
 
 char buf[BSIZE];
 
-/*****	LTP Port	*****/
-int local_flag = PASSED;
+/***** LTP Port *****/
+int local_flag  PASSED;
 int block_number;
 int errno;
-int TST_TOTAL = 1;
+int TST_TOTAL  1;
 
 extern int Tst_count;
 
 int anyfail();
 void setup();
 int blenter();
-/*****	**	**	*****/
+/***** ** ** *****/
 
 void fill();
 int checkit(char *str);
@@ -75,39 +75,39 @@ int checkit(char *str);
 /*--------------------------------------------------------------*/
 int main (int argc, char *argv[])
 {
-	register int i, j;
-	char *p;
+ register int i, j;
+ char *p;
 
 /*--------------------------------------------------------------*/
-   	local_flag = PASSED;
+   local_flag  PASSED;
 
-	fill();
+ fill();
 
-	for (i=0; i < 200; i++) {
-		fill();
-		p = &buf[400];
-		memset(p, 0, i);
-		if ((j = checkit(p)) != i) {
-			tst_resm(TINFO, "Not enough zero bytes, wanted %d, got %d",
-			  i, j);
-			local_flag = FAILED;
-			break;
-		}
-		if (!p[-1] || !p[i]) {
-			tst_resm(TINFO, "Boundary error, clear of %d", i);
-			local_flag = FAILED;
-		}
-		if (local_flag == FAILED)
-			break;
-	}
+ for (i0; i < 200; i++) {
+  fill();
+  p  &buf[400];
+  memset(p, 0, i);
+  if ((j  checkit(p)) ! i) {
+   tst_resm(TINFO, "Not enough zero bytes, wanted %d, got %d",
+     i, j);
+   local_flag  FAILED;
+   break;
+  }
+  if (!p[-1] || !p[i]) {
+   tst_resm(TINFO, "Boundary error, clear of %d", i);
+   local_flag  FAILED;
+  }
+  if (local_flag  FAILED)
+   break;
+ }
 
-   	(local_flag == FAILED) ? tst_resm(TFAIL, "Test failed") : tst_resm(TPASS, "Test passed");
+   (local_flag  FAILED) ? tst_resm(TFAIL, "Test failed") : tst_resm(TPASS, "Test passed");
 /*--------------------------------------------------------------*/
-/* Clean up any files created by test before call to anyfail.	*/
+/* Clean up any files created by test before call to anyfail. */
 
-	(local_flag == FAILED)? tst_resm(TFAIL, "Test failed"): tst_resm(TPASS, "Test passed");
-	tst_exit();
-	/* THIS CALL DOES NOT RETURN - EXITS!!	*/
+ (local_flag  FAILED)? tst_resm(TFAIL, "Test failed"): tst_resm(TPASS, "Test passed");
+ tst_exit();
+ /* THIS CALL DOES NOT RETURN - EXITS!! */
         return(0);
 }
 /*--------------------------------------------------------------*/
@@ -116,19 +116,19 @@ int main (int argc, char *argv[])
 
 void fill()
 {
-	register int i;
-	for (i=0; i < BSIZE; i++)
-		buf[i] = 'a';
+ register int i;
+ for (i0; i < BSIZE; i++)
+  buf[i]  'a';
 }
 
 int checkit(char *str)
 {
-	register int i = 0;
+ register int i  0;
 
-	while (!*str++)
-		i++;
+ while (!*str++)
+  i++;
 
-	return (i);
+ return (i);
 }
 
 

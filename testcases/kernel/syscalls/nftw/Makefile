@@ -1,12 +1,12 @@
-# IBM Corporation 
-# 10/31/2002   Port to LTP     robbiew@us.ibm.com 
+# IBM Corporation
+# 10/31/2002   Port to LTP     robbiew@us.ibm.com
 # 06/30/2001   Port to Linux   nsharoff@us.ibm.com
 
 #
 # $Copyright: $
 # Copyright (c) 1984-1999
 # Sequent Computer Systems, Inc.   All rights reserved.
-#  
+#
 # This software is furnished under a license and may be used
 # only in accordance with the terms of that license and with the
 # inclusion of the above copyright notice.   This software may not
@@ -15,12 +15,12 @@
 # hereby transferred.
 
 LINT =		lint
-CFLAGS+=        -Wall -g -ansi -O -DLINUX -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -I../../../../include 
+CFLAGS+=        -Wall -g -ansi -O -DLINUX -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -I../../../../include
 SRCS1 =		nftw.c tools.c test_func.c test.c lib.c
-OBJS1 =		nftw.o tools.o test_func.o test.o lib.o 
+OBJS1 =		nftw.o tools.o test_func.o test.o lib.o
 SRCS2 =		nftw64.c tools64.c test_func64.c test64.c lib64.c
-OBJS2 =		nftw64.o tools64.o test_func64.o test64.o lib64.o 
-BINS= 		nftw01  nftw6401
+OBJS2 =		nftw64.o tools64.o test_func64.o test64.o lib64.o
+BINS= nftw01  nftw6401
 
 all:		nftw01 nftw6401
 
@@ -37,11 +37,11 @@ remove_obj:
 	rm -f $(OBJS1)
 	rm -f $(OBJS2)
 
-clean:	remove_bin remove_obj 
+clean:	remove_bin remove_obj
 
 lint:
-	$(LINT) -mnuts $(SRCS1) 
-	$(LINT) -mnuts $(SRCS2) 
+	$(LINT) -mnuts $(SRCS1)
+	$(LINT) -mnuts $(SRCS2)
 
-install: 
+install:
 	ln -f $(BINS) ../../../bin

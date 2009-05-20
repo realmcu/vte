@@ -18,7 +18,7 @@
 #-------------------------   ------------    ----------  ------------------------------------------
 #A.Smirnov                    26/06/2005     TLSbo49894   Initial varsion
 #D.Simakov/smkd001c           23/09/2005     TLSbo55077   Re-worked
-#A.Pshenichnikov              23/11/2005     TLSbo58740   ring.yuv and blocks.yuv are copied 
+#A.Pshenichnikov              23/11/2005     TLSbo58740   ring.yuv and blocks.yuv are copied
 #E.Gromazina/NONE             10/01/2006     TLSbo61481   Clean the LCD after testing
 #
 ###################################################################################################

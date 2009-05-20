@@ -17,7 +17,7 @@
 #define SNMP_BC_H
 
 /**
- * This handle will be unique per instance of this plugin. 
+ * This handle will be unique per instance of this plugin.
  * SNMP session data is stored in the handle along with config file data.
  **/
 

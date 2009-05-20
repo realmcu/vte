@@ -41,7 +41,7 @@ extern "C"{
 
 /* User/Driver interface definitions */
 
-/* 
+/*
  * ioctlreturns Ioctl Error Codes.
  *
  * These are the values returned by #scc_ioctl and placed into @c

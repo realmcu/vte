@@ -17,7 +17,7 @@
 
 * This sample test aims to check the following assertions:
 *
-* If SA_NODEFER is not set in sa_flags, the caught signal is added to the 
+* If SA_NODEFER is not set in sa_flags, the caught signal is added to the
 * thread's signal mask during the handler execution.
 
 * The steps are:
@@ -49,23 +49,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -86,91 +86,91 @@ int called = 0;
 
 void handler( int sig )
 {
-	int ret;
-	sigset_t pending;
-	called++;
+ int ret;
+ sigset_t pending;
+ called++;
 
-	if ( called == 2 )
-	{
-		FAILED( "Signal was not masked in signal handler" );
-	}
+ if ( called == 2 )
+ {
+  FAILED( "Signal was not masked in signal handler" );
+ }
 
-	if ( called == 1 )
-	{
+ if ( called == 1 )
+ {
 
-		/* Raise the signal again. It should be masked */
-		ret = raise( SIGNAL );
+  /* Raise the signal again. It should be masked */
+  ret = raise( SIGNAL );
 
-		if ( ret != 0 )
-		{
-			UNRESOLVED( ret, "Failed to raise SIGPIPE again" );
-		}
+  if ( ret != 0 )
+  {
+   UNRESOLVED( ret, "Failed to raise SIGPIPE again" );
+  }
 
-		/* check the signal is pending */
-		ret = sigpending( &pending );
+  /* check the signal is pending */
+  ret = sigpending( &pending );
 
-		if ( ret != 0 )
-		{
-			UNRESOLVED( ret, "Failed to get pending signal set" );
-		}
+  if ( ret != 0 )
+  {
+   UNRESOLVED( ret, "Failed to get pending signal set" );
+  }
 
-		ret = sigismember( &pending, SIGNAL );
+  ret = sigismember( &pending, SIGNAL );
 
-		if ( ret != 1 )
-		{
-			FAILED( "signal is not pending" );
-		}
-	}
+  if ( ret != 1 )
+  {
+   FAILED( "signal is not pending" );
+  }
+ }
 
-	called++;
+ called++;
 }
 
 /* main function */
 int main()
 {
-	int ret;
+ int ret;
 
-	struct sigaction sa;
+ struct sigaction sa;
 
-	/* Initialize output */
-	output_init();
+ /* Initialize output */
+ output_init();
 
-	/* Set the signal handler */
-	sa.sa_flags = 0;
+ /* Set the signal handler */
+ sa.sa_flags = 0;
 
-	sa.sa_handler = handler;
+ sa.sa_handler = handler;
 
-	ret = sigemptyset( &sa.sa_mask );
+ ret = sigemptyset( &sa.sa_mask );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to empty signal set" );
-	}
+ if ( ret != 0 )
+ {
+  UNRESOLVED( ret, "Failed to empty signal set" );
+ }
 
-	/* Install the signal handler for SIGPIPE */
-	ret = sigaction( SIGNAL, &sa, 0 );
+ /* Install the signal handler for SIGPIPE */
+ ret = sigaction( SIGNAL, &sa, 0 );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to set signal handler" );
-	}
+ if ( ret != 0 )
+ {
+  UNRESOLVED( ret, "Failed to set signal handler" );
+ }
 
-	ret = raise( SIGNAL );
+ ret = raise( SIGNAL );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to raise SIGPIPE" );
-	}
+ if ( ret != 0 )
+ {
+  UNRESOLVED( ret, "Failed to raise SIGPIPE" );
+ }
 
-	while ( called != 4 )
-		sched_yield();
+ while ( called != 4 )
+  sched_yield();
 
-	/* Test passed */
+ /* Test passed */
 #if VERBOSE > 0
 
-	output( "Test passed\n" );
+ output( "Test passed\n" );
 
 #endif
 
-	PASSED;
+ PASSED;
 }

@@ -24,20 +24,20 @@
 #                      Modification     Tracking
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
-# Spring Zhang          11/12/2008     ENGR102289      Initial ver. 
+# Spring Zhang          11/12/2008     ENGR102289      Initial ver.
 # Spring Zhang          11/3/2009          n/a      35/51 switch to sgtl5000
 #############################################################################
-# Portability:  ARM sh 
+# Portability:  ARM sh
 #
 # File Name:     fm_basic.sh
 # Total Tests:   2
-# Test Strategy: Test basic FM functions 
-# 
-# Input:	    Test type
+# Test Strategy: Test basic FM functions
+#
+# Input:     Test type
 #
 # Return:       0: PASS, non-0: FAIL
 #
-# Command:      "./fm_basic.sh [Test Type]" 
+# Command:      "./fm_basic.sh [Test Type]"
 
 # Function:     setup
 #
@@ -66,7 +66,7 @@ setup()
     fi
 
     if [ $# -lt 1 ]
-    then 
+    then
         usage
         exit 1
     fi
@@ -87,7 +87,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup() 
+cleanup()
 {
     echo "cleanup"
     echo halt > $FM_CTL
@@ -100,9 +100,9 @@ cleanup()
     fi
 }
 
-# Function:     fm_probe()   
+# Function:     fm_probe()
 #
-# Description:  Test if FM module function is OK 
+# Description:  Test if FM module function is OK
 #
 # Exit:         zero on success
 #               non-zero on failure.
@@ -125,7 +125,7 @@ fm_probe()
     [ -e $FM_CTL ] || {
         tst_resm TFAIL "FM i2c control not exist"
         $RC=67
-        return $RC 
+        return $RC
     }
 
     if [ $platform == "IMX35_3STACK" ] || [ $platform == "IMX51_3STACK" ]
@@ -163,7 +163,7 @@ fm_probe()
     return $RC
 }
 
-# Function:     fm_search()   
+# Function:     fm_search()
 #
 # Description:  Test if FM can get station
 #
@@ -215,7 +215,7 @@ fm_search()
 
     tst_resm TINFO "Wait......10 secs"
     sleep 10
-    
+
     tst_resm TINFO "Do you hear one FM station voice clear?[y/n]"
     read answer
     if [ $answer = "y" ]
@@ -237,7 +237,7 @@ fm_search()
 # Return        - none
 usage()
 {
-    cat <<-EOF 
+    cat <<-EOF
 
     Use this command to test FM functions.
     usage: ./${0##*/} [Test Type] 
@@ -261,7 +261,7 @@ RC=0    # Return value from setup, and test functions.
 #"" will pass the whole args to function setup()
 setup "$@" || exit $RC
 
-case $1 in 
+case $1 in
 1)
     fm_probe "$@" || exit $RC
     ;;

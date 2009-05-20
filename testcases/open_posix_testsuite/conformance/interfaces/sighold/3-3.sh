@@ -7,6 +7,6 @@
 #
 #
 #   Test various methods of passing invalid signals to sighold().
-# 
+#
 
 conformance/interfaces/sighold/3-core-buildonly.test 3

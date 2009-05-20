@@ -26,7 +26,7 @@
  *  the times argument is not null, and the user ID of the process is "root".
  *
  * Expected Result:
- *   utime succeeds returning zero and sets the access and modification 
+ *   utime succeeds returning zero and sets the access and modification
  *   times of the file to that specified by the times argument.
  *
  * Algorithm:
@@ -38,31 +38,31 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return=-1)
- *   	Log the errno and Issue a FAIL message.
+ *   Check return code, if system call failed (return-1)
+ *   Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *   Verify the Functionality of system call
  *      if successful,
- *      	Issue Functionality-Pass message.
+ *      Issue Functionality-Pass message.
  *      Otherwise,
- *		Issue Functionality-Fail message.
+ *  Issue Functionality-Fail message.
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
  *   Delete the temporary directory created.
  *
  * Usage:  <for command-line>
  *  utime04 [-c n] [-e] [-f] [-i n] [-I x] [-p x] [-t]
- *	where,  -c n : Run n copies concurrently.
- *		-e   : Turn on errno logging.
- * 		-f   : Turn off functionality Testing.
- *		-i n : Execute test n times.
- *		-I x : Execute test for x seconds.
- *		-P x : Pause for x seconds between iterations.
- *		-t   : Turn on syscall timing.
+ * where,  -c n : Run n copies concurrently.
+ *  -e   : Turn on errno logging.
+ *-f   : Turn off functionality Testing.
+ *  -i n : Execute test n times.
+ *  -I x : Execute test for x seconds.
+ *  -P x : Pause for x seconds between iterations.
+ *  -t   : Turn on syscall timing.
  *
  * History
- *	07/2001 John George
- *		-Ported
+ * 07/2001 John George
+ *  -Ported
  *
  * Restrictions:
  *  This test should be run by 'super-user' (root) only.
@@ -82,104 +82,104 @@
 #include "test.h"
 #include "usctest.h"
 
-#define TEMP_FILE	"tmp_file"
-#define FILE_MODE	S_IRUSR | S_IRGRP | S_IROTH
-#define NEW_TIME	10000
+#define TEMP_FILE "tmp_file"
+#define FILE_MODE S_IRUSR | S_IRGRP | S_IROTH
+#define NEW_TIME 10000
 
-char *TCID="utime04";		/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-int exp_enos[]={0};
-struct utimbuf times;		/* struct. buffer for utime() */
+char *TCID"utime04";  /* Test program identifier.    */
+int TST_TOTAL1;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
+int exp_enos[]{0};
+struct utimbuf times;  /* struct. buffer for utime() */
 
-void setup();			/* Main setup function of test */
-void cleanup();			/* cleanup function for the test */
+void setup();   /* Main setup function of test */
+void cleanup();   /* cleanup function for the test */
 
 int
 main(int ac, char **av)
 {
-	struct stat stat_buf;	/* struct buffer to hold file info. */
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-	time_t modf_time, access_time;
-				/* file modification/access time */
-    
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *) NULL) {
-		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
+ struct stat stat_buf; /* struct buffer to hold file info. */
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
+ time_t modf_time, access_time;
+    /* file modification/access time */
 
-	/* Perform global setup for test */
-	setup();
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(ac, av, (option_t *) NULL, NULL);
+ if (msg ! (char *) NULL) {
+  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+  tst_exit();
+ }
 
-	/* set the expected errnos... */
-	TEST_EXP_ENOS(exp_enos);
+ /* Perform global setup for test */
+ setup();
 
-	/* Check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
+ /* set the expected errnos... */
+ TEST_EXP_ENOS(exp_enos);
 
-		/* 
-		 * Invoke utime(2) to set TEMP_FILE access and
-		 * modification times to that specified by
-		 * times argument.
-		 */
-		TEST(utime(TEMP_FILE, &times));
+ /* Check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* Reset Tst_count in case we are looping. */
+  Tst_count0;
 
-		/* check return code of utime(2) */
-		if (TEST_RETURN == -1) {
-			TEST_ERROR_LOG(TEST_ERRNO);
-			tst_resm(TFAIL, "utime(%s) Failed, errno=%d : %s",
-				 TEMP_FILE, TEST_ERRNO, strerror(TEST_ERRNO));
-		} else {
-			/*
-			 * Perform functional verification if test
-			 * executed without (-f) option.
-			 */
-			if (STD_FUNCTIONAL_TEST) {
-				/*
-				 * Get the modification and access times of
-				 * temporary file using stat(2).
-				 */
-				if (stat(TEMP_FILE, &stat_buf) < 0) {
-					tst_brkm(TFAIL, cleanup,
-						"stat(2) of %s failed, "
-						"error:%d", TEMP_FILE,
-						TEST_ERRNO);
-					/*NOTREACHED*/
-				}
-				modf_time = stat_buf.st_mtime;
-				access_time = stat_buf.st_atime;
+  /*
+   * Invoke utime(2) to set TEMP_FILE access and
+   * modification times to that specified by
+   * times argument.
+   */
+  TEST(utime(TEMP_FILE, &times));
 
-				/* Now do the actual verification */
-				if ((modf_time != NEW_TIME) || \
-				    (access_time != NEW_TIME)) {
-					tst_resm(TFAIL, "%s access and "
-						"modification times not set",
-						TEMP_FILE);
-				} else {
-					tst_resm(TPASS, "Functionality of "
-						"utime(%s, &times) successful",
-						TEMP_FILE);
-				}
-			} else {
-				tst_resm(TPASS, "%s call succeeded", TCID);
-			}
-		}
-		Tst_count++;		/* incr TEST_LOOP counter */
-	}	/* End for TEST_LOOPING */
+  /* check return code of utime(2) */
+  if (TEST_RETURN  -1) {
+   TEST_ERROR_LOG(TEST_ERRNO);
+   tst_resm(TFAIL, "utime(%s) Failed, errno%d : %s",
+     TEMP_FILE, TEST_ERRNO, strerror(TEST_ERRNO));
+  } else {
+   /*
+    * Perform functional verification if test
+    * executed without (-f) option.
+    */
+   if (STD_FUNCTIONAL_TEST) {
+    /*
+     * Get the modification and access times of
+     * temporary file using stat(2).
+     */
+    if (stat(TEMP_FILE, &stat_buf) < 0) {
+     tst_brkm(TFAIL, cleanup,
+      "stat(2) of %s failed, "
+      "error:%d", TEMP_FILE,
+      TEST_ERRNO);
+     /*NOTREACHED*/
+    }
+    modf_time  stat_buf.st_mtime;
+    access_time  stat_buf.st_atime;
 
-	/* Call cleanup() to undo setup done for the test. */
-	cleanup();
-	/*NOTREACHED*/
+    /* Now do the actual verification */
+    if ((modf_time ! NEW_TIME) || \
+        (access_time ! NEW_TIME)) {
+     tst_resm(TFAIL, "%s access and "
+      "modification times not set",
+      TEMP_FILE);
+    } else {
+     tst_resm(TPASS, "Functionality of "
+      "utime(%s, &times) successful",
+      TEMP_FILE);
+    }
+   } else {
+    tst_resm(TPASS, "%s call succeeded", TCID);
+   }
+  }
+  Tst_count++;  /* incr TEST_LOOP counter */
+ } /* End for TEST_LOOPING */
+
+ /* Call cleanup() to undo setup done for the test. */
+ cleanup();
+ /*NOTREACHED*/
 
 
   return(0);
 
-}	/* End main */
+} /* End main */
 
 /*
  * void
@@ -187,45 +187,45 @@ main(int ac, char **av)
  *  Create a temporary directory and change directory to it.
  *  Create a test file under temporary directory and close it
  */
-void 
+void
 setup()
 {
-	int fildes;			/* file handle for temp file */
+ int fildes;   /* file handle for temp file */
 
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Check that the test process id is super/root  */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, NULL, "Must be super/root for this test!");
-		tst_exit();
-	}
+ /* Check that the test process id is super/root  */
+ if (geteuid() ! 0) {
+  tst_brkm(TBROK, NULL, "Must be super/root for this test!");
+  tst_exit();
+ }
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
-	tst_tmpdir();
+ /* make a temp directory and cd to it */
+ tst_tmpdir();
 
-	/* Creat a temporary file under above directory */
-	if ((fildes = creat(TEMP_FILE, FILE_MODE)) == -1) {
-		tst_brkm(TBROK, cleanup,
-			 "creat(%s, %#o) Failed, errno=%d :%s",
-			 TEMP_FILE, FILE_MODE, errno, strerror(errno));
-	}
+ /* Creat a temporary file under above directory */
+ if ((fildes  creat(TEMP_FILE, FILE_MODE))  -1) {
+  tst_brkm(TBROK, cleanup,
+    "creat(%s, %#o) Failed, errno%d :%s",
+    TEMP_FILE, FILE_MODE, errno, strerror(errno));
+ }
 
-	/* Close the temporary file created */
-	if (close(fildes) < 0) {
-		tst_brkm(TBROK, cleanup,
-			 "close(%s) Failed, errno=%d : %s:",
-			 TEMP_FILE, errno, strerror(errno));
-	}
+ /* Close the temporary file created */
+ if (close(fildes) < 0) {
+  tst_brkm(TBROK, cleanup,
+    "close(%s) Failed, errno%d : %s:",
+    TEMP_FILE, errno, strerror(errno));
+ }
 
-	/* Initialize the modification and access time in the times arg */
-	times.actime = NEW_TIME;
-	times.modtime = NEW_TIME;
+ /* Initialize the modification and access time in the times arg */
+ times.actime  NEW_TIME;
+ times.modtime  NEW_TIME;
 
-}	/* End setup() */
+} /* End setup() */
 
 /*
  * void
@@ -233,18 +233,18 @@ setup()
  *             completion or premature exit.
  *  Remove the test directory and testfile created in the setup.
  */
-void 
+void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
-	tst_rmdir();
+ /* Remove tmp dir and all files in it */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}	/* End cleanup() */
+ /* exit with return code appropriate for results */
+ tst_exit();
+} /* End cleanup() */

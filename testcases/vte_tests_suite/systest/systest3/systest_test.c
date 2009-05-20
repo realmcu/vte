@@ -1,24 +1,24 @@
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2007, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 D.Khoroshev                  06/05/2007     ENGR37697   Initial version
-====================================================================================================
+====================
 Portability: ARM GCC
 
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 
 /* Standard Include Files */
 #include <errno.h>
@@ -49,9 +49,9 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "systest_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
 #define DM__() do{printf("%s:%d %s()\n", __FILE__, __LINE__, __FUNCTION__); fflush(stdout);}while(0)
 
@@ -78,7 +78,7 @@ Portability: ARM GCC
 #define IPC_CHANNEL3              "/dev/mxc_ipc/3"
 #define IPC_BUF_SZ                8192
 #define IPC_TRANSFER_SZ           8192
-#define IPC_CRITICAL_ERRORS_COUNT 50        
+#define IPC_CRITICAL_ERRORS_COUNT 50
 
 // SCC stuff.
 #define DEFAULT_PLAINTEXT_LENGTH 24
@@ -88,15 +88,15 @@ Portability: ARM GCC
 #define DEFAULT_PADDING_ALLOWANCE 10
 
 
-/*==================================================================================================
+/*======================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
-typedef struct 
-{               
+typedef struct
+{
         pthread_t mThreadID;  // Thread ID
         size_t    mIndex;     // Thread index
-        int       mLtpRetval; // Thread's LTP return status       
+        int       mLtpRetval; // Thread's LTP return status
         int       mErrCount;
 } sThreadContext;
 
@@ -109,14 +109,14 @@ typedef struct
 
 typedef void* (*tThreadProc)(void*);
 
-/*==================================================================================================
+/*======================
                                        LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
 // Common stuff.
 static tThreadProc        gThreadProc[MAX_THREADS] = {0};
 static sThreadContext     gThreadContext[MAX_THREADS];
-static int                gNumThreads = 0; 
+static int                gNumThreads = 0;
 static pthread_mutex_t    gMutex = PTHREAD_MUTEX_INITIALIZER;
 static int                gStopAllThreads = FALSE;
 
@@ -124,7 +124,7 @@ static int                gStopAllThreads = FALSE;
 // V4L2 stuff.
 static sV4LBuffer *       gpV4LBuf = 0, * gpV4LBuf1 = 0;
 static unsigned int       gV4LBufNum = 0, gV4LBufNum1 = 0;
-static struct v4l2_format gV4LFormat, gV4LFormat1;  
+static struct v4l2_format gV4LFormat, gV4LFormat1;
 static int                gV4LDev = -1;
 static int                gV4LDevO = -1;
 
@@ -147,18 +147,18 @@ static scc_crypto_mode_t crypto_mode = SCC_ECB_MODE;
 static scc_verify_t check_mode = SCC_VERIFY_MODE_NONE;
 static int gSCCDev = -1;
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 
 extern sTestappConfig gTestappConfig;
 
 
-/*==================================================================================================
+/*======================
                                     FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
-void* Thread1( void * pContext ); // AP: captures images and save the captured images onto FFS 
+void* Thread1( void * pContext ); // AP: captures images and save the captured images onto FFS
 void* Thread2( void * pContext ); // AP: SCC crypt/decrypt smth
 //void* Thread3( void * pContext ); // BP: running a memory-not-friendly code. ?howto?
 void* Thread3( void * pContext ); // AP: reads files from SD/MMC and show them on LCD
@@ -176,13 +176,13 @@ void print_ram_data(uint32_t * ram, uint32_t address, int count);
 void print_scc_return_code(scc_return_t code);
 int run_cipher_tests(void);
 
-/*==================================================================================================
+/*======================
                                          FUNCTIONS
-==================================================================================================*/
+======================*/
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 void* Thread1( void * pContext )
 {
         sThreadContext * pCtx = (sThreadContext*)pContext;
@@ -194,57 +194,57 @@ void* Thread1( void * pContext )
         enum v4l2_buf_type typeBuffer = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         for (i = 0; i < gV4LBufNum; ++i)
         {
-                memset(&buffer, 0, sizeof buffer);      
-                buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;     
-                buffer.memory = V4L2_MEMORY_MMAP;      
+                memset(&buffer, 0, sizeof buffer);
+                buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+                buffer.memory = V4L2_MEMORY_MMAP;
                 buffer.index = i;
                 if (ioctl(gV4LDev, VIDIOC_QUERYBUF, &buffer) < 0)
                 {
                         tst_resm(TWARN, "%s(): ioctl(VIDIOC_QUERYBUF) failed", __FUNCTION__);
                         pCtx->mLtpRetval = TFAIL;
-                        pCtx->mErrCount++;                        
+                        pCtx->mErrCount++;
                 }
                 if (ioctl(gV4LDev, VIDIOC_QBUF, &buffer) < 0)
-                { 
+                {
                         tst_resm(TFAIL,"%s(): ioctl(VIDIOC_QBUF) failed", __FUNCTION__);
                         pCtx->mLtpRetval = TFAIL;
                         pCtx->mErrCount++;
-                }          
-        }                
+                }
+        }
 
         if (ioctl(gV4LDev, VIDIOC_STREAMON, &typeBuffer) < 0)
         {
                 tst_resm(TFAIL, "%s(): ioctl(VIDIOC_STREAMON) failed. Reason: %s", __FUNCTION__, strerror(errno));
                 pCtx->mLtpRetval = TFAIL;
                 pCtx->mErrCount++;
-        }       
-        
+        }
+
         tst_resm(TINFO, "V4L capturing is started");
-       
+
         // ...
         int framesNo = 0;
         char fname[MAX_STR_LEN];
         while (framesNo <= FRAMES_TO_CAPTURE && !pCtx->mErrCount)
         {
 //                printf("----frame No %d\n", framesNo);
-                buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;      
-                buffer.memory = V4L2_MEMORY_MMAP;                         
+                buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+                buffer.memory = V4L2_MEMORY_MMAP;
                 if (ioctl(gV4LDev, VIDIOC_DQBUF, &buffer) < 0)
                 {
-                        tst_resm(TFAIL, "%s(): ioctl(VIDIOC_DQBUF) failed", __FUNCTION__);                        
+                        tst_resm(TFAIL, "%s(): ioctl(VIDIOC_DQBUF) failed", __FUNCTION__);
                         pCtx->mLtpRetval = TFAIL;
                         pCtx->mErrCount++;
                         break;
                 }
-                
-                if (buffer.index >= gV4LBufNum)      
-                {        
-                        tst_resm(TFAIL, "%s(): ioctl(VIDIOC_DQBUF) - Invalid buffer index", __FUNCTION__);        
+
+                if (buffer.index >= gV4LBufNum)
+                {
+                        tst_resm(TFAIL, "%s(): ioctl(VIDIOC_DQBUF) - Invalid buffer index", __FUNCTION__);
                         pCtx->mLtpRetval = TFAIL;
-                        pCtx->mErrCount++;                                                      
-                }     
+                        pCtx->mErrCount++;
+                }
                 else
-                {                                
+                {
                         sprintf(fname, "%s/f%d.out", gTestappConfig.mMountPoint, framesNo);
                         FILE * out = fopen(fname, "wb");
                         if (out)
@@ -257,7 +257,7 @@ void* Thread1( void * pContext )
                                 }
                                 fclose(out);
 
-                                
+
 /*                                memset(&buffer1, 0, sizeof buffer1);
                                 buffer1.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
                                 buffer1.memory = V4L2_MEMORY_MMAP;
@@ -310,24 +310,24 @@ void* Thread1( void * pContext )
                                 pCtx->mErrCount++;
                         }
                 }
-                
+
                 if (ioctl(gV4LDev, VIDIOC_QBUF, &buffer) < 0)
-                {       
-                        tst_resm(TFAIL, "%s(): ioctl(VIDIOC_QBUF) failed", __FUNCTION__);                        
+                {
+                        tst_resm(TFAIL, "%s(): ioctl(VIDIOC_QBUF) failed", __FUNCTION__);
                         pCtx->mLtpRetval = TFAIL;
                         pCtx->mErrCount++;
                         break;
-                }  
-                
+                }
+
                 ++framesNo;
-        } 
-                
+        }
+
         typeBuffer = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         if (ioctl(gV4LDev, VIDIOC_STREAMOFF, &typeBuffer) < 0)
-        {            
+        {
                 tst_resm(TFAIL, "%s(): ioctl(VIDIOC_STREAMOFF) failed", __FUNCTION__);
                 pCtx->mLtpRetval = TFAIL;
-                pCtx->mErrCount++;                                        
+                pCtx->mErrCount++;
         }
         else
         if (gTestappConfig.mVerbose)
@@ -344,23 +344,23 @@ void* Thread1( void * pContext )
         if (gTestappConfig.mVerbose)
                 tst_resm(TINFO, "Stream output stopped ...ok");
 */
-        
+
         tst_resm( TINFO, "V4L capturing is stopped. Errors count: %d", pCtx->mErrCount );
-        
+
         pthread_mutex_lock(&gMutex);
         gStopAllThreads = TRUE;
         pthread_mutex_unlock(&gMutex);
-        
-        return 0;                    
+
+        return 0;
 }
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 
 void *Thread2( void *pContext )
 {
@@ -381,15 +381,15 @@ void *Thread2( void *pContext )
                 pthread_mutex_lock(&gMutex);
                 if (gStopAllThreads)
                         break;
-                pthread_mutex_unlock(&gMutex);                        
+                pthread_mutex_unlock(&gMutex);
         }
         tst_resm(TINFO, "SCC test stopped");
         return 0;
 }
 
 
-/*================================================================================================*/
-/*===== write_scc_resgister =====*/
+/*====================*/
+/*= write_scc_resgister =*/
 /**
 @brief  Performs write data into SCC register
 
@@ -399,7 +399,7 @@ void *Thread2( void *pContext )
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int write_scc_register(uint32_t reg, uint32_t value)
 {
         scc_reg_access  register_access;
@@ -418,8 +418,8 @@ int write_scc_register(uint32_t reg, uint32_t value)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== read_scc_resgister =====*/
+/*====================*/
+/*= read_scc_resgister =*/
 /**
 @brief  Performs read data from SCC register
 
@@ -430,7 +430,7 @@ int write_scc_register(uint32_t reg, uint32_t value)
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int read_scc_register(uint32_t reg, uint32_t * value)
 {
         scc_reg_access  register_access;
@@ -452,8 +452,8 @@ int read_scc_register(uint32_t reg, uint32_t * value)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== run_zeroize_tests =====*/
+/*====================*/
+/*= run_zeroize_tests =*/
 /**
 @brief  Performs Zeroize tests
 
@@ -462,7 +462,7 @@ int read_scc_register(uint32_t reg, uint32_t * value)
 @return On failure - TFAIL
         On success - TPASS
 */
-/*================================================================================================*/
+/*====================*/
 int run_zeroize_tests(void)
 {
         int             VT_rv = TPASS;
@@ -550,7 +550,7 @@ int run_zeroize_tests(void)
                                  SCM_RED_MEMORY);
                 }
                 if (read_scc_register(SCM_RED_MEMORY + 1020, &value) == TPASS)
-                {        
+                {
                         if (gTestappConfig.mVerbose)
                                 tst_resm(TPASS,
                                  "Reading value (42) from SCM_RED_MEMORY+0x00001020 (0x%08X) passed",
@@ -624,8 +624,8 @@ int run_zeroize_tests(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== print_ram_data =====*/
+/*====================*/
+/*= print_ram_data =*/
 /**
 @brief  Performs print eight words per line, starting at ram, as though they
         started at address, until count words have been printed
@@ -636,7 +636,7 @@ int run_zeroize_tests(void)
 
 @return
 */
-/*================================================================================================*/
+/*====================*/
 void print_ram_data(uint32_t * ram, uint32_t address, int count)
 {
         int     i;
@@ -666,8 +666,8 @@ void print_ram_data(uint32_t * ram, uint32_t address, int count)
         }
 }
 
-/*================================================================================================*/
-/*===== print_scc_return_code =====*/
+/*====================*/
+/*= print_scc_return_code =*/
 /**
 @brief  Print an interpretation (the symbol name) of @c code
 
@@ -675,7 +675,7 @@ void print_ram_data(uint32_t * ram, uint32_t address, int count)
 
 @return
 */
-/*================================================================================================*/
+/*====================*/
 void print_scc_return_code(scc_return_t code)
 {
         char   *msg = NULL;
@@ -903,8 +903,8 @@ int run_cipher_tests(void)
                                          SCM_INTERRUPT_CTRL_MASK_INTERRUPTS, SCM_INTERRUPT_CTRL);
                         }
 
-                        /* Start Decryption */                
-                        
+                        /* Start Decryption */
+
                         if (gTestappConfig.mVerbose)
                                 tst_resm(TINFO, "CIPHER: Start Decrypting....");
                         if (ioctl(gSCCDev, SCC_TEST_DECRYPT, &cipher_control) != SCC_RET_OK)
@@ -1000,67 +1000,67 @@ int run_cipher_tests(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int RunTest( void )
 {
         int i;
-        int rv = TPASS;    
-        sThreadContext * pContext;        
+        int rv = TPASS;
+        sThreadContext * pContext;
 
         for (i = 0; i < gNumThreads; ++i)
-        {        
+        {
                 if (gTestappConfig.mThreadToExecute != -1 && gTestappConfig.mThreadToExecute != i)
                         continue;
                 pContext = gThreadContext + i;
                 memset( pContext, 0, sizeof(sThreadContext) );
                 pContext->mIndex = i;
-                
-        
+
+
                 if( pthread_create( &pContext->mThreadID, NULL, (void* (*)(void*))(gThreadProc[i]), pContext ) )
                 {
                         tst_resm( TWARN, "%s : error creating thread %d", __FUNCTION__, i );
-                        return TFAIL;            
+                        return TFAIL;
                 }
-        }    
-    
+        }
+
         /* Wait for the each thread. */
         for( i = 0; i < gNumThreads; ++i )
         {
                 if (gTestappConfig.mThreadToExecute != -1 && gTestappConfig.mThreadToExecute != i)
-                        continue;    
-                pContext = gThreadContext + i;     
+                        continue;
+                pContext = gThreadContext + i;
                 pthread_join( pContext->mThreadID, NULL );
         }
         for( i = 0; i < gNumThreads; ++i )
         {
                 if (gTestappConfig.mThreadToExecute != -1 && gTestappConfig.mThreadToExecute != i)
-                        continue;    
-                pContext = gThreadContext + i;     
+                        continue;
+                pContext = gThreadContext + i;
                 rv += pContext->mLtpRetval;
         }
-    
+
         if( TPASS == rv )
-                rv = VerificateResults();                     
+                rv = VerificateResults();
 
         return rv;
 }
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int VerificateResults( void )
 {
-        int i, sz = -1;      
+        int i, sz = -1;
         char fname[MAX_STR_LEN];
         for (i = 0; i < FRAMES_TO_CAPTURE; ++i)
         {
                 sprintf(fname, "%s/f%d.out", gTestappConfig.mMountPoint, i);
-                
+
                 if (i == 0)
                 {
                         FILE * f = fopen(fname, "r");
-                        if(f) 
+                        if(f)
                         {
                                 fseek(f, 0, SEEK_END);
                                 sz = ftell(f);
@@ -1072,18 +1072,18 @@ int VerificateResults( void )
                         if (gTestappConfig.mVerbose)
                                 tst_resm(TFAIL, "Verification failed");
                         return TFAIL;
-                }                        
+                }
         }
 
         if (gTestappConfig.mVerbose)
                 tst_resm(TINFO, "Verification passed");
-        
+
         return TPASS;
 }
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int VT_systest_setup( void )
 {
         int i;
@@ -1094,13 +1094,13 @@ int VT_systest_setup( void )
         /************************************************
          * Init V4L.
          ************************************************/
-        
+
         if ((gV4LDev = open(gTestappConfig.mV4LDevName, O_RDWR|O_NONBLOCK, 0)) < 0)
         {
                 tst_resm(TFAIL, "%s(): Unable to open %s", __FUNCTION__, gTestappConfig.mV4LDevName);
                 return TFAIL;
         }
-        
+
         if ((gV4LDevO = open(gTestappConfig.mV4LDevOName, O_RDWR|O_NONBLOCK, 0)) < 0)
         {
                 tst_resm(TFAIL, "%s(): Unable to open %s", __FUNCTION__, gTestappConfig.mV4LDevOName);
@@ -1108,7 +1108,7 @@ int VT_systest_setup( void )
         }
 
         // Check the capabilities.
-        struct v4l2_capability cap;                
+        struct v4l2_capability cap;
         if (ioctl(gV4LDev, VIDIOC_QUERYCAP, &cap) < 0)
         {
                 tst_resm(TFAIL, "%s(): ioctl(VIDIOC_QUERYCAP) failed", __FUNCTION__);
@@ -1120,11 +1120,11 @@ int VT_systest_setup( void )
                 return TFAIL;
         }
         if (!(cap.capabilities & V4L2_CAP_STREAMING))
-        {      
-                tst_resm(TWARN, "%s(): %s does not support streaming I/O", __FUNCTION__, gTestappConfig.mV4LDevName);      
-                return TFAIL;    
+        {
+                tst_resm(TWARN, "%s(): %s does not support streaming I/O", __FUNCTION__, gTestappConfig.mV4LDevName);
+                return TFAIL;
         }
-        
+
         memset(&cap, 0, sizeof cap);
         if (ioctl(gV4LDevO, VIDIOC_QUERYCAP, &cap) < 0)
         {
@@ -1145,7 +1145,7 @@ int VT_systest_setup( void )
                 return TFAIL;
 
         }
-        
+
         // Init capture.
         memset(&gV4LFormat, 0, sizeof(gV4LFormat));
         gV4LFormat.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -1166,12 +1166,12 @@ int VT_systest_setup( void )
                 tst_resm(TFAIL, "%s(): ioctl(VIDIOC_S_FMT) failed", __FUNCTION__);
                 return TFAIL;
         }
-        
+
         // Init mmap.
         struct v4l2_requestbuffers reqBuffers;
         struct v4l2_buffer         buffer;
         memset(&reqBuffers, 0, sizeof reqBuffers);
-        reqBuffers.count = 3;  
+        reqBuffers.count = 3;
         reqBuffers.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         reqBuffers.memory = V4L2_MEMORY_MMAP;
         if (ioctl(gV4LDev, VIDIOC_REQBUFS, &reqBuffers) < 0)
@@ -1194,13 +1194,13 @@ int VT_systest_setup( void )
                 memset(&buffer, 0, sizeof buffer);
                 buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
                 buffer.memory = V4L2_MEMORY_MMAP;
-                buffer.index = gV4LBufNum;    
-                
-                if (ioctl(gV4LDev, VIDIOC_QUERYBUF, &buffer) < 0)    
-                {      
-                        tst_resm(TFAIL, "%s(): ioctl(VIDIOC_QUERYBUF) failed", __FUNCTION__);      
-                        return TFAIL;    
-                } 
+                buffer.index = gV4LBufNum;
+
+                if (ioctl(gV4LDev, VIDIOC_QUERYBUF, &buffer) < 0)
+                {
+                        tst_resm(TFAIL, "%s(): ioctl(VIDIOC_QUERYBUF) failed", __FUNCTION__);
+                        return TFAIL;
+                }
                 gpV4LBuf[gV4LBufNum].mSz     = buffer.length;
                 gpV4LBuf[gV4LBufNum].mpStart = mmap(NULL, buffer.length,
                                                     PROT_READ | PROT_WRITE, MAP_SHARED,
@@ -1210,15 +1210,15 @@ int VT_systest_setup( void )
                         tst_resm(TFAIL, "%s(): mmap on %s failed", __FUNCTION__, gTestappConfig.mV4LDevName);
                         return TFAIL;
                 }
-        }                                                                                  
+        }
         if (gTestappConfig.mVerbose)
         {
                 tst_resm(TINFO, "V4L capture init ... ok");
         }
-        
+
         // video output  mmap
         memset(&reqBuffers, 0, sizeof reqBuffers);
-        reqBuffers.count = 3;  
+        reqBuffers.count = 3;
         reqBuffers.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
         reqBuffers.memory = V4L2_MEMORY_MMAP;
         if (ioctl(gV4LDevO, VIDIOC_REQBUFS, &reqBuffers) < 0)
@@ -1241,13 +1241,13 @@ int VT_systest_setup( void )
                 memset(&buffer, 0, sizeof buffer);
                 buffer.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
                 buffer.memory = V4L2_MEMORY_MMAP;
-                buffer.index = gV4LBufNum1;    
-                
-                if (ioctl(gV4LDevO, VIDIOC_QUERYBUF, &buffer) < 0)    
-                {      
-                        tst_resm(TFAIL, "%s(): output ioctl(VIDIOC_QUERYBUF) failed", __FUNCTION__);      
-                        return TFAIL;    
-                } 
+                buffer.index = gV4LBufNum1;
+
+                if (ioctl(gV4LDevO, VIDIOC_QUERYBUF, &buffer) < 0)
+                {
+                        tst_resm(TFAIL, "%s(): output ioctl(VIDIOC_QUERYBUF) failed", __FUNCTION__);
+                        return TFAIL;
+                }
                 gpV4LBuf1[gV4LBufNum1].mSz     = buffer.length;
                 gpV4LBuf1[gV4LBufNum1].mpStart = mmap(NULL, buffer.length,
                                                     PROT_READ | PROT_WRITE, MAP_SHARED,
@@ -1257,12 +1257,12 @@ int VT_systest_setup( void )
                         tst_resm(TFAIL, "%s(): mmap on %s failed", __FUNCTION__, gTestappConfig.mV4LDevOName);
                         return TFAIL;
                 }
-        }                                                                                  
+        }
         if (gTestappConfig.mVerbose)
         {
                 tst_resm(TINFO, "V4L output init ... ok");
-        }         
-      
+        }
+
         int temp_sz = gpV4LBuf[0].mSz;
         for (i = 1; i < gV4LBufNum; ++i)
         {
@@ -1285,7 +1285,7 @@ int VT_systest_setup( void )
         /************************************************
          * Init SCC.
          ************************************************/
-        
+
         if( (gSCCDev = open(SCC_DEV, O_RDWR)) < 0 )
         {
                 tst_resm(TFAIL, "%s() : Can't open %s", __FUNCTION__, SCC_DEV);
@@ -1295,55 +1295,55 @@ int VT_systest_setup( void )
         {
                 tst_resm(TINFO, "SCC init ... ok");
         }
-        
+
         for (i = 24; i < sizeof(plaintext); i++)
         {
                 plaintext[i] = i % 256;
         }
 
         /************************************************
-         * Init FFS. 
+         * Init FFS.
          ************************************************/
 
         if (!SetupFFS(gTestappConfig.mFFSDevName, gTestappConfig.mMountPoint))
         {
                 return TFAIL;
         }
-         
+
         if (gTestappConfig.mVerbose)
         {
                 tst_resm(TINFO, "FFS init ... ok");
-        }        
-        
+        }
 
-                
+
+
         return TPASS;
 }
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int VT_systest_cleanup( void )
-{       
+{
         int i;
         int rv = TPASS;
 
         /************************************************
-         * Cleanup V4L. 
+         * Cleanup V4L.
          ************************************************/
-        for (i = 0; i < gV4LBufNum; ++i)    
-        {      
+        for (i = 0; i < gV4LBufNum; ++i)
+        {
                 if( munmap(gpV4LBuf[i].mpStart, gpV4LBuf[i].mSz) < 0)
                 {
                         tst_resm(TFAIL, "%s(): munmap on %s failed", __FUNCTION__, gTestappConfig.mV4LDevName);
                         rv = TFAIL;
-                }                        
+                }
         }
         if (gTestappConfig.mVerbose)
         {
                 tst_resm(TINFO, "V4L capture cleanup ... ok");
-        }      
+        }
         CLOSE_DEV(gV4LDev);
-        
+
         for (i = 0; i < gV4LBufNum1; ++i)
         {
                 if( munmap(gpV4LBuf1[i].mpStart, gpV4LBuf1[i].mSz) < 0)
@@ -1357,15 +1357,15 @@ int VT_systest_cleanup( void )
                 tst_resm(TINFO, "V4L output cleanup ... ok");
         }
         CLOSE_DEV(gV4LDevO);
-        
+
         /************************************************
-         * Cleanup FFS. 
+         * Cleanup FFS.
          ************************************************/
         CloseFFS(gTestappConfig.mMountPoint);
         if (gTestappConfig.mVerbose)
         {
                 tst_resm(TINFO, "FFS cleanup ... ok");
-        }        
+        }
 
         /************************************************
          * Cleanup SCC.
@@ -1380,16 +1380,16 @@ int VT_systest_cleanup( void )
 }
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int VT_systest_test( void )
-{                          
+{
         return RunTest();
 }
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int CheckFile( const char * fname, int sz )
 {
         FILE * fstream = fopen( fname, "r" );
@@ -1402,13 +1402,13 @@ int CheckFile( const char * fname, int sz )
                 {
                         if( gTestappConfig.mVerbose )
                         {
-                                tst_resm( TWARN, "%s(): %s has a wrong size (actual: %ld, correct: %d)", 
+                                tst_resm( TWARN, "%s(): %s has a wrong size (actual: %ld, correct: %d)",
                                           __FUNCTION__, fname, fsz, sz );
                         }
 
                         return FALSE;
                 }
-                
+
                 return TRUE;
         }
 
@@ -1419,18 +1419,18 @@ int CheckFile( const char * fname, int sz )
         }
 
         return FALSE;
-} 
+}
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int SetupFFS( const char * dev, const char * mntdir )
 {
         struct stat st;
         int res, err;
 
         assert(dev && mntdir);
-                
+
         memset(&st, 0, sizeof(st));
         if (stat(dev, &st))
         {
@@ -1442,7 +1442,7 @@ int SetupFFS( const char * dev, const char * mntdir )
                 tst_resm(TFAIL, "%s(): %s is not a char or a block device", __FUNCTION__, dev);
                 return FALSE;
         }
-        
+
         memset(&st, 0, sizeof st);
         res =  stat(mntdir, &st);
         if (res < 0 || !S_ISDIR(st.st_mode))
@@ -1465,8 +1465,8 @@ int SetupFFS( const char * dev, const char * mntdir )
 }
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int CloseFFS( const char * mntdir )
 {
         if (gTestappConfig.mVerbose)
@@ -1475,16 +1475,16 @@ int CloseFFS( const char * mntdir )
         assert(mntdir);
         if (umount(mntdir) < 0)
         {
-                tst_resm(TFAIL, "%s(): umount(%s) failed. Reason: %s", __FUNCTION__, mntdir, strerror(errno));                
+                tst_resm(TFAIL, "%s(): umount(%s) failed. Reason: %s", __FUNCTION__, mntdir, strerror(errno));
                 return FALSE;
         }
-        
+
         return TRUE;
 }
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int BitMatching(char *buf1, char *buf2, int count)
 {
         int     i;

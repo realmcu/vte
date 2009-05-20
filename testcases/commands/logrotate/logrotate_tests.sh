@@ -28,11 +28,11 @@
 #                logfile is set for rotation every week. Execute the command
 #                logrotate -f <file.conf>, check to see if it forced rotation.
 #                Test #2: Check if logrotate running as a cronjob will rotate a
-#                logfile when it exceeds a specific size. Create two cronjobs 
+#                logfile when it exceeds a specific size. Create two cronjobs
 #                1. runs a command to log a string to a logfile. 2. runs
 #                logrotate <file.conf> every minute. The conf file specifies
 #                that the rotation happen only if the log file exceeds 2k file
-#                size. 
+#                size.
 #
 # Author:        Manoj Iyer, manjo@mail.utexas.edu
 #
@@ -41,91 +41,91 @@
 #                                        cron job.
 #                Feb 28 2003 - Fixed   - Modified testcase to use functions.
 #
-# Function: 	chk_ifexists
+# Function:chk_ifexists
 #
 # Description:  - Check if command required for this test exits.
 #
 # Input:        - $1 - calling test case.
 #               - $2 - command that needs to be checked.
-# 
-# Return:		- zero on success.
-# 				- non-zero on failure.
+#
+# Return:  - zero on success.
+#   - non-zero on failure.
 chk_ifexists()
 {
-	RC=0
+ RC=0
 
-	which $2 > $LTPTMP/tst_logrotate.err 2>&1 || RC=$?
-	if [ $RC -ne 0 ]
-	then
-		tst_brkm TBROK NULL "$1: command $2 not found."
-	fi
-	return $RC
+ which $2 > $LTPTMP/tst_logrotate.err 2>&1 || RC=$?
+ if [ $RC -ne 0 ]
+ then
+  tst_brkm TBROK NULL "$1: command $2 not found."
+ fi
+ return $RC
 }
 
 
 # Function: init
 #
 # Description:  - Check if command required for this test exits.
-#               - Create temporary directories required for this test. 
+#               - Create temporary directories required for this test.
 #               - Initialize global variables.
-# 
-# Return:		- zero on success.
-# 				- non-zero on failure.
+#
+# Return:  - zero on success.
+#   - non-zero on failure.
 init()
 {
-	# Initialize global variables.
-	export RC=0
-	export TST_TOTAL=2
-	export TCID="logrotate"
-	export TST_COUNT=0
+ # Initialize global variables.
+ export RC=0
+ export TST_TOTAL=2
+ export TCID="logrotate"
+ export TST_COUNT=0
 
-	# Inititalize cleanup function.
-	trap "cleanup" 0
+ # Inititalize cleanup function.
+ trap "cleanup" 0
 
-	# create the temporary directory used by this testcase
-	if [ -z $TMP ]
-	then
-		LTPTMP=/tmp/tst_logrotate.$$
-	else
-		LTPTMP=$TMP/tst_logrotate.$$
-	fi
+ # create the temporary directory used by this testcase
+ if [ -z $TMP ]
+ then
+  LTPTMP=/tmp/tst_logrotate.$$
+ else
+  LTPTMP=$TMP/tst_logrotate.$$
+ fi
 
-	mkdir -p $LTPTMP > /dev/null 2>&1 || RC=$?
-	if [ $RC -ne 0 ]
-	then
-		 tst_brkm TBROK "INIT: Unable to create temporary directory"
-		 return $RC
-	fi
+ mkdir -p $LTPTMP > /dev/null 2>&1 || RC=$?
+ if [ $RC -ne 0 ]
+ then
+   tst_brkm TBROK "INIT: Unable to create temporary directory"
+   return $RC
+ fi
 
-	# check if commands tst_*, logrotate, awk exists.
-	chk_ifexists INIT tst_resm  || return $RC
-	chk_ifexists INIT logrotate || return $RC
-	chk_ifexists INIT awk       || return $RC
+ # check if commands tst_*, logrotate, awk exists.
+ chk_ifexists INIT tst_resm  || return $RC
+ chk_ifexists INIT logrotate || return $RC
+ chk_ifexists INIT awk       || return $RC
 
-	return $RC
+ return $RC
 }
 
 
-# Function: 	cleanup
+# Function:cleanup
 #
 # Description:  - remove temporaty files and directories. Stop all jobs stated
 #                 by this testcase.
 #
-# Return:		- zero on success.
-# 				- non-zero on failure.
+# Return:  - zero on success.
+#   - non-zero on failure.
 cleanup()
 {
-	#remove all cronjobs that were installed.
-	tst_resm TINFO "CLEAN: removing all cron jobs."
-	crontab -r > /dev/null 2>&1
+ #remove all cronjobs that were installed.
+ tst_resm TINFO "CLEAN: removing all cron jobs."
+ crontab -r > /dev/null 2>&1
 
-	# remove all the temporary files created by this test.
-	tst_resm TINFO "CLEAN: removing $LTPTMP"
-	rm -fr $LTPTMP
+ # remove all the temporary files created by this test.
+ tst_resm TINFO "CLEAN: removing $LTPTMP"
+ rm -fr $LTPTMP
 }
 
 
-# Function: 	test01
+# Function:test01
 #
 # Description:  - Test that logrotate logrotate will rotate the logfile
 #                 according to the specifications in the config file.
@@ -134,110 +134,110 @@ cleanup()
 #               - use force option to force logrotate to cause the log file to
 #                 be rotated.
 #               - compress the file after rotation.
-# 
-# Return:		- zero on success.
-# 				- non-zero on failure.
+#
+# Return:  - zero on success.
+#   - non-zero on failure.
 test01()
 {
-	count=0
-	files=" "
-	filesize=0
+ count=0
+ files=" "
+ filesize=0
 
-	TCID=logrotate01
-	TST_COUNT=1
+ TCID=logrotate01
+ TST_COUNT=1
 
-	tst_resm TINFO "Test #1: create a configfile $LTPTMP/var_mesg.config"
-	tst_resm TINFO "Test #1: use logrotate -f <config> to force rotation"
-	tst_resm TINFO "Test #1: this will rotate the log file according to"
-	tst_resm TINFO "Test #1: the specification in the configfile."
-	tst_resm TINFO "Test #1: 1. rotate /var/log/tst_logfile file."
-	tst_resm TINFO "Test #1: 2. compresses it."
+ tst_resm TINFO "Test #1: create a configfile $LTPTMP/var_mesg.config"
+ tst_resm TINFO "Test #1: use logrotate -f <config> to force rotation"
+ tst_resm TINFO "Test #1: this will rotate the log file according to"
+ tst_resm TINFO "Test #1: the specification in the configfile."
+ tst_resm TINFO "Test #1: 1. rotate /var/log/tst_logfile file."
+ tst_resm TINFO "Test #1: 2. compresses it."
 
-	# create config file.
-	cat >$LTPTMP/tst_logrotate.conf <<-EOF
-	#****** Begin Config file *******
-	# create new (empty) log files after rotating old ones
-	create
+ # create config file.
+ cat >$LTPTMP/tst_logrotate.conf <<-EOF
+ #****** Begin Config file *******
+ # create new (empty) log files after rotating old ones
+ create
 
-	# compress the log files
-	compress
+ # compress the log files
+ compress
 
-	# RPM packages drop log rotation information into this directory
-	include /etc/logrotate.d
+ # RPM packages drop log rotation information into this directory
+ include /etc/logrotate.d
 
-	/var/log/tst_logfile {
-		rotate 5
-		weekly
-	}
-	#****** End Config file *******
-	EOF
+ /var/log/tst_logfile {
+  rotate 5
+  weekly
+ }
+ #****** End Config file *******
+ EOF
 
-	# create a log file in /var/log/
-	cat >/var/log/tst_logfile <<-EOF
-	#****** Begin Log File ********
-	# This is a dummy log file.
-	#****** End Log File ********
-	EOF
+ # create a log file in /var/log/
+ cat >/var/log/tst_logfile <<-EOF
+ #****** Begin Log File ********
+ # This is a dummy log file.
+ #****** End Log File ********
+ EOF
 
-	while [ $count -lt 10 ]
-	do
-		echo "This a dummy log file used to test logrotate command." >> \
-			/var/log/tst_logfile 
-		 		 count=$(( $count+1 ))
-	done
+ while [ $count -lt 10 ]
+ do
+  echo "This a dummy log file used to test logrotate command." >> \
+   /var/log/tst_logfile
+    count=$(( $count+1 ))
+ done
 
-	# remove all old-n-stale logfiles.
-	for files in /var/log/tst_logfile.*
-	do
-		rm -f $files > /dev/null 2>&1
-	done
+ # remove all old-n-stale logfiles.
+ for files in /var/log/tst_logfile.*
+ do
+  rm -f $files > /dev/null 2>&1
+ done
 
-	logrotate -fv $LTPTMP/tst_logrotate.conf > $LTPTMP/tst_logrotate.out 2>&1 \
-		|| RC=$?
-	if [ $RC -eq 0 ]
-	then
-		# check if config file $LTPTMP/tst_logrotate.conf is read
-		# check if  /etc/logrotate.d is included/
-		# check if 5 rotations are forced.
+ logrotate -fv $LTPTMP/tst_logrotate.conf > $LTPTMP/tst_logrotate.out 2>&1 \
+  || RC=$?
+ if [ $RC -eq 0 ]
+ then
+  # check if config file $LTPTMP/tst_logrotate.conf is read
+  # check if  /etc/logrotate.d is included/
+  # check if 5 rotations are forced.
         # check if compression is done.
-		grep "including /etc/logrotate.d" $LTPTMP/tst_logrotate.out \
-			> $LTPTMP/tst_logrotate.err 2>&1 || RC=$?
-		grep "reading config file $LTPTMP/tst_logrotate.conf" \
-			$LTPTMP/tst_logrotate.out   > $LTPTMP/tst_logrotate.err 2>&1 || RC=$?
-		grep "forced from command line (5 rotations)" \
-			$LTPTMP/tst_logrotate.out   > $LTPTMP/tst_logrotate.err 2>&1 || RC=$?
-		egrep "compressing new|log with" \
-			$LTPTMP/tst_logrotate.out   > $LTPTMP/tst_logrotate.err 2>&1 || RC=$?
-		if [ $RC -ne 0 ]
-		then
-			tst_res TFAIL > $LTPTMP/tst_logrotate.err 2>&1 \
-				"Test #1: logrotate command failed. Reason:"
-		else
-			# Check if compressed log file is created.
-			if [ -f /var/log/tst_logfile.1.gz ]
-			then
-				file /var/log/tst_logfile.1.gz | grep "gzip compressed data" \
-					> $LTPTMP/tst_logrotate.out 2>&1 || RC=$?
-				if [ $RC -eq 0 ]
-				then
-					tst_resm TPASS \
-						"Test #1: logrotate created a compressed file."
-				else
-					tst_res TFAIL $LTPTMP/tst_logrotate.out \
-						"Test #1: Failed to create a compressed file. Reason:"
-				fi
-				return $RC
-			else
-				 tst_res TFAIL  $LTPTMP/tst_logrotate.out \
-				  "Test #1: Failed create /var/log/tst_logfile.1.gz. Reason:"
-				return $RC
-			fi
-		fi
-	else
-		tst_res TFAIL $LTPTMP/tst_logrotate.out \
-		"Test #1: logrotate command exited with $RC return code. Output:"
-	fi
-	return $RC
+  grep "including /etc/logrotate.d" $LTPTMP/tst_logrotate.out \
+   > $LTPTMP/tst_logrotate.err 2>&1 || RC=$?
+  grep "reading config file $LTPTMP/tst_logrotate.conf" \
+   $LTPTMP/tst_logrotate.out   > $LTPTMP/tst_logrotate.err 2>&1 || RC=$?
+  grep "forced from command line (5 rotations)" \
+   $LTPTMP/tst_logrotate.out   > $LTPTMP/tst_logrotate.err 2>&1 || RC=$?
+  egrep "compressing new|log with" \
+   $LTPTMP/tst_logrotate.out   > $LTPTMP/tst_logrotate.err 2>&1 || RC=$?
+  if [ $RC -ne 0 ]
+  then
+   tst_res TFAIL > $LTPTMP/tst_logrotate.err 2>&1 \
+    "Test #1: logrotate command failed. Reason:"
+  else
+   # Check if compressed log file is created.
+   if [ -f /var/log/tst_logfile.1.gz ]
+   then
+    file /var/log/tst_logfile.1.gz | grep "gzip compressed data" \
+     > $LTPTMP/tst_logrotate.out 2>&1 || RC=$?
+    if [ $RC -eq 0 ]
+    then
+     tst_resm TPASS \
+      "Test #1: logrotate created a compressed file."
+    else
+     tst_res TFAIL $LTPTMP/tst_logrotate.out \
+      "Test #1: Failed to create a compressed file. Reason:"
+    fi
+    return $RC
+   else
+     tst_res TFAIL  $LTPTMP/tst_logrotate.out \
+      "Test #1: Failed create /var/log/tst_logfile.1.gz. Reason:"
+    return $RC
+   fi
+  fi
+ else
+  tst_res TFAIL $LTPTMP/tst_logrotate.out \
+  "Test #1: logrotate command exited with $RC return code. Output:"
+ fi
+ return $RC
 }
 
 
@@ -305,7 +305,7 @@ fi
 # cron job to increase the log file size.
 cat >$LTPTMP/tst_addtolog.cron <<EOF
 
-* * * * * echo "To Err Is Human, To Really Screw Up You Need A Computer."  >>/var/log/tst_largelogfile 2>/dev/null 
+* * * * * echo "To Err Is Human, To Really Screw Up You Need A Computer."  >>/var/log/tst_largelogfile 2>/dev/null
 EOF
 
 tst_resm TINFO "Test #2: Installing cron job to increase logsize"
@@ -335,12 +335,12 @@ then
     do
         filesize=`ls -l /var/log/tst_largelogfile | awk '{print $5}'`
     done
-	# wait for 1m  and check if logrotate has rotated the logfile. The cron job
-	# that does a logrotate runs every 1 minute so give the cron a minute...
-	sleep 1m
+ # wait for 1m  and check if logrotate has rotated the logfile. The cron job
+ # that does a logrotate runs every 1 minute so give the cron a minute...
+ sleep 1m
 else
-	tst_resm TINFO "Test #2: No AWK installed ... sleeping for 10mts"
-	sleep 10m
+ tst_resm TINFO "Test #2: No AWK installed ... sleeping for 10mts"
+ sleep 10m
 fi
 
 
@@ -364,11 +364,11 @@ fi
 
 }
 
-# Function:	main
+# Function: main
 #
-# Description:	- Execute all tests and report results.
+# Description: - Execute all tests and report results.
 #
-# Exit:			- zero on success 
+# Exit:   - zero on success
 #               - non-zero on failure.
 
 RC=0

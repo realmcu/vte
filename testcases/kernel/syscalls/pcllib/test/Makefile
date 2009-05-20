@@ -59,10 +59,10 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-host_alias = 
+host_alias =
 host_triplet = i686-pc-linux-gnu
 
-EXEEXT = 
+EXEEXT =
 OBJEXT = o
 PATH_SEPARATOR = :
 AMTAR = ${SHELL} /root/epoll/libpcl/missing --run tar
@@ -81,7 +81,7 @@ RANLIB = ranlib
 STRIP = strip
 VERSION = 1.2
 am__include = include
-am__quote = 
+am__quote =
 install_sh = /root/epoll/libpcl/install-sh
 
 INCLUDES = -I../include
@@ -111,9 +111,9 @@ cothread_LDFLAGS =
 
 DEFS = -DHAVE_CONFIG_H
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
-CPPFLAGS = 
-LDFLAGS = 
-LIBS = 
+CPPFLAGS =
+LDFLAGS =
+LIBS =
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 DEP_FILES = ./$(DEPDIR)/cobench.Po ./$(DEPDIR)/cothread.Po
@@ -145,10 +145,10 @@ clean-noinstPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
-cobench$(EXEEXT): $(cobench_OBJECTS) $(cobench_DEPENDENCIES) 
+cobench$(EXEEXT): $(cobench_OBJECTS) $(cobench_DEPENDENCIES)
 	@rm -f cobench$(EXEEXT)
 	$(LINK) $(cobench_LDFLAGS) $(cobench_OBJECTS) $(cobench_LDADD) $(LIBS)
-cothread$(EXEEXT): $(cothread_OBJECTS) $(cothread_DEPENDENCIES) 
+cothread$(EXEEXT): $(cothread_OBJECTS) $(cothread_DEPENDENCIES)
 	@rm -f cothread$(EXEEXT)
 	$(LINK) $(cothread_LDFLAGS) $(cothread_OBJECTS) $(cothread_LDADD) $(LIBS)
 

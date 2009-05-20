@@ -23,7 +23,7 @@
  * Test Description :
  *  Verify that, readlink will succeed to read the contents of the symbolic
  *  link created the process.
- * 
+ *
  * Expected Result:
  *  readlink() should return the contents of symbolic link path in the buffer
  *  on success.
@@ -37,14 +37,14 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return=-1)
- *   	Issue a FAIL message.
+ *   Check return code, if system call failed (return-1)
+ *   Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *   Verify the Functionality of system call
  *      if successful,
- *      	Issue Functionality-Pass message.
+ *      Issue Functionality-Pass message.
  *      Otherwise,
- *		Issue Functionality-Fail message.
+ *  Issue Functionality-Fail message.
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
  *   Delete the temporary directory created.
@@ -53,13 +53,13 @@
  *  readlink01 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -f   : Turn off functionality Testing.
- *	       -i n : Execute test n times.
- *	       -I x : Execute test for x seconds.
- *	       -P x : Pause for x seconds between iterations.
- *	       -t   : Turn on syscall timing.
+ *        -i n : Execute test n times.
+ *        -I x : Execute test for x seconds.
+ *        -P x : Pause for x seconds between iterations.
+ *        -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS:
  *  This test should be run by 'non-super-user' only.
@@ -74,95 +74,95 @@
 #include "test.h"
 #include "usctest.h"
 
-#define TESTFILE	"testfile"
-#define SYMFILE		"slink_file"
+#define TESTFILE "testfile"
+#define SYMFILE  "slink_file"
 #define FILE_MODE       S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
-#define MAX_SIZE	256
+#define MAX_SIZE 256
 
-char *TCID="readlink01";	/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID"readlink01"; /* Test program identifier.    */
+int TST_TOTAL1;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 
-int exp_val;			/* strlen of testfile */
+int exp_val;   /* strlen of testfile */
 
-void setup();			/* Setup function for the test */
-void cleanup();			/* Cleanup function for the test */
+void setup();   /* Setup function for the test */
+void cleanup();   /* Cleanup function for the test */
 
-char nobody_uid[] = "nobody";
+char nobody_uid[]  "nobody";
 struct passwd *ltpuser;
 
 
 int
 main(int ac, char **av)
 {
-	char buffer[MAX_SIZE];	/* temporary buffer to hold symlink contents*/
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-    
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ char buffer[MAX_SIZE]; /* temporary buffer to hold symlink contents*/
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
 
-	/* Perform global setup for test */
-	setup();
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(ac, av, (option_t *)NULL, NULL);
+ if (msg ! (char *)NULL) {
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	/* Check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* Perform global setup for test */
+ setup();
 
-		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
-	
-		/* 
-		 * Call readlink(2) to read the contents of
-		 * symlink into a buffer.
-		 */
-		TEST(readlink(SYMFILE, buffer, sizeof(buffer)));
-	
-		/* Check return code of readlink(2) */
-		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL, "readlink() on %s failed, errno=%d : %s"
-				 , SYMFILE, TEST_ERRNO, strerror(TEST_ERRNO));
-			continue;
-		}
+ /* Check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/*
-		 * Perform functional verification if test
-		 * executed without (-f) option.
-		 */
-		if (STD_FUNCTIONAL_TEST) {
-			/*
-			 * Compare the return value of readlink()
-			 * with the expected value which is the
-			 * strlen() of testfile.
-			 */
-			if (TEST_RETURN == exp_val) {
-				/* Check for the contents of buffer */
-				if (memcmp(buffer, TESTFILE, exp_val) != 0)  {
-					tst_resm(TFAIL, "Pathname %s and buffer"
-						 " contents %s differ",
-						 TESTFILE, buffer);
-				} else {
-					tst_resm(TPASS, "readlink() "
-						 "functionality on '%s' is "
-						 "correct", SYMFILE);
-				}
-			} else {
-				tst_resm(TFAIL, "readlink() return value %d "
-					 "does't match, Expected %d",
-					 TEST_RETURN, exp_val);
-			}
-		} else {
-			tst_resm(TPASS, "call succeeded");
-		}
-	}	/* End for TEST_LOOPING */
+  /* Reset Tst_count in case we are looping. */
+  Tst_count0;
 
-	/* Call cleanup() to undo setup done for the test. */
-	cleanup();
+  /*
+   * Call readlink(2) to read the contents of
+   * symlink into a buffer.
+   */
+  TEST(readlink(SYMFILE, buffer, sizeof(buffer)));
 
-	return(0);
-}	/* End main */
+  /* Check return code of readlink(2) */
+  if (TEST_RETURN  -1) {
+   tst_resm(TFAIL, "readlink() on %s failed, errno%d : %s"
+     , SYMFILE, TEST_ERRNO, strerror(TEST_ERRNO));
+   continue;
+  }
+
+  /*
+   * Perform functional verification if test
+   * executed without (-f) option.
+   */
+  if (STD_FUNCTIONAL_TEST) {
+   /*
+    * Compare the return value of readlink()
+    * with the expected value which is the
+    * strlen() of testfile.
+    */
+   if (TEST_RETURN  exp_val) {
+    /* Check for the contents of buffer */
+    if (memcmp(buffer, TESTFILE, exp_val) ! 0)  {
+     tst_resm(TFAIL, "Pathname %s and buffer"
+       " contents %s differ",
+       TESTFILE, buffer);
+    } else {
+     tst_resm(TPASS, "readlink() "
+       "functionality on '%s' is "
+       "correct", SYMFILE);
+    }
+   } else {
+    tst_resm(TFAIL, "readlink() return value %d "
+      "does't match, Expected %d",
+      TEST_RETURN, exp_val);
+   }
+  } else {
+   tst_resm(TPASS, "call succeeded");
+  }
+ } /* End for TEST_LOOPING */
+
+ /* Call cleanup() to undo setup done for the test. */
+ cleanup();
+
+ return(0);
+} /* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -171,54 +171,54 @@ main(int ac, char **av)
  *  Create a test file under temporary directory and close it
  *  Create a symbolic link of testfile.
  */
-void 
+void
 setup()
 {
-	int fd;			/* file handle for testfile */
+ int fd;   /* file handle for testfile */
 
-	/* Switch to nobody user for correct error code collection */
-        if (geteuid() != 0) {
+ /* Switch to nobody user for correct error code collection */
+        if (geteuid() ! 0) {
                 tst_brkm(TBROK, tst_exit, "Test must be run as root");
         }
-	 if ((ltpuser = getpwnam(nobody_uid)) == NULL) {
-		tst_brkm(TBROK, cleanup, "getpwname(nobody_uid) failed ");
-	 }
-         if (seteuid(ltpuser->pw_uid) == -1) {
+  if ((ltpuser  getpwnam(nobody_uid))  NULL) {
+  tst_brkm(TBROK, cleanup, "getpwname(nobody_uid) failed ");
+  }
+         if (seteuid(ltpuser->pw_uid)  -1) {
                 tst_resm(TINFO, "seteuid failed to "
                          "to set the effective uid to %d",
                          ltpuser->pw_uid);
                 perror("seteuid");
          }
 
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
-	tst_tmpdir();
+ /* make a temp directory and cd to it */
+ tst_tmpdir();
 
-	if ((fd = open(TESTFILE, O_RDWR|O_CREAT, FILE_MODE)) == -1) {
-		tst_brkm(TBROK, cleanup,
-			 "open(%s, O_RDWR|O_CREAT, %#o) failed, errno=%d : %s",
-			 TESTFILE, FILE_MODE, errno, strerror(errno));
-	}
+ if ((fd  open(TESTFILE, O_RDWR|O_CREAT, FILE_MODE))  -1) {
+  tst_brkm(TBROK, cleanup,
+    "open(%s, O_RDWR|O_CREAT, %#o) failed, errno%d : %s",
+    TESTFILE, FILE_MODE, errno, strerror(errno));
+ }
 
-	if (close(fd) == -1) {
-		tst_resm(TWARN, "close(%s) Failed, errno=%d : %s",
-		TESTFILE, errno, strerror(errno));
-	}
+ if (close(fd)  -1) {
+  tst_resm(TWARN, "close(%s) Failed, errno%d : %s",
+  TESTFILE, errno, strerror(errno));
+ }
 
-	/* Create a symlink of testfile under temporary directory */
-	if (symlink(TESTFILE, SYMFILE) < 0) {
-		tst_brkm(TBROK, cleanup,
-			 "symlink(%s, %s) failed, errno=%d : %s",
-			 TESTFILE, SYMFILE, errno, strerror(errno));
-	}
+ /* Create a symlink of testfile under temporary directory */
+ if (symlink(TESTFILE, SYMFILE) < 0) {
+  tst_brkm(TBROK, cleanup,
+    "symlink(%s, %s) failed, errno%d : %s",
+    TESTFILE, SYMFILE, errno, strerror(errno));
+ }
 
-	/* Get the strlen of testfile */
-	exp_val = strlen(TESTFILE);
+ /* Get the strlen of testfile */
+ exp_val  strlen(TESTFILE);
 }
 
 /*
@@ -227,18 +227,18 @@ setup()
  *
  *  Remove the test directory and testfile created in the setup.
  */
-void 
+void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
-	tst_rmdir();
+ /* Remove tmp dir and all files in it */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

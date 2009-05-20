@@ -1,5 +1,5 @@
 /*
-  Test for the existance and valid prototype 
+  Test for the existance and valid prototype
   of the mq_setattr function as specified on
   line 9690 of the Base Definitions document
 */
@@ -10,6 +10,6 @@
 
 int main()
 {
-	fprintf(stderr, "Test not implemented!\n");
+ fprintf(stderr, "Test not implemented!\n");
         return PTS_UNTESTED;
 }

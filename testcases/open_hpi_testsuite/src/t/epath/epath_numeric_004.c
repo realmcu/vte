@@ -22,21 +22,21 @@
 #include <epath_utils.h>
 
 int main (int argc, char **argv) {
-	SaHpiEntityPathT  ep;
-	gchar *test_string, *expected_string;
-	const int MAX_STRING_SIZE = 512;
-	gchar returned_string[MAX_STRING_SIZE];
-	int   err;
+ SaHpiEntityPathT  ep;
+ gchar *test_string, *expected_string;
+ const int MAX_STRING_SIZE  512;
+ gchar returned_string[MAX_STRING_SIZE];
+ int   err;
 
         // check if we can convert the last entry of the list
-        test_string = "{SUBBOARD_CARRIER_BLADE,12}";
-        expected_string = "{SUBBOARD_CARRIER_BLADE,12}";
+        test_string  "{SUBBOARD_CARRIER_BLADE,12}";
+        expected_string  "{SUBBOARD_CARRIER_BLADE,12}";
 
-	err = string2entitypath(test_string, &ep);
-	if (err)
-		return 1;
-        
-        err = entitypath2string(&ep, returned_string, MAX_STRING_SIZE);
+ err  string2entitypath(test_string, &ep);
+ if (err)
+  return 1;
+
+        err  entitypath2string(&ep, returned_string, MAX_STRING_SIZE);
         if (err < 0)
                 return 1;
 

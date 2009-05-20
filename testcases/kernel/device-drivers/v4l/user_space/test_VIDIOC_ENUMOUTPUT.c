@@ -29,122 +29,122 @@
 #include "test_VIDIOC_ENUMOUTPUT.h"
 
 void test_VIDIOC_ENUMOUTPUT() {
-	int ret;
-	struct v4l2_output output;
-	struct v4l2_output output2;
-	__u32 i;
+ int ret;
+ struct v4l2_output output;
+ struct v4l2_output output2;
+ __u32 i;
 
-	i = 0;
-	do {
-		memset(&output, 0xff, sizeof(output));
-		output.index = i;
-		ret = ioctl(get_video_fd(), VIDIOC_ENUMOUTPUT, &output);
+ i  0;
+ do {
+  memset(&output, 0xff, sizeof(output));
+  output.index  i;
+  ret  ioctl(get_video_fd(), VIDIOC_ENUMOUTPUT, &output);
 
-		dprintf("VIDIOC_ENUMOUTPUT, ret=%i\n", ret);
+  dprintf("VIDIOC_ENUMOUTPUT, ret%i\n", ret);
 
-		if (ret == 0) {
-			CU_ASSERT_EQUAL(ret, 0);
-			CU_ASSERT_EQUAL(output.index, i);
+  if (ret  0) {
+   CU_ASSERT_EQUAL(ret, 0);
+   CU_ASSERT_EQUAL(output.index, i);
 
-			//CU_ASSERT_EQUAL(output.name, ?);
-			CU_ASSERT(0 < strlen( (char*)output.name ));
+   //CU_ASSERT_EQUAL(output.name, ?);
+   CU_ASSERT(0 < strlen( (char*)output.name ));
 
-			//CU_ASSERT_EQUAL(output.type, ?);
-			//CU_ASSERT_EQUAL(output.audioset, ?);
-			//CU_ASSERT_EQUAL(output.modulator, ?);
-			//CU_ASSERT_EQUAL(output.std, ?);
-			CU_ASSERT_EQUAL(output.reserved[0], 0);
-			CU_ASSERT_EQUAL(output.reserved[1], 0);
-			CU_ASSERT_EQUAL(output.reserved[2], 0);
-			CU_ASSERT_EQUAL(output.reserved[3], 0);
+   //CU_ASSERT_EQUAL(output.type, ?);
+   //CU_ASSERT_EQUAL(output.audioset, ?);
+   //CU_ASSERT_EQUAL(output.modulator, ?);
+   //CU_ASSERT_EQUAL(output.std, ?);
+   CU_ASSERT_EQUAL(output.reserved[0], 0);
+   CU_ASSERT_EQUAL(output.reserved[1], 0);
+   CU_ASSERT_EQUAL(output.reserved[2], 0);
+   CU_ASSERT_EQUAL(output.reserved[3], 0);
 
-			dprintf("\toutput = {.index=%u, .name=\"%s\", "
-				".type=0x%X, .audioset=0x%X, .modulator=0x%X, "
-				".std=%llX, "
-				".reserved[]={ 0x%X, 0x%X, 0x%X, 0x%X } }\n",
-				output.index,
-				output.name,
-				output.type,
-				output.audioset,
-				output.modulator,
-				output.std,
-				output.reserved[0],
-				output.reserved[1],
-				output.reserved[2],
-				output.reserved[3]
-				);
+   dprintf("\toutput  {.index%u, .name\"%s\", "
+    ".type0x%X, .audioset0x%X, .modulator0x%X, "
+    ".std%llX, "
+    ".reserved[]{ 0x%X, 0x%X, 0x%X, 0x%X } }\n",
+    output.index,
+    output.name,
+    output.type,
+    output.audioset,
+    output.modulator,
+    output.std,
+    output.reserved[0],
+    output.reserved[1],
+    output.reserved[2],
+    output.reserved[3]
+    );
 
-		} else {
-			CU_ASSERT_EQUAL(ret, -1);
-			CU_ASSERT_EQUAL(errno, EINVAL);
+  } else {
+   CU_ASSERT_EQUAL(ret, -1);
+   CU_ASSERT_EQUAL(errno, EINVAL);
 
-			memset(&output2, 0xff, sizeof(output2));
-			output2.index = i;
-			CU_ASSERT_EQUAL(memcmp(&output, &output2, sizeof(output)), 0);
+   memset(&output2, 0xff, sizeof(output2));
+   output2.index  i;
+   CU_ASSERT_EQUAL(memcmp(&output, &output2, sizeof(output)), 0);
 
-			dprintf("\terrno=%i\n", errno);
+   dprintf("\terrno%i\n", errno);
 
-		}
-		i++;
-	} while (ret == 0);
+  }
+  i++;
+ } while (ret  0);
 
 }
 
 void test_VIDIOC_ENUMOUTPUT_S32_MAX() {
-	int ret;
-	struct v4l2_output output;
-	struct v4l2_output output2;
+ int ret;
+ struct v4l2_output output;
+ struct v4l2_output output2;
 
-	memset(&output, 0xff, sizeof(output));
-	output.index = (__u32)S32_MAX;
-	ret = ioctl(get_video_fd(), VIDIOC_ENUMOUTPUT, &output);
+ memset(&output, 0xff, sizeof(output));
+ output.index  (__u32)S32_MAX;
+ ret  ioctl(get_video_fd(), VIDIOC_ENUMOUTPUT, &output);
 
-	CU_ASSERT_EQUAL(ret, -1);
-	CU_ASSERT_EQUAL(errno, EINVAL);
+ CU_ASSERT_EQUAL(ret, -1);
+ CU_ASSERT_EQUAL(errno, EINVAL);
 
-	memset(&output2, 0xff, sizeof(output2));
-	output2.index = (__u32)S32_MAX;
-	CU_ASSERT_EQUAL(memcmp(&output, &output2, sizeof(output)), 0);
+ memset(&output2, 0xff, sizeof(output2));
+ output2.index  (__u32)S32_MAX;
+ CU_ASSERT_EQUAL(memcmp(&output, &output2, sizeof(output)), 0);
 }
 
 void test_VIDIOC_ENUMOUTPUT_S32_MAX_1() {
-	int ret;
-	struct v4l2_output output;
-	struct v4l2_output output2;
+ int ret;
+ struct v4l2_output output;
+ struct v4l2_output output2;
 
-	memset(&output, 0xff, sizeof(output));
-	output.index = ((__u32)S32_MAX)+1;
-	ret = ioctl(get_video_fd(), VIDIOC_ENUMOUTPUT, &output);
+ memset(&output, 0xff, sizeof(output));
+ output.index  ((__u32)S32_MAX)+1;
+ ret  ioctl(get_video_fd(), VIDIOC_ENUMOUTPUT, &output);
 
-	CU_ASSERT_EQUAL(ret, -1);
-	CU_ASSERT_EQUAL(errno, EINVAL);
+ CU_ASSERT_EQUAL(ret, -1);
+ CU_ASSERT_EQUAL(errno, EINVAL);
 
-	memset(&output2, 0xff, sizeof(output2));
-	output2.index = ((__u32)S32_MAX)+1;
-	CU_ASSERT_EQUAL(memcmp(&output, &output2, sizeof(output)), 0);
+ memset(&output2, 0xff, sizeof(output2));
+ output2.index  ((__u32)S32_MAX)+1;
+ CU_ASSERT_EQUAL(memcmp(&output, &output2, sizeof(output)), 0);
 }
 
 void test_VIDIOC_ENUMOUTPUT_U32_MAX() {
-	int ret;
-	struct v4l2_output output;
-	struct v4l2_output output2;
+ int ret;
+ struct v4l2_output output;
+ struct v4l2_output output2;
 
-	memset(&output, 0xff, sizeof(output));
-	output.index = U32_MAX;
-	ret = ioctl(get_video_fd(), VIDIOC_ENUMOUTPUT, &output);
+ memset(&output, 0xff, sizeof(output));
+ output.index  U32_MAX;
+ ret  ioctl(get_video_fd(), VIDIOC_ENUMOUTPUT, &output);
 
-	CU_ASSERT_EQUAL(ret, -1);
-	CU_ASSERT_EQUAL(errno, EINVAL);
+ CU_ASSERT_EQUAL(ret, -1);
+ CU_ASSERT_EQUAL(errno, EINVAL);
 
-	memset(&output2, 0xff, sizeof(output2));
-	output2.index = U32_MAX;
-	CU_ASSERT_EQUAL(memcmp(&output, &output2, sizeof(output)), 0);
+ memset(&output2, 0xff, sizeof(output2));
+ output2.index  U32_MAX;
+ CU_ASSERT_EQUAL(memcmp(&output, &output2, sizeof(output)), 0);
 }
 
 void test_VIDIOC_ENUMOUTPUT_NULL() {
-	int ret;
+ int ret;
 
-	ret = ioctl(get_video_fd(), VIDIOC_ENUMOUTPUT, NULL);
-	CU_ASSERT_EQUAL(ret, -1);
-	CU_ASSERT_EQUAL(errno, EFAULT);
+ ret  ioctl(get_video_fd(), VIDIOC_ENUMOUTPUT, NULL);
+ CU_ASSERT_EQUAL(ret, -1);
+ CU_ASSERT_EQUAL(errno, EFAULT);
 }

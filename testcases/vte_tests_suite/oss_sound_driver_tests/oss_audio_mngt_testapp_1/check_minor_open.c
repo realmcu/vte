@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   check_minor_open.c
 
         @brief  OSS audio simple open test.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -20,17 +20,17 @@ RB657C/gsch1c                20/07/2004     TLSbo40898  Initial version  of OSS 
 D.Khoroshev/b00313           02/23/2006     TLSbo61805  Update according new SSI specifications
 D.Simakov                    19/10/2006     TLSbo76144  dsp->adsp, dsp1->dsp
 D.Simakov                    07/12/2006     TLSbo76144  Updated with the new kernel
-====================================================================================================
+====================
 Portability: ARM GCC
 
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
-    
+
 /* Harness Specific Include Files. */
 #include <test.h>
 
@@ -38,48 +38,48 @@ Portability: ARM GCC
 #include "oss_sound_driver_test.h"
 #include "../common.h"
 
-/*==================================================================================================
+/*======================
                                        LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 #define MAX_INSTANCES 4
 
-/*================================================================================================*/
-/*===== VT_oss_sound_driver_setup =====*/
+/*====================*/
+/*= VT_oss_sound_driver_setup =*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
-@param  None        
+@param  None
 @return On success - return TPASS              On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_oss_sound_driver_setup(void)
 {
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== VT_oss_sound_driver_cleanup =====*/
+/*====================*/
+/*= VT_oss_sound_driver_cleanup =*/
 /**
 @brief  assumes the post-condition of the test case execution
 
-@param  None        
+@param  None
 @return On success - return TPASS              On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_oss_sound_driver_cleanup(void)
 {
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== VT_oss_sound_driver_cleanup =====*/
+/*====================*/
+/*= VT_oss_sound_driver_cleanup =*/
 /**
 @brief  Test program
 
-@param  None        
+@param  None
 @return On success - return TPASS              On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_oss_sound_driver_test(int supported_inst)
 {
         int VT_rv = TFAIL;
@@ -93,7 +93,7 @@ int VT_oss_sound_driver_test(int supported_inst)
         for ( i=0; i<=supported_inst; i++ )
         {
                 if ( i == 0 )
-                {        
+                {
                         sprintf(drv_name,"/dev/sound/adsp");
                         open_flag = O_RDWR;
                 }

@@ -18,7 +18,7 @@
 
 class QLabel;
 
-class MyOrientation : public QFrame  
+class MyOrientation : public QFrame
 {
     Q_OBJECT
 public:

@@ -19,26 +19,26 @@
 
 /*
  * NAME
- * 	setreuid06.c
+ * setreuid06.c
  *
  * DESCRIPTION
- * 	Test that EPERM is set when setreuid is given an invalid user id.
+ * Test that EPERM is set when setreuid is given an invalid user id.
  *
  * USAGE:  <for command-line>
- *	setreuid06 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
- *	where,  -c n : Run n copies concurrently.
- *		-e   : Turn on errno logging.
- *		-i n : Execute test n times.
- *		-I x : Execute test for x seconds.
- *		-P x : Pause for x seconds between iterations.
- *		-t   : Turn on syscall timing.
+ * setreuid06 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
+ * where,  -c n : Run n copies concurrently.
+ *  -e   : Turn on errno logging.
+ *  -i n : Execute test n times.
+ *  -I x : Execute test for x seconds.
+ *  -P x : Pause for x seconds between iterations.
+ *  -t   : Turn on syscall timing.
  *
  * History
- *	07/2001 John George
- *		-Ported
+ * 07/2001 John George
+ *  -Ported
  *
  * Restrictions
- *      Must be ran as non-root user - nobody recommended.	
+ *      Must be ran as non-root user - nobody recommended.
  */
 
 #include <wait.h>
@@ -53,14 +53,14 @@
 #include "test.h"
 #include "usctest.h"
 
-#define INVAL_USER		 (USHRT_MAX-2)
+#define INVAL_USER   (USHRT_MAX-2)
 
-char *TCID = "setreuid06";
-int TST_TOTAL = 1;
-int exp_enos[]={EPERM, 0};
+char *TCID  "setreuid06";
+int TST_TOTAL  1;
+int exp_enos[]{EPERM, 0};
 extern int Tst_count;
 
-char nobody_uid[] = "nobody";
+char nobody_uid[]  "nobody";
 struct passwd *ltpuser;
 
 
@@ -70,42 +70,42 @@ void cleanup(void);
 int main(int argc, char **argv)
 {
 
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
 
-	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) !=
-	    (char *) NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-		/*NOTREACHED*/
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(argc, argv, (option_t *)NULL, NULL)) !
+     (char *) NULL) {
+  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+  /*NOTREACHED*/
+ }
 
-	/*
-	 * perform global setup for the test
-	 */
-	setup();
+ /*
+  * perform global setup for the test
+  */
+ setup();
 
-	/* check looping state if -i option is given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+ /* check looping state if -i option is given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		TEST(setreuid(-1, INVAL_USER));
-		if (TEST_RETURN != -1) {
-			tst_resm(TFAIL, "%s did not fail as expected", TCID);
-		} else if (TEST_ERRNO == EPERM) {
-			TEST_ERROR_LOG(TEST_ERRNO);
-			tst_resm(TPASS, "setreuid set errno to EPERM as "
-				"expected");
-		} else {
-			TEST_ERROR_LOG(TEST_ERRNO);
-			tst_resm(TFAIL, "setreuid FAILED, expected 1 but "
-				"returned %d", TEST_ERRNO);
-		}
+  TEST(setreuid(-1, INVAL_USER));
+  if (TEST_RETURN ! -1) {
+   tst_resm(TFAIL, "%s did not fail as expected", TCID);
+  } else if (TEST_ERRNO  EPERM) {
+   TEST_ERROR_LOG(TEST_ERRNO);
+   tst_resm(TPASS, "setreuid set errno to EPERM as "
+    "expected");
+  } else {
+   TEST_ERROR_LOG(TEST_ERRNO);
+   tst_resm(TFAIL, "setreuid FAILED, expected 1 but "
+    "returned %d", TEST_ERRNO);
+  }
 
-	}
-	cleanup();
-	/*NOTREACHED*/
+ }
+ cleanup();
+ /*NOTREACHED*/
 
   return(0);
 
@@ -113,25 +113,25 @@ int main(int argc, char **argv)
 
 /*
  * setup()
- * 	performs all ONE TIME setup for this test
+ * performs all ONE TIME setup for this test
  */
 void
 setup(void)
 {
-	/* capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* set the expected errnos... */
-	TEST_EXP_ENOS(exp_enos);
+ /* set the expected errnos... */
+ TEST_EXP_ENOS(exp_enos);
 
-	umask(0);
+ umask(0);
 
-	 /* Switch to nobody user for correct error code collection */
-        if (geteuid() != 0) {
+  /* Switch to nobody user for correct error code collection */
+        if (geteuid() ! 0) {
                 tst_brkm(TBROK, tst_exit, "Test must be run as root");
         }
-        ltpuser = getpwnam(nobody_uid);
-        if (setuid(ltpuser->pw_uid) == -1) {
+        ltpuser  getpwnam(nobody_uid);
+        if (setuid(ltpuser->pw_uid)  -1) {
                 tst_resm(TINFO, "setuid failed to "
                          "to set the effective uid to %d",
                          ltpuser->pw_uid);
@@ -139,24 +139,24 @@ setup(void)
         }
 
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 }
 
 /*
  * cleanup()
- * 	performs all the ONE TIME cleanup for this test at completion
- * 	or premature exit
+ * performs all the ONE TIME cleanup for this test at completion
+ * or premature exit
  */
 void
 cleanup(void)
 {
-	/*
-	 * print timing status if that option was specified
-	 * print errno log if that option was specified
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing status if that option was specified
+  * print errno log if that option was specified
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   pmic_test_CA.c
 
         @brief  Concurrent Access test scenario source file for SC55112 Protocol dirver test appliaction.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -21,13 +21,13 @@ D.Khoroshev/b00313           09/05/2005     TLSbo52700   Rework version
 D.Khoroshev/b00313           01/13/2006     TLSbo59968   Added default data for MC13783
 D.Khoroshev/b00313           07/25/2006     TLSbo64239   Added mc13783 legacy API support
 
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -38,17 +38,17 @@ Portability: ARM GCC
 #include "pmic_test_common.h"
 #include "pmic_test_CA.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 #define nb_value 8
 
 #ifdef CONFIG_MXC_PMIC_SC55112
@@ -67,7 +67,7 @@ unsigned int TEST_VALUE_CA[nb_value][2] =
 };
 #endif
 
-#ifdef  CONFIG_MXC_PMIC_MC13783 
+#ifdef  CONFIG_MXC_PMIC_MC13783
 unsigned int TEST_VALUE_CA[nb_value][2] =
 {
         {pmic_read, REG_MEMORY_A},
@@ -81,7 +81,7 @@ unsigned int TEST_VALUE_CA[nb_value][2] =
 };
 #endif
 
-#ifdef CONFIG_MXC_PMIC_MC13892 
+#ifdef CONFIG_MXC_PMIC_MC13892
 unsigned int TEST_VALUE_CA[nb_value][2] =
 {
         {pmic_read, REG_MEM_A},
@@ -108,30 +108,30 @@ unsigned int TEST_VALUE_CA[nb_value][2] =
 };
 #endif
 
-/*==================================================================================================
+/*======================
                                        LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 extern char *ifile_name;
 extern char device_name[32];
 
-/*==================================================================================================
+/*======================
                                    LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== VT_pmic_CA_setup =====*/
+/*====================*/
+/*= VT_pmic_CA_setup =*/
 /**
 @brief  Opens device file and sets up test sequence used by VT_pmic_opt. Get this sequence from file
         specified by key -F or using standart test sequence.
@@ -144,7 +144,7 @@ extern char device_name[32];
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_pmic_CA_setup (int *fd, int thread_num)
 {
         *fd = open(device_name, O_RDWR);
@@ -159,8 +159,8 @@ int VT_pmic_CA_setup (int *fd, int thread_num)
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_CA_cleanup =====*/
+/*====================*/
+/*= VT_pmic_CA_cleanup =*/
 /**
 @brief  Closes device file and frees memory for array test_sequnce if it was reserved by
         function VT_pmic_read_opt_params()
@@ -172,7 +172,7 @@ int VT_pmic_CA_setup (int *fd, int thread_num)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_pmic_CA_cleanup(int fd, int thread_num)
 {
         if (close(fd) < 0)
@@ -186,8 +186,8 @@ int VT_pmic_CA_cleanup(int fd, int thread_num)
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_test_CA =====*/
+/*====================*/
+/*= VT_pmic_test_CA =*/
 /**
 @brief  This function trying to perform read/write, subscribe/unsubscribe operations with some
         predefined registers and events.
@@ -198,7 +198,7 @@ int VT_pmic_CA_cleanup(int fd, int thread_num)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_pmic_test_CA(int thread_num)
 {
     int fd, i;

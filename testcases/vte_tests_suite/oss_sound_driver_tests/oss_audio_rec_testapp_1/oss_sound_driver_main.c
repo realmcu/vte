@@ -1,45 +1,45 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   oss_sound_driver_main.c
 
         @brief  OSS audio record test main file.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 RB657C/gsch1c                20/07/2004     TLSbo43102  Initial version  of OSS sound driver test development
-D.Simakov/smkd001c           25/07/2005     TLSbo52891  Test case asks final result to 
-                                                        user (yes or no) before printing PASS or FAIL status.      
+D.Simakov/smkd001c           25/07/2005     TLSbo52891  Test case asks final result to
+                                                        user (yes or no) before printing PASS or FAIL status.
 D.Simakov/smkd001c           06/10/2005     TLSbo53199  Syncronization was added. The code was formatted.
 I.Inkina/nknl001             11/01/2005     TLSbo61044  Clock master was added
 D.Khoroshev/b00313           03/03/2006     TLSbo62323  Updates according to last MXC OSS specification
 D.Simakov                    07/12/2006     TLSbo76144  Updated with the new kernel
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
-Total Tests: 1 
+/*======================
+Total Tests: 1
 
 Test Name:   OSS audio record test in different spaces
 
 Test Assertion
 & Strategy:  Tries to record in different audio in kernel and user spaces
 
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,33 +52,33 @@ Test Assertion
 /* Verification Test Environment Include Files */
 #include "oss_sound_driver_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 #if !defined(TRUE) && !defined(FALSE)
 #define TRUE  1
 #define FALSE 0
 #endif
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Extern Global Variables */
 extern int Tst_count;        /* counter for tst_xxx routines.  */
 extern char *TESTDIR;        /* temporary dir created by tst_tmpdir(void) */
@@ -110,23 +110,23 @@ option_t options[] = {
         {NULL, NULL, NULL}      /* NULL required to end array */
 };
 
-/*==================================================================================================
+/*======================
                                     GLOBAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void    cleanup(void);
 void    setup(void);
 int     main(int argc, char **argv);
 
-/*==================================================================================================
+/*======================
                                     LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== cleanup =====*/
+/*====================*/
+/*= cleanup =*/
 /**
 @brief  Performs all one time clean up for this test on successful
         completion,  premature exit or  failure. Closes all temporary
@@ -135,10 +135,10 @@ int     main(int argc, char **argv);
 
 @param  Input :      None.
         Output:      None.
-    
+
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
         /* VTE : Actions needed to get a stable target environment */
@@ -153,23 +153,23 @@ void cleanup(void)
         tst_exit();
 }
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
 
-/*================================================================================================*/
-/*===== help =====*/
+/*====================*/
+/*= help =*/
 /**
 @brief  Inform of the available options and the associated parameters
 
 @param  Input :      None.
         Output:      None.
-    
+
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 void help(void)
 {
         printf("Switches \n\n");
@@ -183,8 +183,8 @@ void help(void)
         printf("       s: 3 for line in \n");
 }
 
-/*================================================================================================*/
-/*===== setup =====*/
+/*====================*/
+/*= setup =*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -192,11 +192,11 @@ void help(void)
 
 @param  Input :      None.
         Output:      None.
-    
+
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
         int     VT_rv = TFAIL;
@@ -211,7 +211,7 @@ void setup(void)
         return;
 }
 
-/*================================================================================================*/
+/*====================*/
 int ask_user(char *question)
 {
         unsigned char answer;
@@ -231,8 +231,8 @@ int ask_user(char *question)
         return ret;
 }
 
-/*================================================================================================*/
-/*===== main =====*/
+/*====================*/
+/*= main =*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -250,11 +250,11 @@ int ask_user(char *question)
                                 -Id - Id of the test according to the test plan
                                 -Case N - If exist, the test case number associated with the test Id
                                 -Iter - Inform the iteration of the loop in case of an endurance/stress test
-    
+
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
         int     VT_rv = TFAIL;
@@ -312,7 +312,7 @@ int main(int argc, char **argv)
         /* Test Case Body. */
         /* VTE : print results and exit test scenario */
         VT_rv = VT_oss_sound_driver_test(Source, 0, ByteNum, Bits, Speed, Chan); /* with the
-                                                                                     * parameters 
+                                                                                     * parameters
                                                                                      * needed
                                                                                      * come from
                                                                                      * parse_opt()) */

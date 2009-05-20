@@ -1,5 +1,5 @@
 #!/bin/sh
-# This will run all the network tests, with the status logged in /tmp/netpan.log  
+# This will run all the network tests, with the status logged in /tmp/netpan.log
 cd `dirname $0`
 export LTPROOT=${PWD}
 echo $LTPROOT | grep testscripts > /dev/null 2>&1
@@ -16,7 +16,7 @@ export PASSWD=
 
 # ---***** NFS OPTIONAL SETTINGS *****---
 # DEFAULTS
-# export VERSION=2 
+# export VERSION=2
 # export SOCKET_TYPE=udp
 # ---*********************************---
 
@@ -32,7 +32,7 @@ cat  ${LTPROOT}/runtest/nfs >> $TMPDIR/network.tests
 cd $TMPDIR
 
 export PATH="${PATH}:${LTPROOT}/testcases/bin"
- 
+
 ${LTPROOT}/ver_linux
 
 ${LTPROOT}/pan/pan -e -l /tmp/netpan.log -S -a ltpnet -n ltpnet -f ${TMPDIR}/network.tests

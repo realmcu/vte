@@ -2,7 +2,7 @@
  * Copyright (c) 2002-2003, Intel Corporation. All rights reserved.
  * Created by:  salwan.searty REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
  This program tests the assertion that if the ss_flags member is set to something
@@ -31,41 +31,41 @@ stack_t altstack1;
 
 void handler(int signo)
 {
-	printf("Just a dummy handler\n");
+ printf("Just a dummy handler\n");
 }
 
 int main()
 {
 
-	struct sigaction act;
-	act.sa_flags = SA_ONSTACK;
-	act.sa_handler = handler;
-	sigemptyset(&act.sa_mask);
+ struct sigaction act;
+ act.sa_flags = SA_ONSTACK;
+ act.sa_handler = handler;
+ sigemptyset(&act.sa_mask);
 
-	if (sigaction(SIGTOTEST,  &act, 0) == -1) {
-		perror("Unexpected error while attempting to setup test pre-conditions");
-		return PTS_UNRESOLVED;
-	}
+ if (sigaction(SIGTOTEST,  &act, 0) == -1) {
+  perror("Unexpected error while attempting to setup test pre-conditions");
+  return PTS_UNRESOLVED;
+ }
 
-	if ((altstack1.ss_sp = (void *)malloc(SIGSTKSZ)) == NULL) {
-		perror("Unexpected error while attempting to setup test pre-conditions");
-		return PTS_UNRESOLVED;
-	}
+ if ((altstack1.ss_sp = (void *)malloc(SIGSTKSZ)) == NULL) {
+  perror("Unexpected error while attempting to setup test pre-conditions");
+  return PTS_UNRESOLVED;
+ }
 
-	altstack1.ss_flags = SS_DISABLE + 1;
-	altstack1.ss_size = SIGSTKSZ;
-	
-	if (sigaltstack(&altstack1, (stack_t *)0) != -1) {
-		printf("Test FAILED: Expected return value of -1.\n");
-		return PTS_FAIL;
-	}
+ altstack1.ss_flags = SS_DISABLE + 1;
+ altstack1.ss_size = SIGSTKSZ;
 
-	if (errno != EINVAL) {
-		printf("Test FAILED: Errno [EINVAL] was expected.\n");
-		return PTS_FAIL;
-	}
+ if (sigaltstack(&altstack1, (stack_t *)0) != -1) {
+  printf("Test FAILED: Expected return value of -1.\n");
+  return PTS_FAIL;
+ }
 
-	printf("Test PASSED\n");
-	return PTS_PASS;
+ if (errno != EINVAL) {
+  printf("Test FAILED: Errno [EINVAL] was expected.\n");
+  return PTS_FAIL;
+ }
+
+ printf("Test PASSED\n");
+ return PTS_PASS;
 }
 

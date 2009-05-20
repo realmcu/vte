@@ -22,7 +22,7 @@
 #Igor Semenchukov/smng001c    25/03/2005     TLSbo48795   Updated due to changes in the codec's code
 #L.Delaspre/rc149c            29/03/2005     TLSbo49055   ARM11 codecs P2 tests
 #D.Simakov/smkd001c           22/10/2005     TLSbo57009   Rework
-#D.Simakov/smkd001c           15/12/2005     TLSbo59668   Improved 
+#D.Simakov/smkd001c           15/12/2005     TLSbo59668   Improved
 ###################################################################################################
 #Portability: Indicate if this module is portable to other compilers or platforms.
 #             If not, indicate specific reasons why is it not portable.
@@ -57,8 +57,8 @@ install:
 	cp -ruf $(AACD_INPUT) $(LTP_BIN)
 	cp -ruf $(AACD_REF) $(LTP_BIN)
 	mkdir -p $(LTP_BIN)/aacd_output
-	mkdir -p $(LTP_BIN)/sharedlibs       
-	cp -rf $(AACD_LIBDIR)/lib$(AACD_LIBRARY).so $(LTP_BIN)/sharedlibs            
+	mkdir -p $(LTP_BIN)/sharedlibs
+	cp -rf $(AACD_LIBDIR)/lib$(AACD_LIBRARY).so $(LTP_BIN)/sharedlibs
 	@echo "***************************************************"
 	@echo "** INSTALL : aaclc_decoder_testapp               **"
 	@echo "***************************************************"

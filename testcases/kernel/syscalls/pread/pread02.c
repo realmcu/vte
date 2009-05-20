@@ -38,8 +38,8 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return=-1)
- *      if errno set == expected errno
+ *   Check return code, if system call failed (return-1)
+ *      if errno set  expected errno
  *              Issue sys call fails with expected return value and errno.
  *      Otherwise,
  *              Issue sys call fails with unexpected errno.
@@ -59,7 +59,7 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS:
  *  None.
@@ -74,119 +74,119 @@
 #include "test.h"
 #include "usctest.h"
 
-#define TEMPFILE	"pread_file"
+#define TEMPFILE "pread_file"
 #define K1              1024
 #define NBUFS           4
 
-char *TCID="pread02";		/* Test program identifier.    */
-int TST_TOTAL=2;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID"pread02";  /* Test program identifier.    */
+int TST_TOTAL2;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 
-char *write_buf[NBUFS];		/* buffer to hold data to be written */
-char *read_buf[NBUFS];		/* buffer to hold data read from file */
-int pfd[2];			/* pair of file descriptors */
-int fd1;			/* file descriptor of temporary file */
+char *write_buf[NBUFS];  /* buffer to hold data to be written */
+char *read_buf[NBUFS];  /* buffer to hold data read from file */
+int pfd[2];   /* pair of file descriptors */
+int fd1;   /* file descriptor of temporary file */
 
-int exp_enos[] = {ESPIPE, EINVAL, 0};
+int exp_enos[]  {ESPIPE, EINVAL, 0};
 
-void setup();			/* Main setup function of test */
-void cleanup();			/* cleanup function for the test */
-int setup1();			/* setup function for test #1 */
-int setup2();			/* setup function for test #2 */
+void setup();   /* Main setup function of test */
+void cleanup();   /* cleanup function for the test */
+int setup1();   /* setup function for test #1 */
+int setup2();   /* setup function for test #2 */
 int no_setup();
-void init_buffers();		/* function to initialize/allocate buffers */
+void init_buffers();  /* function to initialize/allocate buffers */
 
-struct test_case_t {		/* test case struct. to hold ref. test cond's*/
-	int fd;
-	size_t nb;
-	off_t offst;
-	char *desc;
-	int exp_errno;
-	int (*setupfunc)();
-} Test_cases[] = {
-	{ 1, K1, 0, "file descriptor is a PIPE or FIFO", ESPIPE, setup1 },
-	{ 2, K1, -1, "specified offset is -ve or invalid", EINVAL, setup2 },
-	{ 0, 0, 0, NULL, 0, no_setup }
+struct test_case_t {  /* test case struct. to hold ref. test cond's*/
+ int fd;
+ size_t nb;
+ off_t offst;
+ char *desc;
+ int exp_errno;
+ int (*setupfunc)();
+} Test_cases[]  {
+ { 1, K1, 0, "file descriptor is a PIPE or FIFO", ESPIPE, setup1 },
+ { 2, K1, -1, "specified offset is -ve or invalid", EINVAL, setup2 },
+ { 0, 0, 0, NULL, 0, no_setup }
 };
 
 int
 main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-	int i;			/* counter to test different test conditions */
-	int fildes;		/* file descriptor of test file */
-	size_t nbytes;		/* no. of bytes to be written */
-	off_t offset;		/* offset position in the specified file */
-	char *test_desc;	/* test specific error message */
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
+ int i;   /* counter to test different test conditions */
+ int fildes;  /* file descriptor of test file */
+ size_t nbytes;  /* no. of bytes to be written */
+ off_t offset;  /* offset position in the specified file */
+ char *test_desc; /* test specific error message */
 
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(ac, av, (option_t *)NULL, NULL);
+ if (msg ! (char *)NULL) {
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	/* Perform global setup for test */
-	setup();
+ /* Perform global setup for test */
+ setup();
 
-	TEST_EXP_ENOS(exp_enos);
+ TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* Check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
+  /* Reset Tst_count in case we are looping. */
+  Tst_count0;
 
-		/* loop through the test cases */
-		for (i=0; Test_cases[i].desc != NULL; i++) {
-			fildes = Test_cases[i].fd;
-			test_desc = Test_cases[i].desc;
-			nbytes = Test_cases[i].nb;
-			offset = Test_cases[i].offst;
+  /* loop through the test cases */
+  for (i0; Test_cases[i].desc ! NULL; i++) {
+   fildes  Test_cases[i].fd;
+   test_desc  Test_cases[i].desc;
+   nbytes  Test_cases[i].nb;
+   offset  Test_cases[i].offst;
 
-			if (fildes == 1) {
-				fildes = pfd[0];
-			} else if (fildes == 2) {
-				fildes = fd1;
-			}
+   if (fildes  1) {
+    fildes  pfd[0];
+   } else if (fildes  2) {
+    fildes  fd1;
+   }
 
-			/*
-			 * Call pread() with the specified file descriptor,
-			 * no. of bytes to be read from specified offset.
-			 * and verify that call should fail with appropriate
-			 * errno set.
-			 */
-			TEST(pread(fildes, read_buf[0], nbytes, offset));
+   /*
+    * Call pread() with the specified file descriptor,
+    * no. of bytes to be read from specified offset.
+    * and verify that call should fail with appropriate
+    * errno set.
+    */
+   TEST(pread(fildes, read_buf[0], nbytes, offset));
 
-			/* Check for the return code of pread() */
-			if (TEST_RETURN != -1) {
-				tst_brkm(TFAIL, cleanup, "pread() returned "
-					 "%d, expected -1, errno:%d",
-					 TEST_RETURN,
-					 Test_cases[i].exp_errno);
-			}
+   /* Check for the return code of pread() */
+   if (TEST_RETURN ! -1) {
+    tst_brkm(TFAIL, cleanup, "pread() returned "
+      "%d, expected -1, errno:%d",
+      TEST_RETURN,
+      Test_cases[i].exp_errno);
+   }
 
-			TEST_ERROR_LOG(TEST_ERRNO);
+   TEST_ERROR_LOG(TEST_ERRNO);
 
-			/*
-			 * Verify whether expected errno is set.
-			 */
-			if (TEST_ERRNO == Test_cases[i].exp_errno) {
-				tst_resm(TPASS, "pread() fails, %s, errno:%d",
-					 test_desc, TEST_ERRNO);
-			} else {
-				tst_resm(TFAIL, "pread() fails, %s, unexpected "
-					 "errno:%d, expected:%d", test_desc,
-					 TEST_ERRNO, Test_cases[i].exp_errno);
-			}
-		}	/* End of TEST CASE LOOPING */
-	}	/* End of TEST_LOOPOING. */
+   /*
+    * Verify whether expected errno is set.
+    */
+   if (TEST_ERRNO  Test_cases[i].exp_errno) {
+    tst_resm(TPASS, "pread() fails, %s, errno:%d",
+      test_desc, TEST_ERRNO);
+   } else {
+    tst_resm(TFAIL, "pread() fails, %s, unexpected "
+      "errno:%d, expected:%d", test_desc,
+      TEST_ERRNO, Test_cases[i].exp_errno);
+   }
+  } /* End of TEST CASE LOOPING */
+ } /* End of TEST_LOOPOING. */
 
-	/* Call cleanup() to undo setup done for the test. */
-	cleanup();
+ /* Call cleanup() to undo setup done for the test. */
+ cleanup();
 
-	/*NOTREACHED*/
-	return(0);
+ /*NOTREACHED*/
+ return(0);
 }
 
 /*
@@ -197,21 +197,21 @@ main(int ac, char **av)
 void
 setup()
 {
-	int i;		/* counter for setup functions */
+ int i;  /* counter for setup functions */
 
-	/* capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* Allocate/Initialize the read/write buffer with known data */
-	init_buffers();
+ /* Allocate/Initialize the read/write buffer with known data */
+ init_buffers();
 
-	/* Call individual setup functions */
-	for (i=0; Test_cases[i].desc != NULL; i++) {
-		Test_cases[i].setupfunc();
-	}
+ /* Call individual setup functions */
+ for (i0; Test_cases[i].desc ! NULL; i++) {
+  Test_cases[i].setupfunc();
+ }
 }
 
 /*
@@ -220,7 +220,7 @@ setup()
 int
 no_setup()
 {
-	return 0;
+ return 0;
 }
 
 /*
@@ -234,19 +234,19 @@ no_setup()
 int
 setup1()
 {
-	/* Create a pair of unnamed pipe */
-	if (pipe(pfd) < 0) {
-		tst_brkm(TBROK, cleanup, "pipe() failed to create pair of "
-			 "pipe, error:%d", errno);
-	}
+ /* Create a pair of unnamed pipe */
+ if (pipe(pfd) < 0) {
+  tst_brkm(TBROK, cleanup, "pipe() failed to create pair of "
+    "pipe, error:%d", errno);
+ }
 
-	/* Write known data (0's) of K1 bytes */
-	if (write(pfd[1], write_buf[0], K1) != K1) {
-		tst_brkm(TBROK, cleanup, "write to pipe failed: errno=%d : %s",
-			 errno, strerror(errno));
-	}
+ /* Write known data (0's) of K1 bytes */
+ if (write(pfd[1], write_buf[0], K1) ! K1) {
+  tst_brkm(TBROK, cleanup, "write to pipe failed: errno%d : %s",
+    errno, strerror(errno));
+ }
 
-	return 0;
+ return 0;
 }
 
 /*
@@ -259,16 +259,16 @@ setup1()
 int
 setup2()
 {
-	/* make a temp directory and cd to it */
-	tst_tmpdir();
+ /* make a temp directory and cd to it */
+ tst_tmpdir();
 
-	/* Creat a temporary file used for mapping */
-	if ((fd1 = open(TEMPFILE, O_RDWR | O_CREAT, 0666)) < 0) {
-		tst_brkm(TBROK, cleanup, "open() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
-	}
+ /* Creat a temporary file used for mapping */
+ if ((fd1  open(TEMPFILE, O_RDWR | O_CREAT, 0666)) < 0) {
+  tst_brkm(TBROK, cleanup, "open() on %s Failed, errno%d : %s",
+    TEMPFILE, errno, strerror(errno));
+ }
 
-	return 0;
+ return 0;
 }
 
 /*
@@ -282,19 +282,19 @@ setup2()
 void
 init_buffers()
 {
-	int count;		/* counter variable for loop */
+ int count;  /* counter variable for loop */
 
-	/* Allocate and Initialize write buffer with known data */
-	for (count = 0; count < NBUFS; count++) {
-		write_buf[count] = (char *)malloc(K1);
-		read_buf[count] = (char *)malloc(K1);
+ /* Allocate and Initialize write buffer with known data */
+ for (count  0; count < NBUFS; count++) {
+  write_buf[count]  (char *)malloc(K1);
+  read_buf[count]  (char *)malloc(K1);
 
-		if ((write_buf[count] == NULL) || (read_buf[count] == NULL)) {
-			tst_brkm(TBROK, tst_exit,
-				 "malloc() failed on read/write buffers");
-		}
-		memset(write_buf[count], count, K1);
-	}
+  if ((write_buf[count]  NULL) || (read_buf[count]  NULL)) {
+   tst_brkm(TBROK, tst_exit,
+     "malloc() failed on read/write buffers");
+  }
+  memset(write_buf[count], count, K1);
+ }
 }
 
 /*
@@ -308,28 +308,28 @@ init_buffers()
 void
 cleanup()
 {
-	int count;		/* index for the loop */
+ int count;  /* index for the loop */
 
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* Free the memory allocated for the read/write buffer */
-	for (count = 0; count < NBUFS; count++) {
-		free(write_buf[count]);
-		free(read_buf[count]);
-	}
+ /* Free the memory allocated for the read/write buffer */
+ for (count  0; count < NBUFS; count++) {
+  free(write_buf[count]);
+  free(read_buf[count]);
+ }
 
-	/* Close the temporary file created in setup2 */
-	if (close(fd1) < 0) {
-		tst_brkm(TBROK, NULL, "close() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
-	}
+ /* Close the temporary file created in setup2 */
+ if (close(fd1) < 0) {
+  tst_brkm(TBROK, NULL, "close() on %s Failed, errno%d : %s",
+    TEMPFILE, errno, strerror(errno));
+ }
 
-	/* Remove tmp dir and all files in it */
-	tst_rmdir();
+ /* Remove tmp dir and all files in it */
+ tst_rmdir();
 
-	tst_exit();
+ tst_exit();
 }

@@ -77,7 +77,7 @@ char *sprint_uptime(void) {
   loadavg(&av[0], &av[1], &av[2]);
 
   pos += sprintf(buf + pos, " load average: %.2f, %.2f, %.2f",
-		 av[0], av[1], av[2]);
+   av[0], av[1], av[2]);
 
   return buf;
 }

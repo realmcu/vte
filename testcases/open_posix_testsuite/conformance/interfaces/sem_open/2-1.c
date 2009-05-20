@@ -1,8 +1,8 @@
 /*
     Copyright (c) 2002-2003, Intel Corporation. All rights reserved.
     Created by:  majid.awad REMOVE-THIS AT intel DOT com
-    This file is licensed under the GPL license.  For the full content 
-    of this license, see the COPYING file at the top level of this 
+    This file is licensed under the GPL license.  For the full content
+    of this license, see the COPYING file at the top level of this
     source tree.
  */
 
@@ -29,31 +29,31 @@
 
 int main()
 {
-	sem_t   *mysemp;
-	char semname[50];
+ sem_t   *mysemp;
+ char semname[50];
 
-	sprintf(semname, "/" FUNCTION "_" TEST "_%d", getpid());
+ sprintf(semname, "/" FUNCTION "_" TEST "_%d", getpid());
 
-	mysemp = sem_open(semname, O_CREAT, 0777, 0);
-	if ( mysemp  == SEM_FAILED ) {
-  		perror(ERROR_PREFIX "sem_open");
-		return PTS_UNRESOLVED;
-	}
-	
-	if (sem_close(mysemp) == -1 ) {
-		perror(ERROR_PREFIX "sem_close");
-		return PTS_UNRESOLVED;
-	}
+ mysemp  sem_open(semname, O_CREAT, 0777, 0);
+ if ( mysemp   SEM_FAILED ) {
+ perror(ERROR_PREFIX "sem_open");
+  return PTS_UNRESOLVED;
+ }
 
-	mysemp = sem_open(semname, O_CREAT|O_EXCL, 0777, 1);
-	if (( mysemp  == SEM_FAILED ) && ( errno == EEXIST) ) {
-		puts("TEST PASSED");
-		sem_unlink(semname);
-		return  PTS_PASS;
-	}
-	else
-	{
-		puts("TEST FAILED");
-		return PTS_FAIL;
-	}
+ if (sem_close(mysemp)  -1 ) {
+  perror(ERROR_PREFIX "sem_close");
+  return PTS_UNRESOLVED;
+ }
+
+ mysemp  sem_open(semname, O_CREAT|O_EXCL, 0777, 1);
+ if (( mysemp   SEM_FAILED ) && ( errno  EEXIST) ) {
+  puts("TEST PASSED");
+  sem_unlink(semname);
+  return  PTS_PASS;
+ }
+ else
+ {
+  puts("TEST FAILED");
+  return PTS_FAIL;
+ }
 }

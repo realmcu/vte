@@ -26,7 +26,7 @@
 * -> child thread trylock stdout
 * -> join the child
 
-* The test fails if the child thread cannot lock the file 
+* The test fails if the child thread cannot lock the file
 * -- this would mean the child process got stdout file lock ownership.
 
 */
@@ -53,22 +53,22 @@
 /******************************   Test framework   *****************************************/
 /********************************************************************************************/
 #include "testfrmw.h"
- #include "testfrmw.c" 
+ #include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
+ * UNRESOLVED(ret, descr);
  *    where descr is a description of the error and ret is an int (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -85,92 +85,92 @@
 /* Thread function */
 void * threaded( void * arg )
 {
-	int ret;
-	ret = ftrylockfile( stdout );
+ int ret;
+ ret  ftrylockfile( stdout );
 
-	if ( ret != 0 )
-	{
-		FAILED( "The child process is owning the file lock." );
-	}
+ if ( ret ! 0 )
+ {
+  FAILED( "The child process is owning the file lock." );
+ }
 
 #if VERBOSE > 1
 
-	output( "The file lock was not inherited in the child process\n" );
+ output( "The file lock was not inherited in the child process\n" );
 
 #endif
 
-	return NULL;
+ return NULL;
 }
 
 /* The main test function. */
 int main( int argc, char * argv[] )
 {
-	int ret, status;
-	pid_t child, ctl;
-	pthread_t ch;
+ int ret, status;
+ pid_t child, ctl;
+ pthread_t ch;
 
-	/* Initialize output */
-	output_init();
+ /* Initialize output */
+ output_init();
 
-	/* lock the stdout file */
-	flockfile( stdout );
+ /* lock the stdout file */
+ flockfile( stdout );
 
-	/* Create the child */
-	child = fork();
+ /* Create the child */
+ child  fork();
 
-	if ( child == ( pid_t ) - 1 )
-	{
-		UNRESOLVED( errno, "Failed to fork" );
-	}
+ if ( child  ( pid_t ) - 1 )
+ {
+  UNRESOLVED( errno, "Failed to fork" );
+ }
 
-	/* child */
-	if ( child == ( pid_t ) 0 )
-	{
+ /* child */
+ if ( child  ( pid_t ) 0 )
+ {
 
-		ret = pthread_create( &ch, NULL, threaded, NULL );
+  ret  pthread_create( &ch, NULL, threaded, NULL );
 
-		if ( ret != 0 )
-		{
-			UNRESOLVED( ret, "Failed to create a thread" );
-		}
+  if ( ret ! 0 )
+  {
+   UNRESOLVED( ret, "Failed to create a thread" );
+  }
 
-		ret = pthread_join( ch, NULL );
+  ret  pthread_join( ch, NULL );
 
-		if ( ret != 0 )
-		{
-			UNRESOLVED( ret, "Failed to join the thread" );
-		}
+  if ( ret ! 0 )
+  {
+   UNRESOLVED( ret, "Failed to join the thread" );
+  }
 
-		/* We're done */
-		exit( PTS_PASS );
-	}
+  /* We're done */
+  exit( PTS_PASS );
+ }
 
-	/* Parent sleeps for a while to create contension in case the file lock is inherited */
-	sleep( 1 );
+ /* Parent sleeps for a while to create contension in case the file lock is inherited */
+ sleep( 1 );
 
-	funlockfile( stdout );
+ funlockfile( stdout );
 
-	/* Parent joins the child */
-	ctl = waitpid( child, &status, 0 );
+ /* Parent joins the child */
+ ctl  waitpid( child, &status, 0 );
 
-	if ( ctl != child )
-	{
-		UNRESOLVED( errno, "Waitpid returned the wrong PID" );
-	}
+ if ( ctl ! child )
+ {
+  UNRESOLVED( errno, "Waitpid returned the wrong PID" );
+ }
 
-	if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) != PTS_PASS ) )
-	{
-		FAILED( "Child exited abnormally" );
-	}
+ if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) ! PTS_PASS ) )
+ {
+  FAILED( "Child exited abnormally" );
+ }
 
-	/* Test passed */
+ /* Test passed */
 #if VERBOSE > 0
 
-	output( "Test passed\n" );
+ output( "Test passed\n" );
 
 #endif
 
-	PASSED;
+ PASSED;
 }
 
 

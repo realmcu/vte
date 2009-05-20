@@ -28,7 +28,7 @@
 
 int dummy(void *v)
 {
-	return 0;
+ return 0;
 }
 
 /*
@@ -38,50 +38,50 @@ int dummy(void *v)
 #if 0
 int kernel_version_newenough()
 {
-	int ret;
-	struct utsname buf;
-	char *s;
-	int maj, min, micro;
+ int ret;
+ struct utsname buf;
+ char *s;
+ int maj, min, micro;
 
-	ret = uname(&buf);
-	if (ret == -1) {
-		perror("uname");
-		return 0;
-	}
-	s = buf.release;
-	sscanf(s, "%d.%d.%d", &maj, &min, &micro);
-	if (maj < 2)
-		return 0;
-	if (min < 6)
-		return 0;
-	if (micro < 19)
-		return 0;
-	return 1;
+ ret  uname(&buf);
+ if (ret  -1) {
+  perror("uname");
+  return 0;
+ }
+ s  buf.release;
+ sscanf(s, "%d.%d.%d", &maj, &min, &micro);
+ if (maj < 2)
+  return 0;
+ if (min < 6)
+  return 0;
+ if (micro < 19)
+  return 0;
+ return 1;
 }
 #endif  /* Library is already provided by LTP*/
 int main()
 {
-	void *childstack, *stack;
-	int pid;
+ void *childstack, *stack;
+ int pid;
 
-	//if (!kernel_version_newenough())
-	if (tst_kvercmp(2,6,19) < 0)
-		return 1;
-	stack = malloc(getpagesize());
-	if (!stack) {
-		perror("malloc");
-		return 2;
-	}
+ //if (!kernel_version_newenough())
+ if (tst_kvercmp(2,6,19) < 0)
+  return 1;
+ stack  malloc(getpagesize());
+ if (!stack) {
+  perror("malloc");
+  return 2;
+ }
 
-	childstack = stack + getpagesize();
+ childstack  stack + getpagesize();
 
 #ifdef __ia64__
-	pid = clone2(dummy, childstack, getpagesize(), CLONE_NEWUTS, NULL, NULL, NULL, NULL);
+ pid  clone2(dummy, childstack, getpagesize(), CLONE_NEWUTS, NULL, NULL, NULL, NULL);
 #else
-	pid = clone(dummy, childstack, CLONE_NEWUTS, NULL);
+ pid  clone(dummy, childstack, CLONE_NEWUTS, NULL);
 #endif
 
-	if (pid == -1)
-		return 3;
-	return 0;
+ if (pid  -1)
+  return 3;
+ return 0;
 }

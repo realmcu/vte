@@ -10,7 +10,7 @@
 #        THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #        BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #        Freescale Semiconductor, Inc.
-#     
+#
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
@@ -50,7 +50,7 @@ $(TARGET_BIN): $(OBJS)
 
 $(OBJS) : $(SRCS)
 
-$(SRCS) : 
+$(SRCS) :
 
 .phone:
 clean:

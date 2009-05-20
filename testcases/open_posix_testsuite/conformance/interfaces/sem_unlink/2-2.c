@@ -23,7 +23,7 @@
 
 
 * The steps are:
-* -> Create a named semaphore with value = 0.
+* -> Create a named semaphore with value  0.
 * -> create 3 processes. Each call sem_wait, then sem_post, then sem_close/_exit/exec
 * -> the main process unlinks the semaphore, the posts it and close it.
 * -> Check all child processes have returned successfully.
@@ -54,23 +54,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -90,193 +90,193 @@
 /* Operations common to all processes on the semaphore*/
 sem_t * common()
 {
-	int ret;
-	sem_t * sem;
+ int ret;
+ sem_t * sem;
 
-	/* Reconnect to the semaphore */
-	sem = sem_open( SEM_NAME, 0 );
+ /* Reconnect to the semaphore */
+ sem  sem_open( SEM_NAME, 0 );
 
-	if ( sem == SEM_FAILED )
-	{
-		UNRESOLVED( errno, "Failed to reconnect the semaphore" );
-	}
+ if ( sem  SEM_FAILED )
+ {
+  UNRESOLVED( errno, "Failed to reconnect the semaphore" );
+ }
 
 
-	/* block until the semaphore is posted */
+ /* block until the semaphore is posted */
 
-	do
-	{
-		ret = sem_wait( sem );
-	}
-	while ( ( ret != 0 ) && ( errno == EINTR ) );
+ do
+ {
+  ret  sem_wait( sem );
+ }
+ while ( ( ret ! 0 ) && ( errno  EINTR ) );
 
-	if ( ret != 0 )
-	{
-		FAILED( "Waiting for the semaphore failed" );
-	}
+ if ( ret ! 0 )
+ {
+  FAILED( "Waiting for the semaphore failed" );
+ }
 
-	/* spend some time... */
-	sched_yield();
+ /* spend some time... */
+ sched_yield();
 
-	sched_yield();
+ sched_yield();
 
-	sched_yield();
+ sched_yield();
 
-	/* Post the semaphore back */
-	ret = sem_post( sem );
+ /* Post the semaphore back */
+ ret  sem_post( sem );
 
-	if ( ret != 0 )
-	{
-		FAILED( "Failed to post the semaphore" );
-	}
+ if ( ret ! 0 )
+ {
+  FAILED( "Failed to post the semaphore" );
+ }
 
-	return sem;
+ return sem;
 }
 
 /* The main test function. */
 int main( int argc, char * argv[] )
 {
-	int ret, status;
-	pid_t p1, p2, p3, ctl;
+ int ret, status;
+ pid_t p1, p2, p3, ctl;
 
-	sem_t * sem;
+ sem_t * sem;
 
-	/* Initialize output */
-	output_init();
+ /* Initialize output */
+ output_init();
 
-	/* Create the semaphore */
-	sem = sem_open( SEM_NAME, O_CREAT | O_EXCL, 0777, 0 );
+ /* Create the semaphore */
+ sem  sem_open( SEM_NAME, O_CREAT | O_EXCL, 0777, 0 );
 
-	if ( ( sem == SEM_FAILED ) && ( errno == EEXIST ) )
-	{
-		sem_unlink( SEM_NAME );
-		sem = sem_open( SEM_NAME, O_CREAT | O_EXCL, 0777, 0 );
-	}
+ if ( ( sem  SEM_FAILED ) && ( errno  EEXIST ) )
+ {
+  sem_unlink( SEM_NAME );
+  sem  sem_open( SEM_NAME, O_CREAT | O_EXCL, 0777, 0 );
+ }
 
-	if ( sem == SEM_FAILED )
-	{
-		UNRESOLVED( errno, "Failed to create the semaphore" );
-	}
+ if ( sem  SEM_FAILED )
+ {
+  UNRESOLVED( errno, "Failed to create the semaphore" );
+ }
 
-	/* fork 3 times */
-	p1 = fork();
+ /* fork 3 times */
+ p1  fork();
 
-	if ( p1 == ( pid_t ) - 1 )
-	{
-		UNRESOLVED( errno, "Failed to fork" );
-	}
+ if ( p1  ( pid_t ) - 1 )
+ {
+  UNRESOLVED( errno, "Failed to fork" );
+ }
 
-	if ( p1 == ( pid_t ) 0 )        /* child */
-	{
-		sem = common();
-		ret = sem_close( sem );
+ if ( p1  ( pid_t ) 0 )        /* child */
+ {
+  sem  common();
+  ret  sem_close( sem );
 
-		if ( ret != 0 )
-		{
-			FAILED( "Failed to sem_close in child" );
-		}
+  if ( ret ! 0 )
+  {
+   FAILED( "Failed to sem_close in child" );
+  }
 
-		exit( 0 );
-	}
+  exit( 0 );
+ }
 
-	p2 = fork();
+ p2  fork();
 
-	if ( p2 == ( pid_t ) - 1 )
-	{
-		UNRESOLVED( errno, "Failed to fork" );
-	}
+ if ( p2  ( pid_t ) - 1 )
+ {
+  UNRESOLVED( errno, "Failed to fork" );
+ }
 
-	if ( p2 == ( pid_t ) 0 )        /* child */
-	{
-		sem = common();
-		_exit( 0 );
-	}
+ if ( p2  ( pid_t ) 0 )        /* child */
+ {
+  sem  common();
+  _exit( 0 );
+ }
 
-	p3 = fork();
+ p3  fork();
 
-	if ( p3 == ( pid_t ) - 1 )
-	{
-		UNRESOLVED( errno, "Failed to fork" );
-	}
+ if ( p3  ( pid_t ) - 1 )
+ {
+  UNRESOLVED( errno, "Failed to fork" );
+ }
 
-	if ( p3 == ( pid_t ) 0 )        /* child */
-	{
-		sem = common();
-		ret = execl( "/bin/ls", NULL );
-		UNRESOLVED( errno, "Failed to exec" );
-	}
+ if ( p3  ( pid_t ) 0 )        /* child */
+ {
+  sem  common();
+  ret  execl( "/bin/ls", NULL );
+  UNRESOLVED( errno, "Failed to exec" );
+ }
 
-	/* Let all processes start and wait for the semaphore */
-	sleep( 1 );
+ /* Let all processes start and wait for the semaphore */
+ sleep( 1 );
 
-	/* Unlink */
-	ret = sem_unlink( SEM_NAME );
+ /* Unlink */
+ ret  sem_unlink( SEM_NAME );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( errno, "Failed to unlink the semaphore" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( errno, "Failed to unlink the semaphore" );
+ }
 
-	/* Post the semaphore */
-	ret = sem_post( sem );
+ /* Post the semaphore */
+ ret  sem_post( sem );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( errno, "Failed to post the semaphore" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( errno, "Failed to post the semaphore" );
+ }
 
-	/* and close it in this process */
-	ret = sem_close( sem );
+ /* and close it in this process */
+ ret  sem_close( sem );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( errno, "Failed to close the semaphore" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( errno, "Failed to close the semaphore" );
+ }
 
-	/* Wait all processes */
-	ctl = waitpid( p1, &status, 0 );
+ /* Wait all processes */
+ ctl  waitpid( p1, &status, 0 );
 
-	if ( ctl != p1 )
-	{
-		UNRESOLVED( errno, "Waitpid returned the wrong PID" );
-	}
+ if ( ctl ! p1 )
+ {
+  UNRESOLVED( errno, "Waitpid returned the wrong PID" );
+ }
 
-	if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) != 0 ) )
-	{
-		FAILED( "Child 'sem_close' exited abnormally" );
-	}
+ if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) ! 0 ) )
+ {
+  FAILED( "Child 'sem_close' exited abnormally" );
+ }
 
-	ctl = waitpid( p2, &status, 0 );
+ ctl  waitpid( p2, &status, 0 );
 
-	if ( ctl != p2 )
-	{
-		UNRESOLVED( errno, "Waitpid returned the wrong PID" );
-	}
+ if ( ctl ! p2 )
+ {
+  UNRESOLVED( errno, "Waitpid returned the wrong PID" );
+ }
 
-	if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) != 0 ) )
-	{
-		FAILED( "Child '_exit' exited abnormally" );
-	}
+ if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) ! 0 ) )
+ {
+  FAILED( "Child '_exit' exited abnormally" );
+ }
 
-	ctl = waitpid( p3, &status, 0 );
+ ctl  waitpid( p3, &status, 0 );
 
-	if ( ctl != p3 )
-	{
-		UNRESOLVED( errno, "Waitpid returned the wrong PID" );
-	}
+ if ( ctl ! p3 )
+ {
+  UNRESOLVED( errno, "Waitpid returned the wrong PID" );
+ }
 
-	if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) != 0 ) )
-	{
-		FAILED( "Child 'exec' exited abnormally" );
-	}
+ if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) ! 0 ) )
+ {
+  FAILED( "Child 'exec' exited abnormally" );
+ }
 
 
-	/* Test passed */
+ /* Test passed */
 #if VERBOSE > 0
-	output( "Test passed\n" );
+ output( "Test passed\n" );
 
 #endif
-	PASSED;
+ PASSED;
 }
 
 

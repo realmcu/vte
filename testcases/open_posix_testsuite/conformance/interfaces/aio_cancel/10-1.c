@@ -2,18 +2,18 @@
  * Copyright (c) 2004, Bull SA. All rights reserved.
  * Created by:  Laurent.Vivier@bull.net
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
  */
 
 /* assertion:
  *
- *	aio_cancel() shall fail if:
- *	[EBADF] The fildes argument is not a valid descriptor.
+ * aio_cancel() shall fail if:
+ * [EBADF] The fildes argument is not a valid descriptor.
  *
  * method:
  *
- *	use -1 as fildes and check return value is -1 and errno is EBADF
+ * use -1 as fildes and check return value is -1 and errno is EBADF
  *
  */
 
@@ -34,23 +34,23 @@
 
 int main()
 {
-#if _POSIX_ASYNCHRONOUS_IO != 200112L
-	return PTS_UNSUPPORTED;
+#if _POSIX_ASYNCHRONOUS_IO ! 200112L
+ return PTS_UNSUPPORTED;
 #endif
 
-	if (aio_cancel(-1, NULL) != -1)
-	{
-		printf(TNAME " bad aio_cancel return value()\n");
-		return PTS_FAIL;
-	}
+ if (aio_cancel(-1, NULL) ! -1)
+ {
+  printf(TNAME " bad aio_cancel return value()\n");
+  return PTS_FAIL;
+ }
 
-	if (errno != EBADF)
-	{
-		printf(TNAME " errno is not EBADF %s\n", strerror(errno));
-		return PTS_FAIL;
-	}
+ if (errno ! EBADF)
+ {
+  printf(TNAME " errno is not EBADF %s\n", strerror(errno));
+  return PTS_FAIL;
+ }
 
 
-	printf ("Test PASSED\n");
-	return PTS_PASS;
+ printf ("Test PASSED\n");
+ return PTS_PASS;
 }

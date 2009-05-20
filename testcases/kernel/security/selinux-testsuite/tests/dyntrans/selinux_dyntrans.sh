@@ -11,9 +11,9 @@
 
 setup()
 {
-	export TCID="setup"
-	export TST_COUNT=0
-	export TST_TOTAL=2
+ export TCID="setup"
+ export TST_COUNT=0
+ export TST_TOTAL=2
 }
 
 test01()
@@ -22,19 +22,19 @@ test01()
         TST_COUNT=1
         RC=0
 
-	# Verify that notfromdomain cannot transition to todomain.
-	# Should fail on the transition permission check.
-	runcon -t test_dyntrans_notfromdomain_t -- selinux_dyntrans_parent test_dyntrans_todomain_t 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]	# we expect this to fail
-	then
-		echo "$TCID   PASS : dyntrans passed."
-		RC=0
-	else
-		echo "$TCID   FAIL : dynstrans failed."
-		RC=1
-	fi
-	return $RC
+ # Verify that notfromdomain cannot transition to todomain.
+ # Should fail on the transition permission check.
+ runcon -t test_dyntrans_notfromdomain_t -- selinux_dyntrans_parent test_dyntrans_todomain_t 2>&1
+ RC=$?
+ if [ $RC -ne 0 ] # we expect this to fail
+ then
+  echo "$TCID   PASS : dyntrans passed."
+  RC=0
+ else
+  echo "$TCID   FAIL : dynstrans failed."
+  RC=1
+ fi
+ return $RC
 }
 
 test02()
@@ -43,16 +43,16 @@ test02()
         TST_COUNT=2
         RC=0
 
-	# Verify that fromdomain can transition to todomain.
-	runcon -t test_dyntrans_fromdomain_t -- selinux_dyntrans_parent test_dyntrans_todomain_t 2>&1
-	RC=$?
-	if [ $RC -eq 0 ]
-	then
-		echo "$TCID   PASS : dyntrans passed."
-	else
-		echo "$TCID   FAIL : dynstrans failed."
-	fi
-	return $RC
+ # Verify that fromdomain can transition to todomain.
+ runcon -t test_dyntrans_fromdomain_t -- selinux_dyntrans_parent test_dyntrans_todomain_t 2>&1
+ RC=$?
+ if [ $RC -eq 0 ]
+ then
+  echo "$TCID   PASS : dyntrans passed."
+ else
+  echo "$TCID   FAIL : dynstrans failed."
+ fi
+ return $RC
 }
 
 # Function:     main
@@ -68,4 +68,4 @@ EXIT_VAL=0
 setup
 test01 || EXIT_VAL=$RC
 test02 || EXIT_VAL=$RC
-exit $EXIT_VAL 
+exit $EXIT_VAL

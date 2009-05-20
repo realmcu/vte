@@ -1,4 +1,4 @@
-/*   
+/*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -8,12 +8,12 @@
  *  GNU General Public License for more details.
  *
  *
- * Test that when _POSIX_SPORADIC_SERVER is defined, sched_param structure 
+ * Test that when _POSIX_SPORADIC_SERVER is defined, sched_param structure
  * includes the following:
- *   int sched_ss_low_priority 
- *   struct timespec sched_ss_repl_period 
- *   struct timespec sched_ss_init_budget 
- *   int sched_ss_max_repl 
+ *   int sched_ss_low_priority
+ *   struct timespec sched_ss_repl_period
+ *   struct timespec sched_ss_init_budget
+ *   int sched_ss_max_repl
 */
 #include <sched.h>
 #include <unistd.h>
@@ -24,14 +24,14 @@ struct sched_param s;
 
 int dummyfcn(void)
 {
-	struct timespec ss_repl_period, ss_init_budget;
+ struct timespec ss_repl_period, ss_init_budget;
 
-	s.sched_ss_low_priority = 0;
-	ss_repl_period = s.sched_ss_repl_period;
-	ss_init_budget = s.sched_ss_init_budget;
-	s.sched_ss_max_repl = 0;
+ s.sched_ss_low_priority  0;
+ ss_repl_period  s.sched_ss_repl_period;
+ ss_init_budget  s.sched_ss_init_budget;
+ s.sched_ss_max_repl  0;
 
-	return 0;
+ return 0;
 }
 
 #endif

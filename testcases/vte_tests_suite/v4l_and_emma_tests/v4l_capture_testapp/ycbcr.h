@@ -1,14 +1,14 @@
 /*================================================================================================*/
-/** 
-        @file   ycbcr.h 
-        @brief  
-*/ 
-/*================================================================================================== 
- 
-        Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved 
-        THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT 
-        BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF 
-        Freescale Semiconductor, Inc. 
+/**
+        @file   ycbcr.h
+        @brief
+*/
+/*==================================================================================================
+
+        Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
+        THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
+        BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
+        Freescale Semiconductor, Inc.
 
 ====================================================================================================
 Revision History:
@@ -39,7 +39,7 @@ int     YCbCrToRGB (unsigned char *Y, int xsize, unsigned char *Cb,
                     unsigned char *Cr, int cxsize, unsigned char *rgbPixelPtr,
                     int width, int height, int rgbOrientation, int colorFormat);
 
-int     YCbYCrToRGB (unsigned char * YCbYCr, int stride,  unsigned char *rgbPixelPtr, 
+int     YCbYCrToRGB (unsigned char * YCbYCr, int stride,  unsigned char *rgbPixelPtr,
                      int width, int height, int rgbOrientation, int colorFormat);
 
 #endif        /* #ifndef YCBCR_H_ */

@@ -20,8 +20,8 @@
 /*---------------------------------------------------------------------*/
 /**
     Make entry from 3 string's.
-    
-    @return The new_entry returns pointer to the new entry or NULL 
+
+    @return The new_entry returns pointer to the new entry or NULL
             in error case.
 */
 /*---------------------------------------------------------------------*/
@@ -30,7 +30,7 @@ flist_t *mk_entry(int scale_mode,
                   int out_height,
                   const char *inp_fname, const char *out_fname, const char *ref_fname)
 {
-        flist_t *list = malloc(sizeof(flist_t));
+        flist_t *list  malloc(sizeof(flist_t));
 
         if (list)
         {
@@ -45,10 +45,10 @@ flist_t *mk_entry(int scale_mode,
                         strcpy(list->out_fname, out_fname);
                         strcpy(list->ref_fname, ref_fname);
 
-                        list->next = NULL;
-                        list->scale_mode = scale_mode;
-                        list->out_width = out_width;
-                        list->out_height = out_height;
+                        list->next  NULL;
+                        list->scale_mode  scale_mode;
+                        list->out_width  out_width;
+                        list->out_height  out_height;
 
                         return list;
                 }
@@ -60,28 +60,28 @@ flist_t *mk_entry(int scale_mode,
 /*---------------------------------------------------------------------*/
 /**
     Delete linked list without recursion.
-    
+
     @param list - Pointer to head of the list.
 */
 /*---------------------------------------------------------------------*/
 void delete_list(flist_t * list)
 {
-        flist_t *node = list;
-        flist_t *next = node;
+        flist_t *node  list;
+        flist_t *next  node;
 
         while (node)
         {
-                next = node->next;
+                next  node->next;
                 free(node);
-                node = NULL;
-                node = next;
+                node  NULL;
+                node  next;
         }
 }
 
 /*---------------------------------------------------------------------*/
 /**
     This routine reads list of entries from file.
-    
+
     @param filename - Name of file.
     @param pplist   - Double pointer to the list which will contain \n
                       list of entries.
@@ -93,63 +93,63 @@ int read_cfg(const char *filename, flist_t ** pplist)
 {
         FILE   *in;
         char    line[6][MAX_STR_LEN];
-        int     n = 0;
+        int     n  0;
 
-        flist_t *flist = NULL;
+        flist_t *flist  NULL;
         flist_t *node;
         int     scale_mode,
                 out_width,
                 out_height;
 
-        if ((in = fopen(filename, "rt")))
+        if ((in  fopen(filename, "rt")))
         {
                 while (!feof(in))
                 {
                         fscanf(in, "%s", line[n]);
 
-                        if (n == 5)
+                        if (n  5)
                         {
                                 if (!strcmp(line[0], "SCALING"))
-                                        scale_mode = E_PNG_INT_SCALE_PRESERVE_AR;
+                                        scale_mode  E_PNG_INT_SCALE_PRESERVE_AR;
                                 else
-                                        scale_mode = E_PNG_NO_SCALE;
+                                        scale_mode  E_PNG_NO_SCALE;
 
-                                out_width = !strcmp(line[1], NA) ? 0 : atoi(line[1]);
-                                out_height = !strcmp(line[2], NA) ? 0 : atoi(line[2]);
+                                out_width  !strcmp(line[1], NA) ? 0 : atoi(line[1]);
+                                out_height  !strcmp(line[2], NA) ? 0 : atoi(line[2]);
 
                                 if (!flist)
                                 {
-                                        flist =
+                                        flist 
                                             mk_entry(scale_mode, out_width, out_height, line[3],
                                                      line[4], line[5]);
                                         if (!flist)
                                         {
-                                                *pplist = flist;
+                                                *pplist  flist;
                                                 return FALSE;
                                         }
-                                        node = flist;
+                                        node  flist;
                                 }
                                 else
                                 {
-                                        node->next =
+                                        node->next 
                                             mk_entry(scale_mode, out_width, out_height, line[3],
                                                      line[4], line[5]);
-                                        node = node->next;
+                                        node  node->next;
                                         if (!node)
                                         {
-                                                *pplist = flist;
+                                                *pplist  flist;
                                                 return FALSE;
                                         }
                                 }
                         }
-                        /* n = ++n % 3; */
+                        /* n  ++n % 3; */
                         /* to avoid -oN gcc flag */
                         ++n;
-                        n %= 6;
+                        n % 6;
                 }
         }
 
-        *pplist = flist;
+        *pplist  flist;
 
         return TRUE;
 }

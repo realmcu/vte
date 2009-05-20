@@ -70,7 +70,7 @@ until [ $loop = 0 ]; do
         exit_clean -1
     fi
     echo "$CASE     PASS - turned off CPU ${CPU_TO_TEST}, process migrated to CPU ${NEW_CPU}"
-    
+
     # Turn the CPU back online just to see what happens.
     online_cpu ${CPU_TO_TEST}
     let "loop = loop - 1"

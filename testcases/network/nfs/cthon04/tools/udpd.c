@@ -1,4 +1,4 @@
-/*	@(#)udpd.c	1.6 2003/12/29 Connectathon Testsuite	*/
+/* @(#)udpd.c 1.6 2003/12/29 Connectathon Testsuite */
 /*
  *  server for simple udp ping program.
  *  listens on socket for request, then echos back
@@ -15,66 +15,66 @@
 
 static void
 xxit(s)
-	char *s;
+ char *s;
 {
-	perror(s);
-	exit(1);
+ perror(s);
+ exit(1);
 }
 
 /*ARGSUSED*/
 int
 main(argc, argv)
-	int argc;
-	char **argv;
+ int argc;
+ char **argv;
 {
-	int s;				/* socket */
-	struct sockaddr_in addr;	/* socket address */
-	int ret;
+ int s;    /* socket */
+ struct sockaddr_in addr; /* socket address */
+ int ret;
 #ifdef HAVE_SOCKLEN_T
-	socklen_t addrlen = sizeof(struct sockaddr_in);
+ socklen_t addrlen  sizeof(struct sockaddr_in);
 #else
-	size_t addrlen = sizeof(struct sockaddr_in);
+ size_t addrlen  sizeof(struct sockaddr_in);
 #endif
-	struct hostent *hp;
-	char buf[BUFSIZ];
+ struct hostent *hp;
+ char buf[BUFSIZ];
 
-	if ((s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
-		xxit("socket");
+ if ((s  socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+  xxit("socket");
 
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(UDP_PORT);
-	addr.sin_addr.s_addr = INADDR_ANY;
+ addr.sin_family  AF_INET;
+ addr.sin_port  htons(UDP_PORT);
+ addr.sin_addr.s_addr  INADDR_ANY;
 
-	if (bind(s, (struct sockaddr *)&addr, addrlen) < 0)
-		xxit("bind");
+ if (bind(s, (struct sockaddr *)&addr, addrlen) < 0)
+  xxit("bind");
 
-	while(1) {
-		fprintf(stderr, "%s awaiting request\n", argv[0]);
-		addrlen = sizeof(struct sockaddr_in);
-		ret = recvfrom(s, buf, BUFSIZ, 0, (struct sockaddr *)&addr,
-			       &addrlen);
-		if (ret < 0)
-			xxit("recvfrom");
+ while(1) {
+  fprintf(stderr, "%s awaiting request\n", argv[0]);
+  addrlen  sizeof(struct sockaddr_in);
+  ret  recvfrom(s, buf, BUFSIZ, 0, (struct sockaddr *)&addr,
+          &addrlen);
+  if (ret < 0)
+   xxit("recvfrom");
 #ifdef __STDC__
-		if (hp = gethostbyaddr((const char *)&addr.sin_addr,
-					sizeof(addr.sin_addr), AF_INET))
+  if (hp  gethostbyaddr((const char *)&addr.sin_addr,
+     sizeof(addr.sin_addr), AF_INET))
 #else
-		if (hp = gethostbyaddr(&addr.sin_addr, sizeof(addr.sin_addr),
-					AF_INET))
+  if (hp  gethostbyaddr(&addr.sin_addr, sizeof(addr.sin_addr),
+     AF_INET))
 #endif
-			fprintf(stderr, "\
+   fprintf(stderr, "\
 %s: accepted request from host %s\n", argv[0], hp->h_name);
-		else
-			fprintf(stderr, "\
+  else
+   fprintf(stderr, "\
 %s: accepted request from host %x\n", argv[0], addr.sin_addr.s_addr);
 
-		fprintf(stderr, " recvfrom ret %d\n", ret);
-		if (ret > 0) {
-			*buf = *buf + 1;
-			ret = sendto(s, buf, ret, 0, (struct sockaddr *)&addr,
-				     addrlen);
-			fprintf(stderr, " sendto ret %d\n", ret);
-		}
-	}
+  fprintf(stderr, " recvfrom ret %d\n", ret);
+  if (ret > 0) {
+   *buf  *buf + 1;
+   ret  sendto(s, buf, ret, 0, (struct sockaddr *)&addr,
+         addrlen);
+   fprintf(stderr, " sendto ret %d\n", ret);
+  }
+ }
 }
 

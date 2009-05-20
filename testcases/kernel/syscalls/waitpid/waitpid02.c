@@ -19,15 +19,15 @@
 
 /*
  * NAME
- *	waitpid02.c
+ * waitpid02.c
  *
  * DESCRIPTION
- *	Check that when a child gets killed by an integer zero
- *	divide exception, the waiting parent is correctly notified.
+ * Check that when a child gets killed by an integer zero
+ * divide exception, the waiting parent is correctly notified.
  *
  * ALGORITHM
- *	Fork a child and send a SIGFPE to it. The parent waits for the 
- *	death of the child and checks that SIGFPE was returned.
+ * Fork a child and send a SIGFPE to it. The parent waits for the
+ * death of the child and checks that SIGFPE was returned.
  *
  * USAGE:  <for command-line>
  *      waitpid02 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -39,14 +39,14 @@
  *              -t   : Turn on syscall timing.
  *
  * History
- *	07/2001 John George
- *		-Ported
- *	10/2002 Paul Larson
- *		Div by zero doesn't cause SIGFPE on some archs, fixed 
- *		to send the signal with kill
+ * 07/2001 John George
+ *  -Ported
+ * 10/2002 Paul Larson
+ *  Div by zero doesn't cause SIGFPE on some archs, fixed
+ *  to send the signal with kill
  *
  * Restrictions
- *	None
+ * None
  */
 
 #include <sys/file.h>
@@ -61,116 +61,116 @@ void do_child(void);
 void setup(void);
 void cleanup(void);
 
-char *TCID = "waitpid02";
-int TST_TOTAL = 1;
+char *TCID  "waitpid02";
+int TST_TOTAL  1;
 extern int Tst_count;
 
 int main(int argc, char **argv)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
 
-	int pid, npid, sig, nsig;
-	int exno, nexno, status;
+ int pid, npid, sig, nsig;
+ int exno, nexno, status;
 
-	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) !=
-	    (char *) NULL) {
-		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(argc, argv, (option_t *)NULL, NULL)) !
+     (char *) NULL) {
+  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+ }
 
 #ifdef UCLINUX
-	maybe_run_child(&do_child, "");
+ maybe_run_child(&do_child, "");
 #endif
 
-	setup();
+ setup();
 
-	/* check for looping state if -i option is given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+ /* check for looping state if -i option is given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		exno = 1;
-		sig = SIGFPE;
+  exno  1;
+  sig  SIGFPE;
 
-		pid = FORK_OR_VFORK();
+  pid  FORK_OR_VFORK();
 
-		if (pid == 0) {
+  if (pid  0) {
 #ifdef UCLINUX
-			self_exec(argv[0], "");
-			/* No fork() error check is done so don't check here */
+   self_exec(argv[0], "");
+   /* No fork() error check is done so don't check here */
 #else
-			do_child();
+   do_child();
 #endif
-		} else {
-			kill(pid, sig);
-			errno = 0;
-			while(((npid = waitpid(pid, &status, 0)) != -1) ||
-			      (errno == EINTR)) {
-				if (errno == EINTR) {
-					continue;
-				}
+  } else {
+   kill(pid, sig);
+   errno  0;
+   while(((npid  waitpid(pid, &status, 0)) ! -1) ||
+         (errno  EINTR)) {
+    if (errno  EINTR) {
+     continue;
+    }
 
-				if (npid != pid) {
-					tst_resm(TFAIL, "waitpid error: "
-						 "unexpected pid returned");
-				} else {
-					tst_resm(TPASS, "recieved expected pid");
-				}
+    if (npid ! pid) {
+     tst_resm(TFAIL, "waitpid error: "
+       "unexpected pid returned");
+    } else {
+     tst_resm(TPASS, "recieved expected pid");
+    }
 
-				nsig = WTERMSIG(status);
+    nsig  WTERMSIG(status);
 
-				/*
-				 * nsig is the signal number returned by
-				 * waitpid
-				 */
-				if (nsig != sig) {
-					tst_resm(TFAIL, "waitpid error: "
-						 "unexpected signal returned");
-				} else {
-					tst_resm(TPASS, "recieved expected "
-						"signal");
-				}
+    /*
+     * nsig is the signal number returned by
+     * waitpid
+     */
+    if (nsig ! sig) {
+     tst_resm(TFAIL, "waitpid error: "
+       "unexpected signal returned");
+    } else {
+     tst_resm(TPASS, "recieved expected "
+      "signal");
+    }
 
-				/*
-				 * nexno is the exit number returned by
-				 * waitpid
-				 */
-				nexno = WEXITSTATUS(status);
-				if (nexno != 0) {
-					tst_resm(TFAIL, "signal error: "
-						 "unexpected exit number "
-						 "returned");
-				} else {
-					tst_resm(TPASS, "recieved expected "
-						"exit value");
-				}
-			}
-		}
+    /*
+     * nexno is the exit number returned by
+     * waitpid
+     */
+    nexno  WEXITSTATUS(status);
+    if (nexno ! 0) {
+     tst_resm(TFAIL, "signal error: "
+       "unexpected exit number "
+       "returned");
+    } else {
+     tst_resm(TPASS, "recieved expected "
+      "exit value");
+    }
+   }
+  }
 
-		if (access("core", F_OK) == 0) {
-			unlink("core");
-		}
-	}
-	cleanup();
-	/*NOTREACHED*/
+  if (access("core", F_OK)  0) {
+   unlink("core");
+  }
+ }
+ cleanup();
+ /*NOTREACHED*/
 
   return(0);
 
 }
 
 /*
- * do_child() 
+ * do_child()
  */
 void
 do_child()
 {
-	int exno = 1;
+ int exno  1;
 
-	while(1)
-		usleep(10);
-	
-	exit(exno);
+ while(1)
+  usleep(10);
+
+ exit(exno);
 }
 
 /*
@@ -180,27 +180,27 @@ do_child()
 void
 setup(void)
 {
-	/* Pause if that option was specified
-	 * TEST_PAUSE contains the code to fork the test with the -c option.
-	 */
-	TEST_PAUSE;
+ /* Pause if that option was specified
+  * TEST_PAUSE contains the code to fork the test with the -c option.
+  */
+ TEST_PAUSE;
 }
 
 /*
  * cleanup()
- *	performs all ONE TIME cleanup for this test at
- *	completion or premature exit
+ * performs all ONE TIME cleanup for this test at
+ * completion or premature exit
  */
 void
 cleanup(void)
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-	/*NOTREACHED*/
+ /* exit with return code appropriate for results */
+ tst_exit();
+ /*NOTREACHED*/
 }

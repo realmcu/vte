@@ -44,7 +44,7 @@ extern "C"{
 #include <linux/soundcard.h>
 #include <linux/autoconf.h>
 
-typedef struct _mxc_cfg 
+typedef struct _mxc_cfg
 {
         int reg;        /*!< The register address (data sheet value) */
         int val;        /*!< The value to write, or returned by read */

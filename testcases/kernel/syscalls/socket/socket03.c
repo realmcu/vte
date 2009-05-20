@@ -24,7 +24,7 @@
 /*                                                                            */
 /* Description: This Program tests the new system call introduced in 2.6.27.  */
 /*              Ulrich´s comment as in:                                       */
-/* http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=77d2720059618b9b6e827a8b73831eb6c6fad63c */
+/* http://git.kernel.org/?plinux/kernel/git/torvalds/linux-2.6.git;acommit;h77d2720059618b9b6e827a8b73831eb6c6fad63c */
 /*                                                                            */
 /* Usage:  <for command-line>                                                 */
 /* socket03 [-c n] [-e][-i n] [-I x] [-p x] [-t]                      */
@@ -66,9 +66,9 @@ extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
-char *TCID     = "socket03"; /* test program identifier.              */
+char *TCID      "socket03"; /* test program identifier.              */
 int  testno;
-int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
+int  TST_TOTAL  1;                  /* total number of tests in this file.   */
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -128,8 +128,8 @@ int main (int argc, char *argv[]) {
   char *msg;              /* message returned from parse_opts */
 
   /* Parse standard options given to run the test. */
-  msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
-  if (msg != (char *) NULL) {
+  msg  parse_opts(argc, argv, (option_t *) NULL, NULL);
+  if (msg ! (char *) NULL) {
       tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
       tst_exit();
   }
@@ -140,17 +140,17 @@ int main (int argc, char *argv[]) {
   setup();
 
   /* Check looping state if -i option given */
-  for (lc = 0; TEST_LOOPING(lc); ++lc) {
-       Tst_count = 0;
-       for (testno=0; testno < TST_TOTAL; ++testno) {
-            fd = socket (PF_INET, SOCK_STREAM, 0);
-            if (fd == -1) {
+  for (lc  0; TEST_LOOPING(lc); ++lc) {
+       Tst_count  0;
+       for (testno0; testno < TST_TOTAL; ++testno) {
+            fd  socket (PF_INET, SOCK_STREAM, 0);
+            if (fd  -1) {
                 tst_resm(TFAIL, "socket(0) failed");
                 cleanup();
                 tst_exit();
             }
-            fl = fcntl (fd, F_GETFL);
-            if (fl == -1) {
+            fl  fcntl (fd, F_GETFL);
+            if (fl  -1) {
                 tst_brkm(TBROK, cleanup, "fcntl failed");
                 tst_exit();
             }
@@ -161,18 +161,18 @@ int main (int argc, char *argv[]) {
             }
             close (fd);
 
-            fd = socket (PF_INET, SOCK_STREAM|SOCK_NONBLOCK, 0);
-            if (fd == -1) {
+            fd  socket (PF_INET, SOCK_STREAM|SOCK_NONBLOCK, 0);
+            if (fd  -1) {
                 tst_resm(TFAIL, "socket(SOCK_NONBLOCK) failed");
                 cleanup();
                 tst_exit();
             }
-            fl = fcntl (fd, F_GETFL);
-            if (fl == -1) {
+            fl  fcntl (fd, F_GETFL);
+            if (fl  -1) {
                 tst_brkm(TBROK, cleanup, "fcntl failed");
                 tst_exit();
             }
-            if ((fl & O_NONBLOCK) == 0) {
+            if ((fl & O_NONBLOCK)  0) {
                  tst_resm(TFAIL, "socket(SOCK_NONBLOCK) does not set non-blocking mode");
                  cleanup();
                  tst_exit();

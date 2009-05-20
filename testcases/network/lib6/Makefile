@@ -18,7 +18,7 @@
 
 ###########################################################################
 # name of file	: Makefile						  #
-# description	: make(1) description file for lib6 tests.	  	  #
+# description	: make(1) description file for lib6 tests.	    #
 ###########################################################################
 CFLAGS+=	-I../../../include -g
 LOADLIBES+=	-L../../../lib runcc.a -lltp -lpthread

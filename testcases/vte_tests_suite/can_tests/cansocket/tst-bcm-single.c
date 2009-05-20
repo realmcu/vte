@@ -1,5 +1,5 @@
 /*
- *  $Id: tst-bcm-single.c 801 2008-07-01 08:51:21Z hartkopp $
+ *  $Id: tst-bcm-single.c 801 2008-07-01 08:51:21Z hartkopp
  */
 
 /*
@@ -61,51 +61,51 @@
 
 int main(int argc, char **argv)
 {
-	int s;
-	struct sockaddr_can addr;
-	struct ifreq ifr;
+ int s;
+ struct sockaddr_can addr;
+ struct ifreq ifr;
 
-	struct {
-		struct bcm_msg_head msg_head;
-		struct can_frame frame;
-	} msg;
+ struct {
+  struct bcm_msg_head msg_head;
+  struct can_frame frame;
+ } msg;
 
-	if ((s = socket(PF_CAN, SOCK_DGRAM, CAN_BCM)) < 0) {
-		perror("socket");
-		return 1;
-	}
+ if ((s = socket(PF_CAN, SOCK_DGRAM, CAN_BCM)) < 0) {
+  perror("socket");
+  return 1;
+ }
 
-	addr.can_family = PF_CAN;
-	strcpy(ifr.ifr_name, "vcan2");
-	ioctl(s, SIOCGIFINDEX, &ifr);
-	addr.can_ifindex = ifr.ifr_ifindex;
+ addr.can_family = PF_CAN;
+ strcpy(ifr.ifr_name, "vcan2");
+ ioctl(s, SIOCGIFINDEX, &ifr);
+ addr.can_ifindex = ifr.ifr_ifindex;
 
-	if (connect(s, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
-		perror("connect");
-		return 1;
-	}
+ if (connect(s, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+  perror("connect");
+  return 1;
+ }
 
-	msg.msg_head.opcode  = TX_SEND;
-	msg.msg_head.can_id  = 0x760;
-	msg.msg_head.flags   = 0;
-	msg.msg_head.nframes = 1;
-	msg.msg_head.count = 0;
-	msg.msg_head.ival1.tv_sec = 0;
-	msg.msg_head.ival1.tv_usec = 0;
-	msg.msg_head.ival2.tv_sec = 0;
-	msg.msg_head.ival2.tv_usec = 0;
-	msg.frame.can_id    = 0x760;
-	msg.frame.can_dlc   = 6;
-	msg.frame.data[0] = 0xA1;
-	msg.frame.data[1] = 0x0F;
-	msg.frame.data[2] = 0x10;
-	msg.frame.data[3] = 0x00;
-	msg.frame.data[4] = 0x00;
-	msg.frame.data[5] = 0x00;
+ msg.msg_head.opcode  = TX_SEND;
+ msg.msg_head.can_id  = 0x760;
+ msg.msg_head.flags   = 0;
+ msg.msg_head.nframes = 1;
+ msg.msg_head.count = 0;
+ msg.msg_head.ival1.tv_sec = 0;
+ msg.msg_head.ival1.tv_usec = 0;
+ msg.msg_head.ival2.tv_sec = 0;
+ msg.msg_head.ival2.tv_usec = 0;
+ msg.frame.can_id    = 0x760;
+ msg.frame.can_dlc   = 6;
+ msg.frame.data[0] = 0xA1;
+ msg.frame.data[1] = 0x0F;
+ msg.frame.data[2] = 0x10;
+ msg.frame.data[3] = 0x00;
+ msg.frame.data[4] = 0x00;
+ msg.frame.data[5] = 0x00;
 
 
-	if (write(s, &msg, sizeof(msg)) < 0)
-		perror("write");
+ if (write(s, &msg, sizeof(msg)) < 0)
+  perror("write");
 
-	return 0;
+ return 0;
 }

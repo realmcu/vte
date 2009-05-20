@@ -19,16 +19,16 @@
 
 /* Ported from SPIE, section2/iosuite/stream4.c, by Airong Zhang */
 
-/*======================================================================
-	=================== TESTPLAN SEGMENT ===================
+/*
+  TESTPLAN SEGMENT 
 >KEYS:  < fwrite() fread()
 >WHAT:  < 1) Ensure fwrite appends data to stream.
-	< 2) Ensure fread and fwrite return values are valid.
+ < 2) Ensure fread and fwrite return values are valid.
 >HOW:   < 1) Open a file, write to it, and then check it.
-	< 2) Fwrite a know quanity, check return value.
-	<    Fread a know quanity, check return value.
->BUGS:  < 
-======================================================================*/
+ < 2) Fwrite a know quanity, check return value.
+ <    Fread a know quanity, check return value.
+>BUGS:  <
+*/
 
 #include <stdio.h>
 #include <errno.h>
@@ -38,8 +38,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "stream04";
-int TST_TOTAL = 1;
+char *TCID  "stream04";
+int TST_TOTAL  1;
 extern int Tst_count;
 int     local_flag;
 
@@ -47,17 +47,17 @@ int     local_flag;
 #define FAILED 0
 
 
-char progname[] = "stream04()" ;
-char tempfile1[40]="";
+char progname[]  "stream04()" ;
+char tempfile1[40]"";
 long ftell();
 
 /*--------------------------------------------------------------------*/
 int main(int ac, char *av[])
 {
-	FILE *stream;
-	char *junk="abcdefghijklmnopqrstuvwxyz";
-	char *inbuf;
-	int ret;
+ FILE *stream;
+ char *junk"abcdefghijklmnopqrstuvwxyz";
+ char *inbuf;
+ int ret;
 
         int lc;                 /* loop counter */
         char *msg;              /* message returned from parse_opts */
@@ -65,66 +65,66 @@ int main(int ac, char *av[])
          /*
           * parse standard options
           */
-        if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+        if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
                          tst_resm(TBROK, "OPTION PARSING ERROR - %s", msg);
                  tst_exit();
                  /*NOTREACHED*/
          }
-	tst_tmpdir();
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ tst_tmpdir();
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		local_flag = PASSED;
+  local_flag  PASSED;
 
-		sprintf(tempfile1, "stream04.%d", getpid());
-	/*--------------------------------------------------------------------*/
-	//block0:	
-		if((stream=fopen(tempfile1,"a+")) == NULL) {
-			tst_resm(TFAIL,"fopen(%s) a+ failed: %s", tempfile1, strerror(errno));
-			tst_rmdir();
-			tst_exit();
-		}
-		/* write something and check */
-		if((ret=fwrite(junk,sizeof(*junk),strlen(junk),stream)) == 0) {
-			tst_resm(TFAIL,"fwrite failed: %s", strerror(errno));
-			tst_rmdir();
-			tst_exit();
-		}
+  sprintf(tempfile1, "stream04.%d", getpid());
+ /*--------------------------------------------------------------------*/
+ //block0:
+  if((streamfopen(tempfile1,"a+"))  NULL) {
+   tst_resm(TFAIL,"fopen(%s) a+ failed: %s", tempfile1, strerror(errno));
+   tst_rmdir();
+   tst_exit();
+  }
+  /* write something and check */
+  if((retfwrite(junk,sizeof(*junk),strlen(junk),stream))  0) {
+   tst_resm(TFAIL,"fwrite failed: %s", strerror(errno));
+   tst_rmdir();
+   tst_exit();
+  }
 
-		if((size_t)ret != strlen(junk)) {
-			tst_resm(TFAIL,"strlen(junk) = %zi != return value from fwrite = %zi", strlen(junk), ret);
-			local_flag = FAILED;
-		}
+  if((size_t)ret ! strlen(junk)) {
+   tst_resm(TFAIL,"strlen(junk)  %zi ! return value from fwrite  %zi", strlen(junk), ret);
+   local_flag  FAILED;
+  }
 
-		fclose(stream);
-		if((stream=fopen(tempfile1,"r+")) == NULL) {
-			tst_resm(TFAIL,"fopen(%s) r+ failed: %s", tempfile1, strerror(errno));
-			tst_rmdir();
-			tst_exit();
-		}
-		if ( (inbuf=(char *)malloc(strlen(junk))) == 0) {
-			tst_resm(TBROK, "test failed because of malloc: %s", strerror(errno));
-			tst_rmdir();
-			tst_exit();
-		}
-		if((ret=fread(inbuf,sizeof(*junk),strlen(junk),stream)) == 0) {
-			tst_resm(TFAIL,"fread failed: %s", strerror(errno));
-			tst_rmdir();
-			tst_exit();
-		}
-		if((size_t)ret != strlen(junk)) {
-			tst_resm(TFAIL,"strlen(junk) = %zi != return value from fread = %zi", strlen(junk), ret);
-			local_flag = FAILED;
-		}
-		fclose(stream);
-		if (local_flag == PASSED) {
-			tst_resm(TPASS, "Test passed.");
-		} else {
-			tst_resm(TFAIL, "Test failed.");
-		}
-	/*--------------------------------------------------------------------*/
-		unlink(tempfile1);
-	} /* end for */
-	tst_rmdir();
-	tst_exit();
-	return(0);
+  fclose(stream);
+  if((streamfopen(tempfile1,"r+"))  NULL) {
+   tst_resm(TFAIL,"fopen(%s) r+ failed: %s", tempfile1, strerror(errno));
+   tst_rmdir();
+   tst_exit();
+  }
+  if ( (inbuf(char *)malloc(strlen(junk)))  0) {
+   tst_resm(TBROK, "test failed because of malloc: %s", strerror(errno));
+   tst_rmdir();
+   tst_exit();
+  }
+  if((retfread(inbuf,sizeof(*junk),strlen(junk),stream))  0) {
+   tst_resm(TFAIL,"fread failed: %s", strerror(errno));
+   tst_rmdir();
+   tst_exit();
+  }
+  if((size_t)ret ! strlen(junk)) {
+   tst_resm(TFAIL,"strlen(junk)  %zi ! return value from fread  %zi", strlen(junk), ret);
+   local_flag  FAILED;
+  }
+  fclose(stream);
+  if (local_flag  PASSED) {
+   tst_resm(TPASS, "Test passed.");
+  } else {
+   tst_resm(TFAIL, "Test failed.");
+  }
+ /*--------------------------------------------------------------------*/
+  unlink(tempfile1);
+ } /* end for */
+ tst_rmdir();
+ tst_exit();
+ return(0);
 }

@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   tool_listplayer.c
 
         @brief  OSS driver test scenario
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -21,19 +21,19 @@ I.Inkina/nknl001             11/01/2005     TLSbo61044  Clock master was added
 A.Ozerov/B00320              17/02/2006     TLSbo62323  Index_ssi argument was deleted. Master mode
                                                         was removed. Checking if the audio file given
                                                         in argument is stereo or mono was added.
-D.Khoroshev/b00313           04/14/2006     TLSbo67022  VTE 2.0 Integration 
+D.Khoroshev/b00313           04/14/2006     TLSbo67022  VTE 2.0 Integration
 D.Simakov                    13/06/2006     TLSbo67022  STDAC <==> CODEC
 D.Simakov                    19/10/2006     TLSbo76144  dsp->adsp, dsp1->dsp
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
-    
+
 /* Harness Specific Include Files. */
 #include <test.h>
 
@@ -41,74 +41,74 @@ Portability: ARM GCC
 #include "oss_sound_driver_test.h"
 #include "../common.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 typedef struct _dbmx_cfg
 {
         int reg;
         int val;
 } dbmx_cfg;
-        
-/*==================================================================================================
+
+/*======================
                                         LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== VT_oss_sound_driver_setup =====*/
+/*====================*/
+/*= VT_oss_sound_driver_setup =*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_oss_sound_driver_setup(void)
 {
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== VT_oss_sound_driver_cleanup =====*/
+/*====================*/
+/*= VT_oss_sound_driver_cleanup =*/
 /**
 @brief  assumes the post-condition of the test case execution
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
-/*===== VT_oss_sound_driver_cleanup =====*/
+/*====================*/
+/*= VT_oss_sound_driver_cleanup =*/
 int VT_oss_sound_driver_cleanup(void)
 {
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== get_audio_bits =====*/
+/*====================*/
+/*= get_audio_bits =*/
 unsigned short get_audio_bits(FILE* file)
 {
         unsigned short ret;
@@ -117,8 +117,8 @@ unsigned short get_audio_bits(FILE* file)
         return ret;
 }
 
-/*================================================================================================*/
-/*===== get_audio_channels =====*/
+/*====================*/
+/*= get_audio_channels =*/
 unsigned short get_audio_channels(FILE* file)
 {
         unsigned short ret;
@@ -127,8 +127,8 @@ unsigned short get_audio_channels(FILE* file)
         return ret;
 }
 
-/*================================================================================================*/
-/*===== get_audio_frq =====*/
+/*====================*/
+/*= get_audio_frq =*/
 int get_audio_frq(FILE* file)
 {
         int ret;
@@ -137,8 +137,8 @@ int get_audio_frq(FILE* file)
         return ret;
 }
 
-/*================================================================================================*/
-/*===== set_audio_config =====*/
+/*====================*/
+/*= set_audio_config =*/
 int set_audio_config(int fd_audio, FILE* file, int device)
 {
         int tmp, format, frequency, channels;
@@ -148,14 +148,14 @@ int set_audio_config(int fd_audio, FILE* file, int device)
         if (ioctl(fd_audio, SNDCTL_DSP_SETFMT, &format) < 0)
         {
                 tst_resm(TINFO,
-                        "Error in SNDCTL_DSP_SETFMT ioctl call (arg is %d, returned %d). %s", 
+                        "Error in SNDCTL_DSP_SETFMT ioctl call (arg is %d, returned %d). %s",
                         tmp, format, strerror(errno));
                 VT_rv = TFAIL;
         }
         else if ( tmp != format )
         {
                 tst_resm(TINFO,
-                        "Format was not set (SNDCTL_DSP_SETFMT, arg is %d, returned %d). %s", 
+                        "Format was not set (SNDCTL_DSP_SETFMT, arg is %d, returned %d). %s",
                         tmp, format);
                 VT_rv = TFAIL;
         }
@@ -164,7 +164,7 @@ int set_audio_config(int fd_audio, FILE* file, int device)
         if (ioctl(fd_audio, SOUND_PCM_WRITE_RATE, &frequency)< 0)
         {
                 tst_resm(TINFO,
-                        "Error in SOUND_PCM_WRITE_RATE ioctl call (arg is %d, returned %d). %s", 
+                        "Error in SOUND_PCM_WRITE_RATE ioctl call (arg is %d, returned %d). %s",
                         tmp, frequency, strerror(errno));
                 VT_rv = TFAIL;
         }
@@ -203,8 +203,8 @@ int set_audio_config(int fd_audio, FILE* file, int device)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== play_file =====*/
+/*====================*/
+/*= play_file =*/
 int play_file(int fd_audio, FILE* file)
 {
         int err = 0;
@@ -232,28 +232,28 @@ int play_file(int fd_audio, FILE* file)
         return err;
 }
 
-/*================================================================================================*/
-/*===== get_next_file_name =====*/
+/*====================*/
+/*= get_next_file_name =*/
 void get_next_file_name(FILE *fd_list, char *file_name)
 {
         int ret;
         *file_name = '\0';
-        
+
         ret = fscanf(fd_list, "%s\n", file_name);
         tst_resm(TINFO, "Next file: %s\n", file_name);
 }
 
-/*================================================================================================*/
-/*===== VT_oss_sound_driver_test =====*/
+/*====================*/
+/*= VT_oss_sound_driver_test =*/
 /**
 @brief  Test program
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_oss_sound_driver_test(char *playlist, int file_loop, int list_loop, int device)
 {
         FILE *fd_file, *fd_list;
@@ -262,7 +262,7 @@ int VT_oss_sound_driver_test(char *playlist, int file_loop, int list_loop, int d
         int err = 0;
         int ret = TFAIL;
         char file_name[256];
-        
+
         fd_list = fopen (playlist, "r");
         if(fd_list == NULL)
         {
@@ -271,7 +271,7 @@ int VT_oss_sound_driver_test(char *playlist, int file_loop, int list_loop, int d
                 err++;
                 goto _err_list_not_found;
         }
-        
+
         /*CODEC*/
         if ((fd_audio = open (CODEC_DEV, O_RDWR)) < 0)
         {
@@ -279,10 +279,10 @@ int VT_oss_sound_driver_test(char *playlist, int file_loop, int list_loop, int d
                 err++;
                 goto _err_drv_open2;
         }
-        
+
         if ( device == 0 ) /*STDAC*/
         {
-                close(fd_audio);                        
+                close(fd_audio);
                 if ((fd_audio = open (STDAC_DEV, O_WRONLY)) < 0)
                 {
                         tst_resm(TFAIL, "Error opening %s", STDAC_DEV);
@@ -290,11 +290,11 @@ int VT_oss_sound_driver_test(char *playlist, int file_loop, int list_loop, int d
                         goto _err_drv_open2;
                 }
         }
-        
+
         for ( j=0; j<list_loop; j++ )
         {
                 get_next_file_name(fd_list, file_name);
-                
+
                 while ( *file_name != '\0' )
                 {
                         if ((fd_file = fopen (file_name, "r")) == NULL)
@@ -322,9 +322,9 @@ int VT_oss_sound_driver_test(char *playlist, int file_loop, int list_loop, int d
 _next:
                         get_next_file_name(fd_list, file_name);
                 }
-                
+
                 fseek(fd_list, 0, SEEK_SET);
-        } 
+        }
 
         tst_resm(TINFO, "************** Closing the device\n");
         fclose(fd_list);

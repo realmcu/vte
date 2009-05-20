@@ -17,18 +17,18 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* 01/02/2003	Port to LTP	avenkat&us.ibm.com */
-/* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
+/* 01/02/2003 Port to LTP avenkat&us.ibm.com */
+/* 06/30/2001 Port to Linux nsharoff@us.ibm.com */
 
 /*
  * NAME
- *	memcmp1 -- buffer  compare
+ * memcmp1 -- buffer  compare
  *
  * CALLS
- *	memcmp(3)
+ * memcmp(3)
  *
  * ALGORITHM
- *	Check boundary conditions.
+ * Check boundary conditions.
  *
  * RESTRICTIONS
  */
@@ -40,28 +40,28 @@
 #include <string.h>
 #include <errno.h>
 
-/*****	LTP Port	*****/
+/***** LTP Port *****/
 #include "test.h"
 #include "usctest.h"
 
 
-char *TCID = "memcmp1";
+char *TCID  "memcmp1";
 
 #undef  BSIZE
-#define BSIZE	4096
-#define LEN	100
+#define BSIZE 4096
+#define LEN 100
 #define FAILED 0
 #define PASSED 1
-/*****	**	**	*****/
+/***** ** ** *****/
 
 char buf[BSIZE];
 
-/*****	LTP Port	*****/
-int local_flag = PASSED;
+/***** LTP Port *****/
+int local_flag  PASSED;
 int block_number;
 int errno;
 FILE *temp;
-int TST_TOTAL =  2;
+int TST_TOTAL   2;
 int anyfail();
 int blenter();
 int blexit();
@@ -69,7 +69,7 @@ int instress();
 extern int Tst_count;
 
 void setup();
-/*****	**	**	*****/
+/***** ** ** *****/
 
 void clearit();
 void fill(char *str);
@@ -78,151 +78,151 @@ int checkit(char *str);
 /*--------------------------------------------------------------*/
 int main (int argc, char *argv[])
 {
-	char *p, *q;
+ char *p, *q;
 
-	setup();		/* temp file is now open	*/
+ setup();  /* temp file is now open */
 /*--------------------------------------------------------------*/
-	blenter();
+ blenter();
 
-	clearit();
+ clearit();
 
-	p = &buf[100];
-	q = &buf[800];
+ p  &buf[100];
+ q  &buf[800];
 
-	fill(p);
-	fill(q);
+ fill(p);
+ fill(q);
 
-	if (memcmp(p, q, LEN)) {
-		fprintf(temp, "\tmemcmp fails - should have succeeded.\n");
-		local_flag = FAILED;
-	}
+ if (memcmp(p, q, LEN)) {
+  fprintf(temp, "\tmemcmp fails - should have succeeded.\n");
+  local_flag  FAILED;
+ }
 
-	p[LEN - 1] = 0;
+ p[LEN - 1]  0;
 
-	if (!memcmp(p, q, LEN)) {
-		fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
-		local_flag = FAILED;
-	};
+ if (!memcmp(p, q, LEN)) {
+  fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
+  local_flag  FAILED;
+ };
 
-	p[LEN -1] = 'a';
-	p[0] = 0;
+ p[LEN -1]  'a';
+ p[0]  0;
 
-	if (!memcmp(p, q, LEN)) {
-		fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
-		local_flag = FAILED;
-	};
+ if (!memcmp(p, q, LEN)) {
+  fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
+  local_flag  FAILED;
+ };
 
-	p[0] = 'a';
-	q[LEN-1] = 0;
+ p[0]  'a';
+ q[LEN-1]  0;
 
-	if (!memcmp(p, q, LEN)) {
-		fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
-		local_flag = FAILED;
-	};
+ if (!memcmp(p, q, LEN)) {
+  fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
+  local_flag  FAILED;
+ };
 
-	q[LEN-1] = 'a';
-	q[0] = 0;
+ q[LEN-1]  'a';
+ q[0]  0;
 
-	if (!memcmp(p, q, LEN)) {
-		fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
-		local_flag = FAILED;
-	};
+ if (!memcmp(p, q, LEN)) {
+  fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
+  local_flag  FAILED;
+ };
 
-	q[0] = 'a';
+ q[0]  'a';
 
-	if (memcmp(p, q, LEN)) {
-		fprintf(temp, "\tmemcmp fails - should have succeeded.\n");
-		local_flag = FAILED;
-	}
+ if (memcmp(p, q, LEN)) {
+  fprintf(temp, "\tmemcmp fails - should have succeeded.\n");
+  local_flag  FAILED;
+ }
 
-	blexit();
+ blexit();
 /*--------------------------------------------------------------*/
-	blenter();
+ blenter();
 
-	clearit();
+ clearit();
 
-	p = &buf[800];
-	q = &buf[100];
+ p  &buf[800];
+ q  &buf[100];
 
-	fill(p);
-	fill(q);
+ fill(p);
+ fill(q);
 
-	if (memcmp(p, q, LEN)) {
-		fprintf(temp, "\tmemcmp fails - should have succeeded.\n");
-		local_flag = FAILED;
-	}
+ if (memcmp(p, q, LEN)) {
+  fprintf(temp, "\tmemcmp fails - should have succeeded.\n");
+  local_flag  FAILED;
+ }
 
-	p[LEN - 1] = 0;
+ p[LEN - 1]  0;
 
-	if (!memcmp(p, q, LEN)) {
-		fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
-		local_flag = FAILED;
-	};
+ if (!memcmp(p, q, LEN)) {
+  fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
+  local_flag  FAILED;
+ };
 
-	p[LEN -1] = 'a';
-	p[0] = 0;
+ p[LEN -1]  'a';
+ p[0]  0;
 
-	if (!memcmp(p, q, LEN)) {
-		fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
-		local_flag = FAILED;
-	};
+ if (!memcmp(p, q, LEN)) {
+  fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
+  local_flag  FAILED;
+ };
 
-	p[0] = 'a';
-	q[LEN-1] = 0;
+ p[0]  'a';
+ q[LEN-1]  0;
 
-	if (!memcmp(p, q, LEN)) {
-		fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
-		local_flag = FAILED;
-	};
+ if (!memcmp(p, q, LEN)) {
+  fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
+  local_flag  FAILED;
+ };
 
-	q[LEN-1] = 'a';
-	q[0] = 0;
+ q[LEN-1]  'a';
+ q[0]  0;
 
-	if (!memcmp(p, q, LEN)) {
-		fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
-		local_flag = FAILED;
-	};
+ if (!memcmp(p, q, LEN)) {
+  fprintf(temp, "\tmemcmp succeeded - should have failed.\n");
+  local_flag  FAILED;
+ };
 
-	q[0] = 'a';
+ q[0]  'a';
 
-	if (memcmp(p, q, LEN)) {
-		fprintf(temp, "\tmemcmp fails - should have succeeded.\n");
-		local_flag = FAILED;
-	}
+ if (memcmp(p, q, LEN)) {
+  fprintf(temp, "\tmemcmp fails - should have succeeded.\n");
+  local_flag  FAILED;
+ }
 
-	blexit();
+ blexit();
 /*--------------------------------------------------------------*/
-/* Clean up any files created by test before call to anyfail.	*/
+/* Clean up any files created by test before call to anyfail. */
 
-	anyfail();	/* THIS CALL DOES NOT RETURN - EXITS!!	*/
-	return(0);
+ anyfail(); /* THIS CALL DOES NOT RETURN - EXITS!! */
+ return(0);
 }
 /*--------------------------------------------------------------*/
 /* FUNCTIONS GO HERE */
 
 void clearit()
 {
-	register int i;
+ register int i;
 
-	for (i=0; i < BSIZE; i++)
-		buf[i] = 0;
+ for (i0; i < BSIZE; i++)
+  buf[i]  0;
 }
 
 void fill(char *str)
 {
-	register int i;
-	for (i=0; i < LEN; i++)
-		*str++ = 'a';
+ register int i;
+ for (i0; i < LEN; i++)
+  *str++  'a';
 }
 
 int checkit(char *str)
 {
-	register int i;
-	for (i=0; i < LEN; i++)
-		if (*str++ != 'a')
-			return(-1);
-	
-	return (0);
+ register int i;
+ for (i0; i < LEN; i++)
+  if (*str++ ! 'a')
+   return(-1);
+
+ return (0);
 }
 
 
@@ -234,18 +234,18 @@ int anyfail()
 
 void setup()
 {
- temp = stderr;
+ temp  stderr;
 }
 
 int blenter()
 {
-   local_flag = PASSED;
+   local_flag  PASSED;
    return(0);
 }
 
 int blexit()
 {
-   (local_flag == FAILED) ? tst_resm(TFAIL, "Test failed") : tst_resm(TPASS, "Test passed");
+   (local_flag  FAILED) ? tst_resm(TFAIL, "Test failed") : tst_resm(TPASS, "Test passed");
    return(0);
 }
 

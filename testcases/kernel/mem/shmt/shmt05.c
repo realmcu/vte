@@ -22,10 +22,10 @@
 
 /*
  * NAME
- *		 shmt05
+ *   shmt05
  *
  * CALLS
- *		 shmctl(2) shmget(2) shmat(2)
+ *   shmctl(2) shmget(2) shmat(2)
  *
  * ALGORITHM
  * Create two shared memory segments and attach them to the same process
@@ -46,86 +46,86 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "shmt05";		/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID  "shmt05";  /* Test program identifier.    */
+int TST_TOTAL  2;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 /**************/
 
 key_t key[2];
 
-#define		 SIZE		 (2*SHMLBA)
+#define   SIZE   (2*SHMLBA)
 
 int rm_shm(int);
 
 int main()
 {
-	int shmid, shmid1;
-	char *cp, *cp1;
+ int shmid, shmid1;
+ char *cp, *cp1;
 
-	srand48((getpid() << 16) + (unsigned)time((time_t *) NULL));
+ srand48((getpid() << 16) + (unsigned)time((time_t *) NULL));
 
-	key[0] = (key_t) lrand48();
-	key[1] = (key_t) lrand48();
-
-/*--------------------------------------------------------*/
-
-	if ((shmid = shmget(key[0], SIZE, IPC_CREAT | 0666)) < 0) {
-		perror("shmget");
-		tst_resm(TFAIL,
-			 "Error: shmget: shmid = %d, errno = %d\n",
-			 shmid, errno);
-	} else {
-		cp = (char *)shmat(shmid, (void *)NULL, 0);
-
-		if (cp == (char *)-1) {
-			tst_resm(TFAIL, "shmat");
-			rm_shm(shmid);
-		}
-	}
-
-	tst_resm(TPASS, "shmget & shmat");
+ key[0]  (key_t) lrand48();
+ key[1]  (key_t) lrand48();
 
 /*--------------------------------------------------------*/
 
-	if ((shmid1 = shmget(key[1], SIZE, IPC_CREAT | 0666)) < 0) {
-		perror("shmget2");
-		tst_resm(TFAIL,
-			 "Error: shmget: shmid1 = %d, errno = %d\n",
-			 shmid1, errno);
-	} else {
-		cp1 = (char *)shmat(shmid1, cp + (SIZE/2), 0);
-		if (cp1 != (char *)-1) {
-			perror("shmat");
-			tst_resm(TFAIL,
-				 "Error: shmat: shmid1 = %d, addr= %#x, errno = %d\n",
-				 shmid1, cp1, errno);
-		}
-		else{
-			tst_resm(TPASS, "2nd shmget & shmat");
-		}
-	}
+ if ((shmid  shmget(key[0], SIZE, IPC_CREAT | 0666)) < 0) {
+  perror("shmget");
+  tst_resm(TFAIL,
+    "Error: shmget: shmid  %d, errno  %d\n",
+    shmid, errno);
+ } else {
+  cp  (char *)shmat(shmid, (void *)NULL, 0);
+
+  if (cp  (char *)-1) {
+   tst_resm(TFAIL, "shmat");
+   rm_shm(shmid);
+  }
+ }
+
+ tst_resm(TPASS, "shmget & shmat");
+
+/*--------------------------------------------------------*/
+
+ if ((shmid1  shmget(key[1], SIZE, IPC_CREAT | 0666)) < 0) {
+  perror("shmget2");
+  tst_resm(TFAIL,
+    "Error: shmget: shmid1  %d, errno  %d\n",
+    shmid1, errno);
+ } else {
+  cp1  (char *)shmat(shmid1, cp + (SIZE/2), 0);
+  if (cp1 ! (char *)-1) {
+   perror("shmat");
+   tst_resm(TFAIL,
+     "Error: shmat: shmid1  %d, addr %#x, errno  %d\n",
+     shmid1, cp1, errno);
+  }
+  else{
+   tst_resm(TPASS, "2nd shmget & shmat");
+  }
+ }
 
 
 /*------------------------------------------------------*/
 
-	rm_shm(shmid);
-	rm_shm(shmid1);
+ rm_shm(shmid);
+ rm_shm(shmid1);
 
-	tst_exit();
+ tst_exit();
 
 /*-------------------------------------------------------*/
-	return (0);
+ return (0);
 }
 
 int rm_shm(shmid)
 int shmid;
 {
-	if (shmctl(shmid, IPC_RMID, NULL) == -1) {
-		perror("shmctl");
-		tst_resm(TFAIL,
-			 "shmctl Failed to remove: shmid = %d, errno = %d\n",
-			 shmid, errno);
-		tst_exit();
-	}
-	return (0);
+ if (shmctl(shmid, IPC_RMID, NULL)  -1) {
+  perror("shmctl");
+  tst_resm(TFAIL,
+    "shmctl Failed to remove: shmid  %d, errno  %d\n",
+    shmid, errno);
+  tst_exit();
+ }
+ return (0);
 }

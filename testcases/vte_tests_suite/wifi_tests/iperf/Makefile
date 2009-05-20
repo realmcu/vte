@@ -22,10 +22,10 @@
 #                    Modification     Tracking
 #Author                  Date          Number    Description of Changes
 #------------------  ------------    ----------  ----------------------
-# Z.Spring            28/11/2008     ENGR100588   Initial ver, re-construct 
+# Z.Spring            28/11/2008     ENGR100588   Initial ver, re-construct
 #
 ###############################################################################
-#Portability: Indicate if this module is portable to other compilers 
+#Portability: Indicate if this module is portable to other compilers
 #             or platforms.
 #             If not, indicate specific reasons why is it not portable.
 #

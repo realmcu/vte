@@ -20,15 +20,15 @@
 
 /*
  * NAME
- *	statfs03.c
+ * statfs03.c
  *
  * DESCRIPTION
- *	Testcase to check that statfs(2) sets errno to EACCES when
- *	search permission is denied for a component of the path prefix of path.
+ * Testcase to check that statfs(2) sets errno to EACCES when
+ * search permission is denied for a component of the path prefix of path.
  *
  * ALGORITHM
- *	 Use a component of the pathname, where search permission 
- *	 is denied for a component of the path prefix of path. 
+ *  Use a component of the pathname, where search permission
+ *  is denied for a component of the path prefix of path.
  *
  * USAGE:  <for command-line>
  *  statfs03 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -40,10 +40,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	05/2002 Ported by Jacky Malcles
+ * 05/2002 Ported by Jacky Malcles
  *
  * RESTRICTIONS
- *	NONE
+ * NONE
  *
  */
 #include <sys/types.h>
@@ -58,16 +58,16 @@
 #include <pwd.h>
 
 extern char *TESTDIR;
-char *TCID = "statfs03";
-int TST_TOTAL = 1;
-int fileHandle = 0;
+char *TCID  "statfs03";
+int TST_TOTAL  1;
+int fileHandle  0;
 extern int Tst_count;
 
-int exp_enos[]={EACCES, 0};
-char nobody_uid[] = "nobody";
+int exp_enos[]{EACCES, 0};
+char nobody_uid[]  "nobody";
 struct passwd *ltpuser;
 
-char fname[30] = "testfile";
+char fname[30]  "testfile";
 char path[50];
 struct statfs buf;
 
@@ -76,48 +76,48 @@ void cleanup(void);
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-		/*NOTREACHED*/
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+  /*NOTREACHED*/
+ }
 
-	setup();
+ setup();
 
-	/* set up the expected errnos */
-	TEST_EXP_ENOS(exp_enos);
+ /* set up the expected errnos */
+ TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping. */
+  Tst_count  0;
 
-		TEST(statfs(path, &buf));
+  TEST(statfs(path, &buf));
 
-		if (TEST_RETURN != -1) {
-			tst_resm(TFAIL, "call succeeded unexpectedly");
+  if (TEST_RETURN ! -1) {
+   tst_resm(TFAIL, "call succeeded unexpectedly");
 
-		} else {
+  } else {
 
-			TEST_ERROR_LOG(TEST_ERRNO);
+   TEST_ERROR_LOG(TEST_ERRNO);
 
-			if (TEST_ERRNO == EACCES) {
-				tst_resm(TPASS, "expected failure - "
-					 "errno = %d : %s", TEST_ERRNO,
-					 strerror(TEST_ERRNO));
-			} else {
-				tst_resm(TFAIL, "unexpected error - %d : %s - "
-					 "expected %d", TEST_ERRNO,
-					 strerror(TEST_ERRNO), exp_enos[0]);
-			}
-		}
-	}
-	cleanup();
-	/*NOTREACHED*/
+   if (TEST_ERRNO  EACCES) {
+    tst_resm(TPASS, "expected failure - "
+      "errno  %d : %s", TEST_ERRNO,
+      strerror(TEST_ERRNO));
+   } else {
+    tst_resm(TFAIL, "unexpected error - %d : %s - "
+      "expected %d", TEST_ERRNO,
+      strerror(TEST_ERRNO), exp_enos[0]);
+   }
+  }
+ }
+ cleanup();
+ /*NOTREACHED*/
 
   return(0);
 
@@ -129,36 +129,36 @@ void
 setup()
 {
 
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* make a temporary directory and cd to it */
-	tst_tmpdir();
-    if (chmod(TESTDIR, S_IRWXU) == -1) 
+ /* make a temporary directory and cd to it */
+ tst_tmpdir();
+    if (chmod(TESTDIR, S_IRWXU)  -1)
         tst_brkm(TBROK, cleanup, "chmod(%S,700) failed; errno %d: %s", TESTDIR, errno, strerror(errno));
-	
-	/* create a test file */
+
+ /* create a test file */
         sprintf(fname, "%s.%d", fname, getpid());
-	if (mkdir(fname, 0444) == -1) {
-		tst_resm(TFAIL, "creat(2) FAILED to creat temp file");
-	} else {
-		sprintf(path, "%s/%s", fname, fname);
-		if ((fileHandle = creat(path, 0444)) == -1) {
-			tst_resm(TFAIL, "creat (2) FAILED to creat temp file");
-		}
-	}
+ if (mkdir(fname, 0444)  -1) {
+  tst_resm(TFAIL, "creat(2) FAILED to creat temp file");
+ } else {
+  sprintf(path, "%s/%s", fname, fname);
+  if ((fileHandle  creat(path, 0444))  -1) {
+   tst_resm(TFAIL, "creat (2) FAILED to creat temp file");
+  }
+ }
 
 
         /* Switch to nobody user for correct error code collection */
-        if (geteuid() != 0) {
+        if (geteuid() ! 0) {
                 tst_brkm(TBROK, tst_exit, "Test must be run as root");
         }
 
-         ltpuser = getpwnam(nobody_uid);
-         if (seteuid(ltpuser->pw_uid) == -1) {
+         ltpuser  getpwnam(nobody_uid);
+         if (seteuid(ltpuser->pw_uid)  -1) {
                 tst_resm(TINFO, "seteuid failed to "
                          "to set the effective uid to %d",
                          ltpuser->pw_uid);
@@ -170,28 +170,28 @@ setup()
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
+ *        completion or premature exit.
  */
 void
 cleanup()
 {
         /* reset the process ID to the saved ID (root) */
-        if (setuid(0) == -1) {
+        if (setuid(0)  -1) {
                         tst_resm(TINFO, "setuid(0) failed");
         }
 
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
     close(fileHandle);
 
-	TEST_CLEANUP;
+ TEST_CLEANUP;
 
-	/* delete the test directory created in setup() */
-	tst_rmdir();
+ /* delete the test directory created in setup() */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }
 

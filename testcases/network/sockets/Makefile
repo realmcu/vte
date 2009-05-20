@@ -18,7 +18,7 @@
 
 ###########################################################################
 # name of file	: Makefile						  #
-# description	: make(2) erver & client for socket tests        	  #
+# description	: make(2) erver & client for socket tests          #
 ###########################################################################
 CFLAGS+=	-I../../../../include -Wall -g
 LOADLIBES+=     -lpthread

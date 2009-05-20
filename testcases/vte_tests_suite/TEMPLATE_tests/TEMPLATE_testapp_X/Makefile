@@ -4,7 +4,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ##############################################################################
 #
 #   @file   Makefile
@@ -19,7 +19,7 @@
 #
 #Author (core ID)      Date         CR Number    Description of Changes
 #-------------------   ----------   ----------   ------------------------------
-#Developer Name/ID     DD/MM/YYYY   TLSboXXXXX   BRIEF desc. of changes 
+#Developer Name/ID     DD/MM/YYYY   TLSboXXXXX   BRIEF desc. of changes
 #Delaspre/rc149c       07/12/2004   TLSbo40142   update copyrights with Freescale
 #
 ##############################################################################

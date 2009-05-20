@@ -23,11 +23,11 @@
 /*              These tests are adapted from AIX float PVT tests.             */
 /*                                                                            */
 /******************************************************************************/
-#include 	<float.h>
-#include 	<stdio.h>
-#include 	<stdlib.h>
-#include 	<string.h>
-#include 	<errno.h>
+#include <float.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 #include        <limits.h>
 #include        <unistd.h>
 #include        <fcntl.h>
@@ -35,7 +35,7 @@
 #include        <sys/signal.h>
 #include        <math.h>
 
-#define M_PIl	3.1415926535897932384626433832795029L
+#define M_PIl 3.1415926535897932384626433832795029L
 
 
 
@@ -43,108 +43,108 @@
 int create_Result_file()
 {
 
-	int i, nbVal;
-	double	tabRatan[20000], Inc;
-	char *F_name;
-	int fp;
+ int i, nbVal;
+ double tabRatan[20000], Inc;
+ char *F_name;
+ int fp;
 
-	F_name = "ratan";
-	nbVal = 20000; 
+ F_name  "ratan";
+ nbVal  20000;
 
-	Inc = 2/nbVal;
+ Inc  2/nbVal;
 
-	for (i=0; i<nbVal; i++)
-		tabRatan[i] = atan ( (Inc*i)-1 );
+ for (i0; i<nbVal; i++)
+  tabRatan[i]  atan ( (Inc*i)-1 );
 
 
-	fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
+ fp  open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
         if (!fp)
         {
-            	printf("error opening file");
-		close(fp);
-		return -1;
-	}
-	else
-	{
-		for (i = 0; i<nbVal; i++ ) 
-		{
-			write(fp,&tabRatan[i],sizeof(double));
-		}
-	
-		close(fp);
-		return 0;
-	}
+            printf("error opening file");
+  close(fp);
+  return -1;
+ }
+ else
+ {
+  for (i  0; i<nbVal; i++ )
+  {
+   write(fp,&tabRatan[i],sizeof(double));
+  }
+
+  close(fp);
+  return 0;
+ }
 }
 
 
 int create_Data_file()
 {
-	int i, nbVal;
-	double	tabDatan[20000], Inc;
-	char *F_name;
-	int fp;
+ int i, nbVal;
+ double tabDatan[20000], Inc;
+ char *F_name;
+ int fp;
 
-	F_name = "datan";
-	nbVal = 20000; 
+ F_name  "datan";
+ nbVal  20000;
 
-	Inc = 2/nbVal; 
+ Inc  2/nbVal;
 
-	for (i=0; i<nbVal; i++)
-		tabDatan[i] = (Inc * i) -1;
+ for (i0; i<nbVal; i++)
+  tabDatan[i]  (Inc * i) -1;
 
 
-	fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
+ fp  open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
         if (!fp)
         {
-            	printf("error opening file");
-	    	close(fp);
-	    	return -1;
+            printf("error opening file");
+     close(fp);
+     return -1;
         }
         else
-        {	
-		for (i = 0; i<nbVal; i++ ) 
-		{
-			write(fp,&tabDatan[i],sizeof(double));
-		}
-		close(fp);
-		return 0;
-	}
+        {
+  for (i  0; i<nbVal; i++ )
+  {
+   write(fp,&tabDatan[i],sizeof(double));
+  }
+  close(fp);
+  return 0;
+ }
 }
 
 
 int main(int argc, char  *argv[])
 {
 
-	if (argc > 1) 
-	{
-		switch ( atoi(argv[1]) )
-		{
-		case 1:
-			if (create_Data_file() == 0)
-				printf("Data file created\n");
-			else
-				printf("problem during atan data file creation\n");
-			break;
+ if (argc > 1)
+ {
+  switch ( atoi(argv[1]) )
+  {
+  case 1:
+   if (create_Data_file()  0)
+    printf("Data file created\n");
+   else
+    printf("problem during atan data file creation\n");
+   break;
 
-		case 2:
-			if (create_Result_file() == 0)
-				printf("Result file created\n");
-			else
-				printf("problem during atan result file creation\n");
-			break;
-		default:
-			printf("Bad arglist code for: '%s'\n", argv[0]);
-			return -1;
-			break;
-		}
-	}
-	else
-	{
-		if (create_Data_file() != 0)
-			printf("problem during atan data file creation\n");
-		if (create_Result_file() != 0)
-			printf("problem during atan result file creation\n");
-	}
+  case 2:
+   if (create_Result_file()  0)
+    printf("Result file created\n");
+   else
+    printf("problem during atan result file creation\n");
+   break;
+  default:
+   printf("Bad arglist code for: '%s'\n", argv[0]);
+   return -1;
+   break;
+  }
+ }
+ else
+ {
+  if (create_Data_file() ! 0)
+   printf("problem during atan data file creation\n");
+  if (create_Result_file() ! 0)
+   printf("problem during atan result file creation\n");
+ }
 
   return(0);
 

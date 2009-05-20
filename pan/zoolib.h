@@ -53,17 +53,17 @@ void wait_handler();
 
 /*  char *zoo_active( void ); */
 /* zoo_getname(): create a filename to use for the zoo
- * 	returns NULL on error */
+ * returns NULL on error */
 char *zoo_getname(void);
 
-/* zoo_open(): open a zoo file for use 
- * 	returns NULL on error */
+/* zoo_open(): open a zoo file for use
+ * returns NULL on error */
 zoo_t zoo_open(char *zooname);
 
 /* zoo_close(): close an open zoo file */
 int zoo_close(zoo_t z);
 
-/* zoo_mark_cmdline(): make an entry to the zoo 
+/* zoo_mark_cmdline(): make an entry to the zoo
  *	returns 0 on success, -1 on error */
 int zoo_mark_cmdline(zoo_t z, pid_t p, char *tag, char *cmdline);
 
@@ -76,7 +76,7 @@ int zoo_mark_args(zoo_t z, pid_t p, char *tag, int ac, char **av);
 int zoo_clear(zoo_t z, pid_t p);
 
 /* zoo_getpid(): get the pid for a specified tag
- * 	returns pid_t on success and 0 on error */
+ * returns pid_t on success and 0 on error */
 pid_t zoo_getpid(zoo_t z, char *tag);
 
 

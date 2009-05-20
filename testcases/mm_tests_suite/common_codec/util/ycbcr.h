@@ -17,13 +17,13 @@
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
 D.Simakov / smkd001c  21/02/2006   TLSbo61035   Initial version
-=============================================================================*/ 
+=============================================================================*/
 
 #ifndef __YCBCR_H__
 #define __YCBCR_H__
 
-#define RGB_888                     1   
-#define RGB_565                     2   
+#define RGB_888                     1
+#define RGB_565                     2
 
 int YCrCbToRGB( unsigned char *Y, int xsize,
                 unsigned char *Cb, unsigned char *Cr, int cxsize,

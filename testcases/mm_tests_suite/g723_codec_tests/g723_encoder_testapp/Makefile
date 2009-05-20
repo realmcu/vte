@@ -23,7 +23,7 @@
 # D.Simakov / smkd001c   15/04/2005   TLSbo47117   The configs are copied now
 # S. V-Guilhou / svan01c 19/05/2005   TLSbo50534   ARM11 codecs P4 tests
 # D.Simakov/smkd001c     24/10/2005   TLSbo57009   Rework
-# A.Pshenichnikov 	 13/01/2006   TLSbo63011   Makefiles / shared libraries	
+# A.Pshenichnikov  13/01/2006   TLSbo63011   Makefiles / shared libraries
 ##############################################################################
 
 
@@ -33,7 +33,7 @@ CFLAGS    += -Wall -I../../../../include -I$(MMAPI_HDIR) -I$(G723E_HDIR) -I$(COD
 LOADLIBES += -L../../../../lib -lltp -lpthread -lm -Bdynamic -L$(G723E_LIBDIR) -l$(G723E_LIBRARY)
 
 CFLAGS    += -g -mcpu=arm1136j-s -mabi=aapcs -DFILEIO -DLITTLE_ENDIAN
-LOADLIBES += -Wl,--no-warn-mismatch -mcpu=arm1136j-s -lm -lc -lrt 
+LOADLIBES += -Wl,--no-warn-mismatch -mcpu=arm1136j-s -lm -lc -lrt
 
 SRCS       = $(wildcard *.c)
 OBJS       = $(patsubst %.c,%.o,$(SRCS))
@@ -52,9 +52,9 @@ install:
 	cp -f $(CONFIGS) $(LTP_BIN)
 	cp -rf $(G723E_INPUT) $(LTP_BIN)
 	cp -rf $(G723E_REF) $(LTP_BIN)
-	mkdir -p $(LTP_BIN)/g723e_output     
-	mkdir -p $(LTP_BIN)/sharedlibs       
-	cp -rf $(G723E_LIBDIR)/lib$(G723E_LIBRARY).so $(LTP_BIN)/sharedlibs            
+	mkdir -p $(LTP_BIN)/g723e_output
+	mkdir -p $(LTP_BIN)/sharedlibs
+	cp -rf $(G723E_LIBDIR)/lib$(G723E_LIBRARY).so $(LTP_BIN)/sharedlibs
 	@echo "***********************************************"
 	@echo "** INSTALL : g723_encoder_testapp set        **"
 	@echo "***********************************************"

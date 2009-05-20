@@ -10,13 +10,13 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-     
+
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Dmitriy Kazachkov           10/06/2004     TLSbo39741   initial version 
+Dmitriy Kazachkov           10/06/2004     TLSbo39741   initial version
 ==================================================================================================*/
 
 #ifndef PM_TEST_X_H

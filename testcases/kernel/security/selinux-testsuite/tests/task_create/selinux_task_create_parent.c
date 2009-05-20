@@ -15,12 +15,12 @@
 
 int main(void)
 {
-	int pid;
+ int pid;
 
-	if ((pid = fork()) < 0) {
-		perror("fork"); 
-		exit(1);
-	}
-	fprintf(stderr,"%d\n",pid);
-	exit(0);
+ if ((pid  fork()) < 0) {
+  perror("fork");
+  exit(1);
+ }
+ fprintf(stderr,"%d\n",pid);
+ exit(0);
 }

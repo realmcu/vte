@@ -70,7 +70,7 @@ private:
     void  moveTo(int xPosition,int line);
     void  position(TetrixPiece &piece);
     void  optimizedMove(int newPos, int newLine,TetrixPiece &newPiece);
-    
+
     int  &board(int x,int y){return boardPtr[width*y + x];}
 
     TetrixPiece currentPiece;

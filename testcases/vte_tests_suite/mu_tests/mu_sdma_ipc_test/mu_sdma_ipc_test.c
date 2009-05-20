@@ -17,7 +17,7 @@ Description of the file
         If not, indicate specific reasons why is it not portable.
 */
 
-/*======================== REVISION HISTORY ====================================
+/*======== REVISION HISTORY ========
 
 Author (core ID)          Date         CR Number    Description of Changes
 -----------------------   ----------   ----------   ----------------------------
@@ -25,13 +25,13 @@ I. Semenchukov/smng001c   09/03/2005   TLSbo47942   Initial version
 Y. Batrakov               01/09/2006   TLSbo75877   Rework to write data
                                                     according to the MU protocol
 
-==============================================================================*/
+==================*/
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*======================== INCLUDE FILES ====================================*/
+/*======== INCLUDE FILES ========*/
 /* Standard Include Files */
 
 #include <sys/types.h>
@@ -58,26 +58,26 @@ extern "C"{
 
 #include "mu_sdma_ipc_test.h"
 
-/*======================== LOCAL CONSTANTS ==================================*/
+/*======== LOCAL CONSTANTS ==========*/
 const char* log_fname = "/tmp/mu_sdma_ipc_test.log";
 
-/*======================== LOCAL MACROS =====================================*/
+/*======== LOCAL MACROS =========*/
 
 
-/*======================== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) =======*/
+/*======== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) ===*/
 
-/*======================== LOCAL VARIABLES ==================================*/
+/*======== LOCAL VARIABLES ==========*/
 FILE* stdlog = NULL;      /* Log file contains more verbose info about test results */
 int   iter;
 struct termios init_parm;
 
-/*======================== GLOBAL CONSTANTS =================================*/
+/*======== GLOBAL CONSTANTS =========*/
 
 
-/*======================== GLOBAL VARIABLES =================================*/
+/*======== GLOBAL VARIABLES =========*/
 
 
-/*======================== LOCAL FUNCTION PROTOTYPES ========================*/
+/*======== LOCAL FUNCTION PROTOTYPES ========*/
 void* ipc_thread_func(void* thread_arg);
 int   dev_node_init(dev_node_t* node, int is_sdma);
 int   dev_node_cleanup(dev_node_t* node, int is_sdma);
@@ -86,12 +86,12 @@ int   dev_node_read(dev_node_t* node, int is_sdma);
 int   mu_write(int dev, int* val);
 int   mu_read( int dev, int* val);
 
-/*======================== LOCAL FUNCTIONS ==================================*/
+/*======== LOCAL FUNCTIONS ==========*/
 
 
-/*======================== GLOBAL FUNCTIONS =================================*/
+/*======== GLOBAL FUNCTIONS =========*/
 
-/*===== VT_mu_sdma_ipc_setup =====*/
+/*= VT_mu_sdma_ipc_setup =*/
 /**
 Description of the function
 @brief  assumes the pre-condition of the test case execution
@@ -117,7 +117,7 @@ int VT_mu_sdma_ipc_setup(void)
     return rv;
 }
 
-/*===== VT_mu_sdma_ipc_cleanup =====*/
+/*= VT_mu_sdma_ipc_cleanup =*/
 /**
 Description of the function
 @brief  assumes the post-condition of the test case execution
@@ -141,7 +141,7 @@ int VT_mu_sdma_ipc_cleanup(void)
     return rv;
 }
 
-/*===== VT_mu_sdma_ipc_test =====*/
+/*= VT_mu_sdma_ipc_test =*/
 /**
 @brief  Initializes variables and creates two test threads, then waits
         when they complete their work.
@@ -162,14 +162,14 @@ int VT_mu_sdma_ipc_test(int num_iter, dev_node_t* dev_node)
 
     pthread_t  th_id[2];
     int        rv = TFAIL;
-    int		   fd_0;
+    int     fd_0;
     unsigned char testbuf[4];
 
 #if defined(CONFIG_MACH_MXC27520EVB)
-		/* Open in NON_BLOCK for dummy read */
-		fd_0 = open("/dev/mxc_mu/0", O_RDWR | O_NONBLOCK);
-		read(fd_0, testbuf, 4);
-		close(fd_0);
+  /* Open in NON_BLOCK for dummy read */
+  fd_0 = open("/dev/mxc_mu/0", O_RDWR | O_NONBLOCK);
+  read(fd_0, testbuf, 4);
+  close(fd_0);
 #endif
 
     iter = num_iter;
@@ -195,7 +195,7 @@ int VT_mu_sdma_ipc_test(int num_iter, dev_node_t* dev_node)
     return rv;
 }
 
-/*===== ipc_thread_func =====*/
+/*= ipc_thread_func =*/
 /**
 @brief  Calls device init function, then calls write and read functions 'iter' times,
         then calls device cleanup function. Tracks device test status.
@@ -264,7 +264,7 @@ void* ipc_thread_func(void* thread_arg)
     return NULL;
 }
 
-/*===== dev_node_init =====*/
+/*= dev_node_init =*/
 /**
 @brief  Opens a device file and allocates space for read/write buffers.
         Also for SDMA device sets its TTY mode and turns on loopback mode.
@@ -360,7 +360,7 @@ int dev_node_init(dev_node_t* node, int is_sdma)
     return ret;
 }
 
-/*===== dev_node_cleanup =====*/
+/*= dev_node_cleanup =*/
 /**
 @brief  Closes a device file and deallocates read/write buffers' space.
         Also for SDMA device restores its TTY mode and loopback mode.
@@ -428,7 +428,7 @@ int dev_node_cleanup(dev_node_t* node, int is_sdma)
     return ret;
 }
 
-/*===== dev_node_write =====*/
+/*= dev_node_write =*/
 /**
 @brief  Fills write buffer by random values. Writes buffer contents to the device.
         Writes appropriate info to log file.
@@ -516,7 +516,7 @@ int dev_node_write(dev_node_t* node, int is_sdma)
     return ret;
 }
 
-/*===== dev_node_read =====*/
+/*= dev_node_read =*/
 /**
 @brief  Reads information from the device file to the read buffer.
         Writes appropriate info to log file.
@@ -595,7 +595,7 @@ int dev_node_read(dev_node_t* node, int is_sdma)
     return ret;
 }
 
-/*===== dev_node_read =====*/
+/*= dev_node_read =*/
 /**
 @brief  Reverts bytes in 4-byte word and writes it to the MU device.
 
@@ -631,7 +631,7 @@ int mu_write(int dev, int* val)
         return TPASS;
 }
 
-/*===== dev_node_read =====*/
+/*= dev_node_read =*/
 /**
 @brief  Reads 4-byte word from MU device and reverts it.
 

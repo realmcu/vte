@@ -51,7 +51,7 @@ signals:
 public slots:
     void exitFail();
     void exitPass();
-///    
+///
 protected:
     void mouseReleaseEvent( QMouseEvent * );
     void paintEvent( QPaintEvent * );

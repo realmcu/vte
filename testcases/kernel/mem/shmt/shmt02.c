@@ -17,19 +17,19 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* 12/20/2002		 Port to LTP		 robbiew@us.ibm.com */
-/* 06/30/2001		 Port to Linux		 nsharoff@us.ibm.com */
+/* 12/20/2002   Port to LTP   robbiew@us.ibm.com */
+/* 06/30/2001   Port to Linux   nsharoff@us.ibm.com */
 
 /*
  * NAME
- *		 shmt02
+ *   shmt02
  *
  * CALLS
- *		 shmctl(2) shmget(2)
+ *   shmctl(2) shmget(2)
  *
  * ALGORITHM
  * Create and attach a shared memory segment, write to it
- * and then remove it.		  Verify that the shared memory segment
+ * and then remove it.    Verify that the shared memory segment
  * is accessible as long as the process is still alive.
  *
  */
@@ -45,9 +45,9 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "shmt02";		/* Test program identifier.    */
-int TST_TOTAL = 3;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID  "shmt02";  /* Test program identifier.    */
+int TST_TOTAL  3;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 
 /**************/
 
@@ -57,70 +57,70 @@ int rm_shm(int);
 
 int main()
 {
-	register int shmid;
-	char *cp;
-	key_t key;
+ register int shmid;
+ char *cp;
+ key_t key;
 
-	errno = 0;
-	key = (key_t) getpid();
-
-/*----------------------------------------------------------------*/
-
-	if ((shmid = shmget(key, 16 * K_1, IPC_CREAT | 0666)) < 0) {
-		perror("shmget");
-		tst_resm(TFAIL, "shmget Failed: shmid = %d, errno = %d\n",
-			 shmid, errno);
-		tst_exit();
-	}
-
-	tst_resm(TPASS, "shmget");
+ errno  0;
+ key  (key_t) getpid();
 
 /*----------------------------------------------------------------*/
 
-	cp = (char *)shmat(shmid, (void *)NULL, 0);
+ if ((shmid  shmget(key, 16 * K_1, IPC_CREAT | 0666)) < 0) {
+  perror("shmget");
+  tst_resm(TFAIL, "shmget Failed: shmid  %d, errno  %d\n",
+    shmid, errno);
+  tst_exit();
+ }
 
-	if (cp == (char *)-1) {
-		perror("shmat");
-		tst_resm(TFAIL, "shmat Failed: shmid = %d, errno = %d\n",
-			 shmid, errno);
-		rm_shm(shmid);
-		tst_exit();
-	}
-
-	*cp = '1';
-	*(cp + 1) = '2';
-
-	tst_resm(TPASS, "shmat");
+ tst_resm(TPASS, "shmget");
 
 /*----------------------------------------------------------------*/
 
-	rm_shm(shmid);
+ cp  (char *)shmat(shmid, (void *)NULL, 0);
 
-	if (*cp != '1' || *(cp + 1) != '2') {
-		tst_resm(TFAIL,
-			 "Error in shared memory contents: shmid = %d\n",
-			 shmid);
-	}
+ if (cp  (char *)-1) {
+  perror("shmat");
+  tst_resm(TFAIL, "shmat Failed: shmid  %d, errno  %d\n",
+    shmid, errno);
+  rm_shm(shmid);
+  tst_exit();
+ }
 
-	tst_resm(TPASS, "Correct shared memory contents");
+ *cp  '1';
+ *(cp + 1)  '2';
+
+ tst_resm(TPASS, "shmat");
+
+/*----------------------------------------------------------------*/
+
+ rm_shm(shmid);
+
+ if (*cp ! '1' || *(cp + 1) ! '2') {
+  tst_resm(TFAIL,
+    "Error in shared memory contents: shmid  %d\n",
+    shmid);
+ }
+
+ tst_resm(TPASS, "Correct shared memory contents");
 
 /*------------------------------------------------------------------*/
 
-	tst_exit();
+ tst_exit();
 
 /*-------------------- THIS LINE IS NOT REACHED -------------------*/
-	return (0);
+ return (0);
 }
 
 int rm_shm(shmid)
 int shmid;
 {
-	if (shmctl(shmid, IPC_RMID, NULL) == -1) {
-		perror("shmctl");
-		tst_resm(TFAIL,
-			 "shmctl Failed to remove: shmid = %d, errno = %d\n",
-			 shmid, errno);
-		tst_exit();
-	}
-	return (0);
+ if (shmctl(shmid, IPC_RMID, NULL)  -1) {
+  perror("shmctl");
+  tst_resm(TFAIL,
+    "shmctl Failed to remove: shmid  %d, errno  %d\n",
+    shmid, errno);
+  tst_exit();
+ }
+ return (0);
 }

@@ -20,8 +20,8 @@ int main(int argc, char **argv) {
 
   int rc;
 
-  rc = nice(-10);
-  if( rc == -1) {
+  rc  nice(-10);
+  if( rc  -1) {
     perror("test_nice:nice");
     exit(1);
   }

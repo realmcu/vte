@@ -20,14 +20,14 @@
 
 #ifdef _POSIX_SPORADIC_SERVER
 int main() {
-	printf("Not yet tested.\n");
-	return PTS_UNTESTED;
+ printf("Not yet tested.\n");
+ return PTS_UNTESTED;
 }
 
 #else
 int main() {
-	printf("Does not support SS (SPORADIC SERVER)\n");
-	return PTS_UNSUPPORTED;
+ printf("Does not support SS (SPORADIC SERVER)\n");
+ return PTS_UNSUPPORTED;
 }
 
 #endif

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="33"
+   name=""
+   committed-date="2005-10-17T22:25:24.828295Z"
+   url="http://www.netperf.org/svn/netperf2/trunk/m4"
+   last-author="raj"
+   kind="dir"
+   uuid="5bbd99f3-5903-0410-b283-f1d88047b228"
+   revision="70"/>
+<entry
+   name="m4"
+   kind="dir"/>
+</wc-entries>

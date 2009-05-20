@@ -22,7 +22,7 @@
  *
  * Test Description:
  *  Verify that sigprocmask() succeeds to examine and change the calling
- *  process's signal mask. 
+ *  process's signal mask.
  *  Also, verify that sigpending() succeeds to store signal mask that are
  *  blocked from delivery and pending for the calling process.
  *
@@ -40,31 +40,31 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return=-1)
- *   	Log the errno and Issue a FAIL message.
+ *   Check return code, if system call failed (return-1)
+ *   Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *   Verify the Functionality of system call
  *      if successful,
- *      	Issue Functionality-Pass message.
+ *      Issue Functionality-Pass message.
  *      Otherwise,
- *		Issue Functionality-Fail message.
+ *  Issue Functionality-Fail message.
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
  *   Delete the temporary directory created.
  *
  * Usage:  <for command-line>
  *  sigprocmask01 [-c n] [-e] [-f] [-i n] [-I x] [-p x] [-t]
- *	where,  -c n : Run n copies concurrently.
- *		-e   : Turn on errno logging.
- *		-f   : Turn off functionality Testing.
- *		-i n : Execute test n times.
- *		-I x : Execute test for x seconds.
- *		-P x : Pause for x seconds between iterations.
- *		-t   : Turn on syscall timing.
+ * where,  -c n : Run n copies concurrently.
+ *  -e   : Turn on errno logging.
+ *  -f   : Turn off functionality Testing.
+ *  -i n : Execute test n times.
+ *  -I x : Execute test for x seconds.
+ *  -P x : Pause for x seconds between iterations.
+ *  -t   : Turn on syscall timing.
  *
  * History
- *	07/2001 John George
- *		-Ported
+ * 07/2001 John George
+ *  -Ported
  *
  * Restrictions:
  *  None.
@@ -82,147 +82,147 @@
 #include "test.h"
 #include "usctest.h"
 
-void setup();			/* Main setup function of test */
-void cleanup();			/* cleanup function for the test */
-void sig_handler(int sig);	/* signal catching function */
+void setup();   /* Main setup function of test */
+void cleanup();   /* cleanup function for the test */
+void sig_handler(int sig); /* signal catching function */
 
-char *TCID="sigprocmask01";	/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-int exp_enos[]={0};
-int sig_catch = 0;		/* variable to blocked/unblocked signals */
+char *TCID"sigprocmask01"; /* Test program identifier.    */
+int TST_TOTAL1;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
+int exp_enos[]{0};
+int sig_catch  0;  /* variable to blocked/unblocked signals */
 
-struct sigaction sa_new;	/* struct to hold signal info */
-sigset_t sigset;		/* signal set to hold signal lists */
+struct sigaction sa_new; /* struct to hold signal info */
+sigset_t sigset;  /* signal set to hold signal lists */
 sigset_t sigset2;
 
 int
 main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-	pid_t my_pid;		/* test process id */
-    
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *) NULL) {
-		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-		/*NOTREACED*/
-	}
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
+ pid_t my_pid;  /* test process id */
 
-	/* Perform global setup for test */
-	setup();
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(ac, av, (option_t *) NULL, NULL);
+ if (msg ! (char *) NULL) {
+  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+  tst_exit();
+  /*NOTREACED*/
+ }
 
-	/* set the expected errnos... */
-	TEST_EXP_ENOS(exp_enos);
+ /* Perform global setup for test */
+ setup();
 
-	/* Check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
+ /* set the expected errnos... */
+ TEST_EXP_ENOS(exp_enos);
 
-		/* 
-		 * Call sigprocmask() to block (SIGINT) signal
-		 * so that, signal will not be delivered to
-		 * the test process.
-		 */
-		TEST(sigprocmask(SIG_BLOCK, &sigset, 0));
+ /* Check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* Reset Tst_count in case we are looping. */
+  Tst_count0;
 
-		/* Get the process id of test process */
-		my_pid = getpid();
+  /*
+   * Call sigprocmask() to block (SIGINT) signal
+   * so that, signal will not be delivered to
+   * the test process.
+   */
+  TEST(sigprocmask(SIG_BLOCK, &sigset, 0));
 
-		/* Send SIGINT signal to the process */
-		kill(my_pid, SIGINT);
+  /* Get the process id of test process */
+  my_pid  getpid();
 
-		/* check return code of sigprocmask */
-		if (TEST_RETURN == -1) {
-			TEST_ERROR_LOG(TEST_ERRNO);
-			tst_resm(TFAIL,
-				 "sigprocmask() Failed, errno=%d : %s",
-				 TEST_ERRNO, strerror(TEST_ERRNO));
-		} else {
-			/*
-			 * Perform functional verification if test
-			 * executed without (-f) option.
-			 */
-			if (STD_FUNCTIONAL_TEST) {
-				/*
-				 * Check whether process received the signal.
-				 * If yes! signal handler was executed and
-				 * incremented 'sig_catch' variable.
-				 */
-				if (sig_catch) {
-					tst_resm(TFAIL, "sigprocmask fails to "
-						"change process's signal mask");
-				} else {
-					/*
-					 * Check whether specified signal
-					 * 'SIGINT' is pending for the process.
-					 */
-					errno = 0;
-					if (sigpending(&sigset2) == -1) {
-						tst_brkm(TFAIL, cleanup,
-							 "blocked signal not "
-							"in pending state, "
-							"error:%d", errno);
-					}
+  /* Send SIGINT signal to the process */
+  kill(my_pid, SIGINT);
 
-					/*
-					 * Check whether specified signal
-					 * is the member of signal set.
-					 */
-					errno = 0;
-					if (!sigismember(&sigset2, SIGINT)) {
-						tst_brkm(TFAIL, cleanup,
-							"sigismember() failed, "
-							"error:%d", errno);
-						/*NOTREACHED*/
-					}
+  /* check return code of sigprocmask */
+  if (TEST_RETURN  -1) {
+   TEST_ERROR_LOG(TEST_ERRNO);
+   tst_resm(TFAIL,
+     "sigprocmask() Failed, errno%d : %s",
+     TEST_ERRNO, strerror(TEST_ERRNO));
+  } else {
+   /*
+    * Perform functional verification if test
+    * executed without (-f) option.
+    */
+   if (STD_FUNCTIONAL_TEST) {
+    /*
+     * Check whether process received the signal.
+     * If yes! signal handler was executed and
+     * incremented 'sig_catch' variable.
+     */
+    if (sig_catch) {
+     tst_resm(TFAIL, "sigprocmask fails to "
+      "change process's signal mask");
+    } else {
+     /*
+      * Check whether specified signal
+      * 'SIGINT' is pending for the process.
+      */
+     errno  0;
+     if (sigpending(&sigset2)  -1) {
+      tst_brkm(TFAIL, cleanup,
+        "blocked signal not "
+       "in pending state, "
+       "error:%d", errno);
+     }
 
-					/*
-					 * Invoke sigprocmask() again to
-					 * unblock the specified signal.
-					 * so that, signal is delivered and
-					 * signal handler executed.
-					 */
-					errno = 0;
-					if (sigprocmask(SIG_UNBLOCK,
-							 &sigset, 0) == -1) {
-						tst_brkm(TFAIL, cleanup,
-							"sigprocmask() failed "
-							"to unblock signal, "
-							"error=%d", errno);
-						/*NOTREACHED*/
-					}
-					if (sig_catch) {
-						tst_resm(TPASS, "Functionality "
-							"of sigprocmask() "
-							"Successful");
-					} else {
-						tst_resm(TFAIL, "Functionality "
-							"of sigprocmask() "
-							"Failed");
-					}
-				/* set sig_catch back to 0 */
-				sig_catch=0;
-				}
-			} else {
-				tst_resm(TPASS, "Call succeeded");
-			}
-		}
+     /*
+      * Check whether specified signal
+      * is the member of signal set.
+      */
+     errno  0;
+     if (!sigismember(&sigset2, SIGINT)) {
+      tst_brkm(TFAIL, cleanup,
+       "sigismember() failed, "
+       "error:%d", errno);
+      /*NOTREACHED*/
+     }
 
-		Tst_count++;			/* incr TEST_LOOP counter */
-	}	/* End for TEST_LOOPING */
+     /*
+      * Invoke sigprocmask() again to
+      * unblock the specified signal.
+      * so that, signal is delivered and
+      * signal handler executed.
+      */
+     errno  0;
+     if (sigprocmask(SIG_UNBLOCK,
+        &sigset, 0)  -1) {
+      tst_brkm(TFAIL, cleanup,
+       "sigprocmask() failed "
+       "to unblock signal, "
+       "error%d", errno);
+      /*NOTREACHED*/
+     }
+     if (sig_catch) {
+      tst_resm(TPASS, "Functionality "
+       "of sigprocmask() "
+       "Successful");
+     } else {
+      tst_resm(TFAIL, "Functionality "
+       "of sigprocmask() "
+       "Failed");
+     }
+    /* set sig_catch back to 0 */
+    sig_catch0;
+    }
+   } else {
+    tst_resm(TPASS, "Call succeeded");
+   }
+  }
 
-	/* Call cleanup() to undo setup done for the test. */
-	cleanup();
-	/*NOTREACHED*/
+  Tst_count++;   /* incr TEST_LOOP counter */
+ } /* End for TEST_LOOPING */
+
+ /* Call cleanup() to undo setup done for the test. */
+ cleanup();
+ /*NOTREACHED*/
 
 
   return(0);
 
-}	/* End main */
+} /* End main */
 
 /*
  * void
@@ -233,52 +233,52 @@ main(int ac, char **av)
  * Add the signal SIGINT to the exclude list of system-defined
  * signals for the test process.
  */
-void 
+void
 setup()
 {
-	/* capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/*
-	 * Initialise the signal sets with the list that
-	 * excludes/includes  all system-defined signals.
-	 */
-	if (sigemptyset(&sigset) == -1) {
-		tst_brkm(TFAIL, cleanup, 
-			 "sigemptyset() failed, errno=%d : %s",
-			 errno, strerror(errno));
-		/*NOTREACHED*/
-	}
-	if (sigfillset(&sigset2) == -1) {
-		tst_brkm(TFAIL, cleanup,
-			 "sigfillset() failed, errno=%d : %s",
-			 errno, strerror(errno));
-		/*NOTREACHED*/
-	}
+ /*
+  * Initialise the signal sets with the list that
+  * excludes/includes  all system-defined signals.
+  */
+ if (sigemptyset(&sigset)  -1) {
+  tst_brkm(TFAIL, cleanup,
+    "sigemptyset() failed, errno%d : %s",
+    errno, strerror(errno));
+  /*NOTREACHED*/
+ }
+ if (sigfillset(&sigset2)  -1) {
+  tst_brkm(TFAIL, cleanup,
+    "sigfillset() failed, errno%d : %s",
+    errno, strerror(errno));
+  /*NOTREACHED*/
+ }
 
-	/* Set the signal handler function to catch the signal */
-	sa_new.sa_handler = sig_handler;
-	if (sigaction(SIGINT, &sa_new, 0) == -1) {
-		tst_brkm(TFAIL, cleanup,
-			 "sigaction() failed, errno=%d : %s",
-			 errno, strerror(errno));
-		/*NOTREACHED*/
-	}
+ /* Set the signal handler function to catch the signal */
+ sa_new.sa_handler  sig_handler;
+ if (sigaction(SIGINT, &sa_new, 0)  -1) {
+  tst_brkm(TFAIL, cleanup,
+    "sigaction() failed, errno%d : %s",
+    errno, strerror(errno));
+  /*NOTREACHED*/
+ }
 
-	/*
-	 * Add specified signal (SIGINT) to the signal set
-	 * which excludes system-defined signals.
-	 */
-	if (sigaddset(&sigset, SIGINT) == -1) {
-		tst_brkm(TFAIL, cleanup,
-			 "sigaddset() failed, errno=%d : %s",
-			 errno, strerror(errno));
-		/*NOTREACHED*/
-	}
-}	/* End setup() */
+ /*
+  * Add specified signal (SIGINT) to the signal set
+  * which excludes system-defined signals.
+  */
+ if (sigaddset(&sigset, SIGINT)  -1) {
+  tst_brkm(TFAIL, cleanup,
+    "sigaddset() failed, errno%d : %s",
+    errno, strerror(errno));
+  /*NOTREACHED*/
+ }
+} /* End setup() */
 
 /*
  * void
@@ -292,8 +292,8 @@ setup()
 void
 sig_handler(int sig)
 {
-	/* Increment the sig_catch variable */
-	sig_catch++;
+ /* Increment the sig_catch variable */
+ sig_catch++;
 }
 
 /*
@@ -301,15 +301,15 @@ sig_handler(int sig)
  * cleanup() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
  */
-void 
+void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}	/* End cleanup() */
+ /* exit with return code appropriate for results */
+ tst_exit();
+} /* End cleanup() */

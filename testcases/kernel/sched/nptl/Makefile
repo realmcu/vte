@@ -21,7 +21,7 @@
 ###########################################################################
 NPTL:=$(shell getconf GNU_LIBPTHREAD_VERSION 2>/dev/null| grep NPTL; echo $?)
 ifeq ($(NPTL),)
-CFLAGS+=	-I../../../../include -g -Wall 
+CFLAGS+=	-I../../../../include -g -Wall
 else
 CFLAGS+=	-I../../../../include -g -Wall -DUSING_NPTL
 endif

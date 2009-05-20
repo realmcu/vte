@@ -18,20 +18,20 @@
 #                      Modification     Tracking
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
-# Spring Zhang          03/11/2008        n/a        Initial ver. 
+# Spring Zhang          03/11/2008        n/a        Initial ver.
 # Spring                28/11/2008       n/a        Modify COPYRIGHT header
 #############################################################################
-# Portability:  ARM sh 
+# Portability:  ARM sh
 #
-# File Name:    
-# Total Tests:   
-# Test Strategy: 
-# 
-# Input:	- $1 - audio stream
+# File Name:
+# Total Tests:
+# Test Strategy:
 #
-# Return:       - 
+# Input: - $1 - audio stream
 #
-# Use command:  
+# Return:       -
+#
+# Use command:
 
 # Function:     setup
 #
@@ -59,7 +59,7 @@ setup()
         LTPTMP=/tmp
     fi
 
-    if [ $# -ne 3 ] 
+    if [ $# -ne 3 ]
     then
         usage
         exit 1
@@ -78,10 +78,10 @@ setup()
     fi
 
     [ ! -z $STREAM_PATH ] || {
-        tst_resm TBROK "Test #1: STREAM_PATH not set, pls check!" 
+        tst_resm TBROK "Test #1: STREAM_PATH not set, pls check!"
         RC=66
         return $RC
-    } 
+    }
 
     if [ ! -e $SRC_FILE ]
     then
@@ -99,7 +99,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup() 
+cleanup()
 {
     RC=0
     return $RC
@@ -153,7 +153,7 @@ asrc_convert()
 # Return        - none
 usage()
 {
-    cat <<-EOF 
+    cat <<-EOF
 
     Use this command to test ASRC functions.
     usage: ./${0##*/} -to [destination sample rate] [source stream]

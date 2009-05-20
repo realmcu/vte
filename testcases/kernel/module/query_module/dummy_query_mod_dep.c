@@ -16,9 +16,9 @@
  */
 /*************************************************************************
  * Description: This is a kernel loadable module programme used by
- *		testcases of query_module(2). This module has dependency
- *		on dummy_query_mod module (calls function of dummy_del_mod
- *		during initialization).
+ *  testcases of query_module(2). This module has dependency
+ *  on dummy_query_mod module (calls function of dummy_del_mod
+ *  during initialization).
  *************************************************************************/
 
 #define MODULE
@@ -38,17 +38,17 @@ extern void dummy_func_test(void);
 int
 init_module (void)
 {
-	/*
-	 * Call function of other module, does nothing, used to create
-	 * dependency with other module
-	 */
-	dummy_func_test();
-	return 0;
+ /*
+  * Call function of other module, does nothing, used to create
+  * dependency with other module
+  */
+ dummy_func_test();
+ return 0;
 }
 
 /* Cleanup routine of module */
 void
 cleanup_module (void)
 {
-	return;
+ return;
 }

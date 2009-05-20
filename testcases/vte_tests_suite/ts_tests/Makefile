@@ -18,7 +18,7 @@
 #-------------------------   ------------    ----------  ------------------------------------------
 #V.HALABUDA/HLBV001           26/07/2005     TLSbo52694  Initial version
 #V.HALABUDA/HLBV001           09/12/2005     TLSbo59968  Update for common API version
-#C.Gagneraud/cgag1c           17/02/2006     TLSbo62202  VTE-2.0 integration: fix multi-platform 
+#C.Gagneraud/cgag1c           17/02/2006     TLSbo62202  VTE-2.0 integration: fix multi-platform
 #                                                        build issue
 #A.Ozerov/b00320              31/05/2006     TLSbo64237  Names of connectivity testapp and module were#                                                        changed.
 #A.Ozerov/b00320              01/06/2006     TLSbo64237  Support MC13783 for PMIC light testapp was added.
@@ -48,11 +48,11 @@ CFLAGS+=    -Dbool=int
 
 #add by Spring
 ifeq ($(ARCH_PLATFORM), $(filter imx31stack, $(ARCH_PLATFORM)))
-SUBDIRS += ts_testapp1 
+SUBDIRS += ts_testapp1
 endif
 
-SUBDIRS += ts_testapp2 
-SUBDIRS += ts_testapp3 
+SUBDIRS += ts_testapp2
+SUBDIRS += ts_testapp3
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i; done

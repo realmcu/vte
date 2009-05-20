@@ -21,12 +21,12 @@ all: $(LOCKTESTS)
 tlock:	tlock.c
 	$(CC) $(CFLAGS) -o tlock tlock.c $(LIBS)
 
-# Large File Summit semantics for 32- or 64-bit files. 
+# Large File Summit semantics for 32- or 64-bit files.
 tlocklfs:	tlock.c
 	$(CC) $(CFLAGS) -DLF_SUMMIT -o tlocklfs tlock.c $(LIBS)
 
 # 64-bit file offsets on 32-bit OS.  Assumes Large File Summit
-# semantics. 
+# semantics.
 tlock64:	tlock.c
 	$(CC) $(CFLAGS) -DLF_SUMMIT -DLARGE_LOCKS -o tlock64 tlock.c $(LIBS)
 

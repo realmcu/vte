@@ -20,8 +20,8 @@
  *      linkat01.c
  *
  * DESCRIPTION
- *	This test case will verify basic function of linkat
- *	added by kernel 2.6.16 or up.
+ * This test case will verify basic function of linkat
+ * added by kernel 2.6.16 or up.
  *
  * USAGE:  <for command-line>
  * linkat01 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-p]
@@ -35,7 +35,7 @@
  *      -t   : Turn on syscall timing.
  *
  * Author
- *	Yi Yang <yyangcdl@cn.ibm.com> 
+ * Yi Yang <yyangcdl@cn.ibm.com>
  *
  * History
  *      08/25/2006      Created first by Yi Yang <yyangcdl@cn.ibm.com>
@@ -71,11 +71,11 @@ void setup();
 void cleanup();
 void setup_every_copy();
 static int mylinkat_test(int testno, int ofd, const char *ofn,
-			 int nfd, const char *nfn, int f);
+    int nfd, const char *nfn, int f);
 
-char *TCID = "linkat01";	/* Test program identifier.    */
-int TST_TOTAL = TEST_CASES;	/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID  "linkat01"; /* Test program identifier.    */
+int TST_TOTAL  TEST_CASES; /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 char pathname[256];
 char dpathname[256];
 char testfile[256];
@@ -87,22 +87,22 @@ char dtestfile3[256];
 int olddirfd, newdirfd, fd, ret;
 int oldfds[TEST_CASES], newfds[TEST_CASES];
 char *oldfilenames[TEST_CASES], *newfilenames[TEST_CASES];
-int expected_errno[TEST_CASES] = { 0, 0, ENOTDIR, EBADF, EINVAL, 0 };
-int flags[TEST_CASES] = { 0, 0, 0, 0, 1, 0 };
+int expected_errno[TEST_CASES]  { 0, 0, ENOTDIR, EBADF, EINVAL, 0 };
+int flags[TEST_CASES]  { 0, 0, 0, 0, 1, 0 };
 char buffer[VERIFICATION_BLOCK_SIZE];
 
 int mylinkat(int olddirfd, const char *oldfilename,
-	     int newdirfd, const char *newfilename, int flags)
+      int newdirfd, const char *newfilename, int flags)
 {
-	return syscall(__NR_linkat, olddirfd, oldfilename, newdirfd,
-		       newfilename, flags);
+ return syscall(__NR_linkat, olddirfd, oldfilename, newdirfd,
+         newfilename, flags);
 }
 
 int main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-	int i;
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
+ int i;
 
        /* Disable test if the version of the kernel is less than 2.6.16 */
         if((tst_kvercmp(2,6,16)) < 0)
@@ -113,209 +113,209 @@ int main(int ac, char **av)
           }
 
 
-	/***************************************************************
-	 * parse standard options
-	 ***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+ /***************************************************************
+  * parse standard options
+  ***************************************************************/
+ if ((msg  parse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *)NULL)
+  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 
-	/***************************************************************
-	 * perform global setup for test
-	 ***************************************************************/
-	setup();
+ /***************************************************************
+  * perform global setup for test
+  ***************************************************************/
+ setup();
 
-	/***************************************************************
-	 * check looping state if -c option given
-	 ***************************************************************/
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		setup_every_copy();
+ /***************************************************************
+  * check looping state if -c option given
+  ***************************************************************/
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  setup_every_copy();
 
-		/* reset Tst_count in case we are looping. */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping. */
+  Tst_count  0;
 
-		/* 
-		 * Call linkat 
-		 */
-		for (i = 0; i < TST_TOTAL; i++) {
-			TEST(mylinkat_test
-			     (i, oldfds[i], oldfilenames[i], newfds[i],
-			      newfilenames[i], flags[i]));
+  /*
+   * Call linkat
+   */
+  for (i  0; i < TST_TOTAL; i++) {
+   TEST(mylinkat_test
+        (i, oldfds[i], oldfilenames[i], newfds[i],
+         newfilenames[i], flags[i]));
 
-			/* check return code */
-			if (TEST_ERRNO == expected_errno[i]) {
+   /* check return code */
+   if (TEST_ERRNO  expected_errno[i]) {
 
-				/***************************************************************
-				 * only perform functional verification if flag set (-f not given)
-				 ***************************************************************/
-				if (STD_FUNCTIONAL_TEST) {
-					/* No Verification test, yet... */
-					tst_resm(TPASS,
-						 "linkat() returned the expected  errno %d: %s",
-						 TEST_ERRNO,
-						 strerror(TEST_ERRNO));
-				}
-			} else {
-				if ((TEST_ERRNO == ENOMSG)
-				    && (TEST_RETURN == MYRETCODE)) {
-					tst_resm(TINFO,
-						 "The link file's content isn't as same as the original file's "
-						 "although linkat returned 0");
-				}
-				TEST_ERROR_LOG(TEST_ERRNO);
-				tst_resm(TFAIL,
-					 "linkat() Failed, errno=%d : %s",
-					 TEST_ERRNO, strerror(TEST_ERRNO));
-			}
-		}
+    /***************************************************************
+     * only perform functional verification if flag set (-f not given)
+     ***************************************************************/
+    if (STD_FUNCTIONAL_TEST) {
+     /* No Verification test, yet... */
+     tst_resm(TPASS,
+       "linkat() returned the expected  errno %d: %s",
+       TEST_ERRNO,
+       strerror(TEST_ERRNO));
+    }
+   } else {
+    if ((TEST_ERRNO  ENOMSG)
+        && (TEST_RETURN  MYRETCODE)) {
+     tst_resm(TINFO,
+       "The link file's content isn't as same as the original file's "
+       "although linkat returned 0");
+    }
+    TEST_ERROR_LOG(TEST_ERRNO);
+    tst_resm(TFAIL,
+      "linkat() Failed, errno%d : %s",
+      TEST_ERRNO, strerror(TEST_ERRNO));
+   }
+  }
 
-	}			/* End for TEST_LOOPING */
+ }   /* End for TEST_LOOPING */
 
-	/***************************************************************
-	 * cleanup and exit
-	 ***************************************************************/
-	cleanup();
+ /***************************************************************
+  * cleanup and exit
+  ***************************************************************/
+ cleanup();
 
-	return (0);
-}				/* End main */
+ return (0);
+}    /* End main */
 
 void setup_every_copy()
 {
-	int len;
+ int len;
 
-	/* Initialize test dir and file names */
-	sprintf(pathname, "linkattestdir%d", getpid());
-	sprintf(dpathname, "dlinkattestdir%d", getpid());
-	sprintf(testfile, "linkattestfile%d.txt", getpid());
-	sprintf(dtestfile, "dlinkattestfile%d.txt", getpid());
-	sprintf(testfile2, "linkattestdir%d/linkattestfile%d.txt", getpid(),
-		getpid());
-	sprintf(dtestfile2, "dlinkattestdir%d/dlinkattestfile%d.txt", getpid(),
-		getpid());
-	sprintf(testfile3, "/tmp/linkattestfile%d.txt", getpid());
-	sprintf(dtestfile3, "/tmp/dlinkattestfile%d.txt", getpid());
+ /* Initialize test dir and file names */
+ sprintf(pathname, "linkattestdir%d", getpid());
+ sprintf(dpathname, "dlinkattestdir%d", getpid());
+ sprintf(testfile, "linkattestfile%d.txt", getpid());
+ sprintf(dtestfile, "dlinkattestfile%d.txt", getpid());
+ sprintf(testfile2, "linkattestdir%d/linkattestfile%d.txt", getpid(),
+  getpid());
+ sprintf(dtestfile2, "dlinkattestdir%d/dlinkattestfile%d.txt", getpid(),
+  getpid());
+ sprintf(testfile3, "/tmp/linkattestfile%d.txt", getpid());
+ sprintf(dtestfile3, "/tmp/dlinkattestfile%d.txt", getpid());
 
-	ret = mkdir(pathname, 0700);
-	if (ret < 0) {
-		perror("mkdir: ");
-		exit(-1);
-	}
+ ret  mkdir(pathname, 0700);
+ if (ret < 0) {
+  perror("mkdir: ");
+  exit(-1);
+ }
 
-	ret = mkdir(dpathname, 0700);
-	if (ret < 0) {
-		perror("mkdir: ");
-		exit(-1);
-	}
+ ret  mkdir(dpathname, 0700);
+ if (ret < 0) {
+  perror("mkdir: ");
+  exit(-1);
+ }
 
-	olddirfd = open(pathname, O_DIRECTORY);
-	if (olddirfd < 0) {
-		perror("open: ");
-		exit(-1);
-	}
+ olddirfd  open(pathname, O_DIRECTORY);
+ if (olddirfd < 0) {
+  perror("open: ");
+  exit(-1);
+ }
 
-	newdirfd = open(dpathname, O_DIRECTORY);
-	if (newdirfd < 0) {
-		perror("open: ");
-		exit(-1);
-	}
+ newdirfd  open(dpathname, O_DIRECTORY);
+ if (newdirfd < 0) {
+  perror("open: ");
+  exit(-1);
+ }
 
-	fd = open(testfile, O_CREAT | O_RDWR, 0600);
-	if (fd < 0) {
-		perror("open: ");
-		exit(-1);
-	}
+ fd  open(testfile, O_CREAT | O_RDWR, 0600);
+ if (fd < 0) {
+  perror("open: ");
+  exit(-1);
+ }
 
-	len = write(fd, buffer, VERIFICATION_BLOCK_SIZE);
-	if (len < VERIFICATION_BLOCK_SIZE) {
-		perror("write: ");
-		exit(-1);
-	}
+ len  write(fd, buffer, VERIFICATION_BLOCK_SIZE);
+ if (len < VERIFICATION_BLOCK_SIZE) {
+  perror("write: ");
+  exit(-1);
+ }
 
-	fd = open(testfile2, O_CREAT | O_RDWR, 0600);
-	if (fd < 0) {
-		perror("open: ");
-		exit(-1);
-	}
+ fd  open(testfile2, O_CREAT | O_RDWR, 0600);
+ if (fd < 0) {
+  perror("open: ");
+  exit(-1);
+ }
 
-	len = write(fd, buffer, VERIFICATION_BLOCK_SIZE);
-	if (len < VERIFICATION_BLOCK_SIZE) {
-		perror("write: ");
-		exit(-1);
-	}
+ len  write(fd, buffer, VERIFICATION_BLOCK_SIZE);
+ if (len < VERIFICATION_BLOCK_SIZE) {
+  perror("write: ");
+  exit(-1);
+ }
 
-	fd = open(testfile3, O_CREAT | O_RDWR, 0600);
-	if (fd < 0) {
-		perror("open: ");
-		exit(-1);
-	}
+ fd  open(testfile3, O_CREAT | O_RDWR, 0600);
+ if (fd < 0) {
+  perror("open: ");
+  exit(-1);
+ }
 
-	len = write(fd, buffer, VERIFICATION_BLOCK_SIZE);
-	if (len < VERIFICATION_BLOCK_SIZE) {
-		perror("write: ");
-		exit(-1);
-	}
+ len  write(fd, buffer, VERIFICATION_BLOCK_SIZE);
+ if (len < VERIFICATION_BLOCK_SIZE) {
+  perror("write: ");
+  exit(-1);
+ }
 
-	oldfds[0] = oldfds[1] = oldfds[4] = olddirfd;
-	oldfds[2] = fd;
-	oldfds[3] = 100;
-	oldfds[5] = AT_FDCWD;
+ oldfds[0]  oldfds[1]  oldfds[4]  olddirfd;
+ oldfds[2]  fd;
+ oldfds[3]  100;
+ oldfds[5]  AT_FDCWD;
 
-	newfds[0] = newfds[1] = newfds[4] = newdirfd;
-	newfds[2] = fd;
-	newfds[3] = 100;
-	newfds[5] = AT_FDCWD;
+ newfds[0]  newfds[1]  newfds[4]  newdirfd;
+ newfds[2]  fd;
+ newfds[3]  100;
+ newfds[5]  AT_FDCWD;
 
-	oldfilenames[0] = oldfilenames[2] = oldfilenames[3] = oldfilenames[4] =
-	    oldfilenames[5] = testfile;
-	oldfilenames[1] = testfile3;
+ oldfilenames[0]  oldfilenames[2]  oldfilenames[3]  oldfilenames[4] 
+     oldfilenames[5]  testfile;
+ oldfilenames[1]  testfile3;
 
-	newfilenames[0] = newfilenames[2] = newfilenames[3] = newfilenames[4] =
-	    newfilenames[5] = dtestfile;
-	newfilenames[1] = dtestfile3;
+ newfilenames[0]  newfilenames[2]  newfilenames[3]  newfilenames[4] 
+     newfilenames[5]  dtestfile;
+ newfilenames[1]  dtestfile3;
 }
 
 static int mylinkat_test(int testno, int ofd, const char *ofn,
-			 int nfd, const char *nfn, int f)
+    int nfd, const char *nfn, int f)
 {
-	int ret, tmperrno, fd;
-	char linkbuf[VERIFICATION_BLOCK_SIZE];
-	char *filename = NULL;
-	int len;
+ int ret, tmperrno, fd;
+ char linkbuf[VERIFICATION_BLOCK_SIZE];
+ char *filename  NULL;
+ int len;
 
-	ret = mylinkat(ofd, ofn, nfd, nfn, f);
-	if (ret < 0) {
-		return ret;
-	}
+ ret  mylinkat(ofd, ofn, nfd, nfn, f);
+ if (ret < 0) {
+  return ret;
+ }
 
-	tmperrno = errno;
+ tmperrno  errno;
 
-	if (testno == 0)
-		filename = dtestfile2;
-	else if (testno == 1)
-		filename = dtestfile3;
-	else if (testno == 5)
-		filename = dtestfile;
+ if (testno  0)
+  filename  dtestfile2;
+ else if (testno  1)
+  filename  dtestfile3;
+ else if (testno  5)
+  filename  dtestfile;
 
-	if (filename == NULL) {
-		errno = tmperrno;
-		return ret;
-	} else {
-		fd = open(filename, O_RDONLY);
-		if (fd < 0) {
-			perror("open: ");
-			exit(-1);
-		}
-		len = read(fd, linkbuf, VERIFICATION_BLOCK_SIZE);
-		if (len < 0) {
-			perror("read: ");
-			exit(-1);
-		}
-		if (memcmp(buffer, linkbuf, VERIFICATION_BLOCK_SIZE) != 0) {
-			errno = ENOMSG;
-			return MYRETCODE;
-		}
-		errno = tmperrno;
-		return ret;
-	}
+ if (filename  NULL) {
+  errno  tmperrno;
+  return ret;
+ } else {
+  fd  open(filename, O_RDONLY);
+  if (fd < 0) {
+   perror("open: ");
+   exit(-1);
+  }
+  len  read(fd, linkbuf, VERIFICATION_BLOCK_SIZE);
+  if (len < 0) {
+   perror("read: ");
+   exit(-1);
+  }
+  if (memcmp(buffer, linkbuf, VERIFICATION_BLOCK_SIZE) ! 0) {
+   errno  ENOMSG;
+   return MYRETCODE;
+  }
+  errno  tmperrno;
+  return ret;
+ }
 }
 
 /***************************************************************
@@ -323,19 +323,19 @@ static int mylinkat_test(int testno, int ofd, const char *ofn,
  ***************************************************************/
 void setup()
 {
-	/* Initilize buffer */
-	int i;
+ /* Initilize buffer */
+ int i;
 
-	for (i = 0; i < VERIFICATION_BLOCK_SIZE; i++) {
-		buffer[i] = i & 0xff;
-	}
+ for (i  0; i < VERIFICATION_BLOCK_SIZE; i++) {
+  buffer[i]  i & 0xff;
+ }
 
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
-}				/* End setup() */
+ /* Pause if that option was specified */
+ TEST_PAUSE;
+}    /* End setup() */
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
@@ -343,22 +343,22 @@ void setup()
  ***************************************************************/
 void cleanup()
 {
-	/* Remove them */
-	unlink(testfile2);
-	unlink(dtestfile2);
-	unlink(testfile3);
-	unlink(dtestfile3);
-	unlink(testfile);
-	unlink(dtestfile);
-	rmdir(pathname);
-	rmdir(dpathname);
+ /* Remove them */
+ unlink(testfile2);
+ unlink(dtestfile2);
+ unlink(testfile3);
+ unlink(dtestfile3);
+ unlink(testfile);
+ unlink(dtestfile);
+ rmdir(pathname);
+ rmdir(dpathname);
 
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+ /* exit with return code appropriate for results */
+ tst_exit();
+}    /* End cleanup() */

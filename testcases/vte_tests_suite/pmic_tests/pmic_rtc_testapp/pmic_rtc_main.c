@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   pmic_rtc_main.c
 
         @brief  main file of PMIC RTC driver test.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
-    
-====================================================================================================
+
+====================
 Revision History:
                             Modification     Tracking
 Author/Core ID                  Date          Number    Description of Changes
@@ -19,13 +19,13 @@ Author/Core ID                  Date          Number    Description of Changes
 E.Gromazina/NONE             12/08/2005     TLSbo59968  PMIC RTC draft version
 A.Ozerov/b00320              06/07/2006     TLSbo61903  Main function was changed.
 
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,58 +38,58 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "pmic_rtc_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Global Variables */
 char   *TCID = "pmic_rtc_testapp";      /* test program identifier.  */
 int     TST_TOTAL = 5;  /* total number of tests in this file.  */
 char    dev_path[20];
 
-/*==================================================================================================
+/*======================
                                     GLOBAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 int     main(int argc, char **argv);
 void    help(void);
 void    setup(void);
 void    cleanup(void);
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
-/*================================================================================================*/
-/*===== setup =====*/
-/** 
-@brief  Performs all one time setup for this test. This function is 
-        typically used to capture signals, create temporary dirs 
-        and temporary files that may be used in the course of this test. 
+======================*/
+/*====================*/
+/*= setup =*/
+/**
+@brief  Performs all one time setup for this test. This function is
+        typically used to capture signals, create temporary dirs
+        and temporary files that may be used in the course of this test.
 
-@param  Input :      None. 
-        Output:      None. 
+@param  Input :      None.
+        Output:      None.
 
 @return None
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
         int     VT_rv = TFAIL;
@@ -104,20 +104,20 @@ void setup(void)
         return;
 }
 
-/*================================================================================================*/
-/*===== cleanup =====*/
-/** 
-@brief  Performs all one time clean up for this test on successful 
-        completion,  premature exit or  failure. Closes all temporary 
-        files, removes all temporary directories exits the test with 
-        appropriate return code by calling tst_exit(...) function.cleanup 
+/*====================*/
+/*= cleanup =*/
+/**
+@brief  Performs all one time clean up for this test on successful
+        completion,  premature exit or  failure. Closes all temporary
+        files, removes all temporary directories exits the test with
+        appropriate return code by calling tst_exit(...) function.cleanup
 
-@param  Input :      None. 
-        Output:      None. 
-    
-@return None. 
+@param  Input :      None.
+        Output:      None.
+
+@return None.
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
         int     VT_rv = TFAIL;
@@ -132,27 +132,27 @@ void cleanup(void)
         tst_exit();
 }
 
-/*================================================================================================*/
-/*===== main =====*/
-/** 
-@brief  Entry point to this test-case. It parses all the command line 
-        inputs, calls the global setup and executes the test. It logs 
-                                the test status and results appropriately using the LTP API's 
-                                On successful completion or premature failure, cleanup() func 
-                                is called and test exits with an appropriate return code. 
+/*====================*/
+/*= main =*/
+/**
+@brief  Entry point to this test-case. It parses all the command line
+        inputs, calls the global setup and executes the test. It logs
+                                the test status and results appropriately using the LTP API's
+                                On successful completion or premature failure, cleanup() func
+                                is called and test exits with an appropriate return code.
 
-@param  Input :      argc - number of command line parameters. 
-        Output:      **argv - pointer to the array of the command line parameters. 
-                                Describe input arguments to this test-case 
-                                -l - Number of iteration 
-                                -v - Prints verbose output 
-                                -V - Prints the version number 
-    
-@return On failure - Exits by calling cleanup(). 
+@param  Input :      argc - number of command line parameters.
+        Output:      **argv - pointer to the array of the command line parameters.
+                                Describe input arguments to this test-case
+                                -l - Number of iteration
+                                -v - Prints verbose output
+                                -V - Prints the version number
 
-        On success - exits with 0 exit value. 
+@return On failure - Exits by calling cleanup().
+
+        On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
         int     VT_rv = TFAIL;
@@ -163,7 +163,7 @@ int main(int argc, char **argv)
         char    *ch_test_case;   /* option arguments */
         char    *msg;
 
-        option_t options[] = 
+        option_t options[] =
         {
                 {"T:", &tflag, &ch_test_case},  /* argument required */
                 {NULL, NULL, NULL}      /* NULL required to end array */
@@ -207,17 +207,17 @@ int main(int argc, char **argv)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== help =====*/
-/** 
+/*====================*/
+/*= help =*/
+/**
 @brief  Print help information testapp execution.
 
-@param  Input :      None. 
-        Output:      None. 
+@param  Input :      None.
+        Output:      None.
 
-@return None  
+@return None
 */
-/*================================================================================================*/
+/*====================*/
 void help(void)
 {
         printf("PMIC RTC driver option\n");

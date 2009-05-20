@@ -27,16 +27,16 @@
 ##
 ######################################################################
 
-if test "${VALID_BLOCK_DEVICE+set}" = set; 
-then 
+if test "${VALID_BLOCK_DEVICE+set}" = set;
+then
     echo "* VALID_BLOCK_DEVICE=${VALID_BLOCK_DEVICE}";
 else
     echo "* Setting VALID_BLOCK_DEVICE to /dev/ubd0.  If this is incorrect, then you need to set that environment variable yourself.";
     VALID_BLOCK_DEVICE=/dev/ubd0
 fi
 
-if test "${SYSFS_MOUNT_POINT+set}" = set; 
-then 
+if test "${SYSFS_MOUNT_POINT+set}" = set;
+then
     echo "* SYSFS_MOUNT_POINT=${SYSFS_MOUNT_POINT}";
 else
     echo "* Setting SYSFS_MOUNT_POINT to /sys.  If this is incorrect, then you need to set that environment variable yourself.";
@@ -84,11 +84,11 @@ then
 else
     /sbin/insmod /lib/modules/`uname -r`/kernel/crypto/sha1.ko
     if [ $? = 0 ]
-	then
-	/bin/true
+ then
+ /bin/true
     else
-	echo "SHA1 support not found in kernel; error attempting to perform insmod on sha1.ko"
-	exit 1
+ echo "SHA1 support not found in kernel; error attempting to perform insmod on sha1.ko"
+ exit 1
     fi
 fi
 
@@ -354,7 +354,7 @@ if [ $? = 0 ]
 then
     echo "* Succeeded in raising the setuid bit on /bin/true in seclvl 1"
     echo "* Lowering setuid bit on /bin/true..."
-    chmod u-s /bin/true    
+    chmod u-s /bin/true
     exit 1
 fi
 
@@ -365,7 +365,7 @@ if [ $? = 0 ]
 then
     echo "* ERROR: Succeeded in raising the setgid bit on /bin/true in seclvl 1"
     echo "* Lowering setgid bit on /bin/true..."
-    chmod g-s /bin/true    
+    chmod g-s /bin/true
     exit 1
 fi
 
@@ -602,7 +602,7 @@ if [ $? = 0 ]
 then
     echo "* Succeeded in raising the setuid bit on /bin/true in seclvl 2"
     echo "* Lowering setuid bit on /bin/true..."
-    chmod u-s /bin/true    
+    chmod u-s /bin/true
     exit 1
 fi
 
@@ -613,7 +613,7 @@ if [ $? = 0 ]
 then
     echo "* Succeeded in raising the setgid bit on /bin/true in seclvl 1"
     echo "* Lowering setgid bit on /bin/true..."
-    chmod g-s /bin/true    
+    chmod g-s /bin/true
     exit 1
 fi
 

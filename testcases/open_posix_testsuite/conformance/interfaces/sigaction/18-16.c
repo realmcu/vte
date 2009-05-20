@@ -17,7 +17,7 @@
 
 * This sample test aims to check the following assertions:
 *
-* If SA_SIGINFO is not set in sa_flags, sa_handler is used as the signal 
+* If SA_SIGINFO is not set in sa_flags, sa_handler is used as the signal
 * handling function.
 
 * The steps are:
@@ -49,23 +49,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -85,61 +85,61 @@
 int called = 0;
 void handler( int sig )
 {
-	called = 1;
+ called = 1;
 }
 
 /* main function */
 int main()
 {
-	int ret;
+ int ret;
 
-	struct sigaction sa;
+ struct sigaction sa;
 
-	/* Initialize output */
-	output_init();
+ /* Initialize output */
+ output_init();
 
-	/* Set the signal handler */
-	sa.sa_flags = 0;
-	sa.sa_handler = handler;
-	ret = sigemptyset( &sa.sa_mask );
+ /* Set the signal handler */
+ sa.sa_flags = 0;
+ sa.sa_handler = handler;
+ ret = sigemptyset( &sa.sa_mask );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to empty signal set" );
-	}
+ if ( ret != 0 )
+ {
+  UNRESOLVED( ret, "Failed to empty signal set" );
+ }
 
-	/* Install the signal handler for SIGTTOU */
-	ret = sigaction( SIGNAL, &sa, 0 );
+ /* Install the signal handler for SIGTTOU */
+ ret = sigaction( SIGNAL, &sa, 0 );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to set signal handler" );
-	}
+ if ( ret != 0 )
+ {
+  UNRESOLVED( ret, "Failed to set signal handler" );
+ }
 
-	if ( called )
-	{
-		FAILED( "The signal handler has been called when no signal was raised" );
-	}
+ if ( called )
+ {
+  FAILED( "The signal handler has been called when no signal was raised" );
+ }
 
-	ret = raise( SIGNAL );
+ ret = raise( SIGNAL );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to raise SIGTTOU" );
-	}
+ if ( ret != 0 )
+ {
+  UNRESOLVED( ret, "Failed to raise SIGTTOU" );
+ }
 
-	if ( !called )
-	{
-		FAILED( "the sa_handler was not called whereas SA_SIGINFO was not set" );
-	}
+ if ( !called )
+ {
+  FAILED( "the sa_handler was not called whereas SA_SIGINFO was not set" );
+ }
 
 
-	/* Test passed */
+ /* Test passed */
 #if VERBOSE > 0
 
-	output( "Test passed\n" );
+ output( "Test passed\n" );
 
 #endif
 
-	PASSED;
+ PASSED;
 }

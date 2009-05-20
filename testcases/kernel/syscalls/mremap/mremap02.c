@@ -21,9 +21,9 @@
  * Test Name: mremap02
  *
  * Test Description:
- *  Verify that, 
- *   mremap() fails when used to expand the existing virtual memory mapped 
- *   region to the requested size, if the virtual memory area previously 
+ *  Verify that,
+ *   mremap() fails when used to expand the existing virtual memory mapped
+ *   region to the requested size, if the virtual memory area previously
  *   mapped was not page aligned or invalid argument specified.
  *
  * Expected Result:
@@ -37,13 +37,13 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return=-1)
- *   	if errno set == expected errno
- *   		Issue sys call fails with expected return value and errno.
- *   	Otherwise,
- *		Issue sys call fails with unexpected errno.
+ *   Check return code, if system call failed (return-1)
+ *   if errno set  expected errno
+ *  Issue sys call fails with expected return value and errno.
  *   Otherwise,
- *	Issue sys call returns unexpected value.
+ *  Issue sys call fails with unexpected errno.
+ *   Otherwise,
+ * Issue sys call returns unexpected value.
  *
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
@@ -51,14 +51,14 @@
  * Usage:  <for command-line>
  *  mremap02 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
- *	       -e   : Turn on errno logging.
- *	       -i n : Execute test n times.
- *	       -I x : Execute test for x seconds.
- *	       -p x : Pause for x seconds between iterations.
- *	       -t   : Turn on syscall timing.
+ *        -e   : Turn on errno logging.
+ *        -i n : Execute test n times.
+ *        -I x : Execute test for x seconds.
+ *        -p x : Pause for x seconds between iterations.
+ *        -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  *      11/09/2001 Manoj Iyer (manjo@austin.ibm.com)
  *      Modified.
@@ -82,83 +82,83 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID="mremap02";		/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-char *addr;			/* addr of memory mapped region */
-int memsize;			/* memory mapped size */
-int newsize;			/* new size of virtual memory block */
-int exp_enos[]={EINVAL, 0};
+char *TCID"mremap02";  /* Test program identifier.    */
+int TST_TOTAL1;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *addr;   /* addr of memory mapped region */
+int memsize;   /* memory mapped size */
+int newsize;   /* new size of virtual memory block */
+int exp_enos[]{EINVAL, 0};
 
-void setup();			/* Main setup function of test */
-void cleanup();			/* cleanup function for the test */
+void setup();   /* Main setup function of test */
+void cleanup();   /* cleanup function for the test */
 
 int
 main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-	
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
 
-	/* Perform global setup for test */
-	setup();
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(ac, av, (option_t *)NULL, NULL);
+ if (msg ! (char *)NULL) {
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	/* set the expected errnos... */
-	TEST_EXP_ENOS(exp_enos);
+ /* Perform global setup for test */
+ setup();
 
-	/* Check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* set the expected errnos... */
+ TEST_EXP_ENOS(exp_enos);
 
-		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
+ /* Check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* 
-		 * Attempt to expand the existing mapped 
-		 * memory region (memsize) by newsize limits using
-		 * mremap() should fail as old virtual address is not
-		 * page aligned.
-		 */
-		errno = 0;
-		addr = mremap(addr, memsize, newsize, MREMAP_MAYMOVE);
-		TEST_ERRNO = errno;
+  /* Reset Tst_count in case we are looping. */
+  Tst_count0;
 
-		/* Check for the return value of mremap() */
-		if (addr != MAP_FAILED) {
-			tst_resm(TFAIL,
-				 "mremap returned invalid value, expected: -1");
+  /*
+   * Attempt to expand the existing mapped
+   * memory region (memsize) by newsize limits using
+   * mremap() should fail as old virtual address is not
+   * page aligned.
+   */
+  errno  0;
+  addr  mremap(addr, memsize, newsize, MREMAP_MAYMOVE);
+  TEST_ERRNO  errno;
 
-			/* Unmap the mapped memory region */
-			if (munmap(addr, newsize) != 0) {
-				tst_brkm(TBROK, cleanup, "munmap fails to "
-					 "unmap the expanded memory region, "
-					 "error=%d", errno);
-			}
-			continue;
-		}
+  /* Check for the return value of mremap() */
+  if (addr ! MAP_FAILED) {
+   tst_resm(TFAIL,
+     "mremap returned invalid value, expected: -1");
 
-		TEST_ERROR_LOG(TEST_ERRNO);
+   /* Unmap the mapped memory region */
+   if (munmap(addr, newsize) ! 0) {
+    tst_brkm(TBROK, cleanup, "munmap fails to "
+      "unmap the expanded memory region, "
+      "error%d", errno);
+   }
+   continue;
+  }
 
-		if (errno == EINVAL) {
-			tst_resm(TPASS, "mremap() Failed, 'invalid argument "
-				 "specified' - errno %d", TEST_ERRNO);
-		} else {
-			tst_resm(TFAIL, "mremap() Failed, "
-				 "'Unexpected errno %d", TEST_ERRNO);
-		}
-	}	/* End of TEST_LOOPING */
-				
-	/* Call cleanup() to undo setup done for the test. */
-	cleanup();
+  TEST_ERROR_LOG(TEST_ERRNO);
 
-	/*NOTREACHED*/
-	return(0);
+  if (errno  EINVAL) {
+   tst_resm(TPASS, "mremap() Failed, 'invalid argument "
+     "specified' - errno %d", TEST_ERRNO);
+  } else {
+   tst_resm(TFAIL, "mremap() Failed, "
+     "'Unexpected errno %d", TEST_ERRNO);
+  }
+ } /* End of TEST_LOOPING */
 
-}	/* End main */
+ /* Call cleanup() to undo setup done for the test. */
+ cleanup();
+
+ /*NOTREACHED*/
+ return(0);
+
+} /* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -167,41 +167,41 @@ main(int ac, char **av)
  * new size after resize, Set the virtual memory address such that it
  * is not aligned.
  */
-void 
+void
 setup()
 {
-	/* capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* Get the system page size */
-	if ((memsize = getpagesize()) < 0) {
-		tst_brkm(TFAIL, tst_exit,
-			 "getpagesize() fails to get system page size");
-	}
+ /* Get the system page size */
+ if ((memsize  getpagesize()) < 0) {
+  tst_brkm(TFAIL, tst_exit,
+    "getpagesize() fails to get system page size");
+ }
 
-	/* Get the New size of virtual memory block after resize */
-	newsize = (memsize * 2);
+ /* Get the New size of virtual memory block after resize */
+ newsize  (memsize * 2);
 
-	/* Set the old virtual memory address */
-	addr = (char *)(addr + (memsize - 1));
+ /* Set the old virtual memory address */
+ addr  (char *)(addr + (memsize - 1));
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
  */
-void 
+void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* Exit the program */
-	tst_exit();
+ /* Exit the program */
+ tst_exit();
 }

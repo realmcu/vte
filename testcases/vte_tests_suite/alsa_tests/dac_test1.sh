@@ -18,21 +18,21 @@
 #                      Modification     Tracking
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
-# Spring Zhang          25/07/2008       n/a        Initial ver. 
-# Spring                24/10/2008       n/a        Add -A automation option   
+# Spring Zhang          25/07/2008       n/a        Initial ver.
+# Spring                24/10/2008       n/a        Add -A automation option
 # Spring                28/11/2008       n/a        Modify COPYRIGHT header
 #############################################################################
-# Portability:  ARM sh 
+# Portability:  ARM sh
 #
-# File Name:    
+# File Name:
 # Total Tests:        1
 # Test Strategy: play audio streams
-# 
-# Input:	- $1 - audio stream
 #
-# Return:       - 
+# Input: - $1 - audio stream
 #
-# Use command "./dac_test1.sh [audio stream]" 
+# Return:       -
+#
+# Use command "./dac_test1.sh [audio stream]"
 
 # Function:     setup
 #
@@ -61,7 +61,7 @@ setup()
     fi
 
     while getopts f:ANM arg
-    do 
+    do
         case $arg in
         f) FILE=$OPTARG;;
         A) AUTO="true";;
@@ -97,7 +97,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup() 
+cleanup()
 {
     RC=0
     return $RC
@@ -151,7 +151,7 @@ dac_play()
 # Return        - none
 usage()
 {
-    cat <<-EOF 
+    cat <<-EOF
 
     Use this command to test ALSA DAC play functions.
     usage: ./${0##*/} [audio stream]

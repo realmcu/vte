@@ -41,7 +41,7 @@ private:
 public:
   Parse_arguments();
   int init_and_find_index(int first_index, int argc, const char * const *argv);
-  BOOL_TYPE get_argument(const char *argument_name, 
+  BOOL_TYPE get_argument(const char *argument_name,
 			 char *return_buffer,
 			 int max_return_buffer);
 
@@ -49,12 +49,12 @@ public:
 				     const char *argument_name,
 				     int default_value,
 				     int min_range,
-				     int max_range);  
+				     int max_range);
   BOOL_TYPE get_and_validate_float(double *return_value,
 				     const char *argument_name,
 								   double default_value,
 				     double min_range,
-				     double max_range);  
+				     double max_range);
 
 };
 

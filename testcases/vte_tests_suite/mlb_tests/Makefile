@@ -10,7 +10,7 @@
 #        THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #        BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #        Freescale Semiconductor, Inc.
-#     
+#
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
@@ -40,7 +40,7 @@ all:$(TARGET)
 	@echo "** ALL : $(TARGET)  test application  **"
 	@echo "***********************************************"
 	@echo
-  
+
 
 install:
 	ln -f $(TARGET) $(BIN_DIR)
@@ -52,11 +52,11 @@ install:
 
 clean:
 	rm -rf $(OBJS) $(TARGET)
-  
-	
-$(TARGET): $(OBJS) 
+
+
+$(TARGET): $(OBJS)
 	$(CC)  $(OBJS) $(LIBRARY) -o  $@
 
-$(OBJS) : 
-	$(CC) $(CFLAGS) -c $(SRCS) -o $@	
+$(OBJS) :
+	$(CC) $(CFLAGS) -c $(SRCS) -o $@
 

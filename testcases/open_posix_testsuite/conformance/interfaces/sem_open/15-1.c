@@ -17,9 +17,9 @@
 
 * This sample test aims to check the following assertion:
 *
-*  If a process calls sem_open several times with the same name, 
-* the same adress must be returned as long as the semaphore 
-* has not been unlinked or closed as many times as opened. 
+*  If a process calls sem_open several times with the same name,
+* the same adress must be returned as long as the semaphore
+* has not been unlinked or closed as many times as opened.
 
 
 * The steps are:
@@ -53,23 +53,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -87,87 +87,87 @@
 /* The main test function. */
 int main( int argc, char * argv[] )
 {
-	int ret, i;
-	char * name = "/sem_open_15_1";
+ int ret, i;
+ char * name  "/sem_open_15_1";
 
-	sem_t * sems[ 4 ];
+ sem_t * sems[ 4 ];
 
-	/* Initialize output */
-	output_init();
+ /* Initialize output */
+ output_init();
 
-	/* Initialize all semaphores */
+ /* Initialize all semaphores */
 
-	for ( i = 0; i < 4; i++ )
-	{
-		sems[ i ] = sem_open( name, O_CREAT, 0777, 1 );
+ for ( i  0; i < 4; i++ )
+ {
+  sems[ i ]  sem_open( name, O_CREAT, 0777, 1 );
 
-		if ( sems[ i ] == SEM_FAILED )
-		{
-			UNRESOLVED( errno, "Failed to sem_open" );
-		}
+  if ( sems[ i ]  SEM_FAILED )
+  {
+   UNRESOLVED( errno, "Failed to sem_open" );
+  }
 
-	}
+ }
 
-	/* Check all calls returned the same @ */
-	for ( i = 0; i < 3; i++ )
-	{
-		if ( sems[ i ] != sems[ i + 1 ] )
-		{
-			FAILED( "sem_open returned a different address" );
-		}
+ /* Check all calls returned the same @ */
+ for ( i  0; i < 3; i++ )
+ {
+  if ( sems[ i ] ! sems[ i + 1 ] )
+  {
+   FAILED( "sem_open returned a different address" );
+  }
 
-		/* Close some semaphores */
-		ret = sem_close( sems[ i ] );
+  /* Close some semaphores */
+  ret  sem_close( sems[ i ] );
 
-		if ( ret != 0 )
-		{
-			UNRESOLVED( errno, "Failed to sem_close" );
-		}
-	}
+  if ( ret ! 0 )
+  {
+   UNRESOLVED( errno, "Failed to sem_close" );
+  }
+ }
 
-	/* Now, reopen, we should still get the same address */
-	for ( i = 0; i < 3; i++ )
-	{
-		sems[ i ] = sem_open( name, O_CREAT, 0777, 1 );
+ /* Now, reopen, we should still get the same address */
+ for ( i  0; i < 3; i++ )
+ {
+  sems[ i ]  sem_open( name, O_CREAT, 0777, 1 );
 
-		if ( sems[ i ] == SEM_FAILED )
-		{
-			UNRESOLVED( errno, "Failed to sem_open" );
-		}
+  if ( sems[ i ]  SEM_FAILED )
+  {
+   UNRESOLVED( errno, "Failed to sem_open" );
+  }
 
-	}
+ }
 
-	/* Check all calls returned the same @ */
-	for ( i = 0; i < 3; i++ )
-	{
-		if ( sems[ i ] != sems[ i + 1 ] )
-		{
-			FAILED( "sem_open returned a different address" );
-		}
-	}
+ /* Check all calls returned the same @ */
+ for ( i  0; i < 3; i++ )
+ {
+  if ( sems[ i ] ! sems[ i + 1 ] )
+  {
+   FAILED( "sem_open returned a different address" );
+  }
+ }
 
 
-	/* Close all semaphores */
-	for ( i = 0; i < 4; i++ )
-	{
-		ret = sem_close( sems[ i ] );
+ /* Close all semaphores */
+ for ( i  0; i < 4; i++ )
+ {
+  ret  sem_close( sems[ i ] );
 
-		if ( ret != 0 )
-		{
-			UNRESOLVED( errno, "Failed to sem_close" );
-		}
-	}
+  if ( ret ! 0 )
+  {
+   UNRESOLVED( errno, "Failed to sem_close" );
+  }
+ }
 
-	sem_unlink( name );
+ sem_unlink( name );
 
-	/* Test passed */
+ /* Test passed */
 #if VERBOSE > 0
 
-	output( "Test passed\n" );
+ output( "Test passed\n" );
 
 #endif
 
-	PASSED;
+ PASSED;
 }
 
 

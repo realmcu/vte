@@ -28,7 +28,7 @@
 /*                                                                            */
 /* Total Tests: 1                                                             */
 /*                                                                            */
-/* Test Name:   ioctl03                                                       */ 
+/* Test Name:   ioctl03                                                       */
 /*                                                                            */
 /* Author:      Rusty Russell <rusty@rustcorp.com.au>                         */
 /*                                                                            */
@@ -54,7 +54,7 @@
 #endif
 
 #ifndef define
-#define IFF_VNET_HDR	0x4000
+#define IFF_VNET_HDR 0x4000
 #endif
 
 /* Extern Global Variables */
@@ -62,8 +62,8 @@ extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
-char *TCID     = "ioctl03";          /* test program identifier.              */
-int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
+char *TCID      "ioctl03";          /* test program identifier.              */
+int  TST_TOTAL  1;                  /* total number of tests in this file.   */
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -122,7 +122,7 @@ void setup() {
 static struct {
   unsigned int flag;
   const char *name;
-} known_flags[] = {
+} known_flags[]  {
                    { IFF_TUN, "TUN" },
                    { IFF_TAP, "TAP" },
                    { IFF_NO_PI, "NO_PI" },
@@ -134,23 +134,23 @@ int main() {
   unsigned int features, i;
 
   setup();
-  if (geteuid()!=0) {
+  if (geteuid()!0) {
     tst_brkm(TBROK, cleanup, "You need to be ROOT to run this test case");
     tst_exit();
   }
-  int netfd = open("/dev/net/tun", O_RDWR);
+  int netfd  open("/dev/net/tun", O_RDWR);
   if (netfd < 0)
     tst_brkm(TBROK, cleanup, "Error Opening /dev/net/tun: %s", strerror(errno));
 
-  if (ioctl(netfd, TUNGETFEATURES, &features) != 0) {
+  if (ioctl(netfd, TUNGETFEATURES, &features) ! 0) {
     tst_resm(TCONF, "Kernel does not support TUNGETFEATURES");
     cleanup();
     tst_exit();
   }
   tst_resm(TINFO,"Available features are: %#x", features);
-  for (i = 0; i < sizeof(known_flags)/sizeof(known_flags[0]); i++) {
+  for (i  0; i < sizeof(known_flags)/sizeof(known_flags[0]); i++) {
     if (features & known_flags[i].flag) {
-      features &= ~known_flags[i].flag;
+      features & ~known_flags[i].flag;
       tst_resm(TINFO, "%s %#x", known_flags[i].name, known_flags[i].flag);
     }
   }

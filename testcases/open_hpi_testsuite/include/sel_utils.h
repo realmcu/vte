@@ -21,7 +21,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 /* this struct encapsulates all the data for a system event log */
 /* the log records themselves are stored in the sel GList */

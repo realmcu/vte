@@ -24,7 +24,7 @@
 ###################################################################################################
 SUBDIRS = \
 #tina changed	udma_test_module \
-	udma_testapp 
+	udma_testapp
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

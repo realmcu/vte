@@ -7,11 +7,11 @@
  */
 
 /*
- * Test that if O_CREAT is set and attr == NULL, implementation defined
+ * Test that if O_CREAT is set and attr  NULL, implementation defined
  * attributes are used.
  *
  * Just test that mq_getattr() can be called after mq_open() is called
- * with attr == NULL.
+ * with attr  NULL.
  *
  * Otherwise, this really cannot be tested as attributes are implementation-
  * defined.
@@ -32,27 +32,27 @@ int main()
 {
         char qname[NAMESIZE];
         mqd_t queue;
-	struct mq_attr attr;
+ struct mq_attr attr;
 
         sprintf(qname, "/mq_open_12-1_%d", getpid());
 
-        queue = mq_open(qname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, NULL);
-        if (queue == (mqd_t)-1) {
+        queue  mq_open(qname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, NULL);
+        if (queue  (mqd_t)-1) {
                 perror("mq_open() did not return success");
-		printf("Test FAILED\n");
+  printf("Test FAILED\n");
                 return PTS_FAIL;
         }
 
-	if (mq_getattr(queue, &attr) != 0) {
-		perror("mq_getattr() failed");
-		printf("Test FAILED -- could not get attributes\n");
-		mq_close(queue);
-		mq_unlink(qname);
-		return PTS_FAIL;
-	}
+ if (mq_getattr(queue, &attr) ! 0) {
+  perror("mq_getattr() failed");
+  printf("Test FAILED -- could not get attributes\n");
+  mq_close(queue);
+  mq_unlink(qname);
+  return PTS_FAIL;
+ }
 
-	mq_close(queue);
-	mq_unlink(qname);
+ mq_close(queue);
+ mq_unlink(qname);
 
         printf("Test PASSED\n");
         return PTS_PASS;

@@ -23,7 +23,7 @@ else
 export CFLAGS+=-I../../../../include -g -Wall -DOLDER_DISTRO_RELEASE
 endif
 
-LDLIBS+=	-L../../../../lib -lltp 
+LDLIBS+=	-L../../../../lib -lltp
 
 SRCS    = $(wildcard *.c)
 TARGETS = $(patsubst %.c,%,$(SRCS))

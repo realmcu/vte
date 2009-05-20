@@ -1,4 +1,4 @@
-/*************************************************************************************/ 
+/*************************************************************************************/
 /*                                                                                   */
 /* Copyright (C) 2008, Michael Kerrisk <mtk.manpages@gmail.com>,                     */
 /* Copyright (C) 2008, Linux Foundation                                              */
@@ -15,17 +15,17 @@
 /*                                                                                   */
 /* You should have received a copy of the GNU General Public License                 */
 /* along with this program;  if not, write to the Free Software                      */
-/* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA           */ 
+/* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA           */
 /*************************************************************************************/
 /*                                                                                   */
 /* File: utimnsat01.c                                                                */
 /* Description: A command-line interface for testing the utimensat() system call.    */
 /* Author: Michael Kerrisk <mtk.manpages@gmail.com>                                  */
 /* History:                                                                          */
-/*	17 Mar  2008  Initial creation,                                              */
-/*	31 May  2008  Reworked for easier test automation,                           */
-/*	2  June 2008  Renamed from t_utimensat.c to test_utimensat.c,                */
-/*	05 June 2008  Submitted to LTP by Subrata Modak <subrata@linux.vnet.ibm.com> */
+/* 17 Mar  2008  Initial creation,                                              */
+/* 31 May  2008  Reworked for easier test automation,                           */
+/* 2  June 2008  Renamed from t_utimensat.c to test_utimensat.c,                */
+/* 05 June 2008  Submitted to LTP by Subrata Modak <subrata@linux.vnet.ibm.com> */
 /*************************************************************************************/
 
 
@@ -37,15 +37,15 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/syscall.h> 
+#include <sys/syscall.h>
 #include <fcntl.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <test.h>
 #include "linux_syscall_numbers.h"
 
-char *TCID="utimensat01";	/* Test program identifier.    */
-int TST_TOTAL = 0;              /* Total number of test cases. */
+char *TCID"utimensat01"; /* Test program identifier.    */
+int TST_TOTAL  0;              /* Total number of test cases. */
 
 #define cleanup tst_exit
 
@@ -120,30 +120,30 @@ main(int argc, char *argv[])
 
     /* Command-line argument parsing */
 
-    flags = 0;
-    verbose = 1;
-    dirfd = AT_FDCWD;
-    dirfdPath = NULL;
-    oflag = O_RDONLY;
+    flags  0;
+    verbose  1;
+    dirfd  AT_FDCWD;
+    dirfdPath  NULL;
+    oflag  O_RDONLY;
 
-    while ((opt = getopt(argc, argv, "d:nqw")) != -1) {
+    while ((opt  getopt(argc, argv, "d:nqw")) ! -1) {
         switch (opt) {
         case 'd':
-            dirfdPath = optarg;
+            dirfdPath  optarg;
             break;
 
         case 'n':
-            flags |= AT_SYMLINK_NOFOLLOW;
+            flags | AT_SYMLINK_NOFOLLOW;
             if (verbose)
                 printf("Not following symbolic links\n");
             break;
 
         case 'q':
-            verbose = 0;
+            verbose  0;
             break;
 
         case 'w':
-            oflag = O_RDWR | O_APPEND;
+            oflag  O_RDWR | O_APPEND;
             break;
 
         default:
@@ -151,16 +151,16 @@ main(int argc, char *argv[])
         }
     }
 
-    if ((optind + 5 != argc) && (optind + 1 != argc)) 
+    if ((optind + 5 ! argc) && (optind + 1 ! argc))
         usageError(argv[0]);
 
-    if (dirfdPath != NULL) {
-        dirfd = open(dirfdPath, oflag);
-        if (dirfd == -1) errExit("open");
+    if (dirfdPath ! NULL) {
+        dirfd  open(dirfdPath, oflag);
+        if (dirfd  -1) errExit("open");
 
         if (verbose) {
             printf("Opened dirfd %d", oflag);
-            if ((oflag & O_ACCMODE) == O_RDWR)
+            if ((oflag & O_ACCMODE)  O_RDWR)
                 printf(" O_RDWR");
             if (oflag & O_APPEND)
                 printf(" O_APPEND");
@@ -168,7 +168,7 @@ main(int argc, char *argv[])
         }
     }
 
-    pathname = (strcmp(argv[optind], "NULL") == 0) ?
+    pathname  (strcmp(argv[optind], "NULL")  0) ?
                         NULL : argv[optind];
 
     /* Either, we get no values for 'times' fields, in which case
@@ -177,29 +177,29 @@ main(int argc, char *argv[])
        values 'n' and 'o' can be used for tv_nsec settings of
        UTIME_NOW and UTIME_OMIT, respectively. */
 
-    if (argc == optind + 1) {
-        tsp = NULL;
+    if (argc  optind + 1) {
+        tsp  NULL;
 
     } else {
-        ts[0].tv_sec = atoi(argv[optind + 1]);
-        if (argv[optind + 2][0] == 'n') {
-            ts[0].tv_nsec = UTIME_NOW;
-        } else if (argv[optind + 2][0] == 'o') {
-            ts[0].tv_nsec = UTIME_OMIT;
+        ts[0].tv_sec  atoi(argv[optind + 1]);
+        if (argv[optind + 2][0]  'n') {
+            ts[0].tv_nsec  UTIME_NOW;
+        } else if (argv[optind + 2][0]  'o') {
+            ts[0].tv_nsec  UTIME_OMIT;
         } else {
-            ts[0].tv_nsec = atoi(argv[optind + 2]);
+            ts[0].tv_nsec  atoi(argv[optind + 2]);
         }
 
-        ts[1].tv_sec = atoi(argv[optind + 3]);
-        if (argv[optind + 4][0] == 'n') {
-            ts[1].tv_nsec = UTIME_NOW;
-        } else if (argv[optind + 4][0] == 'o') {
-            ts[1].tv_nsec = UTIME_OMIT;
+        ts[1].tv_sec  atoi(argv[optind + 3]);
+        if (argv[optind + 4][0]  'n') {
+            ts[1].tv_nsec  UTIME_NOW;
+        } else if (argv[optind + 4][0]  'o') {
+            ts[1].tv_nsec  UTIME_OMIT;
         } else {
-            ts[1].tv_nsec = atoi(argv[optind + 4]);
+            ts[1].tv_nsec  atoi(argv[optind + 4]);
         }
 
-        tsp = ts;
+        tsp  ts;
     }
 
     /* For testing purposes, it may have been useful to run this program
@@ -210,26 +210,26 @@ main(int argc, char *argv[])
        the permission checking for the utimensat() call is performed
        under that UID. */
 
-    if (geteuid() == 0) {
+    if (geteuid()  0) {
         uid_t u;
 
-        u = getuid();
+        u  getuid();
 
         if (verbose)
             printf("Resetting UIDs to %ld\n", (long) u);
 
-        if (setresuid(u, u, u) == -1)
+        if (setresuid(u, u, u)  -1)
             errExit("setresuid");
     }
 
-    /* Display information allowing user to verify arguments for call */ 
+    /* Display information allowing user to verify arguments for call */
 
     if (verbose) {
         printf("dirfd is %d\n", dirfd);
         printf("pathname is %s\n", pathname);
         printf("tsp is %p", tsp);
-        if (tsp != NULL) {
-            printf("; struct  = { %ld, %ld } { %ld, %ld }",
+        if (tsp ! NULL) {
+            printf("; struct   { %ld, %ld } { %ld, %ld }",
                     (long) tsp[0].tv_sec, (long) tsp[0].tv_nsec,
                     (long) tsp[1].tv_sec, (long) tsp[1].tv_nsec);
         }
@@ -239,22 +239,22 @@ main(int argc, char *argv[])
 
     /* Make the call and see what happened */
 
-    if (utimensat_sc(dirfd, pathname, tsp, flags) == -1) {
-        if (errno == EPERM) {
+    if (utimensat_sc(dirfd, pathname, tsp, flags)  -1) {
+        if (errno  EPERM) {
             if (verbose)
                 printf("utimensat() failed with EPERM\n");
             else
                 printf("EPERM\n");
             exit(EXIT_FAILURE);
 
-        } else if (errno == EACCES) {
+        } else if (errno  EACCES) {
             if (verbose)
                 printf("utimensat() failed with EACCES\n");
             else
                 printf("EACCES\n");
             exit(EXIT_FAILURE);
 
-        } else if (errno == EINVAL) {
+        } else if (errno  EINVAL) {
             if (verbose)
                 printf("utimensat() failed with EINVAL\n");
             else
@@ -269,7 +269,7 @@ main(int argc, char *argv[])
     if (verbose)
         printf("utimensat() succeeded\n");
 
-    if (stat((pathname != NULL) ? pathname : dirfdPath, &sb) == -1)
+    if (stat((pathname ! NULL) ? pathname : dirfdPath, &sb)  -1)
         errExit("stat");
 
     if (verbose) {

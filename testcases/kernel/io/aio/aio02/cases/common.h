@@ -19,6 +19,6 @@ static void io_error(const char *func, int rc)
 		fprintf(stderr, "%s: %s\n", func, strerror(-rc));
 	else
 		fprintf(stderr, "%s: error %d\n", func, rc);
-	
+
 	exit(1);
 }

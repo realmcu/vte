@@ -40,8 +40,8 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return=-1)
- *      if errno set == expected errno
+ *   Check return code, if system call failed (return-1)
+ *      if errno set  expected errno
  *              Issue sys call fails with expected return value and errno.
  *      Otherwise,
  *              Issue sys call fails with unexpected errno.
@@ -61,7 +61,7 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	04/2002 Ported by André Merlier
+ * 04/2002 Ported by André Merlier
  *
  * RESTRICTIONS:
  *  None.
@@ -81,80 +81,80 @@
 #include "test.h"
 #include "usctest.h"
 
-#define PREAD_TEMPDIR	"test"
+#define PREAD_TEMPDIR "test"
 #define K1              2048
 #define NBUFS           1
 
-char *TCID="pread03";		/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID"pread03";  /* Test program identifier.    */
+int TST_TOTAL1;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 
-char *read_buf[NBUFS];		/* buffer to hold data read from file */
+char *read_buf[NBUFS];  /* buffer to hold data read from file */
 char test_dir [100];
-int fd1;			/* file descriptor of temporary file */
-int exp_enos[] = {EISDIR,0};
+int fd1;   /* file descriptor of temporary file */
+int exp_enos[]  {EISDIR,0};
 
-void setup();			/* Main setup function of test */
-void cleanup();			/* cleanup function for the test */
-void init_buffers();		/* function to initialize/allocate buffers */
+void setup();   /* Main setup function of test */
+void cleanup();   /* cleanup function for the test */
+void init_buffers();  /* function to initialize/allocate buffers */
 
 int
 main(int ac, char **av)
 {
-	int lc;
-	char *msg;		/* message returned from parse_opts */
-	size_t nbytes;		/* no. of bytes to be written */
-	off_t offset;		/* offset position in the specified file */
-	char *test_desc;	/* test specific error message */
+ int lc;
+ char *msg;  /* message returned from parse_opts */
+ size_t nbytes;  /* no. of bytes to be written */
+ off_t offset;  /* offset position in the specified file */
+ char *test_desc; /* test specific error message */
 
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(ac, av, (option_t *)NULL, NULL);
+ if (msg ! (char *)NULL) {
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	/* Perform global setup for test */
-	setup();
+ /* Perform global setup for test */
+ setup();
 
-	TEST_EXP_ENOS(exp_enos);
+ TEST_EXP_ENOS(exp_enos);
 
-	/* Check for looping state if -i option is given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+ /* Check for looping state if -i option is given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		test_desc = "EISDIR";
-		nbytes = K1;
-		offset = 20;
+  test_desc  "EISDIR";
+  nbytes  K1;
+  offset  20;
 
-		TEST(pread(fd1, read_buf[0], nbytes, offset));
+  TEST(pread(fd1, read_buf[0], nbytes, offset));
 
-		/* Check for the return code of pread() */
-		if (TEST_RETURN != -1) {
-			tst_brkm(TFAIL, cleanup, "pread() returned "
-				 "%d, expected -1, errno:%d\n",
-				 TEST_RETURN,
-				 exp_enos);
-		}
+  /* Check for the return code of pread() */
+  if (TEST_RETURN ! -1) {
+   tst_brkm(TFAIL, cleanup, "pread() returned "
+     "%d, expected -1, errno:%d\n",
+     TEST_RETURN,
+     exp_enos);
+  }
 
-		TEST_ERROR_LOG(TEST_ERRNO);
+  TEST_ERROR_LOG(TEST_ERRNO);
 
-		/*
-		 * Verify whether expected errno is set.
-		 */
-		if (TEST_ERRNO == exp_enos[0]) {
-			tst_resm(TPASS, "pread() fails with expected error EISDIR errno:%d",TEST_ERRNO);
-		} else {
-			tst_resm(TFAIL, "pread() fails, %s, unexpected "
-				 "errno:%d, expected:%d\n", test_desc,
-				 TEST_ERRNO, exp_enos[0]);
-		}
-	}
+  /*
+   * Verify whether expected errno is set.
+   */
+  if (TEST_ERRNO  exp_enos[0]) {
+   tst_resm(TPASS, "pread() fails with expected error EISDIR errno:%d",TEST_ERRNO);
+  } else {
+   tst_resm(TFAIL, "pread() fails, %s, unexpected "
+     "errno:%d, expected:%d\n", test_desc,
+     TEST_ERRNO, exp_enos[0]);
+  }
+ }
 
-	cleanup();
+ cleanup();
 
-	/*NOTREACHED*/
-	return(0);
+ /*NOTREACHED*/
+ return(0);
 }
 
 /*
@@ -164,42 +164,42 @@ main(int ac, char **av)
 void
 setup()
 {
-	char *cur_dir = NULL;
+ char *cur_dir  NULL;
 
-	/* capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* Allocate the read buffer */
-	init_buffers();
+ /* Allocate the read buffer */
+ init_buffers();
 
-	/* make a temp directory and cd to it */
-	tst_tmpdir();
+ /* make a temp directory and cd to it */
+ tst_tmpdir();
 
-	/* get the currect directory name */
-	if ((cur_dir = getcwd(cur_dir, 0)) == NULL) {
-		tst_brkm(TBROK, cleanup, "Couldn't get current directory name");
-	}
+ /* get the currect directory name */
+ if ((cur_dir  getcwd(cur_dir, 0))  NULL) {
+  tst_brkm(TBROK, cleanup, "Couldn't get current directory name");
+ }
 
-	sprintf(test_dir, "%s.%d", cur_dir, getpid());
+ sprintf(test_dir, "%s.%d", cur_dir, getpid());
 
-	/*
-	 * create a temporary directory
-	 */
-	if(mkdir(PREAD_TEMPDIR, 0777) != 0) {
-		tst_resm(TFAIL, "mkdir() failed to create"
-		                " test directory");
-		exit(1);
-		/* NOTREACHED */
-	}
+ /*
+  * create a temporary directory
+  */
+ if(mkdir(PREAD_TEMPDIR, 0777) ! 0) {
+  tst_resm(TFAIL, "mkdir() failed to create"
+                  " test directory");
+  exit(1);
+  /* NOTREACHED */
+ }
 
-	/* open temporary directory used for test */
-	if ((fd1 = open(PREAD_TEMPDIR,O_RDONLY)) < 0) {
-		tst_brkm(TBROK, cleanup, "open() on %s Failed, errno=%d : %s",
-			 PREAD_TEMPDIR, errno, strerror(errno));
-	}
+ /* open temporary directory used for test */
+ if ((fd1  open(PREAD_TEMPDIR,O_RDONLY)) < 0) {
+  tst_brkm(TBROK, cleanup, "open() on %s Failed, errno%d : %s",
+    PREAD_TEMPDIR, errno, strerror(errno));
+ }
 
 }
 
@@ -211,17 +211,17 @@ setup()
 void
 init_buffers()
 {
-	int count;		/* counter variable for loop */
+ int count;  /* counter variable for loop */
 
-	/* Allocate and Initialize read buffer */
-	for (count = 0; count < NBUFS; count++) {
-		read_buf[count] = (char *)malloc(K1);
+ /* Allocate and Initialize read buffer */
+ for (count  0; count < NBUFS; count++) {
+  read_buf[count]  (char *)malloc(K1);
 
-		if (read_buf[count] == NULL) {
-			tst_brkm(TBROK, tst_exit,
-				 "malloc() failed on read buffers");
-		}
-	}
+  if (read_buf[count]  NULL) {
+   tst_brkm(TBROK, tst_exit,
+     "malloc() failed on read buffers");
+  }
+ }
 }
 
 /*
@@ -233,22 +233,22 @@ init_buffers()
 void
 cleanup()
 {
-	int count;		/* index for the loop */
+ int count;  /* index for the loop */
 
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* Free the memory allocated for the read buffer */
-	for (count = 0; count < NBUFS; count++) {
-		free(read_buf[count]);
-	}
+ /* Free the memory allocated for the read buffer */
+ for (count  0; count < NBUFS; count++) {
+  free(read_buf[count]);
+ }
 
-	/* delete the test directory created in setup() */
-	tst_rmdir();
+ /* delete the test directory created in setup() */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

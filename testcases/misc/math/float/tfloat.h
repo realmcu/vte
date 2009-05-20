@@ -74,9 +74,9 @@ extern int true, num_threads;
  * the TH_FUNC structure contains all the data needed to execute the tests.
  *         code_funct	function type
  *         precision	int. value used to distinguish between rounding
- *      		errors and real ones (relative difference between
- *      		expected and read value should be less than
- *      		2 ** precision)
+ *      errors and real ones (relative difference between
+ *      expected and read value should be less than
+ *      2 ** precision)
  *         funct        function pointer
  *         fident       function id. (string) for error messages
  *         din_fname    data file name (input data)

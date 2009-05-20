@@ -19,18 +19,18 @@
 
 /*
  * NAME
- *	creat04.c
+ * creat04.c
  *
  * DESCRIPTION
- *	testcase to check creat(2) fails with EACCES
+ * testcase to check creat(2) fails with EACCES
  *
  * ALGORITHM
- *	1.	A parent spawns a child, which creates a test-directory, and
- *		makes it 700. Then the parent spawns another child, does a
- *		setreuid to ltpuser1, and attempts to creat() a file (which
- *		does not exist) in the directory created by the first child.
- *	2.	Repeat 1, for a file (to be created by ltpuser1) which exists.
- *		That is the first child should creat() a file before exiting.
+ * 1. A parent spawns a child, which creates a test-directory, and
+ *  makes it 700. Then the parent spawns another child, does a
+ *  setreuid to ltpuser1, and attempts to creat() a file (which
+ *  does not exist) in the directory created by the first child.
+ * 2. Repeat 1, for a file (to be created by ltpuser1) which exists.
+ *  That is the first child should creat() a file before exiting.
  *
  * USAGE:  <for command-line>
  *  creat04 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -42,10 +42,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- *	Test must be run as root.
+ * Test must be run as root.
  */
 
 #include <stdio.h>
@@ -58,147 +58,147 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "creat04";
-int TST_TOTAL = 2;
+char *TCID  "creat04";
+int TST_TOTAL  2;
 extern int Tst_count;
 
 void setup(void);
 void cleanup(void);
 
-#define FMODE	0444
-#define DMODE	00700
+#define FMODE 0444
+#define DMODE 00700
 
-int exp_enos[] = {EACCES, 0};
+int exp_enos[]  {EACCES, 0};
 
-char user1name[] = "nobody";
-char good_dir[40] = "testdir";
+char user1name[]  "nobody";
+char good_dir[40]  "testdir";
 char fname[40], fname1[40];
 extern struct passwd * my_getpwnam(char *);
 struct passwd *ltpuser1;
 
 struct test_case_t {
-	char *fname;
-} TC[] = {
-	/* comment */
-	{fname},
+ char *fname;
+} TC[]  {
+ /* comment */
+ {fname},
 
-	/* comment */
-	{fname1}
+ /* comment */
+ {fname1}
 };
 
 int
 main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	int retval=0;
-	char *msg;			/* message returned from parse_opts */
+ int lc;    /* loop counter */
+ int retval0;
+ char *msg;   /* message returned from parse_opts */
 
-	pid_t pid, pid1;
-	int i, e_code, status, fd;
+ pid_t pid, pid1;
+ int i, e_code, status, fd;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	setup();
+ setup();
 
-	TEST_EXP_ENOS(exp_enos);
+ TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		if ((pid = FORK_OR_VFORK()) == -1) {
-			tst_brkm(TBROK, cleanup, "fork() #1 failed");
-		}
+  if ((pid  FORK_OR_VFORK())  -1) {
+   tst_brkm(TBROK, cleanup, "fork() #1 failed");
+  }
 
-		if (pid == 0) {		/* first child */
-			if (mkdir(good_dir, DMODE) != 0) {
-				tst_resm(TINFO, "mkdir() failed");
-				exit(1);
-			}
-			if ((fd = open(fname1, O_RDWR | O_CREAT, 0444))
-			    == -1) {
-				tst_resm(TINFO, "open() failed");
-				exit(1);
-			}
-			exit(0);
-		}
-		wait(&status);
+  if (pid  0) {  /* first child */
+   if (mkdir(good_dir, DMODE) ! 0) {
+    tst_resm(TINFO, "mkdir() failed");
+    exit(1);
+   }
+   if ((fd  open(fname1, O_RDWR | O_CREAT, 0444))
+        -1) {
+    tst_resm(TINFO, "open() failed");
+    exit(1);
+   }
+   exit(0);
+  }
+  wait(&status);
 
-		/* make sure the child returned a good exit status */
-		e_code = status >> 8;
-		if (e_code != 0) {
-			tst_brkm(TBROK, cleanup, "child #1 failed");
-		}
+  /* make sure the child returned a good exit status */
+  e_code  status >> 8;
+  if (e_code ! 0) {
+   tst_brkm(TBROK, cleanup, "child #1 failed");
+  }
 
-		if ((pid1 = FORK_OR_VFORK()) == -1) {
-			tst_brkm(TBROK, cleanup, "fork() #2 failed");
-		}
+  if ((pid1  FORK_OR_VFORK())  -1) {
+   tst_brkm(TBROK, cleanup, "fork() #2 failed");
+  }
 
-		if (pid1 == 0) {		/* second child */
+  if (pid1  0) {  /* second child */
 
-			ltpuser1 = my_getpwnam(user1name);
+   ltpuser1  my_getpwnam(user1name);
 
-			if (seteuid(ltpuser1->pw_uid) == -1) {
-				tst_resm(TINFO, "setreuid failed to "
-					 "to set the effective uid to %d",
-					 ltpuser1->pw_uid);
-				perror("setreuid");
-				continue;
-			}
+   if (seteuid(ltpuser1->pw_uid)  -1) {
+    tst_resm(TINFO, "setreuid failed to "
+      "to set the effective uid to %d",
+      ltpuser1->pw_uid);
+    perror("setreuid");
+    continue;
+   }
 
-			/* loop through the test cases */
-			for (i=0; i<TST_TOTAL; i++) {
+   /* loop through the test cases */
+   for (i0; i<TST_TOTAL; i++) {
 
-				TEST(creat(TC[i].fname, FMODE));
+    TEST(creat(TC[i].fname, FMODE));
 
-				if (TEST_RETURN != -1) {
-					retval=1;
-					tst_resm(TFAIL, "call succeeded "
-						 "unexpectedly");
-					continue;
-				}
+    if (TEST_RETURN ! -1) {
+     retval1;
+     tst_resm(TFAIL, "call succeeded "
+       "unexpectedly");
+     continue;
+    }
 
-				TEST_ERROR_LOG(TEST_ERRNO);
+    TEST_ERROR_LOG(TEST_ERRNO);
 
-				if (TEST_ERRNO != EACCES) {
-					retval=1;
-					tst_resm(TFAIL, "Expected EACCES got "
-						 "%d : %s", TEST_ERRNO,
-						 strerror(TEST_ERRNO));
-				} else {
-					tst_resm(TPASS, "call failed with "
-						 "expected EACCES error");
-				}
-			}
+    if (TEST_ERRNO ! EACCES) {
+     retval1;
+     tst_resm(TFAIL, "Expected EACCES got "
+       "%d : %s", TEST_ERRNO,
+       strerror(TEST_ERRNO));
+    } else {
+     tst_resm(TPASS, "call failed with "
+       "expected EACCES error");
+    }
+   }
 
-			/* reset our ID back to the saved ID - root */
-			seteuid(0);
+   /* reset our ID back to the saved ID - root */
+   seteuid(0);
 
-			/* clean up things in case we are looping */
-			unlink(fname);
-			unlink(fname1);
-			rmdir(good_dir);
-			exit(retval);
+   /* clean up things in case we are looping */
+   unlink(fname);
+   unlink(fname1);
+   rmdir(good_dir);
+   exit(retval);
 
-		} else {			/* parent */
-			/* wait for the child to finish */
-			wait(&status);
-			/* make sure the child returned a good exit status */
-			e_code = status >> 8;
-			if (e_code != 0) {
-				tst_resm(TFAIL, "Failures reported above");
-			}
-		}
-	}
-	cleanup();
+  } else {   /* parent */
+   /* wait for the child to finish */
+   wait(&status);
+   /* make sure the child returned a good exit status */
+   e_code  status >> 8;
+   if (e_code ! 0) {
+    tst_resm(TFAIL, "Failures reported above");
+   }
+  }
+ }
+ cleanup();
 
-	return 0;
-	/*NOTREACHED*/
+ return 0;
+ /*NOTREACHED*/
 }
 
 /*
@@ -207,42 +207,42 @@ main(int ac, char **av)
 void
 setup()
 {
-	/* The test must be run as root */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
-	}
+ /* The test must be run as root */
+ if (geteuid() ! 0) {
+  tst_brkm(TBROK, tst_exit, "Test must be run as root");
+ }
 
-	/* capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* make a temporary directory and cd to it */
-	tst_tmpdir();
+ /* make a temporary directory and cd to it */
+ tst_tmpdir();
 
-	sprintf(good_dir, "%s.%d", good_dir, getpid());
-	sprintf(fname1, "%s/file1.%d", good_dir, getpid());
-	sprintf(fname, "%s/file.%d", good_dir, getpid());
+ sprintf(good_dir, "%s.%d", good_dir, getpid());
+ sprintf(fname1, "%s/file1.%d", good_dir, getpid());
+ sprintf(fname, "%s/file.%d", good_dir, getpid());
 }
 
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
+ *        completion or premature exit.
  */
 void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* delete the test directory created in setup() */
-	tst_rmdir();
+ /* delete the test directory created in setup() */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   pmic_light_test.c
 
         @brief   Source file for PMIC (sc55112 and mc13783) Ligth driver test scenario.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -22,23 +22,23 @@ I.Inkina/nknl001             27/12/2005     TLSbo61037   Update for MXC91231 and
 D.Khoroshev/b00313           07/25/2005     TLSbo66285   Update for VTE 2.01
 D.Khoroshev/b00313           08/31/2006     TLSbo76979   Added support for both SC55112 and MC13783
                                                          platforms
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                 INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* LTP environment functions */
 #include <test.h>
 #include <usctest.h>
 #include "pmic_light_test.h"
-/*==================================================================================================
+/*======================
                                 LOCAL MACROS
-==================================================================================================*/
-/*================================================================================================
+======================*/
+/*====================
                                         GLOABAL VARIABLES
-==================================================================================================*/
+======================*/
 int     fd;     /* device descriptor */
 t_bklit_setting_param bklit_param_LD1;
 t_bklit_setting_param bklit_param_LD2;
@@ -49,9 +49,9 @@ char pmic_status[9][30] =
         "PMIC_EVENT_NOT_SUBSCRIBED", "PMIC_EVENT_CALL_BACK"
 };
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 int     VT_LED_test_ioctl(void);
 int     VT_LED_fun_pattern_config(void);
 int     VT_LED_fun_test_config(void);
@@ -59,8 +59,8 @@ int     VT_LED_ind_config(void);
 int     VT_bklit_test_ioctl(void);
 int     SET_GET_bklit(t_bklit_setting_param * bklit_param);
 int     VT_bklit_ramp_config_test(void);
-/*================================================================================================*/
-/*===== VT_SC55112_TEST_light_setup =====*/
+/*====================*/
+/*= VT_SC55112_TEST_light_setup =*/
 /**
 @brief  Opens device file.
 
@@ -69,7 +69,7 @@ int     VT_bklit_ramp_config_test(void);
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_pmic_light_test_setup(void)
 {
         fd = open("/dev/" PMIC_LIGHT_DEV, O_RDWR);
@@ -85,8 +85,8 @@ int VT_pmic_light_test_setup(void)
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== VT_SC55112_TEST_light_cleanup =====*/
+/*====================*/
+/*= VT_SC55112_TEST_light_cleanup =*/
 /**
 @brief  Closes device file.
 
@@ -94,7 +94,7 @@ int VT_pmic_light_test_setup(void)
 
 @return None.
 */
-/*================================================================================================*/
+/*====================*/
 void VT_pmic_light_test_cleanup(void)
 {
         printf("Master Enable for BackLight and TCLED is DISABLED\n");
@@ -113,8 +113,8 @@ void VT_pmic_light_test_cleanup(void)
         tst_exit();
 }
 
-/*================================================================================================*/
-/*===== VT_SC55112_test_light_TEST =====*/
+/*====================*/
+/*= VT_SC55112_test_light_TEST =*/
 /**
 @brief  This function executes test cases for SC55112 Light driver test.
 
@@ -123,7 +123,7 @@ void VT_pmic_light_test_cleanup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_pmic_light_test(int switch_fct)
 {
         int     ret;
@@ -197,8 +197,8 @@ int VT_pmic_light_test(int switch_fct)
 
 
 
-/*================================================================================================*/
-/*===== VT_LED_test_ioctl =====*/
+/*====================*/
+/*= VT_LED_test_ioctl =*/
 /**
 @brief  This function executes all the ioctls for Tri-color LED.
 
@@ -207,7 +207,7 @@ int VT_pmic_light_test(int switch_fct)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_LED_test_ioctl(void)
 {
         int bank, mode;
@@ -251,8 +251,8 @@ int VT_LED_test_ioctl(void)
         return rv;
 }
 
-/*================================================================================================*/
-/*===== VT_LED_fun_pattern_config =====*/
+/*====================*/
+/*= VT_LED_fun_pattern_config =*/
 /**
 @brief  This function executes setup Tri-color LED for PMIC Light driver on FUN LIGHT MODE test.
 
@@ -261,7 +261,7 @@ int VT_LED_test_ioctl(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_LED_fun_pattern_config(void)
 {
         int rv = TPASS,bank, pattern;
@@ -291,8 +291,8 @@ int VT_LED_fun_pattern_config(void)
         return rv;
 }
 
-/*================================================================================================*/
-/*===== VT_LED_fun_test_config =====*/
+/*====================*/
+/*= VT_LED_fun_test_config =*/
 /**
 @brief  This function executes setup Tri-color LED for PMIC Light driver on
 FUN LIGHT MODE . Automated Fun Light test.
@@ -302,7 +302,7 @@ FUN LIGHT MODE . Automated Fun Light test.
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_LED_fun_test_config(void)
 {
         t_fun_param fun_param;
@@ -372,7 +372,7 @@ int VT_LED_fun_test_config(void)
         printf("Test PASSED\n");
         return 0;
 }
-/*================================================================================================*/
+/*====================*/
 /*!
  * It reset int_param struct
  *
@@ -382,7 +382,7 @@ int VT_LED_fun_test_config(void)
  *
  * @return       This function returns 0 if successful.
  */
-/*================================================================================================*/
+/*====================*/
 void ind_reset(t_tcled_ind_param * ind_param)
 {
     ind_param->skip = 0;
@@ -395,8 +395,8 @@ void ind_reset(t_tcled_ind_param * ind_param)
 }
 
 
-/*================================================================================================*/
-/*===== VT_LED_ind_config =====*/
+/*====================*/
+/*= VT_LED_ind_config =*/
 /**
 @brief  This function executes setup Tri-color LED for PMIC Light driver on INDICATOR LIGHT MODE test.
 
@@ -405,7 +405,7 @@ void ind_reset(t_tcled_ind_param * ind_param)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_LED_ind_config(void)
 {
         t_tcled_enable_param tcled_setting;
@@ -456,7 +456,7 @@ int VT_LED_ind_config(void)
         return 0;
 }
 
-/*================================================================================================*/
+/*====================*/
 /*!
  * This is the unit test for the tcled ind pattern.
  * It checks that the read/write operation are coherent.
@@ -467,7 +467,7 @@ int VT_LED_ind_config(void)
  *
  * @return       This function returns 0 if successful.
  */
-/*================================================================================================*/
+/*====================*/
 int run_ind_light_test(t_tcled_enable_param * tcled_setting,
                t_tcled_ind_param * ind_param)
 {
@@ -502,7 +502,7 @@ int run_ind_light_test(t_tcled_enable_param * tcled_setting,
     return 0;
 }
 
-/*================================================================================================*/
+/*====================*/
 /*!
  * This function enable backlights
  * Main, Aux and Keypad
@@ -511,7 +511,7 @@ int run_ind_light_test(t_tcled_enable_param * tcled_setting,
  *
  * @return       This function returns a void
  */
-/*================================================================================================*/
+/*====================*/
 
 void enable_backlight(int fd, t_bklit_setting_param * setting)
 {
@@ -569,8 +569,8 @@ void test_disable_backlight(int fd, t_bklit_setting_param * setting)
 
 }
 
-/*================================================================================================*/
-/*===== VT_bklit_ramp_config_test =====*/
+/*====================*/
+/*= VT_bklit_ramp_config_test =*/
 /**
 @brief  This function setup differrent parametrs for backlight.
 
@@ -579,7 +579,7 @@ void test_disable_backlight(int fd, t_bklit_setting_param * setting)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_bklit_ramp_config_test(void)
 {
         int     rv = TPASS;
@@ -634,8 +634,8 @@ int VT_bklit_ramp_config_test(void)
 
         return rv;
 }
-/*================================================================================================*/
-/*===== VT_bklit_test_ioctl =====*/
+/*====================*/
+/*= VT_bklit_test_ioctl =*/
 /**
 @brief  This function Checks the IOCTLs of  backlight functions.
 
@@ -644,7 +644,7 @@ int VT_bklit_ramp_config_test(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_bklit_test_ioctl(void)
 {
     int     rv = TPASS;
@@ -722,8 +722,8 @@ if(rv) ret=TFAIL;
 return ret;
 }
 
-/*================================================================================================*/
-/*===== SET_GET_bklit =====*/
+/*====================*/
+/*= SET_GET_bklit =*/
 /**
 @brief  This function executes ioctl for backlight and is called by
 VT_bklit_test_ioctl .
@@ -733,7 +733,7 @@ VT_bklit_test_ioctl .
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int SET_GET_bklit(t_bklit_setting_param *bklit_param)
 {
         int     rv = TPASS;

@@ -7,38 +7,38 @@
 #include <stdio.h>
 
 int main() {
-	if ( (0 == SIGABRT) ||
-		(0 == SIGALRM) ||
-		(0 == SIGBUS) ||
-		(0 == SIGCHLD) ||
-		(0 == SIGCONT) ||
-		(0 == SIGFPE) ||
-		(0 == SIGHUP) ||
-		(0 == SIGILL) ||
-		(0 == SIGINT) ||
-		(0 == SIGKILL) ||
-		(0 == SIGPIPE) ||
-		(0 == SIGQUIT) ||
-		(0 == SIGSEGV) ||
-		(0 == SIGSTOP) ||
-		(0 == SIGTERM) ||
-		(0 == SIGTSTP) ||
-		(0 == SIGTTIN) ||
-		(0 == SIGTTOU) ||
-		(0 == SIGUSR1) ||
-		(0 == SIGUSR2) ||
-		(0 == SIGPOLL) ||
-		(0 == SIGPROF) ||
-		(0 == SIGSYS) ||
-		(0 == SIGTRAP) ||
-		(0 == SIGURG) ||
-		(0 == SIGVTALRM) ||
-		(0 == SIGXCPU) ||
-		(0 == SIGXFSZ) ) {
-		printf("Test FAILED\n");
-		return -1;
-	} else {
-		printf("Test PASSED\n");
-		return 0;
-	}
+ if ( (0  SIGABRT) ||
+  (0  SIGALRM) ||
+  (0  SIGBUS) ||
+  (0  SIGCHLD) ||
+  (0  SIGCONT) ||
+  (0  SIGFPE) ||
+  (0  SIGHUP) ||
+  (0  SIGILL) ||
+  (0  SIGINT) ||
+  (0  SIGKILL) ||
+  (0  SIGPIPE) ||
+  (0  SIGQUIT) ||
+  (0  SIGSEGV) ||
+  (0  SIGSTOP) ||
+  (0  SIGTERM) ||
+  (0  SIGTSTP) ||
+  (0  SIGTTIN) ||
+  (0  SIGTTOU) ||
+  (0  SIGUSR1) ||
+  (0  SIGUSR2) ||
+  (0  SIGPOLL) ||
+  (0  SIGPROF) ||
+  (0  SIGSYS) ||
+  (0  SIGTRAP) ||
+  (0  SIGURG) ||
+  (0  SIGVTALRM) ||
+  (0  SIGXCPU) ||
+  (0  SIGXFSZ) ) {
+  printf("Test FAILED\n");
+  return -1;
+ } else {
+  printf("Test PASSED\n");
+  return 0;
+ }
 }

@@ -23,7 +23,7 @@
  */
 
 /* ftruncate was formerly an XOPEN extension. We define _XOPEN_SOURCE here to
-   avoid warning if the implementation does not program ftruncate as a base 
+   avoid warning if the implementation does not program ftruncate as a base
    interface */
 #define _XOPEN_SOURCE 600
 
@@ -42,71 +42,71 @@
 #define BUF_SIZE 8
 #define SHM_NAME "/posixtest_5-1"
 
-char str[BUF_SIZE] = "qwerty";
+char str[BUF_SIZE]  "qwerty";
 
 int child_process() {
-	int fd;
-	char *buf;
+ int fd;
+ char *buf;
 
-	fd = shm_open(SHM_NAME, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
-	if(fd == -1) {
-		perror("An error occurs when calling shm_open()");
-		kill(getppid(), SIGUSR1);
-		return PTS_UNRESOLVED;
-	}
+ fd  shm_open(SHM_NAME, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
+ if(fd  -1) {
+  perror("An error occurs when calling shm_open()");
+  kill(getppid(), SIGUSR1);
+  return PTS_UNRESOLVED;
+ }
 
-	if(ftruncate(fd, BUF_SIZE) != 0) {
-		perror("An error occurs when calling ftruncate()");
-		kill(getppid(), SIGUSR1);
-		return PTS_UNRESOLVED;	
-	}
+ if(ftruncate(fd, BUF_SIZE) ! 0) {
+  perror("An error occurs when calling ftruncate()");
+  kill(getppid(), SIGUSR1);
+  return PTS_UNRESOLVED;
+ }
 
-	buf = mmap(NULL, BUF_SIZE, PROT_WRITE, MAP_SHARED, fd, 0);
-	if( buf == MAP_FAILED) {
-		perror("An error occurs when calling mmap()");
-		kill(getppid(), SIGUSR1);
-		return PTS_UNRESOLVED;	
-	}	
+ buf  mmap(NULL, BUF_SIZE, PROT_WRITE, MAP_SHARED, fd, 0);
+ if( buf  MAP_FAILED) {
+  perror("An error occurs when calling mmap()");
+  kill(getppid(), SIGUSR1);
+  return PTS_UNRESOLVED;
+ }
 
-	strcpy(buf, str);
+ strcpy(buf, str);
 
-	return PTS_PASS;
+ return PTS_PASS;
 }
 
 
 int main() {
-	int fd, child_pid;
-	char *buf;
+ int fd, child_pid;
+ char *buf;
 
-	child_pid = fork();
-	if(child_pid == -1) {
-		perror("An error occurs when calling fork()");
-		return PTS_UNRESOLVED;
-	} else if(child_pid == 0) {
-		return child_process();
-	}
-	
-	wait(NULL);
+ child_pid  fork();
+ if(child_pid  -1) {
+  perror("An error occurs when calling fork()");
+  return PTS_UNRESOLVED;
+ } else if(child_pid  0) {
+  return child_process();
+ }
 
-	fd = shm_open(SHM_NAME, O_RDONLY, S_IRUSR|S_IWUSR);
-	if(fd == -1) {
-		perror("An error occurs when calling shm_open()");
-		return PTS_UNRESOLVED;
-	}
+ wait(NULL);
 
-	buf = mmap(NULL, BUF_SIZE, PROT_READ, MAP_SHARED, fd, 0);
-	if( buf == MAP_FAILED) {
-		perror("An error occurs when calling mmap()");
-		return PTS_UNRESOLVED;	
-	}	
+ fd  shm_open(SHM_NAME, O_RDONLY, S_IRUSR|S_IWUSR);
+ if(fd  -1) {
+  perror("An error occurs when calling shm_open()");
+  return PTS_UNRESOLVED;
+ }
 
-	shm_unlink(SHM_NAME);
+ buf  mmap(NULL, BUF_SIZE, PROT_READ, MAP_SHARED, fd, 0);
+ if( buf  MAP_FAILED) {
+  perror("An error occurs when calling mmap()");
+  return PTS_UNRESOLVED;
+ }
 
-	if(strcmp(buf, str) == 0) {
-		printf("Test PASSED\n");
-		return PTS_PASS;
-	}
+ shm_unlink(SHM_NAME);
 
-	printf("Test FAILED\n");
-	return PTS_FAIL;
+ if(strcmp(buf, str)  0) {
+  printf("Test PASSED\n");
+  return PTS_PASS;
+ }
+
+ printf("Test FAILED\n");
+ return PTS_FAIL;
 }

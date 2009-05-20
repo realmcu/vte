@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake Huang/-----             <20081209>     N/A          Initial version
-# 
+#
 ###################################################################################################
 
 
@@ -114,10 +114,10 @@ check_platform()
 
 # Function:     test_case_01
 # Description   - Test if module exist ok
-#  
+#
 test_case_01()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="ipu_dev_node_test"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -135,10 +135,10 @@ return $RC
 
 # Function:     test_case_02
 # Description   - Test ipu_ENC_dev ok
-#  
+#
 test_case_02()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="IPU_ENC_dev"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -161,7 +161,7 @@ INFILE=$(echo $i | sed "s/+/ /g"| awk '{print $3}')
  OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
  ipu_dev_test -iw $WD -ih $HT -if I420 -ow $OWD -oh $OHT -of BGR3 -r 0 -t ENC -out /tmp/out.dat ${INPATH}/${INFILE} || return 1
  rm -f /tmp/out.dat
- sleep 1 
+ sleep 1
  done
 #test rotation
  for j in $ROTATION
@@ -192,7 +192,7 @@ INFILE=$(echo $i | sed "s/+/ /g"| awk '{print $3}')
   rm -f /tmp/out.dat
   sleep 1
  done
- 
+
 
  sleep 1
 done
@@ -203,10 +203,10 @@ return $RC
 
 # Function:     test_case_03
 # Description   - Test if IPU_PP_test ok
-#  
+#
 test_case_03()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="IPU_PP_TEST"
 #TODO give TST_COUNT
 TST_COUNT=3
@@ -251,7 +251,7 @@ INFILE=$(echo $i | sed "s/+/ /g"| awk '{print $3}')
   rm -f /tmp/out.dat
   sleep 1
  done
- 
+
  #now test the resize
  for j in $RESLIST
  do
@@ -259,7 +259,7 @@ INFILE=$(echo $i | sed "s/+/ /g"| awk '{print $3}')
  OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
  ipu_dev_test -iw $WD -ih $HT -if I420 -ow $OWD -oh $OHT -of BGR3 -r 0 -t PP -out /tmp/out.dat ${INPATH}/${INFILE} || return 1
  rm -f /tmp/out.dat
- sleep 1 
+ sleep 1
  done
 
  sleep 1
@@ -271,10 +271,10 @@ return $RC
 
 # Function:     test_case_04
 # Description   - Test if IPU_VF_test ok
-#  
+#
 test_case_04()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="IPU_VF_TEST"
 #TODO give TST_COUNT
 TST_COUNT=4
@@ -297,7 +297,7 @@ INFILE=$(echo $i | sed "s/+/ /g"| awk '{print $3}')
  OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
  OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
  ipu_dev_test -iw $WD -ih $HT -if I420 -ow $OWD -oh $OHT -of BGR3 -r 0 -t VF -out /tmp/out.dat ${INPATH}/${INFILE} || return 1
- sleep 1 
+ sleep 1
  done
 #test rotation
  for j in $ROTATION
@@ -326,7 +326,7 @@ INFILE=$(echo $i | sed "s/+/ /g"| awk '{print $3}')
   done
   sleep 1
  done
- 
+
 
  sleep 1
 done
@@ -362,7 +362,7 @@ usage()
 if [ $# -ne 1 ]
 then
 usage
-exit 1 
+exit 1
 fi
 
 check_platform
@@ -372,7 +372,7 @@ setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC 
+  test_case_01 || exit $RC
   ;;
 2)
   test_case_02 || exit $RC

@@ -16,7 +16,7 @@ void buttons_page::bg_clicked( int nid )
 	QButton *b=buttonGroup1->find(nid);
 	if(b==radioButton1){set_red();return;}
 	if(b==radioButton2){set_green();return;}
-	if(b==radioButton3){set_blue();return;}	
+	if(b==radioButton3){set_blue();return;}
 }
 
 
@@ -25,7 +25,7 @@ void buttons_page::ebg_clicked( int nid )
 	QButton *b=buttonGroup3->find(nid);
 	if(b==checkBox1){set_red();return;}
 	if(b==checkBox2){set_green();return;}
-	if(b==checkBox3){set_blue();return;}	
+	if(b==checkBox3){set_blue();return;}
 }
 
 

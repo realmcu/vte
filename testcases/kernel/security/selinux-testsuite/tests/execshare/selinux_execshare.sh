@@ -13,12 +13,12 @@ setup()
 {
         export TCID="setup"
         export TST_COUNT=0
-	export TST_TOTAL=2
+ export TST_TOTAL=2
 
-	# run tests in the $LTPROOT/testcases/bin directory
-	SAVEPWD=${PWD}
-	cd ${LTPBIN}
-	CURRENTDIR="."
+ # run tests in the $LTPROOT/testcases/bin directory
+ SAVEPWD=${PWD}
+ cd ${LTPBIN}
+ CURRENTDIR="."
 }
 
 test01()
@@ -27,12 +27,12 @@ test01()
         TST_COUNT=1
         RC=0
 
-	# Verify that test_execshare_parent_t can share state across
-	# an exec with test_execshare_child_t.
-	runcon -t test_execshare_parent_t -- $CURRENTDIR/selinux_execshare_parent 0x200 test_execshare_child_t $CURRENTDIR/selinux_execshare_child 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
+ # Verify that test_execshare_parent_t can share state across
+ # an exec with test_execshare_child_t.
+ runcon -t test_execshare_parent_t -- $CURRENTDIR/selinux_execshare_parent 0x200 test_execshare_child_t $CURRENTDIR/selinux_execshare_child 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
                 echo "$TCID   FAIL : execshare failed."
         else
                 echo "$TCID   PASS : execshare passed."
@@ -46,26 +46,26 @@ test02()
         TST_COUNT=2
         RC=0
 
-	# Verify that test_execshare_parent_t cannot share state across 
-	# an exec with test_execshare_notchild_t.
+ # Verify that test_execshare_parent_t cannot share state across
+ # an exec with test_execshare_notchild_t.
 
-	runcon -t test_execshare_parent_t -- $CURRENTDIR/selinux_execshare_parent 0x200 test_execshare_notchild_t $CURRENTDIR/selinux_execshare_child 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
+ runcon -t test_execshare_parent_t -- $CURRENTDIR/selinux_execshare_parent 0x200 test_execshare_notchild_t $CURRENTDIR/selinux_execshare_child 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
                 echo "$TCID   PASS : execshare passed."
-		RC=0
+  RC=0
         else
                 echo "$TCID   FAIL : execshare failed."
-		RC=1
+  RC=1
         fi
-	return $RC
+ return $RC
 }
 
 cleanup()
 {
-	# return to $LTPROOT directory
-	cd $SAVEPWD
+ # return to $LTPROOT directory
+ cd $SAVEPWD
 }
 
 # Function:     main

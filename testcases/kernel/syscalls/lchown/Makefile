@@ -32,7 +32,7 @@ install: create_link.mode
 clean:
 	rm -f $(TARGETS)
 
-create_link.mode: 
+create_link.mode:
 	@/bin/sh ./create_link.mode.sh
 
 .PHONY: create_link.mode

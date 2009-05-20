@@ -7,7 +7,7 @@
  */
 
 /*
-  Test that a closed message queue descriptor has been disassociated from 
+  Test that a closed message queue descriptor has been disassociated from
   its message queue by attempting to set a notification on the descriptor
   and verifying that mq_notify returns -1 and sets errno to EBADF
  */
@@ -27,43 +27,43 @@
 
 int main()
 {
-	char qname[50];
-	mqd_t queue;
-	struct sigevent se;
+ char qname[50];
+ mqd_t queue;
+ struct sigevent se;
 
-	sprintf(qname, "/" FUNCTION "_" TEST "_%d", getpid());
+ sprintf(qname, "/" FUNCTION "_" TEST "_%d", getpid());
 
-	queue = mq_open(qname, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, NULL);
-	if (queue == (mqd_t)-1) {
-		perror(ERROR_PREFIX "mq_open");
-		return PTS_UNRESOLVED;
-	}
+ queue  mq_open(qname, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, NULL);
+ if (queue  (mqd_t)-1) {
+  perror(ERROR_PREFIX "mq_open");
+  return PTS_UNRESOLVED;
+ }
 
-	if (mq_close(queue) == -1) {
-		perror(ERROR_PREFIX "mq_close");
-		return PTS_UNRESOLVED;
-	}
+ if (mq_close(queue)  -1) {
+  perror(ERROR_PREFIX "mq_close");
+  return PTS_UNRESOLVED;
+ }
 
-	se.sigev_notify = SIGEV_SIGNAL;
-	se.sigev_signo = SIGUSR1;
+ se.sigev_notify  SIGEV_SIGNAL;
+ se.sigev_signo  SIGUSR1;
 
-	if (mq_notify(queue, &se) != -1) {
-		printf("mq_notify() did not fail as expected\n");
-		printf("Test FAILED\n");
-		return PTS_FAIL;
-	}
+ if (mq_notify(queue, &se) ! -1) {
+  printf("mq_notify() did not fail as expected\n");
+  printf("Test FAILED\n");
+  return PTS_FAIL;
+ }
 
-	if (errno != EBADF) {
-		printf("errno != EBADF\n");
-		printf("Test FAILED\n");
-		return PTS_FAIL;
-	}
+ if (errno ! EBADF) {
+  printf("errno ! EBADF\n");
+  printf("Test FAILED\n");
+  return PTS_FAIL;
+ }
 
-	if (mq_unlink(qname) != 0) {
-		perror("mq_unlink() did not return success");
-		return PTS_UNRESOLVED;
-	}
+ if (mq_unlink(qname) ! 0) {
+  perror("mq_unlink() did not return success");
+  return PTS_UNRESOLVED;
+ }
 
-	printf("Test PASSED\n");
-	return PTS_PASS;
+ printf("Test PASSED\n");
+ return PTS_PASS;
 }

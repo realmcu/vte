@@ -33,13 +33,13 @@
 
 int main()
 {
-	int fd;
-	fd = mknod( "guid_node", S_IFREG | 02777, (dev_t)NULL );
-	if (fd == -1) {
-		printf( "Error creating guid node\n" );
-		return 1;
-	}
-	printf( "Success creating guid node\n" );
-	close( fd );
-	return 0;
+ int fd;
+ fd  mknod( "guid_node", S_IFREG | 02777, (dev_t)NULL );
+ if (fd  -1) {
+  printf( "Error creating guid node\n" );
+  return 1;
+ }
+ printf( "Success creating guid node\n" );
+ close( fd );
+ return 0;
 }

@@ -50,23 +50,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -85,76 +85,76 @@
 /* The main test function. */
 int main( int argc, char * argv[] )
 {
-	int ret, i;
-	sem_t *sems;
-	sem_t sem_last;
+ int ret, i;
+ sem_t *sems;
+ sem_t sem_last;
 
-	long max;
+ long max;
 
-	/* Initialize output */
-	output_init();
+ /* Initialize output */
+ output_init();
 
-	max = sysconf( _SC_SEM_NSEMS_MAX );
+ max  sysconf( _SC_SEM_NSEMS_MAX );
 
-	if ( max <= 0 )
-	{
-		output( "sysconf( _SC_SEM_NSEMS_MAX ) = %ld\n", max );
-		UNTESTED( "There is no constraint on SEM_NSEMS_MAX" );
-	}
+ if ( max < 0 )
+ {
+  output( "sysconf( _SC_SEM_NSEMS_MAX )  %ld\n", max );
+  UNTESTED( "There is no constraint on SEM_NSEMS_MAX" );
+ }
 
-	sems = ( sem_t * ) calloc( max, sizeof( sem_t ) );
+ sems  ( sem_t * ) calloc( max, sizeof( sem_t ) );
 
-	if ( sems == NULL )
-	{
-		UNRESOLVED( errno, "Failed to alloc space" );
-	}
-
-
-	for ( i = 0; i < max; i++ )
-	{
-		ret = sem_init( &sems[ i ], 0, 0 );
-
-		if ( ret != 0 )
-		{
-			output( "sem_init failed to initialize the %d nth semaphore.\n", i );
-			output( "Tryed to initialize %ld.\n", max );
-			output( "Error is %d: %s\n", errno, strerror( errno ) );
-
-			for ( ; i > 0; i-- )
-				sem_destroy( &sems[ i - 1 ] );
-
-			free( sems );
-
-			PASSED;
-		}
-	}
-
-	ret = sem_init( &sem_last, 0, 1 );
-
-	if ( ret == 0 )
-	{
-		FAILED( "We were able to sem_init more than SEM_NSEMS_MAX semaphores" );
-	}
-
-	if ( errno != ENOSPC )
-	{
-		output( "Error is %d: %s\n", errno, strerror( errno ) );
-	}
-
-	for ( i = 0; i < max; i++ )
-		sem_destroy( &sems[ i ] );
-
-	free( sems );
+ if ( sems  NULL )
+ {
+  UNRESOLVED( errno, "Failed to alloc space" );
+ }
 
 
-	/* Test passed */
+ for ( i  0; i < max; i++ )
+ {
+  ret  sem_init( &sems[ i ], 0, 0 );
+
+  if ( ret ! 0 )
+  {
+   output( "sem_init failed to initialize the %d nth semaphore.\n", i );
+   output( "Tryed to initialize %ld.\n", max );
+   output( "Error is %d: %s\n", errno, strerror( errno ) );
+
+   for ( ; i > 0; i-- )
+    sem_destroy( &sems[ i - 1 ] );
+
+   free( sems );
+
+   PASSED;
+  }
+ }
+
+ ret  sem_init( &sem_last, 0, 1 );
+
+ if ( ret  0 )
+ {
+  FAILED( "We were able to sem_init more than SEM_NSEMS_MAX semaphores" );
+ }
+
+ if ( errno ! ENOSPC )
+ {
+  output( "Error is %d: %s\n", errno, strerror( errno ) );
+ }
+
+ for ( i  0; i < max; i++ )
+  sem_destroy( &sems[ i ] );
+
+ free( sems );
+
+
+ /* Test passed */
 #if VERBOSE > 0
 
-	output( "Test passed\n" );
+ output( "Test passed\n" );
 
 #endif
 
-	PASSED;
+ PASSED;
 }
 
 

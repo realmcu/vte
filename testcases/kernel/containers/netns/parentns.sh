@@ -1,6 +1,6 @@
 #!/bin/sh
 
-################################################################################ 
+################################################################################
 ##                                                                            ##
 ## Copyright (c) International Business Machines  Corp., 2008                 ##
 ##                                                                            ##
@@ -19,7 +19,7 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA    ##
 ##                                                                            ##
 ## Author:      Veerendra <veeren@linux.vnet.ibm.com>                         ##
-################################################################################ 
+################################################################################
 
 ################################################################################
 # This script creates 2 veth devices.
@@ -65,13 +65,13 @@ status=0
     sleep 2
 
     ifconfig $vnet0 $IP1/24 up > /dev/null 2>&1
-	if [ $? -ne 0 ]; then
-		debug "Failed to make interface $vnet0 up in parent....."
-	fi
+ if [ $? -ne 0 ]; then
+  debug "Failed to make interface $vnet0 up in parent....."
+ fi
     route add -host $IP2 dev $vnet0
-	if [ $? -ne 0 ]; then
-		debug "Failed to add route to child in parent for $vnet0....."
-	fi
+ if [ $? -ne 0 ]; then
+  debug "Failed to add route to child in parent for $vnet0....."
+ fi
     echo 1 > /proc/sys/net/ipv4/conf/$vnet0/proxy_arp
 
     # Waits for the Child-NS to get created and reads the PID
@@ -80,7 +80,7 @@ status=0
     debug "INFO: the pid of child is $pid"
     ip link set $vnet1 netns $pid
     if [ $? -ne 0 ]; then
-	echo "Failed to assign network device to child .........."
+ echo "Failed to assign network device to child .........."
     fi
 
     # Passes the device name to Child NS

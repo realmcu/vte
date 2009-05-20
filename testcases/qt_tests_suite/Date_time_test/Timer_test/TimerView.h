@@ -10,18 +10,18 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-     
+
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Konstantin L.           17/05/2004      ?????????   Initial version 
+Konstantin L.           17/05/2004      ?????????   Initial version
 
 Irina Inkina            27/07/2004      ?????????   Initial version
 
 ====================================================================================================
-Portability: Indicate if this module is portable to other compilers or platforms. 
+Portability: Indicate if this module is portable to other compilers or platforms.
              If not, indicate specific reasons why is it not portable.
 
 ==================================================================================================*/
@@ -74,10 +74,10 @@ private:
     QErrorMessage *pTimerExpiredMessage;
 
 private:
-   	void setStartStopButtonText();
+   void setStartStopButtonText();
     void updateTimeoutsCounterLabel();
     void contextMenuEvent( QContextMenuEvent * );
-    
+
 };
 
 #endif //

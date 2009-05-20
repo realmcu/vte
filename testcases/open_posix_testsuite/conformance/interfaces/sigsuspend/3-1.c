@@ -2,7 +2,7 @@
  * Copyright (c) 2003, Intel Corporation. All rights reserved.
  * Created by:  salwan.searty REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
  Assumption: The test assumes that this program is run under normal conditions,
@@ -31,44 +31,44 @@
 
 int main()
 {
-	pid_t pid;
-	pid = fork();
+ pid_t pid;
+ pid = fork();
 
-	if (pid == 0) {
-		/* child */
+ if (pid == 0) {
+  /* child */
 
-	        sigset_t tempmask;
+         sigset_t tempmask;
 
-	        sigemptyset(&tempmask);
+         sigemptyset(&tempmask);
 
-		printf("suspending child\n");
-	        if (sigsuspend(&tempmask) != -1) {
-	                perror("sigsuspend error");
-			return 1;
-		}
+  printf("suspending child\n");
+         if (sigsuspend(&tempmask) != -1) {
+                 perror("sigsuspend error");
+   return 1;
+  }
 
-	        printf("Test FAILED: Should not have returned from sigsuspend\n");
-		return 2;
+         printf("Test FAILED: Should not have returned from sigsuspend\n");
+  return 2;
 
-	} else {
-		int s; 
-		int exit_status;
+ } else {
+  int s;
+  int exit_status;
 
-		/* parent */
-		sleep(1);
+  /* parent */
+  sleep(1);
 
-		printf("parent sending child a SIGABRT signal\n");		
-		kill (pid, SIGABRT);
+  printf("parent sending child a SIGABRT signal\n");
+  kill (pid, SIGABRT);
 
-		if (wait(&s) == -1) {
-			perror("Unexpected error while setting up test "
-			       "pre-conditions");
-			return PTS_UNRESOLVED;
-		}
+  if (wait(&s) == -1) {
+   perror("Unexpected error while setting up test "
+          "pre-conditions");
+   return PTS_UNRESOLVED;
+  }
 
-		exit_status = WEXITSTATUS(s);
+  exit_status = WEXITSTATUS(s);
 
-		printf("Exit status from child is %d\n", exit_status);
+  printf("Exit status from child is %d\n", exit_status);
 
                 if (exit_status == 1) {
                         printf("Test UNRESOLVED: sigsuspend in child process was not successful\n");
@@ -80,7 +80,7 @@ int main()
                         return PTS_FAIL;
                 }
 
-		printf("Test PASSED\n");
-		return PTS_PASS;
-	}
+  printf("Test PASSED\n");
+  return PTS_PASS;
+ }
 }

@@ -21,75 +21,75 @@
 int child_stopped = 0;
 int waiting = 1;
 
-void handler(int signo, siginfo_t *info, void *context) 
+void handler(int signo, siginfo_t *info, void *context)
 {
-	if (info && info->si_code == CLD_STOPPED) {
-		printf("Child has been stopped\n");
-		waiting = 0;
-		child_stopped++;
-	}
+ if (info && info->si_code == CLD_STOPPED) {
+  printf("Child has been stopped\n");
+  waiting = 0;
+  child_stopped++;
+ }
 }
 
 
 int main()
 {
-	pid_t pid;
-	struct sigaction act;
-	struct timeval tv;
+ pid_t pid;
+ struct sigaction act;
+ struct timeval tv;
 
-	act.sa_sigaction = handler;
-	act.sa_flags = SA_SIGINFO;
-	sigemptyset(&act.sa_mask);
-	sigaction(SIGCHLD,  &act, 0);     
+ act.sa_sigaction = handler;
+ act.sa_flags = SA_SIGINFO;
+ sigemptyset(&act.sa_mask);
+ sigaction(SIGCHLD,  &act, 0);
 
-	if ((pid = fork()) == 0) {
-		/* child */
-		while(1) {
-			/* wait forever, or until we are 
-			   interrupted by a signal */
-			tv.tv_sec = 0;
-			tv.tv_usec = 0;
-			select(0, NULL, NULL, NULL, &tv);
-		}
-		return 0;
-	} else {
-		/* parent */
-		int s; 		
-		int i;
+ if ((pid = fork()) == 0) {
+  /* child */
+  while(1) {
+   /* wait forever, or until we are
+      interrupted by a signal */
+   tv.tv_sec = 0;
+   tv.tv_usec = 0;
+   select(0, NULL, NULL, NULL, &tv);
+  }
+  return 0;
+ } else {
+  /* parent */
+  int s;
+  int i;
 
-		for (i = 0; i < NUMSTOPS; i++) {
-			waiting = 1;
+  for (i = 0; i < NUMSTOPS; i++) {
+   waiting = 1;
 
-			printf("--> Sending SIGSTOP\n");
-			kill(pid, SIGSTOP);
+   printf("--> Sending SIGSTOP\n");
+   kill(pid, SIGSTOP);
 
-			/*
-			  Don't let the kernel optimize away queued
-			  SIGSTOP/SIGCONT signals.
-			*/
-			while (waiting) {
-				tv.tv_sec = 1;
-				tv.tv_usec = 0;
-				if (!select(0, NULL, NULL, NULL, &tv))
-				  break;
-			}
+   /*
+     Don't let the kernel optimize away queued
+     SIGSTOP/SIGCONT signals.
+   */
+   while (waiting) {
+    tv.tv_sec = 1;
+    tv.tv_usec = 0;
+    if (!select(0, NULL, NULL, NULL, &tv))
+      break;
+   }
 
 
-			printf("--> Sending SIGCONT\n");
-			kill(pid, SIGCONT);
-		}
-		
-		/* POSIX specifies default action to be abnormal termination */
-		kill(pid, SIGHUP);
-		waitpid(pid, &s, 0);
-	}
+   printf("--> Sending SIGCONT\n");
+   kill(pid, SIGCONT);
+  }
 
-	if (child_stopped == NUMSTOPS) {
-		printf("Test PASSED\n");
-		return 0;
-	}
+  /* POSIX specifies default action to be abnormal termination */
+  kill(pid, SIGHUP);
+  waitpid(pid, &s, 0);
+ }
 
-	printf("Test FAILED\n");
-	return -1;
+ if (child_stopped == NUMSTOPS) {
+  printf("Test PASSED\n");
+  return 0;
+ }
+
+ printf("Test FAILED\n");
+ return -1;
 }
 

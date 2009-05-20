@@ -13,7 +13,7 @@
  *
  * Authors:
  *      peter d phan   <pdphan@users.sf.net>
- *      
+ *
  * Logs:
  *	 Duplicate enums from IBM Blade Center
  */
@@ -21,9 +21,9 @@
 #ifndef SNMP_BC_TIME_H
 #define SNMP_BC_TIME_H
 
-/*                                                                 
+/*
  * Set timezone constants
- */                                                               
+ */
 typedef enum {
 	DST_NONE = 0,
 	DST_USA,
@@ -39,7 +39,7 @@ typedef enum {
 	DST_NWZ,
 	DST_AUTOMATIC              // Must be last in list, used to validate entry
 } DST_STANDARDS;
-    
+
 typedef enum {
 	FIRST_WEEK = 1,
 	SECOND_WEEK,
@@ -47,7 +47,7 @@ typedef enum {
 	FOURTH_WEEK,
 	LAST_WEEK
 } DST_WEEK;
-    
+
 typedef enum {
 	SUNDAY = 1,
 	MONDAY,
@@ -57,7 +57,7 @@ typedef enum {
 	FRIDAY,
 	SATURDAY
 } DST_WEEKDAY;
-    
+
 typedef enum {
 	JANUARY = 1,
 	FEBRUARY,
@@ -73,7 +73,7 @@ typedef enum {
 	DECEMBER
 } DST_MONTH;
 
-/*                                                               
+/*
  * Daylight saving time standards table entry
  *
  * This structure contains the definition of how daylight saving
@@ -111,7 +111,7 @@ const unsigned short days_in_month[12] = /* Table of days in each month. */
 	31      /* December             */
 };
 
-/*       
+/*
  * Daylight saving time standards table
  *
  * This structure contains the definition of how daylight saving
@@ -119,83 +119,83 @@ const unsigned short days_in_month[12] = /* Table of days in each month. */
  *
  * If you add or remove any entries from this table you must also
  * change DST_STANDARDS (contains the indices for this table).
- */                                                              
+ */
 const DST_ENTRY DST_TABLE[] =
 {
-	/*                                                               
+	/*
 	* DST_USA:
 	*   Alaskan, Pacific, Mountain, Central, Eastern,
 	*   Atlantic, Newfoundland
-	*/                                                          
+	*/
 	{ 2,  0, FIRST_WEEK,  SUNDAY,    APRIL,
 	  2,  0, LAST_WEEK,   SUNDAY,    OCTOBER   },
-	/*                                                           
+	/*
 	 * DST_ESA:
 	 *   E. South America
 	 */
 	{ 2,  0, THIRD_WEEK,  SUNDAY,    OCTOBER,
 	  2,  0, SECOND_WEEK, SUNDAY,    FEBRUARY  },
-	/*                                                            
+	/*
 	 * DST_MID:
 	 *   Mid-Atlantic
-	 */                                                            
+	 */
 	{ 2,  0, LAST_WEEK,   SUNDAY,    MARCH,
 	  2,  0, LAST_WEEK,   SUNDAY,    SEPTEMBER },
-	/* 
+	/*
 	 * DST_EEC:
 	 *   Azores, GMT, Romance, Central European, GTB,
 	 *   W. Europe, Arab, Russian, Ekateinburg, Yakutsk
-	 */                                                            
+	 */
 	{ 2,  0, LAST_WEEK,   SUNDAY,    MARCH,
 	  3,  0, LAST_WEEK,   SUNDAY,    OCTOBER   },
-	/*                                                            
+	/*
 	 * DST_EEU:
 	 *   E. Europe
-	 */                                                           
+	 */
 	{ 0,  0, LAST_WEEK,   SUNDAY,    MARCH,
 	  1,  0, LAST_WEEK,   SUNDAY,    SEPTEMBER },
-	/*                                                           
+	/*
 	 * DST_EGT:
 	 *   Egypt
-	 */                                                             
+	 */
 	{ 2,  0, FIRST_WEEK,  FRIDAY,    MAY,
 	  2,  0, LAST_WEEK,   WEDNESDAY, SEPTEMBER },
-	/*                                                           
+	/*
 	 * DST_FLE:
 	 *   FLE
-	 */                                                            
+	 */
 	{ 3,  0, LAST_WEEK,   SUNDAY,    MARCH,
 	  4,  0, LAST_WEEK,   SUNDAY,    OCTOBER   },
-	/*                                                           
+	/*
 	 * DST_IRN:
 	 *   Iran
-	 */                                                             
+	 */
 	{ 2,  0, FIRST_WEEK,  SUNDAY,    MARCH,
 	  2,  0, LAST_WEEK,   TUESDAY,   SEPTEMBER },
-	/*                                                            
+	/*
 	 * DST_AUS:
 	 *   Cen. Australia, AUS Eastern
-	 */                                                          
+	 */
 	{ 2,  0, LAST_WEEK,   SUNDAY,    OCTOBER,
 	  2,  0, LAST_WEEK,   SUNDAY,    MARCH     },
-	/*                                                           
+	/*
 	 * DST_TAS:
 	 *   Tasmania
-	 */                                                            
+	 */
 	{ 2,  0, FIRST_WEEK,  SUNDAY,    OCTOBER,
 	  2,  0, LAST_WEEK,   SUNDAY,    MARCH     },
-	/*                                                            
+	/*
 	 * DST_NWZ:
 	 *   New Zealand
-	 */                                                              
+	 */
 	{ 2,  0, LAST_WEEK,   SUNDAY,    MARCH,
 	  3,  0, LAST_WEEK,   SUNDAY,    OCTOBER   }
 };
 
-/* 
+/*
  * Function Prototyping
  */
- 
+
 int set_bc_dst(struct snmp_session *, struct tm *);
 gboolean is_dst_in_effect(struct tm *, gchar **);
 gboolean is_leap_year(guchar );

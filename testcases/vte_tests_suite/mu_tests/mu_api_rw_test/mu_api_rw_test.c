@@ -1,18 +1,18 @@
-/*================================================================================================*/
+/*====================*/
 /**
     @file   mu_api_rw_test.c
 
     @brief  C source of the mu_api_rw_test test that checks Messaging Unit
             driver read() and write() system calls in both blocking and non-blocking modes.
 */
-/*==================================================================================================
+/*======================
 
 Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
 THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                               Modification     Tracking
 Author (Core ID)                  Date          Number    Description of Changes
@@ -24,16 +24,16 @@ Igor Semenchukov (smng001c)    09/12/2004     TLSbo43804   Rework after heavy MU
 Dmitriy Kazachkov (e1403c)     29/06/2006     TLSbo61895   Rework after MU message format changing
 Sergey Yakubenko               04/10/2007     ENGR42513    Fixed adress
 
-====================================================================================================
+====================
 Portability: Indicate if this module is portable to other compilers or platforms.
              If not, indicate specific reasons why is it not portable.
 
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
 #include <sys/types.h>          /* open()                               */
@@ -59,44 +59,44 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "mu_api_rw_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 const char *mu_dir = "/dev/mxc_mu";
 
-/*==================================================================================================
+/*======================
                                        LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                    LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 int mu_write(int dev, int* val);
 int mu_read( int dev, int* val);
-/*==================================================================================================
+/*======================
                                        LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 int mu_write(int dev, int* val)
 {
         int i, ret;
@@ -163,8 +163,8 @@ int mu_read( int dev, int* val)
 }
 
 
-/*================================================================================================*/
-/*===== VT_mu_api_rw_setup =====*/
+/*====================*/
+/*= VT_mu_api_rw_setup =*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
@@ -173,7 +173,7 @@ int mu_read( int dev, int* val)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_mu_api_rw_setup(void)
 {
 
@@ -181,8 +181,8 @@ int VT_mu_api_rw_setup(void)
 }
 
 
-/*================================================================================================*/
-/*===== VT_mu_api_rw_cleanup =====*/
+/*====================*/
+/*= VT_mu_api_rw_cleanup =*/
 /**
 @brief  assumes the post-condition of the test case execution
 
@@ -191,7 +191,7 @@ int VT_mu_api_rw_setup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_mu_api_rw_cleanup(void)
 {
 
@@ -199,8 +199,8 @@ int VT_mu_api_rw_cleanup(void)
 }
 
 
-/*================================================================================================*/
-/*===== VT_mu_api_rw_test =====*/
+/*====================*/
+/*= VT_mu_api_rw_test =*/
 /**
 @brief  Sequentally opens each device in blocking mode, then reads from its register,
         then writes to its register, then closes the device.
@@ -212,7 +212,7 @@ int VT_mu_api_rw_cleanup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_mu_api_rw_test(char *msg, int blk)
 {
     int  rv = TPASS,
@@ -227,7 +227,7 @@ int VT_mu_api_rw_test(char *msg, int blk)
 
 #define WRITEREQ 1
 #define READREQ  2
-#if defined(CONFIG_MACH_MXC27520EVB) || defined(CONFIG_MACH_MXC30020EVB) || defined(CONFIG_MACH_MXC30031ADS) 
+#if defined(CONFIG_MACH_MXC27520EVB) || defined(CONFIG_MACH_MXC30020EVB) || defined(CONFIG_MACH_MXC30031ADS)
        unsigned int address = 0x10000100;
 #else
        unsigned int address = 0xff002800;
@@ -307,7 +307,7 @@ int VT_mu_api_rw_test(char *msg, int blk)
         /* write a message */
 
         for(i=0;i<msglen;i++)
-        {        
+        {
             rv |= mu_write(mu_fd[idx++%NUM_DEVS],(int*)&bufw[i]);
         }
         /* now check the status */
@@ -330,7 +330,7 @@ int VT_mu_api_rw_test(char *msg, int blk)
         rv |= mu_write(mu_fd[1],(int*)&address);
 
         /* get the safe mode status */
-        rv |= mu_read(mu_fd[0],(int*)&readreq); 
+        rv |= mu_read(mu_fd[0],(int*)&readreq);
     if( readreq!= 0)
         {
                 tst_resm(TFAIL, "Error reading responce from MU:  %x", readreq);
@@ -366,7 +366,7 @@ int VT_mu_api_rw_test(char *msg, int blk)
         }
         else
         {
-        	tst_resm(TPASS, "Messages are the same");
+        tst_resm(TPASS, "Messages are the same");
         }
     }
 

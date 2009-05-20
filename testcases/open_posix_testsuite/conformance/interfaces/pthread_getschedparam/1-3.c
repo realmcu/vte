@@ -17,9 +17,9 @@
 
 * This sample test aims to check the following assertion:
 *
-* The function gets the scheduling policy and parameter of 
-* the specified thread. The priority value is the one last 
-* set with pthread_setschedparam, pthread_setschedprio or 
+* The function gets the scheduling policy and parameter of
+* the specified thread. The priority value is the one last
+* set with pthread_setschedparam, pthread_setschedprio or
 * pthread_create
 
 
@@ -53,23 +53,23 @@
 /***********************   Test framework   ***********************************/
 /******************************************************************************/
 #include "testfrmw.h"
- #include "testfrmw.c" 
+ #include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -87,253 +87,253 @@
 /* This function checks the thread policy & priority */
 void check_param( pthread_t thread, int policy, int priority )
 {
-	int ret = 0;
+ int ret  0;
 
-	int t_pol;
+ int t_pol;
 
-	struct sched_param t_parm;
+ struct sched_param t_parm;
 
-	/* Check the priority is valid */
+ /* Check the priority is valid */
 
-	if ( priority == -1 )
-	{
-		UNRESOLVED( errno, "Wrong priority value" );
-	}
+ if ( priority  -1 )
+ {
+  UNRESOLVED( errno, "Wrong priority value" );
+ }
 
-	/* Get the thread's parameters */
-	ret = pthread_getschedparam( thread, &t_pol, &t_parm );
+ /* Get the thread's parameters */
+ ret  pthread_getschedparam( thread, &t_pol, &t_parm );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to get thread's parameters" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to get thread's parameters" );
+ }
 
-	if ( t_pol != policy )
-	{
-		FAILED( "The thread's policy is not as expected" );
-	}
+ if ( t_pol ! policy )
+ {
+  FAILED( "The thread's policy is not as expected" );
+ }
 
-	if ( t_parm.sched_priority != priority )
-	{
-		FAILED( "The thread's priority is not as expected" );
-	}
+ if ( t_parm.sched_priority ! priority )
+ {
+  FAILED( "The thread's priority is not as expected" );
+ }
 }
 
 /* thread function */
 void * threaded ( void * arg )
 {
-	int ret = 0;
+ int ret  0;
 
-	/* check the thread attributes have been applied
-	  (we only check what is reported, not the real behavior) 
-	 */
-	check_param( pthread_self(), SCHED_RR, sched_get_priority_min( SCHED_RR ) );
+ /* check the thread attributes have been applied
+   (we only check what is reported, not the real behavior)
+  */
+ check_param( pthread_self(), SCHED_RR, sched_get_priority_min( SCHED_RR ) );
 
-	ret = pthread_barrier_wait( arg );
+ ret  pthread_barrier_wait( arg );
 
-	if ( ( ret != 0 ) && ( ret != PTHREAD_BARRIER_SERIAL_THREAD ) )
-	{
-		UNRESOLVED( ret, "barrier wait failed" );
-	}
+ if ( ( ret ! 0 ) && ( ret ! PTHREAD_BARRIER_SERIAL_THREAD ) )
+ {
+  UNRESOLVED( ret, "barrier wait failed" );
+ }
 
-	/* Nothing to do while the main thread sets the scheduling policy */
+ /* Nothing to do while the main thread sets the scheduling policy */
 
-	ret = pthread_barrier_wait( arg );
+ ret  pthread_barrier_wait( arg );
 
-	if ( ( ret != 0 ) && ( ret != PTHREAD_BARRIER_SERIAL_THREAD ) )
-	{
-		UNRESOLVED( ret, "barrier wait failed" );
-	}
+ if ( ( ret ! 0 ) && ( ret ! PTHREAD_BARRIER_SERIAL_THREAD ) )
+ {
+  UNRESOLVED( ret, "barrier wait failed" );
+ }
 
-	/* Check the scheduling policy was changed
-	  (we only check what is reported, not the real behavior) 
-	 */
-	check_param( pthread_self(), SCHED_FIFO, sched_get_priority_min( SCHED_FIFO ) );
+ /* Check the scheduling policy was changed
+   (we only check what is reported, not the real behavior)
+  */
+ check_param( pthread_self(), SCHED_FIFO, sched_get_priority_min( SCHED_FIFO ) );
 
-	ret = pthread_barrier_wait( arg );
+ ret  pthread_barrier_wait( arg );
 
-	if ( ( ret != 0 ) && ( ret != PTHREAD_BARRIER_SERIAL_THREAD ) )
-	{
-		UNRESOLVED( ret, "barrier wait failed" );
-	}
+ if ( ( ret ! 0 ) && ( ret ! PTHREAD_BARRIER_SERIAL_THREAD ) )
+ {
+  UNRESOLVED( ret, "barrier wait failed" );
+ }
 
-	/* Nothing to do while the main thread sets the scheduling parameter */
+ /* Nothing to do while the main thread sets the scheduling parameter */
 
-	ret = pthread_barrier_wait( arg );
+ ret  pthread_barrier_wait( arg );
 
-	if ( ( ret != 0 ) && ( ret != PTHREAD_BARRIER_SERIAL_THREAD ) )
-	{
-		UNRESOLVED( ret, "barrier wait failed" );
-	}
+ if ( ( ret ! 0 ) && ( ret ! PTHREAD_BARRIER_SERIAL_THREAD ) )
+ {
+  UNRESOLVED( ret, "barrier wait failed" );
+ }
 
-	/* Check the scheduling parameter has been changed
-	  (we only check what is reported, not the real behavior) 
-	 */
-	check_param( pthread_self(), SCHED_FIFO, sched_get_priority_max( SCHED_FIFO ) );
+ /* Check the scheduling parameter has been changed
+   (we only check what is reported, not the real behavior)
+  */
+ check_param( pthread_self(), SCHED_FIFO, sched_get_priority_max( SCHED_FIFO ) );
 
-	ret = pthread_barrier_wait( arg );
+ ret  pthread_barrier_wait( arg );
 
-	if ( ( ret != 0 ) && ( ret != PTHREAD_BARRIER_SERIAL_THREAD ) )
-	{
-		UNRESOLVED( ret, "barrier wait failed" );
-	}
+ if ( ( ret ! 0 ) && ( ret ! PTHREAD_BARRIER_SERIAL_THREAD ) )
+ {
+  UNRESOLVED( ret, "barrier wait failed" );
+ }
 
-	return NULL;
+ return NULL;
 }
 
 /* The main test function. */
 int main( int argc, char *argv[] )
 {
-	int ret = 0;
-	pthread_t child;
-	pthread_attr_t ta;
-	pthread_barrier_t bar;
+ int ret  0;
+ pthread_t child;
+ pthread_attr_t ta;
+ pthread_barrier_t bar;
 
-	struct sched_param sp;
+ struct sched_param sp;
 
-	/* Initialize output routine */
-	output_init();
+ /* Initialize output routine */
+ output_init();
 
-	ret = pthread_barrier_init( &bar, NULL, 2 );
+ ret  pthread_barrier_init( &bar, NULL, 2 );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to init barrier" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to init barrier" );
+ }
 
-	/* Create the attribute object with a known scheduling policy */
-	ret = pthread_attr_init( &ta );
+ /* Create the attribute object with a known scheduling policy */
+ ret  pthread_attr_init( &ta );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to initialize thread attribute" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to initialize thread attribute" );
+ }
 
-	ret = pthread_attr_setinheritsched( &ta, PTHREAD_EXPLICIT_SCHED );
+ ret  pthread_attr_setinheritsched( &ta, PTHREAD_EXPLICIT_SCHED );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to set inherit sched" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to set inherit sched" );
+ }
 
-	sp.sched_priority = sched_get_priority_min( SCHED_RR );
+ sp.sched_priority  sched_get_priority_min( SCHED_RR );
 
-	if ( sp.sched_priority == -1 )
-	{
-		UNRESOLVED( errno, "Failed to get min priority" );
-	}
+ if ( sp.sched_priority  -1 )
+ {
+  UNRESOLVED( errno, "Failed to get min priority" );
+ }
 
-	ret = pthread_attr_setschedparam( &ta, &sp );
+ ret  pthread_attr_setschedparam( &ta, &sp );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to set attribute param" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to set attribute param" );
+ }
 
-	ret = pthread_attr_setschedpolicy( &ta, SCHED_RR );
+ ret  pthread_attr_setschedpolicy( &ta, SCHED_RR );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to set attribute policy" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to set attribute policy" );
+ }
 
-	/* Create the thread with this attribute */
-	ret = pthread_create( &child, &ta, threaded, &bar );
+ /* Create the thread with this attribute */
+ ret  pthread_create( &child, &ta, threaded, &bar );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "thread creation failed (you may need more priviledges)" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "thread creation failed (you may need more priviledges)" );
+ }
 
-	/* Wait while the thread checks its policy
-	  (we only check what is reported, not the real behavior) 
-	 */
-	check_param( child, SCHED_RR, sched_get_priority_min( SCHED_RR ) );
+ /* Wait while the thread checks its policy
+   (we only check what is reported, not the real behavior)
+  */
+ check_param( child, SCHED_RR, sched_get_priority_min( SCHED_RR ) );
 
 
-	ret = pthread_barrier_wait( &bar );
+ ret  pthread_barrier_wait( &bar );
 
-	if ( ( ret != 0 ) && ( ret != PTHREAD_BARRIER_SERIAL_THREAD ) )
-	{
-		UNRESOLVED( ret, "barrier wait failed" );
-	}
+ if ( ( ret ! 0 ) && ( ret ! PTHREAD_BARRIER_SERIAL_THREAD ) )
+ {
+  UNRESOLVED( ret, "barrier wait failed" );
+ }
 
-	/* Change the threads policy */
-	sp.sched_priority = sched_get_priority_min( SCHED_FIFO );
+ /* Change the threads policy */
+ sp.sched_priority  sched_get_priority_min( SCHED_FIFO );
 
-	if ( sp.sched_priority == -1 )
-	{
-		UNRESOLVED( errno, "Failed to get min priority" );
-	}
+ if ( sp.sched_priority  -1 )
+ {
+  UNRESOLVED( errno, "Failed to get min priority" );
+ }
 
-	ret = pthread_setschedparam( child, SCHED_FIFO, &sp );
+ ret  pthread_setschedparam( child, SCHED_FIFO, &sp );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to change running thread's policy" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to change running thread's policy" );
+ }
 
-	ret = pthread_barrier_wait( &bar );
+ ret  pthread_barrier_wait( &bar );
 
-	if ( ( ret != 0 ) && ( ret != PTHREAD_BARRIER_SERIAL_THREAD ) )
-	{
-		UNRESOLVED( ret, "barrier wait failed" );
-	}
+ if ( ( ret ! 0 ) && ( ret ! PTHREAD_BARRIER_SERIAL_THREAD ) )
+ {
+  UNRESOLVED( ret, "barrier wait failed" );
+ }
 
-	/* Wait while the thread checks its policy
-	  (we only check what is reported, not the real behavior) 
-	 */
-	check_param( child, SCHED_FIFO, sched_get_priority_min( SCHED_FIFO ) );
+ /* Wait while the thread checks its policy
+   (we only check what is reported, not the real behavior)
+  */
+ check_param( child, SCHED_FIFO, sched_get_priority_min( SCHED_FIFO ) );
 
-	ret = pthread_barrier_wait( &bar );
+ ret  pthread_barrier_wait( &bar );
 
-	if ( ( ret != 0 ) && ( ret != PTHREAD_BARRIER_SERIAL_THREAD ) )
-	{
-		UNRESOLVED( ret, "barrier wait failed" );
-	}
+ if ( ( ret ! 0 ) && ( ret ! PTHREAD_BARRIER_SERIAL_THREAD ) )
+ {
+  UNRESOLVED( ret, "barrier wait failed" );
+ }
 
-	/* Change the thread priority */
-	sp.sched_priority = sched_get_priority_max( SCHED_FIFO );
+ /* Change the thread priority */
+ sp.sched_priority  sched_get_priority_max( SCHED_FIFO );
 
-	if ( sp.sched_priority == -1 )
-	{
-		UNRESOLVED( errno, "Failed to get max priority" );
-	}
+ if ( sp.sched_priority  -1 )
+ {
+  UNRESOLVED( errno, "Failed to get max priority" );
+ }
 
-	ret = pthread_setschedprio( child, sp.sched_priority );
+ ret  pthread_setschedprio( child, sp.sched_priority );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to raise thread's priority" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to raise thread's priority" );
+ }
 
-	ret = pthread_barrier_wait( &bar );
+ ret  pthread_barrier_wait( &bar );
 
-	if ( ( ret != 0 ) && ( ret != PTHREAD_BARRIER_SERIAL_THREAD ) )
-	{
-		UNRESOLVED( ret, "barrier wait failed" );
-	}
+ if ( ( ret ! 0 ) && ( ret ! PTHREAD_BARRIER_SERIAL_THREAD ) )
+ {
+  UNRESOLVED( ret, "barrier wait failed" );
+ }
 
-	/* The thread checks its priority
-	  (we only check what is reported, not the real behavior) 
-	 */
-	check_param( child, SCHED_FIFO, sched_get_priority_max( SCHED_FIFO ) );
+ /* The thread checks its priority
+   (we only check what is reported, not the real behavior)
+  */
+ check_param( child, SCHED_FIFO, sched_get_priority_max( SCHED_FIFO ) );
 
-	ret = pthread_barrier_wait( &bar );
+ ret  pthread_barrier_wait( &bar );
 
-	if ( ( ret != 0 ) && ( ret != PTHREAD_BARRIER_SERIAL_THREAD ) )
-	{
-		UNRESOLVED( ret, "barrier wait failed" );
-	}
+ if ( ( ret ! 0 ) && ( ret ! PTHREAD_BARRIER_SERIAL_THREAD ) )
+ {
+  UNRESOLVED( ret, "barrier wait failed" );
+ }
 
-	ret = pthread_join( child, NULL );
+ ret  pthread_join( child, NULL );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to join the thread" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to join the thread" );
+ }
 
-	PASSED;
+ PASSED;
 }
 
 

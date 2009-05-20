@@ -29,7 +29,7 @@
 #Portability: ARM GCC
 #
 ###################################################################################################
-CFLAGS += -Wall 
+CFLAGS += -Wall
 LOADLIBES +=
 
 # Platforms with one watchdog only
@@ -65,7 +65,7 @@ endif
 obj-m= watchdog_test.o
 TARGET= watchdog_test.ko
 
-all: 
+all:
 	@make -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
 	@rm -rf *.mod.ko *.mod.c .*.cmd *.o .tmp_versions
 	@echo "***********************************************"

@@ -18,7 +18,7 @@ hangup01: hangup01.c
 ptem01: ptem01.c
 	$(CC) $(CFLAGS) -o ptem01 ptem01.c $(LDFLAGS) $(LDLIBS)
 
-pty01: pty01.c	
+pty01: pty01.c
 	$(CC) $(CFLAGS) -o pty01 pty01.c $(LDFLAGS) $(LDLIBS)
 
 FRC:

@@ -15,7 +15,7 @@
 @par Portability:
         SCM-A11, Argon+
         arm-linux-gcc 3.4
-        
+
 */
 
 /*======================== REVISION HISTORY ==================================
@@ -37,9 +37,9 @@ extern "C"{
 
 /*======================== INCLUDE FILES ====================================*/
 
-#include <sys/types.h>  	// fork usage for reentrance test
-#include <unistd.h> 		// fork usage for reentrance test
-#include <pthread.h> 		// fork usage for reentrance test
+#include <sys/types.h>  // fork usage for reentrance test
+#include <unistd.h> // fork usage for reentrance test
+#include <pthread.h> // fork usage for reentrance test
 #include <sys/time.h>		// timer usage for preemptivity
 #include <math.h>               // for sqrt in hogcpu
 #include <assert.h>             // for assert
@@ -49,7 +49,7 @@ extern "C"{
 
 #include <sys/stat.h>
 #include <fcntl.h>
-	       
+
 
 #include <png_dec_interface.h>  // png decoder
 
@@ -64,7 +64,7 @@ extern "C"{
 #endif
 #if !defined(FALSE)
     #define FALSE 0
-#endif        
+#endif
 
 /*======================== DEFINES AND MACROS ===============================*/
 
@@ -73,7 +73,7 @@ extern "C"{
 /*======================== ENUMS ============================================*/
 
 /** Different test cases in the single application */
-typedef enum 
+typedef enum
 {
     NOMINAL_FUNCTIONALITY = 0,  /**< Nominal encoding/decoding */
     ENDURANCE,			        /**< Endurance test */
@@ -86,7 +86,7 @@ typedef enum
 /*======================== STRUCTURES AND OTHER TYPEDEFS ====================*/
 
 typedef struct
-{   
+{
     int testcase;
     int iter;
     const char * cfg_fname;

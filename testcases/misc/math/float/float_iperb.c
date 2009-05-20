@@ -25,13 +25,13 @@
 /******************************************************************************/
 #include "tfloat.h"
 
-const TH_FUNC th_func[] = {
-	{FUNC_NORMAL, 50, cosh,  "cosh",  "dcosh",         "rcosh",
-		""},
-	{FUNC_NORMAL, 50, sinh,  "sinh",  "dsinh",         "rsinh",
-		""},
-	{FUNC_NORMAL, 50, tanh,  "tanh",  "dtanh",         "rtanh",
-		""}
+const TH_FUNC th_func[]  {
+ {FUNC_NORMAL, 50, cosh,  "cosh",  "dcosh",         "rcosh",
+  ""},
+ {FUNC_NORMAL, 50, sinh,  "sinh",  "dsinh",         "rsinh",
+  ""},
+ {FUNC_NORMAL, 50, tanh,  "tanh",  "dtanh",         "rtanh",
+  ""}
 };
 
 #define NB_FUNC  (sizeof(th_func)/sizeof(TH_FUNC))

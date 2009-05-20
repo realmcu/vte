@@ -1,32 +1,32 @@
-/*================================================================================================*/
+/*====================*/
 /**
     @file   v4l_output_test.c
 
     @brief  v4l output Test scenario*/
-/*==================================================================================================
+/*======================
 
     Copyright (C) 2005, Freescale Semiconductor, Inc. All Rights Reserved
     THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
     BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
     Freescale Semiconductor, Inc.
-    
-====================================================================================================
+
+====================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Kardakov Dmitriy/ID         09/11/06        TLSbo76802   Initial version 
-====================================================================================================
+Kardakov Dmitriy/ID         09/11/06        TLSbo76802   Initial version
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
 #ifdef __cplusplus
-extern "C"{ 
+extern "C"{
 #endif
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard header files */
 #include <string.h>
 #include <time.h>
@@ -36,20 +36,20 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "v4l_output_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
 #define SLEEP_TIME 10
 
-/*==================================================================================================
+/*======================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 const char user_output[3][40] = {
         "biggest size",
         "middle size",
@@ -59,9 +59,9 @@ const char user_output[3][40] = {
 const int height_table[3] = { 320, 200, 20 };
 const int width_table[3] = { 240, 100, 10 };
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
 static int v4l_output_fd = 0;
 static int input_fd = 0;
@@ -77,20 +77,20 @@ static struct v4l2_requestbuffers buf_req;
 
 static video_buffer buffers[MAX_BUFF_NUM];
 
-/*==================================================================================================
+/*======================
                                         GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 
 extern params p;
 
-/*==================================================================================================
+/*======================
                                     LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
 int     parse_file(int in_fd, int *width, int *height, char **image_fmt);
 int     configure(void);
@@ -105,19 +105,19 @@ void    write_zero_to_file(FILE * pf, int bytes);
 int     do_resizing(void);
 void    abort_streaming (void);
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
-/*================================================================================================*/
-/*===== pixel_format =====*/
+======================*/
+/*====================*/
+/*= pixel_format =*/
 /**
 @brief  Detects pixel format.
-        
+
 @param  Input:        string - pointer to string which contains format name.
 
 @return On success - Format number.
         On failure - zero value.*/
-/*================================================================================================*/
+/*====================*/
 
 int pixel_format(char *string)
 {
@@ -158,16 +158,16 @@ int pixel_format(char *string)
         return format;
 }
 
-/*================================================================================================*/
-/*===== VT_v4l_output_setup =====*/
+/*====================*/
+/*= VT_v4l_output_setup =*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code*/
-/*================================================================================================*/
+/*====================*/
 int VT_v4l_output_setup(void)
 {
         int     rv = TFAIL;
@@ -205,16 +205,16 @@ int VT_v4l_output_setup(void)
 }
 
 
-/*================================================================================================*/
-/*===== VT_v4l_output_cleanup =====*/
+/*====================*/
+/*= VT_v4l_output_cleanup =*/
 /**
 @brief  assumes the post-condition of the test case execution
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code*/
-/*================================================================================================*/
+/*====================*/
 int VT_v4l_output_cleanup(void)
 {
         int     rv = TPASS;
@@ -235,7 +235,7 @@ int VT_v4l_output_cleanup(void)
 
         if ((output_fd >= 0) && (p.test_type == 1))
                 close(output_fd);
-        
+
         if (input_fd >= 0)
                 close(input_fd);
 
@@ -243,15 +243,15 @@ int VT_v4l_output_cleanup(void)
 }
 
 
-/*================================================================================================*/
-/*===== VT_v4l_output_test =====*/
-/* 
+/*====================*/
+/*= VT_v4l_output_test =*/
+/*
 * @brief This function executes v4l output test scenario.
-* 
+*
 * @param None
-* 
+*
 * @return On success - return TPASS On failure - return the error code */
-/*================================================================================================*/
+/*====================*/
 int VT_v4l_output_test(void)
 {
         int     rv = TFAIL;
@@ -294,15 +294,15 @@ int VT_v4l_output_test(void)
 }
 
 
-/*================================================================================================*/
-/*===== parse_file =====*/
-/* 
+/*====================*/
+/*= parse_file =*/
+/*
 * @brief
-* 
+*
 * @param
-* 
+*
 * @return On success - return TPASS On failure - return the error code */
-/*================================================================================================*/
+/*====================*/
 int parse_file(int in_fd, int *width, int *height, char **image_fmt)
 {
         dump_file_header hdr;
@@ -323,15 +323,15 @@ int parse_file(int in_fd, int *width, int *height, char **image_fmt)
 
 
 
-/*================================================================================================*/
-/*===== configure =====*/
-/* 
+/*====================*/
+/*= configure =*/
+/*
 * @brief
-* 
+*
 * @param None
-* 
+*
 * @return On success - return TPASS On failure - return the error code */
-/*================================================================================================*/
+/*====================*/
 int configure(void)
 {
         int     rv = TFAIL, i =0, err= 0,
@@ -422,7 +422,7 @@ int configure(void)
 
         p.nb_buffers = buf_req.count;
         p.frame_size = fmt.fmt.pix.sizeimage;
-        
+
         for (i = 0; i < p.nb_buffers; i++)
         {
                 memset(&buf, 0, sizeof(buf));
@@ -459,15 +459,15 @@ int configure(void)
 }
 
 
-/*================================================================================================*/
-/*===== process_image =====*/
-/* 
+/*====================*/
+/*= process_image =*/
+/*
 * @brief
-* 
+*
 * @param None
-* 
+*
 * @return On success - return TPASS On failure - return the error code */
-/*================================================================================================*/
+/*====================*/
 int process_image(void)
 {
         int     i, type, err = 0, g_frame_period = 33333;
@@ -583,15 +583,15 @@ int process_image(void)
 
         return rv;
 }
-/*================================================================================================*/
-/*===== process_video =====*/
-/* 
+/*====================*/
+/*= process_video =*/
+/*
 * @brief Performs displaying the video track on LCD
-* 
+*
 * @param None
-* 
+*
 * @return On success - return TPASS On failure - return the error code */
-/*================================================================================================*/
+/*====================*/
 int process_video(void)
 {
         int ret               = 0;
@@ -609,9 +609,9 @@ int process_video(void)
         tst_resm(TINFO, "Starting display the video!");
         tst_resm(TINFO, "Sizeimage = %d", fmt.fmt.pix.sizeimage);
         tst_resm(TINFO, "Frame rate = %d fr/sec.",p.frame_rate);
-        
+
         gettimeofday(&tv_start, 0);
-        
+
         for (nfr_read = 0; nfr_read < p.nb_buffers; nfr_read ++)
         {
                 memset(&buffer, 0, sizeof (buffer));
@@ -628,46 +628,46 @@ int process_video(void)
                         abort_streaming ();
                         return TFAIL;
                 }
-                                
+
                 if (ioctl (v4l_output_fd, VIDIOC_QBUF, &buffer) < 0)
-                { 
+                {
                         tst_resm(TBROK,"VIDIOC_QBUF failed. ERROR : %s", strerror(errno));
                         abort_streaming ();
                         return TFAIL;
-                }    
+                }
         }
-        
+
         if(ioctl (v4l_output_fd, VIDIOC_STREAMON, &typeBuffer) < 0)
         {
                 tst_resm(TBROK,"VIDIOC_STREAMON failed. ERROR : %s", strerror(errno));
                 abort_streaming ();
                 return TFAIL;
         }
-        
+
         tst_resm(TINFO, "VIDIOC_STREAMON start! Look at the display!");
-        
+
         while (1)
         {
-                FD_ZERO (&fds); 
-                FD_SET (v4l_output_fd, &fds);  
+                FD_ZERO (&fds);
+                FD_SET (v4l_output_fd, &fds);
 
-                tv.tv_sec = 1;  
-                tv.tv_usec = 0; 
-             
+                tv.tv_sec = 1;
+                tv.tv_usec = 0;
+
                 ret = select (v4l_output_fd + 1, &fds, NULL, NULL, &tv);
 
-                if(ret < 0)      
-                {           
+                if(ret < 0)
+                {
                         tst_resm(TWARN, "Select fault");
                         abort_streaming ();
                         return TFAIL;
-                }       
-                        
+                }
+
                 if(ret == 0)
-                {           
+                {
                         tst_resm(TWARN, "Select timeout");
                         abort_streaming ();
-                        return TFAIL;  
+                        return TFAIL;
                 }
 
                 memset(&buffer, 0, sizeof (buffer));
@@ -680,12 +680,12 @@ int process_video(void)
                         abort_streaming ();
                         return TFAIL;
                 }
-                
+
                 lseek(input_fd, RAW_DATA_OFFSET + (nfr_read * fmt.fmt.pix.sizeimage), SEEK_SET);
                 num_byte_read = read(input_fd, buffers[buffer.index].start, fmt.fmt.pix.sizeimage);
-                
+
                 if ( num_byte_read < fmt.fmt.pix.sizeimage)
-                {    
+                {
                         if(ioctl (v4l_output_fd, VIDIOC_STREAMOFF, &typeBuffer) < 0)
                         {
                                 tst_resm(TBROK,"VIDIOC_STREAMOFF failed. ERROR : %s", strerror(errno));
@@ -695,13 +695,13 @@ int process_video(void)
                         tst_resm(TINFO, "%d frames were reproduced", nfr_read);
                         return TPASS;
                 }
-                else 
+                else
                 {
                         buffer.timestamp.tv_sec = tv_start.tv_sec;
                         buffer.timestamp.tv_usec = tv_start.tv_usec + nfr_read * g_frame_period;
 
                         if (ioctl (v4l_output_fd, VIDIOC_QBUF, &buffer) < 0)
-                        { 
+                        {
                                 tst_resm(TBROK,"VIDIOC_QBUF failed. ERROR : %s", strerror(errno));
                                 abort_streaming ();
                                 return TFAIL;
@@ -710,16 +710,16 @@ int process_video(void)
                 }
         }
         return TFAIL;
-} 
-/*================================================================================================*/
-/*===== abort_streaming =====*/
-/* 
+}
+/*====================*/
+/*= abort_streaming =*/
+/*
 * @brief Performs stop of streaming and munmap buffers
-* 
+*
 * @param None
-* 
+*
 * @return On success - return TPASS On failure - return the error code */
-/*================================================================================================*/
+/*====================*/
 void abort_streaming (void)
 {
         enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
@@ -727,18 +727,18 @@ void abort_streaming (void)
         ioctl(v4l_output_fd, VIDIOC_STREAMOFF, &type);
         for (i = 0; i < p.nb_buffers; i++)
                 munmap(buffers[i].start, buffers[i].length);
-        
+
 }
 
-/*================================================================================================*/
-/*===== resize =====*/
-/* 
+/*====================*/
+/*= resize =*/
+/*
 * @brief
-* 
+*
 * @param None
-* 
+*
 * @return On success - return TPASS On failure - return the error code */
-/*================================================================================================*/
+/*====================*/
 int resize(void)
 {
         p.x_size_dst = (int) ((float) p.x_ratio / 100.0f * p.x_size_src);
@@ -754,8 +754,8 @@ int resize(void)
 }
 
 
-/*================================================================================================*/
-/*===== ask_user =====*/
+/*====================*/
+/*= ask_user =*/
 /**
 @brief  Asks user to answer the question: is the drawn picture right?
 
@@ -764,7 +764,7 @@ int resize(void)
 
 @return 1 - if user asks "No,  wrong"
         0 - if user asks "Yes, right"*/
-/*================================================================================================*/
+/*====================*/
 
 int ask_user(void)
 {
@@ -792,15 +792,15 @@ int ask_user(void)
         return rv;
 }
 
-/*================================================================================================*/
-/*===== kbhit =====*/
+/*====================*/
+/*= kbhit =*/
 /**
 @brief  Checks state of stdin input stream. This function wait for changing state of stdin with timeout
         SLEEP_TIME.
 @param  Output: pnSleepTime - returns elapsed time in milliseconds.
 
 @return Returns true if stream contains unread symbols, unless return false.*/
-/*================================================================================================*/
+/*====================*/
 int kbhit(int *pnSleepTime)
 {
         fd_set  rset;
@@ -820,7 +820,7 @@ int kbhit(int *pnSleepTime)
         if (nSelect == -1)
                 return 0;
 
-        /* 
+        /*
         * Calculate the elapsed time
         */
         *pnSleepTime = SLEEP_TIME;
@@ -830,7 +830,7 @@ int kbhit(int *pnSleepTime)
         return nSelect > 0;
 }
 
-/*===== write_file_header =====*/
+/*= write_file_header =*/
 /**
 @brief  Writting dump file header
 
@@ -887,7 +887,7 @@ int write_file(char *pix_fmt_name, char *start)
         return TPASS;
 }
 
-/*===== write_zero_to_file =====*/
+/*= write_zero_to_file =*/
 /**
 @brief  Writting zero to dump file
 
@@ -937,5 +937,5 @@ int do_resizing(void)
 }
 
 #ifdef __cplusplus
-} 
+}
 #endif

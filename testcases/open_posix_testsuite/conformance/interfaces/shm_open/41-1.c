@@ -7,7 +7,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- * Test that the shm_open() function sets errno = ENOENT if O_CREAT is not set
+ * Test that the shm_open() function sets errno  ENOENT if O_CREAT is not set
  * and the named shared memory object does not exist.
  */
 
@@ -21,26 +21,26 @@
 #define SHM_NAME "posixtest_41-1"
 
 int main() {
-	int fd, result;
+ int fd, result;
 
-	result = shm_unlink(SHM_NAME);
-	if(result != 0 && errno != ENOENT) { 
-		/* The shared memory object exist and shm_unlink can not 
-		   remove it. */
-		perror("An error occurs when calling shm_unlink()");
-		return PTS_UNRESOLVED;
-	}
+ result  shm_unlink(SHM_NAME);
+ if(result ! 0 && errno ! ENOENT) {
+  /* The shared memory object exist and shm_unlink can not
+     remove it. */
+  perror("An error occurs when calling shm_unlink()");
+  return PTS_UNRESOLVED;
+ }
 
-	fd = shm_open(SHM_NAME, O_RDONLY, S_IRUSR);
+ fd  shm_open(SHM_NAME, O_RDONLY, S_IRUSR);
 
-	if(fd == -1 && errno == ENOENT) {
-		printf("Test PASSED\n");
-		return PTS_PASS;
-	} else if(fd != -1) {
-		printf("shm_open() success.\n");
-		return PTS_FAIL;
-	}
+ if(fd  -1 && errno  ENOENT) {
+  printf("Test PASSED\n");
+  return PTS_PASS;
+ } else if(fd ! -1) {
+  printf("shm_open() success.\n");
+  return PTS_FAIL;
+ }
 
-	perror("Unexpected error");
-	return PTS_FAIL;
+ perror("Unexpected error");
+ return PTS_FAIL;
 }

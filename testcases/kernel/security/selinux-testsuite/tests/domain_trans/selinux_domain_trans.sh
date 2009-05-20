@@ -11,48 +11,48 @@
 
 setup()
 {
-	export TCID="setup"
-	export TST_COUNT=0
-	export TST_TOTAL=2
+ export TCID="setup"
+ export TST_COUNT=0
+ export TST_TOTAL=2
 }
 
 test01()
 {
-	TCID="test01"
-	TST_COUNT=1
-	RC=0
+ TCID="test01"
+ TST_COUNT=1
+ RC=0
 
-	# Verify that notfromdomain cannot transition to todomain.
-	# Should fail on the transition permission check.
-	runcon -t test_transition_notfromdomain_t -- runcon -t test_transition_todomain_t true 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   PASS : domain_trans passed."
-		RC=0
-	else
-		echo "$TCID   FAIL : domain_trans failed."
-		RC=1
-	fi
-	return $RC
+ # Verify that notfromdomain cannot transition to todomain.
+ # Should fail on the transition permission check.
+ runcon -t test_transition_notfromdomain_t -- runcon -t test_transition_todomain_t true 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   PASS : domain_trans passed."
+  RC=0
+ else
+  echo "$TCID   FAIL : domain_trans failed."
+  RC=1
+ fi
+ return $RC
 }
 
 test02()
 {
-	TCID="test02"
-	TST_COUNT=2
-	RC=0
+ TCID="test02"
+ TST_COUNT=2
+ RC=0
 
-	# Verify that fromdomain can transition to todomain.
-	runcon -t test_transition_fromdomain_t -- runcon -t test_transition_todomain_t true 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   FAIL : domain_trans failed."
-	else
-		echo "$TCID   PASS : domain_trans passed."
-	fi
-	return $RC
+ # Verify that fromdomain can transition to todomain.
+ runcon -t test_transition_fromdomain_t -- runcon -t test_transition_todomain_t true 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   FAIL : domain_trans failed."
+ else
+  echo "$TCID   PASS : domain_trans passed."
+ fi
+ return $RC
 }
 
 # Function:     main
@@ -68,4 +68,4 @@ EXIT_VAL=0
 setup
 test01 || EXIT_VAL=$RC
 test02 || EXIT_VAL=$RC
-exit $EXIT_VAL 
+exit $EXIT_VAL

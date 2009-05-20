@@ -1,47 +1,47 @@
 #!/bin/sh
 
 setup () {
-	 export EVENT_NOKQUEUE=yes
-	 export EVENT_NOPOLL=yes
-	 export EVENT_NOSELECT=yes
-	 export EVENT_NOEPOLL=yes
-	 export EVENT_NORTSIG=yes
+  export EVENT_NOKQUEUE=yes
+  export EVENT_NOPOLL=yes
+  export EVENT_NOSELECT=yes
+  export EVENT_NOEPOLL=yes
+  export EVENT_NORTSIG=yes
 }
 
 test () {
-	if ! ./test-init 2>/dev/null ;
-	then
-		echo Skipping test
-		return
-	fi	
+ if ! ./test-init 2>/dev/null ;
+ then
+  echo Skipping test
+  return
+ fi
 
 echo -n " test-eof: "
-if ./test-eof >/dev/null ; 
-then 
-	echo OKAY ; 
-else 
-	echo FAILED ; 
+if ./test-eof >/dev/null ;
+then
+ echo OKAY ;
+else
+ echo FAILED ;
 fi
 echo -n " test-weof: "
-if ./test-weof >/dev/null ; 
-then 
-	echo OKAY ; 
-else 
-	echo FAILED ; 
+if ./test-weof >/dev/null ;
+then
+ echo OKAY ;
+else
+ echo FAILED ;
 fi
 echo -n " test-time: "
-if ./test-time >/dev/null ; 
-then 
-	echo OKAY ; 
-else 
-	echo FAILED ; 
+if ./test-time >/dev/null ;
+then
+ echo OKAY ;
+else
+ echo FAILED ;
 fi
 echo -n " regress: "
-if ./regress >/dev/null ; 
-then 
-	echo OKAY ; 
-else 
-	echo FAILED ; 
+if ./regress >/dev/null ;
+then
+ echo OKAY ;
+else
+ echo FAILED ;
 fi
 }
 

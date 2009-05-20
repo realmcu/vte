@@ -13,29 +13,29 @@ setup()
 {
         export TCID="setup"
         export TST_COUNT=0
-	export TST_TOTAL=3
+ export TST_TOTAL=3
 
-	# Remove any leftover test files from prior failed runs.
-	rm -rf $SELINUXTMPDIR/test_file $SELINUXTMPDIR/test_symlink
+ # Remove any leftover test files from prior failed runs.
+ rm -rf $SELINUXTMPDIR/test_file $SELINUXTMPDIR/test_symlink
 
-	# Create a test file.  
-	touch $SELINUXTMPDIR/test_file 2>&1
-	chcon -t test_readlink_file_t $SELINUXTMPDIR/test_file 2>&1
+ # Create a test file.
+ touch $SELINUXTMPDIR/test_file 2>&1
+ chcon -t test_readlink_file_t $SELINUXTMPDIR/test_file 2>&1
 
-	# Create a test symbolic link to the test file.
-	ln -sf test_file $SELINUXTMPDIR/test_symlink 2>&1
-	chcon -h -t test_readlink_link_t $SELINUXTMPDIR/test_symlink 2>&1
+ # Create a test symbolic link to the test file.
+ ln -sf test_file $SELINUXTMPDIR/test_symlink 2>&1
+ chcon -h -t test_readlink_link_t $SELINUXTMPDIR/test_symlink 2>&1
 }
 
 test01()
 {
-	TCID="test01"
-	TST_COUNT=1
-	RC=0
+ TCID="test01"
+ TST_COUNT=1
+ RC=0
 
-	# Verify that test_readlink_t can read and follow this link.
-	runcon -t test_readlink_t -- ls -Ll $SELINUXTMPDIR/test_symlink
-	RC=$?
+ # Verify that test_readlink_t can read and follow this link.
+ runcon -t test_readlink_t -- ls -Ll $SELINUXTMPDIR/test_symlink
+ RC=$?
         if [ $RC -eq 0 ]
         then
                 echo "$TCID   PASS : readlink passed."
@@ -47,47 +47,47 @@ test01()
 
 test02()
 {
-	TCID="test02"
-	TST_COUNT=2
-	RC=0
+ TCID="test02"
+ TST_COUNT=2
+ RC=0
 
-	# Verify that test_noreadlink_t cannot read or follow this link.
-	runcon -t test_noreadlink_t -- ls -l $SELINUXTMPDIR/test_symlink 2>&1
-	RC=$?
+ # Verify that test_noreadlink_t cannot read or follow this link.
+ runcon -t test_noreadlink_t -- ls -l $SELINUXTMPDIR/test_symlink 2>&1
+ RC=$?
         if [ $RC -ne 0 ]
         then
                 echo "$TCID   PASS : readlink passed."
-		RC=0
+  RC=0
         else
                 echo "$TCID   FAIL : readlink failed."
-		RC=1
+  RC=1
         fi
-	return $RC
+ return $RC
 }
 
 test03()
 {
-	TCID="test03"
-	TST_COUNT=3
-	RC=0
+ TCID="test03"
+ TST_COUNT=3
+ RC=0
 
-	runcon -t test_noreadlink_t -- ls -Ll $SELINUXTMPDIR/test_symlink 2>&1
-	RC=$?
+ runcon -t test_noreadlink_t -- ls -Ll $SELINUXTMPDIR/test_symlink 2>&1
+ RC=$?
         if [ $RC -ne 0 ]
         then
                 echo "$TCID   PASS : readlink passed."
-		RC=0
+  RC=0
         else
                 echo "$TCID   FAIL : readlink failed."
-		RC=1
+  RC=1
         fi
-	return $RC
+ return $RC
 }
 
 cleanup()
 {
-	# Cleanup.
-	rm -rf $SELINUXTMPDIR/test_file $SELINUXTMPDIR/test_symlink
+ # Cleanup.
+ rm -rf $SELINUXTMPDIR/test_file $SELINUXTMPDIR/test_symlink
 }
 
 # Function:     main
@@ -100,7 +100,7 @@ cleanup()
 RC=0    # Return value from setup, and test functions.
 EXIT_VAL=0
 
-setup 
+setup
 test01 || EXIT_VAL=$RC
 test02 || EXIT_VAL=$RC
 test03 || EXIT_VAL=$RC

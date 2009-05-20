@@ -95,7 +95,7 @@ enum
 };
 
 /** Different test cases in the single application */
-typedef enum 
+typedef enum
 {
         T_SHOW_INFO,
         T_PING,
@@ -145,9 +145,9 @@ typedef struct
         int def_test_tx_queue_len;
 } def_config;
 
-typedef struct 
+typedef struct
 {
-        def_config dc;        
+        def_config dc;
         int mTestCase;
         int mList;
         int mVerbose;
@@ -155,7 +155,7 @@ typedef struct
         int avail_if;
         char ifname[32];
         int input_ip;
-} sTestConfig; 
+} sTestConfig;
 
 /*==================================================================================================
                                  GLOBAL VARIABLE DECLARATIONS

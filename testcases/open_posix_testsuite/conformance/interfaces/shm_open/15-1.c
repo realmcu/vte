@@ -8,7 +8,7 @@
  *  GNU General Public License for more details.
  *
  * Test that the shared memory object is created if the shared memory object
- * does not exists and the O_CREAT flags is set.   
+ * does not exists and the O_CREAT flags is set.
  *
  * Steps:
  *  1. Ensure that the shared memory object does not exists using shm_unlink.
@@ -28,37 +28,37 @@
 
 
 int main(){
-	int fd, result;
-	struct stat stat_buf;
+ int fd, result;
+ struct stat stat_buf;
 
-	result = shm_unlink(SHM_NAME);
-	if(result != 0 && errno != ENOENT) { 
-		/* The shared memory object exist and shm_unlink can not 
-		   remove it. */
-		perror("An error occurs when calling shm_unlink()");
-		return PTS_UNRESOLVED;
-	}
+ result  shm_unlink(SHM_NAME);
+ if(result ! 0 && errno ! ENOENT) {
+  /* The shared memory object exist and shm_unlink can not
+     remove it. */
+  perror("An error occurs when calling shm_unlink()");
+  return PTS_UNRESOLVED;
+ }
 
-	fd = shm_open(SHM_NAME, O_RDONLY|O_CREAT, S_IRUSR|S_IWUSR);
-	if(fd == -1) {
-		perror("An error occurs when calling shm_open()");
-		return PTS_UNRESOLVED;
-	}
-	
-	result = fstat(fd, &stat_buf);
+ fd  shm_open(SHM_NAME, O_RDONLY|O_CREAT, S_IRUSR|S_IWUSR);
+ if(fd  -1) {
+  perror("An error occurs when calling shm_open()");
+  return PTS_UNRESOLVED;
+ }
 
-	if(result == 0) {
-		printf("Test PASSED\n");
-		shm_unlink(SHM_NAME);
-		return PTS_PASS;
-	} else if(result == -1 && errno == EBADF) {
-		printf("The shared memory object was no created.\n");
-		shm_unlink(SHM_NAME);
-		return PTS_FAIL;
-	}
+ result  fstat(fd, &stat_buf);
 
-	perror("fstat");
-	shm_unlink(SHM_NAME);
-	return PTS_FAIL;
+ if(result  0) {
+  printf("Test PASSED\n");
+  shm_unlink(SHM_NAME);
+  return PTS_PASS;
+ } else if(result  -1 && errno  EBADF) {
+  printf("The shared memory object was no created.\n");
+  shm_unlink(SHM_NAME);
+  return PTS_FAIL;
+ }
+
+ perror("fstat");
+ shm_unlink(SHM_NAME);
+ return PTS_FAIL;
 }
-       
+

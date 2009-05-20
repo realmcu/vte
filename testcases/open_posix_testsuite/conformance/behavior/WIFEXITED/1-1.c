@@ -12,26 +12,26 @@
 
 int main()
 {
-	if (fork() == 0) {
-		/* child */
-		return -1;
-	} else {
-		int s; 
+ if (fork()  0) {
+  /* child */
+  return -1;
+ } else {
+  int s;
 
-		/* parent */
-		if (wait(&s) == -1) {
-			perror("Unexpected error while setting up test "
-			       "pre-conditions");
-			return -1;
-		}
+  /* parent */
+  if (wait(&s)  -1) {
+   perror("Unexpected error while setting up test "
+          "pre-conditions");
+   return -1;
+  }
 
-		if (!WIFEXITED(s)) {
-			printf("Test PASSED\n");
-			return 0;
-		}
-	}
+  if (!WIFEXITED(s)) {
+   printf("Test PASSED\n");
+   return 0;
+  }
+ }
 
-	printf("Test FAILED\n");
-	return -1;	
+ printf("Test FAILED\n");
+ return -1;
 }
 

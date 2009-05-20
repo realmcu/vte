@@ -1,4 +1,4 @@
-/* 
+/*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -18,7 +18,7 @@ typedef void* (*shmat_test)(int, const void *, int);
 
 int dummyfcn (void)
 {
-	shmat_test dummyvar;
-	dummyvar = shmat;
-	return 0;
+ shmat_test dummyvar;
+ dummyvar  shmat;
+ return 0;
 }

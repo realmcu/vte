@@ -18,7 +18,7 @@
 
 #########################################################################
 # name of file	: Makefile						#
-# description	: make(1) description file                           	#
+# description	: make(1) description file                           #
 #########################################################################
 CFLAGS+=-I../../../../../include -g -Wall
 LOADLIBES+=-L../../../../lib -lltp

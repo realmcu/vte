@@ -19,20 +19,20 @@
 
 /*
  * NAME
- * 	setpgid02.c
+ * setpgid02.c
  *
  * DESCRIPTION
- *	Testcase to check that setpgid() sets errno correctly.
+ * Testcase to check that setpgid() sets errno correctly.
  *
  * CALLS
- * 	setpgid
+ * setpgid
  *
  * ALGORITHM
- * 	Checks that setpgid returns the correct errno values in case of
- * 	negative testing.
- * 	test 1: EINVAL - Pass '-1' as the pgid parameter to setpgid
- * 	test 2: ESRCH - Pass '-1' as the pid parameter to setpgid
- *	test 3: EPERM - Pass an invalid pgid parameter to setpgid
+ * Checks that setpgid returns the correct errno values in case of
+ * negative testing.
+ * test 1: EINVAL - Pass '-1' as the pgid parameter to setpgid
+ * test 2: ESRCH - Pass '-1' as the pid parameter to setpgid
+ * test 3: EPERM - Pass an invalid pgid parameter to setpgid
  *
  * USAGE:  <for command-line>
  *  setpgid02 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -44,10 +44,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * 	None
+ * None
  */
 #include <errno.h>
 #include <unistd.h>
@@ -58,82 +58,82 @@
 void setup();
 void cleanup();
 
-char *TCID = "setpgid02";
-int TST_TOTAL = 3;
+char *TCID  "setpgid02";
+int TST_TOTAL  3;
 extern int Tst_count;
 
 pid_t pgid, pid;
-pid_t bad_pid = -1;
-pid_t zero_pid = 0;
-pid_t inval_pid = 99999;
+pid_t bad_pid  -1;
+pid_t zero_pid  0;
+pid_t inval_pid  99999;
 
-int exp_enos[]={EINVAL, ESRCH, EPERM, 0};
+int exp_enos[]{EINVAL, ESRCH, EPERM, 0};
 
 struct test_case_t {
-	pid_t *pid;
-	pid_t *pgid;
-	int error;
-} TC[] = {
-	/* pgid is less than zero - EINVAL*/
-	{&pid, &bad_pid, EINVAL},
+ pid_t *pid;
+ pid_t *pgid;
+ int error;
+} TC[]  {
+ /* pgid is less than zero - EINVAL*/
+ {&pid, &bad_pid, EINVAL},
 
-	/* pid doesn't match any process - ESRCH */
-	{&bad_pid, &pgid, ESRCH},
+ /* pid doesn't match any process - ESRCH */
+ {&bad_pid, &pgid, ESRCH},
 
-	/* pgid doesn't exist - EPERM */
-	{&zero_pid, &inval_pid, EPERM}
+ /* pgid doesn't exist - EPERM */
+ {&zero_pid, &inval_pid, EPERM}
 };
 
 int main(int ac, char **av)
 {
-	int lc;
-	char *msg;
-	int i;
+ int lc;
+ char *msg;
+ int i;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	/* perform global setup for test */
-	setup();
+ /* perform global setup for test */
+ setup();
 
-	/* set up the expected errnos */
-	TEST_EXP_ENOS(exp_enos);
+ /* set up the expected errnos */
+ TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		/* loop through the test cases */
-		for (i = 0; i < TST_TOTAL; i++) {
+  /* loop through the test cases */
+  for (i  0; i < TST_TOTAL; i++) {
 
-			TEST(setpgid(*TC[i].pid, *TC[i].pgid));
+   TEST(setpgid(*TC[i].pid, *TC[i].pgid));
 
-			if (TEST_RETURN != -1) {
-				tst_resm(TFAIL, "call succeeded unexpectedly");
-				continue;
-			}
+   if (TEST_RETURN ! -1) {
+    tst_resm(TFAIL, "call succeeded unexpectedly");
+    continue;
+   }
 
-			TEST_ERROR_LOG(TEST_ERRNO);
+   TEST_ERROR_LOG(TEST_ERRNO);
 
-			if (TEST_ERRNO == TC[i].error) {
-				tst_resm(TPASS, "expected failure - "
-					 "errno = %d : %s", TEST_ERRNO,
-					 strerror(TEST_ERRNO));
-			} else {
-				tst_resm(TFAIL, "unexpected error - %d : %s - "
-					 "expected %d", TEST_ERRNO,
-					 strerror(TEST_ERRNO), TC[i].error);
-			}
-		}
-	}
-	cleanup();
+   if (TEST_ERRNO  TC[i].error) {
+    tst_resm(TPASS, "expected failure - "
+      "errno  %d : %s", TEST_ERRNO,
+      strerror(TEST_ERRNO));
+   } else {
+    tst_resm(TFAIL, "unexpected error - %d : %s - "
+      "expected %d", TEST_ERRNO,
+      strerror(TEST_ERRNO), TC[i].error);
+   }
+  }
+ }
+ cleanup();
 
-	/*NOTREACHED*/
-	return(0);
+ /*NOTREACHED*/
+ return(0);
 }
 
 /*
@@ -142,29 +142,29 @@ int main(int ac, char **av)
 void
 setup()
 {
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	pgid = getpgrp();
-	pid = getpid();
+ pgid  getpgrp();
+ pid  getpid();
 }
 
 /*
  * cleanup - Performs all ONE TIME cleanup for this test at completion or
- * 	     premature exit
+ *      premature exit
  */
 void
 cleanup()
 {
-	/*
-	 * print timing status if that option was specified
-	 * print errno log if that option was specified
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing status if that option was specified
+  * print errno log if that option was specified
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

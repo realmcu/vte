@@ -19,10 +19,10 @@
 
 /*
  * NAME
- *	waitpid04.c
+ * waitpid04.c
  *
  * DESCRIPTION
- *	test to check the error conditions in waitpid sys call
+ * test to check the error conditions in waitpid sys call
  *
  * USAGE:  <for command-line>
  *      waitpid04 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -34,11 +34,11 @@
  *              -t   : Turn on syscall timing.
  *
  * History
- *	07/2001 John George
- *		-Ported
+ * 07/2001 John George
+ *  -Ported
  *
  * Restrictions
- *	NONE
+ * NONE
  */
 
 #include <sys/signal.h>
@@ -52,100 +52,100 @@ void setup(void);
 void cleanup(void);
 
 /* 0 terminated list of expected errnos */
-int exp_enos[] = {10,22,0};
+int exp_enos[]  {10,22,0};
 
-char *TCID = "waitpid04";
-int TST_TOTAL = 1;
+char *TCID  "waitpid04";
+int TST_TOTAL  1;
 extern int Tst_count;
 
-#define INVAL_FLAG	-1
+#define INVAL_FLAG -1
 
 int flag, condition_number;
 
 int main(int ac, char **av)
 {
-	int pid, status, ret;
+ int pid, status, ret;
 
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) !=
-	    (char *) NULL) {
-		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-		/*NOTREACHED*/
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) !
+     (char *) NULL) {
+  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+  tst_exit();
+  /*NOTREACHED*/
+ }
 
-	setup();
+ setup();
 
-	/* check for looping state if -i option is given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+ /* check for looping state if -i option is given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		ret = waitpid(pid, &status, WNOHANG);
-		flag = 0;
-		condition_number = 1;
-		if( ret != -1) {
-			tst_resm(TFAIL, "condition %d test failed",
-				 condition_number);
-		} else {
-			TEST_ERROR_LOG(errno);
-			if (errno != ECHILD) {
-				tst_resm(TFAIL, "waitpid() set invalid "
-					 "errno, expected ECHILD, got: %d",
-					 errno);
-			} else {
-				tst_resm(TPASS, "condition %d test passed",
-					condition_number);
-			}
-		}
-		condition_number++;
+  ret  waitpid(pid, &status, WNOHANG);
+  flag  0;
+  condition_number  1;
+  if( ret ! -1) {
+   tst_resm(TFAIL, "condition %d test failed",
+     condition_number);
+  } else {
+   TEST_ERROR_LOG(errno);
+   if (errno ! ECHILD) {
+    tst_resm(TFAIL, "waitpid() set invalid "
+      "errno, expected ECHILD, got: %d",
+      errno);
+   } else {
+    tst_resm(TPASS, "condition %d test passed",
+     condition_number);
+   }
+  }
+  condition_number++;
 
-		if (FORK_OR_VFORK() == 0) {
-			exit(0);
-		}
-		pid = 1;
-		ret = waitpid(pid, &status, WUNTRACED);
-		flag = 0;
-		if( ret != -1) {
-			tst_resm(TFAIL, "condition %d test failed",
-				 condition_number);
-		} else {
-			TEST_ERROR_LOG(errno);
-			if (errno != ECHILD) {
-				tst_resm(TFAIL, "waitpid() set invalid "
-					 "errno, expected ECHILD, got: %d",
-					 errno);
-			} else {
-				tst_resm(TPASS, "condition %d test passed",
-					condition_number);
-			}
-		}
-		condition_number++;
+  if (FORK_OR_VFORK()  0) {
+   exit(0);
+  }
+  pid  1;
+  ret  waitpid(pid, &status, WUNTRACED);
+  flag  0;
+  if( ret ! -1) {
+   tst_resm(TFAIL, "condition %d test failed",
+     condition_number);
+  } else {
+   TEST_ERROR_LOG(errno);
+   if (errno ! ECHILD) {
+    tst_resm(TFAIL, "waitpid() set invalid "
+      "errno, expected ECHILD, got: %d",
+      errno);
+   } else {
+    tst_resm(TPASS, "condition %d test passed",
+     condition_number);
+   }
+  }
+  condition_number++;
 
-		/* Option is Inval = INVAL_FLAG */
-		ret =  waitpid(pid, &status, INVAL_FLAG);
-		flag = 0;
-		if( ret != -1) {
-			tst_resm(TFAIL, "condition %d test failed",
-				 condition_number);
-		} else {
-			TEST_ERROR_LOG(errno);
-			if (errno != EINVAL) {
-				tst_resm(TFAIL, "waitpid() set invalid "
-					 "errno, expected EINVAL, got: %d",
-					 errno);
-			} else {
-				 tst_resm(TPASS, "condition %d test passed",
-					condition_number);
-			}
-		}
-		condition_number++;
-	}
-	cleanup();
-	/*NOTREACHED*/
+  /* Option is Inval  INVAL_FLAG */
+  ret   waitpid(pid, &status, INVAL_FLAG);
+  flag  0;
+  if( ret ! -1) {
+   tst_resm(TFAIL, "condition %d test failed",
+     condition_number);
+  } else {
+   TEST_ERROR_LOG(errno);
+   if (errno ! EINVAL) {
+    tst_resm(TFAIL, "waitpid() set invalid "
+      "errno, expected EINVAL, got: %d",
+      errno);
+   } else {
+     tst_resm(TPASS, "condition %d test passed",
+     condition_number);
+   }
+  }
+  condition_number++;
+ }
+ cleanup();
+ /*NOTREACHED*/
 
   return(0);
 
@@ -153,35 +153,35 @@ int main(int ac, char **av)
 
 /*
  * setup()
- *	performs all ONE TIME setup for this test
+ * performs all ONE TIME setup for this test
  */
 void
 setup(void)
 {
-	/* Set up the expected error numbers for -e option */
-	TEST_EXP_ENOS(exp_enos)
+ /* Set up the expected error numbers for -e option */
+ TEST_EXP_ENOS(exp_enos)
 
-	/* Pause if that option was specified
-	 * TEST_PAUSE contains the code to fork the test with the -c option.
-	 */
-	TEST_PAUSE;
+ /* Pause if that option was specified
+  * TEST_PAUSE contains the code to fork the test with the -c option.
+  */
+ TEST_PAUSE;
 }
 
 /*
  * cleanup()
- *	performs all ONE TIME cleanup for this test at
- *	completion or premature exit
+ * performs all ONE TIME cleanup for this test at
+ * completion or premature exit
  */
 void
 cleanup(void)
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-	/*NOTREACHED*/
+ /* exit with return code appropriate for results */
+ tst_exit();
+ /*NOTREACHED*/
 }

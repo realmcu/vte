@@ -10,14 +10,14 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Igor Semenchukov/smng001c    29/11/2004     TLSbo43521   Initial version
-#D.Simakov/smkd001c           10/08/2005     TLSbo53249   MPEG4 AAC encoder was added 
+#D.Simakov/smkd001c           10/08/2005     TLSbo53249   MPEG4 AAC encoder was added
 #
 ###################################################################################################
 #Portability: Indicate if this module is portable to other compilers or platforms.

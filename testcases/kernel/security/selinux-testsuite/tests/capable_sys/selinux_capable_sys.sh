@@ -15,7 +15,7 @@ setup()
 {
         export TCID="setup"
         export TST_COUNT=0
-	export TST_TOTAL=8
+ export TST_TOTAL=8
 
         # Clean up from a previous run
         rm -f $SELINUXTMPDIR/temp_file 2>&1
@@ -30,17 +30,17 @@ test01()
         TST_COUNT=1
         RC=0
 
-	# CAP_SYS_RAWIO
-	touch $SELINUXTMPDIR/temp_file 2>&1
-	runcon -t test_scap_t -- selinux_rawio $SELINUXTMPDIR/temp_file 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   FAIL : capable_sys failed."
-	else
-		echo "$TCID   PASS : capable_sys passed."
-	fi
-	return $RC
+ # CAP_SYS_RAWIO
+ touch $SELINUXTMPDIR/temp_file 2>&1
+ runcon -t test_scap_t -- selinux_rawio $SELINUXTMPDIR/temp_file 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   FAIL : capable_sys failed."
+ else
+  echo "$TCID   PASS : capable_sys passed."
+ fi
+ return $RC
 }
 
 test02()
@@ -49,16 +49,16 @@ test02()
         TST_COUNT=2
         RC=0
 
-	# CAP_SYS_CHROOT
-	runcon -t test_scap_t -- selinux_chroot $SELINUXTMPDIR/ 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   FAIL : capable_sys failed."
-	else
-		echo "$TCID   PASS : capable_sys passed."
-	fi
-	return $RC
+ # CAP_SYS_CHROOT
+ runcon -t test_scap_t -- selinux_chroot $SELINUXTMPDIR/ 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   FAIL : capable_sys failed."
+ else
+  echo "$TCID   PASS : capable_sys passed."
+ fi
+ return $RC
 }
 
 # CAP_SYS_PTRACE - Not done here.
@@ -70,16 +70,16 @@ test03()
         TST_COUNT=3
         RC=0
 
-	# CAP_SYS_ADMIN 
-	runcon -t test_scap_t -- selinux_hostname 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   FAIL : capable_sys failed."
-	else
-		echo "$TCID   PASS : capable_sys passed."
-	fi
-	return $RC
+ # CAP_SYS_ADMIN
+ runcon -t test_scap_t -- selinux_hostname 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   FAIL : capable_sys failed."
+ else
+  echo "$TCID   PASS : capable_sys passed."
+ fi
+ return $RC
 }
 
 # CAP_SYS_BOOT - Not done; too dangerous
@@ -91,15 +91,15 @@ test04()
         TST_COUNT=4
         RC=0
 
-	runcon -t test_scap_t -- selinux_nice 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   FAIL : capable_sys failed."
-	else
-		echo "$TCID   PASS : capable_sys passed."
-	fi
-	return $RC
+ runcon -t test_scap_t -- selinux_nice 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   FAIL : capable_sys failed."
+ else
+  echo "$TCID   PASS : capable_sys passed."
+ fi
+ return $RC
 }
 
 # CAP_SYS_RESOURCE - Not done.
@@ -118,19 +118,19 @@ test05()
         TST_COUNT=5
         RC=0
 
-	# CAP_SYS_RAWIO
-	touch $SELINUXTMPDIR/temp_file 2>&1
-	runcon -t test_noscap_t -- selinux_rawio $SELINUXTMPDIR/temp_file 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   PASS : capable_sys passed."
-		RC=0
-	else
-		echo "$TCID   FAIL : capable_sys failed."
-		RC=1
-	fi
-	return $RC
+ # CAP_SYS_RAWIO
+ touch $SELINUXTMPDIR/temp_file 2>&1
+ runcon -t test_noscap_t -- selinux_rawio $SELINUXTMPDIR/temp_file 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   PASS : capable_sys passed."
+  RC=0
+ else
+  echo "$TCID   FAIL : capable_sys failed."
+  RC=1
+ fi
+ return $RC
 }
 
 test06()
@@ -139,18 +139,18 @@ test06()
         TST_COUNT=6
         RC=0
 
-	# CAP_SYS_CHROOT
-	runcon -t test_noscap_t -- selinux_chroot $SELINUXTMPDIR/ 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   PASS : capable_sys passed."
-		RC=0
-	else
-		echo "$TCID   FAIL : capable_sys failed."
-		RC=1
-	fi
-	return $RC
+ # CAP_SYS_CHROOT
+ runcon -t test_noscap_t -- selinux_chroot $SELINUXTMPDIR/ 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   PASS : capable_sys passed."
+  RC=0
+ else
+  echo "$TCID   FAIL : capable_sys failed."
+  RC=1
+ fi
+ return $RC
 }
 
 test07()
@@ -159,18 +159,18 @@ test07()
         TST_COUNT=7
         RC=0
 
-	# CAP_SYS_ADMIN 
-	runcon -t test_noscap_t -- selinux_hostname 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   PASS : capable_sys passed."
-		RC=0
-	else
-		echo "$TCID   FAIL : capable_sys failed."
-		RC=1
-	fi
-	return $RC
+ # CAP_SYS_ADMIN
+ runcon -t test_noscap_t -- selinux_hostname 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   PASS : capable_sys passed."
+  RC=0
+ else
+  echo "$TCID   FAIL : capable_sys failed."
+  RC=1
+ fi
+ return $RC
 }
 
 test08()
@@ -179,24 +179,24 @@ test08()
         TST_COUNT=8
         RC=0
 
-	# CAP_SYS_NICE
-	runcon -t test_noscap_t -- selinux_nice 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   PASS : capable_sys passed."
-		RC=0
-	else
-		echo "$TCID   FAIL : capable_sys failed."
-		RC=1
-	fi
-	return $RC
+ # CAP_SYS_NICE
+ runcon -t test_noscap_t -- selinux_nice 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   PASS : capable_sys passed."
+  RC=0
+ else
+  echo "$TCID   FAIL : capable_sys failed."
+  RC=1
+ fi
+ return $RC
 }
 
 cleanup()
 {
-	# Remove files
-	rm -f $SELINUXTMPDIR/temp_file 2>&1
+ # Remove files
+ rm -f $SELINUXTMPDIR/temp_file 2>&1
 }
 
 # Function:     main
@@ -209,7 +209,7 @@ cleanup()
 RC=0    # Return value from setup, and test functions.
 EXIT_VAL=0
 
-setup  
+setup
 test01 || EXIT_VAL=$RC
 test02 || EXIT_VAL=$RC
 test03 || EXIT_VAL=$RC
@@ -220,4 +220,4 @@ test06 || EXIT_VAL=$RC
 test07 || EXIT_VAL=$RC
 test08 || EXIT_VAL=$RC
 cleanup
-exit $EXIT_VAL 
+exit $EXIT_VAL

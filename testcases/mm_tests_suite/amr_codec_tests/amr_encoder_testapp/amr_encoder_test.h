@@ -10,14 +10,14 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-     
+
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-F.GAFFIE/rb657c              21/07/2004     TLSbo40930  Initial version 
-L.DELASPRE/rc149c            18/10/2004     TLSbo43867  update with new API 
+F.GAFFIE/rb657c              21/07/2004     TLSbo40930  Initial version
+L.DELASPRE/rc149c            18/10/2004     TLSbo43867  update with new API
 
 ==================================================================================================*/
 
@@ -37,9 +37,9 @@ extern "C"{
 #include <semaphore.h>
 #include <asm/ioctls.h>
 #include <linux/fb.h>		// for frame buffer operations
-#include <sys/types.h> 	// fork usage for reentrance test
-#include <unistd.h> 		// fork usage for reentrance test
-#include <pthread.h> 		// fork usage for reentrance test
+#include <sys/types.h> // fork usage for reentrance test
+#include <unistd.h> // fork usage for reentrance test
+#include <pthread.h> // fork usage for reentrance test
 #include <sys/time.h>		// timer usage for preemptivity
 #include <signal.h>
 #include <stdio.h>
@@ -65,14 +65,14 @@ extern "C"{
 #define EXHAUSTIVE_ENCODE		0
 #define ENDURANCE				1
 #define REENTRANCE				2
-	#define USING_THREAD		1	
+	#define USING_THREAD		1
 	#define USING_PROCESS		0
 #define PREEMPTIVITY			3
 #define LOAD_TEST				4
 
 #define ITERATIONS				10
 
-#define ENCODER_THREAD 		2		/* max number of decoding thread */
+#define ENCODER_THREAD 2		/* max number of decoding thread */
 #define LENGTH					128
 
 
@@ -95,10 +95,10 @@ typedef struct
 	unsigned char * ps8APPEModeStr;
 	unsigned int u32APPEInstanceID;
 	unsigned int s16APPEDtxFlag;
-	
+
 
 	/* add here all variable needed to configure the encoder */
-	
+
 } amr_encoder_thread;
 
 

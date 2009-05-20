@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #<Hake Huang>/-----             <2008/09/19>     N/A          Initial version
-# 
+#
 ###################################################################################################
 
 
@@ -98,10 +98,10 @@ fi
 
 # Function:     test_case_01
 # Description   - Test if unit test ok
-#  
+#
 test_case_01()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="vpu_unit_test"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -121,10 +121,10 @@ return $RC
 
 # Function:     test_case_02
 # Description   - Test if encode h263 ok
-#  
+#
 test_case_02()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="vpu_enc_h263_test"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -138,9 +138,9 @@ cp -f ${LTPROOT}/testcases/bin/config_enc_h263_P3 .
 cp -f ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv .
 
 $TSTCMD -C config_enc_h263_P3 || return $TST_COUNT
- 
+
 rm -f config_enc_h263_P3
-rm -f COASTGUARD_CIF_IJT.yuv 
+rm -f COASTGUARD_CIF_IJT.yuv
 
 $TSTCMD -D "-i test.263 -f 1" || return $TST_COUNT
 
@@ -153,10 +153,10 @@ return $RC
 
 # Function:     test_case_03
 # Description   - Test if encode H264 ok
-#  
+#
 test_case_03()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="vpu_enc_h264_test"
 #TODO give TST_COUNT
 TST_COUNT=3
@@ -170,7 +170,7 @@ cp -f ${LTPROOT}/testcases/bin/config_enc_h264_BP .
 cp -f ${STREAM_PATH}/video/starwars640x480.yuv .
 
 $TSTCMD -C config_enc_h264_BP || return $TST_COUNT
- 
+
 rm -f config_enc_h264_BP
 rm -f starwars640x480.yuv
 
@@ -185,10 +185,10 @@ return $RC
 
 # Function:     test_case_04
 # Description   - Test if encode MPEG4 ok
-#  
+#
 test_case_04()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="vpu_enc_mpeg4_test"
 #TODO give TST_COUNT
 TST_COUNT=4
@@ -202,7 +202,7 @@ cp -f ${LTPROOT}/testcases/bin/config_enc_MPEG4_SP .
 cp -f ${STREAM_PATH}/video/akiyomp4.yuv .
 
 $TSTCMD -C config_enc_MPEG4_SP || return $TST_COUNT
- 
+
 rm -f config_enc_MPEG4_SP
 rm -f akiyomp4.yuv
 
@@ -217,10 +217,10 @@ return $RC
 
 # Function:     test_case_05
 # Description   - Test if encode MJPEG ok
-#  
+#
 test_case_05()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="vpu_enc_mjpeg_test"
 #TODO give TST_COUNT
 TST_COUNT=5
@@ -234,7 +234,7 @@ cp -f ${LTPROOT}/testcases/bin/config_enc_MJPEG_BL .
 cp -f ${STREAM_PATH}/video/akiyomp4.yuv .
 
 $TSTCMD -C config_enc_MJPEG_BL || return $TST_COUNT
- 
+
 rm -f config_enc_MJPEG_BL
 rm -f akiyomp4.yuv
 
@@ -257,7 +257,7 @@ TSTCMD="/unit_tests/mxc_vpu_test.out"
 if [ $# -ne 1 ]
 then
 echo "usage $0 <1/2/3/4/5>"
-exit 1 
+exit 1
 fi
 
 TARGET=
@@ -274,7 +274,7 @@ setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC 
+  test_case_01 || exit $RC
   ;;
 2)
   test_case_02 || exit $RC

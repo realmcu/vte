@@ -49,23 +49,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -85,32 +85,32 @@
 /* The main test function. */
 int main( int argc, char * argv[] )
 {
-	int ret;
+ int ret;
 
-	/* Initialize output */
-	output_init();
+ /* Initialize output */
+ output_init();
 
-	( void ) sem_unlink( SEM_NAME );
+ ( void ) sem_unlink( SEM_NAME );
 
-	ret = sem_unlink( SEM_NAME );
+ ret  sem_unlink( SEM_NAME );
 
-	if ( ret != -1 )
-	{
-		FAILED( "sem_unlink did not return -1" );
-	}
+ if ( ret ! -1 )
+ {
+  FAILED( "sem_unlink did not return -1" );
+ }
 
-	if ( errno != ENOENT )
-	{
-		output( "Error %d: %s\n", errno, strerror( errno ) );
-		FAILED( "The error was not ENOENT" );
-	}
+ if ( errno ! ENOENT )
+ {
+  output( "Error %d: %s\n", errno, strerror( errno ) );
+  FAILED( "The error was not ENOENT" );
+ }
 
-	/* Test passed */
+ /* Test passed */
 #if VERBOSE > 0
-	output( "Test passed\n" );
+ output( "Test passed\n" );
 
 #endif
-	PASSED;
+ PASSED;
 }
 
 

@@ -14,7 +14,7 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 ***************************************************************************/
-/*=========================================================================
+/*
 * This testcase creates the network namespace.
 * It creates veth pair veth8 & veth9. Also assigns IP addresses to the childNS.
 * Also it starts the sshd daemon @ port 7890
@@ -22,7 +22,7 @@
 * Scripts Used: parentns.sh childns.sh
 *
 * Author:      Veerendra <veeren@linux.vnet.ibm.com>
-=========================================================================*/
+*/
 
 #include <sys/utsname.h>
 #include <sched.h>
@@ -41,7 +41,7 @@
 #include "test.h"
 
 
-int TST_TOTAL = 1;
+int TST_TOTAL  1;
 
 extern pid_t getpgid(pid_t pid);
 extern pid_t getsid(pid_t pid);
@@ -49,7 +49,7 @@ static int child_fn(void *c1);
 
 int crtchild(char *s1 , char *s2)
 {
-    char *cmd[] = { "--", s1, s2, (char *)0 };
+    char *cmd[]  { "--", s1, s2, (char *)0 };
     execve("/bin/bash", cmd, __environ);
     printf("The code would not reach here on success\n");
     perror("execve");
@@ -58,43 +58,43 @@ int crtchild(char *s1 , char *s2)
 
 int create_net_namespace(char *p1, char *c1)
 {
-	int pid, status = 0, ret;
-	char *ltproot, *par;
-	long int clone_flags = 0;
-	int stack_size = getpagesize() * 4;
-	void *childstack, *stack;
+ int pid, status  0, ret;
+ char *ltproot, *par;
+ long int clone_flags  0;
+ int stack_size  getpagesize() * 4;
+ void *childstack, *stack;
 
-	if (tst_kvercmp(2, 6, 19) < 0)
-		return 1;
+ if (tst_kvercmp(2, 6, 19) < 0)
+  return 1;
 
-	stack = malloc(stack_size);
-	if (!stack) {
-		perror("failled to malloc memory for stack...");
-		return -1;
-	}
-	childstack = stack + stack_size;
+ stack  malloc(stack_size);
+ if (!stack) {
+  perror("failled to malloc memory for stack...");
+  return -1;
+ }
+ childstack  stack + stack_size;
 
-	clone_flags |= CLONE_NEWNS;
+ clone_flags | CLONE_NEWNS;
 /* Enable other namespaces too optionally */
 #ifdef CLONE_NEWPID
-	clone_flags |= CLONE_NEWPID;
+ clone_flags | CLONE_NEWPID;
 #endif
 
 #ifdef __ia64__
-	pid = clone2(child_fn, childstack, getpagesize(), clone_flags | SIGCHLD,
-						(void *)c1, NULL, NULL, NULL);
+ pid  clone2(child_fn, childstack, getpagesize(), clone_flags | SIGCHLD,
+      (void *)c1, NULL, NULL, NULL);
 #else
-	pid = clone(child_fn, childstack, clone_flags | SIGCHLD, (void *)c1);
+ pid  clone(child_fn, childstack, clone_flags | SIGCHLD, (void *)c1);
 #endif
 
-	if (pid == -1) {
-		perror("Failled to do clone...");
-		free(stack);
-		return -1;
-	}
+ if (pid  -1) {
+  perror("Failled to do clone...");
+  free(stack);
+  return -1;
+ }
 
 /* This code will be executed in parent */
-    ltproot = getenv("LTPROOT");
+    ltproot  getenv("LTPROOT");
 
     if ( !ltproot) {
         printf("LTPROOT env variable is not set\n");
@@ -102,29 +102,29 @@ int create_net_namespace(char *p1, char *c1)
         return -1;
     }
 
-    par = malloc(FILENAME_MAX);
+    par  malloc(FILENAME_MAX);
 
-    if (par == NULL) {
+    if (par  NULL) {
                 printf("FAIL: error while allocating memory");
                 exit(1);
         }
 
-	/* We need to pass the child pid to the parentns.sh script */
+ /* We need to pass the child pid to the parentns.sh script */
     sprintf(par, "%s/testcases/kernel/containers/netns/parentns.sh %s %u",
-							ltproot, p1, pid);
+       ltproot, p1, pid);
 
-        ret = system(par);
-        status = WEXITSTATUS(ret);
-        if ( ret == -1 || status != 0) {
+        ret  system(par);
+        status  WEXITSTATUS(ret);
+        if ( ret  -1 || status ! 0) {
             printf("Error while running the script\n");
             fflush(stdout);
             exit(1);
         }
         fflush(stdout);
 
-        ret = waitpid(pid, &status, __WALL);
-        status = WEXITSTATUS(status);
-        if ( ret  == -1 || status != 0)
+        ret  waitpid(pid, &status, __WALL);
+        status  WEXITSTATUS(status);
+        if ( ret   -1 || status ! 0)
             printf("Error: waitpid() returns %d, status %d\n", ret, status);
 
     return status;
@@ -133,38 +133,38 @@ int create_net_namespace(char *p1, char *c1)
 /* The function to be executed in the child namespace */
 int child_fn(void *c1)
 {
-	char *ltproot, *child;
-	unsigned long flags = 0;
-	int ret;
+ char *ltproot, *child;
+ unsigned long flags  0;
+ int ret;
 
 /* Flags to unshare different Namespaces */
-	flags |= CLONE_NEWNS;
-	flags |= CLONE_NEWNET;
-	flags |= CLONE_NEWUTS;
-	flags |= CLONE_FS;
+ flags | CLONE_NEWNS;
+ flags | CLONE_NEWNET;
+ flags | CLONE_NEWUTS;
+ flags | CLONE_FS;
 
-	ltproot = getenv("LTPROOT");
+ ltproot  getenv("LTPROOT");
 
-	if (!ltproot) {
-		printf("LTPROOT env variable is not set\n");
-		printf("Please set LTPROOT and re-run the test.. Thankyou\n");
-		return -1;
-	}
+ if (!ltproot) {
+  printf("LTPROOT env variable is not set\n");
+  printf("Please set LTPROOT and re-run the test.. Thankyou\n");
+  return -1;
+ }
 
-	child = malloc(FILENAME_MAX);
-	if (child == NULL) {
-		printf("FAIL: error while allocating memory");
-		exit(1);
-	}
+ child  malloc(FILENAME_MAX);
+ if (child  NULL) {
+  printf("FAIL: error while allocating memory");
+  exit(1);
+ }
 
-	sprintf(child, "%s/testcases/kernel/containers/netns/childns.sh",
-								 ltproot);
+ sprintf(child, "%s/testcases/kernel/containers/netns/childns.sh",
+         ltproot);
 
-	/* Unshare the network namespace in the child */
-	ret = unshare(flags);
-	if (ret < 0) {
-		perror("Failled to unshare for netns...");
-		return 1;
-	}
-	return crtchild(child, c1);
+ /* Unshare the network namespace in the child */
+ ret  unshare(flags);
+ if (ret < 0) {
+  perror("Failled to unshare for netns...");
+  return 1;
+ }
+ return crtchild(child, c1);
 }

@@ -11,7 +11,7 @@ typedef int (*kill_test)(pid_t, int);
 
 int dummyfcn (void)
 {
-	kill_test dummyvar;
-	dummyvar = kill;
-	return 0;
+ kill_test dummyvar;
+ dummyvar  kill;
+ return 0;
 }

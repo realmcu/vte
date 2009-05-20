@@ -7,7 +7,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- * Will not test the result of shm_open() when using O_TRUNC with O_RDONLY. 
+ * Will not test the result of shm_open() when using O_TRUNC with O_RDONLY.
  * It is undefined.
  */
 

@@ -10,16 +10,16 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-#F.GAFFIE/rb657c              03/05/2004     TLSbo39336  Initial version 
+#F.GAFFIE/rb657c              03/05/2004     TLSbo39336  Initial version
 #L.DELASPRE/rc149c            16/09/2004     TLSbo42022  VTE 1.5 integration
-#D.Simakov/smkd001c           07/02/2004     TLSbo47179	 Bad dependancies in the mm tests 
-#D.Simakov/smkd001c           23/03/2004     TLSbo48795  application build process	
+#D.Simakov/smkd001c           07/02/2004     TLSbo47179	 Bad dependancies in the mm tests
+#D.Simakov/smkd001c           23/03/2004     TLSbo48795  application build process
 #L.Delaspre/rc149c            29/03/2005     TLSbo49055  ARM11 codecs P2 tests
 #D.Simakov/smkd001c           28/10/2005     TLSbo57009  Rework
 #A.Pshenichnikov	          28/11/2005     TLSbo59532  mem_stat.c was added
@@ -39,7 +39,7 @@ LOADLIBES += -Wl,--no-warn-mismatch -mcpu=arm1136j-s -lm -lc -lrt
 #CFLAGS    += -DPOST_BIT_MATCHING
 #CFLAGS    += -DDEBUG_TEST
 
-SRCS       = $(wildcard *.c) 
+SRCS       = $(wildcard *.c)
 OBJS       = $(patsubst %.c,%.o,$(SRCS))
 
 TARGET     = jpeg_decoder_testapp
@@ -60,11 +60,11 @@ install:
 	cp -rf $(JPEGD_INPUT) $(LTP_BIN)
 	cp -rf $(JPEGD_REF) $(LTP_BIN)
 	mkdir -p $(LTP_BIN)/jpegd_output
-	mkdir -p $(LTP_BIN)/sharedlibs   
-	cp -rf $(JPEGD_LIBDIR)/lib$(JPEGD_LIBRARY).so $(LTP_BIN)/sharedlibs                        
+	mkdir -p $(LTP_BIN)/sharedlibs
+	cp -rf $(JPEGD_LIBDIR)/lib$(JPEGD_LIBRARY).so $(LTP_BIN)/sharedlibs
 	@echo "*****************************************************"
 	@echo "** INSTALL : jpeg_decoder_testapp test application **"
-	@echo "*****************************************************"    
+	@echo "*****************************************************"
 	@echo
 
 clean:
@@ -73,5 +73,5 @@ clean:
 $(TARGET): $(OBJS)
 	$(CC)  $(OBJS) $(LOADLIBES) -o  $@
 
-$(OBJS) : $(SRCS) 
+$(OBJS) : $(SRCS)
 

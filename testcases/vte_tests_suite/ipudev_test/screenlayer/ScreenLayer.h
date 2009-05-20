@@ -19,10 +19,10 @@ extern "C"{
 #endif
 
 /* data type */
-#define u8 		unsigned char
-#define u16 		unsigned short
-#define u32 		unsigned int
-#define s32 		int
+#define u8 unsigned char
+#define u16 unsigned short
+#define u32 unsigned int
+#define s32 int
 
 typedef enum {
 	E_RET_SUCCESS = 0,
@@ -64,14 +64,14 @@ typedef struct {
 } SLRect;
 
 typedef struct {
-	SLRect 		screenRect;
-	u32 		fmt;
+	SLRect screenRect;
+	u32 fmt;
 	u32		bufSize;
-	void 		** bufVaddr;
-	dma_addr_t 	* bufPaddr;
-	void	 	* pPrimary;
+	void ** bufVaddr;
+	dma_addr_t * bufPaddr;
+	void	 * pPrimary;
 	char		fbdev[32];
-	void 		* pPriv;
+	void * pPriv;
 } ScreenLayer;
 
 typedef struct {
@@ -81,7 +81,7 @@ typedef struct {
 	SLRect		srcRect;
 	SLRect		destRect;
 	u32		destRot;
-	dma_addr_t 	srcPaddr;
+	dma_addr_t srcPaddr;
 } LoadParam;
 
 /* APIs */

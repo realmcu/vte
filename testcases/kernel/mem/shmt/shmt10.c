@@ -22,21 +22,21 @@
 
 /*
  * NAME
- *	shmt10.c - test simultaneous shmat/shmdt
+ * shmt10.c - test simultaneous shmat/shmdt
  *
  * CALLS
- *	shmget, shmat, shmdt, shmctl
+ * shmget, shmat, shmdt, shmctl
  *
  * ALGORITHM
- *	Create a shared memory segment and fork a child. Both
- *	parent and child spin in a loop attaching and detaching
- *	the segment. After completing the specified number of
- *	iterations, the child exits and the parent deletes the
- *	segment.
+ * Create a shared memory segment and fork a child. Both
+ * parent and child spin in a loop attaching and detaching
+ * the segment. After completing the specified number of
+ * iterations, the child exits and the parent deletes the
+ * segment.
  *
  * USAGE
  *  shmt10 [-i 500]
- *	-i # of iterations, default 500
+ * -i # of iterations, default 500
  *
  */
 
@@ -50,15 +50,15 @@
 #include <signal.h>
 #include <errno.h>
 
-#define	SIZE	0x32768
+#define SIZE 0x32768
 
 /** LTP Port **/
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "shmt10";		/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID  "shmt10";  /* Test program identifier.    */
+int TST_TOTAL  2;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 /**************/
 
 int shmid;
@@ -72,107 +72,107 @@ int main(argc, argv)
 int argc;
 char *argv[];
 {
-	char *c1 = NULL;
-	int pid, st;
-	register int i;
-	int iter = 500;
-	int c;
-	extern char *optarg;
+ char *c1  NULL;
+ int pid, st;
+ register int i;
+ int iter  500;
+ int c;
+ extern char *optarg;
 
-	key = (key_t) getpid();
-	signal(SIGTERM, fini);
+ key  (key_t) getpid();
+ signal(SIGTERM, fini);
 
 /*--------------------------------------------------------*/
 
-	while ((c = getopt(argc, argv, "i:")) != EOF) {
-		switch (c) {
-		case 'i':
-			iter = atoi(optarg);
-			break;
-		default:
-			tst_resm(TCONF, "usage: %s [-i <# iterations>]",
-				 argv[0]);
-			tst_exit();
-		}
-	}
+ while ((c  getopt(argc, argv, "i:")) ! EOF) {
+  switch (c) {
+  case 'i':
+   iter  atoi(optarg);
+   break;
+  default:
+   tst_resm(TCONF, "usage: %s [-i <# iterations>]",
+     argv[0]);
+   tst_exit();
+  }
+ }
 
 /*------------------------------------------------------------------------*/
 
-	if ((shmid = shmget(key, SIZE, IPC_CREAT | 0666)) < 0) {
-		tst_resm(TFAIL, "shmget");
-		tst_resm(TFAIL, "Error: shmid = %d\n", shmid);
-		tst_exit();
-	}
+ if ((shmid  shmget(key, SIZE, IPC_CREAT | 0666)) < 0) {
+  tst_resm(TFAIL, "shmget");
+  tst_resm(TFAIL, "Error: shmid  %d\n", shmid);
+  tst_exit();
+ }
 
-	pid = fork();
-	switch (pid) {
-	case -1:
-		tst_resm(TBROK, "fork failed");
-		tst_exit();
-	case 0:
-		child(iter);
-		tst_exit();
-	}
+ pid  fork();
+ switch (pid) {
+ case -1:
+  tst_resm(TBROK, "fork failed");
+  tst_exit();
+ case 0:
+  child(iter);
+  tst_exit();
+ }
 
-	for (i = 0; i < iter; i++) {
-		if ((c1 = (char *)shmat(shmid, (void *)0, 0)) == (char *)-1) {
-			tst_resm(TFAIL,
-				 "Error shmat: iter %d, shmid = %d\n", i,
-				 shmid);
-			break;
-		}
-		if (shmdt(c1) < 0) {
-			tst_resm(TFAIL, "Error: shmdt: iter %d ", i);
-			break;
-		}
-	}
-	while (wait(&st) < 0 && errno == EINTR) ;
-	tst_resm(TPASS, "shmat,shmdt");
+ for (i  0; i < iter; i++) {
+  if ((c1  (char *)shmat(shmid, (void *)0, 0))  (char *)-1) {
+   tst_resm(TFAIL,
+     "Error shmat: iter %d, shmid  %d\n", i,
+     shmid);
+   break;
+  }
+  if (shmdt(c1) < 0) {
+   tst_resm(TFAIL, "Error: shmdt: iter %d ", i);
+   break;
+  }
+ }
+ while (wait(&st) < 0 && errno  EINTR) ;
+ tst_resm(TPASS, "shmat,shmdt");
 /*------------------------------------------------------------------------*/
 
-	rm_shm(shmid);
-	tst_exit();
+ rm_shm(shmid);
+ tst_exit();
 
 /*------------------------------------------------------------------------*/
-	return (0);
+ return (0);
 }
 
 int rm_shm(shmid)
 int shmid;
 {
-	if (shmctl(shmid, IPC_RMID, NULL) == -1) {
-		perror("shmctl");
-		tst_resm(TFAIL,
-			 "shmctl Failed to remove: shmid = %d, errno = %d\n",
-			 shmid, errno);
-		tst_exit();
-	}
-	return (0);
+ if (shmctl(shmid, IPC_RMID, NULL)  -1) {
+  perror("shmctl");
+  tst_resm(TFAIL,
+    "shmctl Failed to remove: shmid  %d, errno  %d\n",
+    shmid, errno);
+  tst_exit();
+ }
+ return (0);
 }
 
 int child(iter)
 int iter;
 {
-	register int i;
-	char *c1;
+ register int i;
+ char *c1;
 
-	for (i = 0; i < iter; i++) {
-		if ((c1 = (char *)shmat(shmid, (void *)0, 0)) == (char *)-1) {
-			tst_resm(TFAIL,
-				 "Error:child proc: shmat: iter %d, shmid = %d\n",
-				 i, shmid);
-			tst_exit();
-		}
-		if (shmdt(c1) < 0) {
-			tst_resm(TFAIL,
-				 "Error: child proc: shmdt: iter %d ", i);
-			tst_exit();
-		}
-	}
-	return (0);
+ for (i  0; i < iter; i++) {
+  if ((c1  (char *)shmat(shmid, (void *)0, 0))  (char *)-1) {
+   tst_resm(TFAIL,
+     "Error:child proc: shmat: iter %d, shmid  %d\n",
+     i, shmid);
+   tst_exit();
+  }
+  if (shmdt(c1) < 0) {
+   tst_resm(TFAIL,
+     "Error: child proc: shmdt: iter %d ", i);
+   tst_exit();
+  }
+ }
+ return (0);
 }
 
 void fini()
 {
-	rm_shm(shmid);
+ rm_shm(shmid);
 }

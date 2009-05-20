@@ -1,4 +1,4 @@
-#!/bin/sh  
+#!/bin/sh
 
 LTPROOT=`cd \`dirname $0\` && echo $PWD`
 
@@ -23,16 +23,16 @@ cd $LTPROOT
    echo " ---------------------------------"
    echo "uart_testapp_4   TFAIL       1"
   fi
-  echo""                             
+  echo""
  }
-                             
+
 
 
 
  if [ $# -eq 2 ];
   then
    $TESTAPP4 -s $1 -d $2 -T 1
-    anal_res                          
+    anal_res
    $TESTAPP4 -s $1 -d $2 -T 2
     anal_res
    $TESTAPP4 -s $2 -d $1 -T 1
@@ -47,7 +47,7 @@ cd $LTPROOT
  if [ $rc -eq 0 ];
   then
     echo "uart4.sh          TPASS    "
-  
+
   else
     echo "uart4.sh          TFAIL    "
  fi

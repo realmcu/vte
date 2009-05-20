@@ -11,7 +11,7 @@
 #define FAIL 0
 #define SUCCESS 1
 
-int openlog[2]={0,0};
+int openlog[2]{0,0};
 
 #define MAXNUM 0x100000
 
@@ -20,9 +20,9 @@ int openlog[2]={0,0};
 extern int box_muler(int, int);
 extern void create_or_delete(char *);
 
-int cfilecount=0;
-int dfilecount=0;
-int errorcount=0;
+int cfilecount0;
+int dfilecount0;
+int errorcount0;
 
 main(int ac, char **av)
 {
@@ -32,7 +32,7 @@ main(int ac, char **av)
   int i;
   int m;
 
-  if ( ac != 2 ) {
+  if ( ac ! 2 ) {
     printf("%s hex-style-filename \n", av[0]);
     printf("ex) %s 00022300\n", av[0]);
     exit(1);
@@ -48,14 +48,14 @@ main(int ac, char **av)
 
 
   /* 00/00/00/00 */
-  for ( i = 0 ; i < m ; i++) {
-    r = random() % m;
+  for ( i  0 ; i < m ; i++) {
+    r  random() % m;
     sprintf(fname,"00/%2.2x/%2.2x/00%2.2x%2.2x%2.2x",
-	   ((r>>16)&0xFF),
-	   ((r>>8)&0xFF),
-	   ((r>>16)&0xFF),
-	   ((r>>8)&0xFF),
-	   (r&0xFF));
+    ((r>>16)&0xFF),
+    ((r>>8)&0xFF),
+    ((r>>16)&0xFF),
+    ((r>>8)&0xFF),
+    (r&0xFF));
     create_or_delete(fname);
   }
   fprintf(stderr,"Total create files: %d\n",cfilecount);
@@ -68,13 +68,13 @@ main(int ac, char **av)
 #define AVEFSIZE (MAXFSIZE/2)
 #define POOLDISKSPACE (AVEFSIZE*128)
 
-static int disk_space_pool=0;
+static int disk_space_pool0;
 void create_or_delete(char *fname)
 {
   int r;
   int fsize;
 
-  r = (random() & 1);
+  r  (random() & 1);
   if ( r && disk_space_pool > POOLDISKSPACE) {
     /* create */
     create_file(fname) ;
@@ -91,17 +91,17 @@ void create_or_delete(char *fname)
   }
 }
 
-create_file(char *filename) 
+create_file(char *filename)
 {
   int fd;
   int randomsize;
   char wbuf[MAXFSIZE];
-  if ( (fd=creat(filename, S_IRWXU)) < 0) {
+  if ( (fdcreat(filename, S_IRWXU)) < 0) {
     errorcount++;
     return(-1);
   }
-  if ((randomsize=box_muler(0,MAXFSIZE)) < 0) {
-    randomsize = MAXFSIZE;
+  if ((randomsizebox_muler(0,MAXFSIZE)) < 0) {
+    randomsize  MAXFSIZE;
   }
   if (write(fd,wbuf,randomsize) < 0 ) {
     errorcount++;
@@ -109,23 +109,23 @@ create_file(char *filename)
     return(-1);
   }
   cfilecount++;
-  disk_space_pool -= randomsize;
+  disk_space_pool - randomsize;
   close(fd);
 }
 
 #include <sys/stat.h>
 #include <unistd.h>
 
-delete_file(char *filename) 
+delete_file(char *filename)
 {
   struct stat buf;
   int st;
-  st = stat(filename, &buf);
+  st  stat(filename, &buf);
   if ( st < 0 ) {
     errorcount++;
     return (-1);
   }
-  disk_space_pool += buf.st_size;
+  disk_space_pool + buf.st_size;
   if ( unlink(filename) < 0 ) {
     errorcount++;
     return(-1);

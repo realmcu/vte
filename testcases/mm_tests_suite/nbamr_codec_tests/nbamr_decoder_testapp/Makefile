@@ -4,7 +4,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ##############################################################################
 #
 #   @file   Makefile
@@ -57,8 +57,8 @@ install:
 	cp -ruf $(NBAMRD_INPUT) $(LTP_BIN)
 	cp -ruf $(NBAMRD_REF) $(LTP_BIN)
 	mkdir -p $(LTP_BIN)/nbamrd_output
-	mkdir -p $(LTP_BIN)/sharedlibs   
-	cp -rf $(NBAMRD_LIBDIR)/lib$(NBAMRD_LIBRARY).so $(LTP_BIN)/sharedlibs                
+	mkdir -p $(LTP_BIN)/sharedlibs
+	cp -rf $(NBAMRD_LIBDIR)/lib$(NBAMRD_LIBRARY).so $(LTP_BIN)/sharedlibs
 	@echo "***********************************************"
 	@echo "** INSTALL : nbamr_decoder_testapp set       **"
 	@echo "***********************************************"

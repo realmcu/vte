@@ -32,81 +32,81 @@
  */
 /* $Id: unlink08.c,v 1.1 2001/08/27 22:15:15 plars Exp $ */
 /**********************************************************
- * 
+ *
  *    OS Test - Silicon Graphics, Inc.
- * 
- *    TEST IDENTIFIER	: unlink08
- * 
- *    EXECUTED BY	: anyone
- * 
- *    TEST TITLE	: unlink(2) negative testcases
- * 
- *    PARENT DOCUMENT	: usctpl01
- * 
- *    TEST CASE TOTAL	: 3
- * 
- *    WALL CLOCK TIME	: 1
- * 
- *    CPU TYPES		: ALL
- * 
- *    AUTHOR		: Richard Logan
- * 
- *    CO-PILOT		: William Roske
- * 
- *    DATE STARTED	: 03/30/94
- * 
- *    INITIAL RELEASE	: UNICOS 7.0
- * 
+ *
+ *    TEST IDENTIFIER : unlink08
+ *
+ *    EXECUTED BY : anyone
+ *
+ *    TEST TITLE : unlink(2) negative testcases
+ *
+ *    PARENT DOCUMENT : usctpl01
+ *
+ *    TEST CASE TOTAL : 3
+ *
+ *    WALL CLOCK TIME : 1
+ *
+ *    CPU TYPES  : ALL
+ *
+ *    AUTHOR  : Richard Logan
+ *
+ *    CO-PILOT  : William Roske
+ *
+ *    DATE STARTED : 03/30/94
+ *
+ *    INITIAL RELEASE : UNICOS 7.0
+ *
  *    TEST CASES
- * 
- * 	1-3) See Testcases structure below.
- *	
+ *
+ * 1-3) See Testcases structure below.
+ *
  *    INPUT SPECIFICATIONS
- * 	The standard options for system call tests are accepted.
- *	(See the parse_opts(3) man page).
- * 
+ * The standard options for system call tests are accepted.
+ * (See the parse_opts(3) man page).
+ *
  *    OUTPUT SPECIFICATIONS
- * 	
+ *
  *    DURATION
- * 	Terminates - with frequency and infinite modes.
- * 
+ * Terminates - with frequency and infinite modes.
+ *
  *    SIGNALS
- * 	Uses SIGUSR1 to pause before test if option set.
- * 	(See the parse_opts(3) man page).
+ * Uses SIGUSR1 to pause before test if option set.
+ * (See the parse_opts(3) man page).
  *
  *    RESOURCES
- * 	None
- * 
+ * None
+ *
  *    ENVIRONMENTAL NEEDS
  *      No run-time environmental needs.
- * 
+ *
  *    SPECIAL PROCEDURAL REQUIREMENTS
- * 	None
- * 
+ * None
+ *
  *    INTERCASE DEPENDENCIES
- * 	None
- * 
+ * None
+ *
  *    DETAILED DESCRIPTION
- *	This is a Phase I test for the unlink(2) system call.  It is intended
- *	to provide a limited exposure of the system call, for now.  It
- *	should/will be extended when full functional tests are written for
- *	unlink(2).
- * 
- * 	Setup:
- * 	  Setup signal handling.
- *	  Pause for SIGUSR1 if option specified.
- * 
- * 	Test:
- *	 Loop if the proper options are given.
- * 	  Execute system call
- *	  Check return code, if system call failed (return=-1)
- *		Log the errno and Issue a FAIL message.
- *	  Otherwise, Issue a PASS message.
- * 
- * 	Cleanup:
- * 	  Print errno log and/or timing stats if options given
- * 
- * 
+ * This is a Phase I test for the unlink(2) system call.  It is intended
+ * to provide a limited exposure of the system call, for now.  It
+ * should/will be extended when full functional tests are written for
+ * unlink(2).
+ *
+ * Setup:
+ *   Setup signal handling.
+ *   Pause for SIGUSR1 if option specified.
+ *
+ * Test:
+ *  Loop if the proper options are given.
+ *   Execute system call
+ *   Check return code, if system call failed (return-1)
+ *  Log the errno and Issue a FAIL message.
+ *   Otherwise, Issue a PASS message.
+ *
+ * Cleanup:
+ *   Print errno log and/or timing stats if options given
+ *
+ *
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
 #include <sys/types.h>
@@ -124,11 +124,11 @@ void cleanup();
 
 
 
-char *TCID="unlink08";		/* Test program identifier.    */
-int TST_TOTAL=3;    		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID"unlink08";  /* Test program identifier.    */
+int TST_TOTAL3;   /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 
-int exp_enos[]={0, 0};
+int exp_enos[]{0, 0};
 
 int unwrite_dir_setup();
 int unsearch_dir_setup();
@@ -139,13 +139,13 @@ struct test_case_t {
    char *pathname;
    char *desc;
    int (*setupfunc)();
-   int exp_ret;		/* -1 means error, 0 means != -1 */
+   int exp_ret;  /* -1 means error, 0 means ! -1 */
    int exp_errno;
-} Test_cases[] = {
+} Test_cases[]  {
     { "unwrite_dir/file", "unwritable directory", unwrite_dir_setup,
-		-1, EACCES},
+  -1, EACCES},
     { "unsearch_dir/file", "unsearchable directory", unsearch_dir_setup,
-		-1, EACCES },
+  -1, EACCES },
 #ifdef linux
     { "regdir", "directory", dir_setup, -1, EISDIR},
 #else
@@ -161,18 +161,18 @@ struct test_case_t {
 int
 main(int ac, char **av)
 {
-    int lc;		/* loop counter */
-    char *msg;		/* message returned from parse_opts */
+    int lc;  /* loop counter */
+    char *msg;  /* message returned from parse_opts */
     char *fname;
     char *desc;
     int ind;
-    
+
     /***************************************************************
      * parse standard options
      ***************************************************************/
-    if ( (msg=parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *) NULL ) {
-	tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	tst_exit();
+    if ( (msgparse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *) NULL ) {
+ tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+ tst_exit();
     }
 
     /***************************************************************
@@ -186,59 +186,59 @@ main(int ac, char **av)
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc=0; TEST_LOOPING(lc); lc++) {
+    for (lc0; TEST_LOOPING(lc); lc++) {
 
-	/* reset Tst_count in case we are looping. */
-	Tst_count=0;
-	
+ /* reset Tst_count in case we are looping. */
+ Tst_count0;
 
-        for (ind=0; Test_cases[ind].desc != NULL; ind++ ) {
 
-	    fname = Test_cases[ind].pathname;
-	    desc = Test_cases[ind].desc;
-       
+        for (ind0; Test_cases[ind].desc ! NULL; ind++ ) {
+
+     fname  Test_cases[ind].pathname;
+     desc  Test_cases[ind].desc;
+
             /*
-	     *  Call unlink(2)
-	     */
-	    TEST(unlink(fname));
-	
-	    /* check return code */
-	    if ( TEST_RETURN == -1 ) {
-	        if ( Test_cases[ind].exp_ret == -1 ) { /* neg test */
-	            if ( STD_FUNCTIONAL_TEST ) {
-		        if ( TEST_ERRNO == Test_cases[ind].exp_errno )
-	                    tst_resm(TPASS, "unlink(<%s>) Failed, errno=%d",
-			        desc, TEST_ERRNO);
-		        else
-			    tst_resm(TFAIL,
-			        "unlink(<%s>) Failed, errno=%d, expected errno:%d",
+      *  Call unlink(2)
+      */
+     TEST(unlink(fname));
+
+     /* check return code */
+     if ( TEST_RETURN  -1 ) {
+         if ( Test_cases[ind].exp_ret  -1 ) { /* neg test */
+             if ( STD_FUNCTIONAL_TEST ) {
+          if ( TEST_ERRNO  Test_cases[ind].exp_errno )
+                     tst_resm(TPASS, "unlink(<%s>) Failed, errno%d",
+           desc, TEST_ERRNO);
+          else
+       tst_resm(TFAIL,
+           "unlink(<%s>) Failed, errno%d, expected errno:%d",
                                 desc, TEST_ERRNO, Test_cases[ind].exp_errno);
-	            }
-		    else
-		       Tst_count++;
-		}
-		else {
-		    tst_resm(TFAIL, "unlink(<%s>) Failed, errno=%d",
-			desc, TEST_ERRNO);
-		}
-	    } else  {
-		if ( Test_cases[ind].exp_ret == -1 ) {
-	            tst_resm(TFAIL,
-		        "unlink(<%s>) returned %d, expected -1, errno:%d",
-		        desc, TEST_RETURN, Test_cases[ind].exp_errno);
-		}
-		else if ( STD_FUNCTIONAL_TEST ) {
-	            tst_resm(TPASS,
-		        "unlink(<%s>) returned %d",
-		        desc, TEST_RETURN);
-		}
-		else
-		    Tst_count++;
-		Test_cases[ind].setupfunc(1);
-	    }
-	}
-	
-    }	/* End for TEST_LOOPING */
+             }
+      else
+         Tst_count++;
+  }
+  else {
+      tst_resm(TFAIL, "unlink(<%s>) Failed, errno%d",
+   desc, TEST_ERRNO);
+  }
+     } else  {
+  if ( Test_cases[ind].exp_ret  -1 ) {
+             tst_resm(TFAIL,
+          "unlink(<%s>) returned %d, expected -1, errno:%d",
+          desc, TEST_RETURN, Test_cases[ind].exp_errno);
+  }
+  else if ( STD_FUNCTIONAL_TEST ) {
+             tst_resm(TPASS,
+          "unlink(<%s>) returned %d",
+          desc, TEST_RETURN);
+  }
+  else
+      Tst_count++;
+  Test_cases[ind].setupfunc(1);
+     }
+ }
+
+    } /* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -246,16 +246,16 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-}	/* End main */
+} /* End main */
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void 
+void
 setup()
 {
     int ind;
-    int postest = 0;
+    int postest  0;
 
     /* capture signals */
     tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -266,24 +266,24 @@ setup()
     /* make a temp directory and cd to it */
     tst_tmpdir();
 
-    if ( geteuid() == 0 ) {
-	postest++;
+    if ( geteuid()  0 ) {
+ postest++;
     }
 
-    for (ind=0; Test_cases[ind].desc != NULL; ind++ ) {
-	if ( Test_cases[ind].exp_errno == EACCES && postest )
-	    Test_cases[ind].exp_ret=0;	/* set as a pos test */
-	Test_cases[ind].setupfunc(0);
+    for (ind0; Test_cases[ind].desc ! NULL; ind++ ) {
+ if ( Test_cases[ind].exp_errno  EACCES && postest )
+     Test_cases[ind].exp_ret0; /* set as a pos test */
+ Test_cases[ind].setupfunc(0);
     }
 
-}	/* End setup() */
+} /* End setup() */
 
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
+ *  completion or premature exit.
  ***************************************************************/
-void 
+void
 cleanup()
 {
     chmod("unwrite_dir", 0777);
@@ -301,7 +301,7 @@ cleanup()
     /* exit with return code appropriate for results */
     tst_exit();
 
-}	/* End cleanup() */
+} /* End cleanup() */
 
 /******************************************************************
  *
@@ -312,44 +312,44 @@ int flag;
 {
     int fd;
 
-    if ( ! flag ) {	/* initial setup */
-        if (mkdir("unwrite_dir", 0777) == -1 ) {
-	    tst_brkm(TBROK, cleanup, 
-		"mkdir(unwrite_dir, 0777) failed, errno:%d %s",
-	        errno, strerror(errno));
+    if ( ! flag ) { /* initial setup */
+        if (mkdir("unwrite_dir", 0777)  -1 ) {
+     tst_brkm(TBROK, cleanup,
+  "mkdir(unwrite_dir, 0777) failed, errno:%d %s",
+         errno, strerror(errno));
         }
 
-        if ( (fd=creat("unwrite_dir/file", 0777)) == -1 ) {
-	    tst_brkm(TBROK, cleanup, 
-		"creat(unwrite_dir/file, 0777) failed, errno:%d %s",
-	        errno, strerror(errno));
+        if ( (fdcreat("unwrite_dir/file", 0777))  -1 ) {
+     tst_brkm(TBROK, cleanup,
+  "creat(unwrite_dir/file, 0777) failed, errno:%d %s",
+         errno, strerror(errno));
         }
         close(fd);
 
-        if ( chmod("unwrite_dir", 0555) == -1 ) {    
-	    tst_brkm(TBROK, cleanup, 
-		"chmod(unwrite_dir, 0555) failed, errno:%d %s",
-	        errno, strerror(errno));
+        if ( chmod("unwrite_dir", 0555)  -1 ) {
+     tst_brkm(TBROK, cleanup,
+  "chmod(unwrite_dir, 0555) failed, errno:%d %s",
+         errno, strerror(errno));
         }
     }
-    else {	/* resetup */
-        if ( chmod("unwrite_dir", 0777) == -1 ) {    
-	    tst_brkm(TBROK, cleanup, 
-		"chmod(unwrite_dir, 0777) failed, errno:%d %s",
-	        errno, strerror(errno));
+    else { /* resetup */
+        if ( chmod("unwrite_dir", 0777)  -1 ) {
+     tst_brkm(TBROK, cleanup,
+  "chmod(unwrite_dir, 0777) failed, errno:%d %s",
+         errno, strerror(errno));
         }
 
-        if ( (fd=creat("unwrite_dir/file", 0777)) == -1 ) {
-	    tst_brkm(TBROK, cleanup, 
-		"creat(unwrite_dir/file, 0777) failed, errno:%d %s",
-	        errno, strerror(errno));
+        if ( (fdcreat("unwrite_dir/file", 0777))  -1 ) {
+     tst_brkm(TBROK, cleanup,
+  "creat(unwrite_dir/file, 0777) failed, errno:%d %s",
+         errno, strerror(errno));
         }
         close(fd);
 
-        if ( chmod("unwrite_dir", 0555) == -1 ) {    
-	    tst_brkm(TBROK, cleanup, 
-		"chmod(unwrite_dir, 0555) failed, errno:%d %s",
-	        errno, strerror(errno));
+        if ( chmod("unwrite_dir", 0555)  -1 ) {
+     tst_brkm(TBROK, cleanup,
+  "chmod(unwrite_dir, 0555) failed, errno:%d %s",
+         errno, strerror(errno));
         }
     }
     return 0;
@@ -364,44 +364,44 @@ int flag;
 {
     int fd;
 
-    if ( ! flag ) {	/* initial setup */
-        if (mkdir("unsearch_dir", 0777) == -1 ) {
-	    tst_brkm(TBROK, cleanup, 
-		"mkdir(unsearch_dir, 0777) failed, errno:%d %s",
-	        errno, strerror(errno));
+    if ( ! flag ) { /* initial setup */
+        if (mkdir("unsearch_dir", 0777)  -1 ) {
+     tst_brkm(TBROK, cleanup,
+  "mkdir(unsearch_dir, 0777) failed, errno:%d %s",
+         errno, strerror(errno));
         }
 
-        if ( (fd=creat("unsearch_dir/file", 0777)) == -1 ) {    
-	    tst_brkm(TBROK, cleanup, 
-		"creat(unsearch_dir/file, 0777) failed, errno:%d %s",
-	        errno, strerror(errno));
+        if ( (fdcreat("unsearch_dir/file", 0777))  -1 ) {
+     tst_brkm(TBROK, cleanup,
+  "creat(unsearch_dir/file, 0777) failed, errno:%d %s",
+         errno, strerror(errno));
         }
         close(fd);
 
-        if ( chmod("unsearch_dir", 0666) == -1 ) {    
-	    tst_brkm(TBROK, cleanup, 
-		"chmod(unsearch_dir, 0666) failed, errno:%d %s",
-	        errno, strerror(errno));
+        if ( chmod("unsearch_dir", 0666)  -1 ) {
+     tst_brkm(TBROK, cleanup,
+  "chmod(unsearch_dir, 0666) failed, errno:%d %s",
+         errno, strerror(errno));
         }
     }
-    else {	/* resetup */
-        if ( chmod("unsearch_dir", 0777) == -1 ) {    
-	    tst_brkm(TBROK, cleanup, 
-		"chmod(unsearch_dir, 0777) failed, errno:%d %s",
-	        errno, strerror(errno));
+    else { /* resetup */
+        if ( chmod("unsearch_dir", 0777)  -1 ) {
+     tst_brkm(TBROK, cleanup,
+  "chmod(unsearch_dir, 0777) failed, errno:%d %s",
+         errno, strerror(errno));
         }
 
-        if ( (fd=creat("unsearch_dir/file", 0777)) == -1 ) {    
-	    tst_brkm(TBROK, cleanup, 
-		"creat(unsearch_dir/file, 0777) failed, errno:%d %s",
-	        errno, strerror(errno));
+        if ( (fdcreat("unsearch_dir/file", 0777))  -1 ) {
+     tst_brkm(TBROK, cleanup,
+  "creat(unsearch_dir/file, 0777) failed, errno:%d %s",
+         errno, strerror(errno));
         }
         close(fd);
 
-        if ( chmod("unsearch_dir", 0666) == -1 ) {    
-	    tst_brkm(TBROK, cleanup, 
-		"chmod(unsearch_dir, 0666) failed, errno:%d %s",
-	        errno, strerror(errno));
+        if ( chmod("unsearch_dir", 0666)  -1 ) {
+     tst_brkm(TBROK, cleanup,
+  "chmod(unsearch_dir, 0666) failed, errno:%d %s",
+         errno, strerror(errno));
         }
     }
     return 0;
@@ -414,10 +414,10 @@ int
 dir_setup(flag)
 int flag;
 {
-    if (mkdir("regdir", 0777) == -1 ) {
-	tst_brkm(TBROK, cleanup, 
-	    "mkdir(unwrite_dir, 0777) failed, errno:%d %s",
-	    errno, strerror(errno));
+    if (mkdir("regdir", 0777)  -1 ) {
+ tst_brkm(TBROK, cleanup,
+     "mkdir(unwrite_dir, 0777) failed, errno:%d %s",
+     errno, strerror(errno));
     }
     return 0;
 }
@@ -429,5 +429,5 @@ int
 no_setup(flag)
 int flag;
 {
-	return 0;
+ return 0;
 }

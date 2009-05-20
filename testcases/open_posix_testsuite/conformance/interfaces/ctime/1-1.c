@@ -20,14 +20,14 @@ int main() {
    char * result;
 
    time(&current_time);
-   result = ctime(&current_time);
+   result  ctime(&current_time);
 
-   if (result == NULL) {
-	puts ("Test FAILED: returned NULL");
-	return PTS_FAIL;
+   if (result  NULL) {
+ puts ("Test FAILED: returned NULL");
+ return PTS_FAIL;
    } else {
-   	printf("converted date and time is: %s\n", ctime(&current_time));
-	printf("Test PASSED\n");
-	return PTS_PASS;
+   printf("converted date and time is: %s\n", ctime(&current_time));
+ printf("Test PASSED\n");
+ return PTS_PASS;
    }
 }

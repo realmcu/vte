@@ -50,7 +50,7 @@
 
 #include "../libcontrollers/libcontrollers.h"
 
-/* #define VERBOSE	1 to print verbose output */
+/* #define VERBOSE 1 to print verbose output */
 
 #ifdef VERBOSE
 #define verbose(x...) printf(x)
@@ -66,99 +66,99 @@
  * intuitive. Here we keep 10 ms as the test criterion. The aim of the test
  * is to keep track on group schedular latency among diff kernel versions
  */
-#define ALLOWED	  10000  /* max latency allowed in us */
-#define info	printf("The results FAIL is just intuitive and not exact" \
-		" failure. Please look at the readme in the test directory.\n");
+#define ALLOWED   10000  /* max latency allowed in us */
+#define info printf("The results FAIL is just intuitive and not exact" \
+  " failure. Please look at the readme in the test directory.\n");
 
 extern int Tst_count;
-char *TCID = "cpuctl_latency_tests";
-int TST_COUNT = 1;
-int TST_TOTAL = 1;
+char *TCID  "cpuctl_latency_tests";
+int TST_COUNT  1;
+int TST_TOTAL  1;
 pid_t script_pid;
 
 extern void cleanup()
 {
-	exit(0);
+ exit(0);
 }
 
 int main(int argc, char *argv[])
 {
-	int count, i = 0, iteration = 0;
-	int fail = 0;
-	char mytaskfile[FILENAME_MAX];
-	int test_num;
-	struct timeval prev_time, cur_time;
-	unsigned int actual, actual_s, actual_us, sleeptime;
-	unsigned int delta, delta_max = 0;
-	pid_t script_pid;
+ int count, i  0, iteration  0;
+ int fail  0;
+ char mytaskfile[FILENAME_MAX];
+ int test_num;
+ struct timeval prev_time, cur_time;
+ unsigned int actual, actual_s, actual_us, sleeptime;
+ unsigned int delta, delta_max  0;
+ pid_t script_pid;
 
-	if ((argc < 3) || (argc > 4)) {
-		printf("Invalid #args received from script. Exiting test..\n");
-		exit(1);
-		}
+ if ((argc < 3) || (argc > 4)) {
+  printf("Invalid #args received from script. Exiting test..\n");
+  exit(1);
+  }
 
-	test_num = atoi(argv[1]);
-	script_pid = (pid_t) atoi(argv[2]);
-	if ((test_num < 0) || (script_pid < 0)) {
-		printf("Invalid args received from script. Exiting test..\n");
-		exit(1);
-		}
+ test_num  atoi(argv[1]);
+ script_pid  (pid_t) atoi(argv[2]);
+ if ((test_num < 0) || (script_pid < 0)) {
+  printf("Invalid args received from script. Exiting test..\n");
+  exit(1);
+  }
 
-	if (test_num == 2) {
-		strncpy(mytaskfile, argv[3], FILENAME_MAX);
-		strncat(mytaskfile, "/tasks",
-					 FILENAME_MAX - strlen(mytaskfile) - 1);
-		write_to_file(mytaskfile, "a", getpid());
+ if (test_num  2) {
+  strncpy(mytaskfile, argv[3], FILENAME_MAX);
+  strncat(mytaskfile, "/tasks",
+      FILENAME_MAX - strlen(mytaskfile) - 1);
+  write_to_file(mytaskfile, "a", getpid());
 
-		/* Give a chance to other tasks too to go to their class */
-		sleep(8);
-	}
+  /* Give a chance to other tasks too to go to their class */
+  sleep(8);
+ }
 
 
-	printf("TINFO \tThe latency check task started\n");
+ printf("TINFO \tThe latency check task started\n");
 
-	/* Let us start capturing the time now */
-	for (count = NUM_TIMES; count >= 0 ; count -= INTERVALS) {
-		if (gettimeofday(&prev_time, NULL) == -1)
-			perror("In Iteration no 1 \n");
-		/* sleep for specified time */
-		sleeptime = count * USECONDS;
-		usleep(sleeptime);
+ /* Let us start capturing the time now */
+ for (count  NUM_TIMES; count > 0 ; count - INTERVALS) {
+  if (gettimeofday(&prev_time, NULL)  -1)
+   perror("In Iteration no 1 \n");
+  /* sleep for specified time */
+  sleeptime  count * USECONDS;
+  usleep(sleeptime);
 
-		if (gettimeofday(&cur_time, NULL) == -1)
-			perror("In Iteration no 1 \n");
+  if (gettimeofday(&cur_time, NULL)  -1)
+   perror("In Iteration no 1 \n");
 
-		/* Get the actual difference */
-		actual_s = cur_time.tv_sec - prev_time.tv_sec;
-		actual_us = cur_time.tv_usec - prev_time.tv_usec;
-		actual = 1e6 * actual_s + actual_us;
-		delta = actual - sleeptime;
+  /* Get the actual difference */
+  actual_s  cur_time.tv_sec - prev_time.tv_sec;
+  actual_us  cur_time.tv_usec - prev_time.tv_usec;
+  actual  1e6 * actual_s + actual_us;
+  delta  actual - sleeptime;
 
-		/*  capture the maximum latency observed */
-		if (delta >= delta_max) {
-			delta_max = delta;
-			iteration = i;
-		}
+  /*  capture the maximum latency observed */
+  if (delta > delta_max) {
+   delta_max  delta;
+   iteration  i;
+  }
 
-		if (delta > ALLOWED)
-			fail = 1;
+  if (delta > ALLOWED)
+   fail  1;
 
-		verbose("Iteration %d: Exp(us) =%u, Actual =%u delta = %u\n",
-						 i++, sleeptime, actual, delta);
-	}
+  verbose("Iteration %d: Exp(us) %u, Actual %u delta  %u\n",
+       i++, sleeptime, actual, delta);
+ }
 
-	if (fail) {
-		printf("FAIL \tThe Latency test %d failed\n", test_num);
-		printf("Max latency observed = %u in Iteration %d\n",
-							 delta_max, iteration);
-		info;
-	} else {
-		printf("PASS \tThe Latency test %d passed\n", test_num);
-		printf("Max latency observed = %u microsec in Iteration %d\n",
-							 delta_max, iteration);
-	}
-	/* Done with testing, signal the script */
-	cleanup();
+ if (fail) {
+  printf("FAIL \tThe Latency test %d failed\n", test_num);
+  printf("Max latency observed  %u in Iteration %d\n",
+        delta_max, iteration);
+  info;
+ } else {
+  printf("PASS \tThe Latency test %d passed\n", test_num);
+  printf("Max latency observed  %u microsec in Iteration %d\n",
+        delta_max, iteration);
+ }
+ /* Done with testing, signal the script */
+ cleanup();
 
-	return 0;
+ return 0;
 }

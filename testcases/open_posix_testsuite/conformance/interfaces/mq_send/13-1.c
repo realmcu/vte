@@ -7,7 +7,7 @@
  */
 
 /*
- * Test that errno == EINVAL if msg_prio is >= MQ_PRIO_MAX or < 0 (<0 N/A
+ * Test that errno  EINVAL if msg_prio is > MQ_PRIO_MAX or < 0 (<0 N/A
  * for an unsigned, so not tested).
  */
 
@@ -26,58 +26,58 @@
 #define MSGSTR "0123456789"
 #define NUMINVALID 3
 
-static unsigned invalidpri[NUMINVALID] = {
-		MQ_PRIO_MAX, MQ_PRIO_MAX+1, MQ_PRIO_MAX+5
+static unsigned invalidpri[NUMINVALID]  {
+  MQ_PRIO_MAX, MQ_PRIO_MAX+1, MQ_PRIO_MAX+5
 };
 
 
 int main()
 {
         char qname[NAMESIZE];
-        const char *msgptr = MSGSTR;
+        const char *msgptr  MSGSTR;
         mqd_t queue;
-	int unresolved=0, failure=0, i;
+ int unresolved0, failure0, i;
 
         sprintf(qname, "/mq_send_13-1_%d", getpid());
 
-        queue = mq_open(qname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, NULL);
-        if (queue == (mqd_t)-1) {
+        queue  mq_open(qname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, NULL);
+        if (queue  (mqd_t)-1) {
                 perror("mq_open() did not return success");
                 return PTS_UNRESOLVED;
         }
 
-	for (i=0; i<NUMINVALID; i++) {
-        	if (mq_send(queue, msgptr, strlen(msgptr), invalidpri[i])== 0) {
-                	printf("mq_send() returned success on invalid %d\n",
-				invalidpri[i]);
-			failure = 1;
-        	}
-		if (errno != EINVAL) {
-			printf("errno not == EINVAL for invalid %d\n",
-				invalidpri[i]);
-			failure = 1;
-		}
-	}
+ for (i0; i<NUMINVALID; i++) {
+        if (mq_send(queue, msgptr, strlen(msgptr), invalidpri[i]) 0) {
+                printf("mq_send() returned success on invalid %d\n",
+    invalidpri[i]);
+   failure  1;
+        }
+  if (errno ! EINVAL) {
+   printf("errno not  EINVAL for invalid %d\n",
+    invalidpri[i]);
+   failure  1;
+  }
+ }
 
-        if (mq_close(queue) != 0) {
-		perror("mq_close() did not return success");
-		unresolved=1;
+        if (mq_close(queue) ! 0) {
+  perror("mq_close() did not return success");
+  unresolved1;
         }
 
-        if (mq_unlink(qname) != 0) {
-		perror("mq_unlink() did not return success");
-		unresolved=1;
+        if (mq_unlink(qname) ! 0) {
+  perror("mq_unlink() did not return success");
+  unresolved1;
         }
 
-	if (failure==1) {
-		printf("Test FAILED\n");
-		return PTS_FAIL;
-	}
+ if (failure1) {
+  printf("Test FAILED\n");
+  return PTS_FAIL;
+ }
 
-	if (unresolved==1) {
-		printf("Test UNRESOLVED\n");
-		return PTS_UNRESOLVED;
-	}
+ if (unresolved1) {
+  printf("Test UNRESOLVED\n");
+  return PTS_UNRESOLVED;
+ }
 
         printf("Test PASSED\n");
         return PTS_PASS;

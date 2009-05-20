@@ -53,7 +53,7 @@ public:
 public slots:
 
      void exitPass();
-  //   void exitFail();    
+  //   void exitFail();
 private:
     void setupFileActions();
     void setupEditActions();

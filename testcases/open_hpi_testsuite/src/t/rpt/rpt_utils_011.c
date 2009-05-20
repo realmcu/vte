@@ -31,41 +31,41 @@
  **/
 int main(int argc, char **argv)
 {
-        RPTable *rptable = (RPTable *)g_malloc0(sizeof(RPTable));
-        GSList *records = NULL;
-        guint i = 0;
+        RPTable *rptable  (RPTable *)g_malloc0(sizeof(RPTable));
+        GSList *records  NULL;
+        guint i  0;
 
-        for (i = 0; rptentries[i].ResourceId != 0; i++) {
+        for (i  0; rptentries[i].ResourceId ! 0; i++) {
                 if (oh_add_resource(rptable, rptentries + i, NULL, 0))
                         return 1;
         }
 
-        for (i = 0; i < 5; i++) {
+        for (i  0; i < 5; i++) {
                 if (oh_add_rdr(rptable, RPT_ENTRY_BEGIN, rdrs + i, NULL,0))
                         return 1;
                 else
-                        records = g_slist_append(records, rdrs + i);                
+                        records  g_slist_append(records, rdrs + i);
         }
 
         for (; records; i--) {
-                SaHpiRdrT *tmprdr = NULL, *randrdr = NULL;
-                GSList *tmpnode = NULL;
-                guint k = (guint) (((gfloat)i)*rand()/(RAND_MAX+1.0));
+                SaHpiRdrT *tmprdr  NULL, *randrdr  NULL;
+                GSList *tmpnode  NULL;
+                guint k  (guint) (((gfloat)i)*rand()/(RAND_MAX+1.0));
 
-                tmpnode = g_slist_nth(records, k);
-                randrdr = (SaHpiRdrT *)tmpnode->data;
-                randrdr->RecordId =
+                tmpnode  g_slist_nth(records, k);
+                randrdr  (SaHpiRdrT *)tmpnode->data;
+                randrdr->RecordId 
                         get_rdr_uid(randrdr->RdrType,
                                     randrdr->RdrTypeUnion.SensorRec.Num);
 
-                tmprdr = oh_get_rdr_by_id(rptable, RPT_ENTRY_BEGIN,
+                tmprdr  oh_get_rdr_by_id(rptable, RPT_ENTRY_BEGIN,
                                           randrdr->RecordId);
 
                 if (!tmprdr ||
                     memcmp(randrdr, tmprdr, sizeof(SaHpiRdrT)))
                         return 1;
                 else {
-                        records = g_slist_remove_link(records, tmpnode);
+                        records  g_slist_remove_link(records, tmpnode);
                         g_slist_free_1(tmpnode);
                 }
         }

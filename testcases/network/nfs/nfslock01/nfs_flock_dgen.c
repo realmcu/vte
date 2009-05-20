@@ -14,40 +14,40 @@ char **argv;
    char c, buf[BUFSIZ];
    FILE *fp;
 
-   if (argc != 5) {
+   if (argc ! 5) {
       printf("Usage:<nfs_flock_dgen > <file> <char/line> <lines> <ctype>\n");
       exit(2);
    }
 
-   fp = fopen(argv[1], "w");
+   fp  fopen(argv[1], "w");
 
-   nchars = atoi(argv[2]);
+   nchars  atoi(argv[2]);
    if (nchars > BUFSIZ) {
       printf("Exceeded the maximum limit of the buffer (4096)\n");
       exit(3);
    }
-   nlines = atoi(argv[3]);
-   ctype = atoi(argv[4]);
+   nlines  atoi(argv[3]);
+   ctype  atoi(argv[4]);
 
-   k = 0;
-   for(i = 1; i <= nlines; i++) {
+   k  0;
+   for(i  1; i < nlines; i++) {
       if (ctype) {
-         if ((i%2) == 0)
-            c = '0';
+         if ((i%2)  0)
+            c  '0';
          else
-            c = '1';
+            c  '1';
       }
       else
-         c = 'A' + k;
+         c  'A' + k;
 
-      for(j=0; j < nchars; j++)
-         buf[j] = c;
+      for(j0; j < nchars; j++)
+         buf[j]  c;
 
       fprintf(fp,"%s\n",buf);
 
       if (!ctype) {
-         if (i != 1 && i%26 == 0) {
-            k = 0;
+         if (i ! 1 && i%26  0) {
+            k  0;
          } else
             k++;
       }

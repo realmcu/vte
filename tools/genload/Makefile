@@ -1,4 +1,4 @@
-CFLAGS+= -DPACKAGE=\"stress\" -DVERSION=\"0.17pre11\" 
+CFLAGS+= -DPACKAGE=\"stress\" -DVERSION=\"0.17pre11\"
 
 LDLIBS+= -lm -L../../lib
 

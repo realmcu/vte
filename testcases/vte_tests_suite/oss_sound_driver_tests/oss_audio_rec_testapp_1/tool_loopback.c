@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   tool_recorder.c
 
         @brief  OSS audio record test file.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -23,13 +23,13 @@ D.Khoroshev/b00313           03/03/2006     TLSbo62323  Updates according to las
 D.Simakov/b00296             06/07/2006     TLSbo67022  Error in SNDCTL_CLK_SET_MASTER call fixed (PMIC master, SSI slave is 0 value)
 D.Simakov                    19/10/2006     TLSbo76144  dsp->adsp, dsp1->dsp
 D.Simakov                    07/12/2006     TLSbo76144  Updated with the new kernel
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <errno.h>
 #include <pthread.h>
@@ -41,9 +41,9 @@ Portability: ARM GCC
 #include "oss_sound_driver_test.h"
 #include "../common.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 #define BUF_SIZE        4096
  // 32767
 #define ARG_SRC         1
@@ -69,16 +69,16 @@ pthread_mutex_t reached_flag_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t rw_mutex;
 static int wait_for_write = 0;
 
-/*================================================================================================*/
+/*====================*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_oss_sound_driver_setup(void)
 {
         int     rv = TFAIL;
@@ -89,16 +89,16 @@ int VT_oss_sound_driver_setup(void)
         return rv;
 }
 
-/*================================================================================================*/
+/*====================*/
 /**
 @brief  assumes the post-condition of the test case execution
 
 @param  None
-    
+
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_oss_sound_driver_cleanup(void)
 {
         int     rv = TFAIL;
@@ -109,15 +109,15 @@ int VT_oss_sound_driver_cleanup(void)
         return rv;
 }
 
-/*================================================================================================*/
+/*====================*/
 /**
 @brief  the recording thread
 
-@param  loacal_arg - thread argument 
+@param  loacal_arg - thread argument
 
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void main1(thrd_t * local_arg)
 {
         int     nread;
@@ -163,7 +163,7 @@ void main1(thrd_t * local_arg)
         pthread_mutex_unlock(&reached_flag_mutex);
 }
 
-/*================================================================================================*/
+/*====================*/
 /**
 @brief  the playing thread
 
@@ -171,7 +171,7 @@ void main1(thrd_t * local_arg)
 
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void main2(thrd_t * local_arg)
 {
         int     ntot,
@@ -223,7 +223,7 @@ void main2(thrd_t * local_arg)
         }
 }
 
-/*================================================================================================*/
+/*====================*/
 /* ! * This function launches two threads. One for reading, one for writing
  * @param fd_audio the
  * reading device
@@ -231,7 +231,7 @@ void main2(thrd_t * local_arg)
  * @param toread the number of bytes to read
  * @return the number of errors encountered
  */
-/*================================================================================================*/
+/*====================*/
 int launch_full_duplex(int fd_audio, int fd_audio2, int toread)
 {
         thrd_t  local_arg,
@@ -264,7 +264,7 @@ int launch_full_duplex(int fd_audio, int fd_audio2, int toread)
 }
 
 
-/*================================================================================================*/
+/*====================*/
 /**
 @brief  executes test case.
 
@@ -277,7 +277,7 @@ int launch_full_duplex(int fd_audio, int fd_audio2, int toread)
 
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 int VT_oss_sound_driver_test(int p_src, int p_type, int p_bytes, int p_bits, int p_speed,
                              int p_chan)
 {

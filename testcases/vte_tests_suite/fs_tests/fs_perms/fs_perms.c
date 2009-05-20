@@ -21,7 +21,7 @@
  *  FILE(s)     : fs_perms.c simpletest.sh textx.o Makefile README
  *  DESCRIPTION : Regression test for Linux filesystem permissions.
  *  AUTHOR      : Jeff Martin (martinjn@us.ibm.com)
- *  HISTORY     : 
+ *  HISTORY     :
  *     (04/12/01)v.99  First attempt at using C for fs-regression test.  Only tests read and write bits.
  *     (04/19/01)v1.0  Added test for execute bit.
  *     (05/23/01)v1.1  Added command line parameter to specify test file.
@@ -48,17 +48,17 @@ int main( int argc, char *argv[]) {
 
    switch (argc) {
       case 8:
-	      mode = strtol(argv[1],(char**)NULL,010);
+       mode = strtol(argv[1],(char**)NULL,010);
               cuserId = atoi(argv[2]);
               cgroupId = atoi(argv[3]);
               userId = atoi(argv[4]);
               groupId = atoi(argv[5]);
               fperm[0] = *argv[6];
               exresult = atoi(argv[7]);
-	      break;
+       break;
       default:
-	      printf("Usage: %s <mode of file> <UID of file> <GID of file> <UID of tester> <GID of tester> <permission to test r|w|x> <expected result as 0|1>\n",argv[0]); 
-	      exit(0);
+       printf("Usage: %s <mode of file> <UID of file> <GID of file> <UID of tester> <GID of tester> <permission to test r|w|x> <expected result as 0|1>\n",argv[0]);
+       exit(0);
    }
 
    testsetup(mode,cuserId,cgroupId);
@@ -94,7 +94,7 @@ int testfperm(int userId, int groupId, char* fperm) {
            seteuid(0);
            setegid(0);
            return(-1);
-        }   
+        }
     if(seteuid(userId)) {
         printf("could not seteuid to %d.\n",userId);
            seteuid(0);
@@ -103,29 +103,29 @@ int testfperm(int userId, int groupId, char* fperm) {
         }
 
     switch(tolower(fperm[0])) {
-       case 'x': 
+       case 'x':
           PID = fork();
-	  if (PID == 0) {
-             execlp("./test.file","test.file",NULL); 
-	     exit(0);
-	  }
-	  wait(&tmpi);
-	  nuthertmpi=WEXITSTATUS(tmpi); 
+   if (PID == 0) {
+             execlp("./test.file","test.file",NULL);
+      exit(0);
+   }
+   wait(&tmpi);
+   nuthertmpi=WEXITSTATUS(tmpi);
           seteuid(0);
           setegid(0);
-	  return(nuthertmpi);
+   return(nuthertmpi);
 
-       default: 
+       default:
           if((testfile=fopen("test.file",fperm))){
             fclose(testfile);
             seteuid(0);
             setegid(0);
             return (1);
-	  }
+   }
           else {
             seteuid(0);
             setegid(0);
             return (0);
-	  }
+   }
     }
 }

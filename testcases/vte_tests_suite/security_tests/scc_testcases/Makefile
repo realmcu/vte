@@ -28,7 +28,7 @@ OBJS = $(patsubst %.c,%.o,$(SRCS))
 CFLAGS += -I$(LTP_DIR)/include \
           -I$(KLINUX_SRCDIR)/drivers/mxc/security \
           -I../scc_test_module \
-          -I$(KLINUX_SRCDIR)/include/asm-arm/arch-mxc 
+          -I$(KLINUX_SRCDIR)/include/asm-arm/arch-mxc
 
 LOADLIBES = -L$(LTP_DIR)/lib -lltp
 

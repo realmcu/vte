@@ -1,6 +1,6 @@
 /*
  *  epoll.c ( Efficent event polling implementation )
- *  Copyright (C) 2001,...,2002	 Davide Libenzi
+ *  Copyright (C) 2001,...,2002  Davide Libenzi
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 
 #define __sys_epoll_create(size) _syscall1(int, epoll_create, int, size)
 #define __sys_epoll_ctl(epfd, op, fd, event) _syscall4(int, epoll_ctl, \
-			int, epfd, int, op, int, fd, struct epoll_event *, event)
+   int, epfd, int, op, int, fd, struct epoll_event *, event)
 #define __sys_epoll_wait(epfd, pevents, maxevents, timeout) _syscall4(int, epoll_wait, \
-			  int, epfd, struct epoll_event *, pevents, int, maxevents, int, timeout)
+     int, epfd, struct epoll_event *, pevents, int, maxevents, int, timeout)
 
 
 __sys_epoll_create(size)

@@ -1,4 +1,4 @@
-/* 
+/*
 * Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved THIS SOURCE CODE IS
 * CONFIDENTIAL AND PROPRIETARY AND MAY NOT BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 * Freescale Semiconductor, Inc. */
@@ -19,7 +19,7 @@ Description of the file
 Author (core ID)            Date           CR Number      Description of Changes
 -------------------   ----------   ----------   ------------------------------
 S.ZAVJALOV/zvjs001c   22/03/2005   tlsbo46706       Initial version
-I.Inkina/nknl001           25/07/2005   TLSbo50891      Update open device  
+I.Inkina/nknl001           25/07/2005   TLSbo50891      Update open device
 E.Gromazina                14/10/2005    TLSbo56643     Update for the first MMC
 =============================================================================*/
 
@@ -27,7 +27,7 @@ E.Gromazina                14/10/2005    TLSbo56643     Update for the first MMC
 #define EJECT_MMC_TEST_H
 
 #ifdef __cplusplus
-extern "C"{ 
+extern "C"{
 #endif
 
 /*======================== INCLUDE FILES ====================================*/
@@ -39,7 +39,7 @@ extern "C"{
 /*======================== DEFINES AND MACROS ===============================*/
 
 #define SLEEP_TIME  20000       /* Wait for character with timeout 25ms */
-/* 
+/*
 * #define MMC_DEVICE_BLOCK1 "/dev/mmc/blk0/disc" #define MMC_DEVICE_BLOCK2 "/dev/mmc/blk1/disc" */
 #ifndef TRUE
 #define TRUE  1
@@ -75,7 +75,7 @@ int     VT_eject_mmc_cleanup(void);
 int     VT_eject_mmc_test(param_mmc * par);
 
 #ifdef __cplusplus
-} 
+}
 #endif
 
 #endif                          // EJECT_MMC_TEST_H //

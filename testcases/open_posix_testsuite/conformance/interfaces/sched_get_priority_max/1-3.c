@@ -1,4 +1,4 @@
-/* 
+/*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -17,32 +17,32 @@
 #include <unistd.h>
 #include "posixtest.h"
 
-#if defined(_POSIX_SPORADIC_SERVER)&&(_POSIX_SPORADIC_SERVER != -1)||defined(_POSIX_THREAD_SPORADIC_SERVER)&&(_POSIX_THREAD_SPORADIC_SERVER != -1)
+#if defined(_POSIX_SPORADIC_SERVER)&&(_POSIX_SPORADIC_SERVER ! -1)||defined(_POSIX_THREAD_SPORADIC_SERVER)&&(_POSIX_THREAD_SPORADIC_SERVER ! -1)
 
 int main(int argc, char **argv)
-{	       
-	int result = -1;
-	
-	result = sched_get_priority_max(SCHED_SPORADIC);
-	
-	if(result != -1 && errno == 0 ) {
-		printf("The maximum priority for policy SCHED_SPORADIC is %i.\n",
-		       result);
-		printf("Test PASSED\n");
-		return PTS_PASS;
-	} else {
-		perror("An error occurs");
-		return PTS_FAIL;
-	}
-		
-	printf("This code should not be executed.\n");
+{
+ int result  -1;
+
+ result  sched_get_priority_max(SCHED_SPORADIC);
+
+ if(result ! -1 && errno  0 ) {
+  printf("The maximum priority for policy SCHED_SPORADIC is %i.\n",
+         result);
+  printf("Test PASSED\n");
+  return PTS_PASS;
+ } else {
+  perror("An error occurs");
+  return PTS_FAIL;
+ }
+
+ printf("This code should not be executed.\n");
         return PTS_UNRESOLVED;
 }
 #else
 int main()
 {
-	printf("Does not support SS (SPORADIC SERVER)\n");
-	return PTS_UNSUPPORTED;
+ printf("Does not support SS (SPORADIC SERVER)\n");
+ return PTS_UNSUPPORTED;
 }
 #endif
 

@@ -14,13 +14,13 @@ declare -i verbose=1
 usage()
 {
     echo "
-${prog} ${version} read lcov capture directory(ies) or tar'ed archive(s) capture directory, 
-generate data file(s) (.info) for it/them. 
+${prog} ${version} read lcov capture directory(ies) or tar'ed archive(s) capture directory,
+generate data file(s) (.info) for it/them.
 
-Usage: 
+Usage:
 
     ${0##*/} [-v|-vv] [-q] [-d <DATADIR>] [-o <INFODIR>] -S <SRCTREE> [-B <OBJTREE>] <INPUT>|<INPUT.GCOV.TAR>...
-    
+
     Where:
       -v           : Be more verbose, print action on stdout.
       -vv          : Be more verbose, print commands on stdout.
@@ -30,7 +30,7 @@ Usage:
       -d <DATADIR> : Directory where to untar <INPUT.GCOV.TAR> (default is \$PWD)
       -S <SRCTREE> : Linux source tree
       -B <OBJTREE> : Linux build tree (if != <SRCTREE>)
-      <INPUT>...   : list of capture directory or capture TAR file. 
+      <INPUT>...   : list of capture directory or capture TAR file.
 
 "
     exit
@@ -39,7 +39,7 @@ Usage:
 action()
 {
     if [ $verbose -gt 0 ];
-	then
+ then
         echo "[$prog] $*" 2>&1 | tee -a $log
     fi
 }
@@ -47,11 +47,11 @@ action()
 command()
 {
     if [ $verbose -gt 1 ];
-	then
+ then
         echo "  $*" | tee -a $log
     fi
     if [ $verbose -gt 2 ];
-	then
+ then
         ($*) 2>&1 | tee -a $log
     else
         ($*) >> $log 2>&1
@@ -106,7 +106,7 @@ while [ $# -ne 0 ];
           shift
           ;;
       *)
-          ls -- $1 2>&1 > /dev/null 
+          ls -- $1 2>&1 > /dev/null
           if [ ! $? ]
               then
               echo "\"$1\": no such file or directory"
@@ -174,8 +174,8 @@ for i in $oldinput;
       do
         ln -s $objtree/${f//.gcda/.gcno} $datadir/$base/${f//.gcda/.gcno}
         src=${f//.gcda/.c}
-        if [ -e $objtree/$src ]; 
-            then 
+        if [ -e $objtree/$src ];
+            then
             ln -s $objtree/$src $datadir/$base/$src
         elif [ -e $srctree/$src ];
             then

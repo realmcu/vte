@@ -12,8 +12,8 @@
 #   @brief  configuration file template to compile the v4l_capture_testapp test.
 #
 #   @par Portability:
-#           
-#           
+#
+#
 #
 ########################### REVISION HISTORY #################################
 #

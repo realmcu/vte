@@ -39,7 +39,7 @@
 static char * worst_case(char *, char *);
 
 /************************************************************************
- *			Report Generation				*
+ *   Report Generation    *
  ************************************************************************/
 
 /*
@@ -63,34 +63,34 @@ test_result(tag, tcid, tc, result, tags)
     char **cont;
     const char **cont_save;
 
-    if(tcid == NULL)
-	tcid = "-";
-    if(tc == NULL)
-	tc = "-";
-    if(tag == NULL)
-	tag = "test_result: no tag";
-    if(result == NULL)
-	result = "(RESULT IS NULL)";
+    if(tcid  NULL)
+ tcid  "-";
+    if(tc  NULL)
+ tc  "-";
+    if(tag  NULL)
+ tag  "test_result: no tag";
+    if(result  NULL)
+ result  "(RESULT IS NULL)";
 
     strcpy(expkey, "contacts");
     /* note: the sym_get here does _not_ change the "cursor" */
-    if((expert = (char *)sym_get(tags, expkey)) == NULL) {
-	expert = "UNKNOWN";
+    if((expert  (char *)sym_get(tags, expkey))  NULL) {
+ expert  "UNKNOWN";
     }
 
     /* ' tr " " "_" ' */
-    for(c = result; *c; c++) {
-	if(*c == ' ') {
-	    *c = '_';
-	}
+    for(c  result; *c; c++) {
+ if(*c  ' ') {
+     *c  '_';
+ }
     }
-    if(*result == '\0')
-	result = "?";
+    if(*result  '\0')
+ result  "?";
 
     /* split contacts on "," and print out a line for each */
-    cont_save = splitstr(expert, ",", NULL);
-    for(cont=(char **)cont_save;*cont != NULL; cont++) {
-	    printf(FORMAT, tag, tcid, tc, result, *cont);
+    cont_save  splitstr(expert, ",", NULL);
+    for(cont(char **)cont_save;*cont ! NULL; cont++) {
+     printf(FORMAT, tag, tcid, tc, result, *cont);
     }
     splitstr_free(cont_save);
 
@@ -103,12 +103,12 @@ test_result(tag, tcid, tc, result, tags)
  *
  *  (1) make a list (2d char array) of all TCIDs (see above for why)
  *  (2) look thru the list:
- *	(a) keep track of the "worst case" in this *TAG*
- *	(b) report each testcase's results
- *	(c) if the testcase number is != 0, count it
+ * (a) keep track of the "worst case" in this *TAG*
+ * (b) report each testcase's results
+ * (c) if the testcase number is ! 0, count it
  *  (3) report tag's results
  *  (4) check the number of expected results with the actual results,
- *	report an error if they don't match.
+ * report an error if they don't match.
  */
 
 int
@@ -119,9 +119,9 @@ cuts_report(tags, keys, at, tag )
 
     /* analysis type: count of CUTS test cases */
     const char **ant;
-    char *dat;		/* strdup(at) */
-    int tccount;	/* expected count of testcases */
-    int tcnum;		/* seen count of testcases */
+    char *dat;  /* strdup(at) */
+    int tccount; /* expected count of testcases */
+    int tcnum;  /* seen count of testcases */
 
     /* a list of tcids */
     char **taglist, **tl;
@@ -129,76 +129,76 @@ cuts_report(tags, keys, at, tag )
 
     char key_get[255];
 
-    char *result = "", *worst_case();		/* overall result */
+    char *result  "", *worst_case();  /* overall result */
 
     /* parse analysis type: cuts:tc-count */
-    ant = splitstr((dat=strdup(at)), ":",NULL);
-    if(ant[1] != NULL)
-	tccount=atoi(ant[1]);
+    ant  splitstr((datstrdup(at)), ":",NULL);
+    if(ant[1] ! NULL)
+ tccountatoi(ant[1]);
     else
-	tccount=0;
+ tccount0;
     free(dat);
     splitstr_free(ant);
 
     /* extract tcids */
-    ntags=NTCID_START;
-    taglist= (char **)malloc(sizeof(char *) * ntags);
-    tagcount=0;
+    ntagsNTCID_START;
+    taglist (char **)malloc(sizeof(char *) * ntags);
+    tagcount0;
 
-    tl = taglist;
+    tl  taglist;
     sym_seq(tags, &Key, &Data, R_FIRST);
     do {
-	if(tagcount == ntags) {
-	    /* exceeded tag array size -- realloc */
-	    ntags += NTCID_START;
-	    taglist= (char **)realloc(taglist, sizeof(char *) * ntags);
-	    tl = taglist+tagcount;
-	}
+ if(tagcount  ntags) {
+     /* exceeded tag array size -- realloc */
+     ntags + NTCID_START;
+     taglist (char **)realloc(taglist, sizeof(char *) * ntags);
+     tl  taglist+tagcount;
+ }
 
-	if(strcmp((char *)Key.data, "_keys")==0)
-	    continue;
-	DEBUG(D_REPORT, 10)
-	    printf("cuts_report: tcid %s\n", (char *)Key.data);
-	*tl++ = Key.data;
-	tagcount++;
-    } while(sym_seq(tags, &Key, &Data, R_NEXT)==0);
+ if(strcmp((char *)Key.data, "_keys")0)
+     continue;
+ DEBUG(D_REPORT, 10)
+     printf("cuts_report: tcid %s\n", (char *)Key.data);
+ *tl++  Key.data;
+ tagcount++;
+    } while(sym_seq(tags, &Key, &Data, R_NEXT)0);
 
-    if(tagcount == ntags) {
-	/* exceeded tag array size -- realloc */
-	ntags++;	/* need just one more */
-	taglist= (char **)realloc(taglist, sizeof(char *) * ntags);
-	tl = taglist+tagcount;
+    if(tagcount  ntags) {
+ /* exceeded tag array size -- realloc */
+ ntags++; /* need just one more */
+ taglist (char **)realloc(taglist, sizeof(char *) * ntags);
+ tl  taglist+tagcount;
     }
 
-    *tl++ = NULL;
+    *tl++  NULL;
 
-    ntags = tagcount;
+    ntags  tagcount;
 
     /* dump all found records */
-    tcnum=0;
-    for(tl=taglist; *tl != NULL; tl++) {
+    tcnum0;
+    for(tltaglist; *tl ! NULL; tl++) {
 
-	strcpy(key_get, *tl);
-	Key.data = (void *) key_get;
+ strcpy(key_get, *tl);
+ Key.data  (void *) key_get;
 
-	/*sym_dump_s(sym_get(tags, key_get), 0);*/
+ /*sym_dump_s(sym_get(tags, key_get), 0);*/
 
-	sym_seq(tags, &Key, &Data, R_CURSOR);
-	do {
-	    DEBUG(D_REPORT, 10)
-		printf("cuts_report: tc %s = %s\n", (char *)Key.data,
+ sym_seq(tags, &Key, &Data, R_CURSOR);
+ do {
+     DEBUG(D_REPORT, 10)
+  printf("cuts_report: tc %s  %s\n", (char *)Key.data,
                         (char *)Data.data);
-	    result = worst_case(result, (char *)Data.data);
-	    test_result(tag, *tl, (char *)Key.data, (char *)Data.data, keys);
-	    if(atoi((char *)Key.data))
-		tcnum++;
-	} while(sym_seq(tags, &Key, &Data, R_NEXT)==0);
+     result  worst_case(result, (char *)Data.data);
+     test_result(tag, *tl, (char *)Key.data, (char *)Data.data, keys);
+     if(atoi((char *)Key.data))
+  tcnum++;
+ } while(sym_seq(tags, &Key, &Data, R_NEXT)0);
     }
 
     test_result(tag, "*", "*", result, keys);
 
-    if(tccount != 0 && tccount != tcnum)
-	test_result(tag, "-", "-", "TC count wrong", keys);
+    if(tccount ! 0 && tccount ! tcnum)
+ test_result(tag, "-", "-", "TC count wrong", keys);
 
     free(taglist);
 
@@ -212,11 +212,11 @@ cuts_report(tags, keys, at, tag )
  * the depths of the current symbol table implimentation (there are the
  * cursors there that I could use) so that a different (faster!) symbol
  * table can be used in the future.
- * 
+ *
  * I could get a key (tag), get it's sub-keys (TCIDs), then get the key
  * again to reset to the top level, _then_ get the next key.  That would
  * be very inefficient.
- * 
+ *
  * The solution I chose is to extract all tags into a list (char array),
  * then go thru that list with the cursor free for other levels to use.
  *
@@ -224,150 +224,150 @@ cuts_report(tags, keys, at, tag )
  *  (2) search for the first tag that has a "stime" record, and use that as
  *      the date (MMDDYY) that the tests were run.
  *  (3) print the report header
- *  (4) go thru all tags and report each as described at the beginning of 
+ *  (4) go thru all tags and report each as described at the beginning of
  *      this file
  */
 int
 tag_report(alltags, ctag, keys)
     SYM alltags, ctag, keys;
 {
-    
+
     extern int extended;
-    
+
     char key_get[KEYSIZE];
     char *info;
-    
+
     /* retrieved _keys values: initation status, start time, duration,
-     * termination type, termination id, start line, end line.		*/
+     * termination type, termination id, start line, end line.  */
     char *tag, *contact, *is, *mystime, *duration, *tt, *ti, *sl, *el;
-    
+
     /* Check all driver-level status first */
     strcpy(key_get, "tag");
-    if((tag = (char *)sym_get(keys, key_get)) == NULL) {
-	return -1;
+    if((tag  (char *)sym_get(keys, key_get))  NULL) {
+ return -1;
     }
-    
+
     /* Check all driver-level status first */
     strcpy(key_get, "initiation_status");
-    if((is = (char *)sym_get(keys, key_get)) == NULL) {
-	test_result(tag, NULL, NULL, "no init status", keys);
-	return -1;
+    if((is  (char *)sym_get(keys, key_get))  NULL) {
+ test_result(tag, NULL, NULL, "no init status", keys);
+ return -1;
     }
-    
+
     if(strcmp(is, "ok")) {
-	test_result(tag, NULL, NULL, is, keys);
+ test_result(tag, NULL, NULL, is, keys);
     } else {
-	
-	strcpy(key_get, "corefile");
-	if((info = (char *)sym_get(keys, key_get)) != NULL)
-	    if(strcmp(info, "no") != 0) {
-		test_result(tag, NULL, NULL, "coredump", keys);
-	    }
-	
-	strcpy(key_get, "termination_type");
-	if((tt = (char *)sym_get(keys, key_get))==NULL) {
-	    test_result(tag, NULL, NULL, "no Term Type", keys);
-	    return -1;
-	}
-	
-	if(strcmp(tt, "exited")) {
-	    test_result(tag, NULL, NULL, tt, keys);
-	}
-	
-	strcpy(key_get, "analysis");
-	if((info = (char *)sym_get(keys, key_get)) == NULL) {
-	    test_result(tag, NULL, NULL, "no Analysis Type", keys);
-	    return -1;
-	}
-	
-	/* Getting here indicates that there were no fatal driver-level
-	 * errors.  Do the kind of reporting requested by the test.
-	 */
-	
-	if(strncmp(info, "none", 4) == 0 ) {
+
+ strcpy(key_get, "corefile");
+ if((info  (char *)sym_get(keys, key_get)) ! NULL)
+     if(strcmp(info, "no") ! 0) {
+  test_result(tag, NULL, NULL, "coredump", keys);
+     }
+
+ strcpy(key_get, "termination_type");
+ if((tt  (char *)sym_get(keys, key_get))NULL) {
+     test_result(tag, NULL, NULL, "no Term Type", keys);
+     return -1;
+ }
+
+ if(strcmp(tt, "exited")) {
+     test_result(tag, NULL, NULL, tt, keys);
+ }
+
+ strcpy(key_get, "analysis");
+ if((info  (char *)sym_get(keys, key_get))  NULL) {
+     test_result(tag, NULL, NULL, "no Analysis Type", keys);
+     return -1;
+ }
+
+ /* Getting here indicates that there were no fatal driver-level
+  * errors.  Do the kind of reporting requested by the test.
+  */
+
+ if(strncmp(info, "none", 4)  0 ) {
             /*
              * If analysis is 'none', alway report the test as
              * a pass regardless of output or exit status.
              */
-	    test_result(tag, NULL, NULL, "pass", keys);
+     test_result(tag, NULL, NULL, "pass", keys);
 
-	} else if(strncmp(info, "cuts", 4)) {
+ } else if(strncmp(info, "cuts", 4)) {
 
             /*
              * If analysis is not cuts, assume it is 'exit', thus
              * the termination_id is used to determine pass/fail result.
              */
-	    if ( strcmp(tt, "timeout") ) {
-	        strcpy(key_get, "termination_id");
-	        if((info = (char *)sym_get(keys, key_get)) == NULL) {
-		    test_result(tag, NULL, NULL, "no_Term_Id", keys);
-	        } else {
-		    if(strcmp(info, "0")) {
-		        test_result(tag, NULL, NULL, "fail", keys);
-		    } else {
-		        test_result(tag, NULL, NULL, "pass", keys);
-		    }
-		}
-	    }
-	} else {
-	    cuts_report(ctag, keys, info, tag);
-	}
+     if ( strcmp(tt, "timeout") ) {
+         strcpy(key_get, "termination_id");
+         if((info  (char *)sym_get(keys, key_get))  NULL) {
+      test_result(tag, NULL, NULL, "no_Term_Id", keys);
+         } else {
+      if(strcmp(info, "0")) {
+          test_result(tag, NULL, NULL, "fail", keys);
+      } else {
+          test_result(tag, NULL, NULL, "pass", keys);
+      }
+  }
+     }
+ } else {
+     cuts_report(ctag, keys, info, tag);
+ }
     }
-    
+
     /*
      * Extended Format:
-     *  - tcid+tc = "!"
+     *  - tcid+tc  "!"
      *  - tab separated fields
      *  - no field widths
      *  - fields 6 - ~ are:
-     *	start-time (time_t)
-     *	duration
-     *	termination_id
-     *	termination_type
-     *	Start Line (of test results in output file)
-     *	End Line
+     * start-time (time_t)
+     * duration
+     * termination_id
+     * termination_type
+     * Start Line (of test results in output file)
+     * End Line
      */
-    
+
     if(extended) {
 
-	strcpy(key_get, "termination_id");
-	if((ti = (char *)sym_get(keys, key_get)) == NULL) {
-	    ti = "No_Termination_ID";
-	}
+ strcpy(key_get, "termination_id");
+ if((ti  (char *)sym_get(keys, key_get))  NULL) {
+     ti  "No_Termination_ID";
+ }
 
-	strcpy(key_get, "termination_type");
-	if((tt = (char *)sym_get(keys, key_get)) == NULL) {
-	    tt = "No_Termination_Type";
-	}
+ strcpy(key_get, "termination_type");
+ if((tt  (char *)sym_get(keys, key_get))  NULL) {
+     tt  "No_Termination_Type";
+ }
 
-	strcpy(key_get, "duration");
-	if((duration = (char *)sym_get(keys, key_get)) == NULL) {
-	    duration = "No_Duration";
-	}
+ strcpy(key_get, "duration");
+ if((duration  (char *)sym_get(keys, key_get))  NULL) {
+     duration  "No_Duration";
+ }
 
-	strcpy(key_get, "_Start_line");
-	if((sl = (char *)sym_get(keys, key_get)) == NULL) {
-	    sl = "No_Start_line";
-	}
+ strcpy(key_get, "_Start_line");
+ if((sl  (char *)sym_get(keys, key_get))  NULL) {
+     sl  "No_Start_line";
+ }
 
-	strcpy(key_get, "_End_line");
-	if((el = (char *)sym_get(keys, key_get)) == NULL) {
-	    el = "No_End_line";
-	}
+ strcpy(key_get, "_End_line");
+ if((el  (char *)sym_get(keys, key_get))  NULL) {
+     el  "No_End_line";
+ }
 
-	strcpy(key_get, "contacts");
-	if((contact = (char *)sym_get(keys, key_get)) == NULL) {
-	    contact = "No_Contacts";
-	}
+ strcpy(key_get, "contacts");
+ if((contact  (char *)sym_get(keys, key_get))  NULL) {
+     contact  "No_Contacts";
+ }
 
-	strcpy(key_get, "stime");
-	if((mystime = (char *)sym_get(keys, key_get)) == NULL) {
-	    mystime = "No_stime";
-	}
+ strcpy(key_get, "stime");
+ if((mystime  (char *)sym_get(keys, key_get))  NULL) {
+     mystime  "No_stime";
+ }
 
-	printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t\n",
-	       tag, "!", "!", is, contact, mystime, duration,
-	       ti, tt, sl, el);
+ printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t\n",
+        tag, "!", "!", is, contact, mystime, duration,
+        ti, tt, sl, el);
     }
 
     return 0;
@@ -389,20 +389,20 @@ print_header(tags)
     extern int extended;
 
     if(extended)
-	out = stderr;
+ out  stderr;
     else
-	out = stdout;
+ out  stdout;
 
     fprintf(out, "System Configuration:\n");
     /* build header out of RTS keywords */
     sprintf(key_get, "_RTS");
-    Key.data = (void *) key_get;
-    if(sym_seq(tags, &Key, &Data, R_CURSOR) == 0) {
-	do {
-	    if(strcmp((char *)Key.data, "PATH")==0)
-		continue;
-	    fprintf(out, "%-20.20s %s\n", (char *)Key.data, (char *)Data.data);
-	} while(sym_seq(tags, &Key, &Data, R_NEXT)==0);
+    Key.data  (void *) key_get;
+    if(sym_seq(tags, &Key, &Data, R_CURSOR)  0) {
+ do {
+     if(strcmp((char *)Key.data, "PATH")0)
+  continue;
+     fprintf(out, "%-20.20s %s\n", (char *)Key.data, (char *)Data.data);
+ } while(sym_seq(tags, &Key, &Data, R_NEXT)0);
     }
 
     fprintf(out, "\n");
@@ -425,13 +425,13 @@ cuts_testcase(tag, keys)
     char *cuts_info[5];
     char key[KEYSIZE];
     char *oldresult, *newresult, *worst_case();
-    int tok_num=0;
+    int tok_num0;
     extern char yytext[];
 
-    cuts_info[tok_num] = strtok(yytext, "\t ");
+    cuts_info[tok_num]  strtok(yytext, "\t ");
     while(tok_num < 5 &&
-	  (cuts_info[++tok_num] = strtok(NULL, "\t ")) != NULL )
-	;
+   (cuts_info[++tok_num]  strtok(NULL, "\t ")) ! NULL )
+ ;
 
     strcpy(key, cuts_info[0]);
     strcat(key, ",");
@@ -439,20 +439,20 @@ cuts_testcase(tag, keys)
 
 #ifdef DEBUGGING
     DEBUG(D_SCAN_CUTS, 1) {
-	printf("cuts_testcase: TCID=%s TC=%s Result=%s\n", cuts_info[0],
-	       cuts_info[1], cuts_info[2]);
-	printf("cuts_testcase: %d %s\n", tok_num, key);
+ printf("cuts_testcase: TCID%s TC%s Result%s\n", cuts_info[0],
+        cuts_info[1], cuts_info[2]);
+ printf("cuts_testcase: %d %s\n", tok_num, key);
   }
 #endif
 
-    if((oldresult=(char *)sym_get(tag, key)) != NULL) {
-	/* Duplicate -- assume mulitple runs */
-	/* keep "worst case" */
-	newresult = worst_case(oldresult, cuts_info[2]);
-	sym_put(tag, key, strdup(newresult), PUT_REPLACE);
-	free(oldresult);	/* remove the "data" portion of the key */
+    if((oldresult(char *)sym_get(tag, key)) ! NULL) {
+ /* Duplicate -- assume mulitple runs */
+ /* keep "worst case" */
+ newresult  worst_case(oldresult, cuts_info[2]);
+ sym_put(tag, key, strdup(newresult), PUT_REPLACE);
+ free(oldresult); /* remove the "data" portion of the key */
     } else {
-	sym_put(tag, key, strdup(cuts_info[2]), 0);
+ sym_put(tag, key, strdup(cuts_info[2]), 0);
     }
     return 0;
 }
@@ -465,24 +465,24 @@ worst_case(t1, t2)
     char *t1, *t2;
 {
     /* NULL-terminated table, ordered from worst-case to best-case */
-    static char *worst[] = {
-	"FAIL",		"BROK",		"PASS",		"CONF",
-	"WARN",		"INFO",		NULL,
+    static char *worst[]  {
+ "FAIL",  "BROK",  "PASS",  "CONF",
+ "WARN",  "INFO",  NULL,
     };
 
     char **w1, **w2;
 
     /* Search the table for each status, then use the index to determine
        which has a lower precedence */
-    for(w1=worst; *w1 != NULL && strcmp(t1,*w1); w1++)
-	;
+    for(w1worst; *w1 ! NULL && strcmp(t1,*w1); w1++)
+ ;
 
-    for(w2=worst; *w2 != NULL && strcmp(t2,*w2); w2++)
-	;
+    for(w2worst; *w2 ! NULL && strcmp(t2,*w2); w2++)
+ ;
 
     if(w1 < w2)
-	return(t1);
+ return(t1);
     else
-	return(t2);
+ return(t2);
 
 }

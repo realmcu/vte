@@ -16,8 +16,8 @@
 #                            Modification     Tracking
 #Author/core ID                  Date          Number    Description of Changes
 #-------------------------   ------------    ----------  ------------------------------------------
-#S.ZAVJALOV/None              26/08/2004     TLSbo40418  Initial version                          
-#S.ZAVJALOV/None              01/10/2004     TLSbo40649  Zeroize, HACC, KEM                          
+#S.ZAVJALOV/None              26/08/2004     TLSbo40418  Initial version
+#S.ZAVJALOV/None              01/10/2004     TLSbo40649  Zeroize, HACC, KEM
 #L.DELASPRE/RC149C            11/10/2004     TLSbo42821  VTE 1.5.1 integration
 #L.Delaspre/rc149c            08/12/2004     TLSbo40142  update with Freescale identity
 #A.Urusov/None                10/10/2005     TLSbo55835  Replace AIC KEM Zeroize with SCC
@@ -43,10 +43,10 @@ MXC91231 = mxc27530evb mxc27530ads
 MXC91321 = mxc30030evb mxc30030ads
 # Argon Plus (Argon Plus EVB and Odyssey)
 MXC91331 = i30030evb i30030ads
-# SCMA-9 (Islay) 
+# SCMA-9 (Islay)
 MXC91221 = mxc27520evb
 # i.MX27 (i.MX27 ADS and i.MX27 EVB)
-iMX27 = imx27evb imx27ads 
+iMX27 = imx27evb imx27ads
 # i.MX31 (i.MX31 ADS)
 iMX31 = imx31ads
 
@@ -81,15 +81,15 @@ ifeq ($(ARCH_PLATFORM),$(filter imx27ads imx51stack, $(ARCH_PLATFORM)))
 SUBDIRS += sahara_testapp \
            sahara_module
 endif
-        
+
 ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack, $(ARCH_PLATFORM)))
 SUBDIRS += scc_test_module  \
-          scc_testcases  
+          scc_testcases
 endif
-             
+
 ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack, $(ARCH_PLATFORM)))
 SUBDIRS += scc2_test_module  \
-          scc2_testcases    
+          scc2_testcases
 endif
 
 ifeq ($(ARCH_PLATFORM),$(filter imx37stack imx35stack,$(ARCH_PLATFORM)))
@@ -99,9 +99,9 @@ endif
 
 ifeq ($(ARCH_PLATFORM), $(filter imx31stack, $(ARCH_PLATFORM)))
 SUBDIRS += rnga_test_module  \
-          rnga_testcase  
+          rnga_testcase
 endif
- 
+
 
 
 

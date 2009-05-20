@@ -7,7 +7,7 @@
  */
 
 /*
- * Test that mq_send() will fail if msg_len is not <= mq_attr->mq_msgsize.
+ * Test that mq_send() will fail if msg_len is not < mq_attr->mq_msgsize.
  */
 
 #include <stdio.h>
@@ -26,46 +26,46 @@
 int main()
 {
         char qname[NAMESIZE];
-        const char *msgptr = MSGSTR;
+        const char *msgptr  MSGSTR;
         mqd_t queue;
-	int unresolved=0, failure=0;
-	struct mq_attr attr;
+ int unresolved0, failure0;
+ struct mq_attr attr;
 
         sprintf(qname, "/mq_send_2-1_%d", getpid());
 
-	attr.mq_msgsize = MSGSIZE;
-	attr.mq_maxmsg  = MSGSIZE;
+ attr.mq_msgsize  MSGSIZE;
+ attr.mq_maxmsg   MSGSIZE;
 
-        queue = mq_open(qname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, &attr);
-        if (queue == (mqd_t)-1) {
+        queue  mq_open(qname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, &attr);
+        if (queue  (mqd_t)-1) {
                 perror("mq_open() did not return success");
                 return PTS_UNRESOLVED;
         }
 
-        if (mq_send(queue, msgptr, strlen(msgptr), 1) == 0) {
-                printf("mq_send() returned success when msg_len>=mq_msgsize\n");
-		failure=1;
+        if (mq_send(queue, msgptr, strlen(msgptr), 1)  0) {
+                printf("mq_send() returned success when msg_len>mq_msgsize\n");
+  failure1;
         }
 
-        if (mq_close(queue) != 0) {
-		perror("mq_close() did not return success");
-		unresolved=1;
+        if (mq_close(queue) ! 0) {
+  perror("mq_close() did not return success");
+  unresolved1;
         }
 
-        if (mq_unlink(qname) != 0) {
-		perror("mq_unlink() did not return success");
-		unresolved=1;
+        if (mq_unlink(qname) ! 0) {
+  perror("mq_unlink() did not return success");
+  unresolved1;
         }
 
-	if (failure==1) {
-		printf("Test FAILED\n");
-		return PTS_FAIL;
-	}
+ if (failure1) {
+  printf("Test FAILED\n");
+  return PTS_FAIL;
+ }
 
-	if (unresolved==1) {
-		printf("Test UNRESOLVED\n");
-		return PTS_UNRESOLVED;
-	}
+ if (unresolved1) {
+  printf("Test UNRESOLVED\n");
+  return PTS_UNRESOLVED;
+ }
 
         printf("Test PASSED\n");
         return PTS_PASS;

@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake.Huang/-----             08/01/2008     N/A          Initial version
-# 
+#
 ###################################################################################################
 
 #MLIST="mxc_v4l2_capture ipu_prp_enc ipu_prp_vf_sdc ipu_prp_vf_sdc_bg ipu_still adv7180_tvin"
@@ -134,7 +134,7 @@ return $TST_COUNT
 # Function:     test_tvin_02
 # Description   - Test the TVin module functionality
 #                 TVout pal/ntsc test
-# TYPE:          auto manual 
+# TYPE:          auto manual
 test_tvin_02()
 {
 TCID="test_tvin_02"
@@ -164,9 +164,9 @@ return $TST_COUNT
 
 
 # Function:     test_tvin_03
-# Description   - Test 
+# Description   - Test
 #                 TVin power resume test
-# TYPE:          auto manual  
+# TYPE:          auto manual
 test_tvin_03()
 {
 TCID="test_tvin_03"
@@ -180,7 +180,7 @@ echo "press resume key ..."
 echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
 echo standby > /sys/power/state
- 
+
 mxc_v4l2_tvin &
 
 read -p "did you see the picture form tvin? y/n" RC
@@ -201,12 +201,12 @@ setup || exit $RC
 if [ $# -ne 1 ]
 then
 echo "usage $0 <1/2/3>"
-exit 1 
+exit 1
 fi
 
 case "$1" in
 1)
-  test_tvin_01 || exit $RC 
+  test_tvin_01 || exit $RC
   ;;
 2)
   test_tvin_02 || exit $RC

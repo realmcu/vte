@@ -9,7 +9,7 @@ all: $(TESTS)
 pthcli: pthcli.o readline.o writen.o
 	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LOADLIBES)
 
-pthserv: pthserv.o readline.o writen.o 
+pthserv: pthserv.o readline.o writen.o
 	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LOADLIBES)
 
 install:

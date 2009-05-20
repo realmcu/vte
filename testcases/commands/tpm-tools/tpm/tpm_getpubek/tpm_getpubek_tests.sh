@@ -19,79 +19,79 @@
 
 setup()
 {
-	RC=0				# Return code from commands.
+ RC=0    # Return code from commands.
 
-	if [ -z "$LTPTMP" ] && [ -z "$TMPBASE" ]
-	then
-		LTPTMP="/tmp"
-	else
-		LTPTMP="$TMPBASE"
-	fi
+ if [ -z "$LTPTMP" ] && [ -z "$TMPBASE" ]
+ then
+  LTPTMP="/tmp"
+ else
+  LTPTMP="$TMPBASE"
+ fi
 
-	export TPM_TMPFILE="$LTPTMP/tst_tpm.err"
-	rm -f $TPM_TMPFILE 2>&1
+ export TPM_TMPFILE="$LTPTMP/tst_tpm.err"
+ rm -f $TPM_TMPFILE 2>&1
 
-	# Set known password values
-	if [ -z "$OWN_PWD" ]
-	then
-		export OWN_PWD="OWN PWD"
-	fi
-	if [ -z "$SRK_PWD" ]
-	then
-		export SRK_PWD="SRK PWD"
-	fi
+ # Set known password values
+ if [ -z "$OWN_PWD" ]
+ then
+  export OWN_PWD="OWN PWD"
+ fi
+ if [ -z "$SRK_PWD" ]
+ then
+  export SRK_PWD="SRK PWD"
+ fi
 
-	tst_resm TINFO "INIT: Inititalizing tests."
+ tst_resm TINFO "INIT: Inititalizing tests."
 
-	which tpm_getpubek 1>$TPM_TMPFILE 2>&1 || RC=$?
-	if [ $RC -ne 0 ]
-	then
-		tst_brk TBROK $TPM_TMPFILE NULL \
-			"Setup: tpm_getpubek command does not exist. Reason:"
-		return $RC
-	fi
+ which tpm_getpubek 1>$TPM_TMPFILE 2>&1 || RC=$?
+ if [ $RC -ne 0 ]
+ then
+  tst_brk TBROK $TPM_TMPFILE NULL \
+   "Setup: tpm_getpubek command does not exist. Reason:"
+  return $RC
+ fi
 
-	return $RC
+ return $RC
 }
 
 test01()
 {
-	RC=0				# Return value from commands
-	export TCID=tpm_getpubek01	# Test ID
-	export TST_COUNT=1		# Test number
+ RC=0    # Return value from commands
+ export TCID=tpm_getpubek01 # Test ID
+ export TST_COUNT=1  # Test number
 
-	tpm_getpubek_tests_exp01.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
-	if [ $RC -eq 0 ]
-	then
-		tst_resm TPASS "'tpm_getpubek' passed."
-		RC=0
-	else
-		tst_res TFAIL $TPM_TMPFILE "'tpm_getpubek' failed."
-		RC=1
-	fi
-	return $RC
+ tpm_getpubek_tests_exp01.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
+ if [ $RC -eq 0 ]
+ then
+  tst_resm TPASS "'tpm_getpubek' passed."
+  RC=0
+ else
+  tst_res TFAIL $TPM_TMPFILE "'tpm_getpubek' failed."
+  RC=1
+ fi
+ return $RC
 }
 
 cleanup()
 {
-	rm -f $TPM_TMPFILE 2>&1
+ rm -f $TPM_TMPFILE 2>&1
 }
 
-# Function:	main
+# Function: main
 #
-# Description:	- Execute all tests, report results.
+# Description: - Execute all tests, report results.
 #
-# Exit:		- zero on success
-# 		- non-zero on failure.
+# Exit:  - zero on success
+# - non-zero on failure.
 
-TFAILCNT=0			# Set TFAILCNT to 0, increment on failure.
-RC=0				# Return code from tests.
+TFAILCNT=0   # Set TFAILCNT to 0, increment on failure.
+RC=0    # Return code from tests.
 
-export TCID=tpm_getpubek	# Test ID
-export TST_TOTAL=1		# Total numner of tests in this file.
-export TST_COUNT=0		# Initialize identifier
+export TCID=tpm_getpubek # Test ID
+export TST_TOTAL=1  # Total numner of tests in this file.
+export TST_COUNT=0  # Initialize identifier
 
-setup || exit $RC		# Exit if initializing testcases fails.
+setup || exit $RC  # Exit if initializing testcases fails.
 
 test01 || TFAILCNT=$(($TFAILCNT+1))
 

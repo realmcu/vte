@@ -3,7 +3,7 @@
 
 #ifndef MAX_STR_LEN
     #define MAX_STR_LEN 80
-#endif    
+#endif
 
 #include <bmp_interface.h>
 
@@ -12,22 +12,22 @@ typedef struct flist
     char inp_fname[MAX_STR_LEN];
     char out_fname[MAX_STR_LEN];
     char ref_fname[MAX_STR_LEN];
-    
+
     output_format       out_fmt;
     scaling_mode        scale_mode;
     int                 width, height;
-    
-    struct flist * next;    
-    
+
+    struct flist * next;
+
 } flist_t;
 
 flist_t * mk_entry( const char * out_fmt,
 		            const char * scale_mode,
                     const char * width,
                     const char * height,
-	        	    const char * inp_fname, 
-		            const char * out_fname, 
-        		    const char * ref_fname );
+	            const char * inp_fname,
+		            const char * out_fname,
+            const char * ref_fname );
 void      delete_list( flist_t * list );
 
 /* Aux */

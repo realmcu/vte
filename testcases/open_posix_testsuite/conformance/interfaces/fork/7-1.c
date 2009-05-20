@@ -24,7 +24,7 @@
 * -> Create a message catalog file from the "messcat_src.txt" file
 * -> Open this catalog
 * -> fork
-* -> Check that the child can read from the message catalog. 
+* -> Check that the child can read from the message catalog.
 
 * The test fails if the message catalog is read in the parent and not in the child.
 
@@ -53,22 +53,22 @@
 /******************************   Test framework   *****************************************/
 /********************************************************************************************/
 #include "testfrmw.h"
- #include "testfrmw.c" 
+ #include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
+ * UNRESOLVED(ret, descr);
  *    where descr is a description of the error and ret is an int (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -87,36 +87,36 @@
 
 void read_catalog( nl_catd cat, char * who )
 {
-	char * msg = NULL;
-	int i, j;
-	errno = 0;
+ char * msg  NULL;
+ int i, j;
+ errno  0;
 
 #if VERBOSE > 0
 
-	output( "Reading the message catalog from %s...\n", who );
+ output( "Reading the message catalog from %s...\n", who );
 #endif
 
-	for ( i = 1; i <= 2; i++ )
-	{
-		for ( j = 1; j <= 2; j++ )
-		{
-			msg = catgets( cat, i, j, "not found" );
+ for ( i  1; i < 2; i++ )
+ {
+  for ( j  1; j < 2; j++ )
+  {
+   msg  catgets( cat, i, j, "not found" );
 
-			if ( errno != 0 )
-			{
-				UNRESOLVED( errno, "catgets returned an error" );
-			}
+   if ( errno ! 0 )
+   {
+    UNRESOLVED( errno, "catgets returned an error" );
+   }
 
 #if VERBOSE > 1
-			output( "set %i msg %i: %s\n", i, j, msg );
+   output( "set %i msg %i: %s\n", i, j, msg );
 
 #endif
 
-		}
-	}
+  }
+ }
 
 #if VERBOSE > 0
-	output( "Message catalog read successfully in %s\n", who );
+ output( "Message catalog read successfully in %s\n", who );
 
 #endif
 }
@@ -124,96 +124,96 @@ void read_catalog( nl_catd cat, char * who )
 /* The main test function. */
 int main( int argc, char * argv[] )
 {
-	int ret, status;
-	pid_t child, ctl;
+ int ret, status;
+ pid_t child, ctl;
 
-	nl_catd messcat;
+ nl_catd messcat;
 
-	/* Initialize output */
-	output_init();
-
-
-	/* Generate the message catalog file from the text sourcefile */
-
-	if ( system( NULL ) )
-	{
-		ret = system( "gencat mess.cat " PATH_OFFSET "messcat_src.txt" );
-
-		if ( ret != 0 )
-		{
-			output( "Unable to find messcat_src.txt in standard directory %s\n", PATH_OFFSET );
-			output( "Trying local dir\n" );
-			ret = system( "gencat mess.cat messcat_src.txt" );
-
-			if ( ret != 0 )
-			{
-				output( "Could not find the source file for message catalog.\n" \
-				        "You may need to execute gencat yourself.\n" );
-			}
-		}
-	}
-
-	/* Try opening the message catalog file */
-	messcat = catopen( "./mess.cat", 0 );
-
-	if ( messcat == ( nl_catd ) - 1 )
-	{
-		UNRESOLVED( errno, "Could not open ./mess.cat. You may need to do a gencat before executing this testcase" );
-	}
-
-	/* Read the message catalog */
-	read_catalog( messcat, "parent" );
+ /* Initialize output */
+ output_init();
 
 
-	/* Create the child */
-	child = fork();
+ /* Generate the message catalog file from the text sourcefile */
 
-	if ( child == ( pid_t ) - 1 )
-	{
-		UNRESOLVED( errno, "Failed to fork" );
-	}
+ if ( system( NULL ) )
+ {
+  ret  system( "gencat mess.cat " PATH_OFFSET "messcat_src.txt" );
 
-	/* child */
-	if ( child == ( pid_t ) 0 )
-	{
-		read_catalog( messcat, "child" );
+  if ( ret ! 0 )
+  {
+   output( "Unable to find messcat_src.txt in standard directory %s\n", PATH_OFFSET );
+   output( "Trying local dir\n" );
+   ret  system( "gencat mess.cat messcat_src.txt" );
 
-		/* We're done */
-		exit( PTS_PASS );
-	}
+   if ( ret ! 0 )
+   {
+    output( "Could not find the source file for message catalog.\n" \
+            "You may need to execute gencat yourself.\n" );
+   }
+  }
+ }
 
-	/* Parent joins the child */
-	ctl = waitpid( child, &status, 0 );
+ /* Try opening the message catalog file */
+ messcat  catopen( "./mess.cat", 0 );
 
-	if ( ctl != child )
-	{
-		UNRESOLVED( errno, "Waitpid returned the wrong PID" );
-	}
+ if ( messcat  ( nl_catd ) - 1 )
+ {
+  UNRESOLVED( errno, "Could not open ./mess.cat. You may need to do a gencat before executing this testcase" );
+ }
 
-	if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) != PTS_PASS ) )
-	{
-		FAILED( "Child exited abnormally" );
-	}
+ /* Read the message catalog */
+ read_catalog( messcat, "parent" );
 
-	/* We can now clean up the message catalog file */
-	ret = catclose( messcat );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( errno, "Failed to close the message catalog" );
-	}
+ /* Create the child */
+ child  fork();
 
-	/* Try removing the message catalog file */
-	system( "rm -f mess.cat" );
+ if ( child  ( pid_t ) - 1 )
+ {
+  UNRESOLVED( errno, "Failed to fork" );
+ }
 
-	/* Test passed */
+ /* child */
+ if ( child  ( pid_t ) 0 )
+ {
+  read_catalog( messcat, "child" );
+
+  /* We're done */
+  exit( PTS_PASS );
+ }
+
+ /* Parent joins the child */
+ ctl  waitpid( child, &status, 0 );
+
+ if ( ctl ! child )
+ {
+  UNRESOLVED( errno, "Waitpid returned the wrong PID" );
+ }
+
+ if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) ! PTS_PASS ) )
+ {
+  FAILED( "Child exited abnormally" );
+ }
+
+ /* We can now clean up the message catalog file */
+ ret  catclose( messcat );
+
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( errno, "Failed to close the message catalog" );
+ }
+
+ /* Try removing the message catalog file */
+ system( "rm -f mess.cat" );
+
+ /* Test passed */
 #if VERBOSE > 0
 
-	output( "Test passed\n" );
+ output( "Test passed\n" );
 
 #endif
 
-	PASSED;
+ PASSED;
 }
 
 

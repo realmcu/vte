@@ -17,7 +17,7 @@
 
 * This sample test aims to check the following assertion:
 *
-* If there is not enough memory to store handler adresses, 
+* If there is not enough memory to store handler adresses,
 * the function returns ENOMEM.
 
 * The steps are:
@@ -49,23 +49,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -80,167 +80,167 @@
 /***************************    Test case   ***********************************/
 /******************************************************************************/
 
-pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mtx  PTHREAD_MUTEX_INITIALIZER;
 
-int controls[ 3 ] = {0, 0, 0};
+int controls[ 3 ]  {0, 0, 0};
 /* pthread_atfork handlers */
 void prepare( void )
 {
-	controls[ 0 ] ++;
+ controls[ 0 ] ++;
 }
 
 void parent( void )
 {
-	controls[ 1 ] ++;
+ controls[ 1 ] ++;
 }
 
 void child( void )
 {
-	controls[ 2 ] ++;
+ controls[ 2 ] ++;
 }
 
 
 /* Thread function */
 void * threaded( void * arg )
 {
-	int ret, status;
-	pid_t child, ctl;
+ int ret, status;
+ pid_t child, ctl;
 
-	/* Wait main thread has registered the handler */
-	ret = pthread_mutex_lock( &mtx );
+ /* Wait main thread has registered the handler */
+ ret  pthread_mutex_lock( &mtx );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to lock mutex" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to lock mutex" );
+ }
 
-	ret = pthread_mutex_unlock( &mtx );
+ ret  pthread_mutex_unlock( &mtx );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to unlock mutex" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to unlock mutex" );
+ }
 
-	/* fork */
-	child = fork();
+ /* fork */
+ child  fork();
 
-	if ( child == ( pid_t ) - 1 )
-	{
-		UNRESOLVED( errno, "Failed to fork" );
-	}
+ if ( child  ( pid_t ) - 1 )
+ {
+  UNRESOLVED( errno, "Failed to fork" );
+ }
 
-	/* child */
-	if ( child == ( pid_t ) 0 )
-	{
-		if ( controls[ 0 ] != 10000 )
-		{
-			FAILED( "prepare handler skipped some rounds" );
-		}
+ /* child */
+ if ( child  ( pid_t ) 0 )
+ {
+  if ( controls[ 0 ] ! 10000 )
+  {
+   FAILED( "prepare handler skipped some rounds" );
+  }
 
-		if ( controls[ 2 ] != 10000 )
-		{
-			FAILED( "child handler skipped some rounds" );
-		}
+  if ( controls[ 2 ] ! 10000 )
+  {
+   FAILED( "child handler skipped some rounds" );
+  }
 
-		/* We're done */
-		exit( PTS_PASS );
-	}
+  /* We're done */
+  exit( PTS_PASS );
+ }
 
-	if ( controls[ 0 ] != 10000 )
-	{
-		FAILED( "prepare handler skipped some rounds" );
-	}
+ if ( controls[ 0 ] ! 10000 )
+ {
+  FAILED( "prepare handler skipped some rounds" );
+ }
 
-	if ( controls[ 1 ] != 10000 )
-	{
-		FAILED( "parent handler skipped some rounds" );
-	}
+ if ( controls[ 1 ] ! 10000 )
+ {
+  FAILED( "parent handler skipped some rounds" );
+ }
 
-	/* Parent joins the child */
-	ctl = waitpid( child, &status, 0 );
+ /* Parent joins the child */
+ ctl  waitpid( child, &status, 0 );
 
-	if ( ctl != child )
-	{
-		UNRESOLVED( errno, "Waitpid returned the wrong PID" );
-	}
+ if ( ctl ! child )
+ {
+  UNRESOLVED( errno, "Waitpid returned the wrong PID" );
+ }
 
-	if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) != PTS_PASS ) )
-	{
-		FAILED( "Child exited abnormally" );
-	}
+ if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) ! PTS_PASS ) )
+ {
+  FAILED( "Child exited abnormally" );
+ }
 
 
-	/* quit */
-	return NULL;
+ /* quit */
+ return NULL;
 }
 
 /* The main test function. */
 int main( int argc, char * argv[] )
 {
-	int ret, i;
-	pthread_t ch;
+ int ret, i;
+ pthread_t ch;
 
-	/* Initialize output */
-	output_init();
+ /* Initialize output */
+ output_init();
 
-	ret = pthread_mutex_lock( &mtx );
+ ret  pthread_mutex_lock( &mtx );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to lock mutex" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to lock mutex" );
+ }
 
-	ret = pthread_create( &ch, NULL, threaded, NULL );
+ ret  pthread_create( &ch, NULL, threaded, NULL );
 
-	if ( ret != 0 )
-	{
-		UNRESOLVED( ret, "Failed to create a thread" );
-	}
+ if ( ret ! 0 )
+ {
+  UNRESOLVED( ret, "Failed to create a thread" );
+ }
 
-	/* Register the handlers */
-	for ( i = 0; i < 10000; i++ )
-	{
-		ret = pthread_atfork( prepare, parent, child );
+ /* Register the handlers */
+ for ( i  0; i < 10000; i++ )
+ {
+  ret  pthread_atfork( prepare, parent, child );
 
-		if ( ret == ENOMEM )
-		{
-			output( "ENOMEM returned after %i iterations\n", i );
-			break;
-		}
+  if ( ret  ENOMEM )
+  {
+   output( "ENOMEM returned after %i iterations\n", i );
+   break;
+  }
 
-		if ( ret != 0 )
-		{
-			UNRESOLVED( ret, "Failed to register the atfork handlers" );
-		}
-	}
+  if ( ret ! 0 )
+  {
+   UNRESOLVED( ret, "Failed to register the atfork handlers" );
+  }
+ }
 
-	if ( ret == 0 )
-	{
+ if ( ret  0 )
+ {
 
-		/* Let the child go on */
-		ret = pthread_mutex_unlock( &mtx );
+  /* Let the child go on */
+  ret  pthread_mutex_unlock( &mtx );
 
-		if ( ret != 0 )
-		{
-			UNRESOLVED( ret, "Failed to unlock mutex" );
-		}
+  if ( ret ! 0 )
+  {
+   UNRESOLVED( ret, "Failed to unlock mutex" );
+  }
 
-		ret = pthread_join( ch, NULL );
+  ret  pthread_join( ch, NULL );
 
-		if ( ret != 0 )
-		{
-			UNRESOLVED( ret, "Failed to join the thread" );
-		}
-	}
+  if ( ret ! 0 )
+  {
+   UNRESOLVED( ret, "Failed to join the thread" );
+  }
+ }
 
-	/* Test passed */
+ /* Test passed */
 #if VERBOSE > 0
 
-	output( "Test passed\n" );
+ output( "Test passed\n" );
 
 #endif
 
-	PASSED;
+ PASSED;
 }
 
 

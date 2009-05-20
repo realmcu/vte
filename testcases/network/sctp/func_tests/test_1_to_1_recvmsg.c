@@ -57,150 +57,150 @@
 #include <linux/socket.h>
 #include <sctputil.h>
 
-char *TCID = __FILE__;
-int TST_TOTAL = 8;
-int TST_CNT = 0;
+char *TCID  __FILE__;
+int TST_TOTAL  8;
+int TST_CNT  0;
 
 int
 main(int argc, char *argv[])
 {
         socklen_t len;
-	int ret;
-	int sk,pf_class,lstn_sk,acpt_sk;
-	int flag = 0;
-	struct msghdr inmessage;
-        char *message = "hello, world!\n";
-	struct iovec iov_rcv;
+ int ret;
+ int sk,pf_class,lstn_sk,acpt_sk;
+ int flag  0;
+ struct msghdr inmessage;
+        char *message  "hello, world!\n";
+ struct iovec iov_rcv;
         int count;
-	char * buffer_rcv;
+ char * buffer_rcv;
         char incmsg[CMSG_SPACE(sizeof(sctp_cmsg_data_t))];
-	char *message1 = "hello, world!\n";
+ char *message1  "hello, world!\n";
 
         struct sockaddr_in conn_addr,lstn_addr,svr_addr;
 
-	/* Rather than fflush() throughout the code, set stdout to
+ /* Rather than fflush() throughout the code, set stdout to
          * be unbuffered.
          */
         setvbuf(stdout, NULL, _IONBF, 0);
         setvbuf(stderr, NULL, _IONBF, 0);
 
-        pf_class = PF_INET;
+        pf_class  PF_INET;
 
-        sk = test_socket(pf_class, SOCK_STREAM, IPPROTO_SCTP);
+        sk  test_socket(pf_class, SOCK_STREAM, IPPROTO_SCTP);
 
-        lstn_sk = test_socket(pf_class, SOCK_STREAM, IPPROTO_SCTP);
+        lstn_sk  test_socket(pf_class, SOCK_STREAM, IPPROTO_SCTP);
 
-	conn_addr.sin_family = AF_INET;
-        conn_addr.sin_addr.s_addr = SCTP_IP_LOOPBACK;
-        conn_addr.sin_port = htons(SCTP_TESTPORT_1);
+ conn_addr.sin_family  AF_INET;
+        conn_addr.sin_addr.s_addr  SCTP_IP_LOOPBACK;
+        conn_addr.sin_port  htons(SCTP_TESTPORT_1);
 
-	lstn_addr.sin_family = AF_INET;
-        lstn_addr.sin_addr.s_addr = SCTP_IP_LOOPBACK;
-        lstn_addr.sin_port = htons(SCTP_TESTPORT_1);
+ lstn_addr.sin_family  AF_INET;
+        lstn_addr.sin_addr.s_addr  SCTP_IP_LOOPBACK;
+        lstn_addr.sin_port  htons(SCTP_TESTPORT_1);
 
-	/*Binding the listen socket*/
+ /*Binding the listen socket*/
         test_bind(lstn_sk, (struct sockaddr *) &lstn_addr, sizeof(lstn_addr));
 
         /*Listening the socket*/
         test_listen(lstn_sk, 10);
 
-	len = sizeof(struct sockaddr_in);
-	
-	test_connect(sk, (struct sockaddr *) &conn_addr, len);
+ len  sizeof(struct sockaddr_in);
 
-	acpt_sk = test_accept(lstn_sk, (struct sockaddr *)&svr_addr, &len);
+ test_connect(sk, (struct sockaddr *) &conn_addr, len);
 
-	memset(&inmessage, 0, sizeof(inmessage));
-        buffer_rcv = malloc(REALLY_BIG);
+ acpt_sk  test_accept(lstn_sk, (struct sockaddr *)&svr_addr, &len);
 
-        iov_rcv.iov_base = buffer_rcv;
-        iov_rcv.iov_len = REALLY_BIG;
-        inmessage.msg_iov = &iov_rcv;
-        inmessage.msg_iovlen = 1;
-        inmessage.msg_control = incmsg;
-        inmessage.msg_controllen = sizeof(incmsg);
+ memset(&inmessage, 0, sizeof(inmessage));
+        buffer_rcv  malloc(REALLY_BIG);
 
-	/*recvmsg () TEST1: Bad socket descriptor, EBADF Expected error*/
-	count = recvmsg(-1, &inmessage, flag);
-	if (count != -1 || errno != EBADF)
-		tst_brkm(TBROK, tst_exit, "recvmsg with a bad socket "
-			 "descriptor count:%d, errno:%d", count, errno);
+        iov_rcv.iov_base  buffer_rcv;
+        iov_rcv.iov_len  REALLY_BIG;
+        inmessage.msg_iov  &iov_rcv;
+        inmessage.msg_iovlen  1;
+        inmessage.msg_control  incmsg;
+        inmessage.msg_controllen  sizeof(incmsg);
 
-	tst_resm(TPASS, "recvmsg() with a bad socket descriptor - EBADF");
+ /*recvmsg () TEST1: Bad socket descriptor, EBADF Expected error*/
+ count  recvmsg(-1, &inmessage, flag);
+ if (count ! -1 || errno ! EBADF)
+  tst_brkm(TBROK, tst_exit, "recvmsg with a bad socket "
+    "descriptor count:%d, errno:%d", count, errno);
 
-	/*recvmsg () TEST2: Invalid socket , ENOTSOCK Expected error*/
-	count = recvmsg(0, &inmessage, flag);
-	if (count != -1 || errno != ENOTSOCK)
-		tst_brkm(TBROK, tst_exit, "recvmsg with invalid socket "
-			 "count:%d, errno:%d", count, errno);
+ tst_resm(TPASS, "recvmsg() with a bad socket descriptor - EBADF");
 
-	tst_resm(TPASS, "recvmsg() with invalid socket - ENOTSOCK");
+ /*recvmsg () TEST2: Invalid socket , ENOTSOCK Expected error*/
+ count  recvmsg(0, &inmessage, flag);
+ if (count ! -1 || errno ! ENOTSOCK)
+  tst_brkm(TBROK, tst_exit, "recvmsg with invalid socket "
+    "count:%d, errno:%d", count, errno);
 
-	/*recvmsg () TEST3: Invalid iovec pointer EFAULT, Expected error*/
-	inmessage.msg_iov = (struct iovec *)-1;
-	count = recvmsg(acpt_sk, &inmessage, flag);
-	if (count != -1 || errno != EFAULT)
-		tst_brkm(TBROK, tst_exit, "recvmsg with invalid iovec "
-			 "pointer count:%d, errno:%d", count, errno);
+ tst_resm(TPASS, "recvmsg() with invalid socket - ENOTSOCK");
 
-	tst_resm(TPASS, "recvmsg() with invalid iovec ptr - EFAULT");
-	
-	inmessage.msg_iov = &iov_rcv;
+ /*recvmsg () TEST3: Invalid iovec pointer EFAULT, Expected error*/
+ inmessage.msg_iov  (struct iovec *)-1;
+ count  recvmsg(acpt_sk, &inmessage, flag);
+ if (count ! -1 || errno ! EFAULT)
+  tst_brkm(TBROK, tst_exit, "recvmsg with invalid iovec "
+    "pointer count:%d, errno:%d", count, errno);
 
-	/*recvmsg () TEST4: Invalid msghdr pointer EFAULT, Expected error*/
-	count = recvmsg(acpt_sk, (struct msghdr *)-1, flag);
-	if (count != -1 || errno != EFAULT)
-		tst_brkm(TBROK, tst_exit, "recvmsg with invalid msghdr "
-			 "pointer count:%d, errno:%d", count, errno);
+ tst_resm(TPASS, "recvmsg() with invalid iovec ptr - EFAULT");
 
-	tst_resm(TPASS, "recvmsg() with invalid msghdr ptr - EFAULT");
+ inmessage.msg_iov  &iov_rcv;
 
-	/*recvmsg () TEST5:recvmsg on listening socket,ENOTCONN Expected error*/
-	count = recvmsg(lstn_sk, &inmessage, flag);
-	if (count != -1 || errno != ENOTCONN)
-		tst_brkm(TBROK, tst_exit, "recvmsg on listening socket "
-			 "count:%d, errno:%d", count, errno);
+ /*recvmsg () TEST4: Invalid msghdr pointer EFAULT, Expected error*/
+ count  recvmsg(acpt_sk, (struct msghdr *)-1, flag);
+ if (count ! -1 || errno ! EFAULT)
+  tst_brkm(TBROK, tst_exit, "recvmsg with invalid msghdr "
+    "pointer count:%d, errno:%d", count, errno);
 
-	tst_resm(TPASS, "recvmsg() on listening socket - ENOTCONN");
+ tst_resm(TPASS, "recvmsg() with invalid msghdr ptr - EFAULT");
 
-	count = test_send(acpt_sk, message1, strlen(message), 0);
+ /*recvmsg () TEST5:recvmsg on listening socket,ENOTCONN Expected error*/
+ count  recvmsg(lstn_sk, &inmessage, flag);
+ if (count ! -1 || errno ! ENOTCONN)
+  tst_brkm(TBROK, tst_exit, "recvmsg on listening socket "
+    "count:%d, errno:%d", count, errno);
 
-	ret = test_shutdown(sk, SHUT_WR);
+ tst_resm(TPASS, "recvmsg() on listening socket - ENOTCONN");
 
-	flag = MSG_NOSIGNAL;
-	/*recvmsg () TEST6:reading on a socket that received SHUTDOWN*/
-	count = recvmsg(acpt_sk, &inmessage, flag);
-	if (count < 0)
-		tst_brkm(TBROK, tst_exit, "recvmsg on a socket that has "
-			 "received shutdown count:%d, errno:%d", count, errno);
+ count  test_send(acpt_sk, message1, strlen(message), 0);
 
-	tst_resm(TPASS, "recvmsg() on a socket that has received shutdown - "
-		 "EOF");
+ ret  test_shutdown(sk, SHUT_WR);
 
-	/*recvmsg () TEST7:reading the pending message socket that sent 
-	SHUTDOWN*/
-	count = recvmsg(sk, &inmessage, flag);
-	if (count < 0)
-		tst_brkm(TBROK, tst_exit, "recvmsg on a socket with pending "
-			 "message that has sent shutdown count:%d, errno:%d",
-			 count, errno);
+ flag  MSG_NOSIGNAL;
+ /*recvmsg () TEST6:reading on a socket that received SHUTDOWN*/
+ count  recvmsg(acpt_sk, &inmessage, flag);
+ if (count < 0)
+  tst_brkm(TBROK, tst_exit, "recvmsg on a socket that has "
+    "received shutdown count:%d, errno:%d", count, errno);
 
-	tst_resm(TPASS, "recvmsg() on a socket with pending message that has "
-		 "sent shutdown - SUCCESS");
+ tst_resm(TPASS, "recvmsg() on a socket that has received shutdown - "
+   "EOF");
 
-	/*recvmsg () TEST8: No more message and association is shutdown,
-	ENOTCONN Expected error*/
-	count = recvmsg(sk, &inmessage, flag);
-	if (count != -1 || errno != ENOTCONN)
-		tst_brkm(TBROK, tst_exit, "recvmsg on a socket with no "
-			 "pending messages and has sent shutdown count:%d, "
-			 "errno:%d", count, errno);
+ /*recvmsg () TEST7:reading the pending message socket that sent
+ SHUTDOWN*/
+ count  recvmsg(sk, &inmessage, flag);
+ if (count < 0)
+  tst_brkm(TBROK, tst_exit, "recvmsg on a socket with pending "
+    "message that has sent shutdown count:%d, errno:%d",
+    count, errno);
 
-	tst_resm(TPASS, "recvmsg() on a socket with no pending messages and "
-		 " has sent shutdown - ENOTCONN");
+ tst_resm(TPASS, "recvmsg() on a socket with pending message that has "
+   "sent shutdown - SUCCESS");
 
-	close(sk);
-	close(lstn_sk);
-	close(acpt_sk);
-	return 0;
+ /*recvmsg () TEST8: No more message and association is shutdown,
+ ENOTCONN Expected error*/
+ count  recvmsg(sk, &inmessage, flag);
+ if (count ! -1 || errno ! ENOTCONN)
+  tst_brkm(TBROK, tst_exit, "recvmsg on a socket with no "
+    "pending messages and has sent shutdown count:%d, "
+    "errno:%d", count, errno);
+
+ tst_resm(TPASS, "recvmsg() on a socket with no pending messages and "
+   " has sent shutdown - ENOTCONN");
+
+ close(sk);
+ close(lstn_sk);
+ close(acpt_sk);
+ return 0;
 }

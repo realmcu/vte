@@ -2,13 +2,13 @@
  *
  *  MMDO-EMEA Fix : The symbols in the AMR-NB codec clashed with already existing
  *                  symbols in Trinity Convergence's multimedia framework
- *		   
- *		    This 'patch' provides a global symbol renaaming and should 
+ *
+ *		    This 'patch' provides a global symbol renaaming and should
  *		    avoid further such problems.
  *		    This technique can also be applied in order to make the AMR-NB
  *		    codec openMAX compliant
- *		  
- *		  
+ *
+ *
  *  Authors: Klaus Foerster (r26375) Patrice Bertrand (r34206)
  *  Note:    Look at GCC specific modification in lsp_lsf.c
 */

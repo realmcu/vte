@@ -18,20 +18,21 @@
 #                      Modification     Tracking
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
-# Spring Zhang          07/08/2008       n/a        Initial ver. 
+# Spring Zhang          07/08/2008       n/a        Initial ver.
 # Spring                28/11/2008       n/a        Modify COPYRIGHT header
+# Spring                18/05/2009       n/a        Add BBG2 support
 #############################################################################
-# Portability:  ARM sh bash 
+# Portability:  ARM sh bash
 #
-# File Name:    
+# File Name:
 # Total Tests:        1
 # Test Strategy: switch from speaker to headphone
-# 
-# Input:	- $1 - audio stream
 #
-# Return:       - 
+# Input: - $1 - audio stream
 #
-# Use command "./speaker_switch_headset.sh [audio stream]" 
+# Return:       -
+#
+# Use command "./speaker_switch_headset.sh [audio stream]"
 
 # Function:     setup
 #
@@ -91,12 +92,13 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup() 
+cleanup()
 {
-    RC=0
     echo "clean up environment..."
+    if [ $platform -eq 51 ] || [ $platform -eq 41 ]
+        amixer cset name='Speaker Function' 1 
+    fi
     echo "clean up environment end"
-    return $RC
 }
 
 # Function:     speaker_switch_test
@@ -110,53 +112,26 @@ speaker_switch_test()
 {
     RC=0    # Return value from setup, and test functions.
 
-    find=0
-    
     # Determine the platform
-    find=`cat /proc/cpuinfo | grep "Revision" | grep "31.*" | wc -l`;
-    if [ $find -eq 1 ]
-    then
-        platform=mx31
-    fi
-
-    find=`cat /proc/cpuinfo | grep "Revision" | grep "51.*" | wc -l`;
-    if [ $find -eq 1 ]
-    then
-        platform=mx51
-    fi
+    platfm.sh || platform=$?
 
     # enable speaker
-    if [ $platform = "mx31" ]
+    if [ $platform -eq 31 ]
     then
-        amixer -c 0 cset numid=1,iface=MIXER,name='Master Output Playback Volume' 2 ||RC=$?
+        amixer -c 0 cset name='Master Output Playback Volume' 2 ||RC=$?
         if [ $RC -ne 0 ]
         then
             tst_resm TFAIL "Test #1:adjust mixer volume failed..."
             return $RC
         fi
-    elif [ $platform = "mx51" ]
+    elif [ $platform -eq 51 ] || [ $platform -eq 41 ]
     then
-        amixer cset numid=42,iface=MIXER,name='Speaker Switch' 2 ||RC=$?
+        amixer cset name='Speaker Function' 1 ||RC=$?
         if [ $RC -ne 0 ]
         then
-            tst_resm TFAIL "Test #1: switch speaker failed..."
+            tst_resm TFAIL "Test #1: enable speaker failed..."
             return $RC
         fi
-
-        amixer cset numid=46,iface=MIXER,name='Right Speaker Mixer DACR Switch' 1 ||RC=$?
-        if [ $RC -ne 0 ]
-        then
-            tst_resm TFAIL "Test #1: switch right speaker failed..."
-            return $RC
-        fi
-
-        amixer cset numid=49,iface=MIXER,name='Left Speaker Mixer DACL Switch' 1 ||RC=$?
-        if [ $RC -ne 0 ]
-        then
-            tst_resm TFAIL "Test #1: switch left speaker failed..."
-            return $RC
-        fi
-        amixer cset numid=68,iface=MIXER,name='Speaker Function' 1
     else
         # don't support on other platform
         RC=67
@@ -166,17 +141,9 @@ speaker_switch_test()
 
     tst_resm TINFO "Test #1: adjust mixer volumn..."
 
-    if [ $platform = "mx31" ]
+    if [ $platform -eq 31 ]
     then
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 80||RC=$?
-        if [ $RC -ne 0 ]
-        then
-            tst_resm TFAIL "Test #1:adjust mixer volume failed..."
-            return $RC
-        fi
-    elif [ $platform = "mx51" ] 
-    then
-        amixer -c 0 cset numid=44,iface=MIXER,name='Speaker Volume' 40 ||RC=$?
+        amixer -c 0 cset name='Master Playback Volume' 80||RC=$?
         if [ $RC -ne 0 ]
         then
             tst_resm TFAIL "Test #1:adjust mixer volume failed..."
@@ -206,29 +173,26 @@ speaker_switch_test()
     fi
 
     tst_resm TINFO "Test #1: now the voice will switch from speaker to headphone."
-    if [ $platform = "mx31" ]
+    if [ $platform -eq 31 ]
     then
     # before mx31 2.3.0 release, there is a bug, should use the following meanwhile
     #aplay a.wav&
     #amixer -c 0 cset numid=1,iface=MIXER,name='Master Output Playback Volume' 4
-        amixer -c 0 cset numid=1,iface=MIXER,name='Master Output Playback Volume' 4 ||RC=$?
+        amixer -c 0 cset name='Master Output Playback Volume' 4 ||RC=$?
         if [ $RC -ne 0 ]
         then
             tst_resm TFAIL "Test #1:switch voice failed..."
             return $RC
         fi
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 40
-    elif [ $platform = "mx51" ]
+        amixer -c 0 cset name='Master Playback Volume' 40
+    elif [ $platform -eq 51 ] || [ $platform -eq 41 ]
     then
-        amixer cset numid=42,iface=MIXER,name='Speaker Switch' 0 ||RC=$?
+        amixer cset name='Speaker Function' 0 || RC=$?
         if [ $RC -ne 0 ]
         then
             tst_resm TFAIL "Test #1: switch speaker failed..."
             return $RC
         fi
-        amixer cset numid=46,iface=MIXER,name='Right Speaker Mixer DACR Switch' 0
-        amixer cset numid=49,iface=MIXER,name='Left Speaker Mixer DACL Switch' 0
-        amixer cset numid=68,iface=MIXER,name='Speaker Function' 0
     fi
     sleep 2
 
@@ -243,7 +207,7 @@ speaker_switch_test()
 
     tst_resm TINFO "Do you hear the speaker is mute and the headphone output the voice?[y/n]"
     read answer
-    if [ $answer = "y" ]
+    if [ "$answer" = "y" ]
     then
         tst_resm TPASS "Test #1: speaker switch to headphone success." 
     else

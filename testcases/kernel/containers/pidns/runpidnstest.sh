@@ -22,101 +22,101 @@
 pidns01
 rc=$?
 if [ $rc -ne 0 ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 pidns02
 rc=$?
 if [ $rc -ne 0 ] && [ -z $err_code ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 pidns03
 rc=$?
 if [ $rc -ne 0 ] && [ -z $err_code ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 pidns04
 rc=$?
 if [ $rc -ne 0 ] && [ -z $err_code ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 pidns05
 rc=$?
 if [ $rc -ne 0 ] && [ -z $err_code ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 pidns06
 rc=$?
 if [ $rc -ne 0 ] && [ -z $err_code ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 pidns30
 rc=$?
 if [ $rc -ne 0 ] && [ -z $err_code ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 pidns31
 rc=$?
 if [ $rc -ne 0 ] && [ -z $err_code ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 pidns10
 rc=$?
 if [ $rc -ne 0 ] && [ -z $err_code ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 pidns12
 rc=$?
 if [ $rc -ne 0 ] && [ -z $err_code ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 pidns13
 rc=$?
 if [ $rc -ne 0 ] && [ -z $err_code ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 pidns14
 rc=$?
 if [ $rc -ne 0 ] && [ -z $err_code ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 pidns16
 rc=$?
 if [ $rc -ne 0 ] && [ -z $err_code ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 pidns17
 rc=$?
 if [ $rc -ne 0 ] && [ -z $err_code ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 pidns20
 rc=$?
 if [ $rc -ne 0 ] && [ -z $err_code ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 pidns21
 rc=$?
 if [ $rc -ne 0 ] && [ -z $err_code ]; then
-	err_code=$rc
+ err_code=$rc
 fi
 
 # If any test failed then exit with the value error-code.
 if ! [ -z $err_code ]; then
-	exit $err_code
+ exit $err_code
 fi
 

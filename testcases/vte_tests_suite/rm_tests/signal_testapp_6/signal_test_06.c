@@ -24,7 +24,7 @@
 
 /*---------------------------------------------------------------------+
 |                            signal_test_06                            |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Description:  Verifies that when multiple identical signals are sent |
 |               to a process, at least one is queued.                  |
@@ -62,7 +62,7 @@
 |                                                                      |
 +---------------------------------------------------------------------*/
 
-#define MAXSIG 1024*1024	/* Number of signals sent to process */
+#define MAXSIG 1024*1024 /* Number of signals sent to process */
 
 
 #include <stdio.h>
@@ -90,80 +90,80 @@ int signals_received = 0;
 
 /*---------------------------------------------------------------------+
 |                               main ()                                |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Main program  (see prolog for more details)               |
 |                                                                      |
 +---------------------------------------------------------------------*/
 int RM_main (int argc, char **argv)
 {
-	sigset_t	newmask, 	/* New signal mask */
-			oldmask, 	/* Initial signal mask */
-			pendmask; 	/* Pending signal mask */
-	int		i;		/* Loop index */
+ sigset_t newmask, /* New signal mask */
+   oldmask, /* Initial signal mask */
+   pendmask; /* Pending signal mask */
+ int  i;  /* Loop index */
 
-	/* Print out program header */
-	printf ("%s: IPC TestSuite program\n\n", *argv);
-    
-	/* Set up our signal handler */
-	init_sig ();
+ /* Print out program header */
+ printf ("%s: IPC TestSuite program\n\n", *argv);
 
-	/* 
-	 * Block ALL signals from interrupting the process
-	 */
-	printf ("\tBlock all signals from interrupting the process\n");
-	if (sigfillset (&newmask) < 0) 
-		error ("sigfillset failed", __LINE__);
-	if (sigprocmask (SIG_SETMASK, &newmask, &oldmask) < 0)
-		error ("sigprocmask failed", __LINE__);
+ /* Set up our signal handler */
+ init_sig ();
 
-	/*
-	 * Send MAXSIG signals to the current process -- since ALL of the
-	 * signals are blocked, none of the signals should interrupt the
-	 * process
-	 */
-	printf ("\n\tSend MAX (%d) SIGUSR1 signals to the process...\n", MAXSIG);
-	for (i=0; i<MAXSIG; i++) raise (SIGUSR1);
+ /*
+  * Block ALL signals from interrupting the process
+  */
+ printf ("\tBlock all signals from interrupting the process\n");
+ if (sigfillset (&newmask) < 0)
+  error ("sigfillset failed", __LINE__);
+ if (sigprocmask (SIG_SETMASK, &newmask, &oldmask) < 0)
+  error ("sigprocmask failed", __LINE__);
 
-	/*
-	 *  Sleep for a short time and the check to ensure that a SIGUSR1
-	 *  signal is pending 
-	 */
-	sleep (2);
+ /*
+  * Send MAXSIG signals to the current process -- since ALL of the
+  * signals are blocked, none of the signals should interrupt the
+  * process
+  */
+ printf ("\n\tSend MAX (%d) SIGUSR1 signals to the process...\n", MAXSIG);
+ for (i=0; i<MAXSIG; i++) raise (SIGUSR1);
 
-	printf ("\n\tEnsure at least one SIGUSR1 signal is pending\n");
-	if (sigpending (&pendmask) < 0) 
-		error ("sigpending failed", __LINE__);
+ /*
+  *  Sleep for a short time and the check to ensure that a SIGUSR1
+  *  signal is pending
+  */
+ sleep (2);
 
-	if (sigismember (&pendmask, SIGUSR1) == 0)
-		error ("sent multiple SIGUSR1 signals to process, " \
-			"yet none are pending!", __LINE__);
+ printf ("\n\tEnsure at least one SIGUSR1 signal is pending\n");
+ if (sigpending (&pendmask) < 0)
+  error ("sigpending failed", __LINE__);
 
-	/*
-	 * Change the signal mask to allow signals to interrupt the process
-	 * and then suspend execution until a signal reaches the process
-	 * 
-	 * Then verify that at least one signal was received
-	 */
-	printf ("\n\tChange signal mask & wait for SIGUSR1 signal\n");
-	if (sigsuspend(&oldmask) != -1 || errno != 4)
-		error ("sigsuspend failed", __LINE__);
+ if (sigismember (&pendmask, SIGUSR1) == 0)
+  error ("sent multiple SIGUSR1 signals to process, " \
+   "yet none are pending!", __LINE__);
 
-	if (signals_received != 1) {
-		printf ("Signals are queued!  Sent %d signals, " \
-			"while %d were queued\n",
-			MAXSIG, signals_received);
-	}
+ /*
+  * Change the signal mask to allow signals to interrupt the process
+  * and then suspend execution until a signal reaches the process
+  *
+  * Then verify that at least one signal was received
+  */
+ printf ("\n\tChange signal mask & wait for SIGUSR1 signal\n");
+ if (sigsuspend(&oldmask) != -1 || errno != 4)
+  error ("sigsuspend failed", __LINE__);
 
-	/* Program completed successfully -- exit */
-	printf ("\nsuccessful!\n");
-	return (0);
+ if (signals_received != 1) {
+  printf ("Signals are queued!  Sent %d signals, " \
+   "while %d were queued\n",
+   MAXSIG, signals_received);
+ }
+
+ /* Program completed successfully -- exit */
+ printf ("\nsuccessful!\n");
+ return (0);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               handler ()                             |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Catches signals and aborts the program if a signal other  |
 |            than SIGUSR1 was received                                 |
@@ -176,21 +176,21 @@ int RM_main (int argc, char **argv)
 +---------------------------------------------------------------------*/
 void handler (int signal, int code, struct sigcontext *scp)
 {
-	char msg [256];		/* Buffer for error message */
+ char msg [256];  /* Buffer for error message */
 
-	if (signal != SIGUSR1) {
-		sprintf (msg, "unexpected signal (%d)", signal);
-		error (msg, __LINE__);
-	}
+ if (signal != SIGUSR1) {
+  sprintf (msg, "unexpected signal (%d)", signal);
+  error (msg, __LINE__);
+ }
 
-	printf ("\tcaught SIGUSR1 (%d) signal\n", signal);
-	signals_received++;
+ printf ("\tcaught SIGUSR1 (%d) signal\n", signal);
+ signals_received++;
 }
 
 
 /*---------------------------------------------------------------------+
 |                             init_sig ()                              |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Initialize the signal vector for ALL possible signals     |
 |            (as defined in /usr/include/sys/signal.h) except for      |
@@ -205,61 +205,61 @@ void handler (int signal, int code, struct sigcontext *scp)
 +---------------------------------------------------------------------*/
 void init_sig ()
 {
-	struct sigaction invec;
-	char 	msg [256];		/* Buffer for error message */
-	int 	i;
+ struct sigaction invec;
+ char msg [256];  /* Buffer for error message */
+ int i;
 
-	for (i=1; i<=SIGMAX; i++) {
+ for (i=1; i<=SIGMAX; i++) {
 
-		/* Cannot catch or ignore the following signals */
+  /* Cannot catch or ignore the following signals */
 #ifdef _IA64    /* SIGWAITING not supported, RESERVED */
-		if ((i == SIGKILL) || (i == SIGSTOP) ||
-		    (i == SIGCONT) || (i == SIGWAITING)) continue;
+  if ((i == SIGKILL) || (i == SIGSTOP) ||
+      (i == SIGCONT) || (i == SIGWAITING)) continue;
 #else
 # ifdef _LINUX_
-       		if ((i == SIGKILL) || (i == SIGSTOP) || ((i>=32)&&(i<=34))) continue;
+      if ((i == SIGKILL) || (i == SIGSTOP) || ((i>=32)&&(i<=34))) continue;
 # else
-		if (i == SIGKILL || i == SIGSTOP || i == SIGCONT) continue;
+  if (i == SIGKILL || i == SIGSTOP || i == SIGCONT) continue;
 # endif
 #endif
 
-		invec.sa_handler = (void (*)(int)) handler;
-		sigemptyset (&invec.sa_mask);
-		invec.sa_flags = 0;
+  invec.sa_handler = (void (*)(int)) handler;
+  sigemptyset (&invec.sa_mask);
+  invec.sa_flags = 0;
 
-		if (sigaction (i, &invec, (struct sigaction *) NULL) < 0) {
-			sprintf (msg, "sigaction failed on signal %d", i);
-			error (msg, __LINE__);
-		}
-	}
+  if (sigaction (i, &invec, (struct sigaction *) NULL) < 0) {
+   sprintf (msg, "sigaction failed on signal %d", i);
+   error (msg, __LINE__);
+  }
+ }
 }
 
 
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Creates system error message and calls error ()           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 void sys_error (const char *msg, int line)
 {
-	char syserr_msg [256];
+ char syserr_msg [256];
 
-	sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
-	error (syserr_msg, line);
+ sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
+ error (syserr_msg, line);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               error ()                               |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Prints out message and exits...                           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 void error (const char *msg, int line)
 {
-	fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
-	exit (-1);
+ fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
+ exit (-1);
 }

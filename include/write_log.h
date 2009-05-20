@@ -1,32 +1,32 @@
 /*
  * Copyright (c) 2000 Silicon Graphics, Inc.  All Rights Reserved.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it would be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * Further, this software is distributed without any warranty that it is
  * free of the rightful claim of any third person regarding infringement
  * or the like.  Any license provided herein, whether implied or
  * otherwise, applies only to this software file.  Patent licenses, if
  * any, provided herein do not apply to combinations of this program with
  * other software, or any other product whatsoever.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write the Free Software Foundation, Inc., 59
  * Temple Place - Suite 330, Boston MA 02111-1307, USA.
- * 
+ *
  * Contact information: Silicon Graphics, Inc., 1600 Amphitheatre Pkwy,
  * Mountain View, CA  94043, or:
- * 
- * http://www.sgi.com 
- * 
- * For further information regarding this notice, see: 
- * 
+ *
+ * http://www.sgi.com
+ *
+ * For further information regarding this notice, see:
+ *
  * http://oss.sgi.com/projects/GenInfo/NoticeExplan/
  */
 #ifndef _WRITE_LOG_H_
@@ -50,9 +50,9 @@
  */
 
 struct wlog_rec {
-    int	    w_pid;	    /* pid doing the write  	    */
-    int	    w_offset;       /* file offset  	    	    */
-    int	    w_nbytes;	    /* # bytes written	    	    */
+    int	    w_pid;	    /* pid doing the write      */
+    int	    w_offset;       /* file offset          */
+    int	    w_nbytes;	    /* # bytes written	        */
     int	    w_oflags;       /* low-order open() flags	    */
     int	    w_done;	    /* 1 if io confirmed done	    */
     int	    w_async;	    /* 1 if async write	(writea)    */
@@ -106,24 +106,24 @@ struct wlog_rec {
 
 struct wlog_rec_disk {
 #ifdef CRAY
-    uint    w_offset    : 44;	    /* file offset  	    	    */
+    uint    w_offset    : 44;	    /* file offset          */
     uint    w_extra0    : 20;       /* EXTRA BITS IN WORD 0         */
 #else
     /* NB: sgi is pissy about fields > 32 bit, even cc -mips3 */
-    uint    w_offset    : 32;	    /* file offset  	    	    */
+    uint    w_offset    : 32;	    /* file offset          */
     uint    w_extra0    : 32;       /* EXTRA BITS IN WORD 0         */
 #endif
 
-    uint    w_nbytes    : 32;	    /* # bytes written	    	    */
+    uint    w_nbytes    : 32;	    /* # bytes written	        */
     uint    w_oflags	: 32;	    /* low-order open() flags	    */
 
-    uint    w_pid       : 17;	    /* pid doing the write  	    */
-    uint    w_pathlen	:  7;	    /* length of file path  	    */
+    uint    w_pid       : 17;	    /* pid doing the write      */
+    uint    w_pathlen	:  7;	    /* length of file path      */
     uint    w_patternlen:  6;	    /* length of pattern            */
     uint    w_hostlen   :  4;       /* length of host               */
     uint    w_done      :  1;	    /* 1 if io confirmed done	    */
     uint    w_async     :  1;	    /* 1 if async write	(writea)    */
-    uint    w_extra2 	: 28;	    /* EXTRA BITS IN WORD 2 	    */
+    uint    w_extra2 : 28;	    /* EXTRA BITS IN WORD 2     */
 };
 
 /*

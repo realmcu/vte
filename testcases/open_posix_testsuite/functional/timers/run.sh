@@ -10,15 +10,15 @@
 # Helper functions
 RunTest()
 {
-	echo "TEST: " $1
-	$1
-	if [ $? == 0 ]; then
-		PASS=$PASS+1
-		echo -ne "\t\t\t***TEST PASSED***\n\n"
-	else
-		FAIL=$FAIL+1
-		echo -ne "\t\t\t***TEST FAILED***\n\n"
-	fi
+ echo "TEST: " $1
+ $1
+ if [ $? == 0 ]; then
+  PASS=$PASS+1
+  echo -ne "\t\t\t***TEST PASSED***\n\n"
+ else
+  FAIL=$FAIL+1
+  echo -ne "\t\t\t***TEST FAILED***\n\n"
+ fi
 }
 
 # Main program
@@ -36,15 +36,15 @@ echo "=========================================="
 echo "Run clocks tests"
 echo "================"
 
-for test in $CLOCKSTESTS; do 
-	RunTest $test
+for test in $CLOCKSTESTS; do
+ RunTest $test
 done
 
 echo "Run timers tests"
 echo "================"
 
-for test in $TIMERSTESTS; do 
-	RunTest $test
+for test in $TIMERSTESTS; do
+ RunTest $test
 done
 
 echo

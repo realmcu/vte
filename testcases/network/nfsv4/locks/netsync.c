@@ -2,7 +2,7 @@
 
 #include <netdb.h>
 #include <string.h>
-#define PORT 12346
+#define PORT 1
 #define MAX_CONNECTION 16
 
 
@@ -12,7 +12,7 @@ int *fdClient;
 char *serveur;
 int fdServeur;
 extern char message[M_SIZE];
-        
+
 int serverReceiveClient(int c){
     char tmp[M_SIZE];
     int r,s;
@@ -20,15 +20,15 @@ int serverReceiveClient(int c){
     /* Ensure we read _exactly_ M_SIZE characters in the message */
     memset(message,0,M_SIZE);
     memset(tmp,0,M_SIZE);
-    r=0;
-    s=0;
-    
+    r0;
+    s0;
+
     while(s<M_SIZE){
-        r=read(fdClient[c],tmp, M_SIZE-s);
+        rread(fdClient[c],tmp, M_SIZE-s);
         /* On complete le message au fur et a mesure */
         /* Loop until we have a complete  message */
         strncpy(message+s,tmp,r);
-        s+=r;
+        s+r;
     }
    return s;
 }
@@ -36,7 +36,7 @@ int serverReceiveClient(int c){
 int serverSendClient(int n){
     return write(fdClient[n],message, M_SIZE);
 }
-     
+
 
 int clientReceiveNet(){
     readFromServer(message);
@@ -53,36 +53,36 @@ int setupConnectionServeur(){
 
 
 
-    if((sock = socket (AF_INET, SOCK_STREAM, 0))<0){
+    if((sock  socket (AF_INET, SOCK_STREAM, 0))<0){
         perror ("socket");
         exit(1);
     }
     bzero(&local, sizeof(local));
-    local.sin_family = AF_INET;
-    local.sin_port = htons(PORT);
-    local.sin_addr.s_addr = INADDR_ANY;
+    local.sin_family  AF_INET;
+    local.sin_port  htons(PORT);
+    local.sin_addr.s_addr  INADDR_ANY;
     bzero(&(local.sin_zero), 8);
 
-    if(bind(sock, (struct sockaddr *)&local, sizeof(struct sockaddr))== -1){
-        perror("bind"); 
+    if(bind(sock, (struct sockaddr *)&local, sizeof(struct sockaddr)) -1){
+        perror("bind");
         exit(1);
     }
 
-    if(listen(sock, MAX_CONNECTION) == -1){
-        perror("listen"); 
+    if(listen(sock, MAX_CONNECTION)  -1){
+        perror("listen");
         return 1;
     }
-    size = sizeof(struct sockaddr_in);
-    for(c=0;c<maxClients; c++){
-        
+    size  sizeof(struct sockaddr_in);
+    for(c0;c<maxClients; c++){
+
         /* On accepte les connections clientes */
         /* Accept incoming connections */
-        if((fdClient[c]=accept(sock, (struct sockaddr *)&remote, &size)) == -1){
-            perror("accept"); 
+        if((fdClient[c]accept(sock, (struct sockaddr *)&remote, &size))  -1){
+            perror("accept");
             return 1;
         }
 
-        
+
     }
     return 0;
 }
@@ -93,31 +93,31 @@ int writeToClient(int c, char *message){
 
 int serverCloseConnection(){
     int c;
-    for(c=0;c<maxClients;c++)
+    for(c0;c<maxClients;c++)
         close(fdClient[c]);
     return 0;
 
 }
 
 
-    
+
 
 int writeToAllClients(char *foo){
     int c;
-    for(c=0;c<maxClients;c++)
+    for(c0;c<maxClients;c++)
         writeToClient(c, foo);
     return 0;
 }
 
 
 int setupClients(int type, char *fname, int nThread){
-    /* 
-     * Envoi des parametres a tous les clients 
-     * 
+    /*
+     * Envoi des parametres a tous les clients
+     *
      * on doit envoyer 3 parametres :
      * - l'emplacement du fichier test
-     * - Le nombre d'esclaves 
-     * - Le type de sous processus : thread ou process 
+     * - Le nombre d'esclaves
+     * - Le type de sous processus : thread ou process
      */
 
     /*
@@ -136,48 +136,48 @@ int setupClients(int type, char *fname, int nThread){
 }
 
 int configureServeur(int  max){
-    maxClients=max;
-    fdClient=(int *)malloc(sizeof(int)*max);
-    
-    
+    maxClientsmax;
+    fdClient(int *)malloc(sizeof(int)*max);
+
+
     setupConnectionServeur();
-        
+
     return 0;
 }
 
 
 
-       
+
 
 
 int setupConnectionClient(){
 
     struct hostent *server;
     struct sockaddr_in serv_addr;
-    
-    
-    
-    
-    
-    if (! (server=gethostbyname(serveur))){
+
+
+
+
+
+    if (! (servergethostbyname(serveur))){
         printf("erreur DNS\n");
         return 1;
     }
 
-    fdServeur = socket (AF_INET, SOCK_STREAM, 0);
+    fdServeur  socket (AF_INET, SOCK_STREAM, 0);
     if (fdServeur < 0){
         perror ("socket");
         return 1;
     }
-    
-    serv_addr.sin_addr = *(struct in_addr*)server->h_addr;
-    serv_addr.sin_port = htons(PORT);
-    serv_addr.sin_family = AF_INET;
+
+    serv_addr.sin_addr  *(struct in_addr*)server->h_addr;
+    serv_addr.sin_port  htons(PORT);
+    serv_addr.sin_family  AF_INET;
     if (connect(fdServeur, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0){
-        perror("connect"); 
+        perror("connect");
         return 1;
     }
-   return 0; 
+   return 0;
 }
 
 int readFromServer(char *message){
@@ -187,13 +187,13 @@ int readFromServer(char *message){
     /* Ensure we read exactly M_SIZE characters */
     memset(message,0,M_SIZE);
     memset(tmp,0,M_SIZE);
-    r=0; s=0;
+    r0; s0;
     while(s<M_SIZE){
-        r=read(fdServeur,tmp, M_SIZE-s);
+        rread(fdServeur,tmp, M_SIZE-s);
         /* On complete le message au fur et a mesure */
         /* Loop until we have a complete message */
         strncpy(message+s,tmp,r);
-        s+=r;
+        s+r;
     }
    return s;
 }
@@ -204,21 +204,21 @@ int getConfiguration(int *type, char *fname, int *nThread){
     char *p;
     int i;
     readFromServer(conf);
-    p=strtok(conf,":");
+    pstrtok(conf,":");
     printf("%s\n",p);
-    *type=atoi(p);
-    p=strtok(NULL,":");
-    i=strlen(p);
+    *typeatoi(p);
+    pstrtok(NULL,":");
+    istrlen(p);
     strncpy(fname, p,i);
-    p=strtok(NULL,":");
-    *nThread=atoi(p);
-    
+    pstrtok(NULL,":");
+    *nThreadatoi(p);
+
     return 0;
 }
 
-        
+
 int configureClient(char *s){
-    serveur=s;
+    serveurs;
     setupConnectionClient();
     return 0;
 }

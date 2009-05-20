@@ -14,7 +14,7 @@
  */
 
 /* ftruncate was formerly an XOPEN extension. We define _XOPEN_SOURCE here to
-   avoid warning if the implementation does not program ftruncate as a base 
+   avoid warning if the implementation does not program ftruncate as a base
    interface */
 #define _XOPEN_SOURCE 600
 
@@ -30,41 +30,41 @@
 #define SHM_NAME "posixtest_20-3"
 
 int main() {
-	int fd, result;
-	void *ptr;
-	
-	result = shm_unlink(SHM_NAME);
-	if(result != 0 && errno != ENOENT) { 
-		/* The shared memory object exist and shm_unlink can not 
-		   remove it. */
-		perror("An error occurs when calling shm_unlink()");
-		return PTS_UNRESOLVED;
-	}
+ int fd, result;
+ void *ptr;
 
-	fd = shm_open(SHM_NAME, O_RDWR|O_CREAT, 0);
-	if(fd == -1) {
-		perror("An error occurs when calling shm_open()");
-		return PTS_UNRESOLVED;
-	}
+ result  shm_unlink(SHM_NAME);
+ if(result ! 0 && errno ! ENOENT) {
+  /* The shared memory object exist and shm_unlink can not
+     remove it. */
+  perror("An error occurs when calling shm_unlink()");
+  return PTS_UNRESOLVED;
+ }
 
-	if(ftruncate(fd, BUF_SIZE) != 0) {
-		perror("An error occurs when calling ftruncate()");
-		shm_unlink(SHM_NAME);
-		return PTS_UNRESOLVED;	
-	}
+ fd  shm_open(SHM_NAME, O_RDWR|O_CREAT, 0);
+ if(fd  -1) {
+  perror("An error occurs when calling shm_open()");
+  return PTS_UNRESOLVED;
+ }
 
-	ptr = mmap(NULL, BUF_SIZE, PROT_NONE, MAP_SHARED, fd, 0);
-	if( ptr != MAP_FAILED) {
-		printf("Test PASSED\n");
-		shm_unlink(SHM_NAME);
-		return PTS_PASS;
-	} else if(errno == EACCES){
-		printf("The shared memory object is not opened for reading.\n");
-		shm_unlink(SHM_NAME);
-		return PTS_FAIL;
-	}
+ if(ftruncate(fd, BUF_SIZE) ! 0) {
+  perror("An error occurs when calling ftruncate()");
+  shm_unlink(SHM_NAME);
+  return PTS_UNRESOLVED;
+ }
 
-	perror("mmap");
-	shm_unlink(SHM_NAME);
-	return PTS_FAIL;
+ ptr  mmap(NULL, BUF_SIZE, PROT_NONE, MAP_SHARED, fd, 0);
+ if( ptr ! MAP_FAILED) {
+  printf("Test PASSED\n");
+  shm_unlink(SHM_NAME);
+  return PTS_PASS;
+ } else if(errno  EACCES){
+  printf("The shared memory object is not opened for reading.\n");
+  shm_unlink(SHM_NAME);
+  return PTS_FAIL;
+ }
+
+ perror("mmap");
+ shm_unlink(SHM_NAME);
+ return PTS_FAIL;
 }

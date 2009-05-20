@@ -19,14 +19,14 @@
 
 /*
  * NAME
- *	pipe06.c
+ * pipe06.c
  *
  * DESCRIPTION
- *	Check what happens when the system runs out of pipes.
+ * Check what happens when the system runs out of pipes.
  *
  * ALGORITHM
- *	Issue enough pipe calls to run the system out of pipes.
- *	Check that we get EMFILE.
+ * Issue enough pipe calls to run the system out of pipes.
+ * Check that we get EMFILE.
  *
  * USAGE:  <for command-line>
  *  pipe06 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -38,21 +38,21 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- *	None
+ * None
  */
 #include <fcntl.h>
 #include <errno.h>
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "pipe06";
-int TST_TOTAL = 1;
+char *TCID  "pipe06";
+int TST_TOTAL  1;
 extern int Tst_count;
 
-int exp_enos[] = {EMFILE, 0};
+int exp_enos[]  {EMFILE, 0};
 
 int pipe_ret, pipes[2];
 void setup(void);
@@ -60,45 +60,45 @@ void cleanup(void);
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-		/*NOTREACHED*/
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+  /*NOTREACHED*/
+ }
 
-	setup();
+ setup();
 
-	TEST_EXP_ENOS(exp_enos);
+ TEST_EXP_ENOS(exp_enos);
 
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		TEST(pipe(pipes));
-	
-		if (TEST_RETURN != -1) {
-			tst_resm(TFAIL, "call succeeded unexpectedly");
-		}
+  TEST(pipe(pipes));
 
-		TEST_ERROR_LOG(TEST_ERRNO);
+  if (TEST_RETURN ! -1) {
+   tst_resm(TFAIL, "call succeeded unexpectedly");
+  }
 
-		if (TEST_ERRNO != EMFILE) {
-			tst_resm(TFAIL, "unexpected error - %d : %s - "
-				 "expected EMFILE", TEST_ERRNO,
-				 strerror(TEST_ERRNO));
-		} else {
-			tst_resm(TPASS, "expected failure - "
-				 "errno = %d : %s", TEST_ERRNO,
-	 			 strerror(TEST_ERRNO));
-		}
+  TEST_ERROR_LOG(TEST_ERRNO);
 
-	}
-	cleanup();
-	return(0);
+  if (TEST_ERRNO ! EMFILE) {
+   tst_resm(TFAIL, "unexpected error - %d : %s - "
+     "expected EMFILE", TEST_ERRNO,
+     strerror(TEST_ERRNO));
+  } else {
+   tst_resm(TPASS, "expected failure - "
+     "errno  %d : %s", TEST_ERRNO,
+   strerror(TEST_ERRNO));
+  }
+
+ }
+ cleanup();
+ return(0);
 }
 
 /*
@@ -107,41 +107,41 @@ int main(int ac, char **av)
 void
 setup()
 {
-	int i, numb_fds;
+ int i, numb_fds;
 
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	numb_fds = getdtablesize();
+ numb_fds  getdtablesize();
 
-	for (i = 0; i < numb_fds; i++) {
-		pipe_ret = pipe(pipes);
-		if (pipe_ret < 0) {
-			if (errno != EMFILE) {
-				tst_brkm(TBROK, cleanup, "got unexpected "
-					 "error - %d", errno);
-			}
-			break;
-		}
-	}
+ for (i  0; i < numb_fds; i++) {
+  pipe_ret  pipe(pipes);
+  if (pipe_ret < 0) {
+   if (errno ! EMFILE) {
+    tst_brkm(TBROK, cleanup, "got unexpected "
+      "error - %d", errno);
+   }
+   break;
+  }
+ }
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
+ *        completion or premature exit.
  */
 void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

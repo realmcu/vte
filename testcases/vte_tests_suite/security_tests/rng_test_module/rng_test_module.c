@@ -1,10 +1,10 @@
-/*================================================================================================
+/*====================
 
         @file   rng_test_module.c
 
         @brief  rng API
 
-==================================================================================================*/
+======================*/
 /*
  * Copyright 2004-2006 Freescale Semiconductor, Inc. All Rights Reserved.
  */
@@ -18,7 +18,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-/*====================================================================================================
+/*====================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
@@ -27,21 +27,21 @@ Rakesh S Joshi               29/08/2006     TLSbo74375  Initial version
 A.Ozerov/b00320              11/12/2006     TLSbo84161  Minor changes.
 Rakesh S Joshi               23/01/2007     TLSbo87892  Added schedular to NonBlock RNGA tests.
 
-====================================================================================================
+====================
 Portability:  ARM GCC
-==================================================================================================
+======================
 
-==================================================================================================
+======================
 Total Tests: 1
 
 Test Executable Name:  rng_test_module.ko
 
 Test Strategy:  Examine the RNG module functions
-=================================================================================================
+=====================
 
-==================================================================================================
+======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 
 #include <linux/module.h>
 #include <linux/init.h>
@@ -54,9 +54,9 @@ Test Strategy:  Examine the RNG module functions
 #include <asm/arch-mxc/mxc_security_api.h>
 #include "rng_test_module.h"
 
-/*==================================================================================================
+/*======================
                                  GLOBAL VARIABLE DECLARATIONS
-==================================================================================================*/
+======================*/
 
 static __u32 major_dev_num;
 static struct class *rng_class;
@@ -69,18 +69,18 @@ static unsigned int result_count;
 fsl_shw_result_t *result;
 rng_random_seed get_struct;
 
-/*==================================================================================================
+/*======================
                                      FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
 static int rng_test_init (void);
 static DECLARE_WAIT_QUEUE_HEAD(rngdone);
 void rng_test_exit (void);
 void rng_request(fsl_shw_uco_t *user_ctx);
 
-/*==================================================================================================
+/*======================
                                       FUNCTION DECLARATIONS
-===================================================================================================*/
+=======================*/
 
 static int rng_open(struct inode *inode,  struct file *filp)
 {
@@ -448,9 +448,9 @@ static int rng_test_ioctl(struct inode *inode, struct file *file, unsigned int c
         return ret_rng;
 }/* END of rng_test_ioctl */
 
-/*==================================================================================================
+/*======================
                                  STRUCTURES AND OTHER TYPEDEFS
-==================================================================================================*/
+======================*/
 
 static struct file_operations rng_test_fops =
 {
@@ -461,7 +461,7 @@ static struct file_operations rng_test_fops =
 };
 
 
-/*=================================================================================================================*/
+/*=========================*/
 
 static int __init rng_test_init(void)
 {
@@ -476,7 +476,7 @@ static int __init rng_test_init(void)
 
         if (IS_ERR(rng_class))
            {
- 	       printk(KERN_ALERT "class simple created failed\n");
+        printk(KERN_ALERT "class simple created failed\n");
                    goto err_out;
            }
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26))
@@ -489,7 +489,7 @@ static int __init rng_test_init(void)
                                               RNG_DEVICE_NAME)))
 #endif
            {
- 	       printk(KERN_ALERT "class simple add failed\n");
+        printk(KERN_ALERT "class simple add failed\n");
                    goto err_out;
            }
         printk(KERN_INFO "Module load succesful\n");
@@ -501,14 +501,14 @@ err_out:
         class_device_destroy(rng_class, MKDEV(major_dev_num, 0));
 #else
         device_destroy(rng_class, MKDEV(major_dev_num, 0));
-#endif      
+#endif
         class_destroy(rng_class);
         unregister_chrdev(major_dev_num, RNG_DEVICE_NAME);
         return -1;
 
 }
 
-/*=================================================================================================================*/
+/*=========================*/
 
 void __exit rng_test_exit(void)
 {
@@ -524,7 +524,7 @@ void __exit rng_test_exit(void)
 }
 
 
-/*=================================================================================================================*/
+/*=========================*/
 
 module_init(rng_test_init);
 module_exit(rng_test_exit);

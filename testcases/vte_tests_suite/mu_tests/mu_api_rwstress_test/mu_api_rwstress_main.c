@@ -1,32 +1,32 @@
-/*================================================================================================*/
+/*====================*/
 /**
     @file   mu_api_rwstress_main.c
 
     @brief  Main file of the mu_api_rwstress_test test that performs stress tests of Messaging Unit
             driver read() and write() system calls
 */
-/*==================================================================================================
+/*======================
 
 Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-     
-====================================================================================================
+
+====================
 Revision History:
                               Modification     Tracking
 Author (Core ID)                  Date          Number    Description of Changes
 ---------------------------   ------------    ----------  ------------------------------------------
-Igor Semenchukov (smng001c)    24/08/2004     TLSbo40411   Initial version 
+Igor Semenchukov (smng001c)    24/08/2004     TLSbo40411   Initial version
 Igor Semenchukov (smng001c)    09/12/2004     TLSbo43804   Rework after heavy MU driver modification
 
-====================================================================================================
-Portability: Indicate if this module is portable to other compilers or platforms. 
+====================
+Portability: Indicate if this module is portable to other compilers or platforms.
              If not, indicate specific reasons why is it not portable.
 
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
 Total Tests:    1
 
 Test Name:      mu_api_rwstress_test
@@ -42,15 +42,15 @@ Test Assertion
                 Checks the following Messaging Unit driver functions:
                     mxc_mu_read()
                     mxc_mu_write()
-==================================================================================================*/
+======================*/
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 
 /* Standard Include Files */
 
@@ -67,24 +67,24 @@ extern "C"{
 
 #include "mu_api_rwstress_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
 /*
  * parse_opts() parameters. First option (msg) has flag -M and accepts message that will be written
@@ -100,7 +100,7 @@ char *msg_opt;
 char *child_opt;
 char *iter_opt;
 
-option_t test_opts[] = 
+option_t test_opts[] =
 {
     { "M:",  &msg_flag,    &msg_opt   },
     { "O",   &blk_flag,    NULL       }, /* only switches behaviour; doesn't requires an arg */
@@ -111,14 +111,14 @@ option_t test_opts[] =
 
 char def_msg[] = "G&](56N/"; /* Default message to write */
 
-/*==================================================================================================
+/*======================
                                        GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 
 /* Extern Global Variables */
 
@@ -130,24 +130,24 @@ extern char *TESTDIR;                      /* temporary dir created by tst_tmpdi
 char *TCID     = "mu_api_rwstress_test";   /* test program identifier               */
 int  TST_TOTAL = 1;                        /* total number of tests in this file    */
 
-/*==================================================================================================
+/*======================
                                    GLOBAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void cleanup(void);
 void setup(void);
 int main(int argc, char **argv);
 
-/*==================================================================================================
+/*======================
                                    LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void help(void);
 
-/*==================================================================================================
+/*======================
                                        GLOBAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== cleanup =====*/
+/*====================*/
+/*= cleanup =*/
 /**
 @brief  Performs all one time clean up for this test on successful
     completion,  premature exit or failure. Closes all temporary
@@ -156,10 +156,10 @@ void help(void);
 
 @param  Input :      None.
         Output:      None.
-  
+
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
 
@@ -176,12 +176,12 @@ void cleanup(void)
     tst_exit();
 }
 
-/*==================================================================================================
+/*======================
                                        LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== setup =====*/
+/*====================*/
+/*= setup =*/
 /**
 @brief  Performs all one time setup for this test. This function is
     typically used to capture signals, create temporary dirs
@@ -191,7 +191,7 @@ void cleanup(void)
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
     int VT_rv = TFAIL;
@@ -203,8 +203,8 @@ void setup(void)
     }
     return;
 }
-/*================================================================================================*/
-/*===== main =====*/
+/*====================*/
+/*= main =*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
     inputs, calls the global setup and executes the test. It logs
@@ -215,11 +215,11 @@ void setup(void)
 @param  Input :  argc - number of command line parameters.
                  **argv - pointer to the array of the command line parameters.
         Output:  None
-  
+
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
     int  i;
@@ -276,7 +276,7 @@ int main(int argc, char **argv)
         }
     }
     printf("\tNumber of spawned children is %d\n", forks);
-    
+
     /* perform global test setup, call setup() function. */
 
     setup();
@@ -297,16 +297,16 @@ int main(int argc, char **argv)
     return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== help =====*/
+/*====================*/
+/*= help =*/
 /**
 @brief  Displays the program usage.
 
-@param  Input:	None
+@param  Input: None
     Output: None
-@return	None
+@return None
 */
-/*================================================================================================*/
+/*====================*/
 void help(void)
 {
     fprintf(stderr, "Usage:\t%s [OPTION]\n\n", TCID);

@@ -7,7 +7,7 @@
  */
 
 /*
- * Test that mq_send() returns errno == EBADF if mqdes is not open for
+ * Test that mq_send() returns errno  EBADF if mqdes is not open for
  * writing.
  */
 
@@ -27,47 +27,47 @@
 int main()
 {
         char qname[NAMESIZE];
-        const char *msgptr = MSGSTR;
+        const char *msgptr  MSGSTR;
         mqd_t queue;
-	int unresolved=0, failure=0;
+ int unresolved0, failure0;
 
         sprintf(qname, "/mq_send_11-2_%d", getpid());
 
-        queue = mq_open(qname, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR, NULL);
-        if (queue == (mqd_t)-1) {
+        queue  mq_open(qname, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR, NULL);
+        if (queue  (mqd_t)-1) {
                 perror("mq_open() did not return success");
                 return PTS_UNRESOLVED;
         }
 
-        if (mq_send(queue, msgptr, strlen(msgptr), 1) != -1) {
+        if (mq_send(queue, msgptr, strlen(msgptr), 1) ! -1) {
                 printf("mq_send() did not return -1 on invalid queue\n");
-		failure=1;
+  failure1;
         }
 
-	if (errno != EBADF) {
-		printf("errno != EBADF\n");
-		failure = 1;
-	}
+ if (errno ! EBADF) {
+  printf("errno ! EBADF\n");
+  failure  1;
+ }
 
-        if (mq_close(queue) != 0) {
-		perror("mq_close() did not return success");
-		unresolved=1;
+        if (mq_close(queue) ! 0) {
+  perror("mq_close() did not return success");
+  unresolved1;
         }
 
-        if (mq_unlink(qname) != 0) {
-		perror("mq_unlink() did not return success");
-		unresolved=1;
+        if (mq_unlink(qname) ! 0) {
+  perror("mq_unlink() did not return success");
+  unresolved1;
         }
 
-	if (failure==1) {
-		printf("Test FAILED\n");
-		return PTS_FAIL;
-	}
+ if (failure1) {
+  printf("Test FAILED\n");
+  return PTS_FAIL;
+ }
 
-	if (unresolved==1) {
-		printf("Test UNRESOLVED\n");
-		return PTS_UNRESOLVED;
-	}
+ if (unresolved1) {
+  printf("Test UNRESOLVED\n");
+  return PTS_UNRESOLVED;
+ }
 
         printf("Test PASSED\n");
         return PTS_PASS;

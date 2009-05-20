@@ -13,25 +13,25 @@
 
 /*
  * @file mxc_v4l2_still.c
- * 
+ *
  * @brief Mxc Video For Linux 2 driver test application
- * 
+ *
  */
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*=======================================================================
+/*===============
                                         INCLUDE FILES
-=======================================================================*/
+===============*/
 /* Standard Include Files */
 #include <errno.h>
-#include <sys/types.h>	
-#include <sys/stat.h>	
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <unistd.h>    
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <asm/types.h>
@@ -80,7 +80,7 @@ void fmt_convert(char *dest, char *src, struct v4l2_format fmt)
                 uoff = 0;
                 voff = 2;
         }
-        else {	/* YUV444 */
+        else { /* YUV444 */
                 bpp = 4;
                 yoff = 0;
                 uoff = 1;
@@ -119,7 +119,7 @@ int v4l_capture_setup(void)
                 return TFAIL;
         }
 
-	memset(&fmt, 0, sizeof(fmt));
+ memset(&fmt, 0, sizeof(fmt));
         fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         fmt.fmt.pix.pixelformat = g_pixelformat;
         fmt.fmt.pix.width = g_width;
@@ -131,7 +131,7 @@ int v4l_capture_setup(void)
         {
                 printf("set format failed\n");
                 return TFAIL;
-        } 
+        }
 
         crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         crop.c.left = 0;
@@ -142,7 +142,7 @@ int v4l_capture_setup(void)
         {
                 printf("set cropping failed\n");
                 return TFAIL;
-        } 
+        }
 
         parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         parm.parm.capture.timeperframe.numerator = 1;
@@ -151,12 +151,12 @@ int v4l_capture_setup(void)
                 parm.parm.capture.capturemode = V4L2_MODE_HIGHQUALITY;
         else
                 parm.parm.capture.capturemode = 0;
-         
+
         if (ioctl(fd_v4l, VIDIOC_S_PARM, &parm) < 0)
         {
                 printf("VIDIOC_S_PARM failed\n");
                 return TFAIL;
-        } 
+        }
 
         return fd_v4l;
 }
@@ -168,7 +168,7 @@ void v4l_capture_test(int fd_v4l)
         int fd_still = 0;
         char *buf1, *buf2;
         char still_file[100] = "./still.yuv";
-   
+
         if ((fd_still = open(still_file, O_RDWR | O_CREAT)) < 0)
         {
                 printf("Unable to create y frame recording file\n");
@@ -194,8 +194,8 @@ void v4l_capture_test(int fd_v4l)
         buf2 = (char *)malloc(fmt.fmt.pix.sizeimage);
         if (!buf1 || !buf2)
                 goto exit0;
-        
-        memset(buf1, 0, fmt.fmt.pix.sizeimage); 
+
+        memset(buf1, 0, fmt.fmt.pix.sizeimage);
         memset(buf2, 0, fmt.fmt.pix.sizeimage);
 
         if (read(fd_v4l, buf1, fmt.fmt.pix.sizeimage) != fmt.fmt.pix.sizeimage) {
@@ -213,12 +213,12 @@ void v4l_capture_test(int fd_v4l)
                 printf("VIDIOC_S_PARM failed\n");
         }
 
-        if ((g_convert == 1) && (g_pixelformat != V4L2_PIX_FMT_YUV422P) 
-        	&& (g_pixelformat != V4L2_PIX_FMT_YUV420)) {
+        if ((g_convert == 1) && (g_pixelformat != V4L2_PIX_FMT_YUV422P)
+        && (g_pixelformat != V4L2_PIX_FMT_YUV420)) {
                 fmt_convert(buf2, buf1, fmt);
                 write(fd_still, buf2, fmt.fmt.pix.width * fmt.fmt.pix.height * 3 / 2);
         }
-        else 
+        else
                 write(fd_still, buf1, fmt.fmt.pix.sizeimage);
 
 exit0:
@@ -234,7 +234,7 @@ int main(int argc, char **argv)
 {
         int fd_v4l;
         int i;
-        
+
         for (i = 1; i < argc; i++) {
                 if (strcmp(argv[i], "-w") == 0) {
                         g_width = atoi(argv[++i]);

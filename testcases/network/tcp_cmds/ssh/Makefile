@@ -8,6 +8,6 @@ install:
 	ln -f ssh03 ../../../bin
 	ln -f ssh03_s1 ../../../bin
 	ln -f ssh_set_passwd ../../../bin
-	
+
 
 clean:

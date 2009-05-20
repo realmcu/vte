@@ -10,7 +10,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
@@ -19,9 +19,9 @@
 #I.Inkina/nknl001              1/07/2005     TLSbo52105   Initial version
 #D.Simakov/smkd001c           22/08/2005     TLSbo53252   Re-written
 #D.Simakov/smkd001c           14/10/2005     TLSbo57009   Rework
-#A.Pshenichnikov	      13/01/2006     TLSbo61033   Makefiles / shared libraries	 	
+#A.Pshenichnikov	      13/01/2006     TLSbo61033   Makefiles / shared libraries
 ###################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms. 
+#Portability: Indicate if this module is portable to other compilers or platforms.
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################
@@ -51,21 +51,21 @@ install:
 	cp -f $(CONFIGS) $(LTP_BIN)
 	cp -rf $(H264E_INPUT) $(LTP_BIN)
 	cp -rf $(H264E_REF) $(LTP_BIN)
-	mkdir -p $(LTP_BIN)/h264e_output    
-	mkdir -p $(LTP_BIN)/sharedlibs   
-	cp -rf $(H264E_LIBDIR)/lib$(H264E_LIBRARY).so $(LTP_BIN)/sharedlibs                            
+	mkdir -p $(LTP_BIN)/h264e_output
+	mkdir -p $(LTP_BIN)/sharedlibs
+	cp -rf $(H264E_LIBDIR)/lib$(H264E_LIBRARY).so $(LTP_BIN)/sharedlibs
 	@echo "*************************************************"
 	@echo "** INSTALL : h264_encoder_testapp              **"
-	@echo "*************************************************"        
+	@echo "*************************************************"
 	@echo
 
 clean:
 	rm -f $(patsubst %.c,%.o,$(SRCS)) $(TARGET)
 
-$(TARGET): $(OBJS) $(LIBRARY) 
+$(TARGET): $(OBJS) $(LIBRARY)
 	$(CC)  $(OBJS) $(LOADLIBES) $(LIBRARY) -o  $@
 
-$(OBJS) : $(SRCS) 
+$(OBJS) : $(SRCS)
 
 
 

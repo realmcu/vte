@@ -1,6 +1,6 @@
 #!/bin/sh
 
-################################################################################ 
+################################################################################
 ##                                                                            ##
 ## Copyright (c) International Business Machines  Corp., 2008                 ##
 ##                                                                            ##
@@ -19,7 +19,7 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA    ##
 ##                                                                            ##
 ## Author:      Veerendra <veeren@linux.vnet.ibm.com>                         ##
-################################################################################ 
+################################################################################
 
 
 ################################################################################
@@ -40,27 +40,27 @@ export TST_COUNT
 export TST_TOTAL
 .  initialize.sh
 status=0
-    
+
     if [ $# == 1 ] ; then
         childscrpt=$1
         debug "INFO: The script to be executed in child NS is $childscrpt"
     fi
-    
-    # Passing the PID of child 
+
+    # Passing the PID of child
     echo "child ready" > /tmp/FIFO1;
-    
+
     # waiting for the device name from parent
     vnet1=`cat /tmp/FIFO2`;
     debug "INFO: network dev name received $vnet1";
     # Assigning the dev addresses
     ifconfig $vnet1 $IP2/24 up > /dev/null 2>&1
-	if [ $? -ne 0 ]; then
-		debug "Failed to make interface $vnet1 up in child....."
-	fi
+ if [ $? -ne 0 ]; then
+  debug "Failed to make interface $vnet1 up in child....."
+ fi
 
-    ifconfig lo up ; 
+    ifconfig lo up ;
     sleep 2
-    
+
     #starting the sshd inside the child NS
     /usr/sbin/sshd -p $PORT
     if [ $? == 0 ]; then
@@ -70,7 +70,7 @@ status=0
         tst_resm TFAIL "Failed in starting ssh @ port $PORT"
         status=1
     fi
-    
+
     # checking if parent ns responding
     ping -q -c 2 $IP1 > /dev/null
     if [ $? != 0 ] ; then
@@ -79,12 +79,12 @@ status=0
         cleanup $sshpid $vnet1
         exit $status
     fi
-    
+
     if [ -f  $childscrpt ]; then
         . $childscrpt
     fi
-    
+
     cleanup $sshpid $vnet1
     debug "INFO: Done with executing child script $0, status is $status"
-    
-    exit $status 
+
+    exit $status

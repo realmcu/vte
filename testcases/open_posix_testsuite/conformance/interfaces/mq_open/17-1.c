@@ -16,8 +16,8 @@
 
 int main()
 {
-	printf("Will not test setting O_EXCL without O_CREAT because\n");
-	printf("results are undefined.\n");
-	return PTS_UNTESTED;
+ printf("Will not test setting O_EXCL without O_CREAT because\n");
+ printf("results are undefined.\n");
+ return PTS_UNTESTED;
 }
 

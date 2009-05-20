@@ -38,14 +38,14 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return=-1)
- *   	Log the errno and Issue a FAIL message.
+ *   Check return code, if system call failed (return-1)
+ *   Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *   Verify the Functionality of system call
  *      if successful,
- *      	Issue Functionality-Pass message.
+ *      Issue Functionality-Pass message.
  *      Otherwise,
- *		Issue Functionality-Fail message.
+ *  Issue Functionality-Fail message.
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
  *   Delete the temporary directory created.
@@ -54,13 +54,13 @@
  *  lseek07 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -f   : Turn off functionality Testing.
- *	       -i n : Execute test n times.
- *	       -I x : Execute test for x seconds.
- *	       -P x : Pause for x seconds between iterations.
- *	       -t   : Turn on syscall timing.
+ *        -i n : Execute test n times.
+ *        -I x : Execute test for x seconds.
+ *        -P x : Pause for x seconds between iterations.
+ *        -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS:
  *  None.
@@ -79,211 +79,211 @@
 #include "test.h"
 #include "usctest.h"
 
-#define TEMP_FILE	"tmp_file"
-#define FILE_MODE	S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
+#define TEMP_FILE "tmp_file"
+#define FILE_MODE S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 
-char *TCID="lseek07";		/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-int fildes;			/* file handle for temp file */
-size_t  file_size;		/* size of temporary file */
-char write_buf1[BUFSIZ];	/* buffer to hold data */
-char write_buf2[BUFSIZ];	/* buffer to hold data */
+char *TCID"lseek07";  /* Test program identifier.    */
+int TST_TOTAL1;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
+int fildes;   /* file handle for temp file */
+size_t  file_size;  /* size of temporary file */
+char write_buf1[BUFSIZ]; /* buffer to hold data */
+char write_buf2[BUFSIZ]; /* buffer to hold data */
 
-void setup();			/* Main setup function of test */
-void cleanup();			/* cleanup function for the test */
+void setup();   /* Main setup function of test */
+void cleanup();   /* cleanup function for the test */
 
 int
 main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-	char read_buf[BUFSIZ];	/* data read from temp. file */
-	off_t offset;		/* byte position in temporary file */
-    
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *) NULL) {
-		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
+ char read_buf[BUFSIZ]; /* data read from temp. file */
+ off_t offset;  /* byte position in temporary file */
 
-	/* Perform global setup for test */
-	setup();
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(ac, av, (option_t *) NULL, NULL);
+ if (msg ! (char *) NULL) {
+  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+  tst_exit();
+ }
 
-	/* Check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
+ /* Perform global setup for test */
+ setup();
 
-		/* Set the offset position */
-		offset = file_size + (lc * strlen(write_buf2));
+ /* Check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* Reset Tst_count in case we are looping. */
+  Tst_count0;
 
-		/* 
-		 * Invoke lseek(2) to move the write file
-		 * pointer/handle by the specified offset value.
-		 */
-		TEST(lseek(fildes, offset, SEEK_SET));
+  /* Set the offset position */
+  offset  file_size + (lc * strlen(write_buf2));
 
-		/* check return code of lseek(2) */
-		if (TEST_RETURN == (off_t)-1) {
-			tst_resm(TFAIL, "lseek on (%s) Failed, errno=%d : %s",
-				 TEMP_FILE, TEST_ERRNO, strerror(TEST_ERRNO));
-			continue;
-		}
-		/*
-		 * Perform functional verification if test
-		 * executed without (-f) option.
-		 */
-		if (STD_FUNCTIONAL_TEST) {
-			/*
-			 * Check if the return value from lseek(2)
-			 * is equal to the specified offset value.
-			 */
-			if (TEST_RETURN != offset) {
-				tst_resm(TFAIL, "lseek() returned "
-					 "incorrect value %d, expected "
-					 "%d", TEST_RETURN, offset);
-				continue;
-			}
-			/*
-			 * The return value is okay, now write some data at
-			 * the current offset position.
-			 */
-			if (write(fildes, write_buf2, strlen(write_buf2)) !=
-				       strlen(write_buf2)) {
-				tst_brkm(TFAIL, cleanup, "write() failed to "
-					 "write additional data, error = %d",
-					 errno);
-			}
+  /*
+   * Invoke lseek(2) to move the write file
+   * pointer/handle by the specified offset value.
+   */
+  TEST(lseek(fildes, offset, SEEK_SET));
 
-			/*
-			 * Now close the file and open it again
-			 * and read all of the data.
-			 */
-			if (close(fildes) < 0) {
-				tst_brkm(TFAIL, cleanup, "close() on %s Failed,"
-					 " errno = %d", TEMP_FILE, errno);
-			}
+  /* check return code of lseek(2) */
+  if (TEST_RETURN  (off_t)-1) {
+   tst_resm(TFAIL, "lseek on (%s) Failed, errno%d : %s",
+     TEMP_FILE, TEST_ERRNO, strerror(TEST_ERRNO));
+   continue;
+  }
+  /*
+   * Perform functional verification if test
+   * executed without (-f) option.
+   */
+  if (STD_FUNCTIONAL_TEST) {
+   /*
+    * Check if the return value from lseek(2)
+    * is equal to the specified offset value.
+    */
+   if (TEST_RETURN ! offset) {
+    tst_resm(TFAIL, "lseek() returned "
+      "incorrect value %d, expected "
+      "%d", TEST_RETURN, offset);
+    continue;
+   }
+   /*
+    * The return value is okay, now write some data at
+    * the current offset position.
+    */
+   if (write(fildes, write_buf2, strlen(write_buf2)) !
+           strlen(write_buf2)) {
+    tst_brkm(TFAIL, cleanup, "write() failed to "
+      "write additional data, error  %d",
+      errno);
+   }
 
-			/* Open the file again in read/write mode */
-			if ((fildes = open(TEMP_FILE, O_RDWR)) < 0) {
-				tst_brkm(TFAIL, cleanup, "Could not open the "
-					 "%s readonly, error = %d",
-					 TEMP_FILE, errno);
-			}
+   /*
+    * Now close the file and open it again
+    * and read all of the data.
+    */
+   if (close(fildes) < 0) {
+    tst_brkm(TFAIL, cleanup, "close() on %s Failed,"
+      " errno  %d", TEMP_FILE, errno);
+   }
 
-			/*
-			 * Now read all of the data.  The size should be the
-			 * offset + strlen(write_buf2).
-			 */
-			if (read(fildes, &read_buf, (offset + 
-				  strlen(write_buf2))) < 0) {
-				tst_brkm(TFAIL, cleanup, "read() failed on %s, "
-					 "error=%d", TEMP_FILE, errno);
-			} else {
-				/*
-				 * Check data read is the complete data and not
-				 * the only portion written.
-				 */
-				if ((strncmp(read_buf, write_buf1,
-				     strlen(write_buf1))) != 0) {
-					tst_brkm(TFAIL, cleanup,
-						 "Incorrect data read #1 from "
-						 "file %s", TEMP_FILE);
-				}
-				if ((strncmp(&read_buf[offset], write_buf2,
-				     strlen(write_buf2))) != 0) {
-					tst_brkm(TFAIL, cleanup,
-						 "Incorrect data read #2 from "
-						 "file %s", TEMP_FILE);
-				}
-				tst_resm(TPASS, "Functionality of "
-					 "lseek() on %s successful", TEMP_FILE);
-			}
-		} else {
-			tst_resm(TPASS, "call succeeded");
-		}
-	}	/* End for TEST_LOOPING */
+   /* Open the file again in read/write mode */
+   if ((fildes  open(TEMP_FILE, O_RDWR)) < 0) {
+    tst_brkm(TFAIL, cleanup, "Could not open the "
+      "%s readonly, error  %d",
+      TEMP_FILE, errno);
+   }
 
-	/* Call cleanup() to undo setup done for the test. */
-	cleanup();
+   /*
+    * Now read all of the data.  The size should be the
+    * offset + strlen(write_buf2).
+    */
+   if (read(fildes, &read_buf, (offset +
+      strlen(write_buf2))) < 0) {
+    tst_brkm(TFAIL, cleanup, "read() failed on %s, "
+      "error%d", TEMP_FILE, errno);
+   } else {
+    /*
+     * Check data read is the complete data and not
+     * the only portion written.
+     */
+    if ((strncmp(read_buf, write_buf1,
+         strlen(write_buf1))) ! 0) {
+     tst_brkm(TFAIL, cleanup,
+       "Incorrect data read #1 from "
+       "file %s", TEMP_FILE);
+    }
+    if ((strncmp(&read_buf[offset], write_buf2,
+         strlen(write_buf2))) ! 0) {
+     tst_brkm(TFAIL, cleanup,
+       "Incorrect data read #2 from "
+       "file %s", TEMP_FILE);
+    }
+    tst_resm(TPASS, "Functionality of "
+      "lseek() on %s successful", TEMP_FILE);
+   }
+  } else {
+   tst_resm(TPASS, "call succeeded");
+  }
+ } /* End for TEST_LOOPING */
 
-	/*NOTREACHED*/
-	return(0);
-}	/* End main */
+ /* Call cleanup() to undo setup done for the test. */
+ cleanup();
+
+ /*NOTREACHED*/
+ return(0);
+} /* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
- *	     Create a temporary directory and change directory to it.
- *	     Create a test file under temporary directory and write some
- *	     data into it.
- *	     Get the size of the file using fstat().
+ *      Create a temporary directory and change directory to it.
+ *      Create a test file under temporary directory and write some
+ *      data into it.
+ *      Get the size of the file using fstat().
  */
-void 
+void
 setup()
 {
-	struct stat stat_buf;		/* struct buffer for stat(2) */
+ struct stat stat_buf;  /* struct buffer for stat(2) */
 
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
-	tst_tmpdir();
+ /* make a temp directory and cd to it */
+ tst_tmpdir();
 
-	/* Get the data to be written to temporary file */
-	strcpy(write_buf1, "abcdefg");
-	strcpy(write_buf2, "ijk");
+ /* Get the data to be written to temporary file */
+ strcpy(write_buf1, "abcdefg");
+ strcpy(write_buf2, "ijk");
 
-	/* Creat/open a temporary file for writing under above directory */
-	if ((fildes = open(TEMP_FILE, O_WRONLY | O_CREAT, FILE_MODE)) == -1) {
-		tst_brkm(TBROK, cleanup,
-			 "open(%s, O_WRONLY|O_CREAT, %#o) Failed, errno=%d :%s",
-			 TEMP_FILE, FILE_MODE, errno, strerror(errno));
-	}
+ /* Creat/open a temporary file for writing under above directory */
+ if ((fildes  open(TEMP_FILE, O_WRONLY | O_CREAT, FILE_MODE))  -1) {
+  tst_brkm(TBROK, cleanup,
+    "open(%s, O_WRONLY|O_CREAT, %#o) Failed, errno%d :%s",
+    TEMP_FILE, FILE_MODE, errno, strerror(errno));
+ }
 
-	/* Write data into temporary file */
-	if(write(fildes, write_buf1, strlen(write_buf1)) !=
-							strlen(write_buf1)) {
-		tst_brkm(TBROK, cleanup, "write(2) on %s Failed, errno=%d : %s",
-			 TEMP_FILE, errno, strerror(errno));
-	}
+ /* Write data into temporary file */
+ if(write(fildes, write_buf1, strlen(write_buf1)) !
+       strlen(write_buf1)) {
+  tst_brkm(TBROK, cleanup, "write(2) on %s Failed, errno%d : %s",
+    TEMP_FILE, errno, strerror(errno));
+ }
 
-	/* Get the size of the temporary file after writing data */
-	if (fstat(fildes, &stat_buf) < 0) {
-		tst_brkm(TBROK, cleanup, "fstat() on %s Failed, errno=%d : %s",
-			 TEMP_FILE, errno, strerror(errno));
-	}
+ /* Get the size of the temporary file after writing data */
+ if (fstat(fildes, &stat_buf) < 0) {
+  tst_brkm(TBROK, cleanup, "fstat() on %s Failed, errno%d : %s",
+    TEMP_FILE, errno, strerror(errno));
+ }
 
-	file_size = stat_buf.st_size;
+ file_size  stat_buf.st_size;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
- *	       Remove the test directory and testfile created in the setup.
+ *        Remove the test directory and testfile created in the setup.
  */
-void 
+void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* Close the temporary file created */
-	if (close(fildes) < 0) {
-		tst_brkm(TFAIL, NULL, "close(%s) Failed, errno=%d : %s:",
-			 TEMP_FILE, errno, strerror(errno));
-	}
+ /* Close the temporary file created */
+ if (close(fildes) < 0) {
+  tst_brkm(TFAIL, NULL, "close(%s) Failed, errno%d : %s:",
+    TEMP_FILE, errno, strerror(errno));
+ }
 
-	/* Remove tmp dir and all files in it */
-	tst_rmdir();
+ /* Remove tmp dir and all files in it */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

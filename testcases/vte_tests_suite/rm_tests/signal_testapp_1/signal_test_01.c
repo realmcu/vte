@@ -1,50 +1,50 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   signal_test_01.c
 
         @brief  Simplistic test to verify the signal system function calls.                           */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-CTU                          05/06/1989                  Initial version 
+CTU                          05/06/1989                  Initial version
 DJK                          11/22/1993                  Rewrite for AIX version 4.1
 DJK                          02/07/1994                  Move to "prod" directory
 VHM                          06/04/2001                  Port to work in linux
 D.KHOROSHEV                  09/05/2005     TLSbo56682   sigpause( ) was replaced with sigsuspend( ).
-                                                         LTP integration.   
+                                                         LTP integration.
 A.Ozerov/b00320              11/12/2006     TLSbo84161   Minor changes.
 
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 #include "signal_test_01.h"
 #include "signals.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 /* Macro for specifying signal masks */
 #define MASK(sig)  (1 << ((sig) - 1))
 #define STACKSIZE  20000
 #define MAX_MSGS   8192
 #define error(a) { tst_resm(TBROK,"(line: %d) %s",__LINE__, a); return errno; }
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Define an alternative stack for processing signals */
 char    stackarray[STACKSIZE];
 
@@ -71,31 +71,31 @@ struct sigstack stack = {
 #endif
 
 
-/*==================================================================================================
+/*======================
                                     LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 /* Function prototypes */
 void    handler(int);   /* signal catching function */
 void    init_sig_vec(void);     /* setup signal handler for signals */
 void    reset_valid_sig(void);  /* reset valid_sig array */
 void    sys_error(const char *, int);   /* system error message function */
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Define an array for verifying received signals */
 int     valid_sig[SIGMAX + 1];
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 extern char *TCID;
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
-/*================================================================================================*/
-/*===== VT_RM_setup =====*/
+======================*/
+/*====================*/
+/*= VT_RM_setup =*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
@@ -103,29 +103,29 @@ extern char *TCID;
 
 @return On success - return TPASS
         On failure - return the error code*/
-/*================================================================================================*/
+/*====================*/
 int VT_RM_setup(void)
 {
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== VT_cleanup =====*/
+/*====================*/
+/*= VT_cleanup =*/
 /**
 @brief  assumes the post-condition of the test case execution
 
-@param  
+@param
 
 @return On success - return TPASS
         On failure - return the error code*/
-/*================================================================================================*/
+/*====================*/
 int VT_RM_cleanup(void)
 {
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== VT_RM_signal_test =====*/
+/*====================*/
+/*= VT_RM_signal_test =*/
 /**
 @brief  Main test function of simplistic test to verify the signal system function calls.
         Algorithm:      o  Setup a signal-catching function for every possible
@@ -151,11 +151,11 @@ int VT_RM_cleanup(void)
                                     of a signal.
                         kill () - Sends a signal to a process.
 
-@param  
+@param
 
 @return On success - return 0.
         On failure - return the error code*/
-/*================================================================================================*/
+/*====================*/
 int VT_RM_signal_test(void)
 {
         pid_t   pid = getpid(); /* Process ID (of this process) */
@@ -164,9 +164,9 @@ int VT_RM_signal_test(void)
         /* Print out program header */
         tst_resm(TINFO, "%s: IPC Signals TestSuite program", TCID);
 
-        /* 
-        * Establish signal handler for each signal & reset "valid signals" 
-        * array, and setup alternative stack for processing signals 
+        /*
+        * Establish signal handler for each signal & reset "valid signals"
+        * array, and setup alternative stack for processing signals
         */
         init_sig_vec();
         reset_valid_sig();
@@ -178,16 +178,16 @@ int VT_RM_signal_test(void)
         if (sigstack(&stack, (struct sigstack *) 0) < 0)
                 error("sigstack failed");
 #endif
-        /* 
+        /*
         * Send SIGILL, SIGALRM & SIGIOT signals to this process:
         *
         * First indicate which signals the signal handler should expect
         * by setting the corresponding valid_sig[] array fields.
         *
-        * Then send the signals to this process.  
+        * Then send the signals to this process.
         *
-        * And finally verify that the signals were caught by the signal 
-        * handler by checking to see if the corresponding valid_sig[] array 
+        * And finally verify that the signals were caught by the signal
+        * handler by checking to see if the corresponding valid_sig[] array
         * fields were reset.
         */
         tst_resm(TINFO, "\tSend SIGILL, SIGALRM, SIGIOT signals to process");
@@ -206,7 +206,7 @@ int VT_RM_signal_test(void)
         if (valid_sig[SIGIOT])
                 error("failed to receive SIGIOT signal!")
 
-        /* 
+        /*
         * Block SIGILL, SIGALRM & SIGIOT signals:
         *
         * First create the process signal mask by ORing together the
@@ -215,7 +215,7 @@ int VT_RM_signal_test(void)
         * Then change the process signal mask with sigsetmask ().
         *
         * Verify that the desired signals are blocked from interrupting the
-        * process, by sending both blocked and unblocked signals to the 
+        * process, by sending both blocked and unblocked signals to the
         * process. Only the unblocked signals should interrupt the process.
         */
         tst_resm(TINFO, "\tBlock SIGILL, SIGALRM, SIGIOT signals, "
@@ -252,7 +252,7 @@ int VT_RM_signal_test(void)
         if (valid_sig[SIGINT])
                 error("failed to receive SIGINT signal!");
 
-        /* 
+        /*
         * Block additional SIGFPE, SIGTERM & SIGINT signals:
         *
         * Create a signal mask containing the additional signals to block.
@@ -260,8 +260,8 @@ int VT_RM_signal_test(void)
         * Change the process signal mask to block the additional signals
         * with the sigblock () function.
         *
-        * Verify that all of the desired signals are now blocked from 
-        * interrupting the process.  None of the specified signals should 
+        * Verify that all of the desired signals are now blocked from
+        * interrupting the process.  None of the specified signals should
         * interrupt the process until the process signal mask is changed.
         */
         tst_resm(TINFO, "\tBlock rest of signals");
@@ -296,7 +296,7 @@ int VT_RM_signal_test(void)
         sleep(2);
 
         /* Change the process signal mask: Now specifiy a new process signal mask to allow the * *
-        * SIGINT signal to interrupt the process.  Thus by using sigpause (), force the process to * 
+        * SIGINT signal to interrupt the process.  Thus by using sigpause (), force the process to *
         * * suspend execution until delivery of an unblocked signal (SIGINT in this case). * *
         * Additionally, verify that the SIGINT signal was received. */
         sigprocmask(SIG_BLOCK, &oldmaskset, (sigset_t *)NULL);
@@ -323,20 +323,20 @@ int VT_RM_signal_test(void)
         return 0;
 }
 
-/*================================================================================================*/
-/*===== init_sig_vec =====*/
+/*====================*/
+/*= init_sig_vec =*/
 /**
-@brief  Initialize the signal vector for ALL possible signals     
-        (as defined in /usr/include/sys/signal.h) except for      
+@brief  Initialize the signal vector for ALL possible signals
+        (as defined in /usr/include/sys/signal.h) except for
         the following signals which cannot be caught or ignored:
             o  SIGKILL (9)
             o  SIGSTOP (17)
             o  SIGCONT (19)
 
-@param 
+@param
 
 @return None.*/
-/*================================================================================================*/
+/*====================*/
 void init_sig_vec(void)
 {
         char    errmsg[256];
@@ -392,19 +392,19 @@ void init_sig_vec(void)
 #endif                          /* ifdef _LINUX_ */
 }
 
-/*================================================================================================*/
-/*===== handler =====*/
+/*====================*/
+/*= handler =*/
 /**
 @brief  Signal catching function.  As specified in init_sig_vec()
         this function is automatically called each time a signal
         is received by the process.
         Once receiving the signal, verify that the corresponding
-        signal was expected.  
+        signal was expected.
 @param  Input:   sig - signal identifier.
         Output:  None.
 
 @return None.*/
-/*================================================================================================*/
+/*====================*/
 void handler(int sig)
 {
         /* Check to insure that expected signal was received */
@@ -424,8 +424,8 @@ void handler(int sig)
         }
 }
 
-/*================================================================================================*/
-/*===== reset_valid_sig =====*/
+/*====================*/
+/*= reset_valid_sig =*/
 /**
 @brief  Reset the valid "signal" array.
 
@@ -433,7 +433,7 @@ void handler(int sig)
         Output:  None.
 
 @return None.*/
-/*================================================================================================*/
+/*====================*/
 void reset_valid_sig(void)
 {
         int     i;
@@ -442,8 +442,8 @@ void reset_valid_sig(void)
                 valid_sig[i] = 0;
 }
 
-/*================================================================================================*/
-/*===== sys_error  =====*/
+/*====================*/
+/*= sys_error  =*/
 /**
 @brief Creates system error message and calls error ()
 
@@ -452,7 +452,7 @@ void reset_valid_sig(void)
         Output:  None.
 
 @return None.*/
-/*================================================================================================*/
+/*====================*/
 void sys_error(const char *msg, int line)
 {
         tst_resm(TBROK, "ERROR [line %d] %s: %s", line, msg, strerror(errno));

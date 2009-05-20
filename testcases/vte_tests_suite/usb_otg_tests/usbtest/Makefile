@@ -12,7 +12,7 @@
 LTP_DIR = ../../../..
 BIN_DIR = ../../../bin
 
-CFLAGS += -Wall -I$(LTP_DIR)/include -I$(KLINUX_SRCDIR)/include -I$(KLINUX_BLTDIR)/include  
+CFLAGS += -Wall -I$(LTP_DIR)/include -I$(KLINUX_SRCDIR)/include -I$(KLINUX_BLTDIR)/include
 LOADLIBES += -L$(LTP_DIR)/lib -lltp -lpthread
 
 SRCS=$(wildcard *.c)

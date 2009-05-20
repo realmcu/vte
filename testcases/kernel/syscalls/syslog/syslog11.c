@@ -31,37 +31,37 @@
  *      (See the parse_opts(3) man page).
  *
  *    DESCRIPTION
- *	Verify that, syslog(2) is successful for type ranging from 1 to 8
- * 
- *	Setup:
- *	  Setup signal handling.
- *	  Test caller is superuser
- *	  Check existence of user nobody
- *	  Pause for SIGUSR1 if option specified.
- * 
- *	Test:
- *	 Loop if the proper options are given.
- *	  Execute system call
- *	  Check return value, if not successful,
- *		 Issue FAIL message
- *	  Otherwise,
- *		Issue PASS message
- * 
- *	Cleanup:
- *	  Print errno log and/or timing stats if options given
- * 
+ * Verify that, syslog(2) is successful for type ranging from 1 to 8
+ *
+ * Setup:
+ *   Setup signal handling.
+ *   Test caller is superuser
+ *   Check existence of user nobody
+ *   Pause for SIGUSR1 if option specified.
+ *
+ * Test:
+ *  Loop if the proper options are given.
+ *   Execute system call
+ *   Check return value, if not successful,
+ *   Issue FAIL message
+ *   Otherwise,
+ *  Issue PASS message
+ *
+ * Cleanup:
+ *   Print errno log and/or timing stats if options given
+ *
  * USAGE:  <for command-line>
  *  syslog11 [-c n] [-e] [-f] [-h] [-i n] [-I x] [-p] [-P x] [-t]
- *		where,  -c n : Run n copies concurrently.
- *			-e   : Turn on errno logging.
- *			-f   : Turn off functional testing
- *			-h   : Show help screen
- *			-i n : Execute test n times.
- *			-I x : Execute test for x seconds.
- *			-p   : Pause for SIGUSR1 before starting
- *			-P x : Pause for x seconds between iterations.
- *			-t   : Turn on syscall timing.
- * 
+ *  where,  -c n : Run n copies concurrently.
+ *   -e   : Turn on errno logging.
+ *   -f   : Turn off functional testing
+ *   -h   : Show help screen
+ *   -i n : Execute test n times.
+ *   -I x : Execute test for x seconds.
+ *   -p   : Pause for SIGUSR1 before starting
+ *   -P x : Pause for x seconds between iterations.
+ *   -t   : Turn on syscall timing.
+ *
  ****************************************************************/
 
 #include <errno.h>
@@ -72,20 +72,20 @@
 #include "test.h"
 #include "usctest.h"
 
-#define UNEXP_RET_VAL	-1
+#define UNEXP_RET_VAL -1
 
 extern int Tst_count;
 
-struct test_case_t {			/* test case structure */
-	int type;			/* 1st arg. */
-	char *buf;			/* 2nd arg. */
-	int len;			/* 3rd arg. */
-	int (*setup) (void);		/* Individual setup routine */ 
-	void (*cleanup) (void);		/* Individual cleanup routine */
-	char	*desc;			/* Test description */
+struct test_case_t {   /* test case structure */
+ int type;   /* 1st arg. */
+ char *buf;   /* 2nd arg. */
+ int len;   /* 3rd arg. */
+ int (*setup) (void);  /* Individual setup routine */
+ void (*cleanup) (void);  /* Individual cleanup routine */
+ char *desc;   /* Test description */
 };
 
-char *TCID = "syslog11";
+char *TCID  "syslog11";
 static int testno;
 static char buf;
 static struct passwd *ltpuser;
@@ -97,145 +97,145 @@ static void cleanup1(void);
 
 #define syslog(arg1, arg2, arg3) syscall(__NR_syslog, arg1, arg2, arg3)
 
-static struct test_case_t  tdat[] = {
-	/* Type 0 and 1 are currently not implemented, always returns success */
-	{ 0, &buf, 0, NULL, NULL, "type 0/Close the log" },
-	{ 1, &buf, 0, NULL, NULL, "type 1/Open the log" },
-	{ 2, &buf, 0, NULL, NULL, "type 2/Read from the log" },
-	{ 3, &buf, 0, NULL, NULL, "type 3/Read ring buffer" },
-	{ 3, &buf, 0, setup1, cleanup1, "type 3/Read ring buffer for non-root "
-		"user" },
+static struct test_case_t  tdat[]  {
+ /* Type 0 and 1 are currently not implemented, always returns success */
+ { 0, &buf, 0, NULL, NULL, "type 0/Close the log" },
+ { 1, &buf, 0, NULL, NULL, "type 1/Open the log" },
+ { 2, &buf, 0, NULL, NULL, "type 2/Read from the log" },
+ { 3, &buf, 0, NULL, NULL, "type 3/Read ring buffer" },
+ { 3, &buf, 0, setup1, cleanup1, "type 3/Read ring buffer for non-root "
+  "user" },
   /* Next two lines will clear dmesg. Uncomment if that is okay. -Robbie Williamson */
-  /*	{ 4, &buf, 0, NULL, NULL, "type 4/Read and clear ring buffer" },            */
-  /*	{ 5, &buf, 0, NULL, NULL, "type 5/Clear ring buffer" },                     */
+  /* { 4, &buf, 0, NULL, NULL, "type 4/Read and clear ring buffer" },            */
+  /* { 5, &buf, 0, NULL, NULL, "type 5/Clear ring buffer" },                     */
 
-	{ 8, NULL, 1, NULL, NULL, "type 8/Set log level to 1" },
-	{ 8, NULL, 7, NULL, NULL, "type 8/Set log level to 7(default)" },
-	{ 6, NULL, 0, NULL, NULL, "type 6/Disable printk's to console" },
-	{ 7, NULL, 0, NULL, NULL, "type 7/Enable printk's to console" },
+ { 8, NULL, 1, NULL, NULL, "type 8/Set log level to 1" },
+ { 8, NULL, 7, NULL, NULL, "type 8/Set log level to 7(default)" },
+ { 6, NULL, 0, NULL, NULL, "type 6/Disable printk's to console" },
+ { 7, NULL, 0, NULL, NULL, "type 7/Enable printk's to console" },
 };
 
-int TST_TOTAL = sizeof(tdat) / sizeof(tdat[0]);
+int TST_TOTAL  sizeof(tdat) / sizeof(tdat[0]);
 
 int
 main(int argc, char **argv)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
 
-	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) !=
-	    (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
-	setup();
+ /* parse standard options */
+ if ((msg  parse_opts(argc, argv, (option_t *)NULL, NULL)) !
+     (char *)NULL) {
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
+ setup();
 
-	/* check looping state if -i option is given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+ /* check looping state if -i option is given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		for (testno = 0; testno < TST_TOTAL; ++testno) {
+  for (testno  0; testno < TST_TOTAL; ++testno) {
 
-			if( tdat[testno].setup && tdat[testno].setup() ) {
-				/* Setup failed, skip this testcase */
-				continue;
-			}
+   if( tdat[testno].setup && tdat[testno].setup() ) {
+    /* Setup failed, skip this testcase */
+    continue;
+   }
 
-			TEST(syslog(tdat[testno].type, tdat[testno].buf,
-					tdat[testno].len));
+   TEST(syslog(tdat[testno].type, tdat[testno].buf,
+     tdat[testno].len));
 
-			if (TEST_RETURN == UNEXP_RET_VAL) {
-				if (TEST_ERRNO == EPERM && geteuid() != 0) {
-					tst_resm(TPASS, "syslog() passed for %s (non-root EPERM is OK)",
-						tdat[testno].desc);
-				} else {
-					tst_resm(TFAIL, "syslog() failed for %s: errno "
-						"%d (%s)", tdat[testno].desc, TEST_ERRNO, strerror(errno));
-				}
-			} else {
-				tst_resm(TPASS, "syslog() successful for %s", 
-					tdat[testno].desc);
-			}
+   if (TEST_RETURN  UNEXP_RET_VAL) {
+    if (TEST_ERRNO  EPERM && geteuid() ! 0) {
+     tst_resm(TPASS, "syslog() passed for %s (non-root EPERM is OK)",
+      tdat[testno].desc);
+    } else {
+     tst_resm(TFAIL, "syslog() failed for %s: errno "
+      "%d (%s)", tdat[testno].desc, TEST_ERRNO, strerror(errno));
+    }
+   } else {
+    tst_resm(TPASS, "syslog() successful for %s",
+     tdat[testno].desc);
+   }
 
-			if(tdat[testno].cleanup) {
-				tdat[testno].cleanup();
-			}
-		}
-	}
-	cleanup();
+   if(tdat[testno].cleanup) {
+    tdat[testno].cleanup();
+   }
+  }
+ }
+ cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+ /*NOTREACHED*/
+ return 0;
 }
 
 int
 setup1(void)
 {
-	/* Change effective user id to nodody */
-	if (seteuid(ltpuser->pw_uid) == -1) {
-		tst_resm(TBROK, "seteuid failed to set the effective"
-			" uid to %d", ltpuser->pw_uid);
-		return 1;
-	}
-	return 0;
+ /* Change effective user id to nodody */
+ if (seteuid(ltpuser->pw_uid)  -1) {
+  tst_resm(TBROK, "seteuid failed to set the effective"
+   " uid to %d", ltpuser->pw_uid);
+  return 1;
+ }
+ return 0;
 }
 
 void
 cleanup1(void)
 {
-	/* Change effective user id to root */
-	if (seteuid(0) == -1) {
-		tst_brkm(TBROK, tst_exit, "seteuid failed to set the effective"
-			" uid to root");
-	}
+ /* Change effective user id to root */
+ if (seteuid(0)  -1) {
+  tst_brkm(TBROK, tst_exit, "seteuid failed to set the effective"
+   " uid to root");
+ }
 }
 
 /*
  * setup()
- *	performs all ONE TIME setup for this test
+ * performs all ONE TIME setup for this test
  */
 void
 setup(void)
 {
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Check whether we are root  */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Must be root for this test!");
-		/*NOTREACHED*/
-	}
+ /* Check whether we are root  */
+ if (geteuid() ! 0) {
+  tst_brkm(TBROK, tst_exit, "Must be root for this test!");
+  /*NOTREACHED*/
+ }
 
-	/* Check for nobody_uid user id */
-	if ( (ltpuser = getpwnam("nobody")) == NULL) {
-		tst_brkm(TBROK, tst_exit, "nobody user id doesn't exist");
-		/* NOTREACHED */
-	}
+ /* Check for nobody_uid user id */
+ if ( (ltpuser  getpwnam("nobody"))  NULL) {
+  tst_brkm(TBROK, tst_exit, "nobody user id doesn't exist");
+  /* NOTREACHED */
+ }
 
-	/* Pause if that option was specified
-	 * TEST_PAUSE contains the code to fork the test with the -c option.
-	 */
-	TEST_PAUSE;
+ /* Pause if that option was specified
+  * TEST_PAUSE contains the code to fork the test with the -c option.
+  */
+ TEST_PAUSE;
 }
 
 /*
  * cleanup()
- *	performs all ONE TIME cleanup for this test at
- *	completion or premature exit
+ * performs all ONE TIME cleanup for this test at
+ * completion or premature exit
  */
 void
 cleanup(void)
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
 
-	TEST_CLEANUP;
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-	/*NOTREACHED*/
+ /* exit with return code appropriate for results */
+ tst_exit();
+ /*NOTREACHED*/
 }
 

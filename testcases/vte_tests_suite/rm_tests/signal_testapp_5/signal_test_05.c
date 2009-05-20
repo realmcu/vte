@@ -24,7 +24,7 @@
 
 /*---------------------------------------------------------------------+
 |                            signal_test_05                            |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Description:  Verify that signals can be ignored by the receiving    |
 |               process.                                               |
@@ -82,7 +82,7 @@
 #include <sys/errno.h>
 
 #ifdef _LINUX_
-// bits/signum.h defines _NSIG as 64 
+// bits/signum.h defines _NSIG as 64
 #define SIGMAX 64
 #endif
 
@@ -100,7 +100,7 @@ int sigchld_flag = 0;
 
 /*---------------------------------------------------------------------+
 |                               main ()                                |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Main program  (see prolog for more details)               |
 |                                                                      |
@@ -108,63 +108,63 @@ int sigchld_flag = 0;
 int RM_main (int argc, char **argv)
 {
 
-	pid_t	pid = getpid ();	/* Process ID (of parent process) */
-	int	status;			/* Child's exit status */
+ pid_t pid = getpid (); /* Process ID (of parent process) */
+ int status;   /* Child's exit status */
 
-	/* Print out program header */
-	printf ("%s: IPC TestSuite program\n\n", *argv);
-    
-	/* Set up our signal handler */
-	ignore_signals ();
+ /* Print out program header */
+ printf ("%s: IPC TestSuite program\n\n", *argv);
 
-	/*
-	 * Spawn a child process & have the child process send all of the
-	 * catchable signals to the parent.
-	 */
-	printf ("\n\tSpawning child process\n");
-	switch (fork ()) {
-		case -1: /* Unable to create child process */
-			sys_error ("fork failed", __LINE__);
+ /* Set up our signal handler */
+ ignore_signals ();
 
-		case 0: /* Child process */
-			child (pid);
+ /*
+  * Spawn a child process & have the child process send all of the
+  * catchable signals to the parent.
+  */
+ printf ("\n\tSpawning child process\n");
+ switch (fork ()) {
+  case -1: /* Unable to create child process */
+   sys_error ("fork failed", __LINE__);
 
-		default: /* Parent process */
-			break;
-	}
+  case 0: /* Child process */
+   child (pid);
 
-	/*
-	 * Wait for the child process to complete
-	 * 
-	 * Suspend execution of the parent process until either a signal
-	 * that is not blocked or ignored, or until the child process 
-	 * completes.  
-	 * 
-	 * Use the POSIX macro to insure that the child process exited
-	 * normally.
-	 * 
-	 * Check to insure that the SIGCHLD signal was caught.
-	 */
-	wait (&status);
+  default: /* Parent process */
+   break;
+ }
 
-	if (!WIFEXITED (status))
-		error ("child process exited abnormally", __LINE__);
+ /*
+  * Wait for the child process to complete
+  *
+  * Suspend execution of the parent process until either a signal
+  * that is not blocked or ignored, or until the child process
+  * completes.
+  *
+  * Use the POSIX macro to insure that the child process exited
+  * normally.
+  *
+  * Check to insure that the SIGCHLD signal was caught.
+  */
+ wait (&status);
 
-	if (sigchld_flag != 1)
-		error ("child process failed to send SIGCHLD signal", __LINE__);
+ if (!WIFEXITED (status))
+  error ("child process exited abnormally", __LINE__);
 
-	printf ("\n\tChild process exited successfully\n");
+ if (sigchld_flag != 1)
+  error ("child process failed to send SIGCHLD signal", __LINE__);
 
-	/* Program completed successfully -- exit */
-	printf ("\nsuccessful!\n");
+ printf ("\n\tChild process exited successfully\n");
 
-	return 0;
+ /* Program completed successfully -- exit */
+ printf ("\nsuccessful!\n");
+
+ return 0;
 }
 
 
 /*---------------------------------------------------------------------+
 |                               child ()                               |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Child process                                             |
 |            o  Send all catchable signals (except sigchild) to parent |
@@ -175,37 +175,37 @@ int RM_main (int argc, char **argv)
 +---------------------------------------------------------------------*/
 void child (pid_t pid)
 {
-	int i;
+ int i;
 
-	/* Send one of each of the possible signals to the process */
-	printf ("\n\tChild: sending ALL signals to parent!\n");
-	for (i=1; i< (SIGMAX + 1); i++) {
+ /* Send one of each of the possible signals to the process */
+ printf ("\n\tChild: sending ALL signals to parent!\n");
+ for (i=1; i< (SIGMAX + 1); i++) {
 
-		/* Cannot catch or ignore the following signals */
-		if (i == SIGKILL || i == SIGSTOP || i == SIGCONT)
-			continue;
+  /* Cannot catch or ignore the following signals */
+  if (i == SIGKILL || i == SIGSTOP || i == SIGCONT)
+   continue;
 
-		/* Skip sigchild too */
-		if (i == SIGCHLD) continue;
+  /* Skip sigchild too */
+  if (i == SIGCHLD) continue;
 #ifdef _IA64
-		/* RESERVED - DON'T USE */
-		if ( i == SIGWAITING) continue;
+  /* RESERVED - DON'T USE */
+  if ( i == SIGWAITING) continue;
 #endif
 
-		printf ("\tSending (%d)\n", i);
+  printf ("\tSending (%d)\n", i);
 
-		if (kill (pid, i) < 0)
-			sys_error ("kill failed", __LINE__);
-	}
+  if (kill (pid, i) < 0)
+   sys_error ("kill failed", __LINE__);
+ }
 
-	/* Exit & implicitly send a sigchild interrupt to the parent process */
-	exit (0);
+ /* Exit & implicitly send a sigchild interrupt to the parent process */
+ exit (0);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               handler ()                             |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Signal handler                                            |
 |            o  Send all catchable signals (except sigchild) to parent |
@@ -217,21 +217,21 @@ void child (pid_t pid)
 +---------------------------------------------------------------------*/
 void handler (int signal, int code, struct sigcontext *scp)
 {
-	char msg [100];
+ char msg [100];
 
-	if (signal == SIGCHLD) {
-		printf ("\tcaught SIGCHLD(%d) signal\n", signal);
-		sigchld_flag = 1;
-	} else {
-		sprintf (msg, "caught an unexpected signal (%d)", signal);
-		error (msg, __LINE__);
-	}
+ if (signal == SIGCHLD) {
+  printf ("\tcaught SIGCHLD(%d) signal\n", signal);
+  sigchld_flag = 1;
+ } else {
+  sprintf (msg, "caught an unexpected signal (%d)", signal);
+  error (msg, __LINE__);
+ }
 }
 
 
 /*---------------------------------------------------------------------+
 |                           ignore_signals ()                          |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Force all signals to be ignored, except for the following |
 |            signals:                                                  |
@@ -251,67 +251,67 @@ void handler (int signal, int code, struct sigcontext *scp)
 +---------------------------------------------------------------------*/
 void ignore_signals ()
 {
-	struct sigaction action;
-	char	msg [100];
-	int i;
+ struct sigaction action;
+ char msg [100];
+ int i;
 
-	for (i=1; i< (SIGMAX + 1); i++) {
+ for (i=1; i< (SIGMAX + 1); i++) {
 
-		/* Cannot catch or ignore the following signals: */
+  /* Cannot catch or ignore the following signals: */
 #ifdef _LINUX_
-       		if ((i == SIGKILL) || (i == SIGSTOP) || ((i>=32)&&(i<=34))) continue;
+      if ((i == SIGKILL) || (i == SIGSTOP) || ((i>=32)&&(i<=34))) continue;
 #else
-		if (i == SIGKILL || i == SIGSTOP || i == SIGCONT) continue;
+  if (i == SIGKILL || i == SIGSTOP || i == SIGCONT) continue;
 #endif
 
-		/* Do not ignore SIGCHILD signal */
-		if (i == SIGCHLD) continue;
+  /* Do not ignore SIGCHILD signal */
+  if (i == SIGCHLD) continue;
 
-		action.sa_handler = SIG_IGN;
-		sigfillset (&action.sa_mask);
-		action.sa_flags = SA_RESTART;
+  action.sa_handler = SIG_IGN;
+  sigfillset (&action.sa_mask);
+  action.sa_flags = SA_RESTART;
 
-		if (sigaction (i, &action, (struct sigaction *) NULL) < 0) {
-		        perror("ignore_signals: sigaction");
-			sprintf (msg, "sigaction failed on signal %d", i);
-			error (msg, __LINE__);
-		}
-	}
+  if (sigaction (i, &action, (struct sigaction *) NULL) < 0) {
+          perror("ignore_signals: sigaction");
+   sprintf (msg, "sigaction failed on signal %d", i);
+   error (msg, __LINE__);
+  }
+ }
 
-	/* Setup signal handler for SIGCHLD signal */
-	action.sa_handler = (void (*)(int)) handler;
-	sigfillset (&action.sa_mask);
-	action.sa_flags = SA_RESTART;
-	if (sigaction (SIGCHLD, &action, (struct sigaction *) NULL) < 0)
-		sys_error ("sigaction (SIGCHLD) failed", __LINE__);
+ /* Setup signal handler for SIGCHLD signal */
+ action.sa_handler = (void (*)(int)) handler;
+ sigfillset (&action.sa_mask);
+ action.sa_flags = SA_RESTART;
+ if (sigaction (SIGCHLD, &action, (struct sigaction *) NULL) < 0)
+  sys_error ("sigaction (SIGCHLD) failed", __LINE__);
 }
 
 
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Creates system error message and calls error ()           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 void sys_error (const char *msg, int line)
 {
-	char syserr_msg [256];
+ char syserr_msg [256];
 
-	sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
-	error (syserr_msg, line);
+ sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
+ error (syserr_msg, line);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               error ()                               |
-| ==================================================================== |
+| ================ |
 |                                                                      |
 | Function:  Prints out message and exits...                           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 void error (const char *msg, int line)
 {
-	fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
-	exit (-1);
+ fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
+ exit (-1);
 }

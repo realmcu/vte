@@ -19,41 +19,41 @@
 
 /*
  * NAME
- *	msgctl02.c
+ * msgctl02.c
  *
  * DESCRIPTION
- *	msgctl02 - create a message queue, then issue the IPC_SET command
- *		   to lower the msg_qbytes value.
+ * msgctl02 - create a message queue, then issue the IPC_SET command
+ *     to lower the msg_qbytes value.
  *
  * ALGORITHM
- *	create a message queue
- *	loop if that option was specified
- *	call msgctl() with the IPC_SET command with a new msg_qbytes value
- *	check the return code
- *	  if failure, issue a FAIL message and break remaining tests
- *	otherwise,
- *	  if doing functionality testing
- *	  	if the msg_qbytes value is the new value
- *			issue a PASS message
- *		otherwise
- *			issue a FAIL message
- *	  else issue a PASS message
- *	call cleanup
+ * create a message queue
+ * loop if that option was specified
+ * call msgctl() with the IPC_SET command with a new msg_qbytes value
+ * check the return code
+ *   if failure, issue a FAIL message and break remaining tests
+ * otherwise,
+ *   if doing functionality testing
+ *   if the msg_qbytes value is the new value
+ *   issue a PASS message
+ *  otherwise
+ *   issue a FAIL message
+ *   else issue a PASS message
+ * call cleanup
  *
  * USAGE:  <for command-line>
  *  msgctl02 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -f   : Turn off functionality Testing.
- *	       -i n : Execute test n times.
- *	       -I x : Execute test for x seconds.
- *	       -P x : Pause for x seconds between iterations.
- *	       -t   : Turn on syscall timing.
+ *        -i n : Execute test n times.
+ *        -I x : Execute test for x seconds.
+ *        -P x : Pause for x seconds between iterations.
+ *        -t   : Turn on syscall timing.
  *
  * HISTORY
- *	03/2001 - Written by Wayne Boyer
+ * 03/2001 - Written by Wayne Boyer
  *
  * RESTRICTIONS
- *	none
+ * none
  */
 
 #include "test.h"
@@ -61,11 +61,11 @@
 
 #include "ipcmsg.h"
 
-char *TCID = "msgctl02";
-int TST_TOTAL = 1;
+char *TCID  "msgctl02";
+int TST_TOTAL  1;
 extern int Tst_count;
 
-int msg_q_1 = -1;                      /* to hold the message queue id */
+int msg_q_1  -1;                      /* to hold the message queue id */
 
 struct msqid_ds qs_buf;
 
@@ -73,68 +73,68 @@ unsigned long int new_bytes;
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	setup();			/* global setup */
+ setup();   /* global setup */
 
-	/* The following loop checks looping state if -i option given */
+ /* The following loop checks looping state if -i option given */
 
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		/*
-		 * Set the msqid_ds structure values for the queue
-		 */
-	
-		TEST(msgctl(msg_q_1, IPC_SET, &qs_buf));
-	
-		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL, "%s call failed - errno = %d"
-				 " : %s", TCID, TEST_ERRNO,
-				 strerror(TEST_ERRNO));
-		} else {
-			if (STD_FUNCTIONAL_TEST) {
+  /*
+   * Set the msqid_ds structure values for the queue
+   */
 
-				/* do a stat to get current queue values */
-				if ((msgctl(msg_q_1, IPC_STAT, &qs_buf) == -1)){
-					tst_resm(TBROK, "stat on queue failed");
-					continue;
-				}
+  TEST(msgctl(msg_q_1, IPC_SET, &qs_buf));
 
-				if (qs_buf.msg_qbytes == new_bytes) {	
-					tst_resm(TPASS, "qs_buf.msg_qbytes is"
-						 " the new value - %d",
-						 qs_buf.msg_qbytes);
-				} else {
-					tst_resm(TFAIL, "qs_buf.msg_qbytes "
-						 "value is not expected");
-					tst_resm(TINFO, "expected - %d, "
-						 "received - %d", new_bytes,
-						 qs_buf.msg_qbytes);
-				}
-			} else {
-				tst_resm(TPASS, "msgctl() call succeeded");
-			}
-		}
+  if (TEST_RETURN  -1) {
+   tst_resm(TFAIL, "%s call failed - errno  %d"
+     " : %s", TCID, TEST_ERRNO,
+     strerror(TEST_ERRNO));
+  } else {
+   if (STD_FUNCTIONAL_TEST) {
 
-		/*
-		 * decrement by one the msq_qbytes value
-		 */
-		qs_buf.msg_qbytes -= 1;
-		new_bytes = qs_buf.msg_qbytes;
-	}
+    /* do a stat to get current queue values */
+    if ((msgctl(msg_q_1, IPC_STAT, &qs_buf)  -1)){
+     tst_resm(TBROK, "stat on queue failed");
+     continue;
+    }
 
-	cleanup();
+    if (qs_buf.msg_qbytes  new_bytes) {
+     tst_resm(TPASS, "qs_buf.msg_qbytes is"
+       " the new value - %d",
+       qs_buf.msg_qbytes);
+    } else {
+     tst_resm(TFAIL, "qs_buf.msg_qbytes "
+       "value is not expected");
+     tst_resm(TINFO, "expected - %d, "
+       "received - %d", new_bytes,
+       qs_buf.msg_qbytes);
+    }
+   } else {
+    tst_resm(TPASS, "msgctl() call succeeded");
+   }
+  }
 
-	/*NOTREACHED*/
-	return(0);
+  /*
+   * decrement by one the msq_qbytes value
+   */
+  qs_buf.msg_qbytes - 1;
+  new_bytes  qs_buf.msg_qbytes;
+ }
+
+ cleanup();
+
+ /*NOTREACHED*/
+ return(0);
 }
 
 /*
@@ -143,60 +143,60 @@ int main(int ac, char **av)
 void
 setup(void)
 {
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/*
-	 * Create a temporary directory and cd into it.
-	 * This helps to ensure that a unique msgkey is created.
-	 * See ../lib/libipc.c for more information.
-	 */
-	tst_tmpdir();
+ /*
+  * Create a temporary directory and cd into it.
+  * This helps to ensure that a unique msgkey is created.
+  * See ../lib/libipc.c for more information.
+  */
+ tst_tmpdir();
 
-	/* get a message key */
-	msgkey = getipckey();
+ /* get a message key */
+ msgkey  getipckey();
 
-	/* make sure the initial # of bytes is 0 in our buffer */
-	qs_buf.msg_qbytes = 0x3000;
+ /* make sure the initial # of bytes is 0 in our buffer */
+ qs_buf.msg_qbytes  0x3000;
 
-	/* now we have a key, so let's create a message queue */
-	if ((msg_q_1 = msgget(msgkey, IPC_CREAT | IPC_EXCL | MSG_RW)) == -1) {
-		tst_brkm(TBROK, cleanup, "Can't create message queue");
-	}
+ /* now we have a key, so let's create a message queue */
+ if ((msg_q_1  msgget(msgkey, IPC_CREAT | IPC_EXCL | MSG_RW))  -1) {
+  tst_brkm(TBROK, cleanup, "Can't create message queue");
+ }
 
-	/* now stat the queue to get the default msg_qbytes value */
-	if ((msgctl(msg_q_1, IPC_STAT, &qs_buf)) == -1) {
-		tst_brkm(TBROK, cleanup, "Can't stat the message queue");
-	}
+ /* now stat the queue to get the default msg_qbytes value */
+ if ((msgctl(msg_q_1, IPC_STAT, &qs_buf))  -1) {
+  tst_brkm(TBROK, cleanup, "Can't stat the message queue");
+ }
 
-	/* decrement msg_qbytes and copy its value */
-	qs_buf.msg_qbytes -= 1;
-	new_bytes = qs_buf.msg_qbytes;
+ /* decrement msg_qbytes and copy its value */
+ qs_buf.msg_qbytes - 1;
+ new_bytes  qs_buf.msg_qbytes;
 }
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- * 	       or premature exit.
+ *        or premature exit.
  */
 void
 cleanup(void)
 {
-	/* if it exists, remove the message queue */
-	rm_queue(msg_q_1);
+ /* if it exists, remove the message queue */
+ rm_queue(msg_q_1);
 
-	/* Remove the temporary directory */
-	tst_rmdir();
+ /* Remove the temporary directory */
+ tst_rmdir();
 
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }
 

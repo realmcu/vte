@@ -28,7 +28,7 @@
  *  asapi_07
  *
  * HISTORY
- *	04/2005 written by David L Stevens
+ * 04/2005 written by David L Stevens
  *
  * RESTRICTIONS:
  *  None.
@@ -49,7 +49,7 @@
 #include "usctest.h"
 #include "runcc.h"
 
-char *TCID="asapi_07";		/* Test program identifier.    */
+char *TCID"asapi_07";  /* Test program identifier.    */
 
 void setup(void), cleanup(void);
 
@@ -59,118 +59,118 @@ void adatet(void), adatft(void);
 int
 main(int argc, char *argv[])
 {
-	int	lc;
-	char	*msg;
+ int lc;
+ char *msg;
 
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(argc, argv, (option_t *)NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(argc, argv, (option_t *)NULL, NULL);
+ if (msg ! (char *)NULL) {
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	setup();
+ setup();
 
-	for (lc = 0; TEST_LOOPING(lc); ++lc) {
-		adatet();
-	}
+ for (lc  0; TEST_LOOPING(lc); ++lc) {
+  adatet();
+ }
 
-	cleanup();
-	/* NOTREACHED */
-	return 0;
+ cleanup();
+ /* NOTREACHED */
+ return 0;
 }
 
 enum ttype { EXISTS, ALIAS, VALUE, DEFINED };
 
 struct etent {
-	char	*et_tname;		/* test name */
-	int	et_type;		/* test type */
-	char	*et_incl;		/* include file list */
-	char	*et_struct;		/* structure name */
-	char	*et_field;		/* field name */
-	char	*et_offset;		/* field offset */
-	union {
-		char	*fu_value;	/* field size or value */
-		char	*fu_dname;	/* #define name */
-	} ftun;
-#define et_value	ftun.fu_value
-#define et_dname	ftun.fu_dname
-} etab[] = {
+ char *et_tname;  /* test name */
+ int et_type;  /* test type */
+ char *et_incl;  /* include file list */
+ char *et_struct;  /* structure name */
+ char *et_field;  /* field name */
+ char *et_offset;  /* field offset */
+ union {
+  char *fu_value; /* field size or value */
+  char *fu_dname; /* #define name */
+ } ftun;
+#define et_value ftun.fu_value
+#define et_dname ftun.fu_dname
+} etab[]  {
 /* existence checks, RFC 3542 sections 5, 20 */
-	{ "msghdr msg_name", EXISTS, SOCKET_H, "msghdr",
-		"msg_name", 0, .et_value="sizeof(void *)" },
-	{ "msghdr msg_namelen", EXISTS, SOCKET_H, "msghdr",
-		"msg_namelen", 0, .et_value="sizeof(socklen_t)"},
-	{ "msghdr msg_iov", EXISTS, SOCKET_H, "msghdr",
-		"msg_iov", 0, .et_value="sizeof(struct iovec *)" },
-	{ "msghdr msg_iovlen", EXISTS, SOCKET_H, "msghdr",
-		"msg_iovlen", 0, .et_value="sizeof(struct iovec *)"},
-	{ "msghdr msg_control", EXISTS, SOCKET_H, "msghdr",
-		"msg_control", 0, .et_value="sizeof(void *)"},
-	{ "msghdr msg_controllen", EXISTS, SOCKET_H, "msghdr",
-		"msg_controllen", 0, .et_value="sizeof(socklen_t)"},
-	{ "msghdr msg_flags", EXISTS, SOCKET_H, "msghdr",
-		"msg_flags", 0, .et_value="sizeof(int)"},
-	{ "cmsghdr cmsg_len", EXISTS, SOCKET_H, "cmsghdr",
-		"cmsg_len", 0, .et_value="sizeof(socklen_t)"},
-	{ "cmsghdr cmsg_level", EXISTS, SOCKET_H, "cmsghdr",
-		"cmsg_level", 0, .et_value="sizeof(int)"},
-	{ "cmsghdr cmsg_type", EXISTS, SOCKET_H, "cmsghdr",
-		"cmsg_type", 0, .et_value="sizeof(int)"},
-	{ "CMSG_DATA", DEFINED, SOCKET_H, "CMSG_DATA", 0, 0, 0},
-	{ "CMSG_NXTHDR", DEFINED, SOCKET_H, "CMSG_NXTHDR", 0, 0, 0},
-	{ "CMSG_FIRSTHDR", DEFINED, SOCKET_H, "CMSG_FIRSTHDR", 0, 0, 0},
-	{ "CMSG_SPACE", DEFINED, SOCKET_H, "CMSG_SPACE", 0, 0, 0},
-	{ "CMSG_LEN", DEFINED, SOCKET_H, "CMSG_LEN", 0, 0, 0},
+ { "msghdr msg_name", EXISTS, SOCKET_H, "msghdr",
+  "msg_name", 0, .et_value"sizeof(void *)" },
+ { "msghdr msg_namelen", EXISTS, SOCKET_H, "msghdr",
+  "msg_namelen", 0, .et_value"sizeof(socklen_t)"},
+ { "msghdr msg_iov", EXISTS, SOCKET_H, "msghdr",
+  "msg_iov", 0, .et_value"sizeof(struct iovec *)" },
+ { "msghdr msg_iovlen", EXISTS, SOCKET_H, "msghdr",
+  "msg_iovlen", 0, .et_value"sizeof(struct iovec *)"},
+ { "msghdr msg_control", EXISTS, SOCKET_H, "msghdr",
+  "msg_control", 0, .et_value"sizeof(void *)"},
+ { "msghdr msg_controllen", EXISTS, SOCKET_H, "msghdr",
+  "msg_controllen", 0, .et_value"sizeof(socklen_t)"},
+ { "msghdr msg_flags", EXISTS, SOCKET_H, "msghdr",
+  "msg_flags", 0, .et_value"sizeof(int)"},
+ { "cmsghdr cmsg_len", EXISTS, SOCKET_H, "cmsghdr",
+  "cmsg_len", 0, .et_value"sizeof(socklen_t)"},
+ { "cmsghdr cmsg_level", EXISTS, SOCKET_H, "cmsghdr",
+  "cmsg_level", 0, .et_value"sizeof(int)"},
+ { "cmsghdr cmsg_type", EXISTS, SOCKET_H, "cmsghdr",
+  "cmsg_type", 0, .et_value"sizeof(int)"},
+ { "CMSG_DATA", DEFINED, SOCKET_H, "CMSG_DATA", 0, 0, 0},
+ { "CMSG_NXTHDR", DEFINED, SOCKET_H, "CMSG_NXTHDR", 0, 0, 0},
+ { "CMSG_FIRSTHDR", DEFINED, SOCKET_H, "CMSG_FIRSTHDR", 0, 0, 0},
+ { "CMSG_SPACE", DEFINED, SOCKET_H, "CMSG_SPACE", 0, 0, 0},
+ { "CMSG_LEN", DEFINED, SOCKET_H, "CMSG_LEN", 0, 0, 0},
 };
 
-#define ETCOUNT	(sizeof(etab)/sizeof(etab[0]))
+#define ETCOUNT (sizeof(etab)/sizeof(etab[0]))
 
 /*  existence tests */
 void
 adatet(void)
 {
-	int	i;
+ int i;
 
-	for (i=0; i<ETCOUNT; ++i) {
-		switch (etab[i].et_type) {
-		case EXISTS:
-			structcheck(etab[i].et_tname, etab[i].et_incl,
-				etab[i].et_struct, etab[i].et_field,
-				etab[i].et_offset, etab[i].et_value);
-			break;
-		case ALIAS:
-			aliascheck(etab[i].et_tname, etab[i].et_incl,
-				etab[i].et_struct, etab[i].et_field,
-				etab[i].et_dname);
-			break;
-		case VALUE:
-			valuecheck(etab[i].et_tname, etab[i].et_incl,
-				etab[i].et_struct, etab[i].et_dname);
-			break;
-		case DEFINED:
-			funccheck(etab[i].et_tname, etab[i].et_incl,
-				etab[i].et_struct);
-			break;
-		default:
-			tst_resm(TBROK, "invalid type %d",
-				etab[i].et_type);
-			break;
-		}
-	}
+ for (i0; i<ETCOUNT; ++i) {
+  switch (etab[i].et_type) {
+  case EXISTS:
+   structcheck(etab[i].et_tname, etab[i].et_incl,
+    etab[i].et_struct, etab[i].et_field,
+    etab[i].et_offset, etab[i].et_value);
+   break;
+  case ALIAS:
+   aliascheck(etab[i].et_tname, etab[i].et_incl,
+    etab[i].et_struct, etab[i].et_field,
+    etab[i].et_dname);
+   break;
+  case VALUE:
+   valuecheck(etab[i].et_tname, etab[i].et_incl,
+    etab[i].et_struct, etab[i].et_dname);
+   break;
+  case DEFINED:
+   funccheck(etab[i].et_tname, etab[i].et_incl,
+    etab[i].et_struct);
+   break;
+  default:
+   tst_resm(TBROK, "invalid type %d",
+    etab[i].et_type);
+   break;
+  }
+ }
 }
 
 
 void
 setup(void)
 {
-	TEST_PAUSE;	/* if -P option specified */
+ TEST_PAUSE; /* if -P option specified */
 }
 
 void
 cleanup(void)
 {
-	TEST_CLEANUP;
-	tst_exit();
+ TEST_CLEANUP;
+ tst_exit();
 }
 
-int TST_TOTAL = ETCOUNT;
+int TST_TOTAL  ETCOUNT;

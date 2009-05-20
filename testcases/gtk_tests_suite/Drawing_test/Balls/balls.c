@@ -1,32 +1,32 @@
-/*================================================================================================*/
+/**/
 /**
     @file   balls.c
-*==================================================================================================
+*
 
   Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
 
-====================================================================================================
+
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
   Filinova Natalia           13/09/2004     ??????      Initial Version
 
-==================================================================================================
+
 Portability: Indicate if this module is portable to other compilers or platforms.
              If not, indicate specific reasons why is it not portable.
 
-==================================================================================================*/
+*/
 
 
 #include <gtk/gtk.h>
 #include <math.h>
 #include <stdlib.h>
 
-gint vt=FALSE;
+gint vtFALSE;
 static struct ballStruct {
     double x;
     double y;
@@ -43,7 +43,7 @@ gint eventDestroyQuit(GtkWidget *widget,
         GdkEvent *event,gpointer data);
 gint eventDestroyExit(GtkWidget *widget,
         GdkEvent *event,gpointer data);
-                
+
 gint nextFrame(gpointer data);
 void newBall(struct ballStruct *b);
 void nextBall(struct ballStruct *b);
@@ -57,7 +57,7 @@ void setColor();
 #define INTERVAL 20
 #define RAND_MAX 2147483647
 
-static GtkItemFactoryEntry menu_items[] =
+static GtkItemFactoryEntry menu_items[] 
 {
   { "/_File",            NULL,         0,                     0, "<Branch>" },
   { "/File/_Quit-Pass", "<control>Q",  eventDestroyQuit,       0, "<StockItem>", GTK_STOCK_QUIT },
@@ -75,7 +75,7 @@ int balls_main(int argc,char *argv[])
     GtkItemFactory *item_factory;
 
     gtk_init(&argc,&argv);
-    app = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    app  gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title (GTK_WINDOW (app), "Animation");
     gtk_window_set_default_size (GTK_WINDOW (app),240,320);
 
@@ -83,15 +83,15 @@ int balls_main(int argc,char *argv[])
                        GTK_SIGNAL_FUNC(eventDelete),NULL);
     gtk_signal_connect(GTK_OBJECT(app),"destroy",
                        GTK_SIGNAL_FUNC(eventDestroyQuit),NULL);
-    
-    table = gtk_table_new (2, 1, FALSE);
+
+    table  gtk_table_new (2, 1, FALSE);
     gtk_widget_show(table);
-    
+
       /* Create the menubar*/
-    accel_group = gtk_accel_group_new ();
+    accel_group  gtk_accel_group_new ();
     gtk_window_add_accel_group (GTK_WINDOW (app), accel_group);
     g_object_unref (accel_group);
-    item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
+    item_factory  gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
 
       /* Set up item factory to go away with the window */
     g_object_ref (item_factory);
@@ -111,12 +111,12 @@ int balls_main(int argc,char *argv[])
                       0, 1,                      0, 1,
                       GTK_EXPAND | GTK_FILL,     0,
                       0,                         0);
-                                                                                                                    
+
     setColor();
-    area = gtk_drawing_area_new();
-    gtk_widget_set_usize(area,WIDTH-50,HEIGHT-50);   
+    area  gtk_drawing_area_new();
+    gtk_widget_set_usize(area,WIDTH-50,HEIGHT-50);
     gtk_timeout_add(INTERVAL,nextFrame,area);
-    for(i=0; i<20; i++) newBall(&ball[i]);
+    for(i0; i<20; i++) newBall(&ball[i]);
     gtk_table_attach (GTK_TABLE (table),
                       area,
                         /* X direction */          /* Y direction */
@@ -130,29 +130,29 @@ int balls_main(int argc,char *argv[])
 }
 void setColor()
 {
-  gint i;	
-  for(i=0; i<20; i++) 
+  gint i;
+  for(i0; i<20; i++)
     {
-    	ball[i].colRed = (((double)rand()*0xFFFF)/RAND_MAX);
-    	ball[i].colGreen = (((double)rand()*0xFFFF)/RAND_MAX);
-    	ball[i].colBlue = (((double)rand()*0xFFFF)/RAND_MAX);
+    ball[i].colRed  (((double)rand()*0xFFFF)/RAND_MAX);
+    ball[i].colGreen  (((double)rand()*0xFFFF)/RAND_MAX);
+    ball[i].colBlue  (((double)rand()*0xFFFF)/RAND_MAX);
     }
 }
 gint nextFrame(gpointer data)
 {
     int i;
-    static GdkPixmap *pixmap = NULL;
-    static GdkColormap *colormap = NULL;
-    static GdkGC *gc = NULL;
+    static GdkPixmap *pixmap  NULL;
+    static GdkColormap *colormap  NULL;
+    static GdkGC *gc  NULL;
     GdkColor color;
-    GtkWidget *widget = GTK_WIDGET(data);
+    GtkWidget *widget  GTK_WIDGET(data);
 
-    if(colormap == NULL) {
-        colormap = gdk_colormap_get_system();
-        gc = gdk_gc_new(widget->window);
+    if(colormap  NULL) {
+        colormap  gdk_colormap_get_system();
+        gc  gdk_gc_new(widget->window);
     }
-    if(pixmap == NULL) {
-        pixmap = gdk_pixmap_new(widget->window,
+    if(pixmap  NULL) {
+        pixmap  gdk_pixmap_new(widget->window,
                     WIDTH,HEIGHT,-1);
     }
     gdk_draw_rectangle(pixmap,
@@ -160,17 +160,17 @@ gint nextFrame(gpointer data)
             TRUE,
             0,0,
             WIDTH,HEIGHT);
-    for(i=0; i<20; i++) {
+    for(i0; i<20; i++) {
         nextBall(&ball[i]);
-		color.red = ball[i].colRed;
-		color.green = ball[i].colGreen;
-		color.blue = ball[i].colBlue;
-		gdk_color_alloc(colormap,&color);
-		gdk_gc_set_foreground(gc,&color);
+  color.red  ball[i].colRed;
+  color.green  ball[i].colGreen;
+  color.blue  ball[i].colBlue;
+  gdk_color_alloc(colormap,&color);
+  gdk_gc_set_foreground(gc,&color);
                 gdk_draw_arc(pixmap,
                 gc,
                 TRUE,
-				(int)ball[i].x,(int)ball[i].y,
+    (int)ball[i].x,(int)ball[i].y,
                 DIAMETER*i/2,DIAMETER*i/2,
                 0,360*64);
     }
@@ -186,11 +186,11 @@ gint nextFrame(gpointer data)
 }
 void newBall(struct ballStruct *b)
 {
-    b->x = (((double)rand()*WIDTH)/RAND_MAX);
-    b->y = (((double)rand()*HEIGHT)/RAND_MAX) - HEIGHT;
+    b->x  (((double)rand()*WIDTH)/RAND_MAX);
+    b->y  (((double)rand()*HEIGHT)/RAND_MAX) - HEIGHT;
     do {
-        b->xVelocity = (((double)rand()*10)/RAND_MAX) - 5;
-        b->yVelocity = (((double)rand()*10)/RAND_MAX) - 5;
+        b->xVelocity  (((double)rand()*10)/RAND_MAX) - 5;
+        b->yVelocity  (((double)rand()*10)/RAND_MAX) - 5;
     } while(fabs(b->xVelocity) < 0.5);
 }
 void nextBall(struct ballStruct *b)
@@ -199,15 +199,15 @@ void nextBall(struct ballStruct *b)
         newBall(b);
         return;
     }
-    if((b->y + DIAMETER) >= HEIGHT) {
+    if((b->y + DIAMETER) > HEIGHT) {
         if(b->yVelocity > 0)
-            b->yVelocity = -b->yVelocity;
-        b->yVelocity *= 0.9;
+            b->yVelocity  -b->yVelocity;
+        b->yVelocity * 0.9;
     } else {
-        b->yVelocity += GRAVITY;
+        b->yVelocity + GRAVITY;
     }
-    b->x += b->xVelocity;
-    b->y += b->yVelocity;
+    b->x + b->xVelocity;
+    b->y + b->yVelocity;
 }
 gint eventDelete(GtkWidget *widget,
         GdkEvent *event,gpointer data) {
@@ -216,7 +216,7 @@ gint eventDelete(GtkWidget *widget,
 gint eventDestroyQuit(GtkWidget *widget,
         GdkEvent *event,gpointer data) {
 
-    vt=FALSE;
+    vtFALSE;
     g_print("Test Pass Exiting with test pass");
     gtk_main_quit ();
     return(0);
@@ -224,7 +224,7 @@ gint eventDestroyQuit(GtkWidget *widget,
 gint eventDestroyExit(GtkWidget *widget,
         GdkEvent *event,gpointer data) {
 
-    vt=TRUE;
+    vtTRUE;
     g_print("Test Fail Exiting with test fail");
     gtk_main_quit ();
     return(1);

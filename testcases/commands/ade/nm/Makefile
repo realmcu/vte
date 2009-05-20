@@ -1,5 +1,5 @@
 CFLAGS += -O -Wall
-LOADLIBES += 
+LOADLIBES +=
 
 SRCS=$(wildcard *.c)
 OBJECTS=$(patsubst %.c,%.o,$(SRCS))
@@ -12,6 +12,6 @@ install:
 	ln -f *.o ../../../bin
 
 clean:
-	rm -f nmfile*.o 
+	rm -f nmfile*.o
 
 

@@ -31,20 +31,20 @@
  **/
 int main(int argc, char **argv)
 {
-        RPTable *rptable = (RPTable *)g_malloc0(sizeof(RPTable));
-        SaHpiRptEntryT *tmpentry = NULL;
+        RPTable *rptable  (RPTable *)g_malloc0(sizeof(RPTable));
+        SaHpiRptEntryT *tmpentry  NULL;
         guint i;
 
-        for (i = 0; rptentries[i].ResourceId; i++) {
+        for (i  0; rptentries[i].ResourceId; i++) {
                 if (oh_add_resource(rptable, rptentries+i, NULL, 1))
-                        return 1;        
+                        return 1;
         }
 
-        tmpentry = oh_get_resource_next(rptable, RPT_ENTRY_BEGIN);
+        tmpentry  oh_get_resource_next(rptable, RPT_ENTRY_BEGIN);
         if (!tmpentry)
                 return 1;
 
-        if (tmpentry->ResourceId != rptentries[0].ResourceId)
+        if (tmpentry->ResourceId ! rptentries[0].ResourceId)
                 return 1;
 
         return 0;

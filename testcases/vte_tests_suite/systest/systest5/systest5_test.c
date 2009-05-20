@@ -1,24 +1,24 @@
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2007, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 D.Kardakov                 13/06/2007        ENGR37681  Initial version
-====================================================================================================
+====================
 Portability: ARM GCC
 
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 
 /* Standard Include Files */
 #include <errno.h>
@@ -38,9 +38,9 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "systest5_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
 #define DM__() do{printf("%s:%d %s()\n", __FILE__, __LINE__, __FUNCTION__); fflush(stdout);}while(0)
 
@@ -63,15 +63,15 @@ Portability: ARM GCC
 #define IPC_TRANSFER_SZ           8192
 #define IPC_CRITICAL_ERRORS_COUNT 50
 
-/*==================================================================================================
+/*======================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
-typedef struct 
-{               
+typedef struct
+{
         pthread_t mThreadID;  // Thread ID
         size_t    mIndex;     // Thread index
-        int       mLtpRetval; // Thread's LTP return status       
+        int       mLtpRetval; // Thread's LTP return status
         int       mErrCount;
 } sThreadContext;
 
@@ -84,30 +84,30 @@ typedef struct
 
 typedef void* (*tThreadProc)(void*);
 
-/*==================================================================================================
+/*======================
                                        LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
 // Common stuff.
 static tThreadProc        gThreadProc[MAX_THREADS] = {0};
 static sThreadContext     gThreadContext[MAX_THREADS];
-static int                gNumThreads = 0; 
+static int                gNumThreads = 0;
 static pthread_mutex_t    gMutex = PTHREAD_MUTEX_INITIALIZER;
 static int                gStopAllThreads = FALSE;
 
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 
 extern sTestappConfig gTestappConfig;
 
 
-/*==================================================================================================
+/*======================
                                     FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
-void* Thread1( void * pContext ); // AP: captures images and save the captured images onto FFS 
+void* Thread1( void * pContext ); // AP: captures images and save the captured images onto FFS
 void* Thread2( void * pContext ); // AP: Sahara crypt/decrypt smth
 
 int RunTest           ( void );
@@ -117,38 +117,38 @@ int SetupFFS          ( const char * dev, const char * mntdir );
 int CloseFFS          ( const char * mntdir );
 int BitMatching       ( char * buf1, char * buf2, int count );
 
-/*==================================================================================================
+/*======================
                                          FUNCTIONS
-==================================================================================================*/
+======================*/
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 void* Thread1( void * pContext )
-{       
+{
         sThreadContext * pCtx = (sThreadContext*)pContext;
         assert(pCtx);
         int ret = 0;
-        
+
         tst_resm(TINFO, "vpu_teatapp is started.....");
         ret = system("./vpu_testapp -C loopbackconfig.txt");
-        if (ret < 0) 
+        if (ret < 0)
         {
                 pCtx->mErrCount++;
                 tst_resm(TFAIL, "%s (): vpu_teatapp failed", __FUNCTION__);
         }
-        
+
         tst_resm(TINFO, "vpu_teatapp is compliated. Errors count: %d", pCtx->mErrCount);
-        
-        return 0;                    
+
+        return 0;
 }
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 void* Thread2( void * pContext )
 {
 #ifndef IPC_EXCLUDE
@@ -157,12 +157,12 @@ void* Thread2( void * pContext )
 
         if (gTestappConfig.mVerbose)
                 tst_resm( TINFO, "AP + BP communication over IPC started" );
-                
+
         int     count, count1;
         int     fd = -1;
         int     i;
         char   *tmp_buf;
-        
+
         char wbuf[IPC_BUF_SZ];
         char rbuf[IPC_BUF_SZ];
 
@@ -178,12 +178,12 @@ void* Thread2( void * pContext )
                 {
                         for (i=0; i<IPC_BUF_SZ; ++i)
                                 wbuf[i] = (char)(i % 256);
-                        
+
                         if ((count = write(fd, wbuf, IPC_TRANSFER_SZ)) < 0)
                         {
                                 tst_resm(TFAIL, "%s(): write(%s) failed. Reason: %s", __FUNCTION__, IPC_CHANNEL3, strerror(errno));
                                 pCtx->mLtpRetval = TFAIL;
-                                pCtx->mErrCount++;                                
+                                pCtx->mErrCount++;
                         }
                         else
                         {
@@ -206,19 +206,19 @@ void* Thread2( void * pContext )
                                         pCtx->mLtpRetval = TFAIL;
                                         pCtx->mErrCount++;
                                 }
-                        }                                
-                        
+                        }
+
                         // Critical erros count
                         if (pCtx->mErrCount > IPC_CRITICAL_ERRORS_COUNT)
                                 break;
-                        
+
                         pthread_mutex_lock(&gMutex);
-                        if (gStopAllThreads) 
-                                break; 
+                        if (gStopAllThreads)
+                                break;
                         pthread_mutex_unlock(&gMutex);
                 } // for(;;)
-                close(fd);                
-        }                
+                close(fd);
+        }
 
         if (gTestappConfig.mVerbose)
                 tst_resm(TINFO, "AP + BP communication over IPC stoped. Errors Count: %d", pCtx->mErrCount);
@@ -228,95 +228,95 @@ void* Thread2( void * pContext )
 }
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int RunTest( void )
 {
         int i;
-        int rv = TPASS;    
-        sThreadContext * pContext;        
+        int rv = TPASS;
+        sThreadContext * pContext;
 
         for (i = 0; i < gNumThreads; ++i)
-        {        
+        {
                 if (gTestappConfig.mThreadToExecute != -1 && gTestappConfig.mThreadToExecute != i)
                         continue;
                 pContext = gThreadContext + i;
                 memset( pContext, 0, sizeof(sThreadContext) );
                 pContext->mIndex = i;
-                
-        
+
+
                 if( pthread_create( &pContext->mThreadID, NULL, (void* (*)(void*))(gThreadProc[i]), pContext ) )
                 {
                         tst_resm( TWARN, "%s : error creating thread %d", __FUNCTION__, i );
-                        return TFAIL;        
+                        return TFAIL;
                 }
-        }    
-    
+        }
+
         /* Wait for the each thread. */
         for( i = 0; i < gNumThreads; ++i )
         {
                 if (gTestappConfig.mThreadToExecute != -1 && gTestappConfig.mThreadToExecute != i)
-                        continue;    
-                pContext = gThreadContext + i;     
+                        continue;
+                pContext = gThreadContext + i;
                 pthread_join( pContext->mThreadID, NULL );
         }
         for( i = 0; i < gNumThreads; ++i )
         {
                 if (gTestappConfig.mThreadToExecute != -1 && gTestappConfig.mThreadToExecute != i)
-                        continue;    
-                pContext = gThreadContext + i;     
+                        continue;
+                pContext = gThreadContext + i;
                 rv += pContext->mLtpRetval;
         }
-    
+
         if( TPASS == rv )
-                rv = VerificateResults();                     
+                rv = VerificateResults();
 
         return rv;
 }
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int VerificateResults( void )
 {
-    
+
         if (gTestappConfig.mVerbose)
                 tst_resm(TINFO, "Verification passed");
-        
+
         return TPASS;
 }
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int VT_systest_setup( void )
 {
         gNumThreads = 2;
         gThreadProc[0] = Thread1;
-        gThreadProc[1] = Thread2;               
+        gThreadProc[1] = Thread2;
         return TPASS;
 }
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int VT_systest_cleanup( void )
-{       
+{
         //int i;
         int rv = TPASS;
         return rv;
 }
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int VT_systest_test( void )
-{                          
+{
         return RunTest();
 }
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int CheckFile( const char * fname, int sz )
 {
         FILE * fstream = fopen( fname, "r" );
@@ -329,13 +329,13 @@ int CheckFile( const char * fname, int sz )
                 {
                         if( gTestappConfig.mVerbose )
                         {
-                                tst_resm( TWARN, "%s(): %s has a wrong size (actual: %ld, correct: %d)", 
+                                tst_resm( TWARN, "%s(): %s has a wrong size (actual: %ld, correct: %d)",
                                           __FUNCTION__, fname, fsz, sz );
                         }
 
                         return FALSE;
                 }
-                
+
                 return TRUE;
         }
 
@@ -346,18 +346,18 @@ int CheckFile( const char * fname, int sz )
         }
 
         return FALSE;
-} 
+}
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int SetupFFS( const char * dev, const char * mntdir )
 {
         struct stat st;
         int res, err;
 
         assert(dev && mntdir);
-                
+
         memset(&st, 0, sizeof(st));
         if (stat(dev, &st))
         {
@@ -369,7 +369,7 @@ int SetupFFS( const char * dev, const char * mntdir )
                 tst_resm(TFAIL, "%s(): %s is not a char or a block device", __FUNCTION__, dev);
                 return FALSE;
         }
-        
+
         memset(&st, 0, sizeof st);
         res =  stat(mntdir, &st);
         if (res < 0 || !S_ISDIR(st.st_mode))
@@ -392,8 +392,8 @@ int SetupFFS( const char * dev, const char * mntdir )
 }
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int CloseFFS( const char * mntdir )
 {
         if (gTestappConfig.mVerbose)
@@ -402,16 +402,16 @@ int CloseFFS( const char * mntdir )
         assert(mntdir);
         if (umount(mntdir) < 0)
         {
-                tst_resm(TFAIL, "%s(): umount(%s) failed. Reason: %s", __FUNCTION__, mntdir, strerror(errno));                
+                tst_resm(TFAIL, "%s(): umount(%s) failed. Reason: %s", __FUNCTION__, mntdir, strerror(errno));
                 return FALSE;
         }
-        
+
         return TRUE;
 }
 
 
-/*================================================================================================*/
-/*================================================================================================*/
+/*====================*/
+/*====================*/
 int BitMatching(char *buf1, char *buf2, int count)
 {
         int     i;

@@ -32,81 +32,81 @@
  */
 /* $Id: mkdir08.c,v 1.2 2006/05/26 06:26:40 vapier Exp $ */
 /**********************************************************
- * 
+ *
  *    OS Test - Silicon Graphics, Inc.
- * 
- *    TEST IDENTIFIER	: mkdir08
- * 
- *    EXECUTED BY	: anyone
- * 
- *    TEST TITLE	: Basic test for mkdir(2)
- * 
- *    PARENT DOCUMENT	: usctpl01
- * 
- *    TEST CASE TOTAL	: 1
- * 
- *    WALL CLOCK TIME	: 1
- * 
- *    CPU TYPES		: ALL
- * 
- *    AUTHOR		: William Roske
- * 
- *    CO-PILOT		: Dave Fenner
- * 
- *    DATE STARTED	: 03/30/92
- * 
- *    INITIAL RELEASE	: UNICOS 7.0
- * 
+ *
+ *    TEST IDENTIFIER : mkdir08
+ *
+ *    EXECUTED BY : anyone
+ *
+ *    TEST TITLE : Basic test for mkdir(2)
+ *
+ *    PARENT DOCUMENT : usctpl01
+ *
+ *    TEST CASE TOTAL : 1
+ *
+ *    WALL CLOCK TIME : 1
+ *
+ *    CPU TYPES  : ALL
+ *
+ *    AUTHOR  : William Roske
+ *
+ *    CO-PILOT  : Dave Fenner
+ *
+ *    DATE STARTED : 03/30/92
+ *
+ *    INITIAL RELEASE : UNICOS 7.0
+ *
  *    TEST CASES
- * 
- * 	1.) mkdir(2) returns...(See Description)
- *	
+ *
+ * 1.) mkdir(2) returns...(See Description)
+ *
  *    INPUT SPECIFICATIONS
- * 	The standard options for system call tests are accepted.
- *	(See the parse_opts(3) man page).
- * 
+ * The standard options for system call tests are accepted.
+ * (See the parse_opts(3) man page).
+ *
  *    OUTPUT SPECIFICATIONS
- * 	
+ *
  *    DURATION
- * 	Terminates - with frequency and infinite modes.
- * 
+ * Terminates - with frequency and infinite modes.
+ *
  *    SIGNALS
- * 	Uses SIGUSR1 to pause before test if option set.
- * 	(See the parse_opts(3) man page).
+ * Uses SIGUSR1 to pause before test if option set.
+ * (See the parse_opts(3) man page).
  *
  *    RESOURCES
- * 	None
- * 
+ * None
+ *
  *    ENVIRONMENTAL NEEDS
  *      No run-time environmental needs.
- * 
+ *
  *    SPECIAL PROCEDURAL REQUIREMENTS
- * 	None
- * 
+ * None
+ *
  *    INTERCASE DEPENDENCIES
- * 	None
- * 
+ * None
+ *
  *    DETAILED DESCRIPTION
- *	This is a Phase I test for the mkdir(2) system call.  It is intended
- *	to provide a limited exposure of the system call, for now.  It
- *	should/will be extended when full functional tests are written for
- *	mkdir(2).
- * 
- * 	Setup:
- * 	  Setup signal handling.
- *	  Pause for SIGUSR1 if option specified.
- * 
- * 	Test:
- *	 Loop if the proper options are given.
- * 	  Execute system call
- *	  Check return code, if system call failed (return=-1)
- *		Log the errno and Issue a FAIL message.
- *	  Otherwise, Issue a PASS message.
- * 
- * 	Cleanup:
- * 	  Print errno log and/or timing stats if options given
- * 
- * 
+ * This is a Phase I test for the mkdir(2) system call.  It is intended
+ * to provide a limited exposure of the system call, for now.  It
+ * should/will be extended when full functional tests are written for
+ * mkdir(2).
+ *
+ * Setup:
+ *   Setup signal handling.
+ *   Pause for SIGUSR1 if option specified.
+ *
+ * Test:
+ *  Loop if the proper options are given.
+ *   Execute system call
+ *   Check return code, if system call failed (return-1)
+ *  Log the errno and Issue a FAIL message.
+ *   Otherwise, Issue a PASS message.
+ *
+ * Cleanup:
+ *   Print errno log and/or timing stats if options given
+ *
+ *
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
 #include <errno.h>
@@ -124,25 +124,25 @@ void cleanup();
 
 
 
-char *TCID="mkdir08"; 		/* Test program identifier.    */
-int TST_TOTAL=1;    		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID"mkdir08";/* Test program identifier.    */
+int TST_TOTAL1;   /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 
-int exp_enos[]={0, 0};
+int exp_enos[]{0, 0};
 
 char fname[255];
 
 int
 main(int ac, char **av)
 {
-    int lc;		/* loop counter */
-    char *msg;		/* message returned from parse_opts */
-    
+    int lc;  /* loop counter */
+    char *msg;  /* message returned from parse_opts */
+
     /***************************************************************
      * parse standard options
      ***************************************************************/
-    if ( (msg=parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *) NULL )
-	tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+    if ( (msgparse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *) NULL )
+ tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 
     /***************************************************************
      * perform global setup for test
@@ -155,37 +155,37 @@ main(int ac, char **av)
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc=0; TEST_LOOPING(lc); lc++) {
+    for (lc0; TEST_LOOPING(lc); lc++) {
 
-	/* reset Tst_count in case we are looping. */
-	Tst_count=0;
+ /* reset Tst_count in case we are looping. */
+ Tst_count0;
 
-	/* 
-	 * Call mkdir(2)
-	 */
-	TEST(mkdir(fname, 0777));
-	
-	/* check return code */
-	if ( TEST_RETURN == -1 ) {
-	    TEST_ERROR_LOG(TEST_ERRNO);
-	    tst_resm(TFAIL, "mkdir(%s) Failed, errno=%d : %s", fname,
-		     TEST_ERRNO, strerror(TEST_ERRNO));
-	} else {
-	    
-	    /***************************************************************
-	     * only perform functional verification if flag set (-f not given)
-	     ***************************************************************/
-	    if ( STD_FUNCTIONAL_TEST ) {
-		/* No Verification test, yet... */
-		tst_resm(TPASS, "mkdir(%s) returned %d", fname, TEST_RETURN);
-	    } 
-	    if(rmdir(fname) == -1) {
-		tst_brkm(TBROK, cleanup, "rmdir(%s) Failed, errno=%d : %s",
-			 fname, errno, strerror(errno));
-	    }
-	}
+ /*
+  * Call mkdir(2)
+  */
+ TEST(mkdir(fname, 0777));
 
-    }	/* End for TEST_LOOPING */
+ /* check return code */
+ if ( TEST_RETURN  -1 ) {
+     TEST_ERROR_LOG(TEST_ERRNO);
+     tst_resm(TFAIL, "mkdir(%s) Failed, errno%d : %s", fname,
+       TEST_ERRNO, strerror(TEST_ERRNO));
+ } else {
+
+     /***************************************************************
+      * only perform functional verification if flag set (-f not given)
+      ***************************************************************/
+     if ( STD_FUNCTIONAL_TEST ) {
+  /* No Verification test, yet... */
+  tst_resm(TPASS, "mkdir(%s) returned %d", fname, TEST_RETURN);
+     }
+     if(rmdir(fname)  -1) {
+  tst_brkm(TBROK, cleanup, "rmdir(%s) Failed, errno%d : %s",
+    fname, errno, strerror(errno));
+     }
+ }
+
+    } /* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -193,12 +193,12 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-}	/* End main */
+} /* End main */
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void 
+void
 setup()
 {
 
@@ -212,14 +212,14 @@ setup()
     tst_tmpdir();
 
     sprintf(fname, "./dir_%d", getpid());
-}	/* End setup() */
+} /* End setup() */
 
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
+ *  completion or premature exit.
  ***************************************************************/
-void 
+void
 cleanup()
 {
     /*
@@ -233,4 +233,4 @@ cleanup()
 
     /* exit with return code appropriate for results */
     tst_exit();
-}	/* End cleanup() */
+} /* End cleanup() */

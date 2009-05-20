@@ -1,47 +1,47 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   oss_sound_driver_main.c
 
         @brief  OSS audio play test main file.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 RB657C/gsch1c                20/07/2004     TLSbo40898  Initial version  of OSS sound driver test development
-D.Simakov/smkd001c           25/07/2005     TLSbo52891  Test case asks final result to 
+D.Simakov/smkd001c           25/07/2005     TLSbo52891  Test case asks final result to
 D.Khoroshev/B00313           02/08/2006     TLSbo61044  PMIC master mode is the only supported mode
 D.Khoroshev/B00313           02/15/2006     TLSbo62323  Updates accoring last specifications
 D.Simakov                    13/06/2006     TLSbo67022  STDAC <=> CODEC
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
 Total Tests: 1
 
 Test Name:   OSS Audio Play Test
 
 Test Assertion
 & Strategy:  Play sample file using OSS driver
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-    
+
 /* Harness Specific Include Files. */
 #include <test.h>
 #include <usctest.h>
@@ -49,29 +49,29 @@ Test Assertion
 /* Verification Test Environment Include Files */
 #include "oss_sound_driver_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Global Variables */
 char *TCID     = "oss_audio_play_testapp_0";        /* test program identifier.            */
 int  TST_TOTAL = 1;                                 /* total number of tests in this file. */
@@ -91,23 +91,23 @@ option_t options[] =
 
 static char * audiofile = "ringout.wav";
 
-/*==================================================================================================
+/*======================
                                    GLOBAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void cleanup(void);
 void setup(void);
 int main(int argc, char **argv);
 
-/*==================================================================================================
+/*======================
                                    LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        GLOBAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== cleanup =====*/
+/*====================*/
+/*= cleanup =*/
 /**
 @brief  Performs all one time clean up for this test on successful
         completion,  premature exit or  failure. Closes all temporary
@@ -116,14 +116,14 @@ int main(int argc, char **argv);
 
 @param  Input :      None.
         Output:      None.
-  
+
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
         int VT_rv = TFAIL;
-        
+
         VT_rv = VT_oss_sound_driver_cleanup();
         if (VT_rv != TPASS)
         {
@@ -131,22 +131,22 @@ void cleanup(void)
         }
 }
 
-/*==================================================================================================
+/*======================
                                        LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== help =====*/
+/*====================*/
+/*= help =*/
 /**
 @brief  Inform of the available options and the associated parameters
 
 @param  Input :      None.
         Output:      None.
-  
+
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 void help(void)
 {
         printf("\tSwitches \n\n");
@@ -157,8 +157,8 @@ void help(void)
         printf("\t                1: CODEC\n");
 }
 
-/*================================================================================================*/
-/*===== setup =====*/
+/*====================*/
+/*= setup =*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -166,11 +166,11 @@ void help(void)
 
 @param  Input :      None.
         Output:      None.
-  
+
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
         int VT_rv = TFAIL;
@@ -181,11 +181,11 @@ void setup(void)
         }
 }
 
-/*================================================================================================*/
+/*====================*/
 int ask_user(char *question)
 {
         unsigned char answer;
-        int           ret = TRETR;                        
+        int           ret = TRETR;
         do
         {
                 tst_resm(TINFO, "%s [Y/N]", question);
@@ -200,8 +200,8 @@ int ask_user(char *question)
         return ret;
 }
 
-/*================================================================================================*/
-/*===== main =====*/
+/*====================*/
+/*= main =*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -220,11 +220,11 @@ int ask_user(char *question)
                                 -Id - Id of the test according to the test plan
                                 -Case N - If exist, the test case number associated with the test Id
                                 -Iter - Inform the iteration of the loop in case of an endurance/stress test
-  
+
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
         int VT_rv = TFAIL;
@@ -232,7 +232,7 @@ int main(int argc, char **argv)
         int Loop= 1;
         char * File = audiofile;
         int Device = 0;
-                
+
         /* parse options. */
         if ( (msg=parse_opts(argc, argv, options, help)) != NULL )
         {
@@ -255,7 +255,7 @@ int main(int argc, char **argv)
                         tst_resm(TINFO, " Device is CODEC");
                         FILE *fd_file = NULL;
                         int channels;
- 
+
                         fd_file = fopen(File, "r");
 
                         if(!fd_file)
@@ -267,14 +267,14 @@ int main(int argc, char **argv)
                         fclose(fd_file);
                         if(channels == 2)
                         {
-                                tst_brkm(TBROK , cleanup, "  ERROR: attempting to play stereo file on Voice CODEC device");                                
+                                tst_brkm(TBROK , cleanup, "  ERROR: attempting to play stereo file on Voice CODEC device");
                         }
                 }
                 else if (Device == 0)
                 {
                         tst_resm(TINFO, " Device is STDAC");
                 }
-                else 
+                else
                 {
                         tst_resm(TCONF, " Unknown device device");
                         cleanup();
@@ -286,7 +286,7 @@ int main(int argc, char **argv)
         tst_resm(TINFO, "Testing if %s test case is OK", TCID);
 
         VT_rv = VT_oss_sound_driver_test(Device, Loop, File);
-        
+
         if(VT_rv == TPASS)
         {
                 if( ask_user( "Did this test case work as expected" ) == TPASS )

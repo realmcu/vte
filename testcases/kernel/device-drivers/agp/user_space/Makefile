@@ -1,5 +1,5 @@
 test_agp: tagp_ki.o user_tagp.o
-	gcc tagp_ki.o user_tagp.o -o test_agp 
+	gcc tagp_ki.o user_tagp.o -o test_agp
 
 tagp_ki.o: tagp_ki.c
 	gcc -c tagp_ki.c

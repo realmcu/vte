@@ -33,8 +33,8 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <stdio.h>
-#include <unistd.h> 
-#include <string.h> 
+#include <unistd.h>
+#include <string.h>
 #include <stdlib.h>
 #include <malloc.h>
 #include <pthread.h>
@@ -48,17 +48,17 @@
 #define ERROR -1
 #define END_LINE                0x0A
 
-int udpSocketHandle, 
-    rc, 
-    msg_bytes, 
+int udpSocketHandle,
+    rc,
+    msg_bytes,
     udpClientLen,
-    tcpSocketHandle, 
-    newTcpSocketHandle, 
+    tcpSocketHandle,
+    newTcpSocketHandle,
     tcpClientLen,
-    multiSocketHandle, 
+    multiSocketHandle,
     multiClientLen;
 
-struct sockaddr_in udpClientAddr, 
+struct sockaddr_in udpClientAddr,
                    udpServerAddr,
                    tcpClientAddr,
                    tcpServerAddr,
@@ -85,12 +85,12 @@ int main(int argc, char *argv[]) {
                     tcp_server_queue,
                     multi_server_queue;
 
-    pthread_attr_t  udpthread_attr, 
+    pthread_attr_t  udpthread_attr,
                     tcpthread_attr,
                     multithread_attr;
 
 
-    if (argc!=2) {
+    if (argc!2) {
         printf("Server arguments : %s <multiCast I.P.address/hostname>\n", argv[0]);
         exit(0);
     }
@@ -100,9 +100,9 @@ int main(int argc, char *argv[]) {
 
     /* get mcast address to listen to */
 
-    hostEntry = gethostbyname(argv[1]);
+    hostEntry  gethostbyname(argv[1]);
 
-    if (hostEntry == NULL) {
+    if (hostEntry  NULL) {
         printf("Server %s : You need to pass a multiCast group '%s'\n", argv[0], argv[1]);
         exit(1);
     }
@@ -118,24 +118,24 @@ int main(int argc, char *argv[]) {
     else {
 
         /* create multiCast socket */
-        multiSocketHandle = socket(AF_INET, SOCK_DGRAM, 0);
+        multiSocketHandle  socket(AF_INET, SOCK_DGRAM, 0);
 
         if (multiSocketHandle < 0) {
             printf("%s : cannot create multiCast socket\n",argv[0]);
         } else {
             /* bind multiCast port */
-            multiServerAddr.sin_family=AF_INET;
-            multiServerAddr.sin_addr.s_addr=htonl(INADDR_ANY);
-            multiServerAddr.sin_port=htons(LOCAL_MULTI_SERVER_PORT);  
+            multiServerAddr.sin_familyAF_INET;
+            multiServerAddr.sin_addr.s_addrhtonl(INADDR_ANY);
+            multiServerAddr.sin_porthtons(LOCAL_MULTI_SERVER_PORT);
 
             if (bind(multiSocketHandle,(struct sockaddr *) &multiServerAddr, sizeof(multiServerAddr)) < 0) {
                 printf("%s : cannot bind Multicast port %d \n",argv[0], LOCAL_MULTI_SERVER_PORT);
             } else {
                 /* join multicast group */
-                multiCastReq.imr_multiaddr.s_addr = multiCastAddr.s_addr;
-                multiCastReq.imr_interface.s_addr = htonl(INADDR_ANY);
+                multiCastReq.imr_multiaddr.s_addr  multiCastAddr.s_addr;
+                multiCastReq.imr_interface.s_addr  htonl(INADDR_ANY);
 
-                rc = setsockopt(multiSocketHandle, IPPROTO_IP, IP_ADD_MEMBERSHIP,
+                rc  setsockopt(multiSocketHandle, IPPROTO_IP, IP_ADD_MEMBERSHIP,
                                 (void *) &multiCastReq, sizeof(multiCastReq));
                 if (rc < 0) {
                     printf("%s : cannot join multicast group '%s'",argv[0],
@@ -147,13 +147,13 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        rc = pthread_attr_init(&multithread_attr);
-        rc = pthread_create(&multi_server_queue, &multithread_attr, (void *)&ltp_multi_server_queue, (void *)NULL);
+        rc  pthread_attr_init(&multithread_attr);
+        rc  pthread_create(&multi_server_queue, &multithread_attr, (void *)&ltp_multi_server_queue, (void *)NULL);
     }
 
 
     /* udp socket creation */
-    udpSocketHandle=socket(AF_INET, SOCK_DGRAM, 0);
+    udpSocketHandlesocket(AF_INET, SOCK_DGRAM, 0);
 
     if ( udpSocketHandle < 0) {
         printf("%s: cannot open socket \n",argv[0]);
@@ -161,7 +161,7 @@ int main(int argc, char *argv[]) {
     }
 
     /* tcp socket creation */
-    tcpSocketHandle = socket(AF_INET, SOCK_STREAM, 0);
+    tcpSocketHandle  socket(AF_INET, SOCK_STREAM, 0);
 
     if (tcpSocketHandle < 0) {
         printf("Error: cannot open socket %d \n", tcpSocketHandle);
@@ -170,42 +170,42 @@ int main(int argc, char *argv[]) {
 
 
     /* bind local udp server port */
-    udpServerAddr.sin_family = AF_INET;
-    udpServerAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    udpServerAddr.sin_port = htons(LOCAL_UDP_SERVER_PORT);
+    udpServerAddr.sin_family  AF_INET;
+    udpServerAddr.sin_addr.s_addr  htonl(INADDR_ANY);
+    udpServerAddr.sin_port  htons(LOCAL_UDP_SERVER_PORT);
 
-    rc = bind (udpSocketHandle, (struct sockaddr *) &udpServerAddr,sizeof(udpServerAddr));
+    rc  bind (udpSocketHandle, (struct sockaddr *) &udpServerAddr,sizeof(udpServerAddr));
 
     if ( rc < 0) {
-        printf("%s: Error binding port number %d \n", 
+        printf("%s: Error binding port number %d \n",
                argv[0], LOCAL_UDP_SERVER_PORT);
         exit(1);
     } else {
-        printf("%s: bound port number %d \n", 
+        printf("%s: bound port number %d \n",
                argv[0], LOCAL_UDP_SERVER_PORT);
     }
 
     /* bind local tcp server port */
-    tcpServerAddr.sin_family = AF_INET;
-    tcpServerAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    tcpServerAddr.sin_port = htons(LOCAL_TCP_SERVER_PORT);
+    tcpServerAddr.sin_family  AF_INET;
+    tcpServerAddr.sin_addr.s_addr  htonl(INADDR_ANY);
+    tcpServerAddr.sin_port  htons(LOCAL_TCP_SERVER_PORT);
 
-    rc = bind (tcpSocketHandle, (struct sockaddr *) &tcpServerAddr,sizeof(tcpServerAddr));
+    rc  bind (tcpSocketHandle, (struct sockaddr *) &tcpServerAddr,sizeof(tcpServerAddr));
 
     if ( rc < 0) {
-        printf("%s: Error binding port number %d \n", 
+        printf("%s: Error binding port number %d \n",
                argv[0], LOCAL_TCP_SERVER_PORT);
         exit(1);
     } else {
-        printf("%s: bound port number %d \n", 
+        printf("%s: bound port number %d \n",
                argv[0], LOCAL_TCP_SERVER_PORT);
     }
 
-    rc = pthread_attr_init(&udpthread_attr);
-    rc = pthread_create(&udp_server_queue, &udpthread_attr, (void *)&ltp_udp_server_queue, (void *)NULL);
+    rc  pthread_attr_init(&udpthread_attr);
+    rc  pthread_create(&udp_server_queue, &udpthread_attr, (void *)&ltp_udp_server_queue, (void *)NULL);
 
-    rc = pthread_attr_init(&tcpthread_attr);
-    rc = pthread_create(&tcp_server_queue, &tcpthread_attr, (void *)&ltp_tcp_server_queue, (void *)NULL);
+    rc  pthread_attr_init(&tcpthread_attr);
+    rc  pthread_create(&tcp_server_queue, &tcpthread_attr, (void *)&ltp_tcp_server_queue, (void *)NULL);
 
     while (1);
 
@@ -220,19 +220,19 @@ int main(int argc, char *argv[]) {
 void ltp_udp_server_queue ()
 {
 
-  printf("%s: waiting for data on port UDP %u\n", 
-	   hostname,LOCAL_UDP_SERVER_PORT);
+  printf("%s: waiting for data on port UDP %u\n",
+    hostname,LOCAL_UDP_SERVER_PORT);
 
   /* server infinite loop */
   while(1) {
-    
+
     /* init buffer */
     memset(message, 0, MAX_MSG_LEN);
 
     /* receive message */
-    udpClientLen = sizeof(udpClientAddr);
+    udpClientLen  sizeof(udpClientAddr);
 
-    msg_bytes = recvfrom(udpSocketHandle, message, MAX_MSG_LEN, 0, (struct sockaddr *) &udpClientAddr, &udpClientLen);
+    msg_bytes  recvfrom(udpSocketHandle, message, MAX_MSG_LEN, 0, (struct sockaddr *) &udpClientAddr, &udpClientLen);
 
     printf("msg_bytes:%d \n", msg_bytes);
 
@@ -241,11 +241,11 @@ void ltp_udp_server_queue ()
     }
     else {
         /* print message */
-        printf("%s: from %s:UDP%u : %s \n", 
+        printf("%s: from %s:UDP%u : %s \n",
            hostname,inet_ntoa(udpClientAddr.sin_addr),
            ntohs(udpClientAddr.sin_port), message);
     }
-    
+
   }/* end of server infinite loop */
 
 }
@@ -264,8 +264,8 @@ void ltp_tcp_server_queue ()
 
       printf("%s: waiting for data on port TCP %u\n",hostname ,LOCAL_TCP_SERVER_PORT);
 
-      tcpClientLen = sizeof(tcpClientAddr);
-      newTcpSocketHandle = accept(tcpSocketHandle, (struct sockaddr *) &tcpClientAddr, &tcpClientLen);
+      tcpClientLen  sizeof(tcpClientAddr);
+      newTcpSocketHandle  accept(tcpSocketHandle, (struct sockaddr *) &tcpClientAddr, &tcpClientLen);
 
 
       if(newTcpSocketHandle < 0) {
@@ -276,15 +276,15 @@ void ltp_tcp_server_queue ()
       /* init line */
       memset(message,0x0,MAX_MSG_LEN);
 
-     
+
 
       /* receive segments */
-      while(tcp_receive_buffer(newTcpSocketHandle,message)!= ERROR) {
+      while(tcp_receive_buffer(newTcpSocketHandle,message)! ERROR) {
 
-        printf("%s: received from %s:TCP%d : %s\n", hostname, 
+        printf("%s: received from %s:TCP%d : %s\n", hostname,
            inet_ntoa(tcpClientAddr.sin_addr),
            ntohs(tcpClientAddr.sin_port), message);
-        
+
         /* init line */
         memset(message,0x0,MAX_MSG_LEN);
 
@@ -296,72 +296,72 @@ void ltp_tcp_server_queue ()
 }
 /*
  * Function:     tcp_receive_buffer
- * Description:  This function grabs the message from the tcp queue and 
+ * Description:  This function grabs the message from the tcp queue and
  *               returns it to the calling function in the buffer.
  */
 int tcp_receive_buffer(int newSocket, char *return_buffer) {
-  
-  static int  bytes_received = 0;
+
+  static int  bytes_received  0;
   static char message_received[MAX_MSG_LEN];
-  static int  count = 0;
+  static int  count  0;
   int offset;
 
-  offset = 0;
+  offset  0;
 
   while(1) {
 
-    if(bytes_received == 0) {
+    if(bytes_received  0) {
       /* read data from socket */
 
       memset(message_received, 0x0, MAX_MSG_LEN); /* init buffer */
 
-      count = recvfrom(newSocket, message_received, MAX_MSG_LEN, 0, (struct sockaddr *) &tcpClientAddr, &tcpClientLen);
+      count  recvfrom(newSocket, message_received, MAX_MSG_LEN, 0, (struct sockaddr *) &tcpClientAddr, &tcpClientLen);
 
       if (count < 0) {
-	     perror(" cannot receive data ");
-	     return ERROR;
-      } 
-      else if (count == 0) {
-	     printf(" connection closed by client\n");
+      perror(" cannot receive data ");
+      return ERROR;
+      }
+      else if (count  0) {
+      printf(" connection closed by client\n");
          close(newSocket);
          if (count) {
          }
-	     return ERROR;
+      return ERROR;
       }
     }
-  
+
     /* Check for new data read on socket or */
     /* if still more data in buffer       */
 
     /* copy line into 'return_buffer' */
-    while(*(message_received + bytes_received)!= END_LINE && bytes_received < count) {
+    while(*(message_received + bytes_received)! END_LINE && bytes_received < count) {
       memcpy(return_buffer + offset, message_received + bytes_received, 1);
       offset++;
       bytes_received++;
     }
-    
-    /* end of line + end of buffer => return line */
-    if( bytes_received == count -1) { 
+
+    /* end of line + end of buffer > return line */
+    if( bytes_received  count -1) {
       /* set last byte to END_LINE */
-      *(return_buffer + offset)= END_LINE;
-      bytes_received = 0;
+      *(return_buffer + offset) END_LINE;
+      bytes_received  0;
       return ++offset;
-    } 
-    
-    /* end of line but still some data in buffer => return line */
+    }
+
+    /* end of line but still some data in buffer > return line */
     if(bytes_received < count-1) {
       /* set last byte to END_LINE */
-      *(return_buffer + offset) = END_LINE;
+      *(return_buffer + offset)  END_LINE;
       bytes_received++;
       return ++offset;
     }
 
-    /* end of buffer but line is not ended => */
+    /* end of buffer but line is not ended > */
     /*  wait for more data to arrive on socket */
-    if(bytes_received == count) {
-      bytes_received = 0;
+    if(bytes_received  count) {
+      bytes_received  0;
       return offset;
-    } 
+    }
 
   } /* while */
 }
@@ -372,15 +372,15 @@ int tcp_receive_buffer(int newSocket, char *return_buffer) {
 void ltp_multi_server_queue ()
 {
 
-    printf("%s: waiting for data on port Multicast %u\n", 
+    printf("%s: waiting for data on port Multicast %u\n",
            hostname, LOCAL_MULTI_SERVER_PORT);
 
     /* infinite server loop */
     while (1) {
 
-        multiClientLen=sizeof(multiClientAddr);
+        multiClientLensizeof(multiClientAddr);
 
-        msg_bytes = recvfrom(multiSocketHandle, message, MAX_MSG_LEN, 0, (struct sockaddr *) &multiClientAddr, &multiClientLen);
+        msg_bytes  recvfrom(multiSocketHandle, message, MAX_MSG_LEN, 0, (struct sockaddr *) &multiClientAddr, &multiClientLen);
 
         if (msg_bytes < 0) {
             printf("%s : cannot receive data\n",hostname);

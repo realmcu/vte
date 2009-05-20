@@ -12,33 +12,33 @@
         ARM GCC
 */
 
-/*======================== REVISION HISTORY ==================================
+/* REVISION HISTORY 
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
 D.Simakov / smkd001c  21/02/2006   TLSbo61035   Initial version
-=============================================================================*/ 
+*/
 
-/*==================================================================================================
+/*
                                         LOOKUP TABLES
-==================================================================================================*/
+*/
 
 #include "ycbcr.h"
 
 
 // (rrrr rggg gggb bbbb)
 #ifdef BIG_ENDIAN
-#    define MakeRGB_565(out,r,g,b) out = (((r) << 11) | ((g) << 5) | (b)) 
+#    define MakeRGB_565(out,r,g,b) out  (((r) << 11) | ((g) << 5) | (b))
 #else
-#    define MakeRGB_565(out,r,g,b) out = (((r) << 11) | ((g) << 5) | (b)); \
-                                   out = (((out << 8) & 0xff00) | ((out >> 8) & 0x00ff)) 
+#    define MakeRGB_565(out,r,g,b) out  (((r) << 11) | ((g) << 5) | (b)); \
+                                   out  (((out << 8) & 0xff00) | ((out >> 8) & 0x00ff))
 #endif
 
 
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
-const short int gRCrTbl[256] = 
+const short int gRCrTbl[256] 
 {
         -204, -202, -200, -199, -197, -196, -194, -192,
         -191, -189, -188, -186, -184, -183, -181, -180,
@@ -78,7 +78,7 @@ const short int gRCrTbl[256] =
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
-const short int gGCrTbl[256] = 
+const short int gGCrTbl[256] 
 {
         104, 103, 103, 102, 101, 100, 99, 99,
         98, 97, 96, 95, 95, 94, 93, 92,
@@ -118,7 +118,7 @@ const short int gGCrTbl[256] =
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
-const short int gGCbTbl[256] = 
+const short int gGCbTbl[256] 
 {
         50, 49, 49, 49, 48, 48, 47, 47,
         47, 46, 46, 45, 45, 45, 44, 44,
@@ -158,7 +158,7 @@ const short int gGCbTbl[256] =
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
-const short int gBCbTbl[256] = 
+const short int gBCbTbl[256] 
 {
         -258, -256, -254, -252, -250, -248, -246, -244,
         -242, -240, -238, -236, -234, -232, -230, -228,
@@ -197,9 +197,9 @@ const short int gBCbTbl[256] =
 
 /************************************************************************/
 /* Use this clipping array when 5-bit output is required.               */
-/* These values are calculated using ggClipitArr5[i] = gClipitArr[i] >> 3  */
+/* These values are calculated using ggClipitArr5[i]  gClipitArr[i] >> 3  */
 /************************************************************************/
-const unsigned char ggClipitArr5[832] = 
+const unsigned char ggClipitArr5[832] 
 {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -286,9 +286,9 @@ const unsigned char ggClipitArr5[832] =
 
 /************************************************************************/
 /* Use this clipping array when 6-bit output is required.               */
-/* These values are calculated using ggClipitArr6[i] = gClipitArr[i] >> 2 */
+/* These values are calculated using ggClipitArr6[i]  gClipitArr[i] >> 2 */
 /************************************************************************/
-const unsigned char ggClipitArr6[832] = 
+const unsigned char ggClipitArr6[832] 
 {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -376,7 +376,7 @@ const unsigned char ggClipitArr6[832] =
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
-static const unsigned char gClipitArr[832] = 
+static const unsigned char gClipitArr[832] 
 {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -461,8 +461,8 @@ static const unsigned char gClipitArr[832] =
 };
 
 
-/*==================================================================================*/
-/*==================================================================================*/
+/**/
+/**/
 void YCrCbToRGB_565( unsigned char * Y, int xsize,
                      unsigned char * Cb, unsigned char * Cr, int cxsize,
                      unsigned char * rgbPixelPtr, int width, int height )
@@ -474,63 +474,63 @@ void YCrCbToRGB_565( unsigned char * Y, int xsize,
         int     linePitch, next;
         int     r, b, yy;
         const unsigned char *clipR, *clipG, *clipB;
-        const unsigned char *clipitPtrR = ggClipitArr5 + 288;
-        const unsigned char *clipitPtrG = ggClipitArr6 + 288;
-        const unsigned char *clipitPtrB = ggClipitArr5 + 288;
-        
-        linePitch = width * 2;
-        topLuminancePtr = Y;
-        chromBluePtr = Cb;
-        chromRedPtr = Cr;
-        
+        const unsigned char *clipitPtrR  ggClipitArr5 + 288;
+        const unsigned char *clipitPtrG  ggClipitArr6 + 288;
+        const unsigned char *clipitPtrB  ggClipitArr5 + 288;
+
+        linePitch  width * 2;
+        topLuminancePtr  Y;
+        chromBluePtr  Cb;
+        chromRedPtr  Cr;
+
         // Normal Top-to-Bottom raster
-        next = 1;
-        topOutputPtr = (unsigned short *) rgbPixelPtr;
-        bottomOutputPtr = topOutputPtr + width;
-        
-        for (row = height - 1; row > 0; row -= 2)
+        next  1;
+        topOutputPtr  (unsigned short *) rgbPixelPtr;
+        bottomOutputPtr  topOutputPtr + width;
+
+        for (row  height - 1; row > 0; row - 2)
         {
-                bottomLuminancePtr = topLuminancePtr + xsize;
-                col = width / 2;
+                bottomLuminancePtr  topLuminancePtr + xsize;
+                col  width / 2;
                 while (col)
                 {
-                        r = *chromRedPtr++;
-                        b = *chromBluePtr++;
-                        clipR = clipitPtrR + gRCrTbl[r];
-                        clipB = clipitPtrB + gBCbTbl[b];
-                        clipG = clipitPtrG + gGCrTbl[r] + gGCbTbl[b];
-                        
-                        yy = topLuminancePtr[0];
+                        r  *chromRedPtr++;
+                        b  *chromBluePtr++;
+                        clipR  clipitPtrR + gRCrTbl[r];
+                        clipB  clipitPtrB + gBCbTbl[b];
+                        clipG  clipitPtrG + gGCrTbl[r] + gGCbTbl[b];
+
+                        yy  topLuminancePtr[0];
                         MakeRGB_565(topOutputPtr[0], clipR[yy], clipG[yy], clipB[yy]);
-                        
-                        yy = topLuminancePtr[1];
+
+                        yy  topLuminancePtr[1];
                         MakeRGB_565(topOutputPtr[1], clipR[yy], clipG[yy], clipB[yy]);
-                        
-                        yy = bottomLuminancePtr[0];
+
+                        yy  bottomLuminancePtr[0];
                         MakeRGB_565(bottomOutputPtr[0], clipR[yy], clipG[yy],
                                 clipB[yy]);
-                        
-                        yy = bottomLuminancePtr[1];
+
+                        yy  bottomLuminancePtr[1];
                         MakeRGB_565(bottomOutputPtr[1], clipR[yy], clipG[yy],
                                 clipB[yy]);
-                        
-                        topLuminancePtr += 2;
-                        bottomLuminancePtr += 2;
-                        topOutputPtr += 2;
-                        bottomOutputPtr += 2;
+
+                        topLuminancePtr + 2;
+                        bottomLuminancePtr + 2;
+                        topOutputPtr + 2;
+                        bottomOutputPtr + 2;
                         col--;
                 }
-                chromBluePtr += (cxsize - (width / 2));
-                chromRedPtr += (cxsize - (width / 2));
-                topLuminancePtr = bottomLuminancePtr + (xsize - width);
-                topOutputPtr += (next * (2 * width) - width);
-                bottomOutputPtr += (next * (2 * width) - width);
+                chromBluePtr + (cxsize - (width / 2));
+                chromRedPtr + (cxsize - (width / 2));
+                topLuminancePtr  bottomLuminancePtr + (xsize - width);
+                topOutputPtr + (next * (2 * width) - width);
+                bottomOutputPtr + (next * (2 * width) - width);
         }
 }
 
 
-/*==================================================================================*/
-/*==================================================================================*/
+/**/
+/**/
 void YCrCbToRGB_888(unsigned char * Y, int xsize,
                     unsigned char * Cb, unsigned char * Cr, int cxsize,
                     unsigned char * rgbPixelPtr, int width, int height )
@@ -542,65 +542,65 @@ void YCrCbToRGB_888(unsigned char * Y, int xsize,
     int     linePitch, next;
     int     r, b, yy;
     const unsigned char *clipR, *clipG, *clipB;
-    const unsigned char *clipitPtr = gClipitArr + 288;
+    const unsigned char *clipitPtr  gClipitArr + 288;
 
-    linePitch = width * 3;
-    topLuminancePtr = Y;
-    chromBluePtr = Cb;
-    chromRedPtr = Cr;
+    linePitch  width * 3;
+    topLuminancePtr  Y;
+    chromBluePtr  Cb;
+    chromRedPtr  Cr;
 
-    next = 1;
-    topOutputPtr = rgbPixelPtr;
-    bottomOutputPtr = topOutputPtr + linePitch;
-    
-    for (row = height - 1; row > 0; row -= 2)
+    next  1;
+    topOutputPtr  rgbPixelPtr;
+    bottomOutputPtr  topOutputPtr + linePitch;
+
+    for (row  height - 1; row > 0; row - 2)
     {
-        bottomLuminancePtr = topLuminancePtr + xsize;
-        col = width / 2;
+        bottomLuminancePtr  topLuminancePtr + xsize;
+        col  width / 2;
         while (col)
         {
-            r = *chromRedPtr++;
-            b = *chromBluePtr++;
-            clipR = clipitPtr + gRCrTbl[r];
-            clipB = clipitPtr + gBCbTbl[b];
-            clipG = clipitPtr + gGCrTbl[r] + gGCbTbl[b];
+            r  *chromRedPtr++;
+            b  *chromBluePtr++;
+            clipR  clipitPtr + gRCrTbl[r];
+            clipB  clipitPtr + gBCbTbl[b];
+            clipG  clipitPtr + gGCrTbl[r] + gGCbTbl[b];
 
-            yy = topLuminancePtr[0];
-            topOutputPtr[0] = clipB[yy];        //blue
-            topOutputPtr[1] = clipG[yy];        // green
-            topOutputPtr[2] = clipR[yy];        // red
+            yy  topLuminancePtr[0];
+            topOutputPtr[0]  clipB[yy];        //blue
+            topOutputPtr[1]  clipG[yy];        // green
+            topOutputPtr[2]  clipR[yy];        // red
 
-            yy = topLuminancePtr[1];
-            topOutputPtr[3] = clipB[yy];        //blue
-            topOutputPtr[4] = clipG[yy];        // green
-            topOutputPtr[5] = clipR[yy];        // red
+            yy  topLuminancePtr[1];
+            topOutputPtr[3]  clipB[yy];        //blue
+            topOutputPtr[4]  clipG[yy];        // green
+            topOutputPtr[5]  clipR[yy];        // red
 
-            yy = bottomLuminancePtr[0];
-            bottomOutputPtr[0] = clipB[yy];     // blue
-            bottomOutputPtr[1] = clipG[yy];     //green
-            bottomOutputPtr[2] = clipR[yy];     // red
+            yy  bottomLuminancePtr[0];
+            bottomOutputPtr[0]  clipB[yy];     // blue
+            bottomOutputPtr[1]  clipG[yy];     //green
+            bottomOutputPtr[2]  clipR[yy];     // red
 
-            yy = bottomLuminancePtr[1];
-            bottomOutputPtr[3] = clipB[yy];     // blue
-            bottomOutputPtr[4] = clipG[yy];     //green
-            bottomOutputPtr[5] = clipR[yy];     // red
+            yy  bottomLuminancePtr[1];
+            bottomOutputPtr[3]  clipB[yy];     // blue
+            bottomOutputPtr[4]  clipG[yy];     //green
+            bottomOutputPtr[5]  clipR[yy];     // red
 
-            topLuminancePtr += 2;
-            bottomLuminancePtr += 2;
-            topOutputPtr += 6;
-            bottomOutputPtr += 6;
+            topLuminancePtr + 2;
+            bottomLuminancePtr + 2;
+            topOutputPtr + 6;
+            bottomOutputPtr + 6;
             col--;
         }
-        chromBluePtr += (cxsize - (width / 2));
-        chromRedPtr += (cxsize - (width / 2));
-        topLuminancePtr = bottomLuminancePtr + (xsize - width);
-        topOutputPtr += (next * (2 * linePitch) - 3 * width);
-        bottomOutputPtr += (next * (2 * linePitch) - 3 * width);
+        chromBluePtr + (cxsize - (width / 2));
+        chromRedPtr + (cxsize - (width / 2));
+        topLuminancePtr  bottomLuminancePtr + (xsize - width);
+        topOutputPtr + (next * (2 * linePitch) - 3 * width);
+        bottomOutputPtr + (next * (2 * linePitch) - 3 * width);
     }
 }
 
-/*==================================================================================*/
-/*==================================================================================*/
+/**/
+/**/
 int YCrCbToRGB( unsigned char *Y, int xsize,
                 unsigned char *Cb, unsigned char *Cr, int cxsize,
                 unsigned char *rgbPixelPtr, int width, int height, int colorFormat )

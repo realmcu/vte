@@ -40,14 +40,14 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return=-1)
- *   	Log the errno and Issue a FAIL message.
+ *   Check return code, if system call failed (return-1)
+ *   Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *   Verify the Functionality of system call
  *      if successful,
- *      	Issue Functionality-Pass message.
+ *      Issue Functionality-Pass message.
  *      Otherwise,
- *		Issue Functionality-Fail message.
+ *  Issue Functionality-Fail message.
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
  *   Delete the temporary directory created.
@@ -56,13 +56,13 @@
  *  pwrite01 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -f   : Turn off functionality Testing.
- *	       -i n : Execute test n times.
- *	       -I x : Execute test for x seconds.
- *	       -P x : Pause for x seconds between iterations.
- *	       -t   : Turn on syscall timing.
+ *        -i n : Execute test n times.
+ *        -I x : Execute test for x seconds.
+ *        -P x : Pause for x seconds between iterations.
+ *        -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS:
  *  None.
@@ -80,136 +80,136 @@
 #include "usctest.h"
 
 #define _XOPEN_SOURCE 500
-#define TEMPFILE	"pwrite_file"
+#define TEMPFILE "pwrite_file"
 #define K1              1024
 #define K2              (K1 * 2)
 #define K3              (K1 * 3)
 #define K4              (K1 * 4)
 #define NBUFS           4
 
-char *TCID="pwrite01";		/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-int fildes;			/* file descriptor for tempfile */
-char *write_buf[NBUFS];		/* buffer to hold data to be written */
+char *TCID"pwrite01";  /* Test program identifier.    */
+int TST_TOTAL1;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
+int fildes;   /* file descriptor for tempfile */
+char *write_buf[NBUFS];  /* buffer to hold data to be written */
 
-void setup();			/* Main setup function of test */
-void cleanup();			/* cleanup function for the test */
+void setup();   /* Main setup function of test */
+void cleanup();   /* cleanup function for the test */
 void l_seek(int, off_t, int, off_t); /* function to call lseek() */
-void init_buffers();		/* function to initialize/allocate buffers */
-void check_file_contents();	/* function to verify the contents of file */
+void init_buffers();  /* function to initialize/allocate buffers */
+void check_file_contents(); /* function to verify the contents of file */
 
 int
 main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-	int nwrite;		/* no. of bytes written by pwrite() */
-	
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
+ int nwrite;  /* no. of bytes written by pwrite() */
 
-	/* Perform global setup for test */
-	setup();
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(ac, av, (option_t *)NULL, NULL);
+ if (msg ! (char *)NULL) {
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	/* Check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* Perform global setup for test */
+ setup();
 
-		/* Reset Tst_count in case we are looping. */
-		Tst_count = 0;
+ /* Check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* 
-		 * Call pwrite() to write K1 bytes of data (0's) at offset 0 
-		 * of temporary file
-		 */
-		nwrite = pwrite(fildes, write_buf[0], K1, 0);
+  /* Reset Tst_count in case we are looping. */
+  Tst_count  0;
 
-		/* Check for the return value of pwrite() */
-		if (nwrite != K1) {
-			tst_resm(TFAIL, "pwrite() at offset 0 failed, errno=%d "
-				 ": %s", errno, strerror(errno));
-			continue;
-		}
+  /*
+   * Call pwrite() to write K1 bytes of data (0's) at offset 0
+   * of temporary file
+   */
+  nwrite  pwrite(fildes, write_buf[0], K1, 0);
 
-		/* We should still be at offset 0. */
-		l_seek(fildes, 0, SEEK_CUR, 0);
+  /* Check for the return value of pwrite() */
+  if (nwrite ! K1) {
+   tst_resm(TFAIL, "pwrite() at offset 0 failed, errno%d "
+     ": %s", errno, strerror(errno));
+   continue;
+  }
 
-		/*
-		 * Now, lseek() to a non K boundary, 
-		 * just to be different.
-		 */
-		l_seek(fildes, K1/2, SEEK_SET, K1/2);
+  /* We should still be at offset 0. */
+  l_seek(fildes, 0, SEEK_CUR, 0);
 
-		/*
-		 * Again, pwrite() K1 of data (2's) at offset K2 of 
-		 * temporary file.
-		 */
-		nwrite = pwrite(fildes, write_buf[2], K1, K2);
-		if (nwrite != K1) {
-			tst_resm(TFAIL, "pwrite() failed to "
-				 "write at %d off. on %s, errno=%d : %s",
-				 K2, TEMPFILE, errno, strerror(errno));
-			continue;
-		}
+  /*
+   * Now, lseek() to a non K boundary,
+   * just to be different.
+   */
+  l_seek(fildes, K1/2, SEEK_SET, K1/2);
 
-		/* We should still be at our non K boundary. */
-		l_seek(fildes, 0, SEEK_CUR, K1/2);
+  /*
+   * Again, pwrite() K1 of data (2's) at offset K2 of
+   * temporary file.
+   */
+  nwrite  pwrite(fildes, write_buf[2], K1, K2);
+  if (nwrite ! K1) {
+   tst_resm(TFAIL, "pwrite() failed to "
+     "write at %d off. on %s, errno%d : %s",
+     K2, TEMPFILE, errno, strerror(errno));
+   continue;
+  }
 
-		/* lseek() to an offset of K3. */
-		l_seek(fildes, K3, SEEK_SET, K3);
+  /* We should still be at our non K boundary. */
+  l_seek(fildes, 0, SEEK_CUR, K1/2);
 
-		/*
-		 * Using write(), write of K1 of data (3's) which 
-		 * should take place at an offset of K3, 
-		 * moving the file pointer to K4.
-		 */
-		nwrite = write(fildes, write_buf[3], K1);
-		if (nwrite != K1) {
-			tst_resm(TFAIL, "write() failed: nwrite=%d, errno=%d : "
-				 "%s", nwrite, errno, strerror(errno));
-			continue;
-		}
+  /* lseek() to an offset of K3. */
+  l_seek(fildes, K3, SEEK_SET, K3);
 
-		/* We should be at offset K4. */
-		l_seek(fildes, 0, SEEK_CUR, K4);
+  /*
+   * Using write(), write of K1 of data (3's) which
+   * should take place at an offset of K3,
+   * moving the file pointer to K4.
+   */
+  nwrite  write(fildes, write_buf[3], K1);
+  if (nwrite ! K1) {
+   tst_resm(TFAIL, "write() failed: nwrite%d, errno%d : "
+     "%s", nwrite, errno, strerror(errno));
+   continue;
+  }
 
-		/* Again, pwrite() K1 of data (1's) at offset K1. */
-		nwrite = pwrite(fildes, write_buf[1], K1, K1);
-		if (nwrite != K1) {
-			tst_resm(TFAIL, "pwrite() failed to write at "
-				 "%d off. on %s, errno=%d : %s",
-				 K1, TEMPFILE, errno, strerror(errno));
-			continue;
-		}
+  /* We should be at offset K4. */
+  l_seek(fildes, 0, SEEK_CUR, K4);
 
-		/*
-		 * Perform functional verification if test
-		 * executed without (-f) option.
-		 */
-		if (STD_FUNCTIONAL_TEST) {
-			/*
-			 * Check the contents of temporary file
-			 * to which data written using pwrite().
-			 * Compare the data read with the original
-			 * write_buf[] contents.
-			 */
-			check_file_contents();
-		} else {
-			tst_resm(TPASS, "calls to pwrite() succeeded");
-		}
+  /* Again, pwrite() K1 of data (1's) at offset K1. */
+  nwrite  pwrite(fildes, write_buf[1], K1, K1);
+  if (nwrite ! K1) {
+   tst_resm(TFAIL, "pwrite() failed to write at "
+     "%d off. on %s, errno%d : %s",
+     K1, TEMPFILE, errno, strerror(errno));
+   continue;
+  }
 
-		/* reset to offset 0 in case we are looping */
-		l_seek(fildes, 0, SEEK_SET, 0);
+  /*
+   * Perform functional verification if test
+   * executed without (-f) option.
+   */
+  if (STD_FUNCTIONAL_TEST) {
+   /*
+    * Check the contents of temporary file
+    * to which data written using pwrite().
+    * Compare the data read with the original
+    * write_buf[] contents.
+    */
+   check_file_contents();
+  } else {
+   tst_resm(TPASS, "calls to pwrite() succeeded");
+  }
 
-	}	/* End for TEST_LOOPING */
-	/* Call cleanup() to undo setup done for the test. */
-	cleanup();
+  /* reset to offset 0 in case we are looping */
+  l_seek(fildes, 0, SEEK_SET, 0);
 
-	return(0);
-}	/* End main */
+ } /* End for TEST_LOOPING */
+ /* Call cleanup() to undo setup done for the test. */
+ cleanup();
+
+ return(0);
+} /* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -217,26 +217,26 @@ main(int ac, char **av)
  *  Initialize/allocate read/write buffers.
  *  Create a temporary directory and a file under it and
  */
-void 
+void
 setup()
 {
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* Allocate/Initialize the write buffer with known data */
-	init_buffers();
+ /* Allocate/Initialize the write buffer with known data */
+ init_buffers();
 
-	/* make a temp directory and cd to it */
-	tst_tmpdir();
+ /* make a temp directory and cd to it */
+ tst_tmpdir();
 
-	/* Creat a temporary file used for mapping */
-	if ((fildes = open(TEMPFILE, O_RDWR | O_CREAT, 0666)) < 0) {
-		tst_brkm(TBROK, cleanup, "open() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
-	}
+ /* Creat a temporary file used for mapping */
+ if ((fildes  open(TEMPFILE, O_RDWR | O_CREAT, 0666)) < 0) {
+  tst_brkm(TBROK, cleanup, "open() on %s Failed, errno%d : %s",
+    TEMPFILE, errno, strerror(errno));
+ }
 }
 
 /*
@@ -250,17 +250,17 @@ setup()
 void
 init_buffers()
 {
-	int count;		/* counter variable for loop */
+ int count;  /* counter variable for loop */
 
-	/* Allocate and Initialize write buffer with known data */
-	for (count = 0; count < NBUFS; count++) {
-		write_buf[count] = (char *)malloc(K1);
+ /* Allocate and Initialize write buffer with known data */
+ for (count  0; count < NBUFS; count++) {
+  write_buf[count]  (char *)malloc(K1);
 
-		if (write_buf[count] == NULL)  {
-			tst_brkm(TBROK, tst_exit, "malloc() failed ");
-		}
-		memset(write_buf[count], count, K1);
-	}
+  if (write_buf[count]  NULL)  {
+   tst_brkm(TBROK, tst_exit, "malloc() failed ");
+  }
+  memset(write_buf[count], count, K1);
+ }
 }
 
 /*
@@ -272,68 +272,68 @@ init_buffers()
 void
 l_seek(int fdesc, off_t offset, int whence, off_t checkoff)
 {
-	off_t offloc;		/* offset ret. from lseek() */
+ off_t offloc;  /* offset ret. from lseek() */
 
-	if ((offloc = lseek(fdesc, offset, whence)) != checkoff) {
-		tst_resm(TWARN, "lseek returned %d, expected %d", offloc,
-			 checkoff);
-		tst_brkm(TBROK, cleanup, "lseek() on %s Failed, error=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
-	}
+ if ((offloc  lseek(fdesc, offset, whence)) ! checkoff) {
+  tst_resm(TWARN, "lseek returned %d, expected %d", offloc,
+    checkoff);
+  tst_brkm(TBROK, cleanup, "lseek() on %s Failed, error%d : %s",
+    TEMPFILE, errno, strerror(errno));
+ }
 }
 
 /*
- * check_file_contents() - Check the contents of the file we wrote with 
- *			   pwrite()'s.
+ * check_file_contents() - Check the contents of the file we wrote with
+ *      pwrite()'s.
  *  The contents of the file are verified by using a plain read() and
  *  Compare the data read with the original write_buf[] contents.
  */
 void
 check_file_contents()
 {
-	int count, err_flg = 0;		/* index variable and error flag */
-	int nread;			/* return value of read() */
-	off_t offloc;			/* offset. ret. by lseek() */
-	char *read_buf;		/* buffer to hold read data */
+ int count, err_flg  0;  /* index variable and error flag */
+ int nread;   /* return value of read() */
+ off_t offloc;   /* offset. ret. by lseek() */
+ char *read_buf;  /* buffer to hold read data */
 
-	/* Allocate space for read buffer */
-	read_buf = (char *)malloc(K1);
-	if (read_buf == NULL) {
-		tst_brkm(TBROK, cleanup, "malloc() failed on read buffer");
-	}
+ /* Allocate space for read buffer */
+ read_buf  (char *)malloc(K1);
+ if (read_buf  NULL) {
+  tst_brkm(TBROK, cleanup, "malloc() failed on read buffer");
+ }
 
-	/* Seek to app. location of file and read the data, compare it */
-	for (count = 0; count < NBUFS; count++) {
-		/* Seek to specified offset position from beginning */
-		offloc = lseek(fildes, count * K1, SEEK_SET);
-		if (offloc != (count * K1)) {
-			tst_brkm(TBROK, cleanup,
-				 "lseek() failed: offloc=%d, errno=%d",
-				 offloc, errno);
-		}
+ /* Seek to app. location of file and read the data, compare it */
+ for (count  0; count < NBUFS; count++) {
+  /* Seek to specified offset position from beginning */
+  offloc  lseek(fildes, count * K1, SEEK_SET);
+  if (offloc ! (count * K1)) {
+   tst_brkm(TBROK, cleanup,
+     "lseek() failed: offloc%d, errno%d",
+     offloc, errno);
+  }
 
-		/* Read the data from file into a buffer */
-		nread = read(fildes, read_buf, K1);
-		if (nread != K1) {
-			tst_brkm(TBROK, cleanup,
-				 "read() failed: nread=%d, errno=%d",
-				 nread, errno);
-		}
+  /* Read the data from file into a buffer */
+  nread  read(fildes, read_buf, K1);
+  if (nread ! K1) {
+   tst_brkm(TBROK, cleanup,
+     "read() failed: nread%d, errno%d",
+     nread, errno);
+  }
 
-		/* Compare the read data with the data written using pwrite */
-		if (memcmp(write_buf[count], read_buf, K1) != 0) {
-			tst_resm(TFAIL, "read/write buffer data mismatch");
-			err_flg++;
-		}
-	}
+  /* Compare the read data with the data written using pwrite */
+  if (memcmp(write_buf[count], read_buf, K1) ! 0) {
+   tst_resm(TFAIL, "read/write buffer data mismatch");
+   err_flg++;
+  }
+ }
 
-	/* If no erros, Test successful */
-	if (!err_flg) {
-		tst_resm(TPASS, "Functionality of pwrite() successful");
-	}
+ /* If no erros, Test successful */
+ if (!err_flg) {
+  tst_resm(TPASS, "Functionality of pwrite() successful");
+ }
 
-	/* Release the memory allocated before return */
-	free(read_buf);
+ /* Release the memory allocated before return */
+ free(read_buf);
 }
 
 /*
@@ -344,31 +344,31 @@ check_file_contents()
  * Close the temporary file.
  * Remove the temporary directory created.
  */
-void 
+void
 cleanup()
 {
-	int count;		/* index for the loop */
+ int count;  /* index for the loop */
 
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* Free the memory allocated for the write buffer */
-	for (count = 0; count < NBUFS; count++) {
-		free(write_buf[count]);
-	}
+ /* Free the memory allocated for the write buffer */
+ for (count  0; count < NBUFS; count++) {
+  free(write_buf[count]);
+ }
 
-	/* Close the temporary file */
-	if (close(fildes) < 0) {
-		tst_brkm(TBROK, NULL, "close() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
-	}
+ /* Close the temporary file */
+ if (close(fildes) < 0) {
+  tst_brkm(TBROK, NULL, "close() on %s Failed, errno%d : %s",
+    TEMPFILE, errno, strerror(errno));
+ }
 
-	/* Remove tmp dir and all files in it */
-	tst_rmdir();
+ /* Remove tmp dir and all files in it */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

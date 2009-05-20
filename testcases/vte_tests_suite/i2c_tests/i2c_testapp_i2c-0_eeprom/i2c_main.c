@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   i2c_main.c
 
         @brief  First I2C test main function.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -22,44 +22,44 @@ S.V-Guilhou/svan01c          20/09/2005     TLSbo53753  I/O errors
 V.Khalabuda/b00306           04/07/2006     TLSbo68945  Update testapp for I2C_RDWR ioctl
                                                         and r/w from user space
 
-====================================================================================================
+====================
 Portability:  ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
 Total Tests: 1
 
 Test Executable Name:  i2c_testapp_3
 
 Test Assertion
 & Strategy:  A test for MXC I2C
-=================================================================================================*/
+=====================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Verification Test Environment Include Files */
 #include "i2c_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 int     Dflag = 0,
         Aflag = 0,
         Tflag = 0;
@@ -76,9 +76,9 @@ option_t options[] =
         {NULL, NULL, NULL}
 };
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Extern Global Variables */
 extern int   Tst_count;        /* counter for tst_xxx routines.  */
 extern char *TESTDIR;          /* temporary dir created by tst_tmpdir */
@@ -91,24 +91,24 @@ I2C_TESTS i2c_testcase = 0;
 char    device_name[128];
 unsigned short addr;
 
-/*==================================================================================================
+/*======================
                                     GLOBAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void    cleanup(void);
 int    setup(void);
 int     main(int argc, char **argv);
 
-/*==================================================================================================
+/*======================
                                     LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void    help(void);
 
-/*==================================================================================================
+/*======================
                                         GLOBAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== cleanup =====*/
+/*====================*/
+/*= cleanup =*/
 /**
 @brief  Performs all one time clean up for this test on successful completion,
         premature exit or  failure. Closes all temporary files,
@@ -117,10 +117,10 @@ void    help(void);
 
 @param  Input :      None.
         Output:      None.
-    
+
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
         /* VTE : Actions needed to get a stable target environment */
@@ -137,24 +137,24 @@ void cleanup(void)
         tst_exit();
 }
 
-/*==================================================================================================
+/*======================
                                         LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== help =====*/
+/*====================*/
+/*= help =*/
 /**
 @brief  Inform of the available options and the associated parameters
 
 @param  Input :      None.
         Output:      None.
-    
+
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void help(void)
 {
-        printf("====================================================\n");
+        printf("============\n");
         printf("\t-D x        Device name, e.g. /dev/i2c/0        (def)\n");
         printf("\t-A x        Memory/Start address to access(def, hex)\n");
         printf("\t-T x        Testcase name\n");
@@ -164,8 +164,8 @@ void help(void)
         printf("\t-T [%d - %d]\n", TEST_I2C_RW, TEST_I2C_IOCTL);
 }
 
-/*================================================================================================*/
-/*===== setup =====*/
+/*====================*/
+/*= setup =*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -173,11 +173,11 @@ void help(void)
 
 @param  Input :      None.
         Output:      None.
-    
+
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 int setup(void)
 {
         int     VT_rv = TPASS;
@@ -193,8 +193,8 @@ int setup(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== main =====*/
+/*====================*/
+/*= main =*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -208,15 +208,15 @@ int setup(void)
                                 -l - Number of iteration
                                 -v - Prints verbose output
                                 -V - Prints the version number
-    
+
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
         int     VT_rv = TPASS;
-		//int   	r_value=TPASS;
+  //int   r_value=TPASS;
         char   *msg;
 
         if ((msg = parse_opts(argc, argv, options, &help)) != (char *) NULL)
@@ -265,15 +265,15 @@ int main(int argc, char **argv)
         }
 
         /* perform global test setup, call setup() function. */
-		printf("setup starts.....\n");
+  printf("setup starts.....\n");
         VT_rv=setup();
-		if(VT_rv!=TPASS)
-			{
-				printf("error in setup()!\n");
-				tst_resm(TFAIL, "%s test case did NOT work as expected", TCID);
-				return VT_rv;
-			}
-        printf("setup finished....\n");	
+  if(VT_rv!=TPASS)
+   {
+    printf("error in setup()!\n");
+    tst_resm(TFAIL, "%s test case did NOT work as expected", TCID);
+    return VT_rv;
+   }
+        printf("setup finished....\n");
 
         /* Print test Assertion using tst_resm() function with argument TINFO. */
         tst_resm(TINFO, "Testing if %s test case is OK", TCID);

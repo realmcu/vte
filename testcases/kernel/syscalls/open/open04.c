@@ -19,17 +19,17 @@
 
 /*
  * NAME
- *	open04.c
+ * open04.c
  *
  * DESCRIPTION
- *	Testcase to check that open(2) sets EMFILE if a process opens files
- *	more than its descriptor size
+ * Testcase to check that open(2) sets EMFILE if a process opens files
+ * more than its descriptor size
  *
  * ALGORITHM
- *	First get the file descriptor table size which is set for a process.
- *	Use open(2) for creating files till the descriptor table becomes full.
- *	These open(2)s should succeed. Finally use open(2) to open another
- *	file. This attempt should fail with EMFILE.
+ * First get the file descriptor table size which is set for a process.
+ * Use open(2) for creating files till the descriptor table becomes full.
+ * These open(2)s should succeed. Finally use open(2) to open another
+ * file. This attempt should fail with EMFILE.
  *
  * USAGE:  <for command-line>
  *  open04 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -41,10 +41,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- *	NONE
+ * NONE
  *
  */
 #include <stdio.h>
@@ -54,8 +54,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "open04";
-int TST_TOTAL = 1;
+char *TCID  "open04";
+int TST_TOTAL  1;
 extern int Tst_count;
 
 int fd, ifile, mypid, first;
@@ -63,51 +63,51 @@ int nfile;
 int *buf;
 char fname[40];
 
-int exp_enos[] = {EMFILE, 0};
+int exp_enos[]  {EMFILE, 0};
 
 void setup(void);
 void cleanup(void);
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	setup();
+ setup();
 
-	TEST_EXP_ENOS(exp_enos);
+ TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+ /* check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		TEST(open(fname, O_RDWR | O_CREAT, 0777));
+  TEST(open(fname, O_RDWR | O_CREAT, 0777));
 
-		if (TEST_RETURN != -1) {
-			tst_resm(TFAIL, "call succeeded unexpectedly");
-			continue;
-		}
+  if (TEST_RETURN ! -1) {
+   tst_resm(TFAIL, "call succeeded unexpectedly");
+   continue;
+  }
 
-		TEST_ERROR_LOG(TEST_ERRNO);
+  TEST_ERROR_LOG(TEST_ERRNO);
 
-		if (TEST_ERRNO != EMFILE) {
-			tst_resm(TFAIL, "Expected EMFILE, got %d", TEST_ERRNO);
-		} else {
-			tst_resm(TPASS, "call returned expected EMFILE error");
-		}
-	}
-	close(first);
-	close(fd);
-	cleanup();
+  if (TEST_ERRNO ! EMFILE) {
+   tst_resm(TFAIL, "Expected EMFILE, got %d", TEST_ERRNO);
+  } else {
+   tst_resm(TPASS, "call returned expected EMFILE error");
+  }
+ }
+ close(first);
+ close(fd);
+ cleanup();
 
-	/*NOTREACHED*/
-	return(0);
+ /*NOTREACHED*/
+ return(0);
 }
 
 /*
@@ -116,69 +116,69 @@ int main(int ac, char **av)
 void
 setup()
 {
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* make a temporary directory and cd to it */
-	tst_tmpdir();
+ /* make a temporary directory and cd to it */
+ tst_tmpdir();
 
-	mypid = getpid();
-	nfile = getdtablesize();
-	sprintf(fname, "open04.%d", mypid);
+ mypid  getpid();
+ nfile  getdtablesize();
+ sprintf(fname, "open04.%d", mypid);
 
-	if ((first = fd = open(fname, O_RDWR | O_CREAT, 0777)) == -1) {
-		tst_brkm(TBROK, cleanup, "Cannot open first file");
-	}
+ if ((first  fd  open(fname, O_RDWR | O_CREAT, 0777))  -1) {
+  tst_brkm(TBROK, cleanup, "Cannot open first file");
+ }
 
-	close(fd); 
-	close(first);
-	unlink(fname);
+ close(fd);
+ close(first);
+ unlink(fname);
 
-	/* Allocate memory for stat and ustat structure variables*/
-	if( (buf = (int *) malloc(sizeof(int) * nfile - first)) == NULL) {
-		tst_brkm(TBROK, tst_exit, "Failed to allocate Memory");
-	}
+ /* Allocate memory for stat and ustat structure variables*/
+ if( (buf  (int *) malloc(sizeof(int) * nfile - first))  NULL) {
+  tst_brkm(TBROK, tst_exit, "Failed to allocate Memory");
+ }
 
-	for (ifile = first; ifile <= nfile; ifile++) {
-		sprintf(fname, "open04.%d.%d", ifile, mypid);
-		if ((fd = open(fname, O_RDWR | O_CREAT, 0777)) == -1) {
-			if (errno != EMFILE) {
-				tst_brkm(TBROK, cleanup, "Expected EMFILE got "
-					 "%d", errno);
-			}
-			break;
-		}
-		buf[ifile-first] = fd;
-	}
+ for (ifile  first; ifile < nfile; ifile++) {
+  sprintf(fname, "open04.%d.%d", ifile, mypid);
+  if ((fd  open(fname, O_RDWR | O_CREAT, 0777))  -1) {
+   if (errno ! EMFILE) {
+    tst_brkm(TBROK, cleanup, "Expected EMFILE got "
+      "%d", errno);
+   }
+   break;
+  }
+  buf[ifile-first]  fd;
+ }
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
+ *        completion or premature exit.
  */
 void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
     close(first);
 
-	TEST_CLEANUP;
+ TEST_CLEANUP;
 
-	for (ifile = first; ifile < nfile; ifile++) {
-		sprintf(fname, "open04.%d.%d", ifile, mypid);
-		close(buf[ifile-first]);
-		unlink(fname);
-	}
+ for (ifile  first; ifile < nfile; ifile++) {
+  sprintf(fname, "open04.%d.%d", ifile, mypid);
+  close(buf[ifile-first]);
+  unlink(fname);
+ }
 
-	/* delete the test directory created in setup() */
-	tst_rmdir();
+ /* delete the test directory created in setup() */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

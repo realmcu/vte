@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #<Hake Huang>/-----             <2008-11-27>     N/A          Initial version
-# 
+#
 ###################################################################################################
 
 
@@ -66,10 +66,10 @@ return $RC
 
 # Function:     test_case_01
 # Description   - Test if stty baud rate ok
-#  
+#
 test_case_01()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="test_baud_rate"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -102,7 +102,7 @@ RC=0
 if [ $# -ne 2 ]
 then
 echo "usage $0 <serial device> <case ID>"
-exit 1 
+exit 1
 fi
 
 DEVICE=$1
@@ -119,7 +119,7 @@ setup || exit $RC
 
 case "$2" in
 1)
-  test_case_01 || exit $RC 
+  test_case_01 || exit $RC
   ;;
 *)
   usage

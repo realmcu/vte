@@ -18,15 +18,15 @@
  *
 
  * This file will include user space functions that will drive
- * the kernel module tpci to test various pci functions 
+ * the kernel module tpci to test various pci functions
  * and kernel calls. Each function will need to setup the tif
- * structure so that the in parameters and out parameters 
+ * structure so that the in parameters and out parameters
  * are correctly initialized
- *	
- * use tif structure for passing params between user 
- * space and kernel space, in some tests it is really 
- * not needed but makes easy to maintain all tests if 
- * have the same process to read in params in the 
+ *
+ * use tif structure for passing params between user
+ * space and kernel space, in some tests it is really
+ * not needed but makes easy to maintain all tests if
+ * have the same process to read in params in the
  * kernel module no matter what the test is
  *
  * author: Sean Ruyle (srruyle@us.ibm.com)
@@ -48,24 +48,24 @@ int ki_generic(int fd, int flag) {
         /*
          * build interface structure
          */
-        tif.in_len = 0;
-        tif.in_data = 0;
-        tif.out_len = 0;
-        tif.out_data = 0;
-        tif.out_rc = 0;
+        tif.in_len  0;
+        tif.in_data  0;
+        tif.out_len  0;
+        tif.out_data  0;
+        tif.out_rc  0;
 
         /*
          * ioctl call for flag
          */
-        rc = ioctl(fd, flag, &tif);
+        rc  ioctl(fd, flag, &tif);
         if(rc) {
                 printf("Ioctl error\n");
                 return rc;
         }
-	if(tif.out_rc) {
-		printf("Specific errorr: ");
-		return tif.out_rc;
-	}
+ if(tif.out_rc) {
+  printf("Specific errorr: ");
+  return tif.out_rc;
+ }
 
         return rc;
 }
@@ -73,54 +73,54 @@ int ki_generic(int fd, int flag) {
 #if 0
 int ki_probe_pci_dev(int fd) {
 
-	int 			rc;
-	tpci_interface_t	tif;
+ int rc;
+ tpci_interface_t tif;
 
-	/*
-	 * build interface structure
-	 */
-	tif.in_len = 0;
-	tif.in_data = 0;
-	tif.out_len = 0; 
-	tif.out_data = 0; 
-	tif.out_rc = 0;
+ /*
+  * build interface structure
+  */
+ tif.in_len  0;
+ tif.in_data  0;
+ tif.out_len  0;
+ tif.out_data  0;
+ tif.out_rc  0;
 
-	/*
-	 * ioctl call for PCI_PROBE
-	 */
-	rc = ioctl(fd, PCI_PROBE, &tif);
-	if(rc) {
-		printf("Ioctl error\n");
-		return rc;
-	}
-	if(tif.out_rc) {
-		printf("Specific error in ioctl call\n");
-		return tif.out_rc;
-	}
-	
-	return rc;
+ /*
+  * ioctl call for PCI_PROBE
+  */
+ rc  ioctl(fd, PCI_PROBE, &tif);
+ if(rc) {
+  printf("Ioctl error\n");
+  return rc;
+ }
+ if(tif.out_rc) {
+  printf("Specific error in ioctl call\n");
+  return tif.out_rc;
+ }
+
+ return rc;
 }
 
 
 int ki_enable_pci(int fd) {
 
-	int 			rc;
-	tpci_interface_t	tif;
+ int rc;
+ tpci_interface_t tif;
 
-	/*
-	 * build interface structure
-	 */
-	tif.in_len = 0;
-        tif.in_data =0;
-        tif.out_len = 0;
-        tif.out_data = 0;
-        tif.out_rc = 0;
+ /*
+  * build interface structure
+  */
+ tif.in_len  0;
+        tif.in_data 0;
+        tif.out_len  0;
+        tif.out_data  0;
+        tif.out_rc  0;
 
-	/*
-	 * ioctl call for PCI_ENABLE
-	 */
-	rc = ioctl(fd, PCI_ENABLE, &tif);
-	if(rc) {
+ /*
+  * ioctl call for PCI_ENABLE
+  */
+ rc  ioctl(fd, PCI_ENABLE, &tif);
+ if(rc) {
                 printf("Ioctl error\n");
                 return rc;
         }
@@ -134,32 +134,32 @@ int ki_enable_pci(int fd) {
 
 int ki_disable_pci(int fd) {
 
-	int 			rc;
-	tpci_interface_t	tif;
+ int rc;
+ tpci_interface_t tif;
 
-	/*
-	 * build interface structure
-	 */
-	tif.in_len = 0;
-        tif.in_data =0;
-        tif.out_len = 0;
-        tif.out_data = 0;
-        tif.out_rc = 0;
+ /*
+  * build interface structure
+  */
+ tif.in_len  0;
+        tif.in_data 0;
+        tif.out_len  0;
+        tif.out_data  0;
+        tif.out_rc  0;
 
-	/*
-	 * ioctl call for PCI_DISABLE
-	 */
-	rc = ioctl(fd, PCI_DISABLE, &tif);
-	if(rc) {
-		printf("Ioctl error\n");
-		return rc;
-	}
-	if(tif.out_rc) {
-		printf("Specific error in ioctl call\n");
-		return tif.out_rc;
-	}
+ /*
+  * ioctl call for PCI_DISABLE
+  */
+ rc  ioctl(fd, PCI_DISABLE, &tif);
+ if(rc) {
+  printf("Ioctl error\n");
+  return rc;
+ }
+ if(tif.out_rc) {
+  printf("Specific error in ioctl call\n");
+  return tif.out_rc;
+ }
 
-	return rc;
+ return rc;
 }
 
 int ki_find_bus(int fd) {
@@ -170,16 +170,16 @@ int ki_find_bus(int fd) {
         /*
          * build interface structure
          */
-        tif.in_len = 0;
-        tif.in_data =0;
-        tif.out_len = 0;
-        tif.out_data = 0;
-        tif.out_rc = 0;
+        tif.in_len  0;
+        tif.in_data 0;
+        tif.out_len  0;
+        tif.out_data  0;
+        tif.out_rc  0;
 
         /*
          * ioctl call for PCI_DISABLE
          */
-        rc = ioctl(fd, FIND_BUS, &tif);
+        rc  ioctl(fd, FIND_BUS, &tif);
         if(rc) {
                 printf("Ioctl error\n");
                 return rc;

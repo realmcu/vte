@@ -18,10 +18,10 @@
 #
 #   FILE        : ltpstress.sh
 #   DESCRIPTION : A script that will stress your system using the LTP testsuite.
-#   REQUIREMENTS: 
+#   REQUIREMENTS:
 #                 1) The 'rsh' daemon must be running and NFS (versions 2 &3) must be
 #                    configured into the kernel and installed for networking tests.
-#		  2) The 'sar' application must be installed to use the "-S" option
+#    2) The 'sar' application must be installed to use the "-S" option
 #   HISTORY     :
 #       02/11/2003 Robbie Williamson (robbiew@austin.ibm.com)
 #               written
@@ -53,8 +53,8 @@ NO_NETWORK=0
 usage()
 {
 
-	cat <<-END >&2
-	usage: ${0##*/} [ -d datafile ] [ -i # (in seconds) ] [ -I iofile ] [ -l logfile ] [ -m # (in Mb) ] [ -n ] [ -t duration ] [ [-S]|[-T] ]
+ cat <<-END >&2
+ usage: ${0##*/} [ -d datafile ] [ -i # (in seconds) ] [ -I iofile ] [ -l logfile ] [ -m # (in Mb) ] [ -n ] [ -t duration ] [ [-S]|[-T] ]
 
     -d datafile     Data file for 'sar' or 'top' to log to. Default is "/tmp/ltpstress.data".
     -i # (in sec)   Interval that 'sar' or 'top' should take snapshots. Default is 10 seconds.
@@ -62,12 +62,12 @@ usage()
     -l logfile      Log results of test in a logfile.
     -m # (in Mb)    Specify the _minimum_ memory load of # megabytes in background. Default is all the RAM + 1/2 swap.
     -n              Disable networking stress.
-    -S              Use 'sar' to measure data. 
+    -S              Use 'sar' to measure data.
     -T              Use LTP's modified 'top' tool to measure data.
     -t duration     Execute the testsuite for given duration in hours. Default is 24.
 
-	example: ${0##*/} -d /tmp/sardata -l /tmp/ltplog.$$ -m 128 -t 24 -S
-	END
+ example: ${0##*/} -d /tmp/sardata -l /tmp/ltplog.$$ -m 128 -t 24 -S
+ END
 exit
 }
 
@@ -77,7 +77,7 @@ check_memsize()
   do
     PROC_NUM=$(( PROC_NUM + 1 ))
     memsize=$(( $memsize - 1048576 ))
-  done  
+  done
   leftover_memsize=$memsize
 }
 
@@ -93,23 +93,23 @@ fi
 while getopts d:hi:I:l:STt:m:n\? arg
 do  case $arg in
 
-	d)	datafile="$OPTARG";;
+ d) datafile="$OPTARG";;
 
         h)      echo "Help info:"
-		usage;;
+  usage;;
 
-	i)	interval=$OPTARG;;
+ i) interval=$OPTARG;;
 
-	I)	Iostat=1
-		iofile=$OPTARG;;
+ I) Iostat=1
+  iofile=$OPTARG;;
 
         l)      logfile="-l $OPTARG"
-		LOGGING=1;;
+  LOGGING=1;;
 
-        m)	memsize=$(($OPTARG * 1024))
-		check_memsize;;	
+        m) memsize=$(($OPTARG * 1024))
+  check_memsize;;
 
-	n)	NO_NETWORK=1;;
+ n) NO_NETWORK=1;;
 
         S)      if [ $Top -eq 0 ]; then
                   Sar=1
@@ -118,24 +118,24 @@ do  case $arg in
                   exit
                 fi;;
 
-	T)	if [ $Sar -eq 0 ]; then
+ T) if [ $Sar -eq 0 ]; then
                   $LTPROOT/testcases/bin/top -h 2>&1 | grep "\-f filename" >/dev/null
-		  if [ $? -eq 0 ]; then
+    if [ $? -eq 0 ]; then
                     Top=1
                   else
-		    echo "ERROR: Please build and install the version of top in the /tools dir"
-		    exit
- 		  fi
+      echo "ERROR: Please build and install the version of top in the /tools dir"
+      exit
+   fi
                 else
                   echo "Cannot specify -S and -T...exiting"
                   exit
                 fi;;
 
         t)      hours=$OPTARG
-		duration=$(($hours * 60 * 60));;
+  duration=$(($hours * 60 * 60));;
 
         \?)     echo "Help info:"
-		usage;;
+  usage;;
         esac
 done
 
@@ -161,34 +161,34 @@ if [ $NO_NETWORK -eq 0 ];then
     exit 1
   fi
 
-  rpcinfo -p | grep nfs 
+  rpcinfo -p | grep nfs
   if [ $? -eq 1 ];then
-    /usr/sbin/rpc.nfsd 
+    /usr/sbin/rpc.nfsd
   fi
   sleep 1
-  rpcinfo -p | grep nfs 
+  rpcinfo -p | grep nfs
   if [ $? -eq 1 ];then
     echo "Error: Could not start nfs server daemon."
     exit 1
   fi
 
-  rpcinfo -p | grep status 
+  rpcinfo -p | grep status
   if [ $? -eq 1 ];then
-    /sbin/rpc.statd 
+    /sbin/rpc.statd
   fi
   sleep 1
-  rpcinfo -p | grep status 
+  rpcinfo -p | grep status
   if [ $? -eq 1 ];then
     echo "Error: Could not start statd daemon."
     exit 1
   fi
 
-  rpcinfo -p | grep mount 
+  rpcinfo -p | grep mount
   if [ $? -eq 1 ];then
-    /usr/sbin/rpc.mountd 
+    /usr/sbin/rpc.mountd
   fi
   sleep 1
-  rpcinfo -p | grep mount 
+  rpcinfo -p | grep mount
   if [ $? -eq 1 ];then
     echo "Error: Could not start mountd daemon."
     exit 1
@@ -204,7 +204,7 @@ if [ $memsize -eq 0 ]; then
   TESTMEM=$(($TESTSWAP + $TOTALRAM))
  #Convert to kilobytes
   memsize=$(($TESTMEM * 1024))
-  check_memsize	
+  check_memsize
 fi
 
 # Set max processes to unlimited.
@@ -214,7 +214,7 @@ if [ $PROC_NUM -gt 0 ];then
   genload --vm $PROC_NUM --vm-bytes 1073741824 2>&1 1>/dev/null &
 fi
 if [ $leftover_memsize -gt 0 ];then
-  genload --vm 1 --vm-bytes $(($leftover_memsize * 1024)) 2>&1 1>/dev/null & 
+  genload --vm 1 --vm-bytes $(($leftover_memsize * 1024)) 2>&1 1>/dev/null &
 fi
 
 if [ $NO_NETWORK -eq 0 ];then
@@ -248,7 +248,7 @@ output1=${TMPBASE}/ltpstress.$$.output1
 output2=${TMPBASE}/ltpstress.$$.output2
 output3=${TMPBASE}/ltpstress.$$.output3
 
-${LTPROOT}/pan/pan -e -p -q -S -t ${hours}h -a stress1 -n stress1 $logfile -f ${TMP}/stress.part1 -o $output1 & 
+${LTPROOT}/pan/pan -e -p -q -S -t ${hours}h -a stress1 -n stress1 $logfile -f ${TMP}/stress.part1 -o $output1 &
 ${LTPROOT}/pan/pan -e -p -q -S -t ${hours}h -a stress2 -n stress2 $logfile -f ${TMP}/stress.part2 -o $output2 &
 ${LTPROOT}/pan/pan -e -p -q -S -t ${hours}h -a stress3 -n stress3 $logfile -f ${TMP}/stress.part3 -o $output3 &
 
@@ -260,7 +260,7 @@ echo "        $output2"
 echo "        $output3"
 
 # Sleep a little longer than duration to let pan "try" to gracefully end itself.
-sleep $(($duration + 10))  
+sleep $(($duration + 10))
 
 if [ $Sar -eq 1 ]; then
   killall -9 sadc >/dev/null 2>&1

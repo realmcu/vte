@@ -28,50 +28,50 @@
 #ifdef __ia64__
 #define clone2 __clone2
 extern int  __clone2(int (*fn) (void *arg), void *child_stack_base,
-		     size_t child_stack_size, int flags, void *arg,
-		     pid_t *parent_tid, void *tls, pid_t *child_tid);
+       size_t child_stack_size, int flags, void *arg,
+       pid_t *parent_tid, void *tls, pid_t *child_tid);
 #endif
 
 char somemem[4096];
 
 int myfunc(void *arg){
-	return system(arg);
+ return system(arg);
 }
 
 static void
 usage(char *cmd)
 {
-	printf("%s  child_script parent_script\n",cmd);
+ printf("%s  child_script parent_script\n",cmd);
 }
 
 int main(int argc, char *argv[])
 {
-	char *child_cmd;
-	char *parent_cmd;
-	int ret=0, childret=0;
+ char *child_cmd;
+ char *parent_cmd;
+ int ret0, childret0;
 
-	if ( argc < 3 ) {
-		usage(argv[0]);
-		exit(1);
-	}
+ if ( argc < 3 ) {
+  usage(argv[0]);
+  exit(1);
+ }
 
-	child_cmd = (char *)strdup(argv[2]);
-	parent_cmd = (char *)strdup(argv[1]);
+ child_cmd  (char *)strdup(argv[2]);
+ parent_cmd  (char *)strdup(argv[1]);
 
-	printf("1\n");
+ printf("1\n");
 #ifdef __ia64__
-	if (clone2(myfunc, somemem, getpagesize(), CLONE_NEWNS|SIGCHLD,
-		   child_cmd, NULL, NULL, NULL) != -1) {
+ if (clone2(myfunc, somemem, getpagesize(), CLONE_NEWNS|SIGCHLD,
+     child_cmd, NULL, NULL, NULL) ! -1) {
 #else
-	if (clone(myfunc, somemem, CLONE_NEWNS|SIGCHLD, child_cmd) != -1) {
+ if (clone(myfunc, somemem, CLONE_NEWNS|SIGCHLD, child_cmd) ! -1) {
 #endif
-		system(parent_cmd);
-		wait(&childret);
-	} else {
-		fprintf(stderr, "clone failed\n");
-	}
-	if (ret || !WIFEXITED(childret)){
-		exit(1);
-	}
-	exit(0);
+  system(parent_cmd);
+  wait(&childret);
+ } else {
+  fprintf(stderr, "clone failed\n");
+ }
+ if (ret || !WIFEXITED(childret)){
+  exit(1);
+ }
+ exit(0);
 }

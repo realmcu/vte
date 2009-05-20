@@ -1,29 +1,29 @@
-/*================================================================================================*/
+/*====================*/
 /**
     @file   rtc_main3.c
 
     @brief  RTC periodic interrupts
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
-     
-====================================================================================================
+
+====================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-V. BECKER / rc023c           02/04/2004     TLSbo38652   Initial version 
+V. BECKER / rc023c           02/04/2004     TLSbo38652   Initial version
 V. BECKER / rc023c           25/05/2004     TLSbo38652   Change file name
 C. Gagneraud cgag1c          08/11/2004     TLSbo44474   Warnings fixup
-====================================================================================================
+====================
 Portability:  ARM GCC  gnu compiler
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
 Total Tests: 1
 
 Test Name:  rtc_testapp_3
@@ -31,21 +31,21 @@ Test Name:  rtc_testapp_3
 Test Assertion
 & Strategy:  RTC periodic interrupts
 
-==================================================================================================*/
+======================*/
 
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-    
+
 /* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
@@ -53,34 +53,34 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "rtc_test_3.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Extern Global Variables */
 extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir(void) */
@@ -89,24 +89,24 @@ extern char *TESTDIR;                /* temporary dir created by tst_tmpdir(void
 char *TCID     = "rtc_testapp_3"; /* test program identifier.          */
 int  TST_TOTAL = 1;           /* total number of tests in this file.   */
 
-/*==================================================================================================
+/*======================
                                    GLOBAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void cleanup(void);
 void setup(void);
 int main(int argc, char **argv);
 
-/*==================================================================================================
+/*======================
                                    LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 
 
-/*==================================================================================================
+/*======================
                                        GLOBAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== cleanup =====*/
+/*====================*/
+/*= cleanup =*/
 /**
 @brief  Performs all one time clean up for this test on successful
         completion,  premature exit or  failure. Closes all temporary
@@ -115,10 +115,10 @@ int main(int argc, char **argv);
 
 @param  Input :      None.
         Output:      None.
-  
+
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
         /* VTE : Actions needed to get a stable target environment */
@@ -134,12 +134,12 @@ void cleanup(void)
         tst_exit();
 }
 
-/*==================================================================================================
+/*======================
                                        LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== setup =====*/
+/*====================*/
+/*= setup =*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -147,11 +147,11 @@ void cleanup(void)
 
 @param  Input :      None.
         Output:      None.
-  
+
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
         int VT_rv = TFAIL;
@@ -162,13 +162,13 @@ void setup(void)
         {
                 tst_brkm(TBROK , cleanup, "VT_setup() Failed : error code = 0", VT_rv);
         }
-    
+
         return;
 }
 
 
-/*================================================================================================*/
-/*===== main =====*/
+/*====================*/
+/*= main =*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -182,11 +182,11 @@ void setup(void)
         -l - Number of iteration
         -v - Prints verbose output
         -V - Prints the version number
-  
+
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
         int VT_rv = TFAIL;
@@ -208,14 +208,14 @@ int main(int argc, char **argv)
                 tst_resm(TFAIL, " test case did NOT work as expected", TCID);
         }
 
-        /* cleanup allocated test ressources */	
+        /* cleanup allocated test ressources */
         cleanup();
 
         return VT_rv;
 }
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 }
-#endif 
+#endif
 
 

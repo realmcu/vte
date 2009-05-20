@@ -23,10 +23,10 @@
  * Test Description:
  *  Call mmap() to map a file creating a mapped region with read/exec access
  *  under the following conditions -
- *	- The prot parameter is set to PROT_READ|PROT_EXEC
- *	- The file descriptor is open for read
- *	- The file being mapped has read and execute permission bit set.
- *	- The minimum file permissions should be 0555.
+ * - The prot parameter is set to PROT_READ|PROT_EXEC
+ * - The file descriptor is open for read
+ * - The file being mapped has read and execute permission bit set.
+ * - The minimum file permissions should be 0555.
  *
  *  The call should succeed to map the file creating mapped memory with the
  *  required attributes.
@@ -44,14 +44,14 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return=-1)
- *   	Log the errno and Issue a FAIL message.
+ *   Check return code, if system call failed (return-1)
+ *   Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *   Verify the Functionality of system call
  *      if successful,
- *      	Issue Functionality-Pass message.
+ *      Issue Functionality-Pass message.
  *      Otherwise,
- *		Issue Functionality-Fail message.
+ *  Issue Functionality-Fail message.
  *  Cleanup:
  *   Print timing stats if options given
  *   Delete the temporary directory created.
@@ -60,13 +60,13 @@
  *  mmap04 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -f   : Turn off functionality Testing.
- *	       -i n : Execute test n times.
- *	       -I x : Execute test for x seconds.
- *	       -P x : Pause for x seconds between iterations.
- *	       -t   : Turn on syscall timing.
+ *        -i n : Execute test n times.
+ *        -I x : Execute test for x seconds.
+ *        -P x : Pause for x seconds between iterations.
+ *        -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS:
  *  None.
@@ -86,206 +86,206 @@
 #include "test.h"
 #include "usctest.h"
 
-#define TEMPFILE	"mmapfile"
+#define TEMPFILE "mmapfile"
 
-char *TCID="mmap04";		/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-size_t page_sz;			/* system page size */
-char *addr;			/* addr of memory mapped region */
-char *dummy;			/* dummy variable to hold temp file contents */
-int fildes;			/* file descriptor for temporary file */
+char *TCID"mmap04";  /* Test program identifier.    */
+int TST_TOTAL1;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
+size_t page_sz;   /* system page size */
+char *addr;   /* addr of memory mapped region */
+char *dummy;   /* dummy variable to hold temp file contents */
+int fildes;   /* file descriptor for temporary file */
 
-void setup();			/* Main setup function of test */
-void cleanup();			/* cleanup function for the test */
+void setup();   /* Main setup function of test */
+void cleanup();   /* cleanup function for the test */
 
 int
 main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-	
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *) NULL) {
-		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
 
-	/* Perform global setup for test */
-	setup();
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(ac, av, (option_t *) NULL, NULL);
+ if (msg ! (char *) NULL) {
+  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+  tst_exit();
+ }
 
-	/* Check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
+ /* Perform global setup for test */
+ setup();
 
-		/* 
-		 * Call mmap to map the temporary file 'TEMPFILE'
-	 	 * with read and execute access.
-		 */
-		errno = 0; addr = mmap(0, page_sz, PROT_READ|PROT_EXEC,
-			    MAP_FILE|MAP_SHARED, fildes, 0);
+ /* Check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* Reset Tst_count in case we are looping. */
+  Tst_count0;
 
-		/* Check for the return value of mmap() */
-		if (addr == MAP_FAILED) {
-			tst_resm(TFAIL, "mmap() Failed on %s, errno=%d : %s",
-				 TEMPFILE, errno, strerror(errno));
-			continue;
-		}
+  /*
+   * Call mmap to map the temporary file 'TEMPFILE'
+   * with read and execute access.
+   */
+  errno  0; addr  mmap(0, page_sz, PROT_READ|PROT_EXEC,
+       MAP_FILE|MAP_SHARED, fildes, 0);
 
-		/*
-		 * Perform functional verification if test
-		 * executed without (-f) option.
-		 */
-		if (STD_FUNCTIONAL_TEST) {
-			/*
-			 * Read the file contents into the dummy
-			 * variable.
-			 */
-			if (read(fildes, dummy, page_sz) < 0) {
-				tst_brkm(TFAIL, cleanup, "read() on %s Failed, "
-					 "error:%d", TEMPFILE, errno);
-			}
+  /* Check for the return value of mmap() */
+  if (addr  MAP_FAILED) {
+   tst_resm(TFAIL, "mmap() Failed on %s, errno%d : %s",
+     TEMPFILE, errno, strerror(errno));
+   continue;
+  }
 
-			/*
-			 * Check whether the mapped memory region
-			 * has the file contents.
-			 */
-			if (memcmp(dummy, addr, page_sz)) {
-				tst_resm(TFAIL, "mapped memory region contains "
-					 "invalid data");
-			} else {
-				tst_resm(TPASS,
-					 "Functionality of mmap() successful");
-			}
-		} else {
-			tst_resm(TPASS, "call succeeded");
-		}
-		/* Clean up things in case we are looping. */
-		/* Unmap the mapped memory */
-		if (munmap(addr, page_sz) != 0) {
-			tst_brkm(TFAIL, NULL, "munmap() fails to unmap the "
-				 "memory, errno=%d", errno);
-		}
+  /*
+   * Perform functional verification if test
+   * executed without (-f) option.
+   */
+  if (STD_FUNCTIONAL_TEST) {
+   /*
+    * Read the file contents into the dummy
+    * variable.
+    */
+   if (read(fildes, dummy, page_sz) < 0) {
+    tst_brkm(TFAIL, cleanup, "read() on %s Failed, "
+      "error:%d", TEMPFILE, errno);
+   }
+
+   /*
+    * Check whether the mapped memory region
+    * has the file contents.
+    */
+   if (memcmp(dummy, addr, page_sz)) {
+    tst_resm(TFAIL, "mapped memory region contains "
+      "invalid data");
+   } else {
+    tst_resm(TPASS,
+      "Functionality of mmap() successful");
+   }
+  } else {
+   tst_resm(TPASS, "call succeeded");
+  }
+  /* Clean up things in case we are looping. */
+  /* Unmap the mapped memory */
+  if (munmap(addr, page_sz) ! 0) {
+   tst_brkm(TFAIL, NULL, "munmap() fails to unmap the "
+     "memory, errno%d", errno);
+  }
 
 
-	}	/* End for TEST_LOOPING */
+ } /* End for TEST_LOOPING */
 
-	/* Call cleanup() to undo setup done for the test. */
-	cleanup();
+ /* Call cleanup() to undo setup done for the test. */
+ cleanup();
 
-	/*NOTREACHED*/
-	return(0);
-}	/* End main */
+ /*NOTREACHED*/
+ return(0);
+} /* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
- *  	     Get the system page size.
- *  	     Create a temporary directory and a file under it.
- *  	     Write some known data into file and close it.
- *  	     Change the mode permissions on file to 0555.
- *  	     Re-open the file for reading.
+ *       Get the system page size.
+ *       Create a temporary directory and a file under it.
+ *       Write some known data into file and close it.
+ *       Change the mode permissions on file to 0555.
+ *       Re-open the file for reading.
  */
-void 
+void
 setup()
 {
-	char *tst_buff;			/* test buffer to hold known data */
+ char *tst_buff;   /* test buffer to hold known data */
 
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* Get the system page size */
-	if ((page_sz = getpagesize()) < 0) {
-		tst_brkm(TFAIL, NULL,
-			 "getpagesize() fails to get system page size");
-		tst_exit();
-	}
+ /* Get the system page size */
+ if ((page_sz  getpagesize()) < 0) {
+  tst_brkm(TFAIL, NULL,
+    "getpagesize() fails to get system page size");
+  tst_exit();
+ }
 
-	if ((tst_buff = (char *)calloc(page_sz, sizeof(char))) == NULL) {
-		tst_brkm(TFAIL, NULL,
-			 "calloc() failed to allocate space for tst_buff");
-		tst_exit();
-	}
+ if ((tst_buff  (char *)calloc(page_sz, sizeof(char)))  NULL) {
+  tst_brkm(TFAIL, NULL,
+    "calloc() failed to allocate space for tst_buff");
+  tst_exit();
+ }
 
-	/* Fill the test buffer with the known data */
-	memset(tst_buff, 'A', page_sz);
+ /* Fill the test buffer with the known data */
+ memset(tst_buff, 'A', page_sz);
 
-	/* make a temp directory and cd to it */
-	tst_tmpdir();
+ /* make a temp directory and cd to it */
+ tst_tmpdir();
 
-	/* Creat a temporary file used for mapping */
-	if ((fildes = open(TEMPFILE, O_WRONLY | O_CREAT, 0666)) < 0) {
-		tst_brkm(TFAIL, NULL, "open() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
-		free(tst_buff);
-		cleanup();
-	}
+ /* Creat a temporary file used for mapping */
+ if ((fildes  open(TEMPFILE, O_WRONLY | O_CREAT, 0666)) < 0) {
+  tst_brkm(TFAIL, NULL, "open() on %s Failed, errno%d : %s",
+    TEMPFILE, errno, strerror(errno));
+  free(tst_buff);
+  cleanup();
+ }
 
-	/* Write test buffer contents into temporary file */
-	if (write(fildes, tst_buff, page_sz) < page_sz) {
-		tst_brkm(TFAIL, NULL, "write() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
-		free(tst_buff);
-		cleanup();
-	}
+ /* Write test buffer contents into temporary file */
+ if (write(fildes, tst_buff, page_sz) < page_sz) {
+  tst_brkm(TFAIL, NULL, "write() on %s Failed, errno%d : %s",
+    TEMPFILE, errno, strerror(errno));
+  free(tst_buff);
+  cleanup();
+ }
 
-	/* Free the memory allocated for test buffer */
-	free(tst_buff);
+ /* Free the memory allocated for test buffer */
+ free(tst_buff);
 
-	/* Make sure proper permissions set on file */
-	if (chmod(TEMPFILE, 0555) < 0) {
-		tst_brkm(TFAIL, cleanup, "chmod() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
-	}
+ /* Make sure proper permissions set on file */
+ if (chmod(TEMPFILE, 0555) < 0) {
+  tst_brkm(TFAIL, cleanup, "chmod() on %s Failed, errno%d : %s",
+    TEMPFILE, errno, strerror(errno));
+ }
 
-	/* Close the temporary file opened for write */
-	if (close(fildes) < 0) {
-		tst_brkm(TFAIL, cleanup, "close() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
-	}
+ /* Close the temporary file opened for write */
+ if (close(fildes) < 0) {
+  tst_brkm(TFAIL, cleanup, "close() on %s Failed, errno%d : %s",
+    TEMPFILE, errno, strerror(errno));
+ }
 
-	/* Allocate and initialize dummy string of system page size bytes */
-	if ((dummy = (char *)calloc(page_sz, sizeof(char))) == NULL) {
-		tst_brkm(TFAIL, cleanup,
-			 "calloc() failed to allocate memory for dummy");
-	}
+ /* Allocate and initialize dummy string of system page size bytes */
+ if ((dummy  (char *)calloc(page_sz, sizeof(char)))  NULL) {
+  tst_brkm(TFAIL, cleanup,
+    "calloc() failed to allocate memory for dummy");
+ }
 
-	/* Open the temporary file again for reading */
-	if ((fildes = open(TEMPFILE, O_RDONLY)) < 0) {
-		tst_brkm(TFAIL, cleanup, "open(%s) with read-only Failed, "
-			 "errno:%d", TEMPFILE, errno);
-	}
+ /* Open the temporary file again for reading */
+ if ((fildes  open(TEMPFILE, O_RDONLY)) < 0) {
+  tst_brkm(TFAIL, cleanup, "open(%s) with read-only Failed, "
+    "errno:%d", TEMPFILE, errno);
+ }
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
- * 	       Free the memeory allocated to dummy variable.
- * 	       Remove the temporary directory created.
+ *        Free the memeory allocated to dummy variable.
+ *        Remove the temporary directory created.
  */
-void 
+void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
     close(fildes);
 
-	TEST_CLEANUP;
+ TEST_CLEANUP;
 
-	/* Free the memory space allocated for dummy variable */
-	if (dummy) {
-		free(dummy);
-	}
+ /* Free the memory space allocated for dummy variable */
+ if (dummy) {
+  free(dummy);
+ }
 
-	/* Remove tmp dir and all files in it */
-	tst_rmdir();
+ /* Remove tmp dir and all files in it */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

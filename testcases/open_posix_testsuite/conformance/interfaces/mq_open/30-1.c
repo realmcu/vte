@@ -17,9 +17,9 @@
 
 int main()
 {
-	printf("Will not test mq_open() failing with ENOSPC when there\n");
-	printf("is not enough space to create the message queue\n");
-	printf("as system space cannot be controlled from this test.\n");
-	return PTS_UNTESTED;
+ printf("Will not test mq_open() failing with ENOSPC when there\n");
+ printf("is not enough space to create the message queue\n");
+ printf("as system space cannot be controlled from this test.\n");
+ return PTS_UNTESTED;
 }
 

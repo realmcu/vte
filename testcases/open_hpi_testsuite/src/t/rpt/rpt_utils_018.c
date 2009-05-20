@@ -29,16 +29,16 @@
  **/
 int main(int argc, char **argv)
 {
-        RPTable *rptable = (RPTable *)g_malloc0(sizeof(RPTable));
-        SaHpiRdrT *tmprdr = NULL;
-        guint i = 0;
+        RPTable *rptable  (RPTable *)g_malloc0(sizeof(RPTable));
+        SaHpiRdrT *tmprdr  NULL;
+        guint i  0;
 
-        for (i = 0; rptentries[i].ResourceId != 0; i++) {
+        for (i  0; rptentries[i].ResourceId ! 0; i++) {
                 if (oh_add_resource(rptable, rptentries + i, NULL, 0))
                         return 1;
         }
 
-        for (i = 0; i < 5; i++) {
+        for (i  0; i < 5; i++) {
                 if (oh_add_rdr(rptable, RPT_ENTRY_BEGIN, rdrs + i, NULL,0))
                         return 1;
         }
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
         }
 
         oh_remove_rdr(rptable, rptentries[0].ResourceId, rdrs[1].RecordId);
-        tmprdr = oh_get_rdr_by_type(rptable, rptentries[0].ResourceId,
+        tmprdr  oh_get_rdr_by_type(rptable, rptentries[0].ResourceId,
                                   rdrs[1].RdrType,
                                   rdrs[1].RdrTypeUnion.SensorRec.Num);
         if (tmprdr) return 1;

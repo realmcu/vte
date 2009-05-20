@@ -20,20 +20,20 @@
 /*
  * Test Name: hugemmap03
  *
- * Test Description: Test that a normal page cannot be mapped into a high 
+ * Test Description: Test that a normal page cannot be mapped into a high
  * memory region.
- * 
+ *
  * Usage:  <for command-line>
  *  hugemmap03 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -f   : Turn off functionality Testing.
- *	       -i n : Execute test n times.
- *	       -I x : Execute test for x seconds.
- *	       -P x : Pause for x seconds between iterations.
- *	       -t   : Turn on syscall timing.
+ *        -i n : Execute test n times.
+ *        -I x : Execute test for x seconds.
+ *        -P x : Pause for x seconds between iterations.
+ *        -t   : Turn on syscall timing.
  *
  * HISTORY
- *	04/2004 Written by Robbie Williamson
+ * 04/2004 Written by Robbie Williamson
  *
  * RESTRICTIONS:
  *  Must be compiled in 64-bit mode.
@@ -54,119 +54,119 @@
 #include "test.h"
 #include "usctest.h"
 
-#define PAGE_SIZE      ((1UL) << 12) 	/* Normal page size */
+#define PAGE_SIZE      ((1UL) << 12) /* Normal page size */
 #define HIGH_ADDR      (void *)(0x10000000000)
 
-char* TEMPFILE="mmapfile";
+char* TEMPFILE"mmapfile";
 
-char *TCID="hugemmap03";	/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-unsigned long *addr;		/* addr of memory mapped region */
-int fildes;			/* file descriptor for tempfile */
+char *TCID"hugemmap03"; /* Test program identifier.    */
+int TST_TOTAL1;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
+unsigned long *addr;  /* addr of memory mapped region */
+int fildes;   /* file descriptor for tempfile */
 char *Hopt;                     /* location of hugetlbfs */
 
-void setup();			/* Main setup function of test */
-void cleanup();			/* cleanup function for the test */
+void setup();   /* Main setup function of test */
+void cleanup();   /* cleanup function for the test */
 
 void help()
 {
-	printf("  -H /..  Location of hugetlbfs, i.e. -H /var/hugetlbfs \n");
+ printf("  -H /..  Location of hugetlbfs, i.e. -H /var/hugetlbfs \n");
 }
 
 int
 main(int ac, char **av)
 {
-#if __WORDSIZE==32  /* 32-bit compiled */
-      	tst_resm(TCONF,"This test is only for 64bit");
-	tst_exit();
-       	/*NOTREACHED*/
-       	return(1);
-#else	/* 64-bit compiled */
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-        int Hflag=0;              /* binary flag: opt or not */
+#if __WORDSIZE32  /* 32-bit compiled */
+      tst_resm(TCONF,"This test is only for 64bit");
+ tst_exit();
+       /*NOTREACHED*/
+       return(1);
+#else /* 64-bit compiled */
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
+        int Hflag0;              /* binary flag: opt or not */
 
-       	option_t options[] = {
-        	{ "H:",   &Hflag, &Hopt },    /* Required for location of hugetlbfs */
-            	{ NULL, NULL, NULL }          /* NULL required to end array */
-       	};
+       option_t options[]  {
+        { "H:",   &Hflag, &Hopt },    /* Required for location of hugetlbfs */
+            { NULL, NULL, NULL }          /* NULL required to end array */
+       };
 
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, options, &help);
-	if (msg != (char *) NULL) {
-		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s, use -help", msg);
-		tst_exit();
-	}
+ /* Parse standard options given to run the test. */
+ msg  parse_opts(ac, av, options, &help);
+ if (msg ! (char *) NULL) {
+  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s, use -help", msg);
+  tst_exit();
+ }
 
-	if (Hflag == 0) {
-		tst_brkm(TBROK, NULL, "-H option is REQUIRED for this test, use -h for options help");
-		tst_exit();
-	}
-	
-	/* Perform global setup for test */
-	setup();
+ if (Hflag  0) {
+  tst_brkm(TBROK, NULL, "-H option is REQUIRED for this test, use -h for options help");
+  tst_exit();
+ }
 
-	/* Check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-	
-	        /* Creat a temporary file used for huge mapping */
-		if ((fildes = open(TEMPFILE, O_RDWR | O_CREAT, 0666)) < 0) {
-			tst_brkm(TFAIL, cleanup,
-				 "open() on %s Failed, errno=%d : %s",
-				 TEMPFILE, errno, strerror(errno));
-		}
-		
-		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
+ /* Perform global setup for test */
+ setup();
 
-		/* Attempt to mmap using normal pages and a high memory address */
-		errno = 0;
-		addr = mmap(HIGH_ADDR, PAGE_SIZE, PROT_READ,
-			    MAP_SHARED | MAP_FIXED, fildes, 0);
-		if (addr != MAP_FAILED) {
-			tst_resm(TFAIL, "Normal mmap() into high region unexpectedly succeeded on %s, errno=%d : %s",
-				 TEMPFILE, errno, strerror(errno));
-			continue;
-		} else {
-			tst_resm(TPASS, "Normal mmap() into high region failed correctly");
-		}
+ /* Check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		close(fildes);
-	}	/* End for TEST_LOOPING */
+         /* Creat a temporary file used for huge mapping */
+  if ((fildes  open(TEMPFILE, O_RDWR | O_CREAT, 0666)) < 0) {
+   tst_brkm(TFAIL, cleanup,
+     "open() on %s Failed, errno%d : %s",
+     TEMPFILE, errno, strerror(errno));
+  }
 
-	/* Call cleanup() to undo setup done for the test. */
-	cleanup();
+  /* Reset Tst_count in case we are looping. */
+  Tst_count0;
 
-	/*NOTREACHED*/
-	return 1;
+  /* Attempt to mmap using normal pages and a high memory address */
+  errno  0;
+  addr  mmap(HIGH_ADDR, PAGE_SIZE, PROT_READ,
+       MAP_SHARED | MAP_FIXED, fildes, 0);
+  if (addr ! MAP_FAILED) {
+   tst_resm(TFAIL, "Normal mmap() into high region unexpectedly succeeded on %s, errno%d : %s",
+     TEMPFILE, errno, strerror(errno));
+   continue;
+  } else {
+   tst_resm(TPASS, "Normal mmap() into high region failed correctly");
+  }
+
+  close(fildes);
+ } /* End for TEST_LOOPING */
+
+ /* Call cleanup() to undo setup done for the test. */
+ cleanup();
+
+ /*NOTREACHED*/
+ return 1;
 #endif
-}	/* End main */
+} /* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  *
- * 	     Get system page size, allocate and initialize the string dummy.
- * 	     Initialize addr such that it is more than one page below the break
- * 	     address of the process, and initialize one page region from addr
- * 	     with char 'A'.
- * 	     Creat a temporary directory and a file under it.
- * 	     Write some known data into file and get the size of the file.
+ *      Get system page size, allocate and initialize the string dummy.
+ *      Initialize addr such that it is more than one page below the break
+ *      address of the process, and initialize one page region from addr
+ *      with char 'A'.
+ *      Creat a temporary directory and a file under it.
+ *      Write some known data into file and get the size of the file.
  */
-void 
+void
 setup()
 {
-	char mypid[40];
+ char mypid[40];
 
-	sprintf(mypid,"/%d",getpid());
-	TEMPFILE=strcat(mypid,TEMPFILE);
-	TEMPFILE=strcat(Hopt,TEMPFILE);
+ sprintf(mypid,"/%d",getpid());
+ TEMPFILEstrcat(mypid,TEMPFILE);
+ TEMPFILEstrcat(Hopt,TEMPFILE);
 
-	/* capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
 }
 
@@ -174,18 +174,18 @@ setup()
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
- * 	       Remove the temporary directory created.
+ *        Remove the temporary directory created.
  */
-void 
+void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	unlink(TEMPFILE);
+ unlink(TEMPFILE);
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

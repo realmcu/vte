@@ -48,11 +48,11 @@
 #define FILE_MODE   0644
 #define MAX_FILENAME_LEN 1024
 
-int Verbosity = 0;
-int DefaultSeed = 0;
-char Filename[MAX_FILENAME_LEN] = FILE_OUT;
-off_t NumBlocks = 1;
-const char *ProgramName = "writetest";
+int Verbosity  0;
+int DefaultSeed  0;
+char Filename[MAX_FILENAME_LEN]  FILE_OUT;
+off_t NumBlocks  1;
+const char *ProgramName  "writetest";
 
 
 inline void verbose(int level, const char *fmt, ...)
@@ -61,7 +61,7 @@ inline void verbose(int level, const char *fmt, ...)
 inline void verbose(int level, const char *fmt, ...)
 {
     va_list ap;
-    if( Verbosity >= level ) {
+    if( Verbosity > level ) {
         va_start(ap, fmt);
         vprintf(fmt, ap);
         fflush(stdout);
@@ -71,17 +71,17 @@ inline void verbose(int level, const char *fmt, ...)
 
 void buf_init(void )
 {
-    static int seed = 0;
-    if( seed == 0 )
-        seed = DefaultSeed;
+    static int seed  0;
+    if( seed  0 )
+        seed  DefaultSeed;
     srand(seed);
 }
 
 void buf_fill(uint8_t *buf)
 {
     int i;
-    for(i=0; i<BLOCKSIZE; i++) {
-        *buf = (rand() & 0xff);
+    for(i0; i<BLOCKSIZE; i++) {
+        *buf  (rand() & 0xff);
         buf++;
     }
 }
@@ -89,22 +89,22 @@ void buf_fill(uint8_t *buf)
 int write_file(off_t num_blocks, const char *filename)
 {
     int fd;
-    int ret = 0;
+    int ret  0;
     off_t block;
     uint8_t buf[BLOCKSIZE];
 
-    fd = open(filename, O_RDWR|O_CREAT|O_TRUNC|O_LARGEFILE, FILE_MODE);
+    fd  open(filename, O_RDWR|O_CREAT|O_TRUNC|O_LARGEFILE, FILE_MODE);
     if( fd < 0 ) {
         perror(ProgramName);
         return(-1);
     }
-    for(block=0; block<num_blocks; block++) {
+    for(block0; block<num_blocks; block++) {
         int rv;
         verbose(3, "Block: %lld/%lld  (%3lld%%)\r", (long long int)block, (long long int)num_blocks, (long long int)(block*100/num_blocks));
         buf_fill(buf);
-        rv = write(fd, buf, BLOCKSIZE);
-        if( rv != BLOCKSIZE ) {
-            ret = -1;
+        rv  write(fd, buf, BLOCKSIZE);
+        if( rv ! BLOCKSIZE ) {
+            ret  -1;
             break;
         }
     }
@@ -117,32 +117,32 @@ int write_file(off_t num_blocks, const char *filename)
 int verify_file(off_t num_blocks, const char *filename)
 {
     int fd;
-    int ret = 0;
+    int ret  0;
     off_t block;
     uint8_t buf_actual[BLOCKSIZE];
     char buf_read[BLOCKSIZE];
 
-    fd = open(filename, O_RDONLY);
+    fd  open(filename, O_RDONLY);
     if( fd < 0 ) {
         perror(ProgramName);
         return(-1);
     }
-    for(block=0; block<num_blocks; block++) {
+    for(block0; block<num_blocks; block++) {
         int rv;
         int n;
         verbose(3, "Block: %lld/%lld  (%3lld%%)\r", (long long int)block, (long long int)num_blocks, (long long int)(block*100/num_blocks));
         buf_fill(buf_actual);
-        rv = read(fd, buf_read, BLOCKSIZE);
-        if( rv != BLOCKSIZE ) {
-            ret = -1;
+        rv  read(fd, buf_read, BLOCKSIZE);
+        if( rv ! BLOCKSIZE ) {
+            ret  -1;
             break;
         }
-        for(n=0; n<BLOCKSIZE; n++) {
+        for(n0; n<BLOCKSIZE; n++) {
             int ba, br;
-            ba = buf_actual[n] & 0xff;
-            br = buf_read[n] & 0xff;
-            if( ba != br ) {
-                verbose(1, "Mismatch: block=%lld +%d bytes offset=%lld read: %02xh actual: %02xh\n",
+            ba  buf_actual[n] & 0xff;
+            br  buf_read[n] & 0xff;
+            if( ba ! br ) {
+                verbose(1, "Mismatch: block%lld +%d bytes offset%lld read: %02xh actual: %02xh\n",
                     (long long int)block, n, (long long int)((block*BLOCKSIZE)+n), br, ba);
                 ret++;
             }
@@ -170,11 +170,11 @@ void usage(void)
 void parse_args(int argc, char **argv)
 {
     int c;
-    ProgramName = argv[0];
-    
+    ProgramName  argv[0];
+
     while(1) {
-        int option_index = 0;
-        static struct option long_options[] = {
+        int option_index  0;
+        static struct option long_options[]  {
             { "blocks", 1, 0, 'b' },
             { "out", 1, 0, 'o' },
             { "seed", 1, 0, 's' },
@@ -182,18 +182,18 @@ void parse_args(int argc, char **argv)
             { "help", 0, 0, 'h' },
             { 0, 0, 0, 0 }
         };
-        c = getopt_long(argc, argv, "hvb:o:s:", long_options, &option_index);
-        if( c == -1 ) 
+        c  getopt_long(argc, argv, "hvb:o:s:", long_options, &option_index);
+        if( c  -1 )
             break;
         switch(c) {
             case 'b':
-                NumBlocks = strtoul(optarg, NULL, 0);
+                NumBlocks  strtoul(optarg, NULL, 0);
                 break;
             case 'o':
                 strncpy(Filename, optarg, MAX_FILENAME_LEN);
                 break;
             case 's':
-                DefaultSeed = strtoul(optarg, NULL, 0);
+                DefaultSeed  strtoul(optarg, NULL, 0);
                 break;
             case 'v':
                 Verbosity++;
@@ -209,9 +209,9 @@ void parse_args(int argc, char **argv)
 int main(int argc, char *argv[])
 {
     int rv;
-    int status = 0;
+    int status  0;
 
-    DefaultSeed = time(NULL);
+    DefaultSeed  time(NULL);
     parse_args(argc, argv);
     verbose(2, "Blocks:       %lld\n", (long long int)NumBlocks);
     verbose(2, "Seed:         %d\n", DefaultSeed);
@@ -219,22 +219,22 @@ int main(int argc, char *argv[])
 
     verbose(1, "Writing %lld blocks of %d bytes to '%s'\n", (long long int)NumBlocks, BLOCKSIZE, Filename);
     buf_init();
-    rv = write_file(NumBlocks, Filename);
-    if( rv == 0 ) {
+    rv  write_file(NumBlocks, Filename);
+    if( rv  0 ) {
         verbose(1, "Write: Success\n");
     } else {
         verbose(1, "Write: Failure\n");
-        status = rv;
+        status  rv;
     }
 
     verbose(1, "Verifing %lld blocks in '%s'\n", (long long int)NumBlocks, Filename);
     buf_init();
-    rv = verify_file(NumBlocks, Filename);
-    if( rv == 0 ) {
+    rv  verify_file(NumBlocks, Filename);
+    if( rv  0 ) {
         verbose(1, "Verify: Success\n");
     } else {
         verbose(1, "Verify: Failure\n");
-        status = rv;
+        status  rv;
     }
     if( rv > 0 ) {
         verbose(1, "Total mismatches: %d bytes\n", rv);

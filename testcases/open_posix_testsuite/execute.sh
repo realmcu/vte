@@ -7,10 +7,10 @@
 # of this license, see the COPYING file at the top level of this
 # source tree.
 #
-# This execute.sh script executes executables and format the results 
-# including time statistics like time taken to execute OPTS. 
-# This script doesn't use 'make' or 'gcc'. This script will be useful 
-# to run test cases on embedded target. 
+# This execute.sh script executes executables and format the results
+# including time statistics like time taken to execute OPTS.
+# This script doesn't use 'make' or 'gcc'. This script will be useful
+# to run test cases on embedded target.
 
 
 # Run all the tests in the conformance area.
@@ -26,7 +26,7 @@ start_func()
       if [ $START_HOUR -eq 0 ]
       then
             TOTAL_START_HOUR=0
-            
+
       else
             TOTAL_START_HOUR=`expr $START_HOUR '*' 3600`
       fi
@@ -98,7 +98,7 @@ else
 fi
 
 
-if [ $END_MIN -eq 0 ]   
+if [ $END_MIN -eq 0 ]
 then
       TOTAL_END_MIN=0
 else
@@ -222,8 +222,8 @@ fi
             echo -ne "\t\t* UNTESTED: " $UNTEST "\n"
             echo -ne "\t\t* INTERRUPTED: " $INTR "\n"
             echo -ne "\t\t* HUNG: " $HUNG "\n"
-            echo -ne "\t\t* SEGV: " $SEGV "\n"  
-            echo -ne "\t\t* OTHERS: " $OTH "\n" 
+            echo -ne "\t\t* SEGV: " $SEGV "\n"
+            echo -ne "\t\t* OTHERS: " $OTH "\n"
       echo -ne "\t\t***************************\n"
             display_func
                   echo "Finished"
@@ -238,23 +238,23 @@ fi
             RET_VAL=$?
 
       if [ $RET_VAL -gt 5  -a  $RET_VAL -ne $TIMEVAL_RET ]
-      then 
+      then
             INTR_VAL=10
-      fi 
+      fi
 
       case $RET_VAL in
 
-      0) 
+      0)
                   PASS=$PASS+1
             echo  "$FILEcut:execution:PASS "
             ;;
-      1)     
+      1)
                   FAIL=$FAIL+1
             echo  "$FILEcut:execution:FAIL "
             ;;
 
-      
-      255)     
+
+      255)
                   FAIL=$FAIL+1
             echo  "$FILEcut:execution:FAIL "
             ;;
@@ -278,20 +278,20 @@ fi
             echo  "$FILEcut:execution:UNTESTED "
             ;;
 
-      10) 
+      10)
             INTR=$INTR+1
             echo  "$FILEcut:execution:INTERRUPTED "
             ;;
 
       $TIMEVAL_RET)
-                  HUNG=$HUNG+1      
+                  HUNG=$HUNG+1
                   echo  "$FILEcut:execution:HUNG "
                   ;;
       139)
             SEGV=$SEGV+1
             echo "$FILEcut:execution:Segmentaion Fault "
             ;;
-            
+
       *)
             OTH=$OTH+1
             echo "OTHERS: RET_VAL for $FILE : $RET_VAL"
@@ -303,6 +303,6 @@ done
 
 
 ######################################################################################
- 
+
 
 

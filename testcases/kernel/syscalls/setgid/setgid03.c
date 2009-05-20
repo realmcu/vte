@@ -19,13 +19,13 @@
 
 /*
  * NAME
- * 	setgid03.c
+ * setgid03.c
  *
  * CALLS
- * 	setgid(1) getgid(2)
+ * setgid(1) getgid(2)
  *
  * ALGORITHM
- * 	As root sets the current group id to ltpuser1, verify the results
+ * As root sets the current group id to ltpuser1, verify the results
  *
  * USAGE:  <for command-line>
  *  setgid03 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
@@ -37,10 +37,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * 	Test must be run as root.
+ * Test must be run as root.
  */
 #include <pwd.h>
 #include <errno.h>
@@ -48,11 +48,11 @@
 #include "usctest.h"
 
 TCID_DEFINE(setgid03);
-int TST_TOTAL = 1;
+int TST_TOTAL  1;
 extern int Tst_count;
 
-char ltpuser1[] = "nobody";
-char root[] = "root";
+char ltpuser1[]  "nobody";
+char root[]  "root";
 struct passwd *getpwnam(), *ltpuser1pwent, *rootpwent;
 int mygid;
 
@@ -63,46 +63,46 @@ static void cleanup(void);
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+ int lc;    /* loop counter */
+ char *msg;   /* message returned from parse_opts */
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-		/*NOTREACHED*/
-	}
-	
-	setup();
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+  /*NOTREACHED*/
+ }
 
-	/* Check for looping state if -i option is given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ setup();
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+ /* Check for looping state if -i option is given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		TEST(setgid(ltpuser1pwent->pw_gid));
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL, "call failed unexpectedly");
-			continue;
-		}
+  TEST(setgid(ltpuser1pwent->pw_gid));
 
-		if (!STD_FUNCTIONAL_TEST) {
-			tst_resm(TPASS, "call succeeded");
-			continue;
-		}
+  if (TEST_RETURN  -1) {
+   tst_resm(TFAIL, "call failed unexpectedly");
+   continue;
+  }
 
-		if (getgid() != ltpuser1pwent->pw_gid) {
-			tst_resm(TFAIL, "setgid failed to set gid to "
-				 "ltpuser1's gid");
-		} else {
-			tst_resm(TPASS, "functionality of getgid() is correct");
-		}
-	}
-	cleanup();
+  if (!STD_FUNCTIONAL_TEST) {
+   tst_resm(TPASS, "call succeeded");
+   continue;
+  }
 
-	/*NOTREACHED*/
-	return(0);
+  if (getgid() ! ltpuser1pwent->pw_gid) {
+   tst_resm(TFAIL, "setgid failed to set gid to "
+     "ltpuser1's gid");
+  } else {
+   tst_resm(TPASS, "functionality of getgid() is correct");
+  }
+ }
+ cleanup();
+
+ /*NOTREACHED*/
+ return(0);
 }
 
 /*
@@ -111,56 +111,56 @@ int main(int ac, char **av)
 void
 setup()
 {
-	/* test must be run as root */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
-	}
+ /* test must be run as root */
+ if (geteuid() ! 0) {
+  tst_brkm(TBROK, tst_exit, "Test must be run as root");
+ }
 
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	if ((rootpwent = getpwnam(root)) == NULL) {
-		tst_brkm(TBROK, cleanup, "getpwnam failed for "
-			 "user id %s", root);
-	}
+ if ((rootpwent  getpwnam(root))  NULL) {
+  tst_brkm(TBROK, cleanup, "getpwnam failed for "
+    "user id %s", root);
+ }
 
-	mygid = getgid();
+ mygid  getgid();
 
-	if (mygid != rootpwent->pw_gid) {
-		tst_brkm(TBROK, cleanup, "real group id is not root");
-	}
+ if (mygid ! rootpwent->pw_gid) {
+  tst_brkm(TBROK, cleanup, "real group id is not root");
+ }
 
-	if ((ltpuser1pwent = getpwnam(ltpuser1)) == NULL) {
-		tst_brkm(TBROK, cleanup, "getpwnam failed for user "
-			 "id %s", ltpuser1);
-	}
+ if ((ltpuser1pwent  getpwnam(ltpuser1))  NULL) {
+  tst_brkm(TBROK, cleanup, "getpwnam failed for user "
+    "id %s", ltpuser1);
+ }
 
-	if (!(GID_SIZE_CHECK(rootpwent->pw_gid))) {
-		tst_brkm(TBROK, 
-			 cleanup, 
-			 "gid for `%s' is too large for testing setgid16", 
-			 root);
-	}
-	  
-	
+ if (!(GID_SIZE_CHECK(rootpwent->pw_gid))) {
+  tst_brkm(TBROK,
+    cleanup,
+    "gid for `%s' is too large for testing setgid16",
+    root);
+ }
+
+
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
+ *        completion or premature exit.
  */
 void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

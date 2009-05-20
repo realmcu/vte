@@ -4,7 +4,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#     
+#
 ##############################################################################
 #
 #   @file   Makefile
@@ -19,7 +19,7 @@
 #
 #Author (core ID)      Date         CR Number    Description of Changes
 #-------------------   ----------   ----------   ------------------------------
-#Filinova Natalya      15/02/2005   TLSbo47117   BRIEF desc. of changes 
+#Filinova Natalya      15/02/2005   TLSbo47117   BRIEF desc. of changes
 #Delaspre/rc149c       07/12/2004   TLSbo40142   update copyrights with Freescale
 #D.Simakov/smkd001c    15/04/2005   TLSbo47117   Configs are copied now
 #S. V-Guilhou/svan01c  19/05/2005   TLSbo50534   ARM11 codecs P4 tests
@@ -33,7 +33,7 @@ CFLAGS    += -Wall -I../../../../include -I$(MMAPI_HDIR) -I$(G723D_HDIR) -I$(COD
 LOADLIBES += -L../../../../lib -lltp -lpthread -lm -Bdymanic -L$(G723D_LIBDIR) -l$(G723D_LIBRARY)
 
 CFLAGS    += -g -mcpu=arm1136j-s -mabi=aapcs -DFILEIO -DLITTLE_ENDIAN
-LOADLIBES += -Wl,--no-warn-mismatch -mcpu=arm1136j-s -lm -lc -lrt 
+LOADLIBES += -Wl,--no-warn-mismatch -mcpu=arm1136j-s -lm -lc -lrt
 
 SRCS       = $(wildcard *.c)
 OBJS       = $(patsubst %.c,%.o,$(SRCS))
@@ -52,9 +52,9 @@ install:
 	cp -f $(CONFIGS) $(LTP_BIN)
 	cp -rf $(G723D_INPUT) $(LTP_BIN)
 	cp -rf $(G723D_REF) $(LTP_BIN)
-	mkdir -p $(LTP_BIN)/g723d_output     
-	mkdir -p $(LTP_BIN)/sharedlibs       
-	cp -rf $(G723D_LIBDIR)/lib$(G723D_LIBRARY).so $(LTP_BIN)/sharedlibs            
+	mkdir -p $(LTP_BIN)/g723d_output
+	mkdir -p $(LTP_BIN)/sharedlibs
+	cp -rf $(G723D_LIBDIR)/lib$(G723D_LIBRARY).so $(LTP_BIN)/sharedlibs
 	@echo "***********************************************"
 	@echo "** INSTALL : g723_decoder_testapp set        **"
 	@echo "***********************************************"

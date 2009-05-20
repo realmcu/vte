@@ -12,7 +12,7 @@
  * The failure case chosen is an invalid message queue descriptor.
  *
  * 3/13/03 - Added fix from Gregoire Pichon for specifying an attr
- *           with a mq_maxmsg >= BUFFER.
+ *           with a mq_maxmsg > BUFFER.
  *
  */
 
@@ -34,67 +34,67 @@
 int main()
 {
         char qname[NAMESIZE], msgrcd[BUFFER];
-        const char *msgptr = MSGSTR;
-	struct timespec ts;
+        const char *msgptr  MSGSTR;
+ struct timespec ts;
         mqd_t queue;
-	struct mq_attr attr;
-	int unresolved=0, failure=0, pri;
+ struct mq_attr attr;
+ int unresolved0, failure0, pri;
 
         sprintf(qname, "/mq_timedsend_9-1_%d", getpid());
 
-	attr.mq_msgsize = BUFFER;
-	attr.mq_maxmsg = BUFFER;
-        queue = mq_open(qname, O_CREAT |O_RDWR | O_NONBLOCK, 
-			S_IRUSR | S_IWUSR, &attr);
-        if (queue == (mqd_t)-1) {
+ attr.mq_msgsize  BUFFER;
+ attr.mq_maxmsg  BUFFER;
+        queue  mq_open(qname, O_CREAT |O_RDWR | O_NONBLOCK,
+   S_IRUSR | S_IWUSR, &attr);
+        if (queue  (mqd_t)-1) {
                 perror("mq_open() did not return success");
                 return PTS_UNRESOLVED;
         }
 
-	// Verify mq_timedsend() returns -1
-	ts.tv_sec=time(NULL)+1;
-	ts.tv_nsec=0;
-        if (mq_timedsend(queue+1, msgptr, strlen(msgptr), 1, &ts) != -1) {
+ // Verify mq_timedsend() returns -1
+ ts.tv_sectime(NULL)+1;
+ ts.tv_nsec0;
+        if (mq_timedsend(queue+1, msgptr, strlen(msgptr), 1, &ts) ! -1) {
                 printf("mq_timedsend() did not return -1 on invalid queue\n");
-		failure=1;
+  failure1;
         }
 
-	// Verify errno is set
-	if (errno != EBADF) {
-		printf("errno was not set on invalid queue\n");
-		failure = 1;
-	}
+ // Verify errno is set
+ if (errno ! EBADF) {
+  printf("errno was not set on invalid queue\n");
+  failure  1;
+ }
 
-	// Verify message was not queued (cannot be received)
-        if (mq_receive(queue, msgrcd, BUFFER, &pri) != -1) {
-        	if (strcmp(msgptr, msgrcd) == 0) {
-			printf("Message ended up being sent\n");
-			failure = 1;
-		} else {
-			printf("Error with mq_receive()\n");
-			unresolved = 1;
-		}
+ // Verify message was not queued (cannot be received)
+        if (mq_receive(queue, msgrcd, BUFFER, &pri) ! -1) {
+        if (strcmp(msgptr, msgrcd)  0) {
+   printf("Message ended up being sent\n");
+   failure  1;
+  } else {
+   printf("Error with mq_receive()\n");
+   unresolved  1;
+  }
         }
 
-        if (mq_close(queue) != 0) {
-		perror("mq_close() did not return success");
-		unresolved=1;
+        if (mq_close(queue) ! 0) {
+  perror("mq_close() did not return success");
+  unresolved1;
         }
 
-        if (mq_unlink(qname) != 0) {
-		perror("mq_unlink() did not return success");
-		unresolved=1;
+        if (mq_unlink(qname) ! 0) {
+  perror("mq_unlink() did not return success");
+  unresolved1;
         }
 
-	if (failure==1) {
-		printf("Test FAILED\n");
-		return PTS_FAIL;
-	}
+ if (failure1) {
+  printf("Test FAILED\n");
+  return PTS_FAIL;
+ }
 
-	if (unresolved==1) {
-		printf("Test UNRESOLVED\n");
-		return PTS_UNRESOLVED;
-	}
+ if (unresolved1) {
+  printf("Test UNRESOLVED\n");
+  return PTS_UNRESOLVED;
+ }
 
         printf("Test PASSED\n");
         return PTS_PASS;

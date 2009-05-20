@@ -11,7 +11,7 @@ typedef int (*killpg_test)(pid_t, int);
 
 int dummyfcn (void)
 {
-	killpg_test dummyvar;
-	dummyvar = killpg;
-	return 0;
+ killpg_test dummyvar;
+ dummyvar  killpg;
+ return 0;
 }

@@ -19,17 +19,17 @@
 
 /*
  * NAME
- *	ioctl01.c
+ * ioctl01.c
  *
  * DESCRIPTION
- *	Testcase to check the errnos set by the ioctl(2) system call.
+ * Testcase to check the errnos set by the ioctl(2) system call.
  *
  * ALGORITHM
- *	1. EBADF: Pass an invalid fd to ioctl(fd, ..) and expect EBADF.
- *	2. EFAULT: Pass an invalid address of arg in ioctl(fd, .., arg)
- *	3. EINVAL: Pass invalid cmd in ioctl(fd, cmd, arg)
- *	4. ENOTTY: Pass an non-streams fd in ioctl(fd, cmd, arg)
- *	5. EFAULT: Pass a NULL address for termio
+ * 1. EBADF: Pass an invalid fd to ioctl(fd, ..) and expect EBADF.
+ * 2. EFAULT: Pass an invalid address of arg in ioctl(fd, .., arg)
+ * 3. EINVAL: Pass invalid cmd in ioctl(fd, cmd, arg)
+ * 4. ENOTTY: Pass an non-streams fd in ioctl(fd, cmd, arg)
+ * 5. EFAULT: Pass a NULL address for termio
  *
  * USAGE:  <for command-line>
  *  ioctl01 -D /dev/tty[0-9] [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -41,8 +41,8 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
- *	04/2002 Fixes by wjhuie
+ * 07/2001 Ported by Wayne Boyer
+ * 04/2002 Fixes by wjhuie
  *
  * RESTRICTIONS
  *      test must be run with the -D option
@@ -57,20 +57,20 @@
 #include <test.h>
 #include <usctest.h>
 
-char *TCID = "ioctl01";
-int TST_TOTAL = 5;
+char *TCID  "ioctl01";
+int TST_TOTAL  5;
 extern int Tst_count;
 
-#define	INVAL_IOCTL	9999999
+#define INVAL_IOCTL 9999999
 
 void setup(void);
 void cleanup(void);
 void help(void);
 
-int exp_enos[] = {EBADF, EFAULT, EINVAL, ENOTTY, EFAULT, 0};
+int exp_enos[]  {EBADF, EFAULT, EINVAL, ENOTTY, EFAULT, 0};
 
 int fd, fd1;
-int bfd = -1;
+int bfd  -1;
 
 char *tty;
 struct termio termio;
@@ -80,95 +80,95 @@ struct test_case_t {
         int request;
         struct termio *s_tio;
         int error;
-} TC[] = {
-	/* file descriptor is invalid */
+} TC[]  {
+ /* file descriptor is invalid */
         {&bfd, TCGETA, &termio, EBADF},
 
-	/* termio address is invalid */
+ /* termio address is invalid */
         {&fd, TCGETA, (struct termio *)-1, EFAULT},
 
-	/* command is invalid */
+ /* command is invalid */
         {&fd, INVAL_IOCTL, &termio, EINVAL},
 
-	/* file descriptor is for a regular file */
+ /* file descriptor is for a regular file */
         {&fd1, TCGETA, &termio, ENOTTY},
 
-	/* termio is NULL */
+ /* termio is NULL */
         {&fd, TCGETA, NULL, EFAULT}
 };
 
-int Devflag = 0;
+int Devflag  0;
 char *devname;
 
 /* for test specific parse_opts options - in this case "-D" */
-option_t options[] = {
-	{"D:", &Devflag, &devname},
-	{NULL, NULL, NULL}
+option_t options[]  {
+ {"D:", &Devflag, &devname},
+ {NULL, NULL, NULL}
 };
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	int i;
-	char *msg;			/* message returned from parse_opts */
-	
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, options, &help)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+ int lc;    /* loop counter */
+ int i;
+ char *msg;   /* message returned from parse_opts */
 
-	if (!Devflag) {
-		tst_resm(TWARN, "You must specify a tty device with "
-			 "the -D option.");
-		tst_resm(TWARN, "Run '%s -h' for option information.", TCID);
-		cleanup();
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, options, &help)) ! (char *)NULL) {
+  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+ }
+
+ if (!Devflag) {
+  tst_resm(TWARN, "You must specify a tty device with "
+    "the -D option.");
+  tst_resm(TWARN, "Run '%s -h' for option information.", TCID);
+  cleanup();
         }
 
-        if (geteuid() != 0) { 	 
-	                 tst_brkm(TBROK, tst_exit, "Test must be run as root"); 	 
-	}
+        if (geteuid() ! 0) {
+                  tst_brkm(TBROK, tst_exit, "Test must be run as root");
+ }
 
-	setup();
+ setup();
 
-	if ((fd = open(devname, O_RDWR, 0777)) < 0) {
-		tst_brkm(TBROK, cleanup, "Couldn't open %s, errno = %d",
-			 tty, errno);
-	}
+ if ((fd  open(devname, O_RDWR, 0777)) < 0) {
+  tst_brkm(TBROK, cleanup, "Couldn't open %s, errno  %d",
+    tty, errno);
+ }
 
-	TEST_EXP_ENOS(exp_enos);
+ TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping. */
-		Tst_count = 0;
+ /* check looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  /* reset Tst_count in case we are looping. */
+  Tst_count  0;
 
-		/* loop through the test cases */
-		for (i = 0; i < TST_TOTAL; i++) {
+  /* loop through the test cases */
+  for (i  0; i < TST_TOTAL; i++) {
 
-			TEST(ioctl(*(TC[i].fd), TC[i].request, TC[i].s_tio));
+   TEST(ioctl(*(TC[i].fd), TC[i].request, TC[i].s_tio));
 
-                        if (TEST_RETURN != -1) {
+                        if (TEST_RETURN ! -1) {
                                 tst_resm(TFAIL, "call succeeded unexpectedly");
                                 continue;
                         }
 
                         TEST_ERROR_LOG(TEST_ERRNO);
 
-                        if (TEST_ERRNO == TC[i].error) {
+                        if (TEST_ERRNO  TC[i].error) {
                                 tst_resm(TPASS, "expected failure - "
-                                         "errno = %d : %s", TEST_ERRNO,
+                                         "errno  %d : %s", TEST_ERRNO,
                                          strerror(TEST_ERRNO));
                         } else {
                                 tst_resm(TFAIL, "unexpected error - %d : %s - "
                                          "expected %d", TEST_ERRNO,
                                          strerror(TEST_ERRNO), TC[i].error);
-			}
-		}
-	}
-	cleanup();
+   }
+  }
+ }
+ cleanup();
 
-	/*NOTREACHED*/
-	return(0);
+ /*NOTREACHED*/
+ return(0);
 }
 
 /*
@@ -178,7 +178,7 @@ int main(int ac, char **av)
 void
 help()
 {
-	printf("  -D <tty device> : for example, /dev/tty[0-9]\n");
+ printf("  -D <tty device> : for example, /dev/tty[0-9]\n");
 }
 
 /*
@@ -187,41 +187,41 @@ help()
 void
 setup()
 {
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	/* make a temporary directory and cd to it */
-	tst_tmpdir();
+ /* make a temporary directory and cd to it */
+ tst_tmpdir();
 
-	/* create a temporary file */
-	if ((fd1 = open("x", O_CREAT, 0777)) < 0) {
-		tst_resm(TFAIL, "Could not open test file, errno = %d", errno);
-	}
+ /* create a temporary file */
+ if ((fd1  open("x", O_CREAT, 0777)) < 0) {
+  tst_resm(TFAIL, "Could not open test file, errno  %d", errno);
+ }
 }
 
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
+ *        completion or premature exit.
  */
 void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	close(fd1);
+ close(fd1);
 
-	/* delete the test directory created in setup() */
-	tst_rmdir();
+ /* delete the test directory created in setup() */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }
 

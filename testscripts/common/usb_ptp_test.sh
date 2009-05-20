@@ -24,14 +24,14 @@
 #/*===========================================================================
 #Total Tests:           1
 #Test Executable Name:  usb_PTP_test.sh
-#Test Strategy:         
+#Test Strategy:
 #============================================================================*/
 
 
 # STR1: command options;
 # Use command "./usb_PTP_test.sh [STR1] "to test usb ptp
 
-#initialize 
+#initialize
  TMP_RC=0
  rc=0
 
@@ -40,7 +40,7 @@
   if [ $TMP_RC -eq 0 ]; then
     echo " -----------------------------------------------------------------"
      echo " usb PTP test on $command_options pass!!!"
-    echo " -----------------------------------------------------------------"     
+    echo " -----------------------------------------------------------------"
   else
     rc=1
     echo " -----------------------------------------------------------------"
@@ -55,8 +55,8 @@
     echo ""
     echo " [usb PTP $1 test begin] "
     command_options=$1
-    
-    
+
+
     if [ $command_options = "--auto-detect" ]; then
       echo "auto detect whether the camera can be talked to the board"
       ./gphoto2 --auto-detect
@@ -90,8 +90,8 @@
     else
         echo "Invalid command options"
         rc=1
-    fi      
-    echo " [usb PTP $1 test finished]"                         
+    fi
+    echo " [usb PTP $1 test finished]"
 
  else
      echo "Please enter parameter:[STR1] command options;"
@@ -99,12 +99,12 @@
  fi
 
  echo""
- echo " final script      		RESULT   "
+ echo " final script RESULT   "
  echo " -------------------------------------------"
  if [ $rc -eq 0 ];
   then
     echo " usb_PTP_test.sh           TPASS    "
-  
+
   else
     echo " usb_PTP_test.sh           TFAIL    "
  fi

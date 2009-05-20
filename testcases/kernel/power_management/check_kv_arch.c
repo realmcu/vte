@@ -18,13 +18,13 @@
 #include <test.h>
 
 int kernel_is_too_old(void) {
-	if (tst_kvercmp(2,6,21) < 0)
-		return 1;
-	return 0;
+ if (tst_kvercmp(2,6,21) < 0)
+  return 1;
+ return 0;
 }
 
 /*
- * yeah, to make the makefile coding easier, do_check returns 
+ * yeah, to make the makefile coding easier, do_check returns
  * 1 if unshare is not supported, 0 if it is
  */
 #ifdef __i386__
@@ -36,6 +36,6 @@ int do_check(void) { return 1; }
 #endif
 
 int main() {
-	return do_check();
+ return do_check();
 }
 

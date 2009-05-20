@@ -17,41 +17,41 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* 01/02/2003	Port to LTP	avenkat@us.ibm.com */
-/* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
+/* 01/02/2003 Port to LTP avenkat@us.ibm.com */
+/* 06/30/2001 Port to Linux nsharoff@us.ibm.com */
 
 
 /*
  * NAME
- *      scalb 
+ *      scalb
  *
  * CALLS
  *      nextafter(3C)
  *
  * ALGORITHM
- *	Check results from the above functions against expected values.
+ * Check results from the above functions against expected values.
  *
  * RESTRICTIONS
- * 	Checks for basic functionality, nothing fancy
+ * Checks for basic functionality, nothing fancy
  */
 
-#include	<stdio.h>
-#include	<math.h>
-#include	<errno.h>
-#include	<stdlib.h>
-#include	"test.h"
-#include	"usctest.h"
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <stdlib.h>
+#include "test.h"
+#include "usctest.h"
 
-#define	FAILED 0
-#define	PASSED 1
+#define FAILED 0
+#define PASSED 1
 
-char *TCID = "nextafter01";
+char *TCID  "nextafter01";
 
-int local_flag = PASSED;
+int local_flag  PASSED;
 int block_number;
 int errno;
 FILE *temp;
-int TST_TOTAL = 1;
+int TST_TOTAL  1;
 extern int Tst_count;
 
 void setup();
@@ -61,73 +61,73 @@ int blexit();
 /*--------------------------------------------------------------*/
 int main()
 {
-	double answer;
-	double check;		 /* tmp variable */
+ double answer;
+ double check;   /* tmp variable */
 
-	setup();		/* temp file is now open */
+ setup();  /* temp file is now open */
 /*--------------------------------------------------------------*/
  blenter();
 
-	answer = nextafter(1.0, 1.1);
-	check = (answer + 1.0) / 2;
-	if ((check != answer) && ((float)check != 1.0)) {
-		fprintf(temp, "nextafter returned %e, expected answer or 1.0\n",
-				answer);
-		local_flag = FAILED;
-	}
+ answer  nextafter(1.0, 1.1);
+ check  (answer + 1.0) / 2;
+ if ((check ! answer) && ((float)check ! 1.0)) {
+  fprintf(temp, "nextafter returned %e, expected answer or 1.0\n",
+    answer);
+  local_flag  FAILED;
+ }
 
         blexit();
 /*--------------------------------------------------------------*/
  blenter();
 
-	answer = nextafter(1.0, 0.9);
-	if ((check != answer) && (check != 1.0)) {
-		fprintf(temp, "nextafter returned %e, expected answer or 1.0\n",
-				answer);
-		local_flag = FAILED;
-	}
+ answer  nextafter(1.0, 0.9);
+ if ((check ! answer) && (check ! 1.0)) {
+  fprintf(temp, "nextafter returned %e, expected answer or 1.0\n",
+    answer);
+  local_flag  FAILED;
+ }
 
         blexit();
 /*--------------------------------------------------------------*/
  blenter();
 
-	answer = nextafter(1.0, 1.0);
-	if (answer != 1.0) {
-		fprintf(temp, "nextafter 3 returned %e, expected 1.0\n",
-				answer);
-		local_flag = FAILED;
-	}
+ answer  nextafter(1.0, 1.0);
+ if (answer ! 1.0) {
+  fprintf(temp, "nextafter 3 returned %e, expected 1.0\n",
+    answer);
+  local_flag  FAILED;
+ }
 
         blexit();
 /*--------------------------------------------------------------*/
 
         tst_exit();      /* THIS CALL DOES NOT RETURN - EXITS!!  */
-	return(0);
+ return(0);
 }
 /*--------------------------------------------------------------*/
 
-/*****	*****	LTP Port	*****/
+/***** ***** LTP Port *****/
 
 /* FUNCTIONS */
 
 void setup()
 {
-  temp = stderr;
+  temp  stderr;
 }
 
 
 int blenter()
 {
-  local_flag = PASSED;
+  local_flag  PASSED;
   return(0);
 }
 
 
 int blexit()
 {
-  (local_flag == PASSED ) ? tst_resm(TPASS, "Test passed") : tst_resm(TFAIL, "Test failed");
+  (local_flag  PASSED ) ? tst_resm(TPASS, "Test passed") : tst_resm(TFAIL, "Test failed");
   return(0);
 }
 
 
-/*****	*****		*****/
+/***** *****  *****/

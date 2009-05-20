@@ -1,5 +1,5 @@
 /*
- *======================================================================
+ *
  *
  *                         Motorola Labs
  *         Multimedia Communications Research Lab (MCRL)
@@ -11,7 +11,7 @@
  *
  *       M O T O R O L A  I N T E R N A L   U S E   O N L Y
  *
- *======================================================================
+ *
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,14 +22,14 @@
 #include <writebits.h>
 #include <utils.h>
 
-FILE   *traceFile = NULL;
-S32     traceIndex = 0;
+FILE   *traceFile  NULL;
+S32     traceIndex  0;
 
 void OpenInputVideo(IOParams *p)
 {
     KevOpen(p->sourceFilename, KEV_READ, &p->kevInput);
-    assert((p->kevInput.width & 0xf) == 0);
-    assert((p->kevInput.height & 0xf) == 0);
+    assert((p->kevInput.width & 0xf)  0);
+    assert((p->kevInput.height & 0xf)  0);
 }
 
 void OpenOutputVideo(IOParams *p)
@@ -58,19 +58,19 @@ static void CreateDirectoriesIfNeeded(char *filenameStr)
 {
     char   *nextSlashPtr;
 
-    nextSlashPtr = filenameStr + 1;
+    nextSlashPtr  filenameStr + 1;
     while (1)
     {                                           // for each directory in the path
 
-        nextSlashPtr = strchr(nextSlashPtr, '/');   // find the next slash
+        nextSlashPtr  strchr(nextSlashPtr, '/');   // find the next slash
 
-        if (nextSlashPtr == NULL)               // if no more slashes
+        if (nextSlashPtr  NULL)               // if no more slashes
 
             return;
-        *nextSlashPtr = '\0';                   // shorten the string to just the directory name
+        *nextSlashPtr  '\0';                   // shorten the string to just the directory name
 
         createDir(filenameStr);
-        *nextSlashPtr = '/';                    // repair the string
+        *nextSlashPtr  '/';                    // repair the string
 
         nextSlashPtr++;                         // process the remaining string
 
@@ -87,7 +87,7 @@ void OpenOutputFile(IOParams *p)
     //!< If we are NOT outputting to an BUFFER (thus writing to a file)
     CreateDirectoriesIfNeeded(p->bitFilename);
 
-    if ((p->outFile = fopen(p->bitFilename, "wb")) == NULL)
+    if ((p->outFile  fopen(p->bitFilename, "wb"))  NULL)
     {
         printf("Error opening %s for writing\n", p->bitFilename);
         exit(1);
@@ -95,8 +95,8 @@ void OpenOutputFile(IOParams *p)
 
 #if (SUPPORT_TRACEFILE)
     if (!p->traceFlag)
-        traceFile = NULL;
-    else if ((traceFile = fopen(p->traceFilename, "wb")) == NULL)
+        traceFile  NULL;
+    else if ((traceFile  fopen(p->traceFilename, "wb"))  NULL)
     {
         printf("Error opening %s for writing\n", p->traceFilename);
         exit(1);
@@ -111,17 +111,17 @@ void OpenOutputFile(IOParams *p)
 #endif
 #if  PRINT_ENCODED_FRAME
 
-    len = strlen(p->bitFilename);
-    FrameNumFilename = (char *) malloc(len + 1 + 20);
+    len  strlen(p->bitFilename);
+    FrameNumFilename  (char *) malloc(len + 1 + 20);
     strcpy(FrameNumFilename, p->bitFilename);
-    for (i = (len - 1); i >= 0; i--)
+    for (i  (len - 1); i > 0; i--)
     {
-        if (p->bitFilename[i] == '.')
+        if (p->bitFilename[i]  '.')
             break;
     }
     strcpy(&FrameNumFilename[i], ".fnum");
 
-    if ((p->frameNum = fopen(FrameNumFilename, "w")) == NULL)
+    if ((p->frameNum  fopen(FrameNumFilename, "w"))  NULL)
     {
         printf("Error opening frameNum for writing\n");
         exit(1);
@@ -137,7 +137,7 @@ void IO_ReadVideoFrame(IOParams *p, S32 frameNum, AVCEnc_YCbCrStruct * f)
 {
     // Add initial offset because the encoder library always starts count
     // from 0.  For I/O, we have the option of starting from startFrameNum
-    frameNum += p->startFrameNum;
+    frameNum + p->startFrameNum;
     ReadKevFrame(&p->kevInput, frameNum, f->y, f->xSize,
                  f->cb, f->cr, f->cxSize);
 }
@@ -154,17 +154,17 @@ void IO_WriteOutputVideo(IOParams *p, AVCEnc_YCbCrStruct * f)
 #if (SUPPORT_TRACEFILE)
 void PrintByteTrace(int val)
 {
-    if (traceFile != NULL)
+    if (traceFile ! NULL)
     {
         S32     nBytes, nBits;
         char    s[200];
 
-        nBytes = traceIndex >> 3;
-        nBits = traceIndex & 7;
+        nBytes  traceIndex >> 3;
+        nBits  traceIndex & 7;
         sprintf(s, "%5ld.%ld [%d] %2d %s", nBytes, nBits, 0, 8, "AnnexB");
         AVCE_PrintString(s, val, 8, val);
         fprintf(traceFile, "%s\n", s);
-        traceIndex += 8;
+        traceIndex + 8;
         fflush(traceFile);
     }
 }
@@ -220,7 +220,7 @@ void CloseOutputFile(IOParams *p)
 #endif
 
 #if (SUPPORT_TRACEFILE)
-    if (traceFile != NULL)
+    if (traceFile ! NULL)
         fclose(traceFile);
 #endif
 
@@ -230,7 +230,7 @@ void IO_Init(IOParams *p)
 {
     OpenInputVideo(p);
 
-    p->imageCount = p->kevInput.totalFrames;
+    p->imageCount  p->kevInput.totalFrames;
 
     OpenOutputVideo(p);
 

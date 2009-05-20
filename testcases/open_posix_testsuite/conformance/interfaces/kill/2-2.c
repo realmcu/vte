@@ -6,20 +6,20 @@
 #include <sys/types.h>
 #include "posixtest.h"
 
-/*   
+/*
  * Copyright (c) 2002-2003, Intel Corporation. All rights reserved.
  * Created by:  julie.n.fleischer REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
  *  Test that when the null signal is sent to kill(), error checking is
  *  still performed.
  *  1) Send a signal to generate an ESRCH error.
- *     ==> Send a signal to PID 999999
+ *     > Send a signal to PID 999999
  *  2) Verify ESRCH error received and kill() returned -1.
  *  3) Send a signal to generate an EPERM error.
- *     ==> Set UID to 1 and send a signal to init (pid = 1)
+ *     > Set UID to 1 and send a signal to init (pid  1)
  *  4) Verify EPERM error received and kill() returned -1.
  *
  *  Note:  These tests make the assumptions that:
@@ -32,46 +32,46 @@
 
 int main()
 {
-	int failure = 0;
+ int failure  0;
 
-	/*
-	 * ESRCH
-	 */
-	if (-1 == kill(999999, 0)) {
-		if (ESRCH == errno) {
-			printf("ESRCH error received\n");
-		} else {
-			printf("kill() failed on ESRCH errno not set correctly\n");
-			failure = 1;
-		}	
-	} else {
-		printf("kill() did not fail on ESRCH\n");
-		failure = 1;
-	}
+ /*
+  * ESRCH
+  */
+ if (-1  kill(999999, 0)) {
+  if (ESRCH  errno) {
+   printf("ESRCH error received\n");
+  } else {
+   printf("kill() failed on ESRCH errno not set correctly\n");
+   failure  1;
+  }
+ } else {
+  printf("kill() did not fail on ESRCH\n");
+  failure  1;
+ }
 
-	/*
-	 * EPERM
-	 */
-	setuid(1); /* this is added incase user is root. If user is normal user, then it has no effect on the tests*/
+ /*
+  * EPERM
+  */
+ setuid(1); /* this is added incase user is root. If user is normal user, then it has no effect on the tests*/
 
-	if (-1 == kill(1, 0)) {
-		if (EPERM == errno) {
-			printf("EPERM error received\n");
-		} else {
-			printf("kill() failed on EPERM errno not set correctly\n");
-			failure = 1;
-		}	
-	} else {
-		printf("kill() did not fail on EPERM\n");
-		failure = 1;
-	}
+ if (-1  kill(1, 0)) {
+  if (EPERM  errno) {
+   printf("EPERM error received\n");
+  } else {
+   printf("kill() failed on EPERM errno not set correctly\n");
+   failure  1;
+  }
+ } else {
+  printf("kill() did not fail on EPERM\n");
+  failure  1;
+ }
 
-	if (failure) {
-		printf("At least one test FAILED -- see output for status\n");
-		return PTS_FAIL;
-	} else {
-		printf("All tests PASSED\n");
-		return PTS_PASS;
-	}
+ if (failure) {
+  printf("At least one test FAILED -- see output for status\n");
+  return PTS_FAIL;
+ } else {
+  printf("All tests PASSED\n");
+  return PTS_PASS;
+ }
 }
 

@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library General Public License for more details.
- * 
+ *
  * For their contributions to this program, the author wishes to thank:
  *    Albert D. Cahalan, <albert@users.sf.net>
  *    Craig Small, <csmall@small.dropbear.id.au>
@@ -55,7 +55,7 @@
 #include "top.h"
 
 /*######  Miscellaneous global stuff  ####################################*/
-	/* Used for recording data to and reading data from a file.*/
+ /* Used for recording data to and reading data from a file.*/
 static FILE* outfile;
 static FILE* datafile;
 static int o_flag;
@@ -1764,52 +1764,52 @@ static void parse_args (char **args)
                if (1 != sscanf(cp, "%f", &tmp_delay))
                   std_err(fmtmk("bad delay '%s'", cp));
                break;
-	    case 'f':
+     case 'f':
                if (cp[1]) cp++;
                else if (*args) cp = *args++;
                else std_err("-f requires argument");
-	       if ((datafile = fopen(cp,"r")) == NULL)
-	          std_err(fmtmk("bad file arg; failed to fopen '%s' for reading",cp));
-	       retcode = fscanf(datafile, " MaxTasks:%d RunningTasks:%d SleepingTasks:%d StoppedTasks:%d ZombieTasks:%d", 
-		                &Task1, &Task2, &Task3, &Task4, &Task5);
-	       while( retcode == 5 )
+        if ((datafile = fopen(cp,"r")) == NULL)
+           std_err(fmtmk("bad file arg; failed to fopen '%s' for reading",cp));
+        retcode = fscanf(datafile, " MaxTasks:%d RunningTasks:%d SleepingTasks:%d StoppedTasks:%d ZombieTasks:%d",
+                  &Task1, &Task2, &Task3, &Task4, &Task5);
+        while( retcode == 5 )
                {
-		  loopcntr++;
+    loopcntr++;
                   fgets(buff, BUFF_SIZE, datafile);
-		  AvgMaxTasks+=Task1;
-	          AvgRunningTasks+=Task2;
-	          AvgSleepingTasks+=Task3;
+    AvgMaxTasks+=Task1;
+           AvgRunningTasks+=Task2;
+           AvgSleepingTasks+=Task3;
                   AvgStoppedTasks+=Task4;
                   AvgZombieTasks+=Task5;
-		  fscanf(datafile, " Cpu(s): User:%f\tSystem:%f\tNice:%f\t\tIdle:%f\tIO-wait:%f", 
-		                &CPU1, &CPU2, &CPU3, &CPU4, &CPU5); 
-		  AvgCPUuser+=CPU1;
-		  AvgCPUsys+=CPU2;
-		  AvgCPUnice+=CPU3;
-		  AvgCPUidle+=CPU4;
+    fscanf(datafile, " Cpu(s): User:%f\tSystem:%f\tNice:%f\t\tIdle:%f\tIO-wait:%f",
+                  &CPU1, &CPU2, &CPU3, &CPU4, &CPU5);
+    AvgCPUuser+=CPU1;
+    AvgCPUsys+=CPU2;
+    AvgCPUnice+=CPU3;
+    AvgCPUidle+=CPU4;
                   AvgCPUiowait+=CPU5;
-		  fscanf(datafile, " TotalMem:%dk\tUsedMem:%dk\tFreeMem:%dk\t\tBuffers:%dk",
-			 &Mem1, &Mem2, &Mem3, &Mem4); 
+    fscanf(datafile, " TotalMem:%dk\tUsedMem:%dk\tFreeMem:%dk\t\tBuffers:%dk",
+    &Mem1, &Mem2, &Mem3, &Mem4);
                   fgets(buff, BUFF_SIZE, datafile);
-		  AvgMem1=Mem1/1024; //this data should not change
-		  AvgMem2+=Mem2/1024;
-		  AvgMem3+=Mem3/1024;
-		  AvgMem4+=Mem4/1024;
-		  fscanf(datafile, " TotalSwap:%dk\tUsedSwap:%dk\tFreeSwap:%dk\tCached:%dk",
-			 &Mem1, &Mem2, &Mem3, &Mem4); 
+    AvgMem1=Mem1/1024; //this data should not change
+    AvgMem2+=Mem2/1024;
+    AvgMem3+=Mem3/1024;
+    AvgMem4+=Mem4/1024;
+    fscanf(datafile, " TotalSwap:%dk\tUsedSwap:%dk\tFreeSwap:%dk\tCached:%dk",
+    &Mem1, &Mem2, &Mem3, &Mem4);
                   fgets(buff, BUFF_SIZE, datafile);
-		  AvgSwap1=Mem1/1024; //this data should not change
-		  AvgSwap2+=Mem2/1024;
-		  AvgSwap3+=Mem3/1024;
-		  AvgSwap4+=Mem4/1024;
+    AvgSwap1=Mem1/1024; //this data should not change
+    AvgSwap2+=Mem2/1024;
+    AvgSwap3+=Mem3/1024;
+    AvgSwap4+=Mem4/1024;
                   fgets(buff, BUFF_SIZE, datafile);
-	          retcode = fscanf(datafile, " MaxTasks:%d RunningTasks:%d SleepingTasks:%d StoppedTasks:%d ZombieTasks:%d", 
-		                   &Task1, &Task2, &Task3, &Task4, &Task5);
-  	       }
-	       fclose(datafile);
-	       AvgMaxTasks=AvgMaxTasks / loopcntr;
-	       AvgRunningTasks=AvgRunningTasks / loopcntr;
-	       AvgSleepingTasks= AvgSleepingTasks / loopcntr;
+           retcode = fscanf(datafile, " MaxTasks:%d RunningTasks:%d SleepingTasks:%d StoppedTasks:%d ZombieTasks:%d",
+                     &Task1, &Task2, &Task3, &Task4, &Task5);
+         }
+        fclose(datafile);
+        AvgMaxTasks=AvgMaxTasks / loopcntr;
+        AvgRunningTasks=AvgRunningTasks / loopcntr;
+        AvgSleepingTasks= AvgSleepingTasks / loopcntr;
                AvgStoppedTasks= AvgStoppedTasks / loopcntr;
                AvgZombieTasks= AvgZombieTasks / loopcntr;
                AvgCPUuser= AvgCPUuser / loopcntr;
@@ -1825,23 +1825,23 @@ static void parse_args (char **args)
                AvgSwap2= AvgSwap2 / loopcntr;
                AvgSwap3= AvgSwap3 / loopcntr;
                AvgSwap4= AvgSwap4 / loopcntr;
-	       UsedMemPercentage= AvgMem2 / AvgMem1 * 100;
-	       UsedSwapPercentage= AvgSwap2 / AvgSwap1 * 100;
+        UsedMemPercentage= AvgMem2 / AvgMem1 * 100;
+        UsedSwapPercentage= AvgSwap2 / AvgSwap1 * 100;
 
-	       printf("\nAverage data from %s\n",cp);
-      	       printf("================================\n");
-	       printf(" MaxTasks:%.0f\t\tRunningTasks:%.0f\tSleepingTasks:%.0f\tStoppedTasks:%.0f\tZombieTasks:%.0f\n\n",
-   		        AvgMaxTasks,AvgRunningTasks,AvgSleepingTasks,AvgStoppedTasks,AvgZombieTasks);
-	       printf(" Cpu(s) : User:%.2f\%\tSystem:%.2f\%\t\tNice:%.2f\%\t\tIdle:%.2f\%\t\tIO-wait:%.2f\%\n\n",
-   			AvgCPUuser,AvgCPUsys,AvgCPUnice,AvgCPUidle,AvgCPUiowait);
-	       printf(" TotalMem:%dMb\t\tUsedMem:%.0LfMb\t\tFreeMem:%.0LfMb\t\tBuffers:%.0LfMb\n",
-   			AvgMem1,AvgMem2,AvgMem3,AvgMem4);
-	       printf(" TotalSwap:%dMb\tUsedSwap:%.0LfMb\t\tFreeSwap:%.0LfMb\t\tCached:%.0LfMb\n",
-   		        AvgSwap1,AvgSwap2,AvgSwap3,AvgSwap4);
-	       printf("\n UsedMem Percentage:%.2Lf\%\tUsedSwap Percentage:%.2Lf\%\n\n",UsedMemPercentage,UsedSwapPercentage);
-	       printf("A total of [%d] entries processed from %s.\n\n",loopcntr,cp);
-               exit(0);               
-	       break;
+        printf("\nAverage data from %s\n",cp);
+             printf("========\n");
+        printf(" MaxTasks:%.0f\t\tRunningTasks:%.0f\tSleepingTasks:%.0f\tStoppedTasks:%.0f\tZombieTasks:%.0f\n\n",
+          AvgMaxTasks,AvgRunningTasks,AvgSleepingTasks,AvgStoppedTasks,AvgZombieTasks);
+        printf(" Cpu(s) : User:%.2f\%\tSystem:%.2f\%\t\tNice:%.2f\%\t\tIdle:%.2f\%\t\tIO-wait:%.2f\%\n\n",
+ AvgCPUuser,AvgCPUsys,AvgCPUnice,AvgCPUidle,AvgCPUiowait);
+        printf(" TotalMem:%dMb\t\tUsedMem:%.0LfMb\t\tFreeMem:%.0LfMb\t\tBuffers:%.0LfMb\n",
+ AvgMem1,AvgMem2,AvgMem3,AvgMem4);
+        printf(" TotalSwap:%dMb\tUsedSwap:%.0LfMb\t\tFreeSwap:%.0LfMb\t\tCached:%.0LfMb\n",
+          AvgSwap1,AvgSwap2,AvgSwap3,AvgSwap4);
+        printf("\n UsedMem Percentage:%.2Lf\%\tUsedSwap Percentage:%.2Lf\%\n\n",UsedMemPercentage,UsedSwapPercentage);
+        printf("A total of [%d] entries processed from %s.\n\n",loopcntr,cp);
+               exit(0);
+        break;
             case 'h': case 'H':
             case 'v': case 'V':
                std_err(fmtmk("%s\nusage:\t%s%s"
@@ -1857,17 +1857,17 @@ static void parse_args (char **args)
                if (1 != sscanf(cp, "%d", &Loops) || 1 > Loops)
                   std_err(fmtmk("bad iterations arg '%s'", cp));
                break;
-	    case 'o':
-	       o_flag = 0;
+     case 'o':
+        o_flag = 0;
                if (cp[1]) cp++;
                else if (*args) cp = *args++;
                else std_err("-o requires argument");
-	       if ((outfile = fopen(cp,"a")) == NULL)
-	          std_err(fmtmk("bad file arg; failed to fopen '%s' for write",cp));
-	       else
-		  o_flag = 1;
-		  cp = cp + strlen(cp); 
-	       break;
+        if ((outfile = fopen(cp,"a")) == NULL)
+           std_err(fmtmk("bad file arg; failed to fopen '%s' for write",cp));
+        else
+    o_flag = 1;
+    cp = cp + strlen(cp);
+        break;
             case 'p':
                do {
                   if (selection_type) std_err("conflicting process selection");
@@ -2885,13 +2885,13 @@ static void summaryhlp (CPU_t *cpu, const char *pfx)
       , (float)i_frme * scale
       , (float)w_frme * scale));
    if (o_flag)
-      fprintf(outfile, " %s User:%.2f\tSystem:%.2f\tNice:%.2f\t\tIdle:%.2f\tIO-wait:%.2f\n"  
+      fprintf(outfile, " %s User:%.2f\tSystem:%.2f\tNice:%.2f\t\tIdle:%.2f\tIO-wait:%.2f\n"
               , pfx
               , (float)u_frme * scale
-      	      , (float)s_frme * scale
-      	      , (float)n_frme * scale
-      	      , (float)i_frme * scale
-      	      , (float)w_frme * scale);
+            , (float)s_frme * scale
+            , (float)n_frme * scale
+            , (float)i_frme * scale
+            , (float)w_frme * scale);
    Msg_row += 1;
 
    // remember for next time around
@@ -2947,7 +2947,7 @@ static proc_t **summary_show (void)
          , Frame_maxtask, Frame_running, Frame_sleepin
          , Frame_stopped, Frame_zombied));
       if (o_flag)
-         fprintf(outfile, " MaxTasks:%d\t\tRunningTasks:%d\tSleepingTasks:%d\tStoppedTasks:%d\tZombieTasks:%d\n\n" 
+         fprintf(outfile, " MaxTasks:%d\t\tRunningTasks:%d\tSleepingTasks:%d\tStoppedTasks:%d\tZombieTasks:%d\n\n"
                  , Frame_maxtask, Frame_running, Frame_sleepin
                  , Frame_stopped, Frame_zombied);
       Msg_row += 1;
@@ -2957,8 +2957,8 @@ static proc_t **summary_show (void)
       if ( CHKw(Curwin, View_CPUSUM)) {
          // display just the 1st /proc/stat line
          summaryhlp(&smpcpu[Cpu_tot], "Cpu(s):");
-	 if (o_flag)
-	    fprintf(outfile,"\n");
+  if (o_flag)
+     fprintf(outfile,"\n");
       } else {
          int i;
          char tmp[SMLBUFSIZ];
@@ -2977,7 +2977,7 @@ static proc_t **summary_show (void)
       show_special(0, fmtmk(MEMORY_line1
          , kb_main_total, kb_main_used, kb_main_free, kb_main_buffers));
       if (o_flag)
-         fprintf(outfile, " TotalMem:%dk\tUsedMem:%dk\tFreeMem:%dk\t\tBuffers:%dk\n" 
+         fprintf(outfile, " TotalMem:%dk\tUsedMem:%dk\tFreeMem:%dk\t\tBuffers:%dk\n"
                  , kb_main_total, kb_main_used, kb_main_free, kb_main_buffers);
       show_special(0, fmtmk(MEMORY_line2
          , kb_swap_total, kb_swap_used, kb_swap_free, kb_main_cached));
@@ -2987,7 +2987,7 @@ static proc_t **summary_show (void)
       Msg_row += 2;
    }
    if (o_flag)
-      fprintf(outfile,"============\n");
+      fprintf(outfile,"====\n");
    SETw(Curwin, NEWFRAM_cwo);
    return p_table;
 }

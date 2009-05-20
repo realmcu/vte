@@ -9,12 +9,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,17 +37,17 @@ stress test at the same time you run other tests, like a multi-user
 benchmark.
 
 CAUTION: running this program may crash your system, your disk and all
-	your data along! DO NOT RUN IT ON PRODUCTION SYSTEMS!
-	CONSIDER YOUR DISK FRIED.
-	REMEMBER THE DISCLAIMER PART OF THE LICENSE.
+ your data along! DO NOT RUN IT ON PRODUCTION SYSTEMS!
+ CONSIDER YOUR DISK FRIED.
+ REMEMBER THE DISCLAIMER PART OF THE LICENSE.
 
-	Running as user nobody and with all your filesystems
-	remounted to readonly may be wise..
+ Running as user nobody and with all your filesystems
+ remounted to readonly may be wise..
 
 
 TODO:
-	* in rand_long(), stuff in some real pointers to random data
-	* Does a syscall is supposed to send SIGSEGV?
+ * in rand_long(), stuff in some real pointers to random data
+ * Does a syscall is supposed to send SIGSEGV?
 */
 
 
@@ -65,27 +65,27 @@ TODO:
 #include "test.h"
 #include "usctest.h"
 
-char *TCID="crash02";
-int TST_TOTAL=1;
+char *TCID"crash02";
+int TST_TOTAL1;
 extern int Tst_count;
 
-static int x_opt = 0;
-static int v_opt = 0;
+static int x_opt  0;
+static int v_opt  0;
 static char *v_copt;
-static int s_opt = 0;
+static int s_opt  0;
 static char *s_copt;
-static int l_opt = 0;
+static int l_opt  0;
 static char *l_copt;
-static int n_opt = 0;
+static int n_opt  0;
 static char *n_copt;
 
-int verbose_level = 2;
+int verbose_level  2;
 
 /* depends on architecture.. */
-unsigned int sysno_max = 127;
+unsigned int sysno_max  127;
 
 int nseed;
-int ntries = 100;
+int ntries  100;
 
 /* max time allowed per try, in seconds */
 #define MAX_TRY_TIME 5
@@ -94,50 +94,50 @@ int ntries = 100;
 
 void cleanup()
 {
-	/*
-	 * remove the tmp directory and exit
-	 */
+ /*
+  * remove the tmp directory and exit
+  */
 
-	TEST_CLEANUP;
+ TEST_CLEANUP;
 
-	tst_rmdir();
+ tst_rmdir();
 
-	tst_exit();
+ tst_exit();
 }
 
 void setup()
 {
-	/*
-	 * setup a default signal hander and a
-	 * temporary working directory.
-	 */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+ /*
+  * setup a default signal hander and a
+  * temporary working directory.
+  */
+ tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	TEST_PAUSE;
+ TEST_PAUSE;
 
-	tst_tmpdir();
+ tst_tmpdir();
 }
 
 void help()
 {
-	printf("  -x      dry run, hexdump random code instead\n");
-	printf("  -l x    max syscall no\n");
-	printf("  -v x    verbose level\n");
-	printf("  -s x    random seed\n");
-	printf("  -n x    ntries\n");
+ printf("  -x      dry run, hexdump random code instead\n");
+ printf("  -l x    max syscall no\n");
+ printf("  -v x    verbose level\n");
+ printf("  -s x    random seed\n");
+ printf("  -n x    ntries\n");
 }
 
 /*
  */
-option_t options[] =
+option_t options[] 
 {
-	{ "v:", &v_opt, &v_copt },
-	{ "l:", &l_opt, &l_copt },
-	{ "s:", &s_opt, &s_copt },
-	{ "n:", &n_opt, &n_copt },
-	{ "x", &x_opt, NULL },
+ { "v:", &v_opt, &v_copt },
+ { "l:", &l_opt, &l_copt },
+ { "s:", &s_opt, &s_copt },
+ { "n:", &n_opt, &n_copt },
+ { "x", &x_opt, NULL },
 
-	{ NULL, NULL, NULL }
+ { NULL, NULL, NULL }
 };
 
 
@@ -154,42 +154,42 @@ main (int argc, char *argv[])
   char *msg;
   int lc;
 
-  if ( (msg=parse_opts(argc, argv, options, help)) != (char *) NULL )
-	tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+  if ( (msgparse_opts(argc, argv, options, help)) ! (char *) NULL )
+ tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 
   if (v_opt)
-	  verbose_level = atoi(v_copt);
+   verbose_level  atoi(v_copt);
 
   if (n_opt)
-	  ntries = atoi(n_copt);
+   ntries  atoi(n_copt);
 
   if (l_opt)
-	  sysno_max = atoi(l_copt);
+   sysno_max  atoi(l_copt);
 
   if (s_opt)
-	  nseed = atoi(s_copt);
+   nseed  atoi(s_copt);
   else
-	  nseed = time(NULL);
+   nseed  time(NULL);
 
    setup();
 
-   for (lc=0; TEST_LOOPING(lc); lc++)
+   for (lc0; TEST_LOOPING(lc); lc++)
     {
-		Tst_count=0;
+  Tst_count0;
 
-		tst_resm(TINFO, "crashme02 %d %d %d",
-	   		sysno_max, nseed, ntries);
+  tst_resm(TINFO, "crashme02 %d %d %d",
+   sysno_max, nseed, ntries);
 
-  		srand (nseed);
-		badboy_fork ();
+ srand (nseed);
+  badboy_fork ();
 
-		/* still there? */
-		tst_resm(TPASS, "we're still here, OS seems to be robust");
+  /* still there? */
+  tst_resm(TPASS, "we're still here, OS seems to be robust");
 
-		nseed++;
-	}
-	cleanup();
-	return 0;
+  nseed++;
+ }
+ cleanup();
+ return 0;
 }
 
 /* ************************* */
@@ -202,14 +202,14 @@ void monitor_fcn (int sig)
 {
   int status;
 
- if (verbose_level >= 3) 
-	    printf ("time limit reached on pid. using kill.\n");
+ if (verbose_level > 3)
+     printf ("time limit reached on pid. using kill.\n");
 
-  status = kill (badboy_pid, SIGKILL);
+  status  kill (badboy_pid, SIGKILL);
   if (status < 0)
     {
-	if (verbose_level >= 3) 
-      		printf ("failed to kill process\n");
+ if (verbose_level > 3)
+     printf ("failed to kill process\n");
     }
 }
 
@@ -217,43 +217,43 @@ void monitor_fcn (int sig)
 void
 badboy_fork ()
 {
-	int status, pid;
+ int status, pid;
 
-      status = fork ();
-      badboy_pid = status;
-      if (status == 0)	/* badboy */
-	{
+      status  fork ();
+      badboy_pid  status;
+      if (status  0) /* badboy */
+ {
 #ifdef DEBUG_LATE_BADBOY
-	  sleep(ntries*MAX_TRY_TIME+10);
+   sleep(ntries*MAX_TRY_TIME+10);
 #else
-	  badboy_loop ();
+   badboy_loop ();
 #endif
-	  exit (0);	/* tough guy */
-	}
+   exit (0); /* tough guy */
+ }
       else if (status < 0)
-	perror ("fork");
-      else			/* parent watching over badboy */
-	{
-	  if (verbose_level > 3)
-	  	printf ("badboy pid = %d\n", badboy_pid);
+ perror ("fork");
+      else   /* parent watching over badboy */
+ {
+   if (verbose_level > 3)
+   printf ("badboy pid  %d\n", badboy_pid);
 
 /* don't trust the child to return at night */
       my_signal (SIGALRM, monitor_fcn);
       alarm (ntries*MAX_TRY_TIME);
 
-	  pid = wait (&status);
-	  if (pid <= 0)
-	  {
-		  perror ("wait");
-	  } else {
-	  	if (verbose_level > 3)
-		  printf ("pid %d exited with status %d\n", pid, status);
-		#if 0
-		record_status(status);
-		#endif
-	   }
-	}	/* parent */
-	alarm(0);
+   pid  wait (&status);
+   if (pid < 0)
+   {
+    perror ("wait");
+   } else {
+   if (verbose_level > 3)
+    printf ("pid %d exited with status %d\n", pid, status);
+  #if 0
+  record_status(status);
+  #endif
+    }
+ } /* parent */
+ alarm(0);
 }
 
 /* *************** status recording ************************* */
@@ -264,10 +264,10 @@ static int errno_table[STATUS_MAX];
 
 void record_errno(unsigned int n)
 {
-	if (n >= STATUS_MAX)
-		return;
+ if (n > STATUS_MAX)
+  return;
 
-	errno_table[n]++;
+ errno_table[n]++;
 }
 
 /* may not work with -c option */
@@ -276,14 +276,14 @@ summarize_errno ()
 {
   int i;
 
-  if (x_opt || verbose_level < 2) 
-		  return;
+  if (x_opt || verbose_level < 2)
+    return;
 
   printf ("errno status ... number of cases\n");
-  for (i = 0; i < STATUS_MAX; i++)
+  for (i  0; i < STATUS_MAX; i++)
     {
       if (errno_table[i])
-      	printf ( "%12d ... %5d\n", i, errno_table[i]);
+      printf ( "%12d ... %5d\n", i, errno_table[i]);
     }
 }
 
@@ -310,25 +310,25 @@ badboy_loop ()
   int i;
 
 
-  for (i = 0; i < ntries; ++i)
+  for (i  0; i < ntries; ++i)
     {
-	  /* level 5 */
+   /* level 5 */
 
-  if (!x_opt && verbose_level >= 5) {
-		printf ("try %d\n", i);
+  if (!x_opt && verbose_level > 5) {
+  printf ("try %d\n", i);
   }
 
-      if (setjmp (again_buff) == 3)
-	{
-  	  if (verbose_level >= 5)
-	  	printf ("Barfed\n");
-	}
+      if (setjmp (again_buff)  3)
+ {
+    if (verbose_level > 5)
+   printf ("Barfed\n");
+ }
       else
-	{
-	  set_up_signals ();
-	  alarm (MAX_TRY_TIME);
-	  try_one_crash (i);
-	}
+ {
+   set_up_signals ();
+   alarm (MAX_TRY_TIME);
+   try_one_crash (i);
+ }
   }
   summarize_errno();
 }
@@ -340,47 +340,47 @@ void again_handler (int sig)
   switch (sig)
     {
     case SIGILL:
-      ss = " illegal instruction";
+      ss  " illegal instruction";
       break;
 #ifdef SIGTRAP
     case SIGTRAP:
-      ss = " trace trap";
+      ss  " trace trap";
       break;
 #endif
     case SIGFPE:
-      ss = " arithmetic exception";
+      ss  " arithmetic exception";
       break;
 #ifdef SIGBUS
     case SIGBUS:
-      ss = " bus error";
+      ss  " bus error";
       break;
 #endif
     case SIGSEGV:
-      ss = " segmentation violation";
+      ss  " segmentation violation";
       break;
 #ifdef SIGIOT
     case SIGIOT:
-      ss = " IOT instruction";
+      ss  " IOT instruction";
       break;
 #endif
 #ifdef SIGEMT
     case SIGEMT:
-      ss = " EMT instruction";
+      ss  " EMT instruction";
       break;
 #endif
 #ifdef SIGALRM
     case SIGALRM:
-      ss = " alarm clock";
+      ss  " alarm clock";
       break;
 #endif
     case SIGINT:
-      ss = " interrupt";
+      ss  " interrupt";
       break;
     default:
-      ss = "";
+      ss  "";
     }
-  if (verbose_level >= 5) 
-  	printf ("Got signal %d%s\n", sig, ss);
+  if (verbose_level > 5)
+  printf ("Got signal %d%s\n", sig, ss);
 
   longjmp (again_buff, 3);
 }
@@ -389,9 +389,9 @@ void my_signal (int sig, void (*func) ())
 {
   struct sigaction act;
 
-  act.sa_handler = func;
+  act.sa_handler  func;
   memset (&act.sa_mask, 0x00, sizeof (sigset_t));
-  act.sa_flags = SA_NOMASK|SA_RESTART;
+  act.sa_flags  SA_NOMASK|SA_RESTART;
   sigaction (sig, &act, 0);
 }
 
@@ -425,25 +425,25 @@ set_up_signals ()
  * FIXME: 64bits systems
  *
  * TODO: improve arg mixing (16bits and 8bits values, NULLs, etc.).
- *	big values as returned by rand() are no so interresting 
- *	(except when used as pointers) because they may fall too 
- *	quickly in the invalid parameter sieve. Smaller values,
- *	will be more insidious because they may refer to existing
- *	objects (pids, fd, etc.).
+ * big values as returned by rand() are no so interresting
+ * (except when used as pointers) because they may fall too
+ * quickly in the invalid parameter sieve. Smaller values,
+ * will be more insidious because they may refer to existing
+ * objects (pids, fd, etc.).
  */
 long int rand_long()
 {
     int r1, r2;
 
-    r1 = rand();
-    r2 = rand();
-    
+    r1  rand();
+    r2  rand();
+
     if (r1 & 0x10000L)
-    	r1 = 0;
+    r1  0;
     if (!r1 && (r2 & 0x50000L))
-    	r2 = 0;
+    r2  0;
     else if (!r1 && (r2 & 0x20000L))
-    	r2 &= 0x00ffL;
+    r2 & 0x00ffL;
 
     return (long int) ((r1 & 0xffffL) << 16) | (r2 & 0xffffL);
 }
@@ -453,19 +453,19 @@ try_one_crash (int try_num)
 {
   long int sysno, arg1, arg2, arg3, arg4, arg5, arg6, arg7;
 
-  sysno = rand()%sysno_max;
-  arg1 = rand_long();
-  arg2 = rand_long();
-  arg3 = rand_long();
-  arg4 = rand_long();
-  arg5 = rand_long();
-  arg6 = rand_long();
-  arg7 = rand_long();
+  sysno  rand()%sysno_max;
+  arg1  rand_long();
+  arg2  rand_long();
+  arg3  rand_long();
+  arg4  rand_long();
+  arg5  rand_long();
+  arg6  rand_long();
+  arg7  rand_long();
 
   if (x_opt) {
-      if (verbose_level >= 1) 
-  	printf("%04d: syscall(%ld, %#lx, %#lx, %#lx, %#lx, %#lx, %#lx, %#lx)\n",
-		try_num, sysno, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+      if (verbose_level > 1)
+  printf("%04d: syscall(%ld, %#lx, %#lx, %#lx, %#lx, %#lx, %#lx, %#lx)\n",
+  try_num, sysno, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
   } else {
     syscall (sysno, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
     record_errno(errno);

@@ -19,19 +19,19 @@
 
 /*
  * NAME
- *	posix_fadvise03.c
+ * posix_fadvise03.c
  *
  * DESCRIPTION
- *	Check the value that posix_fadvise returns for wrong ADVISE value.
+ * Check the value that posix_fadvise returns for wrong ADVISE value.
  *
  * USAGE
- * 	posix_fadvise03
+ * posix_fadvise03
  *
  * HISTORY
- *	11/2007 Initial version by Masatake YAMATO <yamato@redhat.com>
+ * 11/2007 Initial version by Masatake YAMATO <yamato@redhat.com>
  *
  * RESTRICTIONS
- * 	None
+ * None
  */
 
 
@@ -57,31 +57,31 @@ void setup();
 void cleanup();
 
 
-TCID_DEFINE(posix_fadvise03);	/* Test program identifier.    */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+TCID_DEFINE(posix_fadvise03); /* Test program identifier.    */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 
-char fname[] = "/bin/cat";	/* test executable to open */
-int  fd      = -1;		/* initialized in open */
+char fname[]  "/bin/cat"; /* test executable to open */
+int  fd       -1;  /* initialized in open */
 
-int  expected_error = EINVAL;
+int  expected_error  EINVAL;
 
-int defined_advise[] = { 
-	POSIX_FADV_NORMAL, 
-        POSIX_FADV_SEQUENTIAL, 
-        POSIX_FADV_RANDOM, 
-        POSIX_FADV_NOREUSE, 
-        POSIX_FADV_WILLNEED, 
+int defined_advise[]  {
+ POSIX_FADV_NORMAL,
+        POSIX_FADV_SEQUENTIAL,
+        POSIX_FADV_RANDOM,
+        POSIX_FADV_NOREUSE,
+        POSIX_FADV_WILLNEED,
         POSIX_FADV_DONTNEED,
 };
 #define defined_advise_total (sizeof(defined_advise) / sizeof(defined_advise[0]))
 
 #if 0
 /* Too many test cases. */
-int TST_TOTAL 	 = (INT_MAX - defined_advise_total);
-int advise_limit = INT_MAX;
-#else 
-int TST_TOTAL 	 = (32 - defined_advise_total);
-int advise_limit = 32;
+int TST_TOTAL   (INT_MAX - defined_advise_total);
+int advise_limit  INT_MAX;
+#else
+int TST_TOTAL   (32 - defined_advise_total);
+int advise_limit  32;
 #endif /* 0 */
 
 /* is_defined_advise:
@@ -90,131 +90,131 @@ int advise_limit = 32;
 static int
 is_defined_advise(int advise)
 {
-	int i;
-	for (i = 0; i < defined_advise_total; i++) {
-		if (defined_advise[i] == advise)
-		  return 1;
-	}
+ int i;
+ for (i  0; i < defined_advise_total; i++) {
+  if (defined_advise[i]  advise)
+    return 1;
+ }
 
-	return 0;
+ return 0;
 }
 
 int
 main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-	int advise;
+ int lc;   /* loop counter */
+ char *msg;  /* message returned from parse_opts */
+ int advise;
 
-        /* Check this system has fadvise64 system which is used 
+        /* Check this system has fadvise64 system which is used
           in posix_fadvise. */
-        if ((_FILE_OFFSET_BITS != 64) && (__NR_fadvise64 == 0)) {
+        if ((_FILE_OFFSET_BITS ! 64) && (__NR_fadvise64  0)) {
                tst_resm(TWARN, "This test can only run on kernels that implements ");
                tst_resm(TWARN, "fadvise64 which is used from posix_fadvise");
                exit(0);
         }
 
-	/*
-	 * parse standard options
-	 */
-	if ( (msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *) NULL )
-	  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+ /*
+  * parse standard options
+  */
+ if ( (msg  parse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *) NULL )
+   tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 
-	/*
-	 * perform global setup for test
-	 */
-	setup();
+ /*
+  * perform global setup for test
+  */
+ setup();
 
-	/*
-	 * check looping state if -i option given on the command line
-	 */
-	for (lc=0; TEST_LOOPING(lc); lc++) {
+ /*
+  * check looping state if -i option given on the command line
+  */
+ for (lc0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
-		Tst_count=0;
+  /* reset Tst_count in case we are looping. */
+  Tst_count0;
 
-		/* loop through the test cases */
-		for (advise = 0; advise < advise_limit; advise++) {
-			
-			/* Don't use defiend advise as an argument. */
-			if (is_defined_advise(advise)) {
-				continue;
-			}
-			
-			TEST(posix_fadvise(fd, 0, 0, advise));
+  /* loop through the test cases */
+  for (advise  0; advise < advise_limit; advise++) {
 
-			if (TEST_RETURN == 0) {
-				tst_resm(TFAIL, "call succeeded unexpectedly");
-				continue;
-			}
-	  
-			/* Man page says:
-			   "On error, an error number is returned." */
-			if (TEST_RETURN == expected_error) {
-				tst_resm(TPASS,
-					 "expected failure - "
-					 "returned value = %d, advise = %d : %s", 
-					 TEST_RETURN,
-					 advise,
-					 strerror(TEST_RETURN));
-			} else {
-				tst_resm(TFAIL,
-					 "unexpected return value - %d : %s, advise %d - "
-					 "expected %d", 
-					 TEST_RETURN,
-					 strerror(TEST_RETURN), 
-					 advise,
-					 expected_error);
-			}
-		}
-	}	/* End for TEST_LOOPING */
+   /* Don't use defiend advise as an argument. */
+   if (is_defined_advise(advise)) {
+    continue;
+   }
 
-	/*
-	 * cleanup and exit
-	 */
-	cleanup();
+   TEST(posix_fadvise(fd, 0, 0, advise));
 
-	return(0);
-}	/* End main */
+   if (TEST_RETURN  0) {
+    tst_resm(TFAIL, "call succeeded unexpectedly");
+    continue;
+   }
+
+   /* Man page says:
+      "On error, an error number is returned." */
+   if (TEST_RETURN  expected_error) {
+    tst_resm(TPASS,
+      "expected failure - "
+      "returned value  %d, advise  %d : %s",
+      TEST_RETURN,
+      advise,
+      strerror(TEST_RETURN));
+   } else {
+    tst_resm(TFAIL,
+      "unexpected return value - %d : %s, advise %d - "
+      "expected %d",
+      TEST_RETURN,
+      strerror(TEST_RETURN),
+      advise,
+      expected_error);
+   }
+  }
+ } /* End for TEST_LOOPING */
+
+ /*
+  * cleanup and exit
+  */
+ cleanup();
+
+ return(0);
+} /* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void 
+void
 setup()
 {
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 
-	fd = open(fname, O_RDONLY);
-	if (fd < 0) {
-		tst_brkm(TBROK, cleanup, 
-			 "Unable to open a file(\"%s\") for test: %s\n",
-			 fname,strerror(errno));
-	} 
-}	/* End setup() */
+ fd  open(fname, O_RDONLY);
+ if (fd < 0) {
+  tst_brkm(TBROK, cleanup,
+    "Unable to open a file(\"%s\") for test: %s\n",
+    fname,strerror(errno));
+ }
+} /* End setup() */
 
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
+ *  completion or premature exit.
  */
-void 
+void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	if (fd != -1) {
-		close(fd);
-	}
+ if (fd ! -1) {
+  close(fd);
+ }
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}	/* End cleanup() */
+ /* exit with return code appropriate for results */
+ tst_exit();
+} /* End cleanup() */

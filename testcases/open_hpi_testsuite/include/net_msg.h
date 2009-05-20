@@ -10,9 +10,9 @@
  * full licensing terms.
  *
  * Authors:  David Judkovics
- *     
- *     
- *     
+ *
+ *
+ *
  */
 
 #ifndef __NET_MSG_H
@@ -32,34 +32,34 @@ enum Msg_Types {
         OPEN = 1,
         CLOSE,
         GET_EVENT,
-        DISCOVER_RESOURCES, 
-        GET_SEL_ID, 
-        GET_SEL_INFO, 
-        SET_SEL_TIME, 
-        SET_SEL_STATE, 
-        GET_SENSOR_DATA, 
-        GET_SENSOR_THRESHOLDS, 
-        SET_SENSOR_THRESHOLDS,  
-        GET_SENSOR_EVENT_ENABLES, 
-        SET_SENSOR_EVENT_ENABLES, 
-        GET_CONTROL_INFO, 
-        GET_CONTROL_STATE, 
-        SET_CONTROL_STATE, 
-        GET_INVENTORY_SIZE, 
+        DISCOVER_RESOURCES,
+        GET_SEL_ID,
+        GET_SEL_INFO,
+        SET_SEL_TIME,
+        SET_SEL_STATE,
+        GET_SENSOR_DATA,
+        GET_SENSOR_THRESHOLDS,
+        SET_SENSOR_THRESHOLDS,
+        GET_SENSOR_EVENT_ENABLES,
+        SET_SENSOR_EVENT_ENABLES,
+        GET_CONTROL_INFO,
+        GET_CONTROL_STATE,
+        SET_CONTROL_STATE,
+        GET_INVENTORY_SIZE,
         GET_INVENTORY_INFO,
-        SET_INVENTORY_INFO, 
-        GET_WATCHDOG_INFO, 
-        SET_WATCHDOG_INFO, 
-        RESET_WATCHDOG, 
-        GET_HOTSWAP_STATE, 
-        SET_HOTSWAP_STATE, 
-        REQUEST_HOTSWAP_ACTION, 
-        GET_POWER_STATE, 
+        SET_INVENTORY_INFO,
+        GET_WATCHDOG_INFO,
+        SET_WATCHDOG_INFO,
+        RESET_WATCHDOG,
+        GET_HOTSWAP_STATE,
+        SET_HOTSWAP_STATE,
+        REQUEST_HOTSWAP_ACTION,
+        GET_POWER_STATE,
         SET_POWER_STATE,
-        GET_INDICATOR_STATE, 
-        SET_INDICATOR_STATE, 
-        CONTROL_PARM, 
-        GET_RESET_STATE,  
+        GET_INDICATOR_STATE,
+        SET_INDICATOR_STATE,
+        CONTROL_PARM,
+        GET_RESET_STATE,
         SET_RESET_STATE,
         UNKNOWN_MSG_TYPE
 };
@@ -87,7 +87,7 @@ typedef struct {
         NETWORK_HDR_STR header;
         int error;
         int num_resource_events;
-	struct oh_event event;   
+	struct oh_event event;
 //	this is for your own good need to recreate indexing without use of this element
 //        struct oh_event oh_event_arry[3];
 } DISCOVER_RESOURCES_MSG_STR;

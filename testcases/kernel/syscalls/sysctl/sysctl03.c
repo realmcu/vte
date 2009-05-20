@@ -19,18 +19,18 @@
 
 /*
  * NAME
- *	sysctl03.c
+ * sysctl03.c
  *
  * DESCRIPTION
- *	Testcase to check that sysctl(2) sets errno to EPERM correctly.
+ * Testcase to check that sysctl(2) sets errno to EPERM correctly.
  *
  * ALGORITHM
- *	a.	Call sysctl(2) as a root user, and attempt to write data
- *		to the kernel_table[]. Since the table does not have write
- *		permissions even for the root, it should fail EPERM.
- *	b.	Call sysctl(2) as a non-root user, and attempt to write data
- *		to the kernel_table[]. Since the table does not have write
- *		permission for the regular user, it should fail with EPERM.
+ * a. Call sysctl(2) as a root user, and attempt to write data
+ *  to the kernel_table[]. Since the table does not have write
+ *  permissions even for the root, it should fail EPERM.
+ * b. Call sysctl(2) as a non-root user, and attempt to write data
+ *  to the kernel_table[]. Since the table does not have write
+ *  permission for the regular user, it should fail with EPERM.
  *
  * USAGE:  <for command-line>
  *  sysctl03 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -42,10 +42,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- *	Test must be run as root.
+ * Test must be run as root.
  */
 #include "test.h"
 #include "usctest.h"
@@ -58,15 +58,15 @@
 #include <linux/sysctl.h>
 #include <pwd.h>
 
-char *TCID = "sysctl03";
-int TST_TOTAL = 2;
+char *TCID  "sysctl03";
+int TST_TOTAL  2;
 extern int Tst_count;
 
 int sysctl(int *name, int nlen, void *oldval, size_t *oldlenp,
            void *newval, size_t newlen)
 {
-	struct __sysctl_args args={name,nlen,oldval,oldlenp,newval,newlen};
-	return syscall(__NR__sysctl, &args);
+ struct __sysctl_args args{name,nlen,oldval,oldlenp,newval,newlen};
+ return syscall(__NR__sysctl, &args);
 }
 
 
@@ -76,101 +76,101 @@ int sysctl(int *name, int nlen, void *oldval, size_t *oldlenp,
 void setup(void);
 void cleanup(void);
 
-int exp_enos[] = {EPERM, 0};
+int exp_enos[]  {EPERM, 0};
 
 int main(int ac, char **av)
 {
-	int lc;
-	char *msg;
+ int lc;
+ char *msg;
 
-	char osname[OSNAMESZ];
-	int osnamelth, status;
-	int name[] = { CTL_KERN, KERN_OSTYPE };
-	pid_t pid;
-	struct passwd *ltpuser;
+ char osname[OSNAMESZ];
+ int osnamelth, status;
+ int name[]  { CTL_KERN, KERN_OSTYPE };
+ pid_t pid;
+ struct passwd *ltpuser;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+ }
 
-	setup();
+ setup();
 
-	TEST_EXP_ENOS(exp_enos);
+ TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option is given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* check looping state if -i option is given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		strcpy(osname, "Linux"); 
-		osnamelth = SIZE(osname);
+  strcpy(osname, "Linux");
+  osnamelth  SIZE(osname);
 
-		TEST(sysctl(name, SIZE(name), 0, 0, osname, osnamelth));
+  TEST(sysctl(name, SIZE(name), 0, 0, osname, osnamelth));
 
-		if (TEST_RETURN != -1) {
-			tst_resm(TFAIL, "sysctl(2) succeeded unexpectedly");
-		} else {
-			TEST_ERROR_LOG(TEST_ERRNO);
+  if (TEST_RETURN ! -1) {
+   tst_resm(TFAIL, "sysctl(2) succeeded unexpectedly");
+  } else {
+   TEST_ERROR_LOG(TEST_ERRNO);
 
-			if (TEST_ERRNO != EPERM) {
-				tst_resm(TFAIL, "Expected EPERM (%d), got %d: %s",
-					 EPERM, TEST_ERRNO, strerror(TEST_ERRNO));
-			} else {
-				tst_resm(TPASS, "Got expected EPERM error");
-			}
-		}
+   if (TEST_ERRNO ! EPERM) {
+    tst_resm(TFAIL, "Expected EPERM (%d), got %d: %s",
+      EPERM, TEST_ERRNO, strerror(TEST_ERRNO));
+   } else {
+    tst_resm(TPASS, "Got expected EPERM error");
+   }
+  }
 
-		osnamelth = SIZE(osname);
-		if ((ltpuser = getpwnam("nobody")) == NULL) {
-			tst_brkm(TBROK, cleanup, "getpwnam() failed");
-		}
+  osnamelth  SIZE(osname);
+  if ((ltpuser  getpwnam("nobody"))  NULL) {
+   tst_brkm(TBROK, cleanup, "getpwnam() failed");
+  }
 
-		/* set process ID to "ltpuser1" */
-		if (seteuid(ltpuser->pw_uid) == -1) {
-			tst_brkm(TBROK, cleanup,
-				 "seteuid() failed, errno %d", errno);
-		}
+  /* set process ID to "ltpuser1" */
+  if (seteuid(ltpuser->pw_uid)  -1) {
+   tst_brkm(TBROK, cleanup,
+     "seteuid() failed, errno %d", errno);
+  }
 
-		if ((pid = FORK_OR_VFORK()) == -1) {
-			tst_brkm(TBROK, cleanup, "fork() failed");
-		}
+  if ((pid  FORK_OR_VFORK())  -1) {
+   tst_brkm(TBROK, cleanup, "fork() failed");
+  }
 
-		if (pid == 0) {			/* child */
-			TEST(sysctl(name, SIZE(name), 0, 0, osname,
-				   osnamelth));
+  if (pid  0) {   /* child */
+   TEST(sysctl(name, SIZE(name), 0, 0, osname,
+       osnamelth));
 
-			if (TEST_RETURN != -1) {
-				tst_resm(TFAIL, "call succeeded unexpectedly");
-			} else {
-				TEST_ERROR_LOG(TEST_ERRNO);
+   if (TEST_RETURN ! -1) {
+    tst_resm(TFAIL, "call succeeded unexpectedly");
+   } else {
+    TEST_ERROR_LOG(TEST_ERRNO);
 
-				if (TEST_ERRNO != EPERM) {
-					tst_resm(TFAIL, "Expected EPERM, got "
-						 "%d", TEST_ERRNO);
-				} else {
-					tst_resm(TPASS, "Got expected EPERM "
-						 "error");
-				}
-			}
+    if (TEST_ERRNO ! EPERM) {
+     tst_resm(TFAIL, "Expected EPERM, got "
+       "%d", TEST_ERRNO);
+    } else {
+     tst_resm(TPASS, "Got expected EPERM "
+       "error");
+    }
+   }
 
-			cleanup();
-	
-		} else {			/* parent */
-			/* wait for the child to finish */
-			wait(&status);
-		}
+   cleanup();
 
-		/* set process ID back to root */
-		if (seteuid(0) == -1) {
-			tst_brkm(TBROK, cleanup, "seteuid() failed");
-		}
-	}
-	cleanup();
+  } else {   /* parent */
+   /* wait for the child to finish */
+   wait(&status);
+  }
 
-	/*NOTREACHED*/
-	return(0);
+  /* set process ID back to root */
+  if (seteuid(0)  -1) {
+   tst_brkm(TBROK, cleanup, "seteuid() failed");
+  }
+ }
+ cleanup();
+
+ /*NOTREACHED*/
+ return(0);
 }
 
 /*
@@ -179,31 +179,31 @@ int main(int ac, char **av)
 void
 setup()
 {
-	/* test must be run as root */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
-	}
+ /* test must be run as root */
+ if (geteuid() ! 0) {
+  tst_brkm(TBROK, tst_exit, "Test must be run as root");
+ }
 
-	/* capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
+ *        completion or premature exit.
  */
 void
 cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing stats if that option was specified.
+  * print errno log if that option was specified.
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

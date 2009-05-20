@@ -8,13 +8,13 @@
 #======================================================================
 #
 #   Freescale SemiconductorConfidential Proprietary
-#  (c) Copyright 2004, Freescale Semiconductor, Inc.  All rights reserved.  
-#            
-#Presence of a copyright notice is not an acknowledgement of publication.  
-#This software file listing contains information of Freescale Semiconductor, Inc. that is of a confidential and 
-#proprietary nature and any viewing or use of this file is prohibited without specific written 
+#  (c) Copyright 2004, Freescale Semiconductor, Inc.  All rights reserved.
+#
+#Presence of a copyright notice is not an acknowledgement of publication.
+#This software file listing contains information of Freescale Semiconductor, Inc. that is of a confidential and
+#proprietary nature and any viewing or use of this file is prohibited without specific written
 #permission from Freescale Semiconductor, Inc.
-     
+
 #=====================================================================================
 #Revision History:
 #                            Modification     Tracking
@@ -27,20 +27,20 @@
 #export PATH=${PATH}:${TESTCASES_HOME}
 
 # Function:     setup
-#        
+#
 # Description:  - Check if required commands exits
 #               - Export global variables
 #               - Check if required config files exits
 #               - Create temporary files and directories
-#   
+#
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
 setup()
 {
-    # Total number of test cases in this file. 
+    # Total number of test cases in this file.
     export TST_TOTAL=1
 
-    # The TCID and TST_COUNT variables are required by the LTP 
+    # The TCID and TST_COUNT variables are required by the LTP
     # command line harness APIs, these variables are not local to this program.
 
     # Test case identifier
@@ -88,7 +88,7 @@ connectivity_test()
     if [ $result -ne 0 ]
     then
         tst_resm TPASS "Pass to test connectivity"
-    else 
+    else
         tst_resm TFAIL "Fail to test connectivity"
         RC=1
     fi

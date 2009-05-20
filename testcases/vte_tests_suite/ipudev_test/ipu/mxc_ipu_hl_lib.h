@@ -221,20 +221,20 @@ typedef struct {
  *
  * @param	output0		The first output paramter for ipu task.
  *
- * @param	output1 	Ipu can support 2 output after postprocess
- * 				from 1 input, this is second one's setting.
- * 				If user want 2 outputs both display to fb,
- * 				please make sure output0 is on fb0.
+ * @param	output1 Ipu can support 2 output after postprocess
+ * 		from 1 input, this is second one's setting.
+ * 		If user want 2 outputs both display to fb,
+ * 		please make sure output0 is on fb0.
  *
  * @param	mode		The ipu mode user can define, refer to
- * 				header file.
+ * 		header file.
  *
  * @param	ipu_handle	User just allocate this structure for init.
- * 				this parameter will provide some necessary
- * 				info after task init function.
+ * 		this parameter will provide some necessary
+ * 		info after task init function.
  *
  * @return	This function returns 0 on success or negative error code on
- * 		fail.
+ * fail.
  */
 int mxc_ipu_lib_task_init(ipu_lib_input_param_t * input,
 		ipu_lib_overlay_param_t * overlay,
@@ -248,7 +248,7 @@ int mxc_ipu_lib_task_init(ipu_lib_input_param_t * input,
  * @param	ipu_handle	The ipu task handle need to un-init.
  *
  * @return	This function returns 0 on success or negative error code on
- * 		fail.
+ * fail.
  */
 void mxc_ipu_lib_task_uninit(ipu_lib_handle_t * ipu_handle);
 
@@ -271,21 +271,21 @@ void mxc_ipu_lib_task_uninit(ipu_lib_handle_t * ipu_handle);
  * @param	ipu_handle	The ipu task handle need to update buffer.
  *
  * @param	new_inbuf_paddr	User can set phyaddr to their own allocated
- * 				buffer addr, ipu lib will update the buffer
- * 				from this address for process. If user do not
- * 				want to use it, please let it be zero, and
- * 				fill the buffer according to inbuf_start
- * 				parameter in ipu_handle.
+ * 		buffer addr, ipu lib will update the buffer
+ * 		from this address for process. If user do not
+ * 		want to use it, please let it be zero, and
+ * 		fill the buffer according to inbuf_start
+ * 		parameter in ipu_handle.
  *
  * @param	new_ovbuf_paddr User defined overlay physical buffer address.
  *
  * @param	output_callback	IPU lib will call output_callback funtion
- * 				when there is output data.
+ * 		when there is output data.
  *
  * @param	output_cb_arg	The argument will be passed to output_callback.
  *
  * @return	This function returns the next update buffer index number on success
- * 		or negative error code on fail.
+ * or negative error code on fail.
  */
 int mxc_ipu_lib_task_buf_update(ipu_lib_handle_t * ipu_handle,
 	dma_addr_t new_inbuf_paddr, dma_addr_t new_ovbuf_paddr,

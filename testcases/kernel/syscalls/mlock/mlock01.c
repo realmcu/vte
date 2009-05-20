@@ -19,15 +19,15 @@
 
 /*
  * NAME
- * 	mlock01.c
+ * mlock01.c
  *
  * DESCRIPTION
- * 	Test to see that mlock works
- * 	
+ * Test to see that mlock works
+ *
  * ALGORITHM
- * 	test 1:
- *		Call mlock with various valid addresses and lengths.  No 
- *		error should be returned
+ * test 1:
+ *  Call mlock with various valid addresses and lengths.  No
+ *  error should be returned
  *
  * USAGE:  <for command-line>
  *         -c n    Run n copies concurrently
@@ -41,10 +41,10 @@
  *         -t      Turn on syscall timing
  *
  * HISTORY
- *	06/2002 Written by Paul Larson
+ * 06/2002 Written by Paul Larson
  *
  * RESTRICTIONS
- * 	None
+ * None
  */
 #include <errno.h>
 #include <unistd.h>
@@ -56,27 +56,27 @@ void setup();
 void setup1(int);
 void cleanup();
 
-char *TCID = "mlock01";		/* Test program identifier.    */
-int TST_TOTAL = 4;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID  "mlock01";  /* Test program identifier.    */
+int TST_TOTAL  4;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 
-int exp_enos[] = { 0 };
+int exp_enos[]  { 0 };
 
 void *addr1;
 
 struct test_case_t {
-	void **addr;
-	int len;
-	void (*setupfunc) ();
-} TC[] = {
-	/* mlock should return ENOMEM when some or all of the address 
-	 * range pointed to by addr and len are not valid mapped pages
-	 * in the address space of the process
-	 */
-	{&addr1, 1, setup1}, 
-	{&addr1, 1024, setup1}, 
-	{&addr1, 1024 * 1024, setup1}, 
-	{&addr1, 1024 * 1024 * 10, setup1}
+ void **addr;
+ int len;
+ void (*setupfunc) ();
+} TC[]  {
+ /* mlock should return ENOMEM when some or all of the address
+  * range pointed to by addr and len are not valid mapped pages
+  * in the address space of the process
+  */
+ {&addr1, 1, setup1},
+ {&addr1, 1024, setup1},
+ {&addr1, 1024 * 1024, setup1},
+ {&addr1, 1024 * 1024 * 10, setup1}
 };
 
 #if !defined(UCLINUX)
@@ -86,69 +86,69 @@ struct test_case_t {
  ***********************************************************************/
 int main(int ac, char **av)
 {
-	int lc, i;		/* loop counter */
-	char *msg;		/* message returned from parse_opts */
+ int lc, i;  /* loop counter */
+ char *msg;  /* message returned from parse_opts */
 
-	if ((msg = parse_opts(ac, av, NULL, NULL)) != (char *) NULL) {
-		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
+ if ((msg  parse_opts(ac, av, NULL, NULL)) ! (char *) NULL) {
+  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+  tst_exit();
+ }
 
     /***************************************************************
      * perform global setup for test
      ***************************************************************/
-	setup();
+ setup();
 
-	/* set the expected errnos... */
-	TEST_EXP_ENOS(exp_enos);
+ /* set the expected errnos... */
+ TEST_EXP_ENOS(exp_enos);
 
     /***************************************************************
-     * check looping state 
+     * check looping state
      ***************************************************************/
-	/* TEST_LOOPING() is a macro that will make sure the test continues
-	 * looping according to the standard command line args. 
-	 */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* TEST_LOOPING() is a macro that will make sure the test continues
+  * looping according to the standard command line args.
+  */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
-		Tst_count = 0;
+  /* reset Tst_count in case we are looping. */
+  Tst_count  0;
 
-		for (i = 0; i < TST_TOTAL; i++) {
+  for (i  0; i < TST_TOTAL; i++) {
 
-			if (TC[i].setupfunc != NULL)
-				TC[i].setupfunc(TC[i].len);
+   if (TC[i].setupfunc ! NULL)
+    TC[i].setupfunc(TC[i].len);
 
-			TEST(mlock(*(TC[i].addr), TC[i].len));
+   TEST(mlock(*(TC[i].addr), TC[i].len));
 
-			/* check return code */
-			if (TEST_RETURN == -1) {
-				TEST_ERROR_LOG(TEST_ERRNO);
-				tst_resm(TFAIL, "mlock(%p, %d) Failed with "
-					 "return=%d, errno=%d : %s",
-					 TC[i].addr, TC[i].len,
-					 TEST_RETURN, TEST_ERRNO,
-					 strerror(TEST_ERRNO));
-			} else {
-				tst_resm(TPASS, "test %d passed length = %d",
-					 i, TC[i].len);
-			}
-		}
-	}			/* End for TEST_LOOPING */
+   /* check return code */
+   if (TEST_RETURN  -1) {
+    TEST_ERROR_LOG(TEST_ERRNO);
+    tst_resm(TFAIL, "mlock(%p, %d) Failed with "
+      "return%d, errno%d : %s",
+      TC[i].addr, TC[i].len,
+      TEST_RETURN, TEST_ERRNO,
+      strerror(TEST_ERRNO));
+   } else {
+    tst_resm(TPASS, "test %d passed length  %d",
+      i, TC[i].len);
+   }
+  }
+ }   /* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
      ***************************************************************/
-	cleanup();
+ cleanup();
 
-	return 0;
-}				/* End main */
+ return 0;
+}    /* End main */
 
 #else
 
 int main()
 {
-	tst_resm(TINFO, "test is not available on uClinux");
-	return 0;
+ tst_resm(TINFO, "test is not available on uClinux");
+ return 0;
 }
 
 #endif /* if !defined(UCLINUX) */
@@ -158,24 +158,24 @@ int main()
  ***************************************************************/
 void setup()
 {
-	TEST_PAUSE;
+ TEST_PAUSE;
 }
 
 void setup1(int len)
 {
-	addr1 = (char *) malloc(len);
-	if (addr1 == NULL)
-		tst_brkm(TFAIL, cleanup, "malloc failed");
+ addr1  (char *) malloc(len);
+ if (addr1  NULL)
+  tst_brkm(TFAIL, cleanup, "malloc failed");
 }
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
+ *  completion or premature exit.
  ***************************************************************/
 void cleanup()
 {
-	TEST_CLEANUP;
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

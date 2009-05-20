@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   pmic_power_test.c
 
         @brief  Test scenario C source for PMIC Power driver.
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -24,13 +24,13 @@ Pradeep K /b01016            10/19/2006     TLSboxxxx   Updated for pmic power
 Rakesh S Joshi/R65956        01/03/2007     TLSbo88188   Updated for pmic power
 
 
-====================================================================================================
+====================
 Portability:  ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Harness Specific Include Files. */
 #include <test.h>
 #include <time.h>
@@ -38,9 +38,9 @@ Portability:  ARM GCC
 /* Verification Test Environment Include Files */
 #include "pmic_power_test.h"
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-===================================================================================================*/
+=======================*/
 int fd = -1;
 FILE * gInFile = NULL;
 #define ARRAY_SIZE(x)   (sizeof(x) / sizeof(x[0]))
@@ -85,9 +85,9 @@ static unsigned int regulator_off[]={
 
 #endif
 
-/*==================================================================================================
+/*======================
                                  LOCAL FUNCTIONS PROTOTYPES
-==================================================================================================*/
+======================*/
 int  pmic_power_test_on(void);
 int  pmic_power_test_off(void);
 int  pmic_power_test_config(void);
@@ -95,12 +95,12 @@ int  check_reg_param(int aReg, int aInd, int aParam);
 int  write_config_file(void);
 char *pmic_error(int errcode);
 
-/*==================================================================================================
+/*======================
                                        LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== pmic_error =====*/
+/*====================*/
+/*= pmic_error =*/
 /**
 @brief  Returns string with error code short description
 
@@ -108,7 +108,7 @@ char *pmic_error(int errcode);
 
 @return On success - return pointer to string or NULL
 */
-/*================================================================================================*/
+/*====================*/
 char *pmic_error(int errcode)
 {
         static char *pmic_errors[] =
@@ -139,8 +139,8 @@ char *pmic_error(int errcode)
         return pmic_errors[errcode];
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_power_test_setup =====*/
+/*====================*/
+/*= VT_pmic_power_test_setup =*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
@@ -149,7 +149,7 @@ char *pmic_error(int errcode)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_pmic_power_test_setup(void)
 {
         int rv = TPASS;
@@ -175,8 +175,8 @@ int VT_pmic_power_test_setup(void)
         return rv;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_power_cleanup =====*/
+/*====================*/
+/*= VT_pmic_power_cleanup =*/
 /**
 @brief  assumes the post-condition of the test case execution
 
@@ -185,7 +185,7 @@ int VT_pmic_power_test_setup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int VT_pmic_power_test_cleanup(void)
 {
         int ret;
@@ -206,8 +206,8 @@ int VT_pmic_power_test_cleanup(void)
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== VT_pmic_power_test =====*/
+/*====================*/
+/*= VT_pmic_power_test =*/
 /**
 @brief  Pmic power test scenario  function
 
@@ -216,7 +216,7 @@ int VT_pmic_power_test_cleanup(void)
 @return On success - return TPASS
         On failure - return TFAIL
 */
-/*================================================================================================*/
+/*====================*/
 int VT_pmic_power_test(void)
 {
         switch(gTestConfig.mTestCase)
@@ -263,8 +263,8 @@ int VT_pmic_power_test(void)
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== pmic_power_test_on =====*/
+/*====================*/
+/*= pmic_power_test_on =*/
 /**
 @brief  Enable a PMIC regulator
 
@@ -273,7 +273,7 @@ int VT_pmic_power_test(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int pmic_power_test_on(void)
 {
         int regNum = 0;
@@ -290,8 +290,8 @@ int pmic_power_test_on(void)
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== pmic_power_test_off =====*/
+/*====================*/
+/*= pmic_power_test_off =*/
 /**
 @brief  Diasable a PMIC regulator
 
@@ -300,7 +300,7 @@ int pmic_power_test_on(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int pmic_power_test_off(void)
 {
         int regNum = 0;
@@ -317,8 +317,8 @@ int pmic_power_test_off(void)
         return TPASS;
 }
 
-/*================================================================================================*/
-/*===== pmic_power_test_config =====*/
+/*====================*/
+/*= pmic_power_test_config =*/
 /**
 @brief  configure a PMIC regulator
 
@@ -327,7 +327,7 @@ int pmic_power_test_off(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int pmic_power_test_config(void)
 {
     t_regulator_cfg_param set_cfg, get_cfg;
@@ -405,8 +405,8 @@ int pmic_power_test_config(void)
 
 }
 
-/*================================================================================================*/
-/*===== pmic_power_test_errconfig =====*/
+/*====================*/
+/*= pmic_power_test_errconfig =*/
 /**
 @brief  Error configuration of a PMIC regulator
 
@@ -415,7 +415,7 @@ int pmic_power_test_config(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
+/*====================*/
 int pmic_power_test_errconfig(void)
 {
     t_regulator_cfg_param set_cfg, get_cfg;

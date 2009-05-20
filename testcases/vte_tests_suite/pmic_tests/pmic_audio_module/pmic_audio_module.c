@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   pmic_audio_module.c
 
         @brief  PMIC audio dirver API
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number     Description of Changes
@@ -19,13 +19,13 @@ Author/core ID                  Date          Number     Description of Changes
 S.Bezrukov/SBAZR1C           31/08/2005     TLSbo52697   Initial version
 A.Ozerov/b00320              08/08/2006     TLSbo73745   Review version(in accordance to L26_1_19 release).
 
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 #include <linux/device.h>       /* Added on 05/03/06 by RAKESH S JOSHI */
 #include <linux/fs.h>
 
@@ -36,14 +36,14 @@ Portability: ARM GCC
 
 #include <pmic_audio_module.h>
 
-/*==================================================================================================
+/*======================
                                         GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 static struct class *pmic_audio_class;   /* added on 05/03/06 RAKESH S JOSHI */
 
-/*==================================================================================================
+/*======================
                                         DEFINES AND MACROS
-==================================================================================================*/
+======================*/
 #define CHECK_ERROR(a) \
 if( a != PMIC_SUCCESS ) \
 { \
@@ -51,9 +51,9 @@ if( a != PMIC_SUCCESS ) \
         printk(KERN_WARNING "Error in "#a". Error code: %d\n", VT_rv); \
 } \
 
-/*==================================================================================================
+/*======================
                                         FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 int VT_pmic_audio_test_output(void)
 {
         PMIC_AUDIO_HANDLE hStDAC = 0,
@@ -258,7 +258,7 @@ int VT_pmic_audio_test_output(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
+/*====================*/
 int VT_pmic_audio_test_input(void)
 {
         int     VT_rv = PMIC_SUCCESS;
@@ -306,7 +306,7 @@ int VT_pmic_audio_test_input(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
+/*====================*/
 int VT_pmic_audio_test_sdac(void)
 {
         int     VT_rv = PMIC_SUCCESS;
@@ -413,7 +413,7 @@ int VT_pmic_audio_test_sdac(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
+/*====================*/
 int VT_pmic_audio_test_codec(void)
 {
         int     VT_rv = PMIC_SUCCESS;
@@ -588,7 +588,7 @@ int VT_pmic_audio_test_codec(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
+/*====================*/
 int VT_pmic_audio_test_bus(void)
 {
         PMIC_AUDIO_HANDLE hStDAC,
@@ -758,7 +758,7 @@ int VT_pmic_audio_test_bus(void)
 
 }
 
-/*================================================================================================*/
+/*====================*/
 static int pmic_test_open(struct inode *inode, struct file *filp)
 {
         return 0;
@@ -774,7 +774,7 @@ static ssize_t pmic_test_write(struct file *filp, const char *buf, size_t count,
         return 0;
 }
 
-/*================================================================================================*/
+/*====================*/
 static int pmic_test_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
                            unsigned long arg)
 {
@@ -794,13 +794,13 @@ static int pmic_test_ioctl(struct inode *inode, struct file *file, unsigned int 
         return -EINVAL;
 }
 
-/*================================================================================================*/
+/*====================*/
 static int pmic_test_release(struct inode *inode, struct file *filp)
 {
         return 0;
 }
 
-/*==================================================================================================*/
+/*======================*/
 static struct file_operations pmic_test_fops =
 {
         owner:THIS_MODULE,
@@ -811,7 +811,7 @@ static struct file_operations pmic_test_fops =
         ioctl:pmic_test_ioctl
 };
 
-/*================================================================================================*/
+/*====================*/
 static int __init pmic_test_init(void)
 {
         int     res;
@@ -849,7 +849,7 @@ static int __init pmic_test_init(void)
         return -1;
 }
 
-/*================================================================================================*/
+/*====================*/
 static void __exit pmic_test_exit(void)
 {
         unregister_chrdev(236, PMIC_AUDIO_DEV);
@@ -859,7 +859,7 @@ static void __exit pmic_test_exit(void)
         printk("PMIC Audio Test: removing virtual device\n");
 }
 
-/*================================================================================================*/
+/*====================*/
 
 module_init(pmic_test_init);
 module_exit(pmic_test_exit);

@@ -19,25 +19,25 @@
 
 /*
  * NAME
- *	kill01.c
+ * kill01.c
  *
  * DESCRIPTION
- *	Test case to check the basic functionality of kill().
+ * Test case to check the basic functionality of kill().
  *
  * ALGORITHM
- *	call setup
- *	loop if the -i option was given
- *	fork a child
- *	execute the kill system call
- *	check the return value
- *	if return value is -1
- *		issue a FAIL message, break remaining tests and cleanup
- *	if we are doing functional testing
- *		if the process was terminated with the expected signal.
- *			issue a PASS message
- *		otherwise
- *			issue a FAIL message
- *	call cleanup
+ * call setup
+ * loop if the -i option was given
+ * fork a child
+ * execute the kill system call
+ * check the return value
+ * if return value is -1
+ *  issue a FAIL message, break remaining tests and cleanup
+ * if we are doing functional testing
+ *  if the process was terminated with the expected signal.
+ *   issue a PASS message
+ *  otherwise
+ *   issue a FAIL message
+ * call cleanup
  *
  * USAGE
  *  kill01 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
@@ -49,10 +49,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Ported by Wayne Boyer
+ * 07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- *	This test should be ran as a non-root user.
+ * This test should be ran as a non-root user.
  */
 
 #include "test.h"
@@ -66,8 +66,8 @@ void cleanup(void);
 void setup(void);
 void do_child(void);
 
-char *TCID= "kill01";
-int TST_TOTAL = 1;
+char *TCID "kill01";
+int TST_TOTAL  1;
 
 extern int Tst_count;
 
@@ -75,72 +75,72 @@ extern int Tst_count;
 
 int main(int ac, char **av)
 {
-	int lc;                         /* loop counter */
-	char *msg;                      /* message returned from parse_opts */
-	pid_t pid;			
-	int exno, status, nsig;
+ int lc;                         /* loop counter */
+ char *msg;                      /* message returned from parse_opts */
+ pid_t pid;
+ int exno, status, nsig;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+ }
 
 #ifdef UCLINUX
-	maybe_run_child(&do_child, "");
+ maybe_run_child(&do_child, "");
 #endif
 
-	setup();                        /* global setup */
+ setup();                        /* global setup */
 
-	/* The following loop checks looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+ /* The following loop checks looping state if -i option given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
-		status = 1;
-		exno = 1;
-		pid = FORK_OR_VFORK();
-		if (pid < 0) {
-			tst_brkm(TBROK, cleanup, "Fork of child failed");
-		} else if (pid == 0) {
+  /* reset Tst_count in case we are looping */
+  Tst_count  0;
+  status  1;
+  exno  1;
+  pid  FORK_OR_VFORK();
+  if (pid < 0) {
+   tst_brkm(TBROK, cleanup, "Fork of child failed");
+  } else if (pid  0) {
 #ifdef UCLINUX
-			if (self_exec(av[0], "") < 0) {
-				tst_brkm(TBROK, cleanup, "self_exec of child failed");
-			}
+   if (self_exec(av[0], "") < 0) {
+    tst_brkm(TBROK, cleanup, "self_exec of child failed");
+   }
 #else
-			do_child();
+   do_child();
 #endif
-		} else {
-			TEST(kill(pid, TEST_SIG));
-			waitpid(pid, &status, 0);
-		}
+  } else {
+   TEST(kill(pid, TEST_SIG));
+   waitpid(pid, &status, 0);
+  }
 
-		if (TEST_RETURN == -1) {
-			tst_brkm(TFAIL, cleanup, "%s failed - errno = %d : %s",
-				TCID, TEST_ERRNO, strerror(TEST_ERRNO));
-			/*NOTREACHED*/
-		}
+  if (TEST_RETURN  -1) {
+   tst_brkm(TFAIL, cleanup, "%s failed - errno  %d : %s",
+    TCID, TEST_ERRNO, strerror(TEST_ERRNO));
+   /*NOTREACHED*/
+  }
 
-		if (STD_FUNCTIONAL_TEST) {
-			/*
-			 * Check to see if the process was terminated with the
-			 * expected signal.
-			 */
-			nsig = WTERMSIG(status);
-			if (nsig == TEST_SIG) {
-				tst_resm(TPASS, "received expected signal %d",
-					nsig);
-			} else {
-				tst_resm(TFAIL, "expected signal %d received %d",
-					 TEST_SIG,nsig);
-			}
-		} else {
-			tst_resm(TPASS, "call succeeded");
-		}
-	}
-	cleanup();
+  if (STD_FUNCTIONAL_TEST) {
+   /*
+    * Check to see if the process was terminated with the
+    * expected signal.
+    */
+   nsig  WTERMSIG(status);
+   if (nsig  TEST_SIG) {
+    tst_resm(TPASS, "received expected signal %d",
+     nsig);
+   } else {
+    tst_resm(TFAIL, "expected signal %d received %d",
+      TEST_SIG,nsig);
+   }
+  } else {
+   tst_resm(TPASS, "call succeeded");
+  }
+ }
+ cleanup();
 
-	/*NOTREACHED*/
-	return(0);
+ /*NOTREACHED*/
+ return(0);
 }
 
 /*
@@ -149,11 +149,11 @@ int main(int ac, char **av)
 void
 do_child()
 {
-	int exno = 1;
-	
-	pause();
-	/*NOTREACHED*/
-	exit(exno);
+ int exno  1;
+
+ pause();
+ /*NOTREACHED*/
+ exit(exno);
 }
 
 /*
@@ -162,8 +162,8 @@ do_child()
 void
 setup(void)
 {
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 }
 
 /*
@@ -173,12 +173,12 @@ setup(void)
 void
 cleanup(void)
 {
-	/*
-	 * print timing status if that option was specified.
-	 * print errno log if that option was specified
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing status if that option was specified.
+  * print errno log if that option was specified
+  */
+ TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

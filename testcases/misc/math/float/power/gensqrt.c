@@ -23,11 +23,11 @@
 /*              These tests are adapted from AIX float PVT tests.             */
 /*                                                                            */
 /******************************************************************************/
-#include 	<float.h>
-#include 	<stdio.h>
-#include 	<stdlib.h>
-#include 	<string.h>
-#include 	<errno.h>
+#include <float.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 #include        <limits.h>
 #include        <unistd.h>
 #include        <fcntl.h>
@@ -40,114 +40,114 @@
 int create_Result_file()
 {
 
-	int i, nbVal;
-	double	tabR[20000],Inc;
-	char *F_name;
-	int fp;
+ int i, nbVal;
+ double tabR[20000],Inc;
+ char *F_name;
+ int fp;
 
-	F_name = "sqrt_out.ref";
-	nbVal = 20000; 
+ F_name  "sqrt_out.ref";
+ nbVal  20000;
 
 
-	for (i=0; i<nbVal; i++) {
-		Inc = exp(2);
-   		tabR[i] = sqrt(Inc*i+Inc); 
-	}
+ for (i0; i<nbVal; i++) {
+  Inc  exp(2);
+  tabR[i]  sqrt(Inc*i+Inc);
+ }
 
-	fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
-       	if (!fp)
-       	{
-       	    	printf("error opening file");
-		close(fp);
-		return -1;
-	}
-	else
-	{
-		for (i = 0; i<nbVal; i++ ) 
-		{
-		    write(fp,&tabR[i],sizeof(double));
-		}
+ fp  open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
+       if (!fp)
+       {
+           printf("error opening file");
+  close(fp);
+  return -1;
+ }
+ else
+ {
+  for (i  0; i<nbVal; i++ )
+  {
+      write(fp,&tabR[i],sizeof(double));
+  }
 
-		close(fp);
-		return 0;
-	}
+  close(fp);
+  return 0;
+ }
 
 }
 
 /*********************************************************************
  *
- *	create input data file
+ * create input data file
  *
  */
 
 int create_Data_file()
 {
-	int i, nbVal;
-	double	tabD[20000], Inc;
-	char *F_name;
-	int fp;
+ int i, nbVal;
+ double tabD[20000], Inc;
+ char *F_name;
+ int fp;
 
-	F_name = "sqrt_inp.ref";
-	nbVal = 20000; 
+ F_name  "sqrt_inp.ref";
+ nbVal  20000;
 
-	Inc = exp(2);
+ Inc  exp(2);
 
-	for (i=0; i<(nbVal); i++) {	
-		tabD[i] = (Inc * i) + Inc;
-	}
+ for (i0; i<(nbVal); i++) {
+  tabD[i]  (Inc * i) + Inc;
+ }
 
-	fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
+ fp  open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
         if (!fp)
         {
-            	printf("error opening file");
-	    	close(fp);
-	    	return -1;
+            printf("error opening file");
+     close(fp);
+     return -1;
         }
         else
-        {	
-		for (i = 0; i<nbVal; i++ ) 
-		{
-			write(fp,&tabD[i],sizeof(double));
-		}
-		close(fp);
-		return 0;
-	}
+        {
+  for (i  0; i<nbVal; i++ )
+  {
+   write(fp,&tabD[i],sizeof(double));
+  }
+  close(fp);
+  return 0;
+ }
 }
 
 
 int main(int argc, char  *argv[])
 {
 
-	if (argc > 1) 
-	{
-		switch ( atoi(argv[1]) )
-		{
-		case 1:
-			if (create_Data_file() == 0)
-				printf("Data file created\n");
-			else
-				printf("problem during %s data file creation\n", argv[0]);
-			break;
+ if (argc > 1)
+ {
+  switch ( atoi(argv[1]) )
+  {
+  case 1:
+   if (create_Data_file()  0)
+    printf("Data file created\n");
+   else
+    printf("problem during %s data file creation\n", argv[0]);
+   break;
 
-		case 2:
-			if (create_Result_file() == 0)
-				printf("Result file created\n");
-			else
-				printf("problem during %s result file creation\n", argv[0]);
-			break;
-		default:
-			printf("Bad arglist code for: '%s'\n", argv[0]);
-			return -1;
-			break;
-		}
-	}
-	else
-	{
-		if (create_Data_file() != 0)
-			printf("problem during %s data file creation\n", argv[0]);
-		if (create_Result_file() != 0)
-			printf("problem during %s result file creation\n", argv[0]);
-	}
+  case 2:
+   if (create_Result_file()  0)
+    printf("Result file created\n");
+   else
+    printf("problem during %s result file creation\n", argv[0]);
+   break;
+  default:
+   printf("Bad arglist code for: '%s'\n", argv[0]);
+   return -1;
+   break;
+  }
+ }
+ else
+ {
+  if (create_Data_file() ! 0)
+   printf("problem during %s data file creation\n", argv[0]);
+  if (create_Result_file() ! 0)
+   printf("problem during %s result file creation\n", argv[0]);
+ }
 
   return(0);
 

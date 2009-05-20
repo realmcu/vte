@@ -34,28 +34,28 @@
 int
 sctp_connectx(int fd, struct sockaddr *addrs, int addrcnt)
 {
-	void *addrbuf;
-	struct sockaddr *sa_addr;
-	socklen_t addrs_size = 0;
-	int i;
+ void *addrbuf;
+ struct sockaddr *sa_addr;
+ socklen_t addrs_size  0;
+ int i;
 
-	addrbuf = addrs;
-	for (i = 0; i < addrcnt; i++) {
-		sa_addr = (struct sockaddr *)addrbuf;
-		switch (sa_addr->sa_family) {
-		case AF_INET:
-			addrs_size += sizeof(struct sockaddr_in);
-			addrbuf += sizeof(struct sockaddr_in);
-			break;
-		case AF_INET6:
-			addrs_size += sizeof(struct sockaddr_in6);
-			addrbuf += sizeof(struct sockaddr_in6);
-			break;
-		default:
-			errno = EINVAL;
-			return -1;
-		}
-	}
-			
-	return setsockopt(fd, SOL_SCTP, SCTP_SOCKOPT_CONNECTX, addrs, addrs_size);
+ addrbuf  addrs;
+ for (i  0; i < addrcnt; i++) {
+  sa_addr  (struct sockaddr *)addrbuf;
+  switch (sa_addr->sa_family) {
+  case AF_INET:
+   addrs_size + sizeof(struct sockaddr_in);
+   addrbuf + sizeof(struct sockaddr_in);
+   break;
+  case AF_INET6:
+   addrs_size + sizeof(struct sockaddr_in6);
+   addrbuf + sizeof(struct sockaddr_in6);
+   break;
+  default:
+   errno  EINVAL;
+   return -1;
+  }
+ }
+
+ return setsockopt(fd, SOL_SCTP, SCTP_SOCKOPT_CONNECTX, addrs, addrs_size);
 }

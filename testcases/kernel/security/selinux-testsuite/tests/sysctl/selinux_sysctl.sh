@@ -11,86 +11,86 @@
 
 setup()
 {
-	export TCID="setup"
-	export TST_COUNT=0
-	export TST_TOTAL=4
+ export TCID="setup"
+ export TST_COUNT=0
+ export TST_TOTAL=4
 
-	# set some values
-	sysctl="kernel.modprobe"
-	oldval=`/sbin/sysctl -n $sysctl`
+ # set some values
+ sysctl="kernel.modprobe"
+ oldval=`/sbin/sysctl -n $sysctl`
 }
 
 test01()
 {
-	TCID="test01"
-	TST_COUNT=1
-	RC=0
+ TCID="test01"
+ TST_COUNT=1
+ RC=0
 
-	runcon -t test_sysctl_t -- /sbin/sysctl -n $sysctl 2>&1
-	RC=$?
-	if [ $RC -eq 0 ]
-	then
-		echo "$TCID   PASS : sysctl passed."
-	else
-		echo "$TCID   FAIL : sysctl failed."
-	fi
-	return $RC
+ runcon -t test_sysctl_t -- /sbin/sysctl -n $sysctl 2>&1
+ RC=$?
+ if [ $RC -eq 0 ]
+ then
+  echo "$TCID   PASS : sysctl passed."
+ else
+  echo "$TCID   FAIL : sysctl failed."
+ fi
+ return $RC
 }
 
 test02()
 {
 
-	TCID="test02"
-	TST_COUNT=2
-	RC=0
+ TCID="test02"
+ TST_COUNT=2
+ RC=0
 
-	runcon -t test_sysctl_t -- /sbin/sysctl -w $sysctl=$oldval 2>&1
-	RC=$?
-	if [ $RC -eq 0 ]
-	then
-		echo "$TCID   PASS : sysctl passed."
-	else
-		echo "$TCID   FAIL : sysctl failed."
-	fi
-	return $RC
+ runcon -t test_sysctl_t -- /sbin/sysctl -w $sysctl=$oldval 2>&1
+ RC=$?
+ if [ $RC -eq 0 ]
+ then
+  echo "$TCID   PASS : sysctl passed."
+ else
+  echo "$TCID   FAIL : sysctl failed."
+ fi
+ return $RC
 }
 
 test03()
 {
-	TCID="test03"
-	TST_COUNT=3
-	RC=0
+ TCID="test03"
+ TST_COUNT=3
+ RC=0
 
-	runcon -t test_nosysctl_t -- /sbin/sysctl -n $sysctl 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   PASS : sysctl passed."
-		RC=0
-	else
-		echo "$TCID   FAIL : sysctl failed."
-		RC=1
-	fi
-	return $RC
+ runcon -t test_nosysctl_t -- /sbin/sysctl -n $sysctl 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   PASS : sysctl passed."
+  RC=0
+ else
+  echo "$TCID   FAIL : sysctl failed."
+  RC=1
+ fi
+ return $RC
 }
 
 test04()
 {
-	TCID="test04"
-	TST_COUNT=4
-	RC=0
+ TCID="test04"
+ TST_COUNT=4
+ RC=0
 
-	runcon -t test_nosysctl_t -- /sbin/sysctl -w $sysctl=foobar 2>&1
-	RC=$?
-	if [ $RC -ne 0 ]
-	then
-		echo "$TCID   PASS : sysctl passed."
-		RC=0
-	else
-		echo "$TCID   FAIL : sysctl failed."
-		RC=1
-	fi
-	return $RC
+ runcon -t test_nosysctl_t -- /sbin/sysctl -w $sysctl=foobar 2>&1
+ RC=$?
+ if [ $RC -ne 0 ]
+ then
+  echo "$TCID   PASS : sysctl passed."
+  RC=0
+ else
+  echo "$TCID   FAIL : sysctl failed."
+  RC=1
+ fi
+ return $RC
 }
 
 #

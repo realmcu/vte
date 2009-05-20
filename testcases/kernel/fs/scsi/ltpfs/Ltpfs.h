@@ -1,13 +1,13 @@
 
-#define FS_LTP_TEST_COMPONENT	        	0x00020999
-#define FS_LTP_TEST_CLASS		        	"ltp_test"
-#define FS_LTP_TEST_HID 		        	"FS0999"
+#define FS_LTP_TEST_COMPONENT	        0x00020999
+#define FS_LTP_TEST_CLASS		        "ltp_test"
+#define FS_LTP_TEST_HID         "FS0999"
 #define FS_LTP_TEST_DRIVER_NAME		    "FS LTP Test Driver"
-#define FS_LTP_TEST_DEVICE_NAME	    	"LTP Test"
-#define FS_LTP_TEST_FILE_STATE    		"state"
+#define FS_LTP_TEST_DEVICE_NAME	    "LTP Test"
+#define FS_LTP_TEST_FILE_STATE    "state"
 #define FS_LTP_TEST_NOTIFY_STATUS		    0x80
 #define FS_LTP_TEST_STATUS_OFFLINE		0x00
-#define FS_LTP_TEST_STATUS_ONLINE	    	0x01
+#define FS_LTP_TEST_STATUS_ONLINE	    0x01
 #define FS_LTP_TEST_STATUS_UNKNOWN		0xFF
 #define _COMPONENT		FS_LTP_TEST_COMPONENT
 #define FS_TLP_TEST_MODULE_NAME		("fs_ltp_test")
@@ -45,15 +45,15 @@
 #define DEV_PATH                            "/dev"
 #define LTP_FS_DIR_NAME                   ""
 #define LTP_FS_DEV_NAME                   "LTPFS"
-#define LTP_FS_DEV_NODE_PATH              DEV_PATH "/" 
+#define LTP_FS_DEV_NODE_PATH              DEV_PATH "/"
 #define LTP_FS_DEVICE_NAME                DEV_PATH "/"  LTP_FS_DEV_NAME
-#define MINOR_SHIFT_BITS 3 
+#define MINOR_SHIFT_BITS 3
 #define MAX_PARTITIONS 8                    /* partition 0 + 7 more possible due to 3 bit partition number field */
 #define	MAX_NUM_DISKS 3                   /* number of real devices */
 
 #define MPDEV_FLAG_CLEAR 0
 #define MPDEV_FLAG_SET   1
-                       
+
 typedef struct _ltpdev_cmd {
     u_int32_t     cmd;           // input - 0==recover, 1==fail
     u_int32_t     status;        // ouput - 0==success

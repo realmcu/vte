@@ -12,21 +12,21 @@ fi
 
 echo "Test run starting at " `date`
 
-usage() 
+usage()
 {
-	cat <<-END >&2
-	usage: ${0##*/} [ -a test name ] 
+ cat <<-END >&2
+ usage: ${0##*/} [ -a test name ]
 
-	example: ${0##*/} -a cases/aio_tio
+ example: ${0##*/} -a cases/aio_tio
 
-	END
+ END
 exit
 }
 
 while getopts :a: arg
 do      case $arg in
-		a)	this_test=$OPTARG;;
-			
+  a) this_test=$OPTARG;;
+
                 \?)     echo "************** Help Info: ********************"
                         usage;;
         esac
@@ -41,9 +41,9 @@ fi
 #Execute only once at present circumstances
 #while [ $# -ge 1 ] ; do
    echo "Starting $this_test"
-   $this_test 
+   $this_test
    res=$?
-   if [ $res -eq 0 ] ; 
+   if [ $res -eq 0 ] ;
    then str="";
    passes=$[passes +1];
    else

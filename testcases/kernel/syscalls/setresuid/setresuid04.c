@@ -19,10 +19,10 @@
 /******************************************************************************/
 /*
  * NAME
- * 	setresuid04.c
+ * setresuid04.c
  *
  * DESCRIPTION
- * 	Check if setresuid behaves correctly with file permissions.
+ * Check if setresuid behaves correctly with file permissions.
  *      The test creates a file as ROOT with permissions 0644, does a setresuid
  *      and then tries to open the file with RDWR permissions.
  *      The same test is done in a fork to check if new UIDs are correctly
@@ -38,10 +38,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- *	07/2001 Created by Renaud Lottiaux
+ * 07/2001 Created by Renaud Lottiaux
  *
  * RESTRICTIONS
- * 	Must be run as root.
+ * Must be run as root.
  */
 #define _GNU_SOURCE 1
 #include <errno.h>
@@ -54,15 +54,15 @@
 #include "usctest.h"
 #include <pwd.h>
 
-char *TCID = "setresuid04";
-int TST_TOTAL = 1;
+char *TCID  "setresuid04";
+int TST_TOTAL  1;
 extern int Tst_count;
-char nobody_uid[] = "nobody";
-char testfile[256] = "";
+char nobody_uid[]  "nobody";
+char testfile[256]  "";
 struct passwd *ltpuser;
 
-int exp_enos[] = {EACCES, 0};
-int fd = -1;
+int exp_enos[]  {EACCES, 0};
+int fd  -1;
 
 void setup(void);
 void cleanup(void);
@@ -70,41 +70,41 @@ void do_master_child();
 
 int main(int ac, char **av)
 {
-	pid_t pid;
-	char *msg;			/* message returned from parse_opts */
-	int status;
+ pid_t pid;
+ char *msg;   /* message returned from parse_opts */
+ int status;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-		/*NOTREACHED*/
-	}
+ /* parse standard options */
+ if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
+  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+  /*NOTREACHED*/
+ }
 
-	/*
-	 * perform global setup for the test
-	 */
-	setup();
+ /*
+  * perform global setup for the test
+  */
+ setup();
 
-	TEST_EXP_ENOS(exp_enos);
+ TEST_EXP_ENOS(exp_enos);
 
-	pid = FORK_OR_VFORK();
-	if (pid < 0)
-		tst_brkm(TBROK, cleanup, "Fork failed");
-	
-	if (pid == 0) {
-		do_master_child();
-		return 0;
-	}
-	else {
-		waitpid(pid, &status, 0);
-		if (!WIFEXITED(status) || (WEXITSTATUS(status) != 0))
-			tst_resm(WEXITSTATUS(status), "son process exits with error");
-	}
+ pid  FORK_OR_VFORK();
+ if (pid < 0)
+  tst_brkm(TBROK, cleanup, "Fork failed");
 
-	cleanup();
-	/*NOTREACHED*/
+ if (pid  0) {
+  do_master_child();
+  return 0;
+ }
+ else {
+  waitpid(pid, &status, 0);
+  if (!WIFEXITED(status) || (WEXITSTATUS(status) ! 0))
+   tst_resm(WEXITSTATUS(status), "son process exits with error");
+ }
 
-	return(0);
+ cleanup();
+ /*NOTREACHED*/
+
+ return(0);
 }
 
 /*
@@ -112,97 +112,97 @@ int main(int ac, char **av)
  */
 void do_master_child()
 {
-	int lc;				/* loop counter */
-	int pid;
-	int status;
+ int lc;    /* loop counter */
+ int pid;
+ int status;
 
-	/* Check looping state if -i option is given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		int tst_fd;
+ /* Check looping state if -i option is given */
+ for (lc  0; TEST_LOOPING(lc); lc++) {
+  int tst_fd;
 
-		/* Reset Tst_count in case we are looping */
-		Tst_count = 0;
+  /* Reset Tst_count in case we are looping */
+  Tst_count  0;
 
-		if (setresuid(0, ltpuser->pw_uid, 0) == -1) {
-			tst_brkm(TBROK, cleanup, 
-				 "setresuid failed to set the euid to %d",
-				 ltpuser->pw_uid);
-		}
+  if (setresuid(0, ltpuser->pw_uid, 0)  -1) {
+   tst_brkm(TBROK, cleanup,
+     "setresuid failed to set the euid to %d",
+     ltpuser->pw_uid);
+  }
 
-		/* Test 1: Check the process with new uid cannot open the file
-		 *         with RDWR permissions.
-		 */
-		TEST(tst_fd = open(testfile, O_RDWR));
+  /* Test 1: Check the process with new uid cannot open the file
+   *         with RDWR permissions.
+   */
+  TEST(tst_fd  open(testfile, O_RDWR));
 
-		if (TEST_RETURN != -1) {
-			tst_resm(TFAIL, "call succeeded unexpectedly");
-			close(tst_fd);
-		}
+  if (TEST_RETURN ! -1) {
+   tst_resm(TFAIL, "call succeeded unexpectedly");
+   close(tst_fd);
+  }
 
-		if (TEST_ERRNO == EACCES) {
-			tst_resm(TPASS, "open returned errno EACCES");
-		} else {
-			tst_resm(TFAIL, "open returned unexpected errno - %d",
-				 TEST_ERRNO);
-			continue;
-		}
+  if (TEST_ERRNO  EACCES) {
+   tst_resm(TPASS, "open returned errno EACCES");
+  } else {
+   tst_resm(TFAIL, "open returned unexpected errno - %d",
+     TEST_ERRNO);
+   continue;
+  }
 
-		/* Test 2: Check a son process cannot open the file
-		 *         with RDWR permissions.
-		 */
-		pid = FORK_OR_VFORK();
-		if (pid < 0)
-			tst_brkm(TBROK, cleanup, "Fork failed");
+  /* Test 2: Check a son process cannot open the file
+   *         with RDWR permissions.
+   */
+  pid  FORK_OR_VFORK();
+  if (pid < 0)
+   tst_brkm(TBROK, cleanup, "Fork failed");
 
-		if (pid == 0) {
-			int tst_fd2; 
+  if (pid  0) {
+   int tst_fd2;
 
-			/* Test to open the file in son process */
-			TEST(tst_fd2 = open(testfile, O_RDWR));
+   /* Test to open the file in son process */
+   TEST(tst_fd2  open(testfile, O_RDWR));
 
-			if (TEST_RETURN != -1) {
-				tst_resm(TFAIL, "call succeeded unexpectedly");
-				close(tst_fd2);
-			}
+   if (TEST_RETURN ! -1) {
+    tst_resm(TFAIL, "call succeeded unexpectedly");
+    close(tst_fd2);
+   }
 
-			TEST_ERROR_LOG(TEST_ERRNO);
-			
-			if (TEST_ERRNO == EACCES) {
-				tst_resm(TPASS, "open returned errno EACCES");
-			} else {
-				tst_resm(TFAIL, "open returned unexpected errno - %d",
-					 TEST_ERRNO);
-			}
-			continue;
-		}
-		else {
-			/* Wait for son completion */
-			waitpid(pid, &status, 0);
-			if (!WIFEXITED(status) || (WEXITSTATUS(status) != 0))
-				exit(WEXITSTATUS(status));
-		}
+   TEST_ERROR_LOG(TEST_ERRNO);
 
-		/* Test 3: Fallback to initial uid and check we can again open
-		 *         the file with RDWR permissions.
-		 */
-		Tst_count++;
-		if (setresuid(0, 0, 0) == -1) {
-			tst_brkm(TBROK, cleanup, 
-				 "setresuid failed to set the euid to 0");
-		}
+   if (TEST_ERRNO  EACCES) {
+    tst_resm(TPASS, "open returned errno EACCES");
+   } else {
+    tst_resm(TFAIL, "open returned unexpected errno - %d",
+      TEST_ERRNO);
+   }
+   continue;
+  }
+  else {
+   /* Wait for son completion */
+   waitpid(pid, &status, 0);
+   if (!WIFEXITED(status) || (WEXITSTATUS(status) ! 0))
+    exit(WEXITSTATUS(status));
+  }
 
-		TEST(tst_fd = open(testfile, O_RDWR));
+  /* Test 3: Fallback to initial uid and check we can again open
+   *         the file with RDWR permissions.
+   */
+  Tst_count++;
+  if (setresuid(0, 0, 0)  -1) {
+   tst_brkm(TBROK, cleanup,
+     "setresuid failed to set the euid to 0");
+  }
 
-		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL, "open returned unexpected errno %d",
-				 TEST_ERRNO);
-			continue;
-		}
-		else {
-			tst_resm(TPASS, "open call succeeded");
-			close (tst_fd);
-		}
-	}
+  TEST(tst_fd  open(testfile, O_RDWR));
+
+  if (TEST_RETURN  -1) {
+   tst_resm(TFAIL, "open returned unexpected errno %d",
+     TEST_ERRNO);
+   continue;
+  }
+  else {
+   tst_resm(TPASS, "open call succeeded");
+   close (tst_fd);
+  }
+ }
 }
 
 /*
@@ -211,47 +211,47 @@ void do_master_child()
 void
 setup(void)
 {
-        if (geteuid() != 0) {
+        if (geteuid() ! 0) {
                 tst_brkm(TBROK, tst_exit, "Test must be run as root");
         }
 
-	ltpuser = getpwnam(nobody_uid);	
+ ltpuser  getpwnam(nobody_uid);
 
-	/* make a temp directory and cd to it */
-	tst_tmpdir();
+ /* make a temp directory and cd to it */
+ tst_tmpdir();
 
-	sprintf(testfile, "setresuid04file%d.tst", getpid());
+ sprintf(testfile, "setresuid04file%d.tst", getpid());
 
-	/* Create test file */
-	fd = open(testfile, O_CREAT | O_RDWR, 0644);
-	if (fd < 0)
-		tst_brkm(TBROK, cleanup, "cannot creat test file");
+ /* Create test file */
+ fd  open(testfile, O_CREAT | O_RDWR, 0644);
+ if (fd < 0)
+  tst_brkm(TBROK, cleanup, "cannot creat test file");
 
-	/* capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+ /* capture signals */
+ tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
+ /* Pause if that option was specified */
+ TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- * 	       or premature exit
+ *        or premature exit
  */
 void
 cleanup(void)
 {
-	close (fd);
+ close (fd);
 
-	/*
-	 * print timing status if that option was specified
-	 * print errno log if that option was specified
-	 */
-	TEST_CLEANUP;
+ /*
+  * print timing status if that option was specified
+  * print errno log if that option was specified
+  */
+ TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
-	tst_rmdir();
+ /* Remove tmp dir and all files in it */
+ tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+ /* exit with return code appropriate for results */
+ tst_exit();
 }

@@ -1,89 +1,89 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   fec_main.c
 
         @brief  Fast Ethernet Controller test
 
 */
-/*==================================================================================================
+/*======================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 D.Khoroshev/b00313           10/05/2006     TLSbo76803  Initial version
 
-====================================================================================================
+====================
 Portability: ARM GCC
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
 Total Tests: 1
 
 Test Name:   Fast Ethernet Controller test
 
 Test Assertion
 & Strategy:  This code is used to test the i.mx27 FEC driver
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Harness Specific Include Files. */
 #include <usctest.h>
 
 /* Verification Test Environment Include Files */
 #include "fec_test.h"
 
-/*==================================================================================================
+/*======================
                                         LOCAL MACROS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        LOCAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        LOCAL VARIABLES
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        GLOBAL CONSTANTS
-==================================================================================================*/
+======================*/
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 /* Global Variables */
 char *TCID     = "fec_testapp";    /* test program identifier.          */
 int  TST_TOTAL = T_NB;                   /* total number of tests in this file.   */
 
 sTestConfig gTestConfig;
 
-/*==================================================================================================
+/*======================
                                    GLOBAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 int main(int argc, char **argv);
 void help(void);
 void cleanup(void);
 void setup(void);
 
-/*==================================================================================================
+/*======================
                                        LOCAL FUNCTIONS
-==================================================================================================*/
+======================*/
 
-/*================================================================================================*/
-/*===== setup =====*/
+/*====================*/
+/*= setup =*/
 /**
 Description of the function
 
@@ -96,7 +96,7 @@ Description of the function
 
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
         int VT_rv = TFAIL;
@@ -107,9 +107,9 @@ void setup(void)
                 tst_brkm(TBROK , cleanup, "VT_setup() Failed : error code = %d", VT_rv);
         }
 }
-   
-/*================================================================================================*/
-/*===== cleanup =====*/
+
+/*====================*/
+/*= cleanup =*/
 /**
 @brief  Performs all one time clean up for this test on successful
         completion,  premature exit or  failure. Closes all temporary
@@ -121,7 +121,7 @@ void setup(void)
 
 @return Nothing
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
         /* VTE : Actions needed to get a stable target environment */
@@ -137,8 +137,8 @@ void cleanup(void)
         tst_exit();
 }
 
-/*================================================================================================*/
-/*===== main =====*/
+/*====================*/
+/*= main =*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -153,19 +153,19 @@ void cleanup(void)
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*================================================================================================*/
+/*====================*/
 int main(int argc, char **argv)
 {
         int VT_rv = TFAIL;
         /* parse options. */
-        int Tflag = 0, 
+        int Tflag = 0,
 #ifdef DEBUG
             Eflag = 0,
 #endif
             vflag = 0,
             Dflag = 0,
             Hflag = 0,
-            bflag = 0;        
+            bflag = 0;
         char *Topt,
 #ifdef DEBUG
              *Eopt,
@@ -185,7 +185,7 @@ int main(int argc, char **argv)
                                 {"b",  &bflag,  NULL}, /* send ping to default hardcoded address */
                                 {NULL,  NULL,   NULL}  /* NULL required to end array */
                              };
-        
+
 
 
         if ( (msg = parse_opts(argc, argv, options, &help)) != (char *) NULL )
@@ -196,21 +196,21 @@ int main(int argc, char **argv)
 
         fill_defconfig();
         gTestConfig.mTestCase = Tflag ? atoi(Topt) : 1; /*Default test case no. 1*/
-        
-        if (gTestConfig.mTestCase < T_SHOW_INFO || gTestConfig.mTestCase >= T_NB) 
+
+        if (gTestConfig.mTestCase < T_SHOW_INFO || gTestConfig.mTestCase >= T_NB)
         {
                 tst_resm(TBROK, "Invalid argument for -T: %s",Topt);
                 help();
                 return TFAIL;
         }
-        
+
         memset(gTestConfig.ifname, 0, sizeof gTestConfig.ifname);
         if (Dflag)
                 strncpy(gTestConfig.ifname, Dopt, 31);
-        else 
+        else
                 strcpy(gTestConfig.ifname, "eth0");
 
-#ifdef DEBUG        
+#ifdef DEBUG
         gTestConfig.useif = Eflag ? atoi(Eopt) : IF_ETHTOOL | IF_MII | IF_IFF;
         if (gTestConfig.useif < 0 || gTestConfig.useif > 7)
         {
@@ -219,12 +219,12 @@ int main(int argc, char **argv)
                 return TFAIL;
         }
 #endif
-        
+
         gTestConfig.input_ip = 1;
         if (Hflag)
         {
                 strncpy(gTestConfig.dc.def_test_ping_addr, Hopt, IPADDR_STRLEN - 1);
-                gTestConfig.input_ip = 0;                
+                gTestConfig.input_ip = 0;
         }
         else
         {
@@ -232,10 +232,10 @@ int main(int argc, char **argv)
                 {
                         gTestConfig.input_ip = 0;
                 }
-        }        
+        }
 
         gTestConfig.mVerbose = vflag;
-        
+
         setup();
 
         /* Print test Assertion using tst_resm() function with argument TINFO. */
@@ -259,20 +259,20 @@ int main(int argc, char **argv)
         return VT_rv;
 }
 
-/*================================================================================================*/
-/*===== help =====*/
+/*====================*/
+/*= help =*/
 /**
 @brief  Inform of the available options and the associated parameters
 
 @param  None.
 
 @return Nothing.
-*/ 
-/*================================================================================================*/
+*/
+/*====================*/
 void help(void)
 {
-        printf("  i.mx27 FEC driver test\n"); 
-        printf("  Usage : -T <test_num>. To put test case number\n"); 
+        printf("  i.mx27 FEC driver test\n");
+        printf("  Usage : -T <test_num>. To put test case number\n");
         printf("                  0 : Show information about current ethernet interface(eth0 by defaults)\n");
         printf("                  1 : Send ping signal to specified host\n");
         printf("                  2 : Change main interface parameters(such as ip address, MTU size, etc)\n");

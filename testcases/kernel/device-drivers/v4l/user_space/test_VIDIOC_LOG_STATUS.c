@@ -28,19 +28,19 @@
 #include "test_VIDIOC_LOG_STATUS.h"
 
 void test_VIDIOC_LOG_STATUS() {
-	int ret;
+ int ret;
 
-	ret = ioctl(get_video_fd(), VIDIOC_LOG_STATUS);
-	dprintf("ret=%i, errno=%i\n", ret, errno);
+ ret  ioctl(get_video_fd(), VIDIOC_LOG_STATUS);
+ dprintf("ret%i, errno%i\n", ret, errno);
 
-	/* this is an optional ioctl, so two possible return values */
-	/* are possible */
-	if (ret == 0) {
-		CU_ASSERT_EQUAL(ret, 0);
-		/* TODO: check if something is shown in dmesg */
+ /* this is an optional ioctl, so two possible return values */
+ /* are possible */
+ if (ret  0) {
+  CU_ASSERT_EQUAL(ret, 0);
+  /* TODO: check if something is shown in dmesg */
 
-	} else {
-		CU_ASSERT_EQUAL(ret, -1);
-		CU_ASSERT_EQUAL(errno, EINVAL);
-	}
+ } else {
+  CU_ASSERT_EQUAL(ret, -1);
+  CU_ASSERT_EQUAL(errno, EINVAL);
+ }
 }

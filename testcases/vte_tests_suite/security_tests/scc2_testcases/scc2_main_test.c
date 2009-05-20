@@ -1,17 +1,17 @@
-/*================================================================================================*/
+/*====================*/
 /**
         @file   scc_test.c
 
         @brief  scc API test
 */
-/*==================================================================================================
+/*======================
 
         Copyright 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================================================================================================
+====================
 Revision History:
                              Modification    Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -20,23 +20,23 @@ A.Urusov/NONE                27/09/2005     TLSbo55835  Initial version
 A.Urusov/NONE                17/11/2005     TLSbo58839  Help and some diagnose messages edited
 A.Ozerov/NONE                03/01/2006     TLSbo61735  Mapping was removed
 
-====================================================================================================
+====================
 Total Tests: 1
 
 Test Executable Name:  scc_test
 
 Test Strategy: Examine the SCC driver common software operations
-=================================================================================================*/
+=====================*/
 
-/*==================================================================================================
+/*======================
                                         INCLUDE FILES
-==================================================================================================*/
+======================*/
 /* Verification Test Environment Include Files */
 #include "scc2_test.h"
 
-/*==================================================================================================
+/*======================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+======================*/
 /** Test program identifier.  */
 char   *TCID = "scc2_test";
 /** Total number of tests in this file.  */
@@ -52,7 +52,7 @@ int     encrypt_only = FALSE;
 /** */
 int     plaintext_length = DEFAULT_PLAINTEXT_LENGTH;
 /** Secret which is going to be encrypted and decrtyped. See also #init_plaintext */
-uint8_t plaintext[4096] = 
+uint8_t plaintext[4096] =
         { 0xca, 0xbb, 0xad, 0xba,
           0xde, 0xad, 0xbe, 0xef,
           0xdb, 0xea, 0x11, 0xbe,
@@ -79,18 +79,18 @@ int     scc_fd;
 /** */
 uint32_t timer_value = 0x5f0000;
 
-/*==================================================================================================
+/*======================
                                    GLOBAL FUNCTION PROTOTYPES
-==================================================================================================*/
+======================*/
 void        help(void);
 void        cleanup(void);
 void        setup(void);
 int         main(int argc, char **argv);
 
-/*==================================================================================================
+/*======================
                                        LOCAL FUNCTIONS
-==================================================================================================*/
-/*===== cleanup =====*/
+======================*/
+/*= cleanup =*/
 /**
 @brief  Performs all one time clean up for this test on successful
                 completion,  premature exit or  failure. Closes all temporary
@@ -98,10 +98,10 @@ int         main(int argc, char **argv);
                 appropriate return code by calling tst_exit() function.cleanup
 
 @param
-  
+
 @return
 */
-/*================================================================================================*/
+/*====================*/
 void cleanup(void)
 {
         int     VT_rv = TFAIL;
@@ -120,18 +120,18 @@ void cleanup(void)
         tst_exit();
 }
 
-/*================================================================================================*/
-/*===== setup =====*/
+/*====================*/
+/*= setup =*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
         and temporary files that may be used in the course of this test.
 
 @param
-  
+
 @return On failure - Exits by calling cleanup().
 */
-/*================================================================================================*/
+/*====================*/
 void setup(void)
 {
         int     VT_rv = VT_scc2_test_setup();
@@ -147,8 +147,8 @@ void setup(void)
         }
 }
 
-/*================================================================================================*/
-/*===== help =====*/
+/*====================*/
+/*= help =*/
 /**
 @brief  Performs print of this test help.
 
@@ -156,7 +156,7 @@ void setup(void)
 
 @return
 */
-/*================================================================================================*/
+/*====================*/
 void help(void)
 {
         printf( "Usage: scc_test [-T][-R offset][-W offset:value][-L tests][-S+/-options]\n"
@@ -165,7 +165,7 @@ void help(void)
                 "-W offset:value (write value into offset)\n" "-L tests,\n"
                 "   where 'tests' can be:\n"
                 "     a (test signal a software alarm to the SCC)\n"
-                "     c (run AIC tests)\n" 
+                "     c (run AIC tests)\n"
                 "     C (display SCC configuration)\n"
                 "     e (encryption and decryption tests)\n"
                 "     m (start monitor security failure)\n"
@@ -187,12 +187,12 @@ void help(void)
                 "-H (display the help)\n");
 }
 
-/*================================================================================================*/
-/*===== main =====*/
+/*====================*/
+/*= main =*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
-      	the test status and results appropriately using the LTP API's
+      the test status and results appropriately using the LTP API's
         On successful completion or premature failure, cleanup() func
         is called and test exits with an appropriate return code.
 
@@ -203,8 +203,8 @@ void help(void)
         On success - exits with 0 exit value.
 */
 
-/*================================================================================================*/
-int main(int arg_count, char *arg_list[]) 
+/*====================*/
+int main(int arg_count, char *arg_list[])
 {
         /* Declare and initialize variables */
         int             VT_rv = TPASS;

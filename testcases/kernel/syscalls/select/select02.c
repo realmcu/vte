@@ -97,7 +97,7 @@
  *      Test:
  *       Loop if the proper options are given.
  *        Execute system call
- *        Check return code, if system call failed (return=-1)
+ *        Check return code, if system call failed (return-1)
  *              Log the errno and Issue a FAIL message.
  *        Otherwise, Issue a PASS message.
  *
@@ -120,9 +120,9 @@
 void setup();
 void cleanup();
 
-char *TCID="select02";		/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID"select02";  /* Test program identifier.    */
+int TST_TOTAL1;  /* Total number of test cases. */
+extern int Tst_count;  /* Test Case counter for tst_* routines */
 
 int Fd[2];
 fd_set saved_Readfds, saved_Writefds;
@@ -134,18 +134,18 @@ fd_set Readfds, Writefds;
 int
 main(int ac, char **av)
 {
-    int lc;		/* loop counter */
-    char *msg;		/* message returned from parse_opts */
-    struct timeval timeout; 
-    long test_time = 0;	/* in usecs */
+    int lc;  /* loop counter */
+    char *msg;  /* message returned from parse_opts */
+    struct timeval timeout;
+    long test_time  0; /* in usecs */
 
 
     /***************************************************************
      * parse standard options, and exit if there is an error
      ***************************************************************/
-    if ( (msg=parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *) NULL ) {
-	tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	tst_exit();
+    if ( (msgparse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *) NULL ) {
+ tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+ tst_exit();
     }
 
     /***************************************************************
@@ -156,54 +156,54 @@ main(int ac, char **av)
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc=0; TEST_LOOPING(lc); lc++) {
+    for (lc0; TEST_LOOPING(lc); lc++) {
 
-	/* reset Tst_count in case we are looping. */
-	Tst_count=0;
+ /* reset Tst_count in case we are looping. */
+ Tst_count0;
 
         /*
          * Assigning the specified seconds within the timeval structure.
          */
 
-	test_time = ((lc%2000)*100000);	/* 100 milli-seconds */
+ test_time  ((lc%2000)*100000); /* 100 milli-seconds */
 
         /*
          * Bound the time to a value less than 60 seconds
          */
 
         if ( test_time > 1000000 * 60 )
-            test_time = test_time % (1000000 * 60);
+            test_time  test_time % (1000000 * 60);
 
-        timeout.tv_sec = test_time / 1000000;
-        timeout.tv_usec = test_time - (timeout.tv_sec * 1000000);
+        timeout.tv_sec  test_time / 1000000;
+        timeout.tv_usec  test_time - (timeout.tv_sec * 1000000);
 
-	Readfds = saved_Readfds;
-	Writefds = saved_Writefds;
+ Readfds  saved_Readfds;
+ Writefds  saved_Writefds;
 
-	/* Call the system call being tested. */
+ /* Call the system call being tested. */
 
-	TEST(select(5, &Readfds, &Writefds, 0, &timeout));
-	
-	/* check return code */
-	if ( TEST_RETURN == -1 ) {
-	    TEST_ERROR_LOG(TEST_ERRNO);
-	    tst_resm(TFAIL,
-		"%d select(5, &Readfds, &Writefds, 0, &timeout) failed, errno=%d\n",
-		lc, errno);
-	} else {
+ TEST(select(5, &Readfds, &Writefds, 0, &timeout));
 
-    	    /***************************************************************
-    	     * only perform functional verification if flag set (-f not given)
-    	     ***************************************************************/
-    	    if ( STD_FUNCTIONAL_TEST ) {
-    		/* Perform functional verification here */
-    		tst_resm(TPASS,
-				"select(5, &Readfds, &Writefds, 0, &timeout) timeout = %ld usecs",
-				test_time);
-	    }
-	}
+ /* check return code */
+ if ( TEST_RETURN  -1 ) {
+     TEST_ERROR_LOG(TEST_ERRNO);
+     tst_resm(TFAIL,
+  "%d select(5, &Readfds, &Writefds, 0, &timeout) failed, errno%d\n",
+  lc, errno);
+ } else {
 
-    }	/* End for TEST_LOOPING */
+        /***************************************************************
+         * only perform functional verification if flag set (-f not given)
+         ***************************************************************/
+        if ( STD_FUNCTIONAL_TEST ) {
+   /* Perform functional verification here */
+   tst_resm(TPASS,
+    "select(5, &Readfds, &Writefds, 0, &timeout) timeout  %ld usecs",
+    test_time);
+     }
+ }
+
+    } /* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -211,12 +211,12 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-}	/* End main */
+} /* End main */
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void 
+void
 setup()
 {
     /* capture signals */
@@ -228,8 +228,8 @@ setup()
     /* create a temporary directory and go to it */
     tst_tmpdir();
 
-    if (pipe(Fd) == -1 ) {
-	tst_brkm(TBROK, cleanup, "pipe(&Fd) failed, errno=%d", errno);
+    if (pipe(Fd)  -1 ) {
+ tst_brkm(TBROK, cleanup, "pipe(&Fd) failed, errno%d", errno);
     }
 
     /*
@@ -242,14 +242,14 @@ setup()
     FD_SET(Fd[0], &saved_Readfds);
     FD_SET(Fd[1], &saved_Writefds);
 
-}	/* End setup() */
+} /* End setup() */
 
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
+ *  completion or premature exit.
  ***************************************************************/
-void 
+void
 cleanup()
 {
     /*
@@ -263,6 +263,6 @@ cleanup()
 
     /* exit with return code appropriate for results */
     tst_exit();
-}	/* End cleanup() */
+} /* End cleanup() */
 
 

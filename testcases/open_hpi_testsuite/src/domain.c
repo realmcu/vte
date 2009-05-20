@@ -29,38 +29,38 @@
  *  The intent is that this list is maintained as new RPT entries
  *  are added and removed from the global RPT table, and used by
  *  saHpiSessionOpen() to determine if the requested domain exist
- *  without doing a full search of the RPT. 
+ *  without doing a full search of the RPT.
  */
-static GSList *global_domain_list = NULL;
+static GSList *global_domain_list  NULL;
 
-int is_in_domain_list(SaHpiDomainIdT did) 
+int is_in_domain_list(SaHpiDomainIdT did)
 {
         GSList *i;
-        
+
         data_access_lock();
 
         g_slist_for_each(i, global_domain_list) {
-                struct oh_domain *d = i->data;
-                if(d->domain_id == did) {
+                struct oh_domain *d  i->data;
+                if(d->domain_id  did) {
                         data_access_unlock();
                         return 1;
                 }
         }
 
         data_access_unlock();
-        
+
         return 0;
 }
 
 struct oh_domain *get_domain_by_id(SaHpiDomainIdT did)
 {
         GSList *i;
-        
+
         data_access_lock();
 
         g_slist_for_each(i, global_domain_list) {
-                struct oh_domain *d = i->data;
-                if(d->domain_id == did) {
+                struct oh_domain *d  i->data;
+                if(d->domain_id  did) {
                         data_access_unlock();
                         return d;
                 }
@@ -77,7 +77,7 @@ struct oh_domain *get_domain_by_id(SaHpiDomainIdT did)
 int add_domain(SaHpiDomainIdT did)
 {
         struct oh_domain *d;
-        
+
         if (did>MAX_GLOBAL_DOMAIN) {
                 dbg("Could not add so large domain, the region is kept for dymanic domain");
                 return -1;
@@ -86,22 +86,22 @@ int add_domain(SaHpiDomainIdT did)
                 dbg("Domain %d exists already, something is fishy", did);
                 return -1;
         }
-        
+
         data_access_lock();
-        
-        d = malloc(sizeof(*d));
+
+        d  malloc(sizeof(*d));
         if (!d) {
                 dbg("Out of memory");
                 data_access_unlock();
                 return -1;
         }
-        
-        d->domain_id = did;
-        d->sel = oh_sel_create();
- 
-        global_domain_list = g_slist_append(global_domain_list, d);
+
+        d->domain_id  did;
+        d->sel  oh_sel_create();
+
+        global_domain_list  g_slist_append(global_domain_list, d);
 
         data_access_unlock();
-        
+
         return 0;
 }

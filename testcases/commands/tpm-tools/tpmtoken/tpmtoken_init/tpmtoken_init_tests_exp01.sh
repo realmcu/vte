@@ -26,25 +26,25 @@ set timeout 30
 #   if it has, it is an error
 spawn tpmtoken_init
 expect {
-	-re "Clear the TPM token data?" {
-		set reinit 1
-		send "n\n"
-	}
-	-re "A new TPM security officer password is needed." {
-		set reinit 0
-	}
+ -re "Clear the TPM token data?" {
+  set reinit 1
+  send "n\n"
+ }
+ -re "A new TPM security officer password is needed." {
+  set reinit 0
+ }
 }
 
 if {$reinit == 0} {
-	expect -re "Enter new password: "
-	send "$P11_SO_PWD\n"
-	expect -re "Confirm password: "
-	send "$P11_SO_PWD\n"
-	expect -re "A new TPM user password is needed."
-	expect -re "Enter new password: "
-	send "$P11_USER_PWD\n"
-	expect -re "Confirm password: "
-	send "$P11_USER_PWD\n"
+ expect -re "Enter new password: "
+ send "$P11_SO_PWD\n"
+ expect -re "Confirm password: "
+ send "$P11_SO_PWD\n"
+ expect -re "A new TPM user password is needed."
+ expect -re "Enter new password: "
+ send "$P11_USER_PWD\n"
+ expect -re "Confirm password: "
+ send "$P11_USER_PWD\n"
 }
 
 expect timeout

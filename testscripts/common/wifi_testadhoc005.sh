@@ -27,7 +27,7 @@ sleep 3
 iwconfig eth1 key off
 sleep 1
 
-iwconfig eth1 essid TestAdhoc005 
+iwconfig eth1 essid TestAdhoc005
 
 echo "=============================="
 echo "        Config End            "
