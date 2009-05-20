@@ -69,7 +69,7 @@ run_test_list()
    RC=1
    media_player=/mnt/nfs/util/mplayer
    media_name=/mnt/nfs/test_stream/goto_tibei.mp3
-   nand_test="flash_eraseall /dev/mtdblock4"
+   nand_test="flash_eraseall /dev/mtd4"
    nand_stress_test="mount -t jffs2 /dev/mtdblock4 /mnt/src && bonnie++ -d /mnt/src -u 0:0 -s 10 -r 5 && umount /mnt/src"
    $media_player $media_name || return $RC
    $nand_test  || return $RC
