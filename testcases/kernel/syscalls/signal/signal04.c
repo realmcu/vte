@@ -19,42 +19,42 @@
 
 /*
  * NAME
- * signal04.c
+ *	signal04.c
  *
  * DESCRIPTION
- * signal04 - restore signals to default behavior
+ *	signal04 - restore signals to default behavior
  *
  * ALGORITHM
- * loop if that option was specified
- * for each signal in siglist[]
- *   set the signal handler to our own and save the return value
- *   issue the signal system call to restore the default behavior
- *   check the return value
- *   if return value  -1
- *     issue a FAIL message, break remaining tests and cleanup
- *   if we are doing functional testing
- *     set the signal handler to our own again and save second return value
- *     if the first return value matches the second return value
- *       issue a PASS message
- *     else
- *       issue a FAIL message
- * call cleanup
+ *	loop if that option was specified
+ *	for each signal in siglist[]
+ *	  set the signal handler to our own and save the return value
+ *	  issue the signal system call to restore the default behavior
+ *	  check the return value
+ *	  if return value == -1
+ *	    issue a FAIL message, break remaining tests and cleanup
+ *	  if we are doing functional testing
+ *	    set the signal handler to our own again and save second return value
+ *	    if the first return value matches the second return value
+ *	      issue a PASS message
+ *	    else
+ *	      issue a FAIL message
+ *	call cleanup
  *
  * USAGE:  <for command-line>
  *  signal04 [-c n] [-f] [-i n] [-I x] [-p x] [-t]
- * where,  -c n : Run n copies concurrently.
- *  -f   : Turn off functionality Testing.
- *  -i n : Execute test n times.
- *  -I x : Execute test for x seconds.
- *  -P x : Pause for x seconds between iterations.
- *  -t   : Turn on syscall timing.
+ *	where,  -c n : Run n copies concurrently.
+ *		-f   : Turn off functionality Testing.
+ *		-i n : Execute test n times.
+ *		-I x : Execute test for x seconds.
+ *		-P x : Pause for x seconds between iterations.
+ *		-t   : Turn on syscall timing.
  *
  * History
- * 07/2001 John George
- *  -Ported
+ *	07/2001 John George
+ *		-Ported
  *
  * Restrictions
- * none
+ *	none
  */
 
 #include "test.h"
@@ -67,16 +67,16 @@ void cleanup(void);
 void setup(void);
 void sighandler(int);
 
-char *TCID "signal04";
+char *TCID= "signal04";
 extern int Tst_count;
 
-int siglist[]  {SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGTRAP, SIGABRT,
-  SIGBUS, SIGFPE, SIGUSR1, SIGSEGV, SIGUSR2, SIGPIPE, SIGALRM,
-  SIGTERM, SIGCHLD, SIGCONT, SIGTSTP, SIGTTIN,
-  SIGTTOU, SIGURG, SIGXCPU, SIGXFSZ, SIGVTALRM, SIGPROF,
-  SIGWINCH, SIGIO, SIGPWR, SIGSYS};
+int siglist[] = {SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGTRAP, SIGABRT, 
+		SIGBUS, SIGFPE, SIGUSR1, SIGSEGV, SIGUSR2, SIGPIPE, SIGALRM,
+		SIGTERM, SIGCHLD, SIGCONT, SIGTSTP, SIGTTIN,
+		SIGTTOU, SIGURG, SIGXCPU, SIGXFSZ, SIGVTALRM, SIGPROF,
+		SIGWINCH, SIGIO, SIGPWR, SIGSYS};
 
-int TST_TOTAL  sizeof(siglist)/sizeof(int);
+int TST_TOTAL = sizeof(siglist)/sizeof(int);
 
 typedef void (*sighandler_t)(int);
 
@@ -84,87 +84,87 @@ sighandler_t  Tret;
 
 int main(int ac, char **av)
 {
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
- int i;
- sighandler_t rval, first;
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
+	int i;
+	sighandler_t rval, first;
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- setup();   /* global setup */
+	setup();			/* global setup */
 
- /* The following loop checks looping state if -i option given */
+	/* The following loop checks looping state if -i option given */
 
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  /*
-   * loop through the list of signals and test each one
-   */
-  for (i0; i<TST_TOTAL; i++) {
+		/*
+		 * loop through the list of signals and test each one
+		 */
+		for (i=0; i<TST_TOTAL; i++) {
 
                         /* First reset the signal to the default
                            action to clear out any pre-test
                            execution settings */
                         signal(siglist[i],SIG_DFL);
 
-   /* then set the handler to our own handler */
-   if ((rval  signal(siglist[i], &sighandler))SIG_ERR) {
-    tst_brkm(TBROK, cleanup, "initial signal call"
-      " failed");
-    /*NOTREACHED*/
-   }
+			/* then set the handler to our own handler */
+			if ((rval = signal(siglist[i], &sighandler))==SIG_ERR) {
+				tst_brkm(TBROK, cleanup, "initial signal call"
+					 " failed");
+				/*NOTREACHED*/
+			}
 
-   /* store the return value */
-   first  rval;
+			/* store the return value */
+			first = rval;
 
-   /* restore the default signal action */
-   errno  0; Tret  signal(siglist[i], SIG_DFL); TEST_ERRNO  errno;
+			/* restore the default signal action */
+			errno = 0; Tret = signal(siglist[i], SIG_DFL); TEST_ERRNO = errno;
 
-   if (Tret  SIG_ERR) {
-    tst_brkm(TFAIL, cleanup, "%s call failed - "
-      "errno  %d : %s", TCID, TEST_ERRNO,
-      strerror(TEST_ERRNO));
-    /*NOTREACHED*/
-   }
+			if (Tret == SIG_ERR) {
+				tst_brkm(TFAIL, cleanup, "%s call failed - "
+					 "errno = %d : %s", TCID, TEST_ERRNO,
+					 strerror(TEST_ERRNO));
+				/*NOTREACHED*/
+			}
+	
+			if (STD_FUNCTIONAL_TEST) {
+				/* now set the handler back to our own */
+				if ((rval = signal(siglist[i], &sighandler))
+								 == SIG_ERR) {
+					tst_brkm(TBROK, cleanup, "initial "
+						 "signal call failed");
+					/*NOTREACHED*/
+				}
 
-   if (STD_FUNCTIONAL_TEST) {
-    /* now set the handler back to our own */
-    if ((rval  signal(siglist[i], &sighandler))
-          SIG_ERR) {
-     tst_brkm(TBROK, cleanup, "initial "
-       "signal call failed");
-     /*NOTREACHED*/
-    }
+				/*
+				 * the first return value should equal the
+				 * second one.
+				 */
+				if (rval == first) {
+					tst_resm(TPASS, "%s call succeeded "
+						"received %d.", TCID, rval);
+				} else {
+					tst_brkm(TFAIL, cleanup, "return "
+						"values for signal(%d) don't "
+						"match. Got %d, expected %d.",
+						siglist[i], rval, first);
+					/*NOTREACHED*/
+				}
+			} else {
+				tst_resm(TPASS, "Call of signal(%d) succeeded",
+					siglist[i]);
+			}
+		}
+	}
 
-    /*
-     * the first return value should equal the
-     * second one.
-     */
-    if (rval  first) {
-     tst_resm(TPASS, "%s call succeeded "
-      "received %d.", TCID, rval);
-    } else {
-     tst_brkm(TFAIL, cleanup, "return "
-      "values for signal(%d) don't "
-      "match. Got %d, expected %d.",
-      siglist[i], rval, first);
-     /*NOTREACHED*/
-    }
-   } else {
-    tst_resm(TPASS, "Call of signal(%d) succeeded",
-     siglist[i]);
-   }
-  }
- }
-
- cleanup();
- /*NOTREACHED*/
+	cleanup();
+	/*NOTREACHED*/
 
   return(0);
 
@@ -184,24 +184,24 @@ sighandler(int sig)
 void
 setup(void)
 {
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- *        or premature exit.
+ * 	       or premature exit.
  */
 void
 cleanup(void)
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }
 

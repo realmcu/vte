@@ -16,16 +16,16 @@
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-/* Linked List Interface Module
+/* Linked List Interface Module 
    John Peter DeVale
-
+   
    Abstract linked list module implementing a double linked list
    and can operate as a circular or terminated list.
 
    the data is a void casted pointer.
 
    the list is sortable by built in sorting algorithms
-
+   
    the list uses a variable compare and copydata function
 
    the list can have a passed in function operate on every node
@@ -61,7 +61,7 @@ struct jlist
   short sort_ascending;		/* if set to one it sorts ascending vice descending */
 
   short i_am_sorted;			/* this variable is set to 1 if the list thinks
-    		it is sorted, or 0 if it thinks it is not */
+    				it is sorted, or 0 if it thinks it is not */
 
   short stay_sorted;			/* this is set to 1 if we want to sort the list
 				     if we realize it has somehow become unsorted
@@ -71,23 +71,23 @@ struct jlist
 				     list prior to searching and reset i_am_sorted
 				     otherwise we will execute a brute force search*/
 
-  short circular;		      /* set to 1 if list is circular, 0 if not */
+  short circular;		      	/* set to 1 if list is circular, 0 if not */
 
   short insert_mode;			/* this controls the way the data is inserted into
 				     the list.  If insert_in_order it inserts the
 				     data in order according to the compare function
-				     if stack_insert it inserts the element onto
+				     if stack_insert it inserts the element onto 
 				     the head of the list.  if queue insert then
-				     it inserts the element on to the end of the
+				     it inserts the element on to the end of the 
 				     list*/
 
-  int   data_size;		      /* the size of the data stored */
+  int   data_size;		      	/* the size of the data stored */
 
-  int (*compare)();		       /* compare function takes two jelement pointers and
-	     	returns an int. 1 for param1>param2 0 for
+  int (*compare)();		       	/* compare function takes two jelement pointers and
+	     			returns an int. 1 for param1>param2 0 for
 				param1 == param2 and -1 for param1 < param2 */
-
-  void (*copydata)();			/* the copy data function copys the data from one data element
+  
+  void (*copydata)();			/* the copy data function copys the data from one data element 
 				     to another.  it copies param1 into param2.  param1 , param2 are
 				     pointers of type jelement, and must be already allocated
 				     the copydata procedure must allocate memory for the actual data */
@@ -128,13 +128,13 @@ extern struct jlist *sort_list(struct jlist *theList);
 	/* this function sorts the list either ascending or descending
 	depending on the value of sort_ascending*/
 
-extern void do_action(struct jlist *theList,
+extern void do_action(struct jlist *theList, 
 				  int (*func)(struct jelement *),
 				  int (*filter)(struct jelement *)
 				  );
 	/* this function performs an action (func) on each element which gets a 1
 	returned from (filter).  if filter = null then (func) is executed on
-	each element
+	each element 
 	func declaration should be of type:
 	int func(struct jelement *theElement)
 	where the return value is 0 if the function may have messed up sorting, 1 otherwise

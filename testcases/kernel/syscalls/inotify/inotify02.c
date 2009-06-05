@@ -34,7 +34,7 @@
  *     Execute sequence file's operation and check return events
  *
  * HISTORY
- *     01/06/2007 - Fix to compile inotify test case with kernel that does
+ *     01/06/2007 - Fix to compile inotify test case with kernel that does 
  *     not support it. Ricardo Salveti de Araujo <rsalveti@linux.vnet.ibm.com>
  *
  *     03/27/2008 - Fix the test failure due to event coalescence. Also add
@@ -70,8 +70,8 @@
 void setup();
 void cleanup();
 
-char *TCID"inotify02";         /* Test program identifier.    */
-int TST_TOTAL9;            /* Total number of test cases. */
+char *TCID="inotify02";         /* Test program identifier.    */
+int TST_TOTAL=9;            /* Total number of test cases. */
 extern int Tst_count;        /* Test Case counter for tst_* routines */
 
 #define BUF_SIZE 256
@@ -114,7 +114,7 @@ int main(int ac, char **av){
     /*
      * parse standard options
      */
-    if ((msgparse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *) NULL)
+    if ((msg=parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *) NULL)
         tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 
     /*
@@ -125,86 +125,86 @@ int main(int ac, char **av){
     /*
      * check looping state if -c option given
      */
-    for (lc0; TEST_LOOPING(lc); lc++) {
+    for (lc=0; TEST_LOOPING(lc); lc++) {
 
         /* reset Tst_count in case we are looping. */
-        Tst_count  0;
+        Tst_count = 0;
 
         /*
          * generate sequence of events
          */
         if (chmod(".", 0755) < 0) {
             tst_brkm(TBROK, cleanup,
-                "chmod(\".\", 0755) Failed, errno%d : %s",
+                "chmod(\".\", 0755) Failed, errno=%d : %s",
                      errno, strerror(errno));
         }
-        event_set[Tst_count].mask  IN_ISDIR | IN_ATTRIB;
+        event_set[Tst_count].mask = IN_ISDIR | IN_ATTRIB;
         strcpy(event_set[Tst_count].name, "");
         Tst_count++;
 
-        if ((fd  creat(FILE_NAME1, 0755))  -1) {
+        if ((fd = creat(FILE_NAME1, 0755)) == -1) {
             tst_brkm(TBROK, cleanup,
-                "creat(\"%s\", 755) Failed, errno%d : %s",
+                "creat(\"%s\", 755) Failed, errno=%d : %s",
                 FILE_NAME1, errno, strerror(errno));
         }
-
-        event_set[Tst_count].mask  IN_CREATE;
+        
+        event_set[Tst_count].mask = IN_CREATE;
         strcpy(event_set[Tst_count].name, FILE_NAME1);
         Tst_count++;
-        event_set[Tst_count].mask  IN_OPEN;
+        event_set[Tst_count].mask = IN_OPEN;
         strcpy(event_set[Tst_count].name, FILE_NAME1);
         Tst_count++;
 
-        if (close(fd)  -1) {
-            tst_brkm(TBROK, cleanup,
-                    "close(%s) Failed, errno%d : %s",
+        if (close(fd) == -1) {
+            tst_brkm(TBROK, cleanup, 
+                    "close(%s) Failed, errno=%d : %s", 
                     FILE_NAME1, errno, strerror(errno));
         }
-        event_set[Tst_count].mask  IN_CLOSE_WRITE;
+        event_set[Tst_count].mask = IN_CLOSE_WRITE;
         strcpy(event_set[Tst_count].name, FILE_NAME1);
         Tst_count++;
 
+        
 
 
-
-        if (rename(FILE_NAME1, FILE_NAME2)  -1){
-            tst_brkm(TBROK, cleanup,
-                    "rename(%s, %s) Failed, errno%d : %s",
+        if (rename(FILE_NAME1, FILE_NAME2) == -1){
+            tst_brkm(TBROK, cleanup, 
+                    "rename(%s, %s) Failed, errno=%d : %s",
                     FILE_NAME1, FILE_NAME2,
                     errno, strerror(errno));
         }
-        event_set[Tst_count].mask  IN_MOVED_FROM;
+        event_set[Tst_count].mask = IN_MOVED_FROM;
         strcpy(event_set[Tst_count].name, FILE_NAME1);
         Tst_count++;
-        event_set[Tst_count].mask  IN_MOVED_TO;
+        event_set[Tst_count].mask = IN_MOVED_TO;
         strcpy(event_set[Tst_count].name, FILE_NAME2);
         Tst_count++;
 
-        if (getcwd(fname1, BUF_SIZE)  NULL){
-            tst_brkm(TBROK, cleanup,
-                    "getcwd(%x, %d) Failed, errno%d : %s",
+        if (getcwd(fname1, BUF_SIZE) == NULL){
+            tst_brkm(TBROK, cleanup, 
+                    "getcwd(%x, %d) Failed, errno=%d : %s",
                     fname1, BUF_SIZE,
                     errno, strerror(errno));
         }
 
         snprintf(fname2, BUF_SIZE, "%s.rename1", fname1);
-        if (rename(fname1, fname2)  -1){
-            tst_brkm(TBROK, cleanup,
-                    "rename(%s, %s) Failed, errno%d : %s",
+        if (rename(fname1, fname2) == -1){
+            tst_brkm(TBROK, cleanup, 
+                    "rename(%s, %s) Failed, errno=%d : %s",
                     fname1, fname2,
                     errno, strerror(errno));
         }
-        event_set[Tst_count].mask  IN_MOVE_SELF;
+        event_set[Tst_count].mask = IN_MOVE_SELF;
         strcpy(event_set[Tst_count].name, "");
         Tst_count++;
 
-        if (unlink(FILE_NAME2)  -1){
+        if (unlink(FILE_NAME2) == -1){
             tst_brkm(TBROK, cleanup,
-                    "unlink(%s) Failed, errno%d : %s",
+                    "unlink(%s) Failed, errno=%d : %s",
                     FILE_NAME2,
                     errno, strerror(errno));
         }
-        event_set[Tst_count].mask  IN_DELETE;
+        event_set[Tst_count].mask = IN_DELETE;
         strcpy(event_set[Tst_count].name, FILE_NAME2);
         Tst_count++;
 
@@ -213,75 +213,75 @@ int main(int ac, char **av){
          * a single event
          */
         snprintf(fname3, BUF_SIZE, "%s.rename2", fname1);
-        if (rename(fname2, fname3)  -1){
+        if (rename(fname2, fname3) == -1){
             tst_brkm(TBROK, cleanup,
-                    "rename(%s, %s) Failed, errno%d : %s",
+                    "rename(%s, %s) Failed, errno=%d : %s",
                     fname2, fname3,
                     errno, strerror(errno));
         }
 
-        if (rename(fname3, fname1)  -1){
-            tst_brkm(TBROK, cleanup,
-                    "rename(%s, %s) Failed, errno%d : %s",
+        if (rename(fname3, fname1) == -1){
+            tst_brkm(TBROK, cleanup, 
+                    "rename(%s, %s) Failed, errno=%d : %s",
                     fname3, fname1,
                     errno, strerror(errno));
         }
-        event_set[Tst_count].mask  IN_MOVE_SELF;
+        event_set[Tst_count].mask = IN_MOVE_SELF;
         strcpy(event_set[Tst_count].name, "");
         Tst_count++;
 
-        if (Tst_count ! TST_TOTAL) {
-            tst_brkm(TBROK, cleanup,
+        if (Tst_count != TST_TOTAL) {
+            tst_brkm(TBROK, cleanup, 
                 "Tst_count and TST_TOTAL are not equal");
         }
+        
+        Tst_count = 0;
 
-        Tst_count  0;
-
-        int len, i  0, test_num  0;
-        if ((len  read(fd_notify, event_buf, EVENT_BUF_LEN)) < 0) {
+        int len, i = 0, test_num = 0;
+        if ((len = read(fd_notify, event_buf, EVENT_BUF_LEN)) < 0) {
             tst_brkm(TBROK, cleanup,
-                "read(%d, buf, %d) Failed, errno%d : %s",
-                fd_notify, EVENT_BUF_LEN,
+                "read(%d, buf, %d) Failed, errno=%d : %s",
+                fd_notify, EVENT_BUF_LEN, 
                 errno, strerror(errno));
 
         }
 
         while (i < len) {
             struct inotify_event *event;
-            event  (struct inotify_event *) &event_buf[i];
-            if (test_num > TST_TOTAL){
+            event = (struct inotify_event *) &event_buf[i];
+            if (test_num >= TST_TOTAL){
                 tst_resm(TFAIL, "get unnecessary event: "
-                    "wd%d mask%x cookie%u len%u"
-                    "name\"%s\"",event->wd, event->mask,
-                    event->cookie, event->len,
+                    "wd=%d mask=%x cookie=%u len=%u"
+                    "name=\"%s\"",event->wd, event->mask,
+                    event->cookie, event->len, 
                             event->name);
 
-            } else     if ((event_set[test_num].mask  event->mask) &&
+            } else     if ((event_set[test_num].mask == event->mask) &&
                     (! strncmp( event_set[test_num].name,
                         event->name, event->len))) {
-                tst_resm(TPASS, "get event: wd%d mask%x"
-                        " cookie%u len%u name\"%s\"",
+                tst_resm(TPASS, "get event: wd=%d mask=%x" 
+                        " cookie=%u len=%u name=\"%s\"",
                         event->wd, event->mask,
-                        event->cookie, event->len,
+                        event->cookie, event->len, 
                         event->name);
 
             } else {
-                tst_resm(TFAIL, "get event: wd%d mask%x "
-                    "(expected %x) cookie%u len%u "
-                    "name\"%s\" (expected \"%s\") %d",
-                    event->wd, event->mask,
+                tst_resm(TFAIL, "get event: wd=%d mask=%x "
+                    "(expected %x) cookie=%u len=%u "
+                    "name=\"%s\" (expected \"%s\") %d",
+                    event->wd, event->mask,    
                     event_set[test_num].mask,
                     event->cookie, event->len, event->name,
-                    event_set[test_num].name,
-                    strcmp(event_set[test_num].name,
+                    event_set[test_num].name, 
+                    strcmp(event_set[test_num].name, 
                         event->name));
             }
             test_num++;
-            i + EVENT_SIZE + event->len;
+            i += EVENT_SIZE + event->len;
         }
 
         for (; test_num<TST_TOTAL; test_num++){
-            tst_resm(TFAIL, "don't get event: mask%x ",
+            tst_resm(TFAIL, "don't get event: mask=%x ",
                     event_set[test_num]);
 
         }
@@ -309,22 +309,22 @@ void setup(){
     /* make a temp directory and cd to it */
     tst_tmpdir();
 
-    if ((fd_notify  myinotify_init ()) < 0) {
-        if( errno  ENOSYS ){
+    if ((fd_notify = myinotify_init ()) < 0) {
+        if( errno == ENOSYS ){
             tst_resm(TCONF, "inotify is not configured in this kernel.");
             tst_resm(TCONF, "Test will not run.");
             tst_exit();
         }else{
             tst_brkm(TBROK, cleanup,
-                "inotify_init () Failed, errno%d : %s",
+                "inotify_init () Failed, errno=%d : %s",
                 errno, strerror(errno));
         }
     }
 
-    if ((wd  myinotify_add_watch (fd_notify, ".", IN_ALL_EVENTS)) < 0){
+    if ((wd = myinotify_add_watch (fd_notify, ".", IN_ALL_EVENTS)) < 0){
         tst_brkm(TBROK, cleanup,
-                "inotify_add_watch (%d, \".\", IN_ALL_EVENTS)"
-                "Failed, errno%d : %s",
+                "inotify_add_watch (%d, \".\", IN_ALL_EVENTS)" 
+                "Failed, errno=%d : %s",
                 fd_notify, errno, strerror(errno));
     };
 
@@ -338,13 +338,13 @@ void setup(){
 void cleanup(){
     if (myinotify_rm_watch(fd_notify, wd) < 0) {
         tst_resm(TWARN,    "inotify_rm_watch (%d, %d) Failed,"
-                "errno%d : %s",
+                "errno=%d : %s",
                 fd_notify, wd, errno, strerror(errno));
 
     }
 
-    if (close(fd_notify)  -1) {
-        tst_resm(TWARN, "close(%d) Failed, errno%d : %s",
+    if (close(fd_notify) == -1) {
+        tst_resm(TWARN, "close(%d) Failed, errno=%d : %s", 
                 fd_notify, errno, strerror(errno));
     }
 
@@ -364,8 +364,8 @@ void cleanup(){
 
 #else
 
-char *TCID"inotify02";         /* Test program identifier.    */
-int TST_TOTAL  0;              /* Total number of test cases. */
+char *TCID="inotify02";         /* Test program identifier.    */
+int TST_TOTAL = 0;              /* Total number of test cases. */
 
 int
 main()

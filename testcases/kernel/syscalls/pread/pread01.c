@@ -39,7 +39,7 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return-1)
+ *   Check return code, if system call failed (return=-1)
  *      Issue a FAIL message.
  *   Otherwise,
  *      Verify the Functionality of system call
@@ -61,7 +61,7 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS:
  *  None.
@@ -77,126 +77,126 @@
 #include "test.h"
 #include "usctest.h"
 
-#define TEMPFILE "pread_file"
+#define TEMPFILE	"pread_file"
 #define K1              1024
 #define K2              (K1 * 2)
 #define K3              (K1 * 3)
 #define K4              (K1 * 4)
 #define NBUFS           4
 
-char *TCID"pread01";  /* Test program identifier.    */
-int TST_TOTAL1;  /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID="pread01";		/* Test program identifier.    */
+int TST_TOTAL=1;		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-int fildes;   /* file descriptor for tempfile */
-char *write_buf[NBUFS];  /* buffer to hold data to be written */
-char *read_buf[NBUFS];  /* buffer to hold data read from file */
+int fildes;			/* file descriptor for tempfile */
+char *write_buf[NBUFS];		/* buffer to hold data to be written */
+char *read_buf[NBUFS];		/* buffer to hold data read from file */
 
-void setup();   /* Main setup function of test */
-void cleanup();   /* cleanup function for the test */
+void setup();			/* Main setup function of test */
+void cleanup();			/* cleanup function for the test */
 void l_seek(int, off_t, int, off_t); /* function to call lseek() */
-void init_buffers();  /* function to initialize/allocate buffers */
-void compare_bufers();  /* function to compare o/p of pread/pwrite */
+void init_buffers();		/* function to initialize/allocate buffers */
+void compare_bufers();		/* function to compare o/p of pread/pwrite */
 
 int
 main(int ac, char **av)
 {
- int lc;   /* loop counter */
- char *msg;  /* message returned from parse_opts */
- int nread;  /* no. of bytes read by pread() */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
+	int nread;		/* no. of bytes read by pread() */
 
- /* Parse standard options given to run the test. */
- msg  parse_opts(ac, av, (option_t *)NULL, NULL);
- if (msg ! (char *)NULL) {
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
- }
+	/* Parse standard options given to run the test. */
+	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
+	if (msg != (char *)NULL) {
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	}
 
- /* Perform global setup for test */
- setup();
+	/* Perform global setup for test */
+	setup();
 
- /* Check looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* Check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* Reset Tst_count in case we are looping */
-  Tst_count0;
+		/* Reset Tst_count in case we are looping */
+		Tst_count=0;
 
-  /*
-   * Call pread() of K1 data (should be 2's) at offset K2.
-   */
-  nread  pread(fildes, read_buf[2], K1, K2);
+		/*
+		 * Call pread() of K1 data (should be 2's) at offset K2.
+		 */
+		nread = pread(fildes, read_buf[2], K1, K2);
 
-  /* Check for the return value of pread() */
-  if (nread ! K1) {
-   tst_brkm(TFAIL, cleanup, "pread() at off. K2 failed: "
-     "nread%d, error:%d", nread, errno);
-  }
+		/* Check for the return value of pread() */
+		if (nread != K1) {
+			tst_brkm(TFAIL, cleanup, "pread() at off. K2 failed: "
+				 "nread=%d, error:%d", nread, errno);
+		}
 
-  /*
-   * We should still be at offset K4,
-   * which we were at the end of block 0.
-   */
-  l_seek(fildes, 0, SEEK_CUR, K4);
+		/*
+		 * We should still be at offset K4,
+		 * which we were at the end of block 0.
+		 */
+		l_seek(fildes, 0, SEEK_CUR, K4);
 
-  /* Now lseek() to offset 0. */
-  l_seek(fildes, 0, SEEK_SET, 0);
+		/* Now lseek() to offset 0. */
+		l_seek(fildes, 0, SEEK_SET, 0);
 
-  /* pread() K1 of data (should be 3's) at offset K3. */
-  nread  pread(fildes, read_buf[3], K1, K3);
-  if (nread ! K1) {
-   tst_brkm(TFAIL, cleanup, "pread() at off. K3 failed: "
-     "nread%d, error:%d", nread, errno);
-  }
+		/* pread() K1 of data (should be 3's) at offset K3. */
+		nread = pread(fildes, read_buf[3], K1, K3);
+		if (nread != K1) {
+			tst_brkm(TFAIL, cleanup, "pread() at off. K3 failed: "
+				 "nread=%d, error:%d", nread, errno);
+		}
 
-  /* We should still be at offset 0. */
-  l_seek(fildes, 0, SEEK_CUR, 0);
+		/* We should still be at offset 0. */
+		l_seek(fildes, 0, SEEK_CUR, 0);
 
-  /*
-   * Do a normal read() of K1 data (should be 0's)
-   * which should take place at offset 0 and move the
-   * file pointer to an offset of K1.
-   */
-  if ((nread  read(fildes, read_buf[0], K1)) ! K1) {
-   tst_brkm(TFAIL, cleanup, "read() at off. 0 failed: "
-     "nread%d, errno%d", nread, errno);
-  }
+		/*
+		 * Do a normal read() of K1 data (should be 0's)
+		 * which should take place at offset 0 and move the
+		 * file pointer to an offset of K1.
+		 */
+		if ((nread = read(fildes, read_buf[0], K1)) != K1) {
+			tst_brkm(TFAIL, cleanup, "read() at off. 0 failed: "
+				 "nread=%d, errno=%d", nread, errno);
+		}
 
-  /* We should now be at an offset of K1. */
-  l_seek(fildes, 0, SEEK_CUR, K1);
+		/* We should now be at an offset of K1. */
+		l_seek(fildes, 0, SEEK_CUR, K1);
 
-  /* pread() of K1 data (should be 1's) at offset K1.*/
-  nread  pread(fildes, read_buf[1], K1, K1);
-  if (nread ! K1) {
-   tst_brkm(TFAIL, cleanup, "pread() at off. K1 failed: "
-     "nread%d, error:%d", nread, errno);
-  }
+		/* pread() of K1 data (should be 1's) at offset K1.*/
+		nread = pread(fildes, read_buf[1], K1, K1);
+		if (nread != K1) {
+			tst_brkm(TFAIL, cleanup, "pread() at off. K1 failed: "
+				 "nread=%d, error:%d", nread, errno);
+		}
 
-  /* We should still be at offset K1. */
-  l_seek(fildes, 0, SEEK_CUR, K1);
+		/* We should still be at offset K1. */
+		l_seek(fildes, 0, SEEK_CUR, K1);
 
-  /*
-   * Perform functional verification if test
-   * executed without (-f) option.
-   */
-  if (STD_FUNCTIONAL_TEST) {
-   /*
-    * Compare the read buffer data read
-    * with the data written to write buffer
-    * in the setup.
-    */
-   compare_bufers(write_buf, read_buf);
-  } else {
-   tst_resm(TPASS, "calls to pread() succeeded");
-  }
+		/*
+		 * Perform functional verification if test
+		 * executed without (-f) option.
+		 */
+		if (STD_FUNCTIONAL_TEST) {
+			/*
+			 * Compare the read buffer data read
+			 * with the data written to write buffer
+			 * in the setup.
+			 */
+			compare_bufers(write_buf, read_buf);
+		} else {
+			tst_resm(TPASS, "calls to pread() succeeded");
+		}
 
-  /* reset our location to offset K4 in case we are looping */
-  l_seek(fildes, K4, SEEK_SET, K4);
- } /* End for TEST_LOOPING */
- /* Call cleanup() to undo setup done for the test. */
- cleanup();
+		/* reset our location to offset K4 in case we are looping */
+		l_seek(fildes, K4, SEEK_SET, K4);
+	}	/* End for TEST_LOOPING */
+	/* Call cleanup() to undo setup done for the test. */
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
-} /* End main */
+	/*NOTREACHED*/
+	return(0);
+}	/* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -208,69 +208,69 @@ main(int ac, char **av)
 void
 setup()
 {
- int nwrite  0;   /* no. of bytes written by pwrite() */
+	int nwrite = 0;			/* no. of bytes written by pwrite() */
 
- /* capture signals */
- tst_sig(FORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /* Allocate/Initialize the read/write buffer with know data */
- init_buffers();
+	/* Allocate/Initialize the read/write buffer with know data */
+	init_buffers();
 
- /* make a temp directory and cd to it */
- tst_tmpdir();
+	/* make a temp directory and cd to it */
+	tst_tmpdir();
 
- /* Creat a temporary file used for mapping */
- if ((fildes  open(TEMPFILE, O_RDWR | O_CREAT, 0666)) < 0) {
-  tst_brkm(TBROK, cleanup, "open() on %s failed, errno%d : %s",
-    TEMPFILE, errno, strerror(errno));
- }
+	/* Creat a temporary file used for mapping */
+	if ((fildes = open(TEMPFILE, O_RDWR | O_CREAT, 0666)) < 0) {
+		tst_brkm(TBROK, cleanup, "open() on %s failed, errno=%d : %s",
+			 TEMPFILE, errno, strerror(errno));
+	}
 
- /* pwrite() K1 of data (0's) at offset 0 of temporary file */
- if ((nwrite  pwrite(fildes, write_buf[0], K1, 0)) ! K1) {
-  tst_brkm(TBROK, cleanup, "pwrite() failed to write on %s, "
-    "errno%d : %s", TEMPFILE, errno, strerror(errno));
- }
+	/* pwrite() K1 of data (0's) at offset 0 of temporary file */
+	if ((nwrite = pwrite(fildes, write_buf[0], K1, 0)) != K1) {
+		tst_brkm(TBROK, cleanup, "pwrite() failed to write on %s, "
+			 "errno=%d : %s", TEMPFILE, errno, strerror(errno));
+	}
 
- /* We should still be at offset 0. */
- l_seek(fildes, 0, SEEK_CUR, 0);
+	/* We should still be at offset 0. */
+	l_seek(fildes, 0, SEEK_CUR, 0);
 
- /* Now, lseek() to a non K boundary, just to be different. */
- l_seek(fildes, K1/2, SEEK_SET, K1/2);
+	/* Now, lseek() to a non K boundary, just to be different. */
+	l_seek(fildes, K1/2, SEEK_SET, K1/2);
 
- /* Again, pwrite() K1 of data (2's) at offset K2 of temporary file */
- if ((nwrite  pwrite(fildes, write_buf[2], K1, K2)) ! K1) {
-  tst_brkm(TBROK, cleanup, "pwrite() failed to write at %d off. "
-    "on %s, errno%d : %s", K2, TEMPFILE, errno,
-    strerror(errno));
- }
+	/* Again, pwrite() K1 of data (2's) at offset K2 of temporary file */
+	if ((nwrite = pwrite(fildes, write_buf[2], K1, K2)) != K1) {
+		tst_brkm(TBROK, cleanup, "pwrite() failed to write at %d off. "
+			 "on %s, errno=%d : %s", K2, TEMPFILE, errno,
+			 strerror(errno));
+	}
 
- /* We should still be at our non K boundary. */
- l_seek(fildes, 0, SEEK_CUR, K1/2);
+	/* We should still be at our non K boundary. */
+	l_seek(fildes, 0, SEEK_CUR, K1/2);
 
- /* lseek() to an offset of K3. */
- l_seek(fildes, K3, SEEK_SET, K3);
+	/* lseek() to an offset of K3. */
+	l_seek(fildes, K3, SEEK_SET, K3);
 
- /*
-  * Using write(), write of K1 of data (3's) which should take
-  * place at an offset of K3, moving the file pointer to K4.
-  */
- if ((nwrite  write(fildes, write_buf[3], K1)) ! K1) {
-  tst_brkm(TBROK, cleanup, "write() failed: nwrite%d, errno%d "
-    ": %s", nwrite, errno, strerror(errno));
- }
+	/*
+	 * Using write(), write of K1 of data (3's) which should take
+	 * place at an offset of K3, moving the file pointer to K4.
+	 */
+	if ((nwrite = write(fildes, write_buf[3], K1)) != K1) {
+		tst_brkm(TBROK, cleanup, "write() failed: nwrite=%d, errno=%d "
+			 ": %s", nwrite, errno, strerror(errno));
+	}
 
- /* We should be at offset K4. */
- l_seek(fildes, 0, SEEK_CUR, K4);
+	/* We should be at offset K4. */
+	l_seek(fildes, 0, SEEK_CUR, K4);
 
- /* Again, pwrite() K1 of data (1's) at offset K1. */
- if ((nwrite  pwrite(fildes, write_buf[1], K1, K1)) ! K1) {
-  tst_brkm(TBROK, cleanup, "pwrite() failed to write at %d off. "
-    "on %s, errno%d : %s", K1, TEMPFILE, errno,
-    strerror(errno));
- }
+	/* Again, pwrite() K1 of data (1's) at offset K1. */
+	if ((nwrite = pwrite(fildes, write_buf[1], K1, K1)) != K1) {
+		tst_brkm(TBROK, cleanup, "pwrite() failed to write at %d off. "
+			 "on %s, errno=%d : %s", K1, TEMPFILE, errno,
+			 strerror(errno));
+	}
 }
 
 /*
@@ -284,19 +284,19 @@ setup()
 void
 init_buffers()
 {
- int count;  /* counter variable for loop */
+	int count;		/* counter variable for loop */
 
- /* Allocate and Initialize read/write buffer */
- for (count  0; count < NBUFS; count++) {
-  write_buf[count]  (char *)malloc(K1);
-  read_buf[count]  (char *)malloc(K1);
+	/* Allocate and Initialize read/write buffer */
+	for (count = 0; count < NBUFS; count++) {
+		write_buf[count] = (char *)malloc(K1);
+		read_buf[count] = (char *)malloc(K1);
 
-  if ((write_buf[count]  NULL) || (read_buf[count]  NULL)) {
-   tst_brkm(TBROK, tst_exit,
-     "malloc() failed on read/write buffers");
-  }
-  memset(write_buf[count], count, K1);
- }
+		if ((write_buf[count] == NULL) || (read_buf[count] == NULL)) {
+			tst_brkm(TBROK, tst_exit,
+				 "malloc() failed on read/write buffers");
+		}
+		memset(write_buf[count], count, K1);
+	}
 }
 
 /*
@@ -308,13 +308,13 @@ init_buffers()
 void
 l_seek(int fdesc, off_t offset, int whence, off_t checkoff)
 {
- off_t offloc;  /* offset ret. from lseek() */
+	off_t offloc;		/* offset ret. from lseek() */
 
- if ((offloc  lseek(fdesc, offset, whence)) ! checkoff) {
-  tst_resm(TWARN, "return  %d, expected %d", offloc, checkoff);
-  tst_brkm(TBROK, cleanup, "lseek() on %s failed, error%d : %s",
-    TEMPFILE, errno, strerror(errno));
- }
+	if ((offloc = lseek(fdesc, offset, whence)) != checkoff) {
+		tst_resm(TWARN, "return = %d, expected %d", offloc, checkoff);
+		tst_brkm(TBROK, cleanup, "lseek() on %s failed, error=%d : %s",
+			 TEMPFILE, errno, strerror(errno));
+	}
 }
 
 /*
@@ -330,20 +330,20 @@ l_seek(int fdesc, off_t offset, int whence, off_t checkoff)
 void
 compare_bufers()
 {
- int count;  /* index for the loop */
- int err_flg  0; /* flag to indicate error */
+	int count;		/* index for the loop */
+	int err_flg = 0;	/* flag to indicate error */
 
- for (count  0; count < NBUFS; count++) {
-  if (memcmp(write_buf[count], read_buf[count], K1) ! 0) {
-   tst_resm(TFAIL, "read/write buffer data mismatch");
-   err_flg++;
-  }
- }
+	for (count = 0; count < NBUFS; count++) {
+		if (memcmp(write_buf[count], read_buf[count], K1) != 0) {
+			tst_resm(TFAIL, "read/write buffer data mismatch");
+			err_flg++;
+		}
+	}
 
- /* If no erros, Test successful */
- if (!err_flg) {
-  tst_resm(TPASS, "Functionality of pread() is correct");
- }
+	/* If no erros, Test successful */
+	if (!err_flg) {
+		tst_resm(TPASS, "Functionality of pread() is correct");
+	}
 }
 
 /*
@@ -357,28 +357,28 @@ compare_bufers()
 void
 cleanup()
 {
- int count;  /* index for the loop */
+	int count;		/* index for the loop */
 
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* Free the memory allocated for the read/write buffer */
- for (count  0; count < NBUFS; count++) {
-  free(write_buf[count]);
-  free(read_buf[count]);
- }
+	/* Free the memory allocated for the read/write buffer */
+	for (count = 0; count < NBUFS; count++) {
+		free(write_buf[count]);
+		free(read_buf[count]);
+	}
 
- /* Close the temporary file */
- if (close(fildes) < 0) {
-  tst_brkm(TBROK, NULL, "close() on %s Failed, errno%d : %s",
-    TEMPFILE, errno, strerror(errno));
- }
+	/* Close the temporary file */
+	if (close(fildes) < 0) {
+		tst_brkm(TBROK, NULL, "close() on %s Failed, errno=%d : %s",
+			 TEMPFILE, errno, strerror(errno));
+	}
 
- /* Remove tmp dir and all files in it */
- tst_rmdir();
+	/* Remove tmp dir and all files in it */
+	tst_rmdir();
 
- tst_exit();
+	tst_exit();
 }

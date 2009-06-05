@@ -43,7 +43,7 @@
 
 /* This is a functional test to verify binding a socket with INADDRY_ANY
  * address and send messages.
- */
+ */ 
 
 #include <stdio.h>
 #include <unistd.h>
@@ -57,9 +57,9 @@
 #include <netinet/sctp.h>
 #include <sctputil.h>
 
-char *TCID  __FILE__;
-int TST_TOTAL  2;
-int TST_CNT  0;
+char *TCID = __FILE__;
+int TST_TOTAL = 2;
+int TST_CNT = 0;
 
 int
 main(void)
@@ -68,185 +68,185 @@ main(void)
         sockaddr_storage_t loop;
         sockaddr_storage_t anyaddr;
         struct msghdr outmessage;
- char incmsg[CMSG_SPACE(sizeof(sctp_cmsg_data_t))];
- char outcmsg[CMSG_SPACE(sizeof(struct sctp_sndrcvinfo))];
- struct cmsghdr *cmsg;
- struct sctp_sndrcvinfo *sinfo;
+	char incmsg[CMSG_SPACE(sizeof(sctp_cmsg_data_t))];
+	char outcmsg[CMSG_SPACE(sizeof(struct sctp_sndrcvinfo))];
+	struct cmsghdr *cmsg;
+	struct sctp_sndrcvinfo *sinfo;
         struct iovec out_iov;
         struct iovec iov;
         struct msghdr inmessage;
-        char *message  "hello, world!\n";
-        char *telephone  "Watson, come here!  I need you!\n";
-        char *telephone_resp  "I already brought your coffee...\n";
+        char *message = "hello, world!\n";
+        char *telephone = "Watson, come here!  I need you!\n";
+        char *telephone_resp = "I already brought your coffee...\n";
         int error;
- int pf_class, af_family;
- uint32_t ppid;
- uint32_t stream;
- socklen_t namelen;
+	int pf_class, af_family;
+	uint32_t ppid;
+	uint32_t stream;
+	socklen_t namelen;
 
-        /* Rather than fflush() throughout the code, set stdout to
-  * be unbuffered.
-  */
- setvbuf(stdout, NULL, _IONBF, 0);
+        /* Rather than fflush() throughout the code, set stdout to 
+	 * be unbuffered. 
+	 */
+	setvbuf(stdout, NULL, _IONBF, 0); 
 
- /* Set some basic values which depend on the address family. */
+	/* Set some basic values which depend on the address family. */
 #if TEST_V6
- pf_class  PF_INET6;
- af_family  AF_INET6;
+	pf_class = PF_INET6;
+	af_family = AF_INET6;
 
-        loop.v6.sin6_family  AF_INET6;
-        loop.v6.sin6_addr  (struct in6_addr)SCTP_IN6ADDR_LOOPBACK_INIT;
-        loop.v6.sin6_port  0;
+        loop.v6.sin6_family = AF_INET6;
+        loop.v6.sin6_addr = (struct in6_addr)SCTP_IN6ADDR_LOOPBACK_INIT;
+        loop.v6.sin6_port = 0;
 
-        anyaddr.v6.sin6_family  AF_INET6;
-        anyaddr.v6.sin6_addr  (struct in6_addr)SCTP_IN6ADDR_ANY_INIT;
-        anyaddr.v6.sin6_port  0;
+        anyaddr.v6.sin6_family = AF_INET6;
+        anyaddr.v6.sin6_addr = (struct in6_addr)SCTP_IN6ADDR_ANY_INIT;
+        anyaddr.v6.sin6_port = 0;
 #else
- pf_class  PF_INET;
- af_family  AF_INET;
+	pf_class = PF_INET;
+	af_family = AF_INET;
 
-        loop.v4.sin_family  AF_INET;
-        loop.v4.sin_addr.s_addr  SCTP_IP_LOOPBACK;
-        loop.v4.sin_port  0;
+        loop.v4.sin_family = AF_INET;
+        loop.v4.sin_addr.s_addr = SCTP_IP_LOOPBACK;
+        loop.v4.sin_port = 0;
 
-        anyaddr.v4.sin_family  AF_INET;
-        anyaddr.v4.sin_addr.s_addr  INADDR_ANY;
-        anyaddr.v4.sin_port  0;
+        anyaddr.v4.sin_family = AF_INET;
+        anyaddr.v4.sin_addr.s_addr = INADDR_ANY;
+        anyaddr.v4.sin_port = 0;
 #endif /* TEST_V6 */
 
         /* Create the two endpoints which will talk to each other.  */
-        sk1  test_socket(pf_class, SOCK_SEQPACKET, IPPROTO_SCTP);
-        sk2  test_socket(pf_class, SOCK_SEQPACKET, IPPROTO_SCTP);
+        sk1 = test_socket(pf_class, SOCK_SEQPACKET, IPPROTO_SCTP);
+        sk2 = test_socket(pf_class, SOCK_SEQPACKET, IPPROTO_SCTP);
 
- /* Enable ASSOC_CHANGE and SNDRCVINFO notifications. */
- test_enable_assoc_change(sk1);
- test_enable_assoc_change(sk2);
+	/* Enable ASSOC_CHANGE and SNDRCVINFO notifications. */
+	test_enable_assoc_change(sk1);
+	test_enable_assoc_change(sk2);
 
         /* Bind these sockets to the test ports.  */
         test_bind(sk1, &loop.sa, sizeof(loop));
         test_bind(sk2, &anyaddr.sa, sizeof(anyaddr));
 
- tst_resm(TPASS, "bind INADDR_ANY address");
+	tst_resm(TPASS, "bind INADDR_ANY address");
 
- /* Mark sk2 as being able to accept new associations */
- test_listen(sk2, 1);
+ 	/* Mark sk2 as being able to accept new associations */
+	test_listen(sk2, 1);
 
- /* Now use getsockaname() to retrieve the ephmeral ports. */
- namelen  sizeof(loop);
- error  getsockname(sk1, &loop.sa, &namelen);
- if (error ! 0)
-  tst_brkm(TBROK, tst_exit, "getsockname: %s", strerror(errno));
+	/* Now use getsockaname() to retrieve the ephmeral ports. */
+	namelen = sizeof(loop);
+	error = getsockname(sk1, &loop.sa, &namelen);
+	if (error != 0)
+		tst_brkm(TBROK, tst_exit, "getsockname: %s", strerror(errno));
 
- namelen  sizeof(anyaddr);
- error  getsockname(sk2, &anyaddr.sa, &namelen);
- if (error ! 0)
-  tst_brkm(TBROK, tst_exit, "getsockname: %s", strerror(errno));
-
+	namelen = sizeof(anyaddr);
+	error = getsockname(sk2, &anyaddr.sa, &namelen);
+	if (error != 0)
+		tst_brkm(TBROK, tst_exit, "getsockname: %s", strerror(errno));
+        
 #if TEST_V6
- loop.v6.sin6_port  anyaddr.v6.sin6_port;
+	loop.v6.sin6_port = anyaddr.v6.sin6_port;
 #else
-        loop.v4.sin_port  anyaddr.v4.sin_port;
+        loop.v4.sin_port = anyaddr.v4.sin_port;
 #endif
 
         /* Send the first message.  This will create the association.  */
-        outmessage.msg_name  &loop;
-        outmessage.msg_namelen  sizeof(loop);
-        outmessage.msg_iov  &out_iov;
-        outmessage.msg_iovlen  1;
-        outmessage.msg_control  outcmsg;
-        outmessage.msg_controllen  sizeof(outcmsg);
-        outmessage.msg_flags  0;
- cmsg  CMSG_FIRSTHDR(&outmessage);
- cmsg->cmsg_level  IPPROTO_SCTP;
- cmsg->cmsg_type  SCTP_SNDRCV;
- cmsg->cmsg_len  CMSG_LEN(sizeof(struct sctp_sndrcvinfo));
- outmessage.msg_controllen  cmsg->cmsg_len;
- sinfo  (struct sctp_sndrcvinfo *)CMSG_DATA(cmsg);
- memset(sinfo, 0x00, sizeof(struct sctp_sndrcvinfo));
- ppid  rand(); /* Choose an arbitrary value. */
- stream  1;
- sinfo->sinfo_ppid  ppid;
- sinfo->sinfo_stream  stream;
-        outmessage.msg_iov->iov_base  message;
-        outmessage.msg_iov->iov_len  strlen(message) + 1;
+        outmessage.msg_name = &loop;
+        outmessage.msg_namelen = sizeof(loop);
+        outmessage.msg_iov = &out_iov;
+        outmessage.msg_iovlen = 1;
+        outmessage.msg_control = outcmsg;
+        outmessage.msg_controllen = sizeof(outcmsg);
+        outmessage.msg_flags = 0;
+	cmsg = CMSG_FIRSTHDR(&outmessage);
+	cmsg->cmsg_level = IPPROTO_SCTP;
+	cmsg->cmsg_type = SCTP_SNDRCV;
+	cmsg->cmsg_len = CMSG_LEN(sizeof(struct sctp_sndrcvinfo));
+	outmessage.msg_controllen = cmsg->cmsg_len;
+	sinfo = (struct sctp_sndrcvinfo *)CMSG_DATA(cmsg);
+	memset(sinfo, 0x00, sizeof(struct sctp_sndrcvinfo));
+	ppid = rand(); /* Choose an arbitrary value. */
+	stream = 1; 
+	sinfo->sinfo_ppid = ppid;
+	sinfo->sinfo_stream = stream;
+        outmessage.msg_iov->iov_base = message;
+        outmessage.msg_iov->iov_len = strlen(message) + 1;
         test_sendmsg(sk1, &outmessage, 0, strlen(message)+1);
 
- /* Initialize inmessage for all receives. */
+	/* Initialize inmessage for all receives. */
         memset(&inmessage, 0, sizeof(inmessage));
-        iov.iov_base  test_malloc(REALLY_BIG);
-        iov.iov_len  REALLY_BIG;
-        inmessage.msg_iov  &iov;
-        inmessage.msg_iovlen  1;
-        inmessage.msg_control  incmsg;
+        iov.iov_base = test_malloc(REALLY_BIG);
+        iov.iov_len = REALLY_BIG;
+        inmessage.msg_iov = &iov;
+        inmessage.msg_iovlen = 1;
+        inmessage.msg_control = incmsg;
 
         /* Get the communication up message on sk2.  */
-        inmessage.msg_controllen  sizeof(incmsg);
-        error  test_recvmsg(sk2, &inmessage, MSG_WAITALL);
- test_check_msg_notification(&inmessage, error,
-        sizeof(struct sctp_assoc_change),
-        SCTP_ASSOC_CHANGE, SCTP_COMM_UP);
+        inmessage.msg_controllen = sizeof(incmsg);
+        error = test_recvmsg(sk2, &inmessage, MSG_WAITALL);
+	test_check_msg_notification(&inmessage, error,
+				    sizeof(struct sctp_assoc_change),
+				    SCTP_ASSOC_CHANGE, SCTP_COMM_UP);	
 
         /* Get the communication up message on sk1.  */
-        inmessage.msg_controllen  sizeof(incmsg);
-        error  test_recvmsg(sk1, &inmessage, MSG_WAITALL);
- test_check_msg_notification(&inmessage, error,
-        sizeof(struct sctp_assoc_change),
-        SCTP_ASSOC_CHANGE, SCTP_COMM_UP);
+        inmessage.msg_controllen = sizeof(incmsg);
+        error = test_recvmsg(sk1, &inmessage, MSG_WAITALL);
+	test_check_msg_notification(&inmessage, error,
+				    sizeof(struct sctp_assoc_change),
+				    SCTP_ASSOC_CHANGE, SCTP_COMM_UP);	
 
         /* Get the first message which was sent.  */
-        inmessage.msg_controllen  sizeof(incmsg);
-        error  test_recvmsg(sk2, &inmessage, MSG_WAITALL);
-        test_check_msg_data(&inmessage, error, strlen(message) + 1,
-       MSG_EOR, stream, ppid);
+        inmessage.msg_controllen = sizeof(incmsg);
+        error = test_recvmsg(sk2, &inmessage, MSG_WAITALL);
+        test_check_msg_data(&inmessage, error, strlen(message) + 1, 
+			    MSG_EOR, stream, ppid);
 
        /* Send 2 messages.  */
-        outmessage.msg_name  &loop;
-        outmessage.msg_namelen  sizeof(loop);
-        outmessage.msg_controllen  sizeof(outcmsg);
-        outmessage.msg_flags  0;
- cmsg  CMSG_FIRSTHDR(&outmessage);
- cmsg->cmsg_level  IPPROTO_SCTP;
- cmsg->cmsg_type  SCTP_SNDRCV;
- cmsg->cmsg_len  CMSG_LEN(sizeof(struct sctp_sndrcvinfo));
- outmessage.msg_controllen  cmsg->cmsg_len;
- sinfo  (struct sctp_sndrcvinfo *)CMSG_DATA(cmsg);
- memset(sinfo, 0x00, sizeof(struct sctp_sndrcvinfo));
- ppid++;
- stream++;
- sinfo->sinfo_ppid  ppid;
- sinfo->sinfo_stream  stream;
- outmessage.msg_iov->iov_base  telephone;
-        outmessage.msg_iov->iov_len  strlen(telephone) + 1;
- test_sendmsg(sk1, &outmessage, 0, strlen(telephone)+1);
+        outmessage.msg_name = &loop;
+        outmessage.msg_namelen = sizeof(loop);
+        outmessage.msg_controllen = sizeof(outcmsg);
+        outmessage.msg_flags = 0;
+	cmsg = CMSG_FIRSTHDR(&outmessage);
+	cmsg->cmsg_level = IPPROTO_SCTP;
+	cmsg->cmsg_type = SCTP_SNDRCV;
+	cmsg->cmsg_len = CMSG_LEN(sizeof(struct sctp_sndrcvinfo));
+	outmessage.msg_controllen = cmsg->cmsg_len;
+	sinfo = (struct sctp_sndrcvinfo *)CMSG_DATA(cmsg);
+	memset(sinfo, 0x00, sizeof(struct sctp_sndrcvinfo));
+	ppid++;
+	stream++;
+	sinfo->sinfo_ppid = ppid;
+	sinfo->sinfo_stream = stream;
+	outmessage.msg_iov->iov_base = telephone;
+        outmessage.msg_iov->iov_len = strlen(telephone) + 1;
+	test_sendmsg(sk1, &outmessage, 0, strlen(telephone)+1);
 
- outmessage.msg_iov->iov_base  telephone_resp;
-        outmessage.msg_iov->iov_len  strlen(telephone_resp) + 1;
- test_sendmsg(sk1, &outmessage, 0, strlen(telephone_resp)+1);
-
+	outmessage.msg_iov->iov_base = telephone_resp;
+        outmessage.msg_iov->iov_len = strlen(telephone_resp) + 1;
+	test_sendmsg(sk1, &outmessage, 0, strlen(telephone_resp)+1);
+        
         /* Get those two messages.  */
- inmessage.msg_controllen  sizeof(incmsg);
-        error  test_recvmsg(sk2, &inmessage, MSG_WAITALL);
-        test_check_msg_data(&inmessage, error, strlen(telephone) + 1,
-       MSG_EOR, stream, ppid);
+	inmessage.msg_controllen = sizeof(incmsg);
+        error = test_recvmsg(sk2, &inmessage, MSG_WAITALL);
+        test_check_msg_data(&inmessage, error, strlen(telephone) + 1, 
+			    MSG_EOR, stream, ppid);
 
- inmessage.msg_controllen  sizeof(incmsg);
-        error  test_recvmsg(sk2, &inmessage, MSG_WAITALL);
-        test_check_msg_data(&inmessage, error, strlen(telephone_resp) + 1,
-       MSG_EOR, stream, ppid);
-
+	inmessage.msg_controllen = sizeof(incmsg);
+        error = test_recvmsg(sk2, &inmessage, MSG_WAITALL);
+        test_check_msg_data(&inmessage, error, strlen(telephone_resp) + 1, 
+			    MSG_EOR, stream, ppid);
+        
         /* Shut down the link.  */
         close(sk1);
 
         /* Get the shutdown complete notification. */
- inmessage.msg_controllen  sizeof(incmsg);
-        error  test_recvmsg(sk2, &inmessage, MSG_WAITALL);
- test_check_msg_notification(&inmessage, error,
-        sizeof(struct sctp_assoc_change),
-        SCTP_ASSOC_CHANGE, SCTP_SHUTDOWN_COMP);
+	inmessage.msg_controllen = sizeof(incmsg);
+        error = test_recvmsg(sk2, &inmessage, MSG_WAITALL);
+	test_check_msg_notification(&inmessage, error,
+				    sizeof(struct sctp_assoc_change),
+				    SCTP_ASSOC_CHANGE, SCTP_SHUTDOWN_COMP);
 
         close(sk2);
 
- tst_resm(TPASS, "send msgs from a socket with INADDR_ANY bind address");
+	tst_resm(TPASS, "send msgs from a socket with INADDR_ANY bind address");
 
         /* Indicate successful completion.  */
         return 0;

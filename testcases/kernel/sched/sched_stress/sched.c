@@ -21,7 +21,7 @@
 
 /*---------------------------------------------------------------------+
 |                                sched.c                               |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Description:  Simplistic test to verify the signal system function   |
 |               calls:                                                 |
@@ -32,7 +32,7 @@
 |                                                                      |
 |   Version  Date    Name  Reason                                      |
 |    0.1     040294  DJK   Initial version for AIX 4.1                 |
-|    0.2     010402  Manoj Iyer Ported to Linux          |
+|    0.2     010402  Manoj Iyer Ported to Linux			       |
 |                                                                      |
 +---------------------------------------------------------------------*/
 
@@ -46,7 +46,7 @@ extern FILE *logfile;
 
 /*---------------------------------------------------------------------+
 |                              openlog ()                              |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  ...                                                       |
 |                                                                      |
@@ -54,59 +54,59 @@ extern FILE *logfile;
 int openlog (char *filename)
 {
 
- if (filename  NULL)
-  error ("passed bad file name to openlog()", __FILE__, __LINE__);
+	if (filename == NULL) 
+		error ("passed bad file name to openlog()", __FILE__, __LINE__);
 
- /*
-  * Open the log file...
-  */
- if  ( (logfile  fopen (filename, "a"))  (FILE *) NULL)
-  sys_error ("fopen failed", __FILE__, __LINE__);
+	/*
+	 * Open the log file...
+	 */
+	if  ( (logfile = fopen (filename, "a")) == (FILE *) NULL)
+		sys_error ("fopen failed", __FILE__, __LINE__);
 
- return (0);
+	return (0);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               logmsg ()                              |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  ...                                                       |
 |                                                                      |
 +---------------------------------------------------------------------*/
 void logmsg (const char *args, ...)
 {
- fprintf (logfile, args);
- fflush (logfile);
+	fprintf (logfile, args);
+	fflush (logfile);
 }
 #endif
 
 
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Creates system error message and calls error ()           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 void sys_error (const char *msg, const char *file, int line)
 {
- char syserr_msg [256];
+	char syserr_msg [256];
 
- sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
- error (syserr_msg, file, line);
+	sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
+	error (syserr_msg, file, line);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               error ()                               |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Prints out message and exits...                           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 void error (const char *msg, const char *file, int line)
 {
- fprintf (stderr, "ERROR [file: %s, line: %d] %s\n", file, line, msg);
- exit (-1);
+	fprintf (stderr, "ERROR [file: %s, line: %d] %s\n", file, line, msg);
+	exit (-1);
 }

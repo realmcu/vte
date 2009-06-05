@@ -26,16 +26,16 @@
  *
  * Usage:  <for command-line>
  *  set_robust_list01 [-c n] [-e][-i n] [-I x] [-p x] [-t]
- * where,  -c n : Run n copies concurrently.
- *  -e   : Turn on errno logging.
- *  -i n : Execute test n times.
- *  -I x : Execute test for x seconds.
- *  -P x : Pause for x seconds between iterations.
- *  -t   : Turn on syscall timing.
+ *	where,  -c n : Run n copies concurrently.
+ *		-e   : Turn on errno logging.
+ *		-i n : Execute test n times.
+ *		-I x : Execute test for x seconds.
+ *		-P x : Pause for x seconds between iterations.
+ *		-t   : Turn on syscall timing.
  *
  * History
- * 07/2008 Ramon de Carvalho Valle <rcvalle@br.ibm.com>
- *  -Created
+ *	07/2008 Ramon de Carvalho Valle <rcvalle@br.ibm.com>
+ *		-Created
  *
  * Restrictions:
  *  None.
@@ -70,10 +70,10 @@ struct robust_list_head {
 
 extern int Tst_count;                /* counter for tst_xxx routines.         */
 
-char *TCID  "set_robust_list01";    /* test program identifier.              */
-int TST_TOTAL  2;                   /* total number of tests in this file.   */
+char *TCID = "set_robust_list01";    /* test program identifier.              */
+int TST_TOTAL = 2;                   /* total number of tests in this file.   */
 
-int exp_enos[]  {EINVAL, 0};
+int exp_enos[] = {EINVAL, 0};
 
 void setup(void);
 void cleanup(void);
@@ -82,50 +82,50 @@ int
 main(int argc, char **argv)
 {
 #ifdef __NR_set_robust_list
- int lc;   /* loop counter */
+	int lc;			/* loop counter */
 #endif
- char *msg;  /* message returned from parse_opts */
+	char *msg;		/* message returned from parse_opts */
 #ifdef __NR_set_robust_list
     struct robust_list_head head;
     size_t len;     /* size of structure struct robust_list_head */
     int retval;
 #endif
 
- msg  parse_opts(argc, argv, (option_t *) NULL, NULL);
- if (msg ! (char *) NULL) {
-  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-  tst_exit();
- }
+	msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
+	if (msg != (char *) NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+		tst_exit();
+	}
 
- setup();
+	setup();
 
 #ifdef __NR_set_robust_list
 
-    len  sizeof(struct robust_list_head);
+    len = sizeof(struct robust_list_head);
 
- for (lc  0; TEST_LOOPING(lc); ++lc) {
-  Tst_count  0;
+	for (lc = 0; TEST_LOOPING(lc); ++lc) {
+		Tst_count = 0;
 
         /*
          * The set_robust_list function fails with EINVAL if the len argument
          * doesn't match the size of structure struct robust_list_head.
          */
 
-        TEST(retval  syscall(__NR_set_robust_list, &head, -1));
+        TEST(retval = syscall(__NR_set_robust_list, &head, -1));
 
         if (TEST_RETURN) {
-            if (TEST_ERRNO  EINVAL)
-                tst_resm(TPASS, "set_robust_list: retval  %d (expected %d), "
-                    "errno  %d (expected %d)",
+            if (TEST_ERRNO == EINVAL)
+                tst_resm(TPASS, "set_robust_list: retval = %d (expected %d), "
+                    "errno = %d (expected %d)",
                     TEST_RETURN, -1, TEST_ERRNO, EINVAL);
             else
-                tst_resm(TFAIL, "set_robust_list: retval  %d (expected %d), "
-                    "errno  %d (expected %d)",
+                tst_resm(TFAIL, "set_robust_list: retval = %d (expected %d), "
+                    "errno = %d (expected %d)",
                     TEST_RETURN, -1, TEST_ERRNO, EINVAL);
         }
         else {
-            tst_resm(TFAIL, "set_robust_list: retval  %d (expected %d), "
-                "errno  %d (expected %d)",
+            tst_resm(TFAIL, "set_robust_list: retval = %d (expected %d), "
+                "errno = %d (expected %d)",
                 TEST_RETURN, -1, TEST_ERRNO, EINVAL);
         }
 
@@ -133,20 +133,20 @@ main(int argc, char **argv)
          * This call to set_robust_list function should be sucessful.
          */
 
-        TEST(retval  syscall(__NR_set_robust_list, &head, len));
+        TEST(retval = syscall(__NR_set_robust_list, &head, len));
 
-        if (TEST_RETURN  0) {
-            tst_resm(TPASS, "set_robust_list: retval  %d (expected %d), "
-                "errno  %d (expected %d)",
+        if (TEST_RETURN == 0) {
+            tst_resm(TPASS, "set_robust_list: retval = %d (expected %d), "
+                "errno = %d (expected %d)",
                 TEST_RETURN, 0, TEST_ERRNO, 0);
         }
         else {
-            tst_resm(TFAIL, "set_robust_list: retval  %d (expected %d), "
-                "errno  %d (expected %d)",
+            tst_resm(TFAIL, "set_robust_list: retval = %d (expected %d), "
+                "errno = %d (expected %d)",
                 TEST_RETURN, 0, TEST_ERRNO, 0);
         }
 
- }
+	}
 
 #else
 
@@ -154,20 +154,20 @@ main(int argc, char **argv)
 
 #endif
 
- cleanup();
+	cleanup();
 
     exit(EXIT_SUCCESS);
 }
 
-void
+void 
 setup(void)
 {
- TEST_EXP_ENOS(exp_enos);
+	TEST_EXP_ENOS(exp_enos);
 
     TEST_PAUSE;
 }
 
-void
+void 
 cleanup(void)
 {
     TEST_CLEANUP;

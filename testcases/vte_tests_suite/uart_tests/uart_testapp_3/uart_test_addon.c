@@ -1,36 +1,36 @@
-/*====================*/
-/**
-    @file   uart_test_addon.c
+/*================================================================================================*/
+/** 
+    @file   uart_test_addon.c 
 
-    @brief Configure the serial interface using MXC UART and/or External UART low-level driver
+    @brief Configure the serial interface using MXC UART and/or External UART low-level driver 
                 Read / Write test */
-/*======================
+/*================================================================================================== 
 
-    Copyright (C) 2007, Freescale Semiconductor, Inc. All Rights Reserved
-    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-    Freescale Semiconductor, Inc.
+    Copyright (C) 2007, Freescale Semiconductor, Inc. All Rights Reserved 
+    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT 
+    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF 
+    Freescale Semiconductor, Inc. 
 
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 D.Kardakov                   04/06/2007    ENGR30041    Initial version
 D.Kardakov                   05/02/2007    ENGR30041    Delay of the reading thread  was fixed.
-====================
+====================================================================================================
 Portability:  ARM GCC  gnu compiler
-======================*/
+==================================================================================================*/
 
 
 #ifdef __cplusplus
-extern "C"{
+extern "C"{ 
 #endif
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <stdlib.h>
 #include <string.h>
@@ -54,14 +54,14 @@ extern "C"{
 #include "uart_test_addon.h"
 
 
-/*
-* Global variable
+/* 
+* Global variable 
 */
 //pthread_t thid_writer,
 //        thid_reader,
 //        thid_signal;
 
-/*
+/* 
 * Local typedef, macros, ...
 */
 #define THR_INFO(fmt, args...) tst_resm(TINFO, "  [R   ] " fmt, ##args)
@@ -76,11 +76,11 @@ extern "C"{
 
 #define REC_BLOCK    4096
 #define TRANS_BLOCK  1024
-#define COMPARE_BUFFER 4096
+#define COMPARE_BUFFER 4096 
 #define RW_SUCCESS  0xCC
 #define NUM_SLEEP   4
-/*
-* local variable
+/* 
+* local variable 
 */
 static int timer_running = 0; // 0 - is not running
 static int cout_timer_sign = 0;
@@ -114,15 +114,15 @@ void      *VT_th_writer_addon(void *param);
 void      *VT_th_reader_addon(void *param);
 void      *VT_th_signal_addon(void *param);
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
-typedef struct
+==================================================================================================*/
+typedef struct 
 {
         char start_message [16];
         char transfer_fname [256];
@@ -130,9 +130,9 @@ typedef struct
         char stop_message [16];
 } transfer_header_t;
 
-/*======================
+/*==================================================================================================
                                         LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 /*
 * local function prototype
 */
@@ -147,9 +147,9 @@ static int check_timer(void);
 static int check_header(transfer_header_t *h);
 static int read_block_from_uart(int uart_fd, unsigned char *memPtr, int blockSize);
 static int write_block_to_uart(int uart_fd, unsigned char *memPtr, int blockSize);
-/*======================
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
   /** Source and destination UART to test */
 static uart_test_t uart_test;
 static flow_ctrl_t uart_flow_ctrl;
@@ -158,37 +158,37 @@ static int         uart_baud_rate;
 int showmessage = 0;
 int read_sleep = 0;
 
-/*======================
+/*==================================================================================================
                                         GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                     LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 
 int     testcase_simple(void);
 int     testcase_hw_flow(void);
 int     testcase_sw_flow(void);
 
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 void    timer_handler(int signum);
 
-/*====================*/
-/*= VT_uart_addon_setup =*/
-/**
+/*================================================================================================*/
+/*===== VT_uart_addon_setup =====*/
+/** 
 * Assumes the test preconditions, open and configure source and destination UART.  Function  is used for data transfer test between two boards.
-*
-*
+* 
+* 
 * @return */
-/*====================*/
+/*================================================================================================*/
 
 int VT_uart_addon_setup(uart_config_t * uart_cfg, flow_ctrl_t flow_ctrl, int baud_rate)
 {
@@ -200,9 +200,9 @@ int VT_uart_addon_setup(uart_config_t * uart_cfg, flow_ctrl_t flow_ctrl, int bau
         uart_test.flow_ctrl = uart_cfg->flow_ctrl;
         if (exchange_direction == 0)
                 tst_resm(TINFO, "* Receiving file from %s port", uart_cfg->device);
-        else
+        else 
                 tst_resm(TINFO, "* Transmitting %s file to %s port", transmit_filename, uart_cfg->device);
-
+        
         tst_resm(TINFO, "* %-20s: %d", "Speed", uart_baud_rate);
         tst_resm(TINFO, "* %-20s: %d", "Parity", uart_cfg->parity_type);
         tst_resm(TINFO, "* %-20s: %d", "Character length", uart_cfg->char_length);
@@ -244,19 +244,19 @@ int VT_uart_addon_setup(uart_config_t * uart_cfg, flow_ctrl_t flow_ctrl, int bau
                         perror(uart_test.device);
                         goto err_restore;
                 }
-
+                
                 if ( (uart_test.fpar.fd = open (transmit_filename, O_RDONLY)) < 0) {
-                        tst_brkm(TBROK, NULL, "Unable to open file %s for transmitting: %s",
+                        tst_brkm(TBROK, NULL, "Unable to open file %s for transmitting: %s", 
                                  transmit_filename, strerror(errno));
                         uart_test.fpar.fd = 0;
                         goto err_restore;
                 }
-
+                
                 if (fstat(uart_test.fpar.fd, &st) < 0) {
                         tst_brkm(TBROK, NULL, "Unable to get file attributes: %s", strerror(errno));
                         goto err_restore;
                 }
-
+                
                 uart_test.data = (unsigned char *) malloc(DATA_BUFFER_SIZE);
                 if (!uart_test.data) {
                         tst_brkm(TBROK, NULL, "Unable to allocate data buffer:");
@@ -282,7 +282,7 @@ int VT_uart_addon_setup(uart_config_t * uart_cfg, flow_ctrl_t flow_ctrl, int bau
         return rv;
 
 err_restore:
-        if (uart_test.fpar.fd != 0)
+        if (uart_test.fpar.fd != 0) 
                 close(uart_test.fpar.fd);
         VT_cleanup_uart(&uart_test);
 err_return:
@@ -292,8 +292,8 @@ err_return:
 
 
 
-/*====================*/
-/*= VT_uart_addon_cleanup =*/
+/*================================================================================================*/
+/*===== VT_uart_addon_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
 
@@ -301,19 +301,19 @@ err_return:
 
 @return On success - return TPASS
 On failure - return the error code*/
-/*====================*/
+/*================================================================================================*/
 int VT_uart_addon_cleanup(void)
 {
         int     rv = TPASS;
         free(uart_test.data);
-        if (uart_test.fpar.fd != 0)
+        if (uart_test.fpar.fd != 0) 
                 close(uart_test.fpar.fd);
-
+                
         if (exchange_direction == 0)
                 tst_resm(TINFO, "Cleaning up destination UART...");
         else
                 tst_resm(TINFO, "Cleaning up source UART...");
-
+                
         if (VT_cleanup_uart(&uart_test) != TPASS)
                 rv = TFAIL;
 
@@ -325,8 +325,8 @@ int VT_uart_addon_cleanup(void)
         return rv;
 }
 
-/*====================*/
-/*= VT_uart_addon_test =*/
+/*================================================================================================*/
+/*===== VT_uart_addon_test =====*/
 /**
 @brief  main test function
 @param  Input :   testcase type (soft/hard or none flow control)
@@ -334,7 +334,7 @@ Output :  None
 
 @return On success - return TPASS
 On failure - return the error code*/
-/*====================*/
+/*================================================================================================*/
 int VT_uart_addon_test(int testcase)
 {
         int     rv = TPASS;
@@ -348,21 +348,21 @@ int VT_uart_addon_test(int testcase)
                 tst_resm(TINFO, "Testing receive from %s:", uart_test.device,
                                  uart_flow_ctrl == FLOW_CTRL_HARD ? "hardware" :
                                  uart_flow_ctrl == FLOW_CTRL_SOFT ? "software" : "???");
-        else
+        else 
                 tst_resm(TINFO, "Testing transmit from %s:", uart_test.device,
                                  uart_flow_ctrl == FLOW_CTRL_HARD ? "hardware" :
                                  uart_flow_ctrl == FLOW_CTRL_SOFT ? "software" : "???");
         tst_resm(TINFO, "    => testcase %d.", testcase);
 
-        /*
-        * Lock reader and writer mutex, so they will wait on it before they begin
+        /* 
+        * Lock reader and writer mutex, so they will wait on it before they begin 
         * their real job.
         */
         pthread_mutex_lock(&rw_mutex);
-
-        /*
+        
+        /* 
         * Create the signal, reader or the writer threads
-        */
+        */    
         if (exchange_direction == 0) {
                 tst_resm(TINFO, "  Creating reader thread => [ R  ]...");
                 error = pthread_create(&rw_thread, NULL, VT_th_reader_addon, NULL);
@@ -392,19 +392,19 @@ int VT_uart_addon_test(int testcase)
                 goto error_exit_cancel_rw_thread;
         }
 
-
+        
         if (exchange_direction == 0)
                 tst_resm(TINFO, "  Signalig reader thread...");
-        else
+        else 
                 tst_resm(TINFO, "  Signalig writer thread...");
-
+        
         pthread_mutex_unlock(&rw_mutex);
 
         if (exchange_direction == 0)
                 tst_resm(TINFO, "  Waiting for reader thread...");
-        else
+        else 
                 tst_resm(TINFO, "  Waiting for writer thread...");
-        /*
+        /* 
         * wait for the reader or writer threads,
         * and check their status
         */
@@ -428,7 +428,7 @@ int VT_uart_addon_test(int testcase)
                 goto error_exit;
         }
 
-        /*
+        /* 
         * Transfert is OK, now check for data errors
         */
 
@@ -469,7 +469,7 @@ void   *VT_th_writer_addon(void *param)
         int     error,
                 remaining,
                 check_timer_val;
-
+        
         int     i = 0,
                 r_blocks_num = 0,
                 last_block_size = 0,
@@ -497,7 +497,7 @@ void   *VT_th_writer_addon(void *param)
         THW_INFO("Writing data to source UART...");
 
         remaining = sizeof (transfer_header_t);
-
+        
         MemPtr = (unsigned char *)&trans_header;
         do {
                 error = write_block_to_uart(uart_test.fd, MemPtr, remaining);
@@ -518,28 +518,28 @@ void   *VT_th_writer_addon(void *param)
                                     MemPtr += error;
                                     remaining -= error;
                             }
-
+                                
                             check_timer_val = check_timer();
                             if (check_timer_val == -1) {
                                     THW_FAIL("Header transmitting failure. Timeout expired!");
                                     rv = TFAIL;
                                     goto th_exit;
                             }
-
-                            if (check_timer_val == -2) {
+                            
+                            if (check_timer_val == -2) { 
                                     printf ("C"); //waiting
                                     fflush(stdout);
                             }
                         } //default
                 }
         } while (error != RW_SUCCESS);
-
+        
         THW_INFO ("Header was successfully transmitted!");
         r_blocks_num = uart_test.fpar.file_size / TRANS_BLOCK;
         last_block_size = uart_test.fpar.file_size % TRANS_BLOCK;
-        if (last_block_size != 0)
+        if (last_block_size != 0) 
                 r_blocks_num++;
-
+    
         for (i = 0; i < r_blocks_num; i++ )
         {
                 if (i == r_blocks_num - 1 && last_block_size != 0) {
@@ -558,9 +558,9 @@ void   *VT_th_writer_addon(void *param)
                                 goto th_exit;
                         }
                 }
-
+                
                 MemPtr = uart_test.data;
-
+                
                 do {
                         error = write_block_to_uart(uart_test.fd, MemPtr, remaining);
                         switch (error) {
@@ -580,14 +580,14 @@ void   *VT_th_writer_addon(void *param)
                                         MemPtr += error;
                                         remaining -= error;
                                 }
-
+                                
                                 check_timer_val = check_timer();
                                 if (check_timer_val == -1) {
                                         THW_FAIL("File transmitting failure. Timeout expired!");
                                         rv = TFAIL;
                                         goto th_exit;
                                 }
-
+                            
                                 if (check_timer_val == -2) {
                                         printf ("C"); //waiting
                                         fflush(stdout);
@@ -614,11 +614,11 @@ void   *VT_th_writer_addon(void *param)
                                 sleep_counter++;
                                 THW_INFO("writing thread sleep %d sec!", thread_sleep_time);
                                 sleep(thread_sleep_time);
-                                THW_INFO("writing thread wake up!");
+                                THW_INFO("writing thread wake up!");        
                         }
                 }
 
-        }// for
+        }// for 
         all_bytes_transfered = uart_test.fpar.file_size + sizeof (transfer_header_t);
 th_exit:
 
@@ -626,7 +626,7 @@ th_exit:
         close(uart_test.fpar.fd);
         uart_test.fpar.fd = 0;
         THW_INFO("Exiting with return code = %d", rv);
-        if (rv == TPASS)
+        if (rv == TPASS) 
                 sleep(4);
         pthread_exit((void *) rv);
 }
@@ -637,14 +637,14 @@ void   *VT_th_reader_addon(void *param)
         int     error,
                 remaining,
                 check_timer_val;
-
+        
         int     i = 0,
                 r_blocks_num = 0,
                 last_block_size = 0,
                 all_rec_tmp = 0;
-
+                
         transfer_header_t rec_header;
-
+        
         int     percent = 0,
                 last_percent = 0;
         unsigned char * MemPtr;// data_ptr;
@@ -659,7 +659,7 @@ void   *VT_th_reader_addon(void *param)
         THR_INFO("Reading data from destination UART...");
 
         remaining = sizeof (transfer_header_t);
-
+        
         MemPtr = (unsigned char *)&rec_header;
         do {
                 error = read_block_from_uart(uart_test.fd, MemPtr, remaining);
@@ -680,14 +680,14 @@ void   *VT_th_reader_addon(void *param)
                                     MemPtr += error;
                                     remaining -= error;
                             }
-
+                                
                             check_timer_val = check_timer();
                             if (check_timer_val == -1) {
                                     THR_FAIL("Header transfert failure. Timeout expired!");
                                     rv = TFAIL;
                                     goto th_exit;
                             }
-
+                            
                             if (check_timer_val == -2) {
                                     printf ("C"); //waiting
                                     fflush (stdout);
@@ -695,24 +695,24 @@ void   *VT_th_reader_addon(void *param)
                         } //default
                 }
         } while (error != RW_SUCCESS);
-
+        
         if (check_header(&rec_header) < 0) {
                 THR_FAIL("Header checking is failed!");
                 rv = TFAIL;
                 goto th_exit;
-        }
-
+        } 
+        
         THR_INFO("Header was successfully received!");
         uart_test.fpar.file_size = rec_header.file_size;
-        THR_INFO("Filename of transferred file %s", rec_header.transfer_fname);
-        if (receive_to_ram_flag == 0 ||
+        THR_INFO("Filename of transferred file %s", rec_header.transfer_fname);        
+        if (receive_to_ram_flag == 0 || 
            (receive_to_ram_flag && save_to_file_flag)) {
 
                 CreateReceiveFname(rec_header.transfer_fname, receive_filename);
-                uart_test.fpar.fd = open(receive_filename, O_WRONLY | O_CREAT | O_TRUNC,
+                uart_test.fpar.fd = open(receive_filename, O_WRONLY | O_CREAT | O_TRUNC, 
                                                             S_IRWXU | S_IRWXG | S_IRWXO);
                 if (uart_test.fpar.fd < 0) {
-                        tst_brkm(TBROK, NULL, "Unable to open file %s for receiving: %s",
+                        tst_brkm(TBROK, NULL, "Unable to open file %s for receiving: %s", 
                                                receive_filename, strerror(errno));
                         uart_test.fpar.fd = 0;
                         rv = TFAIL;
@@ -729,8 +729,8 @@ void   *VT_th_reader_addon(void *param)
                         rv = TFAIL;
                         goto err_rest;
                 }
-
-                uart_test.data = (unsigned char *) malloc(uart_test.fpar.file_size +
+                
+                uart_test.data = (unsigned char *) malloc(uart_test.fpar.file_size + 
                                                           uart_test.fpar.file_size % 4096);
                 if (!uart_test.data) {
                         tst_brkm(TBROK, NULL, "Unable to allocate data buffer:");
@@ -738,16 +738,16 @@ void   *VT_th_reader_addon(void *param)
                         rv = TFAIL;
                         goto err_rest;
                 }
-
+                
                 //THR_INFO("memory for file receiving allocated successfully!");
         }
 
-
+        
         r_blocks_num = uart_test.fpar.file_size / REC_BLOCK;
         last_block_size = uart_test.fpar.file_size % REC_BLOCK;
-        if (last_block_size != 0)
+        if (last_block_size != 0) 
                 r_blocks_num++;
-
+        
         MemPtr = uart_test.data;
 
         for (i = 0; i < r_blocks_num; i++ )
@@ -755,7 +755,7 @@ void   *VT_th_reader_addon(void *param)
                 if (i == r_blocks_num - 1 && last_block_size != 0) {
                         remaining = last_block_size;
                         THR_INFO ("last_block_size = %d", last_block_size);
-                } else
+                } else 
                         remaining = REC_BLOCK;
 
                 do {
@@ -777,14 +777,14 @@ void   *VT_th_reader_addon(void *param)
                                         MemPtr += error;
                                         remaining -= error;
                                 }
-
+                                
                                 check_timer_val = check_timer();
                                 if (check_timer_val == -1) {
                                         THR_FAIL("File transfert failure. Timeout expired!");
                                         rv = TFAIL;
                                         goto err_rest;
                                 }
-
+                            
                                 if (check_timer_val == -2) {
                                         printf ("C"); //waiting
                                         fflush(stdout);
@@ -792,11 +792,11 @@ void   *VT_th_reader_addon(void *param)
                             } //default
                         }
                 } while (error != RW_SUCCESS);
-
+                
                 if (i == r_blocks_num - 1 && last_block_size != 0) {
                         all_rec_tmp += last_block_size;
                         remaining = last_block_size;
-                } else {
+                } else { 
                         all_rec_tmp += REC_BLOCK;
                         remaining = REC_BLOCK;
                 } //else
@@ -825,7 +825,7 @@ void   *VT_th_reader_addon(void *param)
                                 sleep_counter++;
                                 THR_INFO("reading thread sleep %d sec!", thread_sleep_time);
                                 sleep(thread_sleep_time);
-                                THR_INFO("reading thread wake up!");
+                                THR_INFO("reading thread wake up!");        
                         }
                 }
         } //for
@@ -839,19 +839,19 @@ void   *VT_th_reader_addon(void *param)
                         rv = TWARN;
                         THR_WARN ("Files comparison failed (number of errors  = %d)", error);
                 }
-                else
+                else 
                         THR_INFO ("Files comparison successful!");
-
+                
                 if (save_to_file_flag) {
                         THR_INFO("Saving to file %s!", receive_filename);
-                        if (write (uart_test.fpar.fd, uart_test.data, all_rec_tmp)
+                        if (write (uart_test.fpar.fd, uart_test.data, all_rec_tmp) 
                                                                      != all_rec_tmp) {
                                 THR_FAIL("Error file writing!");
                                 rv = TFAIL;
                                 goto err_rest;
                         }
                 }
-        } //if
+        } //if 
 
 err_rest:
         if (uart_test.fpar.fd != 0) {
@@ -865,7 +865,7 @@ err_rest:
         }
 th_exit:
         THR_INFO("Exiting with return code = %d", rv);
-        if (rv == TPASS || rv == TWARN)
+        if (rv == TPASS || rv == TWARN) 
                 sleep(1);
         pthread_exit((void *) rv);
 }
@@ -915,7 +915,7 @@ int alarm_handler(int stat)
         memset(&old, 0, sizeof (struct sigaction));
         if (stat != 0 && stat != 1)
                 return -1;
-
+        
         if (stat == 0) {
                 sigaction (SIGALRM, NULL, &old);
                 if (old.sa_handler != SIG_DFL) {
@@ -935,24 +935,24 @@ int alarm_handler(int stat)
         return 0;
 }
 
-/*====================*/
-/*= run_timer =*/
-/**
-@brief
+/*================================================================================================*/
+/*===== run_timer =====*/
+/** 
+@brief   
 
-@param  None
-
-@return
+@param  None 
+    
+@return  
         */
-/*====================*/
+/*================================================================================================*/
 void run_timer(void)
 {
         struct itimerval timer;
         long int msec;
 
-        /*
-        * Configure the timer to expire.
-        * We are quit large on value since we have to take into account
+        /* 
+        * Configure the timer to expire. 
+        * We are quit large on value since we have to take into account 
         * some "random" overhead
         */
 
@@ -999,29 +999,29 @@ int check_timer(void)
 }
 int check_header(transfer_header_t *h)
 {
-        if ( strcmp (h->start_message, start_message) != 0 ||
+        if ( strcmp (h->start_message, start_message) != 0 || 
              strcmp (h->stop_message, stop_message)   != 0 )
                 return -1;
-        else
+        else 
                 return 0;
 }
-/*====================*/
-/*= timer_handler=*/
-/**
-@brief This is a timer handler.
+/*================================================================================================*/
+/*===== timer_handler=====*/
+/** 
+@brief This is a timer handler. 
 
-@param signum - signal number
-
+@param signum - signal number  
+    
 @return None */
-/*====================*/
+/*================================================================================================*/
 void timer_handler(int signum)
 {
         //tst_resm(TINFO, "  [   T] Timeout expired!");
         cout_timer_sign++;
 }
 
-/*====================*/
-/*= read_block_from_uart=*/
+/*================================================================================================*/
+/*===== read_block_from_uart=====*/
 /*!
  * @brief  UART data block reading function.
  *
@@ -1029,17 +1029,17 @@ void timer_handler(int signum)
  *@param memPtr [Input] Pointer to the first element of an data array.
  * @param blockSize [Input] Size of reading block.
  *
- * @return
+ * @return 
  * @li RW_SUCCESS: If data block was read completely.
  * @li -2: memPtr is a null pointer, or uart_fd handle less or equal 0.
  * @li -1: read() system error.
  * @li Number of read bytes: If device is busy (errno == EAGAIN).
  */
-/*====================*/
+/*================================================================================================*/
 
 int read_block_from_uart(int uart_fd, unsigned char *memPtr, int blockSize)
 {
-        int Bytes_read = 0;
+        int Bytes_read = 0; 
         int error = 0;
         //tst_resm(TINFO, "memPtr = 0x%x", (unsigned long) memPtr);
         if (uart_fd == 0 || memPtr == NULL)
@@ -1049,7 +1049,7 @@ int read_block_from_uart(int uart_fd, unsigned char *memPtr, int blockSize)
 
         do {
                 error = read(uart_fd, memPtr + Bytes_read, blockSize - Bytes_read);
-                //if (error == 0)
+                //if (error == 0) 
                 //        tst_resm (TINFO, "error = %d", error);
 
                 if (error < 0 && errno != EAGAIN)
@@ -1067,11 +1067,11 @@ int read_block_from_uart(int uart_fd, unsigned char *memPtr, int blockSize)
                 }
                 //tst_resm (TINFO, "error = %d", error);
         } while (blockSize - Bytes_read != 0);
-
+        
         return RW_SUCCESS;
 }
-/*====================*/
-/*= write_block_to_uart=*/
+/*================================================================================================*/
+/*===== write_block_to_uart=====*/
 /*!
  * @brief  UART data block writing function.
  *
@@ -1079,16 +1079,16 @@ int read_block_from_uart(int uart_fd, unsigned char *memPtr, int blockSize)
  *@param memPtr [Input] Pointer to the first element of an data array.
  * @param blockSize [Input] Size of  data array..
  *
- * @return
+ * @return 
  * @li RW_SUCCESS: If data block was transfered completely.
  * @li -2: memPtr is a null pointer, or uart_fd handle less or equal 0.
  * @li -1: write() system error.
  * @li Number of transfered bytes: If device is busy (errno == EAGAIN).
  */
-/*====================*/
+/*================================================================================================*/
 int write_block_to_uart(int uart_fd, unsigned char *memPtr, int blockSize)
 {
-        int Bytes_write = 0;
+        int Bytes_write = 0; 
         int error;
         if (uart_fd <= 0 || memPtr == NULL)
                 return -2;
@@ -1097,10 +1097,10 @@ int write_block_to_uart(int uart_fd, unsigned char *memPtr, int blockSize)
 
         do {
                 error = write(uart_fd, memPtr + Bytes_write, blockSize - Bytes_write);
-
+        
                 if (error < 0 && errno != EAGAIN)
                         return -1;
-
+                
                 else if ((error < 0 && errno == EAGAIN) || error == 0) {
                         if (timer_running == 0)
                                 run_timer();
@@ -1134,18 +1134,18 @@ int CreateReceiveFname(char *Fname, char *ReceiveFname)
         Ptr = Fname + FnameSize;
         RPtr = ReceiveFname;
         tmp1Ptr = tmp1;
-        while (*Ptr != *Fname || *(Ptr - 1) != '/')
+        while (*Ptr != *Fname || *(Ptr - 1) != '/') 
                 Ptr--;
-
-        while (*Ptr != '.' || *Ptr != '\0')
+    
+        while (*Ptr != '.' || *Ptr != '\0') 
                 *RPtr++ = *Ptr++;
-
+    
         *RPtr++ = '_';
-
-        while (*tmp1Ptr != '\0')
+        
+        while (*tmp1Ptr != '\0') 
                 *RPtr++ = *tmp1Ptr++;
-
-        if (*Ptr == '.')
+        
+        if (*Ptr == '.') 
                 while (*Ptr != '\0') *RPtr++ = *Ptr++;
 
         *RPtr = '\0'; //End of receive filename string
@@ -1164,9 +1164,9 @@ int MemCmp(unsigned char *Mem1, unsigned char *Mem2, int size)
 
 int compare_data (char *Fname, int size)
 {
-        int fd1, nb_errors  = 0, i, n_blocks = 0,
+        int fd1, nb_errors  = 0, i, n_blocks = 0, 
         block_size = 0, last_block_size = 0,
-        percent = 0;
+        percent = 0; 
         struct stat st1;
         unsigned char *Rec_buff, *Trans_buff;
 
@@ -1178,7 +1178,7 @@ int compare_data (char *Fname, int size)
 
         if (Trans_buff == NULL)
                 return -1;
-
+    
         if ((fd1 = open(Fname, O_RDONLY)) < 0) {
                 tst_resm(TFAIL, "Open file %s failes", Fname);
                 return -1;
@@ -1196,7 +1196,7 @@ int compare_data (char *Fname, int size)
         last_block_size = st1.st_size % COMPARE_BUFFER;
         if (last_block_size != 0)
                 n_blocks++;
-
+    
         for (i = 0; i < n_blocks; i++)
         {
                 if (i == n_blocks - 1 && last_block_size != 0)
@@ -1205,9 +1205,9 @@ int compare_data (char *Fname, int size)
                         block_size = COMPARE_BUFFER;
 
                 if ( (i * 100) / n_blocks > percent + 10) {
-                        percent = (i * 100) / n_blocks;
+                        percent = (i * 100) / n_blocks;    
                         tst_resm (TINFO, "comparison: %3d%%", percent);
-                }
+                } 
 
                 if ( i == n_blocks - 1) {
                         percent = 100;
@@ -1241,9 +1241,9 @@ int VT_check_hardware(int check_error, int check_break, int check_flow, int chec
 
 #define ICNT(who, what)  who##_test.icounter.what - who##_test.icounter_saved.what
 
-        tst_resm(TINFO, "/=========\\");
+        tst_resm(TINFO, "/=============================\\");
         tst_resm(TINFO, "|    UART hardware summary    |");
-        tst_resm(TINFO, "+====+=====");
+        tst_resm(TINFO, "+============+=================");
         tst_resm(TINFO, "|            | %-14s |", "SRC");
         tst_resm(TINFO, "+------------+-----------------");
         tst_resm(TINFO, "| device     | %-14s |", uart_test.device);
@@ -1306,7 +1306,7 @@ int VT_check_hardware(int check_error, int check_break, int check_flow, int chec
                         {
                                 tst_resm(TWARN, "  => No hardware flow control activation.");
                                 /* the next line is commented out because the feature is not supported */
-/*
+/*                                
                                 rv = TFAIL;
 */
                         }
@@ -1337,5 +1337,5 @@ int VT_check_hardware(int check_error, int check_break, int check_flow, int chec
 }
 
 #ifdef __cplusplus
-}
+} 
 #endif

@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   pmic_audio_test.c
 
         @brief  Source file for PMIC audio driver test
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -19,26 +19,26 @@ Author/core ID                  Date          Number    Description of Changes
 S.Bezrukov/SBAZR1C           31/08/2005     TLSbo52697  Initial version
 A.Ozerov/b00320              08/08/2006     TLSbo73745  Review version(in accordance to L26_1_19 release).
 
-====================
+====================================================================================================
 Portability: ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Verification Test Environment Include Files */
 #include "pmic_audio_test.h"
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-=======================*/
+===================================================================================================*/
 int     fd = 0;
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
-/*====================*/
-/*= VT_pmic_audio_test_setup =*/
+==================================================================================================*/
+/*================================================================================================*/
+/*===== VT_pmic_audio_test_setup =====*/
 /**
 @brief  This function assumes the pre-condition of the test case execution
 
@@ -47,7 +47,7 @@ int     fd = 0;
 @return On success - return PMIC_SUCCESS
         On failure - return the error code.
 */
-/*====================*/
+/*================================================================================================*/
 int VT_pmic_audio_test_setup(void)
 {
         int     rv = TFAIL;
@@ -63,8 +63,8 @@ int VT_pmic_audio_test_setup(void)
         return rv;
 }
 
-/*====================*/
-/*= VT_pmic_audio_test_cleanup =*/
+/*================================================================================================*/
+/*===== VT_pmic_audio_test_cleanup =====*/
 /**
 @brief  This function assumes the post-condition of the test case execution
 
@@ -72,7 +72,7 @@ int VT_pmic_audio_test_setup(void)
 
 @return None.
 */
-/*====================*/
+/*================================================================================================*/
 int VT_pmic_audio_test_cleanup(void)
 {
         int     ret;
@@ -88,8 +88,8 @@ int VT_pmic_audio_test_cleanup(void)
         return TPASS;
 }
 
-/*====================*/
-/*= VT_pmic_audio_test =*/
+/*================================================================================================*/
+/*===== VT_pmic_audio_test =====*/
 /**
 @brief  PMIC Battery test scenario
 
@@ -99,7 +99,7 @@ int VT_pmic_audio_test_cleanup(void)
 @return On success - return PMIC_SUCCESS
         On failure - return the error code.
 */
-/*====================*/
+/*================================================================================================*/
 int VT_pmic_audio_test(int test_num)
 {
 #if defined( CONFIG_MXC_PMIC_SC55112 ) || defined( CONFIG_MXC_PMIC_MC13783 )

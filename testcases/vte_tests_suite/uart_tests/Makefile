@@ -10,19 +10,19 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-#V.Becker/rc023c        25/05/2004     TLSbo39126   Change directory names
+#V.Becker/rc023c        25/05/2004     TLSbo39126   Change directory names 
 #L.Delaspre/rc149c      09/12/2004     TLSbo40142   update with Freescale identity
 #I. Inkina / nknl001    07/04/2005     TLSbo48749   testapp_4 testapp_5
 #E.Gromazina            08/04/2005     TLSbo48747   testapp_3 testapp_6
 #
 ###################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms.
+#Portability: Indicate if this module is portable to other compilers or platforms. 
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################

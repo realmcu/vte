@@ -23,7 +23,7 @@
  * Test Description :
  *  Verify that, symlink will succeed to creat a symbolic link of an existing
  *  object name path.
- *
+ * 
  * Expected Result:
  *  symlink() should return value 0 on success and symbolic link of an
  *  existing object should be created.
@@ -37,31 +37,31 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return-1)
- *   Log the errno and Issue a FAIL message.
+ *   Check return code, if system call failed (return=-1)
+ *   	Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   Verify the Functionality of system call
+ *   	Verify the Functionality of system call	
  *      if successful,
- *      Issue Functionality-Pass message.
+ *      	Issue Functionality-Pass message.
  *      Otherwise,
- *  Issue Functionality-Fail message.
+ *		Issue Functionality-Fail message.
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
  *   Delete the temporary directory created.
  *
  * Usage:  <for command-line>
  *  symlink04 [-c n] [-e] [-f] [-i n] [-I x] [-p x] [-t]
- * where,  -c n : Run n copies concurrently.
- *  -e   : Turn on errno logging.
- *  -f   : Turn off functionality Testing.
- *  -i n : Execute test n times.
- *  -I x : Execute test for x seconds.
- *  -P x : Pause for x seconds between iterations.
- *  -t   : Turn on syscall timing.
+ *	where,  -c n : Run n copies concurrently.
+ *		-e   : Turn on errno logging.
+ *		-f   : Turn off functionality Testing.
+ *		-i n : Execute test n times.
+ *		-I x : Execute test for x seconds.
+ *		-P x : Pause for x seconds between iterations.
+ *		-t   : Turn on syscall timing.
  *
  * History
- * 07/2001 John George
- *  -Ported
+ *	07/2001 John George
+ *		-Ported
  *
  * Restrictions:
  *  None.
@@ -78,106 +78,106 @@
 #include "test.h"
 #include "usctest.h"
 
-#define  TESTFILE "testfile"
-#define  SYMFILE "slink_file"
+#define  TESTFILE	"testfile"
+#define  SYMFILE	"slink_file"
 #define FILE_MODE       S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 
-char *TCID"symlink04";  /* Test program identifier.    */
-int TST_TOTAL1;  /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
-int exp_enos[]{0};
+char *TCID="symlink04";		/* Test program identifier.    */
+int TST_TOTAL=1;		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
+int exp_enos[]={0};
 
-void setup();  /* Setup function for the test */
-void cleanup();  /* Cleanup function for the test */
+void setup();		/* Setup function for the test */
+void cleanup();		/* Cleanup function for the test */
 
 int
 main(int ac, char **av)
 {
- struct stat stat_buf; /* stat structure buffer */
- int lc;   /* loop counter */
- char *msg;  /* message returned from parse_opts */
+	struct stat stat_buf;	/* stat structure buffer */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 
- /* Parse standard options given to run the test. */
- msg  parse_opts(ac, av, (option_t *) NULL, NULL);
- if (msg ! (char *) NULL) {
-  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-  tst_exit();
-  /*NOTREACHED*/
- }
+	/* Parse standard options given to run the test. */
+	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
+	if (msg != (char *) NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+		tst_exit();
+		/*NOTREACHED*/
+	}
 
- /* Perform global setup for test */
- setup();
+	/* Perform global setup for test */
+	setup();
 
- /* set the expected errnos... */
- TEST_EXP_ENOS(exp_enos);
+	/* set the expected errnos... */
+	TEST_EXP_ENOS(exp_enos);
 
- /* Check looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /* Reset Tst_count in case we are looping. */
-  Tst_count0;
+	/* Check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* Reset Tst_count in case we are looping. */
+		Tst_count=0;
+	
+		/* 
+		 * Call symlink(2) to create a symlink of 
+		 * testfile.
+		 */
+		TEST(symlink(TESTFILE, SYMFILE));
+	
+		/* Check return code of symlink(2) */
+		if (TEST_RETURN == -1) {
+			TEST_ERROR_LOG(TEST_ERRNO);
+			tst_resm(TFAIL, "symlink(%s, %s) Failed, errno=%d : %s",
+				 TESTFILE, SYMFILE, TEST_ERRNO,
+				 strerror(TEST_ERRNO));
+		} else {
+			/*
+			 * Perform functional verification if test
+			 * executed without (-f) option.
+			 */
+			if (STD_FUNCTIONAL_TEST) {
+				/*
+				 * Get the symlink file status information
+				 * using lstat(2).
+				 */
+				if (lstat(SYMFILE, &stat_buf) < 0) {
+					tst_brkm(TFAIL, cleanup, "lstat(2) of "
+						"%s failed, error:%d", SYMFILE,
+						errno);
+					/*NOTREACHED*/
+				}
 
-  /*
-   * Call symlink(2) to create a symlink of
-   * testfile.
-   */
-  TEST(symlink(TESTFILE, SYMFILE));
+				/* Check if the st_mode contains a link  */
+				if (!S_ISLNK(stat_buf.st_mode)) {
+					tst_resm(TFAIL,
+						 "symlink of %s doesn't exist",
+						 TESTFILE);
+				} else {
+					tst_resm(TPASS, "symlink(%s, %s) "
+						"functionality successful",
+						TESTFILE, SYMFILE);
+				}
+			} else {
+				tst_resm(TPASS, "Call succeeded");
+			}
+		}
 
-  /* Check return code of symlink(2) */
-  if (TEST_RETURN  -1) {
-   TEST_ERROR_LOG(TEST_ERRNO);
-   tst_resm(TFAIL, "symlink(%s, %s) Failed, errno%d : %s",
-     TESTFILE, SYMFILE, TEST_ERRNO,
-     strerror(TEST_ERRNO));
-  } else {
-   /*
-    * Perform functional verification if test
-    * executed without (-f) option.
-    */
-   if (STD_FUNCTIONAL_TEST) {
-    /*
-     * Get the symlink file status information
-     * using lstat(2).
-     */
-    if (lstat(SYMFILE, &stat_buf) < 0) {
-     tst_brkm(TFAIL, cleanup, "lstat(2) of "
-      "%s failed, error:%d", SYMFILE,
-      errno);
-     /*NOTREACHED*/
-    }
+		/* Unlink the symlink file for next loop */
+		if (unlink(SYMFILE) == -1) {
+			tst_brkm(TBROK, cleanup,
+				 "unlink(%s) Failed, errno=%d : %s",
+				 SYMFILE, errno, strerror(errno));
+			/*NOTREACHED*/
+		}
+		Tst_count++;		/* incr TEST_LOOP counter */
+	}	/* End for TEST_LOOPING */
 
-    /* Check if the st_mode contains a link  */
-    if (!S_ISLNK(stat_buf.st_mode)) {
-     tst_resm(TFAIL,
-       "symlink of %s doesn't exist",
-       TESTFILE);
-    } else {
-     tst_resm(TPASS, "symlink(%s, %s) "
-      "functionality successful",
-      TESTFILE, SYMFILE);
-    }
-   } else {
-    tst_resm(TPASS, "Call succeeded");
-   }
-  }
-
-  /* Unlink the symlink file for next loop */
-  if (unlink(SYMFILE)  -1) {
-   tst_brkm(TBROK, cleanup,
-     "unlink(%s) Failed, errno%d : %s",
-     SYMFILE, errno, strerror(errno));
-   /*NOTREACHED*/
-  }
-  Tst_count++;  /* incr TEST_LOOP counter */
- } /* End for TEST_LOOPING */
-
- /* Call cleanup() to undo setup done for the test. */
- cleanup();
- /*NOTREACHED*/
+	/* Call cleanup() to undo setup done for the test. */
+	cleanup();
+	/*NOTREACHED*/
 
 
   return(0);
 
-} /* End main */
+}	/* End main */
 
 /*
  * void
@@ -185,38 +185,38 @@ main(int ac, char **av)
  *  Create a temporary directory and change directory to it.
  *  Create a test file under temporary directory and close it
  */
-void
+void 
 setup()
 {
- int fd;   /* file handle for testfile */
+	int fd;			/* file handle for testfile */
 
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified
-  * TEST_PAUSE contains the code to fork the test with the -i option.
-  * You want to make sure you do this before you create your temporary
-  * directory.
-  */
- TEST_PAUSE;
+	/* Pause if that option was specified
+	 * TEST_PAUSE contains the code to fork the test with the -i option.
+	 * You want to make sure you do this before you create your temporary
+	 * directory.
+	 */
+	TEST_PAUSE;
 
- /* make a temp directory and cd to it */
- tst_tmpdir();
+	/* make a temp directory and cd to it */
+	tst_tmpdir();
 
- /* creat/open a testfile */
- if ((fd  open(TESTFILE, O_RDWR|O_CREAT, FILE_MODE))  -1) {
-  tst_brkm(TBROK, cleanup,
-    "open(%s, O_RDWR|O_CREAT, %#o) Failed, errno%d : %s",
-    TESTFILE, FILE_MODE, errno, strerror(errno));
-  /*NOTREACHED*/
- }
+	/* creat/open a testfile */
+	if ((fd = open(TESTFILE, O_RDWR|O_CREAT, FILE_MODE)) == -1) {
+		tst_brkm(TBROK, cleanup,
+			 "open(%s, O_RDWR|O_CREAT, %#o) Failed, errno=%d : %s",
+			 TESTFILE, FILE_MODE, errno, strerror(errno));
+		/*NOTREACHED*/
+	}
 
- /* Close the temporary file created above */
- if (close(fd)  -1) {
-  tst_resm(TBROK, "close(%s) Failed, errno%d : %s",
-  TESTFILE, errno, strerror(errno));
- }
-} /* End setup() */
+	/* Close the temporary file created above */
+	if (close(fd) == -1) {
+		tst_resm(TBROK, "close(%s) Failed, errno=%d : %s",
+		TESTFILE, errno, strerror(errno));
+	}
+}	/* End setup() */
 
 
 /*
@@ -225,18 +225,18 @@ setup()
  *             completion or premature exit.
  *  Remove the test directory and testfile created in the setup.
  */
-void
+void 
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* Remove tmp dir and all files in it */
- tst_rmdir();
+	/* Remove tmp dir and all files in it */
+	tst_rmdir();
 
- /* exit with return code appropriate for results */
- tst_exit();
-} /* End cleanup() */
+	/* exit with return code appropriate for results */
+	tst_exit();
+}	/* End cleanup() */

@@ -1,8 +1,8 @@
-/*
+/*   
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  julie.n.fleischer REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this
+ * of this license, see the COPYING file at the top level of this 
  * source tree.
 
  * Test to see if timer_delete() returns -1 and sets errno==EINVAL if
@@ -19,20 +19,20 @@
 
 int main(int argc, char *argv[])
 {
- timer_t tid;
+	timer_t tid;
 
- tid = (timer_t) BOGUSTIMERID;
+	tid = (timer_t) BOGUSTIMERID;
 
- if (timer_delete(tid) == -1) {
-  if (errno==EINVAL) {
-   printf("timer_delete() returned -1 and set errno=EINVAL\n");
-   return PTS_PASS;
-  } else {
-   printf("timer_delete() returned -1, but didn't set errno!=EINVAL\n");
-   return PTS_FAIL;
-  }
- }
+	if (timer_delete(tid) == -1) {
+		if (errno==EINVAL) {
+			printf("timer_delete() returned -1 and set errno=EINVAL\n");
+			return PTS_PASS;
+		} else {
+			printf("timer_delete() returned -1, but didn't set errno!=EINVAL\n");
+			return PTS_FAIL;
+		}
+	}
 
- printf("timer_delete() did not return -1\n");
- return PTS_PASS;
+	printf("timer_delete() did not return -1\n");
+	return PTS_PASS;
 }

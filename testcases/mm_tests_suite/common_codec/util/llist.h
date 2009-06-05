@@ -27,7 +27,7 @@ D.Simakov / smkd001c  24/01/2006   TLSbo61035   Initial version
 /**********************/
 typedef struct LinkedList
 {
-        void * mpContent;
+        void * mpContent;    
         struct LinkedList * mpNext;
 } sLinkedList;
 

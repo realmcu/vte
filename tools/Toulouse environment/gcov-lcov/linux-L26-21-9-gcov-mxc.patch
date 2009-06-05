@@ -1,0 +1,90 @@
+diff -Naur linux-2.6.7-mxc1.5_COV/arch/arm/configs/imx27ads_defconfig linux-2.6.7-mxc1.5-gcov.freescale/arch/arm/configs/imx27ads_defconfig
+--- linux-2.6.7-mxc1.5_COV/arch/arm/configs/imx27ads_defconfig	2004-11-02 15:38:08.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.freescale/arch/arm/configs/imx27ads_defconfig	2004-10-28 16:19:42.000000000 +0200
+@@ -716,6 +716,14 @@
+ # CONFIG_PROFILING is not set
+ 
+ #
++# GCOV coverage profiling
++#
++CONFIG_GCOV_PROFILE=y
++# CONFIG_GCOV_ALL is not set
++CONFIG_GCOV_FREESCALE_ALL=y
++CONFIG_GCOV_PROC=m
++
++#
+ # Graphics support
+ #
+ CONFIG_FB=y
+diff -Naur linux-2.6.7-mxc1.5_COV/arch/arm/configs/imx31ads_defconfig linux-2.6.7-mxc1.5-gcov.freescale/arch/arm/configs/imx31ads_defconfig
+--- linux-2.6.7-mxc1.5_COV/arch/arm/configs/imx31ads_defconfig	2004-11-02 15:38:08.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.freescale/arch/arm/configs/imx31ads_defconfig	2004-10-28 16:19:57.000000000 +0200
+@@ -713,6 +713,14 @@
+ # CONFIG_PROFILING is not set
+ 
+ #
++# GCOV coverage profiling
++#
++CONFIG_GCOV_PROFILE=y
++# CONFIG_GCOV_ALL is not set
++CONFIG_GCOV_FREESCALE_ALL=y
++CONFIG_GCOV_PROC=m
++
++#
+ # Graphics support
+ #
+ CONFIG_FB=y
+diff -Naur linux-2.6.7-mxc1.5_COV/arch/arm/configs/mxc27530evb_defconfig linux-2.6.7-mxc1.5-gcov.freescale/arch/arm/configs/mxc27530evb_defconfig
+--- linux-2.6.7-mxc1.5_COV/arch/arm/configs/mxc27530evb_defconfig	2004-11-02 15:38:08.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.freescale/arch/arm/configs/mxc27530evb_defconfig	2004-10-28 16:20:03.000000000 +0200
+@@ -714,6 +714,14 @@
+ # CONFIG_PROFILING is not set
+ 
+ #
++# GCOV coverage profiling
++#
++CONFIG_GCOV_PROFILE=y
++# CONFIG_GCOV_ALL is not set
++CONFIG_GCOV_FREESCALE_ALL=y
++CONFIG_GCOV_PROC=m
++
++#
+ # Graphics support
+ #
+ CONFIG_FB=y
+diff -Naur linux-2.6.7-mxc1.5_COV/arch/arm/configs/mxc30030evb_defconfig linux-2.6.7-mxc1.5-gcov.freescale/arch/arm/configs/mxc30030evb_defconfig
+--- linux-2.6.7-mxc1.5_COV/arch/arm/configs/mxc30030evb_defconfig 2004-11-02 15:38:08.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.freescale/arch/arm/configs/mxc30030evb_defconfig      2004-10-28 16:20:03.000000000 +0200
+@@ -714,6 +714,14 @@
+ # CONFIG_PROFILING is not set
+
+ #
++# GCOV coverage profiling
++#
++CONFIG_GCOV_PROFILE=y
++# CONFIG_GCOV_ALL is not set
++CONFIG_GCOV_FREESCALE_ALL=y
++CONFIG_GCOV_PROC=m
++
++#
+ # Graphics support
+ #
+ CONFIG_FB=y
+diff -Naur linux-2.6.7-mxc1.5_COV/arch/arm/configs/mxc91131evb_defconfig linux-2.6.7-mxc1.5-gcov.freescale/arch/arm/configs/mxc91131evb_defconfig
+--- linux-2.6.7-mxc1.5_COV/arch/arm/configs/mxc91131evb_defconfig 2004-11-02 15:38:08.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.freescale/arch/arm/configs/mxc91131evb_defconfig      2004-10-28 16:20:03.000000000 +0200
+@@ -714,6 +714,14 @@
+ # CONFIG_PROFILING is not set
+
+ #
++# GCOV coverage profiling
++#
++CONFIG_GCOV_PROFILE=y
++# CONFIG_GCOV_ALL is not set
++CONFIG_GCOV_FREESCALE_ALL=y
++CONFIG_GCOV_PROC=m
++
++#
+ # Graphics support
+ #
+ CONFIG_FB=y

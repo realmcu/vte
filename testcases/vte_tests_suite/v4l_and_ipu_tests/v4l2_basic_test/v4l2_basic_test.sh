@@ -53,7 +53,7 @@ ${TSTCMD} -iw 480 -ih 640 -ow 240 -oh 320 -d 4 -fr 60
 if [ $? -eq 0 ];then
 echo "mxc_v4l2_output -iw 480 -ih 640 -ow 240 -oh 320 -d 4 -fr 60 TPASS"
 let PassCount=PassCount+1
-else
+else 
 echo "mxc_v4l2_output -iw 480 -ih 640 -ow 240 -oh 320 -d 4 -fr 60 TFAIL"
 fi
 ${TSTCMD} -iw 720 -ih 512 -ow 240 -oh 184 -d $DISPLAY -fr 60
@@ -107,7 +107,7 @@ if [ $PassCount -eq 55 ];then
 echo "========================"
 echo "Final Result     PASS"
 echo "========================"
-else
+else 
 echo "========================"
 echo "Final Result     FAIL"
 echo "========================"

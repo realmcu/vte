@@ -42,53 +42,53 @@ char buf[BSIZE];
 
 int main(int argc, char *argv[])
 {
- off_t i;
- long bufnum;
- off_t fd;
- time_t time1, time2;
- int writecnt  0, seekcnt  0, diff;
+	off_t i;
+	long bufnum;
+	off_t fd;
+	time_t time1, time2;
+	int writecnt = 0, seekcnt = 0, diff;
 
- time1  time(NULL);
+	time1 = time(NULL);
 
- if (argc ! 2 || atoi(argv[1]) < 1) {
-  printf("usage:<# of %ld buffers to write>\n", BSIZE);
-  exit(3);
- }
- bufnum  strtol(argv[1], NULL, 0);
- printf("Started building a %lu megabyte file @ %s\n", bufnum,
-        asctime(localtime(&time1)));
+	if (argc != 2 || atoi(argv[1]) < 1) {
+		printf("usage:<# of %ld buffers to write>\n", BSIZE);
+		exit(3);
+	}
+	bufnum = strtol(argv[1], NULL, 0);
+	printf("Started building a %lu megabyte file @ %s\n", bufnum,
+	       asctime(localtime(&time1)));
 
- buf[0]  'A';
- for (i  1; i < BSIZE; i++)
-  buf[i]  '0';
- buf[BSIZE - 1]  'Z';
+	buf[0] = 'A';
+	for (i = 1; i < BSIZE; i++)
+		buf[i] = '0';
+	buf[BSIZE - 1] = 'Z';
 
- if ((fd  creat("large_file", 0755))  -1)
-  perror("lftest: ");
+	if ((fd = creat("large_file", 0755)) == -1)
+		perror("lftest: ");
 
- for (i  0; i < bufnum; i++) {
-  if (write(fd, buf, BSIZE)  -1)
-   return -1;
-  else {
-   printf(".");
-   writecnt++;
-   fflush(stdout);
-  }
-  fsync(fd);
-  if (lseek(fd, (i + 1) * BSIZE, 0)  -1)
-   return -1;
-  else
-   seekcnt++;
- }
- close(fd);
- time2  time(NULL);
- printf("\nFinished building a %lu megabyte file @ %s\n", bufnum,
-        asctime(localtime(&time2)));
- diff  time2 - time1;
- printf("Number of Writes: %d\n"
-        "Number of Seeks: %d\n"
-        "Total time for test to run: %d minute(s) and %d seconds\n",
-        writecnt, seekcnt, diff / 60, diff % 60);
+	for (i = 0; i < bufnum; i++) {
+		if (write(fd, buf, BSIZE) == -1)
+			return -1;
+		else {
+			printf(".");
+			writecnt++;
+			fflush(stdout);
+		}
+		fsync(fd);
+		if (lseek(fd, (i + 1) * BSIZE, 0) == -1)
+			return -1;
+		else
+			seekcnt++;
+	}
+	close(fd);
+	time2 = time(NULL);
+	printf("\nFinished building a %lu megabyte file @ %s\n", bufnum,
+	       asctime(localtime(&time2)));
+	diff = time2 - time1;
+	printf("Number of Writes: %d\n"
+	       "Number of Seeks: %d\n"
+	       "Total time for test to run: %d minute(s) and %d seconds\n",
+	       writecnt, seekcnt, diff / 60, diff % 60);
 
- return 0;
+	return 0;
 }

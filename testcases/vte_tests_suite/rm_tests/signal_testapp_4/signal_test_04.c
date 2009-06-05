@@ -24,7 +24,7 @@
 
 /*---------------------------------------------------------------------+
 |                            signal_test_04                            |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Description:  Verify default signal actions (for SIGSTOP & SIGCONT)  |
 |               by spawning a child process and sending the signals    |
@@ -93,7 +93,7 @@
 #include <sys/errno.h>
 
 #ifdef _LINUX_
-// bits/signum.h defines _NSIG as 64
+// bits/signum.h defines _NSIG as 64 
 #define SIGMAX 64
 #endif
 
@@ -112,126 +112,126 @@ volatile int sigusr1_count = 0;
 
 /*---------------------------------------------------------------------+
 |                               main ()                                |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Function:  Main program  (see prolog for more details)               |
 |                                                                      |
 +---------------------------------------------------------------------*/
 int RM_main (int argc, char **argv)
 {
- pid_t pid = getpid (), /* Process ID (of parent process) */
-  cpid;   /* Process ID (of child process) */
- int sigusr1_interrupts; /* xxx */
- int status;   /* Child's exit status */
- int timeout = 10;  /* How long to wait for SIGCHILD */
- char msg [100];  /* Buffer for error message */
+	pid_t 	pid = getpid (),	/* Process ID (of parent process) */
+		cpid;			/* Process ID (of child process) */
+	int	sigusr1_interrupts;	/* xxx */
+	int	status;			/* Child's exit status */
+	int	timeout = 10;		/* How long to wait for SIGCHILD */
+	char	msg [100];		/* Buffer for error message */
 
- /* Print out program header */
- printf ("%s: IPC TestSuite program\n\n", *argv);
- fflush (stdout);
+	/* Print out program header */
+	printf ("%s: IPC TestSuite program\n\n", *argv);
+	fflush (stdout);
+    
+	/* Set up our signal handler */
+	signal_init ();
 
- /* Set up our signal handler */
- signal_init ();
+	/* 
+	 * Spawn a child process & have the child process send SIGUSR1
+	 * signals to the parent.
+	 */
+	switch (cpid = fork ()) {
+		case -1: /* Unable to create child process */
+			sys_error ("fork failed", __LINE__);
+			exit (-1);
 
- /*
-  * Spawn a child process & have the child process send SIGUSR1
-  * signals to the parent.
-  */
- switch (cpid = fork ()) {
-  case -1: /* Unable to create child process */
-   sys_error ("fork failed", __LINE__);
-   exit (-1);
+		case 0: /* Child process */
+			child (pid);
 
-  case 0: /* Child process */
-   child (pid);
+		default: /* Parent process */
+			break;
+	}
 
-  default: /* Parent process */
-   break;
- }
-
- /*
-  * Interrupt the child process
-  *
-  * Send SIGSTOP signal to child process (child process will
-  * stop upon receiving the signal).
-  *
-  * Wait for the child process to receive the SIGSTOP signal
-  * and send a corresponding SIGCLD interrupt to the parent.
-  *
-  * Send SIGKILL signal to child process (child process
-  * will exit upon receiving the signal).
-  */
- printf ("\tWait for SIGUSR1 signal from child process\n");
+	/*
+	 * Interrupt the child process            
+	 *
+	 * Send SIGSTOP signal to child process (child process will
+	 * stop upon receiving the signal).
+	 * 
+	 * Wait for the child process to receive the SIGSTOP signal
+	 * and send a corresponding SIGCLD interrupt to the parent.
+	 * 
+	 * Send SIGKILL signal to child process (child process 
+	 * will exit upon receiving the signal).
+	 */
+	printf ("\tWait for SIGUSR1 signal from child process\n");
 #ifdef _IA64
- while (sigusr1_count < 1) sleep(1);
+	while (sigusr1_count < 1) sleep(1);
 #else
- while (sigusr1_count < 1) ;
+	while (sigusr1_count < 1) ;
 #endif
- printf ("\tReceived SIGUSR1 (30)\n");
- sigusr1_interrupts = sigusr1_count;
+	printf ("\tReceived SIGUSR1 (30)\n");
+	sigusr1_interrupts = sigusr1_count;
 
- printf ("\n\tStop the child process\n");
- kill (cpid, SIGSTOP);
+	printf ("\n\tStop the child process\n");
+	kill (cpid, SIGSTOP);
 
- printf ("\n\tWait for SIGCHLD signal from stopped child process\n");
- alarm (timeout);
- while (sigchld_flag < 1) ;
- printf ("\tReceived SIGCHLD (20)\n");
+	printf ("\n\tWait for SIGCHLD signal from stopped child process\n");
+	alarm (timeout);
+	while (sigchld_flag < 1) ;
+	printf ("\tReceived SIGCHLD (20)\n");
 
- printf ("\n\tResume child process & wait for it to send SIGUSR1 signal\n");
- kill (cpid, SIGCONT);
+	printf ("\n\tResume child process & wait for it to send SIGUSR1 signal\n");
+	kill (cpid, SIGCONT);
 
 #ifdef _IA64
- while (sigusr1_interrupts == sigusr1_count) sleep(1) ;
+	while (sigusr1_interrupts == sigusr1_count) sleep(1) ;
 #else
- while (sigusr1_interrupts == sigusr1_count) ;
+	while (sigusr1_interrupts == sigusr1_count) ;
 #endif
- printf ("\tReceived SIGUSR1 (20)\n");
+	printf ("\tReceived SIGUSR1 (20)\n");
 
- printf ("\n\tNow kill the child process with SIGUSR2 signal\n");
- kill (cpid, SIGUSR2);
+	printf ("\n\tNow kill the child process with SIGUSR2 signal\n");
+	kill (cpid, SIGUSR2);
 
- /*
-  * Wait for the child process to abort
-  *
-  * Suspend execution of the parent process until the SIGCHLD signal
-  * is received upon termination of the child process.
-  *
-  * Check the child process's exit status (with POSIX macros) to
-  * verify that the child process terminated due to the SIGKILL signal
-  * from the parent.
-  *
-  * Additionally verify that the number of SIGCHLD signals received
-  * has increased.
-  */
- printf ("\n\tWait for SIGCHLD signal from killed child process\n");
+	/*
+	 * Wait for the child process to abort 
+	 * 
+	 * Suspend execution of the parent process until the SIGCHLD signal
+	 * is received upon termination of the child process.  
+	 * 
+	 * Check the child process's exit status (with POSIX macros) to 
+	 * verify that the child process terminated due to the SIGKILL signal 
+	 * from the parent.
+	 * 
+	 * Additionally verify that the number of SIGCHLD signals received
+	 * has increased.
+	 */
+	printf ("\n\tWait for SIGCHLD signal from killed child process\n");
 
- wait (&status);
+	wait (&status);
 
- if (WIFSIGNALED (status)) {
-  if (WTERMSIG (status) != SIGUSR2) {
-   sprintf (msg, "child process was killed with signal (%d)",
-    WTERMSIG (status));
-   error (msg, __LINE__);
-  }
- } else {
-  error ("child process did not receive SIGUSR2 signal", __LINE__);
- }
- if (sigchld_flag < 2)
-  error ("child process failed to send SIGCHLD signal", __LINE__);
+	if (WIFSIGNALED (status)) { 
+		if (WTERMSIG (status) != SIGUSR2) {
+			sprintf (msg, "child process was killed with signal (%d)",
+				WTERMSIG (status));
+			error (msg, __LINE__);
+		}
+	} else {
+		error ("child process did not receive SIGUSR2 signal", __LINE__);
+	}
+	if (sigchld_flag < 2)
+		error ("child process failed to send SIGCHLD signal", __LINE__);
 
- printf ("\tReceived SIGCHLD (30)\n");
+	printf ("\tReceived SIGCHLD (30)\n");
 
- /* Program completed successfully -- exit */
- printf ("\nsuccessful!\n");
+	/* Program completed successfully -- exit */
+	printf ("\nsuccessful!\n");
 
- return 0;
+	return 0;
 }
 
 
 /*---------------------------------------------------------------------+
 |                               child ()                               |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Function:  Child process -- loop until killed.                       |
 |            o  continuously send SIGUSR1 interrupts to parent         |
@@ -239,23 +239,23 @@ int RM_main (int argc, char **argv)
 +---------------------------------------------------------------------*/
 void child (pid_t pid)
 {
- while (1) {
-  sleep (2);
+	while (1) {
+		sleep (2);
 #ifdef _IA64
-  if (kill (pid, SIGUSR1) < 0)
-   perror("child: kill");
+		if (kill (pid, SIGUSR1) < 0)
+			perror("child: kill");
 #else
-  kill (pid, SIGUSR1);
+		kill (pid, SIGUSR1);
 #endif
- }
+	}
 
- error ("child process failed to terminate correctly", __LINE__);
+	error ("child process failed to terminate correctly", __LINE__);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               handler ()                             |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Function:  Signal handler                                            |
 |                                                                      |
@@ -266,25 +266,25 @@ void child (pid_t pid)
 +---------------------------------------------------------------------*/
 void handler (int signal, int code, struct sigcontext *scp)
 {
- char msg [100];
+	char msg [100];
 
- if (signal == SIGCHLD) {
-  sigchld_flag++;
- } else if (signal == SIGUSR1) {
-  sigusr1_count++;
- } else if (signal == SIGALRM) {
-  sprintf (msg, "Timed out waiting for SIGCHLD signal from child, defect # 124551");
-  error (msg, __LINE__);
- } else {
-  sprintf (msg, "caught an unexpected signal (%d)", signal);
-  error (msg, __LINE__);
- }
+	if (signal == SIGCHLD) {
+		sigchld_flag++;
+	} else if (signal == SIGUSR1) {
+		sigusr1_count++;
+	} else if (signal == SIGALRM) {
+		sprintf (msg, "Timed out waiting for SIGCHLD signal from child, defect # 124551");
+		error (msg, __LINE__);
+	} else {
+		sprintf (msg, "caught an unexpected signal (%d)", signal);
+		error (msg, __LINE__);
+	}
 }
 
 
 /*---------------------------------------------------------------------+
 |                           signal_init ()                             |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Function:  Take default action for all signals except for SIGCHLD.   |
 |            Particularily interrested in the following:               |
@@ -303,87 +303,87 @@ void handler (int signal, int code, struct sigcontext *scp)
 +---------------------------------------------------------------------*/
 void signal_init ()
 {
- struct sigaction action;
- char msg [100];
- int i;
+	struct sigaction action;
+	char	msg [100];
+	int	i;
 
- for (i=1; i<=SIGMAX; i++) {
+	for (i=1; i<=SIGMAX; i++) {
 
-  /* Do not ignore SIGCHILD signal */
+		/* Do not ignore SIGCHILD signal */
 #ifdef _IA64    /* SIGWAITING not supported, RESERVED */
-  if (i == SIGCHLD || i == SIGALRM ||
-      i == SIGUSR1 || i == SIGWAITING) continue;
+		if (i == SIGCHLD || i == SIGALRM ||
+		    i == SIGUSR1 || i == SIGWAITING) continue;
 #else
 #  ifdef _LINUX_
-      if ((i == SIGKILL) || (i == SIGSTOP) || ((i>=32)&&(i<=34))) continue;
-#  else
+       		if ((i == SIGKILL) || (i == SIGSTOP) || ((i>=32)&&(i<=34))) continue;
+#  else		
                 if ((i == SIGKILL) || (i == SIGSTOP) || (i == SIGCONT)) continue;
 #  endif
 #endif
 
-  action.sa_handler = SIG_DFL;
-  sigfillset (&action.sa_mask);
-  action.sa_flags = SA_RESTART;
+		action.sa_handler = SIG_DFL;
+		sigfillset (&action.sa_mask);
+		action.sa_flags = SA_RESTART;
 
-  if (sigaction (i, &action, (struct sigaction *) NULL) < 0) {
-   sprintf (msg, "sigaction failed on signal %d", i);
-   error (msg, __LINE__);
-  }
- }
+		if (sigaction (i, &action, (struct sigaction *) NULL) < 0) {
+			sprintf (msg, "sigaction failed on signal %d", i);
+			error (msg, __LINE__);
+		}
+	}
 
- /* Setup signal handler for SIGCHLD & SIGUSR1 signals */
- action.sa_handler = (void (*)(int)) handler;
- sigfillset (&action.sa_mask);
+	/* Setup signal handler for SIGCHLD & SIGUSR1 signals */
+	action.sa_handler = (void (*)(int)) handler;
+	sigfillset (&action.sa_mask);
 
- /* changing */
- /*action.sa_flags = 0;*/
- action.sa_flags = SA_RESTART;
+	/* changing */
+	/*action.sa_flags = 0;*/
+	action.sa_flags = SA_RESTART;
 
- if (sigaction (SIGCHLD, &action, (struct sigaction *) NULL) < 0)
-  sys_error ("sigaction (SIGCHLD) failed", __LINE__);
+	if (sigaction (SIGCHLD, &action, (struct sigaction *) NULL) < 0)
+		sys_error ("sigaction (SIGCHLD) failed", __LINE__);
 
- /* changing */
- action.sa_flags = SA_RESTART;
- /* end of changing */
+	/* changing */
+	action.sa_flags = SA_RESTART;
+	/* end of changing */
 
- if (sigaction (SIGUSR1, &action, (struct sigaction *) NULL) < 0)
-  sys_error ("sigaction (SIGUSR1) failed", __LINE__);
+	if (sigaction (SIGUSR1, &action, (struct sigaction *) NULL) < 0)
+		sys_error ("sigaction (SIGUSR1) failed", __LINE__);
 
- /* Setup signal handler for SIGALRM */
- action.sa_handler = (void (*)(int)) handler;
- if (sigaction (SIGALRM, &action, (struct sigaction *) NULL) < 0)
-  sys_error ("sigaction (SIGCHLD) failed", __LINE__);
+	/* Setup signal handler for SIGALRM */
+	action.sa_handler = (void (*)(int)) handler;
+	if (sigaction (SIGALRM, &action, (struct sigaction *) NULL) < 0)
+		sys_error ("sigaction (SIGCHLD) failed", __LINE__);
 }
 
 
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Function:  Creates system error message and calls error ()           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 void sys_error (const char *msg, int line)
 {
- char syserr_msg [256];
+	char syserr_msg [256];
 
- sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
- error (syserr_msg, line);
+	sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
+	error (syserr_msg, line);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               error ()                               |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Function:  Prints out message and exits...                           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 void error (const char *msg, int line)
 {
- fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
+	fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
 #ifdef _IA64
- fflush(stderr);
+	fflush(stderr);
 #endif
- exit (-1);
+	exit (-1);
 }

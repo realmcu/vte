@@ -39,14 +39,14 @@ typedef struct proc_t {
 // 1st 16 bytes
     int
         pid,		/* process id */
-    ppid;		/* pid of parent process */
+    	ppid;		/* pid of parent process */
     unsigned
         pcpu;           /* %CPU usage (is not filled in by readproc!!!) */
     char
-    state,		/* single-char code for process state (S=sleeping) */
-    pad_1,		/* padding */
-    pad_2,		/* padding */
-    pad_3;		/* padding */
+    	state,		/* single-char code for process state (S=sleeping) */
+    	pad_1,		/* padding */
+    	pad_2,		/* padding */
+    	pad_3;		/* padding */
 // 2nd 16 bytes
     unsigned long long
 	utime,		/* user-mode CPU time accumulated by process */
@@ -114,15 +114,15 @@ typedef struct proc_t {
 	**cmdline;	/* command line string vector (/proc/#/cmdline) */
     char
 	/* Be compatible: Digital allows 16 and NT allows 14 ??? */
-    ruser[16],	/* real user name */
-    euser[16],	/* effective user name */
-    suser[16],	/* saved user name */
-    fuser[16],	/* filesystem user name */
-    rgroup[16],	/* real group name */
-    egroup[16],	/* effective group name */
-    sgroup[16],	/* saved group name */
-    fgroup[16],	/* filesystem group name */
-    cmd[16];	/* basename of executable file in call to exec(2) */
+    	ruser[16],	/* real user name */
+    	euser[16],	/* effective user name */
+    	suser[16],	/* saved user name */
+    	fuser[16],	/* filesystem user name */
+    	rgroup[16],	/* real group name */
+    	egroup[16],	/* effective group name */
+    	sgroup[16],	/* saved group name */
+    	fgroup[16],	/* filesystem group name */
+    	cmd[16];	/* basename of executable file in call to exec(2) */
     int
         ruid, rgid,     /* real      */
         euid, egid,     /* effective */
@@ -188,7 +188,7 @@ extern void look_up_our_self(proc_t *p);
 extern void freeproc(proc_t* p);
 
 /* openproc/readproctab:
- *
+ *   
  * Return PROCTAB* / *proc_t[] or NULL on error ((probably) "/proc" cannot be
  * opened.)  By default readproc will consider all processes as valid to parse
  * and return, but not actually fill in the cmdline, environ, and /proc/#/statm

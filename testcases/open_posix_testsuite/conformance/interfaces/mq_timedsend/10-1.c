@@ -8,7 +8,7 @@
 
 /*
  * Test that if O_NONBLOCK is set and the message queue is full, mq_timedsend()
- * will set errno  EAGAIN (subset of 7-1.c).
+ * will set errno == EAGAIN (subset of 7-1.c).
  */
 
 #include <stdio.h>
@@ -33,59 +33,59 @@ int main()
 {
         char qname[NAMESIZE];
         char msgptr[MESSAGESIZE];
- struct timespec ts;
- struct mq_attr attr;
+	struct timespec ts;
+	struct mq_attr attr;
         mqd_t queue;
- int unresolved0, failure0, i, maxreached0;
+	int unresolved=0, failure=0, i, maxreached=0;
 
         sprintf(qname, "/mq_timedsend_10-1_%d", getpid());
 
- attr.mq_msgsize  BUFFER;
- attr.mq_maxmsg  MAXMSG;
-        queue  mq_open(qname, O_CREAT | O_RDWR | O_NONBLOCK,
-   S_IRUSR | S_IWUSR, &attr);
-        if (queue  (mqd_t)-1) {
+	attr.mq_msgsize = BUFFER;
+	attr.mq_maxmsg = MAXMSG;
+        queue = mq_open(qname, O_CREAT | O_RDWR | O_NONBLOCK, 
+			S_IRUSR | S_IWUSR, &attr);
+        if (queue == (mqd_t)-1) {
                 perror("mq_open() did not return success");
                 return PTS_UNRESOLVED;
         }
 
- ts.tv_sectime(NULL)+1;
- ts.tv_nsec0;
- for (i0; i<MAXMSG+1; i++) {
-  sprintf(msgptr, "message %d", i);
-        if (mq_timedsend(queue, msgptr, strlen(msgptr), 1, &ts)  -1) {
-   maxreached1;
-   if (errno ! EAGAIN) {
-    printf("mq_timedsend() did not w/EAGAIN\n");
-    failure1;
-   }
-   break;
-        }
- }
+	ts.tv_sec=time(NULL)+1;
+	ts.tv_nsec=0;
+	for (i=0; i<MAXMSG+1; i++) {
+		sprintf(msgptr, "message %d", i);
+        	if (mq_timedsend(queue, msgptr, strlen(msgptr), 1, &ts) == -1) {
+			maxreached=1;
+			if (errno != EAGAIN) {
+				printf("mq_timedsend() did not w/EAGAIN\n");
+				failure=1;
+			}
+			break;
+        	}
+	}
 
-        if (mq_close(queue) ! 0) {
-  perror("mq_close() did not return success");
-  unresolved1;
-        }
-
-        if (mq_unlink(qname) ! 0) {
-  perror("mq_unlink() did not return success");
-  unresolved1;
+        if (mq_close(queue) != 0) {
+		perror("mq_close() did not return success");
+		unresolved=1;
         }
 
- if (maxreached0) {
-  printf("Test inconclusive:  Couldn't fill message queue\n");
-  return PTS_UNRESOLVED;
- }
- if (failure1) {
-  printf("Test FAILED\n");
-  return PTS_FAIL;
- }
+        if (mq_unlink(qname) != 0) {
+		perror("mq_unlink() did not return success");
+		unresolved=1;
+        }
 
- if (unresolved1) {
-  printf("Test UNRESOLVED\n");
-  return PTS_UNRESOLVED;
- }
+	if (maxreached==0) {
+		printf("Test inconclusive:  Couldn't fill message queue\n");
+		return PTS_UNRESOLVED;
+	}
+	if (failure==1) {
+		printf("Test FAILED\n");
+		return PTS_FAIL;
+	}
+
+	if (unresolved==1) {
+		printf("Test UNRESOLVED\n");
+		return PTS_UNRESOLVED;
+	}
 
         printf("Test PASSED\n");
         return PTS_PASS;

@@ -1,52 +1,52 @@
 /*
  * Copyright (c) 2000 Silicon Graphics, Inc.  All Rights Reserved.
  * Portions Copyright (c) 2000 Ulrich Drepper
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
- *
+ * 
  * This program is distributed in the hope that it would be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
+ * 
  * Further, this software is distributed without any warranty that it is
  * free of the rightful claim of any third person regarding infringement
  * or the like.  Any license provided herein, whether implied or
  * otherwise, applies only to this software file.  Patent licenses, if
  * any, provided herein do not apply to combinations of this program with
  * other software, or any other product whatsoever.
- *
+ * 
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write the Free Software Foundation, Inc., 59
  * Temple Place - Suite 330, Boston MA 02111-1307, USA.
- *
+ * 
  * Contact information: Silicon Graphics, Inc., 1600 Amphitheatre Pkwy,
  * Mountain View, CA  94043, or:
- *
- * http://www.sgi.com
- *
- * For further information regarding this notice, see:
- *
+ * 
+ * http://www.sgi.com 
+ * 
+ * For further information regarding this notice, see: 
+ * 
  * http://oss.sgi.com/projects/GenInfo/NoticeExplan/
  */
 /* $Id: fork05.c,v 1.5 2005/01/05 21:21:27 mridge Exp $ */
 /**********************************************************
  *
  *    Linux Test Project - Silicon Graphics, Inc.
+ *    
+ *    TEST IDENTIFIER	: fork05
  *
- *    TEST IDENTIFIER : fork05
+ *    EXECUTED BY	: anyone
  *
- *    EXECUTED BY : anyone
+ *    TEST TITLE	: Make sure LDT is propagated correctly
  *
- *    TEST TITLE : Make sure LDT is propagated correctly
+ *    TEST CASE TOTAL	: 1
  *
- *    TEST CASE TOTAL : 1
+ *    CPU TYPES		: i386
  *
- *    CPU TYPES  : i386
- *
- *    AUTHORS  : Ulrich Drepper
- *     Nate Straz
+ *    AUTHORS		: Ulrich Drepper
+ *			  Nate Straz
  *
  *On Friday, May 2, 2003 at 09:47:00AM MST, Ulrich Drepper wrote:
  *>Robert Williamson wrote:
@@ -61,7 +61,7 @@
  *>systems.  Either change all uses of %gs to %fs or skip the entire patch
  *>if %gs has a nonzero value.
  *>
- *>- --
+ *>- -- 
  *>- --------------.                        ,-.            444 Castro Street
  *>Ulrich Drepper \    ,-----------------'   \ Mountain View, CA 94041 USA
  *>Red Hat         `--' drepper at redhat.com `---------------------------
@@ -75,34 +75,34 @@
  *> seen an immediate candidate for the breakage.  It could be missing
  *> propagation of the LDT to the new process (and therefore an invalid
  *> segment descriptor) or simply clearing %gs.
- *>
+ *> 
  *> Anyway, this is what you should see and what you get with test5:
- *>
+ *> 
  *> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- *> a  42
- *> %gs  0x0007
- *> %gs  0x0007
- *> a  99
+ *> a = 42
+ *> %gs = 0x0007
+ *> %gs = 0x0007
+ *> a = 99
  *> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- *>
+ *> 
  *> This is what you get with test6:
- *>
+ *> 
  *> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- *> a  42
- *> %gs  0x0007
- *> %gs  0x0000
+ *> a = 42
+ *> %gs = 0x0007
+ *> %gs = 0x0000
  *> <SEGFAULT>
  *> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- *>
+ *> 
  *> If somebody is actually creating a test suite for the kernel, please
  *> add this program.  It's mostly self-contained.  The correct handling
  *> of %gs is really important since glibc 2.2 will make heavy use of it.
- *>
- *> - --
+ *> 
+ *> - -- 
  *> - ---------------.                          ,-.   1325 Chesapeake Terrace
  *> Ulrich Drepper  \    ,-------------------'   \  Sunnyvale, CA 94089 USA
  *> Red Hat          `--' drepper at redhat.com   `------------------------
- *>
+ *> 
  *> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
  *
@@ -115,13 +115,13 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID"fork05";
+char *TCID="fork05";
 extern int Tst_count;
 
 /* list of environment variables to test */
-char *environ_list[]  {"TERM","NoTSetzWq","TESTPROG"};
+char *environ_list[] = {"TERM","NoTSetzWq","TESTPROG"};
 #define NUMBER_OF_ENVIRON sizeof(environ_list)/sizeof(char*)
-int TST_TOTALNUMBER_OF_ENVIRON;                /* Total number of test cases. */
+int TST_TOTAL=NUMBER_OF_ENVIRON;                /* Total number of test cases. */
 
 
 #if defined(linux) && defined(__i386__)
@@ -140,20 +140,20 @@ struct modify_ldt_ldt_s
   unsigned int empty:25;
 };
 
-int a  42;
+int a = 42;
 
 void modify_ldt(int, struct modify_ldt_ldt_s *, int);
-asm(" .text\n\
- .type modify_ldt,@function \n\
+asm("	.text\n\
+	.type modify_ldt,@function \n\
 modify_ldt: \n\
- push   %ebx \n\
- mov    0x10(%esp,1),%edx \n\
- mov    0xc(%esp,1),%ecx \n\
- mov    0x8(%esp,1),%ebx \n\
- mov    $0x7b,%eax \n\
- int    $0x80 \n\
- pop    %ebx \n\
- ret");
+	push   %ebx \n\
+	mov    0x10(%esp,1),%edx \n\
+	mov    0xc(%esp,1),%ecx \n\
+	mov    0x8(%esp,1),%ebx \n\
+	mov    $0x7b,%eax \n\
+	int    $0x80 \n\
+	pop    %ebx \n\
+	ret");
 
 
 
@@ -165,42 +165,42 @@ main ()
   pid_t pid;
   int res;
 
-  ldt0.entry_number  0;
-  ldt0.base_addr  (long) &a;
-  ldt0.limit  4;
-  ldt0.seg_32bit  1;
-  ldt0.contents  0;
-  ldt0.read_exec_only  0;
-  ldt0.limit_in_pages  0;
-  ldt0.seg_not_present  0;
-  ldt0.useable  1;
-  ldt0.empty  0;
+  ldt0.entry_number = 0;
+  ldt0.base_addr = (long) &a;
+  ldt0.limit = 4;
+  ldt0.seg_32bit = 1;
+  ldt0.contents = 0;
+  ldt0.read_exec_only = 0;
+  ldt0.limit_in_pages = 0;
+  ldt0.seg_not_present = 0;
+  ldt0.useable = 1;
+  ldt0.empty = 0;
 
   modify_ldt (1, &ldt0, sizeof (ldt0));
 
   asm ("movw %w0, %%fs" : : "q" (7));
 
-  asm ("movl %%fs:0, %0" : "r" (lo));
-  tst_resm(TINFO,"a  %d", lo);
+  asm ("movl %%fs:0, %0" : "=r" (lo));
+  tst_resm(TINFO,"a = %d", lo);
 
-  asm ("pushl %%fs; popl %0" : "q" (lo));
-  tst_resm(TINFO,"%%fs  %#06hx", lo);
+  asm ("pushl %%fs; popl %0" : "=q" (lo));
+  tst_resm(TINFO,"%%fs = %#06hx", lo);
 
   asm ("movl %0, %%fs:0" : : "r" (99));
 
-  pid  fork ();
+  pid = fork ();
 
-  if (pid  0) {
-      asm ("pushl %%fs; popl %0" : "q" (lo));
-      tst_resm(TINFO,"%%fs  %#06hx", lo);
+  if (pid == 0) {
+      asm ("pushl %%fs; popl %0" : "=q" (lo));
+      tst_resm(TINFO,"%%fs = %#06hx", lo);
 
-      asm ("movl %%fs:0, %0" : "r" (lo));
-      tst_resm(TINFO,"a  %d", lo);
+      asm ("movl %%fs:0, %0" : "=r" (lo));
+      tst_resm(TINFO,"a = %d", lo);
 
-      if (lo ! 99)
+      if (lo != 99)
          tst_resm(TFAIL, "Test failed");
-  else tst_resm(TPASS, "Test passed");
-      exit (lo ! 99);
+	 else tst_resm(TPASS, "Test passed");
+      exit (lo != 99);
   } else {
       waitpid (pid, &res, 0);
   }

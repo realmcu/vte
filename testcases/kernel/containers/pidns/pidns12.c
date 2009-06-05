@@ -30,7 +30,7 @@
 * *
 * * History:
 * *  DATE      NAME                             DESCRIPTION
-* *  13/11/08  Gowrishankar M Creation of this test.
+* *  13/11/08  Gowrishankar M 			Creation of this test.
 * *            <gowrishankar.m@in.ibm.com>
 *
 ******************************************************************************/
@@ -46,8 +46,8 @@
 #include <test.h>
 #include <libclone.h>
 
-char *TCID  "pidns12";
-int TST_TOTAL  1;
+char *TCID = "pidns12";
+int TST_TOTAL = 1;
 int errno;
 int pipefd[2];
 
@@ -60,11 +60,11 @@ int pipefd[2];
  */
 void cleanup()
 {
- /* Clean the test testcase as LTP wants*/
- TEST_CLEANUP;
+	/* Clean the test testcase as LTP wants*/
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }
 
 /*
@@ -72,8 +72,8 @@ void cleanup()
  */
 static void child_signal_handler(int sig, siginfo_t *si, void *unused)
 {
- /* sigtimedwait() traps siginfo details, so this wont be called */
- tst_resm(TWARN, "cinit: control should have not reached here!");
+	/* sigtimedwait() traps siginfo details, so this wont be called */
+	tst_resm(TWARN, "cinit: control should have not reached here!");
 }
 
 /*
@@ -81,68 +81,68 @@ static void child_signal_handler(int sig, siginfo_t *si, void *unused)
  */
 int child_fn(void *arg)
 {
- struct sigaction sa;
- sigset_t newset;
- siginfo_t info;
- struct timespec timeout;
- pid_t pid, ppid;
+	struct sigaction sa;
+	sigset_t newset;
+	siginfo_t info;
+	struct timespec timeout;
+	pid_t pid, ppid;
 
- /* Set process id and parent pid */
- pid  getpid();
- ppid  getppid();
- if (pid ! CHILD_PID || ppid ! PARENT_PID) {
-  tst_resm(TBROK, "cinit: pidns is not created.");
-  cleanup();
- }
+	/* Set process id and parent pid */
+	pid = getpid();
+	ppid = getppid();
+	if (pid != CHILD_PID || ppid != PARENT_PID) {
+		tst_resm(TBROK, "cinit: pidns is not created.");
+		cleanup();
+	}
 
- /* Close read end of pipe */
- close(pipefd[0]);
+	/* Close read end of pipe */
+	close(pipefd[0]);
 
- /* Set signal handler for SIGUSR1 */
- sa.sa_flags  SA_SIGINFO;
- sigfillset(&sa.sa_mask);
- sa.sa_sigaction  child_signal_handler;
- if (sigaction(SIGUSR1, &sa, NULL)  -1) {
-  tst_resm(TBROK, "cinit: sigaction() failed(%s).",\
-    strerror(errno));
-  cleanup();
- }
+	/* Set signal handler for SIGUSR1 */
+	sa.sa_flags = SA_SIGINFO;
+	sigfillset(&sa.sa_mask);
+	sa.sa_sigaction = child_signal_handler;
+	if (sigaction(SIGUSR1, &sa, NULL) == -1) {
+		tst_resm(TBROK, "cinit: sigaction() failed(%s).",\
+				strerror(errno));
+		cleanup();
+	}
 
- /* Set timeout for sigtimedwait */
- timeout.tv_sec  3;
- timeout.tv_nsec  0;
+	/* Set timeout for sigtimedwait */
+	timeout.tv_sec = 3;
+	timeout.tv_nsec = 0;
 
- /* Set mask to wait for SIGUSR1 signal */
- sigemptyset(&newset);
- sigaddset(&newset, SIGUSR1);
+	/* Set mask to wait for SIGUSR1 signal */
+	sigemptyset(&newset);
+	sigaddset(&newset, SIGUSR1);
 
- /* Let parent to signal SIGUSR1 */
- if (write(pipefd[1], "c:go\0", 5) ! 5) {
-  tst_resm(TBROK, "cinit: pipe is broken to write");
-  cleanup();
- }
+	/* Let parent to signal SIGUSR1 */
+	if (write(pipefd[1], "c:go\0", 5) != 5) {
+		tst_resm(TBROK, "cinit: pipe is broken to write");
+		cleanup();
+	}
 
- /* Wait for SIGUSR1 */
- if (sigtimedwait(&newset, &info, &timeout) ! SIGUSR1) {
-  tst_resm(TBROK, "cinit: sigtimedwait() failed(%s).",
-    strerror(errno));
-  cleanup();
- }
+	/* Wait for SIGUSR1 */
+	if (sigtimedwait(&newset, &info, &timeout) != SIGUSR1) {
+		tst_resm(TBROK, "cinit: sigtimedwait() failed(%s).",
+				strerror(errno));
+		cleanup();
+	}
 
- /* Recieved SIGUSR1. Check sender pid */
- if (info.si_pid  0)
-  tst_resm(TPASS, "cinit: signalling PID (from other namespace)"\
-    " is 0 as expected");
- else
-  tst_resm(TFAIL, "cinit: signalling PID (from other namespace)"\
-    " is not 0, but %d.", info.si_pid);
+	/* Recieved SIGUSR1. Check sender pid */
+	if (info.si_pid == 0)
+		tst_resm(TPASS, "cinit: signalling PID (from other namespace)"\
+				" is 0 as expected");
+	else
+		tst_resm(TFAIL, "cinit: signalling PID (from other namespace)"\
+				" is not 0, but %d.", info.si_pid);
 
- /* cleanup and exit */
- close(pipefd[1]);
- cleanup();
+	/* cleanup and exit */
+	close(pipefd[1]);
+	cleanup();
 
- /* Control won't reach below */
- exit(0);
+	/* Control won't reach below */
+	exit(0);
 }
 
 
@@ -152,55 +152,55 @@ int child_fn(void *arg)
 
 int main(int argc, char *argv[])
 {
- int status;
- pid_t pid, cpid;
- char buf[5];
+	int status;
+	pid_t pid, cpid;
+	char buf[5];
 
- pid  getpid();
- tst_resm(TINFO, "parent: PID is %d", pid);
+	pid = getpid();
+	tst_resm(TINFO, "parent: PID is %d", pid);
 
- /* Create pipe for intercommunication */
- if (pipe(pipefd)  -1) {
-  tst_resm(TBROK, "parent: pipe() failed. aborting!");
-  cleanup();
- }
+	/* Create pipe for intercommunication */
+	if (pipe(pipefd) == -1) {
+		tst_resm(TBROK, "parent: pipe() failed. aborting!");
+		cleanup();
+	}
 
- cpid  do_clone(CLONE_NEWPID|SIGCHLD, child_fn, NULL);
- if (cpid < 0) {
-  tst_resm(TBROK, "parent: clone() failed(%s).",\
-    strerror(errno));
-  cleanup();
- }
+	cpid = do_clone(CLONE_NEWPID|SIGCHLD, child_fn, NULL);
+	if (cpid < 0) {
+		tst_resm(TBROK, "parent: clone() failed(%s).",\
+				strerror(errno));
+		cleanup();
+	}
 
- /* Close write end of pipe */
- close(pipefd[1]);
+	/* Close write end of pipe */
+	close(pipefd[1]);
 
- /* Check if container is ready */
- read(pipefd[0], buf, 5);
- if (strcmp(buf, "c:go") ! 0) {
-  tst_resm(TBROK, "parent: container did not respond!");
-  cleanup();
- }
+	/* Check if container is ready */
+	read(pipefd[0], buf, 5);
+	if (strcmp(buf, "c:go") != 0) {
+		tst_resm(TBROK, "parent: container did not respond!");
+		cleanup();
+	}
 
- /* Send SIGUSR1 to container init */
- if (kill(cpid, SIGUSR1)  -1) {
-  tst_resm(TBROK, "parent: kill() failed(%s).", strerror(errno));
-  cleanup();
- }
+	/* Send SIGUSR1 to container init */
+	if (kill(cpid, SIGUSR1) == -1) {
+		tst_resm(TBROK, "parent: kill() failed(%s).", strerror(errno));
+		cleanup();
+	}
 
- if (waitpid(cpid, &status, 0) < 0)
-  tst_resm(TWARN, "parent: waitpid() failed(%s).",\
-    strerror(errno));
+	if (waitpid(cpid, &status, 0) < 0)
+		tst_resm(TWARN, "parent: waitpid() failed(%s).",\
+				strerror(errno));
 
- if (WIFSIGNALED(status) && WTERMSIG(status))
-  tst_resm(TBROK, "child is terminated by signal(%s)",\
-    strsignal(WTERMSIG(status)));
+	if (WIFSIGNALED(status) && WTERMSIG(status))
+		tst_resm(TBROK, "child is terminated by signal(%s)",\
+				strsignal(WTERMSIG(status)));
 
- /* Cleanup and exit */
- close(pipefd[0]);
- cleanup();
+	/* Cleanup and exit */
+	close(pipefd[0]);
+	cleanup();
 
- /* Control won't reach below */
- exit(0);
+	/* Control won't reach below */
+	exit(0);
 
-} /* End main */
+}	/* End main */

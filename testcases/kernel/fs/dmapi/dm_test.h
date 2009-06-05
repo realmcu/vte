@@ -58,7 +58,7 @@
 #define TIMESTAMP_DELAY { \
 	DMLOG_PRINT(DMLVL_DEBUG, "Sleeping to guarantee timestamp change...\n"); \
 	sleep(3); \
-}
+}		
 #define PAGE_SIZE 4096
 #define PAGEALIGN(n) (((n)+(PAGE_SIZE-1)) & ~(PAGE_SIZE-1))
 #define O_DIRECTORY 0200000
@@ -85,9 +85,9 @@
 #define DUMMY_SUBDIR2_LINK "dummy2.dir/dummy.lnk"
 #define DUMMY_SUBDIR2_SUBDIR "dummy2.dir/dummy.dir"
 #define DUMMY_TMP "dummy.tmp"
-#define DUMMY_FILE_RO_MODE (S_IRUSR | S_IRGRP | S_IROTH)
-#define DUMMY_FILE_RW_MODE (DUMMY_FILE_RO_MODE | S_IWUSR)
-#define DUMMY_DIR_RO_MODE (DUMMY_FILE_RO_MODE | S_IXUSR | S_IXGRP | S_IXOTH)
+#define DUMMY_FILE_RO_MODE 	(S_IRUSR | S_IRGRP | S_IROTH)
+#define DUMMY_FILE_RW_MODE 	(DUMMY_FILE_RO_MODE | S_IWUSR)
+#define DUMMY_DIR_RO_MODE 	(DUMMY_FILE_RO_MODE | S_IXUSR | S_IXGRP | S_IXOTH)
 #define DUMMY_DIR_RW_MODE	(DUMMY_DIR_RO_MODE | S_IWUSR)
 
 /* The following constants and macros pertain to DM logging */
@@ -147,7 +147,7 @@ extern dm_region_t dm_PMR_regbuf[];
 typedef struct configResult {
 	char		*name;
 	dm_size_t	result;
-} configResult_t;
+} configResult_t;	
 
 typedef struct eventValidity {
 	dm_boolean_t bGlobalHandle;

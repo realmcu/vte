@@ -19,19 +19,19 @@
 
 /*
  * NAME
- * waitpid05.c
+ *	waitpid05.c
  *
  * DESCRIPTION
- * Check that when a child kills itself with a kill statement after
- * determining its process id by using getpid, the parent receives a
- * correct report of the cause of its death. This also indirectly
- * checks that getpid returns the correct process id.
+ *	Check that when a child kills itself with a kill statement after
+ *	determining its process id by using getpid, the parent receives a
+ *	correct report of the cause of its death. This also indirectly
+ *	checks that getpid returns the correct process id.
  *
  * ALGORITHM
- * For signals 1 - 15: fork a child that determines it's own process
- * id, then sends the signal to itself.  The parent waits to see if the
- * demise of the child results in the signal number being returned to
- * the parent.
+ *	For signals 1 - 15: fork a child that determines it's own process
+ *	id, then sends the signal to itself.  The parent waits to see if the
+ *	demise of the child results in the signal number being returned to
+ *	the parent.
  *
  * USAGE:  <for command-line>
  *      waitpid05 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -43,12 +43,12 @@
  *              -t   : Turn on syscall timing.
  *
  * History
- * 07/2001 John George
- *  -Ported
- * 04/2002 wjhuie sigset cleanups
+ *	07/2001 John George
+ *		-Ported
+ *	04/2002 wjhuie sigset cleanups
  *
  * Restrictions
- * None
+ *	None
  */
 
 #include <sys/file.h>
@@ -66,8 +66,8 @@ void do_child(int);
 void setup(void);
 void cleanup(void);
 
-char *TCID  "waitpid05";
-int TST_TOTAL  1;
+char *TCID = "waitpid05";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 #ifdef UCLINUX
@@ -77,142 +77,142 @@ static int sig_uclinux;
 
 int main(int ac, char **av)
 {
- int pid, npid, sig, nsig;
- int exno, nexno, status;
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
+	int pid, npid, sig, nsig;
+	int exno, nexno, status;
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) !
-     (char *) NULL) {
-  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-  tst_exit();
-  /*NOTREACHED*/
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) !=
+	    (char *) NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+		tst_exit();
+		/*NOTREACHED*/
+	}
 
 #ifdef UCLINUX
- maybe_run_child(&do_child_uclinux, "d", &sig_uclinux);
+	maybe_run_child(&do_child_uclinux, "d", &sig_uclinux);
 #endif
 
- setup();
+	setup();
 
- /* check for looping state if -i option is given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+	/* check for looping state if -i option is given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
+		
+		/*
+		 * Set SIGTERM to SIG_DFL as test driver sets up to ignore
+		 * SIGTERM
+	 	 */
+		if (signal(SIGTERM, SIG_DFL) == SIG_ERR) {
+			tst_resm(TFAIL, "Sigset SIGTERM failed, errno = %d",
+				 errno);
+			tst_exit();
+		}
 
-  /*
-   * Set SIGTERM to SIG_DFL as test driver sets up to ignore
-   * SIGTERM
-   */
-  if (signal(SIGTERM, SIG_DFL)  SIG_ERR) {
-   tst_resm(TFAIL, "Sigset SIGTERM failed, errno  %d",
-     errno);
-   tst_exit();
-  }
-
-  exno  1;
-  for (sig  1; sig < 15; sig++) {
-   if (sig  SIGUSR1 || sig  SIGUSR2 || sig  SIGBUS) {
-    continue;
-   }
+		exno = 1;
+		for (sig = 1; sig <= 15; sig++) {
+			if (sig == SIGUSR1 || sig == SIGUSR2 || sig == SIGBUS) {
+				continue;
+			}
                         /*Initialize signal to its default action*/
                         signal(sig,SIG_DFL);
-   pid  FORK_OR_VFORK();
+			pid = FORK_OR_VFORK();
 
-   if (pid  0) {
+			if (pid == 0) {
 #ifdef UCLINUX
-    self_exec(av[0], "d", sig);
-    /* No fork() error check is done so don't */
-    /* do an error check here */
+				self_exec(av[0], "d", sig);
+				/* No fork() error check is done so don't */
+				/* do an error check here */
 #else
-    do_child(sig);
+				do_child(sig);
 #endif
-   } else {
-    errno  0;
-    while (((npid  waitpid(pid, &status, 0)) !
-     -1) || (errno  EINTR)) {
-     if (errno  EINTR) {
-      continue;
-     }
-     if (npid ! pid) {
-      tst_resm(TFAIL, "waitpid "
-        "error: unexpected "
-        "pid returned");
-     } else {
-      tst_resm(TPASS, "received "
-       "expected pid.");
-     }
+			} else {
+				errno = 0;
+				while (((npid = waitpid(pid, &status, 0)) !=
+					-1) || (errno == EINTR)) {
+					if (errno == EINTR) {
+						continue;
+					}
+					if (npid != pid) {
+						tst_resm(TFAIL, "waitpid "
+							 "error: unexpected "
+							 "pid returned");
+					} else {
+						tst_resm(TPASS, "received "
+							"expected pid.");
+					}
 
-     nsig  status % 256;
+					nsig = status % 256;
 
-     /*
-      * to check if the core dump bit has
-      * been set, bit #7
-      */
-     if (nsig > 128) {
-      nsig - 128;
-      if ((sig  1) || (sig  2) ||
-          (sig  9) ||
-          (sig  13) ||
-          (sig  14) ||
-          (sig  15)) {
-       tst_resm(TFAIL,
-         "signal "
-         "error : "
-         "core dump "
-         "bit set for"
-         " exception "
-         "number %d",
-         sig);
-      }
-     } else if ((sig  3) || (sig  4) ||
-         (sig  5) || (sig  6) ||
-         (sig  8) || (sig  11)) {
-      tst_resm(TFAIL,
-        "signal error: "
-        "core dump bit not "
-        "set for exception "
-        "number %d", sig);
-     }
+					/*
+					 * to check if the core dump bit has
+					 * been set, bit #7
+					 */
+					if (nsig >= 128) {
+						nsig -= 128;
+						if ((sig == 1) || (sig == 2) ||
+						    (sig == 9) ||
+						    (sig == 13) ||
+						    (sig == 14) ||
+						    (sig == 15)) {
+							tst_resm(TFAIL,
+								 "signal "
+								 "error : "
+								 "core dump "
+								 "bit set for"
+								 " exception "
+								 "number %d",
+								 sig);
+						}
+					} else if ((sig == 3) || (sig == 4) ||
+						   (sig == 5) || (sig == 6) ||
+						   (sig == 8) || (sig == 11)) {
+						tst_resm(TFAIL,
+							 "signal error: "
+							 "core dump bit not "
+							 "set for exception "
+							 "number %d", sig);
+					}
 
-     /*
-      * nsig is the signal number returned
-      * by waitpid
-      */
-     if (nsig ! sig) {
-      tst_resm(TFAIL, "waitpid "
-        "error: unexpected "
-        "signal returned");
-      tst_resm(TINFO, "got signal "
-        "%d, expected  "
-        "%d", nsig, sig);
-     }
+					/*
+					 * nsig is the signal number returned
+					 * by waitpid
+					 */
+					if (nsig != sig) {
+						tst_resm(TFAIL, "waitpid "
+							 "error: unexpected "
+							 "signal returned");
+						tst_resm(TINFO, "got signal "
+							 "%d, expected  "
+							 "%d", nsig, sig);
+					}
 
-     /*
-      * nexno is the exit number returned
-      * by waitpid
-      */
-     nexno  status / 256;
-     if (nexno ! 0) {
-      tst_resm(TFAIL, "signal "
-        "error: unexpected "
-        "exit number "
-        "returned");
-     } else {
-      tst_resm(TPASS, "received "
-       "expected exit number.");
-     }
-    }
-   }
-  }
+					/*
+					 * nexno is the exit number returned
+					 * by waitpid
+					 */
+					nexno = status / 256;
+					if (nexno != 0) {
+						tst_resm(TFAIL, "signal "
+							 "error: unexpected "
+							 "exit number "
+							 "returned");
+					} else {
+						tst_resm(TPASS, "received "
+							"expected exit number.");
+					}
+				}
+			}
+		}
 
-  if (access("core", F_OK)  0) {
-   unlink("core");
-  }
- }
- cleanup();
- /*NOTREACHED*/
+		if (access("core", F_OK) == 0) {
+			unlink("core");
+		}
+	}
+	cleanup();
+	/*NOTREACHED*/
 
   return(0);
 
@@ -224,68 +224,68 @@ int main(int ac, char **av)
 void
 do_child(int sig)
 {
- int exno  1;
- int pid  getpid();
+	int exno = 1;
+	int pid = getpid();
 
- if (kill(pid, sig)  -1) {
-  tst_resm(TFAIL, "kill error: kill unsuccessful");
-  exit(exno);
- }
+	if (kill(pid, sig) == -1) {
+		tst_resm(TFAIL, "kill error: kill unsuccessful");
+		exit(exno);
+	}
 }
 
 #ifdef UCLINUX
 /*
  * do_child_uclinux()
- * run do_child with the appropriate sig variable
+ *	run do_child with the appropriate sig variable
  */
 void
 do_child_uclinux()
 {
- do_child(sig_uclinux);
-}
+	do_child(sig_uclinux);
+} 
 #endif
 
 /*
  * setup()
- * performs all ONE TIME setup for this test
+ *	performs all ONE TIME setup for this test
  */
 void
 setup(void)
 {
- struct rlimit newlimit;
+	struct rlimit newlimit;
 
- /* Pause if that option was specified
-  * TEST_PAUSE contains the code to fork the test with the -c option.
-  * You want to make sure you do this before you create your temporary
-  * directory.
-  */
- TEST_PAUSE;
+	/* Pause if that option was specified
+	 * TEST_PAUSE contains the code to fork the test with the -c option.
+	 * You want to make sure you do this before you create your temporary
+	 * directory.
+	 */
+	TEST_PAUSE;
 
- /* Create a unique temporary directory and chdir() to it. */
- tst_tmpdir();
+	/* Create a unique temporary directory and chdir() to it. */
+	tst_tmpdir();
 
- newlimit.rlim_max  newlimit.rlim_cur  RLIM_INFINITY;
- if (setrlimit(RLIMIT_CORE, &newlimit) ! 0)
-  tst_resm(TWARN, "setrlimit(RLIMIT_CORE,RLIM_INFINITY) failed; this may cause some false core-dump test failures");
+	newlimit.rlim_max = newlimit.rlim_cur = RLIM_INFINITY;
+	if (setrlimit(RLIMIT_CORE, &newlimit) != 0)
+		tst_resm(TWARN, "setrlimit(RLIMIT_CORE,RLIM_INFINITY) failed; this may cause some false core-dump test failures");
 }
 
 /*
  * cleanup()
- * performs all ONE TIME cleanup for this test at
- * completion or premature exit
+ *	performs all ONE TIME cleanup for this test at
+ *	completion or premature exit
  */
 void
 cleanup(void)
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- tst_rmdir();
+	tst_rmdir();
 
- /* exit with return code appropriate for results */
- tst_exit();
- /*NOTREACHED*/
+	/* exit with return code appropriate for results */
+	tst_exit();
+	/*NOTREACHED*/
 }

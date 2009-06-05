@@ -18,7 +18,7 @@
  */
 /*---------------------------------------------------------------------+
 |                       message_queue_test_05                          |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Description:  Creates N message queues.  Creates three and deletes   |
 |               one until N is reached.                                |
@@ -71,24 +71,24 @@
 
 /*
  * Defines
- *
+ * 
  * MAX_MESSAGE_QUEUES: maximum number of message queues to create
- *
+ * 
  * DEFAULT_MESSAGE_QUEUES: default number of message queues to create
  * unless specified with [-n] command line option
- *
+ * 
  * USAGE: usage statement macro
  */
 
 #ifdef _LINUX_
-#define MAX_MESSAGE_QUEUES 128
-#define DEFAULT_MESSAGE_QUEUES 10
+#define	MAX_MESSAGE_QUEUES 128
+#define	DEFAULT_MESSAGE_QUEUES 10
 #else
-#define MAX_MESSAGE_QUEUES 4096
-#define DEFAULT_MESSAGE_QUEUES 1000
+#define	MAX_MESSAGE_QUEUES 4096
+#define	DEFAULT_MESSAGE_QUEUES 1000
 #endif
 
-#define USAGE "\nUsage: %s [-n num_message_queues] [-d]\n\n"
+#define USAGE	"\nUsage: %s [-n num_message_queues] [-d]\n\n"	
 
 
 /*
@@ -110,14 +110,14 @@ static void cleanup (int qnum);
  * msqid_array: array containing the unique message queue identifiers
  * debug: debugging flag, set with [-d] command line option
  */
-int max_queues  DEFAULT_MESSAGE_QUEUES;
-int msqid_array [MAX_MESSAGE_QUEUES];
-int debug  0;
-
+int	max_queues = DEFAULT_MESSAGE_QUEUES;
+int	msqid_array [MAX_MESSAGE_QUEUES];
+int	debug = 0;
+                                  
 
 /*---------------------------------------------------------------------+
 |                               main                                   |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Main program  (see prolog for more details)               |
 |                                                                      |
@@ -127,50 +127,50 @@ int debug  0;
 +---------------------------------------------------------------------*/
 int main (int argc, char **argv)
 {
- int nqueues  0; /* Current number of message queues */
- int i;  /* Loop index */
- int mode  0777; /* Misc mode bits */
+	int	nqueues = 0;	/* Current number of message queues */
+	int	i;		/* Loop index */
+	int	mode = 0777;	/* Misc mode bits */
 
- /*
-  * Parse command line arguments and print out program header
-  */
- parse_args (argc, argv);
- printf ("%s: IPC Message Queue TestSuite program\n", *argv);
+	/*
+	 * Parse command line arguments and print out program header
+	 */
+	parse_args (argc, argv);
+	printf ("%s: IPC Message Queue TestSuite program\n", *argv);
 
- printf ("\n\tCreating %d message queues ...\n", max_queues);
- while (nqueues < max_queues) {
+	printf ("\n\tCreating %d message queues ...\n", max_queues);
+	while (nqueues < max_queues) {
 
-  for (i0; i<3; i++) {
-   if (debug) printf ("\tcreating queue [%d]\n", nqueues);
-   if ((msqid_array [nqueues++]
-     msgget (IPC_PRIVATE, IPC_CREAT|mode)) < 0)
-   {
-    cleanup(nqueues);
-    sys_error ("msgget failed", __LINE__);
-   }
+		for (i=0; i<3; i++) {
+			if (debug) printf ("\tcreating queue [%d]\n", nqueues);
+			if ((msqid_array [nqueues++] 
+				= msgget (IPC_PRIVATE, IPC_CREAT|mode)) < 0)
+			{
+				cleanup(nqueues);
+				sys_error ("msgget failed", __LINE__);
+			}
 
-   if (nqueues > MAX_MESSAGE_QUEUES)
-    break;
-  }
+			if (nqueues > MAX_MESSAGE_QUEUES) 
+				break;
+		}
 
-  /*
-   * Delete the last message queue...
-   */
-  if (msgctl (msqid_array [--nqueues], IPC_RMID, 0) < 0)
-   sys_error ("msgctl (IPC_RMID) failed", __LINE__);
-  if (debug) printf ("\tremoved queue  [%d]\n", nqueues);
- }
- printf ("\n\tAll message queues created successfully\n");
+		/*
+		 * Delete the last message queue...
+		 */
+		if (msgctl (msqid_array [--nqueues], IPC_RMID, 0) < 0)
+			sys_error ("msgctl (IPC_RMID) failed", __LINE__);
+		if (debug) printf ("\tremoved queue  [%d]\n", nqueues);
+	}
+	printf ("\n\tAll message queues created successfully\n");
 
         cleanup(nqueues);
- printf ("\nsuccessful!\n");
- return (0);
+	printf ("\nsuccessful!\n");
+	return (0);
 }
 
 
 /*---------------------------------------------------------------------+
 |                             parse_args ()                            |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Parse the command line arguments & initialize global      |
 |            variables.                                                |
@@ -182,70 +182,70 @@ int main (int argc, char **argv)
 +---------------------------------------------------------------------*/
 static void parse_args (int argc, char **argv)
 {
- int opt;
- int errflag  0;
- char *program_name  *argv;
- extern char *optarg; /* Command line option */
+	int	opt;
+	int	errflag = 0;
+	char	*program_name = *argv;
+	extern char 	*optarg;	/* Command line option */
 
- /*
-  * Parse command line options.
-  */
- while ((opt  getopt(argc, argv, "n:d")) ! EOF) {
-  switch (opt) {
-   case 'n': /* number of queues to create */
-    max_queues  atoi (optarg);
-    break;
-   case 'd': /* debug */
-    debug++;
-    break;
-   default:
-    errflag++;
-    break;
-  }
- }
- if (max_queues > MAX_MESSAGE_QUEUES)
-  errflag++;
+	/*
+	 * Parse command line options.
+	 */
+	while ((opt = getopt(argc, argv, "n:d")) != EOF) {
+		switch (opt) {
+			case 'n':	/* number of queues to create */
+				max_queues = atoi (optarg);
+				break;
+			case 'd':	/* debug */
+				debug++;
+				break;
+			default:
+				errflag++;
+				break;
+		}
+	}
+	if (max_queues > MAX_MESSAGE_QUEUES)
+		errflag++;
 
- if (errflag) {
-  fprintf (stderr, USAGE, program_name);
-  exit (2);
- }
+	if (errflag) {
+		fprintf (stderr, USAGE, program_name);
+		exit (2);
+	}
 }
 
 
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Creates system error message and calls error ()           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 static void sys_error (const char *msg, int line)
 {
- char syserr_msg [256];
+	char syserr_msg [256];
 
- sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
- error (syserr_msg, line);
+	sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
+	error (syserr_msg, line);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               error ()                               |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Prints out message and exits...                           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 static void error (const char *msg, int line)
 {
- fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
- exit (-1);
+	fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
+	exit (-1);
 }
 
 
 /*---------------------------------------------------------------------+
 |                              cleanup()                               |
-|  |
+| ==================================================================== |
 | cleanup() - performs all message queues cleanup for this test at     |
 |             completion or premature exit.                            |
 |             Remove the temporary message queues created.             |
@@ -257,8 +257,8 @@ void cleanup(int qnum)
          *  Remove the allocated message queues.
          */
         while (qnum > 0) {
-  if (msqid_array [--qnum] < 0)
-   continue;
+		if (msqid_array [--qnum] < 0)
+			continue;
                 if (msgctl (msqid_array [qnum], IPC_RMID, 0) < 0)
                         sys_error ("msgctl (IPC_RMID) failed", __LINE__);
                 if (debug) printf ("\tremoved queue  [%d]\n", qnum);

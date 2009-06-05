@@ -19,7 +19,7 @@
 # Z.Spring            24/11/2008        N/A         Initial version
 #
 ###############################################################################
-#Portability: Indicate if this module is portable to other compilers
+#Portability: Indicate if this module is portable to other compilers 
 #             or platforms.
 #             If not, indicate specific reasons why is it not portable.
 #

@@ -52,12 +52,12 @@ do_clean()
     done
 }
 
-until [ $loop = 0 ]; do
+until [ $loop = 0 ]; do 
     cpu=0
     number_of_cpus=0
 
     # Turns on all CPUs and saves their states
-    for i in $( get_all_cpus ); do
+    for i in $( get_all_cpus ); do 
         online_cpu $1
         if [ $? = 0 ]; then
             let "cpu = cpu + 1"
@@ -74,7 +74,7 @@ until [ $loop = 0 ]; do
 
     # Start up a number of processes equal to twice the number of
     # CPUs we have.  This is to help ensure we've got enough processes
-    # that at least one will migrate to the new CPU.  Store the PIDs
+    # that at least one will migrate to the new CPU.  Store the PIDs 
     # so we can kill them later.
     let "number_of_cpus = number_of_cpus * 2"
     until [ $number_of_cpus = 0 ]; do

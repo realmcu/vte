@@ -1,0 +1,17 @@
+#Verification Tests Command File
+
+#VT RTC drivers tests
+#files: rtc_testapp_1
+#files: rtc_testapp_2
+#files: rtc_testapp_3
+#files: rtc_testapp_4
+
+TGE-LV-RTC-0010 rtc_testapp_1
+TGE-LV-RTC-0020 rtc_testapp_2
+TGE-LV-RTC-0030 rtc_testapp_3
+TGE-LV-RTC-0040 rtc_testapp_4
+TGE-LV-RTC-0050 rtc_testapp_5 -T EPOCH
+TGE-LV-RTC-0051 rtc_testapp_5 -T POLL
+TGE-LV-RTC-0052 rtc_testapp_5 -T FASYNC
+
+#WARNING the commented tests are not automatical tests

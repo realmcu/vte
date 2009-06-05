@@ -10,7 +10,7 @@
  * Test that shm_open() fails if the shared memory object exist and O_EXCL and
  * O_CREAT are set.
  */
-
+  
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -22,29 +22,29 @@
 #define SHM_NAME "posixtest_22-1"
 
 int main(){
- int fd;
+	int fd;
 
- /* Create the shared memory object */
- fd  shm_open(SHM_NAME, O_RDONLY|O_CREAT, S_IRUSR|S_IWUSR);
- if(fd  -1) {
-  perror("An error occurs when calling shm_open()");
-  return PTS_UNRESOLVED;
- }
+	/* Create the shared memory object */
+	fd = shm_open(SHM_NAME, O_RDONLY|O_CREAT, S_IRUSR|S_IWUSR);
+	if(fd == -1) {
+		perror("An error occurs when calling shm_open()");
+		return PTS_UNRESOLVED;
+	}
 
- fd  shm_open(SHM_NAME, O_RDONLY|O_CREAT|O_EXCL, S_IRUSR|S_IWUSR);
+	fd = shm_open(SHM_NAME, O_RDONLY|O_CREAT|O_EXCL, S_IRUSR|S_IWUSR);
 
- if(fd  -1 && errno  EEXIST) {
-  printf("Test PASSED\n");
-  shm_unlink(SHM_NAME);
-  return PTS_PASS;
- } else if(fd ! -1) {
-  printf("Test FAILED\n");
-  shm_unlink(SHM_NAME);
-  return PTS_FAIL;
- }
+	if(fd == -1 && errno == EEXIST) {
+		printf("Test PASSED\n");
+		shm_unlink(SHM_NAME);
+		return PTS_PASS;
+	} else if(fd != -1) {
+		printf("Test FAILED\n");
+		shm_unlink(SHM_NAME);
+		return PTS_FAIL;
+	}
 
- perror("shm_open");
- shm_unlink(SHM_NAME);
- return PTS_FAIL;
+	perror("shm_open");
+	shm_unlink(SHM_NAME);
+	return PTS_FAIL;
 }
-
+       

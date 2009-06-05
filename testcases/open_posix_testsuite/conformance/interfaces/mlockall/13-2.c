@@ -7,7 +7,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- * Test that the mlockall() function set errno  EINVAL if the flags argument
+ * Test that the mlockall() function set errno = EINVAL if the flags argument
  * includes unimplemented flags.
  */
 
@@ -18,18 +18,18 @@
 
 
 int main() {
- int result;
+	int result;
 
- result  mlockall(~(MCL_CURRENT|MCL_FUTURE));
+	result = mlockall(~(MCL_CURRENT|MCL_FUTURE));
 
- if(result  -1 && errno  EINVAL) {
-  printf("Test PASSED\n");
-  return PTS_PASS;
- } else if(result ! -1) {
-  printf("mlockall() return %i instead of -1.\n", result);
-  return PTS_FAIL;
- } else {
-  perror("Unexpected error");
-  return PTS_FAIL;
- }
+	if(result == -1 && errno == EINVAL) {
+		printf("Test PASSED\n");
+		return PTS_PASS;
+	} else if(result != -1) {
+		printf("mlockall() return %i instead of -1.\n", result);
+		return PTS_FAIL;
+	} else {
+		perror("Unexpected error");
+		return PTS_FAIL;
+	}
 }

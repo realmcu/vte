@@ -1,4 +1,4 @@
-/* $OpenBSD: err.c,v 1.2 2002/06/25 15:50:15 mickey Exp $ */
+/*	$OpenBSD: err.c,v 1.2 2002/06/25 15:50:15 mickey Exp $	*/
 
 /*
  * err.c
@@ -8,7 +8,7 @@
  * Copyright (c) 2000 Dug Song <dugsong@monkey.org>
  *
  * Copyright (c) 1993
- * The Regents of the University of California.  All rights reserved.
+ *	The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,54 +44,54 @@
 void
 err(int eval, const char *fmt, ...)
 {
- va_list ap;
-
- va_start(ap, fmt);
- if (fmt ! NULL) {
-  (void)vfprintf(stderr, fmt, ap);
-  (void)fprintf(stderr, ": ");
- }
- va_end(ap);
- (void)fprintf(stderr, "%s\n", strerror(errno));
- exit(eval);
+	va_list ap;
+	
+	va_start(ap, fmt);
+	if (fmt != NULL) {
+		(void)vfprintf(stderr, fmt, ap);
+		(void)fprintf(stderr, ": ");
+	}
+	va_end(ap);
+	(void)fprintf(stderr, "%s\n", strerror(errno));
+	exit(eval);
 }
 
 void
 warn(const char *fmt, ...)
 {
- va_list ap;
-
- va_start(ap, fmt);
- if (fmt ! NULL) {
-  (void)vfprintf(stderr, fmt, ap);
-  (void)fprintf(stderr, ": ");
- }
- va_end(ap);
- (void)fprintf(stderr, "%s\n", strerror(errno));
+	va_list ap;
+	
+	va_start(ap, fmt);
+	if (fmt != NULL) {
+		(void)vfprintf(stderr, fmt, ap);
+		(void)fprintf(stderr, ": ");
+	}
+	va_end(ap);
+	(void)fprintf(stderr, "%s\n", strerror(errno));
 }
 
 void
 errx(int eval, const char *fmt, ...)
 {
- va_list ap;
-
- va_start(ap, fmt);
- if (fmt ! NULL)
-  (void)vfprintf(stderr, fmt, ap);
- (void)fprintf(stderr, "\n");
- va_end(ap);
- exit(eval);
+	va_list ap;
+	
+	va_start(ap, fmt);
+	if (fmt != NULL)
+		(void)vfprintf(stderr, fmt, ap);
+	(void)fprintf(stderr, "\n");
+	va_end(ap);
+	exit(eval);
 }
 
 void
 warnx(const char *fmt, ...)
 {
- va_list ap;
-
- va_start(ap, fmt);
- if (fmt ! NULL)
-  (void)vfprintf(stderr, fmt, ap);
+	va_list ap;
+	
+	va_start(ap, fmt);
+	if (fmt != NULL)
+		(void)vfprintf(stderr, fmt, ap);
         (void)fprintf(stderr, "\n");
- va_end(ap);
+	va_end(ap);
 }
 

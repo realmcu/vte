@@ -176,8 +176,8 @@ help()
 {
         echo
         echo "Usage: $TCID <device_name> <file_system> <test_file_size_in_Mb>"
-}
-
+}      
+      
 # Function:     main
 #
 # Description:  - Execute all tests, exit with test status.
@@ -188,7 +188,7 @@ help()
 RC=0    # Return value from setup, and test functions.
 
 if [ -z $1 ]
-then
+then 
         help
         exit 1
 else
@@ -219,7 +219,7 @@ fi
 
 test01 || RC=$?
 
-if [ $RC -eq 0 ]
+if [ $RC -eq 0 ] 
 then
         tst_resm  TPASS "This test case works as expected"
 else

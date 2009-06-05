@@ -19,93 +19,93 @@
 
 /*
  * NAME
- * semget03.c
+ *	semget03.c
  *
  * DESCRIPTION
- * semget03 - test for ENOENT error
+ *	semget03 - test for ENOENT error
  *
  * ALGORITHM
- * loop if that option was specified
- * call semget() with a valid key but with no associated semaphore set
- *    and IPC_CREAT is not asserted
- * check the errno value
- *   issue a PASS message if we get ENOENT
- * otherwise, the tests fails
- *   issue a FAIL message
- * call cleanup
+ *	loop if that option was specified
+ *	call semget() with a valid key but with no associated semaphore set
+ *	   and IPC_CREAT is not asserted
+ *	check the errno value
+ *	  issue a PASS message if we get ENOENT
+ *	otherwise, the tests fails
+ *	  issue a FAIL message
+ *	call cleanup
  *
  * USAGE:  <for command-line>
  *  semget03 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -e   : Turn on errno logging.
- *        -i n : Execute test n times.
- *        -I x : Execute test for x seconds.
- *        -P x : Pause for x seconds between iterations.
- *        -t   : Turn on syscall timing.
+ *	       -i n : Execute test n times.
+ *	       -I x : Execute test for x seconds.
+ *	       -P x : Pause for x seconds between iterations.
+ *	       -t   : Turn on syscall timing.
  *
  * HISTORY
- * 03/2001 - Written by Wayne Boyer
+ *	03/2001 - Written by Wayne Boyer
  *
  * RESTRICTIONS
- * none
+ *	none
  */
 
 #include "../lib/ipcsem.h"
 
-char *TCID  "semget03";
-int TST_TOTAL  1;
+char *TCID = "semget03";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
-int exp_enos[]  {ENOENT, 0}; /* 0 terminated list of expected errnos */
+int exp_enos[] = {ENOENT, 0};	/* 0 terminated list of expected errnos */
 
-int sem_id_1  -1;
+int sem_id_1 = -1;
 
 int main(int ac, char **av)
 {
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	}
 
- setup();   /* global setup */
+	setup();			/* global setup */
 
- /* The following loop checks looping state if -i option given */
+	/* The following loop checks looping state if -i option given */
 
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  /* use the TEST macro to make the call */
+		/* use the TEST macro to make the call */
+	
+		TEST(semget(semkey, PSEMS, SEM_RA));
 
-  TEST(semget(semkey, PSEMS, SEM_RA));
+		if (TEST_RETURN != -1) {
+			sem_id_1 = TEST_RETURN;
+			tst_resm(TFAIL, "call succeeded when error expected");
+			continue;
+		}
+	
+		TEST_ERROR_LOG(TEST_ERRNO);
 
-  if (TEST_RETURN ! -1) {
-   sem_id_1  TEST_RETURN;
-   tst_resm(TFAIL, "call succeeded when error expected");
-   continue;
-  }
+		switch(TEST_ERRNO) {
+		case ENOENT:
+			tst_resm(TPASS, "expected failure - errno "
+				 "= %d : %s", TEST_ERRNO, strerror(TEST_ERRNO));
+			break;
+		default:
+			tst_resm(TFAIL, "unexpected error - %d : %s",
+				 TEST_ERRNO, strerror(TEST_ERRNO));
+			break;
+		}
+	}
 
-  TEST_ERROR_LOG(TEST_ERRNO);
+	cleanup();
 
-  switch(TEST_ERRNO) {
-  case ENOENT:
-   tst_resm(TPASS, "expected failure - errno "
-     " %d : %s", TEST_ERRNO, strerror(TEST_ERRNO));
-   break;
-  default:
-   tst_resm(TFAIL, "unexpected error - %d : %s",
-     TEST_ERRNO, strerror(TEST_ERRNO));
-   break;
-  }
- }
-
- cleanup();
-
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -114,46 +114,46 @@ int main(int ac, char **av)
 void
 setup(void)
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Set up the expected error numbers for -e option */
- TEST_EXP_ENOS(exp_enos);
+	/* Set up the expected error numbers for -e option */
+	TEST_EXP_ENOS(exp_enos);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /*
-  * Create a temporary directory and cd into it.
-  * This helps to ensure that a unique msgkey is created.
-  * See ../lib/libipc.c for more information.
-  */
- tst_tmpdir();
+	/*
+	 * Create a temporary directory and cd into it.
+	 * This helps to ensure that a unique msgkey is created.
+	 * See ../lib/libipc.c for more information.
+	 */
+	tst_tmpdir();
 
- /* get an IPC resource key */
- semkey  getipckey();
+	/* get an IPC resource key */
+	semkey = getipckey();
 }
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- *        or premature exit.
+ * 	       or premature exit.
  */
 void
 cleanup(void)
 {
- /* if it exists, remove the semaphore resource */
- rm_sema(sem_id_1);
+	/* if it exists, remove the semaphore resource */
+	rm_sema(sem_id_1);
 
- /* Remove the temporary directory */
- tst_rmdir();
+	/* Remove the temporary directory */
+	tst_rmdir();
 
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }
 

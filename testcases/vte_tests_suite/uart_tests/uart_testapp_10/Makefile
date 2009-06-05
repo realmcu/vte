@@ -35,4 +35,4 @@ $(TARGET): $(OBJS)
 
 $(OBJS) : $(SRCS)
 
-$(SRCS) :
+$(SRCS) : 

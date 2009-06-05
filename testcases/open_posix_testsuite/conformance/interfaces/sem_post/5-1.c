@@ -33,50 +33,50 @@
 #define FUNCTION "sem_post"
 #define ERROR_PREFIX "unexpected error: " FUNCTION " " TEST ": "
 
-#define SEMINITVAL 0 //initial value of semaphore  0
+#define SEMINITVAL 0 //initial value of semaphore = 0
 
 sem_t *gsemp;
 
 int main() {
- char semname[20];
- int val;
+	char semname[20];
+	int val;
 
- sprintf(semname, "/" FUNCTION "_" TEST "_%d", getpid());
+	sprintf(semname, "/" FUNCTION "_" TEST "_%d", getpid());
 
- gsemp  sem_open(semname, O_CREAT, 0777, SEMINITVAL);
- if( gsemp  SEM_FAILED || gsemp  NULL ) {
-  perror(ERROR_PREFIX "sem_open");
-  return PTS_UNRESOLVED;
- }
+	gsemp = sem_open(semname, O_CREAT, 0777, SEMINITVAL);
+	if( gsemp == SEM_FAILED || gsemp == NULL ) {
+		perror(ERROR_PREFIX "sem_open");
+		return PTS_UNRESOLVED;
+	}
 
- sleep(1);
+	sleep(1);
         alarm(1);
 
- if( sem_post(gsemp)  -1 ) {
-  perror(ERROR_PREFIX "sem_post");
-  exit(PTS_UNRESOLVED);
- }
+	if( sem_post(gsemp) == -1 ) {
+		perror(ERROR_PREFIX "sem_post");
+		exit(PTS_UNRESOLVED); 
+	}
 
- /* Checking if the value of the Semaphore incremented by one */
- if( sem_getvalue(gsemp, &val)  -1 ) {
-  perror(ERROR_PREFIX "sem_getvalue");
-  return PTS_UNRESOLVED;
- }
- if (val ! SEMINITVAL+1) {
+	/* Checking if the value of the Semaphore incremented by one */
+	if( sem_getvalue(gsemp, &val) == -1 ) {
+		perror(ERROR_PREFIX "sem_getvalue");
+		return PTS_UNRESOLVED;
+	}
+	if (val != SEMINITVAL+1) {
 #ifdef DEBUG
-  printf("semaphore value was not incremented\n");
+		printf("semaphore value was not incremented\n");
 #endif
-  printf("TEST FAILED\n");
-  return PTS_FAIL;
- }
+		printf("TEST FAILED\n");
+		return PTS_FAIL;
+	}
 
 #ifdef DEBUG
- printf("semaphore value was %d\n", val);
+	printf("semaphore value was %d\n", val);
 #endif
 
- printf("TEST PASSED\n");
- sem_close(gsemp);
- sem_unlink(semname);
- return PTS_PASS;
+	printf("TEST PASSED\n");
+	sem_close(gsemp);
+	sem_unlink(semname);
+	return PTS_PASS;
 }
 

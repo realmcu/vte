@@ -32,74 +32,74 @@
  */
 /* $Id: mkdir01.c,v 1.4 2006/05/12 15:44:11 vapier Exp $ */
 /**********************************************************
- *
+ * 
  *    OS Test - Silicon Graphics, Inc.
- *
- *    TEST IDENTIFIER : mkdir01
- *
- *    EXECUTED BY : anyone
- *
- *    TEST TITLE : Basic errno test for mkdir(2)
- *
- *    PARENT DOCUMENT : mkstds02
- *
- *    TEST CASE TOTAL : 2
- *
- *    WALL CLOCK TIME : 1
- *
- *    CPU TYPES  : ALL
- *
- *    AUTHOR  : Bill Branum
- *
- *    CO-PILOT  : Kathy Olmsted
- *
- *    DATE STARTED : 4/15/92
- *
- *    INITIAL RELEASE : UNICOS 7.0
- *
+ * 
+ *    TEST IDENTIFIER	: mkdir01
+ * 
+ *    EXECUTED BY	: anyone
+ * 
+ *    TEST TITLE	: Basic errno test for mkdir(2)
+ * 
+ *    PARENT DOCUMENT	: mkstds02
+ * 
+ *    TEST CASE TOTAL	: 2
+ * 
+ *    WALL CLOCK TIME	: 1
+ * 
+ *    CPU TYPES		: ALL
+ * 
+ *    AUTHOR		: Bill Branum
+ * 
+ *    CO-PILOT		: Kathy Olmsted
+ * 
+ *    DATE STARTED	: 4/15/92
+ * 
+ *    INITIAL RELEASE	: UNICOS 7.0
+ * 
  *    TEST CASES
- *
- * mkdir(2) test for errno(s) EFAULT.
- *
+ * 
+ * 	mkdir(2) test for errno(s) EFAULT.
+ *	
  *    INPUT SPECIFICATIONS
- * The standard options for system call tests are accepted.
- * (See the parse_opts(3) man page).
- *
+ * 	The standard options for system call tests are accepted.
+ *	(See the parse_opts(3) man page).
+ * 
  *    DURATION
- * Terminates - with frequency and infinite modes.
- *
+ * 	Terminates - with frequency and infinite modes.
+ * 
  *    SIGNALS
- * Uses SIGUSR1 to pause before test if option set.
- * (See the parse_opts(3) man page).
+ * 	Uses SIGUSR1 to pause before test if option set.
+ * 	(See the parse_opts(3) man page).
  *
  *    ENVIRONMENTAL NEEDS
  *      No run-time environmental needs.
- *
+ * 
  *    DETAILED DESCRIPTION
- * This test will verify that mkdir(2) returns a value of
- * -1 and sets errno to EFAULT when the path argument points
- * outside (above/below) the allocated address space of the
- * process.
- *
- * Setup:
- *   Setup signal handling.
- *   Create and make current a temporary directory.
- *   Pause for SIGUSR1 if option specified.
- *
- * Test:
- *  Loop if the proper options are given.
- *   Execute system call
- *   Check return code, if system call failed (return-1)
- *  Log the errno.
+ *	This test will verify that mkdir(2) returns a value of
+ *	-1 and sets errno to EFAULT when the path argument points
+ *	outside (above/below) the allocated address space of the
+ *	process.
+ * 
+ * 	Setup:
+ * 	  Setup signal handling.
+ *	  Create and make current a temporary directory.
+ *	  Pause for SIGUSR1 if option specified.
+ * 
+ * 	Test:
+ *	 Loop if the proper options are given.
+ * 	  Execute system call
+ *	  Check return code, if system call failed (return=-1)
+ *		Log the errno.
  *        If doing functional test
  *            check the errno returned and print result message
- *
- * Cleanup:
- *   Print errno log and/or timing stats if options given
- *   Remove the temporary directory.
- *   Exit.
- *
- *
+ * 
+ * 	Cleanup:
+ * 	  Print errno log and/or timing stats if options given
+ *	  Remove the temporary directory.
+ *	  Exit.
+ * 
+ * 
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
 #include <errno.h>
@@ -121,26 +121,26 @@ void cleanup();
 char *get_high_address();
 #endif
 
-char *TCID"mkdir01";  /* Test program identifier.    */
-int TST_TOTAL2;  /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID="mkdir01";		/* Test program identifier.    */
+int TST_TOTAL=2;		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-int exp_enos[]{EFAULT, 0}; /* List must end with 0 */
+int exp_enos[]={EFAULT, 0};	/* List must end with 0 */
 
-char * bad_addr  0;
+char * bad_addr = 0;
 
 int
 main(int ac, char **av)
 {
-    int lc;  /* loop counter */
-    char *msg;  /* message returned from parse_opts */
-
+    int lc;		/* loop counter */
+    char *msg;		/* message returned from parse_opts */
+    
 
     /***************************************************************
      * parse standard options
      ***************************************************************/
-    if ( (msgparse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *) NULL )
- tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+    if ( (msg=parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *) NULL )
+	tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 
     /***************************************************************
      * perform global setup for test
@@ -153,76 +153,76 @@ main(int ac, char **av)
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc0; TEST_LOOPING(lc); lc++) {
+    for (lc=0; TEST_LOOPING(lc); lc++) {
 
- /* reset Tst_count in case we are looping. */
- Tst_count0;
+	/* reset Tst_count in case we are looping. */
+	Tst_count=0;
 
- /*
-  * TEST CASE: 1
-  * mkdir() call with pointer below allocated address space.
-  */
+	/* 
+	 * TEST CASE: 1
+	 * mkdir() call with pointer below allocated address space.
+	 */
 
- /* Call mkdir(2) */
- TEST(mkdir(bad_addr,0777));
+	/* Call mkdir(2) */
+	TEST(mkdir(bad_addr,0777));
+	
+	/* check return code */
+	if ( TEST_RETURN == -1 ) {
+	    TEST_ERROR_LOG(TEST_ERRNO);
+	}
 
- /* check return code */
- if ( TEST_RETURN  -1 ) {
-     TEST_ERROR_LOG(TEST_ERRNO);
- }
+	/***************************************************************
+	 * only perform functional verification if flag set (-f not given)
+	 ***************************************************************/
+	if ( STD_FUNCTIONAL_TEST ) {
+	  if ( TEST_RETURN == -1 ) {
+	    if (TEST_ERRNO == EFAULT) {
+	      tst_resm(TPASS, "mkdir - path argument pointing below allocated address space failed as expected with errno %d : %s", TEST_ERRNO, strerror(TEST_ERRNO));
+	    }
+	    else {
+	      tst_resm(TFAIL, "mkdir - path argument pointing below allocated address space failed with errno %d : %s but expected %d (EFAULT)", TEST_ERRNO, strerror(TEST_ERRNO),EFAULT);
+	    }
+	  }
+	  else {
+	    tst_resm(TFAIL, "mkdir - path argument pointing below allocated address space succeeded unexpectedly.");
 
- /***************************************************************
-  * only perform functional verification if flag set (-f not given)
-  ***************************************************************/
- if ( STD_FUNCTIONAL_TEST ) {
-   if ( TEST_RETURN  -1 ) {
-     if (TEST_ERRNO  EFAULT) {
-       tst_resm(TPASS, "mkdir - path argument pointing below allocated address space failed as expected with errno %d : %s", TEST_ERRNO, strerror(TEST_ERRNO));
-     }
-     else {
-       tst_resm(TFAIL, "mkdir - path argument pointing below allocated address space failed with errno %d : %s but expected %d (EFAULT)", TEST_ERRNO, strerror(TEST_ERRNO),EFAULT);
-     }
-   }
-   else {
-     tst_resm(TFAIL, "mkdir - path argument pointing below allocated address space succeeded unexpectedly.");
-
-   }
- }
-
+	  }
+	} 
+	
 #if !defined(UCLINUX)
- /*
-  * TEST CASE: 2
-  * mkdir() call with pointer above allocated address space.
-  */
+	/* 
+	 * TEST CASE: 2
+	 * mkdir() call with pointer above allocated address space.
+	 */
 
- /* Call mkdir(2) */
- TEST(mkdir(get_high_address(),0777));
+	/* Call mkdir(2) */
+	TEST(mkdir(get_high_address(),0777));
+	
+	/* check return code */
+	if ( TEST_RETURN == -1 ) {
+	    TEST_ERROR_LOG(TEST_ERRNO);
+	}
 
- /* check return code */
- if ( TEST_RETURN  -1 ) {
-     TEST_ERROR_LOG(TEST_ERRNO);
- }
+	/***************************************************************
+	 * only perform functional verification if flag set (-f not given)
+	 ***************************************************************/
+	if ( STD_FUNCTIONAL_TEST ) {
+	  if ( TEST_RETURN == -1 ) {
+	    if (TEST_ERRNO == EFAULT) {
+	      tst_resm(TPASS, "mkdir - path argument pointing above allocated address space failed as expected with errno %d : %s", TEST_ERRNO, strerror(TEST_ERRNO));
+	    }
+	    else {
+	      tst_resm(TFAIL, "mkdir - path argument pointing above allocated address space failed with errno %d : %s but expected %d (EFAULT)", TEST_ERRNO, strerror(TEST_ERRNO),EFAULT);
+	    }
+	  }
+	  else {
+	    tst_resm(TFAIL, "mkdir - path argument pointing above allocated address space succeeded unexpectedly.");
 
- /***************************************************************
-  * only perform functional verification if flag set (-f not given)
-  ***************************************************************/
- if ( STD_FUNCTIONAL_TEST ) {
-   if ( TEST_RETURN  -1 ) {
-     if (TEST_ERRNO  EFAULT) {
-       tst_resm(TPASS, "mkdir - path argument pointing above allocated address space failed as expected with errno %d : %s", TEST_ERRNO, strerror(TEST_ERRNO));
-     }
-     else {
-       tst_resm(TFAIL, "mkdir - path argument pointing above allocated address space failed with errno %d : %s but expected %d (EFAULT)", TEST_ERRNO, strerror(TEST_ERRNO),EFAULT);
-     }
-   }
-   else {
-     tst_resm(TFAIL, "mkdir - path argument pointing above allocated address space succeeded unexpectedly.");
-
-   }
- }
+	  }
+	} 
 #endif /* if !defined(UCLINUX) */
 
-    } /* End for TEST_LOOPING */
+    }	/* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -230,12 +230,12 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-} /* End main */
+}	/* End main */
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void
+void 
 setup()
 {
     /* capture signals */
@@ -247,19 +247,19 @@ setup()
     /* Create a temporary directory and make it current. */
     tst_tmpdir();
 
-    bad_addr  mmap(0, 1, PROT_NONE,
-      MAP_PRIVATE_EXCEPT_UCLINUX|MAP_ANONYMOUS, 0, 0);
-    if (bad_addr  MAP_FAILED) {
- tst_brkm(TBROK, cleanup, "mmap failed");
+    bad_addr = mmap(0, 1, PROT_NONE,
+		    MAP_PRIVATE_EXCEPT_UCLINUX|MAP_ANONYMOUS, 0, 0);
+    if (bad_addr == MAP_FAILED) {
+	tst_brkm(TBROK, cleanup, "mmap failed");
     }
-} /* End setup() */
+}	/* End setup() */
 
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *  completion or premature exit.
+ *		completion or premature exit.
  ***************************************************************/
-void
+void 
 cleanup()
 {
     /*
@@ -278,6 +278,6 @@ cleanup()
      */
     tst_exit();
 
-} /* End cleanup() */
+}	/* End cleanup() */
 
 

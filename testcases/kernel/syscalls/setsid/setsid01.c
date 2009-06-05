@@ -19,16 +19,16 @@
 
 /*
  * NAME
- * setsid01.c
+ * 	setsid01.c
  *
  * DESCRIPTION
- * Test to check the error and trivial conditions in setsid system call
+ * 	Test to check the error and trivial conditions in setsid system call
  *
  * USAGE
- * setsid01
+ * 	setsid01
  *
  * RESTRICTIONS
- * This test doesn't follow good LTP format - PLEASE FIX!
+ * 	This test doesn't follow good LTP format - PLEASE FIX!
  */
 #include <wait.h>
 #include <limits.h>
@@ -41,14 +41,14 @@
 #include "test.h"
 #include "usctest.h"
 
-#define INVAL_FLAG -1
-#define USER2  301
-#define INVAL_MAXGRP NGROUPS_MAX + 1
-#define INVAL_USER 999999
-#define INVAL_PID 999999
+#define INVAL_FLAG	-1
+#define USER2		301
+#define INVAL_MAXGRP	NGROUPS_MAX + 1
+#define INVAL_USER	999999	
+#define INVAL_PID	999999
 
-char *TCID  "setsid01";
-int TST_TOTAL  1;
+char *TCID = "setsid01";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 #ifdef UCLINUX
@@ -62,91 +62,91 @@ void cleanup(void);
 
 int main(int ac, char **av)
 {
- int pid;
- int fail  0;
- int ret, status;
- int exno  0;
+	int pid;
+	int fail = 0;
+	int ret, status;
+	int exno = 0;
 
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
 #ifdef UCLINUX
- argv0  av[0];
+	argv0 = av[0];
 
- maybe_run_child(&do_child_1, "n", 1);
- maybe_run_child(&do_child_2, "n", 2);
+	maybe_run_child(&do_child_1, "n", 1);
+	maybe_run_child(&do_child_2, "n", 2);
 #endif
 
- /*
-  * perform global setup for the test
-  */
- setup();
+	/*
+	 * perform global setup for the test
+	 */
+	setup();
 
- /* check looping state if -i option is given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* check looping state if -i option is given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  /*
-   * When the process group having forked of a child
-   * and then it attached itself to another process
-   * group and tries to setsid
-   */
-  pid  FORK_OR_VFORK();
+		/*
+		 * When the process group having forked of a child
+		 * and then it attached itself to another process
+		 * group and tries to setsid
+		 */
+		pid = FORK_OR_VFORK();
 
-  if (pid  0) {
-   if ((pid  FORK_OR_VFORK())  -1) {
-    tst_resm(TFAIL, "Fork failed");
-    tst_exit();
-   }
-   if (pid  0) {
+		if (pid == 0) {
+			if ((pid = FORK_OR_VFORK()) == -1) {
+				tst_resm(TFAIL, "Fork failed");
+				tst_exit();
+			}
+			if (pid == 0) {
 #ifdef UCLINUX
-    if (self_exec(argv0, "n", 1) < 0) {
-     tst_resm(TFAIL, "self_exec failed");
-     tst_exit();
-    }
+				if (self_exec(argv0, "n", 1) < 0) {
+					tst_resm(TFAIL, "self_exec failed");
+					tst_exit();
+				}
 #else
-    do_child_1();
+				do_child_1();
 #endif
-   } else {
-    if (setpgid(0, 0) < 0)  {
-     tst_resm(TFAIL, "setpgid(parent) failed: %s", strerror(errno));
-     fail  1;
-    }
+			} else {
+				if (setpgid(0, 0) < 0)  {
+					tst_resm(TFAIL, "setpgid(parent) failed: %s", strerror(errno));
+					fail = 1;
+				}
 
-    if ((ret  wait(&status)) > 0) {
-     if (status ! 0) {
-      tst_resm(TFAIL, "Test {%d} exited "
-        "status 0x%0x (wanted 0x0)", ret, status);
-      fail  1;
-     }
-    }
-   }
-   exit(0);
-  } else {
-   if ((ret  wait(&status)) > 0) {
-    if (status ! 0) {
-     tst_resm(TFAIL, "Test {%d} exited "
-       "status 0x%0x (wanted 0x0)", ret, status);
-     fail  1;
-    }
-   }
-  }
+				if ((ret = wait(&status)) > 0) {
+					if (status != 0) {
+						tst_resm(TFAIL, "Test {%d} exited "
+							 "status 0x%0x (wanted 0x0)", ret, status);
+						fail = 1;
+					}
+				}
+			}
+			exit(0);
+		} else {
+			if ((ret = wait(&status)) > 0) {
+				if (status != 0) {
+					tst_resm(TFAIL, "Test {%d} exited "
+						 "status 0x%0x (wanted 0x0)", ret, status);
+					fail = 1;
+				}
+			}
+		}
 
-  if (!(fail || exno)) {
-   tst_resm(TPASS, "all misc tests passed");
-  }
- }
- cleanup();
- /*NOTREACHED*/
- return(0);
+		if (!(fail || exno)) {
+			tst_resm(TPASS, "all misc tests passed");
+		}
+	}
+	cleanup();
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -155,57 +155,57 @@ int main(int ac, char **av)
 void
 do_child_1()
 {
- int exno  0;
- int retval, ret, status;
- int pid;
+	int exno = 0;
+	int retval, ret, status;
+	int pid;
 
- sleep(1);
-
- if (setpgid(0, 0) < 0) {
-  tst_resm(TFAIL, "setpgid(0,0) failed: %s", strerror(errno));
-  exno  1;
- }
-
- if ((pid  FORK_OR_VFORK())  -1) {
-  tst_resm(TFAIL, "Fork failed");
-  tst_exit();
- }
- if (pid  0) {
+	sleep(1);
+	
+	if (setpgid(0, 0) < 0) {
+		tst_resm(TFAIL, "setpgid(0,0) failed: %s", strerror(errno));
+		exno = 1;
+	}
+	
+	if ((pid = FORK_OR_VFORK()) == -1) {
+		tst_resm(TFAIL, "Fork failed");
+		tst_exit();
+	}
+	if (pid == 0) {
 #ifdef UCLINUX
-  if (self_exec(argv0, "n", 2) < 0) {
-   tst_resm(TFAIL, "self_exec failed");
-   tst_exit();
-  }
+		if (self_exec(argv0, "n", 2) < 0) {
+			tst_resm(TFAIL, "self_exec failed");
+			tst_exit();
+		}
 #else
-  do_child_2();
+		do_child_2();
 #endif
- } else {
-  retval  setpgid(0, getppid());
-  if (retval < 0) {
-   tst_resm(TFAIL, "setpgid failed, errno :%d", errno);
-   exno  2;
-  }
-
-  retval  setsid();
-
-  if (errno  EPERM) {
-   tst_resm(TPASS, "setsid SUCCESS to set "
-     "errno to EPERM");
-  } else {
-   tst_resm(TFAIL, "setsid failed, expected %d,"
-     "return %d", -1, errno);
-   exno  3;
-  }
-  kill(pid, SIGKILL);
-  if ((ret  wait(&status)) > 0) {
-   if (status ! 9) {
-    tst_resm(TFAIL, "Test {%d} exited status 0x%-x (wanted 0x9)",
-     ret, status);
-    exno  4;
-   }
-  }
- }
- exit(exno);
+	} else {
+		retval = setpgid(0, getppid());
+		if (retval < 0) {
+			tst_resm(TFAIL, "setpgid failed, errno :%d", errno);
+			exno = 2;
+		}
+		
+		retval = setsid();
+		
+		if (errno == EPERM) {
+			tst_resm(TPASS, "setsid SUCCESS to set "
+				 "errno to EPERM");
+		} else {
+			tst_resm(TFAIL, "setsid failed, expected %d,"
+				 "return %d", -1, errno);
+			exno = 3;
+		}
+		kill(pid, SIGKILL);
+		if ((ret = wait(&status)) > 0) {
+			if (status != 9) {
+				tst_resm(TFAIL, "Test {%d} exited status 0x%-x (wanted 0x9)",
+					ret, status);
+				exno = 4;
+			}
+		}
+	}
+	exit(exno);
 }
 
 /*
@@ -214,7 +214,7 @@ do_child_1()
 void
 do_child_2()
 {
- for (;;);
+	for (;;);
 }
 
 /*
@@ -223,28 +223,28 @@ do_child_2()
 void
 setup(void)
 {
- /* capture signals */
- tst_sig(FORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
- umask(0);
+	umask(0);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- *        or premature exit
+ * 	       or premature exit
  */
 void
 cleanup(void)
 {
- /*
-  * print timing status if that option was specified
-  * print errno log if that option was specified
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing status if that option was specified
+	 * print errno log if that option was specified
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

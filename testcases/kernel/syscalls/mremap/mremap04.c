@@ -21,8 +21,8 @@
  * Test Name: mremap04
  *
  * Test Description:
- *  Verify that,
- *   mremap() fails when used to expand the existing virtual memory mapped
+ *  Verify that, 
+ *   mremap() fails when used to expand the existing virtual memory mapped 
  *   region to the requested size, if the memory area cannot be expanded at
  *   the current virtual address and MREMAP_MAYMOVE flag not set.
  *
@@ -38,13 +38,13 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return-1)
- *   if errno set  expected errno
- *  Issue sys call failed with expected return value and errno.
+ *   Check return code, if system call failed (return=-1)
+ *   	if errno set == expected errno
+ *   		Issue sys call failed with expected return value and errno.
+ *   	Otherwise,
+ *		Issue sys call failed with unexpected errno.
  *   Otherwise,
- *  Issue sys call failed with unexpected errno.
- *   Otherwise,
- * Issue sys call returns unexpected value.
+ *	Issue sys call returns unexpected value.
  *
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
@@ -54,13 +54,13 @@
  *  mremap04 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -e   : Turn on errno logging.
- *        -i n : Execute test n times.
- *        -I x : Execute test for x seconds.
- *        -p x : Pause for x seconds between iterations.
- *        -t   : Turn on syscall timing.
+ *	       -i n : Execute test n times.
+ *	       -I x : Execute test for x seconds.
+ *	       -p x : Pause for x seconds between iterations.
+ *	       -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  *      11/09/2001 Manoj Iyer (manjo@austin.ibm.com)
  *      Modified.
@@ -88,90 +88,90 @@
 #include "test.h"
 #include "usctest.h"
 
-#define SHM_MODE (SHM_R | SHM_W) /* mode permissions of shared memory */
+#define SHM_MODE	(SHM_R | SHM_W)	/* mode permissions of shared memory */
 
-char *TCID"mremap04";  /* Test program identifier.    */
-int TST_TOTAL1;  /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
-char *addr;   /* addr of memory mapped region */
-char *shmaddr;   /* pointer to shared memory segment */
-int shmid;   /* shared memory identifier. */
-int memsize;   /* memory mapped size */
-int newsize;   /* new size of virtual memory blcok */
-int exp_enos[]{ENOMEM, 0};
+char *TCID="mremap04";		/* Test program identifier.    */
+int TST_TOTAL=1;		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *addr;			/* addr of memory mapped region */
+char *shmaddr;			/* pointer to shared memory segment */
+int shmid;			/* shared memory identifier. */
+int memsize;			/* memory mapped size */
+int newsize;			/* new size of virtual memory blcok */
+int exp_enos[]={ENOMEM, 0};
 
-void setup();   /* Main setup function of test */
-void cleanup();   /* cleanup function for the test */
+void setup();			/* Main setup function of test */
+void cleanup();			/* cleanup function for the test */
 
 extern int getipckey();
 
 int
 main(int ac, char **av)
 {
- int lc;   /* loop counter */
- char *msg;  /* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
+	
+	/* Parse standard options given to run the test. */
+	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
+	if (msg != (char *)NULL) {
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	}
 
- /* Parse standard options given to run the test. */
- msg  parse_opts(ac, av, (option_t *)NULL, NULL);
- if (msg ! (char *)NULL) {
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
- }
+	/* Perform global setup for test */
+	setup();
 
- /* Perform global setup for test */
- setup();
+	/* set the expected errnos... */
+	TEST_EXP_ENOS(exp_enos);
 
- /* set the expected errnos... */
- TEST_EXP_ENOS(exp_enos);
+	/* Check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
- /* Check looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+		/* Reset Tst_count in case we are looping. */
+		Tst_count=0;
 
-  /* Reset Tst_count in case we are looping. */
-  Tst_count0;
+		/* 
+		 * Attempt to expand the existing shared 
+		 * memory region of newsize by newsize limits
+		 * using mremap() should fail as specified
+		 * memory area already locked and MREMAP_MAYMOVE
+		 * flag unset.
+		 */
+		errno = 0;
+		addr = mremap(shmaddr, memsize, newsize, 0);
+		TEST_ERRNO = errno;
 
-  /*
-   * Attempt to expand the existing shared
-   * memory region of newsize by newsize limits
-   * using mremap() should fail as specified
-   * memory area already locked and MREMAP_MAYMOVE
-   * flag unset.
-   */
-  errno  0;
-  addr  mremap(shmaddr, memsize, newsize, 0);
-  TEST_ERRNO  errno;
+		/* Check for the return value of mremap() */
+		if (addr != MAP_FAILED) {
+			tst_resm(TFAIL,
+				 "mremap returned invalid value, expected: -1");
 
-  /* Check for the return value of mremap() */
-  if (addr ! MAP_FAILED) {
-   tst_resm(TFAIL,
-     "mremap returned invalid value, expected: -1");
+			/* Unmap the mapped memory region */
+			if (munmap(addr, newsize) != 0) {
+				tst_brkm(TFAIL, cleanup, "munmap failed to "
+					 "unmap the expanded memory region, "
+					 "error=%d", errno);
+			}
+			continue;
+		}
 
-   /* Unmap the mapped memory region */
-   if (munmap(addr, newsize) ! 0) {
-    tst_brkm(TFAIL, cleanup, "munmap failed to "
-      "unmap the expanded memory region, "
-      "error%d", errno);
-   }
-   continue;
-  }
+		TEST_ERROR_LOG(TEST_ERRNO);
 
-  TEST_ERROR_LOG(TEST_ERRNO);
+		if (TEST_ERRNO == ENOMEM) {
+			tst_resm(TPASS, "mremap() failed, "
+				 "'MREMAP_MAYMOVE flag unset', "
+				 "errno %d", TEST_ERRNO);
+		} else {
+			tst_resm(TFAIL, "mremap() failed, "
+				 "Unexpected errno %d", TEST_ERRNO);
+		}
+	}	/* End of TEST_LOOPING */
+				
+	/* Call cleanup() to undo setup done for the test. */
+	cleanup();
 
-  if (TEST_ERRNO  ENOMEM) {
-   tst_resm(TPASS, "mremap() failed, "
-     "'MREMAP_MAYMOVE flag unset', "
-     "errno %d", TEST_ERRNO);
-  } else {
-   tst_resm(TFAIL, "mremap() failed, "
-     "Unexpected errno %d", TEST_ERRNO);
-  }
- } /* End of TEST_LOOPING */
-
- /* Call cleanup() to undo setup done for the test. */
- cleanup();
-
- /*NOTREACHED*/
- return(0);
-} /* End main */
+	/*NOTREACHED*/
+	return(0);
+}	/* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -180,97 +180,97 @@ main(int ac, char **av)
  * newsize after resize,
  * Create a named shared memory segment SHMKEY of newsize and mode SHM_MODE
  * by using shmget() which returns a shared memory identifier associated
- * with the created shared memory segment.
- * Call shmat() to attach the shared memory segment to the data segment of the
+ * with the created shared memory segment. 
+ * Call shmat() to attach the shared memory segment to the data segment of the 
  * calling process. The segment is attached at the first available address as
  * selected by the system.
  */
-void
+void 
 setup()
 {
- key_t shmkey;
+	key_t shmkey;
 
- /* capture signals */
- tst_sig(FORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /* make a temp directory and cd to it */
- tst_tmpdir();
+	/* make a temp directory and cd to it */
+	tst_tmpdir();
 
- /* Get the system page size */
- if ((memsize  getpagesize()) < 0) {
-  tst_brkm(TBROK, tst_exit,
-    "getpagesize() failed to get system page size");
- }
+	/* Get the system page size */
+	if ((memsize = getpagesize()) < 0) {
+		tst_brkm(TBROK, tst_exit,
+			 "getpagesize() failed to get system page size");
+	}
 
- /* Get the New size of virtual memory block after resize */
- newsize  (memsize * 2);
+	/* Get the New size of virtual memory block after resize */
+	newsize = (memsize * 2);
 
- /* get an IPC resource key */
- shmkey  getipckey();
+	/* get an IPC resource key */
+	shmkey = getipckey();
 
- /*
-  * Create a shared memory segment represented by SHMKEY of
-  * specified size 'newsize' and mode permissions 'SHM_MODE'.
-  */
- shmid  shmget(shmkey, newsize, IPC_CREAT | SHM_MODE);
- if (shmid  -1) {
-  tst_brkm(TBROK, tst_exit, "shmget() Failed to create a shared "
-    "memory, error:%d", errno);
- }
+	/*
+	 * Create a shared memory segment represented by SHMKEY of
+	 * specified size 'newsize' and mode permissions 'SHM_MODE'.
+	 */
+	shmid = shmget(shmkey, newsize, IPC_CREAT | SHM_MODE);
+	if (shmid == -1) {
+		tst_brkm(TBROK, tst_exit, "shmget() Failed to create a shared "
+			 "memory, error:%d", errno);
+	}
 
- /*
-  * Attach  the shared memory segment associated with the shared
-  * memory identifier specified by "shmid" to the data segment of
-  * the calling process at the first available address as selected
-  * by the system.
-  */
- shmaddr  (char *)shmat(shmid, (char *)0, 0);
- if (shmaddr  (void *)-1) {
-  tst_brkm(TBROK, cleanup, "shmat() Failed to attach shared "
-    "memory, error:%d", errno);
- }
+	/*
+	 * Attach  the shared memory segment associated with the shared
+	 * memory identifier specified by "shmid" to the data segment of
+	 * the calling process at the first available address as selected
+	 * by the system.
+	 */
+	shmaddr = (char *)shmat(shmid, (char *)0, 0);
+	if (shmaddr == (void *)-1) {
+		tst_brkm(TBROK, cleanup, "shmat() Failed to attach shared "
+			 "memory, error:%d", errno);
+	}
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
- *        Detach the shared memory segment and remove the shared memory
- *        identifier associated with the shared memory.
+ *	       Detach the shared memory segment and remove the shared memory
+ *	       identifier associated with the shared memory.
  */
-void
+void 
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /*
-  * Detach the shared memory segment attached to
-  * the calling process's data segment
-  */
- if (shmdt(shmaddr) < 0) {
-  tst_brkm(TFAIL, NULL, "shmdt() Failed to detach shared "
-    "memory, error:%d", errno);
- }
+	/*
+	 * Detach the shared memory segment attached to
+	 * the calling process's data segment
+	 */
+	if (shmdt(shmaddr) < 0) {
+		tst_brkm(TFAIL, NULL, "shmdt() Failed to detach shared "
+			 "memory, error:%d", errno);
+	}
 
- /*
-  * Remove the shared memory identifier associated with
-  * the shared memory segment and destroy the shared memory
-  * segment.
-  */
- if (shmctl(shmid, IPC_RMID, 0) < 0) {
-  tst_brkm(TFAIL, NULL, "shmctl() Failed to remove shared "
-    "memory, error:%d", errno);
- }
+	/*
+	 * Remove the shared memory identifier associated with
+	 * the shared memory segment and destroy the shared memory
+	 * segment.
+	 */
+	if (shmctl(shmid, IPC_RMID, 0) < 0) {
+		tst_brkm(TFAIL, NULL, "shmctl() Failed to remove shared "
+			 "memory, error:%d", errno);
+	}
 
- /* Remove the temporary directory */
- tst_rmdir();
+	/* Remove the temporary directory */
+	tst_rmdir();
 
- /* Exit the program */
- tst_exit();
+	/* Exit the program */
+	tst_exit();
 }

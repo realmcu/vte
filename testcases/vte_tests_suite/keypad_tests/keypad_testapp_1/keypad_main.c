@@ -1,47 +1,47 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   keypad_main.c
 
         @brief  keypad test 1 main function.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-V.BECKER/rc023c              30/03/2004     TLSbo38735  Initial version
-V.BECKER/rc023c              15/04/2004     TLSbo38735  Correction after code inspection
-V.BECKER/rc023c              30/04/2004     TLSbo38735  Change file name
+V.BECKER/rc023c              30/03/2004     TLSbo38735  Initial version 
+V.BECKER/rc023c              15/04/2004     TLSbo38735  Correction after code inspection 
+V.BECKER/rc023c              30/04/2004     TLSbo38735  Change file name 
 D.SIMAKOV/smkd001c           31/05/2004     TLSbo39737  The configuration of row and column
                                                         number through test arguments is added
 A.Ozerov/NONE                10/01/2006     TLSbo61037  Update in accordance with linux-2.6.10-rel-L26_1_15
 A.Ozerov/B00320              15/02/2006     TLSbo61037  Device was changed and testapp was reworked accordingly
 
-====================
+====================================================================================================
 Portability:  ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
 Total Tests: 1
 
 Test Executable Name:  keypad_testapp_1
 
-=====================*/
+=================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <errno.h>
-
+    
 /* Harness Specific Include Files. */
 #include <test.h>
 #include <usctest.h>
@@ -49,29 +49,29 @@ Test Executable Name:  keypad_testapp_1
 /* Verification Test Environment Include Files */
 #include "keypad_test_1.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 /* Extern Global Variables */
 extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir(void) */
@@ -80,23 +80,23 @@ extern char *TESTDIR;                /* temporary dir created by tst_tmpdir(void
 char *TCID     = "keypad_testapp_1"; /* test program identifier.          */
 int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 
-/*======================
+/*==================================================================================================
                                     GLOBAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 void cleanup(void);
 void setup(void);
 int main(int argc, char **argv);
 
-/*======================
+/*==================================================================================================
                                     LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         GLOBAL FUNCTIONS
-======================*/
-/*====================*/
-/*= cleanup =*/
+==================================================================================================*/
+/*================================================================================================*/
+/*===== cleanup =====*/
 /**
 @brief  Performs all one time clean up for this test on successful
                                 completion,  premature exit or  failure. Closes all temporary
@@ -105,14 +105,14 @@ int main(int argc, char **argv);
 
 @param  Input :      None.
         Output:      None.
-
+    
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void cleanup(void)
 {
         int VT_rv = TFAIL;
-
+                
         VT_rv = VT_keypad_test1_cleanup();
         if (VT_rv != TPASS)
         {
@@ -122,31 +122,31 @@ void cleanup(void)
         tst_exit();
 }
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
-/*====================*/
-/*= help =*/
+==================================================================================================*/
+/*================================================================================================*/
+/*===== help =====*/
 /**
 @brief  Inform of the available options and the associated parameters
 
 @param  Input :      None.
         Output:      None.
-
+    
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 void help(void)
 {
-        printf("\n============\n");
+        printf("\n====================================================\n");
         printf("Keypad driver options:\n");
         printf("\t '-C' Number of a test case\n");
         printf("Usage: %s [-C]\n\n", TCID);
 }
 
-/*====================*/
-/*= setup =*/
+/*================================================================================================*/
+/*===== setup =====*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -154,15 +154,15 @@ void help(void)
 
 @param  Input :      None.
         Output:      None.
-
+    
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 void setup(void)
 {
         int VT_rv = TFAIL;
-
+        
         VT_rv = VT_keypad_test1_setup();
         if (VT_rv != TPASS)
         {
@@ -170,8 +170,8 @@ void setup(void)
         }
 }
 
-/*====================*/
-/*= main =*/
+/*================================================================================================*/
+/*===== main =====*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -187,11 +187,11 @@ void setup(void)
                                 -V   - Prints the version number
                                 -r   - Number of rows of the keypad matrix
                                 -c   - Number of columns of the keypad matrix
-
+    
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*====================*/
+/*================================================================================================*/
 int main(int argc, char **argv)
 {
         int VT_rv = TFAIL;
@@ -201,7 +201,7 @@ int main(int argc, char **argv)
         int     Cflag = 0;
         char    *Copt;
 
-        option_t options[] =
+        option_t options[] = 
         {
                 {"C:", &Cflag, &Copt},
                 {NULL, NULL, NULL}
@@ -218,7 +218,7 @@ int main(int argc, char **argv)
         {
                 tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
         }
-
+      
         if(Cflag)
         {
                 testcase = atoi(Copt);
@@ -234,9 +234,9 @@ int main(int argc, char **argv)
                 help();
                 return TFAIL;
         }
-
+        
         VT_rv = VT_keypad_test1(testcase);
-
+         
 
         if(VT_rv == TPASS)
         {
@@ -247,7 +247,7 @@ int main(int argc, char **argv)
                 tst_resm(TFAIL, "test case %s did NOT work as expected", TCID);
         }
 
-        cleanup();
+        cleanup(); 
 
         return VT_rv;
 }

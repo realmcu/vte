@@ -20,17 +20,17 @@
  * This file will include user space functions that will drive
  * the kernel module to test various functions and kernel
  * calls. Each function will need to setup the tif structure
- * so that the in parameters and out parameters are correctly
+ * so that the in parameters and out parameters are correctly 
  * initialized
- *
+ * 
  * use tif structure for passing params between user
- * space and kernel space, in some tests it is really not
- * needed, and if nothing is needed to pass in utilize
- * the ki_generic function below. the tif structure makes
- * it easy to maintain all the tests if they have the same
- * process in kernel space to read in params in the kernel
+ * space and kernel space, in some tests it is really not 
+ * needed, and if nothing is needed to pass in utilize 
+ * the ki_generic function below. the tif structure makes 
+ * it easy to maintain all the tests if they have the same 
+ * process in kernel space to read in params in the kernel 
  * module no matter what the test is
- *
+ * 
  * author: Kai Zhao
  * date:   08/25/2003
  *
@@ -49,16 +49,16 @@ int ki_generic(int fd, int flag) {
         /*
          * build interface structure
          */
-        tif.in_len  0;
-        tif.in_data  0;
-        tif.out_len  0;
-        tif.out_data  0;
-        tif.out_rc  0;
+        tif.in_len = 0;
+        tif.in_data = 0;
+        tif.out_len = 0;
+        tif.out_data = 0;
+        tif.out_rc = 0;
 
         /*
          * ioctl call for flag
          */
-        rc  ioctl(fd, flag, &tif);
+        rc = ioctl(fd, flag, &tif);
         if(rc) {
                 printf("Ioctl error\n");
                 return rc;
@@ -78,42 +78,42 @@ int ki_generic(int fd, int flag) {
 #if 0
 An example of using in_data to pass in a structure:
 
-ki_write_t      wif;
+ki_write_t      wif;	
 tagp_interface_t tif;
 
 
-//fill out wif structure
+//fill out wif structure 
 
 /*
  * build interface structure
  */
-tif.in_len  sizeof (ki_write_t);
-tif.in_data  (caddr_t) &wif;
-tif.out_len  0;
-tif.out_data  0;
-tif.out_rc  0;
+tif.in_len = sizeof (ki_write_t);
+tif.in_data = (caddr_t) &wif;
+tif.out_len = 0;
+tif.out_data = 0;
+tif.out_rc = 0;
 
 
-//make ioctl call
+//make ioctl call 
 
 An example of using out_data to get back a structure:
 
-ki_read_t       rif;
+ki_read_t       rif;       
 tagp_interface_t tif;
 
 //fill out rif structure
-rif.len  p_test->data[0];
-rif.handle  open_handle;
-rif.data  (caddr_t)p_test->data[1];
+rif.len = p_test->data[0];
+rif.handle = open_handle;
+rif.data = (caddr_t)p_test->data[1];
 
 /*
  * build interface structure
  */
-tif.in_len  sizeof (ki_read_t);
-tif.in_data  (caddr_t) &rif;
-tif.out_len  0;
-tif.out_data  0;
-tif.out_rc  0;
+tif.in_len = sizeof (ki_read_t);
+tif.in_data = (caddr_t) &rif;
+tif.out_len = 0;
+tif.out_data = 0;
+tif.out_rc = 0;
 
 
 //make ioctl call

@@ -24,26 +24,26 @@ struct msgbuf {
 
 int main(int argc, char **argv)
 {
- int opt;
- int key  0x8888;
- int id;
- int error;
- struct msgbuf msgp;
- size_t msgsz;
+	int opt;
+	int key = 0x8888;
+	int id;
+	int error;
+	struct msgbuf msgp;
+	size_t msgsz;
 
- while ((opt  getopt(argc, argv, "k:")) ! -1) {
-  switch ((char)opt) {
-  case 'k':
-   key  atoi(optarg);
-   break;
-  }
- }
+	while ((opt = getopt(argc, argv, "k:")) != -1) {
+		switch ((char)opt) {
+		case 'k':
+			key = atoi(optarg);
+			break;
+		}
+	}
 
- id  msgget(key, IPC_CREAT|0777);
- if (id  -1)
-   return 1;
+	id = msgget(key, IPC_CREAT|0777);
+	if (id == -1)
+	  return 1;
 
- error  msgrcv(id, &msgp, MSGMAX, 1, IPC_NOWAIT);
- printf("msgrcv: result  %d\n", error);
- return error;
+	error = msgrcv(id, &msgp, MSGMAX, 1, IPC_NOWAIT);
+	printf("msgrcv: result = %d\n", error);
+	return error;
 }

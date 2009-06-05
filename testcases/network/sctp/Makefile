@@ -1,4 +1,4 @@
-SUBDIRS =  lib testlib func_tests
+SUBDIRS =  lib testlib func_tests 
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

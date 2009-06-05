@@ -1,0 +1,53 @@
+#Verification Tests Command File
+
+#VT GTK portage tests
+#files: appwindow colorsel calendar
+#files: changedisplay
+#files: entry drawingarea rulers
+#files: flasher balls visual
+#files: lynestyle editable_cells list_store tree_store
+#files: clist paned text tree
+#files: image pixbufs stock_browser textview
+#files: button_box cursors gtkdial label
+#files: notebook panes progressbar rangewidgets
+#files: scrolledwin sizegroup spinbutton tictactoe
+
+
+#GTK Tests
+#TGE-LV-GTK-0010 appwindow 
+#TGE-LV-GTK-0020 
+#TGE-LV-GTK-0030 colorsel
+#TGE-LV-GTK-0040 calendar
+#TGE-LV-GTK-0050 changedisplay
+#TGE-LV-GTK-0060 entry
+#TGE-LV-GTK-0070 drawingarea
+#TGE-LV-GTK-0080 rulers
+#TGE-LV-GTK-0090 flasher
+#TGE-LV-GTK-0100 balls
+#TGE-LV-GTK-0110 visual
+#TGE-LV-GTK-0120 lynestyle
+#TGE-LV-GTK-0130 editable_cells
+#TGE-LV-GTK-0140 list_store
+#TGE-LV-GTK-0150 tree_store
+#TGE-LV-GTK-0160 clist
+#TGE-LV-GTK-0170 paned
+#TGE-LV-GTK-0180 text
+#TGE-LV-GTK-0190 tree
+#TGE-LV-GTK-0200 image
+#TGE-LV-GTK-0210 pixbufs
+#TGE-LV-GTK-0220 stock_browser
+#TGE-LV-GTK-0230 textview
+#TGE-LV-GTK-0240 button_box
+#TGE-LV-GTK-0250 cursors
+#TGE-LV-GTK-0260 gtkdial
+#TGE-LV-GTK-0270 label
+#TGE-LV-GTK-0280 notebook
+#TGE-LV-GTK-0290 panes
+#TGE-LV-GTK-0300 progressbar
+#TGE-LV-GTK-0310 rangewidgets
+#TGE-LV-GTK-0320 scrolledwin
+#TGE-LV-GTK-0330 sizegroup
+#TGE-LV-GTK-0340 spinbutton
+#TGE-LV-GTK-0350 tictactoe
+
+#WARNING the commented tests are non automatical tests

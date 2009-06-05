@@ -19,26 +19,26 @@
 
 /*
  * NAME
- * kill06.c
+ *	kill06.c
  *
  * DESCRIPTION
- * Test case to check the basic functionality of kill() when killing an
- * entire process group with a negative pid.
+ *	Test case to check the basic functionality of kill() when killing an
+ *	entire process group with a negative pid.
  *
  * ALGORITHM
- * call setup
- * loop if the -i option was given
- * fork 5 children
- * execute the kill system call
- * check the return value
- * if return value is -1
- *  issue a FAIL message, break remaining tests and cleanup
- * if we are doing functional testing
- *  if the processes were terminated with the expected signal.
- *   issue a PASS message
- *  otherwise
- *   issue a FAIL message
- * call cleanup
+ *	call setup
+ *	loop if the -i option was given
+ *	fork 5 children
+ *	execute the kill system call
+ *	check the return value
+ *	if return value is -1
+ *		issue a FAIL message, break remaining tests and cleanup
+ *	if we are doing functional testing
+ *		if the processes were terminated with the expected signal.
+ *			issue a PASS message
+ *		otherwise
+ *			issue a FAIL message
+ *	call cleanup
  *
  * USAGE
  *  kill06 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
@@ -50,10 +50,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * This test should be run as a non-root user.
+ *	This test should be run as a non-root user.
  */
 
 #include "test.h"
@@ -67,8 +67,8 @@ void cleanup(void);
 void setup(void);
 void do_child(void);
 
-char *TCID "kill06";
-int TST_TOTAL  1;
+char *TCID= "kill06";
+int TST_TOTAL = 1;
 
 extern int Tst_count;
 
@@ -76,91 +76,91 @@ extern int Tst_count;
 
 int main(int ac, char **av)
 {
- int lc;                         /* loop counter */
- char *msg;                      /* message returned from parse_opts */
- pid_t pid1, pid2;
- int exno, status, nsig, i;
+	int lc;                         /* loop counter */
+	char *msg;                      /* message returned from parse_opts */
+	pid_t pid1, pid2;
+	int exno, status, nsig, i;
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	}
 
 #ifdef UCLINUX
- maybe_run_child(&do_child, "");
+	maybe_run_child(&do_child, "");
 #endif
 
- setup();                        /* global setup */
+	setup();                        /* global setup */
 
- /* The following loop checks looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* The following loop checks looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
-  status  1;
-  exno  1;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
+		status = 1;
+		exno = 1;
 
-  /* Fork a process and set the process group so that */
-  /* it is different from this one.  Fork 5 more children. */
+		/* Fork a process and set the process group so that */
+		/* it is different from this one.  Fork 5 more children. */
 
-  pid1  FORK_OR_VFORK();
-  if (pid1 < 0) {
-   tst_brkm(TBROK, cleanup, "Fork of first child failed");
-  } else if (pid1  0) {
-   setpgrp();
-   for (i  0; i < 5; i++) {
-    pid2  FORK_OR_VFORK();
-    if (pid2 < 0) {
-     tst_brkm(TBROK, cleanup, "Fork failed");
-    } else if (pid2  0) {
+		pid1 = FORK_OR_VFORK();
+		if (pid1 < 0) {
+			tst_brkm(TBROK, cleanup, "Fork of first child failed");
+		} else if (pid1 == 0) {
+			setpgrp();
+			for (i = 0; i < 5; i++) {
+				pid2 = FORK_OR_VFORK();
+				if (pid2 < 0) {
+					tst_brkm(TBROK, cleanup, "Fork failed");
+				} else if (pid2 == 0) {
 #ifdef UCLINUX
-     if (self_exec(av[0], "") < 0) {
-      tst_brkm(TBROK, cleanup,
-        "self_exec of "
-        "child failed");
-     }
+					if (self_exec(av[0], "") < 0) {
+						tst_brkm(TBROK, cleanup,
+							 "self_exec of "
+							 "child failed");
+					}
 #else
-     do_child();
+					do_child();
 #endif
-    }
-   }
-   /* Kill all processes in this process group */
-   TEST(kill(-getpgrp(), TEST_SIG));
-   sleep(300);
-   /*NOTREACHED*/
+				}
+			}
+			/* Kill all processes in this process group */
+			TEST(kill(-getpgrp(), TEST_SIG));
+			sleep(300);
+			/*NOTREACHED*/
                         tst_resm(TINFO, "%d never recieved a"
-    " signal", getpid());
-   exit(exno);
-  } else {
-   waitpid(pid1, &status, 0);
-   if (TEST_RETURN ! 0) {
-    tst_brkm(TFAIL, cleanup, "%s failed - errno  "
-      "%d : %s", TCID, TEST_ERRNO,
-      strerror(TEST_ERRNO));
-   }
-  }
+				" signal", getpid());
+			exit(exno);
+		} else {
+			waitpid(pid1, &status, 0);
+			if (TEST_RETURN != 0) {
+				tst_brkm(TFAIL, cleanup, "%s failed - errno = "
+						"%d : %s", TCID, TEST_ERRNO,
+						strerror(TEST_ERRNO));
+			}
+		}
 
-  if (STD_FUNCTIONAL_TEST) {
-   /*
-    * Check to see if the process was terminated with the
-    * expected signal.
-    */
-   nsig  WTERMSIG(status);
-   if (! nsig) {
-    tst_resm(TFAIL, "Did not receive any signal");
-   } else if (nsig  TEST_SIG) {
-    tst_resm(TPASS, "received expected signal %d",
-     nsig);
-   } else {
-    tst_resm(TFAIL, "expected signal %d received %d"
-     ,TEST_SIG,nsig);
-   }
-  }
- }
- cleanup();
+		if (STD_FUNCTIONAL_TEST) {
+			/*
+			 * Check to see if the process was terminated with the
+			 * expected signal.
+			 */
+			nsig = WTERMSIG(status);
+			if (! nsig) {
+				tst_resm(TFAIL, "Did not receive any signal");
+			} else if (nsig == TEST_SIG) {
+				tst_resm(TPASS, "received expected signal %d",
+					nsig);
+			} else {
+				tst_resm(TFAIL, "expected signal %d received %d"
+					,TEST_SIG,nsig);
+			}
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -169,12 +169,12 @@ int main(int ac, char **av)
 void
 do_child()
 {
- int exno  1;
+	int exno = 1;
 
- sleep(299);
- /*NOTREACHED*/
- tst_resm(TINFO, "%d never recieved a" " signal", getpid());
- exit(exno);
+	sleep(299);
+	/*NOTREACHED*/
+	tst_resm(TINFO, "%d never recieved a" " signal", getpid());
+	exit(exno);
 }
 
 /*
@@ -183,11 +183,11 @@ do_child()
 void
 setup(void)
 {
- /* Setup default signal handling */
- tst_sig(FORK, DEF_HANDLER, cleanup);
+	/* Setup default signal handling */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
@@ -197,12 +197,12 @@ setup(void)
 void
 cleanup(void)
 {
- /*
-  * print timing status if that option was specified.
-  * print errno log if that option was specified
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing status if that option was specified.
+	 * print errno log if that option was specified
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

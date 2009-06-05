@@ -18,7 +18,7 @@
 
 CFLAGS += -I../../../include -Wall -DNUMA_VERSION1_COMPATIBILITY
 
-LDLIBS += -L../../../lib -lltp
+LDLIBS += -L../../../lib -lltp 
 
 ifeq ($(HAS_NUMA),yes)    #its a numa machine
 LDLIBS += -L../../../lib  -lnuma
@@ -29,7 +29,7 @@ SRCS    = support_numa.c
 TARGETS = $(patsubst %.c,%,$(SRCS))
 endif
 
-all: $(TARGETS)
+all: $(TARGETS) 
 
 
 install:

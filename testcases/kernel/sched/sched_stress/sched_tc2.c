@@ -21,7 +21,7 @@
 
 /*---------------------------------------------------------------------+
 |                               sched_tc2                              |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Description:  Creates long-term disk I/O bound process               |
 |                                                                      |
@@ -39,7 +39,7 @@
 |                                                                      |
 |   Version  Date    Name  Reason                                      |
 |    0.1     050689  CTU   Initial version                             |
-|    0.2     010402  Manoj Iyer Ported to Linux          |
+|    0.2     010402  Manoj Iyer Ported to Linux			       |
 |                                                                      |
 +---------------------------------------------------------------------*/
 
@@ -51,7 +51,7 @@
 
 /*
  * Defines:
- *
+ * 
  * USAGE: usage statement
  *
  * DEFAULT_PRIORITY_TYPE: default priority
@@ -61,9 +61,9 @@
  * DEFAULT_MATRIX_SIZE: default size of matrix
  *
  */
-#define DEFAULT_PRIORITY_TYPE "variable"
-#define DEFAULT_EXECUTION_TIME 1800
-#define MATRIX_SIZE  100
+#define DEFAULT_PRIORITY_TYPE	"variable"
+#define DEFAULT_EXECUTION_TIME	1800
+#define MATRIX_SIZE		100
 #define USAGE "Usage:  %s  [-p priority] [-t sec] [-v] [-d]      \n" \
               "        -t sec      execution time (default 1800 sec)    \n" \
               "        -p priority priority (default variable)          \n" \
@@ -92,43 +92,43 @@ void multiply_matrices ();
  *
  * priority: process type (fixed priority, variable priority)
  */
-int verbose  0;
-int debug  0;
-long    execution_time  DEFAULT_EXECUTION_TIME;
-char *priority       DEFAULT_PRIORITY_TYPE;
+int	verbose = 0;
+int	debug = 0;
+long    execution_time = DEFAULT_EXECUTION_TIME;
+char 	*priority      = DEFAULT_PRIORITY_TYPE;
 
 
 /*---------------------------------------------------------------------+
 |                                 main                                 |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  ...                                                       |
 |                                                                      |
 +---------------------------------------------------------------------*/
 int main (int argc, char **argv)
 {
- long start_time;      /* time at start of testcase */
- int i;
+	long	start_time;      /* time at start of testcase */
+	int	i;
 
- /*
-  * Process command line arguments...
-  */
+	/*
+	 * Process command line arguments...
+	 */
         if (argc < 2) {
                 fprintf (stderr, USAGE, *argv);
                 exit (0);
         }
 
- parse_args (argc, argv);
- if (verbose) printf ("%s: Scheduler TestSuite program\n\n", *argv);
- if (debug) {
-  printf ("\tpriority:       %s\n", priority);
-  printf ("\texecution_time: %ld (sec)\n", execution_time);
- }
+	parse_args (argc, argv);
+	if (verbose) printf ("%s: Scheduler TestSuite program\n\n", *argv);
+	if (debug) {
+		printf ("\tpriority:       %s\n", priority);
+		printf ("\texecution_time: %ld (sec)\n", execution_time);
+	}
 
- /*
-  * Adjust the priority of this process if the real time flag is set
-  */
- if (!strcmp (priority, "fixed")) {
+	/* 
+	 * Adjust the priority of this process if the real time flag is set
+	 */
+	if (!strcmp (priority, "fixed")) {
 #ifndef __linux__
                 if (setpri (0, DEFAULT_PRIORITY) < 0)
                         sys_error ("setpri failed", __FILE__, __LINE__);
@@ -136,37 +136,37 @@ int main (int argc, char **argv)
                 if (setpriority(PRIO_PROCESS, 0, 0) < 0)
                         sys_error ("setpri failed", __FILE__, __LINE__);
 #endif
- }
+	}
 
- /*
-  * Continuously multiply matrix as time permits...
-  */
- i  0;
- start_time  time ((long *) 0);
+	/* 
+	 * Continuously multiply matrix as time permits...
+	 */
+	i = 0;
+	start_time = time ((long *) 0);
 
- if (debug) printf ("\n");
- while  ( (time ((long *)0) - start_time) < execution_time) {
-  if (debug) {
-   printf ("\r\tmultiplying matrix [%d], time left: %ld",
-    i++,
-    execution_time - (time ((long *)0)-start_time));
-   fflush (stdout);
-  }
-  multiply_matrices ();
- }
- if (debug) printf ("\n");
+	if (debug) printf ("\n");
+	while  ( (time ((long *)0) - start_time) < execution_time) {
+		if (debug) {
+			printf ("\r\tmultiplying matrix [%d], time left: %ld", 
+				i++, 
+				execution_time - (time ((long *)0)-start_time));
+			fflush (stdout);
+		}
+		multiply_matrices ();
+	}
+	if (debug) printf ("\n");
 
- /*
-  * Exit with success!
-  */
- if (verbose) printf ("\nsuccessful!\n");
- return (0);
+	/*
+	 * Exit with success!
+	 */
+	if (verbose) printf ("\nsuccessful!\n");
+	return (0);
 }
 
 
 /*---------------------------------------------------------------------+
 |                         multiply_matricies ()                        |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Randomly assigns two matrices values and then multiplies  |
 |            them together.                                            |
@@ -174,37 +174,37 @@ int main (int argc, char **argv)
 +---------------------------------------------------------------------*/
 void multiply_matrices ()
 {
- int     i, j, k; /* various indeces to access the arrays */
- float   matrix_1 [MATRIX_SIZE] [MATRIX_SIZE];
- float   matrix_2 [MATRIX_SIZE] [MATRIX_SIZE];
- float   matrix_3 [MATRIX_SIZE] [MATRIX_SIZE];
+	int     i, j, k; /* various indeces to access the arrays */
+	float   matrix_1 [MATRIX_SIZE] [MATRIX_SIZE];
+	float   matrix_2 [MATRIX_SIZE] [MATRIX_SIZE];
+	float   matrix_3 [MATRIX_SIZE] [MATRIX_SIZE];
 
- /* first, fill the two matrices to be multiplied with random values */
+	/* first, fill the two matrices to be multiplied with random values */
 
- for (i0; i < MATRIX_SIZE; i++) {
-  for (j0; j < MATRIX_SIZE; j++) {
-   matrix_1 [i][j]  (float) (rand() % 100);
-   matrix_2 [i][j]  (float) (rand() % 100);
-  }
- }
+	for (i=0; i < MATRIX_SIZE; i++) {
+		for (j=0; j < MATRIX_SIZE; j++) {
+			matrix_1 [i][j] = (float) (rand() % 100);
+			matrix_2 [i][j] = (float) (rand() % 100);
+		}
+	}
 
- /*
-  * Now multiply the two matrices
-  */
- for (i0; i < MATRIX_SIZE; i++) {
-  for ( j0; j < MATRIX_SIZE; j++) {
-   matrix_3 [i][j]  0.0; /* clear the element first */
-   for (k0; k < MATRIX_SIZE; k++)
-    matrix_3 [i][j] +
-     matrix_1 [i][k] * matrix_2 [k][j];
-  }
- }
+	/* 
+	 * Now multiply the two matrices 
+	 */
+	for (i=0; i < MATRIX_SIZE; i++) {
+		for ( j=0; j < MATRIX_SIZE; j++) {
+			matrix_3 [i][j] = 0.0;	/* clear the element first */
+			for (k=0; k < MATRIX_SIZE; k++)
+				matrix_3 [i][j] += 
+					matrix_1 [i][k] * matrix_2 [k][j];
+		}
+	}
 }
 
 
 /*---------------------------------------------------------------------+
 |                             parse_args ()                            |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Parse the command line arguments & initialize global      |
 |            variables.                                                |
@@ -219,59 +219,59 @@ void multiply_matrices ()
 +---------------------------------------------------------------------*/
 void parse_args (int argc, char **argv)
 {
- int opt;
- int pflg  0, tflg  0;
- int errflag  0;
- char *program_name  *argv;
- extern char *optarg; /* Command line option */
+	int	opt;
+	int 	pflg = 0, tflg = 0;
+	int	errflag = 0;
+	char	*program_name = *argv;
+	extern char 	*optarg;	/* Command line option */
 
- /*
-  * Parse command line options.
-  */
+	/*
+	 * Parse command line options.
+	 */
         if (argc < 2) {
                 fprintf (stderr, USAGE, program_name);
                 exit (0);
         }
 
 
- while ((opt  getopt(argc, argv, "p:t:vd")) ! EOF)
- {
-  switch (opt)
-  {
-  case 'p': /* process type */
-   pflg++;
-   priority  optarg;
-   break;
-  case 't': /* time (hours) */
-   tflg++;
-   execution_time  atof (optarg);
-   break;
-  case 'v': /* verbose */
-   verbose++;
-   break;
-  case 'd': /* enable debugging messages */
-   verbose++;
-   debug++;
-   break;
-  default:
-   errflag++;
-   break;
-  }
- }
+	while ((opt = getopt(argc, argv, "p:t:vd")) != EOF)
+	{
+		switch (opt)
+		{
+		case 'p':	/* process type */
+			pflg++;
+			priority = optarg;
+			break;
+		case 't':	/* time (hours) */
+			tflg++;
+			execution_time = atof (optarg);
+			break;
+		case 'v':	/* verbose */
+			verbose++;
+			break;
+		case 'd':	/* enable debugging messages */
+			verbose++;
+			debug++;
+			break;
+		default:
+			errflag++;
+			break;
+		}
+	}
 
- /*
-  * Check percentage, execution time and process slots...
-  */
- if (pflg) {
-  if (strcmp (priority, "fixed") && strcmp (priority, "variable"))
-   errflag++;
- }
- if (tflg) {
-  if (execution_time < 0.0 || execution_time > 360000)
-   errflag++;
- }
- if (errflag) {
-  fprintf (stderr, USAGE, program_name);
-  exit (2);
- }
+	/*
+	 * Check percentage, execution time and process slots...
+ 	 */
+	if (pflg) { 
+		if (strcmp (priority, "fixed") && strcmp (priority, "variable"))
+			errflag++;
+	}
+	if (tflg) { 
+		if (execution_time < 0.0 || execution_time > 360000)
+			errflag++;
+	}
+	if (errflag) {
+		fprintf (stderr, USAGE, program_name);
+		exit (2);
+	}
 }

@@ -57,37 +57,37 @@
 
 if [ $UID != 0 ]
 then
- echo "FAILED: Must have root access to execute this script"
- exit 1
+	echo "FAILED: Must have root access to execute this script"
+	exit 1
 fi
 
 if [ $# != 1 ]
 then
- echo "FAILED: Usage $0 <disk_partition>"
+	echo "FAILED: Usage $0 <disk_partition>"
         echo "Example: $0 /dev/hdc1"
- exit 1
+	exit 1
 else
- disk_partition=$1
- if [ ! -b $disk_partition ]
- then
-  echo "FAILED: Usage $0 <block special disk_partition>"
-  exit 1
- fi
- mkfs -t ext2 $disk_partition
+	disk_partition=$1
+	if [ ! -b $disk_partition ]
+	then
+		echo "FAILED: Usage $0 <block special disk_partition>"
+		exit 1
+	fi
+	mkfs -t ext2 $disk_partition 
 fi
 
-rpm -q -a | grep autofs
+rpm -q -a | grep autofs 
 if [ $? != 0 ]
 then
- echo "FAILED: autofs package is not installed"
- exit 1
+	echo "FAILED: autofs package is not installed"
+	exit 1
 fi
 
-grep autofs /proc/filesystems
+grep autofs /proc/filesystems 
 if [ $? != 0 ]
 then
- echo "FAILED: autofs module is not built into the kernel or loaded"
- exit 1
+	echo "FAILED: autofs module is not built into the kernel or loaded"
+	exit 1
 fi
 
 
@@ -107,22 +107,22 @@ echo "Found floppy device:$floppy_dev"
 
 if [ $floppy_dev != "" ]
 then
- /sbin/mkfs -t ext2 $floppy_dev
- if [ $? != 0 ]
- then
-  echo "FAILED: mkfs -t ext2 $floppy_dev failed"
-  echo "Insert a disk into the floppy drive"
-  exit 1
- fi
+	/sbin/mkfs -t ext2 $floppy_dev 
+	if [ $? != 0 ]
+	then
+		echo "FAILED: mkfs -t ext2 $floppy_dev failed"
+		echo "Insert a disk into the floppy drive"
+		exit 1 
+	fi
 fi
 
 if [ ! -d /AUTOFS ]
 then
- mkdir -m 777 /AUTOFS
+	mkdir -m 777 /AUTOFS
 fi
 
-echo "/AUTOFS/MEDIA /etc/auto.media" > /etc/auto.master
-echo "floppy -fstype=ext2 :$floppy_dev" > /etc/auto.media
+echo "/AUTOFS/MEDIA	/etc/auto.media" > /etc/auto.master
+echo "floppy	-fstype=ext2	:$floppy_dev" > /etc/auto.media
 
 
 ##############################################################
@@ -134,55 +134,55 @@ echo "floppy -fstype=ext2 :$floppy_dev" > /etc/auto.media
 #
 ##############################################################
 
-/etc/init.d/autofs start
+/etc/init.d/autofs start 
 if [ $? != 0 ]
 then
- rm -rf /etc/auto.master /etc/auto.media /AUTOFS
- echo "FAILED: "/etc/init.d/autofs start""
- exit 1
+	rm -rf /etc/auto.master /etc/auto.media /AUTOFS
+	echo "FAILED: "/etc/init.d/autofs start""
+	exit 1
 fi
 echo "Resuming test, please wait..."
 sleep 15
 
-/etc/init.d/autofs stop
+/etc/init.d/autofs stop 
 if [ $? != 0 ]
 then
- rm -rf /etc/auto.master /etc/auto.media /AUTOFS
- echo "FAILED: "/etc/init.d/autofs stop""
- exit 1
+	rm -rf /etc/auto.master /etc/auto.media /AUTOFS
+	echo "FAILED: "/etc/init.d/autofs stop""
+	exit 1
 else
- /etc/init.d/autofs start
+	/etc/init.d/autofs start 
 fi
 echo "Resuming test, please wait..."
 sleep 15
 
-/etc/init.d/autofs restart
+/etc/init.d/autofs restart 
 if [ $? != 0 ]
 then
- /etc/init.d/autofs stop
- rm -rf /etc/auto.master /etc/auto.media /AUTOFS
- echo "FAILED: "/etc/init.d/autofs restart""
- exit 1
+	/etc/init.d/autofs stop 
+	rm -rf /etc/auto.master /etc/auto.media /AUTOFS
+	echo "FAILED: "/etc/init.d/autofs restart""
+	exit 1
 fi
 echo "Resuming test, please wait..."
 sleep 15
 
-/etc/init.d/autofs status
+/etc/init.d/autofs status 
 if [ $? != 0 ]
 then
- /etc/init.d/autofs stop
- rm -rf /etc/auto.master /etc/auto.media /AUTOFS
- echo "FAILED: "/etc/init.d/autofs status""
- exit 1
+	/etc/init.d/autofs stop 
+	rm -rf /etc/auto.master /etc/auto.media /AUTOFS
+	echo "FAILED: "/etc/init.d/autofs status""
+	exit 1
 fi
 
-/etc/init.d/autofs reload
+/etc/init.d/autofs reload 
 if [ $? != 0 ]
 then
- /etc/init.d/autofs stop
- rm -rf /etc/auto.master /etc/auto.media /AUTOFS
- echo "FAILED: "/etc/init.d/autofs reload""
- exit 1
+	/etc/init.d/autofs stop 
+	rm -rf /etc/auto.master /etc/auto.media /AUTOFS
+	echo "FAILED: "/etc/init.d/autofs reload""
+	exit 1
 fi
 
 
@@ -199,16 +199,16 @@ fi
 
 echo "forcing error paths and conditions..."
 
-mkdir /AUTOFS/MEDIA/mydir 2>&1 > /dev/null
-rm -rf /AUTOFS 2>&1 > /dev/null
+mkdir /AUTOFS/MEDIA/mydir 2>&1 > /dev/null 
+rm -rf /AUTOFS 2>&1 > /dev/null 
 
 mkdir /AUTOFS/MEDIA/floppy/test
 cp /etc/auto.master /etc/auto.media /AUTOFS/MEDIA/floppy/test
 sync; sync
 echo "Resuming test, please wait..."
 sleep 60
-mkdir /AUTOFS/MEDIA/mydir 2>&1 > /dev/null
-rm -rf /AUTOFS            2>&1 > /dev/null
+mkdir /AUTOFS/MEDIA/mydir 2>&1 > /dev/null  
+rm -rf /AUTOFS            2>&1 > /dev/null  
 
 
 ##############################################################
@@ -217,9 +217,9 @@ rm -rf /AUTOFS            2>&1 > /dev/null
 #
 ##############################################################
 
-echo "/AUTOFS/DISK /etc/auto.disk" >> /etc/auto.master
-echo "disk  -fstype=auto,rw,sync :$disk_partition " > /etc/auto.disk
-/etc/init.d/autofs reload
+echo "/AUTOFS/DISK	/etc/auto.disk" >> /etc/auto.master
+echo "disk		-fstype=auto,rw,sync	:$disk_partition " > /etc/auto.disk
+/etc/init.d/autofs reload 
 echo "Resuming test, please wait..."
 sleep 30
 
@@ -233,23 +233,23 @@ sleep 60
 
 
 if [ -e  /AUTOFS/DISK/disk/test ]; then
-  cd /AUTOFS/DISK/disk/test
+  cd /AUTOFS/DISK/disk/test 
   umount /AUTOFS/DISK/disk/ 2>&1 > /dev/null
   if [ $? = 0 ]
     then
- /etc/init.d/autofs stop
- rm -rf /etc/auto.master /etc/auto.media /etc/auto.disk /AUTOFS
- echo "FAILED: unmounted a busy file system!"
- exit 1
+	/etc/init.d/autofs stop 
+	rm -rf /etc/auto.master /etc/auto.media /etc/auto.disk /AUTOFS
+	echo "FAILED: unmounted a busy file system!"
+	exit 1
   fi
-  cd
-  umount /AUTOFS/DISK/disk/
+  cd 
+  umount /AUTOFS/DISK/disk/ 
 if [ $? != 0 ]
   then
- /etc/init.d/autofs stop
- rm -rf /etc/auto.master /etc/auto.media /etc/auto.disk /AUTOFS
- echo "FAILED: Could not unmount automounted file system"
- exit 1
+	/etc/init.d/autofs stop 
+	rm -rf /etc/auto.master /etc/auto.media /etc/auto.disk /AUTOFS
+	echo "FAILED: Could not unmount automounted file system"
+	exit 1
   fi
 fi
 #
@@ -267,7 +267,7 @@ umount /mnt
 #
 #######################################################
 
-/etc/init.d/autofs stop
+/etc/init.d/autofs stop 
 rm -rf /etc/auto.master /etc/auto.media /etc/auto.disk /AUTOFS
 echo "PASSED: $0 passed!"
 exit 0

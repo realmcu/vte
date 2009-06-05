@@ -21,24 +21,24 @@
 
 /*
  * File:
- * ns-common.c
+ *	ns-common.c
  *
  * Description:
- * Common functions and variables in the ns-tools
+ *	Common functions and variables in the ns-tools
  *
  * Author:
- * Mitsuru Chinen <mitch@jp.ibm.com>
+ *	Mitsuru Chinen <mitch@jp.ibm.com>
  *
  * History:
- * Oct 19 2005 - Created (Mitsuru Chinen)
- * May  1 2006 - Added functions for broken_ip, route, multicast tests
+ *	Oct 19 2005 - Created (Mitsuru Chinen)
+ *	May  1 2006 - Added functions for broken_ip, route, multicast tests
  *---------------------------------------------------------------------------*/
 
 /*
  * Fixed values
  */
-#define PROC_RMEM_MAX "/proc/sys/net/core/rmem_max"
-#define PROC_WMEM_MAX "/proc/sys/net/core/wmem_max"
+#define PROC_RMEM_MAX	"/proc/sys/net/core/rmem_max"
+#define PROC_WMEM_MAX	"/proc/sys/net/core/wmem_max"
 
 /*
  * Standard Header Files
@@ -85,7 +85,7 @@ fatal_error(char *errmsg)
  *  This function maximize the send and receive buffer size of a socket
  *
  * Argument:
- *  sd: target socket descriptor
+ *  sd:	target socket descriptor
  *
  * Return value:
  *  None
@@ -94,38 +94,38 @@ void
 maximize_sockbuf(int sd)
 {
     size_t idx;
-    int level[]  { SO_RCVBUF, SO_SNDBUF };
-    char *procfile[]  { PROC_RMEM_MAX, PROC_WMEM_MAX };
-    char *bufname[]  {"rcvbuf", "sndbuf"};
+    int level[] = { SO_RCVBUF, SO_SNDBUF };
+    char *procfile[] = { PROC_RMEM_MAX, PROC_WMEM_MAX };
+    char *bufname[] = {"rcvbuf", "sndbuf"};
 
-    for (idx  0; idx < (sizeof(level) / sizeof(int)); idx++) {
- FILE *fp;  /* File pointer to a proc file */
- int bufsiz;  /* buffer size of socket */
- unsigned int optlen; /* size of sd option parameter */
+    for (idx = 0; idx < (sizeof(level) / sizeof(int)); idx++) {
+	FILE *fp;		/* File pointer to a proc file */
+	int bufsiz;		/* buffer size of socket */
+	unsigned int optlen;	/* size of sd option parameter */
 
- if ((fp  fopen(procfile[idx], "r"))  NULL) {
-     fprintf(stderr, "Failed to open %s\n", procfile[idx]);
-     fatal_error("fopen()");
- }
- if ((fscanf(fp, "%d", &bufsiz)) ! 1) {
-     fprintf(stderr, "Failed to read from %s\n", procfile[idx]);
-     fatal_error("fscanf()");
- }
- if (setsockopt(sd, SOL_SOCKET, level[idx], &bufsiz, sizeof(int))) {
-     fatal_error("setsockopt()");
- }
- if (fclose(fp)) {
-     fprintf(stderr, "Failed to close to %s\n", procfile[idx]);
-     fatal_error("fopen()");
- }
+	if ((fp = fopen(procfile[idx], "r")) == NULL) {
+	    fprintf(stderr, "Failed to open %s\n", procfile[idx]);
+	    fatal_error("fopen()");
+	}
+	if ((fscanf(fp, "%d", &bufsiz)) != 1) {
+	    fprintf(stderr, "Failed to read from %s\n", procfile[idx]);
+	    fatal_error("fscanf()");
+	}
+	if (setsockopt(sd, SOL_SOCKET, level[idx], &bufsiz, sizeof(int))) {
+	    fatal_error("setsockopt()");
+	}
+	if (fclose(fp)) {
+	    fprintf(stderr, "Failed to close to %s\n", procfile[idx]);
+	    fatal_error("fopen()");
+	}
 
- if (debug) {
-     optlen  sizeof(bufsiz);
-     if (getsockopt(sd, SOL_SOCKET, level[idx], &bufsiz, &optlen) < 0) {
-  fatal_error("getsockopt()");
-     }
-     fprintf(stderr, "socket %s size is %d\n", bufname[idx], bufsiz);
- }
+	if (debug) {
+	    optlen = sizeof(bufsiz);
+	    if (getsockopt(sd, SOL_SOCKET, level[idx], &bufsiz, &optlen) < 0) {
+		fatal_error("getsockopt()");
+	    }
+	    fprintf(stderr, "socket %s size is %d\n", bufname[idx], bufsiz);
+	}
     }
 }
 
@@ -150,17 +150,17 @@ calc_checksum(u_int16_t *data, size_t size)
     u_int16_t *pos;
     size_t rest;
 
-    sum  0;
-    pos  data;
-    for (rest  size; rest > 1; rest - 2)
- sum + *(pos++);
+    sum = 0;
+    pos = data;
+    for (rest = size; rest > 1; rest -= 2)
+	sum += *(pos++);
 
     if (rest > 0)
- sum + (*pos) & 0xff00;
+	sum += (*pos) & 0xff00;
 
-    sum  (sum & 0xffff) + (sum >> 16);
-    sum  (sum & 0xffff) + (sum >> 16);
-    sum  ~sum;
+    sum = (sum & 0xffff) + (sum >> 16);
+    sum = (sum & 0xffff) + (sum >> 16);
+    sum = ~sum;
 
     return sum;
 }
@@ -184,8 +184,8 @@ fill_payload(unsigned char *payload_p, size_t size)
 {
     size_t idx;
 
-    for (idx  0; idx < size; idx++)
- *(payload_p + idx)  idx % 0x100;
+    for (idx = 0; idx < size; idx++)
+	*(payload_p + idx) = idx % 0x100;
 }
 
 
@@ -208,11 +208,11 @@ rand_within(int first, int last)
     unsigned int num;
     int rand_val;
 
-    first  first < 0 ? 0 : first;
-    last   RAND_MAX < (unsigned int)last ? RAND_MAX : last;
+    first = first < 0 ? 0 : first;
+    last  = RAND_MAX < (unsigned int)last ? RAND_MAX : last;
 
-    num  last - first + 1U;
-    rand_val  rand() / ((RAND_MAX + 1U) / num) + first;
+    num = last - first + 1U;
+    rand_val = rand() / ((RAND_MAX + 1U) / num) + first;
 
     return rand_val;
 }
@@ -236,12 +236,12 @@ bit_change_seed(size_t bitsize, size_t oversize)
 {
     int rand_val;
     u_int32_t seed;
-    rand_val  rand() / ((RAND_MAX + 1U) / (bitsize + oversize));
+    rand_val = rand() / ((RAND_MAX + 1U) / (bitsize + oversize));
 
-    seed  (rand_val < bitsize) ? (0x00000001 << rand_val) : 0;
+    seed = (rand_val < bitsize) ? (0x00000001 << rand_val) : 0;
 
     if (debug)
- fprintf(stderr, "Bit seed is %08x\n", seed);
+	fprintf(stderr, "Bit seed is %08x\n", seed);
 
     return seed;
 }
@@ -270,26 +270,26 @@ eth_pton(int af, const char *str, struct sockaddr_ll *ll)
     unsigned char *addr_p;
     unsigned int val[ETH_ALEN];
 
-    ll->sll_family       AF_PACKET;            /* Always AF_PACKET */
-    if (af  AF_INET)
- ll->sll_protocol     htons(ETH_P_IP);  /* IPv4 */
+    ll->sll_family      = AF_PACKET;            /* Always AF_PACKET */
+    if (af == AF_INET)
+	ll->sll_protocol    = htons(ETH_P_IP);		/* IPv4 */
     else
- ll->sll_protocol     htons(ETH_P_IPV6); /* IPv6 */
-    ll->sll_ifindex      0;                    /* any interface */
-    ll->sll_hatype       ARPHRD_ETHER;         /* Header type */
-    ll->sll_pkttype      PACKET_OTHERHOST;     /* Packet type */
-    ll->sll_halen        ETH_ALEN;             /* Length of address */
+	ll->sll_protocol    = htons(ETH_P_IPV6);	/* IPv6 */
+    ll->sll_ifindex     = 0;                    /* any interface */
+    ll->sll_hatype      = ARPHRD_ETHER;         /* Header type */
+    ll->sll_pkttype     = PACKET_OTHERHOST;     /* Packet type */
+    ll->sll_halen       = ETH_ALEN;             /* Length of address */
 
     /* Physical layer address */
     if (sscanf(str, "%2x:%2x:%2x:%2x:%2x:%2x", &val[0], &val[1],
-  &val[2], &val[3], &val[4], &val[5]) ! ETH_ALEN) {
- fprintf(stderr, "%s is not a valid MAC address", str);
- return 1;
+		&val[2], &val[3], &val[4], &val[5]) != ETH_ALEN) {
+	fprintf(stderr, "%s is not a valid MAC address", str);
+	return 1;
     }
 
-    addr_p  (unsigned char *)ll->sll_addr;
-    for (idx  0; idx < ETH_ALEN; idx++)
- addr_p[idx]  val[idx];
+    addr_p = (unsigned char *)ll->sll_addr;
+    for (idx = 0; idx < ETH_ALEN; idx++)
+	addr_p[idx] = val[idx];
 
     return 0;
 }
@@ -318,7 +318,7 @@ get_ifinfo(struct ifreq *ans, int sock_fd, const char *ifname, int query)
     strncpy(ans->ifr_name, ifname, (IFNAMSIZ - 1));
 
     if (ioctl(sock_fd, query, ans) < 0)
- fatal_error("ioctl()");
+	fatal_error("ioctl()");
 }
 
 
@@ -341,24 +341,24 @@ strtotimespec(const char *str, struct timespec *ts_p)
 {
     size_t len;
     char *sec_str;
-    unsigned long sec   0;
-    unsigned long nsec  0;
+    unsigned long sec  = 0;
+    unsigned long nsec = 0;
 
-    len  strlen(str);
-    if (len > 9) { /* Check the specified value is bigger than 999999999 */
- sec_str  calloc((len - 9 + 1), sizeof(char));
- strncpy(sec_str, str, len - 9);
- sec   strtoul(sec_str, NULL, 0);
- if (sec > 0x7fffffff)
-     return 1;
- free(sec_str);
- nsec  strtoul(str + len - 9, NULL, 0);
+    len = strlen(str);
+    if (len > 9) {	/* Check the specified value is bigger than 999999999 */
+	sec_str = calloc((len - 9 + 1), sizeof(char));
+	strncpy(sec_str, str, len - 9);
+	sec  = strtoul(sec_str, NULL, 0);
+	if (sec > 0x7fffffff)
+	    return 1;
+	free(sec_str);
+	nsec = strtoul(str + len - 9, NULL, 0);
     } else {
- nsec  strtoul(str, NULL, 0);
+	nsec = strtoul(str, NULL, 0);
     }
 
-    ts_p->tv_sec   sec;
-    ts_p->tv_nsec  nsec;
+    ts_p->tv_sec  = sec;
+    ts_p->tv_nsec = nsec;
 
     return 0;
 }
@@ -389,44 +389,44 @@ get_a_lla_byifindex(struct sockaddr_in6 *lla_p, int ifindex)
     char line[PROC_IFINET6_FILE_LINELENGTH];
     int pos;
 
-    if((fp  fopen(PROC_IFINET6_FILE, "r"))  NULL) {
- fprintf(stderr, "Faile to open %s\n", PROC_IFINET6_FILE);
- return 1;
+    if((fp = fopen(PROC_IFINET6_FILE, "r")) == NULL) {
+	fprintf(stderr, "Faile to open %s\n", PROC_IFINET6_FILE);
+	return 1;
     }
 
-    while(fgets(line, PROC_IFINET6_FILE_LINELENGTH, fp) ! NULL) {
- ret  sscanf(line,
-  "%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x %x %x %x",
-  &oct[0],  &oct[1],  &oct[2],  &oct[3],
-  &oct[4],  &oct[5],  &oct[6],  &oct[7],
-  &oct[8],  &oct[9],  &oct[10], &oct[11],
-  &oct[12], &oct[13], &oct[14], &oct[15],
-  &ifidx, &prefixlen, &scope);
+    while(fgets(line, PROC_IFINET6_FILE_LINELENGTH, fp) != NULL) {
+	ret = sscanf(line,
+		"%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x %x %x %x",
+		&oct[0],  &oct[1],  &oct[2],  &oct[3],
+		&oct[4],  &oct[5],  &oct[6],  &oct[7],
+		&oct[8],  &oct[9],  &oct[10], &oct[11],
+		&oct[12], &oct[13], &oct[14], &oct[15],
+		&ifidx, &prefixlen, &scope);
 
- if (ret  EOF)
-     fatal_error("scanf()");
- else if (ret ! 19)
-     fatal_error("The number of input item is less than the expected");
+	if (ret == EOF)
+	    fatal_error("scanf()");
+	else if (ret != 19)
+	    fatal_error("The number of input item is less than the expected");
 
- if(ifidx ! ifindex)
-     continue;
+	if(ifidx != ifindex)
+	    continue;
 
- if(prefixlen ! 64)
-     continue;
+	if(prefixlen != 64)
+	    continue;
 
- if(scope ! PROC_IFINET6_LINKLOCAL)
-     continue;
+	if(scope != PROC_IFINET6_LINKLOCAL)
+	    continue;
 
- /* Find a link-local address */
- lla_p->sin6_family  AF_INET6;
- lla_p->sin6_port  0;
- lla_p->sin6_flowinfo  0;
- lla_p->sin6_scope_id  ifindex;
+	/* Find a link-local address */
+	lla_p->sin6_family	= AF_INET6;
+	lla_p->sin6_port	= 0;
+	lla_p->sin6_flowinfo	= 0;
+	lla_p->sin6_scope_id	= ifindex;
 
- for(pos  0; pos < 16; pos++)
-     lla_p->sin6_addr.s6_addr[pos]  oct[pos];
+	for(pos = 0; pos < 16; pos++)
+	    lla_p->sin6_addr.s6_addr[pos] = oct[pos];
 
- return 0;
+	return 0;
     }
 
     fprintf(stderr, "No link-local address is found.\n");
@@ -457,19 +457,19 @@ get_maddrinfo(sa_family_t family, const char *maddr, const char *portnum)
     int err;                    /* return value of getaddrinfo */
 
     memset(&hints, '\0', sizeof(struct addrinfo));
-    hints.ai_family  family;
-    hints.ai_socktype  SOCK_DGRAM;
-    hints.ai_protocol  IPPROTO_UDP;
-    hints.ai_flags | AI_NUMERICHOST;
+    hints.ai_family = family;
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_protocol = IPPROTO_UDP;
+    hints.ai_flags |= AI_NUMERICHOST;
 
-    err  getaddrinfo(maddr, portnum, &hints, &res);
+    err = getaddrinfo(maddr, portnum, &hints, &res);
     if (err) {
- fprintf(stderr, "getaddrinfo(): %s\n", gai_strerror(err));
- exit(EXIT_FAILURE);
+	fprintf(stderr, "getaddrinfo(): %s\n", gai_strerror(err));
+	exit(EXIT_FAILURE);
     }
     if (res->ai_next) {
- fprintf(stderr, "getaddrinfo(): multiple address is found.");
- exit(EXIT_FAILURE);
+	fprintf(stderr, "getaddrinfo(): multiple address is found.");
+	exit(EXIT_FAILURE);
     }
 
     return res;
@@ -496,12 +496,12 @@ create_group_info(uint32_t ifindex, struct addrinfo *mainfo_p)
     struct group_req *greq;
 
     /* allocate memory for group_filter */
-    greq  (struct group_req *)calloc(1, sizeof(struct group_req));
-    if (greq  NULL)
- fatal_error("calloc()");
+    greq = (struct group_req *)calloc(1, sizeof(struct group_req));
+    if (greq == NULL)
+	fatal_error("calloc()");
 
     /* substitute informations */
-    greq->gr_interface  ifindex;
+    greq->gr_interface = ifindex;
     memcpy(&greq->gr_group, mainfo_p->ai_addr, mainfo_p->ai_addrlen);
 
     return greq;
@@ -536,56 +536,56 @@ create_source_filter(uint32_t ifindex, struct addrinfo *mainfo_p, uint32_t fmode
     char *sp, *ep;
 
     /* calculate the number of source address */
-    numsrc  1;
-    for (sp  saddrs; *sp ! '\0'; sp++)
- if (*sp  ',')
-     numsrc++;
+    numsrc = 1;
+    for (sp = saddrs; *sp != '\0'; sp++)
+	if (*sp == ',')
+	    numsrc++;
 
     if (debug)
- fprintf(stderr, "number of source address is %u\n", numsrc);
+	fprintf(stderr, "number of source address is %u\n", numsrc);
 
     /* allocate memory for group_filter */
-    gsf  (struct group_filter *)calloc(1, GROUP_FILTER_SIZE(numsrc));
-    if (gsf  NULL)
- fatal_error("calloc()");
+    gsf = (struct group_filter *)calloc(1, GROUP_FILTER_SIZE(numsrc));
+    if (gsf == NULL)
+	fatal_error("calloc()");
 
     /* substitute interface index, multicast address, filter mode */
-    gsf->gf_interface  ifindex;
+    gsf->gf_interface = ifindex;
     memcpy(&gsf->gf_group, mainfo_p->ai_addr, mainfo_p->ai_addrlen);
-    gsf->gf_fmode  fmode;
-    gsf->gf_numsrc  numsrc;
+    gsf->gf_fmode = fmode;
+    gsf->gf_numsrc = numsrc;
 
     /* extract source address aray and substitute the addersses */
     memset(&hints, '\0', sizeof(struct addrinfo));
-    hints.ai_family  mainfo_p->ai_family;
-    hints.ai_socktype  SOCK_DGRAM;
-    hints.ai_protocol  IPPROTO_UDP;
-    hints.ai_flags | AI_NUMERICHOST;
+    hints.ai_family = mainfo_p->ai_family;
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_protocol = IPPROTO_UDP;
+    hints.ai_flags |= AI_NUMERICHOST;
 
     /* extract source address aray and substitute the addersses */
     memset(&hints, '\0', sizeof(struct addrinfo));
-    hints.ai_family  mainfo_p->ai_family;
-    hints.ai_socktype  SOCK_DGRAM;
-    hints.ai_protocol  IPPROTO_UDP;
-    hints.ai_flags | AI_NUMERICHOST;
+    hints.ai_family = mainfo_p->ai_family;
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_protocol = IPPROTO_UDP;
+    hints.ai_flags |= AI_NUMERICHOST;
 
-    sp  saddrs;
-    for(idx  0; idx < numsrc; idx++) {
- ep  strchr(sp, ',');
- if (ep ! NULL)
-     *ep  '\0';
- if (debug)
-     fprintf(stderr, "source address[%u]: %s\n", idx, sp);
+    sp = saddrs;
+    for(idx = 0; idx < numsrc; idx++) {
+	ep = strchr(sp, ',');
+	if (ep != NULL)
+	    *ep = '\0';
+	if (debug)
+	    fprintf(stderr, "source address[%u]: %s\n", idx, sp);
 
- err  getaddrinfo(sp, NULL, &hints, &res);
- if (err) {
-     fprintf(stderr, "getaddrinfo(): %s\n", gai_strerror(err));
-     exit(EXIT_FAILURE);
- }
+	err = getaddrinfo(sp, NULL, &hints, &res);
+	if (err) {
+	    fprintf(stderr, "getaddrinfo(): %s\n", gai_strerror(err));
+	    exit(EXIT_FAILURE);
+	}
 
- memcpy(&gsf->gf_slist[idx], res->ai_addr, res->ai_addrlen);
- freeaddrinfo(res);
- sp  ep + 1;
+	memcpy(&gsf->gf_slist[idx], res->ai_addr, res->ai_addrlen);
+	freeaddrinfo(res);
+	sp = ep + 1;
     }
 
     return gsf;

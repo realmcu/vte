@@ -1,0 +1,61 @@
+/*How to update BSP with GCOV options for coverage tool use*/
+//
+/*In /local/linux_baseport/REF/linuxos/linux create a  
+mxc_L26_1_X_COV directory copying mxc_L26_1_X directory, but for rootdisk
+directory with ROOT rights!!!!*/
+
+cp -r mxc_L26_1_12 mxc_L26_1_12_COV 
+sudo cp -r mxc_L26_1_12/rootdisk mxc_L26_1_12_COV/
+//
+/*In /local/linux_baseport/config create specific files 
+linuxos.linux.L26_1_X_COV.env changing $LBP_VERSION in L26_1_X_COV and
+LNX_EXTRA_VERSION in mxc1.X_COV,
+linuxos.linux.L26_1_X_COV.mk changing $(LBP_VERSION) in L26_1_X_COV,
+and linuxos.tools.L26_1_X_COV.env changing CROSS_PREFIX with the latest Tool
+Chain if you need to use it*/
+//
+/*In your ESTR /local/linux_baseport/ESTR-coreID/SRC, copy
+/local/linux_baseport/REF/linuxos/linux/mxc_L26_1_12_COV/linux
+and change its name linux into linux-2.6.X-mxc1.X_COV*/
+
+sudo cp -r /local/linux_baseport/REF/linuxos/linux/mxc_L26_1_X_COV/linux/
+/local/linux_baseport/ESTR_coreID/SRC
+//
+/*In the directory 
+//local/linux_baseport/ESTR_coreID/SRC/linux-2.6.X-mxc1.X_COV, use the 5 GCOV
+/patches.*/
+
+patch -p1 <../gcov-2.6.8.patch
+/*You may have to patch some file manually such as appear in *.rej files*/
+
+patch -p1 </local/linux_baseport/ESTR_r70160c/lcov/linux-L26.1.5-gcov-arm.patch
+patch -p1 </local/linux_baseport/ESTR_r70160c/lcov/linux-L26.1.5-gcov-freescale.patch
+/*In this patch you modify all drivers' Makefile that you want to cover. So you have to
+add your personal changes in this patch*/
+patch -p1 </local/linux_baseport/ESTR_r70160c/lcov/linux-L26.1.5-gcov-mxc.patch
+patch -p1 </local/linux_baseport/ESTR_r70160c/lcov/linux-L26.1.5-gcov-vpath.patch
+
+/*Replace in /local/linux_baseport/REF/linuxos/linux/mxc_L26_1_X_COV linux file
+by linux-2.6.10-mxc1.X_COV file */
+
+/*In /local/linux_baseport/ */
+. config/config.env
+
+/*On EVB board in /root*/
+/startvte.sh --coverage --nfs <name>
+
+/*In /root/vte_nfs*/
+ insmod /lib/modules/../../drivers/gcov/gcov-proc.ko
+ lcov-reset.sh TITLE
+ launch.sh vt_testname
+ lcov_capture.sh TITLE
+ 
+ /*In your ESTR user space*/
+ make vte_cov TESTCASES='.*' TITLE='Something' // .* are all files in BUILD/VTE_1.Y/results.cov
+ 
+ /*In your ESTR_CoreID/COVERAGE/../data/Something*/
+ genfunction
+ 
+ /*You can read coverage_report_fullfunction.txt.filtered about Line call rate*/
+ 
+

@@ -30,12 +30,12 @@ int main(int argc, char **argv) {
   int rc;
   int flags;
   pid_t pid;
-  char key  '\r';
+  char key = '\r';
   char ex_name[255];
 
-  fd  open(ctermid(NULL), O_RDWR, 0);
-
-  if(fd  -1) {
+  fd = open(ctermid(NULL), O_RDWR, 0);
+  
+  if(fd == -1) {
     perror("selinux_sigiotask:open");
     exit(2);
   }
@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
  /*
   * Spawn off the child process to handle the information protocol.
   */
-  if( (pid  fork()) < 0 ) {
+  if( (pid = fork()) < 0 ) {
      perror("selinux_sigiotask:fork");
      exit(2);
   }
@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
  /*
   * child process
   */
-  if( pid  0 ) {
+  if( pid == 0 ) {
     /* Create the path to the executable the child will run */
     sprintf(ex_name, "%s/selinux_wait_io", dirname(strdup(argv[0])));
 printf("ex_name is %s\n", ex_name);
@@ -64,33 +64,33 @@ printf("ex_name is %s\n", ex_name);
   /*
    * parent process
    */
-  rc  fcntl(fd, F_SETSIG, 0);
-  if( rc  -1 ) {
+  rc = fcntl(fd, F_SETSIG, 0);
+  if( rc == -1 ) {
     perror("selinux_sigiotask:F_SETSIG");
     exit(2);
   }
 
-  rc  fcntl(fd, F_SETOWN, pid);
-  if( rc  -1 ) {
+  rc = fcntl(fd, F_SETOWN, pid);
+  if( rc == -1 ) {
     perror("selinux_sigiotask:F_SETOWN");
     exit(2);
   }
 
-  flags  fcntl(fd, F_GETFL, 0);
+  flags = fcntl(fd, F_GETFL, 0);
   if( flags < 0 ) {
     perror("selinux_sigiotask:F_GETFL");
     exit(2);
   }
-  flags | O_ASYNC;
-  rc  fcntl(fd, F_SETFL, flags);
-  if( rc  -1 ) {
+  flags |= O_ASYNC;
+  rc = fcntl(fd, F_SETFL, flags);
+  if( rc == -1 ) {
     perror("selinux_sigiotask:F_SETFL");
     exit(2);
   }
 
   sleep(1);          /* Allow the child time to start up */
-  rc  ioctl(fd, TIOCSTI, &key);  /* Send a key to the tty device */
-  if( rc  -1 ) {
+  rc = ioctl(fd, TIOCSTI, &key);  /* Send a key to the tty device */
+  if( rc == -1 ) {
     perror("selinux_sigiotask:write");
     exit(2);
   }

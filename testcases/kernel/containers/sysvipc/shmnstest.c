@@ -34,8 +34,8 @@
 #include <test.h>
 #include <libclone.h>
 
-char *TCID  "sysvipc_namespace";
-int TST_TOTAL1;
+char *TCID = "sysvipc_namespace";
+int TST_TOTAL=1;
 #define TESTKEY 0xEAEAEA
 
 int p1[2];
@@ -50,8 +50,8 @@ int check_shmid(void *vtest)
       close(p2[0]);
 
       read(p1[0], buf, 3);
-      id  shmget(TESTKEY, 100, 0);
-      if (id  -1) {
+      id = shmget(TESTKEY, 100, 0);
+      if (id == -1) {
               write(p2[1], "notfnd", 7);
       } else {
               write(p2[1], "exists", 7);
@@ -68,30 +68,30 @@ int check_shmid(void *vtest)
 #define NONESTR "none"
 int main(int argc, char *argv[])
 {
-      int r, use_clone  T_NONE;
+      int r, use_clone = T_NONE;
       int id;
-      char *tsttype  NONESTR;
+      char *tsttype = NONESTR;
       char buf[7];
 
-      if (argc ! 2) {
+      if (argc != 2) {
               tst_resm(TFAIL, "Usage: %s <clone|unshare|none>\n", argv[0]);
               tst_resm(TFAIL, " where clone, unshare, or fork specifies unshare method.");
               tst_exit(2);
       }
-      if (pipe(p1)  -1) { perror("pipe"); exit(EXIT_FAILURE); }
-      if (pipe(p2)  -1) { perror("pipe"); exit(EXIT_FAILURE); }
-      tsttype  NONESTR;
-      if (strcmp(argv[1], "clone")  0) {
-              use_clone  T_CLONE;
-              tsttype  CLONESTR;
-      } else if (strcmp(argv[1], "unshare")  0) {
-              use_clone  T_UNSHARE;
-              tsttype  UNSHARESTR;
+      if (pipe(p1) == -1) { perror("pipe"); exit(EXIT_FAILURE); }
+      if (pipe(p2) == -1) { perror("pipe"); exit(EXIT_FAILURE); }
+      tsttype = NONESTR;
+      if (strcmp(argv[1], "clone") == 0) {
+              use_clone = T_CLONE;
+              tsttype = CLONESTR;
+      } else if (strcmp(argv[1], "unshare") == 0) {
+              use_clone = T_UNSHARE;
+              tsttype = UNSHARESTR;
       }
 
       /* first create the key */
-      id  shmget(TESTKEY, 100, IPC_CREAT);
-      if (id  -1) {
+      id = shmget(TESTKEY, 100, IPC_CREAT);
+      if (id == -1) {
               perror("shmget");
               tst_resm(TFAIL, "shmget failed\n");
               tst_exit(3);
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 
       tst_resm(TINFO, "shmid namespaces test : %s\n",tsttype);
       /* fire off the test */
-      r  do_clone_unshare_test(use_clone, CLONE_NEWIPC, check_shmid, NULL);
+      r = do_clone_unshare_test(use_clone, CLONE_NEWIPC, check_shmid, NULL);
       if (r < 0) {
               tst_resm(TFAIL, "%s failed\n", tsttype);
               tst_exit(1);
@@ -109,14 +109,14 @@ int main(int argc, char *argv[])
       close(p2[1]);
       write(p1[1], "go", 3);
       read(p2[0], buf, 7);
-      if (strcmp(buf, "exists")  0) {
-              if (use_clone  T_NONE)
+      if (strcmp(buf, "exists") == 0) {
+              if (use_clone == T_NONE)
                       tst_resm(TPASS, "plain cloned process found shmid\n");
               else
                       tst_resm(TFAIL, "%s: child process found shmid\n",
                               tsttype);
       } else {
-              if (use_clone  T_NONE)
+              if (use_clone == T_NONE)
                       tst_resm(TFAIL, "plain cloned process didn't find shmid\n");
               else
                       tst_resm(TPASS, "%s: child process didn't find shmid\n",

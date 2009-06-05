@@ -12,7 +12,7 @@
 LTP_DIR = ../../../..
 BIN_DIR = ../../../bin
 
-CFLAGS += -Wall -I$(LTP_DIR)/include -I$(KLINUX_SRCDIR)/include -I$(KLINUX_BLTDIR)/include -I$(KLINUX_SRCDIR)/drivers/usb/input
+CFLAGS += -Wall -I$(LTP_DIR)/include -I$(KLINUX_SRCDIR)/include -I$(KLINUX_BLTDIR)/include -I$(KLINUX_SRCDIR)/drivers/usb/input  
 LOADLIBES += -L$(LTP_DIR)/lib -lltp
 
 SRCS=$(wildcard *.c)

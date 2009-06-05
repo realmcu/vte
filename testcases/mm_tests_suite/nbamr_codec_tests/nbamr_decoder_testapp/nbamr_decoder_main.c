@@ -17,16 +17,16 @@ Description of the file
         If not, indicate specific reasons why is it not portable.
 */
 
-/* REVISION HISTORY 
+/*======================== REVISION HISTORY ==================================
 
 Author (core ID)           Date         CR Number    Description of Changes
 -----------------------    ----------   ----------   -------------------------
 I. Semenchukov/smng001c    18/01/2005   TLSbo46857   Initial version
 I. Semenchukov/smng001c    28/02/2005   TLSbo47115   Changed printf() entries with tst_...()
 
-*/
+=============================================================================*/
 
-/*
+/*============================================================================
 Total Tests: 4
 
 Test Name:   nbamr_decoder_testapp
@@ -54,13 +54,13 @@ Test Assertion
             cates memory for decoder configuration structure, asks for amount of
             decoder memory via decoder routine, allocates this memory, calls
             decoder initialization routine, opens files, then decodes streams.
-*/
+=============================================================================*/
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/* INCLUDE FILES */
+/*======================== INCLUDE FILES ====================================*/
 /* Standard Include Files */
 
 #include <stdio.h>
@@ -76,38 +76,38 @@ extern "C"{
 
 #include "nbamr_decoder_test.h"
 
-/* LOCAL CONSTANTS */
+/*======================== LOCAL CONSTANTS ==================================*/
 
 
-/* LOCAL MACROS */
+/*======================== LOCAL MACROS =====================================*/
 
 
-/* LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) */
+/*======================== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) =======*/
 
 
-/* LOCAL VARIABLES */
+/*======================== LOCAL VARIABLES ==================================*/
 /* parse_opts() parameters. First option (testcase) has flag -T and passes
  * testcase ID. Possible values for ID are from 0 through 3. Second option has
  * flag -L and takes list file name as its argument.
  * All options require arguments.
  */
 
-int  testcase_flag  0; /* What test we will run                             */
-int  listfile_flag  0; /* We want to pass customized list with test files   */
+int  testcase_flag = 0; /* What test we will run                             */
+int  listfile_flag = 0; /* We want to pass customized list with test files   */
 char *testcase_opt;
 char *listfile_opt;
 
-option_t options[] 
+option_t options[] =
 {
     { "T:", &testcase_flag, &testcase_opt },
     { "L:", &listfile_flag, &listfile_opt },
     { NULL, NULL,           NULL          }
 };
 
-/* GLOBAL CONSTANTS */
+/*======================== GLOBAL CONSTANTS =================================*/
 
 
-/* GLOBAL VARIABLES */
+/*======================== GLOBAL VARIABLES =================================*/
 /* Extern Global Variables */
 
 extern int  Tst_count;               /* counter for tst_xxx routines         */
@@ -115,17 +115,17 @@ extern char *TESTDIR;                /* temporary dir created by tst_tmpdir()*/
 
 /* Global Variables */
 
-char *TCID      "nbamr_decoder_testapp"; /* test program name               */
-int  TST_TOTAL  1;                    /* total number of tests in this file */
+char *TCID     = "nbamr_decoder_testapp"; /* test program name               */
+int  TST_TOTAL = 1;                    /* total number of tests in this file */
 
-/* LOCAL FUNCTION PROTOTYPES */
+/*======================== LOCAL FUNCTION PROTOTYPES ========================*/
 void setup();
 void help();
 int  main(int argc, char **argv);
 
-/* LOCAL FUNCTIONS */
+/*======================== LOCAL FUNCTIONS ==================================*/
 
-/* setup */
+/*===== setup =====*/
 /**
 Description of the function
 @brief  Performs all one time setup for this test. This function is
@@ -143,20 +143,20 @@ Description of the function
 */
 void setup()
 {
-    int VT_rv  TFAIL;
+    int VT_rv = TFAIL;
 
     /* VTE : Actions needed to prepare the test running */
 
-    VT_rv  VT_nbamr_decoder_setup();
-    if (VT_rv ! TPASS)
+    VT_rv = VT_nbamr_decoder_setup();
+    if (VT_rv != TPASS)
     {
- tst_brkm(TBROK , cleanup, "VT_nbamr_decoder_setup() Failed : error code  %d", VT_rv);
+	tst_brkm(TBROK , cleanup, "VT_nbamr_decoder_setup() Failed : error code = %d", VT_rv);
     }
 
     return;
 }
 
-/* help */
+/*===== help =====*/
 /**
 Description of the function
 @brief  Describe the usage of the test application
@@ -184,13 +184,13 @@ void help()
     return;
 }
 
-/* main */
+/*===== main =====*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
-  the test status and results appropriately using the LTP API's
-  On successful completion or premature failure, cleanup() func
-  is called and test exits with an appropriate return code.
+		the test status and results appropriately using the LTP API's
+		On successful completion or premature failure, cleanup() func
+		is called and test exits with an appropriate return code.
 @pre None
 @post None
 @param  Input : argc - number of command line parameters.
@@ -207,25 +207,25 @@ void help()
 */
 int main(int argc, char **argv)
 {
-    int  VT_rv  TFAIL;
+    int  VT_rv = TFAIL;
     char *msg;
-    int  testcase  NOMINAL_FUNCTIONALITY;
+    int  testcase = NOMINAL_FUNCTIONALITY;
 
     /* parse options. */
     /** LTP test harness provides a function called parse_opts() that
-    may be used to parse standard options. For a list of standard
-    option that are available refer on-line man page at the LTP
+    may be used to parse standard options. For a list of standard 
+    option that are available refer on-line man page at the LTP 
     web-site */
-
-    if ( (msg  parse_opts(argc, argv, options, help)) ! NULL )
+    
+    if ( (msg = parse_opts(argc, argv, options, help)) != NULL )
     {
- tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
     }
 
     /* Argument handle */
 
     if (testcase_flag)
- testcase  atoi(testcase_opt);
+	testcase = atoi(testcase_opt);
 
     /* perform global test setup, call setup() function. */
 
@@ -235,11 +235,11 @@ int main(int argc, char **argv)
 
     tst_resm(TINFO, "Testing if %s test case is OK", TCID);
 
-    VT_rv  VT_nbamr_decoder_test(testcase, listfile_opt);
-
+    VT_rv = VT_nbamr_decoder_test(testcase, listfile_opt);
+	
     /* VTE : print results and exit test scenario */
 
-    if (VT_rv  TPASS)
+    if (VT_rv == TPASS)
         tst_resm(TPASS, "This test case worked as expected");
     else
         tst_resm(TFAIL, "This test case did NOT work as expected");
@@ -249,9 +249,9 @@ int main(int argc, char **argv)
     return VT_rv;
 }
 
-/* GLOBAL FUNCTIONS */
+/*======================== GLOBAL FUNCTIONS =================================*/
 
-/* cleanup */
+/*===== cleanup =====*/
 /**
 Description of the function
 @brief  Performs all one time clean up for this test on successful
@@ -269,14 +269,14 @@ Description of the function
 */
 void cleanup()
 {
-    int VT_rv  TFAIL;
+    int VT_rv = TFAIL;
 
     /* VTE : Actions needed to get a stable target environment */
-
-    VT_rv  VT_nbamr_decoder_cleanup();
-    if (VT_rv ! TPASS)
+    
+    VT_rv = VT_nbamr_decoder_cleanup();
+    if (VT_rv != TPASS)
     {
- tst_resm(TWARN, "VT_nbamr_decoder_cleanup() Failed : error code  %d", VT_rv);
+	tst_resm(TWARN, "VT_nbamr_decoder_cleanup() Failed : error code = %d", VT_rv);
     }
 
     tst_exit();

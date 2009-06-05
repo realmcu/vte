@@ -7,7 +7,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- * Test that the shm_unlink() function sets errno  ENOENT  if the named shared
+ * Test that the shm_unlink() function sets errno = ENOENT  if the named shared
  * memory object does not exist.
  */
 
@@ -20,22 +20,22 @@
 #define SHM_NAME "posixtest_11-1"
 
 int main() {
- int result;
+	int result;
+	
+	/* Ensure that the name SHM_NAME is removed */
+	shm_unlink(SHM_NAME);
 
- /* Ensure that the name SHM_NAME is removed */
- shm_unlink(SHM_NAME);
+	result = shm_unlink(SHM_NAME);
+	
+	if(result == -1 && errno == ENOENT) {
+		printf("Test PASSED\n");
+		return PTS_PASS;
+	} else if (result == -1) {
+		perror("Unexpected error");
+		return PTS_UNRESOLVED;
+	}
 
- result  shm_unlink(SHM_NAME);
-
- if(result  -1 && errno  ENOENT) {
-  printf("Test PASSED\n");
-  return PTS_PASS;
- } else if (result  -1) {
-  perror("Unexpected error");
-  return PTS_UNRESOLVED;
- }
-
- printf("shm_unlink() success.");
- return PTS_FAIL;
-
+	printf("shm_unlink() success.");
+	return PTS_FAIL;
+	
 }

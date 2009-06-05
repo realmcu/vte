@@ -10,13 +10,13 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-
+     
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Dmitriy Kazachkov           17/05/2004      ?????????   Initial version
+Dmitriy Kazachkov           17/05/2004      ?????????   Initial version 
 
 ==================================================================================================*/
 

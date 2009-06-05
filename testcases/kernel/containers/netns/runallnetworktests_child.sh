@@ -28,18 +28,18 @@
 # mount the proc fs in the child
 mount -t proc lxcproc /proc;
 if [ $? -ne 0 ]; then
- echo "TBROK Failed to mount the proc fs in child... "
- echo "Testcases will fail. So exiting the tests....."
- exit 1;
+	echo "TBROK	Failed to mount the proc fs in child... "
+	echo "Testcases will fail. So exiting the tests....."
+	exit 1;
 fi
 
 . initialize.sh;
 
 /etc/init.d/xinetd restart;
 if [ $? -ne 0 ]; then
- echo "TBROK Failed to restart the xinetd daemon. Please ensure "
-  "you have xinetd installed, appropriate permissions etc."
- exit 1;
+	echo "TBROK	Failed to restart the xinetd daemon. Please ensure "
+		"you have xinetd installed, appropriate permissions etc."
+	exit 1;
 fi
 
 echo "Assuming user has updated the RUSER and PASSWD fields in $0 file"
@@ -47,7 +47,7 @@ echo "If not updated some of the testcases will fail"
 
 export RHOST=$IP1;
 export RUSER="root";
-export PASSWD="linux"; # Please update this field
+export PASSWD="linux";	# Please update this field
 debug "DEBUG: RHOST = $RHOST";
 
 #***********************************#
@@ -126,14 +126,14 @@ echo "Running set of ssh testcase...."
 # This requires ssh daemon to be listening on port 22
 /usr/sbin/sshd -p 22
 if [ $? -eq 0 ]; then
- ssh01;
- ssh02;
- ssh03;
- sshpid=`ps -ef | grep "sshd -p $PORT" | awk '{ print $2 ; exit 0} ' `;
- kill -s SIGKILL $sshpid;
+	ssh01;
+	ssh02;
+	ssh03;
+	sshpid=`ps -ef | grep "sshd -p $PORT" | awk '{ print $2 ; exit 0} ' `;
+	kill -s SIGKILL $sshpid;
 else
- echo "Failed to start ssh daemon at port 22 in container";
- echo "Skipping the set of ssh testcases";
+	echo "Failed to start ssh daemon at port 22 in container";
+	echo "Skipping the set of ssh testcases";
 fi
 
 echo "Running netstat testcase...."
@@ -150,7 +150,7 @@ cleanup $sshpid $vnet1;
 umount /var ;
 umount /proc ;
 if [ $? -ne 0 ]; then
- echo "Failed to unmount the proc fs in child... Exiting"
- exit 1;
+	echo "Failed to unmount the proc fs in child... Exiting"
+	exit 1;
 fi
 

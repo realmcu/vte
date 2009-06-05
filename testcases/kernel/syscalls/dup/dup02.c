@@ -32,80 +32,80 @@
  */
 /* $Id: dup02.c,v 1.2 2006/05/26 06:26:38 vapier Exp $ */
 /**********************************************************
- *
+ * 
  *    OS Test - Silicon Graphics, Inc.
- *
- *    TEST IDENTIFIER : dup02
- *
- *    EXECUTED BY : anyone
- *
- *    TEST TITLE : Negative test for dup(2) with bad fd.
- *
- *    PARENT DOCUMENT : usctpl01
- *
- *    TEST CASE TOTAL : 2
- *
- *    WALL CLOCK TIME : 1
- *
- *    CPU TYPES  : ALL
- *
- *    AUTHOR  : Richard Logan
- *
- *    CO-PILOT  : William Roske
- *
- *    DATE STARTED : 06/94
- *
- *    INITIAL RELEASE : UNICOS 7.0
- *
+ * 
+ *    TEST IDENTIFIER	: dup02
+ * 
+ *    EXECUTED BY	: anyone
+ * 
+ *    TEST TITLE	: Negative test for dup(2) with bad fd.
+ * 
+ *    PARENT DOCUMENT	: usctpl01
+ * 
+ *    TEST CASE TOTAL	: 2
+ * 
+ *    WALL CLOCK TIME	: 1
+ * 
+ *    CPU TYPES		: ALL
+ * 
+ *    AUTHOR		: Richard Logan
+ * 
+ *    CO-PILOT		: William Roske
+ * 
+ *    DATE STARTED	: 06/94
+ * 
+ *    INITIAL RELEASE	: UNICOS 7.0
+ * 
  *    TEST CASES
- *
- * 1-?.) dup(2) returns -1 with errno set to EBADF...(See Description)
- *
+ * 
+ * 	1-?.) dup(2) returns -1 with errno set to EBADF...(See Description)
+ *	
  *    INPUT SPECIFICATIONS
- * The standard options for system call tests are accepted.
- * (See the parse_opts(3) man page).
- *
+ * 	The standard options for system call tests are accepted.
+ *	(See the parse_opts(3) man page).
+ * 
  *    OUTPUT SPECIFICATIONS
- * Standard tst_res formatted output
- *
+ *	Standard tst_res formatted output
+ * 	
  *    DURATION
- * Terminates - with frequency and infinite modes.
- *
+ * 	Terminates - with frequency and infinite modes.
+ * 
  *    SIGNALS
- * Uses SIGUSR1 to pause before test if option set.
- * (See the parse_opts(3) man page).
+ * 	Uses SIGUSR1 to pause before test if option set.
+ * 	(See the parse_opts(3) man page).
  *
  *    RESOURCES
- * None
- *
+ * 	None
+ * 
  *    ENVIRONMENTAL NEEDS
  *      No run-time environmental needs.
- *
+ * 
  *    SPECIAL PROCEDURAL REQUIREMENTS
- * None
- *
+ * 	None
+ * 
  *    INTERCASE DEPENDENCIES
- * None
- *
+ * 	None
+ * 
  *    DETAILED DESCRIPTION
- *
- * Setup:
- *   Setup signal handling.
- *   Pause for SIGUSR1 if option specified.
- *
- * Test:
- *  Loop if the proper options are given.
- *   Loop through the test cases
- *    Execute system call
- *    Check return code, if system call failed (return-1)
- *  if doing functional check
- *     check if errno set correctly, report results
- *   Otherwise, Issue a FAIL message.
- *
- * Cleanup:
- *   Print errno log and/or timing stats if options given
- *
- *
+ * 
+ * 	Setup:
+ * 	  Setup signal handling.
+ *	  Pause for SIGUSR1 if option specified.
+ * 
+ * 	Test:
+ *	 Loop if the proper options are given.
+ *	  Loop through the test cases
+ * 	   Execute system call
+ *	   Check return code, if system call failed (return=-1)
+ *		if doing functional check
+ *		   check if errno set correctly, report results
+ *	  Otherwise, Issue a FAIL message.
+ * 
+ * 	Cleanup:
+ * 	  Print errno log and/or timing stats if options given
+ * 
+ * 
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
 #include <sys/types.h>
@@ -120,13 +120,13 @@ void setup();
 void cleanup();
 
 
-char *TCID"dup02";/* Test program identifier.    */
-int TST_TOTAL2;   /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID="dup02"; 		/* Test program identifier.    */
+int TST_TOTAL=2;    		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-int exp_enos[]{0, 0};
+int exp_enos[]={0, 0};
 
-int Fds[]  { -1, 1500 };
+int Fds[] = { -1, 1500 };
 
 
 /***********************************************************************
@@ -135,17 +135,17 @@ int Fds[]  { -1, 1500 };
 int
 main(int ac, char **av)
 {
-    int lc;  /* loop counter */
-    char *msg;  /* message returned from parse_opts */
-    int nfds  sizeof(Fds) / sizeof(int);
+    int lc;		/* loop counter */
+    char *msg;		/* message returned from parse_opts */
+    int nfds = sizeof(Fds) / sizeof(int);
     int ind;
-
+    
     /***************************************************************
      * parse standard options
      ***************************************************************/
-    if ( (msgparse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *) NULL ) {
- tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
- tst_exit();
+    if ( (msg=parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *) NULL ) {
+	tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	tst_exit();
     }
 
     /***************************************************************
@@ -159,43 +159,43 @@ main(int ac, char **av)
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc0; TEST_LOOPING(lc); lc++) {
+    for (lc=0; TEST_LOOPING(lc); lc++) {
 
- /* reset Tst_count in case we are looping. */
- Tst_count0;
+	/* reset Tst_count in case we are looping. */
+	Tst_count=0;
 
- for (ind0; ind<nfds; ind++) {
+	for (ind=0; ind<nfds; ind++) {
 
-     /*
-      * Call dup(2)
-      */
-     TEST( dup(Fds[ind]) );
+	    /* 
+	     * Call dup(2)
+	     */
+	    TEST( dup(Fds[ind]) );
+	
+	    /* check return code */
+	    if ( TEST_RETURN == -1 ) {
+	        if ( STD_FUNCTIONAL_TEST ) {
+		    if ( TEST_ERRNO == EBADF ) {
+	                tst_resm(TPASS, "dup(%d) Failed, errno=%d : %s", Fds[ind],
+		            TEST_ERRNO, strerror(TEST_ERRNO));
+		    }
+		    else  {
+	                tst_resm(TFAIL,
+			    "dup(%d) Failed, errno=%d %s, expected %d (EBADF)",
+			    Fds[ind], TEST_ERRNO, strerror(TEST_ERRNO), EBADF);
+		    }
+	        }
+	    } else {
+	        tst_resm(TFAIL, "dup(%d) returned %d, expected -1, errno:%d (EBADF)",
+		    Fds[ind], TEST_RETURN, EBADF);
 
-     /* check return code */
-     if ( TEST_RETURN  -1 ) {
-         if ( STD_FUNCTIONAL_TEST ) {
-      if ( TEST_ERRNO  EBADF ) {
-                 tst_resm(TPASS, "dup(%d) Failed, errno%d : %s", Fds[ind],
-              TEST_ERRNO, strerror(TEST_ERRNO));
-      }
-      else  {
-                 tst_resm(TFAIL,
-       "dup(%d) Failed, errno%d %s, expected %d (EBADF)",
-       Fds[ind], TEST_ERRNO, strerror(TEST_ERRNO), EBADF);
-      }
-         }
-     } else {
-         tst_resm(TFAIL, "dup(%d) returned %d, expected -1, errno:%d (EBADF)",
-      Fds[ind], TEST_RETURN, EBADF);
-
-         /* close the new file so loops do not open too many files */
-                if (close(TEST_RETURN)  -1) {
-                   tst_brkm(TBROK, cleanup, "close(%d) Failed, errno%d : %s",
-          TEST_RETURN, errno, strerror(errno));
+	        /* close the new file so loops do not open too many files */
+                if (close(TEST_RETURN) == -1) {
+                   tst_brkm(TBROK, cleanup, "close(%d) Failed, errno=%d : %s",
+		        TEST_RETURN, errno, strerror(errno));
                 }
-     }
- }
-    } /* End for TEST_LOOPING */
+	    }
+	}
+    }	/* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -203,12 +203,12 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-} /* End main */
+}	/* End main */
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void
+void 
 setup()
 {
     /* capture signals */
@@ -220,14 +220,14 @@ setup()
     /* make a temp directory and cd to it */
     tst_tmpdir();
 
-} /* End setup() */
+}	/* End setup() */
 
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *  completion or premature exit.
+ *		completion or premature exit.
  ***************************************************************/
-void
+void 
 cleanup()
 {
     /*
@@ -241,6 +241,6 @@ cleanup()
 
     /* exit with return code appropriate for results */
     tst_exit();
-} /* End cleanup() */
+}	/* End cleanup() */
 
 

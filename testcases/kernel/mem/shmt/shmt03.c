@@ -18,14 +18,14 @@
  */
 
 /* 12/20/2002   Port to LTP     robbiew@us.ibm.com */
-/* 06/30/2001 Port to Linux nsharoff@us.ibm.com */
+/* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
 
 /*
  * NAME
- * shmt3
+ *	shmt3
  *
  * CALLS
- * shmctl(2) shmget(2) shmat(2)
+ *	shmctl(2) shmget(2) shmat(2)
  *
  * ALGORITHM
  * Create one shared memory segment and attach it twice to the same process,
@@ -45,95 +45,95 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID  "shmt03";  /* Test program identifier.    */
-int TST_TOTAL  4;  /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID = "shmt03";		/* Test program identifier.    */
+int TST_TOTAL = 4;		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 /**************/
 
-#define  K_11024
-#define SUCCESSFUL  1
+#define		K_1 		1024
+#define 	SUCCESSFUL	 1
 
 int first_attach, second_attach;
 int rm_shm(int);
 
 int main()
 {
- char *cp1, *cp2;
- int shmid;
- key_t key;
+	char *cp1, *cp2;
+	int shmid;
+	key_t key;
 
- key  (key_t) getpid();
- errno  0;
-
-/*------------------------------------------------------------*/
-
- if ((shmid  shmget(key, 16 * K_1, IPC_CREAT | 0666)) < 0) {
-  perror("shmget");
-  tst_resm(TFAIL, "shmget Failed: shmid  %d, errno  %d\n",
-    shmid, errno);
-  tst_exit();
- }
-
- tst_resm(TPASS, "shmget");
+	key = (key_t) getpid();
+	errno = 0;
 
 /*------------------------------------------------------------*/
 
- if ((cp1  (char *)shmat(shmid, (void *)0, 0))  (char *)-1) {
-  perror("shmat");
-  tst_resm(TFAIL, "shmat Failed: shmid  %d, errno  %d\n",
-    shmid, errno);
- } else {
-  *cp1  '1';
-  *(cp1 + 5 * K_1)  '2';
-  first_attach  SUCCESSFUL;
- }
+	if ((shmid = shmget(key, 16 * K_1, IPC_CREAT | 0666)) < 0) {
+		perror("shmget");
+		tst_resm(TFAIL, "shmget Failed: shmid = %d, errno = %d\n",
+			 shmid, errno);
+		tst_exit();
+	}
 
- tst_resm(TPASS, "1st shmat");
+	tst_resm(TPASS, "shmget");
 
 /*------------------------------------------------------------*/
 
- if ((cp2  (char *)shmat(shmid, (void *)0, 0))  (char *)-1) {
-  perror("shmat");
-  tst_resm(TFAIL, "shmat Failed: shmid  %d, errno  %d\n",
-    shmid, errno);
- } else {
-  second_attach  SUCCESSFUL;
-  if ((*cp2 ! '1' || *(cp2 + 5 * K_1) ! '2') &&
-      first_attach  SUCCESSFUL) {
-   tst_resm(TFAIL, "Error: Shared memory contents\n");
-  }
- }
+	if ((cp1 = (char *)shmat(shmid, (void *)0, 0)) == (char *)-1) {
+		perror("shmat");
+		tst_resm(TFAIL, "shmat Failed: shmid = %d, errno = %d\n",
+			 shmid, errno);
+	} else {
+		*cp1 = '1';
+		*(cp1 + 5 * K_1) = '2';
+		first_attach = SUCCESSFUL;
+	}
 
- tst_resm(TPASS, "2nd shmat");
+	tst_resm(TPASS, "1st shmat");
+
+/*------------------------------------------------------------*/
+
+	if ((cp2 = (char *)shmat(shmid, (void *)0, 0)) == (char *)-1) {
+		perror("shmat");
+		tst_resm(TFAIL, "shmat Failed: shmid = %d, errno = %d\n",
+			 shmid, errno);
+	} else {
+		second_attach = SUCCESSFUL;
+		if ((*cp2 != '1' || *(cp2 + 5 * K_1) != '2') &&
+		    first_attach == SUCCESSFUL) {
+			tst_resm(TFAIL, "Error: Shared memory contents\n");
+		}
+	}
+
+	tst_resm(TPASS, "2nd shmat");
 
 /*---------------------------------------------------------------*/
 
- rm_shm(shmid);
+	rm_shm(shmid);
 
- if (first_attach && second_attach) {
-  if (*cp2 ! '1' || *(cp2 + 5 * K_1) ! '2' ||
-      *cp1 ! '1' || *(cp1 + 5 * K_1) ! '2') {
-   tst_resm(TFAIL, "Error: Shared memory contents\n");
-  }
- }
+	if (first_attach && second_attach) {
+		if (*cp2 != '1' || *(cp2 + 5 * K_1) != '2' ||
+		    *cp1 != '1' || *(cp1 + 5 * K_1) != '2') {
+			tst_resm(TFAIL, "Error: Shared memory contents\n");
+		}
+	}
 
- tst_resm(TPASS, "Correct shared memory contents");
+	tst_resm(TPASS, "Correct shared memory contents");
 /*-----------------------------------------------------------------*/
- tst_exit();
+	tst_exit();
 
 /*----------------------------------------------------------------*/
- return (0);
+	return (0);
 }
 
 int rm_shm(shmid)
 int shmid;
 {
- if (shmctl(shmid, IPC_RMID, NULL)  -1) {
-  perror("shmctl");
-  tst_resm(TFAIL,
-    "shmctl Failed to remove: shmid  %d, errno  %d\n",
-    shmid, errno);
-  tst_exit();
- }
- return (0);
+	if (shmctl(shmid, IPC_RMID, NULL) == -1) {
+		perror("shmctl");
+		tst_resm(TFAIL,
+			 "shmctl Failed to remove: shmid = %d, errno = %d\n",
+			 shmid, errno);
+		tst_exit();
+	}
+	return (0);
 }

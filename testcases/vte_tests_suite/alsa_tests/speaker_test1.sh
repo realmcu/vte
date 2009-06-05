@@ -18,23 +18,23 @@
 #                          Modification     Tracking
 # Author                       Date          Number    Description of Changes
 #-----------------------   ------------    ----------  ---------------------
-# Spring Zhang               24/07/2008       n/a        Initial ver.
+# Spring Zhang               24/07/2008       n/a        Initial ver. 
 # Spring                     02/09/2008       n/a        Add MX51 support
 # Spring                     22/10/2008       n/a        Modify MX51 enable
 # Spring                     28/11/2008       n/a        Modify COPYRIGHT header
 # Spring                     18/05/2009       n/a        Add BBG2 support
 #############################################################################
-# Portability:  ARM sh bash
+# Portability:  ARM sh bash 
 #
-# File Name:
+# File Name:    
 # Total Tests:        1
 # Test Strategy: basic speaker function test
+# 
+# Input:	- $1 - audio stream
 #
-# Input: - $1 - audio stream
+# Return:       - 
 #
-# Return:       -
-#
-# Use command "./speaker_test1.sh [audio stream]"
+# Use command "./speaker_test1.sh [audio stream]" 
 
 # Function:     setup
 #
@@ -94,7 +94,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup()
+cleanup() 
 {
     RC=0
     echo "clean up environment..."

@@ -57,9 +57,9 @@ void   *myAllocateMemory(U32 size)
 
     // This is currently defined to be malloc. Application specific
     // allocation can be substituted here
-    ptr  malloc(size);
+    ptr = malloc(size);
 
-    if (ptr  NULL)
+    if (ptr == NULL)
     {
         fprintf(stderr, "Error allocating memory\n");
         Exit;
@@ -117,15 +117,15 @@ void CreateDirectoriesIfNeeded(char *filenameStr)
 {
     char   *nextSlashPtr;
 
-    nextSlashPtr  filenameStr + 1;
+    nextSlashPtr = filenameStr + 1;
     while (1)
     {                                           // for each directory in the path
-        nextSlashPtr  strchr(nextSlashPtr, '/');   // find the next slash
-        if (nextSlashPtr  NULL)               // if no more slashes
+        nextSlashPtr = strchr(nextSlashPtr, '/');   // find the next slash
+        if (nextSlashPtr == NULL)               // if no more slashes
             return;
-        *nextSlashPtr  '\0';                   // shorten the string to just the directory name
+        *nextSlashPtr = '\0';                   // shorten the string to just the directory name
         createDir(filenameStr);
-        *nextSlashPtr  '/';                    // repair the string
+        *nextSlashPtr = '/';                    // repair the string
         nextSlashPtr++;                         // process the remaining string
     }
 }
@@ -133,12 +133,12 @@ void CreateDirectoriesIfNeeded(char *filenameStr)
 #ifdef _WIN32
 static void UnixToDosFilename(char *filename)
 {
-    int     i, n  strlen(filename);
+    int     i, n = strlen(filename);
 
-    for (i  0; i < n; i++)
+    for (i = 0; i < n; i++)
     {
-        if (filename[i]  '/')
-            filename[i]  '\\';                 //Convert to DOS pathname
+        if (filename[i] == '/')
+            filename[i] = '\\';                 //Convert to DOS pathname
 
     }
     return;
@@ -153,10 +153,10 @@ int createDir(char *dirname)
 {
     FILE   *f;
     char    cmd[256];
-
+                   
     // create a dir if it doesn't exist
-    f  fopen(dirname, "r");
-    if (f  0)
+    f = fopen(dirname, "r");
+    if (f == 0) 
     {
         strcpy(cmd, "mkdir -p ");
         strcat(cmd, dirname);

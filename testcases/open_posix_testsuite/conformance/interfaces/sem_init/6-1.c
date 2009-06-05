@@ -1,8 +1,8 @@
 /*
     Copyright (c) 2003, Intel Corporation. All rights reserved.
     Created by:  majid.awad REMOVE-THIS AT intel DOT com
-    This file is licensed under the GPL license.  For the full content
-    of this license, see the COPYING file at the top level of this
+    This file is licensed under the GPL license.  For the full content 
+    of this license, see the COPYING file at the top level of this 
     source tree.
  */
 /* sem_init shall fail if the valueargument exceeds SEM_VALUE_MAX.
@@ -25,24 +25,24 @@
 
 int main()
 {
- sem_t   mysemp;
- int counter  SEM_VALUE_MAX;
+	sem_t   mysemp;
+	int counter = SEM_VALUE_MAX;
 
- if (SEM_VALUE_MAX > INT_MAX)
- {
-  puts("Test skipped");
-  return PTS_PASS;
+	if (SEM_VALUE_MAX >= INT_MAX)
+	{
+		puts("Test skipped");
+		return PTS_PASS;
         }
 
- ++counter;
+	++counter;
         sem_init (&mysemp, 0, counter);
 
 
- if ( errno  EINVAL )  {
-  puts("TEST PASSED");
-  return PTS_PASS;
- } else {
-  puts("TEST FAILED");
-  return PTS_FAIL;
- }
+	if ( errno == EINVAL )  {
+		puts("TEST PASSED");
+		return PTS_PASS;
+	} else {
+		puts("TEST FAILED");
+		return PTS_FAIL;
+	}
 }

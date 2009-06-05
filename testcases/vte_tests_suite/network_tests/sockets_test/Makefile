@@ -10,7 +10,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
@@ -25,7 +25,7 @@
 CFLAGS+=	-Wall -I../../../../include
 LOADLIBES+=	-L../../../../lib -lltp
 
-SRCS=socket_client_main.c socket_client_test.c socket_server_main.c socket_server_test.c
+SRCS=socket_client_main.c socket_client_test.c socket_server_main.c socket_server_test.c 
 OBJS=$(SRCS:.c=.o)
 
 #TO BE UPDATED WITH THE TEST APPLICATION NAME

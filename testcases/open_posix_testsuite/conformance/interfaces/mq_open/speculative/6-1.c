@@ -33,17 +33,17 @@ int main()
 
         sprintf(qname, "/msgqueue_%d", getpid());
 
-        queue  mq_open(qname, O_CREAT |O_RDWR | O_WRONLY,
-         S_IRUSR | S_IWUSR, NULL);
-        if (queue ! (mqd_t)-1) {
-  printf("In this implementation, mq_open() does not fail\n");
-  printf("on invalid flags\n");
-  mq_close(queue);
-  mq_unlink(qname);
-  return PTS_PASS;
+        queue = mq_open(qname, O_CREAT |O_RDWR | O_WRONLY,
+		       	S_IRUSR | S_IWUSR, NULL);
+        if (queue != (mqd_t)-1) {
+		printf("In this implementation, mq_open() does not fail\n");
+		printf("on invalid flags\n");
+		mq_close(queue);
+		mq_unlink(qname);
+		return PTS_PASS;
         }
 
- printf("In this implementation, mq_open() fails on invalid flags\n");
+	printf("In this implementation, mq_open() fails on invalid flags\n");
         return PTS_PASS;
 }
 

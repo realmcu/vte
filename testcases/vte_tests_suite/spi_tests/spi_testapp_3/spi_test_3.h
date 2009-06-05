@@ -10,13 +10,13 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-
+     
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Tony THOMASSIN/RB595C        18/05/2004     TLSbo39490  SPI test development
+Tony THOMASSIN/RB595C        18/05/2004     TLSbo39490  SPI test development 
 
 ==================================================================================================*/
 
@@ -46,7 +46,7 @@ extern "C"{
                                              ENUMS
 ==================================================================================================*/
 /** TEMPLATE_EX type */
-typedef enum
+typedef enum 
 {
     TEMPLATE_EX_0 = 0,   /**< Example stuff 0. */
     TEMPLATE_EX_1        /**< Example stuff 1. */

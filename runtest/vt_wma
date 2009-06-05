@@ -1,0 +1,16 @@
+#Verification Tests Command File
+
+#VT WMA codec tests
+#files: wma_decoder_testapp
+#files: wmad_cfg wmad_cfg_robustness
+
+#WMA decoder tests
+TG-LV-WMAD-0010 wma_decoder_testapp -T 0 -C $LTPROOT/testcases/bin/configs/wmad_cfg -V
+TG-LV-WMAD-0020 wma_decoder_testapp -T 1 -C $LTPROOT/testcases/bin/configs/wmad_cfg_robustness -V
+TG-LV-WMAD-0030 wma_decoder_testapp -T 2 -C $LTPROOT/testcases/bin/configs/wmad_cfg -N 10 -V
+TG-LV-WMAD-0040 wma_decoder_testapp -T 3 -C $LTPROOT/testcases/bin/configs/wmad_cfg -V
+TG-LV-WMAD-0050 wma_decoder_testapp -T 4 -C $LTPROOT/testcases/bin/configs/wmad_cfg -V
+TG-LV-WMAD-0060 wma_decoder_testapp -T 4 -C $LTPROOT/testcases/bin/configs/wmad_cfg -N 10 -V
+TG-LV-WMAD-0070 wma_decoder_testapp -T 5 -C $LTPROOT/testcases/bin/configs/wmad_cfg -V
+
+

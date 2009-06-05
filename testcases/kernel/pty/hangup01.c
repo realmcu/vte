@@ -38,8 +38,8 @@
 #include "usctest.h"
 
 
-char *TCID"hangup01";            /* Test program identifier.    */
-int TST_TOTAL5;                /* Total number of test cases. */
+char *TCID="hangup01";            /* Test program identifier.    */
+int TST_TOTAL=5;                /* Total number of test cases. */
 extern int Tst_count;           /* Test Case counter for tst_* routines */
 /**************/
 
@@ -62,77 +62,77 @@ extern int Tst_count;           /* Test Case counter for tst_* routines */
 int
 parent(int masterfd, int childpid)
 {
- char buf[BUFSZ];
- struct pollfd pollfds[1];
- int hangupcount  0;
- int datacount  0;
- int status;
- int i;
- int len  strlen(MESSAGE1);
+	char buf[BUFSZ];
+	struct pollfd pollfds[1];
+	int hangupcount = 0;
+	int datacount = 0;
+	int status;
+	int i;
+	int len = strlen(MESSAGE1);
 
- pollfds[0].fd  masterfd;
- pollfds[0].events  POLLIN;
+	pollfds[0].fd = masterfd;
+	pollfds[0].events = POLLIN;
 
         sleep(1);
 
- while ((i  poll(pollfds, 1, -1))  1) {
-  if (read(masterfd, buf, len)  -1) {
-   ++hangupcount;
+	while ((i = poll(pollfds, 1, -1)) == 1) {
+		if (read(masterfd, buf, len) == -1) {
+			++hangupcount;
 #ifdef DEBUG
-   tst_resm(TINFO,"hangup %d", hangupcount);
+			tst_resm(TINFO,"hangup %d", hangupcount);
 #endif
-   if (hangupcount  NUMMESSAGES) {
-    break;
-   }
-  } else {
-   ++datacount;
-   switch (datacount) {
-   case 1:
-    if (strncmp(buf, MESSAGE1,
-        strlen(MESSAGE1)) ! 0) {
-     tst_resm(TFAIL, "unexpected message 1");
-     tst_exit();
-    }
-    len  strlen(MESSAGE2);
-    break;
-   case 2:
-    if (strncmp(buf, MESSAGE2,
-        strlen(MESSAGE2)) ! 0) {
-     tst_resm(TFAIL, "unexpected message 2");
-     tst_exit();
-    }
-    len  strlen(MESSAGE3);
-    break;
-   case 3:
-    if (strncmp(buf, MESSAGE3,
-        strlen(MESSAGE3)) ! 0) {
-     tst_resm(TFAIL, "unexpected message 3");
-     tst_exit();
-    }
-    break;
-   default:
-    tst_resm(TFAIL, "unexpected data message");
-    tst_exit();
-    /*NOTREACHED*/
-   }
-  }
- }
- if (i ! 1) {
-  tst_resm(TFAIL,"poll");
-  tst_exit();
- }
- while (wait(&status) ! childpid) {
-  ;
- }
- if (status ! 0) {
-  tst_resm(TFAIL, "child process exited with status %d", status);
-  tst_exit();
- }
- tst_resm(TPASS,"Pass");
- tst_exit();
-
- /*NOTREACHED*/
- return(0);
+			if (hangupcount == NUMMESSAGES) {
+				break;
+			}
+		} else {
+			++datacount;
+			switch (datacount) {
+			case 1:
+				if (strncmp(buf, MESSAGE1,
+				    strlen(MESSAGE1)) != 0) {
+					tst_resm(TFAIL, "unexpected message 1");
+					tst_exit();
+				}
+				len = strlen(MESSAGE2);
+				break;
+			case 2:
+				if (strncmp(buf, MESSAGE2,
+				    strlen(MESSAGE2)) != 0) {
+					tst_resm(TFAIL, "unexpected message 2");
+					tst_exit();
+				}
+				len = strlen(MESSAGE3);
+				break;
+			case 3:
+				if (strncmp(buf, MESSAGE3,
+				    strlen(MESSAGE3)) != 0) {
+					tst_resm(TFAIL, "unexpected message 3");
+					tst_exit();
+				}
+				break;
+			default:
+				tst_resm(TFAIL, "unexpected data message");
+				tst_exit();
+				/*NOTREACHED*/
+			}
+		}
+	}
+	if (i != 1) {
+		tst_resm(TFAIL,"poll");
+		tst_exit();
+	}
+	while (wait(&status) != childpid) {
+		;
+	}
+	if (status != 0) {
+		tst_resm(TFAIL, "child process exited with status %d", status);
+		tst_exit();
+	}
+	tst_resm(TPASS,"Pass");
+	tst_exit();
+	
+	/*NOTREACHED*/
+	return(0);
 }
 
 
@@ -143,50 +143,50 @@ parent(int masterfd, int childpid)
 void
 child(int masterfd)
 {
- int slavefd;
- char *slavename;
+	int slavefd;
+	char *slavename;
 
 
- if ((slavename  ptsname(masterfd))  (char *)0) {
-  tst_resm(TBROK,"ptsname");
-  tst_exit();
- }
- if ((slavefd  open(slavename, O_RDWR)) < 0) {
-  tst_resm(TBROK,slavename);
-  tst_exit();
- }
- if (write(slavefd, MESSAGE1, strlen(MESSAGE1)) ! strlen(MESSAGE1)) {
-  tst_resm(TBROK,"write");
-  tst_exit();
- }
- if (close(slavefd) ! 0) {
-  tst_resm(TBROK,"close");
-  tst_exit();
- }
- if ((slavefd  open(slavename, O_RDWR)) < 0) {
-  tst_resm(TBROK,"open %s",slavename);
-  tst_exit();
- }
- if (write(slavefd, MESSAGE2, strlen(MESSAGE2)) ! strlen(MESSAGE2)) {
-  tst_resm(TBROK,"write");
-  tst_exit();
- }
- if (close(slavefd) ! 0) {
-  tst_resm(TBROK,"close");
-  tst_exit();
- }
- if ((slavefd  open(slavename, O_RDWR)) < 0) {
-  tst_resm(TBROK,"open %s",slavename);
-  tst_exit();
- }
- if (write(slavefd, MESSAGE3, strlen(MESSAGE3)) ! strlen(MESSAGE3)) {
-  tst_resm(TBROK,"write");
-  tst_exit();
- }
- if (close(slavefd) ! 0) {
-  tst_resm(TBROK,"close");
-  tst_exit();
- }
+	if ((slavename = ptsname(masterfd)) == (char *)0) {
+		tst_resm(TBROK,"ptsname");
+		tst_exit();
+	}
+	if ((slavefd = open(slavename, O_RDWR)) < 0) {
+		tst_resm(TBROK,slavename);
+		tst_exit();
+	}
+	if (write(slavefd, MESSAGE1, strlen(MESSAGE1)) != strlen(MESSAGE1)) {
+		tst_resm(TBROK,"write");
+		tst_exit();
+	}
+	if (close(slavefd) != 0) {
+		tst_resm(TBROK,"close");
+		tst_exit();
+	}
+	if ((slavefd = open(slavename, O_RDWR)) < 0) {
+		tst_resm(TBROK,"open %s",slavename);
+		tst_exit();
+	}
+	if (write(slavefd, MESSAGE2, strlen(MESSAGE2)) != strlen(MESSAGE2)) {
+		tst_resm(TBROK,"write");
+		tst_exit();
+	}
+	if (close(slavefd) != 0) {
+		tst_resm(TBROK,"close");
+		tst_exit();
+	}
+	if ((slavefd = open(slavename, O_RDWR)) < 0) {
+		tst_resm(TBROK,"open %s",slavename);
+		tst_exit();
+	}
+	if (write(slavefd, MESSAGE3, strlen(MESSAGE3)) != strlen(MESSAGE3)) {
+		tst_resm(TBROK,"write");
+		tst_exit();
+	}
+	if (close(slavefd) != 0) {
+		tst_resm(TBROK,"close");
+		tst_exit();
+	}
 }
 
 /*
@@ -194,45 +194,45 @@ child(int masterfd)
  */
 int main(int argc, char **argv)
 {
- int masterfd;  /* master pty fd */
- char *slavename;
- int childpid;
+	int masterfd;		/* master pty fd */
+	char *slavename;
+	int childpid;
 
 /*--------------------------------------------------------------------*/
- masterfd  open(MASTERCLONE, O_RDWR);
- if (masterfd < 0) {
-  tst_resm(TBROK,"open %s",MASTERCLONE);
-  tst_exit();
- }
+	masterfd = open(MASTERCLONE, O_RDWR);
+	if (masterfd < 0) {
+		tst_resm(TBROK,"open %s",MASTERCLONE);
+		tst_exit();
+	}
 
- slavename  ptsname(masterfd);
- if (slavename  (char *)0) {
-  tst_resm(TBROK,"ptsname");
-  tst_exit();
- }
+	slavename = ptsname(masterfd);
+	if (slavename == (char *)0) {
+		tst_resm(TBROK,"ptsname");
+		tst_exit();
+	}
 
- if (grantpt(masterfd) ! 0) {
-  tst_resm(TBROK,"grantpt");
-  tst_exit();
- }
+	if (grantpt(masterfd) != 0) {
+		tst_resm(TBROK,"grantpt");
+		tst_exit();
+	}
 
- if (unlockpt(masterfd) ! 0) {
-  tst_resm(TBROK,"unlockpt");
-  tst_exit();
- }
+	if (unlockpt(masterfd) != 0) {
+		tst_resm(TBROK,"unlockpt");
+		tst_exit();
+	}
 
- childpid  fork();
- if (childpid  -1) {
-  tst_resm(TBROK,"fork");
-  tst_exit();
- } else if (childpid  0) {
-  child(masterfd);
-  tst_exit();
- } else {
-  parent(masterfd, childpid);
- }
+	childpid = fork();
+	if (childpid == -1) {
+		tst_resm(TBROK,"fork");
+		tst_exit();
+	} else if (childpid == 0) {
+		child(masterfd);
+		tst_exit();
+	} else {
+		parent(masterfd, childpid);
+	}
 /*--------------------------------------------------------------------*/
- tst_exit();
- /*NOTREACHED*/
- return(0);
+	tst_exit();
+	/*NOTREACHED*/
+	return(0);
 }

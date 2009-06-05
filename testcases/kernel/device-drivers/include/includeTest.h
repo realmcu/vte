@@ -27,7 +27,7 @@
 #define DEV_PATH		"/dev"
 #define INCLUDE_DEVICE_PATH	DEV_PATH "/"
 #define INCLUDEMAJOR		253
-#define MINOR_SHIFT_BITS 3
+#define MINOR_SHIFT_BITS 	3
 #define MAX_PARTITIONS		8
 #define MAX_NUM_DISKS		3
 #define DEV_NAME		"includeTest"

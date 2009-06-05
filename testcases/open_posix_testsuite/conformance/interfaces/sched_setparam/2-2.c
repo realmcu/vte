@@ -1,4 +1,4 @@
-/*
+/* 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -26,7 +26,7 @@
  *     counter is reasonably lower than the fathers one, the test is
  *     succesfull.
  *  7. The father kill all other children.
- *
+ *  
  */
 
 #include <sched.h>
@@ -58,155 +58,155 @@
 #define STDOUT 1
 #define STDERR 2
 
-int nb_child;   /* Number of child processes  number of CPUs */
-int count  0;
+int nb_child;   /* Number of child processes == number of CPUs */
+int count = 0;
 int the_pipe[2];
 
 /* Get the number of CPUs */
 int get_ncpu() {
- int ncpu  -1;
+	int ncpu = -1;
 
- /* This syscall is not POSIX but it should work on many system */
+	/* This syscall is not POSIX but it should work on many system */
 #ifdef _SC_NPROCESSORS_ONLN
- ncpu  sysconf(_SC_NPROCESSORS_ONLN);
+	ncpu = sysconf(_SC_NPROCESSORS_ONLN);
 #else
 # ifdef BSD
- int mib[2];
- size_t len  sizeof(ncpu);
- mib[0]  CTL_HW;
- mib[1]  HW_NCPU;
- sysctl(mib, 2, &ncpu, &len, NULL, 0);
+	int mib[2];
+	size_t len = sizeof(ncpu);
+	mib[0] = CTL_HW;
+	mib[1] = HW_NCPU;
+	sysctl(mib, 2, &ncpu, &len, NULL, 0);
 # else
 #  ifdef HPUX
- struct pst_dynamic psd;
- pstat_getdynamic(&psd, sizeof(psd), 1, 0);
- ncpu  (int)psd.psd_proc_cnt;
+	struct pst_dynamic psd; 
+	pstat_getdynamic(&psd, sizeof(psd), 1, 0);
+	ncpu = (int)psd.psd_proc_cnt; 
 #  endif /* HPUX */
 # endif /* BSD */
-#endif /* _SC_NPROCESSORS_ONLN */
+#endif /* _SC_NPROCESSORS_ONLN */  
 
- return ncpu;
+	return ncpu;
 }
 
 void child_process(int id){
- int i;
- struct sched_param param;
+	int i;
+	struct sched_param param;
 
- if(id  nb_child-1){
-  param.sched_priority  sched_get_priority_min(SCHED_RR);
-  sched_setparam(getpid(), &param);
- }
+	if(id == nb_child-1){
+		param.sched_priority = sched_get_priority_min(SCHED_RR);
+		sched_setparam(getpid(), &param);
+	}
 
- for(i0; i<NB_LOOP_CHILD; i++) {
-  count ++;
- }
+	for(i=0; i<NB_LOOP_CHILD; i++) {
+		count ++;
+	}
 }
-
+  
 void sigterm_handler(int signum) {
- close(STDOUT);
- close(the_pipe[0]);
- dup2(the_pipe[1],STDOUT);
- close(the_pipe[1]);
+	close(STDOUT);
+	close(the_pipe[0]);
+	dup2(the_pipe[1],STDOUT);
+	close(the_pipe[1]);
 
- printf("*%i*", count);
- fflush(stdout);
+	printf("*%i*", count);
+	fflush(stdout);
 
- exit(0);
+	exit(0);
 }
 
 int main(){
         int child_count, i;
- struct sched_param param;
- int *child_pid;
- float ratio;
+	struct sched_param param;
+	int *child_pid;
+	float ratio;
 
- nb_child  get_ncpu();
- if(nb_child  -1) {
-  printf("Can not get the number of CPUs of your machine.\n");
-  return PTS_UNRESOLVED;
- }
- child_pid  malloc(nb_child);
+	nb_child = get_ncpu();
+	if(nb_child == -1) {
+		printf("Can not get the number of CPUs of your machine.\n");
+		return PTS_UNRESOLVED;
+	}
+	child_pid = malloc(nb_child);
 
- param.sched_priority  ( sched_get_priority_min(SCHED_RR) +
-     sched_get_priority_max(SCHED_RR) ) / 2;
+	param.sched_priority = ( sched_get_priority_min(SCHED_RR) +
+				 sched_get_priority_max(SCHED_RR) ) / 2;
+	
+	if(sched_setscheduler(getpid(), SCHED_RR, &param) == -1){
+		if(errno == EPERM){
+			printf("This process does not have the permission to set its own scheduling policy.\nTry to launch this test as root\n");
+		} else {
+			perror("An error occurs when calling sched_setscheduler()");
+		}
+		return PTS_UNRESOLVED;
+	}
 
- if(sched_setscheduler(getpid(), SCHED_RR, &param)  -1){
-  if(errno  EPERM){
-   printf("This process does not have the permission to set its own scheduling policy.\nTry to launch this test as root\n");
-  } else {
-   perror("An error occurs when calling sched_setscheduler()");
-  }
-  return PTS_UNRESOLVED;
- }
-
- if(signal(SIGTERM, sigterm_handler)  SIG_ERR){
-  perror("An error occurs when calling signal()");
-  return PTS_UNRESOLVED;
+	if(signal(SIGTERM, sigterm_handler) == SIG_ERR){
+		perror("An error occurs when calling signal()");
+		return PTS_UNRESOLVED;
         }
 
- pipe(the_pipe);
+	pipe(the_pipe);
 
- for(i0; i<nb_child; i++) {
-  child_pid[i]  fork();
-  if(child_pid[i]  -1){
-   perror("An error occurs when calling fork()");
-   return PTS_UNRESOLVED;
-  } else if (child_pid[i]  0){
-   child_process(i);
+	for(i=0; i<nb_child; i++) {
+		child_pid[i] = fork();
+		if(child_pid[i] == -1){
+			perror("An error occurs when calling fork()");
+			return PTS_UNRESOLVED;
+		} else if (child_pid[i] == 0){
+			child_process(i);
+			
+			printf("This code should not be executed.\n");
+			return PTS_UNRESOLVED;
+		}
+	}
 
-   printf("This code should not be executed.\n");
-   return PTS_UNRESOLVED;
-  }
- }
+	param.sched_priority = sched_get_priority_max(SCHED_RR);
+	if(sched_setparam(0, &param) != 0) {
+		perror("An error occurs when calling sched_setparam()");
+		return PTS_UNRESOLVED;
+	}
 
- param.sched_priority  sched_get_priority_max(SCHED_RR);
- if(sched_setparam(0, &param) ! 0) {
-  perror("An error occurs when calling sched_setparam()");
-  return PTS_UNRESOLVED;
- }
+	close(STDIN);
+	close(the_pipe[1]);
+	dup2(the_pipe[0],STDIN);
+	close(the_pipe[0]);
 
- close(STDIN);
- close(the_pipe[1]);
- dup2(the_pipe[0],STDIN);
- close(the_pipe[0]);
+	for(i=0; i<NB_LOOP; i++){
+		count++;
+	}
 
- for(i0; i<NB_LOOP; i++){
-  count++;
- }
+	if(kill(child_pid[nb_child-1], SIGTERM) != 0) {
+		perror("An error occurs when calling kill()");
+		return PTS_UNRESOLVED;
+	}
 
- if(kill(child_pid[nb_child-1], SIGTERM) ! 0) {
-  perror("An error occurs when calling kill()");
-  return PTS_UNRESOLVED;
- }
+	param.sched_priority = sched_get_priority_min(SCHED_RR);
+	if(sched_setparam(0, &param) != 0) {
+		perror("An error occurs when calling sched_setparam()");
+		return PTS_UNRESOLVED;
+	}
 
- param.sched_priority  sched_get_priority_min(SCHED_RR);
- if(sched_setparam(0, &param) ! 0) {
-  perror("An error occurs when calling sched_setparam()");
-  return PTS_UNRESOLVED;
- }
+	while(scanf("*%i*",&child_count) == 0) 
+		sched_yield();
 
- while(scanf("*%i*",&child_count)  0)
-  sched_yield();
+	for(i=0; i<nb_child-1; i++) {
+		if(kill(child_pid[i], SIGKILL) != 0) {
+			perror("An error occurs when calling kill()");
+			return PTS_UNRESOLVED;
+		}
+	}
 
- for(i0; i<nb_child-1; i++) {
-  if(kill(child_pid[i], SIGKILL) ! 0) {
-   perror("An error occurs when calling kill()");
-   return PTS_UNRESOLVED;
-  }
- }
+	if(child_count)
+		ratio = (float)count / (float)child_count;
 
- if(child_count)
-  ratio  (float)count / (float)child_count;
-
- if(child_count  0 || ratio > ACCEPTABLE_RATIO) {
-  printf("Test PASSED\n");
-  return PTS_PASS;
- } else if(ratio < (1/ACCEPTABLE_RATIO)) {
-  printf("Higher numerical values for the priority represent the lower priorities.\n");
-  return PTS_FAIL;
- } else {
-  printf("The difference between the processes is not representative.\n");
-  return PTS_UNRESOLVED;
- }
+	if(child_count == 0 || ratio >= ACCEPTABLE_RATIO) {
+		printf("Test PASSED\n");
+		return PTS_PASS;
+	} else if(ratio <= (1/ACCEPTABLE_RATIO)) {
+		printf("Higher numerical values for the priority represent the lower priorities.\n");
+		return PTS_FAIL;
+	} else {
+		printf("The difference between the processes is not representative.\n");
+		return PTS_UNRESOLVED;
+	}
 
 }

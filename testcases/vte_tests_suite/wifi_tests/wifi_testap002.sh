@@ -27,7 +27,7 @@ sleep 2
 iwconfig eth1 mode managed
 sleep 2
 
-iwconfig eth1 key 1234567890
+iwconfig eth1 key 1234567890 
 sleep 3
 
 iwconfig eth1 essid TestAp002

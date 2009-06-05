@@ -13,24 +13,24 @@
 
 #include <libaio.h>
 
-char test_name[]  TEST_NAME;
+char test_name[] = TEST_NAME;
 
 #include TEST_NAME
 
 int main(void)
 {
- int res;
+	int res;
 
- res  test_main();
- printf("test %s completed %s.\n", test_name,
-  res ? "FAILED" : "PASSED"
-  );
- fflush(stdout);
- return res ? 1 : 0;
+	res = test_main();
+	printf("test %s completed %s.\n", test_name, 
+		res ? "FAILED" : "PASSED"
+		);
+	fflush(stdout);
+	return res ? 1 : 0;
 }
 #else
-char *TCID  "aio02/" TEST_NAME;
-int TST_TOTAL0;
+char *TCID = "aio02/" TEST_NAME;
+int TST_TOTAL=0;
 
 int main(void)
 {

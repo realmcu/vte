@@ -19,25 +19,25 @@
 
 /*
  * NAME
- * kill03.c
+ *	kill03.c
  *
  * DESCRIPTION
- * Test case to check that kill fails when given an invalid signal.
+ *	Test case to check that kill fails when given an invalid signal.
  *
  * ALGORITHM
- * call setup
- * loop if the -i option was given
- * fork a child
- * execute the kill system call with an invalid signal
- * check the return value
- * if return value is not -1
- *  issue a FAIL message, break remaining tests and cleanup
- * if we are doing functional testing
- *  if the errno was set to 22 (invalid argument).
- *   issue a PASS message
- *  otherwise
- *   issue a FAIL message
- * call cleanup
+ *	call setup
+ *	loop if the -i option was given
+ *	fork a child
+ *	execute the kill system call with an invalid signal
+ *	check the return value
+ *	if return value is not -1
+ *		issue a FAIL message, break remaining tests and cleanup
+ *	if we are doing functional testing
+ *		if the errno was set to 22 (invalid argument).
+ *			issue a PASS message
+ *		otherwise
+ *			issue a FAIL message
+ *	call cleanup
  *
  * USAGE
  *  kill03 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
@@ -49,10 +49,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * none
+ *	none
  */
 
 #include "test.h"
@@ -66,88 +66,88 @@ void cleanup(void);
 void setup(void);
 void do_child(void);
 
-char *TCID "kill03";
-int TST_TOTAL  1;
+char *TCID= "kill03";
+int TST_TOTAL = 1;
 
 extern int Tst_count;
 
-int exp_enos[]  {EINVAL, 0};
+int exp_enos[] = {EINVAL, 0};
 
 #define TEST_SIG 2000
 
 int main(int ac, char **av)
 {
- int lc;                         /* loop counter */
- char *msg;                      /* message returned from parse_opts */
- pid_t pid;
- int exno, status;
+	int lc;                         /* loop counter */
+	char *msg;                      /* message returned from parse_opts */
+	pid_t pid;			
+	int exno, status;
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	}
 
 #ifdef UCLINUX
- maybe_run_child(&do_child, "");
+	maybe_run_child(&do_child, "");
 #endif
 
- setup();                        /* global setup */
+	setup();                        /* global setup */
 
- TEST_EXP_ENOS(exp_enos);
+	TEST_EXP_ENOS(exp_enos);
 
- /* The following loop checks looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* The following loop checks looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
-  status  1;
-  exno  1;
-  pid  FORK_OR_VFORK();
-  if (pid < 0) {
-   tst_brkm(TBROK, cleanup, "Fork of child failed");
-  } else if (pid  0) {
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
+		status = 1;
+		exno = 1;
+		pid = FORK_OR_VFORK();
+		if (pid < 0) {
+			tst_brkm(TBROK, cleanup, "Fork of child failed");
+		} else if (pid == 0) {
 #ifdef UCLINUX
-   if (self_exec(av[0], "") < 0) {
-    tst_brkm(TBROK, cleanup, "self_exec of child failed");
-   }
+			if (self_exec(av[0], "") < 0) {
+				tst_brkm(TBROK, cleanup, "self_exec of child failed");
+			}
 #else
-   do_child();
+			do_child();
 #endif
-  } else {
-   TEST(kill(pid, TEST_SIG));
-   kill(pid, SIGKILL);
-   waitpid(pid, &status, 0);
-  }
+		} else {
+			TEST(kill(pid, TEST_SIG));
+			kill(pid, SIGKILL);
+			waitpid(pid, &status, 0);
+		}
 
-  if (TEST_RETURN ! -1) {
-   tst_brkm(TFAIL, cleanup, "%s failed - errno  %d : %s "
-    "Expected a return value of -1 got %d",
-    TCID, TEST_ERRNO, strerror(TEST_ERRNO),
-    TEST_RETURN);
-   /*NOTREACHED*/
-  }
+		if (TEST_RETURN != -1) {
+			tst_brkm(TFAIL, cleanup, "%s failed - errno = %d : %s "
+				"Expected a return value of -1 got %d",
+				TCID, TEST_ERRNO, strerror(TEST_ERRNO),
+				TEST_RETURN);
+			/*NOTREACHED*/
+		}
 
-  if (STD_FUNCTIONAL_TEST) {
-   /*
-    * Check to see if the errno was set to the expected
-    * value of 22 : EINVAL.
-    */
-   TEST_ERROR_LOG(TEST_ERRNO);
-   if (TEST_ERRNO  EINVAL) {
-    tst_resm(TPASS, "errno set to %d : %s, as "
-     "expected", TEST_ERRNO,
-     strerror(TEST_ERRNO));
-   } else {
-    tst_resm(TFAIL, "errno set to %d : %s expected "
-     "%d : %s", TEST_ERRNO,
-     strerror(TEST_ERRNO), 22, strerror(22));
-   }
-  }
- }
- cleanup();
+		if (STD_FUNCTIONAL_TEST) {
+			/*
+			 * Check to see if the errno was set to the expected
+			 * value of 22 : EINVAL.
+			 */
+			TEST_ERROR_LOG(TEST_ERRNO);
+			if (TEST_ERRNO == EINVAL) {
+				tst_resm(TPASS, "errno set to %d : %s, as "
+					"expected", TEST_ERRNO,
+					strerror(TEST_ERRNO));
+			} else {
+				tst_resm(TFAIL, "errno set to %d : %s expected "
+					"%d : %s", TEST_ERRNO,
+					strerror(TEST_ERRNO), 22, strerror(22));
+			}
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -156,11 +156,11 @@ int main(int ac, char **av)
 void
 do_child()
 {
- int exno  1;
-
- pause();
- /*NOTREACHED*/
- exit(exno);
+	int exno = 1;
+	
+	pause();
+	/*NOTREACHED*/
+	exit(exno);
 }
 
 /*
@@ -169,8 +169,8 @@ do_child()
 void
 setup(void)
 {
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
@@ -180,12 +180,12 @@ setup(void)
 void
 cleanup(void)
 {
- /*
-  * print timing status if that option was specified.
-  * print errno log if that option was specified
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing status if that option was specified.
+	 * print errno log if that option was specified
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

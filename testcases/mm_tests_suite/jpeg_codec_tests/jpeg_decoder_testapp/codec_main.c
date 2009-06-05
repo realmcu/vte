@@ -14,21 +14,21 @@
         ARM GCC
 */
 
-/* REVISION HISTORY 
+/*======================== REVISION HISTORY ==================================
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
-F.GAFFIE/rb657c       3/05/2004    TLSbo39336    Initial version
+F.GAFFIE/rb657c       3/05/2004    TLSbo39336    Initial version 
 D.Simakov/smkd001c    7/02/2005    TLSbo47113    Update
 D.Simakov/smkd001c    1/02/2006    TLSbo61035    Centralization of common features
-*/
+=============================================================================*/
 
-/*
+/*==================================================================================================
                                         INCLUDE FILES
-*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <stdio.h>
-
+    
 /* Harness Specific Include Files. */
 #include "usctest.h"
 #include "test.h"
@@ -37,23 +37,23 @@ D.Simakov/smkd001c    1/02/2006    TLSbo61035    Centralization of common featur
 #include "codec_test.h"
 
 
-/*
+/*==================================================================================================
                                        GLOBAL VARIABLES
-*/
+==================================================================================================*/
 
-char *          TCID                         NULL;
-int             TST_TOTAL                    1; /*LOAD + 1;*/
-int             gNotSupportedTestCases[]     { -1 };
-int             gNotSupportedTestCasesCount  sizeof(gNotSupportedTestCases)/sizeof(int);
+char *          TCID                        = NULL;
+int             TST_TOTAL                   = 1; /*LOAD + 1;*/
+int             gNotSupportedTestCases[]    = { -1 };
+int             gNotSupportedTestCasesCount = sizeof(gNotSupportedTestCases)/sizeof(int);
 sTestappConfig  gTestappConfig;
 
 
-/*
+/*==================================================================================================
                                        LOCAL FUNCTIONS
-*/
+==================================================================================================*/
 
-/**/
-/**/
+/*================================================================================================*/
+/*================================================================================================*/
 void help( void )
 {
         printf( "Switches (names may be abbreviated):\n\n" );
@@ -71,37 +71,37 @@ void help( void )
         printf( "-F                Enables suspension\n" );
         printf( "-S                Slow bit-matching\n" );
         printf( "-D <sec>          Specifies delay in seconds\n" );
-        printf( "-L                Dsiables LCD\n" );
+        printf( "-L                Dsiables LCD\n" );        
 }
 
 
-/**/
-/**/
+/*================================================================================================*/
+/*================================================================================================*/
 void GetOptions( int argc, char ** argv )
-{
+{        
         /******************/
         /* Parse options. */
         /******************/
-
-        int    testcaseFlag         0;
-        int    iterFlag             0;
-        int    cfgFlag              0;
-        int    verboseFlag          0;
-        int    slowBitmatchingFlag  0;
-        int    suspensionFlag       0;
-        int    delayFlag            0;
-        int    lcdFlag              0;
+        
+        int    testcaseFlag        = 0;
+        int    iterFlag            = 0;
+        int    cfgFlag             = 0;
+        int    verboseFlag         = 0;
+        int    slowBitmatchingFlag = 0;
+        int    suspensionFlag      = 0;
+        int    delayFlag           = 0;
+        int    lcdFlag             = 0;
         char * testcaseOpt;
         char * iterOpt;
         char * cfgOpt;
         char * delayOpt;
         char * msg;
-
-        option_t options[] 
+        
+        option_t options[] =
         {
                 { "T:",  &testcaseFlag,        &testcaseOpt },
                 { "N:",  &iterFlag,            &iterOpt     },
-                { "C:",  &cfgFlag,             &cfgOpt      },
+                { "C:",  &cfgFlag,             &cfgOpt      },                
                 { "V",   &verboseFlag,         NULL         },
                 { "S",   &slowBitmatchingFlag, NULL         },
                 { "F",   &suspensionFlag,      NULL         },
@@ -109,40 +109,40 @@ void GetOptions( int argc, char ** argv )
                 { "L",   &lcdFlag,             NULL         },
                 { NULL,  NULL,                 NULL         }
         };
-
+        
         extern void cleanup( void );
-        if( (msg  parse_opts( argc, argv, options, help )) )
+        if( (msg = parse_opts( argc, argv, options, help )) )
         {
                 tst_brkm( TCONF, cleanup, "OPTION PARSING ERROR - %s", msg );
         }
-
-
+        
+        
         /*****************************************************/
         /* Fill up the gTestappConfig by the parsed options. */
         /*****************************************************/
-
-        gTestappConfig.mTestCase                  testcaseFlag ? atoi( testcaseOpt ) : NOMINAL_FUNCTIONALITY;
-        gTestappConfig.mNumIter                   iterFlag ? atoi( iterOpt ) : DEFAULT_ITERATIONS;
-        gTestappConfig.mConfigFilename            cfgFlag ? cfgOpt : NULL;
-        gTestappConfig.mVerbose                   verboseFlag;
-        gTestappConfig.mSlowBitMatching           slowBitmatchingFlag;
-        gTestappConfig.mSuspension                suspensionFlag;
-        gTestappConfig.mDelay                     delayFlag ? atoi( delayOpt ) : 0;
-        gTestappConfig.mDisableLCD                lcdFlag;
-
+        
+        gTestappConfig.mTestCase                 = testcaseFlag ? atoi( testcaseOpt ) : NOMINAL_FUNCTIONALITY;
+        gTestappConfig.mNumIter                  = iterFlag ? atoi( iterOpt ) : DEFAULT_ITERATIONS;
+        gTestappConfig.mConfigFilename           = cfgFlag ? cfgOpt : NULL;
+        gTestappConfig.mVerbose                  = verboseFlag;
+        gTestappConfig.mSlowBitMatching          = slowBitmatchingFlag;
+        gTestappConfig.mSuspension               = suspensionFlag;
+        gTestappConfig.mDelay                    = delayFlag ? atoi( delayOpt ) : 0;
+        gTestappConfig.mDisableLCD               = lcdFlag;
+                
 
         /**********************************************************/
         /* Check if all of the required arguments were presented. */
-        /**********************************************************/
-
+        /**********************************************************/        
+        
         if( !gTestappConfig.mConfigFilename )
                 tst_brkm( TCONF, cleanup, "Argument required -C" );
 
-
+        
         /**********************************************/
         /* Select the TCID for extra test cases here. */
         /**********************************************/
-
-        if( ROBUSTNESS  gTestappConfig.mTestCase )
-                TCID  "robustness";
+        
+        if( ROBUSTNESS == gTestappConfig.mTestCase )
+                TCID = "robustness";
 }

@@ -19,10 +19,10 @@
 
 /*
  * NAME
- * setuid03.c
+ * 	setuid03.c
  *
  * DESCRIPTION
- * Test to check the error and trivial conditions in setuid
+ * 	Test to check the error and trivial conditions in setuid
  *
  * USAGE:  <for command-line>
  *  setuid03 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -34,10 +34,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * Must be ran as non-root.
+ * 	Must be ran as non-root.
  */
 #include <errno.h>
 #include <sys/types.h>
@@ -47,63 +47,63 @@
 #include "usctest.h"
 #include <pwd.h>
 
-#define ROOT_USER 0
+#define ROOT_USER	0
 
-char *TCID  "setuid03";
-int TST_TOTAL  1;
+char *TCID = "setuid03";
+int TST_TOTAL = 1;
 extern int Tst_count;
-char nobody_uid[]  "nobody";
+char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
-int exp_enos[]  {EPERM, 0};
+int exp_enos[] = {EPERM, 0};
 
 void setup(void);
 void cleanup(void);
 
 int main(int ac, char **av)
 {
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- /*
-  * perform global setup for the test
-  */
- setup();
+	/*
+	 * perform global setup for the test
+	 */
+	setup();
 
- TEST_EXP_ENOS(exp_enos);
+	TEST_EXP_ENOS(exp_enos);
 
- /* check looping state if -i option is given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* check looping state if -i option is given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  TEST(setuid(ROOT_USER));
+		TEST(setuid(ROOT_USER));
 
-  if (TEST_RETURN ! -1) {
-   tst_resm(TFAIL, "call succeeded unexpectedly");
-   continue;
-  }
+		if (TEST_RETURN != -1) {
+			tst_resm(TFAIL, "call succeeded unexpectedly");
+			continue;
+		}
 
-  TEST_ERROR_LOG(TEST_ERRNO);
+		TEST_ERROR_LOG(TEST_ERRNO);
 
-  if (TEST_ERRNO  EPERM) {
-   tst_resm(TPASS, "setuid returned errno EPERM");
-  } else {
-   tst_resm(TFAIL, "setuid returned unexpected errno - %d",
-     TEST_ERRNO);
-  }
- }
- cleanup();
+		if (TEST_ERRNO == EPERM) {
+			tst_resm(TPASS, "setuid returned errno EPERM");
+		} else {
+			tst_resm(TFAIL, "setuid returned unexpected errno - %d",
+				 TEST_ERRNO);
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/	
+	return(0);
 }
 
 /*
@@ -112,12 +112,12 @@ int main(int ac, char **av)
 void
 setup(void)
 {
- /* Switch to nobody user for correct error code collection */
-        if (geteuid() ! 0) {
+	/* Switch to nobody user for correct error code collection */
+        if (geteuid() != 0) {
                 tst_brkm(TBROK, tst_exit, "Test must be run as root");
         }
-         ltpuser  getpwnam(nobody_uid);
-         if (setuid(ltpuser->pw_uid)  -1) {
+         ltpuser = getpwnam(nobody_uid);
+         if (setuid(ltpuser->pw_uid) == -1) {
                 tst_resm(TINFO, "setuid failed to "
                          "to set the effective uid to %d",
                          ltpuser->pw_uid);
@@ -125,28 +125,28 @@ setup(void)
          }
 
 
- /* capture signals */
- tst_sig(FORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
- umask(0);
+	umask(0);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- *        or premature exit
+ * 	       or premature exit
  */
 void
 cleanup(void)
 {
- /*
-  * print timing status if that option was specified
-  * print errno log if that option was specified
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing status if that option was specified
+	 * print errno log if that option was specified
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

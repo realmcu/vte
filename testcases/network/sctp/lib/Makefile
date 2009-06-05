@@ -19,7 +19,7 @@
 #########################################################################
 # name of file	: Makefile						#
 # description	: make(1) description file to build SCTP library        #
-#		                                                        #
+#		                                                        # 
 #########################################################################
 INCLUDES+=-I../include
 
@@ -33,7 +33,7 @@ all: libsctp.a
 libsctp.a: $(OBJS)
 	$(AR) -rc $@ $(OBJS)
 
-$(OBJS): $(SRCS) ../include/netinet/sctp.h
+$(OBJS): $(SRCS) ../include/netinet/sctp.h 
 	$(CC) -c $(SRCS) $(CFLAGS)
 
 install:

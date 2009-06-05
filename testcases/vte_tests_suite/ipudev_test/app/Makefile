@@ -10,7 +10,7 @@ BINDIR = ../../../bin/
 SRCS = mxc_ipudev_test.c utils.c test_pattern.c test_utils.c
 #OBJS = $(patsubst %.c,%.o,$(SRCS))
 LIBS += -L../ipu/ -lipu -lm -L../screenlayer/ -lIpuScreenLayer
-INC = -I$(KLINUX_SRCDIR)/include -I../ipu -I../screenlayer
+INC = -I$(KLINUX_SRCDIR)/include -I../ipu -I../screenlayer 
 CFLAGS += -O3
 
 TARGET = ipu_dev_test

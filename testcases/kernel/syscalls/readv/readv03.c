@@ -20,14 +20,14 @@
 
 /*
  * NAME
- * readv03.c
+ * 	readv03.c
  *
  * DESCRIPTION
- * Testcase to check the error condition of the readv(2) system call
- * when fd refers to a directory.
+ *	Testcase to check the error condition of the readv(2) system call
+ *	when fd refers to a directory.
  *
  * CALLS
- * readv()
+ * 	readv()
  *
  * ALGORITHM
  *      loop if that option was specified
@@ -38,14 +38,14 @@
  *        issue a FAIL message
  *      call cleanup
  *
- * USAGE
- * readv03
+ * USAGE  
+ *	readv03
  *
  * HISTORY
- * 05/2002 Ported by Jacky Malcles
+ *	05/2002 Ported by Jacky Malcles
  *
  * RESTRICTIONS
- * None
+ * 	None
  */
 #include <sys/types.h>
 #include <sys/uio.h>
@@ -57,22 +57,22 @@
 #include "test.h"
 #include "usctest.h"
 
-#define K_1 1024
+#define	K_1	1024
 #define MODES   S_IRWXU
 
-char buf1[K_1];
+char buf1[K_1]; 
 
-struct iovec rd_iovec[1]  {
- {buf1,   K_1}
+struct iovec rd_iovec[1] = { 
+	{buf1,			K_1}
 };
 
-const char *TEST_DIR  "alpha";
+const char *TEST_DIR = "alpha";
 int r_val;
 int fd;
 
 
-char *TCID  "readv03";
-int TST_TOTAL  1;
+char *TCID = "readv03";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 void setup();
@@ -81,39 +81,39 @@ void cleanup();
 
 int main(int ac, char **av)
 {
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- setup();
+	setup();
 
- /* The following loop checks looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* The following loop checks looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  if (readv(fd, rd_iovec, 1) < 0) {
-   if (errno ! EISDIR) {
-    tst_resm(TFAIL, "expected errno  EISDIR, "
-      "got %d", errno);
-   } else {
-    tst_resm(TPASS, "got EISDIR");
-   }
-  } else {
-   tst_resm(TFAIL, "Error: readv returned a positive "
-     "value");
-  }
+		if (readv(fd, rd_iovec, 1) < 0) {
+			if (errno != EISDIR) {
+				tst_resm(TFAIL, "expected errno = EISDIR, "
+					 "got %d", errno);
+			} else {
+				tst_resm(TPASS, "got EISDIR");
+			}
+		} else {
+			tst_resm(TFAIL, "Error: readv returned a positive "
+				 "value");
+		}
 
- }
- cleanup();
- /*NOTREACHED*/
- return(0);
+	}
+	cleanup();
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -123,25 +123,25 @@ void
 setup()
 {
 
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /* make a temporary directory and cd to it */
- tst_tmpdir();
+	/* make a temporary directory and cd to it */
+	tst_tmpdir();
 
         /*
          * create a new directory and open it
          */
 
-        if ((r_val  mkdir(TEST_DIR, MODES))  -1){
+        if ((r_val = mkdir(TEST_DIR, MODES)) == -1){
                 tst_brkm(TBROK, cleanup, "%s - mkdir() in main() "
                          "failed", TCID);
         }
 
-        if ((fd  open(TEST_DIR, O_RDONLY))  -1) {
+        if ((fd = open(TEST_DIR, O_RDONLY)) == -1) {
                 tst_brkm(TBROK, cleanup, "open of directory failed");
         }
 
@@ -149,15 +149,15 @@ setup()
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit.
+ *	       completion or premature exit.
  */
 void
 cleanup()
 {
- if (close(fd) < 0) {
-  tst_brkm(TBROK, cleanup, "close failed: errno  %d", errno);
- }
- tst_rmdir();
- tst_exit();
+	if (close(fd) < 0) {
+		tst_brkm(TBROK, cleanup, "close failed: errno = %d", errno);
+	}
+	tst_rmdir();
+	tst_exit();
 }
 

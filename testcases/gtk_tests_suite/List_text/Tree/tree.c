@@ -1,31 +1,31 @@
-/**/
+/*================================================================================================*/
 /**^M
     @file   tree.c^M
 
-
+==================================================================================================
 
   Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
 
-
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
    Inkina Irina               10/09/2004     ??????      Initial version
 
-
+==================================================================================================
 Portability: Indicate if this module is portable to other compilers or platforms.
              If not, indicate specific reasons why is it not portable.
 
-*/
+==================================================================================================*/
 
 
 #define GTK_ENABLE_BROKEN
 #include <gtk/gtk.h>
-gint vtFALSE;
+gint vt=FALSE;
 
 void destroy_Quit( GtkWidget *widget,gpointer data )
 {
@@ -35,12 +35,12 @@ void destroy_Quit( GtkWidget *widget,gpointer data )
 }
 void destroy_Exit( GtkWidget *widget,gpointer data )
 {
-    vtTRUE;
+    vt=TRUE;
     g_print("Test Fail Exiting with test fail");
     gtk_main_quit();
 }
 
-static GtkItemFactoryEntry menu_items[] 
+static GtkItemFactoryEntry menu_items[] =
 {
   { "/_File",            NULL,         0,                     0, "<Branch>" },
   { "/File/sep1",        NULL,         0,             0, "<Separator>" },
@@ -59,12 +59,12 @@ static void cb_itemsignal( GtkWidget *item,
 
   /* It's a Bin, so it has one child, which we know to be a
      label, so get that */
-  label  GTK_LABEL (GTK_BIN (item)->child);
+  label = GTK_LABEL (GTK_BIN (item)->child);
   /* Get the text of the label */
   gtk_label_get (label, &name);
   /* Get the level of the tree which the item is in */
   g_print ("%s called for item %s->%p, level %d\n", signame, name,
-    item, GTK_TREE (item->parent)->level);
+	   item, GTK_TREE (item->parent)->level);
 }
 
 /* Note that this is never called */
@@ -73,38 +73,38 @@ static void cb_unselect_child( GtkWidget *root_tree,
                                GtkWidget *subtree )
 {
   g_print ("unselect_child called for root tree %p, subtree %p, child %p\n",
-    root_tree, subtree, child);
+	   root_tree, subtree, child);
 }
 
 /* Note that this is called every time the user clicks on an item,
    whether it is already selected or not. */
 static void cb_select_child (GtkWidget *root_tree, GtkWidget *child,
-        GtkWidget *subtree)
+			     GtkWidget *subtree)
 {
   g_print ("select_child called for root tree %p, subtree %p, child %p\n",
-    root_tree, subtree, child);
+	   root_tree, subtree, child);
 }
 
 static void cb_selection_changed( GtkWidget *tree )
 {
   GList *i;
-
+  
   g_print ("selection_change called for tree %p\n", tree);
   g_print ("selected objects are:\n");
 
-  i  GTK_TREE_SELECTION_OLD (tree);
+  i = GTK_TREE_SELECTION_OLD (tree);
   while (i) {
     gchar *name;
     GtkLabel *label;
     GtkWidget *item;
 
     /* Get a GtkWidget pointer from the list node */
-    item  GTK_WIDGET (i->data);
-    label  GTK_LABEL (GTK_BIN (item)->child);
+    item = GTK_WIDGET (i->data);
+    label = GTK_LABEL (GTK_BIN (item)->child);
     gtk_label_get (label, &name);
     g_print ("\t%s on level %d\n", name, GTK_TREE
-      (item->parent)->level);
-    i  i->next;
+	     (item->parent)->level);
+    i = i->next;
   }
 }
 
@@ -119,33 +119,33 @@ int tree_main( int   argc,
 
 
 
-  static gchar *itemnames[]  {"Foo", "Bar", "Baz", "Quux",
-          "Maurice"};
+  static gchar *itemnames[] = {"Foo", "Bar", "Baz", "Quux",
+			       "Maurice"};
   gint i;
 
   gtk_init (&argc, &argv);
 
   /* a generic toplevel window */
-  window  gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   g_signal_connect (G_OBJECT (window), "delete_event",
                     G_CALLBACK (gtk_main_quit), NULL);
   gtk_container_set_border_width (GTK_CONTAINER (window), 5);
 
 
-      accel_group  gtk_accel_group_new ();
-      item_factory  gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
+      accel_group = gtk_accel_group_new ();
+      item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
       g_object_set_data_full (G_OBJECT (window), "<main>",item_factory, (GDestroyNotify) g_object_unref);
       gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
 
       gtk_container_set_border_width (GTK_CONTAINER (window), 0);
 ///////////
       gtk_item_factory_create_items (item_factory,G_N_ELEMENTS(menu_items), menu_items, NULL);
-      box1  gtk_vbox_new (FALSE, 0);
+      box1 = gtk_vbox_new (FALSE, 0);
       gtk_container_add (GTK_CONTAINER (window), box1);
       gtk_box_pack_start (GTK_BOX (box1),gtk_item_factory_get_widget (item_factory, "<main>"),
                           FALSE, FALSE, 0);
 
-      separator  gtk_hseparator_new ();
+      separator = gtk_hseparator_new ();
       gtk_box_pack_start (GTK_BOX (box1), separator, FALSE, TRUE, 0);
 
 /////////
@@ -153,16 +153,16 @@ int tree_main( int   argc,
 
 
   /* A generic scrolled window */
-  scrolled_win  gtk_scrolled_window_new (NULL, NULL);
+  scrolled_win = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
-      GTK_POLICY_AUTOMATIC,
-      GTK_POLICY_AUTOMATIC);
+				  GTK_POLICY_AUTOMATIC,
+				  GTK_POLICY_AUTOMATIC);
   gtk_widget_set_size_request (scrolled_win, 150, 200);
   gtk_container_add (GTK_CONTAINER (box1), scrolled_win);
   gtk_widget_show (scrolled_win);
-
+  
   /* Create the root tree */
-  tree  gtk_tree_new ();
+  tree = gtk_tree_new ();
   g_print ("root tree is %p\n", tree);
   /* connect all GtkTree:: signals */
   g_signal_connect (G_OBJECT (tree), "select_child",
@@ -176,16 +176,16 @@ int tree_main( int   argc,
                                          tree);
   /* Set the selection mode */
   gtk_tree_set_selection_mode (GTK_TREE (tree),
-          GTK_SELECTION_MULTIPLE);
+			       GTK_SELECTION_MULTIPLE);
   /* Show it */
   gtk_widget_show (tree);
 
-  for (i  0; i < 5; i++){
+  for (i = 0; i < 5; i++){
     GtkWidget *subtree, *item;
     gint j;
 
     /* Create a tree item */
-    item  gtk_tree_item_new_with_label (itemnames[i]);
+    item = gtk_tree_item_new_with_label (itemnames[i]);
     /* Connect all GtkItem:: and GtkTreeItem:: signals */
     g_signal_connect (G_OBJECT (item), "select",
                       G_CALLBACK (cb_itemsignal), "select");
@@ -202,21 +202,21 @@ int tree_main( int   argc,
     /* Show it - this can be done at any time */
     gtk_widget_show (item);
     /* Create this item's subtree */
-    subtree  gtk_tree_new ();
+    subtree = gtk_tree_new ();
     g_print ("-> item %s->%p, subtree %p\n", itemnames[i], item,
-      subtree);
+	     subtree);
 
     /* This is still necessary if you want these signals to be called
-       for the subtree's children.  Note that selection_change will be
+       for the subtree's children.  Note that selection_change will be 
        signalled for the root tree regardless. */
     g_signal_connect (G_OBJECT (subtree), "select_child",
-   G_CALLBACK (cb_select_child), subtree);
+			G_CALLBACK (cb_select_child), subtree);
     g_signal_connect (G_OBJECT (subtree), "unselect_child",
-   G_CALLBACK (cb_unselect_child), subtree);
-    /* This has absolutely no effect, because it is completely ignored
+			G_CALLBACK (cb_unselect_child), subtree);
+    /* This has absolutely no effect, because it is completely ignored 
        in subtrees */
     gtk_tree_set_selection_mode (GTK_TREE (subtree),
-     GTK_SELECTION_SINGLE);
+				 GTK_SELECTION_SINGLE);
     /* Neither does this, but for a rather different reason - the
        view_mode and view_line values of a tree are propagated to
        subtrees when they are mapped.  So, setting it later on would
@@ -226,22 +226,22 @@ int tree_main( int   argc,
        AFTER the item has been added to its parent tree! */
     gtk_tree_item_set_subtree (GTK_TREE_ITEM (item), subtree);
 
-    for (j  0; j < 5; j++){
+    for (j = 0; j < 5; j++){
       GtkWidget *subitem;
 
       /* Create a subtree item, in much the same way */
-      subitem  gtk_tree_item_new_with_label (itemnames[j]);
+      subitem = gtk_tree_item_new_with_label (itemnames[j]);
       /* Connect all GtkItem:: and GtkTreeItem:: signals */
       g_signal_connect (G_OBJECT (subitem), "select",
-     G_CALLBACK (cb_itemsignal), "select");
+			  G_CALLBACK (cb_itemsignal), "select");
       g_signal_connect (G_OBJECT (subitem), "deselect",
-     G_CALLBACK (cb_itemsignal), "deselect");
+			  G_CALLBACK (cb_itemsignal), "deselect");
       g_signal_connect (G_OBJECT (subitem), "toggle",
-     G_CALLBACK (cb_itemsignal), "toggle");
+			  G_CALLBACK (cb_itemsignal), "toggle");
       g_signal_connect (G_OBJECT (subitem), "expand",
-     G_CALLBACK (cb_itemsignal), "expand");
+			  G_CALLBACK (cb_itemsignal), "expand");
       g_signal_connect (G_OBJECT (subitem), "collapse",
-     G_CALLBACK (cb_itemsignal), "collapse");
+			  G_CALLBACK (cb_itemsignal), "collapse");
       g_print ("-> -> item %s->%p\n", itemnames[j], subitem);
       /* Add it to its parent tree */
       gtk_tree_append (GTK_TREE (subtree), subitem);

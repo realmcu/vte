@@ -4,4 +4,4 @@ cd ..
 --without-libungif \
 --without-libjpeg \
 --without-bmp \
---libs="./libpng-1.2.20/.libs/libpng.a -lz -lm"
+--libs="./libpng-1.2.20/.libs/libpng.a ../../../../openlibs/lib/libz.a -lm"

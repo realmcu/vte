@@ -25,7 +25,7 @@
 
 /*---------------------------------------------------------------------+
 |                       message_queue_test_01                          |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Description:  Create a message queue to send messages between two    |
 |               processes.                                             |
@@ -82,12 +82,12 @@
 #include <stdlib.h>
 /*
  * Defines
- *
+ * 
  * BUF_SIZE: size of message buffer...
  */
 
 #define key_tt int
-#define FIRST_MSG 0
+#define	FIRST_MSG	0
 #define BUF_SIZE        256
 
 /*
@@ -104,7 +104,7 @@ enum { READ, WRITE };
 
 /*---------------------------------------------------------------------+
 |                               main                                   |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Function:  Main program  (see prolog for more details)               |
 |                                                                      |
@@ -114,131 +114,131 @@ enum { READ, WRITE };
 +---------------------------------------------------------------------*/
 int RM_main (int argc, char **argv)
 {
- key_tt msqid;   /* message queue id */
- struct msgbuf *buf;
- pid_t pid;
- int mode = 0666;
- int fd [2];
+	key_tt	msqid;			/* message queue id */
+	struct msgbuf	*buf;
+	pid_t	pid;
+	int	mode = 0666;
+	int	fd [2];
 
         /*
          * Print out program header
          */
         printf ("%s: IPC Message Queue TestSuite program\n", *argv);
- fflush (stdout);
- pipe (fd);
+	fflush (stdout);
+	pipe (fd);
 
- if ((pid = fork()) == 0) {
-  child (fd);
-  exit (0);
- } else if (pid < (pid_t)0)
-  sys_error ("fork failed", __LINE__);
+	if ((pid = fork()) == 0) {
+		child (fd);
+		exit (0);
+	} else if (pid < (pid_t)0)
+		sys_error ("fork failed", __LINE__);
 
- /*
-  * Create a NEW unique message queue identifier.
-  */
- if ((msqid = msgget (IPC_PRIVATE,  mode|IPC_CREAT|IPC_EXCL)) < 0)
-  sys_error ("msgget failed", __LINE__);
- printf ("\n\tCreate message queue, id: 0x%8.8x\n", msqid);
- fflush (stdout);
+	/*
+	 * Create a NEW unique message queue identifier.
+	 */
+	if ((msqid = msgget (IPC_PRIVATE,  mode|IPC_CREAT|IPC_EXCL)) < 0)
+		sys_error ("msgget failed", __LINE__);
+	printf ("\n\tCreate message queue, id: 0x%8.8x\n", msqid);
+	fflush (stdout);
 
- /*
-  * Send the newly created message queue identifier to the child
-  * process via pipes.  Close pipes after sending identifier.
-  */
- close (fd [READ]);
- if (write (fd [WRITE], &msqid, sizeof (key_tt)) < 0)
-  sys_error ("write failed", __LINE__);
- close (fd [WRITE]);
+	/*
+	 * Send the newly created message queue identifier to the child
+	 * process via pipes.  Close pipes after sending identifier.
+	 */
+	close (fd [READ]);
+	if (write (fd [WRITE], &msqid, sizeof (key_tt)) < 0)
+		sys_error ("write failed", __LINE__);
+	close (fd [WRITE]);
 
- /*
-  * Read the data from the message queue
-  */
- buf = (struct msgbuf *)calloc ((size_t)(sizeof(struct msgbuf) + BUF_SIZE),
-  sizeof (char));
- if (msgrcv (msqid, (void *)buf, (size_t)BUF_SIZE, FIRST_MSG, 0) < 0)
-  sys_error ("msgsnd failed", __LINE__);
- printf ("\n\tParent: received message: %s\n", buf->mtext);
- fflush (stdout);
+	/*
+	 * Read the data from the message queue
+	 */
+	buf = (struct msgbuf *)calloc ((size_t)(sizeof(struct msgbuf) + BUF_SIZE),
+		sizeof (char));
+	if (msgrcv (msqid, (void *)buf, (size_t)BUF_SIZE, FIRST_MSG, 0) < 0)
+		sys_error ("msgsnd failed", __LINE__);
+	printf ("\n\tParent: received message: %s\n", buf->mtext);
+	fflush (stdout);
 
- /*
-  * Remove the message queue from the system
-  */
- printf ("\n\tRemove the message queue\n");
- fflush (stdout);
- if (msgctl (msqid, IPC_RMID, 0) < 0)
-  sys_error ("msgctl (IPC_RMID) failed", __LINE__);
+	/*
+	 * Remove the message queue from the system
+	 */
+	printf ("\n\tRemove the message queue\n");
+	fflush (stdout);
+	if (msgctl (msqid, IPC_RMID, 0) < 0)
+		sys_error ("msgctl (IPC_RMID) failed", __LINE__);
 
         printf ("\nsuccessful!\n");
- fflush (stdout);
- return (0);
+	fflush (stdout);
+	return (0);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               child                                  |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Function:  ...                                                       |
 |                                                                      |
 +---------------------------------------------------------------------*/
 static void child (int fd[])
 {
- key_tt msqid;   /* message queue id */
- size_t nbytes;
- struct msgbuf *buf;
+	key_tt	msqid;			/* message queue id */
+	size_t	nbytes;
+	struct msgbuf	*buf;
 
- /*
-  * Read the message queue identifier from the parent through
-  * the pipe.  Close pipe after reading identifier.
-  */
- close (fd [WRITE]);
- if (read (fd [READ], &msqid, sizeof (key_tt)) < 0)
-  sys_error ("read failed", __LINE__);
- close (fd [READ]);
+	/*
+	 * Read the message queue identifier from the parent through
+	 * the pipe.  Close pipe after reading identifier.
+	 */
+	close (fd [WRITE]);
+	if (read (fd [READ], &msqid, sizeof (key_tt)) < 0)
+		sys_error ("read failed", __LINE__);
+	close (fd [READ]);
         printf ("\n\tChild:  received message queue id: %d\n", msqid);
- fflush (stdout);
+	fflush (stdout);
 
- /*
-  * Put data on the message queue
-  */
- buf = (struct msgbuf *)calloc ((size_t)(sizeof(struct msgbuf) + BUF_SIZE),
-  sizeof (char));
- buf->mtype = 1;
- sprintf (buf->mtext, "\"message queue transmission test....\"");
- nbytes =  strlen (buf->mtext) + 1;
+	/*
+	 * Put data on the message queue
+	 */
+	buf = (struct msgbuf *)calloc ((size_t)(sizeof(struct msgbuf) + BUF_SIZE),
+		sizeof (char));
+	buf->mtype = 1;
+	sprintf (buf->mtext, "\"message queue transmission test....\"");
+	nbytes =  strlen (buf->mtext) + 1;
 
- printf ("\n\tChild:  sending message:  %s\n", buf->mtext);
- fflush (stdout);
- if (msgsnd (msqid, buf, nbytes, 0) < 0)
-  sys_error ("msgsnd failed", __LINE__);
+	printf ("\n\tChild:  sending message:  %s\n", buf->mtext);
+	fflush (stdout);
+	if (msgsnd (msqid, buf, nbytes, 0) < 0)
+		sys_error ("msgsnd failed", __LINE__);
 }
 
 
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Function:  Creates system error message and calls error ()           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 static void sys_error (const char *msg, int line)
 {
- char syserr_msg [256];
+	char syserr_msg [256];
 
- sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
- error (syserr_msg, line);
+	sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
+	error (syserr_msg, line);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               error ()                               |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Function:  Prints out message and exits...                           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 static void error (const char *msg, int line)
 {
- fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
- exit (-1);
+	fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
+	exit (-1);
 }

@@ -19,16 +19,16 @@
 
 /*
  * NAME
- * sendfile03.c
+ *	sendfile03.c
  *
  * DESCRIPTION
- * Testcase to test that sendfile(2) system call returns appropriete
- * errnos on error.
+ *	Testcase to test that sendfile(2) system call returns appropriete
+ *	errnos on error.
  *
  * ALGORITHM
- * 1. Call sendfile(2) with out_fd  -1, and expect EBADF to be returned.
- * 2. Call sendfile(2) with in_fd  -1, and expect EBADF to be returned.
- * 3. Call sendfile(2) with in_fd  out_fd  -1, and expect EBADF.
+ *	1. Call sendfile(2) with out_fd = -1, and expect EBADF to be returned.
+ *	2. Call sendfile(2) with in_fd = -1, and expect EBADF to be returned.
+ *	3. Call sendfile(2) with in_fd = out_fd = -1, and expect EBADF.
  *
  * USAGE:  <for command-line>
  *  sendfile03 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -40,10 +40,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * NONE
+ *	NONE
  */
 
 #include <stdio.h>
@@ -61,7 +61,7 @@
 
 
 TCID_DEFINE(sendfile03);
-int TST_TOTAL  3;
+int TST_TOTAL = 3;
 extern int Tst_count;
 
 int in_fd, out_fd;
@@ -72,73 +72,73 @@ void setup(void);
 void setup_func1(void);
 
 struct test_case_t {
- char *desc;
- void (*setupfunc)();
- int out_fd;
- int in_fd;
- OFF_T *offset;
- int count;
- int exp_errno;
-} testcases[]  {
- { "Test for EBADF, in_fd  -1", NULL, 8, -1, (void *)0, 0, EBADF},
- { "Test for EBADF, out_fd  -1", NULL, -1, 7, (void *)0, 0, EBADF},
- { "Test for EBADF, in_fd  out_fd  -1", NULL, -1, -1, (void *)0, 0,
-  EBADF}
+	char *desc;
+	void (*setupfunc)();
+	int out_fd;
+	int in_fd;
+	OFF_T *offset;
+	int count;
+	int exp_errno;
+} testcases[] = {
+	{ "Test for EBADF, in_fd = -1", NULL, 8, -1, (void *)0, 0, EBADF},
+	{ "Test for EBADF, out_fd = -1", NULL, -1, 7, (void *)0, 0, EBADF},
+	{ "Test for EBADF, in_fd = out_fd = -1", NULL, -1, -1, (void *)0, 0,
+		EBADF}
 };
 
-int exp_enos[]  {EBADF, 0};
+int exp_enos[] = {EBADF, 0};
 
 int main(int ac, char **av)
 {
- int i;
- int lc;    /* loop counter */
- char *msg;   /* parse_opts() return message */
+	int i;
+	int lc;				/* loop counter */
+	char *msg;			/* parse_opts() return message */
 
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- setup();
+	setup();
 
- TEST_EXP_ENOS(exp_enos);
+	TEST_EXP_ENOS(exp_enos);
 
- /*
-  * The following loop checks looping state if -c option given
-  */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  Tst_count  0;
+	/*
+	 * The following loop checks looping state if -c option given
+	 */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		Tst_count = 0;
 
-  for (i  0; i < TST_TOTAL; ++i) {
-   if (testcases[i].setupfunc ! NULL) {
-    testcases[i].setupfunc();
-   }
+		for (i = 0; i < TST_TOTAL; ++i) {
+			if (testcases[i].setupfunc != NULL) {
+				testcases[i].setupfunc();
+			}
 
-   TEST(sendfile(testcases[i].out_fd, testcases[i].in_fd,
-          testcases[i].offset,
-          testcases[i].count));
+			TEST(sendfile(testcases[i].out_fd, testcases[i].in_fd,
+				      testcases[i].offset,
+				      testcases[i].count));
 
-   if (TEST_RETURN ! -1) {
-    tst_resm(TFAIL, "call succeeded unexpectedly");
-    continue;
-   }
+			if (TEST_RETURN != -1) {
+				tst_resm(TFAIL, "call succeeded unexpectedly");
+				continue;
+			}
 
-   TEST_ERROR_LOG(TEST_ERRNO);
+			TEST_ERROR_LOG(TEST_ERRNO);
 
-   if (TEST_ERRNO ! testcases[i].exp_errno) {
-    tst_resm(TFAIL, "sendfile returned unexpected "
-      "errno, expected: %d, got: %d",
-      testcases[i].exp_errno, TEST_ERRNO);
-   } else {
-    tst_resm(TPASS, "sendfile() returned %d : %s",
-      TEST_ERRNO, strerror(TEST_ERRNO));
-   }
-  }
- }
- cleanup();
+			if (TEST_ERRNO != testcases[i].exp_errno) {
+				tst_resm(TFAIL, "sendfile returned unexpected "
+					 "errno, expected: %d, got: %d",
+					 testcases[i].exp_errno, TEST_ERRNO);
+			} else {
+				tst_resm(TPASS, "sendfile() returned %d : %s",
+					 TEST_ERRNO, strerror(TEST_ERRNO));
+			}
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -147,59 +147,59 @@ int main(int ac, char **av)
 void
 setup()
 {
- char buf[100];
+	char buf[100];
 
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /* make a temporary directory and cd to it */
- tst_tmpdir();
+	/* make a temporary directory and cd to it */
+	tst_tmpdir();
 
- sprintf(in_file, "in.%d", getpid());
- if ((in_fd  creat(in_file, 00700)) < 0) {
-  tst_brkm(TBROK, cleanup, "creat failed in setup, errno: %d",
-    errno);
-  /*NOTREACHED*/
- }
- sprintf(buf, "abcdefghijklmnopqrstuvwxyz");
- if (write(in_fd, buf, strlen(buf)) < 0) {
-  tst_brkm(TBROK, cleanup, "write failed, errno: %d", errno);
-  /*NOTREACHED*/
- }
- close(in_fd);
- if ((in_fd  open(in_file, O_RDONLY)) < 0) {
-  tst_brkm(TBROK, cleanup, "open failed, errno: %d", errno);
-  /*NOTREACHED*/
- }
- sprintf(out_file, "out.%d", getpid());
- if ((out_fd  open(out_file, O_TRUNC | O_CREAT | O_RDWR, 0777)) < 0) {
-  tst_brkm(TBROK, cleanup, "open failed, errno: %d", errno);
-  /*NOTREACHED*/
- }
+	sprintf(in_file, "in.%d", getpid());
+	if ((in_fd = creat(in_file, 00700)) < 0) {
+		tst_brkm(TBROK, cleanup, "creat failed in setup, errno: %d",
+			 errno);
+		/*NOTREACHED*/
+	}
+	sprintf(buf, "abcdefghijklmnopqrstuvwxyz");
+	if (write(in_fd, buf, strlen(buf)) < 0) {
+		tst_brkm(TBROK, cleanup, "write failed, errno: %d", errno);
+		/*NOTREACHED*/
+	}
+	close(in_fd);
+	if ((in_fd = open(in_file, O_RDONLY)) < 0) {
+		tst_brkm(TBROK, cleanup, "open failed, errno: %d", errno);
+		/*NOTREACHED*/
+	}
+	sprintf(out_file, "out.%d", getpid());
+	if ((out_fd = open(out_file, O_TRUNC | O_CREAT | O_RDWR, 0777)) < 0) {
+		tst_brkm(TBROK, cleanup, "open failed, errno: %d", errno);
+		/*NOTREACHED*/
+	}
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit.
+ *	       completion or premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- close(out_fd);
- close(in_fd);
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	close(out_fd);
+	close(in_fd);
 
- TEST_CLEANUP;
+	TEST_CLEANUP;
 
- /* delete the test directory created in setup() */
- tst_rmdir();
+	/* delete the test directory created in setup() */
+	tst_rmdir();
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

@@ -10,14 +10,14 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-
+     
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 V.Becker/rc023c              04/05/2004     TLSbo39142   Initial version
-V.Becker/rc023c              18/06/2004     TLSbo39142   Code reviewed
+V.Becker/rc023c              18/06/2004     TLSbo39142   Code reviewed 
 L.Delaspre/rc149c            03/08/2004     TLSbo40891   VTE 1.4 integration
 V.Becker/rc023c              20/10/2004     TLSbo43924   Update after NOR Flash map change
 L.Delaspre/rc149c            08/11/2004     TLSbo44472   Resolve compilation issue

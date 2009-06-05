@@ -13,59 +13,59 @@
 
 setup()
 {
- export TCID="setup"
- export TST_COUNT=0
- export TST_TOTAL=2
+	export TCID="setup"
+	export TST_COUNT=0
+	export TST_TOTAL=2
 
- # Create a temporary file for testing
- rm -f $SELINUXTMPDIR/temp_file 2>&1
- touch $SELINUXTMPDIR/temp_file 2>&1
- chcon -t test_ioctl_file_t $SELINUXTMPDIR/temp_file 2>&1
+	# Create a temporary file for testing
+	rm -f $SELINUXTMPDIR/temp_file 2>&1
+	touch $SELINUXTMPDIR/temp_file 2>&1
+	chcon -t test_ioctl_file_t $SELINUXTMPDIR/temp_file 2>&1
 }
 
 test01()
 {
- TCID="test01"
- TST_COUNT=1
- RC=0
+	TCID="test01"
+	TST_COUNT=1
+	RC=0
 
- # Attempt to perform the ioctls on the temproary
- # file as the good domain
- runcon -t test_ioctl_t -- selinux_ioctl $SELINUXTMPDIR/temp_file 2>&1
- RC=$?
- if [ $RC -eq 0 ]
- then
-  echo "$TCID   PASS : ioctl passed."
- else
-  echo "$TCID   FAIL : ioctl failed."
- fi
- return $RC
+	# Attempt to perform the ioctls on the temproary
+	# file as the good domain
+	runcon -t test_ioctl_t -- selinux_ioctl $SELINUXTMPDIR/temp_file 2>&1
+	RC=$?
+	if [ $RC -eq 0 ]
+	then
+		echo "$TCID   PASS : ioctl passed."
+	else
+		echo "$TCID   FAIL : ioctl failed."
+	fi
+	return $RC
 }
 
 
 test02()
 {
- TCID="test02"
- TST_COUNT=2
- RC=0
+	TCID="test02"
+	TST_COUNT=2
+	RC=0
 
- # Attempt to perform the ioctls on the temproary file as the bad domain
- # The test program, test_noioctl.c, determines success/failure for the
- # individual calls, so we expect success always from that program.
- runcon -t test_noioctl_t -- selinux_noioctl $SELINUXTMPDIR/temp_file 2>&1
- RC=$?
- if [ $RC -eq 0 ]
- then
-  echo "$TCID   PASS : ioctl passed."
- else
-  echo "$TCID   FAIL : ioctl failed."
- fi
- return $RC
+	# Attempt to perform the ioctls on the temproary file as the bad domain
+	# The test program, test_noioctl.c, determines success/failure for the
+	# individual calls, so we expect success always from that program.
+	runcon -t test_noioctl_t -- selinux_noioctl $SELINUXTMPDIR/temp_file 2>&1
+	RC=$?
+	if [ $RC -eq 0 ]
+	then
+		echo "$TCID   PASS : ioctl passed."
+	else
+		echo "$TCID   FAIL : ioctl failed."
+	fi
+	return $RC
 }
 
 cleanup()
 {
- rm -f $SELINUXTMPDIR/temp_file 2>&1
+	rm -f $SELINUXTMPDIR/temp_file 2>&1
 }
 
 # Function:     main
@@ -78,7 +78,7 @@ cleanup()
 RC=0    # Return value from setup, and test functions.
 EXIT_VAL=0
 
-setup
+setup 
 test01 || EXIT_VAL=$RC
 test02 || EXIT_VAL=$RC
 cleanup

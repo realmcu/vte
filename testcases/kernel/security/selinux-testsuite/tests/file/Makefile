@@ -3,9 +3,9 @@ LDLIBS += -lselinux
 
 all: $(TARGETS)
 
-install:
+install: 
 	@set -e; for i in $(TARGETS); do ln -f $$i ../../../../../bin/$$i; done
-	ln -f selinux_file.sh ../../../../../bin/
+	ln -f selinux_file.sh ../../../../../bin/ 
 
 clean:
 	rm -f $(TARGETS)

@@ -7,7 +7,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- * Test that the mlock() function sets errno  EPERM if the calling process
+ * Test that the mlock() function sets errno = EPERM if the calling process
  * does not have the appropriate privilege to perform the requested operation.
  */
 
@@ -28,30 +28,30 @@
 /** Set the euid of this process to a non-root uid */
 int set_nonroot()
 {
- struct passwd *pw;
- setpwent();
- /* search for the first user which is non root */
- while((pw  getpwent()) ! NULL)
-  if(strcmp(pw->pw_name, "root"))
-   break;
- endpwent();
- if(pw  NULL) {
-  printf("There is no other user than current and root.\n");
-  return 1;
- }
+	struct passwd *pw;
+	setpwent();
+	/* search for the first user which is non root */ 
+	while((pw = getpwent()) != NULL)
+		if(strcmp(pw->pw_name, "root"))
+			break;
+	endpwent();
+	if(pw == NULL) {
+		printf("There is no other user than current and root.\n");
+		return 1;
+	}
 
- if(seteuid(pw->pw_uid) ! 0) {
-  if(errno  EPERM) {
-   printf("You don't have permission to change your UID.\n");
-   return 1;
-  }
-  perror("An error occurs when calling seteuid()");
-  return 1;
- }
-
- printf("Testing with user '%s' (uid: %d)\n",
-        pw->pw_name, (int)geteuid());
- return 0;
+	if(seteuid(pw->pw_uid) != 0) {
+		if(errno == EPERM) {
+			printf("You don't have permission to change your UID.\n");
+			return 1;
+		}
+		perror("An error occurs when calling seteuid()");
+		return 1;
+	}
+	
+	printf("Testing with user '%s' (uid: %d)\n",
+	       pw->pw_name, (int)geteuid());
+	return 0;
 }
 
 int main() {
@@ -59,30 +59,30 @@ int main() {
         void *ptr;
 
         /* This test should be run under standard user permissions */
-        if (getuid()  0) {
-                if (set_nonroot() ! 0) {
-   printf("Cannot run this test as non-root user\n");
-   return PTS_UNTESTED;
-  }
+        if (getuid() == 0) {
+                if (set_nonroot() != 0) {
+			printf("Cannot run this test as non-root user\n");	
+			return PTS_UNTESTED;
+		}
         }
 
- ptr  malloc(BUFSIZE);
- if(ptr  NULL) {
+	ptr = malloc(BUFSIZE);
+	if(ptr == NULL) {
                 printf("Can not allocate memory.\n");
                 return PTS_UNRESOLVED;
         }
 
- result  mlock(ptr, BUFSIZE);
+	result = mlock(ptr, BUFSIZE);
 
- if(result  -1 && errno  EPERM) {
-  printf("Test PASSED\n");
-  return PTS_PASS;
- } else if(result  0) {
-  printf("You have the right to call mlock\n");
-  return PTS_FAIL;
- } else {
-  perror("Unexpected error");
-  return PTS_UNRESOLVED;
- }
+	if(result == -1 && errno == EPERM) {
+		printf("Test PASSED\n");
+		return PTS_PASS;
+	} else if(result == 0) {
+		printf("You have the right to call mlock\n");
+		return PTS_FAIL;
+	} else {
+		perror("Unexpected error");
+		return PTS_UNRESOLVED;
+	}
 
 }

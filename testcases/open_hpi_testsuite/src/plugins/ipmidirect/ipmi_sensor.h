@@ -250,7 +250,7 @@ enum tIpmiUnitType
   eIpmiUnitTypeRetries          = 80,
   eIpmiUnitTypeResets           = 81,
   eIpmiUnitTypeOverruns         = 82,
-  eIpmiUnitTypeUnderruns       = 83,
+  eIpmiUnitTypeUnderruns       	= 83,
   eIpmiUnitTypeCollisions       = 84,
   eIpmiUnitTypePackets          = 85,
   eIpmiUnitTypeMessages         = 86,
@@ -585,7 +585,7 @@ public:
   void Event( cIpmiEvent *event );
 
   bool Ignore();
-
+  
   void Log();
 
   friend cIpmiSensor **IpmiGetSensorsFromSdrs( cIpmiDomain  *domain,
@@ -604,13 +604,13 @@ public:
   cIpmiMc *m_mc;
   bool m_destroyed;
 
-  // Indexed by LUN and sensor #
+  // Indexed by LUN and sensor # 
   cIpmiSensor **(m_sensors_by_idx[5]);
   // Size of above sensor array, per LUN.  This will be 0 if the
   // LUN has no sensors.
   int            m_idx_size[5];
   // In the above two, the 5th index is for non-standard sensors.
-
+  
   // Total number of sensors we have in this.
   unsigned int   m_sensor_count;
 

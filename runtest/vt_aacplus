@@ -1,0 +1,14 @@
+#Verification Tests Command File
+
+#VT AAC+ codec tests
+#files: aacplus_decoder_testapp
+#flles: aacplusd_cfg
+
+# AAC+ decoder test 
+TGE-LV-AACPD-0010 aacplus_decoder_testapp -T 0 -C $LTPROOT/testcases/bin/aacplusd_cfg -V
+TGE-LV-AACPD-0030 aacplus_decoder_testapp -T 2 -C $LTPROOT/testcases/bin/aacplusd_cfg -V -N 10
+TGE-LV-AACPD-0040 aacplus_decoder_testapp -T 3 -C $LTPROOT/testcases/bin/aacplusd_cfg -V
+TGE-LV-AACPD-0050 aacplus_decoder_testapp -T 4 -C $LTPROOT/testcases/bin/aacplusd_cfg -V 
+TGE-LV-AACPD-0060 aacplus_decoder_testapp -T 5 -C $LTPROOT/testcases/bin/aacplusd_cfg -V -N 10
+TGE-LV-AACPD-0070 aacplus_decoder_testapp -T 6 -C $LTPROOT/testcases/bin/aacplusd_cfg -V
+

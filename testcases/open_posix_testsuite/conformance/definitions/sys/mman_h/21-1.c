@@ -1,4 +1,4 @@
-/*
+/* 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -20,7 +20,7 @@ typedef int (*posix_typed_mem_get_info_test)(int, struct posix_typed_mem_info *)
 
 int dummyfcn (void)
 {
- posix_typed_mem_get_info_test dummyvar;
- dummyvar  posix_typed_mem_get_info;
- return 0;
+	posix_typed_mem_get_info_test dummyvar;
+	dummyvar = posix_typed_mem_get_info;
+	return 0;
 }

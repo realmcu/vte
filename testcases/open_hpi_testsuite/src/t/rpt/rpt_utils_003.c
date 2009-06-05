@@ -31,36 +31,36 @@
  **/
 int main(int argc, char **argv)
 {
-        RPTable *rptable  (RPTable *)g_malloc0(sizeof(RPTable));
-        guint i  0, k  0;
-        GSList *resources  NULL;
+        RPTable *rptable = (RPTable *)g_malloc0(sizeof(RPTable));
+        guint i = 0, k = 0;
+        GSList *resources = NULL;
 
-        for (i  0; rptentries[i].ResourceId ! 0; i++) {
+        for (i = 0; rptentries[i].ResourceId != 0; i++) {
                 if (oh_add_resource(rptable, rptentries + i, NULL, 0))
                         return 1;
                 else
-                        resources  g_slist_append(resources, rptentries + i);
+                        resources = g_slist_append(resources, rptentries + i);
         }
-
+        
         for (; resources; i--) {
-                SaHpiRptEntryT *randentry  NULL, *tmpentry  NULL;
-                GSList *tmpnode  NULL;
-
-                k  (guint) (((gfloat)i)*rand()/(RAND_MAX+1.0));
-                tmpnode  g_slist_nth(resources, k);
-                randentry  (SaHpiRptEntryT *)tmpnode->data;
-
-                tmpentry 
+                SaHpiRptEntryT *randentry = NULL, *tmpentry = NULL;
+                GSList *tmpnode = NULL;
+                
+                k = (guint) (((gfloat)i)*rand()/(RAND_MAX+1.0));                
+                tmpnode = g_slist_nth(resources, k);
+                randentry = (SaHpiRptEntryT *)tmpnode->data;
+                
+                tmpentry =
                         oh_get_resource_by_id(rptable, randentry->ResourceId);
-
+                        
                 if (!tmpentry ||
                     memcmp(randentry, tmpentry, sizeof(SaHpiRptEntryT)))
                         return 1;
                 else {
-                        resources  g_slist_remove_link(resources, tmpnode);
+                        resources = g_slist_remove_link(resources, tmpnode);
                         g_slist_free_1(tmpnode);
                 }
         }
-
+                
         return 0;
 }

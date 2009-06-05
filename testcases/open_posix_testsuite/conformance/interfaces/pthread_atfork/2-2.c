@@ -17,7 +17,7 @@
 
 * This sample test aims to check the following assertion:
 *
-* NULL can be passed as any of these handlers when no treatment is required.
+* NULL can be passed as any of these handlers when no treatment is required. 
 
 * The steps are:
 * -> Create a new thread
@@ -49,23 +49,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c"
+#include "testfrmw.c" 
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);
- *    where descr is a description of the error and ret is an int
+ * UNRESOLVED(ret, descr);  
+ *    where descr is a description of the error and ret is an int 
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- *
+ * 
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- *
+ * 
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- *
+ * 
  * Those may be used to output information.
  */
 
@@ -80,8 +80,8 @@
 /***************************    Test case   ***********************************/
 /******************************************************************************/
 
-int iPrepare  0, iParent  0, iChild  0;
-pthread_mutex_t mtx  PTHREAD_MUTEX_INITIALIZER;
+int iPrepare = 0, iParent = 0, iChild = 0;
+pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
 
 /* pthread_atfork handlers */
 /* 0: NULL NULL NULL  (1)
@@ -96,219 +96,219 @@ pthread_mutex_t mtx  PTHREAD_MUTEX_INITIALIZER;
  */
 void p1( void )
 {
- iPrepare | 1 << 1;
+	iPrepare |= 1 << 1;
 }
 
 void p4( void )
 {
- iPrepare | 1 << 4;
+	iPrepare |= 1 << 4;
 }
 
 void p5( void )
 {
- iPrepare | 1 << 5;
+	iPrepare |= 1 << 5;
 }
 
 void pa2( void )
 {
- iParent | 1 << 2;
+	iParent |= 1 << 2;
 }
 
 void pa4( void )
 {
- iParent | 1 << 4;
+	iParent |= 1 << 4;
 }
 
 void pa6( void )
 {
- iParent | 1 << 6;
+	iParent |= 1 << 6;
 }
 
 void c3( void )
 {
- iChild | 1 << 3;
+	iChild |= 1 << 3;
 }
 
 void c5( void )
 {
- iChild | 1 << 5;
+	iChild |= 1 << 5;
 }
 
 void c6( void )
 {
- iChild | 1 << 6;
+	iChild |= 1 << 6;
 }
 
 
 /* Thread function */
 void * threaded( void * arg )
 {
- int ret, status;
- pid_t child, ctl;
+	int ret, status;
+	pid_t child, ctl;
 
- /* Wait main thread has registered the handler */
- ret  pthread_mutex_lock( &mtx );
+	/* Wait main thread has registered the handler */
+	ret = pthread_mutex_lock( &mtx );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to lock mutex" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to lock mutex" );
+	}
 
- ret  pthread_mutex_unlock( &mtx );
+	ret = pthread_mutex_unlock( &mtx );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to unlock mutex" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to unlock mutex" );
+	}
 
- /* fork */
- child  fork();
+	/* fork */
+	child = fork();
 
- if ( child  ( pid_t ) - 1 )
- {
-  UNRESOLVED( errno, "Failed to fork" );
- }
+	if ( child == ( pid_t ) - 1 )
+	{
+		UNRESOLVED( errno, "Failed to fork" );
+	}
 
- /* child */
- if ( child  ( pid_t ) 0 )
- {
-  if ( iPrepare ! 50 )
-  {
-   FAILED( "prepare handler were not called as expected" );
-  }
+	/* child */
+	if ( child == ( pid_t ) 0 )
+	{
+		if ( iPrepare != 50 )
+		{
+			FAILED( "prepare handler were not called as expected" );
+		}
 
-  if ( iChild ! 104 )
-  {
-   FAILED( "prepare handler were not called as expected" );
-  }
+		if ( iChild != 104 )
+		{
+			FAILED( "prepare handler were not called as expected" );
+		}
 
-  /* We're done */
-  exit( PTS_PASS );
- }
+		/* We're done */
+		exit( PTS_PASS );
+	}
 
- if ( iPrepare ! 50 )
- {
-  FAILED( "prepare handler were not called as expected" );
- }
+	if ( iPrepare != 50 )
+	{
+		FAILED( "prepare handler were not called as expected" );
+	}
 
- if ( iParent ! 84 )
- {
-  FAILED( "prepare handler were not called as expected" );
- }
+	if ( iParent != 84 )
+	{
+		FAILED( "prepare handler were not called as expected" );
+	}
 
- /* Parent joins the child */
- ctl  waitpid( child, &status, 0 );
+	/* Parent joins the child */
+	ctl = waitpid( child, &status, 0 );
 
- if ( ctl ! child )
- {
-  UNRESOLVED( errno, "Waitpid returned the wrong PID" );
- }
+	if ( ctl != child )
+	{
+		UNRESOLVED( errno, "Waitpid returned the wrong PID" );
+	}
 
- if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) ! PTS_PASS ) )
- {
-  FAILED( "Child exited abnormally" );
- }
+	if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) != PTS_PASS ) )
+	{
+		FAILED( "Child exited abnormally" );
+	}
 
- /* quit */
- return NULL;
+	/* quit */
+	return NULL;
 }
 
 /* The main test function. */
 int main( int argc, char * argv[] )
 {
- int ret;
- pthread_t ch;
+	int ret;
+	pthread_t ch;
 
- /* Initialize output */
- output_init();
+	/* Initialize output */
+	output_init();
 
- ret  pthread_mutex_lock( &mtx );
+	ret = pthread_mutex_lock( &mtx );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to lock mutex" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to lock mutex" );
+	}
 
- ret  pthread_create( &ch, NULL, threaded, NULL );
+	ret = pthread_create( &ch, NULL, threaded, NULL );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to create a thread" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to create a thread" );
+	}
 
- /* Register the handlers */
- ret  pthread_atfork( NULL, NULL, NULL );
+	/* Register the handlers */
+	ret = pthread_atfork( NULL, NULL, NULL );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to register the atfork handlers(N,N,N)" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to register the atfork handlers(N,N,N)" );
+	}
 
- ret  pthread_atfork( p1, NULL, NULL );
+	ret = pthread_atfork( p1, NULL, NULL );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to register the atfork handlers(h,N,N)" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to register the atfork handlers(h,N,N)" );
+	}
 
- ret  pthread_atfork( NULL, pa2, NULL );
+	ret = pthread_atfork( NULL, pa2, NULL );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to register the atfork handlers(N,h,N)" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to register the atfork handlers(N,h,N)" );
+	}
 
- ret  pthread_atfork( NULL, NULL, c3 );
+	ret = pthread_atfork( NULL, NULL, c3 );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to register the atfork handlers(N,N,h)" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to register the atfork handlers(N,N,h)" );
+	}
 
- ret  pthread_atfork( p4, pa4, NULL );
+	ret = pthread_atfork( p4, pa4, NULL );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to register the atfork handlers(h,h,N)" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to register the atfork handlers(h,h,N)" );
+	}
 
- ret  pthread_atfork( p5, NULL, c5 );
+	ret = pthread_atfork( p5, NULL, c5 );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to register the atfork handlers(h,N,h)" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to register the atfork handlers(h,N,h)" );
+	}
 
- ret  pthread_atfork( NULL, pa6, c6 );
+	ret = pthread_atfork( NULL, pa6, c6 );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to register the atfork handlers(N,h,h)" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to register the atfork handlers(N,h,h)" );
+	}
 
- /* Let the child go on */
- ret  pthread_mutex_unlock( &mtx );
+	/* Let the child go on */
+	ret = pthread_mutex_unlock( &mtx );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to unlock mutex" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to unlock mutex" );
+	}
 
- ret  pthread_join( ch, NULL );
+	ret = pthread_join( ch, NULL );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to join the thread" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to join the thread" );
+	}
 
- /* Test passed */
+	/* Test passed */
 #if VERBOSE > 0
 
- output( "Test passed\n" );
+	output( "Test passed\n" );
 
 #endif
 
- PASSED;
+	PASSED;
 }
 
 

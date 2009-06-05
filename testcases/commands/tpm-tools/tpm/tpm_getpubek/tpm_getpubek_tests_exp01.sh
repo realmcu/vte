@@ -26,11 +26,11 @@ set timeout 30
 #   if we are, it is an error
 spawn tpm_getpubek
 expect {
- -re "Public Endorsement Key" { set pwd_prompt 0 }
- -re "Enter owner password: " {
-  set pwd_prompt 1
-  send "$OWN_PWD\n"
- }
+	-re "Public Endorsement Key" { set pwd_prompt 0 }
+	-re "Enter owner password: " {
+		set pwd_prompt 1
+		send "$OWN_PWD\n"
+	}
 }
 expect timeout
 

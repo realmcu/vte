@@ -41,9 +41,9 @@ all: blexer bparser
 	chmod 700 ../templates/do_parse
 
 blexer: jlist.o butil.o lex.yy.o blexer.o
-	gcc $(FLAGS)  -o blexer jlist.o butil.o lex.yy.o blexer.o
+	gcc $(FLAGS)  -o blexer jlist.o butil.o lex.yy.o blexer.o 
 
-bparser: bparser.o
+bparser: bparser.o 
 	g++ $(FLAGS) -o bparser bparser.o butil.c
 
 jlist.o: jlist.c butil.h jlist.h

@@ -26,16 +26,16 @@
 # Authors:      Manoj Iyer - manoji@us.ibm.com
 #               Robbie Williamson - robbiew@us.ibm.com
 #               Marty Ridgeway - mridge@us.ibm.com
-#
+#               
 # History:      Created runltplite script to run a subset of the LTP testsuite
-#
-#
-#
-#
-#
-#
-#
-#
+#               
+#               
+#               
+#                
+#               
+#               
+#               
+#               
 
 
 setup()
@@ -66,31 +66,31 @@ setup()
 }
 
 
-usage()
+usage() 
 {
     cat <<-EOF >&2
 
-    usage: ./${0##*/} -c [-d TMPDIR] [-i # (in Mb)]
-    [ -l LOGFILE ] [ -o OUTPUTFILE ] [ -m # (in Mb)] -N -q
-    [ -r LTPROOT ] -v
-
+    usage: ./${0##*/} -c [-d TMPDIR] [-i # (in Mb)] 
+    [ -l LOGFILE ] [ -o OUTPUTFILE ] [ -m # (in Mb)] -N -q 
+    [ -r LTPROOT ] -v 
+                
     -c NUM_PROCS    Run LTP under additional background CPU load.
     -d TMPDIR       Directory where temporary files will be created.
     -h              Help. Prints all available options.
     -i # (in Mb)    Run LTP with a _min_ IO load of # Mb in background.
     -l LOGFILE      Log results of test in a logfile.
     -m # (in Mb)    Run LTP with a _min_ memory load of # Mb in background.
-    -N              Run all the networking tests.
+    -N              Run all the networking tests. 
     -o OUTPUTFILE   Redirect test output to a file.
-    -p              Human readable format logfiles.
+    -p              Human readable format logfiles. 
     -q              Print less verbose output to screen.
     -r LTPROOT      Fully qualified path where testsuite is installed.
-    -v              Print more verbose output to screen.
+    -v              Print more verbose output to screen.                   
 
     example: ./${0##*/} -i 1024 -m 128 -p -q  -l /tmp/resultlog.$$ -d ${PWD}
 
 
- EOF
+	EOF
 exit 0
 }
 
@@ -116,27 +116,27 @@ main()
 
     while getopts c:d:hi:l:m:No:pqr:v arg
     do  case $arg in
-        c)
-     NUM_PROCS=$(($OPTARG))
+        c)       
+	    NUM_PROCS=$(($OPTARG))
             $LTPROOT/testcases/bin/genload --cpu $NUM_PROCS >/dev/null 2>&1 &
             GENLOAD=1 ;;
-
-        d)  # append $$ to TMP, as it is recursively
+                   
+        d)  # append $$ to TMP, as it is recursively 
             # removed at end of script.
             TMPBASE=$OPTARG
             TMP="${TMPBASE}/ltp-$$"
             export TMPDIR="$TMP";;
-
+    
         h)  usage;;
-
-        i)
+        
+        i)       
             BYTESIZE=$(($OPTARG * 1024 * 1024))
             $LTPROOT/testcases/bin/genload --io 1 >/dev/null 2>&1 &
             $LTPROOT/testcases/bin/genload --hdd 0 --hdd-bytes $BYTESIZE \
-            >/dev/null 2>&1 &
+            >/dev/null 2>&1 & 
             GENLOAD=1 ;;
-
-        l)
+    
+        l)      
 
             echo "INFO: creating $LTPROOT/results directory"
             [ ! -d $LTPROOT/results ] && \
@@ -148,42 +148,42 @@ main()
                 }
             }
             case $OPTARG in
-     /*)
+	    /*)
                 LOGFILE="-l $OPTARG" ;;
-            *)
+            *)    
                 LOGFILE="-l $LTPROOT/results/$OPTARG"
                 ALT_DIR=1 ;;
             esac ;;
-
-        m)
-            MEMSIZE=$(($OPTARG * 1024 * 1024))
+    
+        m)      
+            MEMSIZE=$(($OPTARG * 1024 * 1024)) 
             $LTPROOT/testcases/bin/genload  --vm 0 --vm-bytes $MEMSIZE \
-                >/dev/null 2>&1 &
+                >/dev/null 2>&1 & 
             GENLOAD=1;;
-
+    
         N)  RUN_NETEST=1;;
-
+    
         o)  OUTPUTFILE="-o $OPTARG" ;;
-
+    
         p)  PRETTY_PRT=" -p ";;
-
+   
         q)  QUIET_MODE=" -q ";;
-
+    
         r)  LTPROOT=$OPTARG;;
-
+    
         v)  VERBOSE_MODE=1;;
-
+   
         \?) usage;;
         esac
     done
-
-
+    
+        
     mkdir -p $TMP || \
     {
         echo "FATAL: Unable to make temporary directory $TMP"
         exit 1
     }
-
+    
     cd $TMP || \
     {
       echo "could not cd ${TMP} ... exiting"
@@ -191,7 +191,7 @@ main()
     }
 
 # Run Networking tests ?
-
+    
     [ "$RUN_NETEST" -eq 1 ] && \
     {
         [ -z "$RHOST" ] || [ -z "$PASSWD" ] && \
@@ -217,19 +217,19 @@ main()
             echo "WARNING: security of $RHOST may be compromised"
         }
     }
-
+    
     # If user does not provide a command file select a default set of testcases
     # to execute.
     if   [ -f $CMDFILE ] || \
                 CMDFILE="$LTPROOT/runtest/$CMDFILE"
- then
+	then
         cat $CMDFILE > ${TMP}/alltests || \
         {
             echo "FATAL: Unable to create command file"
             exit 1
         }
     fi
-
+    
     [ "$RUN_NETEST" -eq 1 ] && \
     {
         for SCENFILES in ${LTPROOT}/runtest/tcp_cmds \
@@ -238,21 +238,21 @@ main()
                          ${LTPROOT}/runtest/nfs
         do
             [ -e "$SCENFILES" ] || \
-            {
+            { 
                 echo "FATAL: missing scenario file $SCENFILES"
                 exit 1
             }
-
+                         
             cat $SCENFILES >> ${TMP}/alltests || \
             {
                 echo "FATAL: unable to create command file"
                 exit 1
             }
         done
-    }
-
+    } 
+    
     # The fsx-linux tests use the SCRATCHDEV environment variable as a location
-    # that can be reformatted and run on.  Set SCRATCHDEV if you want to run
+    # that can be reformatted and run on.  Set SCRATCHDEV if you want to run 
     # these tests.  As a safeguard, this is disabled.
     unset SCRATCHDEV
     [ -n "$SCRATCHDEV" ] && \
@@ -263,19 +263,19 @@ main()
              exit 1
          }
     }
-
+    
     # check for required users and groups
     ${LTPROOT}/IDcheck.sh &>/dev/null || \
     {
         echo "WARNING: required users and groups not present"
         echo "WARNING: some test cases may fail"
     }
-
-
-
+    
+    
+       
     # display versions of installed software
     [ -z "$QUIET_MODE" ] && \
-    {
+    { 
         ${LTPROOT}/ver_linux || \
         {
             echo "WARNING: unable to display versions of software installed"
@@ -295,7 +295,7 @@ main()
     #$PAN_COMMAND #Duplicated code here, because otherwise if we fail, only "PAN_COMMAND" gets output
     ${LTPROOT}/pan/pan $QUIET_MODE -e -S $INSTANCES $DURATION -a $$ \
     -n $$ $PRETTY_PRT -f ${TMP}/alltests $LOGFILE $OUTPUTFILE
-
+    
     if [ $? -eq 0 ]; then
       echo "INFO: pan reported all tests PASS"
       VALUE=0
@@ -304,22 +304,22 @@ main()
       VALUE=1
     fi
     [ ! -z "$QUIET_MODE" ] && { echo "INFO: Test end time: $(date)" ; }
-
+    
     [ "$GENLOAD" -eq 1 ] && { killall -9 genload ; }
     [ "$NETPIPE" -eq 1 ] && { killall -9 NPtcp ; }
-
+    
     [ "$ALT_DIR" -eq 1 ] && \
     {
     cat <<-EOF >&1
-
+        
        ###############################################################"
-
+        
             Done executing testcases."
             result log is in the $LTPROOT/results directory"
-
+        
        ###############################################################"
-
- EOF
+       
+	EOF
     }
     exit $VALUE
 }

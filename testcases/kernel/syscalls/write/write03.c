@@ -19,16 +19,16 @@
 
 /*
  * NAME
- * write03.c
+ *	write03.c
  *
  * DESCRIPTION
- * Testcase to check that write(2) doesn't corrupt a file when it fails
+ *	Testcase to check that write(2) doesn't corrupt a file when it fails
  *
  * ALGORITHM
- * Create a file for writing, write 100 bytes to it. Then make write(2)
- * fail with some erroneous parameter, close the fd. Then reopen the
- * file in RDONLY mode, and read the contents of the file. Compare the
- * buffers, to see whether they are same.
+ *	Create a file for writing, write 100 bytes to it. Then make write(2)
+ *	fail with some erroneous parameter, close the fd. Then reopen the
+ *	file in RDONLY mode, and read the contents of the file. Compare the
+ *	buffers, to see whether they are same.
  *
  * USAGE:  <for command-line>
  *      write03 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -40,11 +40,11 @@
  *              -t   : Turn on syscall timing.
  *
  * History
- * 07/2001 John George
- *  -Ported
+ *	07/2001 John George
+ *		-Ported
  *
  * Restrictions
- * NONE
+ *	NONE
  */
 
 #include <unistd.h>
@@ -56,13 +56,13 @@
 #include <sys/mman.h>
 
 /* 0 terminated list of expected errnos */
-int exp_enos[]  {14,0};
+int exp_enos[] = {14,0};
 
-char *TCID  "write03";
-int TST_TOTAL  1;
+char *TCID = "write03";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
-char * bad_addr  0;
+char * bad_addr = 0;
 
 void setup(void);
 void cleanup(void);
@@ -73,88 +73,88 @@ char filename[100];
 
 int main(int argc, char **argv)
 {
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
 
- char wbuf[BUFSIZ], rbuf[BUFSIZ];
- int fd;
+	char wbuf[BUFSIZ], rbuf[BUFSIZ];
+	int fd;
 
- /* parse standard options */
- if ((msg  parse_opts(argc, argv, (option_t *)NULL, NULL)) !
-     (char *)NULL) {
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/* parse standard options */
+	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) !=
+	    (char *)NULL) {
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- /* global setup */
- setup();
+	/* global setup */
+	setup();
 
- /* The following loop checks looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* The following loop checks looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
 //block1:
-  tst_resm(TINFO, "Enter Block 1: test to check if write "
-    "corrupts the file when write fails");
+		tst_resm(TINFO, "Enter Block 1: test to check if write "
+			 "corrupts the file when write fails");
 
-  fd  creat(filename, 0644);
-  if (fd < 0) {
-   tst_resm(TBROK, "creating a new file failed");
-   cleanup();
-   /*NOTREACHED*/
-  }
+		fd = creat(filename, 0644);
+		if (fd < 0) {
+			tst_resm(TBROK, "creating a new file failed");
+			cleanup();
+			/*NOTREACHED*/
+		}
 
-  (void)memset(wbuf, '0', 100);
+		(void)memset(wbuf, '0', 100);
 
-  if (write(fd, wbuf, 100)  -1) {
-   tst_resm(TFAIL, "failed to write to %s", filename);
-   cleanup();
-   /*NOTREACHED*/
-  }
+		if (write(fd, wbuf, 100) == -1) {
+			tst_resm(TFAIL, "failed to write to %s", filename);
+			cleanup();
+			/*NOTREACHED*/
+		}
 
-  if (write(fd, bad_addr, 100) ! -1) {
-   tst_resm(TFAIL, "write(2) failed to fail");
-   cleanup();
-   /*NOTREACHED*/
-  }
-  TEST_ERROR_LOG(errno);
-  close(fd);
+		if (write(fd, bad_addr, 100) != -1) {
+			tst_resm(TFAIL, "write(2) failed to fail");
+			cleanup();
+			/*NOTREACHED*/
+		}
+		TEST_ERROR_LOG(errno);
+		close(fd);
 
-  if ((fd  open(filename, O_RDONLY))  -1) {
-   tst_resm(TBROK, "open(2) failed, errno: %d", errno);
-   cleanup();
-   /*NOTREACHED*/
-  }
+		if ((fd = open(filename, O_RDONLY)) == -1) {
+			tst_resm(TBROK, "open(2) failed, errno: %d", errno);
+			cleanup();
+			/*NOTREACHED*/
+		}
 
-  if (read(fd, rbuf, 100)  -1) {
-   tst_resm(TBROK, "read(2) failed, errno: %d", errno);
-   cleanup();
-   /*NOTREACHED*/
-  }
+		if (read(fd, rbuf, 100) == -1) {
+			tst_resm(TBROK, "read(2) failed, errno: %d", errno);
+			cleanup();
+			/*NOTREACHED*/
+		}
 
-  if (memcmp(wbuf, rbuf, 100)  0) {
-   tst_resm(TPASS, "failure of write(2) didnot corrupt "
-     "the file");
-  } else {
-   tst_resm(TFAIL, "failure of write(2) corrupted the "
-     "file");
-  }
-  tst_resm(TINFO, "Exit block 1");
-  close(fd);
- }
- cleanup();
- /*NOTREACHED*/
- return(0);
+		if (memcmp(wbuf, rbuf, 100) == 0) {
+			tst_resm(TPASS, "failure of write(2) didnot corrupt "
+				 "the file");
+		} else {
+			tst_resm(TFAIL, "failure of write(2) corrupted the "
+				 "file");
+		}
+		tst_resm(TINFO, "Exit block 1");
+		close(fd);
+	}
+	cleanup();
+	/*NOTREACHED*/
+	return(0);
 }
 
 #else
 
 int main()
 {
- tst_resm(TINFO, "test is not available on uClinux");
- return 0;
+	tst_resm(TINFO, "test is not available on uClinux");
+	return 0;
 }
 
 #endif /* if !defined(UCLINUX) */
@@ -165,27 +165,27 @@ int main()
 void
 setup(void)
 {
- /* capture signals */
- tst_sig(FORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
- /* Set up the expected error numbers for -e option */
- TEST_EXP_ENOS(exp_enos);
+	/* Set up the expected error numbers for -e option */
+	TEST_EXP_ENOS(exp_enos);
 
- /* Pause if that option was specified
-  * TEST_PAUSE contains the code to fork the test with the -i option.
-  * You want to make sure you do this before you create your temporary
-  * directory.
-  */
- TEST_PAUSE;
+	/* Pause if that option was specified
+	 * TEST_PAUSE contains the code to fork the test with the -i option.
+	 * You want to make sure you do this before you create your temporary
+	 * directory.
+	 */
+	TEST_PAUSE;
 
- /* Create a unique temporary directory and chdir() to it. */
- tst_tmpdir();
+	/* Create a unique temporary directory and chdir() to it. */
+	tst_tmpdir();
 
- sprintf(filename, "./write03.%d", getpid());
+	sprintf(filename, "./write03.%d", getpid());
 
-        bad_addr  mmap(0, 1, PROT_NONE,
-   MAP_PRIVATE_EXCEPT_UCLINUX|MAP_ANONYMOUS, 0, 0);
-        if (bad_addr  MAP_FAILED) {
+        bad_addr = mmap(0, 1, PROT_NONE,
+			MAP_PRIVATE_EXCEPT_UCLINUX|MAP_ANONYMOUS, 0, 0);
+        if (bad_addr == MAP_FAILED) {
             printf("mmap failed\n");
         }
 
@@ -193,21 +193,21 @@ setup(void)
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *completion or premature exit
+ * 		completion or premature exit
  */
 void
 cleanup(void)
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- unlink(filename);
- tst_rmdir();
+	unlink(filename);
+	tst_rmdir();
 
- /* exit with return code appropriate for results */
- tst_exit();
- /*NOTREACHED*/
+	/* exit with return code appropriate for results */
+	tst_exit();
+	/*NOTREACHED*/
 }

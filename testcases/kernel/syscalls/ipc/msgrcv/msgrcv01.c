@@ -19,42 +19,42 @@
 
 /*
  * NAME
- * msgrcv01.c
+ *	msgrcv01.c
  *
  * DESCRIPTION
- * msgrcv01 - test that msgrcv() receives the expected message
+ *	msgrcv01 - test that msgrcv() receives the expected message
  *
  * ALGORITHM
- * create a message queue
- * initialize a message buffer with a known message and type
- * loop if that option was specified
- * fork a child to receive the message
- * parent enqueues the message then exits
- * check the return code
- *   if failure, issue a FAIL message.
- * otherwise,
- *   if doing functionality testing
- *  build a new message and compare it to the one received
- *   if they are the same,
- *   issue a PASS message
- *  otherwise
- *   issue a FAIL message
- * call cleanup
+ *	create a message queue
+ *	initialize a message buffer with a known message and type
+ *	loop if that option was specified
+ *	fork a child to receive the message
+ *	parent enqueues the message then exits
+ *	check the return code
+ *	  if failure, issue a FAIL message.
+ *	otherwise,
+ *	  if doing functionality testing
+ *		build a new message and compare it to the one received
+ *	  	if they are the same,
+ *			issue a PASS message
+ *		otherwise
+ *			issue a FAIL message
+ *	call cleanup
  *
  * USAGE:  <for command-line>
  *  msgrcv01 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -f   : Turn off functionality Testing.
- *        -i n : Execute test n times.
- *        -I x : Execute test for x seconds.
- *        -P x : Pause for x seconds between iterations.
- *        -t   : Turn on syscall timing.
+ *	       -i n : Execute test n times.
+ *	       -I x : Execute test for x seconds.
+ *	       -P x : Pause for x seconds between iterations.
+ *	       -t   : Turn on syscall timing.
  *
  * HISTORY
- * 03/2001 - Written by Wayne Boyer
+ *	03/2001 - Written by Wayne Boyer
  *
  * RESTRICTIONS
- * none
+ *	none
  */
 
 #include <string.h>
@@ -69,8 +69,8 @@ void cleanup(void);
 void setup(void);
 void do_child(void);
 
-char *TCID  "msgrcv01";
-int TST_TOTAL  1;
+char *TCID = "msgrcv01";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 int msg_q_1;
@@ -80,59 +80,59 @@ pid_t c_pid;
 
 int main(int ac, char **av)
 {
-    int lc;   /* loop counter */
-    char *msg;   /* message returned from parse_opts */
+    int lc;			/* loop counter */
+    char *msg;			/* message returned from parse_opts */
     void check_functionality(void);
     int status, e_code;
 
     /* parse standard options */
-    if ((msg 
-  parse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *) NULL) {
- tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+    if ((msg =
+	 parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *) NULL) {
+	tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
     }
 
 #ifdef UCLINUX
     maybe_run_child(&do_child, "d", &msg_q_1);
 #endif
 
-    setup();   /* global setup */
+    setup();			/* global setup */
 
     /* The following loop checks looping state if -i option given */
 
-    for (lc  0; TEST_LOOPING(lc); lc++) {
- /* reset Tst_count in case we are looping */
- Tst_count  0;
+    for (lc = 0; TEST_LOOPING(lc); lc++) {
+	/* reset Tst_count in case we are looping */
+	Tst_count = 0;
 
- /*
-  * fork a child to read from the queue while the parent
-  * enqueues the message to be read.
-  */
- if ((c_pid  FORK_OR_VFORK())  -1) {
-     tst_brkm(TBROK, cleanup, "could not fork");
- }
+	/*
+	 * fork a child to read from the queue while the parent
+	 * enqueues the message to be read.
+	 */
+	if ((c_pid = FORK_OR_VFORK()) == -1) {
+	    tst_brkm(TBROK, cleanup, "could not fork");
+	}
 
- if (c_pid  0) { /* child */
+	if (c_pid == 0) {	/* child */
 #ifdef UCLINUX
-     if (self_exec(av[0], "d", msg_q_1) < 0) {
-  tst_brkm(TBROK, cleanup, "could not self_exec");
-     }
+	    if (self_exec(av[0], "d", msg_q_1) < 0) {
+		tst_brkm(TBROK, cleanup, "could not self_exec");
+	    }
 #else
-     do_child();
+	    do_child();
 #endif
- } else {  /* parent */
-     /* put the message on the queue */
-     if (msgsnd(msg_q_1, &snd_buf, MSGSIZE, 0)  -1) {
-  tst_brkm(TBROK, cleanup, "Couldn't enqueue" " message");
-     }
-     /* wait for the child to finish */
-     wait(&status);
-     /* make sure the child returned a good exit status */
-     e_code  status >> 8;
-     if (e_code ! 0) {
-  tst_resm(TFAIL, "Failures reported above");
-     }
+	} else {		/* parent */
+	    /* put the message on the queue */
+	    if (msgsnd(msg_q_1, &snd_buf, MSGSIZE, 0) == -1) {
+		tst_brkm(TBROK, cleanup, "Couldn't enqueue" " message");
+	    }
+	    /* wait for the child to finish */
+	    wait(&status);
+	    /* make sure the child returned a good exit status */
+	    e_code = status >> 8;
+	    if (e_code != 0) {
+		tst_resm(TFAIL, "Failures reported above");
+	    }
 
- }
+	}
     }
 
     cleanup();
@@ -148,33 +148,33 @@ int main(int ac, char **av)
 void
 do_child()
 {
-    int retval  0;
+    int retval = 0;
 
     TEST(msgrcv(msg_q_1, &rcv_buf, MSGSIZE, 1, 0));
-
-    if (TEST_RETURN  -1) {
- retval  1;
- tst_resm(TFAIL, "%s call failed - errno  %d : %s",
-   TCID, TEST_ERRNO, strerror(TEST_ERRNO));
+    
+    if (TEST_RETURN == -1) {
+	retval = 1;
+	tst_resm(TFAIL, "%s call failed - errno = %d : %s",
+		 TCID, TEST_ERRNO, strerror(TEST_ERRNO));
     } else {
- if (STD_FUNCTIONAL_TEST) {
-     /*
-      * Build a new message and compare it
-      * with the one received.
-      */
-     init_buf(&cmp_buf, MSGTYPE, MSGSIZE);
-
-     if (strcmp(rcv_buf.mtext, cmp_buf.mtext)  0) {
-  tst_resm(TPASS,
-    "message received  " "message sent");
-     } else {
-  retval  1;
-  tst_resm(TFAIL,
-    "message received ! " "message sent");
-     }
- } else {
-     tst_resm(TPASS, "call succeeded");
- }
+	if (STD_FUNCTIONAL_TEST) {
+	    /*
+	     * Build a new message and compare it
+	     * with the one received.
+	     */
+	    init_buf(&cmp_buf, MSGTYPE, MSGSIZE);
+	    
+	    if (strcmp(rcv_buf.mtext, cmp_buf.mtext) == 0) {
+		tst_resm(TPASS,
+			 "message received = " "message sent");
+	    } else {
+		retval = 1;
+		tst_resm(TFAIL,
+			 "message received != " "message sent");
+	    }
+	} else {
+	    tst_resm(TPASS, "call succeeded");
+	}
     }
     exit(retval);
 }
@@ -197,11 +197,11 @@ void setup(void)
      */
     tst_tmpdir();
 
-    msgkey  getipckey();
+    msgkey = getipckey();
 
     /* create a message queue with read/write permission */
-    if ((msg_q_1  msgget(msgkey, IPC_CREAT | IPC_EXCL | MSG_RW))  -1) {
- tst_brkm(TBROK, cleanup, "Can't create message queue");
+    if ((msg_q_1 = msgget(msgkey, IPC_CREAT | IPC_EXCL | MSG_RW)) == -1) {
+	tst_brkm(TBROK, cleanup, "Can't create message queue");
     }
 
     /* initialize the message buffer */
@@ -210,7 +210,7 @@ void setup(void)
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- *        or premature exit.
+ * 	       or premature exit.
  */
 void cleanup(void)
 {

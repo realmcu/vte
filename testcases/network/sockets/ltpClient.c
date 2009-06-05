@@ -40,7 +40,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
-#include <string.h>
+#include <string.h> 
 #include <sys/time.h>
 
 #define LOCAL_UDP_SERVER_PORT   10000
@@ -48,18 +48,18 @@
 #define LOCAL_MCAST_SERVER_PORT 10002
 #define MAX_MSG_LEN             256
 #define TIMETOLIVE              10
-#define PACKETSIZE             64
+#define PACKETSIZE	            64
 #define NET_ERROR               -1
 #define PACKET_LEN              1024  /* 1K should be plenty */
 #define TRUE                    1
 #define FALSE                   0
 
-struct protoent   *protocol  NULL;
+struct protoent   *protocol = NULL;
 
 struct packet
 {
- struct icmphdr hdr;
- char msg[PACKETSIZE-sizeof(struct icmphdr)];
+	struct icmphdr hdr;
+	char msg[PACKETSIZE-sizeof(struct icmphdr)];
 };
 
 /*
@@ -84,12 +84,12 @@ void ltp_traceroute           (struct sockaddr_in *rawTraceAddr, char * hostName
 ********************************************************************/
 int main(int argc, char *argv[]) {
 
-    int udpSocketHandle,
+    int udpSocketHandle, 
         tcpSocketHandle,
         mcastSocketHandle,
         rc, i;
 
-    struct sockaddr_in   udpClientAddr,
+    struct sockaddr_in   udpClientAddr, 
                          udpRemoteServerAddr,
                          tcpClientAddr,
                          tcpRemoteServerAddr,
@@ -101,9 +101,9 @@ int main(int argc, char *argv[]) {
     char   hostName [MAX_MSG_LEN],
            progName [MAX_MSG_LEN],
            traceName [MAX_MSG_LEN],
-           multiCast  TRUE;
+           multiCast = TRUE;
 
-    unsigned char ttl  1;
+    unsigned char ttl = 1;
 
     /* check command line args */
     if (argc < 4) {
@@ -116,9 +116,9 @@ int main(int argc, char *argv[]) {
     strncpy(traceName, argv[2], MAX_MSG_LEN);
 
     /* get server IP address (no check if input is IP address or DNS name */
-    hostEntry  gethostbyname(hostName);
+    hostEntry = gethostbyname(hostName);
 
-    if (hostEntry  NULL) {
+    if (hostEntry == NULL) {
         printf("%s: unknown host passed'%s' \n", progName, hostName);
         exit(1);
     }
@@ -128,25 +128,25 @@ int main(int argc, char *argv[]) {
 
     /* Setup UDP data packets */
 
-    udpRemoteServerAddr.sin_family  hostEntry->h_addrtype;
+    udpRemoteServerAddr.sin_family = hostEntry->h_addrtype;
     memcpy((char *) &udpRemoteServerAddr.sin_addr.s_addr, hostEntry->h_addr_list[0], hostEntry->h_length);
-    udpRemoteServerAddr.sin_port  htons(LOCAL_UDP_SERVER_PORT);
+    udpRemoteServerAddr.sin_port = htons(LOCAL_UDP_SERVER_PORT);
 
     /* Setup TCP data packets */
 
-    tcpRemoteServerAddr.sin_family  hostEntry->h_addrtype;
+    tcpRemoteServerAddr.sin_family = hostEntry->h_addrtype;
     memcpy((char *) &tcpRemoteServerAddr.sin_addr.s_addr, hostEntry->h_addr_list[0], hostEntry->h_length);
-    tcpRemoteServerAddr.sin_port  htons(LOCAL_TCP_SERVER_PORT);
+    tcpRemoteServerAddr.sin_port = htons(LOCAL_TCP_SERVER_PORT);
 
     /* Setup multiCast data packets */
 
-    mcastRemoteServerAddr.sin_family  hostEntry->h_addrtype;
+    mcastRemoteServerAddr.sin_family = hostEntry->h_addrtype;
     memcpy((char *) &mcastRemoteServerAddr.sin_addr.s_addr, hostEntry->h_addr_list[0], hostEntry->h_length);
-    mcastRemoteServerAddr.sin_port  htons(LOCAL_MCAST_SERVER_PORT);
+    mcastRemoteServerAddr.sin_port = htons(LOCAL_MCAST_SERVER_PORT);
 
     /* socket creation */
-    udpSocketHandle  socket(AF_INET, SOCK_DGRAM, 0);
-    tcpSocketHandle  socket(AF_INET, SOCK_STREAM, 0);
+    udpSocketHandle = socket(AF_INET, SOCK_DGRAM, 0);
+    tcpSocketHandle = socket(AF_INET, SOCK_STREAM, 0);
 
     if (udpSocketHandle < 0) {
         printf("%s: Error: cannot open UDP socket \n",progName);
@@ -157,17 +157,17 @@ int main(int argc, char *argv[]) {
     }
 
     /* bind any UDP port */
-    udpClientAddr.sin_family  AF_INET;
-    udpClientAddr.sin_addr.s_addr  htonl(INADDR_ANY);
-    udpClientAddr.sin_port  htons(0);
+    udpClientAddr.sin_family = AF_INET;
+    udpClientAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    udpClientAddr.sin_port = htons(0);
 
     /* bind any TCP port */
-    tcpClientAddr.sin_family  AF_INET;
-    tcpClientAddr.sin_addr.s_addr  htonl(INADDR_ANY);
-    tcpClientAddr.sin_port  htons(0);
+    tcpClientAddr.sin_family = AF_INET;
+    tcpClientAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    tcpClientAddr.sin_port = htons(0);
 
     if (udpSocketHandle > 0) {
-        rc  bind(udpSocketHandle, (struct sockaddr *) &udpClientAddr, sizeof(udpClientAddr));
+        rc = bind(udpSocketHandle, (struct sockaddr *) &udpClientAddr, sizeof(udpClientAddr));
 
         if (rc < 0) {
             printf("%s: Error: cannot bind UDP port\n", progName);
@@ -175,13 +175,13 @@ int main(int argc, char *argv[]) {
     }
 
     if (tcpSocketHandle > 0) {
-        rc  bind(tcpSocketHandle, (struct sockaddr *) &tcpClientAddr, sizeof(tcpClientAddr));
+        rc = bind(tcpSocketHandle, (struct sockaddr *) &tcpClientAddr, sizeof(tcpClientAddr));
 
         if (rc < 0) {
             printf("%s: Error: cannot bind TCP port\n", progName);
         } else {
             /* connect to server */
-            rc  connect(tcpSocketHandle, (struct sockaddr *) &tcpRemoteServerAddr, sizeof(tcpRemoteServerAddr));
+            rc = connect(tcpSocketHandle, (struct sockaddr *) &tcpRemoteServerAddr, sizeof(tcpRemoteServerAddr));
 
             if (rc < 0) {
                 printf("Error: cannot connect tp TCP Server \n");
@@ -194,29 +194,29 @@ int main(int argc, char *argv[]) {
         printf("%s : Hostname [%s] passed [%s] is not a multicast server\n",progName, hostName,
                inet_ntoa(mcastRemoteServerAddr.sin_addr));
         printf("The multiCast Server will not be started \n");
-        multiCast  FALSE;
+        multiCast = FALSE;
     }
     else {
         /* create socket */
-        mcastSocketHandle  socket(AF_INET, SOCK_DGRAM, 0);
+        mcastSocketHandle = socket(AF_INET, SOCK_DGRAM, 0);
         if (mcastSocketHandle < 0) {
           printf("Error: %s : cannot open mulitCast socket\n", progName);
-          multiCast  FALSE;
+          multiCast = FALSE;
         }
 
         /* bind any port number */
-        mcastClientAddr.sin_family  AF_INET;
-        mcastClientAddr.sin_addr.s_addr  htonl(INADDR_ANY);
-        mcastClientAddr.sin_port  htons(0);
+        mcastClientAddr.sin_family = AF_INET;
+        mcastClientAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+        mcastClientAddr.sin_port = htons(0);
 
         if(bind(mcastSocketHandle, (struct sockaddr *) &mcastClientAddr,sizeof(mcastClientAddr))<0) {
           printf("Error: binding multiCast socket");
-          multiCast  FALSE;
+          multiCast = FALSE;
         }
 
         if(setsockopt(mcastSocketHandle, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl)) < 0) {
-          printf("Error: %s : cannot set ttl  %d \n",progName, ttl);
-          multiCast  FALSE;
+          printf("Error: %s : cannot set ttl = %d \n",progName, ttl);
+          multiCast = FALSE;
         }
 
         printf("%s : sending data on multicast group '%s' (%s)\n",progName,
@@ -225,11 +225,11 @@ int main(int argc, char *argv[]) {
     }
 
     /* Skip over the program and hostnames and just send data */
-    for (i  3; i < argc; i++) {
+    for (i = 3; i < argc; i++) {
 
         if (udpSocketHandle > 0) {
-            rc  sendto(udpSocketHandle, argv[i], strlen(argv[i])+1, 0,
-                        (struct sockaddr *) &udpRemoteServerAddr,
+            rc = sendto(udpSocketHandle, argv[i], strlen(argv[i])+1, 0, 
+                        (struct sockaddr *) &udpRemoteServerAddr, 
                         sizeof(udpRemoteServerAddr));
 
             if (rc < 0) {
@@ -243,7 +243,7 @@ int main(int argc, char *argv[]) {
         }
 
         if (tcpSocketHandle > 0) {
-            rc  send(tcpSocketHandle, argv[i], strlen(argv[i]) + 1, 0);
+            rc = send(tcpSocketHandle, argv[i], strlen(argv[i]) + 1, 0);
 
             if (rc < 0) {
                 printf("cannot send TCP data ");
@@ -257,13 +257,13 @@ int main(int argc, char *argv[]) {
         }
 
         if (multiCast) {
-            rc  sendto(mcastSocketHandle, argv[i], strlen(argv[i])+1, 0,
+            rc = sendto(mcastSocketHandle, argv[i], strlen(argv[i])+1, 0,
                 (struct sockaddr *) &mcastRemoteServerAddr, sizeof(mcastRemoteServerAddr));
 
             if (rc < 0) {
               printf("%s : cannot send multiCast data %d\n",progName,i-1);
               close(mcastSocketHandle);
-              multiCast  FALSE;
+              multiCast = FALSE;
             }
         }
     }
@@ -287,53 +287,53 @@ int main(int argc, char *argv[]) {
 ******************************************************************************/
 int ltp_run_traceroute_tests(char * hostName)
 
-{
+{ 
 
     struct hostent    *hostEntry;
     struct sockaddr_in rawTraceAddr;
-    int    pid  -1;
+    int    pid = -1;
 
 
-    pid  getpid();
+    pid = getpid();
 
-    protocol   getprotobyname("ICMP");
-    hostEntry  gethostbyname(hostName);
+    protocol  = getprotobyname("ICMP");
+    hostEntry = gethostbyname(hostName);
 
     memset(&rawTraceAddr, 0, sizeof(rawTraceAddr));
 
-    rawTraceAddr.sin_family  hostEntry->h_addrtype;
-    rawTraceAddr.sin_port  0;
-    rawTraceAddr.sin_addr.s_addr  *(long*)hostEntry->h_addr;
+    rawTraceAddr.sin_family = hostEntry->h_addrtype;
+    rawTraceAddr.sin_port = 0;
+    rawTraceAddr.sin_addr.s_addr = *(long*)hostEntry->h_addr;
 
     ltp_traceroute(&rawTraceAddr, hostName, pid);
 
     return 0;
 }
 /**********************************************************************
-* Function: ltp_run_ping_tests - host look up and start ping processes
+* Function: ltp_run_ping_tests - host look up and start ping processes 
 *
 ***********************************************************************/
 int ltp_run_ping_tests(char * hostName)
 
-{
+{ 
 
     struct hostent    *hostEntry;
     struct sockaddr_in rawAddr;
-    int    pid  -1;
+    int    pid = -1;
 
 
-    pid  getpid();
+    pid = getpid();
 
-    protocol   getprotobyname("ICMP");
-    hostEntry  gethostbyname(hostName);
+    protocol  = getprotobyname("ICMP");
+    hostEntry = gethostbyname(hostName);
 
     memset(&rawAddr, 0, sizeof(rawAddr));
 
-    rawAddr.sin_family  hostEntry->h_addrtype;
-    rawAddr.sin_port  0;
-    rawAddr.sin_addr.s_addr  *(long*)hostEntry->h_addr;
+    rawAddr.sin_family = hostEntry->h_addrtype;
+    rawAddr.sin_port = 0;
+    rawAddr.sin_addr.s_addr = *(long*)hostEntry->h_addr;
 
-    if ( fork()  0 ){
+    if ( fork() == 0 ){
         network_listener(hostName, pid);
     } else {
         ping_network(&rawAddr, pid);
@@ -349,16 +349,16 @@ int ltp_run_ping_tests(char * hostName)
 *
 *******************************************************************************/
 int network_listener(char * hostName, int pid)
-{
+{   
 
     int                  rawSocket,
                          count,
-                         value  TIMETOLIVE;
+                         value = TIMETOLIVE;
     struct sockaddr_in   rawAddr;
     unsigned char        packet[PACKET_LEN];
 
-    rawSocket  socket(PF_INET, SOCK_RAW, protocol->p_proto);
-    count  0;
+    rawSocket = socket(PF_INET, SOCK_RAW, protocol->p_proto);
+    count = 0;
 
     if ( rawSocket < 0 )
     {
@@ -367,14 +367,14 @@ int network_listener(char * hostName, int pid)
     }
 
     while (1)  /* loop forever */
-    {
+    {   
 
-        int bytes,
-        len  sizeof(rawAddr);
+        int bytes, 
+        len = sizeof(rawAddr);
 
         memset(packet, 0, sizeof(packet));
 
-        bytes  recvfrom(rawSocket, packet, sizeof(packet), 0, (struct sockaddr*)&rawAddr, &len);
+        bytes = recvfrom(rawSocket, packet, sizeof(packet), 0, (struct sockaddr*)&rawAddr, &len);
 
         if ( bytes > 0 )
             output_to_display(packet, bytes, pid);
@@ -384,7 +384,7 @@ int network_listener(char * hostName, int pid)
         }
         count++;
 
-        if (value  count) {
+        if (value == count) {
             printf("Exiting the network_listener...\n");
         }
     }
@@ -393,157 +393,157 @@ int network_listener(char * hostName, int pid)
 }
 
 /****************************************************************
-* Function: checksum - standard 1s complement checksum
+* Function: checksum - standard 1s complement checksum                   
 *
 *****************************************************************/
 unsigned short checksum(void *netPacket, int len)
-{
+{	
 
-    unsigned short *packetPtr  netPacket,
+    unsigned short *packetPtr = netPacket,
                     result;
 
-    unsigned int    sum  0;
+    unsigned int    sum = 0;
 
-    for ( sum  0; len > 1; len - 2 ){
-        sum + *packetPtr++;
+    for ( sum = 0; len > 1; len -= 2 ){
+        sum += *packetPtr++;
     }
 
-    if ( len  1 ){
-        sum + *(unsigned char*)packetPtr;
+    if ( len == 1 ){
+        sum += *(unsigned char*)packetPtr;
     }
 
-    sum  (sum >> 16) + (sum & 0xFFFF);
-    sum + (sum >> 16);
+    sum = (sum >> 16) + (sum & 0xFFFF);
+    sum += (sum >> 16);
 
-    result  ~sum;
+    result = ~sum;
 
     return result;
 }
 
 /*****************************************************************
-* Function: output_to_display - Output to display info. from the
+* Function: output_to_display - Output to display info. from the                        
 *                               listener
 ******************************************************************/
 void output_to_display(void *netPacket, int bytes, int pid)
-{
+{	
 
     int i;
- struct iphdr *ip  netPacket;
- struct icmphdr *icmpPtr  netPacket + ip->ihl*4;
+	struct iphdr *ip = netPacket;
+	struct icmphdr *icmpPtr = netPacket + ip->ihl*4;
     struct in_addr tmp_addr;
 
     printf("\n************** -- Ping Tests - **********************************************\n");
 
- for ( i  0; i < bytes; i++ )
- {
-  if ( !(i & 15) ){
+	for ( i = 0; i < bytes; i++ )
+	{
+		if ( !(i & 15) ){ 
             printf("\n[%d]:  ", i);
         }
 
-  printf("[%d] ", ((unsigned char*)netPacket)[i]);
- }
+		printf("[%d] ", ((unsigned char*)netPacket)[i]);
+	}
 
- printf("\n");
+	printf("\n");
 
-    tmp_addr.s_addr  ip->saddr;
+    tmp_addr.s_addr = ip->saddr;
 
- printf("IPv%d: hdr-size%d pkt-size%d protocol%d TTL%d src%s ",
-  ip->version, ip->ihl*4, ntohs(ip->tot_len), ip->protocol,
-  ip->ttl, inet_ntoa(tmp_addr));
+	printf("IPv%d: hdr-size=%d pkt-size=%d protocol=%d TTL=%d src=%s ",
+		ip->version, ip->ihl*4, ntohs(ip->tot_len), ip->protocol,
+		ip->ttl, inet_ntoa(tmp_addr));
 
-    tmp_addr.s_addr  ip->daddr;
- printf("dst%s\n", inet_ntoa(tmp_addr));
+    tmp_addr.s_addr = ip->daddr;
+	printf("dst=%s\n", inet_ntoa(tmp_addr));
 
- if ( icmpPtr->un.echo.id  pid ) {
+	if ( icmpPtr->un.echo.id == pid ) {
 
-  printf("ICMP: type[%d/%d] checksum[%d] id[%d] seq[%d]\n\n",
-   icmpPtr->type, icmpPtr->code, ntohs(icmpPtr->checksum),
-   icmpPtr->un.echo.id, icmpPtr->un.echo.sequence);
+		printf("ICMP: type[%d/%d] checksum[%d] id[%d] seq[%d]\n\n",
+			icmpPtr->type, icmpPtr->code, ntohs(icmpPtr->checksum),
+			icmpPtr->un.echo.id, icmpPtr->un.echo.sequence);
 
- }
+	}
 }
 /***********************************************************************
-* Function: ping_network - Build a message and send it.
+* Function: ping_network - Build a message and send it.                          
 *
 *
 ***********************************************************************/
 void ping_network(struct sockaddr_in *rawAddr, int pid)
-{
+{	
 
-    const int value  TIMETOLIVE;
- int       i,
-              rawSocket,
-              count  1;
+    const int value = TIMETOLIVE;
+	int       i, 
+              rawSocket, 
+              count = 1;
 
- struct packet rawPacket;
+	struct packet rawPacket;
 
- struct sockaddr_in r_addr;
+	struct sockaddr_in r_addr;
 
- rawSocket  socket(PF_INET, SOCK_RAW, protocol->p_proto);
+	rawSocket = socket(PF_INET, SOCK_RAW, protocol->p_proto);
 
- if ( rawSocket < 0 )   {
+	if ( rawSocket < 0 )   {
         printf("Error: cannot open RAW socket %d\n", rawSocket);
-  return;
- }
+		return;
+	}
 
- if ( setsockopt(rawSocket, SOL_IP, IP_TTL, &value, sizeof(value)) ! 0){
-  printf("ERROR: Setting TimeToLive option");
+	if ( setsockopt(rawSocket, SOL_IP, IP_TTL, &value, sizeof(value)) != 0){
+		printf("ERROR: Setting TimeToLive option");
     }
     else{
         printf("The test will run for [%d] iterations -- Ctrl-C to interupt \n", value);
         sleep(3);
     }
 
- if ( fcntl(rawSocket, F_SETFL, O_NONBLOCK) ! 0 ){
-  printf("ERROR: Failed request nonblocking I/O");
+	if ( fcntl(rawSocket, F_SETFL, O_NONBLOCK) != 0 ){
+		printf("ERROR: Failed request nonblocking I/O");
     }
 
- while (1){
+	while (1){	
 
-        int       msgLengthsizeof(r_addr);
+        int       msgLength=sizeof(r_addr);
 
-  printf("Message ID #:%d \n", count);
+		printf("Message ID #:%d \n", count);
 
-  if ( recvfrom(rawSocket, &rawPacket, sizeof(rawPacket), 0, (struct sockaddr*)&r_addr, &msgLength) > 0 ){
-   printf("*** -- Message Received -- ***\n");
+		if ( recvfrom(rawSocket, &rawPacket, sizeof(rawPacket), 0, (struct sockaddr*)&r_addr, &msgLength) > 0 ){
+			printf("*** -- Message Received -- ***\n");
         }
 
-  memset(&rawPacket, 0, sizeof(rawPacket));
+		memset(&rawPacket, 0, sizeof(rawPacket));
 
-  rawPacket.hdr.type  ICMP_ECHO;
-  rawPacket.hdr.un.echo.id  pid;
+		rawPacket.hdr.type = ICMP_ECHO;
+		rawPacket.hdr.un.echo.id = pid;
 
-  for ( i  0; i < sizeof(rawPacket.msg)-1; i++ ){
-   rawPacket.msg[i]  i + '0';
+		for ( i = 0; i < sizeof(rawPacket.msg)-1; i++ ){
+			rawPacket.msg[i] = i + '0';
         }
 
-  rawPacket.msg[i]  0;
-  rawPacket.hdr.un.echo.sequence  count++;
-  rawPacket.hdr.checksum  checksum(&rawPacket, sizeof(rawPacket));
+		rawPacket.msg[i] = 0;
+		rawPacket.hdr.un.echo.sequence = count++;
+		rawPacket.hdr.checksum = checksum(&rawPacket, sizeof(rawPacket));
 
-  if ( sendto(rawSocket, &rawPacket, sizeof(rawPacket), 0, (struct sockaddr*)rawAddr, sizeof(*rawAddr)) < 0 )
-   printf("ERROR: sendto failed !!");
+		if ( sendto(rawSocket, &rawPacket, sizeof(rawPacket), 0, (struct sockaddr*)rawAddr, sizeof(*rawAddr)) <= 0 )
+			printf("ERROR: sendto failed !!");
 
-  sleep(1);
+		sleep(1);
 
-        if (value  count) {
+        if (value == count) {
             printf("Exiting ping test...\n");
             break;
         }
- }
+	}
 }
 
 /**********************************************************************
-*  Function: ltp_traceroute
-*                      try to reach the destination
+*  Function: ltp_traceroute 
+*                      try to reach the destination       
 *                      while outputting hops along the route
 ***********************************************************************/
 void ltp_traceroute(struct sockaddr_in *rawTraceAddr, char * hostName, int pid)
 {
 
-    const int flag  TRUE;
-    int TimeToLive  0;
-    int i, length, rawTraceSocket, count  1;
+    const int flag = TRUE;
+    int TimeToLive = 0;
+    int i, length, rawTraceSocket, count = 1;
     struct packet       rawTracePacket;
     unsigned char       tracePacket[PACKET_LEN];
     struct sockaddr_in  rawReceiveAddr;
@@ -553,7 +553,7 @@ void ltp_traceroute(struct sockaddr_in *rawTraceAddr, char * hostName, int pid)
 
     printf("\n************** -- Trace Route Tests - **********************************************\n");
 
-    rawTraceSocket  socket(PF_INET, SOCK_RAW, protocol->p_proto);
+    rawTraceSocket = socket(PF_INET, SOCK_RAW, protocol->p_proto);
 
     if ( rawTraceSocket < 0 )
     {
@@ -561,48 +561,48 @@ void ltp_traceroute(struct sockaddr_in *rawTraceAddr, char * hostName, int pid)
         return;
     }
 
-    if ( setsockopt(rawTraceSocket, SOL_IP, SO_ERROR, &flag, sizeof(flag)) ! 0 )
+    if ( setsockopt(rawTraceSocket, SOL_IP, SO_ERROR, &flag, sizeof(flag)) != 0 )
         printf("ERROR: Setting socket options");
 
     do
-    {
+    {   
         struct iphdr       *ip;
-        length  sizeof(rawReceiveAddr);
+        length = sizeof(rawReceiveAddr);
 
         TimeToLive++;
-        if ( setsockopt(rawTraceSocket, SOL_IP, IP_TTL, &TimeToLive, sizeof(TimeToLive)) ! 0){
+        if ( setsockopt(rawTraceSocket, SOL_IP, IP_TTL, &TimeToLive, sizeof(TimeToLive)) != 0){
             printf("ERROR: Setting TimeToLive option");
         }
 
         memset(&rawTracePacket, 0, sizeof(rawTracePacket));
 
-        rawTracePacket.hdr.type  ICMP_ECHO;
-        rawTracePacket.hdr.un.echo.id  pid;
+        rawTracePacket.hdr.type = ICMP_ECHO;
+        rawTracePacket.hdr.un.echo.id = pid;
 
-        for ( i  0; i < sizeof(rawTracePacket.msg)-1; i++ ){
-            rawTracePacket.msg[i]  i+'0';
+        for ( i = 0; i < sizeof(rawTracePacket.msg)-1; i++ ){
+            rawTracePacket.msg[i] = i+'0';
         }
 
-        rawTracePacket.msg[i]  0;
-        rawTracePacket.hdr.un.echo.sequence  count++;
-        rawTracePacket.hdr.checksum  checksum(&rawTracePacket, sizeof(rawTracePacket));
+        rawTracePacket.msg[i] = 0;
+        rawTracePacket.hdr.un.echo.sequence = count++;
+        rawTracePacket.hdr.checksum = checksum(&rawTracePacket, sizeof(rawTracePacket));
 
-
-        if ( sendto(rawTraceSocket, &rawTracePacket, sizeof(rawTracePacket), 0, (struct sockaddr*)rawTraceAddr, sizeof(*rawTraceAddr)) < 0 ){
-   printf("ERROR: sendto failed !!");
+        
+        if ( sendto(rawTraceSocket, &rawTracePacket, sizeof(rawTracePacket), 0, (struct sockaddr*)rawTraceAddr, sizeof(*rawTraceAddr)) <= 0 ){
+			printf("ERROR: sendto failed !!");
         }
         sleep(1);
-
+        
         if ( recvfrom(rawTraceSocket, tracePacket, sizeof(tracePacket), MSG_DONTWAIT, (struct sockaddr*)&rawReceiveAddr, &length) > 0 )
-        {
-            ip  (void*)tracePacket;
+        {   
+            ip = (void*)tracePacket;
 
-            tmp_addr.s_addr  ip->saddr;
+            tmp_addr.s_addr = ip->saddr;
             printf("Host IP:#%d: %s \n", count-1, inet_ntoa(tmp_addr));
 
-            hostEntry2  gethostbyaddr((void*)&rawReceiveAddr, length, rawReceiveAddr.sin_family);
+            hostEntry2 = gethostbyaddr((void*)&rawReceiveAddr, length, rawReceiveAddr.sin_family);
 
-            if ( hostEntry2 ! NULL )
+            if ( hostEntry2 != NULL )
                 printf("(%s)\n", hostEntry2->h_name);
             else
                 perror("Name: ");
@@ -612,7 +612,7 @@ void ltp_traceroute(struct sockaddr_in *rawTraceAddr, char * hostName, int pid)
         }
 
     }
-    while ( rawReceiveAddr.sin_addr.s_addr ! rawTraceAddr->sin_addr.s_addr );
+    while ( rawReceiveAddr.sin_addr.s_addr != rawTraceAddr->sin_addr.s_addr );
 
     printf("\n************** -- End Trace Route Tests - ******************************************\n");
 

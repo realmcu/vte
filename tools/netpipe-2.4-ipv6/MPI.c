@@ -32,18 +32,18 @@ int Setup(ArgStruct *p)
         fflush(stdout);
     }
     p->prot.nbor = !p->prot.iproc;
-
+	
     if (nproc != 2)
     {
- printf("Need two processes\n");
- exit(-2);
+	printf("Need two processes\n");
+	exit(-2);
     }
 
     if (p->prot.iproc == 0)
- p->tr = 1;
+	p->tr = 1;
     else
- p->tr = 0;
-
+	p->tr = 0;
+	
 #ifdef BSEND
     messbuff = (char *)malloc(MAXBUFSIZE * sizeof(char));
     if (messbuff == NULL)
@@ -54,11 +54,11 @@ int Setup(ArgStruct *p)
     MPI_Buffer_attach(messbuff, MAXBUFSIZE);
 #endif
 
-}
+}   
 
 void Sync(ArgStruct *p)
 {
- MPI_Barrier(MPI_COMM_WORLD);
+	MPI_Barrier(MPI_COMM_WORLD);
 }
 
 static int recvPosted = 0;
@@ -66,78 +66,78 @@ static MPI_Request recvRequest;
 
 void PrepareToReceive(ArgStruct *p)
 {
- /*
-   Providing a buffer for reception of data in advance of
-   the sender sending the data provides a major performance
-   boost on some implementations of MPI, particularly shared
-   memory implementations on the Cray T3E and Intel Paragon.
- */
- if (recvPosted)
- {
-     printf("Can't prepare to receive: outstanding receive!\n");
-     exit(-1);
- }
- MPI_Irecv(p->buff, p->bufflen, MPI_BYTE,
-    p->prot.nbor, 1, MPI_COMM_WORLD, &recvRequest);
- recvPosted = -1;
+	/*
+	  Providing a buffer for reception of data in advance of
+	  the sender sending the data provides a major performance
+	  boost on some implementations of MPI, particularly shared
+	  memory implementations on the Cray T3E and Intel Paragon.
+	*/
+	if (recvPosted)
+	{
+	    printf("Can't prepare to receive: outstanding receive!\n");
+	    exit(-1);
+	}
+	MPI_Irecv(p->buff, p->bufflen, MPI_BYTE,
+		  p->prot.nbor, 1, MPI_COMM_WORLD, &recvRequest);
+	recvPosted = -1;
 }
 
 void SendData(ArgStruct *p)
 {
 #ifdef BSEND
- MPI_Bsend(p->buff, p->bufflen, MPI_BYTE, p->prot.nbor, 1, MPI_COMM_WORLD);
+	MPI_Bsend(p->buff, p->bufflen, MPI_BYTE, p->prot.nbor, 1, MPI_COMM_WORLD);
 #else
- MPI_Send(p->buff, p->bufflen, MPI_BYTE, p->prot.nbor, 1, MPI_COMM_WORLD);
+	MPI_Send(p->buff, p->bufflen, MPI_BYTE, p->prot.nbor, 1, MPI_COMM_WORLD);
 #endif
 }
 
 void RecvData(ArgStruct *p)
 {
- MPI_Status status;
- if (recvPosted)
- {
-  MPI_Wait(&recvRequest, &status);
-  recvPosted = 0;
- }
- else
- {
-  MPI_Recv(p->buff, p->bufflen, MPI_BYTE,
-    p->prot.nbor, 1, MPI_COMM_WORLD, &status);
- }
+	MPI_Status status;
+	if (recvPosted)
+	{
+		MPI_Wait(&recvRequest, &status);
+		recvPosted = 0;
+	}
+	else
+	{
+		MPI_Recv(p->buff, p->bufflen, MPI_BYTE, 
+				p->prot.nbor, 1, MPI_COMM_WORLD, &status);
+	}
 }
 
 
 void SendTime(ArgStruct *p, double *t)
 {
 #ifdef BSEND
- MPI_Bsend(t, 1, MPI_DOUBLE, p->prot.nbor, 2, MPI_COMM_WORLD);
+	MPI_Bsend(t, 1, MPI_DOUBLE, p->prot.nbor, 2, MPI_COMM_WORLD);
 #else
- MPI_Send(t, 1, MPI_DOUBLE, p->prot.nbor, 2, MPI_COMM_WORLD);
+	MPI_Send(t, 1, MPI_DOUBLE, p->prot.nbor, 2, MPI_COMM_WORLD);
 #endif
 }
 
 void RecvTime(ArgStruct *p, double *t)
 {
- MPI_Status status;
+	MPI_Status status;
 
- MPI_Recv(t, 1, MPI_DOUBLE, p->prot.nbor, 2, MPI_COMM_WORLD, &status);
+	MPI_Recv(t, 1, MPI_DOUBLE, p->prot.nbor, 2, MPI_COMM_WORLD, &status);
 }
 
 
 void SendRepeat(ArgStruct *p, int rpt)
 {
 #ifdef BSEND
- MPI_Bsend(&rpt, 1, MPI_INT, p->prot.nbor, 2, MPI_COMM_WORLD);
+	MPI_Bsend(&rpt, 1, MPI_INT, p->prot.nbor, 2, MPI_COMM_WORLD);
 #else
- MPI_Send(&rpt, 1, MPI_INT, p->prot.nbor, 2, MPI_COMM_WORLD);
+	MPI_Send(&rpt, 1, MPI_INT, p->prot.nbor, 2, MPI_COMM_WORLD);
 #endif
 }
 
 void RecvRepeat(ArgStruct *p, int *rpt)
 {
- MPI_Status status;
+	MPI_Status status;
 
- MPI_Recv(rpt, 1, MPI_INT, p->prot.nbor, 2, MPI_COMM_WORLD, &status);
+	MPI_Recv(rpt, 1, MPI_INT, p->prot.nbor, 2, MPI_COMM_WORLD, &status);
 }
 
 
@@ -147,6 +147,6 @@ int Establish(ArgStruct *p)
 
 int  CleanUp(ArgStruct *p)
 {
- MPI_Finalize();
+	MPI_Finalize();
 }
 

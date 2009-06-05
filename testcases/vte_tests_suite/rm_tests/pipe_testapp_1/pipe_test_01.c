@@ -1,4 +1,4 @@
-/*
+/* 
 *
 *   Copyright (c) International Business Machines  Corp., 2001
 *
@@ -17,14 +17,14 @@
 *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-/*
+/* 
 * Copyright (C) Bull S.A. 1996
 * Level 1,5 Years Bull Confidential and Proprietary Information
 */
 
 /*---------------------------------------------------------------------+
 |                            pipe_test_01                              |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Description:  Simplistic test to verify the pipe system function     |
 |               calls                                                  |
@@ -82,7 +82,7 @@ void    handler(int, int, struct sigcontext *); /* Signal catching function */
 
 /*---------------------------------------------------------------------+
 |                               main ()                                |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Function:  Main program  (see prolog for more details)               |
 |                                                                      |
@@ -98,21 +98,21 @@ int RM_main(int argc, char **argv)
         enum
         { childA, childB };
 
-        /*
+        /* 
         * Setup signal catching function for SIGPIPE in case an
         * error occurs
         */
         setup_handler();
 
-        /*
+        /* 
         * Create a Pipe for data transfer between the two child
         * processes.
         */
         if (pipe(fd) < 0)
                 sys_error("pipe failed", __LINE__);
 
-        /*
-        * Create child process, run command and write info into pipe.
+        /* 
+        * Create child process, run command and write info into pipe. 
         *
         * Close the read end of the pipe and dup the stdout to the write
         * end of the pipe, so the the output of the exec'd command will
@@ -141,7 +141,7 @@ int RM_main(int argc, char **argv)
                 abort();
         }
 
-        /*
+        /* 
         * Create another child process and run command on data passed though
         * the pipe.
         *
@@ -169,7 +169,7 @@ int RM_main(int argc, char **argv)
                 abort();
         }
 
-        /*
+        /* 
         * Close both ends of the pipe and wait for the child processes
         * to complete.
         */
@@ -191,7 +191,7 @@ int RM_main(int argc, char **argv)
 
 /*---------------------------------------------------------------------+
 |                          setup_handler ()                            |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Function:  Setup the signal handler for SIGPIPE.                     |
 |                                                                      |
@@ -211,7 +211,7 @@ void setup_handler(void)
 
 /*---------------------------------------------------------------------+
 |                             handler ()                               |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Function:  Signal catching function for SIGPIPE signal.              |
 |                                                                      |
@@ -226,7 +226,7 @@ void handler(int sig, int code, struct sigcontext *scp)
 
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Function:  Creates system error message and calls error ()           |
 |                                                                      |
@@ -242,7 +242,7 @@ void sys_error(const char *msg, int line)
 
 /*---------------------------------------------------------------------+
 |                               error ()                               |
-| ================ |
+| ==================================================================== |
 |                                                                      |
 | Function:  Prints out message and exits...                           |
 |                                                                      |

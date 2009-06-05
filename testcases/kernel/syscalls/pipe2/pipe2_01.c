@@ -24,7 +24,7 @@
 /*                                                                            */
 /* Description: This Program tests the new system call introduced in 2.6.27.  */
 /*              Ulrich´s comment as in:                                       */
-/* http://git.kernel.org/?plinux/kernel/git/torvalds/linux-2.6.git;acommit;hed8cae8ba01348bfd83333f4648dd807b04d7f08 */
+/* http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=ed8cae8ba01348bfd83333f4648dd807b04d7f08 */
 /*              says:                                                         */
 /* This patch introduces the new syscall pipe2 which is like pipe but it also */
 /* takes an additional parameter which takes a flag value.  This patch        */
@@ -89,9 +89,9 @@ extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
-char *TCID      "pipe2_01"; /* test program identifier.              */
+char *TCID     = "pipe2_01"; /* test program identifier.              */
 int  testno;
-int  TST_TOTAL  1;                  /* total number of tests in this file.   */
+int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -151,8 +151,8 @@ int main (int argc, char *argv[]) {
   char *msg;              /* message returned from parse_opts */
 
   /* Parse standard options given to run the test. */
-  msg  parse_opts(argc, argv, (option_t *) NULL, NULL);
-  if (msg ! (char *) NULL) {
+  msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
+  if (msg != (char *) NULL) {
       tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
       tst_exit();
   }
@@ -163,17 +163,17 @@ int main (int argc, char *argv[]) {
   setup();
 
   /* Check looping state if -i option given */
-  for (lc  0; TEST_LOOPING(lc); ++lc) {
-       Tst_count  0;
-       for (testno0; testno < TST_TOTAL; ++testno) {
-            if (syscall (__NR_pipe2, fd, 0) ! 0) {
+  for (lc = 0; TEST_LOOPING(lc); ++lc) {
+       Tst_count = 0;
+       for (testno=0; testno < TST_TOTAL; ++testno) {
+            if (syscall (__NR_pipe2, fd, 0) != 0) {
                 tst_resm(TFAIL, "pipe2(0) failed");
                 cleanup();
                 tst_exit();
             }
-            for (i  0; i < 2; ++i) {
-                 coe  fcntl (fd[i], F_GETFD);
-                 if (coe  -1) {
+            for (i = 0; i < 2; ++i) {
+                 coe = fcntl (fd[i], F_GETFD);
+                 if (coe == -1) {
                      tst_brkm(TBROK, cleanup, "fcntl failed");
                      tst_exit();
                  }
@@ -186,18 +186,18 @@ int main (int argc, char *argv[]) {
             close (fd[0]);
             close (fd[1]);
 
-            if (syscall (__NR_pipe2, fd, O_CLOEXEC) ! 0) {
+            if (syscall (__NR_pipe2, fd, O_CLOEXEC) != 0) {
                 tst_resm(TFAIL, "pipe2(O_CLOEXEC) failed");
                 cleanup();
                 tst_exit();
             }
-            for ( i  0; i < 2; ++i) {
-                  coe  fcntl (fd[i], F_GETFD);
-                  if (coe  -1) {
+            for ( i = 0; i < 2; ++i) {
+                  coe = fcntl (fd[i], F_GETFD);
+                  if (coe == -1) {
                       tst_brkm(TBROK, cleanup, "fcntl failed");
                       tst_exit();
                   }
-                  if ((coe & FD_CLOEXEC)  0) {
+                  if ((coe & FD_CLOEXEC) == 0) {
                        tst_resm(TFAIL, "pipe2(O_CLOEXEC) does not set close-on-exit for fd[%d]", i);
                        cleanup();
                        tst_exit();

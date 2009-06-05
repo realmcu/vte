@@ -4,7 +4,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ##############################################################################
 #
 #   @file   Makefile
@@ -27,7 +27,7 @@ SUBDIRS = wmv9_decoder_testapp
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; $(MAKE) -C $$i ; done
-
+        
 install:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
 

@@ -17,9 +17,9 @@
 
 int main()
 {
- printf("Will not test returning with ENFILE if the system has\n");
- printf("too many message queues as this is beyond this\n");
- printf("test's domain.\n");
- return PTS_UNTESTED;
+	printf("Will not test returning with ENFILE if the system has\n");
+	printf("too many message queues as this is beyond this\n");
+	printf("test's domain.\n");
+	return PTS_UNTESTED;
 }
 

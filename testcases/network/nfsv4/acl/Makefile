@@ -4,7 +4,7 @@
 # to make tests, use 'make'
 
 ifeq ($(shell echo | $(CC) $(CFLAGS) -E -include sys/acl.h - &>/dev/null && echo yes),yes)
-ACLTESTS := acl1
+ACLTESTS := acl1 
 else
 ACLTESTS :=
 endif

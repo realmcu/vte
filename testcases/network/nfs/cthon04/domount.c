@@ -1,6 +1,6 @@
 /*
- *      @(#)domount.c 1.2 97/01/03 Connectathon testsuite
- * 1.1 Lachman ONC Test Suite source
+ *      @(#)domount.c	1.2 97/01/03 Connectathon testsuite
+ *	1.1 Lachman ONC Test Suite source
  *
  * domount [-u] [args]
  *
@@ -13,24 +13,24 @@
 
 int main(int argc, char *argv[])
 {
- char *comm;
+	char *comm;
 
- if (argc > 1 && strcmp(argv[1], "-u")  0) {
-  if ((comm  getenv("UMOUNT")) ! NULL)
-   *++argv  comm;
-  else
-   *++argv  "/etc/umount";
- } else {
-  if ((comm  getenv("MOUNT")) ! NULL)
-   *argv  comm;
-  else
-   *argv  "/etc/mount";
- }
+	if (argc > 1 && strcmp(argv[1], "-u") == 0) {
+		if ((comm = getenv("UMOUNT")) != NULL)
+			*++argv = comm;
+		else
+			*++argv = "/etc/umount";
+	} else {
+		if ((comm = getenv("MOUNT")) != NULL)
+			*argv = comm;
+		else
+			*argv = "/etc/mount";
+	}
 
- setuid(0);
+	setuid(0);
 
- execv(*argv, argv);
+	execv(*argv, argv);
 
- return 1;
- /* NOTREACHED */
+	return 1;
+	/* NOTREACHED */
 }

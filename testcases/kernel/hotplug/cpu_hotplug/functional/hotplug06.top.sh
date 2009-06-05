@@ -50,7 +50,7 @@ do_clean()
 
 until [ $loop = 0 ]; do
     # Start up top and give it a little time to run
-    top -b -d 00.10 > /dev/null 2>&1 &
+    top -b -d 00.10 > /dev/null 2>&1 & 
     TOP_PID=$!
     sleep 1
 
@@ -68,9 +68,9 @@ until [ $loop = 0 ]; do
     # Check that top hasn't crashed
     pid_is_valid ${TOP_PID}
     if [ $? ]; then
- echo "$CASE    PASS: PID ${TOP_PID} still running."
-   online_cpu ${CPU_TO_TEST}
- kill_pid ${TOP_PID}
+	echo "$CASE    PASS: PID ${TOP_PID} still running."
+    	online_cpu ${CPU_TO_TEST}
+	kill_pid ${TOP_PID}
     else
         echo "$CASE     FAIL: PID ${TOP_PID} no longer running"
         exit_clean -1

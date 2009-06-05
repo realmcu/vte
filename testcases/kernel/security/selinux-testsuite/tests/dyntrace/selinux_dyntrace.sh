@@ -11,29 +11,29 @@
 
 setup()
 {
- export TCID="setup"
- export TST_COUNT=0
- export TST_TOTAL=2
+	export TCID="setup"
+	export TST_COUNT=0
+	export TST_TOTAL=2
 
- # run tests in $LTPROOT/testcases/bin directory
- SAVEPWD=${PWD}
- cd ${LTPBIN}
- CURRENTDIR="."
+	# run tests in $LTPROOT/testcases/bin directory
+	SAVEPWD=${PWD}
+	cd ${LTPBIN}
+	CURRENTDIR="."
 }
 
 test01()
 {
- TCID="test01"
- TST_COUNT=1
- RC=0
+	TCID="test01"
+	TST_COUNT=1
+	RC=0
 
- # Verify that test_dyntrace_child_t can be traced across an dyn
- # by test_dyntrace_parent_t.
- runcon -t test_dyntrace_parent_t -- $CURRENTDIR/selinux_dyntrace_parent test_dyntrace_child_t $CURRENTDIR/selinux_dyntrace_child 2>&1
- RC=$?
- if [ $RC -eq 0 ]
- then
-  echo "$TCID  PASS : dyntrace passed."
+	# Verify that test_dyntrace_child_t can be traced across an dyn
+	# by test_dyntrace_parent_t.
+	runcon -t test_dyntrace_parent_t -- $CURRENTDIR/selinux_dyntrace_parent test_dyntrace_child_t $CURRENTDIR/selinux_dyntrace_child 2>&1
+	RC=$?
+	if [ $RC -eq 0 ]
+	then
+		echo "$TCID  PASS : dyntrace passed."
         else
                 echo "$TCID   FAIL : dyntrace failed."
         fi
@@ -42,31 +42,31 @@ test01()
 
 test02()
 {
- TCID="test02"
- TST_COUNT=2
- RC=0
+	TCID="test02"
+	TST_COUNT=2
+	RC=0
 
- # Verify that test_dyntrace_notchild_t cannot be traced
- # across an dyn by test_dyntrace_parent_t.
- # Should fail on ptrace permission.
+	# Verify that test_dyntrace_notchild_t cannot be traced 
+	# across an dyn by test_dyntrace_parent_t.
+	# Should fail on ptrace permission.
 
- runcon -t test_dyntrace_parent_t -- $CURRENTDIR/selinux_dyntrace_parent test_dyntrace_notchild_t $CURRENTDIR/selinux_dyntrace_child 2>&1
- RC=$?
- if [ $RC -ne 0 ]
- then
-  echo "$TCID   PASS : dyntrace passed."
-  RC=0
+	runcon -t test_dyntrace_parent_t -- $CURRENTDIR/selinux_dyntrace_parent test_dyntrace_notchild_t $CURRENTDIR/selinux_dyntrace_child 2>&1
+	RC=$?
+	if [ $RC -ne 0 ]
+	then
+		echo "$TCID   PASS : dyntrace passed."
+		RC=0
         else
                 echo "$TCID   FAIL : dyntrace failed."
-  RC=1
+		RC=1
         fi
- return $RC
+	return $RC
 }
 
 cleanup()
 {
- # return to $LTPROOT directory
- cd $SAVEPWD
+	# return to $LTPROOT directory
+	cd $SAVEPWD
 }
 
 # Function:     main
@@ -79,7 +79,7 @@ cleanup()
 RC=0    # Return value from setup, and test functions.
 EXIT_VAL=0
 
-setup
+setup  
 test01 || EXIT_VAL=$RC
 test02 || EXIT_VAL=$RC
 cleanup

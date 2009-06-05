@@ -1,0 +1,52 @@
+#Verification Tests Command File
+
+#VT Mirroring Rotation tests
+#files: opl_mirror_testapp
+#files: opl_rotate_testapp
+#files: opl_chain_testapp
+
+#Mirroring testcases
+TGE-LV-MIRR-0010 opl_mirror_testapp -T1 -Sm -W1
+TGE-LV-MIRR-0011 opl_mirror_testapp -T1 -SM -W1
+TGE-LV-MIRR-0012 opl_mirror_testapp -T1 -D16
+TGE-LV-MIRR-0013 opl_mirror_testapp -T1 -D8
+
+TGE-LV-MIRR-0020 opl_mirror_testapp -T2 -N100
+TGE-LV-MIRR-0021 opl_mirror_testapp -T2 -N100 -D8
+
+TGE-LV-MIRR-0030 opl_mirror_testapp -T3 -C1 -N10 
+TGE-LV-MIRR-0031 opl_mirror_testapp -T3 -N5
+
+TGE-LV-MIRR-0040 opl_mirror_testapp -T4 -N100
+
+TGE-LV-MIRR-0050 opl_mirror_testapp -T5 -Sm
+TGE-LV-MIRR-0051 opl_mirror_testapp -T5 -SM
+TGE-LV-MIRR-0052 opl_mirror_testapp -T5 
+TGE-LV-MIRR-0053 opl_mirror_testapp -T5 -D8
+
+
+#Rotational testcases
+TGE-LV-ROT-0010	opl_rotate_testapp -T1 -Sr -W1
+TGE-LV-ROT-0011	opl_rotate_testapp -T1 -SR -W1
+TGE-LV-ROT-0012	opl_rotate_testapp -T1 -D16
+TGE-LV-ROT-0013	opl_rotate_testapp -T1 -D8
+
+TGE-LV-ROT-0020	opl_rotate_testapp -T2 -N100
+TGE-LV-ROT-0021	opl_rotate_testapp -T2 -N100 -D8
+
+TGE-LV-ROT-0030	opl_rotate_testapp -T3 -C1 -N10
+TGE-LV-ROT-0031	opl_rotate_testapp -T3 -C2 -N5
+
+TGE-LV-ROT-0040	opl_rotate_testapp -T4 -N100
+
+TGE-LV-ROT-0050	opl_rotate_testapp -T5 -Sr
+TGE-LV-ROT-0051	opl_rotate_testapp -T5 -Sr
+TGE-LV-ROT-0052	opl_rotate_testapp -T5 
+TGE-LV-ROT-0053	opl_rotate_testapp -T5 -D8
+
+
+#Chain testcases
+TGE-LV-ROT-MIRR-0010 opl_chain_testapp -D8 -SrmRM
+TGE-LV-ROT-MIRR-0020 opl_chain_testapp -D16 -SmMrmrmMm
+TGE-LV-ROT-MIRR-0030 opl_chain_testapp -D16 -S96
+

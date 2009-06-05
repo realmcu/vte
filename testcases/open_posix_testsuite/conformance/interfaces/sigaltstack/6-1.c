@@ -2,7 +2,7 @@
  * Copyright (c) 2002-2003, Intel Corporation. All rights reserved.
  * Created by:  salwan.searty REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this
+ * of this license, see the COPYING file at the top level of this 
  * source tree.
 
  This program tests the assertion that if the ss_flags member is not set to SS_DISABLE,
@@ -31,51 +31,51 @@ stack_t alternate_s;
 
 void handler(int signo)
 {
- stack_t handler_s;
+	stack_t handler_s;
 
- if (sigaltstack((stack_t *)0, &handler_s) == -1) {
-  perror("Unexpected error while attempting to setup test pre-conditions");
-  exit(PTS_UNRESOLVED);
- }
+	if (sigaltstack((stack_t *)0, &handler_s) == -1) {
+		perror("Unexpected error while attempting to setup test pre-conditions");
+		exit(PTS_UNRESOLVED);
+	}
 
- if (handler_s.ss_flags != SS_ONSTACK) {
-  printf("Test FAILED: The alternate stack's ss_flags member does not contain SS_ONSTACK even though the handler is executing on the alternate stack\n");
-  exit(PTS_FAIL);
- }
+	if (handler_s.ss_flags != SS_ONSTACK) {
+		printf("Test FAILED: The alternate stack's ss_flags member does not contain SS_ONSTACK even though the handler is executing on the alternate stack\n");
+		exit(PTS_FAIL);
+	}
 }
 
 int main()
 {
 
- struct sigaction act;
- act.sa_flags = SA_ONSTACK;
- act.sa_handler = handler;
- sigemptyset(&act.sa_mask);
+	struct sigaction act;
+	act.sa_flags = SA_ONSTACK;
+	act.sa_handler = handler;
+	sigemptyset(&act.sa_mask);
 
- if (sigaction(SIGTOTEST,  &act, 0) == -1) {
-  perror("Unexpected error while attempting to setup test pre-conditions");
-  return PTS_UNRESOLVED;
- }
+	if (sigaction(SIGTOTEST,  &act, 0) == -1) {
+		perror("Unexpected error while attempting to setup test pre-conditions");
+		return PTS_UNRESOLVED;
+	}
 
- if ((alternate_s.ss_sp = (void *)malloc(SIGSTKSZ)) == NULL) {
-  perror("Unexpected error while attempting to setup test pre-conditions");
-  return PTS_UNRESOLVED;
- }
+	if ((alternate_s.ss_sp = (void *)malloc(SIGSTKSZ)) == NULL) {
+		perror("Unexpected error while attempting to setup test pre-conditions");
+		return PTS_UNRESOLVED;
+	}
 
- alternate_s.ss_flags = 0;
- alternate_s.ss_size = SIGSTKSZ;
+	alternate_s.ss_flags = 0;
+	alternate_s.ss_size = SIGSTKSZ;
+	
+	if (sigaltstack(&alternate_s, (stack_t *)0) == -1) {
+		perror("Unexpected error while attempting to setup test pre-conditions");
+		return PTS_UNRESOLVED;
+	}
 
- if (sigaltstack(&alternate_s, (stack_t *)0) == -1) {
-  perror("Unexpected error while attempting to setup test pre-conditions");
-  return PTS_UNRESOLVED;
- }
+	if (raise(SIGTOTEST) == -1) {
+		perror("Unexpected error while attempting to setup test pre-conditions");
+		return PTS_UNRESOLVED;
+	}
 
- if (raise(SIGTOTEST) == -1) {
-  perror("Unexpected error while attempting to setup test pre-conditions");
-  return PTS_UNRESOLVED;
- }
-
- printf("Test PASSED\n");
- return PTS_PASS;
+	printf("Test PASSED\n");
+	return PTS_PASS;
 }
 

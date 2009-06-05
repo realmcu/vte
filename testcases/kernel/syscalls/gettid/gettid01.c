@@ -41,10 +41,10 @@ void setup();
 void cleanup();
 
 
-char *TCID  "gettid01"; /* Test program identifier.    */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID = "gettid01";	/* Test program identifier.    */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-int TST_TOTAL  1;
+int TST_TOTAL = 1;
 
 
 pid_t
@@ -55,12 +55,12 @@ my_gettid (void)
 
 int main(int ac, char **av)
 {
-    int lc;   /* loop counter */
-    char *msg;   /* parse_opts() return message */
+    int lc;			/* loop counter */
+    char *msg;			/* parse_opts() return message */
 
-    if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
- tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
- /*NOTREACHED*/
+    if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	/*NOTREACHED*/
     }
 
     setup();
@@ -68,27 +68,27 @@ int main(int ac, char **av)
     /*
      * The following loop checks looping state if -c option given
      */
-    for (lc  0; TEST_LOOPING(lc); lc++) {
+    for (lc = 0; TEST_LOOPING(lc); lc++) {
 
- Tst_count  0;
-
-
- TEST(my_gettid());
+	Tst_count = 0;
 
 
- if ( TEST_RETURN  -1 ) {
-     TEST_ERROR_LOG(TEST_ERRNO);
-     tst_resm(TFAIL, "gettid() Failed, errno%d: %s",
-       TEST_ERRNO, strerror(TEST_ERRNO));
- } else {
-     /***************************************************************
-      * only perform functional verification if flag set (-f not given)
-      ***************************************************************/
-     if ( STD_FUNCTIONAL_TEST ) {
-  /* No Verification test, yet... */
-  tst_resm(TPASS, "gettid() returned %d", TEST_RETURN);
-     }
- }
+	TEST(my_gettid());
+
+
+	if ( TEST_RETURN == -1 ) {
+	    TEST_ERROR_LOG(TEST_ERRNO);
+	    tst_resm(TFAIL, "gettid() Failed, errno=%d: %s",
+		     TEST_ERRNO, strerror(TEST_ERRNO));
+	} else {
+	    /***************************************************************
+	     * only perform functional verification if flag set (-f not given)
+	     ***************************************************************/
+	    if ( STD_FUNCTIONAL_TEST ) {
+		/* No Verification test, yet... */
+		tst_resm(TPASS, "gettid() returned %d", TEST_RETURN);
+	    }
+	}
     }
 
     cleanup();
@@ -102,7 +102,7 @@ int main(int ac, char **av)
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void
+void 
 setup()
 {
     /* capture signals */
@@ -111,14 +111,14 @@ setup()
     /* Pause if that option was specified */
     TEST_PAUSE;
 
-} /* End setup() */
+}	/* End setup() */
 
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *  completion or premature exit.
+ *		completion or premature exit.
  */
-void
+void 
 cleanup()
 {
     /*
@@ -130,4 +130,4 @@ cleanup()
     /* exit with return code appropriate for results */
     tst_exit();
 
-} /* End cleanup() */
+}	/* End cleanup() */

@@ -1,33 +1,33 @@
-/*====================*/
+/*================================================================================================*/
 /**
     @file   ioerrors_test.c
 
     @brief  GPIO ioerrors test scenario C source.
 */
-/*======================
+/*==================================================================================================
 
   Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-
-====================
+     
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Igor Semenchukov             10/06/2004     TLSbo39741   Initial version
+Igor Semenchukov             10/06/2004     TLSbo39741   Initial version 
 
-====================
-Portability: Indicate if this module is portable to other compilers or platforms.
+====================================================================================================
+Portability: Indicate if this module is portable to other compilers or platforms. 
              If not, indicate specific reasons why is it not portable.
 
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <errno.h>
 #include <stdio.h>      /* fprintf(), sprintf() */
@@ -44,7 +44,7 @@ Portability: Indicate if this module is portable to other compilers or platforms
 #ifdef __cplusplus
 extern "C"{
 #endif
-
+    
 /* Harness Specific Include Files. */
 #include "test.h"
 #ifdef __cplusplus
@@ -55,97 +55,97 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "ioerrors_test.h"
 
-/*======================
+/*==================================================================================================
                                        LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 #define BUFSIZE 4096
 #define LEN     30
 #define TRUE    1
 
-/*====================*/
-/*= VT_ioerrors_setup =*/
+/*================================================================================================*/
+/*===== VT_ioerrors_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
 @param  None
-
+  
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ioerrors_setup(void)
 {
-    int fd = 0;  /* File descriptor for testing filesystem support of O_DIRECT */
+    int fd = 0;		/* File descriptor for testing filesystem support of O_DIRECT */
     char fname[] = "testfile"; /* File name for testing filesystem support of O_DIRECT */
 
     /* Test for filesystem support of O_DIRECT */
     if ((fd = open(fname, O_DIRECT|O_RDWR|O_CREAT, 0666)) < 0)
     {
- tst_resm(TCONF, "ERROR: O_DIRECT is not supported by this filesystem. Error: %d, %s",
-     errno, strerror(errno));
- return TPASS;
+	tst_resm(TCONF, "ERROR: O_DIRECT is not supported by this filesystem. Error: %d, %s",
+	    errno, strerror(errno));
+	return TPASS;
     }
     else
     {
- close(fd);
- unlink(fname);
+	close(fd);
+	unlink(fname);
     }
     return TPASS;
 }
 
 
-/*====================*/
-/*= VT_ioerrors_cleanup =*/
+/*================================================================================================*/
+/*===== VT_ioerrors_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
 
 @param  None
-
+  
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ioerrors_cleanup(void)
 {
     return TPASS;
 }
 
 
-/*====================*/
-/*= VT_ioerrors_test =*/
+/*================================================================================================*/
+/*===== VT_ioerrors_test =====*/
 /**
 @brief  ioerrors test scenario function
 
 @param  None
-
+  
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ioerrors_test(int argc, char** argv)
 {
-    int     fblocks = 1;  /* Iterations. Default 1 */
+    int     fblocks = 1;		/* Iterations. Default 1 */
     int     bufsize = BUFSIZE;
-    int     count, ret;
+    int     count, ret; 
     int     offset;
     int     fd, newfd;
     int     idx,
             l_fail = 0,
-     fail_count = 0,             /* Number of failed tests */
+	    fail_count = 0,             /* Number of failed tests */
             failed = 0,                 /* Bool value - true if at least one testblock failed */
             total = 0;                  /* Number of total tests */
-    int     pgsz = getpagesize();
-    int     pagemask = ~(sysconf(_SC_PAGE_SIZE) - 1);
+    int	    pgsz = getpagesize();
+    int	    pagemask = ~(sysconf(_SC_PAGE_SIZE) - 1);
     char    *buf0,
             *buf1,                      /* Used only in test-14 */
             *buf2;
-    char    filename[LEN];
+    char    filename[LEN]; 
     caddr_t shm_base;
     struct  sigaction act;
 
     act.sa_handler = SIG_IGN;
     sigaction(SIGXFSZ, &act, NULL);
-    sprintf(filename,"testdata-3.%d", getpid());
+    sprintf(filename,"testdata-3.%d", getpid()); 
 
     /* Open file, allocate for buffer 1, fill buffer 1, write it to file, close file */
     if ((fd = open(filename, O_DIRECT|O_RDWR|O_CREAT, 0666)) < 0)
@@ -164,7 +164,7 @@ int VT_ioerrors_test(int argc, char** argv)
         fillbuf(buf0, BUFSIZE, (char)idx);
         if (write(fd, buf0, BUFSIZE) < 0)
         {
-     fprintf(stderr, "ERROR: write failed for %s: %s\n", filename, strerror(errno));
+	    fprintf(stderr, "ERROR: write failed for %s: %s\n", filename, strerror(errno));
             close(fd);
             unlink(filename);
             return TFAIL;
@@ -191,9 +191,9 @@ int VT_ioerrors_test(int argc, char** argv)
     ret = lseek(fd, offset, SEEK_SET);
     if ((ret >= 0) || (errno != EINVAL))
     {
- fprintf(stderr, "lseek allows negative offset. Returns %d: %s", ret, strerror(errno));
- tst_resm(TFAIL, "Negative offset");
- failed = TRUE;
+	fprintf(stderr, "lseek allows negative offset. Returns %d: %s", ret, strerror(errno));
+	tst_resm(TFAIL, "Negative offset");
+	failed = TRUE;
         fail_count++;
     }
     else tst_resm(TPASS, "Negative offset");
@@ -205,15 +205,15 @@ int VT_ioerrors_test(int argc, char** argv)
     lseek(fd, 0, SEEK_SET);
     ret = write(fd, buf2, 4096);
     if (ret < 0)
-    {
+    { 
         fprintf(stderr,"ERROR: test-2: can't write to file %d: %s\n", ret, strerror(errno));
     }
     ret = runtest_f(fd, buf2, offset, count, EINVAL, 2, "odd count");
     if (ret != 0)
     {
         tst_resm (TFAIL, "Odd count of read and write");
- failed = TRUE;
- fail_count++;
+	failed = TRUE;
+	fail_count++;
     }
     else tst_resm (TPASS, "Odd count of read and write");
     total++;
@@ -224,22 +224,22 @@ int VT_ioerrors_test(int argc, char** argv)
     if (lseek(fd, offset, SEEK_SET) < 0)
     {
         fprintf(stderr, "ERROR: test-3.1: lseek failed: %s\n", strerror(errno));
- tst_resm(TFAIL, "Read beyond the file size");
+	tst_resm(TFAIL, "Read beyond the file size");
         failed = TRUE;
- fail_count++;
+	fail_count++;
     }
     else
     {
         ret = read(fd, buf2, count);
         if (ret > 0 || errno != EINVAL)
-        {
+        {   
             fprintf(stderr,"ERROR: test-3: allows read beyond file size. Returns %d: %s\n",
-     ret, strerror(errno));
+	    	ret, strerror(errno));
             tst_resm(TFAIL, "Read beyond the file size");
             failed = TRUE;
-     fail_count++;
+	    fail_count++;
         }
- else tst_resm(TPASS, "Read beyond the file size");
+	else tst_resm(TPASS, "Read beyond the file size");
     }
     total++;
 
@@ -250,9 +250,9 @@ int VT_ioerrors_test(int argc, char** argv)
     ret = runtest_f(newfd, buf2, offset, count, EBADF, 4, "negative fd");
     if (ret != 0)
     {
- tst_resm(TFAIL, "Invalid file descriptor");
+	tst_resm(TFAIL, "Invalid file descriptor");
         failed = TRUE;
- fail_count++;
+	fail_count++;
     }
     else tst_resm(TPASS, "Invalid file descriptor");
     total++;
@@ -265,18 +265,18 @@ int VT_ioerrors_test(int argc, char** argv)
         fprintf(stderr, "ERROR: test-5: getdtablesize failed: %s\n", strerror(errno));
         tst_resm(TFAIL, "Out of range file descriptor");
         failed = TRUE;
- fail_count++;
+	fail_count++;
     }
     else
     {
         ret = runtest_f(newfd, buf2, offset, count, EBADF, 5, "out of range fd");
         if (ret != 0)
         {
-     tst_resm(TFAIL, "Out of range file descriptor");
-     failed = TRUE;
+	    tst_resm(TFAIL, "Out of range file descriptor");
+	    failed = TRUE;
             fail_count++;
- }
- else tst_resm(TPASS, "Out of range file descriptor");
+	}
+	else tst_resm(TPASS, "Out of range file descriptor");
     }
     total++;
 
@@ -287,15 +287,15 @@ int VT_ioerrors_test(int argc, char** argv)
     {
         fprintf(stderr, "ERROR: test-6: can't close fd %d: %s\n", fd, strerror(errno));
         unlink(filename);
- tst_resm(TFAIL, "close failed");
+	tst_resm(TFAIL, "close failed");
         return TFAIL;
     }
     ret = runtest_f(fd, buf2, offset, count, EBADF, 6, "closed fd");
     if (ret != 0)
     {
- tst_resm(TFAIL, "Closed file descriptor");
+	tst_resm(TFAIL, "Closed file descriptor");
         failed = TRUE;
- fail_count++;
+	fail_count++;
     }
     else tst_resm(TPASS, "Closed file descriptor");
     total++;
@@ -309,25 +309,25 @@ int VT_ioerrors_test(int argc, char** argv)
         tst_resm (TCONF, "Skipped Character device read, write");
     }
     else
-    {
+    { 
         ret = runtest_s(newfd, buf2, offset, count, 9, "/dev/null");
- if (ret != 0)
+	if (ret != 0)
         {
-     tst_resm(TFAIL, "character device read, write");
-     failed = TRUE;
-     fail_count++;
- }
- else tst_resm(TPASS, "character device read, write");
+	    tst_resm(TFAIL, "character device read, write");
+	    failed = TRUE;
+	    fail_count++;
+	}
+	else tst_resm(TPASS, "character device read, write");
     }
     total++;
-
+	
     /* Test-8: read, write to a mmapped file */
     shm_base = (char *)(((long)sbrk(0) + (pgsz-1)) & ~(pgsz-1));
     if (shm_base == NULL)
     {
         fprintf(stderr, "ERROR: test-8: sbrk failed: %s\n", strerror(errno));
         unlink(filename);
- tst_resm(TFAIL, "sbrk failed");
+	tst_resm(TFAIL, "sbrk failed");
         return TFAIL;
     }
     offset = 4096;
@@ -336,7 +336,7 @@ int VT_ioerrors_test(int argc, char** argv)
     {
         fprintf(stderr, "ERROR: can't open %s: %s\n", filename, strerror(errno));
         unlink(filename);
- tst_resm(TFAIL, "Open failed");
+	tst_resm(TFAIL, "Open failed");
         return TFAIL;
     }
     shm_base = mmap(shm_base, 0x100000, PROT_READ|PROT_WRITE, MAP_SHARED|MAP_FIXED, fd, 0);
@@ -344,40 +344,40 @@ int VT_ioerrors_test(int argc, char** argv)
     {
         fprintf(stderr, "ERROR: test-8: can't mmap file: %s\n", strerror(errno));
         unlink(filename);
- tst_resm(TFAIL, "mmap failed");
+	tst_resm(TFAIL, "mmap failed");
         return TFAIL;
     }
     ret = runtest_s(fd, buf2, offset, count, 10, "mmapped file");
     if (ret != 0)
     {
- tst_resm(TFAIL, "read, write to a mmapped file");
- failed = TRUE;
- fail_count++;
+	tst_resm(TFAIL, "read, write to a mmapped file");
+	failed = TRUE;
+	fail_count++;
     }
     else tst_resm(TPASS, "read, write to a mmaped file");
-    total++;
+    total++;  
 
     /* Test-9: read, write to an unmapped file with munmap */
     if ((ret = munmap(shm_base, 0x100000)) < 0)
     {
         fprintf(stderr, "ERROR: test-9: can't unmap file: %s\n", strerror(errno));
         unlink(filename);
- tst_resm(TFAIL, "munmap failed");
+	tst_resm(TFAIL, "munmap failed");
         return TFAIL;
     }
     ret = runtest_s(fd, buf2, offset, count, 11, "unmapped file");
     if (ret != 0)
     {
         failed = TRUE;
- fail_count++;
- tst_resm(TFAIL, "read, write to an unmapped file");
+	fail_count++;
+	tst_resm(TFAIL, "read, write to an unmapped file");
     }
     else tst_resm (TPASS, "read, write to an unmapped file");
     if (close(fd) < 0)
     {
         fprintf(stderr, "ERROR: test-9: can't close fd %d: %s\n", fd, strerror(errno));
         unlink(filename);
- tst_resm(TFAIL, "close failed");
+	tst_resm(TFAIL, "close failed");
         return TFAIL;
     }
     total++;
@@ -389,28 +389,28 @@ int VT_ioerrors_test(int argc, char** argv)
     {
         fprintf(stderr, "ERROR: test-10: can't open %s: %s\n", filename, strerror(errno));
         unlink(filename);
- tst_resm(TFAIL, "open failed");
+	tst_resm(TFAIL, "open failed");
         return TFAIL;;
     }
     if (lseek(fd, offset, SEEK_SET) < 0)
     {
         fprintf(stderr, "ERROR: test-10: lseek failed: %s\n", strerror(errno));
-    failed = TRUE;
- fail_count++;
- tst_resm(TFAIL, "lseek failed");
+    	failed = TRUE;
+	fail_count++;
+	tst_resm(TFAIL, "lseek failed");
     }
     else
     {
         ret = read(fd, buf2, count);
- if (ret >= 0 || errno != EBADF)
+	if (ret >= 0 || errno != EBADF)
         {
-     fprintf(stderr, "ERROR: test-10: allows read on file not open for reading. Returns %d: %s\n",
+	    fprintf(stderr, "ERROR: test-10: allows read on file not open for reading. Returns %d: %s\n",
                 ret, strerror(errno));
-     failed = TRUE;
-     fail_count++;
-     tst_resm(TFAIL, "Read from file not open for reading");
+	    failed = TRUE;
+	    fail_count++;
+	    tst_resm(TFAIL, "Read from file not open for reading");
         }
- else tst_resm(TPASS, "Read from file not open for reading");
+	else tst_resm(TPASS, "Read from file not open for reading");
     }
     close(fd);
     total++;
@@ -422,27 +422,27 @@ int VT_ioerrors_test(int argc, char** argv)
     {
         fprintf(stderr, "ERROR: test-11: can't open %s: %s\n", filename, strerror(errno));
         unlink(filename);
- tst_resm(TFAIL, "open failed");
- return TFAIL;
+	tst_resm(TFAIL, "open failed");
+	return TFAIL;
     }
     if (lseek(fd, offset, SEEK_SET) < 0)
     {
         fprintf(stderr, "ERROR: test-11: lseek failed:%s\n", strerror(errno));
- failed = TRUE;
- fail_count++;
- tst_resm(TFAIL, "lseek failed");
+	failed = TRUE;
+	fail_count++;
+	tst_resm(TFAIL, "lseek failed");
     }
     else
     {
- ret = write(fd, buf2, count);
+	ret = write(fd, buf2, count);
         if (ret >= 0 || errno != EBADF)
         {
             fprintf(stderr, "ERROR: test-11: allows write on file not open for writing. Returns %d: %s\n",
-         ret, strerror(errno));
-     failed = TRUE;
-     fail_count++;
-     tst_resm(TFAIL, "Write to file not open for writing");
-    }
+	        ret, strerror(errno));
+	    failed = TRUE;
+	    fail_count++;
+	    tst_resm(TFAIL, "Write to file not open for writing");
+    	}
         else tst_resm(TPASS, "Write to file not open for writing");
     }
     close(fd);
@@ -456,7 +456,7 @@ int VT_ioerrors_test(int argc, char** argv)
     {
         fprintf(stderr, "ERROR: test-12: can't open %s: %s\n", filename, strerror(errno));
         unlink(filename);
- tst_resm(TFAIL, "open failed");
+	tst_resm(TFAIL, "open failed");
         return TFAIL;
     }
     if (lseek(fd, offset, SEEK_SET) < 0)
@@ -481,15 +481,15 @@ int VT_ioerrors_test(int argc, char** argv)
     {
         if ((ret = write(fd, buf2 + 1, count)) != -1)
         {
-     fprintf(stderr,"ERROR: test-12: allows write nonaligned buf. Returns %d: %s\n", ret, strerror(errno));
+	    fprintf(stderr,"ERROR: test-12: allows write nonaligned buf. Returns %d: %s\n", ret, strerror(errno));
             l_fail = TRUE;
         }
     }
     if (l_fail)
     {
         failed = TRUE;
- fail_count++;
- tst_resm(TFAIL, "Read, write with non-aligned buffer");
+	fail_count++;
+	tst_resm(TFAIL, "Read, write with non-aligned buffer");
     }
     else tst_resm(TPASS, "Read, write with non-aligned buffer");
     total++;
@@ -503,7 +503,7 @@ int VT_ioerrors_test(int argc, char** argv)
     {
         fprintf(stderr, "ERROR: test-13: can't open %s: %s\n", filename, strerror(errno));
         unlink(filename);
- tst_resm(TFAIL, "open failed");
+	tst_resm(TFAIL, "open failed");
         return TFAIL;
     }
     if (lseek(fd, offset, SEEK_SET) < 0)
@@ -517,9 +517,9 @@ int VT_ioerrors_test(int argc, char** argv)
 #else
         ret = read(fd, (char*)((ulong)main & pagemask), count);
 #endif
- if (ret >= 0 || errno != EFAULT)
+	if (ret >= 0 || errno != EFAULT)
         {
-     fprintf(stderr,"ERROR: test-13: read to read-only space. Returns %d:%s\n", ret, strerror(errno));
+	    fprintf(stderr,"ERROR: test-13: read to read-only space. Returns %d:%s\n", ret, strerror(errno));
             l_fail = TRUE;
         }
     }
@@ -532,19 +532,19 @@ int VT_ioerrors_test(int argc, char** argv)
 #if defined(__powerpc64__)
         ret = write(fd, (char *)(((ulong *)main)[0] & pagemask), count);
 #else
- ret = write(fd, (char *)((ulong)main & pagemask), count);
+	ret = write(fd, (char *)((ulong)main & pagemask), count);
 #endif
- if (ret < 0 )
+	if (ret < 0 )
         {
-     fprintf(stderr,"[15] write to read-only space. Returns %d: %s\n", ret, strerror(errno));
+	    fprintf(stderr,"[15] write to read-only space. Returns %d: %s\n", ret, strerror(errno));
             l_fail = TRUE;
- }
+	}
     }
     if (l_fail)
     {
         failed = TRUE;
- fail_count++;
- tst_resm(TFAIL, "Read, write buffer in read-only space");
+	fail_count++;
+	tst_resm(TFAIL, "Read, write buffer in read-only space");
     }
     else tst_resm(TPASS, "Read, write buffer in read-only space");
     close(fd);
@@ -557,22 +557,22 @@ int VT_ioerrors_test(int argc, char** argv)
     {
         fprintf(stderr,"ERROR: test-14: sbrk: %s\n", strerror(errno));
         unlink(filename);
- tst_resm(TFAIL, "sbrk failed");
+	tst_resm(TFAIL, "sbrk failed");
         return TFAIL;
     }
     if ((fd = open(filename, O_DIRECT|O_RDWR)) < 0)
     {
         fprintf(stderr, "ERROR: test-14: can't open %s: %s\n", filename, strerror(errno));
         unlink(filename);
- tst_resm(TFAIL, "open failed");
+	tst_resm(TFAIL, "open failed");
         return TFAIL;
     }
     ret =runtest_f(fd, buf1, offset, count, EFAULT, 16, " nonexistant space");
     if (ret != 0)
     {
         failed = TRUE;
- fail_count++;
- tst_resm(TFAIL, "Read, write in non-existant space");
+	fail_count++;
+	tst_resm(TFAIL, "Read, write in non-existant space");
     }
     else tst_resm(TPASS, "Read, write in non-existant space");
     total++;
@@ -585,15 +585,15 @@ int VT_ioerrors_test(int argc, char** argv)
     {
         fprintf(stderr, "ERROR: test-15: can't open %s:%s\n", filename, strerror(errno));
         unlink(filename);
- tst_resm(TFAIL, "open failed");
+	tst_resm(TFAIL, "open failed");
         return TFAIL;;
     }
     ret = runtest_s(fd, buf2, offset, count, 17, "opened with O_SYNC");
     if (ret != 0)
     {
         failed = TRUE;
- fail_count++;
- tst_resm(TFAIL, "Read, write for file with O_SYNC");
+	fail_count++;
+	tst_resm(TFAIL, "Read, write for file with O_SYNC");
     }
     else tst_resm(TPASS, "Read, write for file with O_SYNC");
     total++;
@@ -609,53 +609,53 @@ int VT_ioerrors_test(int argc, char** argv)
     return TPASS;
 }
 
-/*====================*/
-/*= fillbuf =*/
+/*================================================================================================*/
+/*===== fillbuf =====*/
 /**
 @brief  Fill buffer of given size with given character value
 
-@param  Input: buf - pointer to filling buffer
-  count - filling length
-  value - filling character
- Output: None
-
-@return None
+@param  Input:	buf - pointer to filling buffer
+		count - filling length
+		value - filling character  
+	Output: None
+		
+@return	None
 */
-/*====================*/
+/*================================================================================================*/
 void fillbuf(char *buf, int count, char value)
 {
     while (count-- > 0) *buf++ = value;
 }
 
-/*====================*/
-/*= runtest_f =*/
+/*================================================================================================*/
+/*===== runtest_f =====*/
 /**
 @brief  Do read, writes. Verify the error value obtained by running
         read or write with the expected error value (errnum).
 
-@param  Input: fd - file descriptor for read or write
-  buf - read/write buffer
-  offset - file read/write offset
+@param  Input:	fd - file descriptor for read or write
+		buf - read/write buffer
+		offset - file read/write offset  
                 count - number of bytes to read/write
                 errnum - error expected
                 testnum - testblock number
                 msg - testblock message
- Output: None
-
-@return Failure - returns -1
+	Output: None
+		
+@return	Failure - returns -1
         Success - returns 0
 */
-/*====================*/
+/*================================================================================================*/
 int runtest_f(int fd, char *buf, int offset, int count, int errnum, int testnum, char *msg)
 {
     int ret;
     int l_fail = 0;
-
+	
     if (lseek(fd, offset, SEEK_SET) < 0)
     {
         if (errno != errnum)
         {
-     fprintf(stderr, "ERROR: test-%d: lseek before read failed: %s\n", testnum, strerror(errno));
+	    fprintf(stderr, "ERROR: test-%d: lseek before read failed: %s\n", testnum, strerror(errno));
             l_fail = 1;
         }
     }
@@ -664,16 +664,16 @@ int runtest_f(int fd, char *buf, int offset, int count, int errnum, int testnum,
         ret = read(fd, buf, count);
         if (ret >= 0 || errno != errnum)
         {
-     fprintf(stderr, "ERROR: test-%d: read allows %s. Returns %d: %s\n",
+	    fprintf(stderr, "ERROR: test-%d: read allows %s. Returns %d: %s\n",
                 testnum, msg, ret, strerror(errno));
-     l_fail = 1;
- }
+	    l_fail = 1;
+	}
     }
     if (lseek(fd, offset, SEEK_SET) < 0)
     {
         if (errno != errnum)
         {
-     fprintf(stderr, "ERROR: test-%d: lseek before write failed: %s\n", testnum, strerror(errno));
+	    fprintf(stderr, "ERROR: test-%d: lseek before write failed: %s\n", testnum, strerror(errno));
             l_fail = 1;
         }
     }
@@ -682,49 +682,49 @@ int runtest_f(int fd, char *buf, int offset, int count, int errnum, int testnum,
         ret = write(fd, buf, count);
         if (ret >= 0 || errno != errnum)
         {
-     fprintf(stderr, "ERROR: test-%d: write allows %s. Returns %d: %s\n",
+	    fprintf(stderr, "ERROR: test-%d: write allows %s. Returns %d: %s\n",
                 testnum, msg, ret, strerror(errno));
-     l_fail = 1;
- }
+	    l_fail = 1;
+	}
     }
     return(l_fail);
 }
 
-/*====================*/
-/*= runtest_s =*/
+/*================================================================================================*/
+/*===== runtest_s =====*/
 /**
 @brief  Do read, writes. Verify they run successfully.
 
-@param  Input: fd - file descriptor for read or write
-  buf - read/write buffer
-  offset - file read/write offset
+@param  Input:	fd - file descriptor for read or write
+		buf - read/write buffer
+		offset - file read/write offset  
                 count - number of bytes to read/write
                 testnum - testblock number
                 msg - testblock message
- Output: None
-
-@return Failure - returns -1
+	Output: None
+		
+@return	Failure - returns -1
         Success - returns 0
 */
-/*====================*/
+/*================================================================================================*/
 int runtest_s(int fd, char *buf, int offset, int count, int testnum, char *msg)
 {
     int ret;
     int l_fail = 0;
-
+	
     if (lseek(fd, offset, SEEK_SET) < 0)
     {
- fprintf(stderr, "ERROR: test-%d: lseek before read failed: %s\n", testnum, strerror(errno));
+	fprintf(stderr, "ERROR: test-%d: lseek before read failed: %s\n", testnum, strerror(errno));
         l_fail = 1;
     }
     else
     {
         if ( (ret=read(fd, buf, count)) < 0 )
         {
-     fprintf(stderr, "ERROR: test-%d: read failed for %s. Returns %d: %s\n",
+	    fprintf(stderr, "ERROR: test-%d: read failed for %s. Returns %d: %s\n",
                 testnum, msg, ret, strerror(errno));
-     l_fail = 1;
- }
+	    l_fail = 1;
+	}
     }
     if (lseek(fd, offset, SEEK_SET) < 0)
     {
@@ -735,10 +735,10 @@ int runtest_s(int fd, char *buf, int offset, int count, int testnum, char *msg)
     {
         if ( (ret=write(fd, buf, count)) < 0 )
         {
-     fprintf(stderr, "ERROR: test-%d: write failed for %s. returns %d: %s\n",
-  testnum, msg, ret, strerror(errno));
-     l_fail = 1;
- }
+	    fprintf(stderr, "ERROR: test-%d: write failed for %s. returns %d: %s\n",
+		testnum, msg, ret, strerror(errno));
+	    l_fail = 1;
+	}
     }
     return(l_fail);
 }

@@ -24,14 +24,14 @@
  *  Verify that,
  *   1. access() fails with -1 return value and sets errno to EACCES
  *      if the permission bits of the file mode do not permit the
- *  requested (Read/Write/Execute) access.
+ *	 requested (Read/Write/Execute) access.
  *   2. access() fails with -1 return value and sets errno to EINVAL
- * if the specified access mode argument is invalid.
+ *	if the specified access mode argument is invalid.
  *   3. access() fails with -1 return value and sets errno to EFAULT
- * if the pathname points outside allocate address space for the
- * process.
+ *	if the pathname points outside allocate address space for the
+ *	process.
  *   4. access() fails with -1 return value and sets errno to ENOENT
- * if the specified file doesn't exist (or pathname is NULL).
+ *	if the specified file doesn't exist (or pathname is NULL).
  *   5. access() fails with -1 return value and sets errno to ENAMETOOLONG
  *      if the pathname size is > PATH_MAX characters.
  *
@@ -47,13 +47,13 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return-1)
- *   if errno set  expected errno
- *  Issue sys call fails with expected return value and errno.
+ *   Check return code, if system call failed (return=-1)
+ *   	if errno set == expected errno
+ *   		Issue sys call fails with expected return value and errno.
+ *   	Otherwise,
+ *		Issue sys call fails with unexpected errno.
  *   Otherwise,
- *  Issue sys call fails with unexpected errno.
- *   Otherwise,
- * Issue sys call returns unexpected value.
+ *	Issue sys call returns unexpected value.
  *
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
@@ -63,17 +63,17 @@
  *  access05 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -e   : Turn on errno logging.
- *        -i n : Execute test n times.
- *        -I x : Execute test for x seconds.
- *        -P x : Pause for x seconds between iterations.
- *        -t   : Turn on syscall timing.
+ *	       -i n : Execute test n times.
+ *	       -I x : Execute test for x seconds.
+ *	       -P x : Pause for x seconds between iterations.
+ *	       -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS:
  *  This test should be run by 'non-super-user' only.
- *
+ * 
  */
 
 #include <stdio.h>
@@ -90,137 +90,137 @@
 #include "test.h"
 #include "usctest.h"
 
-#define INV_OK  -1
-#define TEST_FILE1 "test_file1"
-#define TEST_FILE2 "test_file2"
-#define TEST_FILE3 "test_file3"
-#define TEST_FILE4 "test_file4"
+#define INV_OK		-1
+#define TEST_FILE1	"test_file1"
+#define TEST_FILE2	"test_file2"
+#define TEST_FILE3	"test_file3"
+#define TEST_FILE4	"test_file4"
 
-#define FILE_MODE S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
+#define FILE_MODE	S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 
 int no_setup();
-int setup1();   /* setup() to test access() for EACCES */
-int setup2();   /* setup() to test access() for EACCES */
-int setup3();   /* setup() to test access() for EACCES */
-int setup4();   /* setup() to test access() for EINVAL */
-int longpath_setup(); /* setup function to test access() for ENAMETOOLONG */
+int setup1();			/* setup() to test access() for EACCES */
+int setup2();			/* setup() to test access() for EACCES */
+int setup3();			/* setup() to test access() for EACCES */
+int setup4();			/* setup() to test access() for EINVAL */
+int longpath_setup();	/* setup function to test access() for ENAMETOOLONG */
 
 #if !defined(UCLINUX)
-char *get_high_address(); /* function from ltp-lib */
+char *get_high_address();	/* function from ltp-lib	*/
 char High_address_node[64];
 #endif
 
 char Longpathname[PATH_MAX+2];
 
-struct test_case_t {  /* test case structure */
- char *pathname;
- int a_mode;
- char *desc;
- int exp_errno;
- int (*setupfunc)();
-} Test_cases[]  {
- { TEST_FILE1, R_OK, "Read Access denied on file", EACCES, setup1 },
- { TEST_FILE2, W_OK, "Write Access denied on file", EACCES, setup2 },
- { TEST_FILE3, X_OK, "Execute Access denied on file", EACCES, setup3 },
- { TEST_FILE4, INV_OK, "Access mode invalid", EINVAL, setup4 },
+struct test_case_t {		/* test case structure */
+	char *pathname;
+	int a_mode;
+	char *desc;
+	int exp_errno;
+	int (*setupfunc)();
+} Test_cases[] = {
+	{ TEST_FILE1, R_OK, "Read Access denied on file", EACCES, setup1 },
+	{ TEST_FILE2, W_OK, "Write Access denied on file", EACCES, setup2 },
+	{ TEST_FILE3, X_OK, "Execute Access denied on file", EACCES, setup3 },
+	{ TEST_FILE4, INV_OK, "Access mode invalid", EINVAL, setup4 },
 #if !defined(UCLINUX)
- { (char *)-1, R_OK, "Negative address", EFAULT, no_setup },
- { High_address_node, R_OK, "Address beyond address space", EFAULT, no_setup },
+	{ (char *)-1, R_OK, "Negative address", EFAULT, no_setup },
+	{ High_address_node, R_OK, "Address beyond address space", EFAULT, no_setup },
 #endif
- { "", W_OK, "Pathname is empty", ENOENT, no_setup },
- { Longpathname, R_OK, "Pathname too long", ENAMETOOLONG, longpath_setup },
- { NULL, 0, NULL, 0, no_setup }
+	{ "", W_OK, "Pathname is empty", ENOENT, no_setup },
+	{ Longpathname, R_OK, "Pathname too long", ENAMETOOLONG, longpath_setup },
+	{ NULL, 0, NULL, 0, no_setup }
 };
 
-char *TCID"access05";  /* Test program identifier.    */
-int TST_TOTAL8;  /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
-int exp_enos[]{EACCES, EFAULT, EINVAL, ENOENT, ENAMETOOLONG, 0};
+char *TCID="access05";		/* Test program identifier.    */
+int TST_TOTAL=8;		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
+int exp_enos[]={EACCES, EFAULT, EINVAL, ENOENT, ENAMETOOLONG, 0};
 
-char nobody_uid[]  "nobody";
+char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
 
-void setup();   /* Main setup function of test */
-void cleanup();   /* cleanup function for the test */
+void setup();			/* Main setup function of test */
+void cleanup();			/* cleanup function for the test */
 
-char * bad_addr  0;
+char * bad_addr = 0;  
 
 int
 main(int ac, char **av)
 {
- int lc;   /* loop counter */
- char *msg;  /* message returned from parse_opts */
- char *file_name; /* name of the testfile */
- char *test_desc; /* test specific message */
- int access_mode; /* specified access mode for testfile */
- int ind;  /* counter for testcase looping */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
+	char *file_name;	/* name of the testfile */
+	char *test_desc;	/* test specific message */
+	int access_mode;	/* specified access mode for testfile */
+	int ind;		/* counter for testcase looping */
 
- /* Parse standard options given to run the test. */
- msg  parse_opts(ac, av, (option_t *) NULL, NULL);
- if (msg ! (char *) NULL) {
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
- }
+	/* Parse standard options given to run the test. */
+	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
+	if (msg != (char *) NULL) {
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	}
 
- /* Perform global setup for test */
- setup();
+	/* Perform global setup for test */
+	setup();
 
- /* set the expected errnos... */
- TEST_EXP_ENOS(exp_enos);
+	/* set the expected errnos... */
+	TEST_EXP_ENOS(exp_enos);
 
- /* Check looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /* Reset Tst_count in case we are looping. */
-  Tst_count  0;
+	/* Check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* Reset Tst_count in case we are looping. */
+		Tst_count = 0;
 
-  for (ind  0; Test_cases[ind].desc ! NULL; ind++) {
-   file_name  Test_cases[ind].pathname;
-   access_mode  Test_cases[ind].a_mode;
-   test_desc  Test_cases[ind].desc;
+		for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
+			file_name = Test_cases[ind].pathname;
+			access_mode = Test_cases[ind].a_mode;
+			test_desc = Test_cases[ind].desc;
 
 #if !defined(UCLINUX)
-   if (file_name  High_address_node) {
-    file_name  get_high_address();
-   }
+			if (file_name == High_address_node) {
+				file_name = get_high_address();
+			}
 #endif
 
-   /*
-    * Call access(2) to test different test conditions.
-    * verify that it fails with -1 return value and
-    * sets appropriate errno.
-    */
-   TEST(access(file_name, access_mode));
+			/* 
+			 * Call access(2) to test different test conditions.
+			 * verify that it fails with -1 return value and
+			 * sets appropriate errno.
+			 */
+			TEST(access(file_name, access_mode));
 
-   if (TEST_RETURN ! -1) {
-    tst_resm(TFAIL, "access() returned %d, "
-      "expected -1, errno:%d", TEST_RETURN,
-      Test_cases[ind].exp_errno);
-    continue;
-   }
+			if (TEST_RETURN != -1) {
+				tst_resm(TFAIL, "access() returned %d, "
+					 "expected -1, errno:%d", TEST_RETURN,
+					 Test_cases[ind].exp_errno);
+				continue;
+			}
 
-   TEST_ERROR_LOG(TEST_ERRNO);
+			TEST_ERROR_LOG(TEST_ERRNO);
 
-   /*
-    * Call a function to verify whether
-    * the specified file has specified
-    * access mode.
-    */
-   if (TEST_ERRNO  Test_cases[ind].exp_errno) {
-    tst_resm(TPASS, "access() fails, %s, errno:%d",
-      test_desc, TEST_ERRNO);
-   } else {
-    tst_resm(TFAIL, "access() fails, %s, errno:%d, "
-      "expected errno:%d", test_desc,
-      TEST_ERRNO, Test_cases[ind].exp_errno);
-   }
-  } /* Test Case Looping */
- } /* End for TEST_LOOPING */
+			/*
+			 * Call a function to verify whether
+			 * the specified file has specified 
+			 * access mode.
+			 */
+			if (TEST_ERRNO == Test_cases[ind].exp_errno) {
+				tst_resm(TPASS, "access() fails, %s, errno:%d",
+					 test_desc, TEST_ERRNO);
+			} else {
+				tst_resm(TFAIL, "access() fails, %s, errno:%d, "
+					 "expected errno:%d", test_desc,
+					 TEST_ERRNO, Test_cases[ind].exp_errno);
+			}
+		}	/* Test Case Looping */
+	}	/* End for TEST_LOOPING */
 
- /* Call cleanup() to undo setup done for the test. */
- cleanup();
+	/* Call cleanup() to undo setup done for the test. */
+	cleanup();
 
- return 0;
- /*NOTREACHED*/
+	return 0;
+	/*NOTREACHED*/
 }
 
 /*
@@ -229,61 +229,61 @@ main(int ac, char **av)
  *  Create a temporary directory and change directory to it.
  *  Call individual test specific setup functions.
  */
-void
+void 
 setup()
 {
- int ind;   /* counter for testsetup functions */
+	int ind;			/* counter for testsetup functions */
 
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-  /* Switch to nobody user for correct error code collection */
-        if (geteuid() ! 0) {
+	 /* Switch to nobody user for correct error code collection */
+        if (geteuid() != 0) {
                 tst_brkm(TBROK, tst_exit, "Test must be run as root");
         }
-        ltpuser  getpwnam(nobody_uid);
-        if (setuid(ltpuser->pw_uid)  -1) {
+        ltpuser = getpwnam(nobody_uid);
+        if (setuid(ltpuser->pw_uid) == -1) {
                 tst_resm(TINFO, "setuid failed to "
                          "to set the effective uid to %d",
                          ltpuser->pw_uid);
                 perror("setuid");
         }
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /* make a temp directory and cd to it */
- tst_tmpdir();
+	/* make a temp directory and cd to it */
+	tst_tmpdir();
 
 #if !defined(UCLINUX)
- bad_addr  mmap(0, 1, PROT_NONE,
-   MAP_PRIVATE_EXCEPT_UCLINUX| MAP_ANONYMOUS, 0, 0);
- if (bad_addr  MAP_FAILED) {
-  tst_brkm(TBROK, cleanup, "mmap failed");
- }
- Test_cases[5].pathname  bad_addr;
+	bad_addr = mmap(0, 1, PROT_NONE,
+			MAP_PRIVATE_EXCEPT_UCLINUX| MAP_ANONYMOUS, 0, 0);
+	if (bad_addr == MAP_FAILED) {
+		tst_brkm(TBROK, cleanup, "mmap failed");
+	}
+	Test_cases[5].pathname = bad_addr;
 #endif
 
- /* call individual setup functions */
- for (ind  0; Test_cases[ind].desc ! NULL; ind++) {
-  Test_cases[ind].setupfunc();
- }
+	/* call individual setup functions */
+	for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
+		Test_cases[ind].setupfunc();
+	}
 }
 
 /*
  * no_setup() - some test conditions do not need any setup.
- *  Hence, this function simply returns 0.
+ *		Hence, this function simply returns 0.
  */
 int
 no_setup()
 {
- return 0;
+	return 0;
 }
 
 /*
  * setup1() - Setup function to test access() for return value -1
- *       and errno EACCES when read access denied for specified
- *       testfile.
+ *	      and errno EACCES when read access denied for specified
+ *	      testfile.
  *
  *   Creat/open a testfile and close it.
  *   Deny read access permissions on testfile.
@@ -292,33 +292,33 @@ no_setup()
 int
 setup1()
 {
- int fd1;   /* file handle for testfile */
+	int fd1;			/* file handle for testfile */
 
- /* Creat a test file under above directory created */
- if ((fd1  open(TEST_FILE1, O_RDWR|O_CREAT, FILE_MODE))  -1) {
-  tst_brkm(TBROK, cleanup,
-    "open(%s, O_RDWR|O_CREAT, %#o) Failed, errno%d :%s",
-    TEST_FILE1, FILE_MODE, errno, strerror(errno));
- }
+	/* Creat a test file under above directory created */
+	if ((fd1 = open(TEST_FILE1, O_RDWR|O_CREAT, FILE_MODE)) == -1) {
+		tst_brkm(TBROK, cleanup,
+			 "open(%s, O_RDWR|O_CREAT, %#o) Failed, errno=%d :%s",
+			 TEST_FILE1, FILE_MODE, errno, strerror(errno));
+	}
 
- /* Close the testfile created above */
- if (close(fd1)  -1) {
-  tst_brkm(TBROK, cleanup, "close(%s) Failed, errno%d : %s",
-    TEST_FILE1, errno, strerror(errno));
- }
+	/* Close the testfile created above */
+	if (close(fd1) == -1) {
+		tst_brkm(TBROK, cleanup, "close(%s) Failed, errno=%d : %s",
+			 TEST_FILE1, errno, strerror(errno));
+	}
 
- /* Change mode permissions on testfile */
- if (chmod(TEST_FILE1, 0333) < 0) {
-  tst_brkm(TBROK, cleanup, "chmod() failed on %s, errno%d",
-    TEST_FILE1, errno);
- }
+	/* Change mode permissions on testfile */
+	if (chmod(TEST_FILE1, 0333) < 0) { 
+		tst_brkm(TBROK, cleanup, "chmod() failed on %s, errno=%d",
+			 TEST_FILE1, errno);
+	}
 
- return 0;
+	return 0;
 }
 
 /*
  * setup2() - Setup function to test access() for return value -1 and
- *       errno EACCES when write access denied on testfile.
+ *	      errno EACCES when write access denied on testfile.
  *
  *   Creat/open a testfile and close it.
  *   Deny write access permissions on testfile.
@@ -327,33 +327,33 @@ setup1()
 int
 setup2()
 {
- int fd2;   /* file handle for testfile */
+	int fd2;			/* file handle for testfile */
 
- /* Creat a test file under above directory created */
- if ((fd2  open(TEST_FILE2, O_RDWR|O_CREAT, FILE_MODE))  -1) {
-  tst_brkm(TBROK, cleanup,
-    "open(%s, O_RDWR|O_CREAT, %#o) Failed, errno%d :%s",
-    TEST_FILE2, FILE_MODE, errno, strerror(errno));
- }
+	/* Creat a test file under above directory created */
+	if ((fd2 = open(TEST_FILE2, O_RDWR|O_CREAT, FILE_MODE)) == -1) {
+		tst_brkm(TBROK, cleanup,
+			 "open(%s, O_RDWR|O_CREAT, %#o) Failed, errno=%d :%s",
+			 TEST_FILE2, FILE_MODE, errno, strerror(errno));
+	}
 
- /* Close the testfile created above */
- if (close(fd2)  -1) {
-  tst_brkm(TBROK, cleanup, "close(%s) Failed, errno%d : %s",
-    TEST_FILE2, errno, strerror(errno));
- }
+	/* Close the testfile created above */
+	if (close(fd2) == -1) {
+		tst_brkm(TBROK, cleanup, "close(%s) Failed, errno=%d : %s",
+			 TEST_FILE2, errno, strerror(errno));
+	}
 
- /* Change mode permissions on testfile */
- if (chmod(TEST_FILE2, 0555) < 0) {
-  tst_brkm(TBROK, cleanup, "chmod() failed on %s, errno%d",
-    TEST_FILE2, errno);
- }
+	/* Change mode permissions on testfile */
+	if (chmod(TEST_FILE2, 0555) < 0) { 
+		tst_brkm(TBROK, cleanup, "chmod() failed on %s, errno=%d",
+			 TEST_FILE2, errno);
+	}
 
- return 0;
+	return 0;
 }
 
 /*
  * setup3() - Setup function to test access() for return value -1 and
- *       errno EACCES when execute access denied on testfile.
+ *	      errno EACCES when execute access denied on testfile.
  *
  *   Creat/open a testfile and close it.
  *   Deny search access permissions on testfile.
@@ -362,34 +362,34 @@ setup2()
 int
 setup3()
 {
- int fd3;   /* file handle for testfile */
+	int fd3;			/* file handle for testfile */
 
- /* Creat a test file under above directory created */
- if ((fd3  open(TEST_FILE3, O_RDWR|O_CREAT, FILE_MODE))  -1) {
-  tst_brkm(TBROK, cleanup,
-    "open(%s, O_RDWR|O_CREAT, %#o) Failed, errno%d :%s",
-    TEST_FILE3, FILE_MODE, errno, strerror(errno));
- }
+	/* Creat a test file under above directory created */
+	if ((fd3 = open(TEST_FILE3, O_RDWR|O_CREAT, FILE_MODE)) == -1) {
+		tst_brkm(TBROK, cleanup,
+			 "open(%s, O_RDWR|O_CREAT, %#o) Failed, errno=%d :%s",
+			 TEST_FILE3, FILE_MODE, errno, strerror(errno));
+	}
 
- /* Close the testfile created above */
- if (close(fd3)  -1) {
-  tst_brkm(TBROK, cleanup, "close(%s) Failed, errno%d : %s",
-    TEST_FILE3, errno, strerror(errno));
- }
+	/* Close the testfile created above */
+	if (close(fd3) == -1) {
+		tst_brkm(TBROK, cleanup, "close(%s) Failed, errno=%d : %s",
+			 TEST_FILE3, errno, strerror(errno));
+	}
 
- /* Change mode permissions on testfile */
- if (chmod(TEST_FILE3, 0666) < 0) {
-  tst_brkm(TBROK, cleanup, "chmod() failed on %s, errno%d",
-    TEST_FILE3, errno);
- }
+	/* Change mode permissions on testfile */
+	if (chmod(TEST_FILE3, 0666) < 0) { 
+		tst_brkm(TBROK, cleanup, "chmod() failed on %s, errno=%d",
+			 TEST_FILE3, errno);
+	}
 
- return 0;
+	return 0;
 }
 
 /*
  * setup4() - Setup function to test access() for return value -1
- *       and errno EINVAL when specified access mode argument is
- *       invalid.
+ *	      and errno EINVAL when specified access mode argument is
+ *	      invalid.
  *
  *   Creat/open a testfile and close it.
  *   This function returns 0.
@@ -397,38 +397,38 @@ setup3()
 int
 setup4()
 {
- int fd4;   /* file handle for testfile */
+	int fd4;			/* file handle for testfile */
 
- /* Creat a test file under above directory created */
- if ((fd4  open(TEST_FILE4, O_RDWR|O_CREAT, FILE_MODE))  -1) {
-  tst_brkm(TBROK, cleanup,
-    "open(%s, O_RDWR|O_CREAT, %#o) Failed, errno%d :%s",
-    TEST_FILE4, FILE_MODE, errno, strerror(errno));
- }
+	/* Creat a test file under above directory created */
+	if ((fd4 = open(TEST_FILE4, O_RDWR|O_CREAT, FILE_MODE)) == -1) {
+		tst_brkm(TBROK, cleanup,
+			 "open(%s, O_RDWR|O_CREAT, %#o) Failed, errno=%d :%s",
+			 TEST_FILE4, FILE_MODE, errno, strerror(errno));
+	}
 
- /* Close the testfile created above */
- if (close(fd4)  -1) {
-  tst_brkm(TBROK, cleanup, "close(%s) Failed, errno%d : %s",
-    TEST_FILE4, errno, strerror(errno));
- }
+	/* Close the testfile created above */
+	if (close(fd4) == -1) {
+		tst_brkm(TBROK, cleanup, "close(%s) Failed, errno=%d : %s",
+			 TEST_FILE4, errno, strerror(errno));
+	}
 
- return 0;
+	return 0;
 }
 
 /*
  * longpath_setup() - setup to create a node with a name length exceeding
- *      the MAX. length of PATH_MAX.
+ * 		      the MAX. length of PATH_MAX.
  */
 int
 longpath_setup()
 {
- int ind;
+	int ind;
 
- for (ind  0; ind < (PATH_MAX + 1); ind++) {
-  Longpathname[ind]  'a';
- }
+	for (ind = 0; ind <= (PATH_MAX + 1); ind++) {
+		Longpathname[ind] = 'a';
+	}
 
- return 0;
+	return 0;
 }
 
 /*
@@ -437,21 +437,21 @@ longpath_setup()
  *
  *  Remove the test directory and testfile created in the setup.
  */
-void
+void 
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /*
-  * Delete the test directory/file and temporary directory
-  * created in the setup.
-  */
- tst_rmdir();
+	/*
+	 * Delete the test directory/file and temporary directory
+	 * created in the setup.
+	 */
+	tst_rmdir();
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

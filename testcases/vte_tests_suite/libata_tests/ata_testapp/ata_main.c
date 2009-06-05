@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   ata_driver_main.c
 
-        @brief  Main file for ATA Disk driver test.
+        @brief  Main file for ATA Disk driver test. 
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
-
-====================
+    
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -19,13 +19,13 @@ Author/core ID                  Date          Number    Description of Changes
 A.Ozerov/b00320              10/09/2006     TLSbo76800  Initial version.
 D.Kazachkov/b00316            6/12/2006     TLSbo80788  Parse opt fix
 
-====================
+====================================================================================================
 Portability: ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,27 +37,27 @@ Portability: ARM GCC
 
 #include "ata_testapp.h"
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 char   *TCID = "ata_driver_testapp";
 int     TST_TOTAL = 1;  /* total number of tests in this file. */
 
-/*======================
+/*==================================================================================================
                                     GLOBAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 void    cleanup(void);
 void    setup(void);
 void    help(void);
 int     main(int argc, char **argv);
 
-/*======================
+/*==================================================================================================
                                     GLOBAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= cleanup =*/
-/**
+/*================================================================================================*/
+/*===== cleanup =====*/
+/** 
 @brief This function performs all one time clean up for this test on successful completion,
         premature exit or failure. Closes all temporary files, removes all temporary directories exits
         the test with appropriate return code by calling tst_exit() function.
@@ -66,7 +66,7 @@ int     main(int argc, char **argv);
 
 @return None.
 */
-/*====================*/
+/*================================================================================================*/
 void cleanup(void)
 {
         int     rv = TFAIL;
@@ -79,17 +79,17 @@ void cleanup(void)
         tst_exit();
 }
 
-/*====================*/
-/*= setup =*/
-/**
+/*================================================================================================*/
+/*===== setup =====*/
+/** 
 @brief Performs all one time setup for this test. This function is typically used to capture
         signals, create temporary dirs and temporary files that may be used in the course of this test.
 
 @param None.
 
-@return None.
+@return None. 
 */
-/*====================*/
+/*================================================================================================*/
 void setup(void)
 {
         int     rv = TFAIL;
@@ -101,8 +101,8 @@ void setup(void)
         }
 }
 
-/*====================*/
-/*= help =*/
+/*================================================================================================*/
+/*===== help =====*/
 /**
 @brief  Print help information.
 
@@ -110,10 +110,10 @@ void setup(void)
 
 @return None.
 */
-/*====================*/
+/*================================================================================================*/
 void help(void)
 {
-        printf("\n===============\n");
+        printf("\n===========================================================================\n");
         printf("ATA Disk driver option\n");
         printf("'-B flag'                    flush buffer cache for device on exit(flag: 0,1)\n");
         printf("'-D device'                  Device for testing\n\n");
@@ -122,26 +122,26 @@ void help(void)
         printf("\t  '-T 3'                   display drive identification\n");
         printf("\t  '-T 4'                   detailed/current information directly from drive\n");
         printf("\t  '-T 5'                   perform reading the device timings\n");
-
+        
         printf("\t  '-T 7 -X mode'           set IDE xfer mode(DANGEROUS)(mode: 0,1,15,16,39,71)");
-        printf("\n===============\n");
+        printf("\n===========================================================================\n");
 }
 
-/*====================*/
-/*= main =*/
-/**
+/*================================================================================================*/
+/*===== main =====*/
+/** 
 @brief Entry point to this test-case. It parses all the command line inputs, calls the global
         setup and executes the test. It logs the test status and results appropriately using the LTP API's
         On successful completion or premature failure, cleanup() func is called and test exits with an
         appropriate return code.
 
-@param Input : argc - number of command line parameters.
+@param Input : argc - number of command line parameters. 
         Output: **argv - pointer to the array of the command line parameters.
-
-@return On failure - Exits by calling cleanup().
-        On success - exits with 0 exit value.
+        
+@return On failure - Exits by calling cleanup(). 
+        On success - exits with 0 exit value. 
 */
-/*====================*/
+/*================================================================================================*/
 int main(int argc, char **argv)
 {
         // char c, *p ;
@@ -173,7 +173,7 @@ int main(int argc, char **argv)
             *iopt = 0,
             *bopt = 0;
 
-        option_t options[] =
+        option_t options[] = 
         {
                 {"D:", &dflag, &dopt},
                 {"T:", &tflag, &topt},
@@ -251,7 +251,7 @@ int main(int argc, char **argv)
                 xfermode = atoi(xopt);
         }
         else
-        {
+        {    
                 if(testcase == 4) /* it is mandatory to set -X arg for testcase #7 */
                 {
                         tst_resm(TFAIL, "Arg -X (xfer mode) is not set");
@@ -275,7 +275,7 @@ int main(int argc, char **argv)
         {
                 tst_resm(TFAIL, "%s %d test case didn't work as expected", TCID, testcase);
         }
-
+ 
         cleanup();
         return rv;
 }

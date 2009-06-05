@@ -24,7 +24,7 @@
 /*                                                                            */
 /* Description: This Program tests the new system call introduced in 2.6.27.  */
 /*              Ulrich´s comment as in:                                       */
-/* http://git.kernel.org/?plinux/kernel/git/torvalds/linux-2.6.git;acommit;h6b1ef0e60d42f2fdaec26baee8327eb156347b4f */
+/* http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=6b1ef0e60d42f2fdaec26baee8327eb156347b4f */
 /* which says:                                                                */
 /* This patch adds support for the TFD_NONBLOCK flag to timerfd_create.  The  */
 /* additional changes needed are minimal. The following test must be adjusted */
@@ -73,9 +73,9 @@ extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
-char *TCID      "timerfd03"; /* test program identifier.              */
+char *TCID     = "timerfd03"; /* test program identifier.              */
 int  testno;
-int  TST_TOTAL  1;                  /* total number of tests in this file.   */
+int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -135,8 +135,8 @@ int main (int argc, char *argv[]) {
     char *msg;              /* message returned from parse_opts */
 
     /* Parse standard options given to run the test. */
-    msg  parse_opts(argc, argv, (option_t *) NULL, NULL);
-    if (msg ! (char *) NULL) {
+    msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
+    if (msg != (char *) NULL) {
         tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
         tst_exit();
     }
@@ -147,17 +147,17 @@ int main (int argc, char *argv[]) {
     setup();
 
     /* Check looping state if -i option given */
-    for (lc  0; TEST_LOOPING(lc); ++lc) {
-         Tst_count  0;
-         for (testno0; testno < TST_TOTAL; ++testno) {
-              fd  syscall (__NR_timerfd_create, CLOCK_REALTIME, 0);
-              if (fd  -1) {
+    for (lc = 0; TEST_LOOPING(lc); ++lc) {
+         Tst_count = 0;
+         for (testno=0; testno < TST_TOTAL; ++testno) {
+              fd = syscall (__NR_timerfd_create, CLOCK_REALTIME, 0);
+              if (fd == -1) {
                   tst_resm(TFAIL, "timerfd_create(0) failed");
                   cleanup();
                   tst_exit();
               }
-              fl  fcntl (fd, F_GETFL);
-              if (fl  -1) {
+              fl = fcntl (fd, F_GETFL);
+              if (fl == -1) {
                   tst_brkm(TBROK, cleanup, "fcntl failed");
                   tst_exit();
               }
@@ -168,18 +168,18 @@ int main (int argc, char *argv[]) {
               }
               close (fd);
 
-              fd  syscall (__NR_timerfd_create, CLOCK_REALTIME, TFD_NONBLOCK);
-              if (fd  -1) {
+              fd = syscall (__NR_timerfd_create, CLOCK_REALTIME, TFD_NONBLOCK);
+              if (fd == -1) {
                   tst_resm(TFAIL, "timerfd_create(TFD_NONBLOCK) failed");
                   cleanup();
                   tst_exit();
               }
-              fl  fcntl (fd, F_GETFL);
-              if (fl  -1) {
+              fl = fcntl (fd, F_GETFL);
+              if (fl == -1) {
                   tst_brkm(TBROK, cleanup, "fcntl failed");
                   tst_exit();
               }
-              if ((fl & O_NONBLOCK)  0) {
+              if ((fl & O_NONBLOCK) == 0) {
                    tst_resm(TFAIL, "timerfd_create(TFD_NONBLOCK) set non-blocking mode");
                    cleanup();
                    tst_exit();

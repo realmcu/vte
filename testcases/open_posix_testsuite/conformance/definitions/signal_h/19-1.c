@@ -11,9 +11,9 @@ int flags;
 
 int dummyfcn (void)
 {
- sp  t.ss_sp;
- size  t.ss_size;
- flags  t.ss_flags;
+	sp = t.ss_sp;
+	size = t.ss_size;
+	flags = t.ss_flags;
 
- return 0;
+	return 0;
 }

@@ -1,4 +1,4 @@
-/*
+/*   
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -18,45 +18,45 @@
 #include "posixtest.h"
 
 struct unique {
- int value;
- char *name;
-} sym[]  {
+	int value;
+	char *name;
+} sym[] = {
 
- {
-   SCHED_FIFO, "SCHED_FIFO"
- },
- {
-   SCHED_RR, "SCHED_RR"
- },
+	{
+		 SCHED_FIFO, "SCHED_FIFO"
+	},
+	{
+		 SCHED_RR, "SCHED_RR"
+	},
 #if defined(_POSIX_SPORADIC_SERVER) || defined(_POSIX_THREAD_SPORADIC_SERVER)
- {
-   SCHED_SPORADIC,"SCHED_SPORADIC"
- },
+	{
+	  SCHED_SPORADIC,"SCHED_SPORADIC"
+	}, 
 #endif
- {
-   SCHED_OTHER, "SCHED_OTHER"
- },
- {
-   0, 0
- }
+	{
+		 SCHED_OTHER, "SCHED_OTHER"
+	},
+	{
+		 0, 0
+	}
 };
 
 int main()
 {
- struct unique *tst;
- int i, ret  PTS_PASS;
- tst  sym;
+	struct unique *tst;
+	int i, ret = PTS_PASS;
+	tst = sym;
 
- while (tst->name) {
-  for (i  0; sym[i].name; i++) {
-   if (tst->value  sym[i].value
-       && strcmp(tst->name, sym[i].name)) {
-    printf("%s has a duplicate value with %s\n",
-           tst->name, sym[i].name);
-    ret  PTS_FAIL;
-   }
-  }
-  tst++;
- }
- return ret;
+	while (tst->name) {
+		for (i = 0; sym[i].name; i++) {
+			if (tst->value == sym[i].value
+			    && strcmp(tst->name, sym[i].name)) {
+				printf("%s has a duplicate value with %s\n",
+				       tst->name, sym[i].name);
+				ret = PTS_FAIL;
+			}
+		}
+		tst++;
+	}
+	return ret;
 }

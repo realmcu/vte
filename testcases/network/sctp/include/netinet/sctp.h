@@ -3,7 +3,7 @@
  * sctp.h
  *
  * Distributed under the terms of the LGPL v2.1 as described in
- *    http://www.gnu.org/copyleft/lesser.txt
+ *    http://www.gnu.org/copyleft/lesser.txt 
  *
  * This file is part of the user library that offers support for the
  * SCTP kernel reference Implementation. The main purpose of this
@@ -68,15 +68,15 @@ enum sctp_optname {
 #define SCTP_ASSOCINFO SCTP_ASSOCINFO
 	SCTP_INITMSG,
 #define SCTP_INITMSG SCTP_INITMSG
-	SCTP_NODELAY, /* Get/set nodelay option. */
+	SCTP_NODELAY, 	/* Get/set nodelay option. */
 #define SCTP_NODELAY	SCTP_NODELAY
 	SCTP_AUTOCLOSE,
 #define SCTP_AUTOCLOSE SCTP_AUTOCLOSE
-	SCTP_SET_PEER_PRIMARY_ADDR,
+	SCTP_SET_PEER_PRIMARY_ADDR, 
 #define SCTP_SET_PEER_PRIMARY_ADDR SCTP_SET_PEER_PRIMARY_ADDR
 	SCTP_PRIMARY_ADDR,
 #define SCTP_PRIMARY_ADDR SCTP_PRIMARY_ADDR
-	SCTP_ADAPTION_LAYER,
+	SCTP_ADAPTION_LAYER,      
 #define SCTP_ADAPTION_LAYER SCTP_ADAPTION_LAYER
 	SCTP_DISABLE_FRAGMENTS,
 #define SCTP_DISABLE_FRAGMENTS SCTP_DISABLE_FRAGMENTS
@@ -88,29 +88,29 @@ enum sctp_optname {
 #define SCTP_EVENTS SCTP_EVENTS
 	SCTP_I_WANT_MAPPED_V4_ADDR,  /* Turn on/off mapped v4 addresses  */
 #define SCTP_I_WANT_MAPPED_V4_ADDR SCTP_I_WANT_MAPPED_V4_ADDR
-	SCTP_MAXSEG, /* Get/set maximum fragment. */
-#define SCTP_MAXSEG SCTP_MAXSEG
+	SCTP_MAXSEG, 	/* Get/set maximum fragment. */
+#define SCTP_MAXSEG 	SCTP_MAXSEG
 	SCTP_STATUS,
 #define SCTP_STATUS SCTP_STATUS
 	SCTP_GET_PEER_ADDR_INFO,
 #define SCTP_GET_PEER_ADDR_INFO SCTP_GET_PEER_ADDR_INFO
 
-	/* Internal Socket Options. Some of the sctp library functions are
+	/* Internal Socket Options. Some of the sctp library functions are 
 	 * implemented using these socket options.
 	 */
 	SCTP_SOCKOPT_BINDX_ADD = 100,/* BINDX requests for adding addresses. */
 #define SCTP_SOCKOPT_BINDX_ADD	SCTP_SOCKOPT_BINDX_ADD
 	SCTP_SOCKOPT_BINDX_REM, /* BINDX requests for removing addresses. */
 #define SCTP_SOCKOPT_BINDX_REM	SCTP_SOCKOPT_BINDX_REM
-	SCTP_SOCKOPT_PEELOFF, /* peel off association. */
+	SCTP_SOCKOPT_PEELOFF, 	/* peel off association. */
 #define SCTP_SOCKOPT_PEELOFF	SCTP_SOCKOPT_PEELOFF
-	SCTP_GET_PEER_ADDRS_NUM_OLD, /* Get number of peer addresss. */
+	SCTP_GET_PEER_ADDRS_NUM_OLD, 	/* Get number of peer addresss. */
 #define SCTP_GET_PEER_ADDRS_NUM_OLD	SCTP_GET_PEER_ADDRS_NUM_OLD
-	SCTP_GET_PEER_ADDRS_OLD, /* Get all peer addresss. */
+	SCTP_GET_PEER_ADDRS_OLD, 	/* Get all peer addresss. */
 #define SCTP_GET_PEER_ADDRS_OLD	SCTP_GET_PEER_ADDRS_OLD
-	SCTP_GET_LOCAL_ADDRS_NUM_OLD, /* Get number of local addresss. */
+	SCTP_GET_LOCAL_ADDRS_NUM_OLD, 	/* Get number of local addresss. */
 #define SCTP_GET_LOCAL_ADDRS_NUM_OLD	SCTP_GET_LOCAL_ADDRS_NUM_OLD
-	SCTP_GET_LOCAL_ADDRS_OLD, /* Get all local addresss. */
+	SCTP_GET_LOCAL_ADDRS_OLD, 	/* Get all local addresss. */
 #define SCTP_GET_LOCAL_ADDRS_OLD	SCTP_GET_LOCAL_ADDRS_OLD
 	SCTP_SOCKOPT_CONNECTX, /* CONNECTX requests. */
 #define SCTP_SOCKOPT_CONNECTX	SCTP_SOCKOPT_CONNECTX
@@ -175,12 +175,12 @@ enum sctp_sinfo_flags {
 	SCTP_UNORDERED = 1,  /* Send/receive message unordered. */
 	SCTP_ADDR_OVER = 2,  /* Override the primary destination. */
 	SCTP_ABORT=4,        /* Send an ABORT message to the peer. */
-	SCTP_EOF=MSG_FIN,    /* Initiate graceful shutdown process. */
+	SCTP_EOF=MSG_FIN,    /* Initiate graceful shutdown process. */ 
 };
 
 
 typedef union {
-	__u8   	raw;
+	__u8   			raw;
 	struct sctp_initmsg	init;
 	struct sctp_sndrcvinfo	sndrcv;
 } sctp_cmsg_data_t;
@@ -414,7 +414,7 @@ enum sctp_sn_type {
 
 /* Notification error codes used to fill up the error fields in some
  * notifications.
- * SCTP_PEER_ADDRESS_CHAGE : spc_error
+ * SCTP_PEER_ADDRESS_CHAGE 	: spc_error
  * SCTP_ASSOC_CHANGE		: sac_error
  * These names should be potentially included in the draft 04 of the SCTP
  * sockets API specification.
@@ -434,7 +434,7 @@ typedef enum sctp_sn_error {
  *
  *   The protocol parameters used to initialize and bound retransmission
  *   timeout (RTO) are tunable.  See [SCTP] for more information on how
- *   these parameters are used in RTO calculation.
+ *   these parameters are used in RTO calculation. 
  */
 struct sctp_rtoinfo {
 	sctp_assoc_t	srto_assoc_id;
@@ -571,10 +571,10 @@ enum sctp_sstat_state {
 };
 
 /*
- * 8.3, 8.5 get all peer/local addresses in an association.
+ * 8.3, 8.5 get all peer/local addresses in an association. 
  * This parameter struct is used by SCTP_GET_PEER_ADDRS and
  * SCTP_GET_LOCAL_ADDRS socket options used internally to implement
- * sctp_getpaddrs() and sctp_getladdrs() API.
+ * sctp_getpaddrs() and sctp_getladdrs() API. 
  */
 struct sctp_getaddrs_old {
 	sctp_assoc_t            assoc_id;

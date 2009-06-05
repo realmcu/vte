@@ -35,24 +35,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "numa.h"
-int numa_exit_on_error  0;
+int numa_exit_on_error = 0;
 char *fmt_mem(unsigned long long mem, char *buf)
 {
-        if (mem  -1L)
+        if (mem == -1L)
                 sprintf(buf, "<not available>");
         else
-                sprintf(buf, "%Lu MB", mem >> 20);
+                sprintf(buf, "%Lu MB", mem >> 20); 
         return buf;
 }
 void hardware(void)
 {
         int i;
-        int maxnode  numa_max_node();
+        int maxnode = numa_max_node();
         printf("available: %d nodes (0-%d)\n", 1+maxnode, maxnode);
-        for (i  0; i < maxnode; i++) {
+        for (i = 0; i <= maxnode; i++) {
                 char buf[64];
                 long fr;
-                unsigned long sz  numa_node_size(i, &fr);
+                unsigned long sz = numa_node_size(i, &fr);
                 printf("node %d cpus:", i);
                 printf("node %d size: %s\n", i, fmt_mem(sz, buf));
                 printf("node %d free: %s\n", i, fmt_mem(fr, buf));
@@ -61,18 +61,18 @@ void hardware(void)
 int main()
 {
          nodemask_t nodemask;
-  void hardware();
-  if (numa_available() < 0)
-  {
-         printf("This system does not support NUMA policy");
-  numa_error("numa_available");
-  numa_exit_on_error  1;
-  exit(numa_exit_on_error);
-     }
- nodemask_zero(&nodemask);
- nodemask_set(&nodemask,1);
- numa_bind(&nodemask);
- hardware();
- return numa_exit_on_error;
+	 void hardware();
+	 if (numa_available() < 0)
+	 {
+         	printf("This system does not support NUMA policy");
+		numa_error("numa_available");
+		numa_exit_on_error = 1;
+		exit(numa_exit_on_error);
+    	 }
+	nodemask_zero(&nodemask);
+	nodemask_set(&nodemask,1);
+	numa_bind(&nodemask);	
+	hardware();
+	return numa_exit_on_error;
 }
-
+                   

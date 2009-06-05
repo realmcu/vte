@@ -19,15 +19,15 @@
 
 /*
  * NAME
- * sysctl04.c
+ *	sysctl04.c
  *
  * DESCRIPTION
- * Testcase to check that sysctl(2) sets errno to ENOTDIR
+ *	Testcase to check that sysctl(2) sets errno to ENOTDIR
  *
  * ALGORITHM
- * 1. Call sysctl(2) with sc_nlen set to 0, and expect ENOTDIR to be set.
- * 2. Call sysctl(2) with sc_nlen greater than CTL_MAXNAME, and expect
- *    ENOTDIR to be set in the errno.
+ *	1. Call sysctl(2) with sc_nlen set to 0, and expect ENOTDIR to be set.
+ *	2. Call sysctl(2) with sc_nlen greater than CTL_MAXNAME, and expect
+ *	   ENOTDIR to be set in the errno.
  *
  * USAGE:  <for command-line>
  *  sysctl04 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -39,10 +39,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * None
+ *	None
  */
 
 #include "test.h"
@@ -53,92 +53,92 @@
 #include <linux/unistd.h>
 #include <linux/sysctl.h>
 
-char *TCID  "sysctl04";
-int TST_TOTAL  2;
+char *TCID = "sysctl04";
+int TST_TOTAL = 2;
 extern int Tst_count;
 
 int sysctl(int *name, int nlen, void *oldval, size_t *oldlenp,
            void *newval, size_t newlen)
 {
- struct __sysctl_args args{name,nlen,oldval,oldlenp,newval,newlen};
- return syscall(__NR__sysctl, &args);
+	struct __sysctl_args args={name,nlen,oldval,oldlenp,newval,newlen};
+	return syscall(__NR__sysctl, &args);
 }
 
 
 #define SIZE(x) sizeof(x)/sizeof(x[0])
 #define OSNAMESZ 100
 
-int exp_enos[]  {ENOTDIR, 0};
+int exp_enos[] = {ENOTDIR, 0};
 
 void setup(void);
 void cleanup(void);
 
 struct test_case_t {
- int size;
- int error;
-} TC[]  {
- /* comment goes here */
- {0, ENOTDIR},
+	int size;
+	int error;
+} TC[] = {
+	/* comment goes here */
+	{0, ENOTDIR},
 
- /* comment goes here */
- {CTL_MAXNAME + 1, ENOTDIR}
+	/* comment goes here */
+	{CTL_MAXNAME + 1, ENOTDIR}
 };
 
 int main(int ac, char **av)
 {
- int lc;
- char *msg;
+	int lc;
+	char *msg;
 
- char osname[OSNAMESZ];
- int i;
- size_t osnamelth;
- int name[]  { CTL_KERN, KERN_OSREV };
+	char osname[OSNAMESZ];
+	int i;
+	size_t osnamelth;
+	int name[] = { CTL_KERN, KERN_OSREV };
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	}
 
- setup();
+	setup();
 
- osnamelth  SIZE(osname);
+	osnamelth = SIZE(osname);
 
- /* set up the expected errnos */
- TEST_EXP_ENOS(exp_enos);
+	/* set up the expected errnos */
+	TEST_EXP_ENOS(exp_enos);
 
- /* check looping state if -i option is given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* check looping state if -i option is given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  /* loop through the test cases */
-  for (i  0; i < TST_TOTAL; i++) {
+		/* loop through the test cases */
+		for (i = 0; i < TST_TOTAL; i++) {
 
-   TEST(sysctl(name, 0, osname, &osnamelth, 0, 0));
+			TEST(sysctl(name, 0, osname, &osnamelth, 0, 0));
 
-   if (TEST_RETURN ! -1) {
-    tst_resm(TFAIL, "call succeeded unexpectedly");
-    continue;
-   }
+			if (TEST_RETURN != -1) {
+				tst_resm(TFAIL, "call succeeded unexpectedly");
+				continue;
+			}
 
-   TEST_ERROR_LOG(TEST_ERRNO);
+			TEST_ERROR_LOG(TEST_ERRNO);
 
-   if (TEST_ERRNO  TC[i].error) {
-    tst_resm(TPASS, "expected failure - "
-      "errno  %d : %s", TEST_ERRNO,
-      strerror(TEST_ERRNO));
-   } else {
-    tst_resm(TFAIL, "unexpected error - %d : %s - "
-      "expected %d", TEST_ERRNO,
-      strerror(TEST_ERRNO), TC[i].error);
-   }
-  }
- }
- cleanup();
+			if (TEST_ERRNO == TC[i].error) {
+				tst_resm(TPASS, "expected failure - "
+					 "errno = %d : %s", TEST_ERRNO,
+					 strerror(TEST_ERRNO));
+			} else {
+				tst_resm(TFAIL, "unexpected error - %d : %s - "
+					 "expected %d", TEST_ERRNO,
+					 strerror(TEST_ERRNO), TC[i].error);
+			}
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -147,26 +147,26 @@ int main(int ac, char **av)
 void
 setup()
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit.
+ *	       completion or premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

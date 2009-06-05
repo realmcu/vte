@@ -1,0 +1,30 @@
+Verification Tests Command File
+# generated automatically by the test campaign macro
+# version 1.0
+
+#files:
+#files:
+#files:
+#files:
+#files:
+
+TGE-LV-SYS-0770 execle01
+TGE-LV-SYS-0780 execlp01
+TGE-LV-SYS-0790 execv01
+TGE-LV-SYS-0800 execve01
+TGE-LV-SYS-0810 execve02 -F $LTPROOT/testcases/bin/test3
+TGE-LV-SYS-0820 execve03
+TGE-LV-SYS-0830 cp -f $LTPROOT/testcases/bin/test3 $TMP; execve04 -F test3
+TGE-LV-SYS-0840 execve05 -F $LTPROOT/testcases/bin/test3
+TGE-LV-SYS-0850 execve06 20 $LTPROOT/testcases/bin/execve06 $LTPROOT/testcases/bin/execve06 4
+TGE-LV-SYS-0860 execvp01
+TGE-LV-SYS-0870 exit01
+TGE-LV-SYS-0880 exit02
+TGE-LV-SYS-0890 fchdir01
+TGE-LV-SYS-0900 fchdir02
+TGE-LV-SYS-0910 fchmod01
+TGE-LV-SYS-0920 fchmod02
+TGE-LV-SYS-0930 fchmod03
+TGE-LV-SYS-0940 fchmod04
+TGE-LV-SYS-0950 cp -p $LTPROOT/testcases/bin/change_owner $TMP;fchmod05
+TGE-LV-SYS-0960 cp -p $LTPROOT/testcases/bin/change_owner $TMP;fchmod06

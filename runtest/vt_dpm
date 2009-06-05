@@ -1,0 +1,35 @@
+#Verification Tests Command File
+
+#VT DPM tests
+#files: dpm_test.sh
+
+
+TGE-LV-DPM-0010 dpm_test.sh -s 0 -d /sys/bus/platform/devices/MXCFB0/power/state
+TGE-LV-DPM-0011 dpm_test.sh -r -d /sys/bus/platform/devices/MXCFB0/power/state
+
+TGE-LV-DPM-0020 dpm_test.sh -s 0 -d /sys/bus/platform/devices/mxcintuart0/power/state
+TGE-LV-DPM-0021 dpm_test.sh -r -d /sys/bus/platform/devices/mxcintuart0/power/state
+TGE-LV-DPM-0022 dpm_test.sh -s 0 -d /sys/bus/platform/devices/mxcintuart1/power/state
+TGE-LV-DPM-0023 dpm_test.sh -r -d /sys/bus/platform/devices/mxcintuart1/power/state
+TGE-LV-DPM-0024 dpm_test.sh -s 0 -d /sys/bus/platform/devices/mxcintuart2/power/state
+TGE-LV-DPM-0025 dpm_test.sh -r -d /sys/bus/platform/devices/mxcintuart2/power/state
+TGE-LV-DPM-0026 dpm_test.sh -s 0 -d /sys/bus/platform/devices/mxcintuart3/power/state
+TGE-LV-DPM-0027 dpm_test.sh -r -d /sys/bus/platform/devices/mxcintuart3/power/state
+
+TGE-LV-DPM-0030 dpm_test.sh -s 0 -d /sys/bus/i2c/devices/0-0048/power/state
+TGE-LV-DPM-0031 dpm_test.sh -r -d /sys/bus/i2c/devices/0-0048/power/state
+
+TGE-LV-DPM-0040 dpm_test.sh -s 0 -d /sys/bus/platform/devices/pcmcia/power/state
+TGE-LV-DPM-0041 dpm_test.sh -r -d /sys/bus/platform/devices/pcmcia/power/state
+
+TGE-LV-DPM-0050 dpm_test.sh -s 0 -d /sys/bus/platform/devices/mmci/power/state
+TGE-LV-DPM-0051 dpm_test.sh -r -d /sys/bus/platform/devices/mmci/power/state
+
+TGE-LV-DPM-0060 dpm_test.sh -s 0 -d /sys/bus/mpu-private/devices/lcd/power
+TGE-LV-DPM-0061 dpm_test.sh -r -d /sys/bus/mpu-private/devices/lcd/power
+
+TGE-LV-DPM-0070 dpm_test.sh -f standby
+TGE-LV-DPM-0071 dpm_test.sh -f mem
+TGE-LV-DPM-0072 dpm_test.sh -f disk
+
+TGE-LV-DPM-0080 dpm_test.sh -s 0

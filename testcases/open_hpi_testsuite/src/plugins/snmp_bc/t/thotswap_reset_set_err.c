@@ -1,5 +1,5 @@
 /* -*- linux-c -*-
- *
+ * 
  * (C) Copyright IBM Corp. 2004
  *
  * This program is distributed in the hope that it will be useful,
@@ -26,119 +26,119 @@
 
 #include <tstubs_res.h>
 #include <tstubs_snmp.h>
-#include <thotswap.h>
+#include <thotswap.h> 
 
-int main(int argc, char **argv)
+int main(int argc, char **argv) 
 {
 
- struct snmp_bc_hnd snmp_handle;
- struct oh_handler_state hnd  {
-  .rptcache  (RPTable *)&test_rpt,
-  .eventq  NULL,
-  .config  NULL,
-  .data  (void *)&snmp_handle,
- };
+	struct snmp_bc_hnd snmp_handle;
+	struct oh_handler_state hnd = {
+		.rptcache = (RPTable *)&test_rpt,
+		.eventq = NULL,
+		.config = NULL,
+		.data = (void *)&snmp_handle,
+	};
 
 #if 0
- /* Fill in RPT Entry */
- test_rpt.rpt.ResourceTag.DataType  SAHPI_TL_TYPE_LANGUAGE;
- test_rpt.rpt.ResourceTag.Language  SAHPI_LANG_ENGLISH;
- test_rpt.rpt.ResourceTag.DataLength  strlen(test_rpt.comment);
- strcpy(test_rpt.rpt.ResourceTag.Data, test_rpt.comment);
+	/* Fill in RPT Entry */
+	test_rpt.rpt.ResourceTag.DataType = SAHPI_TL_TYPE_LANGUAGE;
+	test_rpt.rpt.ResourceTag.Language = SAHPI_LANG_ENGLISH;
+	test_rpt.rpt.ResourceTag.DataLength = strlen(test_rpt.comment);
+	strcpy(test_rpt.rpt.ResourceTag.Data, test_rpt.comment);
 #endif
 
- SaHpiResourceIdT  id  1;
- SaHpiResetActionT act;
- SaErrorT          err;
+	SaHpiResourceIdT  id = 1;
+	SaHpiResetActionT act;
+	SaErrorT          err;
 
- /*****************************
-  * Get Resource Error TestCase
+	/***************************** 
+	 * Get Resource Error TestCase
          *****************************/
- act  SAHPI_COLD_RESET;
- ifobj_force_error  1;
+	act = SAHPI_COLD_RESET;
+	ifobj_force_error = 1;
 
- err  snmp_bc_set_reset_state((void *)&hnd, id, act);
- if (err ! SA_ERR_HPI_NOT_PRESENT) {
-  printf("Error! Get Resource Error TestCase\n");
-  printf("Error! snmp_bc_set_reset_state returned err%d\n", err);
-  return -1;
- }
+	err = snmp_bc_set_reset_state((void *)&hnd, id, act);
+	if (err != SA_ERR_HPI_NOT_PRESENT) {
+		printf("Error! Get Resource Error TestCase\n");
+		printf("Error! snmp_bc_set_reset_state returned err=%d\n", err);
+		return -1; 
+	}
 
- ifobj_force_error  0;
+	ifobj_force_error = 0;
 
- /**********************************
-  * Get Resource Data Error TestCase
+	/********************************** 
+	 * Get Resource Data Error TestCase
          **********************************/
- act  SAHPI_COLD_RESET;
- ifobj_data_force_error  1;
+	act = SAHPI_COLD_RESET;
+	ifobj_data_force_error = 1;
 
- err  snmp_bc_set_reset_state((void *)&hnd, id, act);
- if (err ! -1) {
-  printf("Error! Get Resource Data Error TestCase\n");
-  printf("Error! snmp_bc_set_reset_state returned err%d\n", err);
-  return -1;
- }
+	err = snmp_bc_set_reset_state((void *)&hnd, id, act);
+	if (err != -1) {
+		printf("Error! Get Resource Data Error TestCase\n");
+		printf("Error! snmp_bc_set_reset_state returned err=%d\n", err);
+		return -1; 
+	}
 
- ifobj_data_force_error  0;
+	ifobj_data_force_error = 0;
+	
+	/******************************** 
+	 *  No Hot Swap ResetOID TestCase
+	 ********************************/
+	act = SAHPI_COLD_RESET;
+	test_rpt.mib.OidReset = '\0';
 
- /********************************
-  *  No Hot Swap ResetOID TestCase
-  ********************************/
- act  SAHPI_COLD_RESET;
- test_rpt.mib.OidReset  '\0';
+	err = snmp_bc_set_reset_state((void *)&hnd, id, act);
+	if (err != SA_ERR_HPI_INVALID_CMD) {
+		printf("Error! No Hot Swap ResetOID TestCase\n");
+		printf("Error! snmp_bc_set_reset_state returned err=%d\n", err);
+		return -1;
+	}
+	
+	test_rpt.mib.OidReset = ".1.3.6.1.4.1.2.3.51.2.22.3.1.1.1.8.x";
 
- err  snmp_bc_set_reset_state((void *)&hnd, id, act);
- if (err ! SA_ERR_HPI_INVALID_CMD) {
-  printf("Error! No Hot Swap ResetOID TestCase\n");
-  printf("Error! snmp_bc_set_reset_state returned err%d\n", err);
-  return -1;
- }
-
- test_rpt.mib.OidReset  ".1.3.6.1.4.1.2.3.51.2.22.3.1.1.1.8.x";
-
- /*********************
-  * SNMP Error TestCase
+	/********************* 
+	 * SNMP Error TestCase
          *********************/
- snmp_force_error  1;
- act  SAHPI_COLD_RESET;
+	snmp_force_error = 1;
+	act = SAHPI_COLD_RESET;
 
- err  snmp_bc_set_reset_state((void *)&hnd, id, act);
- if (err  0) {
-  printf("Error! SNMP Error TestCase\n");
-  printf("Error! snmp_bc_set_reset_state returned err%d\n", err);
-  return -1;
- }
+	err = snmp_bc_set_reset_state((void *)&hnd, id, act);
+	if (err == 0) {
+		printf("Error! SNMP Error TestCase\n");
+		printf("Error! snmp_bc_set_reset_state returned err=%d\n", err);
+		return -1; 
+	}
 
- snmp_force_error  0;
+	snmp_force_error = 0;
 
- /***************************
-  * Derive OID Error TestCase
+	/*************************** 
+	 * Derive OID Error TestCase
          ***************************/
- act  SAHPI_COLD_RESET;
- test_rpt.rpt.ResourceEntity.Entry[0].EntityType  0;
+	act = SAHPI_COLD_RESET;
+	test_rpt.rpt.ResourceEntity.Entry[0].EntityType = 0;
 
- err  snmp_bc_set_reset_state((void *)&hnd, id, act);
- if (err  0) {
-  printf("Error! Derive OID Error TestCase\n");
-  printf("Error! snmp_bc_set_reset_state returned err%d\n", err);
-  return -1;
- }
+	err = snmp_bc_set_reset_state((void *)&hnd, id, act);
+	if (err == 0) {
+		printf("Error! Derive OID Error TestCase\n");
+		printf("Error! snmp_bc_set_reset_state returned err=%d\n", err);
+		return -1; 
+	}
 
- test_rpt.rpt.ResourceEntity.Entry[0].EntityType  SAHPI_ENT_SBC_BLADE;
+	test_rpt.rpt.ResourceEntity.Entry[0].EntityType = SAHPI_ENT_SBC_BLADE;
 
- /************************************
-  * Unrecognized Reset Action TestCase
+	/************************************ 
+	 * Unrecognized Reset Action TestCase
          ************************************/
- act  -1;
+	act = -1;
 
- err  snmp_bc_set_reset_state((void *)&hnd, id, act);
- if (err ! SA_ERR_HPI_INVALID_PARAMS) {
-  printf("Error!  Unrecognized Reset Action TestCase\n");
-  printf("Error! snmp_bc_set_reset_state returned err%d\n", err);
-  return -1;
- }
+	err = snmp_bc_set_reset_state((void *)&hnd, id, act);
+	if (err != SA_ERR_HPI_INVALID_PARAMS) {
+		printf("Error!  Unrecognized Reset Action TestCase\n");
+		printf("Error! snmp_bc_set_reset_state returned err=%d\n", err);
+		return -1; 
+	}
 
- return 0;
+	return 0;
 }
 
 /****************

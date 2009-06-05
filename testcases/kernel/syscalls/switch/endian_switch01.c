@@ -60,8 +60,8 @@ static void setup();
 
 static void cleanup();
 
-char *TCID     "endian_switch01"; /* Test program identifier.    */
-int TST_TOTAL  1;          /* Total number of test cases. */
+char *TCID    = "endian_switch01"; /* Test program identifier.    */
+int TST_TOTAL = 1;          /* Total number of test cases. */
 extern int Tst_count;       /* Test Case counter for tst_* routines */
 
 #if defined (__powerpc64__) || (__powerpc__)
@@ -102,17 +102,17 @@ volatile int got_sigill;
 sigjmp_buf jb;
 
 void sigill(int sig) {
- got_sigill  1;
- siglongjmp(jb, 1);
+	got_sigill = 1;
+	siglongjmp(jb, 1);
 }
 
 void do_le_switch(void) {
- register int r0 asm("r0");
+	register int r0 asm("r0");
 
- r0  0x1ebe;
- asm volatile("sc; .long 0x02000044"
-       : "&r" (r0) : "0" (r0)
-       : "cr0", "r9", "r10", "r11", "r12");
+	r0 = 0x1ebe;
+	asm volatile("sc; .long 0x02000044"
+		     : "=&r" (r0) : "0" (r0)
+		     : "cr0", "r9", "r10", "r11", "r12");
 }
 
 int main4(int ac, char **av, char **envp, unsigned long *auxv) {
@@ -123,19 +123,19 @@ int main4(int ac, char **av, char **envp, unsigned long *auxv) {
                 tst_exit();
         }
         setup();
- for (; *auxv ! AT_NULL && *auxv ! AT_HWCAP; auxv + 2)
-  ;
- if (!(auxv[0]  AT_HWCAP && (auxv[1] & PPC_FEATURE_TRUE_LE))) {
+	for (; *auxv != AT_NULL && *auxv != AT_HWCAP; auxv += 2)
+		;
+	if (!(auxv[0] == AT_HWCAP && (auxv[1] & PPC_FEATURE_TRUE_LE))) {
                 tst_brkm(TCONF, cleanup, "Processor does not support little-endian mode");
                 tst_exit();
- }
- signal(SIGILL, sigill);
- if (sigsetjmp(jb, 1)  0)
-  do_le_switch();
- if (got_sigill) {
+	}
+	signal(SIGILL, sigill);
+	if (sigsetjmp(jb, 1) == 0)
+		do_le_switch();
+	if (got_sigill) {
                 tst_resm(TFAIL, "Got SIGILL - test failed");
                 tst_exit();
- }
+	}
         tst_resm(TPASS, "endian_switch() syscall tests passed");
         tst_exit();
 }

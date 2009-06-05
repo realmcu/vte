@@ -1,5 +1,5 @@
 #
-# Copied from ../modify_ldt/Makefile by Masatake YAMATO
+# Copied from ../modify_ldt/Makefile by Masatake YAMATO 
 #
 ###
 #

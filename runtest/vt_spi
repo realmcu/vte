@@ -1,0 +1,34 @@
+#Verification Tests Command File
+
+#VT SPI drivers tests -- For i.300-30 EVB
+#files: spi_testapp_1 spi_testapp_2 spi_testapp_3 - NOT SUPPORTED NOW
+#files: spi_test_module.ko spi_testapp spi_testapp_0
+
+TGE-LV-SPI-MOD insmod $LTPROOT/testcases/bin/spi_test_module.ko; sleep 3
+TGE-LV-SPI-0010	spi_testapp -T 1 -N 1000
+TGE-LV-SPI-0011	spi_testapp -T 1 -D 1 -N 1000
+TGE-LV-SPI-0012	spi_testapp -T 1 -D 2 -N 1000
+TGE-LV-SPI-0020	spi_testapp -T 1 -N 3000
+TGE-LV-SPI-0021	spi_testapp -T 1 -D 1 -N 3000
+TGE-LV-SPI-0022	spi_testapp -T 1 -D 2 -N 3000
+TGE-LV-SPI-0030	spi_testapp -T 4  -N 3000
+TGE-LV-SPI-0031	spi_testapp -T 4 -D 1 -N 3000
+TGE-LV-SPI-0032	spi_testapp -T 4 -D 2 -N 3000
+TGE-LV-SPI-0040	spi_testapp -T 10 -N 10000
+TGE-LV-SPI-0041	spi_testapp -T 10 -D 1 -N 10000
+TGE-LV-SPI-0042	spi_testapp -T 10 -D 2 -N 10000
+TGE-LV-SPI-0050	spi_testapp_0 -D 0
+TGE-LV-SPI-0051	spi_testapp_0 -D 1
+TGE-LV-SPI-0052	spi_testapp_0 -D 2
+TGE-LV-SPI-0060	spi_testapp_0 -N 10 -D 0
+TGE-LV-SPI-0061	spi_testapp_0 -N 10 -D 1
+TGE-LV-SPI-0062	spi_testapp_0 -N 10 -D 2
+TGE-LV-SPI-0070	spi_testapp_0 -D 0 -V E99E
+TGE-LV-SPI-0071	spi_testapp_0 -D 1 -V E99E
+TGE-LV-SPI-0072	spi_testapp_0 -D 2 -V E99E
+TGE-LV-SPI-0080	spi_testapp_0 -D 0 -R 16 -V E6E00001E6E00000
+TGE-LV-SPI-0081	spi_testapp_0 -D 1 -R 16 -V E6E00001E6E00000
+TGE-LV-SPI-0082	spi_testapp_0 -D 2 -R 16 -V E6E00001E6E00000
+TGE-LV-SPI-0090	spi_testapp_0 -D 0 -R 32 -V E6E00001E6E00000E6E00001E6E00001
+TGE-LV-SPI-0091	spi_testapp_0 -D 1 -R 32 -V E6E00001E6E00000E6E00001E6E00001
+TGE-LV-SPI-0092	spi_testapp_0 -D 2 -R 32 -V E6E00001E6E00000E6E00001E6E00001

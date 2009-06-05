@@ -10,12 +10,12 @@
 #     LDFLAGS=-static \
 #     LOADLIBES="-lpthread -lc -lresolv -lnss_dns -lnss_files -lm -lc"
 #
-# Alternately, to override them by editing this file, uncomment the
+# Alternately, to override them by editing this file, uncomment the 
 # following lines:
 #   CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-
    CROSS_CFLAGS=-I$(KLINUX_BLTDIR)/include
    CC=$(CROSS_COMPILER)gcc
-   AR=$(CROSS_COMPILER)ar
+   AR=$(CROSS_COMPILER)ar 
    LDFLAGS=-static
    LOADLIBES=
    LIB_DIR=
@@ -24,7 +24,7 @@
    export CC AR LDFLAGS LOADLIBES LIB_DIR
 #
 # Note: If you override a variable from the commandline all
-# assignments to it in the Makefiles will be ignored. To set it both
+# assignments to it in the Makefiles will be ignored. To set it both 
 # in the commandline and in the Makefiles use a dummy variable like in
 # CFLAGS
 
@@ -33,13 +33,13 @@
 #		CFLAGS+= -DPROJECT_LPDK=1
 #	endif
 #	ifeq ($(MARLEY), 1)
-#		CFLAGS+= -DPROJECT_MARLEY=1
+#		CFLAGS+= -DPROJECT_MARLEY=1	
 #	endif
 #	ifeq ($(RINGO), 1)
 #		CFLAGS+= -DPROJECT_RINGO=1
 #	endif
 #	ifeq ($(mx51), 1)
-#		CFLAGS+= -DPROJECT_MX51=1
+#		CFLAGS+= -DPROJECT_MX51=1	
 #	endif
 #end
 export CFLAGS+=-Wall $(CROSS_CFLAGS)
@@ -49,7 +49,7 @@ export CFLAGS+=-Wall $(CROSS_CFLAGS)
 
 VPATH += include m4
 
-all: config.h config.mk libltp.a
+all: config.h config.mk libltp.a 
 	@$(MAKE) -C pan $@
 	@$(MAKE) -C testcases $@
 	@$(MAKE) -C tools $@
@@ -97,6 +97,7 @@ clean:
 	@$(MAKE) -C pan $@
 	@$(MAKE) -C tools $@
 	@$(MAKE) -C testcases $@
+	@$(MAKE) -C openlibs $@
 
 config.h: config.h.default
 	cp include/config.h.default include/config.h
@@ -145,6 +146,8 @@ ltp: libltp.a pandir tools config.h config.mk
 	@echo "***********************************************"
 
 vte: libltp.a pandir tools
+	-@$(MAKE) -C openlib
+	-@$(MAKE) -C openlib install
 	@echo
 	@echo "***********************************************"
 	@echo "** MAKE ALL - VTE tests suite                **"
@@ -261,5 +264,8 @@ gtk_clean:
 mm_clean:
 	$(MAKE) -C testcases/mm_tests_suite clean
 
-vte_clean_all: vte_clean qt_clean gtk_clean mm_clean unit_clean
+oplib_clean:
+	-$(MAKE) -C openlibs clean
+
+vte_clean_all: vte_clean qt_clean gtk_clean mm_clean unit_clean oplib_clean
 

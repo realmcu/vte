@@ -1,5 +1,5 @@
 /* -*- linux-c -*-
- *
+ * 
  * (C) Copyright IBM Corp. 2004
  *
  * This program is distributed in the hope that it will be useful,
@@ -20,33 +20,33 @@
 
 /**
  * main: epathstr -> epath test
- *
+ * 
  * This test tests whether an entity path string is converted into
- * an entity path properly.
+ * an entity path properly.  
  *
  * TODO: a more extensive set of tests would be nice, might need to create a
  * perl program to generate that code
- *
+ * 
  * Return value: 0 on success, 1 on failure
  **/
-int main(int argc, char **argv)
+int main(int argc, char **argv) 
 {
         SaHpiEntityPathT tmp_ep;
-        char *entity_root  "{BOARD_SET_SPECIFIC,10}{OPERATING_SYSTEM,31}";
-
+        char *entity_root = "{BOARD_SET_SPECIFIC,10}{OPERATING_SYSTEM,31}";
+        
         string2entitypath(entity_root, &tmp_ep);
-
-        if(tmp_ep.Entry[0].EntityType ! SAHPI_ENT_OPERATING_SYSTEM)
+        
+        if(tmp_ep.Entry[0].EntityType != SAHPI_ENT_OPERATING_SYSTEM) 
                 return 1;
-
-        if(tmp_ep.Entry[0].EntityInstance ! 31)
+        
+        if(tmp_ep.Entry[0].EntityInstance != 31)
                 return 1;
-
-        if(tmp_ep.Entry[1].EntityType ! SAHPI_ENT_BOARD_SET_SPECIFIC)
+        
+        if(tmp_ep.Entry[1].EntityType != SAHPI_ENT_BOARD_SET_SPECIFIC)
                 return 1;
-
-        if(tmp_ep.Entry[1].EntityInstance ! 10)
+        
+        if(tmp_ep.Entry[1].EntityInstance != 10)
                 return 1;
-
+        
         return 0;
 }

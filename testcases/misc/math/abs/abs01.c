@@ -17,26 +17,26 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* 01/02/2003   Port to LTP avenkat@us.ibm.com */
-/* 06/30/2001 Port to Linux nsharoff@us.ibm.com */
+/* 01/02/2003   Port to LTP	avenkat@us.ibm.com */
+/* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
 
 /*
  * NAME
- * abs -- absolute integer value
+ *	abs -- absolute integer value
  *
  * CALLS
- * abs(3)
+ *	abs(3)
  *
  * ALGORITHM
- * Check with variables.  Also most neg value as listed
- * on man page.
+ *	Check with variables.  Also most neg value as listed
+ *	on man page.
  *
  * RESTRICTIONS
- * considered a long time - estimate this one
+ *	considered a long time - estimate this one
  */
 #define _GNU_SOURCE 1
 
-#include <stdio.h>  /* needed by testhead.h  */
+#include <stdio.h>		/* needed by testhead.h		*/
 #include <stdlib.h>
 #include <unistd.h>
 #include <ctype.h>
@@ -44,19 +44,19 @@
 #include <errno.h>
 #include <values.h>
 
-/***** LTP Port *****/
+/*****	LTP Port	*****/
 
 #include "test.h"
 #include "usctest.h"
 #define FAILED 0
 #define PASSED 1
 
-char *TCID  "abs01";
-int local_flag  PASSED;
+char *TCID = "abs01";
+int local_flag = PASSED;
 int block_number;
 int errno;
 FILE * temp;
-int TST_TOTAL 1;
+int TST_TOTAL =1;
 extern int Tst_count;
 
 
@@ -68,65 +68,65 @@ int blexit();
 
 /*--------------------------------------------------------------*/
 int main (argc, argv)
- int  argc;
- char *argv[];
+	int  argc;
+	char *argv[];
 {
- register long long i;
- register int j, k, l,m;
+	register long long i;
+	register int j, k, l,m;
 
- setup();  /* temp file is now open */
+	setup();		/* temp file is now open	*/
 /*--------------------------------------------------------------*/
- blenter();
+	blenter();
 
- i  llabs(MININT) + (long long)MININT;
+	i = llabs(MININT) + (long long)MININT;
+	
+	if (i != 0) {
+		fprintf(temp, "abs of minimum integer failed.");
+		local_flag = FAILED;
+	}
 
- if (i ! 0) {
-  fprintf(temp, "abs of minimum integer failed.");
-  local_flag  FAILED;
- }
 
-
- blexit();
+	blexit();
 /*--------------------------------------------------------------*/
- blenter();
+	blenter();
 
- i  llabs(0);
- if (i ! 0) {
-  fprintf(temp, "abs(0) failed, returned %lld\n", i);
-  local_flag  FAILED;
- }
+	i = llabs(0);
+	if (i != 0) {
+		fprintf(temp, "abs(0) failed, returned %lld\n", i);
+		local_flag = FAILED;
+	}
 
- blexit();
+	blexit();
 /*--------------------------------------------------------------*/
- blenter();
+	blenter();
 
- for (m  1; m > 0 ; m << 1) {
-  j  ~m;
-  k  j + 1;
-  l  abs(k);
-  if (l ! m)
-   local_flag  FAILED;
- }
+	for (m = 1; m >= 0 ; m <<= 1) {
+		j = ~m;
+		k = j + 1;
+		l = abs(k);
+		if (l != m)
+			local_flag = FAILED;
+	}
 
- blexit();
+	blexit();
 /*--------------------------------------------------------------*/
-/* Clean up any files created by test before call to anyfail. */
+/* Clean up any files created by test before call to anyfail.	*/
 
- tst_exit(); /* THIS CALL DOES NOT RETURN - EXITS!! */
- return(0);
+	tst_exit();	/* THIS CALL DOES NOT RETURN - EXITS!!	*/
+	return(0);
 }
 /*--------------------------------------------------------------*/
 
-/*****  LTP Port *****/
+/*****  LTP Port	*****/
 void setup()
 {
-  temp  stderr;
+  temp = stderr;
 }
 
 
 int blenter()
 {
-  local_flag  PASSED;
+  local_flag = PASSED;
   return(0);
 }
 
@@ -134,8 +134,8 @@ int blenter()
 
 int blexit()
 {
-  (local_flag  PASSED ) ? tst_resm(TPASS, "Test passed") : tst_resm(TFAIL, "Test failed");
+  (local_flag == PASSED ) ? tst_resm(TPASS, "Test passed") : tst_resm(TFAIL, "Test failed");
   return(0);
 }
 
-/******   *****/
+/******			*****/

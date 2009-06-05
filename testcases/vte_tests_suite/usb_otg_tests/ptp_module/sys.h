@@ -56,5 +56,5 @@ unsigned int si_bulk_in(unsigned int deviceID, void *data,
 unsigned int si_bulk_out(unsigned int deviceID, void *data,
 			 unsigned int *dataLength);
 
-#endif				/*
+#endif				/* 
 				 */

@@ -22,14 +22,14 @@
  */
 
 /* hpi internal apis */
-SaErrorT oh_uid_initialize(void);
-guint oh_uid_from_entity_path(SaHpiEntityPathT *ep);
+SaErrorT oh_uid_initialize(void); 
+guint oh_uid_from_entity_path(SaHpiEntityPathT *ep); 
 guint oh_uid_remove(guint uid);
 guint oh_uid_lookup(SaHpiEntityPathT *ep);
 guint oh_entity_path_lookup(guint *id, SaHpiEntityPathT *ep);
 guint oh_uid_map_to_file(void);
 
-/* uid to entity path cross reference (xref) data structure */
+/* uid to entity path cross reference (xref) data structure */ 
 typedef struct {
         SaHpiResourceIdT resource_id;
         SaHpiEntityPathT entity_path;

@@ -1,0 +1,9 @@
+#Verification Tests Command File
+
+#VT Keypad drivers tests
+
+#files: keypad_testapp_1
+
+#TGE-LV-KPD-0010 keypad_testapp_1 -C 0
+
+#WARNING the commented tests are not automatical tests

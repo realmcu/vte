@@ -3,7 +3,7 @@ LDLIBS += -lselinux
 
 all: $(TARGETS)
 
-install:
+install: 
 	@set -e; for i in $(TARGETS); do ln -f $$i ../../../../../bin/$$i ; done
 	ln -f selinux_execshare.sh ../../../../../bin/
 

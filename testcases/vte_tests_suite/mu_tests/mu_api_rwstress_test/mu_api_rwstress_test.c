@@ -1,18 +1,18 @@
-/*====================*/
+/*================================================================================================*/
 /**
     @file   mu_api_rwstress_test.c
 
     @brief  C source file of the mu_api_rwstress_test test that performs stress tests of Messaging
             Unit driver read() and write() system calls
 */
-/*======================
+/*==================================================================================================
 
 Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
 THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                               Modification     Tracking
 Author (Core ID)                  Date          Number    Description of Changes
@@ -23,19 +23,19 @@ Igor Semenchukov (smng001c)    09/12/2004     TLSbo43804   Rework after heavy MU
 Dmitriy Kazachkov (e1403c)     29/06/2006     TLSbo61895   Rework after MU message format changing
 Sergey Yakubenko               04/10/2007     ENGR42513    Fixed address
 
-====================
+====================================================================================================
 Portability: Indicate if this module is portable to other compilers or platforms.
              If not, indicate specific reasons why is it not portable.
 
-======================*/
+==================================================================================================*/
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 
 /* Standard Include Files */
 
@@ -58,47 +58,47 @@ extern "C"{
 
 #include "mu_api_rwstress_test.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                        LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 const char *mu_dir = "/dev/mxc_mu";
 
-/*======================
+/*==================================================================================================
                                        LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 int count;      /* Number of read/write cycles each child performs */
 int block;      /* If non-zero, non-blocking mode will be used     */
 
-/*======================
+/*==================================================================================================
                                        GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                        GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 int  read_write(char *msg, int index);
 int mu_write(int dev, int* val);
 int mu_read( int dev, int* val);
 
-/*======================
+/*==================================================================================================
                                        LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 int mu_write(int dev, int* val)
 {
         int i, ret;
@@ -164,8 +164,8 @@ int mu_read( int dev, int* val)
 
 
 
-/*====================*/
-/*= VT_mu_api_rwstress_setup =*/
+/*================================================================================================*/
+/*===== VT_mu_api_rwstress_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
@@ -174,15 +174,15 @@ int mu_read( int dev, int* val)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_mu_api_rwstress_setup(void)
 {
     return TPASS;
 }
 
 
-/*====================*/
-/*= VT_mu_api_rwstress_cleanup =*/
+/*================================================================================================*/
+/*===== VT_mu_api_rwstress_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
 
@@ -191,15 +191,15 @@ int VT_mu_api_rwstress_setup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_mu_api_rwstress_cleanup(void)
 {
     return TPASS;
 }
 
 
-/*====================*/
-/*= VT_mu_api_rwstress_test =*/
+/*================================================================================================*/
+/*===== VT_mu_api_rwstress_test =====*/
 /**
 @brief  Accepts user parametes. Spawns some children and waits when all of them complete their work.
         Checks children exit status.
@@ -213,7 +213,7 @@ int VT_mu_api_rwstress_cleanup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_mu_api_rwstress_test(char *msg, int blk, int rw_count, int num_child)
 {
     int   rv = TPASS,
@@ -287,8 +287,8 @@ int VT_mu_api_rwstress_test(char *msg, int blk, int rw_count, int num_child)
     return rv;
 }
 
-/*====================*/
-/*= read_write =*/
+/*================================================================================================*/
+/*===== read_write =====*/
 /**
 @brief  Tries to open device and waits if it busy. Then, do some read/write operations depending on
         parameters supplied by user and closes device.
@@ -299,7 +299,7 @@ int VT_mu_api_rwstress_test(char *msg, int blk, int rw_count, int num_child)
 @return On success - return 0
         On failure - return 1
 */
-/*====================*/
+/*================================================================================================*/
 int read_write(char *msg, int index)
 {
     int  rv = TPASS,
@@ -369,7 +369,7 @@ int read_write(char *msg, int index)
                     return TFAIL;
                 }
                 sleep(1);   /* some pause */
-                tst_resm(TINFO, "[child#%d]Device %s open conflict (%d/%d) ... waiting ....",index,mu_dev, noverbose, OPEN_TRY);
+                tst_resm(TINFO, "[child#%d]Device %s open conflict (%d/%d) ... waiting ....",index,mu_dev, noverbose, OPEN_TRY);               
             }
             else if (mu_fd[idx] < 0)  /* Break on another error */
             {

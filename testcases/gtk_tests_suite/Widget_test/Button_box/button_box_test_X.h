@@ -10,13 +10,13 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-
+     
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Developer Name/ID            DD/MM/YYYY     TLSboXXXXX  BRIEF description of changes made
+Developer Name/ID            DD/MM/YYYY     TLSboXXXXX  BRIEF description of changes made 
 
 ==================================================================================================*/
 
@@ -46,7 +46,7 @@ extern "C"{
                                              ENUMS
 ==================================================================================================*/
 /** button_box_EX type */
-typedef enum
+typedef enum 
 {
 	BUTTON_BOX_EX_0 = 0,   /**< Example stuff 0. */
 	BUTTON_BOX_EX_1        /**< Example stuff 1. */

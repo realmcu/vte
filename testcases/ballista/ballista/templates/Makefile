@@ -27,8 +27,8 @@
 #
 ########################
 #
-# Entry Conditions:
-# The following environment variables are set:
+# Entry Conditions: 
+# 	The following environment variables are set:
 #	 ${CC} : <<appropriate C compiler for target platform>>
 #	 ${CFLAGS} : <<appropriate C compiler flags for target platform>>
 #

@@ -19,29 +19,29 @@
 
 /*
  * NAME
- * kill05.c
+ *	kill05.c
  *
  * DESCRIPTION
- * Test case to check that kill() fails when passed a pid owned by another
- * user.
+ *	Test case to check that kill() fails when passed a pid owned by another
+ *	user.
  *
  * ALGORITHM
- * call setup
- * loop if the -i option was given
- * setup a shared memory segment to for a flag which will notify
- * ltpuser1's process that life is not worth living in a continuous loop.
- * fork a child and set the euid to ltpuser1
- * set the parents euid to ltpuser2
- * execute the kill system call on ltpuser1's pid
- * check the return value
- * if return value is not -1
- *  issue a FAIL message, break remaining tests and cleanup
+ *	call setup
+ *	loop if the -i option was given
+ *	setup a shared memory segment to for a flag which will notify
+ *	ltpuser1's process that life is not worth living in a continuous loop.
+ *	fork a child and set the euid to ltpuser1
+ *	set the parents euid to ltpuser2
+ *	execute the kill system call on ltpuser1's pid
+ *	check the return value
+ *	if return value is not -1
+ *		issue a FAIL message, break remaining tests and cleanup
  *      if we are doing functional testing
  *              if the errno was set to 1 (Operation not permitted)
  *                      issue a PASS message
  *              otherwise
  *                      issue a FAIL message
- * call cleanup
+ *	call cleanup
  *
  * USAGE
  *  kill05 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -53,17 +53,17 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  *      26/02/2008 Renaud Lottiaux (Renaud.Lottiaux@kerlabs.com)
- *      - Fix wrong return value check on shmat system call (leading to
+ *      - Fix wrong return value check on shmat system call (leading to 
  *        segfault in case of error with this syscall).
  *      - Fix deletion of IPC memory segment. Segment was not correctly
  *        deleted due to the change of uid during the test.
  *
  * RESTRICTIONS
- * This test must be run as root.
- * Looping with the -i option does not work correctly.
+ *	This test must be run as root.
+ *	Looping with the -i option does not work correctly.
  */
 
 #include "test.h"
@@ -86,13 +86,13 @@ void setup(void);
 void do_child(void);
 void do_master_child(void);
 
-char *TCID "kill05";
-int TST_TOTAL  1;
-int shmid1  -1;
+char *TCID= "kill05";
+int TST_TOTAL = 1;
+int shmid1 = -1;
 extern key_t semkey;
 int *flag;
 
-int exp_enos[]  {EPERM, 0};
+int exp_enos[] = {EPERM, 0};
 
 extern int Tst_count;
 extern int getipckey();
@@ -101,37 +101,37 @@ extern int getipckey();
 
 int main(int ac, char **av)
 {
- char *msg;                      /* message returned from parse_opts */
- pid_t pid;
- int status;
+	char *msg;                      /* message returned from parse_opts */
+	pid_t pid;
+	int status;
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	}
 
 #ifdef UCLINUX
- maybe_run_child(&do_child, "");
+	maybe_run_child(&do_child, "");
 #endif
 
- setup();                        /* global setup */
+	setup();                        /* global setup */
 
- pid  FORK_OR_VFORK();
- if (pid < 0)
-  tst_brkm(TBROK, cleanup, "Fork failed");
+	pid = FORK_OR_VFORK();
+	if (pid < 0)
+		tst_brkm(TBROK, cleanup, "Fork failed");
+	
+	if (pid == 0) {
+		do_master_child();
+		return (0);
+	}
+	else {
+		waitpid(pid, &status, 0);
+	}
 
- if (pid  0) {
-  do_master_child();
-  return (0);
- }
- else {
-  waitpid(pid, &status, 0);
- }
+	cleanup();
+	/*NOTREACHED*/
 
- cleanup();
- /*NOTREACHED*/
-
- return(0);
+	return(0);
 }
 
 /*
@@ -140,91 +140,91 @@ int main(int ac, char **av)
 void
 do_master_child()
 {
- int lc;                         /* loop counter */
+	int lc;                         /* loop counter */
 
- pid_t pid1;
- int status;
+	pid_t pid1;
+	int status;
 
- char user1name[]  "nobody";
- char user2name[]  "bin";
+	char user1name[] = "nobody";
+	char user2name[] = "bin";
 
- extern struct passwd * my_getpwnam(char *);
+	extern struct passwd * my_getpwnam(char *);
 
- struct passwd *ltpuser1, *ltpuser2;
+	struct passwd *ltpuser1, *ltpuser2;
 
- ltpuser1  my_getpwnam(user1name);
- ltpuser2  my_getpwnam(user2name);
+	ltpuser1 = my_getpwnam(user1name);
+	ltpuser2 = my_getpwnam(user2name);
 
- TEST_EXP_ENOS(exp_enos);
+	TEST_EXP_ENOS(exp_enos);
 
- /* The following loop checks looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* The following loop checks looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  *flag  0;
+		*flag = 0;
 
-  /*
-   * Fork a process and set the euid so that it is
-   * different from this one.
-   */
+		/*
+		 * Fork a process and set the euid so that it is
+		 * different from this one.
+		 */
 
-  pid1  FORK_OR_VFORK();
+		pid1 = FORK_OR_VFORK();
 
-  if (pid1 < 0) {
-   tst_brkm(TBROK, cleanup, "Fork failed");
-  }
+		if (pid1 < 0) {
+			tst_brkm(TBROK, cleanup, "Fork failed");
+		}
 
-  if (pid1  0) {  /* child */
-   if (setreuid(ltpuser1->pw_uid, ltpuser1->pw_uid)  -1){
-    tst_resm(TWARN, "setreuid failed in child");
-   }
+		if (pid1 == 0) {		/* child */
+			if (setreuid(ltpuser1->pw_uid, ltpuser1->pw_uid) == -1){
+				tst_resm(TWARN, "setreuid failed in child");
+			}
 #ifdef UCLINUX
-   if (self_exec(av[0], "") < 0) {
-    tst_brkm(TBROK, cleanup, "self_exec of child failed");
-   }
+			if (self_exec(av[0], "") < 0) {
+				tst_brkm(TBROK, cleanup, "self_exec of child failed");
+			}
 #else
-   do_child();
+			do_child();
 #endif
-  } else {   /* parent */
-   if (setreuid(ltpuser2->pw_uid,ltpuser2->pw_uid)  -1) {
-    tst_resm(TWARN, "seteuid failed in child");
-   }
+		} else {			/* parent */
+			if (setreuid(ltpuser2->pw_uid,ltpuser2->pw_uid) == -1) {
+				tst_resm(TWARN, "seteuid failed in child");
+			}
 
-   TEST(kill(pid1, TEST_SIG));
+			TEST(kill(pid1, TEST_SIG));
 
-   /* signal the child that we're done */
-   *flag  1;
+			/* signal the child that we're done */
+			*flag = 1;
 
-   waitpid(pid1, &status, 0);
+			waitpid(pid1, &status, 0);
 
-   if (TEST_RETURN ! -1) {
-    tst_resm(TFAIL, "%s failed - errno  "
-     "%d : %s Expected a return "
-     "value of -1 got %d", TCID, TEST_ERRNO,
-     strerror(TEST_ERRNO), TEST_RETURN);
+			if (TEST_RETURN != -1) {
+				tst_resm(TFAIL, "%s failed - errno = "
+					"%d : %s Expected a return "
+					"value of -1 got %d", TCID, TEST_ERRNO,
+					strerror(TEST_ERRNO), TEST_RETURN);
 
-    continue;
-   }
-  }
+				continue;
+			}
+		}
 
-  /*
-   * Check to see if the errno was set to the expected
-   * value of 1 : EPERM
-   */
-  TEST_ERROR_LOG(TEST_ERRNO);
+		/*
+		 * Check to see if the errno was set to the expected
+		 * value of 1 : EPERM
+		 */
+		TEST_ERROR_LOG(TEST_ERRNO);
 
-  if (TEST_ERRNO  EPERM) {
-   tst_resm(TPASS, "errno set to %d : %s, as "
-    "expected", TEST_ERRNO,
-    strerror(TEST_ERRNO));
-  } else {
-   tst_resm(TFAIL, "errno set to %d : %s expected "
-    "%d : %s", TEST_ERRNO,
-    strerror(TEST_ERRNO), 1, strerror(1));
-  }
- }
+		if (TEST_ERRNO == EPERM) {
+			tst_resm(TPASS, "errno set to %d : %s, as "
+				"expected", TEST_ERRNO,
+				strerror(TEST_ERRNO));
+		} else {
+			tst_resm(TFAIL, "errno set to %d : %s expected "
+				"%d : %s", TEST_ERRNO,
+				strerror(TEST_ERRNO), 1, strerror(1));
+		}
+	}
 }
 
 /*
@@ -233,16 +233,16 @@ do_master_child()
 void
 do_child()
 {
- pid_t my_pid;
+	pid_t my_pid;
 
- my_pid  getpid();
- while(1) {
-  if (*flag  1) {
-   exit(0);
-  } else {
-   sleep (1);
-  }
- }
+	my_pid = getpid();
+	while(1) {
+		if (*flag == 1) {
+			exit(0);
+		} else {
+			sleep (1);
+		}
+	}
 }
 
 /*
@@ -251,32 +251,32 @@ do_child()
 void
 setup(void)
 {
- /* Check that the process is owned by root */
- if (geteuid() ! 0) {
-  tst_brkm(TBROK, cleanup, "Test must be run as root");
- }
+	/* Check that the process is owned by root */
+	if (geteuid() != 0) {
+		tst_brkm(TBROK, cleanup, "Test must be run as root");
+	}
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /* Make a temp directory and cd to it.
-  * Usefull to be sure getipckey generated different IPC keys.
-  */
- tst_tmpdir();
+	/* Make a temp directory and cd to it.
+	 * Usefull to be sure getipckey generated different IPC keys.
+	 */
+	tst_tmpdir();
 
         /* get an IPC resource key */
-        semkey  getipckey();
+        semkey = getipckey();
 
- if ((shmid1  shmget(semkey, (int)getpagesize(),
-       0666|IPC_CREAT))  -1) {
-  tst_brkm(TBROK, cleanup, "Failed to setup shared memory");
- }
+	if ((shmid1 = shmget(semkey, (int)getpagesize(),
+	      0666|IPC_CREAT)) == -1) {
+		tst_brkm(TBROK, cleanup, "Failed to setup shared memory");
+	}
 
- /*flag  (int *)shmat(shmid1, 0, 0);*/
- if ((flag  (int *)shmat(shmid1, 0, 0))  (int *)-1) {
-  tst_brkm(TBROK, cleanup,
-   "Failed to attatch shared memory:%d", flag);
- }
+	/*flag = (int *)shmat(shmid1, 0, 0);*/
+	if ((flag = (int *)shmat(shmid1, 0, 0)) == (int *)-1) {
+		tst_brkm(TBROK, cleanup,
+			"Failed to attatch shared memory:%d", flag);
+	}
 }
 
 /*
@@ -286,20 +286,20 @@ setup(void)
 void
 cleanup(void)
 {
- /*
-  * print timing status if that option was specified.
-  * print errno log if that option was specified
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing status if that option was specified.
+	 * print errno log if that option was specified
+	 */
+	TEST_CLEANUP;
 
- /* Remove the temporary directory */
- tst_rmdir();
+	/* Remove the temporary directory */
+	tst_rmdir();
 
- /*
-  * if it exists, remove the shared memory
-  */
- rm_shm(shmid1);
+	/*
+	 * if it exists, remove the shared memory
+	 */
+	rm_shm(shmid1);
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

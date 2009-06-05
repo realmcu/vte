@@ -1,18 +1,18 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   pmic_test_IP.c
 
         @brief  Illegal parameters test scenario source file
                 for SC55112 Protocol driver test application.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -22,13 +22,13 @@ D.Khoroshev/b00313          09/05/2005     TLSbo52700   Rework version
 D.Khoroshev/b00313          01/13/2006     TLSbo59968   Added default data for MC13783
 D.Khoroshev/b00313          07/25/2006     TLSbo64239   Added mc13783 legacy API support
 
-====================
+====================================================================================================
 Portability: ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -39,26 +39,26 @@ Portability: ARM GCC
 #include "pmic_test_common.h"
 #include "pmic_test_IP.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                        LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 void fn_callback_IP(void *arg);
 
-/*======================
+/*==================================================================================================
                                        LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 unsigned int TEST_VALUE= 0xFFF000;
 
 #ifdef CONFIG_MXC_PMIC_SC55112
@@ -182,7 +182,7 @@ unsigned int TEST_REG_NA[nb_REG_NA] =
 #define nb_EVNT_NE 10
 unsigned int TEST_EVNT_NA[nb_EVNT_NE] = { 15,16,17,18,23,26,28,35,39,41,42,43 };
 #endif
-#ifdef CONFIG_MXC_PMIC_MC9SDZ60
+#ifdef CONFIG_MXC_PMIC_MC9SDZ60 
 /* Read only Registers */
 #define nb_REG_RO 1
 unsigned int TEST_REG_RO[nb_REG_RO] =
@@ -195,21 +195,21 @@ unsigned int TEST_REG_RO[nb_REG_RO] =
 /* Non available events */
 #endif
 
-/*======================
+/*==================================================================================================
                                        GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                        GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 extern char *ifile_name;
 extern char device_name[32];
 
-/*======================
+/*==================================================================================================
                                        LOCAL FUNCTIONS
-======================*/
-/*====================*/
-/*= VT_pmic_IP_setup =*/
+==================================================================================================*/
+/*================================================================================================*/
+/*===== VT_pmic_IP_setup =====*/
 /**
 @brief  This function opens test module's device file, and allocates memory for test sequence array.
 
@@ -222,7 +222,7 @@ extern char device_name[32];
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_pmic_IP_setup(int *fd, int thread_num)
 {
         *fd = open(device_name, O_RDWR);
@@ -236,8 +236,8 @@ int VT_pmic_IP_setup(int *fd, int thread_num)
         return TPASS;
 }
 
-/*====================*/
-/*= VT_pmic_IP_cleanup =*/
+/*================================================================================================*/
+/*===== VT_pmic_IP_cleanup =====*/
 /**
 @brief This function closes test module's device file and frees memory for test sequence array.
 
@@ -248,7 +248,7 @@ int VT_pmic_IP_setup(int *fd, int thread_num)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_pmic_IP_cleanup(int fd, int thread_num)
 {
         if (close(fd) < 0)
@@ -261,8 +261,8 @@ int VT_pmic_IP_cleanup(int fd, int thread_num)
         return TPASS;
 }
 
-/*====================*/
-/*= VT_pmic_test_IP =*/
+/*================================================================================================*/
+/*===== VT_pmic_test_IP =====*/
 /**
 @brief  SC55112 test scenario which trying to perform read/write, subscribe/unsubscribe with
         incorrect parametres.
@@ -272,7 +272,7 @@ int VT_pmic_IP_cleanup(int fd, int thread_num)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_pmic_test_IP(int thread_num)
 {
         int fd, i;

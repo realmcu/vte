@@ -1,11 +1,11 @@
 #!/bin/bash
 PRIORITY=20
 # If users run pi tests from sshd, they need to improve the priority
-# sshd using the following command.
+# sshd using the following command. 
 
 # chrt -p -f $PRIORITY $PPID
 
-# If users run pi test from console, they need to add the prioirity
+# If users run pi test from console, they need to add the prioirity 
 # of the shell using the following command.
 
 # chrt -p -f $PRIORITY $$
@@ -34,7 +34,7 @@ Run()
 TESTS="pitest-1 pitest-2 pitest-3 pitest-4 pitest-5 pitest-6"
 
 for test in $TESTS; do
- Run $test
+	Run $test
 done
 
 echo -ne "\t\t*****************\n"

@@ -14,23 +14,23 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 ***************************************************************************/
-/* 
+/* ============================================================================
 * This testcase uses the libnetns.c from the library to create network NS.
 * In libnetns.c it uses 2 scripts parentns.sh and childns.sh to create this.
 * After creating the NS, this program verifies that the network is reachable
 * from parent-NS to child-NS and vice-versa.
 *
 * Scripts Used: parentns.sh, childns.sh, par_ftp.sh , ch_ftp.sh container_ftp.pl
-*
-* Author: Veerendra C <vechandr@in.ibm.com>
+* 
+* Author: Veerendra C <vechandr@in.ibm.com> 
 *                      31/07/2008
-* */
+* =============================================================================*/
 
 #include "../libclone/libclone.h"
 
 int main()
 {
     int status;
-    status  create_net_namespace("par_ftp.sh", "ch_ftp.sh");
+    status = create_net_namespace("par_ftp.sh", "ch_ftp.sh");
     return status;
 }

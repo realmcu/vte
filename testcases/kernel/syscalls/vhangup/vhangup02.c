@@ -19,10 +19,10 @@
 
 /*
  * NAME
- * vhangup02.c
+ *	vhangup02.c
  *
  * DESCRIPTION
- * To test the basic functionality of vhangup(2)
+ * 	To test the basic functionality of vhangup(2)
  *
  *
  * USAGE:  <for command-line>
@@ -33,11 +33,11 @@
  *              -P x : Pause for x seconds between iterations.
  *              -t   : Turn on syscall timing.
  * History
- * 07/2001 John George
- *  -Ported
+ *	07/2001 John George
+ *		-Ported
  *
  * Restrictions
- * None
+ *	None
  */
 
 #include <unistd.h>
@@ -51,58 +51,58 @@
 void setup(void);
 void cleanup(void);
 
-char *TCID  "vhangup02";
-int TST_TOTAL  1;
+char *TCID = "vhangup02";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 int fail;
 
 int main(int argc, char **argv)
 {
- int lc;
- char *msg;
+	int lc;
+	char *msg;
 
- pid_t pid, pid1;
- int status;
+	pid_t pid, pid1;
+	int status;
 
- /* parse standard options */
- if ((msg  parse_opts(argc, argv, (option_t *)NULL, NULL)) !
-     (char *) NULL) {
-  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
- }
+	/* parse standard options */
+	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) !=
+	    (char *) NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	}
 
- setup();
+	setup();
 
- /* check looping state if -i option is given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+	/* check looping state if -i option is given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  fail  0;
+		fail = 0;
 
-  if ((pid  FORK_OR_VFORK()) < 0) {
-   tst_brkm(TFAIL, cleanup, "fork failed");
-   /*NOTREACHED*/
-  } else if (pid > 0) { /* parent */
-   waitpid(pid, &status, 0);
-   _exit(0);
-  } else {  /* child */
-   pid1  setsid();
-   if (pid1 < 0) {
-    tst_brkm(TFAIL, cleanup, "setsid failed");
-    /*NOTREACHED*/
-   }
-   TEST(vhangup());
-   if (TEST_RETURN  -1) {
-    tst_resm(TFAIL, "vhangup() failed, errno:%d",
-      errno);
-   } else {
-    tst_resm(TPASS, "vhangup() succeeded");
-   }
-  }
- }
- cleanup();
- /*NOTREACHED*/
+		if ((pid = FORK_OR_VFORK()) < 0) {
+			tst_brkm(TFAIL, cleanup, "fork failed");
+			/*NOTREACHED*/
+		} else if (pid > 0) {	/* parent */
+			waitpid(pid, &status, 0);
+			_exit(0);
+		} else {		/* child */
+			pid1 = setsid();
+			if (pid1 < 0) {
+				tst_brkm(TFAIL, cleanup, "setsid failed");
+				/*NOTREACHED*/
+			}
+			TEST(vhangup());
+			if (TEST_RETURN == -1) {
+				tst_resm(TFAIL, "vhangup() failed, errno:%d",
+					 errno);
+			} else {
+				tst_resm(TPASS, "vhangup() succeeded");
+			}
+		}
+	}
+	cleanup();
+	/*NOTREACHED*/
 
   return(0);
 
@@ -110,32 +110,32 @@ int main(int argc, char **argv)
 
 /*
  * setup()
- * performs all ONE TIME setup for this test
+ *	performs all ONE TIME setup for this test
  */
 void
 setup(void)
 {
- /* Pause if that option was specified
-  * TEST_PAUSE contains the code to fork the test with the -c option.
-  */
- TEST_PAUSE;
+	/* Pause if that option was specified
+	 * TEST_PAUSE contains the code to fork the test with the -c option.
+	 */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup()
- * performs all ONE TIME cleanup for this test at
- * completion or premature exit
+ *	performs all ONE TIME cleanup for this test at
+ *	completion or premature exit
  */
 void
 cleanup(void)
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
- /*NOTREACHED*/
+	/* exit with return code appropriate for results */
+	tst_exit();
+	/*NOTREACHED*/
 }

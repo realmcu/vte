@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   sahara_test.c
 
         @brief  Securitty Sahara2 driver test scenario
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/Core ID                  Date          Number    Description of Changes
@@ -23,25 +23,25 @@ A.Ozerov/NONE                01/12/2005     TLSbo58662  Update for linux-2.6.10-
 A.Ozerov/NONE                19/12/2005     TLSbo58662  Update for linux-2.6.10-cvs-L26_1_15
 A.Ozerov/NONE                31/01/2006     TLSbo61952  Problem with fsl_shw_register_user was fixed
 
-====================
-Portability:  ARM GCC
-======================*/
+====================================================================================================
+Portability:  ARM GCC 
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Verification Test Environment Include Files */
 #include "sahara_test.h"
 
-/*====================*/
+/*================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 static int fd = 0;
 static fsl_shw_uco_t ctx_config;
 
-/*====================*/
+/*================================================================================================*/
 static char *IOCTLS[]=
 {
         "SAHARA_TEST_RUN_CALLBACK",
@@ -58,17 +58,17 @@ static char *IOCTLS[]=
         "SAHARA_TEST_DEREGISTER_USER",
 };
 
-/*====================*/
-/*= VT_sahara_test_setup =*/
-/**
+/*================================================================================================*/
+/*===== VT_sahara_test_setup =====*/
+/** 
 @brief  This function assumes the pre-condition of the test case execution
 
 @param  none
 
-@return On success - return TPASS
-        On failure - return TFAIL
+@return On success - return TPASS 
+        On failure - return TFAIL 
 */
-/*====================*/
+/*================================================================================================*/
 int VT_sahara_test_setup(void)
 {
         char    strdev[256]="/dev/";
@@ -84,17 +84,17 @@ int VT_sahara_test_setup(void)
         return TPASS;
 }
 
-/*====================*/
-/*= VT_sahara_test_cleanup =*/
-/**
+/*================================================================================================*/
+/*===== VT_sahara_test_cleanup =====*/
+/** 
 @brief  This function assumes the post-condition of the test case execution
 
 @param  none
 
-@return On success - return TPASS
-        On failure - return TFAIL
+@return On success - return TPASS 
+        On failure - return TFAIL 
 */
-/*====================*/
+/*================================================================================================*/
 int VT_sahara_test_cleanup(void)
 {
         if (fd > 0)
@@ -103,17 +103,17 @@ int VT_sahara_test_cleanup(void)
         return TPASS;
 }
 
-/*====================*/
-/*= VT_sahara_test =*/
-/**
+/*================================================================================================*/
+/*===== VT_sahara_test =====*/
+/** 
 @brief  Sahara2 Driver test scenario
 
 @param  none
 
-@return On success - return TPASS
-        On failure - return the error code
+@return On success - return TPASS 
+        On failure - return the error code 
 */
-/*====================*/
+/*================================================================================================*/
 int VT_sahara_test(SAHARA_TEST_IOCTL ctx_testcase)
 {
         int     VT_rv = TPASS;
@@ -125,7 +125,7 @@ int VT_sahara_test(SAHARA_TEST_IOCTL ctx_testcase)
         ctx_config.sahara_openfd = -1;
         ctx_config.mem_util = NULL;
         ctx_config.callback = NULL;
-
+        
         if (ioctl(fd, SAHARA_TEST_REGISTER_USER, &ctx_config) != 0)
         {
                 VT_rv = TFAIL;

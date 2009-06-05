@@ -22,7 +22,7 @@
 # L.Delaspre/rc149c            11/06/2004     TLSbo40109  Replace hard include path by a variable
 # L.Delaspre/rc149c            16/08/2004     TLSbo40891  VTE 1.4 integration
 # L.Delaspre/rc149c            08/12/2004     TLSbo40142  Update with Freescale identity
-# A.Ozerov/NONE                10/01/2006     TLSbo61037  Update in accordance with linux-2.6.10-rel-L26_1_15
+# A.Ozerov/NONE                10/01/2006     TLSbo61037  Update in accordance with linux-2.6.10-rel-L26_1_15 
 # A.Ozerov/B00320              15/02/2006     TLSbo61037  Device was changed and testapp was reworked accordingly
 #
 ###################################################################################################

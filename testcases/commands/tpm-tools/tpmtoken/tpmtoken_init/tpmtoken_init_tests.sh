@@ -19,137 +19,137 @@
 
 setup()
 {
- RC=0    # Return code from commands.
+	RC=0				# Return code from commands.
 
- if [ -z "$LTPTMP" ] && [ -z "$TMPBASE" ]
- then
-  LTPTMP="/tmp"
- else
-  LTPTMP="$TMPBASE"
- fi
+	if [ -z "$LTPTMP" ] && [ -z "$TMPBASE" ]
+	then
+		LTPTMP="/tmp"
+	else
+		LTPTMP="$TMPBASE"
+	fi
 
- export TPM_TMPFILE="$LTPTMP/tst_tpm.err"
- rm -f $TPM_TMPFILE 2>&1
+	export TPM_TMPFILE="$LTPTMP/tst_tpm.err"
+	rm -f $TPM_TMPFILE 2>&1
 
- # Set known password values
- if [ -z "$OWN_PWD" ]
- then
-  export OWN_PWD="OWN PWD"
- fi
- if [ -z "$SRK_PWD" ]
- then
-  export SRK_PWD="SRK PWD"
- fi
- if [ -z "$P11_SO_PWD" ]
- then
-  export P11_SO_PWD="P11 SO PWD"
- fi
- if [ -z "$P11_USER_PWD" ]
- then
-  export P11_USER_PWD="P11 USER PWD"
- fi
+	# Set known password values
+	if [ -z "$OWN_PWD" ]
+	then
+		export OWN_PWD="OWN PWD"
+	fi
+	if [ -z "$SRK_PWD" ]
+	then
+		export SRK_PWD="SRK PWD"
+	fi
+	if [ -z "$P11_SO_PWD" ]
+	then
+		export P11_SO_PWD="P11 SO PWD"
+	fi
+	if [ -z "$P11_USER_PWD" ]
+	then
+		export P11_USER_PWD="P11 USER PWD"
+	fi
 
- tst_resm TINFO "INIT: Inititalizing tests."
+	tst_resm TINFO "INIT: Inititalizing tests."
 
- which tpmtoken_init 1>$TPM_TMPFILE 2>&1 || RC=$?
- if [ $RC -ne 0 ]
- then
-  tst_brk TBROK $TPM_TMPFILE NULL \
-   "Setup: tpmtoken_init command does not exist. Reason:"
-  return $RC
- fi
+	which tpmtoken_init 1>$TPM_TMPFILE 2>&1 || RC=$?
+	if [ $RC -ne 0 ]
+	then
+		tst_brk TBROK $TPM_TMPFILE NULL \
+			"Setup: tpmtoken_init command does not exist. Reason:"
+		return $RC
+	fi
 
- tpmtoken_init_tests_exp00.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
- if [ $RC -ne 0 ]
- then
-  tst_brk TBROK $TPM_TMPFILE NULL \
-   "Setup: cannot set SRK password. Reason:"
-  return $RC
- fi
+	tpmtoken_init_tests_exp00.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
+	if [ $RC -ne 0 ]
+	then
+		tst_brk TBROK $TPM_TMPFILE NULL \
+			"Setup: cannot set SRK password. Reason:"
+		return $RC
+	fi
 
- return $RC
+	return $RC
 }
 
 test01()
 {
- RC=0    # Return value from commands
- export TCID=tpmtoken_init01 # Test ID
- export TST_COUNT=1  # Test number
+	RC=0				# Return value from commands
+	export TCID=tpmtoken_init01	# Test ID
+	export TST_COUNT=1		# Test number
 
- tpmtoken_init_tests_exp01.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
- if [ $RC -eq 0 ]
- then
-  tst_resm TPASS "'tpmtoken_init' passed."
-  RC=0
- else
-  tst_res TFAIL $TPM_TMPFILE "'tpmtoken_init' failed."
-  RC=1
- fi
- return $RC
+	tpmtoken_init_tests_exp01.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
+	if [ $RC -eq 0 ]
+	then
+		tst_resm TPASS "'tpmtoken_init' passed."
+		RC=0
+	else
+		tst_res TFAIL $TPM_TMPFILE "'tpmtoken_init' failed."
+		RC=1
+	fi
+	return $RC
 }
 
 test02()
 {
- RC=0    # Return value from commands
- export TCID=tpmtoken_init02 # Test ID
- export TST_COUNT=2  # Test number
+	RC=0				# Return value from commands
+	export TCID=tpmtoken_init02	# Test ID
+	export TST_COUNT=2		# Test number
 
- tpmtoken_init_tests_exp02.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
- if [ $RC -eq 0 ]
- then
-  tst_resm TPASS "'tpmtoken_init' passed."
-  RC=0
- else
-  tst_res TFAIL $TPM_TMPFILE "'tpmtoken_init' failed."
-  RC=1
- fi
- return $RC
+	tpmtoken_init_tests_exp02.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
+	if [ $RC -eq 0 ]
+	then
+		tst_resm TPASS "'tpmtoken_init' passed."
+		RC=0
+	else
+		tst_res TFAIL $TPM_TMPFILE "'tpmtoken_init' failed."
+		RC=1
+	fi
+	return $RC
 }
 
 test03()
 {
- RC=0    # Return value from commands
- export TCID=tpmtoken_init03 # Test ID
- export TST_COUNT=3  # Test number
+	RC=0				# Return value from commands
+	export TCID=tpmtoken_init03	# Test ID
+	export TST_COUNT=3		# Test number
 
- tpmtoken_init_tests_exp03.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
- if [ $RC -eq 0 ]
- then
-  tst_resm TPASS "'tpmtoken_init -y' passed."
-  RC=0
- else
-  tst_res TFAIL $TPM_TMPFILE "'tpmtoken_init -y' failed."
-  RC=1
- fi
- return $RC
+	tpmtoken_init_tests_exp03.sh 1>$TPM_TMPFILE 2>&1 || RC=$?
+	if [ $RC -eq 0 ]
+	then
+		tst_resm TPASS "'tpmtoken_init -y' passed."
+		RC=0
+	else
+		tst_res TFAIL $TPM_TMPFILE "'tpmtoken_init -y' failed."
+		RC=1
+	fi
+	return $RC
 }
 
 cleanup()
 {
- rm -f $TPM_TMPFILE 2>&1
+	rm -f $TPM_TMPFILE 2>&1
 }
 
-# Function: main
+# Function:	main
 #
-# Description: - Execute all tests, report results.
+# Description:	- Execute all tests, report results.
 #
-# Exit:  - zero on success
-# - non-zero on failure.
+# Exit:		- zero on success
+# 		- non-zero on failure.
 
-TFAILCNT=0   # Set TFAILCNT to 0, increment on failure.
-RC=0    # Return code from tests.
+TFAILCNT=0			# Set TFAILCNT to 0, increment on failure.
+RC=0				# Return code from tests.
 
-export TCID=tpmtoken_init # Test ID
-export TST_TOTAL=3  # Total numner of tests in this file.
-export TST_COUNT=0  # Initialize identifier
+export TCID=tpmtoken_init	# Test ID
+export TST_TOTAL=3		# Total numner of tests in this file.
+export TST_COUNT=0		# Initialize identifier
 
 if [ -n "$TPM_NOPKCS11" ]
 then
- tst_resm TINFO "'tpmtoken_init' skipped."
- exit $TFAILCNT
+	tst_resm TINFO "'tpmtoken_init' skipped."
+	exit $TFAILCNT
 fi
 
-setup || exit $RC  # Exit if initializing testcases fails.
+setup || exit $RC		# Exit if initializing testcases fails.
 
 test01 || TFAILCNT=$(($TFAILCNT+1))
 test02 || TFAILCNT=$(($TFAILCNT+1))

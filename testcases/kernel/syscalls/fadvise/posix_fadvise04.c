@@ -19,19 +19,19 @@
 
 /*
  * NAME
- * posix_fadvise04.c
+ *	posix_fadvise04.c
  *
  * DESCRIPTION
- * Check the value that posix_fadvise returns for pipe descriptor.
+ *	Check the value that posix_fadvise returns for pipe descriptor.
  *
  * USAGE
- * posix_fadvise04
+ * 	posix_fadvise04
  *
  * HISTORY
- * 11/2007 Initial version by Masatake YAMATO <yamato@redhat.com>
+ *	11/2007 Initial version by Masatake YAMATO <yamato@redhat.com>
  *
  * RESTRICTIONS
- * None
+ * 	None
  */
 
 
@@ -55,39 +55,39 @@ void setup();
 void cleanup();
 
 
-TCID_DEFINE(posix_fadvise04); /* Test program identifier.    */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+TCID_DEFINE(posix_fadvise04);	/* Test program identifier.    */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-#define GIVEN_IN_SETUP 42 /* No mean. Just used as padding.
-       This is overwritten by setup(). */
+#define GIVEN_IN_SETUP 42	/* No mean. Just used as padding.
+				   This is overwritten by setup(). */
 
 struct test_case_t {
- int   fd;
- off_t offset;
- off_t len;
- int   advice;
- int   error;
-} TC[]  {
- {GIVEN_IN_SETUP, 0, 0, POSIX_FADV_NORMAL,     ESPIPE},
- {GIVEN_IN_SETUP, 0, 0, POSIX_FADV_SEQUENTIAL, ESPIPE},
- {GIVEN_IN_SETUP, 0, 0, POSIX_FADV_RANDOM,     ESPIPE},
- {GIVEN_IN_SETUP, 0, 0, POSIX_FADV_NOREUSE,    ESPIPE},
- {GIVEN_IN_SETUP, 0, 0, POSIX_FADV_WILLNEED,   ESPIPE},
- {GIVEN_IN_SETUP, 0, 0, POSIX_FADV_DONTNEED,   ESPIPE},
+	int   fd;
+	off_t offset;
+	off_t len;
+	int   advice;
+	int   error;
+} TC[] = {
+	{GIVEN_IN_SETUP, 0, 0, POSIX_FADV_NORMAL,     ESPIPE},
+	{GIVEN_IN_SETUP, 0, 0, POSIX_FADV_SEQUENTIAL, ESPIPE},
+	{GIVEN_IN_SETUP, 0, 0, POSIX_FADV_RANDOM,     ESPIPE},
+	{GIVEN_IN_SETUP, 0, 0, POSIX_FADV_NOREUSE,    ESPIPE},
+	{GIVEN_IN_SETUP, 0, 0, POSIX_FADV_WILLNEED,   ESPIPE},
+	{GIVEN_IN_SETUP, 0, 0, POSIX_FADV_DONTNEED,   ESPIPE},
 };
 
-int TST_TOTAL  sizeof(TC) / sizeof(TC[0]);
+int TST_TOTAL = sizeof(TC) / sizeof(TC[0]);
 
 int
 main(int ac, char **av)
 {
- int lc;   /* loop counter */
- char *msg;  /* message returned from parse_opts */
- int i;
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
+	int i;
 
-        /* Check this system has fadvise64 system which is used
+        /* Check this system has fadvise64 system which is used 
           in posix_fadvise. */
-        if ((_FILE_OFFSET_BITS ! 64) && (__NR_fadvise64  0)) {
+        if ((_FILE_OFFSET_BITS != 64) && (__NR_fadvise64 == 0)) {
                tst_resm(TWARN, "This test can only run on kernels that implements ");
                tst_resm(TWARN, "fadvise64 which is used from posix_fadvise");
                exit(0);
@@ -100,108 +100,108 @@ main(int ac, char **av)
           exit(0);
         }
 
- /*
-  * parse standard options
-  */
- if ( (msg  parse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *) NULL )
-   tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	/*
+	 * parse standard options
+	 */
+	if ( (msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *) NULL )
+	  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 
- /*
-  * perform global setup for test
-  */
- setup();
+	/*
+	 * perform global setup for test
+	 */
+	setup();
 
- /*
-  * check looping state if -i option given on the command line
-  */
- for (lc0; TEST_LOOPING(lc); lc++) {
+	/*
+	 * check looping state if -i option given on the command line
+	 */
+	for (lc=0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping. */
-  Tst_count0;
+		/* reset Tst_count in case we are looping. */
+		Tst_count=0;
 
-  /* loop through the test cases */
-  for (i  0; i < TST_TOTAL; i++) {
+		/* loop through the test cases */
+		for (i = 0; i < TST_TOTAL; i++) {
 
-   TEST(posix_fadvise(TC[i].fd, TC[i].offset, TC[i].len, TC[i].advice));
+			TEST(posix_fadvise(TC[i].fd, TC[i].offset, TC[i].len, TC[i].advice));
 
-   if (TEST_RETURN  0) {
-    tst_resm(TFAIL, "call succeeded unexpectedly");
-    continue;
-   }
+			if (TEST_RETURN == 0) {
+				tst_resm(TFAIL, "call succeeded unexpectedly");
+				continue;
+			}
+	  
+			/* Man page says:
+			   "On error, an error number is returned." */
+			if (TEST_RETURN == TC[i].error) {
+				tst_resm(TPASS, "expected failure - "
+					 "returned value = %d : %s", TEST_RETURN,
+					 strerror(TEST_RETURN));
+			} else {
+				tst_resm(TFAIL, "unexpected return value - %d : %s - "
+					 "expected %d", TEST_RETURN,
+					 strerror(TEST_RETURN), TC[i].error);
+			}
+		}
+	}	/* End for TEST_LOOPING */
 
-   /* Man page says:
-      "On error, an error number is returned." */
-   if (TEST_RETURN  TC[i].error) {
-    tst_resm(TPASS, "expected failure - "
-      "returned value  %d : %s", TEST_RETURN,
-      strerror(TEST_RETURN));
-   } else {
-    tst_resm(TFAIL, "unexpected return value - %d : %s - "
-      "expected %d", TEST_RETURN,
-      strerror(TEST_RETURN), TC[i].error);
-   }
-  }
- } /* End for TEST_LOOPING */
+	/*
+	 * cleanup and exit
+	 */
+	cleanup();
 
- /*
-  * cleanup and exit
-  */
- cleanup();
-
- return(0);
-} /* End main */
+	return(0);
+}	/* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void
+void 
 setup()
 {
- int pipedes[2];
+	int pipedes[2];
+	
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Make a pipe */
+	if (pipe(pipedes) != 0) {
+		tst_brkm(TBROK, cleanup,
+			 "Untable to make a pipe: %s\n",
+			 strerror(errno));
+	} else {
+		int i;
+		
+		/* Close write side first. 
+		   I don't use it in test. */
+		close(pipedes[1]);
 
- /* Make a pipe */
- if (pipe(pipedes) ! 0) {
-  tst_brkm(TBROK, cleanup,
-    "Untable to make a pipe: %s\n",
-    strerror(errno));
- } else {
-  int i;
-
-  /* Close write side first.
-     I don't use it in test. */
-  close(pipedes[1]);
-
-  /* Fill fd field of all test cases
-     with read side of pipe. */
-  for (i  0; i < TST_TOTAL; i++) {
-   TC[i].fd  pipedes[0];
-  }
- }
-} /* End setup() */
+		/* Fill fd field of all test cases 
+		   with read side of pipe. */
+		for (i = 0; i < TST_TOTAL; i++) {
+			TC[i].fd = pipedes[0];
+		}
+	}
+}	/* End setup() */
 
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *  completion or premature exit.
+ *		completion or premature exit.
  */
-void
+void 
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* Close pipe of read side */
- close(TC[0].fd);
+	/* Close pipe of read side */
+	close(TC[0].fd);
 
- /* exit with return code appropriate for results */
- tst_exit();
-} /* End cleanup() */
+	/* exit with return code appropriate for results */
+	tst_exit();
+}	/* End cleanup() */

@@ -19,23 +19,23 @@
 
 /*
  * NAME
- * close02.c
+ * 	close02.c
  *
  * DESCRIPTION
- * Check that an invalid file descriptor returns EBADF
+ * 	Check that an invalid file descriptor returns EBADF
  *
  * ALGORITHM
- * loop if that option is specified
- *    call close using the TEST macro and passing in an invalid fd
- *    if the call succeedes
- *       issue a FAIL message
- *    else
- *       log the errno
- *       if the errno  EBADF
- *          issue a PASS message
- *       else
- *          issue a FAIL message
- * cleanup
+ *	loop if that option is specified
+ * 	   call close using the TEST macro and passing in an invalid fd
+ *	   if the call succeedes
+ *	      issue a FAIL message
+ *	   else
+ *	      log the errno
+ *	      if the errno == EBADF
+ *	         issue a PASS message
+ *	      else
+ *	         issue a FAIL message
+ *	cleanup
  *
  * USAGE:  <for command-line>
  *  close02 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -47,10 +47,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * None
+ * 	None
  */
 
 #include <stdio.h>
@@ -62,55 +62,55 @@
 void cleanup(void);
 void setup(void);
 
-int exp_enos[]  {EBADF, 0};
+int exp_enos[] = {EBADF, 0};
 
-char *TCID  "close02";
-int TST_TOTAL  1;
+char *TCID = "close02";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 int
 main(int ac, char **av)
 {
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- setup();   /* global setup */
+	setup();			/* global setup */
 
- /* set up expected errnos */
- TEST_EXP_ENOS(exp_enos);
+	/* set up expected errnos */
+	TEST_EXP_ENOS(exp_enos);
 
- /* The following loop checks looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* The following loop checks looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  TEST(close(-1));
+		TEST(close(-1));
 
-  if (TEST_RETURN ! -1) {
-   tst_resm(TFAIL, "Closed a non existent fildes");
-  } else {
-   TEST_ERROR_LOG(TEST_ERRNO);
+		if (TEST_RETURN != -1) {
+			tst_resm(TFAIL, "Closed a non existent fildes");
+		} else {
+			TEST_ERROR_LOG(TEST_ERRNO);
 
-   if (TEST_ERRNO ! EBADF) {
-    tst_resm(TFAIL, "close() FAILED to set errno "
-      "to EBADF on an invalid fd, got %d",
-      errno);
-   } else {
-    tst_resm(TPASS, "call returned EBADF");
-   }
-  }
- }
- cleanup();
+			if (TEST_ERRNO != EBADF) {
+				tst_resm(TFAIL, "close() FAILED to set errno "
+					 "to EBADF on an invalid fd, got %d",
+					 errno);
+			} else {
+				tst_resm(TPASS, "call returned EBADF");
+			}
+		}
+	}
+	cleanup();
 
- return 0;
- /*NOTREACHED*/
+	return 0;
+	/*NOTREACHED*/
 }
 
 /*
@@ -119,13 +119,13 @@ main(int ac, char **av)
 void
 setup(void)
 {
- /* capture signals */
- tst_sig(FORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
- umask(0);
+	umask(0);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
@@ -135,12 +135,12 @@ setup(void)
 void
 cleanup(void)
 {
- /*
-  * print timing status if that option was specified.
-  * print errno log if that option was specified
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing status if that option was specified.
+	 * print errno log if that option was specified
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

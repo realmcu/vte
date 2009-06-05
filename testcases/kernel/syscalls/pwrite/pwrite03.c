@@ -22,7 +22,7 @@
  *
  * Test Description:
  *  Verify that,
- *      pwrite(2) fails when attempted to write with buf outside accessible
+ *      pwrite(2) fails when attempted to write with buf outside accessible 
  *      address space.
  *
  * Expected Result:
@@ -36,8 +36,8 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return-1)
- *      if errno set  expected errno
+ *   Check return code, if system call failed (return=-1)
+ *      if errno set == expected errno
  *              Issue sys call fails with expected return value and errno.
  *      Otherwise,
  *              Issue sys call fails with unexpected errno.
@@ -52,13 +52,13 @@
  *  pwrite03 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -e   : Turn on errno logging.
- *        -i n : Execute test n times.
- *        -I x : Execute test for x seconds.
- *        -P x : Pause for x seconds between iterations.
- *        -t   : Turn on syscall timing.
+ *	       -i n : Execute test n times.
+ *	       -I x : Execute test for x seconds.
+ *	       -P x : Pause for x seconds between iterations.
+ *	       -t   : Turn on syscall timing.
  *
  * HISTORY
- * 04/2002 Ported by André Merlier
+ *	04/2002 Ported by André Merlier
  *
  * RESTRICTIONS:
  *  None.
@@ -74,98 +74,98 @@
 #include "test.h"
 #include "usctest.h"
 
-#define TEMPFILE "pwrite_file"
+#define TEMPFILE	"pwrite_file"
 #define NBUFS           1
 
-char *TCID"pwrite03";  /* Test program identifier.    */
-int TST_TOTAL1;  /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID="pwrite03";		/* Test program identifier.    */
+int TST_TOTAL=1;		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-char *write_buf[NBUFS];  /* buffer to hold data to be written */
-int fd1;   /* file descriptor of temporary file */
+char *write_buf[NBUFS];		/* buffer to hold data to be written */
+int fd1;			/* file descriptor of temporary file */
 
-void setup();   /* Main setup function of test */
-void cleanup();   /* cleanup function for the test */
-void init_buffers();  /* function to initialize/allocate buffers */
+void setup();			/* Main setup function of test */
+void cleanup();			/* cleanup function for the test */
+void init_buffers();		/* function to initialize/allocate buffers */
 
-int exp_enos[]  {EFAULT,0};
+int exp_enos[] = {EFAULT,0};
 
 #if !defined(UCLINUX)
 
 int
 main(int ac, char **av)
 {
- int lc;   /* loop counter */
- char *msg;  /* message returned from parse_opts */
- size_t nbytes;  /* no. of bytes to be written */
- off_t offset;  /* offset position in the specified file */
- char *test_desc; /* test specific error message */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
+	size_t nbytes;		/* no. of bytes to be written */
+	off_t offset;		/* offset position in the specified file */
+	char *test_desc;	/* test specific error message */
+	
+	/* Parse standard options given to run the test. */
+	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
+	if (msg != (char *)NULL) {
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	}
 
- /* Parse standard options given to run the test. */
- msg  parse_opts(ac, av, (option_t *)NULL, NULL);
- if (msg ! (char *)NULL) {
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
- }
+	/* Perform global setup for test */
+	setup(); 
+	
+	TEST_EXP_ENOS(exp_enos);
+	
+	/* Check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+			
+		/* Reset Tst_count in case we are looping. */
+		Tst_count=0;
 
- /* Perform global setup for test */
- setup();
+		test_desc = "EFAULT";
+		nbytes = 1024;
+		offset = 1;
+		write_buf[0]= sbrk(0);
+		
+		/*
+		 * Call pwrite() with the specified file descriptor,
+		 * no. of bytes to be written at specified offset.
+		 * and verify that call should fail with appropriate
+		 * errno. set.
+		 */
+		TEST(pwrite(fd1,write_buf[0] , nbytes, offset));
+						
+		/* Check for the return code of pwrite() */
+		if (TEST_RETURN != -1) {
+			tst_resm(TFAIL, "pwrite() returned %d, "
+					 "expected -1, errno:%d",
+					 TEST_RETURN, exp_enos[0]);
+		}
 
- TEST_EXP_ENOS(exp_enos);
+		TEST_ERROR_LOG(TEST_ERRNO);
 
- /* Check looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+		/*
+		* Verify whether expected errno is set.
+		*/
+		if (TEST_ERRNO == exp_enos[0]) {
+			tst_resm(TPASS, "pwrite() fails with expected "
+				"error EFAULT errno:%d",TEST_ERRNO);
+		} else {
+			tst_resm(TFAIL, "pread() fails, %s, unexpected "
+				 "errno:%d, expected:%d\n", test_desc,
+				 TEST_ERRNO, exp_enos[0]);
+		}
+		
+	}	/* End of TEST_LOOPING. */
 
-  /* Reset Tst_count in case we are looping. */
-  Tst_count0;
-
-  test_desc  "EFAULT";
-  nbytes  1024;
-  offset  1;
-  write_buf[0] sbrk(0);
-
-  /*
-   * Call pwrite() with the specified file descriptor,
-   * no. of bytes to be written at specified offset.
-   * and verify that call should fail with appropriate
-   * errno. set.
-   */
-  TEST(pwrite(fd1,write_buf[0] , nbytes, offset));
-
-  /* Check for the return code of pwrite() */
-  if (TEST_RETURN ! -1) {
-   tst_resm(TFAIL, "pwrite() returned %d, "
-      "expected -1, errno:%d",
-      TEST_RETURN, exp_enos[0]);
-  }
-
-  TEST_ERROR_LOG(TEST_ERRNO);
-
-  /*
-  * Verify whether expected errno is set.
-  */
-  if (TEST_ERRNO  exp_enos[0]) {
-   tst_resm(TPASS, "pwrite() fails with expected "
-    "error EFAULT errno:%d",TEST_ERRNO);
-  } else {
-   tst_resm(TFAIL, "pread() fails, %s, unexpected "
-     "errno:%d, expected:%d\n", test_desc,
-     TEST_ERRNO, exp_enos[0]);
-  }
-
- } /* End of TEST_LOOPING. */
-
- /* Call cleanup() to undo setup done for the test. */
- cleanup();
-
- return(0);
-} /* End main */
+	/* Call cleanup() to undo setup done for the test. */
+	cleanup();
+	
+	return(0);
+}	/* End main */
 
 #else
 
 int main()
 {
- tst_resm(TINFO, "test is not available on uClinux");
- return 0;
+	tst_resm(TINFO, "test is not available on uClinux");
+	return 0;
 }
 
 #endif /* if !defined(UCLINUX) */
@@ -176,24 +176,24 @@ int main()
  *
  *  Initialize/allocate write buffer.
  */
-void
+void 
 setup()
 {
+	
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
-
- /* Pause if that option was specified */
- TEST_PAUSE;
-
- /* make a temp directory and cd to it */
- tst_tmpdir();
-
- /* Creat a temporary file used for mapping */
- if ((fd1  open(TEMPFILE, O_RDWR | O_CREAT, 0777)) < 0) {
-  tst_brkm(TBROK, cleanup, "open() on %s Failed, errno%d : %s",
-    TEMPFILE, errno, strerror(errno));
- }
+	/* Pause if that option was specified */
+	TEST_PAUSE;
+	
+	/* make a temp directory and cd to it */
+	tst_tmpdir();
+	
+	/* Creat a temporary file used for mapping */
+	if ((fd1 = open(TEMPFILE, O_RDWR | O_CREAT, 0777)) < 0) {
+		tst_brkm(TBROK, cleanup, "open() on %s Failed, errno=%d : %s",
+			 TEMPFILE, errno, strerror(errno));
+	}
 }
 
 /*
@@ -203,25 +203,25 @@ setup()
  * Close the temporary file.
  * Remove the temporary directory created.
  */
-void
+void 
 cleanup()
 {
+	
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/* Close the temporary file created in setup2 */
+	if (close(fd1) < 0) {
+		tst_brkm(TBROK, NULL,
+			 "close() on %s Failed, errno=%d : %s",
+			 TEMPFILE, errno, strerror(errno));
+	}
 
- /* Close the temporary file created in setup2 */
- if (close(fd1) < 0) {
-  tst_brkm(TBROK, NULL,
-    "close() on %s Failed, errno%d : %s",
-    TEMPFILE, errno, strerror(errno));
- }
-
- /* Remove tmp dir and all files in it */
- tst_rmdir();
- /* exit with return code appropriate for results */
- tst_exit();
+	/* Remove tmp dir and all files in it */
+	tst_rmdir();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

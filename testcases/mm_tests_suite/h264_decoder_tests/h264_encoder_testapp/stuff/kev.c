@@ -50,8 +50,8 @@ int createDir(char *dirname)
     char    cmd[256];
 
     // create a dir if it doesn't exist
-    f  fopen(dirname, "r");
-    if (f  0)
+    f = fopen(dirname, "r");
+    if (f == 0)
     {
         strcpy(cmd, "mkdir ");
         strcat(cmd, dirname);
@@ -66,12 +66,12 @@ int createDir(char *dirname)
 // This is for DOS platform
 void UnixToDosFilename(char *filename)
 {
-    unsigned int i, n  strlen(filename);
+    unsigned int i, n = strlen(filename);
 
-    for (i  0; i < n; i++)
+    for (i = 0; i < n; i++)
     {
-        if (filename[i]  '/')
-            filename[i]  '\\';                 //Convert to DOS pathname
+        if (filename[i] == '/')
+            filename[i] = '\\';                 //Convert to DOS pathname
 
     }
     return;
@@ -109,7 +109,7 @@ static FILE *OpenFile(char *name, char *mode)
 {
     FILE   *fp;
 
-    if ((fp  fopen(name, mode))  NULL)
+    if ((fp = fopen(name, mode)) == NULL)
     {
         printf("KevOpen error - could not open file %s in %s mode\n",
                name, mode);
@@ -123,9 +123,9 @@ void KevOpen(char *name, int mode, KevFile * k)
     char    cbuff[256], *ptr, *ptrBase;
     char    modeBin[3], modeAsc[2];
 
-    k->mode  mode;
+    k->mode = mode;
 
-    if (mode  KEV_WRITE)
+    if (mode == KEV_WRITE)
     {
         strcpy(modeBin, "wb");
         strcpy(modeAsc, "w");
@@ -136,83 +136,83 @@ void KevOpen(char *name, int mode, KevFile * k)
         strcpy(modeAsc, "r");
     }
 
-    if (mode  KEV_WRITE)
+    if (mode == KEV_WRITE)
         createDir(name);
 
     strcpy(cbuff, name);
-    ptrBase  cbuff + strlen(cbuff);
+    ptrBase = cbuff + strlen(cbuff);
 
     strcpy(ptrBase, "/y");
-    if (mode  KEV_WRITE)
+    if (mode == KEV_WRITE)
         createDir(cbuff);
-    ptr  cbuff + strlen(cbuff);
+    ptr = cbuff + strlen(cbuff);
     strcat(cbuff, "/data");
-    k->Y_fp  OpenFile(cbuff, modeBin);
+    k->Y_fp = OpenFile(cbuff, modeBin);
     strcpy(ptr, "/descriptor");
-    k->Y_desc  OpenFile(cbuff, modeAsc);
+    k->Y_desc = OpenFile(cbuff, modeAsc);
 
     strcpy(ptrBase, "/cb");
-    if (mode  KEV_WRITE)
+    if (mode == KEV_WRITE)
         createDir(cbuff);
-    ptr  cbuff + strlen(cbuff);
+    ptr = cbuff + strlen(cbuff);
     strcat(cbuff, "/data");
-    k->CB_fp  OpenFile(cbuff, modeBin);
+    k->CB_fp = OpenFile(cbuff, modeBin);
     strcpy(ptr, "/descriptor");
-    k->CB_desc  OpenFile(cbuff, modeAsc);
+    k->CB_desc = OpenFile(cbuff, modeAsc);
 
     strcpy(ptrBase, "/cr");
-    if (mode  KEV_WRITE)
+    if (mode == KEV_WRITE)
         createDir(cbuff);
-    ptr  cbuff + strlen(cbuff);
+    ptr = cbuff + strlen(cbuff);
     strcat(cbuff, "/data");
-    k->CR_fp  OpenFile(cbuff, modeBin);
+    k->CR_fp = OpenFile(cbuff, modeBin);
     strcpy(ptr, "/descriptor");
-    k->CR_desc  OpenFile(cbuff, modeAsc);
+    k->CR_desc = OpenFile(cbuff, modeAsc);
 
     // The source KEV files we have do not have a "ts" component,
     // hence open files only for "write" mode
-    if (mode  KEV_WRITE)
+    if (mode == KEV_WRITE)
     {
         strcpy(ptrBase, "/ts");
         createDir(cbuff);
-        ptr  cbuff + strlen(cbuff);
+        ptr = cbuff + strlen(cbuff);
         strcat(cbuff, "/data");
-        k->TS_fp  OpenFile(cbuff, modeAsc);
+        k->TS_fp = OpenFile(cbuff, modeAsc);
         strcpy(ptr, "/descriptor");
-        k->TS_desc  OpenFile(cbuff, modeAsc);
+        k->TS_desc = OpenFile(cbuff, modeAsc);
     }
     else
     {
-        k->TS_fp  NULL;
-        k->TS_desc  NULL;
+        k->TS_fp = NULL;
+        k->TS_desc = NULL;
     }
 
-    k->width  k->height  0;
-    k->currentFrame  k->totalFrames  0;
+    k->width = k->height = 0;
+    k->currentFrame = k->totalFrames = 0;
 
-    if (mode  KEV_READ)
+    if (mode == KEV_READ)
     {
         while (fscanf(k->Y_desc, "(_dimensions%d%d", &k->height, &k->width)
-               ! EOF)
+               != EOF)
             fgets(cbuff, 256, k->Y_desc);       // go to next line
 
-        if ((k->height  0) || (k->width  0))
+        if ((k->height == 0) || (k->width == 0))
         {
             printf("Error: frame dimensions not found in descriptor\n");
             exit(1);
         }
         rewind(k->Y_desc);
 
-        while (fscanf(k->Y_desc, "(_data_sets%ld", &k->totalFrames) ! EOF)
+        while (fscanf(k->Y_desc, "(_data_sets%ld", &k->totalFrames) != EOF)
             fgets(cbuff, 256, k->Y_desc);       // go to next line
 
-        if (k->totalFrames  0)
+        if (k->totalFrames == 0)
         {
             printf("Error: total frames not found in descriptor\n");
             exit(1);
         }
 
-        //printf("Opened KEV file for read: frames  %ld, size  %d x %d\n",
+        //printf("Opened KEV file for read: frames = %ld, size = %d x %d\n",
         //       k->totalFrames, k->width, k->height);
 
     }
@@ -224,7 +224,7 @@ void KevOpen(char *name, int write, KevFile * k)
     char    mode[3];
     char   *ptr, *ptrBase;
 
-    k->mode  write;
+    k->mode = write;
     if (write)
         strcpy(mode, "wb");
     else
@@ -233,24 +233,24 @@ void KevOpen(char *name, int write, KevFile * k)
     if (write)
         createDir(name);
     strcpy(cbuff, name);
-    ptrBase  cbuff + strlen(cbuff);
+    ptrBase = cbuff + strlen(cbuff);
     strcpy(ptrBase, "/y");
 
     if (write)
         createDir(cbuff);
-    ptr  cbuff + strlen(cbuff);
+    ptr = cbuff + strlen(cbuff);
     strcat(cbuff, "/data");
-    k->Y_fp  fopen(cbuff, mode);
+    k->Y_fp = fopen(cbuff, mode);
 
-    if (k->Y_fp  NULL)
+    if (k->Y_fp == NULL)
     {
         printf("KevOpen error - could not open Y file in %s mode\n", mode);
         exit(1);
     }
 
     strcpy(ptr, "/descriptor");
-    k->Y_desc  fopen(cbuff, mode);
-    if (k->Y_desc  NULL)
+    k->Y_desc = fopen(cbuff, mode);
+    if (k->Y_desc == NULL)
     {
         printf
             ("KevOpen error - could not open Ydescriptor file in %s mode\n",
@@ -261,10 +261,10 @@ void KevOpen(char *name, int write, KevFile * k)
     strcpy(ptrBase, "/cb");
     if (write)
         createDir(cbuff);
-    ptr  cbuff + strlen(cbuff);
+    ptr = cbuff + strlen(cbuff);
     strcat(cbuff, "/data");
-    k->CB_fp  fopen(cbuff, mode);
-    if (k->CB_fp  NULL)
+    k->CB_fp = fopen(cbuff, mode);
+    if (k->CB_fp == NULL)
     {
         printf("KevOpen error - could not open CB file in %s mode\n",
                mode);
@@ -272,8 +272,8 @@ void KevOpen(char *name, int write, KevFile * k)
     }
 
     strcpy(ptr, "/descriptor");
-    k->CB_desc  fopen(cbuff, mode);
-    if (k->CB_desc  NULL)
+    k->CB_desc = fopen(cbuff, mode);
+    if (k->CB_desc == NULL)
     {
         printf("KevOpen error - could not open CB desc file in %s mode\n",
                mode);
@@ -283,10 +283,10 @@ void KevOpen(char *name, int write, KevFile * k)
     strcpy(ptrBase, "/cr");
     if (write)
         createDir(cbuff);
-    ptr  cbuff + strlen(cbuff);
+    ptr = cbuff + strlen(cbuff);
     strcat(cbuff, "/data");
-    k->CR_fp  fopen(cbuff, mode);
-    if (k->CR_fp  NULL)
+    k->CR_fp = fopen(cbuff, mode);
+    if (k->CR_fp == NULL)
     {
         printf("KevOpen error - could not open CR file in %s mode\n",
                mode);
@@ -294,8 +294,8 @@ void KevOpen(char *name, int write, KevFile * k)
     }
 
     strcpy(ptr, "/descriptor");
-    k->CR_desc  fopen(cbuff, mode);
-    if (k->CR_desc  NULL)
+    k->CR_desc = fopen(cbuff, mode);
+    if (k->CR_desc == NULL)
     {
         printf("KevOpen error - could not open CR desc file in %s mode\n",
                mode);
@@ -310,18 +310,18 @@ void KevOpen(char *name, int write, KevFile * k)
         strcat(cbuff, "/ts");
         if (write)
             createDir(cbuff);
-        ptr  cbuff + strlen(cbuff);
+        ptr = cbuff + strlen(cbuff);
         strcat(cbuff, "/data");
-        k->TS_fp  fopen(cbuff, mode);
-        if (k->TS_fp  NULL)
+        k->TS_fp = fopen(cbuff, mode);
+        if (k->TS_fp == NULL)
         {
             printf("KevOpen error - could not open ts file in %s mode\n",
                    mode);
             exit(1);
         }
         strcpy(ptr, "/descriptor");
-        k->TS_desc  fopen(cbuff, mode);
-        if (k->TS_desc  NULL)
+        k->TS_desc = fopen(cbuff, mode);
+        if (k->TS_desc == NULL)
         {
             printf
                 ("KevOpen error - could not open TS desc file in %s mode\n",
@@ -330,32 +330,32 @@ void KevOpen(char *name, int write, KevFile * k)
         }
 
     }
-    k->width  k->height  0;
-    k->currentFrame  k->totalFrames  0;
+    k->width = k->height = 0;
+    k->currentFrame = k->totalFrames = 0;
 
-    if (k->mode  KEV_READ)
+    if (k->mode == KEV_READ)
     {
         while (fscanf(k->Y_desc, "(_dimensions%d%d", &k->height, &k->width)
-               ! EOF)
+               != EOF)
             fgets(cbuff, 256, k->Y_desc);       // go to next line
 
-        if ((k->height  0) || (k->width  0))
+        if ((k->height == 0) || (k->width == 0))
         {
             printf("Error: frame dimensions not found in descriptor\n");
             exit(1);
         }
         fseek(k->Y_desc, 0, SEEK_SET);
 
-        while (fscanf(k->Y_desc, "(_data_sets%ld", &k->totalFrames) ! EOF)
+        while (fscanf(k->Y_desc, "(_data_sets%ld", &k->totalFrames) != EOF)
             fgets(cbuff, 256, k->Y_desc);       // go to next line
 
-        if (k->totalFrames  0)
+        if (k->totalFrames == 0)
         {
             printf("Error: total frames not found in descriptor\n");
             exit(1);
         }
 
-        //printf("Opened KEV file for read: frames  %ld, size  %d x %d\n",
+        //printf("Opened KEV file for read: frames = %ld, size = %d x %d\n",
         //       k->totalFrames, k->width, k->height);
 
     }
@@ -367,11 +367,11 @@ static void ReadFrame(FILE *fp, unsigned char *d, int width, int height,
 {
     int     i;
 
-    for (i  0; i < height; i++)
+    for (i = 0; i < height; i++)
     {
         fread(d, sizeof (unsigned char), width, fp);
 
-        d + xsize;
+        d += xsize;
     }
 
 }
@@ -383,26 +383,26 @@ int ReadKevFrame(KevFile * k, long int frameNum, unsigned char *y,
 {
     int     size;
 
-    assert(k->mode  KEV_READ);
+    assert(k->mode == KEV_READ);
 
-    if (k->mode ! KEV_READ)
+    if (k->mode != KEV_READ)
     {
         printf("Error: Wrong mode for reading from KEV file\n");
         exit(1);
     }
 
-    if ((frameNum < 0) || (frameNum > k->totalFrames))
+    if ((frameNum < 0) || (frameNum >= k->totalFrames))
     {
         printf("Invalid frame number %ld\n", frameNum);
         //exit(1);
         return 0;
     }
 
-    size  k->width * k->height;
+    size = k->width * k->height;
     fseek(k->Y_fp, size * frameNum, SEEK_SET);
     ReadFrame(k->Y_fp, y, k->width, k->height, xsize);
 
-    size >> 2;
+    size >>= 2;
     fseek(k->CB_fp, size * frameNum, SEEK_SET);
     ReadFrame(k->CB_fp, cb, k->width >> 1, k->height >> 1, cxsize);
 
@@ -422,12 +422,12 @@ int ReadKevFrame(KevFile * k, long int frameNum, unsigned char *y,
 // For WRITE mode only
 void SetDimensions(KevFile * k, int width, int height)
 {
-    assert(k->mode  KEV_WRITE);
+    assert(k->mode == KEV_WRITE);
 
-    if (k->mode  KEV_WRITE)
+    if (k->mode == KEV_WRITE)
     {
-        k->width  width;
-        k->height  height;
+        k->width = width;
+        k->height = height;
     }
 }
 
@@ -436,11 +436,11 @@ static void WriteFrame(FILE *fp, unsigned char *d, int width, int height,
 {
     int     i;
 
-    for (i  0; i < height; i++)
+    for (i = 0; i < height; i++)
     {
         fwrite(d, sizeof (unsigned char), width, fp);
 
-        d + xsize;
+        d += xsize;
     }
 }
 
@@ -461,9 +461,9 @@ void WriteKevFrame(KevFile * k, long int frameNum, unsigned char *y,
                    int xsize, unsigned char *cb, unsigned char *cr,
                    int cxsize)
 {
-    assert(k->mode  KEV_WRITE);
+    assert(k->mode == KEV_WRITE);
 
-    if (k->mode  KEV_READ)
+    if (k->mode == KEV_READ)
     {
         printf("Error: Trying to write to a read-only KEV file\n");
         exit(1);
@@ -489,7 +489,7 @@ void WriteKevFrame(KevFile * k, long int frameNum, unsigned char *y,
 
 static void CloseFile(FILE *fp)
 {
-    if (fp ! NULL)
+    if (fp != NULL)
         fclose(fp);
 }
 

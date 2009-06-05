@@ -10,17 +10,17 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-# F.GAFFIE/rb657c             21/07/2004     TLSbo40930  Initial version
-# L.DELASPRE/rc149c           18/10/2004     TLSbo43867  Update with new API
+# F.GAFFIE/rb657c             21/07/2004     TLSbo40930  Initial version 
+# L.DELASPRE/rc149c           18/10/2004     TLSbo43867  Update with new API 
 #
 ###################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms.
+#Portability: Indicate if this module is portable to other compilers or platforms. 
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################
@@ -42,7 +42,7 @@ CFLAGS+= -DAMRD_USE_SCRATCH
 CFLAGS+= -DVAD2
 CFLAGS+= -DNB_AMR_MMSIO
 LOADLIBES+= -L../../../../lib -lltp -lpthread -lm
-LIBRARY = $(LIB_DIR)/encoderlib_MMS_VAD2.a
+LIBRARY = $(LIB_DIR)/encoderlib_MMS_VAD2.a 
 
 SRCS=$(wildcard $(TEST_SRC_DIR)/*.c)
 OBJS=$(patsubst %.c,%.o,$(SRCS)) \
@@ -67,12 +67,12 @@ install:
 clean:
 	rm -f $(patsubst %.c,%.o,$(SRCS)) $(TARGET)
 
-$(TARGET): $(OBJS) $(LIBRARY)
+$(TARGET): $(OBJS) $(LIBRARY) 
 	$(CC)  $(OBJS) $(LOADLIBES) $(LIBRARY) -o  $@
 
-$(OBJS) : $(SRCS)
+$(OBJS) : $(SRCS) 
 
-$(SRCS) : $(TEST_SRC_DIR)/amr_encoder_test.h
+$(SRCS) : $(TEST_SRC_DIR)/amr_encoder_test.h 
 
 
 

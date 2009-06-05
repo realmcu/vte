@@ -31,21 +31,21 @@
  **/
 int main(int argc, char **argv)
 {
-        RPTable *rptable  (RPTable *)g_malloc0(sizeof(RPTable));
-        SaHpiRptEntryT *tmpentry  NULL;
-        guint i  0, k  0;
+        RPTable *rptable = (RPTable *)g_malloc0(sizeof(RPTable));
+        SaHpiRptEntryT *tmpentry = NULL;
+        guint i = 0, k = 0;
 
-        for (i  0; rptentries[i].ResourceId ! 0; i++) {
+        for (i = 0; rptentries[i].ResourceId != 0; i++) {
                 if (oh_add_resource(rptable, rptentries + i, NULL, 0))
                         return 1;
         }
 
-        k  (guint) (((gfloat)i)*rand()/(RAND_MAX+1.0));
+        k = (guint) (((gfloat)i)*rand()/(RAND_MAX+1.0));
 
-        for (tmpentry  oh_get_resource_by_id(rptable, rptentries[k].ResourceId);
+        for (tmpentry = oh_get_resource_by_id(rptable, rptentries[k].ResourceId);
              tmpentry;
-             tmpentry  oh_get_resource_next(rptable, tmpentry->ResourceId)) {
-                if (rptentries[k++].ResourceId ! tmpentry->ResourceId)
+             tmpentry = oh_get_resource_next(rptable, tmpentry->ResourceId)) {
+                if (rptentries[k++].ResourceId != tmpentry->ResourceId)
                         return 1;
         }
 

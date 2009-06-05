@@ -13,29 +13,29 @@
 #define MAXFSIZE 1024 * 192
 
 char wbuf[MAXFSIZE];
-static int filecount0;
+static int filecount=0;
 
 
 extern int box_muler(int, int);
 
-int startc0;
+int startc=0;
 main(int ac,char *av[])
 {
-  int i0;
-  int j0;
-  int k0;
-  int l0;
+  int i=0;
+  int j=0;
+  int k=0;
+  int l=0;
   char dir1[MAXN];
   char dir2[MAXN];
   char dir3[MAXN];
   char filename[MAXN];
   time_t t;
-  int maxfiles0xFFFFFF;
-  int createfiles0;
+  int maxfiles=0xFFFFFF;
+  int createfiles=0;
 
   if ( ac > 1 ) {
     sscanf(av[1],"%x",&maxfiles);
-    if ( maxfiles0 ) {
+    if ( maxfiles==0 ) {
       printf("maxfile argument error (0 value)\n");
       exit(1);
     }
@@ -43,26 +43,26 @@ main(int ac,char *av[])
   time(&t);
   srandom((unsigned int)getpid()^(((unsigned int)t<<16)| (unsigned int)t>>16));
   printf("Create files\n");
-  for ( i  0 ; i < 0xFF ; i++) {
+  for ( i = 0 ; i < 0xFF ; i++) {
     sprintf(dir1,"%2.2x",i);
     makedir(dir1);
     changedir(dir1);
-    for ( j  0 ; j < 0xFF ; j++) {
+    for ( j = 0 ; j < 0xFF ; j++) {
       sprintf(dir2,"%2.2x",j);
       makedir(dir2);
       changedir(dir2);
-      for ( k  0 ; k < 0xFF ; k++) {
- sprintf(dir3,"%2.2x",k);
- makedir(dir3);
- changedir(dir3);
- for ( l  0 ; l < 0xFF ; l++) {
-   sprintf(filename,"%s%s%s%2.2x",dir1,dir2,dir3,l);
-   create_file(filename);
-   if ( maxfiles < createfiles++ ) {
-     goto end;
-   }
- }
- changedir("../");
+      for ( k = 0 ; k < 0xFF ; k++) {
+	sprintf(dir3,"%2.2x",k);
+	makedir(dir3);
+	changedir(dir3);
+	for ( l = 0 ; l < 0xFF ; l++) {
+	  sprintf(filename,"%s%s%s%2.2x",dir1,dir2,dir3,l);
+	  create_file(filename);
+	  if ( maxfiles < createfiles++ ) {
+	    goto end;
+	  }
+	}
+	changedir("../");
       }
       changedir("../");
     }
@@ -73,9 +73,9 @@ end:
   printf("Done\n");
 }
 
-int showchar[]{124,47,45,92,124,47,45,92};
-static int mkdir_counter0;
-makedir(char *dir1)
+int showchar[]={124,47,45,92,124,47,45,92};
+static int mkdir_counter=0;
+makedir(char *dir1) 
 {
   if (mkdir(dir1, S_IRWXU) < 0) {
     perror(dir1);
@@ -90,17 +90,17 @@ changedir(char *dir) {
 }
 
 
-create_file(char *filename)
+create_file(char *filename) 
 {
   int fd;
   int randomsize;
-  if ( (fdcreat(filename, S_IRWXU)) < 0) {
+  if ( (fd=creat(filename, S_IRWXU)) < 0) {
     fprintf(stderr,"\nTotal create files: %d\n",filecount);
     perror(filename);
     exit(1);
   }
-  if ((randomsizebox_muler(0,MAXFSIZE)) < 0) {
-    randomsize  MAXFSIZE;
+  if ((randomsize=box_muler(0,MAXFSIZE)) < 0) {
+    randomsize = MAXFSIZE;
   }
   if (write(fd,wbuf,randomsize) < 0 ) {
     fprintf(stderr,"\nTotal create files: %d\n",filecount);

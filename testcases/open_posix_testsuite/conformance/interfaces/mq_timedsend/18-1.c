@@ -30,31 +30,31 @@
 int main()
 {
         char qname[NAMESIZE];
-        const char *msgptr  MSGSTR;
- struct timespec ts;
+        const char *msgptr = MSGSTR;
+	struct timespec ts;
         mqd_t queue;
 
         sprintf(qname, "/mq_timedsend_18-1_%d", getpid());
 
-        queue  mq_open(qname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, NULL);
-        if (queue  (mqd_t)-1) {
+        queue = mq_open(qname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, NULL);
+        if (queue == (mqd_t)-1) {
                 perror("mq_open() did not return success");
-  printf("Test UNRESOLVED\n");
+		printf("Test UNRESOLVED\n");
                 return PTS_UNRESOLVED;
         }
 
- ts.tv_sectime(NULL)-1;
- ts.tv_nsec0;
-        if (mq_timedsend(queue, msgptr, strlen(msgptr), 1, &ts) ! 0) {
+	ts.tv_sec=time(NULL)-1;
+	ts.tv_nsec=0;
+        if (mq_timedsend(queue, msgptr, strlen(msgptr), 1, &ts) != 0) {
                 perror("mq_timedsend() did not return success on empty queue");
-  printf("Test FAILED\n");
-  mq_close(queue);
-  mq_unlink(qname);
-  return PTS_FAIL;
+		printf("Test FAILED\n");
+		mq_close(queue);
+		mq_unlink(qname);
+		return PTS_FAIL;
         }
 
- mq_close(queue);
- mq_unlink(qname);
+	mq_close(queue);
+	mq_unlink(qname);
 
         printf("Test PASSED\n");
         return PTS_PASS;

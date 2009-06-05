@@ -1,0 +1,11 @@
+#Verification Tests Command File
+
+#VT NAND drivers tests
+#files: nand_mtd_testapp
+
+#NAND
+TGE-LV-NAND-0010 nand_mtd_testapp -T INFO -D /dev/mtd/6
+TGE-LV-NAND-0020 nand_mtd_testapp -T RDRW -D /dev/mtd/6 -A 0x0 -L 0x00700000 -V
+TGE-LV-NAND-0021 nand_mtd_testapp -T RDRW -D /dev/mtd/6 -A 0x013ffc000 -L 0x00004000 -V
+TGE-LV-NAND-0030 nand_mtd_testapp -T WRNER -D /dev/mtd/6 -A 0x00300000 -V
+

@@ -1,42 +1,42 @@
-/*====================*/
+/*================================================================================================*/
 /**
     @file   mu_api_err_test.c
 
     @brief  C source of the mu_api_err_test application that generates variuos errors
             and checks proper Messaging Unit driver reactions.
 */
-/*======================
+/*==================================================================================================
 
 Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
 THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 Freescale Semiconductor, Inc.
-
-====================
+     
+====================================================================================================
 Revision History:
                               Modification     Tracking
 Author (Core ID)                  Date          Number    Description of Changes
 ---------------------------   ------------    ----------  ------------------------------------------
-Igor Semenchukov (smng001c)    25/08/2004     TLSbo40411   Initial version
+Igor Semenchukov (smng001c)    25/08/2004     TLSbo40411   Initial version 
 Igor Semenchukov (smng001c)    30/08/2004     TLSbo40411   Review after inspection
-Igor Semenchukov (smng001c)    09/12/2004     TLSbo43804   Rework after heavy MU driver modification
+Igor Semenchukov (smng001c)    09/12/2004     TLSbo43804   Rework after heavy MU driver modification 
 Igor Semenchukov (smng001c)    11/01/2005     TLSbo43806   Fix wrong verdict management errors
 Dmitriy Kazachkov (e1403c)     29/06/2006     TLSbo61895   Rework after MU message format changing
 Yury Batrakov (NONE)           20/09/2006     TLSbo75877   Fixed ioctl error case (#6)
 
-====================
-Portability: Indicate if this module is portable to other compilers or platforms.
+====================================================================================================
+Portability: Indicate if this module is portable to other compilers or platforms. 
              If not, indicate specific reasons why is it not portable.
 
-======================*/
+==================================================================================================*/
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 
 /* Standard Include Files */
 
@@ -58,92 +58,92 @@ extern "C"{
 
 #include "mu_api_err_test.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                        LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 const char *mu_dir  = "/dev/mxc_mu";
 
-/*======================
+/*==================================================================================================
                                        LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                        GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                        GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                        LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
 
-/*====================*/
-/*= VT_mu_api_err_setup =*/
+/*================================================================================================*/
+/*===== VT_mu_api_err_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
 @param  None
-
+  
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_mu_api_err_setup(void)
 {
     return TPASS;
 }
 
 
-/*====================*/
-/*= VT_mu_api_err_cleanup =*/
+/*================================================================================================*/
+/*===== VT_mu_api_err_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
 
 @param  None
-
+  
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_mu_api_err_cleanup(void)
 {
     return TPASS;
 }
 
 
-/*====================*/
-/*= VT_mu_api_err_test =*/
+/*================================================================================================*/
+/*===== VT_mu_api_err_test =====*/
 /**
 @brief  Generate six errors and checks proper response of Messaging Unit driver system calls.
 
 @param  Input :  None
         Output:  None
-
+  
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_mu_api_err_test(void)
 {
     int         rv = TPASS,                 /* test status               */
@@ -164,7 +164,7 @@ int VT_mu_api_err_test(void)
      * FIRST TEST - try to open invalid device
      */
 
-    printf("\n==  Running FIRST test  ==\n");
+    printf("\n======  Running FIRST test  ======\n");
 
     /* Get MU driver major number since it may be a dynamic number */
 
@@ -178,7 +178,7 @@ int VT_mu_api_err_test(void)
 
     /* Change minor number, so we will open invalid device file. Create device file */
 
-    minor = NR_DEVS + 1;
+    minor = NR_DEVS + 1;        
     sprintf(mu_device, "%s/%d", mu_dir, minor);
     if ( (ret = mknod(mu_device, S_IFCHR | S_IRUSR | S_IWUSR, major | minor)) < 0)
     {
@@ -207,13 +207,13 @@ int VT_mu_api_err_test(void)
     }
     remove(mu_device);
 
-    /*
+    /* 
      * SECOND TEST - try to open the same device file two times at once.
      * Since device file opening operation allocates a particular channel,
      * the device must be busy
      */
 
-    printf("\n==  Running SECOND test  ==\n");
+    printf("\n======  Running SECOND test  ======\n");
     sprintf(mu_device, "%s/0", mu_dir);
 
     if ( (fd = open(mu_device, open_mode)) < 0)    /* Open a device first time */
@@ -246,12 +246,12 @@ int VT_mu_api_err_test(void)
             }
         }
     }   /* fd will be released after last test because all remained tests use it */
-
+    
     /*
      * THIRD TEST - try to write message that is non-aligned to the register size
      */
 
-    printf("\n==  Running THIRD test  ==\n");
+    printf("\n======  Running THIRD test  ======\n");
     ret = write(fd, msg, strlen(msg));
     printf("ret = %d\n", ret);
     if ( (ret < 0) && (errno == EFAULT || errno==EINVAL) ) /* Proper behaviuor */
@@ -277,7 +277,7 @@ int VT_mu_api_err_test(void)
      * FOURTH TEST - try to read message that is non-aligned to the register size
      */
 
-    printf("\n==  Running FORTH test  ==\n");
+    printf("\n======  Running FORTH test  ======\n");
     memset(msg, 0, BAD_CNT + 1);
     ret = read(fd, msg, BAD_CNT);
     printf("ret = %d\n", ret);
@@ -304,7 +304,7 @@ int VT_mu_api_err_test(void)
      * FIFTH TEST - try to write big amount of bytes and see what happened
      */
 
-    printf("\n==  Running FIFTH test  ==\n");
+    printf("\n======  Running FIFTH test  ======\n");
     if ( (big_msg = (char *)malloc(big_cnt)) == NULL)
     {
         rv = TFAIL;
@@ -330,7 +330,7 @@ int VT_mu_api_err_test(void)
      * <kernel_tree>/include/asm/arch reserved numbers from 1 to 9
      */
 
-    printf("\n==  Running SIXTH test  ==\n");
+    printf("\n======  Running SIXTH test  ======\n");
     ret = ioctl(fd, 10);
     if ( (ret < 0) && (errno == ENOTTY || errno==EINVAL) ) /* Proper behaviuor */
     {

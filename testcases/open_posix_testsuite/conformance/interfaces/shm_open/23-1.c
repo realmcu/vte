@@ -18,13 +18,13 @@
  */
 
 /* ftruncate was formerly an XOPEN extension. We define _XOPEN_SOURCE here to
-   avoid warning if the implementation does not program ftruncate as a base
+   avoid warning if the implementation does not program ftruncate as a base 
    interface */
 
 /* adam.li: 2004-04-30: Rewrite the test case. The idea is that with
    O_CREAT and O_EXCL specified, to shm_open() a object can only success
-   once, although multiple processes might open with the same name at the
-   same time.
+   once, although multiple processes might open with the same name at the 
+   same time. 
  */
 #define _XOPEN_SOURCE 600
 
@@ -55,89 +55,89 @@ sem_t *sem;
 
 int child_func(void)
 {
- int i, fd;
- struct timespec ts  {.tv_sec  0, .tv_nsec  0};
- int msec  0;
-
- sleep(1);
- srand(time(NULL));
- for(i0; i<NLOOP; i++){
-  sprintf(name, SHM_NAME, i);
-  fd  shm_open(name, O_RDONLY|O_CREAT|O_EXCL, S_IRUSR|S_IWUSR);
-  if(fd ! -1)
-  {
-   sem_wait(sem);
-   //fprintf(stderr, "%d: %d\n", getpid(), *create_cnt);
-   (*create_cnt)++;
-   sem_post(sem);
-  }
-  /* get a random number [0, 20] */
-  msec  (int) (20.0 * rand() / RAND_MAX) ;
-  ts.tv_nsec  msec * 1000000;
-  nanosleep(&ts, NULL);
- }
- return 0;
+	int i, fd;
+	struct timespec ts = {.tv_sec = 0, .tv_nsec = 0};
+	int msec = 0;		
+	
+	sleep(1);
+	srand(time(NULL));	
+	for(i=0; i<NLOOP; i++){
+		sprintf(name, SHM_NAME, i);
+		fd = shm_open(name, O_RDONLY|O_CREAT|O_EXCL, S_IRUSR|S_IWUSR);
+		if(fd != -1)
+		{
+			sem_wait(sem);
+			//fprintf(stderr, "%d: %d\n", getpid(), *create_cnt);
+			(*create_cnt)++;
+			sem_post(sem);
+		}
+		/* get a random number [0, 20] */
+		msec = (int) (20.0 * rand() / RAND_MAX) ;
+		ts.tv_nsec = msec * 1000000;
+		nanosleep(&ts, NULL);
+	}
+	return 0;
 }
 
 int main() {
- int i, pid, result_fd;
- char semname[20];
+	int i, pid, result_fd;
+	char semname[20];
 
- snprintf(semname, 20, "/sem23-1_%d", getpid());
- sem  sem_open(semname, O_CREAT, 0777, 1);
- if( sem  SEM_FAILED || sem  NULL ) {
-  perror("error at sem_open");
-  return PTS_UNRESOLVED;
- }
- sem_unlink(semname);
+	snprintf(semname, 20, "/sem23-1_%d", getpid());
+	sem = sem_open(semname, O_CREAT, 0777, 1);
+	if( sem == SEM_FAILED || sem == NULL ) {
+		perror("error at sem_open");
+		return PTS_UNRESOLVED;
+	}
+	sem_unlink(semname);
 
- result_fd  shm_open(SHM_RESULT_NAME,
-        O_RDWR|O_CREAT,
-        S_IRUSR|S_IWUSR);
- if(result_fd  -1){
-  perror("An error occurs when calling shm_open()");
-  return PTS_UNRESOLVED;
- }
- shm_unlink(SHM_RESULT_NAME);
- if(ftruncate(result_fd, sizeof(*create_cnt)) ! 0) {
-  perror("An error occurs when calling ftruncate()");
-  shm_unlink(SHM_RESULT_NAME);
-  return PTS_UNRESOLVED;
- }
+	result_fd = shm_open(SHM_RESULT_NAME, 
+			     O_RDWR|O_CREAT, 
+			     S_IRUSR|S_IWUSR);
+	if(result_fd == -1){
+		perror("An error occurs when calling shm_open()");
+		return PTS_UNRESOLVED;
+	}
+	shm_unlink(SHM_RESULT_NAME);
+	if(ftruncate(result_fd, sizeof(*create_cnt)) != 0) {
+		perror("An error occurs when calling ftruncate()");
+		shm_unlink(SHM_RESULT_NAME);
+		return PTS_UNRESOLVED;	
+	}
 
- create_cnt  mmap(NULL, sizeof(*create_cnt), PROT_WRITE,
-  MAP_SHARED, result_fd, 0);
- if( create_cnt  MAP_FAILED) {
-  perror("An error occurs when calling mmap()");
-  shm_unlink(SHM_RESULT_NAME);
-  return PTS_UNRESOLVED;
- }
+	create_cnt = mmap(NULL, sizeof(*create_cnt), PROT_WRITE, 
+		MAP_SHARED, result_fd, 0);
+	if( create_cnt == MAP_FAILED) {
+		perror("An error occurs when calling mmap()");
+		shm_unlink(SHM_RESULT_NAME);
+		return PTS_UNRESOLVED;	
+	}	
 
- *create_cnt  0;
+	*create_cnt = 0;
 
- for(i0; i<NPROCESS; i++) {
-         pid  fork();
-  if(pid  -1){
-   perror("An error occurs when calling fork()");
-   return PTS_UNRESOLVED;
-  } else if(pid  0){
-   child_func();
-   exit(0);
-  }
- }
+	for(i=0; i<NPROCESS; i++) {
+	        pid = fork();
+		if(pid == -1){
+			perror("An error occurs when calling fork()");
+			return PTS_UNRESOLVED;
+		} else if(pid == 0){
+			child_func();
+			exit(0);
+		}
+	}
 
- while (wait(NULL) > 0);
+	while (wait(NULL) > 0);
+	
+	for(i=0; i<NLOOP; i++){
+		sprintf(name, SHM_NAME, i);
+		shm_unlink(name);
+	}	
 
- for(i0; i<NLOOP; i++){
-  sprintf(name, SHM_NAME, i);
-  shm_unlink(name);
- }
+	fprintf(stderr, "create_cnt: %d\n", *create_cnt);
+	if(*create_cnt != NLOOP){
+		printf("Test FAILED\n");
+		return PTS_FAIL;
+	}
 
- fprintf(stderr, "create_cnt: %d\n", *create_cnt);
- if(*create_cnt ! NLOOP){
-  printf("Test FAILED\n");
-  return PTS_FAIL;
- }
-
- return PTS_PASS;
+	return PTS_PASS;
 }

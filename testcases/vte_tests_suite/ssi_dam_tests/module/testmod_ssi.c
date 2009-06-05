@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   testmod_ssi.c
 
         @brief  SSI DAM test module C-file
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -20,9 +20,9 @@ J.Quintero/jqui1c            26/09/2005     xxx         Initial version
 S.V-Guilhou/svan01c          04/10/2005     TLSbo55818  Add MXC91331
 I.Inkina/nknl001             20/12/2005     TLSbo56432  function descriptions were added
 D.Simakov                    06/06/2006     TLSbo67103  No sound on SSI 1 and SSI 2
-====================
+====================================================================================================
 Portability:  ARM GCC
-======================*/
+==================================================================================================*/
 
 #include <linux/kernel.h>
 #include <linux/module.h>

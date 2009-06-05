@@ -17,8 +17,8 @@
 
 * This sample test aims to check the following assertion:
 *
-*  If the semaphore count is 0, the call blocks until the semphore can be
-* locked or the operation is interrupted by a signal.
+*  If the semaphore count is 0, the call blocks until the semphore can be 
+* locked or the operation is interrupted by a signal. 
 
 
 * The steps are:
@@ -56,23 +56,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c"
+#include "testfrmw.c" 
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);
- *    where descr is a description of the error and ret is an int
+ * UNRESOLVED(ret, descr);  
+ *    where descr is a description of the error and ret is an int 
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- *
+ * 
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- *
+ * 
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- *
+ * 
  * Those may be used to output information.
  */
 
@@ -90,104 +90,104 @@ sem_t sem;
 
 void handler( int sig )
 {
- int ret;
- ret  sem_post( &sem );
+	int ret;
+	ret = sem_post( &sem );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( errno, "Failed to post semaphore" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( errno, "Failed to post semaphore" );
+	}
 }
 
 
 /* The main test function. */
 int main( int argc, char * argv[] )
 {
- int ret;
+	int ret;
 
- struct timespec ts_ref, ts_fin;
+	struct timespec ts_ref, ts_fin;
 
- struct sigaction sa;
+	struct sigaction sa;
 
- /* Initialize output */
- output_init();
+	/* Initialize output */
+	output_init();
 
- /* Initialize semaphore */
- ret  sem_init( &sem, 0, 0 );
+	/* Initialize semaphore */
+	ret = sem_init( &sem, 0, 0 );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( errno, "Failed to init semaphore" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( errno, "Failed to init semaphore" );
+	}
 
- /* Register signal handler */
- sa.sa_flags  0;
+	/* Register signal handler */
+	sa.sa_flags = 0;
 
- sa.sa_handler  handler;
+	sa.sa_handler = handler;
 
- ret  sigemptyset( &sa.sa_mask );
+	ret = sigemptyset( &sa.sa_mask );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to empty signal set" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to empty signal set" );
+	}
 
- sigaction( SIGALRM, &sa, 0 );
+	sigaction( SIGALRM, &sa, 0 );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to set signal handler" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to set signal handler" );
+	}
 
- /* Save current time */
- ret  clock_gettime( CLOCK_REALTIME, &ts_ref );
+	/* Save current time */
+	ret = clock_gettime( CLOCK_REALTIME, &ts_ref );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( errno, "Unable to read clock" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( errno, "Unable to read clock" );
+	}
 
- /* Alarm */
- alarm( 1 );
+	/* Alarm */
+	alarm( 1 );
 
- /* Wait for the semaphore */
- ret  sem_wait( &sem );
+	/* Wait for the semaphore */
+	ret = sem_wait( &sem );
 
- if ( ( ret ! 0 ) && ( errno ! EINTR ) )
- {
-  UNRESOLVED( errno, "Failed to wait for the semaphore" );
- }
+	if ( ( ret != 0 ) && ( errno != EINTR ) )
+	{
+		UNRESOLVED( errno, "Failed to wait for the semaphore" );
+	}
 
- /* Check that 1 second has really elapsed */
- ret  clock_gettime( CLOCK_REALTIME, &ts_fin );
+	/* Check that 1 second has really elapsed */
+	ret = clock_gettime( CLOCK_REALTIME, &ts_fin );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( errno, "Unable to read clock" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( errno, "Unable to read clock" );
+	}
 
- if ( ( ( ts_fin.tv_sec - ts_ref.tv_sec ) * 1000000000 ) + ( ts_fin.tv_nsec - ts_ref.tv_nsec ) < 1000000000 )
- {
-  output( "Ts: %d.%9.9d  ->  %d.%9.9d\n", ts_ref.tv_sec, ts_ref.tv_nsec, ts_fin.tv_sec, ts_fin.tv_nsec );
-  FAILED( "The sem_wait call did not block" );
- }
+	if ( ( ( ts_fin.tv_sec - ts_ref.tv_sec ) * 1000000000 ) + ( ts_fin.tv_nsec - ts_ref.tv_nsec ) < 1000000000 )
+	{
+		output( "Ts: %d.%9.9d  ->  %d.%9.9d\n", ts_ref.tv_sec, ts_ref.tv_nsec, ts_fin.tv_sec, ts_fin.tv_nsec );
+		FAILED( "The sem_wait call did not block" );
+	}
 
- /* Destroy the semaphore */
- ret  sem_destroy( &sem );
+	/* Destroy the semaphore */
+	ret = sem_destroy( &sem );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( errno, "Failed to sem_destroy" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( errno, "Failed to sem_destroy" );
+	}
 
- /* Test passed */
+	/* Test passed */
 #if VERBOSE > 0
 
- output( "Test passed\n" );
+	output( "Test passed\n" );
 
 #endif
 
- PASSED;
+	PASSED;
 }
 
 

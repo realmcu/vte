@@ -36,30 +36,30 @@
 
 int main(int argc, char *argv[])
 {
- cap_t cap  cap_get_proc();
- int fd;
- int seqno  0;
- char buf[2000];
+	cap_t cap = cap_get_proc();
+	int fd;
+	int seqno = 0;
+	char buf[2000];
 
- if (argc>1)
-  seqno  atoi(argv[1]);
+	if (argc>1)
+		seqno = atoi(argv[1]);
 
- if (!cap) {
-  perror("print_caps - cap_get_proc");
-  exit(1);
- }
+	if (!cap) {
+		perror("print_caps - cap_get_proc");
+		exit(1);
+	}
 
- fd  open(FIFOFILE, O_WRONLY);
- if (!fd) {
-  perror("print_caps: open fifo");
-  exit(2);
- }
+	fd = open(FIFOFILE, O_WRONLY);
+	if (!fd) {
+		perror("print_caps: open fifo");
+		exit(2);
+	}
 
- snprintf(buf, 2000, "%d.%s", seqno, cap_to_text(cap, NULL));
- write(fd, buf, strlen(buf)+1);
- close(fd);
+	snprintf(buf, 2000, "%d.%s", seqno, cap_to_text(cap, NULL));
+	write(fd, buf, strlen(buf)+1);
+	close(fd);
 
- cap_free(cap);
+	cap_free(cap);
 
- return 0;
+	return 0;
 }

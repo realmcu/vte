@@ -1,71 +1,71 @@
 #if defined(EEI)
 /****************************************************************************
- *             *
- *     COPYRIGHT (c) 1990 - 2000       *
- *      This Software Provided       *
- *         By         *
- *     Robin's Nest Software Inc.       *
- *          2 Paradise Lane     *
- *          Hudson, NH 03051        *
- *          (603) 883-2355        *
- *             *
+ *									    *
+ *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			   This Software Provided			    *
+ *				     By					    *
+ *			  Robin's Nest Software Inc.			    *
+ *			       2 Paradise Lane  			    *
+ *			       Hudson, NH 03051				    *
+ *			       (603) 883-2355				    *
+ *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
- * its documentation for any purpose and without fee is hereby granted,     *
+ * its documentation for any purpose and without fee is hereby granted,	    *
  * provided that the above copyright notice appear in all copies and that   *
- * both that copyright notice and this permission notice appear in the     *
+ * both that copyright notice and this permission notice appear in the	    *
  * supporting documentation, and that the name of the author not be used    *
  * in advertising or publicity pertaining to distribution of the software   *
- * without specific, written prior permission.        *
- *             *
- * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,     *
- * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN     *
+ * without specific, written prior permission.				    *
+ *									    *
+ * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, 	    *
+ * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN	    *
  * NO EVENT SHALL HE BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL   *
  * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR    *
  * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS  *
  * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF   *
- * THIS SOFTWARE.           *
- *             *
+ * THIS SOFTWARE.							    *
+ *									    *
  ****************************************************************************/
 /*
- * Module: dteei.c
- * Author: Robin T. Miller
- * Date: September 13, 1997
+ * Module:	dteei.c
+ * Author:	Robin T. Miller
+ * Date:	September 13, 1997
  *
  * Description:
- * This file contains functions for support of DEC EEI interface.
+ *	This file contains functions for support of DEC EEI interface.
  *
  * Modification History:
  *
  * April 21st, 2000 by Robin Miller.
- * Converted tabs to spaces in all messages, so formatting is not
+ *	Converted tabs to spaces in all messages, so formatting is not
  * screwed up when messages are prefixed by a timestamp or process ID.
  *
  * April 10th, 2000 by Robin Miller.
- * For Wave4, added logic to handle EEI_DEVPATH_FAILURE, so we try
+ *	For Wave4, added logic to handle EEI_DEVPATH_FAILURE, so we try
  * to re-open the tape device to 1) find another path (multi-pathing) or
  * 2) force DRD failover (find another server for the tape).
  *
  * February 19th, 2000 by Robin Miller.
- * While processing a reset condition, if another operation errors
+ *	While processing a reset condition, if another operation errors
  * with no EEI status (EEI_NO_STATUS), then retry that operation.  This
  * may be a driver related problem, but we wish to recover from this.
  * If not compiled for Tru64 clusters, retry target selection timeouts.
  *
  * February 14th, 2000 by Robin Miller.
- * Merge Mike Gilmore's changes:
- * - change the data format from DEVIOCGET to DEVGETINFO.
+ *	Merge Mike Gilmore's changes:
+ *	- change the data format from DEVIOCGET to DEVGETINFO.
  *
  * March 25, 1999 by Robin Miller.
- * Fix problem with my fileno going negative (bad check).
+ *	Fix problem with my fileno going negative (bad check).
  *
  * February 25, 1999 by Robin Miller.
- * Add support for multiple reset conditions.
+ *	Add support for multiple reset conditions.
  *
  * December 21, 1998 by Robin Miller.
- * Add HandleTapeResets() to reposition the tape after resets.
+ *	Add HandleTapeResets() to reposition the tape after resets.
  *
  * March 11, 1998 by George Bittner.
- * Remove unnecessary include files for building in steelos.
+ *	Remove unnecessary include files for building in steelos.
  *
  */
 
@@ -92,32 +92,32 @@
  * because they are always used only as bit fields in the entire sense
  * data structure.  All we have available is the sense key itself.
  */
-#define ILI  0x20
-#define EOM  0x40
-#define FILE_MARK 0x80
+#define	ILI		0x20
+#define	EOM		0x40
+#define	FILE_MARK	0x80
 
-#define DNL  0   /* Disable newline. */
-#define PNL  1   /* Print newline. */
+#define DNL		0			/* Disable newline.	*/
+#define PNL		1			/* Print newline.	*/
 
 /*
  * Declare CAM Debugging Definitions:
  */
-#define CDBG_BRIEF 0  /* Brief message text. */
-#define CDBG_FULL 1  /* Full message text. */
+#define CDBG_BRIEF	0		/* Brief message text. */
+#define CDBG_FULL	1		/* Full message text. */
 
 /*
  * Additional Sense Code Table Entry Format:
  */
 struct sense_entry {
- u_char sense_code;  /* Additional sense code. */
- u_char sense_qualifier; /* Sense code qualifier. */
- char *sense_message;  /* Error message text.  */
+	u_char	sense_code;		/* Additional sense code.	*/
+	u_char	sense_qualifier;	/* Sense code qualifier.	*/
+	char	*sense_message;		/* Error message text.		*/
 };
 
-static char *not_valid_str = "<Not Valid>";
+static char *not_valid_str	= "<Not Valid>";
 
-long mt_blkno;   /* Starting tape block number. */
-long mt_fileno;   /* Starting tape file number. */
+long	mt_blkno;			/* Starting tape block number.	*/
+long	mt_fileno;			/* Starting tape file number.	*/
 
 /*
  * Forward References:
@@ -146,228 +146,228 @@ char *cdbg_EEIStatus(u_int eei_status, int report_format);
  * HandleTapeResets() - Handle Tape Reset Conditions.
  *
  * Description:
- * This function is called to do reset processing for tape devices.
+ * 	This function is called to do reset processing for tape devices.
  * The idea is to reposition the tape to the file/record position prior
  * to the reset, then retry the operation.
  *
- * Inputs: dip = The device information pointer.
+ * Inputs:	dip = The device information pointer.
  *
  * Return Value:
- *  TRUE/FALSE = Retry Operation/Error the Request.
+ *		TRUE/FALSE = Retry Operation/Error the Request.
  *
  */
 bool
 HandleTapeResets(struct dinfo *dip)
 {
- int status;
- int fd = dip->di_fd;
- struct mtget mtget, *mt;
- int saved_errno;
- u_long fileno, files, records;
+	int status;
+	int fd = dip->di_fd;
+	struct mtget mtget, *mt;
+	int saved_errno;
+	u_long fileno, files, records;
 
- if (dip->di_proc_eei) {
-     mt = &mtget;
-     memset(mt, '\0', sizeof(*mt));
- } else {
-     mt = dip->di_mt;
- }
- saved_errno = errno;
- status = get_eei_status(fd, mt);
- if (status != ESUCCESS) {
-     errno = saved_errno;
-     return (FALSE);
- }
+	if (dip->di_proc_eei) {
+	    mt = &mtget;
+	    memset(mt, '\0', sizeof(*mt));
+	} else {
+	    mt = dip->di_mt;
+	}
+	saved_errno = errno;
+	status = get_eei_status(fd, mt);
+	if (status != ESUCCESS) {
+	    errno = saved_errno;
+	    return (FALSE);
+	}
 
- if (dip->di_mode == READ_MODE) {
-     files = dip->di_files_read;
-     records = dip->di_records_read;
- } else {
-     files = dip->di_files_written;
-     records = dip->di_records_written;
- }
- if (dip->di_proc_eei) {
-     if (debug_flag) print_mtstatus(fd, mt, FALSE);
-     /*
-      * See if we should retry this EEI status.
-      */
-     if ( is_StatusRetryable(dip, &mt->eei) ) {
-  if (dip->di_eei_retries-- == 0) {
-      dip->di_eei_retries = EEI_RETRIES;
-      return (FALSE);  /* Exhausted retries. */
-  }
-  if (verbose_flag) {
-      Fprintf("Retry %d after %s status...\n",
-       (EEI_RETRIES - dip->di_eei_retries),
-       cdbg_EEIStatus(mt->eei.status, CDBG_BRIEF));
-  }
-  (void)sleep(dip->di_eei_sleep);
-  return (TRUE);  /* Retry please! */
-     } else if ( is_ResetCondition(dip, &mt->eei) ) {
-  return (FALSE);  /* Don't retry. */
-     } else {
-  if (!debug_flag) print_mtstatus(fd, mt, TRUE);
-  return (FALSE);  /* Don't retry. */
-     }
- }
+	if (dip->di_mode == READ_MODE) {
+	    files = dip->di_files_read;
+	    records = dip->di_records_read;
+	} else {
+	    files = dip->di_files_written;
+	    records = dip->di_records_written;
+	}
+	if (dip->di_proc_eei) {
+	    if (debug_flag) print_mtstatus(fd, mt, FALSE);
+	    /*
+	     * See if we should retry this EEI status.
+	     */
+	    if ( is_StatusRetryable(dip, &mt->eei) ) {
+		if (dip->di_eei_retries-- == 0) {
+		    dip->di_eei_retries = EEI_RETRIES;
+		    return (FALSE);		/* Exhausted retries. */
+		}
+		if (verbose_flag) {
+		    Fprintf("Retry %d after %s status...\n",
+			    (EEI_RETRIES - dip->di_eei_retries),
+			    cdbg_EEIStatus(mt->eei.status, CDBG_BRIEF));
+		}
+		(void)sleep(dip->di_eei_sleep);
+		return (TRUE);		/* Retry please! */
+	    } else if ( is_ResetCondition(dip, &mt->eei) ) {
+		return (FALSE);		/* Don't retry. */
+	    } else {
+		if (!debug_flag) print_mtstatus(fd, mt, TRUE);
+		return (FALSE);		/* Don't retry. */
+	    }
+	}
 
- if ( is_StatusRetryable(dip, &mt->eei) ) {
-     if (verbose_flag) {
-  Fprintf("Retrying after %s status...\n",
-    cdbg_EEIStatus(mt->eei.status, CDBG_BRIEF));
-     }
-     (void)sleep(dip->di_eei_sleep);
-     return (TRUE);
- } else if ( !is_ResetCondition(dip, &mt->eei) ) {
-     print_mtstatus(fd, mt, TRUE);
-     return (FALSE);
- }
+	if ( is_StatusRetryable(dip, &mt->eei) ) {
+	    if (verbose_flag) {
+		Fprintf("Retrying after %s status...\n",
+				cdbg_EEIStatus(mt->eei.status, CDBG_BRIEF));
+	    }
+	    (void)sleep(dip->di_eei_sleep);
+	    return (TRUE);
+	} else if ( !is_ResetCondition(dip, &mt->eei) ) {
+	    print_mtstatus(fd, mt, TRUE);
+	    return (FALSE);
+	}
 
- dip->di_proc_eei = TRUE;  /* For recursion. */
- dip->di_eei_retries = EEI_RETRIES;
+	dip->di_proc_eei = TRUE;		/* For recursion. */
+	dip->di_eei_retries = EEI_RETRIES;
 
- if (verbose_flag) {
-     Fprintf("Processing reset condition (%s) - file %lu, record %lu\n",
-    cdbg_EEIStatus(mt->eei.status, CDBG_BRIEF),
-     mt->mt_fileno, mt->mt_blkno);
- }
+	if (verbose_flag) {
+	    Fprintf("Processing reset condition (%s) - file %lu, record %lu\n",
+				cdbg_EEIStatus(mt->eei.status, CDBG_BRIEF),
+					mt->mt_fileno, mt->mt_blkno);
+	}
 
- if (debug_flag) print_mtstatus(fd, mt, FALSE);
+	if (debug_flag) print_mtstatus(fd, mt, FALSE);
 
- /*
-  * When writing tape files, the last file mark gets written
-  * when closing the tape, so adjust file count appropriately.
-  */
- fileno = files;
- if ( (dip->di_mode == WRITE_MODE) &&
-      (files == file_limit) ) {
-     if (fileno) fileno--;
- }
+	/*
+	 * When writing tape files, the last file mark gets written
+	 * when closing the tape, so adjust file count appropriately.
+	 */
+	fileno = files;
+	if ( (dip->di_mode == WRITE_MODE) &&
+	     (files == file_limit) ) {
+	    if (fileno) fileno--;
+	}
 
- /*
-  * Sanity check the block and file counts.
-  */
- if (mt->mt_fileno != (fileno + mt_fileno)) {
-     /* NFG if the no-rewind device is used! */
-     Fprintf(
- "File count sanity check failed, mt_fileno = %ld, my count = %ld\n",
-   mt->mt_fileno, (fileno + mt_fileno));
+	/*
+	 * Sanity check the block and file counts.
+	 */
+	if (mt->mt_fileno != (fileno + mt_fileno)) {
+	    /* NFG if the no-rewind device is used! */
+	    Fprintf(
+	"File count sanity check failed, mt_fileno = %ld, my count = %ld\n",
+			mt->mt_fileno, (fileno + mt_fileno));
 #if 0
-     return (FALSE);
+	    return (FALSE);
 #endif
-     /* Adjust and continue below... */
-     mt->mt_fileno = (fileno + mt_fileno);
- }
+	    /* Adjust and continue below... */
+	    mt->mt_fileno = (fileno + mt_fileno);
+	}
 
- /*
-  * ??? mt_blkno doesn't always match my counts ???
-  */
- if ( mt->mt_blkno != (records + mt_blkno) ) {
-     Fprintf(
- "Record count sanity check failed, mt_blkno = %ld, my count = %ld\n",
-  mt->mt_blkno, (records + mt_blkno));
+	/*
+	 * ??? mt_blkno doesn't always match my counts ???
+	 */
+	if ( mt->mt_blkno != (records + mt_blkno) ) {
+	    Fprintf(
+	"Record count sanity check failed, mt_blkno = %ld, my count = %ld\n",
+		mt->mt_blkno, (records + mt_blkno));
 #if 0
-     return (FALSE);
+	    return (FALSE);
 #endif
-     /* Adjust and continue below... */
-     mt->mt_blkno = (records + mt_blkno);
- }
+	    /* Adjust and continue below... */
+	    mt->mt_blkno = (records + mt_blkno);
+	}
 
 reposition:
- dip->di_reset_condition = FALSE;
+	dip->di_reset_condition = FALSE;
 
 #if defined(STEELOS)
     if (dip->di_devpath_failure) {
- dip->di_devpath_failure = FALSE;
- /* We terminate if we can't re-open the device. */
- (void) (*dip->di_funcs->tf_reopen_file)(dip, dip->di_oflags);
+	dip->di_devpath_failure = FALSE;
+	/* We terminate if we can't re-open the device. */
+	(void) (*dip->di_funcs->tf_reopen_file)(dip, dip->di_oflags);
     } else {
- /*
-  * Rewind and reposition the tape.
-  */
- status = DoRewindTape(dip);
- if (status) {
-     if (dip->di_reset_condition) goto reposition;
-     dip->di_proc_eei = FALSE;
-     return (FALSE);
- }
+	/*
+	 * Rewind and reposition the tape.
+	 */
+	status = DoRewindTape(dip);
+	if (status) {
+	    if (dip->di_reset_condition) goto reposition;
+	    dip->di_proc_eei = FALSE;
+	    return (FALSE);
+	}
 
- /*
-  * Bring the tape online, driver calls ctape_online(), to force
-  * auto-density selection to be done.  Otherwise, we may proceed
-  * with the wrong tape density.
-  */
- status = DoTapeOnline(dip);
- if (status) {
-     if (dip->di_reset_condition) goto reposition;
-     dip->di_proc_eei = FALSE;
-     return (FALSE);
- }
+	/*
+	 * Bring the tape online, driver calls ctape_online(), to force
+	 * auto-density selection to be done.  Otherwise, we may proceed
+	 * with the wrong tape density.
+	 */
+	status = DoTapeOnline(dip);
+	if (status) {
+	    if (dip->di_reset_condition) goto reposition;
+	    dip->di_proc_eei = FALSE;
+	    return (FALSE);
+	}
     }
 #else /* !defined(STEELOS) */
- /*
-  * NOTE:  Re-open the tape (assumes we're using rewind device),
-  * and reposition the tape.  The re-open of the tape is necessary
-  * to clear state flags (CTAPE_UNIT_ATTEN_STATE & CTAPE_RESET_STATE)
-  * in the CAM tape driver.  If this is NOT done, the close function
-  * won't write file marks. [ Fixed in Steel, not earlier releases! ]
-  */
- (void) (*dip->di_funcs->tf_reopen_file)(dip, dip->di_oflags);
- /*
-  * NOTE: reopen of the tape also brings the tape online.
-  */
+	/*
+	 * NOTE:  Re-open the tape (assumes we're using rewind device),
+	 * and reposition the tape.  The re-open of the tape is necessary
+	 * to clear state flags (CTAPE_UNIT_ATTEN_STATE & CTAPE_RESET_STATE)
+	 * in the CAM tape driver.  If this is NOT done, the close function
+	 * won't write file marks. [ Fixed in Steel, not earlier releases! ]
+	 */
+	(void) (*dip->di_funcs->tf_reopen_file)(dip, dip->di_oflags);
+	/*
+	 * NOTE: reopen of the tape also brings the tape online.
+	 */
 #endif /* !defined(STEELOS) */
 
- /*
-  * Finally, reposition to the correct file and block numbers.
-  */
- if (mt->mt_fileno) {
-     long fileno = mt->mt_fileno;
-     if (verbose_flag) {
-  Fprintf("Positioning to file %lu...\n", fileno);
-     }
-     status = DoForwardSpaceFile(dip, fileno);
-     if (status) {
-  if (dip->di_reset_condition) goto reposition;
-  dip->di_proc_eei = FALSE;
-  return (FALSE);
-     }
- }
+	/*
+	 * Finally, reposition to the correct file and block numbers.
+	 */
+	if (mt->mt_fileno) {
+	    long fileno = mt->mt_fileno;
+	    if (verbose_flag) {
+		Fprintf("Positioning to file %lu...\n", fileno);
+	    }
+	    status = DoForwardSpaceFile(dip, fileno);
+	    if (status) {
+		if (dip->di_reset_condition) goto reposition;
+		dip->di_proc_eei = FALSE;
+		return (FALSE);
+	    }
+	}
 
- if (mt->mt_blkno) {
-     long record = MIN(mt->mt_blkno, records);
-     if (record) {
-  if (verbose_flag) {
-      Fprintf("Positioning to record %lu...\n", record);
-  }
-  status = DoForwardSpaceRecord(dip, record);
-  if (status) {
-      if (dip->di_reset_condition) goto reposition;
-      dip->di_proc_eei = FALSE;
-      return (FALSE);
-  }
-     }
- }
- dip->di_proc_eei = FALSE;
- /*
-  * Don't need to clear EEI status here, since this function is
-  * called recursively when tape movement IOCTL errors occur.
-  */
- return (TRUE);
+	if (mt->mt_blkno) {
+	    long record = MIN(mt->mt_blkno, records);
+	    if (record) {
+		if (verbose_flag) {
+		    Fprintf("Positioning to record %lu...\n", record);
+		}
+		status = DoForwardSpaceRecord(dip, record);
+		if (status) {
+		    if (dip->di_reset_condition) goto reposition;
+		    dip->di_proc_eei = FALSE;
+		    return (FALSE);
+		}
+	    }
+	}
+	dip->di_proc_eei = FALSE;
+	/*
+	 * Don't need to clear EEI status here, since this function is
+	 * called recursively when tape movement IOCTL errors occur.
+	 */
+	return (TRUE);
 }
 
 bool
 is_ResetCondition(
- struct dinfo *dip,
- DEV_EEI_STATUS *eei )
+	struct dinfo	*dip,
+	DEV_EEI_STATUS	*eei )
 {
     /*
      * For Reference:
      *
      *    EEI_DEVPATH_RESET == ( CAM_SCSI_BUS_RESET || ASCQ_PON_RESET
-     *          || ASCQ_POWER_ON
-     *          || ASCQ_BUS_RESET
-     *          || ASCQ_BDR_RESET
-     *          || ASCQ_FIRMWARE_REBOOT )
+     *						    || ASCQ_POWER_ON
+     *						    || ASCQ_BUS_RESET
+     *						    || ASCQ_BDR_RESET
+     *						    || ASCQ_FIRMWARE_REBOOT )
      *
      *    EEI_CNTBUSY_FAILURE == CAM_BUSY
      *
@@ -377,21 +377,21 @@ is_ResetCondition(
      *
      * NOTE: CAM_BDR_SENT belongs with EEI_DEVPATH_RESET :-)
      */
-    if ( (eei->status == EEI_DEVPATH_RESET)  ||
-  (eei->status == EEI_CNTBUSY_FAILURE)  ||
-  (eei->status == EEI_TAPE_POS_LOST)  ||
-  (eei->arch.cam.cam_status == CAM_BDR_SENT) ) {
- dip->di_reset_condition = TRUE;
- (void) sleep (EEI_RESET);
- return (TRUE);
+    if ( (eei->status == EEI_DEVPATH_RESET)		||
+	 (eei->status == EEI_CNTBUSY_FAILURE)		||
+	 (eei->status == EEI_TAPE_POS_LOST)		||
+	 (eei->arch.cam.cam_status == CAM_BDR_SENT)	) {
+	dip->di_reset_condition = TRUE;
+	(void) sleep (EEI_RESET);
+	return (TRUE);
     } else if (eei->status == EEI_DEVSTATE_FAILURE) {
- struct all_req_sns_data *sdp;
- sdp = (struct all_req_sns_data *)&eei->arch.cam.scsi_sense;
- if ( (eei->flags & EEI_SCSI_SENSE_VALID) &&
-      (sdp->sns_key == ALL_UNIT_ATTEN) ) {
-     dip->di_reset_condition = TRUE;
-     return (TRUE); /* Result of reset or power on. */
- }
+	struct all_req_sns_data *sdp;
+	sdp = (struct all_req_sns_data *)&eei->arch.cam.scsi_sense;
+	if ( (eei->flags & EEI_SCSI_SENSE_VALID) &&
+	     (sdp->sns_key == ALL_UNIT_ATTEN) ) {
+	    dip->di_reset_condition = TRUE;
+	    return (TRUE);	/* Result of reset or power on. */
+	}
     }
 #if defined(STEELOS) && defined(MUNSA)
     /*
@@ -403,18 +403,18 @@ is_ResetCondition(
      *
      * Again, for reference, here's the EEI_DEVPATH_FAILURE mapping:
      *
-     *    EEI_DEVPATH_FAILURE == ( CAM_PATH_INVALID ||
-     *       CAM_DEV_NOT_THERE ||
-     *       CAM_SEL_TIMEOUT ||
-     *       CAM_NO_HBA  ||
-     *       CAM_LUN_INVALID ||
-     *       CAM_TID_INVALID )
+     *    EEI_DEVPATH_FAILURE == ( CAM_PATH_INVALID	||
+     *				   CAM_DEV_NOT_THERE	||
+     *				   CAM_SEL_TIMEOUT	||
+     *				   CAM_NO_HBA		||
+     *				   CAM_LUN_INVALID	||
+     *				   CAM_TID_INVALID	)
      *
      */
     if (eei->status == EEI_DEVPATH_FAILURE) {
- dip->di_devpath_failure = TRUE;
- dip->di_reset_condition = TRUE;
- return (TRUE);  /* Re-open to find next path. */
+	dip->di_devpath_failure = TRUE;
+	dip->di_reset_condition = TRUE;
+	return (TRUE);		/* Re-open to find next path. */
     }
 #endif /* defined(STEELOS) && defined(MUNSA) */
 
@@ -423,8 +423,8 @@ is_ResetCondition(
 
 bool
 is_StatusRetryable(
- struct dinfo *dip,
- DEV_EEI_STATUS *eei )
+	struct dinfo	*dip,
+	DEV_EEI_STATUS	*eei )
 {
     /*
      * Personally, I'm starting to think using EEI status mappings
@@ -438,46 +438,46 @@ is_StatusRetryable(
      *     EEI_ABORTIO_FAILURE == ( CAM_REQ_ABORTED || CAM_CMD_TIMEOUT )
      */
     if ( (eei->status == EEI_DEVBUSY_FAILURE) ||
-  (eei->status == EEI_ABORTIO_FAILURE) ) {
- return (TRUE);   /* Retry please! */
+	 (eei->status == EEI_ABORTIO_FAILURE) ) {
+	return (TRUE);			/* Retry please! */
     } else if ( (eei->status == EEI_NO_STATUS) && dip->di_proc_eei) {
- /*
-  * Occasionally, while processing a reset condition on V4.0F, the
-  * first mtop (rewind) is error'ed out with no EEI status.  This is
-  * probably broken in the tape driver, but like any good application
-  * we must try our best to workaround these anomalies :-)
-  */
- return (TRUE);   /* Retry please! */
+	/*
+	 * Occasionally, while processing a reset condition on V4.0F, the
+	 * first mtop (rewind) is error'ed out with no EEI status.  This is
+	 * probably broken in the tape driver, but like any good application
+	 * we must try our best to workaround these anomalies :-)
+	 */
+	return (TRUE);			/* Retry please! */
     }
 
     switch (eei->arch.cam.cam_status) {
- /*
-  * Most of these CAM status' are mapped to EEI_DEVBIO_FAILURE,
-  * but this grouping also contains status codes which should
-  * NOT be retried. (IMHO)
-  *
-  * At this time, EEI_DEVBIO_FAILURE also includes CAM_BDR_SENT
-  * which is used for Reset detection above :-)
-  */
- case CAM_SCSI_BUSY:  /* SCSI bus busy.  */
- case CAM_CMD_TIMEOUT:  /* Command timeout.  */
- case CAM_MSG_REJECT_REC: /* Message reject received. */
- case CAM_UNCOR_PARITY:  /* Uncorrectable parity error. */
- case CAM_DATA_RUN_ERR:  /* Data overrun/underrun error. */
- case CAM_SEQUENCE_FAIL:  /* Target bus phase sequence. */
- case CAM_UNEXP_BUSFREE:  /* Unexpected BUS free.  */
- /*
-  * This status is NOT retried for cluster systems, since this
-  * is the primary status code used to initiate service failover.
-  * [ Changed my mind... we should NOT normally get this error. ]
-  */
+	/*
+	 * Most of these CAM status' are mapped to EEI_DEVBIO_FAILURE,
+	 * but this grouping also contains status codes which should
+	 * NOT be retried. (IMHO)
+	 *
+	 * At this time, EEI_DEVBIO_FAILURE also includes CAM_BDR_SENT
+	 * which is used for Reset detection above :-)
+	 */
+	case CAM_SCSI_BUSY:		/* SCSI bus busy.		*/
+	case CAM_CMD_TIMEOUT:		/* Command timeout.		*/
+	case CAM_MSG_REJECT_REC:	/* Message reject received.	*/
+	case CAM_UNCOR_PARITY:		/* Uncorrectable parity error.	*/
+	case CAM_DATA_RUN_ERR:		/* Data overrun/underrun error.	*/
+	case CAM_SEQUENCE_FAIL:		/* Target bus phase sequence.	*/
+	case CAM_UNEXP_BUSFREE:		/* Unexpected BUS free.		*/
+	/*
+	 * This status is NOT retried for cluster systems, since this
+	 * is the primary status code used to initiate service failover.
+	 * [ Changed my mind... we should NOT normally get this error. ]
+	 */
 #if 0 /* !defined(MUNSA) */
- case CAM_SEL_TIMEOUT:  /* Target selection timeout. */
+	case CAM_SEL_TIMEOUT:		/* Target selection timeout.	*/
 #endif /* !defined(MUNSA) */
-     return (TRUE);  /* Retry these please! */
+	    return (TRUE);		/* Retry these please! */
 
- default:
-     return (FALSE);  /* Don't retry. */
+	default:
+	    return (FALSE);		/* Don't retry. */
     }
 }
 
@@ -487,45 +487,45 @@ is_StatusRetryable(
 bool
 check_eei_status(struct dinfo *dip, bool retry)
 {
- struct mtget mt;
- char *file = dip->di_dname;
- int oflags = (dip->di_oflags | O_NONBLOCK);
- int fd, status;
- int saved_errno = errno;
+	struct mtget mt;
+	char *file = dip->di_dname;
+	int oflags = (dip->di_oflags | O_NONBLOCK);
+	int fd, status;
+	int saved_errno = errno;
 
- if (debug_flag) {
-     Fprintf (
-  "Attempting to open %s file '%s', open flags = %#o...\n",
-   (dip->di_ftype == INPUT_FILE) ? "input" : "output",
-        file, oflags);
- }
+	if (debug_flag) {
+	    Fprintf (
+		"Attempting to open %s file '%s', open flags = %#o...\n",
+			(dip->di_ftype == INPUT_FILE) ? "input" : "output",
+								file, oflags);
+	}
 
- if ( (fd = open (file, oflags)) == FAILURE) {
-     report_error ("check_eei_status open", FALSE);
-     errno = saved_errno;
-     return (FALSE);
- }
+	if ( (fd = open (file, oflags)) == FAILURE) {
+	    report_error ("check_eei_status open", FALSE);
+	    errno = saved_errno;
+	    return (FALSE);
+	}
 
- status = get_eei_status(fd, &mt);
- if (status != ESUCCESS) {
-     (void) close (fd);
-     errno = saved_errno;
-     return (FALSE);
- }
+	status = get_eei_status(fd, &mt);
+	if (status != ESUCCESS) {
+	    (void) close (fd);
+	    errno = saved_errno;
+	    return (FALSE);
+	}
 
- if (debug_flag) print_mtstatus(fd, &mt, FALSE);
+	if (debug_flag) print_mtstatus(fd, &mt, FALSE);
 
- (void) close (fd);
- errno = saved_errno;
+	(void) close (fd);
+	errno = saved_errno;
 
- if (!retry) return (FALSE);
+	if (!retry) return (FALSE);
 
- if ( is_ResetCondition(dip, &mt.eei) ||
-      is_StatusRetryable(dip, &mt.eei) ) {
-     return (TRUE);
- } else {
-     return (FALSE);
- }
+	if ( is_ResetCondition(dip, &mt.eei) ||
+	     is_StatusRetryable(dip, &mt.eei) ) {
+	    return (TRUE);
+	} else {
+	    return (FALSE);
+	}
 }
 
 /*
@@ -534,38 +534,38 @@ check_eei_status(struct dinfo *dip, bool retry)
 void
 clear_eei_status(int fd, bool startup)
 {
- struct mtget mt;
- int status;
+	struct mtget mt;
+	int status;
 
- if (debug_flag) Fprintf("Clearing EEI data...\n");
+	if (debug_flag) Fprintf("Clearing EEI data...\n");
 
- if ( get_eei_status(fd, &mt) != ESUCCESS) return;
+	if ( get_eei_status(fd, &mt) != ESUCCESS) return;
 
- if (debug_flag) print_mtstatus(fd, &mt, FALSE);
+	if (debug_flag) print_mtstatus(fd, &mt, FALSE);
 
- if (startup) {
-     /*
-      * blkno/fileno == -1 when invalid!
-      */
-     if ( (mt_blkno = mt.mt_blkno) < 0L) {
-  mt_blkno = 0L;
-     }
-     if ( (mt_fileno = mt.mt_fileno) < 0L) {
-  mt_fileno = 0L;
-     }
- }
- return;
+	if (startup) {
+	    /*
+	     * blkno/fileno == -1 when invalid!
+	     */
+	    if ( (mt_blkno = mt.mt_blkno) < 0L) {
+		mt_blkno = 0L;
+	    }
+	    if ( (mt_fileno = mt.mt_fileno) < 0L) {
+		mt_fileno = 0L;
+	    }
+	}
+	return;
 }
 
 int
 get_eei_status(int fd, struct mtget *mt)
 {
- int status;
+	int status;
 
- if ( (status = ioctl(fd, MTIOCGET, (char *)mt)) < 0) {
-     report_error ("MTIOCGET failed", FALSE);
- }
- return (status);
+	if ( (status = ioctl(fd, MTIOCGET, (char *)mt)) < 0) {
+	    report_error ("MTIOCGET failed", FALSE);
+	}
+	return (status);
 }
 
 /*
@@ -574,16 +574,16 @@ get_eei_status(int fd, struct mtget *mt)
 void
 print_mtstatus(int fd, struct mtget *mt, bool print_all)
 {
- /*
-  * When processing EEI Reset requests, we do not display
-  * the DEVIOCGET or DEVGETINFO, since these IOCTL's issue
-  * SCSI commands which can interfere with our recovery.
-  * [ Driver does Mode Sense to determine current density ]
-  */
- if ( print_all ) {
-     print_devio(fd);
- }
- print_mtio(fd, mt);
+	/*
+	 * When processing EEI Reset requests, we do not display
+	 * the DEVIOCGET or DEVGETINFO, since these IOCTL's issue
+	 * SCSI commands which can interfere with our recovery.
+	 * [ Driver does Mode Sense to determine current density ]
+	 */
+	if ( print_all ) {
+	    print_devio(fd);
+	}
+	print_mtio(fd, mt);
 }
 
 /*
@@ -593,68 +593,68 @@ print_mtstatus(int fd, struct mtget *mt, bool print_all)
 void
 print_mtio(int fd, struct mtget *mt)
 {
- Fprint("\n");
- Fprint("MTIOCGET ELEMENT        CONTENTS\n");
- Fprint("----------------        --------\n");
- Fprint("mt_type                 ");
- switch(mt->mt_type) {
- case MT_ISTS:
-  Fprint("MT_ISTS\n");
-  break;
- case MT_ISHT:
-  Fprint("MT_ISHT\n");
-  break;
- case MT_ISTM:
-  Fprint("MT_ISTM\n");
-  break;
- case MT_ISMT:
-  Fprint("MT_ISMT\n");
-  break;
- case MT_ISUT:
-  Fprint("MT_ISUT\n");
-  break;
- case MT_ISTMSCP:
-  Fprint("MT_ISTMSCP\n");
-  break;
- case MT_ISST:
-  Fprint("MT_ISST\n");
-  break;
- case MT_ISSCSI:
-  Fprint("MT_ISSCSI\n");
-  break;
- default:
-  Fprint("Unknown mt_type = 0x%x\n", mt->mt_type);
- }
+	Fprint("\n");
+	Fprint("MTIOCGET ELEMENT        CONTENTS\n");
+	Fprint("----------------        --------\n");
+	Fprint("mt_type                 ");
+	switch(mt->mt_type) {
+	case MT_ISTS:
+		Fprint("MT_ISTS\n");
+		break;
+	case MT_ISHT:
+		Fprint("MT_ISHT\n");
+		break;
+	case MT_ISTM:
+		Fprint("MT_ISTM\n");
+		break;
+	case MT_ISMT:
+		Fprint("MT_ISMT\n");
+		break;
+	case MT_ISUT:
+		Fprint("MT_ISUT\n");
+		break;
+	case MT_ISTMSCP:
+		Fprint("MT_ISTMSCP\n");
+		break;
+	case MT_ISST:
+		Fprint("MT_ISST\n");
+		break;
+	case MT_ISSCSI:
+		Fprint("MT_ISSCSI\n");
+		break;
+	default:
+		Fprint("Unknown mt_type = 0x%x\n", mt->mt_type);
+	}
 
- if ( mt->mt_type != MT_ISSCSI ) {
-  Fprint("mt_dsreg                0x%X\n", mt->mt_dsreg);
-  Fprint("mt_erreg                0x%X\n\n", mt->mt_erreg);
-  Fprint("mt_resid                %d\n", mt->mt_resid);
-  return;
- }
+	if ( mt->mt_type != MT_ISSCSI ) {
+		Fprint("mt_dsreg                0x%X\n", mt->mt_dsreg);
+		Fprint("mt_erreg                0x%X\n\n", mt->mt_erreg);
+		Fprint("mt_resid                %d\n", mt->mt_resid);
+		return;
+	}
 
- /*
-  * The rest deals with functionality built into the SCSI tape
-  * driver which does not exist in TMSCP.
-  */
+	/*
+	 * The rest deals with functionality built into the SCSI tape
+	 * driver which does not exist in TMSCP.
+	 */
 
- Fprint("mt_dsreg                0x%X\n", mt->mt_dsreg);
- if (mt->mt_dsreg)
-  print_stat(mt->mt_dsreg);
- Fprint("mt_erreg                0x%X ", mt->mt_erreg);
- print_erreg(mt->mt_erreg);
- Fprint("mt_resid                %d\n", mt->mt_resid);
- Fprint("mt_fileno               %ld %s\n",
-  mt->mt_fileno, (mt->mt_fileno < 0L) ? "(invalid)" : "");
- Fprint("mt_blkno                %ld %s\n",
-  mt->mt_blkno, (mt->mt_blkno < 0L) ? "(invalid)" : "");
+	Fprint("mt_dsreg                0x%X\n", mt->mt_dsreg);
+	if (mt->mt_dsreg)
+		print_stat(mt->mt_dsreg);
+	Fprint("mt_erreg                0x%X ", mt->mt_erreg);
+	print_erreg(mt->mt_erreg);
+	Fprint("mt_resid                %d\n", mt->mt_resid);
+	Fprint("mt_fileno               %ld %s\n",
+		mt->mt_fileno, (mt->mt_fileno < 0L) ? "(invalid)" : "");
+	Fprint("mt_blkno                %ld %s\n",
+		mt->mt_blkno, (mt->mt_blkno < 0L) ? "(invalid)" : "");
 
- /*
-  * Display the Extended Error Information (EEI) Status.
-  */
- print_eei(&mt->eei);
- Fprint("\n");
- return;
+	/*
+	 * Display the Extended Error Information (EEI) Status.
+	 */
+	print_eei(&mt->eei);
+	Fprint("\n");
+	return;
 }
 
 #if defined(ZULUOS)
@@ -668,110 +668,110 @@ void print_status( v1_device_info_t *p_info );
 void
 print_devio(int fd)
 {
- int   status;
- device_info_t  devinfo;
- v1_device_info_t *p_info;
+	int			status;
+	device_info_t		devinfo;
+	v1_device_info_t	*p_info;
 
- /*
-  *  Attempt to use preferred DEVGETINFO, if it fails: use DEVIOCGET
-  */
- status = ioctl( fd, DEVGETINFO, &devinfo );
- if ( status || ( devinfo.version != VERSION_1 ) ) {
-     struct devget devget;
+	/*
+	 *  Attempt to use preferred DEVGETINFO, if it fails: use DEVIOCGET
+	 */
+	status = ioctl( fd, DEVGETINFO, &devinfo );
+	if ( status || ( devinfo.version != VERSION_1 ) ) {
+	    struct devget devget;
 
-     status = ioctl( fd, DEVIOCGET, (void *)&devget );
-     if( status ) {
-  report_error ("DEVIOCGET failed", FALSE);
-  return;
-     }
-     devio_2_devgetinfo( &devget, &devinfo );
- }
- /*
-  *  At this point we have a valid devinfo struct
-  */
- p_info = &devinfo.v1;
+	    status = ioctl( fd, DEVIOCGET, (void *)&devget );
+	    if( status ) {
+		report_error ("DEVIOCGET failed", FALSE);
+		return;
+	    }
+	    devio_2_devgetinfo( &devget, &devinfo );
+	}
+	/*
+	 *  At this point we have a valid devinfo struct
+	 */
+	p_info = &devinfo.v1;
 
- /*
-  * We keep the "status" information EXACTLY the same as before
-  * as there are most likely are user entities outthere that parse
-  * the "status" output. We'll follow the normal output with the
-  * additional devgetinfo information, if applicable.
-  */
- Fprint( "\n" );
- Fprint( "DEVIOGET ELEMENT       CONTENTS\n" );
- Fprint( "----------------       --------\n" );
- Fprint( "category               " );
- switch( p_info->category ) {
+	/*
+	 * We keep the "status" information EXACTLY the same as before
+	 * as there are most likely are user entities outthere that parse
+	 * the "status" output. We'll follow the normal output with the
+	 * additional devgetinfo information, if applicable.
+	 */
+	Fprint( "\n" );
+	Fprint( "DEVIOGET ELEMENT       CONTENTS\n" );
+	Fprint( "----------------       --------\n" );
+	Fprint( "category               " );
+	switch( p_info->category ) {
 
-     case  DEV_TAPE :
-  Fprint( "DEV_TAPE\n" );
-  break;
-     case  DEV_DISK :
-  Fprint( "DEV_DISK\n" );
-  break;
-     case  DEV_TERMINAL :
-  Fprint( "DEV_TERMINAL\n" );
-  break;
-     case  DEV_PRINTER :
-  Fprint( "DEV_PRINTER\n" );
-  break;
-     case  DEV_SPECIAL :
-  Fprint( "DEV_SPECIAL\n" );
-  break;
-     default :
-  Fprint( "UNDEFINED VALUE (0x%x)\n", p_info->category );
-  break;
- }
- Fprint( "bus                    " );
- switch( p_info->bus ) {
+	    case  DEV_TAPE :
+		Fprint( "DEV_TAPE\n" );
+		break;
+	    case  DEV_DISK :
+		Fprint( "DEV_DISK\n" );
+		break;
+	    case  DEV_TERMINAL :
+		Fprint( "DEV_TERMINAL\n" );
+		break;
+	    case  DEV_PRINTER :
+		Fprint( "DEV_PRINTER\n" );
+		break;
+	    case  DEV_SPECIAL :
+		Fprint( "DEV_SPECIAL\n" );
+		break;
+	    default :
+		Fprint( "UNDEFINED VALUE (0x%x)\n", p_info->category );
+		break;
+	}
+	Fprint( "bus                    " );
+	switch( p_info->bus ) {
 
-     case  DEV_UB :
-  Fprint( "DEV_UB\n" );
-  break;
-     case  DEV_QB :
-  Fprint( "DEV_QB\n" );
-  break;
-     case  DEV_MB :
-  Fprint( "DEV_MB\n" );
-  break;
-     case  DEV_BI :
-  Fprint( "DEV_BI\n" );
-  break;
-     case  DEV_CI :
-  Fprint( "DEV_CI\n" );
-  break;
-     case  DEV_NB :
-  Fprint( "DEV_NB\n" );
-  break;
-     case  DEV_MSI :
-  Fprint( "DEV_MSI\n" );
-  break;
-     case  DEV_SCSI :
-  Fprint( "DEV_SCSI\n" );
-  break;
-     case  DEV_UNKBUS :
-  Fprint( "DEV_UNKBUS\n" );
-  break;
-     default :
-  Fprint( "UNDEFINED VALUE (0x%x)\n", p_info->bus );
-  break;
- }
- Fprint( "interface              %s\n", p_info->interface );
- Fprint( "device                 %s\n", p_info->device );
- Fprint( "adpt_num               %d\n", p_info->businfo.adpt_num );
- Fprint( "nexus_num              %d\n", p_info->businfo.nexus_num );
- Fprint( "bus_num                %d\n", p_info->businfo.bus_num );
- Fprint( "ctlr_num               %d\n", p_info->businfo.ctlr_num );
- Fprint( "slave_num              %d\n", p_info->businfo.slave_num );
- Fprint( "dev_name               %s\n", p_info->dev_name );
- Fprint( "unit_num               %d\n", p_info->businfo.unit_num );
- Fprint( "soft_count             %u\n", p_info->soft_count );
- Fprint( "hard_count             %u\n", p_info->hard_count );
- /*
-  *  New info status fields:
-  */
- print_status( p_info );
- return;
+	    case  DEV_UB :
+		Fprint( "DEV_UB\n" );
+		break;
+	    case  DEV_QB :
+		Fprint( "DEV_QB\n" );
+		break;
+	    case  DEV_MB :
+		Fprint( "DEV_MB\n" );
+		break;
+	    case  DEV_BI :
+		Fprint( "DEV_BI\n" );
+		break;
+	    case  DEV_CI :
+		Fprint( "DEV_CI\n" );
+		break;
+	    case  DEV_NB :
+		Fprint( "DEV_NB\n" );
+		break;
+	    case  DEV_MSI :
+		Fprint( "DEV_MSI\n" );
+		break;
+	    case  DEV_SCSI :
+		Fprint( "DEV_SCSI\n" );
+		break;
+	    case  DEV_UNKBUS :
+		Fprint( "DEV_UNKBUS\n" );
+		break;
+	    default :
+		Fprint( "UNDEFINED VALUE (0x%x)\n", p_info->bus );
+		break;
+	}
+	Fprint( "interface              %s\n", p_info->interface );
+	Fprint( "device                 %s\n", p_info->device );
+	Fprint( "adpt_num               %d\n", p_info->businfo.adpt_num );
+	Fprint( "nexus_num              %d\n", p_info->businfo.nexus_num );
+	Fprint( "bus_num                %d\n", p_info->businfo.bus_num );
+	Fprint( "ctlr_num               %d\n", p_info->businfo.ctlr_num );
+	Fprint( "slave_num              %d\n", p_info->businfo.slave_num );
+	Fprint( "dev_name               %s\n", p_info->dev_name );
+	Fprint( "unit_num               %d\n", p_info->businfo.unit_num );
+	Fprint( "soft_count             %u\n", p_info->soft_count );
+	Fprint( "hard_count             %u\n", p_info->hard_count );
+	/*
+	 *  New info status fields:
+	 */
+	print_status( p_info );
+	return;
 }
 
 /*
@@ -780,8 +780,8 @@ print_devio(int fd)
 void
 print_status( v1_device_info_t *p_info )
 {
-    v1_disk_dev_info_t *p_disk;
-    v1_tape_dev_info_t *p_tape;
+    v1_disk_dev_info_t	*p_disk;
+    v1_tape_dev_info_t	*p_tape;
 
     switch( p_info->category ) {
 
@@ -789,8 +789,8 @@ print_status( v1_device_info_t *p_info )
         p_disk = &p_info->devinfo.disk;
         if( !p_disk->status ) {
             break;
- }
- Fprint( "\n" );
+	}
+	Fprint( "\n" );
         Fprint( "DEVGETINFO ELEMENT      CONTENTS\n" );
         Fprint( "------------------      --------\n" );
         Fprint( "status                  0x%x\n", p_disk->status );
@@ -806,7 +806,7 @@ print_status( v1_device_info_t *p_info )
                 Fprint( "REMOVABLE " );
             if( p_disk->status & DKDEV_REMOVABLE )
                 Fprint( "REMOVABLE " );
- }
+	}
         Fprint( "part_num                %d\n", p_disk->part_num );
         Fprint( "media_changes           %d\n", p_disk->media_changes );
         Fprint( "class                   %s\n", p_disk->class==DKDEV_CLS_FLPY_GENERIC ? "GENERIC"
@@ -824,7 +824,7 @@ print_status( v1_device_info_t *p_info )
         p_tape = &p_info->devinfo.tape;
         if ( !p_tape->unit_status && !p_tape->media_status ) {
             break;
- }
+	}
         Fprint( "\n" );
         Fprint( "DEVGETINFO ELEMENT      CONTENTS\n");
         Fprint( "------------------      --------\n");
@@ -862,7 +862,7 @@ print_status( v1_device_info_t *p_info )
             if( p_tape->media_status & TPDEV_POS_VALID )
                 Fprint( "POS_VALID " );
             Fprint( "\n" );
- }
+	}
         Fprint( "unit_status             0x%x\n", p_tape->unit_status );
         if( p_tape->unit_status ) {
             Fprint( "                        " );
@@ -889,17 +889,17 @@ print_status( v1_device_info_t *p_info )
             if( p_tape->unit_status & TPDEV_BUFFERED )
                 Fprint( "Buffered " );
             Fprint( "\n" );
- }
+	}
         Fprint( "record_size             %ld\n", p_tape->recordsz );
         Fprint( "density (current)       %ld BPI\n", p_tape->density_bpi );
         Fprint( "density (on write)      %ld BPI\n", p_tape->density_bpi_wrt );
         if( p_tape->media_status & TPDEV_POS_VALID ) {
             Fprint( "Filemark Cnt            %ld\n", p_tape->fm_cnt );
             Fprint( "Record Cnt              %ld\n", p_tape->position );
- } else {
+	} else {
             Fprint( "Filemark Cnt            <Not Valid>\n" );
             Fprint( "Record Cnt              <Not Valid>\n" );
- }
+	}
         Fprint( "Class                   %d - ", ((int )p_tape->class ) & 0xFF );
         switch( p_tape->class ) {
           case  TPDEV_CLS_DLT :
@@ -926,7 +926,7 @@ print_status( v1_device_info_t *p_info )
           default :
             Fprint( "<unrecognized>\n" );
             break;
- }
+	}
         break;
     }
     return;
@@ -941,229 +941,229 @@ print_status( v1_device_info_t *p_info )
 void
 print_devio(int fd)
 {
- struct devget devinf;
- device_info_t *devinfop;
+	struct devget	devinf;
+	device_info_t	*devinfop;
 
- /*
-  * First, attempt to use the DEVGETINFO ioctl (preferred),
-  * if that fails, try the backward-compatibility ioctl
-  * DEVIOCGET.
-  */
+	/*
+	 * First, attempt to use the DEVGETINFO ioctl (preferred),
+	 * if that fails, try the backward-compatibility ioctl
+	 * DEVIOCGET.
+	 */
 
- /* malloc this as this is a large structure */
- devinfop = (device_info_t *)malloc(sizeof(device_info_t));
+	/* malloc this as this is a large structure */
+	devinfop = (device_info_t *)malloc(sizeof(device_info_t));
 
- if (!(devinfop) ||
-  (ioctl(fd, DEVGETINFO, (char *)devinfop) < 0) ||
-  (devinfop->version != VERSION_1) || /* what a joke! */
-  (devgetinfo_2_devio(devinfop, &devinf) != ESUCCESS)) {
+	if (!(devinfop) || 
+		(ioctl(fd, DEVGETINFO, (char *)devinfop) < 0) ||
+		(devinfop->version != VERSION_1) || /* what a joke! */
+		(devgetinfo_2_devio(devinfop, &devinf) != ESUCCESS)) {
 
-  /* DEVGETINFO failure */
-  if (devinfop)
-   free(devinfop);
-  devinfop = (device_info_t *)NULL;
+		/* DEVGETINFO failure */
+		if (devinfop)
+			free(devinfop);
+		devinfop = (device_info_t *)NULL;
 
-  if (ioctl(fd, DEVIOCGET, (char *)&devinf) < 0) {
-   report_error ("DEVIOCGET failed", FALSE);
-   return;
-  }
- }
- /*
-  * at this point we have a valid devinf struct and possibly
-  * a valid device_info struct.
-  */
+		if (ioctl(fd, DEVIOCGET, (char *)&devinf) < 0) {
+			report_error ("DEVIOCGET failed", FALSE);
+			return;
+		}
+	}
+	/*
+	 * at this point we have a valid devinf struct and possibly
+	 * a valid device_info struct.
+	 */
 
- /*
-  * We keep the "status" information EXACTLY the same as before
-  * as there are most likely are user entities outthere that parse
-  * the "status" output. We'll follow the normal output with the
-  * additional devgetinfo information, if applicable.
-  */
+	/*
+	 * We keep the "status" information EXACTLY the same as before
+	 * as there are most likely are user entities outthere that parse
+	 * the "status" output. We'll follow the normal output with the
+	 * additional devgetinfo information, if applicable.
+	 */
 
- Fprint("\n");
- Fprint("DEVIOGET ELEMENT        CONTENTS\n");
- Fprint("----------------        --------\n");
- Fprint("category                ");
- switch(devinf.category) {
-     case DEV_TAPE:
-  Fprint("DEV_TAPE\n");
-  break;
-     case DEV_DISK:
-  Fprint("DEV_DISK\n");
-  break;
-     case DEV_TERMINAL:
-  Fprint("DEV_TERMINAL\n");
-  break;
-     case DEV_PRINTER:
-  Fprint("DEV_PRINTER\n");
-  break;
-     case DEV_SPECIAL:
-  Fprint("DEV_SPECIAL\n");
-  break;
-     default:
-  Fprint("UNDEFINED VALUE (0x%x)\n", devinf.category);
-  break;
- }
- Fprint("bus                     ");
- switch(devinf.bus) {
-     case DEV_UB:
-  Fprint("DEV_UB\n");
-  break;
-     case DEV_QB:
-  Fprint("DEV_QB\n");
-  break;
-     case DEV_MB:
-  Fprint("DEV_MB\n");
-  break;
-     case DEV_BI:
-  Fprint("DEV_BI\n");
-  break;
-     case DEV_CI:
-  Fprint("DEV_CI\n");
-  break;
-     case DEV_NB:
-  Fprint("DEV_NB\n");
-  break;
-     case DEV_MSI:
-  Fprint("DEV_MSI\n");
-  break;
-     case DEV_SCSI:
-  Fprint("DEV_SCSI\n");
-  break;
-     case DEV_UNKBUS:
-  Fprint("DEV_UNKBUS\n");
-  break;
-     default:
-  Fprint("UNDEFINED VALUE (0x%x)\n", devinf.bus);
-  break;
- }
- Fprint("interface               %s\n", devinf.interface);
- Fprint("device                  %s\n", devinf.device);
- Fprint("adpt_num                %d\n", devinf.adpt_num);
- Fprint("nexus_num               %d\n", devinf.nexus_num);
- Fprint("bus_num                 %d\n", devinf.bus_num);
- Fprint("ctlr_num                %d\n", devinf.ctlr_num);
- Fprint("slave_num               %d\n", devinf.slave_num);
- Fprint("dev_name                %s\n", devinf.dev_name);
- Fprint("unit_num                %d\n", devinf.unit_num);
- Fprint("soft_count              %u\n", devinf.soft_count);
- Fprint("hard_count              %u\n", devinf.hard_count);
- Fprint("stat                    0x%X\n", devinf.stat);
- if (devinf.stat) print_stat(devinf.stat);
- Fprint("category_stat           0x%X\n", devinf.category_stat);
- if (devinf.category_stat) print_category(devinf.category_stat,devinfop);
+	Fprint("\n");
+	Fprint("DEVIOGET ELEMENT        CONTENTS\n");
+	Fprint("----------------        --------\n");
+	Fprint("category                ");
+	switch(devinf.category) {
+	    case DEV_TAPE:
+		Fprint("DEV_TAPE\n");
+		break;
+	    case DEV_DISK:
+		Fprint("DEV_DISK\n");
+		break;
+	    case DEV_TERMINAL:
+		Fprint("DEV_TERMINAL\n");
+		break;
+	    case DEV_PRINTER:
+		Fprint("DEV_PRINTER\n");
+		break;
+	    case DEV_SPECIAL:
+		Fprint("DEV_SPECIAL\n");
+		break;
+	    default:
+		Fprint("UNDEFINED VALUE (0x%x)\n", devinf.category);
+		break;
+	}
+	Fprint("bus                     ");
+	switch(devinf.bus) {
+	    case DEV_UB:
+		Fprint("DEV_UB\n");
+		break;
+	    case DEV_QB:
+		Fprint("DEV_QB\n");
+		break;
+	    case DEV_MB:
+		Fprint("DEV_MB\n");
+		break;
+	    case DEV_BI:
+		Fprint("DEV_BI\n");
+		break;
+	    case DEV_CI:
+		Fprint("DEV_CI\n");
+		break;
+	    case DEV_NB:
+		Fprint("DEV_NB\n");
+		break;
+	    case DEV_MSI:
+		Fprint("DEV_MSI\n");
+		break;
+	    case DEV_SCSI:
+		Fprint("DEV_SCSI\n");
+		break;
+	    case DEV_UNKBUS:
+		Fprint("DEV_UNKBUS\n");
+		break;
+	    default:
+		Fprint("UNDEFINED VALUE (0x%x)\n", devinf.bus);
+		break;
+	}
+	Fprint("interface               %s\n", devinf.interface);
+	Fprint("device                  %s\n", devinf.device);
+	Fprint("adpt_num                %d\n", devinf.adpt_num);
+	Fprint("nexus_num               %d\n", devinf.nexus_num);
+	Fprint("bus_num                 %d\n", devinf.bus_num);
+	Fprint("ctlr_num                %d\n", devinf.ctlr_num);
+	Fprint("slave_num               %d\n", devinf.slave_num);
+	Fprint("dev_name                %s\n", devinf.dev_name);
+	Fprint("unit_num                %d\n", devinf.unit_num);
+	Fprint("soft_count              %u\n", devinf.soft_count);
+	Fprint("hard_count              %u\n", devinf.hard_count);
+	Fprint("stat                    0x%X\n", devinf.stat);
+	if (devinf.stat) print_stat(devinf.stat);
+	Fprint("category_stat           0x%X\n", devinf.category_stat);
+	if (devinf.category_stat) print_category(devinf.category_stat,devinfop);
 
- /* now print any additional DEVGETINFO data */
- if (devinfop) {
-  v1_tape_dev_info_t *tapep;
+	/* now print any additional DEVGETINFO data */
+	if (devinfop) {
+		v1_tape_dev_info_t *tapep;
 
-  tapep = (v1_tape_dev_info_t *)&devinfop->v1.devinfo;
+		tapep = (v1_tape_dev_info_t *)&devinfop->v1.devinfo;
 
-  Fprint("\n");
-  Fprint("DEVGETINFO ELEMENT      CONTENTS\n");
-  Fprint("------------------      --------\n");
-  Fprint("media_status            0x%x\n", tapep->media_status);
-  if (tapep->media_status) {
-      Fprint("                        ");
-      if (tapep->media_status & TPDEV_BOM)
-   Fprint("BOM ");
-      if (tapep->media_status & TPDEV_EOM)
-   Fprint("EOM ");
-      if (tapep->media_status & TPDEV_WRTPROT)
-   Fprint("WrtProt ");
-      if (tapep->media_status & TPDEV_BLANK)
-   Fprint("Blank ");
-      if (tapep->media_status & TPDEV_WRITTEN)
-   Fprint("Written ");
-      if (tapep->media_status & TPDEV_SOFTERR)
-   Fprint("SoftERR ");
-      if (tapep->media_status & TPDEV_HARDERR)
-   Fprint("HardERR ");
-      if (tapep->media_status & TPDEV_DONE)
-   Fprint("Done ");
-      if (tapep->media_status & TPDEV_RETRY)
-   Fprint("Retry ");
-      if (tapep->media_status & TPDEV_ERASED)
-   Fprint("Erased ");
-      if (tapep->media_status & TPDEV_TPMARK)
-   Fprint("TPmark ");
-      if (tapep->media_status & TPDEV_SHRTREC)
-   Fprint("ShortRec ");
-      if (tapep->media_status & TPDEV_RDOPP)
-   Fprint("RD_Opposite ");
-      if (tapep->media_status & TPDEV_RWDING)
-   Fprint("Rewinding ");
-      if (tapep->media_status & TPDEV_POS_VALID)
-   Fprint("POS_VALID ");
-      Fprint("\n");
-  }
-  Fprint("unit_status             0x%x\n", tapep->unit_status);
-  if (tapep->unit_status) {
-      Fprint("                        ");
-      if (tapep->unit_status & TPDEV_READY)
-   Fprint("Ready ");
-      else
-   Fprint("Offline ");
-      if (tapep->unit_status & TPDEV_NO_EOM)
-   Fprint("No_EOM_Warn ");
-      if (tapep->unit_status & TPDEV_HAS_LOADER)
-   Fprint("Loader ");
-      if (tapep->unit_status & TPDEV_1FM_ONCLOSE)
-   Fprint("1_FM_Close ");
-      else
-   Fprint("2_FM_Close ");
-      if (tapep->unit_status & TPDEV_REW_ONCLOSE)
-   Fprint("Rewind ");
-      else
-   Fprint("NO_Rewind ");
-      if (tapep->unit_status & TPDEV_COMPACTING)
-   Fprint("Compacting ");
-      if (tapep->unit_status & TPDEV_COMPRESSING)
-   Fprint("Compacting ");
-      if (tapep->unit_status & TPDEV_BUFFERED)
-   Fprint("Buffered ");
-      Fprint("\n");
-  }
-  Fprint("record_size             %ld\n", tapep->recordsz);
-  Fprint("density (current)       %ld BPI\n", tapep->density_bpi);
-  Fprint("density (on write)      %ld BPI\n", tapep->density_bpi_wrt);
-  if (tapep->media_status & TPDEV_POS_VALID) {
-   Fprint("Filemark Cnt            %ld\n", tapep->fm_cnt);
-   Fprint("Record Cnt              %ld\n", tapep->position);
-  } else {
-   Fprint("Filemark Cnt            %s\n", not_valid_str);
-   Fprint("Record Cnt              %s\n", not_valid_str);
-  }
-  Fprint("Class                   %d - ", ((int)tapep->class) & 0xFF);
-  switch (tapep->class) {
-  case TPDEV_CLS_DLT:
-   Fprint("DLT (tk)\n");
-   break;
-  case TPDEV_CLS_RDAT:
-   Fprint("RDAT\n");
-   break;
-  case TPDEV_CLS_9TRK:
-   Fprint("9TRK\n");
-   break;
-  case TPDEV_CLS_QIC:
-   Fprint("QIC\n");
-   break;
-  case TPDEV_CLS_8MM:
-   Fprint("8MM\n");
-   break;
-  case TPDEV_CLS_3480:
-   Fprint("3480\n");
-   break;
-  case TPDEV_CLS_UNKNOWN:
-   Fprint("<unspecified>\n");
-   break;
-  default:
-   Fprint("<unrecognized>\n");
-   break;
-  }
-  free(devinfop);
- }
- return;
+		Fprint("\n");
+		Fprint("DEVGETINFO ELEMENT      CONTENTS\n");
+		Fprint("------------------      --------\n");
+		Fprint("media_status            0x%x\n", tapep->media_status);
+		if (tapep->media_status) {
+		    Fprint("                        ");
+		    if (tapep->media_status & TPDEV_BOM)
+			Fprint("BOM ");
+		    if (tapep->media_status & TPDEV_EOM)
+			Fprint("EOM ");
+		    if (tapep->media_status & TPDEV_WRTPROT)
+			Fprint("WrtProt ");
+		    if (tapep->media_status & TPDEV_BLANK)
+			Fprint("Blank ");
+		    if (tapep->media_status & TPDEV_WRITTEN)
+			Fprint("Written ");
+		    if (tapep->media_status & TPDEV_SOFTERR)
+			Fprint("SoftERR ");
+		    if (tapep->media_status & TPDEV_HARDERR)
+			Fprint("HardERR ");
+		    if (tapep->media_status & TPDEV_DONE)
+			Fprint("Done ");
+		    if (tapep->media_status & TPDEV_RETRY)
+			Fprint("Retry ");
+		    if (tapep->media_status & TPDEV_ERASED)
+			Fprint("Erased ");
+		    if (tapep->media_status & TPDEV_TPMARK)
+			Fprint("TPmark ");
+		    if (tapep->media_status & TPDEV_SHRTREC)
+			Fprint("ShortRec ");
+		    if (tapep->media_status & TPDEV_RDOPP)
+			Fprint("RD_Opposite ");
+		    if (tapep->media_status & TPDEV_RWDING)
+			Fprint("Rewinding ");
+		    if (tapep->media_status & TPDEV_POS_VALID)
+			Fprint("POS_VALID ");
+		    Fprint("\n");
+		}
+		Fprint("unit_status             0x%x\n", tapep->unit_status);
+		if (tapep->unit_status) {
+		    Fprint("                        ");
+		    if (tapep->unit_status & TPDEV_READY)
+			Fprint("Ready ");
+		    else
+			Fprint("Offline ");
+		    if (tapep->unit_status & TPDEV_NO_EOM)
+			Fprint("No_EOM_Warn ");
+		    if (tapep->unit_status & TPDEV_HAS_LOADER)
+			Fprint("Loader ");
+		    if (tapep->unit_status & TPDEV_1FM_ONCLOSE)
+			Fprint("1_FM_Close ");
+		    else
+			Fprint("2_FM_Close ");
+		    if (tapep->unit_status & TPDEV_REW_ONCLOSE)
+			Fprint("Rewind ");
+		    else
+			Fprint("NO_Rewind ");
+		    if (tapep->unit_status & TPDEV_COMPACTING)
+			Fprint("Compacting ");
+		    if (tapep->unit_status & TPDEV_COMPRESSING)
+			Fprint("Compacting ");
+		    if (tapep->unit_status & TPDEV_BUFFERED)
+			Fprint("Buffered ");
+		    Fprint("\n");
+		}
+		Fprint("record_size             %ld\n", tapep->recordsz);
+		Fprint("density (current)       %ld BPI\n", tapep->density_bpi);
+		Fprint("density (on write)      %ld BPI\n", tapep->density_bpi_wrt);
+		if (tapep->media_status & TPDEV_POS_VALID) {
+			Fprint("Filemark Cnt            %ld\n", tapep->fm_cnt);
+			Fprint("Record Cnt              %ld\n", tapep->position);
+		} else {
+			Fprint("Filemark Cnt            %s\n", not_valid_str);
+			Fprint("Record Cnt              %s\n", not_valid_str);
+		}
+		Fprint("Class                   %d - ", ((int)tapep->class) & 0xFF);
+		switch (tapep->class) {
+		case TPDEV_CLS_DLT:
+			Fprint("DLT (tk)\n");
+			break;
+		case TPDEV_CLS_RDAT:
+			Fprint("RDAT\n");
+			break;
+		case TPDEV_CLS_9TRK:
+			Fprint("9TRK\n");
+			break;
+		case TPDEV_CLS_QIC:
+			Fprint("QIC\n");
+			break;
+		case TPDEV_CLS_8MM:
+			Fprint("8MM\n");
+			break;
+		case TPDEV_CLS_3480:
+			Fprint("3480\n");
+			break;
+		case TPDEV_CLS_UNKNOWN:
+			Fprint("<unspecified>\n");
+			break;
+		default:
+			Fprint("<unrecognized>\n");
+			break;
+		}
+		free(devinfop);
+	}
+	return;
 }
 
 #endif /* defined(ZULUOS) */
@@ -1174,46 +1174,46 @@ print_devio(int fd)
 void
 print_eei(DEV_EEI_STATUS *eei)
 {
- if (eei->version == 0) {
-     PrintAscii ("EEI Information", not_valid_str, PNL);
-     return;
- }
- Fprint("\nCAM Extended Error Information:\n\n");
- PrintHex ("EEI Version", eei->version, PNL);
- PrintAscii ("EEI Status", "", DNL);
- print_eei_status (eei->status);
+	if (eei->version == 0) {
+	    PrintAscii ("EEI Information", not_valid_str, PNL);
+	    return;
+	}
+	Fprint("\nCAM Extended Error Information:\n\n");
+	PrintHex ("EEI Version", eei->version, PNL);
+	PrintAscii ("EEI Status", "", DNL);
+	print_eei_status (eei->status);
 
- PrintHex ("EEI Valid Flags", eei->flags, DNL);
- Fprint (" - ");
- if (eei->flags & EEI_CAM_STATUS_VALID)
-  Fprint ("CAM_STATUS ");
- if (eei->flags & EEI_SCSI_STATUS_VALID)
-  Fprint ("SCSI_STATUS ");
- if (eei->flags & EEI_SCSI_SENSE_VALID)
-  Fprint ("SCSI_SENSE ");
- if (eei->flags & EEI_CAM_DATA_VALID)
-  Fprint ("CAM_DATA");
- Fprint("\n");
+	PrintHex ("EEI Valid Flags", eei->flags, DNL);
+	Fprint (" - ");
+	if (eei->flags & EEI_CAM_STATUS_VALID)
+		Fprint ("CAM_STATUS ");
+	if (eei->flags & EEI_SCSI_STATUS_VALID)
+		Fprint ("SCSI_STATUS ");
+	if (eei->flags & EEI_SCSI_SENSE_VALID)
+		Fprint ("SCSI_SENSE ");
+	if (eei->flags & EEI_CAM_DATA_VALID)
+		Fprint ("CAM_DATA");
+	Fprint("\n");
 
- PrintAscii ("CAM Status", "", DNL);
- if (eei->flags & EEI_CAM_STATUS_VALID) {
-     print_cam_status (eei->arch.cam.cam_status);
- } else {
-     Fprint ("%s\n", not_valid_str);
- }
+	PrintAscii ("CAM Status", "", DNL);
+	if (eei->flags & EEI_CAM_STATUS_VALID) {
+	    print_cam_status (eei->arch.cam.cam_status);
+	} else {
+	    Fprint ("%s\n", not_valid_str);
+	}
 
- PrintAscii ("SCSI Status", "", DNL);
- if (eei->flags & EEI_SCSI_STATUS_VALID) {
-     print_scsi_status(eei->arch.cam.scsi_status);
- } else {
-     Fprint ("%s\n", not_valid_str);
- }
+	PrintAscii ("SCSI Status", "", DNL);
+	if (eei->flags & EEI_SCSI_STATUS_VALID) {
+	    print_scsi_status(eei->arch.cam.scsi_status);
+	} else {
+	    Fprint ("%s\n", not_valid_str);
+	}
 
- if (eei->flags & EEI_SCSI_SENSE_VALID) {
-     print_sense_data (eei->arch.cam.scsi_sense);
- } else {
-     PrintAscii ("SCSI Sense Data", not_valid_str, PNL);
- }
+	if (eei->flags & EEI_SCSI_SENSE_VALID) {
+	    print_sense_data (eei->arch.cam.scsi_sense);
+	} else {
+	    PrintAscii ("SCSI Sense Data", not_valid_str, PNL);
+	}
 }
 
 /*
@@ -1222,17 +1222,17 @@ print_eei(DEV_EEI_STATUS *eei)
 void
 print_erreg(short erreg)
 {
- Fprint ("(%s)\n", cdbg_SenseKeyTable[erreg&0xF]);
- if (erreg & 0xE0) { /* check these three flags */
-  Fprint("\t\t\t");
-  if (erreg & FILE_MARK)
-   Fprint("FILE_MARK ");
-  if (erreg & EOM)
-   Fprint("EOM ");
-  if (erreg & ILI)
-   Fprint("ILI ");
-  Fprint("\n");
- }
+	Fprint ("(%s)\n", cdbg_SenseKeyTable[erreg&0xF]);
+	if (erreg & 0xE0) {	/* check these three flags */
+		Fprint("\t\t\t");
+		if (erreg & FILE_MARK)
+			Fprint("FILE_MARK ");
+		if (erreg & EOM)
+			Fprint("EOM ");
+		if (erreg & ILI)
+			Fprint("ILI ");
+		Fprint("\n");
+	}
 }
 
 /*
@@ -1241,9 +1241,9 @@ print_erreg(short erreg)
 void
 print_eei_status(u_int eei_status)
 {
- Fprint ("%s (%#x) - %s\n",
-  cdbg_EEIStatus(eei_status, CDBG_BRIEF),
-  eei_status, cdbg_EEIStatus(eei_status, CDBG_FULL));
+	Fprint ("%s (%#x) - %s\n",
+		cdbg_EEIStatus(eei_status, CDBG_BRIEF),
+		eei_status, cdbg_EEIStatus(eei_status, CDBG_FULL));
 }
 
 /*
@@ -1252,9 +1252,9 @@ print_eei_status(u_int eei_status)
 void
 print_cam_status(u_int cam_status)
 {
- Fprint ("%s (%#x) - %s\n",
-  cdbg_CamStatus(cam_status, CDBG_BRIEF),
-  cam_status, cdbg_CamStatus(cam_status, CDBG_FULL));
+	Fprint ("%s (%#x) - %s\n",
+		cdbg_CamStatus(cam_status, CDBG_BRIEF),
+		cam_status, cdbg_CamStatus(cam_status, CDBG_FULL));
 }
 
 /*
@@ -1263,9 +1263,9 @@ print_cam_status(u_int cam_status)
 void
 print_scsi_status(u_char scsi_status)
 {
- Fprint ("%s (%#x) - %s\n",
-  cdbg_ScsiStatus(scsi_status, CDBG_BRIEF),
-  scsi_status, cdbg_ScsiStatus(scsi_status, CDBG_FULL));
+	Fprint ("%s (%#x) - %s\n",
+		cdbg_ScsiStatus(scsi_status, CDBG_BRIEF),
+		scsi_status, cdbg_ScsiStatus(scsi_status, CDBG_FULL));
 }
 
 /*
@@ -1274,115 +1274,115 @@ print_scsi_status(u_char scsi_status)
 void
 print_sense_data(u_char *scsi_sense_ptr)
 {
- struct all_req_sns_data *sdp = (struct all_req_sns_data *) scsi_sense_ptr;
- int sense_length = (int) sdp->addition_len + 8;
- u_short ascq;
- u_int info;
+	struct all_req_sns_data *sdp = (struct all_req_sns_data *) scsi_sense_ptr;
+	int sense_length = (int) sdp->addition_len + 8;
+	u_short ascq;
+	u_int info;
 
- Fprint ("\nSCSI Request Sense Information:\n\n");
- PrintHex ("Error Code", sdp->error_code, DNL);
- if (sdp->error_code == ALL_IMED_ERR_CODE) {
-     Fprint (" (Current Error)\n");
- } else if (sdp->error_code == ALL_DEFER_ERR_CODE) {
-     Fprint (" (Deferred Error)\n");
- } else if (sdp->error_code == ALL_VENDOR_SPECIFIC) {
-     Fprint (" (Vendor Specific)\n");
- } else {
-     Fprint ("\n");
- }
- PrintHex ("Valid Bit", sdp->valid, DNL);
- Fprint ("%s\n", (sdp->valid) ? " (Information field is valid)" : "");
- PrintHex ("Segment Number", sdp->segment, PNL);
- PrintHex ("Sense Key", sdp->sns_key, DNL);
- Fprint (" (%s)\n", cdbg_SenseKeyTable[sdp->sns_key]);
- PrintHex ("Illegal Length", sdp->ili, PNL);
- PrintHex ("End Of Media", sdp->eom, PNL);
- PrintHex ("File Mark", sdp->filemark, PNL);
- info = (u_int)( ((u_int)sdp->info_byte3 << 24) +
-   ((u_int)sdp->info_byte2 << 16) +
-   ((u_int)sdp->info_byte1 << 8) +
-    (sdp->info_byte0) );
- PrintHex ("Information Field", info, (info) ? DNL : PNL);
- if (info) Fprint (" (%d)\n", info);
- PrintHex ("Additional Sense Length", sdp->addition_len, PNL);
+	Fprint ("\nSCSI Request Sense Information:\n\n");
+	PrintHex ("Error Code", sdp->error_code, DNL);
+	if (sdp->error_code == ALL_IMED_ERR_CODE) {
+	    Fprint (" (Current Error)\n");
+	} else if (sdp->error_code == ALL_DEFER_ERR_CODE) {
+	    Fprint (" (Deferred Error)\n");
+	} else if (sdp->error_code == ALL_VENDOR_SPECIFIC) {
+	    Fprint (" (Vendor Specific)\n");
+	} else {
+	    Fprint ("\n");
+	}
+	PrintHex ("Valid Bit", sdp->valid, DNL);
+	Fprint ("%s\n", (sdp->valid) ? " (Information field is valid)" : "");
+	PrintHex ("Segment Number", sdp->segment, PNL);
+	PrintHex ("Sense Key", sdp->sns_key, DNL);
+	Fprint (" (%s)\n", cdbg_SenseKeyTable[sdp->sns_key]);
+	PrintHex ("Illegal Length", sdp->ili, PNL);
+	PrintHex ("End Of Media", sdp->eom, PNL);
+	PrintHex ("File Mark", sdp->filemark, PNL);
+	info = (u_int)( ((u_int)sdp->info_byte3 << 24) +
+			((u_int)sdp->info_byte2 << 16) +
+			((u_int)sdp->info_byte1 << 8) +
+			 (sdp->info_byte0) );
+	PrintHex ("Information Field", info, (info) ? DNL : PNL);
+	if (info) Fprint (" (%d)\n", info);
+	PrintHex ("Additional Sense Length", sdp->addition_len, PNL);
 
- if ( (sense_length -= 8) > 0) {
-     info = (u_int)( ((u_int)sdp->cmd_specific3 << 24) +
-       ((u_int)sdp->cmd_specific2 << 16) +
-       ((u_int)sdp->cmd_specific1 << 8) +
-        (sdp->cmd_specific0) );
-     PrintHex ("Command Specific Information", info, (info) ? DNL : PNL);
-     if (info) Fprint (" (%d)\n", info);
-     sense_length -= 4;
- }
+	if ( (sense_length -= 8) > 0) {
+	    info = (u_int)( ((u_int)sdp->cmd_specific3 << 24) +
+			    ((u_int)sdp->cmd_specific2 << 16) +
+			    ((u_int)sdp->cmd_specific1 << 8) +
+			     (sdp->cmd_specific0) );
+	    PrintHex ("Command Specific Information", info, (info) ? DNL : PNL);
+	    if (info) Fprint (" (%d)\n", info);
+	    sense_length -= 4;
+	}
 
- if (sense_length > 0) {
-     char *ascq_msg = cdbg_SenseMessage (sdp);
-     ASCQ_TO_USHORT (sdp, ascq);
-     PrintAscii ("Additional Sense Code/Qualifier", "", DNL);
-     Fprint ("(%#x, %#x) = %s\n", sdp->asc, sdp->asq,
-     (ascq_msg) ? ascq_msg : "Unknown");
-     sense_length -= 2;
- }
+	if (sense_length > 0) {
+	    char *ascq_msg = cdbg_SenseMessage (sdp);
+	    ASCQ_TO_USHORT (sdp, ascq);
+	    PrintAscii ("Additional Sense Code/Qualifier", "", DNL);
+	    Fprint ("(%#x, %#x) = %s\n", sdp->asc, sdp->asq,
+					(ascq_msg) ? ascq_msg : "Unknown");
+	    sense_length -= 2;
+	}
 
- if (sense_length-- > 0) {
-     PrintHex ("Field Replaceable Unit Code", sdp->fru, PNL);
- }
+	if (sense_length-- > 0) {
+	    PrintHex ("Field Replaceable Unit Code", sdp->fru, PNL);
+	}
 
- /*
-  * Sense specific sense data.
-  */
- if (sense_length > 0) {
-     struct all_sks_ill_req *sksi;
-     sksi = &sdp->sense_specific.sks_ill_req;
-     if (sksi->sksv && (sdp->sns_key == ALL_ILLEGAL_REQ) ) {
-  u_short field_ptr = ((sksi->field_ptr1 << 8) + sksi->field_ptr0);
-  PrintHex ("Bit Pointer to Field in Error", sksi->bit_pointer,
-     (sksi->bit_pointer) ? DNL : PNL);
-  if (sksi->bpv) {
-      Fprint (" (valid, bit %u)\n", (sksi->bit_pointer + 1));
-  }
-  PrintHex ("Error Field Command/Data (C/D)", sksi->c_or_d, DNL);
-  Fprint (" (%s)\n", (sksi->c_or_d) ? "Illegal parameter in CDB bytes"
-        : "Illegal parameter in Data Sent");
-  PrintHex ("Byte Pointer to Field in Error", field_ptr,
-      (field_ptr) ? DNL : PNL);
-  if (field_ptr) {
-      Fprint (" (byte %u)\n", (field_ptr + 1)); /* zero-based */
-  }
-  sense_length -= sizeof(*sksi);
-     } else if (sksi->sksv && ( (sdp->sns_key == ALL_RECOVER_ERR) ||
-           (sdp->sns_key == ALL_HARDWARE_ERR) ||
-           (sdp->sns_key == ALL_MEDIUM_ERR) ) ) {
-  struct all_sks_retry_cnt *sksr;
-  sksr = &sdp->sense_specific.sks_retry_cnt;
-  PrintHex ("Actual Retry Count",
-       ((sksr->retry_cnt1 << 8) + sksr->retry_cnt0), PNL);
-  sense_length -= sizeof(*sksr);
-     } else if (sksi->sksv && (sdp->sns_key == ALL_NOT_READY) &&
-         (ascq == ASCQ_LUN_NRDY_FMT) ) {
-  u_short progress;
-  struct all_sks_prog_cnt *sksp;
-  sksp = &sdp->sense_specific.sks_prog_cnt;
-  progress = ((sksp->progress1 << 8) + sksp->progress0);
-  PrintDecimal ("Format Progress Indication", progress, DNL);
-  /*Fprint (" (%d%% complete)\n", FormatProgress(progress));*/
-  sense_length -= sizeof(*sksp);
-     } else {
-  PrintAscii ("Sense Specific Bytes", "", DNL);
-  PrintFields ((u_char *) &sdp->sense_specific,
-     sizeof(sdp->sense_specific));
-  sense_length -= sizeof(sdp->sense_specific);
-     }
- }
- /*
-  * Additional sense bytes (if any);
-  */
- if (sense_length > 0) {
-     PrintAscii ("Additional Sense Bytes", "", DNL);
-     PrintFields ((u_char *)sdp->additional_sense.other_sns,
-       sense_length);
- }
+	/*
+	 * Sense specific sense data.
+	 */
+	if (sense_length > 0) {
+	    struct all_sks_ill_req *sksi;
+	    sksi = &sdp->sense_specific.sks_ill_req;
+	    if (sksi->sksv && (sdp->sns_key == ALL_ILLEGAL_REQ) ) {
+		u_short field_ptr = ((sksi->field_ptr1 << 8) + sksi->field_ptr0);
+		PrintHex ("Bit Pointer to Field in Error", sksi->bit_pointer,
+					(sksi->bit_pointer) ? DNL : PNL);
+		if (sksi->bpv) {
+		    Fprint (" (valid, bit %u)\n", (sksi->bit_pointer + 1));
+		}
+		PrintHex ("Error Field Command/Data (C/D)", sksi->c_or_d, DNL);
+		Fprint (" (%s)\n", (sksi->c_or_d) ? "Illegal parameter in CDB bytes"
+						  : "Illegal parameter in Data Sent");
+		PrintHex ("Byte Pointer to Field in Error", field_ptr,
+						(field_ptr) ? DNL : PNL);
+		if (field_ptr) {
+		    Fprint (" (byte %u)\n", (field_ptr + 1)); /* zero-based */
+		}
+		sense_length -= sizeof(*sksi);
+	    } else if (sksi->sksv && ( (sdp->sns_key == ALL_RECOVER_ERR) ||
+				       (sdp->sns_key == ALL_HARDWARE_ERR) ||
+				       (sdp->sns_key == ALL_MEDIUM_ERR) ) ) {
+		struct all_sks_retry_cnt *sksr;
+		sksr = &sdp->sense_specific.sks_retry_cnt;
+		PrintHex ("Actual Retry Count",
+			    ((sksr->retry_cnt1 << 8) + sksr->retry_cnt0), PNL);
+		sense_length -= sizeof(*sksr);
+	    } else if (sksi->sksv && (sdp->sns_key == ALL_NOT_READY) &&
+				     (ascq == ASCQ_LUN_NRDY_FMT) ) {
+		u_short progress;
+		struct all_sks_prog_cnt *sksp;
+		sksp = &sdp->sense_specific.sks_prog_cnt;
+		progress = ((sksp->progress1 << 8) + sksp->progress0);
+		PrintDecimal ("Format Progress Indication", progress, DNL);
+		/*Fprint (" (%d%% complete)\n", FormatProgress(progress));*/
+		sense_length -= sizeof(*sksp);
+	    } else {
+		PrintAscii ("Sense Specific Bytes", "", DNL);
+		PrintFields ((u_char *) &sdp->sense_specific,
+					sizeof(sdp->sense_specific));
+		sense_length -= sizeof(sdp->sense_specific);
+	    }
+	}
+	/*
+	 * Additional sense bytes (if any);
+	 */
+	if (sense_length > 0) {
+	    PrintAscii ("Additional Sense Bytes", "", DNL);
+	    PrintFields ((u_char *)sdp->additional_sense.other_sns,
+							sense_length);
+	}
 }
 
 /*
@@ -1392,53 +1392,53 @@ print_sense_data(u_char *scsi_sense_ptr)
 void
 print_stat(long stat)
 {
- Fprint("                        ");
- if (stat & DEV_BOM)
-  Fprint("DEV_BOM ");
- if (stat & DEV_EOM)
-  Fprint("DEV_EOM ");
- if (stat & DEV_OFFLINE)
-  Fprint("DEV_OFFLINE ");
- if (stat & DEV_WRTLCK)
-  Fprint("DEV_WRTLCK ");
- if (stat & DEV_BLANK)
-  Fprint("DEV_BLANK ");
- if (stat & DEV_WRITTEN)
-  Fprint("DEV_WRITTEN ");
- if (stat & DEV_CSE)
-  Fprint("DEV_CSE ");
- if (stat & DEV_SOFTERR)
-  Fprint("DEV_SOFTERR ");
- if (stat & DEV_HARDERR)
-  Fprint("DEV_HARDERR ");
- if (stat & DEV_DONE)
-  Fprint("DEV_DONE ");
- if (stat & DEV_RETRY)
-  Fprint("DEV_RETRY ");
- if (stat & DEV_ERASED)
-  Fprint("DEV_ERASED ");
+	Fprint("                        ");
+	if (stat & DEV_BOM)
+		Fprint("DEV_BOM ");
+	if (stat & DEV_EOM)
+		Fprint("DEV_EOM ");
+	if (stat & DEV_OFFLINE)
+		Fprint("DEV_OFFLINE ");
+	if (stat & DEV_WRTLCK)
+		Fprint("DEV_WRTLCK ");
+	if (stat & DEV_BLANK)
+		Fprint("DEV_BLANK ");
+	if (stat & DEV_WRITTEN)
+		Fprint("DEV_WRITTEN ");
+	if (stat & DEV_CSE)
+		Fprint("DEV_CSE ");
+	if (stat & DEV_SOFTERR)
+		Fprint("DEV_SOFTERR ");
+	if (stat & DEV_HARDERR)
+		Fprint("DEV_HARDERR ");
+	if (stat & DEV_DONE)
+		Fprint("DEV_DONE ");
+	if (stat & DEV_RETRY)
+		Fprint("DEV_RETRY ");
+	if (stat & DEV_ERASED)
+		Fprint("DEV_ERASED ");
 #if defined(STEELOS)
- if (stat & DEV_TAPE_MARK)
-  Fprint("TPMARK ");
- if (stat & DEV_SHORT_REC)
-  Fprint("SHRTREC ");
- if (stat & DEV_TPMRK_PEND)
-  Fprint("TPMARK_PENDING ");
- if (stat & DEV_REWINDING)
-  Fprint("REWINDING ");
- if (stat & DEV_READ_OPP)
-  Fprint("READING_OPPOSITE ");
+	if (stat & DEV_TAPE_MARK)
+		Fprint("TPMARK ");
+	if (stat & DEV_SHORT_REC)
+		Fprint("SHRTREC ");
+	if (stat & DEV_TPMRK_PEND)
+		Fprint("TPMARK_PENDING ");
+	if (stat & DEV_REWINDING)
+		Fprint("REWINDING ");
+	if (stat & DEV_READ_OPP)
+		Fprint("READING_OPPOSITE ");
 #else /* !defined(STEELOS) */
- if (stat & CTAPE_TPMARK)
-  Fprint("TPMARK ");
- if (stat & CTAPE_SHRTREC)
-  Fprint("SHRTREC ");
- if (stat & CTAPE_TPMARK_PENDING)
-  Fprint("TPMARK_PENDING ");
- if (stat & CTAPE_REWINDING)
-  Fprint("REWINDING ");
+	if (stat & CTAPE_TPMARK)
+		Fprint("TPMARK ");
+	if (stat & CTAPE_SHRTREC)
+		Fprint("SHRTREC ");
+	if (stat & CTAPE_TPMARK_PENDING)
+		Fprint("TPMARK_PENDING ");
+	if (stat & CTAPE_REWINDING)
+		Fprint("REWINDING ");
 #endif /* defined(STEELOS) */
- Fprint("\n");
+	Fprint("\n");
 }
 
 /*
@@ -1452,321 +1452,321 @@ print_stat(long stat)
 void
 print_category(long stat, device_info_t *devinfop)
 {
- Fprint("                        ");
- if (stat & DEV_TPMARK)
-  Fprint("DEV_TPMARK ");
- if (stat & DEV_SHRTREC)
-  Fprint("DEV_SHRTREC ");
- if (stat & DEV_RDOPP)
-  Fprint("DEV_RDOPP ");
- if (stat & DEV_RWDING)
-  Fprint("DEV_RWDING ");
- if (stat & DEV_LOADER)
-  Fprint("DEV_LOADER ");
+	Fprint("                        ");
+	if (stat & DEV_TPMARK)
+		Fprint("DEV_TPMARK ");
+	if (stat & DEV_SHRTREC)
+		Fprint("DEV_SHRTREC ");
+	if (stat & DEV_RDOPP)
+		Fprint("DEV_RDOPP ");
+	if (stat & DEV_RWDING)
+		Fprint("DEV_RWDING ");
+	if (stat & DEV_LOADER)
+		Fprint("DEV_LOADER ");
 
- if (stat & DEV_800BPI) {
-  Fprint("DEV_800BPI");
- } else if (stat & DEV_1600BPI) {
-  Fprint("DEV_1600BPI");
- } else if (stat & DEV_6250BPI) {
-  Fprint("DEV_6250BPI");
- } else if (stat & DEV_6666BPI) {
-  Fprint("DEV_6666BPI");
- } else if (stat & DEV_10240BPI) {
-  Fprint("DEV_10240BPI");
- } else if (stat & DEV_38000BPI) {
-  Fprint("DEV_38000BPI");
+	if (stat & DEV_800BPI) {
+		Fprint("DEV_800BPI");
+	} else if (stat & DEV_1600BPI) {
+		Fprint("DEV_1600BPI");
+	} else if (stat & DEV_6250BPI) {
+		Fprint("DEV_6250BPI");
+	} else if (stat & DEV_6666BPI) {
+		Fprint("DEV_6666BPI");
+	} else if (stat & DEV_10240BPI) {
+		Fprint("DEV_10240BPI");
+	} else if (stat & DEV_38000BPI) {
+		Fprint("DEV_38000BPI");
 #ifdef DEV_38000_CP
- } else if (stat & DEV_38000_CP) {
-  Fprint("DEV_38000_CP");
- } else if (stat & DEV_76000BPI) {
-  Fprint("DEV_76000BPI");
- } else if (stat & DEV_76000_CP) {
-  Fprint("DEV_76000_CP");
+	} else if (stat & DEV_38000_CP) {
+		Fprint("DEV_38000_CP");
+	} else if (stat & DEV_76000BPI) {
+		Fprint("DEV_76000BPI");
+	} else if (stat & DEV_76000_CP) {
+		Fprint("DEV_76000_CP");
 #endif /* DEV_38000_CP */
- } else if (stat & DEV_8000_BPI) {
-  Fprint("DEV_8000_BPI");
- } else if (stat & DEV_10000_BPI) {
-  Fprint("DEV_10000_BPI");
- } else if (stat & DEV_16000_BPI) {
-  Fprint("DEV_16000_BPI");
- } else if (stat & DEV_54000_BPI) {
-  Fprint("DEV_54000_BPI");
- } else if (stat & DEV_61000_BPI) {
-  Fprint ("DEV_61000_BPI");
- } else if (stat & DEV_45434_BPI) {
-  Fprint ("DEV_45434_BPI");
- } else if (stat & DEV_42500_BPI) {
-  Fprint ("DEV_42500_BPI");
- } else if (stat & DEV_62500_BPI) {
-  Fprint ("DEV_62500_BPI");
- } else if (stat & DEV_40640_BPI) {
-  Fprint ("DEV_40640_BPI");
- } else if (stat & DEV_36000_BPI) {
-  Fprint ("DEV_36000_BPI");
- } else if (stat & DEV_81630_BPI) {
-  Fprint ("DEV_81630_BPI");
- } else {
-  if (devinfop && devinfop->v1.devinfo.tape.density_bpi) {
-   Fprint("DEV_%ld_%s",
-    devinfop->v1.devinfo.tape.density_bpi,
-    ((devinfop->v1.devinfo.tape.unit_status &
-     TPDEV_COMPACTING) ? "CP" : "BPI"));
-  } else
-   Fprint("<unspecified density>");
- }
- Fprint("\n");
+	} else if (stat & DEV_8000_BPI) {
+		Fprint("DEV_8000_BPI");
+	} else if (stat & DEV_10000_BPI) {
+		Fprint("DEV_10000_BPI");
+	} else if (stat & DEV_16000_BPI) {
+		Fprint("DEV_16000_BPI");
+	} else if (stat & DEV_54000_BPI) {
+		Fprint("DEV_54000_BPI");
+	} else if (stat & DEV_61000_BPI) {
+		Fprint ("DEV_61000_BPI");
+	} else if (stat & DEV_45434_BPI) {
+		Fprint ("DEV_45434_BPI");
+	} else if (stat & DEV_42500_BPI) {
+		Fprint ("DEV_42500_BPI");
+	} else if (stat & DEV_62500_BPI) {
+		Fprint ("DEV_62500_BPI");
+	} else if (stat & DEV_40640_BPI) {
+		Fprint ("DEV_40640_BPI");
+	} else if (stat & DEV_36000_BPI) {
+		Fprint ("DEV_36000_BPI");
+	} else if (stat & DEV_81630_BPI) {
+		Fprint ("DEV_81630_BPI");
+	} else {
+		if (devinfop && devinfop->v1.devinfo.tape.density_bpi) {
+			Fprint("DEV_%ld_%s",
+				devinfop->v1.devinfo.tape.density_bpi,
+				((devinfop->v1.devinfo.tape.unit_status &
+					TPDEV_COMPACTING) ? "CP" : "BPI"));
+		} else
+			Fprint("<unspecified density>");
+	}
+	Fprint("\n");
 }
 
 /*
  * Strings used by Common Printing Functions.
  */
-#define ASCII_FIELD "%34.34s: %s"
-#define EMPTY_FIELD "%36.36s%s"
-#define NUMERIC_FIELD "%34.34s: %lu"
-#define HEX_FIELD "%34.34s: %#lx"
-#define FIELD_WIDTH 36  /* The field width (see above). */
-#define DEFAULT_WIDTH 80  /* Default tty display width. */
+#define ASCII_FIELD	"%34.34s: %s"
+#define EMPTY_FIELD	"%36.36s%s"
+#define NUMERIC_FIELD	"%34.34s: %lu"
+#define HEX_FIELD	"%34.34s: %#lx"
+#define FIELD_WIDTH	36		/* The field width (see above).	*/
+#define DEFAULT_WIDTH	80		/* Default tty display width.	*/
 
-int OutputRadix = DEC_RADIX;  /* Default to decimal output. */
+int OutputRadix = DEC_RADIX;		/* Default to decimal output.	*/
 
 void
 PrintNumeric (char *field_str, u_long numeric_value, int nl_flag)
 {
- char *Fprint_str;
+	char *Fprint_str;
 
- if (OutputRadix == HEX_RADIX) {
-  Fprint_str = HEX_FIELD;
- } else {
-  Fprint_str = NUMERIC_FIELD;
- }
- Fprint (Fprint_str, field_str, numeric_value);
- if (nl_flag) Fprint ("\n");
+	if (OutputRadix == HEX_RADIX) {
+		Fprint_str = HEX_FIELD;
+	} else {
+		Fprint_str = NUMERIC_FIELD;
+	}
+	Fprint (Fprint_str, field_str, numeric_value);
+	if (nl_flag) Fprint ("\n");
 }
 
 void
 PrintDecimal (char *field_str, u_long numeric_value, int nl_flag)
 {
- char *Fprint_str = NUMERIC_FIELD;
+	char *Fprint_str = NUMERIC_FIELD;
 
- Fprint (Fprint_str, field_str, numeric_value);
- if (nl_flag) Fprint ("\n");
+	Fprint (Fprint_str, field_str, numeric_value);
+	if (nl_flag) Fprint ("\n");
 }
 
 void
 PrintHex (char *field_str, u_long numeric_value, int nl_flag)
 {
- char *Fprint_str = HEX_FIELD;
+	char *Fprint_str = HEX_FIELD;
 
- Fprint (Fprint_str, field_str, numeric_value);
- if (nl_flag) Fprint ("\n");
+	Fprint (Fprint_str, field_str, numeric_value);
+	if (nl_flag) Fprint ("\n");
 }
 
 void
 PrintAscii (char *field_str, char *ascii_str, int nl_flag)
 {
- int length = strlen(field_str);
- char *Fprint_str = ((length) ? ASCII_FIELD : EMPTY_FIELD);
+	int length = strlen(field_str);
+	char *Fprint_str = ((length) ? ASCII_FIELD : EMPTY_FIELD);
 
- Fprint (Fprint_str, field_str, ascii_str);
- if (nl_flag) Fprint ("\n");
+	Fprint (Fprint_str, field_str, ascii_str);
+	if (nl_flag) Fprint ("\n");
 }
 
 void
 PrintFields (u_char *bptr, int length)
 {
- int field_entrys = ((DEFAULT_WIDTH - FIELD_WIDTH) / 3) - 1;
- int count = 0;
+	int field_entrys = ((DEFAULT_WIDTH - FIELD_WIDTH) / 3) - 1;
+	int count = 0;
 
- while (count < length) {
-     if ((++count % field_entrys) == 0) {
-  Fprint("%02x\n", *bptr++);
-  if (count < length) PrintAscii("", "", DNL);
-     } else {
-  Fprint ("%02x ", *bptr++);
-     }
- }
- if (count % field_entrys) Fprint("\n");
+	while (count < length) {
+	    if ((++count % field_entrys) == 0) {
+		Fprint("%02x\n", *bptr++);
+		if (count < length) PrintAscii("", "", DNL);
+	    } else {
+		Fprint ("%02x ", *bptr++);
+	    }
+	}
+	if (count % field_entrys) Fprint("\n");
 }
 
 /*
  * CAM Status Code Table.
  */
 struct CAM_StatusTable {
- u_char cam_status;
- caddr_t status_msg_brief;
- caddr_t status_msg_full;
+	u_char	cam_status;
+	caddr_t	status_msg_brief;
+	caddr_t	status_msg_full;
 } cam_StatusTable[] = {
-    { CAM_REQ_INPROG,  "CAM_REQ_INPROG",
-    "CCB request is in progress"  },
-    { CAM_REQ_CMP ,  "CAM_REQ_CMP",
-    "CCB request completed w/out error" },
-    { CAM_REQ_ABORTED, "CAM_REQ_ABORTED",
-    "CCB request aborted by the host" },
-    { CAM_UA_ABORT,  "CAM_UA_ABORT",
-    "Unable to Abort CCB request"  },
-    { CAM_REQ_CMP_ERR, "CAM_REQ_CMP_ERR",
-    "CCB request completed with an error" },
-    { CAM_BUSY,  "CAM_BUSY",
-    "CAM subsystem is busy"   },
-    { CAM_REQ_INVALID, "CAM_REQ_INVALID",
-    "CCB request is invalid"  },
-    { CAM_PATH_INVALID, "CAM_PATH_INVALID",
-    "ID supplied is invalid"  },
-    { CAM_DEV_NOT_THERE, "CAM_DEV_NOT_THERE",
-    "device not installed/there"  },
-    { CAM_UA_TERMIO,  "CAM_UA_TERMIO",
-    "Unable to Terminate I/O CCB request" },
-    { CAM_SEL_TIMEOUT, "CAM_SEL_TIMEOUT",
-    "Target selection timeout"  },
-    { CAM_CMD_TIMEOUT, "CAM_CMD_TIMEOUT",
-    "Command timed out",   },
-    { CAM_MSG_REJECT_REC, "CAM_MSG_REJECT_REC",
-    "reject received"   },
-    { CAM_SCSI_BUS_RESET, "CAM_SCSI_BUS_RESET",
-    "bus reset sent/received"  },
-    { CAM_UNCOR_PARITY, "CAM_UNCOR_PARITY",
-    "parity error occurred"   },
-    { CAM_AUTOSENSE_FAIL, "CAM_AUTOSENSE_FAIL",
-    "Request sense cmd fail"  },
-    { CAM_NO_HBA,  "CAM_NO_HBA",
-    "No HBA detected Error"   },
-    { CAM_DATA_RUN_ERR, "CAM_DATA_RUN_ERR",
-    "overrun/underrun error"  },
-    { CAM_UNEXP_BUSFREE, "CAM_UNEXP_BUSFREE",
-    "Unexpected bus free"   },
-    { CAM_SEQUENCE_FAIL, "CAM_SEQUENCE_FAIL",
-    "bus phase sequence failure"  },
-    { CAM_CCB_LEN_ERR, "CAM_CCB_LEN_ERR",
-    "CCB length supplied is inadequate" },
-    { CAM_PROVIDE_FAIL, "CAM_PROVIDE_FAIL",
-    "to provide requ. capability"  },
-    { CAM_BDR_SENT,  "CAM_BDR_SENT",
-    "A SCSI BDR msg was sent to target" },
-    { CAM_REQ_TERMIO,  "CAM_REQ_TERMIO",
-    "CCB request terminated by the host" },
-    { CAM_HBA_ERR,  "CAM_HBA_ERR",
-    "Unrecoverable host bus adaptor error" },
-    { CAM_BUS_RESET_DENIED, "CAM_BUS_RESET_DENIED",
-    "bus reset denied"   },
-    { CAM_MUNSA_REJECT, "CAM_MUNSA_REJECT",
-    "rejecting device"   },
-    { CAM_IDE,  "CAM_IDE",
-    "Initiator Detected Error Received" },
-    { CAM_RESRC_UNAVAIL, "CAM_RESRC_UNAVAIL",
-    "Resource unavailable"   },
-    { CAM_UNACKED_EVENT, "CAM_UNACKED_EVENT",
-    "Unacknowledged event by host"  },
-    { CAM_MESSAGE_RECV, "CAM_MESSAGE_RECV",
-    "Msg received in Host Target Mode" },
-    { CAM_INVALID_CDB, "CAM_INVALID_CDB",
-    "Invalid CDB recvd in HT Mode"  },
-    { CAM_LUN_INVALID, "CAM_LUN_INVALID",
-    "LUN supplied is invalid"  },
-    { CAM_TID_INVALID, "CAM_TID_INVALID",
-    "Target ID supplied is invalid"  },
-    { CAM_FUNC_NOTAVAIL, "CAM_FUNC_NOTAVAIL",
-    "Requested function is not available" },
-    { CAM_NO_NEXUS,  "CAM_NO_NEXUS",
-    "Nexus is not established"  },
-    { CAM_IID_INVALID, "CAM_IID_INVALID",
-    "The initiator ID is invalid"  },
-    { CAM_CDB_RECVD,  "CAM_CDB_RECVD",
-    "The SCSI CDB has been received" },
-    { CAM_LUN_ALLREADY_ENAB, "CAM_LUN_ALLREADY_ENAB",
-    "LUN is already enabled"  },
-    { CAM_SCSI_BUSY,  "CAM_SCSI_BUSY",
-    "SCSI bus busy"    }
+    {	CAM_REQ_INPROG,		"CAM_REQ_INPROG",
+				"CCB request is in progress"		},
+    {	CAM_REQ_CMP ,		"CAM_REQ_CMP",
+				"CCB request completed w/out error"	},
+    {	CAM_REQ_ABORTED,	"CAM_REQ_ABORTED",
+				"CCB request aborted by the host"	},
+    {	CAM_UA_ABORT,		"CAM_UA_ABORT",
+				"Unable to Abort CCB request"		},
+    {	CAM_REQ_CMP_ERR,	"CAM_REQ_CMP_ERR",
+				"CCB request completed with an error"	},
+    {	CAM_BUSY,		"CAM_BUSY",
+				"CAM subsystem is busy"			},
+    {	CAM_REQ_INVALID,	"CAM_REQ_INVALID",
+				"CCB request is invalid"		},
+    {	CAM_PATH_INVALID,	"CAM_PATH_INVALID",
+				"ID supplied is invalid"		},
+    {	CAM_DEV_NOT_THERE,	"CAM_DEV_NOT_THERE",
+				"device not installed/there"		},
+    {	CAM_UA_TERMIO,		"CAM_UA_TERMIO",
+				"Unable to Terminate I/O CCB request"	},
+    {	CAM_SEL_TIMEOUT,	"CAM_SEL_TIMEOUT",
+				"Target selection timeout"		},
+    {	CAM_CMD_TIMEOUT,	"CAM_CMD_TIMEOUT",
+				"Command timed out",			},
+    {	CAM_MSG_REJECT_REC,	"CAM_MSG_REJECT_REC",
+				"reject received"			},
+    {	CAM_SCSI_BUS_RESET,	"CAM_SCSI_BUS_RESET",
+				"bus reset sent/received"		},
+    {	CAM_UNCOR_PARITY,	"CAM_UNCOR_PARITY",
+				"parity error occurred"			},
+    {	CAM_AUTOSENSE_FAIL,	"CAM_AUTOSENSE_FAIL",
+				"Request sense cmd fail"		},
+    {	CAM_NO_HBA,		"CAM_NO_HBA",
+				"No HBA detected Error"			},
+    {	CAM_DATA_RUN_ERR,	"CAM_DATA_RUN_ERR",
+				"overrun/underrun error"		},
+    {	CAM_UNEXP_BUSFREE,	"CAM_UNEXP_BUSFREE",
+				"Unexpected bus free"			},
+    {	CAM_SEQUENCE_FAIL,	"CAM_SEQUENCE_FAIL",
+				"bus phase sequence failure"		},
+    {	CAM_CCB_LEN_ERR,	"CAM_CCB_LEN_ERR",
+				"CCB length supplied is inadequate"	},
+    {	CAM_PROVIDE_FAIL,	"CAM_PROVIDE_FAIL",
+				"to provide requ. capability"		},
+    {	CAM_BDR_SENT,		"CAM_BDR_SENT",
+				"A SCSI BDR msg was sent to target"	},
+    {	CAM_REQ_TERMIO,		"CAM_REQ_TERMIO",
+				"CCB request terminated by the host"	},
+    {	CAM_HBA_ERR,		"CAM_HBA_ERR",
+				"Unrecoverable host bus adaptor error"	},
+    {	CAM_BUS_RESET_DENIED,	"CAM_BUS_RESET_DENIED",
+				"bus reset denied"			},
+    {	CAM_MUNSA_REJECT,	"CAM_MUNSA_REJECT",
+				"rejecting device"			},
+    {	CAM_IDE,		"CAM_IDE",
+				"Initiator Detected Error Received"	},
+    {	CAM_RESRC_UNAVAIL,	"CAM_RESRC_UNAVAIL",
+				"Resource unavailable"			},
+    {	CAM_UNACKED_EVENT,	"CAM_UNACKED_EVENT",
+				"Unacknowledged event by host"		},
+    {	CAM_MESSAGE_RECV,	"CAM_MESSAGE_RECV",
+				"Msg received in Host Target Mode"	},
+    {	CAM_INVALID_CDB,	"CAM_INVALID_CDB",
+				"Invalid CDB recvd in HT Mode"		},
+    {	CAM_LUN_INVALID,	"CAM_LUN_INVALID",
+				"LUN supplied is invalid"		},
+    {	CAM_TID_INVALID,	"CAM_TID_INVALID",
+				"Target ID supplied is invalid"		},
+    {	CAM_FUNC_NOTAVAIL,	"CAM_FUNC_NOTAVAIL",
+				"Requested function is not available"	},
+    {	CAM_NO_NEXUS,		"CAM_NO_NEXUS",
+				"Nexus is not established"		},
+    {	CAM_IID_INVALID,	"CAM_IID_INVALID",
+				"The initiator ID is invalid"		},
+    {	CAM_CDB_RECVD,		"CAM_CDB_RECVD",
+				"The SCSI CDB has been received"	},
+    {	CAM_LUN_ALLREADY_ENAB,	"CAM_LUN_ALLREADY_ENAB",
+				"LUN is already enabled"		},
+    {	CAM_SCSI_BUSY,		"CAM_SCSI_BUSY",
+				"SCSI bus busy"				}
 };
 static int cam_StatusEntrys =
-  sizeof(cam_StatusTable) / sizeof(cam_StatusTable[0]);
+		sizeof(cam_StatusTable) / sizeof(cam_StatusTable[0]);
 
 char *
 cdbg_CamStatus (u_char cam_status, int report_format)
 {
- struct CAM_StatusTable *cst = cam_StatusTable;
- I32 entrys;
+	struct CAM_StatusTable *cst = cam_StatusTable;
+	I32 entrys;
 
- for (entrys = 0; entrys < cam_StatusEntrys; cst++, entrys++) {
-     if (cst->cam_status == (cam_status&CAM_STATUS_MASK)) {
-  if (report_format == CDBG_BRIEF) {
-      return (cst->status_msg_brief);
-  } else {
-      return (cst->status_msg_full);
-  }
-     }
- }
- return ((report_format) ? "Unknown CAM Status" : "Unknown");
+	for (entrys = 0; entrys < cam_StatusEntrys; cst++, entrys++) {
+	    if (cst->cam_status == (cam_status&CAM_STATUS_MASK)) {
+		if (report_format == CDBG_BRIEF) {
+		    return (cst->status_msg_brief);
+		} else {
+		    return (cst->status_msg_full);
+		}
+	    }
+	}
+	return ((report_format) ? "Unknown CAM Status" : "Unknown");
 }
 
 /*
  * CAM Status Code Table.
  */
 struct SCSI_StatusTable {
- u_char scsi_status;
- caddr_t status_msg_brief;
- caddr_t status_msg_full;
+	u_char	scsi_status;
+	caddr_t	status_msg_brief;
+	caddr_t	status_msg_full;
 } scsi_StatusTable[] = {
-    { SCSI_STAT_GOOD,   "SCSI_STAT_GOOD",
- /* 0x00 */ "Command successfully completed"  },
-    { SCSI_STAT_CHECK_CONDITION, "SCSI_STAT_CHECK_CONDITION",
- /* 0x02 */ "Error, exception, or abnormal condition" },
-    { SCSI_STAT_CONDITION_MET, "SCSI_STAT_CONDITION_MET",
- /* 0x04 */ "Requested operation satisifed"  },
-    { SCSI_STAT_BUSY,   "SCSI_STAT_BUSY",
- /* 0x08 */ "Target is BUSY"    },
-    { SCSI_STAT_INTERMEDIATE,  "SCSI_STAT_INTERMEDIATE",
- /* 0x10 */ "Linked commands successfully completed" },
-    { SCSI_STAT_INTER_COND_MET, "SCSI_STAT_INTER_COND_MET",
- /* 0x14 */ "Intermediate-Condition met"   },
-    { SCSI_STAT_RESERVATION_CONFLICT, "SCSI_STAT_RESERVATION_CONFLICT",
- /* 0x18 */ "Target reservation conflict"  },
-    { SCSI_STAT_COMMAND_TERMINATED, "SCSI_STAT_COMMAND_TERMINATED",
- /* 0x22 */ "Command terminated by Terminate I/O Message"},
-    { SCSI_STAT_QUEUE_FULL,  "SCSI_STAT_QUEUE_FULL",
- /* 0x28 */ "Command tag queue is full"   }
+    {	SCSI_STAT_GOOD,			"SCSI_STAT_GOOD",
+	/* 0x00 */ "Command successfully completed"		},
+    {	SCSI_STAT_CHECK_CONDITION,	"SCSI_STAT_CHECK_CONDITION",
+	/* 0x02 */ "Error, exception, or abnormal condition"	},
+    {	SCSI_STAT_CONDITION_MET,	"SCSI_STAT_CONDITION_MET",
+	/* 0x04 */ "Requested operation satisifed"		},
+    {	SCSI_STAT_BUSY,			"SCSI_STAT_BUSY",
+	/* 0x08 */ "Target is BUSY"				},
+    {	SCSI_STAT_INTERMEDIATE,		"SCSI_STAT_INTERMEDIATE",
+	/* 0x10 */ "Linked commands successfully completed"	},
+    {	SCSI_STAT_INTER_COND_MET,	"SCSI_STAT_INTER_COND_MET",
+	/* 0x14 */ "Intermediate-Condition met"			},
+    {	SCSI_STAT_RESERVATION_CONFLICT,	"SCSI_STAT_RESERVATION_CONFLICT",
+	/* 0x18 */ "Target reservation conflict"		},
+    {	SCSI_STAT_COMMAND_TERMINATED,	"SCSI_STAT_COMMAND_TERMINATED",
+	/* 0x22 */ "Command terminated by Terminate I/O Message"},
+    {	SCSI_STAT_QUEUE_FULL,		"SCSI_STAT_QUEUE_FULL",
+	/* 0x28 */ "Command tag queue is full"			}
 };
 static int scsi_StatusEntrys =
-  sizeof(scsi_StatusTable) / sizeof(scsi_StatusTable[0]);
+		sizeof(scsi_StatusTable) / sizeof(scsi_StatusTable[0]);
 
 char *
 cdbg_ScsiStatus (u_char scsi_status, int report_format)
 {
- struct SCSI_StatusTable *cst = scsi_StatusTable;
- I32 entrys;
+	struct SCSI_StatusTable *cst = scsi_StatusTable;
+	I32 entrys;
 
- for (entrys = 0; entrys < scsi_StatusEntrys; cst++, entrys++) {
-     if (cst->scsi_status == scsi_status) {
-  if (report_format == CDBG_BRIEF) {
-      return (cst->status_msg_brief);
-  } else {
-      return (cst->status_msg_full);
-  }
-     }
- }
- return ((report_format) ? "Unknown SCSI Status" : "Unknown");
+	for (entrys = 0; entrys < scsi_StatusEntrys; cst++, entrys++) {
+	    if (cst->scsi_status == scsi_status) {
+		if (report_format == CDBG_BRIEF) {
+		    return (cst->status_msg_brief);
+		} else {
+		    return (cst->status_msg_full);
+		}
+	    }
+	}
+	return ((report_format) ? "Unknown SCSI Status" : "Unknown");
 }
 
 /*
  * Sense Key Error Table.
  */
 char *cdbg_SenseKeyTable[] = {
- "NO SENSE - No error or no sense information",  /* 0x00 */
- "RECOVERED ERROR - Recovery action performed",  /* 0x01 */
- "NOT READY - Logical unit is NOT ready",  /* 0x02 */
- "MEDIUM ERROR - Nonrecoverable medium error",  /* 0x03 */
- "HARDWARE ERROR - Nonrecoverable hardware error", /* 0x04 */
- "ILLEGAL REQUEST - Illegal request or CDB parameter", /* 0x05 */
- "UNIT ATTENTION - Medium changed or target reset", /* 0x06 */
- "DATA PROTECT - Data protected from this operation", /* 0x07 */
- "BLANK CHECK - No-data condition occured",  /* 0x08 */
- "Vendor Specific",     /* 0x09 */
- "COPY ABORTED - Copy command was aborted",  /* 0x0a */
- "ABORTED COMMAND - Target aborted command",  /* 0x0b */
- "EQUAL - Search satisfied with equal comparison", /* 0x0c */
- "VOLUME OVERFLOW - Physical end of media detected", /* 0x0d */
- "MISCOMPARE - Source and medium data differ",  /* 0x0e */
- "RESERVED",      /* 0x0f */
+	"NO SENSE - No error or no sense information",		/* 0x00 */
+	"RECOVERED ERROR - Recovery action performed",		/* 0x01 */
+	"NOT READY - Logical unit is NOT ready",		/* 0x02 */
+	"MEDIUM ERROR - Nonrecoverable medium error",		/* 0x03 */
+	"HARDWARE ERROR - Nonrecoverable hardware error",	/* 0x04 */
+	"ILLEGAL REQUEST - Illegal request or CDB parameter",	/* 0x05 */
+	"UNIT ATTENTION - Medium changed or target reset",	/* 0x06 */
+	"DATA PROTECT - Data protected from this operation",	/* 0x07 */
+	"BLANK CHECK - No-data condition occured",		/* 0x08 */
+	"Vendor Specific",					/* 0x09 */
+	"COPY ABORTED - Copy command was aborted",		/* 0x0a */
+	"ABORTED COMMAND - Target aborted command",		/* 0x0b */
+	"EQUAL - Search satisfied with equal comparison",	/* 0x0c */
+	"VOLUME OVERFLOW - Physical end of media detected",	/* 0x0d */
+	"MISCOMPARE - Source and medium data differ",		/* 0x0e */
+	"RESERVED",						/* 0x0f */
 };
 
 /*
@@ -1984,7 +1984,7 @@ struct sense_entry SenseCodeTable[] = {
 { 0x0C, 0x02, /*D   W  O  */ "Write error - auto reallocation failed" },
 { 0x0C, 0x01, /*D   W  O  */ "Write error recovered with auto reallocation" },
 { 0x27, 0x00, /*DT  W  O  */ "Write protected" },
-/*=================+
+/*=================================================================================+
  | SCSI-3 Additions:                                                               |
  |                                                                                 |
  |              D - DIRECT ACCESS DEVICE (SBC)                Device column key    |
@@ -2135,10 +2135,10 @@ cdbg_SenseMessage (struct all_req_sns_data *sdp)
       int entrys = 0;
 
       for (se = SenseCodeTable; entrys < SenseCodeEntrys; se++, entrys++) {
- if ( (se->sense_code == sdp->asc) &&
-      (se->sense_qualifier == sdp->asq) ) {
-     return (se->sense_message);
- }
+	if ( (se->sense_code == sdp->asc) &&
+	     (se->sense_qualifier == sdp->asq) ) {
+	    return (se->sense_message);
+	}
       }
       return ((char *) 0);
 }
@@ -2147,67 +2147,67 @@ cdbg_SenseMessage (struct all_req_sns_data *sdp)
  * EEI Status Code Table.
  */
 struct EEI_StatusTable {
- u_int eei_status;
- caddr_t status_msg_brief;
- caddr_t status_msg_full;
+	u_int	eei_status;
+	caddr_t	status_msg_brief;
+	caddr_t	status_msg_full;
 } eei_StatusTable[] = {
-    { EEI_NO_STATUS,  "EEI_NO_STATUS",
-    "No EEI status available"  },
-    { EEI_INVALID_PARAM, "EEI_INVALID_PARAM",
-    "Invalid software parameter provided" },
-    { EEI_MALLOC_FAILURE, "EEI_MALLOC_FAILURE",
-    "Memory allocation failed"  },
-    { EEI_CNTBUSY_FAILURE, "EEI_CNTBUSY_FAILURE",
-    "HBA/Controller Busy (retriable)" },
-    { EEI_GROSSSW_FAILURE, "EEI_GROSSSW_FAILURE",
-    "Gross internal software error"  },
-    { EEI_DEVBUSY_FAILURE, "EEI_DEVBUSY_FAILURE",
-    "Device is busy (retriable)"  },
-    { EEI_DEVBIO_FAILURE, "EEI_DEVBIO_FAILURE",
-    "Device/bus I/O error (retriable)" },
-    { EEI_DEVSOFT_FAILURE, "EEI_DEVSOFT_FAILURE",
-    "Device medium error (soft error)" },
-    { EEI_TAPE_POS_LOST, "EEI_TAPE_POS_LOST",
-    "Tape position lost"   },
-    { EEI_DEVREQ_FAILURE, "EEI_DEVREQ_FAILURE",
-    "Device request illegal/unsupported" },
-    { EEI_DEVSTATE_FAILURE, "EEI_DEVSTATE_FAILURE",
-    "Device inoperable (needs initialize)" },
-    { EEI_DEVHARD_FAILURE, "EEI_DEVHARD_FAILURE",
-    "Device hardware error (hard error)" },
-    { EEI_ABORTIO_FAILURE, "EEI_ABORTIO_FAILURE",
-    "Abort/Timed out I/O occured"  },
-    { EEI_CNTRLR_FAILURE, "EEI_CNTRLR_FAILURE",
-    "HBA/Controller failure (retriable)" },
-    { EEI_CXALLOC_FAILURE, "EEI_CXALLOC_FAILURE",
-    "Shared Device allocation failed" },
-    { EEI_RESERVE_PENDING, "EEI_RESERVE_PENDING",
-    "Shared Device Re-reserve pending" },
-    { EEI_DEVPATH_FAILURE, "EEI_DEVPATH_FAILURE",
-    "Device not there (powered off?)" },
-    { EEI_DEVPATH_RESET, "EEI_DEVPATH_RESET",
-    "Device/bus reset occured"  },
-    { EEI_DEVPATH_CONFLICT, "EEI_DEVPATH_CONFLICT",
-    "Device access denied (path conflict)" }
+    {	EEI_NO_STATUS,		"EEI_NO_STATUS",
+				"No EEI status available"		},
+    {	EEI_INVALID_PARAM,	"EEI_INVALID_PARAM",
+				"Invalid software parameter provided"	},
+    {	EEI_MALLOC_FAILURE,	"EEI_MALLOC_FAILURE",
+				"Memory allocation failed"		},
+    {	EEI_CNTBUSY_FAILURE,	"EEI_CNTBUSY_FAILURE",
+				"HBA/Controller Busy (retriable)"	},
+    {	EEI_GROSSSW_FAILURE,	"EEI_GROSSSW_FAILURE",
+				"Gross internal software error"		},
+    {	EEI_DEVBUSY_FAILURE,	"EEI_DEVBUSY_FAILURE",
+				"Device is busy (retriable)"		},
+    {	EEI_DEVBIO_FAILURE,	"EEI_DEVBIO_FAILURE",
+				"Device/bus I/O error (retriable)"	},
+    {	EEI_DEVSOFT_FAILURE,	"EEI_DEVSOFT_FAILURE",
+				"Device medium error (soft error)"	},
+    {	EEI_TAPE_POS_LOST,	"EEI_TAPE_POS_LOST",
+				"Tape position lost"			},
+    {	EEI_DEVREQ_FAILURE,	"EEI_DEVREQ_FAILURE",
+				"Device request illegal/unsupported"	},
+    {	EEI_DEVSTATE_FAILURE,	"EEI_DEVSTATE_FAILURE",
+				"Device inoperable (needs initialize)"	},
+    {	EEI_DEVHARD_FAILURE,	"EEI_DEVHARD_FAILURE",
+				"Device hardware error (hard error)"	},
+    {	EEI_ABORTIO_FAILURE,	"EEI_ABORTIO_FAILURE",
+				"Abort/Timed out I/O occured"		},
+    {	EEI_CNTRLR_FAILURE,	"EEI_CNTRLR_FAILURE",
+				"HBA/Controller failure (retriable)"	},
+    {	EEI_CXALLOC_FAILURE,	"EEI_CXALLOC_FAILURE",
+				"Shared Device allocation failed"	},
+    {	EEI_RESERVE_PENDING,	"EEI_RESERVE_PENDING",
+				"Shared Device Re-reserve pending"	},
+    {	EEI_DEVPATH_FAILURE,	"EEI_DEVPATH_FAILURE",
+				"Device not there (powered off?)"	},
+    {	EEI_DEVPATH_RESET,	"EEI_DEVPATH_RESET",
+				"Device/bus reset occured"		},
+    {	EEI_DEVPATH_CONFLICT,	"EEI_DEVPATH_CONFLICT",
+				"Device access denied (path conflict)"	}
 };
 static int eei_StatusEntrys =
-  sizeof(eei_StatusTable) / sizeof(eei_StatusTable[0]);
+		sizeof(eei_StatusTable) / sizeof(eei_StatusTable[0]);
 
 char *
 cdbg_EEIStatus (u_int eei_status, int report_format)
 {
- struct EEI_StatusTable *est = eei_StatusTable;
- int entrys;
+	struct EEI_StatusTable *est = eei_StatusTable;
+	int entrys;
 
- for (entrys = 0; entrys < eei_StatusEntrys; est++, entrys++) {
-     if (est->eei_status == eei_status) {
-  if (report_format == CDBG_BRIEF) {
-      return (est->status_msg_brief);
-  } else {
-      return (est->status_msg_full);
-  }
-     }
- }
- return ((report_format) ? "Unknown Status" : "Unknown");
+	for (entrys = 0; entrys < eei_StatusEntrys; est++, entrys++) {
+	    if (est->eei_status == eei_status) {
+		if (report_format == CDBG_BRIEF) {
+		    return (est->status_msg_brief);
+		} else {
+		    return (est->status_msg_full);
+		}
+	    }
+	}
+	return ((report_format) ? "Unknown Status" : "Unknown");
 }
 #endif /* defined(EEI) */

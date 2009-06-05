@@ -1,5 +1,5 @@
 /* -*- linux-c -*-
- *
+ * 
  * (C) Copyright IBM Corp. 2004
  *
  * This program is distributed in the hope that it will be useful,
@@ -28,47 +28,47 @@
 #include <tstubs_snmp.h>
 #include <thotswap.h>
 
-int main(int argc, char **argv)
+int main(int argc, char **argv) 
 {
 
-/* struct snmp_bc_hnd snmp_handle; */
- struct oh_handler_state hnd  {
-  .rptcache  NULL,
-  .eventq  NULL,
-  .config  NULL,
-  .data  NULL,
- };
+/*	struct snmp_bc_hnd snmp_handle; */
+	struct oh_handler_state hnd = {
+		.rptcache = NULL,
+		.eventq = NULL,
+		.config = NULL,
+		.data = NULL,
+	};
 
- SaHpiResourceIdT        id  1;
- SaHpiHsStateT           state  SAHPI_HS_STATE_NOT_PRESENT;
- SaHpiHsIndicatorStateT  ind_state  SAHPI_HS_INDICATOR_OFF;
- SaHpiHsActionT          act  SAHPI_HS_ACTION_INSERTION;
- SaErrorT                err;
+	SaHpiResourceIdT        id = 1;
+	SaHpiHsStateT           state = SAHPI_HS_STATE_NOT_PRESENT;
+	SaHpiHsIndicatorStateT  ind_state = SAHPI_HS_INDICATOR_OFF;
+	SaHpiHsActionT          act = SAHPI_HS_ACTION_INSERTION;
+	SaErrorT                err;
 
- err  snmp_bc_get_indicator_state((void *)&hnd, id, &ind_state);
- if (err ! SA_ERR_HPI_INVALID_CMD) {
-  printf("snmp_bc_get_indicator_state should return SA_ERR_HPI_INVALID_CMD\n");
-  return -1;
- }
+	err = snmp_bc_get_indicator_state((void *)&hnd, id, &ind_state);
+	if (err != SA_ERR_HPI_INVALID_CMD) {
+		printf("snmp_bc_get_indicator_state should return SA_ERR_HPI_INVALID_CMD\n");
+		return -1; 
+	}
 
- err  snmp_bc_set_indicator_state((void *)&hnd, id, ind_state);
- if (err ! SA_ERR_HPI_INVALID_CMD) {
-  printf("snmp_bc_set_indicator_state should return SA_ERR_HPI_INVALID_CMD\n");
-  return -1; }
+	err = snmp_bc_set_indicator_state((void *)&hnd, id, ind_state);
+	if (err != SA_ERR_HPI_INVALID_CMD) {
+		printf("snmp_bc_set_indicator_state should return SA_ERR_HPI_INVALID_CMD\n");
+		return -1; }
+	    
+	err = snmp_bc_set_hotswap_state((void *)&hnd, id, state);
+	if (err != SA_ERR_HPI_UNSUPPORTED_API) {
+		printf("snmp_bc_set_hotswap_state should return SA_ERR_HPI_UNSUPPORTED_API\n");
+		return -1;
+	}
 
- err  snmp_bc_set_hotswap_state((void *)&hnd, id, state);
- if (err ! SA_ERR_HPI_UNSUPPORTED_API) {
-  printf("snmp_bc_set_hotswap_state should return SA_ERR_HPI_UNSUPPORTED_API\n");
-  return -1;
- }
+	err = snmp_bc_request_hotswap_action((void *)&hnd, id, act);
+	if (err != SA_ERR_HPI_UNSUPPORTED_API) {
+		printf("snmp_bc_request_hotswap_action should return SA_ERR_HPI_UNSUPPORTED_API\n");
+		return -1;
+	}
 
- err  snmp_bc_request_hotswap_action((void *)&hnd, id, act);
- if (err ! SA_ERR_HPI_UNSUPPORTED_API) {
-  printf("snmp_bc_request_hotswap_action should return SA_ERR_HPI_UNSUPPORTED_API\n");
-  return -1;
- }
-
- return 0;
+	return 0;
 }
 
 /****************

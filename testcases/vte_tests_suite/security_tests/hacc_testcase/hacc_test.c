@@ -1,22 +1,22 @@
-/*====================*/
+/*================================================================================================*/
 /**
     @file   hacc_test.c
 
     @brief  hacc API test
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                 Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-S.ZAVJALOV/zvjs001c          10/08/2004     TLSbo40418   Initial version
+S.ZAVJALOV/zvjs001c          10/08/2004     TLSbo40418   Initial version 
 S.ZAVJALOV/zvjs001c          01/10/2004     TLSbo40649   Version after inspection
 S.ZAVJALOV/zvjs001c          11/10/2004     TLSbo43283   Version for 1.5 release kernel
 S.ZAVJALOV/zvjs001c          04/11/2004     TLSbo43890   Chages for virt_to_phys function
@@ -24,22 +24,22 @@ S.ZAVJALOV/zvjs001c          04/07/2005     TLSbo51629   Change hacc test strate
 A.URUSOV                     14/09/2005     TLSbo53754   VT_hacc_test_setup warning eliminated,
                                                          data2hash_len type is specified
 A.URUSOV                     18/10/2005     TLSbo57061   New test functions runs are added
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
 Total Tests: 1
 
 Test Executable Name:  hacc_test
 
 Test Strategy:  Examine the HAC module functions
-=====================*/
+=================================================================================================*/
 
 #include <sys/mman.h>
 #include <sys/stat.h>
 
 #include "hacc_test.h"
 
-/*====================*/
+/*================================================================================================*/
 
 extern char *TCID;
 
@@ -52,7 +52,7 @@ extern short int stop_flag;
 int     fd = 0;
 hacc_test_param kernel_arg;
 
-/*====================*/
+/*================================================================================================*/
 int VT_hacc_test(void)
 {
         int     VT_rv = TFAIL;
@@ -100,7 +100,7 @@ int VT_hacc_test(void)
         return VT_rv;
 }
 
-/*====================*/
+/*================================================================================================*/
 int VT_hacc_test_setup(void)
 {
         char    f_name[256] = "/dev/";
@@ -121,7 +121,7 @@ int VT_hacc_test_setup(void)
         return VT_rv;
 }
 
-/*====================*/
+/*================================================================================================*/
 int VT_hacc_test_cleanup(void)
 {
         if (fd > 0)
@@ -129,7 +129,7 @@ int VT_hacc_test_cleanup(void)
         return TPASS;
 }
 
-/*====================*/
+/*================================================================================================*/
 void help(void)
 {
         printf("\nUsage: %s\n", TCID);

@@ -1,0 +1,16 @@
+#Verification Tests Command File
+
+#VT Watchdog drivers tests
+#files: watchdog_test.ko
+#files: watchdog_testapp_1
+
+#Watchdog
+TGE-LV-WDG-prepare insmod $LTPROOT/testcases/bin/watchdog_test.ko
+TGE-LV-WDOG-0010 watchdog_testapp_1 -W 0
+#TGE-LV-WDOG-0020 watchdog_testapp_1 -W 1
+TGE-LV-WDOG-0030 watchdog_testapp_1 -W 2
+TGE-LV-WDOG-0040 watchdog_testapp_1 -W 3
+TGE-LV-WDOG-0050 watchdog_testapp_1 -W 4
+
+
+#WARNING the commented tests are not automatical tests

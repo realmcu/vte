@@ -17,7 +17,7 @@ fi
 
 # where the programs are
 
-NETHOME=/usr/bin
+NETHOME=${LTPROOT}/testcases/bin
 
 # at what port will netserver be waiting? If you decide to run
 # netserver at a differnet port than the default of 12865, then set

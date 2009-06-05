@@ -4,7 +4,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ##############################################################################
 #
 #   @file   Makefile
@@ -25,7 +25,7 @@
 #
 ##############################################################################
 CFLAGS+=          -Wall -I../../../../include
-LOADLIBES+=       -L../../../../lib -lltp
+LOADLIBES+=       -L../../../../lib -lltp 
 
 SRCS=$(wildcard *.c)
 OBJS=$(patsubst %.c,%.o,$(SRCS))

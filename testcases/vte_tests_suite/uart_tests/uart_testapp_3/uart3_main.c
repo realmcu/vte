@@ -1,43 +1,43 @@
-/*===================*/
-/**
-    @file   uart3_main.c
+/*===============================================================================================*/
+/** 
+    @file   uart3_main.c 
 
     @brief  First UART test main function. */
-/*=====================
+/*================================================================================================= 
 
-    Copyright (C) 2007, Freescale Semiconductor, Inc. All Rights Reserved
-    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-    Freescale Semiconductor, Inc.
+    Copyright (C) 2007, Freescale Semiconductor, Inc. All Rights Reserved 
+    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT 
+    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF 
+    Freescale Semiconductor, Inc. 
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 C.GAGNERAUD/cgag1c           01/06/2005    TLSbo45060    Rework and improve UART test application
-I.Inkina/nknl001             22/08/2005    TLSbo52626    Update Uart test
+I.Inkina/nknl001             22/08/2005    TLSbo52626    Update Uart test 
 E.Gromazina                  14/09/2005                         Min fix
 D.Kardakov                   04/06/2007    ENGR30041     New transfer data test was added
 D.Kardakov                   05/02/2007    ENGR30041     New options -J,  -Q,  -D were added.
-====================
+====================================================================================================
 Portability:  ARM GCC  gnu compiler
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
 Total Tests:           1
 Test Executable Name:  uart_testapp_3
-Test Strategy:
-=====================*/
+Test Strategy:         
+=================================================================================================*/
 
 
 #ifdef __cplusplus
-extern "C"{
+extern "C"{ 
 #endif
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <stdlib.h>
 #include <unistd.h>
@@ -51,16 +51,16 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "uart_test_3.h"
 #include "uart_test_addon.h"
-/*======================
+/*==================================================================================================
     LOCAL MACROS
-    ======================*/
+    ==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
     LOCAL VARIABLES
-    ======================*/
+    ==================================================================================================*/
 
-/*
+/* 
 * Options flags and arguments
 */
 int     uart_speed_flag = 0;
@@ -92,10 +92,10 @@ int     host_to_host_test_flag = 0;
 int     exchange_direction = 0; // 0  - receiving, 1 - transmission
 int     thread_sleep_time = 0;
 char  * transmit_filename = NULL;
-/*======================
+/*==================================================================================================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
-/*
+==================================================================================================*/
+/* 
 *Command line options descriptor
 */
 #define OPT_DESC(fmt, var) {fmt, &var##_flag, &var##_arg}
@@ -121,19 +121,19 @@ typedef struct
         int     value;
 } testcase_choice_t;
 
-/*======================
+/*==================================================================================================
                                         LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 /* Extern Global Variables */
 extern int Tst_count;   /* counter for tst_xxx routines.  */
 extern char *TESTDIR;   /* temporary dir created by tst_tmpdir(viod) */
@@ -144,16 +144,16 @@ int     TST_TOTAL = 1;  /* total number of tests in this file.  */
 
 
 
-/*======================
+/*==================================================================================================
                                     GLOBAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 void    cleanup(void);
 void    setup(void);
 int     main(int argc, char **argv);
 
-/*======================
+/*==================================================================================================
                                     LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 static parity_type_t str2parity(char *str);
 
 /* static flow_ctrl_t str2flowctrl(char *str); */
@@ -171,12 +171,12 @@ static testcase_choice_t testcase_choices[] = {
 };
 static int testcase = -1;
 
-/*======================
+/*==================================================================================================
                                         GLOBAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= cleanup =*/
+/*================================================================================================*/
+/*===== cleanup =====*/
 /**
 @brief  Performs all one time clean up for this test on successful
 completion,  premature exit or  failure. Closes all temporary
@@ -186,15 +186,15 @@ appropriate return code by calling tst_exit(void) function.cleanup
 @param  Input :      None.
 Output:      None.
 @return Nothing*/
-/*====================*/
+/*================================================================================================*/
 void cleanup(void)
 {
         /* VTE : Actions needed to get a stable target environment */
         int     VT_rv = TFAIL;
-
+        
         if (host_to_host_test_flag == 0)
                 VT_rv = VT_uart_test3_cleanup();
-        else
+        else 
                 VT_rv = VT_uart_addon_cleanup();
         if (VT_rv != TPASS)
         {
@@ -204,21 +204,21 @@ void cleanup(void)
         tst_exit();
 }
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= help =*/
+/*================================================================================================*/
+/*===== help =====*/
 /**
 @brief  Inform of the available options and the associated parameters
 
 @param  Input :      None.
         Output:      None.
-
+    
 @return On failure - Exits by calling cleanup().
         On success - returns 0.*/
-/*====================*/
+/*================================================================================================*/
 void help(void)
 {
         int     i;
@@ -250,8 +250,8 @@ void help(void)
         }
 }
 
-/*====================*/
-/*= setup =*/
+/*================================================================================================*/
+/*===== setup =====*/
 /**
 @brief  Performs all one time setup for this test. This function is
 typically used to capture signals, create temporary dirs
@@ -261,17 +261,17 @@ and temporary files that may be used in the course of this test.
 Sending_UART
 Receiving_UART
 Output:      None.
-
+    
 @return On failure - Exits by calling tst_exit().
 On success - returns 0.*/
-/*====================*/
+/*================================================================================================*/
 void setup(void)
 {
         int     VT_rv = TFAIL;
         uart_config_t * uart;
         /* VTE : Actions needed to prepare the test running */
         if (host_to_host_test_flag == 0)
-                VT_rv = VT_uart_test3_setup(&uart_src, &uart_dst, transfert_length,
+                VT_rv = VT_uart_test3_setup(&uart_src, &uart_dst, transfert_length, 
                                              uart_src.flow_ctrl, atoi(uart_speed_arg));
         else {
                 uart = &uart_src;
@@ -287,8 +287,8 @@ void setup(void)
         return;
 }
 
-/*====================*/
-/*= main =*/
+/*================================================================================================*/
+/*===== main =====*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
 inputs, calls the global setup and executes the test. It logs
@@ -302,10 +302,10 @@ Describe input arguments to this test-case
 -l - Number of iteration
 -v - Prints verbose output
 -V - Prints the version number
-
+    
 @return On failure - Exits by calling cleanup().
 On success - exits with 0 exit value.*/
-/*====================*/
+/*================================================================================================*/
 
 #define check_option(opt, str)                                                          \
 {                                                                                       \
@@ -340,23 +340,23 @@ int main(int argc, char **argv)
         if ((!dev_source_flag || !dev_source_arg) && (!dev_dest_flag || !dev_dest_arg)) {
                 tst_brkm(TBROK, NULL, "Error while parsing command line options: %s", "Missing UART devices");
                 return TFAIL;
-        }
-
+        } 
+        
         if (dev_source_flag && !dev_source_arg) {
-                tst_brkm(TBROK, NULL, "Error while parsing command line options: %s",
+                tst_brkm(TBROK, NULL, "Error while parsing command line options: %s", 
                                       "Missing UART devices source argument");
                 return TFAIL;
         }
-
+        
         if (dev_dest_flag && !dev_dest_arg) {
-                tst_brkm(TBROK, NULL, "Error while parsing command line options: %s",
+                tst_brkm(TBROK, NULL, "Error while parsing command line options: %s", 
                                       "Missing UART devices destination argument");
                 return TFAIL;
         }
-
+        
         if (!dev_source_flag || !dev_source_arg) {
                 host_to_host_test_flag = 1;
-                exchange_direction = 0; //receiving
+                exchange_direction = 0; //receiving 
                 uart_src.device = dev_dest_arg;
                 if (thread_sleep_flag)
                         thread_sleep_time = atoi(thread_sleep_arg);
@@ -480,5 +480,5 @@ static int str2testcase(char *str)
 }
 
 #ifdef __cplusplus
-}
+} 
 #endif

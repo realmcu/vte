@@ -7,7 +7,7 @@
 # *			   This Software Provided			     *
 # *				     By					     *
 # *			  Robin's Nest Software Inc.			     *
-# *			       2 Paradise Lane  	     *
+# *			       2 Paradise Lane  			     *
 # *			       Hudson, NH 03051				     *
 # *			       (603) 883-2355				     *
 # *									     *
@@ -19,7 +19,7 @@
 # * in advertising or publicity pertaining to distribution of the software   *
 # * without specific, written prior permission.				     *
 # *									     *
-# * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,      *
+# * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, 	     *
 # * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN	     *
 # * NO EVENT SHALL HE BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL   *
 # * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR    *
@@ -30,7 +30,7 @@
 # ****************************************************************************/
 #
 # Makefile -- makefile for program 'dt'
-#
+#	
 
 # System makefile definitions for program makefiles
 
@@ -140,7 +140,7 @@ PROGRAM=	dt
 # system targets for program makefile
 
 $(PROGRAM):	$(OBJS) $(XOBJS) $(LIBS)
-		@echo -n loading $(PROGRAM) ...
+		@echo -n loading $(PROGRAM) ... 
 		@$(CC) -o $(PROGRAM) $(CFLAGS) $(LDFLAGS) $(OBJS) $(LIBS) $(EXTLIBS)
 		@echo done
 

@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   oss_sound_driver_main.c
 
         @brief  OSS audio simple open test.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -19,28 +19,28 @@ Author/core ID                  Date          Number    Description of Changes
 RB657C/gsch1c                20/07/2004     TLSbo40898  Initial version  of OSS sound driver test development
 D.Khoroshev/b00313           02/23/2006     TLSbo61805  Update according new SSI specifications
 D.Simakov                    13/06/2006     TLSbo67022  Update HELP
-====================
-Portability: ARM GCC
-======================*/
+====================================================================================================
+Portability: ARM GCC 
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
 Total Tests: 1
 
-Test Name:   Simple open test
+Test Name:   Simple open test 
 
 Test Assertion
-& Strategy:  Test to open more than once the same instance of the driver to ensure that the driver
-             does not allow multiple opening. It does it for each driver (dsp and dsp1)
-======================*/
+& Strategy:  Test to open more than once the same instance of the driver to ensure that the driver 
+             does not allow multiple opening. It does it for each driver (dsp and dsp1)  
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-
+    
 /* Harness Specific Include Files. */
 #include <test.h>
 #include <usctest.h>
@@ -48,33 +48,33 @@ Test Assertion
 /* Verification Test Environment Include Files */
 #include "oss_sound_driver_test.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                        LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 #if !defined(TRUE) && !defined(FALSE)
 #define TRUE  1
 #define FALSE 0
 #endif
 
-/*======================
+/*==================================================================================================
                                        LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                        GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                        GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 /* Global Variables */
 char *TCID     = "oss_testapp_mngt_1";        /* test program identifier.             */
 int  TST_TOTAL = 1;                           /* total number of tests in this file.  */
@@ -87,23 +87,23 @@ option_t options[] = {
         { NULL, NULL, NULL }                   /* NULL required to end array */
 };
 
-/*======================
+/*==================================================================================================
                                    GLOBAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 void cleanup(void);
 void setup(void);
 int main(int argc, char **argv);
 
-/*======================
+/*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                        GLOBAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= cleanup =*/
+/*================================================================================================*/
+/*===== cleanup =====*/
 /**
 @brief  Performs all one time clean up for this test on successful
         completion,  premature exit or  failure. Closes all temporary
@@ -112,14 +112,14 @@ int main(int argc, char **argv);
 
 @param  Input :      None.
         Output:      None.
-
+  
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void cleanup(void)
 {
         int VT_rv = TFAIL;
-
+                
         VT_rv = VT_oss_sound_driver_cleanup();
         if (VT_rv != TPASS)
         {
@@ -129,30 +129,30 @@ void cleanup(void)
         tst_exit();
 }
 
-/*======================
+/*==================================================================================================
                                        LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= help =*/
+/*================================================================================================*/
+/*===== help =====*/
 /**
 @brief  Inform of the available options and the associated parameters
 
 @param  Input :      None.
         Output:      None.
-
+  
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 void help(void)
 {
         printf("Switches \n\n");
         printf("  -N n        Number of instances the driver has\n");
 }
 
-/*====================*/
-/*= setup =*/
+/*================================================================================================*/
+/*===== setup =====*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -160,11 +160,11 @@ void help(void)
 
 @param  Input :      None.
         Output:      None.
-
+  
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 void setup(void)
 {
         int VT_rv = TFAIL;
@@ -175,8 +175,8 @@ void setup(void)
         }
 }
 
-/*====================*/
-/*= main =*/
+/*================================================================================================*/
+/*===== main =====*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -194,17 +194,17 @@ void setup(void)
                                 -Id - Id of the test according to the test plan
                                 -Case N - If exist, the test case number associated with the test Id
                                 -Iter - Inform the iteration of the loop in case of an endurance/stress test
-
+  
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*====================*/
+/*================================================================================================*/
 int main(int argc, char **argv)
 {
         int VT_rv = TFAIL;
         char *msg;
         int Device = 0, inst_num = 2;
-
+                
         /* parse options. */
         if ( (msg=parse_opts(argc, argv, options, help)) != NULL )
         {
@@ -216,7 +216,7 @@ int main(int argc, char **argv)
                 if (inst_num <= 0) inst_num = 2;
                 tst_resm(TINFO, "Number of Instances to check = %d", Device);
         }
-
+        
         /* perform global test setup, call setup() function. */
         setup();
 
@@ -224,12 +224,12 @@ int main(int argc, char **argv)
         tst_resm(TINFO, "Testing if %s test case is OK", TCID);
         /* VTE : print results and exit test scenario */
         VT_rv = VT_oss_sound_driver_test(inst_num); /*with the parameters needed come from parse_opt()*/
-
+        
         if (VT_rv == TPASS)
                 tst_resm(TPASS, "%s test case worked as expected", TCID);
         else
                 tst_resm(TFAIL, "%s test case did NOT work as expected", TCID);
-
+                
         cleanup(); /** OR tst_exit(); */
 
         return VT_rv;

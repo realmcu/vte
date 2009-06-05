@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake.Huang/-----             08/01/2008     N/A          Initial version
-#
+# 
 ###################################################################################################
 
 
@@ -99,7 +99,7 @@ RC=0
 tst_resm TINFO "test #1: tvout_usercase 01"
 
 #lcd_testapp_power -F /dev/fb1
-/unit_tests/mxc_v4l2_output.out -iw 720 -ih 480 -d 5 -f YU12
+/unit_tests/mxc_v4l2_output.out -iw 720 -ih 480 -d 5 -f YU12 
 
 RC=$?
 
@@ -110,7 +110,7 @@ return $RC
 # Function:     test_tvout_usercase_02
 # Description   - Test the TVout module functionality
 #                 TVout pal/ntsc test
-# TYPE:          auto manual
+# TYPE:          auto manual 
 test_tvout_usercase_02()
 {
 TCID="test_tvout_usercase_02"
@@ -118,7 +118,7 @@ TST_COUNT=1
 RC=0
 
 echo U:720x480i-60 > /sys/class/graphics/fb1/mode
-/unit_tests/mxc_v4l2_output.out -iw 128 -ih 128 -ow 720 -oh 480 -d 5 -r 0 -f YU12
+/unit_tests/mxc_v4l2_output.out -iw 128 -ih 128 -ow 720 -oh 480 -d 5 -r 0 -f YU12 
 
 read -p "Does TV out function? y/n" rc
 
@@ -129,7 +129,7 @@ return $RC
 fi
 
 echo U:720x576i-50 > /sys/class/graphics/fb1/mode
-/unit_tests/mxc_v4l2_output.out -iw 128 -ih 128 -ow 720 -oh 576 -d 5 -r 0 -f YU12
+/unit_tests/mxc_v4l2_output.out -iw 128 -ih 128 -ow 720 -oh 576 -d 5 -r 0 -f YU12 
 
 read -p "Does TV out function? y/n" rc
 
@@ -144,9 +144,9 @@ return $RC
 
 
 # Function:     test_tvout_usercase_03
-# Description   - Test
+# Description   - Test 
 #                 TVout unit tests
-# TYPE:          auto
+# TYPE:          auto 
 test_tvout_usercase_03()
 {
 TCID="test_tvout_usercase_03"
@@ -155,7 +155,7 @@ RC=0
 
 
 # SDC input size test cases
-for SIZE in 32 40 48 64 80 96 112 128 144 160 176 192 208 224 240
+for SIZE in 32 40 48 64 80 96 112 128 144 160 176 192 208 224 240 
 do
  /unit_tests/mxc_v4l2_output.out -iw $SIZE -ih $SIZE -ow 720 -oh 480 -d 5 -r 0 -f YU12
  sleep 1
@@ -169,24 +169,24 @@ do
 done
 
 # SDC max input size test case
-/unit_tests/mxc_v4l2_output.out -iw 480 -ih 640 -ow 720 -oh 480 -d 5 -fr 60 -f YU12
-/unit_tests/mxc_v4l2_output.out -iw 720 -ih 512 -ow 720 -oh 480 -d 5 -fr 60 -f YU12
+/unit_tests/mxc_v4l2_output.out -iw 480 -ih 640 -ow 720 -oh 480 -d 5 -fr 60 -f YU12 
+/unit_tests/mxc_v4l2_output.out -iw 720 -ih 512 -ow 720 -oh 480 -d 5 -fr 60 -f YU12 
 
 RC=$?
 return $RC
 }
 
 # Function:     test_tvout_usercase_04
-# Description   - Test
+# Description   - Test 
 #                 TVout function test
-# TYPE:          auto manual
+# TYPE:          auto manual 
 test_tvout_usercase_04()
 {
 TCID="test_tvout_usercase_04"
 TST_COUNT=1
 RC=0
 
-/unit_tests/mxc_v4l2_output.out -iw 128 -ih 128 -ow 720 -oh 480 -d 5 -r 0 -f YU12
+/unit_tests/mxc_v4l2_output.out -iw 128 -ih 128 -ow 720 -oh 480 -d 5 -r 0 -f YU12 
 
 read -p "Does TV out function? y/n" rc
 
@@ -201,15 +201,15 @@ return $RC
 }
 
 # Function:     test_tvout_usercase_05
-# Description   - Test
+# Description   - Test 
 #                 TVout module basic test
-# TYPE:          auto
+# TYPE:          auto  
 test_tvout_usercase_05()
 {
 TCID="test_tvout_usercase_05"
 TST_COUNT=1
 RC=0
-
+ 
 #draw a picture test auto for 5 times
 #lcd_testapp -T 2 -B /dev/fb1 -D 16 -X 5 -D 5
 
@@ -218,7 +218,7 @@ return $RC
 
 # Function:     test_tvout_usercase_06
 # Description   - Test
-#                 TVout sys hardware control
+#                 TVout sys hardware control 
 # TYPE:          auto
 test_tvout_usercase_06()
 {
@@ -231,7 +231,7 @@ echo U:720x480i-60 > /sys/class/graphics/fb1/mode
 MODE=$(cat /sys/class/graphics/fb1/mode)
 
 if [ $MODE != "U:720x480i-60" ]
-then
+then 
 RC=1
 return $TST_COUNT
 fi
@@ -240,7 +240,7 @@ echo U:720x576i-50 > /sys/class/graphics/fb1/mode
 
 MODE=$(cat /sys/class/graphics/fb1/mode)
 if [ $MODE != "U:720x576i-50" ]
-then
+then 
 RC=1
 return $TST_COUNT
 fi
@@ -249,17 +249,17 @@ return $RC
 }
 
 # Function:     test_tvout_usercase_07
-# Description   - Test
+# Description   - Test 
 #                 TVout module power resume
-# TYPE:          semi-auto
+# TYPE:          semi-auto  
 test_tvout_usercase_07()
 {
 TCID="test_tvout_power_resume"
 TST_COUNT=1
 RC=1
+ 
 
-
-/unit_tests/mxc_v4l2_output.out -iw 128 -ih 128 -ow 720 -oh 480 -d 5 -r 0 -f YU12
+/unit_tests/mxc_v4l2_output.out -iw 128 -ih 128 -ow 720 -oh 480 -d 5 -r 0 -f YU12 
 
 echo  "***********************************"
 echo "************************************"
@@ -269,7 +269,7 @@ echo "************************************"
 sleep 1
 echo standby > /sys/power/state
 
-/unit_tests/mxc_v4l2_output.out -iw 128 -ih 128 -ow 720 -oh 480 -d 5 -r 0 -f YU12
+/unit_tests/mxc_v4l2_output.out -iw 128 -ih 128 -ow 720 -oh 480 -d 5 -r 0 -f YU12 
 read -p "is tvout still dispaly? y/n" rt
 if [ $rt == "y" ]
 then
@@ -320,12 +320,12 @@ setup || exit $RC
 if [ $# -ne 1 ]
 then
 usage
-exit 1
+exit 1 
 fi
 
 case "$1" in
 1)
-  test_tvout_usercase_01 || exit $RC
+  test_tvout_usercase_01 || exit $RC 
   ;;
 2)
   test_tvout_usercase_02 || exit $RC

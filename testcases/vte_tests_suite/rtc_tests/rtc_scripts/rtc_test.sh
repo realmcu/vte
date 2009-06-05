@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #<Hake Huang>/-----             <2008-11-27>     N/A          Initial version
-#
+# 
 ###################################################################################################
 
 
@@ -73,10 +73,10 @@ usage()
 
 # Function:     test_case_01
 # Description   - Test if rtc module exist
-#
+#  
 test_case_01()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="rtc_module_exist"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -87,7 +87,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 if [ -e /sys/class/rtc/rtc0 ]
-then
+then 
 RC=0
 fi
 
@@ -98,10 +98,10 @@ return $RC
 
 # Function:     test_case_02
 # Description   - Test if stty hw rtc is ok
-#
+#  
 test_case_02()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="rtc_hw"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -136,17 +136,17 @@ RC=0
 if [ $# -ne 1 ]
 then
 usage
-exit 1
+exit 1 
 fi
 
 setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC
+  test_case_01 || exit $RC 
   ;;
 2)
-  test_case_02 || exit $RC
+  test_case_02 || exit $RC 
   ;;
 *)
   usage

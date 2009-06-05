@@ -29,10 +29,10 @@ LTP_DIR = ../../../..
 BIN_DIR = ../../..
 
 CFLAGS    +=    -Wall -I$(LTP_DIR)/include -I$(KLINUX_SRCDIR)/include -I$(KLINUX_BLTDIR)/include
-LOADLIBES +=    -L$(LTP_DIR)/lib -lltp
+LOADLIBES +=    -L$(LTP_DIR)/lib -lltp 
 
-SRCS = i2c_main.c
-OBJS = i2c_main.o
+SRCS = i2c_main.c 
+OBJS = i2c_main.o 
 
 #TO BE UPDATED WITH THE TEST APPLICATION NAME
 TARGET = i2c_testapp

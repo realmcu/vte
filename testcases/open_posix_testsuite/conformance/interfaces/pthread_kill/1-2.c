@@ -17,7 +17,7 @@
 
 * This sample test aims to check the following assertions:
 *
-* pthread_kill() sends the specified signal to the specified thread.
+* pthread_kill() sends the specified signal to the specified thread. 
 
 
 * The steps are:
@@ -52,23 +52,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c"
+#include "testfrmw.c" 
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);
- *    where descr is a description of the error and ret is an int
+ * UNRESOLVED(ret, descr);  
+ *    where descr is a description of the error and ret is an int 
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- *
+ * 
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- *
+ * 
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- *
+ * 
  * Those may be used to output information.
  */
 
@@ -83,99 +83,99 @@
 /***************************    Test case   ***********************************/
 /******************************************************************************/
 
-int handler_called  0;
+int handler_called = 0;
 pthread_t ch;
 
 /* Signal handler */
 void handler( int sig )
 {
- handler_called  sig;
+	handler_called = sig;
 
- if ( !pthread_equal( pthread_self(), ch ) )
- {
-  FAILED( "The signal handler was not trigged in the killed thread" );
- }
+	if ( !pthread_equal( pthread_self(), ch ) )
+	{
+		FAILED( "The signal handler was not trigged in the killed thread" );
+	}
 }
 
 /* Thread function */
 void * threaded( void * arg )
 {
- int rebours  3;
+	int rebours = 3;
 
- /* sleep up to 3 seconds */
+	/* sleep up to 3 seconds */
 
- while ( ( !handler_called ) && ( rebours-- ) )
-  sleep( 1 );
+	while ( ( !handler_called ) && ( rebours-- ) )
+		sleep( 1 );
 
- /* quit */
- return NULL;
+	/* quit */
+	return NULL;
 }
 
 /* The main test function. */
 int main( int argc, char * argv[] )
 {
- int ret;
+	int ret;
 
- struct sigaction sa;
+	struct sigaction sa;
 
- /* Initialize output */
- output_init();
+	/* Initialize output */
+	output_init();
 
- /* Set the signal handler */
- sa.sa_flags  0;
- sa.sa_handler  handler;
- ret  sigemptyset( &sa.sa_mask );
+	/* Set the signal handler */
+	sa.sa_flags = 0;
+	sa.sa_handler = handler;
+	ret = sigemptyset( &sa.sa_mask );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to empty signal set" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to empty signal set" );
+	}
 
- sigaction( SIGUSR2, &sa, 0 );
+	sigaction( SIGUSR2, &sa, 0 );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to set signal handler" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to set signal handler" );
+	}
 
- /* Create the child */
- ret  pthread_create( &ch, NULL, threaded, NULL );
+	/* Create the child */
+	ret = pthread_create( &ch, NULL, threaded, NULL );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to create a thread" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to create a thread" );
+	}
 
- /* kill the child thread */
- ret  pthread_kill( ch, SIGUSR2 );
+	/* kill the child thread */
+	ret = pthread_kill( ch, SIGUSR2 );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to kill child thread" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to kill child thread" );
+	}
 
- /* Wait for child thread termination */
- ret  pthread_join( ch, NULL );
+	/* Wait for child thread termination */
+	ret = pthread_join( ch, NULL );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to join the thread" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to join the thread" );
+	}
 
- /* Check if handler has been trigged inside the child */
- if ( handler_called ! SIGUSR2 )
- {
-  FAILED( "Wrong signal received in thread" );
- }
+	/* Check if handler has been trigged inside the child */
+	if ( handler_called != SIGUSR2 )
+	{
+		FAILED( "Wrong signal received in thread" );
+	}
 
- /* Test passed */
+	/* Test passed */
 #if VERBOSE > 0
 
- output( "Test passed\n" );
+	output( "Test passed\n" );
 
 #endif
 
- PASSED;
+	PASSED;
 }
 
 

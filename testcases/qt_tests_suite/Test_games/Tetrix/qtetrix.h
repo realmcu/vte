@@ -57,7 +57,7 @@ signals:
 private:
     void paintEvent( QPaintEvent * );
     void resizeEvent( QResizeEvent * );
-
+    
     int      blockWidth,blockHeight;
     int      xOffset,yOffset;
 };

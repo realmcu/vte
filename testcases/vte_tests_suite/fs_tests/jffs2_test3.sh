@@ -18,22 +18,22 @@
 #                          Modification     Tracking
 # Author                       Date          Number    Description of Changes
 #-----------------------   ------------    ----------  ---------------------
-# Spring Zhang               03/07/2008       n/a        Initial ver.
+# Spring Zhang               03/07/2008       n/a        Initial ver. 
 # Spring                     28/11/2008       n/a      Modify COPYRIGHT header
 #############################################################################
-# Portability:  ARM sh bash
+# Portability:  ARM sh bash 
 #
 # File Name:    jffs2_test3.sh
 # Total Tests:      1
 # Test Strategy: file system stress test
+# 
+# Input:	- $1 - device type
+#		    - $2 - device name
+#		    - $3 - mount point(dir)
 #
-# Input: - $1 - device type
-#      - $2 - device name
-#      - $3 - mount point(dir)
+# Return:       - 
 #
-# Return:       -
-#
-# Use command "./jffs2_test3.sh [device type] [device name] [mount point]"
+# Use command "./jffs2_test3.sh [device type] [device name] [mount point]" 
 #               to test jffs2, yaffs, jffs3 file system
 
 
@@ -88,7 +88,7 @@ setup()
     fi
     mkdir $mount_dir
 
-    #mount -t jffs2 /dev/mtdblock2 /tmp/nand
+    #mount -t jffs2 /dev/mtdblock2 /tmp/nand   
     mount -t $device_type $device $mount_dir || RC=$?
     sleep 2
     if [ $RC -ne 0 ]
@@ -106,7 +106,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup()
+cleanup() 
 {
     echo "clean up environment..."
     cd $OLDDIR
@@ -114,7 +114,7 @@ cleanup()
     echo "clean up environment end"
 }
 
-# Function:    perms_files
+# Function:    perms_files 
 #
 # Description:  - test file system access permissions, use "LTP fs_perms"
 #
@@ -131,14 +131,14 @@ perms_files()
 
     cp $BIN_DIR/test.txt $mount_dir || RC=$?
     if [ $RC -ne 0 ]
-    then
+    then 
         tst_resm TBROK "Test #1: copy test.txt failed"
         return $RC
     fi
 
     cp $BIN_DIR/testx.file $mount_dir || RC=$?
     if [ $RC -ne 0 ]
-    then
+    then 
         tst_resm TBROK "Test #1: copy testx.file failed"
         return $RC
     fi
@@ -166,7 +166,7 @@ perms_files()
 # Return        - none
 usage()
 {
-    cat <<-EOF
+    cat <<-EOF 
 
     Use this command to test jffs2/3, yaffs, nfs permission access.
     usage: ./${0##*/} [device type] [device name] [mount point]

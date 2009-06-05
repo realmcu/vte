@@ -1,0 +1,19 @@
+#Verification Tests Command File
+
+#VT PMIC Protocol driver test
+#files: pmic_protocol_testapp
+#files: conf_RW
+#files: conf_IP
+#files: conf_CA
+
+#PMIC Protocol Tests
+TGE-LV-PMICPROTOCOL-MOD insmod $LTPROOT/testcases/bin/pmic_protocol_module.ko && sleep 1
+TGE-LV-PMICPROTOCOL-0010 pmic_protocol_testapp -T RW -F $LTPROOT/testcases/bin/conf_RW
+TGE-LV-PMICPROTOCOL-0020 pmic_protocol_testapp -T SU
+TGE-LV-PMICPROTOCOL-0030 pmic_protocol_testapp -T CA -N 5 -F $LTPROOT/testcases/bin/conf_CA
+TGE-LV-PMICPROTOCOL-0040 pmic_protocol_testapp -T IP -F $LTPROOT/testcases/bin/conf_IP
+TGE-LV-PMICPROTOCOL-0050 pmic_protocol_testapp -T SC
+TGE-LV-PMICPROTOCOL-0060 pmic_protocol_testapp -T RA
+#TGE-LV-PMICPROTOCOL-0070 pmic_protocol_testapp -T S_IT_U
+
+#WARNING the commented tests are not automatical tests

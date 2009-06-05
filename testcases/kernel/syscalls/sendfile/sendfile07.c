@@ -20,11 +20,11 @@
 
 /*
  * NAME
- * sendfile07.c
+ *	sendfile07.c
  *
  * DESCRIPTION
- * Testcase to test that sendfile(2) system call returns EAGAIN
- * when passing blocked out_fd. Here out_fd is opend with O_NONBLOCK.
+ *	Testcase to test that sendfile(2) system call returns EAGAIN
+ *	when passing blocked out_fd. Here out_fd is opend with O_NONBLOCK.
  *
  * ALGORITHM
  *      1. Make sockets with socketpair(&p). Use p[1] as out_fd.
@@ -42,10 +42,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 12/2007 Copyed from sendfile03.c by Masatake YAMATO
+ *	12/2007 Copyed from sendfile03.c by Masatake YAMATO
  *
  * RESTRICTIONS
- * NONE
+ *	NONE
  */
 
 #include <stdio.h>
@@ -63,10 +63,10 @@
 
 
 TCID_DEFINE(sendfile07);
-int TST_TOTAL  1;
+int TST_TOTAL = 1;
 extern int Tst_count;
 
-int in_fd, out_fd  0, ignored_fd  0;
+int in_fd, out_fd = 0, ignored_fd = 0;
 char in_file[100];
 
 /* To make out_fd overflow, write much chars
@@ -78,45 +78,45 @@ void setup(void);
 
 int main(int ac, char **av)
 {
- int lc;    /* loop counter */
- char *msg;   /* parse_opts() return message */
+	int lc;				/* loop counter */
+	char *msg;			/* parse_opts() return message */
 
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- setup();
+	setup();
 
- /*
-  * The following loop checks looping state if -c option given
-  */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  Tst_count  0;
+	/*
+	 * The following loop checks looping state if -c option given
+	 */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		Tst_count = 0;
 
-  TEST(sendfile(out_fd, in_fd, NULL, 1));
+		TEST(sendfile(out_fd, in_fd, NULL, 1));
 
-  if (TEST_RETURN ! -1) {
-   tst_resm(TFAIL, "call succeeded unexpectedly");
-   continue;
-  }
+		if (TEST_RETURN != -1) {
+			tst_resm(TFAIL, "call succeeded unexpectedly");
+			continue;
+		}
 
-  TEST_ERROR_LOG(TEST_ERRNO);
+		TEST_ERROR_LOG(TEST_ERRNO);
 
-  if (TEST_ERRNO ! EAGAIN) {
-   tst_resm(TFAIL, "sendfile returned unexpected "
-     "errno, expected: %d, got: %d",
-     EAGAIN, TEST_ERRNO);
-  } else {
-   tst_resm(TPASS, "sendfile() returned %d : %s",
-     TEST_ERRNO, strerror(TEST_ERRNO));
-  }
- }
+		if (TEST_ERRNO != EAGAIN) {
+			tst_resm(TFAIL, "sendfile returned unexpected "
+				 "errno, expected: %d, got: %d",
+				 EAGAIN, TEST_ERRNO);
+		} else {
+			tst_resm(TPASS, "sendfile() returned %d : %s",
+				 TEST_ERRNO, strerror(TEST_ERRNO));
+		}
+	}
 
- cleanup();
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -125,93 +125,93 @@ int main(int ac, char **av)
 void
 setup()
 {
- char buf[100];
- int  p[2];
- int  i, r;
+	char buf[100];
+	int  p[2];
+	int  i, r;
+	
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* make a temporary directory and cd to it */
+	tst_tmpdir();
 
- /* make a temporary directory and cd to it */
- tst_tmpdir();
-
- sprintf(in_file, "in.%d", getpid());
- if ((in_fd  creat(in_file, 00700)) < 0) {
-  tst_brkm(TBROK, cleanup, "creat failed in setup, errno: %d",
-    errno);
-  /*NOTREACHED*/
- }
- sprintf(buf, "abcdefghijklmnopqrstuvwxyz");
- if (write(in_fd, buf, strlen(buf)) < 0) {
-  tst_brkm(TBROK, cleanup, "write failed, errno: %d", errno);
-  /*NOTREACHED*/
- }
- close(in_fd);
- if ((in_fd  open(in_file, O_RDONLY)) < 0) {
-  tst_brkm(TBROK, cleanup, "open failed, errno: %d", errno);
-  /*NOTREACHED*/
- }
-
- /* Make fulfilled out_fd. */
- if (socketpair(PF_UNIX, SOCK_DGRAM, 0, p) < 0) {
-  tst_brkm(TBROK, cleanup, "socketpair failed, errno: %d", errno);
-  /*NOTREACHED*/
- }
-
- /* Don't close.
-    You cannot write nothing on out_fd if ignored_fd is closed.*/
- ignored_fd  p[0];
- out_fd  p[1];
- if (fcntl(out_fd, F_SETFL, O_WRONLY|O_NONBLOCK) < 0) {
-  tst_brkm(TBROK, cleanup, "fcntl failed, errno: %d", errno);
- }
-
- i  MAX_FILL_DATA_LENGTH;
- while (i > 0) {
-  r  write(out_fd, buf, 1);
-  if (r < 0) {
-   if (errno  EAGAIN) {
-    break;
-   } else {
-    tst_brkm(TBROK, cleanup,
-      "write failed to fill out_fd, errno: %d",
-      errno);
-   }
-  }
-  i--;
- }
- if (i  0) {
-  tst_brkm(TBROK, cleanup,
-    "fail to fill out_fd, write %d bytes but EAGAIN it not returned.",
-    MAX_FILL_DATA_LENGTH);
- }
+	sprintf(in_file, "in.%d", getpid());
+	if ((in_fd = creat(in_file, 00700)) < 0) {
+		tst_brkm(TBROK, cleanup, "creat failed in setup, errno: %d",
+			 errno);
+		/*NOTREACHED*/
+	}
+	sprintf(buf, "abcdefghijklmnopqrstuvwxyz");
+	if (write(in_fd, buf, strlen(buf)) < 0) {
+		tst_brkm(TBROK, cleanup, "write failed, errno: %d", errno);
+		/*NOTREACHED*/
+	}
+	close(in_fd);
+	if ((in_fd = open(in_file, O_RDONLY)) < 0) {
+		tst_brkm(TBROK, cleanup, "open failed, errno: %d", errno);
+		/*NOTREACHED*/
+	}
+	
+	/* Make fulfilled out_fd. */
+	if (socketpair(PF_UNIX, SOCK_DGRAM, 0, p) < 0) {
+		tst_brkm(TBROK, cleanup, "socketpair failed, errno: %d", errno);
+		/*NOTREACHED*/
+	}
+	
+	/* Don't close.
+	   You cannot write nothing on out_fd if ignored_fd is closed.*/
+	ignored_fd = p[0];
+	out_fd = p[1];
+	if (fcntl(out_fd, F_SETFL, O_WRONLY|O_NONBLOCK) < 0) {
+		tst_brkm(TBROK, cleanup, "fcntl failed, errno: %d", errno);
+	}
+	
+	i = MAX_FILL_DATA_LENGTH;
+	while (i > 0) {
+		r = write(out_fd, buf, 1);
+		if (r < 0) {
+			if (errno == EAGAIN) {
+				break;
+			} else {
+				tst_brkm(TBROK, cleanup, 
+					 "write failed to fill out_fd, errno: %d", 
+					 errno);
+			}
+		}
+		i--;
+	}
+	if (i == 0) {
+		tst_brkm(TBROK, cleanup, 
+			 "fail to fill out_fd, write %d bytes but EAGAIN it not returned.", 
+			 MAX_FILL_DATA_LENGTH);
+	}
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit.
+ *	       completion or premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- if (out_fd)
-   close(out_fd);
- if (ignored_fd)
-   close(ignored_fd);
- close(in_fd);
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	if (out_fd)
+	  close(out_fd);
+	if (ignored_fd)
+	  close(ignored_fd);
+	close(in_fd);
 
- TEST_CLEANUP;
+	TEST_CLEANUP;
 
- /* delete the test directory created in setup() */
- tst_rmdir();
+	/* delete the test directory created in setup() */
+	tst_rmdir();
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

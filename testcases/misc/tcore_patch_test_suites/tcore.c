@@ -16,7 +16,7 @@
  *   along with this program;  if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-
+ 
 
 // Use gcc -o xmm xmm.c -pthread -lm to compile.
 
@@ -32,11 +32,11 @@
 
 struct prodcons
 {
-  int buffer[BUFFER_SIZE]; /* the actual data */
-  pthread_mutex_t lock;  /* mutex ensuring exclusive access to buffer */
-  int readpos, writepos; /* positions for reading and writing */
-  pthread_cond_t notempty; /* signaled when buffer is not empty */
-  pthread_cond_t notfull; /* signaled when buffer is not full */
+  int buffer[BUFFER_SIZE];	/* the actual data */
+  pthread_mutex_t lock;		/* mutex ensuring exclusive access to buffer */
+  int readpos, writepos;	/* positions for reading and writing */
+  pthread_cond_t notempty;	/* signaled when buffer is not empty */
+  pthread_cond_t notfull;	/* signaled when buffer is not full */
 };
 
 /* Initialize a buffer */
@@ -46,8 +46,8 @@ init (struct prodcons *b)
   pthread_mutex_init (&b->lock, NULL);
   pthread_cond_init (&b->notempty, NULL);
   pthread_cond_init (&b->notfull, NULL);
-  b->readpos  0;
-  b->writepos  0;
+  b->readpos = 0;
+  b->writepos = 0;
 }
 
 /* Store an integer in the buffer */
@@ -56,16 +56,16 @@ put (struct prodcons *b, int data)
 {
   pthread_mutex_lock (&b->lock);
   /* Wait until buffer is not full */
-  while ((b->writepos + 1) % BUFFER_SIZE  b->readpos)
+  while ((b->writepos + 1) % BUFFER_SIZE == b->readpos)
     {
       pthread_cond_wait (&b->notfull, &b->lock);
       /* pthread_cond_wait reacquired b->lock before returning */
     }
   /* Write the data and advance write pointer */
-  b->buffer[b->writepos]  data;
+  b->buffer[b->writepos] = data;
   b->writepos++;
-  if (b->writepos > BUFFER_SIZE)
-    b->writepos  0;
+  if (b->writepos >= BUFFER_SIZE)
+    b->writepos = 0;
   /* Signal that the buffer is now not empty */
   pthread_cond_signal (&b->notempty);
   pthread_mutex_unlock (&b->lock);
@@ -78,15 +78,15 @@ get (struct prodcons *b)
   int data;
   pthread_mutex_lock (&b->lock);
   /* Wait until buffer is not empty */
-  while (b->writepos  b->readpos)
+  while (b->writepos == b->readpos)
     {
       pthread_cond_wait (&b->notempty, &b->lock);
     }
   /* Read the data and advance read pointer */
-  data  b->buffer[b->readpos];
+  data = b->buffer[b->readpos];
   b->readpos++;
-  if (b->readpos > BUFFER_SIZE)
-    b->readpos  0;
+  if (b->readpos >= BUFFER_SIZE)
+    b->readpos = 0;
   /* Signal that the buffer is now not full */
   pthread_cond_signal (&b->notfull);
   pthread_mutex_unlock (&b->lock);
@@ -105,30 +105,30 @@ producer (void *data)
 {
   int n;
   pid_t pid;
-  long double a3  100.5678943, b3  200.578435698;
+  long double a3 = 100.5678943, b3 = 200.578435698;
   long double c3, d3, e3, f3;
-  a3 + b3;
-  a3 * pow(b3, 2);
-  pid  getpid();
-  printf("producer pid%d\n", pid);
+  a3 += b3;
+  a3 *= pow(b3, 2);
+  pid = getpid();
+  printf("producer pid=%d\n", pid);
   sleep(1);
-  for (n  0; n < 10000; n++)
+  for (n = 0; n < 10000; n++)
     {
       printf ("%d --->\n", n);
       put (&buffer, n);
 
-      if (n7686) {
-     system("ps ax | grep ex");
-    c3  pow(pid, pid);
-    d3  log(pid);
-    e3  c3 * d3;
-    f3  c3 / d3;
- {
- char buf[16];
- sprintf(buf, "%d%d\n", pid, pid);
- __asm__ ("movups %0, %%xmm1;"::"m"(buf));
- }
-     sleep(1);
+      if (n==7686) {
+	    system("ps ax | grep ex");
+	   c3 = pow(pid, pid);
+	   d3 = log(pid);
+	   e3 = c3 * d3;
+	   f3 = c3 / d3;
+ 	{
+	char buf[16];
+	sprintf(buf, "%d%d\n", pid, pid);
+	__asm__ ("movups %0, %%xmm1;"::"m"(buf));
+	}
+	    sleep(1);
       }
     }
   put (&buffer, OVER);
@@ -139,34 +139,34 @@ static void *
 consumer (void *data)
 {
   int d;
-  char *junk  NULL;
+  char *junk = NULL;
   pid_t pid;
-  long double a2  10002.5, b2  2888883.5;
+  long double a2 = 10002.5, b2 = 2888883.5;
   long double c2, d2, e2, f2;
-  a2 + b2;
-  pid  getpid();
-  printf("consumer pid%d\n", pid);
+  a2 += b2;
+  pid = getpid();
+  printf("consumer pid=%d\n", pid);
   sleep(1);
   while (1)
     {
-      d  get (&buffer);
-      if (d  OVER)
- break;
+      d = get (&buffer);
+      if (d == OVER)
+	break;
       printf ("---> %d\n", d);
-      if (d7688) {
-     system("ps ax | grep ex");
-     d2  pid * a2 / b2;
-     e2  tan(pid);
-     f2  cos (pid)/d2;
- {
- char buf[16];
- char buf1[16];
- sprintf(buf, "%d%d\n", pid, pid);
- sprintf(buf1,"%d",d2);
- __asm__ ("movups %0,%%xmm2;"::"m"(buf));
- __asm__ ("movups %0, %%xmm5;"::"m"(buf));
- }
-     *junk  0;
+      if (d==7688) {
+	    system("ps ax | grep ex");
+	    d2 = pid * a2 / b2;
+	    e2 = tan(pid);
+	    f2 = cos (pid)/d2;
+ 	{
+	char buf[16];
+	char buf1[16];
+	sprintf(buf, "%d%d\n", pid, pid);
+	sprintf(buf1,"%d",d2);
+	__asm__ ("movups %0,%%xmm2;"::"m"(buf));
+	__asm__ ("movups %0, %%xmm5;"::"m"(buf));
+	}
+	    *junk = 0;
       }
     }
   return NULL;
@@ -177,19 +177,19 @@ main (void)
 {
   pthread_t th_a, th_b;
   void *retval;
-  double a1  1.5, b1  2.5;
+  double a1 = 1.5, b1 = 2.5;
   long double c1, d1, e1;
   pid_t pid;
-  a1 + b1;
+  a1 += b1;
 
-  pid  getpid();
+  pid = getpid();
 
   init (&buffer);
   /* Create the threads */
   pthread_create (&th_a, NULL, producer, 0);
   pthread_create (&th_b, NULL, consumer, 0);
-
-  c1  exp(pid);
+  
+  c1 = exp(pid);
   /* Wait until producer and consumer finish. */
   pthread_join (th_a, &retval);
   pthread_join (th_b, &retval);

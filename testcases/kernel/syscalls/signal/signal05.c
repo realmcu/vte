@@ -19,40 +19,40 @@
 
 /*
  * NAME
- * signal05.c
+ *	signal05.c
  *
  * DESCRIPTION
- * signal05 - set the signal handler to our own function
+ *	signal05 - set the signal handler to our own function
  *
  * ALGORITHM
- * loop if that option was specified
- * issue the system call
- * check the return value
- *   if return value  -1
- *     issue a FAIL message, break remaining tests and cleanup
- *   if we are doing functional testing
- *     send the signal with kill()
- *     if we catch the signal in the signal handler
- *       issue a PASS message
- *     else
- *       issue a FAIL message
- * call cleanup
+ *	loop if that option was specified
+ *	issue the system call
+ *	check the return value
+ *	  if return value == -1
+ *	    issue a FAIL message, break remaining tests and cleanup
+ *	  if we are doing functional testing
+ *	    send the signal with kill()
+ *	    if we catch the signal in the signal handler
+ *	      issue a PASS message
+ *	    else
+ *	      issue a FAIL message
+ *	call cleanup
  *
  * USAGE:  <for command-line>
  *  signal05 [-c n] [-f] [-i n] [-I x] [-p x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -f   : Turn off functionality Testing.
- *        -i n : Execute test n times.
- *        -I x : Execute test for x seconds.
- *        -P x : Pause for x seconds between iterations.
- *        -t   : Turn on syscall timing.
+ *	       -i n : Execute test n times.
+ *	       -I x : Execute test for x seconds.
+ *	       -P x : Pause for x seconds between iterations.
+ *	       -t   : Turn on syscall timing.
  *
  * History
- * 07/2001 John George
- *  -Ported
+ *	07/2001 John George
+ *		-Ported
  *
  * Restrictions
- * none
+ *	none
  */
 
 #include "test.h"
@@ -65,94 +65,94 @@ void cleanup(void);
 void setup(void);
 void sighandler(int);
 
-char *TCID "signal05";
+char *TCID= "signal05";
 int TST_TOTAL;
 extern int Tst_count;
 
 typedef void (*sighandler_t)(int);
 
-sighandler_t Tret;
+sighandler_t	Tret;
 
-int siglist[]  { SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGTRAP, SIGABRT, SIGIOT,
-  SIGBUS, SIGFPE, SIGUSR1, SIGSEGV, SIGUSR2, SIGPIPE, SIGALRM,
-  SIGTERM,
+int siglist[] = { SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGTRAP, SIGABRT, SIGIOT,
+		SIGBUS, SIGFPE, SIGUSR1, SIGSEGV, SIGUSR2, SIGPIPE, SIGALRM,
+		SIGTERM,
 #ifdef SIGSTKFLT
-  SIGSTKFLT,
+		SIGSTKFLT,
 #endif
-  SIGCHLD, SIGCONT, SIGTSTP, SIGTTIN,
-  SIGTTOU, SIGURG, SIGXCPU, SIGXFSZ, SIGVTALRM, SIGPROF,
-  SIGWINCH, SIGIO, SIGPWR, SIGSYS,
+		SIGCHLD, SIGCONT, SIGTSTP, SIGTTIN,
+		SIGTTOU, SIGURG, SIGXCPU, SIGXFSZ, SIGVTALRM, SIGPROF,
+		SIGWINCH, SIGIO, SIGPWR, SIGSYS,
 #ifdef SIGUNUSED
-  SIGUNUSED
+		SIGUNUSED
 #endif
 };
-int pass  0;
+int pass = 0;
 
 int main(int ac, char **av)
 {
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
- pid_t pid;
- int i, rval;
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
+	pid_t pid;
+	int i, rval;
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *) NULL, NULL)) !
-   (char *) NULL) {
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) !=
+			(char *) NULL) {
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- setup();   /* global setup */
+	setup();			/* global setup */
 
- /* The following loop checks looping state if -i option given */
+	/* The following loop checks looping state if -i option given */
 
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  /*
-   * loop through the list of signals and test each one
-   */
-  for (i0; i<TST_TOTAL; i++) {
+		/*
+		 * loop through the list of signals and test each one
+		 */
+		for (i=0; i<TST_TOTAL; i++) {
 
-   errno  0; Tret  signal(siglist[i], &sighandler); TEST_ERRNO  errno;
+			errno = 0; Tret = signal(siglist[i], &sighandler); TEST_ERRNO = errno;
 
-   if (Tret  SIG_ERR) {
-    tst_resm(TFAIL, "%s call failed - errno  %d "
-      ": %s", TCID, TEST_ERRNO,
-      strerror(TEST_ERRNO));
-    continue;
-   }
+			if (Tret == SIG_ERR) {
+				tst_resm(TFAIL, "%s call failed - errno = %d "
+					 ": %s", TCID, TEST_ERRNO,
+					 strerror(TEST_ERRNO));
+				continue;
+			}
+	
+			if (STD_FUNCTIONAL_TEST) {
+				/*
+				 * Send the signals and make sure they are
+				 * handled in our handler.
+				 */
+				pid = getpid();
+	
+				if ((rval = kill(pid, siglist[i])) != 0) {
+					tst_brkm(TBROK, cleanup,
+						 "call to kill failed");
+					/*NOTREACHED*/
+				}
 
-   if (STD_FUNCTIONAL_TEST) {
-    /*
-     * Send the signals and make sure they are
-     * handled in our handler.
-     */
-    pid  getpid();
+				if (siglist[i] == pass) {
+					tst_resm(TPASS,
+						 "%s call succeeded", TCID);
+				} else {
+					tst_resm(TFAIL,
+						 "received unexpected signal");
+				}
+			} else {
+				tst_resm(TPASS, "Call succeeded");
+			}
+		}
+	}
 
-    if ((rval  kill(pid, siglist[i])) ! 0) {
-     tst_brkm(TBROK, cleanup,
-       "call to kill failed");
-     /*NOTREACHED*/
-    }
+	cleanup();
 
-    if (siglist[i]  pass) {
-     tst_resm(TPASS,
-       "%s call succeeded", TCID);
-    } else {
-     tst_resm(TFAIL,
-       "received unexpected signal");
-    }
-   } else {
-    tst_resm(TPASS, "Call succeeded");
-   }
-  }
- }
-
- cleanup();
-
- /*NOTREACHED*/
+	/*NOTREACHED*/
 
   return(0);
 
@@ -164,8 +164,8 @@ int main(int ac, char **av)
 void
 sighandler(int sig)
 {
- /* set the global pass variable  sig */
- pass  sig;
+	/* set the global pass variable = sig */
+	pass = sig;
 }
 
 /*
@@ -174,25 +174,25 @@ sighandler(int sig)
 void
 setup(void)
 {
- TST_TOTAL  sizeof(siglist)/sizeof(int);
- /* Pause if that option was specified */
- TEST_PAUSE;
+	TST_TOTAL = sizeof(siglist)/sizeof(int);
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- *        or premature exit.
+ * 	       or premature exit.
  */
 void
 cleanup(void)
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }
 

@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   udma_main.c
 
         @brief  Main file for Unified DMA driver test
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
-
-====================
+    
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -20,31 +20,31 @@ A.Ozerov/b00320              03/10/2006     TLSbo78550  Initial version.
 A.Ozerov/b00320              01/11/2006     TLSbo81158  UDMA module was fixed for working with all platforms.
 A.Ozerov/b00320              05/02/2007     TLSbo87473  One of testcases was removed.
 
-====================
+====================================================================================================
 Portability: ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Verification Test Environment Include Files */
 #include "udma_test.h"
 
-/*======================
+/*==================================================================================================
                                     LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 void    setup(void);
 void    help(void);
 void    cleanup(void);
 int     main(int argc, char **argv);
-
-/*======================
+ 
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 /* Extern Global Variables */
 extern int Tst_count;
 extern char *TESTDIR;
@@ -57,21 +57,21 @@ int     TST_TOTAL = 3;
 int     TST_TOTAL = 6;
 #endif
 
-/*======================
+/*==================================================================================================
                                        LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= setup =*/
-/**
+/*================================================================================================*/
+/*===== setup =====*/
+/** 
 @brief Performs all one time setup for this test. This function is typically used to capture
        signals, create temporary dirs and temporary files that may be used in the course of this test.
-
+ 
 @param None.
-
-@return None.
+ 
+@return None. 
 */
-/*====================*/
+/*================================================================================================*/
 void setup(void)
 {
         int     VT_rv = TFAIL;
@@ -83,18 +83,18 @@ void setup(void)
         }
 }
 
-/*====================*/
-/*= cleanup =*/
-/**
+/*================================================================================================*/
+/*===== cleanup =====*/
+/** 
 @brief This function performs all one time clean up for this test on successful completion,
        premature exit or failure. Closes all temporary files, removes all temporary directories exits
        the test with appropriate return code by calling tst_exit() function.
-
+ 
 @param None.
-
+ 
 @return None.
 */
-/*====================*/
+/*================================================================================================*/
 void cleanup(void)
 {
         int     VT_rv = TFAIL;
@@ -108,21 +108,21 @@ void cleanup(void)
         tst_exit();
 }
 
-/*====================*/
-/*= main =*/
-/**
+/*================================================================================================*/
+/*===== main =====*/
+/** 
 @brief Entry point to this test-case. It parses all the command line inputs, calls the global
        setup and executes the test. It logs the test status and results appropriately using the LTP API's
        On successful completion or premature failure, cleanup() func is called and test exits with an
        appropriate return code.
-
-@param Input : argc - number of command line parameters.
+ 
+@param Input : argc - number of command line parameters. 
        Output: **argv - pointer to the array of the command line parameters.
-
-@return On failure - Exits by calling cleanup().
-        On success - exits with 0 exit value.
+       
+@return On failure - Exits by calling cleanup(). 
+        On success - exits with 0 exit value. 
 */
-/*====================*/
+/*================================================================================================*/
 int main(int argc, char **argv)
 {
         int     VT_rv = TFAIL;
@@ -211,8 +211,8 @@ int main(int argc, char **argv)
         return VT_rv;
 }
 
-/*====================*/
-/*= help =*/
+/*================================================================================================*/
+/*===== help =====*/
 /**
 @brief  Print help information.
 
@@ -220,10 +220,10 @@ int main(int argc, char **argv)
 
 @return None.
 */
-/*====================*/
+/*================================================================================================*/
 void help(void)
 {
-        printf("=============\n");
+        printf("=================================================\n");
         printf("Unified DMA driver test options\n");
 
 #ifdef CONFIG_OTHER_PLATFORM
@@ -239,5 +239,5 @@ void help(void)
         printf("\t  '-T 4'     Chain of buffers testing(using HW channel)\n");
         printf("\t  '-T 5'     Chain of buffers testing(using SW channel)\n");
 #endif
-        printf("=============\n");
+        printf("=================================================\n");
 }

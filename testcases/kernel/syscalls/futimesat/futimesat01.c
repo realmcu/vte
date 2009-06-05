@@ -20,8 +20,8 @@
  *      futimesat01.c
  *
  * DESCRIPTION
- * This test case will verify basic function of futimesat
- * added by kernel 2.6.16 or up.
+ *	This test case will verify basic function of futimesat
+ *	added by kernel 2.6.16 or up.
  *
  * USAGE:  <for command-line>
  * futimesat01 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-p]
@@ -35,7 +35,7 @@
  *      -t   : Turn on syscall timing.
  *
  * Author
- * Yi Yang <yyangcdl@cn.ibm.com>
+ *	Yi Yang <yyangcdl@cn.ibm.com> 
  *
  * History
  *      08/24/2006      Created first by Yi Yang <yyangcdl@cn.ibm.com>
@@ -65,9 +65,9 @@ void setup();
 void cleanup();
 void setup_every_copy();
 
-char *TCID  "futimesat01"; /* Test program identifier.    */
-int TST_TOTAL  TEST_CASES; /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID = "futimesat01";	/* Test program identifier.    */
+int TST_TOTAL = TEST_CASES;	/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 char pathname[256];
 char testfile[256];
 char testfile2[256];
@@ -75,19 +75,19 @@ char testfile3[256];
 int dirfd, fd, ret;
 int fds[TEST_CASES];
 char *filenames[TEST_CASES];
-int expected_errno[TEST_CASES]  { 0, 0, ENOTDIR, EBADF, 0 };
+int expected_errno[TEST_CASES] = { 0, 0, ENOTDIR, EBADF, 0 };
 struct timeval times[2];
 
 int myfutimesat(int dirfd, const char *filename, struct timeval *times)
 {
- return syscall(__NR_futimesat, dirfd, filename, times);
+	return syscall(__NR_futimesat, dirfd, filename, times);
 }
 
 int main(int ac, char **av)
 {
- int lc;   /* loop counter */
- char *msg;  /* message returned from parse_opts */
- int i;
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
+	int i;
 
        /* Disable test if the version of the kernel is less than 2.6.16 */
         if((tst_kvercmp(2,6,16)) < 0)
@@ -98,111 +98,111 @@ int main(int ac, char **av)
           }
 
 
- /***************************************************************
-  * parse standard options
-  ***************************************************************/
- if ((msg  parse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *)NULL)
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	/***************************************************************
+	 * parse standard options
+	 ***************************************************************/
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 
- /***************************************************************
-  * perform global setup for test
-  ***************************************************************/
- setup();
+	/***************************************************************
+	 * perform global setup for test
+	 ***************************************************************/
+	setup();
 
- /***************************************************************
-  * check looping state if -c option given
-  ***************************************************************/
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  setup_every_copy();
+	/***************************************************************
+	 * check looping state if -c option given
+	 ***************************************************************/
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		setup_every_copy();
 
-  /* reset Tst_count in case we are looping. */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping. */
+		Tst_count = 0;
 
-  /*
-   * Call futimesat
-   */
-  for (i  0; i < TST_TOTAL; i++) {
-   gettimeofday(&times[0], NULL);
-   gettimeofday(&times[1], NULL);
-   TEST(myfutimesat(fds[i], filenames[i], times));
+		/* 
+		 * Call futimesat 
+		 */
+		for (i = 0; i < TST_TOTAL; i++) {
+			gettimeofday(&times[0], NULL);
+			gettimeofday(&times[1], NULL);
+			TEST(myfutimesat(fds[i], filenames[i], times));
 
-   /* check return code */
-   if (TEST_ERRNO  expected_errno[i]) {
+			/* check return code */
+			if (TEST_ERRNO == expected_errno[i]) {
 
-   /***************************************************************
-    * only perform functional verification if flag set (-f not given)
-    ***************************************************************/
-    if (STD_FUNCTIONAL_TEST) {
-     /* No Verification test, yet... */
-     tst_resm(TPASS,
-       "futimesat() returned the expected  errno %d: %s",
-       TEST_ERRNO,
-       strerror(TEST_ERRNO));
-    }
-   } else {
-    TEST_ERROR_LOG(TEST_ERRNO);
-    tst_resm(TFAIL,
-      "futimesat() Failed, errno%d : %s",
-      TEST_ERRNO, strerror(TEST_ERRNO));
-   }
-  }
+			/***************************************************************
+			 * only perform functional verification if flag set (-f not given)
+			 ***************************************************************/
+				if (STD_FUNCTIONAL_TEST) {
+					/* No Verification test, yet... */
+					tst_resm(TPASS,
+						 "futimesat() returned the expected  errno %d: %s",
+						 TEST_ERRNO,
+						 strerror(TEST_ERRNO));
+				}
+			} else {
+				TEST_ERROR_LOG(TEST_ERRNO);
+				tst_resm(TFAIL,
+					 "futimesat() Failed, errno=%d : %s",
+					 TEST_ERRNO, strerror(TEST_ERRNO));
+			}
+		}
 
- }   /* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 
- /***************************************************************
-  * cleanup and exit
-  ***************************************************************/
- cleanup();
+	/***************************************************************
+	 * cleanup and exit
+	 ***************************************************************/
+	cleanup();
 
- return (0);
-}    /* End main */
+	return (0);
+}				/* End main */
 
 void setup_every_copy()
 {
- /* Initialize test dir and file names */
- sprintf(pathname, "futimesattestdir%d", getpid());
- sprintf(testfile, "futimesattestfile%d.txt", getpid());
- sprintf(testfile2, "futimesattestdir%d/futimesattestfile%d.txt",
-  getpid(), getpid());
- sprintf(testfile3, "/tmp/futimesattestfile%d.txt", getpid());
+	/* Initialize test dir and file names */
+	sprintf(pathname, "futimesattestdir%d", getpid());
+	sprintf(testfile, "futimesattestfile%d.txt", getpid());
+	sprintf(testfile2, "futimesattestdir%d/futimesattestfile%d.txt",
+		getpid(), getpid());
+	sprintf(testfile3, "/tmp/futimesattestfile%d.txt", getpid());
 
- ret  mkdir(pathname, 0700);
- if (ret < 0) {
-  perror("mkdir: ");
-  exit(-1);
- }
+	ret = mkdir(pathname, 0700);
+	if (ret < 0) {
+		perror("mkdir: ");
+		exit(-1);
+	}
 
- dirfd  open(pathname, O_DIRECTORY);
- if (dirfd < 0) {
-  perror("open: ");
-  exit(-1);
- }
+	dirfd = open(pathname, O_DIRECTORY);
+	if (dirfd < 0) {
+		perror("open: ");
+		exit(-1);
+	}
 
- fd  open(testfile, O_CREAT | O_RDWR, 0600);
- if (fd < 0) {
-  perror("open: ");
-  exit(-1);
- }
+	fd = open(testfile, O_CREAT | O_RDWR, 0600);
+	if (fd < 0) {
+		perror("open: ");
+		exit(-1);
+	}
 
- fd  open(testfile2, O_CREAT | O_RDWR, 0600);
- if (fd < 0) {
-  perror("open: ");
-  exit(-1);
- }
+	fd = open(testfile2, O_CREAT | O_RDWR, 0600);
+	if (fd < 0) {
+		perror("open: ");
+		exit(-1);
+	}
 
- fd  open(testfile3, O_CREAT | O_RDWR, 0600);
- if (fd < 0) {
-  perror("open: ");
-  exit(-1);
- }
+	fd = open(testfile3, O_CREAT | O_RDWR, 0600);
+	if (fd < 0) {
+		perror("open: ");
+		exit(-1);
+	}
 
- fds[0]  fds[1]  dirfd;
- fds[2]  fd;
- fds[3]  100;
- fds[4]  AT_FDCWD;
+	fds[0] = fds[1] = dirfd;
+	fds[2] = fd;
+	fds[3] = 100;
+	fds[4] = AT_FDCWD;
 
- filenames[0]  filenames[2]  filenames[3]  filenames[4]  testfile;
- filenames[1]  testfile3;
+	filenames[0] = filenames[2] = filenames[3] = filenames[4] = testfile;
+	filenames[1] = testfile3;
 }
 
 /***************************************************************
@@ -210,31 +210,31 @@ void setup_every_copy()
  ***************************************************************/
 void setup()
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
-}    /* End setup() */
+	/* Pause if that option was specified */
+	TEST_PAUSE;
+}				/* End setup() */
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *  completion or premature exit.
+ *		completion or premature exit.
  ***************************************************************/
 void cleanup()
 {
- /* Remove them */
- unlink(testfile2);
- unlink(testfile3);
- unlink(testfile);
- rmdir(pathname);
+	/* Remove them */
+	unlink(testfile2);
+	unlink(testfile3);
+	unlink(testfile);
+	rmdir(pathname);
 
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
-}    /* End cleanup() */
+	/* exit with return code appropriate for results */
+	tst_exit();
+}				/* End cleanup() */

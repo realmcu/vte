@@ -50,13 +50,13 @@ all: $(TARGET)
 
 # we only copy WBAMRD_INPUT because WBAMRD_REF is the same
 install:
-	ln -f $(TARGET) $(LTP_BIN)
+	ln -f $(TARGET) $(LTP_BIN)  
 	cp -rf $(WBAMRD_INPUT) $(LTP_BIN)
-	mkdir -p $(LTP_BIN)/wbamrd_output
+	mkdir -p $(LTP_BIN)/wbamrd_output   
 	mkdir -p $(LTP_BIN)/list
 	cp -f $(CONFIGS) $(LTP_BIN)/list/
-	mkdir -p $(LTP_BIN)/sharedlibs
-	cp -rf $(WBAMRD_LIBDIR)/lib$(WBAMRD_LIBRARY).so $(LTP_BIN)/sharedlibs
+	mkdir -p $(LTP_BIN)/sharedlibs   
+	cp -rf $(WBAMRD_LIBDIR)/lib$(WBAMRD_LIBRARY).so $(LTP_BIN)/sharedlibs                    
 	@echo "***************************************************"
 	@echo "** INSTALL : wbamr_decoder_testapp               **"
 	@echo "***************************************************"

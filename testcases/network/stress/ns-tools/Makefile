@@ -14,7 +14,7 @@ BINS=ns-tcpserver ns-tcpclient ns-udpserver ns-udpclient \
      ns-udpsender \
      ns-icmp_redirector \
      ns-mcast_receiver ns-igmp_querier \
-     ns-mcast_join
+     ns-mcast_join 
 
 TARGETS=$(SCRIPTS) $(BINS)
 
@@ -36,7 +36,7 @@ ns-mcast_receiver:	ns-common.o ns-mcast_receiver.o
 ns-igmp_querier:	ns-common.o ns-igmp_querier.o
 ns-mcast_join:	ns-common.o ns-mcast_join.o
 
-ns-common.o: ns-traffic.h ns-common.c
+ns-common.o: 	ns-traffic.h ns-common.c 
 ns-tcpserver.o:	ns-traffic.h ns-tcpserver.c
 ns-tcpclient.o:	ns-traffic.h ns-tcpclient.c
 ns-udpserver.o:	ns-traffic.h ns-udpserver.c

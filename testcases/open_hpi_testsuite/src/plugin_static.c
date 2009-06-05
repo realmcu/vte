@@ -19,8 +19,8 @@
 
 
 
-struct oh_static_plugin static_plugins[] 
+struct oh_static_plugin static_plugins[] =
 {
-
+  
   { 0, 0 } /* end mark */
 };

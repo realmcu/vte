@@ -30,13 +30,13 @@
  **/
 int main(int argc, char **argv)
 {
-        RPTable *rptable  (RPTable *)g_malloc0(sizeof(RPTable));
-        SaHpiRptEntryT *tmpentry  NULL;
+        RPTable *rptable = (RPTable *)g_malloc0(sizeof(RPTable));
+        SaHpiRptEntryT *tmpentry = NULL;
 
         if (oh_add_resource(rptable, rptentries, NULL, 0))
                 return 1;
 
-        tmpentry  oh_get_resource_by_id(rptable, rptentries[0].ResourceId);
+        tmpentry = oh_get_resource_by_id(rptable, rptentries[0].ResourceId);
         if (!tmpentry || memcmp(rptentries, tmpentry, sizeof(SaHpiRptEntryT)))
                 return 1;
 

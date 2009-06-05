@@ -16,7 +16,7 @@
 *
 ***************************************************************************/
 
-/* 
+/* ============================================================================
 * This testcase uses the libnetns.c from the lib to create network NS1.
 * In libnetns.c it uses 2 scripts parentns.sh and childns.sh to create this.
 *
@@ -24,14 +24,14 @@
 * Also it checks the sysfs contents of the child are visible from the parent NS.
 * On Success it returns PASS else returns FAIL
 *
-* Scripts used: parent_share.sh parent_view.sh child_propagate.sh
+* Scripts used: parent_share.sh parent_view.sh child_propagate.sh 
 *               parentns.sh childns.sh
 *
-*
+* 
 * Authors:      Poornima Nayak <poornima.nayak@in.ibm.com>
-*               Veerendra C <vechandr@in.ibm.com>
+*               Veerendra C <vechandr@in.ibm.com> 
 *                      31/07/2008
-* */
+* ============================================================================*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -40,18 +40,18 @@
 
 int main()
 {
-    int ret, status  0;
+    int ret, status = 0;
     char *script, *ltproot;
 
-    ltproot  getenv("LTPROOT");
+    ltproot = getenv("LTPROOT");
     if ( ! ltproot) {
         printf("LTPROOT env variable is not set\n");
         printf("Please set LTPROOT and re-run the test.. Thankyou\n");
         return -1;
     }
 
-    script  malloc (FILENAME_MAX);
-    if (script  NULL) {
+    script = malloc (FILENAME_MAX);
+    if (script == NULL) {
         printf("FAIL: error while allocating mem");
         exit(1);
     }
@@ -59,14 +59,14 @@ int main()
     sprintf(script, "%s/testcases/kernel/containers/netns/parent_share.sh" , ltproot);
 
     /* Parent should be able to view child sysfs and vice versa */
-    ret  system(script);
-    status  WEXITSTATUS(ret);
-    if ( ret  -1 || status ! 0) {
+    ret = system(script);
+    status = WEXITSTATUS(ret);
+    if ( ret == -1 || status != 0) {
         printf("Error while executing the script %s\n", script);
         fflush(stdout);
         exit(1);
     }
 
-    status  create_net_namespace("parent_view.sh","child_propagate.sh");
+    status = create_net_namespace("parent_view.sh","child_propagate.sh");
     return status;
 }

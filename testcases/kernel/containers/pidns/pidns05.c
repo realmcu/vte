@@ -28,15 +28,15 @@
 * 4. The parent process will kill child[3] by passing SIGKILL
 * 5. Now parent process, verifies the child containers 4 & 5 are destroyed.
 * 6. If they are killed then
-* Test PASSed
+*	Test PASSed
 *  else Test FAILed.
 *
 * Test Name: pidns05
 *
 * History:
 *
-* FLAG DATE     NAME                  DESCRIPTION
-* 31/10/08  Veerendra C <vechandr@in.ibm.com> Verifies killing of NestedCont's
+* FLAG DATE     	NAME           		        DESCRIPTION
+* 31/10/08  Veerendra C <vechandr@in.ibm.com> 	Verifies killing of NestedCont's
 *
 *******************************************************************************/
 #define _GNU_SOURCE 1
@@ -51,13 +51,13 @@
 #include <test.h>
 #include <libclone.h>
 
-#define INIT_PID 1
-#define CINIT_PID 1
-#define PARENT_PID 0
-#define MAX_DEPTH 5
+#define INIT_PID	1
+#define CINIT_PID	1
+#define PARENT_PID	0
+#define MAX_DEPTH	5
 
-char *TCID  "pidns05";
-int TST_TOTAL  1;
+char *TCID = "pidns05";
+int TST_TOTAL = 1;
 int fd[2];
 
 /*
@@ -66,26 +66,26 @@ int fd[2];
  */
 void cleanup()
 {
- /* Clean the test testcase as LTP wants*/
- TEST_CLEANUP;
+	/* Clean the test testcase as LTP wants*/
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }
 int max_pid()
 {
- FILE *fp;
- int ret;
+	FILE *fp;
+	int ret;
 
- fp  fopen("/proc/sys/kernel/pid_max", "r") ;
- if (fp ! NULL) {
-  fscanf(fp, "%d", &ret);
-  fclose(fp);
- } else {
-  tst_resm(TBROK, "Cannot open /proc/sys/kernel/pid_max \n");
-  ret  -1;
- }
- return ret;
+	fp = fopen("/proc/sys/kernel/pid_max", "r") ;
+	if (fp != NULL) {
+		fscanf(fp, "%d", &ret);
+		fclose(fp);
+	} else {
+		tst_resm(TBROK, "Cannot open /proc/sys/kernel/pid_max \n");
+		ret = -1;
+	}
+	return ret;
 }
 
 /* find_cinit_pids() iteratively finds the pid's having same PGID as its parent.
@@ -94,25 +94,25 @@ int max_pid()
 */
 int find_cinit_pids(pid_t *pids)
 {
- int next  0, pid_max, i ;
- pid_t parentpid, pgid, pgid2;
+	int next = 0, pid_max, i ;
+	pid_t parentpid, pgid, pgid2;
 
- pid_max  max_pid();
- parentpid  getpid();
- pgid  getpgid(parentpid);
+	pid_max = max_pid();
+	parentpid = getpid();
+	pgid = getpgid(parentpid);
 
- /* The loop breaks, when the loop counter reaches the parentpid value */
- for (i  parentpid + 1; i ! parentpid; i++) {
-  if (i > pid_max)
-   i  2;
+	/* The loop breaks, when the loop counter reaches the parentpid value */
+	for (i = parentpid + 1; i != parentpid; i++) {
+		if (i > pid_max)
+			i = 2;
 
-  pgid2  getpgid(i);
-  if (pgid2  pgid) {
-   pids[next]  i;
-   next++;
-  }
- }
- return next;
+		pgid2 = getpgid(i);
+		if (pgid2 == pgid) {
+			pids[next] = i;
+			next++;
+		}
+	}
+	return next;
 }
 
 /*
@@ -120,80 +120,80 @@ int find_cinit_pids(pid_t *pids)
 */
 int create_nested_container(void *vtest)
 {
- int ret, count, *level ;
- pid_t cpid, ppid;
- cpid  getpid();
- ppid  getppid();
- char mesg[]  "Nested Containers are created";
+	int ret, count, *level ;
+	pid_t cpid, ppid;
+	cpid = getpid();
+	ppid = getppid();
+	char mesg[] = "Nested Containers are created";
 
- level  (int *)vtest;
- count  *level;
+	level = (int *)vtest;
+	count = *level;
 
- /* Child process closes up read side of pipe */
- close(fd[0]);
+	/* Child process closes up read side of pipe */
+	close(fd[0]);
 
- /* Comparing the values to make sure pidns is created correctly */
- if ((cpid ! CINIT_PID) || (ppid ! PARENT_PID)) {
-  tst_resm(TFAIL, "FAIL: Got unexpected result of"
-  " cpid%d ppid%d\n", cpid, ppid);
-  cleanup();
- }
- if (count > 1) {
-  count--;
-  ret  do_clone_unshare_test(T_CLONE, CLONE_NEWPID,
-    create_nested_container, (void *) &count);
-  if (ret  -1) {
-   tst_resm(TFAIL, "clone() Failed, errno  %d : %s\n" ,
-     ret, strerror(ret));
-   cleanup();
-  }
- } else {
-  /* Sending mesg, 'Nested containers created' through the pipe */
-  write(fd[1], mesg, (strlen(mesg)+1));
- }
+	/* Comparing the values to make sure pidns is created correctly */
+	if ((cpid != CINIT_PID) || (ppid != PARENT_PID)) {
+		tst_resm(TFAIL, "FAIL: Got unexpected result of"
+		" cpid=%d ppid=%d\n", cpid, ppid);
+		cleanup();
+	}
+	if (count > 1) {
+		count--;
+		ret = do_clone_unshare_test(T_CLONE, CLONE_NEWPID,
+				create_nested_container, (void *) &count);
+		if (ret == -1) {
+			tst_resm(TFAIL, "clone() Failed, errno = %d : %s\n" ,
+				 ret, strerror(ret));
+			cleanup();
+		}
+	} else {
+		/* Sending mesg, 'Nested containers created' through the pipe */
+		write(fd[1], mesg, (strlen(mesg)+1));
+	}
 
- close(fd[1]);
- pause();
+	close(fd[1]);
+	pause();
 
- /* NOT REACHED */
- return 0;
+	/* NOT REACHED */
+	return 0;
 }
 
 
 void kill_nested_containers()
 {
- int orig_count, new_count, status  0, i;
- pid_t pids[MAX_DEPTH];
- pid_t pids_new[MAX_DEPTH];
+	int orig_count, new_count, status = 0, i;
+	pid_t pids[MAX_DEPTH];
+	pid_t pids_new[MAX_DEPTH];
 
- orig_count  find_cinit_pids(pids);
- kill(pids[MAX_DEPTH - 3], SIGKILL) ;
- sleep(1);
+	orig_count = find_cinit_pids(pids);
+	kill(pids[MAX_DEPTH - 3], SIGKILL) ;
+	sleep(1);
 
- /* After killing child container, getting the New PID list */
- new_count  find_cinit_pids(pids_new);
+	/* After killing child container, getting the New PID list */
+	new_count = find_cinit_pids(pids_new);
 
- /*Verifyng if the child containers are destroyed when parent is killed*/
- if (orig_count - 2 ! new_count)
-  status  -1;
+	/*Verifyng if the child containers are destroyed when parent is killed*/
+	if (orig_count - 2 != new_count)
+		status = -1;
 
- for (i  0; i < new_count; i++) {
-  if (pids[i] ! pids_new[i])
-   status  -1;
- }
+	for (i = 0; i < new_count; i++) {
+		if (pids[i] != pids_new[i])
+			status = -1;
+	}
 
- if (status  0)
-  tst_resm(TPASS, "The number of containers killed are %d\n" ,
-    orig_count - new_count);
- else
-  tst_resm(TFAIL, "Failed to kill the sub-containers of "
-    "the container %d\n", pids[MAX_DEPTH - 3]);
+	if (status == 0)
+		tst_resm(TPASS, "The number of containers killed are %d\n" ,
+				orig_count - new_count);
+	else
+		tst_resm(TFAIL, "Failed to kill the sub-containers of "
+				"the container %d\n", pids[MAX_DEPTH - 3]);
 
- /* Loops through the containers created,  to exit from sleep() */
- for (i  0; i < MAX_DEPTH; i++) {
-  kill(pids[i], SIGKILL);
-  waitpid(pids[i], &status, 0);
- }
+	/* Loops through the containers created,  to exit from sleep() */
+	for (i = 0; i < MAX_DEPTH; i++) {
+		kill(pids[i], SIGKILL);
+		waitpid(pids[i], &status, 0);
+	}
 }
 
 
@@ -203,54 +203,54 @@ void kill_nested_containers()
 
 int main(int argc, char *argv[])
 {
- int ret, nbytes, status;
- char readbuffer[80];
- pid_t pid, pgid;
- int count  MAX_DEPTH;
+	int ret, nbytes, status;
+	char readbuffer[80];
+	pid_t pid, pgid;
+	int count = MAX_DEPTH;
 
- pid  fork();
- if (pid < 0) {
-  perror("fork()");
-  exit(1);
- } else if (pid) {
-  wait(&status);
-  exit(0);
- }
+	pid = fork();
+	if (pid < 0) {
+		perror("fork()");
+		exit(1);
+	} else if (pid) {
+		wait(&status);
+		exit(0);
+	}
 
- /* To make all the containers share the same PGID as its parent */
- setpgid(0, 0);
+	/* To make all the containers share the same PGID as its parent */
+	setpgid(0, 0);
 
- pid  getpid();
- pgid  getpgid(pid);
- ret  pipe(fd);
- if (ret  -1)
-  tst_brkm(TBROK, cleanup, "pipe() failed, errno %d", errno);
+	pid = getpid();
+	pgid = getpgid(pid);
+	ret = pipe(fd);
+	if (ret == -1)
+		tst_brkm(TBROK, cleanup, "pipe() failed, errno %d", errno);
 
- ret  do_clone_unshare_test(T_CLONE, CLONE_NEWPID,
-    create_nested_container, (void *) &count);
- if (ret  -1) {
-  tst_resm(TFAIL, "clone() Failed, errno  %d : %s\n" ,
-    ret, strerror(ret));
-  cleanup();
- }
+	ret = do_clone_unshare_test(T_CLONE, CLONE_NEWPID,
+				create_nested_container, (void *) &count);
+	if (ret == -1) {
+		tst_resm(TFAIL, "clone() Failed, errno = %d : %s\n" ,
+			 ret, strerror(ret));
+		cleanup();
+	}
 
- close(fd[1]);
- /* Waiting for the MAX_DEPTH number of containers to be created */
- nbytes  read(fd[0], readbuffer, sizeof(readbuffer));
- close(fd[0]);
- if (nbytes > 0)
-  tst_resm(TINFO, " %d %s", MAX_DEPTH, readbuffer);
- else {
-  tst_resm(TFAIL, "Unable to create %d containers\n", MAX_DEPTH);
-  cleanup();
- }
+	close(fd[1]);
+	/* Waiting for the MAX_DEPTH number of containers to be created */
+	nbytes = read(fd[0], readbuffer, sizeof(readbuffer));
+	close(fd[0]);
+	if (nbytes > 0)
+		tst_resm(TINFO, " %d %s", MAX_DEPTH, readbuffer);
+	else {
+		tst_resm(TFAIL, "Unable to create %d containers\n", MAX_DEPTH);
+		cleanup();
+	}
 
- /* Kill the container created  */
- kill_nested_containers();
- /* cleanup and exit */
- cleanup();
+	/* Kill the container created  */
+	kill_nested_containers();
+	/* cleanup and exit */
+	cleanup();
 
- /*NOTREACHED*/
- return 0;
+	/*NOTREACHED*/
+	return 0;
 }
 

@@ -11,17 +11,17 @@
 
 setup()
 {
- export TCID="setup"
- export TST_COUNT=0
- export TST_TOTAL=4
+	export TCID="setup" 
+	export TST_COUNT=0
+	export TST_TOTAL=4
 
- # Remove any leftover test file from prior failed runs.
- rm -rf $SELINUXTMPDIR/test_file
+	# Remove any leftover test file from prior failed runs.
+	rm -rf $SELINUXTMPDIR/test_file
 
- # Create a test file with the test_setattr_file_t type
- # for use in the tests.
- touch $SELINUXTMPDIR/test_file
- chcon -t test_setattr_file_t $SELINUXTMPDIR/test_file
+	# Create a test file with the test_setattr_file_t type
+	# for use in the tests.
+	touch $SELINUXTMPDIR/test_file
+	chcon -t test_setattr_file_t $SELINUXTMPDIR/test_file
 }
 
 test01()
@@ -30,8 +30,8 @@ test01()
         TST_COUNT=1
         RC=0
 
- # Verify that test_setattr_t can set attributes on the file.
- runcon -t test_setattr_t chown root $SELINUXTMPDIR/test_file 2>&1
+	# Verify that test_setattr_t can set attributes on the file.
+	runcon -t test_setattr_t chown root $SELINUXTMPDIR/test_file 2>&1
         RC=$?
         if [ $RC -eq 0 ]
         then
@@ -48,7 +48,7 @@ test02()
         TST_COUNT=2
         RC=0
 
- runcon -t test_setattr_t chmod 0755 $SELINUXTMPDIR/test_file 2>&1
+	runcon -t test_setattr_t chmod 0755 $SELINUXTMPDIR/test_file 2>&1
         RC=$?
         if [ $RC -eq 0 ]
         then
@@ -65,18 +65,18 @@ test03()
         TST_COUNT=3
         RC=0
 
- # Verify that test_nosetattr_t cannot set attributes on the file.
- runcon -t test_nosetattr_t chown nobody $SELINUXTMPDIR/test_file 2>&1
+	# Verify that test_nosetattr_t cannot set attributes on the file.
+	runcon -t test_nosetattr_t chown nobody $SELINUXTMPDIR/test_file 2>&1
         RC=$?
         if [ $RC -ne 0 ]
         then
                 echo "$TCID   PASS : setattr passed."
-  RC=0
+		RC=0
         else
                 echo "$TCID   FAIL : setattr failed."
-  RC=1
+		RC=1
         fi
- return $RC
+	return $RC
 }
 
 test04()
@@ -85,23 +85,23 @@ test04()
         TST_COUNT=4
         RC=0
 
- runcon -t test_nosetattr_t chmod 0644 $SELINUXTMPDIR/test_file 2>&1
+	runcon -t test_nosetattr_t chmod 0644 $SELINUXTMPDIR/test_file 2>&1
         RC=$?
         if [ $RC -ne 0 ]
         then
                 echo "$TCID   PASS : setattr passed."
-  RC=0
+		RC=0
         else
                 echo "$TCID   FAIL : setattr failed."
-  RC=1
+		RC=1
         fi
- return $RC
+	return $RC
 }
 
 cleanup()
 {
- # Cleanup.
- rm -rf $SELINUXTMPDIR/test_file
+	# Cleanup.
+	rm -rf $SELINUXTMPDIR/test_file
 }
 
 # Function:     main

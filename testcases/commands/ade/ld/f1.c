@@ -1,7 +1,7 @@
 
 void f1()
 {
- int i69;
- ii;
- return;
+	int i=69;
+	i=i;
+	return;
 }

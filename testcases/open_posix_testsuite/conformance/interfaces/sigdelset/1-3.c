@@ -1,8 +1,8 @@
-/*
+/*   
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  julie.n.fleischer REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this
+ * of this license, see the COPYING file at the top level of this 
  * source tree.
 
    Test the error condition of calling sigdelset() to delete a signal not
@@ -19,25 +19,25 @@
 
 int main(int argc, char *argv[])
 {
- sigset_t signalset;
+	sigset_t signalset;
 
- if (sigemptyset(&signalset) == -1) {
-  perror("sigemptyset failed -- test aborted");
-  return PTS_UNRESOLVED;
- }
+	if (sigemptyset(&signalset) == -1) {
+		perror("sigemptyset failed -- test aborted");
+		return PTS_UNRESOLVED;
+	}
 
- if (sigismember(&signalset, SIGCHLD) == 1) {
-  perror("SIGCHLD is already a member of signal set");
-  return PTS_UNRESOLVED;
- }
+	if (sigismember(&signalset, SIGCHLD) == 1) {
+		perror("SIGCHLD is already a member of signal set");
+		return PTS_UNRESOLVED;
+	}
 
- sigdelset(&signalset, SIGCHLD);
+	sigdelset(&signalset, SIGCHLD);
 
- if (sigismember(&signalset, SIGCHLD) == 0) {
-  printf("Test PASSED\n");
-  return PTS_PASS;
- } else {
-  printf("Test FAILED\n");
-  return PTS_FAIL;
- }
+	if (sigismember(&signalset, SIGCHLD) == 0) {
+		printf("Test PASSED\n");
+		return PTS_PASS;
+	} else {
+		printf("Test FAILED\n");
+		return PTS_FAIL;
+	}
 }

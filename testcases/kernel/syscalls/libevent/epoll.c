@@ -50,7 +50,7 @@
 #include "log.h"
 #else
 #define LOG_DBG(x)
-#define log_error warn
+#define log_error	warn
 #endif
 
 #include "event.h"
@@ -64,272 +64,272 @@ extern volatile sig_atomic_t evsignal_caught;
  * all file descriptors outself.
  */
 struct evepoll {
- struct event *evread;
- struct event *evwrite;
+	struct event *evread;
+	struct event *evwrite;
 };
 
 struct epollop {
- struct evepoll *fds;
- int nfds;
- struct epoll_event *events;
- int nevents;
- int epfd;
- sigset_t evsigmask;
+	struct evepoll *fds;
+	int nfds;
+	struct epoll_event *events;
+	int nevents;
+	int epfd;
+	sigset_t evsigmask;
 } epollop;
 
-void *epoll_init (void);
-int epoll_add (void *, struct event *);
-int epoll_del (void *, struct event *);
-int epoll_recalc (void *, int);
-int epoll_dispatch (void *, struct timeval *);
+void *epoll_init	(void);
+int epoll_add	(void *, struct event *);
+int epoll_del	(void *, struct event *);
+int epoll_recalc	(void *, int);
+int epoll_dispatch	(void *, struct timeval *);
 
-struct eventop epollops  {
- "epoll",
- epoll_init,
- epoll_add,
- epoll_del,
- epoll_recalc,
- epoll_dispatch
+struct eventop epollops = {
+	"epoll",
+	epoll_init,
+	epoll_add,
+	epoll_del,
+	epoll_recalc,
+	epoll_dispatch
 };
 
-#define NEVENT 32000
+#define NEVENT	32000
 
 void *
 epoll_init(void)
 {
- int epfd, nfiles  NEVENT;
- struct rlimit rl;
+	int epfd, nfiles = NEVENT;
+	struct rlimit rl;
 
- /* Disable epollueue when this environment variable is set */
- if (getenv("EVENT_NOEPOLL"))
-  return (NULL);
+	/* Disable epollueue when this environment variable is set */
+	if (getenv("EVENT_NOEPOLL"))
+		return (NULL);
 
- memset(&epollop, 0, sizeof(epollop));
+	memset(&epollop, 0, sizeof(epollop));
 
- if (getrlimit(RLIMIT_NOFILE, &rl)  0 &&
-     rl.rlim_cur ! RLIM_INFINITY)
-  nfiles  rl.rlim_cur;
+	if (getrlimit(RLIMIT_NOFILE, &rl) == 0 &&
+	    rl.rlim_cur != RLIM_INFINITY)
+		nfiles = rl.rlim_cur;
 
- /* Initalize the kernel queue */
+	/* Initalize the kernel queue */
 
- if ((epfd  epoll_create(nfiles))  -1) {
-  log_error("epoll_create");
-  return (NULL);
- }
+	if ((epfd = epoll_create(nfiles)) == -1) {
+		log_error("epoll_create");
+		return (NULL);
+	}
 
- epollop.epfd  epfd;
+	epollop.epfd = epfd;
 
- /* Initalize fields */
- epollop.events  malloc(nfiles * sizeof(struct epoll_event));
- if (epollop.events  NULL)
-  return (NULL);
- epollop.nevents  nfiles;
+	/* Initalize fields */
+	epollop.events = malloc(nfiles * sizeof(struct epoll_event));
+	if (epollop.events == NULL)
+		return (NULL);
+	epollop.nevents = nfiles;
 
- epollop.fds  calloc(nfiles, sizeof(struct evepoll));
- if (epollop.fds  NULL) {
-  free(epollop.events);
-  return (NULL);
- }
- epollop.nfds  nfiles;
+	epollop.fds = calloc(nfiles, sizeof(struct evepoll));
+	if (epollop.fds == NULL) {
+		free(epollop.events);
+		return (NULL);
+	}
+	epollop.nfds = nfiles;
 
- evsignal_init(&epollop.evsigmask);
+	evsignal_init(&epollop.evsigmask);
 
- return (&epollop);
+	return (&epollop);
 }
 
 int
 epoll_recalc(void *arg, int max)
 {
- struct epollop *epollop  arg;
+	struct epollop *epollop = arg;
 
- if (max > epollop->nfds) {
-  struct evepoll *fds;
-  int nfds;
+	if (max > epollop->nfds) {
+		struct evepoll *fds;
+		int nfds;
 
-  nfds  epollop->nfds;
-  while (nfds < max)
-   nfds << 1;
+		nfds = epollop->nfds;
+		while (nfds < max)
+			nfds <<= 1;
 
-  fds  realloc(epollop->fds, nfds * sizeof(struct evepoll));
-  if (fds  NULL) {
-   log_error("realloc");
-   return (-1);
-  }
-  epollop->fds  fds;
-  memset(fds + epollop->nfds, 0,
-      (nfds - epollop->nfds) * sizeof(struct evepoll));
-  epollop->nfds  nfds;
- }
+		fds = realloc(epollop->fds, nfds * sizeof(struct evepoll));
+		if (fds == NULL) {
+			log_error("realloc");
+			return (-1);
+		}
+		epollop->fds = fds;
+		memset(fds + epollop->nfds, 0,
+		    (nfds - epollop->nfds) * sizeof(struct evepoll));
+		epollop->nfds = nfds;
+	}
 
- return (evsignal_recalc(&epollop->evsigmask));
+	return (evsignal_recalc(&epollop->evsigmask));
 }
 
 int
 epoll_dispatch(void *arg, struct timeval *tv)
 {
- struct epollop *epollop  arg;
- struct epoll_event *events  epollop->events;
- struct evepoll *evep;
- int i, res, timeout;
+	struct epollop *epollop = arg;
+	struct epoll_event *events = epollop->events;
+	struct evepoll *evep;
+	int i, res, timeout;
 
- if (evsignal_deliver(&epollop->evsigmask)  -1)
-  return (-1);
+	if (evsignal_deliver(&epollop->evsigmask) == -1)
+		return (-1);
 
- timeout  tv->tv_sec * 1000 + tv->tv_usec / 1000;
- res  epoll_wait(epollop->epfd, events, epollop->nevents, timeout);
+	timeout = tv->tv_sec * 1000 + tv->tv_usec / 1000;
+	res = epoll_wait(epollop->epfd, events, epollop->nevents, timeout);
 
- if (evsignal_recalc(&epollop->evsigmask)  -1)
-  return (-1);
+	if (evsignal_recalc(&epollop->evsigmask) == -1)
+		return (-1);
 
- if (res  -1) {
-  if (errno ! EINTR) {
-   log_error("epoll_wait");
-   return (-1);
-  }
+	if (res == -1) {
+		if (errno != EINTR) {
+			log_error("epoll_wait");
+			return (-1);
+		}
 
-  evsignal_process();
-  return (0);
- } else if (evsignal_caught)
-  evsignal_process();
+		evsignal_process();
+		return (0);
+	} else if (evsignal_caught)
+		evsignal_process();
 
- LOG_DBG((LOG_MISC, 80, "%s: epoll_wait reports %d", __func__, res));
+	LOG_DBG((LOG_MISC, 80, "%s: epoll_wait reports %d", __func__, res));
 
- for (i  0; i < res; i++) {
-  int which  0;
-  int what  events[i].events;
-  struct event *evread  NULL, *evwrite  NULL;
+	for (i = 0; i < res; i++) {
+		int which = 0;
+		int what = events[i].events;
+		struct event *evread = NULL, *evwrite = NULL;
 
-  evep  (struct evepoll *)events[i].data.ptr;
-
+		evep = (struct evepoll *)events[i].data.ptr;
+   
                 if (what & EPOLLHUP)
-                        what | EPOLLIN | EPOLLOUT;
+                        what |= EPOLLIN | EPOLLOUT;
                 else if (what & EPOLLERR)
-                        what | EPOLLIN | EPOLLOUT;
+                        what |= EPOLLIN | EPOLLOUT;
 
-  if (what & EPOLLIN) {
-   evread  evep->evread;
-   which | EV_READ;
-  }
+		if (what & EPOLLIN) {
+			evread = evep->evread;
+			which |= EV_READ;
+		}
 
-  if (what & EPOLLOUT) {
-   evwrite  evep->evwrite;
-   which | EV_WRITE;
-  }
+		if (what & EPOLLOUT) {
+			evwrite = evep->evwrite;
+			which |= EV_WRITE;
+		}
 
-  if (!which)
-   continue;
+		if (!which)
+			continue;
 
-  if (evread ! NULL && !(evread->ev_events & EV_PERSIST))
-   event_del(evread);
-  if (evwrite ! NULL && evwrite ! evread &&
-      !(evwrite->ev_events & EV_PERSIST))
-   event_del(evwrite);
+		if (evread != NULL && !(evread->ev_events & EV_PERSIST))
+			event_del(evread);
+		if (evwrite != NULL && evwrite != evread &&
+		    !(evwrite->ev_events & EV_PERSIST))
+			event_del(evwrite);
 
-  if (evread ! NULL)
-   event_active(evread, EV_READ, 1);
-  if (evwrite ! NULL)
-   event_active(evwrite, EV_WRITE, 1);
- }
+		if (evread != NULL)
+			event_active(evread, EV_READ, 1);
+		if (evwrite != NULL)
+			event_active(evwrite, EV_WRITE, 1);
+	}
 
- return (0);
+	return (0);
 }
 
 
 int
 epoll_add(void *arg, struct event *ev)
 {
- struct epollop *epollop  arg;
- struct epoll_event epev;
- struct evepoll *evep;
- int fd, op, events;
+	struct epollop *epollop = arg;
+	struct epoll_event epev;
+	struct evepoll *evep;
+	int fd, op, events;
 
- if (ev->ev_events & EV_SIGNAL)
-  return (evsignal_add(&epollop->evsigmask, ev));
+	if (ev->ev_events & EV_SIGNAL)
+		return (evsignal_add(&epollop->evsigmask, ev));
 
- fd  ev->ev_fd;
- if (fd > epollop->nfds) {
-  /* Extent the file descriptor array as necessary */
-  if (epoll_recalc(epollop, fd)  -1)
-   return (-1);
- }
- evep  &epollop->fds[fd];
- op  EPOLL_CTL_ADD;
- events  0;
- if (evep->evread ! NULL) {
-  events | EPOLLIN;
-  op  EPOLL_CTL_MOD;
- }
- if (evep->evwrite ! NULL) {
-  events | EPOLLOUT;
-  op  EPOLL_CTL_MOD;
- }
+	fd = ev->ev_fd;
+	if (fd >= epollop->nfds) {
+		/* Extent the file descriptor array as necessary */
+		if (epoll_recalc(epollop, fd) == -1)
+			return (-1);
+	}
+	evep = &epollop->fds[fd];
+	op = EPOLL_CTL_ADD;
+	events = 0;
+	if (evep->evread != NULL) {
+		events |= EPOLLIN;
+		op = EPOLL_CTL_MOD;
+	}
+	if (evep->evwrite != NULL) {
+		events |= EPOLLOUT;
+		op = EPOLL_CTL_MOD;
+	}
 
- if (ev->ev_events & EV_READ)
-  events | EPOLLIN;
- if (ev->ev_events & EV_WRITE)
-  events | EPOLLOUT;
+	if (ev->ev_events & EV_READ)
+		events |= EPOLLIN;
+	if (ev->ev_events & EV_WRITE)
+		events |= EPOLLOUT;
 
- epev.data.ptr  evep;
- epev.events  events;
- if (epoll_ctl(epollop->epfd, op, ev->ev_fd, &epev)  -1)
-   return (-1);
+	epev.data.ptr = evep;
+	epev.events = events;
+	if (epoll_ctl(epollop->epfd, op, ev->ev_fd, &epev) == -1)
+			return (-1);
 
- /* Update events responsible */
- if (ev->ev_events & EV_READ)
-  evep->evread  ev;
- if (ev->ev_events & EV_WRITE)
-  evep->evwrite  ev;
+	/* Update events responsible */
+	if (ev->ev_events & EV_READ)
+		evep->evread = ev;
+	if (ev->ev_events & EV_WRITE)
+		evep->evwrite = ev;
 
- return (0);
+	return (0);
 }
 
 int
 epoll_del(void *arg, struct event *ev)
 {
- struct epollop *epollop  arg;
- struct epoll_event epev;
- struct evepoll *evep;
- int fd, events, op;
- int needwritedelete  1, needreaddelete  1;
+	struct epollop *epollop = arg;
+	struct epoll_event epev;
+	struct evepoll *evep;
+	int fd, events, op;
+	int needwritedelete = 1, needreaddelete = 1;
 
- if (ev->ev_events & EV_SIGNAL)
-  return (evsignal_del(&epollop->evsigmask, ev));
+	if (ev->ev_events & EV_SIGNAL)
+		return (evsignal_del(&epollop->evsigmask, ev));
 
- fd  ev->ev_fd;
- if (fd > epollop->nfds)
-  return (0);
- evep  &epollop->fds[fd];
+	fd = ev->ev_fd;
+	if (fd >= epollop->nfds)
+		return (0);
+	evep = &epollop->fds[fd];
 
- op  EPOLL_CTL_DEL;
- events  0;
+	op = EPOLL_CTL_DEL;
+	events = 0;
 
- if (ev->ev_events & EV_READ)
-  events | EPOLLIN;
- if (ev->ev_events & EV_WRITE)
-  events | EPOLLOUT;
+	if (ev->ev_events & EV_READ)
+		events |= EPOLLIN;
+	if (ev->ev_events & EV_WRITE)
+		events |= EPOLLOUT;
 
- if ((events & (EPOLLIN|EPOLLOUT)) ! (EPOLLIN|EPOLLOUT)) {
-  if ((events & EPOLLIN) && evep->evwrite ! NULL) {
-   needwritedelete  0;
-   events  EPOLLOUT;
-   op  EPOLL_CTL_MOD;
-  } else if ((events & EPOLLOUT) && evep->evread ! NULL) {
-   needreaddelete  0;
-   events  EPOLLIN;
-   op  EPOLL_CTL_MOD;
-  }
- }
+	if ((events & (EPOLLIN|EPOLLOUT)) != (EPOLLIN|EPOLLOUT)) {
+		if ((events & EPOLLIN) && evep->evwrite != NULL) {
+			needwritedelete = 0;
+			events = EPOLLOUT;
+			op = EPOLL_CTL_MOD;
+		} else if ((events & EPOLLOUT) && evep->evread != NULL) {
+			needreaddelete = 0;
+			events = EPOLLIN;
+			op = EPOLL_CTL_MOD;
+		}
+	}
 
- epev.events  events;
- epev.data.ptr  evep;
+	epev.events = events;
+	epev.data.ptr = evep;
 
- if (epoll_ctl(epollop->epfd, op, fd, &epev)  -1)
-  return (-1);
+	if (epoll_ctl(epollop->epfd, op, fd, &epev) == -1)
+		return (-1);
 
- if (needreaddelete)
-  evep->evread  NULL;
- if (needwritedelete)
-  evep->evwrite  NULL;
+	if (needreaddelete)
+		evep->evread = NULL;
+	if (needwritedelete)
+		evep->evwrite = NULL;
 
- return (0);
+	return (0);
 }

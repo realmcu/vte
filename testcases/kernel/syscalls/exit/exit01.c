@@ -19,23 +19,23 @@
 
 /*
  * NAME
- * exit01.c
+ *	exit01.c
  *
  * DESCRIPTION
- * Check that exit returns the correct values to the waiting parent
+ *	Check that exit returns the correct values to the waiting parent
  *
  * ALGORITHM
- * Fork a process that immediately calls exit() with a known
- * value. Check for that value in the parent.
+ * 	Fork a process that immediately calls exit() with a known
+ * 	value. Check for that value in the parent.
  *
  * USAGE
- * exit01
+ * 	exit01
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * None
+ * 	None
  */
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -49,88 +49,88 @@
 void cleanup(void);
 void setup(void);
 
-char *TCID  "exit01";
-int TST_TOTAL  1;
+char *TCID = "exit01";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 int main(int ac, char **av)
 {
- int pid, npid, sig, nsig, exno, nexno, status;
- int rval  0;
- int lc;   /* loop counter */
- char *msg;  /* message returned from parse_opts */
+	int pid, npid, sig, nsig, exno, nexno, status;
+	int rval = 0;
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, cleanup, "OPTION PARSIkNG ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, cleanup, "OPTION PARSIkNG ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- setup();  /* global setup for test */
+	setup();		/* global setup for test */
 
- /* check looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping. */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping. */
+		Tst_count = 0;
 
-  sig  0;
-  exno  1;
+		sig = 0;
+		exno = 1;
 
-  if ((pid  FORK_OR_VFORK())  -1) {
-   tst_brkm(TBROK, cleanup, "fork failed, errno%d",
-     errno, strerror(errno));
-  }
+		if ((pid = FORK_OR_VFORK()) == -1) {
+			tst_brkm(TBROK, cleanup, "fork failed, errno=%d",
+				 errno, strerror(errno));
+		}
 
-  if (pid  0) {  /* parent */
-   exit(exno);
-  } else {
-   sleep(1); /* let child start */
-   npid  wait(&status);
+		if (pid == 0) {		/* parent */
+			exit(exno);
+		} else {
+			sleep(1);	/* let child start */
+			npid = wait(&status);
 
-   if (npid ! pid) {
-    tst_resm(TFAIL, "wait error: "
-      "unexpected pid returned");
-    rval  1;
-   }
+			if (npid != pid) {
+				tst_resm(TFAIL, "wait error: "
+					 "unexpected pid returned");
+				rval = 1;
+			}
 
-   nsig  status % 256;
+			nsig = status % 256;
 
-   /*
-    * Check if the core dump bit has been set, bit # 7
-    */
-   if (nsig > 128) {
-    nsig  nsig - 128;
-   }
+			/*
+			 * Check if the core dump bit has been set, bit # 7
+			 */
+			if (nsig >= 128) {
+				nsig = nsig - 128;
+			}
 
-   /*
-    * nsig is the signal number returned by wait
-    */
-   if (nsig ! sig) {
-    tst_resm(TFAIL, "wait error: "
-      "unexpected signal returned");
-    rval  1;
-   }
+			/*
+			 * nsig is the signal number returned by wait
+			 */
+			if (nsig != sig) {
+				tst_resm(TFAIL, "wait error: "
+					 "unexpected signal returned");
+				rval = 1;
+			}
 
-   /*
-    * nexno is the exit number returned by wait
-    */
-   nexno  status / 256;
-   if (nexno ! exno) {
-    tst_resm(TFAIL, "wait error: "
-      "unexpected exit number returned");
-    rval  1;
-   }
-  }
+			/*
+			 * nexno is the exit number returned by wait
+			 */
+			nexno = status / 256;
+			if (nexno != exno) {
+				tst_resm(TFAIL, "wait error: "
+					 "unexpected exit number returned");
+				rval = 1;
+			}
+		}
 
-  if (rval ! 1) {
-   tst_resm(TPASS, "exit() test PASSED");
-  }
- }
- cleanup();
+		if (rval != 1) {
+			tst_resm(TPASS, "exit() test PASSED");
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -139,28 +139,28 @@ int main(int ac, char **av)
 void
 setup()
 {
- /* capture signals */
- tst_sig(FORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
- umask(0);
+	umask(0);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at completion or
- *        premature exit.
+ * 	       premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

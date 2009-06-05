@@ -11,27 +11,27 @@
 
 setup()
 {
- export TCID="setup"
- export TST_COUNT=0
- export TST_TOTAL=2
+	export TCID="setup"
+	export TST_COUNT=0 
+	export TST_TOTAL=2
 
- # Remove any leftover test file from prior failed runs.
- rm -rf $SELINUXTMPDIR/test_file
+	# Remove any leftover test file from prior failed runs.
+	rm -rf $SELINUXTMPDIR/test_file
 
- # Create a test file with the test_stat_file_t type
- # for use in the tests.
- touch $SELINUXTMPDIR/test_file
- chcon -t test_stat_file_t $SELINUXTMPDIR/test_file
+	# Create a test file with the test_stat_file_t type
+	# for use in the tests.
+	touch $SELINUXTMPDIR/test_file
+	chcon -t test_stat_file_t $SELINUXTMPDIR/test_file
 }
 
 test01()
 {
- TCID="test01"
- TST_COUNT=1
- RC=0
+	TCID="test01"
+	TST_COUNT=1
+	RC=0
 
- # Verify that test_stat_t can get attributes on the file.
- runcon -t test_stat_t -- ls -l $SELINUXTMPDIR/test_file 2>&1
+	# Verify that test_stat_t can get attributes on the file.
+	runcon -t test_stat_t -- ls -l $SELINUXTMPDIR/test_file 2>&1
         RC=$?
         if [ $RC -eq 0 ]
         then
@@ -44,28 +44,28 @@ test01()
 
 test02()
 {
- TCID="test02"
- TST_COUNT=2
- RC=0
+	TCID="test02"
+	TST_COUNT=2
+	RC=0
 
- # Verify that test_nostat_t cannot get attributes on the file.
- runcon -t test_nostat_t -- ls -l $SELINUXTMPDIR/test_file 2>&1
+	# Verify that test_nostat_t cannot get attributes on the file.
+	runcon -t test_nostat_t -- ls -l $SELINUXTMPDIR/test_file 2>&1
         RC=$?
         if [ $RC -ne 0 ]
         then
-  echo "$TCID   PASS : stat passed."
-  RC=0
+		echo "$TCID   PASS : stat passed."
+		RC=0
         else
-  echo "$TCID   FAIL : stat failed."
-  RC=1
+		echo "$TCID   FAIL : stat failed."
+		RC=1
         fi
- return $RC
+	return $RC
 }
 
 cleanup()
 {
- # Cleanup.
- rm -rf $SELINUXTMPDIR/test_file
+	# Cleanup.
+	rm -rf $SELINUXTMPDIR/test_file
 }
 
 # Function:     main
@@ -78,7 +78,7 @@ cleanup()
 RC=0    # Return value from setup, and test functions.
 EXIT_VAL=0
 
-setup
+setup 
 test01 || EXIT_VAL=$RC
 test02 || EXIT_VAL=$RC
 cleanup

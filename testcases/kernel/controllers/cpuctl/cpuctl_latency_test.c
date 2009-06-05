@@ -51,55 +51,55 @@
 #include "../libcontrollers/libcontrollers.h"
 
 extern int Tst_count;
-char *TCID  "cpu_controller_latency_tests";
-int TST_TOTAL  2;
+char *TCID = "cpu_controller_latency_tests";
+int TST_TOTAL = 2;
 
 void sighandler(int i)
 {
- exit(0);
+	exit(0);
 }
 
 int main(int argc, char *argv[])
 {
- char mytaskfile[FILENAME_MAX];
- int test_num;
+	char mytaskfile[FILENAME_MAX];
+	int test_num;
 
- /* Signal handler for tasks for exiting gracefully */
- struct sigaction newaction, oldaction;
- sigemptyset(&newaction.sa_mask);
- sigaddset(&newaction.sa_mask, SIGUSR1);
- newaction.sa_handler  &sighandler;
- sigaction(SIGUSR1, &newaction, &oldaction);
+	/* Signal handler for tasks for exiting gracefully */
+	struct sigaction newaction, oldaction;
+	sigemptyset(&newaction.sa_mask);
+	sigaddset(&newaction.sa_mask, SIGUSR1);
+	newaction.sa_handler = &sighandler;
+	sigaction(SIGUSR1, &newaction, &oldaction);
 
- if ((argc < 2) || (argc > 3)) {
-  printf("TBROK\t Invalid #args received from script"
-   " The test will run without any cpu load \n");
-  exit(1);
- }
+	if ((argc < 2) || (argc > 3)) {
+		printf("TBROK\t Invalid #args received from script"
+			" The test will run without any cpu load \n");
+		exit(1);
+	}
 
- /* Migrate the task to its group if applicable */
- test_num  atoi(argv[1]);
- if (test_num < 0) {
-  printf("Invalid test number received from script."
-      " Skipping load creation ");
-  exit(1);
- }
+	/* Migrate the task to its group if applicable */
+	test_num = atoi(argv[1]);
+	if (test_num < 0) {
+		printf("Invalid test number received from script."
+						" Skipping load creation ");
+		exit(1);
+	}
 
- if (test_num  2) {
-  strncpy(mytaskfile, argv[2], FILENAME_MAX);
-  strncat(mytaskfile, "/tasks",
-      FILENAME_MAX - strlen(mytaskfile) - 1);
-  write_to_file(mytaskfile, "a", getpid());
- }
+	if (test_num == 2) {
+		strncpy(mytaskfile, argv[2], FILENAME_MAX);
+		strncat(mytaskfile, "/tasks",
+					 FILENAME_MAX - strlen(mytaskfile) - 1);
+		write_to_file(mytaskfile, "a", getpid());
+	}
 
- /*
-  * Need to run some cpu intensive task. Not sure if it is the best
-  * workload I can run?
-  */
- double f  27409.345; /*just a float number for sqrt*/
+	/*
+	 * Need to run some cpu intensive task. Not sure if it is the best
+	 * workload I can run?
+	 */
+	double f = 27409.345;	/*just a float number for sqrt*/
 
- while (1)
-  f  sqrt(f * f);
+	while (1)
+		f = sqrt(f * f);
 
- return 0;
+	return 0;
 }

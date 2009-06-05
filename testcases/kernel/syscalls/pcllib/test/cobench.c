@@ -38,65 +38,65 @@ static volatile unsigned long sw_counter;
 
 
 static unsigned long long getustime(void) {
- struct timeval tm;
+	struct timeval tm;
 
- gettimeofday(&tm, NULL);
- return (unsigned long long) tm.tv_sec * 1000000ULL + (unsigned long long) tm.tv_usec;
+	gettimeofday(&tm, NULL);
+	return (unsigned long long) tm.tv_sec * 1000000ULL + (unsigned long long) tm.tv_usec;
 }
 
 
 static void switch_bench(void *data) {
 
- for (;;) {
-  sw_counter--;
-  co_resume();
- }
+	for (;;) {
+		sw_counter--;
+		co_resume();
+	}
 }
 
 
 int main(int argc, char *argv[]) {
- int i, ntimes;
- coroutine_t coro;
- unsigned long nswitches;
- unsigned long long ts, te;
+	int i, ntimes;
+	coroutine_t coro;
+	unsigned long nswitches;
+	unsigned long long ts, te;
 
- fprintf(stdout, "measuring co_create+co_delete performance ... ");
- fflush(stdout);
+	fprintf(stdout, "measuring co_create+co_delete performance ... ");
+	fflush(stdout);
 
- ntimes  10000;
- do {
-  ts  getustime();
-  for (i  0; i < ntimes; i++) {
-   if ((coro  co_create(switch_bench, NULL, NULL,
-           CO_STACK_SIZE)) ! NULL)
-    co_delete(coro);
-  }
-  te  getustime();
-  ntimes * 4;
- } while ((te - ts) < MIN_MEASURE_TIME);
+	ntimes = 10000;
+	do {
+		ts = getustime();
+		for (i = 0; i < ntimes; i++) {
+			if ((coro = co_create(switch_bench, NULL, NULL,
+					      CO_STACK_SIZE)) != NULL)
+				co_delete(coro);
+		}
+		te = getustime();
+		ntimes *= 4;
+	} while ((te - ts) < MIN_MEASURE_TIME);
 
- fprintf(stdout, "%g usec\n",
-  (double) (te - ts) / (double) ntimes);
+	fprintf(stdout, "%g usec\n",
+		(double) (te - ts) / (double) ntimes);
 
- if ((coro  co_create(switch_bench, NULL, NULL, CO_STACK_SIZE)) ! NULL) {
-  fprintf(stdout, "measuring switch performance ... ");
-  fflush(stdout);
+	if ((coro = co_create(switch_bench, NULL, NULL, CO_STACK_SIZE)) != NULL) {
+		fprintf(stdout, "measuring switch performance ... ");
+		fflush(stdout);
 
-  sw_counter  nswitches  10000;
-  do {
-   ts  getustime();
-   while (sw_counter)
-    co_call(coro);
-   te  getustime();
-   sw_counter  (nswitches * 4);
-  } while ((te - ts) < MIN_MEASURE_TIME);
+		sw_counter = nswitches = 10000;
+		do {
+			ts = getustime();
+			while (sw_counter)
+				co_call(coro);
+			te = getustime();
+			sw_counter = (nswitches *= 4);
+		} while ((te - ts) < MIN_MEASURE_TIME);
 
-  fprintf(stdout, "%g usec\n",
-   (double) (te - ts) / (double) (2 * nswitches));
+		fprintf(stdout, "%g usec\n",
+			(double) (te - ts) / (double) (2 * nswitches));
 
-  co_delete(coro);
- }
+		co_delete(coro);
+	}
 
- return 0;
+	return 0;
 }
 

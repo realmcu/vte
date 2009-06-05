@@ -1,0 +1,30 @@
+#Verification Tests Command File
+# generated automatically by the test campaign macro
+# version 1.0
+
+#files:
+#files:
+#files:
+#files:
+#files:
+
+TGE-LV-SYS-5170 socketcall01
+TGE-LV-SYS-5180 socketcall02
+TGE-LV-SYS-5190 socketcall03
+TGE-LV-SYS-5200 socketcall04
+TGE-LV-SYS-5210 socketpair01
+TGE-LV-SYS-5230 sockioctl01
+TGE-LV-SYS-5240 stat01
+TGE-LV-SYS-5250 stat02
+TGE-LV-SYS-5260 stat03
+TGE-LV-SYS-5270 stat05
+TGE-LV-SYS-5271 stat06
+TGE-LV-SYS-5280 statfs01
+TGE-LV-SYS-5290 statfs02
+TGE-LV-SYS-5291 statfs03
+TGE-LV-SYS-5295 statvfs01
+TGE-LV-SYS-5300 stime01
+TGE-LV-SYS-5310 stime02
+TGE-LV-SYS-5320 string01
+TGE-LV-SYS-5370 symlink01
+

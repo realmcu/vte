@@ -19,22 +19,22 @@
 
 /*
  * NAME
- * fork11.c
+ * 	fork11.c
  *
  * DESCRIPTION
- * Test that parent gets a pid from each child when doing wait
+ *	Test that parent gets a pid from each child when doing wait
  *
  * ALGORITHM
- * Fork NUMFORKS children that do nothing.
+ *	Fork NUMFORKS children that do nothing.
  *
  * USAGE
- * fork11
+ * 	fork11
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * None
+ * 	None
  */
 
 #include <sys/types.h>
@@ -44,8 +44,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID  "fork11";
-int TST_TOTAL  1;
+char *TCID = "fork11";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 void setup(void);
@@ -55,59 +55,59 @@ void cleanup(void);
 
 int main(int ac, char **av)
 {
- int i, pid, cpid, status;
- int fail0;
- int lc;   /* loop counter */
- char *msg;  /* message returned from parse_opts */
+	int i, pid, cpid, status;
+	int fail=0;
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 
- /*
-  * parse standard options
-  */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/*
+	 * parse standard options
+	 */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- /*
-  * perform global setup for the test
-  */
- setup();
+	/*
+	 * perform global setup for the test
+	 */
+	setup();
 
- /*
-  * check looping state if -i option is given
-  */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/*
+	 * check looping state if -i option is given
+	 */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /*
-   * reset Tst_count in case we are looping.
-   */
-  Tst_count  0;
+		/*
+		 * reset Tst_count in case we are looping.
+		 */
+		Tst_count = 0;
 
-  for (i0; i<NUMFORKS; i++) {
-   if ((pid  fork())  0) { /* child */
-    exit(0);
-   }
+		for (i=0; i<NUMFORKS; i++) {
+			if ((pid = fork()) == 0) {	/* child */
+				exit(0);
+			}
 
-   if (pid > 0) {   /* parent */
-    cpid  wait(&status);
-    if (cpid ! pid) {
-     fail++;
-    }
-   } else {
-    fail++;
-    break;
-   }
-  }
-  if (fail) {
-   tst_resm(TFAIL, "fork failed %d times", fail);
-  } else {
-   tst_resm(TPASS, "fork test passed, %d processes", i);
-  }
- }
- cleanup();
+			if (pid > 0) {			/* parent */
+				cpid = wait(&status);
+				if (cpid != pid) {
+					fail++;
+				}
+			} else {
+				fail++;
+				break;
+			}
+		}
+		if (fail) {
+			tst_resm(TFAIL, "fork failed %d times", fail);
+		} else {
+			tst_resm(TPASS, "fork test passed, %d processes", i);
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -116,29 +116,29 @@ int main(int ac, char **av)
 void
 setup()
 {
- /*
-  * capture signals
-  */
- tst_sig(FORK, DEF_HANDLER, cleanup);
+	/*
+	 * capture signals
+	 */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
- /*
-  * Pause if that option was specified
-  */
- TEST_PAUSE;
+	/*
+	 * Pause if that option was specified
+	 */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit
+ *	       completion or premature exit
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- tst_exit();
+	tst_exit();
 }

@@ -4,8 +4,8 @@ EXECS=tcore tcore.sh tcore.exp
 
 all:		tcore
 
-install:
-		@set -e; for i in $(EXECS) ; do ln -f $$i ../../bin/$$i ; done ;
+install: 
+		@set -e; for i in $(EXECS) ; do ln -f $$i ../../bin/$$i ; done ;	
 
 tcore:		tcore.c
 		$(CC)  -o tcore tcore.c -lm -lpthread

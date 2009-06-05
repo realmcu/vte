@@ -24,7 +24,7 @@
 /*                                                                            */
 /* Description: This Program tests the new system call introduced in 2.6.27.  */
 /*              Ulrich´s comment as in:                                       */
-/* http://git.kernel.org/?plinux/kernel/git/torvalds/linux-2.6.git;acommit;hbe61a86d7237dd80510615f38ae21d6e1e98660c */
+/* http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=be61a86d7237dd80510615f38ae21d6e1e98660c */
 /* which says:                                                                */
 /* This patch adds O_NONBLOCK support to pipe2.  It is minimally more involved*/
 /* than the patches for eventfd et.al but still trivial.  The interfaces of   */
@@ -80,9 +80,9 @@ extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
-char *TCID      "pipe2_02"; /* test program identifier.              */
+char *TCID     = "pipe2_02"; /* test program identifier.              */
 int  testno;
-int  TST_TOTAL  1;                  /* total number of tests in this file.   */
+int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -142,8 +142,8 @@ int main (int argc, char *argv[]) {
     char *msg;              /* message returned from parse_opts */
 
     /* Parse standard options given to run the test. */
-    msg  parse_opts(argc, argv, (option_t *) NULL, NULL);
-    if (msg ! (char *) NULL) {
+    msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
+    if (msg != (char *) NULL) {
         tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
         tst_exit();
     }
@@ -154,19 +154,19 @@ int main (int argc, char *argv[]) {
     setup();
 
     /* Check looping state if -i option given */
-    for (lc  0; TEST_LOOPING(lc); ++lc) {
-         Tst_count  0;
-         for (testno0; testno < TST_TOTAL; ++testno) {
-              if (syscall (__NR_pipe2, fds, 0)  -1) {
+    for (lc = 0; TEST_LOOPING(lc); ++lc) {
+         Tst_count = 0;
+         for (testno=0; testno < TST_TOTAL; ++testno) {
+              if (syscall (__NR_pipe2, fds, 0) == -1) {
                   tst_resm(TFAIL, "pipe2(0) failed");
                   cleanup();
                   tst_exit();
               }
-              for (i  0; i < 2; ++i) {
-                   fl  fcntl (fds[i], F_GETFL);
-                   if (fl  -1) {
+              for (i = 0; i < 2; ++i) {
+                   fl = fcntl (fds[i], F_GETFL);
+                   if (fl == -1) {
                        tst_brkm(TBROK, cleanup, "fcntl failed");
-                       tst_exit();
+                       tst_exit(); 
                    }
                    if (fl & O_NONBLOCK) {
                        tst_resm(TFAIL, "pipe2(0) set non-blocking mode for fds[%d]", i);
@@ -176,18 +176,18 @@ int main (int argc, char *argv[]) {
                    close (fds[i]);
               }
 
-              if (syscall (__NR_pipe2, fds, O_NONBLOCK)  -1) {
+              if (syscall (__NR_pipe2, fds, O_NONBLOCK) == -1) {
                   tst_resm(TFAIL, "pipe2(O_NONBLOCK) failed");
                   cleanup();
                   tst_exit();
               }
-              for (i  0; i < 2; ++i) {
-                   fl  fcntl (fds[i], F_GETFL);
-                   if (fl  -1) {
+              for (i = 0; i < 2; ++i) {
+                   fl = fcntl (fds[i], F_GETFL);
+                   if (fl == -1) {
                        tst_brkm(TBROK, cleanup, "fcntl failed");
-                       tst_exit();
+                       tst_exit(); 
                    }
-                   if ((fl & O_NONBLOCK)  0) {
+                   if ((fl & O_NONBLOCK) == 0) {
                         tst_resm(TFAIL, "pipe2(O_NONBLOCK) does not set non-blocking mode for fds[%d]\n", i);
                         cleanup();
                         tst_exit();

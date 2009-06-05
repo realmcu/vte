@@ -19,15 +19,15 @@
 
 /*
  * NAME
- * pipe08.c
+ *	pipe08.c
  *
  * DESCRIPTION
- * Check that a SIGPIPE signal is generated when a write is
- * attempted on an empty pipe.
+ *	Check that a SIGPIPE signal is generated when a write is
+ *	attempted on an empty pipe.
  *
  * ALGORITHM
- * 1. Write to a pipe after closing the read side.
- * 2. Check for the signal SIGPIPE to be received.
+ *	1. Write to a pipe after closing the read side.
+ *	2. Check for the signal SIGPIPE to be received.
  *
  * USAGE:  <for command-line>
  *  pipe08 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
@@ -39,13 +39,13 @@
  *             -t   : Turn on syscall timing.
  *
  * USAGE
- * pipe08
+ *	pipe08
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * None
+ *	None
  */
 #include <errno.h>
 #include <unistd.h>
@@ -54,8 +54,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID  "pipe08";
-int TST_TOTAL  1;
+char *TCID = "pipe08";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 void setup(void);
@@ -64,56 +64,56 @@ void sighandler(int);
 
 int main(int ac, char **av)
 {
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
 
- int pipefd[2];   /* fds for pipe read/write */
- char wrbuf[BUFSIZ];
- int written, length;
- int close_stat;   /*  exit status of close(read fd) */
+	int pipefd[2];			/* fds for pipe read/write */
+	char wrbuf[BUFSIZ];
+	int written, length;
+	int close_stat;			/*  exit status of close(read fd) */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- if (!STD_FUNCTIONAL_TEST) {
-  tst_resm(TWARN, "-f option should not be used");
- }
+	if (!STD_FUNCTIONAL_TEST) {
+		tst_resm(TWARN, "-f option should not be used");
+	}
 
- setup();
+	setup();
 
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  TEST(pipe(pipefd));
+		TEST(pipe(pipefd));
 
-  if (TEST_RETURN ! 0) {
-   tst_resm(TFAIL, "call failed unexpectedly");
-   continue;
-  }
+		if (TEST_RETURN != 0) {
+			tst_resm(TFAIL, "call failed unexpectedly");
+			continue;
+		}
 
-  if ((close_stat  close(pipefd[0]))  -1) {
-   tst_brkm(TBROK, cleanup, "close of read side failed");
-  }
+		if ((close_stat = close(pipefd[0])) == -1) {
+			tst_brkm(TBROK, cleanup, "close of read side failed");
+		}
 
-  strcpy(wrbuf, "abcdefghijklmnopqrstuvwxyz\0");
-  length  strlen(wrbuf);
+		strcpy(wrbuf, "abcdefghijklmnopqrstuvwxyz\0");
+		length = strlen(wrbuf);
 
-  /*
-   * the SIGPIPE signal will be caught here or else
-   * the program will dump core when the signal is
-   * sent
-   */
-  written  write(pipefd[1], wrbuf, length);
- }
- cleanup();
+		/*
+		 * the SIGPIPE signal will be caught here or else
+		 * the program will dump core when the signal is
+		 * sent
+		 */
+		written = write(pipefd[1], wrbuf, length);
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -122,11 +122,11 @@ int main(int ac, char **av)
 void
 sighandler(int sig)
 {
- if (sig ! SIGPIPE) {
-  tst_resm(TFAIL, "expected SIGPIPE, got %d", sig);
- } else {
-  tst_resm(TPASS, "got expected SIGPIPE signal");
- }
+	if (sig != SIGPIPE) {
+		tst_resm(TFAIL, "expected SIGPIPE, got %d", sig);
+	} else {
+		tst_resm(TPASS, "got expected SIGPIPE signal");
+	}
 }
 
 /*
@@ -135,26 +135,26 @@ sighandler(int sig)
 void
 setup()
 {
- /* capture signals */
- tst_sig(NOFORK, sighandler, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, sighandler, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit.
+ *	       completion or premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

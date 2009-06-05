@@ -53,7 +53,7 @@ GETGROUPS(int size16, GID_T *list16)
 	r = getgroups(size16, list32);
 	if (r < 0)
 	  goto out;
-
+  
 	for (i = 0; i < r; i++) {
 		if (!GID_SIZE_CHECK(list32[i]))
 		  tst_brkm(TBROK,

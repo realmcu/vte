@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #<Hake Huang>/-----             <2008/11/24>     N/A          Initial version
-#
+# 
 ###################################################################################################
 
 
@@ -71,10 +71,10 @@ return $RC
 
 # Function:     test_case_01
 # Description   - Test if multi decode test
-#
+#  
 test_case_01()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="vpu_multi_dec_test"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -115,14 +115,14 @@ return $RC
 if [ $# -ne 1 ]
 then
 echo "usage $0 <1>"
-exit 1
+exit 1 
 fi
 
 setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC
+  test_case_01 || exit $RC 
   ;;
 *)
 #TODO check parameter

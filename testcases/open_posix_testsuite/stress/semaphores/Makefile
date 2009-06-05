@@ -11,8 +11,8 @@ CFLAGS=-Wall -O2 -g -I$(POSIX_DIR_INC) -L$(POSIX_DIR_LIB)
 all:  multi_con_pro.test
 
 %.test : %.c
-	$(CC) $(CFLAGS) $(INCLUDE) $< -o $@ $(LIB) -lpthread
-clean:
+	$(CC) $(CFLAGS) $(INCLUDE) $< -o $@ $(LIB) -lpthread  
+clean: 
 	rm *.test
 
-
+ 

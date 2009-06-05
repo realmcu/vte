@@ -21,7 +21,7 @@ LDLIBS += -L../../../../lib -lltp
 
 include ../utils/compat_16.mk
 
-SRCS    = $(wildcard *.c)
+SRCS    = $(wildcard *.c) 
 TARGETS += $(patsubst %.c,%,$(SRCS))
 
 

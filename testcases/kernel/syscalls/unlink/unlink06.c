@@ -32,81 +32,81 @@
  */
 /* $Id: unlink06.c,v 1.1 2001/08/27 22:15:15 plars Exp $ */
 /**********************************************************
- *
+ * 
  *    OS Test - Silicon Graphics, Inc.
- *
- *    TEST IDENTIFIER : unlink06
- *
- *    EXECUTED BY : anyone
- *
- *    TEST TITLE : unlink(2) of a FIFO
- *
- *    PARENT DOCUMENT : usctpl01
- *
- *    TEST CASE TOTAL : 1
- *
- *    WALL CLOCK TIME : 1
- *
- *    CPU TYPES  : ALL
- *
- *    AUTHOR  : Richard Logan
- *
- *    CO-PILOT  : William Roske
- *
- *    DATE STARTED : 03/30/94
- *
- *    INITIAL RELEASE : UNICOS 7.0
- *
+ * 
+ *    TEST IDENTIFIER	: unlink06
+ * 
+ *    EXECUTED BY	: anyone
+ * 
+ *    TEST TITLE	: unlink(2) of a FIFO
+ * 
+ *    PARENT DOCUMENT	: usctpl01
+ * 
+ *    TEST CASE TOTAL	: 1
+ * 
+ *    WALL CLOCK TIME	: 1
+ * 
+ *    CPU TYPES		: ALL
+ * 
+ *    AUTHOR		: Richard Logan
+ * 
+ *    CO-PILOT		: William Roske
+ * 
+ *    DATE STARTED	: 03/30/94
+ * 
+ *    INITIAL RELEASE	: UNICOS 7.0
+ * 
  *    TEST CASES
- *
- * 1.) unlink(2) returns...(See Description)
- *
+ * 
+ * 	1.) unlink(2) returns...(See Description)
+ *	
  *    INPUT SPECIFICATIONS
- * The standard options for system call tests are accepted.
- * (See the parse_opts(3) man page).
- *
+ * 	The standard options for system call tests are accepted.
+ *	(See the parse_opts(3) man page).
+ * 
  *    OUTPUT SPECIFICATIONS
- *
+ * 	
  *    DURATION
- * Terminates - with frequency and infinite modes.
- *
+ * 	Terminates - with frequency and infinite modes.
+ * 
  *    SIGNALS
- * Uses SIGUSR1 to pause before test if option set.
- * (See the parse_opts(3) man page).
+ * 	Uses SIGUSR1 to pause before test if option set.
+ * 	(See the parse_opts(3) man page).
  *
  *    RESOURCES
- * None
- *
+ * 	None
+ * 
  *    ENVIRONMENTAL NEEDS
  *      No run-time environmental needs.
- *
+ * 
  *    SPECIAL PROCEDURAL REQUIREMENTS
- * None
- *
+ * 	None
+ * 
  *    INTERCASE DEPENDENCIES
- * None
- *
+ * 	None
+ * 
  *    DETAILED DESCRIPTION
- * This is a Phase I test for the unlink(2) system call.  It is intended
- * to provide a limited exposure of the system call, for now.  It
- * should/will be extended when full functional tests are written for
- * unlink(2).
- *
- * Setup:
- *   Setup signal handling.
- *   Pause for SIGUSR1 if option specified.
- *
- * Test:
- *  Loop if the proper options are given.
- *   Execute system call
- *   Check return code, if system call failed (return-1)
- *  Log the errno and Issue a FAIL message.
- *   Otherwise, Issue a PASS message.
- *
- * Cleanup:
- *   Print errno log and/or timing stats if options given
- *
- *
+ *	This is a Phase I test for the unlink(2) system call.  It is intended
+ *	to provide a limited exposure of the system call, for now.  It
+ *	should/will be extended when full functional tests are written for
+ *	unlink(2).
+ * 
+ * 	Setup:
+ * 	  Setup signal handling.
+ *	  Pause for SIGUSR1 if option specified.
+ * 
+ * 	Test:
+ *	 Loop if the proper options are given.
+ * 	  Execute system call
+ *	  Check return code, if system call failed (return=-1)
+ *		Log the errno and Issue a FAIL message.
+ *	  Otherwise, Issue a PASS message.
+ * 
+ * 	Cleanup:
+ * 	  Print errno log and/or timing stats if options given
+ * 
+ * 
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
 #include <sys/types.h>
@@ -124,11 +124,11 @@ void create_file();
 void cleanup();
 
 
-char *TCID"unlink06";/* Test program identifier.    */
-int TST_TOTAL1;   /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID="unlink06"; 		/* Test program identifier.    */
+int TST_TOTAL=1;    		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-int exp_enos[]{0, 0};
+int exp_enos[]={0, 0};
 
 char Fname[255];
 
@@ -138,15 +138,15 @@ char Fname[255];
 int
 main(int ac, char **av)
 {
-    int lc;  /* loop counter */
-    char *msg;  /* message returned from parse_opts */
-
+    int lc;		/* loop counter */
+    char *msg;		/* message returned from parse_opts */
+    
     /***************************************************************
      * parse standard options
      ***************************************************************/
-    if ( (msgparse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *) NULL ) {
- tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
- tst_exit();
+    if ( (msg=parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *) NULL ) {
+	tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	tst_exit();
     }
 
     /***************************************************************
@@ -160,37 +160,37 @@ main(int ac, char **av)
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc0; TEST_LOOPING(lc); lc++) {
+    for (lc=0; TEST_LOOPING(lc); lc++) {
 
- /* reset Tst_count in case we are looping. */
- Tst_count0;
-
- create_file();
+	/* reset Tst_count in case we are looping. */
+	Tst_count=0;
+	
+	create_file();
 
         /*
-  *  Call unlink(2)
-  */
- TEST(unlink(Fname));
-
- /* check return code */
- if ( TEST_RETURN  -1 ) {
-     TEST_ERROR_LOG(TEST_ERRNO);
-     tst_resm(TFAIL, "unlink(%s) Failed, errno%d : %s", Fname,
-       TEST_ERRNO, strerror(TEST_ERRNO));
- } else if ( STD_FUNCTIONAL_TEST ) {
-     if ( access(Fname, F_OK) ! -1 ) {
-         tst_resm(TFAIL,
-            "unlink(%s) returned %d, but access says file still exists.",
-            Fname, TEST_RETURN);
-     }
-     else {
-         tst_resm(TPASS, "unlink(%s) returned %d", Fname, TEST_RETURN);
-     }
- }
- else
-     Tst_count++;
-
-    } /* End for TEST_LOOPING */
+	 *  Call unlink(2)
+	 */
+	TEST(unlink(Fname));
+	
+	/* check return code */
+	if ( TEST_RETURN == -1 ) {
+	    TEST_ERROR_LOG(TEST_ERRNO);
+	    tst_resm(TFAIL, "unlink(%s) Failed, errno=%d : %s", Fname,
+		     TEST_ERRNO, strerror(TEST_ERRNO));
+	} else if ( STD_FUNCTIONAL_TEST ) {
+	    if ( access(Fname, F_OK) != -1 ) {
+	        tst_resm(TFAIL,
+	           "unlink(%s) returned %d, but access says file still exists.", 
+	           Fname, TEST_RETURN);
+	    }
+	    else {
+	        tst_resm(TPASS, "unlink(%s) returned %d", Fname, TEST_RETURN);
+	    }
+	}
+	else
+	    Tst_count++;
+	
+    }	/* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -198,12 +198,12 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-} /* End main */
+}	/* End main */
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void
+void 
 setup()
 {
     /* capture signals */
@@ -217,14 +217,14 @@ setup()
 
     sprintf(Fname, "fifo_unlink%d", getpid());
 
-} /* End setup() */
+}	/* End setup() */
 
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *  completion or premature exit.
+ *		completion or premature exit.
  ***************************************************************/
-void
+void 
 cleanup()
 {
     /*
@@ -239,7 +239,7 @@ cleanup()
     /* exit with return code appropriate for results */
     tst_exit();
 
-} /* End cleanup() */
+}	/* End cleanup() */
 
 /******************************************************************
  *
@@ -247,9 +247,9 @@ cleanup()
 void
 create_file()
 {
-    if(mkfifo(Fname, 0777)  -1) {
+    if(mkfifo(Fname, 0777) == -1) {
         tst_brkm(TBROK, cleanup,
-    "mkfifo(%s, 0777) failed errno:%d %s\n", Fname,
-    errno, strerror(errno));
+	   "mkfifo(%s, 0777) failed errno:%d %s\n", Fname,
+	   errno, strerror(errno));
     }
 }

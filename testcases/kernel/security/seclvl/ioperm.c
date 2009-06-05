@@ -30,7 +30,7 @@
 
 int main() {
   int rc;
-  rc  ioperm( 0x312, 1, 1 );
-  printf( "Return code  [%d]\n", rc );
+  rc = ioperm( 0x312, 1, 1 );
+  printf( "Return code = [%d]\n", rc );
   return rc;
 }

@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #hake huang/b20222/-----          20090112     N/A          Initial version
-#
+# 
 ###################################################################################################
 
 
@@ -69,10 +69,10 @@ return $RC
 
 # Function:     test_case_01
 # Description   - Test if vpu dec power management ok
-#
+#  
 test_case_01()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="vpu_dec_pm_test"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -93,7 +93,7 @@ echo wait the decode task to finish
 sleep 10
 SIZE=$(ls -l /tmp/stream.yuv| awk '{print $5}')
 if [ $SIZE == "152064" ]
-then
+then 
 RC=0
 fi
 rm -f /tmp/stream.yuv
@@ -103,10 +103,10 @@ return $RC
 
 # Function:     test_case_02
 # Description   - Test if vpu encode power management ok
-#
+#  
 test_case_02()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="vpu_enc_pm_test"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -129,7 +129,7 @@ fi
 echo "run encoder  first"
 #$TSTCMD -C config_enc_h263_P3 || return $TST_COUNT
 
-$TSTCMD -E "-f 1 -w 352 -h 288 -i ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv -o /tmp/enc/test.263"
+$TSTCMD -E "-f 1 -w 352 -h 288 -i ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv -o /tmp/enc/test.263" 
 
 
 SIZE1=$(ls -s /tmp/enc/test.263| awk '{print $1}')
@@ -137,7 +137,7 @@ echo "rm temp result"
 rm -f /tmp/enc/test.263
 echo "start a process to test enc"
 #$TSTCMD -C config_enc_h263_P3 &
-$TSTCMD -E "-f 1 -w 352 -h 288 -i ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv -o /tmp/enc/test.263" &
+$TSTCMD -E "-f 1 -w 352 -h 288 -i ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv -o /tmp/enc/test.263" & 
 echo "***********"
 echo "press a key to resume power"
 echo "***********"
@@ -160,10 +160,10 @@ return $RC
 
 # Function:     test_case_03
 # Description   - Test if <TODO test function> ok
-#
+#  
 test_case_03()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="test_demo3_test"
 #TODO give TST_COUNT
 TST_COUNT=3
@@ -180,10 +180,10 @@ return $RC
 
 # Function:     test_case_04
 # Description   - Test if <TODO test function> ok
-#
+#  
 test_case_04()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="test_demo4_test"
 #TODO give TST_COUNT
 TST_COUNT=4
@@ -200,10 +200,10 @@ return $RC
 
 # Function:     test_case_05
 # Description   - Test if <TODO test function> ok
-#
+#  
 test_case_05()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="test_demo5_test"
 #TODO give TST_COUNT
 TST_COUNT=5
@@ -260,7 +260,7 @@ TSTCMD="/unit_tests/mxc_vpu_test.out"
 if [ $# -ne 1 ]
 then
 usage
-exit 1
+exit 1 
 fi
 
 
@@ -270,7 +270,7 @@ setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC
+  test_case_01 || exit $RC 
   ;;
 2)
   test_case_02 || exit $RC

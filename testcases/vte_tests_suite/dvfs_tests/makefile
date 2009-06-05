@@ -17,7 +17,7 @@
 #Author/core ID                  Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #
-all:
+all: 
 install:
 	ln -f dvfs.sh  ../../bin
 	ln -f dvfs_mx25.sh ../../bin

@@ -14,7 +14,7 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 ***************************************************************************/
-/*
+/*========================================================================
 * This testcase uses the libnetns.c from the lib to create network NS1.
 * In libnetns.c it uses 2 scripts parentns.sh and childns.sh to create this.
 *
@@ -24,16 +24,16 @@
 * It returns PASS on Success else returns FAIL.
 *
 * Scripts used: parentns.sh, childns.sh , delchild.sh rename_net.sh
-*
-* Author: Veerendra C <vechandr@in.ibm.com>
+* 
+* Author: Veerendra C <vechandr@in.ibm.com> 
 *                      31/07/2008
-* */
+* =========================================================================*/
 
 #include "../libclone/libclone.h"
 
 int main()
 {
     int status;
-    status  create_net_namespace("delchild.sh", "rename_net.sh");
+    status = create_net_namespace("delchild.sh", "rename_net.sh");
     return status;
 }

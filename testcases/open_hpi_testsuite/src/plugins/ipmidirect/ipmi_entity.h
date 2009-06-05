@@ -142,7 +142,7 @@ public:
   cIpmiEntity *Find( cIpmiMc *mc,
                      tIpmiEntityId entity_id, int entity_instance );
 
-  cIpmiEntity *Add( cIpmiMc *mc, int lun,
+  cIpmiEntity *Add( cIpmiMc *mc, int lun, 
                     tIpmiEntityId entity_id, int entity_instance,
                     const char *id );
   void Rem( cIpmiEntity *ent );

@@ -18,9 +18,9 @@
 
 int main()
 {
- printf("Will not test that {OPEN_MAX} file and message queues can\n");
- printf("be opened as we cannot determine at run-time if a given\n");
- printf("implementation is implemented with a file descriptor.\n");
- return PTS_UNTESTED;
+	printf("Will not test that {OPEN_MAX} file and message queues can\n");
+	printf("be opened as we cannot determine at run-time if a given\n");
+	printf("implementation is implemented with a file descriptor.\n");
+	return PTS_UNTESTED;
 }
 

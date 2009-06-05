@@ -19,14 +19,14 @@
 
 /*
  * NAME
- * fsync03.c
+ *	fsync03.c
  *
  * DESCRIPTION
- * Testcase to check that fsync(2) sets errno correctly.
+ *	Testcase to check that fsync(2) sets errno correctly.
  *
  * ALGORITHM
- * 1. Call fsync() with an invalid fd, and test for EBADF.
- * 2. Call fsync() on a pipe(fd), and expect EINVAL.
+ *	1. Call fsync() with an invalid fd, and test for EBADF.
+ *	2. Call fsync() on a pipe(fd), and expect EINVAL.
  *
  * USAGE:  <for command-line>
  *  fsync03 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -38,10 +38,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * NONE
+ *	NONE
  */
 
 #include <unistd.h>
@@ -52,76 +52,76 @@
 void setup(void);
 void cleanup(void);
 
-int fd[2];  /* fd's for the pipe() call in setup()  */
-int pfd;  /* holds the value for fd[1]  */
-int bfd  -1;  /* an invalid fd   */
+int fd[2];		/* fd's for the pipe() call in setup()  */
+int pfd;		/* holds the value for fd[1]		*/
+int bfd = -1;		/* an invalid fd			*/
 
-int exp_enos[]  {EBADF, EINVAL, 0};
+int exp_enos[] = {EBADF, EINVAL, 0};
 
 struct test_case_t {
         int *fd;
         int error;
-} TC[]  {
- /* EBADF - fd is invalid (-1) */
+} TC[] = {
+	/* EBADF - fd is invalid (-1) */
         { &bfd, EBADF},
 
- /* EINVAL - fsync() on pipe should not succeed. */
+	/* EINVAL - fsync() on pipe should not succeed. */
         { &pfd, EINVAL}
 };
 
-char *TCID  "fsync03";
-int TST_TOTAL  2;
+char *TCID = "fsync03";
+int TST_TOTAL = 2;
 extern int Tst_count;
 
 int main(int ac, char **av)
 {
- int lc;    /* loop counter */
- int i;
- char *msg;   /* message returned from parse_opts */
+	int lc;				/* loop counter */
+	int i;
+	char *msg;			/* message returned from parse_opts */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	}
 
- setup();
+	setup();
 
- /* set up the expected errnos */
- TEST_EXP_ENOS(exp_enos);
+	/* set up the expected errnos */
+	TEST_EXP_ENOS(exp_enos);
 
- /* check looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping. */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping. */
+		Tst_count = 0;
 
-  /* loop through the test cases */
-  for (i  0; i < TST_TOTAL; i++) {
+		/* loop through the test cases */
+		for (i = 0; i < TST_TOTAL; i++) {
 
-   TEST(fsync(*(TC[i].fd)));
+			TEST(fsync(*(TC[i].fd)));
 
-                        if (TEST_RETURN ! -1) {
+                        if (TEST_RETURN != -1) {
                                 tst_resm(TFAIL, "call succeeded unexpectedly");
                                 continue;
                         }
 
                         TEST_ERROR_LOG(TEST_ERRNO);
 
-                        if (TEST_ERRNO  TC[i].error) {
+                        if (TEST_ERRNO == TC[i].error) {
                                 tst_resm(TPASS, "expected failure - "
-                                         "errno  %d : %s", TEST_ERRNO,
+                                         "errno = %d : %s", TEST_ERRNO,
                                          strerror(TEST_ERRNO));
                         } else {
                                 tst_resm(TFAIL, "unexpected error - %d : %s - "
                                          "expected %d", TEST_ERRNO,
                                          strerror(TEST_ERRNO), TC[i].error);
-   }
-  }
- }
- cleanup();
+			}
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -130,40 +130,40 @@ int main(int ac, char **av)
 void
 setup()
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /* make a temporary directory and cd to it */
- tst_tmpdir();
+	/* make a temporary directory and cd to it */
+	tst_tmpdir();
 
- if (pipe(fd) < 0) {
-  tst_brkm(TBROK, cleanup, "pipe call failed");
- }
+	if (pipe(fd) < 0) {
+		tst_brkm(TBROK, cleanup, "pipe call failed");
+	}
 
- pfd  fd[1];
+	pfd = fd[1];
 }
 
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit.
+ *	       completion or premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* delete the test directory created in setup() */
- tst_rmdir();
+	/* delete the test directory created in setup() */
+	tst_rmdir();
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }
 

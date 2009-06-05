@@ -55,23 +55,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c"
+#include "testfrmw.c" 
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);
- *    where descr is a description of the error and ret is an int
+ * UNRESOLVED(ret, descr);  
+ *    where descr is a description of the error and ret is an int 
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- *
+ * 
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- *
+ * 
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- *
+ * 
  * Those may be used to output information.
  */
 
@@ -87,113 +87,113 @@
 /******************************************************************************/
 /***************************    Test case   ***********************************/
 /******************************************************************************/
-int thread_state  0;
+int thread_state = 0;
 
 void * threaded ( void * arg )
 {
- int ret;
- thread_state  1;
+	int ret;
+	thread_state = 1;
 
- do
- {
-  ret  sem_wait( arg );
- }
- while ( ( ret ! 0 ) && ( errno  EINTR ) );
+	do
+	{
+		ret = sem_wait( arg );
+	}
+	while ( ( ret != 0 ) && ( errno == EINTR ) );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( errno, "Failed to wait for the semaphore" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( errno, "Failed to wait for the semaphore" );
+	}
 
- thread_state  2;
- return NULL;
+	thread_state = 2;
+	return NULL;
 }
 
 /* The main test function. */
 int main( int argc, char * argv[] )
 {
- int ret;
- pthread_t child;
- sem_t * sem;
+	int ret;
+	pthread_t child;
+	sem_t * sem;
 
- /* Initialize output */
- output_init();
+	/* Initialize output */
+	output_init();
 
- /* Create the semaphore */
- sem  sem_open( SEM_NAME, O_CREAT | O_EXCL, 0777, 0 );
+	/* Create the semaphore */
+	sem = sem_open( SEM_NAME, O_CREAT | O_EXCL, 0777, 0 );
 
- if ( ( sem  SEM_FAILED ) && ( errno  EEXIST ) )
- {
-  sem_unlink( SEM_NAME );
-  sem  sem_open( SEM_NAME, O_CREAT | O_EXCL, 0777, 0 );
- }
+	if ( ( sem == SEM_FAILED ) && ( errno == EEXIST ) )
+	{
+		sem_unlink( SEM_NAME );
+		sem = sem_open( SEM_NAME, O_CREAT | O_EXCL, 0777, 0 );
+	}
 
- if ( sem  SEM_FAILED )
- {
-  UNRESOLVED( errno, "Failed to create the semaphore" );
- }
+	if ( sem == SEM_FAILED )
+	{
+		UNRESOLVED( errno, "Failed to create the semaphore" );
+	}
 
- /* Create the child */
- ret  pthread_create( &child, NULL, threaded, sem );
+	/* Create the child */
+	ret = pthread_create( &child, NULL, threaded, sem );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to create the thread" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to create the thread" );
+	}
 
- /* Wait for the child to be waiting. */
- while ( thread_state ! 1 )
- {
-  sched_yield();
- }
+	/* Wait for the child to be waiting. */
+	while ( thread_state != 1 )
+	{
+		sched_yield();
+	}
 
- /* Unlink */
- ret  sem_unlink( SEM_NAME );
+	/* Unlink */
+	ret = sem_unlink( SEM_NAME );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( errno, "Failed to unlink the semaphore" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( errno, "Failed to unlink the semaphore" );
+	}
 
- /* Check the semaphore state did not change. */
- sleep( 1 );
+	/* Check the semaphore state did not change. */
+	sleep( 1 );
 
- if ( thread_state ! 1 )
- {
-  FAILED( "sem_unlink made sem_wait thread return" );
- }
+	if ( thread_state != 1 )
+	{
+		FAILED( "sem_unlink made sem_wait thread return" );
+	}
 
- /* Post the semaphore */
- ret  sem_post( sem );
+	/* Post the semaphore */
+	ret = sem_post( sem );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( errno, "Failed to post the semaphore" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( errno, "Failed to post the semaphore" );
+	}
 
- /* Join the thread */
- ret  pthread_join( child, NULL );
+	/* Join the thread */
+	ret = pthread_join( child, NULL );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "Failed to join the thread" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "Failed to join the thread" );
+	}
 
- /* Now, we can destroy all */
- ret  sem_close( sem );
+	/* Now, we can destroy all */
+	ret = sem_close( sem );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( errno, "Failed to close the semaphore" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( errno, "Failed to close the semaphore" );
+	}
 
 
- /* Test passed */
+	/* Test passed */
 #if VERBOSE > 0
- output( "Test passed\n" );
+	output( "Test passed\n" );
 
 #endif
- PASSED;
+	PASSED;
 }
 
 

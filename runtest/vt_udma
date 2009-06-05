@@ -1,0 +1,10 @@
+#Verification Tests Command File
+
+#VT Unified DMA driver test suite
+#files: udma_test_module.ko
+#files: udma_testapp
+
+TGE-LV-UDMA-MOD insmod $LTPROOT/testcases/bin/udma_test_module.ko
+TGE-LV-UDMA-0010 udma_testapp -T 0
+TGE-LV-UDMA-0020 udma_testapp -T 1
+TGE-LV-UDMA-0030 udma_testapp -T 2

@@ -1,5 +1,5 @@
 CFLAGS += -O -Wall -fPIC
-LOADLIBES +=
+LOADLIBES += 
 
 SRCS=$(wildcard *.c)
 OBJECTS=$(patsubst %.c,%.o,$(SRCS))

@@ -27,20 +27,20 @@
 int main()
 {
     int ret;
-    long flags  0;
+    long flags = 0;
 
-    flags | CLONE_NEWNS;
-    flags | CLONE_NEWNET;
+    flags |= CLONE_NEWNS;
+    flags |= CLONE_NEWNET;
 
 
- // Checking if the kernel ver is enough to do NET-NS testing.
- if (tst_kvercmp(2,6,24) < 0)
-  return 1;
+	// Checking if the kernel ver is enough to do NET-NS testing.
+	if (tst_kvercmp(2,6,24) < 0)
+		return 1;
 
-        ret  unshare(flags);
- if ( ret < 0 ) {
-  printf ("Error:Unshare syscall failed for network namespace\n");
-  return 3;
- }
- return 0;
+        ret = unshare(flags);
+	if ( ret < 0 ) {
+		printf ("Error:Unshare syscall failed for network namespace\n");
+		return 3;
+	}
+	return 0;
 }

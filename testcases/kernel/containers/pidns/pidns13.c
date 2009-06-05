@@ -32,7 +32,7 @@
 * *
 * * History:
 * *  DATE      NAME                             DESCRIPTION
-* *  23/10/08  Gowrishankar M Created test scenarion.
+* *  23/10/08  Gowrishankar M 			Created test scenarion.
 * *            <gowrishankar.m@in.ibm.com>
 *
 ******************************************************************************/
@@ -49,8 +49,8 @@
 #include <test.h>
 #include <libclone.h>
 
-char *TCID  "pidns13";
-int TST_TOTAL  1;
+char *TCID = "pidns13";
+int TST_TOTAL = 1;
 int pipe_fd[2];
 
 #define CHILD_PID       1
@@ -62,11 +62,11 @@ int pipe_fd[2];
  */
 void cleanup()
 {
- /* Clean the test testcase as LTP wants*/
- TEST_CLEANUP;
+	/* Clean the test testcase as LTP wants*/
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }
 
 /*
@@ -74,9 +74,9 @@ void cleanup()
  */
 static void child_signal_handler(int sig, siginfo_t *si, void *unused)
 {
- /* sigtimedwait() traps siginfo details, so this wont be called */
- tst_resm(TWARN, "cinit(pid %d): control should have not reached here!",\
-   getpid());
+	/* sigtimedwait() traps siginfo details, so this wont be called */
+	tst_resm(TWARN, "cinit(pid %d): control should have not reached here!",\
+			getpid());
 }
 
 /*
@@ -84,108 +84,108 @@ static void child_signal_handler(int sig, siginfo_t *si, void *unused)
  */
 int child_fn(void *arg)
 {
- struct sigaction sa;
- sigset_t newset;
- siginfo_t info;
- struct timespec timeout;
- pid_t pid, ppid;
- int cinit_no  *((int *)arg);
+	struct sigaction sa;
+	sigset_t newset;
+	siginfo_t info;
+	struct timespec timeout;
+	pid_t pid, ppid;
+	int cinit_no = *((int *)arg);
 
- /* Set process id and parent pid */
- pid  getpid();
- ppid  getppid();
- if (pid ! CHILD_PID || ppid ! PARENT_PID) {
-  tst_resm(TBROK, "cinit%d: pidns is not created.",\
-    cinit_no);
-  cleanup();
- }
+	/* Set process id and parent pid */
+	pid = getpid();
+	ppid = getppid();
+	if (pid != CHILD_PID || ppid != PARENT_PID) {
+		tst_resm(TBROK, "cinit%d: pidns is not created.",\
+				cinit_no);
+		cleanup();
+	}
 
- if (cinit_no  1) {
-  /* in container 1 */
-  /* close pipe write descriptor */
-  if (close(pipe_fd[1])  -1) {
-   tst_resm(TBROK, "cinit1: close(pipe_fd[1]) failed");
-   cleanup();
-  }
+	if (cinit_no == 1) {
+		/* in container 1 */
+		/* close pipe write descriptor */
+		if (close(pipe_fd[1]) == -1) {
+			tst_resm(TBROK, "cinit1: close(pipe_fd[1]) failed");
+			cleanup();
+		}
 
-  /* Let cinit1 to get SIGUSR1 on I/O availability */
-  if (fcntl(pipe_fd[0], F_SETOWN, pid)  -1) {
-   tst_resm(TBROK, "cinit1: fcntl(F_SETOWN) failed");
-   cleanup();
-  }
+		/* Let cinit1 to get SIGUSR1 on I/O availability */
+		if (fcntl(pipe_fd[0], F_SETOWN, pid) == -1) {
+			tst_resm(TBROK, "cinit1: fcntl(F_SETOWN) failed");
+			cleanup();
+		}
 
-  if (fcntl(pipe_fd[0], F_SETSIG, SIGUSR1)  -1) {
-   tst_resm(TBROK, "cinit1: fcntl(F_SETSIG) failed");
-   cleanup();
-  }
+		if (fcntl(pipe_fd[0], F_SETSIG, SIGUSR1) == -1) {
+			tst_resm(TBROK, "cinit1: fcntl(F_SETSIG) failed");
+			cleanup();
+		}
 
-  if (fcntl(pipe_fd[0], F_SETFL,\
-    fcntl(pipe_fd[0], F_GETFL)|O_ASYNC)  -1) {
-   tst_resm(TBROK, "cinit1: fcntl(F_SETFL) failed");
-   cleanup();
-  }
+		if (fcntl(pipe_fd[0], F_SETFL,\
+				fcntl(pipe_fd[0], F_GETFL)|O_ASYNC) == -1) {
+			tst_resm(TBROK, "cinit1: fcntl(F_SETFL) failed");
+			cleanup();
+		}
 
-  /* Set signal handler for SIGUSR1, also mask other signals */
-  sa.sa_flags  SA_SIGINFO;
-  sigfillset(&sa.sa_mask);
-  sa.sa_sigaction  child_signal_handler;
-  if (sigaction(SIGUSR1, &sa, NULL)  -1) {
-   tst_resm(TBROK, "cinit1: sigaction() failed");
-   cleanup();
-  }
+		/* Set signal handler for SIGUSR1, also mask other signals */
+		sa.sa_flags = SA_SIGINFO;
+		sigfillset(&sa.sa_mask);
+		sa.sa_sigaction = child_signal_handler;
+		if (sigaction(SIGUSR1, &sa, NULL) == -1) {
+			tst_resm(TBROK, "cinit1: sigaction() failed");
+			cleanup();
+		}
 
-  tst_resm(TINFO, "cinit1: setup handler for async I/O on pipe");
+		tst_resm(TINFO, "cinit1: setup handler for async I/O on pipe");
 
-  /* Set timeout for sigtimedwait */
-  timeout.tv_sec  10;
-  timeout.tv_nsec  0;
+		/* Set timeout for sigtimedwait */
+		timeout.tv_sec = 10;
+		timeout.tv_nsec = 0;
 
-  /* Set mask to wait for SIGUSR1 signal */
-  sigemptyset(&newset);
-  sigaddset(&newset, SIGUSR1);
+		/* Set mask to wait for SIGUSR1 signal */
+		sigemptyset(&newset);
+		sigaddset(&newset, SIGUSR1);
 
-  /* Wait for SIGUSR1 */
-  if (sigtimedwait(&newset, &info, &timeout) ! SIGUSR1) {
-   tst_resm(TBROK, "cinit1: sigtimedwait() failed.");
-   cleanup();
-  }
+		/* Wait for SIGUSR1 */
+		if (sigtimedwait(&newset, &info, &timeout) != SIGUSR1) {
+			tst_resm(TBROK, "cinit1: sigtimedwait() failed.");
+			cleanup();
+		}
 
-  /* Recieved SIGUSR1. Check details. */
-  if (info.si_fd  pipe_fd[0] && info.si_code  POLL_IN )
-   tst_resm(TPASS, "cinit1: si_fd is %d, si_code is %d",\
-     info.si_fd, info.si_code);
-  else
-   tst_resm(TFAIL, "cinit1: si_fd is %d, si_code is %d",\
-     info.si_fd, info.si_code);
+		/* Recieved SIGUSR1. Check details. */
+		if (info.si_fd == pipe_fd[0] && info.si_code == POLL_IN )
+			tst_resm(TPASS, "cinit1: si_fd is %d, si_code is %d",\
+					info.si_fd, info.si_code);
+		else
+			tst_resm(TFAIL, "cinit1: si_fd is %d, si_code is %d",\
+					info.si_fd, info.si_code);
 
-  /* all done, close the descriptors opened */
-  close(pipe_fd[0]);
+		/* all done, close the descriptors opened */
+		close(pipe_fd[0]);
 
- } else {
-  /* in container 2 */
-  /* close pipe read descriptor */
-  if (close(pipe_fd[0])  -1) {
-   tst_resm(TBROK, "cinit2: close(pipe_fd[0]) failed");
-   cleanup();
-  }
+	} else {
+		/* in container 2 */
+		/* close pipe read descriptor */
+		if (close(pipe_fd[0]) == -1) {
+			tst_resm(TBROK, "cinit2: close(pipe_fd[0]) failed");
+			cleanup();
+		}
 
-  /* sleep for few seconds to avoid race with cinit1 */
-  sleep(2);
+		/* sleep for few seconds to avoid race with cinit1 */
+		sleep(2);
 
-  /* Write some data in pipe to SIGUSR1 cinit1 */
-  tst_resm(TINFO, "cinit2: writing some data in pipe");
-  if (write(pipe_fd[1], "test\n", 5)  -1) {
-   tst_resm(TBROK, "cinit2: write() failed");
-   cleanup();
-  }
+		/* Write some data in pipe to SIGUSR1 cinit1 */
+		tst_resm(TINFO, "cinit2: writing some data in pipe");
+		if (write(pipe_fd[1], "test\n", 5) == -1) {
+			tst_resm(TBROK, "cinit2: write() failed");
+			cleanup();
+		}
 
-  /* all done, close the descriptors opened */
-  close(pipe_fd[1]);
- }
+		/* all done, close the descriptors opened */
+		close(pipe_fd[1]);
+	}
 
- /* cleanup and exit */
- cleanup();
- exit(0);
+	/* cleanup and exit */
+	cleanup();
+	exit(0);
 }
 
 
@@ -195,58 +195,58 @@ int child_fn(void *arg)
 
 int main(int argc, char *argv[])
 {
- int status;
- int *cinit_no  malloc(sizeof(int));
- pid_t cpid1, cpid2;
+	int status;
+	int *cinit_no = malloc(sizeof(int));
+	pid_t cpid1, cpid2;
 
- /* create pipe */
- if (pipe(pipe_fd)  -1) {
-  tst_resm(TBROK, "parent: pipe creation failed");
-  cleanup();
- }
+	/* create pipe */
+	if (pipe(pipe_fd) == -1) {
+		tst_resm(TBROK, "parent: pipe creation failed");
+		cleanup();
+	}
 
- /* container creation on PID namespace */
- if (!cinit_no) {
-  tst_resm(TBROK, "memory allocation failed.");
-  cleanup();
- }
+	/* container creation on PID namespace */
+	if (!cinit_no) {
+		tst_resm(TBROK, "memory allocation failed.");
+		cleanup();
+	}
 
- /* Create container 1 */
- *cinit_no  1;
- cpid1  do_clone(CLONE_NEWPID|SIGCHLD, child_fn, cinit_no);
+	/* Create container 1 */
+	*cinit_no = 1;
+	cpid1 = do_clone(CLONE_NEWPID|SIGCHLD, child_fn, cinit_no);
 
- /* Create container 2 */
- *cinit_no  2;
- cpid2  do_clone(CLONE_NEWPID|SIGCHLD, child_fn, cinit_no);
- if (cpid1 < 0 || cpid2 < 0) {
-  tst_resm(TBROK, "parent: clone() failed.");
-  cleanup();
- }
+	/* Create container 2 */
+	*cinit_no = 2;
+	cpid2 = do_clone(CLONE_NEWPID|SIGCHLD, child_fn, cinit_no);
+	if (cpid1 < 0 || cpid2 < 0) {
+		tst_resm(TBROK, "parent: clone() failed.");
+		cleanup();
+	}
 
- /* Close unwanted descriptors */
- close(pipe_fd[0]);
- close(pipe_fd[1]);
+	/* Close unwanted descriptors */
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
 
- /* Wait for containers to exit */
- if (waitpid(cpid2, &status, 0) < 0)
-  tst_resm(TWARN, "parent: waitpid(cpid2) failed.");
+	/* Wait for containers to exit */
+	if (waitpid(cpid2, &status, 0) < 0)
+		tst_resm(TWARN, "parent: waitpid(cpid2) failed.");
 
- if (WIFSIGNALED(status) && WTERMSIG(status))
-  tst_resm(TWARN, "parent: cinit2 is terminated by signal(%s)",\
-    strsignal(WTERMSIG(status)));
+	if (WIFSIGNALED(status) && WTERMSIG(status))
+		tst_resm(TWARN, "parent: cinit2 is terminated by signal(%s)",\
+				strsignal(WTERMSIG(status)));
 
- if (waitpid(cpid1, &status, 0) < 0)
-  tst_resm(TWARN, "parent: waitpid(cpid1) failed.");
+	if (waitpid(cpid1, &status, 0) < 0)
+		tst_resm(TWARN, "parent: waitpid(cpid1) failed.");
 
- if (WIFSIGNALED(status) && WTERMSIG(status))
-  tst_resm(TWARN, "parent: cinit1 is terminated by signal(%s)",\
-    strsignal(WTERMSIG(status)));
+	if (WIFSIGNALED(status) && WTERMSIG(status))
+		tst_resm(TWARN, "parent: cinit1 is terminated by signal(%s)",\
+				strsignal(WTERMSIG(status)));
 
- /* Cleanup and exit */
- cleanup();
+	/* Cleanup and exit */
+	cleanup();
 
- /* Control won't reach below */
- exit(0);
+	/* Control won't reach below */
+	exit(0);
 
-} /* End main */
+}	/* End main */
 

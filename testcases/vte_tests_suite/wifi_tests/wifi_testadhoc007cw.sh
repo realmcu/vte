@@ -23,7 +23,7 @@ sleep 3
 iwconfig eth1 mode ad-hoc
 sleep 3
 
-iwconfig eth1 key 12345678901234567890
+iwconfig eth1 key 12345678901234567890 
 sleep 3
 
 iwconfig eth1 essid TestAdhoc007

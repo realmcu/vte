@@ -18,7 +18,7 @@ Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  --------------------------------------------
 RB657C/gsch1c                20/07/2004     TLSbo40898  Initial version  of OSS sound driver test development
 D.Khoroshev/B00313           02/22/2006     TLSbo62323  Code cleaning
-D.Simakov                    13/06/2006     TLSbo67022  Exclude #include <asm/arch/audio_controls.h>
+D.Simakov                    13/06/2006     TLSbo67022  Exclude #include <asm/arch/audio_controls.h>     
 D.Simakov                    07/12/2006     TLSbo76144  Updated with the new kernel
 ==================================================================================================*/
 #ifndef oss_sound_driver_TEST_H

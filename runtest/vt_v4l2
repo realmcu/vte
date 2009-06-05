@@ -1,0 +1,79 @@
+#Verification Tests Command File
+
+#VT Video for Linux Two drivers tests
+#files: camera_testapp v4l_capture_testapp v4l_output_testapp
+#files: ipu_pf_testapp test_image.yuv
+
+#TGE-LV-V4L2-0010 v4l_capture_testapp -T 10
+#TGE-LV-V4L2-0011 v4l_capture_testapp -T 300
+#TGE-LV-V4L2-0012 v4l_capture_testapp -H 100 -W 150
+#TGE-LV-V4L2-0013 v4l_capture_testapp -H 170 -W 200
+#TGE-LV-V4L2-0014 v4l_capture_testapp -H 170 -W 210
+#TGE-LV-V4L2-0015 v4l_capture_testapp -H 170 -W 220
+#TGE-LV-V4L2-0016 v4l_capture_testapp -H 170 -W 230
+#TGE-LV-V4L2-0017 v4l_capture_testapp -H 170 -W 240
+#TGE-LV-V4L2-0018 v4l_capture_testapp -S
+#TGE-LV-V4L2-0019 v4l_capture_testapp -B 0,0,100,100
+#TGE-LV-V4L2-0020 v4l_capture_testapp -B 0,0,320,240
+#TGE-LV-V4L2-0021 v4l_capture_testapp -B 3,3,320,240
+#TGE-LV-V4L2-0022 v4l_capture_testapp -B 10,10,320,240
+#TGE-LV-V4L2-0023 v4l_capture_testapp -B 0,0,240,190
+#TGE-LV-V4L2-0024 v4l_capture_testapp -B 0,0,240,240
+#TGE-LV-V4L2-0025 v4l_capture_testapp -B 0,0,300,190
+#TGE-LV-V4L2-0026 v4l_capture_testapp -B 0,0,240,320
+#TGE-LV-V4L2-0027 v4l_capture_testapp -B 320,240,320,240
+#TGE-LV-V4L2-0028 v4l_capture_testapp -B 251,171,320,240
+#TGE-LV-V4L2-0029 v4l_capture_testapp -B 0,0,640,480
+#TGE-LV-V4L2-0030 v4l_capture_testapp -R 1
+#TGE-LV-V4L2-0031 v4l_capture_testapp -R 2
+#TGE-LV-V4L2-0032 v4l_capture_testapp -R 3
+#TGE-LV-V4L2-0033 v4l_capture_testapp -R 4
+#TGE-LV-V4L2-0034 v4l_capture_testapp -R 5
+#TGE-LV-V4L2-0035 v4l_capture_testapp -R 6
+#TGE-LV-V4L2-0036 v4l_capture_testapp -R 7
+#TGE-LV-V4L2-0037 v4l_capture_testapp -R 8
+#TGE-LV-V4L2-0038 v4l_capture_testapp -E 
+#TGE-LV-V4L2-0039 v4l_capture_testapp -Y 1
+#TGE-LV-V4L2-0040 v4l_capture_testapp -C 2 -H 100 -W 150
+#TGE-LV-V4L2-0041 v4l_capture_testapp -C 2 -R 0
+#TGE-LV-V4L2-0042 v4l_capture_testapp -C 2 -R 1
+#TGE-LV-V4L2-0043 v4l_capture_testapp -C 2 -R 2
+#TGE-LV-V4L2-0044 v4l_capture_testapp -C 2 -R 3
+#TGE-LV-V4L2-0045 v4l_capture_testapp -C 2 -R 4
+#TGE-LV-V4L2-0046 v4l_capture_testapp -C 2 -R 5
+#TGE-LV-V4L2-0047 v4l_capture_testapp -C 2 -R 6
+#TGE-LV-V4L2-0048 v4l_capture_testapp -C 2 -R 7
+#TGE-LV-V4L2-0049 v4l_capture_testapp -C 2 -R 8
+#TGE-LV-V4L2-0050 v4l_capture_testapp -C 3 -O BGR24 -o ./output
+#TGE-LV-V4L2-0051 v4l_capture_testapp -C 3 -O BGR32 -o ./output 
+#TGE-LV-V4L2-0052 v4l_capture_testapp -C 3 -O RGB565 -o ./output
+#TGE-LV-V4L2-0053 v4l_capture_testapp -C 3 -O RGB24 -o ./output 
+#TGE-LV-V4L2-0054 v4l_capture_testapp -C 3 -O RGB32 -o ./output 
+#TGE-LV-V4L2-0055 v4l_capture_testapp -C 3 -O YUV422P -o ./output
+#TGE-LV-V4L2-0056 v4l_capture_testapp -C 3 -O YUV420 -o ./output
+#TGE-LV-V4L2-0057 v4l_capture_testapp -C 3 -O UYVY -o ./output 
+#TGE-LV-V4L2-0058 v4l_capture_testapp -C 3 -H 100 -W 150
+#TGE-LV-V4L2-0059 v4l_capture_testapp -C 4
+  
+TGE-LV-V4L2-0060 camera_testapp -E 1
+TGE-LV-V4L2-0061 camera_testapp -E 0
+TGE-LV-V4L2-0062 camera_testapp -T 1
+TGE-LV-V4L2-0063 camera_testapp -T 0
+
+#TGE-LV-V4L2-0070 v4l_output_testapp -C 2 -X 200 -Y 150 -F output_RGB565
+#TGE-LV-V4L2-0071 v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F output_BGR24
+#TGE-LV-V4L2-0072 v4l_output_testapp -C 2 -F output_YUV420
+#TGE-LV-V4L2-0073 v4l_output_testapp -C 2 -R 1 -F output_BGR24
+#TGE-LV-V4L2-0074 v4l_output_testapp -C 2 -R 2 -F output_BGR24
+#TGE-LV-V4L2-0075 v4l_output_testapp -C 2 -R 3 -F output_BGR24
+#TGE-LV-V4L2-0076 v4l_output_testapp -C 2 -R 4 -F output_BGR24
+#TGE-LV-V4L2-0077 v4l_output_testapp -C 2 -R 5 -F output_BGR24
+#TGE-LV-V4L2-0078 v4l_output_testapp -C 2 -R 6 -F output_BGR24
+#TGE-LV-V4L2-0079 v4l_output_testapp -C 2 -R 7 -F output_BGR24
+
+#TGE-LV-V4L2-0080 ipu_pf_testapp -T 1 -F $LTPROOT/testcases/bin/blocks.yuv -O $LTPROOT/testcases/bin/blocks_p.yuv -V -N 100
+#TGE-LV-V4L2-0081 ipu_pf_testapp -T 2 -F $LTPROOT/testcases/bin/ring.yuv -O $LTPROOT/testcases/bin/ring_p.yuv -V -N 100
+#TGE-LV-V4L2-0082 ipu_pf_testapp -T 3 -F $LTPROOT/testcases/bin/ring.yuv -O $LTPROOT/testcases/bin/ring_p.yuv -V -N 100
+#TGE-LV-V4L2-0083 ipu_pf_testapp -T 4 -F $LTPROOT/testcases/bin/blocks.yuv -O $LTPROOT/testcases/bin/blocks_p.yuv -V -N 100
+
+#WARNING the commented tests are no applicable tests

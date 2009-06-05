@@ -13,7 +13,7 @@
  * Authors:
  *      David Ashley<dashley@us.ibm.com>
  */
-
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <glib.h>
@@ -29,21 +29,21 @@
 
 /**
  * main: SEL test
- *
+ * 
  * This test tests creates an SEL and adds one event.
- *
+ * 
  * Return value: 0 on success, 1 on failure
  **/
-int main(int argc, char **argv)
+int main(int argc, char **argv) 
 {
         oh_sel *sel;
         SaErrorT retc;
 
         /* create the SEL */
-        sel  oh_sel_create();
-
-        if(sel  NULL) {
-                dbg("ERROR: sel  NULL.");
+        sel = oh_sel_create();
+        
+        if(sel == NULL) {
+                dbg("ERROR: sel == NULL.");
                 return 1;
         }
 
@@ -54,8 +54,8 @@ int main(int argc, char **argv)
         }
 
         /* close the SEL */
-        retc  oh_sel_close(sel);
-        if (retc ! SA_OK) {
+        retc = oh_sel_close(sel);
+        if (retc != SA_OK) {
                 dbg("ERROR: oh_sel_close failed.");
                 return 1;
         }

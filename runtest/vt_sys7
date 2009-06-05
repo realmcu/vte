@@ -1,0 +1,30 @@
+#Verification Tests Command File
+# generated automatically by the test campaign macro
+# version 1.0
+
+#files:
+#files:
+#files:
+#files:
+#files:
+
+TGE-LV-SYS-1170 fcntl14
+TGE-LV-SYS-1180 fcntl15
+TGE-LV-SYS-1190 fcntl16
+TGE-LV-SYS-1200 fcntl17
+TGE-LV-SYS-1210 fcntl18
+TGE-LV-SYS-1220 fcntl19
+TGE-LV-SYS-1230 fcntl20
+TGE-LV-SYS-1240 fcntl21
+TGE-LV-SYS-1250 fcntl22
+TGE-LV-SYS-1260 fcntl23
+TGE-LV-SYS-1270 fdatasync01
+TGE-LV-SYS-1280 fdatasync02
+TGE-LV-SYS-1290 flock01
+TGE-LV-SYS-1300 flock02
+TGE-LV-SYS-1310 flock03
+TGE-LV-SYS-1320 flock04
+TGE-LV-SYS-1330 flock05
+TGE-LV-SYS-1340 flock06
+TGE-LV-SYS-1350 fmtmsg01
+TGE-LV-SYS-1360 fork01

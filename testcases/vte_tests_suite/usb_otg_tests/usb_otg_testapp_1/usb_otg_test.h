@@ -60,7 +60,7 @@ extern "C"{
                                     FUNCTION PROTOTYPES
 ==================================================================================================*/
 int VT_usb_otg_test_cleanup(void);
-int VT_usb_otg_test_setup(void);
+int VT_usb_otg_test_setup(void);  
 int VT_usb_otg_test(int switch_fct);
 
 #ifdef __cplusplus

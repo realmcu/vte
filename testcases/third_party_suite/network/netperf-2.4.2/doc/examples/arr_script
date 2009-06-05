@@ -10,7 +10,7 @@ init_parms() {
   TOLERANCE=15
   MAX_RETRIES=3
 
-  NETPERF="/usr/bin/netperf"
+  NETPERF="netperf"
 
   NPROC_LIST=""
   RR_SIZES=""

@@ -18,7 +18,7 @@
  */
 /*---------------------------------------------------------------------+
 |                           signal_test_01                             |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Description:  Simplistic test to verify the signal system function   |
 |               calls:                                                 |
@@ -84,8 +84,8 @@ char stackarray [STACKSIZE];
 #include "signals.h"
 
 #ifdef _LINUX_
-stack_t stack  {
-    ss_sp: stackarray+STACKSIZE,    // stack pointer
+stack_t stack = {
+    ss_sp: stackarray+STACKSIZE,    // stack pointer 
     ss_flags: 0, //SS_ONSTACK,      // flags
     ss_size: STACKSIZE              // size
 };
@@ -97,18 +97,18 @@ stack_t *oldstack;
 
 #else // ! _LINUX_
 
-struct sigstack stack  {
- stackarray+STACKSIZE,/* signal stack pointer */
- (_ONSTACK & ~ _OLDSTYLE) /* current status */
+struct sigstack stack = {
+	stackarray+STACKSIZE, 		/* signal stack pointer */
+	(_ONSTACK & ~ _OLDSTYLE)	/* current status */
 };
 #endif
 
 /* Function prototypes */
-void handler (int);   /* signal catching function */
-void init_sig_vec ();   /* setup signal handler for signals */
-void reset_valid_sig ();  /* reset valid_sig array */
-void sys_error (const char *, int); /* system error message function */
-void error (const char *, int);  /* error message function */
+void handler (int);			/* signal catching function */
+void init_sig_vec ();			/* setup signal handler for signals */
+void reset_valid_sig ();		/* reset valid_sig array */
+void sys_error (const char *, int);	/* system error message function */
+void error (const char *, int);		/* error message function */
 
 
 /* Define an array for verifying received signals */
@@ -117,171 +117,171 @@ int valid_sig [ SIGMAX + 1 ];
 
 /*---------------------------------------------------------------------+
 |                               main ()                                |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Main program  (see prolog for more details)               |
 |                                                                      |
 +---------------------------------------------------------------------*/
 int main (int argc, char **argv)
 {
-    sigset_t mask,  /* Initial process signal mask */
-      newmask,/* Second process signal mask */
-      oldmask;  /* Signal mask returned by sigblock */
-    pid_t pid  getpid (); /* Process ID (of this process) */
-
-
- /* Print out program header */
- printf ("%s: IPC Signals TestSuite program\n\n", *argv);
-
- /*
-  * Establish signal handler for each signal & reset "valid signals"
-  * array, and setup alternative stack for processing signals
-  */
- init_sig_vec ();
- reset_valid_sig ();
+    sigset_t mask,		/* Initial process signal mask */
+	     newmask, 		/* Second process signal mask */
+	     oldmask;		/* Signal mask returned by sigblock */
+    pid_t pid = getpid ();	/* Process ID (of this process) */
+    
+    
+	/* Print out program header */
+	printf ("%s: IPC Signals TestSuite program\n\n", *argv);
+    
+	/*
+	 * Establish signal handler for each signal & reset "valid signals" 
+	 * array, and setup alternative stack for processing signals 
+	 */
+	init_sig_vec ();
+	reset_valid_sig ();
 #ifdef _LINUX_
- // sigstack function is obsolete, use sigaltstack instead
- if (sigaltstack (&stack, NULL) < 0)
-         sys_error ("sigaltstack failed", __LINE__);
+	// sigstack function is obsolete, use sigaltstack instead
+	if (sigaltstack (&stack, NULL) < 0)
+	        sys_error ("sigaltstack failed", __LINE__);
 #else
- if (sigstack (&stack, (struct sigstack *)0) < 0)
-  sys_error ("sigstack failed", __LINE__);
+	if (sigstack (&stack, (struct sigstack *)0) < 0)
+		sys_error ("sigstack failed", __LINE__);
 #endif
- /*
-  * Send SIGILL, SIGALRM & SIGIOT signals to this process:
-  *
-  * First indicate which signals the signal handler should expect
-  * by setting the corresponding valid_sig[] array fields.
-  *
-  * Then send the signals to this process.
-  *
-  * And finally verify that the signals were caught by the signal
-  * handler by checking to see if the corresponding valid_sig[] array
-  * fields were reset.
-  */
- printf ("\tSend SIGILL, SIGALRM, SIGIOT signals to process\n");
- valid_sig [SIGILL]   1;
- valid_sig [SIGALRM]  1;
- valid_sig [SIGIOT]   1;
+	/*
+	 * Send SIGILL, SIGALRM & SIGIOT signals to this process:
+	 *
+	 * First indicate which signals the signal handler should expect
+	 * by setting the corresponding valid_sig[] array fields.
+	 *
+	 * Then send the signals to this process.  
+	 *
+	 * And finally verify that the signals were caught by the signal 
+	 * handler by checking to see if the corresponding valid_sig[] array 
+	 * fields were reset.
+	 */
+	printf ("\tSend SIGILL, SIGALRM, SIGIOT signals to process\n");
+	valid_sig [SIGILL]  = 1;
+	valid_sig [SIGALRM] = 1;
+	valid_sig [SIGIOT]  = 1;
 
- kill (pid, SIGILL);
- kill (pid, SIGALRM);
- kill (pid, SIGIOT);
+	kill (pid, SIGILL);
+	kill (pid, SIGALRM);
+	kill (pid, SIGIOT);
 
- if (valid_sig [SIGILL])
-  error ("failed to receive SIGILL signal!", __LINE__);
- if (valid_sig [SIGALRM])
-  error ("failed to receive SIGALRM signal!", __LINE__);
- if (valid_sig [SIGIOT])
-  error ("failed to receive SIGIOT signal!", __LINE__);
+	if (valid_sig [SIGILL])
+		error ("failed to receive SIGILL signal!", __LINE__);
+	if (valid_sig [SIGALRM])
+		error ("failed to receive SIGALRM signal!", __LINE__);
+	if (valid_sig [SIGIOT])
+		error ("failed to receive SIGIOT signal!", __LINE__);
 
- /*
-  * Block SIGILL, SIGALRM & SIGIOT signals:
-  *
-  * First create the process signal mask by ORing together the
-  * signal values.
-  *
-  * Then change the process signal mask with sigsetmask ().
-  *
-  * Verify that the desired signals are blocked from interrupting the
-  * process, by sending both blocked and unblocked signals to the
-  * process. Only the unblocked signals should interrupt the process.
-  */
- printf ("\n\tBlock SIGILL, SIGALRM, SIGIOT signals, " \
-  "and resend signals + others\n");
- sigemptyset (&mask);
- sigaddset (&mask, SIGILL);
- sigaddset (&mask, SIGALRM);
- sigaddset (&mask, SIGIOT);
+	/* 
+	 * Block SIGILL, SIGALRM & SIGIOT signals:
+	 *
+	 * First create the process signal mask by ORing together the
+	 * signal values.
+	 *
+	 * Then change the process signal mask with sigsetmask ().
+	 *
+	 * Verify that the desired signals are blocked from interrupting the
+	 * process, by sending both blocked and unblocked signals to the 
+	 * process. Only the unblocked signals should interrupt the process.
+	 */
+	printf ("\n\tBlock SIGILL, SIGALRM, SIGIOT signals, " \
+		"and resend signals + others\n");
+	sigemptyset (&mask);
+	sigaddset (&mask, SIGILL);
+	sigaddset (&mask, SIGALRM);
+	sigaddset (&mask, SIGIOT);
 #ifdef _LINUX_
- sigprocmask(SIG_SETMASK, &mask, NULL);
+	sigprocmask(SIG_SETMASK, &mask, NULL);
 #else
- if (sigsetmask (mask) < 0)
-  sys_error ("setsigmask failed", __LINE__);
+	if (sigsetmask (mask) < 0)
+		sys_error ("setsigmask failed", __LINE__);
 #endif
- valid_sig [SIGFPE]   1;
- valid_sig [SIGTERM]  1;
- valid_sig [SIGINT]   1;
+	valid_sig [SIGFPE]  = 1;
+	valid_sig [SIGTERM] = 1;
+	valid_sig [SIGINT]  = 1;
 
- kill (pid, SIGILL);
- kill (pid, SIGALRM);
- kill (pid, SIGIOT);
- kill (pid, SIGFPE);
- kill (pid, SIGTERM);
- kill (pid, SIGINT);
+	kill (pid, SIGILL);
+	kill (pid, SIGALRM);
+	kill (pid, SIGIOT);
+	kill (pid, SIGFPE);
+	kill (pid, SIGTERM);
+	kill (pid, SIGINT);
+		 
+	if (valid_sig [SIGFPE])
+		error ("failed to receive SIGFPE signal!", __LINE__);
+	if (valid_sig [SIGTERM])
+		error ("failed to receive SIGTERM signal!", __LINE__);
+	if (valid_sig [SIGINT])
+		error ("failed to receive SIGINT signal!", __LINE__);
 
- if (valid_sig [SIGFPE])
-  error ("failed to receive SIGFPE signal!", __LINE__);
- if (valid_sig [SIGTERM])
-  error ("failed to receive SIGTERM signal!", __LINE__);
- if (valid_sig [SIGINT])
-  error ("failed to receive SIGINT signal!", __LINE__);
-
- /*
-  * Block additional SIGFPE, SIGTERM & SIGINT signals:
-  *
-  * Create a signal mask containing the additional signals to block.
-  *
-  * Change the process signal mask to block the additional signals
-  * with the sigprocmask () function.
-  *
-  * Verify that all of the desired signals are now blocked from
-  * interrupting the process.  None of the specified signals should
-  * interrupt the process until the process signal mask is changed.
-  */
- printf ("\n\tBlock rest of signals\n");
+	/* 
+	 * Block additional SIGFPE, SIGTERM & SIGINT signals:
+	 *
+	 * Create a signal mask containing the additional signals to block.
+	 *
+	 * Change the process signal mask to block the additional signals
+	 * with the sigprocmask () function.
+	 *
+	 * Verify that all of the desired signals are now blocked from 
+	 * interrupting the process.  None of the specified signals should 
+	 * interrupt the process until the process signal mask is changed.
+	 */
+	printf ("\n\tBlock rest of signals\n");
         sigemptyset (&newmask);
         sigaddset (&newmask, SIGFPE);
         sigaddset (&newmask, SIGTERM);
         sigaddset (&newmask, SIGINT);
- sigemptyset (&oldmask);
- if ( sigprocmask (SIG_BLOCK, &newmask, &oldmask) < 0) {
-  perror ("sigprocmask failed");
-  exit (-1);
- }
- if (memcmp (&mask, &oldmask, sizeof(mask)) ! 0)
-  error ("value returned by sigblock () does not match the " \
-   "old signal mask", __LINE__);
+	sigemptyset (&oldmask);
+	if ( sigprocmask (SIG_BLOCK, &newmask, &oldmask) < 0) {
+		perror ("sigprocmask failed");
+		exit (-1);
+	}
+	if (memcmp (&mask, &oldmask, sizeof(mask)) != 0)
+		error ("value returned by sigblock () does not match the " \
+			"old signal mask", __LINE__);
 
- kill (pid, SIGILL);
- kill (pid, SIGALRM);
- kill (pid, SIGIOT);
- kill (pid, SIGFPE);
- kill (pid, SIGTERM);
- kill (pid, SIGINT);
+	kill (pid, SIGILL);
+	kill (pid, SIGALRM);
+	kill (pid, SIGIOT);
+	kill (pid, SIGFPE);
+	kill (pid, SIGTERM);
+	kill (pid, SIGINT);
 
- /* Wait two seconds just to make sure that none of the specified
-  * signals interrupt the process (They should all be blocked).
-  */
- sleep (2);
+	/* Wait two seconds just to make sure that none of the specified
+	 * signals interrupt the process (They should all be blocked).
+	 */
+	sleep (2);
 
- /* Change the process signal mask:
-  *
-  * Now allow the SIGINT signal to interrupt the process.
-  * Thus by using sigpause (), force the process to suspend
-  * execution until delivery of an unblocked signal (here SIGINT).
-  *
-  * Additionally, verify that the SIGINT signal was received.
-  */
- valid_sig [SIGINT]  1;
+	/* Change the process signal mask:
+	 *
+	 * Now allow the SIGINT signal to interrupt the process.
+	 * Thus by using sigpause (), force the process to suspend
+	 * execution until delivery of an unblocked signal (here SIGINT).
+	 *
+	 * Additionally, verify that the SIGINT signal was received.
+	 */
+	valid_sig [SIGINT] = 1;
 
- printf ("\n\tChange signal mask & wait until signal interrupts process\n");
- if (sigpause (SIGINT) ! -1 || errno ! 4)
-  sys_error ("sigpause failed", __LINE__);
+	printf ("\n\tChange signal mask & wait until signal interrupts process\n");
+	if (sigpause (SIGINT) != -1 || errno != 4)
+		sys_error ("sigpause failed", __LINE__);
 
- if (valid_sig [SIGINT])
-  error ("failed to receive SIGINT signal!", __LINE__);
+	if (valid_sig [SIGINT])
+		error ("failed to receive SIGINT signal!", __LINE__);
 
- /* Program completed successfully -- exit */
- printf ("\nsuccessful!\n");
+	/* Program completed successfully -- exit */
+	printf ("\nsuccessful!\n");
 
- return (0);
+	return (0);
 }
 
 
 /*---------------------------------------------------------------------+
 |                           init_sig_vec ()                            |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Initialize the signal vector for ALL possible signals     |
 |            (as defined in /usr/include/sys/signal.h) except for      |
@@ -296,57 +296,57 @@ int main (int argc, char **argv)
 +---------------------------------------------------------------------*/
 void init_sig_vec ()
 {
- char errmsg [256];
- int i;
+	char	errmsg [256];
+	int	i;
 
 #ifdef _LINUX_
- static struct sigaction invec;
+	static struct sigaction invec;
 
- for (i1; i<SIGMAX; i++) {
-      if ((i  SIGKILL) || (i  SIGSTOP) || ((i>32)&&(i<34))) continue;
-  invec.sa_handler  handler;
-  //sigaction.sa_mask  0;
-  invec.sa_flags  0;
+	for (i=1; i<=SIGMAX; i++) {
+       		if ((i == SIGKILL) || (i == SIGSTOP) || ((i>=32)&&(i<=34))) continue;
+		invec.sa_handler = handler;
+		//sigaction.sa_mask = 0;
+		invec.sa_flags = 0;
 
-  if (sigaction (i, &invec, (struct sigaction *)0)) {
-          sprintf (errmsg, "init_sig_vec: sigaction failed on signal (%d)", i);
-          perror(errmsg);
-   sys_error (errmsg, __LINE__);
-  }
- }
+		if (sigaction (i, &invec, (struct sigaction *)0)) {
+		        sprintf (errmsg, "init_sig_vec: sigaction failed on signal (%d)", i);
+		        perror(errmsg);
+			sys_error (errmsg, __LINE__);
+		}
+	}
 #else
- static struct sigvec invec;
+	static struct sigvec invec;
 
- for (i1; i<SIGMAX; i++) {
+	for (i=1; i<=SIGMAX; i++) {
 
-  /* Cannot catch or ignore the following signals */
+		/* Cannot catch or ignore the following signals */
 # ifdef _IA64  /* SIGWAITING NOT supported, RESERVED */
-  if ((i  SIGKILL) || (i  SIGSTOP) ||
-      (i  SIGCONT) || (i  SIGWAITING)) continue;
+		if ((i == SIGKILL) || (i == SIGSTOP) ||
+		    (i == SIGCONT) || (i == SIGWAITING)) continue;
 # else
-                if ((i  SIGKILL) || (i  SIGSTOP) || (i  SIGCONT)) continue;
+                if ((i == SIGKILL) || (i == SIGSTOP) || (i == SIGCONT)) continue;
 # endif
 
-  invec.sv_handler  handler;
-  //invec.sv_mask  SA_NOMASK;
+		invec.sv_handler = handler;
+		//invec.sv_mask = SA_NOMASK;
 # if defined  _IA64
-  invec.sv_flags  1;
+		invec.sv_flags = 1;
 # else
-  invec.sv_onstack  1;
+		invec.sv_onstack = 1;
 # endif
-  if (sigvec (i, &invec, (struct sigvec *)0)) {
-          sprintf (errmsg, "init_sig_vec: sigvec failed on signal (%d)", i);
-          perror(errmsg);
-   sys_error (errmsg, __LINE__);
-  }
- }
+		if (sigvec (i, &invec, (struct sigvec *)0)) {
+		        sprintf (errmsg, "init_sig_vec: sigvec failed on signal (%d)", i);
+		        perror(errmsg);
+			sys_error (errmsg, __LINE__);
+		}
+	}
 #endif //ifdef _LINUX_
 }
 
 
 /*---------------------------------------------------------------------+
 |                             handler ()                               |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Signal catching function.  As specified in init_sig_vec() |
 |            this function is automatically called each time a signal  |
@@ -360,22 +360,22 @@ void init_sig_vec ()
 +---------------------------------------------------------------------*/
 void handler (int sig)
 {
- char errmsg [256];
+	char errmsg [256];
 
- /* Check to insure that expected signal was received */
- if (valid_sig [sig]) {
-  valid_sig [sig]  0;
-  printf ("\treceived signal: (%s)\n", signames[sig]);
- } else {
-  sprintf (errmsg, "unexpected signal (%d,%s)", sig, (sig<32)?signames[sig]:"unknown signal");
-  error (errmsg, __LINE__);
- }
+	/* Check to insure that expected signal was received */
+	if (valid_sig [sig]) {
+		valid_sig [sig] = 0;
+		printf ("\treceived signal: (%s)\n", signames[sig]);
+	} else {
+		sprintf (errmsg, "unexpected signal (%d,%s)", sig, (sig<32)?signames[sig]:"unknown signal");
+		error (errmsg, __LINE__);
+	}
 }
 
 
 /*---------------------------------------------------------------------+
 |                         reset_valid_sig ()                           |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Reset the valid "signal" array                            |
 |                                                                      |
@@ -384,32 +384,32 @@ void handler (int sig)
 +---------------------------------------------------------------------*/
 void reset_valid_sig ()
 {
- int i;
+	int i;
 
- for (i0; i< (SIGMAX + 1); i++)
-  valid_sig [i]  0;
+	for (i=0; i< (SIGMAX + 1); i++)
+		valid_sig [i] = 0;
 }
 
 
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Creates system error message and calls error ()           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 void sys_error (const char *msg, int line)
 {
- char syserr_msg [256];
+	char syserr_msg [256];
 
- sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
- error (syserr_msg, line);
+	sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
+	error (syserr_msg, line);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               error ()                               |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Prints out message and exits...                           |
 |                                                                      |

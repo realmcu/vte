@@ -16,9 +16,9 @@
  */
 /*************************************************************************
  * Description: This is a kernel loadable module programme used by
- *  delete_module03 testcase which inserts this module as part
- *  of setup. This module has dependency on dummy_del_mod module
- *  (calls function of dummy_del_mod during initialization).
+ *		delete_module03 testcase which inserts this module as part
+ *		of setup. This module has dependency on dummy_del_mod module
+ *		(calls function of dummy_del_mod during initialization).
  *************************************************************************/
 
 #define MODULE
@@ -38,7 +38,7 @@ extern int dummy_func_test(void);
 static int __init dummy_init(void) {
         struct proc_dir_entry *proc_dummy;
 
-        proc_dummy  proc_mkdir("dummy_dep", 0);
+        proc_dummy = proc_mkdir("dummy_dep", 0);
         dummy_func_test();
         return 0;
 }

@@ -8,7 +8,7 @@
 
 /*
  * Test that mq_open() fails with EINVAL if O_CREAT was set in oflag,
- * attr ! NULL, and either mq_maxmsg < 0 or mq_msgsize < 0.
+ * attr != NULL, and either mq_maxmsg <= 0 or mq_msgsize <= 0.
  */
 
 #include <stdio.h>
@@ -27,83 +27,83 @@
 
 #define NUMTESTS 3
 
-static int invalid_values[NUMTESTS]  { 0, -1, INT32_MIN };
+static int invalid_values[NUMTESTS] = { 0, -1, INT32_MIN };
 
 int main()
 {
         char qname[NAMESIZE];
         mqd_t queue;
- struct mq_attr attr;
- int i, failed0;
+	struct mq_attr attr;
+	int i, failed=0;
 
         sprintf(qname, "/mq_open_25-1_%d", getpid());
 
- // First, test for invalid maxmsg
- attr.mq_msgsize  VALIDVAL;
- for (i0; i<NUMTESTS; i++) {
-  attr.mq_maxmsg  invalid_values[i];
-        queue  mq_open(qname, O_CREAT |O_RDWR,
-      S_IRUSR | S_IWUSR, &attr);
-        if (queue ! (mqd_t)-1) {
-   printf("mq_open() succeeded w/invalid mq_maxmsg %ld\n",
-     attr.mq_maxmsg);
-   mq_close(queue);
-   mq_unlink(qname);
-   failed++;
+	// First, test for invalid maxmsg
+	attr.mq_msgsize = VALIDVAL;
+	for (i=0; i<NUMTESTS; i++) {
+		attr.mq_maxmsg = invalid_values[i];
+        	queue = mq_open(qname, O_CREAT |O_RDWR, 
+						S_IRUSR | S_IWUSR, &attr);
+        	if (queue != (mqd_t)-1) {
+			printf("mq_open() succeeded w/invalid mq_maxmsg %ld\n",
+					attr.mq_maxmsg);
+			mq_close(queue);
+			mq_unlink(qname);
+			failed++;
 #ifdef DEBUG
-        } else {
-   printf("mq_maxmsg %ld failed as expected\n",
-     attr.mq_maxmsg);
+        	} else {
+			printf("mq_maxmsg %ld failed as expected\n",
+					attr.mq_maxmsg);
 #endif
-  }
+		}
 
-  if (errno ! EINVAL) {
-   printf("errno ! EINVAL for mq_maxmsg %ld\n",
-     attr.mq_maxmsg);
-   failed++;
+		if (errno != EINVAL) {
+			printf("errno != EINVAL for mq_maxmsg %ld\n",
+					attr.mq_maxmsg);
+			failed++;
 #ifdef DEBUG
-        } else {
-   printf("mq_maxmsg %ld set errnoEINVAL as expected\n",
-     attr.mq_maxmsg);
+        	} else {
+			printf("mq_maxmsg %ld set errno==EINVAL as expected\n",
+					attr.mq_maxmsg);
 #endif
-  }
- }
+		}
+	}
 
- // Second, test for invalid msgsize
- attr.mq_maxmsg  VALIDVAL;
- for (i0; i<NUMTESTS; i++) {
-  attr.mq_msgsize  invalid_values[i];
-        queue  mq_open(qname, O_CREAT |O_RDWR,
-      S_IRUSR | S_IWUSR, &attr);
-        if (queue ! (mqd_t)-1) {
-   printf("mq_open() succeeded w/invalid mq_msgsize %ld\n",
-     attr.mq_msgsize);
-   mq_close(queue);
-   mq_unlink(qname);
-   failed++;
+	// Second, test for invalid msgsize
+	attr.mq_maxmsg = VALIDVAL;
+	for (i=0; i<NUMTESTS; i++) {
+		attr.mq_msgsize = invalid_values[i];
+        	queue = mq_open(qname, O_CREAT |O_RDWR, 
+						S_IRUSR | S_IWUSR, &attr);
+        	if (queue != (mqd_t)-1) {
+			printf("mq_open() succeeded w/invalid mq_msgsize %ld\n",
+					attr.mq_msgsize);
+			mq_close(queue);
+			mq_unlink(qname);
+			failed++;
 #ifdef DEBUG
-        } else {
-   printf("mq_msgsize %ld failed as expected\n",
-     attr.mq_msgsize);
+        	} else {
+			printf("mq_msgsize %ld failed as expected\n",
+					attr.mq_msgsize);
 #endif
-  }
+		}
 
-  if (errno ! EINVAL) {
-   printf("errno ! EINVAL for mq_msgsize %ld\n",
-     attr.mq_msgsize);
-   failed++;
+		if (errno != EINVAL) {
+			printf("errno != EINVAL for mq_msgsize %ld\n",
+					attr.mq_msgsize);
+			failed++;
 #ifdef DEBUG
-        } else {
-   printf("mq_msgsize %ld set errnoEINVAL as expected\n",
-     attr.mq_msgsize);
+        	} else {
+			printf("mq_msgsize %ld set errno==EINVAL as expected\n",
+					attr.mq_msgsize);
 #endif
-  }
- }
+		}
+	}
 
- if (failed>0) {
-  printf("Test FAILED\n");
-  return PTS_FAIL;
- }
+	if (failed>0) {
+		printf("Test FAILED\n");
+		return PTS_FAIL;
+	}
 
         printf("Test PASSED\n");
         return PTS_PASS;

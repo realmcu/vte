@@ -10,14 +10,14 @@
 #    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #    Freescale Semiconductor, Inc.
-#
+#     
 ###############################################################################
 #Revision History:
 #                      Modification     Tracking
 #Author                    Date          Number    Description of Changes
 #-------------------   ------------    ----------  ----------------------
-#D.Kazachkov/e1403c     27/07/2004     TLSbo40261   initial version
-#L.Delaspre/rc149c      03/08/2004     TLSbo40891   VTE 1.4 integration
+#D.Kazachkov/e1403c     27/07/2004     TLSbo40261   initial version 
+#L.Delaspre/rc149c      03/08/2004     TLSbo40891   VTE 1.4 integration 
 #L.Delaspre/rc149c      08/12/2004     TLSbo40142   update with Freescale identity
 #E.Gromazina            06/12/2005     TLSbo60060   remove sdma_tty from the compilation for MXC91131
 #O.DAVARD               03/05/2006     TLSbo68696   imxc27ads platform added

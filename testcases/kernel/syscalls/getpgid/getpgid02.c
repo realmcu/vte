@@ -19,14 +19,14 @@
 
 /*
  * NAME
- * getpgid02.c
+ * 	getpgid02.c
  *
  * DESCRIPTION
- * Testcase to check the basic functionality of getpgid().
+ *	Testcase to check the basic functionality of getpgid().
  *
  * ALGORITHM
- * test 1: Does getpgid(-99) and expects ESRCH.
- * test 2: Searches an unused pid and expects ESRCH.
+ * 	test 1: Does getpgid(-99) and expects ESRCH.
+ * 	test 2: Searches an unused pid and expects ESRCH.
  *
  * USAGE:  <for command-line>
  *  getpgid02 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -38,10 +38,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * none
+ *	none
  */
 #define _GNU_SOURCE 1
 
@@ -56,75 +56,75 @@
 void setup(void);
 void cleanup(void);
 
-char *TCID  "getpgid02";
-int TST_TOTAL  2;
+char *TCID = "getpgid02";
+int TST_TOTAL = 2;
 extern int Tst_count;
 
-int pgid_0, pgid_1;
+int 	pgid_0, pgid_1;
 #define BADPID -99
 
-int exp_enos[]{ESRCH, 0};
+int exp_enos[]={ESRCH, 0};
 
 struct test_case_t {
         int *id;
         int error;
-} TC[]  {
- /* The pid value is negative */
+} TC[] = {
+	/* The pid value is negative */
         {&pgid_0, ESRCH},
 
- /* The pid value does not match any process */
+	/* The pid value does not match any process */
         {&pgid_1, ESRCH}
 };
 
 int main(int ac, char **av)
 {
- int lc;    /* loop counter */
- int i;
- char *msg;   /* message returned by parse_opts */
+	int lc;				/* loop counter */
+	int i;
+	char *msg;			/* message returned by parse_opts */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	}
 
- setup();
+	setup();
 
- /* set up the expected errnos */
- TEST_EXP_ENOS(exp_enos);
+	/* set up the expected errnos */
+	TEST_EXP_ENOS(exp_enos);
 
- /* check looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+	/* check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
 
-  /* loop through the test cases */
-  for (i  0; i < TST_TOTAL; i++) {
+		/* loop through the test cases */
+		for (i = 0; i < TST_TOTAL; i++) {
 
-   TEST(getpgid(*TC[i].id));
+			TEST(getpgid(*TC[i].id));
 
-                        if (TEST_RETURN ! -1) {
+                        if (TEST_RETURN != -1) {
                                 tst_resm(TFAIL, "call succeeded unexpectedly");
                                 continue;
                         }
 
                         TEST_ERROR_LOG(TEST_ERRNO);
 
-                        if (TEST_ERRNO  TC[i].error) {
+                        if (TEST_ERRNO == TC[i].error) {
                                 tst_resm(TPASS, "expected failure - "
-                                         "errno  %d : %s", TEST_ERRNO,
+                                         "errno = %d : %s", TEST_ERRNO,
                                          strerror(TEST_ERRNO));
                         } else {
                                 tst_resm(TFAIL, "unexpected error - %d : %s - "
                                          "expected %d", TEST_ERRNO,
                                          strerror(TEST_ERRNO), TC[i].error);
-   }
-  }
- }
- cleanup();
+			}
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -133,43 +133,43 @@ int main(int ac, char **av)
 void
 setup()
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- pgid_0  BADPID;
+	pgid_0 = BADPID;
 
- /*
-  * Find a pid that isn't currently being used.  Start
-  * at 'our pid - 1' and go backwards until we find one.
-  * In this way, we can be reasonably sure that the pid
-  * we find won't be reused for a while as new pids are
-  * allocated counting up to PID_MAX.
-  */
- for (pgid_1  getpid() - 1; --pgid_1 > 0; ) {
-  if (kill(pgid_1, 0) < 0 && errno  ESRCH) {
-   break;
-  }
- }
+	/*
+	 * Find a pid that isn't currently being used.  Start
+	 * at 'our pid - 1' and go backwards until we find one.
+	 * In this way, we can be reasonably sure that the pid
+	 * we find won't be reused for a while as new pids are
+	 * allocated counting up to PID_MAX.
+	 */
+	for (pgid_1 = getpid() - 1; --pgid_1 > 0; ) {
+		if (kill(pgid_1, 0) < 0 && errno == ESRCH) {
+			break;
+		}
+	}
 }
 
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit.
+ *	       completion or premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }
 

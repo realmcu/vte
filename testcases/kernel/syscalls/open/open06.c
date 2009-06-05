@@ -19,15 +19,15 @@
 
 /*
  * NAME
- * open06.c
+ *	open06.c
  *
  * DESCRIPTION
- * Testcase to check open(2) sets errno to ENXIO correctly.
+ *	Testcase to check open(2) sets errno to ENXIO correctly.
  *
  * ALGORITHM
- * Create a named pipe using mknod(2).  Attempt to
- * open(2) the pipe for writing. The open(2) should
- * fail with ENXIO.
+ *	Create a named pipe using mknod(2).  Attempt to
+ *	open(2) the pipe for writing. The open(2) should
+ *	fail with ENXIO.
  *
  * USAGE:  <for command-line>
  *  open06 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -39,10 +39,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * NONE
+ *	NONE
  */
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -52,55 +52,55 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID  "open06";
-int TST_TOTAL  1;
+char *TCID = "open06";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 void setup(void);
 void cleanup(void);
 
-char fname[100]  "fifo";
+char fname[100] = "fifo";
 
-int exp_enos[]  {ENXIO, 0};
+int exp_enos[] = {ENXIO, 0};
 
 int main(int ac, char **av)
 {
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	}
 
- setup();
+	setup();
 
- TEST_EXP_ENOS(exp_enos);
+	TEST_EXP_ENOS(exp_enos);
 
- /* check looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  TEST(open(fname, O_NONBLOCK | O_WRONLY));
-  if (TEST_RETURN ! -1) {
-   tst_resm(TFAIL, "open(2) succeeded unexpectedly");
-   continue;
-  }
+		TEST(open(fname, O_NONBLOCK | O_WRONLY));
+		if (TEST_RETURN != -1) {
+			tst_resm(TFAIL, "open(2) succeeded unexpectedly");
+			continue;
+		}
 
-  TEST_ERROR_LOG(TEST_ERRNO);
+		TEST_ERROR_LOG(TEST_ERRNO);
 
-  if (TEST_ERRNO ! ENXIO) {
-   tst_resm(TFAIL, "Expected ENXIO got %d", TEST_ERRNO);
-  } else {
-   tst_resm(TPASS, "call returned expected ENXIO error");
-  }
- }
- cleanup();
+		if (TEST_ERRNO != ENXIO) {
+			tst_resm(TFAIL, "Expected ENXIO got %d", TEST_ERRNO);
+		} else {
+			tst_resm(TPASS, "call returned expected ENXIO error");
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -109,41 +109,41 @@ int main(int ac, char **av)
 void
 setup()
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /* make a temporary directory and cd to it */
- tst_tmpdir();
+	/* make a temporary directory and cd to it */
+	tst_tmpdir();
 
- sprintf(fname, "%s.%d", fname, getpid());
+	sprintf(fname, "%s.%d", fname, getpid());
 
- if (mknod(fname, S_IFIFO | 0644, (dev_t)NULL)  -1) {
-  tst_brkm(TBROK, cleanup, "mknod FAILED");
-  /*NOTREACHED*/
- }
+	if (mknod(fname, S_IFIFO | 0644, (dev_t)NULL) == -1) {
+		tst_brkm(TBROK, cleanup, "mknod FAILED");
+		/*NOTREACHED*/
+	}
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit.
+ *	       completion or premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- unlink(fname);
+	unlink(fname);
 
- /* delete the test directory created in setup() */
- tst_rmdir();
+	/* delete the test directory created in setup() */
+	tst_rmdir();
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

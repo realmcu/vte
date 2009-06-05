@@ -7,33 +7,33 @@ iam=`whoami`
 tvar=${MACHTYPE%-*}
 tvar=${tvar#*-}
 
-if [ $tvar = "redhat" -o $tvar = "redhat-linux" ]
+if [ $tvar = "redhat" -o $tvar = "redhat-linux" ] 
 then
- CRON_ALLOW="/etc/cron.allow"
+	CRON_ALLOW="/etc/cron.allow"
 else
- CRON_ALLOW="/var/spool/cron/allow"
+	CRON_ALLOW="/var/spool/cron/allow"
 fi
 
 
 if [ $iam = "root" ]; then
- if [ $# -lt 1 ] ; then
-  echo Either do not run this script as root or start it like
-  echo "  $0 <user>"
-  exit 1
- fi
+	if [ $# -lt 1 ] ; then
+		echo Either do not run this script as root or start it like
+		echo "  $0 <user>"
+		exit 1
+	fi
 
- mv $CRON_ALLOW $CRON_ALLOW.old &> /dev/null
- su $1 -c "$0 $*"
+	mv $CRON_ALLOW $CRON_ALLOW.old &> /dev/null
+	su $1 -c "$0 $*"
         RC=$?
- mv $CRON_ALLOW.old $CRON_ALLOW &> /dev/null
- exit $RC
+	mv $CRON_ALLOW.old $CRON_ALLOW &> /dev/null
+	exit $RC
 fi
 
 function restorecrontab () {
- test -e /tmp/crontab-save-$iam && \
-  crontab /tmp/crontab-save-$iam && \
-  rm -f /tmp/crontab-save-$iam && \
-  echo restored old crontab
+	test -e /tmp/crontab-save-$iam && \
+		crontab /tmp/crontab-save-$iam && \
+		rm -f /tmp/crontab-save-$iam && \
+		echo restored old crontab
 }
 
 echo Running as user $iam...
@@ -44,8 +44,8 @@ test -e /tmp/crontab-save-$iam && rm -f /tmp/crontab-save-$iam
 
 if [ "0" -lt `crontab -l 2>/dev/null | wc -l` ]; then
 
- echo 'crontab of this user exists -> creating backup'
- crontab -l | grep '^[^#]' > /tmp/crontab-save-$iam
+	echo 'crontab of this user exists -> creating backup'
+	crontab -l | grep '^[^#]' > /tmp/crontab-save-$iam
 fi
 
 
@@ -71,9 +71,9 @@ EOF
 rc=$?
 
 if [ $rc = "1" ]; then
- echo Error while adding crontab for user $iam
- restorecrontab
- exit 1
+	echo Error while adding crontab for user $iam
+	restorecrontab
+	exit 1
 fi
 
 echo new job added successfully
@@ -87,16 +87,16 @@ rc=1
 test -e /tmp/crontest/output_cron01 && rc=0
 
 if [ $rc = "1" ]; then
- echo Job has not been executed
- restorecrontab
- exit 1
+	echo Job has not been executed
+	restorecrontab
+	exit 1
 fi
 
 grep "Testjob running" /tmp/crontest/output_cron01
 rc=$?
 if [ $rc = "1" ]; then
- echo Job has not produced valid output
- restorecrontab
+	echo Job has not produced valid output
+	restorecrontab
 fi
 
 echo 'job has been executed :-)'

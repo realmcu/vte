@@ -116,7 +116,7 @@ readFully(int fd, void *obuf, int len)
   int bytesRead = 0;
 
   while (bytesLeft > 0 &&
-  (bytesRead = read(fd, (void *) buf, bytesLeft)) > 0)
+	 (bytesRead = read(fd, (void *) buf, bytesLeft)) > 0)
     {
       bytesLeft -= bytesRead;
       buf += bytesRead;
@@ -132,24 +132,24 @@ void Sync(ArgStruct *p)
     char response[7];
 
     if (write(p->commfd, s, strlen(s)) < 0 ||
- readFully(p->commfd, response, strlen(s)) < 0)
+	readFully(p->commfd, response, strlen(s)) < 0)
       {
- perror("NetPIPE: error writing or reading synchronization string");
- exit(3);
+	perror("NetPIPE: error writing or reading synchronization string");
+	exit(3);
       }
     if (strncmp(s, response, strlen(s)))
       {
- fprintf(stderr, "NetPIPE: Synchronization string incorrect!\n");
- exit(3);
+	fprintf(stderr, "NetPIPE: Synchronization string incorrect!\n");
+	exit(3);
       }
 }
 
 void PrepareToReceive(ArgStruct *p)
 {
- /*
-   The Berkeley sockets interface doesn't have a method to pre-post
-   a buffer for reception of data.
- */
+	/*
+	  The Berkeley sockets interface doesn't have a method to pre-post
+	  a buffer for reception of data.
+	*/
 }
 
 void SendData(ArgStruct *p)
@@ -161,15 +161,15 @@ void SendData(ArgStruct *p)
     bytesWritten = 0;
     q = p->buff;
     while (bytesLeft > 0 &&
-    (bytesWritten = write(p->commfd, q, bytesLeft)) > 0)
+	   (bytesWritten = write(p->commfd, q, bytesLeft)) > 0)
       {
- bytesLeft -= bytesWritten;
- q += bytesWritten;
+	bytesLeft -= bytesWritten;
+	q += bytesWritten;
       }
     if (bytesWritten == -1)
       {
- printf("NetPIPE: write: error encountered, errno=%d\n", errno);
- exit(401);
+	printf("NetPIPE: write: error encountered, errno=%d\n", errno);
+	exit(401);
       }
 }
 
@@ -183,19 +183,19 @@ void RecvData(ArgStruct *p)
     bytesRead = 0;
     q = p->buff1;
     while (bytesLeft > 0 &&
-    (bytesRead = read(p->commfd, q, bytesLeft)) > 0)
+	   (bytesRead = read(p->commfd, q, bytesLeft)) > 0)
       {
- bytesLeft -= bytesRead;
- q += bytesRead;
+	bytesLeft -= bytesRead;
+	q += bytesRead;
       }
     if (bytesLeft > 0 && bytesRead == 0)
       {
- printf("NetPIPE: \"end of file\" encountered on reading from socket\n");
+	printf("NetPIPE: \"end of file\" encountered on reading from socket\n");
       }
     else if (bytesRead == -1)
       {
- printf("NetPIPE: read: error encountered, errno=%d\n", errno);
- exit(401);
+	printf("NetPIPE: read: error encountered, errno=%d\n", errno);
+	exit(401);
       }
 }
 
@@ -213,8 +213,8 @@ void SendTime(ArgStruct *p, double *t)
     ntime = htonl(ltime);
     if (write(p->commfd, (char *)&ntime, sizeof(unsigned int)) < 0)
       {
- printf("NetPIPE: write failed in SendTime: errno=%d\n", errno);
- exit(301);
+	printf("NetPIPE: write failed in SendTime: errno=%d\n", errno);
+	exit(301);
       }
 }
 
@@ -226,14 +226,14 @@ void RecvTime(ArgStruct *p, double *t)
     bytesRead = readFully(p->commfd, (void *)&ntime, sizeof(unsigned int));
     if (bytesRead < 0)
       {
- printf("NetPIPE: read failed in RecvTime: errno=%d\n", errno);
- exit(302);
+	printf("NetPIPE: read failed in RecvTime: errno=%d\n", errno);
+	exit(302);
       }
     else if (bytesRead != sizeof(unsigned int))
       {
- fprintf(stderr, "NetPIPE: partial read in RecvTime of %d bytes\n",
-  bytesRead);
- exit(303);
+	fprintf(stderr, "NetPIPE: partial read in RecvTime of %d bytes\n",
+		bytesRead);
+	exit(303);
       }
     ltime = ntohl(ntime);
 
@@ -269,7 +269,7 @@ void RecvRepeat(ArgStruct *p, int *rpt)
   else if (bytesRead != sizeof(unsigned int))
     {
       fprintf(stderr, "NetPIPE: partial read in RecvRepeat of %d bytes\n",
-       bytesRead);
+	      bytesRead);
       exit(306);
     }
   lrpt = ntohl(nrpt);
@@ -286,7 +286,7 @@ int Establish(ArgStruct *p)
  clen = sizeof(p->prot.sin2);
  if(p->tr){
    if(connect(p->commfd, (struct sockaddr *) &(p->prot.sin1),
-       sizeof(p->prot.sin1)) < 0){
+	      sizeof(p->prot.sin1)) < 0){
      printf("Client: Cannot Connect! errno=%d\n",errno);
      exit(-10);
    }
@@ -295,7 +295,7 @@ int Establish(ArgStruct *p)
     /* SERVER */
     listen(p->servicefd, 5);
     p->commfd = accept(p->servicefd, (struct sockaddr *) &(p->prot.sin2),
-         &clen);
+		       &clen);
 
     if(p->commfd < 0){
       printf("Server: Accept Failed! errno=%d\n",errno);
@@ -312,7 +312,7 @@ int Establish(ArgStruct *p)
     }
 
     if(setsockopt(p->commfd, proto->p_proto, TCP_NODELAY,
-    &one, sizeof(one)) < 0)
+		  &one, sizeof(one)) < 0)
     {
       printf("setsockopt: TCP_NODELAY failed! errno=%d\n", errno);
       exit(556);
@@ -322,18 +322,18 @@ int Establish(ArgStruct *p)
     if(p->prot.sndbufsz > 0)
     {
       printf("Send and Receive Buffers on accepted socket set to %d bytes\n",
-      p->prot.sndbufsz);
+	     p->prot.sndbufsz);
       if(setsockopt(p->commfd, SOL_SOCKET, SO_SNDBUF, &(p->prot.sndbufsz),
                                        sizeof(p->prot.sndbufsz)) < 0)
       {
-   printf("setsockopt: SO_SNDBUF failed! errno=%d\n", errno);
- exit(556);
+		 printf("setsockopt: SO_SNDBUF failed! errno=%d\n", errno);
+	exit(556);
       }
       if(setsockopt(p->commfd, SOL_SOCKET, SO_RCVBUF, &(p->prot.rcvbufsz),
                                        sizeof(p->prot.rcvbufsz)) < 0)
       {
-   printf("setsockopt: SO_RCVBUF failed! errno=%d\n", errno);
- exit(556);
+		 printf("setsockopt: SO_RCVBUF failed! errno=%d\n", errno);
+	exit(556);
       }
     }
   }

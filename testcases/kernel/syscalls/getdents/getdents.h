@@ -39,7 +39,7 @@
 				: "memory"				\
 				);					\
 				__rval;					\
-		    })
+		    	})
 #else
 	#define GETDENTS_ASM() 0
 #endif /* __i386__ */

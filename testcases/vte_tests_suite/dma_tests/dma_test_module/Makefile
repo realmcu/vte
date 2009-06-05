@@ -24,13 +24,13 @@
 ####################################################################################################
 MXC_DIR = $(KLINUX_SRCDIR)/drivers/mxc
 
-CFLAGS    += -Wall -I$(MXC_DIR)
+CFLAGS    += -Wall -I$(MXC_DIR) 
 LOADLIBES +=
 
 obj-m  = dma_test_module.o
 TARGET = dma_test_module.ko
 
-all:
+all: 
 	@make -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
 	rm -rf *.mod.ko *.mod.c .*.cmd *.o .*.o.d .tmp_versions
 	@echo "***********************************************"

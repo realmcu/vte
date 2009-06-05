@@ -41,52 +41,52 @@ I_AM_ROOT=0
 # id(1) for entry.
 #
 ife() {
- id "$@" > /dev/null
+	id "$@" > /dev/null
 }
 
 #
 # grep(1) for entry.
 #
 gfe() {
- grep -q "$@"
+	grep -q "$@"
 }
 
 prompt_for_create() {
- if [ -n "$CREATE_ENTRIES" ] ; then
+	if [ -n "$CREATE_ENTRIES" ] ; then
 
-  if [ $I_AM_ROOT -eq 0 ] ; then
-   echo "Not root; can't create user / group entries on local machine".
-   CREATE_ENTRIES=0
-  fi
-  echo "CREATE_ENTRIES variable set to $CREATE_ENTRIES ..."
-  echo
+		if [ $I_AM_ROOT -eq 0 ] ; then
+			echo "Not root; can't create user / group entries on local machine".
+			CREATE_ENTRIES=0
+		fi
+		echo "CREATE_ENTRIES variable set to $CREATE_ENTRIES ..."
+		echo
 
- else
+	else
 
-  if [ $NO_NOBODY_ID -ne 0 -o $NO_BIN_ID -ne 0 -o $NO_DAEMON_ID -ne 0 -o $NO_NOBODY_GRP -ne 0 -o $NO_BIN_GRP -ne 0 -o $NO_DAEMON_GRP -ne 0 -o $NO_USERS_GRP -ne 0 -o $NO_SYS_GRP -ne 0 -a $I_AM_ROOT -ne 0 ] ; then
-   echo -n "If any required user ids and/or groups are missing, would you like these created? Y/N "
-   read ans
-   case "$ans" in
-    Y*|y*) CREATE_ENTRIES=1 ;;
-    *)     CREATE_ENTRIES=0 ;;
-   esac
-  else
-   CREATE_ENTRIES=0
-  fi
+		if [ $NO_NOBODY_ID -ne 0 -o $NO_BIN_ID -ne 0 -o $NO_DAEMON_ID -ne 0 -o $NO_NOBODY_GRP -ne 0 -o $NO_BIN_GRP -ne 0 -o $NO_DAEMON_GRP -ne 0 -o $NO_USERS_GRP -ne 0 -o $NO_SYS_GRP -ne 0 -a $I_AM_ROOT -ne 0 ] ; then
+			echo -n "If any required user ids and/or groups are missing, would you like these created? Y/N "
+			read ans
+			case "$ans" in
+				Y*|y*) CREATE_ENTRIES=1 ;;
+				*)     CREATE_ENTRIES=0 ;;
+			esac
+		else
+			CREATE_ENTRIES=0
+		fi
 
- fi
+	fi
 }
 
 if [ -z ${EUID} ] ; then
- EUID=$(id -u)
+	EUID=$(id -u)
 fi
 
 if [ -e /etc/passwd -a ! -r /etc/passwd ] ; then
- echo "/etc/passwd not readable by uid $EUID"
- exit 1
+	echo "/etc/passwd not readable by uid $EUID"
+	exit 1
 elif [ -e /etc/group -a ! -r /etc/group ] ; then
- echo "/etc/group not readable by uid $EUID"
- exit 1
+	echo "/etc/group not readable by uid $EUID"
+	exit 1
 fi
 
 ife bin; NO_BIN_ID=$?
@@ -100,7 +100,7 @@ gfe '^sys:' /etc/group; NO_SYS_GRP=$?
 gfe '^users:' /etc/group; NO_USERS_GRP=$?
 
 if [ $EUID -eq 0 ] ; then
- I_AM_ROOT=1
+	I_AM_ROOT=1
 fi
 
 prompt_for_create
@@ -125,53 +125,53 @@ echo ""
 #debug_vals
 
 if [ $CREATE_ENTRIES -ne 0 ] ; then
- if ! touch /etc/group ; then
-  echo "Couldn't touch /etc/group"
-  exit 1
- fi
+	if ! touch /etc/group ; then
+		echo "Couldn't touch /etc/group"
+		exit 1
+	fi
 fi
 
 make_user_group() {
- local name=$1 id=$2 no_id=$3 no_grp=$4
+	local name=$1 id=$2 no_id=$3 no_grp=$4
 
- if [ $no_id -eq 0 -a $no_grp -eq 0 ] ; then
-  echo "'$name' user id and group found."
- elif [ $CREATE_ENTRIES -ne 0 ] ; then
-  echo "Creating entries for $name"
+	if [ $no_id -eq 0 -a $no_grp -eq 0 ] ; then
+		echo "'$name' user id and group found."
+	elif [ $CREATE_ENTRIES -ne 0 ] ; then
+		echo "Creating entries for $name"
 
-  # Avoid chicken and egg issue with id(1) call
-  # made above and below.
-  if ! gfe "^${name}:" /etc/passwd && [ $no_id -ne 0 ] ; then
-   echo "${name}:x:${id}:${id}:${name}::" >> /etc/passwd
-  fi
-  if [ $no_grp -ne 0 ] ; then
-   echo "${name}:x:$(id -u ${name}):" >> /etc/group
-  fi
- fi
+		# Avoid chicken and egg issue with id(1) call
+		# made above and below.
+		if ! gfe "^${name}:" /etc/passwd && [ $no_id -ne 0 ] ; then
+			echo "${name}:x:${id}:${id}:${name}::" >> /etc/passwd
+		fi
+		if [ $no_grp -ne 0 ] ; then
+			echo "${name}:x:$(id -u ${name}):" >> /etc/group
+		fi
+	fi
 }
 make_user_group nobody 99 $NO_NOBODY_ID $NO_NOBODY_GRP
 make_user_group bin 1 $NO_BIN_ID $NO_BIN_GRP
 make_user_group daemon 2 $NO_DAEMON_ID $NO_DAEMON_GRP
 
 if [ $NO_USERS_GRP -eq 0 ] ; then
- echo "Users group found."
+	echo "Users group found."
 elif [ $CREATE_ENTRIES -ne 0 ] ; then
- echo 'users:x:100:' >> /etc/group
+	echo 'users:x:100:' >> /etc/group
 fi
 
 if [ $NO_SYS_GRP -eq 0 ] ; then
- echo "Sys group found."
+	echo "Sys group found."
 elif [ $CREATE_ENTRIES -ne 0 ] ; then
- echo 'sys:x:3:' >> /etc/group
+	echo 'sys:x:3:' >> /etc/group
 fi
 
 if ife nobody    && ife bin    && ife daemon &&
    ife -g nobody && ife -g bin && ife -g daemon &&
    gfe '^users:' /etc/group && gfe '^sys:' /etc/group
 then
- echo ""
- echo "Required users/groups exist."
- exit 0
+	echo ""
+	echo "Required users/groups exist."
+	exit 0
 fi
 
 echo ""

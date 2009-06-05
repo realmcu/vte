@@ -18,12 +18,12 @@
  */
 
 /* NICTA */
-/* 13/02/2006 Implemented carl.vanschaik at nicta.com.au */
+/* 13/02/2006	Implemented	carl.vanschaik at nicta.com.au */
 
 /* mem03.c */
 /*
  * NAME
- * mem03.c
+ * 	mem03.c
  *
  * DESCRIPTION
  *      - create two files, write known data to the files.
@@ -37,7 +37,7 @@
  *
  *
  * RESTRICTIONS
- * None
+ * 	None
  */
 
 
@@ -62,96 +62,96 @@
 static void setup();
 static void cleanup();
 
-char *TCID  "mem03";   /* Test program identifier. */
-int TST_TOTAL  1;   /* Total number of test cases. */
-extern int Tst_count;   /* Test Case counter for tst_* routines */
+char *TCID = "mem03";			/* Test program identifier. */
+int TST_TOTAL = 1;			/* Total number of test cases. */
+extern int Tst_count;			/* Test Case counter for tst_* routines */
 
-int f1-1, f2-1;
-char *mm1NULL, *mm2NULL;
+int f1=-1, f2=-1;
+char *mm1=NULL, *mm2=NULL;
 
 /*--------------------------------------------------------------------*/
 int main()
 {
- char tmp1[]  "./tmp.file.1";
- char tmp2[]  "./tmp.file.2";
+	char tmp1[] = "./tmp.file.1";
+	char tmp2[] = "./tmp.file.2";
 
- char str1[]  "testing 123";
- char str2[]  "my test mem";
+	char str1[] = "testing 123";
+	char str2[] = "my test mem";
 
- /* perform global setup for test */
- setup();
+	/* perform global setup for test */
+	setup();
 
- if ((f1  open(tmp1, O_RDWR|O_CREAT, S_IREAD|S_IWRITE))  -1 )
-  tst_brkm(TFAIL, cleanup, "failed to open/create file %s",
-    tmp1);
+	if ((f1 = open(tmp1, O_RDWR|O_CREAT, S_IREAD|S_IWRITE)) == -1 )
+		tst_brkm(TFAIL, cleanup, "failed to open/create file %s",
+			 tmp1);
 
- if ((f2  open(tmp2, O_RDWR|O_CREAT, S_IREAD|S_IWRITE))  -1 )
-  tst_brkm(TFAIL, cleanup, "failed to open/create file %s",
-    tmp2);
+	if ((f2 = open(tmp2, O_RDWR|O_CREAT, S_IREAD|S_IWRITE)) == -1 )
+		tst_brkm(TFAIL, cleanup, "failed to open/create file %s",
+			 tmp2);
 
- write(f1, str1, strlen(str1));
- write(f2, str2, strlen(str2));
+	write(f1, str1, strlen(str1));
+	write(f2, str2, strlen(str2));
 
- {
-  char *save_mm1, *save_mm2;
+	{
+		char *save_mm1, *save_mm2;
 
-  mm1  mmap(0, 64, PROT_READ, MAP_PRIVATE, f1, 0);
-  mm2  mmap(0, 64, PROT_READ, MAP_PRIVATE, f2, 0);
+		mm1 = mmap(0, 64, PROT_READ, MAP_PRIVATE, f1, 0);
+		mm2 = mmap(0, 64, PROT_READ, MAP_PRIVATE, f2, 0);
 
-  if ((mm1  (void*)-1) || (mm2  (void*)-1))
-   tst_brkm(TFAIL, cleanup, "mmap failed");
+		if ((mm1 == (void*)-1) || (mm2 == (void*)-1))
+			tst_brkm(TFAIL, cleanup, "mmap failed");
 
-  save_mm1  mm1;
-  save_mm2  mm2;
+		save_mm1 = mm1;
+		save_mm2 = mm2;
 
-  if ( strncmp(str1, mm1, strlen(str1)) )
-   tst_brkm(TFAIL, cleanup, "failed on compare %s",
-     tmp1);
+		if ( strncmp(str1, mm1, strlen(str1)) )
+			tst_brkm(TFAIL, cleanup, "failed on compare %s",
+				 tmp1);
 
-  if ( strncmp(str2, mm2, strlen(str2)) )
-   tst_brkm(TFAIL, cleanup, "failed on compare %s",
-     tmp2);
+		if ( strncmp(str2, mm2, strlen(str2)) )
+			tst_brkm(TFAIL, cleanup, "failed on compare %s",
+				 tmp2);
 
-  munmap(mm1, 64);
-  munmap(mm2, 64);
+		munmap(mm1, 64);
+		munmap(mm2, 64);
 
-  mm1  mmap(save_mm2, 64, PROT_READ, MAP_PRIVATE, f1, 0);
-  mm2  mmap(save_mm1, 64, PROT_READ, MAP_PRIVATE, f2, 0);
+		mm1 = mmap(save_mm2, 64, PROT_READ, MAP_PRIVATE, f1, 0);
+		mm2 = mmap(save_mm1, 64, PROT_READ, MAP_PRIVATE, f2, 0);
 
-  if ((mm1  (void*)-1) || (mm2  (void*)-1))
-   tst_brkm(TFAIL, cleanup, "second mmap failed");
+		if ((mm1 == (void*)-1) || (mm2 == (void*)-1))
+			tst_brkm(TFAIL, cleanup, "second mmap failed");
 
-  if (mm1 ! save_mm2)
-  {
-   printf("mmap not using same address\n");
-   return 0;
-  }
+		if (mm1 != save_mm2)
+		{
+			printf("mmap not using same address\n");
+			return 0;
+		}
 
-  if (mm2 ! save_mm1)
-  {
-   printf("mmap not using same address\n");
-   return 0;
-  }
+		if (mm2 != save_mm1)
+		{
+			printf("mmap not using same address\n");
+			return 0;
+		}
 
-  if ( strncmp(str1, mm1, strlen(str1)) )
-   tst_brkm(TFAIL, cleanup, "failed on compare %s",
-     tmp1);
+		if ( strncmp(str1, mm1, strlen(str1)) )
+			tst_brkm(TFAIL, cleanup, "failed on compare %s",
+				 tmp1);
 
-  if ( strncmp(str2, mm2, strlen(str2)) )
-   tst_brkm(TFAIL, cleanup, "failed on compare %s",
-     tmp2);
+		if ( strncmp(str2, mm2, strlen(str2)) )
+			tst_brkm(TFAIL, cleanup, "failed on compare %s",
+				 tmp2);
+		
+		munmap(mm1, 64);
+		munmap(mm2, 64);
+	}
 
-  munmap(mm1, 64);
-  munmap(mm2, 64);
- }
+	tst_resm(TPASS,"%s memory test succeeded", TCID);
 
- tst_resm(TPASS,"%s memory test succeeded", TCID);
+	/* clean up and exit */
+	cleanup();
 
- /* clean up and exit */
- cleanup();
-
- /*NOTREACHED*/
- return 0;
+	/*NOTREACHED*/
+	return 0;
 }
 
 /*
@@ -160,32 +160,32 @@ int main()
 void
 setup(void)
 {
- /*
-  * Create a temporary directory and cd into it.
-  */
- tst_tmpdir();
+	/*
+	 * Create a temporary directory and cd into it.
+	 */
+	tst_tmpdir();
 }
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- *        or premature exit.
+ * 	       or premature exit.
  */
 void
 cleanup(void)
 {
- if (mm1)
-  munmap(mm1, 64);
- if (mm2)
-  munmap(mm2, 64);
+	if (mm1)
+		munmap(mm1, 64);
+	if (mm2)
+		munmap(mm2, 64);
 
- if (f1 ! -1)
-  close(f1);
- if (f2 ! -1)
-  close(f2);
+	if (f1 != -1)
+		close(f1);
+	if (f2 != -1)
+		close(f2);
 
- /* Remove the temporary directory */
- tst_rmdir();
+	/* Remove the temporary directory */
+	tst_rmdir();
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

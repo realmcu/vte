@@ -36,7 +36,7 @@ int get_no_of_hugepages() {
        FILE *f;
        char buf[BUFSIZ];
 
-       f  popen("grep 'HugePages_Total' /proc/meminfo | cut -d ':' -f2 | tr -d ' \n'", "r");
+       f = popen("grep 'HugePages_Total' /proc/meminfo | cut -d ':' -f2 | tr -d ' \n'", "r");
        if (!f) {
                tst_resm(TBROK, "Could not get info about Total_Hugepages from /proc/meminfo");
                tst_exit();
@@ -44,7 +44,7 @@ int get_no_of_hugepages() {
        if (!fgets(buf, 10, f)) {
                fclose(f);
                tst_resm(TBROK, "Could not read Total_Hugepages from /proc/meminfo");
-               tst_exit();
+               tst_exit(); 
        }
        pclose(f);
        return(atoi(buf));
@@ -59,7 +59,7 @@ int hugepages_size() {
        FILE *f;
        char buf[BUFSIZ];
 
-       f  popen("grep 'Hugepagesize' /proc/meminfo | cut -d ':' -f2 | tr -d 'kB \n'", "r");
+       f = popen("grep 'Hugepagesize' /proc/meminfo | cut -d ':' -f2 | tr -d 'kB \n'", "r");
        if (!f) {
                tst_resm(TBROK, "Could not get info about HugePages_Size from /proc/meminfo");
                tst_exit();

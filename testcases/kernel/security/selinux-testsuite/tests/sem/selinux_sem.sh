@@ -15,201 +15,201 @@
 
 setup()
 {
- export TCID="setup"
- export TST_COUNT=0
- export TST_TOTAL=13
+	export TCID="setup"
+	export TST_COUNT=0
+	export TST_TOTAL=13
 }
 
 test01()
 {
- TCID="test01"
- TST_COUNT=1
- RC=0
+	TCID="test01"
+	TST_COUNT=1
+	RC=0
 
- # First time should just get the resource
- output=`runcon -t test_ipc_base_t selinux_semget`
- RC=$?
- if [ $RC -eq 0 ]
- then
-  echo "$TCID   PASS : sem passed."
- else
-  echo "$TCID   FAIL : sem failed."
-  return $RC
- fi
+	# First time should just get the resource
+	output=`runcon -t test_ipc_base_t selinux_semget`
+	RC=$?
+	if [ $RC -eq 0 ]
+	then
+		echo "$TCID   PASS : sem passed."
+	else
+		echo "$TCID   FAIL : sem failed."
+		return $RC
+	fi
 
- ipcid=`echo $output | grep -o id\ =\ [0-9]*$ | awk '{ print $NF }'`
- if [ ! $ipcid ]
- then
-  echo  "$TCID: Invalid output from selinux_semget."
- fi
- return $RC
+	ipcid=`echo $output | grep -o id\ =\ [0-9]*$ | awk '{ print $NF }'`
+	if [ ! $ipcid ]
+	then
+		echo  "$TCID: Invalid output from selinux_semget."
+	fi
+	return $RC
 }
 
 test02()
 {
- TCID="test02"
- TST_COUNT=2
- RC=0
+	TCID="test02"
+	TST_COUNT=2
+	RC=0
 
- # Test ipc_info permission
- runcon -t test_ipc_base_t -- selinux_getinfo
- RC=$?
- if [ $RC -eq 0 ]
- then
-  echo "$TCID   PASS : sem passed."
- else
-  echo "$TCID   FAIL : sem failed."
- fi
- return $RC
+	# Test ipc_info permission
+	runcon -t test_ipc_base_t -- selinux_getinfo
+	RC=$?
+	if [ $RC -eq 0 ]
+	then
+		echo "$TCID   PASS : sem passed."
+	else
+		echo "$TCID   FAIL : sem failed."
+	fi
+	return $RC
 }
 
 test03()
 {
- TCID="test03"
- TST_COUNT=3
- RC=0
+	TCID="test03"
+	TST_COUNT=3
+	RC=0
 
- runcon -t test_ipc_none_t -- selinux_getinfo
- RC=$?
- if [ $RC -ne 0 ]
- then
-  echo "$TCID   PASS : sem passed."
-  RC=0
- else
-  echo "$TCID   FAIL : sem failed."
-  RC=1
- fi
- return $RC
+	runcon -t test_ipc_none_t -- selinux_getinfo
+	RC=$?
+	if [ $RC -ne 0 ]
+	then
+		echo "$TCID   PASS : sem passed."
+		RC=0 
+	else
+		echo "$TCID   FAIL : sem failed."
+		RC=1
+	fi
+	return $RC
 }
 
 test04()
 {
- TCID="test04"
- TST_COUNT=4
- RC=0
+	TCID="test04"
+	TST_COUNT=4
+	RC=0
 
- # Delete the resource
- runcon -t test_ipc_base_t ipcrm sem $ipcid
- RC=$?
- if [ $RC -eq 0 ]
- then
-  echo "$TCID   PASS : sem passed."
- else
-  echo "$TCID   FAIL : sem failed."
- fi
- return $RC
+	# Delete the resource
+	runcon -t test_ipc_base_t ipcrm sem $ipcid
+	RC=$?
+	if [ $RC -eq 0 ]
+	then
+		echo "$TCID   PASS : sem passed."
+	else
+		echo "$TCID   FAIL : sem failed."
+	fi
+	return $RC
 }
 
 test05()
 {
- TCID="test05"
- TST_COUNT=5
- RC=0
+	TCID="test05"
+	TST_COUNT=5
+	RC=0
 
- # Create it again
- output=`runcon -t test_ipc_base_t selinux_semget`
- RC=$?
- if [ $RC -eq 0 ]
- then
-  echo "$TCID   PASS : sem passed."
- else
-  echo "$TCID   FAIL : sem failed."
-  return $RC
- fi
+	# Create it again
+	output=`runcon -t test_ipc_base_t selinux_semget`
+	RC=$?
+	if [ $RC -eq 0 ]
+	then
+		echo "$TCID   PASS : sem passed."
+	else
+		echo "$TCID   FAIL : sem failed."
+		return $RC
+	fi
 
- ipcid=`echo $output | grep -o id\ =\ [0-9]*$ | awk '{ print $NF }'`
- if [ ! $ipcid ]
- then
-  echo "$TCID: Invalid output from selinux_semget."
- fi
- return $RC
+	ipcid=`echo $output | grep -o id\ =\ [0-9]*$ | awk '{ print $NF }'`
+	if [ ! $ipcid ]
+	then
+		echo "$TCID: Invalid output from selinux_semget."
+	fi
+	return $RC	
 }
 
 test06()
 {
- TCID="test06"
- TST_COUNT=6
- RC=0
+	TCID="test06"
+	TST_COUNT=6
+	RC=0
 
- # Create it one more time to check associate permission
- output=`runcon -t test_ipc_base_t selinux_semget`
- RC=$?
- if [ $RC -eq 0 ]
- then
-  echo "$TCID   PASS : sem passed."
- else
-  echo "$TCID   FAIL : sem failed."
-  return $RC
- fi
+	# Create it one more time to check associate permission
+	output=`runcon -t test_ipc_base_t selinux_semget`
+	RC=$?
+	if [ $RC -eq 0 ]
+	then
+		echo "$TCID   PASS : sem passed."
+	else
+		echo "$TCID   FAIL : sem failed."
+		return $RC
+	fi
 
- ipcid2=`echo $output | grep -o id\ =\ [0-9]*$ | awk '{ print $NF }'`
- if [ ! $ipcid2 ]
- then
-  echo "$TCID: Invalid output from selinux_semget."
- fi
- return $RC
+	ipcid2=`echo $output | grep -o id\ =\ [0-9]*$ | awk '{ print $NF }'`
+	if [ ! $ipcid2 ]
+	then
+		echo "$TCID: Invalid output from selinux_semget."
+	fi
+	return $RC
 }
 
 test07()
 {
- TCID="test07"
- TST_COUNT=7
- RC=0
+	TCID="test07"
+	TST_COUNT=7
+	RC=0
 
- # Make sure they match
- if [ $ipcid = $ipcid2 ]
- then
-  echo "$TCID   PASS : sem passed."
-  RC=0
- else
-  echo "$TCID   FAIL : sem failed."
-  RC=1
- fi
- return $RC
+	# Make sure they match
+	if [ $ipcid = $ipcid2 ]
+	then
+		echo "$TCID   PASS : sem passed."
+		RC=0
+	else
+		echo "$TCID   FAIL : sem failed."
+		RC=1
+	fi
+	return $RC
 }
 
 test08()
 {
- TCID="test08"
- TST_COUNT=8
- RC=0
+	TCID="test08"
+	TST_COUNT=8
+	RC=0
 
- # Try to associate with it from the read-only domain
- output=`runcon -t test_ipc_read_t selinux_semget`
- RC=$?
- if [ $RC -eq 0 ]
- then
-  echo "$TCID   PASS : sem passed."
- else
-  echo "$TCID   FAIL : sem failed."
-  return $RC
- fi
- ipcid=`echo $output | grep -o id\ =\ [0-9]*$ | awk '{ print $NF }'`
- if [ ! $ipcid ]
- then
-  echo "$TCID: Invalid output from selinux_semget."
- fi
- return $RC
+	# Try to associate with it from the read-only domain
+	output=`runcon -t test_ipc_read_t selinux_semget`
+	RC=$?
+	if [ $RC -eq 0 ]
+	then
+		echo "$TCID   PASS : sem passed."
+	else
+		echo "$TCID   FAIL : sem failed."
+		return $RC
+	fi
+	ipcid=`echo $output | grep -o id\ =\ [0-9]*$ | awk '{ print $NF }'`
+	if [ ! $ipcid ]
+	then
+		echo "$TCID: Invalid output from selinux_semget."
+	fi
+	return $RC	
 }
 
 test09()
 {
- TCID="test09"
- TST_COUNT=9
- RC=0
+	TCID="test09"
+	TST_COUNT=9
+	RC=0
 
- # Try to associate with it from the unprivileged domain
- output=`runcon -t test_ipc_none_t selinux_semget`
- RC=$?
- if [ $RC -ne 0 ]
- then
-  echo "$TCID   PASS : sem passed."
-  RC=0
- else
-  echo "$TCID   FAIL : sem failed."
-  RC=1
- fi
- return $RC
+	# Try to associate with it from the unprivileged domain
+	output=`runcon -t test_ipc_none_t selinux_semget`
+	RC=$?
+	if [ $RC -ne 0 ]
+	then
+		echo "$TCID   PASS : sem passed."
+		RC=0
+	else
+		echo "$TCID   FAIL : sem failed."
+		RC=1
+	fi
+	return $RC
 }
 
 # ================================================================= #
@@ -218,54 +218,54 @@ test09()
 
 test10()
 {
- TCID="test10"
- TST_COUNT=10
- RC=0
+	TCID="test10"
+	TST_COUNT=10
+	RC=0
 
- # run semaphore control tests, we expect all to fail
- output=`runcon -t test_ipc_associate_t selinux_semctl`
- number=`echo $output | awk '{ print NF }'`
- result=`echo $output | awk '{s = 0; n=split($0,a," "); for (i=1; i <= NF; i++) s += a[i]; print s }'`
+	# run semaphore control tests, we expect all to fail
+	output=`runcon -t test_ipc_associate_t selinux_semctl`
+	number=`echo $output | awk '{ print NF }'`
+	result=`echo $output | awk '{s = 0; n=split($0,a," "); for (i=1; i <= NF; i++) s += a[i]; print s }'`
 
- # The results should be a row of -1's. The only way
- # I know to check this is to add up results and see if they
- # are equal to -<number of fields>.
- # Change this if there is a better way to do this check in shell.
- if [ $result = "-$number" ]
- then
-  echo "$TCID   PASS : sem passed."
-  RC=0
- else
-  echo "$TCID   FAIL : sem failed."
-  RC=1
- fi
- return $RC
+	# The results should be a row of -1's. The only way
+	# I know to check this is to add up results and see if they
+	# are equal to -<number of fields>.
+	# Change this if there is a better way to do this check in shell.
+	if [ $result = "-$number" ]
+	then
+		echo "$TCID   PASS : sem passed."
+		RC=0
+	else
+		echo "$TCID   FAIL : sem failed."
+		RC=1
+	fi
+	return $RC
 }
 
 test11()
 {
- TCID="test11"
- TST_COUNT=11
- RC=0
+	TCID="test11"
+	TST_COUNT=11
+	RC=0
 
- # run semaphore control tests, we expect all to succeed
- # last test should delete the semaphore
- output=`runcon -t test_ipc_base_t selinux_semctl`
- result=`echo $output | awk '{s = 0; n=split($0,a," "); for (i=1; i <= NF; i++) s += a[i]; print s }'`
+	# run semaphore control tests, we expect all to succeed
+	# last test should delete the semaphore
+	output=`runcon -t test_ipc_base_t selinux_semctl`
+	result=`echo $output | awk '{s = 0; n=split($0,a," "); for (i=1; i <= NF; i++) s += a[i]; print s }'`
 
- # The results should be a row of 0's. The only way
- # I know to check this is to add up results and see if they
- # are equal to zero.
- # Change this if there is a better way to do this check in shell.
- if [ $result = 0 ]
- then
-  echo "$TCID   PASS : sem passed."
-  RC=0
- else
-  echo "$TCID   FAIL : sem failed."
-  RC=1
- fi
- return $RC
+	# The results should be a row of 0's. The only way
+	# I know to check this is to add up results and see if they
+	# are equal to zero.
+	# Change this if there is a better way to do this check in shell.
+	if [ $result = 0 ]
+	then
+		echo "$TCID   PASS : sem passed."
+		RC=0
+	else
+		echo "$TCID   FAIL : sem failed."
+		RC=1
+	fi
+	return $RC
 }
 
 # ================================================================= #
@@ -274,51 +274,51 @@ test11()
 
 test12()
 {
- TCID="test12"
- TST_COUNT=12
- RC=0
+	TCID="test12"
+	TST_COUNT=12
+	RC=0
 
- runcon -t test_ipc_base_t selinux_semop
- RC=$?
- if [ $RC -eq 0 ]
- then
-  echo "$TCID   PASS : sem passed."
- else
-  echo "$TCID   FAIL : sem failed."
- fi
- return $RC
+	runcon -t test_ipc_base_t selinux_semop
+	RC=$?
+	if [ $RC -eq 0 ]
+	then
+		echo "$TCID   PASS : sem passed."
+	else
+		echo "$TCID   FAIL : sem failed."
+	fi
+	return $RC
 }
 
 test13()
 {
- TCID="test13"
- TST_COUNT=13
- RC=0
+	TCID="test13"
+	TST_COUNT=13
+	RC=0
 
- runcon -t test_ipc_associate_t selinux_semop
- RC=$?
- if [ $RC -ne 0 ]
- then
-  echo "$TCID   PASS : sem passed."
-  RC=0
- else
-  echo "$TCID   FAIL : sem failed."
-  RC=1
- fi
- return $RC
+	runcon -t test_ipc_associate_t selinux_semop
+	RC=$?
+	if [ $RC -ne 0 ]
+	then
+		echo "$TCID   PASS : sem passed."
+		RC=0
+	else
+		echo "$TCID   FAIL : sem failed."
+		RC=1
+	fi
+	return $RC
 }
 
 cleanup()
 {
- # Cleanup
- output=`runcon -t test_ipc_base_t selinux_semget`
+	# Cleanup 
+	output=`runcon -t test_ipc_base_t selinux_semget`
 
- ipcid=`echo $output | grep -o id\ =\ [0-9]*$ | awk '{ print $NF }'`
- if [ ! $ipcid ]
- then
-  echo "cleanup: Invalid output from selinux_semget."
- fi
- runcon -t test_ipc_base_t ipcrm sem $ipcid
+	ipcid=`echo $output | grep -o id\ =\ [0-9]*$ | awk '{ print $NF }'`
+	if [ ! $ipcid ]
+	then
+		echo "cleanup: Invalid output from selinux_semget."
+	fi
+	runcon -t test_ipc_base_t ipcrm sem $ipcid
 }
 
 # Function:     main

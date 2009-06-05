@@ -18,18 +18,18 @@
 #                       Modification     Tracking
 # Author                    Date          Number    Description of Changes
 #--------------------   ------------    ----------  ---------------------
-# Spring Zhang           06/08/2008       n/a      Initial ver.
+# Spring Zhang           06/08/2008       n/a      Initial ver. 
 # Spring                 05/09/2008       n/a      Add mx51 support
 # Spring                 26/09/2008       n/a      Fix some volume 0 bug
-# Spring                 27/10/2008       n/a      Add mx35&mx37 support
+# Spring                 27/10/2008       n/a      Add mx35&mx37 support  
 # Spring                 28/11/2008       n/a      Modify COPYRIGHT header
 #############################################################################
-# Portability:   ARM sh
-# File Name:     dac_vol_adj.sh
+# Portability:   ARM sh 
+# File Name:     dac_vol_adj.sh   
 # Total Tests:   1
 # Test Strategy: play audio streams with volume up and down
-#
-# Use command "./dac_vol_adj.sh [audio stream]"
+# 
+# Use command "./dac_vol_adj.sh [audio stream]" 
 # Tested on : i.MX51&35&37
 # Support: i.MX31&MX51&MX35&MX37
 
@@ -91,7 +91,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup()
+cleanup() 
 {
     RC=0
     echo "clean up environment..."

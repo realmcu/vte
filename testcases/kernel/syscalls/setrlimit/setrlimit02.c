@@ -19,10 +19,10 @@
 
 /*
  * NAME
- * setrlimit02.c
+ *	setrlimit02.c
  *
  * DESCRIPTION
- * Testcase to test the different errnos set by setrlimit(2) system call.
+ *	Testcase to test the different errnos set by setrlimit(2) system call.
  *
  * USAGE:  <for command-line>
  *  setrlimit02 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -34,10 +34,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * NONE
+ *	NONE
  */
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -47,10 +47,10 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID  "setrlimit02";
+char *TCID = "setrlimit02";
 extern int Tst_count;
 
-char nobody_uid[]  "nobody";
+char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
 struct rlimit rlim;
@@ -58,75 +58,75 @@ struct rlimit rlim;
 void setup();
 void cleanup();
 
-int exp_enos[]{EFAULT, EINVAL, EPERM, 0};
+int exp_enos[]={EFAULT, EINVAL, EPERM, 0};
 
 struct test_case_t {
- int resource;
- struct rlimit *rlim;
- int error;
-} TC[]  {
+	int resource;
+	struct rlimit *rlim;
+	int error;
+} TC[] = {
 #if !defined(UCLINUX)
- /* rlim points outside the process address space - EFAULT */
- {RLIMIT_NOFILE, (void *)-1, EFAULT},
+	/* rlim points outside the process address space - EFAULT */
+	{RLIMIT_NOFILE, (void *)-1, EFAULT},
 #endif
- /* the resource is invalid - EINVAL */
- {-1, &rlim, EINVAL},
+	/* the resource is invalid - EINVAL */
+	{-1, &rlim, EINVAL},
 
- /* a non-root user attemps to increase the rlim_max value - EPERM */
- {RLIMIT_NOFILE, &rlim, EPERM}
+	/* a non-root user attemps to increase the rlim_max value - EPERM */ 
+	{RLIMIT_NOFILE, &rlim, EPERM}
 };
 
-int TST_TOTAL  sizeof(TC)/sizeof(*TC);
+int TST_TOTAL = sizeof(TC)/sizeof(*TC);
 
 int main(int ac, char **av)
 {
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
- int i;
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
+	int i;
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- setup();
+	setup();
 
- /* set up the expected errnos */
- TEST_EXP_ENOS(exp_enos);
+	/* set up the expected errnos */
+	TEST_EXP_ENOS(exp_enos);
 
- /* check looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping. */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping. */
+		Tst_count = 0;
 
-  /* loop through the test cases */
-  for (i  0; i < TST_TOTAL; i++) {
+		/* loop through the test cases */
+		for (i = 0; i < TST_TOTAL; i++) {
 
-   TEST(setrlimit(TC[i].resource, TC[i].rlim));
+			TEST(setrlimit(TC[i].resource, TC[i].rlim));
 
-   if (TEST_RETURN ! -1) {
-    tst_resm(TFAIL, "call succeeded unexpectedly");
-    continue;
-   }
+			if (TEST_RETURN != -1) {
+				tst_resm(TFAIL, "call succeeded unexpectedly");
+				continue;
+			}
 
-   TEST_ERROR_LOG(TEST_ERRNO);
+			TEST_ERROR_LOG(TEST_ERRNO);
 
-   if (TEST_ERRNO  TC[i].error) {
-    tst_resm(TPASS, "expected failure - "
-      "errno  %d : %s", TEST_ERRNO,
-      strerror(TEST_ERRNO));
-   } else {
-    tst_resm(TFAIL, "unexpected error - %d : %s - "
-      "expected %d", TEST_ERRNO,
-      strerror(TEST_ERRNO), TC[i].error);
-   }
-  }
- }
- cleanup();
+			if (TEST_ERRNO == TC[i].error) {
+				tst_resm(TPASS, "expected failure - "
+					 "errno = %d : %s", TEST_ERRNO,
+					 strerror(TEST_ERRNO));
+			} else {
+				tst_resm(TFAIL, "unexpected error - %d : %s - "
+					 "expected %d", TEST_ERRNO,
+					 strerror(TEST_ERRNO), TC[i].error);
+			}
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
+	/*NOTREACHED*/
 
   return(0);
 
@@ -139,18 +139,18 @@ void
 setup()
 {
 
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
-  /* Switch to nobody user for correct error code collection */
-        if (geteuid() ! 0) {
+	 /* Switch to nobody user for correct error code collection */
+        if (geteuid() != 0) {
                 tst_brkm(TBROK, tst_exit, "Test must be run as root");
         }
-        ltpuser  getpwnam(nobody_uid);
-        if (setuid(ltpuser->pw_uid)  -1) {
+        ltpuser = getpwnam(nobody_uid);
+        if (setuid(ltpuser->pw_uid) == -1) {
                 tst_resm(TINFO, "setuid failed to "
                          "to set the effective uid to %d",
                          ltpuser->pw_uid);
@@ -158,24 +158,24 @@ setup()
         }
 
 
- /* set an illegal value for a non-root user - test #3 - EPERM */
- getrlimit(RLIMIT_NOFILE, &rlim);
- rlim.rlim_max ++;
+	/* set an illegal value for a non-root user - test #3 - EPERM */
+	getrlimit(RLIMIT_NOFILE, &rlim);
+	rlim.rlim_max ++;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit.
+ *	       completion or premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

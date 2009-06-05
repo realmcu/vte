@@ -1,8 +1,8 @@
-/*
+/*   
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  julie.n.fleischer REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this
+ * of this license, see the COPYING file at the top level of this 
  * source tree.
 
    Test that parameter CLOCK_PROCESS_CPUTIME_ID returns the CPU time of
@@ -22,7 +22,7 @@
 void dosomething()
 {
         int i;
-        for (i0; i < LARGENUMBER; i++) {
+        for (i=0; i < LARGENUMBER; i++) {
                 clock();
         }
 }
@@ -30,55 +30,55 @@ void dosomething()
 int main(int argc, char *argv[])
 {
 #ifndef _POSIX_CPUTIME
- printf("_POSIX_CPUTIME unsupported\n");
- return PTS_UNSUPPORTED;
+	printf("_POSIX_CPUTIME unsupported\n");
+	return PTS_UNSUPPORTED;
 #else
 #ifdef CLOCK_PROCESS_CPUTIME_ID
- struct timespec ts1, ts2, ts3, ts4;
+	struct timespec ts1, ts2, ts3, ts4;
+	
+	if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts1) != 0) {
+		printf("clock_gettime() failed: errno %d\n", errno);
+		return PTS_UNRESOLVED;
+	}
 
- if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts1) ! 0) {
-  printf("clock_gettime() failed: errno %d\n", errno);
-  return PTS_UNRESOLVED;
- }
+	dosomething();
 
- dosomething();
+	if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts2) != 0) {
+		printf("clock_gettime() failed: errno %d\n", errno);
+		return PTS_UNRESOLVED;
+	}
 
- if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts2) ! 0) {
-  printf("clock_gettime() failed: errno %d\n", errno);
-  return PTS_UNRESOLVED;
- }
+	dosomething();
 
- dosomething();
+	if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts3) != 0) {
+		printf("clock_gettime() failed: errno %d\n", errno);
+		return PTS_UNRESOLVED;
+	}
 
- if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts3) ! 0) {
-  printf("clock_gettime() failed: errno %d\n", errno);
-  return PTS_UNRESOLVED;
- }
+	dosomething();
 
- dosomething();
+	if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts4) != 0) {
+		printf("clock_gettime() failed: errno %d\n", errno);
+		return PTS_UNRESOLVED;
+	}
 
- if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts4) ! 0) {
-  printf("clock_gettime() failed: errno %d\n", errno);
-  return PTS_UNRESOLVED;
- }
+	if ( (ts1.tv_sec <= ts2.tv_sec) &&
+		(ts2.tv_sec <= ts3.tv_sec) &&
+		(ts3.tv_sec <= ts4.tv_sec) ) {
+		printf("Test PASSED\n");
+		return PTS_PASS;
+	} else {
+		printf("Test FAILED - ts1=%ld,ts2=%ld,ts3=%ld,ts4=%ld\n",
+				ts1.tv_sec, ts2.tv_sec, ts3.tv_sec, 
+				ts4.tv_sec);
+		return PTS_FAIL;
+	}
 
- if ( (ts1.tv_sec < ts2.tv_sec) &&
-  (ts2.tv_sec < ts3.tv_sec) &&
-  (ts3.tv_sec < ts4.tv_sec) ) {
-  printf("Test PASSED\n");
-  return PTS_PASS;
- } else {
-  printf("Test FAILED - ts1%ld,ts2%ld,ts3%ld,ts4%ld\n",
-    ts1.tv_sec, ts2.tv_sec, ts3.tv_sec,
-    ts4.tv_sec);
-  return PTS_FAIL;
- }
-
- printf("This code should not be executed.\n");
- return PTS_UNRESOLVED;
+	printf("This code should not be executed.\n");
+	return PTS_UNRESOLVED;
 #else
- printf("CLOCK_PROCESS_CPUTIME_ID unsupported\n");
- return PTS_UNSUPPORTED;
+	printf("CLOCK_PROCESS_CPUTIME_ID unsupported\n");
+	return PTS_UNSUPPORTED;
 #endif
 #endif
 

@@ -21,15 +21,15 @@ typedef struct
 #define DEBUG_FILE "./output/debug.bin"
 #define MAX_TEXT_LENGTH 400
 #define END_MSGIDS 500
-FILE * log_fpNULL;
+FILE * log_fp=NULL;
 
 static int initlogger()
 {
-  if(log_fpNULL)
-    log_fpfopen(DEBUG_FILE,"w");
-  if(log_fpNULL)
+  if(log_fp==NULL)
+    log_fp=fopen(DEBUG_FILE,"w");
+  if(log_fp==NULL)
     return(-1);
-  return(0);
+  return(0);  
 }
 
 #ifndef VC_PLUS_PLUS
@@ -42,28 +42,28 @@ int DebugLogText(int dummy1,short int msgid,char *fmt,...)
   LOG_HEADER hdr;
   va_list ap;
   char logString[MAX_TEXT_LENGTH];
-
-  if(initlogger()-1)
+  
+  if(initlogger()==-1)
     return(-1);
 
   if (msgid > END_MSGIDS)
     return(-1);
-
+	
   if(strlen(fmt) > MAX_TEXT_LENGTH)
     { return(-1); }
 
   va_start(ap,fmt);
   vsprintf(logString,fmt,ap);
   va_end(ap);
-  hdr.sync0xB5C7;
-  hdr.timestamp0;
-  hdr.sizesizeof(hdr)+strlen(logString)+1;
-  hdr.msgIdmsgid;
+  hdr.sync=0xB5C7;
+  hdr.timestamp=0;
+  hdr.size=sizeof(hdr)+strlen(logString)+1;
+  hdr.msgId=msgid;
   fwrite(&hdr,1,sizeof(hdr),log_fp);
   fprintf(log_fp, "\n");
   fwrite(logString,(strlen(logString)+1),1,log_fp);
   fprintf(log_fp, "\n");
-  fflush(log_fp);
+  fflush(log_fp);    
   //printf("%5d:%s\n",msgid,logString);
   return(1);
 }
@@ -75,21 +75,21 @@ int DebugLogData(int id1,short int msgid,void *ptr,int size)
 #endif
 {
   LOG_HEADER hdr;
-  if(initlogger()-1)
+  if(initlogger()==-1)
     return(-1);
 
   if (msgid > END_MSGIDS)
     return(-1);
-
-  hdr.sync0xB5C7;
-  hdr.timestamp0;
-  hdr.sizesize+sizeof(hdr);
-  hdr.msgIdmsgid;
+	
+  hdr.sync=0xB5C7;
+  hdr.timestamp=0;
+  hdr.size=size+sizeof(hdr);
+  hdr.msgId=msgid;
 
   fwrite(&hdr,1,sizeof(hdr),log_fp);
   fwrite(ptr,size,1,log_fp);
 
-  fflush(log_fp);
+  fflush(log_fp);      
   return(1);
 }
 

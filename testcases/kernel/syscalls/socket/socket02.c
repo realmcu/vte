@@ -25,7 +25,7 @@
 /* Description: This program tests the new flag SOCK_CLOEXEC introduced in    */
 /*              socket() & socketpair() and in kernel 2.6.27. Ulrich´s comment*/
 /*              as in:                                                        */
-/*              http://git.kernel.org/?plinux/kernel/git/torvalds/linux-2.6.git;acommit;ha677a039be7243357d93502bff2b40850c942e2d */
+/*              http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=a677a039be7243357d93502bff2b40850c942e2d */
 /*              says:                                                         */
 /*                                                                            */
 /*              flag parameters: socket and socketpair                        */
@@ -83,9 +83,9 @@ extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
-char *TCID      "socket02";          /* test program identifier.              */
+char *TCID     = "socket02";          /* test program identifier.              */
 int  testno;
-int  TST_TOTAL  1;                  /* total number of tests in this file.   */
+int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -146,8 +146,8 @@ int main (int argc, char *argv[]) {
   char *msg;              /* message returned from parse_opts */
 
   /* Parse standard options given to run the test. */
-  msg  parse_opts(argc, argv, (option_t *) NULL, NULL);
-  if (msg ! (char *) NULL) {
+  msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
+  if (msg != (char *) NULL) {
       tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
       tst_exit();
   }
@@ -158,16 +158,16 @@ int main (int argc, char *argv[]) {
   setup();
 
   /* Check looping state if -i option given */
-        for (lc  0; TEST_LOOPING(lc); ++lc) {
-                Tst_count  0;
-                for (testno0; testno < TST_TOTAL; ++testno) {
-                     fd  socket(PF_INET, SOCK_STREAM, 0);
-                     if (fd  -1) {
+        for (lc = 0; TEST_LOOPING(lc); ++lc) {
+                Tst_count = 0;
+                for (testno=0; testno < TST_TOTAL; ++testno) {
+                     fd = socket(PF_INET, SOCK_STREAM, 0);
+                     if (fd == -1) {
                          tst_brkm(TBROK, cleanup, "socket(0) failed");
                          tst_exit();
                      }
-                     coe  fcntl(fd, F_GETFD);
-                     if (coe  -1) {
+                     coe = fcntl(fd, F_GETFD);
+                     if (coe == -1) {
                          tst_brkm(TBROK, cleanup, "fcntl failed");
                          tst_exit();
                      }
@@ -178,31 +178,31 @@ int main (int argc, char *argv[]) {
                      }
                      close(fd);
 
-                     fd  socket(PF_INET, SOCK_STREAM|SOCK_CLOEXEC, 0);
-                     if (fd  -1) {
+                     fd = socket(PF_INET, SOCK_STREAM|SOCK_CLOEXEC, 0);
+                     if (fd == -1) {
                          tst_resm(TFAIL, "socket(SOCK_CLOEXEC) failed");
                          cleanup();
                          tst_exit();
                      }
-                     coe  fcntl(fd, F_GETFD);
-                     if (coe  -1) {
+                     coe = fcntl(fd, F_GETFD);
+                     if (coe == -1) {
                          tst_brkm(TBROK, cleanup, "fcntl failed");
                          tst_exit();
                      }
-                     if ((coe & FD_CLOEXEC)  0) {
+                     if ((coe & FD_CLOEXEC) == 0) {
                           tst_resm(TFAIL, "socket(SOCK_CLOEXEC) does not set close-on-exec flag");
                           cleanup();
                           tst_exit();
                      }
                      close(fd);
 
-                     if (socketpair(PF_UNIX, SOCK_STREAM, 0, fds)  -1) {
+                     if (socketpair(PF_UNIX, SOCK_STREAM, 0, fds) == -1) {
                          tst_brkm(TBROK, cleanup, "socketpair(0) failed");
                          tst_exit();
                      }
-                     for (i  0; i < 2; ++i) {
-                          coe  fcntl(fds[i], F_GETFD);
-                          if (coe  -1) {
+                     for (i = 0; i < 2; ++i) {
+                          coe = fcntl(fds[i], F_GETFD);
+                          if (coe == -1) {
                               tst_brkm(TBROK, cleanup, "fcntl failed");
                               tst_exit();
                           }
@@ -214,17 +214,17 @@ int main (int argc, char *argv[]) {
                           close(fds[i]);
                      }
 
-                    if (socketpair (PF_UNIX, SOCK_STREAM|SOCK_CLOEXEC, 0, fds)  -1) {
+                    if (socketpair (PF_UNIX, SOCK_STREAM|SOCK_CLOEXEC, 0, fds) == -1) {
                         tst_brkm(TBROK, cleanup, "socketpair(SOCK_CLOEXEC) failed");
                         tst_exit();
                     }
-                    for (i  0; i < 2; ++i) {
-                         coe  fcntl(fds[i], F_GETFD);
-                         if (coe  -1) {
+                    for (i = 0; i < 2; ++i) {
+                         coe = fcntl(fds[i], F_GETFD);
+                         if (coe == -1) {
                              tst_brkm(TBROK, cleanup, "fcntl failed");
                              tst_exit();
                          }
-                         if ((coe & FD_CLOEXEC)  0) {
+                         if ((coe & FD_CLOEXEC) == 0) {
                               tst_resm(TFAIL, "socketpair(SOCK_CLOEXEC) does not set close-on-exec flag for fds[%d]\n",i);
                               cleanup();
                               tst_exit();

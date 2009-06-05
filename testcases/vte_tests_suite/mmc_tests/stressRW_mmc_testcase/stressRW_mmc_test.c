@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file  rw_mmc_test.c
 
         @brief MMC driver test scenario
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -20,13 +20,13 @@ S.ZAVJALOV/zvjs001c          22/03/2005     TLSbo46706  Initial version
 A.Ozerov/b00320              20/02/2006     TLSbo61899  Testapp was cast to coding standarts
 A.Ozerov/b00320              11/12/2006     TLSbo84161  Minor changes.
 
-====================
+====================================================================================================
 Portability: ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -36,16 +36,16 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "stressRW_mmc_test.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 int     fd_device = 0;
 unsigned char *patten_buf = NULL,
     *read_buf = NULL;
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 extern int vb_mode;
 extern unsigned long block_size,
         block_count,
@@ -53,20 +53,20 @@ extern unsigned long block_size,
         offset_address;
 extern char *device_name;
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
-/*====================*/
-/*= VT_rw_mmc_setup =*/
-/**
+==================================================================================================*/
+/*================================================================================================*/
+/*===== VT_rw_mmc_setup =====*/
+/** 
 @brief  This function assumes the pre-condition of the test case execution
 
 @param  none
 
-@return On success - return TPASS
-        On failure - return TFAIL
+@return On success - return TPASS 
+        On failure - return TFAIL 
 */
-/*====================*/
+/*================================================================================================*/
 int VT_stressRW_mmc_setup(void)
 {
         fd_device = open(device_name, O_RDWR);
@@ -94,17 +94,17 @@ int VT_stressRW_mmc_setup(void)
         return TPASS;
 }
 
-/*====================*/
-/*= VT_rw_mmc_cleanup =*/
+/*================================================================================================*/
+/*===== VT_rw_mmc_cleanup =====*/
 /**
 @brief  This function assumes the post-condition of the test case execution
 
 @param  none
 
-@return On success - return TPASS
-        On failure - return TFAIL
+@return On success - return TPASS 
+        On failure - return TFAIL 
 */
-/*====================*/
+/*================================================================================================*/
 int VT_stressRW_mmc_cleanup(void)
 {
         if (patten_buf != NULL)
@@ -122,8 +122,8 @@ int VT_stressRW_mmc_cleanup(void)
         return TPASS;
 }
 
-/*====================*/
-/*= read_mmc_device =*/
+/*================================================================================================*/
+/*===== read_mmc_device =====*/
 /**
 @brief  This function reads a data from the mmc device
 
@@ -142,7 +142,7 @@ int VT_stressRW_mmc_cleanup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int read_mmc_device(unsigned long start_offset, unsigned long size_to_read, unsigned long bs,
                     unsigned char *read_buf)
 {
@@ -163,10 +163,10 @@ int read_mmc_device(unsigned long start_offset, unsigned long size_to_read, unsi
         return TPASS;
 }
 
-/*====================*/
-/*= write_mmc_device =*/
+/*================================================================================================*/
+/*===== write_mmc_device =====*/
 /**
-@brief  This function writes a data to the mmc device
+@brief  This function writes a data to the mmc device 
 
 @param  start_offset
         Offset start_offset
@@ -183,7 +183,7 @@ int read_mmc_device(unsigned long start_offset, unsigned long size_to_read, unsi
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int write_mmc_device(unsigned long start_offset, unsigned long size_to_write, unsigned long bs,
                      unsigned char *write_buf)
 {
@@ -204,22 +204,22 @@ int write_mmc_device(unsigned long start_offset, unsigned long size_to_write, un
         return TPASS;
 }
 
-/*====================*/
-/*= VT_rw_mmc_test =*/
+/*================================================================================================*/
+/*===== VT_rw_mmc_test =====*/
 /**
 @brief  MMC Driver test scenario function
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_stressRW_mmc_test(void)
 {
         unsigned long i;
-
-  int j;
+		
+		int j;
 
 
         if (vb_mode)
@@ -230,31 +230,31 @@ int VT_stressRW_mmc_test(void)
 
 
 // read/write multiple tims in  order to check read/write ability
-  tst_resm(TINFO,"read/write %d times",RWLoop);
-  for(j=0;j<RWLoop;j++)
-  {
-         if (vb_mode)
-                 tst_resm(TINFO, "Write to %s", device_name);
+		tst_resm(TINFO,"read/write %d times",RWLoop);
+		for(j=0;j<RWLoop;j++)
+		{
+	        if (vb_mode)
+	                tst_resm(TINFO, "Write to %s", device_name);
 
-         if (write_mmc_device(offset_address, block_count, block_size, patten_buf) == TFAIL)
-                 return TFAIL;
+	        if (write_mmc_device(offset_address, block_count, block_size, patten_buf) == TFAIL)
+	                return TFAIL;
 
-         if (vb_mode)
-                 tst_resm(TINFO, "Read from %s", device_name);
+	        if (vb_mode)
+	                tst_resm(TINFO, "Read from %s", device_name);
 
-         if (read_mmc_device(offset_address, block_count, block_size, read_buf) == TFAIL)
-                 return TFAIL;
+	        if (read_mmc_device(offset_address, block_count, block_size, read_buf) == TFAIL)
+	                return TFAIL;
 
-         if (vb_mode)
-                 tst_resm(TINFO, "Compare results");
+	        if (vb_mode)
+	                tst_resm(TINFO, "Compare results");
 
-         if (strncmp((char *) patten_buf, (char *) read_buf, block_size * block_count) != 0)
-         {
-                 tst_resm(TFAIL, "VT_rw_mmc_test() Verify failed");
-                 return TFAIL;
-         }
+	        if (strncmp((char *) patten_buf, (char *) read_buf, block_size * block_count) != 0)
+	        {
+	                tst_resm(TFAIL, "VT_rw_mmc_test() Verify failed");
+	                return TFAIL;
+	        }
 
-  }
+		}
 
         return TPASS;
 }

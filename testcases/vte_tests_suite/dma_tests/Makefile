@@ -24,7 +24,7 @@
 ###################################################################################################
 SUBDIRS = \
 	dma_test_module \
-	dma_testapp
+	dma_testapp 
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

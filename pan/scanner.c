@@ -38,10 +38,10 @@
  * and saves the information into an in-memory hierarchical keyword table.
  *
  * The reporting segment of the program reads that keyword table to produce
- * it's reports.
+ * it's reports.  
  *
  * Synopsis:
- * scanner [ -e ] [ -D area:level ] [ -h ]
+ * 	scanner [ -e ] [ -D area:level ] [ -h ]
  *
  * Description:
  *   Scanner is part of the RTS 2.0 reporting mechanism or pan.
@@ -50,14 +50,14 @@
  *
  * Options:
  *   -e
- * use an "extended" output format
+ *	use an "extended" output format
  *
  *   -D
- * enable debug statements.  Areas are listed in report2.h and levels
- * are in the code.  Must be compiled with "-DDEBUGGING"
+ *	enable debug statements.  Areas are listed in report2.h and levels
+ *	are in the code.  Must be compiled with "-DDEBUGGING"
  *
  *   -h
- * print out a command usage statement and exit.
+ *	print out a command usage statement and exit.
  *
  * INPUT
  *   The input must conform to the RTS/pan driver format.
@@ -66,17 +66,17 @@
  *   A single report style is used.  It consists of a header made of all
  *   keywords in the rts_keywords fields of the driver output, and the test
  *   information.
- * interpretation of CUTS "number of testcases" field when there are
- * multiple TCIDs.  It must be the sum of all TCIDs' testcases.
+ *	interpretation of CUTS "number of testcases" field when there are
+ *	multiple TCIDs.  It must be the sum of all TCIDs' testcases.
  *
  * System Configuration:
- * ARCHITECTURE         IOS_MODEL_E CRAY_YMP YMP7XX
- * CONFIG               JOBCNTL AVL BMD EMA HPM SECURE TFM_UDB_6 SDS SSD
- * RELEASE              82
+ * ARCHITECTURE         IOS_MODEL_E CRAY_YMP YMP7XX 
+ * CONFIG               JOBCNTL AVL BMD EMA HPM SECURE TFM_UDB_6 SDS SSD 
+ * RELEASE              82 
  * UNAME                sn1703c cool 8.2.0ae d82.25
  * date                 03/24/94
  *
- * tag  tcid  testcase status  contact
+ * tag		tcid		testcase	status		contact
  * ------------------------------------------------------------------------
  *
  *   When a report is made for only a tag, the TCID and Testcase fields
@@ -88,22 +88,22 @@
  *   When in extended mode, an additional output line is produced for each
  *   tag.
  *
- * This line is identified with a "!" in the TCID and Testcase fields.
+ *	This line is identified with a "!" in the TCID and Testcase fields.
  *
- * It has no minimum and maximum field widths, so the output does not
- * line up in columns
+ *	It has no minimum and maximum field widths, so the output does not
+ *	line up in columns
  *
- * the "status" field contains the initiation status
+ *	the "status" field contains the initiation status
  *
- * the "contact" field does not expand multiple comma-separated contacts
+ *	the "contact" field does not expand multiple comma-separated contacts
  *
- * fields:
- *  tag, tcid, testcase, status, contact,
- *  start time, duration, termination type, termination id,
- *  output starting line, output ending line
+ *	fields:
+ *		tag, tcid, testcase, status, contact,
+ *		start time, duration, termination type, termination id,
+ *		output starting line, output ending line
  *
  * RELATED DOCUMENTS
- * Regression Test System Phase 2 Test Result Reporting System
+ *	Regression Test System Phase 2 Test Result Reporting System
  *
  * AUTHOR
  *   Glen Overby wrote the code.
@@ -114,10 +114,10 @@
  *   keyed database.
  *
  *   Key Naming
- * - The top-level keys are named after the RTS or pan test tags.
- * - The top-level key named "_RTS" contains the RTS Keywords
- * - Each tag has a "_keys" tag that contains the key fields from
- *   the TEST_START and EXECUTION_STATUS fields.
+ *	- The top-level keys are named after the RTS or pan test tags.
+ *	- The top-level key named "_RTS" contains the RTS Keywords
+ *	- Each tag has a "_keys" tag that contains the key fields from
+ *	  the TEST_START and EXECUTION_STATUS fields.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -130,15 +130,15 @@
 #include "reporter.h"
 #include "symbol.h"
 
-char *cfn;   /* current filename */
-int extended0;   /* -e option */
+char *cfn;			/* current filename */
+int extended=0;			/* -e option */
 
 int
 main(argc, argv)
     int argc;
     char **argv;
 {
-    SYM tags;   /* tag data */
+    SYM tags;			/* tag data */
 
     /* Argument parsing */
     int r;
@@ -146,36 +146,36 @@ main(argc, argv)
     extern char *optarg;
     extern int optind, opterr, optopt;
 
-    while(( r  getopt(argc, argv, "D:ehi")) ! -1) {
- c  (char) r;
- switch(c) {
- case 'i':
-     set_iscanner();
-     break;
- case 'D':
-     set_debug(optarg);
-     break;
- case 'e':
-     extended++;
-     break;
- case 'h':
-     fprintf(stderr, "%s [-e] [-i] [ -D area, level ] input-filenames\n",
-      argv[0]);
-     exit(0);
-     break;
- default:
-     fprintf(stderr, "invalid argument, %c\n", c);
-     exit(1);
- }
+    while(( r = getopt(argc, argv, "D:ehi")) != -1) {
+	c = (char) r;
+	switch(c) {
+	case 'i':
+	    set_iscanner();
+	    break;
+	case 'D':
+	    set_debug(optarg);
+	    break;
+	case 'e':
+	    extended++;
+	    break;
+	case 'h':
+	    fprintf(stderr, "%s [-e] [-i] [ -D area, level ] input-filenames\n",
+		    argv[0]);
+	    exit(0);
+	    break;
+	default:
+	    fprintf(stderr, "invalid argument, %c\n", c);
+	    exit(1);
+	}
     }
 
-    lex_files(&argv[optind]); /* I hope that argv[argc+1]  NULL */
-    tags  sym_open(0, 0, 0);
+    lex_files(&argv[optind]);	/* I hope that argv[argc+1] == NULL */
+    tags = sym_open(0, 0, 0);
 
     scanner(tags);
 #ifdef DEBUGGING
     DEBUG(D_INIT, 1)
- sym_dump_s(tags, 0);
+	sym_dump_s(tags, 0);
 #endif
     reporter(tags);
 

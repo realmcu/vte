@@ -19,15 +19,15 @@
 
 /*
  * NAME
- * fstatfs02.c
+ *	fstatfs02.c
  *
  * DESCRIPTION
- * Testcase to check fstatfs() sets errno correctly.
+ *	Testcase to check fstatfs() sets errno correctly.
  *
  * ALGORITHM
- * 1. Pass -1 as the "fd" parameter for fstatfs(), and expect EBADF.
- * 2. Pass an invalid address (outside the address space of the process),
- *    as the buf paramter of fstatfs(), and expect EFAULT.
+ *	1. Pass -1 as the "fd" parameter for fstatfs(), and expect EBADF.
+ *	2. Pass an invalid address (outside the address space of the process),
+ *	   as the buf paramter of fstatfs(), and expect EFAULT.
  *
  * USAGE:  <for command-line>
  *  fstatfs02 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -39,10 +39,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * NONE
+ *	NONE
  */
 
 #include <sys/vfs.h>
@@ -55,10 +55,10 @@
 void setup(void);
 void cleanup(void);
 
-char *TCID  "fstatfs02";
+char *TCID = "fstatfs02";
 extern int Tst_count;
 
-int exp_enos[]{EBADF, EFAULT, 0};
+int exp_enos[]={EBADF, EFAULT, 0};
 
 struct statfs buf;
 
@@ -66,68 +66,68 @@ struct test_case_t {
         int fd;
         struct statfs *sbuf;
         int error;
-} TC[]  {
- /* EBADF - fd is invalid */
+} TC[] = {
+	/* EBADF - fd is invalid */
         {-1, &buf, EBADF},
 
 #ifndef UCLINUX
- /* Skip since uClinux does not implement memory protection */
- /* EFAULT - address for buf is invalid */
+	/* Skip since uClinux does not implement memory protection */
+	/* EFAULT - address for buf is invalid */
         {1, (void *)-1, EFAULT}
 #endif
 };
 
-int TST_TOTAL  sizeof(TC)/sizeof(*TC);
+int TST_TOTAL = sizeof(TC)/sizeof(*TC);
 
 int main(int ac, char **av)
 {
- int lc;    /* loop counter */
- int i;
- char *msg;   /* message returned from parse_opts */
+	int lc;				/* loop counter */
+	int i;
+	char *msg;			/* message returned from parse_opts */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	}
 
- setup();
+	setup();
 
- /* set up the expected errnos */
- TEST_EXP_ENOS(exp_enos);
+	/* set up the expected errnos */
+	TEST_EXP_ENOS(exp_enos);
 
- /* check looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping. */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping. */
+		Tst_count = 0;
 
-  /* loop through the test cases */
-  for (i  0; i < TST_TOTAL; i++) {
+		/* loop through the test cases */
+		for (i = 0; i < TST_TOTAL; i++) {
 
-   TEST(fstatfs(TC[i].fd, TC[i].sbuf));
+			TEST(fstatfs(TC[i].fd, TC[i].sbuf));
 
-                        if (TEST_RETURN ! -1) {
+                        if (TEST_RETURN != -1) {
                                 tst_resm(TFAIL, "call succeeded unexpectedly");
                                 continue;
                         }
 
                         TEST_ERROR_LOG(TEST_ERRNO);
 
-                        if (TEST_ERRNO  TC[i].error) {
+                        if (TEST_ERRNO == TC[i].error) {
                                 tst_resm(TPASS, "expected failure - "
-                                         "errno  %d : %s", TEST_ERRNO,
+                                         "errno = %d : %s", TEST_ERRNO,
                                          strerror(TEST_ERRNO));
                         } else {
                                 tst_resm(TFAIL, "unexpected error - %d : %s - "
                                          "expected %d", TEST_ERRNO,
                                          strerror(TEST_ERRNO), TC[i].error);
-   }
-  }
- }
- cleanup();
+			}
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -136,34 +136,34 @@ int main(int ac, char **av)
 void
 setup()
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /* make a temporary directory and cd to it */
- tst_tmpdir();
+	/* make a temporary directory and cd to it */
+	tst_tmpdir();
 }
 
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit.
+ *	       completion or premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* delete the test directory created in setup() */
- tst_rmdir();
+	/* delete the test directory created in setup() */
+	tst_rmdir();
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }
 

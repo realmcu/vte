@@ -1,7 +1,7 @@
 #!/bin/sh
 # This script should be run prior to running executing the filesystem tests.
 # valid devices need to be passed for Device Mapper to work correctly
-# 03/14/03 mridge@us.ibm.com added instance and time command line options
+# 03/14/03 mridge@us.ibm.com added instance and time command line options 
 
 cd `dirname $0`
 export LTPROOT=${PWD}
@@ -14,37 +14,37 @@ fi
 export TMPBASE="/tmp"
 
 
-usage()
+usage() 
 {
- cat <<-END >&2
- usage: ${0##*/} [ -a part1 ] [ -b part2 ]
+	cat <<-END >&2
+	usage: ${0##*/} [ -a part1 ] [ -b part2 ]
 
- Note: In order to run this test, you must turn on "device mapper"
+	Note: In order to run this test, you must turn on "device mapper"
         component in kernel (it is under device drivers item when you
         run make menuconfig); and you must install userspace supporting
         files (libdevmapper and dmsetup). They are in the device-mapper
         package. You can download it from http://www.sistina.com. Follow
         the README/INSTALL file within the package to install it.
 
+             
+	defaults:
+	part1=$part1
+	part2=$part2
+	ltproot=$LTPROOT
+	tmpdir=$TMPBASE
 
- defaults:
- part1=$part1
- part2=$part2
- ltproot=$LTPROOT
- tmpdir=$TMPBASE
-
- example: ${0##*/} -a hdc1 -b hdc2
+	example: ${0##*/} -a hdc1 -b hdc2 
 
 
- END
+	END
 exit
 }
 
 while getopts :a:b: arg
 do      case $arg in
-  a) part1=$OPTARG;;
+		a)	part1=$OPTARG;;
                 b)      part2=$OPTARG;;
-
+			
                 \?)     echo "************** Help Info: ********************"
                         usage;;
         esac

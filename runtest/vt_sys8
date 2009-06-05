@@ -1,0 +1,32 @@
+#Verification Tests Command File
+# generated automatically by the test campaign macro
+# version 1.0
+
+#files:
+#files:
+#files:
+#files:
+#files:
+
+TGE-LV-SYS-1370 fork02
+TGE-LV-SYS-1380 fork03
+TGE-LV-SYS-1390 fork04
+TGE-LV-SYS-1400 fork05
+TGE-LV-SYS-1410 fork06
+TGE-LV-SYS-1420 fork07
+TGE-LV-SYS-1430 fork08
+TGE-LV-SYS-1440 fork09
+TGE-LV-SYS-1450 fork10
+TGE-LV-SYS-1460 fork11
+#TGE-LV-SYS-1470 fork12
+TGE-LV-SYS-1480 fpathconf01
+TGE-LV-SYS-1490 fstat01
+TGE-LV-SYS-1500 fstat02
+TGE-LV-SYS-1510 fstat03
+TGE-LV-SYS-1520 fstat04
+TGE-LV-SYS-1530 fstat05
+TGE-LV-SYS-1540 fstatfs01
+TGE-LV-SYS-1550 fstatfs02
+TGE-LV-SYS-1560 fsync01
+TGE-LV-SYS-1570 fsync02
+TGE-LV-SYS-1580 fsync03

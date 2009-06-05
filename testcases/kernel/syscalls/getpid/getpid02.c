@@ -35,14 +35,14 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return-1)
- *   Log the errno and Issue a FAIL message.
+ *   Check return code, if system call failed (return=-1)
+ *   	Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   Verify the Functionality of system call
+ *   	Verify the Functionality of system call	
  *      if successful,
- *      Issue Functionality-Pass message.
+ *      	Issue Functionality-Pass message.
  *      Otherwise,
- *  Issue Functionality-Fail message.
+ *		Issue Functionality-Fail message.
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
  *
@@ -50,13 +50,13 @@
  *  getpid02 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -f   : Turn off functionality Testing.
- *        -i n : Execute test n times.
- *        -I x : Execute test for x seconds.
- *        -P x : Pause for x seconds between iterations.
- *        -t   : Turn on syscall timing.
+ *	       -i n : Execute test n times.
+ *	       -I x : Execute test for x seconds.
+ *	       -P x : Pause for x seconds between iterations.
+ *	       -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS:
  *  None.
@@ -73,101 +73,101 @@
 #include "test.h"
 #include "usctest.h"
 
-void setup();   /* Main setup function of test */
-void cleanup();   /* cleanup function for the test */
+void setup();			/* Main setup function of test */
+void cleanup();			/* cleanup function for the test */
 
-char *TCID"getpid02";  /* Test program identifier.    */
-int TST_TOTAL1;  /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID="getpid02";		/* Test program identifier.    */
+int TST_TOTAL=1;		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int
 main(int ac, char **av)
 {
- int lc;   /* loop counter */
- char *msg;  /* message returned from parse_opts */
- pid_t proc_id;  /* process id of the test process */
- pid_t pid;  /* process id of the child process */
- pid_t pproc_id;  /* parent process id */
- int status;  /* exit status of child process */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
+	pid_t proc_id;		/* process id of the test process */
+	pid_t pid;		/* process id of the child process */
+	pid_t pproc_id;		/* parent process id */
+	int status;		/* exit status of child process */
+    
+	/* Parse standard options given to run the test. */
+	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
+	if (msg != (char *) NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+		tst_exit();
+	}
 
- /* Parse standard options given to run the test. */
- msg  parse_opts(ac, av, (option_t *) NULL, NULL);
- if (msg ! (char *) NULL) {
-  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-  tst_exit();
- }
+	/* Perform global setup for test */
+	setup();
 
- /* Perform global setup for test */
- setup();
+	/* Check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* Reset Tst_count in case we are looping. */
+		Tst_count=0;
 
- /* Check looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /* Reset Tst_count in case we are looping. */
-  Tst_count0;
+		/* 
+		 * Invoke getpid() to get the process id of
+		 * the test process.
+		 */
+		TEST(getpid());
 
-  /*
-   * Invoke getpid() to get the process id of
-   * the test process.
-   */
-  TEST(getpid());
+		/* Save the process id returned by getpid() */
+		proc_id = TEST_RETURN;
 
-  /* Save the process id returned by getpid() */
-  proc_id  TEST_RETURN;
+		/*
+		 * Perform functional verification if test
+		 * executed without (-f) option.
+		 */
+		if (STD_FUNCTIONAL_TEST) {
+			/* Fork a child now */
+			if ((pid = FORK_OR_VFORK()) < 0) {
+				tst_resm(TFAIL, "fork() failed to create child,"
+					 " error=%d", TEST_ERRNO);
+			} else if (pid == 0) {	/* Child process */
+				/* Get the parent process id */
+				pproc_id = getppid();
 
-  /*
-   * Perform functional verification if test
-   * executed without (-f) option.
-   */
-  if (STD_FUNCTIONAL_TEST) {
-   /* Fork a child now */
-   if ((pid  FORK_OR_VFORK()) < 0) {
-    tst_resm(TFAIL, "fork() failed to create child,"
-      " error%d", TEST_ERRNO);
-   } else if (pid  0) { /* Child process */
-    /* Get the parent process id */
-    pproc_id  getppid();
+				/* Verify if the two process IDs match */
+				if (pproc_id != proc_id) {
+					exit(1);
+				}
+				exit(0);
+			} else {	/* parent process */
+				wait(&status);
 
-    /* Verify if the two process IDs match */
-    if (pproc_id ! proc_id) {
-     exit(1);
-    }
-    exit(0);
-   } else { /* parent process */
-    wait(&status);
+				/* Check exit status of child */
+				if (WEXITSTATUS(status) != 0) {
+					tst_resm(TFAIL, "getpid() returned "
+						 "invalid pid %d", proc_id);
+				} else {
+					tst_resm(TPASS, "Functionality of "
+						 "getpid() successful");
+				}
+			}
+		} else {
+			tst_resm(TPASS, "call succeeded");
+		}
+	}	/* End for TEST_LOOPING */
 
-    /* Check exit status of child */
-    if (WEXITSTATUS(status) ! 0) {
-     tst_resm(TFAIL, "getpid() returned "
-       "invalid pid %d", proc_id);
-    } else {
-     tst_resm(TPASS, "Functionality of "
-       "getpid() successful");
-    }
-   }
-  } else {
-   tst_resm(TPASS, "call succeeded");
-  }
- } /* End for TEST_LOOPING */
+	/* Call cleanup() to undo setup done for the test. */
+	cleanup();
 
- /* Call cleanup() to undo setup done for the test. */
- cleanup();
-
- /*NOTREACHED*/
- return(0);
-} /* End main */
+	/*NOTREACHED*/
+	return(0);
+}	/* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
- *      Setup signal catching function.
+ * 	     Setup signal catching function.
  */
-void
+void 
 setup()
 {
- /* capture signals */
- tst_sig(FORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 
@@ -175,15 +175,15 @@ setup()
  * cleanup() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
  */
-void
+void 
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

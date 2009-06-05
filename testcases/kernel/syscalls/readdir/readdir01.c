@@ -32,79 +32,79 @@
  */
 /* $Id: readdir01.c,v 1.4 2002/11/14 16:16:16 plars Exp $ */
 /**********************************************************
- *
+ * 
  *    OS Test - Silicon Graphics, Inc.
- *
- *    TEST IDENTIFIER : readdir01
- *
- *    EXECUTED BY : anyone
- *
- *    TEST TITLE : write multiple files and try to find them with readdir
- *
- *    TEST CASE TOTAL :
- *
- *    WALL CLOCK TIME :
- *
- *    CPU TYPES  : ALL
- *
- *    AUTHOR  : Nate Straz
- *
- *    CO-PILOT  :
- *
- *    DATE STARTED : 02/16/2001
- *
- *    INITIAL RELEASE : Linux 2.4.x
- *
+ * 
+ *    TEST IDENTIFIER	: readdir01
+ * 
+ *    EXECUTED BY	: anyone
+ * 
+ *    TEST TITLE	: write multiple files and try to find them with readdir
+ * 
+ *    TEST CASE TOTAL	:
+ * 
+ *    WALL CLOCK TIME	:
+ * 
+ *    CPU TYPES		: ALL
+ * 
+ *    AUTHOR		: Nate Straz
+ * 
+ *    CO-PILOT		:
+ * 
+ *    DATE STARTED	: 02/16/2001
+ * 
+ *    INITIAL RELEASE	: Linux 2.4.x
+ * 
  *    TEST CASES
- *
- * 1.) Create n files and check that readdir() finds n files
- *
+ * 
+ * 	1.) Create n files and check that readdir() finds n files
+ *	
  *    INPUT SPECIFICATIONS
- * The standard options for system call tests are accepted.
- * (See the parse_opts(3) man page).
- *
+ * 	The standard options for system call tests are accepted.
+ *	(See the parse_opts(3) man page).
+ * 
  *    OUTPUT SPECIFICATIONS
- *
+ * 	
  *    DURATION
- * Terminates - with frequency and infinite modes.
- *
+ * 	Terminates - with frequency and infinite modes.
+ * 
  *    SIGNALS
- * Uses SIGUSR1 to pause before test if option set.
- * (See the parse_opts(3) man page).
+ * 	Uses SIGUSR1 to pause before test if option set.
+ * 	(See the parse_opts(3) man page).
  *
  *    RESOURCES
- * None
- *
+ * 	None
+ * 
  *    ENVIRONMENTAL NEEDS
  *      No run-time environmental needs.
- *
+ * 
  *    SPECIAL PROCEDURAL REQUIREMENTS
- * None
- *
+ * 	None
+ * 
  *    INTERCASE DEPENDENCIES
- * None
- *
+ * 	None
+ * 
  *    DETAILED DESCRIPTION
- * This is a Phase I test for the readdir(2) system call.  It is intended
- * to provide a limited exposure of the system call, for now.  It
- * should/will be extended when full functional tests are written for
- * readdir(2).
- *
- * Setup:
- *   Setup signal handling.
- *   Pause for SIGUSR1 if option specified.
- *
- * Test:
- *  Loop if the proper options are given.
- *   Execute system call
- *   Check return code, if system call failed (return-1)
- *  Log the errno and Issue a FAIL message.
- *   Otherwise, Issue a PASS message.
- *
- * Cleanup:
- *   Print errno log and/or timing stats if options given
- *
- *
+ *	This is a Phase I test for the readdir(2) system call.  It is intended
+ *	to provide a limited exposure of the system call, for now.  It
+ *	should/will be extended when full functional tests are written for
+ *	readdir(2).
+ * 
+ * 	Setup:
+ * 	  Setup signal handling.
+ *	  Pause for SIGUSR1 if option specified.
+ * 
+ * 	Test:
+ *	 Loop if the proper options are given.
+ * 	  Execute system call
+ *	  Check return code, if system call failed (return=-1)
+ *		Log the errno and Issue a FAIL message.
+ *	  Otherwise, Issue a PASS message.
+ * 
+ * 	Cleanup:
+ * 	  Print errno log and/or timing stats if options given
+ * 
+ * 
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
 #include <sys/types.h>
@@ -126,35 +126,35 @@
   * steps are usually put in separate functions for clarity.  The help function
   * is only needed when you are adding new command line options.
   */
-void setup();
+void setup(); 
 void help();
 void cleanup();
 
-char *TCID"readdir01";  /* Test program identifier.    */
-int TST_TOTAL2;   /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID="readdir01";		/* Test program identifier.    */
+int TST_TOTAL=2;    		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 extern int Tst_nobuf;
 
-int exp_enos[]{0, 0};
+int exp_enos[]={0, 0};
 
-#define BASENAME "readdirfile"
+#define BASENAME	"readdirfile"
 
 char Basename[255];
 char Fname[255];
-int Nfiles0;
+int Nfiles=0;
 
 /* To add command line options you need to declare a structure to pass to
  * parse_opts().  options is the structure used in this example.  The format is
  * the string that should be added to optstring in getopt(3), an integer that
  * will be used as a flag if the option is given, and a pointer to a string that
  * should receive the optarg parameter from getopt(3).  Here we add a -N
- * option.  Long options are not supported at this time.
+ * option.  Long options are not supported at this time. 
  */
 char *Nfilearg;
-int Nflag0;
+int Nflag=0;
 
 /* for test specific parse_opts options */
-option_t options[]  {
+option_t options[] = {
         { "N:",  &Nflag, &Nfilearg },   /* -N #files */
         { NULL, NULL, NULL }
 };
@@ -165,15 +165,15 @@ option_t options[]  {
 int
 main(int ac, char **av)
 {
-    int lc;  /* loop counter */
-    char *msg;  /* message returned from parse_opts */
+    int lc;		/* loop counter */
+    char *msg;		/* message returned from parse_opts */
     int cnt;
     int nfiles, fd;
     char fname[255];
     DIR *test_dir;
     struct dirent *dptr;
 
-    Tst_nobuf1;
+    Tst_nobuf=1;
 
     /***************************************************************
      * parse standard options
@@ -182,16 +182,16 @@ main(int ac, char **av)
      * that understands many common options to control looping.  If you are not
      * adding any new options, pass NULL in place of options and &help.
      */
-    if ( (msgparse_opts(ac, av, options, &help)) ! 0 ) {
- tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
- tst_exit();
+    if ( (msg=parse_opts(ac, av, options, &help)) != 0 ) {
+	tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	tst_exit();
     }
 
     if ( Nflag ) {
- if (sscanf(Nfilearg, "%i", &Nfiles) ! 1 ) {
-     tst_brkm(TBROK, NULL, "--N option arg is not a number");
-     tst_exit();
- }
+	if (sscanf(Nfilearg, "%i", &Nfiles) != 1 ) {
+	    tst_brkm(TBROK, NULL, "--N option arg is not a number");
+	    tst_exit();
+	}
     }
 
     /***************************************************************
@@ -206,78 +206,78 @@ main(int ac, char **av)
     TEST_EXP_ENOS(exp_enos);
 
     /***************************************************************
-     * check looping state
+     * check looping state 
      ***************************************************************/
     /* TEST_LOOPING() is a macro that will make sure the test continues
-     * looping according to the standard command line args.
+     * looping according to the standard command line args. 
      */
-    for (lc0; TEST_LOOPING(lc); lc++) {
+    for (lc=0; TEST_LOOPING(lc); lc++) {
 
- /* reset Tst_count in case we are looping. */
- Tst_count0;
+	/* reset Tst_count in case we are looping. */
+	Tst_count=0;
 
- if ( Nfiles )
-     nfiles  Nfiles;
- else
-     /* min of 10 links and max of a 100 links */
-     nfiles  (lc%90)+10;
+	if ( Nfiles )
+	    nfiles = Nfiles;
+	else
+	    /* min of 10 links and max of a 100 links */
+	    nfiles = (lc%90)+10;
 
- /* create a bunch of files to look at */
- for(cnt0; cnt < nfiles; cnt++) {
+	/* create a bunch of files to look at */
+	for(cnt=0; cnt < nfiles; cnt++) {
+	
+	    sprintf(fname, "%s%d", Basename, cnt);
+	    if ((fd = open(fname, O_RDWR|O_CREAT, 0700)) == -1) {
+		tst_brkm(TBROK, cleanup,
+				"open(%s, O_RDWR|O_CREAT,0700) Failed, errno=%d : %s", fname, errno, strerror(errno));
+	    } else if (write(fd, "hello\n", 6) < 0) {
+		tst_brkm(TBROK, cleanup,
+				"write(%s, \"hello\\n\", 6) Failed, errno=%d : %s", fname, errno, strerror(errno));
+	    } else if (close(fd) < 0) {
+		tst_res(TWARN, "close(%s) Failed, errno=%d : %s",
+				fname, errno, strerror(errno));
+	    }
+	}
 
-     sprintf(fname, "%s%d", Basename, cnt);
-     if ((fd  open(fname, O_RDWR|O_CREAT, 0700))  -1) {
-  tst_brkm(TBROK, cleanup,
-    "open(%s, O_RDWR|O_CREAT,0700) Failed, errno%d : %s", fname, errno, strerror(errno));
-     } else if (write(fd, "hello\n", 6) < 0) {
-  tst_brkm(TBROK, cleanup,
-    "write(%s, \"hello\\n\", 6) Failed, errno%d : %s", fname, errno, strerror(errno));
-     } else if (close(fd) < 0) {
-  tst_res(TWARN, "close(%s) Failed, errno%d : %s",
-    fname, errno, strerror(errno));
-     }
- }
+	if ((test_dir = opendir(".")) == NULL) {
+	    tst_resm(TFAIL, "opendir(\".\") Failed, errno=%d : %s",
+			    errno, strerror(errno));
+	} else {
+	    /* count the entries we find to see if any are missing */
+	    cnt = 0;
+	    errno = 0;
+	    while ((dptr = readdir(test_dir)) != 0) {
+		if (strcmp(dptr->d_name, ".") && strcmp(dptr->d_name, ".."))
+		    cnt++;
+	    }
 
- if ((test_dir  opendir("."))  NULL) {
-     tst_resm(TFAIL, "opendir(\".\") Failed, errno%d : %s",
-       errno, strerror(errno));
- } else {
-     /* count the entries we find to see if any are missing */
-     cnt  0;
-     errno  0;
-     while ((dptr  readdir(test_dir)) ! 0) {
-  if (strcmp(dptr->d_name, ".") && strcmp(dptr->d_name, ".."))
-      cnt++;
-     }
+	    if (errno != 0) {
+		tst_resm(TFAIL, "readir(test_dir) Failed on try %d, errno=%d : %s",
+				cnt+1, errno, strerror(errno));
+	    }
+	    if (cnt == nfiles) {
+		tst_resm(TPASS, "found all %d that were created", nfiles);
+	    } else if (cnt > nfiles) {
+		tst_resm(TFAIL, "found more files than were created");
+		tst_resm(TINFO, "created: %d, found: %d", nfiles, cnt);
+	    } else {
+		tst_resm(TFAIL, "found less files than were created");
+		tst_resm(TINFO, "created: %d, found: %d", nfiles, cnt);
+	    }
+	}
 
-     if (errno ! 0) {
-  tst_resm(TFAIL, "readir(test_dir) Failed on try %d, errno%d : %s",
-    cnt+1, errno, strerror(errno));
-     }
-     if (cnt  nfiles) {
-  tst_resm(TPASS, "found all %d that were created", nfiles);
-     } else if (cnt > nfiles) {
-  tst_resm(TFAIL, "found more files than were created");
-  tst_resm(TINFO, "created: %d, found: %d", nfiles, cnt);
-     } else {
-  tst_resm(TFAIL, "found less files than were created");
-  tst_resm(TINFO, "created: %d, found: %d", nfiles, cnt);
-     }
- }
-
- /* Here we clean up after the test case so we can do another iteration.
-  */
- for(cnt0; cnt < nfiles; cnt++) {
-
+	/* Here we clean up after the test case so we can do another iteration.
+	 */
+	for(cnt=0; cnt < nfiles; cnt++) {
+        
             sprintf(fname, "%s%d", Basename, cnt);
 
-     if (unlink(fname)  -1) {
-  tst_res(TWARN, "unlink(%s) Failed, errno%d : %s",
-   Fname, errno, strerror(errno));
-     }
- }
+	    if (unlink(fname) == -1) {
+		tst_res(TWARN, "unlink(%s) Failed, errno=%d : %s",
+			Fname, errno, strerror(errno));
+	    }
+	}
 
-    } /* End for TEST_LOOPING */
+    }	/* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -285,7 +285,7 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-} /* End main */
+}	/* End main */
 
 /***************************************************************
  * help
@@ -303,11 +303,11 @@ help()
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void
+void 
 setup()
 {
     /* You will want to enable some signal handling so you can capture
-     * unexpected signals like SIGSEGV.
+     * unexpected signals like SIGSEGV. 
      */
     tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
@@ -330,9 +330,9 @@ setup()
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *  completion or premature exit.
+ *		completion or premature exit.
  ***************************************************************/
-void
+void 
 cleanup()
 {
     /*
@@ -342,7 +342,7 @@ cleanup()
     TEST_CLEANUP;
 
     /* If you use a temporary directory, you need to be sure you remove it. Use
-     * tst_rmdir() to do it automatically.
+     * tst_rmdir() to do it automatically.  
      */
     tst_rmdir();
 

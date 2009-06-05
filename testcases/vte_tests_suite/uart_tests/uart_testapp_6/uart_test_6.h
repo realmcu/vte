@@ -10,10 +10,10 @@ Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
 THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 Freescale Semiconductor, Inc.
-
+     
 ====================================================================================================
 Revision History:
-
+                            				    
 Author (core ID)             Date               CR Number         Description of Changes
 ------------------------   ------------    ----------------  -------------------------------------------
 E.Gromazina                 25/04/2005       TLSbo48749       Initial version
@@ -58,8 +58,8 @@ extern "C"{
 #define EXTERNAL_UART_TTS_1     "/dev/tts/1"
 
 /* UART settings constants */
-#define RTS_AND_DTR 0x006
-#define CTS_AND_RTS 0x026
+#define RTS_AND_DTR 	0x006
+#define CTS_AND_RTS 	0x026
 
 /* MXC port type defined in /include/linux/serial_core.h as PORT_MXC */
 #define MXC_PORT_NUMBER 52
@@ -68,9 +68,9 @@ extern "C"{
 #define EXTERNAL_UART_PORT_TYPE  7
 
 /* Default parameters */
-#define BAUD_DEF B115200
-#define PARITY_DEF		'N'
-#define BREAK_DEF		'N'
+#define BAUD_DEF 		B115200
+#define PARITY_DEF		'N' 
+#define BREAK_DEF		'N' 
 
 #define MAX_BUFFER_SIZE	512
 #define ITER_SIZE			10
@@ -85,11 +85,11 @@ extern "C"{
 ==================================================================================================*/
 typedef struct param
 {
-        char UART1_drive[15];
-        char UART2_drive[15];
+        char UART1_drive[15];	
+        char UART2_drive[15]; 
         char parity_con;
         char break_con;
-
+        
 }param_t;
 
 /*==================================================================================================

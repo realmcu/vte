@@ -10,8 +10,8 @@
 # Alternately, to override them by editing this file, uncomment the
 # following lines:
 
-KLINUX_SRCDIR=/home/vobs/linux_2.6.26_imx51stack_3.4.0
-KLINUX_BLTDIR=/home/vobs/linux_2.6.26_imx51stack_3.4.0
+KLINUX_SRCDIR=/home/vobs/linux_2.6.28_imx51stack_4.1.0
+KLINUX_BLTDIR=/home/vobs/linux_2.6.28_imx51stack_4.1.0
 ARCH_CPU=arm
 ARCH_PLATFORM=imx51stack
 export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM

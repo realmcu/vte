@@ -1,7 +1,7 @@
 /******************************************************************************/
 /*                                                                            */
 /* Copyright (C) 2008, Linux Foundation,                                      */
-/* written by Michael Kerrisk <mtk.manpages@gmail.com>                        */
+/* written by Michael Kerrisk <mtk.manpages@gmail.com>                        */ 
 /*                                                                            */
 /* Licensed under the GNU GPLv2 or later.                                     */
 /* This program is free software;  you can redistribute it and/or modify      */
@@ -84,8 +84,8 @@ extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
-char *TCID      "accept04_01"; /* test program identifier.          */
-int  TST_TOTAL  1;                  /* total number of tests in this file.   */
+char *TCID     = "accept04_01"; /* test program identifier.          */
+int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -150,9 +150,9 @@ static int
 accept4(int fd, struct sockaddr *sockaddr, socklen_t *addrlen, int flags)
 {
 #ifdef DEBUG
-   tst_resm(TINFO, "Calling accept4(): flags  %x", flags);
-   if (flags ! 0) {
-       tst_resm(TINFO," (");
+   tst_resm(TINFO, "Calling accept4(): flags = %x", flags);
+   if (flags != 0) {
+       tst_resm(TINFO," (");     
        if (flags & SOCK_CLOEXEC)
            tst_resm(TINFO,"SOCK_CLOEXEC");
        if ((flags & SOCK_CLOEXEC) && (flags & SOCK_NONBLOCK))
@@ -167,10 +167,10 @@ accept4(int fd, struct sockaddr *sockaddr, socklen_t *addrlen, int flags)
 #if USE_SOCKETCALL
    long args[6];
 
-   args[0]  fd;
-   args[1]  (long) sockaddr;
-   args[2]  (long) addrlen;
-   args[3]  flags;
+   args[0] = fd;
+   args[1] = (long) sockaddr;
+   args[2] = (long) addrlen;
+   args[3] = flags;
 
    return syscall(__NR_socketcall, SYS_ACCEPT4, args);
 #else
@@ -191,39 +191,39 @@ do_test(int lfd, struct sockaddr_in *conn_addr,
    socklen_t addrlen;
 
 #ifdef DEBUG
-   tst_resm(TINFO,"\n");
+   tst_resm(TINFO,"=======================================\n");
 #endif
 
-   connfd  socket(AF_INET, SOCK_STREAM, 0);
-   if (connfd  -1)
+   connfd = socket(AF_INET, SOCK_STREAM, 0);
+   if (connfd == -1)
        die("Socket Error");
    if (connect(connfd, (struct sockaddr *) conn_addr,
-               sizeof(struct sockaddr_in))  -1)
+               sizeof(struct sockaddr_in)) == -1)
        die("Connect Error");
 
-   addrlen  sizeof(struct sockaddr_in);
-   acceptfd  accept4(lfd, (struct sockaddr *) &claddr, &addrlen,
+   addrlen = sizeof(struct sockaddr_in);
+   acceptfd = accept4(lfd, (struct sockaddr *) &claddr, &addrlen,
                       closeonexec_flag | nonblock_flag);
-   if (acceptfd  -1) {
+   if (acceptfd == -1) {
        tst_resm(TCONF, "syscall __NR_accept4 not supported on your arch");
    }
 
-   fdf  fcntl(acceptfd, F_GETFD);
-   if (fdf  -1)
+   fdf = fcntl(acceptfd, F_GETFD);
+   if (fdf == -1)
        die("fcntl:F_GETFD");
-   fdf_pass  ((fdf & FD_CLOEXEC) ! 0) 
-              ((closeonexec_flag & SOCK_CLOEXEC) ! 0);
+   fdf_pass = ((fdf & FD_CLOEXEC) != 0) ==
+              ((closeonexec_flag & SOCK_CLOEXEC) != 0);
 #ifdef DEBUG
    tst_resm(TINFO, "Close-on-exec flag is %sset (%s); ", (fdf & FD_CLOEXEC) ? "" : "not ", fdf_pass ? "OK" : "failed");
 #endif
    if(!fdf_pass)
      tst_resm(TFAIL, "Close-on-exec flag mismatch, should be %x, actual %x", fdf & FD_CLOEXEC, closeonexec_flag & SOCK_CLOEXEC);
 
-   flf  fcntl(acceptfd, F_GETFL);
-   if (flf  -1)
+   flf = fcntl(acceptfd, F_GETFL);
+   if (flf == -1)
        die("fcntl:F_GETFD");
-   flf_pass  ((flf & O_NONBLOCK) ! 0) 
-              ((nonblock_flag & SOCK_NONBLOCK) !0);
+   flf_pass = ((flf & O_NONBLOCK) != 0) ==
+              ((nonblock_flag & SOCK_NONBLOCK) !=0);
 #ifdef DEBUG
    tst_resm(TINFO, "nonblock flag is %sset (%s)\n", (flf & O_NONBLOCK) ? "" : "not ", flf_pass ? "OK" : "failed");
 #endif
@@ -246,24 +246,24 @@ create_listening_socket(int port_num)
    int optval;
 
    memset(&svaddr, 0, sizeof(struct sockaddr_in));
-   svaddr.sin_family  AF_INET;
-   svaddr.sin_addr.s_addr  htonl(INADDR_ANY);
-   svaddr.sin_port  htons(port_num);
+   svaddr.sin_family = AF_INET;
+   svaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+   svaddr.sin_port = htons(port_num);
 
-   lfd  socket(AF_INET, SOCK_STREAM, 0);
-   if (lfd  -1)
+   lfd = socket(AF_INET, SOCK_STREAM, 0);
+   if (lfd == -1)
        die("Socket Error");
 
-   optval  1;
+   optval = 1;
    if (setsockopt(lfd, SOL_SOCKET, SO_REUSEADDR, &optval,
-                  sizeof(optval))  -1)
+                  sizeof(optval)) == -1)
        die("Setsockopt Error");
 
    if (bind(lfd, (struct sockaddr *) &svaddr,
-            sizeof(struct sockaddr_in))  -1)
+            sizeof(struct sockaddr_in)) == -1)
        die("Bind Error");
 
-   if (listen(lfd, 5)  -1)
+   if (listen(lfd, 5) == -1)
        die("Listen Error");
 
    return lfd;
@@ -279,14 +279,14 @@ main(int argc, char *argv[])
    int port_num;
 
    setup();
-   port_num  (argc > 1) ? atoi(argv[1]) : PORT_NUM;
+   port_num = (argc > 1) ? atoi(argv[1]) : PORT_NUM;
 
    memset(&conn_addr, 0, sizeof(struct sockaddr_in));
-   conn_addr.sin_family  AF_INET;
-   conn_addr.sin_addr.s_addr  htonl(INADDR_LOOPBACK);
-   conn_addr.sin_port  htons(port_num);
+   conn_addr.sin_family = AF_INET;
+   conn_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+   conn_addr.sin_port = htons(port_num);
 
-   lfd  create_listening_socket(port_num);
+   lfd = create_listening_socket(port_num);
 
    do_test(lfd, &conn_addr, 0, 0);
    do_test(lfd, &conn_addr, SOCK_CLOEXEC, 0);

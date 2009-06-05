@@ -19,18 +19,18 @@
 
 /*
  * NAME
- * sendfile02.c
+ *	sendfile02.c
  *
  * DESCRIPTION
- * Testcase to test the basic functionality of the sendfile(2) system call.
+ *	Testcase to test the basic functionality of the sendfile(2) system call.
  *
  * ALGORITHM
- * 1. call sendfile(2) with offset  0
- * 2. call sendfile(2) with offset in the middle of the file
+ *	1. call sendfile(2) with offset = 0
+ *	2. call sendfile(2) with offset in the middle of the file
  *
  * USAGE:  <for command-line>
  *  sendfile02 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
- *     where,
+ *     where,  
  *             -f   : Turn off functionality Testing.
  *             -i n : Execute test n times.
  *             -I x : Execute test for x seconds.
@@ -38,11 +38,11 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
- * 08/2002 Make it use a socket so it works with 2.5 kernel
+ *	07/2001 Ported by Wayne Boyer
+ *	08/2002 Make it use a socket so it works with 2.5 kernel
  *
  * RESTRICTIONS
- * NONE
+ *	NONE
  */
 #include <stdio.h>
 #include <errno.h>
@@ -65,7 +65,7 @@
 
 
 TCID_DEFINE(sendfile02);
-int TST_TOTAL  4;
+int TST_TOTAL = 4;
 extern int Tst_count;
 
 char in_file[100];
@@ -81,15 +81,15 @@ void setup(void);
 int create_server(void);
 
 struct test_case_t {
- char *desc;
- int offset;
- int exp_retval;
- int exp_updated_offset;
-} testcases[]  {
- { "Test sendfile(2) with offset  0", 0, 26, 26 },
- { "Test sendfile(2) with offset in the middle of file", 2, 24, 26 },
- { "Test sendfile(2) with offset in the middle of file", 4, 22, 26 },
- { "Test sendfile(2) with offset in the middle of file", 6, 20, 26 }
+	char *desc;
+	int offset;
+	int exp_retval;
+	int exp_updated_offset;
+} testcases[] = {
+	{ "Test sendfile(2) with offset = 0", 0, 26, 26 },
+	{ "Test sendfile(2) with offset in the middle of file", 2, 24, 26 },
+	{ "Test sendfile(2) with offset in the middle of file", 4, 22, 26 },
+	{ "Test sendfile(2) with offset in the middle of file", 6, 20, 26 }
 };
 
 #ifdef UCLINUX
@@ -98,76 +98,76 @@ static char* argv0;
 
 void do_sendfile(OFF_T offset, int i)
 {
- int in_fd;
- struct stat sb;
- int wait_status;
- int wait_stat;
- off_t before_pos, after_pos;
+	int in_fd;
+	struct stat sb;
+	int wait_status;
+	int wait_stat;
+	off_t before_pos, after_pos;
 
 
- out_fd  create_server();
+	out_fd = create_server();
 
- if ((in_fd  open(in_file, O_RDONLY)) < 0) {
-  tst_brkm(TBROK, cleanup, "open failed: %d", errno);
-  /*NOTREACHED*/
- }
- if (stat(in_file, &sb) < 0) {
-  tst_brkm(TBROK, cleanup, "stat failed: %d", errno);
-  /*NOTREACHED*/
- }
+	if ((in_fd = open(in_file, O_RDONLY)) < 0) {
+		tst_brkm(TBROK, cleanup, "open failed: %d", errno);
+		/*NOTREACHED*/
+	}
+	if (stat(in_file, &sb) < 0) {
+		tst_brkm(TBROK, cleanup, "stat failed: %d", errno);
+		/*NOTREACHED*/
+	}
 
 
- if ((before_pos  lseek(in_fd, 0, SEEK_CUR)) < 0) {
-  tst_brkm(TBROK, cleanup, "lseek before invoking sendfile failed: %d", errno);
-  /*NOTREACHED*/
- }
+	if ((before_pos = lseek(in_fd, 0, SEEK_CUR)) < 0) {
+		tst_brkm(TBROK, cleanup, "lseek before invoking sendfile failed: %d", errno);
+		/*NOTREACHED*/
+	}
+	
+	TEST(sendfile(out_fd, in_fd, &offset, sb.st_size - offset));
 
- TEST(sendfile(out_fd, in_fd, &offset, sb.st_size - offset));
+	if ((after_pos = lseek(in_fd, 0, SEEK_CUR)) < 0) {
+		tst_brkm(TBROK, cleanup, "lseek after invoking sendfile failed: %d", errno);
+		/*NOTREACHED*/
+	}
+	
+	if (STD_FUNCTIONAL_TEST) {
+		/* Close the sockets */
+		shutdown(sockfd, SHUT_RDWR);
+		shutdown(s, SHUT_RDWR);
+		if (TEST_RETURN != testcases[i].exp_retval) {
+			tst_resm(TFAIL, "sendfile(2) failed to return "
+				 "expected value, expected: %d, "
+				 "got: %d", testcases[i].exp_retval,
+				 TEST_RETURN);
+			kill(child_pid, SIGKILL);
+		} else if (offset != testcases[i].exp_updated_offset) {
+			tst_resm(TFAIL, "sendfile(2) failed to update "
+				 "OFFSET parameter to expected value, "
+				 "expected: %d, got: %d", 
+				 testcases[i].exp_updated_offset,
+				 offset);
+		} else if (before_pos != after_pos) {
+			tst_resm(TFAIL, "sendfile(2) updated the file position "
+				 " of in_fd unexpectedly, expected file position: %d, "
+				 " actual file position %d", 
+				 before_pos, after_pos);
+		} else {
+			tst_resm(TPASS, "functionality of sendfile() is "
+					"correct");
+			wait_status = waitpid(-1, &wait_stat, 0);
+			}
+	} else {
+		tst_resm(TPASS, "call succeeded");
+		/* Close the sockets */
+		shutdown(sockfd, SHUT_RDWR);
+		shutdown(s, SHUT_RDWR);
+		if (TEST_RETURN != testcases[i].exp_retval) {
+			kill(child_pid, SIGKILL);
+		} else {
+			wait_status = waitpid(-1, &wait_stat, 0);
+		}
+	}
 
- if ((after_pos  lseek(in_fd, 0, SEEK_CUR)) < 0) {
-  tst_brkm(TBROK, cleanup, "lseek after invoking sendfile failed: %d", errno);
-  /*NOTREACHED*/
- }
-
- if (STD_FUNCTIONAL_TEST) {
-  /* Close the sockets */
-  shutdown(sockfd, SHUT_RDWR);
-  shutdown(s, SHUT_RDWR);
-  if (TEST_RETURN ! testcases[i].exp_retval) {
-   tst_resm(TFAIL, "sendfile(2) failed to return "
-     "expected value, expected: %d, "
-     "got: %d", testcases[i].exp_retval,
-     TEST_RETURN);
-   kill(child_pid, SIGKILL);
-  } else if (offset ! testcases[i].exp_updated_offset) {
-   tst_resm(TFAIL, "sendfile(2) failed to update "
-     "OFFSET parameter to expected value, "
-     "expected: %d, got: %d",
-     testcases[i].exp_updated_offset,
-     offset);
-  } else if (before_pos ! after_pos) {
-   tst_resm(TFAIL, "sendfile(2) updated the file position "
-     " of in_fd unexpectedly, expected file position: %d, "
-     " actual file position %d",
-     before_pos, after_pos);
-  } else {
-   tst_resm(TPASS, "functionality of sendfile() is "
-     "correct");
-   wait_status  waitpid(-1, &wait_stat, 0);
-   }
- } else {
-  tst_resm(TPASS, "call succeeded");
-  /* Close the sockets */
-  shutdown(sockfd, SHUT_RDWR);
-  shutdown(s, SHUT_RDWR);
-  if (TEST_RETURN ! testcases[i].exp_retval) {
-   kill(child_pid, SIGKILL);
-  } else {
-   wait_status  waitpid(-1, &wait_stat, 0);
-  }
- }
-
- close(in_fd);
+	close(in_fd);
 
 }
 
@@ -177,15 +177,15 @@ void do_sendfile(OFF_T offset, int i)
 void
 do_child()
 {
- int lc;
- socklen_t length;
- char rbuf[4096];
+	int lc;
+	socklen_t length;
+	char rbuf[4096];
 
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  length  sizeof(sin1);
-  recvfrom(sockfd, rbuf, 4096, 0, (struct sockaddr*)&sin1, &length);
- }
- exit(0);
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		length = sizeof(sin1);
+		recvfrom(sockfd, rbuf, 4096, 0, (struct sockaddr*)&sin1, &length);
+	}
+	exit(0);
 }
 
 /*
@@ -194,135 +194,135 @@ do_child()
 void
 setup()
 {
- int fd;
- char buf[100];
+	int fd;
+	char buf[100];
 
- /* capture signals */
- tst_sig(FORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /* make a temporary directory and cd to it */
- tst_tmpdir();
- sprintf(in_file, "in.%d", getpid());
- if ((fd  creat(in_file, 00700)) < 0) {
-  tst_brkm(TBROK, cleanup, "creat failed in setup, errno: %d",
-    errno);
-  /*NOTREACHED*/
- }
- sprintf(buf, "abcdefghijklmnopqrstuvwxyz");
- if (write(fd, buf, strlen(buf)) < 0) {
-  tst_brkm(TBROK, cleanup, "write failed, errno: %d", errno);
-  /*NOTREACHED*/
- }
- close(fd);
- sprintf(out_file, "out.%d", getpid());
+	/* make a temporary directory and cd to it */
+	tst_tmpdir();
+	sprintf(in_file, "in.%d", getpid());
+	if ((fd = creat(in_file, 00700)) < 0) {
+		tst_brkm(TBROK, cleanup, "creat failed in setup, errno: %d",
+			 errno);
+		/*NOTREACHED*/
+	}
+	sprintf(buf, "abcdefghijklmnopqrstuvwxyz");
+	if (write(fd, buf, strlen(buf)) < 0) {
+		tst_brkm(TBROK, cleanup, "write failed, errno: %d", errno);
+		/*NOTREACHED*/
+	}
+	close(fd);
+	sprintf(out_file, "out.%d", getpid());
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit.
+ *	       completion or premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- close(out_fd);
- /* delete the test directory created in setup() */
- tst_rmdir();
+	close(out_fd);
+	/* delete the test directory created in setup() */
+	tst_rmdir();
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }
 
 int create_server(void) {
- static int count0;
+	static int count=0;
 
- sockfd  socket(PF_INET, SOCK_DGRAM, 0);
- if(sockfd < 0) {
-  tst_brkm(TBROK, cleanup, "call to socket() failed: %s",
-   strerror(errno));
-  return -1;
- }
- sin1.sin_family  AF_INET;
- sin1.sin_port  htons(((getpid() * TST_TOTAL) % 32768) + 11000 + count);
- sin1.sin_addr.s_addr  INADDR_ANY;
- count++;
- if(bind(sockfd, (struct sockaddr*)&sin1, sizeof(sin1)) < 0) {
-  tst_brkm(TBROK, cleanup, "call to bind() failed: %s",
-   strerror(errno));
-  return -1;
- }
- child_pid  FORK_OR_VFORK();
- if(child_pid < 0) {
-  tst_brkm(TBROK, cleanup, "client/server fork failed: %s",
-   strerror(errno));
-  return -1;
- }
- if(!child_pid) { /* child */
+	sockfd = socket(PF_INET, SOCK_DGRAM, 0);
+	if(sockfd < 0) {
+		tst_brkm(TBROK, cleanup, "call to socket() failed: %s",
+			strerror(errno));
+		return -1;
+	}
+	sin1.sin_family = AF_INET;
+	sin1.sin_port = htons(((getpid() * TST_TOTAL) % 32768) + 11000 + count);
+	sin1.sin_addr.s_addr = INADDR_ANY;
+	count++;
+	if(bind(sockfd, (struct sockaddr*)&sin1, sizeof(sin1)) < 0) {
+		tst_brkm(TBROK, cleanup, "call to bind() failed: %s",
+			strerror(errno));
+		return -1;
+	}
+	child_pid = FORK_OR_VFORK();
+	if(child_pid < 0) {
+		tst_brkm(TBROK, cleanup, "client/server fork failed: %s",
+			strerror(errno));
+		return -1;
+	}
+	if(!child_pid) { /* child */
 #ifdef UCLINUX
-  if(self_exec(argv0, "") < 0) {
-   tst_brkm(TBROK, cleanup, "self_exec failed");
-   return -1;
-
-  }
+		if(self_exec(argv0, "") < 0) {
+			tst_brkm(TBROK, cleanup, "self_exec failed");
+			return -1;
+			
+		}
 #else
-  do_child();
+		do_child();
 #endif
- }
+	}
 
- s  socket(PF_INET, SOCK_DGRAM, 0);
- inet_aton("127.0.0.1", &sin1.sin_addr);
- if(s < 0) {
-  tst_brkm(TBROK, cleanup, "call to socket() failed: %s",
-   strerror(errno));
-  return -1;
- }
- if (connect(s, (struct sockaddr*)&sin1, sizeof(sin1)) < 0) {
-  tst_brkm(TBROK, cleanup, "call to connect() failed: %s",
-   strerror(errno));
- }
- return s;
+	s = socket(PF_INET, SOCK_DGRAM, 0);
+	inet_aton("127.0.0.1", &sin1.sin_addr);
+	if(s < 0) {
+		tst_brkm(TBROK, cleanup, "call to socket() failed: %s",
+			strerror(errno));
+		return -1;
+	}
+	if (connect(s, (struct sockaddr*)&sin1, sizeof(sin1)) < 0) {
+		tst_brkm(TBROK, cleanup, "call to connect() failed: %s",
+			strerror(errno));
+	}
+	return s;
 
 }
 
 int main(int ac, char **av)
 {
- int i;
- int lc;    /* loop counter */
- char *msg;   /* parse_opts() return message */
+	int i;
+	int lc;				/* loop counter */
+	char *msg;			/* parse_opts() return message */
 
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
 #ifdef UCLINUX
- argv0  av[0];
- maybe_run_child(&do_child, "");
+	argv0 = av[0];
+	maybe_run_child(&do_child, "");
 #endif
 
- setup();
+	setup();
 
- /*
-  * The following loop checks looping state if -c option given
-  */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  Tst_count  0;
+	/*
+	 * The following loop checks looping state if -c option given
+	 */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		Tst_count = 0;
 
-  for (i  0; i < TST_TOTAL; ++i) {
-   do_sendfile(testcases[i].offset, i);
-  }
- }
- cleanup();
+		for (i = 0; i < TST_TOTAL; ++i) {
+			do_sendfile(testcases[i].offset, i);
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 

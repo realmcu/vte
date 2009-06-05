@@ -18,26 +18,26 @@
  */
 
 /* 12/03/2002   Port to LTP     robbiew@us.ibm.com */
-/* 06/30/2001 Port to Linux nsharoff@us.ibm.com */
+/* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
 
 /*
  * NAME
- * acct01.c  -- test acct
+ *	acct01.c  -- test acct
  *
  * CALLS
- * acct
+ *	acct
  *
  * ALGORITHM
- * issue calls to acct and test the returned values against
- * expected results
+ *	issue calls to acct and test the returned values against
+ *	expected results
  *
  * RESTRICTIONS
- * This must run root since the acct call may only be done
- * by root.   Use the TERM flag, to clean up files.
+ *	This must run root since the acct call may only be done
+ *	by root.   Use the TERM flag, to clean up files.
  */
 
 
-#include <stdio.h>  /* needed by testhead.h  */
+#include <stdio.h>		/* needed by testhead.h		*/
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -53,8 +53,8 @@
 #define PASSED 1
 
 
-char *TCID"acct01";            /* Test program identifier.    */
-int TST_TOTAL4;                /* Total number of test cases. */
+char *TCID="acct01";            /* Test program identifier.    */
+int TST_TOTAL=4;                /* Total number of test cases. */
 extern int Tst_count;           /* Test Case counter for tst_* routines */
 /**************/
 
@@ -64,111 +64,111 @@ char fname[80];
 
 /*--------------------------------------------------------------*/
 int main (argc, argv)
- int  argc;
- char *argv[];
+	int  argc;
+	char *argv[];
 {
- register int i;
- char tmpbuf[100], tmpbuf2[ 100 ];
+	register int i;
+	char tmpbuf[100], tmpbuf2[ 100 ];
 
 
 /*--------------------------------------------------------------*/
 
- /* turn off acct, so we are in a known state
- */
- if( acct( NULL )  -1 ) {
-  if( errno  ENOSYS ){
-   tst_resm(TCONF,"BSD process accounting is not configured in this kernel.");
-   tst_resm(TCONF,"Test will not run.");
-   tst_exit();
-  }else{
-   tst_resm(TBROK, "Attempting to disable acct, but got %d",
-     errno );
-   tst_exit();
-  }
- }
+	/* turn off acct, so we are in a known state
+	*/
+	if( acct( NULL ) == -1 ) {
+		if( errno == ENOSYS ){
+			tst_resm(TCONF,"BSD process accounting is not configured in this kernel.");
+			tst_resm(TCONF,"Test will not run.");
+			tst_exit();
+		}else{
+			tst_resm(TBROK, "Attempting to disable acct, but got= %d",
+				 errno );
+			tst_exit();
+		}
+	}
+	
+	tst_tmpdir();
 
- tst_tmpdir();
-
- /* now try to use a device, and it should fail */
- if (acct("/dev/null") ! -1) {
-  tst_resm(TFAIL, "attempting to assign acct file to device: expected failure but got okay return");
-  tst_exit();
- } else tst_resm(TPASS,"Received expected error: -1");
+	/* now try to use a device, and it should fail */
+	if (acct("/dev/null") != -1) {
+		tst_resm(TFAIL, "attempting to assign acct file to device: expected failure but got okay return");
+		tst_exit();
+	} else tst_resm(TPASS,"Received expected error: -1");
 
 
- /* check the errno, for EACCESS */
- if( errno ! EACCES ) {
+	/* check the errno, for EACCESS */
+	if( errno != EACCES ) {
                 tst_resm(TFAIL,"Attempt to use non-ordinary file didn't receive EACCESS error - received %d",errno);
                 tst_exit();
- } else tst_resm(TPASS,"Received expected error: EACCESS");
+	} else tst_resm(TPASS,"Received expected error: EACCESS");
 
 
- /* check for error on non-existent file name */
- sprintf( tmpbuf, "./%s.%d", TCID, getpid() );
+	/* check for error on non-existent file name */
+	sprintf( tmpbuf, "./%s.%d", TCID, getpid() );
 
- unlink( tmpbuf );
+	unlink( tmpbuf );
 
- if( acct( tmpbuf ) ! -1 ) {
-  tst_resm(TBROK,"attempt to set acct to non-existent file didn't fail as it should");
-  tst_exit();
- }
+	if( acct( tmpbuf ) != -1 ) {
+		tst_resm(TBROK,"attempt to set acct to non-existent file didn't fail as it should");
+		tst_exit();
+	}
 
- /* check the errno */
- if( errno ! ENOENT ) {
-  tst_resm(TFAIL, "Attempt to set acct to non-existent file failed as expected but errno %d", errno );
- } else tst_resm(TPASS,"Received expected error: ENOENT");
-
-
- /* now do a valid acct enable call
- */
- sprintf(tmpbuf, "./%s.%d", TCID, getpid() );
-
- if( (icreat( tmpbuf, 0777))  -1) {
-  tst_resm(TBROK,"Failure %d on opening %s",
-   errno, tmpbuf );
-  tst_exit();
- }
-
- close(i);
-
- if( acct( tmpbuf )  -1 ) {
-  tst_resm(TBROK,"Failure %d on enabling acct file %d",
-   errno, tmpbuf );
-  tst_exit();
- }
+	/* check the errno */
+	if( errno != ENOENT ) {
+		tst_resm(TFAIL, "Attempt to set acct to non-existent file failed as expected but errno= %d", errno );
+	} else tst_resm(TPASS,"Received expected error: ENOENT");
 
 
- /* now check for busy error return
- */
+	/* now do a valid acct enable call
+	*/
+	sprintf(tmpbuf, "./%s.%d", TCID, getpid() );
+	
+	if( (i=creat( tmpbuf, 0777)) == -1) {
+		tst_resm(TBROK,"Failure %d on opening %s", 
+			errno, tmpbuf );
+		tst_exit();
+	}
 
- sprintf( tmpbuf2, "./%s.%d.2", TCID, getpid() );
+	close(i);
 
- if( acct( tmpbuf2 ) ! -1 ) {
-  tst_resm(TBROK, "Second try on enabling acct did not fail as it should");
-  tst_exit();
- }
+	if( acct( tmpbuf ) == -1 ) {
+		tst_resm(TBROK,"Failure %d on enabling acct file= %d",
+			errno, tmpbuf );
+		tst_exit();
+	} 
 
- /*
-  * acct() confirms to SVr4, but not POSIX in LINUX as of 03 Dec 2002
-  * In the above case, file doesn't exist and should get ENOENT.
+
+	/* now check for busy error return
+	*/
+
+	sprintf( tmpbuf2, "./%s.%d.2", TCID, getpid() );
+
+	if( acct( tmpbuf2 ) != -1 ) {
+		tst_resm(TBROK, "Second try on enabling acct did not fail as it should");
+		tst_exit();
+	}
+
+	/* 
+	 * acct() confirms to SVr4, but not POSIX in LINUX as of 03 Dec 2002 
+	 * In the above case, file doesn't exist and should get ENOENT.
          */
- if( errno ! ENOENT ) {
-  tst_resm(TFAIL, "Second try on enabling acct failed but with errno %d expected %d", errno, ENOENT );
-  tst_exit();
- } else tst_resm(TPASS,"Received expected error: ENOENT");
+	if( errno != ENOENT ) {
+		tst_resm(TFAIL, "Second try on enabling acct failed but with errno= %d expected= %d", errno, ENOENT );
+		tst_exit();
+	} else tst_resm(TPASS,"Received expected error: ENOENT");
 
- /* now disable accting */
- if( acct( NULL )  -1 ) {
-  tst_resm(TBROK, "Attempt to do final disable of acct failed, errno %d", errno );
-  tst_exit();
- }
+	/* now disable accting */
+	if( acct( NULL ) == -1 ) {
+		tst_resm(TBROK, "Attempt to do final disable of acct failed, errno= %d", errno );
+		tst_exit();
+	}
 
- unlink( tmpbuf );
+	unlink( tmpbuf );
 
 /*--------------------------------------------------------------*/
-/* Clean up any files created by test before call to tst_exit. */
- tst_rmdir();
- tst_exit(); /* THIS CALL DOES NOT RETURN - EXITS!! */
+/* Clean up any files created by test before call to tst_exit.	*/
+	tst_rmdir();
+	tst_exit();	/* THIS CALL DOES NOT RETURN - EXITS!!	*/
 /*--------------------------------------------------------------*/
- return(0);
+	return(0);
 }

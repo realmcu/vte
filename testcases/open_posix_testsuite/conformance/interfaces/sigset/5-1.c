@@ -2,7 +2,7 @@
  * Copyright (c) 2003, Intel Corporation. All rights reserved.
  * Created by:  salwan.searty REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this
+ * of this license, see the COPYING file at the top level of this 
  * source tree.
 
  This program tests the assertion that the process's signal mask will be
@@ -11,7 +11,7 @@
  Steps:
  1. Empty the signal mask
  2. Deliver the signal
- 3. When we return from the signal handler, verify that the signal mask
+ 3. When we return from the signal handler, verify that the signal mask 
     is still empty, otherwise fail.
 
 */
@@ -36,35 +36,35 @@ int is_empty(sigset_t *set) {
                 SIGTRAP, SIGURG, SIGVTALRM, SIGXCPU, SIGXFSZ };
 
         for (i=0; i<NUMSIGNALS; i++) {
-  if (sigismember(set, siglist[i]) != 0)
-   return 0;
+		if (sigismember(set, siglist[i]) != 0)
+			return 0;
         }
         return 1;
 }
 
 void myhandler(int signo)
 {
- printf("SIGCHLD called. Inside handler\n");
+	printf("SIGCHLD called. Inside handler\n");
 }
 
 int main()
 {
- sigset_t mask;
- sigemptyset(&mask);
+	sigset_t mask;
+	sigemptyset(&mask);
 
- sigprocmask(SIG_SETMASK, &mask, NULL);
+	sigprocmask(SIG_SETMASK, &mask, NULL);
 
- if (sigset(SIGCHLD, myhandler) == SIG_ERR) {
+	if (sigset(SIGCHLD, myhandler) == SIG_ERR) {
                 perror("Unexpected error while using sigset()");
-               return PTS_UNRESOLVED;
+               	return PTS_UNRESOLVED;
         }
 
- raise(SIGCHLD);
- sigprocmask(SIG_SETMASK, NULL, &mask);
+	raise(SIGCHLD);
+	sigprocmask(SIG_SETMASK, NULL, &mask);
 
- if (is_empty(&mask) != 1) {
-  printf("Test FAILED: signal mask should be empty\n");
-  return PTS_FAIL;
- }
- return PTS_PASS;
-}
+	if (is_empty(&mask) != 1) {
+		printf("Test FAILED: signal mask should be empty\n");
+		return PTS_FAIL;
+	}
+	return PTS_PASS;
+} 

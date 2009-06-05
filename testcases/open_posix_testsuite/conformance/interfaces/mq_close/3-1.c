@@ -29,38 +29,38 @@
 
 int main()
 {
- char qname[50];
- mqd_t queue;
+	char qname[50];
+	mqd_t queue;
 
- sprintf(qname, "/" FUNCTION "_" TEST "_%d", getpid());
+	sprintf(qname, "/" FUNCTION "_" TEST "_%d", getpid());
 
- queue  mq_open(qname, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, NULL);
- if (queue  (mqd_t)-1) {
-  perror(ERROR_PREFIX "mq_open");
-  return PTS_UNRESOLVED;
- }
+	queue = mq_open(qname, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, NULL);
+	if (queue == (mqd_t)-1) {
+		perror(ERROR_PREFIX "mq_open");
+		return PTS_UNRESOLVED;
+	}
 
- if (mq_close(queue)  -1) {
-  perror(ERROR_PREFIX "mq_close");
-  mq_unlink(qname);
-  return PTS_UNRESOLVED;
- }
+	if (mq_close(queue) == -1) {
+		perror(ERROR_PREFIX "mq_close");
+		mq_unlink(qname);
+		return PTS_UNRESOLVED;
+	}
 
- if (mq_unlink(qname) ! 0) {
-  perror("mq_unlink() did not return success");
-  return PTS_UNRESOLVED;
- }
+	if (mq_unlink(qname) != 0) {
+		perror("mq_unlink() did not return success");
+		return PTS_UNRESOLVED;
+	}
 
- if (mq_close(queue) ! -1) {
-  printf("mq_close() did not return failure\n");
-  printf("Test FAILED\n");
-  return PTS_FAIL;
- }
- if (errno ! EBADF) {
-  printf("errno ! EBADF\n");
-  return PTS_FAIL;
- }
+	if (mq_close(queue) != -1) {
+		printf("mq_close() did not return failure\n");
+		printf("Test FAILED\n");
+		return PTS_FAIL;
+	}
+	if (errno != EBADF) {
+		printf("errno != EBADF\n");
+		return PTS_FAIL;
+	}
 
- printf("Test PASSED\n");
- return PTS_PASS;
+	printf("Test PASSED\n");
+	return PTS_PASS;
 }

@@ -1,0 +1,37 @@
+#Verification Tests Command File
+
+#VT Security device tests
+#files: rnga_test_module.ko
+#files: rnga_test
+
+
+#RNGA testcases
+TGE-LV-RNGA-MOD insmod $LTPROOT/testcases/bin/rnga_test_module.ko
+TGE-LV-RNGA-0001 rnga_test -T RNGA-CTRL-REG-CFG
+TGE-LV-RNGA-0010 rnga_test -T RNGA-GET-RND
+TGE-LV-RNGA-0020 rnga_test -T RNGA-TEST-1
+TGE-LV-RNGA-0030 rnga_test -T RNGA-FIFO-INFO
+TGE-LV-RNGA-0040 rnga_test -T RNGA-FIFO-SIZE
+TGE-LV-RNGA-0070 rnga_test -T RNGA-SEEDS-RND -A 0
+TGE-LV-RNGA-0080 rnga_test -T RNGA-PWR-DOWN
+TGE-LV-RNGA-0090 rnga_test -T RNGA-AWAKE
+TGE-LV-RNGA-0100 rnga_test -T RNGA-GET-STATUS
+TGE-LV-RNGA-0110 rnga_test -T RNGA-CLRINT
+TGE-LV-RNGA-0120 rnga_test -T RNGA-VRFY-CFGMODE
+TGE-LV-RNGA-0130 rnga_test -T RNGA-OSC-FREQ-CFGMODE
+TGE-LV-RNGA-0140 rnga_test -T RNGA-SHFT-CLK-ON-CVC
+TGE-LV-RNGA-0150 rnga_test -T RNGA-SYS-CLK-ON-CVC
+TGE-LV-RNGA-0160 rnga_test -T RNGA-RESET-SHFT-REG-CVC
+TGE-LV-RNGA-0170 rnga_test -T RNGA-CFGOSCCNTCTRLW
+TGE-LV-RNGA-0180 rnga_test -T RNGA-CFGOSCCNTCTRLR
+TGE-LV-RNGA-0190 rnga_test -T RNGA-OSCCNT1
+TGE-LV-RNGA-0200 rnga_test -T RNGA-OSCCNT2
+TGE-LV-RNGA-0210 rnga_test -T RNGA-OSCSTATUS
+TGE-LV-RNGA-0220 rnga_test -T RNGA-SUS-DIS
+TGE-LV-RNGA-0230 rnga_test -T RNGA-SUS-SAVE
+TGE-LV-RNGA-0240 rnga_test -T RNGA-SUS-PWR-DWN
+TGE-LV-RNGA-0250 rnga_test -T RNGA-RES-PWR-ON
+TGE-LV-RNGA-0260 rnga_test -T RNGA-RES-REST-STATE
+TGE-LV-RNGA-0270 rnga_test -T RNGA-RES-ENABLE
+
+#WARNING the commented tests are not automatical tests

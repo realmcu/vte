@@ -19,26 +19,26 @@
 
 /*
  * NAME
- * fork07.c
+ * 	fork07.c
  *
  * DESCRIPTION
- * Check that all children inherit parent's file descriptor
+ *	Check that all children inherit parent's file descriptor
  *
  * ALGORITHM
- * Parent opens a file, writes to it; forks Nforks children.
- * Each child attempts to read the file then returns.
- * Parent reports PASS if all children succeed.
+ * 	Parent opens a file, writes to it; forks Nforks children. 
+ * 	Each child attempts to read the file then returns.
+ * 	Parent reports PASS if all children succeed.
  *
  * USAGE
- * fork07
+ * 	fork07
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
- * 07/2002 Limited forking and split "infinite forks" test case to
- *         fork12.c by Nate Straz
+ *	07/2001 Ported by Wayne Boyer
+ *	07/2002 Limited forking and split "infinite forks" test case to
+ *	        fork12.c by Nate Straz
  *
  * RESTRICTIONS
- * None
+ * 	None
  */
 
 #include <stdio.h>
@@ -50,8 +50,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID  "fork07";
-int TST_TOTAL  1;
+char *TCID = "fork07";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 void help(void);
@@ -62,133 +62,133 @@ char pbuf[10];
 char fnamebuf[40];
 
 char *Nforkarg;
-int Nflag0;
-int Nforks0;
-int vflag0;
+int Nflag=0;
+int Nforks=0;
+int vflag=0;
 
-option_t options[]  {
- { "N:", &Nflag, &Nforkarg }, /* -N #forks */
- { "v" , &vflag, NULL },  /* -v (verbose) */
- { NULL, NULL, NULL }
+option_t options[] = {
+	{ "N:", &Nflag, &Nforkarg },	/* -N #forks */
+	{ "v" , &vflag, NULL },		/* -v (verbose) */
+	{ NULL, NULL, NULL }
 };
 
 int
 main(int ac, char **av)
 {
- int status, forks, pid1;
- int ch_r_stat;
- FILE *rea, *writ;
- int c_pass, c_fail;
+	int status, forks, pid1;
+	int ch_r_stat;
+	FILE *rea, *writ;
+	int c_pass, c_fail;
 
- int lc;   /* loop counter */
- char *msg;  /* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 
- /*
-  * parse standard options
-  */
- if ((msg  parse_opts(ac, av, options, &help)) ! (char *)NULL){
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/*
+	 * parse standard options
+	 */
+	if ((msg = parse_opts(ac, av, options, &help)) != (char *)NULL){
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- if ( Nflag ) {
-        if (sscanf(Nforkarg, "%i", &Nforks) ! 1 ) {
-  tst_brkm(TBROK, cleanup, "--N option arg is not a number");
-  tst_exit();
-     }
- } else {
-     Nforks  100;
- }
+	if ( Nflag ) {
+    	    if (sscanf(Nforkarg, "%i", &Nforks) != 1 ) {
+		tst_brkm(TBROK, cleanup, "--N option arg is not a number");
+		tst_exit();
+	    }
+	} else {
+	    Nforks = 100;
+	}
 
- /*
-  * perform global setup for the test
-  */
- setup();
+	/*
+	 * perform global setup for the test
+	 */
+	setup();
 
- /*
-  * check looping state if -i option is given
-  */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /*
-   * reset Tst_count in case we are looping.
-   */
-  Tst_count  0;
+	/*
+	 * check looping state if -i option is given
+	 */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/*
+		 * reset Tst_count in case we are looping.
+		 */
+		Tst_count = 0;
 
-  if ((writ  fopen(fnamebuf, "w"))  NULL)
-   tst_resm(TFAIL, "failed to fopen file for write");
-  if ((rea  fopen(fnamebuf, "r"))  NULL)
-   tst_resm(TFAIL, "failed to fopen file for read");
+		if ((writ = fopen(fnamebuf, "w")) == NULL)
+			tst_resm(TFAIL, "failed to fopen file for write");
+		if ((rea = fopen(fnamebuf, "r")) == NULL)
+			tst_resm(TFAIL, "failed to fopen file for read");
 
-  fprintf(writ,"abcdefghijklmnopqrstuv") ;
-  fflush(writ);
-  sleep(1);
+		fprintf(writ,"abcdefghijklmnopqrstuv") ;
+		fflush(writ);
+		sleep(1);
 
-  if ((getc(rea)) ! 'a')
-   tst_resm(TFAIL, "getc from read side was confused");
+		if ((getc(rea)) != 'a') 
+			tst_resm(TFAIL, "getc from read side was confused");
 
-  /* fork off the children */
-  tst_resm(TINFO, "Forking %d children", Nforks);
-  tst_flush();
-  for (forks  0; forks < Nforks; forks++) {
-      if ((pid1  fork())  0) { /* child */
-   ch_r_stat  getc(rea);
+		/* fork off the children */
+		tst_resm(TINFO, "Forking %d children", Nforks);
+		tst_flush();
+		for (forks = 0; forks < Nforks; forks++) {
+		    if ((pid1 = fork()) == 0) { /* child */
+			ch_r_stat = getc(rea);
 #ifdef DEBUG
-   tst_resm(TINFO, "Child got char: %c", ch_r_stat);
-   tst_resm(TINFO, "integer value of getc in child "
-     "expected %d got %d", 'b', ch_r_stat);
+			tst_resm(TINFO, "Child got char: %c", ch_r_stat);
+			tst_resm(TINFO, "integer value of getc in child "
+				 "expected %d got %d", 'b', ch_r_stat);
 #endif
-   if (ch_r_stat  'b') {
-       if (vflag) {
-    tst_resm(TINFO, "%6d: read correct character",
-      getpid());
-       }
-    exit(0);
-   } else {
-       if (vflag) {
-    tst_resm(TINFO, "%6d: read '%c' instead of 'b'",
-      getpid(), (char)ch_r_stat);
-       }
-    exit(1);
-   }
-      } else if (pid1  -1) {
-   tst_brkm(TBROK, cleanup,
-     "Failed to fork child %d, %s (%d)",
-     forks+1, strerror(errno), errno);
-   tst_exit();
-      }
-  }
-  tst_resm(TINFO, "Forked all %d children, now collecting", Nforks);
+			if (ch_r_stat == 'b') {
+			    if (vflag) {
+				tst_resm(TINFO, "%6d: read correct character",
+						getpid());
+			    }
+				exit(0);
+			} else {
+			    if (vflag) {
+				tst_resm(TINFO, "%6d: read '%c' instead of 'b'",
+						getpid(), (char)ch_r_stat);
+			    }
+				exit(1);
+			}
+		    } else if (pid1 == -1) {
+			tst_brkm(TBROK, cleanup,
+					"Failed to fork child %d, %s (%d)",
+					forks+1, strerror(errno), errno);
+			tst_exit();
+		    }
+		}
+		tst_resm(TINFO, "Forked all %d children, now collecting", Nforks);
 
-  /* Collect all the kids and see how they did */
+		/* Collect all the kids and see how they did */
 
-  c_pass  c_fail  0;
-  while (wait(&status) > 0) {
-      if (WIFEXITED(status) && WEXITSTATUS(status)  0) {
-   c_pass++;
-      } else {
-   c_fail++;
-      }
-      --forks;
-  }
-  if (forks  0) {
-      tst_resm(TINFO, "Collected all %d children", Nforks);
-      if (c_fail > 0) {
-   tst_resm(TFAIL, "%d/%d children didn't read correctly from an inheritted fd", c_fail, Nforks);
-      } else {
-   tst_resm(TPASS, "%d/%d children read correctly from an inheritted fd", c_pass, Nforks);
-      }
-  } else if (forks > 0) {
-      tst_brkm(TBROK, cleanup, "There should be %d more children to collect!", forks);
-  } else /* forks < 0 */ {
-      tst_brkm(TBROK, cleanup, "Collected %d more children then I should have!", abs(forks));
-  }
- }
- fclose(writ);
- fclose(rea);
- cleanup();
+		c_pass = c_fail = 0;
+		while (wait(&status) > 0) {
+		    if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
+			c_pass++;
+		    } else {
+			c_fail++;
+		    }
+		    --forks;
+		}
+		if (forks == 0) {
+		    tst_resm(TINFO, "Collected all %d children", Nforks);
+		    if (c_fail > 0) {
+			tst_resm(TFAIL, "%d/%d children didn't read correctly from an inheritted fd", c_fail, Nforks);
+		    } else {
+			tst_resm(TPASS, "%d/%d children read correctly from an inheritted fd", c_pass, Nforks);
+		    }
+		} else if (forks > 0) {
+		    tst_brkm(TBROK, cleanup, "There should be %d more children to collect!", forks);
+		} else /* forks < 0 */ {
+		    tst_brkm(TBROK, cleanup, "Collected %d more children then I should have!", abs(forks));
+		}
+	}
+	fclose(writ);
+	fclose(rea);
+	cleanup();
 
- /*NOTREACHED*/
- return 0;
+	/*NOTREACHED*/
+	return 0;
 }
 
 void
@@ -203,50 +203,50 @@ help()
 void
 setup()
 {
- /*
-  * capture signals
-  */
- tst_sig(FORK, DEF_HANDLER, cleanup);
+	/*
+	 * capture signals
+	 */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
- umask(0);
+	umask(0);
 
- /*
-  * Pause if that option was specified
-  */
- TEST_PAUSE;
+	/*
+	 * Pause if that option was specified
+	 */
+	TEST_PAUSE;
 
- /*
-  * make a temp directory and cd to it
-  */
- tst_tmpdir();
-
- strcpy(fnamebuf, "fork07.");
- sprintf(pbuf, "%d", getpid());
- strcat(fnamebuf, pbuf);
+	/*
+	 * make a temp directory and cd to it
+	 */
+	tst_tmpdir();
+	
+	strcpy(fnamebuf, "fork07.");
+	sprintf(pbuf, "%d", getpid());
+	strcat(fnamebuf, pbuf);
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit
+ *	       completion or premature exit
  */
 void
 cleanup()
 {
- int waitstatus;
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	int waitstatus;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* collect our zombies */
- while (wait(&waitstatus) > 0);
+	/* collect our zombies */
+	while (wait(&waitstatus) > 0);
 
- /*
-  * remove tmp dir and all files in it
-  */
- unlink(fnamebuf);
- tst_rmdir();
+	/*
+	 * remove tmp dir and all files in it
+	 */
+	unlink(fnamebuf);
+	tst_rmdir();
 
- tst_exit();
+	tst_exit();
 }

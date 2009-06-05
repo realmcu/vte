@@ -30,7 +30,7 @@
 * *
 * * History:
 * *  DATE      NAME                             DESCRIPTION
-* *  13/11/08  Gowrishankar M Creation of this test.
+* *  13/11/08  Gowrishankar M 			Creation of this test.
 * *            <gowrishankar.m@in.ibm.com>
 *
 ******************************************************************************/
@@ -46,8 +46,8 @@
 #include <test.h>
 #include <libclone.h>
 
-char *TCID  "pidns17";
-int TST_TOTAL  1;
+char *TCID = "pidns17";
+int TST_TOTAL = 1;
 int errno;
 
 int child_fn(void *);
@@ -61,46 +61,46 @@ void cleanup(void);
  */
 int child_fn(void *arg)
 {
- pid_t pid, ppid;
- int i, children[10], status;
+	pid_t pid, ppid;
+	int i, children[10], status;
 
- /* Set process id and parent pid */
- pid  getpid();
- ppid  getppid();
- if (pid ! CHILD_PID || ppid ! PARENT_PID) {
-  tst_resm(TBROK, "cinit: pidns is not created.");
-  cleanup();
- }
+	/* Set process id and parent pid */
+	pid = getpid();
+	ppid = getppid();
+	if (pid != CHILD_PID || ppid != PARENT_PID) {
+		tst_resm(TBROK, "cinit: pidns is not created.");
+		cleanup();
+	}
 
- /* Spawn many children */
- for (i  0; i < 10; i++)
-  if ((children[i]  fork())  0)
-   sleep(10);
+	/* Spawn many children */
+	for (i = 0; i < 10; i++)
+		if ((children[i] = fork()) == 0)
+			sleep(10);
 
- /* wait for last child to get scheduled */
- sleep(1);
+	/* wait for last child to get scheduled */
+	sleep(1);
 
- if (kill(-1, SIGUSR1)  -1) {
-  tst_resm(TBROK, "cinit: kill(-1, SIGUSR1) failed");
-  cleanup();
- }
+	if (kill(-1, SIGUSR1) == -1) {
+		tst_resm(TBROK, "cinit: kill(-1, SIGUSR1) failed");
+		cleanup();
+	}
 
- for (i  0; i < 10; i++) {
-  if (waitpid(children[i], &status, WNOHANG)  -1) {
-   tst_resm(TBROK, "cinit: waitpid() failed(%s)",\
-     strerror(errno));
-   cleanup();
-  }
-  if (!(WIFSIGNALED(&status) && WTERMSIG(status)  SIGUSR1)) {
-   tst_resm(TFAIL, "cinit: found a child alive still.");
-   cleanup();
-  }
- }
- tst_resm(TPASS, "cinit: all children are terminated.");
+	for (i = 0; i < 10; i++) {
+		if (waitpid(children[i], &status, WNOHANG) == -1) {
+			tst_resm(TBROK, "cinit: waitpid() failed(%s)",\
+					strerror(errno));
+			cleanup();
+		}
+		if (!(WIFSIGNALED(&status) && WTERMSIG(status) == SIGUSR1)) {
+			tst_resm(TFAIL, "cinit: found a child alive still.");
+			cleanup();
+		}
+	}
+	tst_resm(TPASS, "cinit: all children are terminated.");
 
- /* cleanup and exit */
- cleanup();
- exit(0);
+	/* cleanup and exit */
+	cleanup();
+	exit(0);
 }
 
 /***********************************************************************
@@ -109,33 +109,33 @@ int child_fn(void *arg)
 
 int main(int argc, char *argv[])
 {
- int status, ret;
- pid_t pid;
+	int status, ret;
+	pid_t pid;
 
- pid  getpid();
+	pid = getpid();
 
- /* Container creation on PID namespace */
- ret  do_clone_unshare_test(T_CLONE,\
-     CLONE_NEWPID, child_fn, NULL);
- if (ret ! 0) {
-  tst_resm(TBROK, "parent: clone() failed. rc%d(%s)",\
-    ret, strerror(errno));
-  /* Cleanup & continue with next test case */
-  cleanup();
- }
+	/* Container creation on PID namespace */
+	ret = do_clone_unshare_test(T_CLONE,\
+					CLONE_NEWPID, child_fn, NULL);
+	if (ret != 0) {
+		tst_resm(TBROK, "parent: clone() failed. rc=%d(%s)",\
+				ret, strerror(errno));
+		/* Cleanup & continue with next test case */
+		cleanup();
+	}
 
- sleep(1);
- if (wait(&status) < 0)
-  tst_resm(TWARN, "parent: waitpid() failed.");
+	sleep(1);
+	if (wait(&status) < 0)
+		tst_resm(TWARN, "parent: waitpid() failed.");
 
- if (!WIFEXITED(status) || WEXITSTATUS(status) ! 0)
-  tst_resm(TWARN, "parent: container was terminated by %s",\
-    strsignal(WTERMSIG(status)));
+	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+		tst_resm(TWARN, "parent: container was terminated by %s",\
+				strsignal(WTERMSIG(status)));
 
- /* cleanup and exit */
- cleanup();
- exit(0);
-} /* End main */
+	/* cleanup and exit */
+	cleanup();
+	exit(0);
+}	/* End main */
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
@@ -143,9 +143,9 @@ int main(int argc, char *argv[])
  */
 void cleanup()
 {
- /* Clean the test testcase as LTP wants*/
- TEST_CLEANUP;
+	/* Clean the test testcase as LTP wants*/
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -16,6 +16,6 @@
 #include "posixtest.h"
 
 int main() {
- printf("Will not test that the target process is moved to the tail of the thread\nlist for its priority when it is running.\n");
- return PTS_UNTESTED;
+	printf("Will not test that the target process is moved to the tail of the thread\nlist for its priority when it is running.\n");
+	return PTS_UNTESTED;
 }

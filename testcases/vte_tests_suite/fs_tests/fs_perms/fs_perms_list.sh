@@ -18,18 +18,18 @@
 #                          Modification     Tracking
 # Author                       Date          Number    Description of Changes
 #-----------------------   ------------    ----------  ---------------------
-# Spring Zhang               03/07/2008       n/a        Initial ver.
+# Spring Zhang               03/07/2008       n/a        Initial ver. 
 # Spring                     28/11/2008       n/a      Modify COPYRIGHT header
 #############################################################################
-# Portability:  ARM sh bash
+# Portability:  ARM sh bash 
 #
 # File Name:    fs_perms_list.sh
 # Total Tests:        21
 # Test Strategy: file access permission test
+# 
+# Input:	none
 #
-# Input: none
-#
-# Return:
+# Return:     
 #
 # Use command "./fs_perms_list.sh to test file system access permission
 

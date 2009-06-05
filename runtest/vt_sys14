@@ -1,0 +1,30 @@
+#Verification Tests Command File
+# generated automatically by the test campaign macro
+# version 1.0
+
+#files:
+#files:
+#files:
+#files:
+#files:
+
+TGE-LV-SYS-2570 lstat02
+TGE-LV-SYS-2580 lstat03
+TGE-LV-SYS-2590 mallopt01
+TGE-LV-SYS-2600 memset01
+TGE-LV-SYS-2610 memcmp01
+TGE-LV-SYS-2620 memcpy01
+TGE-LV-SYS-2630 mkdir01
+TGE-LV-SYS-2640 mkdir02
+TGE-LV-SYS-2650 mkdir03
+TGE-LV-SYS-2660 mkdir04
+TGE-LV-SYS-2670 mkdir05
+TGE-LV-SYS-2680 symlink01 -T mkdir05
+TGE-LV-SYS-2690 mkdir08
+TGE-LV-SYS-2700 mkdir09
+TGE-LV-SYS-2710 mknod01
+TGE-LV-SYS-2720 mknod02
+TGE-LV-SYS-2730 mknod03
+TGE-LV-SYS-2740 mknod04
+TGE-LV-SYS-2750 mknod05
+TGE-LV-SYS-2760 mknod06

@@ -23,11 +23,11 @@
 
 int main()
 {
- printf("Will not test the user ID and group ID of a created\n");
- printf("message queue as we would need multiple users and\n");
- printf("groups on the system to test.\n");
- printf("Will not test the file permissions as testing would\n");
- printf("be implementation defined.\n");
- return PTS_UNTESTED;
+	printf("Will not test the user ID and group ID of a created\n");
+	printf("message queue as we would need multiple users and\n");
+	printf("groups on the system to test.\n");
+	printf("Will not test the file permissions as testing would\n");
+	printf("be implementation defined.\n");
+	return PTS_UNTESTED;
 }
 

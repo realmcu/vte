@@ -1,0 +1,17 @@
+#Verification Tests Command File
+
+#VT IO drivers tests
+#files: directio_test 
+#files: dio_bio_test 
+#files: dio_bio_vectors_test 
+#files: ioerrors_test 
+#files: dio_append_test 
+#files: dio_sparse_test
+
+#IO
+TGE-LV-IO-0010 directio_test -b 65536 -n 2000
+TGE-LV-IO-0020 dio_bio_test -b 65536 -i 1000 -o 1024000
+TGE-LV-IO-0030 dio_bio_vectors_test -b 65536 -n 10 -i 100 -o 1024000
+TGE-LV-IO-0040 ioerrors_test
+TGE-LV-IO-0050 dio_append_test
+TGE-LV-IO-0060 dio_sparse_test

@@ -20,7 +20,7 @@
 # name of file	: Makefile						  #
 ###########################################################################
 CFLAGS+=	-I../../../../include -Wall
-LOADLIBES+=	-L../../../../lib -lltp
+LOADLIBES+=	-L../../../../lib -lltp 
 
 SRCS=$(wildcard *.c)
 TARGETS=$(patsubst %.c,%,$(SRCS))

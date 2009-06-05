@@ -36,7 +36,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif 
 
 extern GSList *managed_hs_resources;
 /* a simple typedef to store a state flag with a resource

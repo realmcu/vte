@@ -29,10 +29,10 @@
 
 #define DBG_INOUT	0x0001	/* display function entry/exit */
 #define DBG_ERRORS	0x0002	/* display various error conditions */
-#define DBG_INFO  0x0004	/* display other debug info */
-#define DBG_ARGS  0x0008
+#define DBG_INFO  	0x0004	/* display other debug info */
+#define DBG_ARGS  	0x0008
 
-#define DBG_BUFS  0x0010	/* display buffer configuration info */
+#define DBG_BUFS  	0x0010	/* display buffer configuration info */
 #define DBG_XMIT    0x0020	/* display buffer transmits */
 #define DBG_RECV    0x0040	/* display buffer receipts */
 

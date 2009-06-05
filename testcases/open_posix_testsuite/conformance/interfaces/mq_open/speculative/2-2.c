@@ -7,7 +7,7 @@
  */
 
 /*
- * Test that if the first letter of name is not "/" the behavior
+ * Test that if the first letter of name is not "/" the behavior 
  * is implementation defined.
  */
 
@@ -29,18 +29,18 @@ int main()
 
         sprintf(qname, "msgqueue_%d", getpid());
 
-        queue  mq_open(qname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, NULL);
-        if (queue  (mqd_t)-1) {
-  printf("This implementation does not appear to support\n");
-  printf("message queue names that do not start with /.\n");
-  return PTS_PASS;
+        queue = mq_open(qname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, NULL);
+        if (queue == (mqd_t)-1) {
+		printf("This implementation does not appear to support\n");
+		printf("message queue names that do not start with /.\n");
+		return PTS_PASS;
         }
 
- mq_close(queue);
- mq_unlink(qname);
+	mq_close(queue);
+	mq_unlink(qname);
 
- printf("This implementation may support message queue\n");
- printf("names that do not start with /.\n");
+	printf("This implementation may support message queue\n");
+	printf("names that do not start with /.\n");
         printf("Test PASSED\n");
         return PTS_PASS;
 }

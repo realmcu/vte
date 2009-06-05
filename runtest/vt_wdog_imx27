@@ -1,0 +1,11 @@
+#Verification Tests Command File
+
+#VT Watchdog drivers tests
+#files: watchdog_testapp_2
+
+#Watchdog for MX27 platform by /dev/misc/watchdog
+#TGE-LV-WDOG-0060 watchdog_testapp_2 -W 0 -T 1 -S 1
+#TGE-LV-WDOG-0070 watchdog_testapp_2 -W 1 -T 1 -S 1
+
+
+#WARNING the commented tests are not automatical tests

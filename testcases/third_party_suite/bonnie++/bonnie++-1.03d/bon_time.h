@@ -39,7 +39,7 @@ public:
   void Initialize();
   static double get_cur_time();
   static double get_cpu_use();
-
+ 
 private:
   int print_cpu_stat(tests_t test);
   int print_stat(tests_t test);

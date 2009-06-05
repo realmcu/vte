@@ -22,11 +22,11 @@
 /*              These tests are adapted from AIX float PVT tests.             */
 /*                                                                            */
 /******************************************************************************/
-#include <float.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
+#include 	<float.h>
+#include 	<stdio.h>
+#include 	<stdlib.h>
+#include 	<string.h>
+#include 	<errno.h>
 #include        <limits.h>
 #include        <unistd.h>
 #include        <fcntl.h>
@@ -38,118 +38,118 @@
 
 int create_Result_file()
 {
+	
+	int signgam = 0;
+	int i, nbVal, tabSign[20000];
+	double	tabR[20000], Inc;
+	char *F_name, *F_namesign;
+	int fp, fpsi;
 
- int signgam  0;
- int i, nbVal, tabSign[20000];
- double tabR[20000], Inc;
- char *F_name, *F_namesign;
- int fp, fpsi;
+	F_name = "gamma_out.ref";
+	F_namesign = "gamma_sign.ref";
+	nbVal = 20000; 
 
- F_name  "gamma_out.ref";
- F_namesign  "gamma_sign.ref";
- nbVal  20000;
+	Inc = sqrt(3);
 
- Inc  sqrt(3);
+	for (i=0; i<nbVal; i++)
+	{
+		tabR[i] = lgamma(1+Inc*i);
+		tabSign[i] = signgam;
+	}
 
- for (i0; i<nbVal; i++)
- {
-  tabR[i]  lgamma(1+Inc*i);
-  tabSign[i]  signgam;
- }
-
- fp  open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
- fpsi  open(F_namesign,O_RDWR|O_CREAT|O_TRUNC,0777);
+	fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
+	fpsi = open(F_namesign,O_RDWR|O_CREAT|O_TRUNC,0777);
         if (!fp || !fpsi)
         {
-            printf("error opening file");
-  close(fp);
-  close(fpsi);
-  return -1;
- }
- else
- {
-  for (i  0; i<nbVal; i++ )
-  {
-   write(fp,&tabR[i],sizeof(double));
-   write(fpsi,&tabSign[i],sizeof(int));
-  }
-
-  close(fp);
-  close(fpsi);
-  return 0;
- }
- return(0);
+            	printf("error opening file");
+		close(fp);
+		close(fpsi);
+		return -1;
+	}
+	else
+	{
+		for (i = 0; i<nbVal; i++ ) 
+		{
+			write(fp,&tabR[i],sizeof(double));
+			write(fpsi,&tabSign[i],sizeof(int));
+		}
+	
+		close(fp);
+		close(fpsi);
+		return 0;
+	}
+	return(0);
 }
 
 
 int create_Data_file()
 {
- int i, nbVal;
- double tabD[20000], Inc;
- char *F_name;
- int fp;
+	int i, nbVal;
+	double	tabD[20000], Inc;
+	char *F_name;
+	int fp;
 
- F_name  "gamma_inp.ref";
- nbVal  20000;
+	F_name = "gamma_inp.ref";
+	nbVal = 20000; 
 
- Inc  sqrt(3);
+	Inc = sqrt(3);
 
- for (i0; i<nbVal; i++)
-  tabD[i]  (1+Inc*i);
+	for (i=0; i<nbVal; i++)
+		tabD[i] = (1+Inc*i);
 
 
- fp  open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
+	fp = open(F_name,O_RDWR|O_CREAT|O_TRUNC,0777);
         if (!fp)
         {
-            printf("error opening file");
-     close(fp);
-     return -1;
+            	printf("error opening file");
+	    	close(fp);
+	    	return -1;
         }
         else
-        {
-  for (i  0; i<nbVal; i++ )
-  {
-   write(fp,&tabD[i],sizeof(double));
-  }
-  close(fp);
-  return 0;
- }
- return(0);
+        {	
+		for (i = 0; i<nbVal; i++ ) 
+		{
+			write(fp,&tabD[i],sizeof(double));
+		}
+		close(fp);
+		return 0;
+	}
+	return(0);
 }
 
 
 int main(int argc, char  *argv[])
 {
 
- if (argc > 1)
- {
-  switch ( atoi(argv[1]) )
-  {
-  case 1:
-   if (create_Data_file()  0)
-    printf("Data file created\n");
-   else
-    printf("problem during %s data file creation\n", argv[0]);
-   break;
+	if (argc > 1) 
+	{
+		switch ( atoi(argv[1]) )
+		{
+		case 1:
+			if (create_Data_file() == 0)
+				printf("Data file created\n");
+			else
+				printf("problem during %s data file creation\n", argv[0]);
+			break;
 
-  case 2:
-   if (create_Result_file()  0)
-    printf("Result file created\n");
-   else
-    printf("problem during %s result file creation\n", argv[0]);
-   break;
-  default:
-   printf("Bad arglist code for: '%s'\n", argv[0]);
-   return -1;
-   break;
-  }
- }
- else
- {
-  if (create_Data_file() ! 0)
-   printf("problem during %s data file creation\n", argv[0]);
-  if (create_Result_file() ! 0)
-   printf("problem during %s result file creation\n", argv[0]);
- }
- return(0);
+		case 2:
+			if (create_Result_file() == 0)
+				printf("Result file created\n");
+			else
+				printf("problem during %s result file creation\n", argv[0]);
+			break;
+		default:
+			printf("Bad arglist code for: '%s'\n", argv[0]);
+			return -1;
+			break;
+		}
+	}
+	else
+	{
+		if (create_Data_file() != 0)
+			printf("problem during %s data file creation\n", argv[0]);
+		if (create_Result_file() != 0)
+			printf("problem during %s result file creation\n", argv[0]);
+	}
+	return(0);
 }

@@ -24,7 +24,7 @@
 /*                                                                            */
 /* Description: This Program tests the new system call introduced in 2.6.27.  */
 /*              Ulrich´s comment as in:                                       */
-/* http://git.kernel.org/?plinux/kernel/git/torvalds/linux-2.6.git;acommit;he7d476dfdf0bcfed478a207aecfdc84f81efecaf */
+/* http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=e7d476dfdf0bcfed478a207aecfdc84f81efecaf */
 /* which says:                                                                */
 /* This patch adds support for the EFD_NONBLOCK flag to eventfd2.  The        */
 /* additional changes needed are minimal. The following test must be adjusted */
@@ -80,9 +80,9 @@ extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
-char *TCID      "eventfd2_02"; /* test program identifier.              */
+char *TCID     = "eventfd2_02"; /* test program identifier.              */
 int  testno;
-int  TST_TOTAL  1;                  /* total number of tests in this file.   */
+int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -142,29 +142,29 @@ int main (int argc, char *argv[]) {
     char *msg;              /* message returned from parse_opts */
 
     /* Parse standard options given to run the test. */
-    msg  parse_opts(argc, argv, (option_t *) NULL, NULL);
-    if (msg ! (char *) NULL) {
+    msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
+    if (msg != (char *) NULL) {
         tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
         tst_exit();
     }
     if((tst_kvercmp(2, 6, 27)) < 0) {
         tst_resm(TCONF, "This test can only run on kernels that are 2.6.27 and higher");
         tst_exit();
-    }
+    }  
     setup();
 
     /* Check looping state if -i option given */
-    for (lc  0; TEST_LOOPING(lc); ++lc) {
-         Tst_count  0;
-         for (testno0; testno < TST_TOTAL; ++testno) {
-              fd  syscall (__NR_eventfd2, 1, 0);
-              if (fd  -1) {
+    for (lc = 0; TEST_LOOPING(lc); ++lc) {
+         Tst_count = 0;
+         for (testno=0; testno < TST_TOTAL; ++testno) {
+              fd = syscall (__NR_eventfd2, 1, 0);
+              if (fd == -1) {
                   tst_resm(TFAIL, "eventfd2(0) failed");
                   cleanup();
                   tst_exit();
               }
-              fl  fcntl (fd, F_GETFL);
-              if (fl  -1) {
+              fl = fcntl (fd, F_GETFL);
+              if (fl == -1) {
                   tst_brkm(TBROK, cleanup, "fcntl failed");
                   tst_exit();
               }
@@ -175,18 +175,18 @@ int main (int argc, char *argv[]) {
               }
               close (fd);
 
-              fd  syscall (__NR_eventfd2, 1, EFD_NONBLOCK);
-              if (fd  -1) {
+              fd = syscall (__NR_eventfd2, 1, EFD_NONBLOCK);
+              if (fd == -1) {
                   tst_resm(TFAIL, "eventfd2(EFD_NONBLOCK) failed");
                   cleanup();
                   tst_exit();
               }
-              fl  fcntl (fd, F_GETFL);
-              if (fl  -1) {
+              fl = fcntl (fd, F_GETFL);
+              if (fl == -1) {
                   tst_brkm(TBROK, cleanup, "fcntl failed");
                   tst_exit();
               }
-              if ((fl & O_NONBLOCK)  0) {
+              if ((fl & O_NONBLOCK) == 0) {
                    tst_resm(TFAIL, "eventfd2(EFD_NONBLOCK) does not set non-blocking mode");
                    cleanup();
                    tst_exit();

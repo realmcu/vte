@@ -19,39 +19,39 @@
 
 /*
  * NAME
- * setpriority03.c
+ *	setpriority03.c
  *
  * DESCRIPTION
- * setpriority03 - test for an expected failure by using an invalid
- *   PRIO value
+ *	setpriority03 - test for an expected failure by using an invalid
+ *			PRIO value
  *
  * CALLS
- * setpriority()
+ *	setpriority()
  *
  * ALGORITHM
- * loop if that option was specified
- * issue the system call
- * check the errno value
- *   issue a PASS message if we get EINVAL - errno 22
- * otherwise, the tests fails
- *   issue a FAIL message
- *   break any remaining tests
- *   call cleanup
+ *	loop if that option was specified
+ *	issue the system call
+ *	check the errno value
+ *	  issue a PASS message if we get EINVAL - errno 22
+ *	otherwise, the tests fails
+ *	  issue a FAIL message
+ *	  break any remaining tests
+ *	  call cleanup
  *
  * USAGE:  <for command-line>
  *  setpriority03 [-c n] [-e] [-i n] [-I x] [-p x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -e   : Turn on errno logging.
- *        -i n : Execute test n times.
- *        -I x : Execute test for x seconds.
- *        -P x : Pause for x seconds between iterations.
- *        -t   : Turn on syscall timing.
+ *	       -i n : Execute test n times.
+ *	       -I x : Execute test for x seconds.
+ *	       -P x : Pause for x seconds between iterations.
+ *	       -t   : Turn on syscall timing.
  *
  * HISTORY
- * 03/2001 - Written by Wayne Boyer
+ *	03/2001 - Written by Wayne Boyer
  *
  * RESTRICTIONS
- * none
+ *	none
  */
 
 #include "test.h"
@@ -64,62 +64,62 @@
 void cleanup(void);
 void setup(void);
 
-char *TCID "setpriority03";
-int TST_TOTAL  1;
+char *TCID= "setpriority03";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
-int exp_enos[]  {EINVAL, 0};
+int exp_enos[] = {EINVAL, 0};
 
 int main(int ac, char **av)
 {
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
- int new_val  2;
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
+	int new_val = 2;
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	}
 
- setup();   /* global setup */
+	setup();			/* global setup */
 
- /* The following loop checks looping state if -i option given */
+	/* The following loop checks looping state if -i option given */
 
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  /*
-   * Use an invalid PRIO value by making it negative.
-   * This should give an EINVAL error.
-   * PRIO_PROCESS  0, PRIO_PGRP  1, PRIO_USER  2
-   */
+		/*
+		 * Use an invalid PRIO value by making it negative.
+		 * This should give an EINVAL error.
+		 * PRIO_PROCESS = 0, PRIO_PGRP = 1, PRIO_USER = 2
+		 */
+	
+		/* call the system call with the TEST() macro */
+		TEST(setpriority(-PRIO_PGRP, 0, new_val));
+	
+		if (TEST_RETURN == 0) {
+			tst_resm(TFAIL, "call failed to produce expected error "
+				 "- errno = %d - %s", TEST_ERRNO,
+				 strerror(TEST_ERRNO));
+		}
+	
+		TEST_ERROR_LOG(TEST_ERRNO);
 
-  /* call the system call with the TEST() macro */
-  TEST(setpriority(-PRIO_PGRP, 0, new_val));
+		switch (TEST_ERRNO) {
+		case EINVAL:
+			tst_resm(TPASS, "expected failure - errno = %d - %s",
+				 TEST_ERRNO, strerror(TEST_ERRNO));
+			break;
+		default:
+			tst_resm(TFAIL, "call failed to produce expected error "
+				 "- errno = %d - %s", TEST_ERRNO,
+				 strerror(TEST_ERRNO));
+		}
+	}
+	cleanup();
 
-  if (TEST_RETURN  0) {
-   tst_resm(TFAIL, "call failed to produce expected error "
-     "- errno  %d - %s", TEST_ERRNO,
-     strerror(TEST_ERRNO));
-  }
-
-  TEST_ERROR_LOG(TEST_ERRNO);
-
-  switch (TEST_ERRNO) {
-  case EINVAL:
-   tst_resm(TPASS, "expected failure - errno  %d - %s",
-     TEST_ERRNO, strerror(TEST_ERRNO));
-   break;
-  default:
-   tst_resm(TFAIL, "call failed to produce expected error "
-     "- errno  %d - %s", TEST_ERRNO,
-     strerror(TEST_ERRNO));
-  }
- }
- cleanup();
-
- /*NOTREACHED*/
+	/*NOTREACHED*/
 
   return(0);
 
@@ -131,29 +131,29 @@ int main(int ac, char **av)
 void
 setup(void)
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Set up the expected error numbers for -e option */
- TEST_EXP_ENOS(exp_enos);
+	/* Set up the expected error numbers for -e option */
+	TEST_EXP_ENOS(exp_enos);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- *        or premature exit.
+ * 	       or premature exit.
  */
 void
 cleanup(void)
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

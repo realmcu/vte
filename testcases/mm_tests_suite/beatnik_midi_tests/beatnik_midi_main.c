@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved THIS SOURCE CODE IS
  * CONFIDENTIAL AND PROPRIETARY AND MAY NOT BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
  * Freescale Semiconductor, Inc. */
@@ -13,17 +13,17 @@
         If not, indicate specific reasons why is it not portable.
 */
 
-/* REVISION HISTORY 
+/*======================== REVISION HISTORY ==================================
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
-D.Simakov / smkd001c  11/09/2005   TLSbo53248   Initial version
-*/
+D.Simakov / smkd001c  11/09/2005   TLSbo53248   Initial version 
+=============================================================================*/
 
 
-/*
+/*==================================================================================================
                                         INCLUDE FILES
-*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,80 +36,80 @@ D.Simakov / smkd001c  11/09/2005   TLSbo53248   Initial version
 /* Verification Test Environment Include Files */
 #include "beatnik_midi_test.h"
 
-/*
+/*==================================================================================================
                                         LOCAL MACROS
-*/
+==================================================================================================*/
 
 
-/*
+/*==================================================================================================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-*/
+==================================================================================================*/
 
-/*
+/*==================================================================================================
                                        LOCAL CONSTANTS
-*/
+==================================================================================================*/
 
-/*
+/*==================================================================================================
                                        LOCAL VARIABLES
-*/
+==================================================================================================*/
 
 
-/*
+/*==================================================================================================
                                        GLOBAL CONSTANTS
-*/
+==================================================================================================*/
 
 
-/*
+/*==================================================================================================
                                        GLOBAL VARIABLES
-*/
+==================================================================================================*/
 /* Extern Global Variables */
 extern int Tst_count;   /* counter for tst_xxx routines.  */
 extern char *TESTDIR;   /* temporary dir created by tst_tmpdir(void) */
 
 /* Global Variables */
-char   *TCID  NULL;    /* test program identifier.  */
-int     TST_TOTAL  1;  /* total number of tests in this file.  */
+char   *TCID = NULL;    /* test program identifier.  */
+int     TST_TOTAL = 1;  /* total number of tests in this file.  */
 
 sTestappConfig gTestappConfig;
 
-/*
+/*==================================================================================================
                                    GLOBAL FUNCTION PROTOTYPES
-*/
+==================================================================================================*/
 void    cleanup( void );
 void    setup( void );
 int     main(int argc, char **argv);
 
-/*
+/*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
-*/
+==================================================================================================*/
 
 
-/*
+/*==================================================================================================
                                        GLOBAL FUNCTIONS
-*/
+==================================================================================================*/
 
-/**/
-/**/
+/*================================================================================================*/
+/*================================================================================================*/
 void cleanup( void )
 {
-        int     rv  TFAIL;
+        int     rv = TFAIL;
 
-        rv  VT_beatnik_midi_cleanup();
-        if (rv ! TPASS)
+        rv = VT_beatnik_midi_cleanup();
+        if (rv != TPASS)
         {
-                tst_resm(TWARN, "VT_beatnik_midi_cleanup() Failed : error code  %d", rv);
+                tst_resm(TWARN, "VT_beatnik_midi_cleanup() Failed : error code = %d", rv);
         }
 
         tst_exit();
 }
 
-/*
+/*==================================================================================================
                                        LOCAL FUNCTIONS
-*/
+==================================================================================================*/
 
 
-/**/
-/**/
+/*================================================================================================*/
+/*================================================================================================*/
 void help( void )
 {
         printf("Switches (names may be abbreviated):\n\n");
@@ -121,43 +121,43 @@ void help( void )
 }
 
 
-/**/
-/**/
+/*================================================================================================*/
+/*================================================================================================*/
 void setup( void )
 {
-        int     rv  TFAIL;
+        int     rv = TFAIL;
 
-        rv  VT_beatnik_midi_setup();
-        if (rv ! TPASS)
+        rv = VT_beatnik_midi_setup();
+        if (rv != TPASS)
         {
-                tst_brkm(TBROK, cleanup, "VT_beatnik_midi_setup() Failed : error code  %d", rv);
+                tst_brkm(TBROK, cleanup, "VT_beatnik_midi_setup() Failed : error code = %d", rv);
         }
 
         return;
 }
 
 
-/**/
-/**/
+/*================================================================================================*/
+/*================================================================================================*/
 int main(int argc, char **argv)
 {
-        int     rv  TFAIL;
+        int     rv = TFAIL;
 
         /* parse options. */
-        int     testcaseFlag  0;
-        int     iterFlag  0;
-        int     cfgFlag  0;
-        int     obanFlag  0;
-        int     verboseFlag  0;
+        int     testcaseFlag = 0;
+        int     iterFlag = 0;
+        int     cfgFlag = 0;
+        int     obanFlag = 0;
+        int     verboseFlag = 0;
         char   *testcaseOpt;
         char   *iterOpt;
         char   *cfgOpt;
         char   *obanOpt;
         char   *msg;
 
-        // int isTestCaseAuto  TRUE; /*+ AskUser();*/
+        // int isTestCaseAuto = TRUE; /*+ AskUser();*/
 
-        option_t options[]  {
+        option_t options[] = {
                 {"T:", &testcaseFlag, &testcaseOpt},
                 {"N:", &iterFlag, &iterOpt},
                 {"C:", &cfgFlag, &cfgOpt},
@@ -167,17 +167,17 @@ int main(int argc, char **argv)
         };
 
         /* parse options. */
-        if (NULL ! (msg  parse_opts(argc, argv, options, help)))
+        if (NULL != (msg = parse_opts(argc, argv, options, help)))
         {
                 tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
         }
 
         /* Fill the gTestappConfig by the parsed options */
-        gTestappConfig.mTestCase  testcaseFlag ? atoi(testcaseOpt) : NOMINAL_FUNCTIONALITY;
-        gTestappConfig.mNumIter  iterFlag ? atoi(iterOpt) : DEFAULT_ITERATIONS;
-        gTestappConfig.mConfigFilename  cfgFlag ? cfgOpt : NULL;
-        gTestappConfig.mOutputBan  obanFlag ? atoi(obanOpt) : 0;
-        gTestappConfig.mVerbose  verboseFlag;
+        gTestappConfig.mTestCase = testcaseFlag ? atoi(testcaseOpt) : NOMINAL_FUNCTIONALITY;
+        gTestappConfig.mNumIter = iterFlag ? atoi(iterOpt) : DEFAULT_ITERATIONS;
+        gTestappConfig.mConfigFilename = cfgFlag ? cfgOpt : NULL;
+        gTestappConfig.mOutputBan = obanFlag ? atoi(obanOpt) : 0;
+        gTestappConfig.mVerbose = verboseFlag;
 
         /* Check if all of the required arguments were presented */
         if (!gTestappConfig.mConfigFilename)
@@ -187,25 +187,25 @@ int main(int argc, char **argv)
         switch (gTestappConfig.mTestCase)
         {
         case NOMINAL_FUNCTIONALITY:
-                TCID  strdup("nominal");
+                TCID = strdup("nominal");
                 break;
         case ROBUSTNESS:
-                TCID  strdup("robustness");
+                TCID = strdup("robustness");
                 break;
         case RELOCATABILITY:
-                TCID  strdup("relocatability");
+                TCID = strdup("relocatability");
                 break;
         case RE_ENTRANCE:
-                TCID  strdup("re-entrance");
+                TCID = strdup("re-entrance");
                 break;
         case PRE_EMPTION:
-                TCID  strdup("pre-emption");
+                TCID = strdup("pre-emption");
                 break;
         case ENDURANCE:
-                TCID  strdup("endurance");
+                TCID = strdup("endurance");
                 break;
         case LOAD:
-                TCID  strdup("load");
+                TCID = strdup("load");
                 break;
         default:
                 assert(!"unknown test case");
@@ -218,9 +218,9 @@ int main(int argc, char **argv)
         tst_resm(TINFO, "Testing if %s test case is OK", TCID);
 
         /* VTE : print results and exit test scenario */
-        rv  VT_beatnik_midi_test();
+        rv = VT_beatnik_midi_test();
 
-        if (rv  TPASS)
+        if (rv == TPASS)
                 tst_resm(TPASS, "%s test case worked as expected", TCID);
         else
                 tst_resm(TFAIL, "%s test case did NOT work as expected", TCID);

@@ -1,8 +1,8 @@
-/*
+/*   
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  julie.n.fleischer REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this
+ * of this license, see the COPYING file at the top level of this 
  * source tree.
  *
  * Test to see if timer_getoverrun() sets errno=EINVAL if no timers have been
@@ -19,21 +19,21 @@
 
 int main(int argc, char *argv[])
 {
- timer_t tid;
+	timer_t tid;
 
- tid = (timer_t) BOGUSTID;
+	tid = (timer_t) BOGUSTID;
 
- if (timer_getoverrun(tid) == -1) {
-  if (EINVAL == errno) {
-   printf("fcn returned -1 and errno=EINVAL\n");
-   return PTS_PASS;
-  } else {
-   printf("fcn returned -1, but errno!=EINVAL\n");
-   printf("Test FAILED\n");
-   return PTS_FAIL;
-  }
- }
+	if (timer_getoverrun(tid) == -1) {
+		if (EINVAL == errno) {
+			printf("fcn returned -1 and errno=EINVAL\n");
+			return PTS_PASS;
+		} else {
+			printf("fcn returned -1, but errno!=EINVAL\n");
+			printf("Test FAILED\n");
+			return PTS_FAIL;
+		}
+	}
 
- printf("fcn did not return -1\n");
- return PTS_PASS;
+	printf("fcn did not return -1\n");
+	return PTS_PASS;
 }

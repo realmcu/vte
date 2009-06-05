@@ -30,7 +30,7 @@ install: change_owner.mode
 clean:
 	rm -f $(TARGETS)
 
-change_owner.mode:
+change_owner.mode: 
 	@/bin/sh ./change_owner.mode.sh
 
 .PHONY: change_owner.mode

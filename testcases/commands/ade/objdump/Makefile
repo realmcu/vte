@@ -16,7 +16,7 @@ install:
 clean:
 	rm -f $(TESTS)
 
-$(TESTS):
+$(TESTS): 
 	$(CC) -O $(CFLAGS) $(cflags) test $(LDFLAGS) ./test.c
 	$(CC) -c $(CFLAGS) $(cflags) test_arch.o ./test.c
 	$(CC) $(CFLAGS) $(cflags) test_D $(LDFLAGS) ./test.c

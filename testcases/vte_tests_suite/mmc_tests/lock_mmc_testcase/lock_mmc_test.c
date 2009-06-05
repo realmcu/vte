@@ -17,22 +17,22 @@ Description of the file
         If not, indicate specific reasons why is it not portable.
 */
 
-/*======== REVISION HISTORY ==========
+/*======================== REVISION HISTORY ==================================
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
 S.ZAVJALOV/zvjs001c   04/04/2005   tlsbo45047   Initial version
 
-=================*/
+=============================================================================*/
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*======== INCLUDE FILES ========*/
+/*======================== INCLUDE FILES ====================================*/
 /* Standard Include Files */
 #include <errno.h>
-
+    
 /* Harness Specific Include Files. */
 #include "test.h"
 
@@ -45,31 +45,31 @@ extern "C"{
 
 #include <time.h>
 
-/*======== LOCAL CONSTANTS ==========*/
+/*======================== LOCAL CONSTANTS ==================================*/
 
-/*======== LOCAL MACROS =========*/
+/*======================== LOCAL MACROS =====================================*/
 
-/*======== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) ===*/
+/*======================== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) =======*/
 
-/*======== LOCAL VARIABLES ==========*/
+/*======================== LOCAL VARIABLES ==================================*/
 
 int fd_device = 0;
 unsigned char *patten_buf = NULL, *read_buf = NULL;
 
-/*======== GLOBAL CONSTANTS =========*/
+/*======================== GLOBAL CONSTANTS =================================*/
 
-/*======== GLOBAL VARIABLES =========*/
+/*======================== GLOBAL VARIABLES =================================*/
 
 extern int vb_mode;
 extern char *device_name;
 
-/*======== LOCAL FUNCTION PROTOTYPES ========*/
+/*======================== LOCAL FUNCTION PROTOTYPES ========================*/
 
-/*======== LOCAL FUNCTIONS ==========*/
+/*======================== LOCAL FUNCTIONS ==================================*/
 
-/*======== GLOBAL FUNCTIONS =========*/
+/*======================== GLOBAL FUNCTIONS =================================*/
 
-/*= VT_lock_mmc_setup =*/
+/*===== VT_lock_mmc_setup =====*/
 /**
 Description of the function
 @brief  assumes the pre-condition of the test case execution
@@ -110,7 +110,7 @@ int VT_lock_mmc_setup()
     return TPASS;
 }
 
-/*= VT_tempalte_cleanup =*/
+/*===== VT_tempalte_cleanup =====*/
 /**
 Description of the function
 @brief  assumes the post-condition of the test case execution
@@ -140,12 +140,12 @@ int VT_lock_mmc_cleanup(void)
     return TPASS;
 }
 
-/*= VT_lock_mmc_test =*/
+/*===== VT_lock_mmc_test =====*/
 /**
 @brief  Template test scenario X function
 
 @param  None
-
+  
 @return On success - return TPASS
         On failure - return the error code
 */
@@ -166,7 +166,7 @@ int VT_lock_mmc_test()
     bytes_count = read(fd_device, read_buf, READ_BLOCK);
     if (bytes_count != READ_BLOCK)
     {
- tst_resm(TFAIL, "VT_lock_mmc_test() Failed read from device");
+	tst_resm(TFAIL, "VT_lock_mmc_test() Failed read from device");
         return TFAIL;
     }
 
@@ -184,10 +184,10 @@ int VT_lock_mmc_test()
     bytes_count = write(fd_device, patten_buf, WRITE_BLOCK);
     if (bytes_count == WRITE_BLOCK)
     {
- tst_resm(TFAIL, "VT_lock_mmc_test() It is possible to write on device");
+	tst_resm(TFAIL, "VT_lock_mmc_test() It is possible to write on device");
         return TFAIL;
     }
-
+            
     return TPASS;
 }
 

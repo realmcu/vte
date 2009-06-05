@@ -1,0 +1,13 @@
+#Verification Tests Command File
+
+#VT GIF decoder tests
+#files: gif_decoder_testapp
+#files: opts_cfg opts_cfg_er
+
+#GIF decoder tests
+TGE-LV-GIFD-0010 gif_decoder_testapp -T 0 -C $LTPROOT/testcases/bin/opts_cfg -D 5    
+TGE-LV-GIFD-0020 gif_decoder_testapp -T 1 -C $LTPROOT/testcases/bin/opts_cfg -N 10
+TGE-LV-GIFD-0030 gif_decoder_testapp -T 2 -C $LTPROOT/testcases/bin/opts_cfg -N 10
+TGE-LV-GIFD-0040 gif_decoder_testapp -T 0 -C $LTPROOT/testcases/bin/opts_cfg_er
+TGE-LV-GIFD-0050 gif_decoder_testapp -T 3 -C $LTPROOT/testcases/bin/opts_cfg -N 10 -D 5    
+TGE-LV-GIFD-0060 gif_decoder_testapp -T 4 -C $LTPROOT/testcases/bin/opts_cfg -D 5    

@@ -1,0 +1,30 @@
+#Verification Tests Command File
+# generated automatically by the test campaign macro
+# version 1.0
+
+#files:
+#files:
+#files:
+#files:
+#files:
+
+TGE-LV-SYS-2370 link03
+TGE-LV-SYS-2380 link04
+TGE-LV-SYS-2390 link05
+TGE-LV-SYS-2400 link06
+TGE-LV-SYS-2410 link07
+TGE-LV-SYS-2420 listen01
+TGE-LV-SYS-2430 llseek01
+TGE-LV-SYS-2440 llseek02
+TGE-LV-SYS-2450 lseek01
+TGE-LV-SYS-2460 lseek02
+TGE-LV-SYS-2470 lseek03
+TGE-LV-SYS-2480 lseek04
+TGE-LV-SYS-2490 lseek05
+TGE-LV-SYS-2500 lseek06
+TGE-LV-SYS-2510 lseek07
+TGE-LV-SYS-2520 lseek08
+TGE-LV-SYS-2530 lseek09
+TGE-LV-SYS-2540 lseek10
+TGE-LV-SYS-2550 lstat01
+TGE-LV-SYS-2560 symlink01 -T lstat01

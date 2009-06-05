@@ -1,0 +1,30 @@
+#Verification Tests Command File
+# generated automatically by the test campaign macro
+# version 1.0
+
+#files:
+#files:
+#files:
+#files:
+#files:
+
+TGE-LV-SYS-4970 settimeofday01
+TGE-LV-SYS-4980 settimeofday02
+TGE-LV-SYS-4990 setuid01
+TGE-LV-SYS-5000 setuid02
+TGE-LV-SYS-5010 setuid03
+TGE-LV-SYS-5020 sigaction01
+TGE-LV-SYS-5030 sigaction02
+TGE-LV-SYS-5040 sigaltstack01
+TGE-LV-SYS-5050 sigaltstack02
+TGE-LV-SYS-5060 sighold02
+TGE-LV-SYS-5070 signal01
+TGE-LV-SYS-5080 signal02
+TGE-LV-SYS-5090 signal03
+TGE-LV-SYS-5100 signal04
+TGE-LV-SYS-5110 signal05
+TGE-LV-SYS-5120 sigpending02
+TGE-LV-SYS-5130 sigprocmask01
+TGE-LV-SYS-5140 sigrelse01
+TGE-LV-SYS-5150 sigsuspend01
+TGE-LV-SYS-5160 socket01

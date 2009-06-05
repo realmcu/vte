@@ -34,21 +34,21 @@
 
 int main()
 {
- int fd;
- int i;
- char buf[32*1024];
- char filename[1024];
+	int fd;
+	int i;
+	char buf[32*1024];
+	char filename[1024];
 
     printf("Starting dirty tests...\n");
 
- sprintf(filename, "/test/aiodio/file.xx.%d", getpid());
- fd  open(filename, O_CREAT|O_WRONLY, 0666);
+	sprintf(filename, "/test/aiodio/file.xx.%d", getpid());
+	fd = open(filename, O_CREAT|O_WRONLY, 0666);
 
- memset(buf, 0xaa, sizeof(buf));
- for ( i  0 ; i < 3000; i++)
-  write(fd, buf, sizeof(buf));
- fsync(fd);
- close(fd);
- unlink(filename);
+	memset(buf, 0xaa, sizeof(buf));
+	for ( i = 0 ; i < 3000; i++)
+		write(fd, buf, sizeof(buf));
+	fsync(fd);
+	close(fd);
+	unlink(filename);
     return 0;
 }

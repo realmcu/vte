@@ -53,62 +53,62 @@
 #include <netinet/sctp.h>
 #include <sctputil.h>
 
-char *TCID  __FILE__;
-int TST_TOTAL  3;
-int TST_CNT  0;
+char *TCID = __FILE__;
+int TST_TOTAL = 3;
+int TST_CNT = 0;
 
-int
-main(void)
+int 
+main(void) 
 {
+	
+	int sd, ret;
+	socklen_t len;
+	struct sctp_rtoinfo srtoinfo; /*setting the variables*/
+	struct sctp_rtoinfo grtoinfo; /*Getting the variables*/
 
- int sd, ret;
- socklen_t len;
- struct sctp_rtoinfo srtoinfo; /*setting the variables*/
- struct sctp_rtoinfo grtoinfo; /*Getting the variables*/
+	sd = test_socket (PF_INET, SOCK_STREAM, IPPROTO_SCTP);
 
- sd  test_socket (PF_INET, SOCK_STREAM, IPPROTO_SCTP);
+	len = sizeof(struct sctp_rtoinfo);
+	
+	/*TEST1 Getting the default values using getsockopt()*/
+	ret = getsockopt(sd, IPPROTO_SCTP, SCTP_RTOINFO, &grtoinfo, &len);
+	if (ret < 0)
+		tst_brkm(TBROK, tst_exit, "getsockopt SCTP_RTOINFO "
+			 "ret:%d, errno:%d", ret, errno);
 
- len  sizeof(struct sctp_rtoinfo);
+	tst_resm(TPASS, "getsockopt() SCTP_RTOINFO - SUCCESS");
 
- /*TEST1 Getting the default values using getsockopt()*/
- ret  getsockopt(sd, IPPROTO_SCTP, SCTP_RTOINFO, &grtoinfo, &len);
- if (ret < 0)
-  tst_brkm(TBROK, tst_exit, "getsockopt SCTP_RTOINFO "
-    "ret:%d, errno:%d", ret, errno);
+	/*Assigning the values to RTO initial and max and min bounds*/
+	srtoinfo.srto_initial=60;
+	srtoinfo.srto_max=100;
+	srtoinfo.srto_min=40;
 
- tst_resm(TPASS, "getsockopt() SCTP_RTOINFO - SUCCESS");
+	/*TEST2 Setting the values using setsockopt()*/
+	ret = setsockopt(sd, IPPROTO_SCTP, SCTP_RTOINFO, &srtoinfo, 
+		sizeof(struct sctp_rtoinfo));
+	if (ret < 0)
+		tst_brkm(TBROK, tst_exit, "setsockopt SCTP_RTOINFO "
+			 "ret:%d, errno:%d", ret, errno);
 
- /*Assigning the values to RTO initial and max and min bounds*/
- srtoinfo.srto_initial60;
- srtoinfo.srto_max100;
- srtoinfo.srto_min40;
+	tst_resm(TPASS, "setsockopt() SCTP_RTOINFO - SUCCESS");
 
- /*TEST2 Setting the values using setsockopt()*/
- ret  setsockopt(sd, IPPROTO_SCTP, SCTP_RTOINFO, &srtoinfo,
-  sizeof(struct sctp_rtoinfo));
- if (ret < 0)
-  tst_brkm(TBROK, tst_exit, "setsockopt SCTP_RTOINFO "
-    "ret:%d, errno:%d", ret, errno);
+	/*Getting the values which are set using setsockopt()*/
+	ret = getsockopt(sd, IPPROTO_SCTP, SCTP_RTOINFO, &grtoinfo, &len);
+	if (ret < 0)
+		tst_brkm(TBROK, tst_exit, "getsockopt SCTP_RTOINFO "
+			 "ret:%d, errno:%d", ret, errno);
 
- tst_resm(TPASS, "setsockopt() SCTP_RTOINFO - SUCCESS");
+	/* TEST3 Compare the get values with the set values. */ 
+	if (srtoinfo.srto_initial != grtoinfo.srto_initial &&
+            srtoinfo.srto_max != grtoinfo.srto_max &&
+            srtoinfo.srto_min != grtoinfo.srto_min)
+		tst_brkm(TBROK, tst_exit, "setsockopt/getsockopt SCTP_RTOINFO "
+			 "compare failed");
 
- /*Getting the values which are set using setsockopt()*/
- ret  getsockopt(sd, IPPROTO_SCTP, SCTP_RTOINFO, &grtoinfo, &len);
- if (ret < 0)
-  tst_brkm(TBROK, tst_exit, "getsockopt SCTP_RTOINFO "
-    "ret:%d, errno:%d", ret, errno);
+	tst_resm(TPASS, "setsockopt()/getsockopt SCTP_RTOINFO compare - "
+		 "SUCCESS");
 
- /* TEST3 Compare the get values with the set values. */
- if (srtoinfo.srto_initial ! grtoinfo.srto_initial &&
-            srtoinfo.srto_max ! grtoinfo.srto_max &&
-            srtoinfo.srto_min ! grtoinfo.srto_min)
-  tst_brkm(TBROK, tst_exit, "setsockopt/getsockopt SCTP_RTOINFO "
-    "compare failed");
+	close(sd);
 
- tst_resm(TPASS, "setsockopt()/getsockopt SCTP_RTOINFO compare - "
-   "SUCCESS");
-
- close(sd);
-
- return 0;
+	return 0;
 }

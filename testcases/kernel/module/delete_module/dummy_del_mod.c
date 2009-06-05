@@ -16,14 +16,14 @@
  */
 /*************************************************************************
  * Description: This is a kernel loadable module programme used by
- *  delete_module03 testcase which inserts this module as part
- *  setup.
+ *		delete_module03 testcase which inserts this module as part
+ *		setup.
  *************************************************************************/
 
 #define MODULE
-/* #define __KERNEL__    Commented this line out b/c it causes errors with
- *    module.h when it calls /usr/include/linux/version.h
- *    -11/22/02 Robbie Williamson <robbiew@us.ibm.com>
+/* #define __KERNEL__    Commented this line out b/c it causes errors with 
+ *			 module.h when it calls /usr/include/linux/version.h
+ *			 -11/22/02 Robbie Williamson <robbiew@us.ibm.com>
  */
 
 #include <asm/atomic.h>
@@ -39,13 +39,13 @@ static int dummy_func_test(void);
 
 static int dummy_func_test()
 {
- return 0;
+	return 0;
 }
 
 static int __init dummy_init(void) {
         struct proc_dir_entry *proc_dummy;
 
-        proc_dummy  proc_mkdir("dummy", 0);
+        proc_dummy = proc_mkdir("dummy", 0);
         return 0;
 }
 

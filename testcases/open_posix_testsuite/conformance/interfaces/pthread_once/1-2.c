@@ -24,7 +24,7 @@
 * -> call pthread_once
 * -> check the init_routine executed
 
-* The test fails if the init_routine has not been called after pthread_once
+* The test fails if the init_routine has not been called after pthread_once 
 * has returned.
 
 */
@@ -47,22 +47,22 @@
 /******************************   Test framework   *****************************************/
 /********************************************************************************************/
 #include "testfrmw.h"
- #include "testfrmw.c"
+ #include "testfrmw.c" 
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);
+ * UNRESOLVED(ret, descr);  
  *    where descr is a description of the error and ret is an int (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- *
+ * 
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- *
+ * 
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- *
+ * 
  * Those may be used to output information.
  */
 
@@ -82,37 +82,37 @@ int control;
 void my_init( void )
 {
 
- control  1;
+	control = 1;
 
- return ;
+	return ;
 }
 
 /* The main test function. */
 int main( int argc, char * argv[] )
 {
- int ret;
+	int ret;
 
- pthread_once_t myctl  PTHREAD_ONCE_INIT;
+	pthread_once_t myctl = PTHREAD_ONCE_INIT;
 
- /* Initialize output */
- output_init();
+	/* Initialize output */
+	output_init();
 
- control  0;
+	control = 0;
 
- /* Call the initializer */
- ret  pthread_once( &myctl, my_init );
+	/* Call the initializer */
+	ret = pthread_once( &myctl, my_init );
 
- if ( ret ! 0 )
- {
-  UNRESOLVED( ret, "pthread_once failed" );
- }
+	if ( ret != 0 )
+	{
+		UNRESOLVED( ret, "pthread_once failed" );
+	}
 
- if ( control ! 1 )
- {
-  FAILED( "The initializer function did not execute" );
- }
+	if ( control != 1 )
+	{
+		FAILED( "The initializer function did not execute" );
+	}
 
- PASSED;
+	PASSED;
 }
 
 

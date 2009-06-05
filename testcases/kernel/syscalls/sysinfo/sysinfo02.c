@@ -18,15 +18,15 @@
  */
 
 /*
- * Test Name : sysinfo02
+ * Test Name :	sysinfo02
  *
  * Test description
- *  Verify that sysinfo() returns the correct error for an invalid address structure.
- *
+ *  Verify that sysinfo() returns the correct error for an invalid address structure. 
+ * 
  * Expected Result :
  *  sysinfo() returns value 0 on success and the sysinfo structure should
  *  be filled with the system information.
- *
+ * 
  * Algorithm:
  *  Setup :
  *   Setup for signal handling.
@@ -36,24 +36,24 @@
  *  Loop if the proper option is given.
  *  Execute the system call.
  *  Pass an invalid address to the structure.
- *  Check return code, if system call failed (return-1)
- *  Test case passed, Issue functionality pass message
+ *  Check return code, if system call failed (return=-1)
+ *  	Test case passed, Issue functionality pass message
  *  Otherwise,
- * Issue Functionality-Fail message.
+ *	Issue Functionality-Fail message.
  * Cleanup:
  *  Print errno log and/or timing stats if options given
  *  Delete the temporary directory created.
  *
  * USAGE:  <for command-line>
- * sysinfo02 [-c n] [-i n] [-I x] [-P x] [-t]
- * where,  -c n : Run n copies concurrently.
- *  -i n : Execute test n times.
- *  -I x : Execute test for x seconds.
- *  -P x : Pause for x seconds between iterations.
- *  -t   : Turn on syscall timing.
+ *	sysinfo02 [-c n] [-i n] [-I x] [-P x] [-t]
+ *	where,  -c n : Run n copies concurrently.
+ *		-i n : Execute test n times.
+ *		-I x : Execute test for x seconds.
+ *		-P x : Pause for x seconds between iterations.
+ *		-t   : Turn on syscall timing.
  * History
- * 07/2001 John George
- *  -Ported
+ *	07/2001 John George
+ *		-Ported
  *
  * Restrictions:
  *  None
@@ -76,52 +76,52 @@
 void setup();
 void cleanup();
 
-char *TCID  "sysinfo02"; /* Test program identifier */
-int TST_TOTAL  1;  /* Total number of test cases */
-extern int Tst_count;  /* Test case counter for tst_* routines */
+char *TCID = "sysinfo02";	/* Test program identifier */
+int TST_TOTAL = 1;		/* Total number of test cases */
+extern int Tst_count;		/* Test case counter for tst_* routines */
 
 #if !defined(UCLINUX)
 
 int
 main(int ac, char **av)
 {
- struct sysinfo *sysinfo_buf;
- int lc;
- char *msg;
+	struct sysinfo *sysinfo_buf;
+	int lc;
+	char *msg;
 
- sysinfo_buf  (void *)INVALID_ADDRESS;
+	sysinfo_buf = (void *)INVALID_ADDRESS;
 
- /* parse standard options */
- if((msg  parse_opts(ac, av, (option_t *) NULL, NULL)) !
-  (char *) NULL) {
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/* parse standard options */
+	if((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) !=
+		(char *) NULL) {
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- setup();  /* Global setup */
+	setup();		/* Global setup */
 
- /* The following loop checks looping state if -i option given */
- for(lc  0; TEST_LOOPING(lc); lc++) {
+	/* The following loop checks looping state if -i option given */
+	for(lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  TEST(sysinfo(sysinfo_buf));
-  /* check return code */
-  if (TEST_RETURN ! 0 && TEST_ERRNO  EFAULT) {
-   /* Test succeeded as it was supposed to return -1 */
-   tst_resm(TPASS, "Test to check the error code %d",
-    TEST_ERRNO,"PASSED");
-  }
-  else {
-   /* Test Failed */
-   tst_brkm(TFAIL, cleanup, "sysinfo() Failed, Expected -1"
-     "returned %d/n", TEST_ERRNO, "FAILED");
-   /*NOTREACHED*/
-  }
- }
- cleanup();
- /*NOTREACHED*/
+		TEST(sysinfo(sysinfo_buf));
+		/* check return code */
+		if (TEST_RETURN != 0 && TEST_ERRNO == EFAULT) {
+			/* Test succeeded as it was supposed to return -1 */
+			tst_resm(TPASS, "Test to check the error code %d",
+				TEST_ERRNO,"PASSED");
+		}
+		else {
+			/* Test Failed */
+			tst_brkm(TFAIL, cleanup, "sysinfo() Failed, Expected -1"
+				 "returned %d/n", TEST_ERRNO, "FAILED");
+			/*NOTREACHED*/
+		}
+	}
+	cleanup();
+	/*NOTREACHED*/
 
   return(0);
 
@@ -131,27 +131,27 @@ main(int ac, char **av)
 
 int main()
 {
- tst_resm(TINFO, "test is not available on uClinux");
- return 0;
+	tst_resm(TINFO, "test is not available on uClinux");
+	return 0;
 }
 
 #endif /* if !defined(UCLINUX) */
 
 /*
  * setup()
- * performs one time setup
+ *	performs one time setup
  *
  */
 void
 setup(void)
 {
- /* capture signals */
- tst_sig(FORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
- umask(0);
+	umask(0);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
@@ -161,6 +161,6 @@ setup(void)
 void
 cleanup(void)
 {
- TEST_CLEANUP;
- tst_exit();
+	TEST_CLEANUP;
+	tst_exit();
 }

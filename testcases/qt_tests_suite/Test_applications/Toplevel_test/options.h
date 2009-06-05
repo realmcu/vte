@@ -87,7 +87,7 @@ public:
     QPushButton* pbApply;
     QPushButton* pbClose;
     QPushButton* pbClose_E;
-
+    
 
 public slots:
     virtual void apply();

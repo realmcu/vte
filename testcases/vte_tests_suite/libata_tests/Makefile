@@ -10,7 +10,7 @@
 #       THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #       BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #       Freescale Semiconductor, Inc.
-#
+#     
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
@@ -19,7 +19,7 @@
 #A.Ozerov/b00320              10/09/2006     TLSbo76800  Initial version.
 #
 ###################################################################################################
-#Portability: ARM GCC
+#Portability: ARM GCC 
 #
 ###################################################################################################
 

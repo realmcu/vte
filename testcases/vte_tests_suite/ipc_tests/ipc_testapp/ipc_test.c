@@ -1,17 +1,17 @@
-/*===================*/
+/*===============================================================================================*/
 /**
         @file   ipc_test.c
 
         @brief  Source file for Unified IPC test application.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -23,14 +23,14 @@ A.Ozerov/b00320              26/04/2006     TLSbo61791  Performs a cast in accor
 Olivier Davard/b02578        09/21/2006     TLSbo61860  Update to get working tests
 A.Ozerov/b00320              11/12/2006     TLSbo84161  Minor changes.
 
-====================
+====================================================================================================
 Portability: ARM GCC
 
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <sys/ioctl.h>
 #include <sys/types.h>
@@ -51,14 +51,14 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "ipc_test.h"
 
-/*======================
+/*==================================================================================================
                                         DEFINES AND MACROS
-======================*/
+==================================================================================================*/
 const char pm_file[] = POWER_STATE_FILE;
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 unsigned int cycles;    /* Number of write/read cycles in appropriate tests */
 int     nonblock_mode;
 
@@ -66,9 +66,9 @@ extern char dev_fname[MAX_STR_LEN];
 extern char *dev_path;
 extern int dev_num;
 
-/*======================
+/*==================================================================================================
                                     LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 int     VT_ipc_dev_exch(unsigned int dev_id, unsigned int buf_size);
 void    VT_ipc_rnd_fill_buffer(char *buf, unsigned int size);
 int     VT_ipc_goto_pmode(unsigned int pmstate);
@@ -84,22 +84,22 @@ int     VT_ipc_ioctl_test(unsigned int dev_id);
 int     VT_ipc_pm_test(void);
 int     VT_ipc_errors_test(unsigned int dev_id);
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= VT_ipc_lkd_tst =*/
+/*================================================================================================*/
+/*===== VT_ipc_lkd_tst =====*/
 /**
 @brief  Performs some write/read operations with IPC device defined by number
 
 @param  pkt_len - length of package
         quantity_seg - segments quantity
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ipc_lkd_tst(int pkt_len, int quantity_seg)
 {
         struct ioctl_args args;
@@ -131,8 +131,8 @@ int VT_ipc_lkd_tst(int pkt_len, int quantity_seg)
         return ret;
 }
 
-/*====================*/
-/*= VT_ipc_packet_data_loopback =*/
+/*================================================================================================*/
+/*===== VT_ipc_packet_data_loopback =====*/
 /**
 @brief  Performs some write/read operations with IPC device defined by number
 
@@ -142,7 +142,7 @@ int VT_ipc_lkd_tst(int pkt_len, int quantity_seg)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ipc_packet_data_loopback(int pkt_len, int quantity_seg)
 {
         struct ioctl_args args;
@@ -174,8 +174,8 @@ int VT_ipc_packet_data_loopback(int pkt_len, int quantity_seg)
         return ret;
 }
 
-/*====================*/
-/*= VT_ipc_packet_data_write_ex_cont_loopback =*/
+/*================================================================================================*/
+/*===== VT_ipc_packet_data_write_ex_cont_loopback =====*/
 /**
 @brief  Performs some write/read operations with IPC device defined by number
 
@@ -185,7 +185,7 @@ int VT_ipc_packet_data_loopback(int pkt_len, int quantity_seg)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ipc_packet_data_cont_loopback(int pkt_len, int quantity_seg)
 {
         struct ioctl_args args;
@@ -220,18 +220,18 @@ int VT_ipc_packet_data_cont_loopback(int pkt_len, int quantity_seg)
         return ret;
 }
 
-/*====================*/
-/*= VT_ipc_dev_exch =*/
+/*================================================================================================*/
+/*===== VT_ipc_dev_exch =====*/
 /**
 @brief  Performs some write/read operations with IPC device defined by number
 
 @param  dev_id   - IPC device number
         buf_size - read/write buffer size
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ipc_dev_exch(unsigned int dev_id, unsigned int buf_size)
 {
         // char dev_fname[MAX_STR_LEN];
@@ -336,17 +336,17 @@ int VT_ipc_dev_exch(unsigned int dev_id, unsigned int buf_size)
         return ret;
 }
 
-/*====================*/
-/*= VT_ipc_rnd_fill_buffer =*/
+/*================================================================================================*/
+/*===== VT_ipc_rnd_fill_buffer =====*/
 /**
 @brief  Fills memory that buf points to by random values.
 
 @param  buf      - pointer to area to be filled
         buf_size - buffer size
-
+    
 @return None
 */
-/*====================*/
+/*================================================================================================*/
 void VT_ipc_rnd_fill_buffer(char *buf, unsigned int size)
 {
         int     i;
@@ -364,17 +364,17 @@ void VT_ipc_rnd_fill_buffer(char *buf, unsigned int size)
 
 }
 
-/*====================*/
-/*= VT_ipc_ioctl_test =*/
+/*================================================================================================*/
+/*===== VT_ipc_ioctl_test =====*/
 /**
 @brief  Sends IPC ioctl() commands to the given device file
 
 @param  dev_id - IPC device number
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ipc_ioctl_test(unsigned int dev_id)
 {
         // char dev_fname[MAX_STR_LEN];
@@ -442,17 +442,17 @@ int VT_ipc_ioctl_test(unsigned int dev_id)
         return ret;
 }
 
-/*====================*/
-/*= VT_ipc_pm_test =*/
+/*================================================================================================*/
+/*===== VT_ipc_pm_test =====*/
 /**
 @brief  Puts IPC device into various power modes, then restores active state
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ipc_pm_test(void)
 {
         int     state = ACTIVE_STATE;
@@ -496,19 +496,19 @@ int VT_ipc_pm_test(void)
         return ret;
 }
 
-/*====================*/
-/*= VT_ipc_goto_pmode =*/
+/*================================================================================================*/
+/*===== VT_ipc_goto_pmode =====*/
 /**
 @brief  Opens device power state mode and writes new state to it, then
         reads state from it. If state values are identical, operation
         was performed successfully.
 
 @param  pmstate    - number that represents power mode
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ipc_goto_pmode(unsigned int pmstate)
 {
         FILE   *fp;
@@ -535,17 +535,17 @@ int VT_ipc_goto_pmode(unsigned int pmstate)
         return ret;
 }
 
-/*====================*/
-/*= VT_ipc_errors_test =*/
+/*================================================================================================*/
+/*===== VT_ipc_errors_test =====*/
 /**
 @brief  Tries to generate some error conditions and checks proper device driver reaction
 
 @param  dev_id - IPC device number
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ipc_errors_test(unsigned int dev_id)
 {
         int     ret = TPASS;
@@ -560,24 +560,24 @@ int VT_ipc_errors_test(unsigned int dev_id)
                 ret = TFAIL;
         /* THIRD TEST for error: try to write/read short msgs with improper length */
         /* if (dev_id <= IPC_CHANNEL2) { if (VT_ipc_dev_exch(dev_id, SHORT_LEN + 1) == TFAIL)
-        *
+        * 
         * tst_resm(TINFO, "Got expected result: Cannot write a long msg on IPC Channels over MU");
         * else ret = TFAIL; } else { if (VT_ipc_dev_exch(dev_id, SHORT_LEN + 1) != TPASS) ret =
         * TFAIL; } */
         return ret;
 }
 
-/*====================*/
-/*= VT_ipc_invalid_dev_open =*/
+/*================================================================================================*/
+/*===== VT_ipc_invalid_dev_open =====*/
 /**
 @brief  Creates an invalid entry in /dev, then tries to open it.
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ipc_invalid_dev_open(void)
 {
         // char dev_fname[MAX_STR_LEN];
@@ -629,17 +629,17 @@ int VT_ipc_invalid_dev_open(void)
         return ret;
 }
 
-/*====================*/
-/*= VT_ipc_dev_open_twice =*/
+/*================================================================================================*/
+/*===== VT_ipc_dev_open_twice =====*/
 /**
 @brief  Tries to open valid IPC device twice. It shouldn't been allowed according to documentation.
 
 @param  dev_id - IPC device number
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ipc_dev_open_twice(unsigned int dev_id)
 {
         // char dev_fname[MAX_STR_LEN];
@@ -673,17 +673,17 @@ int VT_ipc_dev_open_twice(unsigned int dev_id)
         return ret;
 }
 
-/*====================*/
-/*= VT_ipc_thread_func =*/
+/*================================================================================================*/
+/*===== VT_ipc_thread_func =====*/
 /**
 @brief  Performs write/read operations with the device file defined by dev_info_t structure
 
 @param  arg - void pointer to the dev_info_t structure containing device number, buffer size
                 and error value
-
+    
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void   *VT_ipc_thread_func(void *arg)
 {
         dev_info_t *devp;
@@ -706,17 +706,17 @@ void   *VT_ipc_thread_func(void *arg)
         return NULL;
 }
 
-/*====================*/
-/*= VT_ipc_threads_tests =*/
+/*================================================================================================*/
+/*===== VT_ipc_threads_tests =====*/
 /**
 @brief  Creates threads, each of which will communicate to its own device.
 
 @param  dev_info - pointer to array of dev_info_t structures
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ipc_threads_tests(dev_info_t * dev_info)
 {
         int     i;
@@ -754,8 +754,8 @@ int VT_ipc_threads_tests(dev_info_t * dev_info)
         return ret;
 }
 
-/*====================*/
-/*= VT_ipc_setup =*/
+/*================================================================================================*/
+/*===== VT_ipc_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
@@ -765,7 +765,7 @@ int VT_ipc_threads_tests(dev_info_t * dev_info)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ipc_setup(void)
 {
         int     VT_rv = TFAIL;
@@ -774,8 +774,8 @@ int VT_ipc_setup(void)
         return VT_rv;
 }
 
-/*====================*/
-/*= VT_ipc_cleanup =*/
+/*================================================================================================*/
+/*===== VT_ipc_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
 
@@ -785,23 +785,23 @@ int VT_ipc_setup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ipc_cleanup(void)
 {
         return TPASS;
 }
 
-/*====================*/
-/*= VT_ipc_test =*/
+/*================================================================================================*/
+/*===== VT_ipc_test =====*/
 /**
 @brief  Fills dev_info_t array by given parameters and runs appropriate test scenario
 
 @param  test_id, dev_num, pkt_len, log_len, iter_nr, nonblk, quantity_seg.
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ipc_test(int test_id, int pkt_len, int log_len, int iter_nr, int nonblk, int quantity_seg)
 {
         int     i;

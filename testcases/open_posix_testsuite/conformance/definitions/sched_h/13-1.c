@@ -1,4 +1,4 @@
-/*
+/*    
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -20,7 +20,7 @@ typedef int (*sched_getparam_test) (pid_t, struct sched_param *);
 
 int dummyfcn(void)
 {
- sched_getparam_test dummyvar;
- dummyvar  sched_getparam;
- return 0;
+	sched_getparam_test dummyvar;
+	dummyvar = sched_getparam;
+	return 0;
 }

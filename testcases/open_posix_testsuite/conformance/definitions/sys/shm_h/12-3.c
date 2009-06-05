@@ -1,4 +1,4 @@
-/*
+/* 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -18,8 +18,8 @@ typedef key_t (*ftok_test)(const char *, int);
 
 int dummyfcn (void)
 {
- ftok_test dummyvar;
- dummyvar  ftok;
- return 0;
+	ftok_test dummyvar;
+	dummyvar = ftok;
+	return 0;
 }
 

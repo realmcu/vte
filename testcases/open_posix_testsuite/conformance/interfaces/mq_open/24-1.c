@@ -17,8 +17,8 @@
 
 int main()
 {
- printf("Will not test mq_open() being interrupted as it is\n");
- printf("not possible to predictably interrupt an mq_open().\n");
- return PTS_UNTESTED;
+	printf("Will not test mq_open() being interrupted as it is\n");
+	printf("not possible to predictably interrupt an mq_open().\n");
+	return PTS_UNTESTED;
 }
 

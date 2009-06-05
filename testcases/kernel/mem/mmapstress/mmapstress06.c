@@ -1,6 +1,6 @@
 /* IBM Corporation */
-/* 01/02/2003 Port to LTP avenkat@us.ibm.com */
-/* 06/30/2001 Port to Linux nsharoff@us.ibm.com */
+/* 01/02/2003	Port to LTP	avenkat@us.ibm.com */
+/* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
 /*
  *   Copyright (c) International Business Machines  Corp., 2003
  *
@@ -41,72 +41,72 @@
 #define FAILED 0
 #define PASSED 1
 
-int local_flag  PASSED;
-char *TCID  "mmapstress06"; //mfile_swap
+int local_flag = PASSED;
+char *TCID = "mmapstress06"; //mfile_swap
 FILE *temp;
-int TST_TOTAL  1;
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 int anyfail();
 void ok_exit();
-/***** ** ** *****/
+/*****	**	**	*****/
 
-#define ANON_GRAN_PAGES_MAX (32U)
+#define ANON_GRAN_PAGES_MAX	(32U)
 
 
-extern time_t time(time_t *);
-extern char *ctime(const time_t *);
+extern time_t	time(time_t *);
+extern char	*ctime(const time_t *);
 extern int atoi(const char *);
 
-#define NMFPTEPG  (1024)
-#define ERROR(M) (void)fprintf(stderr, "%s: errno  %d; " M "\n", \
-    argv[0], errno);
+#define NMFPTEPG		(1024)
+#define ERROR(M)	(void)fprintf(stderr, "%s: errno = %d; " M "\n", \
+				argv[0], errno);
 
 int
 main(int argc, char *argv[]) {
- caddr_t mmapaddr;
- size_t pagesize  sysconf(_SC_PAGE_SIZE);
- time_t t;
- int sleep_time0;
+	caddr_t	mmapaddr;
+	size_t	pagesize = sysconf(_SC_PAGE_SIZE);
+	time_t	t;
+	int	sleep_time=0;
 
- if (!argc) {
-  (void)fprintf(stderr, "argc  0\n");
-  anyfail();
- }
- if (argc ! 2 || !(sleep_time  atoi(argv[1]))) {
-  (void)fprintf(stderr, "usage: %s sleep_time\n", argv[0]);
-  anyfail();
- }
- (void)time(&t);
-// (void)printf("%s: Started %s", argv[0], ctime(&t));  LTP Port
- if (sbrk(pagesize - ((ulong)sbrk(0) & (pagesize-1)))  (char *)-1) {
-  ERROR("couldn't round up brk");
+	if (!argc) {
+		(void)fprintf(stderr, "argc == 0\n");
+		anyfail();
+	}
+	if (argc != 2 || !(sleep_time = atoi(argv[1]))) {
+		(void)fprintf(stderr, "usage: %s sleep_time\n", argv[0]);
+		anyfail();
+	}
+	(void)time(&t);
+//	(void)printf("%s: Started %s", argv[0], ctime(&t));  LTP Port
+	if (sbrk(pagesize - ((ulong)sbrk(0) & (pagesize-1))) == (char *)-1) {
+		ERROR("couldn't round up brk");
                 anyfail();
- }
- if ((mmapaddr  sbrk(0))  (char *)-1) {
-  ERROR("couldn't find top of brk");
+	}
+	if ((mmapaddr = sbrk(0)) == (char *)-1) {
+		ERROR("couldn't find top of brk");
                 anyfail();
- }
- /* mmapaddr is now on a page boundary after the brk segment */
- if (mmap(mmapaddr, (ANON_GRAN_PAGES_MAX*NMFPTEPG+1)*pagesize, PROT_READ|PROT_WRITE,MAP_ANONYMOUS|MAP_SHARED, 0, 0)(caddr_t)-1)
- {
-  ERROR("large mmap failed");
-  printf ("for this test to run, it needs a mmap space of\n");
-  printf ("%d pages\n", (ANON_GRAN_PAGES_MAX*NMFPTEPG+1));
-  return 1;
- }
- (void)sleep(sleep_time);
- (void)time(&t);
-// (void)printf("%s: Finished %s", argv[0], ctime(&t)); LTP Port
- ok_exit();
- return 0;
+	}
+	/* mmapaddr is now on a page boundary after the brk segment */
+	if (mmap(mmapaddr, (ANON_GRAN_PAGES_MAX*NMFPTEPG+1)*pagesize, PROT_READ|PROT_WRITE,MAP_ANONYMOUS|MAP_SHARED, 0, 0)==(caddr_t)-1)
+	{
+		ERROR("large mmap failed");
+		printf ("for this test to run, it needs a mmap space of\n");
+		printf ("%d pages\n", (ANON_GRAN_PAGES_MAX*NMFPTEPG+1));
+		return 1;
+	}
+	(void)sleep(sleep_time);
+	(void)time(&t);
+//	(void)printf("%s: Finished %s", argv[0], ctime(&t)); LTP Port
+	ok_exit();
+	return 0;
 }
 
-/***** LTP Port *****/
+/*****	LTP Port	*****/
 void ok_exit()
 {
         tst_resm(TPASS, "Test passed\n");
- tst_exit();
+	tst_exit();
 }
 
 
@@ -117,4 +117,4 @@ int anyfail()
   return(0);
 }
 
-/***** ** ** *****/
+/*****	**	**	*****/

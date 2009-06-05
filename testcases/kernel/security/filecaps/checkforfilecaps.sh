@@ -22,10 +22,10 @@
 check_simple_capset
 ret=$?
 if [ $ret -ne 0 ]; then
- echo Posix capabilities not compiled into the kernel.  Please
- echo modprobe capability or recompile your kernel with
- echo CONFIG_SECURITY_CAPABILITIES=y.
- exit 1
+	echo Posix capabilities not compiled into the kernel.  Please
+	echo modprobe capability or recompile your kernel with
+	echo CONFIG_SECURITY_CAPABILITIES=y.
+	exit 1
 fi
 
 touch testme
@@ -33,10 +33,10 @@ setcap cap_sys_admin=ip testme
 ret=$?
 rm -f testme
 if [ $ret -ne 0 ]; then
- echo File capabilities not compiled into kernel.  Please
- echo make sure your kernel is compiled with
- echo CONFIG_SECURITY_FILE_CAPABILITIES=y.
- exit 1
+	echo File capabilities not compiled into kernel.  Please
+	echo make sure your kernel is compiled with
+	echo CONFIG_SECURITY_FILE_CAPABILITIES=y.
+	exit 1
 fi
 
 exit 0

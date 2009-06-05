@@ -27,7 +27,7 @@
 * 2. When parent clone a process with flag CLONE_NEWPID, the parent process ID
 * of should be zero.
 *
-* 3. The container init process (one), should not get killed by the SIGKILL in
+* 3. The container init process (one), should not get killed by the SIGKILL in 
 * the childNS
 *
 * Total Tests:
@@ -36,15 +36,15 @@
 *
 * Test Assertion & Strategy:
 *
-* From main() clone a new child process with passing the clone_flag as
-* CLONE_NEWPID.
+* From main() clone a new child process with passing the clone_flag as 
+* CLONE_NEWPID. 
 * The container init, should not get killed by the SIGKILL inside the child NS.
 * Usage: <for command-line>
 * pidns04
 *
 * History:
 *
-* FLAG DATE     NAME                  DESCRIPTION
+* FLAG DATE     	NAME           		        DESCRIPTION
 * 08/10/08      Veerendra C <vechandr@in.ibm.com> Verifies killing of cont init.
 *
 *******************************************************************************/
@@ -64,8 +64,8 @@
 #define CHILD_PID       1
 #define PARENT_PID      0
 
-char *TCID  "pid_namespace4";
-int TST_TOTAL1;
+char *TCID = "pid_namespace4";
+int TST_TOTAL=1;
 int     fd[2] ;
 void cleanup(void);
 
@@ -74,32 +74,32 @@ void cleanup(void);
 */
 static int child_fn1(void *ttype)
 {
- pid_t cpid, ppid;
- cpid  getpid();
- ppid  getppid();
- char mesg[]  "I was not killed !";
-       /* Child process closes up read side of pipe */
-       close(fd[0]);
+	pid_t cpid, ppid;
+	cpid = getpid();
+	ppid = getppid();
+	char mesg[] = "I was not killed !";
+       	/* Child process closes up read side of pipe */
+       	close(fd[0]);
 
- /* Comparing the values to make sure pidns is created correctly */
- if(( cpid  CHILD_PID) && ( ppid  PARENT_PID ) ) {
-  tst_resm(TINFO, "PIDNS test is running inside container");
-  kill(INIT_PID, SIGKILL);
-  /* Verifying whether the container init is not killed, "
-   If so writing into the pipe created in the parent NS" */
+	/* Comparing the values to make sure pidns is created correctly */
+	if(( cpid == CHILD_PID) && ( ppid == PARENT_PID ) ) {
+		tst_resm(TINFO, "PIDNS test is running inside container");
+		kill(INIT_PID, SIGKILL);
+		/* Verifying whether the container init is not killed, "
+		 If so writing into the pipe created in the parent NS" */
 
-        /* Send "mesg" through the write side of pipe */
-        write(fd[1], mesg, (strlen(mesg)+1));
- }
- else {
-  tst_resm(TFAIL, "FAIL: Got unexpected result of"
-  " cpid%d ppid%d\n", cpid, ppid);
- }
- close(fd[1]);
- cleanup();
+        	/* Send "mesg" through the write side of pipe */
+        	write(fd[1], mesg, (strlen(mesg)+1));
+	}
+	else {
+		tst_resm(TFAIL, "FAIL: Got unexpected result of"
+		" cpid=%d ppid=%d\n", cpid, ppid);
+	}
+	close(fd[1]);
+	cleanup();
 
- /* NOT REACHED */
- return 0;
+	/* NOT REACHED */
+	return 0;
 }
 
 /***********************************************************************
@@ -108,47 +108,47 @@ static int child_fn1(void *ttype)
 
 int main(int argc, char *argv[])
 {
- int ret, status, nbytes;
+	int ret, status, nbytes;
         char    readbuffer[80];
 
- pipe(fd);
- ret  do_clone_unshare_test(T_CLONE, CLONE_NEWPID, child_fn1, NULL);
- if ((wait(&status)) < 0) {
-  tst_resm(TWARN, "wait() failed, skipping this test case");
-  /* Cleanup & continue with next test case */
-  cleanup();
- }
- if (ret  -1) {
-  tst_resm(TFAIL, "clone() Failed, errno  %d :"
-   " %s", ret, strerror(ret));
-  /* Cleanup & continue with next test case */
-  cleanup();
- }
+	pipe(fd);
+	ret = do_clone_unshare_test(T_CLONE, CLONE_NEWPID, child_fn1, NULL);
+	if ((wait(&status)) < 0) {
+		tst_resm(TWARN, "wait() failed, skipping this test case");
+		/* Cleanup & continue with next test case */
+		cleanup();
+	}
+	if (ret == -1) {
+		tst_resm(TFAIL, "clone() Failed, errno = %d :"
+			" %s", ret, strerror(ret));
+		/* Cleanup & continue with next test case */
+		cleanup();
+	}
 
- /* Parent process closes up write side of pipe */
- close(fd[1]);
- /* Read in a string from the pipe */
- nbytes  read(fd[0], readbuffer, sizeof(readbuffer));
+	/* Parent process closes up write side of pipe */
+	close(fd[1]);
+	/* Read in a string from the pipe */
+	nbytes = read(fd[0], readbuffer, sizeof(readbuffer));
 
- if (nbytes !0 ) {
-  tst_resm(TPASS, "Container init : %s", readbuffer);
- }
- else {
-  tst_resm(TFAIL, "Container init is killed by SIGKILL !!!");
- }
+	if (nbytes !=0 ) {
+		tst_resm(TPASS, "Container init : %s", readbuffer);
+	}
+	else {
+		tst_resm(TFAIL, "Container init is killed by SIGKILL !!!");
+	}
 
- if (WTERMSIG(status)) {
-  tst_resm(TFAIL, "Container init pid got killed by signal %d",
-  WTERMSIG(status));
- }
+	if (WTERMSIG(status)) {
+		tst_resm(TFAIL, "Container init pid got killed by signal %d",
+		WTERMSIG(status));
+	}
         /* cleanup and exit */
- cleanup();
- close(fd[0]);
+	cleanup();
+	close(fd[0]);
 
- /*NOTREACHED*/
- return 0;
+	/*NOTREACHED*/
+	return 0;
 
-} /* End main */
+}	/* End main */
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
@@ -157,9 +157,9 @@ int main(int argc, char *argv[])
 void
 cleanup()
 {
- /* Clean the test testcase as LTP wants*/
- TEST_CLEANUP;
+	/* Clean the test testcase as LTP wants*/
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

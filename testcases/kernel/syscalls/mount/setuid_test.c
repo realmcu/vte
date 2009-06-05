@@ -29,41 +29,41 @@
 #include <stdlib.h>
 #include <stdlib.h>
 #include <errno.h>
-
-
+        
+        
 /* Save the effective and real UIDs. */
-
+        
 static uid_t euid, ruid;
-
-
+        
+        
 /* Restore the effective UID to its original value. */
-
+        
 int
 do_setuid (void)
 {
- int status;
-
- status  setreuid (ruid, 0);
- if (status < 0) {
-  return 1;
- } else {
-  return 0;
- }
- return 0;
+	int status;
+        
+	status = setreuid (ruid, 0);
+	if (status < 0) {
+		return 1;
+	} else {
+		return 0;
+	}
+	return 0;
 }
-
+        
 /* Main program. */
-
+        
 int
 main (void)
 {
- int exit_status;
+	int exit_status;
 
 /* Save the real and effective user IDs.  */
- ruid  getuid ();
- euid  geteuid ();
- exit_status  do_setuid ();
+	ruid = getuid ();
+	euid = geteuid ();
+	exit_status = do_setuid ();
 
- exit(exit_status);
+	exit(exit_status);
 }
 

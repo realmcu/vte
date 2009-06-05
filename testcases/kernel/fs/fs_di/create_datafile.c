@@ -19,10 +19,10 @@
 
 /*
  *  FILE        : create_datafile.c
- *  PURPOSE : Creates a file of specified size.
- *  HISTORY :
- *  10/17/2003 Robbie Williamson
- *   -Written
+ *  PURPOSE	: Creates a file of specified size.
+ *  HISTORY	: 
+ *  	10/17/2003 Robbie Williamson
+ *	  -Written  	
  */
 
 #include <stdio.h>
@@ -44,29 +44,29 @@ main(int argc, char *argv[])
    char buf[BSIZE];
    off_t fd;
 
-   if (argc ! 3 || atoi(argv[1]) < 1)
+   if (argc != 3 || atoi(argv[1]) < 1)
    {
       printf("usage:\n\tcreate_file <# of %ld buffers to write> <name of file to create>\n\t ex. # create_file 10 /tmp/testfile\n",BSIZE);
       exit(3);
    }
-   bufnum  strtol(argv[1],NULL,0);
+   bufnum = strtol(argv[1],NULL,0);
    printf("Started building a %lu megabyte file\n",bufnum);
-   buf[0]'A';
-   for (i1;i<BSIZE;i++)
-      buf[i]buf[i-1]+1;
-   buf[BSIZE-1]'Z';
-
-   if ((fd  creat(argv[2],0755))  -1)
+   buf[0]='A';
+   for (i=1;i<BSIZE;i++)
+      buf[i]=buf[i-1]+1;
+   buf[BSIZE-1]='Z';
+    
+   if ((fd = creat(argv[2],0755)) == -1)
       perror("lftest: ");
 
-   for (i0;i<bufnum;i++)
+   for (i=0;i<bufnum;i++)
    {
-      if (write(fd,buf,BSIZE)  -1)
-  return -1;
-      else
+      if (write(fd,buf,BSIZE) == -1)
+	 return -1;
+      else 
       {
-  printf(".");
-  fflush(stdout);
+	 printf(".");
+	 fflush(stdout);
       }
       fsync(fd);
    }

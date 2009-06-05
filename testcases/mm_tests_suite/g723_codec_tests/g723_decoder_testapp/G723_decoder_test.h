@@ -21,7 +21,7 @@ Description of the file
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
-Filinova Natalya      15/02/2005   TLSbo47117   BRIEF desc. of changes
+Filinova Natalya      15/02/2005   TLSbo47117   BRIEF desc. of changes 
 Delaspre/rc149c       07/12/2004   TLSbo40142   update copyrights with Freescale
 D.Simakov/smkd001c    15/04/2005   TLSbo47117   Pre-emptivity test case was added
 D.Simakov/smkd001c    24/10/2005   TLSbo57009   FLIST_CFG was fixed
@@ -36,9 +36,9 @@ extern "C"{
 
 /*======================== INCLUDE FILES ====================================*/
 
-#include <sys/types.h>  // fork usage for reentrance test
-#include <unistd.h> // fork usage for reentrance test
-#include <pthread.h> // fork usage for reentrance test
+#include <sys/types.h>  	// fork usage for reentrance test
+#include <unistd.h> 		// fork usage for reentrance test
+#include <pthread.h> 		// fork usage for reentrance test
 #include <sys/time.h>		// timer usage for preemptivity
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -65,9 +65,9 @@ extern "C"{
 #define alloc_slow(A)       malloc(A)
 #define mem_free(A)         free(A)
 
-#define FLIST_CFG           "g723d_cfg" /*configure file with input and reference data*/
-#define MAX_STR_LEN         256
-#define DEFAULT_CFG_DIR_PATH "./"             /*path to directory with configure file */
+#define FLIST_CFG           	"g723d_cfg" /*configure file with input and reference data*/
+#define MAX_STR_LEN         	256
+#define DEFAULT_CFG_DIR_PATH 	"./"             /*path to directory with configure file */ 
 
 /*======================== ENUMS ============================================*/
 

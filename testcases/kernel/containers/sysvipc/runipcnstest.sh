@@ -39,7 +39,7 @@ echo
 for type in none clone unshare; do
       echo "sysvipc: MesgQ $type"
       mesgq_nstest $type
-   ret=$?
+	  ret=$?
       if [ $exit_code -ne 0 ]; then
               exit_code=$ret
       fi
@@ -48,7 +48,7 @@ echo
 for type in none clone unshare; do
       echo "sysvipc: Semaphore $type"
       sem_nstest $type
-   ret=$?
+	  ret=$?
       if [ $exit_code -ne 0 ]; then
               exit_code=$ret
       fi

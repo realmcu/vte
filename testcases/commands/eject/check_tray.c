@@ -13,9 +13,9 @@
 /* for more details.                                                          */
 /*                                                                            */
 /* You should have received a copy of the GNU General Public License          */
-/* along with this program;  if not, write to the Free Software            */
+/* along with this program;  if not, write to the Free Software		          */
 /* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA    */
-/*                                                   */
+/*									                                          */
 /******************************************************************************/
 
 /******************************************************************************/
@@ -43,7 +43,7 @@
 
 /******************************************************************************/
 /*                                                                            */
-/* Function: main                                                          */
+/* Function:	main                                                          */
 /*                                                                            */
 /* Description: This function opens the cdrom device, and checks the status   */
 /*              of the drive. Note drop the cdrom inside the cd drive for     */
@@ -56,14 +56,14 @@
 /*              4 - CD disk in drive & drive closed.                          */
 /*                                                                            */
 /******************************************************************************/
-
+ 
 int
 main()
 {
-    int fdcdrom  -1;
+    int fdcdrom = -1;
 
- if ((fdcdrom  open("/dev/cdrom", O_RDONLY|O_NONBLOCK))  -1)
-  exit(-2);
+	if ((fdcdrom = open("/dev/cdrom", O_RDONLY|O_NONBLOCK)) == -1)
+		exit(-2);
 
- exit (ioctl(fdcdrom, CDROM_DRIVE_STATUS));
+	exit (ioctl(fdcdrom, CDROM_DRIVE_STATUS));
 }

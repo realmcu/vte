@@ -29,7 +29,7 @@ LTP_DIR = ../../../..
 BIN_DIR = ../../..
 
 CFLAGS    +=    -Wall -I$(LTP_DIR)/include -I$(KLINUX_SRCDIR)/include -I$(KLINUX_BLTDIR)/include -g
-LOADLIBES +=    -L$(LTP_DIR)/lib -lltp
+LOADLIBES +=    -L$(LTP_DIR)/lib -lltp 
 
 SRCS = i2c_main.c i2c_test.c
 OBJS = i2c_main.o i2c_test.o

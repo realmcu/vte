@@ -11,7 +11,7 @@
  * sched_ss_init_budget members of the param argument have no effect on the
  * scheduling behavior if the scheduling policy of the target process is either
  * SCHED_FIFO or SCHED_RR.
-
+ 
  *
  * @pt:SS
  */
@@ -22,14 +22,14 @@
 
 #ifdef _POSIX_SPORADIC_SERVER
 int main() {
- printf("Not yet tested.\n");
- return PTS_UNTESTED;
+	printf("Not yet tested.\n");
+	return PTS_UNTESTED;
 }
 
 #else
 int main() {
- printf("Does not support SS (SPORADIC SERVER)\n");
- return PTS_UNSUPPORTED;
+	printf("Does not support SS (SPORADIC SERVER)\n");
+	return PTS_UNSUPPORTED;
 }
 
 #endif

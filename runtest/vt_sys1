@@ -1,0 +1,28 @@
+#Verification Tests Command File
+# generated automatically by the test campaign macro
+# version 1.0
+
+#files:
+#files:
+#files:
+#files:
+#files:
+
+#TGE-LV-SYS-0010 ulimit01 -c 1024;abort01
+TGE-LV-SYS-0020 accept01
+TGE-LV-SYS-0030 access01
+TGE-LV-SYS-0040 access02
+TGE-LV-SYS-0050 access03
+TGE-LV-SYS-0060 access04
+TGE-LV-SYS-0070 access05
+TGE-LV-SYS-0080 acct01
+TGE-LV-SYS-0090 acct02
+TGE-LV-SYS-0100 adjtimex01
+TGE-LV-SYS-0110 adjtimex02
+TGE-LV-SYS-0120 alarm01
+TGE-LV-SYS-0130 alarm02
+TGE-LV-SYS-0140 alarm03
+TGE-LV-SYS-0150 cp -f $LTPROOT/testcases/bin/sig_rev $TMP;alarm04
+TGE-LV-SYS-0160 alarm05
+TGE-LV-SYS-0170 alarm06
+TGE-LV-SYS-0180 alarm07

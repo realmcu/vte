@@ -1,5 +1,5 @@
 /* -*- linux-c -*-
- *
+ * 
  * (C) Copyright IBM Corp. 2004
  *
  * This program is distributed in the hope that it will be useful,
@@ -28,66 +28,66 @@
 #include <tstubs_snmp.h>
 #include <thotswap.h>
 
-int main(int argc, char **argv)
+int main(int argc, char **argv) 
 {
 
- struct snmp_bc_hnd snmp_handle;
- struct oh_handler_state hnd  {
-  .rptcache  (RPTable *)&test_rpt,
-  .eventq  NULL,
-  .config  NULL,
-  .data  (void *)&snmp_handle,
- };
+	struct snmp_bc_hnd snmp_handle;
+	struct oh_handler_state hnd = {
+		.rptcache = (RPTable *)&test_rpt,
+		.eventq = NULL,
+		.config = NULL,
+		.data = (void *)&snmp_handle,
+	};
 
 #if 0
- /* Fill in RPT Entry */
- test_rpt.rpt.ResourceTag.DataType  SAHPI_TL_TYPE_LANGUAGE;
- test_rpt.rpt.ResourceTag.Language  SAHPI_LANG_ENGLISH;
- test_rpt.rpt.ResourceTag.DataLength  strlen(test_rpt.comment);
- strcpy(test_rpt.rpt.ResourceTag.Data, test_rpt.comment);
+	/* Fill in RPT Entry */
+	test_rpt.rpt.ResourceTag.DataType = SAHPI_TL_TYPE_LANGUAGE;
+	test_rpt.rpt.ResourceTag.Language = SAHPI_LANG_ENGLISH;
+	test_rpt.rpt.ResourceTag.DataLength = strlen(test_rpt.comment);
+	strcpy(test_rpt.rpt.ResourceTag.Data, test_rpt.comment);
 #endif
 
- SaHpiResourceIdT  id  1;
- SaHpiHsStateT     state;
- SaErrorT          err;
- SaHpiHsStateT expected_value;
+	SaHpiResourceIdT  id = 1;
+	SaHpiHsStateT     state;
+	SaErrorT          err;
+	SaHpiHsStateT expected_value;
 
- /******************
-  * Healthy TestCase
+	/******************
+	 * Healthy TestCase
          ******************/
- expected_value  SAHPI_HS_STATE_ACTIVE_HEALTHY;
+	expected_value = SAHPI_HS_STATE_ACTIVE_HEALTHY;
 
- err  snmp_bc_get_hotswap_state((void *)&hnd, id, &state);
- if (err) {
-  printf("Error! Healthy TestCase\n");
-  printf("snmp_bc_get_hotswap_state returned err%d\n", err);
-  return -1;
- }
- if (state ! expected_value) {
-  printf("Error! Healthy TestCase\n");
-  printf("snmp_bc_get_hotswap_state unexpected value%d\n", state);
-  return -1;
- }
+	err = snmp_bc_get_hotswap_state((void *)&hnd, id, &state);
+	if (err) {
+		printf("Error! Healthy TestCase\n");
+		printf("snmp_bc_get_hotswap_state returned err=%d\n", err);
+		return -1; 
+	}
+	if (state != expected_value) {
+		printf("Error! Healthy TestCase\n");
+		printf("snmp_bc_get_hotswap_state unexpected value=%d\n", state);
+		return -1;
+	}
 
- /********************
-  * Unhealthy TestCase
+	/******************** 
+	 * Unhealthy TestCase
          ********************/
- snmp_value_integer  0;
- expected_value  SAHPI_HS_STATE_ACTIVE_UNHEALTHY;
+	snmp_value_integer = 0;
+	expected_value = SAHPI_HS_STATE_ACTIVE_UNHEALTHY;
 
- err  snmp_bc_get_hotswap_state((void *)&hnd, id, &state);
- if (err) {
-  printf("Error! Unhealthy TestCase\n");
-  printf("Error! snmp_bc_get_hotswap_state returned err%d\n", err);
-  return -1;
- }
- if (state ! expected_value) {
-  printf("Error! Unhealthy TestCase\n");
-  printf("Error! snmp_bc_get_hotswap_state unexpected value%d\n", state);
-  return -1;
- }
+	err = snmp_bc_get_hotswap_state((void *)&hnd, id, &state);
+	if (err) {
+		printf("Error! Unhealthy TestCase\n");
+		printf("Error! snmp_bc_get_hotswap_state returned err=%d\n", err);
+		return -1; 
+	}
+	if (state != expected_value) {
+		printf("Error! Unhealthy TestCase\n");
+		printf("Error! snmp_bc_get_hotswap_state unexpected value=%d\n", state);
+		return -1;
+	}
 
- return 0;
+	return 0;
 }
 
 /****************

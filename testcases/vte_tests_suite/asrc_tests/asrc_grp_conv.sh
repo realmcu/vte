@@ -18,19 +18,19 @@
 #                      Modification     Tracking
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
-# Spring Zhang          09/12/2008        n/a        Initial ver.
+# Spring Zhang          09/12/2008        n/a        Initial ver. 
 #############################################################################
-# Portability:  ARM sh
+# Portability:  ARM sh 
 #
-# File Name:
-# Total Tests:
-# Test Strategy:
+# File Name:    
+# Total Tests:   
+# Test Strategy: 
+# 
+# Input:	- 
 #
-# Input: -
+# Return:       - 
 #
-# Return:       -
-#
-# Use command:
+# Use command:  
 
 # Function:     setup
 #
@@ -58,7 +58,7 @@ setup()
         LTPTMP=/tmp
     fi
 
-    if [ $# -ne 1 ]
+    if [ $# -ne 1 ] 
     then
         usage
         exit 1
@@ -76,10 +76,10 @@ setup()
     fi
 
     [ ! -z $STREAM_PATH ] || {
-        tst_resm TBROK "Test #1: STREAM_PATH not set, pls check!"
+        tst_resm TBROK "Test #1: STREAM_PATH not set, pls check!" 
         RC=66
         return $RC
-    }
+    } 
 }
 
 # Function:     cleanup
@@ -88,7 +88,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup()
+cleanup() 
 {
     echo "cleanup"
 }
@@ -165,7 +165,7 @@ asrc_with_sample_rate()
 # Return        - none
 usage()
 {
-    cat <<-EOF
+    cat <<-EOF 
 
     Use this command to test ASRC functions.
     usage: ./${0##*/} [input sampling rate]

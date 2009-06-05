@@ -31,6 +31,6 @@ echo "Running network testcases under containers..."
 
 create_container;
 if [ $? -ne 0 ]; then
- echo "some of the network testcases under netns failled"
- exit 1;
+	echo "some of the network testcases under netns failled"
+	exit 1;
 fi

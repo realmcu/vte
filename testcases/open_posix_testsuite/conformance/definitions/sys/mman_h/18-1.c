@@ -1,4 +1,4 @@
-/*
+/* 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -22,7 +22,7 @@ typedef int (*munmap_test)(void *, size_t);
 
 int dummyfcn (void)
 {
- munmap_test dummyvar;
- dummyvar  munmap;
- return 0;
+	munmap_test dummyvar;
+	dummyvar = munmap;
+	return 0;
 }

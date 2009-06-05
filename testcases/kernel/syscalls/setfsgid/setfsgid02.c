@@ -19,14 +19,14 @@
 
 /*
  * NAME
- * setfsgid02.c
+ *	setfsgid02.c
  *
  * DESCRIPTION
- * Testcase to check the basic functionality of setfsgid(2) system
- * call failures.
+ *	Testcase to check the basic functionality of setfsgid(2) system
+ *	call failures.
  *
  * ALGORITHM
- * Call setfsgid() and test the return value when invalid gid used.
+ *	Call setfsgid() and test the return value when invalid gid used.
  *
  * USAGE:  <for command-line>
  *  setfsgid01 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
@@ -38,11 +38,11 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *      04/2003 Adapted by Dustin Kirkland (k1rkland@us.ibm.com)
  *
  * RESTRICTIONS
- * None
+ *	None
  */
 #include <stdio.h>
 #include <unistd.h>
@@ -56,8 +56,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID  "setfsgid02";
-int TST_TOTAL  1;
+char *TCID = "setfsgid02";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 void setup(void);
@@ -65,53 +65,53 @@ void cleanup(void);
 
 int main(int ac, char **av)
 {
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
 
- gid_t gid;
+	gid_t gid;
+	
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	}
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
- }
+	setup();
 
- setup();
+	/* Check for looping state if -i option is given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
- /* Check for looping state if -i option is given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
-
-                gid  1;
+                gid = 1;
                 while (getgrgid(gid)) {
                   gid++;
                 }
 
-  TEST(setfsgid(gid));
+		TEST(setfsgid(gid));
 
-  if (TEST_RETURN  -1) {
-   tst_resm(TFAIL, "call failed unexpectedly - errno %d",
-     TEST_ERRNO);
-   continue;
-  }
+		if (TEST_RETURN == -1) {
+			tst_resm(TFAIL, "call failed unexpectedly - errno %d",
+				 TEST_ERRNO);
+			continue;
+		}
 
-  if (!STD_FUNCTIONAL_TEST) {
-   tst_resm(TPASS, "call succeeded");
-   continue;
-  }
+		if (!STD_FUNCTIONAL_TEST) {
+			tst_resm(TPASS, "call succeeded");
+			continue;
+		}
 
-  if (TEST_RETURN  gid) {
-   tst_resm(TFAIL, "setfsgid() returned %d, expeceted %d",
-     TEST_RETURN, gid);
-  } else {
-   tst_resm(TPASS, "setfsgid() returned expected value : "
-     "%d", TEST_RETURN);
-  }
- }
- cleanup();
+		if (TEST_RETURN == gid) {
+			tst_resm(TFAIL, "setfsgid() returned %d, expeceted %d",
+				 TEST_RETURN, gid);
+		} else {
+			tst_resm(TPASS, "setfsgid() returned expected value : "
+				 "%d", TEST_RETURN);
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return EXIT_SUCCESS;
+	/*NOTREACHED*/
+	return EXIT_SUCCESS;
 }
 
 /*
@@ -120,26 +120,26 @@ int main(int ac, char **av)
 void
 setup()
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit.
+ *	       completion or premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

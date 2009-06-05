@@ -42,8 +42,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID"f00f";
-int TST_TOTAL1;
+char *TCID="f00f";
+int TST_TOTAL=1;
 
 #ifdef __i386__
 
@@ -51,7 +51,7 @@ int TST_TOTAL1;
 /*
  * an f00f instruction
  */
-char x[5]  { 0xf0, 0x0f, 0xc7, 0xc8 };
+char x[5] = { 0xf0, 0x0f, 0xc7, 0xc8 };
 
 void
 sigill (int sig)
@@ -60,10 +60,10 @@ sigill (int sig)
   tst_exit();
 }
 
-int
+int 
 main ()
 {
-  void (*f) ()  (void *) x;
+  void (*f) () = (void *) x;
 
   signal (SIGILL, sigill);
   tst_resm(TINFO, "Testing for proper f00f instruction handling.");

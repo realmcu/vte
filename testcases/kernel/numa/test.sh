@@ -38,19 +38,19 @@ x=$(ls /sys/devices/system/node | wc -l)
 fi
 if [ $x -gt 1 ]
 then
- if [ ! -f /usr/include/numa.h ]
- then
-  echo no;
-else
-  echo yes;
- fi
+	if [ ! -f /usr/include/numa.h ]
+	then
+		echo no;
+ 	else
+		echo yes;
+	fi
 else
         echo no;     #numa is not present
 
 fi
 }
 if [ "$CROSS_COMPILER" == "" ] then
- chk_ifexist
+	chk_ifexist
 else
     echo no;
 fi

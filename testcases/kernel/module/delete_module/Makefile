@@ -14,8 +14,8 @@
 # Temple Place - Suite 330, Boston MA 02111-1307, USA.
 #
 ###########################################################################
-# name of file		 : Makefile		        #
-# description		 : make file for the delete_module(2) testcases		    #
+# name of file		 : Makefile		 		 		 		 		 		   #
+# description		 : make file for the delete_module(2) testcases		 		   #
 ###########################################################################
 
 EXTRA_CFLAGS+=		 -I../../../../include -Wall

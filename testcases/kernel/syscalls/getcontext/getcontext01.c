@@ -24,8 +24,8 @@
  *
  *    TEST CASE TOTAL   : 1
  *
- *    AUTHOR            : Prashant P Yendigeri
- *                        <prashant.yendigeri@wipro.com>
+ *    AUTHOR            : Prashant P Yendigeri 
+ *                        <prashant.yendigeri@wipro.com> 
  *
  *    DESCRIPTION
  *      This is a Phase I test for the getcontext(2) system call.
@@ -47,60 +47,60 @@
 void setup();
 void cleanup();
 
-char *TCID"getcontext01";     /* Test program identifier.    */
-int TST_TOTAL1;                /* Total number of test cases. */
+char *TCID="getcontext01";     /* Test program identifier.    */
+int TST_TOTAL=1;                /* Total number of test cases. */
 extern int Tst_count;           /* Test Case counter for tst_* routines */
 
-int exp_enos[]{0};             /* must be a 0 terminated list */
+int exp_enos[]={0};             /* must be a 0 terminated list */
 
 int  main(int ac, char **av)
 {
- int lc;             /* loop counter */
- char *msg;          /* message returned from parse_opts */
+ 	int lc;             /* loop counter */
+	char *msg;          /* message returned from parse_opts */
 
- ucontext_t ptr;
- /***************************************************************
-  * parse standard options
-  ***************************************************************/
- if ( (msgparse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *) NULL )
+	ucontext_t ptr;
+	/***************************************************************
+	 * parse standard options
+	 ***************************************************************/
+	if ( (msg=parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *) NULL )
         tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 
-    /***************************************************************
-     * perform global setup for test
-     ***************************************************************/
-    setup();
+    	/***************************************************************
+     	* perform global setup for test
+     	***************************************************************/
+    	setup();
 
-    /* set the expected errnos... */
-    TEST_EXP_ENOS(exp_enos);
+    	/* set the expected errnos... */
+    	TEST_EXP_ENOS(exp_enos);
 
-    /***************************************************************
-     * check looping state if -c option given
-     ***************************************************************/
-    for (lc0; TEST_LOOPING(lc); lc++) {
+    	/***************************************************************
+     	* check looping state if -c option given
+     	***************************************************************/
+    	for (lc=0; TEST_LOOPING(lc); lc++) {
 
-        /* reset Tst_count in case we are looping. */
-        Tst_count0;
+        	/* reset Tst_count in case we are looping. */
+        	Tst_count=0;
 
 
-        /*
-         * TEST CASE:
-         *  Getcontext
-         */
-        ;
+        	/*
+         	* TEST CASE:
+         	*  Getcontext
+         	*/
+        	;
 
-        /* Call getcontext(2) */
-        TEST(getcontext(&ptr));
+        	/* Call getcontext(2) */
+        	TEST(getcontext(&ptr));
 
         /* check return code */
-        if ( TEST_RETURN  -1 ) {
+        if ( TEST_RETURN == -1 ) {
             TEST_ERROR_LOG(TEST_ERRNO);
-            tst_resm(TFAIL, "getcontext - Sanity test :  Fail errno%d : %s",
+            tst_resm(TFAIL, "getcontext - Sanity test :  Fail errno=%d : %s",
                      TEST_ERRNO, strerror(TEST_ERRNO));
         }
-    else if ( TEST_RETURN > 0 ) {
-     TEST_ERROR_LOG(TEST_ERRNO);
+				else if ( TEST_RETURN >= 0 ) {
+					TEST_ERROR_LOG(TEST_ERRNO);
             tst_resm(TPASS, "getcontext - Sanity test : Pass");
-    }
+				}
 
     }   /* End for TEST_LOOPING */
 

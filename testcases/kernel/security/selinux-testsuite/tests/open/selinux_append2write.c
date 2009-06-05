@@ -15,26 +15,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(int argc, char **argv)
+int main(int argc, char **argv) 
 {
- int fd, rc;
+	int fd, rc;
 
- if (argc ! 2) {
-  fprintf(stderr, "usage:  %s path", argv[0]);
-  exit(1);
- }
+	if (argc != 2) {
+		fprintf(stderr, "usage:  %s path", argv[0]);
+		exit(1);
+	}
 
- fd  open(argv[1], O_WRONLY | O_APPEND);
- if (fd < 0) {
-  perror(argv[1]);
-  exit(1);
- }
+	fd = open(argv[1], O_WRONLY | O_APPEND);
+	if (fd < 0) {
+		perror(argv[1]);
+		exit(1);
+	}
 
- rc  fcntl(fd, F_SETFL, 0);
- if (rc < 0) {
-  perror("fcntl");
-  exit(1);
- }
- close (fd);
- exit(0);
+	rc = fcntl(fd, F_SETFL, 0);
+	if (rc < 0) {
+		perror("fcntl");
+		exit(1);
+	}
+	close (fd);
+	exit(0);
 }

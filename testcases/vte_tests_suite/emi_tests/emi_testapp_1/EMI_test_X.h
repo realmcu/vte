@@ -10,13 +10,13 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-
+     
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Sergey Zavjalov           10/06/2004     TLSbo39741   initial version
+Sergey Zavjalov           10/06/2004     TLSbo39741   initial version 
 ==================================================================================================*/
 
 #ifndef EMI_TEST_X_H

@@ -23,13 +23,13 @@
 /*              These tests are adapted from AIX float PVT tests.             */
 /*                                                                            */
 /******************************************************************************/
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <float.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
+#include	<sys/types.h>
+#include	<sys/wait.h>
+#include 	<float.h>
+#include 	<stdio.h>
+#include 	<stdlib.h>
+#include 	<string.h>
+#include 	<errno.h>
 #include        <limits.h>
 #include        <unistd.h>
 #include        <fcntl.h>
@@ -37,68 +37,68 @@
 #include        <sys/signal.h>
 #include        <math.h>
 
-#define M_PIl 3.1415926535897932384626433832795029L L
+#define 	M_PIl	3.1415926535897932384626433832795029L L
 
 
 /*****************************************************************
- * create file:
- *
+ * create file: 
+ * 	
  * func_name is the name of the trigo function (sin, cos, tan...)
  *
  * code can take 2 values: DATA_CREATE to create a input data file
- *      RESULT_CREATE for output result file
+ *			   RESULT_CREATE for output result file
  */
 
 int create_file(char *func_name, int NbVal)
 {
- pid_t myproc;
-
-        if (( myproc  fork() )!0)
+	pid_t myproc;
+	           
+        if (( myproc = fork() )!=0)
                 return myproc;
         else {
-  char *arglist[]  { func_name, NULL};
-      execvp(arglist[0], arglist);
+		char *arglist[] = { func_name, NULL};
+	     	execvp(arglist[0], arglist);
 
-      fprintf(stderr, "ERROR %s\n", strerror(errno));
-      abort();
- }
-}
+	     	fprintf(stderr, "ERROR %s\n", strerror(errno));
+	     	abort();
+	}
+} 
 
 
 
 
 int main(int argc, char *argv[])
 {
- char *funct;
- pid_t  child;
+	char *funct;
+	pid_t  child;
+	
+	funct = "./gencos";
+	child=create_file(funct, 0);
+	waitpid(child,NULL,0);
 
- funct  "./gencos";
- childcreate_file(funct, 0);
- waitpid(child,NULL,0);
+	funct = "./gensin";
+	child=create_file(funct, 0);
+	waitpid(child,NULL,0);
 
- funct  "./gensin";
- childcreate_file(funct, 0);
- waitpid(child,NULL,0);
+	funct = "./gentan";
+	child=create_file(funct, 0);
+	waitpid(child,NULL,0);
 
- funct  "./gentan";
- childcreate_file(funct, 0);
- waitpid(child,NULL,0);
+	funct = "./genatan";
+	child=create_file(funct, 0);
+	waitpid(child,NULL,0);
+		
+	funct = "./genatan2";
+	child=create_file(funct, 0);
+	waitpid(child,NULL,0);
 
- funct  "./genatan";
- childcreate_file(funct, 0);
- waitpid(child,NULL,0);
+	funct = "./genacos";
+	child=create_file(funct, 0);
+	waitpid(child,NULL,0);
 
- funct  "./genatan2";
- childcreate_file(funct, 0);
- waitpid(child,NULL,0);
+	funct = "./genasin";
+	child=create_file(funct, 0);
+	waitpid(child,NULL,0);
 
- funct  "./genacos";
- childcreate_file(funct, 0);
- waitpid(child,NULL,0);
-
- funct  "./genasin";
- childcreate_file(funct, 0);
- waitpid(child,NULL,0);
-
- return 0;
+	return 0;
 }

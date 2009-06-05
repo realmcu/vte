@@ -29,13 +29,13 @@
  **/
 int main(int argc, char **argv)
 {
-        RPTable *rptable  (RPTable *)g_malloc0(sizeof(RPTable));
+        RPTable *rptable = (RPTable *)g_malloc0(sizeof(RPTable));
         guint i;
 
-        for (i  0; rptentries[i].ResourceId; i++) {
+        for (i = 0; rptentries[i].ResourceId; i++) {
                 if (oh_add_resource(rptable, rptentries+i, NULL, 0))
                         return 1;
-        }
+        }        
 
         if (!oh_add_rdr(rptable, 1234567, rdrs, NULL, 1))
                 return 1;

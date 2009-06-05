@@ -21,12 +21,12 @@
 #################################################################################
 # Name Of File: parameters.sh                                                   #
 #                                                                               #
-# Description:This file has functions for the setup for testing cpucontroller #
+# Description: 	This file has functions for the setup for testing cpucontroller #
 #               setup includes creating controller device, mounting it with     #
 #               cgroup filesystem with option cpu and creating groups in it.    #
 #                                                                               #
-# Functions:    get_num_groups(): decides number of groups based on num of cpus #
-#               setup(): creaes /dev/cpuctl, mounts cgroup fs on it, creates#
+# Functions:    get_num_groups(): decides number of groups based on num of cpus	#
+#               setup(): creaes /dev/cpuctl, mounts cgroup fs on it, creates 	#
 #               groups in that, creates fifo to fire tasks at one time.         #
 #               cleanup(): Does full system cleanup                             #
 #                                                                               #
@@ -43,20 +43,20 @@
 
 set_def_group() #default group spinning a task to create ideal scenario
 {
- [ -d /dev/cpuctl/group_def ] || mkdir /dev/cpuctl/group_def;
- if [ $? -ne 0 ]
- then
-  echo "ERROR: Can't create default group... "
-   "Check your permissions..Exiting test";
-  cleanup;
-  exit -1;
- fi
- # Migrate all the running tasks to this group
- # rt tasks require a finite value to cpu.rt_runtime_us
- echo 10000 > /dev/cpuctl/group_def/cpu.rt_runtime_us;
- for task in `cat /dev/cpuctl/tasks`; do
-  echo $task > /dev/cpuctl/group_def/tasks 2>/dev/null 1>&2;
- done
+	[ -d /dev/cpuctl/group_def ] || mkdir /dev/cpuctl/group_def;
+	if [ $? -ne 0 ]
+	then
+		echo "ERROR: Can't create default group... "
+			"Check your permissions..Exiting test";
+		cleanup;
+		exit -1;
+	fi
+	# Migrate all the running tasks to this group
+	# rt tasks require a finite value to cpu.rt_runtime_us
+	echo 10000 > /dev/cpuctl/group_def/cpu.rt_runtime_us;
+	for task in `cat /dev/cpuctl/tasks`; do
+		echo $task > /dev/cpuctl/group_def/tasks 2>/dev/null 1>&2;
+	done
 }
 
 get_num_groups()        # Number of tasks should be >= number of cpu's (to check scheduling fairness)
@@ -73,16 +73,16 @@ get_num_groups()        # Number of tasks should be >= number of cpu's (to check
         fi
 }
 
- # Write the cleanup function
+	# Write the cleanup function
 cleanup ()
 {
         echo "Cleanup called";
- killall cpuctl_def_task01 1>/dev/null 2>&1;
- killall cpuctl_def_task02 1>/dev/null 2>&1;
+	killall cpuctl_def_task01 1>/dev/null 2>&1;
+	killall cpuctl_def_task02 1>/dev/null 2>&1;
         rm -f cpuctl_task_* 2>/dev/null
- for task in `cat /dev/cpuctl/group_def/tasks`; do
-  echo $task > /dev/cpuctl/tasks 2>/dev/null 1>&2;
- done
+	for task in `cat /dev/cpuctl/group_def/tasks`; do
+		echo $task > /dev/cpuctl/tasks 2>/dev/null 1>&2;
+	done
         rmdir /dev/cpuctl/group* 2> /dev/null
         umount /dev/cpuctl 2> /dev/null
         rmdir /dev/cpuctl 2> /dev/null
@@ -111,7 +111,7 @@ do_setup ()
         fi
 
         # Group created earlier may again be visible if not cleaned properly...so clean them
- groups=/dev/cpuctl/group*
+	groups=/dev/cpuctl/group*
         if [ -z "$groups" ]
         then
                 rmdir /dev/cpuctl/group*

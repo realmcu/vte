@@ -15,7 +15,7 @@ mkdir -p Ref
 mkdir -p Ref/mpeg_aac_conformance
 mkdir -p Ref/mpeg_sbr_conformance
 mkdir -p Ref/ps-conformance
-mkdir -p Ref/ct_sbr_certification
+mkdir -p Ref/ct_sbr_certification 
 mkdir -p Ref/ct_sbr_certification/erroneous
 mkdir -p Ref/ct_sbr_certification/transport
 mkdir -p Ref/ct_sbr_certification/valid

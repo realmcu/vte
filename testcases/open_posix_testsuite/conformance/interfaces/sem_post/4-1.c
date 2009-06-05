@@ -1,8 +1,8 @@
 /*
     Copyright (c) 2003, Intel Corporation. All rights reserved.
     Created by:  majid.awad REMOVE-THIS AT intel DOT com
-    This file is licensed under the GPL license.  For the full content
-    of this license, see the COPYING file at the top level of this
+    This file is licensed under the GPL license.  For the full content 
+    of this license, see the COPYING file at the top level of this 
     source tree.
  */
 
@@ -27,28 +27,28 @@
 
 
 int main() {
- sem_t *mysemp;
- char semname[20];
+	sem_t *mysemp;
+	char semname[20];
 
- sprintf(semname, "/" FUNCTION "_" TEST "_%d", getpid());
+	sprintf(semname, "/" FUNCTION "_" TEST "_%d", getpid());
 
- /* Initial value of Semaphore is 0 */
- mysemp  sem_open(semname, O_CREAT, 0777, 0);
- if( mysemp  SEM_FAILED || mysemp  NULL ) {
-  perror(ERROR_PREFIX "sem_open");
-  return PTS_UNRESOLVED;
- }
+	/* Initial value of Semaphore is 0 */
+	mysemp = sem_open(semname, O_CREAT, 0777, 0);
+	if( mysemp == SEM_FAILED || mysemp == NULL ) {
+		perror(ERROR_PREFIX "sem_open");
+		return PTS_UNRESOLVED;
+	}
 
- if(  sem_post(mysemp)  0 ) {
-  puts("TEST PASSED");
-  sem_close(mysemp);
-  sem_unlink(semname);
-  return PTS_PASS;
- } else {
-  puts("TEST FAILED: value of sem_post is not returning zero");
-  return PTS_FAIL;
- }
- printf("This code should not be executed.\n");
-  return PTS_UNRESOLVED;
+	if(  sem_post(mysemp) == 0 ) {
+		puts("TEST PASSED");
+		sem_close(mysemp);
+		sem_unlink(semname);
+		return PTS_PASS;
+	} else { 
+		puts("TEST FAILED: value of sem_post is not returning zero");
+		return PTS_FAIL;
+	}
+	printf("This code should not be executed.\n");
+		return PTS_UNRESOLVED;
 }
 

@@ -20,7 +20,7 @@ Description of the file
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
-Kardakov Dmitriy/ID   09/11/06     TLSbo76802   Initial version
+Kardakov Dmitriy/ID   09/11/06     TLSbo76802   Initial version 
 =============================================================================*/
 
 #ifndef __V4L_CAPTURE_TEST_H
@@ -58,7 +58,7 @@ extern "C"{
 
 /*======================== DEFINES AND MACROS ===============================*/
 
-#if !defined(TRUE)
+#if !defined(TRUE) 
 #define TRUE    1
 #endif
 
@@ -67,7 +67,7 @@ extern "C"{
 #endif
 
 /*======================== ENUMS ============================================*/
-typedef enum
+typedef enum 
 {
         PRP_VF = 1,
         PRP_ENC_ON_D,
@@ -76,7 +76,7 @@ typedef enum
 } eCases;
 
 /*======================== STRUCTURES AND OTHER TYPEDEFS ====================*/
-typedef struct
+typedef struct 
 {
         const char * mV4LDevice;
         const char * mOutputDevice;
@@ -85,7 +85,7 @@ typedef struct
         int mHeight;
         int mCount;
         int mCaseNum;
-        int mRotationMode;
+        int mRotationMode; 
         int mOutputFormat;
         int mCrop;
         struct v4l2_rect mCropRect;
@@ -96,7 +96,7 @@ typedef struct
         int mFrameRate;
         int mDuration;
 
-} sV4LTestConfig;
+} sV4LTestConfig; 
 /*======================== GLOBAL VARIABLE DECLARATIONS =====================*/
 
 extern sV4LTestConfig gV4LTestConfig;

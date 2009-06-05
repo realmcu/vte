@@ -32,81 +32,81 @@
  */
 /* $Id: execlp01.c,v 1.4 2006/05/26 06:26:38 vapier Exp $ */
 /**********************************************************
- *
+ * 
  *    OS Test - Silicon Graphics, Inc.
- *
- *    TEST IDENTIFIER : execlp01
- *
- *    EXECUTED BY : anyone
- *
- *    TEST TITLE : Basic test for execlp(2)
- *
- *    PARENT DOCUMENT : usctpl01
- *
- *    TEST CASE TOTAL : 1
- *
- *    WALL CLOCK TIME : 1
- *
- *    CPU TYPES  : ALL
- *
- *    AUTHOR  : William Roske
- *
- *    CO-PILOT  : Dave Fenner
- *
- *    DATE STARTED : 06/01/02
- *
- *    INITIAL RELEASE : UNICOS 7.0
- *
+ * 
+ *    TEST IDENTIFIER	: execlp01
+ * 
+ *    EXECUTED BY	: anyone
+ * 
+ *    TEST TITLE	: Basic test for execlp(2)
+ * 
+ *    PARENT DOCUMENT	: usctpl01
+ * 
+ *    TEST CASE TOTAL	: 1
+ * 
+ *    WALL CLOCK TIME	: 1
+ * 
+ *    CPU TYPES		: ALL
+ * 
+ *    AUTHOR		: William Roske
+ * 
+ *    CO-PILOT		: Dave Fenner
+ * 
+ *    DATE STARTED	: 06/01/02
+ * 
+ *    INITIAL RELEASE	: UNICOS 7.0
+ * 
  *    TEST CASES
- *
- * 1.) execlp(2) returns...(See Description)
- *
+ * 
+ * 	1.) execlp(2) returns...(See Description)
+ *	
  *    INPUT SPECIFICATIONS
- * The standard options for system call tests are accepted.
- * (See the parse_opts(3) man page).
- *
+ * 	The standard options for system call tests are accepted.
+ *	(See the parse_opts(3) man page).
+ * 
  *    OUTPUT SPECIFICATIONS
- *
+ * 	
  *    DURATION
- * Terminates - with frequency and infinite modes.
- *
+ * 	Terminates - with frequency and infinite modes.
+ * 
  *    SIGNALS
- * Uses SIGUSR1 to pause before test if option set.
- * (See the parse_opts(3) man page).
+ * 	Uses SIGUSR1 to pause before test if option set.
+ * 	(See the parse_opts(3) man page).
  *
  *    RESOURCES
- * None
- *
+ * 	None
+ * 
  *    ENVIRONMENTAL NEEDS
  *      No run-time environmental needs.
- *
+ * 
  *    SPECIAL PROCEDURAL REQUIREMENTS
- * None
- *
+ * 	None
+ * 
  *    INTERCASE DEPENDENCIES
- * None
- *
+ * 	None
+ * 
  *    DETAILED DESCRIPTION
- * This is a Phase I test for the execlp(2) system call.  It is intended
- * to provide a limited exposure of the system call, for now.  It
- * should/will be extended when full functional tests are written for
- * execlp(2).
- *
- * Setup:
- *   Setup signal handling.
- *   Pause for SIGUSR1 if option specified.
- *
- * Test:
- *  Loop if the proper options are given.
- *   Execute system call
- *   Check return code, if system call failed (return-1)
- *  Log the errno and Issue a FAIL message.
- *   Otherwise, Issue a PASS message.
- *
- * Cleanup:
- *   Print errno log and/or timing stats if options given
- *
- *
+ *	This is a Phase I test for the execlp(2) system call.  It is intended
+ *	to provide a limited exposure of the system call, for now.  It
+ *	should/will be extended when full functional tests are written for
+ *	execlp(2).
+ * 
+ * 	Setup:
+ * 	  Setup signal handling.
+ *	  Pause for SIGUSR1 if option specified.
+ * 
+ * 	Test:
+ *	 Loop if the proper options are given.
+ * 	  Execute system call
+ *	  Check return code, if system call failed (return=-1)
+ *		Log the errno and Issue a FAIL message.
+ *	  Otherwise, Issue a PASS message.
+ * 
+ * 	Cleanup:
+ * 	  Print errno log and/or timing stats if options given
+ * 
+ * 
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
 #include <errno.h>
@@ -125,29 +125,29 @@ void cleanup();
 
 
 
-char *TCID"execlp01";  /* Test program identifier.    */
-int TST_TOTAL1;  /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
-extern int Tst_nobuf;  /* used to turn off buffering in tst_ routines */
+char *TCID="execlp01";		/* Test program identifier.    */
+int TST_TOTAL=1;		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
+extern int Tst_nobuf;		/* used to turn off buffering in tst_ routines */
 
-int exp_enos[]{0, 0};  /* Zero terminated list of expected errnos */
+int exp_enos[]={0, 0};		/* Zero terminated list of expected errnos */
 
-int pid;  /* process id from fork */
-int status;  /* status returned from waitpid */
+int pid;		/* process id from fork */
+int status;		/* status returned from waitpid */
 
 int
 main(int ac, char **av)
 {
-    int lc;  /* loop counter */
-    char *msg;  /* message returned from parse_opts */
-
-    Tst_nobuf1; /* turn off buffering in tst_ routines */
+    int lc;		/* loop counter */
+    char *msg;		/* message returned from parse_opts */
+    
+    Tst_nobuf=1;	/* turn off buffering in tst_ routines */
 
     /***************************************************************
      * parse standard options
      ***************************************************************/
-    if ( (msgparse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *) NULL )
- tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+    if ( (msg=parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *) NULL )
+	tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 
     /***************************************************************
      * perform global setup for test
@@ -160,44 +160,44 @@ main(int ac, char **av)
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc0; TEST_LOOPING(lc); lc++) {
+    for (lc=0; TEST_LOOPING(lc); lc++) {
 
- /* reset Tst_count in case we are looping. */
- Tst_count0;
+	/* reset Tst_count in case we are looping. */
+	Tst_count=0;
 
+		
+	/* 
+	 * TEST CASE:
+	 *   fork, then call execlp from child 
+	 */
+	switch(pid=FORK_OR_VFORK()) {
+	case 0: 	/* CHILD - Call execlp(2) */
+	    execlp("/usr/bin/test", "/usr/bin/test", NULL);
+	    /* should not get here!! if we do, the parent will fail the Test Case */
+	    exit(errno);	
+	case -1:	/* ERROR!!! exit now!!*/
+	    tst_brkm(TBROK, cleanup, 
+			"Unable to fork a child process to exec over!  Errno:%d,:%s",
+			errno, strerror(errno));
+	    break;
+	default:
+	    waitpid(pid, &status, 0);
+	    if ( WIFEXITED(status) ) {
+		/***************************************************************
+		 * only perform functional verification if flag set (-f not given)
+		 ***************************************************************/
+		if ( STD_FUNCTIONAL_TEST ) {
+		    /* No Verification test, yet... */
+		    tst_resm(TPASS, "execlp - properly exec's a simple program..");
+		} 
+	    } else {
+		TEST_ERROR_LOG(WEXITSTATUS(status));
+		tst_resm(TFAIL, "Child process did not terminate properly, status=%d", status);
+	    }
+	    break;
+	}	/* switch */
 
- /*
-  * TEST CASE:
-  *   fork, then call execlp from child
-  */
- switch(pidFORK_OR_VFORK()) {
- case 0: /* CHILD - Call execlp(2) */
-     execlp("/usr/bin/test", "/usr/bin/test", NULL);
-     /* should not get here!! if we do, the parent will fail the Test Case */
-     exit(errno);
- case -1: /* ERROR!!! exit now!!*/
-     tst_brkm(TBROK, cleanup,
-   "Unable to fork a child process to exec over!  Errno:%d,:%s",
-   errno, strerror(errno));
-     break;
- default:
-     waitpid(pid, &status, 0);
-     if ( WIFEXITED(status) ) {
-  /***************************************************************
-   * only perform functional verification if flag set (-f not given)
-   ***************************************************************/
-  if ( STD_FUNCTIONAL_TEST ) {
-      /* No Verification test, yet... */
-      tst_resm(TPASS, "execlp - properly exec's a simple program..");
-  }
-     } else {
-  TEST_ERROR_LOG(WEXITSTATUS(status));
-  tst_resm(TFAIL, "Child process did not terminate properly, status%d", status);
-     }
-     break;
- } /* switch */
-
-    } /* End for TEST_LOOPING */
+    }	/* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -205,12 +205,12 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-} /* End main */
+}	/* End main */
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void
+void 
 setup()
 {
     /* capture signals */
@@ -228,17 +228,17 @@ The TEST macro is NOT used.");
 
     /* Pause if that option was specified */
     TEST_PAUSE;
-
+    
     /* make a temp dir and cd to it */
     tst_tmpdir();
-} /* End setup() */
+}	/* End setup() */
 
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *  completion or premature exit.
+ *		completion or premature exit.
  ***************************************************************/
-void
+void 
 cleanup()
 {
     /*
@@ -252,6 +252,6 @@ cleanup()
 
     /* exit with return code appropriate for results */
     tst_exit();
-} /* End cleanup() */
+}	/* End cleanup() */
 
 

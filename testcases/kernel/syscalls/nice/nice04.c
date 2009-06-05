@@ -35,15 +35,15 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return-1)
- *   if errno set  expected errno
- *  PASS
- *  Issue sys call fails with expected return value and errno.
+ *   Check return code, if system call failed (return=-1)
+ *   	if errno set == expected errno
+ *		PASS
+ *   		Issue sys call fails with expected return value and errno.
+ *   	Otherwise,
+ *		FAIL
+ *		Issue sys call fails with unexpected errno.
  *   Otherwise,
- *  FAIL
- *  Issue sys call fails with unexpected errno.
- *   Otherwise,
- * Issue sys call returns unexpected value.
+ *	Issue sys call returns unexpected value.
  *
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
@@ -52,13 +52,13 @@
  *  nice04 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -e   : Turn on errno logging.
- *        -i n : Execute test n times.
- *        -I x : Execute test for x seconds.
- *        -P x : Pause for x seconds between iterations.
- *        -t   : Turn on syscall timing.
+ *	       -i n : Execute test n times.
+ *	       -I x : Execute test for x seconds.
+ *	       -P x : Pause for x seconds between iterations.
+ *	       -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS:
  *  This test should be executed by 'non-super-user' only.
@@ -70,98 +70,98 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID"nice04";  /* Test program identifier.    */
-int TST_TOTAL1;  /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID="nice04";		/* Test program identifier.    */
+int TST_TOTAL=1;		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-char nobody_uid[]  "nobody";
+char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
 
-int exp_enos[]{EPERM, 0};
+int exp_enos[]={EPERM, 0};
 
-struct test_case_t {  /* test case struct. to hold ref. test cond's*/
- int nice_val;
- char *desc;
- int exp_errno;
-} Test_cases[]  {
- {-5, "Non-root cannot specify higher priority", EPERM}
+struct test_case_t {		/* test case struct. to hold ref. test cond's*/
+	int nice_val;
+	char *desc;
+	int exp_errno;
+} Test_cases[] = {
+	{-5, "Non-root cannot specify higher priority", EPERM}
 };
 
-void setup();   /* Main setup function of test */
-void cleanup();   /* cleanup function for the test */
+void setup();			/* Main setup function of test */
+void cleanup();			/* cleanup function for the test */
 
 int
 main(int ac, char **av)
 {
- int lc;   /* loop counter */
- char *msg;  /* message returned from parse_opts */
- int i;   /* counter variable for test case looping */
- int incr_val;  /* nice value for the process */
- char *test_desc; /* test specific error message */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
+	int i;			/* counter variable for test case looping */
+	int incr_val;		/* nice value for the process */
+	char *test_desc; 	/* test specific error message */
+    
+	/* Parse standard options given to run the test. */
+	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
+	if (msg != (char *)NULL) {
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	}
 
- /* Parse standard options given to run the test. */
- msg  parse_opts(ac, av, (option_t *)NULL, NULL);
- if (msg ! (char *)NULL) {
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
- }
+	/* Perform global setup for test */
+	setup();
 
- /* Perform global setup for test */
- setup();
+	TEST_EXP_ENOS(exp_enos);
 
- TEST_EXP_ENOS(exp_enos);
+	/* Check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
- /* Check looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+		/* Reset Tst_count in case we are looping. */
+		Tst_count=0;
 
-  /* Reset Tst_count in case we are looping. */
-  Tst_count0;
+		for (i=0; i<TST_TOTAL; i++) {
+			incr_val = Test_cases[i].nice_val;
+			test_desc = Test_cases[i].desc;
 
-  for (i0; i<TST_TOTAL; i++) {
-   incr_val  Test_cases[i].nice_val;
-   test_desc  Test_cases[i].desc;
+			/* 
+			 * Call nice(2) with different 'incr' parameter
+			 * values and verify that it fails as expected.
+			 */
+			TEST(nice(incr_val));
 
-   /*
-    * Call nice(2) with different 'incr' parameter
-    * values and verify that it fails as expected.
-    */
-   TEST(nice(incr_val));
+			/* check return code from nice(2) */
+			if (TEST_RETURN == -1) {
+				TEST_ERROR_LOG(TEST_ERRNO);
+				tst_resm(TPASS, "nice(2) returned %d for %s",
+					 TEST_RETURN, test_desc);
+			} else {
+				tst_resm(TFAIL,
+				 	 "nice() returned %d for %s, errno:%d",
+					 TEST_RETURN, test_desc, errno);
+			}
+		}	/* End of TEST CASE LOOPING. */
+	}	/* End for TEST_LOOPING */
 
-   /* check return code from nice(2) */
-   if (TEST_RETURN  -1) {
-    TEST_ERROR_LOG(TEST_ERRNO);
-    tst_resm(TPASS, "nice(2) returned %d for %s",
-      TEST_RETURN, test_desc);
-   } else {
-    tst_resm(TFAIL,
-      "nice() returned %d for %s, errno:%d",
-      TEST_RETURN, test_desc, errno);
-   }
-  } /* End of TEST CASE LOOPING. */
- } /* End for TEST_LOOPING */
+	/* Call cleanup() to undo setup done for the test. */
+	cleanup();
 
- /* Call cleanup() to undo setup done for the test. */
- cleanup();
-
- return(0);
-} /* End main */
+	return(0);
+}	/* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  *  Make sure the test process uid is non-root only.
  */
-void
+void 
 setup()
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-  /* Switch to nobody user for correct error code collection */
-        if (geteuid() ! 0) {
+	 /* Switch to nobody user for correct error code collection */
+        if (geteuid() != 0) {
                 tst_brkm(TBROK, tst_exit, "Test must be run as root");
         }
-        ltpuser  getpwnam(nobody_uid);
-        if (setuid(ltpuser->pw_uid)  -1) {
+        ltpuser = getpwnam(nobody_uid);
+        if (setuid(ltpuser->pw_uid) == -1) {
                 tst_resm(TINFO, "setuid failed to "
                          "to set the effective uid to %d",
                          ltpuser->pw_uid);
@@ -169,23 +169,23 @@ setup()
         }
 
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
  */
-void
+void 
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

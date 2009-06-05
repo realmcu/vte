@@ -17,11 +17,11 @@
 
 // might as well fill cache lines... else we waste memory anyway
 
-#define HASHSIZE 64  /* power of 2 */
-#define HASH(x)  ((x) & (HASHSIZE - 1))
+#define	HASHSIZE	64		/* power of 2 */
+#define	HASH(x)		((x) & (HASHSIZE - 1))
 
-#define NAMESIZE 20
-#define NAMELENGTH "19"
+#define NAMESIZE	20
+#define NAMELENGTH	"19"
 
 static struct pwbuf {
     struct pwbuf *next;
@@ -36,16 +36,16 @@ char *user_from_uid(uid_t uid)
 
     p = &pwhash[HASH(uid)];
     while (*p) {
- if ((*p)->uid == uid)
-     return((*p)->name);
- p = &(*p)->next;
+	if ((*p)->uid == uid)
+	    return((*p)->name);
+	p = &(*p)->next;
     }
     *p = (struct pwbuf *) xmalloc(sizeof(struct pwbuf));
     (*p)->uid = uid;
     if ((pw = getpwuid(uid)) == NULL)
- sprintf((*p)->name, "#%d", uid);
+	sprintf((*p)->name, "#%d", uid);
     else
- sprintf((*p)->name, "%-." NAMELENGTH "s", pw->pw_name);
+	sprintf((*p)->name, "%-." NAMELENGTH "s", pw->pw_name);
     (*p)->next = NULL;
     return((*p)->name);
 }

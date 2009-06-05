@@ -19,26 +19,26 @@
 
 /*
  * NAME
- * fork12.c
+ * 	fork12.c
  *
  * DESCRIPTION
- * Check that all children inherit parent's file descriptor
+ *	Check that all children inherit parent's file descriptor
  *
  * ALGORITHM
- * Parent forks processes until -1 is returned.
- *
+ * 	Parent forks processes until -1 is returned.  
+ * 	
  * USAGE
- * fork12
- * ** CAUTION ** Can hang your machine, esp prior to 2.4.19
+ * 	fork12
+ * 	** CAUTION ** Can hang your machine, esp prior to 2.4.19
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
- * 07/2002 Split from fork07 as a test case to exhaust available pids.
+ *	07/2001 Ported by Wayne Boyer
+ *	07/2002 Split from fork07 as a test case to exhaust available pids.
  *
  * RESTRICTIONS
- * Should be run as root to avoid resource limits.
- * Should not be run with other test programs because it tries to
- *   use all available pids.
+ * 	Should be run as root to avoid resource limits.  
+ * 	Should not be run with other test programs because it tries to 
+ * 	  use all available pids.
  */
 
 #include <stdio.h>
@@ -48,8 +48,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID  "fork12";
-int TST_TOTAL  1;
+char *TCID = "fork12";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 void setup(void);
@@ -61,70 +61,70 @@ char pbuf[10];
 int
 main(int ac, char **av)
 {
- int forks, pid1, fork_errno, waitstatus;
- int ret, status;
- int lc;   /* loop counter */
- char *msg;  /* message returned from parse_opts */
+	int forks, pid1, fork_errno, waitstatus;
+	int ret, status;
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 
- /*
-  * parse standard options
-  */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/*
+	 * parse standard options
+	 */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- /*
-  * perform global setup for the test
-  */
- setup();
+	/*
+	 * perform global setup for the test
+	 */
+	setup();
 
- /*
-  * check looping state if -i option is given
-  */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /*
-   * reset Tst_count in case we are looping.
-   */
-  Tst_count  0;
+	/*
+	 * check looping state if -i option is given
+	 */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/*
+		 * reset Tst_count in case we are looping.
+		 */
+		Tst_count = 0;
 
-  tst_resm(TINFO, "Forking as many kids as possible");
-  forks  0;
-  while ((pid1  fork()) ! -1) {
-      if (pid1  0) { /* child */
-   pause();
-   exit(0);
-      }
-      forks++;
-      ret  waitpid(-1, &status, WNOHANG);
-      if (ret < 0)
-   tst_brkm(TBROK, cleanup, "waitpid failed %d: %s\n", \
-     errno, strerror(errno));
+		tst_resm(TINFO, "Forking as many kids as possible");
+		forks = 0;
+		while ((pid1 = fork()) != -1) {
+		    if (pid1 == 0) { /* child */
+			pause();
+			exit(0);
+		    }
+		    forks++;
+		    ret = waitpid(-1, &status, WNOHANG);
+		    if (ret < 0)
+			tst_brkm(TBROK, cleanup, "waitpid failed %d: %s\n", \
+					errno, strerror(errno));
                     if (ret > 0) {
-   /* a child may be killed by OOM killer */
-          if (WTERMSIG(status)  SIGKILL)
-       break;
+			/* a child may be killed by OOM killer */
+		        if (WTERMSIG(status) == SIGKILL)
+			    break;
                         tst_brkm(TBROK, cleanup, \
-    "child exit with error code %d or signal %d", \
-    WEXITSTATUS(status), WTERMSIG(status));
+				"child exit with error code %d or signal %d", \
+				WEXITSTATUS(status), WTERMSIG(status));
                     }
-  }
-  fork_errno  errno;
+		}
+		fork_errno = errno;
 
-  /* parent */
-  tst_resm(TINFO, "Number of processes forked is %d", forks);
-  tst_resm(TPASS, "fork() eventually failed with %d: %s",
-    fork_errno, strerror(fork_errno));
-  /* collect our kids */
+		/* parent */
+		tst_resm(TINFO, "Number of processes forked is %d", forks);
+		tst_resm(TPASS, "fork() eventually failed with %d: %s",
+				fork_errno, strerror(fork_errno));
+		/* collect our kids */
                 sleep(3); //Introducing a sleep(3) to make sure all children are at pause() when SIGQUIT is sent to them
-  kill(0, SIGQUIT);
-  while (wait(&waitstatus) > 0);
+		kill(0, SIGQUIT);
+		while (wait(&waitstatus) > 0);
 
- }
- cleanup();
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return 0;
+	/*NOTREACHED*/
+	return 0;
 }
 
 /*
@@ -133,47 +133,47 @@ main(int ac, char **av)
 void
 setup()
 {
- /*
-  * capture signals
-  */
- tst_sig(FORK, fork12_sigs, cleanup);
+	/*
+	 * capture signals
+	 */
+	tst_sig(FORK, fork12_sigs, cleanup);
 
- /*
-  * Pause if that option was specified
-  */
- TEST_PAUSE;
+	/*
+	 * Pause if that option was specified
+	 */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit
+ *	       completion or premature exit
  */
 void
 cleanup()
 {
- int waitstatus;
+	int waitstatus;
 
- /* collect our kids */
- kill(0, SIGQUIT);
- while (wait(&waitstatus) > 0);
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/* collect our kids */
+	kill(0, SIGQUIT);
+	while (wait(&waitstatus) > 0);
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- tst_exit();
+	tst_exit();
 }
 
 void
 fork12_sigs(int signum)
 {
-    if (signum  SIGQUIT) {
- /* Children will continue, parent will ignore */
+    if (signum == SIGQUIT) {
+	/* Children will continue, parent will ignore */
     } else {
- tst_brkm(TBROK, 0, "Unexpected signal %d received.", signum);
- cleanup();
- tst_exit();
+	tst_brkm(TBROK, 0, "Unexpected signal %d received.", signum);
+	cleanup();
+	tst_exit();
     }
 }
 

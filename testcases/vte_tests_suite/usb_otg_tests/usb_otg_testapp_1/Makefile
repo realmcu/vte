@@ -17,7 +17,7 @@
 #Author/core ID                  Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #A.Ozerov/B00320              07/04/2006     TLSbo58840  Initial version
-#A.Ozerov/B00320              29/06/2006     TLSbo71035  One test case was removed.
+#A.Ozerov/B00320              29/06/2006     TLSbo71035  One test case was removed. 
 #                                                        One test case was changed(works with the bus).
 #
 ####################################################################################################

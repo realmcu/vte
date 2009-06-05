@@ -1,0 +1,113 @@
+1.0.2:
+
+Thu Nov 23 1:41:00 PDT 2006 / Ben Pfaff <blp@cs.stanford.edu>
+
+- Fix version number reported by fm and fmscan programs, as well as
+  the version number included in the manpages.
+
+  Bug report by "Petr Slansky" <slansky@usa.net>.
+
+- No functional changes.
+
+1.0.1:
+
+Sat Oct 7 1:05:00 PDT 2006 / Ben Pfaff <blp@cs.stanford.edu>
+
+- Make fm able to sleep for a user-specified time, or forever, after
+  applying settings.  This makes fm usable with radio tuner drivers
+  that turn off the radio after the fd used for tuning is closed.
+
+  Idea and patch from Dave Ulrick <d-ulrick@insightbb.com>.
+
+1.0:
+
+Sat Sep 3 12:21:00 PDT 2004 / Ben Pfaff <blp@cs.stanford.edu>
+
+- New maintainer.  New home page is http://benpfaff.org/fmtools
+
+- Updated email addresses.
+
+- Integrated Debian packaging.
+
+- Made fmscan threshold configurable from command line.
+
+- Use videodev.h header detached from kernel to avoid including kernel
+  headers.
+
+0.99.1:
+
+Fri Aug 16 23:08:30 CDT 2002 / Russell Kroll <rkroll@exploits.org>
+
+ - fm, fmscan: fix the FSF's address in the headers
+
+Fri Aug 16 23:07:49 CDT 2002 / Russell Kroll <rkroll@exploits.org>
+
+ - COPYING: put in the modern version of the GPL v2, with the correct
+   address for the FSF.
+
+Fri Aug 16 23:05:33 CDT 2002 / Russell Kroll <rkroll@exploits.org>
+
+ - Makefile: reworked a bunch of stuff, and added such useful things
+   like install targets.  Hopefully this will make packaging less of 
+   a hack.
+
+Fri Aug 16 22:55:41 CDT 2002 / Russell Kroll <rkroll@exploits.org>
+
+ - fm: do the VIDIOCGAUDIO first so there's always good data in the struct
+
+Fri Aug 16 22:48:10 CDT 2002 / Russell Kroll <rkroll@exploits.org>
+
+ - fm.1: incorporated the man page written by Ben Pfaff.
+
+Fri Aug 16 22:47:01 CDT 2002 / Russell Kroll <rkroll@exploits.org>
+
+ - fm: set va.balance to 32768 rather than relying on whatever junk
+   happens to be in the struct.   Reported by ahmet inan.
+
+Fri Aug 16 22:43:47 CDT 2002 / Russell Kroll <rkroll@exploits.org>
+
+ - fm: applied patch from Viktor Rosenfeld to fix the rounding so that
+   channels like 99.95 MHz can be tuned.
+
+0.99.0:
+
+Sat Feb  3 22:41:12 CST 2001 - Russell Kroll <rkroll@exploits.org>
+
+ - Final cleanups for 0.99.0.  This source has been sitting around for
+   awhile, so it's probably time to push towards 1.0 and call it done.
+   How much can you do to a pair of radio programs, anyway?
+
+Thu Jan  4 17:29:49 CST 2001 - Russell Kroll <rkroll@exploits.org>
+
+ - fmscan: ioctl/code cleanups, ala fm
+ - fmscan: -d <dev> support
+ - fm: -d <dev> support for multiple devices (/dev/radio1 and so on)
+ - fm: ioctl results checked, other coding cleanups
+
+0.2.5 and earlier:
+
+Mon Apr 12 20:32:13 MDT 1999
+ - -t option for selecting the tuner on multi-tuner boards (radio-cadet, etc)
+
+Wed Feb  3 13:13:01 MST 1999
+ - fmtools 0.2.4 released
+ - 'devices' target added to Makefile
+ - documentation updated for fmscan and /dev/radio0
+ - programs now use /dev/radio0 instead of old(er) /dev/radio
+ - fmscan added
+ - small code cleanups
+ - -o added to oneliner usage display
+
+Sat Jan 16 23:55:15 MST 1999
+ - fmtools 0.2.3 released
+ - -o (override frequency range checks) introduced after some l-k discussion
+
+Sun Jan 10 22:17:07 MST 1999
+ - fmtools 0.2.2 released
+ - overflows and negative values during volume changes fixed
+ - exit codes are now sane
+ - the division should now accurately reflect 100% volume
+
+Thu Jul 30 08:39:50 MDT 1998
+ - We now support fine tuning on cards that fly the VIDEO_TUNER_LOW flag.
+   Thanks to Ben Pfaff for this addition.

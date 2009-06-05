@@ -15,10 +15,10 @@
         If not, indicate specific reasons why is it not portable.
 */
 
-/*======================== REVISION HISTORY ==================================
+/*======================== REVISION HISTORY ==================================		
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
-D.Simakov / smkd001c  06/09/2005   TLSbo53247   Initial version
+D.Simakov / smkd001c  06/09/2005   TLSbo53247   Initial version 
 =============================================================================*/
 
 #ifndef __aacplus_decoder_test_H__
@@ -34,7 +34,7 @@ extern "C"{
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
+#include <unistd.h>               
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <assert.h>
@@ -54,7 +54,7 @@ extern "C"{
 #endif
 #if !defined(FALSE)
     #define FALSE 0
-#endif
+#endif        
 
 /*==================================================================================================
                                        DEFINES AND MACROS
@@ -65,13 +65,13 @@ extern "C"{
                                              ENUMS
 ==================================================================================================*/
         /** Different test cases in the single application */
-typedef enum
+typedef enum 
 {
-        NOMINAL_FUNCTIONALITY = 0,
-        ROBUSTNESS,
+        NOMINAL_FUNCTIONALITY = 0, 
+        ROBUSTNESS,        
         RELOCATABILITY,
         RE_ENTRANCE,
-        PRE_EMPTION,
+        PRE_EMPTION,    
         ENDURANCE,
         LOAD,
 } eAacDecoderTestCases;
@@ -80,11 +80,11 @@ typedef enum
 /*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
 ==================================================================================================*/
-typedef struct
+typedef struct 
 {
         int          mTestCase;
         int          mNumIter;
-        const char * mConfigFilename;
+        const char * mConfigFilename;        
         int          mVerbose;
 } sTestappConfig;
 

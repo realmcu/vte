@@ -34,29 +34,29 @@
 #define SHM_NAME "posixtest_8-1"
 
 int main() {
- int fd1, fd2;
- char path[25]  "/tmp/posixtestXXXXXX";
+	int fd1, fd2;
+	char path[25] = "/tmp/posixtestXXXXXX";
 
- fd1  mkstemp(path);
- if(fd1  -1) {
-  perror("An error occurs when calling mkstemp()");
-  return PTS_UNRESOLVED;
- }
+	fd1 = mkstemp(path);
+	if(fd1 == -1) {
+		perror("An error occurs when calling mkstemp()");
+		return PTS_UNRESOLVED;
+	}
 
- fd2  shm_open(SHM_NAME, O_RDWR | O_CREAT, S_IRUSR|S_IWUSR);
- if(fd2  -1) {
-  perror("An error occurs when calling shm_open()");
-  unlink(path);
-  return PTS_UNRESOLVED;
- }
+	fd2 = shm_open(SHM_NAME, O_RDWR | O_CREAT, S_IRUSR|S_IWUSR);
+	if(fd2 == -1) {
+		perror("An error occurs when calling shm_open()");
+		unlink(path);
+		return PTS_UNRESOLVED;
+	}
+	
+	unlink(path);
+	shm_unlink(SHM_NAME);
 
- unlink(path);
- shm_unlink(SHM_NAME);
-
- if(fd2  (fd1+1)) {
-  printf("Test PASSED\n");
-  return PTS_PASS;
- }
- printf("Test FAILED\n");
- return PTS_FAIL;
+	if(fd2 == (fd1+1)) {
+		printf("Test PASSED\n");
+		return PTS_PASS;
+	}
+	printf("Test FAILED\n");
+	return PTS_FAIL;
 }

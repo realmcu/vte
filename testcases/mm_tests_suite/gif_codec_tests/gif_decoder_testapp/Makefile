@@ -32,7 +32,7 @@ LTP_BIN    = ../../../bin
 CFLAGS    += -Wall -I../../../../include -I$(MMAPI_HDIR) -I$(CODECS_DIR)/common
 LOADLIBES  += -L../../../../lib -lltp -lpthread -lm -Bdynamic -L$(GIFDEC_LIBDIR) -l$(GIFDEC_LIBRARY)
 
-CFLAGS    += -g -mcpu=arm1136j-s -mabi=aapcs #-DDEBUG_TEST
+CFLAGS    += -g -mcpu=arm1136j-s -mabi=aapcs #-DDEBUG_TEST 
 LOADLIBES += -Wl,--no-warn-mismatch -mcpu=arm1136j-s -lm -lc -lrt
 
 SRCS=$(wildcard *.c) sub/pars_conf.c sub/fb_draw_api.c sub/mem_stat.c
@@ -50,16 +50,16 @@ all: $(TARGET)
 
 install:
 	ln -f $(TARGET) $(LTP_BIN)
-	cp -lf $(CONFIGS) $(LTP_BIN)
+	cp -lf $(CONFIGS) $(LTP_BIN) 
 	cp -rf $(GIFDEC_INPUT) $(LTP_BIN)
 	cp -rf $(GIFDEC_REF) $(LTP_BIN)
-	mkdir -p $(LTP_BIN)/gifd_output
-	mkdir -p $(LTP_BIN)/sharedlibs
-	cp -rf $(GIFDEC_LIBDIR)/lib$(GIFDEC_LIBRARY).so $(LTP_BIN)/sharedlibs
+	mkdir -p $(LTP_BIN)/gifd_output   
+	mkdir -p $(LTP_BIN)/sharedlibs   
+	cp -rf $(GIFDEC_LIBDIR)/lib$(GIFDEC_LIBRARY).so $(LTP_BIN)/sharedlibs                
 	@echo "***************************************************"
 	@echo "** INSTALL : gif_decoder_testapp                 **"
 	@echo "***************************************************"
-
+    
 	@echo
 
 clean:

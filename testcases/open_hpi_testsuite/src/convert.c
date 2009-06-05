@@ -76,7 +76,7 @@ c_1_over_cube(double val)
 
 
 typedef double (*linearizer)(double val);
-static linearizer linearize[11] 
+static linearizer linearize[11] =
 {
         c_linear,
         log,
@@ -113,51 +113,51 @@ sign_extend(int m, int bits)
  *
  * Return value: SA_OK if conversion possible
  **/
-SaErrorT
+SaErrorT 
 sensor_convert_from_raw (SaHpiSensorRecT *sensor,
                          SaHpiUint32T     val,
                          SaHpiFloat32T   *result)
 {
         SaHpiFloat32T m, b, b_exp, r_exp, fval;
         linearizer c_func;
-        SaHpiSensorFactorsT *factors  &sensor->DataFormat.Factors;
+        SaHpiSensorFactorsT *factors = &sensor->DataFormat.Factors;
 
-        if ( factors->Linearization  SAHPI_SL_NONLINEAR )
-                c_func  c_linear;
-        else if ( factors->Linearization < 11 )
-                c_func  linearize[factors->Linearization];
+        if ( factors->Linearization == SAHPI_SL_NONLINEAR )
+                c_func = c_linear;
+        else if ( factors->Linearization <= 11 )
+                c_func = linearize[factors->Linearization];
         else
                 return SA_ERR_HPI_INVALID_DATA;
 
-        val & 0xff;
+        val &= 0xff;
 
-        m      (SaHpiFloat32T)factors->M_Factor;
-        b      (SaHpiFloat32T)factors->B_Factor;
-        r_exp  (SaHpiFloat32T)factors->ExpR;
-        b_exp  (SaHpiFloat32T)factors->ExpB;
+        m     = (SaHpiFloat32T)factors->M_Factor;
+        b     = (SaHpiFloat32T)factors->B_Factor;
+        r_exp = (SaHpiFloat32T)factors->ExpR;
+        b_exp = (SaHpiFloat32T)factors->ExpB;
 
         switch( sensor->DataFormat.SignFormat ) {
         case SAHPI_SDF_UNSIGNED:
-                fval  (SaHpiFloat32T)val;
+                fval = (SaHpiFloat32T)val;
                 break;
 
         case SAHPI_SDF_1S_COMPLEMENT:
-                val  sign_extend( val, 8 );
+                val = sign_extend( val, 8 );
                 if ( val < 0 )
-                        val + 1;
+                        val += 1;
 
-                fval  (SaHpiFloat32T)val;
+                fval = (SaHpiFloat32T)val;
                 break;
 
         case SAHPI_SDF_2S_COMPLEMENT:
-                fval  (SaHpiFloat32T)sign_extend( val, 8 );
+                fval = (SaHpiFloat32T)sign_extend( val, 8 );
                 break;
 
         default:
                 return SA_ERR_HPI_INVALID_DATA;
         }
 
-        *result  c_func(   ((m * fval) + (b * pow(10, b_exp)))
+        *result = c_func(   ((m * fval) + (b * pow(10, b_exp)))
                           * pow(10, r_exp) );
 
         return SA_OK;
@@ -187,27 +187,27 @@ sensor_convert_to_raw (SaHpiSensorRecT *sensor,
 
         switch(sensor->DataFormat.SignFormat) {
         case SAHPI_SDF_UNSIGNED:
-                lowraw      0;
-                highraw   255;
-                minraw      0;
-                maxraw    255;
-                next_raw  128;
+                lowraw   =   0;
+                highraw  = 255;
+                minraw   =   0;
+                maxraw   = 255;
+                next_raw = 128;
                 break;
 
         case SAHPI_SDF_1S_COMPLEMENT:
-                lowraw    -127;
-                highraw    127;
-                minraw    -127;
-                maxraw     127;
-                next_raw     0;
+                lowraw   = -127;
+                highraw  =  127;
+                minraw   = -127;
+                maxraw   =  127;
+                next_raw =    0;
                 break;
 
         case SAHPI_SDF_2S_COMPLEMENT:
-                lowraw    -128;
-                highraw    127;
-                minraw    -128;
-                maxraw     127;
-                next_raw     0;
+                lowraw   = -128;
+                highraw  =  127;
+                minraw   = -128;
+                maxraw   =  127;
+                next_raw =    0;
                 break;
 
         default:
@@ -217,19 +217,19 @@ sensor_convert_to_raw (SaHpiSensorRecT *sensor,
         /* We do a binary search for the right value.  Yuck, but I don't
            have a better plan that will work with non-linear sensors. */
         do {
-                raw  next_raw;
-                rv  sensor_convert_from_raw(sensor, raw, &cval);
+                raw = next_raw;
+                rv = sensor_convert_from_raw(sensor, raw, &cval);
                 if ( rv )
                         return rv;
 
                 if (cval < val) {
-                        next_raw  ((highraw - raw) / 2) + raw;
-                        lowraw  raw;
+                        next_raw = ((highraw - raw) / 2) + raw;
+                        lowraw = raw;
                 } else {
-                        next_raw  ((raw - lowraw) / 2) + lowraw;
-                        highraw  raw;
+                        next_raw = ((raw - lowraw) / 2) + lowraw;
+                        highraw = raw;
                 }
-        } while(raw ! next_raw);
+        } while(raw != next_raw);
 
         /* The above loop gets us to within 1 of what it should be, we
            have to look at rounding to make the final decision. */
@@ -238,33 +238,33 @@ sensor_convert_to_raw (SaHpiSensorRecT *sensor,
                 if (raw < maxraw) {
                         SaHpiFloat32T nval;
 
-                        rv  sensor_convert_from_raw(sensor, raw+1, &nval);
+                        rv = sensor_convert_from_raw(sensor, raw+1, &nval);
                         if (rv)
                                 return rv;
 
-                        nval  cval + ((nval - cval) / 2.0);
-                        if (val > nval)
+                        nval = cval + ((nval - cval) / 2.0);
+                        if (val >= nval)
                                 raw++;
                 }
         } else {
                 if (raw > minraw) {
                         SaHpiFloat32T pval;
 
-                        rv  sensor_convert_from_raw(sensor, raw-1, &pval);
+                        rv = sensor_convert_from_raw(sensor, raw-1, &pval);
                         if (rv)
                                 return rv;
 
-                        pval  pval + ((cval - pval) / 2.0);
+                        pval = pval + ((cval - pval) / 2.0);
                         if (val < pval)
                                 raw--;
                 }
         }
 
-        if (sensor->DataFormat.SignFormat  SAHPI_SDF_1S_COMPLEMENT)
+        if (sensor->DataFormat.SignFormat == SAHPI_SDF_1S_COMPLEMENT)
                 if (raw < 0)
-                        raw - 1;
+                        raw -= 1;
 
-        *result  raw & 0xff;
+        *result = raw & 0xff;
 
         return SA_OK;
 }

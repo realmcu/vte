@@ -24,10 +24,10 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID  "io_destroy01"; /* Test program identifier.    */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID = "io_destroy01";	/* Test program identifier.    */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-int TST_TOTAL  1;
+int TST_TOTAL = 1;
 
 #ifdef HAVE_LIBAIO_H
 #include <libaio.h>
@@ -38,25 +38,25 @@ int TST_TOTAL  1;
 
 /*
  * cleanup()
- * performs all the ONE TIME cleanup for this test at completion or
- * premature exit
+ * 	performs all the ONE TIME cleanup for this test at completion or
+ * 	premature exit
  */
 void
 cleanup(void)
 {
- /*
-  * print timing status if that option was specified
-  * print errno log if that option was specified
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing status if that option was specified
+	 * print errno log if that option was specified
+	 */
+	TEST_CLEANUP;
 
- tst_exit();
+	tst_exit();
 }
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void
+void 
 setup()
 {
     /* capture signals */
@@ -65,29 +65,29 @@ setup()
     /* Pause if that option was specified */
     TEST_PAUSE;
 
-} /* End setup() */
+}	/* End setup() */
 
 int
 main(int argc, char** argv)
 {
- int   lc;   /* loop counter */
- char *msg;   /* parse_opts() return message */
+	int   lc;			/* loop counter */
+	char *msg;			/* parse_opts() return message */
 
- io_context_t ctx;
- long expected_return;
+	io_context_t ctx;
+	long expected_return;
 
+	
+	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- if ((msg  parse_opts(argc, argv, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	setup();
 
- setup();
-
- /* Check for looping state if -i option is given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+	/* Check for looping state if -i option is given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
 /*
 DESCRIPTION
@@ -101,41 +101,41 @@ RETURN VALUE
 ERRORS
        EINVAL The AIO context specified by ctx is invalid.
 */
-  expected_return  -EINVAL;
-  TEST(io_destroy( ctx ));
+		expected_return = -EINVAL;
+		TEST(io_destroy( ctx ));
 
 
-  if (TEST_RETURN  0) {
-   tst_resm(TFAIL, "call succeeded unexpectedly");
-  } else if (TEST_RETURN  expected_return) {
-   tst_resm(TPASS, "expected failure - "
-     "returned value  %d : %s", TEST_RETURN,
-     strerror(-1 * TEST_RETURN));
-  } else {
-   tst_resm(TFAIL, "unexpected returned value - %d - "
-     "expected %d", TEST_RETURN,
-     expected_return);
-  }
+		if (TEST_RETURN == 0) {
+			tst_resm(TFAIL, "call succeeded unexpectedly");
+		} else if (TEST_RETURN == expected_return) {
+			tst_resm(TPASS, "expected failure - "
+				 "returned value = %d : %s", TEST_RETURN,
+				 strerror(-1 * TEST_RETURN));
+		} else {
+			tst_resm(TFAIL, "unexpected returned value - %d - "
+				 "expected %d", TEST_RETURN,
+				 expected_return);
+		}
 
-  /*
-    EFAULT The context pointed to is invalid.
-  */
+		/*
+		  EFAULT The context pointed to is invalid.
+		*/
 
-  /*
-    ENOSYS io_destroy is not implemented on this architecture.
-  */
-  /* Crackerjack has a test case for ENOSYS. But Testing for ENOSYS
-     is not meaningful for LTP, I think.
-     -- Masatake */
- }
- cleanup();
+		/*
+		  ENOSYS io_destroy is not implemented on this architecture.
+		*/
+		/* Crackerjack has a test case for ENOSYS. But Testing for ENOSYS
+		   is not meaningful for LTP, I think.
+		   -- Masatake */
+	}
+	cleanup();
 
- return 0;
+	return 0;
 }
 #else
 int main(int argc, char **argv)
 {
- tst_resm(TCONF, "System doesn't support execution of the test");
- return 0;
+	tst_resm(TCONF, "System doesn't support execution of the test");
+	return 0;
 }
 #endif

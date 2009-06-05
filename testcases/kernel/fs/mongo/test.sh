@@ -1,8 +1,8 @@
 #!/bin/sh
-#To exectute this you need mongo filesystem utility.
-#Run this inside the mongo directory.
+#To exectute this you need mongo filesystem utility. 
+#Run this inside the mongo directory. 
 #mongo utility can be found in www.namesys.com/benchmarks/mongo-xxx.tgz
-#Description-this script tests the mongo utility which actulally give the time ie cpu time
+#Description-this script tests the mongo utility which actulally give the time ie cpu time 
 #Real time etc on reiserfile system and jfs filesystem.
 #created by prakash.banu@wipro.com
 #
@@ -25,33 +25,33 @@ LOG_DIR=$PWD
 TEST_DIR=testdir
 
 
- #should be root  to execute this script .
- if [ $UID -ne 0 ]; then
-  echo "This script must be run as root"
-  exit
- fi
-  #set the PATH variable if its not done .
+   		#should be root  to execute this script .
+	if [ $UID -ne 0 ]; then
+		echo "This script must be run as root"
+		exit
+	fi
+		#set the PATH variable if its not done .
 export PATH=$PATH:/sbin
-lsmod |grep reiserfs
+lsmod |grep reiserfs 
 
- if [ $? -ne 0 ]; then
-  echo "inserting reiserfs and its dependencies"
- fi
-modprobe reiserfs
- if [ $? -ne 0 ]; then
-  echo "check wheather reiserfs  is been compiled in the kernel"
- fi
+	if [ $? -ne 0 ]; then
+		echo "inserting reiserfs and its dependencies"
+	fi 
+modprobe reiserfs  
+	if [ $? -ne 0 ]; then
+		echo "check wheather reiserfs  is been compiled in the kernel" 
+	fi
 
 lsmod |grep loop
- if [ $? -ne 0 ]; then
-  echo "inserting loopback device module"
- fi
+	if [ $? -ne 0 ]; then
+		echo "inserting loopback device module"
+	fi
 modprobe loop
- if [ $? -ne 0 ]; then
-  echo "check wheather loopback device option is been compiled in the kernel"
- fi
+	if [ $? -ne 0 ]; then
+		echo "check wheather loopback device option is been compiled in the kernel"
+	fi
 
- #run the mongo test on reiserfs file system type
+	#run the mongo test on reiserfs file system type 
 function reiserfs
 
 {
@@ -60,17 +60,17 @@ echo "performing mongo on reiserfs"
 dd if=/dev/zero of=reiserfs  bs=8k count=10240 > /dev/null 2>&1
 losetup /dev/loop0 reiserfs
 mkdir -p $TEST_DIR
-./mongo.pl LOG=/tmp/logfile1 file_size=10000 bytes=100000 fstype=reiserfs dev=/dev/loop0 dir=$TEST_DIR RUN   log=$LOG_DIR/reiserlog > /dev/null 2>&1
+./mongo.pl LOG=/tmp/logfile1 file_size=10000 bytes=100000 fstype=reiserfs dev=/dev/loop0 dir=$TEST_DIR RUN   log=$LOG_DIR/reiserlog > /dev/null 2>&1 
 
-echo "RESULTS LOGGED IN $LOG_DIR/reiserlog"
+echo "RESULTS LOGGED IN $LOG_DIR/reiserlog" 
 export PATH=$PATH:/sbin
 losetup -d /dev/loop0
 
 EOF
 }
+	
 
-
-#To run on jfs file system type
+#To run on jfs file system type 
 function  JFS
 
 {
@@ -79,12 +79,12 @@ echo "performing mongo on jfs file system"
 mkdir -p $TEST_DIR
 dd if=/dev/zero of=jfs  bs=8k count=10240 > /dev/null 2>&1
 losetup /dev/loop0 jfs
-./mongo.pl LOG=/tmp/logfile1 file_size=10000 bytes=100000 fstype=jfs dev=/dev/loop0 dir=$TEST_DIR   RUN log=$LOG_DIR/jfslog
+./mongo.pl LOG=/tmp/logfile1 file_size=10000 bytes=100000 fstype=jfs dev=/dev/loop0 dir=$TEST_DIR   RUN log=$LOG_DIR/jfslog 
 
 echo "RESULTS LOGGED IN $LOG_DIR/jfslog"
 export PATH=$PATH:/sbin
 losetup -d /dev/loop0
-echo "rm -rf ./fs.sh" >> ./fs.sh 2>&1
+echo "rm -rf ./fs.sh" >> ./fs.sh 2>&1 
 EOF
 }
 
@@ -106,6 +106,6 @@ esac
 echo "THIS MAY TAKE SOME MINUTES"
 sh fs.sh
 
-#performing cleanup
-#losetup -d /dev/loop0
+#performing cleanup 
+#losetup -d /dev/loop0 
 rm -rf $TEST_DIR

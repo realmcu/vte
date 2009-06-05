@@ -45,27 +45,27 @@
 
 int LTP_acpi_open_block_device(void);
 
-int ltp_block_dev_handle  0;      /* handle to LTP Test block device */
+int ltp_block_dev_handle = 0;      /* handle to LTP Test block device */
 
 int main(int argc, char **argv)
 {
 
-    ltpdev_cmd_t  cmd  {0,0};
+    ltpdev_cmd_t  cmd = {0,0};
     int rc;
 
     printf("[%s] - Running test program\n", argv[0]);
 
-    rc  LTP_acpi_open_block_device();
+    rc = LTP_acpi_open_block_device();
 
     if (!rc) {
 
-        ltp_block_dev_handle  open(LTP_ACPI_DEVICE_NAME, O_RDWR);
+        ltp_block_dev_handle = open(LTP_ACPI_DEVICE_NAME, O_RDWR);
 
         if (ltp_block_dev_handle < 0) {
-            printf("ERROR: Open of device %s failed %d errno  %d\n", LTP_ACPI_DEVICE_NAME,ltp_block_dev_handle, errno);
+            printf("ERROR: Open of device %s failed %d errno = %d\n", LTP_ACPI_DEVICE_NAME,ltp_block_dev_handle, errno);
         }
         else {
-            rc  ioctl (ltp_block_dev_handle, LTPDEV_CMD, &cmd);
+            rc = ioctl (ltp_block_dev_handle, LTPDEV_CMD, &cmd);
 
             printf("return from ioctl %d \n", rc);
         }
@@ -84,21 +84,21 @@ int LTP_acpi_open_block_device()
     int rc;
 
 
-    if (ltp_block_dev_handle  0) {
+    if (ltp_block_dev_handle == 0) {
 
         /* check for the /dev/LTPACPITest subdir, and create if it does not exist.
          *
          * If devfs is running and mounted on /dev, these checks will all pass,
          * so a new node will not be created.
          */
-        devt  makedev(LTPMAJOR, 0);
+        devt = makedev(LTPMAJOR, 0);
 
-        rc  stat(LTP_ACPI_DEV_NODE_PATH, &statbuf);
+        rc = stat(LTP_ACPI_DEV_NODE_PATH, &statbuf);
 
         if (rc) {
-            if (errno  ENOENT) {
+            if (errno == ENOENT) {
                 /* dev node does not exist. */
-                rc  mkdir(LTP_ACPI_DEV_NODE_PATH, (S_IFDIR | S_IRWXU |
+                rc = mkdir(LTP_ACPI_DEV_NODE_PATH, (S_IFDIR | S_IRWXU |
                                                     S_IRGRP | S_IXGRP |
                                                     S_IROTH | S_IXOTH));
             } else {
@@ -107,9 +107,9 @@ int LTP_acpi_open_block_device()
 
         } else {
             if (!(statbuf.st_mode & S_IFDIR)) {
-                rc  unlink(LTP_ACPI_DEV_NODE_PATH);
+                rc = unlink(LTP_ACPI_DEV_NODE_PATH);
                 if (!rc) {
-                    rc  mkdir(LTP_ACPI_DEV_NODE_PATH, (S_IFDIR | S_IRWXU |
+                    rc = mkdir(LTP_ACPI_DEV_NODE_PATH, (S_IFDIR | S_IRWXU |
                                                     S_IRGRP | S_IXGRP |
                                                     S_IROTH | S_IXOTH));
                 }
@@ -121,11 +121,11 @@ int LTP_acpi_open_block_device()
          * Check for the /dev/ltp-acpi/block_device node, and create if it does not
          * exist.
          */
-        rc  stat(LTP_ACPI_DEVICE_NAME, &statbuf);
+        rc = stat(LTP_ACPI_DEVICE_NAME, &statbuf);
         if (rc) {
-            if (errno  ENOENT) {
+            if (errno == ENOENT) {
                 /* dev node does not exist */
-                rc  mknod(LTP_ACPI_DEVICE_NAME, (S_IFBLK | S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP), devt);
+                rc = mknod(LTP_ACPI_DEVICE_NAME, (S_IFBLK | S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP), devt);
             } else {
                 printf("ERROR:Problem with LTP ACPI block device node directory.  Error code form stat() is %d\n\n", errno);
             }
@@ -136,12 +136,12 @@ int LTP_acpi_open_block_device()
              * block device and that it has the right major and minor.
              */
             if ((!(statbuf.st_mode & S_IFBLK)) ||
-                 (statbuf.st_rdev ! devt)) {
+                 (statbuf.st_rdev != devt)) {
 
                 /* Recreate the dev node. */
-                rc  unlink(LTP_ACPI_DEVICE_NAME);
+                rc = unlink(LTP_ACPI_DEVICE_NAME);
                 if (!rc) {
-                    rc  mknod(LTP_ACPI_DEVICE_NAME, (S_IFBLK | S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP), devt);
+                    rc = mknod(LTP_ACPI_DEVICE_NAME, (S_IFBLK | S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP), devt);
                 }
             }
         }

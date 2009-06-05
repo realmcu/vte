@@ -23,7 +23,7 @@
 
 /*
  * NAME
- * move_pages09.c
+ *	move_pages09.c
  *
  * DESCRIPTION
  *      Failure when all pages are in required node.
@@ -42,11 +42,11 @@
  *              -t   : Turn on syscall timing.
  *
  * History
- * 05/2008 Vijay Kumar
- *  Initial Version.
+ *	05/2008 Vijay Kumar
+ *		Initial Version.
  *
  * Restrictions
- * None
+ *	None
  */
 
 #include <sys/mman.h>
@@ -67,61 +67,61 @@
 void setup(void);
 void cleanup(void);
 
-char *TCID  "move_pages09";
-int TST_TOTAL  1;
+char *TCID = "move_pages09";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 int main(int argc, char **argv)
 {
- unsigned int i;
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
- unsigned int from_node  0;
+	unsigned int i;
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
+	unsigned int from_node = 0;
 
- /* parse standard options */
- msg  parse_opts(argc, argv, (option_t *) NULL, NULL);
- if (msg ! NULL) {
-  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-  tst_exit();
-  /* NOTREACHED */
- }
+	/* parse standard options */
+	msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
+	if (msg != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+		tst_exit();
+		/* NOTREACHED */
+	}
 
- setup();
+	setup();
 
- /* check for looping state if -i option is given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  void *pages[TEST_PAGES]  { 0 };
-  int nodes[TEST_PAGES];
-  int status[TEST_PAGES];
-  int ret;
+	/* check for looping state if -i option is given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		void *pages[TEST_PAGES] = { 0 };
+		int nodes[TEST_PAGES];
+		int status[TEST_PAGES];
+		int ret;
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  ret  alloc_pages_on_node(pages, TEST_PAGES, from_node);
-  if (ret  -1)
-   continue;
+		ret = alloc_pages_on_node(pages, TEST_PAGES, from_node);
+		if (ret == -1)
+			continue;
 
-  for (i  0; i < TEST_PAGES; i++)
-   nodes[i]  from_node;
+		for (i = 0; i < TEST_PAGES; i++)
+			nodes[i] = from_node;
 
-  ret  numa_move_pages(0, TEST_PAGES, pages, nodes,
-          status, MPOL_MF_MOVE);
-  TEST_ERRNO  errno;
-  if (ret  -1 && errno  ENOENT)
-   tst_resm(TPASS, "move_pages failed with "
-     "ENOENT as expected");
-  else
-   tst_resm(TFAIL, "move pages did not fail "
-     "with ENOENT");
+		ret = numa_move_pages(0, TEST_PAGES, pages, nodes,
+				      status, MPOL_MF_MOVE);
+		TEST_ERRNO = errno;
+		if (ret == -1 && errno == ENOENT)
+			tst_resm(TPASS, "move_pages failed with "
+				 "ENOENT as expected");
+		else
+			tst_resm(TFAIL, "move pages did not fail "
+				 "with ENOENT");
 
-  free_pages(pages, TEST_PAGES);
- }
+		free_pages(pages, TEST_PAGES);
+	}
 
- cleanup();
- /* NOT REACHED */
+	cleanup();
+	/* NOT REACHED */
 
- return 0;
+	return 0;
 }
 
 /*
@@ -130,15 +130,15 @@ int main(int argc, char **argv)
 void
 setup(void)
 {
- /* capture signals */
- tst_sig(FORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
- check_config(TEST_NODES);
+	check_config(TEST_NODES);
 
- /* Pause if that option was specified
-  * TEST_PAUSE contains the code to fork the test with the -c option.
-  */
- TEST_PAUSE;
+	/* Pause if that option was specified
+	 * TEST_PAUSE contains the code to fork the test with the -c option.
+	 */
+	TEST_PAUSE;
 }
 
 /*
@@ -147,13 +147,13 @@ setup(void)
 void
 cleanup(void)
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
- /*NOTREACHED*/
+	/* exit with return code appropriate for results */
+	tst_exit();
+	/*NOTREACHED*/
 }

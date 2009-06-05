@@ -22,7 +22,7 @@
 CFLAGS+=	-I../../../../include -O -g -Wall
 #LARGEFILE support
 #CFLAGS+=	-I../../../../include -O -g -Wall -DLARGE_FILE
-LOADLIBES+=	-L../../../../lib -lltp
+LOADLIBES+=	-L../../../../lib -lltp 
 
 SRCS=$(wildcard *.c)
 TARGETS=$(patsubst %.c,%,$(SRCS))

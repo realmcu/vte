@@ -19,19 +19,19 @@
 
 /*
  * NAME
- * signalfd01.c
+ *	signalfd01.c
  *
  * DESCRIPTION
- * Check signalfd can receive signals
+ *	Check signalfd can receive signals
  *
  * USAGE
- * signalfd01
+ * 	signalfd01
  *
  * HISTORY
- * 9/2008 Initial version by Masatake YAMATO <yamato@redhat.com>
+ *	9/2008 Initial version by Masatake YAMATO <yamato@redhat.com>
  *
  * RESTRICTIONS
- * None
+ * 	None
  */
 # define _GNU_SOURCE
 
@@ -46,13 +46,13 @@
 #include <fcntl.h>
 
 TCID_DEFINE(signalfd01);
-int TST_TOTAL  1;
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 
 #ifndef HAVE_SIGNALFD
 #define  USE_STUB
-#endif
+#endif 
 
 #if defined HAVE_SYS_SIGNALFD_H
 #include <sys/signalfd.h>
@@ -81,8 +81,8 @@ extern int Tst_count;
 #ifdef USE_STUB
 int main(int argc, char **argv)
 {
- tst_resm(TCONF, "System doesn't support execution of the test");
- return 0;
+	tst_resm(TCONF, "System doesn't support execution of the test");
+	return 0;
 }
 
 #else
@@ -90,8 +90,8 @@ int main(int argc, char **argv)
 #include "linux_syscall_numbers.h"
 int signalfd(int fd, const sigset_t * mask, int flags)
 {
- /* Taken from GLIBC. */
- return (syscall(__NR_signalfd, fd, mask, _NSIG / 8));
+	/* Taken from GLIBC. */
+	return (syscall(__NR_signalfd, fd, mask, _NSIG / 8));
 }
 #endif
 
@@ -100,209 +100,209 @@ void setup(void);
 
 int do_test1(int ntst, int sig)
 {
- int sfd_for_next;
- int sfd;
- sigset_t mask;
- pid_t pid;
- struct signalfd_siginfo fdsi;
- ssize_t s;
+	int sfd_for_next;
+	int sfd;
+	sigset_t mask;
+	pid_t pid;
+	struct signalfd_siginfo fdsi;
+	ssize_t s;
 
- sigemptyset(&mask);
- sigaddset(&mask, sig);
- if (sigprocmask(SIG_BLOCK, &mask, NULL) < 0) {
-  tst_brkm(TBROK, cleanup,
-    "sigprocmask() Failed: errno%d : %s",
-    errno, strerror(errno));
- }
+	sigemptyset(&mask);
+	sigaddset(&mask, sig);
+	if (sigprocmask(SIG_BLOCK, &mask, NULL) < 0) {
+		tst_brkm(TBROK, cleanup,
+			 "sigprocmask() Failed: errno=%d : %s",
+			 errno, strerror(errno));
+	}
 
- TEST(signalfd(-1, &mask, 0));
+	TEST(signalfd(-1, &mask, 0));
 
- if ((sfd  TEST_RETURN)  -1) {
-  tst_resm(TFAIL,
-    "signalfd() Failed, errno%d : %s",
-    TEST_ERRNO, strerror(TEST_ERRNO));
-  sfd_for_next  -1;
-  return sfd_for_next;
+	if ((sfd = TEST_RETURN) == -1) {
+		tst_resm(TFAIL,
+			 "signalfd() Failed, errno=%d : %s",
+			 TEST_ERRNO, strerror(TEST_ERRNO));
+		sfd_for_next = -1;
+		return sfd_for_next;
 
- } else if (!STD_FUNCTIONAL_TEST) {
-  tst_resm(TPASS, "signalfd is created successfully");
-  sfd_for_next  sfd;
-  goto out;
- }
+	} else if (!STD_FUNCTIONAL_TEST) {
+		tst_resm(TPASS, "signalfd is created successfully");
+		sfd_for_next = sfd;
+		goto out;
+	}
 
- if (fcntl(sfd, F_SETFL, O_NONBLOCK)  -1) {
-  close(sfd);
-  tst_brkm(TBROK, cleanup,
-    "setting signalfd nonblocking mode failed: errno%d : %s",
-    errno, strerror(errno));
- }
+	if (fcntl(sfd, F_SETFL, O_NONBLOCK) == -1) {
+		close(sfd);
+		tst_brkm(TBROK, cleanup,
+			 "setting signalfd nonblocking mode failed: errno=%d : %s",
+			 errno, strerror(errno));
+	}
 
- pid  getpid();
- if (kill(pid, sig)  -1) {
-  close(sfd);
-  tst_brkm(TBROK, cleanup,
-    "kill(self, %s) failed: errno%d : %s",
-    strsignal(sig), errno, strerror(errno));
- }
+	pid = getpid();
+	if (kill(pid, sig) == -1) {
+		close(sfd);
+		tst_brkm(TBROK, cleanup,
+			 "kill(self, %s) failed: errno=%d : %s",
+			 strsignal(sig), errno, strerror(errno));
+	}
 
- s  read(sfd, &fdsi, sizeof(struct signalfd_siginfo));
- if ((s > 0) && (s ! sizeof(struct signalfd_siginfo))) {
-  tst_resm(TFAIL,
-    "getting incomplete signalfd_siginfo data: "
-    "actual-size%d, expected-size %d",
-    s, sizeof(struct signalfd_siginfo));
-  sfd_for_next  -1;
-  close(sfd);
-  goto out;
- } else if (s < 0) {
-  if (errno  EAGAIN) {
-   tst_resm(TFAIL,
-     "signalfd_siginfo data is not delivered yet");
-   sfd_for_next  -1;
-   close(sfd);
-   goto out;
-  } else {
-   close(sfd);
-   tst_brkm(TBROK, cleanup,
-     "read signalfd_siginfo data failed: errno%d : %s",
-     errno, strerror(errno));
-  }
- } else if (s  0) {
-  tst_resm(TFAIL, "got EOF unexpectedly");
-  sfd_for_next  -1;
-  close(sfd);
-  goto out;
- }
+	s = read(sfd, &fdsi, sizeof(struct signalfd_siginfo));
+	if ((s > 0) && (s != sizeof(struct signalfd_siginfo))) {
+		tst_resm(TFAIL,
+			 "getting incomplete signalfd_siginfo data: "
+			 "actual-size=%d, expected-size= %d",
+			 s, sizeof(struct signalfd_siginfo));
+		sfd_for_next = -1;
+		close(sfd);
+		goto out;
+	} else if (s < 0) {
+		if (errno == EAGAIN) {
+			tst_resm(TFAIL,
+				 "signalfd_siginfo data is not delivered yet");
+			sfd_for_next = -1;
+			close(sfd);
+			goto out;
+		} else {
+			close(sfd);
+			tst_brkm(TBROK, cleanup,
+				 "read signalfd_siginfo data failed: errno=%d : %s",
+				 errno, strerror(errno));
+		}
+	} else if (s == 0) {
+		tst_resm(TFAIL, "got EOF unexpectedly");
+		sfd_for_next = -1;
+		close(sfd);
+		goto out;
+	}
 
- if (fdsi.SIGNALFD_PREFIX(signo)  sig) {
-  tst_resm(TPASS, "got expected signal");
-  sfd_for_next  sfd;
-  goto out;
- } else {
-  tst_resm(TFAIL, "got unexpected signal: signal%d : %s",
-    fdsi.SIGNALFD_PREFIX(signo),
-    strsignal(fdsi.SIGNALFD_PREFIX(signo)));
-  sfd_for_next  -1;
-  close(sfd);
-  goto out;
- }
+	if (fdsi.SIGNALFD_PREFIX(signo) == sig) {
+		tst_resm(TPASS, "got expected signal");
+		sfd_for_next = sfd;
+		goto out;
+	} else {
+		tst_resm(TFAIL, "got unexpected signal: signal=%d : %s",
+			 fdsi.SIGNALFD_PREFIX(signo),
+			 strsignal(fdsi.SIGNALFD_PREFIX(signo)));
+		sfd_for_next = -1;
+		close(sfd);
+		goto out;
+	}
 
  out:
- return sfd_for_next;
+	return sfd_for_next;
 }
 
 void do_test2(int ntst, int fd, int sig)
 {
- int sfd;
- sigset_t mask;
- pid_t pid;
- struct signalfd_siginfo fdsi;
- ssize_t s;
+	int sfd;
+	sigset_t mask;
+	pid_t pid;
+	struct signalfd_siginfo fdsi;
+	ssize_t s;
 
- sigemptyset(&mask);
- sigaddset(&mask, sig);
- if (sigprocmask(SIG_BLOCK, &mask, NULL) < 0) {
-  close(fd);
-  tst_brkm(TBROK, cleanup,
-    "sigprocmask() Failed: errno%d : %s",
-    errno, strerror(errno));
- }
+	sigemptyset(&mask);
+	sigaddset(&mask, sig);
+	if (sigprocmask(SIG_BLOCK, &mask, NULL) < 0) {
+		close(fd);
+		tst_brkm(TBROK, cleanup,
+			 "sigprocmask() Failed: errno=%d : %s",
+			 errno, strerror(errno));
+	}
 
- TEST(signalfd(fd, &mask, 0));
+	TEST(signalfd(fd, &mask, 0));
 
- if ((sfd  TEST_RETURN)  -1) {
-  tst_resm(TFAIL,
-    "reassignment the file descriptor by signalfd() failed, errno%d : %s",
-    TEST_ERRNO, strerror(TEST_ERRNO));
-  return;
- } else if (sfd ! fd) {
-  tst_resm(TFAIL,
-    "different fd is returned in reassignment: expected-fd%d, actual-fd%d",
-    fd, sfd);
-  close(sfd);
-  return;
+	if ((sfd = TEST_RETURN) == -1) {
+		tst_resm(TFAIL,
+			 "reassignment the file descriptor by signalfd() failed, errno=%d : %s",
+			 TEST_ERRNO, strerror(TEST_ERRNO));
+		return;
+	} else if (sfd != fd) {
+		tst_resm(TFAIL,
+			 "different fd is returned in reassignment: expected-fd=%d, actual-fd=%d",
+			 fd, sfd);
+		close(sfd);
+		return;
 
- } else if (!STD_FUNCTIONAL_TEST) {
-  tst_resm(TPASS, "signalfd is successfully reassigned");
-  goto out;
- }
+	} else if (!STD_FUNCTIONAL_TEST) {
+		tst_resm(TPASS, "signalfd is successfully reassigned");
+		goto out;
+	}
 
- pid  getpid();
- if (kill(pid, sig)  -1) {
-  close(sfd);
-  tst_brkm(TBROK, cleanup,
-    "kill(self, %s) failed: errno%d : %s",
-    strsignal(sig), errno, strerror(errno));
- }
+	pid = getpid();
+	if (kill(pid, sig) == -1) {
+		close(sfd);
+		tst_brkm(TBROK, cleanup,
+			 "kill(self, %s) failed: errno=%d : %s",
+			 strsignal(sig), errno, strerror(errno));
+	}
 
- s  read(sfd, &fdsi, sizeof(struct signalfd_siginfo));
- if ((s > 0) && (s ! sizeof(struct signalfd_siginfo))) {
-  tst_resm(TFAIL,
-    "getting incomplete signalfd_siginfo data: "
-    "actual-size%d, expected-size %d",
-    s, sizeof(struct signalfd_siginfo));
-  goto out;
- } else if (s < 0) {
-  if (errno  EAGAIN) {
-   tst_resm(TFAIL,
-     "signalfd_siginfo data is not delivered yet");
-   goto out;
-  } else {
-   close(sfd);
-   tst_brkm(TBROK, cleanup,
-     "read signalfd_siginfo data failed: errno%d : %s",
-     errno, strerror(errno));
-  }
- } else if (s  0) {
-  tst_resm(TFAIL, "got EOF unexpectedly");
-  goto out;
- }
+	s = read(sfd, &fdsi, sizeof(struct signalfd_siginfo));
+	if ((s > 0) && (s != sizeof(struct signalfd_siginfo))) {
+		tst_resm(TFAIL,
+			 "getting incomplete signalfd_siginfo data: "
+			 "actual-size=%d, expected-size= %d",
+			 s, sizeof(struct signalfd_siginfo));
+		goto out;
+	} else if (s < 0) {
+		if (errno == EAGAIN) {
+			tst_resm(TFAIL,
+				 "signalfd_siginfo data is not delivered yet");
+			goto out;
+		} else {
+			close(sfd);
+			tst_brkm(TBROK, cleanup,
+				 "read signalfd_siginfo data failed: errno=%d : %s",
+				 errno, strerror(errno));
+		}
+	} else if (s == 0) {
+		tst_resm(TFAIL, "got EOF unexpectedly");
+		goto out;
+	}
 
- if (fdsi.SIGNALFD_PREFIX(signo)  sig) {
-  tst_resm(TPASS, "got expected signal");
-  goto out;
- } else {
-  tst_resm(TFAIL, "got unexpected signal: signal%d : %s",
-    fdsi.SIGNALFD_PREFIX(signo),
-    strsignal(fdsi.SIGNALFD_PREFIX(signo)));
-  goto out;
- }
+	if (fdsi.SIGNALFD_PREFIX(signo) == sig) {
+		tst_resm(TPASS, "got expected signal");
+		goto out;
+	} else {
+		tst_resm(TFAIL, "got unexpected signal: signal=%d : %s",
+			 fdsi.SIGNALFD_PREFIX(signo),
+			 strsignal(fdsi.SIGNALFD_PREFIX(signo)));
+		goto out;
+	}
 
  out:
- return;
+	return;
 }
 
 int main(int argc, char **argv)
 {
- int lc;
- char *msg;  /* message returned from parse_opts */
- int sfd;
+	int lc;
+	char *msg;		/* message returned from parse_opts */
+	int sfd;
 
- if ((tst_kvercmp(2, 6, 22)) < 0) {
-  tst_resm(TWARN,
-    "This test can only run on kernels that are 2.6.22 and higher");
-  exit(0);
- }
+	if ((tst_kvercmp(2, 6, 22)) < 0) {
+		tst_resm(TWARN,
+			 "This test can only run on kernels that are 2.6.22 and higher");
+		exit(0);
+	}
 
- if ((msg  parse_opts(argc, argv, NULL, NULL)) ! NULL) {
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
- }
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	}
 
- setup();
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  Tst_count  0;
+	setup();
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		Tst_count = 0;
 
-  sfd  do_test1(lc, SIGUSR1);
-  if (sfd < 0)
-   continue;
+		sfd = do_test1(lc, SIGUSR1);
+		if (sfd < 0)
+			continue;
 
-  do_test2(lc, sfd, SIGUSR2);
-  close(sfd);
- }
+		do_test2(lc, sfd, SIGUSR2);
+		close(sfd);
+	}
 
- cleanup();
+	cleanup();
 
- return 0;
+	return 0;
 }
 
 /*
@@ -310,24 +310,24 @@ int main(int argc, char **argv)
  */
 void setup(void)
 {
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- *        or premature exit.
+ * 	       or premature exit.
  */
 void cleanup(void)
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }
 
 #endif

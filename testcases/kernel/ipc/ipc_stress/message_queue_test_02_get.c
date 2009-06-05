@@ -18,7 +18,7 @@
  */
 /*---------------------------------------------------------------------+
 |                     message_queue_test_02_get                        |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Description:  Create a message queue to send messages between two    |
 |               processes.                                             |
@@ -68,12 +68,12 @@
 
 /*
  * Defines
- *
+ * 
  * BUF_SIZE: size of message buffer...
  */
-#define DEFAULT_PROJECT_NAME "/tmp/message_queue_test"
-#define DEFAULT_PROJECT_ID 20
-#define USAGE "\nUsage: %s [-f project_name ] [-i project_id ]\n\n"
+#define DEFAULT_PROJECT_NAME 	"/tmp/message_queue_test"
+#define DEFAULT_PROJECT_ID	20
+#define USAGE	"\nUsage: %s [-f project_name ] [-i project_id ]\n\n"
 
 
 /*
@@ -90,16 +90,16 @@ static void error (const char *, int);
 
 /*
  * Global variables
- *
+ * 
  * project_name: Unique path used to create key (ftok)
  * project_id:   Unique number used to create key (ftok)
  */
-char *project_name  DEFAULT_PROJECT_NAME;
-char project_id  DEFAULT_PROJECT_ID;
+char	*project_name = DEFAULT_PROJECT_NAME;
+char	project_id = DEFAULT_PROJECT_ID;
 
 /*---------------------------------------------------------------------+
 |                               main                                   |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Main program  (see prolog for more details)               |
 |                                                                      |
@@ -109,37 +109,37 @@ char project_id  DEFAULT_PROJECT_ID;
 +---------------------------------------------------------------------*/
 int main (int argc, char **argv)
 {
- key_t key;  /* Unique key */
- int msqid;  /* Message queue identifier */
- int fd;  /* Temp file descriptor */
- mode_t mode  0777; /* Default mode bits */
+	key_t	key;		/* Unique key */
+	int	msqid;		/* Message queue identifier */
+	int	fd;		/* Temp file descriptor */
+	mode_t	mode = 0777;	/* Default mode bits */
 
- /*
-  * Parse command line options
-  */
- parse_args (argc, argv);
+	/*
+	 * Parse command line options
+	 */
+	parse_args (argc, argv);
 
- if ((fd  open (project_name, O_CREAT | O_RDWR, mode)) < 0)
-  sys_error ("open failed", __LINE__);
+	if ((fd = open (project_name, O_CREAT | O_RDWR, mode)) < 0)
+		sys_error ("open failed", __LINE__);
 
- if (close(fd) < 0)
-  sys_error ("close failed", __LINE__);
+	if (close(fd) < 0)
+		sys_error ("close failed", __LINE__);
 
- if ((key  ftok (project_name, project_id)) < 0)
-  sys_error ("ftok failed", __LINE__);
+	if ((key = ftok (project_name, project_id)) < 0)
+		sys_error ("ftok failed", __LINE__);
 
- if ((msqid  msgget (key, IPC_CREAT|S_IRUSR|S_IWUSR)) < 0)
-  sys_error ("msgget failed", __LINE__);
+	if ((msqid = msgget (key, IPC_CREAT|S_IRUSR|S_IWUSR)) < 0)
+		sys_error ("msgget failed", __LINE__);
 
- printf ("%d\n", msqid);
+	printf ("%d\n", msqid);
 
- return (0);
+	return (0);
 }
-
+	
 
 /*---------------------------------------------------------------------+
 |                             parse_args ()                            |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Parse the command line arguments & initialize global      |
 |            variables.                                                |
@@ -153,59 +153,59 @@ int main (int argc, char **argv)
 +---------------------------------------------------------------------*/
 static void parse_args (int argc, char **argv)
 {
- int opt;
- int errflag  0;
- char *program_name  *argv;
- extern char *optarg; /* Command line option */
+	int	opt;
+	int	errflag = 0;
+	char	*program_name = *argv;
+	extern char 	*optarg;	/* Command line option */
 
- /*
-  * Parse command line options.
-  */
- while ((opt  getopt(argc, argv, "f:i:")) ! EOF) {
-  switch (opt) {
-   case 'f': /* project file */
-    project_name  optarg;
-    break;
-   case 'i': /* project id */
-    project_id  *optarg;
-    break;
-   default:
-    errflag++;
-    break;
-  }
- }
- if (errflag) {
-  fprintf (stderr, USAGE, program_name);
-  exit (2);
- }
+	/*
+	 * Parse command line options.
+	 */
+	while ((opt = getopt(argc, argv, "f:i:")) != EOF) {
+		switch (opt) {
+			case 'f':	/* project file */
+				project_name = optarg;
+				break;
+			case 'i':	/* project id */
+				project_id = *optarg;
+				break;
+			default:
+				errflag++;
+				break;
+		}
+	}
+	if (errflag) {
+		fprintf (stderr, USAGE, program_name);
+		exit (2);
+	}
 }
 
 
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Creates system error message and calls error ()           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 static void sys_error (const char *msg, int line)
 {
- char syserr_msg [256];
+	char syserr_msg [256];
 
- sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
- error (syserr_msg, line);
+	sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
+	error (syserr_msg, line);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               error ()                               |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Prints out message and exits...                           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 static void error (const char *msg, int line)
 {
- fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
- exit (-1);
+	fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
+	exit (-1);
 }

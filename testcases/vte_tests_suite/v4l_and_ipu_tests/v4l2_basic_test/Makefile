@@ -10,28 +10,28 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  ------------------------------------------
-#KHOROSHEV.D                 09/29/2005      TLSbo55077  Initial version
+#KHOROSHEV.D                 09/29/2005      TLSbo55077  Initial version 
 #
 ###################################################################################################
 #Portability: ARM GCC
 ###################################################################################################
 
-CFLAGS       += -Wall -I ../../../../include
+CFLAGS       += -Wall -I ../../../../include 
 LOADLIBES    += -L../../../../lib -lltp -lm
-PROGRAM =
+PROGRAM = 
 LIBRARY =
 
 #SRCS = $(wildcard *.c)
 #OBJS = $(patsubst %.c,%.o,$(SRCS))
 
 #TARGET = mxc_v4l2_overlay mxc_v4l2_capture mxc_v4l2_output mxc_v4l2_still
-TARGET = mxc_v4l2_output.sh mxc_v4l2_overlay.sh
+TARGET = mxc_v4l2_output.sh mxc_v4l2_overlay.sh 
 
 all: $(TARGET)
 	@echo "***********************************************"
@@ -47,6 +47,6 @@ install:
 	@echo
 
 clean:
-
+	
 
 #$(OBJS) : $(SRCS)

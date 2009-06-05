@@ -46,103 +46,103 @@ mqd_t gqueue;
  */
 void justreturn_handler(int signo)
 {
- return;
+	return;
 }
 
 int main()
 {
- int pid;
-        const char *msgptr  MSGSTR;
- struct mq_attr attr;
- struct sigaction act;
+	int pid;
+        const char *msgptr = MSGSTR;
+	struct mq_attr attr;
+	struct sigaction act;
 
         sprintf(gqname, "/mq_timedsend_5-2_%d", getpid());
 
- attr.mq_msgsize  BUFFER;
- attr.mq_maxmsg  MAXMSG;
-        gqueue  mq_open(gqname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, &attr);
-        if (gqueue  (mqd_t)-1) {
+	attr.mq_msgsize = BUFFER;
+	attr.mq_maxmsg = MAXMSG;
+        gqueue = mq_open(gqname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, &attr);
+        if (gqueue == (mqd_t)-1) {
                 perror("mq_open() did not return success");
                 return PTS_UNRESOLVED;
         }
 
- /* parent and child use justreturn_handler to just return out of
-  * situations -- parent uses to stop it's sleep and wait again for
-  * the child; child uses to stop its mq_timedsend
-  */
- act.sa_handlerjustreturn_handler;
- act.sa_flags0;
- sigemptyset(&act.sa_mask);
- sigaction(SIGABRT, &act, 0);
+	/* parent and child use justreturn_handler to just return out of
+	 * situations -- parent uses to stop it's sleep and wait again for
+	 * the child; child uses to stop its mq_timedsend
+	 */
+	act.sa_handler=justreturn_handler;
+	act.sa_flags=0;
+	sigemptyset(&act.sa_mask);
+	sigaction(SIGABRT, &act, 0);
 
- if ((pid  fork())  0) {
-  /* child here */
-  int i;
-  struct timespec ts;
-  /* set up timeout to be as long as possible */
-  ts.tv_secINT32_MAX;
-  ts.tv_nsec0;
+	if ((pid = fork()) == 0) {
+		/* child here */
+		int i;
+		struct timespec ts;
+		/* set up timeout to be as long as possible */
+		ts.tv_sec=INT32_MAX;
+		ts.tv_nsec=0;
 
-  sleep(1);  // give parent time to set up handler
-  for (i0; i<MAXMSG+1; i++) {
-       if (mq_timedsend(gqueue, msgptr,
-      strlen(msgptr), 1, &ts)  -1) {
-    if (errno  EINTR) {
-    printf("mq_timedsend interrupted by signal\n");
-     return CHILDPASS;
-    } else {
-   printf("mq_timedsend not interrupted by signal\n");
-     return CHILDFAIL;
-    }
-       }
-   /* send signal to parent each time message is sent */
-   kill(getppid(), SIGABRT);
-  }
+		sleep(1);  // give parent time to set up handler
+		for (i=0; i<MAXMSG+1; i++) {
+        		if (mq_timedsend(gqueue, msgptr, 
+						strlen(msgptr), 1, &ts) == -1) {
+				if (errno == EINTR) {
+				printf("mq_timedsend interrupted by signal\n");
+					return CHILDPASS;
+				} else {
+			printf("mq_timedsend not interrupted by signal\n");
+					return CHILDFAIL;
+				}
+        		}
+			/* send signal to parent each time message is sent */
+			kill(getppid(), SIGABRT);
+		}
 
-  printf("Child never blocked\n");
-  return CHILDFAIL;
- } else {
-  /* parent here */
-  int j,k, blocking0;
+		printf("Child never blocked\n");
+		return CHILDFAIL;
+	} else {
+		/* parent here */
+		int j,k, blocking=0;
 
-  for (j0; j<MAXMSG+1; j++) {
-   if (sleep(3)  0) {
-   /* If sleep finished, child is probably blocking */
-    blocking1; //set blocking flag
-    kill(pid, SIGABRT); //signal child
-    break;
-   }
-  }
+		for (j=0; j<MAXMSG+1; j++) {
+			if (sleep(3) == 0) {
+			/* If sleep finished, child is probably blocking */
+				blocking=1; //set blocking flag
+				kill(pid, SIGABRT); //signal child
+				break;
+			}
+		}
 
-  if (blocking!1) {
-   printf("Signal never blocked\n");
-   kill(pid, SIGKILL); //kill child if not gone
-   mq_close(gqueue);
-   mq_unlink(gqname);
-   return PTS_UNRESOLVED;
-  }
-  mq_close(gqueue);
-  if (mq_unlink(gqname) ! 0) {
-   perror("mq_unlink()");
-   kill(pid, SIGKILL); //kill child if not gone
-   return PTS_UNRESOLVED;
-  }
+		if (blocking!=1) {
+			printf("Signal never blocked\n");
+			kill(pid, SIGKILL); //kill child if not gone
+			mq_close(gqueue);
+			mq_unlink(gqname);
+			return PTS_UNRESOLVED;
+		}
+		mq_close(gqueue);
+		if (mq_unlink(gqname) != 0) {
+			perror("mq_unlink()");
+			kill(pid, SIGKILL); //kill child if not gone
+			return PTS_UNRESOLVED;
+		}
 
-  if (wait(&k)  -1) {
-   perror("Error waiting for child to exit\n");
-   kill(pid, SIGKILL); //kill child if not gone
-   return PTS_UNRESOLVED;
-  }
+		if (wait(&k) == -1) {
+			perror("Error waiting for child to exit\n");
+			kill(pid, SIGKILL); //kill child if not gone
+			return PTS_UNRESOLVED;
+		}
+		
+		if (!WIFEXITED(k) || !WEXITSTATUS(k)) {
+			printf("Test FAILED\n");
+			return PTS_FAIL;
+		}
 
-  if (!WIFEXITED(k) || !WEXITSTATUS(k)) {
-   printf("Test FAILED\n");
-   return PTS_FAIL;
-  }
+		printf("Test PASSED\n");
+		return PTS_PASS;
+	}
 
-  printf("Test PASSED\n");
-  return PTS_PASS;
- }
-
- return PTS_UNRESOLVED;
+	return PTS_UNRESOLVED;
 }
 

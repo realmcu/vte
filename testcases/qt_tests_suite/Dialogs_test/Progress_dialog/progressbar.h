@@ -58,7 +58,7 @@ protected slots:
     void slotTimeout();
 private:
   void contextMenuEvent( QContextMenuEvent * );
-
+     
 
 };
 

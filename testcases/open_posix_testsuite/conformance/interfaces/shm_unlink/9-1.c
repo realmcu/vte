@@ -7,7 +7,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- * Test that shm_unlink() sets errno  EACCES if permission is denied to unlink
+ * Test that shm_unlink() sets errno = EACCES if permission is denied to unlink
  * the named shared memory object.
  *
  * Steps:
@@ -35,52 +35,52 @@
 
 
 int main() {
- int fd, result;
- struct passwd *pw;
+	int fd, result;
+	struct passwd *pw;
+	
+	fd = shm_open(SHM_NAME, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
+	if(fd == -1) {
+		perror("An error occurs when calling shm_open()");
+		return PTS_UNRESOLVED;
+	}
+	
+	/* search for the first user which is non root and which is not the
+	   current user */
+	while((pw = getpwent()) != NULL)
+		if(strcmp(pw->pw_name, "root") && pw->pw_uid != getuid())
+			break;
 
- fd  shm_open(SHM_NAME, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
- if(fd  -1) {
-  perror("An error occurs when calling shm_open()");
-  return PTS_UNRESOLVED;
- }
+	if(pw == NULL) {
+		printf("There is no other user than current and root.\n");
+		return PTS_UNRESOLVED;
+	}
 
- /* search for the first user which is non root and which is not the
-    current user */
- while((pw  getpwent()) ! NULL)
-  if(strcmp(pw->pw_name, "root") && pw->pw_uid ! getuid())
-   break;
+	if(seteuid(pw->pw_uid) != 0) {
+		if(errno == EPERM) {
+			printf("You don't have permission to change your UID.\nTry to rerun this test as root.\n");
+			return PTS_UNRESOLVED;
+		}
+		perror("An error occurs when calling seteuid()");
+		return PTS_UNRESOLVED;
+	}
+	
+	printf("Testing with user '%s' (uid: %i)\n",
+	       pw->pw_name, pw->pw_uid);
 
- if(pw  NULL) {
-  printf("There is no other user than current and root.\n");
-  return PTS_UNRESOLVED;
- }
-
- if(seteuid(pw->pw_uid) ! 0) {
-  if(errno  EPERM) {
-   printf("You don't have permission to change your UID.\nTry to rerun this test as root.\n");
-   return PTS_UNRESOLVED;
-  }
-  perror("An error occurs when calling seteuid()");
-  return PTS_UNRESOLVED;
- }
-
- printf("Testing with user '%s' (uid: %i)\n",
-        pw->pw_name, pw->pw_uid);
-
- result  shm_unlink(SHM_NAME);
- if(result  -1&& errno  EACCES) {
-  printf("Test PASSED\n");
-  seteuid(getuid());
-  shm_unlink(SHM_NAME);
-  return PTS_PASS;
- } else if(result  -1) {
-  perror("Unexpected error");
-  seteuid(getuid());
-  shm_unlink(SHM_NAME);
-  return PTS_FAIL;
- }
-
- printf("shm_unlink() success.\n");
- return PTS_UNRESOLVED;
-
+	result = shm_unlink(SHM_NAME);
+	if(result == -1&& errno == EACCES) {
+		printf("Test PASSED\n");
+		seteuid(getuid());
+		shm_unlink(SHM_NAME);
+		return PTS_PASS;
+	} else if(result == -1) {
+		perror("Unexpected error");		
+		seteuid(getuid());
+		shm_unlink(SHM_NAME);
+		return PTS_FAIL;
+	}
+	
+	printf("shm_unlink() success.\n");
+	return PTS_UNRESOLVED;
+	
 }

@@ -6,7 +6,7 @@
  * source tree.
  *
  *
- * This test case will cover all the conversion specifiers that are supported
+ * This test case will cover all the conversion specifiers that are supported 
  * in strftime().
  */
 
@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <langinfo.h>
-#include <time.h>
+#include <time.h> 
 #include "posixtest.h"
 
 
@@ -35,45 +35,45 @@ int main () {
     /* use format controls to print the various date/time components. */
 
     result = strftime(text, 256, "%a", local_t);
-    printf("a   Bytes %i           %s ", result, text);
+    printf("a   Bytes %i           %s	", result, text);
     if ( result != 3 ) {
-     puts("Test Failed: \%a doesn't equal at least 3 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%a doesn't equal at least 3 bytes");
+	    return PTS_FAIL;
     } else {
-     puts("PASS");
+	    puts("PASS");
     }
 
     result = strftime(text, 256, "%A", local_t);
-    printf("A   Bytes %i           %s ", result, text);
+    printf("A   Bytes %i           %s	", result, text);
     if ( result <= 5 ) {
-     puts("Test Failed: \%A doesn't equal to 6 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%A doesn't equal to 6 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
     result = strftime(text, 256 , "%b", local_t);
-    printf("b   Bytes %i           %s ", result, text);
+    printf("b   Bytes %i           %s	", result, text);
     if ( result != 3 ) {
-     puts("Test Failed: \%b doesn't equal to 3 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%b doesn't equal to 3 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
     result = strftime(text, 256, "%B", local_t);
-    printf("B   Bytes %i           %s ", result, text);
+    printf("B   Bytes %i           %s	", result, text);
     if ( result < 3 ) {
-     puts("Test Failed: \%B is less than3 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%B is less than3 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
 /*  This section has been commented for known bug in gcc:
  *
  *  result = strftime(text, 256, "%c", local_t);
- *  printf("c   Bytes %i          %s ", result, text);
+ *  printf("c   Bytes %i          %s	", result, text);
  *  if ( result <= 30 ) {
  *    puts("Test Failed: \%c doesn't equal at least 30 bytes");
  *   } else {
@@ -82,27 +82,27 @@ int main () {
  */
 
     result = strftime(text, 256, "%C", local_t);
-    printf("C   Bytes %i           %s ", result, text);
+    printf("C   Bytes %i           %s	", result, text);
     if ( result != 2 ) {
-     puts("Test Failed: \%C doesn't equal at least 2 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%C doesn't equal at least 2 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
     result = strftime(text, 256, "%d", local_t);
-    printf("d   Bytes %i           %s ", result, text);
+    printf("d   Bytes %i           %s	", result, text);
     if ( result != 2 ) {
-     puts("Test Failed: \%d doesn't equal at least 2 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%d doesn't equal at least 2 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
 /*  This section has been commented for known bug in gcc:
  *
  *  result = strftime(text, 256, "%D", local_t);
- *  printf("D   Bytes %i           %s ", result, text);
+ *  printf("D   Bytes %i           %s	", result, text);
  *  if ( result != 8 ) {
  *    puts("Test Failed: \%D doesn't equal at least 2 bytes");
  *    return PTS_FAIL;
@@ -113,219 +113,219 @@ int main () {
 
 
     result = strftime(text, 256, "%e", local_t);
-    printf("e   Bytes %i           %s ", result, text);
+    printf("e   Bytes %i           %s	", result, text);
     if ( result != 2 ) {
-     puts("Test Failed: \%e doesn't equal at least 2 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%e doesn't equal at least 2 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
     result = strftime(text, 256, "%F", local_t);
-    printf("F   Bytes %i           %s ", result, text);
+    printf("F   Bytes %i           %s	", result, text);
     if ( result != 10 ) {
-     puts("Test Failed: \%F doesn't equal at least 10 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%F doesn't equal at least 10 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
     result = strftime(text, 256, "%H", local_t);
-    printf("H   Bytes %i           %s ", result, text);
+    printf("H   Bytes %i           %s	", result, text);
     if ( result != 2 ) {
-     puts("Test Failed: \%H doesn't equal at least 2 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%H doesn't equal at least 2 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
 /*  This section has been commented for known bug in gcc:
  *
  *   result = strftime(text, 256, "%g", local_t);
- *   printf("g   Bytes %i           %s  ", result, text);
+ *   printf("g   Bytes %i           %s		", result, text);
  *   if ( result != 2 ) {
-*     puts("Test Failed: \%g doesn't equal at least 2 bytes");
-*     return PTS_FAIL;
+*	    puts("Test Failed: \%g doesn't equal at least 2 bytes");
+*	    return PTS_FAIL;
 *    } else {
-*     puts ("PASS");
+*	    puts ("PASS");
 *    }
 */
 
     result = strftime(text, 256, "%G", local_t);
-    printf("G   Bytes %i           %s ", result, text);
+    printf("G   Bytes %i           %s	", result, text);
     if ( result != 4 ) {
-     puts("Test Failed: \%G doesn't equal at least 4 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%G doesn't equal at least 4 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
     result = strftime(text, 256, "%h", local_t);
-    printf("h   Bytes %i           %s ", result, text);
+    printf("h   Bytes %i           %s	", result, text);
     if ( result != 3 ) {
-     puts("Test Failed: \%h doesn't equal at least 3 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%h doesn't equal at least 3 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
 
 
     result = strftime(text, 256, "%I", local_t);
-    printf("I   Bytes %i           %s ", result, text);
+    printf("I   Bytes %i           %s	", result, text);
     if ( result != 2 ) {
-     puts("Test Failed: \%I doesn't equal at least 2 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%I doesn't equal at least 2 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
     result = strftime(text, 256, "%j", local_t);
-    printf("j   Bytes %i           %s ", result, text);
+    printf("j   Bytes %i           %s	", result, text);
     if ( result != 3 ) {
-     puts("Test Failed: \%j doesn't equal at least 3 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%j doesn't equal at least 3 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
     result = strftime(text, 256, "%m", local_t);
-    printf("m   Bytes %i           %s ", result, text);
+    printf("m   Bytes %i           %s	", result, text);
     if ( result != 2 ) {
-     puts("Test Failed: \%m doesn't equal at least 2 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%m doesn't equal at least 2 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
     result = strftime(text, 256, "%M", local_t);
-    printf("M   Bytes %i           %s ", result, text);
+    printf("M   Bytes %i           %s	", result, text);
     if ( result != 2 ) {
-     puts("Test Failed: \%M doesn't equal at least 2 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%M doesn't equal at least 2 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
     result = strftime(text, 256, "%n", local_t);
-    printf("n   Bytes %i           %s ", result, text);
+    printf("n   Bytes %i           %s	", result, text);
     if ( result != 1 ) {
-     puts("Test Failed: \%n doesn't equal at least 1 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%n doesn't equal at least 1 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
 
     result = strftime(text, 256, "%p", local_t);
-    printf("p   Bytes %i           %s ", result, text);
+    printf("p   Bytes %i           %s	", result, text);
     if ( result != 2 ) {
-     puts("Test Failed: \%p doesn't equal at least 2 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%p doesn't equal at least 2 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
     result = strftime(text, 256, "%r", local_t);
-    printf("r   Bytes %i           %s ", result, text);
+    printf("r   Bytes %i           %s	", result, text);
     if ( result != 11 ) {
-     puts("Test Failed: \%r doesn't equal at least 11 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%r doesn't equal at least 11 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
 
     result = strftime(text, 256, "%R", local_t);
-    printf("R   Bytes %i           %s ", result, text);
+    printf("R   Bytes %i           %s	", result, text);
     if ( result != 5 ) {
-     puts("Test Failed: \%R doesn't equal at least 5 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%R doesn't equal at least 5 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
 
     result = strftime(text, 256, "%S", local_t);
-    printf("S   Bytes %i           %s ", result, text);
+    printf("S   Bytes %i           %s	", result, text);
     if ( result != 2 ) {
-     puts("Test Failed: \%S doesn't equal at least 2 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%S doesn't equal at least 2 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
     result = strftime(text, 256, "%t", local_t);
-    printf("t   Bytes %i           %s ", result, text);
+    printf("t   Bytes %i           %s	", result, text);
     if ( result != 1 ) {
-     puts("Test Failed: \%t doesn't equal at least 1 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%t doesn't equal at least 1 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
 
     result = strftime(text, 256, "%T", local_t);
-    printf("T   Bytes %i           %s ", result, text);
+    printf("T   Bytes %i           %s	", result, text);
     if ( result != 8 ) {
-     puts("Test Failed: \%T doesn't equal at least 8 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%T doesn't equal at least 8 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
 
     result = strftime(text, 256, "%u", local_t);
-    printf("u   Bytes %i           %s ", result, text);
+    printf("u   Bytes %i           %s	", result, text);
     if ( result != 1 ) {
-     puts("Test Failed: \%u doesn't equal at least 1 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%u doesn't equal at least 1 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
 
     result = strftime(text, 256, "%U", local_t);
-    printf("U   Bytes %i           %s ", result, text);
+    printf("U   Bytes %i           %s	", result, text);
     if ( result != 2 ) {
-     puts("Test Failed: \%U doesn't equal at least 2 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%U doesn't equal at least 2 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
     result = strftime(text, 256, "%V", local_t);
-    printf("V   Bytes %i           %s ", result, text);
+    printf("V   Bytes %i           %s	", result, text);
     if ( result != 2 ) {
-     puts("Test Failed: \%V doesn't equal at least 2 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%V doesn't equal at least 2 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
 
     result = strftime(text, 256, "%w", local_t);
-    printf("w   Bytes %i           %s ", result, text);
+    printf("w   Bytes %i           %s	", result, text);
     if ( result != 1 ) {
-     puts("Test Failed: \%w doesn't equal at least 1 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%w doesn't equal at least 1 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
     result = strftime(text, 256, "%W", local_t);
-    printf("W   Bytes %i           %s ", result, text);
+    printf("W   Bytes %i           %s	", result, text);
     if ( result != 2 ) {
-     puts("Test Failed: \%W doesn't equal at least 2 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%W doesn't equal at least 2 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
 /*  This section has been commented for known bug in gcc:
  *
  *  result = strftime(text, 256, "%x", local_t);
- *  printf("x   Bytes %i           %s ", result, text);
+ *  printf("x   Bytes %i           %s	", result, text);
  *  if ( result != 10 ) {
  *    puts("Test Failed: \%x doesn't equal at least 10 bytes");
  *    return PTS_FAIL;
@@ -335,18 +335,18 @@ int main () {
  */
 
     result = strftime(text, 256, "%X", local_t);
-    printf("X   Bytes %i           %s ", result, text);
+    printf("X   Bytes %i           %s	", result, text);
     if ( result != 8 ) {
-     puts("Test Failed: \%X doesn't equal at least 11 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%X doesn't equal at least 11 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
 /*  This section has been commented for known bug in gcc:
  *
  *  result = strftime(text, 256, "%y", local_t);
- *  printf("y   Bytes %i           %s ", result, text);
+ *  printf("y   Bytes %i           %s	", result, text);
  *  if ( result != 2 ) {
  *    puts("Test Failed: \%y doesn't equal at least 2 bytes");
  *    return PTS_FAIL;
@@ -356,32 +356,32 @@ int main () {
  */
 
     result = strftime(text, 256, "%Y", local_t);
-    printf("Y   Bytes %i           %s ", result, text);
+    printf("Y   Bytes %i           %s	", result, text);
     if ( result != 4 ) {
-     puts("Test Failed: \%Y doesn't equal at least 4 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%Y doesn't equal at least 4 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
     result = strftime(text, 256, "%z", local_t);
-    printf("z   Bytes %i           %s ", result, text);
+    printf("z   Bytes %i           %s	", result, text);
     if ( result != 5 ) {
-     puts("Test Failed: \%z doesn't equal at least 5 bytes");
-     return PTS_FAIL;
+	    puts("Test Failed: \%z doesn't equal at least 5 bytes");
+	    return PTS_FAIL;
     } else {
-     puts ("PASS");
+	    puts ("PASS");
     }
 
 
     //result = strftime(text, 256, "%Z", local_t);
-  //printf("Z   Bytes %i           %s ", result, text);
+  //printf("Z   Bytes %i           %s	", result, text);
   //if ( result != 3 ) {
-//     puts("Test Failed: \%Z doesn't equal at least 3 bytes");
- //  return PTS_FAIL;
-   // } else {
-//      puts ("PASS");
-  //  }
+//	    puts("Test Failed: \%Z doesn't equal at least 3 bytes");
+ //		return PTS_FAIL;
+   // 	} else {
+//		    puts ("PASS");
+  //  	}
     printf("\n");
 
 return PTS_PASS;

@@ -10,6 +10,6 @@
 
 int main()
 {
- fprintf(stderr, "Test not implemented!\n");
+	fprintf(stderr, "Test not implemented!\n");
         return PTS_UNTESTED;
 }

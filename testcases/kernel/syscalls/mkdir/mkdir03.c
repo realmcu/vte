@@ -19,47 +19,47 @@
 
 /*
  * NAME
- * mkdir03
+ *	mkdir03
  *
  * DESCRIPTION
- * check mkdir() with various error conditions that should produce
- * EFAULT, ENAMETOOLONG, EEXIST, ENOENT and ENOTDIR
+ *	check mkdir() with various error conditions that should produce
+ *	EFAULT, ENAMETOOLONG, EEXIST, ENOENT and ENOTDIR
  *
  * ALGORITHM
- * Setup:
- *  Setup signal handling.
- *  Pause for SIGUSR1 if option specified.
- *  Create temporary directory.
+ *	Setup:
+ *		Setup signal handling.
+ *		Pause for SIGUSR1 if option specified.
+ *		Create temporary directory.
  *
- * Test:
- *  Loop if the proper options are given.
+ *	Test:
+ *		Loop if the proper options are given.
  *              Loop through the test cases
  *                 call the test case specific setup routine if necessary
  *                 call mkdir() using the TEST macro
- *     if the call succeeds
- *        print a FAIL message and continue
- *     Log the errno value
- *     if the errno is expected
- *   issue a PASS message
- *     else
- *   issue a FAIL message
- * Cleanup:
- *  Print errno log and/or timing stats if options given
- *  Delete the temporary directory created.
+ *		   if the call succeeds
+ *		      print a FAIL message and continue
+ *		   Log the errno value
+ *		   if the errno is expected
+ *			issue a PASS message
+ *		   else
+ *			issue a FAIL message
+ *	Cleanup:
+ *		Print errno log and/or timing stats if options given
+ *		Delete the temporary directory created.
  * USAGE
- * mkdir03 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
- * where,  -c n : Run n copies concurrently.
- *  -e   : Turn on errno logging.
- *  -i n : Execute test n times.
- *  -I x : Execute test for x seconds.
- *  -P x : Pause for x seconds between iterations.
- *  -t   : Turn on syscall timing.
+ *	mkdir03 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
+ *	where,  -c n : Run n copies concurrently.
+ *		-e   : Turn on errno logging.
+ *		-i n : Execute test n times.
+ *		-I x : Execute test for x seconds.
+ *		-P x : Pause for x seconds between iterations.
+ *		-t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * None.
+ *	None.
  *
  */
 
@@ -79,208 +79,208 @@ void setup3();
 void setup4();
 void setup5();
 
-#define PERMS  0777
-#define PERMS2  0277
+#define PERMS		0777
+#define PERMS2		0277
 
-#define NAMELEN  50
+#define NAMELEN		50
 
-char *TCID  "mkdir03";           /* Test program identifier.    */
-int fileHandle, fileHandle2  0;
+char *TCID = "mkdir03";           /* Test program identifier.    */
+int fileHandle, fileHandle2 = 0;
 extern int Tst_count;           /* Test Case counter for tst_* routines */
 
 char tstdir3[NAMELEN];
 char tstdir4[NAMELEN];
 char tstdir5[NAMELEN];
 
-char long_dir[]  "abcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyz";
+char long_dir[] = "abcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyz";
 
-int exp_enos[]{EFAULT, ENAMETOOLONG, EEXIST, ENOENT, ENOTDIR, 0};
+int exp_enos[]={EFAULT, ENAMETOOLONG, EEXIST, ENOENT, ENOTDIR, 0};
 
-char * bad_addr  0;
+char * bad_addr = 0;
 
 struct test_case_t {
         char *dir;
         int perms;
         int error;
         void (*setupfunc)();
-} TC[]  {
+} TC[] = {
 #if !defined(UCLINUX)
- /* try to create a directory with an illegal name/address */
+	/* try to create a directory with an illegal name/address */
         { (void *)-1, PERMS, EFAULT, NULL },
 #endif
 
- /* try to create a directory using a name that is too long */
+	/* try to create a directory using a name that is too long */
         { long_dir, PERMS2, ENAMETOOLONG, NULL },
 
- /* try to create a directory with the same name as an existing file */
+	/* try to create a directory with the same name as an existing file */
         { tstdir3, PERMS, EEXIST, setup3 },
 
- /* try to create a directory under a directory that doesn't exist */
+	/* try to create a directory under a directory that doesn't exist */
         { tstdir4, PERMS, ENOENT, setup4 },
 
- /*
-  * try to create a directory under a path with a non-directory
-  * component
-  */
+	/*
+	 * try to create a directory under a path with a non-directory
+	 * component
+	 */
         { tstdir5, PERMS, ENOTDIR, setup5 }
 };
 
-int TST_TOTAL  sizeof(TC)/sizeof(TC[0]);
+int TST_TOTAL = sizeof(TC)/sizeof(TC[0]);
 
 int
 main(int ac, char **av)
 {
- int lc;             /* loop counter */
- char *msg;          /* message returned from parse_opts */
- int i;
+	int lc;             /* loop counter */
+	char *msg;          /* message returned from parse_opts */
+	int i;
 
- /*
-  * parse standard options
-  */
- if ((msgparse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL) {
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
- }
+	/*
+	 * parse standard options
+	 */
+	if ((msg=parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL) {
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	}
 
- /*
-  * perform global setup for test
-  */
- setup();
+	/*
+	 * perform global setup for test
+	 */
+	setup();
+	
+	/* set the expected errnos... */
+	TEST_EXP_ENOS(exp_enos);
+	
+	/*
+	 * check looping state if -i option given
+	 */
+	for (lc=0; TEST_LOOPING(lc); lc++) {
+	  
+		/* reset Tst_count in case we are looping. */
+		Tst_count=0;
 
- /* set the expected errnos... */
- TEST_EXP_ENOS(exp_enos);
+		/* loop through the test cases */
+		for (i = 0; i < TST_TOTAL; i++) {
 
- /*
-  * check looping state if -i option given
-  */
- for (lc0; TEST_LOOPING(lc); lc++) {
+			/* perform test specific setup if necessary */
+			if (TC[i].setupfunc != NULL) {
+				(*TC[i].setupfunc)();
+			}
 
-  /* reset Tst_count in case we are looping. */
-  Tst_count0;
+			TEST(mkdir(TC[i].dir, TC[i].perms));
 
-  /* loop through the test cases */
-  for (i  0; i < TST_TOTAL; i++) {
-
-   /* perform test specific setup if necessary */
-   if (TC[i].setupfunc ! NULL) {
-    (*TC[i].setupfunc)();
-   }
-
-   TEST(mkdir(TC[i].dir, TC[i].perms));
-
-                        if (TEST_RETURN ! -1) {
+                        if (TEST_RETURN != -1) {
                                 tst_resm(TFAIL, "call succeeded unexpectedly");
                                 continue;
                         }
 
                         TEST_ERROR_LOG(TEST_ERRNO);
 
-                        if (TEST_ERRNO  TC[i].error) {
+                        if (TEST_ERRNO == TC[i].error) {
                                 tst_resm(TPASS, "expected failure - "
-                                         "errno  %d : %s", TEST_ERRNO,
+                                         "errno = %d : %s", TEST_ERRNO,
                                          strerror(TEST_ERRNO));
                         } else {
                                 tst_resm(TFAIL, "unexpected error - %d : %s - "
                                          "expected %d", TEST_ERRNO,
                                          strerror(TEST_ERRNO), TC[i].error);
-   }
-  }
- }   /* End for TEST_LOOPING */
-
- /*
-  * cleanup and exit
-  */
- cleanup();
-
- /*NOTREACHED*/
- return(0);
+			}
+		}
+	}   /* End for TEST_LOOPING */
+	
+	/*
+	 * cleanup and exit
+	 */
+	cleanup();
+	
+	/*NOTREACHED*/
+	return(0);
 }       /* End main */
 
 /*
  * setup3() - performs all ONE TIME setup for this test case 3.
  */
-void
+void 
 setup3()
 {
- char tstfile3[NAMELEN];
+	char tstfile3[NAMELEN];
 
- /* Initialize the test directory name and file name */
- sprintf(tstfile3, "tst.%d", getpid());
- sprintf(tstdir3, "%s", tstfile3);
+	/* Initialize the test directory name and file name */
+	sprintf(tstfile3, "tst.%d", getpid());
+	sprintf(tstdir3, "%s", tstfile3);
 
- /* create a file */
- if ((fileHandle  creat(tstfile3, PERMS))  -1) {
-  tst_brkm(TBROK, cleanup, "file creation failed is setup3");
- }
+	/* create a file */
+	if ((fileHandle = creat(tstfile3, PERMS)) == -1) {
+		tst_brkm(TBROK, cleanup, "file creation failed is setup3");
+	}
 }
 
 /*
  * setup4() - performs all ONE TIME setup for this test case 4.
  */
-void
+void 
 setup4()
 {
- char tstdir[NAMELEN];
- struct stat statbuf;
+	char tstdir[NAMELEN];
+	struct stat statbuf;
 
- /* Initialize the test directory name */
-   sprintf(tstdir, "tstdir4.%d", getpid());
- sprintf(tstdir4, "%s/tst", tstdir);
+	/* Initialize the test directory name */
+		 sprintf(tstdir, "tstdir4.%d", getpid());
+	sprintf(tstdir4, "%s/tst", tstdir);
 /*
- sprintf(tstdir4, "%s/tst", tstdir4);
+	sprintf(tstdir4, "%s/tst", tstdir4);
 
   This fails with EACCES           ^^^^^^^
   add this as testcase?
 
 */
 
- /* make sure tstdir4 does not exist */
- if (stat(tstdir4, &statbuf) ! -1) {
-  tst_brkm(TBROK, cleanup, "directory exists - test #4");
- }
+	/* make sure tstdir4 does not exist */
+	if (stat(tstdir4, &statbuf) != -1) {
+		tst_brkm(TBROK, cleanup, "directory exists - test #4");
+	}
 
 }
 
 /*
  * setup5() - performs all ONE TIME setup for this test case 5.
  */
-void
+void 
 setup5()
 {
- char tstfile5[NAMELEN];
+	char tstfile5[NAMELEN];
 
- /* Initialize the test directories name and file name */
- sprintf(tstfile5, "tstfile5.%d", getpid());
- sprintf(tstdir5, "%s/tst",tstfile5);
+	/* Initialize the test directories name and file name */
+	sprintf(tstfile5, "tstfile5.%d", getpid());
+	sprintf(tstdir5, "%s/tst",tstfile5);
 
- /* create a file */
- if ((fileHandle2  creat(tstfile5, PERMS))  -1) {
-  tst_brkm(TBROK, cleanup, "creat a file failed");
-  /*NOTREACHED*/
- }
+	/* create a file */
+	if ((fileHandle2 = creat(tstfile5, PERMS)) == -1) {
+		tst_brkm(TBROK, cleanup, "creat a file failed");
+		/*NOTREACHED*/
+	}
 }
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void
+void 
 setup()
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /* Create a temporary directory and make it current. */
- tst_tmpdir();
+	/* Create a temporary directory and make it current. */
+	tst_tmpdir();
 
 #if !defined(UCLINUX)
- bad_addr  mmap(0, 1, PROT_NONE,
-   MAP_PRIVATE_EXCEPT_UCLINUX|MAP_ANONYMOUS, 0, 0);
- if (bad_addr  MAP_FAILED) {
-  tst_brkm(TBROK, cleanup, "mmap failed");
- }
- TC[0].dir  bad_addr;
+	bad_addr = mmap(0, 1, PROT_NONE,
+			MAP_PRIVATE_EXCEPT_UCLINUX|MAP_ANONYMOUS, 0, 0);
+	if (bad_addr == MAP_FAILED) {
+		tst_brkm(TBROK, cleanup, "mmap failed");
+	}
+	TC[0].dir = bad_addr;
 #endif
 }
 
@@ -289,25 +289,25 @@ setup()
  * cleanup() - performs all ONE TIME cleanup for this test at
  *              completion or premature exit.
  */
-void
+void 
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- close(fileHandle);
- close(fileHandle2);
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	close(fileHandle);
+	close(fileHandle2);
 
- TEST_CLEANUP;
+	TEST_CLEANUP;
 
- /*
-  * Remove the temporary directory.
-  */
- tst_rmdir();
-
- /*
-  * Exit with return code appropriate for results.
-  */
- tst_exit();
+	/*
+	 * Remove the temporary directory.
+	 */
+	tst_rmdir();
+	
+	/*
+	 * Exit with return code appropriate for results.
+	 */
+	tst_exit();
 }

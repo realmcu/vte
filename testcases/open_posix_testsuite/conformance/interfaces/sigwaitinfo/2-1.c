@@ -1,11 +1,11 @@
-/*
+/*   
  * Copyright (c) 2002-2003, Intel Corporation. All rights reserved.
  * Created by:  salwan.searty REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this
+ * of this license, see the COPYING file at the top level of this 
  * source tree.
 
- This program tests the assertion that the lowest pending signal will be
+ This program tests the assertion that the lowest pending signal will be 
  selected by sigwaitinfo() if there are any multiple pending signals in the
  range SIGRTMIN to SIGRTMAX.
 
@@ -31,43 +31,43 @@
 
 
 void myhandler(int signo, siginfo_t *info, void *context) {
- printf ("Inside dummy handler\n");
+	printf ("Inside dummy handler\n");
 }
 
 int main()
 {
- int pid, rtsig;
- union sigval value;
- struct sigaction act;
- sigset_t selectset;
+	int pid, rtsig;
+	union sigval value;
+	struct sigaction act;
+	sigset_t selectset;
 
- act.sa_flags = SA_SIGINFO;
- act.sa_sigaction = myhandler;
- sigemptyset(&act.sa_mask);
- sigemptyset(&selectset);
+	act.sa_flags = SA_SIGINFO;
+	act.sa_sigaction = myhandler;
+	sigemptyset(&act.sa_mask);
+	sigemptyset(&selectset);
 
- for (rtsig=SIGRTMAX; rtsig>=SIGRTMIN; rtsig--) {
-  sigaddset(&act.sa_mask, rtsig);
-  sighold(rtsig);
-  sigaddset(&selectset, rtsig);
- }
+	for (rtsig=SIGRTMAX; rtsig>=SIGRTMIN; rtsig--) {
+		sigaddset(&act.sa_mask, rtsig);
+		sighold(rtsig);
+		sigaddset(&selectset, rtsig);
+	}
 
- pid = getpid();
- value.sival_int = 5; /* 5 is just an arbitrary value */
+	pid = getpid();
+	value.sival_int = 5;	/* 5 is just an arbitrary value */
 
- for (rtsig=SIGRTMAX; rtsig>=SIGRTMIN; rtsig--) {
-  sigaction(rtsig, &act, 0);
-  if (sigqueue(pid, rtsig, value) != 0) {
-   printf("Test UNRESOLVED: call to sigqueue did not return success\n");
-   return PTS_UNRESOLVED;
-  }
- }
+	for (rtsig=SIGRTMAX; rtsig>=SIGRTMIN; rtsig--) {
+		sigaction(rtsig, &act, 0);
+		if (sigqueue(pid, rtsig, value) != 0) {
+			printf("Test UNRESOLVED: call to sigqueue did not return success\n");
+			return PTS_UNRESOLVED;
+		}
+	}
 
         if (sigwaitinfo(&selectset, NULL) != SIGRTMIN) {
-  printf("Test FAILED: sigwaitinfo() did not return the lowest of the multiple pending signals between SIGRTMIN and SIGRTMAX\n");
+		printf("Test FAILED: sigwaitinfo() did not return the lowest of the multiple pending signals between SIGRTMIN and SIGRTMAX\n");
                 return PTS_FAIL;
         }
 
- return PTS_PASS;
+	return PTS_PASS;
 }
 

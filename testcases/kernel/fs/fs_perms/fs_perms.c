@@ -39,107 +39,107 @@
 
 #include "test.h"
 
-char *TCID  "fs_perms";
-int TST_TOTAL  1;
+char *TCID = "fs_perms";
+int TST_TOTAL = 1;
 
 static int testsetup(mode_t mode, int cuserId, int cgroupId)
 {
- int ret;
+	int ret;
 
- ret  unlink("test.file");
- if (ret && errno ! ENOENT)
-  goto done;
- ret  system("cp testx test.file");
- if (ret)
-  goto done;
- ret  chmod("test.file", mode);
- if (ret)
-  goto done;
- ret  chown("test.file", cuserId, cgroupId);
+	ret = unlink("test.file");
+	if (ret && errno != ENOENT)
+		goto done;
+	ret = system("cp testx test.file");
+	if (ret)
+		goto done;
+	ret = chmod("test.file", mode);
+	if (ret)
+		goto done;
+	ret = chown("test.file", cuserId, cgroupId);
 
  done:
- return ret;
+	return ret;
 }
 
 static int testfperm(int userId, int groupId, char *fperm)
 {
- /* SET CURRENT USER/GROUP PERMISSIONS */
- if (setegid(groupId)) {
-  tst_brkm(TBROK, NULL, "could not setegid to %d: %s", groupId, strerror(errno));
-  seteuid(0);
-  setegid(0);
-  return -1;
- }
- if (seteuid(userId)) {
-  tst_brkm(TBROK, NULL, "could not seteuid to %d: %s", userId, strerror(errno));
-  seteuid(0);
-  setegid(0);
-  return -1;
- }
+	/* SET CURRENT USER/GROUP PERMISSIONS */
+	if (setegid(groupId)) {
+		tst_brkm(TBROK, NULL, "could not setegid to %d: %s", groupId, strerror(errno));
+		seteuid(0);
+		setegid(0);
+		return -1;
+	}
+	if (seteuid(userId)) {
+		tst_brkm(TBROK, NULL, "could not seteuid to %d: %s", userId, strerror(errno));
+		seteuid(0);
+		setegid(0);
+		return -1;
+	}
 
- switch (tolower(fperm[0])) {
- case 'x': {
-  int status;
-  if (fork()  0) {
-   execlp("./test.file", "test.file", NULL);
-   exit(1);
-  }
-  wait(&status);
-  seteuid(0);
-  setegid(0);
-  return WEXITSTATUS(status);
- }
- default: {
-  FILE *testfile;
-  if ((testfile  fopen("test.file", fperm))) {
-   fclose(testfile);
-   seteuid(0);
-   setegid(0);
-   return 0;
-  } else {
-   seteuid(0);
-   setegid(0);
-   return 1;
-  }
- }
- }
+	switch (tolower(fperm[0])) {
+	case 'x': {
+		int status;
+		if (fork() == 0) {
+			execlp("./test.file", "test.file", NULL);
+			exit(1);
+		}
+		wait(&status);
+		seteuid(0);
+		setegid(0);
+		return WEXITSTATUS(status);
+	}
+	default: {
+		FILE *testfile;
+		if ((testfile = fopen("test.file", fperm))) {
+			fclose(testfile);
+			seteuid(0);
+			setegid(0);
+			return 0;
+		} else {
+			seteuid(0);
+			setegid(0);
+			return 1;
+		}
+	}
+	}
 }
 
 int main(int argc, char *argv[])
 {
- char *fperm;
- int result, exresult  0, cuserId  0, cgroupId  0, userId  0, groupId  0;
- mode_t mode;
+	char *fperm;
+	int result, exresult = 0, cuserId = 0, cgroupId = 0, userId = 0, groupId = 0;
+	mode_t mode;
 
- tst_require_root(tst_exit);
+	tst_require_root(tst_exit);
 
- switch (argc) {
- case 8:
-  mode  strtol(argv[1], (char **)NULL, 010);
-  cuserId  atoi(argv[2]);
-  cgroupId  atoi(argv[3]);
-  userId  atoi(argv[4]);
-  groupId  atoi(argv[5]);
-  fperm  argv[6];
-  exresult  atoi(argv[7]);
-  break;
- default:
-  printf("Usage: %s <mode of file> <UID of file> <GID of file> <UID of tester> <GID of tester> <permission to test r|w|x> <expected result as 0|1>\n", argv[0]);
-  return 1;
- }
+	switch (argc) {
+	case 8:
+		mode = strtol(argv[1], (char **)NULL, 010);
+		cuserId = atoi(argv[2]);
+		cgroupId = atoi(argv[3]);
+		userId = atoi(argv[4]);
+		groupId = atoi(argv[5]);
+		fperm = argv[6];
+		exresult = atoi(argv[7]);
+		break;
+	default:
+		printf("Usage: %s <mode of file> <UID of file> <GID of file> <UID of tester> <GID of tester> <permission to test r|w|x> <expected result as 0|1>\n", argv[0]);
+		return 1;
+	}
 
- result  testsetup(mode, cuserId, cgroupId);
- if (result) {
-  tst_brkm(TBROK, tst_exit, "testsetup() failed: %s", strerror(errno));
-  return result;
- }
+	result = testsetup(mode, cuserId, cgroupId);
+	if (result) {
+		tst_brkm(TBROK, tst_exit, "testsetup() failed: %s", strerror(errno));
+		return result;
+	}
 
- result  testfperm(userId, groupId, fperm);
- unlink("test.file");
- tst_resm(exresult  result ? TPASS : TFAIL, "%c a %03o file owned by (%d/%d) as user/group(%d/%d)",
-  fperm[0], mode, cuserId, cgroupId, userId, groupId);
-    /* Spring@2008.9.26, should return if expect result  result
- return result;
+	result = testfperm(userId, groupId, fperm);
+	unlink("test.file");
+	tst_resm(exresult == result ? TPASS : TFAIL, "%c a %03o file owned by (%d/%d) as user/group(%d/%d)",
+		fperm[0], mode, cuserId, cgroupId, userId, groupId);
+    /* Spring@2008.9.26, should return if expect result = result
+	return result;
          */
-    return ( !(result  exresult));
+    return ( !(result == exresult));
 }

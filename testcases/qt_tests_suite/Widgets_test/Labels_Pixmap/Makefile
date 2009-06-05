@@ -20,7 +20,7 @@
 # cgag1c           05/0X/07       TLSbo48237  Minor fix in install target
 #
 ##############################################################################
-# Portability:
+# Portability: 
 #
 ##############################################################################
 
@@ -52,10 +52,10 @@ EXTRA_DEFS=
 ##############################################################################
 QMAKE_CFLAGS   = -I$(VTE_TOPDIR)/include $(EXTRA_INCDIR) $(EXTRA_DEFS)
 QMAKE_CXXFLAGS = -I$(VTE_TOPDIR)/include $(EXTRA_INCDIR) $(EXTRA_DEFS)
-QMAKE_LFLAGS   = -L$(VTE_TOPDIR)/lib $(EXTRA_LIBDIR)
+QMAKE_LFLAGS   = -L$(VTE_TOPDIR)/lib $(EXTRA_LIBDIR) 
 QMAKE_LIBS     = -lltp $(EXTRA_LIBS)
 QMAKE          = $(QTDIR)/bin/qmake
-QMAKE_GENMAKE_FLAGS = -after \
+QMAKE_GENMAKE_FLAGS = 	-after \
 			QMAKE_CFLAGS+="$(QMAKE_CFLAGS)" \
 			QMAKE_CXXFLAGS+="$(QMAKE_CXXFLAGS)" \
 			QMAKE_LFLAGS+="$(QMAKE_LFLAGS)" \

@@ -6,20 +6,20 @@
  * Copyright (C) 1998-2001  Carnegie Mellon University
  *
  * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
+ * modify it under the terms of the GNU General Public License  
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
+ 
 #ifndef _NEWGO_H_RPCGEN
 #define _NEWGO_H_RPCGEN
 
@@ -33,88 +33,88 @@
 
 #include "ballista.h"
 
-#ifdef __cplusplus
+#ifdef __cplusplus 
 extern "C" bool_t xdr_b_param(XDR *, b_param);
-#elif __STDC__
+#elif __STDC__ 
 extern  bool_t xdr_b_param(XDR *, b_param);
-#else /* Old Style C */
+#else /* Old Style C */ 
 bool_t xdr_b_param();
-#endif /* Old Style C */
+#endif /* Old Style C */ 
 
 
 typedef char *my_line;
-#ifdef __cplusplus
+#ifdef __cplusplus 
 extern "C" bool_t xdr_my_line(XDR *, my_line*);
-#elif __STDC__
+#elif __STDC__ 
 extern  bool_t xdr_my_line(XDR *, my_line*);
-#else /* Old Style C */
+#else /* Old Style C */ 
 bool_t xdr_my_line();
-#endif /* Old Style C */
+#endif /* Old Style C */ 
 
 
 typedef struct {
 	u_int my_vector_lines_len;
 	my_line *my_vector_lines_val;
 } my_vector_lines;
-#ifdef __cplusplus
+#ifdef __cplusplus 
 extern "C" bool_t xdr_my_vector_lines(XDR *, my_vector_lines*);
-#elif __STDC__
+#elif __STDC__ 
 extern  bool_t xdr_my_vector_lines(XDR *, my_vector_lines*);
-#else /* Old Style C */
+#else /* Old Style C */ 
 bool_t xdr_my_vector_lines();
-#endif /* Old Style C */
+#endif /* Old Style C */ 
 
 
 typedef struct {
 	u_int my_arr_vec_line_len;
 	my_vector_lines *my_arr_vec_line_val;
 } my_arr_vec_line;
-#ifdef __cplusplus
+#ifdef __cplusplus 
 extern "C" bool_t xdr_my_arr_vec_line(XDR *, my_arr_vec_line*);
-#elif __STDC__
+#elif __STDC__ 
 extern  bool_t xdr_my_arr_vec_line(XDR *, my_arr_vec_line*);
-#else /* Old Style C */
+#else /* Old Style C */ 
 bool_t xdr_my_arr_vec_line();
-#endif /* Old Style C */
+#endif /* Old Style C */ 
 
 
 typedef struct {
 	u_int one_dim_len;
 	b_param *one_dim_val;
 } one_dim;
-#ifdef __cplusplus
+#ifdef __cplusplus 
 extern "C" bool_t xdr_one_dim(XDR *, one_dim*);
-#elif __STDC__
+#elif __STDC__ 
 extern  bool_t xdr_one_dim(XDR *, one_dim*);
-#else /* Old Style C */
+#else /* Old Style C */ 
 bool_t xdr_one_dim();
-#endif /* Old Style C */
+#endif /* Old Style C */ 
 
 
 typedef struct {
 	u_int two_dim_len;
 	one_dim *two_dim_val;
 } two_dim;
-#ifdef __cplusplus
+#ifdef __cplusplus 
 extern "C" bool_t xdr_two_dim(XDR *, two_dim*);
-#elif __STDC__
+#elif __STDC__ 
 extern  bool_t xdr_two_dim(XDR *, two_dim*);
-#else /* Old Style C */
+#else /* Old Style C */ 
 bool_t xdr_two_dim();
-#endif /* Old Style C */
+#endif /* Old Style C */ 
 
 
 typedef struct {
 	u_int three_dim_len;
 	two_dim *three_dim_val;
 } three_dim;
-#ifdef __cplusplus
+#ifdef __cplusplus 
 extern "C" bool_t xdr_three_dim(XDR *, three_dim*);
-#elif __STDC__
+#elif __STDC__ 
 extern  bool_t xdr_three_dim(XDR *, three_dim*);
-#else /* Old Style C */
+#else /* Old Style C */ 
 bool_t xdr_three_dim();
-#endif /* Old Style C */
+#endif /* Old Style C */ 
 
 
 struct info {
@@ -123,13 +123,13 @@ struct info {
 	double sample_size;
 };
 typedef struct info info;
-#ifdef __cplusplus
+#ifdef __cplusplus 
 extern "C" bool_t xdr_info(XDR *, info*);
-#elif __STDC__
+#elif __STDC__ 
 extern  bool_t xdr_info(XDR *, info*);
-#else /* Old Style C */
+#else /* Old Style C */ 
 bool_t xdr_info();
-#endif /* Old Style C */
+#endif /* Old Style C */ 
 
 
 struct return_info {
@@ -137,13 +137,13 @@ struct return_info {
 	int total;
 };
 typedef struct return_info return_info;
-#ifdef __cplusplus
+#ifdef __cplusplus 
 extern "C" bool_t xdr_return_info(XDR *, return_info*);
-#elif __STDC__
+#elif __STDC__ 
 extern  bool_t xdr_return_info(XDR *, return_info*);
-#else /* Old Style C */
+#else /* Old Style C */ 
 bool_t xdr_return_info();
-#endif /* Old Style C */
+#endif /* Old Style C */ 
 
 
 struct data_from_client {
@@ -155,13 +155,13 @@ struct data_from_client {
 	char *function;
 };
 typedef struct data_from_client data_from_client;
-#ifdef __cplusplus
+#ifdef __cplusplus 
 extern "C" bool_t xdr_data_from_client(XDR *, data_from_client*);
-#elif __STDC__
+#elif __STDC__ 
 extern  bool_t xdr_data_from_client(XDR *, data_from_client*);
-#else /* Old Style C */
+#else /* Old Style C */ 
 bool_t xdr_data_from_client();
-#endif /* Old Style C */
+#endif /* Old Style C */ 
 
 
 #define BALLISTA ((u_long)0x50000000)
@@ -183,13 +183,13 @@ extern  return_info * get_array_3_svc(info *, struct svc_req *);
 extern  int * send_data_3(data_from_client *, CLIENT *);
 extern  int * send_data_3_svc(data_from_client *, struct svc_req *);
 
-#else /* Old Style C */
+#else /* Old Style C */ 
 #define get_array ((u_long)1)
 extern  return_info * get_array_3();
 extern  return_info * get_array_3_svc();
 #define send_data ((u_long)2)
 extern  int * send_data_3();
 extern  int * send_data_3_svc();
-#endif /* Old Style C */
+#endif /* Old Style C */ 
 
 #endif /* !_NEWGO_H_RPCGEN */

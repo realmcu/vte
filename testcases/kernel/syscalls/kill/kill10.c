@@ -32,56 +32,56 @@
  */
 /* $Id: kill10.c,v 1.4 2006/02/11 04:34:37 vapier Exp $ */
 /**********************************************************
- *
+ * 
  *    OS Test - Silicon Graphics, Inc.
- *
- *    TEST IDENTIFIER : kill10
- *
- *    EXECUTED BY : anyone
- *
- *    TEST TITLE : signal flooding test
- *
- *    TEST CASE TOTAL : 1
- *
- *    WALL CLOCK TIME :
- *
- *    CPU TYPES  : ALL
- *
- *    AUTHOR  : Nate Straz
- *
- *    DATE STARTED : 04/09/2001
- *
- *    INITIAL RELEASE : Linux 2.4.x
- *
+ * 
+ *    TEST IDENTIFIER	: kill10
+ * 
+ *    EXECUTED BY	: anyone
+ * 
+ *    TEST TITLE	: signal flooding test
+ * 
+ *    TEST CASE TOTAL	: 1
+ * 
+ *    WALL CLOCK TIME	: 
+ * 
+ *    CPU TYPES		: ALL
+ * 
+ *    AUTHOR		: Nate Straz
+ * 
+ *    DATE STARTED	: 04/09/2001
+ * 
+ *    INITIAL RELEASE	: Linux 2.4.x
+ * 
  *    TEST CASES
- *
- * 1.) Create a large number of processes and signal between them.
- *
+ * 
+ * 	1.) Create a large number of processes and signal between them.
+ *	
  *    INPUT SPECIFICATIONS
- * The standard options for system call tests are accepted.
- * (See the parse_opts(3) man page).
- *
+ * 	The standard options for system call tests are accepted.
+ *	(See the parse_opts(3) man page).
+ * 
  *    OUTPUT SPECIFICATIONS
- *
+ * 	
  *    DURATION
- * Terminates - with frequency and infinite modes.
- *
+ * 	Terminates - with frequency and infinite modes.
+ * 
  *    SIGNALS
- * Uses SIGUSR1 to pause before test if option set.
- * (See the parse_opts(3) man page).
+ * 	Uses SIGUSR1 to pause before test if option set.
+ * 	(See the parse_opts(3) man page).
  *
  *    RESOURCES
- * None
- *
+ * 	None
+ * 
  *    ENVIRONMENTAL NEEDS
  *      No run-time environmental needs.
- *
+ * 
  *    SPECIAL PROCEDURAL REQUIREMENTS
- * None
- *
+ * 	None
+ * 
  *    INTERCASE DEPENDENCIES
- * None
- *
+ * 	None
+ * 
  *    DETAILED DESCRIPTION
  *  This test creates -g groups of -n processes each and prepares them to send
  *  large numbers of signals.  All process fall into three levels.
@@ -95,7 +95,7 @@
  *                forking off -n procs and setting up their signal handling.
  *                Managers are in a pgid with their Children.
  *                SIGALRM -> Process making your children
- *                SIGUSR1 ->
+ *                SIGUSR1 -> 
  *                SIGUSR2 -> Reply to Child to stop
  *                SIGHUP  -> Reset child signal counter
  *                SIGQUIT -> Exit gracefully
@@ -115,22 +115,22 @@
  *  Manager signals the Master.  Once the Master acknowledges that all Managers
  *  have talked to all their Children, the test iteration is over.
  *
- * Setup:
- *   Pause for SIGUSR1 if option specified.
- *   Fork -g Managers
- *     Set up signal handling for Children
- *     Fork -n Children for each manager
- *     Set up signal handling for Managers
- *   Set up signal handling for Master
- *
- * Test:
- *  Loop if the proper options are given.
- *    Send SIGUSR1 to all Managers and their Children
- *    Wait for Managers to send SIGUSR2
- *
- * Cleanup:
- *   Send SIGQUIT to all Manager process groups and wait for Manager to quit.
- *   Print errno log and/or timing stats if options given
+ * 	Setup:
+ *	  Pause for SIGUSR1 if option specified.
+ *	  Fork -g Managers
+ *	    Set up signal handling for Children
+ *	    Fork -n Children for each manager
+ *	    Set up signal handling for Managers
+ *	  Set up signal handling for Master
+ * 
+ * 	Test:
+ *	 Loop if the proper options are given.
+ *	   Send SIGUSR1 to all Managers and their Children
+ *	   Wait for Managers to send SIGUSR2
+ * 
+ * 	Cleanup:
+ * 	  Send SIGQUIT to all Manager process groups and wait for Manager to quit.
+ * 	  Print errno log and/or timing stats if options given
  *
  *  Debugging:
  *    0 - normal operations
@@ -142,8 +142,8 @@
  *    6 - Manager - Child interaction
  *    7 - Child setup
  *    8 - Child processing
- *
- *
+ * 
+ * 
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
 #include <sys/types.h>
@@ -158,7 +158,7 @@
 #include "test.h"
 #include "usctest.h"
 
-void setup();
+void setup(); 
 void help();
 void cleanup();
 void fork_pgrps(int pgrps_left);
@@ -168,7 +168,7 @@ void fork_procs(int procs_left);
 /* signal handlers */
 void ack_ready(int sig, siginfo_t *si, void *data);
 void ack_done(int sig, siginfo_t *si, void *data);
-void set_create_procs(int sig);
+void set_create_procs(int sig); 
 void graceful_exit(int sig);
 void set_signal_parents(int sig);
 void clear_signal_parents(int sig);
@@ -181,36 +181,36 @@ void wakeup(int sig);
 struct pid_list_item {
     pid_t pid;
     short flag;
-} *child_checklist  NULL;
-int child_checklist_total  0;
+} *child_checklist = NULL;
+int child_checklist_total = 0;
 int checklist_cmp(const void *a, const void *b);
 void checklist_reset(int bit);
 
 inline int k_sigaction(int sig, struct sigaction *sa, struct sigaction *osa);
 
-char *TCID"kill10";  /* Test program identifier.    */
-int TST_TOTAL1;   /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID="kill10";		/* Test program identifier.    */
+int TST_TOTAL=1;    		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 extern int Tst_nobuf;
 
-int exp_enos[]{0, 0};
+int exp_enos[]={0, 0};
 
-int num_procs  10;
-int num_pgrps  2;
-int pgrps_ready  0;
-int child_signal_counter  0;
+int num_procs = 10;
+int num_pgrps = 2;
+int pgrps_ready = 0;
+int child_signal_counter = 0;
 
-int create_procs_flag  0;
-int signal_parents_flag  0;
-int confirmed_ready_flag  0;
-int debug_flag  0;
-pid_t mypid  0;
+int create_procs_flag = 0;
+int signal_parents_flag = 0;
+int confirmed_ready_flag = 0;
+int debug_flag = 0;
+pid_t mypid = 0;
 
 char *narg, *garg, *darg;
-int nflag0, gflag0, dflag0;
+int nflag=0, gflag=0, dflag=0;
 
 /* for test specific parse_opts options */
-option_t options[]  {
+option_t options[] = {
         { "n:",  &nflag, &narg },       /* -n #procs */
         { "g:",  &gflag, &garg },       /* -g #pgrps */
         { "d:",  &dflag, &darg },       /* -d <debug level>  */
@@ -223,11 +223,11 @@ option_t options[]  {
 int
 main(int ac, char **av)
 {
-    int lc;         /* loop counter */
+    int lc;	        /* loop counter */
     char *msg;      /* message returned from parse_opts */
     int cnt;
 
-    Tst_nobuf1;
+    Tst_nobuf=1;
 
     /***************************************************************
      * parse standard options
@@ -236,26 +236,26 @@ main(int ac, char **av)
      * that understands many common options to control looping.  If you are not
      * adding any new options, pass NULL in place of options and &help.
      */
-    if ((msg  parse_opts(ac, av, options, &help))) {
+    if ((msg = parse_opts(ac, av, options, &help))) {
         tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
         tst_exit();
     }
 
     if (nflag) {
-        if (sscanf(narg, "%i", &num_procs) ! 1 ) {
+        if (sscanf(narg, "%i", &num_procs) != 1 ) {
             tst_brkm(TBROK, NULL, "-n option arg is not a number");
             tst_exit();
         }
     }
     if (gflag) {
-        if (sscanf(garg, "%i", &num_pgrps) ! 1 ) {
+        if (sscanf(garg, "%i", &num_pgrps) != 1 ) {
             tst_brkm(TBROK, NULL, "-g option arg is not a number");
             tst_exit();
         }
     }
 
     if (dflag) {
-        if (sscanf(darg, "%i", &debug_flag) ! 1 ) {
+        if (sscanf(darg, "%i", &debug_flag) != 1 ) {
             tst_brkm(TBROK, NULL, "-d option arg is not a number");
             tst_exit();
         }
@@ -273,23 +273,23 @@ main(int ac, char **av)
     TEST_EXP_ENOS(exp_enos);
 
     /***************************************************************
-     * check looping state
+     * check looping state 
      ***************************************************************/
     /* TEST_LOOPING() is a macro that will make sure the test continues
-     * looping according to the standard command line args.
+     * looping according to the standard command line args. 
      */
-    for (lc0; TEST_LOOPING(lc); lc++) {
+    for (lc=0; TEST_LOOPING(lc); lc++) {
 
         /* reset Tst_count in case we are looping. */
-        Tst_count0;
-        child_signal_counter  0;
-        pgrps_ready  0;
+        Tst_count=0;
+        child_signal_counter = 0;
+        pgrps_ready = 0;
         checklist_reset(0x03);
 
         /* send SIGUSR1 to each pgroup */
-        for (cnt  0; cnt < child_checklist_total; ++cnt) {
-            if (debug_flag  > 2)
-                printf("%d: test_loop, SIGUSR1 -> %d\n",
+        for (cnt = 0; cnt < child_checklist_total; ++cnt) {
+            if (debug_flag  >= 2)
+                printf("%d: test_loop, SIGUSR1 -> %d\n", 
                                 mypid, -child_checklist[cnt].pid);
             kill(-child_checklist[cnt].pid, SIGUSR1);
         }
@@ -297,17 +297,17 @@ main(int ac, char **av)
         /* wait for the managers to signal they are done */
         while (child_signal_counter < num_pgrps) {
             alarm(1);
-            if (debug_flag  > 2)
-                printf("%d: Master pausing for done (%d/%d)\n",
+            if (debug_flag  >= 2) 
+                printf("%d: Master pausing for done (%d/%d)\n", 
                                 mypid, child_signal_counter, num_pgrps);
             pause();
         }
         tst_resm(TPASS, "All %d pgrps received their signals", child_signal_counter);
 
- /* Here we clean up after the test case so we can do another iteration.
-  */
+	/* Here we clean up after the test case so we can do another iteration.
+	 */
 
-    } /* End for TEST_LOOPING */
+    }	/* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -315,7 +315,7 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-} /* End main */
+}	/* End main */
 
 /***************************************************************
  * help
@@ -327,7 +327,7 @@ main(int ac, char **av)
 void
 help()
 {
- printf("  -g n    Create n process groups (default: %d)\n", num_pgrps);
+	printf("  -g n    Create n process groups (default: %d)\n", num_pgrps);
     printf("  -n n    Create n children in each process group (default: %d)\n", num_procs);
     printf("  -d n    Set debug level to n (default: %d)\n", debug_flag);
 }
@@ -335,14 +335,14 @@ help()
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void
+void 
 setup()
 {
     struct sigaction sa;
     int i;
 
     /* You will want to enable some signal handling so you can capture
-     * unexpected signals like SIGSEGV.
+     * unexpected signals like SIGSEGV. 
      */
     tst_sig(FORK, DEF_HANDLER, cleanup);
 
@@ -354,26 +354,26 @@ setup()
      */
     TEST_PAUSE;
 
-    mypid  getpid();
-    sa.sa_handler  SIG_DFL;
+    mypid = getpid();
+    sa.sa_handler = SIG_DFL;
     sigemptyset(&sa.sa_mask);
-    sa.sa_flags  0;
-    if (debug_flag > 1)
+    sa.sa_flags = 0;
+    if (debug_flag >= 1)
         printf("%d: setting SIGTRAP -> SIG_DFL\n", mypid);
     k_sigaction(SIGTRAP, &sa, 0);
-    if (debug_flag > 1)
+    if (debug_flag >= 1)
         printf("%d: setting SIGCONT -> SIG_DFL\n", mypid);
     k_sigaction(SIGCONT, &sa, 0);
 
-    sa.sa_handler  set_create_procs;
-    if (debug_flag > 4)
+    sa.sa_handler = set_create_procs;
+    if (debug_flag >= 4)
         printf("%d: setting SIGALRM -> set_create_procs\n", mypid);
     k_sigaction(SIGALRM, &sa, 0);
 
-    sa.sa_handler  NULL;
-    sa.sa_sigaction  ack_ready;
-    sa.sa_flags  SA_SIGINFO;
-    if (debug_flag > 1)
+    sa.sa_handler = NULL;
+    sa.sa_sigaction = ack_ready;
+    sa.sa_flags = SA_SIGINFO;
+    if (debug_flag >= 1)
         printf("%d: setting SIGUSR1 -> ack_ready\n", mypid);
     k_sigaction(SIGUSR1, &sa, 0);
 
@@ -382,9 +382,9 @@ setup()
     /* wait for all pgrps to report in */
     if (debug_flag)
         printf("Master: %d\n", mypid);
-    while (pgrps_ready < num_pgrps) {
-        if (debug_flag  > 3)
-            printf("%d: Master pausing for Managers to check in (%d/%d)\n",
+    while (pgrps_ready < num_pgrps) { 
+        if (debug_flag  >= 3) 
+            printf("%d: Master pausing for Managers to check in (%d/%d)\n", 
                             mypid, pgrps_ready, num_pgrps);
     /*
      * We might recieve the signal from the (last manager) before
@@ -392,51 +392,51 @@ setup()
      * all the managers reported in. So set an alarm so that we can
      * wake up.
      */
- alarm(1);
+	alarm(1);
+  
 
-
-        pause();
+        pause(); 
     }
     checklist_reset(0x03);
     if (debug_flag) {
         printf("Managers: \n");
-        for (i  0; i < num_pgrps; i++) { printf("%d ", child_checklist[i].pid); }
+        for (i = 0; i < num_pgrps; i++) { printf("%d ", child_checklist[i].pid); }
         printf("\n");
     }
 
     /* set up my signal processing */
     /* continue on ALRM */
-    sa.sa_handler  wakeup;
-    if (debug_flag > 4)
+    sa.sa_handler = wakeup;
+    if (debug_flag >= 4)
         printf("%d: setting SIGALRM -> wakeup\n", mypid);
     k_sigaction(SIGALRM, &sa, 0);
     /* reply to child on USR2 */
-    sa.sa_handler  NULL;
-    sa.sa_sigaction  ack_done;
-    sa.sa_flags  SA_SIGINFO;
-    if (debug_flag  > 1)
+    sa.sa_handler = NULL;
+    sa.sa_sigaction = ack_done;
+    sa.sa_flags = SA_SIGINFO;
+    if (debug_flag  >= 1)
         printf("%d: setting SIGUSR2 -> ack_done\n", mypid);
     k_sigaction(SIGUSR2, &sa, 0);
 }
 
-void
+void 
 ack_ready(int sig, siginfo_t *si, void *data)
 {
     struct pid_list_item findit, *result;
 
-    findit.pid  si->si_pid;
+    findit.pid = si->si_pid;
 
-    result  bsearch(&findit, child_checklist, child_checklist_total,
+    result = bsearch(&findit, child_checklist, child_checklist_total, 
                     sizeof(*child_checklist), checklist_cmp);
     if (result) {
         if (!(result->flag & 0x01)) {
-            if (debug_flag > 3)
+            if (debug_flag >= 3)
                 printf("%d: ack_ready, SIGUSR1 -> %d\n", mypid, si->si_pid);
             kill(si->si_pid, SIGUSR1);
-            result->flag  result->flag | 0x01;
+            result->flag = result->flag | 0x01;
             ++pgrps_ready;
         } else {
-            if (debug_flag > 3)
+            if (debug_flag >= 3)
                 printf("%d: ack_ready, already acked %d\n", mypid, si->si_pid);
         }
     } else {
@@ -445,43 +445,43 @@ ack_ready(int sig, siginfo_t *si, void *data)
     }
 }
 
-void
+void 
 ack_done(int sig, siginfo_t *si, void *data)
 {
     struct pid_list_item findit, *result;
 
+    
+    findit.pid = si->si_pid;
 
-    findit.pid  si->si_pid;
-
-    result  bsearch(&findit, child_checklist, child_checklist_total,
+    result = bsearch(&findit, child_checklist, child_checklist_total, 
                     sizeof(*child_checklist), checklist_cmp);
     if (result) {
         if (!(result->flag & 0x02)) {
-            if (debug_flag  > 3)
+            if (debug_flag  >= 3) 
                 printf("%d: ack_done, SIGHUP -> %d\n", mypid, si->si_pid);
             kill(si->si_pid, SIGHUP);
             ++child_signal_counter;
-            result->flag  result->flag | 0x02;
+            result->flag = result->flag | 0x02;
         } else {
-            if (debug_flag > 3)
+            if (debug_flag >= 3)
                 printf("%d: ack_done, already told %d\n", mypid, si->si_pid);
         }
     } else {
-        tst_brkm(TBROK, cleanup,
+        tst_brkm(TBROK, cleanup, 
                         "received unexpected signal from %d", si->si_pid);
     }
 }
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *  completion or premature exit.
+ *		completion or premature exit.
  ***************************************************************/
-void
+void 
 cleanup()
 {
     int i;
     /* send SIGHUP to all pgroups */
-    for (i  0; i < num_pgrps; ++i) {
+    for (i = 0; i < num_pgrps; ++i) {
         /* try to do this as nicely as possible */
         kill(-child_checklist[i].pid, SIGQUIT);
         waitpid(child_checklist[i].pid, NULL, 0);
@@ -504,30 +504,30 @@ fork_pgrps(int pgrps_left)
 {
     pid_t child;
 
-    if (!(child_checklist  calloc(pgrps_left, sizeof(*child_checklist)))) {
+    if (!(child_checklist = calloc(pgrps_left, sizeof(*child_checklist)))) {
         tst_brkm(TBROK, cleanup,
-                        "%d: couldn't calloc child_checklist, errno%d : %s",
+                        "%d: couldn't calloc child_checklist, errno=%d : %s",
                         mypid, errno, strerror(errno));
     }
-    child_checklist_total  0;
+    child_checklist_total = 0;
     while (pgrps_left) {
-        if (debug_flag  > 1)
+        if (debug_flag  >= 1)
             printf("%d: forking new Manager\n", mypid);
-        switch (child  fork()) {
-                case -1:
+        switch (child = fork()) {
+                case -1: 
                         tst_brkm(TBROK, cleanup,
-                                        "fork() failed in fork_pgrps(%d), errno%d : %s",
+                                        "fork() failed in fork_pgrps(%d), errno=%d : %s", 
                                         pgrps_left, errno, strerror(errno));
                         break;
-                case 0: mypid  getpid();
+                case 0: mypid = getpid();
                         free(child_checklist);
-                        child_checklist  NULL;
+                        child_checklist = NULL;
                         manager(num_procs);
                         break;
-                default:
-                        child_checklist[child_checklist_total++].pid  child;
+                default: 
+                        child_checklist[child_checklist_total++].pid = child;
                         setpgid(child, child);
-                        if (debug_flag  > 3)
+                        if (debug_flag  >= 3)
                             printf("%d: fork_pgrps, SIGALRM -> %d\n", mypid, child);
                         kill(child, SIGALRM);
         }
@@ -539,14 +539,14 @@ fork_pgrps(int pgrps_left)
 void
 set_create_procs(int sig)
 {
-    if (debug_flag  > 3)
+    if (debug_flag  >= 3) 
         printf("%d: Manager cleared to fork\n", getpid());
     create_procs_flag++;
     return;
 }
 
 /*********************************************************************
- * new_pgrg() - handle the creation of the pgrp managers and their
+ * new_pgrg() - handle the creation of the pgrp managers and their 
  *              children
  ********************************************************************/
 void
@@ -557,7 +557,7 @@ manager(int num_procs)
     /* Wait for the parent to change our pgid before we start forking */
     while (!create_procs_flag) {
         alarm(1);
-        if (debug_flag  > 3)
+        if (debug_flag  >= 3)
             printf("%d: Manager pausing, not cleared to fork\n", mypid);
         pause();
     }
@@ -565,34 +565,34 @@ manager(int num_procs)
     /* set up the signal handling the children will use */
 
     /* ignore HUP */
-    sa.sa_handler  SIG_IGN;
+    sa.sa_handler = SIG_IGN;
     sigemptyset(&sa.sa_mask);
-    sa.sa_flags  0;
-    if (debug_flag  > 4)
+    sa.sa_flags = 0;
+    if (debug_flag  >= 4)
         printf("%d: setting SIGHUP -> SIG_IGN\n", mypid);
     k_sigaction(SIGHUP, &sa, 0);
-
+    
     /* We use ALRM to make sure that we don't miss the signal effects ! */
-    sa.sa_handler  wakeup;
-    if (debug_flag  > 4)
+    sa.sa_handler = wakeup;
+    if (debug_flag  >= 4)
         printf("%d: setting SIGALRM -> wakeup\n", mypid);
     k_sigaction(SIGALRM, &sa, 0);
 
     /* exit on QUIT */
-    sa.sa_handler  graceful_exit;
-    if (debug_flag  > 4)
+    sa.sa_handler = graceful_exit;
+    if (debug_flag  >= 4)
         printf("%d: setting SIGQUIT -> graceful_exit\n", mypid);
     k_sigaction(SIGQUIT, &sa, 0);
 
     /* start signaling on USR1 */
-    sa.sa_handler  set_signal_parents;
+    sa.sa_handler = set_signal_parents;
     sigfillset(&sa.sa_mask);
-    if (debug_flag  > 7)
+    if (debug_flag  >= 7)
         printf("%d: setting SIGUSR1 -> set_signal_parents\n", mypid);
     k_sigaction(SIGUSR1, &sa, 0);
     /* stop signaling on USR2 */
-    sa.sa_handler  clear_signal_parents;
-    if (debug_flag  > 7)
+    sa.sa_handler = clear_signal_parents;
+    if (debug_flag  >= 7)
         printf("%d: setting SIGUSR2 -> clear_signal_parents\n", mypid);
     k_sigaction(SIGUSR2, &sa, 0);
 
@@ -602,55 +602,55 @@ manager(int num_procs)
     /* now set up my signal handling */
 
     /* continue on ALRM */
-    sa.sa_handler  wakeup;
-    if (debug_flag > 4)
+    sa.sa_handler = wakeup;
+    if (debug_flag >= 4)
         printf("%d: setting SIGALRM -> wakeup\n", mypid);
     k_sigaction(SIGALRM, &sa, 0);
     /* mark ready confirmation on USR1 */
-    sa.sa_handler  set_confirmed_ready;
-    if (debug_flag  > 4)
+    sa.sa_handler = set_confirmed_ready;
+    if (debug_flag  >= 4)
         printf("%d: setting SIGUSR1 -> set_confirmed_ready\n", mypid);
     k_sigaction(SIGUSR1, &sa, 0);
     /* reset our counter on HUP */
-    sa.sa_handler  reset_counter;
-    if (debug_flag  > 4)
+    sa.sa_handler = reset_counter;
+    if (debug_flag  >= 4)
         printf("%d: setting SIGHUP -> reset_counter\n", mypid);
     k_sigaction(SIGHUP, &sa, 0);
 
     /* reply to child on USR2 */
-    sa.sa_handler  NULL;
-    sa.sa_sigaction  reply_to_child;
-    sa.sa_flags  SA_SIGINFO;
-    if (debug_flag  > 4)
+    sa.sa_handler = NULL;
+    sa.sa_sigaction = reply_to_child;
+    sa.sa_flags = SA_SIGINFO;
+    if (debug_flag  >= 4)
         printf("%d: setting SIGUSR2 -> reply_to_child\n", mypid);
     k_sigaction(SIGUSR2, &sa, 0);
 
     /* tell our parent that we are ready to rock */
     while (!confirmed_ready_flag) {
-        if (debug_flag  > 3)
+        if (debug_flag  >= 3)
             printf("%d: Manager, SIGUSR1 -> %d\n", mypid, getppid());
-        if (kill(getppid(), SIGUSR1)  -1) {
+        if (kill(getppid(), SIGUSR1) == -1) {
             tst_resm(TWARN, "%d: Couldn't signal master (%d) that we're ready. %d: %s",
                             mypid, getppid(), errno, strerror(errno));
             exit(errno);
         }
         usleep(100);
     }
-
+    
     /* handle pgroup management while the tests are running */
     while (1) {
         alarm(1);
-        if (debug_flag  > 5)
-            printf("%d: Manager pausing (%d/%d)\n",
-                            mypid, child_signal_counter, num_procs);
-        pause();
-        if (child_signal_counter > num_procs) {
-            confirmed_ready_flag  0;
+        if (debug_flag  >= 5) 
+            printf("%d: Manager pausing (%d/%d)\n", 
+                            mypid, child_signal_counter, num_procs); 
+        pause(); 
+        if (child_signal_counter >= num_procs) {
+            confirmed_ready_flag = 0;
             tst_resm(TINFO, "%d: All %d children reported in", mypid, child_signal_counter);
             while (child_signal_counter) {
-                if (debug_flag  > 3)
+                if (debug_flag  >= 3)
                     printf("%d: Manager, SIGUSR2 -> %d\n", mypid, getppid());
-                if (kill(getppid(), SIGUSR2)  -1) {
+                if (kill(getppid(), SIGUSR2) == -1) {
                     tst_resm(TINFO, "%d: Couldn't signal master (%d) that we're ready. %d: %s",
                                     mypid, getppid(), errno, strerror(errno));
                     exit(errno);
@@ -662,64 +662,64 @@ manager(int num_procs)
 }
 
 /* some simple signal handlers for the kids */
-void
-graceful_exit(int sig)
-{
-    exit(0);
+void 
+graceful_exit(int sig) 
+{ 
+    exit(0); 
 }
-void
-set_signal_parents(int sig)
-{
-    if (debug_flag  > 8)
+void 
+set_signal_parents(int sig) 
+{ 
+    if (debug_flag  >= 8) 
         printf("%d: Child start signalling\n", mypid);
-    signal_parents_flag  1;
+    signal_parents_flag = 1; 
 }
-void
-clear_signal_parents(int sig)
-{
-    if (debug_flag  > 8)
+void 
+clear_signal_parents(int sig) 
+{ 
+    if (debug_flag  >= 8)
         printf("%d: Child stop signalling\n", mypid);
-    signal_parents_flag  0;
+    signal_parents_flag = 0; 
 }
-void
-set_confirmed_ready(int sig)
-{
+void 
+set_confirmed_ready(int sig) 
+{ 
 
-    if (debug_flag  > 3)
+    if (debug_flag  >= 3)
         printf("%d: Manager confirmed ready\n", mypid);
-    confirmed_ready_flag  1;
+    confirmed_ready_flag = 1; 
 }
-void
-reset_counter(int sig)
-{
-    checklist_reset(0xFF);
-    child_signal_counter  0;
-    if (debug_flag  > 3)
+void 
+reset_counter(int sig) 
+{ 
+    checklist_reset(0xFF); 
+    child_signal_counter = 0; 
+    if (debug_flag  >= 3)
         printf("%d: reset_counter\n", mypid);
 }
 
-void
+void 
 reply_to_child(int sig, siginfo_t *si, void *data)
 {
     struct pid_list_item findit, *result;
 
-    findit.pid  si->si_pid;
+    findit.pid = si->si_pid;
 
-    result  bsearch(&findit, child_checklist, child_checklist_total,
+    result = bsearch(&findit, child_checklist, child_checklist_total, 
                     sizeof(*child_checklist), checklist_cmp);
     if (result) {
         if (!result->flag) {
-            if (debug_flag  > 6)
+            if (debug_flag  >= 6)
                 printf("%d: reply_to_child, SIGUSR1 -> %d\n", mypid, si->si_pid);
             kill(si->si_pid, SIGUSR2);
             ++child_signal_counter;
-            result->flag  1;
+            result->flag = 1;
         } else {
-            if (debug_flag  > 6)
+            if (debug_flag  >= 6)
                 printf("%d: reply_to_child, already told %d\n", mypid, si->si_pid);
         }
     } else {
-        tst_brkm(TBROK, cleanup,
+        tst_brkm(TBROK, cleanup, 
                         "received unexpected signal from %d", si->si_pid);
     }
 }
@@ -734,46 +734,46 @@ fork_procs(int procs_left)
 {
     pid_t child;
 
-    if (!(child_checklist  calloc(procs_left, sizeof(*child_checklist)))) {
+    if (!(child_checklist = calloc(procs_left, sizeof(*child_checklist)))) {
         tst_brkm(TBROK, cleanup,
-                        "%d: couldn't calloc child_checklist, errno%d : %s",
+                        "%d: couldn't calloc child_checklist, errno=%d : %s",
                         mypid, errno, strerror(errno));
     }
-    child_checklist_total  0;
+    child_checklist_total = 0;
 
     /* We are setting the flag for children, to avoid missing any signals */
-    signal_parents_flag  0;
+    signal_parents_flag = 0;
 
     while (procs_left) {
-        if (debug_flag  > 4)
+        if (debug_flag  >= 4)
             printf("%d: forking new Child\n", mypid);
-        switch (child  fork()) {
+        switch (child = fork()) {
                 case -1: tst_brkm(TBROK, cleanup,
-                                         "fork() failed in fork_procs(%d), errno%d : %s",
+                                         "fork() failed in fork_procs(%d), errno=%d : %s",
                                          procs_left, errno, strerror(errno));
                          break;
-                case 0: mypid  getpid();
-                         while (1) {
+                case 0: mypid = getpid();
+                         while (1) { 
                             /* wait to start */
-                            if (debug_flag  > 8)
+                            if (debug_flag  >= 8) 
                                 printf("%d: Child pausing\n", mypid);
-                            /*
-                             * If we have already recieved the signal, we dont
-         * want to pause for it !
+                            /* 
+                             * If we have already recieved the signal, we dont 
+			      * want to pause for it !
                              */
-        while(!signal_parents_flag) {
+		  	    while(!signal_parents_flag) {
                                 alarm(2);
-                                pause();
-       }
-
+                                pause(); 
+			    }
+                            
                             /* if we started, call mama */
                             while (signal_parents_flag) {
-                                if (debug_flag  > 6)
+                                if (debug_flag  >= 6)
                                     printf("%d: child, SIGUSR2 -> %d\n",
                                                     mypid, getppid());
-                                if (kill(getppid(), SIGUSR2)  -1) {
+                                if (kill(getppid(), SIGUSR2) == -1) {
                                     /* something went wrong */
-                                    tst_resm(TINFO, "%d: kill(ppid:%d, SIGUSR2) failed. %d: %s",
+                                    tst_resm(TINFO, "%d: kill(ppid:%d, SIGUSR2) failed. %d: %s", 
                                                     mypid, getppid(), errno, strerror(errno));
                                     exit(errno);
                                 }
@@ -782,7 +782,7 @@ fork_procs(int procs_left)
                         }
                         break;
                 default:
-                        child_checklist[child_checklist_total++].pid  child;
+                        child_checklist[child_checklist_total++].pid = child;
         }
         --procs_left;
     }
@@ -790,21 +790,21 @@ fork_procs(int procs_left)
 }
 
 
-int
+int 
 checklist_cmp(const void *a, const void *b)
 {
-    const struct pid_list_item *pa  (const struct pid_list_item *)a;
-    const struct pid_list_item *pb  (const struct pid_list_item *)b;
+    const struct pid_list_item *pa = (const struct pid_list_item *)a;
+    const struct pid_list_item *pb = (const struct pid_list_item *)b;
 
     return (pa->pid > pb->pid) - (pa->pid < pb->pid);
 }
 
-void
+void 
 checklist_reset(int bit)
 {
     int i;
-    for (i  0; i < child_checklist_total; i++) {
-        child_checklist[i].flag  child_checklist[i].flag & (~bit);
+    for (i = 0; i < child_checklist_total; i++) {
+        child_checklist[i].flag = child_checklist[i].flag & (~bit);
     }
 
 }
@@ -813,10 +813,10 @@ inline int
 k_sigaction(int sig, struct sigaction *sa, struct sigaction *osa)
 {
     int ret;
-    if ((ret  sigaction(sig, sa, osa))  -1) {
+    if ((ret = sigaction(sig, sa, osa)) == -1) {
         tst_brkm(TBROK, cleanup,
                         "sigaction(%d, ...) failed, errno %d: %s",
                         sig, errno, strerror(errno));
-    }
+    } 
     return ret;
 }

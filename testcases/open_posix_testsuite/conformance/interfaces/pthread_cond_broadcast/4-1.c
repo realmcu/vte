@@ -1,8 +1,8 @@
-/*
+/*   
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  bing.wei.liu REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this
+ * of this license, see the COPYING file at the top level of this 
  * source tree.
 
  * Test that pthread_cond_broadcast()
@@ -22,108 +22,108 @@
 
 struct testdata
 {
- pthread_mutex_t mutex;
- pthread_cond_t  cond;
+	pthread_mutex_t mutex;
+	pthread_cond_t  cond;
 } td;
 
-int start_num  0;
-int waken_num  0;
+int start_num = 0;
+int waken_num = 0;
 
 void *thr_func(void *arg)
 {
- int rc;
- pthread_t self  pthread_self();
-
- if (pthread_mutex_lock(&td.mutex) ! 0) {
-  fprintf(stderr,"[Thread 0x%p] failed to acquire the mutex\n", (void*)self);
-  exit(PTS_UNRESOLVED);
- }
- fprintf(stderr,"[Thread 0x%p] started and locked the mutex\n", (void*)self);
- start_num ++;
-
- fprintf(stderr,"[Thread 0x%p] is waiting for the cond\n", (void*)self);
- rc  pthread_cond_wait(&td.cond, &td.mutex);
- if(rc ! 0) {
-  fprintf(stderr,"pthread_cond_wait return %d\n", rc);
+	int rc;
+	pthread_t self = pthread_self();
+	
+	if (pthread_mutex_lock(&td.mutex) != 0) {
+		fprintf(stderr,"[Thread 0x%p] failed to acquire the mutex\n", (void*)self);
+		exit(PTS_UNRESOLVED);
+	}
+	fprintf(stderr,"[Thread 0x%p] started and locked the mutex\n", (void*)self);
+	start_num ++;
+	
+	fprintf(stderr,"[Thread 0x%p] is waiting for the cond\n", (void*)self);
+	rc = pthread_cond_wait(&td.cond, &td.mutex);
+	if(rc != 0) {
+		fprintf(stderr,"pthread_cond_wait return %d\n", rc);
                 exit(PTS_UNRESOLVED);
- }
- fprintf(stderr,"[Thread 0x%p] was wakened\n", (void*)self);
- waken_num ++;
+	}
+	fprintf(stderr,"[Thread 0x%p] was wakened\n", (void*)self);
+	waken_num ++;
 
- if (pthread_mutex_unlock(&td.mutex) ! 0) {
-  fprintf(stderr,"[Thread 0x%p] failed to release the mutex\n", (void*)self);
-  exit(PTS_UNRESOLVED);
- }
- return NULL;
+	if (pthread_mutex_unlock(&td.mutex) != 0) {
+		fprintf(stderr,"[Thread 0x%p] failed to release the mutex\n", (void*)self);
+		exit(PTS_UNRESOLVED);
+	}
+	return NULL;
 }
 
 int main()
 {
- int i, rc;
- pthread_t  thread[THREAD_NUM];
+	int i, rc;
+	pthread_t  thread[THREAD_NUM];
 
- if (pthread_mutex_init(&td.mutex, NULL) ! 0) {
-  fprintf(stderr,"Fail to initialize mutex\n");
-  return PTS_UNRESOLVED;
- }
- if (pthread_cond_init(&td.cond, NULL) ! 0) {
-  fprintf(stderr,"Fail to initialize cond\n");
-  return PTS_UNRESOLVED;
- }
+	if (pthread_mutex_init(&td.mutex, NULL) != 0) {
+		fprintf(stderr,"Fail to initialize mutex\n");
+		return PTS_UNRESOLVED;
+	}
+	if (pthread_cond_init(&td.cond, NULL) != 0) {
+		fprintf(stderr,"Fail to initialize cond\n");
+		return PTS_UNRESOLVED;
+	}
 
- for (i0; i<THREAD_NUM; i++) {  /* create THREAD_NUM threads */
-     if (pthread_create(&thread[i], NULL, thr_func, NULL) ! 0) {
-   fprintf(stderr,"Fail to create thread[%d]\n", i);
-   return PTS_UNRESOLVED;
-  }
- }
- while (start_num < THREAD_NUM) /* waiting for all threads started */
-  usleep(100);
+	for (i=0; i<THREAD_NUM; i++) {  /* create THREAD_NUM threads */
+	    	if (pthread_create(&thread[i], NULL, thr_func, NULL) != 0) {
+			fprintf(stderr,"Fail to create thread[%d]\n", i);
+			return PTS_UNRESOLVED;
+		}
+	}
+	while (start_num < THREAD_NUM)	/* waiting for all threads started */
+		usleep(100);
 
- /* Acquire the mutex to make sure that all waiters are currently
-    blocked on pthread_cond_wait */
- if (pthread_mutex_lock(&td.mutex) ! 0) {
-  fprintf(stderr,"Main: Fail to acquire mutex\n");
-  return PTS_UNRESOLVED;
- }
- if (pthread_mutex_unlock(&td.mutex) ! 0) {
-  fprintf(stderr,"Main: Fail to release mutex\n");
-  return PTS_UNRESOLVED;
- }
- sleep(1);
+	/* Acquire the mutex to make sure that all waiters are currently  
+	   blocked on pthread_cond_wait */
+	if (pthread_mutex_lock(&td.mutex) != 0) {	
+		fprintf(stderr,"Main: Fail to acquire mutex\n");
+		return PTS_UNRESOLVED;
+	}
+	if (pthread_mutex_unlock(&td.mutex) != 0) {
+		fprintf(stderr,"Main: Fail to release mutex\n");
+		return PTS_UNRESOLVED;
+	}
+	sleep(1);
 
- /* broadcast the condition to wake up all waiters */
- fprintf(stderr,"[Main thread] broadcast the condition\n");
- rc  pthread_cond_broadcast(&td.cond);
- if (rc ! 0) {
-  if (rc  EINVAL) {
-   fprintf(stderr,"pthread_cond_broadcast returns EINVAL\n");
-   return PTS_UNRESOLVED;
-  }
-  else if (rc ! 0) {
-   fprintf(stderr,"pthread_cond_broadcast returns %d\n",rc);
-                printf("Test FAILED\n");
-   return PTS_FAIL;
-  }
- }
- fprintf(stderr,"[Main thread] pthread_cond_broadcast() returned 0\n");
- sleep(1);
- if (waken_num < THREAD_NUM){
-  fprintf(stderr,"[Main thread] Not all waiters were wakened\n");
-  for (i0; i<THREAD_NUM; i++) {
-   pthread_cancel(thread[i]);
-  }
+	/* broadcast the condition to wake up all waiters */ 
+	fprintf(stderr,"[Main thread] broadcast the condition\n");
+	rc = pthread_cond_broadcast(&td.cond);
+	if (rc != 0) {
+		if (rc == EINVAL) {
+			fprintf(stderr,"pthread_cond_broadcast returns EINVAL\n");
+			return PTS_UNRESOLVED;
+		}
+		else if (rc != 0) {
+			fprintf(stderr,"pthread_cond_broadcast returns %d\n",rc);
+  	              	printf("Test FAILED\n");
+			return PTS_FAIL;
+		}
+	}
+	fprintf(stderr,"[Main thread] pthread_cond_broadcast() returned 0\n");
+	sleep(1);
+	if (waken_num < THREAD_NUM){
+		fprintf(stderr,"[Main thread] Not all waiters were wakened\n");
+		for (i=0; i<THREAD_NUM; i++) {
+			pthread_cancel(thread[i]);
+		}
                 return PTS_UNRESOLVED;
- }
- fprintf(stderr,"[Main thread] all waiters were wakened\n");
-
- /* join all secondary threads */
- for (i0; i<THREAD_NUM; i++) {
-     if (pthread_join(thread[i], NULL) ! 0) {
-   fprintf(stderr,"Fail to join thread[%d]\n", i);
-   return PTS_UNRESOLVED;
-  }
- }
- printf("Test PASSED\n");
- return PTS_PASS;
+	}	
+	fprintf(stderr,"[Main thread] all waiters were wakened\n");
+	
+	/* join all secondary threads */
+	for (i=0; i<THREAD_NUM; i++) {
+	    	if (pthread_join(thread[i], NULL) != 0) {
+			fprintf(stderr,"Fail to join thread[%d]\n", i);
+			return PTS_UNRESOLVED;
+		}
+	}
+	printf("Test PASSED\n");
+	return PTS_PASS;
 }

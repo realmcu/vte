@@ -22,7 +22,7 @@ if [ $# -eq 0 ]; then
 fi
 
 # where is netperf
-NETPERF_CMD=/usr/bin/netperf
+NETPERF_CMD=${LTPROOT}/testcases/bin/netperf
 
 # at what port will netserver be waiting? If you decide to run
 # netserver at a differnet port than the default of 12865, then set

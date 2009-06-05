@@ -16,8 +16,8 @@
 
 int main()
 {
- printf("Will not test returning EACCESS when privileges are denied\n");
- printf("as POSIX does not define when this error occurs.\n");
- return PTS_UNTESTED;
+	printf("Will not test returning EACCESS when privileges are denied\n");
+	printf("as POSIX does not define when this error occurs.\n");
+	return PTS_UNTESTED;
 }
 

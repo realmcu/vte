@@ -20,7 +20,7 @@
 #
 ###############################################################################
 
-obj-m := scull.o
+obj-m := scull.o 
 TARGETS=scull.ko
 all:
 	$(MAKE) -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules

@@ -28,14 +28,14 @@
 
 #define OUTP stderr
 
-static const unsigned char scsi_command_size[8]  { 6, 10, 10, 12,
+static const unsigned char scsi_command_size[8] = { 6, 10, 10, 12,
                                                    16, 12, 10, 10 };
 
 #define COMMAND_SIZE(opcode) scsi_command_size[((opcode) >> 5) & 7]
 
-static const char unknown[]  "UNKNOWN";
+static const char unknown[] = "UNKNOWN";
 
-static const char * group_0_commands[]  {
+static const char * group_0_commands[] = {
 /* 00-03 */ "Test Unit Ready", "Rezero Unit", unknown, "Request Sense",
 /* 04-07 */ "Format Unit", "Read Block Limits", unknown, "Reasssign Blocks",
 /* 08-0d */ "Read (6)", unknown, "Write (6)", "Seek (6)", unknown, unknown,
@@ -47,7 +47,7 @@ static const char * group_0_commands[]  {
 };
 
 
-static const char *group_1_commands[]  {
+static const char *group_1_commands[] = {
 /* 20-23 */  unknown, unknown, unknown, "Read Format capacities",
 /* 24-28 */ "Set window", "Read Capacity",
             unknown, unknown, "Read (10)",
@@ -61,7 +61,7 @@ static const char *group_1_commands[]  {
 /* 3d-3f */ "Update Block", "Read Long",  "Write Long",
 };
 
-static const char *group_2_commands[]  {
+static const char *group_2_commands[] = {
 /* 40-41 */ "Change Definition", "Write Same",
 /* 42-48 */ "Read sub-channel", "Read TOC", "Read header",
             "Play audio (10)", "Get configuration", "Play audio msf",
@@ -78,7 +78,7 @@ static const char *group_2_commands[]  {
 };
 
 /* The following are 16 byte commands in group 4 */
-static const char *group_4_commands[]  {
+static const char *group_4_commands[] = {
 /* 80-84 */ "Xdwrite (16)", "Rebuild (16)", "Regenerate (16)", "Extended copy",
             "Receive copy results",
 /* 85-89 */ "Memory Export In (16)", "Access control in", "Access control out",
@@ -93,7 +93,7 @@ static const char *group_4_commands[]  {
 };
 
 /* The following are 12 byte commands in group 5 */
-static const char *group_5_commands[]  {
+static const char *group_5_commands[] = {
 /* a0-a5 */ "Report luns", "Blank", "Send event", "Maintenance (in)",
             "Maintenance (out)", "Move medium/play audio(12)",
 /* a6-a9 */ "Exchange medium", "Move medium attached", "Read(12)",
@@ -117,18 +117,18 @@ static const char *group_5_commands[]  {
 #define RESERVED_GROUP  0
 #define VENDOR_GROUP    1
 
-static const char **commands[]  {
+static const char **commands[] = {
     group_0_commands, group_1_commands, group_2_commands,
     (const char **) RESERVED_GROUP, group_4_commands,
     group_5_commands, (const char **) VENDOR_GROUP,
     (const char **) VENDOR_GROUP
 };
 
-static const char reserved[]  "RESERVED";
-static const char vendor[]  "VENDOR SPECIFIC";
+static const char reserved[] = "RESERVED";
+static const char vendor[] = "VENDOR SPECIFIC";
 
 static void print_opcode(int opcode) {
-    const char **table  commands[ group(opcode) ];
+    const char **table = commands[ group(opcode) ];
 
     switch ((unsigned long) table) {
     case RESERVED_GROUP:
@@ -138,7 +138,7 @@ static void print_opcode(int opcode) {
         fprintf(OUTP, "%s(0x%02x)", vendor, opcode);
         break;
     default:
- fprintf(OUTP, "%s",table[opcode & 0x1f]);
+	fprintf(OUTP, "%s",table[opcode & 0x1f]);
         break;
     }
 }
@@ -147,36 +147,36 @@ void sg_print_command (const unsigned char * command) {
     int k, s;
     print_opcode(command[0]);
     fprintf(OUTP, " [");
-    for (k  0, s  COMMAND_SIZE(command[0]); k < s; ++k)
+    for (k = 0, s = COMMAND_SIZE(command[0]); k < s; ++k)
         fprintf(OUTP, "%02x ", command[k]);
     fprintf(OUTP, "]\n");
 }
 
-void sg_print_status(int masked_status)
+void sg_print_status(int masked_status) 
 {
-    int scsi_status  (masked_status << 1) & 0x7e;
+    int scsi_status = (masked_status << 1) & 0x7e;
 
     sg_print_scsi_status(scsi_status);
 }
 
-void sg_print_scsi_status(int scsi_status)
+void sg_print_scsi_status(int scsi_status) 
 {
     const char * ccp;
 
-    scsi_status & 0x7e; /* sanitize as much as possible */
+    scsi_status &= 0x7e; /* sanitize as much as possible */
     switch (scsi_status) {
-        case 0: ccp  "Good"; break;
-        case 0x2: ccp  "Check Condition"; break;
-        case 0x4: ccp  "Condition Met"; break;
-        case 0x8: ccp  "Busy"; break;
-        case 0x10: ccp  "Intermediate"; break;
-        case 0x14: ccp  "Intermediate-Condition Met"; break;
-        case 0x18: ccp  "Reservation Conflict"; break;
-        case 0x22: ccp  "Command Terminated (obsolete)"; break;
-        case 0x28: ccp  "Task set Full"; break;
-        case 0x30: ccp  "ACA Active"; break;
-        case 0x40: ccp  "Task Aborted"; break;
-        default: ccp  "Unknown status"; break;
+        case 0: ccp = "Good"; break;
+        case 0x2: ccp = "Check Condition"; break;
+        case 0x4: ccp = "Condition Met"; break;
+        case 0x8: ccp = "Busy"; break;
+        case 0x10: ccp = "Intermediate"; break;
+        case 0x14: ccp = "Intermediate-Condition Met"; break;
+        case 0x18: ccp = "Reservation Conflict"; break;
+        case 0x22: ccp = "Command Terminated (obsolete)"; break;
+        case 0x28: ccp = "Task set Full"; break;
+        case 0x30: ccp = "ACA Active"; break;
+        case 0x40: ccp = "Task Aborted"; break;
+        default: ccp = "Unknown status"; break;
     }
     fprintf(OUTP, "%s ", ccp);
 }
@@ -232,7 +232,7 @@ struct error_info2{
     const char * text;
 };
 
-static struct error_info2 additional2[] 
+static struct error_info2 additional2[] =
 {
   {0x40,0x00,0x7f,D,"Ram failure (%x)"},
   {0x40,0x80,0xff,D|T|L|P|W|R|S|O|M|C,"Diagnostic failure on component (%x)"},
@@ -241,7 +241,7 @@ static struct error_info2 additional2[]
   {0, 0, 0, 0, NULL}
 };
 
-static struct error_info additional[] 
+static struct error_info additional[] =
 {
   {0x00,0x00,SC_ALL_DEVS,"No additional sense information"},
   {0x00,0x01,T,"Filemark detected"},
@@ -268,41 +268,41 @@ static struct error_info additional[]
   {0x03,0x01,T,"No write current"},
   {0x03,0x02,T,"Excessive write errors"},
   {0x04,0x00,SC_ALL_DEVS,SC_LOGICAL_UNIT SC_NOT_READY "cause not reportable"},
-  {0x04,0x01,SC_ALL_DEVS,SC_LOGICAL_UNIT "is" SC_IN_PROGRESS
- "of becoming ready"},
-  {0x04,0x02,SC_ALL_DEVS,SC_LOGICAL_UNIT SC_NOT_READY
- "initializing cmd. required"},
-  {0x04,0x03,SC_ALL_DEVS,SC_LOGICAL_UNIT SC_NOT_READY
- "manual intervention required"},
+  {0x04,0x01,SC_ALL_DEVS,SC_LOGICAL_UNIT "is" SC_IN_PROGRESS 
+  		"of becoming ready"},
+  {0x04,0x02,SC_ALL_DEVS,SC_LOGICAL_UNIT SC_NOT_READY 
+  		"initializing cmd. required"},
+  {0x04,0x03,SC_ALL_DEVS,SC_LOGICAL_UNIT SC_NOT_READY 
+  		"manual intervention required"},
   {0x04,0x04,D|T|L|R|O|B,SC_LOGICAL_UNIT SC_NOT_READY "format" SC_IN_PROGRESS},
-  {0x04,0x05,D|T|W|O|M|C|A|B|K,SC_LOGICAL_UNIT SC_NOT_READY
- "rebuild" SC_IN_PROGRESS},
-  {0x04,0x06,D|T|W|O|M|C|A|B|K,SC_LOGICAL_UNIT SC_NOT_READY
- "recalculation" SC_IN_PROGRESS},
-  {0x04,0x07,SC_ALL_DEVS,SC_LOGICAL_UNIT SC_NOT_READY
- SC_OPERATION SC_IN_PROGRESS},
+  {0x04,0x05,D|T|W|O|M|C|A|B|K,SC_LOGICAL_UNIT SC_NOT_READY 
+  		"rebuild" SC_IN_PROGRESS},
+  {0x04,0x06,D|T|W|O|M|C|A|B|K,SC_LOGICAL_UNIT SC_NOT_READY 
+  		"recalculation" SC_IN_PROGRESS},
+  {0x04,0x07,SC_ALL_DEVS,SC_LOGICAL_UNIT SC_NOT_READY 
+  		SC_OPERATION SC_IN_PROGRESS},
   {0x04,0x08,R,SC_LOGICAL_UNIT SC_NOT_READY "long write" SC_IN_PROGRESS},
-  {0x04,0x09,SC_ALL_DEVS,SC_LOGICAL_UNIT SC_NOT_READY "self-test"
-  SC_IN_PROGRESS},
-  {0x04,0x0a,SC_ALL_DEVS,SC_LOGICAL_UNIT
- "not accessible, asymmetric access state transition"},
-  {0x04,0x0b,SC_ALL_DEVS,SC_LOGICAL_UNIT
- "not accessible, target port in standby state"},
-  {0x04,0x0c,SC_ALL_DEVS,SC_LOGICAL_UNIT
- "not accessible, target port in unavailable state"},
+  {0x04,0x09,SC_ALL_DEVS,SC_LOGICAL_UNIT SC_NOT_READY "self-test" 
+		SC_IN_PROGRESS},
+  {0x04,0x0a,SC_ALL_DEVS,SC_LOGICAL_UNIT 
+  		"not accessible, asymmetric access state transition"},
+  {0x04,0x0b,SC_ALL_DEVS,SC_LOGICAL_UNIT 
+  		"not accessible, target port in standby state"},
+  {0x04,0x0c,SC_ALL_DEVS,SC_LOGICAL_UNIT 
+  		"not accessible, target port in unavailable state"},
   {0x04,0x10,SC_ALL_DEVS,SC_LOGICAL_UNIT SC_NOT_READY
- "auxiliary memory not accessible"},
-  {0x05,0x00,D|T|L|W|R|S|O|M|C|A|E|B|K,SC_LOGICAL_UNIT
- "does not respond to selection"},
+  		"auxiliary memory not accessible"},
+  {0x05,0x00,D|T|L|W|R|S|O|M|C|A|E|B|K,SC_LOGICAL_UNIT 
+  		"does not respond to selection"},
   {0x06,0x00,D|W|R|O|M|B|K,"No reference position found"},
   {0x07,0x00,D|T|L|W|R|S|O|M|B|K,"Multiple peripheral devices selected"},
   {0x08,0x00,D|T|L|W|R|S|O|M|C|A|E|B|K,SC_LOGICAL_UNIT "communication failure"},
-  {0x08,0x01,D|T|L|W|R|S|O|M|C|A|E|B|K,SC_LOGICAL_UNIT
- "communication time-out"},
-  {0x08,0x02,D|T|L|W|R|S|O|M|C|A|E|B|K,SC_LOGICAL_UNIT
- "communication parity error"},
-  {0x08,0x03,D|T|R|O|M|B|K,SC_LOGICAL_UNIT
- "communication CRC error (Ultra-DMA/32)"},
+  {0x08,0x01,D|T|L|W|R|S|O|M|C|A|E|B|K,SC_LOGICAL_UNIT 
+  		"communication time-out"},
+  {0x08,0x02,D|T|L|W|R|S|O|M|C|A|E|B|K,SC_LOGICAL_UNIT 
+  		"communication parity error"},
+  {0x08,0x03,D|T|R|O|M|B|K,SC_LOGICAL_UNIT 
+  		"communication CRC error (Ultra-DMA/32)"},
   {0x08,0x04,D|T|L|P|W|R|S|O|C|K,"Unreachable copy target"},
   {0x09,0x00,D|T|W|R|O|B,"Track following error"},
   {0x09,0x01,W|R|O|K,"Tracking servo failure"},
@@ -328,7 +328,7 @@ static struct error_info additional[]
   {0x0C,0x0C,SC_ALL_DEVS,"Write error - unexpected unsolicited data"},
   {0x0C,0x0D,SC_ALL_DEVS,"Write error - not enough unsolicited data"},
   {0x0D,0x00,D|T|L|P|W|R|S|O|C|A|K,
-  "Error detected by third party temporary initiator"},
+		"Error detected by third party temporary initiator"},
   {0x0D,0x01,D|T|L|P|W|R|S|O|C|A|K, "Third party device failure"},
   {0x0D,0x02,D|T|L|P|W|R|S|O|C|A|K, "Copy target device not reachable"},
   {0x0D,0x03,D|T|L|P|W|R|S|O|C|A|K, "Incorrect copy target device"},
@@ -373,21 +373,21 @@ static struct error_info additional[]
   {0x16,0x02,D|W|O|B|K,"Data sync error - recommend rewrite"},
   {0x16,0x03,D|W|O|B|K,"Data sync error - data auto-reallocated"},
   {0x16,0x04,D|W|O|B|K,"Data sync error - recommend reassignment"},
-  {0x17,0x00,D|T|W|R|S|O|B|K,SC_RECOVERED_DATA
-  "with no error correction applied"},
+  {0x17,0x00,D|T|W|R|S|O|B|K,SC_RECOVERED_DATA 
+		"with no error correction applied"},
   {0x17,0x01,D|T|W|R|S|O|B|K,SC_RECOVERED_DATA "with retries"},
   {0x17,0x02,D|T|W|R|O|B|K,SC_RECOVERED_DATA "with positive head offset"},
   {0x17,0x03,D|T|W|R|O|B|K,SC_RECOVERED_DATA "with negative head offset"},
   {0x17,0x04,W|R|O|B,SC_RECOVERED_DATA "with retries and/or circ applied"},
   {0x17,0x05,D|W|R|O|B|K,SC_RECOVERED_DATA "using previous sector id"},
   {0x17,0x06,D|W|O|B|K,SC_RECOVERED_DATA "without ecc - data auto-reallocated"},
-  {0x17,0x07,D|W|R|O|B|K,SC_RECOVERED_DATA
-  "without ecc - recommend reassignment"},
+  {0x17,0x07,D|W|R|O|B|K,SC_RECOVERED_DATA 
+		"without ecc - recommend reassignment"},
   {0x17,0x08,D|W|R|O|B|K,SC_RECOVERED_DATA "without ecc - recommend rewrite"},
   {0x17,0x09,D|W|R|O|B|K,SC_RECOVERED_DATA "without ecc - data rewritten"},
   {0x18,0x00,D|T|W|R|O|B|K,SC_RECOVERED_DATA "with error correction applied"},
-  {0x18,0x01,D|W|R|O|B|K,SC_RECOVERED_DATA
-  "with error corr. & retries applied"},
+  {0x18,0x01,D|W|R|O|B|K,SC_RECOVERED_DATA 
+		"with error corr. & retries applied"},
   {0x18,0x02,D|W|R|O|B|K,SC_RECOVERED_DATA "- data auto-reallocated"},
   {0x18,0x03,R,SC_RECOVERED_DATA "with CIRC"},
   {0x18,0x04,R,SC_RECOVERED_DATA "with L-EC"},
@@ -409,7 +409,7 @@ static struct error_info additional[]
   {0x1F,0x00,D|O|K,"Partial defect list transfer"},
   {0x20,0x00,SC_ALL_DEVS,"Invalid command" SC_OPERATION " code"},
   {0x20,0x01,D|T|P|W|R|O|M|A|E|B|K,
-  "Access denied - initiator pending-enrolled"},
+  	"Access denied - initiator pending-enrolled"},
   {0x20,0x02,D|T|P|W|R|O|M|A|E|B|K,"Access denied - no access rights"},
   {0x20,0x03,D|T|P|W|R|O|M|A|E|B|K,"Access denied - no mgmt id key"},
   {0x20,0x04,T,"Illegal command while in write capable state"},
@@ -440,7 +440,7 @@ static struct error_info additional[]
   {0x26,0x0A,D|T|L|P|W|R|S|O|C|K,"Unexpected inexact segment"},
   {0x26,0x0B,D|T|L|P|W|R|S|O|C|K,"Inline data length exceeded"},
   {0x26,0x0C,D|T|L|P|W|R|S|O|C|K,
-  "Invalid" SC_OPERATION " for copy source or destination"},
+		"Invalid" SC_OPERATION " for copy source or destination"},
   {0x26,0x0D,D|T|L|P|W|R|S|O|C|K,"Copy segment granularity violation"},
   {0x27,0x00,D|T|W|R|O|B|K,"Write protected"},
   {0x27,0x01,D|T|W|R|O|B|K,"Hardware write protected"},
@@ -468,7 +468,7 @@ static struct error_info additional[]
   {0x2A,0x06,SC_ALL_DEVS,"Asymmetric access state changed"},
   {0x2A,0x07,SC_ALL_DEVS,"Implicit asymmetric access state transition failed"},
   {0x2B,0x00,D|T|L|P|W|R|S|O|C|K,
-  "Copy cannot execute since host cannot disconnect"},
+		"Copy cannot execute since host cannot disconnect"},
   {0x2C,0x00,SC_ALL_DEVS,"Command sequence error"},
   {0x2C,0x01,S,"Too many windows specified"},
   {0x2C,0x02,S,"Invalid combination of windows specified"},
@@ -516,7 +516,7 @@ static struct error_info additional[]
   {0x3A,0x02,D|T|W|R|O|M|B|K,"Medium not present - tray open"},
   {0x3A,0x03,D|T|W|R|O|M|B,"Medium not present - loadable"},
   {0x3A,0x04,D|T|W|R|O|M|B,
-  "Medium not present - medium auxiliary memory accessible"},
+		"Medium not present - medium auxiliary memory accessible"},
   {0x3B,0x00,T|L,"Sequential positioning error"},
   {0x3B,0x01,T,"Tape position error at beginning-of-medium"},
   {0x3B,0x02,T,"Tape position error at end-of-medium"},
@@ -587,7 +587,7 @@ static struct error_info additional[]
   /*
    * FIXME(eric) - need a way to represent wildcards here.
    */
-  {0x4D,0x00,SC_ALL_DEVS,"Tagged overlapped commands (nn  queue tag)"},
+  {0x4D,0x00,SC_ALL_DEVS,"Tagged overlapped commands (nn = queue tag)"},
   {0x4E,0x00,SC_ALL_DEVS,"Overlapped commands attempted"},
   {0x50,0x00,T,"Write append error"},
   {0x50,0x01,T,"Write append position error"},
@@ -623,7 +623,7 @@ static struct error_info additional[]
   {0x5D,0x01,R|B,"Media failure prediction threshold exceeded"},
   {0x5D,0x02,R,SC_LOGICAL_UNIT "failure prediction threshold exceeded"},
   {0x5D,0x03,R,"spare area exhaustion prediction threshold exceeded"},
- /* large series of "impending failure" messages */
+	/* large series of "impending failure" messages */
   {0x5D,0x10,D|B,SC_HARDWARE_IF "general hard drive failure"},
   {0x5D,0x11,D|B,SC_HARDWARE_IF "drive" SC_ERROR_RATE_TOO_HIGH },
   {0x5D,0x12,D|B,SC_HARDWARE_IF "data" SC_ERROR_RATE_TOO_HIGH },
@@ -776,7 +776,7 @@ static struct error_info additional[]
   {0, 0, 0, NULL}
 };
 
-static const char * sc_oft_used[0x1f]  {
+static const char * sc_oft_used[0x1f] = {
         "umulig",                       /* index 0x0 should be impossible */
         "Audio play operation ",
         "Logical unit ",
@@ -794,7 +794,7 @@ static const char * sc_oft_used[0x1f]  {
         " times too high",
 };
 
-static const char *snstext[]  {
+static const char *snstext[] = {
     "No Sense",                 /* There is no sense information */
     "Recovered Error",          /* The last command completed successfully
                                    but used error correction */
@@ -807,14 +807,14 @@ static const char *snstext[]  {
     "Data Protect",             /* Access to the data is blocked */
     "Blank Check",              /* Reached unexpected written or unwritten
                                    region of the medium */
-    "Key9",                    /* Vendor specific */
+    "Key=9",                    /* Vendor specific */
     "Copy Aborted",             /* COPY or COMPARE was aborted */
     "Aborted Command",          /* The target aborted the command */
     "Equal",                    /* SEARCH DATA found data equal (obsolete) */
     "Volume Overflow",          /* Medium full with still data to be written */
     "Miscompare",               /* Source data and data on the medium
                                    do not agree */
-    "Key15"                    /* Reserved */
+    "Key=15"                    /* Reserved */
 };
 
 static
@@ -825,51 +825,51 @@ void sg_print_asc_ascq(unsigned char asc, unsigned char ascq)
     const char * ccp;
     const char * oup;
     char c;
-    int found  0;
+    int found = 0;
 
-    for (k0; additional[k].text; k++) {
- if (additional[k].code1  asc &&
-     additional[k].code2  ascq) {
-     found  1;
-     ccp  additional[k].text;
-     for (j  0; *ccp && (j < sizeof(obuff)); ++ccp) {
-  c  *ccp;
-  if ((c < 0x20) && (c > 0)) {
-      oup  sc_oft_used[(int)c];
-      if (oup) {
-   strcpy(obuff + j, oup);
-   j + strlen(oup);
-      }
-      else {
-   strcpy(obuff + j, "???");
-   j + 3;
-      }
-  }
-  else
-      obuff[j++]  c;
-     }
-     if (j < sizeof(obuff))
-  obuff[j]  '\0';
-     else
-  obuff[sizeof(obuff) - 1]  '\0';
-     fprintf(OUTP, "Additional sense: %s\n", obuff);
- }
+    for (k=0; additional[k].text; k++) {
+	if (additional[k].code1 == asc &&
+	    additional[k].code2 == ascq) {
+	    found = 1;
+	    ccp = additional[k].text;
+	    for (j = 0; *ccp && (j < sizeof(obuff)); ++ccp) {
+		c = *ccp;
+		if ((c < 0x20) && (c > 0)) {
+		    oup = sc_oft_used[(int)c];
+		    if (oup) {
+			strcpy(obuff + j, oup);
+			j += strlen(oup);
+		    }
+		    else {
+			strcpy(obuff + j, "???");
+			j += 3;
+		    }
+		}
+		else
+		    obuff[j++] = c;
+	    }
+	    if (j < sizeof(obuff))
+		obuff[j] = '\0';
+	    else
+		obuff[sizeof(obuff) - 1] = '\0';
+	    fprintf(OUTP, "Additional sense: %s\n", obuff);
+	}
     }
     if (found)
- return;
+	return;
 
-    for(k0; additional2[k].text; k++) {
- if ((additional2[k].code1  asc) &&
-     (ascq > additional2[k].code2_min)  &&
-     (ascq < additional2[k].code2_max)) {
-     found  1;
-     fprintf(OUTP, "Additional sense: ");
-     fprintf(OUTP, additional2[k].text, ascq);
-     fprintf(OUTP, "\n");
- }
+    for(k=0; additional2[k].text; k++) {
+	if ((additional2[k].code1 == asc) &&
+	    (ascq >= additional2[k].code2_min)  &&
+	    (ascq <= additional2[k].code2_max)) {
+	    found = 1;
+	    fprintf(OUTP, "Additional sense: ");
+	    fprintf(OUTP, additional2[k].text, ascq);
+	    fprintf(OUTP, "\n");
+	}
     }
     if (! found)
- fprintf(OUTP, "ASC%2x ASCQ%2x\n", asc, ascq);
+	fprintf(OUTP, "ASC=%2x ASCQ=%2x\n", asc, ascq);
 }
 
 /* Print sense information */
@@ -878,58 +878,58 @@ void sg_print_sense(const char * leadin, const unsigned char * sense_buffer,
 {
     int k, s;
     int sense_key, sense_class, valid, code;
-    int descriptor_format  0;
-    const char * error  NULL;
+    int descriptor_format = 0;
+    const char * error = NULL;
 
     if (sb_len < 1) {
-     fprintf(OUTP, "sense buffer empty\n");
-     return;
+	    fprintf(OUTP, "sense buffer empty\n");
+	    return;
     }
-    sense_class  (sense_buffer[0] >> 4) & 0x07;
-    code  sense_buffer[0] & 0xf;
-    valid  sense_buffer[0] & 0x80;
+    sense_class = (sense_buffer[0] >> 4) & 0x07;
+    code = sense_buffer[0] & 0xf;
+    valid = sense_buffer[0] & 0x80;
     if (leadin)
- fprintf(OUTP, "%s: ", leadin);
+	fprintf(OUTP, "%s: ", leadin);
 
-    if (sense_class  7) {     /* extended sense data */
-        s  sense_buffer[7] + 8;
+    if (sense_class == 7) {     /* extended sense data */
+        s = sense_buffer[7] + 8;
         if(s > sb_len) {
-     fprintf(OUTP, "Sense buffer too small (at %d bytes), %d bytes "
-      "truncated\n", sb_len, s - sb_len);
-     s  sb_len;
- }
+	    fprintf(OUTP, "Sense buffer too small (at %d bytes), %d bytes "
+		    "truncated\n", sb_len, s - sb_len);
+	    s = sb_len;
+	}
 
         switch (code) {
         case 0x0:
-            error  "Current";  /* error concerns current command */
+            error = "Current";  /* error concerns current command */
             break;
         case 0x1:
-            error  "Deferred"; /* error concerns some earlier command */
+            error = "Deferred"; /* error concerns some earlier command */
                 /* e.g., an earlier write to disk cache succeeded, but
                    now the disk discovers that it cannot write the data */
             break;
- case 0x2:
-     descriptor_format  1;
-     error  "Descriptor current";
-     /* new descriptor sense format */
-     break;
- case 0x3:
-     descriptor_format  1;
-     error  "Descriptor deferred";
-     /* new descriptor sense format (deferred report) */
-     break;
+	case 0x2:
+	    descriptor_format = 1;
+	    error = "Descriptor current";
+	    /* new descriptor sense format */
+	    break;
+	case 0x3:
+	    descriptor_format = 1;
+	    error = "Descriptor deferred";
+	    /* new descriptor sense format (deferred report) */
+	    break;
         default:
-            error  "Invalid";
+            error = "Invalid";
         }
- sense_key  sense_buffer[ descriptor_format ? 1 : 2 ] & 0xf;
+	sense_key = sense_buffer[ descriptor_format ? 1 : 2 ] & 0xf;
         fprintf(OUTP, "%s, Sense key: %s\n", error, snstext[sense_key]);
 
- if (descriptor_format)
-     sg_print_asc_ascq(sense_buffer[2], sense_buffer[3]);
- else {
+	if (descriptor_format)
+	    sg_print_asc_ascq(sense_buffer[2], sense_buffer[3]);
+	else {
             if (!valid)
-                fprintf(OUTP, "[valid0] ");
-            fprintf(OUTP, "Info fld0x%x, ", (int)((sense_buffer[3] << 24) |
+                fprintf(OUTP, "[valid=0] ");
+            fprintf(OUTP, "Info fld=0x%x, ", (int)((sense_buffer[3] << 24) |
                     (sense_buffer[4] << 16) | (sense_buffer[5] << 8) |
                     sense_buffer[6]));
 
@@ -940,21 +940,21 @@ void sg_print_sense(const char * leadin, const unsigned char * sense_buffer,
             if (sense_buffer[2] & 0x20)
                fprintf(OUTP, "ILI "); /* incorrect block length requested */
 
-     if (s > 13) {
-  if (sense_buffer[12] || sense_buffer[13])
-      sg_print_asc_ascq(sense_buffer[12], sense_buffer[13]);
-     }
-     if (sense_key  5 && s > 18 && (sense_buffer[15]&0x80)) {
-  fprintf(OUTP, "Sense Key Specific: Error in %s byte %d",
-   (sense_buffer[15]&0x40)?"Command":"Data",
-   (sense_buffer[16]<<8)|sense_buffer[17]);
-  if(sense_buffer[15]&0x08) {
-      fprintf(OUTP, " bit %d\n", sense_buffer[15]&0x07);
-  } else {
-      fprintf(OUTP, "\n");
-  }
-     }
- }
+	    if (s > 13) {
+		if (sense_buffer[12] || sense_buffer[13])
+		    sg_print_asc_ascq(sense_buffer[12], sense_buffer[13]);
+	    }
+	    if (sense_key == 5 && s >= 18 && (sense_buffer[15]&0x80)) {
+		fprintf(OUTP, "Sense Key Specific: Error in %s byte %d",
+			(sense_buffer[15]&0x40)?"Command":"Data",
+			(sense_buffer[16]<<8)|sense_buffer[17]);
+		if(sense_buffer[15]&0x08) {
+		    fprintf(OUTP, " bit %d\n", sense_buffer[15]&0x07);
+		} else {
+		    fprintf(OUTP, "\n");
+		}
+	    }
+	}
 
     } else {    /* non-extended sense data */
 
@@ -966,46 +966,46 @@ void sg_print_sense(const char * leadin, const unsigned char * sense_buffer,
           *    sense_buffer[1..3] : 21-bit logical block address
           */
 
- if (sb_len < 4) {
-     fprintf(OUTP, "sense buffer too short (4 byte minimum)\n");
-     return;
- }
+	if (sb_len < 4) {
+	    fprintf(OUTP, "sense buffer too short (4 byte minimum)\n");
+	    return;
+	}
         if (leadin)
             fprintf(OUTP, "%s: ", leadin);
         if (sense_buffer[0] < 15)
-            fprintf(OUTP,
-         "old sense: key %s\n", snstext[sense_buffer[0] & 0x0f]);
+            fprintf(OUTP, 
+	    	    "old sense: key %s\n", snstext[sense_buffer[0] & 0x0f]);
         else
-            fprintf(OUTP, "sns  %2x %2x\n", sense_buffer[0], sense_buffer[2]);
+            fprintf(OUTP, "sns = %2x %2x\n", sense_buffer[0], sense_buffer[2]);
 
-        fprintf(OUTP, "Non-extended sense class %d code 0x%0x ",
-  sense_class, code);
-        s  4;
+        fprintf(OUTP, "Non-extended sense class %d code 0x%0x ", 
+		sense_class, code);
+        s = 4;
     }
 
     fprintf(OUTP, "Raw sense data (in hex):\n  ");
-    for (k  0; k < s; ++k) {
-        if ((k > 0) && (0  (k % 24)))
+    for (k = 0; k < s; ++k) {
+        if ((k > 0) && (0 == (k % 24)))
             fprintf(OUTP, "\n  ");
         fprintf(OUTP, "%02x ", sense_buffer[k]);
     }
     fprintf(OUTP, "\n");
 }
 
-static const char * hostbyte_table[]{
+static const char * hostbyte_table[]={
 "DID_OK", "DID_NO_CONNECT", "DID_BUS_BUSY", "DID_TIME_OUT", "DID_BAD_TARGET",
 "DID_ABORT", "DID_PARITY", "DID_ERROR", "DID_RESET", "DID_BAD_INTR",
 "DID_PASSTHROUGH", "DID_SOFT_ERROR", NULL};
 
 void sg_print_host_status(int host_status)
-{   static int maxcode0;
+{   static int maxcode=0;
     int i;
 
     if(! maxcode) {
-        for(i  0; hostbyte_table[i]; i++) ;
-        maxcode  i-1;
+        for(i = 0; hostbyte_table[i]; i++) ;
+        maxcode = i-1;
     }
-    fprintf(OUTP, "Host_status0x%02x", host_status);
+    fprintf(OUTP, "Host_status=0x%02x", host_status);
     if(host_status > maxcode) {
         fprintf(OUTP, "is invalid ");
         return;
@@ -1013,29 +1013,29 @@ void sg_print_host_status(int host_status)
     fprintf(OUTP, "(%s) ",hostbyte_table[host_status]);
 }
 
-static const char * driverbyte_table[]{
+static const char * driverbyte_table[]={
 "DRIVER_OK", "DRIVER_BUSY", "DRIVER_SOFT",  "DRIVER_MEDIA", "DRIVER_ERROR",
 "DRIVER_INVALID", "DRIVER_TIMEOUT", "DRIVER_HARD", "DRIVER_SENSE", NULL};
 
-static const char * driversuggest_table[]{"SUGGEST_OK",
+static const char * driversuggest_table[]={"SUGGEST_OK",
 "SUGGEST_RETRY", "SUGGEST_ABORT", "SUGGEST_REMAP", "SUGGEST_DIE",
 unknown,unknown,unknown, "SUGGEST_SENSE",NULL};
 
 
 void sg_print_driver_status(int driver_status)
 {
-    static int driver_max 0 , suggest_max0;
+    static int driver_max =0 , suggest_max=0;
     int i;
-    int dr  driver_status & SG_ERR_DRIVER_MASK;
-    int su  (driver_status & SG_ERR_SUGGEST_MASK) >> 4;
+    int dr = driver_status & SG_ERR_DRIVER_MASK;
+    int su = (driver_status & SG_ERR_SUGGEST_MASK) >> 4;
 
     if(! driver_max) {
-        for(i  0; driverbyte_table[i]; i++) ;
-        driver_max  i;
-        for(i  0; driversuggest_table[i]; i++) ;
-        suggest_max  i;
+        for(i = 0; driverbyte_table[i]; i++) ;
+        driver_max = i;
+        for(i = 0; driversuggest_table[i]; i++) ;
+        suggest_max = i;
     }
-    fprintf(OUTP, "Driver_status0x%02x",driver_status);
+    fprintf(OUTP, "Driver_status=0x%02x",driver_status);
     fprintf(OUTP, " (%s,%s) ",
             dr < driver_max  ? driverbyte_table[dr]:"invalid",
             su < suggest_max ? driversuggest_table[su]:"invalid");
@@ -1045,47 +1045,47 @@ static int sg_sense_print(const char * leadin, int scsi_status,
                           int host_status, int driver_status,
                           const unsigned char * sense_buffer, int sb_len)
 {
-    int done_leadin  0;
-    int done_sense  0;
+    int done_leadin = 0;
+    int done_sense = 0;
 
-    scsi_status & 0x7e; /*sanity */
-    if ((0  scsi_status) && (0  host_status) &&
-        (0  driver_status))
+    scsi_status &= 0x7e; /*sanity */
+    if ((0 == scsi_status) && (0 == host_status) &&
+        (0 == driver_status))
         return 1;       /* No problems */
-    if (0 ! scsi_status) {
+    if (0 != scsi_status) {
         if (leadin)
             fprintf(OUTP, "%s: ", leadin);
-        done_leadin  1;
- fprintf(OUTP, "scsi status: ");
+        done_leadin = 1;
+	fprintf(OUTP, "scsi status: ");
         sg_print_scsi_status(scsi_status);
         fprintf(OUTP, "\n");
-        if (sense_buffer && ((scsi_status  SCSI_CHECK_CONDITION) ||
-                             (scsi_status  SCSI_COMMAND_TERMINATED))) {
+        if (sense_buffer && ((scsi_status == SCSI_CHECK_CONDITION) ||
+                             (scsi_status == SCSI_COMMAND_TERMINATED))) {
             sg_print_sense(0, sense_buffer, sb_len);
-            done_sense  1;
+            done_sense = 1;
         }
     }
-    if (0 ! host_status) {
+    if (0 != host_status) {
         if (leadin && (! done_leadin))
             fprintf(OUTP, "%s: ", leadin);
         if (done_leadin)
             fprintf(OUTP, "plus...: ");
         else
-            done_leadin  1;
+            done_leadin = 1;
         sg_print_host_status(host_status);
         fprintf(OUTP, "\n");
     }
-    if (0 ! driver_status) {
+    if (0 != driver_status) {
         if (leadin && (! done_leadin))
             fprintf(OUTP, "%s: ", leadin);
         if (done_leadin)
             fprintf(OUTP, "plus...: ");
         else
-            done_leadin  1;
+            done_leadin = 1;
         sg_print_driver_status(driver_status);
         fprintf(OUTP, "\n");
         if (sense_buffer && (! done_sense) &&
-            (SG_ERR_DRIVER_SENSE  (0xf & driver_status)))
+            (SG_ERR_DRIVER_SENSE == (0xf & driver_status)))
             sg_print_sense(0, sense_buffer, sb_len);
     }
     return 0;
@@ -1103,10 +1103,10 @@ int sg_chk_n_print(const char * leadin, int masked_status,
                    int host_status, int driver_status,
                    const unsigned char * sense_buffer, int sb_len)
 {
-    int scsi_status  (masked_status << 1) & 0x7e;
+    int scsi_status = (masked_status << 1) & 0x7e;
 
     return sg_sense_print(leadin, scsi_status, host_status, driver_status,
-     sense_buffer, sb_len);
+    			  sense_buffer, sb_len);
 }
 
 #ifdef SG_IO
@@ -1121,54 +1121,54 @@ int sg_err_category(int masked_status, int host_status,
                     int driver_status, const unsigned char * sense_buffer,
                     int sb_len)
 {
-    int scsi_status  (masked_status << 1) & 0x7e;
+    int scsi_status = (masked_status << 1) & 0x7e;
 
     return sg_err_category_new(scsi_status, host_status, driver_status,
-          sense_buffer, sb_len);
+    			       sense_buffer, sb_len);
 }
 
-int sg_err_category_new(int scsi_status, int host_status, int driver_status,
-   const unsigned char * sense_buffer, int sb_len)
+int sg_err_category_new(int scsi_status, int host_status, int driver_status, 
+			const unsigned char * sense_buffer, int sb_len)
 {
-    scsi_status & 0x7e;
-    if ((0  scsi_status) && (0  host_status) &&
-        (0  driver_status))
+    scsi_status &= 0x7e;
+    if ((0 == scsi_status) && (0 == host_status) &&
+        (0 == driver_status))
         return SG_ERR_CAT_CLEAN;
-    if ((SCSI_CHECK_CONDITION  scsi_status) ||
-        (SCSI_COMMAND_TERMINATED  scsi_status) ||
-        (SG_ERR_DRIVER_SENSE  (0xf & driver_status))) {
+    if ((SCSI_CHECK_CONDITION == scsi_status) ||
+        (SCSI_COMMAND_TERMINATED == scsi_status) ||
+        (SG_ERR_DRIVER_SENSE == (0xf & driver_status))) {
         if (sense_buffer && (sb_len > 2)) {
-     int sense_key;
-     unsigned char asc;
+	    int sense_key;
+	    unsigned char asc;
 
-     if (sense_buffer[0] & 0x2) {
-     sense_key  sense_buffer[1] & 0xf;
-  asc  sense_buffer[2];
-     }
-     else {
-     sense_key  sense_buffer[2] & 0xf;
-  asc  (sb_len > 12) ? sense_buffer[12] : 0;
-     }
+	    if (sense_buffer[0] & 0x2) {
+	    	sense_key = sense_buffer[1] & 0xf;
+		asc = sense_buffer[2];
+	    }
+	    else {
+	    	sense_key = sense_buffer[2] & 0xf;
+		asc = (sb_len > 12) ? sense_buffer[12] : 0;
+	    }
 
-            if(RECOVERED_ERROR  sense_key)
+            if(RECOVERED_ERROR == sense_key)
                 return SG_ERR_CAT_RECOVERED;
-            else if (UNIT_ATTENTION  sense_key) {
-                if (0x28  asc)
+            else if (UNIT_ATTENTION == sense_key) {
+                if (0x28 == asc)
                     return SG_ERR_CAT_MEDIA_CHANGED;
-                if (0x29  asc)
+                if (0x29 == asc)
                     return SG_ERR_CAT_RESET;
             }
         }
         return SG_ERR_CAT_SENSE;
     }
-    if (0 ! host_status) {
-        if ((SG_ERR_DID_NO_CONNECT  host_status) ||
-            (SG_ERR_DID_BUS_BUSY  host_status) ||
-            (SG_ERR_DID_TIME_OUT  host_status))
+    if (0 != host_status) {
+        if ((SG_ERR_DID_NO_CONNECT == host_status) ||
+            (SG_ERR_DID_BUS_BUSY == host_status) ||
+            (SG_ERR_DID_TIME_OUT == host_status))
             return SG_ERR_CAT_TIMEOUT;
     }
-    if (0 ! driver_status) {
-        if (SG_ERR_DRIVER_TIMEOUT  driver_status)
+    if (0 != driver_status) {
+        if (SG_ERR_DRIVER_TIMEOUT == driver_status)
             return SG_ERR_CAT_TIMEOUT;
     }
     return SG_ERR_CAT_OTHER;
@@ -1181,10 +1181,10 @@ int sg_get_command_size(unsigned char opcode)
 
 void sg_get_command_name(unsigned char opcode, int buff_len, char * buff)
 {
-    const char **table  commands[ group(opcode) ];
+    const char **table = commands[ group(opcode) ];
 
-    if ((NULL  buff) || (buff_len < 1))
-    return;
+    if ((NULL == buff) || (buff_len < 1))
+    	return;
 
     switch ((unsigned long) table) {
     case RESERVED_GROUP:

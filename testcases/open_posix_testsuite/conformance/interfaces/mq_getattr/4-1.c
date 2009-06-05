@@ -8,9 +8,9 @@
 
 /*
  * mq_getattr test plan:
- * mq_getattr gets mq_curmsgs value, which will be returned as
+ * mq_getattr gets mq_curmsgs value, which will be returned as 
  * the number of the message currently on the queue.
- *
+ *  
  */
 
 #include <stdio.h>
@@ -27,60 +27,60 @@
 #define ERROR_PREFIX "unexpected error: " FUNCTION " " TEST ": "
 
 #define NAMESIZE 50
-#define MSG_NUM 5
-#define MSGSIZE  50
-#define MAXMSG  40
+#define MSG_NUM	5
+#define MSGSIZE		50
+#define MAXMSG		40
 
 int main()
 {
         char mqname[NAMESIZE];
-        const char *msgptr  "test message";
+        const char *msgptr = "test message";
         mqd_t mqdes;
- struct mq_attr mqstat;
- int i;
- int unresolved0, failure0;
+	struct mq_attr mqstat;
+	int i;
+	int unresolved=0, failure=0;
 
- sprintf(mqname, "/" FUNCTION "_" TEST "_%d", getpid());
+	sprintf(mqname, "/" FUNCTION "_" TEST "_%d", getpid());
 
- memset(&mqstat,0,sizeof(mqstat));
- mqstat.mq_msgsize  MSGSIZE;
- mqstat.mq_maxmsg  MAXMSG;
-        mqdes  mq_open(mqname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, &mqstat);
-        if (mqdes  (mqd_t)-1) {
+	memset(&mqstat,0,sizeof(mqstat));
+	mqstat.mq_msgsize = MSGSIZE;
+	mqstat.mq_maxmsg = MAXMSG;
+        mqdes = mq_open(mqname, O_CREAT |O_RDWR, S_IRUSR | S_IWUSR, &mqstat);
+        if (mqdes == (mqd_t)-1) {
                 perror(ERROR_PREFIX "mq_open()");
                 return PTS_UNRESOLVED;
         }
- for (i  0; i < MSG_NUM; i++) {
-        if (mq_send(mqdes, msgptr, strlen(msgptr), 1)  -1) {
-                perror(ERROR_PREFIX "mq_send()");
-   unresolved  1;
-        }
- }
- memset(&mqstat,0,sizeof(mqstat));
- if (mq_getattr(mqdes, &mqstat) ! 0) {
-  perror(ERROR_PREFIX "mq_getattr");
-  unresolved  1;
- }
- else {
-  if (mqstat.mq_curmsgs ! MSG_NUM) {
-   printf("mq_getattr didn't get the correct "
-          "mq_curmsgs \n");
-   failure  1;
-  }
- }
+	for (i = 0; i < MSG_NUM; i++) {
+        	if (mq_send(mqdes, msgptr, strlen(msgptr), 1) == -1) {
+                	perror(ERROR_PREFIX "mq_send()");
+			unresolved = 1;
+        	}
+	}
+	memset(&mqstat,0,sizeof(mqstat));
+	if (mq_getattr(mqdes, &mqstat) != 0) {
+		perror(ERROR_PREFIX "mq_getattr");
+		unresolved = 1;
+	}
+	else {
+		if (mqstat.mq_curmsgs != MSG_NUM) {
+			printf("mq_getattr didn't get the correct "
+			       "mq_curmsgs \n");
+			failure = 1;
+		}
+	}
 
- mq_close(mqdes);
- mq_unlink(mqname);
+	mq_close(mqdes);
+	mq_unlink(mqname);
 
- if (failure1) {
-  printf("Test FAILED\n");
-  return PTS_FAIL;
- }
+	if (failure==1) {
+		printf("Test FAILED\n");
+		return PTS_FAIL;
+	}
 
- if (unresolved1) {
-  printf("Test UNRESOLVED\n");
-  return PTS_UNRESOLVED;
- }
+	if (unresolved==1) {
+		printf("Test UNRESOLVED\n");
+		return PTS_UNRESOLVED;
+	}
 
         printf("Test PASSED\n");
         return PTS_PASS;

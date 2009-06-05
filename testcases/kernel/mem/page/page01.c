@@ -17,24 +17,24 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* 06/30/2001 Port to Linux nsharoff@us.ibm.com */
-/* 11/01/2002 Port to LTP  robbiew@us.ibm.com */
+/* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
+/* 11/01/2002	Port to LTP  	robbiew@us.ibm.com */
 
                            /* page01.c */
-/*
-  TESTPLAN SEGMENT 
-CALLS: malloc(3)
+/*======================================================================
+	=================== TESTPLAN SEGMENT ===================
+CALLS:	malloc(3)
 
- Run with KILL flag
+	Run with KILL flag
 
 >KEYS:  < paging behavior
 >WHAT:  < Does the system balk at heavy demands on it's paging facilities?
 >HOW:   < Create a number of process, each of which requests a large
- < chunk of memory to be assigned to an array.  Write to each
- < element in that array, and verify that what was written/stored
- < is what was expected.
+	< chunk of memory to be assigned to an array.  Write to each
+	< element in that array, and verify that what was written/stored
+	< is what was expected.
 >BUGS:  <
-*/
+======================================================================*/
 
 #include <stdio.h>
 #include <wait.h>
@@ -62,146 +62,146 @@ int instress(void);
 #define FAILED 0
 #define PASSED 1
 
-int local_flag  PASSED;
+int local_flag = PASSED;
 int block_number;
 FILE *temp;
 
-char *TCID"page01";           /* Test program identifier.    */
-int TST_TOTAL1;                /* Total number of test cases. */
+char *TCID="page01";           /* Test program identifier.    */
+int TST_TOTAL=1;                /* Total number of test cases. */
 extern int Tst_count;           /* Test Case counter for tst_* routines */
 /**************/
 
 
 int main(argc, argv)
- int argc;
- char *argv[];
+	int argc;
+	char *argv[];
 {
- int nchild;
- int memory_size;
- int error_count, i, j, pid, status;
- int *number_pointer;
- int *memory_pointer;
- int child, count;
+	int nchild;
+	int memory_size;
+	int error_count, i, j, pid, status;
+	int *number_pointer;
+	int *memory_pointer;
+	int child, count;
 
 
- setup();
+	setup();
 
- if (argc < 2) {
-  memory_size  256 * 1024;
-  nchild  50;
- } else if (argc  3) {
-  if (sscanf(argv[1], "%d", &memory_size) ! 1)
-   bd_arg(argv[1]);
-  if (sscanf(argv[2], "%d", &nchild) ! 1)
-   bd_arg(argv[2]);
- } else {
-  printf("page01 [memory size (words)]  [nchild]\n");
-  tst_resm(TCONF, "\tBad arg count.\n");
-  exit(1);
- }
+	if (argc < 2) {
+		memory_size = 256 * 1024;
+		nchild = 50;
+	} else if (argc == 3) {
+		if (sscanf(argv[1], "%d", &memory_size) != 1)
+			bd_arg(argv[1]);
+		if (sscanf(argv[2], "%d", &nchild) != 1)
+			bd_arg(argv[2]);
+	} else {
+		printf("page01 [memory size (words)]  [nchild]\n");
+		tst_resm(TCONF, "\tBad arg count.\n");
+		exit(1);
+	}
 
 
- blenter();
+	blenter();
 
- error_count  0;
+	error_count = 0;
 
- /****************************************/
- /*     */
- /* attempt to fork a number of */
- /* identical processes  */
- /*     */
- /****************************************/
+	/****************************************/
+	/*					*/
+	/*	attempt to fork a number of 	*/
+	/*	identical processes		*/
+	/*					*/
+	/****************************************/
 
- for(i  1; i < nchild; i++) {
-  if((pid  fork())  -1) {
-   terror("Fork failed (may be OK if under stress)");
-   if (instress())
-    ok_exit();
-   forkfail();
-  }
-  else if(pid  0) {
-   /********************************/
-   /*    */
-   /*   allocate memory  of size */
-   /*    "memory_size"  */
-   /*    */
-   /********************************/
+	for(i = 1; i <= nchild; i++) {
+		if((pid = fork()) == -1) {
+			terror("Fork failed (may be OK if under stress)");
+			if (instress())
+				ok_exit();
+			forkfail();
+		}
+		else if(pid == 0) {
+			/********************************/
+			/*				*/
+			/*   allocate memory  of size	*/
+			/*    "memory_size"		*/
+			/*				*/
+			/********************************/
 
-   memory_pointer  (int*)malloc(memory_size*sizeof(int));
-   if(memory_pointer  0) {
-     tst_resm(TBROK, "Cannot allocate memory - malloc failed.\n");
-    if (i < 2) {
-     tst_resm(TBROK, "This should not happen for first two children.\n");
-     tst_resm(TFAIL, "Child %d - fail.\n", i);
-     tst_exit();
-    } else {
-     tst_resm(TCONF, "This is ok for all but first two children.\n");
-     tst_resm(TCONF, "Child %d - ok.\n", i);
-     tst_exit();
-    }
-   }
-   number_pointer  memory_pointer;
+			memory_pointer = (int*)malloc(memory_size*sizeof(int));
+			if(memory_pointer == 0) {
+					tst_resm(TBROK, "Cannot allocate memory - malloc failed.\n");
+				if (i < 2) {
+					tst_resm(TBROK, "This should not happen for first two children.\n");
+					tst_resm(TFAIL, "Child %d - fail.\n", i);
+					tst_exit();
+				} else {
+					tst_resm(TCONF, "This is ok for all but first two children.\n");
+					tst_resm(TCONF, "Child %d - ok.\n", i);
+					tst_exit();
+				}
+			}
+			number_pointer = memory_pointer;
 
-   /********************************/
-   /*    */
-   /*         write to it  */
-   /*    */
-   /********************************/
+			/********************************/
+			/*				*/
+			/*         write to it		*/
+			/*				*/
+			/********************************/
 
-   for(j  1; j < memory_size; j++)
-    *(number_pointer++)  j;
-   sleep(1);
+			for(j = 1; j <= memory_size; j++) 
+				*(number_pointer++) = j;
+			sleep(1);
 
-   /********************************/
-   /*    */
-   /*      and read from it to */
-   /*  check that what was written */
-   /*       is still there  */
-   /*    */
-   /********************************/
+			/********************************/
+			/*				*/
+			/*      and read from it to	*/
+			/*  check that what was written	*/
+			/*       is still there		*/
+			/*				*/
+			/********************************/
 
-   number_pointer  memory_pointer;
-   for(j  1; j < memory_size; j++) {
-    if(*(number_pointer++) ! j) error_count++;
-   }
-   exit(error_count);
-  }
- }
+			number_pointer = memory_pointer;
+			for(j = 1; j <= memory_size; j++) { 
+				if(*(number_pointer++) != j) error_count++;
+			}	
+			exit(error_count);
+		}
+	}
 
- /****************************************/
- /*     */
- /* wait for the child processes */
- /*      to teminate and report the # */
- /* of deviations recognized */
- /*     */
- /****************************************/
+	/****************************************/
+	/*					*/
+	/*	wait for the child processes 	*/
+	/*      to teminate and report the #	*/
+	/*	of deviations recognized	*/
+	/*					*/
+	/****************************************/
 
- count  0;
- while ((child  wait(&status)) > 0) {
+	count = 0;
+	while ((child = wait(&status)) > 0) {
 #ifdef DEBUG
-  tst_resm(TINFO, "Test {%d} exited status %d\n", child, status);
+		tst_resm(TINFO, "Test {%d} exited status %d\n", child, status);
 #endif
-  if (status)
-   local_flag  FAILED;
-  count++;
- }
+		if (status)
+			local_flag = FAILED;
+		count++;
+	}
 
- if (count ! nchild) {
-  tst_resm(TWARN, "Wrong number of children waited on.\n");
-  tst_resm(TWARN, "Count  %d, expected  %d.\n",
-   count, nchild);
- }
+	if (count != nchild) {
+		tst_resm(TWARN, "Wrong number of children waited on.\n");
+		tst_resm(TWARN, "Count = %d, expected = %d.\n",
+			count, nchild);
+	}
 
- anyfail();
- /** NOT REACHED **/
- return(0);
+	anyfail();
+	/** NOT REACHED **/
+	return(0);
 }
 
 int bd_arg(str)
- char *str;
+	char *str;
 {
- tst_resm(TCONF, "\tCannot parse %s as a number.\n", str);
- exit(1);
+	tst_resm(TCONF, "\tCannot parse %s as a number.\n", str);
+	exit(1);
 }
 
 /** LTP Port **/
@@ -214,7 +214,7 @@ void
 setup()
 {
     tst_tmpdir();
-    temp  stderr;
+    temp = stderr;
 }
 
 /*
@@ -225,7 +225,7 @@ setup()
 void
 blenter()
 {
-    local_flag  PASSED;
+    local_flag = PASSED;
         return;
 }
 
@@ -238,7 +238,7 @@ blenter()
 void
 anyfail()
 {
-    (local_flag  FAILED) ? tst_resm(TFAIL, "Test failed")
+    (local_flag == FAILED) ? tst_resm(TFAIL, "Test failed")
            : tst_resm(TPASS, "Test passed");
     tst_rmdir();
     tst_exit();
@@ -252,7 +252,7 @@ anyfail()
 void
 ok_exit()
 {
-        local_flag  PASSED;
+        local_flag = PASSED;
         return;
 }
 

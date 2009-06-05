@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh  
 
 LTPROOT=`cd \`dirname $0\` && echo $PWD`
 cd $LTPROOT
@@ -51,75 +51,75 @@ runit()
 
 case $order in
     "1")
- runit -s $1 -d $2 -B $3 -T $4 -R O -C 7 -S 1
- runit -s $1 -d $2 -B $3 -T $4 -R E -C 7 -S 1
- runit -s $1 -d $2 -B $3 -T $4 -R O -C 8 -S 1
- runit -s $1 -d $2 -B $3 -T $4 -R E -C 8 -S 1
- runit -s $1 -d $2 -B $3 -T $4 -R O -C 7 -S 2
- runit -s $1 -d $2 -B $3 -T $4 -R E -C 7 -S 2
- runit -s $1 -d $2 -B $3 -T $4 -R O -C 8 -S 2
- runit -s $1 -d $2 -B $3 -T $4 -R E -C 8 -S 2
- runit -s $2 -d $1 -B $3 -T $4 -R O -C 7 -S 1
- runit -s $2 -d $1 -B $3 -T $4 -R E -C 7 -S 1
- runit -s $2 -d $1 -B $3 -T $4 -R O -C 8 -S 1
- runit -s $2 -d $1 -B $3 -T $4 -R E -C 8 -S 1
- runit -s $2 -d $1 -B $3 -T $4 -R O -C 7 -S 2
- runit -s $2 -d $1 -B $3 -T $4 -R E -C 7 -S 2
- runit -s $2 -d $1 -B $3 -T $4 -R O -C 8 -S 2
+	runit -s $1 -d $2 -B $3 -T $4 -R O -C 7 -S 1
+	runit -s $1 -d $2 -B $3 -T $4 -R E -C 7 -S 1
+	runit -s $1 -d $2 -B $3 -T $4 -R O -C 8 -S 1
+	runit -s $1 -d $2 -B $3 -T $4 -R E -C 8 -S 1
+	runit -s $1 -d $2 -B $3 -T $4 -R O -C 7 -S 2
+	runit -s $1 -d $2 -B $3 -T $4 -R E -C 7 -S 2
+	runit -s $1 -d $2 -B $3 -T $4 -R O -C 8 -S 2
+	runit -s $1 -d $2 -B $3 -T $4 -R E -C 8 -S 2
+	runit -s $2 -d $1 -B $3 -T $4 -R O -C 7 -S 1
+	runit -s $2 -d $1 -B $3 -T $4 -R E -C 7 -S 1
+	runit -s $2 -d $1 -B $3 -T $4 -R O -C 8 -S 1
+	runit -s $2 -d $1 -B $3 -T $4 -R E -C 8 -S 1
+	runit -s $2 -d $1 -B $3 -T $4 -R O -C 7 -S 2
+	runit -s $2 -d $1 -B $3 -T $4 -R E -C 7 -S 2
+	runit -s $2 -d $1 -B $3 -T $4 -R O -C 8 -S 2
        runit -s $2 -d $1 -B $3 -T $4 -R E -C 8 -S 2
- ;;
+	;;
     "2")
- for S in 1 2;
-   do
-   for R in O E;
-     do
-     for C in 7 8;
-       do
-       runit -s $1 -d $2 -B $3 -T $4 -R $R -C $C -S $S
-       runit -s $2 -d $1 -B $3 -T $4 -R $R -C $C -S $S
-     done;
-   done;
- done;
- ;;
+	for S in 1 2;
+	  do 
+	  for R in O E;
+	    do
+	    for C in 7 8;
+	      do
+	      runit -s $1 -d $2 -B $3 -T $4 -R $R -C $C -S $S
+	      runit -s $2 -d $1 -B $3 -T $4 -R $R -C $C -S $S
+	    done;
+	  done;
+	done;
+	;;
     "3")
- for C in 8 7;
-   do
-   for R in E 0;
-     do
-     for S in 2 1;
-       do
-       runit -s $2 -d $1 -B $3 -T $4 -R $R -C $C -S $S
-       runit -s $1 -d $2 -B $3 -T $4 -R $R -C $C -S $S
-     done;
-   done;
- done;
- ;;
+	for C in 8 7;
+	  do 
+	  for R in E 0;
+	    do
+	    for S in 2 1;
+	      do
+	      runit -s $2 -d $1 -B $3 -T $4 -R $R -C $C -S $S
+	      runit -s $1 -d $2 -B $3 -T $4 -R $R -C $C -S $S
+	    done;
+	  done;
+	done;
+	;;
     "4")
- for S in 1 2;
-   do
-   for R in O E;
-     do
-     for C in 7 8;
-       do
-       runit -s $1 -d $2 -B $3 -T $4 -R $R -C $C -S $S
-     done;
-   done;
- done;
- for S in 1 2;
-   do
-   for R in O E;
-     do
-     for C in 7 8;
-       do
-       runit -s $2 -d $1 -B $3 -T $4 -R $R -C $C -S $S
-     done;
-   done;
- done;
- ;;
+	for S in 1 2;
+	  do 
+	  for R in O E;
+	    do
+	    for C in 7 8;
+	      do
+	      runit -s $1 -d $2 -B $3 -T $4 -R $R -C $C -S $S
+	    done;
+	  done;
+	done;
+	for S in 1 2;
+	  do 
+	  for R in O E;
+	    do
+	    for C in 7 8;
+	      do
+	      runit -s $2 -d $1 -B $3 -T $4 -R $R -C $C -S $S
+	    done;
+	  done;
+	done;
+	;;
     *)
- echo "Unsupported order: \"$order\""
- exit 1
- ;;
+	echo "Unsupported order: \"$order\""
+	exit 1
+	;;
 esac
 
   echo""

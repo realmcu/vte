@@ -7,5 +7,5 @@ tbase_ki.o: tbase_ki.c
 user_tbase.o: user_tbase.c
 	gcc -c user_tbase.c
 
-clean:
+clean: 
 	 rm -f *.o 2>/dev/null || true

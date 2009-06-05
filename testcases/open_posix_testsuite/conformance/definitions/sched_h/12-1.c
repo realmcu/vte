@@ -1,4 +1,4 @@
-/*
+/*    
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -19,7 +19,7 @@ typedef int (*sched_get_priority_min_test) (int);
 
 int dummyfcn(void)
 {
- sched_get_priority_min_test dummyvar;
- dummyvar  sched_get_priority_min;
- return 0;
+	sched_get_priority_min_test dummyvar;
+	dummyvar = sched_get_priority_min;
+	return 0;
 }

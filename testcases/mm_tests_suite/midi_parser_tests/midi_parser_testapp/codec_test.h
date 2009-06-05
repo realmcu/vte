@@ -16,7 +16,7 @@
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
-D.Simakov/smkd001c    23/05/2005   TLSbo47117	Initial version
+D.Simakov/smkd001c    23/05/2005   TLSbo47117	Initial version	
 D.Simakov             30/05/2006   TLSbo66276   Phase2
 =============================================================================*/
 
@@ -55,77 +55,77 @@ D.Simakov             30/05/2006   TLSbo66276   Phase2
 ==================================================================================================*/
 
 /* Test cases. */
-enum
+enum 
 {
-        NOMINAL_FUNCTIONALITY,
+        NOMINAL_FUNCTIONALITY, 
         ROBUSTNESS,
         RELOCATABILITY,
         RE_ENTRANCE,
-        PRE_EMPTION,
+        PRE_EMPTION,    
         ENDURANCE,
-        LOAD
+        LOAD        
 };
 
 /*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
 ==================================================================================================*/
 
-/* Testapp configuration. */
+/* Testapp configuration. */ 
 typedef struct
 {
         int              mTestCase;
         int              mNumIter;
         const char *     mConfigFilename;
-        int              mVerbose;
-        int              mSlowBitMatching;
+        int              mVerbose;    
+        int              mSlowBitMatching;         
         int              mDelay;
         int              mDisableLCD;
 } sTestappConfig;
 
 /* Set of parameters for each codec handler. */
-typedef struct
+typedef struct 
 {
-        unsigned int     mNoEntry;
+        unsigned int     mNoEntry;    
         char             mInpFileName[MAX_STR_LEN];
         char             mOutFileName[MAX_STR_LEN];
-        char             mRefFileName[MAX_STR_LEN];
-
+        char             mRefFileName[MAX_STR_LEN]; 
+                
         int              mFrameDuration;
-
-        int              mIsReadyForBitMatching;
+        
+        int              mIsReadyForBitMatching;     
 
 } sHandlerParams;
 
 /* Codec handler. */
 typedef struct
-{
+{                          
         /****************************************/
         /* Input and output (streams, buffers). */
         /****************************************/
-
-        FILE                  * mpInpStream;
-        FILE                  * mpOutStream;
-
-
+        
+        FILE                  * mpInpStream;  
+        FILE                  * mpOutStream;                         
+                
+                
         /********************/
         /* Decoder's stuff. */
         /********************/
-
+        
         MIDIPAR_Config          mMidiParConfig;
         MIDIPAR_Info		    mMidiParInfo;
         MIDI_Input_Details      mMidiParInpDetails;
         MIDI_Output_Details     mMidiParOutdetails;
-        MIDIPAR_RET_TYPE        mLastCodecError;
-
-
+        MIDIPAR_RET_TYPE        mLastCodecError;    
+        
+        
         /***************/
         /* Other data. */
-        /***************/
-
+        /***************/               
+        
         unsigned long           mIndex;
-        sHandlerParams        * mpParams;
-        pthread_t               mThreadID;
-        int                     mLtpRetval;
+        sHandlerParams        * mpParams;                    
+        pthread_t               mThreadID;                  
+        int                     mLtpRetval;                      
 } sCodecHandler;
 
 
@@ -133,7 +133,7 @@ typedef struct
                                  GLOBAL VARIABLE DECLARATIONS
 ==================================================================================================*/
 
-extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */
+extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */        
 
 
 /*==================================================================================================
@@ -156,4 +156,4 @@ int VT_codec_setup    ( void );
 int VT_codec_cleanup  ( void );
 int VT_codec_test     ( void );
 
-#endif //__CODEC_TEST_H__
+#endif //__CODEC_TEST_H__  

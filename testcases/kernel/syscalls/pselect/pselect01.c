@@ -51,8 +51,8 @@
 void setup();
 void cleanup();
 
-char *TCID"pselect01";     /* Test program identifier.    */
-int TST_TOTAL1;           /* Total number of test cases. */
+char *TCID="pselect01";     /* Test program identifier.    */
+int TST_TOTAL=1;           /* Total number of test cases. */
 extern int Tst_count;      /* Test Case counter for tst_* routines */
 
 #define FILENAME "pselect01_test"
@@ -68,8 +68,8 @@ int main()
  unsigned start,end;
 
  setup();
-
- fd  open(FILENAME,O_CREAT | O_RDWR, 0777);
+ 
+ fd = open(FILENAME,O_CREAT | O_RDWR, 0777);
  if (fd < 0)
  {
   tst_resm(TBROK,"Opening %s...Failed....err %d",FILENAME,errno);
@@ -77,11 +77,11 @@ int main()
  }
      FD_ZERO(&readfds);
      FD_SET(fd,&readfds);
-        tv.tv_sec  0;
-        tv.tv_usec   0;
+        tv.tv_sec = 0;
+        tv.tv_usec =  0;
 
- ret_pselect  pselect(fd, &readfds, 0, 0, (struct timespec *)&tv,NULL);
- if( ret_pselect > 0)
+ ret_pselect = pselect(fd, &readfds, 0, 0, (struct timespec *)&tv,NULL);
+ if( ret_pselect >= 0)
  {
   tst_resm(TPASS,"Basic pselect syscall testing....OK");
  }
@@ -90,48 +90,48 @@ int main()
  close(fd);
  remove(FILENAME);
 
-
- for( total_sec1; total_sec<LOOP_COUNT; total_sec++)
+ 
+ for( total_sec=1; total_sec<=LOOP_COUNT; total_sec++)
  {
           FD_ZERO(&readfds);
           FD_SET(0, &readfds);
 
-          tv.tv_sec  total_sec;
-          tv.tv_usec   0;
+          tv.tv_sec = total_sec;
+          tv.tv_usec =  0;
 
   tst_resm(TINFO,"Testing basic pselect sanity,Sleeping for %d secs",tv.tv_sec);
-  start  time(&t);
-   retval  pselect(0, &readfds, NULL, NULL, (struct timespec *)&tv,NULL);
-  end  time(&t);
-
-  if(total_sec > (end - start))
+  start = time(&t);
+   retval = pselect(0, &readfds, NULL, NULL, (struct timespec *)&tv,NULL);
+  end = time(&t);
+  
+  if(total_sec >= (end - start))
   tst_resm(TPASS,"Sleep time was correct");
   else
-  tst_resm(TFAIL,"Sleep time was incorrect:%d ! %d",total_sec,(end - start));
+  tst_resm(TFAIL,"Sleep time was incorrect:%d != %d",total_sec,(end - start));
  }
 
 #ifdef DEBUG
  tst_resm(TINFO,"Now checking usec sleep precision");
 #endif
- for( total_usec1; total_usec<LOOP_COUNT; total_usec++)
+ for( total_usec=1; total_usec<=LOOP_COUNT; total_usec++)
  {
           FD_ZERO(&readfds);
           FD_SET(0, &readfds);
 
-          tv.tv_sec  total_sec;
-          tv.tv_usec   total_usec * 1000000;
+          tv.tv_sec = total_sec;
+          tv.tv_usec =  total_usec * 1000000;
 
   tst_resm(TINFO,"Testing basic pselect sanity,Sleeping for %d micro secs",tv.tv_usec);
-  start  time(&t);
-   retval  pselect(0, &readfds, NULL, NULL, (struct timespec *)&tv,NULL);
-  end  time(&t);
-
+  start = time(&t);
+   retval = pselect(0, &readfds, NULL, NULL, (struct timespec *)&tv,NULL);
+  end = time(&t);
+ 
   /* Changed total_sec compare to an at least vs an exact compare */
-
-  if(((end - start) > total_sec) && ((end - start) < total_sec + 1))
+ 
+  if(((end - start) >= total_sec) && ((end - start) <= total_sec + 1))
   tst_resm(TPASS,"Sleep time was correct");
   else
-  tst_resm(TFAIL,"Sleep time was incorrect:%d ! %d",total_sec,(end - start));
+  tst_resm(TFAIL,"Sleep time was incorrect:%d != %d",total_sec,(end - start));
  }
  cleanup();
 return 0;

@@ -20,8 +20,8 @@
  *      readlinkat01.c
  *
  * DESCRIPTION
- * This test case will verify basic function of readlinkat
- * added by kernel 2.6.16 or up.
+ *	This test case will verify basic function of readlinkat
+ *	added by kernel 2.6.16 or up.
  *
  * USAGE:  <for command-line>
  * readlinkat01 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-p]
@@ -35,7 +35,7 @@
  *      -t   : Turn on syscall timing.
  *
  * Author
- * Yi Yang <yyangcdl@cn.ibm.com>
+ *	Yi Yang <yyangcdl@cn.ibm.com> 
  *
  * History
  *      08/28/2006      Created first by Yi Yang <yyangcdl@cn.ibm.com>
@@ -71,9 +71,9 @@ void setup();
 void cleanup();
 void setup_every_copy();
 
-char *TCID  "readlinkat01"; /* Test program identifier.    */
-int TST_TOTAL  TEST_CASES; /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID = "readlinkat01";	/* Test program identifier.    */
+int TST_TOTAL = TEST_CASES;	/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 char pathname[256];
 char dpathname[256];
 char testfile[256];
@@ -85,20 +85,20 @@ char dtestfile3[256];
 int dirfd, fd, ret;
 int fds[TEST_CASES];
 char *filenames[TEST_CASES];
-int expected_errno[TEST_CASES]  { 0, 0, ENOTDIR, EBADF, 0 };
+int expected_errno[TEST_CASES] = { 0, 0, ENOTDIR, EBADF, 0 };
 char expected_buff[TEST_CASES][256];
 char buffer[BUFF_SIZE];
 
 int myreadlinkat(int dirfd, const char *filename, char *buffer, size_t bufsize)
 {
- return syscall(__NR_readlinkat, dirfd, filename, buffer, bufsize);
+	return syscall(__NR_readlinkat, dirfd, filename, buffer, bufsize);
 }
 
 int main(int ac, char **av)
 {
- int lc;   /* loop counter */
- char *msg;  /* message returned from parse_opts */
- int i;
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
+	int i;
 
        /* Disable test if the version of the kernel is less than 2.6.16 */
         if((tst_kvercmp(2,6,16)) < 0)
@@ -109,164 +109,164 @@ int main(int ac, char **av)
           }
 
 
- /***************************************************************
-  * parse standard options
-  ***************************************************************/
- if ((msg  parse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *)NULL)
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	/***************************************************************
+	 * parse standard options
+	 ***************************************************************/
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 
- /***************************************************************
-  * perform global setup for test
-  ***************************************************************/
- setup();
+	/***************************************************************
+	 * perform global setup for test
+	 ***************************************************************/
+	setup();
 
- /***************************************************************
-  * check looping state if -c option given
-  ***************************************************************/
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  setup_every_copy();
+	/***************************************************************
+	 * check looping state if -c option given
+	 ***************************************************************/
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		setup_every_copy();
 
-  /* reset Tst_count in case we are looping. */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping. */
+		Tst_count = 0;
 
-  /*
-   * Call readlinkat
-   */
-  for (i  0; i < TST_TOTAL; i++) {
-   buffer[0]  '\0';
-   TEST(myreadlinkat
-        (fds[i], filenames[i], buffer, BUFF_SIZE));
+		/* 
+		 * Call readlinkat 
+		 */
+		for (i = 0; i < TST_TOTAL; i++) {
+			buffer[0] = '\0';
+			TEST(myreadlinkat
+			     (fds[i], filenames[i], buffer, BUFF_SIZE));
 
-   if (TEST_RETURN > 0) {
-    buffer[TEST_RETURN]  '\0';
-   }
+			if (TEST_RETURN >= 0) {
+				buffer[TEST_RETURN] = '\0';
+			}
 
-   /* check return code */
-   if (TEST_ERRNO  expected_errno[i]
-       && (strcmp(expected_buff[i], buffer)  0)) {
+			/* check return code */
+			if (TEST_ERRNO == expected_errno[i]
+			    && (strcmp(expected_buff[i], buffer) == 0)) {
 
-    /***************************************************************
-     * only perform functional verification if flag set (-f not given)
-     ***************************************************************/
-    if (STD_FUNCTIONAL_TEST) {
-     /* No Verification test, yet... */
-     tst_resm(TPASS,
-       "readlinkat() returned the expected  errno %d: %s",
-       TEST_ERRNO,
-       strerror(TEST_ERRNO));
-    }
-   } else {
-    if (TEST_RETURN > 0) {
-     tst_resm(TINFO,
-       "The link readlinkat got isn't as same as the expected");
-    }
-    TEST_ERROR_LOG(TEST_ERRNO);
-    tst_resm(TFAIL,
-      "readlinkat() Failed, errno%d : %s",
-      TEST_ERRNO, strerror(TEST_ERRNO));
-   }
-  }
+				/***************************************************************
+				 * only perform functional verification if flag set (-f not given)
+				 ***************************************************************/
+				if (STD_FUNCTIONAL_TEST) {
+					/* No Verification test, yet... */
+					tst_resm(TPASS,
+						 "readlinkat() returned the expected  errno %d: %s",
+						 TEST_ERRNO,
+						 strerror(TEST_ERRNO));
+				}
+			} else {
+				if (TEST_RETURN >= 0) {
+					tst_resm(TINFO,
+						 "The link readlinkat got isn't as same as the expected");
+				}
+				TEST_ERROR_LOG(TEST_ERRNO);
+				tst_resm(TFAIL,
+					 "readlinkat() Failed, errno=%d : %s",
+					 TEST_ERRNO, strerror(TEST_ERRNO));
+			}
+		}
 
- }   /* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 
- /***************************************************************
-  * cleanup and exit
-  ***************************************************************/
- cleanup();
+	/***************************************************************
+	 * cleanup and exit
+	 ***************************************************************/
+	cleanup();
 
- return (0);
-}    /* End main */
+	return (0);
+}				/* End main */
 
 void setup_every_copy()
 {
- int i;
- char tmpfilename[256]  "";
+	int i;
+	char tmpfilename[256] = "";
 
- /* Initialize test dir and file names */
- sprintf(pathname, "readlinkattestdir%d", getpid());
- sprintf(dpathname, "dreadlinkattestdir%d", getpid());
- sprintf(testfile, "readlinkattestfile%d.txt", getpid());
- sprintf(dtestfile, "dreadlinkattestfile%d.txt", getpid());
- sprintf(testfile2, "readlinkattestdir%d/readlinkattestfile%d.txt",
-  getpid(), getpid());
- sprintf(dtestfile2, "dreadlinkattestdir%d/dreadlinkattestfile%d.txt",
-  getpid(), getpid());
- sprintf(testfile3, "/tmp/readlinkattestfile%d.txt", getpid());
- sprintf(dtestfile3, "/tmp/dreadlinkattestfile%d.txt", getpid());
+	/* Initialize test dir and file names */
+	sprintf(pathname, "readlinkattestdir%d", getpid());
+	sprintf(dpathname, "dreadlinkattestdir%d", getpid());
+	sprintf(testfile, "readlinkattestfile%d.txt", getpid());
+	sprintf(dtestfile, "dreadlinkattestfile%d.txt", getpid());
+	sprintf(testfile2, "readlinkattestdir%d/readlinkattestfile%d.txt",
+		getpid(), getpid());
+	sprintf(dtestfile2, "dreadlinkattestdir%d/dreadlinkattestfile%d.txt",
+		getpid(), getpid());
+	sprintf(testfile3, "/tmp/readlinkattestfile%d.txt", getpid());
+	sprintf(dtestfile3, "/tmp/dreadlinkattestfile%d.txt", getpid());
 
- ret  mkdir(pathname, 0700);
- if (ret < 0) {
-  perror("mkdir: ");
-  exit(-1);
- }
+	ret = mkdir(pathname, 0700);
+	if (ret < 0) {
+		perror("mkdir: ");
+		exit(-1);
+	}
 
- ret  mkdir(dpathname, 0700);
- if (ret < 0) {
-  perror("mkdir: ");
-  exit(-1);
- }
+	ret = mkdir(dpathname, 0700);
+	if (ret < 0) {
+		perror("mkdir: ");
+		exit(-1);
+	}
 
- dirfd  open(dpathname, O_DIRECTORY);
- if (dirfd < 0) {
-  perror("open: ");
-  exit(-1);
- }
+	dirfd = open(dpathname, O_DIRECTORY);
+	if (dirfd < 0) {
+		perror("open: ");
+		exit(-1);
+	}
 
- fd  open(testfile, O_CREAT | O_RDWR, 0600);
- if (fd < 0) {
-  perror("open: ");
-  exit(-1);
- }
+	fd = open(testfile, O_CREAT | O_RDWR, 0600);
+	if (fd < 0) {
+		perror("open: ");
+		exit(-1);
+	}
 
- ret  symlink(testfile, dtestfile);
- if (ret < 0) {
-  perror("symlink: ");
-  exit(-1);
- }
+	ret = symlink(testfile, dtestfile);
+	if (ret < 0) {
+		perror("symlink: ");
+		exit(-1);
+	}
 
- fd  open(testfile2, O_CREAT | O_RDWR, 0600);
- if (fd < 0) {
-  perror("open: ");
-  exit(-1);
- }
+	fd = open(testfile2, O_CREAT | O_RDWR, 0600);
+	if (fd < 0) {
+		perror("open: ");
+		exit(-1);
+	}
 
- tmpfilename[0]  '\0';
- strcat(strcat(tmpfilename, "../"), testfile2);
- ret  symlink(tmpfilename, dtestfile2);
- if (ret < 0) {
-  perror("symlink: ");
-  exit(-1);
- }
+	tmpfilename[0] = '\0';
+	strcat(strcat(tmpfilename, "../"), testfile2);
+	ret = symlink(tmpfilename, dtestfile2);
+	if (ret < 0) {
+		perror("symlink: ");
+		exit(-1);
+	}
 
- fd  open(testfile3, O_CREAT | O_RDWR, 0600);
- if (fd < 0) {
-  perror("open: ");
-  exit(-1);
- }
+	fd = open(testfile3, O_CREAT | O_RDWR, 0600);
+	if (fd < 0) {
+		perror("open: ");
+		exit(-1);
+	}
 
- ret  symlink(testfile3, dtestfile3);
- if (ret < 0) {
-  perror("symlink: ");
-  exit(-1);
- }
+	ret = symlink(testfile3, dtestfile3);
+	if (ret < 0) {
+		perror("symlink: ");
+		exit(-1);
+	}
 
- fds[0]  fds[1]  dirfd;
- fds[2]  fd;
- fds[3]  100;
- fds[4]  AT_FDCWD;
+	fds[0] = fds[1] = dirfd;
+	fds[2] = fd;
+	fds[3] = 100;
+	fds[4] = AT_FDCWD;
 
- filenames[0]  filenames[2]  filenames[3]  filenames[4] 
-     filenames[5]  dtestfile;
- filenames[1]  dtestfile3;
+	filenames[0] = filenames[2] = filenames[3] = filenames[4] =
+	    filenames[5] = dtestfile;
+	filenames[1] = dtestfile3;
 
- for (i  0; i < TEST_CASES; i++)
-  expected_buff[i][0]  '\0';
+	for (i = 0; i < TEST_CASES; i++)
+		expected_buff[i][0] = '\0';
 
- strcat(strcat(expected_buff[0], "../"), testfile2);
- strcat(expected_buff[1], testfile3);
- strcat(expected_buff[2], "");
- strcat(expected_buff[3], "");
- strcat(expected_buff[4], testfile);
+	strcat(strcat(expected_buff[0], "../"), testfile2);
+	strcat(expected_buff[1], testfile3);
+	strcat(expected_buff[2], "");
+	strcat(expected_buff[3], "");
+	strcat(expected_buff[4], testfile);
 }
 
 /***************************************************************
@@ -274,12 +274,12 @@ void setup_every_copy()
  ***************************************************************/
 void setup()
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
-}    /* End setup() */
+	/* Pause if that option was specified */
+	TEST_PAUSE;
+}				/* End setup() */
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
@@ -287,22 +287,22 @@ void setup()
  ***************************************************************/
 void cleanup()
 {
- /* Remove them */
- unlink(testfile2);
- unlink(dtestfile2);
- unlink(testfile3);
- unlink(dtestfile3);
- unlink(testfile);
- unlink(dtestfile);
- rmdir(pathname);
- rmdir(dpathname);
+	/* Remove them */
+	unlink(testfile2);
+	unlink(dtestfile2);
+	unlink(testfile3);
+	unlink(dtestfile3);
+	unlink(testfile);
+	unlink(dtestfile);
+	rmdir(pathname);
+	rmdir(dpathname);
 
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
-}    /* End cleanup() */
+	/* exit with return code appropriate for results */
+	tst_exit();
+}				/* End cleanup() */

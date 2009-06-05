@@ -16,71 +16,71 @@
  */
 
 /**********************************************************
- *
- *    TEST IDENTIFIER   : fcntl28
- *
- *    EXECUTED BY   : anyone
- *
- *    TEST TITLE   : Basic test for fcntl(2) using F_SETLEASE & F_RDLCK argument.
- *
- *    TEST CASE TOTAL   : 1
- *
- *    WALL CLOCK TIME   : 1
- *
- *    CPU TYPES   : ALL
- *
- *    AUTHOR   : Jacky Malcles
- *
+ * 
+ *    TEST IDENTIFIER		 : fcntl28
+ * 
+ *    EXECUTED BY		 : anyone
+ * 
+ *    TEST TITLE		 : Basic test for fcntl(2) using F_SETLEASE & F_RDLCK argument.
+ * 
+ *    TEST CASE TOTAL		 : 1
+ * 
+ *    WALL CLOCK TIME		 : 1
+ * 
+ *    CPU TYPES		 		 : ALL
+ * 
+ *    AUTHOR		 		 : Jacky Malcles
+ * 
  *    TEST CASES
- *
- * 1.) fcntl(2) returns...(See Description)
- *
+ * 
+ * 		 1.) fcntl(2) returns...(See Description)
+ *		 
  *    INPUT SPECIFICATIONS
- * The standard options for system call tests are accepted.
- *   (See the parse_opts(3) man page).
- *
+ * 		 The standard options for system call tests are accepted.
+ *		 (See the parse_opts(3) man page).
+ * 
  *    OUTPUT SPECIFICATIONS
- *
+ * 		 
  *    DURATION
- * Terminates - with frequency and infinite modes.
- *
+ * 		 Terminates - with frequency and infinite modes.
+ * 
  *    SIGNALS
- * Uses SIGUSR1 to pause before test if option set.
- * (See the parse_opts(3) man page).
+ * 		 Uses SIGUSR1 to pause before test if option set.
+ * 		 (See the parse_opts(3) man page).
  *
  *    RESOURCES
- * None
- *
+ * 		 None
+ * 
  *    ENVIRONMENTAL NEEDS
  *      No run-time environmental needs.
- *
+ * 
  *    SPECIAL PROCEDURAL REQUIREMENTS
- * None
- *
+ * 		 None
+ * 
  *    INTERCASE DEPENDENCIES
- * None
- *
+ * 		 None
+ * 
  *    DETAILED DESCRIPTION
- *   This is a Phase I test for the fcntl(2) system call.  It is intended
- *   to provide a limited exposure of the system call, for now.  It
- *   should/will be extended when full functional tests are written for
- *   fcntl(2).
- *
- * Setup:
- *   Setup signal handling.
- *     Pause for SIGUSR1 if option specified.
- *
- * Test:
- *    Loop if the proper options are given.
- *   Execute system call
- *     Check return code, if system call failed (return-1)
- *   Log the errno and Issue a FAIL message.
- *     Otherwise, Issue a PASS message.
- *
- * Cleanup:
- *   Print errno log and/or timing stats if options given
- *
- *
+ *		 This is a Phase I test for the fcntl(2) system call.  It is intended
+ *		 to provide a limited exposure of the system call, for now.  It
+ *		 should/will be extended when full functional tests are written for
+ *		 fcntl(2).
+ * 
+ * 		 Setup:
+ * 		   Setup signal handling.
+ *		   Pause for SIGUSR1 if option specified.
+ * 
+ * 		 Test:
+ *		  Loop if the proper options are given.
+ * 		   Execute system call
+ *		   Check return code, if system call failed (return=-1)
+ *		 		 Log the errno and Issue a FAIL message.
+ *		   Otherwise, Issue a PASS message.
+ * 
+ * 		 Cleanup:
+ * 		   Print errno log and/or timing stats if options given
+ * 
+ * 
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
 #include <sys/types.h>
@@ -97,11 +97,11 @@ void setup();
 void cleanup();
 
 
-char *TCID"fcntl28"; /* Test program identifier.    */
-int TST_TOTAL1;    /* Total number of test cases. */
-extern int Tst_count;   /* Test Case counter for tst_* routines */
+char *TCID="fcntl28"; 		 		 /* Test program identifier.    */
+int TST_TOTAL=1;    		 		 /* Total number of test cases. */
+extern int Tst_count;		 		 /* Test Case counter for tst_* routines */
 
-int exp_enos[]{0};
+int exp_enos[]={0};
 
 char fname[255];
 int fd;
@@ -109,14 +109,14 @@ int fd;
 int
 main(int ac, char **av)
 {
-    int lc,expected_result  -1;       /* loop counter, expected resul*/
-           /*   from system call */
-    char *msg;          /* message returned from parse_opts */
+    int lc,expected_result = -1;       /* loop counter, expected resul*/
+				       /*   from system call */
+    char *msg;		 	       /* message returned from parse_opts */
     /***************************************************************
      * parse standard options
      ***************************************************************/
-    if ( (msgparse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *) NULL )
-   tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+    if ( (msg=parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *) NULL )
+		 tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 
     /***************************************************************
      * perform global setup for test
@@ -126,26 +126,26 @@ main(int ac, char **av)
     /* set the expected errnos... */
     TEST_EXP_ENOS(exp_enos);
 
-    expected_result  -1;
+    expected_result = -1;
 
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc0; TEST_LOOPING(lc); lc++) {
+    for (lc=0; TEST_LOOPING(lc); lc++) {
 
-   /* reset Tst_count in case we are looping. */
-   Tst_count0;
+		 /* reset Tst_count in case we are looping. */
+		 Tst_count=0;
 
 #ifdef F_SETLEASE
-   /*
-    * Call fcntl(2) with F_SETLEASE & F_RDLCK argument on fname
-    */
-   TEST(fcntl(fd, F_SETLEASE, F_RDLCK));
-
-   /* check return code */
-   if ( TEST_RETURN  expected_result ) {
-       TEST_ERROR_LOG(TEST_ERRNO);
-   tst_resm(TPASS,
+		 /* 
+		  * Call fcntl(2) with F_SETLEASE & F_RDLCK argument on fname
+		  */
+		 TEST(fcntl(fd, F_SETLEASE, F_RDLCK));
+		 
+		 /* check return code */
+		 if ( TEST_RETURN == expected_result ) {
+		     TEST_ERROR_LOG(TEST_ERRNO);
+		 		 tst_resm(TPASS,
                                 "fcntl(fd, F_SETLEASE, F_RDLCK) succeeded");
                         }
                  else {
@@ -153,11 +153,11 @@ main(int ac, char **av)
                                 " failed with errno %d : %s", fname,
                                  TEST_ERRNO, strerror(TEST_ERRNO));
                        }
-
+ 
 #else
-  tst_resm(TINFO, "F_SETLEASE not defined, skipping test");
+		tst_resm(TINFO, "F_SETLEASE not defined, skipping test");
 #endif
-    }   /* End for TEST_LOOPING */
+    }		 /* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -165,12 +165,12 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-}   /* End main */
+}		 /* End main */
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void
+void 
 setup()
 {
     /* capture signals */
@@ -183,19 +183,19 @@ setup()
     tst_tmpdir();
 
     sprintf(fname,"tfile_%d",getpid());
-    if ((fd  open(fname,O_WRONLY|O_CREAT,0222))  -1) {
+    if ((fd = open(fname,O_WRONLY|O_CREAT,0222)) == -1) {
        tst_brkm(TBROK, cleanup,
-   "open(%s, O_WRONLY|O_CREAT,0222) Failed, errno%d : %s",
-   fname, errno, strerror(errno));
+		 		 "open(%s, O_WRONLY|O_CREAT,0222) Failed, errno=%d : %s",
+		 		 fname, errno, strerror(errno));
     }
-}   /* End setup() */
+}		 /* End setup() */
 
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *   completion or premature exit.
+ *		 		 completion or premature exit.
  ***************************************************************/
-void
+void 
 cleanup()
 {
     /*
@@ -205,8 +205,8 @@ cleanup()
     TEST_CLEANUP;
 
     /* close the file we've had open */
-    if (close(fd)  -1) {
-       tst_resm(TWARN, "close(%s) Failed, errno%d : %s", fname, errno, strerror(errno));
+    if (close(fd) == -1) {
+       tst_resm(TWARN, "close(%s) Failed, errno=%d : %s", fname, errno, strerror(errno));
     }
 
     /* Remove tmp dir and all files in it */
@@ -214,5 +214,5 @@ cleanup()
 
     /* exit with return code appropriate for results */
     tst_exit();
-}   /* End cleanup() */
+}		 /* End cleanup() */
 

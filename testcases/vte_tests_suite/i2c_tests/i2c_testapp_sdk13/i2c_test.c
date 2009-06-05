@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   i2c_test.c
 
         @brief  Test scenario C source for i2c_testapp_3.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -23,40 +23,40 @@ S.V-Guilhou/svan01c          20/09/2005     TLSbo53753  I/O errors
 V.Khalabuda/b00306           04/07/2006     TLSbo68945  Update testapp for I2C_RDWR ioctl
                                                         and r/w from user space
 
-====================
+====================================================================================================
 Portability: ARM GCC
 
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Verification Test Environment Include Files */
 #include "i2c_test.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 int     fd = -1;
 struct  i2c_rdwr_ioctl_data work_queue;
 
@@ -64,59 +64,59 @@ extern I2C_TESTS i2c_testcase;
 extern char device_name[128];
 extern unsigned short addr;
 
-/*======================
+/*==================================================================================================
                                     LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= VT_setup =*/
+/*================================================================================================*/
+/*===== VT_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_i2c_setup(void)
 {
-
+       
 
         fd = open(device_name, O_RDWR);
-
+		
         if ((fd) < 0)
         {
                 tst_resm(TFAIL, "VT_i2c_setup() Failed open device");
-    return TFAIL;
+				return TFAIL;
         }
 
         work_queue.msgs = (struct i2c_msg *) malloc(work_queue.nmsgs *sizeof(struct i2c_msg));
         if (!work_queue.msgs)
         {
                 tst_resm(TFAIL, "VT_i2c_setup() Failed allocate memory");
-    return TFAIL;
+				return TFAIL;
         }
 
 
         return TPASS;
 }
 
-/*====================*/
-/*= VT_cleanup =*/
+/*================================================================================================*/
+/*===== VT_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_i2c_cleanup(void)
 {
         int     VT_rv = TFAIL;
@@ -129,17 +129,17 @@ int VT_i2c_cleanup(void)
         return VT_rv;
 }
 
-/*====================*/
-/*= VT_i2c_test =*/
+/*================================================================================================*/
+/*===== VT_i2c_test =====*/
 /**
 @brief  i2c test scenario function
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_i2c_test(void)
 {
         int     VT_rv = TFAIL;
@@ -162,47 +162,47 @@ int VT_i2c_test(void)
         return VT_rv;
 }
 
-/*====================*/
-/*= VT_i2c_test_rw =*/
+/*================================================================================================*/
+/*===== VT_i2c_test_rw =====*/
 /**
 @brief  Read/Write from I2C character device interface from user space.
         reads bytes at the memory address (addr) from assigned slave address on the i2c device bus
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_i2c_test_rw(void)
 {
         int     VT_rv = TPASS;
         //unsigned short size = BUFF_SIZE;
         //unsigned short idx;
        // char           buf[BUFF_SIZE];
-        //long int mem_addr;
+        //long int 		 mem_addr;
         char               cswap;
 
-  int write_sign = -2;
-  int read_sign = -2;
-  int size = BUFF_SIZE;
-  int idx;
-
-  //charswap_buffer[3];
-  char  buf_read[BUFF_SIZE*2];
-  //char  buf[10];
-  memset(buf_read,'a',BUFF_SIZE*2);
-  buf_read[BUFF_SIZE*2-1]='\0';
-  printf("buf_read content: %s\n", buf_read);
+	 int write_sign = -2;
+	 int read_sign = -2;
+	 int size	=	BUFF_SIZE;
+	 int idx;
+	 
+	 //char 		swap_buffer[3];	
+	 char		buf_read[BUFF_SIZE*2];	
+	 //char		buf[10];
+	 memset(buf_read,'a',BUFF_SIZE*2);
+	 buf_read[BUFF_SIZE*2-1]='\0';
+	 printf("buf_read content: %s\n", buf_read);	
         union
         {
-                unsigned short       mem_addr;
-                char          bytes[2];
+                unsigned short       	mem_addr;
+                char           			bytes[2];
         } tmp;
 
- printf("addr's value: %d\n", addr);
-
-  printf("i2c rw test starts......\n");
+	printf("addr's value: %d\n", addr);	
+		
+		printf("i2c rw test starts......\n");
         if (ioctl(fd, I2C_SLAVE, 0x76) != 0)        /* set the tvout address */
         {
                 tst_resm(TFAIL, "ERROR: with ioctl I2C_SLAVE. Errno: %d, Reason: %s", errno, strerror(errno));
@@ -221,57 +221,57 @@ int VT_i2c_test_rw(void)
                 VT_rv = TFAIL;
         }
 
+	
+	
+	
+	for(idx=0;idx<size-1;idx++)
+		{
+			tmp.mem_addr=addr+idx;
+			cswap=tmp.bytes[0];
+			tmp.bytes[0]=tmp.bytes[1];
+			tmp.bytes[1]=cswap;
 
+			
+			//write_sign=write(fd, tmp.bytes, 1);
+			//buf[0]=0x07;
+			//write_sign=write(fd,buf,1);
+			/*
+			if(write_sign<0)
+				{
+				printf("write size: %d \n",write_sign);
+				return TFAIL;
+				}
+			*/	
+			read_sign=read(fd, buf_read+idx*2, 2);
+			
+			if(read_sign<0)
+				{
+				printf("read size: %d \n",read_sign);
+				return TFAIL;
+				}
+			
+		//printf("the data readed from tvout_data is: %x%x\n", buf_read[idx*2],buf_read[idx*2+1]);		
+		}
+	buf_read[BUFF_SIZE*2-1]='\0';
+	
+	printf("the data readed from tvout is: %s\n", buf_read);
 
-
- for(idx=0;idx<size-1;idx++)
-  {
-   tmp.mem_addr=addr+idx;
-   cswap=tmp.bytes[0];
-   tmp.bytes[0]=tmp.bytes[1];
-   tmp.bytes[1]=cswap;
-
-
-   //write_sign=write(fd, tmp.bytes, 1);
-   //buf[0]=0x07;
-   //write_sign=write(fd,buf,1);
-   /*
-   if(write_sign<0)
-    {
-    printf("write size: %d \n",write_sign);
-    return TFAIL;
-    }
-   */
-   read_sign=read(fd, buf_read+idx*2, 2);
-
-   if(read_sign<0)
-    {
-    printf("read size: %d \n",read_sign);
-    return TFAIL;
-    }
-
-  //printf("the data readed from tvout_data is: %x%x\n", buf_read[idx*2],buf_read[idx*2+1]);
-  }
- buf_read[BUFF_SIZE*2-1]='\0';
-
- printf("the data readed from tvout is: %s\n", buf_read);
-
- printf("i2c rw test finished......\n");
+	printf("i2c rw test finished......\n");
         return VT_rv;
 }
 
 
-/*====================*/
-/*= VT_i2c_test_ioctl =*/
+/*================================================================================================*/
+/*===== VT_i2c_test_ioctl =====*/
 /**
 @brief  Send the I2C messages using kernel ioctls with I2C_RDWR
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_i2c_test_ioctl(void)
 {
         int     VT_rv = TPASS;
@@ -286,7 +286,7 @@ int VT_i2c_test_ioctl(void)
                 (work_queue.msgs[idx]).addr  = addr + idx;
                 (work_queue.msgs[idx]).buf   = NULL;
         }
-
+ 
         if (ioctl(fd, I2C_TIMEOUT, 2) < 0)        /* set the timeout    */
         {
                 tst_resm(TFAIL, "ERROR: with ioctl I2C_TIMEOUT. Errno: %d, Reason: %s", errno, strerror(errno));
@@ -298,14 +298,14 @@ int VT_i2c_test_ioctl(void)
                 tst_resm(TFAIL, "ERROR: with ioctl I2C_RETRIES. Errno: %d, Reason: %s", errno, strerror(errno));
                 VT_rv = TFAIL;
         }
-  printf("i2c ioctl test starts......\n");
-
+		printf("i2c ioctl test starts......\n");
+ 
         if (ioctl(fd, I2C_RDWR, (unsigned long)&work_queue) < 0)
         {
                 tst_resm(TFAIL, "ERROR: with ioctl I2C_RDWR. Errno: %d, Reason: %s", errno, strerror(errno));
                 VT_rv = TFAIL;
         }
-  printf("i2c ioctl test finished......\n");
+		printf("i2c ioctl test finished......\n");
 
         return VT_rv;
 }

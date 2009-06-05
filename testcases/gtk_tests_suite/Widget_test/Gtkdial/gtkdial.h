@@ -40,7 +40,7 @@ Portability: Indicate if this module is portable to other compilers or platforms
 
 ==================================================================================================*/
 
-
+ 
 #ifndef __GTK_DIAL_H__
 #define __GTK_DIAL_H__
 

@@ -2,10 +2,10 @@
  * Copyright (c) 2003, Intel Corporation. All rights reserved.
  * Created by:  salwan.searty REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this
+ * of this license, see the COPYING file at the top level of this 
  * source tree.
 
- This program tests the assertion that if disp is SIG_HOLD, then the
+ This program tests the assertion that if disp is SIG_HOLD, then the 
  signal's disposition shall remain unchanged
 
  Steps:
@@ -29,45 +29,45 @@ int handler_called = 0;
 
 void myhandler(int signo)
 {
- printf("SIGCHLD called. Inside handler\n");
- handler_called = 1;
+	printf("SIGCHLD called. Inside handler\n");
+	handler_called = 1;
 }
 
 int main()
 {
- sigset_t pendingset;
- struct sigaction act;
- act.sa_handler = myhandler;
- act.sa_flags = 0;
- sigemptyset(&act.sa_mask);
+	sigset_t pendingset;
+	struct sigaction act;
+	act.sa_handler = myhandler;
+	act.sa_flags = 0;
+	sigemptyset(&act.sa_mask);
 
- if (sigaction(SIGCHLD, &act, 0) != 0) {
+	if (sigaction(SIGCHLD, &act, 0) != 0) {
                 perror("Unexpected error while using sigaction()");
-               return PTS_UNRESOLVED;
+               	return PTS_UNRESOLVED;
         }
 
         if (sigset(SIGCHLD,SIG_HOLD) != SIG_HOLD) {
                 perror("Unexpected error while using sigset()");
-               return PTS_UNRESOLVED;
+               	return PTS_UNRESOLVED;
         }
 
- raise(SIGCHLD);
-
+	raise(SIGCHLD);
+	
         if (sigpending(&pendingset) == -1) {
                 printf("Error calling sigpending()\n");
                 return PTS_UNRESOLVED;
         }
 
         if (sigismember(&pendingset, SIGCHLD) != 1) {
-  printf("Test UNRESOLVED: Signal SIGCHLD was not successfully blocked\n");
-  return PTS_UNRESOLVED;
- }
+		printf("Test UNRESOLVED: Signal SIGCHLD was not successfully blocked\n");
+		return PTS_UNRESOLVED;
+	}
 
- sigrelse(SIGCHLD);
+	sigrelse(SIGCHLD);
 
- if (handler_called != 1) {
-  printf("Test FAILED: Signal wasn't delivered even though it was removed from the signal mask\n");
-  return PTS_FAIL;
- }
- return PTS_PASS;
-}
+	if (handler_called != 1) {
+		printf("Test FAILED: Signal wasn't delivered even though it was removed from the signal mask\n");
+		return PTS_FAIL;
+	}
+	return PTS_PASS;
+} 

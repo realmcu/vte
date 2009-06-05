@@ -18,12 +18,12 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 
- * This is the main of your user space test program,
- * which will open the correct kernel module, find the
- * file descriptor value and use that value to make
+ * This is the main of your user space test program, 
+ * which will open the correct kernel module, find the 
+ * file descriptor value and use that value to make 
  * ioctl calls to the system
  *
- * Use the ki_generic and other ki_testname functions
+ * Use the ki_generic and other ki_testname functions 
  * to abstract the calls from the main
  *
  * author: Sean Ruyle
@@ -46,22 +46,22 @@
 #include "user_tmod.h"
 #include "../kernel_space/tmod.h"
 
-static int tmod_fd  -1;  /* file descriptor */
+static int tmod_fd = -1;		/* file descriptor */
 
 
-int
+int 
 tmodopen() {
 
     dev_t devt;
- struct stat     st;
-    int    rc  0;
+	struct stat     st;
+    int    rc = 0;
 
-    devt  makedev(TMOD_MAJOR, 0);
+    devt = makedev(TMOD_MAJOR, 0);
 
     if (rc) {
-        if (errno  ENOENT) {
+        if (errno == ENOENT) {
             /* dev node does not exist. */
-            rc  mkdir(DEVICE_NAME, (S_IFDIR | S_IRWXU |
+            rc = mkdir(DEVICE_NAME, (S_IFDIR | S_IRWXU |
                                                 S_IRGRP | S_IXGRP |
                                                 S_IROTH | S_IXOTH));
         } else {
@@ -70,9 +70,9 @@ tmodopen() {
 
     } else {
         if (!(st.st_mode & S_IFDIR)) {
-            rc  unlink(DEVICE_NAME);
+            rc = unlink(DEVICE_NAME);
             if (!rc) {
-                rc  mkdir(DEVICE_NAME, (S_IFDIR | S_IRWXU |
+                rc = mkdir(DEVICE_NAME, (S_IFDIR | S_IRWXU |
                                                 S_IRGRP | S_IXGRP |
                                                 S_IROTH | S_IXOTH));
             }
@@ -84,11 +84,11 @@ tmodopen() {
      * Check for the /dev/tmod node, and create if it does not
      * exist.
      */
-    rc  stat(DEVICE_NAME, &st);
+    rc = stat(DEVICE_NAME, &st);
     if (rc) {
-        if (errno  ENOENT) {
+        if (errno == ENOENT) {
             /* dev node does not exist */
-            rc  mknod(DEVICE_NAME, (S_IFCHR | S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP), devt);
+            rc = mknod(DEVICE_NAME, (S_IFCHR | S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP), devt);
         } else {
             printf("ERROR:Problem with tbase device node directory.  Error code form stat() is %d\n\n", errno);
         }
@@ -99,20 +99,20 @@ tmodopen() {
          * block device and that it has the right major and minor.
          */
         if ((!(st.st_mode & S_IFCHR)) ||
-             (st.st_rdev ! devt)) {
+             (st.st_rdev != devt)) {
 
             /* Recreate the dev node. */
-            rc  unlink(DEVICE_NAME);
+            rc = unlink(DEVICE_NAME);
             if (!rc) {
-                rc  mknod(DEVICE_NAME, (S_IFCHR | S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP), devt);
+                rc = mknod(DEVICE_NAME, (S_IFCHR | S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP), devt);
             }
         }
     }
 
-    tmod_fd  open(DEVICE_NAME, O_RDWR);
+    tmod_fd = open(DEVICE_NAME, O_RDWR);
 
     if (tmod_fd < 0) {
-        printf("ERROR: Open of device %s failed %d errno  %d\n", DEVICE_NAME,tmod_fd, errno);
+        printf("ERROR: Open of device %s failed %d errno = %d\n", DEVICE_NAME,tmod_fd, errno);
         return errno;
     }
     else {
@@ -123,41 +123,41 @@ tmodopen() {
 }
 
 
-int
+int 
 tmodclose() {
 
- if (tmod_fd ! -1) {
-  close (tmod_fd);
-  tmod_fd  -1;
- }
-
- return 0;
+	if (tmod_fd != -1) {
+		close (tmod_fd);
+		tmod_fd = -1;
+	}
+		
+	return 0;
 }
 
 
 int main() {
- int rc;
+	int rc;
 
- /* open the module */
- rc  tmodopen();
+	/* open the module */
+	rc = tmodopen();
         if (rc ) {
                 printf("Test MOD Driver may not be loaded\n");
                 exit(1);
         }
 
+	
+
+	/* make test calls */
+	if(ki_generic(tmod_fd, LTP_OPTION1))
+		printf("Failed on option 1 test\n");
+	else
+		printf("Success on option 1 test\n");
 
 
- /* make test calls */
- if(ki_generic(tmod_fd, LTP_OPTION1))
-  printf("Failed on option 1 test\n");
- else
-  printf("Success on option 1 test\n");
 
-
-
- /* close the module */
- rc  tmodclose();
- if (rc ) {
+	/* close the module */
+	rc = tmodclose();
+	if (rc ) {
                 printf("Test MOD Driver may not be closed\n");
                 exit(1);
         }

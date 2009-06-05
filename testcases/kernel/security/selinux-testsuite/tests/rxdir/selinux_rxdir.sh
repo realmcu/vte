@@ -13,17 +13,17 @@ setup()
 {
         export TCID="setup"
         export TST_COUNT=0
- export TST_TOTAL=4
+	export TST_TOTAL=4
 
- # Remove any leftover test directory from prior failed runs.
- rm -rf $SELINUXTMPDIR/test_dir
+	# Remove any leftover test directory from prior failed runs.
+	rm -rf $SELINUXTMPDIR/test_dir
 
- # Create a test dir with the test_rxdir_dir_t type
- # for use in the tests.
- mkdir --context=system_u:object_r:test_rxdir_dir_t $SELINUXTMPDIR/test_dir
+	# Create a test dir with the test_rxdir_dir_t type
+	# for use in the tests.
+	mkdir --context=system_u:object_r:test_rxdir_dir_t $SELINUXTMPDIR/test_dir
 
- # Touch a file in the directory.
- touch $SELINUXTMPDIR/test_dir/test_file
+	# Touch a file in the directory.
+	touch $SELINUXTMPDIR/test_dir/test_file
 }
 
 test01()
@@ -32,8 +32,8 @@ test01()
         TST_COUNT=1
         RC=0
 
- # Verify that test_rdir_t can read but not search the directory.
- runcon -t test_rdir_t -- ls $SELINUXTMPDIR/test_dir 2>&1
+	# Verify that test_rdir_t can read but not search the directory.
+	runcon -t test_rdir_t -- ls $SELINUXTMPDIR/test_dir 2>&1
         RC=$?
         if [ $RC -eq 0 ]
         then
@@ -50,17 +50,17 @@ test02()
         TST_COUNT=2
         RC=0
 
- runcon -t test_rdir_t -- ls $SELINUXTMPDIR/test_dir/test_file 2>&1
+	runcon -t test_rdir_t -- ls $SELINUXTMPDIR/test_dir/test_file 2>&1
         RC=$?
         if [ $RC -ne 0 ]
         then
                 echo "$TCID   PASS : rxdir passed."
-  RC=0
+		RC=0
         else
                 echo "$TCID   FAIL : rxdir failed."
-  RC=1
+		RC=1
         fi
- return $RC
+	return $RC
 }
 
 test03()
@@ -69,8 +69,8 @@ test03()
         TST_COUNT=3
         RC=0
 
- # Verify that test_xdir_t can search but not read the directory.
- runcon -t test_xdir_t -- ls $SELINUXTMPDIR/test_dir/test_file 2>&1
+	# Verify that test_xdir_t can search but not read the directory.
+	runcon -t test_xdir_t -- ls $SELINUXTMPDIR/test_dir/test_file 2>&1
         RC=$?
         if [ $RC -eq 0 ]
         then
@@ -78,7 +78,7 @@ test03()
         else
                 echo "$TCID   FAIL : rxdir failed."
         fi
- return $RC
+	return $RC
 }
 
 test04()
@@ -87,23 +87,23 @@ test04()
         TST_COUNT=4
         RC=0
 
- runcon -t test_xdir_t -- ls $SELINUXTMPDIR/test_dir 2>&1
+	runcon -t test_xdir_t -- ls $SELINUXTMPDIR/test_dir 2>&1
         RC=$?
         if [ $RC -ne 0 ]
         then
                 echo "$TCID   PASS : rxdir passed."
-  RC=0
+		RC=0
         else
                 echo "$TCID   FAIL : rxdir failed."
-  RC=1
+		RC=1
         fi
- return $RC
+	return $RC
 }
 
 cleanup()
 {
- # Cleanup.
- rm -rf $SELINUXTMPDIR/test_dir
+	# Cleanup.
+	rm -rf $SELINUXTMPDIR/test_dir
 }
 
 # Function:     main
@@ -122,4 +122,4 @@ test02 || EXIT_VAL=$RC
 test03 || EXIT_VAL=$RC
 test04 || EXIT_VAL=$RC
 cleanup
-exit $EXIT_VAL
+exit $EXIT_VAL 

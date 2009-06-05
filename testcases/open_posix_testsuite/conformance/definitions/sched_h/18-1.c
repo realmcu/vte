@@ -1,4 +1,4 @@
-/*
+/*    
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -19,7 +19,7 @@ typedef int (*sched_yield_test) (void);
 
 int dummyfcn(void)
 {
- sched_yield_test dummyvar;
- dummyvar  sched_yield;
- return 0;
+	sched_yield_test dummyvar;
+	dummyvar = sched_yield;
+	return 0;
 }

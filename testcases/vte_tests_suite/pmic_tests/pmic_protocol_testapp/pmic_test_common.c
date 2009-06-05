@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file  pmic_test_common.c
 
         @brief  Common unit.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -25,13 +25,13 @@ D. Khoroshev/b00313          02/15/2006     TLSbo59968   Returned test module fo
 D. Khoroshev/b00313          07/25/2006     TLSbo64239   Added mc13783 legacy API support
 
 
-====================
+====================================================================================================
 Portability: ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <errno.h>
 #include <ctype.h>
@@ -43,43 +43,43 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "pmic_test_common.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                        LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                        LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                        GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 t_sensor_bits default_sens_bits;
 unsigned int last_reg_value;
 
-/*======================
+/*==================================================================================================
                                        GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                        LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= default_callback =*/
+/*================================================================================================*/
+/*===== default_callback =====*/
 /**
 @brief  Default callback function used when VT_pmic_opt or VT_pmic_opt_param was called with operation
         PMIC_SUBSCRIBE_T/PMIC_UNSUBSCRIBE_T without existing structure type_event_notification, but
@@ -89,7 +89,7 @@ unsigned int last_reg_value;
 
 @return None
 */
-/*====================*/
+/*================================================================================================*/
 void default_callback(void *arg)
 {
         pthread_mutex_lock(&mutex);
@@ -97,8 +97,8 @@ void default_callback(void *arg)
         pthread_mutex_unlock(&mutex);
 }
 
-/*====================*/
-/*= VT_pmic_setup =*/
+/*================================================================================================*/
+/*===== VT_pmic_setup =====*/
 /**
 @brief  Creates mutex used for multithreading tests
 
@@ -107,14 +107,14 @@ void default_callback(void *arg)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_pmic_setup(void)
 {
         return pthread_mutex_init(&mutex, NULL);
 }
 
-/*====================*/
-/*= VT_cleanup =*/
+/*================================================================================================*/
+/*===== VT_cleanup =====*/
 /**
 @brief  Destroy mutex used for multithreading tests
 
@@ -123,14 +123,14 @@ int VT_pmic_setup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_pmic_cleanup(void)
 {
         return  pthread_mutex_destroy(&mutex);
 }
 
-/*====================*/
-/*= VT_pmic_read_opt_params =*/
+/*================================================================================================*/
+/*===== VT_pmic_read_opt_params =====*/
 /**
 @brief  Parse config file used for tests CA, IP, RW, conf.
         Config file have next format:
@@ -151,7 +151,7 @@ int VT_pmic_cleanup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 /*int VT_pmic_read_opt_params(char *file_name, int *nb_param, opt_params **opt_param)
 {
         int param_number = 0, i, line;
@@ -288,8 +288,8 @@ int VT_pmic_cleanup(void)
         return TPASS;
 }
 */
-/*====================*/
-/*= VT_pmic_read =*/
+/*================================================================================================*/
+/*===== VT_pmic_read =====*/
 /**
 @brief  VT_pmic_print_opt
 
@@ -297,7 +297,7 @@ int VT_pmic_cleanup(void)
 
 @return None
 */
-/*====================*/
+/*================================================================================================*/
 /*void VT_pmic_print_opt(opt_params *param)
 {
         static char *operation_name[] =
@@ -329,8 +329,8 @@ int VT_pmic_cleanup(void)
         }
 }
 */
-/*====================*/
-/*= VT_pmic_read =*/
+/*================================================================================================*/
+/*===== VT_pmic_read =====*/
 /**
 @brief  read register
 
@@ -341,7 +341,7 @@ int VT_pmic_cleanup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_pmic_read(int fd, int reg, unsigned int *val)
 {
         register_info reg_info;
@@ -355,16 +355,16 @@ int VT_pmic_read(int fd, int reg, unsigned int *val)
                 pthread_mutex_unlock(&mutex);
                 return rv;
         }else{
-       *val = reg_info.reg_value;
-       pthread_mutex_lock(&mutex);
-       tst_resm(TINFO,"Read value from reg %d: 0x%X", reg, *val);
-       pthread_mutex_unlock(&mutex);
-  }
+        		*val = reg_info.reg_value;
+        		pthread_mutex_lock(&mutex);
+        		tst_resm(TINFO,"Read value from reg %d: 0x%X", reg, *val);
+        		pthread_mutex_unlock(&mutex);
+		}
         return rv;
 }
 
-/*====================*/
-/*= VT_pmic_write =*/
+/*================================================================================================*/
+/*===== VT_pmic_write =====*/
 /**
 @brief  writes register
 
@@ -375,7 +375,7 @@ int VT_pmic_read(int fd, int reg, unsigned int *val)
 @return On success - return TPASS
         On failure - return TFAIL
 */
-/*====================*/
+/*================================================================================================*/
 int VT_pmic_write(int fd, int reg, unsigned int val)
 {
         register_info reg_info;
@@ -391,15 +391,15 @@ int VT_pmic_write(int fd, int reg, unsigned int val)
                 pthread_mutex_unlock(&mutex);
                 return rv;
         }else{
-       pthread_mutex_lock(&mutex);
-       tst_resm(TINFO,"Write value 0x%X in reg %d : OK", val, reg);
-       pthread_mutex_unlock(&mutex);
-  }
+        		pthread_mutex_lock(&mutex);
+        		tst_resm(TINFO,"Write value 0x%X in reg %d : OK", val, reg);
+        		pthread_mutex_unlock(&mutex);
+		}
         return rv;
 }
 
-/*====================*/
-/*= VT_pmic_subscribe =*/
+/*================================================================================================*/
+/*===== VT_pmic_subscribe =====*/
 /**
 @brief  subscribe event
 
@@ -408,12 +408,12 @@ int VT_pmic_write(int fd, int reg, unsigned int val)
 @return On success - return TPASS
         On failure - return TFAIL
 */
-/*====================*/
+/*================================================================================================*/
 int VT_pmic_subscribe(int fd, unsigned int event)
 {
         int rv=0;
 //        register_info reg_info;
-//  reg_info.event = event;
+//		reg_info.event = event;
 
         if(ioctl(fd, PMIC_SUBSCRIBE, &event) != 0)
         {
@@ -430,8 +430,8 @@ int VT_pmic_subscribe(int fd, unsigned int event)
         return rv;
 }
 
-/*====================*/
-/*= VT_pmic_unsubscribe =*/
+/*================================================================================================*/
+/*===== VT_pmic_unsubscribe =====*/
 /**
 @brief  unsubscribes event
 
@@ -441,12 +441,12 @@ int VT_pmic_subscribe(int fd, unsigned int event)
 @return On success - return TPASS
         On failure - return TFAIL
 */
-/*====================*/
+/*================================================================================================*/
 int VT_pmic_unsubscribe(int fd, unsigned int event)
 {
         int rv=0;
 //        register_info reg_info;
-//  reg_info.event = event;
+//		reg_info.event = event;
         if(ioctl(fd, PMIC_UNSUBSCRIBE, &event) != 0){
                 rv=errno;
                 pthread_mutex_lock(&mutex);
@@ -454,16 +454,16 @@ int VT_pmic_unsubscribe(int fd, unsigned int event)
                 pthread_mutex_unlock(&mutex);
                 return rv;
         }else{
-      pthread_mutex_lock(&mutex);
+		    pthread_mutex_lock(&mutex);
             tst_resm(TINFO, "Unsubscribe event %d: OK\n", event);
-      pthread_mutex_unlock(&mutex);
-         return TPASS;
-     }
-     return rv;
+		    pthread_mutex_unlock(&mutex);
+	        return TPASS;
+	    }
+	    return rv;
 }
 
-/*====================*/
-/*= VT_pmic_check_sensor =*/
+/*================================================================================================*/
+/*===== VT_pmic_check_sensor =====*/
 /**
 @brief  checks sensor
 
@@ -472,7 +472,7 @@ int VT_pmic_unsubscribe(int fd, unsigned int event)
 
 @return State of sensor(boolean).
 */
-/*====================*/
+/*================================================================================================*/
 #ifdef CONFIG_MXC_PMIC_SC55112
 /*int VT_pmic_check_sensor(int fd, t_sensor sensor)
 {
@@ -516,8 +516,8 @@ int VT_pmic_unsubscribe(int fd, unsigned int event)
 //}
 //#endif        /* CONFIG_MXC_PMIC_MC13783 */
 
-/*====================*/
-/*= VT_pmic_get_sensors =*/
+/*================================================================================================*/
+/*===== VT_pmic_get_sensors =====*/
 /**
 @brief  get sensors values
 
@@ -527,7 +527,7 @@ int VT_pmic_unsubscribe(int fd, unsigned int event)
 @return On success - return TPASS
         On failure - return TFAIL
 */
-/*====================*/
+/*================================================================================================*/
 #ifdef CONFIG_MXC_PMIC_SC55112
 /*int VT_pmic_get_sensors(int fd, t_sensor_bits *sensor_bits)
 {
@@ -639,8 +639,8 @@ int VT_pmic_get_sensors(int fd, t_sensor_bits* sensor_bits)
 
 #endif */       /* CONFIG_MXC_PMIC_MC13783 */
 
-/*====================*/
-/*= VT_pmic_opt =*/
+/*================================================================================================*/
+/*===== VT_pmic_opt =====*/
 /**
 @brief  perform operations (read reg, write reg, subscribe event, unsubscribe event, check sensors)
 
@@ -652,7 +652,7 @@ int VT_pmic_get_sensors(int fd, t_sensor_bits* sensor_bits)
         On failure - return TFAIL
 
 */
-/*====================*/
+/*================================================================================================*/
 /*int VT_pmic_opt_param(int fd, opt_params *params)
 {
         if(params == NULL)
@@ -662,8 +662,8 @@ int VT_pmic_get_sensors(int fd, t_sensor_bits* sensor_bits)
         return VT_pmic_opt(fd, params->operation, params->val1, &(params->val2));
 }
 */
-/*====================*/
-/*= VT_pmic_opt =*/
+/*================================================================================================*/
+/*===== VT_pmic_opt =====*/
 /**
 @brief  perform operations (read reg, write reg, subscribe event, unsubscribe event, check sensors)
 
@@ -685,7 +685,7 @@ int VT_pmic_get_sensors(int fd, t_sensor_bits* sensor_bits)
         On failure - return TFAIL
 
 */
-/*====================*/
+/*================================================================================================*/
 /*int VT_pmic_opt(int fd, int operation, int val1, unsigned int *val2)
 {
         int rv=PMIC_SUCCESS;
@@ -805,8 +805,8 @@ int VT_pmic_get_sensors(int fd, t_sensor_bits* sensor_bits)
         return rv;
 }*/
 
-/*====================*/
-/*= pmic_error =*/
+/*================================================================================================*/
+/*===== pmic_error =====*/
 /**
 @brief  Returns string with error code short description
 
@@ -814,7 +814,7 @@ int VT_pmic_get_sensors(int fd, t_sensor_bits* sensor_bits)
 
 @return On success - return pointer to string or NULL
 */
-/*====================*/
+/*================================================================================================*/
 char *pmic_error(int errcode)
 {
         static char *pmic_errors[] =

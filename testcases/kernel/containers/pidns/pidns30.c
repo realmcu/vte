@@ -55,11 +55,11 @@
 #include <test.h>
 #include <libclone.h>
 
-char *TCID  "pidns30";
-int TST_TOTAL  1;
+char *TCID = "pidns30";
+int TST_TOTAL = 1;
 
-char *mqname  "/mq1";
-int result  TFAIL;
+char *mqname = "/mq1";
+int result = TFAIL;
 
 int errno;
 int father_to_child[2];
@@ -71,7 +71,7 @@ int child_to_father[2];
 #define MSG      "HOW ARE YOU"
 #define MSG_PRIO 1
 
-#define NO_STEP -1
+#define NO_STEP	-1
 #define F_STEP_0 0x00
 #define F_STEP_1 0x01
 #define F_STEP_2 0x02
@@ -82,14 +82,14 @@ int child_to_father[2];
 
 static void remove_pipe(int *fd)
 {
- close(fd[0]);
- close(fd[1]);
+	close(fd[0]);
+	close(fd[1]);
 }
 
 static void remove_mqueue(mqd_t mqd)
 {
- mq_close(mqd);
- mq_unlink(mqname);
+	mq_close(mqd);
+	mq_unlink(mqname);
 }
 
 /*
@@ -98,39 +98,39 @@ static void remove_mqueue(mqd_t mqd)
  */
 static void cleanup_resources(int step, mqd_t mqd)
 {
- switch (step) {
- case C_STEP_2:
-  close(child_to_father[1]);
-  close(father_to_child[0]);
-  mq_close(mqd);
-  break;
+	switch (step) {
+	case C_STEP_2:
+		close(child_to_father[1]);
+		close(father_to_child[0]);
+		mq_close(mqd);
+		break;
 
- case C_STEP_1:
-  mq_notify(mqd, NULL);
-  /* fall through */
- case C_STEP_0:
-  mq_close(mqd);
-  break;
+	case C_STEP_1:
+		mq_notify(mqd, NULL);
+		/* fall through */
+	case C_STEP_0:
+		mq_close(mqd);
+		break;
 
- case F_STEP_3:
-  remove_mqueue(mqd);
-  close(child_to_father[0]);
-  close(father_to_child[1]);
-  break;
+	case F_STEP_3:
+		remove_mqueue(mqd);
+		close(child_to_father[0]);
+		close(father_to_child[1]);
+		break;
 
- case F_STEP_2:
-  remove_mqueue(mqd);
-  /* fall through */
- case F_STEP_1:
-  remove_pipe(father_to_child);
-  /* fall through */
- case F_STEP_0:
-  remove_pipe(child_to_father);
-  break;
- default:
-  tst_resm(TWARN, "Unknown code - no resource removed.");
-  break;
- }
+	case F_STEP_2:
+		remove_mqueue(mqd);
+		/* fall through */
+	case F_STEP_1:
+		remove_pipe(father_to_child);
+		/* fall through */
+	case F_STEP_0:
+		remove_pipe(child_to_father);
+		break;
+	default:
+		tst_resm(TWARN, "Unknown code - no resource removed.");
+		break;
+	}
 }
 
 /*
@@ -139,14 +139,14 @@ static void cleanup_resources(int step, mqd_t mqd)
  */
 static void cleanup(int result, int step, mqd_t mqd)
 {
- if (step ! NO_STEP)
-  cleanup_resources(step, mqd);
+	if (step != NO_STEP)
+		cleanup_resources(step, mqd);
 
- /* Clean the test testcase as LTP wants*/
- TEST_CLEANUP;
+	/* Clean the test testcase as LTP wants*/
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit(result);
+	/* exit with return code appropriate for results */
+	tst_exit(result);
 }
 
 /*
@@ -154,41 +154,41 @@ static void cleanup(int result, int step, mqd_t mqd)
  */
 static void child_signal_handler(int sig, siginfo_t *si, void *unused)
 {
- char buf[256];
- mqd_t rc;
- struct mq_attr attr;
+	char buf[256];
+	mqd_t rc;
+	struct mq_attr attr;
 
- if (si->si_signo ! SIGUSR1) {
-  tst_resm(TBROK, "cinit: received %s unexpectedly",
-   strsignal(si->si_signo));
-  return;
- }
+	if (si->si_signo != SIGUSR1) {
+		tst_resm(TBROK, "cinit: received %s unexpectedly",
+			strsignal(si->si_signo));
+		return;
+	}
 
- if (si->si_code ! SI_MESGQ) {
-  tst_resm(TBROK, "cinit: expected signal code SI_MESGQ - Got %d",
-   si->si_code);
-  return;
- }
+	if (si->si_code != SI_MESGQ) {
+		tst_resm(TBROK, "cinit: expected signal code SI_MESGQ - Got %d",
+			si->si_code);
+		return;
+	}
 
- if (si->si_pid) {
-  tst_resm(TFAIL,
-   "cinit: expected signal originator PID  0 - Got %d",
-   si->si_pid);
-  return;
- }
+	if (si->si_pid) {
+		tst_resm(TFAIL,
+			"cinit: expected signal originator PID = 0 - Got %d",
+			si->si_pid);
+		return;
+	}
 
- tst_resm(TPASS, "cinit: signal originator PID  0");
- result  TPASS;
+	tst_resm(TPASS, "cinit: signal originator PID = 0");
+	result = TPASS;
 
- /*
-  * Now read the message - Be silent on errors since this is not the
-  * test purpose.
-  */
- rc  mq_getattr((mqd_t)si->si_int, &attr);
- if (rc  (mqd_t)-1)
-  return;
+	/*
+	 * Now read the message - Be silent on errors since this is not the
+	 * test purpose.
+	 */
+	rc = mq_getattr((mqd_t)si->si_int, &attr);
+	if (rc == (mqd_t)-1)
+		return;
 
- mq_receive((mqd_t)si->si_int, buf, attr.mq_msgsize, NULL);
+	mq_receive((mqd_t)si->si_int, buf, attr.mq_msgsize, NULL);
 }
 
 
@@ -197,75 +197,75 @@ static void child_signal_handler(int sig, siginfo_t *si, void *unused)
  */
 int child_fn(void *arg)
 {
- pid_t pid, ppid;
- struct sigaction sa;
- mqd_t mqd;
- struct sigevent notif;
- char buf[5];
+	pid_t pid, ppid;
+	struct sigaction sa;
+	mqd_t mqd;
+	struct sigevent notif;
+	char buf[5];
 
- /* Set process id and parent pid */
- pid  getpid();
- ppid  getppid();
+	/* Set process id and parent pid */
+	pid = getpid();
+	ppid = getppid();
 
- if (pid ! CHILD_PID || ppid ! PARENT_PID) {
-  tst_resm(TBROK, "cinit: pidns is not created");
-  cleanup(TBROK, NO_STEP, 0);
- }
+	if (pid != CHILD_PID || ppid != PARENT_PID) {
+		tst_resm(TBROK, "cinit: pidns is not created");
+		cleanup(TBROK, NO_STEP, 0);
+	}
 
- /* Close the appropriate end of each pipe */
- close(child_to_father[0]);
- close(father_to_child[1]);
+	/* Close the appropriate end of each pipe */
+	close(child_to_father[0]);
+	close(father_to_child[1]);
 
- mqd  mq_open(mqname, O_RDONLY);
- if (mqd  (mqd_t)-1) {
-  tst_resm(TBROK, "cinit: mq_open() failed (%s)",
-   strerror(errno));
-  cleanup(TBROK, NO_STEP, 0);
- }
- tst_resm(TINFO, "cinit: mq_open succeeded");
+	mqd = mq_open(mqname, O_RDONLY);
+	if (mqd == (mqd_t)-1) {
+		tst_resm(TBROK, "cinit: mq_open() failed (%s)",
+			strerror(errno));
+		cleanup(TBROK, NO_STEP, 0);
+	}
+	tst_resm(TINFO, "cinit: mq_open succeeded");
 
- /* Register for notification on message arrival */
- notif.sigev_notify  SIGEV_SIGNAL;
- notif.sigev_signo  SIGUSR1;
- notif.sigev_value.sival_int  mqd;
- if (mq_notify(mqd, &notif)  (mqd_t)-1) {
-  tst_resm(TBROK, "cinit: mq_notify() failed (%s)",
-   strerror(errno));
-  cleanup(TBROK, C_STEP_0, mqd);
- }
- tst_resm(TINFO, "cinit: successfully registered for notification");
+	/* Register for notification on message arrival */
+	notif.sigev_notify = SIGEV_SIGNAL;
+	notif.sigev_signo = SIGUSR1;
+	notif.sigev_value.sival_int = mqd;
+	if (mq_notify(mqd, &notif) == (mqd_t)-1) {
+		tst_resm(TBROK, "cinit: mq_notify() failed (%s)",
+			strerror(errno));
+		cleanup(TBROK, C_STEP_0, mqd);
+	}
+	tst_resm(TINFO, "cinit: successfully registered for notification");
 
- /* Define handler for SIGUSR1 */
- sa.sa_flags  SA_SIGINFO;
- sigemptyset(&sa.sa_mask);
- sa.sa_sigaction  child_signal_handler;
- if (sigaction(SIGUSR1, &sa, NULL)  -1) {
-  tst_resm(TBROK, "cinit: sigaction() failed(%s)",
-   strerror(errno));
-  cleanup(TBROK, C_STEP_1, mqd);
- }
- tst_resm(TINFO, "cinit: successfully registered handler for SIGUSR1");
+	/* Define handler for SIGUSR1 */
+	sa.sa_flags = SA_SIGINFO;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_sigaction = child_signal_handler;
+	if (sigaction(SIGUSR1, &sa, NULL) == -1) {
+		tst_resm(TBROK, "cinit: sigaction() failed(%s)",
+			strerror(errno));
+		cleanup(TBROK, C_STEP_1, mqd);
+	}
+	tst_resm(TINFO, "cinit: successfully registered handler for SIGUSR1");
 
- /* Ask parent to send a message to the mqueue */
- if (write(child_to_father[1], "c:ok", 5) ! 5) {
-  tst_resm(TBROK, "cinit: pipe is broken (%s)", strerror(errno));
-  cleanup(TBROK, C_STEP_1, mqd);
- }
+	/* Ask parent to send a message to the mqueue */
+	if (write(child_to_father[1], "c:ok", 5) != 5) {
+		tst_resm(TBROK, "cinit: pipe is broken (%s)", strerror(errno));
+		cleanup(TBROK, C_STEP_1, mqd);
+	}
 
- sleep(3);
+	sleep(3);
 
- /* Has parent sent a message? */
- read(father_to_child[0], buf, 5);
- if (strcmp(buf, "f:ok")) {
-  tst_resm(TBROK, "cinit: parent did not send the message!");
-  cleanup(TBROK, C_STEP_1, mqd);
- }
- tst_resm(TINFO, "cinit: my father is done - cleaning");
+	/* Has parent sent a message? */
+	read(father_to_child[0], buf, 5);
+	if (strcmp(buf, "f:ok")) {
+		tst_resm(TBROK, "cinit: parent did not send the message!");
+		cleanup(TBROK, C_STEP_1, mqd);
+	}
+	tst_resm(TINFO, "cinit: my father is done - cleaning");
 
- /* Be silent on errors from now on */
- cleanup_resources(C_STEP_2, mqd);
+	/* Be silent on errors from now on */
+	cleanup_resources(C_STEP_2, mqd);
 
- exit(0);
+	exit(0);
 }
 
 /***********************************************************************
@@ -274,71 +274,71 @@ int child_fn(void *arg)
 
 int main(int argc, char *argv[])
 {
- int status;
- char buf[5];
- pid_t cpid;
- mqd_t mqd;
- mqd_t rc;
+	int status;
+	char buf[5];
+	pid_t cpid;
+	mqd_t mqd;
+	mqd_t rc;
 
- if (pipe(child_to_father)  -1) {
-  tst_resm(TBROK, "parent: pipe() failed. aborting!");
-  cleanup(TBROK, NO_STEP, 0);
- }
+	if (pipe(child_to_father) == -1) {
+		tst_resm(TBROK, "parent: pipe() failed. aborting!");
+		cleanup(TBROK, NO_STEP, 0);
+	}
 
- if (pipe(father_to_child)  -1) {
-  tst_resm(TBROK, "parent: pipe() failed. aborting!");
-  cleanup(TBROK, F_STEP_0, 0);
- }
+	if (pipe(father_to_child) == -1) {
+		tst_resm(TBROK, "parent: pipe() failed. aborting!");
+		cleanup(TBROK, F_STEP_0, 0);
+	}
 
- mq_unlink(mqname);
- mqd  mq_open(mqname, O_RDWR|O_CREAT|O_EXCL, 0777, NULL);
- if (mqd  (mqd_t)-1) {
-  tst_resm(TBROK, "parent: mq_open() failed (%s)",
-   strerror(errno));
-  cleanup(TBROK, F_STEP_1, 0);
- }
- tst_resm(TINFO, "parent: successfully created posix mqueue");
+	mq_unlink(mqname);
+	mqd = mq_open(mqname, O_RDWR|O_CREAT|O_EXCL, 0777, NULL);
+	if (mqd == (mqd_t)-1) {
+		tst_resm(TBROK, "parent: mq_open() failed (%s)",
+			strerror(errno));
+		cleanup(TBROK, F_STEP_1, 0);
+	}
+	tst_resm(TINFO, "parent: successfully created posix mqueue");
 
- /* container creation on PID namespace */
- cpid  do_clone(CLONE_NEWPID|SIGCHLD, child_fn, NULL);
- if (cpid < 0) {
-  tst_resm(TBROK, "parent: clone() failed(%s)", strerror(errno));
-  cleanup(TBROK, F_STEP_2, mqd);
- }
+	/* container creation on PID namespace */
+	cpid = do_clone(CLONE_NEWPID|SIGCHLD, child_fn, NULL);
+	if (cpid < 0) {
+		tst_resm(TBROK, "parent: clone() failed(%s)", strerror(errno));
+		cleanup(TBROK, F_STEP_2, mqd);
+	}
 
- /* Close the appropriate end of each pipe */
- close(child_to_father[1]);
- close(father_to_child[0]);
+	/* Close the appropriate end of each pipe */
+	close(child_to_father[1]);
+	close(father_to_child[0]);
 
- /* Is container ready */
- read(child_to_father[0], buf, 5);
- if (strcmp(buf, "c:ok")) {
-  tst_resm(TBROK, "parent: container did not respond!");
-  cleanup(TBROK, F_STEP_2, mqd);
- }
+	/* Is container ready */
+	read(child_to_father[0], buf, 5);
+	if (strcmp(buf, "c:ok")) {
+		tst_resm(TBROK, "parent: container did not respond!");
+		cleanup(TBROK, F_STEP_2, mqd);
+	}
 
- rc  mq_send(mqd, MSG, strlen(MSG), MSG_PRIO);
- if (rc  (mqd_t)-1) {
-  tst_resm(TBROK, "parent: mq_send() failed (%s)",
-   strerror(errno));
-  cleanup(TBROK, F_STEP_2, mqd);
- }
- tst_resm(TINFO, "parent: mq_send() succeeded");
+	rc = mq_send(mqd, MSG, strlen(MSG), MSG_PRIO);
+	if (rc == (mqd_t)-1) {
+		tst_resm(TBROK, "parent: mq_send() failed (%s)",
+			strerror(errno));
+		cleanup(TBROK, F_STEP_2, mqd);
+	}
+	tst_resm(TINFO, "parent: mq_send() succeeded");
 
- /* Tell the child the message has been sent */
- if (write(father_to_child[1], "f:ok", 5) ! 5) {
-  tst_resm(TBROK, "father: pipe is broken(%s)", strerror(errno));
-  cleanup(TBROK, F_STEP_2, mqd);
- }
+	/* Tell the child the message has been sent */
+	if (write(father_to_child[1], "f:ok", 5) != 5) {
+		tst_resm(TBROK, "father: pipe is broken(%s)", strerror(errno));
+		cleanup(TBROK, F_STEP_2, mqd);
+	}
 
- /* Wait for child to finish */
- if (wait(&status)  -1) {
-  tst_resm(TBROK, "parent: wait() failed(%s)", strerror(errno));
-  cleanup(TBROK, F_STEP_2, mqd);
- }
+	/* Wait for child to finish */
+	if (wait(&status) == -1) {
+		tst_resm(TBROK, "parent: wait() failed(%s)", strerror(errno));
+		cleanup(TBROK, F_STEP_2, mqd);
+	}
 
- cleanup(result, F_STEP_3, mqd);
+	cleanup(result, F_STEP_3, mqd);
 
- /* NOT REACHED */
- return 0;
+	/* NOT REACHED */
+	return 0;
 }    /* End main */

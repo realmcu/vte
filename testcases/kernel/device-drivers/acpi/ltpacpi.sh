@@ -13,28 +13,28 @@ ltproot=$TPROOT
 tmpdir=$TMPBASE
 
 
-usage()
+usage() 
 {
- cat <<-END >&2
- usage: ${0##*/} [ -r run ]
+	cat <<-END >&2
+	usage: ${0##*/} [ -r run ] 
+                
 
-
- example: ${0##*/} -r run
+	example: ${0##*/} -r run
 
         ACPI must be enabled in the kernel. Since ACPI will control devices and possibly put them to sleep,
         it's not recommended that any other tests be run concurrently with these tests since you may
-        get unexpected results.
-        These tests are currently ONLY supported on the 2.5 kernels. 2.4 kernels probably won't even build much
+        get unexpected results. 
+        These tests are currently ONLY supported on the 2.5 kernels. 2.4 kernels probably won't even build much 
         less run.
 
- END
+	END
 exit
 }
 
 while getopts :r: arg
 do      case $arg in
-            r)    run=$OPTARG;;
-
+		          r)	   run=$OPTARG;;
+			
                 \?)     echo "************** Help Info: ********************"
                         usage;;
         esac
@@ -51,4 +51,4 @@ insmod ${LTPROOT}/LtpAcpiCmds.ko || insmod ${LTPROOT}/LtpAcpiCmds.o
 lsmod
 ${LTPROOT}/LtpAcpiMain
 rmmod LtpAcpiCmds
-
+  

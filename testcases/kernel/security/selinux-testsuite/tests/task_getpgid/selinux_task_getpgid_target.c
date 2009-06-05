@@ -8,9 +8,9 @@
  *
  */
 
-int main(void)
+int main(void) 
 {
- while (1) {
-  sleep(1);
- }
+	while (1) {
+		sleep(1);
+	}
 }

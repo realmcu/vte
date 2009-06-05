@@ -1,0 +1,12 @@
+#Verification Tests Command File
+
+#VT USB-OTG driver tests
+#files: usb_otg_testapp_1
+
+#testcases
+TGE-LV-USB-OTG-0010 usb_otg_testapp_1 -T 0
+TGE-LV-USB-OTG-0020 usb_otg_testapp_1 -T 1
+TGE-LV-USB-OTG-0030 usb_otg_testapp_1 -T 2
+TGE-LV-USB-OTG-0040 usb_otg_testapp_1 -T 3
+
+#WARNING the commented tests are not automatical tests

@@ -7,7 +7,7 @@
  *
  *
  *
- * This test case shall return PASS on returning the value of time, otherwise
+ * This test case shall return PASS on returning the value of time, otherwise 
  * it fails with -1.
  */
 
@@ -20,16 +20,16 @@
 
 int main(void)
 {
- time_t current_time;
+	time_t current_time;
+		
+	current_time = time(NULL);
+	printf("%ju secs since the Epoch\n",(uintmax_t) current_time);
 
- current_time  time(NULL);
- printf("%ju secs since the Epoch\n",(uintmax_t) current_time);
-
- if (current_time ! -1) {
-  puts("Test PASSED");
-  return PTS_PASS;
- } else {
-  puts("Test FAILED: not value for time.");
-  return PTS_FAIL;
- }
+	if (current_time != -1) {
+		puts("Test PASSED");
+		return PTS_PASS;
+	} else {
+		puts("Test FAILED: not value for time.");
+		return PTS_FAIL;
+	}
 }

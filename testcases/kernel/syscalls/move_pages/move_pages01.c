@@ -23,7 +23,7 @@
 
 /*
  * NAME
- * move_pages01.c
+ *	move_pages01.c
  *
  * DESCRIPTION
  *      Test retrieval of NUMA node
@@ -42,11 +42,11 @@
  *              -t   : Turn on syscall timing.
  *
  * History
- * 05/2008 Vijay Kumar
- *  Initial Version.
+ *	05/2008 Vijay Kumar
+ *		Initial Version.
  *
  * Restrictions
- * None
+ *	None
  */
 
 #include <sys/signal.h>
@@ -66,55 +66,55 @@
 void setup(void);
 void cleanup(void);
 
-char *TCID  "move_pages01";
-int TST_TOTAL  1;
+char *TCID = "move_pages01";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 int main(int argc, char **argv)
 {
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
 
- /* parse standard options */
- msg  parse_opts(argc, argv, (option_t *) NULL, NULL);
- if (msg ! NULL) {
-  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-  tst_exit();
-  /* NOTREACHED */
- }
+	/* parse standard options */
+	msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
+	if (msg != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+		tst_exit();
+		/* NOTREACHED */
+	}
 
- setup();
+	setup();
 
- /* check for looping state if -i option is given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  void *pages[TEST_PAGES]  { 0 };
-  int status[TEST_PAGES];
-  int ret;
+	/* check for looping state if -i option is given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		void *pages[TEST_PAGES] = { 0 };
+		int status[TEST_PAGES];
+		int ret;
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  ret  alloc_pages_linear(pages, TEST_PAGES);
-  if (ret  -1)
-   continue;
+		ret = alloc_pages_linear(pages, TEST_PAGES);
+		if (ret == -1)
+			continue;
 
-  ret  numa_move_pages(0, TEST_PAGES, pages, NULL, status, 0);
-  TEST_ERRNO  errno;
-  if (ret ! 0) {
-   tst_resm(TFAIL, "retrieving NUMA nodes failed");
-   free_pages(pages, TEST_PAGES);
-   continue;
-  }
+		ret = numa_move_pages(0, TEST_PAGES, pages, NULL, status, 0);
+		TEST_ERRNO = errno;
+		if (ret != 0) {
+			tst_resm(TFAIL, "retrieving NUMA nodes failed");
+			free_pages(pages, TEST_PAGES);
+			continue;
+		}
 
-  verify_pages_linear(pages, status, TEST_PAGES);
+		verify_pages_linear(pages, status, TEST_PAGES);
 
-  free_pages(pages, TEST_PAGES);
- }
+		free_pages(pages, TEST_PAGES);
+	}
 
- cleanup();
- /* NOT REACHED */
+	cleanup();
+	/* NOT REACHED */
 
- return 0;
+	return 0;
 }
 
 /*
@@ -123,14 +123,14 @@ int main(int argc, char **argv)
 void
 setup(void)
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- check_config(TEST_NODES);
- /* Pause if that option was specified
-  * TEST_PAUSE contains the code to fork the test with the -c option.
-  */
- TEST_PAUSE;
+	check_config(TEST_NODES);
+	/* Pause if that option was specified
+	 * TEST_PAUSE contains the code to fork the test with the -c option.
+	 */
+	TEST_PAUSE;
 }
 
 /*
@@ -139,13 +139,13 @@ setup(void)
 void
 cleanup(void)
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
- /*NOTREACHED*/
+	/* exit with return code appropriate for results */
+	tst_exit();
+	/*NOTREACHED*/
 }

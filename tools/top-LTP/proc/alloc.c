@@ -27,9 +27,9 @@ void *xmalloc(unsigned int size) {
         ++size;
     p = malloc(size);
     if (!p) {
- fprintf(stderr, "xmalloc: malloc(%d) failed", size);
- perror(NULL);
- exit(1);
+	fprintf(stderr, "xmalloc: malloc(%d) failed", size);
+	perror(NULL);
+	exit(1);
     }
     return(p);
 }
@@ -41,9 +41,9 @@ void *xrealloc(void *oldp, unsigned int size) {
         ++size;
     p = realloc(oldp, size);
     if (!p) {
- fprintf(stderr, "xrealloc: realloc(%d) failed", size);
- perror(NULL);
- exit(1);
+	fprintf(stderr, "xrealloc: realloc(%d) failed", size);
+	perror(NULL);
+	exit(1);
     }
     return(p);
 }

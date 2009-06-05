@@ -1,8 +1,8 @@
-/*
+/*   
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  julie.n.fleischer REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this
+ * of this license, see the COPYING file at the top level of this 
  * source tree.
 
  * Test that timers are disarmed and deleted by an exec.
@@ -31,50 +31,50 @@
 
 void handler(int signo)
 {
- printf("Caught signal\n");
+	printf("Caught signal\n");
 }
 
 int main(int argc, char *argv[])
 {
- struct sigevent ev;
- struct sigaction act;
- timer_t tid;
- struct itimerspec its;
+	struct sigevent ev;
+	struct sigaction act;
+	timer_t tid;
+	struct itimerspec its;
 
- ev.sigev_notify = SIGEV_SIGNAL;
- ev.sigev_signo = SIGTOTEST;
+	ev.sigev_notify = SIGEV_SIGNAL;
+	ev.sigev_signo = SIGTOTEST;
 
- act.sa_handler=handler;
- act.sa_flags=0;
+	act.sa_handler=handler;
+	act.sa_flags=0;
 
- its.it_interval.tv_sec = 0;
- its.it_interval.tv_nsec = 0;
- its.it_value.tv_sec = TIMERSEC;
- its.it_value.tv_nsec = 0;
+	its.it_interval.tv_sec = 0;
+	its.it_interval.tv_nsec = 0;
+	its.it_value.tv_sec = TIMERSEC;
+	its.it_value.tv_nsec = 0;
 
- if (sigemptyset(&act.sa_mask) == -1) {
-  perror("Error calling sigemptyset\n");
-  return PTS_UNRESOLVED;
- }
- if (sigaction(SIGTOTEST, &act, 0) == -1) {
-  perror("Error calling sigaction\n");
-  return PTS_UNRESOLVED;
- }
+	if (sigemptyset(&act.sa_mask) == -1) {
+		perror("Error calling sigemptyset\n");
+		return PTS_UNRESOLVED;
+	}
+	if (sigaction(SIGTOTEST, &act, 0) == -1) {
+		perror("Error calling sigaction\n");
+		return PTS_UNRESOLVED;
+	}
 
- if (timer_create(CLOCK_REALTIME, &ev, &tid) != 0) {
-  perror("timer_create() did not return success\n");
-  return PTS_UNRESOLVED;
- }
+	if (timer_create(CLOCK_REALTIME, &ev, &tid) != 0) {
+		perror("timer_create() did not return success\n");
+		return PTS_UNRESOLVED;
+	}
 
- if (timer_settime(tid, 0, &its, NULL) != 0) {
-  perror("timer_settime() did not return success\n");
-  return PTS_UNRESOLVED;
- }
+	if (timer_settime(tid, 0, &its, NULL) != 0) {
+		perror("timer_settime() did not return success\n");
+		return PTS_UNRESOLVED;
+	}
 
- if (execl("/bin/sleep", "sleep", "3", NULL) == -1) {
-  printf("Test FAILED\n");
-  return PTS_FAIL;
- }
+	if (execl("/bin/sleep", "sleep", "3", NULL) == -1) {
+		printf("Test FAILED\n");
+		return PTS_FAIL;
+	}
 
- return PTS_FAIL;
+	return PTS_FAIL;
 }

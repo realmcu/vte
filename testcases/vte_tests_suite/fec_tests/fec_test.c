@@ -1,42 +1,42 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   fec_test.c
 
         @brief  Test scenario C source for fec driver test.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 D.Khoroshev/b00313           10/05/2006     TLSbo76803  Initial version
 
-====================
+====================================================================================================
 Portability:  ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Verification Test Environment Include Files */
 #include "fec_test.h"
 #include <ctype.h>
 
-/*======================
+/*==================================================================================================
                                        LOCAL MACROS
-=======================*/
+===================================================================================================*/ 
 #define        SOCKET_AF(af)        (((af) == AF_UNSPEC) ? AF_INET : (af))
 
-/*======================
+/*==================================================================================================
                                        GLOBAL VARIABLES
-=======================*/
+===================================================================================================*/
 int sock = -1;
 int af = AF_UNSPEC;
 char *hostname = NULL;
@@ -73,7 +73,7 @@ static struct if_name_t {
 #ifdef DEBUG
 static struct if_name_t if_priv_flag_names [] = {
 /* Private (from user) interface flags (netdevice->priv_flags). */
-{
+{       
         {IFF_802_1Q_VLAN, "IFF_802_1Q_VLAN"},
         {IFF_EBRIDGE, "IFF_EBRIDGE"},
 
@@ -108,7 +108,7 @@ static struct if_name_t if_priv_flag_names [] = {
 static struct if_name_t af_names[] = {
 /* Supported address families. */
         {AF_UNSPEC, "AF_UNSPEC"},
-        {AF_UNIX, "AF_UNIX"},
+        {AF_UNIX, "AF_UNIX"},        
         /* Unix domain sockets                 */
         {AF_LOCAL, "AF_LOCAL"},
         /* POSIX name for AF_UNIX        */
@@ -126,11 +126,11 @@ static struct if_name_t af_names[] = {
         /* Multiprotocol bridge         */
         {AF_ATMPVC, "AF_ATMPVC"},
         /* ATM PVCs                        */
-        {AF_X25, "AF_X25"},
+        {AF_X25, "AF_X25"},        
         /* Reserved for X.25 project         */
         {AF_INET6, "AF_INET6"},
         /* IP version 6                        */
-        {AF_ROSE, "AF_ROSE"},
+        {AF_ROSE, "AF_ROSE"},        
         /* Amateur Radio X.25 PLP        */
         {AF_DECnet, "AF_DECnet"},
         /* Reserved for DECnet project        */
@@ -138,7 +138,7 @@ static struct if_name_t af_names[] = {
         /* Reserved for 802.2LLC project*/
         {AF_SECURITY, "AF_SECURITY"},
         /* Security callback pseudo AF */
-        {AF_KEY, "AF_KEY"},
+        {AF_KEY, "AF_KEY"},        
       /* PF_KEY key management API */
         {AF_NETLINK, "AF_NETLINK"},
 
@@ -146,13 +146,13 @@ static struct if_name_t af_names[] = {
         /* Alias to emulate 4.4BSD */
         {AF_PACKET, "AF_PACKET"},
         /* Packet family                */
-        {AF_ASH, "AF_ASH"},
+        {AF_ASH, "AF_ASH"},        
         /* Ash                                */
         {AF_ECONET, "AF_ECONET"},
         /* Acorn Econet                        */
         {AF_ATMSVC, "AF_ATMSVC"},
         /* ATM SVCs                        */
-        {AF_SNA, "AF_SNA"},
+        {AF_SNA, "AF_SNA"},        
         /* Linux SNA Project (nutters!) */
         {AF_IRDA, "AF_IRDA"},
         /* IRDA sockets                        */
@@ -160,7 +160,7 @@ static struct if_name_t af_names[] = {
         /* PPPoX sockets                */
         {AF_WANPIPE, "AF_WANPIPE"},
         /* Wanpipe API Sockets */
-        {26/*AF_LLC*/, "AF_LLC"},
+        {26/*AF_LLC*/, "AF_LLC"},        
         /* Linux LLC                        */
         {AF_BLUETOOTH, "AF_BLUETOOTH"},
         /* Bluetooth sockets                 */
@@ -168,9 +168,9 @@ static struct if_name_t af_names[] = {
         /* For now...                   */
 };
 
-/*======================
-                                 LOCAL FUNCTIONS PROTOTYPES
-======================*/
+/*==================================================================================================
+                                 LOCAL FUNCTIONS PROTOTYPES 
+==================================================================================================*/
 int  fec_test_on(void);
 int  fec_test_off(void);
 int  fec_test_config(void);
@@ -199,12 +199,12 @@ int in_cksum(unsigned short *buf, int sz);
 int ping(const char *hostname);
 void VT_noresp_handler(int arg);
 int VT_ask_user(char *msg);
-/*======================
+/*==================================================================================================
                                        LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= VT_fec_test_setup =*/
+/*================================================================================================*/
+/*===== VT_fec_test_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
@@ -213,19 +213,19 @@ int VT_ask_user(char *msg);
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_fec_test_setup(void)
 {
         int rv = TPASS;
 
         sock = socket(SOCKET_AF(af), SOCK_DGRAM, 0);
-
+        
         if (sock < 0)
         {
                 tst_resm(TFAIL, "VT_fec_test_setup() : Failed to create socket. Returned error '%s'", strerror(errno));
                 rv = TFAIL;
         }
-
+        
         if ( store_config() )
         {
                 tst_resm(TWARN, "Cannot save configuration for %s", gTestConfig.ifname);
@@ -244,8 +244,8 @@ int VT_fec_test_setup(void)
         return rv;
 }
 
-/*====================*/
-/*= VT_fec_cleanup =*/
+/*================================================================================================*/
+/*===== VT_fec_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
 
@@ -254,7 +254,7 @@ int VT_fec_test_setup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_fec_test_cleanup(void)
 {
         if (sock >= 0)
@@ -262,8 +262,8 @@ int VT_fec_test_cleanup(void)
         return TPASS;
 }
 
-/*====================*/
-/*= VT_fec_test =*/
+/*================================================================================================*/
+/*===== VT_fec_test =====*/
 /**
 @brief  Pmic power test scenario  function
 
@@ -272,7 +272,7 @@ int VT_fec_test_cleanup(void)
 @return On success - return TPASS
         On failure - return TFAIL
 */
-/*====================*/
+/*================================================================================================*/
 int VT_fec_test(void)
 {
         int VT_rv = TPASS;
@@ -287,13 +287,13 @@ int VT_fec_test(void)
                         tst_resm(TINFO, "\tEthtool: %s", gTestConfig.avail_if & IF_ETHTOOL ? "yes" : "no");
                         VT_rv = VT_ask_user("\n\tIs this information correct(y|n|q)?");
                 break;
-
+                
                 case T_CHECK_ENTRIES:
                         tst_resm(TINFO, "Test case %d: Check entries", gTestConfig.mTestCase);
                         VT_rv = check_entries();
 
                 break;
-
+                
                 case T_PING:
                         tst_resm(TINFO, "Test case %d: Send ping", gTestConfig.mTestCase);
                         if (gTestConfig.input_ip)
@@ -303,20 +303,20 @@ int VT_fec_test(void)
                                 tst_resm(TINFO, "Input ip address (xxx.xxx.xxx.xxx) or null string to skip test:");
                                 do
                                 {
-                                        fgets(addr, 16, stdin);
+                                        fgets(addr, 16, stdin);        
                                         if ( *addr == '\n' || *addr == '\r' )
                                         {
                                                 tst_resm(TINFO, "Skipping test");
                                                 return TFAIL;
                                         }
                                 } while(!inet_aton(addr, &in));
-                                memcpy(gTestConfig.dc.def_test_ping_addr, addr, IPADDR_STRLEN);
+                                memcpy(gTestConfig.dc.def_test_ping_addr, addr, IPADDR_STRLEN);        
                         }
-
-                        tst_resm(TINFO, "pinging %s ...", gTestConfig.dc.def_test_ping_addr);
+                
+                        tst_resm(TINFO, "pinging %s ...", gTestConfig.dc.def_test_ping_addr);        
                         VT_rv = ping(gTestConfig.dc.def_test_ping_addr);
                 break;
-
+                
                 case T_UP_DOWN:
                         tst_resm(TINFO, "Test case %d: Shut down and rise up %s interface ",
                                         gTestConfig.mTestCase, gTestConfig.ifname);
@@ -325,7 +325,7 @@ int VT_fec_test(void)
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TWARN, "Can not rise up %s interface", gTestConfig.ifname);
                 break;
-
+                
                 case T_UP:
                         tst_resm(TINFO, "Test case %d: Rise up %s interface", gTestConfig.mTestCase);
                         if ((VT_rv = interface_up()) != TPASS)
@@ -348,8 +348,8 @@ int VT_fec_test(void)
         return VT_rv;
 }
 
-/*====================*/
-/*= fec_get_info =*/
+/*================================================================================================*/
+/*===== fec_get_info =====*/
 /**
 @brief  Display information about fec controller
 
@@ -358,14 +358,14 @@ int VT_fec_test(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int fec_get_info(void)
 {
         struct ifreq ifr;
         int goterr = 0;
-
+        
         memset(&ifr, 0, sizeof(struct ifreq));
-
+        
         strncpy(ifr.ifr_name, gTestConfig.ifname, sizeof(ifr.ifr_name));
 
         if (ioctl(sock, SIOCGIFFLAGS, &ifr) < 0) {
@@ -378,7 +378,7 @@ int fec_get_info(void)
         {
                 tst_resm(TWARN, "ioctl SIOCGIFFLAGS: %s", strerror(errno));
                 ++goterr;
-        }
+        }      
 
         print_if_info();
         print_ifmap_info();
@@ -386,8 +386,8 @@ int fec_get_info(void)
         return TPASS;
 }
 
-/*====================*/
-/*= c_flagname =*/
+/*================================================================================================*/
+/*===== c_flagname =====*/
 /**
 @brief  Returns flag name by it's value.
 
@@ -396,13 +396,13 @@ int fec_get_info(void)
 @return On success - returns pointer to string containing flag name
         On failure - returns NULL
 */
-/*====================*/
+/*================================================================================================*/
 char *c_flagname(short flag)
 {
         int i, nb_flags = sizeof(ifflag_names) / sizeof(struct if_name_t);
         if (flag > (short)IFF_DYNAMIC)
                 return NULL;
-
+        
         for (i = 0; i < nb_flags; ++i)
         {
                 if (flag == ifflag_names[i].id)
@@ -411,8 +411,8 @@ char *c_flagname(short flag)
         return NULL;
 }
 
-/*====================*/
-/*= c_afname =*/
+/*================================================================================================*/
+/*===== c_afname =====*/
 /**
 @brief  Returns flag name by it's value.
 
@@ -421,13 +421,13 @@ char *c_flagname(short flag)
 @return On success - returns pointer to string containing flag name
         On failure - returns NULL
 */
-/*====================*/
+/*================================================================================================*/
 char *c_afname(sa_family_t af)
 {
         int i, l;
         if (af > (short)AF_MAX)
                 return NULL;
-
+        
         l = 0;
         i = 16;
         do {
@@ -441,8 +441,8 @@ char *c_afname(sa_family_t af)
         return NULL;
 }
 
-/*====================*/
-/*= print_if_info =*/
+/*================================================================================================*/
+/*===== print_if_info =====*/
 /**
 @brief  print common info about interface.
 
@@ -451,14 +451,14 @@ char *c_afname(sa_family_t af)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int print_if_info(void)
 {
         int goterror = 0;
         struct ifreq ifr;
         struct in_addr in;
 
-        tst_resm(TINFO, "Interface info");
+        tst_resm(TINFO, "Interface info");        
 
         memset(&ifr, 0, sizeof(struct ifreq));
         strncpy(ifr.ifr_name, gTestConfig.ifname, sizeof(ifr.ifr_name));
@@ -467,7 +467,7 @@ int print_if_info(void)
         {
                 tst_resm(TWARN, "ioctl SIOCGIFADDR: %s", strerror(errno));
                 goterror++;
-        }
+        }       
         in = ((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr;
         tst_resm(TINFO, "\taddress: %s", inet_ntoa(in));
 
@@ -475,15 +475,15 @@ int print_if_info(void)
         {
                 tst_resm(TWARN, "ioctl SIOCGIFDSTADDR: %s", strerror(errno));
                 goterror++;
-        }
+        }       
         in = ((struct sockaddr_in *)&ifr.ifr_dstaddr)->sin_addr;
         tst_resm(TINFO, "\tdest address: %s", inet_ntoa(in));
-
+        
         if (ioctl(sock, SIOCGIFBRDADDR, &ifr) == -1)
         {
                 tst_resm(TWARN, "ioctl SIOCGIFBRDADDR: %s", strerror(errno));
                 goterror++;
-        }
+        }       
         in = ((struct sockaddr_in *)&ifr.ifr_broadaddr)->sin_addr;
         tst_resm(TINFO, "\tbroadcast address: %s", inet_ntoa(in));
 
@@ -491,7 +491,7 @@ int print_if_info(void)
         {
                 tst_resm(TWARN, "ioctl SIOCGIFBRDADDR: %s", strerror(errno));
                 goterror++;
-        }
+        }       
         in = ((struct sockaddr_in *)&ifr.ifr_netmask)->sin_addr;
         tst_resm(TINFO, "\tnetmask: %s", inet_ntoa(in));
 
@@ -499,7 +499,7 @@ int print_if_info(void)
         {
                 tst_resm(TWARN, "ioctl SIOCGIFHWADDR: %s", strerror(errno));
                 goterror++;
-        }
+        }       
         tst_resm(TINFO, "\thardware address: %s", inet_ntoha(ifr.ifr_hwaddr.sa_data));
 
         if (ioctl(sock, SIOCGIFMTU, &ifr) == -1)
@@ -508,28 +508,28 @@ int print_if_info(void)
                 goterror++;
         }
         tst_resm(TINFO, "\tMTU: %d", ifr.ifr_mtu);
-
+        
         if (ioctl(sock, SIOCGIFMETRIC, &ifr) == -1)
         {
                 tst_resm(TWARN, "ioctl SIOCGIFMETRIC: %s", strerror(errno));
                 goterror++;
         }
         tst_resm(TINFO, "\tmetric: %d", ifr.ifr_metric);
-
+        
         if (ioctl(sock, SIOCGIFTXQLEN, &ifr) == -1)
         {
                 tst_resm(TWARN, "ioctl SIOCGIFTXQLEN: %s", strerror(errno));
                 goterror++;
         }
         tst_resm(TINFO, "\tTX queue length: %d", ifr.ifr_qlen);
-
+        
 
         return goterror ? TFAIL : TPASS;
 }
 
 
-/*====================*/
-/*= check_entries =*/
+/*================================================================================================*/
+/*===== check_entries =====*/
 /**
 @brief  Change main parameters of ethernet interface such as ip address, broadcast address, netmask,
         hardware address, MTU size, etc.
@@ -539,7 +539,7 @@ int print_if_info(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int check_entries(void)
 {
         int goterror = 0;
@@ -575,7 +575,7 @@ int check_entries(void)
                 inet_aton(gTestConfig.dc.def_test_addr, in);
                 memcpy(&in1, in, sizeof (struct in_addr));
                 if (ioctl(sock, SIOCSIFADDR, &ifr) == -1)
-                {
+                {        
                         tst_resm(TWARN, "ioctl SIOCSIFADDR: %s", strerror(errno));
                         goterror++;
                 }
@@ -591,18 +591,18 @@ int check_entries(void)
                         }
                         if (memcmp(&((struct sockaddr_in*)&ifr.ifr_addr)->sin_addr,
                                                         &in1, sizeof (struct in_addr)) != 0)
-                        {
+                        {                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TWARN, "\t-target address was not set (%s)", inet_ntoa(*in));
                                 goterror++;
                         }
-                        else
+                        else                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TINFO, "\t+address was successfully set to %s", inet_ntoa(*in));
 
-                        memcpy(&ifr.ifr_addr, &sa, sizeof (struct sockaddr));
+                        memcpy(&ifr.ifr_addr, &sa, sizeof (struct sockaddr));                        
                         if (ioctl(sock, SIOCSIFADDR, &ifr) == -1)
-                        {
+                        {        
                                 tst_resm(TWARN, "ioctl SIOCSIFADDR: %s", strerror(errno));
                                 goterror++;
                                }
@@ -615,7 +615,7 @@ int check_entries(void)
                 }
         }
 
-        /* Change dst address */
+        /* Change dst address */                
         if (gTestConfig.mVerbose)
                 tst_resm(TINFO, "Change dst adress");
         if (ioctl(sock, SIOCGIFDSTADDR, &ifr) == -1)
@@ -634,7 +634,7 @@ int check_entries(void)
                 inet_aton(gTestConfig.dc.def_test_addr, in);
                 memcpy(&in1, in, sizeof (struct in_addr));
                 if (ioctl(sock, SIOCSIFDSTADDR, &ifr) == -1)
-                {
+                {        
                         tst_resm(TWARN, "ioctl SIOCSIFDSTADDR: %s", strerror(errno));
                         goterror++;
                 }
@@ -650,19 +650,19 @@ int check_entries(void)
                         }
                         if (memcmp(&((struct sockaddr_in*)&ifr.ifr_dstaddr)->sin_addr,
                                                         &in1, sizeof (struct in_addr)) != 0)
-                        {
+                        {                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TWARN, "\t-target dst address was not set (%s)", inet_ntoa(*in));
                                 goterror++;
                         }
-                        else
+                        else                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TINFO, "\t+dst address was successfully set to %s",
                                                         inet_ntoa(*in));
 
-                        memcpy(&ifr.ifr_dstaddr, &sa, sizeof (struct sockaddr));
+                        memcpy(&ifr.ifr_dstaddr, &sa, sizeof (struct sockaddr));                        
                         if (ioctl(sock, SIOCSIFDSTADDR, &ifr) == -1)
-                        {
+                        {        
                                 tst_resm(TWARN, "ioctl SIOCSIFDSTADDR: %s", strerror(errno));
                                 goterror++;
                                }
@@ -693,7 +693,7 @@ int check_entries(void)
                 inet_aton(gTestConfig.dc.def_test_addr, in);
                 memcpy(&in1, in, sizeof (struct in_addr));
                 if (ioctl(sock, SIOCSIFBRDADDR, &ifr) == -1)
-                {
+                {        
                         tst_resm(TWARN, "ioctl SIOCSIFBRDADDR: %s", strerror(errno));
                         goterror++;
                 }
@@ -709,19 +709,19 @@ int check_entries(void)
                         }
                         if (memcmp(&((struct sockaddr_in*)&ifr.ifr_broadaddr)->sin_addr,
                                                         &in1, sizeof (struct in_addr)) != 0)
-                        {
+                        {                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TWARN, "\t-target broad address was not set (%s)", inet_ntoa(*in));
                                 goterror++;
                         }
-                        else
+                        else                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TINFO, "\t+broad address was successfully set to %s",
                                                         inet_ntoa(*in));
 
-                        memcpy(&ifr.ifr_broadaddr, &sa, sizeof (struct sockaddr));
+                        memcpy(&ifr.ifr_broadaddr, &sa, sizeof (struct sockaddr));                        
                         if (ioctl(sock, SIOCSIFBRDADDR, &ifr) == -1)
-                        {
+                        {        
                                 tst_resm(TWARN, "ioctl SIOCSIFBRDADDR: %s", strerror(errno));
                                 goterror++;
                                }
@@ -733,7 +733,7 @@ int check_entries(void)
                         }
                 }
         }
-
+        
         /* Change netmask */
         if (gTestConfig.mVerbose)
                 tst_resm(TINFO, "Change netmask");
@@ -753,7 +753,7 @@ int check_entries(void)
                 inet_aton(gTestConfig.dc.def_test_netmask, in);
                 memcpy(&in1, in, sizeof (struct in_addr));
                 if (ioctl(sock, SIOCSIFNETMASK, &ifr) == -1)
-                {
+                {        
                         tst_resm(TWARN, "ioctl SIOCSIFNETMASK: %s", strerror(errno));
                         goterror++;
                 }
@@ -769,18 +769,18 @@ int check_entries(void)
                         }
                         if (memcmp(&((struct sockaddr_in*)&ifr.ifr_netmask)->sin_addr,
                                                         &in1, sizeof (struct in_addr)) != 0)
-                        {
+                        {                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TWARN, "\t-netmask was not set (%s)", inet_ntoa(*in));
                                 goterror++;
                         }
-                        else
+                        else                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TINFO, "\t+netmask was successfully set to %s", inet_ntoa(*in));
 
-                        memcpy(&ifr.ifr_netmask, &sa, sizeof (struct sockaddr));
+                        memcpy(&ifr.ifr_netmask, &sa, sizeof (struct sockaddr));                        
                         if (ioctl(sock, SIOCSIFNETMASK, &ifr) == -1)
-                        {
+                        {        
                                 tst_resm(TWARN, "ioctl SIOCSIFNETMASK: %s", strerror(errno));
                                 goterror++;
                                }
@@ -791,7 +791,7 @@ int check_entries(void)
                         }
                 }
         }
-
+        
         /* Change hardware address */
         if (gTestConfig.mVerbose)
                 tst_resm(TINFO, "Change hardware address");
@@ -801,7 +801,7 @@ int check_entries(void)
                 goterror++;
         }
         else
-        {
+        {                
                 char *hwa, hwa_backup[6], hwa_test[6];
                 memset(hwa_backup, 0, sizeof hwa_backup);
                 memset(hwa_test, 0, sizeof hwa_backup);
@@ -817,7 +817,7 @@ int check_entries(void)
                         tst_resm(TINFO, "\t+shutting down %s interface!", gTestConfig.ifname);
                 interface_down();
                 if (ioctl(sock, SIOCSIFHWADDR, &ifr) == -1)
-                {
+                {        
                         tst_resm(TWARN, "ioctl SIOCSIFHWADDR: %s", strerror(errno));
                         goterror++;
                 }
@@ -833,20 +833,20 @@ int check_entries(void)
                         }
 
                         if (memcmp(&ifr.ifr_hwaddr.sa_data, hwa_test, sizeof hwa_test) != 0)
-                        {
+                        {                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TWARN, "\t-hardware address was not set (%s)", inet_ntoha(hwa));
                                 goterror++;
                         }
-                        else
+                        else                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TINFO, "\t+hardware address was successfully set to %s",
                                                         inet_ntoha(hwa));
 
-
+                        
                         memcpy(&ifr.ifr_hwaddr.sa_data, hwa_backup, sizeof hwa_backup);
                         if (ioctl(sock, SIOCSIFHWADDR, &ifr) == -1)
-                        {
+                        {        
                                 tst_resm(TWARN, "ioctl SIOCSIFHWADDR: %s", strerror(errno));
                                 goterror++;
                                }
@@ -878,7 +878,7 @@ int check_entries(void)
                 }
                 ifr.ifr_mtu = gTestConfig.dc.def_test_mtu_size;
                 if (ioctl(sock, SIOCSIFMTU, &ifr) == -1)
-                {
+                {        
                         tst_resm(TWARN, "ioctl SIOCSIFMTU: %s", strerror(errno));
                         goterror++;
                 }
@@ -893,19 +893,19 @@ int check_entries(void)
                                 goterror++;
                         }
                         if (ifr.ifr_mtu != gTestConfig.dc.def_test_mtu_size)
-                        {
+                        {                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TWARN, "\t-MTU size was not set (%d)", ifr.ifr_mtu);
                                 goterror++;
                         }
-                        else
+                        else                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TINFO, "\t+MTU size was successfully set to %d", ifr.ifr_mtu);
 
-
+                        
                         ifr.ifr_mtu = mtu;
                         if (ioctl(sock, SIOCSIFMTU, &ifr) == -1)
-                        {
+                        {        
                                 tst_resm(TWARN, "ioctl SIOCSIFMTU: %s", strerror(errno));
                                 goterror++;
                                }
@@ -917,7 +917,7 @@ int check_entries(void)
                 }
         }
 
-#ifdef DEBUG
+#ifdef DEBUG        
         /* Change metric */
         if (gTestConfig.mVerbose)
                 tst_resm(TINFO, "Change metric");
@@ -935,7 +935,7 @@ int check_entries(void)
                 }
                 ifr.ifr_metric = gTestConfig.dc.def_test_metric;
                 if (ioctl(sock, SIOCSIFMETRIC, &ifr) == -1)
-                {
+                {        
                         if (gTestConfig.mVerbose)
                                 tst_resm(TWARN, "ioctl SIOCSIFMETRIC: %s", strerror(errno));
                         goterror++;
@@ -951,19 +951,19 @@ int check_entries(void)
                                 goterror++;
                         }
                         if (ifr.ifr_metric != gTestConfig.dc.def_test_metric)
-                        {
+                        {                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TWARN, "\t-metric was not set (%d)", ifr.ifr_metric);
                                 goterror++;
                         }
-                        else
+                        else                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TINFO, "\t+metric was successfully set to %d", ifr.ifr_metric);
 
-
+                        
                         ifr.ifr_metric = metric;
                         if (ioctl(sock, SIOCSIFMETRIC, &ifr) == -1)
-                        {
+                        {        
                                 tst_resm(TWARN, "ioctl SIOCSIFMETRIC: %s", strerror(errno));
                                 goterror++;
                                }
@@ -993,7 +993,7 @@ int check_entries(void)
                 }
                 ifr.ifr_qlen = gTestConfig.dc.def_test_tx_queue_len;
                 if (ioctl(sock, SIOCSIFTXQLEN, &ifr) == -1)
-                {
+                {        
                         tst_resm(TWARN, "ioctl SIOCSIFTXQLEN: %s", strerror(errno));
                         goterror++;
                 }
@@ -1008,19 +1008,19 @@ int check_entries(void)
                                 goterror++;
                         }
                         if (ifr.ifr_qlen != gTestConfig.dc.def_test_tx_queue_len)
-                        {
+                        {                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TWARN, "\t-tx queue length was not set (%d)", ifr.ifr_qlen);
                                 goterror++;
                         }
-                        else
+                        else                
                                 if (gTestConfig.mVerbose)
                                         tst_resm(TINFO, "\t+tx queue length was successfully set to %d", ifr.ifr_qlen);
 
-
+                        
                         ifr.ifr_qlen = qlen;
                         if (ioctl(sock, SIOCSIFTXQLEN, &ifr) == -1)
-                        {
+                        {        
                                 tst_resm(TWARN, "ioctl SIOCSIFTXQLEN: %s", strerror(errno));
                                 goterror++;
                                }
@@ -1035,8 +1035,8 @@ int check_entries(void)
         return goterror ? TFAIL : TPASS;
 }
 
-/*====================*/
-/*= print_ifmap_info =*/
+/*================================================================================================*/
+/*===== print_ifmap_info =====*/
 /**
 @brief  print device memory map info.
 
@@ -1045,13 +1045,13 @@ int check_entries(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int print_ifmap_info(void)
 {
         int goterror = 0;
         struct ifreq ifr;
         tst_resm(TINFO, "Device memory map info");
-
+        
         memset(&ifr, 0, sizeof(struct ifreq));
         strncpy(ifr.ifr_name, gTestConfig.ifname, sizeof(ifr.ifr_name));
 
@@ -1059,7 +1059,7 @@ int print_ifmap_info(void)
         {
                 tst_resm(TWARN, "ioctl SIOCGIFMAP: %s", strerror(errno));
                 goterror++;
-        }
+        }       
         tst_resm(TINFO, "\tmem_start: 0x%x",ifr.ifr_map.mem_start);
         tst_resm(TINFO, "\tmem_end: 0x%x", ifr.ifr_map.mem_end);
         tst_resm(TINFO, "\tbase_addr: 0x%x", ifr.ifr_map.base_addr);
@@ -1070,8 +1070,8 @@ int print_ifmap_info(void)
         return goterror ? TFAIL : TPASS;
 }
 
-/*====================*/
-/*= print_ifflags_info =*/
+/*================================================================================================*/
+/*===== print_ifflags_info =====*/
 /**
 @brief  Display information about the IF flags.
 
@@ -1079,7 +1079,7 @@ int print_ifmap_info(void)
 
 @return none
 */
-/*====================*/
+/*================================================================================================*/
 void print_ifflags_info(short ifflags)
 {
         int i = 0, nb_flags = sizeof(ifflag_names) / sizeof(struct if_name_t);
@@ -1094,8 +1094,8 @@ void print_ifflags_info(short ifflags)
         tst_resm(TINFO, "------------------------------");
 }
 
-/*====================*/
-/*= in_cksum =*/
+/*================================================================================================*/
+/*===== in_cksum =====*/
 /**
 @brief  This function generates packet checksums.
 @param  buf        - buffer with data
@@ -1103,7 +1103,7 @@ void print_ifflags_info(short ifflags)
 
 @return checksum
 */
-/*====================*/
+/*================================================================================================*/
 int in_cksum(unsigned short *buf, int sz)
 {
         int nleft = sz;
@@ -1127,8 +1127,8 @@ int in_cksum(unsigned short *buf, int sz)
         return ans;
 }
 
-/*====================*/
-/*= inet_ntoa =*/
+/*================================================================================================*/
+/*===== inet_ntoa =====*/
 /**
 @brief  This function returns string containing ip address, string is allocated in static buffer
         and will be overrited at next call time.
@@ -1136,7 +1136,7 @@ int in_cksum(unsigned short *buf, int sz)
 
 @return pointer to string
 */
-/*====================*/
+/*================================================================================================*/
 char *inet_ntoa(const struct in_addr in)
 {
         static char addr_buf[sizeof "255.255.255.255"];
@@ -1151,8 +1151,8 @@ char *inet_ntoa(const struct in_addr in)
         return addr_buf;
 }
 
-/*====================*/
-/*= inet_ntoha =*/
+/*================================================================================================*/
+/*===== inet_ntoha =====*/
 /**
 @brief  This function returns string containing hardware address, string is allocated in static buffer
         and will be overrited at next call time.
@@ -1160,19 +1160,19 @@ char *inet_ntoa(const struct in_addr in)
 
 @return pointer to string
 */
-/*====================*/
+/*================================================================================================*/
 char *inet_ntoha(const char *sa_data)
 {
         static char haddr[sizeof "00:11:22:33:44:55"];
         /* Hardware address */
         const unsigned char *hw = sa_data;
-        sprintf(haddr, "%02x:%02x:%02x:%02x:%02x:%02x",
+        sprintf(haddr, "%02x:%02x:%02x:%02x:%02x:%02x", 
                 *hw, *(hw + 1), *(hw + 2), *(hw + 3), *(hw + 4), *(hw + 5));
         return haddr;
 }
 
-/*====================*/
-/*= inet_aton =*/
+/*================================================================================================*/
+/*===== inet_aton =====*/
 /**
 @brief  This function parse string containing ip address and store it in struct in_addr
 
@@ -1181,23 +1181,23 @@ char *inet_ntoha(const char *sa_data)
 
 @return 1 if success, otherwise zero
 */
-/*====================*/
+/*================================================================================================*/
 int inet_aton(const char *cp, struct in_addr *inp)
 {
         unsigned char *hin=(unsigned char *)inp;
         int read_val;
         unsigned int val0, val1, val2, val3;
-        read_val = sscanf(cp, "%u.%u.%u.%u", &val0, &val1, &val2, &val3);
+        read_val = sscanf(cp, "%u.%u.%u.%u", &val0, &val1, &val2, &val3);        
         hin[0] = (unsigned char)val0;
         hin[1] = (unsigned char)val1;
         hin[2] = (unsigned char)val2;
         hin[3] = (unsigned char)val3;
-
+        
         return read_val == 4;
 }
 
-/*====================*/
-/*= inet_haton =*/
+/*================================================================================================*/
+/*===== inet_haton =====*/
 /**
 @brief  This function parse string containing hardware address and store it in buffer sa_data
 
@@ -1206,13 +1206,13 @@ int inet_aton(const char *cp, struct in_addr *inp)
 
 @return 1 if success, otherwise zero
 */
-/*====================*/
+/*================================================================================================*/
 int inet_haton(const char *cp, char *sa_data)
 {
         /* Hardware address */
         unsigned char *hw = sa_data;
         unsigned int i, hwval[6];
-        i = sscanf(cp, "%02x:%02x:%02x:%02x:%02x:%02x",
+        i = sscanf(cp, "%02x:%02x:%02x:%02x:%02x:%02x", 
                 hwval, (hwval + 1), (hwval + 2), (hwval + 3), (hwval + 4), (hwval + 5));
         if (i != 6)
                 return 0;
@@ -1222,8 +1222,8 @@ int inet_haton(const char *cp, char *sa_data)
         return 1;
 }
 
-/*====================*/
-/*= detect_beat_ethtool =*/
+/*================================================================================================*/
+/*===== detect_beat_ethtool =====*/
 /**
 @brief  This function get link status via ethtool interface.
 
@@ -1231,7 +1231,7 @@ int inet_haton(const char *cp, char *sa_data)
 
 @return IFSTATUS_UP or IF_STATUS down if no error occured else IFSTATUS_ERR
 */
-/*====================*/
+/*================================================================================================*/
 ifstatus_t detect_beat_ethtool(void)
 {
         struct ifreq ifr;
@@ -1245,7 +1245,7 @@ ifstatus_t detect_beat_ethtool(void)
 
         if (ioctl(sock, SIOCETHTOOL, &ifr) == -1)
         {
-                if (gTestConfig.mVerbose)
+                if (gTestConfig.mVerbose)        
                         tst_resm(TWARN, "ETHTOOL_GLINK failed: %s", strerror(errno));
                 return IFSTATUS_ERR;
         }
@@ -1253,8 +1253,8 @@ ifstatus_t detect_beat_ethtool(void)
         return edata.data ? IFSTATUS_UP : IFSTATUS_DOWN;
 }
 
-/*====================*/
-/*= detect_beat_iff =*/
+/*================================================================================================*/
+/*===== detect_beat_iff =====*/
 /**
 @brief  This function get link status via standart IFF interface.
 
@@ -1262,7 +1262,7 @@ ifstatus_t detect_beat_ethtool(void)
 
 @return IFSTATUS_UP or IF_STATUS down if no error occured else IFSTATUS_ERR
 */
-/*====================*/
+/*================================================================================================*/
 ifstatus_t detect_beat_iff(void)
 {
         struct ifreq ifr;
@@ -1279,8 +1279,8 @@ ifstatus_t detect_beat_iff(void)
         return ifr.ifr_flags & IFF_RUNNING ? IFSTATUS_UP : IFSTATUS_DOWN;
 }
 
-/*====================*/
-/*= detect_beat_mii =*/
+/*================================================================================================*/
+/*===== detect_beat_mii =====*/
 /**
 @brief  This function get link status via mii interface.
 
@@ -1288,7 +1288,7 @@ ifstatus_t detect_beat_iff(void)
 
 @return IFSTATUS_UP or IF_STATUS down if no error occured else IFSTATUS_ERR
 */
-/*====================*/
+/*================================================================================================*/
 ifstatus_t detect_beat_mii(void)
 {
         struct ifreq ifr;
@@ -1315,8 +1315,8 @@ ifstatus_t detect_beat_mii(void)
         return (((unsigned short*) &ifr.ifr_data)[3] & 0x0004) ? IFSTATUS_UP : IFSTATUS_DOWN;
 }
 
-/*====================*/
-/*= interface_up =*/
+/*================================================================================================*/
+/*===== interface_up =====*/
 /**
 @brief  This function sets flag IF_UP unless flag is already set.
 
@@ -1325,7 +1325,7 @@ ifstatus_t detect_beat_mii(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int interface_up(void)
 {
         struct ifreq ifr;
@@ -1359,8 +1359,8 @@ int interface_up(void)
         return TPASS;
 }
 
-/*====================*/
-/*= interface_down =*/
+/*================================================================================================*/
+/*===== interface_down =====*/
 /**
 @brief  This function resets flag IF_UP unless flag is no set.
 
@@ -1369,7 +1369,7 @@ int interface_up(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int interface_down(void)
 {
         struct ifreq ifr;
@@ -1403,8 +1403,8 @@ int interface_down(void)
         return TPASS;
 }
 
-/*====================*/
-/*= store_config =*/
+/*================================================================================================*/
+/*===== store_config =====*/
 /**
 @brief  This function stores parameters of ethernet interface in global structure.
 
@@ -1413,7 +1413,7 @@ int interface_down(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int store_config(void)
 {
         struct ifreq ifr;
@@ -1421,7 +1421,7 @@ int store_config(void)
 
         memset(&ifr, 0, sizeof(struct ifreq));
         strncpy(ifr.ifr_name, gTestConfig.ifname, sizeof ifr.ifr_name-1);
-
+        
         if (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1)
         {
                 tst_resm(TWARN, "ioctl SIOCGIFFLAGS: %s", strerror(errno));
@@ -1432,7 +1432,7 @@ int store_config(void)
         {
                 tst_resm(TWARN, "ioctl SIOCGIFADDR: %s", strerror(errno));
                 goterror++;
-        }
+        }        
         memcpy(&gTestConfig.dc.sifr_addr, &ifr.ifr_addr, sizeof(struct sockaddr));
         if (ioctl(sock, SIOCGIFDSTADDR, &ifr) == -1)
         {
@@ -1482,11 +1482,11 @@ int store_config(void)
                 goterror++;
         }
 
-        return goterror ? TFAIL : TPASS;
+        return goterror ? TFAIL : TPASS;        
 }
 
-/*====================*/
-/*= print_config =*/
+/*================================================================================================*/
+/*===== print_config =====*/
 /**
 @brief  This function prints stored ethernet interface's parameters.
 
@@ -1495,7 +1495,7 @@ int store_config(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int print_config(void)
 {
         def_config *dc = &gTestConfig.dc;
@@ -1503,10 +1503,10 @@ int print_config(void)
         print_ifflags_info(dc->sifr_flags);
 
         tst_resm(TINFO, "\taddress: %s", inet_ntoa( ((struct sockaddr_in*)&dc->sifr_addr)->sin_addr ));
-        tst_resm(TINFO, "\tdst address: %s", inet_ntoa(((struct sockaddr_in*)&dc->sifr_dstaddr)->sin_addr));
+        tst_resm(TINFO, "\tdst address: %s", inet_ntoa(((struct sockaddr_in*)&dc->sifr_dstaddr)->sin_addr));        
         tst_resm(TINFO, "\tbroad address: %s", inet_ntoa(((struct sockaddr_in*)&dc->sifr_broadaddr)->sin_addr));
-        tst_resm(TINFO, "\tnetmask: %s", inet_ntoa(((struct sockaddr_in*)&dc->sifr_netmask)->sin_addr));
-        tst_resm(TINFO, "\thardware address: %s", inet_ntoha(dc->sifr_hwaddr.sa_data));
+        tst_resm(TINFO, "\tnetmask: %s", inet_ntoa(((struct sockaddr_in*)&dc->sifr_netmask)->sin_addr));        
+        tst_resm(TINFO, "\thardware address: %s", inet_ntoha(dc->sifr_hwaddr.sa_data));        
         tst_resm(TINFO, "\tmem_start: 0x%x",dc->sifr_map.mem_start);
         tst_resm(TINFO, "\tmem_end: 0x%x", dc->sifr_map.mem_end);
         tst_resm(TINFO, "\tbase_addr: 0x%x", dc->sifr_map.base_addr);
@@ -1517,8 +1517,8 @@ int print_config(void)
 }
 
 
-/*====================*/
-/*= fill_defconfig =*/
+/*================================================================================================*/
+/*===== fill_defconfig =====*/
 /**
 @brief  This function initializes global structure gTestConfig.
 
@@ -1527,7 +1527,7 @@ int print_config(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 void fill_defconfig(void)
 {
         def_config *dc = &gTestConfig.dc;
@@ -1550,8 +1550,8 @@ void fill_defconfig(void)
 }
 
 /* ping */
-/*====================*/
-/*= ping =*/
+/*================================================================================================*/
+/*===== ping =====*/
 /**
 @brief  Send ping to specified ip address.
 
@@ -1560,7 +1560,7 @@ void fill_defconfig(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int ping(const char *host_ip)
 {
         struct sockaddr_in pingaddr;
@@ -1613,14 +1613,14 @@ int ping(const char *host_ip)
                                 break;
                 }
         }
-
+        
         close(pingsock);
         tst_resm(TINFO, "%s pinged successfully!\n", host_ip);
         return TPASS;
 }
 
-/*====================*/
-/*= VT_noresp_handler =*/
+/*================================================================================================*/
+/*===== VT_noresp_handler =====*/
 /**
 @brief  Function for handling alarm signal in ping test.
 
@@ -1628,7 +1628,7 @@ int ping(const char *host_ip)
 
 @return none
 */
-/*====================*/
+/*================================================================================================*/
 void VT_noresp_handler(int arg)
 {
         tst_resm(TWARN, "No response from %s", gTestConfig.dc.def_test_ping_addr);
@@ -1636,8 +1636,8 @@ void VT_noresp_handler(int arg)
         exit(TFAIL);
 }
 
-/*====================*/
-/*= VT_ask_user =*/
+/*================================================================================================*/
+/*===== VT_ask_user =====*/
 /**
 @brief  Show message and read answer('y'|'n'|'q')
 
@@ -1645,7 +1645,7 @@ void VT_noresp_handler(int arg)
 
 @return TPASS, TFAIL or TRETR according to the user's answer
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ask_user(char *msg)
 {
         int answer = TRETR;
@@ -1661,6 +1661,6 @@ int VT_ask_user(char *msg)
                 if (tolower(ch) == 'q')
                         break;
         } while (answer == TRETR);
-
+        
         return answer;
 }

@@ -22,10 +22,10 @@
 
 /*
  * NAME
- * shmt09
+ *	shmt09
  *
  * CALLS
- * sbrk(2) shmctl(2) shmget(2)
+ *	sbrk(2) shmctl(2) shmget(2)
  *
  * ALGORITHM
  * Create a shared memory segment and attach at the default address.
@@ -53,153 +53,153 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID  "shmt09";  /* Test program identifier.    */
-int TST_TOTAL  4;  /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID = "shmt09";		/* Test program identifier.    */
+int TST_TOTAL = 4;		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 /**************/
 
 #ifdef __ia64__
-#define INCREMENT8388608 /* 8Mb */
+#define INCREMENT 		8388608	/* 8Mb */
 #elif defined (__mips__)  ||  defined (__hppa__) || defined (__sparc__)
-#define INCREMENT  262144 /* 256Kb */
+#define INCREMENT		262144	/* 256Kb */
 #elif defined __sh__ || defined (__arm__)
-#define INCREMENT16384   /* 16kb */
+#define INCREMENT 		16384   /* 16kb */
 #else
-#define INCREMENTSHMLBA
+#define INCREMENT 		SHMLBA
 #endif
 
 int rm_shm(int);
 
 int main()
 {
- char *c1  NULL, *c2  NULL, *c3  NULL;
- void *vp;
- int shmid;
- key_t key;
+	char *c1 = NULL, *c2 = NULL, *c3 = NULL;
+	void *vp;
+	int shmid;
+	key_t key;
 
- key  (key_t) getpid();
+	key = (key_t) getpid();
 
 /*-----------------------------------------------------------*/
 
- if ((unsigned long)sbrk(16384) > (-4095UL)) {
-  perror("sbrk");
-  tst_resm(TFAIL, "Error: sbrk failed, errno  %d\n", errno);
-  tst_exit();
- }
+	if ((unsigned long)sbrk(16384) >= (-4095UL)) {
+		perror("sbrk");
+		tst_resm(TFAIL, "Error: sbrk failed, errno = %d\n", errno);
+		tst_exit();
+	}
 
- if ((unsigned long)sbrk(-4097) > (-4095UL)) {
-  perror("sbrk");
-  tst_resm(TFAIL, "Error: sbrk failed, errno  %d\n", errno);
-  tst_exit();
- }
+	if ((unsigned long)sbrk(-4097) >= (-4095UL)) {
+		perror("sbrk");
+		tst_resm(TFAIL, "Error: sbrk failed, errno = %d\n", errno);
+		tst_exit();
+	}
 
- if ((shmid  shmget(key, 10 * K_1, IPC_CREAT | 0666)) < 0) {
-  perror("shmget");
-  tst_resm(TFAIL,
-    "Error: shmget Failed, shmid  %d, errno  %d\n",
-    shmid, errno);
-  tst_exit();
- }
+	if ((shmid = shmget(key, 10 * K_1, IPC_CREAT | 0666)) < 0) {
+		perror("shmget");
+		tst_resm(TFAIL,
+			 "Error: shmget Failed, shmid = %d, errno = %d\n",
+			 shmid, errno);
+		tst_exit();
+	}
 
- c1  (char *)shmat(shmid, (void *)0, 0);
- if (c1  (char *)-1) {
-  perror("shmat");
-  tst_resm(TFAIL,
-    "Error: shmat Failed, shmid  %d, errno  %d\n",
-    shmid, errno);
-  rm_shm(shmid);
-  tst_exit();
- }
+	c1 = (char *)shmat(shmid, (void *)0, 0);
+	if (c1 == (char *)-1) {
+		perror("shmat");
+		tst_resm(TFAIL,
+			 "Error: shmat Failed, shmid = %d, errno = %d\n",
+			 shmid, errno);
+		rm_shm(shmid);
+		tst_exit();
+	}
 
- tst_resm(TPASS, "sbrk, sbrk, shmget, shmat");
+	tst_resm(TPASS, "sbrk, sbrk, shmget, shmat");
 
 /*--------------------------------------------------------*/
 
- if ((unsigned long)sbrk(32 * K_1) > (-4095UL)) {
-  perror("sbrk");
-  tst_resm(TFAIL, "Error: sbrk failed, errno  %d\n", errno);
-  rm_shm(shmid);
-  tst_exit();
- }
- vp  (void *)((char *)sbrk(0) - 2 * K_1);
- c2  (char *)shmat(shmid, vp, 0);
- if (c2 ! (char *)-1) {
-  tst_resm(TFAIL,
-    "ERROR: shmat: succeeded!: shmid  %d, shmaddr  0x%08x, "
-    "att_addr  0x%08x\n", shmid, c2, vp);
-  rm_shm(shmid);
-  tst_exit();
- }
+	if ((unsigned long)sbrk(32 * K_1) >= (-4095UL)) {
+		perror("sbrk");
+		tst_resm(TFAIL, "Error: sbrk failed, errno = %d\n", errno);
+		rm_shm(shmid);
+		tst_exit();
+	}
+	vp = (void *)((char *)sbrk(0) - 2 * K_1);
+	c2 = (char *)shmat(shmid, vp, 0);
+	if (c2 != (char *)-1) {
+		tst_resm(TFAIL,
+			 "ERROR: shmat: succeeded!: shmid = %d, shmaddr = 0x%08x, "
+			 "att_addr = 0x%08x\n", shmid, c2, vp);
+		rm_shm(shmid);
+		tst_exit();
+	}
 
- tst_resm(TPASS, "sbrk, shmat");
+	tst_resm(TPASS, "sbrk, shmat");
 
 /*---------------------------------------------------------*/
 
- if ((unsigned long)sbrk(-16000) > (-4095UL)) {
-  perror("sbrk");
-  tst_resm(TFAIL, "Error: sbrk failed, errno  %d\n", errno);
-  rm_shm(shmid);
-  tst_exit();
- }
+	if ((unsigned long)sbrk(-16000) >= (-4095UL)) {
+		perror("sbrk");
+		tst_resm(TFAIL, "Error: sbrk failed, errno = %d\n", errno);
+		rm_shm(shmid);
+		tst_exit();
+	}
 #ifdef __mips__
- vp  (void *)((char *)sbrk(0) + 256 * K_1);
+	vp = (void *)((char *)sbrk(0) + 256 * K_1);
 #elif  defined(__powerpc__) || defined(__powerpc64__)
- vp  (void *)((char *)sbrk(0) + getpagesize());
+	vp = (void *)((char *)sbrk(0) + getpagesize());
 #else
- /* SHM_RND rounds vp on the nearest multiple of SHMLBA */
- vp  (void *)SHMALIGN((char *)sbrk(0) + 1);
+	/* SHM_RND rounds vp on the nearest multiple of SHMLBA */
+	vp = (void *)SHMALIGN((char *)sbrk(0) + 1);
 #endif
 
- c3  (char *)shmat(shmid, vp, SHM_RND);
- if (c3  (char *)-1) {
-  perror("shmat1");
-  tst_resm(TFAIL,
-    "Error: shmat Failed, shmid  %d, errno  %d\n",
-    shmid, errno);
-  rm_shm(shmid);
-  tst_exit();
- }
+	c3 = (char *)shmat(shmid, vp, SHM_RND);
+	if (c3 == (char *)-1) {
+		perror("shmat1");
+		tst_resm(TFAIL,
+			 "Error: shmat Failed, shmid = %d, errno = %d\n",
+			 shmid, errno);
+		rm_shm(shmid);
+		tst_exit();
+	}
 
- tst_resm(TPASS, "sbrk, shmat");
+	tst_resm(TPASS, "sbrk, shmat");
 
 /*--------------------------------------------------------*/
 #if defined (__ia64__) || defined(__mips__) || defined(__hppa__) || defined(__arm__)
- while ((vp  sbrk(INCREMENT)) ! (void *)-1) ;
- if (errno ! ENOMEM) {
-  tst_resm(TFAIL, "Error: sbrk failed, errno  %d\n", errno);
-  rm_shm(shmid);
-  tst_exit();
- }
+	while ((vp = sbrk(INCREMENT)) != (void *)-1) ;
+	if (errno != ENOMEM) {
+		tst_resm(TFAIL, "Error: sbrk failed, errno = %d\n", errno);
+		rm_shm(shmid);
+		tst_exit();
+	}
 #else
- if ((vp  sbrk(INCREMENT)) ! (void *)-1) {
-  tst_resm(TFAIL,
-    "Error: sbrk succeeded!  ret  0x%08x, curbrk  0x%08x, ",
-    vp, sbrk(0));
-  rm_shm(shmid);
-  tst_exit();
- }
+	if ((vp = sbrk(INCREMENT)) != (void *)-1) {
+		tst_resm(TFAIL,
+			 "Error: sbrk succeeded!  ret = 0x%08x, curbrk = 0x%08x, ",
+			 vp, sbrk(0));
+		rm_shm(shmid);
+		tst_exit();
+	}
 #endif
 
- tst_resm(TPASS, "sbrk");
+	tst_resm(TPASS, "sbrk");
 
 /*------------------------------------------------------*/
 
- rm_shm(shmid);
- tst_exit();
+	rm_shm(shmid);
+	tst_exit();
 
 /*-----------------------------------------------------*/
- return (0);
+	return (0);
 }
 
 int rm_shm(shmid)
 int shmid;
 {
- if (shmctl(shmid, IPC_RMID, NULL)  -1) {
-  perror("shmctl");
-  tst_resm(TFAIL,
-    "shmctl Failed to remove: shmid  %d, errno  %d\n",
-    shmid, errno);
-  tst_exit();
- }
- return (0);
+	if (shmctl(shmid, IPC_RMID, NULL) == -1) {
+		perror("shmctl");
+		tst_resm(TFAIL,
+			 "shmctl Failed to remove: shmid = %d, errno = %d\n",
+			 shmid, errno);
+		tst_exit();
+	}
+	return (0);
 }

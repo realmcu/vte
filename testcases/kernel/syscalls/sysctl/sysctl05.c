@@ -19,16 +19,16 @@
 
 /*
  * NAME
- * sysctl05.c
+ *	sysctl05.c
  *
  * DESCRIPTION
- * Testcase to check that sysctl(2) sets errno to EFAULT
+ *	Testcase to check that sysctl(2) sets errno to EFAULT
  *
  * ALGORITHM
- * 1. Call sysctl(2) with the address of sc_oldname outside the address
- *    space of the process, and expect EFAULT.
- * 2. Call sysctl(2) with the address of sc_oldval outside the address
- *    space of the process, and expect EFAULT.
+ *	1. Call sysctl(2) with the address of sc_oldname outside the address
+ *	   space of the process, and expect EFAULT.
+ *	2. Call sysctl(2) with the address of sc_oldval outside the address
+ *	   space of the process, and expect EFAULT.
  *
  * USAGE:  <for command-line>
  *  sysctl05 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -40,10 +40,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * None
+ *	None
  */
 
 #include "test.h"
@@ -55,15 +55,15 @@
 #include <linux/version.h>
 #include <errno.h>
 
-char *TCID  "sysctl05";
-int TST_TOTAL  2;
+char *TCID = "sysctl05";
+int TST_TOTAL = 2;
 extern int Tst_count;
 
 int sysctl(int *name, int nlen, void *oldval, size_t *oldlenp,
            void *newval, size_t newlen)
 {
- struct __sysctl_args args{name,nlen,oldval,oldlenp,newval,newlen};
- return syscall(__NR__sysctl, &args);
+	struct __sysctl_args args={name,nlen,oldval,oldlenp,newval,newlen};
+	return syscall(__NR__sysctl, &args);
 }
 
 #define SIZE(x) sizeof(x)/sizeof(x[0])
@@ -71,97 +71,97 @@ int sysctl(int *name, int nlen, void *oldval, size_t *oldlenp,
 char osname[BUFSIZ];
 size_t osnamelth;
 
-int exp_enos[]  {EFAULT, 0};
+int exp_enos[] = {EFAULT, 0};
 
 void setup(void);
 void cleanup(void);
 
 struct testcases {
- char *desc;
- int name[2];
- int size;
- void *oldval;
- size_t *oldlen;
- void *newval;
- int newlen;
- int (*cleanup)();
- int exp_retval;
- int exp_errno;
-} testcases[]  {
- { "Test for EFAULT: invalid oldlen", { CTL_KERN, KERN_OSRELEASE },
-  2, osname, (void *)-1, NULL, 0, NULL, -1, EFAULT },
- { "Test for EFAULT: invalid oldval", { CTL_KERN, KERN_VERSION },
-  2, (void *)-1, &osnamelth, NULL, 0, NULL, -1, EFAULT }
+	char *desc;
+	int name[2];
+	int size;
+	void *oldval;
+	size_t *oldlen;
+	void *newval;
+	int newlen;
+	int (*cleanup)();
+	int exp_retval;
+	int exp_errno;
+} testcases[] = {
+	{ "Test for EFAULT: invalid oldlen", { CTL_KERN, KERN_OSRELEASE },
+		2, osname, (void *)-1, NULL, 0, NULL, -1, EFAULT },
+	{ "Test for EFAULT: invalid oldval", { CTL_KERN, KERN_VERSION },
+		2, (void *)-1, &osnamelth, NULL, 0, NULL, -1, EFAULT }
 };
 
 #if !defined(UCLINUX)
 
 int main(int ac, char **av)
 {
- int lc;
- char *msg;
- int i;
- int ret0;
+	int lc;
+	char *msg;
+	int i;
+	int ret=0;
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	}
 
- setup();
+	setup();
 
- TEST_EXP_ENOS(exp_enos);
+	TEST_EXP_ENOS(exp_enos);
 
- /* check looping state if -i option is given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* check looping state if -i option is given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  for (i  0; i < TST_TOTAL; ++i) {
+		for (i = 0; i < TST_TOTAL; ++i) {
 
-   osnamelth  SIZE(osname);
+			osnamelth = SIZE(osname);
 
-   TEST(sysctl(testcases[i].name, testcases[i].size,
-         testcases[i].oldval, testcases[i].oldlen,
-         testcases[i].newval, testcases[i].newlen));
+			TEST(sysctl(testcases[i].name, testcases[i].size,
+				     testcases[i].oldval, testcases[i].oldlen,
+				     testcases[i].newval, testcases[i].newlen));
 
-   if (TEST_RETURN ! testcases[i].exp_retval) {
-    tst_resm(TFAIL, "sysctl(2) returned unexpected "
-      "retval, expected: %d, got: %d",
-      testcases[i].exp_retval, ret);
-    continue;
-   }
+			if (TEST_RETURN != testcases[i].exp_retval) {
+				tst_resm(TFAIL, "sysctl(2) returned unexpected "
+					 "retval, expected: %d, got: %d",
+					 testcases[i].exp_retval, ret);
+				continue;
+			}
 
-   TEST_ERROR_LOG(TEST_ERRNO);
+			TEST_ERROR_LOG(TEST_ERRNO);
 
-   if (TEST_ERRNO ! testcases[i].exp_errno) {
-    tst_resm(TFAIL, "sysctl(2) returned unexpected "
-      "errno, expected: %d, got: %d",
-      testcases[i].exp_errno, errno);
-    continue;
-   }
+			if (TEST_ERRNO != testcases[i].exp_errno) {
+				tst_resm(TFAIL, "sysctl(2) returned unexpected "
+					 "errno, expected: %d, got: %d",
+					 testcases[i].exp_errno, errno);
+				continue;
+			}
 
-   tst_resm(TPASS, "sysctl(2) set errno correctly "
-     "to %d", testcases[i].exp_errno);
+			tst_resm(TPASS, "sysctl(2) set errno correctly "
+				 "to %d", testcases[i].exp_errno);
 
-   if (testcases[i].cleanup) {
-    (void)testcases[i].cleanup();
-   }
-  }
- }
- cleanup();
+			if (testcases[i].cleanup) {
+				(void)testcases[i].cleanup();
+			}
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 #else
 
 int main()
 {
- tst_resm(TINFO, "test is not available on uClinux");
- return 0;
+	tst_resm(TINFO, "test is not available on uClinux");
+	return 0;
 }
 
 #endif /* if !defined(UCLINUX) */
@@ -172,26 +172,26 @@ int main()
 void
 setup()
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit.
+ *	       completion or premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

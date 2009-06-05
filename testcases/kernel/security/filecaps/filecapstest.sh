@@ -22,15 +22,15 @@
 checkforlibcap
 ret=$?
 if [ $ret -ne 0 ]; then
- echo "Filecaps 0 CONF : System doesn't support execution of the test"
- echo setcap not installed.  Please install libcap-2.11 or newer from
- echo ftp://ftp.kernel.org/pub/linux/libs/security/linux-privs/libcap2
- exit 0
+	echo "Filecaps 0 CONF : System doesn't support execution of the test"
+	echo setcap not installed.  Please install libcap-2.11 or newer from
+	echo ftp://ftp.kernel.org/pub/linux/libs/security/linux-privs/libcap2
+	exit 0
 fi
 checkforfilecaps.sh
 ret=$?
 if [ $ret -ne 0 ]; then
- exit 1
+	exit 1
 fi
 
 echo "Running in:"
@@ -42,21 +42,21 @@ echo "cap_sys_admin tests"
 verify_caps_exec 0
 tmp=$?
 if [ $tmp -ne 0 ]; then
- exit_code=$tmp
+	exit_code=$tmp
 fi
 
 echo "testing for correct caps"
 verify_caps_exec 1
 tmp=$?
 if [ $tmp -ne 0 ]; then
- exit_code=$tmp
+	exit_code=$tmp
 fi
 
 echo "testing for correct pI checks"
 inh_capped
 tmp=$?
 if [ $tmp -ne 0 ]; then
- exit_code=$tmp
+	exit_code=$tmp
 fi
 
 exit $exit_code

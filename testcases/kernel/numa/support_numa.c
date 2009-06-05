@@ -51,12 +51,12 @@ extern int  Tst_count;               /* to avoid compilation errors. */
 extern char *TESTDIR;                /* to avoid compilation errors. */
 
 /* Global Variables */
-char *TCID      "support_numa"; /* to avoid compilation errors. */
-int  TST_TOTAL  1;                  /* to avoid compilation errors. */
+char *TCID     = "support_numa"; /* to avoid compilation errors. */
+int  TST_TOTAL = 1;                  /* to avoid compilation errors. */
 
 void sigfunc(int sig)
 {
-        tst_resm(TINFO, "#Caught signal signum%d", sig);
+        tst_resm(TINFO, "#Caught signal signum=%d", sig);
 }
 
 /******************************************************************************/
@@ -66,9 +66,9 @@ void sigfunc(int sig)
 /* Description: Alloctes 1MB of memory and touches it to verify numa behaviour*/
 /*                                                                            */
 /* Input:       Describe input arguments to this program                      */
-/*               argv[1] 1 then print pagesize                              */
-/*               argv[1] 2 then allocate 1MB of memory                      */
-/*   argv[1] 3 then pause the program to catch sigint       */
+/*               argv[1] ==1 then print pagesize                              */
+/*               argv[1] ==2 then allocate 1MB of memory                      */
+/*		 argv[1] ==3 then pause the program to catch sigint	      */
 /*                                                                            */
 /* Exit:       On failure - Exits with non-zero value.                        */
 /*             On success - exits with 0 exit value.                          */
@@ -77,46 +77,46 @@ void sigfunc(int sig)
 
 int main( int argc, char *argv[] )
 {
- int i;
- char *buf  NULL;
- int count0;
- struct sigaction sa;
+	int i;
+	char *buf = NULL;
+	int count=0;
+	struct sigaction sa;
 
         switch(atoi(argv[1]))
- {
- case 1: printf("%d", PAGE_SIZE);
-  return 0;
- case 2:
-  buf  (char*) malloc(MB);
-               if (!buf)
-  {
-   tst_resm(TINFO, "#Memory is not available\n");
-   tst_exit();
-   exit(2);
-  }
-      for (i0; i<MB; i+ PAGE_SIZE)
-  {
-   count++;
-              buf[i]  'a';
-              barrier();
-      }
-  free(buf);
-  return 0;
- case 3:
+	{
+	case 1: printf("%d", PAGE_SIZE);
+		return 0;
+	case 2:
+		buf = (char*) malloc(MB);
+               	if (!buf) 
+		{
+			tst_resm(TINFO, "#Memory is not available\n");
+			tst_exit();
+			exit(2);
+		}
+       		for (i=0; i<MB; i+= PAGE_SIZE) 
+		{
+			count++;
+               		buf[i] = 'a';
+               		barrier();
+       		}
+		free(buf);
+		return 0;
+	case 3:
                 /* Trap SIGINT */
-                sa.sa_handler  sigfunc;
-                sa.sa_flags  SA_RESTART;
+                sa.sa_handler = sigfunc;
+                sa.sa_flags = SA_RESTART;
                 sigemptyset(&sa.sa_mask);
-                if( sigaction(SIGINT, &sa, 0) < 0 )
-  {
-   tst_brkm(TBROK, NULL, "#Sigaction SIGINT failed\n");
-   tst_exit();
-   exit(1);
-  }
+                if( sigaction(SIGINT, &sa, 0) < 0 ) 
+		{
+			tst_brkm(TBROK, NULL, "#Sigaction SIGINT failed\n");
+			tst_exit();
+			exit(1);
+		}
                 /* wait for signat Int */
                 pause();
-  return 0;
- default:
-  exit(1);
- }
+		return 0;
+	default:
+		exit(1);
+	}
 }

@@ -15,13 +15,13 @@ PWD	:= $(shell pwd)
 
 default:
 	$(MAKE) -C $(KDIR) SUBDIRS=$(PWD) modules
-	gcc  $(CFLAGS) -o ltpfstest -lm  main.c
+	gcc  $(CFLAGS) -o ltpfstest -lm  main.c 
 #	$(MAKE) -C $(KERNELDIR) SUBDIRS=$(PWD) modules
 endif
 
 clean:
-	rm -f LtpfsCmds.o
-	rm -f LtpfsCmds.ko
+	rm -f LtpfsCmds.o  
+	rm -f LtpfsCmds.ko 
 	rm -f LtpfsCmds.bb
 	rm -f LtpfsCmds.bbg
 	rm -f LtpfsCmds.mod.c

@@ -1,6 +1,6 @@
-/*
+/* 
    Test for the existance and valid format
-   of the mq_attr structure as specified on
+   of the mq_attr structure as specified on 
    line 9678 of the Base Definitions document
 */
 
@@ -10,6 +10,6 @@
 
 int main()
 {
- fprintf(stderr, "Not Implemented!\n");
- return PTS_UNTESTED;
+	fprintf(stderr, "Not Implemented!\n");
+	return PTS_UNTESTED;
 }

@@ -23,64 +23,64 @@
 
 void * runner(void * arg) {
 
- while(1) sleep(1);
- return NULL;
+	while(1) sleep(1);
+	return NULL;
 }
 
 int main() {
- int new_priority, max_priority, policy, result;
- struct sched_param param;
- pthread_t tid;
- pthread_attr_t attr;
+	int new_priority, max_priority, policy, result;
+	struct sched_param param;
+	pthread_t tid;
+	pthread_attr_t attr;
 
- if(sched_getparam(getpid(), &param) ! 0){
-  perror("An error occurs when calling sched_getparam()");
-  pthread_exit((void*)-1);
- }
+	if(sched_getparam(getpid(), &param) != 0){
+		perror("An error occurs when calling sched_getparam()");
+		pthread_exit((void*)-1);
+	}
 
- /* Make sure new_priority ! old priority */
- policy  sched_getscheduler(getpid());
- max_priority  sched_get_priority_max(policy);
- new_priority  (param.sched_priority  max_priority) ?
-  sched_get_priority_min(policy) :
-  max_priority;
+	/* Make sure new_priority != old priority */
+	policy = sched_getscheduler(getpid());
+	max_priority = sched_get_priority_max(policy);
+	new_priority = (param.sched_priority == max_priority) ? 
+		sched_get_priority_min(policy) :
+		max_priority;
 
- if(pthread_attr_init(&attr) ! 0) {
-  printf("An error occurs when calling pthread_attr_init()");
-  return PTS_UNRESOLVED;
- }
- result  pthread_attr_setscope(&attr, PTHREAD_SCOPE_PROCESS);
- if(result  ENOTSUP) {
+	if(pthread_attr_init(&attr) != 0) {
+		printf("An error occurs when calling pthread_attr_init()");
+		return PTS_UNRESOLVED;
+	}
+	result = pthread_attr_setscope(&attr, PTHREAD_SCOPE_PROCESS);
+	if(result == ENOTSUP) {
                 printf("Process contention scope threads are not supported. Use System contention schope instead.\n");
-                result  pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
+                result = pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
 //              return PTS_UNSUPPORTED;
- } else if(result ! 0) {
-  printf("An error occurs when calling pthread_attr_setscope()");
-  return PTS_UNRESOLVED;
- }
- if(pthread_create(&tid, &attr, runner, NULL) ! 0) {
-  printf("An error occurs when calling pthread_create()");
-  return PTS_UNRESOLVED;
- }
+	} else if(result != 0) {
+		printf("An error occurs when calling pthread_attr_setscope()");
+		return PTS_UNRESOLVED;
+	}
+	if(pthread_create(&tid, &attr, runner, NULL) != 0) {
+		printf("An error occurs when calling pthread_create()");
+		return PTS_UNRESOLVED;
+	}
 
 
- param.sched_priority  new_priority;
- if(sched_setparam(getpid(), &param) ! 0){
-  perror("An error occurs when calling sched_setparam()");
-  return PTS_UNRESOLVED;
- }
+	param.sched_priority = new_priority;
+	if(sched_setparam(getpid(), &param) != 0){
+		perror("An error occurs when calling sched_setparam()");
+		return PTS_UNRESOLVED;
+	}
 
- if(pthread_getschedparam(tid , &policy, &param) ! 0) {
-  printf("An error occurs when calling pthread_getschedparam()");
-  return PTS_UNRESOLVED;
- }
+	if(pthread_getschedparam(tid , &policy, &param) != 0) {
+		printf("An error occurs when calling pthread_getschedparam()");
+		return PTS_UNRESOLVED;
+	}
 
- pthread_cancel(tid);
+	pthread_cancel(tid);
 
- if(param.sched_priority  new_priority){
-  printf("Test PASSED\n");
-  return PTS_PASS;
- }
- printf("sched_setparam() does not set the right param.\n");
- return PTS_FAIL;
+	if(param.sched_priority == new_priority){
+		printf("Test PASSED\n");
+		return PTS_PASS;
+	}
+	printf("sched_setparam() does not set the right param.\n");
+	return PTS_FAIL;
 }

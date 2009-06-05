@@ -1,13 +1,13 @@
 /*
     Copyright (c) 2003, Intel Corporation. All rights reserved.
     Created by:  majid.awad REMOVE-THIS AT intel DOT com
-    This file is licensed under the GPL license.  For the full content
-    of this license, see the COPYING file at the top level of this
+    This file is licensed under the GPL license.  For the full content 
+    of this license, see the COPYING file at the top level of this 
     source tree.
  */
 
 /*
-The following test case initializes an unnamed semaphore with a value of 1,
+The following test case initializes an unnamed semaphore with a value of 1, 
 and then check the value of the semaphore.
 */
 
@@ -27,19 +27,19 @@ and then check the value of the semaphore.
 
 int main ()
 {
- sem_t   mysemp;
- int sts;
- unsigned int val;
+	sem_t   mysemp;
+	int sts;
+	unsigned int val;
 
- sts  sem_init(&mysemp, 0, 1);
+	sts = sem_init(&mysemp, 0, 1);
 
 
-        if( sem_getvalue(&mysemp, &val)  -1 ) {
+        if( sem_getvalue(&mysemp, &val) == -1 ) {
                 perror(ERROR_PREFIX "sem_getvalue");
                 return PTS_UNRESOLVED;
         }
 
- if (( sts  -1 ) && ( val ! 1)) {
+	if (( sts == -1 ) && ( val != 1)) {
                 puts("TEST FAILED");
                 return PTS_FAIL;
         } else {

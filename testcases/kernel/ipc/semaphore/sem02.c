@@ -22,15 +22,15 @@
  *
  *  DESCRIPTION : The application creates several threads using pthread_create().
  *  One thread performs a semop() with the SEM_UNDO flag set. The change in
- *  sempaphore value performed by that semop should be "undone" only when the
+ *  sempaphore value performed by that semop should be "undone" only when the 
  *  last pthread exits.
  *
  *  EXPECTED OUTPUT:
- *  Waiter, pid  <pid#>
- *  Poster, pid  <pid#>, posting
+ *  Waiter, pid = <pid#>
+ *  Poster, pid = <pid#>, posting
  *  Poster posted
  *  Poster exiting
- *  Waiter waiting, pid  <pid#>
+ *  Waiter waiting, pid = <pid#>
  *  Waiter done waiting
  *
  *  HISTORY:
@@ -57,17 +57,17 @@
 
 #define NUMTHREADS 2
 
-void *retval[NUMTHREADS];
+void *retval[NUMTHREADS]; 
 void * waiter(void *);
 void * poster(void *);
 void cleanup(void);
 
-char *TCID  "sem02";
-int TST_TOTAL  1;
+char *TCID = "sem02";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
-struct sembuf Psembuf  {0, -1, SEM_UNDO};
-struct sembuf Vsembuf  {0, 1, SEM_UNDO};
+struct sembuf Psembuf = {0, -1, SEM_UNDO};
+struct sembuf Vsembuf = {0, 1, SEM_UNDO};
 
 union semun {
         int val;                        /* value for SETVAL */
@@ -84,49 +84,49 @@ int main(int argc, char **argv)
     int i, rc;
     char *msg;
     union semun semunion;
-
+    
     pthread_t pt[NUMTHREADS];
     pthread_attr_t attr;
 
-    if ((msg  parse_opts(argc, argv, (option_t *) NULL, NULL)) ! (char *) NULL) {
- tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+    if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) != (char *) NULL) {
+	tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
     }
     /* Create the semaphore set */
-    sem_id  semget(KEY, 1, 0666 | IPC_CREAT);
+    sem_id = semget(KEY, 1, 0666 | IPC_CREAT);
     if (sem_id < 0)
     {
-   printf ("semget failed, errno  %d\n", errno);
-   exit (1);
+		 printf ("semget failed, errno = %d\n", errno);
+		 exit (1);
     }
     /* initialize data  structure associated to the semaphore */
-    semunion.val  1;
+    semunion.val = 1;
     semctl(sem_id, 0, SETVAL, semunion);
 
-
+    
     /* setup the attributes of the thread        */
     /* set the scope to be system to make sure the threads compete on a  */
     /* global scale for cpu   */
     pthread_attr_init(&attr);
     pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
 
-    err_ret1;  /* Set initial error value to 1 */
+    err_ret=1;  /* Set initial error value to 1 */ 
     /* Create the threads */
-    for (i0; i<NUMTHREADS; i++)
+    for (i=0; i<NUMTHREADS; i++)
     {
-   if (i  0)
-       rc  pthread_create(&pt[i], &attr, waiter, retval[i]);
-   else
-       rc  pthread_create(&pt[i], &attr, poster, retval[i]);
+		 if (i == 0)
+		     rc = pthread_create(&pt[i], &attr, waiter, retval[i]);
+		 else
+		     rc = pthread_create(&pt[i], &attr, poster, retval[i]);
     }
 
     /* Sleep long enough to see that the other threads do what they are supposed to do */
     sleep(20);
-    semunion.val  1;
+    semunion.val = 1;
     semctl(sem_id, 0, IPC_RMID, semunion);
-    if ( err_ret  1 )
- tst_resm(TFAIL, "failed");
+    if ( err_ret == 1 )
+	tst_resm(TFAIL, "failed");
     else
- tst_resm(TPASS, "passed");
+	tst_resm(TPASS, "passed");
     cleanup();
     /* NOT REACHED */
     return 1;
@@ -140,15 +140,15 @@ int main(int argc, char **argv)
 void * waiter(void * foo)
 {
     int pid;
-    pid  getpid();
+    pid = getpid();
 
-    tst_resm(TINFO, "Waiter, pid  %d", pid);
+    tst_resm(TINFO, "Waiter, pid = %d", pid);
     sleep(10);
 
-    tst_resm(TINFO, "Waiter waiting, pid  %d", pid);
+    tst_resm(TINFO, "Waiter waiting, pid = %d", pid);
     semop(sem_id, &Psembuf, 1);
     tst_resm(TINFO, "Waiter done waiting");
-    err_ret0; /* If the message above is displayed, the test is a PASS */
+    err_ret=0; /* If the message above is displayed, the test is a PASS */
     pthread_exit(0);
 }
 
@@ -159,18 +159,18 @@ void * waiter(void * foo)
 void * poster(void * foo)
 {
     int pid;
-
-    pid  getpid();
-    tst_resm(TINFO, "Poster, pid  %d, posting", pid);
+   
+    pid = getpid();
+    tst_resm(TINFO, "Poster, pid = %d, posting", pid);
     semop(sem_id, &Vsembuf, 1);
     tst_resm(TINFO, "Poster posted");
     tst_resm(TINFO, "Poster exiting");
-
+    
     pthread_exit(0);
 }
 
 void cleanup(void)
 {
- TEST_CLEANUP;
- tst_exit();
+	TEST_CLEANUP;
+	tst_exit();
 }

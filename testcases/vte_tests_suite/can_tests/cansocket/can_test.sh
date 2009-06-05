@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake.Huang/-----             08/06/2008     N/A          Initial version
-#
+# 
 ###################################################################################################
 #
 # Notes:
@@ -95,7 +95,7 @@ RC=0
 TCID="test_can_01"
 TST_COUNT=1
 
-echo please check the CAN cable
+echo please check the CAN cable 
 
 read -p "Is the can cable ok? y/n" Rnt
 
@@ -216,7 +216,7 @@ return $RC
 # Function: test_can-03
 # Description: -test the loop back test used to test the can socket
 # catalog: auto-manual test
-#
+# 
 test_can_03()
 {
 RC=0
@@ -267,7 +267,7 @@ REGISTERS_RW="br_presdiv br_rjw br_propseg br_pseg1 br_pseg2 xmit_maxmb maxmb"
 REGISTERS_RW_BIT="abort bcc boff_rec fifo listen local_priority \
                   loopback smp srx_dis ext_msg std_msg tsyn wak_src wakeup"
 
-#not test for read only register
+#not test for read only register                 
 REGISTER_RO="bitrate state"
 
 bk=$(cat /sys/devices/platform/FlexCAN$CANBUS/br_clksrc)
@@ -292,7 +292,7 @@ for i in $REGISTERS_RW_BIT
 do
 bk=$(cat /sys/devices/platform/FlexCAN$CANBUS/$i)
 echo 1 >  /sys/devices/platform/FlexCAN$CANBUS/$i
-Rnt=$(cat /sys/devices/platform/FlexCAN$CANBUS/$i)
+Rnt=$(cat /sys/devices/platform/FlexCAN$CANBUS/$i) 
 
 if [ $Rnt -ne 1 ]
 then
@@ -301,7 +301,7 @@ return $RC
 fi
 
 echo 0 >  /sys/devices/platform/FlexCAN$CANBUS/$i
-Rnt=$(cat /sys/devices/platform/FlexCAN$CANBUS/$i)
+Rnt=$(cat /sys/devices/platform/FlexCAN$CANBUS/$i) 
 if [ $Rnt -ne 0 ]
 then
 RC=$TST_COUNT
@@ -406,7 +406,7 @@ RC=0
 if [ $# -ne 2 ]
 then
 usage
-exit 1
+exit 1 
 fi
 
 CANID=$1
@@ -415,7 +415,7 @@ setup || exit $RC
 
 case "$2" in
 1)
-  test_can_01 || exit $RC
+  test_can_01 || exit $RC 
   ;;
 2)
   test_can_02 || exit $RC

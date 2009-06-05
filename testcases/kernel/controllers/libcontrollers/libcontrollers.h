@@ -62,7 +62,7 @@ unsigned int *shares_pointer;//??
 
 char target[LINE_MAX];
 
-struct dirent *dir_pointer;
+struct dirent 	*dir_pointer;
 
 enum{
 	GET_SHARES	=1,

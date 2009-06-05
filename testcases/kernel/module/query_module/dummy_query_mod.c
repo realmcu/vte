@@ -16,7 +16,7 @@
  */
 /*************************************************************************
  * Description: This is a kernel loadable module programme used by
- *  testcases of query_module(2)
+ *		testcases of query_module(2)
  *************************************************************************/
 
 #define MODULE
@@ -36,21 +36,21 @@ void dummy_func_test(void);
 int
 init_module (void)
 {
- return 0;
+	return 0;
 }
 
 /* Cleanup routine of module */
 void
 cleanup_module (void)
 {
- return;
+	return;
 }
 
 /* Dummy function used by dependent module */
 void
 dummy_func_test(void)
 {
- return;
+	return;
 }
 
 EXPORT_SYMBOL(dummy_func_test);

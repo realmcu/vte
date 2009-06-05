@@ -1,30 +1,30 @@
-/*====================*/
+/*================================================================================================*/
 /**
 @file   spi_main.c
 
 @brief  LTP Motorola template.
 */
-/*======================
+/*==================================================================================================
 
 Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
 THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
 Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Tony THOMASSIN/RB595C        18/05/2004     TLSbo39490   SPI test development
+Tony THOMASSIN/RB595C        18/05/2004     TLSbo39490   SPI test development 
 I.Inkina/nknl001             24/08/2005     TLsbo53757   SPI test options added
-====================
-Portability: Indicate if this module is portable to other compilers or platforms.
+====================================================================================================
+Portability: Indicate if this module is portable to other compilers or platforms. 
 If not, indicate specific reasons why is it not portable.
 
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
 Total Tests: TO BE COMPLETED
 
 Test Name:   TO BE COMPLETED
@@ -32,7 +32,7 @@ Test Name:   TO BE COMPLETED
 Test Assertion
 & Strategy:  A brief description of the test Assertion and Strategy
 TO BE COMPLETED
-======================*/
+==================================================================================================*/
 
 
 #ifdef __cplusplus
@@ -51,9 +51,9 @@ extern "C"{
 #define false 0
 #endif
 
-/*======================
+/*==================================================================================================
 INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,32 +67,32 @@ INCLUDE FILES
 /* Verification Test Environment Include Files */
 #include "spi_test_2.h"
 
-/*======================
+/*==================================================================================================
 LOCAL MACROS
-======================*/
+==================================================================================================*/
 #define READ_REGISTER_0 0x00000000
 #define READ_REGISTER_1 0x02000000
-/*======================
+/*==================================================================================================
 LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
 LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 #if !defined(TRUE) && !defined(FALSE)
 #define TRUE  1
 #define FALSE 0
 #endif
 
-/*======================
+/*==================================================================================================
 LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
 GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 static int mod;
 
 int Tflag = 0;
@@ -100,9 +100,9 @@ int Mflag = 0;
 int Sflag = 0;
 int Uflag = 0;
 
-char *Topt,*Mopt,*Sopt,*Uopt;
+char *Topt,*Mopt,*Sopt,*Uopt; 
 
-option_t options[] =
+option_t options[] = 
 {
         { "T:", &Tflag, &Topt },
         { "M:", &Mflag, &Mopt },
@@ -111,9 +111,9 @@ option_t options[] =
         { NULL, NULL, NULL }
 };
 
-/*======================
+/*==================================================================================================
 GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 /* Extern Global Variables */
 extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir(...) */
@@ -124,25 +124,25 @@ int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 
 
 
-/*======================
+/*==================================================================================================
 GLOBAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 void cleanup(void);
 void setup(void);
 int main(int argc, char **argv);
 
-/*======================
+/*==================================================================================================
 LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 struct s_list *addtree(struct s_list *p, char *adress,  char *value, int count);
 
 
-/*======================
+/*==================================================================================================
 GLOBAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= cleanup =*/
+/*================================================================================================*/
+/*===== cleanup =====*/
 /**
 @brief  Performs all one time clean up for this test on successful
 completion,  premature exit or  failure. Closes all temporary
@@ -151,50 +151,50 @@ appropriate return code by calling tst_exit(...) function.cleanup
 
 @param  Input :      None.
         Output:      None.
-
+ 
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void cleanup(void)
 {
         /* VTE : Actions needed to get a stable target environment */
         int VT_rv = TFAIL;
-
+        
         VT_rv = VT_spi_cleanup();
         if (VT_rv != TPASS)
         {
                 tst_resm(TWARN, "VT_cleanup() Failed : error code = %d", VT_rv);
         }
-
+        
         tst_exit();
 }
 
-/*====================*/
-/*= help =*/
+/*================================================================================================*/
+/*===== help =====*/
 /**
 @brief Displays help
 
 @param  Input :      None.
         Output:      None.
-
+ 
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void help (void)
 {
         printf("   -M        module : 1 for SPI1 or 2 for SPI2\n");
         printf("   -U        card : 1 for MXC275-30 ADS , 2 for MXC275-30 EVB or 3 for i.300-30 EVB\n");
         printf("   -T        number couple Addres Value <number>\n");
         printf("   -S        string Addres Value, Addres Value, Addres Value ......\n");
-
+        
 }
 
-/*======================
+/*==================================================================================================
 LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= setup =*/
+/*================================================================================================*/
+/*===== setup =====*/
 /**
 @brief  Performs all one time setup for this test. This function is
 typically used to capture signals, create temporary dirs
@@ -202,15 +202,15 @@ and temporary files that may be used in the course of this test.
 
 @param  Input :      None.
         Output:      None.
-
+ 
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 void setup(void)
 {
         int VT_rv = TFAIL;
-
+        
         /* VTE : Actions needed to prepare the test running */
         VT_rv = VT_spi_setup(mod);
         if (VT_rv != TPASS)
@@ -218,14 +218,14 @@ void setup(void)
                 tst_brkm(TBROK , cleanup, "VT_setup() Failed : error code = %d", VT_rv);
         }
         /* VTE */
-
+        
         return;
 }
 
 
 
-/*====================*/
-/*= main =*/
+/*================================================================================================*/
+/*===== main =====*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
 inputs, calls the global setup and executes the test. It logs
@@ -239,11 +239,11 @@ is called and test exits with an appropriate return code.
         -l - Number of iteration
         -v - Prints verbose output
         -V - Prints the version number
-
+ 
 @return On failure - Exits by calling cleanup(...).
         On success - exits with 0 exit value.
 */
-/*====================*/
+/*================================================================================================*/
 int main(int argc, char **argv)
 {
         int VT_rv = TFAIL;
@@ -251,7 +251,7 @@ int main(int argc, char **argv)
         char* msg;
         int card = 2;
         int number_couple=1;
-
+        
         char *adress;
         char *value;
         struct s_list *root = NULL;
@@ -260,25 +260,25 @@ int main(int argc, char **argv)
         int dl=0, dl_o=0, dl_l=0;
         char *ad=NULL;
         char *ad_l=NULL;
-
+        
         if ( (msg=parse_opts(argc,argv,options,&help)) != NULL )
                 tst_brkm(TBROK, help, "OPTION PARSING ERROR - %s", msg);
-
+        
         if ( Mflag )
         {
                 module = atoi(Mopt);
                 tst_resm(TINFO ," module = %d", module);
         }
-
+        
         mod = module;
-
+        
         if ( Uflag )
         {
                 card = atoi(Uopt);
                 tst_resm ( TINFO, " card = %d", card);
         }
-
-
+        
+        
         if ( Tflag )
         {
                 number_couple = atoi(Topt);
@@ -310,48 +310,48 @@ int main(int argc, char **argv)
                                 root=addtree(root,adress,value,i);
                                 free(adress);
                                 free(value);
-                        }
-
-                        i++;
-
+                        }		
+                        
+                        i++;		
+                        
                 }//end while
-
+                
         }
         else
         {
                 tst_brkm(TBROK, NULL, "Error while parsing command line options: %s", "Missing Adrdress/Value of SPI");
                 return TFAIL;
         }
-
+        
         /* perform global test setup, call setup(...) function. */
         setup();
-
+        
         /* Print test Assertion using tst_resm(...) function with argument TINFO. */
         tst_resm(TINFO, "Testing if %s test case is OK", TCID);
-
-
-        VT_rv = VT_spi_test_1(module, card, root);
-
+        
+        
+        VT_rv = VT_spi_test_1(module, card, root); 
+        
         if(VT_rv == TPASS)
                 tst_resm(TPASS, "%s test case worked as expected", TCID);
         else
                 tst_resm(TFAIL, "%s test case did NOT work as expected", TCID);
-
-
+        
+        
         cleanup(); /** OR tst_exit(...); */
         /* VTE */
-
+        
         return VT_rv;
-
+        
 }
 
 struct s_list *addtree(struct s_list *p, char *adress,  char *value, int count)
 {
-
+        
         if(p==NULL)
         {
                 p=(struct s_list*) malloc(sizeof(struct s_list));
-
+                
                 p->adress= strdup(adress);
                 p->value =strdup(value);
                 p->count = count;
@@ -361,7 +361,7 @@ struct s_list *addtree(struct s_list *p, char *adress,  char *value, int count)
         {
                 p->next=addtree( p->next,adress, value, count);
         }
-
+        
         return p;
 }
 

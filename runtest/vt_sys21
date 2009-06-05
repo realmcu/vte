@@ -1,0 +1,30 @@
+#Verification Tests Command File
+# generated automatically by the test campaign macro
+# version 1.0
+
+#files:
+#files:
+#files:
+#files:
+#files:
+
+TGE-LV-SYS-3970 rename07
+TGE-LV-SYS-3980 rename08
+TGE-LV-SYS-3990 rename09
+TGE-LV-SYS-4000 rename10
+#TGE-LV-SYS-4010
+TGE-LV-SYS-4020 rename12
+TGE-LV-SYS-4030 rename13
+TGE-LV-SYS-4040 rename14
+TGE-LV-SYS-4050 rmdir01
+TGE-LV-SYS-4060 rmdir02
+TGE-LV-SYS-4070 rmdir03
+TGE-LV-SYS-4080 symlink01 -T rmdir03
+TGE-LV-SYS-4090 rmdir04
+TGE-LV-SYS-4100 rmdir05
+TGE-LV-SYS-4110 sbrk01
+TGE-LV-SYS-4120 sched_get_priority_max01
+TGE-LV-SYS-4130 sched_get_priority_max02
+TGE-LV-SYS-4140 sched_get_priority_min01
+TGE-LV-SYS-4150 sched_get_priority_min02
+TGE-LV-SYS-4160 sched_getparam01

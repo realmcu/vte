@@ -19,13 +19,13 @@
 
 /*
  * NAME
- * sched_getscheduler02.C
+ *	sched_getscheduler02.C
  *
  * DESCRIPTION
- * To check for the errno ESRCH
+ *	To check for the errno ESRCH
  *
  * ALGORITHM
- * Pass an invalid pid to sched_getscheduler() and test for ESRCH.
+ *	Pass an invalid pid to sched_getscheduler() and test for ESRCH.
  *
  * USAGE:  <for command-line>
  *  sched_getscheduler02 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -37,7 +37,7 @@
  *             -t   : Turn on syscall timing.
  *
  * RESTRICTION
- * None
+ *	None
  */
 
 #include <stdio.h>
@@ -46,57 +46,57 @@
 #include <test.h>
 #include <usctest.h>
 
-#define INVALID_PID 999999
+#define INVALID_PID	999999
 
-char *TCID  "sched_getscheduler02";
-int TST_TOTAL  1;
+char *TCID = "sched_getscheduler02";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
-int exp_enos[]  {ESRCH, 0};
+int exp_enos[] = {ESRCH, 0};
 
 void setup(void);
 void cleanup(void);
 
 int main(int ac, char **av)
 {
- int lc;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
+	int lc;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- setup();
+	setup();
 
- TEST_EXP_ENOS(exp_enos);
+	TEST_EXP_ENOS(exp_enos);
 
- /* check looping state if -i option is given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+	/* check looping state if -i option is given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  TEST(sched_getscheduler(INVALID_PID));
+		TEST(sched_getscheduler(INVALID_PID));
 
-  if (TEST_RETURN ! -1) {
-   tst_resm(TFAIL, "sched_getscheduler(2) passed "
-     "unexpectedly");
-   continue;
-  }
+		if (TEST_RETURN != -1) {
+			tst_resm(TFAIL, "sched_getscheduler(2) passed "
+				 "unexpectedly");
+			continue;
+		}
 
-  TEST_ERROR_LOG(TEST_ERRNO);
+		TEST_ERROR_LOG(TEST_ERRNO);
 
-  if (errno ! ESRCH) {
-   tst_resm(TFAIL, "Expected ESRCH, got %d", errno);
-  } else {
-   tst_resm(TPASS, "call failed with ESRCH");
-  }
- }
- cleanup();
+		if (errno != ESRCH) {
+			tst_resm(TFAIL, "Expected ESRCH, got %d", errno);
+		} else {
+			tst_resm(TPASS, "call failed with ESRCH");
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 /*
@@ -105,26 +105,26 @@ int main(int ac, char **av)
 void
 setup()
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit.
+ *	       completion or premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

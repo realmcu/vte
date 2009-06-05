@@ -50,10 +50,10 @@ until [ $loop = 0 ]; do
     sar -P ALL 1 0 > /tmp/log_$$ &
     sleep 2
     SAR_PID=$!
-
+    
     # Verify that SAR has correctly listed the missing CPU as 'nan'
     cat /tmp/log_$$ | grep -i nan > /dev/null
-    while [ $? != 0 ]; do
+    while [ $? != 0 ]; do 
         echo "$CASE    FAIL: CPU${CPU_TO_TEST} Not Found on SAR!"
         exit_clean -1
     done
@@ -74,7 +74,7 @@ until [ $loop = 0 ]; do
         echo "$CASE     FAIL: CPU${CPU_TO_TEST} cannot be onlined line: 60"
         exit_clean -1
     fi
-
+    
     sleep 1
     time=`date +%T`
     sleep .5

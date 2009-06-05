@@ -13,38 +13,38 @@
 
 int main(int argc, char *argv[])
 {
- sigset_t signalset;
+	sigset_t signalset;
 
- if (sigemptyset(&signalset) == -1) {
-  perror("sigemptyset failed -- test aborted");
-  return PTS_UNRESOLVED;
- }
- if (sigaddset(&signalset, SIGALRM) == 0) {
-  if (sigismember(&signalset, SIGALRM) == 0) {
-   printf("sigaddset returned, sigismember failed\n");
-   return PTS_UNRESOLVED;
-  }
- } else {
-  printf("sigaddset did not successfully add signal\n");
-  return PTS_UNRESOLVED;
- }
+	if (sigemptyset(&signalset) == -1) {
+		perror("sigemptyset failed -- test aborted");
+		return PTS_UNRESOLVED;
+	}
+	if (sigaddset(&signalset, SIGALRM) == 0) {
+		if (sigismember(&signalset, SIGALRM) == 0) {
+			printf("sigaddset returned, sigismember failed\n");
+			return PTS_UNRESOLVED;
+		}
+	} else {
+		printf("sigaddset did not successfully add signal\n");
+		return PTS_UNRESOLVED;
+	}
 
- if (sigdelset(&signalset, SIGALRM) == 0) {
-  if (sigismember(&signalset, SIGALRM) == 1) {
-   printf("Signal is still in signal set.\n");
-   return PTS_FAIL;
-  }
- } else {
-  printf("sigdelset() failed\n");
-  return PTS_FAIL;
- }
+	if (sigdelset(&signalset, SIGALRM) == 0) {
+		if (sigismember(&signalset, SIGALRM) == 1) {
+			printf("Signal is still in signal set.\n");
+			return PTS_FAIL;
+		}
+	} else {
+		printf("sigdelset() failed\n");
+		return PTS_FAIL;
+	}
 
- sigdelset(&signalset, SIGALRM);
- if (sigismember(&signalset, SIGALRM) == 0) {
-  printf("Test PASSED\n");
-  return PTS_PASS;
- } else {
-  printf("Test FAILED\n");
-  return PTS_FAIL;
- }
+	sigdelset(&signalset, SIGALRM);
+	if (sigismember(&signalset, SIGALRM) == 0) {
+		printf("Test PASSED\n");
+		return PTS_PASS;
+	} else {
+		printf("Test FAILED\n");
+		return PTS_FAIL;
+	}
 }

@@ -18,7 +18,7 @@
  */
 /*---------------------------------------------------------------------+
 |                           signal_test_03                             |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Description:  Block a critical section from receiving signals.       |
 |                                                                      |
@@ -67,10 +67,10 @@
 #include <errno.h>
 
 #define MASK(sig)  (1 << ((sig) - 1))
-#define MAXTIME 2   /* MAX timeout (minutes) */
+#define MAXTIME	2			/* MAX timeout (minutes) */
 
 #ifdef _LINUX_
-// bits/signum.h defines _NSIG as 64
+// bits/signum.h defines _NSIG as 64 
 #define SIGMAX 64
 #endif
 
@@ -84,101 +84,101 @@ void error (const char *, int);
 
 
 /* Global variables */
-int signals_received  0;
+int signals_received = 0;
 
 
 /*---------------------------------------------------------------------+
 |                               main ()                                |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Main program  (see prolog for more details)               |
 |                                                                      |
 +---------------------------------------------------------------------*/
 int main (int argc, char **argv)
 {
- int timeout  MAXTIME*60; /* Number sec to wait for signal */
+	int	timeout = MAXTIME*60;	/* Number sec to wait for signal */
 
- /* Print out program header */
- printf ("%s: IPC Signals TestSuite program\n\n", *argv);
+	/* Print out program header */
+	printf ("%s: IPC Signals TestSuite program\n\n", *argv);
 
- /* Set up our signal handlers */
- init_sig_vec ();
+	/* Set up our signal handlers */
+	init_sig_vec ();
 
- /*
-  * Critical section - block SIGILL signal
-  *
-  * Block the SIGILL interrupt from interrupting the process
-  * with the sigprocmask () system function call.
-  *
-  * Send the SIGILL interrupt to the process in an attempt to
-  * disrupt the critial section -- the signal should be blocked.
-  * Wait one second to insure that the signal has plenty of time
-  * to reach the process.
-  */
+	/*
+	 * Critical section - block SIGILL signal
+	 *  
+	 * Block the SIGILL interrupt from interrupting the process
+	 * with the sigprocmask () system function call.
+	 *  
+	 * Send the SIGILL interrupt to the process in an attempt to 
+	 * disrupt the critial section -- the signal should be blocked.
+	 * Wait one second to insure that the signal has plenty of time
+	 * to reach the process.  
+	 */
 #ifdef _LINUX_
- sigset_t mask;
- sigemptyset (&mask);
- sigaddset (&mask, SIGILL);
- sigprocmask (SIG_BLOCK, &mask, NULL);
+	sigset_t mask;
+	sigemptyset (&mask);
+	sigaddset (&mask, SIGILL);
+	sigprocmask (SIG_BLOCK, &mask, NULL);
 #else
- if (sigblock ( MASK (SIGILL) ) < 0)
-  sys_error ("sigblock failed", __LINE__);
+	if (sigblock ( MASK (SIGILL) ) < 0)
+		sys_error ("sigblock failed", __LINE__);
 #endif
 
- printf ("\t(BEGIN) Critial section\n");
+	printf ("\t(BEGIN) Critial section\n");
 
- /* Critial section */
- sleep (1);
+	/* Critial section */
+	sleep (1);
 
- /*
-  * End of critical section - ensure SIGILL signal was not received
-  *
-  * Check to insure that the signal handler has not caught any signals,
-  * and then unblock all of the signals with the sigsetmask system
-  * function call.
-  */
- if (signals_received > 0)
-  error ("received an unexpected signal during the critical section",
-   __LINE__);
+	/*
+	 * End of critical section - ensure SIGILL signal was not received
+	 * 
+	 * Check to insure that the signal handler has not caught any signals,
+	 * and then unblock all of the signals with the sigsetmask system 
+	 * function call.  
+	 */
+	if (signals_received > 0)
+		error ("received an unexpected signal during the critical section",
+			__LINE__);
 
- printf ("\n\t(END) Critial section\n");
+	printf ("\n\t(END) Critial section\n");
 
 #ifdef _LINUX_
- sigemptyset (&mask);
- sigprocmask (SIG_SETMASK, &mask, NULL);
+	sigemptyset (&mask);
+	sigprocmask (SIG_SETMASK, &mask, NULL);
 #else
- if (sigsetmask (0) < 0)
-  sys_error ("sigsetmask failed", __LINE__);
+	if (sigsetmask (0) < 0) 
+		sys_error ("sigsetmask failed", __LINE__);
 #endif
- /*  Spring, 2008.9.25, raise() return -1, use kill() instead
+	/*  Spring, 2008.9.25, raise() return -1, use kill() instead 
     raise (SIGILL);
         */
     kill(getpid(), SIGILL);
 
- /*
-  * Upon unblocking the signals, should receive the SIGILL signal.
-  * Verify that it indeed is caught.
-  */
- while (signals_received  0 && --timeout)
-   {
-         printf(".");
-  fflush(stdout);
-  sleep (1);
-   }
+	/*
+	 * Upon unblocking the signals, should receive the SIGILL signal.
+	 * Verify that it indeed is caught.
+	 */
+	while (signals_received == 0 && --timeout)
+	  {
+	        printf(".");
+		fflush(stdout);
+		sleep (1);
+	  }
 
- if (timeout  0)
-  error ("failed to receive SIGILL signal after unblocking signals",
-   __LINE__);
+	if (timeout == 0) 
+		error ("failed to receive SIGILL signal after unblocking signals", 
+			__LINE__);
 
- /* Program completed successfully -- exit */
- printf ("\nsuccessful!\n");
- return (0);
+	/* Program completed successfully -- exit */
+	printf ("\nsuccessful!\n");
+	return (0);
 }
 
 
 /*---------------------------------------------------------------------+
 |                           init_sig_vec ()                            |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Initialize the signal vector for ALL possible signals     |
 |            (as defined in /usr/include/sys/signal.h) except for      |
@@ -193,38 +193,38 @@ int main (int argc, char **argv)
 +---------------------------------------------------------------------*/
 void init_sig_vec ()
 {
- struct sigaction invec;
- char msg [256];  /* Buffer for error message */
- int i;
+	struct sigaction invec;
+	char 	msg [256];		/* Buffer for error message */
+	int 	i;
 
- for (i1; i<SIGMAX; i++) {
+	for (i=1; i<=SIGMAX; i++) {
 
-  /* Cannot catch or ignore the following signals */
+		/* Cannot catch or ignore the following signals */
 #ifdef _IA64    /* SIGWAITING not supported, RESERVED */
-  if ((i  SIGKILL) || (i  SIGSTOP) ||
-      (i  SIGCONT) || (i  SIGWAITING)) continue;
+		if ((i == SIGKILL) || (i == SIGSTOP) ||
+		    (i == SIGCONT) || (i == SIGWAITING)) continue;
 #else
 # ifdef _LINUX_
-      if ((i  SIGKILL) || (i  SIGSTOP) || ((i>32)&&(i<34))) continue;
+       		if ((i == SIGKILL) || (i == SIGSTOP) || ((i>=32)&&(i<=34))) continue;
 # else
-  if (i  SIGKILL || i  SIGSTOP || i  SIGCONT) continue;
+		if (i == SIGKILL || i == SIGSTOP || i == SIGCONT) continue;
 # endif
 #endif
 
-  invec.sa_handler  (void (*)(int)) handler;
-  sigemptyset (&invec.sa_mask);
-  invec.sa_flags  0;
+		invec.sa_handler = (void (*)(int)) handler;
+		sigemptyset (&invec.sa_mask);
+		invec.sa_flags = 0;
 
-  if (sigaction (i, &invec, (struct sigaction *) NULL) < 0) {
-   sprintf (msg, "sigaction failed on signal %d", i);
-   error (msg, __LINE__);
-  }
- }
+		if (sigaction (i, &invec, (struct sigaction *) NULL) < 0) {
+			sprintf (msg, "sigaction failed on signal %d", i);
+			error (msg, __LINE__);
+		}
+	}
 }
 
 /*---------------------------------------------------------------------+
 |                             handler ()                               |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Signal catching function.  This function is called each   |
 |            time a non-blocked signal is received by the process.     |
@@ -237,36 +237,36 @@ void init_sig_vec ()
 +---------------------------------------------------------------------*/
 void handler (int signal)
 {
- if (signal  SIGILL) signals_received++;
- printf ("\treceived signal: (%s)\n", signames[signal]);
+	if (signal == SIGILL) signals_received++;
+	printf ("\treceived signal: (%s)\n", signames[signal]);
 }
 
 
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Creates system error message and calls error ()           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 void sys_error (const char *msg, int line)
 {
- char syserr_msg [256];
+	char syserr_msg [256];
 
- sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
- error (syserr_msg, line);
+	sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
+	error (syserr_msg, line);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               error ()                               |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Prints out message and exits...                           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 void error (const char *msg, int line)
 {
- fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
- exit (-1);
+	fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
+	exit (-1);
 }

@@ -10,14 +10,14 @@
  * http://www.opensource.org/licenses/gpl-license.html
  * http://www.gnu.org/copyleft/gpl.html
  */
-/*================
+/*============================================================================
 Revision History:
                  Modification     Tracking
 Author/core ID       Date          Number    Description of Changes
 --------------   ------------    ----------  ----------------------------
-Z.Spring          19/11/2008        n/a       Planted from unit test,
+Z.Spring          19/11/2008        n/a       Planted from unit test, 
                                                 add return value judgement
-================*/
+============================================================================*/
 #ifdef __cplusplus
 extern "C"{
 #endif
@@ -37,12 +37,12 @@ int test() {
   int err=0;
 
   fd = open("/dev/sdma_test",O_RDWR);
-
+ 
   if(fd < 0){
     printf("Failed open\n");
     return 1;
   }
-
+  
   if (err=write(fd, buf, 0)){
       close(fd);
       return err;
@@ -60,7 +60,7 @@ int test() {
 }
 
 int main(int argc,char **argv) {
-  return test();
+  return test();  
 }
 
 #ifdef __cplusplus

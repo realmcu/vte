@@ -85,7 +85,7 @@ struct i2c_msg
 ==================================================================================================*/
 #ifdef	PROJECT_MARLEY
 #define DEFAULT_I2C_BUS          "i2c-0"
-#else
+#else   
 #define DEFAULT_I2C_BUS	    "i2c/0"
 #endif
 #define BUFF_SIZE                32                /* one page is 256 byte */

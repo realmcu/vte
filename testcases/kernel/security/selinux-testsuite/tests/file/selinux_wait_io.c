@@ -30,9 +30,9 @@ int main(int argc, char **argv) {
   /*
    * Set up signal handler for SIGIO.
    */
-   siga.sa_handler  sig_io;
+   siga.sa_handler = sig_io;
    sigemptyset(&siga.sa_mask);
-   siga.sa_flags  0;
+   siga.sa_flags = 0;
    sigaction(SIGIO, &siga, NULL);
    sleep(5);
    exit(1);

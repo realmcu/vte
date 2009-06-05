@@ -32,81 +32,81 @@
  */
 /* $Id: unlink07.c,v 1.4 2006/05/12 15:44:11 vapier Exp $ */
 /**********************************************************
- *
+ * 
  *    OS Test - Silicon Graphics, Inc.
- *
- *    TEST IDENTIFIER : unlink07
- *
- *    EXECUTED BY : anyone
- *
- *    TEST TITLE : unlink(2) negative testcases
- *
- *    PARENT DOCUMENT : usctpl01
- *
- *    TEST CASE TOTAL : 1
- *
- *    WALL CLOCK TIME : 1
- *
- *    CPU TYPES  : ALL
- *
- *    AUTHOR  : Richard Logan
- *
- *    CO-PILOT  : William Roske
- *
- *    DATE STARTED : 03/30/94
- *
- *    INITIAL RELEASE : UNICOS 7.0
- *
+ * 
+ *    TEST IDENTIFIER	: unlink07
+ * 
+ *    EXECUTED BY	: anyone
+ * 
+ *    TEST TITLE	: unlink(2) negative testcases
+ * 
+ *    PARENT DOCUMENT	: usctpl01
+ * 
+ *    TEST CASE TOTAL	: 1
+ * 
+ *    WALL CLOCK TIME	: 1
+ * 
+ *    CPU TYPES		: ALL
+ * 
+ *    AUTHOR		: Richard Logan
+ * 
+ *    CO-PILOT		: William Roske
+ * 
+ *    DATE STARTED	: 03/30/94
+ * 
+ *    INITIAL RELEASE	: UNICOS 7.0
+ * 
  *    TEST CASES
- *
- * 1-8) See Testcases structure below.
- *
+ * 
+ * 	1-8) See Testcases structure below.
+ *	
  *    INPUT SPECIFICATIONS
- * The standard options for system call tests are accepted.
- * (See the parse_opts(3) man page).
- *
+ * 	The standard options for system call tests are accepted.
+ *	(See the parse_opts(3) man page).
+ * 
  *    OUTPUT SPECIFICATIONS
- *
+ * 	
  *    DURATION
- * Terminates - with frequency and infinite modes.
- *
+ * 	Terminates - with frequency and infinite modes.
+ * 
  *    SIGNALS
- * Uses SIGUSR1 to pause before test if option set.
- * (See the parse_opts(3) man page).
+ * 	Uses SIGUSR1 to pause before test if option set.
+ * 	(See the parse_opts(3) man page).
  *
  *    RESOURCES
- * None
- *
+ * 	None
+ * 
  *    ENVIRONMENTAL NEEDS
  *      No run-time environmental needs.
- *
+ * 
  *    SPECIAL PROCEDURAL REQUIREMENTS
- * None
- *
+ * 	None
+ * 
  *    INTERCASE DEPENDENCIES
- * None
- *
+ * 	None
+ * 
  *    DETAILED DESCRIPTION
- * This is a Phase I test for the unlink(2) system call.  It is intended
- * to provide a limited exposure of the system call, for now.  It
- * should/will be extended when full functional tests are written for
- * unlink(2).
- *
- * Setup:
- *   Setup signal handling.
- *   Pause for SIGUSR1 if option specified.
- *
- * Test:
- *  Loop if the proper options are given.
- *   Execute system call
- *   Check return code, if system call failed (return-1)
- *  Log the errno and Issue a FAIL message.
- *   Otherwise, Issue a PASS message.
- *
- * Cleanup:
- *   Print errno log and/or timing stats if options given
- *
- *
+ *	This is a Phase I test for the unlink(2) system call.  It is intended
+ *	to provide a limited exposure of the system call, for now.  It
+ *	should/will be extended when full functional tests are written for
+ *	unlink(2).
+ * 
+ * 	Setup:
+ * 	  Setup signal handling.
+ *	  Pause for SIGUSR1 if option specified.
+ * 
+ * 	Test:
+ *	 Loop if the proper options are given.
+ * 	  Execute system call
+ *	  Check return code, if system call failed (return=-1)
+ *		Log the errno and Issue a FAIL message.
+ *	  Otherwise, Issue a PASS message.
+ * 
+ * 	Cleanup:
+ * 	  Print errno log and/or timing stats if options given
+ * 
+ * 
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
 #include <sys/types.h>
@@ -117,7 +117,7 @@
 #include <string.h>
 #include <signal.h>
 #include <unistd.h>
-#include <sys/param.h>  /* for PATH_MAX */
+#include <sys/param.h>		/* for PATH_MAX */
 #include "test.h"
 #include "usctest.h"
 
@@ -127,13 +127,13 @@ void cleanup();
 
 extern char *get_high_address();
 
-char *TCID"unlink07";  /* Test program identifier.    */
-int TST_TOTAL6;   /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID="unlink07";		/* Test program identifier.    */
+int TST_TOTAL=6;    		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-int exp_enos[]{0, 0};
+int exp_enos[]={0, 0};
 
-char * bad_addr  0;
+char * bad_addr = 0;
 
 int longpath_setup();
 int no_setup();
@@ -146,16 +146,16 @@ struct test_case_t {
    char *desc;
    int exp_errno;
    int (*setupfunc)();
-} Test_cases[]  {
+} Test_cases[] = {
     { "nonexistfile", "non-existent file", ENOENT, no_setup},
     { "", "path is empty string", ENOENT, no_setup},
     { "nefile/file", "path contains a non-existent file",
-  ENOENT, no_setup },
+		ENOENT, no_setup },
 #if !defined(UCLINUX)
     { High_address, "address beyond address space", EFAULT, no_setup },
 #endif
     { "file/file", "path contains a regular file",
-  ENOTDIR, filepath_setup },
+		ENOTDIR, filepath_setup },
 #if !defined(UCLINUX)
     { High_address, "address beyond address space", EFAULT, no_setup },
 #endif
@@ -170,18 +170,18 @@ struct test_case_t {
 int
 main(int ac, char **av)
 {
-    int lc;  /* loop counter */
-    char *msg;  /* message returned from parse_opts */
+    int lc;		/* loop counter */
+    char *msg;		/* message returned from parse_opts */
     char *fname;
     char *desc;
     int ind;
-
+    
     /***************************************************************
      * parse standard options
      ***************************************************************/
-    if ( (msgparse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *) NULL ) {
- tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
- tst_exit();
+    if ( (msg=parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *) NULL ) {
+	tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	tst_exit();
     }
 
 
@@ -196,47 +196,47 @@ main(int ac, char **av)
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc0; TEST_LOOPING(lc); lc++) {
+    for (lc=0; TEST_LOOPING(lc); lc++) {
 
- /* reset Tst_count in case we are looping. */
- Tst_count0;
+	/* reset Tst_count in case we are looping. */
+	Tst_count=0;
+	
 
+        for (ind=0; Test_cases[ind].desc != NULL; ind++ ) {
 
-        for (ind0; Test_cases[ind].desc ! NULL; ind++ ) {
-
-     fname  Test_cases[ind].pathname;
-     desc  Test_cases[ind].desc;
+	    fname = Test_cases[ind].pathname;
+	    desc = Test_cases[ind].desc;
 
 #if !defined(UCLINUX)
-     if ( fname  High_address )
-  fname  get_high_address();
-#endif
+	    if ( fname == High_address )
+		fname = get_high_address();
+#endif       
             /*
-      *  Call unlink(2)
-      */
-     TEST(unlink(fname));
-
-     /* check return code */
-     if ( TEST_RETURN  -1 ) {
-         if ( STD_FUNCTIONAL_TEST ) {
-      if ( TEST_ERRNO  Test_cases[ind].exp_errno )
-                 tst_resm(TPASS, "unlink(<%s>) Failed, errno%d",
-       desc, TEST_ERRNO);
-      else
-   tst_resm(TFAIL,
-       "unlink(<%s>) Failed, errno%d, expected errno:%d",
+	     *  Call unlink(2)
+	     */
+	    TEST(unlink(fname));
+	
+	    /* check return code */
+	    if ( TEST_RETURN == -1 ) {
+	        if ( STD_FUNCTIONAL_TEST ) {
+		    if ( TEST_ERRNO == Test_cases[ind].exp_errno )
+	                tst_resm(TPASS, "unlink(<%s>) Failed, errno=%d",
+			    desc, TEST_ERRNO);
+		    else
+			tst_resm(TFAIL,
+			    "unlink(<%s>) Failed, errno=%d, expected errno:%d",
                             desc, TEST_ERRNO, Test_cases[ind].exp_errno);
-         }
-  else
-     Tst_count++;
-     } else  {
-         tst_resm(TFAIL,
-      "unlink(<%s>) returned %d, expected -1, errno:%d",
-      desc, TEST_RETURN, Test_cases[ind].exp_errno);
-     }
- }
-
-    } /* End for TEST_LOOPING */
+	        }
+		else
+		   Tst_count++;
+	    } else  {
+	        tst_resm(TFAIL,
+		    "unlink(<%s>) returned %d, expected -1, errno:%d",
+		    desc, TEST_RETURN, Test_cases[ind].exp_errno);
+	    }
+	}
+	
+    }	/* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -244,12 +244,12 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-} /* End main */
+}	/* End main */
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void
+void 
 setup()
 {
     int ind;
@@ -263,24 +263,24 @@ setup()
     /* make a temp directory and cd to it */
     tst_tmpdir();
 
-    bad_addr  mmap(0, 1, PROT_NONE, MAP_PRIVATE|MAP_ANONYMOUS, 0, 0);
-    if (bad_addr  MAP_FAILED) {
- tst_brkm(TBROK, cleanup, "mmap failed");
+    bad_addr = mmap(0, 1, PROT_NONE, MAP_PRIVATE|MAP_ANONYMOUS, 0, 0);
+    if (bad_addr == MAP_FAILED) {
+	tst_brkm(TBROK, cleanup, "mmap failed");
     }
-    Test_cases[7].pathname  bad_addr;
+    Test_cases[7].pathname = bad_addr;
 
-    for (ind0; Test_cases[ind].desc ! NULL; ind++ ) {
- Test_cases[ind].setupfunc();
+    for (ind=0; Test_cases[ind].desc != NULL; ind++ ) {
+	Test_cases[ind].setupfunc();
     }
 
-} /* End setup() */
+}	/* End setup() */
 
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *  completion or premature exit.
+ *		completion or premature exit.
  ***************************************************************/
-void
+void 
 cleanup()
 {
     chmod("unwrite_dir", 0777);
@@ -298,7 +298,7 @@ cleanup()
     /* exit with return code appropriate for results */
     tst_exit();
 
-} /* End cleanup() */
+}	/* End cleanup() */
 
 /******************************************************************
  *
@@ -317,8 +317,8 @@ longpath_setup()
 {
    int ind;
 
-    for(ind0; ind< PATH_MAX+1; ind++) {
- Longpathname[ind]  'a';
+    for(ind=0; ind<= PATH_MAX+1; ind++) {
+	Longpathname[ind] = 'a';
     }
     return 0;
 
@@ -331,9 +331,9 @@ filepath_setup()
 {
     int fd;
 
-    if ( (fdcreat("file", 0777))  -1 ) {
- tst_brkm(TBROK, cleanup, "creat(file) failed, errno:%d %s",
-     errno, strerror(errno));
+    if ( (fd=creat("file", 0777)) == -1 ) {
+	tst_brkm(TBROK, cleanup, "creat(file) failed, errno:%d %s",
+	    errno, strerror(errno));
     }
     close(fd);
     return 0;

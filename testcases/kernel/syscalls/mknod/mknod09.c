@@ -20,7 +20,7 @@
  * Test Name: mknod09
  *
  * Test Description:
- *  Verify that, mknod() fails with -1 and sets errno to EINVAL if the mode is
+ *  Verify that, mknod() fails with -1 and sets errno to EINVAL if the mode is 
  *  different than a normal file, device special file or FIFO.
  *
  * Expected Result:
@@ -36,13 +36,13 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed (return-1)
- *   if errno set  expected errno
- *  Issue sys call fails with expected return value and errno.
+ *   Check return code, if system call failed (return=-1)
+ *   	if errno set == expected errno
+ *   		Issue sys call fails with expected return value and errno.
+ *   	Otherwise,
+ *		Issue sys call fails with unexpected errno.
  *   Otherwise,
- *  Issue sys call fails with unexpected errno.
- *   Otherwise,
- * Issue sys call returns unexpected value.
+ *	Issue sys call returns unexpected value.
  *
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
@@ -53,13 +53,13 @@
  *     where,  -c n : Run n copies concurrently.
  *             -e   : Turn on errno logging.
  *             -f   : Turn off functionality Testing.
- *        -i n : Execute test n times.
- *        -I x : Execute test for x seconds.
- *        -P x : Pause for x seconds between iterations.
- *        -t   : Turn on syscall timing.
+ *	       -i n : Execute test n times.
+ *	       -I x : Execute test for x seconds.
+ *	       -P x : Pause for x seconds between iterations.
+ *	       -t   : Turn on syscall timing.
  *
  * HISTORY
- * 05/2002 Ported by André Merlier
+ *	05/2002 Ported by André Merlier
  *
  * RESTRICTIONS:
  *  This test should be run by 'super-user' (root) only.
@@ -71,78 +71,78 @@
 #include "test.h"
 #include "usctest.h"
 
-#define MODE_RWX S_IFMT  /* mode different from those expected */
-#define TNODE  "tnode" /*pathname */
+#define MODE_RWX	S_IFMT		/* mode different from those expected */
+#define TNODE		"tnode"	/*pathname */
 
-char *TCID"mknod09";           /* Test program identifier.    */
-int TST_TOTAL  1;  /* Total number of test cases. */
+char *TCID="mknod09";           /* Test program identifier.    */
+int TST_TOTAL = 1;		/* Total number of test cases. */
 extern int Tst_count;           /* Test Case counter for tst_* routines */
-int exp_enos[]  {EINVAL, 0};
+int exp_enos[] = {EINVAL, 0};
 
-void setup();   /* setup function for the test */
-void cleanup();   /* cleanup function for the test */
+void setup();			/* setup function for the test */
+void cleanup();			/* cleanup function for the test */
 
 int
 main(int ac, char **av)
 {
- int lc;   /* loop counter */
- char *msg;  /* message returned from parse_opts */
- char *test_desc;        /* test specific error message */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
+	char *test_desc;        /* test specific error message */
 
- /* Parse standard options given to run the test. */
- msg  parse_opts(ac, av, (option_t *) NULL, NULL);
- if (msg ! (char *) NULL) {
-  tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-  tst_exit();
- }
+	/* Parse standard options given to run the test. */
+	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
+	if (msg != (char *) NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+		tst_exit();
+	}
 
- /* Perform global setup for test */
- setup();
+	/* Perform global setup for test */
+	setup();
+	
+	/* set the expected errnos... */
+	TEST_EXP_ENOS(exp_enos);
 
- /* set the expected errnos... */
- TEST_EXP_ENOS(exp_enos);
+	/* Check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		test_desc = "EINVAL";
+		
+		/* Reset Tst_count in case we are looping. */
+		Tst_count=0;
 
- /* Check looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  test_desc  "EINVAL";
+		/*
+		* Call mknod(2) to test condition.
+		* verify that it fails with -1 return value and
+		* sets appropriate errno.
+		*/
+		TEST(mknod(TNODE, MODE_RWX, 0));
+		
+		/* Check return code from mknod(2) */
+		if (TEST_RETURN != -1) {
+			tst_resm(TFAIL,"mknod() returned %d,"
+				 "expected -1, errno=%d",TEST_RETURN,
+				 exp_enos[0]);
+		}
+		else{
+			TEST_ERROR_LOG(TEST_ERRNO);
+			
+			if (TEST_ERRNO == exp_enos[0]) {
+				tst_resm(TPASS,"mknod() fails with expected "
+				"error EINVAL errno:%d",TEST_ERRNO);
+			} else {
+				tst_resm(TFAIL, "mknod() fails, %s, "
+					 "errno=%d, expected errno=%d",
+					 test_desc, TEST_ERRNO,
+					 exp_enos[0]);
+			}
+		}
+   	}
 
-  /* Reset Tst_count in case we are looping. */
-  Tst_count0;
+	/* Call cleanup */
+	cleanup();
 
-  /*
-  * Call mknod(2) to test condition.
-  * verify that it fails with -1 return value and
-  * sets appropriate errno.
-  */
-  TEST(mknod(TNODE, MODE_RWX, 0));
-
-  /* Check return code from mknod(2) */
-  if (TEST_RETURN ! -1) {
-   tst_resm(TFAIL,"mknod() returned %d,"
-     "expected -1, errno%d",TEST_RETURN,
-     exp_enos[0]);
-  }
-  else{
-   TEST_ERROR_LOG(TEST_ERRNO);
-
-   if (TEST_ERRNO  exp_enos[0]) {
-    tst_resm(TPASS,"mknod() fails with expected "
-    "error EINVAL errno:%d",TEST_ERRNO);
-   } else {
-    tst_resm(TFAIL, "mknod() fails, %s, "
-      "errno%d, expected errno%d",
-      test_desc, TEST_ERRNO,
-      exp_enos[0]);
-   }
-  }
-   }
-
- /* Call cleanup */
- cleanup();
-
- /*NOTREACHED*/
- return(0);
-} /* End main */
+	/*NOTREACHED*/
+	return(0);
+}	/* End main */
 
 /*
  * setup(void)
@@ -150,20 +150,20 @@ main(int ac, char **av)
 void
 setup()
 {
- /* Capture unexpected signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* Capture unexpected signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Check that the test process id is super/root  */
- if (geteuid() ! 0) {
-  tst_brkm(TBROK, NULL, "Must be super/root for this test!");
-  tst_exit();
- }
+	/* Check that the test process id is super/root  */
+	if (geteuid() != 0) {
+		tst_brkm(TBROK, NULL, "Must be super/root for this test!"); 
+		tst_exit();
+	}
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /* Make a temp dir and cd to it */
- tst_tmpdir();
+	/* Make a temp dir and cd to it */
+	tst_tmpdir();
 }
 
 /*
@@ -172,15 +172,15 @@ setup()
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* Remove files and temporary directory created */
- tst_rmdir();
-
- /* exit with return code appropriate for results */
- tst_exit();
+	/* Remove files and temporary directory created */
+	tst_rmdir();
+  
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

@@ -20,7 +20,7 @@
 
 
 /* ftruncate was formerly an XOPEN extension. We define _XOPEN_SOURCE here to
-   avoid warning if the implementation does not program ftruncate as a base
+   avoid warning if the implementation does not program ftruncate as a base 
    interface */
 #define _XOPEN_SOURCE 600
 
@@ -37,68 +37,68 @@
 #define SHM_NAME "posixtest_28-1"
 
 int main() {
- int fd;
- char str[BUF_SIZE]  "qwerty";
- char *buf;
+	int fd;
+	char str[BUF_SIZE] = "qwerty";
+	char *buf;
+	
+	fd = shm_open(SHM_NAME, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
+	if(fd == -1) {
+		perror("An error occurs when calling shm_open()");
+		return PTS_UNRESOLVED;
+	}
+	
+	if(ftruncate(fd, BUF_SIZE) != 0) {
+		perror("An error occurs when calling ftruncate()");
+		shm_unlink(SHM_NAME);
+		return PTS_UNRESOLVED;	
+	}
 
- fd  shm_open(SHM_NAME, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
- if(fd  -1) {
-  perror("An error occurs when calling shm_open()");
-  return PTS_UNRESOLVED;
- }
+	buf = mmap(NULL, BUF_SIZE, PROT_WRITE, MAP_SHARED, fd, 0);
+	if( buf == MAP_FAILED) {
+		perror("An error occurs when calling mmap()");
+		shm_unlink(SHM_NAME);
+		return PTS_UNRESOLVED;	
+	}	
 
- if(ftruncate(fd, BUF_SIZE) ! 0) {
-  perror("An error occurs when calling ftruncate()");
-  shm_unlink(SHM_NAME);
-  return PTS_UNRESOLVED;
- }
+	strcpy(buf, str);
+	
+	if(munmap(buf, BUF_SIZE) != 0) {
+		perror("An error occurs when calling munmap()");
+		shm_unlink(SHM_NAME);
+		return PTS_UNRESOLVED;	
+	}	
 
- buf  mmap(NULL, BUF_SIZE, PROT_WRITE, MAP_SHARED, fd, 0);
- if( buf  MAP_FAILED) {
-  perror("An error occurs when calling mmap()");
-  shm_unlink(SHM_NAME);
-  return PTS_UNRESOLVED;
- }
-
- strcpy(buf, str);
-
- if(munmap(buf, BUF_SIZE) ! 0) {
-  perror("An error occurs when calling munmap()");
-  shm_unlink(SHM_NAME);
-  return PTS_UNRESOLVED;
- }
-
- if(close(fd) ! 0) {
-  perror("An error occurs when calling close()");
-  shm_unlink(SHM_NAME);
-  return PTS_UNRESOLVED;
- }
+	if(close(fd) != 0) {
+		perror("An error occurs when calling close()");
+		shm_unlink(SHM_NAME);
+		return PTS_UNRESOLVED;	
+	}	
 
         /* Now, there are no more reference on SHM_NAME but it is not unlink */
 
- fd  shm_open(SHM_NAME, O_RDONLY, S_IRUSR|S_IWUSR);
- if(fd  -1 && errno  ENOENT) {
-  printf("The name of the shared memory object was removed.\n");
-  return PTS_FAIL;
- } else if(fd  -1) {
-  perror("An error occurs when calling shm_open()");
-  shm_unlink(SHM_NAME);
-  return PTS_UNRESOLVED;
- }
+	fd = shm_open(SHM_NAME, O_RDONLY, S_IRUSR|S_IWUSR);
+	if(fd == -1 && errno == ENOENT) {
+		printf("The name of the shared memory object was removed.\n");
+		return PTS_FAIL;
+	} else if(fd == -1) {
+		perror("An error occurs when calling shm_open()");
+		shm_unlink(SHM_NAME);
+		return PTS_UNRESOLVED;
+	}
 
- buf  mmap(NULL, BUF_SIZE, PROT_READ, MAP_SHARED, fd, 0);
- if( buf  MAP_FAILED) {
-  perror("An error occurs when calling mmap()");
-  shm_unlink(SHM_NAME);
-  return PTS_UNRESOLVED;
- }
+	buf = mmap(NULL, BUF_SIZE, PROT_READ, MAP_SHARED, fd, 0);
+	if( buf == MAP_FAILED) {
+		perror("An error occurs when calling mmap()");
+		shm_unlink(SHM_NAME);
+		return PTS_UNRESOLVED;	
+	}	
 
- if(strcmp(buf, str)  0) {
-  printf("Test PASSED\n");
-  shm_unlink(SHM_NAME);
-  return PTS_PASS;
- }
- printf("The content of the shared memory object was removed.\n");
- shm_unlink(SHM_NAME);
- return PTS_FAIL;
+	if(strcmp(buf, str) == 0) {
+		printf("Test PASSED\n");
+		shm_unlink(SHM_NAME);
+		return PTS_PASS;
+	}
+	printf("The content of the shared memory object was removed.\n");
+	shm_unlink(SHM_NAME);
+	return PTS_FAIL;
 }

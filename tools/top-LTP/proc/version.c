@@ -36,15 +36,15 @@ int linux_version_code = 0;
 static void init_Linux_version(void) __attribute__((constructor));
 static void init_Linux_version(void) {
     static struct utsname uts;
-    int x = 0, y = 0, z = 0; /* cleared in case sscanf() < 3 */
-
+    int x = 0, y = 0, z = 0;	/* cleared in case sscanf() < 3 */
+    
     if (linux_version_code) return;
-    if (uname(&uts) == -1) /* failure implies impending death */
- exit(1);
+    if (uname(&uts) == -1)	/* failure implies impending death */
+	exit(1);
     if (sscanf(uts.release, "%d.%d.%d", &x, &y, &z) < 3)
- fprintf(stderr,  /* *very* unlikely to happen by accident */
-  "Non-standard uts for running kernel:\n"
-  "release %s=%d.%d.%d gives version code %d\n",
-  uts.release, x, y, z, LINUX_VERSION(x,y,z));
+	fprintf(stderr,		/* *very* unlikely to happen by accident */
+		"Non-standard uts for running kernel:\n"
+		"release %s=%d.%d.%d gives version code %d\n",
+		uts.release, x, y, z, LINUX_VERSION(x,y,z));
     linux_version_code = LINUX_VERSION(x, y, z);
 }

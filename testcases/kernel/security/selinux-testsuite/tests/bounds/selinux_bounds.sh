@@ -10,149 +10,149 @@
 
 setup()
 {
- export TCID="setup"
- export TST_COUNT=0
- export TST_TOTAL=4
+	export TCID="setup"
+	export TST_COUNT=0
+	export TST_TOTAL=4
 
- # Remove any leftover test directories from prior failed runs.
- rm -rf $SELINUXTMPDIR/bounds_file*
+	# Remove any leftover test directories from prior failed runs.
+	rm -rf $SELINUXTMPDIR/bounds_file*
 
- # Create test files
- dd if=/dev/zero of=$SELINUXTMPDIR/bounds_file      count=1
- dd if=/dev/zero of=$SELINUXTMPDIR/bounds_file_red  count=1
+	# Create test files
+	dd if=/dev/zero of=$SELINUXTMPDIR/bounds_file      count=1
+	dd if=/dev/zero of=$SELINUXTMPDIR/bounds_file_red  count=1
         dd if=/dev/zero of=$SELINUXTMPDIR/bounds_file_blue count=1
- chcon -t test_bounds_file_t      $SELINUXTMPDIR/bounds_file
- chcon -t test_bounds_file_red_t  $SELINUXTMPDIR/bounds_file_red
- chcon -t test_bounds_file_blue_t $SELINUXTMPDIR/bounds_file_blue
+	chcon -t test_bounds_file_t      $SELINUXTMPDIR/bounds_file
+	chcon -t test_bounds_file_red_t  $SELINUXTMPDIR/bounds_file_red
+	chcon -t test_bounds_file_blue_t $SELINUXTMPDIR/bounds_file_blue
 }
 
 test01()
 {
- TCID="test01"
- TST_COUNT=1
- RC=0
+	TCID="test01"
+	TST_COUNT=1
+	RC=0
 
- runcon -t test_bounds_parent_t \
-        -- selinux_bounds_thread test_bounds_child_t 2>&1
- RC=$?
- if [ $RC -eq 0 ];
- then
-  echo "$TCID   PASS : thread dyntrans passed."
- else
-  echo "$TCID   FAIL : thread dynstrans failed."
- fi
- return $RC
+	runcon -t test_bounds_parent_t \
+	       -- selinux_bounds_thread test_bounds_child_t 2>&1
+	RC=$?
+	if [ $RC -eq 0 ];
+	then
+		echo "$TCID   PASS : thread dyntrans passed."
+	else
+		echo "$TCID   FAIL : thread dynstrans failed."
+	fi
+	return $RC
 }
 
 test02()
 {
- TCID="test02"
- TST_COUND=2
- RC=0
+	TCID="test02"
+	TST_COUND=2
+	RC=0
 
- runcon -t test_bounds_parent_t \
-        -- selinux_bounds_thread test_bounds_unbound_t 2>&1
- RC=$?
- if [ $RC -ne 0 ]; # we expect this to fail
- then
-  echo "$TCID   PASS : thread dyntrans to unbound domain failed."
-  RC=0
- else
-  echo "$TCID   FAIL : thread dyntrans to unbound domain succeeded."
-  RC=1
- fi
- return $RC
+	runcon -t test_bounds_parent_t \
+	       -- selinux_bounds_thread test_bounds_unbound_t 2>&1
+	RC=$?
+	if [ $RC -ne 0 ];	# we expect this to fail
+	then
+		echo "$TCID   PASS : thread dyntrans to unbound domain failed."
+		RC=0
+	else
+		echo "$TCID   FAIL : thread dyntrans to unbound domain succeeded."
+		RC=1
+	fi
+	return $RC
 }
 
 test03()
 {
- TCID="test03"
- TST_COUND=3
- RC=0
+	TCID="test03"
+	TST_COUND=3
+	RC=0
 
- runcon -t test_bounds_child_t \
-  -- dd if=$SELINUXTMPDIR/bounds_file of=/dev/null count=1
- RC=$?
- if [ $RC -eq 0 ];
- then
-  echo "$TCID   PASS : unbounded action to be allowed."
- else
-  echo "$TCID   FAIL : unbounded action to be allowed."
- fi
- return $RC
+	runcon -t test_bounds_child_t \
+		-- dd if=$SELINUXTMPDIR/bounds_file of=/dev/null count=1
+	RC=$?
+	if [ $RC -eq 0 ];
+	then
+		echo "$TCID   PASS : unbounded action to be allowed."
+	else
+		echo "$TCID   FAIL : unbounded action to be allowed."
+	fi
+	return $RC
 }
 
 test04()
 {
- TCID="test04"
- TST_COUNT=4
- RC=0
+	TCID="test04"
+	TST_COUNT=4
+	RC=0
 
- runcon -t test_bounds_child_t \
-  -- dd if=/dev/zero of=$SELINUXTMPDIR/bounds_file count=1
- RC=$?
- if [ $RC -ne 0 ]; # we expect this to fail
- then
-  echo "$TCID   PASS : bounded action to be denied."
-  RC=0
- else
-  echo "$TCID   FAIL : bounded action to be denied."
-  RC=1
- fi
- return $RC
+	runcon -t test_bounds_child_t \
+		-- dd if=/dev/zero of=$SELINUXTMPDIR/bounds_file count=1
+	RC=$?
+	if [ $RC -ne 0 ];	# we expect this to fail
+	then
+		echo "$TCID   PASS : bounded action to be denied."
+		RC=0
+	else
+		echo "$TCID   FAIL : bounded action to be denied."
+		RC=1
+	fi
+	return $RC
 }
 
 test05()
 {
- TCID="test05"
- TST_COUNT=5
- RC=0
+	TCID="test05"
+	TST_COUNT=5
+	RC=0
 
- runcon -t test_bounds_parent_t \
-        -- dd if=/dev/zero of=$SELINUXTMPDIR/bounds_file_red count=1
- RC=$?
- if [ $RC -ne 0 ]; # we expect this to fail
- then
-  echo "$TCID   PASS : actions to bounded type to be denied."
-  RC=0
- else
-  echo "$TCID   FAIL : actions to bounded type to be denied."
-  RC=1
- fi
- return $RC
+	runcon -t test_bounds_parent_t \
+	       -- dd if=/dev/zero of=$SELINUXTMPDIR/bounds_file_red count=1
+	RC=$?
+	if [ $RC -ne 0 ];	# we expect this to fail
+	then
+		echo "$TCID   PASS : actions to bounded type to be denied."
+		RC=0
+	else
+		echo "$TCID   FAIL : actions to bounded type to be denied."
+		RC=1
+	fi
+	return $RC
 }
 
 test06()
 {
- TCID="test06"
- TST_COUNT=6
- RC=0
+	TCID="test06"
+	TST_COUNT=6
+	RC=0
 
- runcon -t test_bounds_child_t -- chmod 0777 $SELINUXTMPDIR/bounds_file_blue
- RC=$?
- if [ $RC -eq 0 ];
- then
-  echo "$TCID   PASS : bounds of subject can setattr bounds of target"
- else
-  echo "$TCID   FAIL : bounds of subject can setattr bounds of target"
- fi
- return $RC
+	runcon -t test_bounds_child_t -- chmod 0777 $SELINUXTMPDIR/bounds_file_blue
+	RC=$?
+	if [ $RC -eq 0 ];
+	then
+		echo "$TCID   PASS : bounds of subject can setattr bounds of target"
+	else
+		echo "$TCID   FAIL : bounds of subject can setattr bounds of target"
+	fi
+	return $RC
 }
 
 cleanup()
 {
- # Cleanup
- rm -rf $SELINUXTMPDIR/bounds_file*
+	# Cleanup
+	rm -rf $SELINUXTMPDIR/bounds_file*
 }
 
-# Function: main
+# Function:	main
 #
-# Description: - Execute all tests, exit with test status.
+# Description:	- Execute all tests, exit with test status.
 #
-# Exit:  - zero on success
-#  - non-zero on failure.
+# Exit:		- zero on success
+#		- non-zero on failure.
 #
-RC=0 # Return value from setup, and test functions.
+RC=0	# Return value from setup, and test functions.
 EXIT_VAL=0
 
 setup

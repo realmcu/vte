@@ -32,46 +32,46 @@
  */
 /* $Id: getgroups01.c,v 1.4 2006/10/30 16:16:07 vapier Exp $ */
 /***********************************************************************
-TEST IDENTIFIER:  getgroups01 : Getgroups system call critical test
+TEST IDENTIFIER:  getgroups01 :	Getgroups system call critical test
 
 PARENT DOCUMENT:  ggrtds01:  Getgroups system call test design spec
 
 AUTHOR: Barrie Kletscher
- Rewrote :  11-92 by Richard Logan
+	Rewrote :  11-92 by Richard Logan
 
 CO-PILOT: Dave Baumgartner
 
 TEST ITEMS:
- 1. Check to see if getgroups(-1, gidset) fails and sets errno to EINVAL
- 2. Check to see if getgroups(0, gidset) does not return -1 and gidset is
-  not modified.
- 3. Check to see if getgroups(x, gigset) fails and sets errno to EINVAL,
-  where x is one less then what is returned by getgroups(0, gidset).
- 4. Check to see if getgroups() succeeds and gidset contains
-  group id returned from getgid().
+	1. Check to see if getgroups(-1, gidset) fails and sets errno to EINVAL
+	2. Check to see if getgroups(0, gidset) does not return -1 and gidset is
+		not modified.
+	3. Check to see if getgroups(x, gigset) fails and sets errno to EINVAL,
+		where x is one less then what is returned by getgroups(0, gidset).
+	4. Check to see if getgroups() succeeds and gidset contains
+		group id returned from getgid().
 
 INPUT SPECIFICATIONS:
- NONE
+	NONE
 
 OUTPUT SPECIFICATIONS:
- Standard tst_res output format
+	Standard tst_res output format
 
 ENVIRONMENTAL NEEDS:
- NONE.
+	NONE.
 
 SPECIAL PROCEDURAL REQUIREMENTS:
- None
+	None
 
 INTERCASE DEPENDENCIES:
- Test case #3 depends on test case #2.
+	Test case #3 depends on test case #2.
 
 DETAILED DESCRIPTION:
- Set up the signal handling capabilities.
- execute tests
- exit
+	Set up the signal handling capabilities.
+	execute tests
+	exit
 
 BUGS:
- None known.
+	None known.
 
 ************************************************************/
 
@@ -88,11 +88,11 @@ BUGS:
 void setup();
 void cleanup();
 
-char *TCID"getgroups01";          /* Test program identifier.    */
-int TST_TOTAL4;                /* Total number of test cases. */
+char *TCID="getgroups01";          /* Test program identifier.    */
+int TST_TOTAL=4;                /* Total number of test cases. */
 extern int Tst_count;           /* Test Case counter for tst_* routines */
 
-gid_t gidset[NGROUPS]; /* storage for all group ids */
+gid_t gidset[NGROUPS];	/* storage for all group ids */
 gid_t cmpset[NGROUPS];
 
 /***********************************************************************
@@ -104,13 +104,13 @@ main(int ac, char **av)
     int lc;             /* loop counter */
     char *ptr;          /* message returned from parse_opts */
 
-    int i,   /* counter */
- group,   /* return value from Getgid() call */
- entries;  /* number of group entries */
+    int	i,			/* counter */
+	group,			/* return value from Getgid() call */
+	entries;		/* number of group entries */
 
     int ret;
     int ret2;
-    int errors  0;
+    int errors = 0;
     char msg[500];
 
     /* Initialize the group access list */
@@ -118,7 +118,7 @@ main(int ac, char **av)
     /***************************************************************
      * parse standard options, and exit if there is an error
      ***************************************************************/
-    if ( (ptrparse_opts(ac, av, (option_t *) NULL, NULL)) ! (char *) NULL ) {
+    if ( (ptr=parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *) NULL ) {
         tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", ptr);
         tst_exit();
     }
@@ -131,158 +131,158 @@ main(int ac, char **av)
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc0; TEST_LOOPING(lc); lc++) {
+    for (lc=0; TEST_LOOPING(lc); lc++) {
 
         /* reset Tst_count in case we are looping. */
-        Tst_count0;
+        Tst_count=0;
 
 
         /*
          * Check to see if getgroups() fails on erraneous condition.
          */
- TEST( getgroups(-1,gidset) );
+	TEST( getgroups(-1,gidset) );
+	
+	if((ret=TEST_RETURN) != -1) {
+		sprintf(msg,
+		    "getgroups(-1,gidset) returned %d, expected -1 and errno = EINVAL",
+		    ret);
+		tst_resm(TFAIL,msg);
+		errors++;
+	}
+	else if ( STD_FUNCTIONAL_TEST ) {
+		if(errno != EINVAL) {
+		    sprintf(msg,
+			"getgroups(-1,gidset) returned %d, errno = %d, expected errno %d (EINVAL)",
+			ret, errno, EINVAL);
+		    tst_resm(TFAIL,msg);
+		    errors++;
+	        }
+		else {
+		    sprintf(msg,
+		    "getgroups(-1,gidset) returned %d and error = %d (EINVAL) as expected",
+		    ret, errno);
+		    tst_resm(TPASS, msg);
+	        }
+	}
 
- if((retTEST_RETURN) ! -1) {
-  sprintf(msg,
-      "getgroups(-1,gidset) returned %d, expected -1 and errno  EINVAL",
-      ret);
-  tst_resm(TFAIL,msg);
-  errors++;
- }
- else if ( STD_FUNCTIONAL_TEST ) {
-  if(errno ! EINVAL) {
-      sprintf(msg,
-   "getgroups(-1,gidset) returned %d, errno  %d, expected errno %d (EINVAL)",
-   ret, errno, EINVAL);
-      tst_resm(TFAIL,msg);
-      errors++;
-         }
-  else {
-      sprintf(msg,
-      "getgroups(-1,gidset) returned %d and error  %d (EINVAL) as expected",
-      ret, errno);
-      tst_resm(TPASS, msg);
-         }
- }
+	/*
+	 * Check that if ngrps is zero that the number of groups is return and
+	 * the the gidset array is not modified.
+	 * This is a POSIX special case.
+	 */
 
- /*
-  * Check that if ngrps is zero that the number of groups is return and
-  * the the gidset array is not modified.
-  * This is a POSIX special case.
-  */
+	memset(gidset, 052, NGROUPS);
+	memset(cmpset, 052, NGROUPS);
 
- memset(gidset, 052, NGROUPS);
- memset(cmpset, 052, NGROUPS);
+	TEST( getgroups(0,gidset) );
+	if((ret=TEST_RETURN) < 0) {
+		sprintf(msg,
+		    "getgroups(0,gidset) returned %d with errno = %d, expected num gids with no change to gidset",
+		    ret, errno);
+		tst_resm(TFAIL,msg);
+		errors++;
+	}
+	else if ( STD_FUNCTIONAL_TEST ) {
+	    /*
+	     * check that gidset was unchanged
+	     */
+	    if ( memcmp(cmpset, gidset, NGROUPS) != 0 ) {
+		sprintf(msg,
+		    "getgroups(0,gidset) returned %d, the gidset array was modified",
+		    ret);
+	        tst_resm(TFAIL,msg);
+		errors++;
+	    }
+	    else {
+		sprintf(msg,
+		    "getgroups(0,gidset) returned %d, the gidset array not was modified",
+		    ret);
+	        tst_resm(TPASS, msg);
+	    }
+	}
 
- TEST( getgroups(0,gidset) );
- if((retTEST_RETURN) < 0) {
-  sprintf(msg,
-      "getgroups(0,gidset) returned %d with errno  %d, expected num gids with no change to gidset",
-      ret, errno);
-  tst_resm(TFAIL,msg);
-  errors++;
- }
- else if ( STD_FUNCTIONAL_TEST ) {
-     /*
-      * check that gidset was unchanged
-      */
-     if ( memcmp(cmpset, gidset, NGROUPS) ! 0 ) {
-  sprintf(msg,
-      "getgroups(0,gidset) returned %d, the gidset array was modified",
-      ret);
-         tst_resm(TFAIL,msg);
-  errors++;
-     }
-     else {
-  sprintf(msg,
-      "getgroups(0,gidset) returned %d, the gidset array not was modified",
-      ret);
-         tst_resm(TPASS, msg);
-     }
- }
-
- /*
-  * Check to see that is -1 is returned and errno is set to EINVAL when
-  * ngroups is not big enough to hold all groups.
-  */
-
- if ( ret < 1 ) {
-     sprintf(msg, "getgroups(0,gidset) returned %d, Unable to test that\nusing ngrps >1 but less than number of grps", ret);
-     tst_resm(TCONF, msg);
-     errors++;
- }
- else {
-     TEST( getgroups(ret-1, gidset) );
-     if ((ret2  TEST_RETURN)  -1 ) {
-         if ( STD_FUNCTIONAL_TEST ) {
-      if (  errno ! EINVAL ) {
-          sprintf(msg,
-       "getgroups(%d, gidset) returned -1, but not errno %d (EINVAL) but %d",
-       ret-1, EINVAL, errno);
-                 tst_resm(TFAIL, msg);
-                 errors++;
-      }
-      else {
-          sprintf(msg,
+	/*
+	 * Check to see that is -1 is returned and errno is set to EINVAL when
+	 * ngroups is not big enough to hold all groups.
+	 */
+	
+	if ( ret <= 1 ) {
+	    sprintf(msg, "getgroups(0,gidset) returned %d, Unable to test that\nusing ngrps >=1 but less than number of grps", ret);
+	    tst_resm(TCONF, msg);
+	    errors++;
+	}
+	else {
+	    TEST( getgroups(ret-1, gidset) );
+	    if ((ret2 = TEST_RETURN) == -1 ) {
+	        if ( STD_FUNCTIONAL_TEST ) {
+		    if (  errno != EINVAL ) {
+		        sprintf(msg,
+			    "getgroups(%d, gidset) returned -1, but not errno %d (EINVAL) but %d",
+			    ret-1, EINVAL, errno);
+	                tst_resm(TFAIL, msg);
+	                errors++;
+		    }
+		    else {
+		        sprintf(msg,
                             "getgroups(%d, gidset) returned -1, and errno %d (EINVAL) when %d grps",
-       ret-1, errno, ret);
-                 tst_resm(TPASS, msg);
-      }
-  }
-     }
-     else {
-  sprintf(msg,
-      "getgroups(%d, gidset) returned %d, expected -1 and errno EINVAL.",
-      ret-1, ret2);
-         tst_resm(TFAIL, msg);
-         errors++;
-     }
- }
+			    ret-1, errno, ret);
+	                tst_resm(TPASS, msg);
+		    }
+		}
+	    }
+	    else {
+		sprintf(msg,
+		    "getgroups(%d, gidset) returned %d, expected -1 and errno EINVAL.",
+		    ret-1, ret2);
+	        tst_resm(TFAIL, msg);
+	        errors++;
+	    }
+	}
 
- /*
-  * Check to see if getgroups() succeeds and contains getgid's gid.
-  */
+	/*
+ 	 * Check to see if getgroups() succeeds and contains getgid's gid.
+ 	 */
 
- TEST( getgroups(NGROUPS,gidset) );
- if((entries  TEST_RETURN)  -1) {
-     sprintf(msg, "getgroups(NGROUPS,gidset) returned -1 and errno  %d", errno);
-     tst_resm(TFAIL, msg);
-     errors++;
- }
- else if ( STD_FUNCTIONAL_TEST ) {
+	TEST( getgroups(NGROUPS,gidset) );
+	if((entries = TEST_RETURN) == -1) {
+	    sprintf(msg, "getgroups(NGROUPS,gidset) returned -1 and errno = %d", errno);
+	    tst_resm(TFAIL, msg);
+	    errors++;
+	}
+	else if ( STD_FUNCTIONAL_TEST ) {
 
-     /*
-      * Check to see if getgroups() contains getgid().
-      */
+	    /*
+	     * Check to see if getgroups() contains getgid().
+	     */
 
-     group  getgid();
+	    group = getgid();
 
-     for(i  0; i < entries; i++)
-     {
-  if(gidset[i]  group)
-  {
-      sprintf(msg,
-      "getgroups(NGROUPS,gidset) ret %d contains gid %d (from getgid)",
-      entries, group);
-      tst_resm(TPASS, msg);
-      break;
-  }
-     }
+	    for(i = 0; i < entries; i++)
+	    {
+		if(gidset[i] == group)
+		{
+		    sprintf(msg,
+		    "getgroups(NGROUPS,gidset) ret %d contains gid %d (from getgid)",
+		    entries, group);
+		    tst_resm(TPASS, msg);
+		    break;
+		}
+	    }
 
-     if( i  entries ) {
-  sprintf(msg,
-      "getgroups(NGROUPS,gidset) ret %d, does not contain gid %d (from getgid)",
-      entries, group);
-  tst_resm(TFAIL,msg);
-         errors++;
-     }
- }
+	    if( i == entries ) {
+		sprintf(msg,
+		    "getgroups(NGROUPS,gidset) ret %d, does not contain gid %d (from getgid)",
+		    entries, group);
+		tst_resm(TFAIL,msg);
+	        errors++;
+	    }
+	}
 
     }
     cleanup();
 
     return 0;
-} /* end main() */
+}	/* end main() */
 
 
 /***************************************************************

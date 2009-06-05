@@ -7,7 +7,7 @@
  */
 
 /*
- * Test that mq_timedsend() returns errno  EBADF if mqdes is not open for
+ * Test that mq_timedsend() returns errno == EBADF if mqdes is not open for
  * writing.
  */
 
@@ -28,50 +28,50 @@
 int main()
 {
         char qname[NAMESIZE];
-        const char *msgptr  MSGSTR;
- struct timespec ts;
+        const char *msgptr = MSGSTR;
+	struct timespec ts;
         mqd_t queue;
- int unresolved0, failure0;
+	int unresolved=0, failure=0;
 
         sprintf(qname, "/mq_timedsend_11-2_%d", getpid());
 
-        queue  mq_open(qname, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR, NULL);
-        if (queue  (mqd_t)-1) {
+        queue = mq_open(qname, O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR, NULL);
+        if (queue == (mqd_t)-1) {
                 perror("mq_open() did not return success");
                 return PTS_UNRESOLVED;
         }
 
- ts.tv_sectime(NULL)+1;
- ts.tv_nsec0;
-        if (mq_timedsend(queue, msgptr, strlen(msgptr), 1, &ts) ! -1) {
+	ts.tv_sec=time(NULL)+1;
+	ts.tv_nsec=0;
+        if (mq_timedsend(queue, msgptr, strlen(msgptr), 1, &ts) != -1) {
                 printf("mq_timedsend() did not return -1 on invalid queue\n");
-  failure1;
+		failure=1;
         }
 
- if (errno ! EBADF) {
-  printf("errno ! EBADF\n");
-  failure  1;
- }
+	if (errno != EBADF) {
+		printf("errno != EBADF\n");
+		failure = 1;
+	}
 
-        if (mq_close(queue) ! 0) {
-  perror("mq_close() did not return success");
-  unresolved1;
+        if (mq_close(queue) != 0) {
+		perror("mq_close() did not return success");
+		unresolved=1;
         }
 
-        if (mq_unlink(qname) ! 0) {
-  perror("mq_unlink() did not return success");
-  unresolved1;
+        if (mq_unlink(qname) != 0) {
+		perror("mq_unlink() did not return success");
+		unresolved=1;
         }
 
- if (failure1) {
-  printf("Test FAILED\n");
-  return PTS_FAIL;
- }
+	if (failure==1) {
+		printf("Test FAILED\n");
+		return PTS_FAIL;
+	}
 
- if (unresolved1) {
-  printf("Test UNRESOLVED\n");
-  return PTS_UNRESOLVED;
- }
+	if (unresolved==1) {
+		printf("Test UNRESOLVED\n");
+		return PTS_UNRESOLVED;
+	}
 
         printf("Test PASSED\n");
         return PTS_PASS;

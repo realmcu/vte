@@ -36,15 +36,15 @@ medium_size=4020
 small_size=220
 
 if [ ! -d $data_dir ] ; then
- mkdir $data_dir
- chmod 777 $data_dir
+	mkdir $data_dir
+	chmod 777 $data_dir
 fi
 
 for m in .. ../.. ../../.. ../../../.. ; do
- makeit=$m/tools/make-file.sh
- if [ -e $makeit ] ; then
-  break
- fi
+	makeit=$m/tools/make-file.sh
+	if [ -e $makeit ] ; then
+		break
+	fi
 done
 
 $makeit $data_dir/$small_file $small_size
@@ -53,23 +53,23 @@ $makeit $data_dir/$large_file $large_size
 $makeit $data_dir/$jumbo_file $jumbo_size
 
 if [ ! -e $data_dir/bin.sm ] ; then
- cnt=6
- while ((cnt--)) ; do
-  gzip -1 -c datafiles/ascii.sm >> $data_dir/bin.sm
- done
+	cnt=6
+	while ((cnt--)) ; do
+		gzip -1 -c datafiles/ascii.sm >> $data_dir/bin.sm
+	done
 fi
 
 genfile() {
- local input=$data_dir/$1 output=$data_dir/$2
- local cnt=20
+	local input=$data_dir/$1 output=$data_dir/$2
+	local cnt=20
 
- if [ -e $output ] ; then
-  return 0
- fi
+	if [ -e $output ] ; then
+		return 0
+	fi
 
- while ((cnt--)) ; do
-  cat $input >> $output
- done
+	while ((cnt--)) ; do
+		cat $input >> $output
+	done
 }
 
 genfile bin.sm bin.med

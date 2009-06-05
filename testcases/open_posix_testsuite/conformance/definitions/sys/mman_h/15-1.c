@@ -1,4 +1,4 @@
-/*
+/* 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -21,7 +21,7 @@ typedef int (*msync_test)(void *, size_t, int);
 
 int dummyfcn (void)
 {
- msync_test dummyvar;
- dummyvar  msync;
- return 0;
+	msync_test dummyvar;
+	dummyvar = msync;
+	return 0;
 }

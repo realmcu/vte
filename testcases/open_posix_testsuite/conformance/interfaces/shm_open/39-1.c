@@ -7,7 +7,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- * Test that the shm_open() function sets errno  ENAMETOOLONG if the length
+ * Test that the shm_open() function sets errno = ENAMETOOLONG if the length
  * of a pathname component is longer than {NAME_MAX} (not including the
  * terminating null).
  */
@@ -22,33 +22,33 @@
 #include "posixtest.h"
 
 int main() {
- int fd, i;
- long name_max;
- char *shm_name;
+	int fd, i;
+	long name_max;
+	char *shm_name;
 
- name_max  pathconf("/", _PC_NAME_MAX);
- if(name_max  -1) {
-  perror("An error occurs when calling pathconf()");
-  return PTS_UNRESOLVED;
+	name_max = pathconf("/", _PC_NAME_MAX);
+	if(name_max == -1) {
+		perror("An error occurs when calling pathconf()");
+		return PTS_UNRESOLVED;
         }
- shm_name  malloc(name_max+3);
+	shm_name = malloc(name_max+3);
 
- shm_name[0]  '/';
- for(i1; i<name_max+2; i++)
-  shm_name[i]  'a';
- shm_name[name_max+2]  0;
+	shm_name[0] = '/';
+	for(i=1; i<name_max+2; i++)
+		shm_name[i] = 'a';
+	shm_name[name_max+2] = 0;
+	
+	fd = shm_open(shm_name, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
+	
+	if(fd == -1 && errno == ENAMETOOLONG) {
+		printf("Test PASSED\n");
+		return PTS_PASS;
+	} else if(fd != -1) {
+		printf("shm_open() success.\n");
+		shm_unlink(shm_name);
+		return PTS_FAIL;
+	}
 
- fd  shm_open(shm_name, O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
-
- if(fd  -1 && errno  ENAMETOOLONG) {
-  printf("Test PASSED\n");
-  return PTS_PASS;
- } else if(fd ! -1) {
-  printf("shm_open() success.\n");
-  shm_unlink(shm_name);
-  return PTS_FAIL;
- }
-
- perror("shm_open");
- return PTS_FAIL;
+	perror("shm_open");
+	return PTS_FAIL;
 }

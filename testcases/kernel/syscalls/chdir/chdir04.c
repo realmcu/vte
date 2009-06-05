@@ -19,24 +19,24 @@
 
 /*
  * NAME
- * chdir04.c
+ * 	chdir04.c
  *
  * DESCRIPTION
- * Testcase to test whether chdir(2) sets errno correctly.
- *
+ *	Testcase to test whether chdir(2) sets errno correctly.
+ * 
  * ALGORITHM
- * 1. Test for ENAMETOOLONG:
- *  Create a bad directory name with length more than
+ *	1.	Test for ENAMETOOLONG:
+ *		Create a bad directory name with length more than
  *
- *  VFS_MAXNAMELEN (Linux kernel variable), and attempt to
- *  chdir(2) to it.
+ *		VFS_MAXNAMELEN (Linux kernel variable), and attempt to
+ *		chdir(2) to it.
  *
- * 2. Test for ENOENT:
- *  Attempt to chdir(2) on a non-existent directory
+ *	2.	Test for ENOENT:
+ *		Attempt to chdir(2) on a non-existent directory
  *
- * 3. Test for EFAULT:
- *  Pass an address which lies outside the address space of the
- *  process, and expect an EFAULT.
+ *	3.	Test for EFAULT:
+ *		Pass an address which lies outside the address space of the
+ *		process, and expect an EFAULT.
  *
  * USAGE:  <for command-line>
  * chdir04 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
@@ -48,10 +48,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * NONE
+ *	NONE
  */
 
 #include <stdio.h>
@@ -61,99 +61,99 @@
 #include <test.h>
 #include <usctest.h>
 
-char *TCID  "chdir04";
+char *TCID = "chdir04";
 extern int Tst_count;
 
-int exp_enos[]  {ENAMETOOLONG, ENOENT, EFAULT, 0};
+int exp_enos[] = {ENAMETOOLONG, ENOENT, EFAULT, 0};
 
-char bad_dir[]  "abcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyz";
+char bad_dir[] = "abcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyz"; 
 
-char noexist_dir[]  "/tmp/noexistdir";
+char noexist_dir[] = "/tmp/noexistdir";
 
 struct test_case_t {
- char *dname;
- int error;
-} TC[]  {
- /*
-  * to test whether chdir() is setting ENAMETOOLONG if the
-  * directory is more than VFS_MAXNAMELEN
-  */
- {bad_dir, ENAMETOOLONG},
+	char *dname;
+	int error;
+} TC[] = {
+	/*
+ 	 * to test whether chdir() is setting ENAMETOOLONG if the
+	 * directory is more than VFS_MAXNAMELEN
+ 	 */
+	{bad_dir, ENAMETOOLONG},
 
- /*
-  * to test whether chdir() is setting ENOENT if the
-  * directory is not existing.
-  */
- {noexist_dir, ENOENT},
+	/*
+	 * to test whether chdir() is setting ENOENT if the
+	 * directory is not existing.
+	 */
+	{noexist_dir, ENOENT},
 
 #if !defined(UCLINUX)
- /*
-  * to test whether chdir() is setting EFAULT if the
-  * directory is an invalid address.
-  */
- {(void *)-1, EFAULT}
+	/*
+	 * to test whether chdir() is setting EFAULT if the
+	 * directory is an invalid address.
+	 */
+	{(void *)-1, EFAULT}
 #endif
 };
 
-int TST_TOTAL  (sizeof(TC) / sizeof(*TC));
+int TST_TOTAL = (sizeof(TC) / sizeof(*TC));
 
 int flag;
-#define FAILED 1
+#define	FAILED	1
 
 void setup(void);
 void cleanup(void);
 
-char * bad_addr  0;
+char * bad_addr = 0;
 
 int
 main(int ac, char **av)
 {
- int lc;    /* loop counter */
- int i;
- char *msg;   /* message returned from parse_opts */
+	int lc;				/* loop counter */
+	int i;
+	char *msg;			/* message returned from parse_opts */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	}
 
- setup();
+	setup();
 
- /* set up the expected errnos */
- TEST_EXP_ENOS(exp_enos);
+	/* set up the expected errnos */
+	TEST_EXP_ENOS(exp_enos);
 
- /* check looping state if -i option is given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+	/* check looping state if -i option is given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  /* loop through the test cases */
-  for (i0; i<TST_TOTAL; i++) {
+		/* loop through the test cases */
+		for (i=0; i<TST_TOTAL; i++) {
 
-   TEST(chdir(TC[i].dname));
+			TEST(chdir(TC[i].dname));
 
-   if (TEST_RETURN ! -1) {
-    tst_resm(TFAIL, "call succeeded unexpectedly");
-    continue;
-   }
+			if (TEST_RETURN != -1) {
+				tst_resm(TFAIL, "call succeeded unexpectedly");
+				continue;
+			}
 
-   TEST_ERROR_LOG(TEST_ERRNO);
+			TEST_ERROR_LOG(TEST_ERRNO);
 
-   if (TEST_ERRNO  TC[i].error) {
-    tst_resm(TPASS, "expected failure - "
-      "errno  %d : %s", TEST_ERRNO,
-      strerror(TEST_ERRNO));
-   } else {
-    tst_resm(TFAIL, "unexpected error - %d : %s - "
-      "expected %d", TEST_ERRNO,
-      strerror(TEST_ERRNO), TC[i].error);
-   }
-  }
- }
- cleanup();
+			if (TEST_ERRNO == TC[i].error) {
+				tst_resm(TPASS, "expected failure - "
+					 "errno = %d : %s", TEST_ERRNO,
+					 strerror(TEST_ERRNO));
+			} else {
+				tst_resm(TFAIL, "unexpected error - %d : %s - "
+					 "expected %d", TEST_ERRNO,
+					 strerror(TEST_ERRNO), TC[i].error);
+			}
+		}
+	}
+	cleanup();
 
- return 0;
- /*NOTREACHED*/
+	return 0;
+	/*NOTREACHED*/
 }
 
 /*
@@ -162,44 +162,44 @@ main(int ac, char **av)
 void
 setup()
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- /* make a temporary directory and cd to it */
- tst_tmpdir();
+	/* make a temporary directory and cd to it */
+	tst_tmpdir();
 
 #if !defined(UCLINUX)
- bad_addr  mmap(0, 1, PROT_NONE,
-   MAP_PRIVATE_EXCEPT_UCLINUX|MAP_ANONYMOUS, 0, 0);
- if (bad_addr  MAP_FAILED) {
-  tst_brkm(TBROK, cleanup, "mmap failed");
- }
- TC[2].dname  bad_addr;
+	bad_addr = mmap(0, 1, PROT_NONE,
+			MAP_PRIVATE_EXCEPT_UCLINUX|MAP_ANONYMOUS, 0, 0);
+	if (bad_addr == MAP_FAILED) {
+		tst_brkm(TBROK, cleanup, "mmap failed");
+	}
+	TC[2].dname = bad_addr;
 #endif
 }
 
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
- *        completion or premature exit.
+ *	       completion or premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /*
-  * Delete the test directory created in setup().
-  */
- tst_rmdir();
+	/*
+	 * Delete the test directory created in setup().
+	 */
+	tst_rmdir();
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

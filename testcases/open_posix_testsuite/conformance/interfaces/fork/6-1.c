@@ -53,22 +53,22 @@
 /******************************   Test framework   *****************************************/
 /********************************************************************************************/
 #include "testfrmw.h"
- #include "testfrmw.c"
+ #include "testfrmw.c" 
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);
+ * UNRESOLVED(ret, descr);  
  *    where descr is a description of the error and ret is an int (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- *
+ * 
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- *
+ * 
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- *
+ * 
  * Those may be used to output information.
  */
 
@@ -85,115 +85,115 @@
 
 int count( DIR * thedir )
 {
- int counter  0;
+	int counter = 0;
 
- struct dirent *dp;
+	struct dirent *dp;
 
- rewinddir( thedir );
+	rewinddir( thedir );
 
- /* Count the directory entries */
+	/* Count the directory entries */
 
- do
- {
-  dp  readdir( thedir );
+	do
+	{
+		dp = readdir( thedir );
 
-  if ( dp ! NULL )
-   counter++;
- }
- while ( dp ! NULL );
+		if ( dp != NULL )
+			counter++;
+	}
+	while ( dp != NULL );
 
- return counter;
+	return counter;
 }
 
 /* The main test function. */
 int main( int argc, char * argv[] )
 {
- int ret, status;
- pid_t child, ctl;
+	int ret, status;
+	pid_t child, ctl;
 
- int counted;
+	int counted;
 
- /* the '.' directory pointers */
- DIR *dotdir;
+	/* the '.' directory pointers */
+	DIR *dotdir;
 
- /* Initialize output */
- output_init();
+	/* Initialize output */
+	output_init();
 
- /* Open the directory */
- dotdir  opendir( "." );
+	/* Open the directory */
+	dotdir = opendir( "." );
 
- if ( dotdir  NULL )
- {
-  UNRESOLVED( errno, "opendir failed" );
- }
+	if ( dotdir == NULL )
+	{
+		UNRESOLVED( errno, "opendir failed" );
+	}
 
- /* Count entries */
- counted  count( dotdir );
-
-#if VERBOSE > 0
-
- output( "Found %d entries in current dir\n", counted );
-
-#endif
-
- /* Create the child */
- child  fork();
-
- if ( child  ( pid_t ) - 1 )
- {
-  UNRESOLVED( errno, "Failed to fork" );
- }
-
- /* child */
- if ( child  ( pid_t ) 0 )
- {
-  /* Count in child process */
-  counted  count( dotdir );
+	/* Count entries */
+	counted = count( dotdir );
 
 #if VERBOSE > 0
 
-  output( "Found %d entries in current dir from child\n", counted );
+	output( "Found %d entries in current dir\n", counted );
+
 #endif
 
-  ret  closedir( dotdir );
+	/* Create the child */
+	child = fork();
 
-  if ( ret ! 0 )
-  {
-   UNRESOLVED( errno, "Failed to close dir in child" );
-  }
+	if ( child == ( pid_t ) - 1 )
+	{
+		UNRESOLVED( errno, "Failed to fork" );
+	}
 
-  /* We're done */
-  exit( PTS_PASS );
- }
+	/* child */
+	if ( child == ( pid_t ) 0 )
+	{
+		/* Count in child process */
+		counted = count( dotdir );
 
- /* Parent joins the child */
- ctl  waitpid( child, &status, 0 );
-
- if ( ctl ! child )
- {
-  UNRESOLVED( errno, "Waitpid returned the wrong PID" );
- }
-
- if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) ! PTS_PASS ) )
- {
-  FAILED( "Child exited abnormally -- dir stream not copied?" );
- }
-
- /* close the directory stream */
- ret  closedir( dotdir );
-
- if ( ret ! 0 )
- {
-  UNRESOLVED( errno, "Failed to closedir in parent" );
- }
-
- /* Test passed */
 #if VERBOSE > 0
- output( "Test passed\n" );
+
+		output( "Found %d entries in current dir from child\n", counted );
+#endif
+
+		ret = closedir( dotdir );
+
+		if ( ret != 0 )
+		{
+			UNRESOLVED( errno, "Failed to close dir in child" );
+		}
+
+		/* We're done */
+		exit( PTS_PASS );
+	}
+
+	/* Parent joins the child */
+	ctl = waitpid( child, &status, 0 );
+
+	if ( ctl != child )
+	{
+		UNRESOLVED( errno, "Waitpid returned the wrong PID" );
+	}
+
+	if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) != PTS_PASS ) )
+	{
+		FAILED( "Child exited abnormally -- dir stream not copied?" );
+	}
+
+	/* close the directory stream */
+	ret = closedir( dotdir );
+
+	if ( ret != 0 )
+	{
+		UNRESOLVED( errno, "Failed to closedir in parent" );
+	}
+
+	/* Test passed */
+#if VERBOSE > 0
+	output( "Test passed\n" );
 
 #endif
 
- PASSED;
+	PASSED;
 }
 
 

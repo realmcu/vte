@@ -22,7 +22,7 @@
 
 #   Freescale Semiconductor, Inc.
 
-#
+#     
 
 ###################################################################################################
 
@@ -34,9 +34,9 @@
 
 #-------------------------   ------------    ----------  -------------------------------------------
 
-#Vincent BECKER/rc023c  31/08/2004   TLSbo40417   Initial version
+#Vincent BECKER/rc023c  31/08/2004   TLSbo40417   Initial version 
 
-#V. Becker/rc023c           27/09/2004   TLSbo40417   Inspection TLS941
+#V. Becker/rc023c           27/09/2004   TLSbo40417   Inspection TLS941 
 
 #L.Delaspre/rc149c            08/12/2004     TLSbo40142   update with Freescale identity
 
@@ -46,7 +46,7 @@
 
 ###################################################################################################
 
-#Portability: Indicate if this module is portable to other compilers or platforms.
+#Portability: Indicate if this module is portable to other compilers or platforms. 
 
 #             If not, indicate specific reasons why is it not portable.
 

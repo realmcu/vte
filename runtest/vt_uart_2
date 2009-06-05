@@ -1,0 +1,16 @@
+#VT UART drivers tests for /dev/ttymxc/1 and  /dev/ttymxc/2
+#files: uart_testapp_3 uart_testapp_4 uart_testapp_5 uart_testapp_6
+
+TGE-LV-UART-0200 uart3.sh /dev/ttymxc/1 /dev/ttymxc/2 150 none
+TGE-LV-UART-0205 uart3.sh /dev/ttymxc/1 /dev/ttymxc/2 921600 none
+TGE-LV-UART-0210 uart3.sh /dev/ttymxc/1 /dev/ttymxc/2 1500000 none
+TGE-LV-UART-0215 uart3.sh /dev/ttymxc/1 /dev/ttymxc/2 150 hard
+TGE-LV-UART-0220 uart3.sh /dev/ttymxc/1 /dev/ttymxc/2 921600 hard
+TGE-LV-UART-0225 uart3.sh /dev/ttymxc/1 /dev/ttymxc/2 1500000 hard
+TGE-LV-UART-0230 uart3.sh /dev/ttymxc/1 /dev/ttymxc/2 150 soft
+TGE-LV-UART-0235 uart3.sh /dev/ttymxc/1 /dev/ttymxc/2 921600 soft
+TGE-LV-UART-0240 uart3.sh /dev/ttymxc/1 /dev/ttymxc/2 1500000 soft
+TGE-LV-UART-0245 uart4.sh /dev/ttymxc/1 /dev/ttymxc/2
+TGE-LV-UART-0250 uart5.sh /dev/ttymxc/2
+TGE-LV-UART-0255 uart6.sh /dev/ttymxc/1 /dev/ttymxc/2
+

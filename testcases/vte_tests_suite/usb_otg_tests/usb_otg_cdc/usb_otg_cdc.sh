@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake Huang/-----             02/12/2008     N/A          Initial version
-#
+# 
 ###################################################################################################
 
 
@@ -77,8 +77,8 @@ RC=0
 #TODO add cleanup code here
 
 modprobe -r g_ether
-modprobe -r cdc_ether
-modprobe -r usbnet
+modprobe -r cdc_ether 
+modprobe -r usbnet 
 return $RC
 }
 
@@ -92,10 +92,10 @@ echo "1: icmp test"
 
 # Function:     test_case_01
 # Description   - Test if cdc icmp ok
-#
+#  
 test_case_01()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="cdc_icmp_test"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -114,7 +114,7 @@ loss=$(ping $HOSTIP -c 4 -s $i | grep "0% packet loss")
 if [ -z $loss ]
 then
 return 1
-fi
+fi 
 done
 
 
@@ -126,10 +126,10 @@ return $RC
 
 # Function:     test_case_02
 # Description   - Test if <TODO test function> ok
-#
+#  
 test_case_02()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="test_demo2_test"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -146,10 +146,10 @@ return $RC
 
 # Function:     test_case_03
 # Description   - Test if <TODO test function> ok
-#
+#  
 test_case_03()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="test_demo3_test"
 #TODO give TST_COUNT
 TST_COUNT=3
@@ -166,10 +166,10 @@ return $RC
 
 # Function:     test_case_04
 # Description   - Test if <TODO test function> ok
-#
+#  
 test_case_04()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="test_demo4_test"
 #TODO give TST_COUNT
 TST_COUNT=4
@@ -186,10 +186,10 @@ return $RC
 
 # Function:     test_case_05
 # Description   - Test if <TODO test function> ok
-#
+#  
 test_case_05()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="test_demo5_test"
 #TODO give TST_COUNT
 TST_COUNT=5
@@ -212,7 +212,7 @@ RC=0
 if [ $# -ne 1 ]
 then
 usage
-exit 1
+exit 1 
 fi
 
 HOSTIP=11.11.11.11
@@ -222,7 +222,7 @@ setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC
+  test_case_01 || exit $RC 
   ;;
 2)
   test_case_02 || exit $RC

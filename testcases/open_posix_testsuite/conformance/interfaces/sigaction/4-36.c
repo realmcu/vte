@@ -3,7 +3,7 @@
  * Copyright (c) 2002-2003, Intel Corporation. All rights reserved.
  * Created by:  rusty.lynch REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this
+ * of this license, see the COPYING file at the top level of this 
  * source tree.
 
   Test case for assertion #4 of the sigaction system call that shows
@@ -13,12 +13,12 @@
   Steps:
   1. Fork a new process
   2. (parent) wait for child
-  3. (child) Setup a signal handler for SIGPIPE with SIGSTOP added to
+  3. (child) Setup a signal handler for SIGPIPE with SIGSTOP added to 
              the signal mask
   4. (child) raise SIGPIPE
   5. (child, signal handler) raise SIGSTOP
   5. (child) If still around then return -1
-  6. (parent - returning from wait) If child was stopped then return
+  6. (parent - returning from wait) If child was stopped then return 
      kill the child and return success, otherwise fail.
 */
 
@@ -32,54 +32,54 @@
 
 void handler(int signo)
 {
- printf("About to stop child\n");
- raise(SIGSTOP);
- printf("Child has continued\n");
- exit(0);
+	printf("About to stop child\n");
+	raise(SIGSTOP);
+	printf("Child has continued\n");
+	exit(0);
 }
 
 int main()
 {
- pid_t pid;
- if ((pid = fork()) == 0) {
-  /* child */
+	pid_t pid;
+	if ((pid = fork()) == 0) {
+		/* child */
 
-  struct sigaction act;
+		struct sigaction act;
+	
+		act.sa_handler = handler;
+		act.sa_flags = 0;
+		sigemptyset(&act.sa_mask);
+		sigaddset(&act.sa_mask, SIGSTOP);
+		if (sigaction(SIGPIPE,  &act, 0) == -1) {
+			perror("Unexpected error while attempting to "
+			       "setup test pre-conditions");
+			return PTS_UNRESOLVED;
+		}
+		
+		if (raise(SIGPIPE) == -1) {
+			perror("Unexpected error while attempting to "
+			       "setup test pre-conditions");
+		}
 
-  act.sa_handler = handler;
-  act.sa_flags = 0;
-  sigemptyset(&act.sa_mask);
-  sigaddset(&act.sa_mask, SIGSTOP);
-  if (sigaction(SIGPIPE,  &act, 0) == -1) {
-   perror("Unexpected error while attempting to "
-          "setup test pre-conditions");
-   return PTS_UNRESOLVED;
-  }
+		return PTS_UNRESOLVED;
+	} else {
+		int s; 
 
-  if (raise(SIGPIPE) == -1) {
-   perror("Unexpected error while attempting to "
-          "setup test pre-conditions");
-  }
+		/* parent */
+		if (waitpid(pid, &s, WUNTRACED) == -1) {
+			perror("Unexpected error while setting up test "
+			       "pre-conditions");
+			return PTS_UNRESOLVED;
+		}
 
-  return PTS_UNRESOLVED;
- } else {
-  int s;
+		if (WIFSTOPPED(s)) {
+			printf("Test PASSED\n");
+			kill(pid, SIGKILL);
+			return PTS_PASS;
+		}
+	}
 
-  /* parent */
-  if (waitpid(pid, &s, WUNTRACED) == -1) {
-   perror("Unexpected error while setting up test "
-          "pre-conditions");
-   return PTS_UNRESOLVED;
-  }
-
-  if (WIFSTOPPED(s)) {
-   printf("Test PASSED\n");
-   kill(pid, SIGKILL);
-   return PTS_PASS;
-  }
- }
-
- printf("Test FAILED\n");
- return PTS_FAIL;
+	printf("Test FAILED\n");
+	return PTS_FAIL;	
 }
 

@@ -39,7 +39,7 @@ TARGET = auto_prepare.sh
 TARGET += storage_test.sh storage_test_concurrent.sh storage_random_test.sh usbh_test.sh usb_test.sh
 
 # usb
-TARGET += dd.exe usbd_test.pl
+TARGET += usbd_testall.pl usbd_test.pl
 
 # drivers
 TARGET += gserial.inf linux.inf usbser.sys
@@ -47,11 +47,16 @@ TARGET += gserial.inf linux.inf usbser.sys
 #performance
 TARGET += performance performance_command_line performance_prepare.sh performance_test.sh
 
-#ubi
+#ubi 
 TARGET += ubi_test.sh
 
 #usb ptp
-TARGET += usb_ptp_test.sh ptpinstall.tar.gz
+TARGET += usb_ptp_test.sh
+
+TOOL_BIN = dd.exe activeperl.rar InstallUSBCV132.msi ptpinstall.tar.gz
+
+#all modules insert and remove test 
+TARGET += modules_verify.sh
 
 all: $(TARGET)
 	@echo "***********************************************"
@@ -61,6 +66,7 @@ all: $(TARGET)
 
 install:
 	ln -f $(TARGET) ../../bin
+	-ln -f $(TOOL_BIN) ../../bin/
 	@echo "***********************************************"
 	@echo "** INSTALL : ln all storage scripts to bin   **"
 	@echo "***********************************************"

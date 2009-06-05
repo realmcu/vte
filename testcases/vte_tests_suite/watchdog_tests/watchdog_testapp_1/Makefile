@@ -16,8 +16,8 @@
 #                            Modification     Tracking
 #Author/core ID                  Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-#V Becker/rc023c              23/07/2004     TLSbo40889  Initial version
-#L Delaspre/rc149c            23/07/2004     TLSbo40891  VTE 1.4 integration
+#V Becker/rc023c              23/07/2004     TLSbo40889  Initial version 
+#L Delaspre/rc149c            23/07/2004     TLSbo40891  VTE 1.4 integration 
 #L.Delaspre/rc149c            08/12/2004     TLSbo40142  update with Freescale identity
 #V.Khalabuda/b00306           06/07/2006     TLSbo63552  Update for ArgonLV support
 #

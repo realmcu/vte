@@ -15,56 +15,56 @@
  *
  */
 /**************************************************************************
+ * 
+ *    TEST IDENTIFIER	: reboot02
  *
- *    TEST IDENTIFIER : reboot02
- *
- *
- *    EXECUTED BY : root / superuser
- *
- *    TEST TITLE : Test checking for basic error conditions
- *  for reboot(2)
- *
- *    TEST CASE TOTAL : 2
- *
- *    AUTHOR  : Aniruddha Marathe <aniruddha.marathe@wipro.com>
- *
+ * 
+ *    EXECUTED BY	: root / superuser
+ * 
+ *    TEST TITLE	: Test checking for basic error conditions
+ *    				 for reboot(2)
+ * 
+ *    TEST CASE TOTAL	: 2 
+ * 
+ *    AUTHOR		: Aniruddha Marathe <aniruddha.marathe@wipro.com>
+ * 
  *    SIGNALS
- * Uses SIGUSR1 to pause before test if option set.
- * (See the parse_opts(3) man page).
+ * 	Uses SIGUSR1 to pause before test if option set.
+ * 	(See the parse_opts(3) man page).
  *
  *    DESCRIPTION
- * This test case checks whether reboot(2) system call  returns
- * appropriate error number for invalid
- * flag parameter or invalid user.
- *
- * Setup:
- *   Setup signal handling.
- *   Pause for SIGUSR1 if option specified.
- *   For testing error on invalid user, change the effective uid
- *
- * Test:
- *   Loop if the proper options are given.
- *   Execute system call with invaid flag parameter
- *   and then for invalid user
- *   Check return code, if system call fails with errno  expected errno
- *  Issue syscall passed with expected errno
- *   Otherwise,
- *   Issue syscall failed to produce expected errno
- *
- * Cleanup:
- *   Do cleanup for the test.
- *
+ *	This test case checks whether reboot(2) system call  returns 
+ *	appropriate error number for invalid
+ *	flag parameter or invalid user.
+ * 
+ * 	Setup:
+ *	  Setup signal handling.
+ *	  Pause for SIGUSR1 if option specified.
+ *	  For testing error on invalid user, change the effective uid
+ * 
+ * 	Test:
+ *	  Loop if the proper options are given.
+ *	  Execute system call with invaid flag parameter
+ *	  and then for invalid user
+ *	  Check return code, if system call fails with errno == expected errno
+ *		Issue syscall passed with expected errno
+ *	  Otherwise, 
+ *	  Issue syscall failed to produce expected errno
+ * 
+ * 	Cleanup:
+ * 	  Do cleanup for the test.
+ * 	   
  * USAGE:  <for command-line>
  *  reboot02 [-c n] [-e] [-i n] [-I x] [-p x] [-t] [-h] [-f] [-p]
- *  where
- *  -c n: run n copies simultaneously
- * -e   : Turn on errno logging.
- * -i n : Execute test n times.
- * -I x : Execute test for x seconds.
- * -p   : Pause for SIGUSR1 before starting
- * -P x : Pause for x seconds between iterations.
- * -t   : Turn on syscall timing.
- *
+ *  where 
+ *  	-c n: run n copies simultaneously 
+ *	-e   : Turn on errno logging.
+ *	-i n : Execute test n times.
+ *	-I x : Execute test for x seconds.
+ *	-p   : Pause for SIGUSR1 before starting
+ *	-P x : Pause for x seconds between iterations.
+ *	-t   : Turn on syscall timing.
+ *		
  *RESTRICTIONS:
  *for lib4 and lib5 reboot(2) system call is implemented as
  *int reboot(int magic, int magic2, int flag, void *arg); This test case
@@ -86,90 +86,90 @@ static void setup();
 static void cleanup();
 static int setup_test();
 
-char *TCID  "reboot02"; /* Test program identifier.    */
-int TST_TOTAL  2;       /* Total number of test cases. */
-extern int Tst_count;    /* Test Case counter for tst_* routines */
-char nobody_uid[]  "nobody";
+char *TCID = "reboot02"; 	/* Test program identifier.    */
+int TST_TOTAL = 2;       	/* Total number of test cases. */
+extern int Tst_count;    	/* Test Case counter for tst_* routines */
+char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
-static int exp_enos[]  {EINVAL, EPERM, 0};
+static int exp_enos[] = {EINVAL, EPERM, 0};
 
 static struct test_case_t {
- char *err_desc;  /*error description */
- int  exp_errno;  /* expected error number*/
- char *exp_errval; /*Expected errorvalue string*/
-} testcase[]  {
- {"Invalid flag", EINVAL, "EINVAL"},
- {"Permission denied", EPERM, "EPERM "}
+	char *err_desc;		/*error description */
+	int  exp_errno;		/* expected error number*/
+	char *exp_errval;	/*Expected errorvalue string*/
+} testcase[] = {
+	{"Invalid flag", EINVAL, "EINVAL"},
+	{"Permission denied", EPERM, "EPERM "}
 };
 
 int
 main(int ac, char **av)
 {
 
- int lc, i; /* loop counter */
- char *msg; /* message returned from parse_opts */
+	int lc, i;	/* loop counter */
+	char *msg;	/* message returned from parse_opts */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL))
-  ! (char *)NULL) {
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL))
+		!= (char *)NULL) {
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	}
 
- /* perform global setup for test */
- setup();
+	/* perform global setup for test */
+	setup();
 
- /* check looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  for(i  0; i < TST_TOTAL; i++) {
+		for(i = 0; i < TST_TOTAL; i++) {
 
-   /* reset Tst_count in case we are looping. */
-   Tst_count  0;
-   if(i  0) {
-    TEST(reboot(INVALID_PARAMETER));
-   } else {
-    /*change the user to nobody*/
-    if(setup_test()  0) {
-     TEST(reboot(LINUX_REBOOT_CMD_CAD_ON));
-     /* Set effective user id back to root */
-     if (seteuid(0)  -1) {
-      tst_brkm(TBROK, cleanup,
-       "seteuid failed to "
-       "set the effective uid"
-       " to root");
-      perror("seteuid");
-     }
-    } else {
-     tst_resm(TWARN, "skipping the test");
-     continue;
-    }
-   }
-   /* check return code */
-   if ((TEST_RETURN  -1) && (TEST_ERRNO  testcase[i].
-     exp_errno)) {
-    tst_resm(TPASS, "reboot(2) expected failure;"
-      " Got errno - %s : %s",
-      testcase[i].exp_errval,
-      testcase[i].err_desc);
-   } else {
-    tst_resm(TFAIL,"reboot(2) failed to produce"
-      " expected error; %d, errno"
-            ": %s and got %d",
-      testcase[i].exp_errno,
-      testcase[i].exp_errval,
-      TEST_ERRNO);
-   }
+			/* reset Tst_count in case we are looping. */
+			Tst_count = 0;
+			if(i == 0) {
+				TEST(reboot(INVALID_PARAMETER));
+			} else {
+				/*change the user to nobody*/
+				if(setup_test() == 0) {
+					TEST(reboot(LINUX_REBOOT_CMD_CAD_ON));
+					/* Set effective user id back to root */
+					if (seteuid(0) == -1) {
+						tst_brkm(TBROK, cleanup, 
+							"seteuid failed to "
+							"set the effective uid"
+							" to root");
+						perror("seteuid");
+					}
+				} else {
+					tst_resm(TWARN, "skipping the test");
+					continue;
+				}
+			}
+			/* check return code */
+			if ((TEST_RETURN == -1) && (TEST_ERRNO == testcase[i].
+					exp_errno)) {
+				tst_resm(TPASS, "reboot(2) expected failure;"
+						" Got errno - %s : %s", 
+						testcase[i].exp_errval, 
+						testcase[i].err_desc);
+			} else {
+				tst_resm(TFAIL,"reboot(2) failed to produce"
+						" expected error; %d, errno" 
+					       ": %s and got %d", 
+						testcase[i].exp_errno, 
+						testcase[i].exp_errval, 
+						TEST_ERRNO);
+			}
 
-   TEST_ERROR_LOG(TEST_ERRNO);
-  } /*End of TEST LOOPS*/
- }  /* End of TEST_LOOPING*/
+			TEST_ERROR_LOG(TEST_ERRNO);
+		}	/*End of TEST LOOPS*/
+	}		/* End of TEST_LOOPING*/
 
- /*Clean up and exit*/
- cleanup();
+	/*Clean up and exit*/
+	cleanup();
 
- /*NOTREACHED*/
- return 0;
-} /*End of main*/
+	/*NOTREACHED*/
+	return 0;
+}	/*End of main*/
 
 /*
  * setup_test() - This function sets the user as nobdy
@@ -177,38 +177,38 @@ main(int ac, char **av)
 int
 setup_test()
 {
- if((ltpuser  getpwnam(nobody_uid))  NULL) {
-  tst_resm(TWARN, "\"nobody\" user not present. skipping test");
-  return -1;
- }
- if (seteuid(ltpuser->pw_uid)  -1) {
-  tst_resm(TWARN, "seteuid failed to "
-   "to set the effective uid to %d", ltpuser->pw_uid);
-  perror("seteuid");
-  return -1;
- }
- return 0;
+	if((ltpuser = getpwnam(nobody_uid)) == NULL) {
+		tst_resm(TWARN, "\"nobody\" user not present. skipping test");
+		return -1;
+	}
+	if (seteuid(ltpuser->pw_uid) == -1) {
+		tst_resm(TWARN, "seteuid failed to "
+			"to set the effective uid to %d", ltpuser->pw_uid);
+		perror("seteuid");
+		return -1;
+	}
+	return 0;
 }
 
 /* setup() - performs all ONE TIME setup for this test */
 void
 setup()
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* set the expected errnos... */
- TEST_EXP_ENOS(exp_enos);
+	/* set the expected errnos... */
+	TEST_EXP_ENOS(exp_enos);
 
- /* Check whether we are root*/
- if (geteuid() ! 0) {
-  tst_brkm(TBROK, tst_exit, "Test must be run as root");
- }
+	/* Check whether we are root*/
+	if (geteuid() != 0) {
+		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+	}
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
-} /* End setup() */
+}	/* End setup() */
 
 /*
 * cleanup() - Performs one time cleanup for this test at
@@ -217,13 +217,13 @@ setup()
 void
 cleanup()
 {
- /*
- * print timing stats if that option was specified.
- * print errno log if that option was specified.
- */
- TEST_CLEANUP;
+	/*
+	* print timing stats if that option was specified.
+	* print errno log if that option was specified.
+	*/
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
-} /* End cleanup() */
+	/* exit with return code appropriate for results */
+	tst_exit();
+}	/* End cleanup() */
 

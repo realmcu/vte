@@ -32,82 +32,82 @@
  */
 /* $Id: link04.c,v 1.5 2007/02/09 20:48:23 vapier Exp $ */
 /**********************************************************
- *
+ * 
  *    OS Test - Silicon Graphics, Inc.
- *
- *    TEST IDENTIFIER : link04
- *
- *    EXECUTED BY : anyone
- *
- *    TEST TITLE : Negative test cases for link(2).
- *
- *    PARENT DOCUMENT : usctpl01
- *
- *    TEST CASE TOTAL : 14
- *
- *    WALL CLOCK TIME : 1
- *
- *    CPU TYPES  : ALL
- *
- *    AUTHOR  : Richard Logan
- *
- *    CO-PILOT  : William Roske
- *
- *    DATE STARTED : 03/30/94
- *
- *    INITIAL RELEASE : UNICOS 7.0
- *
+ * 
+ *    TEST IDENTIFIER	: link04
+ * 
+ *    EXECUTED BY	: anyone
+ * 
+ *    TEST TITLE	: Negative test cases for link(2).
+ * 
+ *    PARENT DOCUMENT	: usctpl01
+ * 
+ *    TEST CASE TOTAL	: 14
+ * 
+ *    WALL CLOCK TIME	: 1
+ * 
+ *    CPU TYPES		: ALL
+ * 
+ *    AUTHOR		: Richard Logan
+ * 
+ *    CO-PILOT		: William Roske
+ * 
+ *    DATE STARTED	: 03/30/94
+ * 
+ *    INITIAL RELEASE	: UNICOS 7.0
+ * 
  *    TEST CASES
- *
- * 1-14.) link(2) returns...(See Test_cases structure below)
- *
+ * 
+ * 	1-14.) link(2) returns...(See Test_cases structure below)
+ *	
  *    INPUT SPECIFICATIONS
- * The standard options for system call tests are accepted.
- * (See the parse_opts(3) man page).
- *
+ * 	The standard options for system call tests are accepted.
+ *	(See the parse_opts(3) man page).
+ * 
  *    OUTPUT SPECIFICATIONS
- * Standard tst_res output formt.
- *
+ *	Standard tst_res output formt.
+ * 	
  *    DURATION
- * Terminates - with frequency and infinite modes.
- *
+ * 	Terminates - with frequency and infinite modes.
+ * 
  *    SIGNALS
- * Uses SIGUSR1 to pause before test if option set.
- * (See the parse_opts(3) man page).
+ * 	Uses SIGUSR1 to pause before test if option set.
+ * 	(See the parse_opts(3) man page).
  *
  *    RESOURCES
- * None
- *
+ * 	None
+ * 
  *    ENVIRONMENTAL NEEDS
  *      No run-time environmental needs.
- *
+ * 
  *    SPECIAL PROCEDURAL REQUIREMENTS
- * None
- *
+ * 	None
+ * 
  *    INTERCASE DEPENDENCIES
- * None
- *
+ * 	None
+ * 
  *    DETAILED DESCRIPTION
- * This is a Phase I test for the link(2) system call.  It is intended
- * to provide a limited exposure of the system call, for now.  It
- * should/will be extended when full functional tests are written for
- * link(2).
- *
- * Setup:
- *   Setup signal handling.
- *   Pause for SIGUSR1 if option specified.
- *
- * Test:
- *  Loop if the proper options are given.
- *   Execute system call
- *   Check return code, if system call failed (return-1)
- *  Log the errno and Issue a FAIL message.
- *   Otherwise, Issue a PASS message.
- *
- * Cleanup:
- *   Print errno log and/or timing stats if options given
- *
- *
+ *	This is a Phase I test for the link(2) system call.  It is intended
+ *	to provide a limited exposure of the system call, for now.  It
+ *	should/will be extended when full functional tests are written for
+ *	link(2).
+ * 
+ * 	Setup:
+ * 	  Setup signal handling.
+ *	  Pause for SIGUSR1 if option specified.
+ * 
+ * 	Test:
+ *	 Loop if the proper options are given.
+ * 	  Execute system call
+ *	  Check return code, if system call failed (return=-1)
+ *		Log the errno and Issue a FAIL message.
+ *	  Otherwise, Issue a PASS message.
+ * 
+ * 	Cleanup:
+ * 	  Print errno log and/or timing stats if options given
+ * 
+ * 
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
 #include <sys/types.h>
@@ -116,7 +116,7 @@
 #include <errno.h>
 #include <string.h>
 #include <signal.h>
-#include <sys/param.h>  /* for PATH_MAX */
+#include <sys/param.h>		/* for PATH_MAX */
 #include <sys/mman.h>
 #include "test.h"
 #include "usctest.h"
@@ -127,13 +127,13 @@ void cleanup();
 
 extern char *get_high_address();
 
-char *TCID"link04";/* Test program identifier.    */
-int TST_TOTAL14;   /* Total number of test cases. */
-extern int Tst_count;  /* Test Case counter for tst_* routines */
+char *TCID="link04"; 		/* Test program identifier.    */
+int TST_TOTAL=14;    		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-int exp_enos[]{0, 0};
+int exp_enos[]={0, 0};
 
-char * bad_addr  0;
+char * bad_addr = 0;
 
 int longpath_setup();
 int no_setup();
@@ -153,17 +153,17 @@ struct test_case_t {
    int exp_errno;
    int (*setupfunc1)();
    int (*setupfunc2)();
-} Test_cases[]  {
+} Test_cases[] = {
     /* This test program should contain test cases where link */
     /* will fail regardless of who executed it (i.e. joe-user or root) */
 
     /* first path is invalid */
 
     { "nonexistfile", "non-existent file", "nefile", "nefile",
- ENOENT, no_setup, no_setup},
+	ENOENT, no_setup, no_setup},
 
     { "", "path is empty string", "nefile", "nefile",
- ENOENT, no_setup, no_setup},
+	ENOENT, no_setup, no_setup},
 
     { "neefile/file", "path contains a non-existent file",  "nefile", "nefile",
         ENOENT, no_setup, no_setup },
@@ -172,39 +172,39 @@ struct test_case_t {
         ENOTDIR, filepath_setup, no_setup },
 
     { Longpathname, "pathname too long", "nefile", "nefile",
- ENAMETOOLONG, longpath_setup, no_setup },
+	ENAMETOOLONG, longpath_setup, no_setup },
 #if !defined(UCLINUX)
     { High_address, "address beyond address space", "nefile", "nefile",
- EFAULT, no_setup, no_setup },
+	EFAULT, no_setup, no_setup },
 #endif
 
     { (char *)-1, "negative address", "nefile", "nefile",
- EFAULT, no_setup, no_setup },
+	EFAULT, no_setup, no_setup },
 
     /* second path is invalid */
 
     { "regfile", "regfile", "", "empty string",
- ENOENT, no_setup, no_setup},
+	ENOENT, no_setup, no_setup},
 
     { "regfile", "regfile", "neefile/file", "path contains a non-existent file",
- ENOENT, filepath_setup, no_setup},
+	ENOENT, filepath_setup, no_setup},
 
     { "regfile", "regfile", "file/file", "path contains a regular file",
- ENOENT, filepath_setup, no_setup},
+	ENOENT, filepath_setup, no_setup},
 
     { "regfile", "regfile", Longpathname, "pathname too long",
- ENAMETOOLONG, no_setup, longpath_setup },
+	ENAMETOOLONG, no_setup, longpath_setup },
 #if !defined(UCLINUX)
     { "regfile", "regfile", High_address, "address beyond address space",
- EFAULT, no_setup, no_setup },
+	EFAULT, no_setup, no_setup },
 #endif
     { "regfile", "regfile", (char *)-1, "negative address",
- EFAULT, no_setup, no_setup},
+	EFAULT, no_setup, no_setup},
 
     /* two existing files */
 
     { "regfile", "regfile", "regfile2", "regfile2",
- EEXIST, filepath_setup, filepath2_setup },
+	EEXIST, filepath_setup, filepath2_setup },
 
     { NULL, NULL, NULL, NULL, 0, no_setup, no_setup }
 };
@@ -216,18 +216,18 @@ struct test_case_t {
 int
 main(int ac, char **av)
 {
-    int lc;  /* loop counter */
-    char *msg;  /* message returned from parse_opts */
+    int lc;		/* loop counter */
+    char *msg;		/* message returned from parse_opts */
     char *fname1, *fname2;
     char *desc1, *desc2;
     int ind;
-
+    
     /***************************************************************
      * parse standard options
      ***************************************************************/
-    if ( (msgparse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *) NULL ) {
- tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
- tst_exit();
+    if ( (msg=parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *) NULL ) {
+	tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	tst_exit();
     }
 
     /***************************************************************
@@ -238,24 +238,24 @@ main(int ac, char **av)
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc0; TEST_LOOPING(lc); lc++) {
+    for (lc=0; TEST_LOOPING(lc); lc++) {
 
- /* reset Tst_count in case we are looping. */
- Tst_count0;
+	/* reset Tst_count in case we are looping. */
+	Tst_count=0;
+	
+        for (ind=0; Test_cases[ind].desc1 != NULL; ind++ ) {
 
-        for (ind0; Test_cases[ind].desc1 ! NULL; ind++ ) {
-
-            fname1  Test_cases[ind].file1;
-            desc1  Test_cases[ind].desc1;
-            fname2  Test_cases[ind].file2;
-            desc2  Test_cases[ind].desc2;
+            fname1 = Test_cases[ind].file1;
+            desc1 = Test_cases[ind].desc1;
+            fname2 = Test_cases[ind].file2;
+            desc2 = Test_cases[ind].desc2;
 
 #if !defined(UCLINUX)
-     if ( fname1  High_address )
-  fname1  get_high_address();
+	    if ( fname1 == High_address )
+		fname1 = get_high_address();
 
-     if ( fname2  High_address )
-  fname2  get_high_address();
+	    if ( fname2 == High_address )
+		fname2 = get_high_address();
 #endif
 
             /*
@@ -264,14 +264,14 @@ main(int ac, char **av)
             TEST(link(fname1, fname2));
 
             /* check return code */
-            if ( TEST_RETURN  -1 ) {
+            if ( TEST_RETURN == -1 ) {
                 if ( STD_FUNCTIONAL_TEST ) {
-                    if ( TEST_ERRNO  Test_cases[ind].exp_errno )
-                        tst_resm(TPASS, "link(<%s>, <%s>) Failed, errno%d",
+                    if ( TEST_ERRNO == Test_cases[ind].exp_errno )
+                        tst_resm(TPASS, "link(<%s>, <%s>) Failed, errno=%d",
                             desc1, desc2, TEST_ERRNO);
                     else
                         tst_resm(TFAIL,
-                            "link(<%s>, <%s>) Failed, errno%d, expected errno:%d",
+                            "link(<%s>, <%s>) Failed, errno=%d, expected errno:%d",
                             desc1, desc2, TEST_ERRNO, Test_cases[ind].exp_errno);
                 }
                 else
@@ -284,7 +284,7 @@ main(int ac, char **av)
         }
 
 
-    } /* End for TEST_LOOPING */
+    }	/* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
@@ -292,12 +292,12 @@ main(int ac, char **av)
     cleanup();
 
     return 0;
-} /* End main */
+}	/* End main */
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void
+void 
 setup()
 {
     int ind;
@@ -312,28 +312,28 @@ setup()
     tst_tmpdir();
 
 #if !defined(UCLINUX)
-    bad_addr  mmap(0, 1, PROT_NONE,
-      MAP_PRIVATE_EXCEPT_UCLINUX|MAP_ANONYMOUS, 0, 0);
-    if (bad_addr  MAP_FAILED) {
- tst_brkm(TBROK, cleanup, "mmap failed");
+    bad_addr = mmap(0, 1, PROT_NONE,
+		    MAP_PRIVATE_EXCEPT_UCLINUX|MAP_ANONYMOUS, 0, 0);
+    if (bad_addr == MAP_FAILED) {
+	tst_brkm(TBROK, cleanup, "mmap failed");
     }
-    Test_cases[6].file1  bad_addr;
-    Test_cases[12].file2  bad_addr;
+    Test_cases[6].file1 = bad_addr;
+    Test_cases[12].file2 = bad_addr;
 #endif
 
-    for (ind0; Test_cases[ind].desc1 ! NULL; ind++ ) {
+    for (ind=0; Test_cases[ind].desc1 != NULL; ind++ ) {
         Test_cases[ind].setupfunc1();
         Test_cases[ind].setupfunc2();
     }
 
-} /* End setup() */
+}	/* End setup() */
 
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *  completion or premature exit.
+ *		completion or premature exit.
  ***************************************************************/
-void
+void 
 cleanup()
 {
     /*
@@ -347,7 +347,7 @@ cleanup()
 
     /* exit with return code appropriate for results */
     tst_exit();
-} /* End cleanup() */
+}	/* End cleanup() */
 
 /******************************************************************
  *
@@ -366,14 +366,14 @@ longpath_setup()
 {
    int ind;
 
-    static int alreadycalled  0;
+    static int alreadycalled = 0;
 
-    if ( alreadycalled )
- return 0;
+    if ( alreadycalled ) 
+	return 0;
     alreadycalled++;
-
-    for(ind0; ind< PATH_MAX+1; ind++) {
-        Longpathname[ind]  'a';
+	
+    for(ind=0; ind<= PATH_MAX+1; ind++) {
+        Longpathname[ind] = 'a';
     }
     return 0;
 
@@ -386,13 +386,13 @@ int
 filepath2_setup()
 {
     int fd;
-    static int alreadycalled  0;
+    static int alreadycalled = 0;
 
-    if ( alreadycalled )
- return 0;
+    if ( alreadycalled ) 
+	return 0;
     alreadycalled++;
 
-    if ( (fdcreat("regfile2", 0777))  -1 ) {
+    if ( (fd=creat("regfile2", 0777)) == -1 ) {
         tst_brkm(TBROK, cleanup, "creat(regfile2, 0777) failed, errno:%d %s",
             errno, strerror(errno));
     }
@@ -406,13 +406,13 @@ int
 filepath_setup()
 {
     int fd;
-    static int alreadycalled  0;
+    static int alreadycalled = 0;
 
-    if ( alreadycalled )
- return 0;
+    if ( alreadycalled ) 
+	return 0;
     alreadycalled++;
 
-    if ( (fdcreat("regfile", 0777))  -1 ) {
+    if ( (fd=creat("regfile", 0777)) == -1 ) {
         tst_brkm(TBROK, cleanup, "creat(regfile, 0777) failed, errno:%d %s",
             errno, strerror(errno));
     }
@@ -426,16 +426,16 @@ filepath_setup()
 int
 dir_setup()
 {
-    static int alreadycalled  0;
+    static int alreadycalled = 0;
 
-    if ( alreadycalled )
- return 0;
+    if ( alreadycalled ) 
+	return 0;
     alreadycalled++;
 
-    if ( mkdir("dir", 0777)  -1 ) {
+    if ( mkdir("dir", 0777) == -1 ) {
         tst_brkm(TBROK, cleanup,
-     "mkdir(dir, 0700) Failed, errno%d : %s",
-     errno, strerror(errno));
+	    "mkdir(dir, 0700) Failed, errno=%d : %s",
+	    errno, strerror(errno));
     }
 
     return 0;

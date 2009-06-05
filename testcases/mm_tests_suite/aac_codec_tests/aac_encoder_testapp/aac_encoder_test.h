@@ -4,22 +4,22 @@
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
 */
-
+	
 /**
 @file aac_encoder_test.h
-
+	
 @brief VTE C header template
-
+	
 @par Portability:
         Indicate if this module is portable to other compilers or platforms.
         If not, indicate specific reasons why is it not portable.
 */
-
+	
 /*======================== REVISION HISTORY ==================================
-
+		
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
-D.Simakov / smkd001c  09/09/2005   TLSbo53249   Initial version
+D.Simakov / smkd001c  09/09/2005   TLSbo53249   Initial version 
 =============================================================================*/
 
 #ifndef __AAC_ENCODER_TEST_H__
@@ -35,7 +35,7 @@ extern "C"{
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
+#include <unistd.h>               
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <assert.h>
@@ -55,7 +55,7 @@ extern "C"{
 #endif
 #if !defined(FALSE)
     #define FALSE 0
-#endif
+#endif        
 
 /*==================================================================================================
                                        DEFINES AND MACROS
@@ -66,12 +66,12 @@ extern "C"{
                                              ENUMS
 ==================================================================================================*/
 /** Different test cases in the single application */
-typedef enum
+typedef enum 
 {
-    NOMINAL_FUNCTIONALITY = 0,
+    NOMINAL_FUNCTIONALITY = 0, 
     RELOCATABILITY,
     RE_ENTRANCE,
-    PRE_EMPTION,
+    PRE_EMPTION,    
     ENDURANCE,
     LOAD,
 } eAacEncoderTestCases;
@@ -80,12 +80,12 @@ typedef enum
 /*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
 ==================================================================================================*/
-typedef struct
+typedef struct 
 {
     int          mTestCase;
     int          mNumIter;
-    const char * mConfigFilename;
-    int          mOutputBan;
+    const char * mConfigFilename;        
+    int          mOutputBan; 
     int          mVerbose;
 } sTestappConfig;
 

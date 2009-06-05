@@ -11,53 +11,53 @@
 
 setup()
 {
- export TCID="setup"
- export TST_COUNT=0
- export TST_TOTAL=2
+	export TCID="setup"
+	export TST_COUNT=0
+	export TST_TOTAL=2
 
- # run tests in $LTPROOT/testcases/bin directory
- SAVEPWD=${PWD}
- cd ${LTPBIN}
- CURRENTDIR=.
+	# run tests in $LTPROOT/testcases/bin directory
+	SAVEPWD=${PWD}
+	cd ${LTPBIN}
+	CURRENTDIR=.
 
- # Start the process to be traced.
- runcon -t test_ptrace_traced_t $CURRENTDIR/selinux_ptrace_wait.sh &
- PID=$!
+	# Start the process to be traced.
+	runcon -t test_ptrace_traced_t $CURRENTDIR/selinux_ptrace_wait.sh &
+	PID=$!
 
- # Give the process a moment to initialize.
- sleep 1
+	# Give the process a moment to initialize.
+	sleep 1 
 }
 
 test01()
 {
- TCID="test01"
+	TCID="test01"
         TST_COUNT=1
         RC=0
 
- # Verify that the nottracer domain cannot attach to the process.
- # Should fail on the ptrace permission check.
+	# Verify that the nottracer domain cannot attach to the process.
+	# Should fail on the ptrace permission check.
 
- runcon -t test_ptrace_nottracer_t $CURRENTDIR/selinux_ptrace $PID
+	runcon -t test_ptrace_nottracer_t $CURRENTDIR/selinux_ptrace $PID
         RC=$?
         if [ $RC -ne 0 ]
         then
                 echo "$TCID   PASS : ptrace passed."
-  RC=0
+		RC=0
         else
                 echo "$TCID   FAIL : ptrace failed."
-  RC=1
+		RC=1
         fi
- return $RC
+	return $RC
 }
 
 test02()
 {
- TCID="test02"
+	TCID="test02"
         TST_COUNT=2
         RC=0
 
- # Verify that the tracer domain can trace to the process.
- runcon -t test_ptrace_tracer_t $CURRENTDIR/selinux_ptrace $PID
+	# Verify that the tracer domain can trace to the process.
+	runcon -t test_ptrace_tracer_t $CURRENTDIR/selinux_ptrace $PID
         RC=$?
         if [ $RC -eq 0 ]
         then
@@ -65,16 +65,16 @@ test02()
         else
                 echo "$TCID   FAIL : ptrace failed."
         fi
- return $RC
+	return $RC
 }
 
 cleanup()
 {
- # Kill the process.
- kill -s KILL $PID
+	# Kill the process.
+	kill -s KILL $PID
 
- # return to $LTPROOT directory
- cd $SAVEPWD
+	# return to $LTPROOT directory
+	cd $SAVEPWD
 }
 
 # Function:     main
@@ -87,7 +87,7 @@ cleanup()
 RC=0    # Return value from setup, and test functions.
 EXIT_VAL=0
 
-setup
+setup 
 test01 || EXIT_VAL=$RC
 test02 || EXIT_VAL=$RC
 cleanup

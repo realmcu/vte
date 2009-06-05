@@ -18,21 +18,21 @@
 #                      Modification     Tracking
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
-# Spring Zhang          24/11/2008       n/a        Initial ver.
+# Spring Zhang          24/11/2008       n/a        Initial ver. 
 # Spring                28/11/2008       n/a      Modify COPYRIGHT header
 # Spring                16/01/2008       n/a      MX35 port change to /dev/ttymxc2
 #############################################################################
-# Portability:  ARM sh
+# Portability:  ARM sh 
 #
 # File Name:     gps_basic.sh
 # Total Tests:   1
-# Test Strategy: Test basic GPS functions
-#
-# Input:     Test type
+# Test Strategy: Test basic GPS functions 
+# 
+# Input:	    Test type
 #
 # Return:       0: PASS, non-0: FAIL
 #
-# Command:      "./gps_basic.sh [Test Type]"
+# Command:      "./gps_basic.sh [Test Type]" 
 
 # Function:     setup
 #
@@ -61,7 +61,7 @@ setup()
     fi
 
     if [ $# -lt 1 ]
-    then
+    then 
         usage
         exit 1
     fi
@@ -76,7 +76,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup()
+cleanup() 
 {
     RC=0
     tst_resm TINFO "Clean GPS module..."
@@ -85,9 +85,9 @@ cleanup()
     return $RC
 }
 
-# Function:     gps_smoke()
+# Function:     gps_smoke()   
 #
-# Description:  Test if GPS module function is OK
+# Description:  Test if GPS module function is OK 
 #
 # Exit:         zero on success
 #               non-zero on failure.
@@ -121,7 +121,7 @@ gps_smoke()
     sleep 3
 
     if [ ! -e /var/run/gpspipe ]
-    then
+    then 
         tst_resm TFAIL "gps pipe not exists(/var/run/gpspipe)"
         RC=67
         return $RC
@@ -132,7 +132,7 @@ gps_smoke()
     bgpid=$!
     sleep 5
     kill $bgpid
-
+    
     grep -i GPGGA gpsinfo.txt || RC=$?
     if [ $RC -eq 0 ]
     then
@@ -145,7 +145,7 @@ gps_smoke()
     return $RC
 }
 
-# Function:     gps_full()
+# Function:     gps_full()   
 #
 # Description:  Test if GPS can get latitude&longitude position
 #
@@ -177,11 +177,11 @@ gps_full()
         tst_resm TFAIL "Test #2: Probe GPS module fail"
         return $RC
     fi
-
+    
     sleep 3
 
     if [ ! -e /var/run/gpspipe ]
-    then
+    then 
         tst_resm TFAIL "Test #2: gps pipe not exists(/var/run/gpspipe)"
         RC=67
         return $RC
@@ -189,7 +189,7 @@ gps_full()
 
     tst_resm TINFO "Test #2: Please pay attention to GPGGA msg in GPS log"
     tst_resm TINFO "Press Ctrl+C to quit the program if you find:"
-    tst_resm TINFO "GL_NMEA[$GPGGA,055205.00,3116.807422,N,12031.820805,E,1,05,1.0,011.0,M,,M,,*79"
+    tst_resm TINFO "GL_NMEA[$GPGGA,055205.00,3116.807422,N,12031.820805,E,1,05,1.0,011.0,M,,M,,*79" 
     sleep 15
     cat /var/run/gpspipe &
     bgpid=$!
@@ -198,7 +198,7 @@ gps_full()
     kill $bgpid
 
     tst_resm TINFO "Test #2"
-    tst_resm TINFO "GL_NMEA[$GPGGA,055205.00,3116.807422,N,12031.820805,E,1,05,1.0,011.0,M,,M,,*79"
+    tst_resm TINFO "GL_NMEA[$GPGGA,055205.00,3116.807422,N,12031.820805,E,1,05,1.0,011.0,M,,M,,*79" 
     tst_resm TINFO "Do you see the message like the former one, esp. 3116.807422,N,12031.820805,E ?[y/n]"
     read answer
     if [ $answer = "y" ]
@@ -220,10 +220,10 @@ gps_full()
 # Return        - none
 usage()
 {
-    cat <<-EOF
+    cat <<-EOF 
 
     Use this command to test GPS functions.
-    usage: ./${0##*/} [Test Type]
+    usage: ./${0##*/} [Test Type] 
     Test Type: 1 -- GPS module smoke test, 2 -- Full GPS test
     e.g.: ./${0##*/} 1
 
@@ -243,7 +243,7 @@ RC=0    # Return value from setup, and test functions.
 #"" will pass the whole args to function setup()
 setup "$@" || exit $RC
 
-case $1 in
+case $1 in 
 1)
     gps_smoke "$@" || exit $RC
     ;;

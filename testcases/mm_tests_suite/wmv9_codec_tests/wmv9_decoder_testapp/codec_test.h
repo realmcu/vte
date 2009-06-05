@@ -16,7 +16,7 @@
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
-D.Simakov/smkd001c    23/05/2005   TLSbo47117	Initial version
+D.Simakov/smkd001c    23/05/2005   TLSbo47117	Initial version	
 D.Simakov             19/05/2006   TLSbo66280   Phase2
 =============================================================================*/
 
@@ -55,110 +55,110 @@ D.Simakov             19/05/2006   TLSbo66280   Phase2
 ==================================================================================================*/
 
 /* Test cases. */
-enum
+enum 
 {
-        NOMINAL_FUNCTIONALITY,
+        NOMINAL_FUNCTIONALITY, 
         ROBUSTNESS,
         RELOCATABILITY,
         RE_ENTRANCE,
-        PRE_EMPTION,
+        PRE_EMPTION,    
         ENDURANCE,
-        LOAD
+        LOAD        
 };
 
 /*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
 ==================================================================================================*/
 
-/* Testapp configuration. */
+/* Testapp configuration. */ 
 typedef struct
 {
         int              mTestCase;
         int              mNumIter;
         const char *     mConfigFilename;
-        int              mVerbose;
-        int              mSlowBitMatching;
+        int              mVerbose;    
+        int              mSlowBitMatching;         
         int              mDelay;
         int              mDisableLCD;
 } sTestappConfig;
 
 /* Set of parameters for each codec handler. */
-typedef struct
+typedef struct 
 {
-        unsigned int     mNoEntry;
+        unsigned int     mNoEntry;    
         char             mInpFileName[MAX_STR_LEN];
         char             mOutFileName[MAX_STR_LEN];
-        char             mRefFileName[MAX_STR_LEN];
-
+        char             mRefFileName[MAX_STR_LEN]; 
+                
         int              mDesiredFps;
-
-        int              mIsReadyForBitMatching;
+        
+        int              mIsReadyForBitMatching;     
 
 } sHandlerParams;
 
 /* Codec handler. */
 typedef struct
-{
+{                          
         /****************************************/
         /* Input and output (streams, buffers). */
         /****************************************/
-
-        FILE                  * mpInpStream;
-        struct hKevFile       * mpOutStream;
+        
+        FILE                  * mpInpStream;  
+        struct hKevFile       * mpOutStream;                 
 
         size_t                 mInpBufferSz;
-        unsigned char        * mpInpBuffer;
-
+        unsigned char        * mpInpBuffer;                
+        
         unsigned char        * mpRgbBuffer;
         //size_t                 mOutputBufferSize;
         //short                * mpOutputBuffer;
-
-
+                
+        
         /***********************/
         /* Stream information. */
         /***********************/
 
-        // RCV header information, passed around using this structure
+        // RCV header information, passed around using this structure 
         int             mWidth;
         int             mHeight;
         int             mBitRate;
         int             mFrameRate;
         int             mRcvVersion;
         const char *    mCompFmtString;
-
-        // Sequence header information
+        
+        // Sequence header information 
         int             mSeqDataSz;
         unsigned char * mpSeqData;
-
-        int             mNumTotalFrames;
+        
+        int             mNumTotalFrames;     
         int             mNumFrames2Decode;
-
-        // information related to reading from file, for each frame
-        int             mTotalBytes;
-        int             mBytesLeft;
+        
+        // information related to reading from file, for each frame 
+        int             mTotalBytes;   
+        int             mBytesLeft;    
 
 
         /********************/
         /* Decoder's stuff. */
         /********************/
-
+        
         sWmv9DecObjectType mDecObj;
-        eWmv9DecRetType    mLastCodecError;
-
-
+        eWmv9DecRetType    mLastCodecError;    
+        
+        
         /***************/
         /* Other data. */
         /***************/
-
-        unsigned long  mFramesCount;
+        
+        unsigned long  mFramesCount;            
         int            mFpsDelay;
-        int            mCurrentDelay;
+        int            mCurrentDelay; 
         int            mFpsInCfg;
-
+        
         unsigned long           mIndex;
-        sHandlerParams        * mpParams;
-        pthread_t               mThreadID;
-        int                     mLtpRetval;
+        sHandlerParams        * mpParams;                    
+        pthread_t               mThreadID;                  
+        int                     mLtpRetval;                      
 } sCodecHandler;
 
 
@@ -166,7 +166,7 @@ typedef struct
                                  GLOBAL VARIABLE DECLARATIONS
 ==================================================================================================*/
 
-extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */
+extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */        
 
 
 /*==================================================================================================
@@ -189,4 +189,4 @@ int VT_codec_setup    ( void );
 int VT_codec_cleanup  ( void );
 int VT_codec_test     ( void );
 
-#endif //__CODEC_TEST_H__
+#endif //__CODEC_TEST_H__  

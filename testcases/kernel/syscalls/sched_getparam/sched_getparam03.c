@@ -31,13 +31,13 @@
  *      (See the parse_opts(3) man page).
  *
  * DESCRIPTION
- * Verify that,
+ * 	Verify that,
  *   1) sched_getparam(2) returns -1 and sets errno to ESRCH if the
- * process with specified pid could not be found
+ *	process with specified pid could not be found
  *   2) sched_getparam(2) returns -1 and sets errno to EINVAL if
- * the parameter pid is an invalid value (-1)
+ *	the parameter pid is an invalid value (-1)
  *   3) sched_getparam(2) returns -1 and sets errno to EINVAL if the
- * parameter p is an invalid address
+ *	parameter p is an invalid address
  *
  * ALGORITHM
  * Setup:
@@ -47,8 +47,8 @@
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if (system call failed (return-1)) &
- *      (errno set  expected errno)
+ *   Check return code, if (system call failed (return=-1)) &
+ *			   (errno set == expected errno)
  *              Issue sys call fails with expected return value and errno.
  *   Otherwise,
  *      Issue sys call returns unexpected value.
@@ -58,15 +58,15 @@
  *
  * USAGE:  <for command-line>
  *  sched_getparam03 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-h] [-f] [-p]
- *  where,  -c n : Run n copies concurrently.
- *   -e   : Turn on errno logging.
- *   -h   : Show help screen
- *   -f   : Turn off functional testing
- *   -i n : Execute test n times.
- *   -I x : Execute test for x seconds.
- *   -p   : Pause for SIGUSR1 before starting
- *   -P x : Pause for x seconds between iterations.
- *   -t   : Turn on syscall timing.
+ *		where,  -c n : Run n copies concurrently.
+ *			-e   : Turn on errno logging.
+ *			-h   : Show help screen
+ *			-f   : Turn off functional testing
+ *			-i n : Execute test n times.
+ *			-I x : Execute test for x seconds.
+ *			-p   : Pause for SIGUSR1 before starting
+ *			-P x : Pause for x seconds between iterations.
+ *			-t   : Turn on syscall timing.
  *
  *********************************************************************/
 
@@ -83,73 +83,73 @@ static void setup(void);
 
 static struct sched_param  param;
 
-char *TCID "sched_getparam03";
+char *TCID= "sched_getparam03";
 extern int Tst_count;
 
-static int exp_enos[]  {EINVAL, ESRCH, 0}; /* 0 terminated list of *
-       * expected errnos */
+static int exp_enos[] = {EINVAL, ESRCH, 0};	/* 0 terminated list of *
+						 * expected errnos */
 
 static struct test_case_t {
- char *desc;
- pid_t pid;
- struct  sched_param *p;
- int exp_errno;
- char err_desc[10];
-} test_cases[]  {
- { "test with non-existing pid", LARGE_PID, &param, ESRCH, "ESRCH" },
- { "test invalid pid value", -1, &param, EINVAL, "EINVAL" },
- { "test with invalid address for p", 0, NULL, EINVAL, "EINVAL" },
+	char *desc;
+	pid_t pid;
+	struct  sched_param *p;
+	int exp_errno;
+	char err_desc[10];
+} test_cases[] = {
+	{ "test with non-existing pid", LARGE_PID, &param, ESRCH, "ESRCH" },
+	{ "test invalid pid value", -1, &param, EINVAL, "EINVAL" },
+	{ "test with invalid address for p", 0, NULL, EINVAL, "EINVAL" },
 };
 
-int TST_TOTAL  sizeof(test_cases) / sizeof(test_cases[0]);
+int TST_TOTAL = sizeof(test_cases) / sizeof(test_cases[0]);
 
 int
 main(int ac, char **av)
 {
- int lc, ind;    /* loop counter */
- char *msg;   /* message returned from parse_opts */
+	int lc, ind;				/* loop counter */
+	char *msg;			/* message returned from parse_opts */
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *) NULL, NULL))
-   ! (char *) NULL) {
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
+			!= (char *) NULL) {
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	}
 
- setup();   /* global setup */
+	setup();			/* global setup */
 
- /* The following loop checks looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+	/* The following loop checks looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  for (ind  0; ind < TST_TOTAL; ind++) {
+		for (ind = 0; ind < TST_TOTAL; ind++) {
 
-   /* Call sched_getparam(2) to test different test
-    * conditions. verify that it fails with -1 return
-    * value and sets appropriate errno.
-    */
-   TEST(sched_getparam(test_cases[ind].pid,
-        test_cases[ind].p));
+			/* Call sched_getparam(2) to test different test
+			 * conditions. verify that it fails with -1 return
+			 * value and sets appropriate errno.
+			 */	
+			TEST(sched_getparam(test_cases[ind].pid,
+					   test_cases[ind].p));
+	
+			if ((TEST_RETURN == -1) &&
+			    (TEST_ERRNO == test_cases[ind].exp_errno)) {
+				tst_resm(TPASS, "expected failure; Got %s",
+						 test_cases[ind].err_desc);
+			} else {
+				tst_resm(TFAIL, "Call failed to produce "
+					"expected error;  Expected errno: %d "
+					"Got : %d, %s",
+					test_cases[ind].exp_errno,
+					TEST_ERRNO, strerror(TEST_ERRNO));
+			}
+			TEST_ERROR_LOG(TEST_ERRNO);
+		}
+	}
 
-   if ((TEST_RETURN  -1) &&
-       (TEST_ERRNO  test_cases[ind].exp_errno)) {
-    tst_resm(TPASS, "expected failure; Got %s",
-       test_cases[ind].err_desc);
-   } else {
-    tst_resm(TFAIL, "Call failed to produce "
-     "expected error;  Expected errno: %d "
-     "Got : %d, %s",
-     test_cases[ind].exp_errno,
-     TEST_ERRNO, strerror(TEST_ERRNO));
-   }
-   TEST_ERROR_LOG(TEST_ERRNO);
-  }
- }
-
- cleanup();
-
- /*NOTREACHED*/
- return 0;
+	cleanup();
+	
+	/*NOTREACHED*/
+	return 0;
 }
 
 /*
@@ -159,32 +159,32 @@ void
 setup(void)
 {
 
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Set up the expected error numbers for -e option */
- TEST_EXP_ENOS(exp_enos);
+	/* Set up the expected error numbers for -e option */
+	TEST_EXP_ENOS(exp_enos);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
 }
 
 /*
  * cleanup() -  performs all the ONE TIME cleanup for this test at completion
- *or premature exit.
+ * 		or premature exit.
  */
 void
 cleanup(void)
 {
 
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }
 

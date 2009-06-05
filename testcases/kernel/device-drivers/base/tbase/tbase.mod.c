@@ -25,6 +25,6 @@ MODULE_INFO(vermagic, VERMAGIC_STRING);
 
 static const char __module_depends[]
 __attribute_used__
-__attribute__((section(".modinfo"))) 
-"depends";
+__attribute__((section(".modinfo"))) =
+"depends=";
 

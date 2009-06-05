@@ -21,14 +21,14 @@ int main(int argc, char **argv) {
   int rc;
   char buf[255];
 
-  rc  gethostname(buf, sizeof(buf));
-  if( rc ! 0 ) {
+  rc = gethostname(buf, sizeof(buf));
+  if( rc != 0 ) {
     perror("test_sethostname:gethostname");
     exit(2);
   }
 
-  rc  sethostname(buf, strlen(buf));
-  if( rc ! 0 ) {
+  rc = sethostname(buf, strlen(buf));
+  if( rc != 0 ) {
     perror("test_sethostname:sethostname");
     exit(1);
   }

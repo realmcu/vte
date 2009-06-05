@@ -18,7 +18,7 @@
  */
 /*---------------------------------------------------------------------+
 |                           semaphore_test_01                          |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Description:  Simplistic test to verify the semget () and semctl ()  |
 |               system function calls.                                 |
@@ -91,7 +91,7 @@ union semun {
  *
  * NUM_SEMAPHORES: number of semaphores to create
  */
-#define NUM_SEMAPHORES 1
+#define NUM_SEMAPHORES	1
 
 
 /*
@@ -106,7 +106,7 @@ static void error (const char *, int);
 
 /*---------------------------------------------------------------------+
 |                               main                                   |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Main program  (see prolog for more details)               |
 |                                                                      |
@@ -116,94 +116,94 @@ static void error (const char *, int);
 +---------------------------------------------------------------------*/
 int main (int argc, char **argv)
 {
- uid_t uid  getuid ();  /* User's user id */
- gid_t gid  getgid ();  /* User's group id */
- int semid;   /* Unique semaphore id */
- int nsems  NUM_SEMAPHORES; /* Number of semaphores to create */
- struct semid_ds exp_semdata; /* Expected semaphore values */
- union semun exp_semdatap;
- struct semid_ds act_semdata; /* Actual semaphore values */
- union semun act_semdatap;
+	uid_t uid = getuid ();		/* User's user id */
+	gid_t gid = getgid ();		/* User's group id */
+	int semid;			/* Unique semaphore id */
+	int nsems = NUM_SEMAPHORES;	/* Number of semaphores to create */
+	struct semid_ds exp_semdata;	/* Expected semaphore values */
+	union semun exp_semdatap;
+	struct semid_ds act_semdata;	/* Actual semaphore values */
+	union semun act_semdatap;
 
- exp_semdatap.buf  &exp_semdata;
- act_semdatap.buf  &act_semdata;
+	exp_semdatap.buf = &exp_semdata;
+	act_semdatap.buf = &act_semdata;
 
- umask (0000);
+	umask (0000);
 
- /* SET semid_ds STRUCTURE TO DESIRED VALUES........ */
+	/* SET semid_ds STRUCTURE TO DESIRED VALUES........ */
 
- /*
-  * Initialize the "expected" sempahore value structure
-  */
- exp_semdata.sem_perm.cuid  exp_semdata.sem_perm.uid   uid;
- exp_semdata.sem_perm.cgid  exp_semdata.sem_perm.gid   gid;
- exp_semdata.sem_perm.mode  0660;
- exp_semdata.sem_nsems      nsems;
+	/*
+	 * Initialize the "expected" sempahore value structure
+	 */
+	exp_semdata.sem_perm.cuid = exp_semdata.sem_perm.uid  = uid;
+	exp_semdata.sem_perm.cgid = exp_semdata.sem_perm.gid  = gid;
+	exp_semdata.sem_perm.mode = 0660;
+	exp_semdata.sem_nsems     = nsems;
+ 
+	/*
+	 * Create a semaphore, set the semaphore fields and then
+	 * retrieve the fields.
+	 */
+	if ( (semid = semget (IPC_PRIVATE, nsems, IPC_CREAT|0666)) < 0)
+		sys_error ("semget (IPC_PRIVATE) failed", __LINE__);
 
- /*
-  * Create a semaphore, set the semaphore fields and then
-  * retrieve the fields.
-  */
- if ( (semid  semget (IPC_PRIVATE, nsems, IPC_CREAT|0666)) < 0)
-  sys_error ("semget (IPC_PRIVATE) failed", __LINE__);
+	if (semctl (semid, nsems, IPC_SET, exp_semdatap) < 0)
+		sys_error ("semctl (IPC_SET) failed", __LINE__);
 
- if (semctl (semid, nsems, IPC_SET, exp_semdatap) < 0)
-  sys_error ("semctl (IPC_SET) failed", __LINE__);
+	if (semctl (semid, nsems, IPC_STAT, act_semdatap) < 0)
+		sys_error ("semctl (IPC_STAT) failed", __LINE__);
 
- if (semctl (semid, nsems, IPC_STAT, act_semdatap) < 0)
-  sys_error ("semctl (IPC_STAT) failed", __LINE__);
+	/*
+	 * Verify that the semaphore fields were set correctly
+	 */
+	if (act_semdata.sem_perm.cuid != exp_semdata.sem_perm.cuid)
+		error ("sem_perm.cuid field was not set!", __LINE__);
+	if (act_semdata.sem_perm.uid != exp_semdata.sem_perm.uid)
+		error ("sem_perm.uid field was not set!", __LINE__);
+	if (act_semdata.sem_perm.cgid != exp_semdata.sem_perm.cgid)
+		error ("sem_perm.cgid field was not set!", __LINE__);
+	if (act_semdata.sem_perm.gid != exp_semdata.sem_perm.gid)
+		error ("sem_perm.gid field was not set!", __LINE__);
+	if (act_semdata.sem_perm.mode != exp_semdata.sem_perm.mode)
+		error ("sem_perm.mode field was not set!", __LINE__);
+	if (act_semdata.sem_nsems != exp_semdata.sem_nsems)
+		error ("sem_nsems field was not set!", __LINE__);
 
- /*
-  * Verify that the semaphore fields were set correctly
-  */
- if (act_semdata.sem_perm.cuid ! exp_semdata.sem_perm.cuid)
-  error ("sem_perm.cuid field was not set!", __LINE__);
- if (act_semdata.sem_perm.uid ! exp_semdata.sem_perm.uid)
-  error ("sem_perm.uid field was not set!", __LINE__);
- if (act_semdata.sem_perm.cgid ! exp_semdata.sem_perm.cgid)
-  error ("sem_perm.cgid field was not set!", __LINE__);
- if (act_semdata.sem_perm.gid ! exp_semdata.sem_perm.gid)
-  error ("sem_perm.gid field was not set!", __LINE__);
- if (act_semdata.sem_perm.mode ! exp_semdata.sem_perm.mode)
-  error ("sem_perm.mode field was not set!", __LINE__);
- if (act_semdata.sem_nsems ! exp_semdata.sem_nsems)
-  error ("sem_nsems field was not set!", __LINE__);
+	/*
+	 * Print out the id of the newly created semaphore for comparison
+	 * with the 'ipcs -s' command and then exit.
+	 */
+	printf ("%d\n", semid);
 
- /*
-  * Print out the id of the newly created semaphore for comparison
-  * with the 'ipcs -s' command and then exit.
-  */
- printf ("%d\n", semid);
-
- return (0);
+	return (0);
 }
 
 
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Creates system error message and calls error ()           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 static void sys_error (const char *msg, int line)
 {
- char syserr_msg [256];
+	char syserr_msg [256];
 
- sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
- error (syserr_msg, line);
+	sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
+	error (syserr_msg, line);
 }
 
 
 /*---------------------------------------------------------------------+
 |                               error ()                               |
-|  |
+| ==================================================================== |
 |                                                                      |
 | Function:  Prints out message and exits...                           |
 |                                                                      |
 +---------------------------------------------------------------------*/
 static void error (const char *msg, int line)
 {
- fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
- exit (-1);
+	fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
+	exit (-1);
 }

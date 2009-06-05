@@ -40,9 +40,9 @@ exit 0
 " 2
 
 while true ; do
- chmod +x $dir
- su $user -c ./test.sh
- sleep 8
- ./slay $user
+	chmod +x $dir
+	su $user -c ./test.sh
+	sleep 8
+	./slay $user
 done
-
+	
