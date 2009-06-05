@@ -16,62 +16,62 @@
 #include "test.h"
 #include "HTutils.h"
 
-char *TCID  "ht_enable";
-int TST_TOTAL  1;
+char *TCID = "ht_enable";
+int TST_TOTAL = 1;
 
 int main(int argc, char *argv[])
 {
- tst_resm(TINFO, "Begin: HyperThreading Enabled");
+	tst_resm(TINFO, "Begin: HyperThreading Enabled");
 
 #ifndef ARCH_i386
- tst_brkm(TCONF, NULL, "This test suite can only excute on i386 architecture.");
+	tst_brkm(TCONF, NULL, "This test suite can only excute on i386 architecture.");
 #else
- if(is_cmdline_para("noht"))
+	if(is_cmdline_para("noht"))
           {
-  tst_resm(TINFO, "The kernel boot paramter 'noht' is set.");
-  switch(check_ht_capability())
-  {
-  case 0:
-   tst_resm(TFAIL, "HT is enabled.");
-   break;
-  case 1:
-   tst_resm(TPASS, "HT is dinabled.");
-   break;
-  case 2:
-   tst_brkm(TCONF, NULL, "This processor does not support HT.");
-   break;
-  case 3:
-   tst_resm(TFAIL, "HT feature is not included in this Linux Kernel.");
-   break;
-  default:
-   tst_resm(TFAIL, "Unknown reason.");
-  }
- }
- else
- {
-  tst_resm(TINFO, "The kernel boot paramter 'noht' is not set.");
-  switch(check_ht_capability())
-  {
-  case 0:
-   tst_resm(TPASS, "HT is enabled.");
-   break;
-  case 1:
-   tst_resm(TFAIL, "HT is not enabled.");
-   break;
-  case 2:
-   tst_brkm(TCONF, NULL, "This processor does not support HT.");
-   break;
-  case 3:
-   tst_resm(TFAIL, "HT feature is not included in this Linux Kernel.");
-   break;
-  default:
-   tst_resm(TFAIL, "Unknown reason.");
-  }
- }
+		tst_resm(TINFO, "The kernel boot paramter 'noht' is set.");
+		switch(check_ht_capability())
+		{
+		case 0:
+			tst_resm(TFAIL, "HT is enabled.");
+			break;
+		case 1:
+			tst_resm(TPASS, "HT is dinabled.");
+			break;
+		case 2:
+			tst_brkm(TCONF, NULL, "This processor does not support HT.");
+			break;
+		case 3:
+			tst_resm(TFAIL, "HT feature is not included in this Linux Kernel.");
+			break;
+		default:
+			tst_resm(TFAIL, "Unknown reason.");
+		}
+	}
+	else
+	{
+		tst_resm(TINFO, "The kernel boot paramter 'noht' is not set.");
+		switch(check_ht_capability())
+		{
+		case 0:
+			tst_resm(TPASS, "HT is enabled.");
+			break;
+		case 1:
+			tst_resm(TFAIL, "HT is not enabled.");
+			break;
+		case 2:
+			tst_brkm(TCONF, NULL, "This processor does not support HT.");
+			break;
+		case 3:
+			tst_resm(TFAIL, "HT feature is not included in this Linux Kernel.");
+			break;
+		default:
+			tst_resm(TFAIL, "Unknown reason.");
+		}
+	}
 #endif
 
- tst_resm(TINFO, "End: HyperThreading Enabled");
+	tst_resm(TINFO, "End: HyperThreading Enabled");
 
- return 0;
+	return 0;
 }
 

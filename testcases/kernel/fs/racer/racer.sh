@@ -66,14 +66,14 @@ DIR="race"
 
 echo "CTRL-C to exit"
 trap "
-    echo \"Cleaning up\"
-    killall file_create.sh
+    echo \"Cleaning up\" 
+    killall file_create.sh 
     killall dir_create.sh
-    killall file_rm.sh
-    killall file_rename.sh
-    killall file_link.sh
-    killall file_symlink.sh
-    killall file_list.sh
+    killall file_rm.sh 
+    killall file_rename.sh 
+    killall file_link.sh 
+    killall file_symlink.sh 
+    killall file_list.sh 
     killall file_concat.sh
     exit 0
 " 2

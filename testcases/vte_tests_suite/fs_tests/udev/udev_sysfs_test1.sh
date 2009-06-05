@@ -18,22 +18,22 @@
 #                          Modification     Tracking
 # Author                       Date          Number    Description of Changes
 #-----------------------   ------------    ----------  ---------------------
-# Spring Zhang               10/06/2008       n/a        Initial ver.
+# Spring Zhang               10/06/2008       n/a        Initial ver. 
 # Spring                     28/11/2008       n/a      Modify COPYRIGHT header
 #############################################################################
-# Portability:  ARM sh bash
+# Portability:  ARM sh bash 
 #
 # File Name:    udev_sysfs_1.sh
 # Total Tests:        1
 # Test Goal: Check if sysfs and udev mechanism is working.
-# Test Strategy:
-#           1.
+# Test Strategy: 
+#           1. 
+# 
+# Input:	- $1 - none
 #
-# Input: - $1 - none
+# Return:       - 
 #
-# Return:       -
-#
-# Use command "./udev_sysfs_1.sh"
+# Use command "./udev_sysfs_1.sh" 
 #               to test sysfs and udev mechanism
 
 
@@ -90,7 +90,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup()
+cleanup() 
 {
     RC=0
     echo "clean up environment..."
@@ -111,7 +111,7 @@ sysfs_mech()
     RC=0    # Return value from setup, and test functions.
     tst_resm TINFO "Test #1: detect /dev node"
     sleep 3
-
+    
     ls -l /dev/scull1 || RC=$?
     if [ $RC -ne 0 ]
     then
@@ -149,7 +149,7 @@ sysfs_mech()
     return $RC
 }
 
-# Function:    udev_mech
+# Function:    udev_mech 
 #
 # Description:  - udev mechanism
 #
@@ -170,7 +170,7 @@ udev_mech()
 # Return        - none
 usage()
 {
-    cat <<-EOF
+    cat <<-EOF 
 
     Use this command to test sys &dev file system and udev mechanism.
     usage: ./${0##*/}

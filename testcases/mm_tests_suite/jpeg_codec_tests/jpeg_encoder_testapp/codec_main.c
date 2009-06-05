@@ -12,23 +12,23 @@
         ARM GCC
 */
 
-/* REVISION HISTORY 
+/*======================== REVISION HISTORY ==================================
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
-F.GAFFIE/rb657c       03/05/2004   TLSbo39336   Initial version
-D.Simakov/smkd001c    07/02/2005   TLSbo47179   Bad dependancies in the mm tests
+F.GAFFIE/rb657c       03/05/2004   TLSbo39336   Initial version 
+D.Simakov/smkd001c    07/02/2005   TLSbo47179   Bad dependancies in the mm tests 
                                                 application build process
-D.Simakov/smkd001c    25/10/2005   TLSbo59191   Improved
+D.Simakov/smkd001c    25/10/2005   TLSbo59191   Improved         
 D.Simakov/smkd001c    24/01/2006   TLSbo61035   Centralization of common features
-*/
+=============================================================================*/
 
-/*
+/*==================================================================================================
                                         INCLUDE FILES
-*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <stdio.h>
-
+    
 /* Harness Specific Include Files. */
 #include "usctest.h"
 #include "test.h"
@@ -37,23 +37,23 @@ D.Simakov/smkd001c    24/01/2006   TLSbo61035   Centralization of common feature
 #include "codec_test.h"
 
 
-/*
+/*==================================================================================================
                                        GLOBAL VARIABLES
-*/
+==================================================================================================*/
 
-char *          TCID              NULL;
-int             TST_TOTAL         1; /*LOAD + 1;*/
+char *          TCID             = NULL;
+int             TST_TOTAL        = 1; /*LOAD + 1;*/
 sTestappConfig  gTestappConfig;
-int             gNotSupportedTestCases[]  { -1 };
-int             gNotSupportedTestCasesCount  sizeof(gNotSupportedTestCases)/sizeof(int);
+int             gNotSupportedTestCases[] = { -1 };
+int             gNotSupportedTestCasesCount = sizeof(gNotSupportedTestCases)/sizeof(int);
 
 
-/*
+/*==================================================================================================
                                        LOCAL FUNCTIONS
-*/
+==================================================================================================*/
 
-/**/
-/**/
+/*================================================================================================*/
+/*================================================================================================*/
 void help()
 {
         printf( "Switches (names may be abbreviated):\n\n" );
@@ -73,56 +73,56 @@ void help()
 }
 
 
-/**/
-/**/
+/*================================================================================================*/
+/*================================================================================================*/
 void GetOptions( int argc, char ** argv )
 {
-
+        
         /* parse options. */
-        int    testcaseFlag         0;
-        int    iterFlag             0;
-        int    cfgFlag              0;
-        int    verboseFlag          0;
-        int    slowBitmatchingFlag  0;
-        int    frameLevelApiFlag    0;
+        int    testcaseFlag        = 0;
+        int    iterFlag            = 0;
+        int    cfgFlag             = 0;
+        int    verboseFlag         = 0;
+        int    slowBitmatchingFlag = 0;
+        int    frameLevelApiFlag   = 0;
         char * testcaseOpt;
         char * iterOpt;
         char * cfgOpt;
         char * msg;
-
-        option_t options[] 
+        
+        option_t options[] =
         {
                 { "T:",  &testcaseFlag,        &testcaseOpt },
                 { "N:",  &iterFlag,            &iterOpt     },
-                { "C:",  &cfgFlag,             &cfgOpt      },
+                { "C:",  &cfgFlag,             &cfgOpt      },                
                 { "V",   &verboseFlag,         NULL         },
                 { "S",   &slowBitmatchingFlag, NULL         },
                 { "F",   &frameLevelApiFlag,   NULL         },
                 { NULL,  NULL,                 NULL         }
         };
-
+        
         /* parse options. */
         extern void cleanup( void );
-        if( (msg  parse_opts( argc, argv, options, help )) )
+        if( (msg = parse_opts( argc, argv, options, help )) )
         {
                 tst_brkm( TCONF, cleanup, "OPTION PARSING ERROR - %s", msg );
         }
-
+        
         /* Fill the gTestappConfig by the parsed options. */
-        gTestappConfig.mTestCase                  testcaseFlag ? atoi(testcaseOpt) : NOMINAL_FUNCTIONALITY;
-        gTestappConfig.mNumIter                   iterFlag ? atoi(iterOpt) : DEFAULT_ITERATIONS;
-        gTestappConfig.mConfigFilename            cfgFlag ? cfgOpt : NULL;
-        gTestappConfig.mVerbose                   verboseFlag;
-        gTestappConfig.mSlowBitMatching           slowBitmatchingFlag;
-        gTestappConfig.mFrameLevelApi             frameLevelApiFlag;
-
+        gTestappConfig.mTestCase                 = testcaseFlag ? atoi(testcaseOpt) : NOMINAL_FUNCTIONALITY;
+        gTestappConfig.mNumIter                  = iterFlag ? atoi(iterOpt) : DEFAULT_ITERATIONS;
+        gTestappConfig.mConfigFilename           = cfgFlag ? cfgOpt : NULL;
+        gTestappConfig.mVerbose                  = verboseFlag;
+        gTestappConfig.mSlowBitMatching          = slowBitmatchingFlag;
+        gTestappConfig.mFrameLevelApi            = frameLevelApiFlag;
+                
         /* Check if all of the required arguments were presented */
         if( !gTestappConfig.mConfigFilename )
                 tst_brkm( TCONF, cleanup, "Argument required -C" );
 
         /* Select the TCID for extra test cases here: */
-        if( THUMB_ENCODING  gTestappConfig.mTestCase )
-                TCID  "thumb";
+        if( THUMB_ENCODING == gTestappConfig.mTestCase )
+                TCID = "thumb";
 }
 
 

@@ -24,7 +24,7 @@
 struct tableData
 {
   char lexeme[255];
-  char owner[255];
+  char owner[255]; 
 };
 
 struct tableData *symLook(char sym[255]);

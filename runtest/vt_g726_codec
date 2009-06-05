@@ -1,0 +1,19 @@
+#Verification Tests Command File
+
+#VT G.726 codec tests
+#files: g726_encoder_testapp
+#files: g726e_cfg g726e_cfg_mt
+#files: g726_decoder_testapp
+#files: g726d_cfg g726d_cfg_mt
+
+#G.726 codec tests
+
+TG-LV-G726-0010 g726_encoder_testapp -T 0 -C $LTPROOT/testcases/bin/g726e_cfg
+TG-LV-G726-0020 g726_encoder_testapp -T 1 -C $LTPROOT/testcases/bin/g726e_cfg_mt
+TG-LV-G726-0040 g726_encoder_testapp -T 3 -C $LTPROOT/testcases/bin/g726e_cfg -N 10
+TG-LV-G726-0050 g726_encoder_testapp -T 4 -C $LTPROOT/testcases/bin/g726e_cfg
+
+TG-LV-G726-0060 g726_decoder_testapp -T 0 -C $LTPROOT/testcases/bin/g726d_cfg
+TG-LV-G726-0070 g726_decoder_testapp -T 1 -C $LTPROOT/testcases/bin/g726d_cfg_mt
+TG-LV-G726-0090 g726_decoder_testapp -T 3 -C $LTPROOT/testcases/bin/g726d_cfg -N 10
+TG-LV-G726-0100 g726_decoder_testapp -T 4 -C $LTPROOT/testcases/bin/g726d_cfg

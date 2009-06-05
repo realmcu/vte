@@ -33,13 +33,13 @@
 
 int main()
 {
- int fd;
- fd  open( "guid_file", O_CREAT, 02777 );
- if (fd  -1) {
-  printf( "Error creating guid file\n" );
-  return 1;
- }
- printf( "Success creating guid file\n" );
- close( fd );
- return 0;
+	int fd;
+	fd = open( "guid_file", O_CREAT, 02777 );
+	if (fd == -1) {
+		printf( "Error creating guid file\n" );
+		return 1;
+	}
+	printf( "Success creating guid file\n" );
+	close( fd );
+	return 0;
 }

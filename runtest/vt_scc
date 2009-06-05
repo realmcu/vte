@@ -1,0 +1,32 @@
+#Verification Tests Command File
+
+#VT Security device tests
+#files: scc_test_module.ko
+#files: scc_test
+#files: scc_scr.sh
+
+#SCC testcases
+TGE-LV-SCC-MOD insmod $LTPROOT/testcases/bin/scc_test_module.ko
+TGE-LV-SCC-0010 scc_test -LC
+TGE-LV-SCC-0020 scc_test -Ls
+TGE-LV-SCC-0030 scc_test -Lr
+TGE-LV-SCC-0040 scc_test -Lm
+TGE-LV-SCC-0050 scc_test -T -Lt
+TGE-LV-SCC-0060 scc_test -R C
+TGE-LV-SCC-0070 scc_test -W C:25
+TGE-LV-SCC-0080 scc_test -R C
+TGE-LV-SCC-0090 scc_test -R C -S+Q
+TGE-LV-SCC-0100 scc_test -Lc
+TGE-LV-SCC-0110 scc_test -Lzr
+TGE-LV-SCC-0120 scc_test -Le -S+D+v
+TGE-LV-SCC-0130 scc_test -Le -S+D-v
+TGE-LV-SCC-0140 scc_test -Le -S+D+c
+TGE-LV-SCC-0150 scc_test -Le -S+D+l 18
+TGE-LV-SCC-0160 scc_test -Le -S+D+m
+TGE-LV-SCC-0170 scc_test -Le -S+D-m
+TGE-LV-SCC-0180 scc_test -Le -S+D+o
+TGE-LV-SCC-0190 scc_test -Le -S+D+p
+TGE-LV-SCC-0200 scc_test -LM
+TGE-LV-SCC-0210 scc_scr.sh
+
+#WARNING the commented tests are not automatical tests

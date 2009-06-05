@@ -44,4 +44,4 @@ $(TARGET): $(OBJ)
 
 .PHONY: clean
 clean:
-	rm -f $(TARGET) $(OBJ)
+	rm -f $(TARGET) $(OBJ) 

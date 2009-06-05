@@ -13,18 +13,18 @@
 #  http://www.gnu.org/copyleft/lgpl.html
 #
 ##############################################################################
-#
+# 
 #    @file   file_get.sh
-#
-#    @brief  Download files from ftp/http servers
-#
+# 
+#    @brief  Download files from ftp/http servers 
+# 
 ##############################################################################
-#Revision History:
-#                    Modification     Tracking
-#Author                  Date          Number    Description of Changes
+#Revision History: 
+#                    Modification     Tracking 
+#Author                  Date          Number    Description of Changes 
 #-----------------   ------------    ----------  -----------------------------
-#S.ZAVJALOV/-----     10-06-2004     TLSbo39738   Initial version
-#
+#S.ZAVJALOV/-----     10-06-2004     TLSbo39738   Initial version 
+# 
 ##############################################################################
 
 setup()
@@ -53,7 +53,7 @@ setup()
     tst_brkm TBROK "SETUP: Unable to create temporary directory"
     return $RC
   fi
-
+    
   # Check if wget command exists
   which wget &>$LTPTMP/tst_template.out || RC=$?
   if [ $RC -ne 0 ]
@@ -65,7 +65,7 @@ setup()
   #Store curent dir
   export CUR_DIR=`pwd`
 
-  cd $LTPTMP
+  cd $LTPTMP  
 
   return $RC
 }
@@ -73,9 +73,9 @@ setup()
 cleanup()
 {
   RC=0
-
+  
   cd $CUR_DIR
-
+  
   if [ -d $LTPTMP ]
   then
     rm -rf $LTPTMP
@@ -97,7 +97,7 @@ test01()
     tst_brkm TBROK NULL "TEST01: Can't download $FILE_NAME"
     return $RC
   fi
-
+  
   return $RC
 }
 

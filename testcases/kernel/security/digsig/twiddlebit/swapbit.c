@@ -22,52 +22,52 @@
 
 int usage(char *prog)
 {
- printf("Usage: %s [-r] file offset count\n", prog);
- exit(1);
+	printf("Usage: %s [-r] file offset count\n", prog);
+	exit(1);
 }
 
 int main(int argc, char *argv[])
 {
- int reverse  0, count;
- FILE *fin;
- char c;
+	int reverse = 0, count;
+	FILE *fin;
+	char c;
 
- if (argc > 1 && strcmp(argv[1], "-r")0) {
-  reverse  1;
-  argc--;
-  argv++;
- }
+	if (argc > 1 && strcmp(argv[1], "-r")==0) {
+		reverse = 1;
+		argc--;
+		argv++;
+	}
 
- if (argc < 4)
-  usage(argv[0]);
+	if (argc < 4)
+		usage(argv[0]);
 
- fin  fopen(argv[1], "r+");
+	fin = fopen(argv[1], "r+");
 
- if (!fin) {
-  printf("Could not open %s for writing\n", argv[1]);
-  exit(1);
- }
+	if (!fin) {
+		printf("Could not open %s for writing\n", argv[1]);
+		exit(1);
+	}
 
- count  atoi(argv[2]);
+	count = atoi(argv[2]);
 
- if (count < 0) {
-  printf("Bad count value: %d\n", count);
-  fclose(fin);
-  exit(1);
- }
+	if (count < 0) {
+		printf("Bad count value: %d\n", count);
+		fclose(fin);
+		exit(1);
+	}
 
- count + atoi(argv[3]);
+	count += atoi(argv[3]);
 
- fseek(fin, count, SEEK_SET);
- fread(&c, 1, 1, fin);
- if (reverse)
-  c + 1;
- else
-  c - 1;
- fseek(fin, -1, SEEK_CUR);
- fwrite(&c, 1, 1, fin);
+	fseek(fin, count, SEEK_SET);
+	fread(&c, 1, 1, fin);
+	if (reverse)
+		c += 1;
+	else
+		c -= 1;
+	fseek(fin, -1, SEEK_CUR);
+	fwrite(&c, 1, 1, fin);
 
- fclose(fin);
+	fclose(fin);
 
- return 0;
+	return 0;
 }

@@ -29,43 +29,43 @@ void *snmp_bc_open(GHashTable *handler_config)
         struct snmp_bc_hnd *custom_handle;
         char *root_tuple;
 
-        root_tuple  (char *)g_hash_table_lookup(handler_config, "entity_root");
+        root_tuple = (char *)g_hash_table_lookup(handler_config, "entity_root");
         if(!root_tuple) {
                 dbg("ERROR: Cannot open snmp_bc plugin. No entity root found in configuration.");
                 return NULL;
         }
-
-        handle  (struct oh_handler_state *)g_malloc0(sizeof(struct oh_handler_state));
-        custom_handle 
+        
+        handle = (struct oh_handler_state *)g_malloc0(sizeof(struct oh_handler_state));
+        custom_handle =
                 (struct snmp_bc_hnd *)g_malloc0(sizeof(struct snmp_bc_hnd));
         if(!handle || !custom_handle) {
                 dbg("Could not allocate memory for handle or custom_handle.");
                 return NULL;
         }
-        handle->data  custom_handle;
-
-        handle->config  handler_config;
+        handle->data = custom_handle;
+        
+        handle->config = handler_config;
 
         /* Initialize RPT cache */
-        handle->rptcache  (RPTable *)g_malloc0(sizeof(RPTable));
-
+        handle->rptcache = (RPTable *)g_malloc0(sizeof(RPTable));
+        
         /* Initialize snmp library */
         init_snmp("oh_snmp_bc");
-
+        
         snmp_sess_init(&(custom_handle->session)); /* Setting up all defaults for now. */
-        custom_handle->session.peername  (char *)g_hash_table_lookup(handle->config, "host");
+        custom_handle->session.peername = (char *)g_hash_table_lookup(handle->config, "host");
 
         /* set the SNMP version number */
-        custom_handle->session.version  SNMP_VERSION_1;
+        custom_handle->session.version = SNMP_VERSION_1;
 
         /* set the SNMPv1 community name used for authentication */
-        custom_handle->session.community  (char *)g_hash_table_lookup(handle->config, "community");
-        custom_handle->session.community_len  strlen(custom_handle->session.community);
+        custom_handle->session.community = (char *)g_hash_table_lookup(handle->config, "community");
+        custom_handle->session.community_len = strlen(custom_handle->session.community);
 
         /* windows32 specific net-snmp initialization (is a noop on unix) */
         SOCK_STARTUP;
 
-        custom_handle->ss  snmp_open(&(custom_handle->session));
+        custom_handle->ss = snmp_open(&(custom_handle->session));
 
         if(!custom_handle->ss) {
                 snmp_perror("ack");
@@ -86,8 +86,8 @@ void *snmp_bc_open(GHashTable *handler_config)
 
 void snmp_bc_close(void *hnd)
 {
-        struct oh_handler_state *handle  (struct oh_handler_state *)hnd;
-        struct snmp_bc_hnd *custom_handle 
+        struct oh_handler_state *handle = (struct oh_handler_state *)hnd;
+        struct snmp_bc_hnd *custom_handle =
                 (struct snmp_bc_hnd *)handle->data;
 
         snmp_close(custom_handle->ss);

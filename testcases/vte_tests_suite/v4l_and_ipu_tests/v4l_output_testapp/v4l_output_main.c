@@ -1,82 +1,82 @@
-/*====================*/
+/*================================================================================================*/
 /**
     @file   v4l_output_main.c
 
     @brief  v4l output main source file.*/
-/*======================
+/*==================================================================================================
 
     Copyright (C) 2005, Freescale Semiconductor, Inc. All Rights Reserved
     THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
     BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
     Freescale Semiconductor, Inc.
-
-====================
+    
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-Smirnov Artyom/ID            07/05/05       TLSbo49894   BRIEF description of changes made
+Smirnov Artyom/ID            07/05/05       TLSbo49894   BRIEF description of changes made 
 Bezrukov.S/SBAZR1C           08/17/2005     TLSbo53919   Remove the Brightness feature
 KHOROSHEV.D                  09/29/2005     TLSbo55077   Rewiev version
-Kazachkov/e1403c             03/14/2006     TLSbo58742  -S option causes seg fault  - fixed
-====================
-Portability: ARM GCC
-======================*/
+Kazachkov/e1403c             03/14/2006     TLSbo58742	 -S option causes seg fault  - fixed
+====================================================================================================
+Portability: ARM GCC 
+==================================================================================================*/
 
-/*======================
-Total Tests:
+/*==================================================================================================
+Total Tests: 
 
-Test Name: v4l output test scenario
+Test Name: v4l output test scenario   
 
 Test Assertion
-& Strategy:  Read dump file with picture, convert it to necessary format, crop, rotate picture and
+& Strategy:  Read dump file with picture, convert it to necessary format, crop, rotate picture and 
 display it to the screen(write to another dump file).
-======================*/
+==================================================================================================*/
 
 
 #ifdef __cplusplus
-extern "C"{
+extern "C"{ 
 #endif
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 
 /* Verification Test Environment Include Files */
 #include "v4l_output_test.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 
 #if !defined(TRUE) && !defined(FALSE)
 #define TRUE  1
 #define FALSE 0
 #endif
 
-/*======================
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 /* Extern Global Variables */
 
 /* Global Variables */
@@ -91,7 +91,7 @@ int     Cflag = 0,
     Xflag = 0,
     Yflag = 0,
     Fflag = 0;
-
+ 
 int     Oflag = 0,
     oflag = 0,
     Pflag = 0,
@@ -133,28 +133,28 @@ option_t options[] = {
 params  p;
 
 
-/*======================
+/*==================================================================================================
                                     GLOBAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 
 void    cleanup(void);
 void    setup(void);
 int     main(int argc, char **argv);
 
-/*======================
+/*==================================================================================================
                                     LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         GLOBAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
 
 void help(void)
 {
         printf("^[[36m^[[40mUsage: %s [-C <number>][-X <x_ratio>] [-Y <y_ratio>] [-R <rotation>]\n", TCID);
-        printf("          [-S <number_of_buffers>] [-F <dump file>] [-o <output_file>]\n");
+        printf("          [-S <number_of_buffers>] [-F <dump file>] [-o <output_file>]\n"); 
         printf("          [-O <output_format>] [-d <video_dev>]^[[m\n\n");
         printf("\tWhere: C specifies testcase number: 1 - file to file, 2 - file to display\n");
         printf("\t\tx_ratio, y_ratio - ratios are in percents\n");
@@ -167,8 +167,8 @@ void help(void)
 }
 
 
-/*====================*/
-/*= cleanup =*/
+/*================================================================================================*/
+/*===== cleanup =====*/
 /**
 @brief  Performs all one time clean up for this test on successful
                 completion,  premature exit or  failure. Closes all temporary
@@ -177,9 +177,9 @@ void help(void)
 
 @param  Input :      None.
         Output:      None.
-
+    
 @return Nothing*/
-/*====================*/
+/*================================================================================================*/
 void cleanup(void)
 {
         /* VTE : Actions needed to get a stable target environment */
@@ -196,12 +196,12 @@ void cleanup(void)
         tst_exit();
 }
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= setup =*/
+/*================================================================================================*/
+/*===== setup =====*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -209,10 +209,10 @@ void cleanup(void)
 
 @param  Input :      None.
         Output:      None.
-
+    
 @return On failure - Exits by calling cleanup().
         On success - returns 0.*/
-/*====================*/
+/*================================================================================================*/
 void setup(void)
 {
         int     VT_rv = TFAIL;
@@ -227,8 +227,8 @@ void setup(void)
 }
 
 
-/*====================*/
-/*= main =*/
+/*================================================================================================*/
+/*===== main =====*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -238,10 +238,10 @@ void setup(void)
 
 @param  Input :      argc - number of command line parameters.
         Output:      **argv - pointer to the array of the command line parameters.
-
+    
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.*/
-/*====================*/
+/*================================================================================================*/
 int main(int argc, char **argv)
 {
         int     VT_rv = TFAIL;
@@ -294,18 +294,18 @@ int main(int argc, char **argv)
                 p.y_size_crop = 40;
         }
 
- if (Bflag)
- {
-     /*cropping tested through offset */
-     p.crop_on = 2;
-     /*hardcode to offset 10 by default*/
-     p.x_offset = 10;
-     p.y_offset = 10;
-     p.x_size_crop = 320;
-     p.y_size_crop = 240;
-     if(Bopt)
-      sscanf(Bopt,"%d,%d,%d,%d",&p.x_offset,&p.y_offset,&p.x_size_crop,&p.y_size_crop);
- }
+	if (Bflag)
+	{
+	    /*cropping tested through offset */
+	    p.crop_on = 2;
+	    /*hardcode to offset 10 by default*/
+	    p.x_offset = 10;
+	    p.y_offset = 10;
+	    p.x_size_crop = 320;
+	    p.y_size_crop = 240;
+	    if(Bopt)
+	     sscanf(Bopt,"%d,%d,%d,%d",&p.x_offset,&p.y_offset,&p.x_size_crop,&p.y_size_crop);
+	}
 
         if (Xflag)
                 p.x_ratio = atoi(Xopt);

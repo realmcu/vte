@@ -1,0 +1,57 @@
+#Verification Tests Command File
+
+#VT SC55112 Connectivity driver tests
+#files: pmic_convity_module.ko
+#files: pmic_convity_testapp
+
+# Connectivity testcases
+# Load module for API accordance
+TGE-LV-PMIC-CONVITY-MOD insmod $LTPROOT/testcases/bin/pmic_convity_module.ko
+
+# reset state
+TGE-LV-PMIC-CONVITY-0000 pmic_convity_testapp -T 0
+
+# write, read and compare register
+TGE-LV-PMIC-CONVITY-0010 pmic_convity_testapp -T 1
+
+# open connectivity driver with USB and RS232 handle
+TGE-LV-PMIC-CONVITY-0020 pmic_convity_testapp -T 2 -A 0
+TGE-LV-PMIC-CONVITY-0021 pmic_convity_testapp -T 2 -A 1
+
+# close connectivity driver
+TGE-LV-PMIC-CONVITY-0030 pmic_convity_testapp -T 3
+
+# SET and GET operating mode for the PMIC connectivity hardware
+TGE-LV-PMIC-CONVITY-0040 pmic_convity_testapp -T 4 -A 0
+TGE-LV-PMIC-CONVITY-0041 pmic_convity_testapp -T 4 -A 1
+
+# Reset with open handle
+TGE-LV-PMIC-CONVITY-0050 pmic_convity_testapp -T 5 -A 0
+TGE-LV-PMIC-CONVITY-0051 pmic_convity_testapp -T 5 -A 1
+
+# SET, GET and the current callback function
+TGE-LV-PMIC-CONVITY-0060 pmic_convity_testapp -T 6
+
+# SET and GET the USB transceiver speed
+TGE-LV-PMIC-CONVITY-0070 pmic_convity_testapp -T 7
+# SET and GET the USB transceiver's current power supply configuration
+TGE-LV-PMIC-CONVITY-0080 pmic_convity_testapp -T 8
+# SET and GET the USB transceiver's operating mode
+TGE-LV-PMIC-CONVITY-0090 pmic_convity_testapp -T 9
+# get the current Data Line Pulse duration (in milliseconds) for the USB OTG Session Request Protocol
+TGE-LV-PMIC-CONVITY-0100 pmic_convity_testapp -T 10
+# explicitly start and stop the USB OTG Host Negotiation Protocol (HNP) process
+TGE-LV-PMIC-CONVITY-0110 pmic_convity_testapp -T 11
+# SET, GET and CLEAR the USB On-The-Go (OTG) configuration
+TGE-LV-PMIC-CONVITY-0120 pmic_convity_testapp -T 12
+
+# SET and GET the connectivity interface's current RS-232 operating configuration
+TGE-LV-PMIC-CONVITY-0130 pmic_convity_testapp -T 13
+
+# Signal the attached device to exit the current CEA-936 operating mode
+TGE-LV-PMIC-CONVITY-0140 pmic_convity_testapp -T 14
+
+# Unload module
+TGE-LV-PMIC-CONVITY-MOD rmmod pmic_convity_module
+
+#WARNING the commented tests are not automatical tests

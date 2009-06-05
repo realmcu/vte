@@ -45,7 +45,7 @@ Portability:  ARM GCC
 
 
 /**/
-#ifdef CONFIG_ARCH_MXC91231
+#ifdef CONFIG_ARCH_MXC91231 
 
 #define INIT_CKO_CLOCK()                                        \
         do{                                                     \
@@ -61,8 +61,8 @@ Portability:  ARM GCC
 }while(0)
 
 /*!
- * This macro is used to normalize master clock (ccm/crm)
- * divider value, as USBPLL runs at different frequency
+ * This macro is used to normalize master clock (ccm/crm) 
+ * divider value, as USBPLL runs at different frequency 
  * on each platform. In MXC91231 case, we need to multiply
  * the base divider (which depends on frequency to applied
  * to audio to be played) by 2/5.
@@ -88,10 +88,10 @@ gpio_audio_port_active(5);                              \
 }while(0)
 
 /*!
- * This macro is used to normalize master clock (ccm/crm)
- * divider value, as USBPLL runs at different frequency
- * on each platform. On MX31 case, there is no need to
- * normalize it as MX31 dividers are the base for the
+ * This macro is used to normalize master clock (ccm/crm) 
+ * divider value, as USBPLL runs at different frequency 
+ * on each platform. On MX31 case, there is no need to 
+ * normalize it as MX31 dividers are the base for the 
  * other boards.
  */
 #define NORMALIZE_CCM_DIVIDER(v)                        (v)
@@ -123,52 +123,52 @@ do{ \
 /*!
  * Wave file configuration.
  */
-struct wave_config{
+struct wave_config{        
         /*!
          * SSI
          */
         unsigned short ssi;
-
+        
         /*!
          * Number of channels (1:MONO, 2:STEREO)
          */
         unsigned short num_channels;
-
+        
         /*!
          * Sample rate
          */
         unsigned long sample_rate;
-
+        
         /*!
          * Bits per sample (16-bits mode supported)
          */
         unsigned short bits_per_sample;
-
+        
         /*!
          * Sample size
          */
         unsigned long sample_size;
-
+        
         /*!
          * Requested mixing mode
          */
          unsigned long mix_enabled;
-
+         
         /*!
          * MC13783 device to use
          */
          unsigned long dac_codec;
-
+         
         /*!
           * ssi fifo to be used
           */
          int ssi_fifo;
-
+         
         /*!
           * clock provider
           */
          int master_clock;
-
+         
 };
 
 #endif /* __TESTMOD_SSI_H__ */

@@ -18,18 +18,18 @@
 #                      Modification     Tracking
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
-# Spring Zhang          19/11/2008       n/a        Initial ver.
+# Spring Zhang          19/11/2008       n/a        Initial ver. 
 # Spring                28/11/2008       n/a      Modify COPYRIGHT header
 #############################################################################
-# Portability:  ARM sh
+# Portability:  ARM sh 
 #
-# File Name:   sdma_rw.sh
+# File Name:   sdma_rw.sh 
 # Total Tests:        1
-# Test Strategy:
+# Test Strategy: 
+# 
+# Input:	
 #
-# Input:
-#
-# Return:
+# Return:  
 #
 # Use command "./sdma_rw.sh"
 
@@ -83,16 +83,16 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup()
+cleanup() 
 {
     RC=0
     rmmod mxc_sdma_mem_test
     return $RC
 }
 
-# Function:
+# Function:     
 #
-# Description:
+# Description: 
 #
 # Exit:         - zero on success
 #               - non-zero on failure.
@@ -112,10 +112,11 @@ sdma_rw_test()
     sleep 5
 
     sdma_rw || RC=$?
-    if [ $RC -ne 0 ]
+    if [ $RC -eq 0 ]
     then
+        tst_resm TPASS "Test #1: SDMA WRITE/READ pass."
+    else
         tst_resm TFAIL "Test #1: SDMA WRITE/READ fail."
-        return $RC
     fi
 
     return $RC
@@ -128,7 +129,7 @@ sdma_rw_test()
 # Return        - none
 usage()
 {
-    cat <<-EOF
+    cat <<-EOF 
 
     Use this command to test SDMA RW
     usage: ./${0##*/}

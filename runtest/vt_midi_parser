@@ -1,0 +1,13 @@
+#Verification Tests Command File
+
+#VT MIDI parser test application
+#files: midi_parser_testapp
+#files: midipar_cfg midipar_cfg_robustness
+
+TG-LV-MIDPAR-0010 midi_parser_testapp -T 0 -C $LTPROOT/testcases/bin/configs/midipar_cfg -V
+TG-LV-MIDPAR-0020 midi_parser_testapp -T 1 -C $LTPROOT/testcases/bin/configs/midipar_cfg_robustness -V
+TG-LV-MIDPAR-0030 midi_parser_testapp -T 2 -C $LTPROOT/testcases/bin/configs/midipar_cfg -N 10 -V
+TG-LV-MIDPAR-0040 midi_parser_testapp -T 3 -C $LTPROOT/testcases/bin/configs/midipar_cfg -V
+TG-LV-MIDPAR-0050 midi_parser_testapp -T 4 -C $LTPROOT/testcases/bin/configs/midipar_cfg -V
+TG-LV-MIDPAR-0060 midi_parser_testapp -T 5 -C $LTPROOT/testcases/bin/configs/midipar_cfg -N 10 -V
+TG-LV-MIDPAR-0070 midi_parser_testapp -T 6 -C $LTPROOT/testcases/bin/configs/midipar_cfg -V

@@ -16,7 +16,7 @@
 #                            Modification     Tracking
 #Author/core ID                  Date          Number     Description of Changes
 #-------------------------   ------------    ----------   -----------------------------------------
-#S.Bezrukov/SBAZR1C           31/08/2005     TLSbo52697   Initial version
+#S.Bezrukov/SBAZR1C           31/08/2005     TLSbo52697   Initial version                           
 #A.Ozerov/b00320              08/08/2006     TLSbo73745   Review version(in accordance to L26_1_19 release).
 #
 ####################################################################################################

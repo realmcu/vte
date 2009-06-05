@@ -1,0 +1,12 @@
+#Verification Tests Command File
+
+#VT NOR MTD drivers tests
+#files: nor_mtd_testapp_1
+#files: nor_mtd_testapp_2
+
+#NOR
+TGE-LV-NMTD-0010 nor_mtd_testapp_1 -D /dev/mtd/1 
+TGE-LV-NMTD-0011 nor_mtd_testapp_1 -D /dev/mtd/1 -T 0x1000
+TGE-LV-NMTD-0020 nor_mtd_testapp_2 -D /dev/mtd/1 -A 0x80000
+TGE-LV-NMTD-0030 nor_mtd_testapp_2 -D /dev/mtd/1 -A 0x100000
+

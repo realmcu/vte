@@ -16,10 +16,10 @@
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
-Tony THOMASSIN/RB595C 29/07/2004   TLSbo41151   SSI/DAM test development
-I.Inkina/nknl001      29/06/2005   TLSbo50735   code was improved
+Tony THOMASSIN/RB595C 29/07/2004   TLSbo41151   SSI/DAM test development 
+I.Inkina/nknl001      29/06/2005   TLSbo50735   code was improved  
 V.Halabuda/hlbv001    05/08/2005   TLSbo53363   update for linux-2.6.10-rel-1.12.arm
-I.Inkina/nknl001      22/09/2005   TLSbo55818   update for VTE_1.13
+I.Inkina/nknl001      22/09/2005   TLSbo55818   update for VTE_1.13  
 D.Khoroshev/b00313    12/01/2005   TLSbo56844   Add SC55112 support
 D.Simakov             05/06/2006   TLSbo67103   Re-written
 D.Kardakov            11/09/2006   TLSbo71015   update for L26_21 release
@@ -57,15 +57,15 @@ D.Kardakov            11/09/2006   TLSbo71015   update for L26_21 release
 typedef struct
 {
         int     mTestCase;
-        char *  mSndName;
+        char *  mSndName;        
         int     mWriteChunkSz;
-} sTestappConfig;
+} sTestappConfig; 
 
 /*==================================================================================================
                                  GLOBAL VARIABLE DECLARATIONS
 ==================================================================================================*/
 
-extern sTestappConfig  gTestappConfig;
+extern sTestappConfig  gTestappConfig;     
 
 
 /*==================================================================================================

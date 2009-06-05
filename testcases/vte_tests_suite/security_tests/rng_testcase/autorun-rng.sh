@@ -47,26 +47,26 @@ run_testcase "./rng_test -R30"
 
 # Generating Random Number in User Mode
 for CASE in 4 8 50 100 200 500 ; do
- echo "Reading $CASE Random Numbers"
- run_testcase "./rng_test -E$CASE"
+	echo "Reading $CASE Random Numbers"
+	run_testcase "./rng_test -E$CASE"
 done
 
 # Generating Random Number in Kernel Mode
 for CASE in 4 8 50 100 200 500 ; do
- echo "Reading $CASE Random Numbers as kernel mode"
- run_testcase "./rng_test -Ok -E$CASE"
+	echo "Reading $CASE Random Numbers as kernel mode"
+	run_testcase "./rng_test -Ok -E$CASE"
 done
 
 # Adding Entropy in User Mode
 for CASE in 4 8 C AB 2CC 5AB ; do
- echo "Adding Entropy in User Mode"
- run_testcase "./rng_test -Z$CASE"
+	echo "Adding Entropy in User Mode"
+	run_testcase "./rng_test -Z$CASE"
 done
 
 # Adding Entropy in Kernel Mode
 for CASE in 4 8 C AB 2CC 5AB ; do
- echo "Adding Entropy in Kernel Mode"
- run_testcase "./rng_test -Ok -Z$CASE"
+	echo "Adding Entropy in Kernel Mode"
+	run_testcase "./rng_test -Ok -Z$CASE"
 done
 
 # Writing in to RNG Registers

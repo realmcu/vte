@@ -35,7 +35,7 @@ Portability: Indicate if this module is portable to other compilers or platforms
 #include <qcolordialog.h>
 #include <qcolor.h>
 #include <qpen.h>
-#include <qinputdialog.h>
+#include <qinputdialog.h> 
 #include <time.h>
 
 
@@ -77,7 +77,7 @@ private:
 protected:
 	QPixmap buffer;
 	void mix();
-
+	
 };
 
 

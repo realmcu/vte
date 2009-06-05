@@ -21,7 +21,7 @@
 # Spring Zhang        07/02/2008        n/a      Add jffs2,nfs,sysfs,etc. tests
 #
 ###############################################################################
-#Portability: Indicate if this module is portable to other compilers
+#Portability: Indicate if this module is portable to other compilers 
 #             or platforms.
 #             If not, indicate specific reasons why is it not portable.
 #
@@ -33,7 +33,7 @@ SUBDIRS+=fs_cr_rm fs_fsck fs_inod
 SUBDIRS+=fs_perms doio
 # New fs test cases
 SUBDIRS+=udev
-TARGETS=jffs2_test1.sh cramfs_test1.sh procfs_test1.sh sample.cramfs
+TARGETS=jffs2_test1.sh cramfs_test1.sh procfs_test1.sh sample.cramfs 
 TARGETS+=jffs2_test2.sh jffs2_test3.sh
 
 all:

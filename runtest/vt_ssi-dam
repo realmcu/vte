@@ -1,0 +1,57 @@
+#Verification Tests Command File
+
+#VT SSI DAM drivers tests
+#files: ssi_dam_testapp
+
+TGE-LV-SSI-MOD insmod $LTPROOT/testcases/bin/testmod_ssi.ko
+
+#TGE-LV-SSI-0010 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio11k16M.wav -C32768
+#TGE-LV-SSI-0011 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio11k16S.wav -C32768
+#TGE-LV-SSI-0012 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio16k16M.wav -C32768
+#TGE-LV-SSI-0013 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio16k16S.wav -C32768
+#TGE-LV-SSI-0014 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio22k16M.wav -C32768
+#TGE-LV-SSI-0015 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio22k16S.wav -C32768
+#TGE-LV-SSI-0016 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio24k16M.wav -C32768
+#TGE-LV-SSI-0017 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio24k16S.wav -C32768
+#TGE-LV-SSI-0018 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio32k16M.wav -C32768
+#TGE-LV-SSI-0019 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio32k16S.wav -C32768
+#TGE-LV-SSI-0020 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio44k16M.wav -C4096
+#TGE-LV-SSI-0021 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio44k16S.wav -C4096
+#TGE-LV-SSI-0022 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio48k16S.wav -C32768
+#TGE-LV-SSI-0023 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio64k16M.wav -C32768
+#TGE-LV-SSI-0024 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio64k16S.wav -C32768
+#TGE-LV-SSI-0025 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio8k16M.wav -C32768
+#TGE-LV-SSI-0026 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio8k16S.wav -C32768
+#TGE-LV-SSI-0027 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio96k16M.wav -C32768
+#TGE-LV-SSI-0028 ssi_dam_testapp -T0 -S $LTPROOT/testcases/bin/audio96k16S.wav -C32768
+
+#TGE-LV-SSI-0030 ssi_dam_testapp -T1 -S $LTPROOT/testcases/bin/audio16k16M.wav -C32768
+#TGE-LV-SSI-0031 ssi_dam_testapp -T1 -S $LTPROOT/testcases/bin/audio16k16S.wav -C32768
+#TGE-LV-SSI-0032 ssi_dam_testapp -T1 -S $LTPROOT/testcases/bin/audio8k16M.wav -C32768
+#TGE-LV-SSI-0033 ssi_dam_testapp -T1 -S $LTPROOT/testcases/bin/audio8k16S.wav -C32768
+
+#TGE-LV-SSI-0041 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio11k16M.wav -C32768
+#TGE-LV-SSI-0042 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio11k16S.wav -C32768
+#TGE-LV-SSI-0043 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio16k16M.wav -C32768
+#TGE-LV-SSI-0044 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio16k16S.wav -C32768
+#TGE-LV-SSI-0045 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio22k16M.wav -C32768
+#TGE-LV-SSI-0046 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio22k16S.wav -C32768
+#TGE-LV-SSI-0047 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio24k16M.wav -C32768
+#TGE-LV-SSI-0048 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio24k16S.wav -C32768
+#TGE-LV-SSI-0049 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio32k16M.wav -C32768
+#TGE-LV-SSI-0050 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio32k16S.wav -C32768
+#TGE-LV-SSI-0051 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio44k16M.wav -C4096
+#TGE-LV-SSI-0052 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio44k16S.wav -C4096
+#TGE-LV-SSI-0053 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio48k16S.wav -C32768
+#TGE-LV-SSI-0054 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio64k16M.wav -C32768
+#TGE-LV-SSI-0055 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio64k16S.wav -C32768
+#TGE-LV-SSI-0056 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio8k16M.wav -C32768
+#TGE-LV-SSI-0057 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio8k16S.wav -C32768
+#TGE-LV-SSI-0058 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio96k16M.wav -C32768
+#TGE-LV-SSI-0059 ssi_dam_testapp -T2 -S $LTPROOT/testcases/bin/audio96k16S.wav -C32768
+
+#TGE-LV-SSI-0060 ssi_dam_testapp -T3 -S $LTPROOT/testcases/bin/audio16k16M.wav -C32768
+#TGE-LV-SSI-0061 ssi_dam_testapp -T3 -S $LTPROOT/testcases/bin/audio16k16S.wav -C32768
+#TGE-LV-SSI-0062 ssi_dam_testapp -T3 -S $LTPROOT/testcases/bin/audio8k16M.wav -C32768
+#TGE-LV-SSI-0063 ssi_dam_testapp -T3 -S $LTPROOT/testcases/bin/audio8k16S.wav -C32768
+

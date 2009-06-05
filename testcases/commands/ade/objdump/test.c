@@ -2,25 +2,25 @@
 int main()
 {
 
- int i0;
+	int i=0;
 
 
- for( i0; i<10; i++)
- {
+	for( i=0; i<10; i++)
+	{
 
-  if ( i %2 )
+		if ( i %2 )
 
-   printf(" Hello \n ");
+			printf(" Hello \n ");
 
-  else
-   printf("World \n");
+		else
+			printf("World \n");
 
- }
+	}
 
- printf(" the end \n");
+	printf(" the end \n");
 
- return 0;
+	return 0;
 
 }
-
+	
 

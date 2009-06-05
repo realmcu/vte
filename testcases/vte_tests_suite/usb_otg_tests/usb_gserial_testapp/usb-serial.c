@@ -23,36 +23,36 @@ int main()
         perror("Open /dev/ttygs");
         exit(1);
     }
-
-#if 1
+	
+#if 1    
     ret = write(fd, writebuffer, strlen(writebuffer));
     if (ret < 0)
     {
         perror("write ttygs");
         exit(1);
     }
-    printf("write size = %d\n", ret);
+    printf("write size = %d\n", ret);   
 #endif
 /*
-    ret = read(fd, readbuffer, size);
+	   ret = read(fd, readbuffer, size);
 
-  printf("read size=%d\n",size);
-
-     if (ret < 0)
-         perror("read ttygs");
-     else
-         printf("%s: receive from usb-serial:%s", __FILE__, readbuffer);
-  */
+		printf("read size=%d\n",size);
+		
+	    if (ret < 0)
+	        perror("read ttygs");
+	    else    
+	        printf("%s: receive from usb-serial:%s", __FILE__, readbuffer);
+	 */
     while(1)
-    {
-  while((nread=read(fd,readbuffer,size))>0)
-  {
-   //printf("\nLen:%d\n",nread);
-   readbuffer[nread+1]='\0';
-   printf("%s: receive from usb-serial:%s", __FILE__, readbuffer);
-  }
+    	{
+		while((nread=read(fd,readbuffer,size))>0)
+		{
+			//printf("\nLen:%d\n",nread);
+			readbuffer[nread+1]='\0';
+			printf("%s: receive from usb-serial:%s", __FILE__, readbuffer);	
+		}
 
- }
+	}
 
     close(fd);
 }

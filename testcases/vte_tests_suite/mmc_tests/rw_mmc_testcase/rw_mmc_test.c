@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file  rw_mmc_test.c
 
         @brief MMC driver test scenario
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -20,13 +20,13 @@ S.ZAVJALOV/zvjs001c          22/03/2005     TLSbo46706  Initial version
 A.Ozerov/b00320              20/02/2006     TLSbo61899  Testapp was cast to coding standarts
 A.Ozerov/b00320              11/12/2006     TLSbo84161  Minor changes.
 
-====================
+====================================================================================================
 Portability: ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -36,36 +36,36 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "rw_mmc_test.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 int     fd_device = 0;
 unsigned char *patten_buf = NULL,
     *read_buf = NULL;
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 extern int vb_mode;
 extern unsigned long block_size,
         block_count,
         offset_address;
 extern char *device_name;
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
-/*====================*/
-/*= VT_rw_mmc_setup =*/
-/**
+==================================================================================================*/
+/*================================================================================================*/
+/*===== VT_rw_mmc_setup =====*/
+/** 
 @brief  This function assumes the pre-condition of the test case execution
 
 @param  none
 
-@return On success - return TPASS
-        On failure - return TFAIL
+@return On success - return TPASS 
+        On failure - return TFAIL 
 */
-/*====================*/
+/*================================================================================================*/
 int VT_rw_mmc_setup(void)
 {
         fd_device = open(device_name, O_RDWR);
@@ -93,17 +93,17 @@ int VT_rw_mmc_setup(void)
         return TPASS;
 }
 
-/*====================*/
-/*= VT_rw_mmc_cleanup =*/
+/*================================================================================================*/
+/*===== VT_rw_mmc_cleanup =====*/
 /**
 @brief  This function assumes the post-condition of the test case execution
 
 @param  none
 
-@return On success - return TPASS
-        On failure - return TFAIL
+@return On success - return TPASS 
+        On failure - return TFAIL 
 */
-/*====================*/
+/*================================================================================================*/
 int VT_rw_mmc_cleanup(void)
 {
         if (patten_buf != NULL)
@@ -121,8 +121,8 @@ int VT_rw_mmc_cleanup(void)
         return TPASS;
 }
 
-/*====================*/
-/*= read_mmc_device =*/
+/*================================================================================================*/
+/*===== read_mmc_device =====*/
 /**
 @brief  This function reads a data from the mmc device
 
@@ -141,7 +141,7 @@ int VT_rw_mmc_cleanup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int read_mmc_device(unsigned long start_offset, unsigned long size_to_read, unsigned long bs,
                     unsigned char *read_buf)
 {
@@ -162,10 +162,10 @@ int read_mmc_device(unsigned long start_offset, unsigned long size_to_read, unsi
         return TPASS;
 }
 
-/*====================*/
-/*= write_mmc_device =*/
+/*================================================================================================*/
+/*===== write_mmc_device =====*/
 /**
-@brief  This function writes a data to the mmc device
+@brief  This function writes a data to the mmc device 
 
 @param  start_offset
         Offset start_offset
@@ -182,7 +182,7 @@ int read_mmc_device(unsigned long start_offset, unsigned long size_to_read, unsi
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int write_mmc_device(unsigned long start_offset, unsigned long size_to_write, unsigned long bs,
                      unsigned char *write_buf)
 {
@@ -203,17 +203,17 @@ int write_mmc_device(unsigned long start_offset, unsigned long size_to_write, un
         return TPASS;
 }
 
-/*====================*/
-/*= VT_rw_mmc_test =*/
+/*================================================================================================*/
+/*===== VT_rw_mmc_test =====*/
 /**
 @brief  MMC Driver test scenario function
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_rw_mmc_test(void)
 {
         unsigned long i;

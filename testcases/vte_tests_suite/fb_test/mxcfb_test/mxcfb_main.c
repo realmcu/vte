@@ -1,4 +1,4 @@
-/*====================*/
+/*================================================================================================*/
 /**
     @file   mxcfb_main.c
 
@@ -9,11 +9,14 @@
 extern "C"{
 #endif
 
+/*==================================================================================================
+                                        INCLUDE FILES
+==================================================================================================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-
+    
 /* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
@@ -21,6 +24,23 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "mxcfb_test.h"
 
+/*==================================================================================================
+                                        LOCAL MACROS
+==================================================================================================*/
+
+
+/*==================================================================================================
+                          LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
+==================================================================================================*/
+
+
+/*==================================================================================================
+                                       LOCAL CONSTANTS
+==================================================================================================*/
+
+/*==================================================================================================
+                                       LOCAL VARIABLES
+==================================================================================================*/
 int      T_flag;        /* fisrt fb to open */
 char     *T_opt;        /* fb name  */
 int      d_flag;
@@ -35,11 +55,17 @@ option_t opts[] =
     { "D:", &D_flag, &D_opt},
     { NULL, NULL,    NULL}
 };
+         
 
 
+/*==================================================================================================
+                                       GLOBAL CONSTANTS
+==================================================================================================*/
 
 
-
+/*==================================================================================================
+                                       GLOBAL VARIABLES
+==================================================================================================*/
 /* Extern Global Variables */
 extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir(...) */
@@ -48,14 +74,25 @@ extern char *TESTDIR;                /* temporary dir created by tst_tmpdir(...)
 char *TCID     = "mxcfb";           /* test program identifier               */
 int  TST_TOTAL = 1;                  /* total number of tests in this file    */
 
+/*==================================================================================================
+                                   GLOBAL FUNCTION PROTOTYPES
+==================================================================================================*/
 /*void cleanup();*/
 
+/*==================================================================================================
+                                   LOCAL FUNCTION PROTOTYPES
+==================================================================================================*/
 void help(void);
 void setup(void);
 int main(int argc, char **argv);
 
 
-/*= cleanup =*/
+/*==================================================================================================
+                                       GLOBAL FUNCTIONS
+==================================================================================================*/
+
+/*================================================================================================*/
+/*===== cleanup =====*/
 /**
 @brief  Performs all one time clean up for this test on successful
         completion,  premature exit or  failure. Closes all temporary
@@ -64,13 +101,14 @@ int main(int argc, char **argv);
 
 @param  Input :      None.
         Output:      None.
-
+  
 @return Nothing
 */
+/*================================================================================================*/
 void cleanup(void)
 {
         int VT_rv = TFAIL;
-
+        
         /* VTE : Actions needed to get a stable target environment */
         VT_rv = VT_fb_cleanup();
         if (VT_rv != TPASS)
@@ -81,7 +119,12 @@ void cleanup(void)
         tst_exit();
 }
 
-/*= setup =*/
+/*==================================================================================================
+                                       LOCAL FUNCTIONS
+==================================================================================================*/
+
+/*================================================================================================*/
+/*===== setup =====*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -89,25 +132,27 @@ void cleanup(void)
 
 @param  Input :      None.
         Output:      None.
-
+  
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
+/*================================================================================================*/
 void setup(void)
 {
-    int VT_rv = TFAIL;
+    int VT_rv = TFAIL;    
     /* VTE : Actions needed to prepare the test running */
     VT_rv = VT_fb_setup();
     if (VT_rv != TPASS)
     {
       tst_brkm(TBROK , cleanup, "VT_fb_setup() Failed : error code = %d", VT_rv);
     }
-
+        
     return;
 }
 
 
-/*= main =*/
+/*================================================================================================*/
+/*===== main =====*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -118,15 +163,16 @@ void setup(void)
 @param  Input :  argc - number of command line parameters.
                  **argv - pointer to the array of the command line parameters.
         Output:  None
-
+  
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
+/*================================================================================================*/
 int main(int argc, char **argv)
 {
         int  VT_rv = TFAIL;
         char *message;      /* From parse_opts() */
-
+        
         if ( (message = parse_opts(argc, argv, opts, &help)) != NULL)
         {
                 printf("An error occured while parsing options: %s\n", message);
@@ -143,19 +189,21 @@ int main(int argc, char **argv)
         else
                 tst_resm(TFAIL, "%s test case did NOT work as expected", TCID);
         cleanup();
-
+        
         return VT_rv;
 }
 
-/*= help =*/
+/*================================================================================================*/
+/*===== help =====*/
 /**
 @brief  Displays the program usage
 
 @param  Input:  None
         Output: None
-
+  
 @return None
 */
+/*================================================================================================*/
 void help(void)
 {
         printf("Usage: -T <testcase ID> -D <fb background> -d <fb fore ground> \n");

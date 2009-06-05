@@ -11,18 +11,18 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ###################################################################################################
 #Revision History:
 #                              Modification     Tracking
 #Author (Core ID)                  Date          Number    Description of Changes
 #---------------------------   ------------    ----------  ----------------------------------------
-#Igor Semenchukov (smng001c)    23/08/2004     TLSbo40411   Initial version
+#Igor Semenchukov (smng001c)    23/08/2004     TLSbo40411   Initial version 
 #Igor Semenchukov (smng001c)    08/12/2004     TLSbo43804   Rework after heavy MU drv modification;
-#                                                           merge two test cases in the one
-##Sergey Yakubenko		04/10/2007     ENGR42513    Support of the SKYE Plus was added
+#                                                           merge two test cases in the one 
+##Sergey Yakubenko		04/10/2007     ENGR42513    Support of the SKYE Plus was added		
 ###################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms.
+#Portability: Indicate if this module is portable to other compilers or platforms. 
 #             If not, indicate specific reasons why is it not portable.
 ###################################################################################################
 
@@ -31,7 +31,7 @@ CFLAGS+=        -Wall -I../../../../include
 LOADLIBES+=     -L../../../../lib -lltp
 
 ifeq ($(ARCH_PLATFORM), mxc30031ads)
-CFLAGS+= -DCONFIG_MACH_MXC30031ADS
+CFLAGS+= 	-DCONFIG_MACH_MXC30031ADS
 endif
 
 ifeq ($(ARCH_PLATFORM), mxc27520evb)

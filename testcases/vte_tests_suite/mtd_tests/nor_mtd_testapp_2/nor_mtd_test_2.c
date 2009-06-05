@@ -1,39 +1,39 @@
-/*====================*/
+/*================================================================================================*/
 /**
     @file   nor_mtd_test_2.c
 
     @brief Test error cases in do write/read/erase operations on
               a flash memory device using MTD subsystem API
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
-
-====================
+     
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-V.Becker/rc023c          04/05/2004     TLSbo39142   Initial version
-V.Becker/rc023c          18/06/2004     TLSbo39142   Code reviewed
+V.Becker/rc023c          04/05/2004     TLSbo39142   Initial version 
+V.Becker/rc023c          18/06/2004     TLSbo39142   Code reviewed 
 V.Becker/rc023c          20/10/2004     TLSbo43924   Update after NOR Flash map change
 E.Gromazina              07/07/2005     TLSbo50888   Minor fixes
 C.Gagneraud/cgag1c       06/01/2006     TLSbo53742   Complete rewrite
 D.Simakov/b00296         06/07/2006     TLSbo67309   Backup/Restore were implemented to
                                                      use the /dev/mtd/1 and /dev/mtd/2 devices
-
-====================
+                                                         
+====================================================================================================
 Portability:  ARM GCC  gnu compiler
-======================*/
+==================================================================================================*/
 
 
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -44,9 +44,9 @@ Portability:  ARM GCC  gnu compiler
 #include "nor_mtd_test_2.h"
 
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
 #if !defined(TRUE)
     #define TRUE 1
@@ -54,62 +54,62 @@ Portability:  ARM GCC  gnu compiler
 #if !defined(FALSE)
     #define FALSE 0
 #endif
+            
 
-
-/*======================
+/*==================================================================================================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 
 typedef struct
 {
         void * data;
         size_t sz;
 } backup_data_t;
+                
 
-
-/*======================
+/*==================================================================================================
                                        LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                        LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 static int           file_desc = 0;
 static backup_data_t backup    = {0,0};
 
-/*======================
+/*==================================================================================================
                                        GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                        GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 extern char device_name[];
 
-/*======================
+/*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 int     Erase_Flash(struct erase_info_user *, struct mtd_info_user *, unsigned int);
 int     Backup(size_t sz);
 int     Restore(void);
 
 
-/*======================
+/*==================================================================================================
                                        LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
 
-/*====================*/
-/*= VT_nor_mtd_test2_setup =*/
+/*================================================================================================*/
+/*===== VT_nor_mtd_test2_setup =====*/
 /**
 
 @param  None
-
+  
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_nor_mtd_test2_setup(void)
 {
         int     rv = TFAIL;
@@ -131,17 +131,17 @@ int VT_nor_mtd_test2_setup(void)
         return rv;
 }
 
-/*====================*/
-/*= VT_nor_mtd_test2_cleanup =*/
+/*================================================================================================*/
+/*===== VT_nor_mtd_test2_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
 
 @param  None
-
+  
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_nor_mtd_test2_cleanup(void)
 {
         int     rv = TFAIL;
@@ -152,7 +152,7 @@ int VT_nor_mtd_test2_cleanup(void)
         struct erase_info_user mxc_erase_mtd;
         ioctl(file_desc, MEMGETINFO, &mxc_mtd);
         Erase_Flash(&mxc_erase_mtd, &mxc_mtd, backup.sz);
-        Restore();
+        Restore();                                                                                        
 
         /* Close NOR MTD driver */
         ret = close(file_desc);
@@ -169,17 +169,17 @@ int VT_nor_mtd_test2_cleanup(void)
         return rv;
 }
 
-/*====================*/
-/*= VT_nor_mtd_test2 =*/
+/*================================================================================================*/
+/*===== VT_nor_mtd_test2 =====*/
 /**
 @brief  nor_mtd_test 2 tests error cases on NOR Flash memory device driver
 
 @param  None
-
+  
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_nor_mtd_test2(unsigned long size)
 {
         tst_resm(TINFO, "NOR MTD driver test 2");
@@ -207,12 +207,12 @@ int VT_nor_mtd_test2(unsigned long size)
                 tst_resm(TFAIL, "MEMGETINFO failed: %s", strerror(errno));
                 return rv;
         }
-
+        
         if( !Backup(mxc_mtd.size) )
                 return rv;
         lseek(file_desc, 0, SEEK_SET);
-
-
+                        
+                                  
 
 
         /** Write to NOR Flash memory without erasure:
@@ -275,7 +275,7 @@ int VT_nor_mtd_test2(unsigned long size)
         }
 
 
-        /** Write beyond total Flash size
+        /** Write beyond total Flash size 
         * - erase last block of flash
         * - set cursor to the end
         * - write data in last place
@@ -343,7 +343,7 @@ int VT_nor_mtd_test2(unsigned long size)
                 failure = 1;
         }
 
-        /** Read NOR flash at wrong address
+        /** Read NOR flash at wrong address 
         * - set cursor to the end
         * - read data from last place
         * - read data again => should failed with ENOSPC
@@ -410,8 +410,8 @@ int VT_nor_mtd_test2(unsigned long size)
 }
 
 
-/*====================*/
-/*====================*/
+/*================================================================================================*/
+/*================================================================================================*/
 int Erase_Flash(struct erase_info_user *mxc_erase, struct mtd_info_user *mtd_info,
                 unsigned int Flash_size)
 {
@@ -442,13 +442,13 @@ int Erase_Flash(struct erase_info_user *mxc_erase, struct mtd_info_user *mtd_inf
 }
 
 
-/*====================*/
-/*====================*/
+/*================================================================================================*/
+/*================================================================================================*/
 int Backup(size_t sz)
-{
+{        
         if( backup.data || file_desc <= 0 )
                 return FALSE;
-
+                
         backup.sz = sz;
         backup.data = malloc( backup.sz );
         if( !backup.data )
@@ -456,8 +456,8 @@ int Backup(size_t sz)
                 tst_brkm( TBROK, (void(*)())VT_nor_mtd_test2_cleanup,
                          "%s : Can't allocate %lu bytes memory",
                           __FUNCTION__, (unsigned long)backup.sz );
-        }
-
+        }                
+        
         /* Backup loop */
         int total_bytes_read = 0, bytes_read;
         char * buf = (char*)backup.data;
@@ -475,9 +475,9 @@ int Backup(size_t sz)
                 total_bytes_read += bytes_read;
                 buf += bytes_read;
         }
-
+        
         tst_resm( TINFO, "Flash data was backuped (%lu bytes)", (unsigned long)backup.sz );
-
+        
         /* flashdump */
         FILE * out = fopen( "flashdump", "wb" );
         if( out )
@@ -485,21 +485,21 @@ int Backup(size_t sz)
                 fwrite( backup.data, 1, backup.sz, out );
                 fclose( out );
         }
-
+        
         return TRUE;
 }
 
 
-/*====================*/
-/*====================*/
+/*================================================================================================*/
+/*================================================================================================*/
 int Restore(void)
 {
         if( !backup.data || file_desc <= 0 )
                 return FALSE;
-
+        
         /* Restore loop */
         int total_bytes_written = 0, bytes_written;
-        char * buf = (char*)backup.data;
+        char * buf = (char*)backup.data;        
         while(total_bytes_written < backup.sz)
         {
                 bytes_written = write(file_desc, buf, 8);
@@ -512,12 +512,12 @@ int Restore(void)
                 total_bytes_written += bytes_written;
                 buf += bytes_written;
         }
-
+                        
         free( backup.data );
-        backup.data = 0;
-
+        backup.data = 0;                
+        
         tst_resm( TINFO, "Flash data was restored (%lu bytes)", (unsigned long)backup.sz );
         backup.sz = 0;
-
+        
         return TRUE;
 }

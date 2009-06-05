@@ -1,4 +1,4 @@
-/*
+/* 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -18,6 +18,6 @@
 /* The minimun acceptable value for USHRT_MAX */
 #define MIN_USHRT_MAX 65535
 
-shmatt_t tmin  0;
-shmatt_t tmax  USHRT_MAX;
-shmatt_t tminmax  MIN_USHRT_MAX;
+shmatt_t tmin = 0;
+shmatt_t tmax = USHRT_MAX;
+shmatt_t tminmax = MIN_USHRT_MAX;

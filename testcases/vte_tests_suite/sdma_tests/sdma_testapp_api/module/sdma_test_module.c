@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   sdma_test_module.c
 
         @brief  SDMA API
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                         Modification     Tracking
 Author/core ID              Date          Number        Description of Changes
@@ -24,14 +24,14 @@ V.HALABUDA/HLBV001       05/07/2005     TLSbo52340      Update version for linux
 I.Inkina/nknl001         02/08/2005     TLsbo49843      Update initializing the memory
 A.Ozerov/B00320          10/02/2006     TLSbo61734      Code was cast to coding conventions
 A.Ozerov/b00320          11/12/2006     TLSbo84161      Minor changes.
-D.Kardakov               07/30/2007     ENGR43546       "SDMA script not found" error was fixed.
-====================
+D.Kardakov               07/30/2007     ENGR43546       "SDMA script not found" error was fixed.  
+====================================================================================================
 Portability:  ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <linux/init.h>
 #include <linux/module.h>
@@ -54,18 +54,18 @@ Portability:  ARM GCC
 #endif
 #endif
 
-/*======================
+/*==================================================================================================
                                         DEFINES AND MACROS
-======================*/
+==================================================================================================*/
 #define MXC_SDMA_TEST_1         1
 #define MXC_SDMA_TEST_2         2
 #define MXC_SDMA_TEST_3         3
 
 #define SDMA_DEV "sdma_test_module"
 
-/*======================
+/*==================================================================================================
                                 STRUCTURES AND OTHER TYPEDEFS
-======================*/
+==================================================================================================*/
 typedef struct
 {
         unsigned int channel;
@@ -73,9 +73,9 @@ typedef struct
         unsigned int bd_index;
 } test_param;
 
-/*======================
+/*==================================================================================================
                                     FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 static int mxc_module_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
                             unsigned long arg);
 int     mxc_sdma_test1(unsigned int arg, sdma_periphT ptype);
@@ -88,26 +88,26 @@ void    sdma_test_exit(void);
 void   *malloc_sdma(size_t size);
 void    free_sdma(void *buf);
 
-/*======================
+/*==================================================================================================
                                 GLOBAL VARIABLE DECLARATIONS
-======================*/
+==================================================================================================*/
 int     dev_num;
 
 static struct class *sdma_class;        /* added on 05/01/06 Bunloeur Sean */
 
-static struct file_operations sdma_module_fops =
+static struct file_operations sdma_module_fops = 
 {
         owner:THIS_MODULE,
         ioctl:mxc_module_ioctl,
 };
 
-/*====================*/
+/*================================================================================================*/
 void sdma_test_callback(void *arg)
 {
         return;
 }
 
-/*====================*/
+/*================================================================================================*/
 void   *malloc_sdma(size_t size)
 {
         void   *buf;
@@ -116,13 +116,13 @@ void   *malloc_sdma(size_t size)
         return buf;
 }
 
-/*====================*/
+/*================================================================================================*/
 void free_sdma(void *buf)
 {
         kfree(buf);
 }
 
-/*====================*/
+/*================================================================================================*/
 int mxc_sdma_test1(unsigned int arg, sdma_periphT ptype)
 {
         int     channel[1];
@@ -167,7 +167,7 @@ int mxc_sdma_test1(unsigned int arg, sdma_periphT ptype)
                 mxc_free_dma(*channel);
                 return err;
         }
-        /*
+        /* 
         * r_params->sourceAddr = src; r_params->destAddr = dest; r_params->count = 16*sizeof(__u32); */
         if ((err = mxc_dma_set_config(*channel, r_params, 0)) != 0)
         {
@@ -186,7 +186,7 @@ int mxc_sdma_test1(unsigned int arg, sdma_periphT ptype)
         return 0;
 }
 
-/*====================*/
+/*================================================================================================*/
 int mxc_sdma_test2(unsigned int arg, unsigned int mass_num)
 {
         int     i,
@@ -208,21 +208,21 @@ int mxc_sdma_test2(unsigned int arg, unsigned int mass_num)
                 printk(KERN_WARNING "Fail in %s: mxc_request_dma err = %d\n", __FUNCTION__, err);
                 return err;
         }
-        /*
+        /* 
         * Peripheral type is MEMORY. The full list of peripheral types defined in sdma_periphT enum.
         * Pay attention that there are peripherals , like UART for instance, that have different
         * peripheral types. This is because there are UARTs connected to SDMA via MAX, and others via
         * SPBA. Fail in these cases 2 different SDMA scripts used for each one of the UARTs. '_SP'
         * extention says that this is the UART that connected via SPBA. */
         c_params->peripheral_type = MEMORY;
-        /*
+        /* 
         * Transfer types. The full list of transfer types defined in sdma_transferT enum. Fail in
         * general when we talk about real peripheral (not MEMORY), each peripheral can use 4 types
         * of transfers: per_2_emi and emi_2_per are transfers from/to EMI to/from peripheral.
         * per_2_int and int_2_per are transfers from/to internal RAM to/from peripheral. emi_2_emi
         * is used for memory transfers. */
         c_params->transfer_type = emi_2_emi;
-        /*
+        /* 
         * Fail in peripheral transfers 3 additional parameters must be set: watermark_level - number
         * of bytes transferred on peripheral's dma request per_address - address of peripheral's
         * FIFO or buffer. Fail in case of FIRI, UART receive and ATA it the base address of
@@ -245,17 +245,17 @@ int mxc_sdma_test2(unsigned int arg, unsigned int mass_num)
                 src[i] = i;
                 dest[i] = 0;
         }
-        /*
+        /* 
         * Here we set the src address and destination address of memory in specific request. Fail in
         * peripheral transfers only one parameter should be set, depending on direction. Pay
         * attention, that peripheral's source or destination address is set previously during setup
         * channel. */
         r_params->sourceAddr = (__u8 *) sdma_virt_to_phys(src);
         r_params->destAddr = (__u8 *) sdma_virt_to_phys(dest);
-        /*
+        /* 
         * number of bytes to transfer */
         r_params->count = mass_num * sizeof(__u32);
-        /*
+        /* 
         * callback function. If it is not set, no response will be after the end of transfer
         * r_params->callback = sdma_test_callback; //(dma_callback_t) */
 
@@ -265,7 +265,7 @@ int mxc_sdma_test2(unsigned int arg, unsigned int mass_num)
                 mxc_free_dma(*channel);
                 return err;
         }
-        /*
+        /* 
         * Here we enable the channel. After number of bytes that was set in count field is
         * transferred callback function will run (if it is set). And we will need to setup a new
         * request. Fail in peripheral case, it is important to understand the meaning of watermark
@@ -301,7 +301,7 @@ int mxc_sdma_test2(unsigned int arg, unsigned int mass_num)
         return ret;
 }
 
-/*====================*/
+/*================================================================================================*/
 int mxc_sdma_test3(unsigned int arg)
 {
         int     channel[1];
@@ -331,7 +331,7 @@ int mxc_sdma_test3(unsigned int arg)
         return 1;
 }
 
-/*====================*/
+/*================================================================================================*/
 static int mxc_module_ioctl(struct inode *inode, struct file *file,
                             unsigned int cmd, unsigned long arg)
 {
@@ -356,7 +356,7 @@ static int mxc_module_ioctl(struct inode *inode, struct file *file,
         return ret;
 }
 
-/*====================*/
+/*================================================================================================*/
 static int sdma_test_init(void)
 {
         if ((dev_num = register_chrdev(0, SDMA_DEV, &sdma_module_fops)) < 0)
@@ -391,7 +391,7 @@ static int sdma_test_init(void)
 
 }
 
-/*====================*/
+/*================================================================================================*/
 void sdma_test_exit(void)
 {
         unregister_chrdev(dev_num, "sdma_test_module");

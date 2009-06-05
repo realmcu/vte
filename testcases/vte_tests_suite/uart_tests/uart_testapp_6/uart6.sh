@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh  
 
 LTPROOT=`cd \`dirname $0\` && echo $PWD`
 
@@ -23,7 +23,7 @@ TESTAPP6=./uart_testapp_6
    echo " ---------------------------------"
    echo "uart_testapp_6   TFAIL       1"
   fi
-  echo""
+  echo"" 
  }
 
 
@@ -54,7 +54,7 @@ TESTAPP6=./uart_testapp_6
  if [ $rc -eq 0 ];
   then
     echo "uart6.sh          TPASS    "
-
+  
   else
     echo "uart6.sh          TFAIL    "
  fi

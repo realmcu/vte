@@ -18,20 +18,20 @@
 #                      Modification     Tracking
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
-# Spring Zhang          26/11/2008     ENGR100354     Initial ver.
+# Spring Zhang          26/11/2008     ENGR100354     Initial ver. 
 # Spring                28/11/2008       n/a      Modify COPYRIGHT header
 #############################################################################
-# Portability:  ARM sh
+# Portability:  ARM sh 
 #
 # File Name:     bt_smoke.sh
 # Total Tests:   1
-# Test Strategy: Test basic BT functions
-#
-# Input:     Test type
+# Test Strategy: Test basic BT functions 
+# 
+# Input:	    Test type
 #
 # Return:       0: PASS, non-0: FAIL
 #
-# Command:      "./bt_smoke.sh"
+# Command:      "./bt_smoke.sh" 
 
 # Function:     setup
 #
@@ -60,14 +60,14 @@ setup()
     fi
 
     if [ $# -ne 0 ]
-    then
+    then 
         usage
         exit 1
     fi
 
     trap "cleanup" 0
 
-    [ ! -e /usr/local/bin/hci_spp_demo_app ] && {
+    [ ! -e /usr/local/bin/hci_spp_demo_app ] && { 
         tst_resm TBROK "BT application miss!!"
         RC=67
     }
@@ -81,7 +81,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup()
+cleanup() 
 {
     RC=0
     tst_resm TINFO "Clean BT module..."
@@ -90,9 +90,9 @@ cleanup()
     return $RC
 }
 
-# Function:     bt_smoke()
+# Function:     bt_smoke()   
 #
-# Description:  Test if BT module function is OK
+# Description:  Test if BT module function is OK 
 #
 # Exit:         zero on success
 #               non-zero on failure.
@@ -105,8 +105,8 @@ bt_smoke()
 
     modprobe mxc_bt || RC=$?
     [ $RC -ne 0 ] && {
-    tst_resm TFAIL "Probe BT module fail"
-    return $RC
+    tst_resm TFAIL "Probe BT module fail" 
+    return $RC 
     }
 
     sleep 3
@@ -119,7 +119,7 @@ bt_smoke()
     sleep 60
     tst_resm TINFO "Grep BT device in BT search log"
     kill $bgpid
-
+    
     grep "^0:\ " bt_search.log ||RC=$?
     if [ $RC -eq 0 ]
     then
@@ -140,7 +140,7 @@ bt_smoke()
 # Return        - none
 usage()
 {
-    cat <<-EOF
+    cat <<-EOF 
 
     Use this command to test BT driver can search device.
     usage: ./${0##*/}

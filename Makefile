@@ -216,6 +216,64 @@ package:
 	@$(RPMBUILD) -ba ltp-devel.spec
 
 vte: pan utils tools libs
+
+clean:
+	@$(MAKE) -C lib $@
+	@$(MAKE) -C pan $@
+	@$(MAKE) -C tools $@
+	@$(MAKE) -C testcases $@
+	@$(MAKE) -C openlibs $@
+
+config.h: config.h.default
+	cp include/config.h.default include/config.h
+config.mk:
+	touch $@
+# Update the path of the Kernel Linux source code to be tested
+#export KLINUX_SRCDIR= /home/vobs/linux-2.6.24_marley_080317
+#export KLINUX_BLTDIR= /home/vobs/linux-2.6.24_marley_080317
+#export ARCH_CPU= arm
+#export ARCH_PLATFORM=imx31ads
+
+ltp: libltp.a pandir tools config.h config.mk
+	@touch include/config.h.default
+	@$(MAKE) config.h
+	@echo
+	@echo "***********************************************"
+	@echo "** MAKE ALL - Kernel LTP tests suite         **"
+	@echo "***********************************************"
+	@echo
+	@$(MAKE) -C testcases/kernel all
+	@echo
+	@echo "***********************************************"
+	@echo "** MAKE INSTALL - Kernel LTP tests suite     **"
+	@echo "***********************************************"
+	@echo
+	@$(MAKE) -C testcases/kernel install
+	@echo
+	@echo "***********************************************"
+	@echo "** LTP Kernel tests suite is available       **"
+	@echo "***********************************************"
+	@echo
+	@echo "***********************************************"
+	@echo "** MAKE ALL - Network LTP tests suite        **"
+	@echo "***********************************************"
+	@echo
+	@$(MAKE) -C testcases/network all
+	@echo
+	@echo "***********************************************"
+	@echo "** MAKE INSTALL - Kernel LTP tests suite     **"
+	@echo "***********************************************"
+	@echo
+	@$(MAKE) -C testcases/network install
+	@echo
+	@echo "***********************************************"
+	@echo "** LTP Network tests suite is available      **"
+	@echo "***********************************************"
+
+vte: libltp.a pandir tools
+	-@$(MAKE) -C openlib
+	-@$(MAKE) -C openlib install
+>>>>>>> 20090605
 	@echo
 	@echo "***********************************************"
 	@echo "** MAKE ALL - VTE tests suite                **"

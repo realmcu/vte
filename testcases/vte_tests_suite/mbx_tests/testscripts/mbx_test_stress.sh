@@ -17,7 +17,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake.Huang/-----             07/28/2008     N/A          Initial version
-#
+# 
 ###################################################################################################
 #!/bin/sh
 
@@ -54,7 +54,7 @@ tst_resm TINFO "MBx script installed"
 else
 tst_resm TINFO "MBx initial script not found on /etc/rc.d/init.d"
 RC=1
-return $RC
+return $RC 
 fi
 
 /etc/rc.d/init.d/rc.pvr start
@@ -84,8 +84,8 @@ return $RC
 
 
 # Function:     test_mbx_stress
-# Description   - stress test
-#
+# Description   - stress test 
+#  
 test_mbx_stress_01()
 {
 TCID="test_mbx_stress_01"

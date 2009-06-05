@@ -18,7 +18,7 @@
 ########################
 #
 # Entry Conditions:
-# The following environment variables are set:
+# 	The following environment variables are set:
 #	 ${TARGET} : the name of the os specific Test Manager
 #
 ########################
@@ -33,7 +33,7 @@ TARGET_DEF    = -DB_SELFHOST
 OBJS = match.o line.o hack.o ballistaRPC.o ballistaXDR.o ${TEST_MAN_FILE}.o \
 	ballistaUtil.o marshal.o testCaseIterator.o\
 	serverCommunication.o parseArguments.o ballistaError.o
-
+	
 
 # build everything by default
 all : callGen callGen_standAlone genCodeCreator replacer ballista
@@ -67,10 +67,10 @@ ballistaXDR.o : ballistaXDR.c
 ballistaUtil.o : ballistaUtil.cpp
 	${CC} ${CFLAGS} -c $?
 
-testCaseIterator.o : testCaseIterator.cpp
+testCaseIterator.o : testCaseIterator.cpp 
 	${CC} ${CFLAGS} -c $?
 
-serverCommunication.o : serverCommunication.cpp
+serverCommunication.o : serverCommunication.cpp 
 	${CC} ${CFLAGS} -c $?
 
 parseArguments.o : parseArguments.cpp
@@ -99,7 +99,7 @@ ballista : ballista.cpp ${OBJS}
 unmarshal.o : unmarshal.cpp
 	${CC} ${CFLAGS} -c $?
 
-testmarshal.o : testmarshal.cpp
+testmarshal.o : testmarshal.cpp 
 	${CC} ${CFLAGS} -c $?
 
 testmarshal : marshal.o unmarshal.o testmarshal.o
@@ -114,7 +114,7 @@ test_parse_arguments : test_parse_arguments.o parseArguments.o \
 	-o test_parse_arguments
 
 pause_harness : pause_harness.cpp ${OBJS}
-	${CC} -Itemplates ${CFLAGS} pause_harness.cpp ${OBJS} -o pause_harness
+	${CC} -Itemplates ${CFLAGS} pause_harness.cpp ${OBJS} -o pause_harness 
 
 
 # clean up everything that we build

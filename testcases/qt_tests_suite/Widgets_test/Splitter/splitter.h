@@ -56,7 +56,7 @@ private:
 class Splitte : public QWidget
 {
   Q_OBJECT
-
+  
 public:
     Splitte(QWidget* parent=0, const char* name=0);
     ~Splitte(){};

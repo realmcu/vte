@@ -1,0 +1,40 @@
+#Verification Tests Command File
+
+#VT AMR Decoder tests
+#files: amr_decoder_vad1 amr_decoder_vad1_mms
+#files: amr_decoder_vad2 amr_decoder_vad2_mms
+#files: amr_decoder_nodtx
+
+#AMRD testcases
+TGE-LV-AMRD-0100 amr_decoder_vad1 -T 0
+TGE-LV-AMRD-0101 amr_decoder_vad1_mms -T 0
+TGE-LV-AMRD-0102 amr_decoder_vad2 -T 0
+TGE-LV-AMRD-0103 amr_decoder_vad2_mms -T 0
+TGE-LV-AMRD-0104 amr_decoder_nodtx -T 0
+TGE-LV-AMRD-0110 amr_decoder_vad1 -T 1
+TGE-LV-AMRD-0111 amr_decoder_vad1_mms -T 1
+TGE-LV-AMRD-0112 amr_decoder_vad2 -T 1
+TGE-LV-AMRD-0113 amr_decoder_vad2_mms -T 1
+TGE-LV-AMRD-0114 amr_decoder_nodtx -T 1
+TGE-LV-AMRD-0120 amr_decoder_vad1 -T 2 -N 20
+TGE-LV-AMRD-0121 amr_decoder_vad1_mms -T 2 -N 20
+TGE-LV-AMRD-0122 amr_decoder_vad2 -T 2 -N 20
+TGE-LV-AMRD-0123 amr_decoder_vad2_mms -T 2 -N 20
+TGE-LV-AMRD-0124 amr_decoder_nodtx -T 2 -N 20
+TGE-LV-AMRD-0130 amr_decoder_vad1 -T 3 -N 100
+TGE-LV-AMRD-0131 amr_decoder_vad1_mms -T 3 -N 50
+TGE-LV-AMRD-0132 amr_decoder_vad2 -T 3 -N 50
+TGE-LV-AMRD-0133 amr_decoder_vad2_mms -T 3 -N 50
+TGE-LV-AMRD-0134 amr_decoder_nodtx -T 3 -N 50
+TGE-LV-AMRD-0140 amr_decoder_vad1 -T 4 -N 100
+TGE-LV-AMRD-0141 amr_decoder_vad1_mms -T 4 -N 50
+TGE-LV-AMRD-0142 amr_decoder_vad2 -T 4 -N 50
+TGE-LV-AMRD-0143 amr_decoder_vad2_mms -T 4 -N 50
+TGE-LV-AMRD-0144 amr_decoder_nodtx -T 4 -N 50
+TGE-LV-AMRD-0150 amr_decoder_vad1 -T 5 -N 100
+TGE-LV-AMRD-0151 amr_decoder_vad1_mms -T 5 -N 50
+TGE-LV-AMRD-0152 amr_decoder_vad2 -T 5 -N 50
+TGE-LV-AMRD-0153 amr_decoder_vad2_mms -T 5 -N 50
+TGE-LV-AMRD-0154 amr_decoder_nodtx -T 5 -N 50
+
+#WARNING the commented tests are not automatical tests

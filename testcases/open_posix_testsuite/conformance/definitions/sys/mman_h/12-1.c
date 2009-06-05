@@ -1,4 +1,4 @@
-/*
+/* 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -20,7 +20,7 @@ typedef int (*mlockall_test)(int);
 
 int dummyfcn (void)
 {
- mlockall_test dummyvar;
- dummyvar  mlockall;
- return 0;
+	mlockall_test dummyvar;
+	dummyvar = mlockall;
+	return 0;
 }

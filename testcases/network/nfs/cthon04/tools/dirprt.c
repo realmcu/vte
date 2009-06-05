@@ -1,14 +1,14 @@
 /*
- * @(#)dirprt.c 1.6 2002/12/13 Connectathon Testsuite
- * 1.2 Lachman ONC Test Suite source
+ *	@(#)dirprt.c	1.6 2002/12/13 Connectathon Testsuite
+ *	1.2 Lachman ONC Test Suite source
  */
 
 #ifdef SOLARIS2X
-/*
+/* 
  * XXX if this is lacking, i-numbers get printed as zero.  Not clear why;
  * should investigate sometime.
  */
-#define _FILE_OFFSET_BITS 64
+#define _FILE_OFFSET_BITS	64
 #endif
 
 #include <sys/param.h>
@@ -35,18 +35,18 @@ static DIR *my_opendir ARGS_((char *));
 static void print ARGS_((char *));
 
 main(argc, argv)
- int argc;
- char *argv[];
+	int argc;
+	char *argv[];
 {
 #if defined (AIX)
- fprintf(stderr, "dirprt is not supported on this platform.\n");
- exit(1);
+	fprintf(stderr, "dirprt is not supported on this platform.\n");
+	exit(1);
 #else
- argv++;
- argc--;
- while (argc--) {
-  print(*argv++);
- }
+	argv++;
+	argc--;
+	while (argc--) {
+		print(*argv++);
+	}
 #endif /* AIX */
 }
 
@@ -54,32 +54,32 @@ main(argc, argv)
 
 static void
 print(dir)
- char *dir;
+	char *dir;
 {
- DIR *dirp;
+	DIR *dirp;
 #ifdef use_directs
- struct direct *dp;
+	struct direct *dp;
 #else
- struct dirent *dp;
+	struct dirent *dp;
 #endif
 
- dirp  my_opendir(dir);
- if (dirp  NULL) {
-  perror(dir);
-  return;
- }
- while ((dp  readdir(dirp)) ! NULL) {
+	dirp = my_opendir(dir);
+	if (dirp == NULL) {
+		perror(dir);
+		return;
+	}
+	while ((dp = readdir(dirp)) != NULL) {
 #if defined(SVR3) || defined(SVR4) || defined(LINUX)
-  printf("%5ld %5ld %5d %s\n", (long)telldir(dirp),
-         (long)dp->d_ino,
-         dp->d_reclen, dp->d_name);
+		printf("%5ld %5ld %5d %s\n", (long)telldir(dirp),
+		       (long)dp->d_ino,
+		       dp->d_reclen, dp->d_name);
 #else
-  printf("%5ld %5d %5d %5d %s\n", (long)telldir(dirp),
-         dp->d_fileno,
-         dp->d_reclen, dp->d_namlen, dp->d_name);
+		printf("%5ld %5d %5d %5d %s\n", (long)telldir(dirp), 
+		       dp->d_fileno,
+		       dp->d_reclen, dp->d_namlen, dp->d_name);
 #endif
- }
- closedir(dirp);
+	}
+	closedir(dirp);
 }
 
 #include <sys/stat.h>
@@ -89,20 +89,20 @@ print(dir)
  */
 static DIR *
 my_opendir(name)
- char *name;
+	char *name;
 {
- struct stat sb;
+	struct stat sb;
 
- if (stat(name, &sb)  -1) {
-  printf("stat failed\n");
-  return (NULL);
- }
- if ((sb.st_mode & S_IFMT) ! S_IFDIR) {
-  printf("not a directory\n");
-  return (NULL);
- }
- printf("%s mode %o dir %o\n", name, (int)sb.st_mode, S_IFDIR);
- return(opendir(name));
+	if (stat(name, &sb) == -1) {
+		printf("stat failed\n");
+		return (NULL);
+	}
+	if ((sb.st_mode & S_IFMT) != S_IFDIR) {
+		printf("not a directory\n");
+		return (NULL);
+	}
+	printf("%s mode %o dir %o\n", name, (int)sb.st_mode, S_IFDIR);
+	return(opendir(name));
 }
 
 #endif /* AIX */

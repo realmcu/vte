@@ -42,17 +42,17 @@ extern "C"{
 #include <linux/videodev.h>
 #include "mxc_ipu_hl_lib.h"
 
-#define FBDEV0 "/dev/fb0"
-#define FBDEV1 "/dev/fb1"
-#define FBDEV2 "/dev/fb2"
+#define FBDEV0	"/dev/fb0"
+#define FBDEV1	"/dev/fb1"
+#define FBDEV2	"/dev/fb2"
 
-#define DBG_DEBUG  3
-#define DBG_INFO  2
-#define DBG_WARNING  1
-#define DBG_ERR   0
+#define DBG_DEBUG		3
+#define DBG_INFO		2
+#define DBG_WARNING		1
+#define DBG_ERR			0
 
 static int debug_level = DBG_ERR;
-#define dbg(flag, fmt, args...) { if(flag <= debug_level)  printf("%s:%d "fmt, __FILE__, __LINE__,##args); }
+#define dbg(flag, fmt, args...)	{ if(flag <= debug_level)  printf("%s:%d "fmt, __FILE__, __LINE__,##args); }
 
 /* this mutex only can protect within same process context,
  * for different process, pls add other mutex*/
@@ -74,152 +74,152 @@ enum {
 };
 
 typedef enum {
- NULL_MODE = 0,
- IC_MODE = 0x1,
- ROT_MODE = 0x2,
- COPY_MODE = 0x4,
+	NULL_MODE = 0,
+	IC_MODE = 0x1,
+	ROT_MODE = 0x2,
+	COPY_MODE = 0x4,
 } task_mode_t;
 
 typedef enum {
- RGB_CS,
- YUV_CS,
- NULL_CS
+	RGB_CS,
+	YUV_CS,
+	NULL_CS
 } cs_t;
 
 typedef struct {
         int fd_ipu;
         int mode;
- int enabled;
+	int enabled;
 
         int irq;
- int output_bufnum;
- int update_bufnum;
+	int output_bufnum;
+	int update_bufnum;
         ipu_mem_info i_minfo[2];
         ipu_mem_info ov_minfo[2];
- int iwidth;
- int iheight;
- int i_off;
- int i_uoff;
- int i_voff;
- int overlay_en;
- int ovwidth;
- int ovheight;
- int ov_off;
- int ov_uoff;
- int ov_voff;
+	int iwidth;
+	int iheight;
+	int i_off;
+	int i_uoff;
+	int i_voff;
+	int overlay_en;
+	int ovwidth;
+	int ovheight;
+	int ov_off;
+	int ov_uoff;
+	int ov_voff;
 
- int input_fr_cnt;
- int output_fr_cnt;
+	int input_fr_cnt;
+	int output_fr_cnt;
 
- struct {
-  unsigned int task_mode;
-  unsigned int ipu_task;
-  ipu_channel_t ic_chan;
-  ipu_channel_t rot_chan;
-  ipu_channel_t begin_chan;
-  ipu_channel_t end_chan;
+	struct {
+		unsigned int task_mode;
+		unsigned int ipu_task;
+		ipu_channel_t ic_chan;
+		ipu_channel_t rot_chan;
+		ipu_channel_t begin_chan;
+		ipu_channel_t end_chan;
 
-  ipu_mem_info r_minfo[2];
-  ipu_mem_info o_minfo[2];
+		ipu_mem_info r_minfo[2];
+		ipu_mem_info o_minfo[2];
 
-  int show_to_fb;
-  int fd_fb;
-  int fb_stride;
-  void * fb_mem;
-  int screen_size;
-  ipu_channel_t fb_chan;
+		int show_to_fb;
+		int fd_fb;
+		int fb_stride;
+		void * fb_mem;
+		int screen_size;
+		ipu_channel_t fb_chan;
 
-  int owidth;
-  int oheight;
-  int o_off;
-  int o_uoff;
-  int o_voff;
- } output[2];
+		int owidth;
+		int oheight;
+		int o_off;
+		int o_uoff;
+		int o_voff;
+	} output[2];
 } ipu_lib_priv_handle_t;
 
 static u32 fmt_to_bpp(u32 pixelformat)
 {
- u32 bpp;
+	u32 bpp;
 
- switch (pixelformat)
- {
-  case IPU_PIX_FMT_RGB565:
-  /*interleaved 422*/
-  case IPU_PIX_FMT_YUYV:
-  case IPU_PIX_FMT_UYVY:
-  /*non-interleaved 422*/
-  case IPU_PIX_FMT_YUV422P:
-  case IPU_PIX_FMT_YVU422P:
-   bpp = 16;
-   break;
-  case IPU_PIX_FMT_BGR24:
-  case IPU_PIX_FMT_RGB24:
-  case IPU_PIX_FMT_YUV444:
-   bpp = 24;
-   break;
-  case IPU_PIX_FMT_BGR32:
-  case IPU_PIX_FMT_BGRA32:
-  case IPU_PIX_FMT_RGB32:
-  case IPU_PIX_FMT_RGBA32:
-  case IPU_PIX_FMT_ABGR32:
-   bpp = 32;
-   break;
-  /*non-interleaved 420*/
-  case IPU_PIX_FMT_YUV420P:
-  case IPU_PIX_FMT_YUV420P2:
-  case IPU_PIX_FMT_NV12:
-   bpp = 12;
-   break;
-  default:
-   bpp = 8;
-   break;
- }
- return bpp;
+	switch (pixelformat)
+	{
+		case IPU_PIX_FMT_RGB565:
+		/*interleaved 422*/
+		case IPU_PIX_FMT_YUYV:
+		case IPU_PIX_FMT_UYVY:
+		/*non-interleaved 422*/
+		case IPU_PIX_FMT_YUV422P:
+		case IPU_PIX_FMT_YVU422P:
+			bpp = 16;
+			break;
+		case IPU_PIX_FMT_BGR24:
+		case IPU_PIX_FMT_RGB24:
+		case IPU_PIX_FMT_YUV444:
+			bpp = 24;
+			break;
+		case IPU_PIX_FMT_BGR32:
+		case IPU_PIX_FMT_BGRA32:
+		case IPU_PIX_FMT_RGB32:
+		case IPU_PIX_FMT_RGBA32:
+		case IPU_PIX_FMT_ABGR32:
+			bpp = 32;
+			break;
+		/*non-interleaved 420*/
+		case IPU_PIX_FMT_YUV420P:
+		case IPU_PIX_FMT_YUV420P2:
+		case IPU_PIX_FMT_NV12:
+			bpp = 12;
+			break;
+		default:
+			bpp = 8;
+			break;
+	}
+	return bpp;
 }
 
 static cs_t colorspaceofpixel(int fmt)
 {
- switch(fmt)
- {
-  case IPU_PIX_FMT_RGB565:
-  case IPU_PIX_FMT_BGR24:
-  case IPU_PIX_FMT_RGB24:
-  case IPU_PIX_FMT_BGRA32:
-  case IPU_PIX_FMT_BGR32:
-  case IPU_PIX_FMT_RGBA32:
-  case IPU_PIX_FMT_RGB32:
-  case IPU_PIX_FMT_ABGR32:
-   return RGB_CS;
-   break;
-  case IPU_PIX_FMT_UYVY:
-  case IPU_PIX_FMT_YUYV:
-  case IPU_PIX_FMT_YUV420P2:
-  case IPU_PIX_FMT_YUV420P:
-  case IPU_PIX_FMT_YVU422P:
-  case IPU_PIX_FMT_YUV422P:
-  case IPU_PIX_FMT_YUV444:
-  case IPU_PIX_FMT_NV12:
-   return YUV_CS;
-   break;
-  default:
-   return NULL_CS;
- }
+	switch(fmt)
+	{
+		case IPU_PIX_FMT_RGB565:
+		case IPU_PIX_FMT_BGR24:
+		case IPU_PIX_FMT_RGB24:
+		case IPU_PIX_FMT_BGRA32:
+		case IPU_PIX_FMT_BGR32:
+		case IPU_PIX_FMT_RGBA32:
+		case IPU_PIX_FMT_RGB32:
+		case IPU_PIX_FMT_ABGR32:
+			return RGB_CS;
+			break;
+		case IPU_PIX_FMT_UYVY:
+		case IPU_PIX_FMT_YUYV:
+		case IPU_PIX_FMT_YUV420P2:
+		case IPU_PIX_FMT_YUV420P:
+		case IPU_PIX_FMT_YVU422P:
+		case IPU_PIX_FMT_YUV422P:
+		case IPU_PIX_FMT_YUV444:
+		case IPU_PIX_FMT_NV12:
+			return YUV_CS;
+			break;
+		default:
+			return NULL_CS;
+	}
 }
 
 static int need_csc(int ifmt, int ofmt)
 {
- cs_t ics,ocs;
+	cs_t ics,ocs;
 
- ics = colorspaceofpixel(ifmt);
- ocs = colorspaceofpixel(ofmt);
+	ics = colorspaceofpixel(ifmt);
+	ocs = colorspaceofpixel(ofmt);
 
- if((ics == NULL_CS) || (ocs == NULL_CS)){
-  dbg(DBG_ERR, "Color Space not recognized!\n");
-  return -1;
- }else if(ics != ocs)
-  return 1;
+	if((ics == NULL_CS) || (ocs == NULL_CS)){
+		dbg(DBG_ERR, "Color Space not recognized!\n");
+		return -1;
+	}else if(ics != ocs)
+		return 1;
 
- return 0;
+	return 0;
 }
 
 static int get_system_rev(unsigned int * system_rev)
@@ -259,1792 +259,1792 @@ static int get_system_rev(unsigned int * system_rev)
 
 static int _ipu_get_arch_rot_begin()
 {
- unsigned int system_rev, arch;
+	unsigned int system_rev, arch;
 
- if (get_system_rev(&system_rev) < 0)
-  return IPU_ROTATE_90_RIGHT;
+	if (get_system_rev(&system_rev) < 0)
+		return IPU_ROTATE_90_RIGHT;
 
- dbg(DBG_INFO, "system_rev is 0x%x\n", system_rev);
- arch = system_rev & 0xff000;
- /* for mx37 */
- if (arch == 0x37000)
-  return IPU_ROTATE_HORIZ_FLIP;
- else
-  return IPU_ROTATE_90_RIGHT;
+	dbg(DBG_INFO, "system_rev is 0x%x\n", system_rev);
+	arch = system_rev & 0xff000;
+	/* for mx37 */
+	if (arch == 0x37000)
+		return IPU_ROTATE_HORIZ_FLIP;
+	else
+		return IPU_ROTATE_90_RIGHT;
 }
 
 static int _ipu_task_busy_in_hw(int ipu_task)
 {
- int ret = 0;
+	int ret = 0;
 
- if (ipu_task & IC_ENC)
-  ret |= ipu_is_channel_busy(MEM_PRP_ENC_MEM);
- if (ipu_task & IC_VF)
-  ret |= ipu_is_channel_busy(MEM_PRP_VF_MEM);
- if (ipu_task & IC_PP)
-  ret |= ipu_is_channel_busy(MEM_PP_MEM);
- if (ipu_task & ROT_ENC)
-  ret |= ipu_is_channel_busy(MEM_ROT_ENC_MEM);
- if (ipu_task & ROT_VF)
-  ret |= ipu_is_channel_busy(MEM_ROT_VF_MEM);
- if (ipu_task & ROT_PP)
-  ret |= ipu_is_channel_busy(MEM_ROT_PP_MEM);
+	if (ipu_task & IC_ENC)
+		ret |= ipu_is_channel_busy(MEM_PRP_ENC_MEM);
+	if (ipu_task & IC_VF)
+		ret |= ipu_is_channel_busy(MEM_PRP_VF_MEM);
+	if (ipu_task & IC_PP)
+		ret |= ipu_is_channel_busy(MEM_PP_MEM);
+	if (ipu_task & ROT_ENC)
+		ret |= ipu_is_channel_busy(MEM_ROT_ENC_MEM);
+	if (ipu_task & ROT_VF)
+		ret |= ipu_is_channel_busy(MEM_ROT_VF_MEM);
+	if (ipu_task & ROT_PP)
+		ret |= ipu_is_channel_busy(MEM_ROT_PP_MEM);
 
- return ret;
+	return ret;
 }
 
 static int _ipu_is_task_busy(int ipu_task)
 {
- /* g_task_in_use is only useful in same process context*/
- if (g_task_in_use & ipu_task)
-  return 1;
- /* IC_ENC and IC_VF can not be enabled together in different task*/
- if (((g_task_in_use & IC_ENC) && (ipu_task & IC_VF)) ||
-  ((g_task_in_use & IC_VF) && (ipu_task & IC_ENC)))
-  return 1;
- /* we need to check low level HW busy status */
- if (_ipu_task_busy_in_hw(ipu_task))
-  return 1;
- return 0;
+	/* g_task_in_use is only useful in same process context*/
+	if (g_task_in_use & ipu_task)
+		return 1;
+	/* IC_ENC and IC_VF can not be enabled together in different task*/
+	if (((g_task_in_use & IC_ENC) && (ipu_task & IC_VF)) ||
+		((g_task_in_use & IC_VF) && (ipu_task & IC_ENC)))
+		return 1;
+	/* we need to check low level HW busy status */
+	if (_ipu_task_busy_in_hw(ipu_task))
+		return 1;
+	return 0;
 }
 
 static task_mode_t __ipu_task_check(ipu_lib_priv_handle_t * ipu_priv_handle,
-  ipu_lib_input_param_t * input,
-  ipu_lib_output_param_t * output,
-  int out_idx)
+		ipu_lib_input_param_t * input,
+		ipu_lib_output_param_t * output,
+		int out_idx)
 {
- task_mode_t task_mode = NULL_MODE;
- int tmp;
+	task_mode_t task_mode = NULL_MODE;
+	int tmp;
 
- if(output->rot >= _ipu_get_arch_rot_begin()){
-  if(output->rot >= IPU_ROTATE_90_RIGHT){
-   /*output swap*/
-   tmp = ipu_priv_handle->output[out_idx].owidth;
-   ipu_priv_handle->output[out_idx].owidth =
-    ipu_priv_handle->output[out_idx].oheight;
-   ipu_priv_handle->output[out_idx].oheight = tmp;
-  }
-  task_mode |= ROT_MODE;
- }
+	if(output->rot >= _ipu_get_arch_rot_begin()){
+		if(output->rot >= IPU_ROTATE_90_RIGHT){
+			/*output swap*/
+			tmp = ipu_priv_handle->output[out_idx].owidth;
+			ipu_priv_handle->output[out_idx].owidth =
+				ipu_priv_handle->output[out_idx].oheight;
+			ipu_priv_handle->output[out_idx].oheight = tmp;
+		}
+		task_mode |= ROT_MODE;
+	}
 
- /* make sure width is 8 pixel align*/
- ipu_priv_handle->output[out_idx].owidth =
-  ipu_priv_handle->output[out_idx].owidth - ipu_priv_handle->output[out_idx].owidth%8;
- if (task_mode & ROT_MODE)
-  ipu_priv_handle->output[out_idx].oheight =
-   ipu_priv_handle->output[out_idx].oheight - ipu_priv_handle->output[out_idx].oheight%8;
+	/* make sure width is 8 pixel align*/
+	ipu_priv_handle->output[out_idx].owidth =
+		ipu_priv_handle->output[out_idx].owidth - ipu_priv_handle->output[out_idx].owidth%8;
+	if (task_mode & ROT_MODE)
+		ipu_priv_handle->output[out_idx].oheight =
+			ipu_priv_handle->output[out_idx].oheight - ipu_priv_handle->output[out_idx].oheight%8;
 
- /*need resize or CSC?*/
- if((ipu_priv_handle->iwidth != ipu_priv_handle->output[out_idx].owidth) ||
-   (ipu_priv_handle->iheight != ipu_priv_handle->output[out_idx].oheight) ||
-   need_csc(input->fmt,output->fmt))
-  task_mode |= IC_MODE;
+	/*need resize or CSC?*/
+	if((ipu_priv_handle->iwidth != ipu_priv_handle->output[out_idx].owidth) ||
+			(ipu_priv_handle->iheight != ipu_priv_handle->output[out_idx].oheight) ||
+			need_csc(input->fmt,output->fmt))
+		task_mode |= IC_MODE;
 
- /*need flip?*/
- if((task_mode == NULL_MODE) && (output->rot > IPU_ROTATE_NONE ))
-  task_mode |= IC_MODE;
+	/*need flip?*/
+	if((task_mode == NULL_MODE) && (output->rot > IPU_ROTATE_NONE ))
+		task_mode |= IC_MODE;
 
- /*need IDMAC do format(same color space)?*/
- if((task_mode == NULL_MODE) && (input->fmt != output->fmt))
-  task_mode |= IC_MODE;
+	/*need IDMAC do format(same color space)?*/
+	if((task_mode == NULL_MODE) && (input->fmt != output->fmt))
+		task_mode |= IC_MODE;
 
- if(output->rot >= _ipu_get_arch_rot_begin()){
-  if(output->rot >= IPU_ROTATE_90_RIGHT){
-   /*output swap*/
-   tmp = ipu_priv_handle->output[out_idx].owidth;
-   ipu_priv_handle->output[out_idx].owidth =
-    ipu_priv_handle->output[out_idx].oheight;
-   ipu_priv_handle->output[out_idx].oheight = tmp;
-  }
- }
+	if(output->rot >= _ipu_get_arch_rot_begin()){
+		if(output->rot >= IPU_ROTATE_90_RIGHT){
+			/*output swap*/
+			tmp = ipu_priv_handle->output[out_idx].owidth;
+			ipu_priv_handle->output[out_idx].owidth =
+				ipu_priv_handle->output[out_idx].oheight;
+			ipu_priv_handle->output[out_idx].oheight = tmp;
+		}
+	}
 
- return task_mode;
+	return task_mode;
 }
 
 static int _ipu_task_check(ipu_lib_input_param_t * input,
-  ipu_lib_overlay_param_t * overlay,
-  ipu_lib_output_param_t * output0,
-  ipu_lib_output_param_t * output1,
-  ipu_lib_handle_t * ipu_handle)
+		ipu_lib_overlay_param_t * overlay,
+		ipu_lib_output_param_t * output0,
+		ipu_lib_output_param_t * output1,
+		ipu_lib_handle_t * ipu_handle)
 {
- int ipu_task_busy = 0, output_num, i;
- int ret = 0, hope_task_mode;
- ipu_lib_output_param_t * output;
- ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
+	int ipu_task_busy = 0, output_num, i;
+	int ret = 0, hope_task_mode;
+	ipu_lib_output_param_t * output;
+	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
 
- hope_task_mode = ipu_priv_handle->mode & 0x07;
- if (output1 && hope_task_mode) {
-  if (hope_task_mode != (TASK_ENC_MODE | TASK_VF_MODE)) {
-   dbg(DBG_ERR, "Must use both ENC & VF task for 2 output case!\n");
-   ret = -1;
-   goto done;
-  }
- }
- if (overlay && hope_task_mode) {
-  if (!(hope_task_mode & (TASK_VF_MODE | TASK_PP_MODE))) {
-   dbg(DBG_ERR, "Must use PP or VF task for overlay!\n");
-   ret = -1;
-   goto done;
-  }
- }
- if (overlay && output1) {
-  dbg(DBG_ERR, "Do not consider overlay+output1 case!\n");
-  ret = -1;
-  goto done;
- }
+	hope_task_mode = ipu_priv_handle->mode & 0x07;
+	if (output1 && hope_task_mode) {
+		if (hope_task_mode != (TASK_ENC_MODE | TASK_VF_MODE)) {
+			dbg(DBG_ERR, "Must use both ENC & VF task for 2 output case!\n");
+			ret = -1;
+			goto done;
+		}
+	}
+	if (overlay && hope_task_mode) {
+		if (!(hope_task_mode & (TASK_VF_MODE | TASK_PP_MODE))) {
+			dbg(DBG_ERR, "Must use PP or VF task for overlay!\n");
+			ret = -1;
+			goto done;
+		}
+	}
+	if (overlay && output1) {
+		dbg(DBG_ERR, "Do not consider overlay+output1 case!\n");
+		ret = -1;
+		goto done;
+	}
 
- if ((input->input_crop_win.win_w > 0) || (input->input_crop_win.win_h > 0)) {
-  if ((input->input_crop_win.win_w + input->input_crop_win.pos.x) > input->width)
-   input->input_crop_win.win_w = input->width - input->input_crop_win.pos.x;
-  if ((input->input_crop_win.win_h + input->input_crop_win.pos.y) > input->height)
-   input->input_crop_win.win_h = input->height - input->input_crop_win.pos.y;
-  ipu_priv_handle->iwidth = input->input_crop_win.win_w;
-  ipu_priv_handle->iheight = input->input_crop_win.win_h;
+	if ((input->input_crop_win.win_w > 0) || (input->input_crop_win.win_h > 0)) {
+		if ((input->input_crop_win.win_w + input->input_crop_win.pos.x) > input->width)
+			input->input_crop_win.win_w = input->width - input->input_crop_win.pos.x;
+		if ((input->input_crop_win.win_h + input->input_crop_win.pos.y) > input->height)
+			input->input_crop_win.win_h = input->height - input->input_crop_win.pos.y;
+		ipu_priv_handle->iwidth = input->input_crop_win.win_w;
+		ipu_priv_handle->iheight = input->input_crop_win.win_h;
 
-  if ((ipu_priv_handle->iwidth != input->width) || (ipu_priv_handle->iheight != input->height)) {
-   /* NOTE: u v offset should based on start point of i_off*/
-   switch (input->fmt) {
-    case IPU_PIX_FMT_YUV420P2:
-    case IPU_PIX_FMT_YUV420P:
-     ipu_priv_handle->i_off = input->input_crop_win.pos.y * input->width +
-      input->input_crop_win.pos.x;
-     ipu_priv_handle->i_uoff = (input->width * (input->height - input->input_crop_win.pos.y)
-       - input->input_crop_win.pos.x)
-      + ((input->width/2 * input->input_crop_win.pos.y/2)
-        + input->input_crop_win.pos.x/2);
-     ipu_priv_handle->i_voff = ipu_priv_handle->i_uoff +
-      (input->width/2 * input->height/2);
-     break;
-    case IPU_PIX_FMT_YVU422P:
-     ipu_priv_handle->i_off = input->input_crop_win.pos.y * input->width +
-      input->input_crop_win.pos.x;
-     ipu_priv_handle->i_voff = (input->width * (input->height - input->input_crop_win.pos.y)
-       - input->input_crop_win.pos.x)
-      + ((input->width * input->input_crop_win.pos.y)/2 + input->input_crop_win.pos.x/2);
-     ipu_priv_handle->i_uoff = ipu_priv_handle->i_voff +
-      (input->width * input->height)/2;
-     break;
-    case IPU_PIX_FMT_YUV422P:
-     ipu_priv_handle->i_off = input->input_crop_win.pos.y * input->width +
-      input->input_crop_win.pos.x;
-     ipu_priv_handle->i_uoff = (input->width * (input->height - input->input_crop_win.pos.y)
-       - input->input_crop_win.pos.x)
-      + (input->width * input->input_crop_win.pos.y)/2 + input->input_crop_win.pos.x/2;
-     ipu_priv_handle->i_voff = ipu_priv_handle->i_uoff +
-      (input->width * input->height)/2;
-     break;
-    case IPU_PIX_FMT_NV12:
-     ipu_priv_handle->i_off = input->input_crop_win.pos.y * input->width +
-      input->input_crop_win.pos.x;
-     ipu_priv_handle->i_uoff = (input->width * (input->height - input->input_crop_win.pos.y)
-       - input->input_crop_win.pos.x)
-      + input->width * input->input_crop_win.pos.y + input->input_crop_win.pos.x;
-     break;
-    default:
-     ipu_priv_handle->i_off = (input->input_crop_win.pos.y * input->width +
-       input->input_crop_win.pos.x) * fmt_to_bpp(input->fmt)/8;
-     break;
-   }
-  }
- } else {
-  ipu_priv_handle->iwidth = input->width;
-  ipu_priv_handle->iheight = input->height;
- }
+		if ((ipu_priv_handle->iwidth != input->width) || (ipu_priv_handle->iheight != input->height)) {
+			/* NOTE: u v offset should based on start point of i_off*/
+			switch (input->fmt) {
+				case IPU_PIX_FMT_YUV420P2:
+				case IPU_PIX_FMT_YUV420P:
+					ipu_priv_handle->i_off = input->input_crop_win.pos.y * input->width +
+						input->input_crop_win.pos.x;
+					ipu_priv_handle->i_uoff = (input->width * (input->height - input->input_crop_win.pos.y)
+							- input->input_crop_win.pos.x)
+						+ ((input->width/2 * input->input_crop_win.pos.y/2)
+								+ input->input_crop_win.pos.x/2);
+					ipu_priv_handle->i_voff = ipu_priv_handle->i_uoff +
+						(input->width/2 * input->height/2);
+					break;
+				case IPU_PIX_FMT_YVU422P:
+					ipu_priv_handle->i_off = input->input_crop_win.pos.y * input->width +
+						input->input_crop_win.pos.x;
+					ipu_priv_handle->i_voff = (input->width * (input->height - input->input_crop_win.pos.y)
+							- input->input_crop_win.pos.x)
+						+ ((input->width * input->input_crop_win.pos.y)/2 + input->input_crop_win.pos.x/2);
+					ipu_priv_handle->i_uoff = ipu_priv_handle->i_voff +
+						(input->width * input->height)/2;
+					break;
+				case IPU_PIX_FMT_YUV422P:
+					ipu_priv_handle->i_off = input->input_crop_win.pos.y * input->width +
+						input->input_crop_win.pos.x;
+					ipu_priv_handle->i_uoff = (input->width * (input->height - input->input_crop_win.pos.y)
+							- input->input_crop_win.pos.x)
+						+ (input->width * input->input_crop_win.pos.y)/2 + input->input_crop_win.pos.x/2;
+					ipu_priv_handle->i_voff = ipu_priv_handle->i_uoff +
+						(input->width * input->height)/2;
+					break;
+				case IPU_PIX_FMT_NV12:
+					ipu_priv_handle->i_off = input->input_crop_win.pos.y * input->width +
+						input->input_crop_win.pos.x;
+					ipu_priv_handle->i_uoff = (input->width * (input->height - input->input_crop_win.pos.y)
+							- input->input_crop_win.pos.x)
+						+ input->width * input->input_crop_win.pos.y + input->input_crop_win.pos.x;
+					break;
+				default:
+					ipu_priv_handle->i_off = (input->input_crop_win.pos.y * input->width +
+							input->input_crop_win.pos.x) * fmt_to_bpp(input->fmt)/8;
+					break;
+			}
+		}
+	} else {
+		ipu_priv_handle->iwidth = input->width;
+		ipu_priv_handle->iheight = input->height;
+	}
 
- if (overlay) {
-  if ((overlay->ov_crop_win.win_w > 0) || (overlay->ov_crop_win.win_h > 0)) {
-   if ((overlay->ov_crop_win.win_w + overlay->ov_crop_win.pos.x) > overlay->width)
-    overlay->ov_crop_win.win_w = overlay->width - overlay->ov_crop_win.pos.x;
-   if ((overlay->ov_crop_win.win_h + overlay->ov_crop_win.pos.y) > overlay->height)
-    overlay->ov_crop_win.win_h = overlay->height - overlay->ov_crop_win.pos.y;
-   ipu_priv_handle->ovwidth = overlay->ov_crop_win.win_w;
-   ipu_priv_handle->ovheight = overlay->ov_crop_win.win_h;
+	if (overlay) {
+		if ((overlay->ov_crop_win.win_w > 0) || (overlay->ov_crop_win.win_h > 0)) {
+			if ((overlay->ov_crop_win.win_w + overlay->ov_crop_win.pos.x) > overlay->width)
+				overlay->ov_crop_win.win_w = overlay->width - overlay->ov_crop_win.pos.x;
+			if ((overlay->ov_crop_win.win_h + overlay->ov_crop_win.pos.y) > overlay->height)
+				overlay->ov_crop_win.win_h = overlay->height - overlay->ov_crop_win.pos.y;
+			ipu_priv_handle->ovwidth = overlay->ov_crop_win.win_w;
+			ipu_priv_handle->ovheight = overlay->ov_crop_win.win_h;
 
-   if ((ipu_priv_handle->ovwidth != overlay->width) || (ipu_priv_handle->ovheight != overlay->height)) {
-    /* NOTE: u v offset should based on start point of ov_off*/
-    switch (overlay->fmt) {
-     case IPU_PIX_FMT_YUV420P2:
-     case IPU_PIX_FMT_YUV420P:
-      ipu_priv_handle->ov_off = overlay->ov_crop_win.pos.y * overlay->width +
-       overlay->ov_crop_win.pos.x;
-      ipu_priv_handle->ov_uoff = (overlay->width * (overlay->height - overlay->ov_crop_win.pos.y)
-        - overlay->ov_crop_win.pos.x)
-       + ((overlay->width/2 * overlay->ov_crop_win.pos.y/2)
-         + overlay->ov_crop_win.pos.x/2);
-      ipu_priv_handle->ov_voff = ipu_priv_handle->ov_uoff +
-       (overlay->width/2 * overlay->height/2);
-      break;
-     case IPU_PIX_FMT_YVU422P:
-      ipu_priv_handle->ov_off = overlay->ov_crop_win.pos.y * overlay->width +
-       overlay->ov_crop_win.pos.x;
-      ipu_priv_handle->ov_voff = (overlay->width * (overlay->height - overlay->ov_crop_win.pos.y)
-        - overlay->ov_crop_win.pos.x)
-       + ((overlay->width * overlay->ov_crop_win.pos.y)/2 + overlay->ov_crop_win.pos.x/2);
-      ipu_priv_handle->ov_uoff = ipu_priv_handle->i_voff +
-       (overlay->width * overlay->height)/2;
-      break;
-     case IPU_PIX_FMT_YUV422P:
-      ipu_priv_handle->ov_off = overlay->ov_crop_win.pos.y * overlay->width +
-       overlay->ov_crop_win.pos.x;
-      ipu_priv_handle->ov_uoff = (overlay->width * (overlay->height - overlay->ov_crop_win.pos.y)
-        - overlay->ov_crop_win.pos.x)
-       + (overlay->width * overlay->ov_crop_win.pos.y)/2 + overlay->ov_crop_win.pos.x/2;
-      ipu_priv_handle->ov_voff = ipu_priv_handle->i_uoff +
-       (overlay->width * overlay->height)/2;
-      break;
-     case IPU_PIX_FMT_NV12:
-      ipu_priv_handle->ov_off = overlay->ov_crop_win.pos.y * overlay->width +
-       overlay->ov_crop_win.pos.x;
-      ipu_priv_handle->ov_uoff = (overlay->width * (overlay->height - overlay->ov_crop_win.pos.y)
-        - overlay->ov_crop_win.pos.x)
-       + overlay->width * overlay->ov_crop_win.pos.y + overlay->ov_crop_win.pos.x;
-      break;
-     default:
-      ipu_priv_handle->ov_off = (overlay->ov_crop_win.pos.y * overlay->width +
-        overlay->ov_crop_win.pos.x) * fmt_to_bpp(overlay->fmt)/8;
-      break;
-    }
-   }
-  } else {
-   ipu_priv_handle->ovwidth = overlay->width;
-   ipu_priv_handle->ovheight = overlay->height;
-  }
- }
+			if ((ipu_priv_handle->ovwidth != overlay->width) || (ipu_priv_handle->ovheight != overlay->height)) {
+				/* NOTE: u v offset should based on start point of ov_off*/
+				switch (overlay->fmt) {
+					case IPU_PIX_FMT_YUV420P2:
+					case IPU_PIX_FMT_YUV420P:
+						ipu_priv_handle->ov_off = overlay->ov_crop_win.pos.y * overlay->width +
+							overlay->ov_crop_win.pos.x;
+						ipu_priv_handle->ov_uoff = (overlay->width * (overlay->height - overlay->ov_crop_win.pos.y)
+								- overlay->ov_crop_win.pos.x)
+							+ ((overlay->width/2 * overlay->ov_crop_win.pos.y/2)
+									+ overlay->ov_crop_win.pos.x/2);
+						ipu_priv_handle->ov_voff = ipu_priv_handle->ov_uoff +
+							(overlay->width/2 * overlay->height/2);
+						break;
+					case IPU_PIX_FMT_YVU422P:
+						ipu_priv_handle->ov_off = overlay->ov_crop_win.pos.y * overlay->width +
+							overlay->ov_crop_win.pos.x;
+						ipu_priv_handle->ov_voff = (overlay->width * (overlay->height - overlay->ov_crop_win.pos.y)
+								- overlay->ov_crop_win.pos.x)
+							+ ((overlay->width * overlay->ov_crop_win.pos.y)/2 + overlay->ov_crop_win.pos.x/2);
+						ipu_priv_handle->ov_uoff = ipu_priv_handle->i_voff +
+							(overlay->width * overlay->height)/2;
+						break;
+					case IPU_PIX_FMT_YUV422P:
+						ipu_priv_handle->ov_off = overlay->ov_crop_win.pos.y * overlay->width +
+							overlay->ov_crop_win.pos.x;
+						ipu_priv_handle->ov_uoff = (overlay->width * (overlay->height - overlay->ov_crop_win.pos.y)
+								- overlay->ov_crop_win.pos.x)
+							+ (overlay->width * overlay->ov_crop_win.pos.y)/2 + overlay->ov_crop_win.pos.x/2;
+						ipu_priv_handle->ov_voff = ipu_priv_handle->i_uoff +
+							(overlay->width * overlay->height)/2;
+						break;
+					case IPU_PIX_FMT_NV12:
+						ipu_priv_handle->ov_off = overlay->ov_crop_win.pos.y * overlay->width +
+							overlay->ov_crop_win.pos.x;
+						ipu_priv_handle->ov_uoff = (overlay->width * (overlay->height - overlay->ov_crop_win.pos.y)
+								- overlay->ov_crop_win.pos.x)
+							+ overlay->width * overlay->ov_crop_win.pos.y + overlay->ov_crop_win.pos.x;
+						break;
+					default:
+						ipu_priv_handle->ov_off = (overlay->ov_crop_win.pos.y * overlay->width +
+								overlay->ov_crop_win.pos.x) * fmt_to_bpp(overlay->fmt)/8;
+						break;
+				}
+			}
+		} else {
+			ipu_priv_handle->ovwidth = overlay->width;
+			ipu_priv_handle->ovheight = overlay->height;
+		}
+	}
 
- if (output1)
-  output_num = 2;
- else
-  output_num = 1;
+	if (output1)
+		output_num = 2;
+	else
+		output_num = 1;
 
- for (i=0;i<output_num;i++) {
-  if (i == 0)
-   output = output0;
-  else
-   output = output1;
+	for (i=0;i<output_num;i++) {
+		if (i == 0)
+			output = output0;
+		else
+			output = output1;
 
-  if ((output->output_win.win_w > 0) || (output->output_win.win_h > 0)) {
-   if ((output->output_win.win_w + output->output_win.pos.x) > output->width)
-    output->output_win.win_w = output->width - output->output_win.pos.x;
-   if ((output->output_win.win_h + output->output_win.pos.y) > output->height)
-    output->output_win.win_h = output->height - output->output_win.pos.y;
-   ipu_priv_handle->output[i].owidth = output->output_win.win_w;
-   ipu_priv_handle->output[i].oheight = output->output_win.win_h;
+		if ((output->output_win.win_w > 0) || (output->output_win.win_h > 0)) {
+			if ((output->output_win.win_w + output->output_win.pos.x) > output->width)
+				output->output_win.win_w = output->width - output->output_win.pos.x;
+			if ((output->output_win.win_h + output->output_win.pos.y) > output->height)
+				output->output_win.win_h = output->height - output->output_win.pos.y;
+			ipu_priv_handle->output[i].owidth = output->output_win.win_w;
+			ipu_priv_handle->output[i].oheight = output->output_win.win_h;
 
-   if ((ipu_priv_handle->output[i].owidth != output->width) ||
-    (ipu_priv_handle->output[i].oheight != output->height)) {
-    /* NOTE: u v offset should based on start point of i_off*/
-    switch (output->fmt) {
-     case IPU_PIX_FMT_YUV420P2:
-     case IPU_PIX_FMT_YUV420P:
-      ipu_priv_handle->output[i].o_off = output->output_win.pos.y * output->width +
-       output->output_win.pos.x;
-      ipu_priv_handle->output[i].o_uoff = (output->width * (output->height - output->output_win.pos.y)
-        - output->output_win.pos.x)
-       + ((output->width/2 * output->output_win.pos.y/2)
-         + output->output_win.pos.x/2);
-      ipu_priv_handle->output[i].o_voff = ipu_priv_handle->output[i].o_uoff +
-       (output->width/2 * output->height/2);
-      break;
-     case IPU_PIX_FMT_YVU422P:
-      ipu_priv_handle->output[i].o_off = output->output_win.pos.y * output->width +
-       output->output_win.pos.x;
-      ipu_priv_handle->output[i].o_voff = (output->width * (output->height - output->output_win.pos.y)
-        - output->output_win.pos.x)
-       + ((output->width * output->output_win.pos.y)/2 + output->output_win.pos.x/2);
-      ipu_priv_handle->output[i].o_uoff = ipu_priv_handle->output[i].o_voff +
-       (output->width * output->height)/2;
-      break;
-     case IPU_PIX_FMT_YUV422P:
-      ipu_priv_handle->output[i].o_off = output->output_win.pos.y * output->width +
-       output->output_win.pos.x;
-      ipu_priv_handle->output[i].o_uoff = (output->width * (output->height - output->output_win.pos.y)
-        - output->output_win.pos.x)
-       + (output->width * output->output_win.pos.y)/2 + output->output_win.pos.x/2;
-      ipu_priv_handle->output[i].o_voff = ipu_priv_handle->output[i].o_uoff +
-       (output->width * output->height)/2;
-      break;
-     case IPU_PIX_FMT_NV12:
-      ipu_priv_handle->output[i].o_off = output->output_win.pos.y * output->width +
-       output->output_win.pos.x;
-      ipu_priv_handle->output[i].o_uoff = (output->width * (output->height - output->output_win.pos.y)
-        - output->output_win.pos.x)
-       + output->width * output->output_win.pos.y + output->output_win.pos.x;
-      break;
-     default:
-      ipu_priv_handle->output[i].o_off = (output->output_win.pos.y * output->width +
-        output->output_win.pos.x) * fmt_to_bpp(output->fmt)/8;
-      break;
-    }
-   }
-  } else {
-   ipu_priv_handle->output[i].owidth = output->width;
-   ipu_priv_handle->output[i].oheight = output->height;
-  }
- }
+			if ((ipu_priv_handle->output[i].owidth != output->width) ||
+				(ipu_priv_handle->output[i].oheight != output->height)) {
+				/* NOTE: u v offset should based on start point of i_off*/
+				switch (output->fmt) {
+					case IPU_PIX_FMT_YUV420P2:
+					case IPU_PIX_FMT_YUV420P:
+						ipu_priv_handle->output[i].o_off = output->output_win.pos.y * output->width +
+							output->output_win.pos.x;
+						ipu_priv_handle->output[i].o_uoff = (output->width * (output->height - output->output_win.pos.y)
+								- output->output_win.pos.x)
+							+ ((output->width/2 * output->output_win.pos.y/2)
+									+ output->output_win.pos.x/2);
+						ipu_priv_handle->output[i].o_voff = ipu_priv_handle->output[i].o_uoff +
+							(output->width/2 * output->height/2);
+						break;
+					case IPU_PIX_FMT_YVU422P:
+						ipu_priv_handle->output[i].o_off = output->output_win.pos.y * output->width +
+							output->output_win.pos.x;
+						ipu_priv_handle->output[i].o_voff = (output->width * (output->height - output->output_win.pos.y)
+								- output->output_win.pos.x)
+							+ ((output->width * output->output_win.pos.y)/2 + output->output_win.pos.x/2);
+						ipu_priv_handle->output[i].o_uoff = ipu_priv_handle->output[i].o_voff +
+							(output->width * output->height)/2;
+						break;
+					case IPU_PIX_FMT_YUV422P:
+						ipu_priv_handle->output[i].o_off = output->output_win.pos.y * output->width +
+							output->output_win.pos.x;
+						ipu_priv_handle->output[i].o_uoff = (output->width * (output->height - output->output_win.pos.y)
+								- output->output_win.pos.x)
+							+ (output->width * output->output_win.pos.y)/2 + output->output_win.pos.x/2;
+						ipu_priv_handle->output[i].o_voff = ipu_priv_handle->output[i].o_uoff +
+							(output->width * output->height)/2;
+						break;
+					case IPU_PIX_FMT_NV12:
+						ipu_priv_handle->output[i].o_off = output->output_win.pos.y * output->width +
+							output->output_win.pos.x;
+						ipu_priv_handle->output[i].o_uoff = (output->width * (output->height - output->output_win.pos.y)
+								- output->output_win.pos.x)
+							+ output->width * output->output_win.pos.y + output->output_win.pos.x;
+						break;
+					default:
+						ipu_priv_handle->output[i].o_off = (output->output_win.pos.y * output->width +
+								output->output_win.pos.x) * fmt_to_bpp(output->fmt)/8;
+						break;
+				}
+			}
+		} else {
+			ipu_priv_handle->output[i].owidth = output->width;
+			ipu_priv_handle->output[i].oheight = output->height;
+		}
+	}
 
- if (overlay) {
-  if ((ipu_priv_handle->ovwidth != ipu_priv_handle->output[0].owidth) ||
-    (ipu_priv_handle->ovheight != ipu_priv_handle->output[0].oheight)) {
-   dbg(DBG_ERR, "width/height of overlay and output should be same!\n");
-   ret = -1;
-   goto done;
-  }
- }
+	if (overlay) {
+		if ((ipu_priv_handle->ovwidth != ipu_priv_handle->output[0].owidth) ||
+				(ipu_priv_handle->ovheight != ipu_priv_handle->output[0].oheight)) {
+			dbg(DBG_ERR, "width/height of overlay and output should be same!\n");
+			ret = -1;
+			goto done;
+		}
+	}
 
- ipu_priv_handle->output[0].task_mode = __ipu_task_check(ipu_priv_handle, input, output0, 0);
- if (output1)
-  ipu_priv_handle->output[1].task_mode = __ipu_task_check(ipu_priv_handle, input, output1, 1);
+	ipu_priv_handle->output[0].task_mode = __ipu_task_check(ipu_priv_handle, input, output0, 0);
+	if (output1)
+		ipu_priv_handle->output[1].task_mode = __ipu_task_check(ipu_priv_handle, input, output1, 1);
 
- if (overlay) {
-  ipu_priv_handle->output[0].task_mode |= IC_MODE;
-  ipu_priv_handle->overlay_en = 1;
- }
+	if (overlay) {
+		ipu_priv_handle->output[0].task_mode |= IC_MODE;
+		ipu_priv_handle->overlay_en = 1;
+	}
 
- if (output1) {
-  /* 2 output case, should use VF & ENC task*/
-  if (ipu_priv_handle->output[0].task_mode == ROT_MODE)
-   ipu_priv_handle->output[0].ipu_task |= ROT_ENC;
-  else if (ipu_priv_handle->output[0].task_mode == (IC_MODE | ROT_MODE))
-   ipu_priv_handle->output[0].ipu_task |= IC_ENC | ROT_ENC;
-  else
-   ipu_priv_handle->output[0].ipu_task |= IC_ENC;
+	if (output1) {
+		/* 2 output case, should use VF & ENC task*/
+		if (ipu_priv_handle->output[0].task_mode == ROT_MODE)
+			ipu_priv_handle->output[0].ipu_task |= ROT_ENC;
+		else if (ipu_priv_handle->output[0].task_mode == (IC_MODE | ROT_MODE))
+			ipu_priv_handle->output[0].ipu_task |= IC_ENC | ROT_ENC;
+		else
+			ipu_priv_handle->output[0].ipu_task |= IC_ENC;
 
-  if (ipu_priv_handle->output[1].task_mode == ROT_MODE)
-   ipu_priv_handle->output[1].ipu_task |= ROT_VF;
-  else if (ipu_priv_handle->output[1].task_mode == (IC_MODE | ROT_MODE))
-   ipu_priv_handle->output[1].ipu_task |= IC_VF | ROT_VF;
-  else
-   ipu_priv_handle->output[1].ipu_task |= IC_VF;
+		if (ipu_priv_handle->output[1].task_mode == ROT_MODE)
+			ipu_priv_handle->output[1].ipu_task |= ROT_VF;
+		else if (ipu_priv_handle->output[1].task_mode == (IC_MODE | ROT_MODE))
+			ipu_priv_handle->output[1].ipu_task |= IC_VF | ROT_VF;
+		else
+			ipu_priv_handle->output[1].ipu_task |= IC_VF;
 
-  if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task |
-    ipu_priv_handle->output[1].ipu_task)) {
-   /* is it ok switch the ENC & VF */
-   ipu_priv_handle->output[0].ipu_task =
-    ipu_priv_handle->output[1].ipu_task = 0;
+		if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task |
+				ipu_priv_handle->output[1].ipu_task)) {
+			/* is it ok switch the ENC & VF */
+			ipu_priv_handle->output[0].ipu_task =
+				ipu_priv_handle->output[1].ipu_task = 0;
 
-   if (ipu_priv_handle->output[0].task_mode == ROT_MODE)
-    ipu_priv_handle->output[0].ipu_task |= ROT_VF;
-   else if (ipu_priv_handle->output[0].task_mode == (IC_MODE | ROT_MODE))
-    ipu_priv_handle->output[0].ipu_task |= IC_VF | ROT_VF;
-   else
-    ipu_priv_handle->output[0].ipu_task |= IC_VF;
+			if (ipu_priv_handle->output[0].task_mode == ROT_MODE)
+				ipu_priv_handle->output[0].ipu_task |= ROT_VF;
+			else if (ipu_priv_handle->output[0].task_mode == (IC_MODE | ROT_MODE))
+				ipu_priv_handle->output[0].ipu_task |= IC_VF | ROT_VF;
+			else
+				ipu_priv_handle->output[0].ipu_task |= IC_VF;
 
-   if (ipu_priv_handle->output[1].task_mode == ROT_MODE)
-    ipu_priv_handle->output[1].ipu_task |= ROT_ENC;
-   else if (ipu_priv_handle->output[1].task_mode == (IC_MODE | ROT_MODE))
-    ipu_priv_handle->output[1].ipu_task |= IC_ENC | ROT_ENC;
-   else
-    ipu_priv_handle->output[1].ipu_task |= IC_ENC;
+			if (ipu_priv_handle->output[1].task_mode == ROT_MODE)
+				ipu_priv_handle->output[1].ipu_task |= ROT_ENC;
+			else if (ipu_priv_handle->output[1].task_mode == (IC_MODE | ROT_MODE))
+				ipu_priv_handle->output[1].ipu_task |= IC_ENC | ROT_ENC;
+			else
+				ipu_priv_handle->output[1].ipu_task |= IC_ENC;
 
-   if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task |
-      ipu_priv_handle->output[1].ipu_task))
-    ipu_task_busy = 1;
-  }
- } else {
-  /* 1 output case */
-  if (ipu_priv_handle->output[0].task_mode == NULL_MODE) {
-   if (input->user_def_paddr[0] && output0->user_def_paddr[0]) {
-    ipu_priv_handle->output[0].task_mode = COPY_MODE;
-    dbg(DBG_INFO, "Copy case!\n");
-    goto done;
+			if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task |
+						ipu_priv_handle->output[1].ipu_task))
+				ipu_task_busy = 1;
+		}
+	} else {
+		/* 1 output case */
+		if (ipu_priv_handle->output[0].task_mode == NULL_MODE) {
+			if (input->user_def_paddr[0] && output0->user_def_paddr[0]) {
+				ipu_priv_handle->output[0].task_mode = COPY_MODE;
+				dbg(DBG_INFO, "Copy case!\n");
+				goto done;
 
-   } else {
-    dbg(DBG_ERR, "Do not need any operation! Will do nothing!\n");
-    ret = -1;
-    goto done;
-   }
-  }
+			} else {
+				dbg(DBG_ERR, "Do not need any operation! Will do nothing!\n");
+				ret = -1;
+				goto done;
+			}
+		}
 
-  /* try ENC first */
-  if (ipu_priv_handle->output[0].task_mode & ROT_MODE)
-   ipu_priv_handle->output[0].ipu_task |= ROT_ENC;
-  if (ipu_priv_handle->output[0].task_mode & IC_MODE)
-   ipu_priv_handle->output[0].ipu_task |= IC_ENC;
+		/* try ENC first */
+		if (ipu_priv_handle->output[0].task_mode & ROT_MODE)
+			ipu_priv_handle->output[0].ipu_task |= ROT_ENC;
+		if (ipu_priv_handle->output[0].task_mode & IC_MODE)
+			ipu_priv_handle->output[0].ipu_task |= IC_ENC;
 
-  if (overlay || _ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
-   (hope_task_mode && ((hope_task_mode & TASK_ENC_MODE) == 0))) {
+		if (overlay || _ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
+			(hope_task_mode && ((hope_task_mode & TASK_ENC_MODE) == 0))) {
 
-   /* hope mode ENC task is busy ? */
-   if (!overlay && hope_task_mode && (hope_task_mode & TASK_ENC_MODE)) {
-    ipu_task_busy = 1;
-    goto done;
-   }
+			/* hope mode ENC task is busy ? */
+			if (!overlay && hope_task_mode && (hope_task_mode & TASK_ENC_MODE)) {
+				ipu_task_busy = 1;
+				goto done;
+			}
 
-   /* try PP */
-   ipu_priv_handle->output[0].ipu_task = 0;
-   if (ipu_priv_handle->output[0].task_mode & ROT_MODE)
-    ipu_priv_handle->output[0].ipu_task |= ROT_PP;
-   if (ipu_priv_handle->output[0].task_mode & IC_MODE)
-    ipu_priv_handle->output[0].ipu_task |= IC_PP;
+			/* try PP */
+			ipu_priv_handle->output[0].ipu_task = 0;
+			if (ipu_priv_handle->output[0].task_mode & ROT_MODE)
+				ipu_priv_handle->output[0].ipu_task |= ROT_PP;
+			if (ipu_priv_handle->output[0].task_mode & IC_MODE)
+				ipu_priv_handle->output[0].ipu_task |= IC_PP;
 
-   if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
-    (hope_task_mode && ((hope_task_mode & TASK_PP_MODE) == 0))) {
+			if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
+				(hope_task_mode && ((hope_task_mode & TASK_PP_MODE) == 0))) {
 
-    /* hope mode PP task is busy ? */
-    if (hope_task_mode && (hope_task_mode & TASK_PP_MODE)) {
-     ipu_task_busy = 1;
-     goto done;
-    }
+				/* hope mode PP task is busy ? */
+				if (hope_task_mode && (hope_task_mode & TASK_PP_MODE)) {
+					ipu_task_busy = 1;
+					goto done;
+				}
 
-    /* try VF */
-    ipu_priv_handle->output[0].ipu_task = 0;
-    if (ipu_priv_handle->output[0].task_mode & ROT_MODE)
-     ipu_priv_handle->output[0].ipu_task |= ROT_VF;
-    if (ipu_priv_handle->output[0].task_mode & IC_MODE)
-     ipu_priv_handle->output[0].ipu_task |= IC_VF;
+				/* try VF */
+				ipu_priv_handle->output[0].ipu_task = 0;
+				if (ipu_priv_handle->output[0].task_mode & ROT_MODE)
+					ipu_priv_handle->output[0].ipu_task |= ROT_VF;
+				if (ipu_priv_handle->output[0].task_mode & IC_MODE)
+					ipu_priv_handle->output[0].ipu_task |= IC_VF;
 
-    /* left only VF task to try */
-    if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
-     (hope_task_mode && ((hope_task_mode & TASK_VF_MODE) == 0)))
-     ipu_task_busy = 1;
-   }
-  }
- }
+				/* left only VF task to try */
+				if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
+					(hope_task_mode && ((hope_task_mode & TASK_VF_MODE) == 0)))
+					ipu_task_busy = 1;
+			}
+		}
+	}
 done:
- if (ipu_task_busy) {
-  ret = -1;
-  dbg(DBG_ERR, "ipu is busy\n");
-  if (hope_task_mode)
-   dbg(DBG_ERR, " for hope task mode 0x%x!\n", hope_task_mode);
- } else if (ret == 0){
-  unsigned int task = ipu_priv_handle->output[0].ipu_task |
-    ipu_priv_handle->output[1].ipu_task;
-  dbg(DBG_INFO, "\033[0;34mWill take ipu task\033[0m\n");
-  if (task & IC_ENC)
-   dbg(DBG_INFO, "\tIC_ENC\n");
-  if (task & IC_VF)
-   dbg(DBG_INFO, "\tIC_VF\n");
-  if (task & IC_PP)
-   dbg(DBG_INFO, "\tIC_PP\n");
-  if (task & ROT_ENC)
-   dbg(DBG_INFO, "\tROT_ENC\n");
-  if (task & ROT_VF)
-   dbg(DBG_INFO, "\tROT_VF\n");
-  if (task & ROT_PP)
-   dbg(DBG_INFO, "\tROT_PP\n");
- }
- return ret;
+	if (ipu_task_busy) {
+		ret = -1;
+		dbg(DBG_ERR, "ipu is busy\n");
+		if (hope_task_mode)
+			dbg(DBG_ERR, " for hope task mode 0x%x!\n", hope_task_mode);
+	} else if (ret == 0){
+		unsigned int task = ipu_priv_handle->output[0].ipu_task |
+				ipu_priv_handle->output[1].ipu_task;
+		dbg(DBG_INFO, "\033[0;34mWill take ipu task\033[0m\n");
+		if (task & IC_ENC)
+			dbg(DBG_INFO, "\tIC_ENC\n");
+		if (task & IC_VF)
+			dbg(DBG_INFO, "\tIC_VF\n");
+		if (task & IC_PP)
+			dbg(DBG_INFO, "\tIC_PP\n");
+		if (task & ROT_ENC)
+			dbg(DBG_INFO, "\tROT_ENC\n");
+		if (task & ROT_VF)
+			dbg(DBG_INFO, "\tROT_VF\n");
+		if (task & ROT_PP)
+			dbg(DBG_INFO, "\tROT_PP\n");
+	}
+	return ret;
 }
 
 static int _ipu_mem_alloc(ipu_lib_input_param_t * input,
-  ipu_lib_overlay_param_t * overlay,
-  ipu_lib_output_param_t * output0,
-  ipu_lib_output_param_t * output1,
-  ipu_lib_handle_t * ipu_handle)
+		ipu_lib_overlay_param_t * overlay,
+		ipu_lib_output_param_t * output0,
+		ipu_lib_output_param_t * output1,
+		ipu_lib_handle_t * ipu_handle)
 {
- int i, j, ret = 0, bufcnt, output_num;
- ipu_lib_output_param_t * output;
- ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
+	int i, j, ret = 0, bufcnt, output_num;
+	ipu_lib_output_param_t * output;
+	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
 
- if (ipu_priv_handle->mode & OP_STREAM_MODE)
-  bufcnt = 2;
- else
-  bufcnt = 1;
+	if (ipu_priv_handle->mode & OP_STREAM_MODE)
+		bufcnt = 2;
+	else
+		bufcnt = 1;
 
- if (ipu_priv_handle->output[1].ipu_task)
-  output_num = 2;
- else
-  output_num = 1;
+	if (ipu_priv_handle->output[1].ipu_task)
+		output_num = 2;
+	else
+		output_num = 1;
 
- ipu_priv_handle->output[0].show_to_fb = output0->show_to_fb;
- if (output1)
-  ipu_priv_handle->output[1].show_to_fb = output1->show_to_fb;
+	ipu_priv_handle->output[0].show_to_fb = output0->show_to_fb;
+	if (output1)
+		ipu_priv_handle->output[1].show_to_fb = output1->show_to_fb;
 
- for (i=0;i<bufcnt;i++) {
-  /* user can choose other input phy addr*/
-  if (input->user_def_paddr[i] == 0) {
-   ipu_handle->ifr_size = ipu_priv_handle->i_minfo[i].size =
-     input->width/8*input->height*fmt_to_bpp(input->fmt);
-   if (ioctl(ipu_priv_handle->fd_ipu, IPU_ALOC_MEM, &(ipu_priv_handle->i_minfo[i])) < 0) {
-    dbg(DBG_ERR, "Ioctl IPU_ALOC_MEM failed!\n");
-    ret = -1;
-    goto err;
-   }
-   /* mmap virtual addr for user*/
-   ipu_handle->inbuf_start[i] = mmap (NULL, ipu_priv_handle->i_minfo[i].size,
-     PROT_READ | PROT_WRITE, MAP_SHARED,
-     ipu_priv_handle->fd_ipu, ipu_priv_handle->i_minfo[i].paddr);
-   if (ipu_handle->inbuf_start[i] == MAP_FAILED) {
-    dbg(DBG_ERR, "mmap failed!\n");
-    ret = -1;
-    goto err;
-   }
-   dbg(DBG_INFO, "\033[0;35mAlocate %d dma mem [%d] for input, dma addr 0x%x, mmap to %p!\033[0m\n",
-     ipu_handle->ifr_size, i, ipu_priv_handle->i_minfo[i].paddr, ipu_handle->inbuf_start[i]);
-  } else {
-   ipu_priv_handle->i_minfo[i].paddr = input->user_def_paddr[i];
-   dbg(DBG_INFO, "\033[0;35mSet input dma mem [%d] addr 0x%x by user!\033[0m\n", i, input->user_def_paddr[i]);
-  }
+	for (i=0;i<bufcnt;i++) {
+		/* user can choose other input phy addr*/
+		if (input->user_def_paddr[i] == 0) {
+			ipu_handle->ifr_size = ipu_priv_handle->i_minfo[i].size =
+					input->width/8*input->height*fmt_to_bpp(input->fmt);
+			if (ioctl(ipu_priv_handle->fd_ipu, IPU_ALOC_MEM, &(ipu_priv_handle->i_minfo[i])) < 0) {
+				dbg(DBG_ERR, "Ioctl IPU_ALOC_MEM failed!\n");
+				ret = -1;
+				goto err;
+			}
+			/* mmap virtual addr for user*/
+			ipu_handle->inbuf_start[i] = mmap (NULL, ipu_priv_handle->i_minfo[i].size,
+					PROT_READ | PROT_WRITE, MAP_SHARED,
+					ipu_priv_handle->fd_ipu, ipu_priv_handle->i_minfo[i].paddr);
+			if (ipu_handle->inbuf_start[i] == MAP_FAILED) {
+				dbg(DBG_ERR, "mmap failed!\n");
+				ret = -1;
+				goto err;
+			}
+			dbg(DBG_INFO, "\033[0;35mAlocate %d dma mem [%d] for input, dma addr 0x%x, mmap to %p!\033[0m\n",
+					ipu_handle->ifr_size, i, ipu_priv_handle->i_minfo[i].paddr, ipu_handle->inbuf_start[i]);
+		} else {
+			ipu_priv_handle->i_minfo[i].paddr = input->user_def_paddr[i];
+			dbg(DBG_INFO, "\033[0;35mSet input dma mem [%d] addr 0x%x by user!\033[0m\n", i, input->user_def_paddr[i]);
+		}
 
-  if (overlay) {
-   if (overlay->user_def_paddr[i] == 0) {
-    ipu_handle->ovfr_size = ipu_priv_handle->ov_minfo[i].size =
-     overlay->width/8*overlay->height*fmt_to_bpp(overlay->fmt);
-    if (ioctl(ipu_priv_handle->fd_ipu, IPU_ALOC_MEM, &(ipu_priv_handle->ov_minfo[i])) < 0) {
-     dbg(DBG_ERR, "Ioctl IPU_ALOC_MEM failed!\n");
-     ret = -1;
-     goto err;
-    }
-    /* mmap virtual addr for user*/
-    ipu_handle->ovbuf_start[i] = mmap (NULL, ipu_priv_handle->ov_minfo[i].size,
-      PROT_READ | PROT_WRITE, MAP_SHARED,
-      ipu_priv_handle->fd_ipu, ipu_priv_handle->ov_minfo[i].paddr);
-    if (ipu_handle->ovbuf_start[i] == MAP_FAILED) {
-     dbg(DBG_ERR, "mmap failed!\n");
-     ret = -1;
-     goto err;
-    }
-    dbg(DBG_INFO, "\033[0;35mAlocate %d dma mem [%d] for overlay, dma addr 0x%x, mmap to %p!\033[0m\n",
-      ipu_handle->ovfr_size, i, ipu_priv_handle->ov_minfo[i].paddr, ipu_handle->ovbuf_start[i]);
-   } else {
-    ipu_priv_handle->ov_minfo[i].paddr = overlay->user_def_paddr[i];
-    dbg(DBG_INFO, "\033[0;35mSet overlay dma mem [%d] addr 0x%x by user!\033[0m\n", i, overlay->user_def_paddr[i]);
-   }
-  }
+		if (overlay) {
+			if (overlay->user_def_paddr[i] == 0) {
+				ipu_handle->ovfr_size = ipu_priv_handle->ov_minfo[i].size =
+					overlay->width/8*overlay->height*fmt_to_bpp(overlay->fmt);
+				if (ioctl(ipu_priv_handle->fd_ipu, IPU_ALOC_MEM, &(ipu_priv_handle->ov_minfo[i])) < 0) {
+					dbg(DBG_ERR, "Ioctl IPU_ALOC_MEM failed!\n");
+					ret = -1;
+					goto err;
+				}
+				/* mmap virtual addr for user*/
+				ipu_handle->ovbuf_start[i] = mmap (NULL, ipu_priv_handle->ov_minfo[i].size,
+						PROT_READ | PROT_WRITE, MAP_SHARED,
+						ipu_priv_handle->fd_ipu, ipu_priv_handle->ov_minfo[i].paddr);
+				if (ipu_handle->ovbuf_start[i] == MAP_FAILED) {
+					dbg(DBG_ERR, "mmap failed!\n");
+					ret = -1;
+					goto err;
+				}
+				dbg(DBG_INFO, "\033[0;35mAlocate %d dma mem [%d] for overlay, dma addr 0x%x, mmap to %p!\033[0m\n",
+						ipu_handle->ovfr_size, i, ipu_priv_handle->ov_minfo[i].paddr, ipu_handle->ovbuf_start[i]);
+			} else {
+				ipu_priv_handle->ov_minfo[i].paddr = overlay->user_def_paddr[i];
+				dbg(DBG_INFO, "\033[0;35mSet overlay dma mem [%d] addr 0x%x by user!\033[0m\n", i, overlay->user_def_paddr[i]);
+			}
+		}
 
-  for (j=0;j<output_num;j++) {
-   if (j == 0)
-    output = output0;
-   else
-    output = output1;
+		for (j=0;j<output_num;j++) {
+			if (j == 0)
+				output = output0;
+			else
+				output = output1;
 
-   /* user can choose other output phy addr*/
-   if ((output->show_to_fb == 0) && (output->user_def_paddr[i] == 0)) {
-    ipu_handle->ofr_size[j] = ipu_priv_handle->output[j].o_minfo[i].size =
-     output->width/8*output->height*fmt_to_bpp(output->fmt);
-    if (ioctl(ipu_priv_handle->fd_ipu, IPU_ALOC_MEM,
-      &(ipu_priv_handle->output[j].o_minfo[i])) < 0) {
-     dbg(DBG_ERR, "Ioctl IPU_ALOC_MEM failed!\n");
-     ret = -1;
-     goto err;
-    }
-    /* mmap virtual addr for user*/
-    if (j == 0) {
-     ipu_handle->outbuf_start0[i] = mmap (NULL, ipu_priv_handle->output[j].o_minfo[i].size,
-       PROT_READ | PROT_WRITE, MAP_SHARED,
-       ipu_priv_handle->fd_ipu, ipu_priv_handle->output[j].o_minfo[i].paddr);
-     if (ipu_handle->outbuf_start0[i] == MAP_FAILED) {
-      dbg(DBG_ERR, "mmap failed!\n");
-      ret = -1;
-      goto err;
-     }
-     dbg(DBG_INFO, "\033[0;35mAlocate %d dma mem [%d] for output0, dma addr 0x%x, mmap to %p!\033[0m\n",
-       ipu_handle->ofr_size[j], i, ipu_priv_handle->output[j].o_minfo[i].paddr,
-       ipu_handle->outbuf_start0[i]);
-    } else {
-     ipu_handle->outbuf_start1[i] = mmap (NULL, ipu_priv_handle->output[j].o_minfo[i].size,
-       PROT_READ | PROT_WRITE, MAP_SHARED,
-       ipu_priv_handle->fd_ipu, ipu_priv_handle->output[j].o_minfo[i].paddr);
-     if (ipu_handle->outbuf_start1[i] == MAP_FAILED) {
-      dbg(DBG_ERR, "mmap failed!\n");
-      ret = -1;
-      goto err;
-     }
-     dbg(DBG_INFO, "\033[0;35mAlocate %d dma mem [%d] for output1, dma addr 0x%x, mmap to %p!\033[0m\n",
-       ipu_handle->ofr_size[j], i, ipu_priv_handle->output[j].o_minfo[i].paddr,
-       ipu_handle->outbuf_start1[i]);
-    }
-   } else if (output->user_def_paddr[i] != 0) {
-    ipu_priv_handle->output[j].o_minfo[i].paddr = output->user_def_paddr[i];
-    dbg(DBG_INFO, "\033[0;35mSet output%d dma mem [%d] addr 0x%x by user!\033[0m\n", j, i, output->user_def_paddr[i]);
-   }
+			/* user can choose other output phy addr*/
+			if ((output->show_to_fb == 0) && (output->user_def_paddr[i] == 0)) {
+				ipu_handle->ofr_size[j] = ipu_priv_handle->output[j].o_minfo[i].size =
+					output->width/8*output->height*fmt_to_bpp(output->fmt);
+				if (ioctl(ipu_priv_handle->fd_ipu, IPU_ALOC_MEM,
+						&(ipu_priv_handle->output[j].o_minfo[i])) < 0) {
+					dbg(DBG_ERR, "Ioctl IPU_ALOC_MEM failed!\n");
+					ret = -1;
+					goto err;
+				}
+				/* mmap virtual addr for user*/
+				if (j == 0) {
+					ipu_handle->outbuf_start0[i] = mmap (NULL, ipu_priv_handle->output[j].o_minfo[i].size,
+							PROT_READ | PROT_WRITE, MAP_SHARED,
+							ipu_priv_handle->fd_ipu, ipu_priv_handle->output[j].o_minfo[i].paddr);
+					if (ipu_handle->outbuf_start0[i] == MAP_FAILED) {
+						dbg(DBG_ERR, "mmap failed!\n");
+						ret = -1;
+						goto err;
+					}
+					dbg(DBG_INFO, "\033[0;35mAlocate %d dma mem [%d] for output0, dma addr 0x%x, mmap to %p!\033[0m\n",
+							ipu_handle->ofr_size[j], i, ipu_priv_handle->output[j].o_minfo[i].paddr,
+							ipu_handle->outbuf_start0[i]);
+				} else {
+					ipu_handle->outbuf_start1[i] = mmap (NULL, ipu_priv_handle->output[j].o_minfo[i].size,
+							PROT_READ | PROT_WRITE, MAP_SHARED,
+							ipu_priv_handle->fd_ipu, ipu_priv_handle->output[j].o_minfo[i].paddr);
+					if (ipu_handle->outbuf_start1[i] == MAP_FAILED) {
+						dbg(DBG_ERR, "mmap failed!\n");
+						ret = -1;
+						goto err;
+					}
+					dbg(DBG_INFO, "\033[0;35mAlocate %d dma mem [%d] for output1, dma addr 0x%x, mmap to %p!\033[0m\n",
+							ipu_handle->ofr_size[j], i, ipu_priv_handle->output[j].o_minfo[i].paddr,
+							ipu_handle->outbuf_start1[i]);
+				}
+			} else if (output->user_def_paddr[i] != 0) {
+				ipu_priv_handle->output[j].o_minfo[i].paddr = output->user_def_paddr[i];
+				dbg(DBG_INFO, "\033[0;35mSet output%d dma mem [%d] addr 0x%x by user!\033[0m\n", j, i, output->user_def_paddr[i]);
+			}
 
-   /* allocate dma buffer for rotation? */
-   if(ipu_priv_handle->output[j].task_mode == (ROT_MODE | IC_MODE)) {
-    ipu_priv_handle->output[j].r_minfo[i].size =
-      ipu_priv_handle->output[j].owidth/8*ipu_priv_handle->output[j].oheight
-      *fmt_to_bpp(output->fmt);
-    if (ioctl(ipu_priv_handle->fd_ipu, IPU_ALOC_MEM,
-      &(ipu_priv_handle->output[j].r_minfo[i])) < 0) {
-     dbg(DBG_ERR, "Ioctl IPU_ALOC_MEM failed!\n");
-     ret = -1;
-     goto err;
-    }
-    dbg(DBG_INFO, "\033[0;35mAlocate %d dma mem [%d] for %d rotation, dma addr 0x%x!\033[0m\n",
-      ipu_priv_handle->output[j].r_minfo[i].size, i, j, ipu_priv_handle->output[j].r_minfo[i].paddr);
-   }
-  }
- }
+			/* allocate dma buffer for rotation? */
+			if(ipu_priv_handle->output[j].task_mode == (ROT_MODE | IC_MODE)) {
+				ipu_priv_handle->output[j].r_minfo[i].size =
+						ipu_priv_handle->output[j].owidth/8*ipu_priv_handle->output[j].oheight
+						*fmt_to_bpp(output->fmt);
+				if (ioctl(ipu_priv_handle->fd_ipu, IPU_ALOC_MEM,
+						&(ipu_priv_handle->output[j].r_minfo[i])) < 0) {
+					dbg(DBG_ERR, "Ioctl IPU_ALOC_MEM failed!\n");
+					ret = -1;
+					goto err;
+				}
+				dbg(DBG_INFO, "\033[0;35mAlocate %d dma mem [%d] for %d rotation, dma addr 0x%x!\033[0m\n",
+						ipu_priv_handle->output[j].r_minfo[i].size, i, j, ipu_priv_handle->output[j].r_minfo[i].paddr);
+			}
+		}
+	}
 
- /*for the case output direct to framebuffer*/
- for (j=0;j<output_num;j++) {
-  if (j == 0)
-   output = output0;
-  else
-   output = output1;
+	/*for the case output direct to framebuffer*/
+	for (j=0;j<output_num;j++) {
+		if (j == 0)
+			output = output0;
+		else
+			output = output1;
 
-  if (output->show_to_fb) {
-   int owidth, oheight;
-   struct fb_fix_screeninfo fb_fix;
-   struct fb_var_screeninfo fb_var;
-   int offset = 0;
-   char *fbdev;
+		if (output->show_to_fb) {
+			int owidth, oheight;
+			struct fb_fix_screeninfo fb_fix;
+			struct fb_var_screeninfo fb_var;
+			int offset = 0;
+			char *fbdev;
 
-   if (output->fb_disp.fb_num == 0)
-    fbdev = FBDEV0;
-   else if (output->fb_disp.fb_num == 1)
-    fbdev = FBDEV1;
-   else
-    fbdev = FBDEV2;
+			if (output->fb_disp.fb_num == 0)
+				fbdev = FBDEV0;
+			else if (output->fb_disp.fb_num == 1)
+				fbdev = FBDEV1;
+			else
+				fbdev = FBDEV2;
 
-   dbg(DBG_INFO, "Output %d Show to %s\n", j, fbdev);
+			dbg(DBG_INFO, "Output %d Show to %s\n", j, fbdev);
 
-   if ((ipu_priv_handle->output[j].fd_fb = open(fbdev, O_RDWR, 0)) < 0) {
-    dbg(DBG_ERR, "Unable to open %s\n", fbdev);
-    ret = -1;
-    goto err;
-   }
+			if ((ipu_priv_handle->output[j].fd_fb = open(fbdev, O_RDWR, 0)) < 0) {
+				dbg(DBG_ERR, "Unable to open %s\n", fbdev);
+				ret = -1;
+				goto err;
+			}
 
-   if ( ioctl(ipu_priv_handle->output[j].fd_fb, FBIOGET_FSCREENINFO, &fb_fix) < 0) {
-    dbg(DBG_ERR, "Get FB fix info failed!\n");
-    close(ipu_priv_handle->output[j].fd_fb);
-    ret = -1;
-    goto err;
-   }
-   if ( ioctl(ipu_priv_handle->output[j].fd_fb, FBIOGET_VSCREENINFO, &fb_var) < 0) {
-    dbg(DBG_ERR, "Get FB var info failed!\n");
-    close(ipu_priv_handle->output[j].fd_fb);
-    ret = -1;
-    goto err;
-   }
+			if ( ioctl(ipu_priv_handle->output[j].fd_fb, FBIOGET_FSCREENINFO, &fb_fix) < 0) {
+				dbg(DBG_ERR, "Get FB fix info failed!\n");
+				close(ipu_priv_handle->output[j].fd_fb);
+				ret = -1;
+				goto err;
+			}
+			if ( ioctl(ipu_priv_handle->output[j].fd_fb, FBIOGET_VSCREENINFO, &fb_var) < 0) {
+				dbg(DBG_ERR, "Get FB var info failed!\n");
+				close(ipu_priv_handle->output[j].fd_fb);
+				ret = -1;
+				goto err;
+			}
 
-   if (strcmp(fb_fix.id, "DISP3 FG") == 0)
-    ipu_priv_handle->output[j].fb_chan = MEM_FG_SYNC;
-   else if (strcmp(fb_fix.id, "DISP3 BG") == 0)
-    ipu_priv_handle->output[j].fb_chan = MEM_BG_SYNC;
-   else if (strcmp(fb_fix.id, "DISP3 BG - DI1") == 0)
-    ipu_priv_handle->output[j].fb_chan = MEM_DC_SYNC;
+			if (strcmp(fb_fix.id, "DISP3 FG") == 0)
+				ipu_priv_handle->output[j].fb_chan = MEM_FG_SYNC;
+			else if (strcmp(fb_fix.id, "DISP3 BG") == 0)
+				ipu_priv_handle->output[j].fb_chan = MEM_BG_SYNC;
+			else if (strcmp(fb_fix.id, "DISP3 BG - DI1") == 0)
+				ipu_priv_handle->output[j].fb_chan = MEM_DC_SYNC;
 
-   if (!ipu_priv_handle->output[j].fb_chan) {
-    dbg(DBG_WARNING,
-     "Get FB ipu channel failed, fix id %s\n", fb_fix.id);
-    if (output->fb_disp.fb_num == 0)
-     ipu_priv_handle->output[j].fb_chan = MEM_BG_SYNC;
-    else if (output->fb_disp.fb_num == 1)
-     ipu_priv_handle->output[j].fb_chan = MEM_DC_SYNC;
-    else
-     ipu_priv_handle->output[j].fb_chan = MEM_FG_SYNC;
-   }
+			if (!ipu_priv_handle->output[j].fb_chan) {
+				dbg(DBG_WARNING,
+					"Get FB ipu channel failed, fix id %s\n", fb_fix.id);
+				if (output->fb_disp.fb_num == 0)
+					ipu_priv_handle->output[j].fb_chan = MEM_BG_SYNC;
+				else if (output->fb_disp.fb_num == 1)
+					ipu_priv_handle->output[j].fb_chan = MEM_DC_SYNC;
+				else
+					ipu_priv_handle->output[j].fb_chan = MEM_FG_SYNC;
+			}
 
-   owidth = output->width;
-   oheight = output->height;
+			owidth = output->width;
+			oheight = output->height;
 
-   if (ipu_priv_handle->output[j].fb_chan == MEM_FG_SYNC) {
-    fb_var.xres = owidth;
-    fb_var.xres_virtual = fb_var.xres;
-    fb_var.yres = oheight;
-    fb_var.yres_virtual = fb_var.yres * 2;
-    if ( ioctl(ipu_priv_handle->output[j].fd_fb, FBIOPUT_VSCREENINFO, &fb_var) < 0) {
-     dbg(DBG_ERR, "Set FB var info failed!\n");
-     close(ipu_priv_handle->output[j].fd_fb);
-     ret = -1;
-     goto err;
-    }
-    if ( ioctl(ipu_priv_handle->output[j].fd_fb, MXCFB_SET_OVERLAY_POS,
-      &(output->fb_disp.pos)) < 0)
-     dbg(DBG_ERR, "Set FB position failed!\n");
-   } else if ((fb_var.yres == fb_var.yres_virtual)) {
-    fb_var.yres_virtual = fb_var.yres * 2;
-    if ( ioctl(ipu_priv_handle->output[j].fd_fb, FBIOPUT_VSCREENINFO, &fb_var) < 0) {
-     dbg(DBG_ERR, "Set FB var info failed!\n");
-     close(ipu_priv_handle->output[j].fd_fb);
-     ret = -1;
-     goto err;
-    }
-   }
+			if (ipu_priv_handle->output[j].fb_chan == MEM_FG_SYNC) {
+				fb_var.xres = owidth;
+				fb_var.xres_virtual = fb_var.xres;
+				fb_var.yres = oheight;
+				fb_var.yres_virtual = fb_var.yres * 2;
+				if ( ioctl(ipu_priv_handle->output[j].fd_fb, FBIOPUT_VSCREENINFO, &fb_var) < 0) {
+					dbg(DBG_ERR, "Set FB var info failed!\n");
+					close(ipu_priv_handle->output[j].fd_fb);
+					ret = -1;
+					goto err;
+				}
+				if ( ioctl(ipu_priv_handle->output[j].fd_fb, MXCFB_SET_OVERLAY_POS,
+						&(output->fb_disp.pos)) < 0)
+					dbg(DBG_ERR, "Set FB position failed!\n");
+			} else if ((fb_var.yres == fb_var.yres_virtual)) {
+				fb_var.yres_virtual = fb_var.yres * 2;
+				if ( ioctl(ipu_priv_handle->output[j].fd_fb, FBIOPUT_VSCREENINFO, &fb_var) < 0) {
+					dbg(DBG_ERR, "Set FB var info failed!\n");
+					close(ipu_priv_handle->output[j].fd_fb);
+					ret = -1;
+					goto err;
+				}
+			}
 
-   if ( ioctl(ipu_priv_handle->output[j].fd_fb, FBIOGET_FSCREENINFO, &fb_fix) < 0) {
-    dbg(DBG_ERR, "Get FB fix info failed!\n");
-    close(ipu_priv_handle->output[j].fd_fb);
-    ret = -1;
-    goto err;
-   }
+			if ( ioctl(ipu_priv_handle->output[j].fd_fb, FBIOGET_FSCREENINFO, &fb_fix) < 0) {
+				dbg(DBG_ERR, "Get FB fix info failed!\n");
+				close(ipu_priv_handle->output[j].fd_fb);
+				ret = -1;
+				goto err;
+			}
 
-   if ( ioctl(ipu_priv_handle->output[j].fd_fb, FBIOGET_VSCREENINFO, &fb_var) < 0) {
-    dbg(DBG_ERR, "Get FB var info failed!\n");
-    close(ipu_priv_handle->output[j].fd_fb);
-    ret = -1;
-    goto err;
-   }
+			if ( ioctl(ipu_priv_handle->output[j].fd_fb, FBIOGET_VSCREENINFO, &fb_var) < 0) {
+				dbg(DBG_ERR, "Get FB var info failed!\n");
+				close(ipu_priv_handle->output[j].fd_fb);
+				ret = -1;
+				goto err;
+			}
 
-   dbg(DBG_INFO, "fb xres %d\n", fb_var.xres);
-   dbg(DBG_INFO, "fb yres %d\n", fb_var.yres);
-   dbg(DBG_INFO, "fb xres_virtual %d\n", fb_var.xres_virtual);
-   dbg(DBG_INFO, "fb yres_virtual %d\n", fb_var.yres_virtual);
+			dbg(DBG_INFO, "fb xres %d\n", fb_var.xres);
+			dbg(DBG_INFO, "fb yres %d\n", fb_var.yres);
+			dbg(DBG_INFO, "fb xres_virtual %d\n", fb_var.xres_virtual);
+			dbg(DBG_INFO, "fb yres_virtual %d\n", fb_var.yres_virtual);
 
-   if ((owidth > fb_var.xres) || (oheight > fb_var.yres)
-     || (fmt_to_bpp(output->fmt) != fb_var.bits_per_pixel)) {
-    dbg(DBG_ERR, "Output image is not fit for %s!\n", fbdev);
-    close(ipu_priv_handle->output[j].fd_fb);
-    ret = -1;
-    goto err;
-   }
+			if ((owidth > fb_var.xres) || (oheight > fb_var.yres)
+					|| (fmt_to_bpp(output->fmt) != fb_var.bits_per_pixel)) {
+				dbg(DBG_ERR, "Output image is not fit for %s!\n", fbdev);
+				close(ipu_priv_handle->output[j].fd_fb);
+				ret = -1;
+				goto err;
+			}
 
-   ipu_priv_handle->output[j].fb_stride = fb_var.xres * fb_var.bits_per_pixel/8;
+			ipu_priv_handle->output[j].fb_stride = fb_var.xres * fb_var.bits_per_pixel/8;
 
-   if (ipu_priv_handle->output[j].fb_chan != MEM_FG_SYNC)
-    offset = output->fb_disp.pos.y * ipu_priv_handle->output[j].fb_stride
-      + output->fb_disp.pos.x * fb_var.bits_per_pixel/8;
+			if (ipu_priv_handle->output[j].fb_chan != MEM_FG_SYNC)
+				offset = output->fb_disp.pos.y * ipu_priv_handle->output[j].fb_stride
+						+ output->fb_disp.pos.x * fb_var.bits_per_pixel/8;
 
-   ipu_priv_handle->output[j].screen_size = fb_var.yres * fb_fix.line_length;
+			ipu_priv_handle->output[j].screen_size = fb_var.yres * fb_fix.line_length;
 
-   ipu_priv_handle->output[j].o_minfo[0].paddr = fb_fix.smem_start +
-     ipu_priv_handle->output[j].screen_size + offset;
-   if (bufcnt > 1)
-    ipu_priv_handle->output[j].o_minfo[1].paddr = fb_fix.smem_start + offset;
+			ipu_priv_handle->output[j].o_minfo[0].paddr = fb_fix.smem_start +
+					ipu_priv_handle->output[j].screen_size + offset;
+			if (bufcnt > 1)
+				ipu_priv_handle->output[j].o_minfo[1].paddr = fb_fix.smem_start + offset;
 
-   ipu_priv_handle->output[j].fb_mem = mmap(0,
-     2*ipu_priv_handle->output[j].screen_size,
-     PROT_READ | PROT_WRITE, MAP_SHARED,
-     ipu_priv_handle->output[j].fd_fb, 0);
-   if (ipu_priv_handle->output[j].fb_mem == MAP_FAILED) {
-    dbg(DBG_ERR, "mmap failed!\n");
-    close(ipu_priv_handle->output[j].fd_fb);
-    ret = -1;
-    goto err;
-   }
+			ipu_priv_handle->output[j].fb_mem = mmap(0,
+					2*ipu_priv_handle->output[j].screen_size,
+					PROT_READ | PROT_WRITE, MAP_SHARED,
+					ipu_priv_handle->output[j].fd_fb, 0);
+			if (ipu_priv_handle->output[j].fb_mem == MAP_FAILED) {
+				dbg(DBG_ERR, "mmap failed!\n");
+				close(ipu_priv_handle->output[j].fd_fb);
+				ret = -1;
+				goto err;
+			}
 
-   if ((ipu_priv_handle->output[j].fb_chan != MEM_FG_SYNC) &&
-     ((owidth < fb_var.xres) || (oheight < fb_var.yres)))
-    /*make two buffer be the same to avoid flick*/
-    memcpy(ipu_priv_handle->output[j].fb_mem +
-      ipu_priv_handle->output[j].screen_size,
-      ipu_priv_handle->output[j].fb_mem,
-      ipu_priv_handle->output[j].screen_size);
+			if ((ipu_priv_handle->output[j].fb_chan != MEM_FG_SYNC) &&
+					((owidth < fb_var.xres) || (oheight < fb_var.yres)))
+				/*make two buffer be the same to avoid flick*/
+				memcpy(ipu_priv_handle->output[j].fb_mem +
+						ipu_priv_handle->output[j].screen_size,
+						ipu_priv_handle->output[j].fb_mem,
+						ipu_priv_handle->output[j].screen_size);
 
-   dbg(DBG_INFO, "fb stride %d\n", ipu_priv_handle->output[j].fb_stride);
-   dbg(DBG_INFO, "fb screen_size %d\n", ipu_priv_handle->output[j].screen_size);
-   dbg(DBG_INFO, "fb phyaddr0 0x%x\n", ipu_priv_handle->output[j].o_minfo[0].paddr);
-   dbg(DBG_INFO, "fb phyaddr1 0x%x\n", ipu_priv_handle->output[j].o_minfo[1].paddr);
-  }
- }
+			dbg(DBG_INFO, "fb stride %d\n", ipu_priv_handle->output[j].fb_stride);
+			dbg(DBG_INFO, "fb screen_size %d\n", ipu_priv_handle->output[j].screen_size);
+			dbg(DBG_INFO, "fb phyaddr0 0x%x\n", ipu_priv_handle->output[j].o_minfo[0].paddr);
+			dbg(DBG_INFO, "fb phyaddr1 0x%x\n", ipu_priv_handle->output[j].o_minfo[1].paddr);
+		}
+	}
 err:
- return ret;
+	return ret;
 }
 
 static void _ipu_mem_free(ipu_lib_handle_t * ipu_handle)
 {
- int i, j, bufcnt, output_num;
- ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
+	int i, j, bufcnt, output_num;
+	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
 
- if (ipu_priv_handle->mode & OP_STREAM_MODE)
-  bufcnt = 2;
- else
-  bufcnt = 1;
+	if (ipu_priv_handle->mode & OP_STREAM_MODE)
+		bufcnt = 2;
+	else
+		bufcnt = 1;
 
- if (ipu_priv_handle->output[1].ipu_task)
-  output_num = 2;
- else
-  output_num = 1;
+	if (ipu_priv_handle->output[1].ipu_task)
+		output_num = 2;
+	else
+		output_num = 1;
 
- for (i=0;i<bufcnt;i++) {
-  if (ipu_priv_handle->i_minfo[i].vaddr) {
-   if (ipu_handle->inbuf_start[i])
-    munmap(ipu_handle->inbuf_start[i], ipu_priv_handle->i_minfo[i].size);
-   ioctl(ipu_priv_handle->fd_ipu, IPU_FREE_MEM, &(ipu_priv_handle->i_minfo[i]));
-   dbg(DBG_INFO, "\033[0;35mFree %d dma mem [%d] for input, dma addr 0x%x!\033[0m\n",
-     ipu_handle->ifr_size, i, ipu_priv_handle->i_minfo[i].paddr);
-  }
-  if (ipu_priv_handle->ov_minfo[i].vaddr) {
-   if (ipu_handle->ovbuf_start[i])
-    munmap(ipu_handle->ovbuf_start[i], ipu_priv_handle->ov_minfo[i].size);
-   ioctl(ipu_priv_handle->fd_ipu, IPU_FREE_MEM, &(ipu_priv_handle->ov_minfo[i]));
-   dbg(DBG_INFO, "\033[0;35mFree %d dma mem [%d] for overlay, dma addr 0x%x!\033[0m\n",
-     ipu_handle->ovfr_size, i, ipu_priv_handle->ov_minfo[i].paddr);
-  }
+	for (i=0;i<bufcnt;i++) {
+		if (ipu_priv_handle->i_minfo[i].vaddr) {
+			if (ipu_handle->inbuf_start[i])
+				munmap(ipu_handle->inbuf_start[i], ipu_priv_handle->i_minfo[i].size);
+			ioctl(ipu_priv_handle->fd_ipu, IPU_FREE_MEM, &(ipu_priv_handle->i_minfo[i]));
+			dbg(DBG_INFO, "\033[0;35mFree %d dma mem [%d] for input, dma addr 0x%x!\033[0m\n",
+					ipu_handle->ifr_size, i, ipu_priv_handle->i_minfo[i].paddr);
+		}
+		if (ipu_priv_handle->ov_minfo[i].vaddr) {
+			if (ipu_handle->ovbuf_start[i])
+				munmap(ipu_handle->ovbuf_start[i], ipu_priv_handle->ov_minfo[i].size);
+			ioctl(ipu_priv_handle->fd_ipu, IPU_FREE_MEM, &(ipu_priv_handle->ov_minfo[i]));
+			dbg(DBG_INFO, "\033[0;35mFree %d dma mem [%d] for overlay, dma addr 0x%x!\033[0m\n",
+					ipu_handle->ovfr_size, i, ipu_priv_handle->ov_minfo[i].paddr);
+		}
 
-  for (j=0;j<output_num;j++) {
-   if (ipu_priv_handle->output[j].show_to_fb == 0) {
-    if (ipu_priv_handle->output[j].o_minfo[i].vaddr) {
-     if (j == 0) {
-      if (ipu_handle->outbuf_start0[i])
-       munmap(ipu_handle->outbuf_start0[i],
-        ipu_priv_handle->output[j].o_minfo[i].size);
-     } else {
-      if (ipu_handle->outbuf_start1[i])
-       munmap(ipu_handle->outbuf_start1[i],
-        ipu_priv_handle->output[j].o_minfo[i].size);
-     }
-     ioctl(ipu_priv_handle->fd_ipu, IPU_FREE_MEM,
-       &(ipu_priv_handle->output[j].o_minfo[i]));
+		for (j=0;j<output_num;j++) {
+			if (ipu_priv_handle->output[j].show_to_fb == 0) {
+				if (ipu_priv_handle->output[j].o_minfo[i].vaddr) {
+					if (j == 0) {
+						if (ipu_handle->outbuf_start0[i])
+							munmap(ipu_handle->outbuf_start0[i],
+								ipu_priv_handle->output[j].o_minfo[i].size);
+					} else {
+						if (ipu_handle->outbuf_start1[i])
+							munmap(ipu_handle->outbuf_start1[i],
+								ipu_priv_handle->output[j].o_minfo[i].size);
+					}
+					ioctl(ipu_priv_handle->fd_ipu, IPU_FREE_MEM,
+							&(ipu_priv_handle->output[j].o_minfo[i]));
 
-     dbg(DBG_INFO, "\033[0;35mFree %d dma mem [%d] for output%d, dma addr 0x%x!\033[0m\n",
-       ipu_handle->ofr_size[j], i, j, ipu_priv_handle->output[j].o_minfo[i].paddr);
-    }
-   }
+					dbg(DBG_INFO, "\033[0;35mFree %d dma mem [%d] for output%d, dma addr 0x%x!\033[0m\n",
+							ipu_handle->ofr_size[j], i, j, ipu_priv_handle->output[j].o_minfo[i].paddr);
+				}
+			}
 
-   if (ipu_priv_handle->output[j].r_minfo[i].vaddr) {
-    ioctl(ipu_priv_handle->fd_ipu, IPU_FREE_MEM, &(ipu_priv_handle->output[j].r_minfo[i]));
-    dbg(DBG_INFO, "\033[0;35mFree %d dma mem [%d] for %d rotation, dma addr 0x%x!\033[0m\n",
-      ipu_priv_handle->output[j].r_minfo[i].size, i, j, ipu_priv_handle->output[j].r_minfo[i].paddr);
-   }
-  }
- }
+			if (ipu_priv_handle->output[j].r_minfo[i].vaddr) {
+				ioctl(ipu_priv_handle->fd_ipu, IPU_FREE_MEM, &(ipu_priv_handle->output[j].r_minfo[i]));
+				dbg(DBG_INFO, "\033[0;35mFree %d dma mem [%d] for %d rotation, dma addr 0x%x!\033[0m\n",
+						ipu_priv_handle->output[j].r_minfo[i].size, i, j, ipu_priv_handle->output[j].r_minfo[i].paddr);
+			}
+		}
+	}
 
- for (j=0;j<output_num;j++) {
-  if (ipu_priv_handle->output[j].show_to_fb){
-   struct fb_var_screeninfo fb_var;
+	for (j=0;j<output_num;j++) {
+		if (ipu_priv_handle->output[j].show_to_fb){
+			struct fb_var_screeninfo fb_var;
 
-   /* make sure buffer1 still at fbmem base*/
-   memcpy(ipu_priv_handle->output[j].fb_mem,
-     ipu_priv_handle->output[j].fb_mem +
-     ipu_priv_handle->output[j].screen_size,
-     ipu_priv_handle->output[j].screen_size);
+			/* make sure buffer1 still at fbmem base*/
+			memcpy(ipu_priv_handle->output[j].fb_mem,
+					ipu_priv_handle->output[j].fb_mem +
+					ipu_priv_handle->output[j].screen_size,
+					ipu_priv_handle->output[j].screen_size);
 
-   ioctl(ipu_priv_handle->output[j].fd_fb, FBIOGET_VSCREENINFO, &fb_var);
-   fb_var.activate |= FB_ACTIVATE_FORCE;
-   ioctl(ipu_priv_handle->output[j].fd_fb, FBIOPUT_VSCREENINFO, &fb_var);
+			ioctl(ipu_priv_handle->output[j].fd_fb, FBIOGET_VSCREENINFO, &fb_var);
+			fb_var.activate |= FB_ACTIVATE_FORCE;
+			ioctl(ipu_priv_handle->output[j].fd_fb, FBIOPUT_VSCREENINFO, &fb_var);
 
-   if (ipu_priv_handle->output[j].fb_mem)
-    munmap(ipu_priv_handle->output[j].fb_mem, 2*ipu_priv_handle->output[j].screen_size);
-   close(ipu_priv_handle->output[j].fd_fb);
-  }
- }
+			if (ipu_priv_handle->output[j].fb_mem)
+				munmap(ipu_priv_handle->output[j].fb_mem, 2*ipu_priv_handle->output[j].screen_size);
+			close(ipu_priv_handle->output[j].fd_fb);
+		}
+	}
 }
 
 static int _ipu_channel_setup(ipu_lib_input_param_t * input,
-  ipu_lib_overlay_param_t * overlay,
-  ipu_lib_output_param_t * output0,
-  ipu_lib_output_param_t * output1,
-  ipu_lib_handle_t * ipu_handle)
+		ipu_lib_overlay_param_t * overlay,
+		ipu_lib_output_param_t * output0,
+		ipu_lib_output_param_t * output1,
+		ipu_lib_handle_t * ipu_handle)
 {
- ipu_channel_params_t params;
- int i, tmp, ret = 0, out_stride, output_num;
- ipu_lib_output_param_t * output;
- ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
+	ipu_channel_params_t params;
+	int i, tmp, ret = 0, out_stride, output_num;
+	ipu_lib_output_param_t * output;
+	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
 
- if (ipu_priv_handle->output[1].ipu_task)
-  output_num = 2;
- else
-  output_num = 1;
+	if (ipu_priv_handle->output[1].ipu_task)
+		output_num = 2;
+	else
+		output_num = 1;
 
- dbg(DBG_INFO, "\033[0;34mmode:\033[0m\n");
- if (ipu_priv_handle->mode & TASK_ENC_MODE)
-  dbg(DBG_INFO, "\tTASK_ENC_MODE\n");
- if (ipu_priv_handle->mode & TASK_VF_MODE)
-  dbg(DBG_INFO, "\tTASK_VF_MODE\n");
- if (ipu_priv_handle->mode & TASK_PP_MODE)
-  dbg(DBG_INFO, "\tTASK_PP_MODE\n");
- if (ipu_priv_handle->mode & OP_NORMAL_MODE)
-  dbg(DBG_INFO, "\tOP_NORMAL_MODE\n");
- if (ipu_priv_handle->mode & OP_STREAM_MODE)
-  dbg(DBG_INFO, "\tOP_STREAM_MODE\n");
+	dbg(DBG_INFO, "\033[0;34mmode:\033[0m\n");
+	if (ipu_priv_handle->mode & TASK_ENC_MODE)
+		dbg(DBG_INFO, "\tTASK_ENC_MODE\n");
+	if (ipu_priv_handle->mode & TASK_VF_MODE)
+		dbg(DBG_INFO, "\tTASK_VF_MODE\n");
+	if (ipu_priv_handle->mode & TASK_PP_MODE)
+		dbg(DBG_INFO, "\tTASK_PP_MODE\n");
+	if (ipu_priv_handle->mode & OP_NORMAL_MODE)
+		dbg(DBG_INFO, "\tOP_NORMAL_MODE\n");
+	if (ipu_priv_handle->mode & OP_STREAM_MODE)
+		dbg(DBG_INFO, "\tOP_STREAM_MODE\n");
 
- dbg(DBG_INFO, "\033[0;34minput info:\033[0m\n");
- dbg(DBG_INFO, "\tw: %d\n", input->width);
- dbg(DBG_INFO, "\th: %d\n", input->height);
- dbg(DBG_INFO, "\tfmt: 0x%x\n", input->fmt);
- dbg(DBG_INFO, "\t\tw_posx: %d\n", input->input_crop_win.pos.x);
- dbg(DBG_INFO, "\t\tw_posy: %d\n", input->input_crop_win.pos.y);
- dbg(DBG_INFO, "\t\tw_w: %d\n", input->input_crop_win.win_w);
- dbg(DBG_INFO, "\t\tw_h: %d\n", input->input_crop_win.win_h);
+	dbg(DBG_INFO, "\033[0;34minput info:\033[0m\n");
+	dbg(DBG_INFO, "\tw: %d\n", input->width);
+	dbg(DBG_INFO, "\th: %d\n", input->height);
+	dbg(DBG_INFO, "\tfmt: 0x%x\n", input->fmt);
+	dbg(DBG_INFO, "\t\tw_posx: %d\n", input->input_crop_win.pos.x);
+	dbg(DBG_INFO, "\t\tw_posy: %d\n", input->input_crop_win.pos.y);
+	dbg(DBG_INFO, "\t\tw_w: %d\n", input->input_crop_win.win_w);
+	dbg(DBG_INFO, "\t\tw_h: %d\n", input->input_crop_win.win_h);
 
- dbg(DBG_INFO, "\t\033[0;34minput crop:\033[0m\n");
- dbg(DBG_INFO, "\t\tiwidth: %d\n", ipu_priv_handle->iwidth);
- dbg(DBG_INFO, "\t\tiheight: %d\n", ipu_priv_handle->iheight);
- dbg(DBG_INFO, "\t\ti_off 0x%x\n", ipu_priv_handle->i_off);
- dbg(DBG_INFO, "\t\ti_uoff 0x%x\n", ipu_priv_handle->i_uoff);
- dbg(DBG_INFO, "\t\ti_voff 0x%x\n", ipu_priv_handle->i_voff);
+	dbg(DBG_INFO, "\t\033[0;34minput crop:\033[0m\n");
+	dbg(DBG_INFO, "\t\tiwidth: %d\n", ipu_priv_handle->iwidth);
+	dbg(DBG_INFO, "\t\tiheight: %d\n", ipu_priv_handle->iheight);
+	dbg(DBG_INFO, "\t\ti_off 0x%x\n", ipu_priv_handle->i_off);
+	dbg(DBG_INFO, "\t\ti_uoff 0x%x\n", ipu_priv_handle->i_uoff);
+	dbg(DBG_INFO, "\t\ti_voff 0x%x\n", ipu_priv_handle->i_voff);
 
- dbg(DBG_INFO, "\t\033[0;34minput buf paddr:\033[0m\n");
- dbg(DBG_INFO, "\t\tbuf0 0x%x\n", ipu_priv_handle->i_minfo[0].paddr);
- dbg(DBG_INFO, "\t\tbuf1 0x%x\n", ipu_priv_handle->i_minfo[1].paddr);
+	dbg(DBG_INFO, "\t\033[0;34minput buf paddr:\033[0m\n");
+	dbg(DBG_INFO, "\t\tbuf0 0x%x\n", ipu_priv_handle->i_minfo[0].paddr);
+	dbg(DBG_INFO, "\t\tbuf1 0x%x\n", ipu_priv_handle->i_minfo[1].paddr);
 
- if (overlay) {
-  dbg(DBG_INFO, "\033[0;34moverlay info:\033[0m\n");
-  dbg(DBG_INFO, "\tw: %d\n", overlay->width);
-  dbg(DBG_INFO, "\th: %d\n", overlay->height);
-  dbg(DBG_INFO, "\tfmt: 0x%x\n", overlay->fmt);
-  dbg(DBG_INFO, "\t\tw_posx: %d\n", overlay->ov_crop_win.pos.x);
-  dbg(DBG_INFO, "\t\tw_posy: %d\n", overlay->ov_crop_win.pos.y);
-  dbg(DBG_INFO, "\t\tw_w: %d\n", overlay->ov_crop_win.win_w);
-  dbg(DBG_INFO, "\t\tw_h: %d\n", overlay->ov_crop_win.win_h);
+	if (overlay) {
+		dbg(DBG_INFO, "\033[0;34moverlay info:\033[0m\n");
+		dbg(DBG_INFO, "\tw: %d\n", overlay->width);
+		dbg(DBG_INFO, "\th: %d\n", overlay->height);
+		dbg(DBG_INFO, "\tfmt: 0x%x\n", overlay->fmt);
+		dbg(DBG_INFO, "\t\tw_posx: %d\n", overlay->ov_crop_win.pos.x);
+		dbg(DBG_INFO, "\t\tw_posy: %d\n", overlay->ov_crop_win.pos.y);
+		dbg(DBG_INFO, "\t\tw_w: %d\n", overlay->ov_crop_win.win_w);
+		dbg(DBG_INFO, "\t\tw_h: %d\n", overlay->ov_crop_win.win_h);
 
-  dbg(DBG_INFO, "\t\033[0;34moverlay crop:\033[0m\n");
-  dbg(DBG_INFO, "\t\tovwidth: %d\n", ipu_priv_handle->ovwidth);
-  dbg(DBG_INFO, "\t\tovheight: %d\n", ipu_priv_handle->ovheight);
-  dbg(DBG_INFO, "\t\tov_off 0x%x\n", ipu_priv_handle->ov_off);
-  dbg(DBG_INFO, "\t\tov_uoff 0x%x\n", ipu_priv_handle->ov_uoff);
-  dbg(DBG_INFO, "\t\tov_voff 0x%x\n", ipu_priv_handle->ov_voff);
+		dbg(DBG_INFO, "\t\033[0;34moverlay crop:\033[0m\n");
+		dbg(DBG_INFO, "\t\tovwidth: %d\n", ipu_priv_handle->ovwidth);
+		dbg(DBG_INFO, "\t\tovheight: %d\n", ipu_priv_handle->ovheight);
+		dbg(DBG_INFO, "\t\tov_off 0x%x\n", ipu_priv_handle->ov_off);
+		dbg(DBG_INFO, "\t\tov_uoff 0x%x\n", ipu_priv_handle->ov_uoff);
+		dbg(DBG_INFO, "\t\tov_voff 0x%x\n", ipu_priv_handle->ov_voff);
 
-  dbg(DBG_INFO, "\t\033[0;34moverlay buf paddr:\033[0m\n");
-  dbg(DBG_INFO, "\t\tbuf0 0x%x\n", ipu_priv_handle->ov_minfo[0].paddr);
-  dbg(DBG_INFO, "\t\tbuf1 0x%x\n", ipu_priv_handle->ov_minfo[1].paddr);
- }
+		dbg(DBG_INFO, "\t\033[0;34moverlay buf paddr:\033[0m\n");
+		dbg(DBG_INFO, "\t\tbuf0 0x%x\n", ipu_priv_handle->ov_minfo[0].paddr);
+		dbg(DBG_INFO, "\t\tbuf1 0x%x\n", ipu_priv_handle->ov_minfo[1].paddr);
+	}
 
- dbg(DBG_INFO, "\033[0;34moutput0 info:\033[0m\n");
- dbg(DBG_INFO, "\tw: %d\n", output0->width);
- dbg(DBG_INFO, "\th: %d\n", output0->height);
- dbg(DBG_INFO, "\trot: %d\n", output0->rot);
- dbg(DBG_INFO, "\tfmt: 0x%x\n", output0->fmt);
- dbg(DBG_INFO, "\tshow_to_fb: %d\n", output0->show_to_fb);
- if (output0->show_to_fb) {
-  dbg(DBG_INFO, "\t\tfb_num: %d\n", output0->fb_disp.fb_num);
-  dbg(DBG_INFO, "\t\tfb_w_posx: %d\n", output0->fb_disp.pos.x);
-  dbg(DBG_INFO, "\t\tfb_w_posy: %d\n", output0->fb_disp.pos.y);
- }
+	dbg(DBG_INFO, "\033[0;34moutput0 info:\033[0m\n");
+	dbg(DBG_INFO, "\tw: %d\n", output0->width);
+	dbg(DBG_INFO, "\th: %d\n", output0->height);
+	dbg(DBG_INFO, "\trot: %d\n", output0->rot);
+	dbg(DBG_INFO, "\tfmt: 0x%x\n", output0->fmt);
+	dbg(DBG_INFO, "\tshow_to_fb: %d\n", output0->show_to_fb);
+	if (output0->show_to_fb) {
+		dbg(DBG_INFO, "\t\tfb_num: %d\n", output0->fb_disp.fb_num);
+		dbg(DBG_INFO, "\t\tfb_w_posx: %d\n", output0->fb_disp.pos.x);
+		dbg(DBG_INFO, "\t\tfb_w_posy: %d\n", output0->fb_disp.pos.y);
+	}
 
- dbg(DBG_INFO, "\t\033[0;34moutput0 window:\033[0m\n");
- dbg(DBG_INFO, "\t\towidth: %d\n", ipu_priv_handle->output[0].owidth);
- dbg(DBG_INFO, "\t\toheight: %d\n", ipu_priv_handle->output[0].oheight);
- dbg(DBG_INFO, "\t\toff 0x%x\n", ipu_priv_handle->output[0].o_off);
- dbg(DBG_INFO, "\t\tuoff 0x%x\n", ipu_priv_handle->output[0].o_uoff);
- dbg(DBG_INFO, "\t\tvoff 0x%x\n", ipu_priv_handle->output[0].o_voff);
+	dbg(DBG_INFO, "\t\033[0;34moutput0 window:\033[0m\n");
+	dbg(DBG_INFO, "\t\towidth: %d\n", ipu_priv_handle->output[0].owidth);
+	dbg(DBG_INFO, "\t\toheight: %d\n", ipu_priv_handle->output[0].oheight);
+	dbg(DBG_INFO, "\t\toff 0x%x\n", ipu_priv_handle->output[0].o_off);
+	dbg(DBG_INFO, "\t\tuoff 0x%x\n", ipu_priv_handle->output[0].o_uoff);
+	dbg(DBG_INFO, "\t\tvoff 0x%x\n", ipu_priv_handle->output[0].o_voff);
 
- dbg(DBG_INFO, "\t\033[0;34moutput0 buf paddr:\033[0m\n");
- dbg(DBG_INFO, "\t\tbuf0 0x%x\n", ipu_priv_handle->output[0].o_minfo[0].paddr);
- dbg(DBG_INFO, "\t\tbuf1 0x%x\n", ipu_priv_handle->output[0].o_minfo[1].paddr);
+	dbg(DBG_INFO, "\t\033[0;34moutput0 buf paddr:\033[0m\n");
+	dbg(DBG_INFO, "\t\tbuf0 0x%x\n", ipu_priv_handle->output[0].o_minfo[0].paddr);
+	dbg(DBG_INFO, "\t\tbuf1 0x%x\n", ipu_priv_handle->output[0].o_minfo[1].paddr);
 
- if (output1) {
-  dbg(DBG_INFO, "\033[0;34moutput1 info:\033[0m\n");
-  dbg(DBG_INFO, "\tw: %d\n", output1->width);
-  dbg(DBG_INFO, "\th: %d\n", output1->height);
-  dbg(DBG_INFO, "\trot: %d\n", output1->rot);
-  dbg(DBG_INFO, "\tfmt: 0x%x\n", output1->fmt);
-  dbg(DBG_INFO, "\tshow_to_fb: %d\n", output1->show_to_fb);
-  if (output1->show_to_fb) {
-   dbg(DBG_INFO, "\t\tfb_num: %d\n", output1->fb_disp.fb_num);
-   dbg(DBG_INFO, "\t\tfb_w_posx: %d\n", output1->fb_disp.pos.x);
-   dbg(DBG_INFO, "\t\tfb_w_posy: %d\n", output1->fb_disp.pos.y);
-  }
+	if (output1) {
+		dbg(DBG_INFO, "\033[0;34moutput1 info:\033[0m\n");
+		dbg(DBG_INFO, "\tw: %d\n", output1->width);
+		dbg(DBG_INFO, "\th: %d\n", output1->height);
+		dbg(DBG_INFO, "\trot: %d\n", output1->rot);
+		dbg(DBG_INFO, "\tfmt: 0x%x\n", output1->fmt);
+		dbg(DBG_INFO, "\tshow_to_fb: %d\n", output1->show_to_fb);
+		if (output1->show_to_fb) {
+			dbg(DBG_INFO, "\t\tfb_num: %d\n", output1->fb_disp.fb_num);
+			dbg(DBG_INFO, "\t\tfb_w_posx: %d\n", output1->fb_disp.pos.x);
+			dbg(DBG_INFO, "\t\tfb_w_posy: %d\n", output1->fb_disp.pos.y);
+		}
 
-  dbg(DBG_INFO, "\t\033[0;34moutput0 window:\033[0m\n");
-  dbg(DBG_INFO, "\t\towidth: %d\n", ipu_priv_handle->output[1].owidth);
-  dbg(DBG_INFO, "\t\toheight: %d\n", ipu_priv_handle->output[1].oheight);
-  dbg(DBG_INFO, "\t\toff 0x%x\n", ipu_priv_handle->output[1].o_off);
-  dbg(DBG_INFO, "\t\tuoff 0x%x\n", ipu_priv_handle->output[1].o_uoff);
-  dbg(DBG_INFO, "\t\tvoff 0x%x\n", ipu_priv_handle->output[1].o_voff);
+		dbg(DBG_INFO, "\t\033[0;34moutput0 window:\033[0m\n");
+		dbg(DBG_INFO, "\t\towidth: %d\n", ipu_priv_handle->output[1].owidth);
+		dbg(DBG_INFO, "\t\toheight: %d\n", ipu_priv_handle->output[1].oheight);
+		dbg(DBG_INFO, "\t\toff 0x%x\n", ipu_priv_handle->output[1].o_off);
+		dbg(DBG_INFO, "\t\tuoff 0x%x\n", ipu_priv_handle->output[1].o_uoff);
+		dbg(DBG_INFO, "\t\tvoff 0x%x\n", ipu_priv_handle->output[1].o_voff);
 
-  dbg(DBG_INFO, "\t\033[0;34moutput1 buf paddr:\033[0m\n");
-  dbg(DBG_INFO, "\t\tbuf0 0x%x\n", ipu_priv_handle->output[1].o_minfo[0].paddr);
-  dbg(DBG_INFO, "\t\tbuf1 0x%x\n", ipu_priv_handle->output[1].o_minfo[1].paddr);
- }
+		dbg(DBG_INFO, "\t\033[0;34moutput1 buf paddr:\033[0m\n");
+		dbg(DBG_INFO, "\t\tbuf0 0x%x\n", ipu_priv_handle->output[1].o_minfo[0].paddr);
+		dbg(DBG_INFO, "\t\tbuf1 0x%x\n", ipu_priv_handle->output[1].o_minfo[1].paddr);
+	}
 
- dbg(DBG_INFO, "\033[0;34mEnabling:\033[0m\n");
- /*Setup ipu channel*/
- for (i=0;i<output_num;i++) {
-  unsigned int task_mode;
+	dbg(DBG_INFO, "\033[0;34mEnabling:\033[0m\n");
+	/*Setup ipu channel*/
+	for (i=0;i<output_num;i++) {
+		unsigned int task_mode;
 
-  if (i == 0)
-   output = output0;
-  else
-   output = output1;
+		if (i == 0)
+			output = output0;
+		else
+			output = output1;
 
-  dbg(DBG_INFO, "\033[0;34mTask %d:\033[0m \n", i);
+		dbg(DBG_INFO, "\033[0;34mTask %d:\033[0m \n", i);
 
-  task_mode = ipu_priv_handle->output[i].task_mode & ~(COPY_MODE);
-  if(task_mode == IC_MODE){
-   dbg(DBG_INFO, "\tOnly IC, begin & end chan:\n");
+		task_mode = ipu_priv_handle->output[i].task_mode & ~(COPY_MODE);
+		if(task_mode == IC_MODE){
+			dbg(DBG_INFO, "\tOnly IC, begin & end chan:\n");
 
-   if (ipu_priv_handle->output[i].ipu_task & IC_ENC) {
-    ipu_priv_handle->output[i].ic_chan = MEM_PRP_ENC_MEM;
-    dbg(DBG_INFO, "\t\tMEM_PRP_ENC_MEM\n");
-   } else if (ipu_priv_handle->output[i].ipu_task & IC_VF) {
-    ipu_priv_handle->output[i].ic_chan = MEM_PRP_VF_MEM;
-    dbg(DBG_INFO, "\t\tMEM_PRP_VF_MEM\n");
-   } else if (ipu_priv_handle->output[i].ipu_task & IC_PP) {
-    ipu_priv_handle->output[i].ic_chan = MEM_PP_MEM;
-    dbg(DBG_INFO, "\t\tMEM_PP_MEM\n");
-   }
+			if (ipu_priv_handle->output[i].ipu_task & IC_ENC) {
+				ipu_priv_handle->output[i].ic_chan = MEM_PRP_ENC_MEM;
+				dbg(DBG_INFO, "\t\tMEM_PRP_ENC_MEM\n");
+			} else if (ipu_priv_handle->output[i].ipu_task & IC_VF) {
+				ipu_priv_handle->output[i].ic_chan = MEM_PRP_VF_MEM;
+				dbg(DBG_INFO, "\t\tMEM_PRP_VF_MEM\n");
+			} else if (ipu_priv_handle->output[i].ipu_task & IC_PP) {
+				ipu_priv_handle->output[i].ic_chan = MEM_PP_MEM;
+				dbg(DBG_INFO, "\t\tMEM_PP_MEM\n");
+			}
 
-   memset(&params, 0, sizeof (params));
+			memset(&params, 0, sizeof (params));
 
-   params.mem_prp_vf_mem.in_width = ipu_priv_handle->iwidth;
-   params.mem_prp_vf_mem.in_height = ipu_priv_handle->iheight;
-   params.mem_prp_vf_mem.in_pixel_fmt = input->fmt;
+			params.mem_prp_vf_mem.in_width = ipu_priv_handle->iwidth;
+			params.mem_prp_vf_mem.in_height = ipu_priv_handle->iheight;
+			params.mem_prp_vf_mem.in_pixel_fmt = input->fmt;
 
-   params.mem_prp_vf_mem.out_width = ipu_priv_handle->output[i].owidth;
-   params.mem_prp_vf_mem.out_height = ipu_priv_handle->output[i].oheight;
-   params.mem_prp_vf_mem.out_pixel_fmt = output->fmt;
+			params.mem_prp_vf_mem.out_width = ipu_priv_handle->output[i].owidth;
+			params.mem_prp_vf_mem.out_height = ipu_priv_handle->output[i].oheight;
+			params.mem_prp_vf_mem.out_pixel_fmt = output->fmt;
 
-   if (overlay) {
-    params.mem_prp_vf_mem.in_g_pixel_fmt = overlay->fmt;
-    params.mem_prp_vf_mem.graphics_combine_en = 1;
-    params.mem_prp_vf_mem.global_alpha_en = overlay->alpha_en;
-    params.mem_prp_vf_mem.alpha = overlay->alpha;
-    params.mem_prp_vf_mem.key_color_en = overlay->key_color_en;
-    params.mem_prp_vf_mem.key_color = overlay->key_color;
-   }
+			if (overlay) {
+				params.mem_prp_vf_mem.in_g_pixel_fmt = overlay->fmt;
+				params.mem_prp_vf_mem.graphics_combine_en = 1;
+				params.mem_prp_vf_mem.global_alpha_en = overlay->alpha_en;
+				params.mem_prp_vf_mem.alpha = overlay->alpha;
+				params.mem_prp_vf_mem.key_color_en = overlay->key_color_en;
+				params.mem_prp_vf_mem.key_color = overlay->key_color;
+			}
 
-   ret = ipu_init_channel(ipu_priv_handle->output[i].ic_chan, &params);
-   if (ret < 0)
-    goto done;
+			ret = ipu_init_channel(ipu_priv_handle->output[i].ic_chan, &params);
+			if (ret < 0)
+				goto done;
 
-   ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].ic_chan,
-     IPU_INPUT_BUFFER,
-     input->fmt,
-     ipu_priv_handle->iwidth,
-     ipu_priv_handle->iheight,
-     input->width*bytes_per_pixel(input->fmt),
-     IPU_ROTATE_NONE,
-     ipu_priv_handle->i_minfo[0].paddr + ipu_priv_handle->i_off,
-     ipu_priv_handle->mode & OP_STREAM_MODE ?
-      ipu_priv_handle->i_minfo[1].paddr + ipu_priv_handle->i_off : 0,
-     ipu_priv_handle->i_uoff, ipu_priv_handle->i_voff);
-   if (ret < 0) {
-    ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
-    goto done;
-   }
+			ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].ic_chan,
+					IPU_INPUT_BUFFER,
+					input->fmt,
+					ipu_priv_handle->iwidth,
+					ipu_priv_handle->iheight,
+					input->width*bytes_per_pixel(input->fmt),
+					IPU_ROTATE_NONE,
+					ipu_priv_handle->i_minfo[0].paddr + ipu_priv_handle->i_off,
+					ipu_priv_handle->mode & OP_STREAM_MODE ?
+						ipu_priv_handle->i_minfo[1].paddr + ipu_priv_handle->i_off : 0,
+					ipu_priv_handle->i_uoff, ipu_priv_handle->i_voff);
+			if (ret < 0) {
+				ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
+				goto done;
+			}
 
-   if (overlay) {
-    ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].ic_chan,
-      IPU_GRAPH_IN_BUFFER,
-      overlay->fmt,
-      ipu_priv_handle->ovwidth,
-      ipu_priv_handle->ovheight,
-      overlay->width*bytes_per_pixel(overlay->fmt),
-      IPU_ROTATE_NONE,
-      ipu_priv_handle->ov_minfo[0].paddr + ipu_priv_handle->ov_off,
-      ipu_priv_handle->mode & OP_STREAM_MODE ?
-      ipu_priv_handle->ov_minfo[1].paddr + ipu_priv_handle->ov_off : 0,
-      ipu_priv_handle->ov_uoff, ipu_priv_handle->ov_voff);
-    if (ret < 0) {
-     ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
-     goto done;
-    }
-   }
+			if (overlay) {
+				ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].ic_chan,
+						IPU_GRAPH_IN_BUFFER,
+						overlay->fmt,
+						ipu_priv_handle->ovwidth,
+						ipu_priv_handle->ovheight,
+						overlay->width*bytes_per_pixel(overlay->fmt),
+						IPU_ROTATE_NONE,
+						ipu_priv_handle->ov_minfo[0].paddr + ipu_priv_handle->ov_off,
+						ipu_priv_handle->mode & OP_STREAM_MODE ?
+						ipu_priv_handle->ov_minfo[1].paddr + ipu_priv_handle->ov_off : 0,
+						ipu_priv_handle->ov_uoff, ipu_priv_handle->ov_voff);
+				if (ret < 0) {
+					ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
+					goto done;
+				}
+			}
 
-   if (output->show_to_fb) {
-    out_stride = ipu_priv_handle->output[i].fb_stride;
-   } else
-    out_stride = output->width*bytes_per_pixel(output->fmt);
+			if (output->show_to_fb) {
+				out_stride = ipu_priv_handle->output[i].fb_stride;
+			} else
+				out_stride = output->width*bytes_per_pixel(output->fmt);
 
-   ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].ic_chan,
-     IPU_OUTPUT_BUFFER,
-     output->fmt,
-     ipu_priv_handle->output[i].owidth,
-     ipu_priv_handle->output[i].oheight,
-     out_stride,
-     output->rot,
-     ipu_priv_handle->output[i].o_minfo[0].paddr +
-     ipu_priv_handle->output[i].o_off,
-     ipu_priv_handle->mode & OP_STREAM_MODE ?
-      ipu_priv_handle->output[i].o_minfo[1].paddr +
-      ipu_priv_handle->output[i].o_off : 0,
-     ipu_priv_handle->output[i].o_uoff, ipu_priv_handle->output[i].o_voff);
-   if (ret < 0) {
-    ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
-    goto done;
-   }
+			ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].ic_chan,
+					IPU_OUTPUT_BUFFER,
+					output->fmt,
+					ipu_priv_handle->output[i].owidth,
+					ipu_priv_handle->output[i].oheight,
+					out_stride,
+					output->rot,
+					ipu_priv_handle->output[i].o_minfo[0].paddr +
+					ipu_priv_handle->output[i].o_off,
+					ipu_priv_handle->mode & OP_STREAM_MODE ?
+						ipu_priv_handle->output[i].o_minfo[1].paddr +
+						ipu_priv_handle->output[i].o_off : 0,
+					ipu_priv_handle->output[i].o_uoff, ipu_priv_handle->output[i].o_voff);
+			if (ret < 0) {
+				ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
+				goto done;
+			}
 
-   ipu_priv_handle->output[i].begin_chan =
-    ipu_priv_handle->output[i].end_chan =
-     ipu_priv_handle->output[i].ic_chan;
-  }
-  /*Only ROT*/
-  else if (task_mode == ROT_MODE){
-   dbg(DBG_INFO, "\tOnly ROT, begin & end chan:\n");
+			ipu_priv_handle->output[i].begin_chan =
+				ipu_priv_handle->output[i].end_chan =
+					ipu_priv_handle->output[i].ic_chan;
+		}
+		/*Only ROT*/
+		else if (task_mode == ROT_MODE){
+			dbg(DBG_INFO, "\tOnly ROT, begin & end chan:\n");
 
-   if (ipu_priv_handle->output[i].ipu_task & ROT_ENC) {
-    ipu_priv_handle->output[i].rot_chan = MEM_ROT_ENC_MEM;
-    dbg(DBG_INFO, "\t\tMEM_ROT_ENC_MEM\n");
-   } else if (ipu_priv_handle->output[i].ipu_task & ROT_VF) {
-    ipu_priv_handle->output[i].rot_chan = MEM_ROT_VF_MEM;
-    dbg(DBG_INFO, "\t\tMEM_ROT_VF_MEM\n");
-   } else if (ipu_priv_handle->output[i].ipu_task & ROT_PP) {
-    ipu_priv_handle->output[i].rot_chan = MEM_ROT_PP_MEM;
-    dbg(DBG_INFO, "\t\tMEM_ROT_PP_MEM\n");
-   }
+			if (ipu_priv_handle->output[i].ipu_task & ROT_ENC) {
+				ipu_priv_handle->output[i].rot_chan = MEM_ROT_ENC_MEM;
+				dbg(DBG_INFO, "\t\tMEM_ROT_ENC_MEM\n");
+			} else if (ipu_priv_handle->output[i].ipu_task & ROT_VF) {
+				ipu_priv_handle->output[i].rot_chan = MEM_ROT_VF_MEM;
+				dbg(DBG_INFO, "\t\tMEM_ROT_VF_MEM\n");
+			} else if (ipu_priv_handle->output[i].ipu_task & ROT_PP) {
+				ipu_priv_handle->output[i].rot_chan = MEM_ROT_PP_MEM;
+				dbg(DBG_INFO, "\t\tMEM_ROT_PP_MEM\n");
+			}
 
-   ret = ipu_init_channel(ipu_priv_handle->output[i].rot_chan, NULL);
-   if (ret < 0) {
-    goto done;
-   }
+			ret = ipu_init_channel(ipu_priv_handle->output[i].rot_chan, NULL);
+			if (ret < 0) {
+				goto done;
+			}
 
-   ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].rot_chan,
-     IPU_INPUT_BUFFER,
-     input->fmt,
-     ipu_priv_handle->iwidth,
-     ipu_priv_handle->iheight,
-     input->width*bytes_per_pixel(input->fmt),
-     output->rot,
-     ipu_priv_handle->i_minfo[0].paddr + ipu_priv_handle->i_off,
-     ipu_priv_handle->mode & OP_STREAM_MODE ?
-      ipu_priv_handle->i_minfo[1].paddr + ipu_priv_handle->i_off : 0,
-     ipu_priv_handle->i_uoff, ipu_priv_handle->i_voff);
-   if (ret < 0) {
-    ipu_uninit_channel(ipu_priv_handle->output[i].rot_chan);
-    goto done;
-   }
+			ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].rot_chan,
+					IPU_INPUT_BUFFER,
+					input->fmt,
+					ipu_priv_handle->iwidth,
+					ipu_priv_handle->iheight,
+					input->width*bytes_per_pixel(input->fmt),
+					output->rot,
+					ipu_priv_handle->i_minfo[0].paddr + ipu_priv_handle->i_off,
+					ipu_priv_handle->mode & OP_STREAM_MODE ?
+						ipu_priv_handle->i_minfo[1].paddr + ipu_priv_handle->i_off : 0,
+					ipu_priv_handle->i_uoff, ipu_priv_handle->i_voff);
+			if (ret < 0) {
+				ipu_uninit_channel(ipu_priv_handle->output[i].rot_chan);
+				goto done;
+			}
 
-   if (output->show_to_fb)
-    out_stride = ipu_priv_handle->output[i].fb_stride;
-   else
-    out_stride = output->width*bytes_per_pixel(output->fmt);
+			if (output->show_to_fb)
+				out_stride = ipu_priv_handle->output[i].fb_stride;
+			else
+				out_stride = output->width*bytes_per_pixel(output->fmt);
 
-   ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].rot_chan,
-     IPU_OUTPUT_BUFFER,
-     output->fmt,
-     ipu_priv_handle->output[i].owidth,
-     ipu_priv_handle->output[i].oheight,
-     out_stride,
-     IPU_ROTATE_NONE,
-     ipu_priv_handle->output[i].o_minfo[0].paddr +
-     ipu_priv_handle->output[i].o_off,
-     ipu_priv_handle->mode & OP_STREAM_MODE ?
-      ipu_priv_handle->output[i].o_minfo[1].paddr +
-      ipu_priv_handle->output[i].o_off : 0,
-     ipu_priv_handle->output[i].o_uoff, ipu_priv_handle->output[i].o_voff);
-   if (ret < 0) {
-    ipu_uninit_channel(ipu_priv_handle->output[i].rot_chan);
-    goto done;
-   }
+			ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].rot_chan,
+					IPU_OUTPUT_BUFFER,
+					output->fmt,
+					ipu_priv_handle->output[i].owidth,
+					ipu_priv_handle->output[i].oheight,
+					out_stride,
+					IPU_ROTATE_NONE,
+					ipu_priv_handle->output[i].o_minfo[0].paddr +
+					ipu_priv_handle->output[i].o_off,
+					ipu_priv_handle->mode & OP_STREAM_MODE ?
+						ipu_priv_handle->output[i].o_minfo[1].paddr +
+						ipu_priv_handle->output[i].o_off : 0,
+					ipu_priv_handle->output[i].o_uoff, ipu_priv_handle->output[i].o_voff);
+			if (ret < 0) {
+				ipu_uninit_channel(ipu_priv_handle->output[i].rot_chan);
+				goto done;
+			}
 
-   ipu_priv_handle->output[i].begin_chan =
-    ipu_priv_handle->output[i].end_chan =
-     ipu_priv_handle->output[i].rot_chan;
-  }
-  /*IC ROT*/
-  else if(task_mode == (IC_MODE | ROT_MODE)){
-   dbg(DBG_INFO, "\tIC + ROT, begin chan:\n");
+			ipu_priv_handle->output[i].begin_chan =
+				ipu_priv_handle->output[i].end_chan =
+					ipu_priv_handle->output[i].rot_chan;
+		}
+		/*IC ROT*/
+		else if(task_mode == (IC_MODE | ROT_MODE)){
+			dbg(DBG_INFO, "\tIC + ROT, begin chan:\n");
 
-   if (ipu_priv_handle->output[i].ipu_task & IC_ENC) {
-    ipu_priv_handle->output[i].ic_chan = MEM_PRP_ENC_MEM;
-    dbg(DBG_INFO, "\t\tMEM_PRP_ENC_MEM\n");
-   } else if (ipu_priv_handle->output[i].ipu_task & IC_VF) {
-    ipu_priv_handle->output[i].ic_chan = MEM_PRP_VF_MEM;
-    dbg(DBG_INFO, "\t\tMEM_PRP_VF_MEM\n");
-   } else if (ipu_priv_handle->output[i].ipu_task & IC_PP) {
-    ipu_priv_handle->output[i].ic_chan = MEM_PP_MEM;
-    dbg(DBG_INFO, "\t\tMEM_PP_MEM\n");
-   }
+			if (ipu_priv_handle->output[i].ipu_task & IC_ENC) {
+				ipu_priv_handle->output[i].ic_chan = MEM_PRP_ENC_MEM;
+				dbg(DBG_INFO, "\t\tMEM_PRP_ENC_MEM\n");
+			} else if (ipu_priv_handle->output[i].ipu_task & IC_VF) {
+				ipu_priv_handle->output[i].ic_chan = MEM_PRP_VF_MEM;
+				dbg(DBG_INFO, "\t\tMEM_PRP_VF_MEM\n");
+			} else if (ipu_priv_handle->output[i].ipu_task & IC_PP) {
+				ipu_priv_handle->output[i].ic_chan = MEM_PP_MEM;
+				dbg(DBG_INFO, "\t\tMEM_PP_MEM\n");
+			}
 
-   dbg(DBG_INFO, "\tend chan:\n");
+			dbg(DBG_INFO, "\tend chan:\n");
 
-   if (ipu_priv_handle->output[i].ipu_task & ROT_ENC) {
-    ipu_priv_handle->output[i].rot_chan = MEM_ROT_ENC_MEM;
-    dbg(DBG_INFO, "\t\tMEM_ROT_ENC_MEM\n");
-   } else if (ipu_priv_handle->output[i].ipu_task & ROT_VF) {
-    ipu_priv_handle->output[i].rot_chan = MEM_ROT_VF_MEM;
-    dbg(DBG_INFO, "\t\tMEM_ROT_VF_MEM\n");
-   } else if (ipu_priv_handle->output[i].ipu_task & ROT_PP) {
-    ipu_priv_handle->output[i].rot_chan = MEM_ROT_PP_MEM;
-    dbg(DBG_INFO, "\t\tMEM_ROT_PP_MEM\n");
-   }
+			if (ipu_priv_handle->output[i].ipu_task & ROT_ENC) {
+				ipu_priv_handle->output[i].rot_chan = MEM_ROT_ENC_MEM;
+				dbg(DBG_INFO, "\t\tMEM_ROT_ENC_MEM\n");
+			} else if (ipu_priv_handle->output[i].ipu_task & ROT_VF) {
+				ipu_priv_handle->output[i].rot_chan = MEM_ROT_VF_MEM;
+				dbg(DBG_INFO, "\t\tMEM_ROT_VF_MEM\n");
+			} else if (ipu_priv_handle->output[i].ipu_task & ROT_PP) {
+				ipu_priv_handle->output[i].rot_chan = MEM_ROT_PP_MEM;
+				dbg(DBG_INFO, "\t\tMEM_ROT_PP_MEM\n");
+			}
 
-   if(output->rot >= IPU_ROTATE_90_RIGHT){
-    /*output swap*/
-    tmp = ipu_priv_handle->output[i].owidth;
-    ipu_priv_handle->output[i].owidth = ipu_priv_handle->output[i].oheight;
-    ipu_priv_handle->output[i].oheight = tmp;
-   }
+			if(output->rot >= IPU_ROTATE_90_RIGHT){
+				/*output swap*/
+				tmp = ipu_priv_handle->output[i].owidth;
+				ipu_priv_handle->output[i].owidth = ipu_priv_handle->output[i].oheight;
+				ipu_priv_handle->output[i].oheight = tmp;
+			}
 
-   memset(&params, 0, sizeof (params));
+			memset(&params, 0, sizeof (params));
 
-   params.mem_prp_vf_mem.in_width = ipu_priv_handle->iwidth;
-   params.mem_prp_vf_mem.in_height = ipu_priv_handle->iheight;
-   params.mem_prp_vf_mem.in_pixel_fmt = input->fmt;
+			params.mem_prp_vf_mem.in_width = ipu_priv_handle->iwidth;
+			params.mem_prp_vf_mem.in_height = ipu_priv_handle->iheight;
+			params.mem_prp_vf_mem.in_pixel_fmt = input->fmt;
 
-   params.mem_prp_vf_mem.out_width = ipu_priv_handle->output[i].owidth;
-   params.mem_prp_vf_mem.out_height = ipu_priv_handle->output[i].oheight;
-   params.mem_prp_vf_mem.out_pixel_fmt = output->fmt;
+			params.mem_prp_vf_mem.out_width = ipu_priv_handle->output[i].owidth;
+			params.mem_prp_vf_mem.out_height = ipu_priv_handle->output[i].oheight;
+			params.mem_prp_vf_mem.out_pixel_fmt = output->fmt;
 
-   if (overlay) {
-    params.mem_prp_vf_mem.in_g_pixel_fmt = overlay->fmt;
-    params.mem_prp_vf_mem.graphics_combine_en = 1;
-    params.mem_prp_vf_mem.global_alpha_en = overlay->alpha_en;
-    params.mem_prp_vf_mem.alpha = overlay->alpha;
-    params.mem_prp_vf_mem.key_color_en = overlay->key_color_en;
-    params.mem_prp_vf_mem.key_color = overlay->key_color;
-   }
+			if (overlay) {
+				params.mem_prp_vf_mem.in_g_pixel_fmt = overlay->fmt;
+				params.mem_prp_vf_mem.graphics_combine_en = 1;
+				params.mem_prp_vf_mem.global_alpha_en = overlay->alpha_en;
+				params.mem_prp_vf_mem.alpha = overlay->alpha;
+				params.mem_prp_vf_mem.key_color_en = overlay->key_color_en;
+				params.mem_prp_vf_mem.key_color = overlay->key_color;
+			}
 
-   ret = ipu_init_channel(ipu_priv_handle->output[i].ic_chan, &params);
-   if (ret < 0) {
-    goto done;
-   }
+			ret = ipu_init_channel(ipu_priv_handle->output[i].ic_chan, &params);
+			if (ret < 0) {
+				goto done;
+			}
 
-   ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].ic_chan,
-     IPU_INPUT_BUFFER,
-     input->fmt,
-     ipu_priv_handle->iwidth,
-     ipu_priv_handle->iheight,
-     input->width*bytes_per_pixel(input->fmt),
-     IPU_ROTATE_NONE,
-     ipu_priv_handle->i_minfo[0].paddr + ipu_priv_handle->i_off,
-     ipu_priv_handle->mode & OP_STREAM_MODE ?
-      ipu_priv_handle->i_minfo[1].paddr + ipu_priv_handle->i_off : 0,
-     ipu_priv_handle->i_uoff, ipu_priv_handle->i_voff);
-   if (ret < 0) {
-    ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
-    goto done;
-   }
+			ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].ic_chan,
+					IPU_INPUT_BUFFER,
+					input->fmt,
+					ipu_priv_handle->iwidth,
+					ipu_priv_handle->iheight,
+					input->width*bytes_per_pixel(input->fmt),
+					IPU_ROTATE_NONE,
+					ipu_priv_handle->i_minfo[0].paddr + ipu_priv_handle->i_off,
+					ipu_priv_handle->mode & OP_STREAM_MODE ?
+						ipu_priv_handle->i_minfo[1].paddr + ipu_priv_handle->i_off : 0,
+					ipu_priv_handle->i_uoff, ipu_priv_handle->i_voff);
+			if (ret < 0) {
+				ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
+				goto done;
+			}
 
-   if (overlay) {
-    ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].ic_chan,
-      IPU_GRAPH_IN_BUFFER,
-      overlay->fmt,
-      ipu_priv_handle->ovwidth,
-      ipu_priv_handle->ovheight,
-      overlay->width*bytes_per_pixel(overlay->fmt),
-      IPU_ROTATE_NONE,
-      ipu_priv_handle->ov_minfo[0].paddr + ipu_priv_handle->ov_off,
-      ipu_priv_handle->mode & OP_STREAM_MODE ?
-      ipu_priv_handle->ov_minfo[1].paddr + ipu_priv_handle->ov_off : 0,
-      ipu_priv_handle->ov_uoff, ipu_priv_handle->ov_voff);
-    if (ret < 0) {
-     ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
-     goto done;
-    }
-   }
+			if (overlay) {
+				ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].ic_chan,
+						IPU_GRAPH_IN_BUFFER,
+						overlay->fmt,
+						ipu_priv_handle->ovwidth,
+						ipu_priv_handle->ovheight,
+						overlay->width*bytes_per_pixel(overlay->fmt),
+						IPU_ROTATE_NONE,
+						ipu_priv_handle->ov_minfo[0].paddr + ipu_priv_handle->ov_off,
+						ipu_priv_handle->mode & OP_STREAM_MODE ?
+						ipu_priv_handle->ov_minfo[1].paddr + ipu_priv_handle->ov_off : 0,
+						ipu_priv_handle->ov_uoff, ipu_priv_handle->ov_voff);
+				if (ret < 0) {
+					ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
+					goto done;
+				}
+			}
 
-   ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].ic_chan,
-     IPU_OUTPUT_BUFFER,
-     output->fmt,
-     ipu_priv_handle->output[i].owidth,
-     ipu_priv_handle->output[i].oheight,
-     ipu_priv_handle->output[i].owidth*bytes_per_pixel(output->fmt),
-     IPU_ROTATE_NONE,
-     ipu_priv_handle->output[i].r_minfo[0].paddr,
-     ipu_priv_handle->mode & OP_STREAM_MODE ?
-      ipu_priv_handle->output[i].r_minfo[1].paddr : 0,
-     0, 0);
-   if (ret < 0) {
-    ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
-    goto done;
-   }
+			ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].ic_chan,
+					IPU_OUTPUT_BUFFER,
+					output->fmt,
+					ipu_priv_handle->output[i].owidth,
+					ipu_priv_handle->output[i].oheight,
+					ipu_priv_handle->output[i].owidth*bytes_per_pixel(output->fmt),
+					IPU_ROTATE_NONE,
+					ipu_priv_handle->output[i].r_minfo[0].paddr,
+					ipu_priv_handle->mode & OP_STREAM_MODE ?
+						ipu_priv_handle->output[i].r_minfo[1].paddr : 0,
+					0, 0);
+			if (ret < 0) {
+				ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
+				goto done;
+			}
 
-   ret = ipu_init_channel(ipu_priv_handle->output[i].rot_chan, NULL);
-   if (ret < 0) {
-    ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
-    goto done;
-   }
+			ret = ipu_init_channel(ipu_priv_handle->output[i].rot_chan, NULL);
+			if (ret < 0) {
+				ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
+				goto done;
+			}
 
-   ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].rot_chan,
-     IPU_INPUT_BUFFER,
-     output->fmt,
-     ipu_priv_handle->output[i].owidth,
-     ipu_priv_handle->output[i].oheight,
-     ipu_priv_handle->output[i].owidth*bytes_per_pixel(output->fmt),
-     output->rot,
-     ipu_priv_handle->output[i].r_minfo[0].paddr,
-     ipu_priv_handle->mode & OP_STREAM_MODE ?
-      ipu_priv_handle->output[i].r_minfo[1].paddr : 0,
-     0, 0);
-   if (ret < 0) {
-    ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
-    ipu_uninit_channel(ipu_priv_handle->output[i].rot_chan);
-    goto done;
-   }
+			ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].rot_chan,
+					IPU_INPUT_BUFFER,
+					output->fmt,
+					ipu_priv_handle->output[i].owidth,
+					ipu_priv_handle->output[i].oheight,
+					ipu_priv_handle->output[i].owidth*bytes_per_pixel(output->fmt),
+					output->rot,
+					ipu_priv_handle->output[i].r_minfo[0].paddr,
+					ipu_priv_handle->mode & OP_STREAM_MODE ?
+						ipu_priv_handle->output[i].r_minfo[1].paddr : 0,
+					0, 0);
+			if (ret < 0) {
+				ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
+				ipu_uninit_channel(ipu_priv_handle->output[i].rot_chan);
+				goto done;
+			}
 
-   if(output->rot >= IPU_ROTATE_90_RIGHT){
-    /*output swap*/
-    tmp = ipu_priv_handle->output[i].owidth;
-    ipu_priv_handle->output[i].owidth = ipu_priv_handle->output[i].oheight;
-    ipu_priv_handle->output[i].oheight = tmp;
-   }
+			if(output->rot >= IPU_ROTATE_90_RIGHT){
+				/*output swap*/
+				tmp = ipu_priv_handle->output[i].owidth;
+				ipu_priv_handle->output[i].owidth = ipu_priv_handle->output[i].oheight;
+				ipu_priv_handle->output[i].oheight = tmp;
+			}
 
-   if (output->show_to_fb)
-    out_stride = ipu_priv_handle->output[i].fb_stride;
-   else
-    out_stride = output->width*bytes_per_pixel(output->fmt);
+			if (output->show_to_fb)
+				out_stride = ipu_priv_handle->output[i].fb_stride;
+			else
+				out_stride = output->width*bytes_per_pixel(output->fmt);
 
-   ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].rot_chan,
-     IPU_OUTPUT_BUFFER,
-     output->fmt,
-     ipu_priv_handle->output[i].owidth,
-     ipu_priv_handle->output[i].oheight,
-     out_stride,
-     IPU_ROTATE_NONE,
-     ipu_priv_handle->output[i].o_minfo[0].paddr +
-     ipu_priv_handle->output[i].o_off,
-     ipu_priv_handle->mode & OP_STREAM_MODE ?
-      ipu_priv_handle->output[i].o_minfo[1].paddr +
-      ipu_priv_handle->output[i].o_off : 0,
-     ipu_priv_handle->output[i].o_uoff, ipu_priv_handle->output[i].o_voff);
-   if (ret < 0) {
-    ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
-    ipu_uninit_channel(ipu_priv_handle->output[i].rot_chan);
-    goto done;
-   }
+			ret = ipu_init_channel_buffer(ipu_priv_handle->output[i].rot_chan,
+					IPU_OUTPUT_BUFFER,
+					output->fmt,
+					ipu_priv_handle->output[i].owidth,
+					ipu_priv_handle->output[i].oheight,
+					out_stride,
+					IPU_ROTATE_NONE,
+					ipu_priv_handle->output[i].o_minfo[0].paddr +
+					ipu_priv_handle->output[i].o_off,
+					ipu_priv_handle->mode & OP_STREAM_MODE ?
+						ipu_priv_handle->output[i].o_minfo[1].paddr +
+						ipu_priv_handle->output[i].o_off : 0,
+					ipu_priv_handle->output[i].o_uoff, ipu_priv_handle->output[i].o_voff);
+			if (ret < 0) {
+				ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
+				ipu_uninit_channel(ipu_priv_handle->output[i].rot_chan);
+				goto done;
+			}
 
-   ret = ipu_link_channels(ipu_priv_handle->output[i].ic_chan,
-      ipu_priv_handle->output[i].rot_chan);
-   if (ret < 0) {
-    ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
-    ipu_uninit_channel(ipu_priv_handle->output[i].rot_chan);
-    goto done;
-   }
+			ret = ipu_link_channels(ipu_priv_handle->output[i].ic_chan,
+						ipu_priv_handle->output[i].rot_chan);
+			if (ret < 0) {
+				ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
+				ipu_uninit_channel(ipu_priv_handle->output[i].rot_chan);
+				goto done;
+			}
 
-   ipu_priv_handle->output[i].begin_chan = ipu_priv_handle->output[i].ic_chan;
-   ipu_priv_handle->output[i].end_chan = ipu_priv_handle->output[i].rot_chan;
-  }
+			ipu_priv_handle->output[i].begin_chan = ipu_priv_handle->output[i].ic_chan;
+			ipu_priv_handle->output[i].end_chan = ipu_priv_handle->output[i].rot_chan;
+		}
 
-  if (output->show_to_fb) {
-   dbg(DBG_INFO, "\tdisp chan:\n");
-   if (ipu_priv_handle->output[i].fb_chan == MEM_BG_SYNC) {
-    dbg(DBG_INFO, "\t\tMEM_BG_SYNC\n")
-   }
-   if (ipu_priv_handle->output[i].fb_chan == MEM_FG_SYNC) {
-    dbg(DBG_INFO, "\t\tMEM_FG_SYNC\n")
-   }
-   if (ipu_priv_handle->output[i].fb_chan == MEM_DC_SYNC) {
-    dbg(DBG_INFO, "\t\tMEM_DC_SYNC\n")
-   }
+		if (output->show_to_fb) {
+			dbg(DBG_INFO, "\tdisp chan:\n");
+			if (ipu_priv_handle->output[i].fb_chan == MEM_BG_SYNC) {
+				dbg(DBG_INFO, "\t\tMEM_BG_SYNC\n")
+			}
+			if (ipu_priv_handle->output[i].fb_chan == MEM_FG_SYNC) {
+				dbg(DBG_INFO, "\t\tMEM_FG_SYNC\n")
+			}
+			if (ipu_priv_handle->output[i].fb_chan == MEM_DC_SYNC) {
+				dbg(DBG_INFO, "\t\tMEM_DC_SYNC\n")
+			}
 
-   ret = ipu_link_channels(ipu_priv_handle->output[i].end_chan,
-     ipu_priv_handle->output[i].fb_chan);
-   if (ret < 0) {
-    ipu_unlink_channels(ipu_priv_handle->output[i].ic_chan,
-      ipu_priv_handle->output[i].rot_chan);
-    ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
-    ipu_uninit_channel(ipu_priv_handle->output[i].rot_chan);
-    goto done;
-   }
-  }
- }
+			ret = ipu_link_channels(ipu_priv_handle->output[i].end_chan,
+					ipu_priv_handle->output[i].fb_chan);
+			if (ret < 0) {
+				ipu_unlink_channels(ipu_priv_handle->output[i].ic_chan,
+						ipu_priv_handle->output[i].rot_chan);
+				ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
+				ipu_uninit_channel(ipu_priv_handle->output[i].rot_chan);
+				goto done;
+			}
+		}
+	}
 
- /*only need one irq even for 2 output case*/
- switch (ipu_priv_handle->output[0].begin_chan) {
- case MEM_ROT_ENC_MEM:
-  ipu_priv_handle->irq = IPU_IRQ_PRP_ENC_ROT_IN_EOF;
-  break;
- case MEM_ROT_VF_MEM:
-  ipu_priv_handle->irq = IPU_IRQ_PRP_VF_ROT_IN_EOF;
-  break;
- case MEM_ROT_PP_MEM:
-  ipu_priv_handle->irq = IPU_IRQ_PP_ROT_IN_EOF;
-  break;
- case MEM_PRP_ENC_MEM:
- case MEM_PRP_VF_MEM:
-  ipu_priv_handle->irq = IPU_IRQ_PRP_IN_EOF;
-  break;
- case MEM_PP_MEM:
-  ipu_priv_handle->irq = IPU_IRQ_PP_IN_EOF;
-  break;
- default:
-  dbg(DBG_ERR, "Should not be here!\n");
- }
+	/*only need one irq even for 2 output case*/
+	switch (ipu_priv_handle->output[0].begin_chan) {
+	case MEM_ROT_ENC_MEM:
+		ipu_priv_handle->irq = IPU_IRQ_PRP_ENC_ROT_IN_EOF;
+		break;
+	case MEM_ROT_VF_MEM:
+		ipu_priv_handle->irq = IPU_IRQ_PRP_VF_ROT_IN_EOF;
+		break;
+	case MEM_ROT_PP_MEM:
+		ipu_priv_handle->irq = IPU_IRQ_PP_ROT_IN_EOF;
+		break;
+	case MEM_PRP_ENC_MEM:
+	case MEM_PRP_VF_MEM:
+		ipu_priv_handle->irq = IPU_IRQ_PRP_IN_EOF;
+		break;
+	case MEM_PP_MEM:
+		ipu_priv_handle->irq = IPU_IRQ_PP_IN_EOF;
+		break;
+	default:
+		dbg(DBG_ERR, "Should not be here!\n");
+	}
 done:
- return ret;
+	return ret;
 }
 
 static int _ipu_copy_setup(ipu_lib_input_param_t * input,
-  ipu_lib_output_param_t * output,
-  ipu_lib_handle_t * ipu_handle)
+		ipu_lib_output_param_t * output,
+		ipu_lib_handle_t * ipu_handle)
 {
- int ret = 0, hope_task_mode, ipu_task_busy = 0;
- ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
- unsigned int task;
+	int ret = 0, hope_task_mode, ipu_task_busy = 0;
+	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
+	unsigned int task;
 
- hope_task_mode = ipu_priv_handle->mode & 0x07;
- if (ipu_priv_handle->mode & OP_STREAM_MODE) {
-  if (!input->user_def_paddr[0] ||
-   !input->user_def_paddr[1] ||
-   !output->user_def_paddr[0] ||
-   !output->user_def_paddr[1]) {
-   dbg(DBG_ERR, "Should set both user def paddr for stream mode!\n");
-   ret = -1;
-   goto done;
-  }
- }
+	hope_task_mode = ipu_priv_handle->mode & 0x07;
+	if (ipu_priv_handle->mode & OP_STREAM_MODE) {
+		if (!input->user_def_paddr[0] ||
+			!input->user_def_paddr[1] ||
+			!output->user_def_paddr[0] ||
+			!output->user_def_paddr[1]) {
+			dbg(DBG_ERR, "Should set both user def paddr for stream mode!\n");
+			ret = -1;
+			goto done;
+		}
+	}
 
- ipu_priv_handle->output[0].show_to_fb = 0;
- ipu_priv_handle->i_minfo[0].paddr = input->user_def_paddr[0];
- ipu_priv_handle->i_minfo[1].paddr = input->user_def_paddr[1];
- ipu_priv_handle->output[0].o_minfo[0].paddr = output->user_def_paddr[0];
- ipu_priv_handle->output[0].o_minfo[1].paddr = output->user_def_paddr[1];
+	ipu_priv_handle->output[0].show_to_fb = 0;
+	ipu_priv_handle->i_minfo[0].paddr = input->user_def_paddr[0];
+	ipu_priv_handle->i_minfo[1].paddr = input->user_def_paddr[1];
+	ipu_priv_handle->output[0].o_minfo[0].paddr = output->user_def_paddr[0];
+	ipu_priv_handle->output[0].o_minfo[1].paddr = output->user_def_paddr[1];
 
- /* try IC-ENC first */
- ipu_priv_handle->output[0].ipu_task = IC_ENC;
- if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
-  (hope_task_mode && ((hope_task_mode & TASK_ENC_MODE) == 0))) {
+	/* try IC-ENC first */
+	ipu_priv_handle->output[0].ipu_task = IC_ENC;
+	if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
+		(hope_task_mode && ((hope_task_mode & TASK_ENC_MODE) == 0))) {
 
-  /* try ROT-ENC */
-  ipu_priv_handle->output[0].ipu_task = ROT_ENC;
-  if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
-   (hope_task_mode && ((hope_task_mode & TASK_ENC_MODE) == 0))) {
-   /* hope mode ENC task is busy ? */
-   if (hope_task_mode && (hope_task_mode & TASK_ENC_MODE)) {
-    ipu_task_busy = 1;
-    goto done;
-   }
+		/* try ROT-ENC */
+		ipu_priv_handle->output[0].ipu_task = ROT_ENC;
+		if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
+			(hope_task_mode && ((hope_task_mode & TASK_ENC_MODE) == 0))) {
+			/* hope mode ENC task is busy ? */
+			if (hope_task_mode && (hope_task_mode & TASK_ENC_MODE)) {
+				ipu_task_busy = 1;
+				goto done;
+			}
 
-   /* try IC-PP */
-   ipu_priv_handle->output[0].ipu_task = IC_PP;
-   if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
-    (hope_task_mode && ((hope_task_mode & TASK_PP_MODE) == 0))) {
+			/* try IC-PP */
+			ipu_priv_handle->output[0].ipu_task = IC_PP;
+			if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
+				(hope_task_mode && ((hope_task_mode & TASK_PP_MODE) == 0))) {
 
-    /* try ROT-PP */
-    ipu_priv_handle->output[0].ipu_task = ROT_PP;
-    if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
-     (hope_task_mode && ((hope_task_mode & TASK_PP_MODE) == 0))) {
-     /* hope mode PP task is busy ? */
-     if (hope_task_mode && (hope_task_mode & TASK_PP_MODE)) {
-      ipu_task_busy = 1;
-      goto done;
-     }
+				/* try ROT-PP */
+				ipu_priv_handle->output[0].ipu_task = ROT_PP;
+				if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
+					(hope_task_mode && ((hope_task_mode & TASK_PP_MODE) == 0))) {
+					/* hope mode PP task is busy ? */
+					if (hope_task_mode && (hope_task_mode & TASK_PP_MODE)) {
+						ipu_task_busy = 1;
+						goto done;
+					}
 
-     /* try ROT-VF */
-     ipu_priv_handle->output[0].ipu_task = ROT_VF;
-     if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
-      (hope_task_mode && ((hope_task_mode & TASK_VF_MODE) == 0))) {
-      ipu_task_busy = 1;
-      goto done;
-     }
-    }
-   }
-  }
- }
- task = ipu_priv_handle->output[0].ipu_task;
- dbg(DBG_INFO, "\033[0;34mCOPY mode will take ipu task\033[0m\n");
- if (task & IC_ENC)
-  dbg(DBG_INFO, "\tIC_ENC\n");
- if (task & IC_PP)
-  dbg(DBG_INFO, "\tIC_PP\n");
- if (task & ROT_ENC)
-  dbg(DBG_INFO, "\tROT_ENC\n");
- if (task & ROT_VF)
-  dbg(DBG_INFO, "\tROT_VF\n");
- if (task & ROT_PP)
-  dbg(DBG_INFO, "\tROT_PP\n");
+					/* try ROT-VF */
+					ipu_priv_handle->output[0].ipu_task = ROT_VF;
+					if (_ipu_is_task_busy(ipu_priv_handle->output[0].ipu_task) ||
+						(hope_task_mode && ((hope_task_mode & TASK_VF_MODE) == 0))) {
+						ipu_task_busy = 1;
+						goto done;
+					}
+				}
+			}
+		}
+	}
+	task = ipu_priv_handle->output[0].ipu_task;
+	dbg(DBG_INFO, "\033[0;34mCOPY mode will take ipu task\033[0m\n");
+	if (task & IC_ENC)
+		dbg(DBG_INFO, "\tIC_ENC\n");
+	if (task & IC_PP)
+		dbg(DBG_INFO, "\tIC_PP\n");
+	if (task & ROT_ENC)
+		dbg(DBG_INFO, "\tROT_ENC\n");
+	if (task & ROT_VF)
+		dbg(DBG_INFO, "\tROT_VF\n");
+	if (task & ROT_PP)
+		dbg(DBG_INFO, "\tROT_PP\n");
 
- if ((ipu_priv_handle->output[0].ipu_task == IC_ENC) ||
-  (ipu_priv_handle->output[0].ipu_task == IC_PP))
-  ipu_priv_handle->output[0].task_mode |= IC_MODE;
- else
-  ipu_priv_handle->output[0].task_mode |= ROT_MODE;
+	if ((ipu_priv_handle->output[0].ipu_task == IC_ENC) ||
+		(ipu_priv_handle->output[0].ipu_task == IC_PP))
+		ipu_priv_handle->output[0].task_mode |= IC_MODE;
+	else
+		ipu_priv_handle->output[0].task_mode |= ROT_MODE;
 
- ret = _ipu_channel_setup(input, NULL, output, NULL, ipu_handle);
+	ret = _ipu_channel_setup(input, NULL, output, NULL, ipu_handle);
 done:
- if (ipu_task_busy) {
-  ret = -1;
-  dbg(DBG_ERR, "ipu is busy\n");
-  if (hope_task_mode)
-   dbg(DBG_ERR, " for hope task mode 0x%x!\n", hope_task_mode);
- }
- return ret;
+	if (ipu_task_busy) {
+		ret = -1;
+		dbg(DBG_ERR, "ipu is busy\n");
+		if (hope_task_mode)
+			dbg(DBG_ERR, " for hope task mode 0x%x!\n", hope_task_mode);
+	}
+	return ret;
 }
 
 static int _ipu_task_setup(ipu_lib_input_param_t * input,
-  ipu_lib_overlay_param_t * overlay,
-  ipu_lib_output_param_t * output0,
-  ipu_lib_output_param_t * output1,
-  ipu_lib_handle_t * ipu_handle)
+		ipu_lib_overlay_param_t * overlay,
+		ipu_lib_output_param_t * output0,
+		ipu_lib_output_param_t * output1,
+		ipu_lib_handle_t * ipu_handle)
 {
- int ret = 0;
+	int ret = 0;
 
- if ((ret = _ipu_mem_alloc(input, overlay, output0, output1, ipu_handle)) < 0) {
-  _ipu_mem_free(ipu_handle);
-  return ret;
- }
+	if ((ret = _ipu_mem_alloc(input, overlay, output0, output1, ipu_handle)) < 0) {
+		_ipu_mem_free(ipu_handle);
+		return ret;
+	}
 
- if ((ret = _ipu_channel_setup(input, overlay, output0, output1, ipu_handle)) < 0) {
-  _ipu_mem_free(ipu_handle);
-  return ret;
- }
+	if ((ret = _ipu_channel_setup(input, overlay, output0, output1, ipu_handle)) < 0) {
+		_ipu_mem_free(ipu_handle);
+		return ret;
+	}
 
- return ret;
+	return ret;
 }
 
 /*!
  * This function init the ipu task according to param setting.
  *
- * @param input  Input parameter for ipu task.
+ * @param	input		Input parameter for ipu task.
  *
- * @param overlay  Overlay parameter for ipu task.
+ * @param	overlay		Overlay parameter for ipu task.
  *
- * @param output0  The first output paramter for ipu task.
+ * @param	output0		The first output paramter for ipu task.
  *
- * @param output1 Ipu can support 2 output after postprocess
- *  from 1 input, this is second one's setting.
+ * @param	output1 	Ipu can support 2 output after postprocess
+ * 				from 1 input, this is second one's setting.
  *
- * @param mode  The ipu mode user can define, refer to
- *  header file.
+ * @param	mode		The ipu mode user can define, refer to
+ * 				header file.
  *
- * @param ipu_handle User just allocate this structure for init.
- *  this parameter will provide some necessary
- *  info after task init function.
+ * @param	ipu_handle	User just allocate this structure for init.
+ * 				this parameter will provide some necessary
+ * 				info after task init function.
  *
- * @return This function returns 0 on success or negative error code on
- *fail.
+ * @return	This function returns 0 on success or negative error code on
+ * 		fail.
  */
 int mxc_ipu_lib_task_init(ipu_lib_input_param_t * input,
-  ipu_lib_overlay_param_t * overlay,
-  ipu_lib_output_param_t * output0,
-  ipu_lib_output_param_t * output1,
-  int mode, ipu_lib_handle_t * ipu_handle)
+		ipu_lib_overlay_param_t * overlay,
+		ipu_lib_output_param_t * output0,
+		ipu_lib_output_param_t * output1,
+		int mode, ipu_lib_handle_t * ipu_handle)
 {
- int ret = 0;
- ipu_lib_priv_handle_t * ipu_priv_handle;
+	int ret = 0;
+	ipu_lib_priv_handle_t * ipu_priv_handle;
 
- dbg(DBG_INFO, "\033[0;34m*** mxc_ipu_lib_task_init ***\033[0m\n");
+	dbg(DBG_INFO, "\033[0;34m*** mxc_ipu_lib_task_init ***\033[0m\n");
 
- if (ipu_handle == NULL) {
-  dbg(DBG_ERR, "Pls allocate ipu_handle!\n");
-  return -1;
- }
+	if (ipu_handle == NULL) {
+		dbg(DBG_ERR, "Pls allocate ipu_handle!\n");
+		return -1;
+	}
 
- pthread_mutex_lock(&mutex);
+	pthread_mutex_lock(&mutex);
 
- memset(ipu_handle, 0, sizeof(ipu_lib_handle_t));
+	memset(ipu_handle, 0, sizeof(ipu_lib_handle_t));
 
- ipu_priv_handle = (ipu_lib_priv_handle_t *)malloc(sizeof(ipu_lib_priv_handle_t));
- if (ipu_priv_handle == NULL) {
-  dbg(DBG_ERR, "Can not malloc priv handle!\n");
-  ret = -1;
-  goto done;
- }
+	ipu_priv_handle = (ipu_lib_priv_handle_t *)malloc(sizeof(ipu_lib_priv_handle_t));
+	if (ipu_priv_handle == NULL) {
+		dbg(DBG_ERR, "Can not malloc priv handle!\n");
+		ret = -1;
+		goto done;
+	}
 
- ipu_handle->priv = ipu_priv_handle;
- memset(ipu_priv_handle, 0, sizeof(ipu_lib_priv_handle_t));
+	ipu_handle->priv = ipu_priv_handle;
+	memset(ipu_priv_handle, 0, sizeof(ipu_lib_priv_handle_t));
 
- ipu_priv_handle->mode = mode;
+	ipu_priv_handle->mode = mode;
 
- if ((ret = ipu_priv_handle->fd_ipu  = ipu_open()) < 0)
-  goto done;
+	if ((ret = ipu_priv_handle->fd_ipu  = ipu_open()) < 0)
+		goto done;
 
- if ((ret = _ipu_task_check(input, overlay, output0, output1, ipu_handle)) < 0) {
-  ipu_close();
-  goto done;
- }
+	if ((ret = _ipu_task_check(input, overlay, output0, output1, ipu_handle)) < 0) {
+		ipu_close();
+		goto done;
+	}
 
- if (ipu_priv_handle->output[0].task_mode & COPY_MODE) {
-  if ((ret = _ipu_copy_setup(input, output0, ipu_handle)) < 0) {
-   ipu_close();
-   goto done;
-  }
- } else {
-  if ((ret = _ipu_task_setup(input, overlay, output0, output1, ipu_handle)) < 0) {
-   ipu_close();
-   goto done;
-  }
- }
+	if (ipu_priv_handle->output[0].task_mode & COPY_MODE) {
+		if ((ret = _ipu_copy_setup(input, output0, ipu_handle)) < 0) {
+			ipu_close();
+			goto done;
+		}
+	} else {
+		if ((ret = _ipu_task_setup(input, overlay, output0, output1, ipu_handle)) < 0) {
+			ipu_close();
+			goto done;
+		}
+	}
 
- g_task_in_use |= (ipu_priv_handle->output[0].ipu_task | ipu_priv_handle->output[1].ipu_task);
+	g_task_in_use |= (ipu_priv_handle->output[0].ipu_task | ipu_priv_handle->output[1].ipu_task);
 
- dbg(DBG_INFO, "g_task_in_use 0x%x\n", g_task_in_use);
+	dbg(DBG_INFO, "g_task_in_use 0x%x\n", g_task_in_use);
 done:
- pthread_mutex_unlock(&mutex);
+	pthread_mutex_unlock(&mutex);
 
- return ret;
+	return ret;
 }
 
 /*!
  * This function uninit the ipu task for special ipu handle.
  *
- * @param ipu_handle The ipu task handle need to un-init.
+ * @param	ipu_handle	The ipu task handle need to un-init.
  *
- * @return This function returns 0 on success or negative error code on
- *fail.
+ * @return	This function returns 0 on success or negative error code on
+ * 		fail.
  */
 void mxc_ipu_lib_task_uninit(ipu_lib_handle_t * ipu_handle)
 {
- int i, output_num;
- ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
+	int i, output_num;
+	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
 
- dbg(DBG_INFO, "\033[0;34m*** mxc_ipu_lib_task_uninit ***\033[0m\n");
+	dbg(DBG_INFO, "\033[0;34m*** mxc_ipu_lib_task_uninit ***\033[0m\n");
 
- /* if stream mode, wait for latest frame finish */
- if (ipu_priv_handle->mode & OP_STREAM_MODE) {
-  if (_ipu_wait_for_irq(ipu_priv_handle->irq, 1000)) {
-   dbg(DBG_ERR, "wait for irq %d time out!\n", ipu_priv_handle->irq);
-  } else
-   ipu_priv_handle->output_fr_cnt++;
- }
+	/* if stream mode, wait for latest frame finish */
+	if (ipu_priv_handle->mode & OP_STREAM_MODE) {
+		if (_ipu_wait_for_irq(ipu_priv_handle->irq, 1000)) {
+			dbg(DBG_ERR, "wait for irq %d time out!\n", ipu_priv_handle->irq);
+		} else
+			ipu_priv_handle->output_fr_cnt++;
+	}
 
- pthread_mutex_lock(&mutex);
+	pthread_mutex_lock(&mutex);
 
- if (ipu_priv_handle->output[1].ipu_task)
-  output_num = 2;
- else
-  output_num = 1;
+	if (ipu_priv_handle->output[1].ipu_task)
+		output_num = 2;
+	else
+		output_num = 1;
 
- for (i=0;i<output_num;i++) {
-  if (ipu_priv_handle->output[i].show_to_fb) {
-   if (ipu_priv_handle->output[i].fb_chan == MEM_FG_SYNC) {
-    struct mxcfb_pos pos = {0};
+	for (i=0;i<output_num;i++) {
+		if (ipu_priv_handle->output[i].show_to_fb) {
+			if (ipu_priv_handle->output[i].fb_chan == MEM_FG_SYNC) {
+				struct mxcfb_pos pos = {0};
 
-    if ( ioctl(ipu_priv_handle->output[i].fd_fb, MXCFB_SET_OVERLAY_POS,
-      &pos) < 0)
-     dbg(DBG_ERR, "Set FB position failed!\n");
-   }
-  }
- }
+				if ( ioctl(ipu_priv_handle->output[i].fd_fb, MXCFB_SET_OVERLAY_POS,
+						&pos) < 0)
+					dbg(DBG_ERR, "Set FB position failed!\n");
+			}
+		}
+	}
 
- _ipu_task_disable(ipu_handle);
+	_ipu_task_disable(ipu_handle);
 
- dbg(DBG_INFO, "total input frame cnt is %d\n", ipu_priv_handle->input_fr_cnt);
- dbg(DBG_INFO, "total output frame cnt is %d\n", ipu_priv_handle->output_fr_cnt);
+	dbg(DBG_INFO, "total input frame cnt is %d\n", ipu_priv_handle->input_fr_cnt);
+	dbg(DBG_INFO, "total output frame cnt is %d\n", ipu_priv_handle->output_fr_cnt);
 
- for (i=0;i<output_num;i++) {
-  if (ipu_priv_handle->output[i].show_to_fb) {
-   ipu_unlink_channels(ipu_priv_handle->output[i].end_chan,
-     ipu_priv_handle->output[i].fb_chan);
+	for (i=0;i<output_num;i++) {
+		if (ipu_priv_handle->output[i].show_to_fb) {
+			ipu_unlink_channels(ipu_priv_handle->output[i].end_chan,
+					ipu_priv_handle->output[i].fb_chan);
 
-   if (ipu_priv_handle->output[i].fb_chan == MEM_FG_SYNC) {
-    int blank = FB_BLANK_POWERDOWN;
-    if ( ioctl(ipu_priv_handle->output[i].fd_fb, FBIOBLANK, blank) < 0) {
-     dbg(DBG_ERR, "POWERDOWN FB failed!\n");
-    }
-   }
-  }
+			if (ipu_priv_handle->output[i].fb_chan == MEM_FG_SYNC) {
+				int blank = FB_BLANK_POWERDOWN;
+				if ( ioctl(ipu_priv_handle->output[i].fd_fb, FBIOBLANK, blank) < 0) {
+					dbg(DBG_ERR, "POWERDOWN FB failed!\n");
+				}
+			}
+		}
 
-  if((ipu_priv_handle->output[i].task_mode & ROT_MODE) &&
-   (ipu_priv_handle->output[i].task_mode & IC_MODE))
-   ipu_unlink_channels(ipu_priv_handle->output[i].ic_chan,
-     ipu_priv_handle->output[i].rot_chan);
+		if((ipu_priv_handle->output[i].task_mode & ROT_MODE) &&
+			(ipu_priv_handle->output[i].task_mode & IC_MODE))
+			ipu_unlink_channels(ipu_priv_handle->output[i].ic_chan,
+					ipu_priv_handle->output[i].rot_chan);
 
-  if(ipu_priv_handle->output[i].task_mode & IC_MODE)
-   ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
+		if(ipu_priv_handle->output[i].task_mode & IC_MODE)
+			ipu_uninit_channel(ipu_priv_handle->output[i].ic_chan);
 
-  if(ipu_priv_handle->output[i].task_mode & ROT_MODE)
-   ipu_uninit_channel(ipu_priv_handle->output[i].rot_chan);
- }
+		if(ipu_priv_handle->output[i].task_mode & ROT_MODE)
+			ipu_uninit_channel(ipu_priv_handle->output[i].rot_chan);
+	}
 
- g_task_in_use &= ~(ipu_priv_handle->output[0].ipu_task | ipu_priv_handle->output[1].ipu_task);
+	g_task_in_use &= ~(ipu_priv_handle->output[0].ipu_task | ipu_priv_handle->output[1].ipu_task);
 
- dbg(DBG_INFO, "g_task_in_use 0x%x\n", g_task_in_use);
+	dbg(DBG_INFO, "g_task_in_use 0x%x\n", g_task_in_use);
 
- if (!(ipu_priv_handle->output[0].task_mode & COPY_MODE))
-  _ipu_mem_free(ipu_handle);
+	if (!(ipu_priv_handle->output[0].task_mode & COPY_MODE))
+		_ipu_mem_free(ipu_handle);
 
- ipu_close();
+	ipu_close();
 
- free((void *)ipu_priv_handle);
+	free((void *)ipu_priv_handle);
 
- pthread_mutex_unlock(&mutex);
+	pthread_mutex_unlock(&mutex);
 }
 
 int _ipu_task_enable(ipu_lib_handle_t * ipu_handle)
 {
- int ret = 0, bufcnt, i, output_num;
- ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
- unsigned int task_mode;
+	int ret = 0, bufcnt, i, output_num;
+	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
+	unsigned int task_mode;
 
- if (ipu_priv_handle->mode & OP_STREAM_MODE)
-  bufcnt = 2;
- else
-  bufcnt = 1;
+	if (ipu_priv_handle->mode & OP_STREAM_MODE)
+		bufcnt = 2;
+	else
+		bufcnt = 1;
 
- if (ipu_priv_handle->output[1].ipu_task)
-  output_num = 2;
- else
-  output_num = 1;
+	if (ipu_priv_handle->output[1].ipu_task)
+		output_num = 2;
+	else
+		output_num = 1;
 
- /*setup irq*/
- ipu_clear_irq(ipu_priv_handle->irq);
- ret = ipu_register_generic_isr(ipu_priv_handle->irq, NULL);
- if (ret < 0) {
-  dbg(DBG_ERR, "Ioctl IPU_REGISTER_GENERIC_ISR %d failed!\n", ipu_priv_handle->irq);
-  goto done;
- }
+	/*setup irq*/
+	ipu_clear_irq(ipu_priv_handle->irq);
+	ret = ipu_register_generic_isr(ipu_priv_handle->irq, NULL);
+	if (ret < 0) {
+		dbg(DBG_ERR, "Ioctl IPU_REGISTER_GENERIC_ISR %d failed!\n", ipu_priv_handle->irq);
+		goto done;
+	}
 
- /* set channel buffer ready */
- for (i=0;i<output_num;i++) {
-  task_mode = ipu_priv_handle->output[i].task_mode & ~(COPY_MODE);
-  if(task_mode == IC_MODE){
-   if (i == 0)
-    ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_INPUT_BUFFER, 0);
-   if (ipu_priv_handle->overlay_en)
-    ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_GRAPH_IN_BUFFER, 0);
-   ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_OUTPUT_BUFFER, 0);
-   if (bufcnt == 2) {
-    if (i == 0)
-     ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_INPUT_BUFFER, 1);
-    if (ipu_priv_handle->overlay_en)
-     ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_GRAPH_IN_BUFFER, 1);
-    ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_OUTPUT_BUFFER, 1);
-   }
-  } else if (task_mode == ROT_MODE){
-   ipu_select_buffer(ipu_priv_handle->output[i].rot_chan, IPU_INPUT_BUFFER, 0);
-   ipu_select_buffer(ipu_priv_handle->output[i].rot_chan, IPU_OUTPUT_BUFFER, 0);
-   if (bufcnt == 2) {
-    ipu_select_buffer(ipu_priv_handle->output[i].rot_chan, IPU_INPUT_BUFFER, 1);
-    ipu_select_buffer(ipu_priv_handle->output[i].rot_chan, IPU_OUTPUT_BUFFER, 1);
-   }
-  } else if(task_mode == (IC_MODE | ROT_MODE)){
-   ipu_select_buffer(ipu_priv_handle->output[i].rot_chan, IPU_OUTPUT_BUFFER, 0);
-   if (bufcnt == 2)
-    ipu_select_buffer(ipu_priv_handle->output[i].rot_chan, IPU_OUTPUT_BUFFER, 1);
+	/* set channel buffer ready */
+	for (i=0;i<output_num;i++) {
+		task_mode = ipu_priv_handle->output[i].task_mode & ~(COPY_MODE);
+		if(task_mode == IC_MODE){
+			if (i == 0)
+				ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_INPUT_BUFFER, 0);
+			if (ipu_priv_handle->overlay_en)
+				ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_GRAPH_IN_BUFFER, 0);
+			ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_OUTPUT_BUFFER, 0);
+			if (bufcnt == 2) {
+				if (i == 0)
+					ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_INPUT_BUFFER, 1);
+				if (ipu_priv_handle->overlay_en)
+					ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_GRAPH_IN_BUFFER, 1);
+				ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_OUTPUT_BUFFER, 1);
+			}
+		} else if (task_mode == ROT_MODE){
+			ipu_select_buffer(ipu_priv_handle->output[i].rot_chan, IPU_INPUT_BUFFER, 0);
+			ipu_select_buffer(ipu_priv_handle->output[i].rot_chan, IPU_OUTPUT_BUFFER, 0);
+			if (bufcnt == 2) {
+				ipu_select_buffer(ipu_priv_handle->output[i].rot_chan, IPU_INPUT_BUFFER, 1);
+				ipu_select_buffer(ipu_priv_handle->output[i].rot_chan, IPU_OUTPUT_BUFFER, 1);
+			}
+		} else if(task_mode == (IC_MODE | ROT_MODE)){
+			ipu_select_buffer(ipu_priv_handle->output[i].rot_chan, IPU_OUTPUT_BUFFER, 0);
+			if (bufcnt == 2)
+				ipu_select_buffer(ipu_priv_handle->output[i].rot_chan, IPU_OUTPUT_BUFFER, 1);
 
-   if (i == 0)
-    ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_INPUT_BUFFER, 0);
-   if (ipu_priv_handle->overlay_en)
-    ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_GRAPH_IN_BUFFER, 0);
-   ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_OUTPUT_BUFFER, 0);
-   if (bufcnt == 2) {
-    if (i == 0)
-     ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_INPUT_BUFFER, 1);
-    if (ipu_priv_handle->overlay_en)
-     ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_GRAPH_IN_BUFFER, 1);
-    ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_OUTPUT_BUFFER, 1);
-   }
-  }
- }
+			if (i == 0)
+				ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_INPUT_BUFFER, 0);
+			if (ipu_priv_handle->overlay_en)
+				ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_GRAPH_IN_BUFFER, 0);
+			ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_OUTPUT_BUFFER, 0);
+			if (bufcnt == 2) {
+				if (i == 0)
+					ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_INPUT_BUFFER, 1);
+				if (ipu_priv_handle->overlay_en)
+					ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_GRAPH_IN_BUFFER, 1);
+				ipu_select_buffer(ipu_priv_handle->output[i].ic_chan, IPU_OUTPUT_BUFFER, 1);
+			}
+		}
+	}
 
- /* enable channels */
- for (i=0;i<output_num;i++) {
-  if(ipu_priv_handle->output[i].task_mode & ROT_MODE)
-   ipu_enable_channel(ipu_priv_handle->output[i].rot_chan);
- }
- for (i=0;i<output_num;i++) {
-  if(ipu_priv_handle->output[i].task_mode & IC_MODE)
-   ipu_enable_channel(ipu_priv_handle->output[i].ic_chan);
- }
+	/* enable channels */
+	for (i=0;i<output_num;i++) {
+		if(ipu_priv_handle->output[i].task_mode & ROT_MODE)
+			ipu_enable_channel(ipu_priv_handle->output[i].rot_chan);
+	}
+	for (i=0;i<output_num;i++) {
+		if(ipu_priv_handle->output[i].task_mode & IC_MODE)
+			ipu_enable_channel(ipu_priv_handle->output[i].ic_chan);
+	}
 done:
- return ret;
+	return ret;
 }
 
 void _ipu_task_disable(ipu_lib_handle_t * ipu_handle)
 {
- int i, output_num;
- ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
+	int i, output_num;
+	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
 
- if (ipu_priv_handle->output[1].ipu_task)
-  output_num = 2;
- else
-  output_num = 1;
+	if (ipu_priv_handle->output[1].ipu_task)
+		output_num = 2;
+	else
+		output_num = 1;
 
- ipu_free_irq(ipu_priv_handle->irq, NULL);
+	ipu_free_irq(ipu_priv_handle->irq, NULL);
 
- for (i=0;i<output_num;i++) {
-  if(ipu_priv_handle->output[i].task_mode & IC_MODE){
-   if (ipu_priv_handle->output[i].ipu_task & IC_ENC) {
-    ipu_clear_irq(IPU_IRQ_PRP_IN_EOF);
-    ipu_clear_irq(IPU_IRQ_PRP_ENC_OUT_EOF);
-   } else if (ipu_priv_handle->output[i].ipu_task & IC_VF) {
-    ipu_clear_irq(IPU_IRQ_PRP_IN_EOF);
-    ipu_clear_irq(IPU_IRQ_PRP_VF_OUT_EOF);
-   } else if (ipu_priv_handle->output[i].ipu_task & IC_PP) {
-    ipu_clear_irq(IPU_IRQ_PP_IN_EOF);
-    ipu_clear_irq(IPU_IRQ_PP_OUT_EOF);
-   }
-   ipu_disable_channel(ipu_priv_handle->output[i].ic_chan, 1);
-  }
+	for (i=0;i<output_num;i++) {
+		if(ipu_priv_handle->output[i].task_mode & IC_MODE){
+			if (ipu_priv_handle->output[i].ipu_task & IC_ENC) {
+				ipu_clear_irq(IPU_IRQ_PRP_IN_EOF);
+				ipu_clear_irq(IPU_IRQ_PRP_ENC_OUT_EOF);
+			} else if (ipu_priv_handle->output[i].ipu_task & IC_VF) {
+				ipu_clear_irq(IPU_IRQ_PRP_IN_EOF);
+				ipu_clear_irq(IPU_IRQ_PRP_VF_OUT_EOF);
+			} else if (ipu_priv_handle->output[i].ipu_task & IC_PP) {
+				ipu_clear_irq(IPU_IRQ_PP_IN_EOF);
+				ipu_clear_irq(IPU_IRQ_PP_OUT_EOF);
+			}
+			ipu_disable_channel(ipu_priv_handle->output[i].ic_chan, 1);
+		}
 
-  if(ipu_priv_handle->output[i].task_mode & ROT_MODE){
-   if (ipu_priv_handle->output[i].ipu_task & ROT_ENC) {
-    ipu_clear_irq(IPU_IRQ_PRP_ENC_ROT_IN_EOF);
-    ipu_clear_irq(IPU_IRQ_PRP_ENC_ROT_OUT_EOF);
-   } else if (ipu_priv_handle->output[i].ipu_task & ROT_VF) {
-    ipu_clear_irq(IPU_IRQ_PRP_VF_ROT_IN_EOF);
-    ipu_clear_irq(IPU_IRQ_PRP_VF_ROT_OUT_EOF);
-   } else if (ipu_priv_handle->output[i].ipu_task & ROT_PP) {
-    ipu_clear_irq(IPU_IRQ_PP_ROT_IN_EOF);
-    ipu_clear_irq(IPU_IRQ_PP_ROT_OUT_EOF);
-   }
-   ipu_disable_channel(ipu_priv_handle->output[i].rot_chan, 1);
-  }
- }
+		if(ipu_priv_handle->output[i].task_mode & ROT_MODE){
+			if (ipu_priv_handle->output[i].ipu_task & ROT_ENC) {
+				ipu_clear_irq(IPU_IRQ_PRP_ENC_ROT_IN_EOF);
+				ipu_clear_irq(IPU_IRQ_PRP_ENC_ROT_OUT_EOF);
+			} else if (ipu_priv_handle->output[i].ipu_task & ROT_VF) {
+				ipu_clear_irq(IPU_IRQ_PRP_VF_ROT_IN_EOF);
+				ipu_clear_irq(IPU_IRQ_PRP_VF_ROT_OUT_EOF);
+			} else if (ipu_priv_handle->output[i].ipu_task & ROT_PP) {
+				ipu_clear_irq(IPU_IRQ_PP_ROT_IN_EOF);
+				ipu_clear_irq(IPU_IRQ_PP_ROT_OUT_EOF);
+			}
+			ipu_disable_channel(ipu_priv_handle->output[i].rot_chan, 1);
+		}
+	}
 }
 
 int _ipu_wait_for_irq(int irq, int times)
 {
- int wait = 0;
- ipu_event_info info;
- info.irq = irq;
+	int wait = 0;
+	ipu_event_info info;
+	info.irq = irq;
 
- while (ipu_get_interrupt_event(&info) < 0) {
-  dbg(DBG_INFO, "Can not get wait irq %d, try again!\n", irq);
-  wait += 1;
-  if (wait >= times)
-   break;
- }
+	while (ipu_get_interrupt_event(&info) < 0) {
+		dbg(DBG_INFO, "Can not get wait irq %d, try again!\n", irq);
+		wait += 1;
+		if (wait >= times)
+			break;
+	}
 
- if (wait < times)
-  return 0;
- else
-  return 1;
+	if (wait < times)
+		return 0;
+	else
+		return 1;
 }
 
 /*!
@@ -2063,127 +2063,127 @@ int _ipu_wait_for_irq(int irq, int times)
  * the phys buffer address by parameter phyaddr; if not, user can fill the input data
  * to ipu_handle->inbuf_start[].
  *
- * @param ipu_handle The ipu task handle need to update buffer.
+ * @param	ipu_handle	The ipu task handle need to update buffer.
  *
- * @param new_inbuf_paddr User can set phyaddr to their own allocated
- *  buffer addr, ipu lib will update the buffer
- *  from this address for process. If user do not
- *  want to use it, please let it be zero, and
- *  fill the buffer according to inbuf_start
- *  parameter in ipu_handle.
+ * @param	new_inbuf_paddr	User can set phyaddr to their own allocated
+ * 				buffer addr, ipu lib will update the buffer
+ * 				from this address for process. If user do not
+ * 				want to use it, please let it be zero, and
+ * 				fill the buffer according to inbuf_start
+ * 				parameter in ipu_handle.
  *
- * @param new_ovbuf_paddr User defined overlay physical buffer address.
+ * @param	new_ovbuf_paddr User defined overlay physical buffer address.
  *
- * @param output_callback IPU lib will call output_callback funtion
- *  when there is output data.
+ * @param	output_callback	IPU lib will call output_callback funtion
+ * 				when there is output data.
  *
- * @param output_cb_arg The argument will be passed to output_callback.
+ * @param	output_cb_arg	The argument will be passed to output_callback.
  *
- * @return This function returns the next update buffer index number on success
- *or negative error code on fail.
+ * @return	This function returns the next update buffer index number on success
+ * 		or negative error code on fail.
  */
 int mxc_ipu_lib_task_buf_update(ipu_lib_handle_t * ipu_handle,
- dma_addr_t new_inbuf_paddr, dma_addr_t new_ovbuf_paddr,
- void (output_callback)(void *, int), void * output_cb_arg)
+	dma_addr_t new_inbuf_paddr, dma_addr_t new_ovbuf_paddr,
+	void (output_callback)(void *, int), void * output_cb_arg)
 {
- int ret, i, output_num;
- ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
+	int ret, i, output_num;
+	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
 
- if (ipu_priv_handle->output[1].ipu_task)
-  output_num = 2;
- else
-  output_num = 1;
+	if (ipu_priv_handle->output[1].ipu_task)
+		output_num = 2;
+	else
+		output_num = 1;
 
- if (ipu_priv_handle->enabled == 0) {
-  pthread_mutex_lock(&mutex);
+	if (ipu_priv_handle->enabled == 0) {
+		pthread_mutex_lock(&mutex);
 
-  if ((ret = _ipu_task_enable(ipu_handle)) < 0) {
-   pthread_mutex_unlock(&mutex);
-   return ret;
-  }
+		if ((ret = _ipu_task_enable(ipu_handle)) < 0) {
+			pthread_mutex_unlock(&mutex);
+			return ret;
+		}
 
-  pthread_mutex_unlock(&mutex);
+		pthread_mutex_unlock(&mutex);
 
-  dbg(DBG_INFO, "\033[0;34mipu task begin:\033[0m\n");
+		dbg(DBG_INFO, "\033[0;34mipu task begin:\033[0m\n");
 
-  if (ipu_priv_handle->mode & OP_STREAM_MODE)
-   ipu_priv_handle->input_fr_cnt = 2;
-  else
-   ipu_priv_handle->input_fr_cnt = 1;
+		if (ipu_priv_handle->mode & OP_STREAM_MODE)
+			ipu_priv_handle->input_fr_cnt = 2;
+		else
+			ipu_priv_handle->input_fr_cnt = 1;
 
-  if (_ipu_wait_for_irq(ipu_priv_handle->irq, 1000)) {
-   dbg(DBG_ERR, "wait for irq %d time out!\n", ipu_priv_handle->irq);
-   return -1;
-  }
+		if (_ipu_wait_for_irq(ipu_priv_handle->irq, 1000)) {
+			dbg(DBG_ERR, "wait for irq %d time out!\n", ipu_priv_handle->irq);
+			return -1;
+		}
 
-  for (i=0;i<output_num;i++) {
-   if (ipu_priv_handle->output[i].show_to_fb) {
-    int blank = FB_BLANK_UNBLANK;
-    if ( ioctl(ipu_priv_handle->output[i].fd_fb, FBIOBLANK, blank) < 0) {
-     dbg(DBG_ERR, "UNBLANK FB failed!\n");
-    }
-   }
-  }
+		for (i=0;i<output_num;i++) {
+			if (ipu_priv_handle->output[i].show_to_fb) {
+				int blank = FB_BLANK_UNBLANK;
+				if ( ioctl(ipu_priv_handle->output[i].fd_fb, FBIOBLANK, blank) < 0) {
+					dbg(DBG_ERR, "UNBLANK FB failed!\n");
+				}
+			}
+		}
 
-  if (output_callback)
-   output_callback(output_cb_arg, ipu_priv_handle->output_bufnum);
+		if (output_callback)
+			output_callback(output_cb_arg, ipu_priv_handle->output_bufnum);
 
-  ipu_priv_handle->output_fr_cnt = 1;
-  ipu_priv_handle->enabled = 1;
- } else {
-  dbg(DBG_DEBUG, "update pingpang %d\n", ipu_priv_handle->update_bufnum);
-  dbg(DBG_DEBUG, "output pingpang %d\n", ipu_priv_handle->output_bufnum);
+		ipu_priv_handle->output_fr_cnt = 1;
+		ipu_priv_handle->enabled = 1;
+	} else {
+		dbg(DBG_DEBUG, "update pingpang %d\n", ipu_priv_handle->update_bufnum);
+		dbg(DBG_DEBUG, "output pingpang %d\n", ipu_priv_handle->output_bufnum);
 
-  if (ipu_priv_handle->mode & OP_STREAM_MODE) {
-   if (_ipu_wait_for_irq(ipu_priv_handle->irq, 1000)) {
-    dbg(DBG_ERR, "wait for irq %d time out!\n", ipu_priv_handle->irq);
-    return -1;
-   }
+		if (ipu_priv_handle->mode & OP_STREAM_MODE) {
+			if (_ipu_wait_for_irq(ipu_priv_handle->irq, 1000)) {
+				dbg(DBG_ERR, "wait for irq %d time out!\n", ipu_priv_handle->irq);
+				return -1;
+			}
 
-   if (output_callback)
-    output_callback(output_cb_arg, ipu_priv_handle->output_bufnum);
-  }
+			if (output_callback)
+				output_callback(output_cb_arg, ipu_priv_handle->output_bufnum);
+		}
 
-  for (i=0;i<output_num;i++)
-   if (!ipu_priv_handle->output[i].show_to_fb)
-    ipu_select_buffer(ipu_priv_handle->output[i].end_chan,
-     IPU_OUTPUT_BUFFER, ipu_priv_handle->update_bufnum);
-  if (new_inbuf_paddr) {
-   dbg(DBG_DEBUG, "update input with user defined buffer phy 0x%x\n", new_inbuf_paddr);
-   ipu_update_channel_buffer(ipu_priv_handle->output[0].begin_chan, IPU_INPUT_BUFFER,
-    ipu_priv_handle->update_bufnum, new_inbuf_paddr);
-  }
-  if (new_ovbuf_paddr && ipu_priv_handle->overlay_en) {
-   dbg(DBG_DEBUG, "update overlay with user defined buffer phy 0x%x\n", new_ovbuf_paddr);
-   ipu_update_channel_buffer(ipu_priv_handle->output[0].begin_chan, IPU_GRAPH_IN_BUFFER,
-    ipu_priv_handle->update_bufnum, new_ovbuf_paddr);
-  }
-  ipu_select_buffer(ipu_priv_handle->output[0].begin_chan, IPU_INPUT_BUFFER,
-     ipu_priv_handle->update_bufnum);
-  if (ipu_priv_handle->overlay_en)
-   ipu_select_buffer(ipu_priv_handle->output[0].begin_chan, IPU_GRAPH_IN_BUFFER,
-     ipu_priv_handle->update_bufnum);
+		for (i=0;i<output_num;i++)
+			if (!ipu_priv_handle->output[i].show_to_fb)
+				ipu_select_buffer(ipu_priv_handle->output[i].end_chan,
+					IPU_OUTPUT_BUFFER, ipu_priv_handle->update_bufnum);
+		if (new_inbuf_paddr) {
+			dbg(DBG_DEBUG, "update input with user defined buffer phy 0x%x\n", new_inbuf_paddr);
+			ipu_update_channel_buffer(ipu_priv_handle->output[0].begin_chan, IPU_INPUT_BUFFER,
+				ipu_priv_handle->update_bufnum, new_inbuf_paddr);
+		}
+		if (new_ovbuf_paddr && ipu_priv_handle->overlay_en) {
+			dbg(DBG_DEBUG, "update overlay with user defined buffer phy 0x%x\n", new_ovbuf_paddr);
+			ipu_update_channel_buffer(ipu_priv_handle->output[0].begin_chan, IPU_GRAPH_IN_BUFFER,
+				ipu_priv_handle->update_bufnum, new_ovbuf_paddr);
+		}
+		ipu_select_buffer(ipu_priv_handle->output[0].begin_chan, IPU_INPUT_BUFFER,
+					ipu_priv_handle->update_bufnum);
+		if (ipu_priv_handle->overlay_en)
+			ipu_select_buffer(ipu_priv_handle->output[0].begin_chan, IPU_GRAPH_IN_BUFFER,
+					ipu_priv_handle->update_bufnum);
 
-  if (ipu_priv_handle->mode & OP_STREAM_MODE)
-   ipu_priv_handle->update_bufnum = ipu_priv_handle->update_bufnum ? 0 : 1;
-  else {
-   if (_ipu_wait_for_irq(ipu_priv_handle->irq, 1000)) {
-    dbg(DBG_ERR, "wait for irq %d time out!\n", ipu_priv_handle->irq);
-    return -1;
-   }
+		if (ipu_priv_handle->mode & OP_STREAM_MODE)
+			ipu_priv_handle->update_bufnum = ipu_priv_handle->update_bufnum ? 0 : 1;
+		else {
+			if (_ipu_wait_for_irq(ipu_priv_handle->irq, 1000)) {
+				dbg(DBG_ERR, "wait for irq %d time out!\n", ipu_priv_handle->irq);
+				return -1;
+			}
 
-   if (output_callback)
-    output_callback(output_cb_arg, ipu_priv_handle->output_bufnum);
-  }
+			if (output_callback)
+				output_callback(output_cb_arg, ipu_priv_handle->output_bufnum);
+		}
 
-  ipu_priv_handle->input_fr_cnt++;
-  ipu_priv_handle->output_fr_cnt++;
- }
+		ipu_priv_handle->input_fr_cnt++;
+		ipu_priv_handle->output_fr_cnt++;
+	}
 
- if (ipu_priv_handle->mode & OP_STREAM_MODE)
-  ipu_priv_handle->output_bufnum = ipu_priv_handle->output_bufnum ? 0 : 1;
+	if (ipu_priv_handle->mode & OP_STREAM_MODE)
+		ipu_priv_handle->output_bufnum = ipu_priv_handle->output_bufnum ? 0 : 1;
 
- return ipu_priv_handle->update_bufnum;
+	return ipu_priv_handle->update_bufnum;
 }
 
 #ifdef __cplusplus

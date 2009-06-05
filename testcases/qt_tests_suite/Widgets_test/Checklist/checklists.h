@@ -37,7 +37,7 @@ Portability: Indicate if this module is portable to other compilers or platforms
 #define CHECKLISTS_H
 
 #include <qwidget.h>
-#include <qstatusbar.h>
+#include <qstatusbar.h> 
 
 class QListView;
 class QLabel;
@@ -50,7 +50,7 @@ public slots:
    void keyPressEvent(QKeyEvent *e);
     void exitFail();
     void exitPass();
-
+   
  public:
  int VT_rv;
     CheckLists( QWidget *parent = 0, const char *name = 0 );

@@ -42,7 +42,7 @@ PORT=""
 
 # where is netperf, and are there any "constant" options such as 
 # the netserver port number
-NETHOME=/usr/bin
+NETHOME=${LTPROOT}/testcases/bin
 NETPERF=$NETHOME/netperf $PORT
 
 # How accurate we want the estimate of performance: 

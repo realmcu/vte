@@ -17,18 +17,18 @@ Description of the file
         If not, indicate specific reasons why is it not portable.
 */
 
-/*===== REVISION HISTORY =======
+/*========================= REVISION HISTORY ===================================
 
 Author (core ID)          Date         CR Number    Description of Changes
 -----------------------   ----------   ----------   ----------------------------
-I. Semenchukov/smng001c   09/03/2005   TLSbo47942   Initial version
-Y. Batrakov               09/01/2006   TLSbo75877   Rework to write data
+I. Semenchukov/smng001c   09/03/2005   TLSbo47942   Initial version 
+Y. Batrakov               09/01/2006   TLSbo75877   Rework to write data 
                                                     according to the MU protocol
 
 
-==================*/
+==============================================================================*/
 
-/*================
+/*============================================================================
 Total Tests: 1
 
 Test Name:   mu_sdma_ipc_test
@@ -48,13 +48,13 @@ Test Assertion
                 buffers contents match for write and read buffers after write
                    and read operation
 
-=================*/
+=============================================================================*/
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*======== INCLUDE FILES ========*/
+/*======================== INCLUDE FILES ====================================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -69,24 +69,24 @@ extern "C"{
 
 #include "mu_sdma_ipc_test.h"
 
-/*======== LOCAL CONSTANTS ==========*/
+/*======================== LOCAL CONSTANTS ==================================*/
 
 
-/*======== LOCAL MACROS =========*/
+/*======================== LOCAL MACROS =====================================*/
 
 
-/*======== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) ===*/
+/*======================== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) =======*/
 
 
-/*======== LOCAL VARIABLES ==========*/
+/*======================== LOCAL VARIABLES ==================================*/
 /* parse_opts() four parameters. First parameter defines number of write/read
  * cycles (default is 2). Second parameter defines SDMA buffer size (default
- * is 128). Third parameter defines SDMA device number (0 for /dev/sdma0 and
- * so on). Forth parametes defines the number of SDMA devices to write (default
+ * is 128). Third parameter defines SDMA device number (0 for /dev/sdma0 and 
+ * so on). Forth parametes defines the number of SDMA devices to write (default 
  * is 1).
  * All parameters require arguments.
  */
-
+ 
 int   iter_flag;
 int   bufsz_flag;
 int   sddev_flag;
@@ -107,10 +107,10 @@ option_t options[] =
 
 dev_node_t dev_node[2];
 
-/*======== GLOBAL CONSTANTS =========*/
+/*======================== GLOBAL CONSTANTS =================================*/
 
 
-/*======== GLOBAL VARIABLES =========*/
+/*======================== GLOBAL VARIABLES =================================*/
 /* Extern Global Variables */
 
 extern int   Tst_count;          /* counter for tst_xxx routines             */
@@ -121,14 +121,14 @@ extern char* TESTDIR;            /* temporary dir created by tst_tmpdir(void)*/
 char* TCID      = "mu_sdma_ipc_test";/* test program name                    */
 int   TST_TOTAL = 1;                 /* total number of tests in this file   */
 
-/*======== LOCAL FUNCTION PROTOTYPES ========*/
+/*======================== LOCAL FUNCTION PROTOTYPES ========================*/
 void setup(void);
 void help(void);
 int  main(int argc, char** argv);
 
-/*======== LOCAL FUNCTIONS ==========*/
+/*======================== LOCAL FUNCTIONS ==================================*/
 
-/*= setup =*/
+/*===== setup =====*/
 /**
 Description of the function
 @brief  Performs all one time setup for this test. This function is
@@ -157,7 +157,7 @@ void setup(void)
     return;
 }
 
-/*= help =*/
+/*===== help =====*/
 /**
 Description of the function
 @brief  Describe the usage of the test application
@@ -183,7 +183,7 @@ void help(void)
     return;
 }
 
-/*= main =*/
+/*===== main =====*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -262,9 +262,9 @@ int main(int argc, char **argv)
     return VT_rv;
 }
 
-/*======== GLOBAL FUNCTIONS =========*/
+/*======================== GLOBAL FUNCTIONS =================================*/
 
-/*= cleanup =*/
+/*===== cleanup =====*/
 /**
 Description of the function
 @brief  Performs all one time clean up for this test on successful

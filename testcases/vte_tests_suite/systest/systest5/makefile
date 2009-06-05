@@ -10,7 +10,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ########################### REVISION HISTORY #################################
 #
 #Author (core ID)      Date         CR Number    Description of Changes
@@ -24,10 +24,10 @@ BIN_DIR = ../../../bin
 
 CFLAGS += -Wall -DLINUX -I$(LTP_DIR)/include
 
-CFLAGS     += -DDEBUG_TEST
+CFLAGS     += -DDEBUG_TEST 
 LOADLIBES  += -L$(LTP_DIR)/lib -lltp -pthread
 
-PROGRAM =
+PROGRAM = 
 LIBRARY =
 
 SRCS = $(wildcard *.c)

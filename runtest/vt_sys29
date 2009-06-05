@@ -1,0 +1,29 @@
+Verification Tests Command File
+# generated automatically by the test campaign macro
+# version 1.0
+
+#files:
+#files:
+#files:
+#files:
+#files:
+
+TGE-LV-SYS-5580 syslog01
+TGE-LV-SYS-5590 syslog02
+TGE-LV-SYS-5600 syslog03
+TGE-LV-SYS-5610 syslog04
+TGE-LV-SYS-5620 syslog05
+TGE-LV-SYS-5630 syslog06
+TGE-LV-SYS-5640 syslog07
+TGE-LV-SYS-5650 syslog08
+TGE-LV-SYS-5660 syslog09
+TGE-LV-SYS-5670 syslog10
+TGE-LV-SYS-5680 syslog11
+TGE-LV-SYS-5690 syslog12
+TGE-LV-SYS-5720 times01
+TGE-LV-SYS-5730 times02
+TGE-LV-SYS-5740 times03
+TGE-LV-SYS-5750 truncate01
+TGE-LV-SYS-5760 truncate02
+TGE-LV-SYS-5770 truncate03
+TGE-LV-SYS-5780 truncate04

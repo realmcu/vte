@@ -1,0 +1,30 @@
+#Verification Tests Command File
+# generated automatically by the test campaign macro
+# version 1.0
+
+#files:
+#files:
+#files:
+#files:
+#files:
+
+TGE-LV-SYS-0970 fchmod07
+TGE-LV-SYS-0980 fchown01
+TGE-LV-SYS-0990 fchown02
+TGE-LV-SYS-1000 cp -p $LTPROOT/testcases/bin/change_owner $TMP;fchown03
+TGE-LV-SYS-1010 export change_owner=$LTPROOT/testcases/bin/change_owner;fchown04
+TGE-LV-SYS-1020 fchown05
+TGE-LV-SYS-1030 fcntl01
+TGE-LV-SYS-1040 fcntl02
+TGE-LV-SYS-1050 fcntl03
+TGE-LV-SYS-1060 fcntl04
+TGE-LV-SYS-1070 fcntl05
+TGE-LV-SYS-1080 fcntl06
+TGE-LV-SYS-1090 fcntl07
+TGE-LV-SYS-1100 fcntl07B
+TGE-LV-SYS-1110 fcntl08
+TGE-LV-SYS-1120 fcntl09
+TGE-LV-SYS-1130 fcntl10
+TGE-LV-SYS-1140 fcntl11
+TGE-LV-SYS-1150 fcntl12
+TGE-LV-SYS-1160 fcntl13

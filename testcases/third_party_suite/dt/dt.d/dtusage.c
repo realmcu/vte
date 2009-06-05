@@ -1,131 +1,131 @@
 /****************************************************************************
- *             *
- *     COPYRIGHT (c) 1990 - 2000       *
- *      This Software Provided       *
- *         By         *
- *     Robin's Nest Software Inc.       *
- *          2 Paradise Lane     *
- *          Hudson, NH 03051        *
- *          (603) 883-2355        *
- *             *
+ *									    *
+ *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			   This Software Provided			    *
+ *				     By					    *
+ *			  Robin's Nest Software Inc.			    *
+ *			       2 Paradise Lane  			    *
+ *			       Hudson, NH 03051				    *
+ *			       (603) 883-2355				    *
+ *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
- * its documentation for any purpose and without fee is hereby granted,     *
+ * its documentation for any purpose and without fee is hereby granted,	    *
  * provided that the above copyright notice appear in all copies and that   *
- * both that copyright notice and this permission notice appear in the     *
+ * both that copyright notice and this permission notice appear in the	    *
  * supporting documentation, and that the name of the author not be used    *
  * in advertising or publicity pertaining to distribution of the software   *
- * without specific, written prior permission.        *
- *             *
- * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,     *
- * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN     *
+ * without specific, written prior permission.				    *
+ *									    *
+ * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, 	    *
+ * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN	    *
  * NO EVENT SHALL HE BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL   *
  * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR    *
  * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS  *
  * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF   *
- * THIS SOFTWARE.           *
- *             *
+ * THIS SOFTWARE.							    *
+ *									    *
  ****************************************************************************/
 /*
- * Module: dtusage.c
- * Author: Robin T. Miller
+ * Module:	dtusage.c
+ * Author:	Robin T. Miller
  *
  * Description:
- * Display usage information for generic data test program.
+ *	Display usage information for generic data test program.
  *
  * Modification History:
  *
  * January 24th, 2001 by Robin Miller.
- * Add help text for variable I/O requests sizes.
+ *	Add help text for variable I/O requests sizes.
  *
  * December 30th, 2000 by Robin Miller.
- * Make changes to build using MKS/NuTCracker product.
+ *	Make changes to build using MKS/NuTCracker product.
  *
  * May 8th, 2000 by Robin Miller.
- * Add dtversion() to display just the version string.
+ *	Add dtversion() to display just the version string.
  *
  * August 6th, 1999 by Robin Miller.
- * Better parameterizing of "long long" printf formatting.
+ *	Better parameterizing of "long long" printf formatting.
  *
  * July 29th, 1999 by Robin Miller.
- * Merge in changes made to compile on FreeBSD.
+ *	Merge in changes made to compile on FreeBSD.
  *
  * July 24th, 1999 by Robin Miller.
- * Bumped major version number to 12.x due to pattern=iot support.
+ *	Bumped major version number to 12.x due to pattern=iot support.
  *
  * December 21, 1998 by Robin Miller.
- * Bump of major version number to 11.x due to tape reset support.
+ *	Bump of major version number to 11.x due to tape reset support.
  *
  * March 27, 1997 by Ali Eghlima.
- * Document "munsa={cr,cw,pr,pw,ex}" option.  MUti-Node Simultaneous
- * Access (MUNSA) is used in a cluster system when accessing shared
- * resources.  The Distributed Lock Manager (DLM) is used to control
- * access to a resource and to synchronize all access.
+ *	Document "munsa={cr,cw,pr,pw,ex}" option.  MUti-Node Simultaneous
+ *	Access (MUNSA) is used in a cluster system when accessing shared
+ *	resources.  The Distributed Lock Manager (DLM) is used to control
+ *	access to a resource and to synchronize all access.
  *
  * February 21, 1996 by Robin Miller.
- * Document iotype={random,sequential} options.
+ *	Document iotype={random,sequential} options.
  *
  * December 19, 1995 by Robin Miller
  *      Conditionalize for Linux Operating System.
  *
  * November 19, 1995 by Robin Miller.
- * Describe logical block data options (lba=, lbs=, enable=lbdata).
+ *	Describe logical block data options (lba=, lbs=, enable=lbdata).
  *
  * July 26, 1995 by Robin Miller.
- * Added AIO bug fixes/enhancements, special pattern string mapping,
- * corrected data dumping/add dump limit, reporting of lba on disk
- * devices, child signal bug fix/error control, additional stats...
- * So, it's finally time for a new version string -> V8.0 (enjoy).
+ *	Added AIO bug fixes/enhancements, special pattern string mapping,
+ *	corrected data dumping/add dump limit, reporting of lba on disk
+ *	devices, child signal bug fix/error control, additional stats...
+ *	So, it's finally time for a new version string -> V8.0 (enjoy).
  *
  * September 23, 1994 by Robin Miller.
  *      Change O_DSYNCH to O_DSYNC, and O_FSYNCH to O_SYNC.
  *
  * December 7, 1993 by Robin Miller.
- * Ported to SunOS 5.1 (Solaris).
+ *	Ported to SunOS 5.1 (Solaris).
  *
  * September 1, 1993 by Robin Miller.
- * Added description of "min=", "max=", & "incr=" parameters.
- * Finally added version and date identifiers for tracking.
- * V1.0=Sun/3 (disk & tape), V2.0=Sun/386i (tty support),
- * V3.0=Sun/Sparc (mmap files), V4.0=Ultrix, V5.0=DEC OSF/1,
- * V6.0=QNX (POSIX support),
- * V7.0=(procs, files, step, runtime, AIO, variable records).
+ *	Added description of "min=", "max=", & "incr=" parameters.
+ *	Finally added version and date identifiers for tracking.
+ *	V1.0=Sun/3 (disk & tape), V2.0=Sun/386i (tty support),
+ *	V3.0=Sun/Sparc (mmap files), V4.0=Ultrix, V5.0=DEC OSF/1,
+ *	V6.0=QNX (POSIX support),
+ *	V7.0=(procs, files, step, runtime, AIO, variable records).
  *
  * August 31, 1993 by Robin Miller.
- * Added description of "align=rotate" & "pattern=incr" options.
+ *	Added description of "align=rotate" & "pattern=incr" options.
  *
  * August 30, 1993 by Robin Miller.
- * Added description of AIO options: enable=aio & aios=value
+ *	Added description of AIO options: enable=aio & aios=value
  *
  * August 17, 1993 by Robin Miller.
- * Added text to describe "runtime=" option & format.
+ *	Added text to describe "runtime=" option & format.
  *
  * August 5, 1993 by Robin Miller.
- * Add text to describe "files=value" option (for tapes).
+ *	Add text to describe "files=value" option (for tapes).
  *
  * August 3, 1993 by Robin Miller.
- * Add text to describe "procs=value" option.
+ *	Add text to describe "procs=value" option.
  *
  * September 19, 1992 by Robin Miller.
- * Add text to describe "enable/disable=flush" tty option.
+ *	Add text to describe "enable/disable=flush" tty option.
  *
  * September 17, 1992 by Robin Miller.
- * Add text to describe "pattern=string" option, and to describe
- * how to override the default decimal radix numeric input.
+ *	Add text to describe "pattern=string" option, and to describe
+ *	how to override the default decimal radix numeric input.
  *
  * September 11, 1992 by Robin Miller.
- * Display help text to stdout instead of stderr so output can be
- * easily piped to a pager.
+ *	Display help text to stdout instead of stderr so output can be
+ *	easily piped to a pager.
  */
 #include "dt.h"
 #include <fcntl.h>
 
 /*
- * usage() Display valid options for dt program.
+ * usage()	Display valid options for dt program.
  *
- * Really should be in a man page since it's grown so much.
+ *	Really should be in a man page since it's grown so much.
  */
-#define P printf
-#define D Fprint
+#define P	printf
+#define D	Fprint
 
 char *version_str = "Date: June 2nd, Version: 14.10, Author: Robin T. Miller";
 
@@ -180,7 +180,7 @@ dthelp(void)
     P ("\terrors=value     The number of errors to tolerate.\n");
     P ("\tfiles=value      Set number of tape files to process.\n");
     P ("\tflow=type        Set flow to: none, cts_rts, or xon_xoff.\n");
-/*  P ("\thz=value         Set number of clock ticks per second.\n"); */
+/*  P ("\thz=value         Set number of clock ticks per second.\n");	*/
     P ("\tincr=value       Set number of record bytes to increment.\n");
     P ("    or\tincr=variable    Enables variable I/O request sizes.\n");
     P ("\tiodir=direction  Set I/O direction to: {forward or reverse}.\n");
@@ -225,77 +225,77 @@ dthelp(void)
     P ("\n    Flags to enable/disable:\n");
 #if defined(AIO)
     P ("\taio              POSIX Asynchronous I/O.(Default: %s)\n",
-    (aio_flag) ? enabled_str : disabled_str);
+				(aio_flag) ? enabled_str : disabled_str);
 #endif /* defined(AIO) */
     P ("\tcerrors          Report close errors.   (Default: %s)\n",
-    (cerrors_flag) ? enabled_str : disabled_str);
+				(cerrors_flag) ? enabled_str : disabled_str);
     P ("\tcompare          Data comparison.       (Default: %s)\n",
-    (compare_flag) ? enabled_str : disabled_str);
+				(compare_flag) ? enabled_str : disabled_str);
     P ("\tcoredump         Core dump on errors.   (Default: %s)\n",
-    (core_dump) ? enabled_str : disabled_str);
+				(core_dump) ? enabled_str : disabled_str);
     P ("\tdebug            Debug output.          (Default: %s)\n",
-    (debug_flag) ? enabled_str : disabled_str);
+				(debug_flag) ? enabled_str : disabled_str);
     P ("\tDebug            Verbose debug output.  (Default: %s)\n",
-    (Debug_flag) ? enabled_str : disabled_str);
+				(Debug_flag) ? enabled_str : disabled_str);
     P ("\trdebug           Random debug output.   (Default: %s)\n",
-    (rDebugFlag) ? enabled_str : disabled_str);
+				(rDebugFlag) ? enabled_str : disabled_str);
 #if defined(LOG_DIAG_INFO)
     /* Only has meaning on Tru64 Unix (right now)... may change later! */
     P ("\tdiag             Log diagnostic msgs.   (Default: %s)\n",
-    (logdiag_flag) ? enabled_str : disabled_str);
+				(logdiag_flag) ? enabled_str : disabled_str);
 #endif /* defined(LOG_DIAG_INFO) */
     P ("\tdump             Dump data buffer.      (Default: %s)\n",
-    (dump_flag) ? enabled_str : disabled_str);
+				(dump_flag) ? enabled_str : disabled_str);
     P ("\teof              EOF/EOM exit status.   (Default: %s)\n",
-    (eof_status) ? enabled_str : disabled_str);
+				(eof_status) ? enabled_str : disabled_str);
 #if defined(EEI)
     P ("\teei              Tape EEI reporting.    (Default: %s)\n",
-    (eei_flag) ? enabled_str : disabled_str);
+				(eei_flag) ? enabled_str : disabled_str);
     P ("\tresets           Tape reset handling.   (Default: %s)\n",
-    (eei_resets) ? enabled_str : disabled_str);
+				(eei_resets) ? enabled_str : disabled_str);
 #endif /* defined(EEI) */
     P ("\tflush            Flush tty I/O queues.  (Default: %s)\n",
-    (flush_flag) ? enabled_str : disabled_str);
+				(flush_flag) ? enabled_str : disabled_str);
     P ("\tfsync            Controls file sync'ing.(Default: %s)\n",
-    (fsync_flag == UNINITIALIZED) ? "runtime"
-    : (fsync_flag) ? enabled_str : disabled_str);
+				(fsync_flag == UNINITIALIZED) ? "runtime"
+				: (fsync_flag) ? enabled_str : disabled_str);
     P ("\theader           Log file header.       (Default: %s)\n",
-    (header_flag) ? enabled_str : disabled_str);
+				(header_flag) ? enabled_str : disabled_str);
     P ("\tlbdata           Logical block data.    (Default: %s)\n",
-    (lbdata_flag) ? enabled_str : disabled_str);
+				(lbdata_flag) ? enabled_str : disabled_str);
     P ("\tloopback         Loopback mode.         (Default: %s)\n",
-    (loopback) ? enabled_str : disabled_str);
+				(loopback) ? enabled_str : disabled_str);
     P ("\tmicrodelay       Microsecond delays.    (Default: %s)\n",
-    (micro_flag) ? enabled_str : disabled_str);
+				(micro_flag) ? enabled_str : disabled_str);
 #if defined(MMAP)
     P ("\tmmap             Memory mapped I/O.     (Default: %s)\n",
-    (mmap_flag) ? enabled_str : disabled_str);
+				(mmap_flag) ? enabled_str : disabled_str);
 #endif /* defined(MMAP) */
     P ("\tmodem            Test modem tty lines.  (Default: %s)\n",
-    (modem_flag) ? enabled_str : disabled_str);
+				(modem_flag) ? enabled_str : disabled_str);
     P ("\tmulti            Multiple volumes.      (Default: %s)\n",
-    (multi_flag) ? enabled_str : disabled_str);
+				(multi_flag) ? enabled_str : disabled_str);
     P ("\tpstats           Per pass statistics.   (Default: %s)\n",
-    (pstats_flag) ? enabled_str : disabled_str);
+				(pstats_flag) ? enabled_str : disabled_str);
     P ("\traw              Read after write.      (Default: %s)\n",
-    (raw_flag) ? enabled_str : disabled_str);
+				(raw_flag) ? enabled_str : disabled_str);
 #if defined(sun)
     P ("\tsoftcar          tty software carrier.  (Default: none)\n");
 #endif /* defined(sun) */
     P ("\tstats            Display statistics.    (Default: %s)\n",
-    (stats_flag) ? enabled_str : disabled_str);
+				(stats_flag) ? enabled_str : disabled_str);
 #if defined(DEC)
     P ("\ttable            Table(sysinfo) timing. (Default: %s)\n",
-    (table_flag) ? enabled_str : disabled_str);
+				(table_flag) ? enabled_str : disabled_str);
 #endif /* defined(DEC) */
     P ("\tttyport          Flag device as a tty.  (Default: %s)\n",
-    (ttyport_flag) ? enabled_str : disabled_str);
+				(ttyport_flag) ? enabled_str : disabled_str);
     P ("\tunique           Unique pattern.        (Default: %s)\n",
-    (unique_pattern) ? enabled_str : disabled_str);
+				(unique_pattern) ? enabled_str : disabled_str);
     P ("\tverbose          Verbose output.        (Default: %s)\n",
-    (verbose_flag) ? enabled_str : disabled_str);
+				(verbose_flag) ? enabled_str : disabled_str);
     P ("\tverify           Verify data written.   (Default: %s)\n",
-    (verify_flag) ? enabled_str : disabled_str);
+				(verify_flag) ? enabled_str : disabled_str);
     P ("\n\tExample: enable=debug disable=compare,pstats\n");
 #if defined(MUNSA)
     P ("\n    MUNSA Lock Options:\n");
@@ -355,17 +355,17 @@ dthelp(void)
 #endif /* defined(O_TEMP) */
     P ("\n    Delays (Values are seconds, unless microdelay enabled):\n");
     P ("\tcdelay=value     Delay before closing the file.    (Def: %d)\n",
-       cdelay_count);
+							cdelay_count);
     P ("\tedelay=value     Delay between multiple passes.    (Def: %d)\n",
-       edelay_count);
+							edelay_count);
     P ("\trdelay=value     Delay before reading each record. (Def: %d)\n",
-       rdelay_count);
+							rdelay_count);
     P ("\tsdelay=value     Delay before starting the test.   (Def: %d)\n",
-       sdelay_count);
+							sdelay_count);
     P ("\ttdelay=value     Delay before child terminates.    (Def: %d)\n",
-       tdelay_count);
+							tdelay_count);
     P ("\twdelay=value     Delay before writing each record. (Def: %d)\n",
-       wdelay_count);
+							wdelay_count);
     P ("\n    Numeric Input:\n");
     P ("\tFor options accepting numeric input, the string may contain any\n");
     P ("\tcombination of the following characters:\n");
@@ -374,7 +374,7 @@ dthelp(void)
     P ("            q = quadwords (%d bytes)\n", sizeof(large_t));
     P ("\t    b = blocks (512 bytes)         k = kilobytes (1024 bytes)\n");
     P ("\t    m = megabytes (1048576 bytes)  p = page size (%d bytes)\n",
-        page_size);
+								page_size);
     P ("\t    g = gigabytes (%ld bytes)\n", GBYTE_SIZE);
     P ("\t    t = terabytes (" LDF " bytes)\n", TBYTE_SIZE);
     P ("\t    inf or INF = infinity (" LUF " bytes)\n", INFINITY);
@@ -396,12 +396,12 @@ dthelp(void)
     P ("\t    \\f = Formfeed    \\n = Newline        \\r = Carriage Return\n");
     P ("\t    \\t = Tab         \\v = Vertical Tab   \\e or \\E = Escape\n");
     P ("\t    \\ddd = Octal Value    \\xdd or \\Xdd = Hexadecimal Value\n");
-
+  
     P ("\n    Time Input:\n");
     P ("\t    d = days (%d seconds),      h = hours (%d seconds)\n",
-      SECS_PER_DAY, SECS_PER_HOUR);
+						SECS_PER_DAY, SECS_PER_HOUR);
     P ("\t    m = minutes (%d seconds),      s = seconds (the default)\n\n",
-        SECS_PER_MIN);
+								SECS_PER_MIN);
     P ("\tArithmetic characters are permitted, and implicit addition is\n");
     P ("\tperformed on strings of the form '1d5h10m30s'.\n");
 
@@ -435,7 +435,7 @@ dthelp(void)
     P (", volumes=%d, vrecords=%lu\n", volume_limit, volume_records);
     P ("\tiodir=%s", (io_dir == FORWARD) ? "forward" : "reverse");
     P (", iomode=%s", (io_mode == TEST_MODE) ? "test" :
-   (io_mode == COPY_MODE) ? "copy" : "verify");
+			(io_mode == COPY_MODE) ? "copy" : "verify");
     P (", iotype=%s\n", (io_type == RANDOM_IO) ? "random" : "sequential");
     P ("\n    --> %s <--\n", version_str);
 

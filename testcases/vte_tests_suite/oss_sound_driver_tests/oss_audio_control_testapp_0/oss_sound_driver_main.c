@@ -1,37 +1,37 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   oss_sound_driver_main.c
 
         @brief  OSS audio control test main file.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 RB657C/gsch1c                20/07/2004     TLSbo40898  Initial version  of OSS sound driver test development
 D.Simakov/smkd001c           25/07/2005     TLSbo52891  Test case asks final result to user (yes or no)
-                                                        before printing PASS or FAIL status.
+                                                        before printing PASS or FAIL status.      
 A.Ozerov/b00320              07/11/2005     TLSbo56870  Compilation flags for SC55112 and MC13783
                                                         platforms
 D.Khoroshev/b00313           02/02/2006     TLSbo61495  Code cleaning
 D.Khoroshev/b00313           03/03/2006     TLSbo62323  Update according to the last MXC OSS specifications
 A.Ozerov/b00320              20/07/2006     TLSbo70792  Code was cast to coding conventions.
 
-====================
+====================================================================================================
 Portability: ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,29 +44,29 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "oss_sound_driver_test.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 /* Global Variables */
 char   *TCID = "oss_testapp_ctrl_0";    /* test program identifier.  */
 int     TST_TOTAL = 1;  /* total number of tests in this file.  */
@@ -79,7 +79,7 @@ char   *Deviceopt;      /* Device option arguments */
 char   *Incrementopt;   /* Increment option arguments */
 char   *Fileopt;        /* File option arguments */
 
-option_t options[] =
+option_t options[] = 
 {
         {"D:", &Deviceflag, &Deviceopt},        /* argument required */
         {"N:", &Incrementflag, &Incrementopt},  /* argument required */
@@ -89,23 +89,23 @@ option_t options[] =
 
 static char *audiofile = "ringout8k16M.wav";
 
-/*======================
+/*==================================================================================================
                                     GLOBAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 void    cleanup(void);
 void    setup(void);
 int     main(int argc, char **argv);
 
-/*======================
+/*==================================================================================================
                                     LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         GLOBAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= cleanup =*/
+/*================================================================================================*/
+/*===== cleanup =====*/
 /**
 @brief  Performs all one time clean up for this test on successful
         completion,  premature exit or  failure. Closes all temporary
@@ -114,10 +114,10 @@ int     main(int argc, char **argv);
 
 @param  Input :      None.
         Output:      None.
-
+    
 @return None.
 */
-/*====================*/
+/*================================================================================================*/
 void cleanup(void)
 {
         int     VT_rv = TFAIL;
@@ -132,21 +132,21 @@ void cleanup(void)
         tst_exit();
 }
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= help =*/
+/*================================================================================================*/
+/*===== help =====*/
 /**
 @brief  Inform of the available options and the associated parameters
 
 @param  Input :      None.
         Output:      None.
-
+    
 @return None.
 */
-/*====================*/
+/*================================================================================================*/
 void help(void)
 {
         printf("Switches \n\n");
@@ -162,8 +162,8 @@ void help(void)
         printf("\t  -F  Select the test file (default: ringout8k16M.wav)\n");
 }
 
-/*====================*/
-/*= setup =*/
+/*================================================================================================*/
+/*===== setup =====*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -171,10 +171,10 @@ void help(void)
 
 @param  Input :      None.
         Output:      None.
-
+    
 @return None.
 */
-/*====================*/
+/*================================================================================================*/
 void setup(void)
 {
         int     VT_rv = TFAIL;
@@ -187,17 +187,17 @@ void setup(void)
         }
 }
 
-/*====================*/
-/*= ask_user =*/
+/*================================================================================================*/
+/*===== ask_user =====*/
 /**
-@brief  Shows question specified with a parameter and reads answer.
+@brief  Shows question specified with a parameter and reads answer. 
 
 @param  Input :      question - text message.
         Output:      None.
 
 @return TPASS or TFAIL depends of user's answer.
 */
-/*====================*/
+/*================================================================================================*/
 int ask_user(char *question)
 {
         unsigned char answer;
@@ -217,8 +217,8 @@ int ask_user(char *question)
         return ret;
 }
 
-/*====================*/
-/*= main =*/
+/*================================================================================================*/
+/*===== main =====*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -236,11 +236,11 @@ int ask_user(char *question)
                                 -Id - Id of the test according to the test plan
                                 -Case N - If exist, the test case number associated with the test Id
                                 -Iter - Inform the iteration of the loop in case of an endurance/stress test
-
+    
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*====================*/
+/*================================================================================================*/
 int main(int argc, char **argv)
 {
         int     VT_rv = TFAIL;
@@ -281,7 +281,7 @@ int main(int argc, char **argv)
         tst_resm(TINFO, "Testing if %s test case is OK", TCID);
 
         /* VTE : print results and exit test scenario */
-        VT_rv = VT_oss_sound_driver_test(Device, Increment, File);      /* with the parameters needed
+        VT_rv = VT_oss_sound_driver_test(Device, Increment, File);      /* with the parameters needed 
                                                                         * come from parse_opt()) */
 
         if (VT_rv == TPASS)

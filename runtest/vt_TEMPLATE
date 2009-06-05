@@ -1,0 +1,6 @@
+#Verification Tests Command File
+
+#VT TEMPLATE Tests
+#files: TEMPLATE_testapp_X
+
+TEMPLATE_TEST_CASE_ID TEMPLATE_testapp_X

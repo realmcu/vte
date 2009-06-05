@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   spi_test_module.c
 
         @brief  LTP MXC SPI test module.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -25,12 +25,12 @@ D.Kazachkov/b00316           30/05/2006     TLSbo67010  Update version for linux
 V.Khalabuda/b00306           17/04/2006     TLSbo72876  Arrangement of device create using classes
 D.Khoroshev/b00313           02/01/2006     TLSbo86657  Adaptation to linux 2.6.18 spi driver model
 
-====================
+====================================================================================================
 Portability: ARM GCC
 
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
 Total Tests: 1
 
 Test Name:   spi_test_module.ko
@@ -38,11 +38,11 @@ Test Name:   spi_test_module.ko
 Test Assertion
 & Strategy:  A brief description of the test Assertion and Strategy
             TO BE COMPLETED
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 #include <linux/interrupt.h>
 #include <linux/autoconf.h>
 
@@ -160,14 +160,14 @@ static ssize_t spi_test_read(struct file* file, char* buf, size_t bytes, loff_t 
 
         if (bytes > priv->rem_count)
                 bytes = priv->rem_count;
-
+        
         res = copy_to_user((void*)buf, (void*)priv->readbuffer, bytes);
         if (res > 0)
         {
                 up(&priv->sem);
                 return -EFAULT;
         }
-
+        
         priv->rem_count -= bytes;
         if (priv->rem_count > 0)
         {
@@ -222,7 +222,7 @@ static ssize_t spi_test_write(struct file* file, const char* buf, size_t count, 
 
         if(res == 0)
         {
-
+                
                 DPRINTK("All data was sent to SPI\n");
         }
         else
@@ -247,7 +247,7 @@ static int spi_test_ioctl(struct inode *inode, struct file *file, unsigned int c
         {
 
         case SPI_SEND_FRAME:
-                {
+                {        
                 unsigned long ref_jiffy, time_diff;
                 int i, ret = 0;
                 ref_jiffy = jiffies;
@@ -255,7 +255,7 @@ static int spi_test_ioctl(struct inode *inode, struct file *file, unsigned int c
                 for (i = 0; i < arg; i++)
                 {
                         ret = spi_write(priv->spi, buf, 1);
-
+                
                 }
                 time_diff = jiffies - ref_jiffy;
 
@@ -296,7 +296,7 @@ static int __devinit spi_test_probe(struct spi_device *spi)
         if (ret != 0) {
                 return -1;
         }
-
+        
         if (!strcmp(spi->dev.bus_id, "spi1.4"))
         {
                 master = 0;
@@ -321,9 +321,9 @@ static int __devinit spi_test_probe(struct spi_device *spi)
         spi_priv[master]->rem_count = 0;
         spi_priv[master]->spi = spi;
         sema_init(&spi_priv[master]->sem, 1);
-
-        snprintf(device_name, 10, DEV_MXC_SPI "%d", master);
-
+        
+        snprintf(device_name, 10, DEV_MXC_SPI "%d", master);                
+        
         temp_class =
                 class_device_create(spi_class, NULL,
                                     MKDEV(major_spi, master), NULL,
@@ -362,11 +362,11 @@ static int __devexit spi_test_remove(struct spi_device *spi)
         if (master < 0)
         {
                 DPRINTK("Unknown device %s\n", spi->dev.bus_id);
-                return -EINVAL;
+                return -EINVAL;        
         }
-
+        
         kfree(spi_priv[master]);
-        class_device_destroy(spi_class, MKDEV(major_spi, master));
+        class_device_destroy(spi_class, MKDEV(major_spi, master));        
 
         return 0;
 }
@@ -414,8 +414,8 @@ int spi_test_setup(struct spi_device *spi)
         return spi_setup(spi);
 }
 
-/*====================*/
-/*= spi_module_init =*/
+/*================================================================================================*/
+/*===== spi_module_init =====*/
 /**
 @brief  This function implements the init function of the SPI device.
         This function is called when the module is loaded.
@@ -424,7 +424,7 @@ int spi_test_setup(struct spi_device *spi)
 
 @return This function returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 static int __init spi_module_init(void)
 {
         int ret=0;
@@ -435,7 +435,7 @@ static int __init spi_module_init(void)
         {
                 DPRINTK(KERN_WARNING "Unable to get a major for spi");
                 return major_spi;
-        }
+        }        
 
         spi_class = class_create(THIS_MODULE, DEV_MXC_SPI);
         if (IS_ERR(spi_class))

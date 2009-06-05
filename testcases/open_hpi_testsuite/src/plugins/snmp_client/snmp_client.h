@@ -19,28 +19,28 @@
 
 /* used for storing information of Remote Resource */
 struct resource_data {
-	SaHpiDomainIdT remote_domain;
-	SaHpiResourceIdT remote_resource_id;
+	SaHpiDomainIdT 		remote_domain;
+	SaHpiResourceIdT 	remote_resource_id;
 	SaHpiEntryIdT		remote_entry_id;
 };
 
 
 
 struct rdr_index {
-	SaHpiDomainIdT remote_domain;
-	SaHpiResourceIdT remote_resource_id;
-	SaHpiEntryIdT        remote_record_id;
+	SaHpiDomainIdT 		remote_domain;
+	SaHpiResourceIdT 	remote_resource_id;
+	SaHpiEntryIdT        	remote_record_id;
 	/* get this value for the rdr record proper */
 	/* saHpiRdrType */
 };
 
 
 struct rdr_data {
-	struct rdr_index index;
-	void 	*control_rdr;
-	void 	*sensor_rdr;
-	void 	*inventory_rdr;
-	void 	*watchdog_rdr;
+	struct rdr_index 	index;
+	void 			*control_rdr;
+	void 			*sensor_rdr;
+	void 			*inventory_rdr;
+	void 			*watchdog_rdr;
 };
 
 

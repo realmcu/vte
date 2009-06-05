@@ -1,0 +1,124 @@
+#!/bin/sh
+set -u
+
+
+alias ct=cleartool
+
+# Per user config
+VTE_USER_CFG_DIR=${HOME}/.vte
+
+# VTE env config
+PREFIX=/local/linux_baseport
+
+# Adjust PATH to get VTE env scripts
+PATH=$PREFIX/bin:$PATH
+
+# Source useful functions
+. $PREFIX/bin/functions.env
+
+# Create per user config dir, if it doesn't exist
+[ ! -e ${VTE_USER_CFG_DIR} ] && mkdir ${VTE_USER_CFG_DIR}
+
+#
+# Ask user for a param value, allow a default value taken 
+# from user's config dir
+#
+# $1: Variable name 
+# $2: Question
+function ask_param
+{
+    cfg=${VTE_USER_CFG_DIR}/$1
+    default=""
+    [ -e ${cfg} ] && default=`cat ${cfg}`
+    question "$2" "$default"
+    eval $1="$response"
+    export $1
+    [ -e ${cfg} ] && [ "$response" != "$default" ] && cp ${cfg} $cfg.previous
+    echo "$response" > ${cfg}
+}
+
+function info_setting
+{
+    var=$1
+    val=$(eval "echo $`echo $var`")
+    info "Setting $var to $val"
+}
+
+ask_param VTE_CR_INT \
+          "CR for VTE Integration (without Tlsbo)?"
+ask_param VTE_CR_INT_OWNER \
+          "User ID for VTE Integration?"
+ask_param VTE_VERS_MAJOR \
+          "Major version of VTE for integration?"
+ask_param VTE_VERS_MINOR \
+          "Minor version of VTE for integration?"
+ask_param LTP_VERS \
+          "Version of LTP VTE is based on?"
+
+# Adjust and export all envs var.
+export VTE_CR_INT="tlsbo${VTE_CR_INT}"
+export VTE_CR_INT_OWNER 
+export VTE_VERS_MAJOR
+export VTE_VERS_MINOR
+export VTE_VERS="${VTE_VERS_MAJOR}.${VTE_VERS_MINOR}"
+export VTE_VERS_TAG="`printf "%02d.%02d" ${VTE_VERS_MAJOR} ${VTE_VERS_MINOR}`"
+export VTE_TAG_INT="${VTE_VERS_TAG}I"
+export VTE_TAG_REL="${VTE_VERS_TAG}R"
+export VTE_LABEL_INT="CO_VTE_${VTE_TAG_INT}"
+export VTE_LABEL_REL="CO_VTE_${VTE_TAG_REL}"
+export VTE_BRANCH="int_${VTE_CR_INT}_zfr11_${VTE_CR_INT_OWNER}_sps-linux-ap-vte-${VTE_VERS}"
+export VTE_CCSPEC="${VTE_USER_CFG_DIR}/vte-${VTE_VERS}/${VTE_CR_INT}.cs"
+export VTE_USER_CFG_DIR
+export VTE_USER_CR_DIR=${VTE_USER_CFG_DIR}/vte-${VTE_VERS}
+export VTE_CHECK_CONVENTION="vte_check_convention.pl -nospell"
+
+# Tell user some interesting values.
+info_setting VTE_CR_INT       
+info_setting VTE_TAG_INT  
+info_setting VTE_LABEL_INT
+info_setting VTE_BRANCH
+
+
+# Build new config spec for VTE integration
+# BUG: ".../" doesn't work in the new shell...  
+#   => Need to remove the "..." once in new shell 
+cat > ${VTE_CCSPEC} <<EOF
+element * CHECKEDOUT
+
+# branch to import developers' changes
+element * .../${VTE_BRANCH}/LATEST
+mkbranch ${VTE_BRANCH}
+
+# Baseline VTE+LTP
+element /vob/vb_sw_linux_ap_vte/... ${VTE_LABEL_INT}
+
+# VTE Test Applications
+element /vob/vb_sw_linux_ap_vta/... /main/LATEST
+
+# Linux Test Projet
+element /vob/vb_sw_linux_ap_vte/... /main/LATEST
+
+EOF
+
+# Let user choose the view
+ask_user_view
+
+# Prepare a post script that will set the new CS 
+# when going into the view
+VTE_POST_SH=/tmp/`basename $0`_post_$$
+export VTE_POST_SH
+cat > ${VTE_POST_SH} <<EOF
+[ -e ${HOME}/.alias ] && . ${HOME}/.alias
+export PS1="[VTE-${VTE_VERS} ${VTE_CR_INT}] % \w 
+$ "
+echo "Updating view..."
+cleartool setcs ${VTE_CCSPEC}
+cd /view/${user_view}
+# We need to launch the shell ourself
+/bin/bash --login --noprofile --norc +e -u -o emacs
+EOF
+chmod u+x ${VTE_POST_SH}
+
+export SHELL=/bin/bash
+action "cleartool setview -exec ${VTE_POST_SH} ${user_view}"
+

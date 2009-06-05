@@ -19,9 +19,9 @@
 int
 main(int argc, char **argv)
 {
- /* Initalize the event library */
- event_init();
+	/* Initalize the event library */
+	event_init();
 
- return (0);
+	return (0);
 }
 

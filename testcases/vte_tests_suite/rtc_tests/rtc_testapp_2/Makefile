@@ -10,19 +10,19 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-#V.Becker/rc023c	05/04/2004   TLSbo38652   Initial version
-#V.Becker/rc023c	25/05/2004   TLSbo38652   Change file names
+#V.Becker/rc023c	05/04/2004   TLSbo38652   Initial version 
+#V.Becker/rc023c	25/05/2004   TLSbo38652   Change file names 
 # Ludovic DELASPRE/RC149C     11/06/2004     TLSbo40109   Replace hard include path by a variable
 #L.Delaspre/rc149c            09/12/2004     TLSbo40142   update with Freescale identity
 #
 ###################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms.
+#Portability: Indicate if this module is portable to other compilers or platforms. 
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################

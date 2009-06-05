@@ -29,10 +29,10 @@
  **/
 int main(int argc, char **argv)
 {
-        RPTable *rptable  NULL;
+        RPTable *rptable = NULL;
 
         if (!oh_add_resource(rptable, rptentries, NULL, 0))
                 return 1;
-
+        
         return 0;
 }

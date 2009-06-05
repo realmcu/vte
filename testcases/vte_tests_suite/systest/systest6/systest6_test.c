@@ -1,24 +1,24 @@
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2007, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 D.Simakov                    06/06/2007      ENGR37682   Initial version
-====================
+====================================================================================================
 Portability: ARM GCC
 
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 
 /* Standard Include Files */
 #include <errno.h>
@@ -45,9 +45,9 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "systest6_test.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
 #define DM__() do{printf("%s:%d %s()\n", __FILE__, __LINE__, __FUNCTION__); fflush(stdout);}while(0)
 
@@ -71,15 +71,15 @@ Portability: ARM GCC
 // V4L stuff
 #define MAX_V4L_BUFFERS          3
 
-/*======================
+/*==================================================================================================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 
-typedef struct
-{
+typedef struct 
+{               
         pthread_t mThreadID;  // Thread ID
         size_t    mIndex;     // Thread index
-        int       mLtpRetval; // Thread's LTP return status
+        int       mLtpRetval; // Thread's LTP return status       
         int       mErrCount;
 } sThreadContext;
 
@@ -90,18 +90,18 @@ typedef struct
         size_t mSz;
         size_t mOffset;
 } sV4LBuffer;
-
+                
 
 typedef void* (*tThreadProc)(void*);
 
-/*======================
+/*==================================================================================================
                                        LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 
 // Common stuff.
 static tThreadProc        gThreadProc[MAX_THREADS] = {0};
 static sThreadContext     gThreadContext[MAX_THREADS];
-static int                gNumThreads = 0;
+static int                gNumThreads = 0; 
 static pthread_mutex_t    gMutex = PTHREAD_MUTEX_INITIALIZER;
 static int                gStopAllThreads = FALSE;
 
@@ -116,19 +116,19 @@ static                    sV4LBuffer          gV4LBuffers[MAX_V4L_BUFFERS];
 
 static unsigned char      gFileData[FS_FILE_SZ];
 
-/*======================
+/*==================================================================================================
                                        GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 
 extern sTestappConfig gTestappConfig;
 
 
-/*======================
+/*==================================================================================================
                                     FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 
 void* Thread1( void * pContext ); // Video playback
-void* Thread2( void * pContext ); // USB HS transfer
+void* Thread2( void * pContext ); // USB HS transfer 
 
 int RunTest           ( void );
 int VerificateResults ( void );
@@ -139,13 +139,13 @@ int SetupFFS          ( const char * dev, const char * mntdir );
 int CloseFFS          ( const char * mntdir );
 int BitMatching       ( char * buf1, char * buf2, int count );
 int MoveFile          (const char * from, const char * to);
-/*======================
+/*==================================================================================================
                                          FUNCTIONS
-======================*/
+==================================================================================================*/
 
 
-/*====================*/
-/*====================*/
+/*================================================================================================*/
+/*================================================================================================*/
 void* Thread1( void * pContext )
 {
         sThreadContext * pCtx = (sThreadContext*)pContext;
@@ -156,7 +156,7 @@ void* Thread1( void * pContext )
         struct v4l2_buffer buffer;
         struct timeval tv_start;
         char *buf;
-        enum v4l2_buf_type typeBuffer = V4L2_BUF_TYPE_VIDEO_OUTPUT;
+        enum v4l2_buf_type typeBuffer = V4L2_BUF_TYPE_VIDEO_OUTPUT;        
 
         frame_size = gV4Lfmt.fmt.pix.sizeimage;
 
@@ -171,7 +171,7 @@ void* Thread1( void * pContext )
         memset(buf, 0, frame_size);
 
         gettimeofday(&tv_start, 0);
-
+        
         lseek(gTestappConfig.mVideoFileDesc, RAW_DATA_OFFSET, SEEK_SET);
         // ...
         int framesNo;
@@ -199,7 +199,7 @@ void* Thread1( void * pContext )
                         break;
                 }
 
-
+                        
                 if (framesNo == 1)
                 {
                         tst_resm(TINFO, "V4L starting output...");
@@ -233,8 +233,8 @@ void* Thread1( void * pContext )
                                 }
                                 else
                                 {
- if (gTestappConfig.mVerbose)
-  tst_resm(TWARN, "%s(): output ioctl(VIDIOC_DQBUF) failed: %s", __FUNCTION__, strerror(errno));
+        				if (gTestappConfig.mVerbose)
+        					tst_resm(TWARN, "%s(): output ioctl(VIDIOC_DQBUF) failed: %s", __FUNCTION__, strerror(errno));
                                 }
                         }
                 }
@@ -258,20 +258,20 @@ void* Thread1( void * pContext )
         else
         if (gTestappConfig.mVerbose)
                 tst_resm(TINFO, "Stream output stopped ...ok");
-
+                
         if (gTestappConfig.mVerbose)
                 tst_resm(TINFO, "Video playback stopped. Errors Count: %d", pCtx->mErrCount);
 
         pthread_mutex_lock(&gMutex);
         gStopAllThreads = TRUE;
         pthread_mutex_unlock(&gMutex);
-
-        return 0;
+        
+        return 0;                
 }
 
 
-/*====================*/
-/*====================*/
+/*================================================================================================*/
+/*================================================================================================*/
 void* Thread2( void * pContext )
 {
         sThreadContext * pCtx = (sThreadContext*)pContext;
@@ -280,43 +280,43 @@ void* Thread2( void * pContext )
         if (gTestappConfig.mVerbose)
                 tst_resm(TINFO, "Transfer to/from flash card (over USB HS interface) started");
 
-
+        
         int toSd = TRUE;
         char cmd[MAX_STR_LEN];
         char fname[MAX_STR_LEN];
         unsigned char refBuffer[FS_FILE_SZ];
         int i;
         for (i=0; i<FS_MV_ITERATIONS; ++i)
-        {
+        {        
                 if (toSd)
-                        snprintf(cmd, MAX_STR_LEN, "mv -f %s %s/", FS_FILE_NAME,
+                        snprintf(cmd, MAX_STR_LEN, "mv -f %s %s/", FS_FILE_NAME, 
                                  gTestappConfig.mMountPoint);
-
+                                                    
                 else
-                        snprintf(cmd, MAX_STR_LEN, "mv -f %s/%s .", gTestappConfig.mMountPoint,
+                        snprintf(cmd, MAX_STR_LEN, "mv -f %s/%s .", gTestappConfig.mMountPoint, 
                                  FS_FILE_NAME);
-
+                
                 if (-1 == system(cmd))
                 {
                         tst_resm(TFAIL, "%s(): system(%s) failed. Reason: %s", __FUNCTION__, cmd, strerror(errno));
                         pCtx->mErrCount++;
-                        pCtx->mLtpRetval = TFAIL;
+                        pCtx->mLtpRetval = TFAIL;                                                
                 }
                 else
-                {
-                        // Verification
-                        if (toSd)
-                                snprintf(fname, MAX_STR_LEN, "%s/%s", gTestappConfig.mMountPoint, FS_FILE_NAME);
+                {               
+                        // Verification                        
+                        if (toSd)                                
+                                snprintf(fname, MAX_STR_LEN, "%s/%s", gTestappConfig.mMountPoint, FS_FILE_NAME);                                                                        
                         else
                                 snprintf(fname, MAX_STR_LEN, "%s", FS_FILE_NAME);
-
+                 
                         if (!CheckFile(fname, FS_FILE_SZ))
                         {
                                 tst_resm(TFAIL, "%s(): CheckFile(%s) failed. Reason: file not found or it has a wrong size",
-                                         __FUNCTION__, fname);
+                                         __FUNCTION__, fname);                                
                                 pCtx->mErrCount++;
-                                pCtx->mLtpRetval = TFAIL;
-                        }
+                                pCtx->mLtpRetval = TFAIL;                                                                                                                                 
+                        }                        
                         else
                         {
                                 FILE * in = fopen(fname, "rb");
@@ -325,18 +325,18 @@ void* Thread2( void * pContext )
                                         if (1 != fread(refBuffer, FS_FILE_SZ, 1, in) )
                                         {
                                                 tst_resm(TFAIL, "%s(): fread(%s) failed. Reason: %s",
-                                                         __FUNCTION__, fname, strerror(errno));
+                                                         __FUNCTION__, fname, strerror(errno));                                
                                                 pCtx->mErrCount++;
-                                                pCtx->mLtpRetval = TFAIL;
-                                        }
+                                                pCtx->mLtpRetval = TFAIL;                                                                                                                                                                                                                         
+                                        } 
                                         else
                                         {
                                                 if (!BitMatching((char*)gFileData, (char*)refBuffer, FS_FILE_SZ))
                                                 {
                                                         tst_resm(TFAIL, "%s(): BitMatching(%s) failed",
-                                                                 __FUNCTION__, fname);
+                                                                 __FUNCTION__, fname);                                
                                                         pCtx->mErrCount++;
-                                                        pCtx->mLtpRetval = TFAIL;
+                                                        pCtx->mLtpRetval = TFAIL;                                                                                                                                 
                                                 }
                                         }
                                         fclose(in);
@@ -344,98 +344,98 @@ void* Thread2( void * pContext )
                                 else
                                 {
                                         tst_resm(TFAIL, "%s(): fopen(%s) failed. Reason: %s",
-                                                 __FUNCTION__, fname, strerror(errno));
+                                                 __FUNCTION__, fname, strerror(errno));                                
                                         pCtx->mErrCount++;
-                                        pCtx->mLtpRetval = TFAIL;
-                                }
-                        }
-                        toSd = toSd ? FALSE : TRUE;
-                } // for (;;)
+                                        pCtx->mLtpRetval = TFAIL;                                                                                                                                 
+                                }                        
+                        }                              
+                        toSd = toSd ? FALSE : TRUE;        
+                } // for (;;)                
         }
-#if 0
+#if 0        
         pthread_mutex_lock(&gMutex);
         gStopAllThreads = TRUE;
         pthread_mutex_unlock(&gMutex);
 #endif
-
+        
         if (gTestappConfig.mVerbose)
                 tst_resm(TINFO, "Transfer to/from flash card (over USB HS interface) stopped. Errors Count: %d", pCtx->mErrCount);
-
+        
         return 0;
 }
 
 
-/*====================*/
-/*====================*/
+/*================================================================================================*/
+/*================================================================================================*/
 int RunTest( void )
 {
         int i;
-        int rv = TPASS;
-        sThreadContext * pContext;
+        int rv = TPASS;    
+        sThreadContext * pContext;        
 
         for (i = 0; i < gNumThreads; ++i)
-        {
+        {        
                 if (gTestappConfig.mThreadToExecute != -1 && gTestappConfig.mThreadToExecute != i)
                         continue;
                 pContext = gThreadContext + i;
                 memset( pContext, 0, sizeof(sThreadContext) );
                 pContext->mIndex = i;
-
-
+                
+        
                 if( pthread_create( &pContext->mThreadID, NULL, (void* (*)(void*))(gThreadProc[i]), pContext ) )
                 {
                         tst_resm( TWARN, "%s : error creating thread %d", __FUNCTION__, i );
-                        return TFAIL;
+                        return TFAIL;            
                 }
-        }
-
+        }    
+    
         /* Wait for the each thread. */
         for( i = 0; i < gNumThreads; ++i )
         {
                 if (gTestappConfig.mThreadToExecute != -1 && gTestappConfig.mThreadToExecute != i)
-                        continue;
-                pContext = gThreadContext + i;
+                        continue;    
+                pContext = gThreadContext + i;     
                 pthread_join( pContext->mThreadID, NULL );
         }
         for( i = 0; i < gNumThreads; ++i )
         {
                 if (gTestappConfig.mThreadToExecute != -1 && gTestappConfig.mThreadToExecute != i)
-                        continue;
-                pContext = gThreadContext + i;
+                        continue;    
+                pContext = gThreadContext + i;     
                 rv += pContext->mLtpRetval;
         }
-
+    
         if( TPASS == rv )
-                rv = VerificateResults();
+                rv = VerificateResults();                     
 
         return rv;
 }
 
 
-/*====================*/
-/*====================*/
+/*================================================================================================*/
+/*================================================================================================*/
 int VerificateResults( void )
-{
+{        
         if (gTestappConfig.mVerbose)
                 tst_resm(TINFO, "Verification passed");
-
+        
         return TPASS;
 }
 
 
-/*====================*/
-/*====================*/
+/*================================================================================================*/
+/*================================================================================================*/
 int VT_systest_setup( void )
 {
         gNumThreads = 2;
         gThreadProc[0] = Thread1;
         gThreadProc[1] = Thread2;
 
-
+        
         /************************************************
-         * Setup V4L.
+         * Setup V4L. 
          ************************************************/
-
+        
         int output = 3, i;
 
         char *cpixformat;
@@ -447,14 +447,14 @@ int VT_systest_setup( void )
                           strerror(errno));
                 return TFAIL;
         }
-
+        
         if ( (gV4LOutputDevice = open(gTestappConfig.mV4LDevName, O_RDWR)) == -1)
         {
                 tst_resm(TFAIL, "%s() : open(%s) failed. Reason: %s", __FUNCTION__, gTestappConfig.mV4LDevName,
                           strerror(errno));
-                return TFAIL;
+                return TFAIL;                          
         }
-
+       
         // Check the capabilities.
         struct v4l2_capability cap;
         if (ioctl(gV4LOutputDevice, VIDIOC_QUERYCAP, &cap) < 0)
@@ -472,32 +472,32 @@ int VT_systest_setup( void )
                 tst_resm(TWARN, "%s(): %s does not support streaming I/O", __FUNCTION__, gTestappConfig.mV4LDevName);
                 return TFAIL;
         }
-
+ 
         if (ioctl(gV4LOutputDevice, VIDIOC_S_OUTPUT, &output) < 0)
         {
-                tst_resm(TFAIL, "%s() : ioctl(VIDIOC_S_OUTPUT) failed. Reason: %s", __FUNCTION__, strerror(errno));
+                tst_resm(TFAIL, "%s() : ioctl(VIDIOC_S_OUTPUT) failed. Reason: %s", __FUNCTION__, strerror(errno));        
                 return TFAIL;
         }
-
+      
         memset(&gV4Lcropcap, 0, sizeof(gV4Lcropcap));
         gV4Lcropcap.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
         if ((ioctl(gV4LOutputDevice, VIDIOC_CROPCAP, &gV4Lcropcap)) < 0)
         {
                 tst_resm(TFAIL, "%s() : ioctl(VIDIOC_CROPCAP) failed. Reason: %s", __FUNCTION__, strerror(errno));
-                return TFAIL;
-        }
+                return TFAIL;                                
+        }        
         if (gV4Lcropcap.type != V4L2_BUF_TYPE_VIDEO_OUTPUT)
         {
                 tst_resm(TFAIL, "%s() : Error: cropcap is not V4L2_BUF_TYPE_VIDEO_OUTPUT type");
                 return TFAIL;
         }
-
+       
         if (parse_file(gTestappConfig.mVideoFileDesc, &gTestappConfig.mWidth, &gTestappConfig.mHeight, &cpixformat))
         {
                 tst_resm(TFAIL, "%s() : parse_file failed.", __FUNCTION__);
                 return TFAIL;
         }
-
+         
         memset(&gV4Lcrop, 0, sizeof gV4Lcrop);
         gV4Lcrop.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
         gV4Lcrop.c.top = 0;
@@ -509,20 +509,20 @@ int VT_systest_setup( void )
         if (ioctl(gV4LOutputDevice, VIDIOC_S_CROP, &gV4Lcrop) < 0 && errno != EINVAL)
         {
                 tst_resm(TFAIL, "%s() : ioctl(VIDIOC_S_CROP) failed. Reason: %s", __FUNCTION__, strerror(errno));
-                return TFAIL;
+                return TFAIL;                                
         }
-
+        
         memset(&gV4Lfmt, 0, sizeof gV4Lfmt);
-        gV4Lfmt.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
+        gV4Lfmt.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;        
         gV4Lfmt.fmt.pix.width = gTestappConfig.mWidth;
         gV4Lfmt.fmt.pix.height = gTestappConfig.mHeight;
         gV4Lfmt.fmt.pix.pixelformat = pixel_format(cpixformat);
         if (ioctl(gV4LOutputDevice, VIDIOC_S_FMT, &gV4Lfmt) < 0)
         {
                 tst_resm(TFAIL, "%s() : ioctl(VIDIOC_S_FMT) failed. Reason: %s", __FUNCTION__, strerror(errno));
-                return TFAIL;
+                return TFAIL;                                        
         }
-
+        
         memset(&gV4LbufReq, 0, sizeof(gV4LbufReq));
         gV4LbufReq.count = 3;
         gV4LbufReq.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
@@ -530,9 +530,9 @@ int VT_systest_setup( void )
         if (ioctl(gV4LOutputDevice, VIDIOC_REQBUFS, &gV4LbufReq) < 0)
         {
                 tst_resm(TFAIL, "%s() : ioctl(VIDIOC_S_FMT) failed. Reason: %s", __FUNCTION__, strerror(errno));
-                return TFAIL;
+                return TFAIL;                                                                
         }
-
+       
         for (i = 0; i < gV4LbufReq.count; i++)
         {
                 memset(&gV4Lbuf, 0, sizeof(gV4Lbuf));
@@ -542,34 +542,34 @@ int VT_systest_setup( void )
                 if ((ioctl(gV4LOutputDevice, VIDIOC_QUERYBUF, &gV4Lbuf)) < 0)
                 {
                         tst_resm(TFAIL, "%s() : ioctl(VIDIOC_S_FMT) failed. Reason: %s", __FUNCTION__, strerror(errno));
-                        return TFAIL;
+                        return TFAIL;                                                                                
                 }
                 gV4LBuffers[i].mSz = gV4Lbuf.length;
                 gV4LBuffers[i].mpStart = mmap(NULL, gV4Lbuf.length,
                                         PROT_READ | PROT_WRITE, MAP_SHARED, gV4LOutputDevice, gV4Lbuf.m.offset);
                 if (gV4LBuffers[i].mpStart == MAP_FAILED)
                 {
-                        tst_resm(TFAIL, "%s() : mmap(%s) failed. Reason: %s", __FUNCTION__,
+                        tst_resm(TFAIL, "%s() : mmap(%s) failed. Reason: %s", __FUNCTION__, 
                                  gTestappConfig.mV4LDevName, strerror(errno));
-                        return TFAIL;
+                        return TFAIL;                                                     
                 }
         }
-
+                                        
 
         /************************************************
-         * Init FFS.
+         * Init FFS. 
          ************************************************/
 
         if (!SetupFFS(gTestappConfig.mFFSDevName, gTestappConfig.mMountPoint))
         {
                 return TFAIL;
         }
-
+         
         if (gTestappConfig.mVerbose)
         {
                 tst_resm(TINFO, "FFS init ... ok");
         }
-
+        
         // Create a file
         unsigned char val;
         FILE * out = fopen(FS_FILE_NAME, "wb");
@@ -579,30 +579,30 @@ int VT_systest_setup( void )
                 {
                         val = (unsigned char)(rand()%256);
                         gFileData[i] = val;
-                        if (EOF == fputc(val, out))
+                        if (EOF == fputc(val, out))                         
                         {
                                 tst_resm(TBROK, "%s(): fputc(%s) failed. Reason: %s", __FUNCTION__, FS_FILE_NAME, strerror(errno));
                                 fclose(out);
-                                return TBROK;
+                                return TBROK; 
                         }
                 }
-
+        
                 fclose(out);
-        }
+        } 
         else
         {
                 tst_resm(TBROK, "%s(): fopen(%s) failed. Reason: %s", __FUNCTION__, FS_FILE_NAME, strerror(errno));
                 return TBROK;
-        }
-
+        }        
+        
         return TPASS;
 }
 
 
-/*====================*/
-/*====================*/
+/*================================================================================================*/
+/*================================================================================================*/
 int VT_systest_cleanup( void )
-{
+{       
         int rv = TPASS;
         int i;
 
@@ -620,33 +620,33 @@ int VT_systest_cleanup( void )
         }
 
         CLOSE_DEV(gV4LOutputDevice);
-
+        
         CLOSE_DEV(gTestappConfig.mVideoFileDesc);
 
         /************************************************
-         * Cleanup FFS.
+         * Cleanup FFS. 
          ************************************************/
 
         CloseFFS(gTestappConfig.mMountPoint);
         if (gTestappConfig.mVerbose)
         {
                 tst_resm(TINFO, "FFS cleanup ... ok");
-        }
+        }                
 
         return rv;
 }
 
 
-/*====================*/
-/*====================*/
+/*================================================================================================*/
+/*================================================================================================*/
 int VT_systest_test( void )
-{
+{                          
         return RunTest();
 }
 
 
-/*====================*/
-/*====================*/
+/*================================================================================================*/
+/*================================================================================================*/
 int CheckFile( const char * fname, int sz )
 {
         FILE * fstream = fopen( fname, "r" );
@@ -659,13 +659,13 @@ int CheckFile( const char * fname, int sz )
                 {
                         if( gTestappConfig.mVerbose )
                         {
-                                tst_resm( TWARN, "%s(): %s has a wrong size (actual: %ld, correct: %d)",
+                                tst_resm( TWARN, "%s(): %s has a wrong size (actual: %ld, correct: %d)", 
                                           __FUNCTION__, fname, fsz, sz );
                         }
 
                         return FALSE;
                 }
-
+                
                 return TRUE;
         }
 
@@ -676,7 +676,7 @@ int CheckFile( const char * fname, int sz )
         }
 
         return FALSE;
-}
+} 
 
 int pixel_format(char *string)
 {
@@ -735,15 +735,15 @@ int parse_file(int in_fd, int *width, int *height, char **image_fmt)
         return 0;
 }
 
-/*====================*/
-/*====================*/
+/*================================================================================================*/
+/*================================================================================================*/
 int SetupFFS( const char * dev, const char * mntdir )
 {
         struct stat st;
         int res, err;
 
         assert(dev && mntdir);
-
+                
         memset(&st, 0, sizeof(st));
         if (stat(dev, &st))
         {
@@ -755,7 +755,7 @@ int SetupFFS( const char * dev, const char * mntdir )
                 tst_resm(TFAIL, "%s(): %s is not a char or a block device", __FUNCTION__, dev);
                 return FALSE;
         }
-
+        
         memset(&st, 0, sizeof st);
         res =  stat(mntdir, &st);
         if (res < 0 || !S_ISDIR(st.st_mode))
@@ -778,8 +778,8 @@ int SetupFFS( const char * dev, const char * mntdir )
 }
 
 
-/*====================*/
-/*====================*/
+/*================================================================================================*/
+/*================================================================================================*/
 int CloseFFS( const char * mntdir )
 {
         if (gTestappConfig.mVerbose)
@@ -788,16 +788,16 @@ int CloseFFS( const char * mntdir )
         assert(mntdir);
         if (umount(mntdir) < 0)
         {
-                tst_resm(TFAIL, "%s(): umount(%s) failed. Reason: %s", __FUNCTION__, mntdir, strerror(errno));
+                tst_resm(TFAIL, "%s(): umount(%s) failed. Reason: %s", __FUNCTION__, mntdir, strerror(errno));                
                 return FALSE;
         }
-
+        
         return TRUE;
 }
 
 
-/*====================*/
-/*====================*/
+/*================================================================================================*/
+/*================================================================================================*/
 int BitMatching(char *buf1, char *buf2, int count)
 {
         int     i;

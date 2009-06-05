@@ -23,7 +23,7 @@
 #L.Delaspre/rc149c             14/04/2005    TLSbo48760   VTE 1.9 integration
 #
 ###################################################################################################
-# Portability: Indicate if this module is portable to other compilers or platforms.
+# Portability: Indicate if this module is portable to other compilers or platforms. 
 #             If not, indicate specific reasons why is it not portable.
 #
 # This test suile can be compiled using regular g++ and arm-linux-g++

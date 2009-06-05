@@ -71,7 +71,7 @@ public:
 
   int Cmp( const cIpmiAddr &addr ) const;
   bool operator==( const cIpmiAddr &addr ) const { return !Cmp( addr ); }
-  bool operator!=( const cIpmiAddr &addr ) const { return Cmp( addr ); }
+  bool operator!=( const cIpmiAddr &addr ) const { return Cmp( addr ); }  
 
   void Log() const;
   short Channel() const  { return m_channel; }
@@ -79,8 +79,8 @@ public:
   unsigned char Lun() const  { return m_lun; }
 
   unsigned char SlaveAddr() const
-  {
-    assert( m_type == eIpmiAddrTypeIpmb );
+  { 
+    assert( m_type == eIpmiAddrTypeIpmb ); 
     return m_slave_addr;
   }
 

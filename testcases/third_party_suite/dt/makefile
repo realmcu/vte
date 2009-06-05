@@ -35,7 +35,7 @@
 
 # Notes by Victor
 #source:  http://home.comcast.net/~scsiguy/SCSI_FAQ/RMiller_Tools/dt.html
-#download "Linux Intel Data Test Program dt Kit" ---->  intel-dt.tar.tar
+#download "Linux Intel Data Test Program dt Kit" ---->  intel-dt.tar.tar 
 
 SUBDIRS = dt.d
 

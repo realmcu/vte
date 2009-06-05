@@ -1,4 +1,4 @@
-/*
+/* 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -18,12 +18,12 @@
 #include <sys/mman.h>
 
 typedef int (*posix_mem_offset_test)(const void *restrict, size_t,
-         off_t *restrict, size_t *restrict,
-         int *restrict);
+				     off_t *restrict, size_t *restrict,
+				     int *restrict);
 
 int dummyfcn (void)
 {
- posix_mem_offset_test dummyvar;
- dummyvar  posix_mem_offset;
- return 0;
+	posix_mem_offset_test dummyvar;
+	dummyvar = posix_mem_offset;
+	return 0;
 }

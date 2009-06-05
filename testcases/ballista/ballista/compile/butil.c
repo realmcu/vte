@@ -24,25 +24,25 @@
 
 void jerror(char error_text[])
 {
- fprintf(stderr,"Ballista Parser run-time error...\n");
- fprintf(stderr,"%s\n",error_text);
- fprintf(stderr,"...now exiting to system...\n");
- exit(1);
+	fprintf(stderr,"Ballista Parser run-time error...\n");
+	fprintf(stderr,"%s\n",error_text);
+	fprintf(stderr,"...now exiting to system...\n");
+	exit(1);
 }
 
 void upper(char *text)
 {
 
-  int i0;
-  if (textNULL) jerror("null string passed to upper");
-  for (i0;i<(int)strlen(text);i++)
-    text[i]  (char)toupper(text[i]);
+  int i=0;
+  if (text==NULL) jerror("null string passed to upper");
+  for (i=0;i<(int)strlen(text);i++)
+    text[i] = (char)toupper(text[i]);
 }
 
 void lower(char *text)
 {
-  int i0;
-  if (textNULL) jerror("null string passed to lower");
-  for (i0;i<(int)strlen(text);i++)
-    text[i]  (char)tolower(text[i]);
+  int i=0;
+  if (text==NULL) jerror("null string passed to lower");
+  for (i=0;i<(int)strlen(text);i++)
+    text[i] = (char)tolower(text[i]);
 }

@@ -13,29 +13,29 @@
 
 /*
  * @file mxc_v4l2_overlay.c
- *
+ * 
  * @brief Mxc Video For Linux 2 driver test application
- *
+ * 
  */
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*===============
+/*=======================================================================
                                         INCLUDE FILES
-===============*/
+=======================================================================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-
+    
 /* Verification Test Environment Include Files */
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <sys/types.h>	
+#include <sys/stat.h>	
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <unistd.h>
+#include <unistd.h>    
 #include <stdio.h>
 #include <stdlib.h>
 #include <asm/types.h>
@@ -85,7 +85,7 @@ int g_overlay = 0;
 int g_camera_color = 0;
 int g_camera_framerate = 0;
 
-int
+int 
 mxc_v4l_overlay_test(int timeout)
 {
         int i;
@@ -95,79 +95,79 @@ mxc_v4l_overlay_test(int timeout)
         if (ioctl(fd_v4l, VIDIOC_OVERLAY, &overlay) < 0)
         {
                 printf("VIDIOC_OVERLAY start failed\n");
-  return TFAIL;
-        }
+		return TFAIL;
+        } 
 
-        for (i = 0; i < 3 ; i++) {
+        for (i = 0; i < 3 ; i++) { 
                 // flash a frame
                 ctl.id = V4L2_CID_PRIVATE_BASE + 1;
                 if (ioctl(fd_v4l, VIDIOC_S_CTRL, &ctl) < 0)
                 {
                         printf("set ctl failed\n");
-   return TFAIL;
+			return TFAIL;
                 }
-             sleep(1);
+	            sleep(1);
         }
 
         if (g_camera_color == 1) {
                 ctl.id = V4L2_CID_BRIGHTNESS;
                 for (i = 0; i < 0xff; i+=0x20) {
-              ctl.value = i;
-                printf("change the brightness %d\n", i);
+		            ctl.value = i;
+                	printf("change the brightness %d\n", i);
                     ioctl(fd_v4l, VIDIOC_S_CTRL, &ctl);
-              sleep(1);
-                }
-  }
-  else if (g_camera_color == 2) {
+		            sleep(1);
+                } 
+		}
+		else if (g_camera_color == 2) {
                 ctl.id = V4L2_CID_SATURATION;
                 for (i = 25; i < 150; i+= 25) {
-              ctl.value = i;
-                 printf("change the color saturation %d\n", i);
+		            ctl.value = i;
+	                printf("change the color saturation %d\n", i);
                     ioctl(fd_v4l, VIDIOC_S_CTRL, &ctl);
-              sleep(5);
-                }
-  }
-  else if (g_camera_color == 3) {
+		            sleep(5);
+                } 
+		}
+		else if (g_camera_color == 3) {
                 ctl.id = V4L2_CID_RED_BALANCE;
                 for (i = 0; i < 0xff; i+=0x20) {
-              ctl.value = i;
-                 printf("change the red balance %d\n", i);
+		            ctl.value = i;
+	                printf("change the red balance %d\n", i);
                     ioctl(fd_v4l, VIDIOC_S_CTRL, &ctl);
-              sleep(1);
-                }
-  }
-  else if (g_camera_color == 4) {
+		            sleep(1);
+                } 
+		}
+		else if (g_camera_color == 4) {
                 ctl.id = V4L2_CID_BLUE_BALANCE;
                 for (i = 0; i < 0xff; i+=0x20) {
-              ctl.value = i;
-                printf("change the blue balance %d\n", i);
+		            ctl.value = i;
+                	printf("change the blue balance %d\n", i);
                     ioctl(fd_v4l, VIDIOC_S_CTRL, &ctl);
-              sleep(1);
-                }
-  }
-  else if (g_camera_color == 5) {
+		            sleep(1);
+                } 
+		}
+		else if (g_camera_color == 5) {
                 ctl.id = V4L2_CID_BLACK_LEVEL;
                 for (i = 0; i < 4; i++) {
-              ctl.value = i;
-                printf("change the black balance %d\n", i);
+		            ctl.value = i;
+                	printf("change the black balance %d\n", i);
                     ioctl(fd_v4l, VIDIOC_S_CTRL, &ctl);
-              sleep(5);
-                }
-        }
+		            sleep(5);
+                } 
+        } 
         else {
-          sleep(timeout);
+		        sleep(timeout);
         }
 
         overlay = 0;
         if (ioctl(fd_v4l, VIDIOC_OVERLAY, &overlay) < 0)
         {
                 printf("VIDIOC_OVERLAY stop failed\n");
-  return TFAIL;
-        }
- return 0;
+		return TFAIL;
+        } 
+	return 0;
 }
 
-int
+int 
 mxc_v4l_overlay_setup(struct v4l2_format *fmt)
 {
         struct v4l2_streamparm parm;
@@ -179,15 +179,15 @@ mxc_v4l_overlay_setup(struct v4l2_format *fmt)
         {
                 printf("VIDIOC_S_OUTPUT failed\n");
                 return TFAIL;
-        }
+        } 
 
         ctl.id = V4L2_CID_PRIVATE_BASE;
-  ctl.value = g_rotate;
+		ctl.value = g_rotate;
         if (ioctl(fd_v4l, VIDIOC_S_CTRL, &ctl) < 0)
         {
                 printf("set control failed\n");
                 return TFAIL;
-        }
+        } 
 
         crop.type = V4L2_BUF_TYPE_VIDEO_OVERLAY;
         crop.c.left = g_sensor_left;
@@ -198,36 +198,36 @@ mxc_v4l_overlay_setup(struct v4l2_format *fmt)
         {
                 printf("set cropping failed\n");
                 return TFAIL;
-        }
+        } 
 
         if (ioctl(fd_v4l, VIDIOC_S_FMT, fmt) < 0)
         {
                 printf("set format failed\n");
                 return TFAIL;
-        }
+        } 
 
         if (ioctl(fd_v4l, VIDIOC_G_FMT, fmt) < 0)
         {
                 printf("get format failed\n");
                 return TFAIL;
-        }
+        } 
 
         if (ioctl(fd_v4l, VIDIOC_G_STD, &id) < 0)
         {
                 printf("VIDIOC_G_STD failed\n");
                 return TFAIL;
-        }
+        } 
 
         parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         parm.parm.capture.timeperframe.numerator = 1;
         parm.parm.capture.timeperframe.denominator = g_camera_framerate;
         parm.parm.capture.capturemode = 0;
-
+         
         if (ioctl(fd_v4l, VIDIOC_S_PARM, &parm) < 0)
         {
                 printf("VIDIOC_S_PARM failed\n");
                 return TFAIL;
-        }
+        } 
 
         parm.parm.capture.timeperframe.numerator = 0;
         parm.parm.capture.timeperframe.denominator = 0;
@@ -236,7 +236,7 @@ mxc_v4l_overlay_setup(struct v4l2_format *fmt)
         {
                 printf("get frame rate failed\n");
                 return TFAIL;
-        }
+        } 
 
         printf("frame_rate is %d\n", parm.parm.capture.timeperframe.denominator);
         return TPASS;
@@ -245,7 +245,7 @@ mxc_v4l_overlay_setup(struct v4l2_format *fmt)
 int process_cmdline(int argc, char **argv)
 {
         int i;
-
+        
         for (i = 1; i < argc; i++) {
                 if (strcmp(argv[i], "-iw") == 0) {
                         g_sensor_width = atoi(argv[++i]);
@@ -292,15 +292,15 @@ int process_cmdline(int argc, char **argv)
                 else if (strcmp(argv[i], "-help") == 0) {
                         printf("MXC Video4Linux overlay Device Test\n\n" \
                                " -iw <input width>\n -ih <input height>\n" \
-                               " -it <input top>\n -il <input left>\n" \
+                               " -it <input top>\n -il <input left>\n"	\
                                " -ow <display width>\n -oh <display height>\n" \
-                               " -ot <display top>\n -ol <display left>\n" \
+                               " -ot <display top>\n -ol <display left>\n"	\
                                " -r <rotate mode>\n -t <timeout>\n" \
-                               " -d <output display> \n" \
+                               " -d <output display> \n"	\
                                " -v <camera color> 1-brightness 2-saturation"
                                " 3-red 4-blue 5-black balance\n"\
-                               " -fr <frame rate 0-Auto> \n" \
-                               " -fg foreground mode when -fg specified,"
+                               " -fr <frame rate 0-Auto> \n"	\
+                               " -fg foreground mode when -fg specified," 
                                " otherwise go to frame buffer\n");
                         return -1;
                 }
@@ -308,14 +308,14 @@ int process_cmdline(int argc, char **argv)
 
         printf("g_display_width = %d, g_display_height = %d\n", g_display_width, g_display_height);
         printf("g_display_top = %d, g_display_left = %d\n", g_display_top, g_display_left);
-
+        
         if ((g_display_width == 0) || (g_display_height == 0)) {
                 return -1;
         }
         return 0;
 }
 
-int
+int 
 main(int argc, char **argv)
 {
         struct v4l2_format fmt;
@@ -332,7 +332,7 @@ main(int argc, char **argv)
         unsigned int * cur_fb32;
         __u32 screen_size;
         int h, w;
- int ret = 0;
+	int ret = 0;
 
         if (process_cmdline(argc, argv) < 0) {
                 return TFAIL;
@@ -352,11 +352,11 @@ main(int argc, char **argv)
         if (mxc_v4l_overlay_setup(&fmt) < 0) {
                 printf("Setup overlay failed.\n");
                 return TFAIL;
-  }
+		}
 
-        memset(&fb_v4l2, 0, sizeof(fb_v4l2));
+        memset(&fb_v4l2, 0, sizeof(fb_v4l2)); 
 
-        if ((fd_fb = open(fb_device, O_RDWR )) < 0) {
+        if ((fd_fb = open(fb_device, O_RDWR )) < 0)	{
                 printf("Unable to open frame buffer\n");
                 return TFAIL;
         }
@@ -375,73 +375,73 @@ main(int argc, char **argv)
                 fb_v4l2.fmt.height = var.yres;
                 if (var.bits_per_pixel == 32) {
                         fb_v4l2.fmt.pixelformat = IPU_PIX_FMT_BGR32;
-                        fb_v4l2.fmt.bytesperline = 4 * fb_v4l2.fmt.width;
+                        fb_v4l2.fmt.bytesperline = 4 * fb_v4l2.fmt.width; 
                 }
                 else if (var.bits_per_pixel == 24) {
                         fb_v4l2.fmt.pixelformat = IPU_PIX_FMT_BGR24;
-                        fb_v4l2.fmt.bytesperline = 3 * fb_v4l2.fmt.width;
+                        fb_v4l2.fmt.bytesperline = 3 * fb_v4l2.fmt.width; 
                 }
                 else if (var.bits_per_pixel == 16) {
                         fb_v4l2.fmt.pixelformat = IPU_PIX_FMT_RGB565;
-                        fb_v4l2.fmt.bytesperline = 2 * fb_v4l2.fmt.width;
+                        fb_v4l2.fmt.bytesperline = 2 * fb_v4l2.fmt.width; 
                 }
 
                 fb_v4l2.flags = V4L2_FBUF_FLAG_PRIMARY;
                 fb_v4l2.base = (void *) fix.smem_start;
         } else {
-
-         alpha.alpha = 255;
-         alpha.enable = 1;
-         if ( ioctl(fd_fb, MXCFB_SET_GBL_ALPHA, &alpha) < 0) {
+        
+	        alpha.alpha = 255;
+	        alpha.enable = 1;
+	        if ( ioctl(fd_fb, MXCFB_SET_GBL_ALPHA, &alpha) < 0) {
                         close(fd_fb);
                         return TFAIL;
-         }
+	        }
 
-         color_key.color_key = 0x00080808;
-         color_key.enable = 1;
-         if ( ioctl(fd_fb, MXCFB_SET_CLR_KEY, &color_key) < 0) {
+	        color_key.color_key = 0x00080808;
+	        color_key.enable = 1;
+	        if ( ioctl(fd_fb, MXCFB_SET_CLR_KEY, &color_key) < 0) {
                         close(fd_fb);
                         return TFAIL;
-         }
+	        }
 
-         screen_size = var.yres * fix.line_length;
+	        screen_size = var.yres * fix.line_length;
 
-         /* Map the device to memory*/
-         fb0 = (unsigned short *)mmap(0, screen_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd_fb, 0);
-         if ((int)fb0 == -1)
-         {
-                 printf("\nError: failed to map framebuffer device 0 to memory.\n");
+	        /* Map the device to memory*/
+	        fb0 = (unsigned short *)mmap(0, screen_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd_fb, 0);
+	        if ((int)fb0 == -1)
+	        {
+	                printf("\nError: failed to map framebuffer device 0 to memory.\n");
                         close(fd_fb);
                         return TFAIL;
-         }
+	        }
 
-
-         if (var.bits_per_pixel == 16) {
-                 for (h = g_display_top; h < (g_display_height + g_display_top); h++) {
-                         cur_fb16 = (unsigned short *)((__u32)fb0 + h*fix.line_length);
-                         for (w = g_display_left; w < g_display_width + g_display_left; w++) {
-                                 cur_fb16[w] = 0x0841;
-                         }
-                 }
-         }
-         else if (var.bits_per_pixel == 24) {
-                 for (h = g_display_top; h < (g_display_height + g_display_top); h++) {
-                         cur_fb8 = (unsigned char *)((__u32)fb0 + h*fix.line_length);
-                         for (w = g_display_left; w < g_display_width + g_display_left; w++) {
-                                 *cur_fb8++ = 8;
-                                 *cur_fb8++ = 8;
-                                 *cur_fb8++ = 8;
-                         }
-                 }
-         }
-         else if (var.bits_per_pixel == 32) {
-                 for (h = g_display_top; h < (g_display_height + g_display_top); h++) {
-                         cur_fb32 = (unsigned int *)((__u32)fb0 + h*fix.line_length);
-                         for (w = g_display_left; w < g_display_width + g_display_left; w++) {
-                                 cur_fb32[w] = 0x00080808;
-                         }
-                 }
-         }
+	        
+	        if (var.bits_per_pixel == 16) {
+	                for (h = g_display_top; h < (g_display_height + g_display_top); h++) {
+	                        cur_fb16 = (unsigned short *)((__u32)fb0 + h*fix.line_length);
+	                        for (w = g_display_left; w < g_display_width + g_display_left; w++) {
+	                                cur_fb16[w] = 0x0841;
+	                        }
+	                }
+	        }
+	        else if (var.bits_per_pixel == 24) {
+	                for (h = g_display_top; h < (g_display_height + g_display_top); h++) {
+	                        cur_fb8 = (unsigned char *)((__u32)fb0 + h*fix.line_length);
+	                        for (w = g_display_left; w < g_display_width + g_display_left; w++) {
+	                                *cur_fb8++ = 8;
+	                                *cur_fb8++ = 8;
+	                                *cur_fb8++ = 8;
+	                        }
+	                }
+	        }
+	        else if (var.bits_per_pixel == 32) {
+	                for (h = g_display_top; h < (g_display_height + g_display_top); h++) {
+	                        cur_fb32 = (unsigned int *)((__u32)fb0 + h*fix.line_length);
+	                        for (w = g_display_left; w < g_display_width + g_display_left; w++) {
+	                                cur_fb32[w] = 0x00080808;
+	                        }
+	                }
+	        }
                 if (ioctl(fd_v4l, VIDIOC_G_FBUF, &fb_v4l2) < 0) {
                         printf("Get framebuffer failed\n");
                         return TFAIL;
@@ -455,14 +455,14 @@ main(int argc, char **argv)
         {
                 printf("set framebuffer failed\n");
                 return TFAIL;
-        }
+        } 
 
         if (ioctl(fd_v4l, VIDIOC_G_FBUF, &fb_v4l2) < 0) {
                 printf("set framebuffer failed\n");
                 return TFAIL;
-        }
+        } 
 
-        printf("\n frame buffer width %d, height %d, bytesperline %d\n",
+        printf("\n frame buffer width %d, height %d, bytesperline %d\n", 
                 fb_v4l2.fmt.width, fb_v4l2.fmt.height, fb_v4l2.fmt.bytesperline);
         ret = mxc_v4l_overlay_test(g_timeout);
 

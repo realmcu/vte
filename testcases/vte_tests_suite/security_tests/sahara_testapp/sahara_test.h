@@ -20,9 +20,9 @@ A.Urusov/NONE                09/11/2005     TLSbo57926  Initial version
 A.Ozerov/NONE                01/12/2005     TLSbo58662  Update for linux-2.6.10-rel-L26_1_14
 A.Ozerov/NONE                19/12/2005     TLSbo58662  Update for linux-2.6.10-cvs-L26_1_15
 D.Simakov/smkd001c           21/09/2006     TLSbo76069  Compilation error
-
+                                                        
 ====================================================================================================
-Portability:  ARM GCC
+Portability:  ARM GCC 
 ==================================================================================================*/
 #ifndef SAHARA_TEST_H
 #define SAHARA_TEST_H
@@ -37,7 +37,7 @@ extern "C" {
 /* Standard Include Files */
 #include <fcntl.h>
 #include <unistd.h>
-#include <sys/ioctl.h>
+#include <sys/ioctl.h> 
 #include <errno.h>
 
 /* Harness Specific Include Files. */
@@ -52,7 +52,7 @@ extern "C" {
 #include <sahara_module.h>
 
 /*==================================================================================================
-                                     DEFINES AND MACROS
+                                     DEFINES AND MACROS 
 ==================================================================================================*/
 #define POOL_SIZE 10
 

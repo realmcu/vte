@@ -1,14 +1,14 @@
 /*================================================================================================*/
-/**
-    @file   uart_test_addon.h
+/** 
+    @file   uart_test_addon.h 
 
     @brief  UART test3 header file */
-/*==================================================================================================
+/*================================================================================================== 
 
-    Copyright (C) 2007, Freescale Semiconductor, Inc. All Rights Reserved
-    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-    Freescale Semiconductor, Inc.
+    Copyright (C) 2007, Freescale Semiconductor, Inc. All Rights Reserved 
+    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT 
+    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF 
+    Freescale Semiconductor, Inc. 
 
 =========================================================================================
 Revision History:
@@ -22,7 +22,7 @@ D.Kardakov                   04/06/2007    ENGR30041    Initial version
 #define UART_TEST_ADDON_H
 
 #ifdef __cplusplus
-extern "C"{
+extern "C"{ 
 #endif
 
 /*======================================================================================
@@ -68,7 +68,7 @@ extern int VT_uart_addon_test(int testcase);
 
 
 #ifdef __cplusplus
-}
+} 
 #endif
 
 #endif                          /* UART_TEST_ADDON_H */

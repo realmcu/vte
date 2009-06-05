@@ -1,31 +1,31 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   fb_draw_api.c
 
         @brief  Test scenario
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2005, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 D.Simakov/smkd001c           21/09/2005     TLSbo55077   Initial version
 
-====================
+====================================================================================================
 Portability: ARM GCC
 
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 
 #include <assert.h>
 #include <stdlib.h>
@@ -41,17 +41,17 @@ Portability: ARM GCC
 
 #include "fb_draw_api.h"
 
-/*======================
+/*==================================================================================================
                                        DEFINES AND MACROS
-======================*/
+==================================================================================================*/
 #if !defined(TRUE) && !defined(FALSE)
     #define TRUE 1
     #define FALSE 0
 #endif
 
-/*======================
+/*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
-======================*/
+==================================================================================================*/
 typedef struct
 {
         int file_desc;                        /*!< frame buffer file descriptor FGA for display purpose */
@@ -60,9 +60,9 @@ typedef struct
         unsigned char * ptr;                  /*!< pointer to frame buffer FGA for display purpose */
 } framebuffer_core_t;
 
-/*======================
+/*==================================================================================================
                                      FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 void _draw_scanline_24( unsigned char * scanline, int x, int y, int width, pixel_format_e pfmt );
 void _draw_scanline_16( unsigned char * scanline, int x, int y, int width, pixel_format_e pfmt );
 void _draw_rect( int x1, int y1, int x2, int y2, const argb_color_t * color );
@@ -70,7 +70,7 @@ void _clear_screen( const argb_color_t * color );
 void _set_pixel( const argb_color_t * color );
 void _get_pixel( argb_color_t * color );
 int  _fb_init( const char * fb_device );
-void _fb_done( void );
+void _fb_done( void );  
 
 
 /*****************************************************************************/
@@ -82,7 +82,7 @@ static framebuffer_core_t g_fb_core;
 /*! Get framebuffer instance.
  *
  *  \return
- *  Returns the framebuffer_t instance or NULL if an errors are occured. */
+ *  Returns the framebuffer_t instance or NULL if an errors are occured. */	
 /*****************************************************************************/
 const framebuffer_t * get_framebuffer( void )
 {
@@ -93,17 +93,17 @@ const framebuffer_t * get_framebuffer( void )
 }
 
 /*****************************************************************************/
-/*! Init routine.
- *
- *  \param fb_device \n[in] Famebuffer device name.
+/*! Init routine. 
+ * 
+ *  \param fb_device \n[in] Famebuffer device name.	
  *
  *  \return
  *  all ok ? TRUE : FALSE */
 /*****************************************************************************/
 int _fb_init( const char * fb_device )
 {
-        assert( fb_device );
-
+        assert( fb_device );    
+        
         /* reinit */
         if( g_framebuffer )
         {
@@ -111,32 +111,32 @@ int _fb_init( const char * fb_device )
                 assert( g_framebuffer );
                 return _fb_init( fb_device );
         }
-
-        g_framebuffer = malloc( sizeof(framebuffer_t) );
+        
+        g_framebuffer = malloc( sizeof(framebuffer_t) );    
         atexit( _fb_done );
-
-        /* open framebuffer */
+        
+        /* open framebuffer */ 
         g_fb_core.file_desc = open( fb_device, O_RDWR );
-
+        
         /* get screen infos  (size, resolution)*/
         if( ioctl( g_fb_core.file_desc, FBIOGET_VSCREENINFO, &g_fb_core.screen_info ) )
         {
                 fprintf( stderr, "_fb_init : error reading variable information\n" );
                 return FALSE;
         }
-
+        
         g_fb_core.size = g_fb_core.screen_info.xres * g_fb_core.screen_info.yres * g_fb_core.screen_info.bits_per_pixel / 8;
         g_framebuffer->width = g_fb_core.screen_info.xres;
         g_framebuffer->height = g_fb_core.screen_info.yres;
         switch( g_fb_core.screen_info.bits_per_pixel )
         {
         case 24:
-                g_framebuffer->pixel_format = PF_RGB_888;
+                g_framebuffer->pixel_format = PF_RGB_888;   
                 g_framebuffer->draw_scanline = _draw_scanline_24;
                 g_framebuffer->_fb_pitch = g_framebuffer->width * 3;
                 break;
-        case 16:
-                g_framebuffer->pixel_format = PF_RGB_565;
+        case 16: 
+                g_framebuffer->pixel_format = PF_RGB_565;   
                 g_framebuffer->draw_scanline = _draw_scanline_16;
                 g_framebuffer->_fb_pitch = g_framebuffer->width * 2;
                 break;
@@ -148,7 +148,7 @@ int _fb_init( const char * fb_device )
         g_framebuffer->clear_screen = _clear_screen;
         g_framebuffer->set_pixel = _set_pixel;
         g_framebuffer->get_pixel = _get_pixel;
-
+        
         /* map the device to memory */
         g_fb_core.ptr = (unsigned char*)mmap( 0, g_fb_core.size, PROT_READ|PROT_WRITE, MAP_SHARED, g_fb_core.file_desc, 0 );
         if( (int)g_fb_core.ptr == -1 )
@@ -157,7 +157,7 @@ int _fb_init( const char * fb_device )
                 return FALSE;
         }
         g_framebuffer->_fb_direct_ptr = g_fb_core.ptr;
-
+        
         memset( g_fb_core.ptr, 0xFF, g_fb_core.size );
         return TRUE;
 }
@@ -171,7 +171,7 @@ void _fb_done( void )
         {
                 free( g_framebuffer );
                 g_framebuffer = NULL;
-        }
+        }    
         munmap( g_fb_core.ptr, g_fb_core.size );
         close( g_fb_core.file_desc );
 }
@@ -183,21 +183,21 @@ void _draw_scanline_24( unsigned char * scanline, int x, int y, int width, pixel
 {
         assert( scanline );
         assert( width > 0 );
-
+        
         struct fb_var_screeninfo * sinfo = &g_fb_core.screen_info;
-
+        
         if(x < 0) x = 0; if(x > sinfo->xres) x = sinfo->xres;
         if(y < 0) y = 0; if(y > sinfo->yres) y = sinfo->yres;
         if(x + width > sinfo->xres) { width -= (sinfo->xres - x + width); width = -width; }
-
+        
         int offset = (y * sinfo->xres + x)*3;
         unsigned char * ptr = g_fb_core.ptr + offset;
-
+        
         unsigned char  * p888  = scanline;
         unsigned short * p16   = (unsigned short*)scanline;
         unsigned char  * p8888 = scanline;
         int i;
-
+        
         switch( pfmt )
         {
         case PF_ARGB_8888:
@@ -214,7 +214,7 @@ void _draw_scanline_24( unsigned char * scanline, int x, int y, int width, pixel
                 break;
         case PF_RGB_888:
                 for( i = 0; i < width; ++i )
-                {
+                {    
                         unsigned char b = *(p888++);
                         unsigned char g = *(p888++);
                         unsigned char r = *(p888++);
@@ -244,26 +244,26 @@ void _draw_scanline_16( unsigned char * scanline, int x, int y, int width, pixel
 {
         assert( scanline );
         assert( width > 0 );
-
+        
         struct fb_var_screeninfo * sinfo = &g_fb_core.screen_info;
-
+        
         if(x < 0) x = 0; if(x > sinfo->xres) x = sinfo->xres;
         if(y < 0) y = 0; if(y > sinfo->yres) y = sinfo->yres;
         if(x + width > sinfo->xres) { width -= (sinfo->xres - x + width); width = -width; }
-
+        
         int offset = (y * sinfo->xres + x)*2;
         unsigned char * ptr = g_fb_core.ptr + offset;
-
+        
         unsigned char  * p888  = scanline;
-        unsigned short * p16   = (unsigned short*)scanline;
+        unsigned short * p16   = (unsigned short*)scanline;    
         unsigned short * dest16 = (unsigned short*)ptr;
         int i;
-
+        
         switch( pfmt )
         {
         case PF_RGB_888:
                 for( i = 0; i < width; ++i )
-                {
+                {    
                         unsigned char r = *p888++;
                         unsigned char g = *p888++;
                         unsigned char b = *p888++;
@@ -271,7 +271,7 @@ void _draw_scanline_16( unsigned char * scanline, int x, int y, int width, pixel
                         *ptr++ = (unsigned char)((((g>>2)>>3) & 0x07) | ( r & 0xF8) );
                 }
                 break;
-        case PF_RGB_565: case PF_RGB_555:
+        case PF_RGB_565: case PF_RGB_555:	
                 for( i = 0; i < width; ++i )
                 {
                         *dest16++ = *p16++;
@@ -285,35 +285,35 @@ void _draw_scanline_16( unsigned char * scanline, int x, int y, int width, pixel
 void _draw_rect( int x1, int y1, int x2, int y2, const argb_color_t * color )
 {
         assert( color );
-
+        
         struct fb_var_screeninfo * sinfo = &g_fb_core.screen_info;
-        if(x1 < 0) x1 = 0; if(x1 > sinfo->xres) x1 = sinfo->xres;
-        if(x2 < 0) x2 = 0; if(x2 > sinfo->xres) x2 = sinfo->xres;
-        if(y1 < 0) y1 = 0; if(y1 > sinfo->yres) y1 = sinfo->yres;
-        if(y2 < 0) y2 = 0; if(y2 > sinfo->yres) y2 = sinfo->yres;
+        if(x1 < 0) x1 = 0; if(x1 > sinfo->xres) x1 = sinfo->xres;  
+        if(x2 < 0) x2 = 0; if(x2 > sinfo->xres) x2 = sinfo->xres;  
+        if(y1 < 0) y1 = 0; if(y1 > sinfo->yres) y1 = sinfo->yres;  
+        if(y2 < 0) y2 = 0; if(y2 > sinfo->yres) y2 = sinfo->yres; 
         if((x1 >= x2) || (y1 >= y2)) return;
-
+        
         int ix, iy;
         unsigned char r24 = (unsigned char)(color->r*255);
         unsigned char g24 = (unsigned char)(color->g*255);
         unsigned char b24 = (unsigned char)(color->b*255);
-
+        
         unsigned short r16 = (unsigned char)(color->r*31) << (6+5);
         unsigned short g16 = (unsigned char)(color->r*63) << (5);
         unsigned short b16 = (unsigned char)(color->r*31);
-
+        
         switch( sinfo->bits_per_pixel )
         {
         case 24:
                 for( iy = y1; iy <= y2; ++iy )
-                {
+                {   
                         int offset = (iy*sinfo->xres+x1)*3;
                         unsigned char * p24 = g_fb_core.ptr + offset;
                         for( ix = 0; ix <(x2-x1); ++ix )
                         {
                                 *p24++ = r24;
                                 *p24++ = g24;
-                                *p24++ = b24;
+                                *p24++ = b24;	
                         }
                 }
                 break;
@@ -336,7 +336,7 @@ void _draw_rect( int x1, int y1, int x2, int y2, const argb_color_t * color )
 }
 
 void _clear_screen( const argb_color_t * color )
-{
+{    
         memset( g_fb_core.ptr, 0xff, g_fb_core.size );
 }
 

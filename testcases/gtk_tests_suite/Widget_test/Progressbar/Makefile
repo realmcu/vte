@@ -10,7 +10,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
@@ -20,7 +20,7 @@
 # Ludovic Delaspre/rc149c     27/10/2004     TLSbo44018  make GTK compilation available
 #
 ###################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms.
+#Portability: Indicate if this module is portable to other compilers or platforms. 
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################

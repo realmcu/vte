@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #hake huang/-----             24/11/2008     N/A          Initial version
-#
+# 
 ###################################################################################################
 
 
@@ -77,10 +77,10 @@ echo "4 power test"
 # Function:     test_case_01
 # Description   - Test if module exist
 # Type:         Smoke/BAT test auto
-#
+#  
 test_case_01()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="module exist test"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -102,10 +102,10 @@ return $RC
 # Function:     test_case_02
 # Description   - Test event case
 # Type:         function semi-auto
-#
+#  
 test_case_02()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="test_evtest_keypad"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -121,7 +121,7 @@ evtest /dev/input/event0
 read -p "is the key value match?y/n" Rt
 
 if [ $Rt == y ]
-then
+then 
 RC=0
 fi
 
@@ -132,10 +132,10 @@ return $RC
 # Function:     test_case_03
 # Description   - Test loadkey case
 # Type:         function semi-auto
-#
+#  
 test_case_03()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="test_loadkeymap_keypad"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -160,7 +160,7 @@ evtest /dev/input/event0
 read -p "are the keys value match below?y/n" Rt
 
 if [ $Rt == y ]
-then
+then 
 RC=0
 fi
 
@@ -171,10 +171,10 @@ return $RC
 # Function:     test_case_04
 # Description   - Test power state resume
 # Type:         function manual
-#
+#  
 test_case_04()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="test_loadkeymap_keypad"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -185,7 +185,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-echo now enter power standby
+echo now enter power standby 
 echo "please press a key to wakeup system"
 echo standby > /sys/power/state
 
@@ -195,7 +195,7 @@ evtest /dev/input/event0
 read -p "are the keys value match below?y/n" Rt
 
 if [ $Rt == y ]
-then
+then 
 RC=0
 fi
 
@@ -210,14 +210,14 @@ RC=0
 if [ $# -ne 1 ]
 then
 usage
-exit 1
+exit 1 
 fi
 
 setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC
+  test_case_01 || exit $RC 
   ;;
 2)
   test_case_02 || exit $RC
@@ -225,7 +225,7 @@ case "$1" in
 3)
   test_case_03 || exit $RC
   ;;
-3)
+4)
   test_case_04 || exit $RC
   ;;
 *)

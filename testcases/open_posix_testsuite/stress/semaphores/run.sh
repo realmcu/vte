@@ -10,16 +10,16 @@
 # Helper functions
 RunTest()
 {
- echo "TEST: " $1 $2
- TOTAL=$TOTAL+1
- ./$1 $2
- if [ $? == 0 ]; then
-  PASS=$PASS+1
-  echo -ne "\t\t\t***TEST PASSED***\n\n"
- else
-  FAIL=$FAIL+1
-  echo -ne "\t\t\t***TEST FAILED***\n\n"
- fi
+	echo "TEST: " $1 $2
+	TOTAL=$TOTAL+1
+	./$1 $2
+	if [ $? == 0 ]; then
+		PASS=$PASS+1
+		echo -ne "\t\t\t***TEST PASSED***\n\n"
+	else
+		FAIL=$FAIL+1
+		echo -ne "\t\t\t***TEST FAILED***\n\n"
+	fi
 }
 
 # Main program

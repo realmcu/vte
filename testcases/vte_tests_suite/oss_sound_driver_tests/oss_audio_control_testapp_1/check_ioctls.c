@@ -1,26 +1,26 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   check_ioctls.c
 
         @brief  OSS audio mixer controls test.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  --------------------------------------------
 Franois GAFFIE/
 RB657C Guillaume SCHMUCK/
-gsch1c                      20/07/2004      TLSbo40898  Initial version  of OSS sound driver test
+gsch1c                      20/07/2004      TLSbo40898  Initial version  of OSS sound driver test 
                                                         development.
-D.Simakov/smkd001c          01/08/2005      TLSBo53192  IOCTL's checks was fixed
+D.Simakov/smkd001c          01/08/2005      TLSBo53192  IOCTL's checks was fixed         
 A.Ozerov/b00320             26/10/2005      TLSbo56870  MC13783 tests was changed to SC55112 tests
 A.Ozerov/b00320             12/12/2005      TLSbo60058  Fix set_mixer function
 D.Khoroshev/b00313          02/03/2005      TLSbo61495  Added ioctl return values checking
@@ -30,13 +30,13 @@ D.Simakov                   13/06/2006      TLSbo67022  STDAC <==> CODEC
 D.Simakov                   19/10/2006      TLSbo76144  dsp->adsp, dsp1->dsp
 A.Ozerov/b00320             13/11/2006      TLSbo81934  Adaptation with alsa-oss emulation
 D.Simakov                    22/12/2005     TLSbo87096  Zeus compilation issue
-====================
+====================================================================================================
 Portability: ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -46,9 +46,9 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "oss_sound_driver_test.h"
 
-/*====================*/
+/*================================================================================================*/
 char *AFMT[] =
-{
+{ 
         "AFMT_MU_LAW",
         "AFMT_A_LAW",
         "AFMT_IMA_ADPCM",
@@ -104,50 +104,50 @@ char *MIXER_DEVS[] =
         "SOUND_MIXER_MONITOR"
 };
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
-/*====================*/
+==================================================================================================*/
+/*================================================================================================*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_oss_sound_driver_setup(void)
 {
         return TPASS;
 }
 
-/*====================*/
+/*================================================================================================*/
 /**
 @brief  assumes the post-condition of the test case execution
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_oss_sound_driver_cleanup(void)
 {
         return TPASS;
 }
 
-/*====================*/
+/*================================================================================================*/
 /**
-@brief
+@brief  
 
 @param  int fd_mixer
         int fd_audio
         int device
-
-@return
+    
+@return 
 */
-/*====================*/
+/*================================================================================================*/
 int set_input_bias(int fd_mixer, int fd_audio, int device)
 {
         int     val = device;
@@ -156,7 +156,7 @@ int set_input_bias(int fd_mixer, int fd_audio, int device)
         if (ioctl(fd_mixer, SOUND_MIXER_WRITE_RECSRC, &val) < 0)
         {
                 tst_resm(TFAIL, "%s: Error in SOUND_MIXER_WRITE_RECSRC for device 0x%x. Returned error code '%s'",
-                                __FUNCTION__, device, strerror(errno));
+                                __FUNCTION__, device, strerror(errno));        
                 nb_err++;
         }
         if (ioctl(fd_mixer, SOUND_MIXER_READ_RECSRC, &val) < 0)
@@ -175,9 +175,9 @@ int set_input_bias(int fd_mixer, int fd_audio, int device)
         nb_err = 0;
         val = 1;
 #ifdef CONFIG_MXC_PMIC_SC55112
-        /* Not Supported
+        /* Not Supported 
         if (ioctl(fd_audio, SNDCTL_PMIC_WRITE_IN_BIAS, &val) < 0)
-        {
+        {        
                 tst_resm(TFAIL, "%s: Error in SNDCTL_PMIC_WRITE_IN_BIAS for device 0x%x. Returned error code '%s'",
                                 __FUNCTION__, device, strerror(errno));
                 nb_err++;
@@ -228,16 +228,16 @@ int set_input_bias(int fd_mixer, int fd_audio, int device)
         return err;
 }
 
-/*====================*/
+/*================================================================================================*/
 /**
-@brief
+@brief  
 
 @param  int fd_mixer
         int curr_device
 
-@return
+@return 
 */
-/*====================*/
+/*================================================================================================*/
 int set_output_device(int fd_mixer, int device)
 {
         int     val = device;
@@ -267,15 +267,15 @@ int set_output_device(int fd_mixer, int device)
         return err;
 }
 
-/*====================*/
+/*================================================================================================*/
 /**
-@brief
+@brief  
 
 @param  int fd_audio
 
-@return
+@return 
 */
-/*====================*/
+/*================================================================================================*/
 int set_bits(int fd_audio)
 {
         int     ret = 0,
@@ -315,16 +315,16 @@ int set_bits(int fd_audio)
         return err;
 }
 
-/*====================*/
+/*================================================================================================*/
 /**
-@brief
+@brief  
 
 @param  int fd_audio
         int max_channel
 
-@return
+@return 
 */
-/*====================*/
+/*================================================================================================*/
 int set_channels(int fd_audio, int max_channel)
 {
         int     ret = 0,
@@ -360,15 +360,15 @@ int set_channels(int fd_audio, int max_channel)
         return err;
 }
 
-/*====================*/
+/*================================================================================================*/
 /**
-@brief
+@brief  
 
 @param  None
 
-@return
+@return 
 */
-/*====================*/
+/*================================================================================================*/
 int test_channels(void)
 {
         int     err = 0;
@@ -419,19 +419,19 @@ int test_channels(void)
         err += set_channels(fd_audio, 1);
         err += set_channels(fd_audio, 2);
         close(fd_audio);
-
+        
         return err;
 }
 
-/*====================*/
+/*================================================================================================*/
 /**
-@brief
+@brief  
 
 @param  int fd_audio
 
-@return
+@return 
 */
-/*====================*/
+/*================================================================================================*/
 int set_speed_stdac(int fd_audio)
 {
         int     ret = 0,
@@ -441,7 +441,7 @@ int set_speed_stdac(int fd_audio)
                 i,
                 mem;
 
-        int     supported_speeds[] =
+        int     supported_speeds[] = 
                 {
                         8000, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000
 #ifdef CONFIG_MXC_MC13783_PMIC
@@ -472,7 +472,7 @@ int set_speed_stdac(int fd_audio)
                                         __FUNCTION__, strerror(errno));
                         nb_err++;
                 }
-
+                        
                 if (!nb_err && val != mem)
                 {
                         tst_resm(TFAIL, "%s: Failed to set speed rate to %d, returned value %d.",
@@ -489,15 +489,15 @@ int set_speed_stdac(int fd_audio)
         return err;
 }
 
-/*====================*/
+/*================================================================================================*/
 /**
-@brief
+@brief  
 
 @param  int fd_audio
 
-@return
+@return 
 */
-/*====================*/
+/*================================================================================================*/
 int set_speed_codec(int fd_audio)
 {
         int     ret = 0,
@@ -506,7 +506,7 @@ int set_speed_codec(int fd_audio)
         int     val,
                 i,
                 mem;
-        int     supported_speeds[] =
+        int     supported_speeds[] = 
                 {
                         8000, 16000
                 };
@@ -551,16 +551,16 @@ int set_speed_codec(int fd_audio)
         return err;
 }
 
-/*====================*/
+/*================================================================================================*/
 /**
-@brief
+@brief  
 
 @param  int fd_audio
         int device
 
-@return
+@return 
 */
-/*====================*/
+/*================================================================================================*/
 int set_speed(int fd_audio, int device)
 {
         int     err = 0;
@@ -577,16 +577,16 @@ int set_speed(int fd_audio, int device)
         return err;
 }
 
-/*====================*/
+/*================================================================================================*/
 /**
-@brief
+@brief  
 
 @param  int fd_audio
         int device
 
-@return
+@return 
 */
-/*====================*/
+/*================================================================================================*/
 int check_audio_ioctls(int fd_audio, int device)
 {
         int     err = 0, blk_size = 0;
@@ -829,15 +829,15 @@ int check_audio_ioctls(int fd_audio, int device)
         return err;
 }
 
-/*====================*/
+/*================================================================================================*/
 /**
-@brief
+@brief  
 
 @param  int fd_mixer
 
-@return
+@return 
 */
-/*====================*/
+/*================================================================================================*/
 int check_mixer_ioctls(int fd_mixer)
 {
         int     err = 0;
@@ -960,23 +960,23 @@ int check_mixer_ioctls(int fd_mixer)
                         }
                 }
         }
-
+        
         if (!err)
                 tst_resm(TINFO, "No Error in MIXER IOCTLs");
 
         return err;
 }
 
-/*====================*/
+/*================================================================================================*/
 /**
 @brief  Test program
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_oss_sound_driver_test(int Device)
 {
         int     VT_rv = TFAIL;
@@ -1048,7 +1048,7 @@ int VT_oss_sound_driver_test(int Device)
 #endif
         close(fd_audio);
         close(fd_mixer);
-
+        
         if (!err)
                 VT_rv = TPASS;
 

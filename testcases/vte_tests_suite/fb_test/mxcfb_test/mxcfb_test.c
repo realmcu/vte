@@ -1,4 +1,4 @@
-/*====================*/
+/*================================================================================================*/
 /**
     @file   mxcfb_test.c
 
@@ -100,7 +100,7 @@ BOOL draw_test()
 BOOL ovpos_test()
 {
  int x, y;
- struct mxcfb_pos pos;
+ struct mxcfb_pos pos; 
  struct fb_var_screeninfo mode_info;
 
  tst_resm(TINFO, "draw a red screen in fore ground");
@@ -139,16 +139,18 @@ BOOL pan_test()
    int y, old_yvres;
    struct fb_var_screeninfo mode_info;
    struct mxcfb_gbl_alpha gbl_alpha;
-/*x pan is not supported*/
+/*x pan is not supported*/ 
+
 #if 1
  tst_resm(TINFO, "ensure thr global alpha is 50");
  gbl_alpha.enable = 1;
  gbl_alpha.alpha = 50;
  CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_GBL_ALPHA, &gbl_alpha));
+
  tst_resm(TINFO,"test fb0 pan");
  CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
  old_yvres = mode_info.yres_virtual;
- mode_info.yres_virtual = mode_info.yres * 2;
+ mode_info.yres_virtual = mode_info.yres * 2; 
  CALL_IOCTL(ioctl(fb_fd, FBIOPUT_VSCREENINFO, &mode_info));
 
  /*remap the devices*/
@@ -167,12 +169,12 @@ BOOL pan_test()
    return FALSE;
  }
  sleep(5);
-   for (y = 0; y <= mode_info.yres; y += mode_info.yres / 2)
+   for (y = 0; y <= mode_info.yres; y += mode_info.yres / 2) 
    {
         mode_info.yoffset = y;
- printf("\r offset at %d", y);
+	printf("\r offset at %d", y);
         CALL_IOCTL(ioctl(fb_fd, FBIOPAN_DISPLAY, &mode_info));
- sleep(1);
+	sleep(1);
   }
  mode_info.yres_virtual = old_yvres;
  CALL_IOCTL(ioctl(fb_fd, FBIOPUT_VSCREENINFO, &mode_info));
@@ -182,7 +184,8 @@ BOOL pan_test()
  old_yvres = mode_info.yres_virtual;
  mode_info.yres_virtual = mode_info.yres * 2;
  CALL_IOCTL(ioctl(fb_fd_fg, FBIOPUT_VSCREENINFO, &mode_info));
- /*remap the device*/
+ 
+ /*remap the device*/ 
   munmap(fb_fg_mem_ptr, fb_fg_info.smem_len);
   CALL_IOCTL(ioctl(fb_fd_fg, FBIOGET_FSCREENINFO, &fb_fg_info));
   fb_fg_mem_ptr = mmap(NULL, fb_fg_info.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, fb_fd_fg, 0);
@@ -195,7 +198,7 @@ BOOL pan_test()
    tst_resm(TINFO, "fail to draw patter on fb1");
    return FALSE;
  }
- for (y = 0; y <= mode_info.yres ; y += mode_info.yres / 2)
+ for (y = 0; y <= mode_info.yres ; y += mode_info.yres / 2) 
  {
    mode_info.yoffset = y;
    printf("\r offset at %d", y);
@@ -221,6 +224,7 @@ BOOL colorkey_test()
 {
  struct mxcfb_gbl_alpha gbl_alpha;
  struct mxcfb_color_key key;
+  
  tst_resm(TINFO, "draw a green screen in back ground");
   if( TPASS != draw_pattern(fb_fd,fb_mem_ptr,0,255,0))
  {
@@ -234,21 +238,28 @@ BOOL colorkey_test()
    tst_resm(TINFO, "fail to draw patter on fb1");
    return FALSE;
  }
+
   key.enable = 1;
   key.color_key = 0x00FF0000; // Red
+  
   tst_resm(TINFO,"Color key enabled\n");
   tst_resm(TINFO,"Now the forground is green\n");
   CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_CLR_KEY, &key));
   sleep(3);
+
   /*make fore ground opaque*/
   gbl_alpha.enable = 1;
   gbl_alpha.alpha = 128;
   CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_GBL_ALPHA, &gbl_alpha));
   tst_resm(TINFO,"Now the forground is yellow\n");
+
+  
   sleep(3);
+
   key.enable = 0;
   CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_CLR_KEY, &key));
   tst_resm(TINFO,"Color key disabled\n");
+  
   /* gbl_alpha.enable = 0; */
   gbl_alpha.alpha = 50;
   ioctl(fb_fd, MXCFB_SET_GBL_ALPHA, &gbl_alpha);
@@ -264,8 +275,8 @@ BOOL galpha_test()
 {
  int i;
  struct mxcfb_gbl_alpha gbl_alpha;
-#if 1
- tst_resm(TINFO, "draw a green screen in back ground");
+#if 1 
+ tst_resm(TINFO, "draw a green screen in back ground"); 
  if( TPASS != draw_pattern(fb_fd,fb_mem_ptr,0,255,0))
  {
    tst_resm(TINFO, "fail to draw patter on fb0");
@@ -283,7 +294,7 @@ BOOL galpha_test()
  /*now set alpha*/
  tst_resm(TINFO, "the overlay screen is change from red to yellow to green");
  gbl_alpha.enable = 1;
- for (i = 0; i < 0x100; i+= 10)
+ for (i = 0; i < 0x100; i+=10) 
  {
      gbl_alpha.alpha = i;
      CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_GBL_ALPHA, &gbl_alpha));
@@ -294,8 +305,8 @@ BOOL galpha_test()
   CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_GBL_ALPHA, &gbl_alpha));
   tst_resm(TINFO,"Global alpha disabled\n");
 
-#if 1
- tst_resm(TINFO, "clear back ground");
+#if 1 
+ tst_resm(TINFO, "clear back ground"); 
  if( TPASS != draw_pattern(fb_fd,fb_mem_ptr,0,0,0))
  {
    tst_resm(TINFO, "fail to draw patter on fb0");
@@ -321,7 +332,7 @@ BOOL vsync_test()
 {
  int ifn = 120, ifrate = 0, i = 0, r = 0;
  clock_t stime, etime;
- long ldur = 0;
+ long ldur = 0;  
  stime = clock();
  for (i = 0, r = 0; i < ifn; i++, r++)
  {
@@ -334,7 +345,7 @@ BOOL vsync_test()
   CALL_IOCTL(ioctl(fb_fd, MXCFB_WAIT_FOR_VSYNC, &i));
  }
  etime = clock();
- ldur = (etime - stime);
+ ldur = (etime - stime); 
  ifrate = 1000 * ldur/CLOCKS_PER_SEC;/*ms*/
  if(ifrate > 0)
    ifrate = ifn * 1000 / ifrate;
@@ -342,12 +353,14 @@ BOOL vsync_test()
  return TRUE;
 }
 
-/*= VT_fb_setup =*/
+/*===== VT_fb_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution. Opens the framebuffer device,
         gets information into the fb_fix_screeninfo structure, and maps fb device into memory.
+
 @param  Input:  None
         Output: None
+  
 @return On success - return TPASS
         On failure - return the error code
 */
@@ -379,17 +392,20 @@ int VT_fb_setup(void)
     {
         tst_brkm(TFAIL, cleanup, "Can't map framebuffer device into memory: %s\n", strerror(errno));
     }
+
     if (iID == 3 || iID == 1 || iID == 4 || iID == 5)
     {
       /*global alpha test */
       fb_fd_fg = open(d_opt, O_RDWR);
       if ( fb_fd_fg < 0 )
         tst_brkm(TBROK, cleanup, "Cannot open fb1 framebuffer: %s", strerror(errno));
+      
       CALL_IOCTL(ioctl(fb_fd_fg, FBIOBLANK, FB_BLANK_UNBLANK));
       sleep(3);
       if ((ioctl(fb_fd_fg, FBIOGET_FSCREENINFO, &fb_fg_info)) < 0)
         tst_brkm(TFAIL, cleanup, "Cannot get framebuffer fixed parameters due to ioctl error: %s",
                  strerror(errno));
+      
       fb_fg_mem_ptr = mmap(NULL, fb_fg_info.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, fb_fd_fg, 0);
       if ((int)fb_fg_mem_ptr == -1)
         tst_brkm(TFAIL, cleanup, "Can't map framebuffer device into memory: %s\n", strerror(errno));
@@ -400,12 +416,13 @@ int VT_fb_setup(void)
 }
 
 
-/*= VT_sleep_cleanup =*/
+/*===== VT_sleep_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution. Closes the framebuffer device.
 
 @param  Input:  None
         Output: None
+  
 @return On success - return TPASS
         On failure - return the error code
 */
@@ -415,7 +432,7 @@ int VT_fb_cleanup(void)
     munmap(fb_mem_ptr, fb_info.smem_len);
     close(fb_fd);
     if(iID == 3 || iID == 1 || iID == 4 || iID == 5)
-    {
+    { 
     draw_pattern(fb_fd_fg,fb_fg_mem_ptr,0,0,0);
      munmap(fb_fg_mem_ptr, fb_fg_info.smem_len);
      close(fb_fd_fg);
@@ -433,26 +450,26 @@ int VT_fb_test()
        tst_resm(TINFO, "color key test");
        if (!colorkey_test())
        {
-         rv = TFAIL;
+         rv = TFAIL; 
          tst_resm(TFAIL, "color key test FAIL");
        }else
-         tst_resm(TPASS, "color key test ok");
+         tst_resm(TPASS, "color key test ok"); 
        break;
   case 2:
        tst_resm(TINFO, "vsync test");
        if (!vsync_test())
        {
-         rv = TFAIL;
+         rv = TFAIL; 
          tst_resm(TFAIL, "vsync test FAIL");
        }else{
-         tst_resm(TPASS, "vsync test ok");
+         tst_resm(TPASS, "vsync test ok"); 
        }
        break;
   case 3:
        tst_resm(TINFO, "global alpha test");
        if (!galpha_test())
        {
-         rv = TFAIL;
+         rv = TFAIL; 
          tst_resm(TFAIL, "alpha test FAIL");
        }else
          tst_resm(TPASS, "alpha test ok");
@@ -461,7 +478,7 @@ int VT_fb_test()
        tst_resm(TINFO, "pan test");
        if (!pan_test())
        {
-         rv = TFAIL;
+         rv = TFAIL; 
          tst_resm(TFAIL, "pan test FAIL");
        }else
          tst_resm(TPASS, "pan test ok");
@@ -470,7 +487,7 @@ int VT_fb_test()
        tst_resm(TINFO, "overlay pos test");
        if (!ovpos_test())
        {
-         rv = TFAIL;
+         rv = TFAIL; 
          tst_resm(TFAIL, "overlay test FAIL");
        }else
          tst_resm(TPASS, "overlay test ok");
@@ -479,7 +496,7 @@ int VT_fb_test()
        tst_resm(TINFO, "draw test test");
        if (!draw_test())
        {
-         rv = TFAIL;
+         rv = TFAIL; 
          tst_resm(TFAIL, "draw test FAIL");
        }else
          tst_resm(TPASS, "draw test ok");
@@ -487,6 +504,7 @@ int VT_fb_test()
   default:
        break;
  }
+ 
  return rv;
 }
 
@@ -509,6 +527,7 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
        rv = TFAIL;
        return rv;
     }
+
     /* Change activation flag and apply it */
     act_mode = mode_info.activate;
     mode_info.activate = FB_ACTIVATE_NOW | FB_ACTIVATE_FORCE;
@@ -518,6 +537,8 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
        rv = TFAIL;
        return rv;
     }
+
+    
     CALL_IOCTL(ioctl(fd, FBIOGET_FSCREENINFO, &fx_fb_info));
     /* Fill in the px struct */
     px.bpp = mode_info.bits_per_pixel / 8;
@@ -530,14 +551,16 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
     px.b_field.offset = mode_info.blue.offset;
     px.b_field.length = mode_info.blue.length;
     px.trans = 0x00;
-    px.line_length = fx_fb_info.line_length / px.bpp;
+    px.line_length = fx_fb_info.line_length / px.bpp; 
     size = px.line_length * px.yres;
+    
     /* Clear screen and fill it with some pattern */
     px.r_color = r;
     px.g_color = g;
     px.b_color = b; /* Set color values */
     for (i = 0; i < size; i++)
         fb_wr_ptr = draw_px(fb_wr_ptr, &px);
+
      /* Restore activation flag */
     #if 1
     mode_info.activate = act_mode;
@@ -545,19 +568,22 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
     #endif
     return rv;
 }
-/*= draw_px =*/
+
+/*===== draw_px =====*/
 /**
 @brief  Computes byte values from given color values depending on color depth and draws one pixel
 
 @param  Input:  where - pointer to the pixel that will be drawn
                 p     - pointer to struct pixel that contains color values and screen color info
         Output: None
+  
 @return pointer to the next pixel that will be drawn
 */
 unsigned char *draw_px(unsigned char *where, struct pixel *p)
 {
 #ifdef MAD_TEST
     __u32 value;
+
     if (!where)
     {
         fprintf(stderr, "where isn't a valid pointer to 'unsigned char'\n");
@@ -578,24 +604,28 @@ unsigned char *draw_px(unsigned char *where, struct pixel *p)
             *where++ = *((unsigned char *)&value + 1);
             *where++ = *((unsigned char *)&value);
             break;
+
         case 24:
             *where++ = *((unsigned char *)&value + 2);
             *where++ = *((unsigned char *)&value + 1);
             *where++ = *((unsigned char *)&value);
             break;
+
         case 32:
             /* Don't use transparency byte; this byte always equals 0 */
-            *where++;
+            *where++; 
             *where++ = *((unsigned char *)&value + 2);
             *where++ = *((unsigned char *)&value + 1);
             *where++ = *((unsigned char *)&value);
             break;
+
         default:
             break;
     }
     return where;
 #else
         __u32 value;
+        
         if (!where)
         {
                 tst_resm(TFAIL, "where isn't a valid pointer to 'unsigned char' ");
@@ -606,10 +636,12 @@ unsigned char *draw_px(unsigned char *where, struct pixel *p)
                 tst_resm(TFAIL, "p isn't a valid pointer to 'struct pixel' ");
                 return where;
         }
+        
         /* Convert pixel color represented by 3 bytes to appropriate color depth */
         value = (p->r_color * (1 << p->r_field.length) / (1 << 8) ) << p->r_field.offset;
         value |= (p->g_color * (1 << p->g_field.length) / (1 << 8) ) << p->g_field.offset;
         value |= (p->b_color * (1 << p->b_field.length) / (1 << 8) ) << p->b_field.offset;
+        
 /*        if ( p->t_field.length != 0)
         {
                value |= (p->trans * (1 << p->t_field.length) / (1 << 8) ) << p->t_field.offset;
@@ -620,20 +652,24 @@ unsigned char *draw_px(unsigned char *where, struct pixel *p)
                 *where++ = *((unsigned char *)&value);
                 *where++ = *((unsigned char *)&value + 1);
                 break;
+                
         case 24:
                 *where++ = *((unsigned char *)&value);
                 *where++ = *((unsigned char *)&value + 1);
                 *where++ = *((unsigned char *)&value + 2);
                 break;
+                
         case 32:
                 *where++ = *((unsigned char *)&value);
-                *where++ = *((unsigned char *)&value + 1);
+                *where++ = *((unsigned char *)&value + 1); 
                 *where++ = *((unsigned char *)&value + 2);
                 *where++ = *((unsigned char *)&value + 3);
                 break;
+                
         default:
                 break;
         }
+        
         return where;
 #endif
 }

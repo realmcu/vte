@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   ata_driver_testapp.c
 
         @brief  Source file for ATA Disk driver test.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -20,13 +20,13 @@ A.Ozerov/b00320              10/09/2006     TLSbo76800  Initial version.
 D.Kazachkov/b00316            6/12/2006     TLSbo80788  Cosmetic fix
 
 
-====================
+====================================================================================================
 Portability: ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
@@ -54,9 +54,9 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "libata_testapp.h"
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-=======================*/
+===================================================================================================*/
 int     fd = 0;
 
 extern const char *minor_str[];
@@ -66,7 +66,7 @@ static int do_writing = 0,
 static int get_IDentity = 0;
 static int open_flags = O_RDWR | O_NONBLOCK;
 
-const char *cfg_str[] =
+const char *cfg_str[] = 
 {       "", " HardSect", " SoftSect", " NotMFM",
         " HdSw>15uSec", " SpinMotCtl", " Fixed", " Removeable",
         " DTR<=5Mbs", " DTR>5Mbs", " DTR>10Mbs", " RotSpdTol>.5%",
@@ -76,12 +76,12 @@ const char *cfg_str[] =
 const char *SlowMedFast[] = { "slow", "medium", "fast", "eide", "ata" };
 const char *BuffType[] = { "unknown", "1Sect", "DualPort", "DualPortCache" };
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= VT_ata_driver_test_setup =*/
+/*================================================================================================*/
+/*===== VT_ata_driver_test_setup =====*/
 /**
 @brief  This function assumes the pre-condition of the test case execution
 
@@ -90,14 +90,14 @@ const char *BuffType[] = { "unknown", "1Sect", "DualPort", "DualPortCache" };
 @return On success - return TPASS.
         On failure - return the error code.
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ata_driver_test_setup(void)
 {
         return TPASS;
 }
 
-/*====================*/
-/*= VT_ata_driver_test_cleanup =*/
+/*================================================================================================*/
+/*===== VT_ata_driver_test_cleanup =====*/
 /**
 @brief  This function assumes the post-condition of the test case execution
 
@@ -105,13 +105,13 @@ int VT_ata_driver_test_setup(void)
 
 @return None.
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ata_driver_test_cleanup(void)
 {
         return TPASS;
 }
 
-/*====================*/
+/*================================================================================================*/
 static void dmpstr(const char *prefix, unsigned int i, const char *s[], unsigned int maxi)
 {
         if (i > maxi)
@@ -120,12 +120,12 @@ static void dmpstr(const char *prefix, unsigned int i, const char *s[], unsigned
                 tst_resm(TINFO, "%s%s", prefix, s[i]);
 }
 
-/*====================*/
+/*================================================================================================*/
 static void dump_identity(const struct hd_driveid *id)
 {
         int     i;
-        char    pmodes[64] = { 0, },
-                dmodes[128] = { 0,},
+        char    pmodes[64] = { 0, }, 
+                dmodes[128] = { 0,}, 
                 umodes[128] = { 0,};
 
         const unsigned short int *id_regs = (const void *) id;
@@ -315,79 +315,79 @@ static void dump_identity(const struct hd_driveid *id)
 
 int ata_readperfrom_test(int fd)
 {
- int rv=TPASS;
- char *readbuf;
- unsigned long long size;
- struct timeval tv1,tv2;
- long  interval;
- long sumInterval=0;
- double readspeed;
- double MByte=1000000/1024;
-  int     shmid;
-  int i,readtimes=10;
+	int rv=TPASS;
+	char *readbuf;
+	unsigned long long size;
+	struct timeval tv1,tv2;
+	long  interval;
+	long sumInterval=0;
+	double readspeed;
+	double MByte=1000000/1024;
+	 int     shmid;
+	 int i,readtimes=10;
 
- for(i=0;i<readtimes;i++)
- {
-  if ((shmid = shmget(IPC_PRIVATE, TIMING_BUF_BYTES, 0600)) == -1)
-         {
-                 perror("could not allocate sharedmem buf");
-                 return TFAIL;
-         }
-         if (shmctl(shmid, SHM_LOCK, NULL) == -1)
-         {
-                 perror("could not lock sharedmem buf");
-                 (void) shmctl(shmid, IPC_RMID, NULL);
-                 return TFAIL;
-         }
-         if ((readbuf = shmat(shmid, (char *) 0, 0)) == (char *) -1)
-         {
-                 perror("could not attach sharedmem buf");
-                 (void) shmctl(shmid, IPC_RMID, NULL);
-                 return TFAIL;
-         }
-         if (shmctl(shmid, IPC_RMID, NULL) == -1)
-                 perror("shmctl(,IPC_RMID,) failed");
+	for(i=0;i<readtimes;i++)
+	{
+		if ((shmid = shmget(IPC_PRIVATE, TIMING_BUF_BYTES, 0600)) == -1)
+	        {
+	                perror("could not allocate sharedmem buf");
+	                return TFAIL;
+	        }
+	        if (shmctl(shmid, SHM_LOCK, NULL) == -1)
+	        {
+	                perror("could not lock sharedmem buf");
+	                (void) shmctl(shmid, IPC_RMID, NULL);
+	                return TFAIL;
+	        }
+	        if ((readbuf = shmat(shmid, (char *) 0, 0)) == (char *) -1)
+	        {
+	                perror("could not attach sharedmem buf");
+	                (void) shmctl(shmid, IPC_RMID, NULL);
+	                return TFAIL;
+	        }
+	        if (shmctl(shmid, IPC_RMID, NULL) == -1)
+	                perror("shmctl(,IPC_RMID,) failed");
 
-         /* Clear out the device request queues & give them time to complete */
-         sync();
-         sleep(3);
+	        /* Clear out the device request queues & give them time to complete */
+	        sync();
+	        sleep(3);
 
-  gettimeofday(&tv1,NULL);
+		gettimeofday(&tv1,NULL);
 
-  size=read(fd,readbuf,TIMING_BUF_BYTES);
+		size=read(fd,readbuf,TIMING_BUF_BYTES);
 
-  gettimeofday(&tv2, NULL);
+		gettimeofday(&tv2, NULL);
 
-  if(size!=TIMING_BUF_BYTES)
-  {
-   if (size)
-                 {
-                         if (size== -1)
-                                 tst_resm(TINFO,"read() failed");
-                         else
-                                 tst_resm(TINFO, "read(%u) returned %u bytes", TIMING_BUF_BYTES, size);
-                 }
-                 else
-                 {
-                         tst_resm(TINFO,"read() hit EOF - device too small\n");
-                 }
-     rv=TFAIL;
-                 return rv;
-  }
+		if(size!=TIMING_BUF_BYTES)
+		{
+			if (size)
+	                {
+	                        if (size== -1)
+	                                tst_resm(TINFO,"read() failed");
+	                        else
+	                                tst_resm(TINFO, "read(%u) returned %u bytes", TIMING_BUF_BYTES, size);
+	                }
+	                else
+	                {
+	                        tst_resm(TINFO,"read() hit EOF - device too small\n");
+	                }
+			  rv=TFAIL;
+	                return rv;	
+		}
 
-  interval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
-  sumInterval=sumInterval+interval;
+		interval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
+		sumInterval=sumInterval+interval;
+		
 
+	}
 
- }
-
- readspeed=(MByte*((double)size*readtimes)/sumInterval)/1024;
-
- tst_resm(TINFO,"HDD average read speed  %lf MB/sec",readspeed);
-
-  if (-1 == shmdt(readbuf))
+	readspeed=(MByte*((double)size*readtimes)/sumInterval)/1024;
+	
+	tst_resm(TINFO,"HDD average read speed  %lf MB/sec",readspeed);
+	
+	 if (-1 == shmdt(readbuf))
                 perror("could not detach sharedmem buf");
- return rv;
+	return rv;
 }
 
 //ata writeperformance test
@@ -395,307 +395,307 @@ int ata_readperfrom_test(int fd)
 int ata_writeperform_test(int fd)
 {
 
- int rv=TPASS;
- char *writebuf;
- unsigned long long size;
- struct timeval tv1,tv2;
- long  interval;
- long sumInterval=0;
- double writespeed;
- double MByte=1000000/1024;
-  int     shmid;
-  int i,writetimes=10;
+	int rv=TPASS;
+	char *writebuf;
+	unsigned long long size;
+	struct timeval tv1,tv2;
+	long  interval;
+	long sumInterval=0;
+	double writespeed;
+	double MByte=1000000/1024;
+	 int     shmid;
+	 int i,writetimes=10;
 
- for(i=0;i<writetimes;i++)
- {
-  if ((shmid = shmget(IPC_PRIVATE, TIMING_BUF_BYTES, 0600)) == -1)
-         {
-                 perror("could not allocate sharedmem buf");
-                 return TFAIL;
-         }
-         if (shmctl(shmid, SHM_LOCK, NULL) == -1)
-         {
-                 perror("could not lock sharedmem buf");
-                 (void) shmctl(shmid, IPC_RMID, NULL);
-                 return TFAIL;
-         }
-         if ((writebuf = shmat(shmid, (char *) 0, 0)) == (char *) -1)
-         {
-                 perror("could not attach sharedmem buf");
-                 (void) shmctl(shmid, IPC_RMID, NULL);
-                 return TFAIL;
-         }
-         if (shmctl(shmid, IPC_RMID, NULL) == -1)
-                 perror("shmctl(,IPC_RMID,) failed");
+	for(i=0;i<writetimes;i++)
+	{
+		if ((shmid = shmget(IPC_PRIVATE, TIMING_BUF_BYTES, 0600)) == -1)
+	        {
+	                perror("could not allocate sharedmem buf");
+	                return TFAIL;
+	        }
+	        if (shmctl(shmid, SHM_LOCK, NULL) == -1)
+	        {
+	                perror("could not lock sharedmem buf");
+	                (void) shmctl(shmid, IPC_RMID, NULL);
+	                return TFAIL;
+	        }
+	        if ((writebuf = shmat(shmid, (char *) 0, 0)) == (char *) -1)
+	        {
+	                perror("could not attach sharedmem buf");
+	                (void) shmctl(shmid, IPC_RMID, NULL);
+	                return TFAIL;
+	        }
+	        if (shmctl(shmid, IPC_RMID, NULL) == -1)
+	                perror("shmctl(,IPC_RMID,) failed");
 
-         /* Clear out the device request queues & give them time to complete */
-         sync();
-         sleep(3);
+	        /* Clear out the device request queues & give them time to complete */
+	        sync();
+	        sleep(3);
 
-  gettimeofday(&tv1,NULL);
+		gettimeofday(&tv1,NULL);
 
-  size=write(fd,writebuf,TIMING_BUF_BYTES);
+		size=write(fd,writebuf,TIMING_BUF_BYTES);
 
-  gettimeofday(&tv2, NULL);
+		gettimeofday(&tv2, NULL);
 
-  if(size!=TIMING_BUF_BYTES)
-  {
-   if (size)
-                 {
-                         if (size== -1)
-                                 tst_resm(TINFO,"write() failed");
-                         else
-                                 tst_resm(TINFO, "write(%u) returned %u bytes", TIMING_BUF_BYTES, size);
-                 }
-                 else
-                 {
-                         tst_resm(TINFO,"write() hit EOF - device too small\n");
-                 }
-     rv=TFAIL;
-                 return rv;
-  }
+		if(size!=TIMING_BUF_BYTES)
+		{
+			if (size)
+	                {
+	                        if (size== -1)
+	                                tst_resm(TINFO,"write() failed");
+	                        else
+	                                tst_resm(TINFO, "write(%u) returned %u bytes", TIMING_BUF_BYTES, size);
+	                }
+	                else
+	                {
+	                        tst_resm(TINFO,"write() hit EOF - device too small\n");
+	                }
+			  rv=TFAIL;
+	                return rv;	
+		}
+		
+		interval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
+		sumInterval=sumInterval+interval;
+		
+	}
+	
+	
+	//writespeed=(MByte*((double)size)/interval)/1024;
+	writespeed=(MByte*((double)size*writetimes)/sumInterval)/1024;
 
-  interval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
-  sumInterval=sumInterval+interval;
-
- }
-
-
- //writespeed=(MByte*((double)size)/interval)/1024;
- writespeed=(MByte*((double)size*writetimes)/sumInterval)/1024;
-
-
- tst_resm(TINFO,"HDD average write speed %lf MB/sec",writespeed);
-  if (-1 == shmdt(writebuf))
+	
+	tst_resm(TINFO,"HDD average write speed %lf MB/sec",writespeed);
+	 if (-1 == shmdt(writebuf))
                 perror("could not detach sharedmem buf");
- return rv;
-
+	return rv;
+	
 }
 
 
-//test read/write performance at PIO mode
+//test read/write performance at PIO mode 
 
 int ata_ReadWritePerformancePIOMode(int fd)
 {
- //unsigned char args1[4+512] = { WIN_SETFEATURES, 0, 0, 1, };
- unsigned char args1[4 + 512] = { WIN_IDENTIFY, 0, 0, 1, };
- int xfermode;
- int VT_rv_read[5] ={TPASS,TPASS,TPASS,TPASS,TPASS};
- int VT_rv_write[5] ={TPASS,TPASS,TPASS,TPASS,TPASS};
- int VT_rv=TPASS;
- int i=0,maxPIOMode=5;
- int failFlag=TPASS;
+	//unsigned char args1[4+512] = { WIN_SETFEATURES, 0, 0, 1, };
+	unsigned char args1[4 + 512] = { WIN_IDENTIFY, 0, 0, 1, };
+	int xfermode;
+	int VT_rv_read[5] ={TPASS,TPASS,TPASS,TPASS,TPASS};
+	int VT_rv_write[5] ={TPASS,TPASS,TPASS,TPASS,TPASS};
+	int VT_rv=TPASS;
+	int i=0,maxPIOMode=5;
+	int failFlag=TPASS;
+	
+	for(i=0;i<maxPIOMode;i++)
+	{
+		//args1[0]=WIN_SETFEATURES;
+		//args1[1]=0;
+		//args1[2]=3;
+		//args1[3]=0;
+		tst_resm(TINFO,"read/write performance at PIO mode %d",i);
+		xfermode=8+i;;
+		args1[1] = xfermode;
+	    tst_resm(TINFO, "setting xfermode to %d", xfermode);
+	    //interpret_xfermode(xfermode);
 
- for(i=0;i<maxPIOMode;i++)
- {
-  //args1[0]=WIN_SETFEATURES;
-  //args1[1]=0;
-  //args1[2]=3;
-  //args1[3]=0;
-  tst_resm(TINFO,"read/write performance at PIO mode %d",i);
-  xfermode=8+i;;
-  args1[1] = xfermode;
-     tst_resm(TINFO, "setting xfermode to %d", xfermode);
-     //interpret_xfermode(xfermode);
+	    if (ioctl(fd, HDIO_DRIVE_CMD, &args1) != TPASS)
+	    {
+	    	tst_resm(TFAIL, "HDIO_DRIVE_CMD(setxfermode) failed. Error string: %s",
+	                                 strerror(errno));
+	        VT_rv = TFAIL;
+			return VT_rv;
+	    }
 
-     if (ioctl(fd, HDIO_DRIVE_CMD, &args1) != TPASS)
-     {
-     tst_resm(TFAIL, "HDIO_DRIVE_CMD(setxfermode) failed. Error string: %s",
-                                  strerror(errno));
-         VT_rv = TFAIL;
-   return VT_rv;
-     }
+		flush_buffer_cache(fd);
+		
+		//ata read performance at PIO mode 0
+		tst_resm(TINFO,"ATA read performance at PIO mode %d",i);
+		VT_rv=ata_readperfrom_test(fd);
+		if(VT_rv==TFAIL)
+		{
+			tst_resm(TFAIL,"read performance test failed at PIO mode %d",i);
+			VT_rv_read[i]=TFAIL;
+		}
 
-  flush_buffer_cache(fd);
+		flush_buffer_cache(fd);
+		
+		//ata write performance at PIO mode 0
+		tst_resm(TINFO,"ATA write performance at PIO mode %d",i);
+		VT_rv=ata_writeperform_test(fd);
+		if(VT_rv==TFAIL)
+		{
+			tst_resm(TFAIL,"write performance test failed at PIO mode %d",i);
+			VT_rv_write[i]=TFAIL;
+		}
+		flush_buffer_cache(fd);
+	}
 
-  //ata read performance at PIO mode 0
-  tst_resm(TINFO,"ATA read performance at PIO mode %d",i);
-  VT_rv=ata_readperfrom_test(fd);
-  if(VT_rv==TFAIL)
-  {
-   tst_resm(TFAIL,"read performance test failed at PIO mode %d",i);
-   VT_rv_read[i]=TFAIL;
-  }
+	for(i=0;i<maxPIOMode;i++)
+	{
+		if(VT_rv_read[i]==TFAIL || VT_rv_write[i]==TFAIL)
+			{
+			failFlag=TFAIL;
+			break;
+		}
+	}
 
-  flush_buffer_cache(fd);
-
-  //ata write performance at PIO mode 0
-  tst_resm(TINFO,"ATA write performance at PIO mode %d",i);
-  VT_rv=ata_writeperform_test(fd);
-  if(VT_rv==TFAIL)
-  {
-   tst_resm(TFAIL,"write performance test failed at PIO mode %d",i);
-   VT_rv_write[i]=TFAIL;
-  }
-  flush_buffer_cache(fd);
- }
-
- for(i=0;i<maxPIOMode;i++)
- {
-  if(VT_rv_read[i]==TFAIL || VT_rv_write[i]==TFAIL)
-   {
-   failFlag=TFAIL;
-   break;
-  }
- }
-
- if(failFlag==TFAIL)
-  {
-  tst_resm(TFAIL,"read/write performance test at PIO mode failed");
-  return failFlag;
- }
- return TPASS;
+	if(failFlag==TFAIL)
+		{
+		tst_resm(TFAIL,"read/write performance test at PIO mode failed");
+		return failFlag;
+	}
+	return TPASS;
 }
 
 int ata_ReadWritePerformanceMDMAMode(int fd)
 {
- //unsigned char args1[4+512] = { WIN_SETFEATURES, 0, 0, 1, };
- unsigned char args1[4 + 512] = { WIN_IDENTIFY, 0, 0, 1, };
- int xfermode;
- int VT_rv_read[3] ={TPASS,TPASS,TPASS};
- int VT_rv_write[3] ={TPASS,TPASS,TPASS};
- int VT_rv=TPASS;
- int i=0,maxMDMAMode=3;
- int failFlag=TPASS;
+	//unsigned char args1[4+512] = { WIN_SETFEATURES, 0, 0, 1, };
+	unsigned char args1[4 + 512] = { WIN_IDENTIFY, 0, 0, 1, };
+	int xfermode;
+	int VT_rv_read[3] ={TPASS,TPASS,TPASS};
+	int VT_rv_write[3] ={TPASS,TPASS,TPASS};
+	int VT_rv=TPASS;
+	int i=0,maxMDMAMode=3;
+	int failFlag=TPASS;
+	
+	for(i=0;i<maxMDMAMode;i++)
+	{
+		//args1[0]=WIN_SETFEATURES;
+		//args1[1]=0;
+		//args1[2]=3;
+		//args1[3]=0;
+		tst_resm(TINFO,"read/write performance at MDMA mode %d",i);
+		xfermode=32+i;;
+		args1[1] = xfermode;
+	    tst_resm(TINFO, "setting xfermode to %d", xfermode);
+	    //interpret_xfermode(xfermode);
 
- for(i=0;i<maxMDMAMode;i++)
- {
-  //args1[0]=WIN_SETFEATURES;
-  //args1[1]=0;
-  //args1[2]=3;
-  //args1[3]=0;
-  tst_resm(TINFO,"read/write performance at MDMA mode %d",i);
-  xfermode=32+i;;
-  args1[1] = xfermode;
-     tst_resm(TINFO, "setting xfermode to %d", xfermode);
-     //interpret_xfermode(xfermode);
+	    if (ioctl(fd, HDIO_DRIVE_CMD, &args1) != TPASS)
+	    {
+	    	tst_resm(TFAIL, "HDIO_DRIVE_CMD(setxfermode) failed. Error string: %s",
+	                                 strerror(errno));
+	        VT_rv = TFAIL;
+			return VT_rv;
+	    }
 
-     if (ioctl(fd, HDIO_DRIVE_CMD, &args1) != TPASS)
-     {
-     tst_resm(TFAIL, "HDIO_DRIVE_CMD(setxfermode) failed. Error string: %s",
-                                  strerror(errno));
-         VT_rv = TFAIL;
-   return VT_rv;
-     }
+		flush_buffer_cache(fd);
+		
+		//ata read performance at MDMA mode 0
+		tst_resm(TINFO,"ATA read performance at MDMA mode %d",i);
+		VT_rv=ata_readperfrom_test(fd);
+		if(VT_rv==TFAIL)
+		{
+			tst_resm(TFAIL,"read performance test failed at MDMA mode %d",i);
+			VT_rv_read[i]=TFAIL;
+		}
 
-  flush_buffer_cache(fd);
+		flush_buffer_cache(fd);
+		
+		//ata write performance at MDMA mode 0
+		tst_resm(TINFO,"ATA write performance at MDMA mode %d",i);
+		VT_rv=ata_writeperform_test(fd);
+		if(VT_rv==TFAIL)
+		{
+			tst_resm(TFAIL,"write performance test failed at MDMA mode %d",i);
+			VT_rv_write[i]=TFAIL;
+		}
+		flush_buffer_cache(fd);
+	}
 
-  //ata read performance at MDMA mode 0
-  tst_resm(TINFO,"ATA read performance at MDMA mode %d",i);
-  VT_rv=ata_readperfrom_test(fd);
-  if(VT_rv==TFAIL)
-  {
-   tst_resm(TFAIL,"read performance test failed at MDMA mode %d",i);
-   VT_rv_read[i]=TFAIL;
-  }
+	for(i=0;i<maxMDMAMode;i++)
+	{
+		if(VT_rv_read[i]==TFAIL || VT_rv_write[i]==TFAIL)
+			{
+			failFlag=TFAIL;
+			break;
+		}
+	}
 
-  flush_buffer_cache(fd);
-
-  //ata write performance at MDMA mode 0
-  tst_resm(TINFO,"ATA write performance at MDMA mode %d",i);
-  VT_rv=ata_writeperform_test(fd);
-  if(VT_rv==TFAIL)
-  {
-   tst_resm(TFAIL,"write performance test failed at MDMA mode %d",i);
-   VT_rv_write[i]=TFAIL;
-  }
-  flush_buffer_cache(fd);
- }
-
- for(i=0;i<maxMDMAMode;i++)
- {
-  if(VT_rv_read[i]==TFAIL || VT_rv_write[i]==TFAIL)
-   {
-   failFlag=TFAIL;
-   break;
-  }
- }
-
- if(failFlag==TFAIL)
-  {
-  tst_resm(TFAIL,"read/write performance test at MDMA mode failed");
-  return failFlag;
- }
-
- return TPASS;
+	if(failFlag==TFAIL)
+		{
+		tst_resm(TFAIL,"read/write performance test at MDMA mode failed");
+		return failFlag;
+	}
+	
+	return TPASS;
 }
 
 int ata_ReadWritePerformanceUDMAMode(int fd)
 {
- //unsigned char args1[4+512] = { WIN_SETFEATURES, 0, 0, 1, };
- unsigned char args1[4 + 512] = { WIN_IDENTIFY, 0, 0, 1, };
- int xfermode;
- int VT_rv_read[4] ={TPASS,TPASS,TPASS,TPASS};
- int VT_rv_write[4] ={TPASS,TPASS,TPASS,TPASS};
- int VT_rv=TPASS;
- int i=0,maxUDMAMode=4;
- int failFlag=TPASS;
+	//unsigned char args1[4+512] = { WIN_SETFEATURES, 0, 0, 1, };
+	unsigned char args1[4 + 512] = { WIN_IDENTIFY, 0, 0, 1, };
+	int xfermode;
+	int VT_rv_read[4] ={TPASS,TPASS,TPASS,TPASS};
+	int VT_rv_write[4] ={TPASS,TPASS,TPASS,TPASS};
+	int VT_rv=TPASS;
+	int i=0,maxUDMAMode=4;
+	int failFlag=TPASS;
+	
+	for(i=0;i<maxUDMAMode;i++)
+	{
+		//args1[0]=WIN_SETFEATURES;
+		//args1[1]=0;
+		//args1[2]=3;
+		//args1[3]=0;
+		tst_resm(TINFO,"read/write performance at UDMA mode %d",i);
+		xfermode=64+i;;
+		args1[1] = xfermode;
+	    tst_resm(TINFO, "setting xfermode to %d", xfermode);
+	    //interpret_xfermode(xfermode);
 
- for(i=0;i<maxUDMAMode;i++)
- {
-  //args1[0]=WIN_SETFEATURES;
-  //args1[1]=0;
-  //args1[2]=3;
-  //args1[3]=0;
-  tst_resm(TINFO,"read/write performance at UDMA mode %d",i);
-  xfermode=64+i;;
-  args1[1] = xfermode;
-     tst_resm(TINFO, "setting xfermode to %d", xfermode);
-     //interpret_xfermode(xfermode);
+	    if (ioctl(fd, HDIO_DRIVE_CMD, &args1) != TPASS)
+	    {
+	    	tst_resm(TFAIL, "HDIO_DRIVE_CMD(setxfermode) failed. Error string: %s",
+	                                 strerror(errno));
+	        VT_rv = TFAIL;
+			return VT_rv;
+	    }
 
-     if (ioctl(fd, HDIO_DRIVE_CMD, &args1) != TPASS)
-     {
-     tst_resm(TFAIL, "HDIO_DRIVE_CMD(setxfermode) failed. Error string: %s",
-                                  strerror(errno));
-         VT_rv = TFAIL;
-   return VT_rv;
-     }
+		flush_buffer_cache(fd);
+		
+		//ata read performance at MDMA mode 0
+		tst_resm(TINFO,"ATA read performance at UDMA mode %d",i);
+		VT_rv=ata_readperfrom_test(fd);
+		if(VT_rv==TFAIL)
+		{
+			tst_resm(TFAIL,"read performance test failed at UDMA mode %d",i);
+			VT_rv_read[i]=TFAIL;
+		}
 
-  flush_buffer_cache(fd);
+		flush_buffer_cache(fd);
+		
+		//ata write performance at MDMA mode 0
+		tst_resm(TINFO,"ATA write performance at UDMA mode %d",i);
+		VT_rv=ata_writeperform_test(fd);
+		if(VT_rv==TFAIL)
+		{
+			tst_resm(TFAIL,"write performance test failed at UDMA mode %d",i);
+			VT_rv_write[i]=TFAIL;
+		}
+		flush_buffer_cache(fd);
+	}
 
-  //ata read performance at MDMA mode 0
-  tst_resm(TINFO,"ATA read performance at UDMA mode %d",i);
-  VT_rv=ata_readperfrom_test(fd);
-  if(VT_rv==TFAIL)
-  {
-   tst_resm(TFAIL,"read performance test failed at UDMA mode %d",i);
-   VT_rv_read[i]=TFAIL;
-  }
+	for(i=0;i<maxUDMAMode;i++)
+	{
+		if(VT_rv_read[i]==TFAIL || VT_rv_write[i]==TFAIL)
+			{
+			failFlag=TFAIL;
+			break;
+		}
+	}
 
-  flush_buffer_cache(fd);
-
-  //ata write performance at MDMA mode 0
-  tst_resm(TINFO,"ATA write performance at UDMA mode %d",i);
-  VT_rv=ata_writeperform_test(fd);
-  if(VT_rv==TFAIL)
-  {
-   tst_resm(TFAIL,"write performance test failed at UDMA mode %d",i);
-   VT_rv_write[i]=TFAIL;
-  }
-  flush_buffer_cache(fd);
- }
-
- for(i=0;i<maxUDMAMode;i++)
- {
-  if(VT_rv_read[i]==TFAIL || VT_rv_write[i]==TFAIL)
-   {
-   failFlag=TFAIL;
-   break;
-  }
- }
-
- if(failFlag==TFAIL)
-  {
-  tst_resm(TFAIL,"read/write performance test at UDMA mode failed");
-  return failFlag;
- }
-
- return TPASS;
+	if(failFlag==TFAIL)
+		{
+		tst_resm(TFAIL,"read/write performance test at UDMA mode failed");
+		return failFlag;
+	}
+	
+	return TPASS;	
 }
 
 
 
-/*====================*/
+/*================================================================================================*/
 void flush_buffer_cache(int fd)
 {
         fsync(fd);      /* flush buffers */
@@ -705,7 +705,7 @@ void flush_buffer_cache(int fd)
                 perror("HDIO_DRIVE_CMD(null)(wait for flush complete) failed");
 }
 
-/*====================*/
+/*================================================================================================*/
 int read_big_block(int fd, char *buf)
 {
         int     i,
@@ -732,7 +732,7 @@ int read_big_block(int fd, char *buf)
         return 0;
 }
 
-/*====================*/
+/*================================================================================================*/
 int write_big_block(int fd, char *buf)
 {
         int     i,
@@ -759,7 +759,7 @@ int write_big_block(int fd, char *buf)
         return 0;
 }
 
-/*====================*/
+/*================================================================================================*/
 static int do_blkgetsize(int fd, unsigned long long *blksize64)
 {
         int     rc;
@@ -777,7 +777,7 @@ static int do_blkgetsize(int fd, unsigned long long *blksize64)
         return rc;
 }
 
-/*====================*/
+/*================================================================================================*/
 void time_device(int fd)
 {
         char   *buf;
@@ -827,12 +827,12 @@ void time_device(int fd)
                do_writing ? "writes" : "reads");
         fflush(stdout);
 
-        /*
+        /* 
         * getitimer() is used rather than gettimeofday() because
         * it is much more consistent(on my machine, at least).
         */
 
-        struct itimerval e3 =
+        struct itimerval e3 = 
         {
                 {1000, 0},
                 {1000, 0}
@@ -866,13 +866,13 @@ void time_device(int fd)
                 perror("could not detach sharedmem buf");
 }
 
-/*====================*/
+/*================================================================================================*/
 static void on_off(unsigned int value)
 {
         printf(value ? "(on)" : "(off)");
 }
 
-/*====================*/
+/*================================================================================================*/
 static void interpret_xfermode(unsigned int xfermode)
 {
         switch (xfermode)
@@ -929,8 +929,8 @@ static void interpret_xfermode(unsigned int xfermode)
         }
 }
 
-/*====================*/
-/*= VT_ata_driver_test =*/
+/*================================================================================================*/
+/*===== VT_ata_driver_test =====*/
 /**
 @brief  ATA Disk driver test scenario.
 
@@ -940,7 +940,7 @@ static void interpret_xfermode(unsigned int xfermode)
 @return On success - return TPASS
         On failure - return the error code.
 */
-/*====================*/
+/*================================================================================================*/
 int VT_ata_driver_test(char *devname, int testcase, int dma_flag, int io32bit, int xfermode,
                        int flush_buffer)
 {
@@ -954,7 +954,7 @@ int VT_ata_driver_test(char *devname, int testcase, int dma_flag, int io32bit, i
         static struct hd_driveid id;
         unsigned char args1[4] = { WIN_SETFEATURES, 0, 3, 0 };
         unsigned char args2[4 + 512] = { WIN_IDENTIFY, 0, 0, 1, };
-
+         
         unsigned i;
         __u16  *id1;
 
@@ -1003,7 +1003,7 @@ int VT_ata_driver_test(char *devname, int testcase, int dma_flag, int io32bit, i
                         VT_rv = TFAIL;
                 }
                 break;
-
+      
         case 1:
                 if (ioctl(fd, HDIO_GET_IDENTITY, &id) == TPASS)
                 {
@@ -1062,10 +1062,10 @@ int VT_ata_driver_test(char *devname, int testcase, int dma_flag, int io32bit, i
                 do_timings = 1;
                 time_device(fd);
                 break;
-
+       
         case 4:
-  // modify by Victor Cui 30/12/2008
-  //args1[2] = xfermode;
+		// modify by Victor Cui 30/12/2008 
+		//args1[2] = xfermode;
                 args2[2] = xfermode;
                 tst_resm(TINFO, "setting xfermode to %d", xfermode);
                 interpret_xfermode(xfermode);
@@ -1077,33 +1077,33 @@ int VT_ata_driver_test(char *devname, int testcase, int dma_flag, int io32bit, i
                         VT_rv = TFAIL;
                 }
                 break;
-  case 5:
-   //PIO mode read/write performance
-   VT_rv=ata_ReadWritePerformancePIOMode(fd);
-   if(VT_rv==TFAIL)
-   {
-    tst_resm(TFAIL,"HDD read/write performance test at PIO mode failed");
-   }
-   break;
-
-  case 6:
-   //MDMA mode read/write performance
-   VT_rv=ata_ReadWritePerformanceMDMAMode(fd);
-   if(VT_rv==TFAIL)
-   {
-    tst_resm(TFAIL,"HDD read/write performance test at MDMA mode failed");
-
-   }
-   break;
-  //UDMA mode read/write performance
-  case 7:
-   VT_rv=ata_ReadWritePerformanceUDMAMode(fd);
-   if(VT_rv==TFAIL)
-    {
-    tst_resm(TFAIL,"HDD read/write performance test at UDMA mode failed");
-   }
-   break;
-
+		case 5: 
+			//PIO mode read/write performance
+			VT_rv=ata_ReadWritePerformancePIOMode(fd);
+			if(VT_rv==TFAIL)
+			{
+				tst_resm(TFAIL,"HDD read/write performance test at PIO mode failed");
+			}
+			break;
+			
+		case 6: 
+			//MDMA mode read/write performance
+			VT_rv=ata_ReadWritePerformanceMDMAMode(fd);
+			if(VT_rv==TFAIL)
+			{
+				tst_resm(TFAIL,"HDD read/write performance test at MDMA mode failed");
+			
+			}
+			break;
+		//UDMA mode read/write performance
+		case 7: 
+			VT_rv=ata_ReadWritePerformanceUDMAMode(fd);
+			if(VT_rv==TFAIL)
+				{
+				tst_resm(TFAIL,"HDD read/write performance test at UDMA mode failed");
+			}
+			break;
+		
         }
 
         if (flush_buffer)

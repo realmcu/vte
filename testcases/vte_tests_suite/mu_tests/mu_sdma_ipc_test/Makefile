@@ -4,7 +4,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ##############################################################################
 #
 #   @file   Makefile
@@ -19,8 +19,8 @@
 #
 #Author (core ID)          Date         CR Number    Description of Changes
 #-----------------------   ----------   ----------   -------------------------
-#I. Semenchukov/smng001c   02/03/2005   TLSbo47942   Initial version
-#L.Delaspre/rc149c         07/04/2005   TLSbo48760   VTE 1.9 integration
+#I. Semenchukov/smng001c   02/03/2005   TLSbo47942   Initial version 
+#L.Delaspre/rc149c         07/04/2005   TLSbo48760   VTE 1.9 integration 
 #
 ##############################################################################
 

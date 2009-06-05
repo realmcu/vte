@@ -12,15 +12,15 @@
 #       Freescale Semiconductor, Inc.
 #
 ####################################################################################################
-#Revision History:
+#Revision History:                                                                                 
 #                            Modification     Tracking
-#Author/core ID                  Date          Number    Description of Changes
+#Author/core ID                  Date          Number    Description of Changes                    
 #-------------------------   ------------    ----------  -------------------------------------------
-#S.ZAVJALOV/-----             13/07/2004     TLSbo40259  Initial version
-#L.DELASPRE/rc149c            13/08/2004     TLSbo40891  VTE 1.4 integration
+#S.ZAVJALOV/-----             13/07/2004     TLSbo40259  Initial version                          
+#L.DELASPRE/rc149c            13/08/2004     TLSbo40891  VTE 1.4 integration                      
 #L.Delaspre/rc149c            08/12/2004     TLSbo40142  update with Freescale identity
-#A.Ozerov/B00320              10/02/2006     TLSbo61734  Code was cast to coding conventions
-#
+#A.Ozerov/B00320              10/02/2006     TLSbo61734  Code was cast to coding conventions  
+#                                                                                                  
 ####################################################################################################
 #Portability: ARM GCC
 #
@@ -28,7 +28,7 @@
 LTP_DIR = ../../../..
 BIN_DIR = ../../..
 
-CFLAGS +=    -Wall -I$(LTP_DIR)/include
+CFLAGS +=    -Wall -I$(LTP_DIR)/include 
 LOADLIBES += -L$(LTP_DIR)/lib -lltp
 
 SUBDIRS = module

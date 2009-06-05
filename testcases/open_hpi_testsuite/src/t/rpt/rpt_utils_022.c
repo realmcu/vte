@@ -29,9 +29,9 @@
  **/
 int main(int argc, char **argv)
 {
-        RPTable *rptable  (RPTable *)g_malloc0(sizeof(RPTable));
+        RPTable *rptable = (RPTable *)g_malloc0(sizeof(RPTable));
 
-        rptentries[0].ResourceId  RPT_ENTRY_BEGIN;
+        rptentries[0].ResourceId = RPT_ENTRY_BEGIN;
 
         if (!oh_add_resource(rptable, rptentries, NULL, 0))
                 return 1;

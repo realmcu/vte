@@ -6,23 +6,23 @@
 #======================================================================
 #
 #                             Freescale SemiconductorConfidential Proprietary
-#                   (c) Copyright 2004, Freescale Semiconductor, Inc.  All rights reserved.
-#
-#Presence of a copyright notice is not an acknowledgement of publication.
-#This software file listing contains information of Freescale Semiconductor, Inc. that is of a confidential and
-#proprietary nature and any viewing or use of this file is prohibited without specific written
+#                   (c) Copyright 2004, Freescale Semiconductor, Inc.  All rights reserved.  
+#            
+#Presence of a copyright notice is not an acknowledgement of publication.  
+#This software file listing contains information of Freescale Semiconductor, Inc. that is of a confidential and 
+#proprietary nature and any viewing or use of this file is prohibited without specific written 
 #permission from Freescale Semiconductor, Inc.
-
+     
 #=====================================================================================
 #Revision History:
-#                       Modification Tracking
-# Author          Date  Number  Description of Changes
-#------------------     ------------ ---------- ------------------------------
-#V. Becker/rc023c     31/08/2004 TLSbo40417 Initial version
-#V. Becker/rc023c     27/09/2004 TLSbo40417 Inspection TLS941
-#V. Becker/rc023c       25/10/2004 TLSbo44073 Minor changes
-#V.HALABUDA/HLBV001     12/04/2005 TLSbo40417 control, mandate and limit IrDA stack
-#Rakesh S Joshi/R65956  19/02/2007 TLSbo87888 Added irxfer
+#                       Modification	Tracking
+# Author		        Date		Number		Description of Changes
+#------------------	    ------------	----------	------------------------------
+#V. Becker/rc023c	    31/08/2004	TLSbo40417	Initial version 
+#V. Becker/rc023c	    27/09/2004	TLSbo40417	Inspection TLS941 
+#V. Becker/rc023c       25/10/2004	TLSbo44073	Minor changes 
+#V.HALABUDA/HLBV001     12/04/2005	TLSbo40417	control, mandate and limit IrDA stack
+#Rakesh S Joshi/R65956  19/02/2007	TLSbo87888	Added irxfer
 
 #Set path variable to add vte binaries
 #export TESTCASES_HOME=/tmp/vte/testcases/bin
@@ -33,12 +33,12 @@ tst_resm()
 }
 
 # Function:     setup
-#
+#        
 # Description:  - Check if required commands exits
 #               - Export global variables
 #               - Check if required config files exits
 #               - Create temporary files and directories
-#
+#   
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
 setup()
@@ -47,13 +47,13 @@ setup()
     RV_2=0
     RV=0
     cp -f libopenobex.a /usr/lib/
-    # Total number of test cases in this file.
+    # Total number of test cases in this file. 
     export TST_TOTAL=1
 
-    #The TCID and TST_COUNT variables are required by the LTP
+    #The TCID and TST_COUNT variables are required by the LTP 
     #command line harness APIs, these variables are not local to this program.
 
- #Load IrDA module in the kernel
+	#Load IrDA module in the kernel
     modprobe irda
     RV_1=$?
     modprobe mxc_ir 2>/dev/null
@@ -65,7 +65,7 @@ setup()
     # Set up is initialized as test 0
     export TST_COUNT=0
 
-    # Initialize cleanup function to execute on program exit.
+    # Initialize cleanup function to execute on program exit. 
     # This function will be called before the test program exits.
     ! [ $RV_1 -ne 0 -o  $RV_2 -ne 0 ]
     RV=$?
@@ -193,9 +193,9 @@ IrDA_FIR_receive()
 }
 
 # Function:     main
-#
+# 
 # Description:  - Execute all tests, exit with test status.
-#
+#               
 # Exit:         - zero on success
 #               - non-zero on failure.
 #

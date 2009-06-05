@@ -18,21 +18,21 @@
 #                      Modification     Tracking
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
-# Spring Zhang          07/08/2008       n/a        Initial ver.
+# Spring Zhang          07/08/2008       n/a        Initial ver. 
 # Spring                28/11/2008       n/a        Modify COPYRIGHT header
 # Spring                18/05/2009       n/a        Add BBG2 support
 #############################################################################
-# Portability:  ARM sh bash
+# Portability:  ARM sh bash 
 #
-# File Name:
+# File Name:    
 # Total Tests:        1
 # Test Strategy: switch from speaker to headphone
+# 
+# Input:	- $1 - audio stream
 #
-# Input: - $1 - audio stream
+# Return:       - 
 #
-# Return:       -
-#
-# Use command "./speaker_switch_headset.sh [audio stream]"
+# Use command "./speaker_switch_headset.sh [audio stream]" 
 
 # Function:     setup
 #
@@ -92,7 +92,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup()
+cleanup() 
 {
     echo "clean up environment..."
     if [ $platform -eq 51 ] || [ $platform -eq 41 ]

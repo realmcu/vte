@@ -12,8 +12,8 @@ text.txt:
 install:
 	@set -e; for i in $(TARGETS) ; do ln -f $$i ../../../bin/$$i ; done
 fs_perms.o: fs_perms.c
-	$(CC) -c fs_perms.c $(CFLAGS)
+	$(CC) -c fs_perms.c $(CFLAGS) 
 testx.o: testx.c
-	$(CC) -c testx.c $(CFLAGS)
+	$(CC) -c testx.c $(CFLAGS) 
 clean:
 	rm -f *.o fs_perms testx.file

@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   tool_recorder.c
 
         @brief  Test scenario C source template.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -20,13 +20,13 @@ RB657C/gsch1c                20/07/2004     TLSbo40898  Initial version  of OSS 
 I.Inkina/nknl001             18/10/2005     TLSbo53864  The error management was added
 D.Simakov                    19/10/2006     TLSbo76144  dsp->adsp, dsp1->dsp
 D.Simakov                    07/12/2006     TLSbo76144  Updated with the new kernel
-====================
+====================================================================================================
 Portability: ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -37,44 +37,44 @@ Portability: ARM GCC
 #include "oss_sound_driver_test.h"
 #include "../common.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 #define BUF_SIZE 32767
 
-/*====================*/
-/*= VT_oss_sound_driver_setup =*/
+/*================================================================================================*/
+/*===== VT_oss_sound_driver_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_oss_sound_driver_setup(void)
 {
         return TPASS;
 }
 
-/*====================*/
-/*= VT_oss_sound_driver_cleanup =*/
+/*================================================================================================*/
+/*===== VT_oss_sound_driver_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_oss_sound_driver_cleanup(void)
 {
         return TPASS;
 }
 
-/*====================*/
+/*================================================================================================*/
 int write_wav_header(FILE * fd_file, int *totalread, unsigned short *chan,
                      int *frequency, unsigned short *bits)
 {
@@ -121,17 +121,17 @@ int write_wav_header(FILE * fd_file, int *totalread, unsigned short *chan,
 er:     return rv;
 }
 
-/*====================*/
-/*= VT_oss_sound_driver_test =*/
+/*================================================================================================*/
+/*===== VT_oss_sound_driver_test =====*/
 /**
 @brief  Test program
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_oss_sound_driver_test(char *file1, int source, int toread, int chan,
                              int speed, int bits)
 {

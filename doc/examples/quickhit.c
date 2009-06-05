@@ -141,18 +141,18 @@ int TST_TOTAL = 2;		/* Total number of test cases. */
 
 int exp_enos[] = {0, 0};
 
-#define BASENAME "lkfile"
+#define BASENAME	"lkfile"
 
 char Basename[255];
 char Fname[255];
-int Nlinks0;
+int Nlinks=0;
 
 /* To add command line options you need to declare a structure to pass to
  * parse_opts().  options is the structure used in this example.  The format is
  * the string that should be added to optstring in getopt(3), an integer that
  * will be used as a flag if the option is given, and a pointer to a string that
  * should receive the optarg parameter from getopt(3).  Here we add a -N
- * option.  Long options are not supported at this time.
+ * option.  Long options are not supported at this time. 
  */
 char *Nlinkarg;
 int Nflag = 0;
@@ -217,11 +217,8 @@ main(int ac, char **av)
 	 */
 	for (lc=0; TEST_LOOPING(lc); lc++) {
 
- if ( Nlinks )
-     nlinks  Nlinks;
- else
-     /* min of 10 links and max of a 100 links */
-     nlinks  (lc%90)+10;
+	/* reset Tst_count in case we are looping. */
+	Tst_count=0;
 
 	if (Nlinks)
 		nlinks = Nlinks;
@@ -333,7 +330,7 @@ help(void)
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void
+void 
 setup()
 {
 	int fd;
@@ -370,7 +367,7 @@ setup()
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
- *  completion or premature exit.
+ *		completion or premature exit.
  ***************************************************************/
 static void
 cleanup(void)

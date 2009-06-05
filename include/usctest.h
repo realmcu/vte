@@ -48,7 +48,7 @@
  *    INITIAL RELEASE	: UNICOS 7.0
  *
  *    DESCRIPTION
- * TEST(SCALL) - calls a system call
+ * 	TEST(SCALL) - calls a system call
  *	TEST_VOID(SCALL) - same as TEST() but for syscalls with no return value.
  *	TEST_CLEANUP - print the log of errno return counts if STD_ERRNO_LOG
  *		       is set.
@@ -67,7 +67,7 @@
  * 	TEST(SCALL) - Global Variables set:
  *			long TEST_RETURN=return code from SCALL
  *			int TEST_ERRNO=value of errno at return from SCALL
- * TEST_VOID(SCALL) - Global Variables set:
+ * 	TEST_VOID(SCALL) - Global Variables set:
  *			int TEST_ERRNO=value of errno at return from SCALL
  *	TEST_CLEANUP - None.
  *	TEST_PAUSEF(HAND) -  None.
@@ -252,7 +252,7 @@ do { \
 
 /***********************************************************************
  * TEST_PAUSEF: Pause for SIGUSR1 if the pause flag is set.
- *  Set the user specified function as the interrupt
+ * 		 Set the user specified function as the interrupt
  *		 handler instead of "STD_go"
  *
  * parameters:

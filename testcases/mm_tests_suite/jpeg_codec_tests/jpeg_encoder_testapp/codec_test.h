@@ -16,11 +16,11 @@
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
-F.GAFFIE/rb657c       03/05/2004   TLSbo39336   Initial version
-D.Simakov/smkd001c    07/02/2005   TLSbo47179   Bad dependancies in the mm tests
+F.GAFFIE/rb657c       03/05/2004   TLSbo39336   Initial version 
+D.Simakov/smkd001c    07/02/2005   TLSbo47179   Bad dependancies in the mm tests 
                                                 application build process
-D.Simakov/smkd001c    25/10/2005   TLSbo59191   Improved
-D.Simakov/smkd001c    24/01/2006   TLSbo61035   Centralization of common features
+D.Simakov/smkd001c    25/10/2005   TLSbo59191   Improved 
+D.Simakov/smkd001c    24/01/2006   TLSbo61035   Centralization of common features 
 =============================================================================*/
 
 #ifndef __CODEC_TEST_H__
@@ -56,43 +56,43 @@ D.Simakov/smkd001c    24/01/2006   TLSbo61035   Centralization of common feature
 ==================================================================================================*/
 
 /* Test cases. */
-enum
+enum 
 {
-        NOMINAL_FUNCTIONALITY,
+        NOMINAL_FUNCTIONALITY, 
         THUMB_ENCODING,
         RELOCATABILITY,
         RE_ENTRANCE,
-        PRE_EMPTION,
+        PRE_EMPTION,    
         ENDURANCE,
-        LOAD
+        LOAD        
 };
 
 /*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
 ==================================================================================================*/
 
-/* Testapp configuration. */
+/* Testapp configuration. */ 
 typedef struct
 {
         int              mTestCase;
         int              mNumIter;
         const char *     mConfigFilename;
-        int              mVerbose;
-        int              mSlowBitMatching;
-        int              mFrameLevelApi;
+        int              mVerbose;    
+        int              mSlowBitMatching; 
+        int              mFrameLevelApi; 
 } sTestappConfig;
 
 /* Set of parameters for each codec handler. */
-typedef struct
+typedef struct 
 {
-        unsigned int        mNoEntry;
-        char                mInpFileName[3][MAX_STR_LEN];
+        unsigned int        mNoEntry;    
+        char                mInpFileName[3][MAX_STR_LEN]; 
         char                mOutFileName[MAX_STR_LEN];
         char                mRefFileName[MAX_STR_LEN];
-        int                 mIsReadyForBitMatching;
+        int                 mIsReadyForBitMatching;     
 
         JPEG_ENC_YUV_FORMAT mYUVFormat;
-        int                 mComprMethod;
+        int                 mComprMethod; 
         JPEG_ENC_MODE       mMode;
         int                 mExifFlag;
         int                 mQuality;
@@ -104,28 +104,28 @@ typedef struct
         int                 mUWidth;
         int                 mUHeight;
         int                 mVWidth;
-        int                 mVHeight;
+        int                 mVHeight; 
 } sHandlerParams;
 
 /* Codec handler. */
 typedef struct
-{
+{  
         unsigned long    mIndex;
-
-        sHandlerParams * mpParams;
+        
+        sHandlerParams * mpParams;    
         FILE           * mpInputStream[3]; /* Non interleaved: Y, U, V. Interleaved: YUV, 0, 0. */
         FILE           * mpOutputStream;
-
-        int              mLastCodecError;
-
+        
+        int              mLastCodecError; 
+        
         unsigned char  * mpInpBuffer[3];
-        size_t           mInpBufferSz[3];
-
+        size_t           mInpBufferSz[3];     
+        
         unsigned char    mpOutBuffer[OUTP_BUFFER_SIZE];
-
+        
         jpeg_enc_object  mEncObject;
-
-        pthread_t        mThreadID;
+        
+        pthread_t        mThreadID;              
         int              mLtpRetval;
 } sCodecHandler;
 
@@ -134,7 +134,7 @@ typedef struct
                                  GLOBAL VARIABLE DECLARATIONS
 ==================================================================================================*/
 
-extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */
+extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */        
 
 
 /*==================================================================================================

@@ -29,8 +29,8 @@
  **/
 int main(int argc, char **argv)
 {
-        RPTable *rptable  (RPTable *)g_malloc0(sizeof(RPTable));
-        gchar *data  "My data";
+        RPTable *rptable = (RPTable *)g_malloc0(sizeof(RPTable));
+        gchar *data = "My data";
 
         if (oh_add_resource(rptable, rptentries, data, KEEP_RPT_DATA))
                 return 1;

@@ -17,7 +17,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake.Huang/-----             07/11/2008     N/A          Initial version
-#
+# 
 ###################################################################################################
 #!/bin/sh
 
@@ -55,7 +55,7 @@ tst_resm TINFO "MBx script installed"
 else
 tst_resm TINFO "MBx initial script not found on /etc/rc.d/init.d"
 RC=1
-return $RC
+return $RC 
 fi
 
 /etc/rc.d/init.d/rc.pvr start
@@ -85,7 +85,7 @@ return $RC
 
 # Function:     test_mbx_driver_01
 # Description   - Test if service is ok
-#
+#  
 test_mbx_driver_01()
 {
 TCID="test_mbx_driver_01"
@@ -100,7 +100,7 @@ tst_resm TINFO "test #1: driver test"
 #then
 #tst_resm TINFO "services_test not exist"
 #RC=1
-#return $TST_COUNT
+#return $TST_COUNT 
 #fi
 
 Rnt=$(services_test | grep FAIL| awk '{print $1}')
@@ -117,7 +117,7 @@ return $TST_COUNT
 
 # Function:     test_mbx_driver_02
 # Description   - Test if driver is ok
-#
+#  
 test_mbx_driver_02()
 {
 TCID="test_mbx_driver_02"
@@ -132,7 +132,7 @@ tst_resm TINFO "test #2: driver test 2"
 #then
 #$tst_resm TINFO "power_test not exist"
 #RC=1
-#return $TST_COUNT
+#return $TST_COUNT 
 #fi
 
 if [ -z $TMP ]
@@ -156,7 +156,7 @@ Rnt= $(grep "FAIL" $TMP/out_mbx )
 else
 tst_resm TINFO "can not write to temp file"
 RC=1
-return $TST_COUNT
+return $TST_COUNT  
 fi
 
 if [ -z $Rnt ]
@@ -170,7 +170,7 @@ return $TST_COUNT
 
 # Function:     test_mbx_egl_01
 # Description   - Test if gl es function is ok
-#
+#  
 test_mbx_egl_01()
 {
 TCID="test_mbx_egl_01"
@@ -185,7 +185,7 @@ tst_resm TINFO "test #3: egl test 1"
 #then
 #$tst_resm TINFO "egl_test not exist"
 #RC=1
-#return $TST_COUNT
+#return $TST_COUNT 
 #fi
 
 Rnt=$(egl_test 1000 | grep error)
@@ -208,7 +208,7 @@ return $TST_COUNT
 
 # Function:     test_mbx_egl_02
 # Description   - Test if egl function is ok
-#
+#  
 test_mbx_egl_02()
 {
 TCID="test_mbx_egl_02"
@@ -223,7 +223,7 @@ tst_resm TINFO "test #4: gl test 2"
 #then
 #$tst_resm TINFO "glinfo not exist"
 #RC=1
-#return $TST_COUNT
+#return $TST_COUNT 
 #fi
 
 glinfo
@@ -246,7 +246,7 @@ RC=0
 if [ $# -ne 1 ]
 then
 echo "usage $0 <A/M>"
-exit 1
+exit 1 
 fi
 
 setup || exit $RC
@@ -254,7 +254,7 @@ setup || exit $RC
 if [ $1 == "A" ]
 then
 #auto test set
-test_mbx_driver_01 || exit $RC
+test_mbx_driver_01 || exit $RC 
 test_mbx_driver_02 || exit $RC
 test_mbx_egl_02    || exit $RC
 else

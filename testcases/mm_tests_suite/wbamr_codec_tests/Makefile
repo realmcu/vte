@@ -10,7 +10,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
@@ -20,13 +20,13 @@
 #
 #
 ###################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms.
+#Portability: Indicate if this module is portable to other compilers or platforms. 
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################
 
 SUBDIRS = wbamr_encoder_testapp \
-wbamr_decoder_testapp
+wbamr_decoder_testapp 
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

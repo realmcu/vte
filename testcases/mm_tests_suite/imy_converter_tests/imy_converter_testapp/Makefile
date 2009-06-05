@@ -4,7 +4,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ##############################################################################
 #
 #   @file   Makefile
@@ -31,13 +31,13 @@ CFLAGS+=        -Wall -I../../../../include -I$(MMAPI_HDIR) -I$(IMY_HDIR)
 LOADLIBES+=     -L../../../../lib -lltp -lpthread -Bdynamic -L$(IMY_LIBDIR) -l$(IMY_LIBRARY)
 
 CFLAGS+= -g -mcpu=arm1136j-s -mabi=aapcs -DFILEIO -DLITTLE_ENDIAN
-LOADLIBES+= -Wl,--no-warn-mismatch -mcpu=arm1136j-s -lm -lc -lrt
+LOADLIBES+= -Wl,--no-warn-mismatch -mcpu=arm1136j-s -lm -lc -lrt 
 
 SRCS=$(wildcard *.c)
 OBJS=$(patsubst %.c,%.o,$(SRCS))
 
 CONFIGS = imelody.cfg imelody_robustness.cfg
-TARGET  = imelody_conv_test
+TARGET  = imelody_conv_test 
 
 all: $(TARGET)
 	@echo "**************************************************"
@@ -51,8 +51,8 @@ install:
 	cp -rf $(IMY_INPUT) $(LTP_BIN)
 	cp -rf $(IMY_REF) $(LTP_BIN)
 	mkdir -p $(LTP_BIN)/imy_output
-	mkdir -p $(LTP_BIN)/sharedlibs
-	cp -rf $(IMY_LIBDIR)/lib$(IMY_LIBRARY).so $(LTP_BIN)/sharedlibs
+	mkdir -p $(LTP_BIN)/sharedlibs   
+	cp -rf $(IMY_LIBDIR)/lib$(IMY_LIBRARY).so $(LTP_BIN)/sharedlibs            
 	@echo "*************************************"
 	@echo "** INSTALL : imy_converter_testapp **"
 	@echo "*************************************"

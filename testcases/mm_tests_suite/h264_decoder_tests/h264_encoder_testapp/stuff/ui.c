@@ -1,5 +1,5 @@
 /*
- *
+ *======================================================================
  *
  *                         Motorola Labs
  *         Multimedia Communications Research Lab (MCRL)
@@ -11,10 +11,10 @@
  *
  *       M O T O R O L A  I N T E R N A L   U S E   O N L Y
  *
- *
+ *======================================================================
  */
 /*!
- *
+ *=====================================================================
  * \file
  *    ui.c
  *
@@ -32,7 +32,7 @@
  *    27/Dec/2004: added support for FMO
  *    - Shih-Ta Hsiang                      <hsiang@motorola.com>
  *    18/Mar/2005: imrpove support for intra MB refresh
- *
+ *=====================================================================
  */
 
 #include <stdio.h>
@@ -56,7 +56,7 @@
 #undef  Exit
 #define PrintErr(s,...)
 #define Exit exit(1)
-//#define PrintErr
+//#define PrintErr 
 //#define Exit return 0
 
 
@@ -76,19 +76,19 @@ char   *GetControlFileContent(char *Filename)
     FILE   *f;
     char   *buf;
 
-    if (NULL  (f  fopen(Filename, "r")))
+    if (NULL == (f = fopen(Filename, "r")))
     {
         PrintErr("Cannot open control file %s.\n", Filename);
         Exit;
     }
 
-    if (0 ! fseek(f, 0, SEEK_END))
+    if (0 != fseek(f, 0, SEEK_END))
     {
         PrintErr("Cannot fseek in control file %s.\n", Filename);
         Exit;
     }
 
-    FileSize  ftell(f);
+    FileSize = ftell(f);
     if (FileSize < 0 || FileSize > 60000)
     {
         PrintErr
@@ -96,13 +96,13 @@ char   *GetControlFileContent(char *Filename)
              FileSize, Filename);
         Exit;
     }
-    if (0 ! fseek(f, 0, SEEK_SET))
+    if (0 != fseek(f, 0, SEEK_SET))
     {
         PrintErr("Cannot fseek in control file %s.\n", Filename);
         Exit;
     }
 
-    if ((buf  malloc(FileSize + 1))  NULL)
+    if ((buf = malloc(FileSize + 1)) == NULL)
     {
         PrintErr("Memory Allocation Error\n");
         Exit;
@@ -112,8 +112,8 @@ char   *GetControlFileContent(char *Filename)
     // as reported by fread() below will be often smaller due to CR/LF to CR conversion and/or
     // control characters after the dos EOF marker in the file.
 
-    FileSize  fread(buf, 1, FileSize, f);
-    buf[FileSize]  '\0';
+    FileSize = fread(buf, 1, FileSize, f);
+    buf[FileSize] = '\0';
 
     fclose(f);
     return buf;
@@ -132,10 +132,10 @@ char   *GetControlFileContent(char *Filename)
  */
 static int ParameterNameToMapIndex(char *s, ParameterMapping *MapPtr)
 {
-    int     i  0;
+    int     i = 0;
 
-    while (MapPtr[i].TokenName ! NULL)
-        if (0  strcmp(MapPtr[i].TokenName, s))
+    while (MapPtr[i].TokenName != NULL)
+        if (0 == strcmp(MapPtr[i].TokenName, s))
             return i;
         else
             i++;
@@ -158,10 +158,10 @@ void ParseContent(char *buf, int bufsize, ParameterMapping *MapPtr)
 
     char   *items[MAX_ITEMS_TO_PARSE];
     int     MapIdx;
-    int     item  0;
-    int     InString  0, InItem  0;
-    char   *p  buf;
-    char   *bufend  &buf[bufsize];
+    int     item = 0;
+    int     InString = 0, InItem = 0;
+    char   *p = buf;
+    char   *bufend = &buf[bufsize];
     long    IntContent;
     int     i;
 
@@ -177,18 +177,18 @@ void ParseContent(char *buf, int bufsize, ParameterMapping *MapPtr)
                 break;
             case '#':                          // Found comment
 
-                *p  '\0';                      // Replace '#' with '\0' in case of comment immediately following integer or string
+                *p = '\0';                      // Replace '#' with '\0' in case of comment immediately following integer or string
 
-                while (*p ! '\n' && p < bufend)    // Skip till EOL or EOF, whichever comes first
+                while (*p != '\n' && p < bufend)    // Skip till EOL or EOF, whichever comes first
 
                     p++;
-                InString  0;
-                InItem  0;
+                InString = 0;
+                InItem = 0;
                 break;
             case '\n':
-                InItem  0;
-                InString  0;
-                *p++  '\0';
+                InItem = 0;
+                InString = 0;
+                *p++ = '\0';
                 break;
             case ' ':
             case '\t':                         // Skip whitespace, leave state unchanged
@@ -198,30 +198,30 @@ void ParseContent(char *buf, int bufsize, ParameterMapping *MapPtr)
                 else
                 {                               // Terminate non-strings once whitespace is found
 
-                    *p++  '\0';
-                    InItem  0;
+                    *p++ = '\0';
+                    InItem = 0;
                 }
                 break;
 
             case '"':                          // Begin/End of String
 
-                *p++  '\0';
+                *p++ = '\0';
                 if (!InString)
                 {
-                    items[item++]  p;
-                    InItem  ~InItem;
+                    items[item++] = p;
+                    InItem = ~InItem;
                 }
                 else
-                    InItem  0;
-                InString  ~InString;           // Toggle
+                    InItem = 0;
+                InString = ~InString;           // Toggle
 
                 break;
 
             default:
                 if (!InItem)
                 {
-                    items[item++]  p;
-                    InItem  ~InItem;
+                    items[item++] = p;
+                    InItem = ~InItem;
                 }
                 p++;
         }
@@ -229,26 +229,26 @@ void ParseContent(char *buf, int bufsize, ParameterMapping *MapPtr)
 
     item--;
 
-    for (i  0; i < item; i + 3)
+    for (i = 0; i < item; i += 3)
     {
-        if (0 > (MapIdx  ParameterNameToMapIndex(items[i], MapPtr)))
+        if (0 > (MapIdx = ParameterNameToMapIndex(items[i], MapPtr)))
         {
             PrintErr("Parsing error in control file:\n"
                      "      Parameter Name '%s' not recognized\n",
                      items[i]);
             Exit;
         }
-        if (strcmp("", items[i + 1]))
+        if (strcmp("=", items[i + 1]))
         {
             PrintErr("Parsing error in control file:\n"
-                     "    '' expected as the second token in each line\n");
+                     "    '=' expected as the second token in each line\n");
             Exit;
         }
 
         // Now interprete the Value, context sensitive...
 
-        if (MapPtr[MapIdx].Type < NUM32)
-            if (1 ! sscanf(items[i + 2], "%ld", &IntContent))
+        if (MapPtr[MapIdx].Type <= NUM32)
+            if (1 != sscanf(items[i + 2], "%ld", &IntContent))
             {
                 PrintErr
                     ("Parsing error: Expected numerical value for"
@@ -260,13 +260,13 @@ void ParseContent(char *buf, int bufsize, ParameterMapping *MapPtr)
         switch (MapPtr[MapIdx].Type)
         {
             case NUM32:                        // Numerical
-                *(long *) (MapPtr[MapIdx].Location)  IntContent;
+                *(long *) (MapPtr[MapIdx].Location) = IntContent;
                 break;
             case NUM16:                        // Numerical
-                *(short *) (MapPtr[MapIdx].Location)  (short) IntContent;
+                *(short *) (MapPtr[MapIdx].Location) = (short) IntContent;
                 break;
             case NUM8:                         // Numerical
-                *(char *) (MapPtr[MapIdx].Location)  (char) IntContent;
+                *(char *) (MapPtr[MapIdx].Location) = (char) IntContent;
                 break;
             case STR:
                 strcpy((char *) MapPtr[MapIdx].Location, items[i + 2]);
@@ -288,38 +288,38 @@ void ParseContent(char *buf, int bufsize, ParameterMapping *MapPtr)
 #define Print(fmt,...)
 static void CheckParameters(ParameterMapping *MapPtr)
 {
-    int     i  0;
-    long    val  0;
+    int     i = 0;
+    long    val = 0;
 
     //! Verify that the encoder parameters fall within accepted ranges.
-    while (MapPtr[i].TokenName ! NULL)
+    while (MapPtr[i].TokenName != NULL)
     {
-        if (MapPtr[i].Type < NUM32)
+        if (MapPtr[i].Type <= NUM32)
         {
             switch (MapPtr[i].Type)
             {
                 case NUM32:
-                    val  *(long *) (MapPtr[i].Location);
+                    val = *(long *) (MapPtr[i].Location);
                     break;
                 case NUM16:
-                    val  *(short *) (MapPtr[i].Location);
+                    val = *(short *) (MapPtr[i].Location);
                     break;
                 case NUM8:
-                    val  *(char *) (MapPtr[i].Location);
+                    val = *(char *) (MapPtr[i].Location);
                     break;
             }
-            Print("> %s  %ld\n", MapPtr[i].TokenName, val);
+            Print("=> %s = %ld\n", MapPtr[i].TokenName, val);
             if (val < MapPtr[i].minVal || val > MapPtr[i].maxVal)
             {
                 PrintErr
-                    ("Input parameter %s  %ld exceeds its bounds [%ld %ld]\n",
+                    ("Input parameter %s = %ld exceeds its bounds [%ld %ld]\n",
                      MapPtr[i].TokenName, val, MapPtr[i].minVal,
                      MapPtr[i].maxVal);
                 Exit;
             }
         }
         else
-            Print("> %s  %s\n", MapPtr[i].TokenName,
+            Print("=> %s = %s\n", MapPtr[i].TokenName,
                   (char *) MapPtr[i].Location);
         i++;
     }
@@ -331,66 +331,66 @@ static void ReadUserInput(int argc, char *argv[], ParameterMapping *MapPtr)
     int     CLcount, ContentLen, NumberParams;
 
     //! Parse the command line arguments.
-    CLcount  1;
+    CLcount = 1;
     while (CLcount < argc)
     {
         //! Parse control file
-        if (0  strncmp(argv[CLcount], "-f", 2))
+        if (0 == strncmp(argv[CLcount], "-f", 2))
         {
-            if (CLcount  (argc - 1))
+            if (CLcount == (argc - 1))
             {
                 PrintErr("Control file not specified\n");
                 Exit;
             }
-            content  GetControlFileContent(argv[CLcount + 1]);
+            content = GetControlFileContent(argv[CLcount + 1]);
             Print("\nParsing Paramsfile %s\n\n", argv[CLcount + 1]);
             ParseContent(content, strlen(content), MapPtr);
             free(content);
-            CLcount + 2;
+            CLcount += 2;
         }
         else
         {
             //! Process any overrides for the params.
-            if (0  strncmp(argv[CLcount], "-p", 2))
+            if (0 == strncmp(argv[CLcount], "-p", 2))
             {
                 //! Collect all data until next parameter (starting with -<x>
                 //! where (x is any character)), put into content, and parse it.
                 CLcount++;
-                ContentLen  0;
-                NumberParams  CLcount;
+                ContentLen = 0;
+                NumberParams = CLcount;
 
                 // determine the necessary size for content.
                 // An 1000 additional bytes are allocated for spaces and \0s.
-                while (NumberParams < argc && argv[NumberParams][0] ! '-')
-                    ContentLen + strlen(argv[NumberParams++]);
-                ContentLen + 1000;
+                while (NumberParams < argc && argv[NumberParams][0] != '-')
+                    ContentLen += strlen(argv[NumberParams++]);
+                ContentLen += 1000;
 
-                if ((content  malloc(ContentLen))  NULL)
+                if ((content = malloc(ContentLen)) == NULL)
                     exit(-1);                   //no_mem_exit("Configure: content");;
 
-                content[0]  '\0';
+                content[0] = '\0';
 
                 // concatenate all parameters itendified before
                 while (CLcount < NumberParams)
                 {
-                    char   *source  &argv[CLcount][0];
-                    char   *destin  &content[strlen(content)];
+                    char   *source = &argv[CLcount][0];
+                    char   *destin = &content[strlen(content)];
 
-                    while (*source ! '\0')
+                    while (*source != '\0')
                     {
-                        //! NOTE: The parser expects a whitespace before and after a ''.
+                        //! NOTE: The parser expects a whitespace before and after a '='.
                         //! If not present then add the spaces.
-                        if (*source  '')
+                        if (*source == '=')
                         {
-                            *destin++  ' ';
-                            *destin++  '';
-                            *destin++  ' ';
+                            *destin++ = ' ';
+                            *destin++ = '=';
+                            *destin++ = ' ';
                         }
                         else
-                            *destin++  *source;
+                            *destin++ = *source;
                         source++;
                     }
-                    *destin  '\0';
+                    *destin = '\0';
                     CLcount++;
                 }
                 Print("<Command Line> '%s'", content);
@@ -437,10 +437,10 @@ void UI_GetUserInput(IOParams *o, AVC_VideoEncodeParamsStruct * e,
     //! The formatting of the mapping is as follows:
     //! {<Token name>,<Variable Address>,<STRing/NUMber>,<Default NUM val>,<Default STR val>,<Min NUM>,<Max NUM>}
     //! The #defined can be found in global.h
-    int     i  0;
+    int     i = 0;
 
 #ifndef __ARMV6__
-    ParameterMapping Map[]  {
+    ParameterMapping Map[] = {
         {"ControlFile", &o->ctlFile, STR, NA, "encoder.ctl", NA, NA},
         {"Version", &o->version, NUM16, CTL_CURRENT_VERSION, "",
          CTL_CURRENT_VERSION, CTL_CURRENT_VERSION},
@@ -500,7 +500,7 @@ void UI_GetUserInput(IOParams *o, AVC_VideoEncodeParamsStruct * e,
         {NULL, NULL, -1, -1, NULL, 0, 0}
     };
 #else
-    ParameterMapping Map[]  {
+    ParameterMapping Map[] = {
         {"ControlFile", "encoder.ctl", STR, NA, "encoder.ctl", NA, NA},
         {"Version", "CTL_CURRENT_VERSION", NUM16, CTL_CURRENT_VERSION, "",
          CTL_CURRENT_VERSION, CTL_CURRENT_VERSION},
@@ -560,64 +560,64 @@ void UI_GetUserInput(IOParams *o, AVC_VideoEncodeParamsStruct * e,
         {"RCMethod", "2", NUM8, 2, "", 0, 2},
         {NULL, NULL, -1, -1, NULL, 0, 0}
     };
-    Map[i++].Location  &o->ctlFile;
-    Map[i++].Location  &o->version;
-    Map[i++].Location  &o->sourceFilename;
-    Map[i++].Location  &o->bitFilename;
-    Map[i++].Location  &o->traceFilename;
-    Map[i++].Location  &o->reconFilename;
-    Map[i++].Location  &o->traceFlag;
-    Map[i++].Location  &o->writeReconstructedFlag;
-    Map[i++].Location  &e->sourceFrameRate;
-    Map[i++].Location  &e->encodingFrameRate;
-    Map[i++].Location  &e->targetBitRate;
-    Map[i++].Location  &e->qualityTradeoff;
-    Map[i++].Location  &e->delayFactor;
-    Map[i++].Location  &e->intraRefreshMethod;
-    Map[i++].Location  &e->numForcedIntra;
-    Map[i++].Location  &e->ME_AlgorithmID;
-    Map[i++].Location  &e->mbIntegerSearchDistance;
-    Map[i++].Location  &e->level;
-    Map[i++].Location  &o->startFrameNum;
-    Map[i++].Location  &o->endFrameNum;
-    Map[i++].Location  &e->IDRPeriod;
-    Map[i++].Location  &e->intraPeriod;
-    Map[i++].Location  &e->sliceMode;
-    Map[i++].Location  &e->maxRefFrames;
-    Map[i++].Location  &e->qi;
-    Map[i++].Location  &e->qp;
-    Map[i++].Location  &e->resyncMarkSpacing;
-    Map[i++].Location  &e->resyncMarkMBSpacing;
-    Map[i++].Location  &e->num_slice_groups;
-    Map[i++].Location  &e->slice_group_map_type;
-    Map[i++].Location  &o->SliceGroupConfigFileName;
-    Map[i++].Location  &e->sliceGroupSlicingMode;
-    Map[i++].Location  &e->enableBlockSize[0];
-    Map[i++].Location  &e->enableBlockSize[1];
-    Map[i++].Location  &e->enableBlockSize[2];
-    Map[i++].Location  &e->enableBlockSize[3];
-    Map[i++].Location  &e->enableBlockSize[4];
-    Map[i++].Location  &e->enableBlockSize[5];
-    Map[i++].Location  &e->enableBlockSize[6];
-    Map[i++].Location  &e->rdMode;
-    Map[i++].Location  &o->outputMode;
-    Map[i++].Location  &e->rcMethod;
+    Map[i++].Location = &o->ctlFile;
+    Map[i++].Location = &o->version;
+    Map[i++].Location = &o->sourceFilename;
+    Map[i++].Location = &o->bitFilename;
+    Map[i++].Location = &o->traceFilename;
+    Map[i++].Location = &o->reconFilename;
+    Map[i++].Location = &o->traceFlag;
+    Map[i++].Location = &o->writeReconstructedFlag;
+    Map[i++].Location = &e->sourceFrameRate;
+    Map[i++].Location = &e->encodingFrameRate;
+    Map[i++].Location = &e->targetBitRate;
+    Map[i++].Location = &e->qualityTradeoff;
+    Map[i++].Location = &e->delayFactor;
+    Map[i++].Location = &e->intraRefreshMethod;
+    Map[i++].Location = &e->numForcedIntra;
+    Map[i++].Location = &e->ME_AlgorithmID;
+    Map[i++].Location = &e->mbIntegerSearchDistance;
+    Map[i++].Location = &e->level;
+    Map[i++].Location = &o->startFrameNum;
+    Map[i++].Location = &o->endFrameNum;
+    Map[i++].Location = &e->IDRPeriod;
+    Map[i++].Location = &e->intraPeriod;
+    Map[i++].Location = &e->sliceMode;
+    Map[i++].Location = &e->maxRefFrames;
+    Map[i++].Location = &e->qi;
+    Map[i++].Location = &e->qp;
+    Map[i++].Location = &e->resyncMarkSpacing;
+    Map[i++].Location = &e->resyncMarkMBSpacing;
+    Map[i++].Location = &e->num_slice_groups;
+    Map[i++].Location = &e->slice_group_map_type;
+    Map[i++].Location = &o->SliceGroupConfigFileName;
+    Map[i++].Location = &e->sliceGroupSlicingMode;
+    Map[i++].Location = &e->enableBlockSize[0];
+    Map[i++].Location = &e->enableBlockSize[1];
+    Map[i++].Location = &e->enableBlockSize[2];
+    Map[i++].Location = &e->enableBlockSize[3];
+    Map[i++].Location = &e->enableBlockSize[4];
+    Map[i++].Location = &e->enableBlockSize[5];
+    Map[i++].Location = &e->enableBlockSize[6];
+    Map[i++].Location = &e->rdMode;
+    Map[i++].Location = &o->outputMode;
+    Map[i++].Location = &e->rcMethod;
 #endif
 
     //! Set the encoder default values for all parameters above
-    i  0;
-    while (Map[i].TokenName ! NULL)
+    i = 0;
+    while (Map[i].TokenName != NULL)
     {
         switch (Map[i].Type)
         {
             case NUM32:                        // Numerical
-                *(long *) (Map[i].Location)  (long) Map[i].intVal;
+                *(long *) (Map[i].Location) = (long) Map[i].intVal;
                 break;
             case NUM16:                        // Numerical
-                *(short *) (Map[i].Location)  (short) Map[i].intVal;
+                *(short *) (Map[i].Location) = (short) Map[i].intVal;
                 break;
             case NUM8:                         // Numerical
-                *(char *) (Map[i].Location)  (char) Map[i].intVal;
+                *(char *) (Map[i].Location) = (char) Map[i].intVal;
                 break;
             case STR:
                 strcpy((char *) Map[i].Location, Map[i].charVal);
@@ -629,30 +629,30 @@ void UI_GetUserInput(IOParams *o, AVC_VideoEncodeParamsStruct * e,
     ReadUserInput(argc, argv, Map);
 
     // For slice groups
-    if ((e->sliceMode  4) && (e->num_slice_groups > 1)
-        && ((e->slice_group_map_type  0)
-            || (e->slice_group_map_type  2)
-            || (e->slice_group_map_type  6)))
+    if ((e->sliceMode == 4) && (e->num_slice_groups > 1)
+        && ((e->slice_group_map_type == 0)
+            || (e->slice_group_map_type == 2)
+            || (e->slice_group_map_type == 6)))
     {
         FILE   *sgfile;
 
-        e->sliceGroupRunLength 
+        e->sliceGroupRunLength =
             malloc(sizeof (e->sliceGroupRunLength[0]) *
                    e->num_slice_groups);
 
-        if ((sgfile  fopen(o->SliceGroupConfigFileName, "r"))  NULL)
+        if ((sgfile = fopen(o->SliceGroupConfigFileName, "r")) == NULL)
         {
             printf("Unable to open Slice Group Config file %s\n",
                    o->SliceGroupConfigFileName);
             exit(1);
         }
-        Print("> Parsing Slice Group Config file %s\n",
+        Print("=> Parsing Slice Group Config file %s\n",
               o->SliceGroupConfigFileName);
-        if (e->slice_group_map_type  0)
+        if (e->slice_group_map_type == 0)
         {
-            Print("  > Slice Group Run Lengths :");
+            Print("  => Slice Group Run Lengths :");
             // each line contains one 'run_length' value
-            for (i  0; i < e->num_slice_groups; i++)
+            for (i = 0; i < e->num_slice_groups; i++)
             {
                 fscanf(sgfile, "%hd", (e->sliceGroupRunLength + i));
                 fscanf(sgfile, "%*[^\n]");      // Ignore rest of characters in the line
@@ -663,6 +663,6 @@ void UI_GetUserInput(IOParams *o, AVC_VideoEncodeParamsStruct * e,
         fclose(sgfile);
     }
     // For only 1st frame being I frame
-    if (e->intraPeriod  0)
-        e->intraPeriod  0x7fffffff;
+    if (e->intraPeriod == 0)
+        e->intraPeriod = 0x7fffffff;
 }

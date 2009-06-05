@@ -1,0 +1,30 @@
+#Verification Tests Command File
+# generated automatically by the test campaign macro
+# version 1.0
+
+#files:
+#files:
+#files:
+#files:
+#files:
+
+TGE-LV-SYS-4770 setregid02
+TGE-LV-SYS-4780 setregid03
+TGE-LV-SYS-4790 setregid04
+TGE-LV-SYS-4800 setresgid01
+TGE-LV-SYS-4810 setresgid02
+TGE-LV-SYS-4820 setresgid03
+TGE-LV-SYS-4830 setresuid01
+TGE-LV-SYS-4840 setresuid02
+TGE-LV-SYS-4850 setresuid03
+TGE-LV-SYS-4860 setreuid01
+TGE-LV-SYS-4870 setreuid02
+TGE-LV-SYS-4880 setreuid03
+TGE-LV-SYS-4890 setreuid04
+TGE-LV-SYS-4900 setreuid05
+TGE-LV-SYS-4910 setreuid06
+TGE-LV-SYS-4920 setrlimit01
+TGE-LV-SYS-4930 setrlimit02
+TGE-LV-SYS-4940 setrlimit03
+TGE-LV-SYS-4950 setsid01
+TGE-LV-SYS-4960 setsockopt01

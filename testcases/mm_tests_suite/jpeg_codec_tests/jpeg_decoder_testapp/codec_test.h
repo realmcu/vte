@@ -16,11 +16,11 @@
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
-F.GAFFIE/rb657c       3/05/2004    TLSbo39336    Initial version
+F.GAFFIE/rb657c       3/05/2004    TLSbo39336    Initial version 
 D.Simakov/smkd001c    7/02/2005    TLSbo47113    Update
 D.Simakov/smkd001c    22/07/2005   TLSbo52627    Relocatability test caes was added
 D.Simakov/smkd001c    05/12/2005   TLSbo59190    Bit-match check and load test were added
-D.Simakov/smkd001c    31/01/2006   TLSbo61035    Centralization of common features
+D.Simakov/smkd001c    31/01/2006   TLSbo61035    Centralization of common features   
 =============================================================================*/
 
 #ifndef __CODEC_TEST_H__
@@ -59,42 +59,42 @@ D.Simakov/smkd001c    31/01/2006   TLSbo61035    Centralization of common featur
 ==================================================================================================*/
 
 /* Test cases. */
-enum
+enum 
 {
-        NOMINAL_FUNCTIONALITY,
+        NOMINAL_FUNCTIONALITY, 
         ROBUSTNESS,
         RELOCATABILITY,
         RE_ENTRANCE,
-        PRE_EMPTION,
+        PRE_EMPTION,    
         ENDURANCE,
-        LOAD
+        LOAD        
 };
 
 /*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
 ==================================================================================================*/
 
-/* Testapp configuration. */
+/* Testapp configuration. */ 
 typedef struct
 {
         int              mTestCase;
         int              mNumIter;
         const char *     mConfigFilename;
-        int              mVerbose;
-        int              mSlowBitMatching;
-        int              mSuspension;
+        int              mVerbose;    
+        int              mSlowBitMatching; 
+        int              mSuspension; 
         int              mDelay;
         int              mDisableLCD;
 } sTestappConfig;
 
 /* Set of parameters for each codec handler. */
-typedef struct
+typedef struct 
 {
-        unsigned int        mNoEntry;
-        char                mInpFileName[MAX_STR_LEN];
+        unsigned int        mNoEntry;    
+        char                mInpFileName[MAX_STR_LEN]; 
         char                mOutFileName[MAX_STR_LEN];
         char                mRefFileName[MAX_STR_LEN];
-        int                 mIsReadyForBitMatching;
+        int                 mIsReadyForBitMatching;     
 
         JPEGD_OUTPUT_FORMAT mOutFormat;
         JPEGD_DCT_METHOD    mDctMethod;
@@ -104,48 +104,48 @@ typedef struct
 
 /* Codec handler. */
 typedef struct
-{
+{  
         unsigned long        mIndex;
-
+        
 
         /****************************************/
         /* Input and output (streams, buffers). */
         /****************************************/
 
         FILE               * mpInputStream;
-        FILE               * mpOutputStream;
-
-        unsigned char      * mpOutBuffer[JPEGD_MAX_NUM_COMPS];
+        FILE               * mpOutputStream;  
+        
+        unsigned char      * mpOutBuffer[JPEGD_MAX_NUM_COMPS];  
         size_t               mOutBufferSz[JPEGD_MAX_NUM_COMPS];
         long                 mOutStrideWidth[JPEGD_MAX_NUM_COMPS];
-
+        
         unsigned char        mpInpBuffer[INPUT_BUFFER_SZ];
-
+                       
 
         /***************/
         /* Other data. */
-        /***************/
+        /***************/               
 
         sHandlerParams     * mpParams;
-        JPEGD_Decoder_Object mDecObject;
-        int                  mLastCodecError;
-        int                  mDrawedLinesNo;
-        pthread_t            mThreadID;
+        JPEGD_Decoder_Object mDecObject;        
+        int                  mLastCodecError;                
+        int                  mDrawedLinesNo;     
+        pthread_t            mThreadID;              
         int                  mLtpRetval;
-
-
+        
+        
         /********************/
         /* Suspension data. */
         /********************/
-
+        
         long                 mTotalBytes;
         int                  mSuspType;
         int                  mSuspState;
         int                  mSuspFlag;
         int                  mSuspEof;
         unsigned int         mSavedMcuOffset;
-        unsigned int         mSuspTargetBytes;
-
+        unsigned int         mSuspTargetBytes;        
+                
 } sCodecHandler;
 
 
@@ -153,7 +153,7 @@ typedef struct
                                  GLOBAL VARIABLE DECLARATIONS
 ==================================================================================================*/
 
-extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */
+extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */        
 
 
 /*==================================================================================================
@@ -176,4 +176,4 @@ int VT_codec_setup    ( void );
 int VT_codec_cleanup  ( void );
 int VT_codec_test     ( void );
 
-#endif //__CODEC_TEST_H__
+#endif //__CODEC_TEST_H__ 

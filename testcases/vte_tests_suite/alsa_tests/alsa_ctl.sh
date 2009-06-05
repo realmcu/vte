@@ -18,19 +18,19 @@
 #                      Modification     Tracking
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
-# Spring Zhang          29/12/2008      ENGR99691     Initial ver.
+# Spring Zhang          29/12/2008      ENGR99691     Initial ver. 
 #############################################################################
-# Portability:  ARM sh
+# Portability:  ARM sh 
 #
-# File Name:
+# File Name:    
 # Total Tests:        1
 # Test Strategy: play audio streams
+# 
+# Input:	- $1 - audio stream
 #
-# Input: - $1 - audio stream
+# Return:       - 
 #
-# Return:       -
-#
-# Use command "./alsa_ctl.sh"
+# Use command "./alsa_ctl.sh" 
 
 # Function:     setup
 #
@@ -77,7 +77,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup()
+cleanup() 
 {
     RC=0
     return $RC
@@ -92,7 +92,7 @@ cleanup()
 #
 alsa_ctl()
 {
-    RC=0
+    RC=0    
     TST_COUNT=1
 
     tst_resm TINFO "Test #1: save soundcard driver setting to a file."
@@ -102,9 +102,9 @@ alsa_ctl()
         tst_resm TFAIL "Test #1: save soundcard driver setting to a file."
         return $RC
     fi
-    grep "DAC Playback Volume" file ||RC=$?
+    grep "DAC Playback Volume" file ||RC=$? 
     [ $RC -eq 0 ] || {
-        tst_resm TFAIL "Test #1: alsa setting file error."
+        tst_resm TFAIL "Test #1: alsa setting file error." 
         return $RC
     }
 
@@ -134,7 +134,7 @@ alsa_ctl()
 # Return        - none
 usage()
 {
-    cat <<-EOF
+    cat <<-EOF 
 
     Use this command to test ALSA CONTROL functions.
     usage: ./${0##*/}

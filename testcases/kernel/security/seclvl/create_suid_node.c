@@ -32,13 +32,13 @@
 
 int main()
 {
- int fd;
- fd  mknod( "suid_node", S_IFREG | 04777, (dev_t)NULL );
- if (fd  -1) {
-  printf( "Error creating suid node\n" );
-  return 1;
- }
- printf( "Success creating suid node\n" );
- close( fd );
- return 0;
+	int fd;
+	fd = mknod( "suid_node", S_IFREG | 04777, (dev_t)NULL );
+	if (fd == -1) {
+		printf( "Error creating suid node\n" );
+		return 1;
+	}
+	printf( "Success creating suid node\n" );
+	close( fd );
+	return 0;
 }

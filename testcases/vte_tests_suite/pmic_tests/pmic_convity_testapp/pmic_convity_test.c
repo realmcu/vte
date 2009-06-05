@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   pmic_convity_test.c
 
         @brief  Source file for PMIC Connectivity driver test.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number     Description of Changes
@@ -22,17 +22,17 @@ A.Ozerov/b00320              15/05/2006     TLSbo64237   Code was cast in accord
 A.Ozerov/b00320              10/08/2006     TLSbo74269   Test MC13783 connectivity driver was added.
 Rakesh S Joshi/r65956        24/07/2007     ENGR00039319 RS-232 and CEA936 operating configuration updated.
 
-====================
+====================================================================================================
 Portability: ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Verification Test Environment Include Files */
 #include "pmic_convity_test.h"
 
-/*====================*/
+/*================================================================================================*/
 extern char *TCID;
 
 extern PMIC_CONVITY_TEST_IOCTL convity_testcase;
@@ -58,11 +58,11 @@ static char *IOCTLS[]=
         "PMIC_CONVITY_TEST_CLOSE",
 };
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
-/*====================*/
-/*= VT_pmic_convity_test_setup =*/
+==================================================================================================*/
+/*================================================================================================*/
+/*===== VT_pmic_convity_test_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
@@ -71,7 +71,7 @@ static char *IOCTLS[]=
 @return On success - return TPASS
         On failure - return TFAIL
 */
-/*====================*/
+/*================================================================================================*/
 int VT_pmic_convity_test_setup(void)
 {
         int VT_rv = TPASS;
@@ -83,17 +83,17 @@ int VT_pmic_convity_test_setup(void)
         {
                 VT_rv = TFAIL;
                 tst_resm(VT_rv, "VT_pmic_convity_test_setup() Failed open device");
-       VT_rv = VT_pmic_convity_test_cleanup();
-          if(VT_rv != TPASS)
-       {
-                tst_resm(TFAIL, "VT_cleanup() Failed : error code = %d", VT_rv);
-       }
+        		VT_rv = VT_pmic_convity_test_cleanup();
+		        if(VT_rv != TPASS)
+        		{
+                	tst_resm(TFAIL, "VT_cleanup() Failed : error code = %d", VT_rv);
+        		}
         }
         return VT_rv;
 }
 
-/*====================*/
-/*= VT_pmic_convity_test_cleanup =*/
+/*================================================================================================*/
+/*===== VT_pmic_convity_test_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
 
@@ -102,7 +102,7 @@ int VT_pmic_convity_test_setup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_pmic_convity_test_cleanup(void)
 {
         if(fd > 0)
@@ -113,8 +113,8 @@ int VT_pmic_convity_test_cleanup(void)
         else return TFAIL;
 }
 
-/*====================*/
-/*= VT_pmic_convity_test =*/
+/*================================================================================================*/
+/*===== VT_pmic_convity_test =====*/
 /**
 @brief  PMIC test scenario connectivity function
 
@@ -123,7 +123,7 @@ int VT_pmic_convity_test_cleanup(void)
 @return On success - return TPASS
         On failure - return TFAIL
 */
-/*====================*/
+/*================================================================================================*/
 int VT_pmic_convity_test(void)
 {
         int status = 0;
@@ -143,14 +143,14 @@ int VT_pmic_convity_test(void)
             tst_resm(VT_rv, "\n\nInvalid Option\n\n");
             return VT_rv;
         }else
-  {
-   if (convity_testcase == 9 ){
-    convity_testcase =8;
-   }else
-    if ( convity_testcase == 10 || convity_testcase == 11 || convity_testcase == 12 || convity_testcase == 13 )
-       {
-     convity_testcase=9;
-    }
+		{
+			if (convity_testcase == 9 ){
+				convity_testcase =8;
+			}else
+				if ( convity_testcase == 10 || convity_testcase == 11 || convity_testcase == 12 || convity_testcase == 13 )
+        		{
+					convity_testcase=9;
+				}
             if((status = ioctl(fd, PMIC_CONVITY_TEST_OPEN, &convity_config)) != PMIC_SUCCESS)
             {
                     VT_rv = TFAIL;

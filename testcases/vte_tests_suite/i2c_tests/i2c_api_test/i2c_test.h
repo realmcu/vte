@@ -105,7 +105,7 @@ typedef enum
         TEST_I2C_RW,
         TEST_I2C_IOCTL,
 } I2C_TESTS;
-#endif
+#endif 
 
 /*==================================================================================================
                                 STRUCTURES AND OTHER TYPEDEFS

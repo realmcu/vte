@@ -1,0 +1,1 @@
+cmd_/home/b08445/USBOTG/ptp/usbstillimage.ko := /opt/freescale/usr/local/gcc-4.1.1-glibc-2.4-nptl-6/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-ld -EL  -r -o /home/b08445/USBOTG/ptp/usbstillimage.ko /home/b08445/USBOTG/ptp/usbstillimage.o /home/b08445/USBOTG/ptp/usbstillimage.mod.o

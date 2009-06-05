@@ -10,7 +10,7 @@
 extern int migrate_pages(const pid_t, int, unsigned int*, unsigned int*);
 #endif
 
-// temporary?
+// temporary?  
 #ifndef MPOL_MF_MOVE
 #define MPOL_MF_MOVE    (1<<1)  /* Move existing pages, if possible */
 #endif

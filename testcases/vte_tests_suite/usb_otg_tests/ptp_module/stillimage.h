@@ -129,5 +129,5 @@ unsigned int stillimg_get_dev_status(unsigned int deviceID,
 				     void *pStatusDataBuffer,
 				     unsigned int bufferSize);
 
-#endif				/*
+#endif				/* 
 				 */

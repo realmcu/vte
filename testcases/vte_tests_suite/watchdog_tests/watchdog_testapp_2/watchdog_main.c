@@ -1,38 +1,38 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   watchdog_main.c
 
         @brief  watchdog test main function.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 V.Khalabuda/b00306           06/07/2006     TLSbo69495  Update for MX27 platform in accordance with changes in time.c file
 Gamma Gao/b14842             12/24/2007                 Chang for MX37 platform(Kernel 2.6.22)
-====================
+====================================================================================================
 Portability:  ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
 Total Tests: 1
 
 Test Executable Name:  watchdog_testapp_2
 
 Test Strategy:  Implementation watchdog features over ioctls of linux/watchdog.h and write operand
-=====================*/
+=================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -43,14 +43,14 @@ Test Strategy:  Implementation watchdog features over ioctls of linux/watchdog.h
 /* Verification Test Environment Include Files */
 #include "watchdog_test_2.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 /* Binary flags : option is set or not */
 int     w_num = 0,
         s_num = 0,
@@ -61,9 +61,9 @@ char    *w_copt,
         *s_copt,
         *t_copt;
 
-/*======================
+/*==================================================================================================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 /* Options given to the Watchdog test. Argument is required for number of watchdog to be tested. */
 option_t Watchdog_options[] =
 {
@@ -73,17 +73,17 @@ option_t Watchdog_options[] =
         {NULL, NULL, NULL}              /* NULL required to end array */
 };
 
-/*======================
+/*==================================================================================================
                                         LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 /* Extern Global Variables */
 extern int     Tst_count;        /* counter for tst_xxx routines.  */
 extern char   *TESTDIR;          /* temporary dir created by tst_tmpdir */
@@ -94,23 +94,23 @@ int     TST_TOTAL = 1;                      /* total number of tests in this fil
 
 int timeout, sleep_sec, test;
 
-/*======================
+/*==================================================================================================
                                     GLOBALover 17KB  FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 void    cleanup(void);
 void    setup(void);
 int     main(int argc, char **argv);
 
-/*======================
+/*==================================================================================================
                                     LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         GLOBAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= cleanup =*/
+/*================================================================================================*/
+/*===== cleanup =====*/
 /**
 @brief  Performs all one time clean up for this test on successful completion,
         premature exit or failure. Closes all temporary files,
@@ -119,10 +119,10 @@ int     main(int argc, char **argv);
 
 @param  Input :      None.
         Output:      None.
-
+    
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void cleanup(void)
 {
         /* VTE : Actions needed to get a stable target environment */
@@ -138,12 +138,12 @@ void cleanup(void)
         tst_exit();
 }
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= setup =*/
+/*================================================================================================*/
+/*===== setup =====*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -151,11 +151,11 @@ void cleanup(void)
 
 @param  Input :      None.
         Output:      None.
-
+    
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 void setup(void)
 {
         int     VT_rv = TFAIL;
@@ -170,21 +170,21 @@ void setup(void)
         return;
 }
 
-/*====================*/
-/*= help =*/
+/*================================================================================================*/
+/*===== help =====*/
 /**
 @brief  Inform of the available options and the associated parameters
 
 @param  Input :      None.
         Output:      None.
-
+    
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 void help(void)
 {
-        printf("============\n");
+        printf("====================================================\n");
         printf("WDOG driver options:\n");
         printf("\t-T N\ttimeout: value in seconds to cause wdt timeout/reset\n");
         printf("\t-S N\tsleep: value in seconds to service the wdt\n");
@@ -192,8 +192,8 @@ void help(void)
         printf("Usage: %s -T <timeout> -S <sleep> -W <test>\n", TCID);
 }
 
-/*====================*/
-/*= main =*/
+/*================================================================================================*/
+/*===== main =====*/
 /**
 @brief  Entry point to this test-case. It parses all the command line inputs,
         calls the global setup and executes the test. It logs the test status and
@@ -207,11 +207,11 @@ void help(void)
                                 -l - Number of iteration
                                 -v - Prints verbose output
                                 -V - Prints the version number
-
+    
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*====================*/
+/*================================================================================================*/
 int main(int argc, char **argv)
 {
         int     VT_rv = TFAIL;

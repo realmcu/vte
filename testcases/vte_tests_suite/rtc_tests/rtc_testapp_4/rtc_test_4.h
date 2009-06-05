@@ -49,7 +49,9 @@ extern "C"{
 /*==================================================================================================
                                        DEFINES AND MACROS
 ==================================================================================================*/
-#define RTC_DRIVER_NAME "/dev/rtc0"
+// Victor: /dev/rtc will link to the true device
+//#define RTC_DRIVER_NAME "/dev/rtc0"
+#define RTC_DRIVER_NAME "/dev/rtc"
 #define BAD_FREQUENCY 65
 #define BAD_FREQUENCY2 1024
 #define WAKEUP_ALARM_ENABLED 1

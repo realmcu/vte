@@ -30,15 +30,15 @@
  **/
 int main(int argc, char **argv)
 {
-        RPTable *rptable  (RPTable *)g_malloc0(sizeof(RPTable));
-        void *data  NULL;
- char *res_data  "This is the resource's data...It's private.";
- unsigned int res_data_len  strlen(res_data);
+        RPTable *rptable = (RPTable *)g_malloc0(sizeof(RPTable));
+        void *data = NULL;
+	char *res_data = "This is the resource's data...It's private.";
+	unsigned int res_data_len = strlen(res_data);
 
         if (oh_add_resource(rptable, rptentries, res_data, 0))
                 return 1;
 
-        data  oh_get_resource_data(rptable, rptentries[0].ResourceId);
+        data = oh_get_resource_data(rptable, rptentries[0].ResourceId);
         if (!data || memcmp(data, res_data, res_data_len))
                 return 1;
 

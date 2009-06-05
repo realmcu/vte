@@ -22,14 +22,14 @@
 extern "C"{
 #endif
 
-/*===============
+/*=======================================================================
                                         INCLUDE FILES
-===============*/
+=======================================================================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-
+    
 /* Verification Test Environment Include Files */
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -76,9 +76,9 @@ int
 mxc_v4l_tvin_test(void)
 {
         int overlay = 1;
- v4l2_std_id id;
- struct v4l2_streamparm parm;
-
+	v4l2_std_id id;
+	struct v4l2_streamparm parm;
+	 
         parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         parm.parm.capture.timeperframe.numerator = 1;
         parm.parm.capture.timeperframe.denominator = 0;
@@ -86,33 +86,33 @@ mxc_v4l_tvin_test(void)
         if (ioctl(fd_v4l, VIDIOC_OVERLAY, &overlay) < 0)
         {
                 printf("VIDIOC_OVERLAY start failed\n");
-  return TFAIL;
+		return TFAIL;
         }
 
        /* Detect standard monitor, the default video standard is PAL when the test programe is started */
 
        while (1) {
-  if (ioctl(fd_v4l, VIDIOC_G_STD, &id) < 0)
+		if (ioctl(fd_v4l, VIDIOC_G_STD, &id) < 0)
                 {
                     printf("overlay test programe: VIDIOC_G_STD failed\n");
                     return TFAIL;
                 }
-  if (g_current_std == id)
-  {
+		if (g_current_std == id)
+		{
                     sleep(1);
-      continue;
-  }
-  else
-  {
-      printf("overlay test programe: video standard changed ... \n");
-      ioctl(fd_v4l, VIDIOC_S_STD, &id);
-      g_cap_mode = (g_cap_mode + 1) % 2;
-      parm.parm.capture.capturemode = g_cap_mode;
-      ioctl(fd_v4l, VIDIOC_S_PARM, &parm);
-      g_current_std = id;
+		    continue;
+		}
+		else
+		{
+		    printf("overlay test programe: video standard changed ... \n");
+		    ioctl(fd_v4l, VIDIOC_S_STD, &id);
+		    g_cap_mode = (g_cap_mode + 1) % 2;
+		    parm.parm.capture.capturemode = g_cap_mode;
+		    ioctl(fd_v4l, VIDIOC_S_PARM, &parm);
+		    g_current_std = id;
                     sleep(1);
-      continue;
-   }
+		    continue;
+		 }
        }
 
     return 0;
@@ -124,7 +124,7 @@ mxc_v4l_tvin_setup(struct v4l2_format *fmt)
         struct v4l2_streamparm parm;
         struct v4l2_control ctl;
         struct v4l2_crop crop;
-  int display_lcd = 0;
+	 int display_lcd = 0;
 
         if (ioctl(fd_v4l, VIDIOC_S_OUTPUT, &display_lcd) < 0)
         {
@@ -133,7 +133,7 @@ mxc_v4l_tvin_setup(struct v4l2_format *fmt)
         }
 
         ctl.id = V4L2_CID_PRIVATE_BASE;
- ctl.value = 0;
+	ctl.value = 0;
         if (ioctl(fd_v4l, VIDIOC_S_CTRL, &ctl) < 0)
         {
                 printf("set control failed\n");
@@ -162,12 +162,12 @@ mxc_v4l_tvin_setup(struct v4l2_format *fmt)
                 printf("get format failed\n");
                 return TFAIL;
         }
-
+		
         parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         parm.parm.capture.timeperframe.numerator = 1;
         parm.parm.capture.timeperframe.denominator = 0;
         parm.parm.capture.capturemode = 0;
-
+         
         if (ioctl(fd_v4l, VIDIOC_S_PARM, &parm) < 0)
         {
                 printf("VIDIOC_S_PARM failed\n");
@@ -204,7 +204,7 @@ main(int argc, char **argv)
         unsigned int * cur_fb32;
         __u32 screen_size;
         int h, w;
- int ret = 0;
+	int ret = 0;
 
         if ((fd_v4l = open(v4l_device, O_RDWR, 0)) < 0) {
                 printf("Unable to open %s\n", v4l_device);
@@ -220,11 +220,11 @@ main(int argc, char **argv)
         if (mxc_v4l_tvin_setup(&fmt) < 0) {
                 printf("Setup tvin failed.\n");
                 return TFAIL;
- }
+	}
 
         memset(&fb_v4l2, 0, sizeof(fb_v4l2));
 
-        if ((fd_fb = open(fb_device, O_RDWR )) < 0) {
+        if ((fd_fb = open(fb_device, O_RDWR )) < 0)	{
                 printf("Unable to open frame buffer\n");
                 return TFAIL;
         }
@@ -240,11 +240,11 @@ main(int argc, char **argv)
 
         /* Overlay setting */
         alpha.alpha = 255;
- alpha.enable = 1;
- if ( ioctl(fd_fb, MXCFB_SET_GBL_ALPHA, &alpha) < 0) {
+	alpha.enable = 1;
+	if ( ioctl(fd_fb, MXCFB_SET_GBL_ALPHA, &alpha) < 0) {
                 close(fd_fb);
                 return TFAIL;
- }
+	}
 
         color_key.color_key = 0x00080808;
         color_key.enable = 1;
@@ -262,7 +262,7 @@ main(int argc, char **argv)
                 printf("\nError: failed to map framebuffer device 0 to memory.\n");
                 close(fd_fb);
                 return TFAIL;
-  }
+	 }
 
         if (var.bits_per_pixel == 16) {
                 for (h = DISPLAY_TOP; h < (DISPLAY_HEIGHT+ DISPLAY_TOP); h++) {

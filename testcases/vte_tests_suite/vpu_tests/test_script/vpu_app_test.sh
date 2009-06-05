@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #<Hake Huang>/-----             <2009/02/12>     N/A          Initial version
-#
+# 
 ###################################################################################################
 
 
@@ -111,7 +111,7 @@ fi
 
 # Function:     test_dec_exec
 # Description   - Test app options for defined format and srcfile
-#
+#  
 test_dec_exec()
 {
 RC=1
@@ -123,7 +123,7 @@ echo "pure decode 1 frame to LCD"
 ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1" || return $RC
 echo "pure decode i frame to file"
 ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -o /tmp/_out_.yuv" || return $RC
-SIZE=$(ls -s /tmp/_out_.yuv | awk '{print $1}')
+SIZE=$(ls -s /tmp/_out_.yuv | awk '{print $1}') 
 rm -rf /tmp/_out_.yuv
 if [ $SIZE -eq 0 ]
 then
@@ -171,9 +171,9 @@ echo "following is chroma interleave mode $l"
       do
        OWD=$(echo $n | sed "s/x/ /g" | awk '{print $1}')
        OHT=$(echo $n | sed "s/x/ /g" | awk '{print $2}')
-        echo "output width is $OWD height is $OHT"
+        echo "output width is $OWD height is $OHT"       
        ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -e 1 -d 1 -r $i -m $j -u $k -t $l -w $OWD -h $OHT" || return $RC
- sleep 1
+	sleep 1
       done
       echo "test prescan in 7 frames"
       ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 7 -e 1 -d 1 -r $i -m $j -u $k -t $l -s 1" || return $RC
@@ -191,8 +191,8 @@ then
 #   OWD=$(echo $i | sed "s/x/ /g" | awk '{print $1}')
 #   OHT=$(echo $i | sed "s/x/ /g" | awk '{print $2}')
 #   ${TSTCMD} -L "-f $FORMAT -w $OWD -h $OHT -t 1 -c 30" || return $RC
-# done
-fi
+# done 
+fi	
 
 echo "$srcfile test dec app PASS"
 RC=0
@@ -219,7 +219,7 @@ then
  do
   echo "rotation mode $k"
   for i in $MIRROR
-  do
+  do	
    echo "mirror mode $i"
    for j in $SIZELIST
    do
@@ -245,10 +245,10 @@ return $C
 
 # Function:     test_case_01
 # Description   - Test if MPEG2 decode ok
-#
+#  
 test_case_01()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="vpu_MPEG2_test"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -270,10 +270,10 @@ return $RC
 
 # Function:     test_case_02
 # Description   - Test if  vc1 decode ok
-#
+#  
 test_case_02()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="vpu_vc1_app"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -298,10 +298,10 @@ return $RC
 
 # Function:     test_case_03
 # Description   - Test if decode Divx ok
-#
+#  
 test_case_03()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="vpu_divx_app_test"
 #TODO give TST_COUNT
 TST_COUNT=3
@@ -311,10 +311,10 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-srcfile=${STREAM_PATH}/video/divx311_320x240.avi
+srcfile=${STREAM_PATH}/video/divx311_320x240.avi 
 FORMAT=5
 test_dec_exec || return $RC
-
+ 
 RC=0
 
 return $RC
@@ -322,10 +322,10 @@ return $RC
 
 # Function:     test_case_04
 # Description   - Test if decode MPEG4 ok
-#
+#  
 test_case_04()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="vpu_mpeg4_app_test"
 #TODO give TST_COUNT
 TST_COUNT=4
@@ -348,10 +348,10 @@ return $RC
 
 # Function:     test_case_05
 # Description   - Test if decode H264 HP with short head ok
-#
+#  
 test_case_05()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="vpu_h264HP_app"
 #TODO give TST_COUNT
 TST_COUNT=5
@@ -373,10 +373,10 @@ return $RC
 
 # Function:     test_case_06
 # Description   - Test if decode H264 BP with short head ok
-#
+#  
 test_case_06()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="vpu_h264BP_app"
 #TODO give TST_COUNT
 TST_COUNT=6
@@ -395,10 +395,10 @@ return $RC
 
 # Function:     test_case_7
 # Description   - Test H263 app
-#
+#  
 test_case_07()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="vpu_dec_h263-basic"
 #TODO give TST_COUNT
 TST_COUNT=7
@@ -421,10 +421,10 @@ return $RC
 
 # Function:     test_case_8
 # Description   - Test enc MJPEG app
-#
+#  
 test_case_08()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="vpu_MJPEG_app"
 #TODO give TST_COUNT
 TST_COUNT=7
@@ -461,7 +461,7 @@ echo "8: MJPEG test"
 if [ $# -ne 1 ]
 then
 echo "usage $0 <1/2/3/4/5/6/7/8>"
-exit 1
+exit 1 
 fi
 
 srcfile=
@@ -490,7 +490,7 @@ setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC
+  test_case_01 || exit $RC 
   ;;
 2)
   test_case_02 || exit $RC

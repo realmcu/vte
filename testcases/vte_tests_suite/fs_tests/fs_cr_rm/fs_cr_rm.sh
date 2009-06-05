@@ -21,7 +21,7 @@
 #L.Delaspre/rc149c            08/12/2004     TLSbo40142   update with Freescale identity
 #L.Delaspre/rc149c            23/03/2005     TLSbo47635   rework the header of test script
 # Spring                      28/11/2008       n/a      Modify COPYRIGHT header
-#
+# 
 ###################################################################################################
 
 
@@ -48,10 +48,10 @@ stamp()
 
 setup()
 {
-  export RC=0      # Return code from commands.
-  export TST_TOTAL=1    # total numner of tests in this file.
-  export TCID="TGE-LV-RAMFS-0030"   # this is the SETUP function.
-  export TST_COUNT=0    # SETUP identifier,
+  export RC=0						# Return code from commands.
+  export TST_TOTAL=1				# total numner of tests in this file.
+  export TCID="TGE-LV-RAMFS-0030"			# this is the SETUP function.
+  export TST_COUNT=0				# SETUP identifier,
 
   if [ -z $TMP_PATH ]
   then
@@ -66,12 +66,12 @@ setup()
   mkdir -p $LTPTMP/ &>/dev/null || RC=$?
   if [ $RC -ne 0 ]
   then
- tst_brkm TBROK NULL "SETUP: Unable to create temporary directory"
- return $RC
+	tst_brkm TBROK NULL "SETUP: Unable to create temporary directory"
+	return $RC
   fi
+    
 
-
-  cd $LTPTMP
+  cd $LTPTMP  
 
   return $RC
 }
@@ -79,9 +79,9 @@ setup()
 cleanup()
 {
   RC=0
-
+  
   cd ..
-
+  
   if [ -d $LTPTMP ]
   then
     rm -rf $LTPTMP
@@ -99,30 +99,30 @@ test01()
 
   for count in `seq 1 3`;
   do
- echo -ne ' '
+	echo -ne ' '
     mkdir a
     for i in `seq 1 1000`;
     do
       echo  0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz > a/$i || RC=$?
-     if [ $RC -ne 0 ]
-     then
-       tst_brkm TBROK NULL "TEST01: Can't create file a/$i"
-    return $RC
-     fi
-   stamp
+	    if [ $RC -ne 0 ]
+	    then
+	      tst_brkm TBROK NULL "TEST01: Can't create file a/$i"
+		  return $RC
+	    fi
+	  stamp
     done
 
- mkdir b
+	mkdir b
     for j in `seq 1 1000`;
- do
-   ln -s `pwd`/a/$j b/$j || RC=$?
+	do
+  	  ln -s `pwd`/a/$j b/$j || RC=$?
       if [ $RC -ne 0 ]
       then
-   tst_brkm TBROK NULL "TEST01: Can't create symbol link b/$j"
+    	tst_brkm TBROK NULL "TEST01: Can't create symbol link b/$j"
         return $RC
       fi
       stamp
- done
+	done
 
     rm -fr b
     rm -fr a

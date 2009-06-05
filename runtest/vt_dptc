@@ -1,0 +1,27 @@
+#Verification Tests Command File
+
+#VT DVFS/DPTC drivers tests
+#files: dvfs_dptc_testapp
+
+# INIT test
+TGE-LV-DVFS_DPTC-0010 dvfs_dptc_testapp -T 0 -D /dev/dptc
+# READING and UPDATING test
+TGE-LV-DVFS_DPTC-0020 dvfs_dptc_testapp -T 1 -D /dev/dptc
+# REFERENCE CIRCUIT test
+TGE-LV-DVFS_DPTC-0030 dvfs_dptc_testapp -T 2 -D /dev/dptc -A 0x10
+TGE-LV-DVFS_DPTC-0031 dvfs_dptc_testapp -T 2 -D /dev/dptc -A 0x1c
+TGE-LV-DVFS_DPTC-0032 dvfs_dptc_testapp -T 2 -D /dev/dptc -A 0x1b
+TGE-LV-DVFS_DPTC-0033 dvfs_dptc_testapp -T 2 -D /dev/dptc -A 0x1a
+# WORKING POINT test
+TGE-LV-DVFS_DPTC-0040 dvfs_dptc_testapp -T 3 -D /dev/dptc -A 0xf
+TGE-LV-DVFS_DPTC-0041 dvfs_dptc_testapp -T 3 -D /dev/dptc -A 0xe
+TGE-LV-DVFS_DPTC-0042 dvfs_dptc_testapp -T 3 -D /dev/dptc -A 0xd
+TGE-LV-DVFS_DPTC-0043 dvfs_dptc_testapp -T 3 -D /dev/dptc -A 0xc
+# FREQUENCY test
+TGE-LV-DVFS_DPTC-0050 dvfs_dptc_testapp -T 4 -D /dev/dptc
+# SW general purpose bits test
+TGE-LV-DVFS_DPTC-0060 dvfs_dptc_testapp -T 5 -D /dev/dptc -A 0x19
+# Wait-For-Interrupt state test
+TGE-LV-DVFS_DPTC-0070 dvfs_dptc_testapp -T 6 -D /dev/dptc -A 0x18
+
+#WARNING the commented tests are not automatical tests

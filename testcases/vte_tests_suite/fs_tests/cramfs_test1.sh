@@ -18,21 +18,21 @@
 #                          Modification     Tracking
 # Author                       Date          Number    Description of Changes
 #-----------------------   ------------    ----------  ---------------------
-# Spring Zhang               11/06/2008       n/a        Initial ver.
+# Spring Zhang               11/06/2008       n/a        Initial ver. 
 # Spring                     28/11/2008       n/a      Modify COPYRIGHT header
 #############################################################################
-# Portability:  ARM sh bash
+# Portability:  ARM sh bash 
 #
 # File Name:    cramfs_1.sh
 # Total Tests:        1
 # Test Strategy: basic file operation such as copy on cramfs.
+# 
+# Input:	- $1 - device name
+#		    - $2 - mount point(dir)
 #
-# Input: - $1 - device name
-#      - $2 - mount point(dir)
+# Return:       - 
 #
-# Return:       -
-#
-# Use command "./cramfs_1.sh [device name] [mount point]"
+# Use command "./cramfs_1.sh [device name] [mount point]" 
 #               to test cramfs file system
 
 
@@ -85,7 +85,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup()
+cleanup() 
 {
     echo "clean up environment..."
     umount $mount_dir && sleep 1
@@ -149,7 +149,7 @@ cramfs_ops()
 # Return        - none
 usage()
 {
-    cat <<-EOF
+    cat <<-EOF 
 
     Use this command to test cramfs file system basic functions.
     usage: ./${0##*/} [cramfs image] [mount point]

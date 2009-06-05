@@ -29,16 +29,16 @@
  **/
 int main(int argc, char **argv)
 {
-        RPTable *rptable  (RPTable *)g_malloc0(sizeof(RPTable));
+        RPTable *rptable = (RPTable *)g_malloc0(sizeof(RPTable));
         guint i;
 
-        for (i  0; i < SAHPI_MAX_ENTITY_PATH; i++) {
-                if (rptentries[0].ResourceEntity.Entry[i].EntityType  SAHPI_ENT_ROOT) {
-                        rptentries[0].ResourceEntity.Entry[i].EntityType  0;
+        for (i = 0; i < SAHPI_MAX_ENTITY_PATH; i++) {
+                if (rptentries[0].ResourceEntity.Entry[i].EntityType == SAHPI_ENT_ROOT) {
+                        rptentries[0].ResourceEntity.Entry[i].EntityType = 0;
                         break;
                 }
         }
-
+        
         if (!oh_add_resource(rptable, rptentries, NULL, 1))
                 return 1;
 

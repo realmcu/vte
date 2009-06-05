@@ -1,30 +1,30 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   pmic_rtc_module.c
 
         @brief  PMIC RTC test module
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         reescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 Pradeep K / b01016           09/25/2006     TLSboXXX    Initial version
 
-====================
+====================================================================================================
 Portability:  ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 //#include <linux/config.h>
 #include <linux/poll.h>
 #include <linux/module.h>
@@ -38,9 +38,9 @@ Portability:  ARM GCC
 
 #include "pmic_rtc_module.h"
 
-/*======================
+/*==================================================================================================
                                        GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 
 static struct class *pmic_rtc_class;
 static int pmic_rtc_major = 0;
@@ -49,16 +49,16 @@ static void callback_alarm_asynchronous(void);
 static pmic_event_callback_t alarm_event;
 static bool pmic_rtc_done = 0;
 
-/*======================
+/*==================================================================================================
                                        DEFINES AND MACROS
-======================*/
+==================================================================================================*/
 #ifdef __ALL_TRACES__
 #define TRACEMSG_RTC(fmt,args...)  printk(fmt,##args)
 #else                           /* __ALL_TRACES__ */
 #define TRACEMSG_RTC(fmt,args...)
 #endif                          /* __ALL_TRACES__ */
 
-/*====================*/
+/*================================================================================================*/
 
 #define CHECK_ERROR(a)                  \
 do {                                    \
@@ -67,9 +67,9 @@ do {                                    \
         return ret;                     \
 } while (0)
 
-/*======================
+/*==================================================================================================
                                      LOCAL FUNCTION
-======================*/
+==================================================================================================*/
 /*!
  * This is the callback function called on TSI Pmic event, used in asynchronous
  * call.
@@ -78,7 +78,7 @@ static void callback_alarm_asynchronous(void)
 {
         pmic_rtc_done = true;
 }
-/*====================*/
+/*================================================================================================*/
 
 /*!
  * This is the callback function is used in test code for (un)sub.
@@ -89,7 +89,7 @@ static void callback_test_sub(void)
         printk(KERN_INFO"***** Pmic RTC 'Alarm IT CallBack' *****");
         printk(KERN_INFO"*****************************************");
 }
-/*====================*/
+/*================================================================================================*/
 /*!
  * This function implements IOCTL controls on a PMIC RTC device.
  *
@@ -99,7 +99,7 @@ static void callback_test_sub(void)
  * @param        arg         the parameter
  * @return       This function returns 0 if successful.
  */
-/*===================*/
+/*===============================================================================================*/
 static int pmic_rtc_ioctl(struct inode *inode, struct file *file,
                           unsigned int cmd, unsigned long arg)
 {
@@ -192,7 +192,7 @@ static int pmic_rtc_ioctl(struct inode *inode, struct file *file,
         return 0;
 }
 
-/*===================*/
+/*===============================================================================================*/
 /* Called without the kernel lock - fine */
 static unsigned int pmic_rtc_poll(struct file *file, poll_table * wait)
 {
@@ -203,7 +203,7 @@ static unsigned int pmic_rtc_poll(struct file *file, poll_table * wait)
         return 0;
 }
 
-/*====================*/
+/*================================================================================================*/
 
 /*!
  * This function implements the open method on a PMIC RTC device.
@@ -216,7 +216,7 @@ static int pmic_rtc_open(struct inode *inode, struct file *file)
 {
         return 0;
 }
-/*====================*/
+/*================================================================================================*/
 
 /*!
  * This function implements the release method on a PMIC RTC device.
@@ -230,9 +230,9 @@ static int pmic_rtc_release(struct inode *inode, struct file *file)
         return 0;
 }
 
-/*=====================
+/*=================================================================================================
 GLOBAL VARIABLE DECLARATIONS
-======================*/
+==================================================================================================*/
 static struct file_operations pmic_rtc_fops = {
         .owner = THIS_MODULE,
         .ioctl = pmic_rtc_ioctl,
@@ -241,7 +241,7 @@ static struct file_operations pmic_rtc_fops = {
         .release = pmic_rtc_release,
 };
 
-/*====================*/
+/*================================================================================================*/
 
 /*
  * Init and Exit
@@ -280,7 +280,7 @@ static int __init pmic_rtc_init(void)
 
 }
 
-/*====================*/
+/*================================================================================================*/
 static void __exit pmic_rtc_exit(void)
 {
         unregister_chrdev(pmic_rtc_major, PMIC_RTC_DEV);
@@ -290,7 +290,7 @@ static void __exit pmic_rtc_exit(void)
         printk("PMIC RTC Test: removing virtual device\n");
 }
 
-/*====================*/
+/*================================================================================================*/
 
 module_init(pmic_rtc_init);
 module_exit(pmic_rtc_exit);

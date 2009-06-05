@@ -11,18 +11,18 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-#I. Semenchukov/smng001c      21/09/2004     TLSbo41672   Initial version
-#L. Delaspre/rc149c           08/10/2004     TLSbo42821   VTE 1.5.1 integration
+#I. Semenchukov/smng001c      21/09/2004     TLSbo41672   Initial version 
+#L. Delaspre/rc149c           08/10/2004     TLSbo42821   VTE 1.5.1 integration 
 #L.Delaspre/rc149c            08/12/2004     TLSbo40142   update with Freescale identity
 #
 ###################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms.
+#Portability: Indicate if this module is portable to other compilers or platforms. 
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################
@@ -35,7 +35,7 @@ OBJS=$(patsubst %.c,%.o,$(SRCS))
 
 #TO BE UPDATED WITH THE TEST APPLICATION NAME
 TARGET=lcd_testapp_power
-
+ 
 all: $(TARGET)
 	@echo "***********************************************"
 	@echo "** ALL : lcd_testapp_power application       **"

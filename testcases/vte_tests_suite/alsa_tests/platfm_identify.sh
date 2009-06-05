@@ -18,14 +18,14 @@
 #                      Modification     Tracking
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
-# Spring Zhang          27/11/2008       n/a        Initial ver.
+# Spring Zhang          27/11/2008       n/a        Initial ver. 
 # Spring                28/11/2008       n/a        Modify COPYRIGHT header
 #############################################################################
 # Find the platform type
 determine_platform()
 {
     local find=0
-
+    
     # Determine the platform
     find=`cat /proc/cpuinfo | grep "Revision" | grep "31.*" | wc -l`;
     if [ $find -eq 1 ]
@@ -64,19 +64,19 @@ determine_platform()
         RC=31
     elif [ $platform = "mx35" ]
     then
-        echo  "Platform MX35"
+        echo  "Platform MX35" 
         RC=35
     elif [ $platform = "mx37" ]
     then
-        echo  "Platform MX37"
+        echo  "Platform MX37" 
         RC=37
     elif [ $platform = "mx51" ]
     then
-        echo  "Platform MX51"
+        echo  "Platform MX51" 
         RC=51
     elif [ $platform = "SMTP378X" ]
     then
-        echo  "Platform SMTP378X"
+        echo  "Platform SMTP378X" 
         let RC=378%128
     else
         echo  "Platform not recognized!"

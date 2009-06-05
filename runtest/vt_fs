@@ -1,0 +1,34 @@
+#Verification Tests Command File
+
+#VT File System drivers tests
+#files: fs_fsck.sh
+#files: fs_perms
+#files: fs_inod.sh
+#files: fs_cr_rm.sh
+
+#FS Tests
+TGE-LV-CRAMFS-0010 fs_fsck.sh cramfs /dev/mtdblock/2
+
+TGE-LV-RAMFS-0010 fs_perms 001 99 99 12 100 x 1
+TGE-LV-RAMFS-0011 fs_perms 010 99 99 200 99 x 1
+TGE-LV-RAMFS-0012 fs_perms 100 99 99 99 500 x 1
+TGE-LV-RAMFS-0013 fs_perms 002 99 99 12 100 w 1
+TGE-LV-RAMFS-0014 fs_perms 001 99 99 12 100 x 1
+TGE-LV-RAMFS-0015 fs_perms 020 99 99 200 99 w 1
+TGE-LV-RAMFS-0016 fs_perms 200 99 99 99 500 w 1
+TGE-LV-RAMFS-0017 fs_perms 004 99 99 12 100 r 1
+TGE-LV-RAMFS-0018 fs_perms 040 99 99 200 99 r 1
+TGE-LV-RAMFS-0019 fs_perms 004 99 99 12 100 r 1
+TGE-LV-RAMFS-0020 fs_perms 004 99 99 12 100 r 1
+TGE-LV-RAMFS-0021 fs_perms 000 99 99 99 99 w 0
+TGE-LV-RAMFS-0022 fs_perms 000 99 99 99 99 x 0
+TGE-LV-RAMFS-0023 fs_perms 010 99 99 99 500 x 0
+TGE-LV-RAMFS-0024 fs_perms 100 99 99 200 99 x 0
+TGE-LV-RAMFS-0025 fs_perms 020 99 99 99 500 w 0
+TGE-LV-RAMFS-0026 fs_perms 200 99 99 200 99 w 0
+TGE-LV-RAMFS-0027 fs_perms 040 99 99 99 500 r 0
+TGE-LV-RAMFS-0028 fs_perms 400 99 99 200 99 r 0
+
+TGE-LV-RAMFS-0030 fs_inod.sh $TMP 10 10 1
+
+TGE-LV-RAMFS-0040 fs_cr_rm.sh $TMP

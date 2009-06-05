@@ -4,7 +4,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ##############################################################################
 #
 #   @file   Makefile
@@ -24,7 +24,7 @@
 ##############################################################################
 
 SUBDIRS = nbamr_encoder_testapp \
-nbamr_decoder_testapp
+nbamr_decoder_testapp 
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

@@ -27,16 +27,16 @@ void perror(const char *s);
 
 int main(int argc, char **argv)
 {
- int fd;
+	int fd;
 
- if (argc < 2)
-  exit(-5);
- fd  open(argv[1], O_RDWR);
- if (fd  -1) {
-  perror("failed !\n");
- } else {
-  printf("succeeded!\n");
-  sleep(10);
-  close(fd);
- }
+	if (argc < 2)
+		exit(-5);
+	fd = open(argv[1], O_RDWR);
+	if (fd == -1) {
+		perror("failed !\n");
+	} else {
+		printf("succeeded!\n");
+		sleep(10);
+		close(fd);
+	}
 }

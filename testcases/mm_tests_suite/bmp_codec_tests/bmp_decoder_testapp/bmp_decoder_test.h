@@ -10,13 +10,13 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-
+     
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-D.Simakov / smkd001c         12/07/2004     TLSbo40263   Initial version
+D.Simakov / smkd001c         12/07/2004     TLSbo40263   Initial version 
 D.Simakov / smkd001c         02/03/2005     TLSbo47117   Updated
 D.Simakov / smkd001c         25/03/2005     TLSbo48683   Improved
 D.Simakov / smkd001c         02/06/2005     TLSbo50899  Robustness test case was improved
@@ -37,9 +37,9 @@ extern "C"{
 #include <semaphore.h>
 #include <asm/ioctls.h>
 #include <linux/fb.h>		// for frame buffer operations
-#include <sys/types.h>  // fork usage for reentrance test
-#include <unistd.h> // fork usage for reentrance test
-#include <pthread.h> // fork usage for reentrance test
+#include <sys/types.h>  	// fork usage for reentrance test
+#include <unistd.h> 		// fork usage for reentrance test
+#include <pthread.h> 		// fork usage for reentrance test
 #include <sys/time.h>		// timer usage for preemptivity
 #include <signal.h>
 #include <stdio.h>
@@ -49,8 +49,8 @@ extern "C"{
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include <bmp_interface.h>
-
+#include <bmp_interface.h>               
+                              
 /*==================================================================================================
                                            CONSTANTS
 ==================================================================================================*/
@@ -62,7 +62,7 @@ extern "C"{
 /* List all the test Id / Case	*/
 //#define EXHAUSTIVE_DECODE		0
 //#define ENDURANCE				1
-//#define ROBUSTNESS_1    2
+//#define ROBUSTNESS_1    		2
 //#define ROBUSTNESS_2            3
 //#define REENTRANCE				4
 //#define PREEMPTIVITY			5
@@ -70,15 +70,15 @@ extern "C"{
 
 #define ITERATIONS				10
 
-#define INPUT_BUF_SIZE  2048 /* size of the input buffer for each decoding thread */
-#define DECODER_THREAD 	2	 /* max number of decoding thread */
+#define INPUT_BUF_SIZE  		2048 /* size of the input buffer for each decoding thread */
+#define DECODER_THREAD 			2	 /* max number of decoding thread */
 
-
+               
 /*==================================================================================================
                                              ENUMS
 ==================================================================================================*/
 /** bmp_decoder_EX type */
-typedef enum
+typedef enum 
 {
     NOMINAL_FUNCTIONALITY = 0,
     ENDURANCE,
@@ -86,7 +86,7 @@ typedef enum
     ROBUSTNESS_2, /* some wrong file with the bmp hdr */
     RE_ENTRANCE,
     PRE_EMPTION,
-    LOAD_TEST
+    LOAD_TEST    
 } bmp_decoder_testcases_t;
 
 
@@ -98,7 +98,7 @@ typedef enum
 typedef struct
 {
 	unsigned int instance_id;
-  unsigned char * input_file_name;
+  	unsigned char * input_file_name;
 	unsigned char * output_file_name;
     unsigned char * ref_fname;
 	BMP_Decoder_Params dec_param;

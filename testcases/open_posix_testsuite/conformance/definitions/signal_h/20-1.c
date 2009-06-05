@@ -10,8 +10,8 @@ void *sp;
 
 int dummyfcn (void)
 {
- sp  t.ss_sp;
- onstack  t.ss_onstack;
+	sp = t.ss_sp;
+	onstack = t.ss_onstack;
 
- return 0;
+	return 0;
 }

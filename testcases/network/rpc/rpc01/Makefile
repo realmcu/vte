@@ -1,5 +1,5 @@
 CFLAGS += -w -O
-LDLIBS +=
+LDLIBS += 
 
 SRCS=$(wildcard *.c)
 TARGETS=$(patsubst %.c,%,$(SRCS))

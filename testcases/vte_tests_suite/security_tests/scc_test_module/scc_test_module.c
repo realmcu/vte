@@ -1,4 +1,4 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   scc_test_module.c
         @brief This is a test module for the SCC.
@@ -8,14 +8,14 @@
                included at various points which should be helpful in moving the
                code to a different environment.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -24,18 +24,18 @@ A.Urusov/NONE                29/09/2005     TLSbo55835   Initial version
 A.Ozerov/NONE                03/02/2006     TLSbo61735   Mapping was removed
 Y.Batrakov/NONE              20/09/2006     TLSbo78563   Fixed compilation for imx27 platform
 D.Simakov                    13/11/2006     TLSbo80386   tests are unable to access registers for i.MX27ADS
-====================
-====================
+====================================================================================================
+====================================================================================================
 Total Tests: 1
 
 Test Executable Name:  scc_test_module.ko
 
 Test Strategy: Examine the SCC driver common software operations
-=====================*/
+=================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 #include <linux/module.h>
 #include <linux/device.h>
 #include <linux/version.h>
@@ -48,9 +48,9 @@ Test Strategy: Examine the SCC driver common software operations
 #include "scc_test_module.h"
 
 
-/*======================
+/*==================================================================================================
                                    LOCAL VARIABLE DECLARATIONS
-======================*/
+==================================================================================================*/
 #define SCC_READ_REGISTER(offset) __raw_readl(scc_base+(offset))
 #define SCC_WRITE_REGISTER(offset,value) (void)__raw_writel(value, scc_base+(offset))
 #define SCC_BYTE_OFFSET(bp) ((uint32_t)(bp) % sizeof(uint32_t))
@@ -59,9 +59,9 @@ static volatile void *scc_base;
 static __u32 major_dev_num;
 static struct class *scc_class; /* Added by Pradeep K*/
 
-/*======================
+/*==================================================================================================
                                      LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 static int scc_test_init(void);
 static int scc_test_open(struct inode *inode, struct file *file);
 static int scc_test_release(struct inode *inode, struct file *file);
@@ -76,9 +76,9 @@ static int scc_test_zeroize(unsigned long scc_data);
 
 //extern int //---devfs_mk_cdev(dev_t dev, umode_t mode, const char *fmt, ...);
 
-/*======================
+/*==================================================================================================
                                    STRUCTURES AND OTHER TYPEDEFS
-======================*/
+==================================================================================================*/
 /**
  * Interface jump vector for calls into the device driver.
  *
@@ -93,7 +93,7 @@ static struct file_operations scc_test_fops = {
         .release = scc_test_release,
 };
 
-/*====================*/
+/*================================================================================================*/
 
 static inline int offset_within_smn(uint32_t register_offset)
 {
@@ -144,7 +144,7 @@ static scc_return_t check_register_offset(uint32_t register_offset)
  * @todo An appropriate "major" number must be selected, or generated
  * automatically (along with mknod() call!?)
  */
-/*====================*/
+/*================================================================================================*/
 static int scc_test_init(void)
 {
         if ((major_dev_num = register_chrdev(0, SCC_TEST_DEVICE_NAME, &scc_test_fops)) < 0)
@@ -201,7 +201,7 @@ err_out:
 }
 
 
-/*====================*/
+/*================================================================================================*/
 /***********************************************************************
  * scc_test_ioctl()                                                    *
  **********************************************************************/
@@ -239,7 +239,7 @@ err_out:
  *
  * @return 0 or an error code (IOCTL_SCC_xxx)
  */
-/*====================*/
+/*================================================================================================*/
 static int scc_test_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
                           unsigned long scc_data)
 {
@@ -293,7 +293,7 @@ static int scc_test_ioctl(struct inode *inode, struct file *file, unsigned int c
         return error_code;
 }
 
-/*====================*/
+/*================================================================================================*/
 /***********************************************************************
  * scc_read_open()                                                     *
  **********************************************************************/
@@ -309,7 +309,7 @@ static int scc_test_ioctl(struct inode *inode, struct file *file, unsigned int c
  *
  * @return 0 if successful, error code if not
  */
-/*====================*/
+/*================================================================================================*/
 static int scc_test_open(struct inode *inode, struct file *file)
 {
 //#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
@@ -324,7 +324,7 @@ static int scc_test_open(struct inode *inode, struct file *file)
         return 0;
 }
 
-/*====================*/
+/*================================================================================================*/
 /***********************************************************************
  * scc_test_release()                                                  *
  **********************************************************************/
@@ -339,7 +339,7 @@ static int scc_test_open(struct inode *inode, struct file *file)
  *
  * @return 0 (always - errors are ignored)
  */
-/*====================*/
+/*================================================================================================*/
 static int scc_test_release(struct inode *inode, struct file *file)
 {
 //#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
@@ -354,7 +354,7 @@ static int scc_test_release(struct inode *inode, struct file *file)
         return 0;
 }
 
-/*====================*/
+/*================================================================================================*/
 /***********************************************************************
  * scc_test_cleanup()                                                  *
  **********************************************************************/
@@ -371,7 +371,7 @@ static int scc_test_release(struct inode *inode, struct file *file)
  * during error handling from #scc_test_init().
  *
  */
-/*====================*/
+/*================================================================================================*/
 static void scc_test_cleanup(void)
 {
         iounmap((void *)scc_base);
@@ -394,7 +394,7 @@ static void scc_test_cleanup(void)
         return;
 }
 
-/*====================*/
+/*================================================================================================*/
 /***********************************************************************
  * scc_test_get_configuration()                                        *
  **********************************************************************/
@@ -410,7 +410,7 @@ static void scc_test_cleanup(void)
  * previously retrieved information.
  *
  */
-/*====================*/
+/*================================================================================================*/
 static int scc_test_get_configuration(unsigned long scc_data)
 {
         int     error_code = IOCTL_SCC_OK;
@@ -433,7 +433,7 @@ static int scc_test_get_configuration(unsigned long scc_data)
 
 } /* scc_get_configuration */
 
-/*====================*/
+/*================================================================================================*/
 /***********************************************************************
  * scc_test_read_register()                                                 *
  **********************************************************************/
@@ -445,7 +445,7 @@ static int scc_test_get_configuration(unsigned long scc_data)
  *
  * @return 0 for success, an error code on failure.
  */
-/*====================*/
+/*================================================================================================*/
 static int scc_test_read_register(unsigned long scc_data)
 {
         scc_reg_access  reg_struct;
@@ -478,7 +478,7 @@ static int scc_test_read_register(unsigned long scc_data)
         return error_code;
 }
 
-/*====================*/
+/*================================================================================================*/
 /***********************************************************************
  * scc_test_write_register()
  **********************************************************************/
@@ -490,7 +490,7 @@ static int scc_test_read_register(unsigned long scc_data)
  *
  * @return 0 for success, an error code on failure.
  */
-/*====================*/
+/*================================================================================================*/
 static int scc_test_write_register(unsigned long scc_data)
 {
         scc_reg_access  reg_struct;
@@ -531,7 +531,7 @@ static int scc_test_write_register(unsigned long scc_data)
         return error_code;
 }
 
-/*====================*/
+/*================================================================================================*/
 /*****************************************************************************/
 /* scc_test_cipher() */
 /*****************************************************************************/
@@ -548,7 +548,7 @@ static int scc_test_write_register(unsigned long scc_data)
  * @param cmd      - SCC_ENCRYPT = Encryption or SCC_DECRYPT = Decryption
  * @param scc_data - Input struct provided by application code.
  */
-/*====================*/
+/*================================================================================================*/
 static int scc_test_cipher(uint32_t cmd, unsigned long scc_data)
 {
         scc_encrypt_decrypt cipher_struct;      /* local copy */
@@ -667,7 +667,7 @@ static int scc_test_cipher(uint32_t cmd, unsigned long scc_data)
         return error_code;
 }
 
-/*====================*/
+/*================================================================================================*/
 /*****************************************************************************/
 /* scc_test_zeroize() */
 /*****************************************************************************/
@@ -678,7 +678,7 @@ static int scc_test_cipher(uint32_t cmd, unsigned long scc_data)
  *
  * @return 0 on success, -errno on failure
  */
-/*====================*/
+/*================================================================================================*/
 static int scc_test_zeroize(unsigned long scc_data)
 {
         scc_return_t return_code = scc_zeroize_memories();
@@ -688,7 +688,7 @@ static int scc_test_zeroize(unsigned long scc_data)
         return 0;
 }
 
-/*====================*/
+/*================================================================================================*/
 /** Tell Linux where to invoke driver on module load  */
 module_init(scc_test_init);
 

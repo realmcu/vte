@@ -1,43 +1,43 @@
-/*====================*/
+/*================================================================================================*/
 /**
     @file   sdma_tty_main.c
 
     @brief   SDMA TTY test main function.*/
-/*======================
+/*==================================================================================================
 
     Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
     THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
     BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
     Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 V. ZAVJALOV/----             19/07/2004     TLSbo40259  Initial version
 E.Gromazina                  31/10/2005     TLSbo56685  Fix bag
-====================
+====================================================================================================
 Portability:  ARM GCC  gnu compiler
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
 Total Tests: 1
 
 Test Executable Name:  sdma_tty
 
 Test Strategy:
-=====================*/
+=================================================================================================*/
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <errno.h>
-
+    
 /* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
@@ -45,34 +45,34 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "sdma_tty_test.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 /* Extern Global Variables */
 extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir(void) */
@@ -91,24 +91,24 @@ option_t options[] = {
         { NULL, NULL, NULL }                    /* NULL required to end array */
 };
 
-/*======================
+/*==================================================================================================
                                     GLOBAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 void cleanup(void);
 void setup(void);
 int main(int argc, char **argv);
 void help(void);
 
-/*======================
+/*==================================================================================================
                                     LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         GLOBAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= cleanup =*/
+/*================================================================================================*/
+/*===== cleanup =====*/
 /**
 @brief  Performs all one time clean up for this test on successful
                                 completion,  premature exit or  failure. Closes all temporary
@@ -117,14 +117,14 @@ void help(void);
 
 @param  Input :      None.
         Output:      None.
-
+    
 @return Nothing*/
-/*====================*/
+/*================================================================================================*/
 void cleanup(void)
 {
     /* VTE : Actions needed to get a stable target environment */
         int VT_rv = TFAIL;
-
+                
         VT_rv = VT_sdma_tty_test_cleanup();
         if (VT_rv != TPASS)
         {
@@ -135,12 +135,12 @@ void cleanup(void)
     tst_exit();
 }
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= setup =*/
+/*================================================================================================*/
+/*===== setup =====*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -148,27 +148,27 @@ void cleanup(void)
 
 @param  Input :      None.
         Output:      None.
-
+    
 @return On failure - Exits by calling cleanup().
         On success - returns 0.*/
-/*====================*/
+/*================================================================================================*/
 void setup(void)
 {
         int VT_rv = TFAIL;
-
+        
     /* VTE : Actions needed to prepare the test running */
         VT_rv = VT_sdma_tty_test_setup();
         if (VT_rv != TPASS)
         {
                 tst_brkm(TBROK , cleanup, "VT_sdma_tty_setup() Failed : error code = %d", VT_rv);
         }
-
+    
     return;
 }
 
 
-/*====================*/
-/*= main =*/
+/*================================================================================================*/
+/*===== main =====*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -182,10 +182,10 @@ void setup(void)
                                 -l - Number of iteration
                                 -v - Prints verbose output
                                 -V - Prints the version number
-
+    
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.*/
-/*====================*/
+/*================================================================================================*/
 int main(int argc, char **argv)
 {
         int VT_rv = TFAIL;
@@ -201,7 +201,7 @@ int main(int argc, char **argv)
                   tst_brkm(TBROK, cleanup, "Invalid arg for -n: %s", n_copt);
         }
         else
-            tst_brkm(TBROK, cleanup, "Required arg -n");
+            tst_brkm(TBROK, cleanup, "Required arg -n");        
 
         if (r_num)
         {
@@ -216,7 +216,7 @@ int main(int argc, char **argv)
            string_param = s_copt;
         else
            tst_brkm(TBROK, cleanup, "Required arg -s");
-
+        
         /* perform global test setup, call setup() function. */
         setup();
 
@@ -225,14 +225,14 @@ int main(int argc, char **argv)
 
         /* VTE : Execute test, print results and exit test scenario */
         VT_rv = VT_sdma_tty_test();
-
+        
         if(VT_rv == TPASS)
             tst_resm(TPASS, "test case %s worked as expected", TCID);
         else
             tst_resm(TFAIL, "test case %s did NOT work as expected", TCID);
-
-        /* cleanup test allocated ressources */
-        cleanup();
+                
+        /* cleanup test allocated ressources */        
+        cleanup(); 
 
         return VT_rv;
 }

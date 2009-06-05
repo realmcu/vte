@@ -34,7 +34,7 @@ ifeq ($(ARCH_PLATFORM),mxc91131evb)
 CFLAGS+= -DCONFIG_MXC_PMIC_SC55112
 else
 CFLAGS+= -DCONFIG_MXC_MC13783_PMIC
-endif
+endif 
 
 SRCS=$(wildcard *.c)
 OBJS=$(patsubst %.c,%.o,$(SRCS))
@@ -51,7 +51,7 @@ all: $(TARGET)
 install:
 	ln -f $(TARGET) ../../../bin
 	cp -uf ../alsa_bin/aplay ../../../bin
-	cp -uf ../alsa_bin/arecord ../../../bin
+	cp -uf ../alsa_bin/arecord ../../../bin        
 	@echo "***********************************************"
 	@echo "** INSTALL : $(TARGET)     **"
 	@echo "***********************************************"

@@ -24,7 +24,7 @@
 /*                                                                            */
 /* Description: This Program tests the new system call introduced in 2.6.27.  */
 /*              Ulrich´s comment as in:                                       */
-/* http://git.kernel.org/?plinux/kernel/git/torvalds/linux-2.6.git;acommit;ha0998b50c3f0b8fdd265c63e0032f86ebe377dbf */
+/* http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=a0998b50c3f0b8fdd265c63e0032f86ebe377dbf */
 /*              says:                                                         */
 /* This patch adds the new epoll_create2 syscall.  It extends the old         */
 /* epoll_create syscall by one parameter which is meant to hold a flag value. */
@@ -84,9 +84,9 @@ extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
-char *TCID      "epoll_create2_01"; /* test program identifier.              */
+char *TCID     = "epoll_create2_01"; /* test program identifier.              */
 int  testno;
-int  TST_TOTAL  1;                  /* total number of tests in this file.   */
+int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -146,8 +146,8 @@ int main (int argc, char *argv[]) {
   char *msg;              /* message returned from parse_opts */
 
   /* Parse standard options given to run the test. */
-  msg  parse_opts(argc, argv, (option_t *) NULL, NULL);
-  if (msg ! (char *) NULL) {
+  msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
+  if (msg != (char *) NULL) {
       tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
       tst_exit();
   }
@@ -158,17 +158,17 @@ int main (int argc, char *argv[]) {
   setup();
 
    /* Check looping state if -i option given */
-  for (lc  0; TEST_LOOPING(lc); ++lc) {
-       Tst_count  0;
-       for (testno0; testno < TST_TOTAL; ++testno) {
-            fd  syscall (__NR_epoll_create2, 1, 0);
-            if (fd  -1) {
+  for (lc = 0; TEST_LOOPING(lc); ++lc) {
+       Tst_count = 0;
+       for (testno=0; testno < TST_TOTAL; ++testno) {
+            fd = syscall (__NR_epoll_create2, 1, 0);
+            if (fd == -1) {
                 tst_resm(TFAIL, "epoll_create2(0) failed");
                 cleanup();
                 tst_exit();
             }
-            coe  fcntl (fd, F_GETFD);
-            if (coe  -1) {
+            coe = fcntl (fd, F_GETFD);
+            if (coe == -1) {
                 tst_brkm(TBROK, cleanup, "fcntl failed");
                 tst_exit();
             }
@@ -178,18 +178,18 @@ int main (int argc, char *argv[]) {
                 tst_exit();
             }
             close (fd);
-            fd  syscall (__NR_epoll_create2, 1, EPOLL_CLOEXEC);
-            if (fd  -1) {
+            fd = syscall (__NR_epoll_create2, 1, EPOLL_CLOEXEC);
+            if (fd == -1) {
                 tst_resm(TFAIL, "epoll_create2(EPOLL_CLOEXEC) failed");
                 cleanup();
                 tst_exit();
             }
-            coe  fcntl (fd, F_GETFD);
-            if (coe  -1) {
+            coe = fcntl (fd, F_GETFD);
+            if (coe == -1) {
                 tst_brkm(TBROK, cleanup, "fcntl failed");
                 tst_exit();
             }
-            if ((coe & FD_CLOEXEC)  0) {
+            if ((coe & FD_CLOEXEC) == 0) {
                  tst_resm(TFAIL, "epoll_create2(EPOLL_CLOEXEC) set close-on-exec flag");
                  cleanup();
                  tst_exit();

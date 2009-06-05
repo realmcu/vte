@@ -10,7 +10,7 @@
 *       int     mode;
 *       char    *buffer;
 *       int     bsize;
-*	int offset;
+*	int 	offset;
 *
 * DESCRIPTION
 *       datagen fills the buffer pointed to by 'buffer' with 'bsize' bytes

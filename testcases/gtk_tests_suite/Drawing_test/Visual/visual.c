@@ -4,14 +4,14 @@
 #include <string.h>
 #include <stdio.h>
 
-gint vtFALSE;
+gint vt=FALSE;
 gint eventDelete(GtkWidget *widget,
         GdkEvent *event,gpointer data);
 gint eventDestroyQuit(GtkWidget *widget,
         GdkEvent *event,gpointer data);
 gint eventDestroyExit(GtkWidget *widget,
         GdkEvent *event,gpointer data);
-static GtkItemFactoryEntry menu_items[] 
+static GtkItemFactoryEntry menu_items[] =
 {
   { "/_File",            NULL,         0,                     0, "<Branch>" },
   { "/File/_Quit-Pass", "<control>Q",  eventDestroyQuit,       0, "<StockItem>", GTK_STOCK_QUIT },
@@ -34,22 +34,22 @@ int visual_main(int argc,char *argv[])
     gchar work[80];
     gchar text[4096];
     gtk_init(&argc,&argv);
-    app  gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    app = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title (GTK_WINDOW (app), "Creating Colors");
     gtk_window_set_default_size (GTK_WINDOW (app),240,320);
-
+           
     gtk_signal_connect(GTK_OBJECT(app),"delete_event",
             GTK_SIGNAL_FUNC(eventDelete),NULL);
     gtk_signal_connect(GTK_OBJECT(app),"destroy",
             GTK_SIGNAL_FUNC(eventDestroyQuit),NULL);
 
-    table  gtk_table_new (2, 1, FALSE);
+    table = gtk_table_new (2, 1, FALSE);
     gtk_widget_show(table);
 
-    accel_group  gtk_accel_group_new ();
+    accel_group = gtk_accel_group_new ();
     gtk_window_add_accel_group (GTK_WINDOW (app), accel_group);
     g_object_unref (accel_group);
-    item_factory  gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
+    item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
 
       /* Set up item factory to go away with the window */
     g_object_ref (item_factory);
@@ -70,7 +70,7 @@ int visual_main(int argc,char *argv[])
                       GTK_EXPAND | GTK_FILL,     0,
                       0,                         0);
 
-    visual  gdk_visual_get_system();
+    visual = gdk_visual_get_system();
 
     sprintf(text,"Type: ");
     switch(visual->type) {
@@ -127,10 +127,10 @@ int visual_main(int argc,char *argv[])
             visual->blue_prec);
     strcat(text,work);
 
-    label  gtk_label_new(text);
+    label = gtk_label_new(text);
     gtk_label_set_justify(GTK_LABEL(label),
             GTK_JUSTIFY_LEFT);
-
+    
    gtk_misc_set_padding(GTK_MISC(label),0,0);
 
    gtk_table_attach (GTK_TABLE (table),
@@ -153,7 +153,7 @@ gint eventDelete(GtkWidget *widget,
 gint eventDestroyQuit(GtkWidget *widget,
         GdkEvent *event,gpointer data) {
 
-    vtFALSE;
+    vt=FALSE;
     g_print("Test Pass Exiting with test pass");
     gtk_main_quit ();
     return(0);
@@ -161,7 +161,7 @@ gint eventDestroyQuit(GtkWidget *widget,
 gint eventDestroyExit(GtkWidget *widget,
         GdkEvent *event,gpointer data) {
 
-    vtTRUE;
+    vt=TRUE;
     g_print("Test Fail Exiting with test fail");
     gtk_main_quit ();
     return(1);

@@ -41,7 +41,7 @@ sleep 2
 iwconfig eth1 key off
 sleep 2
 
-iwconfig eth1 essid TestAp080
+iwconfig eth1 essid TestAp080 
 sleep 3
 
 ping -c 4 192.168.1.1 ||RC=$?

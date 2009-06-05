@@ -12,10 +12,10 @@ extern void signal_action(int, siginfo_t *, void *);
 
 int dummyfcn (void)
 {
-  t.sa_handler  signal_handler;
-  set  &t.sa_mask;
-  flags  t.sa_flags;
-  t.sa_sigaction  signal_action;
+  t.sa_handler = signal_handler;
+  set = &t.sa_mask;
+  flags = t.sa_flags;
+  t.sa_sigaction = signal_action;
 
   return 0;
 }

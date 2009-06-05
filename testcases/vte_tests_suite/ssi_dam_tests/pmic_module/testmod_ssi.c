@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   testmod_ssi.c
 
         @brief  ssi test module
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -24,13 +24,13 @@ D.Kardakov                   11/09/2006     TLSbo71015  Re-written for L26_21 re
 D.Karaakov                   02/01/2007     TLSbo87890  Update for MXC91131Evb, i.MX31ADS platforms
                                                         Some problems with
                                                         voice codec testcases was fixed
-====================
+====================================================================================================
 Portability:  ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -63,9 +63,9 @@ Portability:  ARM GCC
 /* Verification Test Environment Include Files */
 #include "testmod_ssi.h"
 
-/*======================
+/*==================================================================================================
                                  GLOBAL VARIABLE DECLARATIONS
-======================*/
+==================================================================================================*/
 #define TIMESLOTS_2                                        0x3
 #define TIMESLOTS_4                                        0x2
 
@@ -232,9 +232,9 @@ while(0)
                               (DAM_VIRT_BASE_ADDR + 4 + a*8)))
 #endif
 #endif
-/*======================
+/*==================================================================================================
                                   GLOBAL STATIC DEFINITIONS
-======================*/
+==================================================================================================*/
 
 // The following SSI bit clock configuration settings are based upon
 //  16 bits/word and 4 words/frame. These values are used to configure
@@ -360,15 +360,15 @@ static const unsigned int nSSIClockSetup = sizeof(ssiClockSetup) /
 
 static const unsigned int REG_FULLMASK = 0xffffff;
 
-/*======================
+/*==================================================================================================
                                        GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 
 static struct class *ssi_class;    /* added on 05/01/06 Bunloeur Sean */
 
-/*======================
+/*==================================================================================================
                                      LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 /* buffers used to transfer data from kernel space */
 static char ssi1_buf[MAX_CHUNK_SIZE];
 static char ssi2_buf[MAX_CHUNK_SIZE];
@@ -384,17 +384,17 @@ int     mxc27530evb_ecn = 1;
 int     mxc27530evb_ecn = 0;
 #endif
 
-/*======================
+/*==================================================================================================
                                      FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 #ifdef DUMP_REGS
 void pmic_audio_dump_registers(void);
 void dump_AUDMUX_reg(void);
 void dump_SSI_registers(ssi_mod module);
 #endif
-/*======================
+/*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
-======================*/
+==================================================================================================*/
 
 struct ssi_priv_data
 {
@@ -429,8 +429,8 @@ volatile unsigned long getreg_value(unsigned int offset, unsigned int ssi)
 }
 
 #ifdef DUMP_REGS
-/*====================*/
-/*= pmic_audio_dump_registers =*/
+/*================================================================================================*/
+/*===== pmic_audio_dump_registers =====*/
 /**
  * @brief Provide a hexadecimal dump of all PMIC audio registers (DEBUG only)
  *
@@ -459,7 +459,7 @@ volatile unsigned long getreg_value(unsigned int offset, unsigned int ssi)
  * BUG: scheduling while atomic: ...
  *
  */
-/*====================*/
+/*================================================================================================*/
 void pmic_audio_dump_registers(void)
 {
     unsigned int reg_value = 0;
@@ -514,8 +514,8 @@ void pmic_audio_dump_registers(void)
     }
 
 }
-/*====================*/
-/*= dump_AUDMUX_reg =*/
+/*================================================================================================*/
+/*===== dump_AUDMUX_reg =====*/
 /**
 @brief  This function dumps the content of the registers of the AUDMUX module.
 
@@ -523,7 +523,7 @@ void pmic_audio_dump_registers(void)
 
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void dump_AUDMUX_reg(void)
 {
     DPRINTK("Registers AUDMUX:\n");
@@ -551,8 +551,8 @@ void dump_AUDMUX_reg(void)
     DPRINTK("_reg_DAM_CNMCR = 0x%x\n", (int)_reg_DAM_CNMCR);
 
 }
-/*====================*/
-/*= dump_SSI_registers =*/
+/*================================================================================================*/
+/*===== dump_SSI_registers =====*/
 /**
 @brief  This function dumps the content of the registers of the SSI module.
 
@@ -560,7 +560,7 @@ void dump_AUDMUX_reg(void)
 
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void dump_SSI_registers(ssi_mod module)
 {
         printk("- SCR = 0x%8X \n", (unsigned int)getreg_value(MXC_SSI1SCR, module));
@@ -581,8 +581,8 @@ void dump_SSI_registers(ssi_mod module)
         printk("- SRMSK = 0x%8X \n", (unsigned int)getreg_value(MXC_SSI1SRMSK, module));
 }
 #endif
-/*====================*/
-/*=mxc_config_pll====*/
+/*================================================================================================*/
+/*=====mxc_config_pll====*/
 /*!
  * This function configures the USB PLL to act as the clock source for the
  * SSI's internal clock generator.
@@ -597,7 +597,7 @@ void dump_SSI_registers(ssi_mod module)
  * @param        samplingRate_Hz [in] sampling rate of the audio stream
  *
  */
- /*====================*/
+ /*================================================================================================*/
 static void mxc_config_pll(const int ssi_index,
                const int ssiClockSettingIndex,
                const unsigned int samplingRate_Hz)
@@ -690,8 +690,8 @@ static void mxc_config_pll(const int ssi_index,
     DPRINTK("INFO: Bit clock error  = %ld Hz\n",
         (long)(ssiActualBitClock_Hz - ssiTargetBitClock_Hz));
 }
-/*====================*/
-/*=configure_ssi_tx====*/
+/*================================================================================================*/
+/*=====configure_ssi_tx====*/
 /*!
  * This function configures the SSI bus (including the correct clock settings
  * for either master or slave mode).
@@ -699,7 +699,7 @@ static void mxc_config_pll(const int ssi_index,
  * @param        drv_inst [in] info about the current transfer
  *
  */
- /*====================*/
+ /*================================================================================================*/
 void configure_ssi_tx(const struct wave_config * const waveconf)
 {
     int mod = waveconf->ssi;
@@ -839,8 +839,8 @@ void configure_ssi_tx(const struct wave_config * const waveconf)
         ssi_rx_mask_time_slot(mod, 0xfffffffe);
     }
 }
-/*====================*/
-/*=normalize_speed_for_pmic====*/
+/*================================================================================================*/
+/*=====normalize_speed_for_pmic====*/
 /**
 @brief  This function returns normalized sample rate speed for wavconf.
 
@@ -848,7 +848,7 @@ void configure_ssi_tx(const struct wave_config * const waveconf)
 
 @return This function returns normalized sample rate speed for wavconf.
 */
-/*====================*/
+/*================================================================================================*/
 inline int normalize_speed_for_pmic(struct wave_config *waveconf)
 {
         if (waveconf->dac_codec == STEREO_DAC )
@@ -895,8 +895,8 @@ inline int normalize_speed_for_pmic(struct wave_config *waveconf)
     }
 }
 
-/*====================*/
-/*=halt_hardware====*/
+/*================================================================================================*/
+/*=====halt_hardware====*/
 /**
 @brief  This function halts hardware, disables voice CODEC and stereo DAC.
 
@@ -904,7 +904,7 @@ inline int normalize_speed_for_pmic(struct wave_config *waveconf)
 
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void halt_hardware(struct wave_config *wavconf)
 {
         /* disable codec and stereodac */
@@ -924,8 +924,8 @@ void halt_hardware(struct wave_config *wavconf)
 }
 
 #ifdef CONFIG_ARCH_MXC91331
-/*====================*/
-/*=set_mxc91331_clocks====*/
+/*================================================================================================*/
+/*=====set_mxc91331_clocks====*/
 /**
 @brief  This function configures clock(for MXC91331).
 
@@ -935,7 +935,7 @@ void halt_hardware(struct wave_config *wavconf)
 
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void set_mxc91331_clocks(unsigned int mask, unsigned int data, unsigned int offset)
 {
         volatile unsigned long reg = 0;
@@ -951,8 +951,8 @@ void set_mxc91331_clocks(unsigned int mask, unsigned int data, unsigned int offs
 }
 #endif
 
-/*====================*/
-/*=internal_init====*/
+/*================================================================================================*/
+/*=====internal_init====*/
 /**
 @brief  This function initializes hardware.
 
@@ -960,7 +960,7 @@ void set_mxc91331_clocks(unsigned int mask, unsigned int data, unsigned int offs
 
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void internal_init(void)
 {
 #if defined(CONFIG_ARCH_MXC91231) || defined(CONFIG_ARCH_MX3)
@@ -997,8 +997,8 @@ void internal_init(void)
         set_mxc91331_clocks(0x0003FFFF, 0x00000C06, 0x8);
 #endif
 }
-/*====================*/
-/*=configure_stereodac====*/
+/*================================================================================================*/
+/*=====configure_stereodac====*/
 /**
 @brief  This function configures stereo DAC.
 
@@ -1006,7 +1006,7 @@ void internal_init(void)
 
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void configure_stereodac(PMIC_AUDIO_HANDLE hinst, struct wave_config *wavconf)
 {
     int speed         = 0;
@@ -1063,8 +1063,8 @@ void configure_stereodac(PMIC_AUDIO_HANDLE hinst, struct wave_config *wavconf)
     DPRINTK("        speed = %d\n", (int) speed);
 
 }
-/*====================*/
-/*=configure_codec====*/
+/*================================================================================================*/
+/*=====configure_codec====*/
 /**
 @brief  This function configures voice CODEC.
 
@@ -1072,7 +1072,7 @@ void configure_stereodac(PMIC_AUDIO_HANDLE hinst, struct wave_config *wavconf)
 
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void configure_codec(PMIC_AUDIO_HANDLE hinst, struct wave_config *wavconf)
 {
     int speed          = 0;
@@ -1112,7 +1112,7 @@ void configure_codec(PMIC_AUDIO_HANDLE hinst, struct wave_config *wavconf)
 
     if ( (err = pmic_audio_output_enable_mixer(hinst)) < 0)
             DPRINTK("Error in pmic_audio_output_enable_mixer: err = %d\n", err);
-
+    
     if ( (err = pmic_audio_output_set_port(hinst, STEREO_HEADSET_LEFT | STEREO_HEADSET_RIGHT)) < 0)
             DPRINTK("Error in pmic_audio_output_set_port: err = %d\n", err);
 
@@ -1123,8 +1123,8 @@ void configure_codec(PMIC_AUDIO_HANDLE hinst, struct wave_config *wavconf)
     DPRINTK("        speed = %d\n", (int) speed);
 }
 
-/*====================*/
-/*=configure_dam====*/
+/*================================================================================================*/
+/*=====configure_dam====*/
 /**
 @brief  This function configures DAM.
 
@@ -1132,7 +1132,7 @@ void configure_codec(PMIC_AUDIO_HANDLE hinst, struct wave_config *wavconf)
 
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void configure_dam(struct wave_config *wavconf)
 {
     unsigned int source_port;
@@ -1214,7 +1214,7 @@ void configure_dam(struct wave_config *wavconf)
 
     writel(0x0031010, IO_ADDRESS(AUDMUX_BASE_ADDR) + 0x38);
 }
-/*=wirte_fifo====*/
+/*=====wirte_fifo====*/
 /**
 @brief  This function writes performs transmiting of input data
 
@@ -1222,7 +1222,7 @@ void configure_dam(struct wave_config *wavconf)
 
 @return none
 */
-/*====================*/
+/*================================================================================================*/
 int write_fifo(struct ssi_priv_data *priv)
 {
         unsigned long ssi_sfcsr_addr;
@@ -1261,7 +1261,7 @@ int write_fifo(struct ssi_priv_data *priv)
                 if (((reg & 0xF00) >> 8) == 0 )
                         num_zero++;
                 //DPRINTK("ssi:readl. reg: %lX \n", reg);
-
+                
                 ++ counter;
 
                 if ( ( ((reg & 0xF00) >> 8) <= 7 ) && ( ((reg & 0xF000000) >> 24) <= 7))
@@ -1282,7 +1282,7 @@ int write_fifo(struct ssi_priv_data *priv)
 
                 if(counter > 10000)
                 {
-                        DPRINTK("========<><><><>++++++++++++++++++++\n");
+                        DPRINTK("============================<><><><>++++++++++++++++++++\n");
                         rv = -EAGAIN;
                         break;
                 }
@@ -1294,8 +1294,8 @@ int write_fifo(struct ssi_priv_data *priv)
         return rv;
 }
 
-/*====================*/
-/*=ssi1_interrupt_handler====*/
+/*================================================================================================*/
+/*=====ssi1_interrupt_handler====*/
 /**
 @brief  Interrupt service routine registered to handle the individual general purpose interrupts or
         muxed. Interrupts are cleared in ISR before scheduling tasklet
@@ -1307,7 +1307,7 @@ int write_fifo(struct ssi_priv_data *priv)
 @return The function returns \b IRQ_RETVAL(1) if interrupt was handled, returns \b IRQ_RETVAL(0)
         if the interrupt was not handled.  \b IRQ_RETVAL is defined in \b include/linux/interrupt.h.
 */
-/*====================*/
+/*================================================================================================*/
 static irqreturn_t ssi1_interrupt_handler(int irq, void *dev_id, struct pt_regs *regs)
 {
         int     handled = 0;
@@ -1315,8 +1315,8 @@ static irqreturn_t ssi1_interrupt_handler(int irq, void *dev_id, struct pt_regs 
         return IRQ_RETVAL(handled);
 }
 
-/*====================*/
-/*=ssi2_interrupt_handler====*/
+/*================================================================================================*/
+/*=====ssi2_interrupt_handler====*/
 /**
 @brief  Interrupt service routine registered to handle the individual general purpose interrupts or
         muxed. Interrupts are cleared in ISR before scheduling tasklet
@@ -1328,7 +1328,7 @@ static irqreturn_t ssi1_interrupt_handler(int irq, void *dev_id, struct pt_regs 
 @return The function returns \b IRQ_RETVAL(1) if interrupt was handled, returns \b IRQ_RETVAL(0)
         if the interrupt was not handled.  \b IRQ_RETVAL is defined in \b include/linux/interrupt.h.
 */
-/*====================*/
+/*================================================================================================*/
 static irqreturn_t ssi2_interrupt_handler(int irq, void *dev_id, struct pt_regs *regs)
 {
         int     handled = 0;
@@ -1336,8 +1336,8 @@ static irqreturn_t ssi2_interrupt_handler(int irq, void *dev_id, struct pt_regs 
         return IRQ_RETVAL(handled);
 }
 
-/*====================*/
-/*=ssi_ioctl====*/
+/*================================================================================================*/
+/*=====ssi_ioctl====*/
 /**
 @brief  This function implements IOCTL controls on a SSI device.
 
@@ -1348,7 +1348,7 @@ static irqreturn_t ssi2_interrupt_handler(int irq, void *dev_id, struct pt_regs 
 
 @return This function returns 0 if successful.
 */
-/*====================*/
+/*================================================================================================*/
 static int ssi_ioctl(struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg)
 {
         struct wave_config *wavconf;
@@ -1486,7 +1486,7 @@ static int ssi_ioctl(struct inode *inode, struct file *file, unsigned int cmd, u
         return 0;
 }
 
-/*====================*/
+/*================================================================================================*/
 /*====ssi_open====*/
 /**
 @brief  This function implements the open method on a SSI device.
@@ -1496,7 +1496,7 @@ static int ssi_ioctl(struct inode *inode, struct file *file, unsigned int cmd, u
 
 @return This function returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 static int ssi_open(struct inode *inode, struct file *file)
 {
         unsigned int minor = MINOR(inode->i_rdev);
@@ -1515,8 +1515,8 @@ static int ssi_open(struct inode *inode, struct file *file)
         return 0;
 }
 
-/*====================*/
-/*=ssi_free====*/
+/*================================================================================================*/
+/*=====ssi_free====*/
 /**
 @brief  This function implements the release method on a SSI device.
 
@@ -1525,7 +1525,7 @@ static int ssi_open(struct inode *inode, struct file *file)
 
 @return This function returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 static int ssi_free(struct inode *inode, struct file *file)
 {
         /* unsigned int minor = MINOR(inode->i_rdev); */
@@ -1538,8 +1538,8 @@ static int ssi_free(struct inode *inode, struct file *file)
         return 0;
 }
 
-/*====================*/
-/*=ssi_write====*/
+/*================================================================================================*/
+/*=====ssi_write====*/
 /**
 @brief  This function implements the write method on a SSI device.
 
@@ -1548,7 +1548,7 @@ static int ssi_free(struct inode *inode, struct file *file)
 
 @return This function returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 static ssize_t ssi_write(struct file *file, const char *buf, size_t bytes, loff_t * off)
 {
         struct ssi_priv_data *priv;
@@ -1569,8 +1569,8 @@ static ssize_t ssi_write(struct file *file, const char *buf, size_t bytes, loff_
         return write_fifo(priv);
 }
 
-/*====================*/
-/*=ssi_write====*/
+/*================================================================================================*/
+/*=====ssi_write====*/
 /**
 @brief  This function implements the read method on a SSI device.
 
@@ -1579,7 +1579,7 @@ static ssize_t ssi_write(struct file *file, const char *buf, size_t bytes, loff_
 
 @return This function returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 static ssize_t ssi_read(struct file *file, char *buf, size_t bytes, loff_t * off)
 {
         struct ssi_priv_data *priv;
@@ -1613,8 +1613,8 @@ static struct file_operations ssi_fops =
         .release = ssi_free,
 };
 
-/*====================*/
-/*=testmod_ssi_init====*/
+/*================================================================================================*/
+/*=====testmod_ssi_init====*/
 /**
 @brief   This function implements the init function of the SSI device. This function is called when the
          module is loaded.
@@ -1623,7 +1623,7 @@ static struct file_operations ssi_fops =
 
 @return This function returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 static int __init testmod_ssi_init(void)
 {
         int     res = 0;
@@ -1684,8 +1684,8 @@ err_out:
         return -1;
 }
 
-/*====================*/
-/*=testmod_ssi_exit====*/
+/*================================================================================================*/
+/*=====testmod_ssi_exit====*/
 /**
 @brief  This function implements the init function of the SSI device. This function is called when the
         module is unloading.
@@ -1694,7 +1694,7 @@ err_out:
 
 @return This function returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 static void __exit testmod_ssi_exit(void)
 {
         free_irq(INT_SSI1, NULL);
@@ -1710,7 +1710,7 @@ static void __exit testmod_ssi_exit(void)
         printk(KERN_DEBUG "ssi : successfully unloaded\n");
 }
 
-/*====================*/
+/*================================================================================================*/
 
 module_init(testmod_ssi_init);
 module_exit(testmod_ssi_exit);

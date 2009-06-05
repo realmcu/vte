@@ -1,0 +1,13 @@
+#Verification Tests Command File
+
+#VT iMY to MIDI convertor tests
+#files: imelody.cfg imelody_robustness.cfg
+#files: imelody_conv_test
+
+#iMY to MIDI convertor tests
+TGE-LV-IMMIDI-0010 imelody_conv_test -T 0 -F $LTPROOT/testcases/bin/imelody.cfg
+TGE-LV-IMMIDI-0020 imelody_conv_test -T 1 -F $LTPROOT/testcases/bin/imelody.cfg
+TGE-LV-IMMIDI-0030 imelody_conv_test -T 2 -F $LTPROOT/testcases/bin/imelody.cfg
+TGE-LV-IMMIDI-0040 imelody_conv_test -T 3 -F $LTPROOT/testcases/bin/imelody.cfg
+TGE-LV-IMMIDI-0050 imelody_conv_test -T 4 -F $LTPROOT/testcases/bin/imelody_robustness.cfg
+

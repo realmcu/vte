@@ -1,4 +1,4 @@
-/*
+/* 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -18,7 +18,7 @@ typedef int (*shmctl_test)(int, int, struct shmid_ds *);
 
 int dummyfcn (void)
 {
- shmctl_test dummyvar;
- dummyvar  shmctl;
- return 0;
+	shmctl_test dummyvar;
+	dummyvar = shmctl;
+	return 0;
 }

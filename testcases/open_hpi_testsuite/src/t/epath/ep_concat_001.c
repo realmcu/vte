@@ -30,7 +30,7 @@
 int main(int argc, char **argv)
 {
         SaHpiEntityPathT tmp_ep;
-        char *entity_root  "{CHASSIS_SPECIFIC,89}{OPERATING_SYSTEM,46}";
+        char *entity_root = "{CHASSIS_SPECIFIC,89}{OPERATING_SYSTEM,46}";
 
         string2entitypath(entity_root, &tmp_ep);
 

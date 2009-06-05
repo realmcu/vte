@@ -18,7 +18,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake Huang/-----             20081010     N/A          Initial version
-#
+# 
 ###################################################################################################
 
 
@@ -101,10 +101,10 @@ return $RC
 
 # Function:     test_case_01
 # Description   - Test if NTSC overlay test ok
-#
+#  
 test_case_01()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="overlay_NTSC_test"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -144,10 +144,10 @@ return $RC
 
 # Function:     test_case_02
 # Description   - Test if PAL overlay test ok
-#
+#  
 test_case_02()
 {
-#TODO give TCID
+#TODO give TCID 
 TCID="overlay_PAL_test"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -160,7 +160,7 @@ echo U:720x576i-50 > /sys/class/graphics/fb1/mode
 
 # SDC input size test cases
 for SIZE in 32 40 48 64 80 96 112 128 144 160 176 192 208 224 240; do
- /unit_tests/mxc_v4l2_output.out -iw $SIZE -ih $SIZE -ow 720 -oh 576 -f YU12 -d $DISPLAY -r 0 || exit $RC
+	/unit_tests/mxc_v4l2_output.out -iw $SIZE -ih $SIZE -ow 720 -oh 576 -f YU12 -d $DISPLAY -r 0 || exit $RC
 done
 
 # SDC output rotation test cases
@@ -190,7 +190,7 @@ RC=0
 if [ $# -ne 1 ]
 then
 echo "usage $0 <1/2>"
-exit 1
+exit 1 
 fi
 
 check_platform
@@ -199,7 +199,7 @@ setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC
+  test_case_01 || exit $RC 
   ;;
 2)
   test_case_02 || exit $RC

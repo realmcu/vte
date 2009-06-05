@@ -1,10 +1,10 @@
-/*====================
+/*================================================================================================
 
         @file   rng_test_module.c
 
         @brief  rng API
 
-======================*/
+==================================================================================================*/
 /*
  * Copyright 2004-2006 Freescale Semiconductor, Inc. All Rights Reserved.
  */
@@ -18,7 +18,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-/*====================
+/*====================================================================================================
 Revision History:
                 Modification     Tracking
 Author                          Date          Number    Description of Changes
@@ -26,19 +26,19 @@ Author                          Date          Number    Description of Changes
 Rakesh S Joshi              29/08/2006     TLSbo74375   Initial version
 Rakesh S Joshi              23/01/2007     TLSbo87892   Removed UCOREGISTER_TWICE case
 
-====================
+====================================================================================================
 Portability:  ARM GCC
-======================
+==================================================================================================
 
-======================
+==================================================================================================
 Total Tests: 1
 
 Test Strategy:  Examine the RNG module functions
-=====================
+=================================================================================================
 
-======================
+==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -49,37 +49,37 @@ Test Strategy:  Examine the RNG module functions
 /* Verification Test Environment Include Files */
 #include "rng_test.h"
 
-/*======================
+/*==================================================================================================
                                        GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 /* Extern Global Variables */
 extern int  Tst_count;               /* counter for tst_xxx routines.         */
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir(...) */
 
 /* Global Variables */
-char *TCID     = "rng_test";      /* test program identifier.          */
+char *TCID     = "rng_test"; 	     /* test program identifier.          */
 int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 int  rng_testcase = 0;
 unsigned long argument = 0;
-/*======================
+/*==================================================================================================
                                    GLOBAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 void cleanup(void);
 void setup(void);
 int main(int argc, char **argv);
 
-/*======================
+/*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 
 void help(void);
 
-/*======================
+/*==================================================================================================
                                        GLOBAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= cleanup =*/
+/*================================================================================================*/
+/*===== cleanup =====*/
 /**
 @brief  Performs all one time clean up for this test on successful
         completion,  premature exit or  failure. Closes all temporary
@@ -90,7 +90,7 @@ void help(void);
 
 @return
 */
-/*====================*/
+/*================================================================================================*/
 void cleanup(void)
 {
         /* VTE : Actions needed to get a stable target environment */
@@ -106,12 +106,12 @@ void cleanup(void)
         tst_exit();
 }
 
-/*======================
+/*==================================================================================================
                                        LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= setup =*/
+/*================================================================================================*/
+/*===== setup =====*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -122,7 +122,7 @@ void cleanup(void)
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 void setup(void)
 {
         int VT_rv = TFAIL;
@@ -138,12 +138,12 @@ void setup(void)
 }
 
 
-/*====================*/
-/*= main =*/
+/*================================================================================================*/
+/*===== main =====*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
-  the test status and results appropriately using the LTP API's
+  	the test status and results appropriately using the LTP API's
         On successful completion or premature failure, cleanup() func
         is called and test exits with an appropriate return code.
 
@@ -157,7 +157,7 @@ void setup(void)
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*====================*/
+/*================================================================================================*/
 int main(int argc, char **argv)
 {
         int VT_rv = TFAIL;
@@ -176,10 +176,10 @@ int main(int argc, char **argv)
                 return TFAIL;
         }
 
- /* Print test Assertion using tst_resm() function with argument TINFO. */
+	/* Print test Assertion using tst_resm() function with argument TINFO. */
         tst_resm(TINFO, "Testing %s testcase.", TCID);
 
- if (t_num)
+	if (t_num)
         {
                 if      (strcmp(t_copt, "RNG-UCO-REG-POOL") == 0) rng_testcase =CASE_TEST_RNG_UCOREGISTER_POOL;
                 else if (strcmp(t_copt, "RNG-UCO-REG-FLAGS") == 0) rng_testcase =CASE_TEST_RNG_UCOREGISTER_FLAGS;

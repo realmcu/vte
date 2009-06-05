@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   oss_sound_driver_test.c
 
         @brief  OSS audio control test scenario.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -25,13 +25,13 @@ D.Simakov                    13/06/2006     TLSbo67022  STDAC <==> CODEC
 A.Ozerov/b00320              20/07/2006     TLSbo70792  volume_test, balance_test and other functions were changed.
 D.Simakov                    19/10/2006     TLSbo76144  dsp->adsp, dsp1->dsp
 D.Simakov                    22/12/2005     TLSbo87096  Zeus compilation issue
-====================
+====================================================================================================
 Portability: ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -42,14 +42,14 @@ Portability: ARM GCC
 #include "oss_sound_driver_test.h"
 #include "../common.h"
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 static audio_settings current_driver_settings;  /* Current settings of the audio HW */
 
-/*======================
+/*==================================================================================================
                                     LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 unsigned short get_audio_bits(FILE * file);
 unsigned short get_audio_channels(FILE * file);
 int     get_audio_frq(FILE * file);
@@ -71,20 +71,20 @@ int     adder_test(int fd_audio, int fd_mixer, audio_settings audio_config, test
 int     volume_ioctl_test(int fd_audio, int fd_mixer, audio_settings audio_config);
 void    detect_enter(int time_out);
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
-/*====================*/
-/*= get_audio_bits=*/
+==================================================================================================*/
+/*================================================================================================*/
+/*===== get_audio_bits=====*/
 /**
 @brief  Parse the header of the test file to get the audio bits.
 
 @param  file to parse
-
+    
 @return On success - return 0
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 unsigned short get_audio_bits(FILE * file)
 {
         unsigned short ret;
@@ -94,17 +94,17 @@ unsigned short get_audio_bits(FILE * file)
         return ret;
 }
 
-/*====================*/
-/*= get_audio_channels=*/
+/*================================================================================================*/
+/*===== get_audio_channels=====*/
 /**
 @brief  Parse the header of the test file to get the audio channels.
 
 @param  file to parse
-
+    
 @return On success - return 0
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 unsigned short get_audio_channels(FILE * file)
 {
         unsigned short ret;
@@ -114,17 +114,17 @@ unsigned short get_audio_channels(FILE * file)
         return ret;
 }
 
-/*====================*/
-/*= equal_settings=*/
+/*================================================================================================*/
+/*===== equal_settings=====*/
 /**
-@brief  compares 2 audio_settings structure
+@brief  compares 2 audio_settings structure 
 
 @param  the 2 audio_settings structure to compare
-
+    
 @return On success - return 0
         On failure - return err
 */
-/*====================*/
+/*================================================================================================*/
 unsigned int equal_settings(audio_settings config_1, audio_settings config_2)
 {
         int     err = 0;
@@ -149,17 +149,17 @@ unsigned int equal_settings(audio_settings config_1, audio_settings config_2)
         return err;
 }
 
-/*====================*/
-/*= get_audio_frq=*/
+/*================================================================================================*/
+/*===== get_audio_frq=====*/
 /**
 @brief  Parse the header of the test file to get the frequency.
 
 @param  file to parse
-
+    
 @return On success - return 0
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int get_audio_frq(FILE * file)
 {
         int     ret;
@@ -169,19 +169,19 @@ int get_audio_frq(FILE * file)
         return ret;
 }
 
-/*====================*/
-/*= set_settings=*/
+/*================================================================================================*/
+/*===== set_settings=====*/
 /**
 @brief  apply the audio settings to the sound driver
 
 @param  fd_audio: audio driver reference
                 fd_mixer: audio mixer reference
                 settings_to_apply: the settings to be set
-
+    
 @return On success - return 0
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int set_settings(int fd_audio, int fd_mixer, audio_settings settings_to_apply)
 {
         int     err = 0,
@@ -330,19 +330,19 @@ int set_settings(int fd_audio, int fd_mixer, audio_settings settings_to_apply)
         return err;
 }
 
-/*====================*/
-/*= get_settings=*/
+/*================================================================================================*/
+/*===== get_settings=====*/
 /**
 @brief  Get the audio settings from the audio driver
 
 @param  fd_audio: audio driver reference
                 fd_mixer: audio mixer reference
                 settings_to_apply: the settings to be set
-
+    
 @return On success - return 0
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int get_settings(int fd_audio, int fd_mixer, audio_settings * settings)
 {
         int     err = 0;
@@ -411,19 +411,19 @@ int get_settings(int fd_audio, int fd_mixer, audio_settings * settings)
         return err;
 }
 
-/*====================*/
-/*= set_audio_config=*/
+/*================================================================================================*/
+/*===== set_audio_config=====*/
 /**
 @brief  get the audio config for the file to be tested
 
 @param  fd_audio: audio driver reference
                 fd_mixer: audio mixer reference
                 file: file to be tested
-
+    
 @return On success - return 0
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int set_audio_config(int fd_audio, int fd_mixer, FILE * file)
 {
         int     tmp,
@@ -456,18 +456,18 @@ int set_audio_config(int fd_audio, int fd_mixer, FILE * file)
         return ret;
 }
 
-/*====================*/
-/*= play_file=*/
+/*================================================================================================*/
+/*===== play_file=====*/
 /**
 @brief  play the file
 
 @param  fd_audio: audio driver reference
                 file: file to be tested
-
+    
 @return On success - return 0
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int play_file(int fd_audio, FILE * file)
 {
         int     err = 0;
@@ -502,8 +502,8 @@ int play_file(int fd_audio, FILE * file)
         return err;
 }
 
-/*====================*/
-/*= volume_test=*/
+/*================================================================================================*/
+/*===== volume_test=====*/
 /**
 @brief  volume test loop
 
@@ -511,11 +511,11 @@ int play_file(int fd_audio, FILE * file)
                 fd_mixer: audio mixer reference
                 audio_config: config of the sound driver to use
                 params: regroups the test parameters (file, increment)
-
+    
 @return On success - return 0
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int volume_test(int fd_audio, int fd_mixer, audio_settings audio_config, test_parameters params)
 {
         int     vol = 0,
@@ -536,8 +536,8 @@ int volume_test(int fd_audio, int fd_mixer, audio_settings audio_config, test_pa
         return err;
 }
 
-/*====================*/
-/*= balance_test=*/
+/*================================================================================================*/
+/*===== balance_test=====*/
 /**
 @brief  Balance test loop
 
@@ -545,11 +545,11 @@ int volume_test(int fd_audio, int fd_mixer, audio_settings audio_config, test_pa
                 fd_mixer: audio mixer reference
                 audio_config: config of the sound driver to use
                 params: regroups the test parameters (file, increment)
-
+    
 @return On success - return 0
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int balance_test(int fd_audio, int fd_mixer, audio_settings audio_config, test_parameters params)
 {
         int     err = 0;
@@ -569,8 +569,8 @@ int balance_test(int fd_audio, int fd_mixer, audio_settings audio_config, test_p
         return err;
 }
 
-/*====================*/
-/*= codec_filter_test=*/
+/*================================================================================================*/
+/*===== codec_filter_test=====*/
 /**
 @brief  Codec filter test loop: try all the configurations of the filter of the codec
 
@@ -578,11 +578,11 @@ int balance_test(int fd_audio, int fd_mixer, audio_settings audio_config, test_p
                 fd_mixer: audio mixer reference
                 audio_config: config of the sound driver to use
                 params: regroups the test parameters (file, increment)
-
+    
 @return On success - return 0
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int codec_filter_test(int fd_audio, int fd_mixer, audio_settings audio_config,
                       test_parameters params)
 {
@@ -630,8 +630,8 @@ int codec_filter_test(int fd_audio, int fd_mixer, audio_settings audio_config,
         return err;
 }
 
-/*====================*/
-/*= adder_test=*/
+/*================================================================================================*/
+/*===== adder_test=====*/
 /**
 @brief  Adder test loop: try all the configurations of the adder
 
@@ -639,11 +639,11 @@ int codec_filter_test(int fd_audio, int fd_mixer, audio_settings audio_config,
                 fd_mixer: audio mixer reference
                 audio_config: config of the sound driver to use
                 params: regroups the test parameters (file, increment)
-
+    
 @return On success - return 0
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 #ifdef CONFIG_MXC_MC13783_PMIC
 int adder_test(int fd_audio, int fd_mixer, audio_settings audio_config, test_parameters params)
 {
@@ -684,8 +684,8 @@ int adder_test(int fd_audio, int fd_mixer, audio_settings audio_config, test_par
 }
 #endif
 
-/*====================*/
-/*= volume_ioctl_test=*/
+/*================================================================================================*/
+/*===== volume_ioctl_test=====*/
 /**
 @brief  Test the volume ioctl on different activated/disactivated device
 
@@ -693,19 +693,19 @@ int adder_test(int fd_audio, int fd_mixer, audio_settings audio_config, test_par
                 fd_mixer: audio mixer reference
                 audio_config: config of the sound driver to use
                 params: regroups the test parameters (file, increment)
-
+    
 @return On success - return 0
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int volume_ioctl_test(int fd_audio, int fd_mixer, audio_settings audio_config)
 {
         int     err = 0,
                 ret = 0;
 
-/*======================
+/*==================================================================================================
                                         FIRST TEST
-======================*/
+==================================================================================================*/
         /* 2 outputs are active, set the volume on the 2 outputs at the same value */
         tst_resm(TINFO, "Activate VOLUME and PHONEOUT\n");
         audio_config.active_output = SOUND_MASK_VOLUME | SOUND_MASK_PHONEOUT;
@@ -724,9 +724,9 @@ int volume_ioctl_test(int fd_audio, int fd_mixer, audio_settings audio_config)
                 err++;
         }
 
-/*======================
+/*==================================================================================================
                                         SECOND TEST
-======================*/
+==================================================================================================*/
         /* Set the volume on an unactive output */
         tst_resm(TINFO, "Activate VOLUME\n");
         audio_config.active_output = SOUND_MASK_VOLUME;
@@ -746,17 +746,17 @@ int volume_ioctl_test(int fd_audio, int fd_mixer, audio_settings audio_config)
         return err;
 }
 
-/*====================*/
-/*= VT_oss_sound_driver_setup =*/
+/*================================================================================================*/
+/*===== VT_oss_sound_driver_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_oss_sound_driver_setup(void)
 {
         int     rv = TFAIL;
@@ -765,17 +765,17 @@ int VT_oss_sound_driver_setup(void)
         return rv;
 }
 
-/*====================*/
-/*= VT_cleanup =*/
+/*================================================================================================*/
+/*===== VT_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_oss_sound_driver_cleanup(void)
 {
         int     rv = TFAIL;
@@ -784,18 +784,18 @@ int VT_oss_sound_driver_cleanup(void)
         return rv;
 }
 
-/*====================*/
-/*= detect_enter =*/
+/*================================================================================================*/
+/*===== detect_enter =====*/
 /**
-@brief  Detect enter key stroken from console
+@brief  Detect enter key stroken from console 
                 Used between each picture decode of the test suite.
                 If enter is pressed, the next picture is decoded immediately.
 
 @param  time_out: time out value to unlock the prompt
-
+    
 @return None
 */
-/*====================*/
+/*================================================================================================*/
 void detect_enter(int time_out)
 {
         int     fd_console = 0; /* 0 is the video input */
@@ -813,21 +813,21 @@ void detect_enter(int time_out)
                 {
                         read(fd_console, &c, 1);
                 }
-                while (c != 10);        // i.e. line-feed
+                while (c != 10);        // i.e. line-feed 
         }
 }
 
-/*====================*/
-/*= VT_oss_sound_driver_test =*/
+/*================================================================================================*/
+/*===== VT_oss_sound_driver_test =====*/
 /**
 @brief  Template test scenario X function
 
 @param  None
-
+    
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_oss_sound_driver_test(int Device, int Increment, char *File)
 {
         int     rv = TFAIL;
@@ -848,9 +848,9 @@ int VT_oss_sound_driver_test(int Device, int Increment, char *File)
         params.increment = Increment;
         params.testfilename = File;
 
-/*======================
+/*==================================================================================================
                                         TEST STDAC
-======================*/
+==================================================================================================*/
         if (params.device == STDAC)
         {
                 tst_resm(TINFO, "TEST SUITE on STDAC \n");
@@ -891,9 +891,9 @@ int VT_oss_sound_driver_test(int Device, int Increment, char *File)
                 /* Get the modified config for playing the test file correctly */
                 err += get_settings(fd_audio, fd_mixer, &audio_config);
 
-/*======================
+/*==================================================================================================
                                                     TEST IOCTL
-======================*/
+==================================================================================================*/
                 tst_resm(TINFO, "TEST IOCTL\n");
                 err_1 = volume_ioctl_test(fd_audio, fd_mixer, audio_config);
 
@@ -905,13 +905,13 @@ int VT_oss_sound_driver_test(int Device, int Increment, char *File)
                 err += err_1;
                 err_1 = 0;
 
-/*======================
+/*==================================================================================================
                                             END OF TEST IOCTL
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                                 TEST VOLUME
-======================*/
+==================================================================================================*/
                 /* Select the output device to activate */
 
                 /* Earpiece: mono output */
@@ -962,13 +962,13 @@ int VT_oss_sound_driver_test(int Device, int Increment, char *File)
                 err += err_1;
                 err_1 = 0;
 
-/*======================
+/*==================================================================================================
                                             END OF TEST VOLUME
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                                 TEST BALANCE
-======================*/
+==================================================================================================*/
                 /* Select the output device to activate */
                 ret = ask_user("\n TEST BALANCE on HEADSET. Press 'Y' when ready, 'N' to skip");
                 if (!ret)
@@ -992,9 +992,9 @@ int VT_oss_sound_driver_test(int Device, int Increment, char *File)
                 err += err_1;
                 err_1 = 0;
 
-/*======================
+/*==================================================================================================
                                         END OF TEST BALANCE
-======================*/
+==================================================================================================*/
                 fclose(params.fd_file);
                 close(fd_audio);
                 close(fd_mixer);
@@ -1006,13 +1006,13 @@ int VT_oss_sound_driver_test(int Device, int Increment, char *File)
 
         }
 
-/*======================
+/*==================================================================================================
                                         END TEST STDAC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         TEST CODEC
-======================*/
+==================================================================================================*/
         if (params.device == CODEC)
         {
                 tst_resm(TINFO, "TEST SUITE on CODEC");
@@ -1052,9 +1052,9 @@ int VT_oss_sound_driver_test(int Device, int Increment, char *File)
                 /* Get the modified config for playing the test file correctly */
                 err += get_settings(fd_audio, fd_mixer, &audio_config);
 
-/*======================
+/*==================================================================================================
                                                     TEST IOCTL
-======================*/
+==================================================================================================*/
                 tst_resm(TINFO, "TEST IOCTL\n");
                 err_1 = volume_ioctl_test(fd_audio, fd_mixer, audio_config);
 
@@ -1066,13 +1066,13 @@ int VT_oss_sound_driver_test(int Device, int Increment, char *File)
                 err += err_1;
                 err_1 = 0;
 
-/*======================
+/*==================================================================================================
                                             END OF TEST IOCTL
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                                 TEST VOLUME
-======================*/
+==================================================================================================*/
                 /* Select the output device to activate */
 
                 /* Earpiece: mono output */
@@ -1120,13 +1120,13 @@ int VT_oss_sound_driver_test(int Device, int Increment, char *File)
 
                 err += err_1;
                 err_1 = 0;
-/*======================
+/*==================================================================================================
                                             END OF TEST VOLUME
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                             TEST BALANCE
-======================*/
+==================================================================================================*/
                 /* Select the output device to activate */
                 ret = ask_user("\n TEST BALANCE on HEADSET. Press 'Y' when ready, 'N' to skip");
                 if (!ret)
@@ -1149,13 +1149,13 @@ int VT_oss_sound_driver_test(int Device, int Increment, char *File)
 
                 err += err_1;
                 err_1 = 0;
-/*======================
+/*==================================================================================================
                                         END OF TEST BALANCE
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                             TEST FILTER
-======================*/
+==================================================================================================*/
                 ret = ask_user("\n TEST FILTER on HEADSET. Press 'Y' when ready, 'N' to skip");
                 if (!ret)
                 {
@@ -1169,9 +1169,9 @@ int VT_oss_sound_driver_test(int Device, int Increment, char *File)
 
                 err += err_1;
                 err_1 = 0;
-/*======================
+/*==================================================================================================
                                         END OF TEST FILTER
-======================*/
+==================================================================================================*/
 
                 fclose(params.fd_file);
                 close(fd_audio);
@@ -1183,13 +1183,13 @@ int VT_oss_sound_driver_test(int Device, int Increment, char *File)
                         tst_resm(TFAIL, "Encountered %d errors", err_1);
         }
 
-/*======================
+/*==================================================================================================
                                         END TEST CODEC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         TEST ADDER
-======================*/
+==================================================================================================*/
 #ifdef CONFIG_MXC_MC13783_PMIC
         if (params.device == ADDER)
         {
@@ -1261,9 +1261,9 @@ int VT_oss_sound_driver_test(int Device, int Increment, char *File)
                 err_1 = 0;
         }
 #endif
-/*======================
+/*==================================================================================================
                                     END OF TEST ADDER
-======================*/
+==================================================================================================*/
         if (!err)
         {
                 rv = TPASS;

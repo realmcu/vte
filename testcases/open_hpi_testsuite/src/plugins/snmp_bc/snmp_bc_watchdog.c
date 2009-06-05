@@ -18,27 +18,27 @@
 #include <snmp_bc_watchdog.h>
 
 SaErrorT snmp_bc_get_watchdog_info(void *hnd,
-       SaHpiResourceIdT id,
-       SaHpiWatchdogNumT num,
-       SaHpiWatchdogT *wdt)
+				   SaHpiResourceIdT id,
+				   SaHpiWatchdogNumT num,
+				   SaHpiWatchdogT *wdt)
 {
- /* Watchdog not supported */
+	/* Watchdog not supported */
         return SA_ERR_HPI_NOT_PRESENT;
 }
 
 SaErrorT snmp_bc_set_watchdog_info(void *hnd,
-       SaHpiResourceIdT id,
-       SaHpiWatchdogNumT num,
-       SaHpiWatchdogT *wdt)
+				   SaHpiResourceIdT id,
+				   SaHpiWatchdogNumT num,
+				   SaHpiWatchdogT *wdt)
 {
- /* Watchdog not supported */
+	/* Watchdog not supported */
         return SA_ERR_HPI_NOT_PRESENT;
 }
 
 SaErrorT snmp_bc_reset_watchdog(void *hnd,
-    SaHpiResourceIdT id,
-    SaHpiWatchdogNumT num)
+				SaHpiResourceIdT id,
+				SaHpiWatchdogNumT num)
 {
- /* Watchdog not supported */
+ 	/* Watchdog not supported */
         return SA_ERR_HPI_NOT_PRESENT;
 }

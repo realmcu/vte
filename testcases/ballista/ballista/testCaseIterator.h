@@ -36,7 +36,7 @@ class Test_case_iterator {
   double sample_size;
   Server_communication *server;
  public:
-  Test_case_iterator(Server_communication *server_com, double sample_size_val,
+  Test_case_iterator(Server_communication *server_com, double sample_size_val, 
 		     int NumArg, vector<line> vec[MAXP]);
   two_dim *next();
   virtual ~Test_case_iterator();

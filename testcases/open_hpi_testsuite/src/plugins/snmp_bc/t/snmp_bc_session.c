@@ -37,28 +37,28 @@ void *snmp_bc_open(GHashTable *handler_config)
         struct snmp_bc_hnd *custom_handle;
         char *root_tuple;
 
-        root_tuple  (char *)g_hash_table_lookup(handler_config, "entity_root");
+        root_tuple = (char *)g_hash_table_lookup(handler_config, "entity_root");
         if(!root_tuple) {
                 dbg("ERROR: Cannot open snmp_bc plugin. No entity root found in configuration.");
                 return NULL;
         }
-
-        handle  (struct oh_handler_state *)g_malloc0(sizeof(struct oh_handler_state));
-        custom_handle 
+        
+        handle = (struct oh_handler_state *)g_malloc0(sizeof(struct oh_handler_state));
+        custom_handle =
                 (struct snmp_bc_hnd *)g_malloc0(sizeof(struct snmp_bc_hnd));
         if(!handle || !custom_handle) {
                 dbg("Could not allocate memory for handle or custom_handle.");
                 return NULL;
         }
-        handle->data  custom_handle;
-
-        handle->config  handler_config;
+        handle->data = custom_handle;
+        
+        handle->config = handler_config;
 
         /* Initialize RPT cache */
-        handle->rptcache  (RPTable *)g_malloc0(sizeof(RPTable));
-
-        custom_handle->ss  NULL;
-
+        handle->rptcache = (RPTable *)g_malloc0(sizeof(RPTable));
+        
+        custom_handle->ss = NULL;
+        
         /* this initializes the simulator tables */
         sim_init();
 
@@ -74,8 +74,8 @@ void *snmp_bc_open(GHashTable *handler_config)
 
 void snmp_bc_close(void *hnd)
 {
-        /*        struct oh_handler_state *handle  (struct oh_handler_state *)hnd;
-        struct snmp_bc_hnd *custom_handle 
+        /*        struct oh_handler_state *handle = (struct oh_handler_state *)hnd;
+        struct snmp_bc_hnd *custom_handle =
                 (struct snmp_bc_hnd *)handle->data;
         */
         /* clean up the simulator */
@@ -84,73 +84,73 @@ void snmp_bc_close(void *hnd)
 
 static int sim_init() {
 
- int i;
+	int i;
 
- dbg("************************************\n");
- dbg("****** Blade Center Simulator ******\n");
- dbg("************************************\n");
+	dbg("************************************\n");
+	dbg("****** Blade Center Simulator ******\n");
+	dbg("************************************\n");
 
- sim_hash  g_hash_table_new(g_str_hash, g_str_equal);
+	sim_hash = g_hash_table_new(g_str_hash, g_str_equal);
 
- if (sim_hash  NULL) {
-  dbg("Cannot allocate simulation hash table\n");
-  return -1;
- }
+	if (sim_hash == NULL) {
+		dbg("Cannot allocate simulation hash table\n");
+		return -1;
+	}
 
- for (i0; sim_resource_array[i].oid ! NULL; i++) {
+	for (i=0; sim_resource_array[i].oid != NULL; i++) {
+		
+		char *key;
+		char *key_exists;
 
-  char *key;
-  char *key_exists;
+		SnmpMibInfoT *mibinfo;
+    
+		key = g_strdup(sim_resource_array[i].oid);
+		if (!key) {
+			dbg("Cannot allocate memory for key for oid=%s\n",
+			    sim_resource_array[i].oid);
+			sim_close();
+			return -1;
+		}
+		mibinfo = g_malloc0(sizeof(SnmpMibInfoT));
+		if (!mibinfo) {
+			dbg("Cannot allocate memory for hash value for oid=%s", 
+			    sim_resource_array[i].oid);
+			sim_close();
+			return -1;
+		}
 
-  SnmpMibInfoT *mibinfo;
+		key_exists = g_hash_table_lookup(sim_hash, key); 
+		if (!key_exists) {
+			mibinfo->type = sim_resource_array[i].mib.type;
 
-  key  g_strdup(sim_resource_array[i].oid);
-  if (!key) {
-   dbg("Cannot allocate memory for key for oid%s\n",
-       sim_resource_array[i].oid);
-   sim_close();
-   return -1;
-  }
-  mibinfo  g_malloc0(sizeof(SnmpMibInfoT));
-  if (!mibinfo) {
-   dbg("Cannot allocate memory for hash value for oid%s",
-       sim_resource_array[i].oid);
-   sim_close();
-   return -1;
-  }
+			switch (mibinfo->type) {
+			case ASN_INTEGER:
+				mibinfo->value.integer = sim_resource_array[i].mib.value.integer;
+				break;
+			case ASN_OCTET_STR:
+				strcpy(mibinfo->value.string, sim_resource_array[i].mib.value.string);
+				break;
+			default:
+				dbg("Unknown SNMP type=%d for oid=%s\n", mibinfo->type, key);
+				return -1;
+			}
+			g_hash_table_insert(sim_hash, key, mibinfo);
+		}
+		else {
+			dbg("WARNING: Oid %s is defined twice\n", sim_resource_array[i].oid);
+		}
+	}
 
-  key_exists  g_hash_table_lookup(sim_hash, key);
-  if (!key_exists) {
-   mibinfo->type  sim_resource_array[i].mib.type;
-
-   switch (mibinfo->type) {
-   case ASN_INTEGER:
-    mibinfo->value.integer  sim_resource_array[i].mib.value.integer;
-    break;
-   case ASN_OCTET_STR:
-    strcpy(mibinfo->value.string, sim_resource_array[i].mib.value.string);
-    break;
-   default:
-    dbg("Unknown SNMP type%d for oid%s\n", mibinfo->type, key);
-    return -1;
-   }
-   g_hash_table_insert(sim_hash, key, mibinfo);
-  }
-  else {
-   dbg("WARNING: Oid %s is defined twice\n", sim_resource_array[i].oid);
-  }
- }
-
- return 0;
+	return 0;
 }
 
 static int sim_close()
 {
 
         g_hash_table_foreach(sim_hash, free_hash_data, NULL);
- g_hash_table_destroy(sim_hash);
+	g_hash_table_destroy(sim_hash);
 
- return 0;
+	return 0;
 }
 
 static void free_hash_data(gpointer key, gpointer value, gpointer user_data)

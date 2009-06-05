@@ -1,85 +1,85 @@
-/**/
+/*================================================================================================*/
 /**^M
     @file   spinbutton.c^M
-*
+*==================================================================================================
 
   Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
 
-
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
    Inkina irina               10/09/2004     ??????      Initial version
 
-
+==================================================================================================
 Portability: Indicate if this module is portable to other compilers or platforms.
              If not, indicate specific reasons why is it not portable.
 
-*/
+==================================================================================================*/
 
 
 #include <stdio.h>
 #include <gtk/gtk.h>
-gint vtFALSE;
+gint vt=FALSE;
 static GtkWidget *spinner1;
 
 void destroy_Quit( GtkWidget *widget,gpointer data )
 {
-    vtFALSE;
+    vt=FALSE;
     g_print("Test Pass Exiting with test pass");
     gtk_main_quit();
 }
 void destroy_Exit( GtkWidget *widget,gpointer data )
 {
-    vtTRUE;
+    vt=TRUE;
     g_print("Test Fail Exiting with test fail");
     gtk_main_quit();
 }
 
-static GtkItemFactoryEntry menu_items[] 
+static GtkItemFactoryEntry menu_items[] =
 {
-  { "/_File",   NULL,        0,        0, "<Branch>" },
-  { "/File/sep1",  NULL,        0,       0, "<Separator>" },
-  { "/File/_Quit - Pass","<control>Q", destroy_Quit,       0 },
-  { "/File/_Exit - Fail","<control>E", destroy_Exit,       0 },
-  { "/_Help",   NULL,        0,        0, "<Branch>" },
-  { "/Help/_About",  "<control>H", 0,       0 },
+  { "/_File",		 NULL,	       0,		      0, "<Branch>" },
+  { "/File/sep1",	 NULL,	       0,	      0, "<Separator>" },
+  { "/File/_Quit - Pass","<control>Q", destroy_Quit,	      0 },
+  { "/File/_Exit - Fail","<control>E", destroy_Exit,	      0 },
+  { "/_Help",		 NULL,	       0,		      0, "<Branch>" },
+  { "/Help/_About",	 "<control>H",	0,	      0 },
 };
 
 
 void toggle_snap( GtkWidget     *widget,
-    GtkSpinButton *spin )
+		  GtkSpinButton *spin )
 {
   gtk_spin_button_set_snap_to_ticks (spin, GTK_TOGGLE_BUTTON (widget)->active);
 }
 
 void toggle_numeric( GtkWidget *widget,
-       GtkSpinButton *spin )
+		     GtkSpinButton *spin )
 {
   gtk_spin_button_set_numeric (spin, GTK_TOGGLE_BUTTON (widget)->active);
 }
 
 void change_digits( GtkWidget *widget,
-             GtkSpinButton *spin )
+	            GtkSpinButton *spin )
 {
   gtk_spin_button_set_digits (GTK_SPIN_BUTTON (spinner1),
                               gtk_spin_button_get_value_as_int (spin));
 }
 
 void get_value( GtkWidget *widget,
-  gpointer data )
+		gpointer data )
 {
   gchar buf[32];
   GtkLabel *label;
   GtkSpinButton *spin;
 
-  spin  GTK_SPIN_BUTTON (spinner1);
-  label  GTK_LABEL (g_object_get_data (G_OBJECT (widget), "user_data"));
-  if (GPOINTER_TO_INT (data)  1)
+  spin = GTK_SPIN_BUTTON (spinner1);
+  label = GTK_LABEL (g_object_get_data (G_OBJECT (widget), "user_data"));
+  if (GPOINTER_TO_INT (data) == 1)
     sprintf (buf, "%d", gtk_spin_button_get_value_as_int (spin));
   else
     sprintf (buf, "%0.*f", spin->digits,
@@ -110,173 +110,173 @@ int spinbutton_main( int   argc, char *argv[] )
   /* Initialise GTK */
   gtk_init (&argc, &argv);
 
-  window  gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
   g_signal_connect (G_OBJECT (window), "destroy",
-      G_CALLBACK (gtk_main_quit), &window);
+		    G_CALLBACK (gtk_main_quit), &window);
 
   gtk_window_set_title (GTK_WINDOW (window), "Spin Button");
 
-      accel_group  gtk_accel_group_new ();
-      item_factory  gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
+      accel_group = gtk_accel_group_new ();
+      item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
       g_object_set_data_full (G_OBJECT (window), "<main>",item_factory, (GDestroyNotify) g_object_unref);
       gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
 
       gtk_container_set_border_width (GTK_CONTAINER (window), 0);
 ///////////
       gtk_item_factory_create_items (item_factory,G_N_ELEMENTS(menu_items), menu_items, NULL);
-      box1  gtk_vbox_new (FALSE, 0);
+      box1 = gtk_vbox_new (FALSE, 0);
       gtk_container_add (GTK_CONTAINER (window), box1);
 
       gtk_box_pack_start (GTK_BOX (box1),gtk_item_factory_get_widget (item_factory, "<main>"),
-     FALSE, FALSE, 0);
+			  FALSE, FALSE, 0);
 
-      separator  gtk_hseparator_new ();
+      separator = gtk_hseparator_new ();
       gtk_box_pack_start (GTK_BOX (box1), separator, FALSE, TRUE, 0);
 
 /////////
-
-  main_vbox  gtk_vbox_new (FALSE, 5);
+  
+  main_vbox = gtk_vbox_new (FALSE, 5);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 10);
   gtk_container_add (GTK_CONTAINER (box1), main_vbox);
-
-  frame  gtk_frame_new ("Not accelerated");
+  
+  frame = gtk_frame_new ("Not accelerated");
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
-
-  vbox  gtk_vbox_new (FALSE, 0);
+  
+  vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
   gtk_container_add (GTK_CONTAINER (frame), vbox);
-
+  
   /* Day, month, year spinners */
-
-  hbox  gtk_hbox_new (FALSE, 0);
+  
+  hbox = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 5);
-
-  vbox2  gtk_vbox_new (FALSE, 0);
+  
+  vbox2 = gtk_vbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (hbox), vbox2, TRUE, TRUE, 5);
-
-  label  gtk_label_new ("Day :");
+  
+  label = gtk_label_new ("Day :");
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
   gtk_box_pack_start (GTK_BOX (vbox2), label, FALSE, TRUE, 0);
-
-  adj  (GtkAdjustment *) gtk_adjustment_new (1.0, 1.0, 31.0, 1.0,
-           5.0, 0.0);
-  spinner  gtk_spin_button_new (adj, 0, 0);
+  
+  adj = (GtkAdjustment *) gtk_adjustment_new (1.0, 1.0, 31.0, 1.0,
+					      5.0, 0.0);
+  spinner = gtk_spin_button_new (adj, 0, 0);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (spinner), TRUE);
   gtk_box_pack_start (GTK_BOX (vbox2), spinner, FALSE, TRUE, 0);
-
-  vbox2  gtk_vbox_new (FALSE, 0);
+  
+  vbox2 = gtk_vbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (hbox), vbox2, TRUE, TRUE, 5);
-
-  label  gtk_label_new ("Month :");
+  
+  label = gtk_label_new ("Month :");
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
   gtk_box_pack_start (GTK_BOX (vbox2), label, FALSE, TRUE, 0);
-
-  adj  (GtkAdjustment *) gtk_adjustment_new (1.0, 1.0, 12.0, 1.0,
-           5.0, 0.0);
-  spinner  gtk_spin_button_new (adj, 0, 0);
+  
+  adj = (GtkAdjustment *) gtk_adjustment_new (1.0, 1.0, 12.0, 1.0,
+					      5.0, 0.0);
+  spinner = gtk_spin_button_new (adj, 0, 0);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (spinner), TRUE);
   gtk_box_pack_start (GTK_BOX (vbox2), spinner, FALSE, TRUE, 0);
-
-  vbox2  gtk_vbox_new (FALSE, 0);
+  
+  vbox2 = gtk_vbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (hbox), vbox2, TRUE, TRUE, 5);
-
-  label  gtk_label_new ("Year :");
+  
+  label = gtk_label_new ("Year :");
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
   gtk_box_pack_start (GTK_BOX (vbox2), label, FALSE, TRUE, 0);
-
-  adj  (GtkAdjustment *) gtk_adjustment_new (1998.0, 0.0, 2100.0,
-           1.0, 100.0, 0.0);
-  spinner  gtk_spin_button_new (adj, 0, 0);
+  
+  adj = (GtkAdjustment *) gtk_adjustment_new (1998.0, 0.0, 2100.0,
+					      1.0, 100.0, 0.0);
+  spinner = gtk_spin_button_new (adj, 0, 0);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (spinner), FALSE);
   gtk_widget_set_size_request (spinner, 55, -1);
   gtk_box_pack_start (GTK_BOX (vbox2), spinner, FALSE, TRUE, 0);
-
-  frame  gtk_frame_new ("Accelerated");
+  
+  frame = gtk_frame_new ("Accelerated");
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
-
-  vbox  gtk_vbox_new (FALSE, 0);
+  
+  vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
   gtk_container_add (GTK_CONTAINER (frame), vbox);
-
-  hbox  gtk_hbox_new (FALSE, 0);
+  
+  hbox = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 5);
-
-  vbox2  gtk_vbox_new (FALSE, 0);
+  
+  vbox2 = gtk_vbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (hbox), vbox2, TRUE, TRUE, 5);
-
-  label  gtk_label_new ("Value :");
+  
+  label = gtk_label_new ("Value :");
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
   gtk_box_pack_start (GTK_BOX (vbox2), label, FALSE, TRUE, 0);
-
-  adj  (GtkAdjustment *) gtk_adjustment_new (0.0, -10000.0, 10000.0,
-           0.5, 100.0, 0.0);
-  spinner1  gtk_spin_button_new (adj, 1.0, 2);
+  
+  adj = (GtkAdjustment *) gtk_adjustment_new (0.0, -10000.0, 10000.0,
+					      0.5, 100.0, 0.0);
+  spinner1 = gtk_spin_button_new (adj, 1.0, 2);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (spinner1), TRUE);
   gtk_widget_set_size_request (spinner1, 100, -1);
   gtk_box_pack_start (GTK_BOX (vbox2), spinner1, FALSE, TRUE, 0);
-
-  vbox2  gtk_vbox_new (FALSE, 0);
+  
+  vbox2 = gtk_vbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (hbox), vbox2, TRUE, TRUE, 5);
-
-  label  gtk_label_new ("Digits :");
+  
+  label = gtk_label_new ("Digits :");
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
   gtk_box_pack_start (GTK_BOX (vbox2), label, FALSE, TRUE, 0);
-
-  adj  (GtkAdjustment *) gtk_adjustment_new (2, 1, 5, 1, 1, 0);
-  spinner2  gtk_spin_button_new (adj, 0.0, 0);
+  
+  adj = (GtkAdjustment *) gtk_adjustment_new (2, 1, 5, 1, 1, 0);
+  spinner2 = gtk_spin_button_new (adj, 0.0, 0);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (spinner2), TRUE);
   g_signal_connect (G_OBJECT (adj), "value_changed",
-      G_CALLBACK (change_digits),
-      (gpointer) spinner2);
+		    G_CALLBACK (change_digits),
+		    (gpointer) spinner2);
   gtk_box_pack_start (GTK_BOX (vbox2), spinner2, FALSE, TRUE, 0);
-
-  hbox  gtk_hbox_new (FALSE, 0);
+  
+  hbox = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 5);
-
-  button  gtk_check_button_new_with_label ("Snap to 0.5-ticks");
+  
+  button = gtk_check_button_new_with_label ("Snap to 0.5-ticks");
   g_signal_connect (G_OBJECT (button), "clicked",
-      G_CALLBACK (toggle_snap),
-      (gpointer) spinner1);
+		    G_CALLBACK (toggle_snap),
+		    (gpointer) spinner1);
   gtk_box_pack_start (GTK_BOX (vbox), button, TRUE, TRUE, 0);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
-
-  button  gtk_check_button_new_with_label ("Numeric only input mode");
+  
+  button = gtk_check_button_new_with_label ("Numeric only input mode");
   g_signal_connect (G_OBJECT (button), "clicked",
-      G_CALLBACK (toggle_numeric),
-      (gpointer) spinner1);
+		    G_CALLBACK (toggle_numeric),
+		    (gpointer) spinner1);
   gtk_box_pack_start (GTK_BOX (vbox), button, TRUE, TRUE, 0);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
-
-  val_label  gtk_label_new ("");
-
-  hbox  gtk_hbox_new (FALSE, 0);
+  
+  val_label = gtk_label_new ("");
+  
+  hbox = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 5);
-  button  gtk_button_new_with_label ("Value as Int");
+  button = gtk_button_new_with_label ("Value as Int");
   g_object_set_data (G_OBJECT (button), "user_data", val_label);
   g_signal_connect (G_OBJECT (button), "clicked",
-      G_CALLBACK (get_value),
-      GINT_TO_POINTER (1));
+		    G_CALLBACK (get_value),
+		    GINT_TO_POINTER (1));
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 5);
-
-  button  gtk_button_new_with_label ("Value as Float");
+  
+  button = gtk_button_new_with_label ("Value as Float");
   g_object_set_data (G_OBJECT (button), "user_data", val_label);
   g_signal_connect (G_OBJECT (button), "clicked",
-      G_CALLBACK (get_value),
-      GINT_TO_POINTER (2));
+		    G_CALLBACK (get_value),
+		    GINT_TO_POINTER (2));
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 5);
-
+  
   gtk_box_pack_start (GTK_BOX (vbox), val_label, TRUE, TRUE, 0);
   gtk_label_set_text (GTK_LABEL (val_label), "0");
-
-  hbox  gtk_hbox_new (FALSE, 0);
+  
+  hbox = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (main_vbox), hbox, FALSE, TRUE, 0);
-
+  
   gtk_widget_show_all (window);
 
   /* Enter the event loop */
   gtk_main ();
-
+    
   return (vt);
 }
 

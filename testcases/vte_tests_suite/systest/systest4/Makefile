@@ -10,7 +10,7 @@
 #    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #    Freescale Semiconductor, Inc.
-#
+#     
 ########################### REVISION HISTORY #################################
 #
 #Author/Core ID          Date       CR Number    Description of Changes

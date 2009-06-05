@@ -85,7 +85,7 @@ CFLAGS += -Wall -I$(LTP_DIR)include/ \
 #
 LOADLIBES = -L$(LTP_DIR)lib -lltp
 
-SRCS=$(wildcard *.c)
+SRCS=$(wildcard *.c) 
 OBJS=$(patsubst %.c,%.o,$(SRCS))
 
 #TO BE UPDATED WITH THE TEST APPLICATION NAME

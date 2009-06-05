@@ -1,0 +1,41 @@
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/arch/arm/Kconfig linux-2.6.7-mxc1.5_COV/arch/arm/Kconfig
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/arch/arm/Kconfig	2004-11-04 11:10:46.000000000 +0100
++++ linux-2.6.7-mxc1.5_COV/arch/arm/Kconfig	2004-11-02 15:38:08.000000000 +0100
+@@ -680,6 +680,8 @@
+ 
+ source "arch/arm/oprofile/Kconfig"
+ 
++source "drivers/gcov/Kconfig"
++
+ source "drivers/video/Kconfig"
+ 
+ source "drivers/media/Kconfig"
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/arch/arm/kernel/head.S linux-2.6.7-mxc1.5_COV/arch/arm/kernel/head.S
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/arch/arm/kernel/head.S	2004-11-04 11:10:45.000000000 +0100
++++ linux-2.6.7-mxc1.5_COV/arch/arm/kernel/head.S	2004-11-02 15:38:07.000000000 +0100
+@@ -369,3 +369,25 @@
+ 	mov	pc, lr
+ 2:	ldmib	r4, {r5, r6, r7}		@ found, get results
+ 	mov	pc, lr
++
++
++#ifdef CONFIG_GCOV_PROFILE
++/*
++ * The .ctors-section contains a list of pointers to constructor
++ * functions which are used to initialize gcov structures.
++ *
++ * Because there is no NULL at the end of the constructor list
++ * in the kernel we need the addresses of both the constructor
++ * as well as the destructor list which are supposed to be
++ * adjacent.
++ */
++
++.section ".ctors","aw"
++.globl  __CTOR_LIST__
++.type   __CTOR_LIST__, %object
++__CTOR_LIST__:
++.section ".dtors","aw"
++.globl  __DTOR_LIST__
++.type   __DTOR_LIST__, %object
++__DTOR_LIST__:
++#endif

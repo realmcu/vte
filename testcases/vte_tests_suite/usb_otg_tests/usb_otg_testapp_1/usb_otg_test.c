@@ -1,17 +1,17 @@
-/*===================*/
+/*===============================================================================================*/
 /**
         @file   usb_otg_test.c
 
         @brief  source file for USB-OTG driver test.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -21,23 +21,23 @@ A.Ozerov/B00320              29/06/2006     TLSbo71035  Execution order of test 
                                                         One test case was removed.
                                                         Some useless functions were removed.
 
-====================
+====================================================================================================
 Portability: ARM GCC
 
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Harness Specific Include Files. */
 #include <test.h>
 
 /* Verification Test Environment Include Files */
 #include "usb_otg_test.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 extern char *TCID;
 extern int fd;
 extern int vflag;
@@ -47,7 +47,7 @@ int     i = 0;
 int     count_1 = 1;
 int     count_2 = 1;
 
-char   *otg_strings[] =
+char   *otg_strings[] = 
 {
         "invalid_state",
         "otg_disabled",
@@ -85,7 +85,7 @@ char   *otg_strings[] =
         "terminator_state"
 };
 
-char   *otg_meta_states[] =
+char   *otg_meta_states[] = 
 {
         "m_a_idle",
         "m_a_wait_vrise",
@@ -122,16 +122,16 @@ char   *otg_meta_states[] =
 
 char    info_string[] = "new info";
 
-/*======================
+/*==================================================================================================
                                             STRUCTURES
-======================*/
+==================================================================================================*/
 struct otg_firmware_info firmware_info;
 struct otg_test test;
 struct otg_admin_command command;
 struct otg_status_update status_update;
 struct otg_state state;
 
-struct otg_state otg_states_mn[] =
+struct otg_state otg_states_mn[] = 
 {
         {       /* 0 */
          invalid_state, /* .state */
@@ -427,9 +427,9 @@ struct otg_state otg_states_mn[] =
         {0, 0, "", 0, 0,},
 };
 
-struct otg_test otg_tests_mn[] =
+struct otg_test otg_tests_mn[] = 
 {
-        /*
+        /* 
         * This the initial state of the software when first loaded.
         * It is not possible to return to this state.
         */
@@ -439,7 +439,7 @@ struct otg_test otg_tests_mn[] =
          otg_disabled,  /* .target */
          enable_otg,    /* .test1 */
          },
-        /*
+        /* 
         * The USBOTG State Machine has been initialized but is inactive.
         * This state may have arrived at from either the invalid_state or
         * from the otg_disable state.
@@ -450,7 +450,7 @@ struct otg_test otg_tests_mn[] =
          otg_enable_ocd,        /* .target */
          enable_otg,    /* .test1 */
          },
-        /*
+        /* 
         * The State Machine stops the device drivers and waits for them
         * to signal that they have finished de-initializing.
         */
@@ -460,7 +460,7 @@ struct otg_test otg_tests_mn[] =
          otg_disable_hcd,       /* .target */
          TCD_OK,        /* .test1 */
          },
-        /*
+        /* 
         * The State Machine stops the device drivers and waits for them
         * to signal that they have finished de-initializing.
         */
@@ -470,7 +470,7 @@ struct otg_test otg_tests_mn[] =
          otg_disable_pcd,       /* .target */
          HCD_OK,        /* .test1 */
          },
-        /*
+        /* 
         * The State Machine stops the device drivers and waits for them
         * to signal that they have finished de-initializing.
         */
@@ -480,7 +480,7 @@ struct otg_test otg_tests_mn[] =
          otg_disable_ocd,       /* .target */
          PCD_OK,        /* .test1 */
          },
-        /*
+        /* 
         * The State Machine stops the device drivers and waits for them
         * to signal that they have finished de-initializing.
         */
@@ -490,7 +490,7 @@ struct otg_test otg_tests_mn[] =
          otg_disabled,  /* .target */
          OCD_OK,        /* .test1 */
          },
-        /*
+        /* 
         * The State Machine starts the device drivers and waits for them
         * to signal that they have finished initializing.
         */
@@ -506,7 +506,7 @@ struct otg_test otg_tests_mn[] =
          otg_enable_pcd,        /* .target */
          OCD_OK,        /* .test1 */
          },
-        /*
+        /* 
         * The State Machine starts the device drivers and waits for them
         * to signal that they have finished initializing.
         */
@@ -516,7 +516,7 @@ struct otg_test otg_tests_mn[] =
          otg_enable_hcd,        /* .target */
          PCD_OK,        /* .test1 */
          },
-        /*
+        /* 
         * The State Machine starts the device drivers and waits for them
         * to signal that they have finished initializing.
         */
@@ -526,7 +526,7 @@ struct otg_test otg_tests_mn[] =
          otg_enable_tcd,        /* .target */
          HCD_OK,        /* .test1 */
          },
-        /*
+        /* 
         * The State Machine starts the device drivers and waits for them
         * to signal that they have finished initializing.
         */
@@ -560,7 +560,7 @@ struct otg_test otg_tests_mn[] =
          ID_GND,        /* .test1 */
          enable_otg,    /* .test2 */
          },
-        /* ! USB Peripheral is idle. Waiting for Vbus to indicate that it has been plugged into a USB
+        /* ! USB Peripheral is idle. Waiting for Vbus to indicate that it has been plugged into a USB 
         * Host. */
         {       /* Check for disable (must be done for check for bus_drop.) */
          14,    /* .test */
@@ -602,7 +602,7 @@ struct otg_test otg_tests_mn[] =
          peripheral_bus_reset,  /* .target */
          BUS_RESET,     /* .test1 */
          },
-        /* ! USB Peripheral, waiting to be addressed. It is waiting to be enumerated and configured *
+        /* ! USB Peripheral, waiting to be addressed. It is waiting to be enumerated and configured * 
         * by the USB Host. */
         {       /* Move to idle via discharge, if we loose any of these inputs. */
          20,    /* .test */
@@ -701,7 +701,7 @@ struct otg_test otg_tests_mn[] =
          AUTO | AUTO_,  /* .test1 */
          },
         /* ! A-Device idle state. An A-Plug is inserted in the Mini A-B Receptacle. This is the Host
-        * * Only idle state. Waiting for user to allow the bus to be used. N.B. Reset all progress *
+        * * Only idle state. Waiting for user to allow the bus to be used. N.B. Reset all progress * 
         * indicator inputs here. */
         {       /* */
          34,    /* .test */
@@ -722,7 +722,7 @@ struct otg_test otg_tests_mn[] =
          AUTO | AUTO_,  /* .test1 */
          },
         /* ! A-Device idle state. An A-Plug is inserted in the Mini A-B Receptacle. This is the Host
-        * * Only idle state. Waiting for user to allow the bus to be used. N.B. Reset all progress *
+        * * Only idle state. Waiting for user to allow the bus to be used. N.B. Reset all progress * 
         * indicator inputs here. */
         {       /* */
          37,    /* .test */
@@ -813,7 +813,7 @@ struct otg_test otg_tests_mn[] =
          host_addressed,        /* .target */
          ADDRESSED,     /* .test1 */
          },
-        /* ! A-Device host, the device has been addressed, attempt to enumerate, find the appropriate
+        /* ! A-Device host, the device has been addressed, attempt to enumerate, find the appropriate 
         * class driver and configure. */
         {       /* Lost B-Connect or user changed his mind? */
          50,    /* .test */
@@ -882,20 +882,20 @@ struct otg_test otg_tests_mn[] =
 
 };
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= VT_usb_otg_test_cleanup =*/
-/**
+/*================================================================================================*/
+/*===== VT_usb_otg_test_cleanup =====*/
+/** 
 @brief  This function assumes the post-condition of the test case execution
 
 @param  None.
 
 @return None.
 */
-/*====================*/
+/*================================================================================================*/
 int VT_usb_otg_test_cleanup(void)
 {
         if (fd != 0)
@@ -903,8 +903,8 @@ int VT_usb_otg_test_cleanup(void)
         return TPASS;
 }
 
-/*====================*/
-/*= VT_usb_otg_test_setup =*/
+/*================================================================================================*/
+/*===== VT_usb_otg_test_setup =====*/
 /**
 @brief  This function assumes the pre-condition of the test case execution
 
@@ -913,7 +913,7 @@ int VT_usb_otg_test_cleanup(void)
 @return On success - return TPASS.
         On failure - return the error code.
 */
-/*====================*/
+/*================================================================================================*/
 int VT_usb_otg_test_setup(void)
 {
         fd = open("/proc/" USB_DEV, O_RDWR);
@@ -926,8 +926,8 @@ int VT_usb_otg_test_setup(void)
         return TPASS;
 }
 
-/*====================*/
-/*= set_state =*/
+/*================================================================================================*/
+/*===== set_state =====*/
 /**
 @brief  This function sets a state of State Machine.
 
@@ -937,7 +937,7 @@ int VT_usb_otg_test_setup(void)
 @return On success - return TPASS.
         On failure - return the error code.
 */
-/*====================*/
+/*================================================================================================*/
 int set_state(int num)
 {
         struct otg_state state1;
@@ -1017,8 +1017,8 @@ int set_state(int num)
         return rv;
 }
 
-/*====================*/
-/*= set_test =*/
+/*================================================================================================*/
+/*===== set_test =====*/
 /**
 @brief  This function tests transition from state to state.
 
@@ -1028,7 +1028,7 @@ int set_state(int num)
 @return On success - return TPASS.
         On failure - return the error code.
 */
-/*====================*/
+/*================================================================================================*/
 int set_test(int num)
 {
         struct otg_test test1;
@@ -1107,8 +1107,8 @@ int set_test(int num)
         return rv;
 }
 
-/*====================*/
-/*= VT_usb_otg_test =*/
+/*================================================================================================*/
+/*===== VT_usb_otg_test =====*/
 /**
 @brief  USB-OTG test scenario.
 
@@ -1118,7 +1118,7 @@ int set_test(int num)
 @return On success - return TPASS.
         On failure - return the error code.
 */
-/*====================*/
+/*================================================================================================*/
 int VT_usb_otg_test(int switch_fct)
 {
         struct otg_admin_command command1;
@@ -1129,9 +1129,9 @@ int VT_usb_otg_test(int switch_fct)
         switch (switch_fct)
         {
         case 0:
-                printf("================\n");
+                printf("====================================================================\n");
                 tst_resm(TINFO, "test the bus...");
-                printf("================\n");
+                printf("====================================================================\n");
                 /* enable OTG */
                 if (ioctl(fd, OTGADMIN_ENABLE_OTG, 1) < 0)
                 {
@@ -1595,9 +1595,9 @@ int VT_usb_otg_test(int switch_fct)
                 break;
 
         case 1:
-                printf("================\n");
+                printf("====================================================================\n");
                 tst_resm(TINFO, "set/get various features...");
-                printf("================\n");
+                printf("====================================================================\n");
                 tst_resm(TINFO, "=== get status ===");
                 memset(&status_update, 0x00, sizeof(struct otg_status_update));
                 if (ioctl(fd, OTGADMIN_STATUS, &status_update) < 0)
@@ -1621,7 +1621,7 @@ int VT_usb_otg_test(int switch_fct)
                         tst_resm(TINFO, "function name: %s\n", status_update.function_name);
                 }
 
-                printf("================\n");
+                printf("====================================================================\n");
                 tst_resm(TINFO, "=== set serial ===");
                 memset(&command, 0x00, sizeof(struct otg_admin_command));
                 command.n = 8;
@@ -1662,7 +1662,7 @@ int VT_usb_otg_test(int switch_fct)
                         rv = TFAIL;
                 }
 
-                printf("================\n");
+                printf("====================================================================\n");
                 tst_resm(TINFO, "=== set function ===");
                 memset(&command, 0x00, sizeof(struct otg_admin_command));
                 command.n = 0;
@@ -1755,7 +1755,7 @@ int VT_usb_otg_test(int switch_fct)
                         tst_resm(TINFO, "function name: %s\n", command1.string);
                 }
 
-                printf("================\n");
+                printf("====================================================================\n");
                 tst_resm(TINFO, "=== set info ===");
                 memset(&firmware_info, 0x00, sizeof(struct otg_firmware_info));
                 firmware_info.number_of_states = 3;
@@ -1805,9 +1805,9 @@ int VT_usb_otg_test(int switch_fct)
 
                 break;
         case 2:
-                printf("================\n");
+                printf("====================================================================\n");
                 tst_resm(TINFO, "set/get state...");
-                printf("================\n");
+                printf("====================================================================\n");
                 for (i = 0; i < 34; i++)
                 {
                         ASSERT(set_state(i));
@@ -1815,14 +1815,14 @@ int VT_usb_otg_test(int switch_fct)
 
                 break;
         case 3:
-                printf("================\n");
+                printf("====================================================================\n");
                 tst_resm(TINFO, "set/get test...");
-                printf("================\n");
+                printf("====================================================================\n");
                 for (i = 0; i < 59; i++)
                 {
                         ASSERT(set_test(i));
                         printf
-                            ("================\n");
+                            ("====================================================================\n");
                 }
 
                 break;

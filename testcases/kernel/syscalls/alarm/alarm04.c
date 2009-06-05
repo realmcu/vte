@@ -23,7 +23,7 @@
  * Test Description:
  *  Check that when an alarm request is made, the signal SIGALRM is received
  *  even after the process has done an exec().
- *
+ * 
  * Expected Result:
  *  The signal SIGALRM should be received in the execed process.
  *  Since, this process execs another process, hence never returns unless
@@ -36,26 +36,26 @@
  *
  *  Test:
  *   Execute system call
- *   Check return code, if system call failed (return-1)
- *   Log the errno and Issue a FAIL message.
+ *   Check return code, if system call failed (return=-1)
+ *   	Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   Verify the Functionality of system call
+ *   	Verify the Functionality of system call	
  *      if successful,
- *      Issue Functionality-Pass message.
+ *      	Issue Functionality-Pass message.
  *      Otherwise,
- *  Issue Functionality-Fail message.
+ *		Issue Functionality-Fail message.
  *  Cleanup:
  *   Print errno log and/or timing stats if options given
  *
  * Usage:  <for command-line>
  *  alarm04 [-c n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
- *        -I x : Execute test for x seconds.
- *        -P x : Pause for x seconds between iterations.
- *        -t   : Turn on syscall timing.
+ *	       -I x : Execute test for x seconds.
+ *	       -P x : Pause for x seconds between iterations.
+ *	       -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS:
  *  None.
@@ -72,49 +72,49 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID"alarm04";
-int TST_TOTAL1;
-char Cmd_buffer[PATH_MAX]; /* buffer to hold "alarm04" name */
+char *TCID="alarm04";
+int TST_TOTAL=1;
+char Cmd_buffer[PATH_MAX];	/* buffer to hold "alarm04" name */
 
-void setup();   /* Setup function for the test */
-void cleanup();   /* Cleanup function for the test */
+void setup();			/* Setup function for the test */
+void cleanup();			/* Cleanup function for the test */
 
 int
 main(int ac, char **av)
 {
- char *msg;              /* message returned from parse_opts */
- int time_sec  3; /* time for which alarm is set */
+	char *msg;              /* message returned from parse_opts */
+	int time_sec = 3;	/* time for which alarm is set */ 
 
- /* Parse standard options given to run the test. */
- msg  parse_opts(ac, av, (option_t *)NULL, NULL);
- if (msg ! (char *)NULL) {
-  tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
- }
+	/* Parse standard options given to run the test. */
+	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
+	if (msg != (char *)NULL) {
+		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	}
 
- /* Perform global setup for test */
- setup();
+	/* Perform global setup for test */
+	setup();
 
- /*
-  * Call alarm() with non-zero timer which will
-  * expire before the execed process "sig_rev" resumes
-  * exection after sleep. Hence, SIGALRM which is generated
-  * should be received by "sig_rev" process.
-  */
- TEST(alarm(time_sec));
+	/*
+	 * Call alarm() with non-zero timer which will
+	 * expire before the execed process "sig_rev" resumes
+	 * exection after sleep. Hence, SIGALRM which is generated
+	 * should be received by "sig_rev" process.
+	 */
+	TEST(alarm(time_sec));
 
- if (STD_FUNCTIONAL_TEST) {
-  /* exec a process "sig_rev" */
-  execl(Cmd_buffer, "sig_rev", "3", NULL);
- }
+	if (STD_FUNCTIONAL_TEST) {
+		/* exec a process "sig_rev" */
+		execl(Cmd_buffer, "sig_rev", "3", NULL);
+	}
 
- /* This message never printed unless exec fails */
- tst_resm(TFAIL, "exec of %s Failed, errno%d",
-    Cmd_buffer, errno);
+	/* This message never printed unless exec fails */
+	tst_resm(TFAIL, "exec of %s Failed, errno=%d",
+			 Cmd_buffer, errno);
 
- /* Call cleanup function for the test */
- cleanup();
+	/* Call cleanup function for the test */
+	cleanup();
 
- return 0;
+	return 0;
 }
 
 /*
@@ -125,13 +125,13 @@ void
 setup()
 {
 
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
- sprintf(Cmd_buffer, "sig_rev");
+	sprintf(Cmd_buffer, "sig_rev");
 }
 
 /*
@@ -142,12 +142,12 @@ setup()
 void
 cleanup()
 {
- /*
-  * print timing stats if that option was specified.
-  * print errno log if that option was specified.
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

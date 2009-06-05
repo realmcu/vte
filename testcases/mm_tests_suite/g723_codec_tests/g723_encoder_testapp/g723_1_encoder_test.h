@@ -37,9 +37,9 @@ extern "C"{
 /*==================================================================================================
                                          INCLUDE FILES
 ==================================================================================================*/
-#include <sys/types.h>  // fork usage for reentrance test
-#include <unistd.h> // fork usage for reentrance test
-#include <pthread.h> // fork usage for reentrance test
+#include <sys/types.h>  	// fork usage for reentrance test
+#include <unistd.h> 		// fork usage for reentrance test
+#include <pthread.h> 		// fork usage for reentrance test
 #include <sys/time.h>		// timer usage for preemptivity
 #include <math.h>               // for sqrt in hogcpu
 #include "g723_enc_api.h"
@@ -78,10 +78,10 @@ typedef enum
     NOMINAL_FUNCTIONALITY,
     RELOCATABILITY,
     RE_ENTRANCE,
-
+    
     PRE_EMPTION,
     ENDURANCE,
-    LOAD
+    LOAD        
 } g723_1_decoder_testcases_t;
 
 

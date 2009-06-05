@@ -94,7 +94,7 @@ public:
   {
     m_lock.Lock();
   }
-
+  
   ~cThreadLockAuto()
   {
     m_lock.Unlock();
@@ -136,7 +136,7 @@ public:
   virtual ~cThreadCond();
 
   // call Lock before Signal
-  virtual void Signal();
+  virtual void Signal(); 
 
   // call Lock before Wait
   virtual void Wait();

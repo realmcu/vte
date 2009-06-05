@@ -11,18 +11,18 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ###################################################################################################
 #Revision History:
 #                              Modification     Tracking
 #Author (Core ID)                  Date          Number    Description of Changes
 #---------------------------   ------------    ----------  ------------------------------------------
-#Igor Semenchukov (smng001c)    23/08/2004     TLSbo40411   Initial version
-#Ludovic Delaspre (rc149c)      13/09/2004     TLSbo42022   VTE 1.5 integration
+#Igor Semenchukov (smng001c)    23/08/2004     TLSbo40411   Initial version 
+#Ludovic Delaspre (rc149c)      13/09/2004     TLSbo42022   VTE 1.5 integration 
 #L.Delaspre/rc149c              08/12/2004     TLSbo40142   update with Freescale identity
 #
 ###################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms.
+#Portability: Indicate if this module is portable to other compilers or platforms. 
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################

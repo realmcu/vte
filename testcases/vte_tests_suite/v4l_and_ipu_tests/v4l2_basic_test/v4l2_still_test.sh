@@ -55,7 +55,7 @@ echo "========================"
 echo "Final Result     PASS"
 echo "========================"
 exit 0
-else
+else 
 echo "========================"
 echo "Final Result     FAIL"
 echo "========================"

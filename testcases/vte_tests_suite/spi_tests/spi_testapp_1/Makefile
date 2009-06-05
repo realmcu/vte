@@ -10,20 +10,20 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-# Tony THOMASSIN/RB595C       18/05/2004     TLSbo39490   SPI test development
+# Tony THOMASSIN/RB595C       18/05/2004     TLSbo39490   SPI test development 
 # Ludovic DELASPRE/RC149C     11/06/2004     TLSbo40109   Replace hard include path by a variable
-# Tony THOMASSIN/RB595C       28/07/2004     TLSbo40583
+# Tony THOMASSIN/RB595C       28/07/2004     TLSbo40583    
 # Ludovic DELASPRE/RC149C     28/07/2004     TLSbo40891   VTE 1.4 integration
 #L.Delaspre/rc149c            08/12/2004     TLSbo40142   update with Freescale identity
 #
 ###################################################################################################
-#Portability: Indicate if this module is portable to other compilers or platforms.
+#Portability: Indicate if this module is portable to other compilers or platforms. 
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################

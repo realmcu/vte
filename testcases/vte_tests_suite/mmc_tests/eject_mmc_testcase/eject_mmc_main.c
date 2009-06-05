@@ -1,5 +1,5 @@
-/*
-* Copyright (C) 2004, Freescale Semiconductor, Inc.
+/* 
+* Copyright (C) 2004, Freescale Semiconductor, Inc. 
 * All Rights Reserved THIS SOURCE CODE IS
 * CONFIDENTIAL AND PROPRIETARY AND MAY NOT BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 * Freescale Semiconductor, Inc. */
@@ -13,16 +13,16 @@ Description of the file
 
 @par Portability: arm,  gcc,  montavista */
 
-/*========= REVISION HISTORY ==========
+/*================================= REVISION HISTORY ==================================
 
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
 S.ZAVJALOV/zvjs001c   22/03/2005   tlsbo46706   Initial version
-I.Inkina/nknl001      25/07/2005   TLSbo50891      Update open device
+I.Inkina/nknl001      25/07/2005   TLSbo50891      Update open device 
 E.Gromazina           14/10/2005    TLSbo56643     Update for the first MMC
-=================*/
+=============================================================================*/
 
-/*================
+/*============================================================================
 Total Tests: 1
 
 Test Name:   eject_mmc_test
@@ -30,14 +30,14 @@ Test Name:   eject_mmc_test
 Test Assertion
 & Strategy:  A brief description of the test Assertion and Strategy
             TO BE COMPLETED
-=================*/
+=============================================================================*/
 
 
 #ifdef __cplusplus
-extern "C"{
+extern "C"{ 
 #endif
 
-/*======== INCLUDE FILES ========*/
+/*======================== INCLUDE FILES ====================================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,29 +50,29 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "eject_mmc_test.h"
 
-/*======== LOCAL CONSTANTS ==========*/
+/*======================== LOCAL CONSTANTS ==================================*/
 
 
-/*======== LOCAL MACROS =========*/
+/*======================== LOCAL MACROS =====================================*/
 
-/*======== LOCAL VARIABLES ==========*/
+/*======================== LOCAL VARIABLES ==================================*/
 int     flag_d = 0;
 char   *d_opt;
 
-/*======== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) ===*/
+/*======================== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) =======*/
 /* Options given to the MMC test : -D :name of MMC 1 device */
 
-option_t MMC_options[] =
+option_t MMC_options[] = 
 {
 
         {"D:", &flag_d, &d_opt},
         {NULL, NULL, NULL}
 };
 
-/*======== GLOBAL CONSTANTS =========*/
+/*======================== GLOBAL CONSTANTS =================================*/
 
 
-/*======== GLOBAL VARIABLES =========*/
+/*======================== GLOBAL VARIABLES =================================*/
 /* Extern Global Variables */
 extern int Tst_count;   /* counter for tst_xxx routines */
 extern char *TESTDIR;   /* temporary dir created by tst_tmpdir(void) */
@@ -81,14 +81,14 @@ extern char *TESTDIR;   /* temporary dir created by tst_tmpdir(void) */
 char   *TCID = "eject_mmc_test";        /* test program name */
 int     TST_TOTAL = 1;  /* total number of tests in this file */
 
-/*======== LOCAL FUNCTION PROTOTYPES ========*/
+/*======================== LOCAL FUNCTION PROTOTYPES ========================*/
 void    setup(void);
 void    help(void);
 int     main(int argc, char **argv);
 
-/*======== LOCAL FUNCTIONS ==========*/
+/*======================== LOCAL FUNCTIONS ==================================*/
 
-/*===== setup ===========*/
+/*========================= setup ===========================================*/
 /**
 Description of the function
 @brief  Performs all one time setup for this test. This function is
@@ -98,7 +98,7 @@ Description of the function
         Output: None.
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
-=================*/
+=============================================================================*/
 
 void setup(void)
 {
@@ -114,7 +114,7 @@ void setup(void)
         return;
 }
 
-/*====== help ===========*/
+/*========================== help ===========================================*/
 /**
 Description of the function
 @brief  Describe the usage of the test application
@@ -123,7 +123,7 @@ Description of the function
         Output: None.
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
-=================*/
+=============================================================================*/
 
 void help(void)
 {
@@ -132,7 +132,7 @@ void help(void)
         return;
 }
 
-/*======= main =========*/
+/*======================= main =============================================*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -148,7 +148,7 @@ void help(void)
                 -V - Prints the version number
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
-=================*/
+=============================================================================*/
 
 int main(int argc, char **argv)
 {
@@ -177,8 +177,8 @@ int main(int argc, char **argv)
 
         /* parse options. */
         /** LTP test harness provides a function called parse_opts() that
-        may be used to parse standard options. For a list of standard
-        option that are available refer on-line man page at the LTP
+        may be used to parse standard options. For a list of standard 
+        option that are available refer on-line man page at the LTP 
         web-site */
 
         /* perform global test setup, call setup() function. */
@@ -210,9 +210,9 @@ int main(int argc, char **argv)
 
 }
 
-/*======== GLOBAL FUNCTIONS =========*/
+/*======================== GLOBAL FUNCTIONS =================================*/
 
-/*========= cleanup =========*/
+/*============================= cleanup =====================================*/
 /**
 Description of the function
 @brief  Performs all one time clean up for this test on successful
@@ -223,7 +223,7 @@ Description of the function
 @param  Input : None.
         Output: None.
 @return Nothing
-=================*/
+=============================================================================*/
 
 void cleanup(void)
 {
@@ -240,5 +240,5 @@ void cleanup(void)
 
 
 #ifdef __cplusplus
-}
+} 
 #endif

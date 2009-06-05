@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   tool_player.c
 
         @brief  OSS Audio Play Test scenario source file.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -20,16 +20,16 @@ RB657C/gsch1c                20/07/2004     TLSbo40898  Initial version  of OSS 
 D.Khoroshev/B00313           02/10/2006     TLSbo62323  Update according to the latest specifications
 D.Simakov                    13/06/2006     TLSbo67022  STDAC <=> CODEC
 D.Simakov                    19/10/2006     TLSbo76144  dsp->adsp, dsp1->dsp
-====================
+====================================================================================================
 Portability: ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <errno.h>
-
+    
 /* Verification Test Environment Include Files */
 #include <test.h>
 
@@ -37,50 +37,50 @@ Portability: ARM GCC
 #include "oss_sound_driver_test.h"
 #include "../common.h"
 
-/*======================
+/*==================================================================================================
                                        LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 extern int Portflag;
 
-/*======================
+/*==================================================================================================
                                        LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 #define BUF_SIZE 4096
 
-/*====================*/
-/*= VT_oss_sound_driver_setup =*/
+/*================================================================================================*/
+/*===== VT_oss_sound_driver_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution
 
 @param  None
-
+  
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_oss_sound_driver_setup(void)
 {
         return TPASS;
 }
 
-/*====================*/
-/*= VT_oss_sound_driver_cleanup =*/
+/*================================================================================================*/
+/*===== VT_oss_sound_driver_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
 
 @param  None
-
+  
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_oss_sound_driver_cleanup(void)
 {
         return TPASS;
 }
 
-/*====================*/
-/*= get_audio_bits =*/
+/*================================================================================================*/
+/*===== get_audio_bits =====*/
 unsigned short get_audio_bits(FILE* file)
 {
         unsigned short ret;
@@ -89,8 +89,8 @@ unsigned short get_audio_bits(FILE* file)
         return ret;
 }
 
-/*====================*/
-/*= get_audio_channels =*/
+/*================================================================================================*/
+/*===== get_audio_channels =====*/
 unsigned short get_audio_channels(FILE* file)
 {
         unsigned short ret;
@@ -99,8 +99,8 @@ unsigned short get_audio_channels(FILE* file)
         return ret;
 }
 
-/*====================*/
-/*= get_audio_frq =*/
+/*================================================================================================*/
+/*===== get_audio_frq =====*/
 int get_audio_frq(FILE* file)
 {
         int ret;
@@ -109,8 +109,8 @@ int get_audio_frq(FILE* file)
         return ret;
 }
 
-/*====================*/
-/*= set_audio_config =*/
+/*================================================================================================*/
+/*===== set_audio_config =====*/
 int set_audio_config(int fd_audio, FILE* file)
 {
         int tmp, format, frequency, channels;
@@ -120,14 +120,14 @@ int set_audio_config(int fd_audio, FILE* file)
         if (ioctl(fd_audio, SNDCTL_DSP_SETFMT, &format) < 0)
         {
                 tst_resm(TINFO,
-                        "Error in SNDCTL_DSP_SETFMT ioctl call (arg is %d, returned %d). %s",
+                        "Error in SNDCTL_DSP_SETFMT ioctl call (arg is %d, returned %d). %s", 
                         tmp, format, strerror(errno));
                 VT_rv = TFAIL;
         }
         else if ( tmp != format )
         {
                 tst_resm(TINFO,
-                        "Format was not set (SNDCTL_DSP_SETFMT, arg is %d, returned %d). %s",
+                        "Format was not set (SNDCTL_DSP_SETFMT, arg is %d, returned %d). %s", 
                         tmp, format);
                 VT_rv = TFAIL;
         }
@@ -136,7 +136,7 @@ int set_audio_config(int fd_audio, FILE* file)
         if (ioctl(fd_audio, SOUND_PCM_WRITE_RATE, &frequency)< 0)
         {
                 tst_resm(TINFO,
-                        "Error in SOUND_PCM_WRITE_RATE ioctl call (arg is %d, returned %d). %s",
+                        "Error in SOUND_PCM_WRITE_RATE ioctl call (arg is %d, returned %d). %s", 
                         tmp, frequency, strerror(errno));
                 VT_rv = TFAIL;
         }
@@ -169,8 +169,8 @@ int set_audio_config(int fd_audio, FILE* file)
         return VT_rv;
 }
 
-/*====================*/
-/*= play_file =*/
+/*================================================================================================*/
+/*===== play_file =====*/
 int play_file(int fd_audio, FILE* file)
 {
         int err = 0;
@@ -196,7 +196,7 @@ int play_file(int fd_audio, FILE* file)
                         }
                         else
                                 printf ("%d/%d written.\n", nwritten, nleft);
-
+                
                         nleft -= nwritten;
                         p += nwritten;
                 }
@@ -208,17 +208,17 @@ int play_file(int fd_audio, FILE* file)
         return err;
 }
 
-/*====================*/
-/*= VT_oss_sound_driver_test =*/
+/*================================================================================================*/
+/*===== VT_oss_sound_driver_test =====*/
 /**
 @brief  Test program
 
 @param  None
-
+  
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_oss_sound_driver_test(int device, int loop, char *file)
 {
         FILE *fd_file = NULL;
@@ -256,7 +256,7 @@ int VT_oss_sound_driver_test(int device, int loop, char *file)
         {
                 goto _err_drv_open;
         }
-
+        
         if ( set_audio_config(fd_audio, fd_file) != TPASS )
         {
                 tst_resm(TFAIL, "Bad format for file 1. ");

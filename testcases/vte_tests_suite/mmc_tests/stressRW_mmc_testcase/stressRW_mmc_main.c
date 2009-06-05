@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   rw_mmc_main.c
 
-        @brief  Main file for MMC driver test.
+        @brief  Main file for MMC driver test. 
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -19,13 +19,13 @@ Author/core ID                  Date          Number    Description of Changes
 S.ZAVJALOV/zvjs001c          22/03/2005     TLSbo46706  Initial version
 A.Ozerov/b00320              20/02/2006     TLSbo61899  Testapp was cast to coding standarts
 
-====================
+====================================================================================================
 Portability: ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,9 +38,9 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "stressRW_mmc_test.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 int     o_num = 0,
         t_num = 0,
         c_num = 0,
@@ -55,8 +55,8 @@ char   *t_copt,
 unsigned long block_size = 0,
               block_count = 0,
               offset_address = 0,
-     RWLoop=0;
-option_t options[] =
+			  RWLoop=0;
+option_t options[] = 
 {
         {"D:", &d_num, &device_name},   /* MMC device name */
         {"O:", &o_num, &o_copt},        /* Offset */
@@ -67,9 +67,9 @@ option_t options[] =
         {NULL, NULL, NULL}      /* NULL required to end array */
 };
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 /* Extern Global Variables */
 extern int   Tst_count; /* counter for tst_xxx routines */
 extern char *TESTDIR;   /* temporary dir created by tst_tmpdir */
@@ -78,18 +78,18 @@ extern char *TESTDIR;   /* temporary dir created by tst_tmpdir */
 char   *TCID = "stressRW_mmc_test";   /* test program name */
 int     TST_TOTAL = 1;  /* total number of tests in this file */
 
-/*======================
+/*==================================================================================================
                                     GLOBAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 void    setup(void);
 void    help(void);
 int     main(int argc, char **argv);
 
-/*======================
+/*==================================================================================================
                                         GLOBAL FUNCTIONS
-======================*/
-/*====================*/
-/*= setup =*/
+==================================================================================================*/
+/*================================================================================================*/
+/*===== setup =====*/
 /**
 @brief  Performs all one time setup for this test. This function is typically used to capture
         signals, create temporary dirs and temporary files that may be used in the course of this test
@@ -98,7 +98,7 @@ int     main(int argc, char **argv);
 
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void setup(void)
 {
         int     VT_rv = TFAIL;
@@ -110,8 +110,8 @@ void setup(void)
         }
 }
 
-/*====================*/
-/*= cleanup =*/
+/*================================================================================================*/
+/*===== cleanup =====*/
 /**
 @brief  This function performs all one time clean up for this test on successful completion,
         premature exit or failure. Closes all temporary files, removes all temporary directories exits
@@ -121,7 +121,7 @@ void setup(void)
 
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void cleanup(void)
 {
         int     VT_rv = TFAIL;
@@ -134,8 +134,8 @@ void cleanup(void)
         tst_exit();
 }
 
-/*====================*/
-/*= help =*/
+/*================================================================================================*/
+/*===== help =====*/
 /**
 @brief  Print help information
 
@@ -143,7 +143,7 @@ void cleanup(void)
 
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void help(void)
 {
         printf("Usage : %s -D <MMC block device> -O <offset> -C <block count> -T <block type> -L <read/write times> -V\n",
@@ -151,8 +151,8 @@ void help(void)
         return;
 }
 
-/*====================*/
-/*= main =*/
+/*================================================================================================*/
+/*===== main =====*/
 /**
 @brief  Entry point to this test-case. It parses all the command line inputs, calls the global
         setup and executes the test. It logs the test status and results appropriately using the LTP API's
@@ -161,11 +161,11 @@ void help(void)
 
 @param  Input : argc - number of command line parameters
         Output: **argv - pointer to the array of the command line parameters
-
+        
 @return On failure - Exits by calling cleanup()
         On success - exits with 0 exit value
 */
-/*====================*/
+/*================================================================================================*/
 int main(int argc, char **argv)
 {
         int     VT_rv = TFAIL;
@@ -195,24 +195,24 @@ int main(int argc, char **argv)
         {
                 tst_brkm(TBROK, cleanup, "Required argument -C");
         }
-
-  //tst_resm(TINFO,"Read/write loop info: l_num:%d l_copt:%s",l_num,l_copt);
-
-  if (l_num)
-  {
-   RWLoop = strtol(l_copt, NULL, 16);
-   //tst_resm(TINFO,"Read/write loop info: l_num:%d l_copt:%s RWLoop:%d",l_num,l_copt,RWLoop);
-   if(RWLoop<=0)
-   {
-    tst_brkm(TBROK,cleanup,"Invalid arg for -L:%s", l_copt);
-    return TFAIL;
-   }
-  }
-  else
-  {
-   tst_brkm(TBROK, cleanup, "Required argument -L");
-  }
-
+		
+		//tst_resm(TINFO,"Read/write loop info: l_num:%d l_copt:%s",l_num,l_copt);
+		
+		if (l_num)
+		{
+			RWLoop = strtol(l_copt, NULL, 16);	
+			//tst_resm(TINFO,"Read/write loop info: l_num:%d l_copt:%s RWLoop:%d",l_num,l_copt,RWLoop);
+			if(RWLoop<=0)
+			{
+				tst_brkm(TBROK,cleanup,"Invalid arg for -L:%s", l_copt);
+				return TFAIL;
+			}
+		}
+		else
+		{
+			tst_brkm(TBROK, cleanup, "Required argument -L");
+		}
+		
         if (o_num)
         {
                 offset_address = strtol(o_copt, NULL, 16);

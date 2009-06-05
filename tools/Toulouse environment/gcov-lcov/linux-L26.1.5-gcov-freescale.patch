@@ -1,0 +1,445 @@
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/arch/arm/mach-argonplus/Makefile linux-2.6.7-mxc1.5-gcov.new/arch/arm/mach-argonplus/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/arch/arm/mach-argonplus/Makefile	2004-11-04 11:10:46.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/arch/arm/mach-argonplus/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -2,6 +2,14 @@
+ # Makefile for the linux kernel.
+ #
+ 
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL), y)
++EXTRA_CFLAGS += $(GCOV_FLAGS)
++endif
++
+ # Object file lists.
+ 
+ obj-y			:= cpu.o irq.o mm.o time.o sdma.o gpio_common.o spba.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/arch/arm/mach-mx3/Makefile linux-2.6.7-mxc1.5-gcov.new/arch/arm/mach-mx3/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/arch/arm/mach-mx3/Makefile	2004-11-04 11:10:46.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/arch/arm/mach-mx3/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -2,6 +2,14 @@
+ # Makefile for the linux kernel.
+ #
+ 
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL), y)
++EXTRA_CFLAGS += $(GCOV_FLAGS)
++endif
++
+ # Object file lists.
+ 
+ obj-y			:= cpu.o irq.o mm.o sdma.o gpio_common.o time.o spba.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/arch/arm/mach-scma11/Makefile linux-2.6.7-mxc1.5-gcov.new/arch/arm/mach-scma11/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/arch/arm/mach-scma11/Makefile	2004-11-04 11:10:46.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/arch/arm/mach-scma11/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -2,7 +2,15 @@
+ # Makefile for the linux kernel.
+ #
+ 
+-# Object file lists.
++
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL), y)
++EXTRA_CFLAGS += $(GCOV_FLAGS)
++endif
++
+ 
+ obj-y			:= cpu.o irq.o mm.o sdma.o gpio_common.o time.o spba.o
+ obj-$(CONFIG_ARCH_SCMA11EVB)	+= scma11evb.o scma11evb_gpio.o 
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/char/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/char/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/char/Makefile	2004-11-04 11:11:14.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/char/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -2,6 +2,15 @@
+ # Makefile for the kernel character device drivers.
+ #
+ 
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL),y)
++CFLAGS_mxc_mu.o += $(GCOV_FLAGS)
++CFLAGS_mxc_sdma_tty.o += $(GCOV_FLAGS)
++CFLAGS_mxc_keyb.o += $(GCOV_FLAGS)
++endif
++
+ #
+ # This file contains the font map for the default (hardware) font
+ #
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/gcov/Kconfig linux-2.6.7-mxc1.5-gcov.new/drivers/gcov/Kconfig
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/gcov/Kconfig	2004-11-04 11:13:09.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/gcov/Kconfig	2004-11-04 12:25:12.000000000 +0100
+@@ -27,6 +27,13 @@
+ 	If you say Y here, it will compile the entire kernel with coverage
+ 	option enabled.
+ 
++config GCOV_FREESCALE_ALL
++	bool "Profile all freescale drivers"
++	depends on GCOV_PROFILE
++	---help---
++	If you say Y here, it will compile all the Freescale drivers with coverage
++	option enabled.
++	
+ config GCOV_PROC
+ 	tristate "Provide GCOV proc file system entry"
+ 	depends on GCOV_PROFILE && PROC_FS
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/i2c/busses/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/i2c/busses/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/i2c/busses/Makefile	2004-11-04 11:11:11.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/i2c/busses/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -2,6 +2,13 @@
+ # Makefile for the i2c bus drivers.
+ #
+ 
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL),y)
++CFLAGS_mxc_i2c.o += $(GCOV_FLAGS)
++endif
++
+ obj-$(CONFIG_I2C_ALI1535)	+= i2c-ali1535.o
+ obj-$(CONFIG_I2C_ALI1563)	+= i2c-ali1563.o
+ obj-$(CONFIG_I2C_ALI15X3)	+= i2c-ali15x3.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/i2c/chips/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/i2c/chips/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/i2c/chips/Makefile	2004-11-04 11:11:11.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/i2c/chips/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -2,6 +2,13 @@
+ # Makefile for the kernel hardware sensors chip drivers.
+ #
+ 
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL),y)
++CFLAGS_mxc_i2c_client.o += $(GCOV_FLAGS)
++endif
++
+ # asb100, then w83781d go first, as they can override other drivers' addresses.
+ obj-$(CONFIG_SENSORS_ASB100)	+= asb100.o
+ obj-$(CONFIG_SENSORS_W83627HF)	+= w83627hf.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/media/mmc/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/media/mmc/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/media/mmc/Makefile	2004-11-04 11:11:15.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/media/mmc/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -2,6 +2,13 @@
+ # Makefile for the kernel mmc device drivers.
+ #
+ 
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL),y)
++CFLAGS_mxc_mmc.o += $(GCOV_FLAGS)
++endif
++
+ #
+ # Core
+ #
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mtd/maps/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/mtd/maps/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mtd/maps/Makefile	2004-11-04 11:11:25.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/mtd/maps/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -3,6 +3,16 @@
+ #
+ # $Id: linux-L26.1.5-gcov-freescale.patch,v 1.1.1.1 2008/04/14 09:02:59 b06080 Exp $
+ 
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL),y)
++CFLAGS_argonplusevb_flash.o += $(GCOV_FLAGS)
++CFLAGS_mx3ads_flash.o += $(GCOV_FLAGS)
++CFLAGS_scma11evb_flash.o += $(GCOV_FLAGS)
++endif
++
+ ifeq ($(CONFIG_MTD_COMPLEX_MAPPINGS),y)
+ obj-$(CONFIG_MTD)		+= map_funcs.o
+ endif
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mtd/nand/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/mtd/nand/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mtd/nand/Makefile	2004-11-04 11:11:26.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/mtd/nand/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -3,6 +3,14 @@
+ #
+ # $Id: linux-L26.1.5-gcov-freescale.patch,v 1.1.1.1 2008/04/14 09:02:59 b06080 Exp $
+ 
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(GCOV_FREESCALE_ALL), y)
++CFLAGS_mxc_nd.o += $(GCOV_FLAGS)
++endif
++
+ ifeq ($(PATCHLEVEL),4)
+ O_TARGET			:= nandlink.o
+ export-objs			:= nand_base.o nand_bbt.o nand_ecc.o nand_ids.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/atlas/core/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/atlas/core/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/atlas/core/Makefile	2004-11-04 11:11:30.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/atlas/core/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -2,5 +2,13 @@
+ # Makefile for the atlas core drivers.
+ #
+ 
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL), y)
++EXTRA_CFLAGS += $(GCOV_FLAGS)
++endif
++
+ obj-$(CONFIG_ATLAS) += atlas-core-mod.o 
+ atlas-core-mod-objs := atlas-core.o os_independent.o register.o spi_interface.o event.o atlas_external.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/atlas/module/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/atlas/module/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/atlas/module/Makefile	2004-11-04 11:11:30.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/atlas/module/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -2,6 +2,15 @@
+ # Makefile for the atlas adc drivers.
+ #
+ 
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL), y)
++EXTRA_CFLAGS += $(GCOV_FLAGS)
++endif
++
++
+ obj-$(CONFIG_ATLAS_ADC) += atlas_adc-mod.o
+ obj-$(CONFIG_ATLAS_AUDIO) += atlas_audio-mod.o
+ obj-$(CONFIG_ATLAS_RTC) += atlas_rtc-mod.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/dam/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/dam/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/dam/Makefile	2004-11-04 11:11:30.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/dam/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -1,6 +1,14 @@
+ #
+ # Makefile for the kernel SSI device drivers.
+ 
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(GCOV_FREESCALE_ALL), y)
++EXTRA_CFLAGS += $(GCOV_FLAGS)
++endif
++
+ #ifneq($(KERNELRELEASE))
+ 
+ obj-$(CONFIG_DAM) 		+= dammod.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/ipu/camera/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/ipu/camera/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/ipu/camera/Makefile	2004-11-04 11:11:30.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/ipu/camera/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -1,2 +1,9 @@
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL),y)
++EXTRA_CFLAGS += $(GCOV_FLAGS)
++endif
++
+ obj-$(CONFIG_MXC_CAMERA_MICRON_143) += mt9v143.o
+ obj-$(CONFIG_MXC_CAMERA_MICRON_111) += mt9v111.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/ipu/display/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/ipu/display/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/ipu/display/Makefile	2004-11-04 11:11:30.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/ipu/display/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -1,3 +1,10 @@
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL),y)
++EXTRA_CFLAGS += $(GCOV_FLAGS)
++endif
++
+ obj-$(CONFIG_MXC_SDC_SHARP_PANEL) += mxc_sharp.o
+ 
+ mxc_sharp-objs := ipu_sharp_panel.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/ipu/library/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/ipu/library/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/ipu/library/Makefile	2004-11-04 11:11:30.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/ipu/library/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -1,3 +1,10 @@
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL),y)
++EXTRA_CFLAGS += $(GCOV_FLAGS)
++endif
++
+ obj-$(CONFIG_MXC_IPU) += mxc_ipu_lib.o
+ 
+ mxc_ipu_lib-objs := ipu_lib_sensor.o ipu_lib_display.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/ipu/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/ipu/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/ipu/Makefile	2004-11-04 11:11:30.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/ipu/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -1,3 +1,11 @@
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL),y)
++EXTRA_CFLAGS += $(GCOV_FLAGS)
++endif
++
++
+ obj-$(CONFIG_MXC_IPU) += mxc_ipu.o
+ 
+ mxc_ipu-objs := ipu_gen.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/pm/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/pm/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/pm/Makefile	2004-11-04 11:11:30.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/pm/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -2,5 +2,14 @@
+ # Makefile for Power Managment devices.
+ #
+ 
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL), y)
++EXTRA_CFLAGS += $(GCOV_FLAGS)
++endif
++
++
+ obj-$(CONFIG_MX_DPTC)	+= dptc.o
+ 
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/security/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/security/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/security/Makefile	2004-11-04 11:11:30.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/security/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -1,5 +1,13 @@
+ # Makefile for the Linux MXC Security API
+ 
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL), y)
++EXTRA_CFLAGS += $(GCOV_FLAGS)
++endif
++
+ obj-$(CONFIG_MXC_SECURITY_MOD)	        += mxc_security_drv.o
+ obj-$(CONFIG_MXC_SECURITY_MOD_TEST)	+= mxc_sec_test_drv.o
+ 
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/spi/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/spi/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/spi/Makefile	2004-11-04 11:11:30.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/spi/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -1,6 +1,14 @@
+ #
+ # Makefile for the kernel SPI device drivers.
+ 
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL), y)
++EXTRA_CFLAGS += $(GCOV_FLAGS)
++endif
++
+ #ifneq($(KERNELRELEASE))
+ 
+ obj-$(CONFIG_SPI) 		+= spimod.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/ssi/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/ssi/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/mxc/ssi/Makefile	2004-11-04 11:11:30.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/mxc/ssi/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -1,6 +1,14 @@
+ #
+ # Makefile for the kernel SSI device drivers.
+ 
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL), y)
++EXTRA_CFLAGS += $(GCOV_FLAGS)
++endif
++
+ #ifneq($(KERNELRELEASE))
+ 
+ obj-$(CONFIG_SSI) 		+= ssimod.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/net/irda/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/net/irda/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/net/irda/Makefile	2004-11-04 11:11:04.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/net/irda/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -4,6 +4,13 @@
+ # 9 Aug 2000, Christoph Hellwig <hch@infradead.org>
+ # Rewritten to use lists instead of if-statements.
+ #
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL),y)
++CFLAGS_mxc_fir.o += $(GCOV_FLAGS)
++endif
+ 
+ # Old SIR drivers 
+ obj-$(CONFIG_IRPORT_SIR)	+= 		irport.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/net/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/net/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/net/Makefile	2004-11-04 11:11:06.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/net/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -2,6 +2,14 @@
+ # Makefile for the Linux network (ethercard) device drivers.
+ #
+ 
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL), y)
++CFLAGS_3c59x.o += $(GCOV_FLAGS)
++endif
++
+ ifeq ($(CONFIG_ISDN_PPP),y)
+   obj-$(CONFIG_ISDN) += slhc.o
+ endif
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/serial/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/serial/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/serial/Makefile	2004-11-04 11:11:17.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/serial/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -3,6 +3,12 @@
+ #
+ #  $Id: linux-L26.1.5-gcov-freescale.patch,v 1.1.1.1 2008/04/14 09:02:59 b06080 Exp $
+ #
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL),y)
++CFLAGS_mxc_uart.o += $(GCOV_FLAGS)
++endif
+ 
+ serial-8250-y :=
+ serial-8250-$(CONFIG_SERIAL_8250_ACPI) += 8250_acpi.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/video/mxc/Makefile linux-2.6.7-mxc1.5-gcov.new/drivers/video/mxc/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/drivers/video/mxc/Makefile	2004-11-04 11:11:10.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/drivers/video/mxc/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -1 +1,9 @@
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL), y)
++EXTRA_CFLAGS += $(GCOV_FLAGS)
++endif
++
+ obj-$(CONFIG_FB_MXC)        += mxcfb.o
+diff -Naur linux-2.6.7-mxc1.5-gcov-2.6.5/sound/oss/Makefile linux-2.6.7-mxc1.5-gcov.new/sound/oss/Makefile
+--- linux-2.6.7-mxc1.5-gcov-2.6.5/sound/oss/Makefile	2004-11-04 11:11:39.000000000 +0100
++++ linux-2.6.7-mxc1.5-gcov.new/sound/oss/Makefile	2004-11-04 12:25:12.000000000 +0100
+@@ -3,6 +3,15 @@
+ # 18 Apr 1998, Michael Elizabeth Chastain, <mailto:mec@shout.net>
+ # Rewritten to use lists instead of if-statements.
+ 
++#
++# cgag1c@motorola.com [TLS FR] 02/06/2004
++# test for gcov
++# 
++ifeq ($(CONFIG_GCOV_FREESCALE_ALL), y)
++CFLAGS_mxc-audio.o += $(GCOV_FLAGS)
++CFLAGS_mxc-hwdep.o += $(GCOV_FLAGS)
++endif
++
+ # Each configuration option enables a list of files.
+ 
+ obj-$(CONFIG_SOUND_OSS)		+= sound.o

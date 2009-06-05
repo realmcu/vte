@@ -18,18 +18,18 @@
 #                          Modification     Tracking
 # Author                       Date          Number    Description of Changes
 #-----------------------   ------------    ----------  ---------------------
-# Spring Zhang               03/07/2008       n/a        Initial ver.
+# Spring Zhang               03/07/2008       n/a        Initial ver. 
 # Spring                     28/11/2008       n/a      Modify COPYRIGHT header
 #############################################################################
-# Portability:  ARM sh bash
+# Portability:  ARM sh bash 
 #
 # File Name:    original growfiles_list.sh
-# Total Tests:       30
+# Total Tests:       30 
 # Test Strategy: file system stress test
+# 
+# Input:	none
 #
-# Input: none
-#
-# Return:
+# Return:     
 #
 # Use command "./growfiles_list.sh to stress test file system
 

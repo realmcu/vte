@@ -74,19 +74,19 @@ struct wave_config
 
         /*! Requested mixing mode */
         unsigned long mix_enabled;
-
+        
         /*! Used device */
         unsigned long dac_codec;
-
-        /*! Used audio data  bus  (AUDIO_DATA_BUS_1 or AUDIO_DATA_BUS_2)*/
+    
+        /*! Used audio data  bus  (AUDIO_DATA_BUS_1 or AUDIO_DATA_BUS_2)*/ 
         PMIC_AUDIO_DATA_BUS dac_bus;
-
+        
         /*! Source clock  (CLOCK_IN_CLIA or CLOCK_IN_CLIB for mc13783) */
         PMIC_AUDIO_CLOCK_IN_SOURCE pmic_clock_source;
-
+        
         /*! clock provider (BUS_SLAVE_MODE - PMIC is slave, BUS_MASTER_MODE - PMIC is master) */
         PMIC_AUDIO_BUS_MODE master_slave;
-
+        
         /*! ssi fifo to be used */
         int ssi_fifo;
 

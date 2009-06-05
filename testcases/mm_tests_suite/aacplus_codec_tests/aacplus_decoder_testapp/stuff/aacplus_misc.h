@@ -10,7 +10,7 @@
  * Description: header file for aacplus_main.c .
  *
  ****************************** Change History********************************
- *
+ * 
  *    DD/MM/YYYY     Code Ver     Description                   Author
  *   -----------     --------     -----------                   ------
  *    28/06/2005      01          File  Created                 Webber Wang
@@ -111,11 +111,11 @@ typedef struct SBR_HEADER_DATA
         unsigned char timeStep;            /*!< Time resolution of SBR in QMF-slots */
         unsigned short codecFrameSize;     /*!< Core coder frame size in samples */
         unsigned short outSampleRate;      /*!< Output sampling frequency */
-
+        
         /* Changes in these variables causes concealment */
         CHANNEL_MODE  channelMode;         /*!< Mono, pseudo-stereo or stereo */
         unsigned char ampResolution;       /*!< Amplitude resolution of envelope values (0: 1.5dB, 1: 3dB) */
-
+        
         /* Changes in these variables causes a reset of the decoder */
         unsigned char startFreq;           /*!< Index for SBR start frequency */
         unsigned char stopFreq;            /*!< Index for SBR highest frequency */
@@ -123,13 +123,13 @@ typedef struct SBR_HEADER_DATA
         unsigned char freqScale;           /*!< 0: linear scale,  1-3 logarithmic scales */
         unsigned char alterScale;          /*!< Flag for coarser frequency resolution */
         unsigned char noise_bands;         /*!< Noise bands per octave, read from bitstream*/
-
+        
         /* don't require reset */
         unsigned char limiterBands;        /*!< Index for number of limiter bands per octave */
         unsigned char limiterGains;        /*!< Index to select gain limit */
         unsigned char interpolFreq;        /*!< Select gain calculation method (1: per QMF channel, 0: per SBR band) */
         unsigned char smoothingLength;     /*!< Smoothing of gains over time (0: on  1: off) */
-
+        
         HANDLE_FREQ_BAND_DATA hFreqBandData;  /*!< Pointer to struct #FREQ_BAND_DATA */
 } SBR_HEADER_DATA;
 #endif

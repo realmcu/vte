@@ -77,8 +77,8 @@ Portability:  ARM GCC
 #define _8_BIT                  2
 
 #ifndef TEST_USER_SPACE
-// Supplemental information for the dma channels.
-typedef unsigned char READ_WRITE_DIRECTION;
+// Supplemental information for the dma channels. 
+typedef unsigned char READ_WRITE_DIRECTION; 
 #define READ_ 1
 #define WRITE_ 2
 typedef struct

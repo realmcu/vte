@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   ipc_main.c
 
         @brief  Main file for Unified IPC driver test application.
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -21,14 +21,14 @@ V.Khalabuda/hlbv001          17/05/2005     TLSbo50460  Option behaviour
 S.Zavjalov/zvjs001c          24/06/2005     TLSbo50997  Linked list mode
 A.Ozerov/b00320              26/04/2006     TLSbo61791  Performs a cast in accordance to coding standarts
 
-====================
+====================================================================================================
 Portability: ARM GCC
 
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,17 +41,17 @@ Portability: ARM GCC
 /* Verification Test Environment Include Files */
 #include "ipc_test.h"
 
-/*======================
+/*==================================================================================================
                                         DEFINES AND MACROS
-======================*/
+==================================================================================================*/
 #define DEF_PKT_LEN         8192
 #define DEF_LOG_LEN         2048
 #define MIN_BUF_ITER        0
 #define NR_ITER             1
 
-/*======================
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 static sig_atomic_t     sig_count;
 static struct   sigaction sa;
 
@@ -69,7 +69,7 @@ char   *dev_opt;
 char   *iter_opt;
 char   *qtty_opt;
 
-option_t options[] =
+option_t options[] = 
 {
         {"N:", &id_flag, &id_opt},              /* Test ID */
         {"S:", &pktsz_flag, &pktsz_opt},        /* Packet buffer size */
@@ -81,9 +81,9 @@ option_t options[] =
         {NULL, NULL, NULL},                     /* NULL required to end array */
 };
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 /* Extern Global Variables */
 extern int      Tst_count;        /* counter for tst_xxx routines              */
 extern char    *TESTDIR;          /* temporary dir created by tst_tmpdir(void) */
@@ -97,19 +97,19 @@ char    dev_fname[MAX_STR_LEN];
 char   *dev_path;
 int     dev_num = -1;
 
-/*======================
+/*==================================================================================================
                                     GLOBAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 void    setup(void);
 void    help(void);
 int     main(int argc, char **argv);
 
-/*======================
+/*==================================================================================================
                                         GLOBAL FUNCTIONS
-======================*/
+==================================================================================================*/
 
-/*====================*/
-/*= help =*/
+/*================================================================================================*/
+/*===== help =====*/
 /**
 Description of the function
 @brief  Describes the usage of the test application.
@@ -121,7 +121,7 @@ Description of the function
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 void help(void)
 {
         printf("Usage: %s [options]\n", TCID);
@@ -147,13 +147,13 @@ void help(void)
         return;
 }
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 void sig_hand(int sig);
 
-/*====================*/
-/*= setup =*/
+/*================================================================================================*/
+/*===== setup =====*/
 /**
 @brief  Performs all one time setup for this test. This function is
         typically used to capture signals, create temporary dirs
@@ -165,7 +165,7 @@ void sig_hand(int sig);
 @return On failure - Exits by calling cleanup().
         On success - returns 0.
 */
-/*====================*/
+/*================================================================================================*/
 void setup(void)
 {
         int     VT_rv = TFAIL;
@@ -189,8 +189,8 @@ void setup(void)
         }
 }
 
-/*====================*/
-/*= cleanup =*/
+/*================================================================================================*/
+/*===== cleanup =====*/
 /**
 @brief  Performs all one time clean up for this test on successful
                 completion,  premature exit or  failure. Closes all temporary
@@ -202,7 +202,7 @@ void setup(void)
 
 @return Nothing
 */
-/*====================*/
+/*================================================================================================*/
 void cleanup(void)
 {
         int     VT_rv = TFAIL;
@@ -223,8 +223,8 @@ void cleanup(void)
 //        tst_exit();
 }
 
-/*====================*/
-/*= main =*/
+/*================================================================================================*/
+/*===== main =====*/
 /**
 @brief  Entry point to this test-case. It parses all the command line
         inputs, calls the global setup and executes the test. It logs
@@ -242,7 +242,7 @@ void cleanup(void)
 @return On failure - Exits by calling cleanup().
         On success - exits with 0 exit value.
 */
-/*====================*/
+/*================================================================================================*/
 int main(int argc, char **argv)
 {
         int     VT_rv = TFAIL;
@@ -368,16 +368,16 @@ int main(int argc, char **argv)
         return VT_rv;
 }
 
-/*====================*/
-/*= timer_handler=*/
-/**
-@brief This is a timer handler.
-
-@param sig - signal number
-
-@return None
+/*================================================================================================*/
+/*===== timer_handler=====*/
+/**  
+@brief This is a timer handler.  
+  
+@param sig - signal number   
+    
+@return None  
 */
-/*====================*/
+/*================================================================================================*/
 void sig_hand(int sig)
 {
         if (sig_count)

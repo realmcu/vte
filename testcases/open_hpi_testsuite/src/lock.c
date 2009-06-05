@@ -16,35 +16,35 @@
 #include <config.h>
 #include <errno.h>
 #include <unistd.h>
-#include <openhpi.h>
+#include <openhpi.h>  
 
-
+		 
 #ifdef HAVE_THREAD_SAFE
 /* multi-threading support, use Posix mutex for data access */
 /* initialize mutex used for data locking */
-static pthread_mutex_t data_access_mutex  PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+static pthread_mutex_t data_access_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 
-static int will_block  0;
+static int will_block = 0;
 
-void data_access_lock(void)
+void data_access_lock(void) 
 {
- if (pthread_mutex_trylock(&data_access_mutex)  EBUSY) {
-  pthread_mutex_lock(&data_access_mutex);
-         will_block++;
- }
+	if (pthread_mutex_trylock(&data_access_mutex) == EBUSY) {
+		pthread_mutex_lock(&data_access_mutex);	
+	        will_block++;
+	}
 }
 
 void data_access_unlock(void)
 {
-        pthread_mutex_unlock(&data_access_mutex);
+        pthread_mutex_unlock(&data_access_mutex);    
 }
 
-int data_access_block_times(void)
+int data_access_block_times(void) 
 {
         return(will_block);
 }
-#else
+#else 
 void data_access_lock(void) {}
-void data_access_unlock(void){}
+void data_access_unlock(void){} 
 int data_access_block_times(void){ return(0);}
 #endif/*HAVE_THREAD_SAFE*/

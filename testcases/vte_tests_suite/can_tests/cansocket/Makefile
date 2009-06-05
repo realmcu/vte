@@ -1,5 +1,5 @@
 #
-#  $Id: Makefile,v 1.1.2.1.4.1 2008/09/11 10:25:35 b06975 Exp
+#  $Id: Makefile,v 1.1.2.1.4.1 2008/09/11 10:25:35 b06975 Exp $
 #
 #  Copyright (c) 2002-2007 Volkswagen Group Electronic Research
 #  All rights reserved.
@@ -50,12 +50,12 @@ CFLAGS    = -O2 -Wall -Wno-parentheses -I$(KLINUX_SRCDIR)/include \
 	    -DAF_CAN=PF_CAN
 SCRIPTS = can_test.sh
 
-PROGRAMS = tst-raw		  \
+PROGRAMS = 	tst-raw		  \
 		tst-raw-filter	  \
 		tst-err		  \
 		tst-raw-sendto	  \
-		tst-bcm-cycle   \
-		tst-bcm-server   \
+		tst-bcm-cycle 	  \
+		tst-bcm-server 	  \
 		tst-bcm-tx_read	  \
 		tst-bcm-rtr	  \
 		tst-bcm-single	  \
@@ -66,10 +66,10 @@ PROGRAMS = tst-raw		  \
 		tst-bcm-dump	  \
 		tst-proc	  \
 		canecho       \
-                cansend
+                cansend            
 
 
-all: $(PROGRAMS)
+all: $(PROGRAMS) 
 
 install:
 	ln -f $(PROGRAMS) $(BIN_DIR)
@@ -81,8 +81,8 @@ clean:
 
 distclean:
 	rm -f $(PROGRAMS) *~
-
-
+	
+     	
 cansend: cansend.o lib.o
 
 lib.o: lib.h

@@ -10,14 +10,14 @@
   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
   Freescale Semiconductor, Inc.
-
+     
 ====================================================================================================
 Revision History:
                             Modification     Tracking
 Author (core ID)                Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
-F.GAFFIE/rb657c              21/07/2004     TLSbo40930  Initial version
-L.DELASPRE/rc149c            18/10/2004     TLSbo43867  update with new API
+F.GAFFIE/rb657c              21/07/2004     TLSbo40930  Initial version 
+L.DELASPRE/rc149c            18/10/2004     TLSbo43867  update with new API 
 
 ==================================================================================================*/
 
@@ -37,9 +37,9 @@ extern "C"{
 #include <semaphore.h>
 #include <asm/ioctls.h>
 #include <linux/fb.h>		// for frame buffer operations
-#include <sys/types.h> // fork usage for reentrance test
-#include <unistd.h> // fork usage for reentrance test
-#include <pthread.h> // fork usage for reentrance test
+#include <sys/types.h> 	// fork usage for reentrance test
+#include <unistd.h> 		// fork usage for reentrance test
+#include <pthread.h> 		// fork usage for reentrance test
 #include <sys/time.h>		// timer usage for preemptivity
 #include <signal.h>
 #include <stdio.h>
@@ -66,15 +66,15 @@ extern "C"{
 #define ENDURANCE				1
 #define ROBUSTNESS				2
 #define REENTRANCE				3
-	#define USING_THREAD		1
+	#define USING_THREAD		1	
 	#define USING_PROCESS		0
 #define PREEMPTIVITY			4
 #define LOAD_TEST				5
 
 #define ITERATIONS				10
 
-#define INPUT_BUF_SIZE  	2048	/* size of the input buffer for each decoding thread */
-#define DECODER_THREAD 2		/* max number of decoding thread */
+#define INPUT_BUF_SIZE  			2048	/* size of the input buffer for each decoding thread */
+#define DECODER_THREAD 		2		/* max number of decoding thread */
 #define LENGTH					128
 
 //#define MMS_FORMAT				0
@@ -99,7 +99,7 @@ typedef struct
 	unsigned char *reference_file;
 	U32 u32APPDInstanceID;
 	S32 s32RXFrameTypeMode;
-
+	
 } amr_decoder_thread;
 
 /*==================================================================================================

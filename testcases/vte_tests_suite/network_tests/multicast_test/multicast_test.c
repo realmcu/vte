@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   multicast_test.c
 
         @brief  Multicast test, send and recive multicasting message which read from file
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -19,25 +19,25 @@ Author/core ID                  Date          Number    Description of Changes
 S.ZAVJALOV/                  10/06/2004     TLSbo39738  Initial version
 A.Ozerov/b00320              11/12/2006     TLSbo84161  Minor changes.
 
-====================
+====================================================================================================
 Portability:  ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
 Total Tests: 1
 
 Test Executable Name:  multicast_test
 
 Test Strategy:  A test for send and receive multicast message by use UDP sockets
-=====================*/
+=================================================================================================*/
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -47,9 +47,9 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "multicast_test.h"
 
-/*======================
+/*==================================================================================================
                                 GLOBAL VARIABLE DECLARATIONS
-======================*/
+==================================================================================================*/
 
 struct termios stored_settings;
 
@@ -81,13 +81,13 @@ int VT_multicast_test(int argc, char* argv[])
                 break;
             case 't':
                 ttl = strtol(optarg, NULL, 0);
-                break;
+                break;            
             case 'l':
-                if (strcmp(optarg,"on") == 0)
+                if (strcmp(optarg,"on") == 0) 
                     loopb = TRUE;
-                if (strcmp(optarg,"off") == 0)
-                    loopb = FALSE;
-                break;
+                if (strcmp(optarg,"off") == 0) 
+                    loopb = FALSE;                
+                break;            
             case 'f':
                 if ((fd_message=open(optarg, O_RDONLY)) == -1)
                 {
@@ -95,14 +95,14 @@ int VT_multicast_test(int argc, char* argv[])
                     return TFAIL;
                 }
                 fstat(fd_message, &filestat);
-                if (filestat.st_size > MAX_LENGTH_MESSAGE)
+                if (filestat.st_size > MAX_LENGTH_MESSAGE) 
                     message_len=MAX_LENGTH_MESSAGE;
                 else
                     message_len=filestat.st_size;
                 addr_mfile=mmap(0, message_len, PROT_READ, MAP_SHARED, fd_message, 0);
                 memcpy(message, addr_mfile, message_len);
                 message[message_len]=0;
-                break;
+                break;            
             default:
                 break;
         }
@@ -114,54 +114,54 @@ int VT_multicast_test(int argc, char* argv[])
         return TFAIL;
     }
 
-    if ( (send_s=socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    if ( (send_s=socket(AF_INET, SOCK_DGRAM, 0)) < 0) 
     {
         perror ("send socket");
         return TFAIL;
-    }
+    }   
 
-    if (setsockopt(send_s, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl)) < 0)
+    if (setsockopt(send_s, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl)) < 0) 
     {
         perror ("ttl setsockopt");
         return TFAIL;
     }
 
-//Disable/Enable Loop-back
-    if (setsockopt(send_s, IPPROTO_IP, IP_MULTICAST_LOOP, &loopb, sizeof(loopb)) < 0)
+//Disable/Enable Loop-back 
+    if (setsockopt(send_s, IPPROTO_IP, IP_MULTICAST_LOOP, &loopb, sizeof(loopb)) < 0) 
     {
         perror ("loop setsockopt");
         return TFAIL;
     }
 
-    if ( (recv_s=socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    if ( (recv_s=socket(AF_INET, SOCK_DGRAM, 0)) < 0) 
     {
         perror ("recv socket");
         return TFAIL;
     }
 
     i=1;
-    if (setsockopt(recv_s, SOL_SOCKET, SO_REUSEADDR, &i, sizeof(i)) < 0)
+    if (setsockopt(recv_s, SOL_SOCKET, SO_REUSEADDR, &i, sizeof(i)) < 0) 
     {
         perror("reuseaddr setsockopt");
         return TFAIL;
     }
 
-    if (bind(recv_s, (struct sockaddr*)&mcast_group, sizeof(mcast_group)) < 0)
+    if (bind(recv_s, (struct sockaddr*)&mcast_group, sizeof(mcast_group)) < 0) 
     {
         perror ("bind");
         return TFAIL;
     }
 
-//Tell the kernel we want to join that multicast group.
+//Tell the kernel we want to join that multicast group. 
     mreq.imr_multiaddr = mcast_group.sin_addr;
     mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-    if (setsockopt(recv_s, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0)
+    if (setsockopt(recv_s, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) 
     {
         perror ("add_membership setsockopt");
         return TFAIL;
     }
 
-    if (uname(&name) < 0)
+    if (uname(&name) < 0) 
     {
         perror ("uname");
         return TFAIL;
@@ -173,25 +173,25 @@ int VT_multicast_test(int argc, char* argv[])
         while(! (kbhit(&nSleepTime)));
         printf("test started\n\n");
 
-    switch (fork())
+    switch (fork()) 
     {
 //Error fork
         case -1:
             perror("fork");
             return TFAIL;
 //Child
-        case 0:
+        case 0: 
         {
             int rs;
             int len;
             struct sockaddr_in from;
             message_len=MAX_LENGTH_MESSAGE;
 
-            for (;;)
+            for (;;) 
             {
                 len=sizeof(from);
-                if ( (rs=recvfrom(recv_s, message, message_len, 0,
-                                (struct sockaddr*)&from, (socklen_t *)&len)) < 0)
+                if ( (rs=recvfrom(recv_s, message, message_len, 0, 
+                                (struct sockaddr*)&from, (socklen_t *)&len)) < 0) 
                 {
                     perror ("recv");
                     exit (1);
@@ -203,31 +203,31 @@ int VT_multicast_test(int argc, char* argv[])
             }
         }
 //Parent
-        default:
-        {
-            for (;;)
-            {
+        default: 
+        { 
+            for (;;) 
+            {        
                 if (kbhit(&nSleepTime))
                 {
                         key=getchar();
-                        if (key == 'p' || key == 'P')
+                        if (key == 'p' || key == 'P') 
                         {
                                 restore_terminal();
                                 return TPASS;
                         }
-                        if (key == 'f' || key == 'F')
+                        if (key == 'f' || key == 'F') 
                         {
                                 restore_terminal();
                                 return TFAIL;
                         }
                 }
-                if (sendto(send_s, message, strlen(message), 0, (struct sockaddr*)&mcast_group,
-                            sizeof(mcast_group)) < strlen (message))
+                if (sendto(send_s, message, strlen(message), 0, (struct sockaddr*)&mcast_group, 
+                            sizeof(mcast_group)) < strlen (message)) 
                 {
                     perror("sendto");
                     return TFAIL;
                 }
-            }
+            }   
         }
     }
 }

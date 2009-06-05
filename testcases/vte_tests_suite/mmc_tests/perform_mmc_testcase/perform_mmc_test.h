@@ -20,7 +20,7 @@ S.ZAVJALOV/zvjs001c          22/03/2005     TLSbo46706  Initial version
 A.Ozerov/b00320              20/02/2006     TLSbo61899  Testapp was cast to coding standarts
 
 ====================================================================================================
-Portability:  ARM GCC
+Portability:  ARM GCC 
 ==================================================================================================*/
 #ifndef PERFORM_MMC_TEST_H
 #define PERFORM_MMC_TEST_H
@@ -38,7 +38,7 @@ extern "C"{
 #include <time.h>
 
 /*==================================================================================================
-                                    DEFINES AND MACROS
+                                    DEFINES AND MACROS 
 ==================================================================================================*/
 #define MMC_BLOCK_SIZE       0x200
 #define MMC_SECTOR_SIZE      0x7D000

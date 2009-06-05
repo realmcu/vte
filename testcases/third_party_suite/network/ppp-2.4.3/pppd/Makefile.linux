@@ -33,7 +33,7 @@ endif
 # CC = gcc
 #
 COPTS = -O2 -pipe -Wall -g
-LIBS =
+LIBS = -L../../../../../openlibs/lib
 
 # Uncomment the next 2 lines to include support for Microsoft's
 # MS-CHAP authentication protocol.  Also, edit plugins/radius/Makefile.linux.
@@ -75,7 +75,7 @@ PLUGIN=y
 
 MAXOCTETS=y
 
-INCLUDE_DIRS= -I../include
+INCLUDE_DIRS= -I../include -I../../../../../openlibs/include
 
 COMPILE_FLAGS= -DHAVE_PATHS_H -DIPX_CHANGE -DHAVE_MMAP
 

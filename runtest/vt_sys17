@@ -1,0 +1,30 @@
+#Verification Tests Command File
+# generated automatically by the test campaign macro
+# version 1.0
+
+#files:
+#files:
+#files:
+#files:
+#files:
+
+TGE-LV-SYS-3170 munmap02
+TGE-LV-SYS-3180 munmap03
+TGE-LV-SYS-3190 nanosleep01
+TGE-LV-SYS-3200 nanosleep02
+TGE-LV-SYS-3210 nanosleep03
+TGE-LV-SYS-3220 nanosleep04
+TGE-LV-SYS-3230 nftw01
+TGE-LV-SYS-3240 nftw6401
+TGE-LV-SYS-3250 nice01
+TGE-LV-SYS-3260 nice02
+TGE-LV-SYS-3270 nice03
+TGE-LV-SYS-3280 nice04
+TGE-LV-SYS-3290 nice05
+TGE-LV-SYS-3300 open01
+TGE-LV-SYS-3310 symlink01 -T open01
+TGE-LV-SYS-3320 open02
+TGE-LV-SYS-3330 open03
+TGE-LV-SYS-3340 open04
+TGE-LV-SYS-3350 open05
+TGE-LV-SYS-3360 open06

@@ -1,0 +1,23 @@
+#Verification Tests Command File
+
+#VT H.264/AVC decoder tests
+#files: h264_decoder_testapp
+#files: h264d_cfg h264d_cfg_robustness
+
+TG-LV-H264D-0010 h264_decoder_testapp -T 0 -C $LTPROOT/testcases/bin/configs/h264d_cfg -V -S
+TG-LV-H264D-0020 h264_decoder_testapp -T 1 -C $LTPROOT/testcases/bin/configs/h264d_cfg -V -S -L
+TG-LV-H264D-0030 h264_decoder_testapp -T 2 -C $LTPROOT/testcases/bin/configs/h264d_cfg -V -S -N 10
+TG-LV-H264D-0040 h264_decoder_testapp -T 3 -C $LTPROOT/testcases/bin/configs/h264d_cfg -V -S
+TG-LV-H264D-0050 h264_decoder_testapp -T 4 -C $LTPROOT/testcases/bin/configs/h264d_cfg -V -S
+TG-LV-H264D-0060 h264_decoder_testapp -T 5 -C $LTPROOT/testcases/bin/configs/h264d_cfg -V -S -N 10
+TG-LV-H264D-0060 h264_decoder_testapp -T 6 -C $LTPROOT/testcases/bin/configs/h264d_cfg -V -S
+
+#VT H.264/AVC encoder tests
+#files: h264_encoder_testapp
+#files: h264e_cfg encoder.ctl
+TG-LV-H264E-0010 h264_encoder_testapp -T 0 -C $LTPROOT/testcases/bin/h264e_cfg -V
+TG-LV-H264E-0020 h264_encoder_testapp -T 1 -C $LTPROOT/testcases/bin/h264e_cfg -N 10 -V 
+TG-LV-H264E-0030 h264_encoder_testapp -T 2 -C $LTPROOT/testcases/bin/h264e_cfg -V
+TG-LV-H264E-0040 h264_encoder_testapp -T 3 -C $LTPROOT/testcases/bin/h264e_cfg -V
+TG-LV-H264E-0050 h264_encoder_testapp -T 4 -C $LTPROOT/testcases/bin/h264e_cfg -N 10 -V
+TG-LV-H264E-0060 h264_encoder_testapp -T 5 -C $LTPROOT/testcases/bin/h264e_cfg -V

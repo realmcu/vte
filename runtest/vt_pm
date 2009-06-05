@@ -1,0 +1,16 @@
+#Verification Tests Command File
+
+#Process Manager Tests
+#files: sockets_testapp
+#files: nptl_testapp
+#files: process_testapp
+#files: threads_testapp_1
+#files: threads_testapp_2
+#files: shed_testapp
+
+TGE-LV-PM-0010 sockets_testapp
+TGE-LV-PM-0020 nptl_testapp
+TGE-LV-PM-0030 process_testapp -b 2 -d 2 -t 5
+TGE-LV-PM-0040 threads_testapp_1
+TGE-LV-PM-0050 threads_testapp_2 -n 1000
+TGE-LV-PM-0060 shed_testapp

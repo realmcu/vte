@@ -1,5 +1,5 @@
 /* -*- linux-c -*-
- *
+ * 
  * (C) Copyright IBM Corp. 2004
  *
  * This program is distributed in the hope that it will be useful,
@@ -30,100 +30,100 @@
 #include <tstubs_snmp.h>
 #include <thotswap.h>
 
-int main(int argc, char **argv)
+int main(int argc, char **argv) 
 {
 
- struct snmp_bc_hnd snmp_handle;
- struct oh_handler_state hnd  {
-  .rptcache  (RPTable *)&test_rpt,
-  .eventq  NULL,
-  .config  NULL,
-  .data  (void *)&snmp_handle,
- };
+	struct snmp_bc_hnd snmp_handle;
+	struct oh_handler_state hnd = {
+		.rptcache = (RPTable *)&test_rpt,
+		.eventq = NULL,
+		.config = NULL,
+		.data = (void *)&snmp_handle,
+	};
 
 #if 0
- /* Fill in RPT Entry */
- test_rpt.rpt.ResourceTag.DataType  SAHPI_TL_TYPE_LANGUAGE;
- test_rpt.rpt.ResourceTag.Language  SAHPI_LANG_ENGLISH;
- test_rpt.rpt.ResourceTag.DataLength  strlen(test_rpt.comment);
- strcpy(test_rpt.rpt.ResourceTag.Data, test_rpt.comment);
+	/* Fill in RPT Entry */
+	test_rpt.rpt.ResourceTag.DataType = SAHPI_TL_TYPE_LANGUAGE;
+	test_rpt.rpt.ResourceTag.Language = SAHPI_LANG_ENGLISH;
+	test_rpt.rpt.ResourceTag.DataLength = strlen(test_rpt.comment);
+	strcpy(test_rpt.rpt.ResourceTag.Data, test_rpt.comment);
 #endif
 
- SaHpiResourceIdT  id  1;
- SaHpiHsStateT     state;
- SaErrorT          err;
+	SaHpiResourceIdT  id = 1;
+	SaHpiHsStateT     state;
+	SaErrorT          err;
 
- /*****************************
-  * Get Resource Error TestCase
+	/***************************** 
+	 * Get Resource Error TestCase
          *****************************/
- ifobj_force_error  1;
+	ifobj_force_error = 1;
 
- err  snmp_bc_get_hotswap_state((void *)&hnd, id, &state);
- if (err ! SA_ERR_HPI_NOT_PRESENT) {
-  printf("Error! Get Resource Error TestCase\n");
-  printf("Error! snmp_bc_get_state returned err%d\n", err);
-  return -1;
- }
+	err = snmp_bc_get_hotswap_state((void *)&hnd, id, &state);
+	if (err != SA_ERR_HPI_NOT_PRESENT) {
+		printf("Error! Get Resource Error TestCase\n");
+		printf("Error! snmp_bc_get_state returned err=%d\n", err);
+		return -1; 
+	}
 
- ifobj_force_error  0;
+	ifobj_force_error = 0;
 
- /**********************************
-  * Get Resource Data Error TestCase
+	/********************************** 
+	 * Get Resource Data Error TestCase
          **********************************/
- ifobj_data_force_error  1;
+	ifobj_data_force_error = 1;
 
- err  snmp_bc_get_hotswap_state((void *)&hnd, id, &state);
- if (err ! -1) {
-  printf("Error! Get Resource Data Error TestCase\n");
-  printf("Error! snmp_bc_get_state returned err%d\n", err);
-  return -1;
- }
+	err = snmp_bc_get_hotswap_state((void *)&hnd, id, &state);
+	if (err != -1) {
+		printf("Error! Get Resource Data Error TestCase\n");
+		printf("Error! snmp_bc_get_state returned err=%d\n", err);
+		return -1; 
+	}
 
- ifobj_data_force_error  0;
-
- /********************************
-  * No Hot Swap State OID TestCase
+	ifobj_data_force_error = 0;
+	
+	/********************************
+	 * No Hot Swap State OID TestCase
          ********************************/
- test_rpt.mib.OidHealth  '\0';
+	test_rpt.mib.OidHealth = '\0';
 
- err  snmp_bc_get_hotswap_state((void *)&hnd, id, &state);
- if (err ! SA_ERR_HPI_INVALID_CMD) {
-  printf("Error! No Hot Swap State OID TestCase\n");
-  printf("snmp_bc_get_hotswap_state returned err%d\n", err);
-  return -1;
- }
+	err = snmp_bc_get_hotswap_state((void *)&hnd, id, &state);
+	if (err != SA_ERR_HPI_INVALID_CMD) {
+		printf("Error! No Hot Swap State OID TestCase\n");
+		printf("snmp_bc_get_hotswap_state returned err=%d\n", err);
+		return -1; 
+	}
 
- test_rpt.mib.OidHealth  ".1.3.6.1.4.1.2.3.51.2.2.7.1.0";
+	test_rpt.mib.OidHealth = ".1.3.6.1.4.1.2.3.51.2.2.7.1.0";
 
- /*********************
-  * SNMP Error TestCase
+	/********************* 
+	 * SNMP Error TestCase
          *********************/
- snmp_force_error  1;
+	snmp_force_error = 1;
 
- err  snmp_bc_get_hotswap_state((void *)&hnd, id, &state);
- if (err  0) {
-  printf("Error! SNMP Error TestCase\n");
-  printf("Error! snmp_bc_get_hotswap_state returned err%d\n", err);
-  return -1;
- }
+	err = snmp_bc_get_hotswap_state((void *)&hnd, id, &state);
+	if (err == 0) {
+		printf("Error! SNMP Error TestCase\n");
+		printf("Error! snmp_bc_get_hotswap_state returned err=%d\n", err);
+		return -1; 
+	}
 
- snmp_force_error  0;
+	snmp_force_error = 0;
 
- /***************************
-  * Derive OID Error TestCase
+	/*************************** 
+	 * Derive OID Error TestCase
          ***************************/
- test_rpt.rpt.ResourceEntity.Entry[0].EntityType  0;
+	test_rpt.rpt.ResourceEntity.Entry[0].EntityType = 0;
 
- err  snmp_bc_get_hotswap_state((void *)&hnd, id, &state);
- if (err  0) {
-  printf("Error! Derive OID Error TestCase\n");
-  printf("Error! snmp_bc_get_hotswap_state returned err%d\n", err);
-  return -1;
- }
+	err = snmp_bc_get_hotswap_state((void *)&hnd, id, &state);
+	if (err == 0) {
+		printf("Error! Derive OID Error TestCase\n");
+		printf("Error! snmp_bc_get_hotswap_state returned err=%d\n", err);
+		return -1; 
+	}
 
- test_rpt.rpt.ResourceEntity.Entry[0].EntityType  SAHPI_ENT_SBC_BLADE;
+	test_rpt.rpt.ResourceEntity.Entry[0].EntityType = SAHPI_ENT_SBC_BLADE;
 
- return 0;
+	return 0;
 }
 
 /****************

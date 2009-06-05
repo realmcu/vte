@@ -1,4 +1,4 @@
-/*
+/*	
  *	@(#)unixdos.h	1.1	98/10/26 Connectathon Testsuite
  *
  * typedefs used in the DOSorWIN version only
@@ -39,7 +39,7 @@ statfs stuff
                  fsid_t  f_fsid;     /* file system id */
                  long    f_spare[7]; /* spare for later */
           };
-
+          
 int statfs(char *path, struct statfs *buf);
 
 /************************************************************

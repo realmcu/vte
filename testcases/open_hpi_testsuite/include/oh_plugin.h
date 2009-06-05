@@ -27,7 +27,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif 
 
 /*
  * struct oh_sel_id is filled by plugin.
@@ -43,7 +43,7 @@ struct oh_sel_id {
  * (Domain, SEL and RDR etc.).
  */
 struct oh_resource_event {
-	/* XXX: upper layer will fill some fields which does not
+	/* XXX: upper layer will fill some fields which does not 
 	 * owned by plugins (such as domain Id)
 	 */
 	SaHpiRptEntryT		entry;
@@ -53,7 +53,7 @@ struct oh_resource_event {
  *
  */
 struct oh_resource_del_event {
-        SaHpiResourceIdT resource_id;
+        SaHpiResourceIdT resource_id;        
 };
 
 /*
@@ -65,7 +65,7 @@ struct oh_resource_del_event {
 	struct oh_domain_id	domain_id;
 };*/
 
-/*
+/* 
  * The event is used for plugin to report its RDRs in resource.
  */
 struct oh_rdr_event {
@@ -89,7 +89,7 @@ struct oh_hpi_event {
         /* struct oh_resource_id	parent; */
 	/*This is rdr id which the event relates*/
         SaHpiEntryIdT id;
-
+	
 	/* XXX: upper layer will fill some fields which does not
 	 * owned by plugins (ResourceId etc.). */
 	SaHpiEventT		event;
@@ -99,7 +99,7 @@ struct oh_hpi_event {
 struct oh_rsel {
 	/* this is the entry's id */
 	struct oh_sel_id	oid;
-
+	
 	SaHpiEntryIdT		entry_id;
 };
 
@@ -110,7 +110,7 @@ struct oh_rsel {
 	struct oh_rsel rsel;
 };*/
 
-/*
+/* 
  * This is the main event structure. It is used for plugin report
  * its discovery about new resource/rdr or what happend on resource
  */
@@ -128,7 +128,7 @@ struct oh_event {
 		struct oh_rdr_event	 rdr_event;
                 struct oh_rdr_del_event  rdr_del_event;
 		struct oh_hpi_event	 hpi_event;
-	} u;
+	} u;		    
 };
 
 struct oh_handler_state {
@@ -144,8 +144,8 @@ struct oh_handler_state {
  */
 
 #if 0
-/* UUID_OH_ABI_V1 is out-of-date, keep here just for reference
- * ee778a5f-32cf-453b-a650-518814dc956c
+/* UUID_OH_ABI_V1 is out-of-date, keep here just for reference 
+ * ee778a5f-32cf-453b-a650-518814dc956c 
  */
 static const uuid_t UUID_OH_ABI_V1 = {
 	0xee, 0x77, 0x8a, 0x5f, 0x32, 0xcf, 0x45, 0x3b,
@@ -161,33 +161,33 @@ static const uuid_t UUID_OH_ABI_V2 = {
 
 struct oh_abi_v2 {
 	/**
-	 * The function create an instance
-	 * @return the handler of the instance, this can be recognised
+	 * The function create an instance 
+	 * @return the handler of the instance, this can be recognised 
 	 * as a domain in upper layer
-	 * @param name the mechanism's name.
+	 * @param name the mechanism's name. 
 	 * for example, "snmp" for SNMP, "smi" for IPMI SMI
 	 * @param addr the interface name.
 	 * for example, "ipaddr:port" for SNMP, "if_num" for IPMI SMI
 	 */
 	void *(*open)(GHashTable *handler_config);
-
+	
 	void (*close)(void *hnd);
 	/**
-	 * The function wait for event.
-	 *
+	 * The function wait for event. 
+	 * 
 	 *
 	 * @remark at the start-up, plugins must send out res/rdr event for all
 	 * resources and rdrs so as to OpenHPI can build up RPT/RDR.
 	 * @return >0 if an event is returned; 0 if timeout; otherwise an error
 	 * occur.
-	 * @param event if existing, plugin store the event.
+	 * @param event if existing, plugin store the event. 
 	 * @param timeout is an upper bound on the amount of time elapsed
-	 * before returns. It may be zero, causing select to return
+	 * before returns. It may be zero, causing select to return 
 	 * immediately.
 	 */
-	SaErrorT (*get_event)(void *hnd, struct oh_event *event,
+	SaErrorT (*get_event)(void *hnd, struct oh_event *event, 
 			 struct timeval *timeout);
-
+	
 	/**
 	 * prompt plug-in to search for new resources
 	 */
@@ -198,7 +198,7 @@ struct oh_abi_v2 {
          * a chance to set it in nv storage if it likes
          */
         SaErrorT (*set_resource_tag)(void *hnd, SaHpiResourceIdT id, SaHpiTextBufferT *tag);
-
+        
         /**
          * set resource severity is pushed down so the device has
          * a chance to set it in nv storage
@@ -238,16 +238,16 @@ struct oh_abi_v2 {
 
 	/**
 	 * get entry in RSEL
-         *
+         * 
          * although it looks like we need Resource and RDR passed back up, we don't
-         * because SelEntryT has that info stored in it.  We'll just unwind
+         * because SelEntryT has that info stored in it.  We'll just unwind 
          * that in infrastructure.
 	 */
         SaErrorT (*get_sel_entry)(void *hnd, SaHpiResourceIdT id, SaHpiSelEntryIdT current,
                              SaHpiSelEntryIdT *prev, SaHpiSelEntryIdT *next, SaHpiSelEntryT *entry);
-
+        
         /**
-         * clear SEL
+         * clear SEL 
          */
         SaErrorT (*clear_sel)(void *hnd, SaHpiResourceIdT id);
 
@@ -255,7 +255,7 @@ struct oh_abi_v2 {
 	/**
 	 * get sensor data
 	 */
-	SaErrorT (*get_sensor_data)(void *hnd, SaHpiResourceIdT id,
+	SaErrorT (*get_sensor_data)(void *hnd, SaHpiResourceIdT id, 
                                SaHpiSensorNumT num,
                                SaHpiSensorReadingT *data);
 
@@ -265,7 +265,7 @@ struct oh_abi_v2 {
 	SaErrorT (*get_sensor_thresholds)(void *hnd, SaHpiResourceIdT id,
                                      SaHpiSensorNumT num,
                                      SaHpiSensorThresholdsT *thres);
-
+	
 	/**
 	 * set sensor thresholds
 	 */
@@ -293,14 +293,14 @@ struct oh_abi_v2 {
 	SaErrorT (*get_control_state)(void *hnd, SaHpiResourceIdT id,
                                  SaHpiCtrlNumT num,
                                  SaHpiCtrlStateT *state);
-
+	
 	/**
 	 * set control state
 	 */
 	SaErrorT (*set_control_state)(void *hnd, SaHpiResourceIdT id,
                                  SaHpiCtrlNumT num,
                                  SaHpiCtrlStateT *state);
-
+	
 	/**
 	 * get inventory size
 	 */
@@ -331,7 +331,7 @@ struct oh_abi_v2 {
                                  SaHpiWatchdogNumT num,
                                  SaHpiWatchdogT *wdt);
 
-	/**
+	/** 
 	 * set watchdog timer info
 	 */
 	SaErrorT (*set_watchdog_info)(void *hnd, SaHpiResourceIdT id,
@@ -347,43 +347,43 @@ struct oh_abi_v2 {
 	/**
 	 * get hotswap state
 	 */
-	SaErrorT (*get_hotswap_state)(void *hnd, SaHpiResourceIdT id,
+	SaErrorT (*get_hotswap_state)(void *hnd, SaHpiResourceIdT id, 
 				 SaHpiHsStateT *state);
 
 	/**
 	 * set hotswap state
 	 */
-	SaErrorT (*set_hotswap_state)(void *hnd, SaHpiResourceIdT id,
+	SaErrorT (*set_hotswap_state)(void *hnd, SaHpiResourceIdT id, 
 				 SaHpiHsStateT state);
 
 	/**
 	 * request hotswap state
 	 */
-	SaErrorT (*request_hotswap_action)(void *hnd, SaHpiResourceIdT id,
+	SaErrorT (*request_hotswap_action)(void *hnd, SaHpiResourceIdT id, 
 				      SaHpiHsActionT act);
 
 	/**
 	 * get power state
 	 */
-	SaErrorT (*get_power_state)(void *hnd, SaHpiResourceIdT id,
+	SaErrorT (*get_power_state)(void *hnd, SaHpiResourceIdT id, 
 			       SaHpiHsPowerStateT *state);
 
 	/**
 	 * set power state
 	 */
-	SaErrorT (*set_power_state)(void *hnd, SaHpiResourceIdT id,
+	SaErrorT (*set_power_state)(void *hnd, SaHpiResourceIdT id, 
 			       SaHpiHsPowerStateT state);
-
+	
 	/**
 	 * get indicator state
 	 */
-	SaErrorT (*get_indicator_state)(void *hnd, SaHpiResourceIdT id,
+	SaErrorT (*get_indicator_state)(void *hnd, SaHpiResourceIdT id, 
 				   SaHpiHsIndicatorStateT *state);
 
 	/**
 	 * set indicator state
 	 */
-	SaErrorT (*set_indicator_state)(void *hnd, SaHpiResourceIdT id,
+	SaErrorT (*set_indicator_state)(void *hnd, SaHpiResourceIdT id, 
 				   SaHpiHsIndicatorStateT state);
 
 	/**
@@ -394,13 +394,13 @@ struct oh_abi_v2 {
 	/**
 	 * get reset state
 	 */
-	SaErrorT (*get_reset_state)(void *hnd, SaHpiResourceIdT id,
+	SaErrorT (*get_reset_state)(void *hnd, SaHpiResourceIdT id, 
 			       SaHpiResetActionT *act);
 
 	/**
 	 * set_reset state
 	 */
-	SaErrorT (*set_reset_state)(void *hnd, SaHpiResourceIdT id,
+	SaErrorT (*set_reset_state)(void *hnd, SaHpiResourceIdT id, 
 			       SaHpiResetActionT act);
 
 };

@@ -10,7 +10,7 @@
 #   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
 #   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
 #   Freescale Semiconductor, Inc.
-#
+#     
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
@@ -22,7 +22,7 @@
 ###################################################################################################
 BIN_DIR = ../..
 SUBDIRS = vpu_lib \
-	vpu_testapp
+	vpu_testapp 
 
 #ifeq ($(ARCH_PLATFORM), imx37stack)
 #SOURCEDIR = ./arch-mx37

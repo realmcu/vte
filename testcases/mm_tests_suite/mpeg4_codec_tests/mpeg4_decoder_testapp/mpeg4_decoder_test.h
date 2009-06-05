@@ -26,14 +26,14 @@ Filinova Natalya      15/02/2005   TLSbo47115    BRIEF desc. of changes
 Filinova Natalya      28/02/2005   TLSbo47115    BRIEF desc. of changes
 Delaspre/rc149c                    TLSbo47115    update copyrights with Freescale
 D.Simakov/smkd001c    01/04/2005   TLSbo49126    Updates according to the new API.
-D.Simakov/smkd001c    21/07/2005   TLSbo52629    Relocatability test case was added
-D.Simakov/smkd001c    16/12/2005   TLSbo59667    Advanced decode w skip fixed
+D.Simakov/smkd001c    21/07/2005   TLSbo52629    Relocatability test case was added 
+D.Simakov/smkd001c    16/12/2005   TLSbo59667    Advanced decode w skip fixed 
 =============================================================================*/
 
 #ifndef MPEG4_DECODER_TEST_H
 #define MPEG4_DECODER_TEST_H
 
-#ifdef __cplusplus
+#ifdef __cplusplus                            
 extern "C"{
 #endif
 
@@ -52,7 +52,7 @@ extern "C"{
 
 
 #define DEFAULT_ITERATIONS        10                   /* default 10 iterations for decode process     */
-#define BIT_BUFFER_SIZE           1024	               /* default size of buffer for reading bitstream */
+#define BIT_BUFFER_SIZE           1024	               /* default size of buffer for reading bitstream */												
 #define DEFAULT_START_FRAME       1                    /* default skipping from 1st frame              */
 #define DEFAULT_NUM_TO_SKIP       5		       /* default 5 frames to skip                     */
 #define DEFAULT_DISPLAY_TIME      0                    /* default no displaing decode time             */
@@ -69,7 +69,7 @@ extern "C"{
 
 /*======================== ENUMS ============================================*/
 /** Different test cases in the single application */
-typedef enum
+typedef enum 
 {
     NOMINAL_FUNCTIONALITY = 0,  /**< Nominal decoding */
     ADVANCED_FUNCTIONALITY,     /**< Decoding with skipping frames**/
@@ -104,8 +104,8 @@ typedef enum
 /*======================== FUNCTION PROTOTYPES ==============================*/
 int VT_mpeg4_decoder_setup();
 int VT_mpeg4_decoder_cleanup();
-int VT_mpeg4_decoder_test( int testcase, int iter, int output,
-                           int skip_mode, int start_frame, int number,
+int VT_mpeg4_decoder_test( int testcase, int iter, int output, 
+                           int skip_mode, int start_frame, int number, 
 			   int time, char* input_fname, int delay,int comm,char* dir);
 
 #ifdef __cplusplus

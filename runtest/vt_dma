@@ -1,0 +1,14 @@
+#Verification Tests Command File
+
+#VT DMAC drivers tests
+#files: dma_testapp
+
+TGE-LV-DMA-MOD insmod $LTPROOT/testcases/bin/dma_test_module.ko
+
+TGE-LV-DMA-0010 dma_testapp -T0 
+TGE-LV-DMA-0020 dma_testapp -T1 
+TGE-LV-DMA-0030 dma_testapp -T2 
+TGE-LV-DMA-0040 dma_testapp -T3 
+TGE-LV-DMA-0050 dma_testapp -T4 -C"0 0 0 0 0 0 0 200 1 4 0"
+TGE-LV-SSI-0060 dma_testapp -T5 
+TGE-LV-SSI-0070 dma_testapp -T6 

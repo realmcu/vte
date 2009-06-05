@@ -6,12 +6,12 @@
 #define F_SEEK_END   2
 
 
-typedef struct
+typedef struct 
 {
     unsigned char * data;
     unsigned char * ppos;
     long	    size;
-    long       pos;
+    long   	    pos;
     int             is_open;
 } file_buf_t;
 

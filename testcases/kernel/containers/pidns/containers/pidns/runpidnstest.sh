@@ -22,17 +22,17 @@
 exit_code=0
 pidns01
 if [ $? -ne 0 ]; then
- exit_code="$?"
- exit $exit_code
+	exit_code="$?"
+	exit $exit_code
 fi
 pidns02
 if [ $? -ne 0 ]; then
- exit_code="$?"
- exit $exit_code
+	exit_code="$?"
+	exit $exit_code
 fi
 pidns03
 if [ $? -ne 0 ]; then
- exit_code="$?"
- exit $exit_code
+	exit_code="$?"
+	exit $exit_code
 fi
 exit $exit_code

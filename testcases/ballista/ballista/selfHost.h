@@ -53,7 +53,7 @@
  *                  dynamically loaded
  * Pre-Conditions:  test execution file exists
  * Post-Contidions: N/A
- * Design:          Based on original Ballista functionality,
+ * Design:          Based on original Ballista functionality, 
  *                  and implementation of VxWorks-specific Test_manager
  * Notes:           N/A
  *
@@ -69,17 +69,17 @@ class Selfhost_test_manager : public Test_manager {
 
   //Destructor
   virtual ~Selfhost_test_manager (void);
-
+  
   virtual int manage_test(MARSHAL_DATA_TYPE arguments,
 			  long timeout_value,
 			  char *pass_status, int max_pass_status,
 			  int *call_ret,
 			  char *sys_err, int max_sys_err,
 			  char *mut_return, int max_mut_return);
-
+  
  private:
   // Private member variables
-
+  
   // Variable to hold process id number of child for test
   // 0 for no child, positive integer if child exists
   pid_t pid;

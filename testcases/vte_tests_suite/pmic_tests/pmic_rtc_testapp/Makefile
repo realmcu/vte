@@ -19,7 +19,7 @@
 #E.Gromazina/NONE             08/12/2005     TLSbo59968   Initial version
 #A.Ozerov/b00320              06/07/2006     TLSbo61903   Code was cast to coding standarts.
 #Pradeep K/b01016             09/25/2006     TLSboXXXX    Updated for PMIC drivers
-#D.Simakov                    07/09/2006     TLSbo67178   iMX27 compilation issue
+#D.Simakov                    07/09/2006     TLSbo67178   iMX27 compilation issue 
 ####################################################################################################
 #Portability: ARM GCC
 #

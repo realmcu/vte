@@ -1,19 +1,19 @@
-#Presence of a copyright notice is not an acknowledgement of publication.
-#This software file listing contains information of Freescale Semiconductor, Inc. that is of a confidential and
-#proprietary nature and any viewing or use of this file is prohibited without specific written
+#Presence of a copyright notice is not an acknowledgement of publication.  
+#This software file listing contains information of Freescale Semiconductor, Inc. that is of a confidential and 
+#proprietary nature and any viewing or use of this file is prohibited without specific written 
 #permission from Freescale Semiconductor, Inc.
-
+     
 #=====================================================================================
 #Revision History:
 #                       Modification       Tracking
 # Author                Date                Number                Description of Changes
 #------------------     ------------       ----------        ------------------------------
-#V. Becker/rc023c        31/08/2004        TLSbo40417        Initial version
-#V. Becker/rc023c        27/09/2004        TLSbo40417        Inspection TLS941
-#V. Becker/rc023c        25/10/2004        TLSbo44073        Minor changes
+#V. Becker/rc023c        31/08/2004        TLSbo40417        Initial version 
+#V. Becker/rc023c        27/09/2004        TLSbo40417        Inspection TLS941 
+#V. Becker/rc023c        25/10/2004        TLSbo44073        Minor changes 
 #V.HALABUDA/HLBV001      12/04/2005        TLSbo40417        control, mandate and limit IrDA stack
 #A.Ozerov/b00320         20/10/2006        TLSbo76160        irattach was removed
-#Rakesh S Joshi/R65956   01/03/2007        TLSbo87888        ifconfig irda0 up is added
+#Rakesh S Joshi/R65956   01/03/2007        TLSbo87888        ifconfig irda0 up is added  
 
 #Set path variable to add vte binaries
 #export TESTCASES_HOME=/tmp/vte/testcases/bin
@@ -25,12 +25,12 @@ tst_resm()
 }
 
 # Function:     setup
-#
+#        
 # Description:  - Check if required commands exits
 #               - Export global variables
 #               - Check if required config files exits
 #               - Create temporary files and directories
-#
+#   
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RV)
 setup()
@@ -39,10 +39,10 @@ setup()
         RV_2=0
         RV=0
 
-        # Total number of test cases in this file.
+        # Total number of test cases in this file. 
         export TST_TOTAL=1
 
-        # The TCID and TST_COUNT variables are required by the LTP
+        # The TCID and TST_COUNT variables are required by the LTP 
         # command line harness APIs, these variables are not local to this program.
 
         tst_resm TINFO "Performing setup"
@@ -89,7 +89,7 @@ cleanup()
         RV_5=$?
 
         ! [ $RV_1 -ne 0 -o  $RV_2 -ne 0 -o $RV_3 -ne 0 -o $RV_4 -ne 0 -o $RV_5 -ne 0 ]
-        RV=$?
+        RV=$? 
 
         if [ $RV -eq 0 ]
         then
@@ -195,9 +195,9 @@ IrDA_FIR_test()
 }
 
 # Function:     main
-#
+# 
 # Description:  - Execute all tests, exit with test status.
-#
+#               
 # Exit:         - zero on success
 #               - non-zero on failure.
 #

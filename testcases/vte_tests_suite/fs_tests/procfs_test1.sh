@@ -18,19 +18,19 @@
 #                          Modification     Tracking
 # Author                       Date          Number    Description of Changes
 #-----------------------   ------------    ----------  ---------------------
-# Spring Zhang               23/05/2008       n/a        Initial ver.
+# Spring Zhang               23/05/2008       n/a        Initial ver. 
 # Spring                     28/11/2008       n/a      Modify COPYRIGHT header
 #############################################################################
-# Portability:  ARM sh bash
+# Portability:  ARM sh bash 
 #
 # File Name:    procfs_1.sh
 # Total Tests:           1
 # Test Strategy:
+# 
+# Input: no	- $1 - 
+#		    - $2 - 
 #
-# Input: no - $1 -
-#      - $2 -
-#
-# Return:       -
+# Return:       - 
 #
 # Use command "./procfs_test1.sh "to test proc file system
 
@@ -79,7 +79,7 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup()
+cleanup() 
 {
     echo
 }

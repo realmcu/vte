@@ -1,4 +1,4 @@
-/*
+/*    
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -21,7 +21,7 @@ typedef int (*sched_rr_get_interval_test) (pid_t, struct timespec *);
 
 int dummyfcn(void)
 {
- sched_rr_get_interval_test dummyvar;
- dummyvar  sched_rr_get_interval;
- return 0;
+	sched_rr_get_interval_test dummyvar;
+	dummyvar = sched_rr_get_interval;
+	return 0;
 }

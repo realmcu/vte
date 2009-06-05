@@ -1,4 +1,4 @@
-/*
+/*    
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -20,7 +20,7 @@ typedef int (*sched_getscheduler_test) (pid_t);
 
 int dummyfcn(void)
 {
- sched_getscheduler_test dummyvar;
- dummyvar  sched_getscheduler;
- return 0;
+	sched_getscheduler_test dummyvar;
+	dummyvar = sched_getscheduler;
+	return 0;
 }

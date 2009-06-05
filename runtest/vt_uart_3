@@ -1,0 +1,22 @@
+#VT external UART drivers tests for /dev/tts/0 and /dev/tts/1
+#files: uart_testapp_3 uart_testapp_4 uart_testapp_5 uart_testapp_6
+
+TGE-LV-UART-0310 uart3.sh /dev/tts/0 /dev/tts/1 460800 none
+TGE-LV-UART-0305 uart3.sh /dev/tts/0 /dev/tts/1 230400 none
+TGE-LV-UART-0300 uart3.sh /dev/tts/0 /dev/tts/1 150 none
+
+TGE-LV-UART-0325 uart3.sh /dev/tts/0 /dev/tts/1 460800 hard
+TGE-LV-UART-0320 uart3.sh /dev/tts/0 /dev/tts/1 230400 hard
+TGE-LV-UART-0315 uart3.sh /dev/tts/0 /dev/tts/1 150 hard
+
+TGE-LV-UART-0340 uart3.sh /dev/tts/0 /dev/tts/1 460800 soft
+TGE-LV-UART-0335 uart3.sh /dev/tts/0 /dev/tts/1 230400 soft
+TGE-LV-UART-0330 uart3.sh /dev/tts/0 /dev/tts/1 150 soft
+
+TGE-LV-UART-0345 uart5.sh /dev/tts/0
+TGE-LV-UART-0350 uart5.sh /dev/tts/1
+TGE-LV-UART-0355 uart6.sh /dev/tts/0 /dev/tts/1
+
+
+
+

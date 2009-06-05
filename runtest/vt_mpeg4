@@ -1,0 +1,20 @@
+#Verification Tests Command File
+
+#VT mpeg4 encoder and mpeg4 decoder tests
+#files: mpeg4_encoder_testapp mpeg4_decoder_testapp
+#files: mpeg4d_cfg mpeg4d_cfg_robustness mpeg4e_cfg
+
+TG-LV-MPEG4E-0010 mpeg4_encoder_testapp -T 0 -C $LTPROOT/testcases/bin/configs/mpeg4e_cfg -V
+TG-LV-MPEG4E-0020 mpeg4_encoder_testapp -T 1 -C $LTPROOT/testcases/bin/configs/mpeg4e_cfg -V -N 10
+TG-LV-MPEG4E-0030 mpeg4_encoder_testapp -T 2 -C $LTPROOT/testcases/bin/configs/mpeg4e_cfg -V
+TG-LV-MPEG4E-0040 mpeg4_encoder_testapp -T 3 -C $LTPROOT/testcases/bin/configs/mpeg4e_cfg -V
+TG-LV-MPEG4E-0050 mpeg4_encoder_testapp -T 4 -C $LTPROOT/testcases/bin/configs/mpeg4e_cfg -V -N 10
+TG-LV-MPEG4E-0060 mpeg4_encoder_testapp -T 5 -C $LTPROOT/testcases/bin/configs/mpeg4e_cfg -V
+
+TG-LV-MPEG4D-0010 mpeg4_decoder_testapp -T 0 -C $LTPROOT/testcases/bin/configs/mpeg4d_cfg -V -S
+TG-LV-MPEG4D-0020 mpeg4_decoder_testapp -T 1 -C $LTPROOT/testcases/bin/configs/mpeg4d_cfg_robustness -V -S -L
+TG-LV-MPEG4D-0030 mpeg4_decoder_testapp -T 2 -C $LTPROOT/testcases/bin/configs/mpeg4d_cfg -V -S -N 10
+TG-LV-MPEG4D-0040 mpeg4_decoder_testapp -T 3 -C $LTPROOT/testcases/bin/configs/mpeg4d_cfg -V -S
+TG-LV-MPEG4D-0050 mpeg4_decoder_testapp -T 4 -C $LTPROOT/testcases/bin/configs/mpeg4d_cfg -V -S
+TG-LV-MPEG4D-0060 mpeg4_decoder_testapp -T 5 -C $LTPROOT/testcases/bin/configs/mpeg4d_cfg -V -S -N 10
+TG-LV-MPEG4D-0070 mpeg4_decoder_testapp -T 6 -C $LTPROOT/testcases/bin/configs/mpeg4d_cfg -V -S

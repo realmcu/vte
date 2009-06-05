@@ -55,81 +55,81 @@ D.Simakov             24/01/2006   TLSbo61035   Initial version
 ==================================================================================================*/
 
 /* Test cases. */
-enum
+enum 
 {
-        NOMINAL_FUNCTIONALITY,
+        NOMINAL_FUNCTIONALITY, 
         ROBUSTNESS,
         RELOCATABILITY,
         RE_ENTRANCE,
-        PRE_EMPTION,
+        PRE_EMPTION,    
         ENDURANCE,
-        LOAD
+        LOAD        
 };
 
 /*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
 ==================================================================================================*/
 
-/* Testapp configuration. */
+/* Testapp configuration. */ 
 typedef struct
 {
         int              mTestCase;
         int              mNumIter;
         const char *     mConfigFilename;
-        int              mVerbose;
-        int              mSlowBitMatching;
+        int              mVerbose;    
+        int              mSlowBitMatching;         
         int              mDelay;
         int              mDisableLCD;
 } sTestappConfig;
 
 /* Set of parameters for each codec handler. */
-typedef struct
+typedef struct 
 {
-        unsigned int     mNoEntry;
+        unsigned int     mNoEntry;    
         char             mInpFileName[MAX_STR_LEN];
         char             mOutFileName[MAX_STR_LEN];
-        char             mRefFileName[MAX_STR_LEN];
-
-        int              mIsReadyForBitMatching;
+        char             mRefFileName[MAX_STR_LEN]; 
+                
+        int              mIsReadyForBitMatching;     
 
 } sHandlerParams;
 
 /* Codec handler. */
 typedef struct
-{
+{                          
         /****************************************/
         /* Input and output (streams, buffers). */
         /****************************************/
-
-        FILE                  * mpInpStream;
+        
+        FILE                  * mpInpStream;  
         FILE                  * mpOutStream;
         unsigned char         * mpOutBuffer[CHUNK_SIZE+4];
-        unsigned char         * mpInpBuffer;
-        unsigned char         * mpOutBufferA;
-
+        unsigned char         * mpInpBuffer;    
+        unsigned char         * mpOutBufferA; 
+        
         int                     mFileSz;
         int                     mBytesRd;
         char                  * mpBuff;
         char                  * mpBuffHead;
-
+      
 
         /********************/
         /* Decoder's stuff. */
         /********************/
 
         sOggVorbisDecObj        mDecObject;
-        int                     mLastCodecError;
+        int                     mLastCodecError; 
 
-
+        
         /***************/
         /* Other data. */
         /***************/
-
+        
         unsigned long           mIndex;
-        sHandlerParams        * mpParams;
-        pthread_t               mThreadID;
-        int                     mLtpRetval;
-
+        sHandlerParams        * mpParams;                    
+        pthread_t               mThreadID;                  
+        int                     mLtpRetval;      
+                
 } sCodecHandler;
 
 
@@ -137,7 +137,7 @@ typedef struct
                                  GLOBAL VARIABLE DECLARATIONS
 ==================================================================================================*/
 
-extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */
+extern sTestappConfig  gTestappConfig;             /* defined in the codec_main.c */        
 
 
 /*==================================================================================================
@@ -160,4 +160,4 @@ int VT_codec_setup    ( void );
 int VT_codec_cleanup  ( void );
 int VT_codec_test     ( void );
 
-#endif //__CODEC_TEST_H__
+#endif //__CODEC_TEST_H__  

@@ -75,7 +75,7 @@ extern "C"{
                                             ENUMS
 ==================================================================================================*/
 /** DVFS_TEST_CASES type */
-typedef enum
+typedef enum 
 {
         INIT_TEST = 0,  /**< Init test */
         RW_TEST,        /**< Reading and updating tables test*/

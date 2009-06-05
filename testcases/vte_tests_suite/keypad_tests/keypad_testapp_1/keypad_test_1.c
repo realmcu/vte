@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   keypad_test_1.c
 
         @brief  Threads implementation of keypad test : display and read a keypad key in RAW mode
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -29,14 +29,14 @@ A.Ozerov/NONE                10/01/2006     TLSbo61037  Update in accordance wit
 I.Inkina/nknl001             10/01/2006     TLSbo61037  Update in accordance with linux-2.6.10-rel-L26_1_15
 A.Ozerov/B00320              15/02/2006     TLSbo61037  Device was changed and testapp was reworked accordingly
 
-====================
+====================================================================================================
 Portability:  ARM GCC
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <errno.h>
 
@@ -46,20 +46,20 @@ Portability:  ARM GCC
 /* Verification Test Environment Include Files */
 #include "keypad_test_1.h"
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         LOCAL CONSTANTS
-======================*/
-/*=====================
+==================================================================================================*/
+/*=================================================================================================
                         This Keyarraycode is for MXC30030 Platform
-======================*/
+==================================================================================================*/
 #if defined CONFIG_MACH_MXC30030ADS
 char   *keyarraycode[] =
 {"TBD", "0", "1","2", "3","4","5", "6","7","8",
@@ -85,9 +85,9 @@ char   *keyarraycode[] =
  "0","0","0","0","0","0","camera",
 };
 
-/*=======================
+/*===================================================================================================
                         This Keyarraycode is for MX21/MX27 Platform
-====================*/
+====================================================================================================*/
 #elif defined CONFIG_MACH_MX27ADS
 char   *keyarraycode[] =
 {"0", "0", "1","2", "3","4","5", "6","7","8",
@@ -109,9 +109,9 @@ char   *keyarraycode[] =
  "0","SEL","0","0","0","0","0","Record",
 };
 
-/*=======================
+/*===================================================================================================
 This Keyarraycode is for MXC27530, MXC91131, MX31 , ArgonPlus Platform
-====================*/
+====================================================================================================*/
 #elif defined CONFIG_MACH_MX31ADS || defined CONFIG_MACH_MX31STACK
 char   *keyarraycode[] =
 {"75", "74", "1","2", "3","4","5", "6","7","8",
@@ -133,9 +133,9 @@ char   *keyarraycode[] =
  "mm","aa","pp","ii","uu","qq","vv","ww","Record",
 };
 
-/*=======================
+/*===================================================================================================================
 This keyarraycode is for MX37 Platform
-=======================*/
+===================================================================================================================*/
 #elif defined CONFIG_MACH_MX37STACK
  char   *keyarraycode[] =
 {"0", "ESC", "1","2", "3","4","5", "6","7","8",
@@ -177,30 +177,30 @@ This keyarraycode is for MX37 Platform
  "0","0","SEL","0","0","0","0","0","Record",
 };
 #endif
-/*======================
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
 int     fd = 0;
-/*======================
+/*==================================================================================================
                                         GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 static bool gfinished;
 
-/*======================
+/*==================================================================================================
                                     LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 int     readkeycode_function(void);
 int     ask_user(void);
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
-/*====================*/
-/*= VT_keypad_test1_setup =*/
+==================================================================================================*/
+/*================================================================================================*/
+/*===== VT_keypad_test1_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution
 ioctl: Inappropriate ioctl for device
@@ -209,7 +209,7 @@ ioctl: Inappropriate ioctl for device
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_keypad_test1_setup(void)
 {
         int     rv = TFAIL;
@@ -229,8 +229,8 @@ int VT_keypad_test1_setup(void)
         return rv;
 }
 
-/*====================*/
-/*= VT_keypad_test1_cleanup =*/
+/*================================================================================================*/
+/*===== VT_keypad_test1_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
 
@@ -239,7 +239,7 @@ int VT_keypad_test1_setup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_keypad_test1_cleanup(void)
 {
         int     rv = TFAIL;
@@ -260,8 +260,8 @@ int VT_keypad_test1_cleanup(void)
         return rv;
 }
 
-/*====================*/
-/*= VT_keypad_test1 =*/
+/*================================================================================================*/
+/*===== VT_keypad_test1 =====*/
 /**
 @brief  Keypad test with read and display key scan code in RAW mode
 
@@ -271,7 +271,7 @@ int VT_keypad_test1_cleanup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*====================*/
+/*================================================================================================*/
 int VT_keypad_test1(int tcase)
 {
         int     rv = TFAIL;
@@ -300,8 +300,8 @@ int VT_keypad_test1(int tcase)
         return rv;
 }
 
-/*====================*/
-/*= readkeycode_function =*/
+/*================================================================================================*/
+/*===== readkeycode_function =====*/
 /**
 @brief  read keycode pressed by user
 
@@ -310,7 +310,7 @@ int VT_keypad_test1(int tcase)
 @return On success
         On failure
 */
-/*====================*/
+/*================================================================================================*/
 int readkeycode_function(void)
 {
         int     i = 0,
@@ -324,7 +324,7 @@ int readkeycode_function(void)
         while (gfinished == FALSE)
 
         {
-
+                   
                 memset(buf, 0, sizeof(buf));
                 short_scancodes = read(fd, buf, 20);
                 if (short_scancodes > 0)
@@ -343,9 +343,9 @@ int readkeycode_function(void)
                                      else
                                          tst_resm(TINFO, "The status of key is pressed");
                         }
-
-
-                        #elif defined CONFIG_MACH_MX51STACK || defined CONFIG_MACH_MX37STACK
+                          
+                         
+                        #elif defined CONFIG_MACH_MX51STACK || defined CONFIG_MACH_MX37STACK 
                             if (buf[10] == 108)
                             {
                                 gfinished = TRUE;
@@ -358,7 +358,7 @@ int readkeycode_function(void)
                                          tst_resm(TINFO, "The status of key is pressed");
                             }
                            #endif
-                        */
+                        */   
                         i = buf[10];
                         printf("KPP TEST APP: Pressed key is %s\n", keyarraycode[i]);
                             if(n%2==0)
@@ -382,8 +382,8 @@ int readkeycode_function(void)
         return rv;
 }
 
-/*====================*/
-/*= ask_user =*/
+/*================================================================================================*/
+/*===== ask_user =====*/
 /**
 @brief  Asks user to answer the question: is the test right?
 
@@ -393,7 +393,7 @@ int readkeycode_function(void)
 @return 1 - if user asks "No,  wrong"
         0 - if user asks "Yes, right"
 */
-/*====================*/
+/*================================================================================================*/
 int ask_user(void)
 {
         unsigned char answer;

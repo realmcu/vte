@@ -1,17 +1,17 @@
-/*====================*/
+/*================================================================================================*/
 /**
         @file   nor_mtd_test.c
 
         @brief  NOR MTD test
 */
-/*======================
+/*==================================================================================================
 
         Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
         THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
         BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
         Freescale Semiconductor, Inc.
 
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author/core ID                  Date          Number    Description of Changes
@@ -23,21 +23,21 @@ E.Gromazina                  07/07/2005     TLSbo50888  minor fixes
 A.Ozerov/b00320              19/04/2006     TLSbo61865  Change erase_flash_block and VT_nor_mtd_test_wrner function.
 A.Ozerov/b00320              11/12/2006     TLSbo84161  Minor changes.
 Rakesh S Joshi/r65956        25/07/2007     ENGR42511   Fix segmentation error when
-              erase memory on MXC30031-ADS.
+														erase memory on MXC30031-ADS.
 
-====================
+====================================================================================================
 Portability:  ARM GCC
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 #include "nor_mtd_test.h"
 #include <errno.h>
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 extern char *TCID;
 extern char device_name[];
 extern int h_num,
@@ -55,14 +55,14 @@ char   *rw_buf = 0;
 loff_t offs;
 
 
-/*======================
+/*==================================================================================================
                                     FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 int     erase_flash_block(long offset, long length);
 int     read_flash_block(long offset, long length, char *mem);
 int     write_flash_block(long offset, long length, char *mem);
 
-/*====================*/
+/*================================================================================================*/
 int VT_nor_mtd_test_info(void)
 {
         int     number_of_regions = 0;
@@ -118,7 +118,10 @@ int VT_nor_mtd_test_info(void)
         {
                 tst_resm(TINFO, "Get memory region information");
         }
-        for (i = 0; i <= number_of_regions; i++)
+        // Victor Cui modify: for the bug of kernel upgrade from 26 to 28
+	//                    if  number_of_regions=0, virtual address and Segmentation fault
+	//for (i = 0; i <= number_of_regions; i++)
+	for (i = 0; i < number_of_regions; i++)
         {
                 mxc_region_mtd.regionindex = i;
                 if ((ioctl(file_desc, MEMGETREGIONINFO, &mxc_region_mtd) != 0) && (errno != EINVAL))
@@ -144,7 +147,7 @@ int VT_nor_mtd_test_regionInfo(void)
         int     i;
 
 
-
+	
         switch (mxc_info_mtd.type)
         {
         case MTD_ABSENT:
@@ -167,7 +170,7 @@ int VT_nor_mtd_test_regionInfo(void)
                 break;
         }
 
-  tst_resm(TINFO, "\nFlash info :\n \
+		tst_resm(TINFO, "\nFlash info :\n \
                 - type : %s\n \
                 - flags : %d\n \
                 - size : 0x%lx\n \
@@ -194,7 +197,10 @@ int VT_nor_mtd_test_regionInfo(void)
         {
                 tst_resm(TINFO, "Get memory region information");
         }
-        for (i = 0; i <= number_of_regions; i++)
+ 	// Victor Cui modify: for the bug of kernel upgrade from 26 to 28
+	//                    if  number_of_regions=0, virtual address and Segmentation fault
+        //for (i = 0; i <= number_of_regions; i++)
+        for (i = 0; i < number_of_regions; i++)
         {
                 mxc_region_info.regionindex = i;
                 if ((ioctl(file_desc, MEMGETREGIONINFO, &mxc_region_info) != 0) && (errno != EINVAL))
@@ -207,15 +213,15 @@ int VT_nor_mtd_test_regionInfo(void)
                 - erase size : 0x%lx\n \
                 - offset : 0x%lx", i, mxc_region_info.numblocks, mxc_region_info.erasesize, mxc_region_info.offset);
         }
- numblocks=mxc_region_info.numblocks;
- offset=mxc_region_info.offset;
-
- return TPASS;
-
+	numblocks=mxc_region_info.numblocks;
+	offset=mxc_region_info.offset;
+	
+	return TPASS;
+	 
 }
 
 
-/*====================*/
+/*================================================================================================*/
 int VT_nor_mtd_test_wrner(void)
 {
 
@@ -232,15 +238,15 @@ int VT_nor_mtd_test_wrner(void)
         return TPASS;
 }
 
-/*====================*/
+/*================================================================================================*/
 int VT_nor_mtd_test_rdrw(void)
 {
 #ifdef CONFIG_ARCH_MXC92323
-  if (addr_offset % mxc_info_mtd.erasesize)
-  {
-    tst_resm(TFAIL,"\n INVALID -A option , it should be multiple of %d ",mxc_info_mtd.erasesize);
-   return TFAIL;
-  }
+		if (addr_offset % mxc_info_mtd.erasesize)
+		{
+			 tst_resm(TFAIL,"\n INVALID -A option , it should be multiple of %d ",mxc_info_mtd.erasesize);
+			return TFAIL;
+		}
 #endif
         /* Read */
         if (v_num)
@@ -278,372 +284,372 @@ int VT_nor_mtd_test_rdrw(void)
         return TPASS;
 }
 
-//check nor bad block and unlock, lock ioctl
+//check nor bad block and unlock, lock ioctl  
 
 int VT_nor_mtd_test_badblk(void)
 {
- int i,goodBlockFlag=0;
- //int     number_of_regions = 0;
+	int i,goodBlockFlag=0;
+	//int     number_of_regions = 0;
        //struct region_info_user mxc_region_info;
- struct erase_info_user  erase;
- int rc=0;
- char *rwbuff;
+	struct erase_info_user  erase;
+	int rc=0;
+	char *rwbuff;
+	
+	tst_resm(TINFO,"numblocks 0x%lx, offset 0x%lx\n",numblocks,offset);
 
- tst_resm(TINFO,"numblocks 0x%lx, offset 0x%lx\n",numblocks,offset);
 
+	offs=offset;
+	
+	//get good block
+	for (i=0;i<=numblocks;i++)
+	{
+		erase.start=i*mxc_info_mtd.erasesize;
+		erase.length=mxc_info_mtd.erasesize;
+		offs=offs+i*mxc_info_mtd.erasesize;
+		if((ioctl(file_desc, MEMGETBADBLOCK, &offs)) != 0)
+		{
+			tst_resm(TFAIL,"VT_nor_mtd_test_badblk failed ioctl MEMGETBADBLOCK");
+			continue;
+			//return TFAIL;
+		}
+		else
+		{
+			tst_resm(TINFO,"get good block, offs=%d !",offs);
+			goodBlockFlag=1;
+			break;
+		}
+		//tst_resm(TPASS,"get %d bad block",offs);
+	}
 
- offs=offset;
+	if(i>numblocks)
+	{
+		tst_resm(TFAIL,"There is no goog block in region");
+		return TPASS;
+	}
 
- //get good block
- for (i=0;i<=numblocks;i++)
- {
-  erase.start=i*mxc_info_mtd.erasesize;
-  erase.length=mxc_info_mtd.erasesize;
-  offs=offs+i*mxc_info_mtd.erasesize;
-  if((ioctl(file_desc, MEMGETBADBLOCK, &offs)) != 0)
-  {
-   tst_resm(TFAIL,"VT_nor_mtd_test_badblk failed ioctl MEMGETBADBLOCK");
-   continue;
-   //return TFAIL;
-  }
-  else
-  {
-   tst_resm(TINFO,"get good block, offs=%d !",offs);
-   goodBlockFlag=1;
-   break;
-  }
-  //tst_resm(TPASS,"get %d bad block",offs);
- }
-
- if(i>numblocks)
- {
-  tst_resm(TFAIL,"There is no goog block in region");
-  return TPASS;
- }
-
- if (!(rwbuff = (char *) malloc(sizeof(char) * (mxc_info_mtd.erasesize))))
+	if (!(rwbuff = (char *) malloc(sizeof(char) * (mxc_info_mtd.erasesize))))
         {
                 tst_resm(TFAIL, "VT_nor_mtd_test_badblk() Failed allocate memory");
                 return TFAIL;
         }
 
- int readFlag=0,writeFlag=0,eraseFlag=0;
+	int readFlag=0,writeFlag=0,eraseFlag=0;
+	
+	//Lock this good block, try to read/write/erase. read/write/erase failure, then unlock this block. try to read/write/erase again
+	if(goodBlockFlag)
+	{
+		//lock this good block
+		if(ioctl(file_desc,MEMUNLOCK,&erase)!=0)
+		{
+			tst_resm(TFAIL,"MTD lock failure!");
+			//return TFAIL;
+		}
 
- //Lock this good block, try to read/write/erase. read/write/erase failure, then unlock this block. try to read/write/erase again
- if(goodBlockFlag)
- {
-  //lock this good block
-  if(ioctl(file_desc,MEMUNLOCK,&erase)!=0)
-  {
-   tst_resm(TFAIL,"MTD lock failure!");
-   //return TFAIL;
-  }
-
-  //If lock success,then read/write/erase
-  //read
-  if (pread(file_desc, rwbuff, erase.length, erase.start) < 0)
-        {
-       tst_resm(TFAIL,"read failure after lock this block!");
-   readFlag=1;
-   //return TFAIL;
-        }
-  else
-  {
-   tst_resm(TPASS,"Read success after lock this block!");
-   //readFlag=1;
-   //return TFAIL;
-  }
-  //erase
-  if ((ioctl(file_desc, MEMERASE, &erase)) != 0)
+		//If lock success,then read/write/erase
+		//read
+		if (pread(file_desc, rwbuff, erase.length, erase.start) < 0)
+        	{
+        		tst_resm(TFAIL,"read failure after lock this block!");
+			readFlag=1;
+			//return TFAIL;
+        	}
+		else
+		{
+			tst_resm(TPASS,"Read success after lock this block!");
+			//readFlag=1;
+			//return TFAIL;
+		}
+		//erase
+		if ((ioctl(file_desc, MEMERASE, &erase)) != 0)
               {
                         tst_resm(TINFO, "Unable to erase after lock this block");
                         //return TPASS;
               }
-  else
-  {
-   tst_resm(TFAIL,"Erase success after lock this block");
-   eraseFlag=1;
-   //return TFAIL;
-  }
+		else
+		{
+			tst_resm(TFAIL,"Erase success after lock this block");
+			eraseFlag=1;
+			//return TFAIL;
+		}
 
-  if ((pwrite(file_desc,rwbuff, erase.length, erase.start)) < 0)
-  {
-   tst_resm(TINFO,"Write failure after lock this block");
-  }
-  else
-  {
-   tst_resm(TINFO,"Write success after lock this block!");
-   writeFlag=1;
-  }
+		if ((pwrite(file_desc,rwbuff, erase.length, erase.start)) < 0)
+		{
+			tst_resm(TINFO,"Write failure after lock this block");
+		}
+		else
+		{
+			tst_resm(TINFO,"Write success after lock this block!");
+			writeFlag=1;
+		}
 
-  if(readFlag ||writeFlag || eraseFlag)
-  {
-   tst_resm(TFAIL,"lock block falure because the locked block is available to read/write/erase!");
-   //return TFAIL;
-  }
- }
+		if(readFlag ||writeFlag || eraseFlag)
+		{
+			tst_resm(TFAIL,"lock block falure because the locked block is available to read/write/erase!");
+			//return TFAIL;
+		}
+	}	
 
- if(rwbuff!=0)
-  free(rwbuff);
-
- return TPASS;
+	if(rwbuff!=0)
+		free(rwbuff);
+	
+	return TPASS;
 }
 
 int VT_nor_mtd_test_thrdrwe(void)
 {
 
- int i,numOfRead;
- numOfRead=10;
+	int i,numOfRead;
+	numOfRead=10;
 
- for(i=0;i<numOfRead;i++)
- {
-  /* Read */
-         if (v_num)
-         {
-                 tst_resm(TINFO, "Performing read memory region 0x%lx - 0x%lx", addr_offset, addr_offset + length_tmem);
-         }
-         if ((read_flash_block(addr_offset, length_tmem, rw_buf)) == TFAIL)
-         {
-                 tst_resm(TFAIL, "VT_nor_mtd_test() Failed read device");
-                 return TFAIL;
-         }
+	for(i=0;i<numOfRead;i++)
+	{
+		/* Read */
+	        if (v_num)
+	        {
+	                tst_resm(TINFO, "Performing read memory region 0x%lx - 0x%lx", addr_offset, addr_offset + length_tmem);
+	        }
+	        if ((read_flash_block(addr_offset, length_tmem, rw_buf)) == TFAIL)
+	        {
+	                tst_resm(TFAIL, "VT_nor_mtd_test() Failed read device");
+	                return TFAIL;
+	        }
 
-         /* Erase */
-         if (v_num)
-         {
-                 tst_resm(TINFO, "Performing erase memory region 0x%lx - 0x%lx", addr_offset, addr_offset + length_tmem);
-         }
-         if (erase_flash_block(addr_offset, length_tmem) == TFAIL)
-         {
-                 tst_resm(TFAIL, "VT_nor_mtd_test() Failed erase device, error: %s", strerror(errno));
-                 return TFAIL;
-         }
+	        /* Erase */
+	        if (v_num)
+	        {
+	                tst_resm(TINFO, "Performing erase memory region 0x%lx - 0x%lx", addr_offset, addr_offset + length_tmem);
+	        }
+	        if (erase_flash_block(addr_offset, length_tmem) == TFAIL)
+	        {
+	                tst_resm(TFAIL, "VT_nor_mtd_test() Failed erase device, error: %s", strerror(errno));
+	                return TFAIL;
+	        }
 
-         /* Write */
-         if (v_num)
-         {
-                 tst_resm(TINFO, "Performing write memory region 0x%lx", addr_offset);
-         }
-         if ((write_flash_block(addr_offset, length_tmem, rw_buf)) == TFAIL)
-         {
-                 tst_resm(TFAIL, "VT_nor_mtd_test() Failed write into device, error: %s", strerror(errno));
-                 return TFAIL;
-         }
- }
+	        /* Write */
+	        if (v_num)
+	        {
+	                tst_resm(TINFO, "Performing write memory region 0x%lx", addr_offset);
+	        }
+	        if ((write_flash_block(addr_offset, length_tmem, rw_buf)) == TFAIL)
+	        {
+	                tst_resm(TFAIL, "VT_nor_mtd_test() Failed write into device, error: %s", strerror(errno));
+	                return TFAIL;
+	        }
+	}
 
-  return TPASS;
+		return TPASS;	
 }
 
 
 int VT_nor_mtd_test_thrdrwonepage(void)
 {
- int i,numOfRead;
- i=0;
- numOfRead=10;
+	int i,numOfRead;
+	i=0;
+	numOfRead=10;
 
- for(i=0;i<numOfRead;i++)
- {
-  /* Read */
-         if (v_num)
-         {
-                 tst_resm(TINFO, "Performing read memory region 0x%lx - 0x%lx", addr_offset, addr_offset + length_tmem);
-         }
-         if ((read_flash_block(addr_offset, length_tmem, rw_buf)) == TFAIL)
-         {
-                 tst_resm(TFAIL, "VT_nor_mtd_test() Failed read device");
-                 return TFAIL;
-         }
+	for(i=0;i<numOfRead;i++)
+	{
+		/* Read */
+	        if (v_num)
+	        {
+	                tst_resm(TINFO, "Performing read memory region 0x%lx - 0x%lx", addr_offset, addr_offset + length_tmem);
+	        }
+	        if ((read_flash_block(addr_offset, length_tmem, rw_buf)) == TFAIL)
+	        {
+	                tst_resm(TFAIL, "VT_nor_mtd_test() Failed read device");
+	                return TFAIL;
+	        }
 
-         /* Write */
-         if (v_num)
-         {
-                 tst_resm(TINFO, "Performing write memory region 0x%lx", addr_offset);
-         }
-         if ((write_flash_block(addr_offset, length_tmem, rw_buf)) == TFAIL)
-         {
-                 tst_resm(TFAIL, "VT_nor_mtd_test() Failed write into device, error: %s", strerror(errno));
-                 return TFAIL;
-         }
- }
+	        /* Write */
+	        if (v_num)
+	        {
+	                tst_resm(TINFO, "Performing write memory region 0x%lx", addr_offset);
+	        }
+	        if ((write_flash_block(addr_offset, length_tmem, rw_buf)) == TFAIL)
+	        {
+	                tst_resm(TFAIL, "VT_nor_mtd_test() Failed write into device, error: %s", strerror(errno));
+	                return TFAIL;
+	        }
+	}
 
- return TPASS;
+	return TPASS;	
 
 }
 
 
-//test nor performance
+//test nor performance 
 
 int VT_nor_mtd_test_perform(void)
 {
- //unsigned long bcount;
- unsigned long lcount;
- unsigned char *buf = NULL;
- struct timeval tv1,tv2;
- long   readinterval=0,writeinterval=0,eraseinterval=0,sumEraseInterval=0,sumWriteInterval=0;
- double writespeed=0,readspeed=0,erasespeed=0;
- double kbyte=1000000/1024.0;
- int readloop=10,writeloop=10,eraseloop=10;
+	//unsigned long bcount;
+	unsigned long lcount;
+	unsigned char *buf = NULL;
+	struct timeval tv1,tv2;
+	long   readinterval=0,writeinterval=0,eraseinterval=0,sumEraseInterval=0,sumWriteInterval=0;
+	double writespeed=0,readspeed=0,erasespeed=0;
+	double kbyte=1000000/1024.0;
+	int readloop=10,writeloop=10,eraseloop=10;
 
 
- long writepage;
- struct  erase_info_user mxc_erase_mtd;
+	long writepage;
+	struct  erase_info_user mxc_erase_mtd;
+	
 
+	if(fullPageFlag)
+	{
+		//full page performance
+		writepage=mxc_info_mtd.writesize;
+	}
+	else
+	{
+		//half page performance
+		writepage=mxc_info_mtd.writesize/2;
+	}
 
- if(fullPageFlag)
- {
-  //full page performance
-  writepage=mxc_info_mtd.writesize;
- }
- else
- {
-  //half page performance
-  writepage=mxc_info_mtd.writesize/2;
- }
-
- if(writepage<=0)
- {
-  tst_resm(TFAIL,"get write page size failed");
-  return TFAIL;
- }
- //allocate buffer for read or write
- if (!(buf = (char *) malloc(sizeof(char) * (writepage))))
+	if(writepage<=0)
+	{
+		tst_resm(TFAIL,"get write page size failed");
+		return TFAIL;
+	}
+	//allocate buffer for read or write
+	if (!(buf = (char *) malloc(sizeof(char) * (writepage))))
         {
                 tst_resm(TFAIL, "nor performance test() Failed allocate memory");
                 return TFAIL;
         }
 
- tst_resm(TINFO,"nor performance test");
+	tst_resm(TINFO,"nor performance test");
 
- //test everage read speed
- //start count on begin of read
-
-
-
- gettimeofday(&tv1, NULL);
-
- for(lcount=0;lcount<readloop;lcount++)
- {
-  //offset=offset+lcount*writepage;
-  //if(pread(file_desc, buf, writepage, addr_offset) < 0)
-
-  if(pread(file_desc, buf, writepage, addr_offset) < 0)
-  {
-   tst_resm(TFAIL,"Read failure!");
-   return TFAIL;
-  }
- }
-
- //get time on end of write
- gettimeofday(&tv2, NULL);
-
- //get interval of write
- readinterval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
-
- if(readinterval!=0)
- {
-
-  //calculate write speed
-  readspeed=(double)(kbyte*((double)(writepage*readloop))/(double)((readinterval)));
- }
+	//test everage read speed
+	//start count on begin of read
 
 
 
- //end of test read speed
+	gettimeofday(&tv1, NULL);
+
+	for(lcount=0;lcount<readloop;lcount++)
+	{
+		//offset=offset+lcount*writepage;
+		//if(pread(file_desc, buf, writepage, addr_offset) < 0)
+		
+		if(pread(file_desc, buf, writepage, addr_offset) < 0)
+		{
+			tst_resm(TFAIL,"Read failure!");
+			return TFAIL;
+		}
+	}
+	
+	//get time on end of write
+	gettimeofday(&tv2, NULL);
+
+	//get interval of write
+	readinterval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
+
+	if(readinterval!=0)
+	{
+
+		//calculate write speed 
+		readspeed=(double)(kbyte*((double)(writepage*readloop))/(double)((readinterval)));
+	}
+       
+	
+
+	//end of test read speed
 
 
+	 
 
-
- //test write speed
- //get time on start of write
- //gettimeofday(&tv1, NULL);
-
- for(lcount=0;lcount<writeloop;lcount++)
- {
-  mxc_erase_mtd.start = addr_offset;
+	//test write speed 
+	//get time on start of write
+	//gettimeofday(&tv1, NULL);
+          
+	for(lcount=0;lcount<writeloop;lcount++)
+	{
+		mxc_erase_mtd.start = addr_offset;
                 mxc_erase_mtd.length=mxc_info_mtd.erasesize;
-  gettimeofday(&tv1, NULL);
-  if (ioctl(file_desc, MEMERASE, &mxc_erase_mtd) != 0)
-  {
-   tst_resm(TFAIL, "%d: MTD Erase failure: %s", file_desc, strerror(errno));
-
-   return TFAIL;
-  }
+		gettimeofday(&tv1, NULL);
+		if (ioctl(file_desc, MEMERASE, &mxc_erase_mtd) != 0)
+		{
+			tst_resm(TFAIL, "%d: MTD Erase failure: %s", file_desc, strerror(errno));
+					
+			return TFAIL;
+		}
                //erase_flash_block(addr_offset,mxc_erase_mtd
-  gettimeofday(&tv2, NULL);
-  //get erase time
-  eraseinterval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
-  if(eraseinterval>0)
-  {
-   sumEraseInterval=sumEraseInterval+eraseinterval;
-  }
+		gettimeofday(&tv2, NULL);
+		//get erase time
+		eraseinterval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
+		if(eraseinterval>0)
+		{
+			sumEraseInterval=sumEraseInterval+eraseinterval;
+		}
 
-  gettimeofday(&tv1, NULL);
-  //if(pwrite(file_desc, rw_buf, length_tmem, addr_offset) < 0)
-  if(pwrite(file_desc, buf, writepage, addr_offset) < 0)
-  {
-   tst_resm(TFAIL,"Write failure!");
-   return TFAIL;
-  }
-  gettimeofday(&tv2, NULL);
-  //get write time
-  writeinterval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
-  if(writeinterval>0)
-  {
-   sumWriteInterval=sumWriteInterval+writeinterval;
-  }
- }
-
-
-
- if(sumWriteInterval!=0)
- {
-
-  //calculate write speed
-  writespeed=(double)(kbyte*((double)(writepage*writeloop))/(double)((sumWriteInterval)));
- }
+		gettimeofday(&tv1, NULL);
+		//if(pwrite(file_desc, rw_buf, length_tmem, addr_offset) < 0)
+		if(pwrite(file_desc, buf, writepage, addr_offset) < 0)
+		{
+			tst_resm(TFAIL,"Write failure!");
+			return TFAIL;
+		}
+		gettimeofday(&tv2, NULL);
+		//get write time
+		writeinterval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
+		if(writeinterval>0)
+		{
+			sumWriteInterval=sumWriteInterval+writeinterval;
+		}
+	}
+	
 
 
+	if(sumWriteInterval!=0)
+	{
+
+		//calculate write speed 
+		writespeed=(double)(kbyte*((double)(writepage*writeloop))/(double)((sumWriteInterval)));
+	}
+
+       
 
 
- //end of test write speed
+	//end of test write speed
+	
 
 
+	if(sumEraseInterval!=0)
+	{
 
- if(sumEraseInterval!=0)
- {
+		//calculate write speed 
+		erasespeed=(double)(kbyte*((double)(mxc_info_mtd.erasesize*eraseloop))/(double)((sumEraseInterval)));
+	}
 
-  //calculate write speed
-  erasespeed=(double)(kbyte*((double)(mxc_info_mtd.erasesize*eraseloop))/(double)((sumEraseInterval)));
- }
+	//end of test erase speed 
 
- //end of test erase speed
-
- if(fullPageFlag)
- {
-  tst_resm(TINFO,"nor page everage read speed:%lf KBps",readspeed);
-  tst_resm(TINFO,"nor page everage write speed:%lf KBps",writespeed);
-  tst_resm(TINFO,"nor page everage erase speed:%lf KBps",erasespeed);
- }
- else
- {
-  tst_resm(TINFO,"nor halfpage everage read speed:%lf KBps",readspeed);
-  tst_resm(TINFO,"nor halfpage everage write speed:%lf KBps",writespeed);
-  tst_resm(TINFO,"nor halfpage everage erase speed:%lf KBps",erasespeed);
- }
-
-  if (buf != 0)
+	if(fullPageFlag)
+	{
+		tst_resm(TINFO,"nor page everage read speed:%lf KBps",readspeed);
+		tst_resm(TINFO,"nor page everage write speed:%lf KBps",writespeed);
+		tst_resm(TINFO,"nor page everage erase speed:%lf KBps",erasespeed);
+	}
+	else
+	{
+		tst_resm(TINFO,"nor halfpage everage read speed:%lf KBps",readspeed);
+		tst_resm(TINFO,"nor halfpage everage write speed:%lf KBps",writespeed);
+		tst_resm(TINFO,"nor halfpage everage erase speed:%lf KBps",erasespeed);	
+	}
+	
+	 if (buf != 0)
                 free(buf);
 
- return TPASS;
+	return TPASS;
 
 }
 
 
 
-/*====================*/
+/*================================================================================================*/
 int VT_nor_mtd_test_setup(void)
 {
-  tst_resm(TINFO, " Open NOR MTD driver : %s\n", device_name);
+		tst_resm(TINFO, " Open NOR MTD driver : %s\n", device_name);
         file_desc = open(device_name, O_RDWR);
         sleep(1);
         if (file_desc < 0)
@@ -675,7 +681,7 @@ int VT_nor_mtd_test_setup(void)
         return TPASS;
 }
 
-/*====================*/
+/*================================================================================================*/
 int VT_nor_mtd_test_cleanup(void)
 {
         if (file_desc > 0)
@@ -686,7 +692,7 @@ int VT_nor_mtd_test_cleanup(void)
         return TPASS;
 }
 
-/*====================*/
+/*================================================================================================*/
 int read_flash_block(long offset, long length, char *mem)
 {
         /* Read */
@@ -697,7 +703,7 @@ int read_flash_block(long offset, long length, char *mem)
         return TPASS;
 }
 
-/*====================*/
+/*================================================================================================*/
 int write_flash_block(long offset, long length, char *mem)
 {
         char   *temp_buf;
@@ -733,7 +739,7 @@ int write_flash_block(long offset, long length, char *mem)
         return TPASS;
 }
 
-/*====================*/
+/*================================================================================================*/
 int erase_flash_block(long offset, long length)
 {
         struct  erase_info_user mxc_erase_mtd;
@@ -756,7 +762,7 @@ int erase_flash_block(long offset, long length)
         {
                 loff_t o_ffset = i;
                 //int ret = ioctl(file_desc, MEMGETBADBLOCK, &o_ffset);
-                /*
+                /* 
                 if (ret > 0)
                 {
                         tst_resm(TWARN, "Skipping bad block at 0x%08x", i);
@@ -775,7 +781,7 @@ int erase_flash_block(long offset, long length)
                 */
                 {
                        tst_resm(TINFO,"start:=%d",i);
-                       tst_resm(TINFO,"length:=%d",mxc_info_mtd.erasesize);
+                       tst_resm(TINFO,"length:=%d",mxc_info_mtd.erasesize); 
                         mxc_erase_mtd.start = i;
                         mxc_erase_mtd.length = mxc_info_mtd.erasesize;
                         if (ioctl(file_desc, MEMERASE, &mxc_erase_mtd) != 0)
@@ -808,6 +814,6 @@ int erase_flash_block(long offset, long length)
         }
 
         free(temp_buf);
-
+        
         return TPASS;
 }

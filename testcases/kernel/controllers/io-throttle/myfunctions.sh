@@ -21,41 +21,41 @@
 
 setup()
 {
- # create testcase cgroups
- if [ -e /dev/blockioctl ]; then
-  echo "WARN: /dev/blockioctl already exist! overwriting."
-  cleanup
- fi
- mkdir /dev/blockioctl
- mount -t cgroup -o blockio cgroup /dev/blockioctl
- if [ $? -ne 0 ]; then
-  echo "ERROR: could not mount cgroup filesystem " \
-   " on /dev/blockioctl. Exiting test."
-  cleanup
-  exit 1
- fi
- for i in `seq 1 3`; do
-  if [ -e /dev/blockioctl/cgroup-$i ]; then
-   rmdir /dev/blockioctl/cgroup-$i
-   echo "WARN: earlier cgroup-$i found and removed"
-  fi
-  mkdir /dev/blockioctl/cgroup-$i
-  if [ $? -ne 0 ]; then
-   echo "ERROR: could not create cgroup-$i" \
-    "Check your permissions. Exiting test."
-   cleanup
-   exit 1
-  fi
- done
+	# create testcase cgroups
+	if [ -e /dev/blockioctl ]; then
+		echo "WARN: /dev/blockioctl already exist! overwriting."
+		cleanup
+	fi
+	mkdir /dev/blockioctl
+	mount -t cgroup -o blockio cgroup /dev/blockioctl
+	if [ $? -ne 0 ]; then
+		echo "ERROR: could not mount cgroup filesystem " \
+			" on /dev/blockioctl. Exiting test."
+		cleanup
+		exit 1
+	fi
+	for i in `seq 1 3`; do
+		if [ -e /dev/blockioctl/cgroup-$i ]; then
+			rmdir /dev/blockioctl/cgroup-$i
+			echo "WARN: earlier cgroup-$i found and removed"
+		fi
+		mkdir /dev/blockioctl/cgroup-$i
+		if [ $? -ne 0 ]; then
+			echo "ERROR: could not create cgroup-$i" \
+				"Check your permissions. Exiting test."
+			cleanup
+			exit 1
+		fi
+	done
 }
 
 cleanup()
 {
- echo "Cleanup called"
- for i in `seq 1 3`; do
-  rmdir /dev/blockioctl/cgroup-$i
-  rm -f /tmp/cgroup-$i.out
- done
- umount /dev/blockioctl
- rmdir /dev/blockioctl
+	echo "Cleanup called"
+	for i in `seq 1 3`; do
+		rmdir /dev/blockioctl/cgroup-$i
+		rm -f /tmp/cgroup-$i.out
+	done
+	umount /dev/blockioctl
+	rmdir /dev/blockioctl
 }

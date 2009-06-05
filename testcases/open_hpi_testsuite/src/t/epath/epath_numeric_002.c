@@ -22,15 +22,15 @@
 #include <epath_utils.h>
 
 int main (int argc, char **argv) {
- SaHpiEntityPathT  ep;
- gchar *test_string;
- int   err;
+	SaHpiEntityPathT  ep;
+	gchar *test_string;
+	int   err;
 
         // negativ values are not allowd
-        test_string  "{-7,11}";
+        test_string = "{-7,11}";
 
- err  string2entitypath(test_string, &ep);
- if (!err)
+	err = string2entitypath(test_string, &ep);
+	if (!err)
                 return 1;
 
         return 0;

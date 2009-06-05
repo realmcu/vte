@@ -29,7 +29,7 @@
 
 int main() {
   int rc;
-  rc  iopl( 3 );
-  printf( "Return code  [%d]\n", rc );
+  rc = iopl( 3 );
+  printf( "Return code = [%d]\n", rc );
   return rc;
 }

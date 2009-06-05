@@ -1,0 +1,18 @@
+#Verification Tests Command File
+
+#VT WB AMR codec tests
+#files: wbamr_encoder_testapp
+#files: wbamr_decoder_testapp
+#files: list/full_list
+
+#WB AMR codec tests
+TGE-LV-WBAMR-0010 wbamr_encoder_testapp
+TGE-LV-WBAMR-0011 wbamr_encoder_testapp -L $LTPROOT/testcases/bin/wbamre_full_list
+TGE-LV-WBAMR-0020 wbamr_encoder_testapp -T 1
+TGE-LV-WBAMR-0030 wbamr_encoder_testapp -T 2
+TGE-LV-WBAMR-0040 wbamr_decoder_testapp -T 0
+TGE-LV-WBAMR-0041 wbamr_decoder_testapp -T 0 -L $LTPROOT/testcases/bin/list/wbamrd_full_list
+TGE-LV-WBAMR-0050 wbamr_decoder_testapp -T 1
+TGE-LV-WBAMR-0051 wbamr_decoder_testapp -T 1 -L $LTPROOT/testcases/bin/list/wbamrd_full_list
+TGE-LV-WBAMR-0060 wbamr_decoder_testapp -T 2
+TGE-LV-WBAMR-0070 wbamr_decoder_testapp -T 3

@@ -31,37 +31,37 @@ enum clnt_stat clnt_call2(CLIENT *rh, u_long proc, xdrproc_t xargs, caddr_t args
 };
 
 #endif
-static struct timeval TIMEOUT  { 1000, 0 };
+static struct timeval TIMEOUT = { 1000, 0 };
 
 
 return_info *
 get_array_3(info *argp, CLIENT *clnt)
 {
- static return_info clnt_res;
+	static return_info clnt_res;
 
- memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
 #ifndef HP
- if (clnt_call(clnt, get_array,(xdrproc_t) xdr_info, (caddr_t)argp, (xdrproc_t)xdr_return_info, (caddr_t)&clnt_res, TIMEOUT) ! RPC_SUCCESS) {
-  return (NULL);
- }
+	if (clnt_call(clnt, get_array,(xdrproc_t) xdr_info, (caddr_t)argp, (xdrproc_t)xdr_return_info, (caddr_t)&clnt_res, TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
 #else
- if (clnt_call2(clnt, get_array,(xdrproc_t) xdr_info, (caddr_t)argp, (xdrproc_t)xdr_return_info, (caddr_t)&clnt_res, TIMEOUT) ! RPC_SUCCESS) {
-  return (NULL);
- }
+	if (clnt_call2(clnt, get_array,(xdrproc_t) xdr_info, (caddr_t)argp, (xdrproc_t)xdr_return_info, (caddr_t)&clnt_res, TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
 #endif
- return (&clnt_res);
+	return (&clnt_res);
 }
 
 int *
 send_data_3(data_from_client *argp, CLIENT *clnt)
 {
- static int clnt_res;
+	static int clnt_res;
 
- memset((char *)&clnt_res, 0, sizeof(clnt_res));
- if (clnt_call(clnt, send_data, (xdrproc_t)xdr_data_from_client, (caddr_t)argp, (xdrproc_t)xdr_int, (caddr_t)&clnt_res, TIMEOUT) ! RPC_SUCCESS) {
-  return (NULL);
- }
- return (&clnt_res);
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call(clnt, send_data, (xdrproc_t)xdr_data_from_client, (caddr_t)argp, (xdrproc_t)xdr_int, (caddr_t)&clnt_res, TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
 }
 
 

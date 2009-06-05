@@ -1,0 +1,22 @@
+#Verification Tests Command File
+# generated automatically by the test campaign macro
+# version 1.0
+
+#files:
+#files:
+#files:
+#files:
+#files:
+
+TGE-LV-NET-0240 accept01
+TGE-LV-NET-0250 bind01
+TGE-LV-NET-0260 listen01
+TGE-LV-NET-0270 recv01
+TGE-LV-NET-0280 recvfrom01
+TGE-LV-NET-0290 recvmsg01
+TGE-LV-NET-0300 send01
+TGE-LV-NET-0310 sendmsg01
+TGE-LV-NET-0320 sendto01
+TGE-LV-NET-0330 setsockopt01
+TGE-LV-NET-0340 socket01
+

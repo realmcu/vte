@@ -19,7 +19,7 @@ Run()
 TESTS="robust1-sun robust2-sun robust1-mode2 robust2-mode2 robust3-mode2"
 
 for test in $TESTS; do
- Run $test
+	Run $test
 done
 
 echo -ne "\t\t*****************\n"

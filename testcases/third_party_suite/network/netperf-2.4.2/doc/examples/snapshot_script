@@ -37,7 +37,7 @@
 #
 # where is netperf installed, there are a few possible places:
 
-NETPERF_CMD=/usr/bin/netperf
+NETPERF_CMD=${LTPROOT}/testcases/bin/netperf
 
 
 # there should be no more than two parms passed

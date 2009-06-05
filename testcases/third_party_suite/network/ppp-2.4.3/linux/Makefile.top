@@ -6,6 +6,9 @@ INCDIR = $(DESTDIR)/include
 MANDIR = $(DESTDIR)/share/man
 ETCDIR = @SYSCONF@/ppp
 
+MFLAGS = 
+
+
 # uid 0 = root
 INSTALL= install
 

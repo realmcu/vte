@@ -35,7 +35,7 @@ opt_e=""
 
 . ./sh.common
 
-#   determine source(s) and destination
+#   determine source(s) and destination 
 argc=$#
 srcs=""
 while [ $# -gt 1 ]; do

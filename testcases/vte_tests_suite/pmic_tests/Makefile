@@ -18,7 +18,7 @@
 #-------------------------   ------------    ----------  ------------------------------------------
 #V.HALABUDA/HLBV001           26/07/2005     TLSbo52694  Initial version
 #V.HALABUDA/HLBV001           09/12/2005     TLSbo59968  Update for common API version
-#C.Gagneraud/cgag1c           17/02/2006     TLSbo62202  VTE-2.0 integration: fix multi-platform
+#C.Gagneraud/cgag1c           17/02/2006     TLSbo62202  VTE-2.0 integration: fix multi-platform 
 #                                                        build issue
 #A.Ozerov/b00320              31/05/2006     TLSbo64237  Names of connectivity testapp and module were#                                                        changed.
 #A.Ozerov/b00320              01/06/2006     TLSbo64237  Support MC13783 for PMIC light testapp was added.
@@ -77,10 +77,10 @@ endif
 endif
 
 ifeq ($(ARCH_PLATFORM),imx37stack)
-#CFLAGS+=
+#CFLAGS+=   
 #SUBDIRS +=\
 	pmic_protocol_testapp	\
-	pmic_light_testapp
+	pmic_light_testapp      
 
 endif
 
@@ -89,7 +89,7 @@ ifeq ($(ARCH_PLATFORM),imx51stack)
 #SUBDIRS +=\
           pmic_13892   \
           pmic_adc_testapp   \
-          pmic_rtc_testapp
+          pmic_rtc_testapp   
 endif
 
 CFLAGS+=-Dbool=int -Dture=1 -Dfalse=0

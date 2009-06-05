@@ -17,7 +17,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake.Huang/-----             07/28/2008     N/A          Initial version
-#
+# 
 ###################################################################################################
 #!/bin/sh
 
@@ -81,64 +81,64 @@ RC=0
 setup || exit $RC
 
 echo case 1
-echo Test control channel with 256fps frame rate.
+echo Test control channel with 256fps frame rate.	
 echo mlb-test -f 256 -t ctrl -b
 echo -------------------------------------------------
 echo case 2
-echo Test control channel with 512fps frame rate.
+echo Test control channel with 512fps frame rate.	
 echo mlb-test -f 512 -t ctrl -b
 echo -------------------------------------------------
 echo case 3
-echo Test control channel with 1024fps frame rate.
+echo Test control channel with 1024fps frame rate.	
 echo mlb-test -f 1024 -t ctrl -b
-echo not supported in imx31 due to hardware
+echo not supported in imx31 due to hardware 
 echo -------------------------------------------------
 echo case 4
-echo Test control channel non block I/O with 256fps frame rate.
+echo Test control channel non block I/O with 256fps frame rate.	
 echo mlb-test -f 256 -t ctrl
 echo -------------------------------------------------
 echo case 5
-echo Test control channel non block I/O with 512fps frame rate.
+echo Test control channel non block I/O with 512fps frame rate.	
 echo mlb-test -f 512 -t ctrl
 echo -------------------------------------------------
 echo case 6
-echo not supported in imx31 due to hardware
-echo Test control channel non block I/O with 1024fps frame rate.
+echo not supported in imx31 due to hardware  
+echo Test control channel non block I/O with 1024fps frame rate.	
 echo mlb-test -f 1024 -t ctrl
-echo not supported in imx31 due to hardware
+echo not supported in imx31 due to hardware 
 echo -------------------------------------------------
 echo case 7
-echo Test asynchronous channel with 256fps frame rate.
+echo Test asynchronous channel with 256fps frame rate.	
 echo mlb-test -f 256 -t async -b
 echo -------------------------------------------------
 echo case 8
-echo Test asynchronous channel with 512fps frame rate.
+echo Test asynchronous channel with 512fps frame rate.	
 echo mlb-test -f 512 -t async -b
 echo -------------------------------------------------
 echo case 9
-echo Test asynchronous channel with 1024fps frame rate.
+echo Test asynchronous channel with 1024fps frame rate.	
 echo mlb-test -f 1024 -t async -b
-echo not supported in imx31 due to hardware
+echo not supported in imx31 due to hardware 
 echo -------------------------------------------------
 echo case 10
-echo Test asynchronous channel non block I/O with 256fps frame rate.
+echo Test asynchronous channel non block I/O with 256fps frame rate.	
 echo mlb-test -f 256 -t async
 echo -------------------------------------------------
 echo case 11
-echo Test asynchronous channel non block I/O with 512fps frame rate.
+echo Test asynchronous channel non block I/O with 512fps frame rate.	
 echo mlb-test -f 512 -t async
 echo -------------------------------------------------
 echo case 12
-echo Test asynchronous channel non block I/O with 1024fps frame rate.
+echo Test asynchronous channel non block I/O with 1024fps frame rate.	
 echo mlb-test -f 1024 -t async
-echo not supported in imx31 due to hardware
+echo not supported in imx31 due to hardware  
 
 
 read -p "select  case to test <1-12>" tid
 
 case "$tid" in
 1)
-   mxc_mlb_test -f 256 -t ctrl -b || exit $RC
+   mxc_mlb_test -f 256 -t ctrl -b || exit $RC 
   ;;
 2)
   mxc_mlb_test -f 512 -t ctrl -b || exit $RC
@@ -175,7 +175,7 @@ case "$tid" in
   ;;
 *)
   echo "wrong number quit"
-  RC=13
+  RC=13 
   exit $RC
   ;;
 esac

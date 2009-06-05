@@ -19,28 +19,28 @@
 
 /*
  * NAME
- * getgid02.c
+ *	getgid02.c
  *
  * DESCRIPTION
- * Testcase to check the basic functionality of getegid().
+ *	Testcase to check the basic functionality of getegid().
  *
  * ALGORITHM
- * call setup
- * loop if that option was specified
- * Execute getegid() call using TEST macro
- * if not expected value
- *    break remaining tests and cleanup
- * if STD_FUNCTIONAL_TEST
- *    Execute geteuid() call
- *    Execute getpwduid() call
- *    if the passwd entry is NULL
- *       break the remaining tests and cleanup
- *    else if pwent->pw_gid ! TEST_RETURN
- *       print failure message
- *    else
- *       print pass message
- * else
- *    print pass message
+ *	call setup
+ *	loop if that option was specified
+ *	Execute getegid() call using TEST macro
+ *	if not expected value
+ *	   break remaining tests and cleanup
+ *	if STD_FUNCTIONAL_TEST
+ *	   Execute geteuid() call
+ *	   Execute getpwduid() call
+ *	   if the passwd entry is NULL
+ *	      break the remaining tests and cleanup
+ *	   else if pwent->pw_gid != TEST_RETURN
+ *	      print failure message
+ *	   else
+ *	      print pass message
+ *	else
+ *	   print pass message
  *      call cleanup
  *
  * USAGE:  <for command-line>
@@ -53,10 +53,10 @@
  *             -t   : Turn on syscall timing.
  *
  * HISTORY
- * 07/2001 Ported by Wayne Boyer
+ *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * none
+ *	none
  */
 
 #include <pwd.h>
@@ -68,63 +68,63 @@
 void cleanup(void);
 void setup(void);
 
-char *TCID "getgid02";
-int TST_TOTAL  1;
+char *TCID= "getgid02";
+int TST_TOTAL = 1;
 extern int Tst_count;
 
 int main(int ac, char **av)
 {
- int lc;                         /* loop counter */
- char *msg;                      /* message returned from parse_opts */
- int euid;
- struct passwd *pwent;
+	int lc;                         /* loop counter */
+	char *msg;                      /* message returned from parse_opts */
+	int euid;
+	struct passwd *pwent;
 
- /* parse standard options */
- if ((msg  parse_opts(ac, av, (option_t *)NULL, NULL)) ! (char *)NULL){
-  tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-  /*NOTREACHED*/
- }
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+		/*NOTREACHED*/
+	}
 
- setup();                        /* global setup */
+	setup();                        /* global setup */
 
- /* The following loop checks looping state if -i option given */
- for (lc  0; TEST_LOOPING(lc); lc++) {
+	/* The following loop checks looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-  /* reset Tst_count in case we are looping */
-  Tst_count  0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-  TEST(getegid());
+		TEST(getegid());
 
-  if (TEST_RETURN < 0) {
-   tst_brkm(TBROK, cleanup, "This should never happen");
-  }
+		if (TEST_RETURN < 0) {
+			tst_brkm(TBROK, cleanup, "This should never happen");
+		}
 
-  if (STD_FUNCTIONAL_TEST) {
-   euid  geteuid();
+		if (STD_FUNCTIONAL_TEST) {
+			euid = geteuid();
 
-   pwent  getpwuid(euid);
+			pwent = getpwuid(euid);
 
-   if (pwent  NULL) {
-    tst_brkm(TBROK, cleanup, "geteuid() returned "
-      "unexpected value %d", euid);
-   } else {
-    if (pwent->pw_gid ! TEST_RETURN) {
-     tst_resm(TFAIL, "getegid() return value"
-      " %d unexpected - expected %d",
-      TEST_RETURN, pwent->pw_gid);
-    } else {
-     tst_resm(TPASS, "effective group id %d "
-       "is correct", TEST_RETURN);
-    }
-   }
-  } else {
-   tst_resm(TPASS, "call succeeded");
-  }
- }
- cleanup();
+			if (pwent == NULL) {
+				tst_brkm(TBROK, cleanup, "geteuid() returned "
+					 "unexpected value %d", euid);
+			} else {
+				if (pwent->pw_gid != TEST_RETURN) {
+					tst_resm(TFAIL, "getegid() return value"
+						" %d unexpected - expected %d",
+						TEST_RETURN, pwent->pw_gid);
+				} else {
+					tst_resm(TPASS, "effective group id %d "
+						 "is correct", TEST_RETURN);
+				}
+			}
+		} else {
+			tst_resm(TPASS, "call succeeded");
+		}
+	}
+	cleanup();
 
- /*NOTREACHED*/
- return(0);
+	/*NOTREACHED*/
+	return(0);
 }
 
 
@@ -134,26 +134,26 @@ int main(int ac, char **av)
 void
 setup()
 {
- /* capture signals */
- tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
- /* Pause if that option was specified */
- TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 }
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- *        or premature exit.
+ * 	       or premature exit.
  */
 void
 cleanup()
 {
- /*
-  * print timing status if that option was specified.
-  * print errno log if that option was specified
-  */
- TEST_CLEANUP;
+	/*
+	 * print timing status if that option was specified.
+	 * print errno log if that option was specified
+	 */
+	TEST_CLEANUP;
 
- /* exit with return code appropriate for results */
- tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 }

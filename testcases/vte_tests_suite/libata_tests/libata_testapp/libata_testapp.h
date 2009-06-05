@@ -23,7 +23,7 @@ A.Ozerov/b00320              10/09/2006     TLSbo76800  Initial version.
 #define ATA_DRIVER_TESTAPP_H
 
 #ifdef __cplusplus
-extern "C"{
+extern "C"{ 
 #endif
 
 /*==================================================================================================
@@ -61,7 +61,7 @@ extern "C"{
 /*==================================================================================================
                                     STRUCTURES AND TYPEDEFS
 ==================================================================================================*/
-struct xfermode_entry
+struct xfermode_entry 
 {
         int val;
         const char *name;
@@ -73,7 +73,7 @@ enum ata_ioctls {
 };
 
 
-static const struct xfermode_entry xfermode_table[] =
+static const struct xfermode_entry xfermode_table[] = 
 {
         { 8,    "pio0" },
         { 9,    "pio1" },
@@ -137,7 +137,7 @@ int ata_ReadWritePerformanceUDMAMode(int fd);
 
 
 #ifdef __cplusplus
-}
+} 
 #endif
 
 #endif /* ATA_DRIVER_TESTAPP_H */

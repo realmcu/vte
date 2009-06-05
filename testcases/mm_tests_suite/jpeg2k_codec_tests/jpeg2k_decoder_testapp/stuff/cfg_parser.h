@@ -11,7 +11,7 @@
 
 typedef struct LinkedList
 {
-    void * mpContent;
+    void * mpContent;    
     struct LinkedList * mpNext;
 } sLinkedList;
 

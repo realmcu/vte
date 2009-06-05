@@ -1,41 +1,41 @@
-/*====================*/
-/**
-    @file   uart_test_3.c
+/*================================================================================================*/
+/** 
+    @file   uart_test_3.c 
 
-    @brief Configure the serial interface using MXC UART and/or External UART low-level driver
+    @brief Configure the serial interface using MXC UART and/or External UART low-level driver 
                 Read / Write test */
-/*======================
+/*================================================================================================== 
 
-    Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
-    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-    Freescale Semiconductor, Inc.
+    Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved 
+    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT 
+    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF 
+    Freescale Semiconductor, Inc. 
+        
 
-
-====================
+====================================================================================================
 Revision History:
                             Modification     Tracking
 Author                          Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 C.GAGNERAUD/cgag1c           01/06/2005    TLSbo45060    Rework and improve UART test application
-I.Inkina/nknl001             22/08/2005    TLSbo52626    Update Uart test
-E.Gromazina                  14/09/2005                         min fix
-E.Gromazina                  13/10/2005    TLSbo56650    replace the FAIL by a WARN when verifying
+I.Inkina/nknl001             22/08/2005    TLSbo52626    Update Uart test 
+E.Gromazina                  14/09/2005                         min fix  
+E.Gromazina                  13/10/2005    TLSbo56650    replace the FAIL by a WARN when verifying         
                                                         the CTS/RTS activation"
-Pradeep K /b01016            05/08/2007    ENGR11834    Fix for Soft and Hard flow control issue
+Pradeep K /b01016            05/08/2007	   ENGR11834    Fix for Soft and Hard flow control issue			
 Dmitriy Kardakov                                        New transfer data test
-====================
+====================================================================================================
 Portability:  ARM GCC  gnu compiler
-======================*/
+==================================================================================================*/
 
 
 #ifdef __cplusplus
-extern "C"{
+extern "C"{ 
 #endif
 
-/*======================
+/*==================================================================================================
                                         INCLUDE FILES
-======================*/
+==================================================================================================*/
 /* Standard Include Files */
 #include <stdlib.h>
 #include <unistd.h>
@@ -56,14 +56,14 @@ extern "C"{
 #include "uart_test_3.h"
 
 
-/*
-* Global variable
+/* 
+* Global variable 
 */
 pthread_t thid_writer,
         thid_reader,
         thid_signal;
 
-/*
+/* 
 * Local typedef, macros, ...
 */
 #define THR_INFO(fmt, args...) tst_resm(TINFO, "  [R   ] " fmt, ##args)
@@ -75,8 +75,8 @@ pthread_t thid_writer,
 #define THC_FAIL(fmt, args...) tst_resm(TFAIL, "  [  C ] " fmt, ##args)
 #define THS_FAIL(fmt, args...) tst_resm(TFAIL, "  [   S] " fmt, ##args)
 
-/*
-* local variable
+/* 
+* local variable 
 */
 static int cout_timer_sign = 0;
 static unsigned long nb_read = 0;
@@ -89,7 +89,7 @@ static unsigned long nb_write = 0;
 /* static int writing = 0; */
 static pthread_mutex_t write_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-/*
+/* 
 * local function prototype
 */
 /* Block all signals (except SIGINT) for da calling thread */
@@ -109,23 +109,23 @@ void   *VT_th_writer(void *param);
 void   *VT_th_reader(void *param);
 void   *VT_th_signal(void *param);
 
-/*======================
+/*==================================================================================================
                                         LOCAL MACROS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                             LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         LOCAL CONSTANTS
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                         LOCAL VARIABLES
-======================*/
+==================================================================================================*/
   /** Source and destination UART to test */
 static uart_test_t src_uart,
         dst_uart;
@@ -134,38 +134,38 @@ static int uart_transfert_length;
 static int uart_baud_rate;
 
 
-/*======================
+/*==================================================================================================
                                         GLOBAL CONSTANTS
-======================*/
+==================================================================================================*/
 
 
-/*======================
+/*==================================================================================================
                                         GLOBAL VARIABLES
-======================*/
+==================================================================================================*/
 
-/*======================
+/*==================================================================================================
                                     LOCAL FUNCTION PROTOTYPES
-======================*/
+==================================================================================================*/
 
 int     testcase_simple(void);
 int     testcase_hw_flow(void);
 int     testcase_sw_flow(void);
 
 
-/*======================
+/*==================================================================================================
                                         LOCAL FUNCTIONS
-======================*/
+==================================================================================================*/
 int     run_timer(void);
 void    timer_handler(int signum);
 
-/*====================*/
-/*= VT_uart_test4_setup =*/
-/**
+/*================================================================================================*/
+/*===== VT_uart_test4_setup =====*/
+/** 
 * Assumes the test preconditions, open and configure source and destination UART.
-*
-*
+* 
+* 
 * @return */
-/*====================*/
+/*================================================================================================*/
 int VT_uart_test3_setup(uart_config_t * src_cfg, uart_config_t * dst_cfg,
                         int transfert_length, flow_ctrl_t flow_ctrl, int baud_rate)
 {
@@ -268,8 +268,8 @@ int VT_uart_test3_setup(uart_config_t * src_cfg, uart_config_t * dst_cfg,
 
 
 
-/*====================*/
-/*= VT_mxc_uart_test4_cleanup =*/
+/*================================================================================================*/
+/*===== VT_mxc_uart_test4_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
 
@@ -277,7 +277,7 @@ int VT_uart_test3_setup(uart_config_t * src_cfg, uart_config_t * dst_cfg,
 
 @return On success - return TPASS
 On failure - return the error code*/
-/*====================*/
+/*================================================================================================*/
 int VT_uart_test3_cleanup(void)
 {
         int     rv = TPASS;
@@ -309,8 +309,8 @@ int VT_uart_test3_cleanup(void)
         return rv;
 }
 
-/*====================*/
-/*= VT_mxc_uart_test4 =*/
+/*================================================================================================*/
+/*===== VT_mxc_uart_test4 =====*/
 /**
 @brief  mxc_uart test configures and sets UART driver before sending/receiving
 characters on it
@@ -322,7 +322,7 @@ Output :  None
 
 @return On success - return TPASS
 On failure - return the error code*/
-/*====================*/
+/*================================================================================================*/
 int VT_uart_test3(int testcase)
 {
         int     rv = TPASS;
@@ -342,14 +342,14 @@ int VT_uart_test3(int testcase)
 
         tst_resm(TINFO, "    => testcase %d.", testcase);
 
-        /*
-        * Lock reader and writer mutex, so they will wait on it before they begin
+        /* 
+        * Lock reader and writer mutex, so they will wait on it before they begin 
         * their real job.
         */
         pthread_mutex_lock(&read_mutex);
         pthread_mutex_lock(&write_mutex);
 
-        /*
+        /* 
         * Create the signal, reader and the writer threads
         */
         tst_resm(TINFO, "  Creating reader thread => [ R  ]...");
@@ -381,7 +381,7 @@ int VT_uart_test3(int testcase)
         switch (testcase)
         {
         case TESTCASE_SIMPLE:
-                /*
+                /* 
                 * "Signal" reader then writer thread
                 */
                 tst_resm(TINFO, "  Signalig reader and writer threads...");
@@ -390,46 +390,46 @@ int VT_uart_test3(int testcase)
                 break;
 
         case TESTCASE_HW_FLOW:
- tst_resm(TINFO, "  Signalig reader and writer threads...");
+  		tst_resm(TINFO, "  Signalig reader and writer threads...");
                 pthread_mutex_unlock(&read_mutex);
                 pthread_mutex_unlock(&write_mutex);
- #if 0
-                /*
+	#if 0		
+                /* 
                 * "Signal" the writer thread
                 */
                 tst_resm(TINFO, "  Signalig writer threads...");
                 pthread_mutex_unlock(&write_mutex);
 
-                /*
+                /* 
                 * Wait, to allow the writer to fill reader and writer buffers
                 */
                 nb_sec = 1 + uart_transfert_length / uart_baud_rate;
                 tst_resm(TINFO, "  Waiting %d before signaling reader...", nb_sec);
                 sleep(nb_sec);
 
-                /*
+                /* 
                 * "Signal" the reader thread
                 */
                 pthread_mutex_unlock(&read_mutex);
- #endif
+	#endif		
                 break;
 
         case TESTCASE_SW_FLOW:
-                /*
+                /* 
                 * "Signal" the writer thread
                 */
                 tst_resm(TINFO, "  Signalig writer threads...");
-  pthread_mutex_unlock(&read_mutex);
+		pthread_mutex_unlock(&read_mutex);
                 pthread_mutex_unlock(&write_mutex);
 
- #if 0   /*
+	#if 0   /* 
                 * Wait, to allow the writer to fill reader and writer buffers
                 */
                 nb_sec = 1 + uart_transfert_length / uart_baud_rate;
                 tst_resm(TINFO, "  Waiting %d before signaling reader...", nb_sec);
                 sleep(nb_sec);
 
-                /*
+                /* 
                 * "Signal" the reader thread
                 */
                 pthread_mutex_unlock(&read_mutex);
@@ -437,12 +437,12 @@ int VT_uart_test3(int testcase)
 
         default:
                 rv = TBROK;
- #endif
+	#endif		
                 break;
         }
 
 
-        /*
+        /* 
         * wait for the reader and the writer threads,
         * and check their status
         */
@@ -474,7 +474,7 @@ int VT_uart_test3(int testcase)
                 goto error_exit;
         }
 
-        /*
+        /* 
         * Transfert is OK, now check for data errors
         */
         nb_errors = 0;
@@ -554,11 +554,11 @@ int VT_setup_uart(uart_config_t * cfg, uart_test_t * uart, char *desc, int open_
         uart->termios.c_iflag |= INPCK | IGNPAR;
 
         /* CLOCAL: * If this bit is set, it indicates that the terminal is connected "locally" * and
-        * * that the modem status lines (such as carrier detect) should be * ignored. * CREAD: * If *
+        * * that the modem status lines (such as carrier detect) should be * ignored. * CREAD: * If * 
         * this bit is set, input can be read from the terminal. Otherwise, * input is discarded *
         * when it arrives. */
         uart->termios.c_cflag |= CLOCAL | CREAD;
-
+          
         /* Open device twice: * - first with O_NONBLOCK in case CLOCAL is not set * - second open is
         * * the "normal" way */
 
@@ -752,7 +752,7 @@ void   *VT_th_writer(void *param)
         rv = TPASS;
 
         th_exit:
-        /*
+        /* 
         * if (rv != TPASS) { error = pthread_cancel(thid_reader); if (error < 0) {
         * perror("pthread_cancel(reader)"); } } */
         THW_INFO("Exiting with return code = %d", rv);
@@ -813,13 +813,13 @@ void   *VT_th_reader(void *param)
                                 last_percent = percent;
                         }
                 }
-                /*
+                /* 
                 * pthread_mutex_lock(&read_mutex); if (reader_sleep > 0) {
                 * sleep(random_max(reader_sleep)); } pthread_mutex_unlock(&read_mutex); */
         }
         while (remaining > 0 && cout_timer_sign == 0);
         rv = TPASS;
- printf("Remaining bytes=%d\n", remaining);
+	printf("Remaining bytes=%d\n", remaining);
 
         th_exit:
 
@@ -897,9 +897,9 @@ int VT_check_hardware(int check_error, int check_break, int check_flow, int chec
 
 #define ICNT(who, what)  who##_uart.icounter.what - who##_uart.icounter_saved.what
 
-        tst_resm(TINFO, "/==========\\");
+        tst_resm(TINFO, "/==============================================\\");
         tst_resm(TINFO, "|         UART hardware summary                |");
-        tst_resm(TINFO, "+====+====+====+");
+        tst_resm(TINFO, "+============+================+================+");
         tst_resm(TINFO, "|            | %-14s | %-14s |", "SRC", "DST");
         tst_resm(TINFO, "+------------+----------------+----------------+");
         tst_resm(TINFO, "| device     | %-14s | %-14s |", src_uart.device, dst_uart.device);
@@ -952,16 +952,16 @@ int VT_check_hardware(int check_error, int check_break, int check_flow, int chec
         if (check_flow)
         {
 /* These counts cannot be maintained by the driver as we are using hardware driven hardware flow control (i.e: the hardware controls the RTS and CTS lines)*/
-#if 0
+#if 0		
                 if (uart_flow_ctrl == FLOW_CTRL_HARD)
                 {
                         if (ICNT(src, cts) == 0)
                         {
                                 tst_resm(TWARN, "  => No hardware flow control activation.");
                                 /* the next line is commented out because the feature is not supported */
-/*
+/*                                
                                 rv = TFAIL;
-*/
+*/				
                         }
                 }
 #endif
@@ -992,16 +992,16 @@ int VT_check_hardware(int check_error, int check_break, int check_flow, int chec
 }
 
 
-/*====================*/
-/*= run_timer_for_reader =*/
-/**
-@brief
+/*================================================================================================*/
+/*===== run_timer_for_reader =====*/
+/** 
+@brief   
 
-@param  None
-
-@return On success - return TPASS
+@param  None 
+    
+@return On success - return TPASS 
         On failure - return the error code */
-/*====================*/
+/*================================================================================================*/
 int run_timer(void)
 {
         struct sigaction sa;
@@ -1014,9 +1014,9 @@ int run_timer(void)
 
         sigaction(SIGALRM, &sa, NULL);
 
-        /*
-        * Configure the timer to expire.
-        * We are quit large on value since we have to take into account
+        /* 
+        * Configure the timer to expire. 
+        * We are quit large on value since we have to take into account 
         * some "random" overhead
         */
 
@@ -1041,15 +1041,15 @@ int run_timer(void)
 }
 
 
-/*====================*/
-/*= timer_handler=*/
-/**
-@brief This is a timer handler.
+/*================================================================================================*/
+/*===== timer_handler=====*/
+/** 
+@brief This is a timer handler. 
 
-@param signum - signal number
-
+@param signum - signal number  
+    
 @return None */
-/*====================*/
+/*================================================================================================*/
 void timer_handler(int signum)
 {
         int     error;
@@ -1068,5 +1068,5 @@ void timer_handler(int signum)
 
 
 #ifdef __cplusplus
-}
+} 
 #endif

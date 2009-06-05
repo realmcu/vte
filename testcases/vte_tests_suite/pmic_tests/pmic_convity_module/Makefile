@@ -17,7 +17,7 @@
 #Author/core id                  Date          Number     Description of Changes
 #-------------------------   ------------    ----------   -----------------------------------------
 #V.Khalabuda/hlbv001          13/08/2005     TLSbo52695   Initial version
-#V.Khalabuda/hlbv001          02/09/2005     TLSbo52695   Update for linux-2.6.10-rel-L26_1_14
+#V.Khalabuda/hlbv001          02/09/2005     TLSbo52695   Update for linux-2.6.10-rel-L26_1_14 
 #
 ####################################################################################################
 #Portability:    ARM GCC

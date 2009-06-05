@@ -18,18 +18,18 @@ dec_offset=`echo "ibase=16; $temp" | bc`
 
 ./$tstf
 if [ $? != 0 ]; then
- echo "Error running *good* test"
+	echo "Error running *good* test"
 fi
 
 for count in `seq 0 511`; do
- ./swapbit $tstf $dec_offset $count
- ./$tstf
- ret=$?
- if [ $ret = 0 ]; then
-  echo "Error at bit $count - return value $ret"
-#  exit 1
- fi;
- ./swapbit -r $tstf $dec_offset $count
+	./swapbit $tstf $dec_offset $count
+	./$tstf
+	ret=$?
+	if [ $ret = 0 ]; then
+		echo "Error at bit $count - return value $ret"
+#		exit 1
+	fi;
+	./swapbit -r $tstf $dec_offset $count
 done
 
 exit 0

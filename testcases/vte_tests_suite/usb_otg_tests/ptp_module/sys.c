@@ -17,159 +17,159 @@
 unsigned short extr_le16(unsigned char **ppBuffer)
 {
 
- unsigned short val = (*(*ppBuffer)) | (*(*ppBuffer + 1) << 8);
+	unsigned short val = (*(*ppBuffer)) | (*(*ppBuffer + 1) << 8);
 
- (*ppBuffer) += 2;
+	(*ppBuffer) += 2;
 
- return val;
+	return val;
 
 }
 
 unsigned int extr_le32(unsigned char **ppBuffer)
 {
 
- unsigned int val =
-     (*(*ppBuffer)) | (*(*ppBuffer + 1) << 8) | (*(*ppBuffer + 2) << 16)
+	unsigned int val =
+	    (*(*ppBuffer)) | (*(*ppBuffer + 1) << 8) | (*(*ppBuffer + 2) << 16)
 
-     | (*(*ppBuffer + 3) << 24);
+	    | (*(*ppBuffer + 3) << 24);
 
- (*ppBuffer) += 4;
+	(*ppBuffer) += 4;
 
- return val;
+	return val;
 
 }
 
 unsigned int extr_le64(unsigned char **ppBuffer)
 {
 
- unsigned int val =
-     (*(*ppBuffer)) | (*(*ppBuffer + 1) << 8) | (*(*ppBuffer + 2) << 16)
+	unsigned int val =
+	    (*(*ppBuffer)) | (*(*ppBuffer + 1) << 8) | (*(*ppBuffer + 2) << 16)
 
-     | (*(*ppBuffer + 3) << 24);
+	    | (*(*ppBuffer + 3) << 24);
 
- (*ppBuffer) += 8;
+	(*ppBuffer) += 8;
 
- return val;
+	return val;
 
 }
 
 unsigned char *extr_le_str(unsigned char **ppBuffer)
 {
 
- static unsigned char nullstring[] =
-     { 0, '(', 0, 'n', 0, 'u', 0, 'l', 0, 'l', 0, ')', 0 };
+	static unsigned char nullstring[] =
+	    { 0, '(', 0, 'n', 0, 'u', 0, 'l', 0, 'l', 0, ')', 0 };
 
- unsigned char *ret;
+	unsigned char *ret;
 
- unsigned char strlen = *(*ppBuffer);
+	unsigned char strlen = *(*ppBuffer);
 
- ret = (*ppBuffer) + 1;
+	ret = (*ppBuffer) + 1;
 
- (*ppBuffer) += (1 + strlen * 2);
+	(*ppBuffer) += (1 + strlen * 2);
 
- if (strlen == 0)
+	if (strlen == 0)
 
-  return &nullstring[1];
+		return &nullstring[1];
 
- return ret;
+	return ret;
 
 }
 
 unsigned char *extr_le_ary16(unsigned char **ppBuffer)
 {
 
- unsigned char *ret;
+	unsigned char *ret;
 
- unsigned int arraylen = extr_le32(ppBuffer);
+	unsigned int arraylen = extr_le32(ppBuffer);
 
- ret = (*ppBuffer);
+	ret = (*ppBuffer);
 
- (*ppBuffer) += (arraylen * 2);
+	(*ppBuffer) += (arraylen * 2);
 
- return ret;
+	return ret;
 
 }
 
 void print_uni_str(unsigned char *unicodeString)
 {
 
- if (!unicodeString) {
+	if (!unicodeString) {
 
-  printk(KERN_INFO "(null)");
+		printk(KERN_INFO "(null)");
 
-  return;
+		return;
 
- }
+	}
 
- while ((*unicodeString) | (*(unicodeString + 1))) {
+	while ((*unicodeString) | (*(unicodeString + 1))) {
 
-  printk(KERN_INFO "%c", *unicodeString);
+		printk(KERN_INFO "%c", *unicodeString);
 
-  unicodeString += 2;
+		unicodeString += 2;
 
- }
+	}
 
 }
 
 extern int usbsidev_ctrl(unsigned int deviceID, unsigned char bmRequestType,
-    unsigned char bRequest);
+			 unsigned char bRequest);
 
 extern int usbsidev_ctrl_in(unsigned int deviceID, unsigned char bmRequestType,
-       unsigned char bRequest, unsigned short wLength,
-       void *data);
+			    unsigned char bRequest, unsigned short wLength,
+			    void *data);
 
 extern int usbsidev_ctrl_out(unsigned int deviceID,
-        unsigned char bmRequestType,
-        unsigned char bRequest, unsigned short wLength,
-        void *data);
+			     unsigned char bmRequestType,
+			     unsigned char bRequest, unsigned short wLength,
+			     void *data);
 
 extern int usbsidev_in(unsigned char *buffer, unsigned int *bufferlen);
 
 extern int usbsidev_out(unsigned char *buffer, unsigned int *bufferlen);
 
 inline unsigned int si_control(unsigned int deviceID,
-          unsigned char bmRequestType,
-          unsigned char bRequest)
+			       unsigned char bmRequestType,
+			       unsigned char bRequest)
 {
 
- return usbsidev_ctrl(deviceID, bmRequestType, bRequest);
+	return usbsidev_ctrl(deviceID, bmRequestType, bRequest);
 
 }
 
 inline unsigned int si_control_in(unsigned int deviceID,
-      unsigned char bmRequestType,
-      unsigned char bRequest,
-      unsigned short wLength, void *data)
+				  unsigned char bmRequestType,
+				  unsigned char bRequest,
+				  unsigned short wLength, void *data)
 {
 
- return usbsidev_ctrl_in(deviceID, bmRequestType, bRequest, wLength,
-    data);
+	return usbsidev_ctrl_in(deviceID, bmRequestType, bRequest, wLength,
+				data);
 
 }
 
 inline unsigned int si_control_out(unsigned int deviceID,
-       unsigned char bmRequestType,
-       unsigned char bRequest,
-       unsigned short wLength, void *data)
+				   unsigned char bmRequestType,
+				   unsigned char bRequest,
+				   unsigned short wLength, void *data)
 {
 
- return usbsidev_ctrl_out(deviceID, bmRequestType, bRequest, wLength,
-     data);
+	return usbsidev_ctrl_out(deviceID, bmRequestType, bRequest, wLength,
+				 data);
 
 }
 
 inline unsigned int si_bulk_in(unsigned int deviceID, void *data,
-          unsigned int *dataLength)
+			       unsigned int *dataLength)
 {
 
- return usbsidev_in(data, dataLength);
+	return usbsidev_in(data, dataLength);
 
 }
 
 inline unsigned int si_bulk_out(unsigned int deviceID, void *data,
-    unsigned int *dataLength)
+				unsigned int *dataLength)
 {
 
- return usbsidev_out(data, dataLength);
+	return usbsidev_out(data, dataLength);
 
 }
