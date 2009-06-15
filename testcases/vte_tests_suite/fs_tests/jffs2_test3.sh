@@ -75,9 +75,17 @@ setup()
     device=$2
     mount_dir=$3
 
-    if [ $device_type = "nfs" ]
+    tmp_type=`echo $device_type | awk '{ print $1 }'`
+    if [ "$tmp_type" = "nfs" ]
     then
         umount $mount_dir 2>/dev/null && sleep 1
+        # add for WuKong
+        WK_SERVER=10.200.1.1
+        ping -c 1 $WK_SERVER
+        if [ $? -eq 0 ] 
+        then
+            device=${WK_SERVER}:/rootfs/temp2
+        fi
     else
         umount $device 2>/dev/null && sleep 1
     fi

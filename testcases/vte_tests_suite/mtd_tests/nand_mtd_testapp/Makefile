@@ -27,11 +27,11 @@
 CFLAGS    +=     -Wall -I../../../../include -I$(KLINUX_BLTDIR)/include -I$(KLINUX_SRCDIR)/include
 LOADLIBES +=     -L../../../../lib -lltp
 
-include $(KLINUX_BLTDIR)/.config
+#include $(KLINUX_BLTDIR)/.config
 
-ifeq "$(CONFIG_ARCH_MXC92323)" "y"
-CFLAGS += -DCONFIG_ARCH_MXC92323
-endif
+#ifeq "$(CONFIG_ARCH_MXC92323)" "y"
+#CFLAGS += -DCONFIG_ARCH_MXC92323
+#endif
 
 SRCS = $(wildcard *.c)
 OBJS = $(patsubst %.c,%.o,$(SRCS))
