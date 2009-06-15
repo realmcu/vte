@@ -60,7 +60,7 @@ cleanup()
 RC=0
 
 #TODO add cleanup code here
-modprobe -r gpu_z430
+modprobe -r gpu_z160
 return $RC
 }
 

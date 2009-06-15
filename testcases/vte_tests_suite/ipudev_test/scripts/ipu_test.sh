@@ -180,7 +180,7 @@ RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
-BWLIST="10 16 32 40 51 64 255"
+BWLIST="10 32 51 255"
 
 #TODO add function test scripte here
 for i in $BWLIST
@@ -199,6 +199,7 @@ ipu_dev_test -P 5 -bw $i || return $RC
 ipu_dev_test -P 6 -bw $i || return $RC
 ipu_dev_test -P 7 -bw $i || return $RC
 ipu_dev_test -P 8 -bw $i || return $RC
+ipu_dev_test -P 9 -bw $i || return $RC
 fi
 
 done

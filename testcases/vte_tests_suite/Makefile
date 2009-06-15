@@ -118,6 +118,7 @@ SUBDIRS += ata_tests
 
 ifeq ($(ARCH_PLATFORM), $(filter imx25stack, $(ARCH_PLATFORM)))
 SUBDIRS += can_tests
+SUBDIRS += usb_host_test
 endif
 
 ifeq ($(ARCH_PLATFORM), $(filter imx35stack, $(ARCH_PLATFORM)))
@@ -193,7 +194,7 @@ SUBDIRS += libata_tests
 endif
 
 #added by Blake 
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx37stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx37stack, $(ARCH_PLATFORM)))
 SUBDIRS += dptc_tests
 endif
 #added by Blake

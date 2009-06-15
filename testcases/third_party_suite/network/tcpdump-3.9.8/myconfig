@@ -1,0 +1,4 @@
+./configure --host=arm-none-linux-gnueabi \
+CFLAGS=-I$(pwd)/../../../../openlibs/include/ \
+LDFLAGS=-L$(pwd)/../../../../openlibs/lib/ \
+--oldincludedir=$(pwd)

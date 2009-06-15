@@ -7,8 +7,8 @@
 ##############################################################################
 
 
-CONFIG_SUBDIRS = ethtool-6 ppp-2.4.3 
-SUBDIRS = ethtool-6 mii-tool-1.9.1.1 ppp-2.4.3
+CONFIG_SUBDIRS = ethtool-6 ppp-2.4.3
+SUBDIRS = ethtool-6 mii-tool-1.9.1.1 ppp-2.4.3 tcpdump-3.9.8
 TARGETS=ethtool mii-tool
 
 all: config
@@ -21,7 +21,8 @@ install:
 	-ln -f netperf-2.4.2/doc/examples/* ../../bin/
 	-ln -f mii-tool-1.9.1.1/mii-tool ../../bin/
 	#-$(MAKE) -C netperf-2.4.2 install 
-	-ln -f ppp-2.4.3/pppd/pppd ../../bin
+	-ln -f ppp-2.4.3/pppd/pppd ../../bin/
+	-ln -f tcpdump-3.9.8/tcpdump ../../bin/
 
 clean:
 	-@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
@@ -34,3 +35,4 @@ config:
 	else for i in $(CONFIG_SUBDIRS); do cd $$i && ./configure --host=arm-none-linux-gnueabi CC=$(CROSS_COMPILER)gcc && cd ..; done; \
 	fi
 	-cd netperf-2.4.2 && ./myconfig && cd ..
+	-cd tcpdump-3.9.8 && ./myconfig && cd ..

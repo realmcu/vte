@@ -549,19 +549,19 @@ int init_overlay(void)
                 tst_resm(TWARN,"ERROR init_overlay() : get format failed");
                 return TFAIL;
         } 
-                
+        /*        
         if(ioctl(gFdV4L, VIDIOC_G_STD, &stdID) < 0)
         {
                 tst_resm(TWARN,"ERROR init_overlay() : VIDIOC_G_STD failed");
                 return TFAIL;
         }
-                
         if(ioctl(gFdV4L, VIDIOC_S_OUTPUT, &displayLCD) < 0)
         {
                 tst_resm(TWARN,"ERROR init_overlay() : VIDIOC_S_OUTPUT failed");
                 return TFAIL;
         } 
         
+          */      
         streamParm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         streamParm.parm.capture.timeperframe.numerator = 1;
         streamParm.parm.capture.timeperframe.denominator = gV4LTestConfig.mFrameRate;
@@ -811,7 +811,7 @@ int start_capturing (void)
         unsigned int i;  
         struct v4l2_buffer buffer;  
         enum v4l2_buf_type typeBuffer = gUsecase;
-        int start = 0;
+        unsigned long start = 0;
          
         switch(gUsecase)
         {    
@@ -841,14 +841,32 @@ int start_capturing (void)
                         break;     
                         
                 case V4L2_BUF_TYPE_VIDEO_OVERLAY: 
-                
+                       {
+		        #define MX25_TEMP_SLT 0
+		        #if MX25_TEMP_SLT
+		        int fd_fb = 0;
+			struct fb_fix_screeninfo fix;
+			if ((fd_fb = open("/dev/fb0", O_RDWR )) < 0) {
+			 printf("Unable to open frame buffer\n");
+			 return TFAIL;
+			}
+			if (ioctl(fd_fb, FBIOGET_FSCREENINFO, &fix) < 0) {
+			 printf("Unable to get frame buffer parameter\n");
+			 return TFAIL;
+			}
+
+                       #endif
+
                         if(gV4LTestConfig.mVerbose) 
                         {
                                 tst_resm(TINFO,"OVERLAY MODE");
                         }
-                        
+                        #if MX25_TEMP_SLT
+                        start = fix.smem_start;
+			printf("smem_start = %ul \n", start);
+                        #else
                         start = 1;
-                                  
+			#endif
                         if(ioctl (gFdV4L, VIDIOC_OVERLAY, &start) < 0) 
                         {
                                 tst_resm(TWARN,"Error start_capturing() for VIDIOC_OVERLAY : %s",strerror(errno));
@@ -859,7 +877,7 @@ int start_capturing (void)
                         tst_resm(TINFO,"Please wait %d sec ... \n",gV4LTestConfig.mCount);
                         
                         sleep(gV4LTestConfig.mCount);
-                                 
+                        }         
                         break;
                         
                 default:          
