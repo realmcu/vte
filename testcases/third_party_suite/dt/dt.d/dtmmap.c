@@ -1,12 +1,10 @@
+static char *whatHeader = "@(#) dt.d/dtmmap.c /main/2 Jan_18_15:13";
 /****************************************************************************
  *									    *
- *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			  COPYRIGHT (c) 1990 - 2004			    *
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
- *			       Hudson, NH 03051				    *
- *			       (603) 883-2355				    *
  *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
  * its documentation for any purpose and without fee is hereby granted,	    *
@@ -34,6 +32,18 @@
  *	Functions to do memory mapped I/O for 'dt' program.
  *
  * Modification History:
+ *
+ * October 16th, 2006 by Robin T. Miller.
+ *      Added support for recording a timestamp in each data block.
+ *
+ * October 21st, 2004 by Robin Miller.
+ *      For variable record lengths, ensure we prime the first size
+ * to ensure it meets device size alignment requirements.
+ *
+ * November 17th, 2003 by Robin Miller.
+ *	Breakup output to stdout or stderr, rather than writing
+ * all output to stderr.  If output file is stdout ('-') or a log
+ * file is specified, then all output reverts to stderr.
  *
  * January 24th, 2001 by Robin Miller.
  *	Add support for variable I/O requests sizes.
@@ -263,7 +273,11 @@ mmap_read_data (struct dinfo *dip)
 	 * For variable length records, initialize to minimum record size.
 	 */
 	if (min_size) {
-	    dsize = min_size;
+            if (variable_flag) {
+                dsize = get_variable (dip);
+            } else {
+                dsize = min_size;
+            }
 	} else {
 	    dsize = block_size;
 	}
@@ -285,7 +299,7 @@ mmap_read_data (struct dinfo *dip)
 	    if ( (dip->di_fbytes_read + dsize) > data_limit) {
 		bsize = (data_limit - dip->di_fbytes_read);
 		if (debug_flag) {
-		    Fprintf ("Reading partial record of %d bytes...\n", bsize);
+		    Printf ("Reading partial record of %d bytes...\n", bsize);
 		}
 	    } else {
 		bsize = dsize;
@@ -304,7 +318,7 @@ mmap_read_data (struct dinfo *dip)
 	     */
 	    if (count == (ssize_t) 0) {		/* Pseudo end of file. */
 		if (debug_flag) {
-		    Fprintf ("End of memory mapped file detected...\n");
+		    Printf ("End of memory mapped file detected...\n");
 		}
 		end_of_file = TRUE;
 		exit_status = END_OF_FILE;
@@ -318,9 +332,9 @@ mmap_read_data (struct dinfo *dip)
 	    }
 
 	    if (count == dsize) {
-		records_processed++;
+		dip->di_full_reads++;
 	    } else {
-		partial_records++;
+		dip->di_partial_reads++;
 	    }
 
 	    /*
@@ -433,7 +447,7 @@ mmap_write_data (struct dinfo *dip)
 	    if ( (dip->di_fbytes_written + dsize) > data_limit) {
 		bsize = (data_limit - dip->di_fbytes_written);
 		if (debug_flag) {
-		    Fprintf ("Writing partial record of %d bytes...\n",
+		    Printf ("Writing partial record of %d bytes...\n",
 								bsize);
 		}
 	    } else {
@@ -455,6 +469,15 @@ mmap_write_data (struct dinfo *dip)
 		lba = init_lbdata (mmap_bufptr, count, lba, lbdata_size);
 	    }
 
+#if defined(TIMESTAMP)
+            /*
+             * If timestamps are enabled, initialize buffer accordingly.
+             */
+            if (timestamp_flag) {
+                init_timestamp(mmap_bufptr, count, lbdata_size);
+            }
+#endif /* defined(TIMESTAMP) */
+
 	    mmap_bufptr += count;
 	    dip->di_dbytes_written += count;
 	    dip->di_fbytes_written += count;
@@ -464,7 +487,7 @@ mmap_write_data (struct dinfo *dip)
 	     */
 	    if (count == (ssize_t) 0) {		/* Pseudo end of file. */
 		if (debug_flag) {
-		    Fprintf ("End of memory mapped file reached...\n");
+		    Printf ("End of memory mapped file reached...\n");
 		}
 		end_of_file = TRUE;
 		exit_status = END_OF_FILE;
@@ -475,9 +498,9 @@ mmap_write_data (struct dinfo *dip)
 		break;
 	    } else {
 		if (count == dsize) {
-		    records_processed++;
+		    dip->di_full_writes++;
 		} else {
-		    partial_records++;
+		    dip->di_partial_writes++;
 		}
 	    }
 

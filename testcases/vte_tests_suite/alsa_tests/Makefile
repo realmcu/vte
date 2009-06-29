@@ -1,15 +1,16 @@
+#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 ###############################################################################
 #
 #    @file   Makefile
 #
 #    @brief  configuration file to compile the ALSA test applications.
-#
-###############################################################################
-#
-#   Copyright (C) 2008, Freescale Semiconductor, Inc. All Rights Reserved
-#   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-#   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-#   Freescale Semiconductor, Inc.
 #
 ###############################################################################
 #Revision History:
@@ -26,18 +27,14 @@
 #
 ###############################################################################
 
-SUBDIRS=
 TARGETS=dac_test1.sh adc_test1.sh dac_vol_adj.sh alsa_ctl.sh dac_channel_swap.sh
 TARGETS+=speaker_test1.sh speaker_switch_headset.sh
-TARGETS+=audio48k16S.wav
 #Platform identify script
 TARGETS+=platfm_identify.sh
 
 all:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
 
 install:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
 	@for i in $(TARGETS); do \
 		ln -f $$i ../../bin/ ;\
 		echo "***********************************************" ; \
@@ -47,6 +44,5 @@ install:
 	@echo
 
 clean:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
 
 

@@ -1,23 +1,18 @@
+/***
+**Copyright 2006-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**
+**The code contained herein is licensed under the GNU General Public
+**License. You may obtain a copy of the GNU General Public License
+**Version 2 or later at the following locations:
+**
+**http://www.opensource.org/licenses/gpl-license.html
+**http://www.gnu.org/copyleft/gpl.html
+**/
 /*================================================================================================
 
         @file   rng_test_module.c
 
         @brief  rng API
-
-==================================================================================================*/
-/*
- * Copyright 2004-2006 Freescale Semiconductor, Inc. All Rights Reserved.
- */
-
-/*
- * The code contained herein is licensed under the GNU General Public
- * License. You may obtain a copy of the GNU General Public License
- * Version 2 or later at the following locations:
- *
- * http://www.opensource.org/licenses/gpl-licensisr_locke.html
- * http://www.gnu.org/copyleft/gpl.html
- */
-
 /*====================================================================================================
 Revision History:
                             Modification     Tracking
@@ -51,7 +46,7 @@ Test Strategy:  Examine the RNG module functions
 #include <linux/delay.h>
 #include <linux/fs.h>
 #include <linux/version.h>
-#include <asm/arch-mxc/mxc_security_api.h>
+//#include <asm/arch-mxc/mxc_security_api.h>
 #include "rng_test_module.h"
 
 /*==================================================================================================
@@ -482,6 +477,10 @@ static int __init rng_test_init(void)
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,26))
         if (IS_ERR(class_device_create(rng_class,NULL,
                                               MKDEV(major_dev_num, 0), NULL,
+                                              RNG_DEVICE_NAME)))
+#elif (LINUX_VERSION_CODE == KERNEL_VERSION(2,6,28))
+        if (IS_ERR(device_create(rng_class,NULL,
+                                              MKDEV(major_dev_num, 0),NULL,
                                               RNG_DEVICE_NAME)))
 #else
         if (IS_ERR(device_create(rng_class,NULL,

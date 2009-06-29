@@ -1,15 +1,18 @@
+/***
+**Copyright 2006-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**
+**The code contained herein is licensed under the GNU General Public
+**License. You may obtain a copy of the GNU General Public License
+**Version 2 or later at the following locations:
+**
+**http://www.opensource.org/licenses/gpl-license.html
+**http://www.gnu.org/copyleft/gpl.html
+**/
 /*================================================================================================*/
 /**
     @file   v4l_output_main.c
 
-    @brief  v4l output main source file.*/
-/*==================================================================================================
-
-    Copyright (C) 2005, Freescale Semiconductor, Inc. All Rights Reserved
-    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-    Freescale Semiconductor, Inc.
-    
+    @brief  v4l output main source file.
 ====================================================================================================
 Revision History:
                             Modification     Tracking

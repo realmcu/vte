@@ -1,12 +1,10 @@
+static char *whatHeader = "@(#) dt.d/dtusage.c /main/3 Jan_18_15:13";
 /****************************************************************************
  *									    *
- *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			  COPYRIGHT (c) 1990 - 2004			    *
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
- *			       Hudson, NH 03051				    *
- *			       (603) 883-2355				    *
  *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
  * its documentation for any purpose and without fee is hereby granted,	    *
@@ -33,6 +31,18 @@
  *	Display usage information for generic data test program.
  *
  * Modification History:
+ *
+ * December 23rd, 2004 by Robin Miller.
+ *      Add help text for statistics control level.
+ *
+ * December 21st, 2004 by Robin Miller.
+ *      Add help text for keepalive format control characters.
+ *
+ * December 5th, 2003 by Robin Miller.
+ *      Conditionalize help text for tty options.
+ *
+ * March 15th, 2003 by Robin Miller.
+ *	Add displaying of prefix string if specified.
  *
  * January 24th, 2001 by Robin Miller.
  *	Add help text for variable I/O requests sizes.
@@ -127,7 +137,7 @@
 #define P	printf
 #define D	Fprint
 
-char *version_str = "Date: June 2nd, Version: 14.10, Author: Robin T. Miller";
+char *version_str = "Date: January 13th, 2007, Version: 15.34, Author: Robin T. Miller";
 
 void
 dtusage(void)
@@ -164,8 +174,13 @@ dthelp(void)
     P ("\taios=value       Set number of AIO's to queue.\n");
 #endif /* defined(AIO) */
 #if !defined(_QNX_SOURCE)
+    P ("\talarm=time       The keepalive alarm time.\n");
+    P ("\tkeepalive=string The keepalive message string.\n");
+    P ("\tpkeepalive=str   The pass keepalive msg string.\n");
+    P ("\ttkeepalive=str   The totals keepalive msg string.\n");
     P ("\talign=offset     Set offset within page aligned buffer.\n");
     P ("    or\talign=rotate     Rotate data address through sizeof(ptr).\n");
+
 #endif /* !defined(_QNX_SOURCE) */
     P ("\tcapacity=value   Set the device capacity in bytes.\n");
 #if defined(DEC)
@@ -194,6 +209,7 @@ dthelp(void)
     P ("\tflags=flags      Set open flags:   {excl,sync,...}\n");
     P ("\toflags=flags     Set output flags: {append,trunc,...}\n");
     P ("\toncerr=action    Set child error action: {abort or continue}.\n");
+    P ("\tnoprogt=value    Set the no progress time (in seconds).\n");
 #if defined(_QNX_SOURCE)
     P ("\tparity=string    Set parity to: {even, odd, mark, space, or none}.\n");
 #else /* !defined(_QNX_SOURCE) */
@@ -205,19 +221,28 @@ dthelp(void)
     P ("    or\tpattern=incr     Use an incrementing data pattern.\n");
     P ("    or\tpattern=string   The string to use for the data pattern.\n");
     P ("\tposition=offset  Position to offset before testing.\n");
+    P ("\tprefix=string    The data pattern prefix string.\n");
     P ("\tprocs=value      The number of processes to create.\n");
+#if defined(HP_UX)
+    P ("\tqdepth=value     Set the queue depth to specified value.\n");
+#endif /* defined(HP_UX) */
     P ("\tralign=value     The random I/O offset alignment.\n");
     P ("\trlimit=value     The random I/O data byte limit.\n");
     P ("\trseed=value      The random number generator seed.\n");
     P ("\trecords=value    The number of records to process.\n");
     P ("\truntime=time     The number of seconds to execute.\n");
+    P ("\tslice=value      The specific disk slice to test.\n");
     P ("\tslices=value     The number of disk slices to test.\n");
     P ("\tskip=value       The number of records to skip past.\n");
     P ("\tseek=value       The number of records to seek past.\n");
     P ("\tstep=value       The number of bytes seeked after I/O.\n");
+    P ("\tstats=level      The stats level: {brief, full, or none}\n");
+#if defined(TTY)
     P ("\tspeed=value      The tty speed (baud rate) to use.\n");
     P ("\ttimeout=value    The tty read timeout in .10 seconds.\n");
     P ("\tttymin=value     The tty read minimum count (sets vmin).\n");
+#endif /* defined(TTY) */
+    P ("\ttrigger=type     The trigger to execute during errors.\n");
     P ("\tvolumes=value    The number of volumes to process.\n");
     P ("\tvrecords=value   The record limit for the last volume.\n");
     P ("\tenable=flag      Enable one or more of the flags below.\n");
@@ -248,14 +273,18 @@ dthelp(void)
 				(dump_flag) ? enabled_str : disabled_str);
     P ("\teof              EOF/EOM exit status.   (Default: %s)\n",
 				(eof_status) ? enabled_str : disabled_str);
+    P ("\tfsalign          File system align.     (Default: %s)\n",
+				(fsalign_flag) ? enabled_str : disabled_str);
 #if defined(EEI)
     P ("\teei              Tape EEI reporting.    (Default: %s)\n",
 				(eei_flag) ? enabled_str : disabled_str);
     P ("\tresets           Tape reset handling.   (Default: %s)\n",
 				(eei_resets) ? enabled_str : disabled_str);
 #endif /* defined(EEI) */
+#if defined(TTY)
     P ("\tflush            Flush tty I/O queues.  (Default: %s)\n",
 				(flush_flag) ? enabled_str : disabled_str);
+#endif /* defined(TTY) */
     P ("\tfsync            Controls file sync'ing.(Default: %s)\n",
 				(fsync_flag == UNINITIALIZED) ? "runtime"
 				: (fsync_flag) ? enabled_str : disabled_str);
@@ -263,40 +292,53 @@ dthelp(void)
 				(header_flag) ? enabled_str : disabled_str);
     P ("\tlbdata           Logical block data.    (Default: %s)\n",
 				(lbdata_flag) ? enabled_str : disabled_str);
+#if defined(TTY)
     P ("\tloopback         Loopback mode.         (Default: %s)\n",
 				(loopback) ? enabled_str : disabled_str);
+#endif /* defined(TTY */
     P ("\tmicrodelay       Microsecond delays.    (Default: %s)\n",
 				(micro_flag) ? enabled_str : disabled_str);
 #if defined(MMAP)
     P ("\tmmap             Memory mapped I/O.     (Default: %s)\n",
 				(mmap_flag) ? enabled_str : disabled_str);
 #endif /* defined(MMAP) */
+#if defined(TTY)
     P ("\tmodem            Test modem tty lines.  (Default: %s)\n",
 				(modem_flag) ? enabled_str : disabled_str);
+#endif /* defined(TTY) */
     P ("\tmulti            Multiple volumes.      (Default: %s)\n",
 				(multi_flag) ? enabled_str : disabled_str);
+    P ("\tnoprog           No progress check.     (Default: %s)\n",
+				(noprog_flag) ? enabled_str : disabled_str);
     P ("\tpstats           Per pass statistics.   (Default: %s)\n",
 				(pstats_flag) ? enabled_str : disabled_str);
     P ("\traw              Read after write.      (Default: %s)\n",
 				(raw_flag) ? enabled_str : disabled_str);
-#if defined(sun)
+#if defined(sun) && defined(TTY)
     P ("\tsoftcar          tty software carrier.  (Default: none)\n");
-#endif /* defined(sun) */
+#endif /* defined(sun) && defined(TTY) */
     P ("\tstats            Display statistics.    (Default: %s)\n",
 				(stats_flag) ? enabled_str : disabled_str);
 #if defined(DEC)
     P ("\ttable            Table(sysinfo) timing. (Default: %s)\n",
 				(table_flag) ? enabled_str : disabled_str);
 #endif /* defined(DEC) */
+#if defined(TIMESTAMP)
+    P ("\ttimestamp        Timestamp each block.  (Default: %s)\n",
+				(timestamp_flag) ? enabled_str : disabled_str);
+#endif /* defined(TIMESTAMP) */
+#if defined(TTY)
     P ("\tttyport          Flag device as a tty.  (Default: %s)\n",
 				(ttyport_flag) ? enabled_str : disabled_str);
+#endif /* defined(TTY) */
     P ("\tunique           Unique pattern.        (Default: %s)\n",
 				(unique_pattern) ? enabled_str : disabled_str);
     P ("\tverbose          Verbose output.        (Default: %s)\n",
 				(verbose_flag) ? enabled_str : disabled_str);
     P ("\tverify           Verify data written.   (Default: %s)\n",
 				(verify_flag) ? enabled_str : disabled_str);
-    P ("\n\tExample: enable=debug disable=compare,pstats\n");
+    P ("\n");
+    P ("      Example: enable=debug disable=compare,pstats\n");
 #if defined(MUNSA)
     P ("\n    MUNSA Lock Options:\n");
     P ("\tcr = Concurrent Read (permits read access, cr/pr/cw by others)\n");
@@ -304,7 +346,8 @@ dthelp(void)
     P ("\tcw = Concurrent Write (permits write and cr access to resource by all)\n");
     P ("\tpw = Protected Write (permits write access, cr by others)\n");
     P ("\tex = Exclusive Mode (permits read/write access, no access to others)\n");
-    P ("\n\t    For more details, please refer to the dlm(4) reference page.\n");
+    P ("\n");
+    P ("\t    For more details, please refer to the dlm(4) reference page.\n");
 #endif /* defined(MUNSA) */
     P ("\n    Common Open Flags:\n");
 #if defined(O_EXCL)
@@ -348,7 +391,7 @@ dthelp(void)
     P ("\tdsync (O_DSYNC)       Sync data to disk during write operations.\n");
 #endif /* defined(O_DSYNC) */
 #if defined(O_TRUNC)
-    P ("\ttrunc (O_TRUNC)       Truncate an exisiting file before writing.\n");
+    P ("\ttrunc (O_TRUNC)       Truncate an existing file before writing.\n");
 #endif /* defined(O_TRUNC) */
 #if defined(O_TEMP)
     P ("\ttemp (O_TEMP)         Temporary file, try to keep data in cache.\n");
@@ -373,8 +416,7 @@ dthelp(void)
     P ("\t    w = words (%d bytes)", sizeof(int));
     P ("            q = quadwords (%d bytes)\n", sizeof(large_t));
     P ("\t    b = blocks (512 bytes)         k = kilobytes (1024 bytes)\n");
-    P ("\t    m = megabytes (1048576 bytes)  p = page size (%d bytes)\n",
-								page_size);
+    P ("\t    m = megabytes (1048576 bytes)  p = page size (%d bytes)\n", page_size);
     P ("\t    g = gigabytes (%ld bytes)\n", GBYTE_SIZE);
     P ("\t    t = terabytes (" LDF " bytes)\n", TBYTE_SIZE);
     P ("\t    inf or INF = infinity (" LUF " bytes)\n", INFINITY);
@@ -391,12 +433,47 @@ dthelp(void)
     P ("\ta leading zero '0' for octal conversions.  NOTE: Evaluation is from\n");
     P ("\tright to left without precedence, and parenthesis are not permitted.\n");
 
+    P ("\n    Keepalive Format Control:\n");
+    P ("\t    %%b = The bytes read or written.  %%B = Total bytes read and written.\n");
+    P ("\t    %%c = Record count for this pass. %%C = Total records for this test.\n");
+    P ("\t    %%d = The device name.            %%D = The real device name.\n");
+    P ("\t    %%e = The number of errors.       %%E = The error limit.\n");
+    P ("\t    %%f = The files read or written.  %%F = Total files read and written.\n");
+    P ("\t    %%h = The host name.              %%H = The full host name.\n");
+    P ("\t    %%k = The kilobytes this pass.    %%K = Total kilobytes for this test.\n");
+    P ("\t    %%l = Blocks read or written.     %%L = Total blocks read and written.\n");
+    P ("\t    %%m = The megabytes this pass.    %%M = Total megabytes for this test.\n");
+    P ("\t    %%p = The pass count.             %%P = The pass limit.\n");
+    P ("\t    %%r = Records read this pass.     %%R = Total records read this test.\n");
+    P ("\t    %%s = The seconds this pass.      %%S = The total seconds this test.\n");
+    P ("\t    %%t = The pass elapsed time.      %%T = The total elapsed time.\n");
+    P ("\t    %%i = The I/O mode (read/write)   %%u = The user (login) name.\n");
+    P ("\t    %%w = Records written this pass.  %%W = Total records written this test.\n");
+    P ("\n    Performance Keywords:\n");
+    P ("\t    %%bps  = The bytes per second.    %%lbps = Logical blocks per second.\n");
+    P ("\t    %%kbps = Kilobytes per second.    %%mbps = The megabytes per second.\n");
+    P ("\t    %%iops = The I/O's per second.    %%spio = The seconds per I/O.\n");
+    P ("\n");
+    P ("      Lowercase means per pass stats, while uppercase means total stats.\n");
+    P ("\n");
+    P ("      Default: %s\n", keepalive0);
+    P ("                     or if pass statistics summary is disabled:\n");
+    P ("               %s\n", keepalive1);
+
     P ("\n    Pattern String Input:\n");
     P ("\t    \\\\ = Backslash   \\a = Alert (bell)   \\b = Backspace\n");
     P ("\t    \\f = Formfeed    \\n = Newline        \\r = Carriage Return\n");
     P ("\t    \\t = Tab         \\v = Vertical Tab   \\e or \\E = Escape\n");
     P ("\t    \\ddd = Octal Value    \\xdd or \\Xdd = Hexadecimal Value\n");
   
+    P ("\n    Prefix Format Control:\n");
+    P ("\t    %%d = The device name.           %%D = The real device name.\n");
+    P ("\t    %%h = The host name.             %%H = The full host name.\n");
+    P ("\t    %%p = The process ID.            %%P = The parent PID.\n");
+    P ("\t    %%u = The user name.\n");
+    P ("\n");
+    P ("      Example: prefix=\"%%u@%%h (pid %%p)\"\n");
+
     P ("\n    Time Input:\n");
     P ("\t    d = days (%d seconds),      h = hours (%d seconds)\n",
 						SECS_PER_DAY, SECS_PER_HOUR);
@@ -404,6 +481,15 @@ dthelp(void)
 								SECS_PER_MIN);
     P ("\tArithmetic characters are permitted, and implicit addition is\n");
     P ("\tperformed on strings of the form '1d5h10m30s'.\n");
+
+    P ("\n    Trigger Types:\n");
+    P ("\t    br = Execute a bus reset.\n");
+    P ("\t    bdr = Execute a bus device reset.\n");
+    P ("\t    seek = Issue a seek to the failing lba.\n");
+    P ("\t    cmd:string = Execute command with these args:\n");
+    P ("\t      string dname op dsize offset position lba errno\n");
+    P ("\n");
+    P ("\t    The first three options require Scu in your PATH.\n");
 
     /*
      * Display the program defaults.
@@ -417,11 +503,13 @@ dthelp(void)
     P (", log=stderr\n");
 
     P ("\tpattern=%#x", pattern);
+#if defined(TTY)
     P (", flow=%s", flow_str);
     P (", parity=%s", parity_str);
     P (", speed=%s\n", speed_str);
 
     P ("\ttimeout=%d seconds", (tty_timeout / 10));
+#endif /* defined(TTY) */
     P (", dispose=delete");
     P (", align=%d (page aligned)\n", align_offset);
 
@@ -436,7 +524,9 @@ dthelp(void)
     P ("\tiodir=%s", (io_dir == FORWARD) ? "forward" : "reverse");
     P (", iomode=%s", (io_mode == TEST_MODE) ? "test" :
 			(io_mode == COPY_MODE) ? "copy" : "verify");
-    P (", iotype=%s\n", (io_type == RANDOM_IO) ? "random" : "sequential");
+    P (", iotype=%s", (io_type == RANDOM_IO) ? "random" : "sequential");
+    P (", stats=%s\n", (stats_level == STATS_BRIEF) ? "brief" :
+                       (stats_level == STATS_FULL) ? "full" : "none");
     P ("\n    --> %s <--\n", version_str);
 
     exit (SUCCESS);

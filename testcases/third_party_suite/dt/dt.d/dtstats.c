@@ -1,12 +1,10 @@
+static char *whatHeader = "WHATSTRING";
 /****************************************************************************
  *									    *
- *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			  COPYRIGHT (c) 1990 - 2004			    *
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
- *			       Hudson, NH 03051				    *
- *			       (603) 883-2355				    *
  *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
  * its documentation for any purpose and without fee is hereby granted,	    *
@@ -34,6 +32,22 @@
  *	Display statistics information for generic data test program.
  *
  * Modification History:
+ *
+ * June 24th, 2004 by Robin Miller.
+ *      Improve data pattern display when multiple passes specified.
+ * Previously, insufficent/misleading information was displayed when
+ * IOT or lbdata was enabled.
+ *
+ * December 6th, 2003 by Robin Miller.
+ *      Conditionalize to exclude tty code.
+ *
+ * November 17th, 2003 by Robin Miller.
+ *	Breakup output to stdout or stderr, rather than writing
+ * all output to stderr.  If output file is stdout ('-') or a log
+ * file is specified, then all output reverts to stderr.
+ *
+ * January 29th, 2002 by Robin Miller.
+ *	Display the start and end date/time for per pass statistics.
  *
  * January 24th, 2001 by Robin Miller.
  *	If variable block sizes enabled, display the random seed used.
@@ -152,45 +166,64 @@ static char *data_op_str = "Data operation performed: ";
 /*
  * Functions to Process Statistics:
  */
-
 void
 gather_stats(struct dinfo *dip)
 {
-	total_files_read += dip->di_files_read;
-	total_files_written += dip->di_files_written;
-	total_bytes_read += dip->di_dbytes_read;
-	total_bytes_written += dip->di_dbytes_written;
+    /*
+     * Gather per pass statistics.
+     */
+    total_files_read += dip->di_files_read;
+    total_files_written += dip->di_files_written;
+    total_bytes_read += dip->di_dbytes_read;
+    total_bytes_written += dip->di_dbytes_written;
+    total_partial_reads += dip->di_partial_reads;
+    total_partial_writes += dip->di_partial_writes;
+    total_records_read += dip->di_full_reads;
+    total_records_written += dip->di_full_writes;
+    /* TODO: Cleanup these two variables. */
+    records_processed = (dip->di_full_reads + dip->di_full_writes);
+    partial_records = (dip->di_partial_reads + dip->di_partial_writes);
 }
 
 void
-gather_totals(void)
+gather_totals(struct dinfo *dip)
 {
-	total_bytes = (total_bytes_read + total_bytes_written);
-	total_files = (total_files_read + total_files_written);
-	total_records += records_processed;
-	total_partial += partial_records;
-	total_errors += error_count;
+    /*
+     * Gather total (accumulated) statistics:
+     */
+    /* TODO: Move total statistics to dip structure! */
+    total_bytes = (total_bytes_read + total_bytes_written);
+    total_files = (total_files_read + total_files_written);
+    total_records += records_processed;
+    total_partial += partial_records;
+    total_errors += error_count;
 }
 
 void
 init_stats(struct dinfo *dip)
 {
-	end_of_file = FALSE;
-	error_count = (vu_long) 0;
-	dip->di_end_of_file = FALSE;
-	dip->di_end_of_media = FALSE;
-	dip->di_end_of_logical = FALSE;
-	dip->di_files_read = (vu_long) 0;
-	dip->di_dbytes_read = (v_large) 0;
-	dip->di_vbytes_read = (v_large) 0;
-	dip->di_records_read = (vu_long) 0;
-	dip->di_files_written = (vu_long) 0;
-	dip->di_dbytes_written = (v_large) 0;
-	dip->di_vbytes_written = (v_large) 0;
-	dip->di_records_written = (vu_long) 0;
-	dip->di_volume_records = (vu_long) 0;
-	partial_records = (vu_long) 0;
-	records_processed = (vu_long) 0;
+    /*
+     * Initial fields in preparation for the next pass.
+     */
+    end_of_file = FALSE;
+    error_count = (vu_long) 0;
+    dip->di_end_of_file = FALSE;
+    dip->di_end_of_media = FALSE;
+    dip->di_end_of_logical = FALSE;
+    dip->di_files_read = (vu_long) 0;
+    dip->di_dbytes_read = (v_large) 0;
+    dip->di_vbytes_read = (v_large) 0;
+    dip->di_records_read = (vu_long) 0;
+    dip->di_files_written = (vu_long) 0;
+    dip->di_dbytes_written = (v_large) 0;
+    dip->di_vbytes_written = (v_large) 0;
+    dip->di_records_written = (vu_long) 0;
+    dip->di_volume_records = (vu_long) 0;
+    dip->di_full_reads = (u_long) 0;
+    dip->di_full_writes = (u_long) 0;
+    dip->di_partial_reads = (u_long) 0;
+    dip->di_partial_writes = (u_long) 0;
+    records_processed = (u_long) 0;
 }
 
 /************************************************************************
@@ -204,38 +237,38 @@ init_stats(struct dinfo *dip)
 void
 report_pass(struct dinfo *dip, enum stats stats_type)
 {
-	gather_stats(dip);		/* Gather the total statistics.	*/
-	gather_totals();		/* Update the total statistics. */
-	if (pstats_flag) {		/* Display statistics per pass. */
-	    if (stats_flag) {		/* Displaying any statistics?	*/
-		report_stats(dip, stats_type);
-	    }
-	} else if (verbose_flag) {
-	    clock_t at;
-	    end_time = times (&etimes);
-#if defined(DEC)
-	    table(TBL_SYSINFO,0,(char *)&e_table,1,sizeof(struct tbl_sysinfo));
-#endif /* defined(DEC) */
-	    if (num_procs || num_slices || forked_flag) {
-		fprintf (stderr,
-		    "%s (%d): End of %s pass %lu, records = %lu, errors = %lu",
-			cmdname, getpid(), stats_names[(int)stats_type],
-			pass_count, records_processed, error_count);
-	    } else {
-		fprintf (stderr,
-		    "%s: End of %s pass %lu, records = %lu, errors = %lu",
-			cmdname, stats_names[(int)stats_type],
-			pass_count, records_processed, error_count);
-	    }
-	    fprintf (stderr, ", elapsed time = ");
-	    at = end_time - pass_time;
-	    print_time (at);
-	    (void) fflush (stderr);
+    gather_stats(dip);		/* Gather the total statistics.	*/
+    gather_totals(dip);		/* Update the total statistics. */
+
+    if (pstats_flag && (stats_level == STATS_FULL) ) {
+        if (stats_flag) {
+	    report_stats(dip, stats_type);
 	}
-	/*
-	 * Re-initialize the per pass counters and flags.
-	 */
-	init_stats(dip);
+    } else if ( (!pstats_flag && verbose_flag) || /* compatability */
+                (pstats_flag && (stats_level == STATS_BRIEF)) ) {
+#if defined(DEC)
+	table(TBL_SYSINFO,0,(char *)&e_table,1,sizeof(struct tbl_sysinfo));
+#endif /* defined(DEC) */
+        if ( user_keepalive && !user_pkeepalive &&
+             (time((time_t *)0) > lastalarm) ) {
+          char alivemsg[STRING_BUFFER_SIZE];
+          if (FmtKeepAlive(dip, keepalive, alivemsg) == SUCCESS) {
+              LogMsg (ofp, logLevelLog, PRT_NOIDENT, "%s\n", alivemsg);
+          }
+        }
+        if ( pkeepalive && strlen(pkeepalive) ) {
+            /* TODO: Make stats type available in FmtKeepAlive()! */
+	    Lprintf ("End of %s ", stats_names[(int)stats_type]);
+            FmtKeepAlive(dip, pkeepalive, log_bufptr);
+            LogMsg (ofp, logLevelLog, PRT_NOIDENT, "%s\n", log_buffer);
+	    log_bufptr = log_buffer;
+        }
+    }
+    /*
+     * Re-initialize the per pass counters and flags.
+     */
+    init_stats(dip);
+    return;
 }
 
 /************************************************************************
@@ -261,8 +294,22 @@ report_stats(struct dinfo *dip, enum stats stats_type)
 	struct tbl_sysinfo *stbl, *etbl = &e_table;
 #endif /* defined(DEC) */
 
-	if (stats_flag == FALSE) return;	/* No statistics...	*/
+        if (!stats_flag || (stats_level == STATS_NONE) ) return;
 
+        if ( (stats_type == TOTAL_STATS) && (stats_level == STATS_BRIEF) ) {
+            if ( user_keepalive && !user_tkeepalive &&
+                 (time((time_t *)0) > lastalarm) ) {
+                if (FmtKeepAlive(dip, keepalive, log_buffer) == SUCCESS) {
+                    LogMsg (ofp, logLevelLog, PRT_NOIDENT, "%s\n", log_buffer);
+                }
+            }
+            if ( tkeepalive && strlen(tkeepalive) ) {
+                if (FmtKeepAlive(dip, tkeepalive, log_buffer) == SUCCESS) {
+                    LogMsg (ofp, logLevelLog, PRT_NOIDENT, "%s\n", log_buffer);
+                }
+            }
+            return;
+        }
 	end_time = times (etms);
 #if defined(DEC)
 	table(TBL_SYSINFO,0,(char *)etbl,1,sizeof(struct tbl_sysinfo));
@@ -374,11 +421,13 @@ report_stats(struct dinfo *dip, enum stats stats_type)
 			(num_procs) ? num_procs : num_slices);
 	}
 
+#if defined(TTY)
 	if (ttyport_flag && (stats_type == TOTAL_STATS)) {
 	    Lprintf ("%30.30sflow=%s, parity=%s, speed=%s\n",
 				"Terminal characteristics: ",
 				flow_str, parity_str, speed_str);
 	}
+#endif /* defined(TTY) */
 
     if (io_mode == TEST_MODE) {
 	/*
@@ -389,6 +438,8 @@ report_stats(struct dinfo *dip, enum stats stats_type)
 	    pinfo = " (read verify disabled)";
 	} else if (!compare_flag) {
 	    pinfo = " (data compare disabled)";
+	} else if (incr_pattern) {
+	    sprintf(pinfo, " (incrementing 0-255)");
 	} else if (iot_pattern) {
 	    sprintf(pinfo, " (blocking is %u bytes)", lbdata_size);
 	} else if (pattern_file || pattern_string) {
@@ -397,7 +448,11 @@ report_stats(struct dinfo *dip, enum stats stats_type)
 	    sprintf(pinfo, " (w/lbdata, lba %u, size %u bytes)",
 					 lbdata_addr, lbdata_size);
 	}
-	if (stats_type == TOTAL_STATS) {
+	if ( (stats_type == TOTAL_STATS) || (pass_limit > 1L) ) {
+	    if (prefix_string) {
+		Lprintf ("%30.30s'%s'\n",
+			"Data pattern prefix used: ", prefix_string);
+	    }
 	    if (pattern_file) {
 		Lprintf ("%30.30s%s (%lu bytes)\n",
 			"Data pattern file used: ", pattern_file, patbuf_size);
@@ -417,14 +472,6 @@ report_stats(struct dinfo *dip, enum stats stats_type)
 		Lprintf ("%30.30s0x%08x%s\n",
 				"Data pattern read: ", pattern, pinfo);
 	      }
-	    }
-	} else if ( (pass_limit > 1L) && !pattern_file ) {
-	    if (stats_type == READ_STATS) {
-		Lprintf ("%30.30s0x%08x%s\n",
-				"Data pattern read: ", pattern, pinfo);
-	    } else {
-		Lprintf ("%30.30s0x%08x\n",
-				"Data pattern written: ", pattern, pinfo);
 	    }
 	}
     } else { /* !TEST_MODE */
@@ -464,14 +511,14 @@ report_stats(struct dinfo *dip, enum stats stats_type)
 	    }
 	}
     
-#if !defined(__GNUC__) && defined(_NT_SOURCE)
+#if !defined(__GNUC__) && ( defined(_NT_SOURCE) || defined(WIN32) )
     /* Avoid:  error C2520: conversion from unsigned __int64 to double not implemented, use signed __int64 */
 	Kbytes = (double) ( (double)(slarge_t) xfer_bytes / (double) KBYTE_SIZE);
 	Mbytes = (double) ( (double)(slarge_t) xfer_bytes / (double) MBYTE_SIZE);
 #else /* !defined(_NT_SOURCE) */
 	Kbytes = (double) ( (double) xfer_bytes / (double) KBYTE_SIZE);
 	Mbytes = (double) ( (double) xfer_bytes / (double) MBYTE_SIZE);
-#endif /* !defined(__GNUC__) && defined(_NT_SOURCE) */
+#endif /* !defined(__GNUC__) ( defined(_NT_SOURCE) || defined(WIN32) ) */
 	    
 	Lprintf ("%30.30s" LUF " (%.3f Kbytes, %.3f Mbytes)\n",
 				"Total bytes transferred: ",
@@ -481,15 +528,17 @@ report_stats(struct dinfo *dip, enum stats stats_type)
 	 * Calculate the total clock ticks (hz = ticks/second).
 	 */
 	if (et) {
-#if !defined(__GNUC__) && defined(_NT_SOURCE)
+#if !defined(__GNUC__) &&  defined(_NT_SOURCE) 
 	    bytes_sec = ((double)(slarge_t)xfer_bytes / ((double)et / (double)hz));
+#elif defined(WIN32)
+	    bytes_sec = ((double)(slarge_t)xfer_bytes / (double)et );
 #else /* !defined(_NT_SOURCE) */
 	    bytes_sec = ((double)xfer_bytes / ((double)et / (double)hz));
 #endif /* !defined(__GNUC__) && defined(_NT_SOURCE) */
 	} else {
 	    bytes_sec = 0.0;
 	}
-#if !defined(__GNUC__) && defined(_NT_SOURCE)
+#if !defined(__GNUC__) && ( defined(_NT_SOURCE) || defined(WIN32) )
 	kbytes_sec = (double) ( (double) bytes_sec / (double) KBYTE_SIZE);
 #else /* !defined(_NT_SOURCE) */
         kbytes_sec = (double) ( (double) bytes_sec / (double) KBYTE_SIZE);
@@ -506,7 +555,7 @@ report_stats(struct dinfo *dip, enum stats stats_type)
 #endif /* defined(AIO) */
 
 	if (et && xfer_records) {
-#if !defined(__GNUC__) && defined(_NT_SOURCE)
+#if !defined(__GNUC__) && ( defined(_NT_SOURCE) || defined(WIN32) )
 	    double records = (double)(slarge_t)(xfer_records + xfer_partial);
 #else /* !defined(_NT_SOURCE) */
 	    double records = (double)(xfer_records + xfer_partial);
@@ -570,7 +619,7 @@ report_stats(struct dinfo *dip, enum stats stats_type)
 	 */
 	Lprintf ("%30.30s", "Total elapsed time: ");
 	format_time (et);
-
+#if !defined(WIN32)
 	/*
 	 * More ugliness for Windows, since the system and
 	 * user times are always zero, don't display them.
@@ -584,11 +633,12 @@ report_stats(struct dinfo *dip, enum stats stats_type)
 	at = etms->tms_utime - stms->tms_utime;
 	at += etms->tms_cutime - stms->tms_cutime;
 	format_time (at);
+#endif /* !defined(WIN32) */
 
 #if defined(DEC)
 	if (table_flag) {
 	    if ( (etbl->si_hz != stbl->si_hz) ) {
-		fprintf (stderr, "Inconsistency! etbl->si_hz = %ld, stbl->si_hz = %ld\n",
+		Fprintf ("Inconsistency! etbl->si_hz = %ld, stbl->si_hz = %ld\n",
 								etbl->si_hz, stbl->si_hz);
 	    }
 	    table_user = (etbl->si_user - stbl->si_user);
@@ -610,13 +660,11 @@ report_stats(struct dinfo *dip, enum stats stats_type)
 	}
 #endif /* defined(DEC) */
 
-	if (stats_type == TOTAL_STATS) {
-	    Lprintf ("%30.30s", "Starting time: ");
-	    Ctime(program_start);
-	    program_end = time((time_t) 0);
-	    Lprintf ("%30.30s", "Ending time: ");
-	    Ctime(program_end);
-	    Lprintf ("\n");
-	}
+	Lprintf ("%30.30s", "Starting time: ");
+	Ctime(program_start);
+	program_end = time((time_t) 0);
+	Lprintf ("%30.30s", "Ending time: ");
+	Ctime(program_end);
+	Lprintf ("\n");
 	Lflush();
 }

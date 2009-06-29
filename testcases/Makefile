@@ -48,7 +48,8 @@ all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
 
 install:
-	mkdir -p bin
+	-rm -rf bin
+	-mkdir -p bin
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
 
 uclinux:
@@ -60,7 +61,6 @@ uclinux_install:
 		do $(MAKE) -C $$i uclinux_install ; done
 
 clean:
-	rm -rf bin
 	@set -e; for i in $(SUBDIRS) ; do $(MAKE) -C $$i clean ; done
 
 >>>>>>> vte 20080401

@@ -1,16 +1,17 @@
+#Copyright 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 ###################################################################################################
 #
 #    @file   Makefile
 #
 #    @brief  configuration file to compile the VTE MC13783 test applications.
 #
-###################################################################################################
-#
-#   Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
-#   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-#   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-#   Freescale Semiconductor, Inc.
-#     
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
@@ -30,7 +31,7 @@
 SUBDIRS = \
 oss_audio_control_testapp_0 \
 oss_audio_control_testapp_1 \
-#tina changed oss_audio_mngt_testapp_1 \
+oss_audio_mngt_testapp_1 \
 oss_audio_mngt_testapp_2 \
 oss_audio_play_testapp_0 \
 oss_audio_play_testapp_1 \

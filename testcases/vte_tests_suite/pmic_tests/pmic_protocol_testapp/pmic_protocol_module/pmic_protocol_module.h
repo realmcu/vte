@@ -1,0 +1,79 @@
+/***
+**Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**
+**The code contained herein is licensed under the GNU General Public
+**License. You may obtain a copy of the GNU General Public License
+**Version 2 or later at the following locations:
+**
+**http://www.opensource.org/licenses/gpl-license.html
+**http://www.gnu.org/copyleft/gpl.html
+**/
+/*================================================================================================*/
+/**
+        @file   sc55112_protocol_module.h
+
+        @brief  Protocol driver module header file
+*/
+/*==================================================================================================
+
+        Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
+        THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
+        BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
+        reescale Semiconductor, Inc.
+
+====================================================================================================
+Revision History:
+                            Modification     Tracking
+Author/core ID                  Date          Number    Description of Changes
+-------------------------   ------------    ----------  -------------------------------------------
+D.Khoroshev/B00313           15/07/2005     TLSbo52700  Initial version
+D.Khoroshev/B00313           02/15/2006     TLSbo59968  Returned test module for MC13783 support
+D.Khoroshev/b00313           07/25/2006     TLSbo64239  Added mc13783 legacy API support
+
+====================================================================================================
+Portability:  ARM GCC
+==================================================================================================*/
+#ifndef PMIC_PROTOCOL_TEST_H
+#define PMIC_PROTOCOL_TEST_H
+
+/*#include <linux/autoconf.h>
+#include <asm/arch/pmic_status.h>
+*/
+
+#ifdef __cplusplus
+extern "C"{
+#endif
+
+
+
+/*==================================================================================================
+                CONSTANTS
+==================================================================================================*/
+
+/*==================================================================================================
+                DEFINES AND MACROS
+==================================================================================================*/
+
+/*==================================================================================================
+        ENUMS
+==================================================================================================*/
+
+/*==================================================================================================
+        STRUCTURES AND OTHER TYPEDEFS
+==================================================================================================*/
+
+#endif
+
+/*==================================================================================================
+        GLOBAL VARIABLE DECLARATIONS
+==================================================================================================*/
+
+/*==================================================================================================
+        FUNCTION PROTOTYPES
+==================================================================================================*/
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif        /* PMIC_PROTOCOL_TEST_H */

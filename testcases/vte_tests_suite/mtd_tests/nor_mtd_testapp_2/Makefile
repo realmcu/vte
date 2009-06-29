@@ -1,3 +1,11 @@
+#Copyright 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 ###################################################################################################
 #
 #    @file   Makefile
@@ -5,20 +13,13 @@
 #    @brief  configuration file to compile the nor_mtd_testapp_2 test.
 #
 ###################################################################################################
-#
-#   Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
-#   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-#   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-#   Freescale Semiconductor, Inc.
-#     
-###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #V Becker/rc023c           04/05/2004   TLSbo39142   Initial version 
 #V Becker/rc023c           26/07/2004   TLSbo39142   Update include path 
-#L.Delaspre/rc149c            08/12/2004     TLSbo40142   update with Freescale identity
+#L.Delaspre/rc149c         08/12/2004     TLSbo40142   update with Freescale identity
 #
 ###################################################################################################
 #Portability: Indicate if this module is portable to other compilers or platforms. 

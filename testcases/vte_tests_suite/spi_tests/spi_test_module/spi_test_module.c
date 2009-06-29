@@ -1,16 +1,18 @@
+/***
+**Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**
+**The code contained herein is licensed under the GNU General Public
+**License. You may obtain a copy of the GNU General Public License
+**Version 2 or later at the following locations:
+**
+**http://www.opensource.org/licenses/gpl-license.html
+**http://www.gnu.org/copyleft/gpl.html
+**/
 /*================================================================================================*/
 /**
         @file   spi_test_module.c
 
         @brief  LTP MXC SPI test module.
-*/
-/*==================================================================================================
-
-        Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
-        THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-        BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-        Freescale Semiconductor, Inc.
-
 ====================================================================================================
 Revision History:
                             Modification     Tracking
@@ -47,9 +49,6 @@ Test Assertion
 #include <linux/autoconf.h>
 
 /* Common API's Include Files */
-#include <asm/irq.h>
-#include <asm/arch/clock.h>
-#include <asm/arch/gpio.h>
 #include <linux/delay.h>
 /* Verification Test Environment Include Files */
 
@@ -65,15 +64,45 @@ Test Assertion
 #include <linux/kdev_t.h>
 #include <linux/major.h>
 #include <linux/string.h>
+#include <linux/version.h>
 
-#include <asm/hardware.h>
+#include <asm/irq.h>
+#include <mach/gpio.h>
+#include <mach/hardware.h>
 #include <asm/mach-types.h>
-#include <asm/arch/clock.h>
-#include <asm/semaphore.h>
+#include <linux/semaphore.h>
 #include <asm/uaccess.h>
 
 #include <linux/spi/spi.h>
 #include "spi_test_module.h"
+
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28))
+
+#ifndef class_device_destroy
+#define class_device_destroy  device_destroy
+#endif
+#ifndef class_device_create
+#define class_device_create(cs, NULL, dev, parent, fmt,args...)  device_create(cs, parent, dev, NULL, fmt, ##args)
+#endif
+#ifndef class_device
+#define class_device device
+#endif
+
+#else
+
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,26))
+#ifndef class_device_destroy
+#define class_device_destroy  device_destroy
+#endif
+#ifndef class_device_create
+#define class_device_create(cs, NULL, dev, parent, fmt,args...)  device_create(cs, parent, dev, fmt, ##args)
+#endif
+#ifndef class_device
+#define class_device device
+#endif
+#endif
+
+#endif
 
 #define DPRINTK(fmt, args...) printk(fmt, ##args)
 

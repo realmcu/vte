@@ -1,17 +1,12 @@
+#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 #!/bin/sh
-##############################################################################
-#
-#  Copyright 2004-2008 Freescale Semiconductor, Inc. All Rights Reserved.
-#
-##############################################################################
-#
-#  The code contained herein is licensed under the GNU Lesser General Public
-#  License.  You may obtain a copy of the GNU Lesser General Public License
-#  Version 2.1 or later at the following locations:
-#
-#  http://www.opensource.org/licenses/lgpl-license.html
-#  http://www.gnu.org/copyleft/lgpl.html
-#
 ##############################################################################
 #
 # Revision History:
@@ -99,6 +94,10 @@ setup()
 #               - non zero on failure. return value from commands ($RC)
 cleanup() 
 {
+    needpause=$(cat /proc/cpuinfo | grep 378 | wc -l)
+    if [ ! -z $needpause ]; then
+      sleep 3;
+    fi
     RC=0
     return $RC
 }
@@ -118,12 +117,16 @@ dac_play()
  hear if there is voice."
     #aplay -D hw:0,0 $1 || RC=$?
     #args=`echo $@|sed 's/-A//g'`
-    aplay -N -M $FILE || RC=$?
+    file=$(basename $FILE)
+    cp $FILE /tmp/${file} 
+    #aplay -N -M $FILE || RC=$?
+    aplay -N -M /tmp/${file} || RC=$?
     if [ $RC -ne 0 ]
     then
         tst_resm TFAIL "Test #1: play error, please check the stream file"
         return $RC
     fi
+    rm -f /tmp/${file}
 
     #if auto, ignore ask the answer!
     if [ -n "$AUTO" ]

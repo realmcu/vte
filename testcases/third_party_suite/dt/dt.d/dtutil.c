@@ -1,12 +1,10 @@
+static char *whatHeader = "@(#) dt.d/dtutil.c /main/9 Jan_24_03:56";
 /****************************************************************************
  *									    *
- *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			  COPYRIGHT (c) 1990 - 2004			    *
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
- *			       Hudson, NH 03051				    *
- *			       (603) 883-2355				    *
  *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
  * its documentation for any purpose and without fee is hereby granted,	    *
@@ -36,20 +34,25 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <math.h>
-#if defined(USE_STDARG)
-#  include <string.h>
-#  include <stdarg.h>
-#else /* !defined(USE_STDARG) */
-#  include <varargs.h>
-#  if defined(sun)
-#    include <sys/time.h>
-#  else /* !defined(sun) */
-#    include <sys/ioctl.h>
-#  endif /* !defined(sun) */
-#  include <sys/param.h>
-#  include <sys/resource.h>
-#endif /* defined(USE_STDARG) */
+#include <string.h>
+#include <stdarg.h>
 #include <sys/stat.h>
+
+#if !defined(WIN32)
+#  include <sys/param.h>
+#  include <netdb.h>		/* for MAXHOSTNAMELEN */
+#  include <sys/wait.h>
+#endif /* !defined(WIN32) */
+
+#if defined(WIN32)
+#  ifndef MAXHOSTNAMELEN
+#    define MAXHOSTNAMELEN 255
+#  endif
+#  if !defined(INVALID_SET_FILE_POINTER)
+#    define INVALID_SET_FILE_POINTER -1
+#  endif
+#define strncasecmp _strnicmp
+#endif /* !defined(WIN32) */
 
 #if defined(sun)
 #  define strtoul	strtol
@@ -61,6 +64,146 @@ extern void *valloc(size_t size);
 
 /*
  * Modification History:
+ *
+ * January 6th, 2007 by Robin T. Miller.
+ *	When random I/O is used, scale the random number by a multiplier
+ * and the device block size, to obtain larger offset for >1TB capacities.
+ *
+ * November 1st, 2006 by Robin T. Miller.
+ *      In ReportDeviceInfo(), do not save the updated file offset
+ * unless we're using AIO, since our normal read/write test functions
+ * maintain this offset themselves.
+ *
+ * October 16th, 2006 by Robin T. Miller.
+ *      Updated stoh() and htos() from Scu source.
+ *      Handle new timestamp option:
+ *      - skip timestamps during verification.
+ *      - report time block was written during corruptions.
+ *
+ * October 4th, 2006 by Robin T. Miller.
+ *      Added warning in delete_file() if file cannot be unlink'ed, but
+ * this should never occur now that terminate() only calls if it's open.
+ *
+ * June 24th, 2006 by Robin T. Miller.
+ *	Fix two places in ExecuteTrigger() where a status value was not
+ * returned!  (overlooked when changing void to int return value).
+ *
+ * January 19th, 2005 by Nagendra Vadlakunta.
+ * 	To add IA64 support for Windows, excluded MACHINE_64BIT
+ * part of the code in functions stoh() and htos().
+ * 
+ * January 12th, 2005 by Robin T. Miller.
+ *      Added keepalive format control string parsing (see help).
+ *      For Hazard, do *not* prepend our program name to messages.
+ *
+ *      In Hazard mode, remove space following "RPCLOGn: ", so we are
+ * consistent with how Hazard logs all its' output.
+ *
+ * December 16th, 2004 by Robin Miller.
+ *      Updated printf control strings in ReportDeviceInfo() to properly
+ * display lba following by offsets (the latter was incorrect, due to
+ * wrong format used for lba).  Found on 32 bit systems (of course)
+ * Side Note:  I've started coding lba's for 64 bits instead of 32 bits
+ * which limits the size (of course), but there's much work to do yet!
+ *
+ * October 21st, 2004 by Robin Miller.
+ *      Report the current file position during error report.
+ * Although the relative block number is formulated from the file
+ * offset, some folks would also like to see the actual offset.
+ * For random I/O, always align offsets to the device size (dsize).
+ * Failure to do this causes false data corruptions to regular files.
+ * For big-endian machines, the IOT pattern must be byte swapped, since
+ * IOT is designed to be little-endian only.
+ *
+ * June 24th, 2004 by Robin Miller.
+ *      Major cleanup to init_iotdata() function to properly handle
+ * non-modulo prefix and transfer counts.  The odd bytes were not
+ * initialized to something (now ~0) which lead to false failures.
+ *
+ * June 22nd, 2004 by Robin Miller.
+ *      Added support for triggers on corruption.
+ *      Properly report failing lba when lbdata is used.
+ *      Don't align random offsets to the device size when testing
+ * regular files through a file system.  In general, random I/O is
+ * not usually going to work to a file, since part of file usually
+ * gets overwitten (sorry, we don't track blocks already written).
+ *
+ * March 30th, 2004 by Robin Miller.
+ *      Improve lseek error messages (should they should fail).
+ *
+ * March 24th, 2004 by Robin Miller.
+ *      Update code in do_random() where the random data limit
+ * (rdata_limit) was being truncated to an unsigned long, which
+ * is 32-bits many systems.  This causes large capacity disks,
+ * such as 36GB (0x900000000), to be truncated to zero which
+ * causes a divide by zero ("Arithmetic exception" on HP-UX).
+ * Also increase the size of the random number (randum) to
+ * 64-bits (on 32-bit systems), so larger seeks are possible.
+ *
+ * February 23, 2004 by Robin Miller.
+ *      Reverse the buffer and prefix pattern bytes being dumped
+ * in verify_prefix(), so they properly reflect the expected versus
+ * found bytes.  Otherwise, the information is misleading.
+ *
+ * November 25th, 2003 by Robin Miller.
+ *      When formatting the prefix string, if we're doing random
+ * I/O, round the prefix string up to sizeof(u_int32), so partial
+ * patterns (non-modulo our 4 byte pattern) do not get used, which
+ * causes false data compare failures.
+ * Note: Failures still occur if random I/O is used with pattern
+ * files containing non-repeating data pattern bytes!
+ *
+ * November 20th, 2003 by Robin Miller.
+ *	Broken verify data function up for better performance.
+ *	Update prefix string logic to write the string in every
+ * logical block (lbdata_size).  This had to be done or else random
+ * I/O with prefix strings failed!  It also give better coverage.
+ *
+ * November 17th, 2003 by Robin Miller.
+ *	Breakup output to stdout or stderr, rather than writing
+ * all output to stderr.  If output file is stdout ('-') or a log
+ * file is specified, then all output reverts to stderr.
+ *
+ * October 8th, 2003 by Robin Miller.
+ *	On AIX, accept ENXIO for I/O's pass EOF.
+ *
+ * September 27th, 2003 by Robin Miller.
+ *      Added support for AIX.
+ *
+ * March 20th, 2003 by Robin Miller.
+ *	Added FmtPrefix() to format the prefix string.
+ *
+ * March 18th, 2003 by Robin Miller.
+ *	Optimize code and loops using USE_PATTERN_BUFFER define.
+ *
+ * March 15th, 2003 by Robin Miller.
+ *	Added support for data pattern prefix strings.
+ *
+ * March 4th, 2003 by Robin Miller.
+ *	Add support for broken EOF SunOS release.  This means writes
+ * at EOF return a count of zero, but there is no errno value to key
+ * off like POSIX specifies.
+ *
+ * November 21st, 2002 by Robin Miller.
+ *	On HP-UX, accept ENXIO for I/O's pass EOF.
+ *
+ * November 14th, 2002 by Robin Miller.
+ *	Add support for 32-bit HP-UX compilation.
+ *
+ * October 10th, 2002 by Robin Miller.
+ *	Display correct erroring byte during data compare errors,
+ * when using a 32-bit hex data pattern.
+ *
+ * February 1st, 2002 by Robin Miller.
+ *	Make porting changes necessary for Solaris 8.
+ *
+ * January 29th, by Robin Miller.
+ *	Minor tweak to clarify correct versus incorrect data dumped.
+ *
+ * June 25th, 2001 by Robin Miller.
+ *	Report mt status for all errors, not just EIO errors.  Also,
+ * report mt status on unexpected EOF/EOM when no data transferred.
+ * Note: Reporting mt and EEI status is only done for Tru64 Unix.
  *
  * February 24th, 2001 by Robin Miller.
  *	Add conditionalization for QNX RTP (Neutrino).
@@ -344,6 +487,23 @@ extern void *valloc(size_t size);
 /*
  * Forward References:
  */
+size_t copy_prefix(u_char *buffer, size_t bcount);
+int verify_prefix(struct dinfo *dip, u_char *buffer, size_t bcount, size_t *pcount);
+
+static int verify_data_normal(	struct dinfo	*dip,
+				u_char		*buffer,
+				size_t		bcount,
+				u_int32		pattern);
+static int verify_data_prefix(	struct dinfo	*dip,
+				u_char		*buffer,
+				size_t		bcount,
+				u_int32		pattern );
+static int verify_data_with_lba(struct dinfo	*dip,
+				u_char		*buffer,
+				size_t		bcount,
+				u_int32		pattern,
+				u_int32		*lba );
+
 static size_t CalculateDumpSize(size_t size);
 static int dopad_verify (
 			struct dinfo	*dip,
@@ -358,13 +518,15 @@ int vSprintf(char *bufptr, const char *msg, va_list ap);
 #if 0
 static char *pad_str =		"Pad";
 #endif
+static char *lba_str =          "Lba";
 static char *data_str =		"Data";
 static char *pattern_str =	"Pattern";
+static char *prefix_str =	"Prefix";
 static char *verify_str =	"Verify";
 
 static char *compare_error_str =	"Data compare error at byte";
 static char *bad_conversion_str =
-		 "Warning: unexpected conversion size of %d bytes.";
+		 "Warning: unexpected conversion size of %d bytes.\n";
 
 /************************************************************************
  *									*
@@ -384,10 +546,20 @@ delete_file (struct dinfo *dip)
     int status;
 
     if (debug_flag) {
-	Fprintf("Deleting file '%s'...\n", dip->di_dname);
+	Printf("Deleting file '%s'...\n", dip->di_dname);
     }
     if ( (status = unlink(dip->di_dname)) == FAILURE) {
-	report_error ("unlink", TRUE);
+#if defined(WIN32)
+   	LogMsg (efp, logLevelError, 0, "unlink failed!\n");
+#else /* !defined(WIN32) */
+        if (errno == ENOENT) {
+            LogMsg (efp, logLevelWarn, 0,
+                    "Warning: File '%s' does NOT exist during unlink, created?\n",
+                    dip->di_dname);
+        } else {
+	    report_error ("unlink", TRUE);
+        }
+#endif /* defined(WIN32) */
     }
     return (status);
 }
@@ -452,45 +624,66 @@ dump_buffer (	char		*name,
 		size_t		bufr_size,
 		bool		expected )
 {
-	size_t i, limit, offset;
-	u_int field_width = 16;
-	u_char *bend = (base + bufr_size);
-	u_char *bptr;
+    size_t i, limit, offset;
+    u_int field_width = 16;
+    u_char *bend = (base + bufr_size);
+    u_char *bptr;
 
-	/*
-	 * Since many requests do large transfers, limit data dumped.
-	 */
-	limit = (dump_size < dump_limit) ? dump_size : dump_limit;
+    /*
+     * Since many requests do large transfers, limit data dumped.
+     */
+    limit = (dump_size < dump_limit) ? dump_size : dump_limit;
 
-	/*
-	 * Now to provide context, attempt to dump data on both sides of
-	 * the corrupted data, ensuring buffer limits are not exceeded.
-	 */
-	bptr = (ptr - (limit >> 1));
-	if (bptr < base) bptr = base;
-	if ( (bptr + limit) > bend) {
-	    limit = (bend - bptr);	/* Dump to end of buffer. */
-	}
-	offset = (ptr - base);		/* Offset to failing data. */
-	/*
-	 * NOTE: Rotate parameters are not displayed since we don't have
-	 * the base data address and can't use global due to AIO design.
-	 * [ if I get ambitious, I'll correct this in a future release. ]
-	 */
-	Fprintf ("The incorrect data starts at address %#lx (marked by asterisk '*')\n",
-									ptr);
-	Fprintf ("Dumping %s Buffer (base = %#lx, offset = %u, limit = %u bytes):\n\n",
+    /*
+     * Now to provide context, attempt to dump data on both sides of
+     * the corrupted data, ensuring buffer limits are not exceeded.
+     */
+    bptr = (ptr - (limit >> 1));
+    if (bptr < base) bptr = base;
+    if ( (bptr + limit) > bend) {
+	limit = (bend - bptr);		/* Dump to end of buffer. */
+    }
+    offset = (ptr - base);		/* Offset to failing data. */
+
+    /*
+     * NOTE: Rotate parameters are not displayed since we don't have
+     * the base data address and can't use global due to AIO design.
+     * [ if I get ambitious, I'll correct this in a future release. ]
+     */
+    Fprintf ("The %scorrect data starts at address %#lx (marked by asterisk '*')\n",
+							(expected) ? "" : "in", ptr);
+    Fprintf ("Dumping %s Buffer (base = %#lx, offset = %u, limit = %u bytes):\n",
 							name, base, offset, limit);
-	for (i = 0; i < limit; i++, bptr++) {
-	    if ((i % field_width) == (size_t) 0) {
-		if (i) fprintf (stderr, "\n");
-		fprintf (stderr, "%#lx ", (u_long)bptr);
-	    }
-	    fprintf (stderr, "%c%02x", (bptr == ptr) ? '*' : ' ', *bptr);
+    LogMsg (efp, logLevelError, (PRT_NOIDENT | PRT_NOFLUSH), "\n");
+
+    for (i = 0; i < limit; i++, bptr++) {
+	if ((i % field_width) == (size_t) 0) {
+	    if (i) fprintf (efp, "\n");
+	    LogMsg (efp, logLevelError, (PRT_NOIDENT | PRT_NOFLUSH),
+			"%#lx ", (u_long)bptr);
 	}
-	if (i) Fprint ("\n");
-	if (expected) Fprint ("\n");
+	fprintf (efp, "%c%02x", (bptr == ptr) ? '*' : ' ', *bptr);
+    }
+    if (i) Fprint ("\n");
+    if (expected) {
+	LogMsg (efp, logLevelError, (PRT_NOIDENT | PRT_NOFLUSH), "\n");
+    }
+    (void)fflush(efp);
 }
+
+#if defined(TIMESTAMP)
+
+void
+display_timestamp(u_char *buffer)
+{
+    time_t seconds;
+
+    seconds = stoh(buffer, sizeof(seconds));
+    /* Note: ctime() appends newline automatically! */
+    Fprintf("The data block was written on %s", ctime(&seconds));
+    return;
+}
+#endif /* defined(TIMESTAMP) */
 
 /************************************************************************
  *									*
@@ -513,35 +706,40 @@ fill_buffer (	u_char		*buffer,
 		size_t		byte_count,
 		u_int32		pattern)
 {
-	u_char *bptr = buffer;
-	size_t i;
+    register u_char *bptr = buffer;
+    register u_char *pptr, *pend;
+    register size_t bcount = byte_count;
 
-	/*
-	 * Initialize the buffer with a data pattern.
-	 */
-	if (!pattern_buffer) {
-	    union {
-		u_char pat[sizeof(u_int32)];
-		u_int32 pattern;
-	    } p;
+    pptr = pattern_bufptr;
+    pend = pattern_bufend;
 
-	    p.pattern = pattern;
-	    for (i = 0; i < byte_count; i++) {
-		*bptr++ = p.pat[i & (sizeof(u_int32) - 1)];
+    /*
+     * Initialize the buffer with a data pattern.
+     */
+    if ( !prefix_string ) {
+	while (bcount--) {
+	    *bptr++ = *pptr++;
+	    if (pptr == pend) {
+		pptr = pattern_buffer;
 	    }
-	} else {
-	    u_char *pptr, *pend;
-
-	    pptr = pattern_bufptr;
-	    pend = pattern_bufend;
-	    for (i = 0; i < byte_count; i++) {
-		*bptr++ = *pptr++;
-		if (pptr == pend) {
-		    pptr = pattern_buffer;
-		}
-	    }
-	    pattern_bufptr = pptr;
 	}
+    } else {
+	register size_t i;
+	for (i = 0; i < bcount; ) {
+	    if ((i % lbdata_size) == 0) {
+		size_t pcount = copy_prefix (bptr, (bcount - i));
+		i += pcount;
+		bptr += pcount;
+		continue;
+	    }
+	    *bptr++ = *pptr++; i++;
+	    if (pptr == pend) {
+		pptr = pattern_buffer;
+	    }
+	}
+    }
+    pattern_bufptr = pptr;
+    return;
 }
 
 /************************************************************************
@@ -561,22 +759,60 @@ init_buffer (	u_char		*buffer,
 		size_t		count,
 		u_int32		pattern )
 {
-	u_char *bptr;
-	union {
-	    u_char pat[sizeof(u_int32)];
-	    u_int32 pattern;
-	} p;
-	size_t i;
+    register u_char *bptr;
+    union {
+        u_char pat[sizeof(u_int32)];
+        u_int32 pattern;
+    } p;
+    register size_t i;
 
-	/*
-	 * Initialize the buffer with a data pattern.
-	 */
-	p.pattern = pattern;
-	bptr = buffer;
-	for (i = 0; i < count; i++) {
-	    *bptr++ = p.pat[i & (sizeof(u_int32) - 1)];
-	}
+    /*
+     * Initialize the buffer with a data pattern.
+     */
+    p.pattern = pattern;
+    bptr = buffer;
+    for (i = 0; i < count; i++) {
+        *bptr++ = p.pat[i & (sizeof(u_int32) - 1)];
+    }
+    return;
 }
+
+#if _BIG_ENDIAN_
+/************************************************************************
+ *									*
+ * init_swapped() - Initialize Buffer with a Swapped Data Pattern.	*
+ *									*
+ * Inputs:	buffer = Pointer to buffer to init.			*
+ *		count = Number of bytes to initialize.			*
+ *		pattern = Data pattern to init buffer with.		*
+ *									*
+ * Return Value:							*
+ *		Void.							*
+ *									*
+ ************************************************************************/
+void
+init_swapped (	u_char		*buffer,
+		size_t		count,
+		u_int32		pattern )
+{
+    register u_char *bptr;
+    union {
+        u_char pat[sizeof(u_int32)];
+        u_int32 pattern;
+    } p;
+    register size_t i;
+
+    /*
+     * Initialize the buffer with a data pattern.
+     */
+    p.pattern = pattern;
+    bptr = buffer;
+    for (i = count; i ; ) {
+        *bptr++ = p.pat[--i & (sizeof(u_int32) - 1)];
+    }
+    return;
+}
+#endif /* _BIG_ENDIAN_ */
 
 /************************************************************************
  *									*
@@ -602,19 +838,90 @@ init_lbdata (
 	u_int32		lba,
 	u_int32		lbsize )
 {
-	u_char *bptr = buffer;
+    u_char *bptr = buffer;
+    register ssize_t i;
 
+    /*
+     * Initialize the buffer with logical block data.
+     */
+    if (prefix_string) {
+        register size_t pcount = 0, scount = lbsize;
 	/*
-	 * Initialize the buffer with logical block data.
+	 * The lba is encoded after the prefix string.
 	 */
-	while ( ((ssize_t)count > 0) && (count >= sizeof(lba)) ) {
-	    htos (bptr, lba, sizeof(lba));
-	    bptr += lbsize;
-	    count -= lbsize;
-	    lba++;
-	}
-	return (lba);
+	pcount = MIN(prefix_size, count);
+	scount -= pcount;
+        for (i = 0; (i+pcount+sizeof(lba)) <= count; ) {
+            bptr += pcount;
+            htos (bptr, lba, sizeof(lba));
+            i += lbsize;
+            bptr += scount;
+            lba++;
+        }
+    } else {
+        for (i = 0; (i+sizeof(lba)) <= count; ) {
+            htos (bptr, lba, sizeof(lba));
+            i += lbsize;
+            bptr += lbsize;
+            lba++;
+        }
+    }
+
+    return (lba);
 }
+
+#if defined(TIMESTAMP)
+/************************************************************************
+ *									*
+ * init_timestamp() - Initialize Data Buffer with a Timestamp.          *
+ *									*
+ * Description:								*
+ *	This function places a timestamp in the first 4 bytes of each   *
+ * data block.                                                          *
+ *									*
+ * Inputs:	buffer = The data buffer to initialize.			*
+ *		count = The data buffer size (in bytes).		*
+ *		lbsize = The logical block size (in bytes).		*
+ *									*
+ * Outputs:	Returns the next lba to use.				*
+ *									*
+ ************************************************************************/
+void
+init_timestamp (
+	u_char		*buffer,
+	size_t		count,
+	u_int32		lbsize )
+{
+    u_char *bptr = buffer;
+    register ssize_t i;
+    register time_t timestamp = time((time_t *)NULL);
+
+    /*
+     * Initialize the buffer with a timestamp (in seconds).
+     */
+    if (prefix_string) {
+        register size_t pcount = 0, scount = lbsize;
+	/*
+	 * The timestamp is encoded after the prefix string.
+	 */
+	pcount = MIN(prefix_size, count);
+	scount -= pcount;
+        for (i = 0; (i+pcount+sizeof(timestamp)) <= count; ) {
+            bptr += pcount;
+            htos (bptr, (large_t)timestamp, sizeof(timestamp));
+            i += lbsize;
+            bptr += scount;
+        }
+    } else {
+        for (i = 0; (i+sizeof(timestamp)) <= count; ) {
+            htos (bptr, (large_t)timestamp, sizeof(timestamp));
+            i += lbsize;
+            bptr += lbsize;
+        }
+    }
+    return;
+}
+#endif /* defined(TIMESTAMP) */
 
 #if !defined(INLINE_FUNCS)
 /*
@@ -623,19 +930,19 @@ init_lbdata (
 u_int32
 make_lba(
 	struct dinfo	*dip,
-	off_t		pos )
+	OFF_T		pos )
 {
-    if (pos == (off_t) 0) {
+    if (pos == (OFF_T) 0) {
 	return ((u_int32) 0);
     } else {
 	return (pos / lbdata_size);
     }
 }
 
-off_t
+OFF_T
 make_offset(struct dinfo *dip, u_int32 lba)
 {
-    return ((off_t)(lba * lbdata_size));
+    return ((OFF_T)(lba * lbdata_size));
 }
 
 /*
@@ -644,9 +951,9 @@ make_offset(struct dinfo *dip, u_int32 lba)
 u_int32
 make_lbdata(
 	struct dinfo	*dip,
-	off_t		pos )
+	OFF_T		pos )
 {
-    if (pos == (off_t) 0) {
+    if (pos == (OFF_T) 0) {
 	return ((u_int32) 0);
     } else {
 	return (pos / lbdata_size);
@@ -658,7 +965,7 @@ make_lbdata(
 u_int32
 winit_lbdata(
 	struct dinfo	*dip,
-	off_t		pos,
+	OFF_T		pos,
 	u_char		*buffer,
 	size_t		count,
 	u_int32		lba,
@@ -667,7 +974,7 @@ winit_lbdata(
     if (user_lbdata) {
 	/* Using user defined lba, not file position! */
 	return (init_lbdata (buffer, count, lba, lbsize));
-    } else if (pos == (off_t) 0) {
+    } else if (pos == (OFF_T) 0) {
 	return (init_lbdata (buffer, count, (u_int32) 0, lbsize));
     } else {
 	return (init_lbdata (buffer, count, (pos / lbsize), lbsize));
@@ -676,7 +983,7 @@ winit_lbdata(
 
 /************************************************************************
  *									*
- * init_iotdata() - Initialize Data Buffer with IOT test pattern.	*
+ * init_iotdata() - Initialize Pattern Buffer with IOT test pattern.	*
  *									*
  * Description:								*
  *	This function takes the starting logical block address, and	*
@@ -684,42 +991,115 @@ winit_lbdata(
  * is the logical block with the constant 0x01010101 added every u_int.	*
  *									*
  *	NOTE: The IOT pattern is stored in the pattern buffer, which	*
- * is assumed to be page aligned, thus there are no alignment problems	*
- * on Alpha/Mips.  Remember, the data buffer may be unaligned :-)	*
+ * is assumed to be page aligned, thus there are no alignment problems.	*
+ * Note:  Addition of prefix string changes this alignment assumption!  *
  *									*
  *	This implementation does _not_ provide the "best" performance,	*
  * but it does allow the normal 'dt' data flow to be mostly unaffected.	*
  *									*
- * Inputs:	count = The data buffer size (in bytes).		*
+ * Inputs:	bcount = The data buffer size (in bytes).		*
  *		lba = The starting logical block address.		*
  *		lbsize = The logical block size (in bytes).		*
  *									*
  * Outputs:	Returns the next lba to use.				*
+ *                                                                      *
+ * Note: If the count is smaller than sizeof(u_int32), then no lba is   *
+ * encoded in the buffer.  Instead, we init odd bytes with ~0.          *
  *									*
  ************************************************************************/
 u_int32
 init_iotdata (
-	size_t		count,
+	size_t		bcount,
 	u_int32		lba,
 	u_int32		lbsize )
 {
-    u_int32 *bptr, lba_pattern;
-    int i, bperb;
+    register ssize_t count = (ssize_t)bcount;
+    register u_int32 lba_pattern;
+    /* IOT pattern initialization size. */
+    register int iot_icnt = sizeof(lba_pattern);
+    register int i;
 
     if (lbsize == 0) return (lba);
-    bperb = (lbsize / sizeof(u_int));
-    bptr = (u_int32 *)pattern_buffer;
+
     pattern_bufptr = pattern_buffer;
     /*
-     * Initialize the buffer with the IOT test pattern.
+     * If the prefix string is a multiple of an unsigned int,
+     * we can initialize the buffer using 32-bit words, otherwise
+     * we must do so a byte at a time which is slower (of course).
+     *
+     * Note: This 32-bit fill is possible since the pattern buffer
+     * is known to be page aligned!
+     *
+     * Format: <prefix string><IOT pattern>...
+     *
+     * Also Note:  The prefix string is copied to the data buffer
+     * by fill_buffer(), so don't be mislead by this code.  The
+     * IOT pattern bytes is adjusted for the sizeof(prefix_string).
      */
-    while ( ((ssize_t)count > 0) && (count >= sizeof(lba)) ) {
-        lba_pattern = lba++;	/* Start with logical block address. */
-        for (i = 0; (i < bperb) && ((ssize_t)count > 0); i++) {
-	    *bptr++ = lba_pattern;
-	    lba_pattern += 0x01010101;
-	    count -= sizeof(u_int32);
-	}
+    if (count < iot_icnt) {
+        init_buffer(pattern_buffer, count, ~0);
+    } else if (prefix_string && (prefix_size & (iot_icnt-1))) {
+        register u_char *bptr = pattern_buffer;
+        /*
+         * Initialize the buffer with the IOT test pattern.
+         */
+        while ( (count > 0) && (count >= sizeof(lba)) ) {
+            /*
+             * Process one lbsize'd block at a time.
+             *
+             * Format: <optional prefix><lba><lba data>...
+             */
+            lba_pattern = lba++;
+            for (i = (lbsize - prefix_size); 
+                 ( (i > 0) && (count >= iot_icnt) ); ) {
+#if _BIG_ENDIAN_
+                init_swapped(bptr, iot_icnt, lba_pattern);
+#else /* !_BIG_ENDIAN_ */
+                init_buffer(bptr, iot_icnt, lba_pattern);
+#endif /* _BIG_ENDIAN_ */
+                lba_pattern += 0x01010101;
+                i -= iot_icnt;
+                bptr += iot_icnt;
+                count -= iot_icnt;
+            }
+        }
+        /* Handle any residual count here! */
+        if (count && (count < iot_icnt)) {
+            init_buffer(bptr, count, ~0);
+        }
+    } else {
+        register int wperb; /* words per lbsize'ed buffer */
+        register u_int32 *bptr;
+
+        wperb = (lbsize / iot_icnt);
+        bptr = (u_int32 *)pattern_buffer;
+        if (prefix_string) {
+            /*
+             * Adjust counts for the prefix string.
+             */
+            wperb -= (prefix_size / iot_icnt);
+            count -= prefix_size;
+        }
+
+        /*
+         * Initialize the buffer with the IOT test pattern.
+         */
+        while ( (count > 0) && (count >= iot_icnt) ) {
+            lba_pattern = lba++;
+            for (i = 0; (i < wperb) && (count >= iot_icnt); i++) {
+#if _BIG_ENDIAN_
+                init_swapped((u_char *)bptr++, iot_icnt, lba_pattern);
+#else /* !_BIG_ENDIAN_ */
+                *bptr++ = lba_pattern;
+#endif /* _BIG_ENDIAN_ */
+                lba_pattern += 0x01010101;
+                count -= iot_icnt;
+            }
+        }
+        /* Handle any residual count here! */
+        if (count && (count < iot_icnt)) {
+            init_buffer((u_char *)bptr, count, ~0);
+        }
     }
     return (lba);
 }
@@ -755,6 +1135,84 @@ init_padbytes (	u_char		*buffer,
 	}
 }
 
+/*
+ * copy_prefix() - Copy Prefix String to Buffer.
+ *
+ * Inputs:
+ *	buffer = Pointer to buffer to copy prefix.
+ *	bcount = Count of remaining buffer bytes.
+ *
+ * Implicit Inputs:
+ *	prefix_string = The prefix string.
+ *	prefix_size = The prefix size.
+ *
+ * Outputs:
+ *	Returns number of prefix bytes copied.
+ */
+size_t
+copy_prefix( u_char *buffer, size_t bcount )
+{
+    size_t pcount;
+
+    pcount = MIN(prefix_size, bcount);
+    (void)memcpy(buffer, prefix_string, pcount);
+    return (pcount);
+}
+
+/*
+ * verify_prefix() - Verify Buffer with Prefix String.
+ *
+ * Inputs:
+ *	dip = The device information pointer.
+ *	buffer = Address of buffer to verify.
+ *	bcount = Count of remaining buffer bytes.
+ *	pcount = Pointer to return prefix count verified.
+ *
+ * Implicit Inputs:
+ *	prefix_string = The prefix string.
+ *	prefix_size = The prefix size.
+ *
+ * Outputs:
+ *	pcount gets the prefix string count verified.
+ *	Return value is Success or Failure.
+ */
+int
+verify_prefix( struct dinfo *dip, u_char *buffer, size_t bcount, size_t *pcount )
+{
+    register u_char *bptr = buffer;
+    register u_char *pstr = (u_char *)prefix_string;
+    register size_t count;
+    register int i;
+    int status = SUCCESS;
+
+    count = MIN(prefix_size, bcount);
+
+    for (i = 0; (i < count); i++, bptr++, pstr++) {
+	if (*bptr != *pstr) {
+	    size_t dump_size;
+	    ReportCompareError (dip, count, i, *pstr, *bptr);
+	    Fprintf ("Mismatch of data pattern prefix: '%s'\n", prefix_string);
+	    /* expected */
+	    dump_size = CalculateDumpSize (prefix_size);
+	    dump_buffer (prefix_str, (u_char *)prefix_string,
+				pstr, dump_size, prefix_size, TRUE);
+	    /* received */
+#if defined(TIMESTAMP)
+            if (timestamp_flag) {
+                display_timestamp(buffer+count);
+            }
+#endif /* defined(TIMESTAMP) */
+	    dump_size = CalculateDumpSize (bcount);
+	    dump_buffer (data_str, buffer, bptr, dump_size, bcount, FALSE);
+	    status = FAILURE;
+            (void)ExecuteTrigger(dip, "miscompare");
+	    break;
+	}
+    }
+    *pcount = count;
+    return (status);
+}
+
 /************************************************************************
  *									*
  * verify_buffers() - Verify Data Buffers.				*
@@ -787,13 +1245,35 @@ verify_buffers(	struct dinfo	*dip,
 	    /* expected */
 	    dump_buffer (data_str, dbuffer, dptr, dump_size, count, TRUE);
 	    /* received */
+#if defined(TIMESTAMP)
+            if (timestamp_flag) {
+                display_timestamp(vbuffer);
+            }
+#endif /* defined(TIMESTAMP) */
 	    dump_buffer (verify_str, vbuffer, vptr, dump_size, count, FALSE);
+            (void)ExecuteTrigger(dip, "miscompare");
 	    return (FAILURE);
 	}
     }
     return (SUCCESS);
 }
 
+/************************************************************************
+ *									*
+ * verify_lbdata() - Verify Logical Block Address in Buffer.            *
+ *									*
+ * Description:								*
+ *	Note: This function is used during read-after-write tests.      *
+ *									*
+ * Inputs:	dip = The device information pointer.			*
+ *		dbuffer = Data buffer to verify with.			*
+ *		vbuffer = Verification buffer to use.			*
+ *		count = The number of bytes to compare.			*
+ *              lba = Pointer to return last lba verified.              *
+ *									*
+ * Outputs:	Returns SUCCESS/FAILURE = lba Ok/Compare Error. 	*
+ *									*
+ ************************************************************************/
 int
 verify_lbdata(	struct dinfo	*dip,
 		u_char		*dbuffer,
@@ -801,12 +1281,16 @@ verify_lbdata(	struct dinfo	*dip,
 		size_t		count,
 		u_int32		*lba )
 {
-    u_int32 i, dlbn, vlbn;
+    u_int32 i, dlbn = 0, vlbn;
     u_char *dptr = dbuffer;
     u_char *vptr = vbuffer;
     int status = SUCCESS;
 
-    for (i = 0; (i+sizeof(dlbn) < count); i += lbdata_size,
+    /*
+     * Note: With timestamps enabled, we overwrite the lba.
+     */
+    if (timestamp_flag) { return (status); }
+    for (i = 0; (i+sizeof(dlbn) <= count); i += lbdata_size,
 		 dptr += lbdata_size, vptr += lbdata_size) {
 	if (iot_pattern) {
 	    dlbn = get_lbn(dptr);
@@ -855,77 +1339,59 @@ verify_data (	struct dinfo	*dip,
 		u_int32		pattern,
 		u_int32		*lba )
 {
-    u_int32 i = 0;
-    bool error = FALSE;
-    u_char *vptr = buffer;
-    u_char *pptr = NULL, *pend;
-    u_int32 lbn, vlbn = *lba;
-    int status = SUCCESS;
-    union {
-	u_char pat[sizeof(u_int32)];
-	u_int pattern;
-    } p;
-
-    p.pattern = pattern;
-    if (pattern_buffer) {
-	pptr = pattern_bufptr;
-	pend = pattern_bufend;
-    }
+    bool check_lba = (iot_pattern || (lbdata_flag && lbdata_size));
 
     /*
-     * TODO:  This function is woefully overloaded! :-)
+     * I hate to duplicate code, but the smaller functions
+     * optimize better and give *much* better performance.
      */
-    while ( (i < count) && !error ) {
-	/*
-	 * Handle IOT and Lbdata logical block checks first.
-	 */
-	if ( (iot_pattern || lbdata_flag && lbdata_size) &&
-	     ((i % lbdata_size) == 0) && (i+sizeof(lbn) <= count) ) {
-	    if (iot_pattern) {
-		vlbn = get_lbn(pptr);
-		lbn = get_lbn(vptr);
-	    } else {
-		lbn = stoh (vptr, sizeof(lbn));
-	    }
-	    if (lbn != vlbn) {
-		error = TRUE;
-		ReportLbdataError (dip, *lba, count, i, vlbn, lbn);
-		continue;
-	    } else {
-		vlbn++;
-		i += sizeof(lbn);
-		vptr += sizeof(lbn);
-		/* Skip past pattern bytes, handling wrapping. */
-		if (pptr) {
-		    int size = sizeof(lbn);
-		    while (size--) {
-			pptr++;
-			if (pptr == pend) pptr = pattern_buffer;
-		    }
-		}
-		continue;
-	    }
-	} /* end of IOT/Lbdata check */
+    if ( !check_lba && !prefix_string ) {
+	return ( verify_data_normal(dip, buffer, count, pattern) );
+    } else if ( !check_lba && prefix_string ) {
+	return ( verify_data_prefix(dip, buffer, count, pattern) );
+    } else {
+	return ( verify_data_with_lba(dip, buffer, count, pattern, lba) );
+    }
+}
 
-	if (pattern_buffer) {
-	    if (*vptr != *pptr) {
-		error = TRUE;
-		ReportCompareError (dip, count, i, *pptr, *vptr);
-	    } else {
-		i++, pptr++, vptr++;
-		if (pptr == pend) pptr = pattern_buffer;
-	    }
-	} else { /* check one of 4 pattern bytes */
-	    if (*vptr != p.pat[i & (sizeof(u_int32) - 1)]) {
-		error = TRUE;
-		ReportCompareError (dip, count, i,
-				p.pat[(sizeof(u_int32) - 1)], *vptr);
-	    } else {
-		i++, vptr++;
-	    }
+static int
+verify_data_normal(
+	struct dinfo	*dip,
+	u_char		*buffer,
+	size_t		bcount,
+	u_int32		pattern )
+{
+    register size_t i = 0;
+    register u_char *vptr = buffer;
+    register u_char *pptr = pattern_bufptr;
+    register u_char *pend = pattern_bufend;
+    register size_t count = bcount;
+    bool error = FALSE;
+    int status = SUCCESS;
+
+    while ( (i < count) ) {
+#if defined(TIMESTAMP)
+        /*
+         * Skip the timestamp (if enabled).
+         */
+        if (timestamp_flag && ((i % lbdata_size) == 0)) {
+            int p;
+            i += sizeof(time_t);
+            vptr += sizeof(time_t);
+            for (p = 0; (p < sizeof(time_t)); p++) {
+                if (++pptr == pend) pptr = pattern_buffer;
+            }
+        }
+#endif /* defined(TIMESTAMP) */
+	if (*vptr != *pptr) {
+	    error = TRUE;
+	    ReportCompareError (dip, count, i, *pptr, *vptr);
+	    break;
+	} else {
+	    i++, pptr++, vptr++;
+	    if (pptr == pend) pptr = pattern_buffer;
 	}
-    } /* end of while... */
-
+    }
     if (error) {
 	if (dump_flag) {
 	    size_t dump_size = CalculateDumpSize (count);
@@ -937,12 +1403,178 @@ verify_data (	struct dinfo	*dip,
 					pdump_size, patbuf_size, TRUE);
 	    }
 	    /* received */
+#if defined(TIMESTAMP)
+            if (timestamp_flag) {
+                display_timestamp(buffer);
+            }
+#endif /* defined(TIMESTAMP) */
 	    dump_buffer (data_str, buffer, vptr, dump_size, count, FALSE);
 	}
+        (void)ExecuteTrigger(dip, "miscompare");
 	status = FAILURE;
     }
-    *lba = vlbn;
-    if (pattern_buffer) pattern_bufptr = pptr;
+    pattern_bufptr = pptr;
+    return (status);
+}
+
+static int
+verify_data_prefix(
+	struct dinfo	*dip,
+	u_char		*buffer,
+	size_t		bcount,
+	u_int32		pattern )
+{
+    register size_t i = 0;
+    register u_char *vptr = buffer;
+    register u_char *pptr = pattern_bufptr;
+    register u_char *pend = pattern_bufend;
+    register size_t count = bcount;
+    bool error = FALSE;
+    int status = SUCCESS;
+
+    while ( (i < count) ) {
+	/*
+	 * Verify the prefix string (if any).
+	 */
+	if (prefix_string && ((i % lbdata_size) == 0)) {
+	    size_t pcount;
+	    status = verify_prefix (dip, vptr, (count - i), &pcount);
+	    if (status == FAILURE) return (status);
+	    i += pcount;
+	    vptr += pcount;
+	    continue;
+	}
+	if (*vptr != *pptr) {
+	    error = TRUE;
+	    ReportCompareError (dip, count, i, *pptr, *vptr);
+	    break;
+	} else {
+	    i++, pptr++, vptr++;
+	    if (pptr == pend) pptr = pattern_buffer;
+	}
+    }
+    if (error) {
+	if (dump_flag) {
+	    size_t dump_size = CalculateDumpSize (count);
+	    if (pattern_buffer) {
+		size_t pdump_size = (dump_size < patbuf_size)
+					? dump_size : patbuf_size;
+		/* expected */
+		dump_buffer (pattern_str, pattern_buffer, pptr,
+					pdump_size, patbuf_size, TRUE);
+	    }
+	    /* received */
+#if defined(TIMESTAMP)
+            if (timestamp_flag) {
+                display_timestamp(buffer);
+            }
+#endif /* defined(TIMESTAMP) */
+	    dump_buffer (data_str, buffer, vptr, dump_size, count, FALSE);
+	}
+        (void)ExecuteTrigger(dip, "miscompare");
+	status = FAILURE;
+    }
+    pattern_bufptr = pptr;
+    return (status);
+}
+
+static int
+verify_data_with_lba(
+	struct dinfo	*dip,
+	u_char		*buffer,
+	size_t		bcount,
+	u_int32		pattern,
+	u_int32		*lba )
+{
+    register size_t i = 0;
+    register u_char *vptr = buffer;
+    register u_char *pptr = pattern_bufptr;
+    register u_char *pend = pattern_bufend;
+    register size_t count = bcount;
+    register u_int32 lbn, vlbn = *lba;
+    bool error = FALSE, lbn_error = FALSE;
+    int status = SUCCESS;
+
+    while ( (i < count) ) {
+	/*
+	 * Handle IOT and Lbdata logical block checks first.
+	 */
+	if ( ((i % lbdata_size) == 0) ) {
+	    /*
+	     * Verify the prefix string prior to encoded lba's.
+	     */
+	    if (prefix_string) {
+		size_t pcount;
+		status = verify_prefix (dip, vptr, (count - i), &pcount);
+		if (status == FAILURE) return (status);
+		vptr += pcount;
+		if ( (i += pcount) == count) continue;
+	    }
+	    if ( (i+sizeof(lbn) <= count) ) {
+		if (iot_pattern) {
+		    vlbn = get_lbn(pptr);
+		    lbn = get_lbn(vptr);
+		} else {
+		    lbn = stoh (vptr, sizeof(lbn));
+		}
+	        if (!timestamp_flag && (lbn != vlbn)) {
+		    error = lbn_error = TRUE;
+		    ReportLbdataError (dip, *lba, count, i, vlbn, lbn);
+		    break;
+		} else {
+		    int size;
+		    vlbn++;
+		    i += sizeof(lbn);
+		    vptr += sizeof(lbn);
+		    /* Skip past pattern bytes, handling wrapping. */
+		    size = sizeof(lbn);
+		    while (size--) {
+			pptr++;
+			if (pptr == pend) pptr = pattern_buffer;
+		    }
+		}
+		continue;
+	    }
+	}
+
+	if (*vptr != *pptr) {
+	    error = TRUE;
+	    ReportCompareError (dip, count, i, *pptr, *vptr);
+	    break;
+	} else {
+	    i++, pptr++, vptr++;
+	    if (pptr == pend) pptr = pattern_buffer;
+	}
+    }
+
+    if (error) {
+	if (dump_flag) {
+	    size_t dump_size = CalculateDumpSize (count);
+            if (lbn_error && !iot_pattern) {
+                u_int32 elbn = vlbn; /* Can't take address of register. */
+                /* expected - yep, real ugly, but gotta be correct! */
+                dump_buffer (lba_str, (u_char *)&elbn, (u_char *)&elbn,
+                             sizeof(elbn), sizeof(elbn), TRUE); 
+            } else if (pattern_buffer) {
+		size_t pdump_size = (dump_size < patbuf_size)
+					? dump_size : patbuf_size;
+		/* expected */
+		dump_buffer (pattern_str, pattern_buffer, pptr,
+					pdump_size, patbuf_size, TRUE);
+	    }
+	    /* received */
+#if defined(TIMESTAMP)
+            if (timestamp_flag) {
+                display_timestamp(buffer);
+            }
+#endif /* defined(TIMESTAMP) */
+	    dump_buffer (data_str, buffer, vptr, dump_size, count, FALSE);
+	}
+        (void)ExecuteTrigger(dip, "miscompare");
+	status = FAILURE;
+    }
+    pattern_bufptr = pptr;
+    *lba = vlbn;		/* Pass updated lba back to caller. */
     return (status);
 }
 
@@ -1034,8 +1666,9 @@ dopad_verify (
 		    Fprintf ("Data buffer pointer = %#lx, buffer offset = %ld\n",
 								vptr, offset);
 		}
-		fflush (stderr);
+		fflush (efp);
 		status = FAILURE;
+                (void)ExecuteTrigger(dip, "miscompare");
 		break;
 	    }
 	}
@@ -1057,7 +1690,7 @@ dopad_verify (
  *									*
  ************************************************************************/
 void
-process_pfile (int *fd, char *file, int mode)
+process_pfile (HANDLE *fd, char *file, int mode)
 {
 	struct stat sb;
 	size_t count, size;
@@ -1066,12 +1699,25 @@ process_pfile (int *fd, char *file, int mode)
 #if defined(__WIN32__)
 	mode |= O_BINARY;
 #endif /* defined(__WIN32__) */
+
+#if defined(WIN32)
+	if( (*fd = CreateFile (file, mode, (FILE_SHARE_READ | FILE_SHARE_WRITE), NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL)) == NoFd) {
+#else /* !defined(WIN32) */
 	if ( (*fd = open (file, mode)) == FAILURE) {
+#endif /* defined(WIN32) */
 	    Fprintf ("Error opening pattern file '%s', mode = %o\n",
 							file, mode);
 	    report_error ("process_pfile", TRUE);
 	    exit (exit_status);
 	}
+#if defined(WIN32)
+	if (GetFileType (*fd) == FILE_TYPE_DISK) {
+	    size = GetFileSize (*fd, NULL);
+	} else {
+	    Fprintf ("Expect regular file for pattern file.\n");
+	    exit (exit_status);
+        }
+#else /* !defined(WIN32) */
 	if (fstat (*fd, &sb) < 0) {
 	    report_error ("fstat", TRUE);
 	    exit (exit_status);
@@ -1084,14 +1730,25 @@ process_pfile (int *fd, char *file, int mode)
 	    exit (exit_status);
 	}
 	size = (size_t) sb.st_size;
+#endif /* defined(WIN32) */
 	buffer = (u_char *) myalloc (size, 0);
+#if defined(WIN32)
+	if(!ReadFile (*fd, buffer, size, &count, NULL)) count = -1;
+	if (count != size) {
+#else /* !defined(WIN32) */
 	if ( (count = read (*fd, buffer, size)) != size) {
+#endif /* defined(WIN32) */
 	    Fprintf ("Pattern file '%s' read error!\n", file);
 	    if ((ssize_t)count == FAILURE) {
+#if defined(WIN32)
+		report_error ("ReadFile", TRUE);
+#else /* !defined(WIN32) */
 		report_error ("read", TRUE);
+#endif /* defined(WIN32) */
 		exit (exit_status);
 	    } else {
-		Fprintf ("Attempted to read %d bytes, read only %d bytes.",
+		LogMsg (efp, logLevelCrit, 0,
+			"Attempted to read %d bytes, read only %d bytes.",
 							 size, count);
 		exit (FATAL_ERROR);
 	    }
@@ -1102,7 +1759,11 @@ process_pfile (int *fd, char *file, int mode)
 	/*
 	 * Currently don't need pattern file open for anything else.
 	 */
+#if defined(WIN32)
+	CloseHandle (*fd); *fd = NoFd;
+#else /* !defined(WIN32) */
 	(void) close (*fd); *fd = -1;
+#endif /* defined(WIN32) */
 }
 
 /************************************************************************
@@ -1164,8 +1825,27 @@ copy_pattern (u_int32 pattern, u_char *buffer)
 /*
  * Function to display ASCII time.
  */
+char *
+bformat_time (char *bp, clock_t time)
+{
+    u_int hr, min, sec, frac;
+
+    frac = time % hz;
+    frac = (frac * 100) / hz;
+    time /= hz;
+    sec = time % 60; time /= 60;
+    min = time % 60;
+    if (hr = time / 60) {
+        bp += Sprintf(bp, "%dh", hr);
+    }
+    bp += Sprintf(bp, "%02dm", min);
+    bp += Sprintf(bp, "%02d.", sec);
+    bp += Sprintf(bp, "%02ds", frac);
+    return (bp);
+}
+
 void
-print_time (clock_t time)
+print_time (FILE *fp, clock_t time)
 {
 	u_int hr, min, sec, frac;
 
@@ -1175,29 +1855,34 @@ print_time (clock_t time)
 	sec = time % 60; time /= 60;
 	min = time % 60;
 	if (hr = time / 60) {
-	    fprintf (stderr, "%dh", hr);
+	    fprintf (fp, "%dh", hr);
 	}
-	fprintf (stderr, "%02dm", min);
-	fprintf (stderr, "%02d.", sec);
-	fprintf (stderr, "%02ds\n", frac);
+	fprintf (fp, "%02dm", min);
+	fprintf (fp, "%02d.", sec);
+	fprintf (fp, "%02ds\n", frac);
 }
 
 void
 format_time (clock_t time)
 {
 	clock_t hr, min, sec, frac;
-
+#if !defined(WIN32)
 	frac = (time % hz);
 	frac = (frac * 100) / hz;
 	time /= hz;
+#endif /* !defined(WIN32) */
 	sec = time % 60; time /= 60;
 	min = time % 60;
 	if (hr = time / 60) {
 	    Lprintf ("%dh", hr);
 	}
 	Lprintf ("%02dm", min);
+#if defined(WIN32)
+	Lprintf ("%02ds\n", sec);
+#else /* !defined(WIN32) */
 	Lprintf ("%02d.", sec);
 	Lprintf ("%02ds\n", frac);
+#endif /* defined(WIN32) */
 }
 
 #if defined(DEC)
@@ -1243,16 +1928,25 @@ format_ltime (long time, int tps)
  *	Returns file position on Success, (off_t)-1 on Failure.		*
  *									*
  ************************************************************************/
-off_t
-seek_file (int fd, u_long records, off_t size, int whence)
+OFF_T
+seek_file (HANDLE fd, u_long records, OFF_T size, int whence)
 {
-    off_t pos;
+    OFF_T pos;
 
     /*
      * Seek to specifed file position.
      */
-    if ((pos = lseek (fd, (off_t)(records * size), whence)) == (off_t)-1) {
+#if defined(WIN32)
+    if ((pos = SetFilePtr ( fd, (OFF_T)(records * size), whence)) == (OFF_T)-1) {
+        Fprintf("SetFilePtr failed (fd %d, offset " FUF ", whence %d)\n",
+                fd, (off_t)(records * size), whence);
+        report_error ("SetFilePointer", TRUE);
+#else /* !defined(WIN32) */
+    if ((pos = lseek (fd, (OFF_T)(records * size), whence)) == (OFF_T)-1) {
+        Fprintf("lseek failed (fd %d, offset " FUF ", whence %d)\n",
+                fd, (off_t)(records * size), whence);
 	report_error ("lseek", TRUE);
+#endif /* defined(WIN32) */
     }
     return (pos);
 }
@@ -1260,14 +1954,17 @@ seek_file (int fd, u_long records, off_t size, int whence)
 /*
  * Utility functions to handle file positioning.
  */
-off_t
-seek_position (struct dinfo *dip, off_t offset, int whence)
+OFF_T
+seek_position (struct dinfo *dip, OFF_T offset, int whence)
 {
-    off_t pos;
+    OFF_T pos;
+#if defined(WIN32)
+    LARGE_INTEGER seek;
+#endif /* defined(WIN32) */
 
 #if defined(DEBUG)
     if (Debug_flag) {
-        Fprintf ("attempting lseek (fd=%d, offset=%lu, whence=%d)\n",
+        Printf ("attempting lseek (fd=%d, offset=" FUF ", whence=%d)\n",
 					dip->di_fd, offset, whence);
     }
 #endif /* defined(DEBUG) */
@@ -1275,18 +1972,26 @@ seek_position (struct dinfo *dip, off_t offset, int whence)
     /*
      * Seek to specifed file position.
      */
-    if ((pos = lseek (dip->di_fd, offset, whence)) == (off_t) -1) {
+#if defined(WIN32)
+    if ((pos = SetFilePtr ( dip->di_fd, offset, whence)) == (OFF_T)-1) {
+#else /* !defined(WIN32) */
+    if ((pos = lseek (dip->di_fd, offset, whence)) == (OFF_T) -1) {
+#endif /* defined(WIN32) */
 	if (Debug_flag) {
-	    Fprintf ("failed lseek (fd %d, offset " FUF " whence %d)\n",
+	    Printf ("failed lseek (fd %d, offset " FUF ", whence %d)\n",
 					dip->di_fd, offset, whence);
 	}
+#if defined(WIN32)
+	report_error ("SetFilePointer", TRUE);
+#else /* !defined(WIN32) */
 	report_error ("lseek", TRUE);
+#endif /* defined(WIN32) */
 	terminate (exit_status);
     }
 
 #if defined(DEBUG)
     if (Debug_flag) {
-	Fprintf ("pos=%lu = lseek (fd=%d, offset=%lu, whence=%d)\n",
+	Printf ("pos=" FUF " = lseek (fd=%d, offset=%lu, whence=%d)\n",
 					pos, dip->di_fd, offset, whence);
     }
 #endif /* defined(DEBUG) */
@@ -1296,13 +2001,13 @@ seek_position (struct dinfo *dip, off_t offset, int whence)
 
 #if !defined(INLINE_FUNCS)
 
-off_t
+OFF_T
 get_position (struct dinfo *dip)
 {
 #if defined(_BSD)
-    return (seek_position (dip, (off_t) 0, L_INCR));
+    return (seek_position (dip, (OFF_T) 0, L_INCR));
 #else /* !defined(_BSD) */
-    return (seek_position (dip, (off_t) 0, SEEK_CUR));
+    return (seek_position (dip, (OFF_T) 0, SEEK_CUR));
 #endif /* defined(_BSD) */
 }
 
@@ -1311,7 +2016,7 @@ get_position (struct dinfo *dip)
 u_int32
 get_lba (struct dinfo *dip)
 {
-    off_t pos;
+    OFF_T pos;
     if ( (pos = get_position(dip)) ) {
 	return ( (u_int32)(pos / lbdata_size) );
     } else {
@@ -1319,35 +2024,35 @@ get_lba (struct dinfo *dip)
     }
 }
 
-off_t
-incr_position (struct dinfo *dip, off_t offset)
+OFF_T
+incr_position (struct dinfo *dip, OFF_T offset)
 {
 #if defined(_BSD)
-    off_t pos = seek_position (dip, offset, L_INCR);
+    OFF_T pos = seek_position (dip, offset, L_INCR);
 #else /* !defined(_BSD) */
-    off_t pos = seek_position (dip, offset, SEEK_CUR);
+    OFF_T pos = seek_position (dip, offset, SEEK_CUR);
 #endif /* defined(_BSD) */
 
     if (Debug_flag || rDebugFlag) {
-	u_int32 lba = (pos / (off_t)dip->di_dsize);
-	Fprintf ("Seeked to block %lu (%#lx) at byte position " FUF "\n",
+	large_t lba = (pos / (OFF_T)dip->di_dsize);
+	Printf ("Seeked to block " LUF " (" LXF ") at byte position " FUF "\n",
 							lba, lba, pos);
     }
     return (pos);
 }
 
-off_t
-set_position (struct dinfo *dip, off_t offset)
+OFF_T
+set_position (struct dinfo *dip, OFF_T offset)
 {
 #if defined(_BSD)
-    off_t pos = seek_position (dip, offset, L_SET);
+    OFF_T pos = seek_position (dip, offset, L_SET);
 #else /* !defined(_BSD) */
-    off_t pos = seek_position (dip, offset, SEEK_SET);
+    OFF_T pos = seek_position (dip, offset, SEEK_SET);
 #endif /* defined(_BSD) */
 
     if (Debug_flag || rDebugFlag) {
-	u_int32 lba = (pos / (off_t)dip->di_dsize);
-	Fprintf ("Seeked to block %lu (%#lx) at byte position " FUF ".\n",
+	large_t lba = (pos / (OFF_T)dip->di_dsize);
+	Printf ("Seeked to block " LUF " (" LXF ") at byte position " FUF "\n",
 							lba, lba, pos);
     }
     return (pos);
@@ -1355,20 +2060,20 @@ set_position (struct dinfo *dip, off_t offset)
 
 #if !defined(INLINE_FUNCS)
 
-off_t
+OFF_T
 make_position(struct dinfo *dip, u_int32 lba)
 {
-    return ( (off_t)(lba * lbdata_size));
+    return ( (OFF_T)(lba * lbdata_size));
 }
 
 #endif /* !defined(INLINE_FUNCS) */
 
 void
-show_position (struct dinfo *dip, off_t pos)
+show_position (struct dinfo *dip, OFF_T pos)
 {
     if (debug_flag || rDebugFlag) {
-	u_int32 lba = make_lba(dip, pos);
-	Fprintf ("Current file offset is " FUF " (" FXF "), relative lba is %u (%#x)\n",
+	large_t lba = make_lba(dip, pos);
+	Printf ("Current file offset is " FUF " (" FXF "), relative lba is %u (%#x)\n",
 						pos, pos, lba, lba);
     }
 }
@@ -1398,13 +2103,17 @@ get_random(void)
 size_t
 get_variable (struct dinfo *dip)
 {
-    size_t length;
-    u_long randum;
+    register size_t length;
+    register u_long randum;
 
     randum = get_random();
     length = (size_t)((randum % max_size) + min_size);
     if (dip->di_dsize) {
-	length = roundup(length, dip->di_dsize);
+        if ( (dip->di_dtype->dt_dtype == DT_REGULAR) && !fsalign_flag) {
+            length = roundup(length, patbuf_size);
+        } else {
+	    length = roundup(length, dip->di_dsize);
+        }
     }
     if (length > max_size) length = max_size;
     return (length);
@@ -1428,14 +2137,15 @@ set_rseed(u_int seed)
 /*
  * Function to set position for random I/O.
  */
-off_t
+OFF_T
 do_random (struct dinfo *dip, bool doseek, size_t xfer_size)
 {
-    off_t pos, dsize, ralign;
-    u_long randum, records;
+    register OFF_T pos, dsize, ralign;
+    register large_t randum;
+    u_long records;
 
-    dsize = (off_t)(dip->di_dsize);
-    ralign = (off_t)((random_align) ? random_align : dsize);
+    dsize = (OFF_T)(dip->di_dsize);
+    
     if (dip->di_mode == READ_MODE) {
 	records = dip->di_records_read;
     } else {
@@ -1445,34 +2155,43 @@ do_random (struct dinfo *dip, bool doseek, size_t xfer_size)
     /*
      * Ensure the random alignment size is modulo the device size.
      */
-    if ( (ralign % dsize) != 0) ralign = roundup(ralign,dsize);
+    if ( (dip->di_dtype->dt_dtype == DT_REGULAR) && !fsalign_flag) {
+        off_t fsalign = patbuf_size;
+        if (user_ralign) {
+            ralign = (off_t)((random_align) ? random_align : fsalign);
+        } else {
+            ralign = fsalign;
+        }
+        ralign = roundup(ralign, fsalign);
+    } else {
+        ralign = (off_t)((random_align) ? random_align : dsize);
+        ralign = roundup(ralign, dsize);
+    }
 
-    randum = get_random();
+    randum = (large_t)get_random();
 
     /*
      * Set position so that the I/O is in the range from file_position to 
      * data_limit and is block size aligned.
      *
-     * Since randum only ranges to 2^31, treat it as a block number to
-     * allow random access to more blocks in a large device or file.
+     * Since randum only ranges to 2^31, scale the offset by shift value,
+     * which is based on the capacity.  See dtread.c: ReadCapacity()
      *
      * Note:  This scaling/rounding/range checking kills performance!
      */
-    if (records & 0x01) {
-	randum *= dsize;	/* Scale upwards every other record. */
-    }
-    pos = (randum % (u_long)rdata_limit);
+    randum <<= dip->di_rshift;	/* Scale up! */
+    pos = (OFF_T)(randum % rdata_limit);
     /*
      * Ensure the upper data limit isn't exceeded.
      */
     while ((pos + xfer_size) >= rdata_limit) {
-	pos = ( (pos + xfer_size) % (u_long)rdata_limit);
+	pos = ( (pos + xfer_size) % rdata_limit);
     }
 
     /*
      * Round up and align as necessary.
      */
-    pos = roundup(pos, ralign);
+    if (ralign) pos = roundup(pos, ralign);
 
     /*
      * Ensure the position is within random range.
@@ -1497,8 +2216,8 @@ do_random (struct dinfo *dip, bool doseek, size_t xfer_size)
 	 * Note:  For AIO, we just calculate the random position.
 	 */
 	if (Debug_flag || rDebugFlag) {
-	    u_int32 lba = (pos / dsize);
-	    Fprintf ("Random position set to " FUF " block %lu (%#lx).\n",
+	    large_t lba = (pos / dsize);
+	    Printf ("Random position set to " FUF " block " LUF " (" LXF ").\n",
 							pos, lba, lba);
 	}
 	return (pos);
@@ -1522,7 +2241,7 @@ int
 skip_records (	struct dinfo	*dip,
 		u_long		records,
 		u_char		*buffer,
-		off_t		size)
+		OFF_T		size)
 {
     u_long i;
     size_t count;
@@ -1532,7 +2251,11 @@ skip_records (	struct dinfo	*dip,
      * Skip over the specified record(s).
      */
     for (i = 0; i < records; i++) {
+#if defined(WIN32)
+	if(!ReadFile (dip->di_fd, buffer, size, &count, NULL)) count = -1;
+#else /* !defined(WIN32) */
 	count = read (dip->di_fd, buffer, size);
+#endif /* defined(WIN32) */
 	if ( (status = check_read (dip, count, size)) == FAILURE) {
 	    break;
 	}
@@ -1562,19 +2285,22 @@ myalloc (size_t size, int offset)
 
 #if defined(_BSD)
 	if ( (bp = (u_char *) valloc (size + offset)) == (u_char *) 0) {
-	    Fprintf ("valloc() failed allocating %lu bytes.\n",
+	    LogMsg (efp, logLevelCrit, 0,
+		    "valloc() failed allocating %lu bytes.\n",
 						(size + offset));
 	    exit (FATAL_ERROR);
 	}
 #elif defined(_QNX_SOURCE) && !defined(_QNX_32BIT)
 	if ( (bp = (u_char *) malloc (size + offset)) == (u_char *) 0) {
-	    Fprintf ("malloc() failed allocating %u bytes.\n",
+	    LogMsg (efp, logLevelCrit, 0,
+		    "malloc() failed allocating %u bytes.\n",
 						(size + offset));
 	    exit (FATAL_ERROR);
 	}
 #else /* !defined_BSD) || !defined(_QNX_SOURCE) */
 	if ( (bp = (u_char *) malloc (size + offset + page_size)) == (u_char *) 0) {
-	    Fprintf ("malloc() failed allocating %lu bytes.\n",
+	    LogMsg (efp, logLevelCrit, 0,
+		    "malloc() failed allocating %lu bytes.\n",
 					(size + offset + page_size));
 	    exit (FATAL_ERROR);
 	} else {
@@ -1583,10 +2309,11 @@ myalloc (size_t size, int offset)
 #endif /* defined(_BSD) */
 	bp += offset;
 	if (debug_flag) {
-	    Fprintf (
+	    Printf (
 	"Allocated buffer at address %#lx of %u bytes, using offset %u\n",
 							bp, size, offset);
 	}
+	memset (bp, '\0', size);
 	return (bp);
 }
 
@@ -1599,8 +2326,13 @@ Malloc (size_t size)
 	void *bp;
 
 	if ( (bp = malloc (size)) == NULL) {
-	    Fprintf ("malloc() failed allocating %u bytes.\n", size);
+	    LogMsg (efp, logLevelCrit, 0,
+		    "malloc() failed allocating %u bytes.\n", size);
+#if defined(WIN32)
+	    exit(ERROR_OUTOFMEMORY);
+#else /* !defined(WIN32) */
 	    exit (ENOMEM);
+#endif /* defined(WIN32) */
 	}
 	memset (bp, '\0', size);
 	return (bp);
@@ -1800,14 +2532,16 @@ CvtStrtoLarge (char *nstr, char **eptr, int base)
 {
 	large_t n = 0, val;
 
-#if defined(QuadIsLong)
+#if defined(QuadIsLong) || defined(HP_UX)  
 	if ( (n = strtoul (nstr, eptr, base)) == (large_t) 0) {
 #elif defined(QuadIsLongLong)
-#  if defined(SCO) || defined(__QNXNTO__)
+#  if defined(SCO) || defined(__QNXNTO__) || defined(SOLARIS) || defined(AIX) || defined(_NT_SOURCE)
 	if ( (n = strtoull (nstr, eptr, base)) == (large_t) 0) {
-#  else /* !defined(SCO) && !defined(__QNXNTO__) */
+#elif defined(WIN32)
+	if ( (n = strtoul (nstr, eptr, base)) == (large_t) 0) {
+#  else /* !defined(SCO) && !defined(__QNXNTO__) && !defined(AIX) && !defined(_NT_SOURCE) */
 	if ( (n = strtouq (nstr, eptr, base)) == (large_t) 0) {
-#  endif /* defined(SCO) || defined(__QNXNTO__) */
+#  endif /* defined(SCO) || defined(__QNXNTO__) || defined(SOLARIS) || defined(AIX) || defined(_NT_SOURCE) */
 #else /* assume QuadIsDouble */
 	if ( (n = strtod (nstr, eptr)) == (large_t) 0) {
 #endif
@@ -2139,13 +2873,19 @@ Ctime (time_t timer)
 u_long
 RecordError(void)
 {
-	error_time = time((time_t *) 0);
-	/* ctime() adds newline '\n' to time stamp. */
-	Fprint ("\n");
-	Fprintf ("Error number %lu occurred on %s",
-			++error_count, ctime(&error_time));
-	exit_status = FAILURE;
-	return (error_count);
+    error_time = time((time_t *) 0);
+    /* ctime() adds newline '\n' to time stamp. */
+    LogMsg (efp, logLevelError, PRT_NOIDENT, "\n");
+    LogMsg (efp, logLevelCrit, 0,
+	    "Error number %lu occurred on %s",
+	    ++error_count, ctime(&error_time));
+    end_time = times (&etimes);
+    Fprintf ("Elapsed time since beginning of pass: ");
+    print_time (efp, end_time - pass_time);
+    Fprintf ("Elapsed time since beginning of test: ");
+    print_time (efp, end_time - start_time);
+    exit_status = FAILURE;
+    return (error_count);
 }
 
 /*
@@ -2155,8 +2895,13 @@ u_long
 RecordWarning(u_long record)
 {
 	error_time = time((time_t *) 0);
-	Fprintf ("Warning on record number %lu, occurred at %s",
+	Printf ("Warning on record number %lu, occurred at %s",
 			    (record + 1), ctime(&error_time));
+	end_time = times (&etimes);
+	Printf ("Elapsed time since beginning of pass: ");
+	print_time (ofp, end_time - pass_time);
+	Printf ("Elapsed time since beginning of test: ");
+	print_time (ofp, end_time - start_time);
 	return (warning_errors);
 }
 
@@ -2165,61 +2910,61 @@ RecordWarning(u_long record)
  */
 /*VARARGS*/
 void
-#if defined(USE_STDARG)
-Fprintf (char *format, ...)
-#else /* !defined(USE_STDARG) */
-Fprintf (va_alist)
-va_dcl
-#endif /* defined(USE_STDARG) */
+LogMsg (FILE *fp, enum logLevel level, int flags, char *fmtstr, ...)
 {
-	va_list ap;
-	FILE *fp = stderr;
+    va_list ap;
 
-#if defined(USE_STDARG)
-	va_start(ap, format);
-#else /* !defined(USE_STDARG) */
-	char *fmt;
-	va_start(ap);
-#endif /* defined(USE_STDARG) */
+    if (hazard_flag && !(flags & PRT_NOLEVEL)) {
+	fprintf (fp, "RPCLOG%d:", level);
+    }
+    if ( !(flags & PRT_NOIDENT) ) {
 	if ( ((num_procs || num_slices) && !child_pid) || forked_flag) {
 	    fprintf (fp, "%s (%d): ", cmdname, getpid());
 	} else {
 	    fprintf (fp, "%s: ", cmdname);
 	}
-#if defined(USE_STDARG)
+    }
+
+    va_start(ap, fmtstr);
+    vfprintf (fp, fmtstr, ap);
+    va_end(ap);
+    if ( !(flags & PRT_NOFLUSH) ) {
+	(void) fflush (fp);
+    }
+    return;
+}
+
+void
+Fprintf (char *format, ...)
+{
+	va_list ap;
+	FILE *fp = efp;
+
+	if (hazard_flag) {
+	    fprintf (fp, "RPCLOG%d:", logLevelError);
+	} else if ( ((num_procs || num_slices) && !child_pid) || forked_flag) {
+	    fprintf (fp, "%s (%d): ", cmdname, getpid());
+	} else {
+	    fprintf (fp, "%s: ", cmdname);
+	}
+	va_start(ap, format);
 	vfprintf (fp, format, ap);
-#else /* !defined(USE_STDARG) */
-	fmt = va_arg(ap, char *);
-	vfprintf (fp, fmt, ap);
-#endif /* defined(USE_STDARG) */
 	va_end(ap);
 	(void) fflush (fp);
 }
 
 /*
- * Same as Fprintf except no program name identifier.
+ * Same as Fprintf except no identifier or log prefix.
  */
 /*VARARGS*/
 void
-#if defined(USE_STDARG)
 Fprint (char *format, ...)
-#else /* !defined(USE_STDARG) */
-Fprint (va_alist)
-va_dcl
-#endif /* defined(USE_STDARG) */
 {
 	va_list ap;
-	FILE *fp = stderr;
+	FILE *fp = efp;
 
-#if defined(USE_STDARG)
 	va_start(ap, format);
 	vfprintf (fp, format, ap);
-#else /* !defined(USE_STDARG) */
-	char *fmt;
-	va_start(ap);
-	fmt = va_arg(ap, char *);
-	vfprintf (fp, fmt, ap);
-#endif /* defined(USE_STDARG) */
 	va_end(ap);
 }
 
@@ -2228,25 +2973,13 @@ va_dcl
  */
 /*VARARGS*/
 void
-#if defined(USE_STDARG)
 Lprintf (char *format, ...)
-#else /* !defined(USE_STDARG) */
-Lprintf (va_alist)
-va_dcl
-#endif /* defined(USE_STDARG) */
 {
 	va_list ap;
 	char *bp = log_bufptr;
 
-#if defined(USE_STDARG)
 	va_start(ap, format);
 	vsprintf (bp, format, ap);
-#else /* !defined(USE_STDARG) */
-	char *fmt;
-	va_start(ap);
-	fmt = va_arg(ap, char *);
-	vsprintf (bp, fmt, ap);
-#endif /* defined(USE_STDARG) */
 	va_end(ap);
 	bp += strlen(bp);
 	log_bufptr = bp;
@@ -2258,10 +2991,51 @@ va_dcl
 void
 Lflush(void)
 {
-	FILE *fp = stderr;
+	FILE *fp = ofp;
 	Fputs (log_buffer, fp);
 	fflush (fp);
 	log_bufptr = log_buffer;
+}
+
+/*
+ * Display message to stdout & flush output.
+ */
+/*VARARGS*/
+void
+Printf (char *format, ...)
+{
+	va_list ap;
+	FILE *fp = ofp;
+
+	if (hazard_flag) {
+	    fprintf (fp, "RPCLOG%d:", logLevelLog);
+	} else if ( ((num_procs || num_slices) && !child_pid) || forked_flag) {
+	    fprintf (fp, "%s (%d): ", cmdname, getpid());
+	} else {
+	    fprintf (fp, "%s: ", cmdname);
+	}
+	va_start(ap, format);
+	vfprintf (fp, format, ap);
+	va_end(ap);
+	(void) fflush (fp);
+}
+
+/*
+ * Same as Printf except no program name identifier.
+ */
+/*VARARGS*/
+void
+Print (char *format, ...)
+{
+	va_list ap;
+	FILE *fp = ofp;
+
+	if (hazard_flag) {
+	    fprintf (fp, "RPCLOG%d:", logLevelLog);
+	}
+	va_start(ap, format);
+	vfprintf (fp, format, ap);
+	va_end(ap);
 }
 
 /*VARARGS*/
@@ -2307,7 +3081,7 @@ Fputs (char *str, FILE *stream)
 	return (status);
 }
 
-#if defined(_QNX_SOURCEx) || defined(SOLARIS)
+#if defined(_QNX_SOURCEx) || defined(SOLARIS) || defined(WIN32)
 /*
  * TODO: Could be made a macro for better performance.
  */
@@ -2317,7 +3091,7 @@ bzero (char *buffer, size_t length)
 	memset ((void *)buffer, '\0', length);
 }
 
-#endif /* defined(_QNX_SOURCE) || defined(SOLARIS) */
+#endif /* defined(_QNX_SOURCE) || defined(SOLARIS) || defined(WIN32) */
 
 /************************************************************************
  *									*
@@ -2351,16 +3125,26 @@ is_Eof (struct dinfo *dip, size_t count, int *status)
      * We expect writes @ EOF to fail w/count -1, and errno ENOSPC.
      */
     if ( (dip->di_mode == WRITE_MODE) && (count == (size_t) 0) ) {
+#if defined(BrokenEOF)
+	dip->di_end_of_file = TRUE;
+	exit_status = END_OF_FILE;
+	return (end_of_file = TRUE);
+#else /* !defined(BrokenEOF) */
 	return (FALSE);
+#endif /* defined(BrokenEOF) */
     }
-#if defined(SCO)
+#if defined(SCO) || defined(HP_UX) || defined(AIX)
     if ( (count == (size_t) 0) ||
 	 ( ((ssize_t)count == (ssize_t) -1) &&
 	   ((errno == ENOSPC) || (errno == ENXIO)) ) ) {
-#else /* !defined(SCO) */
+#elif defined(WIN32)
+    if ( (count == (size_t) 0) ||
+	 ( (count == -1) &&
+	 ( (errno = GetLastError()) == ERROR_DISK_FULL) ) ) {
+#else /* !defined(SCO) && !defined(HP_UX) && !defined(AIX) */
     if ( (count == (size_t) 0) ||
 	 (((ssize_t)count == (ssize_t) -1) && (errno == ENOSPC)) ) {
-#endif /* defined(SCO) */
+#endif /* defined(SCO) || defined(HP_UX) || defined(AIX) */
 	large_t data_bytes;
 	if (dip->di_mode == READ_MODE) {
 	    data_bytes = dip->di_dbytes_read;
@@ -2368,18 +3152,17 @@ is_Eof (struct dinfo *dip, size_t count, int *status)
 	    data_bytes = dip->di_dbytes_written;
 	}
 	if (debug_flag || eDebugFlag) {
-	    Fprintf ("End of %s detected, count = %d, errno = %d [file #%lu, record #%lu]\n",
+	    Printf ("End of %s detected, count = %d, errno = %d [file #%lu, record #%lu]\n",
+#if defined(WIN32)
+			(count == 0) ? "file" : "media", count, GetLastError(),
+#else /* !defined(WIN32) */
 			(count == 0) ? "file" : "media", count, errno,
+#endif /* defined(WIN32) */
 			(dip->di_mode == READ_MODE) ?
 			 (dip->di_files_read + 1) : (dip->di_files_written + 1),
 			(dip->di_mode == READ_MODE) ?
 			 (dip->di_records_read + 1) : (dip->di_records_written + 1));
 	}
-#if defined(EEI)
-	if ((dip->di_dtype->dt_dtype == DT_TAPE) && eei_flag) {
-	    clear_eei_status(dip->di_fd, FALSE);
-	}
-#endif /* defined(EEI) */
 	if (dip->di_dtype->dt_dtype == DT_TAPE) {
 	    if (count == (size_t) 0) {
 		/* Two file mark's == end of logical tape. */
@@ -2391,20 +3174,34 @@ is_Eof (struct dinfo *dip, size_t count, int *status)
 		dip->di_end_of_media = TRUE;
 	    }
 	}
-#if defined(SCO)
+#if defined(SCO) || defined(HP_UX)
 	if ( ( ((ssize_t)count == (ssize_t) -1) &&
 	       ((errno == ENOSPC) || (errno == ENXIO)) ) &&
 	     (data_bytes == (large_t ) 0) ) { /* This is the key... */
-#else /* !defined(SCO) */
+#elif defined(WIN32)
+	if ( ( (count == -1) &&
+	     ( (errno = GetLastError()) == ERROR_DISK_FULL) ) &&
+	     (data_bytes == (large_t ) 0) ) { /* This is the key... */
+#else /* !defined(SCO) && !defined(HP_UX) */
 	if ( (((ssize_t)count == (ssize_t) -1) && (errno == ENOSPC)) &&
 	     (data_bytes == (large_t ) 0) ) { /* This is the key... */
-#endif /* defined(SCO) */
+#endif /* defined(SCO) || defined(HP_UX) */
 	    exit_status = errno;
 	    report_error((dip->di_mode == READ_MODE) ? "read" : "write", TRUE);
+#if defined(EEI)
+	    if ( (dip->di_dtype->dt_dtype == DT_TAPE) && eei_flag) {
+		print_mtstatus (dip->di_fd, dip->di_mt, TRUE);
+	    }
+#endif /* defined(EEI) */
 	    if (status) *status = FAILURE;
 	} else {
 	    exit_status = END_OF_FILE;
 	}
+#if defined(EEI)
+	if ((dip->di_dtype->dt_dtype == DT_TAPE) && eei_flag) {
+	    clear_eei_status(dip->di_fd, FALSE);
+	}
+#endif /* defined(EEI) */
 	dip->di_end_of_file = TRUE;
 	return (end_of_file = TRUE);
     }
@@ -2418,7 +3215,7 @@ void
 set_Eof(struct dinfo *dip)
 {
     if (debug_flag || eDebugFlag) {
-	Fprintf ("Beginning of media detected [file #%lu, record #%lu]\n",
+	Printf ("Beginning of media detected [file #%lu, record #%lu]\n",
 		(dip->di_mode == READ_MODE) ?
 		 (dip->di_files_read + 1) : (dip->di_files_written + 1),
 		(dip->di_mode == READ_MODE) ?
@@ -2478,11 +3275,11 @@ ReportDeviceInfo (
      * For disk devices, also report the relative block address.
      */
     if (dip->di_random_access) {
-	off_t current_offset;
-	off_t starting_offset;
+        large_t lba;
+	OFF_T current_offset;
+	OFF_T starting_offset;
 	u_int32 dsize = dip->di_dsize;
-	off_t block_offset = (byte_position % dsize);
-	u_long lba;
+	OFF_T block_offset = (byte_position % dsize);
 
 #if defined(AIO)
 	if (aio_flag) {
@@ -2498,22 +3295,39 @@ ReportDeviceInfo (
 #endif /* defined(AIO) */
 
 	lba = WhichBlock ((starting_offset + byte_position), dsize);
-	Fprintf("Relative block number where the error occcured is %lu", lba);
+
+        dip->di_lba = lba;
+        /*
+         * Only save the offset for AIO, since our normal read/write
+         * functions maintain the file offset themselves.  If we do
+         * this here, our next offset will be incorrect breaking lba
+         * values when using IOT pattern (for example).
+         */
+        if (aio_flag) {
+            dip->di_offset = current_offset;
+        }
+        dip->di_position = block_offset;
+
+	LogMsg (efp, logLevelError, PRT_NOFLUSH,
+		"Relative block number where the error occurred is " LUF ","
+                " position " FUF, lba, (starting_offset + byte_position));
 	if (block_offset) {
-	    Fprint (" (offset %lu)\n", block_offset);
+	    LogMsg (efp, logLevelError, (PRT_NOIDENT|PRT_NOLEVEL),
+		    " (offset %lu)\n", (u_int)block_offset);
 	} else {
-	    Fprint ("\n");
+	    LogMsg (efp, logLevelError, (PRT_NOIDENT|PRT_NOLEVEL), "\n");
 	}
 #if defined(LOG_DIAG_INFO)
 	if (logdiag_flag) {
 	    char *bp = msg_buffer;
 	    bp += Sprintf(bp,
-			"%s: Relative block number where the error occcured is %lu\n",
-			cmdname, lba);
+		  "%s: Relative block number where the error occurred is " LUF ",",
+		  " position " FUF, cmdname, lba, (starting_offset + byte_position));
 	    if (block_offset) {
-		--bp;
-		bp += Sprintf(bp, " (offset %lu)\n", block_offset);
-  	    }
+		bp += Sprintf(bp, " (offset %lu)\n", (u_int)block_offset);
+  	    } else {
+                bp += Sprintf(bp, "\n");
+            }
 	    LogDiagMsg(msg_buffer);
 	}
 #endif /* defined(LOG_DIAG_INFO) */
@@ -2540,7 +3354,7 @@ ReportDeviceInfo (
 		 * NOTE: Output device could be at a different offset.
 		 */
 		struct dinfo *odip = output_dinfo;
-		off_t output_offset = get_position(odip);
+		OFF_T output_offset = get_position(odip);
 		output_offset += dsize;
 		if (dip->di_mode == READ_MODE) {
 		    dip->di_fbytes_read += dsize;
@@ -2552,7 +3366,7 @@ ReportDeviceInfo (
 	}
 #if defined(EEI)
     } else if ( (dip->di_dtype->dt_dtype == DT_TAPE) && eei_flag) {
-	if (eio_error) print_mtstatus (dip->di_fd, dip->di_mt, TRUE);
+	print_mtstatus (dip->di_fd, dip->di_mt, TRUE);
 #endif /* defined(EEI) */
     }
 }
@@ -2591,7 +3405,7 @@ ReportLbdataError (
 
     ReportDeviceInfo (dip, byte_count, byte_position, FALSE);
 
-    Fprintf ("Block expected = %u (0x%x), block found = %u (0x%x), count = %u\n",
+    Fprintf ("Block expected = %u (0x%08x), block found = %u (0x%08x), count = %u\n",
 		expected_data, expected_data, data_found, data_found, byte_count);
 
 #if defined(LOG_DIAG_INFO)
@@ -2605,7 +3419,7 @@ ReportLbdataError (
 	    bp += Sprintf(bp, "%s: %s %u in record number %lu\n", cmdname,
 			compare_error_str, byte_position, (dip->di_records_read + 1));
 	}
-	bp += Sprintf(bp, "%s: Block expected = %u (0x%x), block found = %u (0x%x), count = %u\n",
+	bp += Sprintf(bp, "%s: Block expected = %u (0x%08x), block found = %u (0x%08x), count = %u\n",
 		cmdname, expected_data, expected_data, data_found, data_found, byte_count);
 	LogDiagMsg(msg_buffer);
     }
@@ -2626,6 +3440,683 @@ IS_HexString (char *s)
 	    if ( !isxdigit((int)*s++) ) return (FALSE);
 	}
 	return (TRUE);
+}
+
+/*
+ * FmtKeepAlive() - Format Keepalive Message.
+ *
+ * Special Format Characters:
+ *
+ *      %b = The bytes read or written.
+ *      %B = The total bytes read and written.
+ *      %c = The count of records this pass.
+ *      %C = The total records for this test.
+ *	%d = The device name.
+ *	%D = The real device name.
+ *      %e = The number of errors.
+ *      %E = The error limit.
+ *      %f = The files read or written.
+ *      %F = The total files read and written.
+ *	%h = The host name.
+ *	%H = The full host name.
+ *      %i = The I/O mode ("read" or "write").
+ *      %k = The kilobytes this pass.
+ *      %K = The total kilobytes this test.
+ *      %l = The logical blocks read or written.
+ *      %L = The total blocks read and written.
+ *      %m = The megabytes this pass.
+ *      %M = The total megabytes this test.
+ *	%p = The pass count.
+ *	%P = The pass limit.
+ *      %r = The records read this pass.
+ *      %R = The total records read this test.
+ *      %s = The seconds this pass.
+ *      %S = The total seconds this test.
+ *      %t = The pass elapsed time.
+ *      %T = The total elapsed time.
+ *	%u = The user (login) name.
+ *      %w = The records written this pass.
+ *      %W = The total records written this test.
+ *
+ * Performance Keywords:
+ *      %bps  = The bytes per second.
+ *      %lbps = The blocks per second.
+ *      %kbps = The kilobytes per second.
+ *      %mbps = The megabytes per second.
+ *      %iops = The I/O's per second.
+ *      %spio = The seconds per I/O.
+ *
+ * Lowercase means per pass stats, while uppercase means total stats.
+ *
+ * Inputs:
+ *	dip = The device information pointer.
+ *	keepalivefmt = Keepalive formal control string.
+ *	buffer = Buffer for formatted message.
+ *
+ * Outputs:
+ *	Returns SUCCESS or FAILURE.
+ */
+int
+FmtKeepAlive (struct dinfo *dip, char *keepalivefmt, char *buffer)
+{
+  char    *from = keepalivefmt;
+  char    *to = buffer;
+  ssize_t length = strlen(keepalivefmt);
+
+  while (length-- > 0) {
+    bool full_info = FALSE;
+    /*
+     * Running out of single characters, use key words for performance.
+     */
+    if (*from == '%') {
+      char *key = (from + 1);
+      /*
+       * The approach taken is: lower = pass, upper = total
+       */
+      if (strncasecmp(key, "bps", 3) == 0) {
+        int secs;
+        large_t bytes;
+        bool pass_stats = (strncmp(key, "bps", 3) == 0);
+        bytes = GetStatsValue(dip, ST_BYTES, pass_stats, &secs);
+        if (secs) {
+          to += Sprintf(to, "%.3f", ((double)bytes / (double)secs));
+        } else {
+          to += Sprintf(to, "0.000");
+        }
+        length -= 3;
+        from += 4;
+        continue;
+      } else if (strncasecmp(key, "lbps", 4) == 0) {
+        int secs;
+        large_t blocks;
+        bool pass_stats = (strncmp(key, "lbps", 4) == 0);
+        blocks = GetStatsValue(dip, ST_BLOCKS, pass_stats, &secs);
+        if (secs && dip->di_dsize) {
+          to += Sprintf(to, "%.3f", ((double)blocks / (double)secs));
+        } else {
+          to += Sprintf(to, "0.000");
+        }
+        length -= 4;
+        from += 5;
+        continue;
+      } else if (strncasecmp(key, "kbps", 4) == 0) {
+        int secs;
+        large_t bytes;
+        bool pass_stats = (strncmp(key, "kbps", 4) == 0);
+        bytes = GetStatsValue(dip, ST_BYTES, pass_stats, &secs);
+        if (secs) {
+          to += Sprintf(to, "%.3f", ((double)bytes / (double)KBYTE_SIZE) / secs);
+        } else {
+          to += Sprintf(to, "0.000");
+        }
+        length -= 4;
+        from += 5;
+        continue;
+      } else if (strncasecmp(key, "mbps", 4) == 0) {
+        int secs;
+        large_t bytes;
+        bool pass_stats = (strncmp(key, "mbps", 4) == 0);
+        bytes = GetStatsValue(dip, ST_BYTES, pass_stats, &secs);
+        if (secs) {
+          to += Sprintf(to, "%.3f", ((double)bytes / (double)MBYTE_SIZE) / secs);
+        } else {
+          to += Sprintf(to, "0.000");
+        }
+        length -= 4;
+        from += 5;
+        continue;
+      } else if (strncasecmp(key, "iops", 4) == 0) {
+        int secs;
+        u_long records;
+        bool pass_stats = (strncmp(key, "iops", 4) == 0);
+        records = GetStatsValue(dip, ST_RECORDS, pass_stats, &secs);
+        if (secs) {
+          to += Sprintf(to, "%.3f", ((double)records / (double)secs));
+        } else {
+          to += Sprintf(to, "0.000");
+        }
+        length -= 4;
+        from += 5;
+        continue;
+      } else if (strncasecmp(key, "spio", 4) == 0) {
+        int secs;
+        u_long records;
+        bool pass_stats = (strncmp(key, "spio", 4) == 0);
+        records = GetStatsValue(dip, ST_RECORDS, pass_stats, &secs);
+        if (records) {
+          to += Sprintf(to, "%.4f", ((double)secs / (double)records));
+        } else {
+          to += Sprintf(to, "0.0000");
+        }
+        length -= 4;
+        from += 5;
+        continue;
+      }
+    }
+    switch (*from) {
+      case '%': {
+        if (length) {
+          switch (*(from + 1)) {
+            case 'b': {
+              if (raw_flag) {
+                to += Sprintf(to, LUF,
+                              (dip->di_dbytes_read + dip->di_dbytes_written));
+              } else if (dip->di_mode == READ_MODE) {
+                to += Sprintf(to, LUF, dip->di_dbytes_read);
+              } else {
+                to += Sprintf(to, LUF, dip->di_dbytes_written);
+              }
+              break;
+            }
+            case 'B': {
+              to += Sprintf(to, LUF,
+                    (total_bytes + dip->di_dbytes_read + dip->di_dbytes_written));
+              break;
+            }
+            case 'c': {
+              if (raw_flag) {
+                to += Sprintf(to, "%lu",
+                              (dip->di_records_read + dip->di_records_written));
+              } else if (dip->di_mode == READ_MODE) {
+                to += Sprintf(to, "%lu", dip->di_records_read);
+              } else {
+                to += Sprintf(to, "%lu", dip->di_records_written);
+              }
+              break;
+            }
+            case 'C': {
+              to += Sprintf(to, LUF,
+                    (total_records + total_partial +
+                     dip->di_records_read + dip->di_records_written));
+              break;
+            }
+            case 'd': {
+              to += Sprintf(to, "%s", dip->di_dname);
+              break;
+            }
+            case 'D': {
+              if ( dip->di_device ) { /* Only if known. */
+                to += Sprintf(to, "%s", dip->di_device);
+              } else {
+                struct dtype *dtp = dip->di_dtype;
+                to += Sprintf(to, "%s", dtp->dt_type);
+              }
+              break;
+            }
+            case 'e': {
+              to += Sprintf(to, "%lu",
+                            (dip->di_read_errors + dip->di_write_errors));
+              break;
+            }
+            case 'E': {
+              to += Sprintf(to, "%lu", error_limit);
+              break;
+            }
+            case 'f': {
+              if (raw_flag) {
+                to += Sprintf(to, "%lu",
+                              (dip->di_files_read + dip->di_files_written));
+              } else if (dip->di_mode == READ_MODE) {
+                to += Sprintf(to, "%lu", dip->di_files_read);
+              } else {
+                to += Sprintf(to, "%lu", dip->di_files_written);
+              }
+              break;
+            }
+            case 'F': {
+              to += Sprintf(to, LUF,
+                    (total_files + dip->di_files_read + dip->di_files_written));
+              break;
+            }
+            case 'H':
+              full_info = TRUE;
+              /* FALL THROUGH */
+            case 'h': {
+              char *p, hostname[MAXHOSTNAMELEN];
+              if ( gethostname(hostname, sizeof(hostname)) ) {
+                perror("gethostname()");
+                return(FAILURE);
+              }
+              if ( !full_info ) {
+                if (p = strchr(hostname, '.')) {
+                  *p = '\0';
+                }
+              }
+              to += Sprintf(to, "%s", hostname);
+              break;
+            }
+            case 'i': {
+              if (raw_flag) {
+                to += Sprintf(to, "raw");
+              } else if (dip->di_mode == READ_MODE) {
+                to += Sprintf(to, "read");
+              } else {
+                to += Sprintf(to, "write");
+              }
+              break;
+            }
+            case 'k': {
+              if (raw_flag) {
+                to += Sprintf(to, "%.3f",
+                              (((double)dip->di_dbytes_read + (double)dip->di_dbytes_written)
+                              / (double)KBYTE_SIZE));
+              } else if (dip->di_mode == READ_MODE) {
+                to += Sprintf(to, "%.3f",
+                              ((double)dip->di_dbytes_read / (double)KBYTE_SIZE));
+              } else {
+                to += Sprintf(to, "%.3f",
+                              ((double)dip->di_dbytes_written / (double)KBYTE_SIZE));
+              }
+              break;
+            }
+            case 'K': {
+              to += Sprintf(to, "%.3f",
+                            (((double)total_bytes +
+                              (double)dip->di_dbytes_read + (double)dip->di_dbytes_written)
+                            / (double)MBYTE_SIZE));
+              break;
+            }
+            case 'l': {
+              if (dip->di_dsize <= 1) { /* Device without a size, tape, etc. */
+                  to += Sprintf(to, "<n/a>");
+              } else if (raw_flag) {
+                to += Sprintf(to, LUF,
+                              ((dip->di_dbytes_read + dip->di_dbytes_written)
+                              / dip->di_dsize));
+              } else if (dip->di_mode == READ_MODE) {
+                to += Sprintf(to, LUF, (dip->di_dbytes_read / dip->di_dsize));
+              } else {
+                to += Sprintf(to, LUF, (dip->di_dbytes_written / dip->di_dsize));
+              }
+              break;
+            }
+            case 'L': {
+              if (dip->di_dsize <= 1) { /* Device without a size, tape, etc. */
+                  to += Sprintf(to, "<n/a>");
+              } else {
+                  to += Sprintf(to, LUF,
+              ((total_bytes + dip->di_dbytes_read + dip->di_dbytes_written) / dip->di_dsize));
+              }
+              break;
+            }
+            case 'm': {
+              if (raw_flag) {
+                to += Sprintf(to, "%.3f",
+                              (((double)dip->di_dbytes_read + (double)dip->di_dbytes_written)
+                              / (double)MBYTE_SIZE));
+              } else if (dip->di_mode == READ_MODE) {
+                to += Sprintf(to, "%.3f",
+                              ((double)dip->di_dbytes_read / (double)MBYTE_SIZE));
+              } else {
+                to += Sprintf(to, "%.3f",
+                              ((double)dip->di_dbytes_written / (double)MBYTE_SIZE));
+              }
+              break;
+            }
+            case 'M': {
+              to += Sprintf(to, "%.3f",
+                            (((double)total_bytes +
+                              (double)dip->di_dbytes_read + (double)dip->di_dbytes_written)
+                            / (double)MBYTE_SIZE));
+              break;
+            }
+            case 'p': {
+              to += Sprintf(to, "%lu", pass_count);
+              break;
+            }
+            case 'P': {
+              to += Sprintf(to, "%lu", pass_limit);
+              break;
+            }
+            case 'r': {
+              to += Sprintf(to, "%lu", dip->di_records_read);
+              break;
+            }
+            case 'R': {
+              to += Sprintf(to, LUF,
+                    (total_records_read + total_partial_reads + dip->di_records_read));
+              break;
+            }
+            case 's': {
+              int secs;
+              end_time = times (&etimes);
+              secs = ((end_time - pass_time) / hz);
+              to += Sprintf(to, "%d", secs);
+              break;
+            }
+            case 'S': {
+              int secs;
+              end_time = times (&etimes);
+              secs = ((end_time - start_time) / hz);
+              to += Sprintf(to, "%d", secs);
+              break;
+            }
+            case 't': {
+              clock_t at;
+              end_time = times (&etimes);
+              at = end_time - pass_time;
+              to = bformat_time(to, at);
+              break;
+            }
+            case 'T': {
+              clock_t at;
+              end_time = times (&etimes);
+              at = end_time - start_time;
+              to = bformat_time(to, at);
+              break;
+            }
+            case 'u': {
+#if defined(WIN32)
+	      DWORD size = 256;
+	      TCHAR buf[256];
+#endif
+              char *username = NULL;
+             
+#if defined(WIN32)
+	      GetUserName(buf, &size);
+	      username = buf;
+#else /* if !defined(WIN32) */
+              username = getlogin();
+#endif 
+	      if (username) {
+                to += Sprintf(to, "%s", username);
+              } else {
+#if defined(WIN32)
+		Fprintf("GetUserName failed !\n");
+#else /*if !defined(WIN32) */
+                perror("getlogin()");
+#endif
+              }
+              break;
+            }
+            case 'w': {
+              to += Sprintf(to, "%lu", dip->di_records_written);
+              break;
+            }
+            case 'W': {
+              to += Sprintf(to, LUF,
+                    (total_records_written + total_partial_writes + dip->di_records_written));
+              break;
+            }
+            default: {
+              *to++ = *from;
+              *to++ = *(from + 1);
+              break;
+            }
+          } /* end switch */
+          length--;
+          from += 2;
+          break;
+        } else { /* !length */
+          *to++ = *from++;
+        } /* end if length */
+        break;
+      } /* end case '%' */
+      case '\\': {
+        if (length) {
+          switch (*(from + 1)) {
+            case 'n': {
+              to += Sprintf(to, "\n");
+              break;
+            }
+            case 't': {
+              to += Sprintf(to, "\t");
+              break;
+            }
+            default: {
+              *to++ = *from;
+              *to++ = *(from + 1);
+              break;
+            }
+          } /* end switch */
+          length--;
+          from += 2;
+          break;
+        } else { /* !length */
+          *to++ = *from++;
+        } /* end if length */
+        break;
+      } /* end case '\' */
+      default: {
+        *to++ = *from++;
+        break;
+      }
+    }
+  }
+  *to = '\0';       /* NULL terminate! */
+  return(SUCCESS);
+}
+
+/*
+ * GetStatsValue() - Simple function to obtain stats values.
+ *
+ * Inputs:
+ *    dip = The device information pointer.
+ *    stv = The stats value to obtain.
+ *    pass_stats = Boolean true if pass stats.
+ *    secs = Optional pointer to store seconds.
+ *
+ * Return Value:
+ *    Returns the stats value (64 bits).
+ */
+large_t
+GetStatsValue(struct dinfo *dip, stats_value_t stv, bool pass_stats, int *secs)
+{
+   large_t value;
+
+   switch (stv) {
+     case ST_BYTES: {
+       if (pass_stats) {
+          if (raw_flag) {
+            value = (dip->di_dbytes_read + dip->di_dbytes_written);
+          } else if (dip->di_mode == READ_MODE) {
+            value = dip->di_dbytes_read;
+          } else {
+            value = dip->di_dbytes_written;
+          }
+        } else {
+          value = (total_bytes + dip->di_dbytes_read + dip->di_dbytes_written);
+        }
+        break;
+     }
+     case ST_BLOCKS: {
+       value = GetStatsValue(dip, ST_BYTES, pass_stats, secs);
+       if (dip->di_dsize) {
+         value /= dip->di_dsize; /* Convert to logical blocks. */
+       }
+       break;
+     }
+     case ST_FILES: {
+       if (pass_stats) {
+         if (raw_flag) {
+           value = (dip->di_files_read + dip->di_files_written);
+         } else if (dip->di_mode == READ_MODE) {
+           value = dip->di_files_read;
+         } else {
+           value = dip->di_files_written;
+         }
+       } else {
+         value = (total_files + dip->di_files_read + dip->di_files_written);
+       }
+       break;
+     }
+     case ST_RECORDS: {
+       if (pass_stats) {
+         if (raw_flag) {
+           value = (dip->di_records_read + dip->di_records_written);
+         } else if (dip->di_mode == READ_MODE) {
+           value = dip->di_records_read;
+         } else {
+           value = dip->di_records_written;
+         }
+       } else {
+         value = (total_records + total_partial +
+                  dip->di_records_read + dip->di_records_written);
+       }
+       break;
+     }
+     default:
+       Fprintf("Invalid stats value request, %d\n", stv);
+       abort();
+   }
+   if (secs) {
+     end_time = times(&etimes);
+     if (pass_stats) {
+       *secs = ((end_time - pass_time) / hz);
+     } else {
+       *secs = ((end_time - start_time) / hz); 
+     }
+   }
+   return (value);
+}
+
+/*
+ * FmtPrefix() - Format the Prefix String.
+ *
+ * Special Format Characters:
+ *
+ *	%d = The device name.
+ *	%D = The real device name.
+ *	%h = The host name.
+ *	%H = The full host name.
+ *	%p = The process ID.
+ *	%P = The parent process ID.
+ *	%u = The user (login) name.
+ *
+ * Inputs:
+ *	dip = The device information pointer.
+ *	prefix = Pointer to prefix address.
+ *	psize = Pointer to prefix length;
+ *
+ * Outputs:
+ *	Returns SUCCESS or FAILURE.
+ *	Prefix string and size are updated.
+ */
+int
+FmtPrefix (struct dinfo *dip, char **prefix, int *psize)
+{
+    char	*from = *prefix;
+    char	*buffer, *to;
+    int		length = *psize;
+#if defined(WIN32)
+    int		len = MAXHOSTNAMELEN;
+    DWORD size = 256;
+    TCHAR buf[256];
+    char *username;
+#endif /* defined(WIN32) */
+    if (strstr (from, "%") == NULL) {
+        /* See comments below. */
+        if (io_type != RANDOM_IO) {
+	    return (SUCCESS);
+        }
+    }
+    buffer = to = Malloc(KBYTE_SIZE);
+    while (length--) {
+	bool full_info = FALSE;
+	switch (*from) {
+	    case '%':
+		if (length) {
+		    switch (*(from + 1)) {
+			case 'd': {
+			    to += Sprintf(to, "%s", dip->di_dname);
+			    break;
+			}
+			case 'D': {
+			    if ( dip->di_device ) { /* Only if known. */
+				to += Sprintf(to, "%s", dip->di_device);
+			    } else {
+				struct dtype *dtp = dip->di_dtype;
+				to += Sprintf(to, "%s", dtp->dt_type);
+			    }
+			    break;
+			}
+			case 'H':
+			    full_info = TRUE;
+			    /* FALL THROUGH */
+			case 'h': {
+			    char *p, hostname[MAXHOSTNAMELEN];
+#if defined(WIN32)
+			    if (( GetComputerName(hostname, &len)) == 0) {
+			        Fprintf("GetComputerName failed!\n");
+#else /* !defined(WIN32) */
+			    if ( gethostname(hostname, sizeof(hostname)) ) {
+				perror("gethostname()");
+#endif /* defined(WIN32) */
+				return (FAILURE);
+			    }
+			    if ( !full_info ) {
+				if (p = strchr(hostname, '.')) {
+				    *p = '\0';
+				}
+			    }
+			    to += Sprintf(to, "%s", hostname);
+			    break;
+			}
+			case 'p': {
+			    pid_t pid = getpid();
+			    to += Sprintf(to, "%d", pid);
+			    break;
+			}
+			case 'P': {
+#if defined(WIN32)
+			    LogMsg (efp,logLevelError,0,
+				   "option P currently not supported\n");
+			    exit(FAILURE);
+#else /* !defined(WIN32) */
+			    pid_t ppid = getppid();
+			    to += Sprintf(to, "%d", ppid);
+#endif /* defined(WIN32) */
+			    break;
+			}
+			case 'u': {
+#if defined(WIN32)
+			    GetUserName(buf, &size);
+			    username = buf;
+#else /* !defined(WIN32) */
+			    char *username = getlogin();
+#endif /* defined(WIN32) */
+			    if (username) {
+				to += Sprintf(to, "%s", username);
+			    } else {
+#if defined(WIN32)
+				Fprintf("GetUserName failed !\n");
+#else /* !defined(WIN32) */
+				perror("getlogin()");
+#endif /* defined(WIN32) */
+			    }
+			    break;
+			}
+			default: {
+			    *to++ = *from;
+			    *to++ = *(from + 1);
+			    break;
+			}
+		    }
+		    length--;
+		    from += 2;
+		    break;
+		}
+		/* FALLTHROUGH */
+	    default: {
+		*to++ = *from++;
+		break;
+	    }
+	}
+    }
+    free (*prefix);
+    *psize = strlen(buffer)+1; /* plus NULL! */
+    /*
+     * To avoid problems with random I/O, make the prefix string
+     * modulo the lba (iot or lbdata) or our 4 byte data pattern.
+     * Otherwise, random I/O fails with a partial pattern.
+     */
+    if (io_type == RANDOM_IO) {
+        *psize = roundup(*psize, sizeof(u_int32));
+    }
+    *prefix = Malloc(*psize);
+    (void)strcpy(*prefix, buffer);
+    free (buffer);
+    return (SUCCESS);
 }
 
 /*
@@ -2714,10 +4205,10 @@ StrCopy (void *to_buffer, void *from_buffer, size_t length)
  *		Returns a long value with the proper byte ordering.	*
  *									*
  ************************************************************************/
-u_long
+large_t
 stoh (u_char *bp, size_t size)
 {
-	u_long value = 0L;
+	large_t value = 0L;
 
 	switch (size) {
 
@@ -2739,44 +4230,34 @@ stoh (u_char *bp, size_t size)
 			  ((u_long)bp[2] << 8) | (u_long)bp[3]);
 		break;
 
-#if defined(MACHINE_64BITS)
-	/*
-	 * These sizes, require "long long" (64 bits), and since most
-	 * compilers don't support this, I've only defined for Alpha.
-	 */
 	    case 0x05:
-		value = ( ((u_long)bp[0] << 32L) | ((u_long)bp[1] << 24) |
-			  ((u_long)bp[2] << 16) | ((u_long)bp[3] << 8) |
-			  (u_long)bp[4] );
+		value = ( ((large_t)bp[0] << 32L) | ((large_t)bp[1] << 24) |
+			  ((large_t)bp[2] << 16) | ((large_t)bp[3] << 8) |
+			  (large_t)bp[4] );
 		break;
 
 	    case 0x06:
-		value = ( ((u_long)bp[0] << 40L) | ((u_long)bp[1] << 32L) |
-			  ((u_long)bp[2] << 24) | ((u_long)bp[3] << 16) |
-			  ((u_long)bp[4] << 8) | (u_long)bp[5] );
+		value = ( ((large_t)bp[0] << 40L) | ((large_t)bp[1] << 32L) |
+			  ((large_t)bp[2] << 24) | ((large_t)bp[3] << 16) |
+			  ((large_t)bp[4] << 8) | (large_t)bp[5] );
 		break;
 
 	    case 0x07:
-		value = ( ((u_long)bp[0] << 48L) | ((u_long)bp[1] << 40L) |
-			  ((u_long)bp[2] << 32L) | ((u_long)bp[3] << 24) |
-			  ((u_long)bp[4] << 16) | ((u_long)bp[5] << 8) |
-			  (u_long)bp[6] );
+		value = ( ((large_t)bp[0] << 48L) | ((large_t)bp[1] << 40L) |
+			  ((large_t)bp[2] << 32L) | ((large_t)bp[3] << 24) |
+			  ((large_t)bp[4] << 16) | ((large_t)bp[5] << 8) |
+			  (large_t)bp[6] );
 		break;
-	    case sizeof(u_long):
-		/*
-		 * NOTE: Compiler dependency? If I don't cast each byte
-		 * below to u_long, the code generated simply ignored the
-		 * bytes [0-3] and sign extended bytes [4-7].  Strange.
-		 */
-		value = ( ((u_long)bp[0] << 56L) | ((u_long)bp[1] << 48L) |
-			  ((u_long)bp[2] << 40L) | ((u_long)bp[3] << 32L) |
-			  ((u_long)bp[4] << 24) | ((u_long)bp[5] << 16) |
-			  ((u_long)bp[6] << 8) | (u_long)bp[7] );
+
+	    case sizeof(large_t):
+		value = ( ((large_t)bp[0] << 56L) | ((large_t)bp[1] << 48L) |
+			  ((large_t)bp[2] << 40L) | ((large_t)bp[3] << 32L) |
+			  ((large_t)bp[4] << 24) | ((large_t)bp[5] << 16) |
+			  ((large_t)bp[6] << 8) | (large_t)bp[7] );
 		break;
-#endif /* defined(MACHINE_64BITS) */
 
 	    default:
-		Fprintf ("%s\n", bad_conversion_str, size);
+		Fprintf (bad_conversion_str, size);
 		break;
 
 	}
@@ -2800,7 +4281,7 @@ stoh (u_char *bp, size_t size)
  *									*
  ************************************************************************/
 void
-htos (u_char *bp, u_long value, size_t size)
+htos (u_char *bp, large_t value, size_t size)
 {
 	switch (size) {
 
@@ -2826,11 +4307,6 @@ htos (u_char *bp, u_long value, size_t size)
 		bp[3] = (u_char) value;
 		break;
 
-#if defined(MACHINE_64BITS)
-	/*
-	 * These sizes, require "long long" (64 bits), and since most
-	 * compilers don't support this, I've only defined for Alpha.
-	 */
 	    case 0x05:
 		bp[0] = (u_char) (value >> 32L);
 		bp[1] = (u_char) (value >> 24);
@@ -2858,7 +4334,7 @@ htos (u_char *bp, u_long value, size_t size)
 		bp[6] = (u_char) value;
 		break;
 
-	    case sizeof(u_long):
+	    case sizeof(large_t):
 		bp[0] = (u_char) (value >> 56L);
 		bp[1] = (u_char) (value >> 48L);
 		bp[2] = (u_char) (value >> 40L);
@@ -2868,10 +4344,9 @@ htos (u_char *bp, u_long value, size_t size)
 		bp[6] = (u_char) (value >> 8);
 		bp[7] = (u_char) value;
 		break;
-#endif /* defined(MACHINE_64BITS) */
 
 	    default:
-		Fprintf ("%s\n", bad_conversion_str, size);
+		Fprintf (bad_conversion_str, size);
 		break;
 
 	}
@@ -2919,3 +4394,120 @@ LogDiagMsg(char *msg)
 }
 
 #endif /* defined(DEC) */
+
+enum trigger_type
+check_trigger_type (char *str)
+{
+    if (strcmp(str, "br") == 0) {
+        return (TRIGGER_BR);
+    } else if (strcmp(str, "bdr") == 0) {
+        return (TRIGGER_BDR);
+    } else if (strcmp(str, "seek") == 0) {
+        return (TRIGGER_SEEK);
+    } else if (strncmp(str, "cmd:", 4) == 0) {
+        trigger_cmd = &str[4];
+        return (TRIGGER_CMD);
+    } else {
+        LogMsg (efp, logLevelCrit, 0,
+                "Valid trigger types are: br, bdr, seek, or cmd:string\n");
+        return (TRIGGER_INVALID);
+    }
+}
+
+int
+ExecuteTrigger (struct dinfo *dip, ...)
+{
+    char cmd[STRING_BUFFER_SIZE];
+    enum trigger_type trigger = dip->di_trigger;
+    int status = TRIGACT_CONTINUE;
+
+    if (( (trigger == TRIGGER_BR) ||
+          (trigger == TRIGGER_BDR) ||
+          (trigger == TRIGGER_SEEK) ) &&
+        (dip->di_dtype->dt_dtype != DT_DISK) ) {
+        LogMsg (efp, logLevelWarn, 0,
+                "Trigger requires a raw disk to execute Scu!\n");
+        return (status);
+    }
+    switch (trigger) {
+        case TRIGGER_NONE:
+            return (status);
+            /*NOTREACHED*/
+            break;
+
+        case TRIGGER_BR:
+            (void)sprintf(cmd, "scu -f %s br", dip->di_dname);
+            break;
+
+        case TRIGGER_BDR:
+            (void)sprintf(cmd, "scu -f %s bdr", dip->di_dname);
+            break;
+
+        case TRIGGER_SEEK: {
+            (void)sprintf(cmd, "scu -f %s seek lba " LUF,
+                          dip->di_dname, dip->di_lba);
+            break;
+        }
+        case TRIGGER_CMD: {
+            va_list ap;
+            char *op;
+            va_start(ap, dip);
+            op = va_arg(ap, char *);
+            va_end(ap);
+            /*
+             * Format: cmd dname op dsize offset position lba errno
+             */
+            (void)sprintf(cmd, "%s %s %s %u " FUF " %u " LUF " %d",
+                          trigger_cmd,
+                          dip->di_dname, op, dip->di_dsize,
+                          dip->di_offset, dip->di_position,
+                          dip->di_lba, dip->di_errno);
+            break;
+        }
+        default:
+            LogMsg (efp, logLevelCrit, 0,
+                    "Invalid trigger type detected, type = %d\n", trigger);
+            terminate(FATAL_ERROR);
+            /*NOTREACHED*/
+            break;
+    }
+    Printf("Executing: %s\n", cmd);
+    status = system(cmd);
+    status = WEXITSTATUS(status);
+    if (status) Printf("Trigger exited with status %d!\n", status);
+    return (status);
+}
+
+#if defined(WIN32)
+
+LPVOID
+error_msg(void)
+{
+    LPVOID msgbuf;
+   if( FormatMessage (
+			FORMAT_MESSAGE_ALLOCATE_BUFFER |
+			FORMAT_MESSAGE_FROM_SYSTEM,
+			NULL,
+			GetLastError(),
+			MAKELANGID(LANG_NEUTRAL,SUBLANG_DEFAULT),
+			(LPSTR) &msgbuf,
+			0,NULL) == 0) {
+        report_error("Format message",TRUE);
+	return 0;
+    }
+    else
+	return(msgbuf);
+}
+
+OFF_T
+SetFilePtr (HANDLE hf, OFF_T distance, DWORD MoveMethod)
+{
+  LARGE_INTEGER seek;
+  seek.QuadPart = distance;
+  seek.LowPart = SetFilePointer (hf, seek.LowPart, &seek.HighPart, MoveMethod);
+  if(seek.LowPart == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
+    seek.QuadPart = -1;
+  return (OFF_T)seek.QuadPart;
+}
+
+#endif /* defined(WIN32) */

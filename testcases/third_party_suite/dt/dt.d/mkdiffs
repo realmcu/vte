@@ -1,6 +1,0 @@
-diff -c dt.c /usr/tmp/dt.d >dt.c-diffs 2>&1
-diff -c dt.h /usr/tmp/dt.d >dt.h-diffs 2>&1
-diff -c dtgen.c /usr/tmp/dt.d >dtgen.c-diffs 2>&1
-diff -c dtusage.c /usr/tmp/dt.d >dtusage.c-diffs 2>&1
-diff -c dtutil.c /usr/tmp/dt.d >dtutil.c-diffs 2>&1
-diff -c dtwrite.c /usr/tmp/dt.d >dtwrite.c-diffs 2>&1

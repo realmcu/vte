@@ -1,12 +1,10 @@
+static char *whatHeader = "@(#) dt.d/dtaio.c /main/3 Jan_20_06:08";
 /****************************************************************************
  *									    *
- *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			  COPYRIGHT (c) 1990 - 2004			    *
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
- *			       Hudson, NH 03051				    *
- *			       (603) 883-2355				    *
  *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
  * its documentation for any purpose and without fee is hereby granted,	    *
@@ -28,25 +26,71 @@
 /*
  * Module:	dtaio.c
  * Author:	Robin T. Miller
- * Date:	August 26, 1993
+ * Date:	August 26, 1993 
  *
  * Description:
  *	Functions to handle POSIX Asynchronous I/O requests for 'dt' program.
  */
-
 #if defined(AIO)
 
 #include "dt.h"
-#include <aio.h>
+#if !defined(WIN32)
+#  include <aio.h>
+#endif /* !defined(WIN32) */
 #include <limits.h>
 #include <sys/stat.h>
 
 #if !defined(AIO_PRIO_DFL)
 #  define AIO_PRIO_DFL	0		/* Default scheduling priority. */
 #endif /* !defined(AIO_PRIO_DFL) */
+
+#if defined(_AIO_AIX_SOURCE)
+/*
+ * Allows testing with legacy AIX AIO (5.1 and older).
+ */
+#  define POSIX_4D11
+  /*
+   * Note: The usage of this field could be dangerous, but we need an
+   * aiocb field to ease our port to AIX! (may need to revisit this).
+   */
+#  define aio_fildes aio_fp
+#endif /* defined(_AIO_AIX_SOURCE) */
 
 /*
  * Modification History:
+ *
+ * October 16th, 2006 by Robin T. Miller.
+ *      Added support for recording a timestamp in each data block.
+ *
+ * May 1st, 2006 by Robin T. Miller.
+ *	Added support for AIX Async I/O.
+ *
+ * January 19th, 2005 by Nagendra Vadlakunta.
+ *	Added AIO support for Windows
+ *
+ * October 21st, 2004 by Robin Miller.
+ *      For variable record lengths, ensure we prime the first size
+ * to ensure it meets device size alignment requirements.
+ *
+ * February 13th, 2004 by Robin Miller.
+ *      Factor in the file position when doing reverse I/O, to avoid
+ * writing/reading into that area (which is now deemed protected).
+ *
+ * November 17th, 2003 by Robin Miller.
+ *	Breakup output to stdout or stderr, rather than writing
+ * all output to stderr.  If output file is stdout ('-') or a log
+ * file is specified, then all output reverts to stderr.
+ *
+ * January 17th, 2003 by Robin Miller.
+ *	On HP-UX, accept ENXIO for I/O's pass EOF.
+ *
+ * November 14th, 2002 by Robin Miller.
+ *	On HP-UX, initialize aiocb->aio_sigevent field, or else
+ * EINVAL is returned.  aio_sigevent.sigev_notify = SIGEV_NONE;
+ *
+ * June 25th, 2001 by Robin Miller.
+ *	Restructured code associated with Tru64 Unix EEI, so we obtain
+ * the EEI status for all tape errors, not just EIO errors.
  *
  * January 26th, 2001 by Robin Miller.
  *	Added support for reverse reading and writing.
@@ -189,6 +233,7 @@
 #if 0
 static void dtaio_checkdevice(struct dinfo *dip);
 #endif
+
 static int dtaio_wait(struct dinfo *dip, struct aiocb *acbp);
 static int dtaio_waitall(struct dinfo *dip, bool canceling);
 static int dtaio_wait_reads(struct dinfo *dip);
@@ -197,11 +242,16 @@ static int dtaio_process_read(struct dinfo *dip, struct aiocb *acbp);
 static int dtaio_process_write(struct dinfo *dip, struct aiocb *acbp);
 
 #define AIO_BUFS	8		/* Default number of AIO buffers. */
-#define AIO_NotQed	-1		/* AIO request not queued flag.	*/
+
+#if defined(WIN32)
+#  define AIO_NotQed	INVALID_HANDLE_VALUE
+#else /* !defined(WIN32) */
+#  define AIO_NotQed	-1		/* AIO request not queued flag.	*/
+#endif /* defined(WIN32) */
 
 int	aio_bufs = AIO_BUFS;		/* The number of AIO buffers.	*/
 int	aio_index;			/* Index to AIO control block.	*/
-volatile off_t aio_offset;		/* AIO offset (we maintain).	*/
+volatile OFF_T aio_offset;		/* AIO offset (we maintain).	*/
 v_large	aio_data_bytes;			/* Total data bytes per pass.	*/
 v_large	aio_file_bytes;			/* # of tape bytes processed.	*/
 vu_long	aio_record_count;		/* # of records to processed.	*/
@@ -291,20 +341,18 @@ dtaio_initialize (struct dinfo *dip)
 #endif
 
     if ( (dip->di_dtype->dt_dtype == DT_TAPE) && raw_flag && (aio_bufs > 1) ) {
-	Fprintf("Sorry, tapes are limited to 1 AIO with raw option!\n");
+	Printf("Sorry, tapes are limited to 1 AIO with raw option!\n");
 	aio_bufs = 1;
 	size = (sizeof(struct aiocb) * aio_bufs);
     }
 
     aio_index = 0;
-    aio_offset = (off_t) 0;
+    aio_offset = (OFF_T) 0;
     if (acbs == NULL) {
 	acbs = (struct aiocb *) Malloc (size);
-	bzero ((char *) acbs, size);
 	if (rotate_flag) {
 	    size_t psize = (aio_bufs * sizeof(u_char *));
 	    aiobufs = (u_char **) Malloc (psize);
-	    bzero ((char *) aiobufs, psize);
 	}
     }
     for (index = 0, acbp = acbs; index < aio_bufs; index++, acbp++) {
@@ -315,15 +363,18 @@ dtaio_initialize (struct dinfo *dip)
 	    }
 	}
 	acbp->aio_fildes = AIO_NotQed;
-	acbp->aio_offset = (off_t) 0;
+	acbp->aio_offset = (OFF_T) 0;
 	acbp->aio_nbytes = block_size;
+#if !defined(WIN32)
 	acbp->aio_reqprio = AIO_PRIO_DFL;	/* Set default priority. */
-#if defined(SCO)
+#if defined(SCO) || defined(HP_UX)
 	/*
 	 * Note: The AIO manual recommends setting AIO_RAW, but when
 	 *       this is set, EINVAL is returned by aio_read/aio_write!
 	 */
+#  if defined(SCO)
 	acbp->aio_flags = 0;			/* Must be zero to work! */
+#  endif /* defined(SCO) */
 	acbp->aio_sigevent.sigev_notify = SIGEV_NONE;
 #if 0
 	acbp->aio_flags = 0; /*AIO_RAW;*/	/* Required on SVR4.2(?) */
@@ -336,8 +387,10 @@ dtaio_initialize (struct dinfo *dip)
 	acbp->aio_sigevent.sigev_notify = SIGEV_CALLBACK;
 	acbp->aio_sigevent.sigev_func = my_aio_completion_function;
 	acbp->aio_sigevent.sigev_value = acbp;
-#endif
-#endif /* defined(SCO) */
+#endif /* 0 */
+#endif /* defined(SCO) || defined(HP_UX) */
+
+#endif /* !defined(WIN32) */
 	/*
 	 * Use first buffer allocated for initial skip reads, etc.
 	 */
@@ -361,7 +414,8 @@ dtaio_checkdevice (struct dinfo *dip)
 	exit (FATAL_ERROR);
     }
     if (!S_ISCHR(sb.st_mode) ) {
-	Fprintf("'%s' is NOT a character device, cannot use asynchronous I/O.\n",
+	LogMsg (efp, logLevelCrit, 0,
+		"'%s' is NOT a character device, cannot use asynchronous I/O.\n",
 								dip->di_dname);
 	exit (FATAL_ERROR);
     }
@@ -378,15 +432,27 @@ dtaio_cancel (struct dinfo *dip)
     int status;
 
     /*
-     * This is not a very useful operation on DEC OSF/1 at this time,
-     * since the drivers do *not* contain a cancel entry point.
-     * So... you cannot actually cancel outstanding I/O requests.
+     * Cancel any outstanding AIO's.
      */
-    if ((status = aio_cancel (dip->di_fd, NULL)) == FAILURE) {
+#if defined(WIN32)
+    if ( !(status = CancelIo(dip->di_fd)) ) {
+	report_error ("dtaio_cancel", TRUE);
+	if (debug_flag){
+	    Printf ("CancelIo Failed : %d\n", GetLastError());
+	}
+    }
+#else /* !defined(WIN32) */
+    if ((status = aio_cancel (dip->di_fd, (struct aiocb *) 0)) == FAILURE) {
 	/*
-	 * aio_cancel() returns EBADF if we never issued any AIO!
+	 * aio_cancel() returns EBADF if the file descriptor is
+         * not valid, which could mean we didn't open device yet.
 	 */
+#if defined(SOLARIS)
+        /* Why is EOVERFLOW being returned? */
+	if ( (errno != EBADF) && (errno != EOVERFLOW) ) {
+#else /* !defined(SOLARIS) */
 	if (errno != EBADF) {
+#endif /* defined(SOLARIS) */
 	    report_error ("aio_cancel", TRUE);
 	}
 	return (status);
@@ -396,11 +462,11 @@ dtaio_cancel (struct dinfo *dip)
 	switch (status) {
 
 	    case AIO_ALLDONE:
-		Fprintf ("All requests completed before cancel...\n");
+		Printf ("All requests completed before cancel...\n");
 		break;
 
 	    case AIO_CANCELED:
-		Fprintf ("Outstanding requests were canceled...\n");
+		Printf ("Outstanding requests were canceled...\n");
 		break;
 
 	    case AIO_NOTCANCELED:
@@ -412,6 +478,7 @@ dtaio_cancel (struct dinfo *dip)
 		break;
 	}
     }
+#endif /* defined(WIN32) */
     return (status);
 }
 
@@ -424,6 +491,7 @@ dtaio_cancel_reads (struct dinfo *dip)
     aio_data_adjust = aio_file_adjust = aio_record_adjust = 0L;
     (void) dtaio_cancel (dip);
     status = dtaio_waitall (dip, TRUE);
+#if !defined(WIN32) /* no tape support for Windows */ 
     if (aio_file_adjust && (dtp->dt_dtype == DT_TAPE) ) {
 	daddr_t count = (daddr_t)aio_file_adjust;
 	/*
@@ -445,6 +513,7 @@ dtaio_cancel_reads (struct dinfo *dip)
 	    status = DoForwardSpaceFile (dip, (daddr_t) 1);
 	}
     }
+#endif /* !defined(WIN32) */
     return (status);
 }
 
@@ -474,16 +543,40 @@ dtaio_restart(struct dinfo *dip, struct aiocb *first_acbp)
 	 * Assumes the first request was already waited for!
 	 */
 	if (Debug_flag) {
-	    Fprintf ("Restarting request for acbp at %#lx...\n", acbp);
+	    Printf ("Restarting request for acbp at %#lx...\n", acbp);
 	}
 	if (dip->di_mode == READ_MODE) {
+#if defined(WIN32)
+	    acbp->overlap.hEvent = 0;
+	    acbp->overlap.Offset = ((PLARGE_INTEGER)(&acbp->aio_offset))->LowPart;
+	    acbp->overlap.OffsetHigh = ((PLARGE_INTEGER)(&acbp->aio_offset))->HighPart;
+	    error = ReadFile(acbp->aio_fildes, acbp->aio_buf, acbp->aio_nbytes,
+						NULL, &acbp->overlap);
+	    if ((!error) && (GetLastError() != ERROR_IO_PENDING)) {
+		error = FAILURE;
+#elif defined(_AIO_AIX_SOURCE)
+	    if ( (error = aio_read (acbp->aio_fildes, acbp)) == FAILURE) {
+#else /* !defined(_AIO_AIX_SOURCE) */
 	    if ( (error = aio_read (acbp)) == FAILURE) {
+#endif /* defined(_AIO_AIX_SOURCE) */
 		acbp->aio_fildes = AIO_NotQed;
 		report_error ("aio_read", TRUE);
 		return (error);
 	    }
 	} else {
+#if defined(WIN32)
+	    acbp->overlap.hEvent = 0;
+	    acbp->overlap.Offset = ((PLARGE_INTEGER)(&acbp->aio_offset))->LowPart;
+	    acbp->overlap.OffsetHigh = ((PLARGE_INTEGER)(&acbp->aio_offset))->HighPart;
+	    error = WriteFile(acbp->aio_fildes, acbp->aio_buf, acbp->aio_nbytes,
+						NULL, &acbp->overlap);
+	    if ((!error) && (GetLastError() != ERROR_IO_PENDING)) {
+		error = FAILURE;
+#elif defined(_AIO_AIX_SOURCE)
+	    if ( (error = aio_write (acbp->aio_fildes, acbp)) == FAILURE) {
+#else /* !defined(_AIO_AIX_SOURCE) */
 	    if ( (error = aio_write (acbp)) == FAILURE) {
+#endif /* defined(_AIO_AIX_SOURCE) */
 		acbp->aio_fildes = AIO_NotQed;
 		report_error ("aio_write", TRUE);
 		return (error);
@@ -496,7 +589,9 @@ dtaio_restart(struct dinfo *dip, struct aiocb *first_acbp)
 	if (acbp->aio_fildes == AIO_NotQed) abort();
 
 	error = dtaio_wait (dip, acbp);
+#if !defined(WIN32)
 	(void) aio_return (acbp);
+#endif /* !defined(WIN32) */
 
     } while (TRUE);
 
@@ -508,17 +603,35 @@ dtaio_restart(struct dinfo *dip, struct aiocb *first_acbp)
 static int
 dtaio_wait (struct dinfo *dip, struct aiocb *acbp)
 {
+#if defined(WIN32)
+    while (!GetOverlappedResult (acbp->aio_fildes, &acbp->overlap, &acbp->bytes_rw, FALSE))  {
+	if (GetLastError() != ERROR_IO_INCOMPLETE) {
+	    /* later we check bytes_rw to know the status of operation	*
+	     * that's why we are inintializing with FIALURE in case of error	*
+	     * in case of success it will have total bytes read/write	*/
+	    acbp->bytes_rw = FAILURE; 
+	    report_error("dtaio_wait", TRUE);
+	    return FAILURE;
+	}
+	Sleep(10); /* just to avoid tight loop */
+    }
+    return SUCCESS; 
+#else /* !defined(WIN32) */
     int error, status;
 
     if (Debug_flag) {
-	Fprintf ("Waiting for acbp at %#lx to complete...\n", acbp);
+	Printf ("Waiting for acbp at %#lx to complete...\n", acbp);
     }
     /*
      * Loop waiting for an I/O request to complete.
      */
     while ((error = aio_error (acbp)) == EINPROGRESS) {
 #if defined(POSIX_4D11)
+#  if defined(_AIO_AIX_SOURCE)
+	if ((status = aio_suspend (1, (struct aiocb **)&acbp)) == FAILURE) {
+#  else /* !defined(_AIO_AIX_SOURCE) */
 	if ((status = aio_suspend (1, (const struct aiocb **)&acbp)) == FAILURE) {
+#  endif /* defined(_AIO_AIX_SOURCE) */
 #else /* Beyond draft 11... */
 	if ((status = aio_suspend ((const struct aiocb **)&acbp,1,NULL)) == FAILURE) {
 #endif /* defined(POSIX_4D11) */
@@ -532,19 +645,21 @@ dtaio_wait (struct dinfo *dip, struct aiocb *acbp)
 	report_error ("aio_error", TRUE);
     }
     return (error);
+#endif /* defined(WIN32) */
 }
 
 static int
 dtaio_waitall(struct dinfo *dip, bool canceling)
 {
     struct aiocb *acbp;
-    size_t bsize;
-    ssize_t count, adjust;
+    register size_t bsize;
+    register ssize_t count;
+    ssize_t adjust;
     int index, error, status = SUCCESS;
 
     /*
      * During EEI reset handling, don't touch the active requests,
-     * since dtaio_restart() needs this state to restart reqeusts.
+     * since dtaio_restart() needs this state to restart requests.
      */
     if (dip->di_proc_eei) return (status);
     /*
@@ -561,20 +676,29 @@ dtaio_waitall(struct dinfo *dip, bool canceling)
 		continue;	/* aio_error() failed! */
 	    }
 	}
+#if defined(WIN32)
+	/* bytes_rw is bytes read/write in previous operation or FAILURE */
+	count = acbp->bytes_rw; 
+#else /* !defined(WIN32) */
 	count = aio_return (acbp);
+#endif /* defined(WIN32) */
 	acbp->aio_fildes = AIO_NotQed;
 	errno = error;
 	if ( (count == FAILURE) && !dip->di_closing && !terminating_flag) {
 	    /*
-	     * End of media is handled below.
+	     * End of media is handled below, handle expected errors.
 	     */
-#if defined(SCO)
+#if defined(AIX)
+	    if ( (error != ENOSPC) && (error != ENXIO) && (error != ECANCELED) ) {
+#elif defined(SCO) || defined(HP_UX)
 	    if ( (error != ENOSPC) && (error != ENXIO) ) {
-#else /* !defined(SCO) */
+#elif defined(WIN32) /* if there is error and if disk is not full*/
+	    if (GetLastError() != ERROR_DISK_FULL) {
+#else /* !defined(SCO) && !defined(HP_UX) && !defined(AIX) */
 	    if (error != ENOSPC) {
-#endif /* defined(SCO) */
+#endif /* defined(SCO) || defined(HP_UX) || defined(AIX) */
 		current_acb = acbp;
-		report_error ("aio_return", TRUE);
+		report_error ("dtaio_waitall", TRUE);
 		ReportDeviceInfo (dip, acbp->aio_nbytes, 0, (errno == EIO));
 		status = FAILURE;
 		/* adjust counts below */
@@ -593,7 +717,7 @@ dtaio_waitall(struct dinfo *dip, bool canceling)
 	    aio_file_bytes -= bsize;
 	} else if (adjust = (bsize - count)) {
 	    if (debug_flag) {
-		Fprintf("Adjusting byte counts by %d bytes...\n", adjust);
+		Printf("Adjusting byte counts by %d bytes...\n", adjust);
 	    }
 	    aio_data_bytes -= adjust;
 	    aio_file_bytes -= adjust;
@@ -619,9 +743,17 @@ dtaio_waitall(struct dinfo *dip, bool canceling)
 		}
 		aio_data_adjust += count;
 		if (count == bsize) {
-		    records_processed++;
+                    if (dip->di_mode == READ_MODE) {
+		        dip->di_full_reads++;
+                    } else {
+                        dip->di_full_writes++;
+                    }
 		} else {
-		    partial_records++;
+                    if (dip->di_mode == READ_MODE) {
+		        dip->di_partial_reads++;
+                    } else {
+                        dip->di_partial_writes++;
+                    }
 		}
 	    }
 	}
@@ -694,13 +826,13 @@ dtaio_wait_writes (struct dinfo *dip)
 int
 dtaio_read_data (struct dinfo *dip)
 {
-    struct aiocb *acbp;
+    register struct aiocb *acbp;
     int error, status = SUCCESS;
-    size_t bsize, dsize;
+    register size_t bsize, dsize;
 
     if (dip->di_random_access) {
 	if (io_dir == REVERSE) {
-	    (void)set_position(dip, (off_t)rdata_limit);
+	    (void)set_position(dip, (OFF_T)rdata_limit);
 	}
 	aio_lba = get_lba(dip);
 	aio_offset = get_position(dip);
@@ -714,7 +846,11 @@ dtaio_read_data (struct dinfo *dip)
      * For variable length records, initialize to minimum record size.
      */
     if (min_size) {
-	dsize = min_size;
+        if (variable_flag) {
+            dsize = get_variable (dip);
+        } else {
+	    dsize = min_size;
+        }
     } else {
 	dsize = block_size;
     }
@@ -756,10 +892,6 @@ dtaio_read_data (struct dinfo *dip)
 	     */
 	    if ( (aio_file_bytes + dsize) > data_limit) {
 		bsize = (data_limit - aio_file_bytes);
-		if (debug_flag && !variable_flag) {
-		    Fprintf ("Record #%lu, Reading a partial record of %lu bytes...\n",
-					(aio_record_count + 1), bsize);
-		}
 	    } else {
 		bsize = dsize;
 	    }
@@ -778,13 +910,19 @@ dtaio_read_data (struct dinfo *dip)
 	    }
 
 	    acbp->aio_fildes = dip->di_fd;
-	    acbp->aio_nbytes = bsize;
 
 	    if (io_dir == REVERSE) {
 		/*debug*/ if (!aio_offset) abort(); /*debug*/
-		bsize = MIN(aio_offset, bsize);
-		aio_offset = (off_t)(aio_offset - bsize);
+		bsize = MIN((aio_offset-file_position), bsize);
+		aio_offset = (OFF_T)(aio_offset - bsize);
 	    }
+
+            if (debug_flag && (bsize != dsize) && !variable_flag) {
+                Printf ("Record #%lu, Reading a partial record of %lu bytes...\n",
+                                    (aio_record_count + 1), bsize);
+            }
+
+	    acbp->aio_nbytes = bsize;
 
 	    if (io_type == RANDOM_IO) {
 		acbp->aio_offset = do_random (dip, FALSE, bsize);
@@ -803,19 +941,32 @@ dtaio_read_data (struct dinfo *dip)
 	    }
 
 	    if (Debug_flag) {
-		u_int32 lba = NO_LBA;
+		large_t iolba = NO_LBA;
+                OFF_T iopos = (OFF_T) 0;
 		if (dip->di_random_access || lbdata_flag || iot_pattern) {
-		    lba = make_lbdata(dip, (dip->di_volume_bytes + acbp->aio_offset));
+                    iopos = (dip->di_volume_bytes + acbp->aio_offset);
+		    iolba = make_lbdata(dip, iopos);
 		}
 		report_record(dip, (dip->di_files_read + 1), (aio_record_count + 1),
-			lba, READ_MODE, (void *)acbp->aio_buf, acbp->aio_nbytes);
+			iolba, iopos, READ_MODE, (void *)acbp->aio_buf, acbp->aio_nbytes);
 	    }
+#if defined(WIN32)
+	    acbp->overlap.hEvent = 0;
+	    acbp->overlap.Offset = ((PLARGE_INTEGER)(&acbp->aio_offset))->LowPart;
+	    acbp->overlap.OffsetHigh = ((PLARGE_INTEGER)(&acbp->aio_offset))->HighPart;
+	    error = ReadFile(acbp->aio_fildes, acbp->aio_buf, acbp->aio_nbytes,
+						NULL, &acbp->overlap);
+	    if ((!error) && (GetLastError() != ERROR_IO_PENDING)) {
+		error = FAILURE;
+#elif defined(_AIO_AIX_SOURCE)
+	    if ( (error = aio_read (acbp->aio_fildes, acbp)) == FAILURE) {
+#else /* !defined(_AIO_AIX_SOURCE) */
 	    if ( (error = aio_read (acbp)) == FAILURE) {
+#endif /* defined(WIN32) */
 		acbp->aio_fildes = AIO_NotQed;
 		report_error ("aio_read", TRUE);
 		return (error);
 	    }
-
 	    /*
 	     * Must adjust record/data counts here to avoid writing
 	     * too much data, even though the writes are incomplete.
@@ -831,8 +982,8 @@ dtaio_read_data (struct dinfo *dip)
 	    if (step_offset) {
 		if (io_dir == FORWARD) {
 		    aio_offset += step_offset;
-		} else if ((aio_offset -= step_offset) <= (off_t) 0) {
-		    aio_offset = (off_t) 0;
+		} else if ((aio_offset -= step_offset) <= (OFF_T) file_position) {
+		    aio_offset = (OFF_T) file_position;
 		}
 	    }
 
@@ -852,7 +1003,7 @@ dtaio_read_data (struct dinfo *dip)
 	     * Always ensure the next control block has completed.
 	     */
 	    if (++aio_index == aio_bufs) aio_index = 0;
-	    if ( (io_dir == REVERSE) && (aio_offset == (off_t) 0) ) {
+	    if ( (io_dir == REVERSE) && (aio_offset == (OFF_T) file_position) ) {
 		break;
 	    }
 	    acbp = &acbs[aio_index];
@@ -894,8 +1045,9 @@ static int
 dtaio_process_read (struct dinfo *dip, struct aiocb *acbp)
 {
     struct dtfuncs *dtf = dip->di_funcs;
-    size_t bsize, dsize;
-    ssize_t count, adjust;
+    register size_t bsize, dsize;
+    register ssize_t count;
+    ssize_t adjust;
     int error, status = SUCCESS;
 
 #if defined(EEI)
@@ -903,11 +1055,16 @@ retry:
 #endif
     current_acb = acbp;
     error = dtaio_wait (dip, acbp);
+#if defined(WIN32)
+    /* total bytes read by ReadFile call or FAILURE in case or error */
+    count = acbp->bytes_rw; 
+#else /* !defined(WIN32) */
     count = aio_return (acbp);
+#endif /* defined(WIN32) */
 
 #if defined(EEI)
-    if ( (error == EIO) && (dip->di_dtype->dt_dtype == DT_TAPE) ) {
-	if (eei_resets) {
+    if (dip->di_dtype->dt_dtype == DT_TAPE) {
+	if ( (errno == EIO) && eei_resets) {
 	    if ( HandleTapeResets(dip) ) {
 		int error = dtaio_restart(dip, acbp);
 		if (error) return (error);
@@ -931,12 +1088,14 @@ retry:
 	/*
 	 * End of media is handled below.
 	 */
-#if defined(SCO)
+#if defined(SCO) || defined(HP_UX) || defined(AIX)
 	if ( (error != ENOSPC) && (error != ENXIO) ) {
-#else /* !defined(SCO) */
+#elif defined(WIN32) /* if there is a error and if disk is not full */
+	if (GetLastError() != ERROR_DISK_FULL) { 
+#else /* !defined(SCO) && !defined(HP_UX) && !defined(AIX) */
 	if (error != ENOSPC) {
-#endif /* defined(SCO) */
-	    report_error ("aio_return", TRUE);
+#endif /* defined(SCO) || defined(HP_UX) || defined(AIX) */
+	    report_error ("dtaio_process_read", TRUE);
 	    ReportDeviceInfo (dip, acbp->aio_nbytes, 0, (errno == EIO));
 	    return (FAILURE);
 	}
@@ -961,7 +1120,7 @@ retry:
 	aio_file_bytes -= bsize;
     } else if (adjust = (bsize - count)) {
 	if (debug_flag) {
-	    Fprintf("Adjusting byte counts by %d bytes...\n", adjust);
+	    Printf("Adjusting byte counts by %d bytes...\n", adjust);
 	}
 	aio_data_bytes -= adjust;
 	aio_file_bytes -= adjust;
@@ -979,7 +1138,7 @@ retry:
 	    status = HandleMultiVolume (dip);
 	    aio_record_count = dip->di_records_read;
 	    /*aio_file_bytes = dip->di_dbytes_read;*/
-	    aio_offset = (off_t) 0;
+	    aio_offset = (OFF_T) 0;
 	}
 	return (status);
     } else {
@@ -989,9 +1148,9 @@ retry:
 	    dip->di_fbytes_read += count;
 	    dip->di_vbytes_read += count;
 	    if (count == dsize) {
-		records_processed++;
-	    } else {
-		partial_records++;
+                dip->di_full_reads++;
+            } else {
+                dip->di_partial_reads++;
 	    }
 	    dip->di_offset = (acbp->aio_offset + count);
 	}
@@ -1028,8 +1187,8 @@ retry:
     dip->di_records_read++;
     dip->di_volume_records++;
 
-    if ( ((io_dir == REVERSE) && (acbp->aio_offset == (off_t) 0)) ||
-	 (step_offset && ((acbp->aio_offset - step_offset) <= (off_t) 0)) ) {
+    if ( ((io_dir == REVERSE) && (acbp->aio_offset == (OFF_T) file_position)) ||
+	 (step_offset && ((acbp->aio_offset - step_offset) <= (OFF_T) file_position)) ) {
 	set_Eof(dip);
     }
     return (status);
@@ -1047,14 +1206,14 @@ retry:
 int
 dtaio_write_data (struct dinfo *dip)
 {
-    struct aiocb *acbp;
+    register struct aiocb *acbp;
     int error, status = SUCCESS;
-    size_t bsize, dsize;
+    register size_t bsize, dsize;
     u_int32 lba = lbdata_addr;
 
     if (dip->di_random_access) {
 	if (io_dir == REVERSE) {
-	    (void)set_position(dip, (off_t)rdata_limit);
+	    (void)set_position(dip, (OFF_T)rdata_limit);
 	}
 	aio_lba = lba = get_lba(dip);
 	aio_offset = get_position(dip);
@@ -1068,7 +1227,11 @@ dtaio_write_data (struct dinfo *dip)
      * For variable length records, initialize to minimum record size.
      */
     if (min_size) {
-	dsize = min_size;
+        if (variable_flag) {
+            dsize = get_variable (dip);
+        } else {
+	    dsize = min_size;
+        }
     } else {
 	dsize = block_size;
     }
@@ -1088,7 +1251,7 @@ dtaio_write_data (struct dinfo *dip)
 
 	/*
 	 * Two loops are used with AIO.  The inner loop queues requests up
-	 * to the requested amount, and the outer loop checks the actual
+	 * tto the requested amount, and the outer loop checks the actual
 	 * data processed.  This is done to handle short reads, which can
 	 * happen frequently with random I/O and large block sizes.
 	 */
@@ -1110,10 +1273,6 @@ dtaio_write_data (struct dinfo *dip)
 	     */
 	    if ( (aio_file_bytes + dsize) > data_limit) {
 		bsize = (data_limit - aio_file_bytes);
-		if (debug_flag && !variable_flag) {
-		    Fprintf ("Record #%lu, Writing a partial record of %d bytes...\n",
-						(aio_record_count + 1), bsize);
-		}
 	    } else {
 		bsize = dsize;
 	    }
@@ -1132,13 +1291,19 @@ dtaio_write_data (struct dinfo *dip)
 	    }
 
 	    acbp->aio_fildes = dip->di_fd;
-	    acbp->aio_nbytes = bsize;
 
 	    if (io_dir == REVERSE) {
 		/*debug*/ if (!aio_offset) abort(); /*debug*/
-		bsize = MIN(aio_offset, bsize);
-		aio_offset = (off_t)(aio_offset - bsize);
+		bsize = MIN((aio_offset-file_position), bsize);
+		aio_offset = (OFF_T)(aio_offset - bsize);
 	    }
+
+            acbp->aio_nbytes = bsize;
+
+            if (debug_flag && (bsize != dsize) && !variable_flag) {
+                Printf ("Record #%lu, Writing a partial record of %d bytes...\n",
+                                    (aio_record_count + 1), bsize);
+            }
 
 	    if (io_type == RANDOM_IO) {
 		acbp->aio_offset = do_random (dip, FALSE, bsize);
@@ -1168,21 +1333,42 @@ dtaio_write_data (struct dinfo *dip)
 					data_buffer, bsize, lba, lbdata_size);
 	    }
 
+#if defined(TIMESTAMP)
+            /*
+             * If timestamps are enabled, initialize buffer accordingly.
+             */
+            if (timestamp_flag) {
+                init_timestamp(data_buffer, bsize, lbdata_size);
+            }
+#endif /* defined(TIMESTAMP) */
+
 	    if (Debug_flag) {
-		u_int32 lba = NO_LBA;
+		large_t iolba = NO_LBA;
+                OFF_T iopos = (OFF_T) 0;
 		if (dip->di_random_access || lbdata_flag || iot_pattern) {
-		    lba = make_lbdata(dip, (dip->di_volume_bytes + acbp->aio_offset));
+                    iopos = (dip->di_volume_bytes + acbp->aio_offset);
+		    iolba = make_lbdata(dip, iopos);
 		}
 		report_record(dip, (dip->di_files_written + 1), (aio_record_count + 1),
-			lba, WRITE_MODE, (void *)acbp->aio_buf, acbp->aio_nbytes);
+			iolba, iopos, WRITE_MODE, (void *)acbp->aio_buf, acbp->aio_nbytes);
 	    }
-
+#if defined(WIN32)
+	    acbp->overlap.hEvent = 0;
+	    acbp->overlap.Offset = ((PLARGE_INTEGER)(&acbp->aio_offset))->LowPart;
+	    acbp->overlap.OffsetHigh = ((PLARGE_INTEGER)(&acbp->aio_offset))->HighPart;
+	    error = WriteFile(acbp->aio_fildes, acbp->aio_buf, acbp->aio_nbytes,
+						NULL, &acbp->overlap);
+	    if ((!error) && (GetLastError() != ERROR_IO_PENDING)) {
+		error = FAILURE;
+#elif defined(_AIO_AIX_SOURCE)
+	    if ( (error = aio_write (acbp->aio_fildes, acbp)) == FAILURE) {
+#else /* !defined(_AIO_AIX_SOURCE) */
 	    if ( (error = aio_write (acbp)) == FAILURE) {
+#endif /* defined(WIN32) */
 		acbp->aio_fildes = AIO_NotQed;
 		report_error ("aio_write", TRUE);
 		return (error);
 	    }
-
 	    /*
 	     * Must adjust record/data counts here to avoid writing
 	     * too much data, even though the writes are incomplete.
@@ -1198,8 +1384,8 @@ dtaio_write_data (struct dinfo *dip)
 	    if (step_offset) {
 		if (io_dir == FORWARD) {
 		    aio_offset += step_offset;
-		} else if ((aio_offset -= step_offset) <= (off_t) 0) {
-		    aio_offset = (off_t) 0;
+		} else if ((aio_offset -= step_offset) <= (OFF_T) file_position) {
+		    aio_offset = (OFF_T) file_position;
 		}
 	    }
 
@@ -1219,7 +1405,7 @@ dtaio_write_data (struct dinfo *dip)
 	     * Always ensure the next control block has completed.
 	     */
 	    if (++aio_index == aio_bufs) aio_index = 0;
-	    if ( (io_dir == REVERSE) && (aio_offset == (off_t) 0) ) {
+	    if ( (io_dir == REVERSE) && (aio_offset == (OFF_T) file_position) ) {
 		break;
 	    }
 	    acbp = &acbs[aio_index];
@@ -1260,8 +1446,9 @@ dtaio_write_data (struct dinfo *dip)
 static int
 dtaio_process_write (struct dinfo *dip, struct aiocb *acbp)
 {
-    size_t bsize, dsize;
-    ssize_t count, adjust;
+    register size_t bsize, dsize;
+    register ssize_t count;
+    ssize_t adjust;
     int error, status = SUCCESS;
 
 #if defined(EEI)
@@ -1269,11 +1456,16 @@ retry:
 #endif
     current_acb = acbp;
     error = dtaio_wait (dip, acbp);
+#if defined(WIN32)
+    /* total bytes wrote by WriteFile call or FAILURE in case of error */
+    count = acbp->bytes_rw; 
+#else /* !defined(WIN32) */
     count = aio_return (acbp);
+#endif /* defined(WIN32) */
 
 #if defined(EEI)
-    if ( (error == EIO) && (dip->di_dtype->dt_dtype == DT_TAPE) ) {
-	if (eei_resets) {
+    if (dip->di_dtype->dt_dtype == DT_TAPE) {
+	if ( (errno == EIO) && eei_resets) {
 	    if ( HandleTapeResets(dip) ) {
 		dtaio_restart(dip, acbp);
 		goto retry;
@@ -1291,14 +1483,15 @@ retry:
 	      (dip->di_volume_records == volume_records)) {
 	return (SUCCESS);
     }
-
     if (count == FAILURE) {
-#if defined(SCO)
+#if defined(SCO) || defined(HP_UX) || defined(AIX)
 	if ( (error != ENOSPC) && (error != ENXIO) ) {
-#else /* !defined(SCO) */
+#elif defined(WIN32)/* if there is a error and if disk is not full */
+	if (GetLastError() != ERROR_DISK_FULL) { 
+#else /* !defined(SCO) && !defined(HP_UX) && !defined(AIX) */
 	if (error != ENOSPC) {
-#endif /* defined(SCO) */
-	    report_error ("aio_return", TRUE);
+#endif /* defined(SCO) || defined(HP_UX) || defined(AIX) */
+	    report_error ("dtaio_process_write", TRUE);
 	    ReportDeviceInfo (dip, acbp->aio_nbytes, 0, (errno == EIO));
 	    return (FAILURE);
 	}
@@ -1309,7 +1502,7 @@ retry:
     bsize = acbp->aio_nbytes;
 
     if (min_size) {
-	dsize = bsize;	/* Can lead to wrong partial record count :-) */
+	dsize = bsize;	/* Can lead to wrong partial record count :-( */
     } else {
 	dsize = block_size;
     }
@@ -1339,17 +1532,17 @@ retry:
 	    status = HandleMultiVolume (dip);
 	    aio_record_count = dip->di_records_written;
 	    /*aio_file_bytes = dip->di_dbytes_written;*/
-	    aio_offset = (off_t) 0;
+	    aio_offset = (OFF_T) 0;
 	}
 	return (status);
     }
 
     if (count > (ssize_t) 0) {
-	if (count == dsize) {
-	    records_processed++;
-	} else {
-	    partial_records++;
-	}
+        if (count == dsize) {
+            dip->di_full_writes++;
+        } else {
+            dip->di_partial_writes++;
+        }
 	dip->di_offset = (acbp->aio_offset + count);
     }
     if ((status = check_write (dip, count, bsize)) == FAILURE) {
@@ -1365,8 +1558,8 @@ retry:
     dip->di_records_written++;
     dip->di_volume_records++;
 
-    if ( ((io_dir == REVERSE) && (acbp->aio_offset == (off_t) 0)) ||
-	 (step_offset && ((acbp->aio_offset - step_offset) <= (off_t) 0)) ) {
+    if ( ((io_dir == REVERSE) && (acbp->aio_offset == (OFF_T) file_position)) ||
+	 (step_offset && ((acbp->aio_offset - step_offset) <= (OFF_T) file_position)) ) {
 	set_Eof(dip);
     }
     return (status);

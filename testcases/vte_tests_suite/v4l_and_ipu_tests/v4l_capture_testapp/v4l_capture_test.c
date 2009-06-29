@@ -1,10 +1,13 @@
-/*/
-    Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
-  
-    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-    Freescale Semiconductor, Inc.
-*/
+/***
+**Copyright 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**
+**The code contained herein is licensed under the GNU General Public
+**License. You may obtain a copy of the GNU General Public License
+**Version 2 or later at the following locations:
+**
+**http://www.opensource.org/licenses/gpl-license.html
+**http://www.gnu.org/copyleft/gpl.html
+**/
 
 /**
 @file   v4l_capture_test.c
@@ -420,7 +423,7 @@ int init_overlay(void)
         struct v4l2_streamparm streamParm;
         v4l2_std_id stdID;
         int displayLCD = 0; 
-         
+
         /* Get Frame Buffer overlay parametrs */
         if(ioctl(gFdV4L, VIDIOC_G_FBUF, &fbuffer) < 0)
         {
@@ -476,9 +479,8 @@ int init_overlay(void)
 
          
         /* Get original format */
-        
         CLEAR(gFormat);
-        
+
         gFormat.type = V4L2_BUF_TYPE_VIDEO_OVERLAY;
 
         if(ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0)
@@ -504,17 +506,9 @@ int init_overlay(void)
                         return TFAIL;
         }
         
-        /* Set format to device */
-
-        CLEAR(gFormat);
         
-        gFormat.type = V4L2_BUF_TYPE_VIDEO_OVERLAY;
-#ifdef MAD_TEST_MODIFY           
-        gFormat.fmt.win.w.left = 0;
-        gFormat.fmt.win.w.top = 0;
-        gFormat.fmt.win.w.height = gV4LTestConfig.mHeight;
-        gFormat.fmt.win.w.width = gV4LTestConfig.mWidth;
-#else
+       gFormat.type = V4L2_BUF_TYPE_VIDEO_OVERLAY;
+        /*gFormat.fmt.pix.pixelformat = IPU_PIX_FMT_RGB565;*/
 	if(gV4LTestConfig.mCrop)
 	{
 	gFormat.fmt.win.w.left = crop.c.left;
@@ -531,7 +525,6 @@ int init_overlay(void)
         
 	tst_resm(TINFO,"Default image: left = %d, top = %d, width = %d, height = %d", gFormat.fmt.win.w.left, gFormat.fmt.win.w.top, gFormat.fmt.win.w.width, gFormat.fmt.win.w.height);
 	}
-#endif                
         if(gV4LTestConfig.mRotation)
         {
                 if(config_device_for_rotation(gV4LTestConfig.mRotationMode))
@@ -548,8 +541,8 @@ int init_overlay(void)
         {
                 tst_resm(TWARN,"ERROR init_overlay() : get format failed");
                 return TFAIL;
-        } 
-        /*        
+        }
+	/*
         if(ioctl(gFdV4L, VIDIOC_G_STD, &stdID) < 0)
         {
                 tst_resm(TWARN,"ERROR init_overlay() : VIDIOC_G_STD failed");
@@ -560,8 +553,7 @@ int init_overlay(void)
                 tst_resm(TWARN,"ERROR init_overlay() : VIDIOC_S_OUTPUT failed");
                 return TFAIL;
         } 
-        
-          */      
+	*/
         streamParm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         streamParm.parm.capture.timeperframe.numerator = 1;
         streamParm.parm.capture.timeperframe.denominator = gV4LTestConfig.mFrameRate;

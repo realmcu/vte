@@ -1,9 +1,16 @@
+/***
+**Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**
+**The code contained herein is licensed under the GNU General Public
+**License. You may obtain a copy of the GNU General Public License
+**Version 2 or later at the following locations:
+**
+**http://www.opensource.org/licenses/gpl-license.html
+**http://www.gnu.org/copyleft/gpl.html
+**/
 /*================================================================================================*/
 /**
     @file   mxcfb_test.c
-
-    @brief  C source file of the sleep test application that checks SLCDC driver by
-            putting device to the various VESA blanking levels.
 */
 #ifdef __cplusplus
 extern "C"{
@@ -581,49 +588,6 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
 */
 unsigned char *draw_px(unsigned char *where, struct pixel *p)
 {
-#ifdef MAD_TEST
-    __u32 value;
-
-    if (!where)
-    {
-        fprintf(stderr, "where isn't a valid pointer to 'unsigned char'\n");
-        return where;
-    }
-    if (!p)
-    {
-        fprintf(stderr, "p isn't a valid pointer to 'struct pixel'\n");
-        return where;
-    }
-    /* Convert pixel color represented by 3 bytes to appropriate color depth */
-    value = (p->r_color * (1 << p->r_field.length) / (1 << 8) ) << p->r_field.offset;
-    value |= (p->g_color * (1 << p->g_field.length) / (1 << 8) ) << p->g_field.offset;
-    value |= (p->b_color * (1 << p->b_field.length) / (1 << 8) ) << p->b_field.offset;
-    switch (p->bpp * 8)
-    {
-        case 12 ... 16:
-            *where++ = *((unsigned char *)&value + 1);
-            *where++ = *((unsigned char *)&value);
-            break;
-
-        case 24:
-            *where++ = *((unsigned char *)&value + 2);
-            *where++ = *((unsigned char *)&value + 1);
-            *where++ = *((unsigned char *)&value);
-            break;
-
-        case 32:
-            /* Don't use transparency byte; this byte always equals 0 */
-            *where++; 
-            *where++ = *((unsigned char *)&value + 2);
-            *where++ = *((unsigned char *)&value + 1);
-            *where++ = *((unsigned char *)&value);
-            break;
-
-        default:
-            break;
-    }
-    return where;
-#else
         __u32 value;
         
         if (!where)
@@ -671,7 +635,6 @@ unsigned char *draw_px(unsigned char *where, struct pixel *p)
         }
         
         return where;
-#endif
 }
 
 #ifdef __cplusplus

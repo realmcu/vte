@@ -1,3 +1,11 @@
+#Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 #!/bin/sh
 #filename: prepare.sh
 #Author                          Date        Description of Changes
@@ -5,6 +13,7 @@
 #Victor Cui                   31/07/2008     Prepare for hardware connection and filesystem
 #Spring Zhang                 20/04/2009     add return value in preparation 
 #                                            used by Linux plugin
+#Spring Zhang                 17/06/2009     add prepare vpu for 37&51 
 #notes:
 # -I insert modules(SD, ATA, V4L, BT, USBH or ALL)          
 # 	eg. ./auto_prepare.sh -I SD
@@ -949,6 +958,14 @@ prepare_usbh()
     return 0
 }
 
+#for MX37&51 only
+prepare_vpu()
+{
+    echo -e "\033[9;0]" > /dev/tty0
+    echo 1 > /proc/sys/vm/lowmem_reserve_ratio
+    return 0
+}
+
 scp_vte()
 {
 	prepare_platform;
@@ -984,7 +1001,7 @@ platform=MX31;
 ata_dev_point=hda;
 vte_name=imx31stack-vte-test;
 vte_path=/home;
-sys_name=`uname -r`
+sys_name=`uname -r`/
 
 case $# in
 	1) if [ $1 = "-H" ]; then
@@ -1047,6 +1064,9 @@ case $# in
 				"ata" | "ATA") prepare_ata;
 					;;
 				"usbh" | "USBH") prepare_usbh;
+					;;
+                #only for MX37&51
+				"VPU" | "vpu") prepare_vpu;
 					;;
 				"all" | "ALL") prepare_nand;
 				 	       prepare_nor;

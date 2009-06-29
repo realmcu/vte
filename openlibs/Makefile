@@ -1,16 +1,16 @@
-SUBDIRS =  zlib-1.2.3 libpcap-0.9.6
+SUBDIRS += zlib-1.2.3 libpcap-0.9.6 libpng-1.2.20
 
 all: config
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i CC=$(CROSS_COMPILER)gcc; done
-	-$(MAKE) -C libpcap-0.9.6  CC=$(CROSS_COMPILER)gcc shared
+	$(MAKE) -C libpcap-0.9.6  CC=$(CROSS_COMPILER)gcc shared
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
-	-$(MAKE) -C libpcap-0.9.6 install-shared
+	$(MAKE) -C libpcap-0.9.6 install-shared
 install:
 	echo "usually the rootfs will have test libs"
 clean:
-	rm -rf bin
-	@set -e; for i in $(SUBDIRS) ; do $(MAKE) -C $$i clean ; done
+	-@set -e; for i in $(SUBDIRS) ; do $(MAKE) -C $$i clean ; done
+	-@set -e; for i in $(SUBDIRS) ; do $(MAKE) -C $$i distclean ; done
+	rm -rf bin lib share man include
 config:
-	-cd zlib-1.2.3 && ./configure --prefix=$$(pwd)/../ && cd .. 
-	-cd libpcap-0.9.6  && ./myconfig && cd ..
+	@set -e; for i in $(SUBDIRS) ; do cd $$i ; ./myconfig ; cd ..; done
 

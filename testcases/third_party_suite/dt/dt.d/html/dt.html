@@ -15,10 +15,10 @@ verifys its' default data pattern, then displays performance statisics and other
 test parameters before exiting.  Since verification of data is performed,
 <I>dt</I> can be thought of as a generic diagnostic tool.
 <P>
-    <I>dt</I> is conditionalized to run on Digital UNIX, SUN, ULTRIX, OSF/MK,
-QNX, Linux, and Windows/NT operating systems.  The Windows/NT version requires
-the Cygnus Solutions
-<A HREF="http://sourceware.cygnus.com/cygwin"><I>cygwin</I> toolkit</A>.
+    <I>dt</I> is conditionalized to run on Tru64 UNIX, HP-UX, AIX, Solaris, ULTRIX,
+OSF/MK, QNX, Linux, SCO Unixware, and Windows operating systems.  The Windows version
+requires the Cygnus Solutions
+<A HREF="http://sources.redhat.com/cygwin/"><I>cygwin</I> toolkit</A>.
 <P>
     <I>dt</I> command lines are similar to the <I>dd</I> program, which is
 popular on most UNIX systems.  It contains numerous options to give the user
@@ -32,27 +32,30 @@ for setting up the speed, parity, data bits, etc.
 
 <H2>Latest <I>dt</I> Kits:</H2>
 <DL>
+<DD><A HREF="ftp/dt/dt-source.tar.gz">Latest <I>dt</I> source kit Version 15.34</A>
+<DD><A HREF="ftp/dt/dt-Overview.pdf"><I>dt</I> Program Overview (Acrobat .pdf).</A>
 <DD><A HREF="ftp/dt/dt-Overview.ppt"><I>dt</I> Program Overview (PowerPoint).</A>
-<DD><A HREF="ftp/dt/dt-UsersGuide.pdf"><I>dt</I> User's Manual (.pdf)</A> thanks to Hank Jakiela
+<DD><A HREF="ftp/dt/dt-UsersGuide.pdf"><I>dt</I> User's Manual (Acrobat .pdf)</A>
 <DD><A HREF="ftp/dt/dt-UsersGuide.ps.gz"><I>dt</I> User's Manual (Postscript).</A>
-<DD><A HREF="ftp/dt/dt-source.tar.gz">Latest <I>dt</I> source kit Version 14.2</A>
 <DD><A HREF="ftp/dt/dt-V3.2.tar.gz">Digital Unix V3.2x <I>dt</I> executable.</A>
-<DD><A HREF="ftp/dt/dt-ptos.tar.gz">Tru64 Unix V4.0F <I>dt</I> executable.</A>
+<DD><A HREF="ftp/dt/dt-ptos.tar.gz">Tru64 Unix V4.0x <I>dt</I> executable.</A>
 <DD><A HREF="ftp/dt/dt-dlm.tar.gz">TruCluster Wave V1.6 <I>dt</I> executable.</A>
-<DD><A HREF="ftp/dt/dt-Wave4.tar.gz">TruCluster Wave 4.0 <I>dt</I> executable.</A>
-<DD><A HREF="ftp/dt/dt-steelos.tar.gz">Tru64 Unix T5.0 <I>dt</I> executable.</A>
+<DD><A HREF="ftp/dt/dt-Wave4.tar.gz">TruCluster Wave 4.x <I>dt</I> executable.</A>
+<DD><A HREF="ftp/dt/dt-steelos.tar.gz">Tru64 Unix V5.x <I>dt</I> executable.</A>
 <DD><A HREF="ftp/dt/dt-win32.tar.gz">Windows/NT Data Test Program <I>dt</I> Kit.</A>
 <DD><A HREF="ftp/linux/alpha-dt.tar.gz">Linux Alpha Data Test Program <I>dt</I> Kit.</A>
 <DD><A HREF="ftp/linux/intel-dt.tar.gz">Linux Intel Data Test Program <I>dt</I> Kit.</A>
 <DD><A HREF="ftp/FreeBSD/dt-FreeBSD.tar.gz">FreeBSD 4.0 Data Test Program <I>dt</I> Kit.</A>.
 <DD><A HREF="ftp/sco/dt-sco.tar.gz">SCO UnixWare 7.1 Data Test Program <I>dt</I> Kit.</A>
+<DD><A HREF="ftp/hp-ux/IA64-dt.tar.gz">HP-UX IA64 <I>dt</I> executable.</A>
+<DD><A HREF="ftp/hp-ux/PA-RISC-dt.tar.gz">HP-UX PA-RISC <I>dt</I> executable.</A>
 </DL>
 <P>
 Unpack the above archives via: "<B>gzip -dc kit-name.tar.gz | tar xvf -</B>"
 
-<H3>Please Note:</H2> While the latest <I>dt</I> source is <B>Version 14.2</B>,
-only the latest operating system releases are kept up to date.  Also, if you are
-running with Zincos, you may wish to download and recompile from scratch via:
+<H3>Please Note:</H2> While the latest <I>dt</I> source is <B>Version 14.28</B>,
+only the latest operating system releases are kept up to date.  Rebuilding <I>dt</I>
+is fairly easy.  Copy the necessary Makefile, then follow these steps to build:
 <P>
 <PRE>
 	% <B>cp -p Makefile.linux Makefile</B>
@@ -61,6 +64,9 @@ running with Zincos, you may wish to download and recompile from scratch via:
 
 <H2>Latest Changes:</H2>
 <DL>
+<DD><A HREF="dt/WhatsNew-Jan13,2007.html">What's New as of January 13th, 2007</A> (Version 15.34)
+<DD><A HREF="dt/WhatsNew-Aug14,2004.html">What's New as of August 14th, 2004</A> (Version 15.10)
+<DD><A HREF="dt/WhatsNew-Mar25,2003.html">What's New as of March 25th, 2003</A> (Version 14.28)
 <DD><A HREF="dt/WhatsNew-Jan29,2001.html">What's New as of January 29th, 2001</A> (Version 14.2)
 <DD><A HREF="dt/WhatsNew-Apr02,2000.html">What's New as of April 2nd, 2000</A> (Version 13.10)
 <DD><A HREF="dt/WhatsNew-Jan12,2000.html">What's New as of January 12th, 2000</A> (Version 13.0)
@@ -77,12 +83,12 @@ running with Zincos, you may wish to download and recompile from scratch via:
 </DL>
 
 <HR>
-<A HREF="mailto:Robin.Miller@compaq.com"><IMG SRC="gifs/mailbox.gif" ALT="Mail"></A>
-Send mail to admin of this page: <EM>Robin.Miller@compaq.com</EM> 
+<A HREF="mailto:Robin.Miller@netapp.com"><IMG SRC="gifs/mailbox.gif" ALT="Mail"></A>
+Send mail to admin of this page: <EM>Robin.Miller@netapp.com</EM> 
 <A HREF="index.html"><IMG SRC="gifs/home04.gif" ALT="Home"></A>
 To Robin's home page.
 <P>
-Last modified: February 14th, 2001
+Last modified: January 17th, 2007
 <HR>
 
 <H2>Uses For <I>dt</I>:</H2>
@@ -91,7 +97,7 @@ I'll list a few just to whet your appetite:
 <UL>
 <LI>Testing of tape devices using different block sizes to determine
 the best blocking factor for optimum performance and capacity.
-This is very important for streaming tapes devices.
+This is very important for streaming tape drives.
 <LI>Write tapes to end of tape, to determine the total tape capacity.
 This gives the total data capacity of tapes, after inter-record
 gaps, preamble/postambles, or pad blocks are written on the tape.
@@ -164,8 +170,13 @@ Usage: dt options...
         bs=value         The block size to read/write.
         log=filename     The log file name to write.
         aios=value       Set number of AIO's to queue.
+        alarm=time       The keepalive alarm time.
+        keepalive=string The keepalive message string.
+        pkeepalive=str   The pass keepalive msg string.
+        tkeepalive=str   The totals keepalive msg string.
         align=offset     Set offset within page aligned buffer.
     or  align=rotate     Rotate data address through sizeof(ptr).
+        capacity=value   Set the device capacity in bytes.
         dispose=mode     Set file dispose to: {delete or keep}.
         dlimit=value     Set the dump data buffer limit.
         dtype=string     Set the device type being tested.
@@ -188,6 +199,7 @@ Usage: dt options...
         flags=flags      Set open flags:   {excl,sync,...}
         oflags=flags     Set output flags: {append,trunc,...}
         oncerr=action    Set child error action: {abort or continue}.
+        noprogt=value    Set the no progress time (in seconds).
         parity=string    Set parity to: {even, odd, or none}.
         passes=value     The number of passes to perform.
         pattern=value    The 32 bit hex data pattern to use.
@@ -195,19 +207,23 @@ Usage: dt options...
     or  pattern=incr     Use an incrementing data pattern.
     or  pattern=string   The string to use for the data pattern.
         position=offset  Position to offset before testing.
+        prefix=string    The data pattern prefix string.
         procs=value      The number of processes to create.
         ralign=value     The random I/O offset alignment.
         rlimit=value     The random I/O data byte limit.
         rseed=value      The random number generator seed.
         records=value    The number of records to process.
         runtime=time     The number of seconds to execute.
+        slice=value      The specific disk slice to test.
         slices=value     The number of disk slices to test.
         skip=value       The number of records to skip past.
         seek=value       The number of records to seek past.
         step=value       The number of bytes seeked after I/O.
+        stats=level      The stats level: {brief, full, or none}
         speed=value      The tty speed (baud rate) to use.
         timeout=value    The tty read timeout in .10 seconds.
         ttymin=value     The tty read minimum count (sets vmin).
+        trigger=type     The trigger to execute during errors.
         volumes=value    The number of volumes to process.
         vrecords=value   The record limit for the last volume.
         enable=flag      Enable one or more of the flags below.
@@ -221,10 +237,9 @@ Usage: dt options...
         debug            Debug output.          (Default: disabled)
         Debug            Verbose debug output.  (Default: disabled)
         rdebug           Random debug output.   (Default: disabled)
-        diag             Log diagnostic msgs.   (Default: disabled)
         dump             Dump data buffer.      (Default: enabled)
-        eei              Tape EEI reporting.    (Default: enabled)
-        resets           Tape reset handling.   (Default: disabled)
+        eof              EOF/EOM exit status.   (Default: enabled)
+        fsalign          File system align.     (Default: disabled)
         flush            Flush tty I/O queues.  (Default: enabled)
         fsync            Controls file sync'ing.(Default: runtime)
         header           Log file header.       (Default: enabled)
@@ -234,29 +249,32 @@ Usage: dt options...
         mmap             Memory mapped I/O.     (Default: disabled)
         modem            Test modem tty lines.  (Default: disabled)
         multi            Multiple volumes.      (Default: disabled)
+        noprog           No progress check.     (Default: disabled)
         pstats           Per pass statistics.   (Default: enabled)
         raw              Read after write.      (Default: disabled)
         stats            Display statistics.    (Default: enabled)
-        table            Table(sysinfo) timing. (Default: disabled)
+        timestamp        Timestamp each block.  (Default: disabled)
         ttyport          Flag device as a tty.  (Default: disabled)
         unique           Unique pattern.        (Default: enabled)
         verbose          Verbose output.        (Default: enabled)
         verify           Verify data written.   (Default: enabled)
 
-        Example: enable=debug disable=compare,pstats
+      Example: enable=debug disable=compare,pstats
 
     Common Open Flags:
         excl (O_EXCL)         Exclusive open. (don't share)
         ndelay (O_NDELAY)     Non-delay open. (don't block)
         nonblock (O_NONBLOCK) Non-blocking open/read/write.
+        direct (O_DIRECT)     Direct disk access. (don't cache data).
         rsync (O_RSYNC)       Synchronize read operations.
         sync (O_SYNC)         Sync updates for data/file attributes.
+        large (O_LARGEFILE)   Enable large (64-bit) file system support.
 
     Output Open Flags:
         append (O_APPEND)     Append data to end of existing file.
         defer (O_DEFER)       Defer updates to file during writes.
         dsync (O_DSYNC)       Sync data to disk during write operations.
-        trunc (O_TRUNC)       Truncate an exisiting file before writing.
+        trunc (O_TRUNC)       Truncate an existing file before writing.
 
     Delays (Values are seconds, unless microdelay enabled):
         cdelay=value     Delay before closing the file.    (Def: 0)
@@ -273,7 +291,7 @@ Usage: dt options...
         Special Characters:
             w = words (4 bytes)            q = quadwords (8 bytes)
             b = blocks (512 bytes)         k = kilobytes (1024 bytes)
-            m = megabytes (1048576 bytes)  p = page size (8192 bytes)
+            m = megabytes (1048576 bytes)  p = page size (4096 bytes)
             g = gigabytes (1073741824 bytes)
             t = terabytes (1099511627776 bytes)
             inf or INF = infinity (18446744073709551615 bytes)
@@ -293,11 +311,47 @@ Usage: dt options...
         a leading zero '0' for octal conversions.  NOTE: Evaluation is from
         right to left without precedence, and parenthesis are not permitted.
 
+    Keepalive Format Control:
+            %b = The bytes read or written.  %B = Total bytes read and written.
+            %c = Record count for this pass. %C = Total records for this test.
+            %d = The device name.            %D = The real device name.
+            %e = The number of errors.       %E = The error limit.
+            %f = The files read or written.  %F = Total files read and written.
+            %h = The host name.              %H = The full host name.
+            %k = The kilobytes this pass.    %K = Total kilobytes for this test.
+            %l = Blocks read or written.     %L = Total blocks read and written.
+            %m = The megabytes this pass.    %M = Total megabytes for this test.
+            %p = The pass count.             %P = The pass limit.
+            %r = Records read this pass.     %R = Total records read this test.
+            %s = The seconds this pass.      %S = The total seconds this test.
+            %t = The pass elapsed time.      %T = The total elapsed time.
+            %i = The I/O mode (read/write)   %u = The user (login) name.
+            %w = Records written this pass.  %W = Total records written this test.
+
+    Performance Keywords:
+            %bps  = The bytes per second.    %lbps = Logical blocks per second.
+            %kbps = Kilobytes per second.    %mbps = The megabytes per second.
+            %iops = The I/O's per second.    %spio = The seconds per I/O.
+
+      Lowercase means per pass stats, while uppercase means total stats.
+
+      Default: %d Stats: mode %i, blocks %l, %m Mbytes, pass %p/%P, elapsed %t
+                     or if pass statistics summary is disabled:
+               %d Stats: mode %i, blocks %L, %M Mbytes, pass %p/%P, elapsed %T
+
     Pattern String Input:
             \\ = Backslash   \a = Alert (bell)   \b = Backspace
             \f = Formfeed    \n = Newline        \r = Carriage Return
             \t = Tab         \v = Vertical Tab   \e or \E = Escape
             \ddd = Octal Value    \xdd or \Xdd = Hexadecimal Value
+
+    Prefix Format Control:
+            %d = The device name.           %D = The real device name.
+            %h = The host name.             %H = The full host name.
+            %p = The process ID.            %P = The parent PID.
+            %u = The user name.
+
+      Example: prefix="%u@%h (pid %p)"
 
     Time Input:
             d = days (86400 seconds),      h = hours (3600 seconds)
@@ -306,15 +360,23 @@ Usage: dt options...
         Arithmetic characters are permitted, and implicit addition is
         performed on strings of the form '1d5h10m30s'.
 
+    Trigger Types:
+            br = Execute a bus reset.
+            bdr = Execute a bus device reset.
+            seek = Issue a seek to the failing lba.
+            cmd:string = Execute command with these args:
+              string dname op dsize offset position lba errno
+
+            The first three options require Scu in your PATH.
+
     Defaults:
         errors=1, files=0, passes=1, records=0, bs=512, log=stderr
         pattern=0x39c39c39, flow=xon_xoff, parity=none, speed=9600
         timeout=3 seconds, dispose=delete, align=0 (page aligned)
-        aios=8, dlimit=64, oncerr=continue, volumes=0, vrecords=1
-        iodir=forward, iomode=test, iotype=sequential
+        aios=8, dlimit=512, oncerr=continue, volumes=0, vrecords=1
+        iodir=forward, iomode=test, iotype=sequential, stats=full
 
-    --> Date: February 1st, 2001, Version: 14.1, Author: Robin T. Miller <--
-% 
+    --> Date: January 13th, 2007, Version: 15.34, Author: Robin T. Miller <--
 </PRE>
 </BODY>
 </HTML>

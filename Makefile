@@ -221,18 +221,16 @@ clean:
 	@$(MAKE) -C lib $@
 	@$(MAKE) -C pan $@
 	@$(MAKE) -C tools $@
-	@$(MAKE) -C testcases $@
 	@$(MAKE) -C openlibs $@
+	@$(MAKE) -C testcases $@
+
+binclean:
+	-rm -rf ./testcases/bin
 
 config.h: config.h.default
 	cp include/config.h.default include/config.h
 config.mk:
 	touch $@
-# Update the path of the Kernel Linux source code to be tested
-#export KLINUX_SRCDIR= /home/vobs/linux-2.6.24_marley_080317
-#export KLINUX_BLTDIR= /home/vobs/linux-2.6.24_marley_080317
-#export ARCH_CPU= arm
-#export ARCH_PLATFORM=imx31ads
 
 ltp: libltp.a pandir tools config.h config.mk
 	@touch include/config.h.default
@@ -270,11 +268,11 @@ ltp: libltp.a pandir tools config.h config.mk
 	@echo "** LTP Network tests suite is available      **"
 	@echo "***********************************************"
 
+	@echo "** MAKE ALL - third party suite               **"
+
 vte: libltp.a pandir tools
 	-@$(MAKE) -C openlib
 	-@$(MAKE) -C openlib install
->>>>>>> 20090605
-	@echo
 	@echo "***********************************************"
 	@echo "** MAKE ALL - VTE tests suite                **"
 	@echo "***********************************************"
@@ -292,15 +290,14 @@ vte: libltp.a pandir tools
 	@echo "***********************************************"
 	@echo
 	@echo "***********************************************"
-	@echo "** MAKE ALL - third party suite               **"
-	@echo "** including bonnie++ dt and iozone           **"
+	@echo "** open source programs are available        **"
 	@echo "***********************************************"
 	@echo
 	@$(MAKE) -C testcases/third_party_suite all
 	@$(MAKE) -C testcases/third_party_suite install
 	@echo
 	@echo "***********************************************"
-	@echo "** bonnie++ dt and iozone are available      **"
+	@echo "**        build Finished                     **"
 	@echo "***********************************************"
 
 ## End misc targets.

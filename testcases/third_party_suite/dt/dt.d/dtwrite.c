@@ -1,12 +1,10 @@
+static char *whatHeader = "@(#) dt.d/dtwrite.c /main/3 Jan_18_15:13";
 /****************************************************************************
  *									    *
- *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			  COPYRIGHT (c) 1990 - 2004			    *
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
- *			       Hudson, NH 03051				    *
- *			       (603) 883-2355				    *
  *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
  * its documentation for any purpose and without fee is hereby granted,	    *
@@ -33,12 +31,38 @@
  *	Write routines for generic data test program.
  */
 #include "dt.h"
-#if !defined(_QNX_SOURCE)
+#if !defined(_QNX_SOURCE) && !defined(WIN32)
 #  include <sys/file.h>
-#endif /* !defined(_QNX_SOURCE) */
+#endif /* !defined(_QNX_SOURCE) && !defined(WIN32) */
 
 /*
  * Modification History:
+ *
+ * October 16th, 2006 by Robin T. Miller.
+ *      Added support for recording a timestamp in each data block.
+ *
+ * October 21st, 2004 by Robin Miller.
+ *      For variable record lengths, ensure we prime the first size
+ * to ensure it meets device size alignment requirements.
+ *
+ * June 23rd, 2004 by Robin Miller.
+ *      Added support for triggers on corruption.
+ *
+ * February 13th, 2004 by Robin Miller.
+ *      Factor in the file position when doing reverse I/O, to avoid
+ * writing into that area (which is now deemed protected).
+ *
+ * November 17th, 2003 by Robin Miller.
+ *	Breakup output to stdout or stderr, rather than writing
+ * all output to stderr.  If output file is stdout ('-') or a log
+ * file is specified, then all output reverts to stderr.
+ *
+ * September 27th, 2003 by Robin Miller.
+ *      Added support for AIX.
+ *
+ * June 25th, 2001 by Robin Miller.
+ *	Restructured code associated with Tru64 Unix EEI, so we obtain
+ * the EEI status for all tape errors, not just EIO errors.
  *
  * February 24th, 2001 by Robin Miller.
  *	Add conditionalization for QNX RTP (Neutrino).
@@ -165,8 +189,8 @@
 int
 write_data (struct dinfo *dip)
 {
-    ssize_t count;
-    size_t bsize, dsize;
+    register ssize_t count;
+    register size_t bsize, dsize;
     int status = SUCCESS;
     u_int32 lba;
 
@@ -174,13 +198,17 @@ write_data (struct dinfo *dip)
      * For variable length records, initialize to minimum record size.
      */
     if (min_size) {
-	dsize = min_size;
+        if (variable_flag) {
+            dsize = get_variable (dip);
+        } else {
+	    dsize = min_size;
+        }
     } else {
 	dsize = block_size;
     }
     if (dip->di_random_access) {
 	if (io_dir == REVERSE) {
-	    (void)set_position(dip, (off_t)rdata_limit);
+	    (void)set_position(dip, (OFF_T)rdata_limit);
 	}
 	lba = get_lba(dip);
 	dip->di_offset = get_position(dip);
@@ -201,6 +229,7 @@ write_data (struct dinfo *dip)
 	}
 
 	if (wdelay_count) {			/* Optional write delay	*/
+	    //if (noprog_flag) { dip->di_initiated_time = time((time_t *)0); }
 	    mySleep (wdelay_count);
 	}
 
@@ -209,23 +238,24 @@ write_data (struct dinfo *dip)
 	 */
 	if ( (dip->di_fbytes_written + dsize) > data_limit) {
 	    bsize = (size_t)(data_limit - dip->di_fbytes_written);
-	    if (debug_flag && !variable_flag) {
-		Fprintf ("Record #%lu, Writing a partial record of %lu bytes...\n",
-					(dip->di_records_written + 1), bsize);
-	    }
 	} else {
 	    bsize = dsize;
 	}
 
 	if (io_dir == REVERSE) {
-	    bsize = MIN(dip->di_offset, bsize);
-	    dip->di_offset = set_position(dip, (off_t)(dip->di_offset - bsize));
+	    bsize = MIN((dip->di_offset-file_position), bsize);
+	    dip->di_offset = set_position(dip, (OFF_T)(dip->di_offset - bsize));
 	} else if (io_type == RANDOM_IO) {
 	    dip->di_offset = do_random (dip, TRUE, bsize);
 	}
 
+        if (debug_flag && (bsize != dsize) && !variable_flag) {
+            Printf ("Record #%lu, Writing a partial record of %lu bytes...\n",
+                                    (dip->di_records_written + 1), bsize);
+        }
+
 	if (iot_pattern || lbdata_flag) {
-	    lba = make_lbdata (dip, (off_t)(dip->di_volume_bytes + dip->di_offset));
+	    lba = make_lbdata (dip, (OFF_T)(dip->di_volume_bytes + dip->di_offset));
 	}
 
 	/*
@@ -253,15 +283,27 @@ write_data (struct dinfo *dip)
 	    lba = init_lbdata (data_buffer, bsize, lba, lbdata_size);
 	}
 
+#if defined(TIMESTAMP)
+        /*
+         * If timestamps are enabled, initialize buffer accordingly.
+         */
+        if (timestamp_flag) {
+            init_timestamp(data_buffer, bsize, lbdata_size);
+        }
+#endif /* defined(TIMESTAMP) */
+
 	if (Debug_flag) {
-	    u_int32 iolba = NO_LBA;
+	    large_t iolba = NO_LBA;
+            OFF_T iopos = (OFF_T) 0;
 	    if (dip->di_random_access) {
-		iolba = (get_position(dip) / dip->di_dsize);
+                iopos = get_position(dip);
+		iolba = (iopos / dip->di_dsize);
 	    } else if (lbdata_flag || iot_pattern) {
-		iolba = make_lbdata (dip, (off_t)(dip->di_volume_bytes + dip->di_offset));
+                iopos = (OFF_T)(dip->di_volume_bytes + dip->di_offset);
+		iolba = make_lbdata (dip, iopos);
 	    }
-	    report_record(dip, (dip->di_files_written + 1), (dip->di_records_written + 1),
-				iolba, WRITE_MODE, data_buffer, bsize);
+            report_record(dip, (dip->di_files_written + 1), (dip->di_records_written + 1),
+				iolba, iopos, WRITE_MODE, data_buffer, bsize);
 	}
 
 	count = write_record (dip, data_buffer, bsize, dsize, &status);
@@ -300,7 +342,7 @@ write_data (struct dinfo *dip)
 	if (io_dir == FORWARD) {
 	    dip->di_offset += count;	/* Maintain our own position too! */
 	} else if ( (io_type == SEQUENTIAL_IO) &&
-		    (dip->di_offset == (off_t) 0) ) {
+		    (dip->di_offset == (OFF_T) file_position) ) {
 	    set_Eof(dip);
 	    break;
 	}
@@ -308,7 +350,7 @@ write_data (struct dinfo *dip)
 	if (step_offset) {
 	    if (io_dir == FORWARD) {
 		dip->di_offset = incr_position (dip, step_offset);
-	    } else if ((dip->di_offset -= step_offset) <= (off_t) 0) {
+	    } else if ((dip->di_offset -= step_offset) <= (OFF_T) file_position) {
 		set_Eof(dip);
 		break;
 	    }
@@ -335,8 +377,14 @@ check_write (struct dinfo *dip, ssize_t count, size_t size)
 
     if ((size_t)count != size) {
 	if (count == FAILURE) {
+#if defined(WIN32)
+	    report_error ("WriteFile", FALSE);
+	    ReportDeviceInfo (dip, 0, 0, (bool)((errno=GetLastError()) == ERROR_IO_DEVICE));
+#else /* !defined(WIN32) */
 	    report_error ("write", FALSE);
 	    ReportDeviceInfo (dip, 0, 0, (bool)(errno == EIO));
+#endif /* defined(WIN32) */
+            (void)ExecuteTrigger(dip, "write");
 	} else {
 	    /*
 	     * For writes at end of file or writes at end of block
@@ -348,7 +396,7 @@ check_write (struct dinfo *dip, ssize_t count, size_t size)
 	     */
 	    if ( (debug_flag || verbose_flag || ((size_t)count > size)) &&
 		 (io_mode == TEST_MODE) /*&& (io_type == SEQUENTIAL_IO)*/ ) {
-		Fprintf(
+		Printf(
 	"WARNING: Record #%lu, attempted to write %lu bytes, wrote only %lu bytes.\n",
 					(dip->di_records_written + 1), size, count);
 	    }
@@ -386,7 +434,9 @@ copy_record (	struct dinfo	*dip,
 
     count = write_record (dip, buffer, bsize, bsize, &status);
     /* TODO: Get this into write_record() where it belongs! */
-    if (count > (ssize_t) 0) dip->di_records_written++;
+    if (count > (ssize_t) 0) {
+	dip->di_records_written++;
+    }
     return (status);
 }
 
@@ -416,12 +466,18 @@ write_record(
 
 retry:
     *status = SUCCESS;
+    if (noprog_flag) { dip->di_initiated_time = time((time_t *)0); }
+#if defined(WIN32)
+    if (!WriteFile (dip->di_fd, buffer, bsize, &count, NULL)) { count = -1; }
+#else /* !defined(WIN32) */
     count = write (dip->di_fd, buffer, bsize);
+#endif /* defined(WIN32) */
+    if (noprog_flag) { dip->di_initiated_time = (time_t) 0; }
 
 #if defined(EEI)
-    if ( (count == FAILURE) && (errno == EIO) &&
+    if ( (count == FAILURE) &&
 	 (dip->di_dtype->dt_dtype == DT_TAPE) ) {
-	if (eei_resets) {
+	if ( (errno == EIO) && eei_resets) {
 	    if ( HandleTapeResets(dip) ) {
 		goto retry;
 	    }
@@ -434,7 +490,7 @@ retry:
     if ( is_Eof (dip, count, status) ) {
 	if (multi_flag) {
 	    *status = HandleMultiVolume (dip);
-	    dip->di_offset = (off_t) 0;
+	    dip->di_offset = (OFF_T) 0;
 	    if (*status == SUCCESS) goto retry;
 	}
     } else {
@@ -443,9 +499,9 @@ retry:
 	    dip->di_fbytes_written += count;
 	    dip->di_vbytes_written += count;
 	    if ((size_t)count == dsize) {
-		records_processed++;
+		dip->di_full_writes++;
 	    } else {
-		partial_records++;
+		dip->di_partial_writes++;
 	    }
 	}
 	*status = check_write (dip, count, bsize);
@@ -472,7 +528,7 @@ write_verify(
 	u_char		*buffer,
 	size_t		bsize,
 	size_t		dsize,
-	off_t		pos )
+	OFF_T		pos )
 {
     u_char *vbuffer = verify_buffer;
     ssize_t count;
@@ -484,12 +540,12 @@ write_verify(
     }
 
     if (dip->di_dtype->dt_dtype == DT_TAPE) {
-#if !defined(__NUTC__) && !defined(__QNXNTO__)
+#if !defined(__NUTC__) && !defined(__QNXNTO__) && !defined(AIX) && !defined(WIN32)
 	status = DoBackwardSpaceRecord(dip, 1);
 	if (status) return (status);
-#endif /* !defined(__NUTC__) && !defined(__QNXNTO__) */
+#endif /* !defined(__NUTC__) && !defined(__QNXNTO__) && !defined(AIX) && !defined(WIN32) */
     } else { /* assume random access */
-	off_t npos = set_position (dip, pos);
+	OFF_T npos = set_position (dip, pos);
 	if (npos != pos) {
 	    Fprintf("ERROR: Wrong seek position, (npos " FUF " != pos)" FUF "!\n",
 						npos, (pos - bsize));
@@ -497,7 +553,7 @@ write_verify(
 	}
     }
     if (iot_pattern || lbdata_flag) {
-	lba = make_lbdata(dip, (off_t)(dip->di_volume_bytes + pos));
+	lba = make_lbdata(dip, (OFF_T)(dip->di_volume_bytes + pos));
     }
 
     if (rotate_flag) {
@@ -518,19 +574,26 @@ write_verify(
     }
 
     if (Debug_flag) {
-	u_int32 iolba = NO_LBA;
+	large_t iolba = NO_LBA;
+        OFF_T iopos = (OFF_T) 0;
 	if (dip->di_random_access) {
-	    iolba = (get_position(dip) / dip->di_dsize);
+            iopos = get_position(dip);
+	    iolba = (iopos / dip->di_dsize);
 	} else if (lbdata_flag || iot_pattern) {
-	    iolba = make_lbdata (dip, (off_t)(dip->di_volume_bytes + pos));
+            iopos = (OFF_T)(dip->di_volume_bytes + pos);
+	    iolba = make_lbdata (dip, iopos);
 	}
-	report_record(dip, (dip->di_files_written + 1), (dip->di_records_read + 1),
-			iolba, READ_MODE, vbuffer, bsize);
+	report_record(dip, (dip->di_files_read + 1), (dip->di_records_read + 1),
+			iolba, iopos, READ_MODE, vbuffer, bsize);
     }
 
     count = read_record (dip, vbuffer, bsize, dsize, &status);
     if (end_of_file) {
+#if defined(WIN32)
+	report_error ("ReadFile", FALSE);
+#else /* !defined(WIN32) */
 	report_error ("read", FALSE);
+#endif /* defined(WIN32) */
 	ReportDeviceInfo (dip, 0, 0, FALSE);
 	(void)RecordError();
 	if (dip->di_dtype->dt_dtype != DT_TAPE) {

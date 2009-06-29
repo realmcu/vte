@@ -1,15 +1,16 @@
+#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 ###############################################################################
 #
 #    @file   Makefile
 #
 #    @brief  configuration file to compile the FM test applications.
-#
-###############################################################################
-#
-#   Copyright (C) 2008, Freescale Semiconductor, Inc. All Rights Reserved
-#   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-#   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-#   Freescale Semiconductor, Inc.
 #
 ###############################################################################
 #Revision History:
@@ -25,7 +26,7 @@
 #
 ###############################################################################
 
-SUBDIRS = fmtools-1.0.2 
+SUBDIRS = ../../third_party_suite/fmtools-1.0.2 
 TARGETS = fm_basic.sh 
 
 all:
@@ -39,10 +40,10 @@ install:
 		echo "***********************************************" ; \
 	done
 	@echo
-	-ln -f fmtools-1.0.2/fm ../../bin/
-	-ln -f fmtools-1.0.2/fmscan ../../bin/
+	-ln -f ../../third_party_suite/fmtools-1.0.2/fm ../../bin/
+	-ln -f ../../third_party_suite/fmtools-1.0.2/fmscan ../../bin/
 
 clean:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
+	-@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
 
 

@@ -1,0 +1,85 @@
+<HTML>
+<HEAD>
+<TITLE>Data Test Program (dt) August 14th, 2004</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#D19275">
+
+<CENTER><H2><STRONG>What's New as of August 14th, 2004</STRONG></H2></CENTER>
+
+<H2>Changes For This Release</H2>
+This is a major release of <I>dt</I>, which includes several bug
+fixes and new features.
+<P>
+The following changes were made to <I>dt</I> Version 15.10:
+<UL>
+<LI>
+Ported to AIX.
+<LI>     
+Added <I>enable=hazard</I> to support "dt stress" test configuration
+under Hazard test suite.  This option causes errors to be written
+to stdout, instead of stderr, with a special severity prefix.
+<LI>       
+Added <I>enable/disable=fsalign</I> to allow non-block aligned I/O
+for file system testing.  The default is off (disabled), so
+variable lengths via incr=var and non-block random offsets
+are possible.  Use enable=fsalign to enable previous behavior.
+<LI>       
+Fixed random I/O offsets for large capacity disks.  Previously
+when compiled for 32 bits, offsets were truncated to 32 bits.
+<LI>
+When position=offset option is used, prevent I/O prior to this
+offset when doing reverse I/O.
+<LI>
+For Linux, use IOCTL to obtain sector size & partition capacity.
+Why? The partition capacity may not be the actual disk capacity,
+and allows bypassing 'dt' calculating capacity for random I/O.
+<LI>
+For HP-UX, added <I>qdepth=N</I> option to set a new queue depth.  This
+setting is "sticky", meaning the previous setting isn't restored.
+The default queue depth on current HP-UX is 8, but this option
+can be used to generate a higher I/O load when doing async I/O.
+<LI>       
+Added support for <I>trigger=action</I> option, which is invoked when
+errors occur.  When using the "trigger=cmd:string" type, the
+tester can then do special handling of errors, like panic'ing
+the system, doing expanded corruption analysis, etc.
+<PRE>
+	trigger=type     The trigger to execute during errors.
+
+	Trigger Types:
+            br = Execute a bus reset.
+            bdr = Execute a bus device reset.
+            seek = Issue a seek to the failing lba.
+            cmd:string = Execute command with these args:
+              string dname op dsize offset position lba errno
+	      where:
+	        dname = The device/file name.
+	        op = open/close/read/write/miscompare
+	        dsize = The device block size.
+	        offset = The current file offset.
+	        position = The failing offset within block.
+	        lba = The logical block address (relative for FS).
+	        errno = The error number on syscall errors.
+
+            The first three options require Scu in your PATH, since
+	Scu is used to execute these operations.
+</PRE>
+<P>
+<CENTER>Within HP, the updated <I>dt</I> kits are located @ URL:</CENTER>
+<P>
+<CENTER><A HREF="http://www.zk3.dec.com/~rmiller/dt.html">http://www.zk3.dec.com/~rmiller/dt.html</A></CENTER>
+<P>
+<CENTER>External to HP, you can obtain <I>dt</I> kits from URL:</CENTER>
+<P>
+<CENTER><A HREF="http://www.bit-net.com/~rmiller/dt.html">http://www.bit-net.com/~rmiller/dt.html</A></CENTER>
+</UL>
+<HR>
+<A HREF="mailto:Robin.Miller@hp.com"><IMG SRC="../gifs/mailbox.gif" ALT="Mail"></A>
+Send mail to admin of this page: <EM>Robin.Miller@hp.com</EM>
+<A HREF="../index.html"><IMG SRC="../gifs/home04.gif" ALT="Home"></A>
+To Robin's home page.
+<P>
+Last Modified: August 14th, 2004
+</BODY>
+</HTML>

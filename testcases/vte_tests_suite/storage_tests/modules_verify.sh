@@ -1,3 +1,11 @@
+#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 #!/bin/sh
 ################################################################################
 #
@@ -6,19 +14,6 @@
 #    @brief  this shell script is used to test the module insert and remove 
 #             function.
 #
-################################################################################
-# 
-# Copyright 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
-#
-# The code contained herein is licensed under the GNU Lesser General
-#
-# Public License.  You may obtain a copy of the GNU Lesser General
-#
-# Public License Version 2.1 or later at the following locations: 
-# 
-# http://www.opensource.org/licenses/lgpl-license.html 
-# http://www.gnu.org/copyleft/lgpl.html 
-# 
 ################################################################################
 #Revision History: 
 #                            Modification     ClearQuest 
@@ -51,6 +46,14 @@ setup()
 	# do all modules insert and remove two times
 	C_TIMES=2;
 	i=0;
+
+	if [ -e module_verify_tmp0 ]; then	
+			rm module_verify_tmp0
+	fi
+	if [ -e module_verify_tmp1 ]; then	
+			rm module_verify_tmp1
+	fi
+	
 	return $RC 
 }
 # Function:     cleanup 

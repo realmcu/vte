@@ -1,12 +1,10 @@
+static char *whatHeader = "@(#) dt.d/dttty.c /main/2 Jan_18_15:13";
 /****************************************************************************
  *									    *
- *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			  COPYRIGHT (c) 1990 - 2004			    *
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
- *			       Hudson, NH 03051				    *
- *			       (603) 883-2355				    *
  *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
  * its documentation for any purpose and without fee is hereby granted,	    *
@@ -55,6 +53,21 @@
 
 /*
  * Modification History:
+ *
+ * November 9th, 2004 by Kirk Russell.
+ *      For QNX, change hardware flow control flags (IHFLOW | OHFLOW)
+ * from c_lflag to c_cflag field in the termios structure.  Thanks!
+ *
+ * November 17th, 2003 by Robin Miller.
+ *	Breakup output to stdout or stderr, rather than writing
+ * all output to stderr.  If output file is stdout ('-') or a log
+ * file is specified, then all output reverts to stderr.
+ *
+ * September 27th, 2003 by Robin Miller.
+ *      Added support for AIX.
+ *
+ * February 23rd, 2002 by Robin Miller.
+ *      Make porting changes for HP-UX IA64.
  *
  * December 30th, 2000 by Robin Miller.
  *	Make changes to build using MKS/NuTCracker product.
@@ -245,7 +258,7 @@ tty_open (struct dinfo *dip, int oflags)
 	return (status);
     }
 
-#if !defined(_QNX_SOURCE) && !defined(sun) && !defined(__MSDOS__) && !defined(__WIN32__)
+#if !defined(_QNX_SOURCE) && !defined(sun) && !defined(__MSDOS__) && !defined(__WIN32__) && !defined(HP_UX)
     if (!debug_flag && !loopback) {
 	if ((status = ioctl (dip->di_fd, TIOCEXCL, 0)) == FAILURE) {
 	    report_error ("TIOCEXCL", FALSE);
@@ -374,7 +387,7 @@ drain_tty (int fd)
 {
 	int status;
 
-#if !defined(_QNX_SOURCE) && !defined(__MSDOS__) && !defined(__WIN32__)
+#if !defined(_QNX_SOURCE) && !defined(__MSDOS__) && !defined(__WIN32__) && !defined(HP_UX)
 	/*
 	 * If debug is enabled, display the characters not flushed
 	 * in the output queue yet.
@@ -385,7 +398,7 @@ drain_tty (int fd)
 	    if (ioctl (fd, TIOCOUTQ, &outq_size) < 0) {
 		report_error ("TIOCOUTQ", TRUE);
 	    } else {
-		Fprintf ("Characters remaining in output queue = %d\n",
+		Printf ("Characters remaining in output queue = %d\n",
 								outq_size);
 	    }
 	}
@@ -394,7 +407,7 @@ drain_tty (int fd)
 	 * Wait for the output queue to drain.
 	 */
 	if (debug_flag) {
-	    Fprintf ("Waiting for output queue to drain...\n");
+	    Printf ("Waiting for output queue to drain...\n");
 	}
 #if defined(ultrix)
 	if ((status = ioctl (fd, TCSBRK, -1)) < 0) {
@@ -411,7 +424,7 @@ drain_tty (int fd)
 	    status = setup_tty (fd, FALSE);
 	}
 	if (debug_flag && (status == SUCCESS) ) {
-	    Fprintf ("Output queue finished draining...\n");
+	    Printf ("Output queue finished draining...\n");
 	}
 	return (status);
 }
@@ -454,7 +467,7 @@ flush_tty (int fd)
 	     * Read & display any characters in the typeahead buffer.
 	     */
 	    while ( (count = read (fd, &buff, (size_t) 1)) > (ssize_t) 0) {
-		Fprintf ("Flushing: %c (%d.) (%#x)\n", buff, buff, buff);
+		Printf ("Flushing: %c (%d.) (%#x)\n", buff, buff, buff);
 	    }
 	} else if (!flush_flag) {
 	    /*
@@ -481,13 +494,13 @@ flush_tty (int fd)
 int
 save_tty (int fd)
 {
-	int status;
+	int status = SUCCESS;
 
 	if (debug_flag) {
-	    Fprintf ("Saving current terminal characteristics, fd = %d...\n", fd);
+	    Printf ("Saving current terminal characteristics, fd = %d...\n", fd);
 	}
 
-#if !defined(_QNX_SOURCE) && !defined(sun) && !defined(__MSDOS__) && !defined(__WIN32__)
+#if !defined(_QNX_SOURCE) && !defined(sun) && !defined(__MSDOS__) && !defined(__WIN32__) && !defined(HP_UX)
 	/*
 	 * Save the line discipline.
 	 */
@@ -543,12 +556,12 @@ save_tty (int fd)
 int
 restore_tty (int fd)
 {
-	int status;
+	int status = SUCCESS;
 
 	if (tty_saved == FALSE) return (WARNING);
 
 	if (debug_flag) {
-	    Fprintf ("Restoring saved terminal characteristics, fd = %d...\n", fd);
+	    Printf ("Restoring saved terminal characteristics, fd = %d...\n", fd);
 	}
 
 	/*
@@ -572,7 +585,7 @@ restore_tty (int fd)
 	}
 #endif /* defined(sun) */
 
-#if !defined(_QNX_SOURCE) && !defined(sun) && !defined(__MSDOS__) && !defined(__WIN32__)
+#if !defined(_QNX_SOURCE) && !defined(sun) && !defined(__MSDOS__) && !defined(__WIN32__) && !defined(HP_UX)
 	/*
 	 * Restore the saved line discipline.
 	 */
@@ -603,7 +616,7 @@ setup_tty (int fd, int flushing)
 #endif
 
 	if (debug_flag && !flushing) {
-	    Fprintf ("Setting up test terminal characteristics, fd = %d...\n", fd);
+	    Printf ("Setting up test terminal characteristics, fd = %d...\n", fd);
 	}
 
 #if defined(sun)
@@ -627,7 +640,7 @@ setup_tty (int fd, int flushing)
 	}
 #endif /* defined(sun) */
 
-#if !defined(_QNX_SOURCE) && !defined(sun) && !defined(__MSDOS__) && !defined(__WIN32__) && !defined(SCO)
+#if !defined(_QNX_SOURCE) && !defined(sun) && !defined(__MSDOS__) && !defined(__WIN32__) && !defined(SCO) && !defined(HP_UX) && !defined(AIX)
 	/*
 	 * Ensure the correct line discipline is setup.
 	 */
@@ -692,7 +705,7 @@ setup_tty (int fd, int flushing)
 	} else {
 	    tm.c_cflag = CLOCAL;	/* Ignore modem signals. */
 	}
-#if defined(sun) || defined(__linux__) || defined(SCO)
+#if defined(sun) || defined(__linux__) || defined(SCO) || defined(HP_UX) || defined(AIX)
 	tm.c_cflag |= (baud_rate_code | data_bits_code | parity_code | CREAD);
 #else /* !defined(sun) */
 	tm.c_cflag |= (data_bits_code | parity_code | CREAD);
@@ -742,7 +755,7 @@ setup_tty (int fd, int flushing)
 #elif defined(_QNX_SOURCE)
 	tm.c_lflag |= IEXTEN;			/* QNX POSIX extensions. */
 	if (flow_type == CTS_RTS) {
-	    tm.c_lflag |= (IHFLOW | OHFLOW);	/* CTS/RTS flow control. */
+	    tm.c_cflag |= (IHFLOW | OHFLOW);	/* CTS/RTS flow control. */
 	} else if (flow_type == XON_XOFF) {
 	    tm.c_iflag |= (IXON | IXOFF);	/* XON/XOFF Flow control. */
 	}
@@ -846,12 +859,12 @@ setup_baud_rate (u_int32 baud)
 	    return (SUCCESS);			/* Return success status. */
 	}
     }
-    fprintf (stderr, "Baud rate '%d' is invalid, valid entrys are:\n", baud);
+    fprintf (efp, "Baud rate '%d' is invalid, valid entrys are:\n", baud);
     for (tsp = baud_rate_tbl, i = 0; i < num_baud_rates; i++, tsp++) {
-	if ( (i % 6) == 0) fprintf (stderr, "\n");
-	fprintf (stderr, "%10d", tsp->usr_speed);
+	if ( (i % 6) == 0) fprintf (efp, "\n");
+	fprintf (efp, "%10d", tsp->usr_speed);
     }
-    fprintf (stderr, "\n");
+    fprintf (efp, "\n");
     return (FAILURE);
 }
 
@@ -918,8 +931,8 @@ HangupModem (int fd)
 	return (status);
 }
 
-#define P(fmtstr)		fprintf (stderr, fmtstr)
-#define P1(fmtstr,arg)		fprintf (stderr, fmtstr, arg)
+#define P(fmtstr)		fprintf (efp, fmtstr)
+#define P1(fmtstr,arg)		fprintf (efp, fmtstr, arg)
 
 int
 ShowModemSignals (int fd)
@@ -969,7 +982,7 @@ WaitForCarrier (int fd)
 	unsigned int delay = 1;
 
 	if (debug_flag) {
-	    Fprintf ("Waiting for carrier or DSR signals...\n");
+	    Printf ("Waiting for carrier or DSR signals...\n");
 	}
 	do {
 	    if ( (msigs = GetModemSignals(fd)) == FAILURE) {

@@ -1,16 +1,19 @@
+/***
+**Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**
+**The code contained herein is licensed under the GNU General Public
+**License. You may obtain a copy of the GNU General Public License
+**Version 2 or later at the following locations:
+**
+**http://www.opensource.org/licenses/gpl-license.html
+**http://www.gnu.org/copyleft/gpl.html
+**/
 /*================================================================================================*/
 /**
 @file   lcd_main.c
 
 @brief  main file of the fbdraw test application that checks SLCDC driver by
 producing simple output to Epson fb.
-*/
-/*==================================================================================================
-
-Copyright (C) 2005, Freescale Semiconductor, Inc. All Rights Reserved
-THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-Freescale Semiconductor, Inc.
 
 ====================================================================================================
 Revision History:
@@ -125,22 +128,18 @@ int T_flag = 0;	/* Option flags      */
 int B_flag = 0;
 int O_flag = 0;
 int P_flag = 0;        
-#ifndef MAD_TEST_MODIFY
 int X_flag = 0;
 int N_flag = 0;
 int R_flag = 0;
-#endif
 
 
 char *T_opt;	 /* Option arguments   */
 char *B_opt;
 char *O_opt;
 char *P_opt;       
-#ifndef MAD_TEST_MODIFY
 char *X_opt;  
 char *N_opt;
 char *R_opt;
-#endif
 
 
 option_t opts[] =
@@ -149,11 +148,9 @@ option_t opts[] =
         { "B:", &B_flag, &B_opt },
         { "O:", &O_flag, &O_opt },
         { "D:", &P_flag, &P_opt },
-#ifndef MAD_TEST_MODIFY
         { "X:", &X_flag, &X_opt },
         { "N:", &N_flag, &N_opt },
         { "R:", &R_flag, &R_opt },
-#endif
         { NULL, NULL,    NULL   }
 };
 
@@ -179,10 +176,8 @@ int testcase_nb;
 char fb_path[PATH_LEN];
 char fb_path_1[PATH_LEN];
 int bpp;
-#ifndef MAD_TEST_MODIFY
 int wait_sec;
 int run_times = 1;
-#endif
 
 /*==================================================================================================
 GLOBAL FUNCTION PROTOTYPES
@@ -225,12 +220,9 @@ void cleanup(void)
                 tst_resm(TWARN, "VT_fbdraw_cleanup() Failed : error code = %d", VT_rv);
         }
         /* Exit with appropriate return code. */
-#ifndef MAD_TEST_MODIFY
 	if (!O_flag)
  	       tst_exit();		
-#else
         tst_exit();
-#endif
 }
 
 /*==================================================================================================
@@ -294,15 +286,12 @@ int main(int argc, char **argv)
                 return VT_rv;
         }
 
-#ifndef MAD_TEST_MODIFY
 	if (X_flag){
                 wait_sec = atoi(X_opt);
                 tst_resm(TINFO, "Disable user enquiry\n");
 	}
 	if (N_flag)
                 run_times = atoi(N_opt);	
-
-#endif
         
         if (T_flag)
                 testcase_nb = atoi(T_opt);
@@ -333,7 +322,6 @@ int main(int argc, char **argv)
                 help();
                 return VT_rv;
         }
- #ifndef MAD_TEST_MODIFY
 	int i, j;
 	int rc = 0;
 	int tn = 1;
@@ -400,24 +388,6 @@ int main(int argc, char **argv)
 		cleanup();
 
 	}
-        /* VTE : print results and exit test scenario */
-#else       
-        /* perform global test setup, call setup() function. */
-        setup();
-        
-        /* Print test Assertion using tst_resm() function with argument TINFO. */
-        tst_resm(TINFO, "Testing if %s test case is OK", TCID);
-        
-        VT_rv = VT_lcd_test();
-        
-        /* VTE : print results and exit test scenario */
-        if(VT_rv == TPASS)
-                tst_resm(TPASS, "%s test case worked as expected", TCID);
-        else
-                tst_resm(TFAIL, "%s test case did NOT work as expected", TCID);
-        
-        cleanup();
-#endif        
         return VT_rv;
 }
 

@@ -1,12 +1,10 @@
+/* @(#) dt.d/dt.h /main/4 Jan_20_06:08 */
 /****************************************************************************
  *									    *
- *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			  COPYRIGHT (c) 1990 - 2004			    *
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
- *			       Hudson, NH 03051				    *
- *			       (603) 883-2355				    *
  *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
  * its documentation for any purpose and without fee is hereby granted,	    *
@@ -27,6 +25,31 @@
  ****************************************************************************/
 /*
  * Modification History:
+ *
+ * January 19th, 2005 by Nagendra Vadlakunta
+ * 	Added AIO and IA64 support for Windows.
+ *
+ * June 22nd, 2004 by Robin Miller.
+ *      Added support for triggers on corruption.
+ *
+ * September 27th, 2003 by Robin Miller.
+ *      Added support for AIX.
+ *
+ * March 14th, 2003 by Robin Miller.
+ *	Add declarations for slice and prefix variables.
+ *
+ * November 14th, 2002 by Robin Miller.
+ *	Add support for 32-bit HP-UX compilation.
+ *
+ * February 23rd, 2002 by Robin Miller.
+ *	Make porting changes for HP-UX IA64.
+ *
+ * February 1st, 2002 by Robin Miller.
+ *	Make porting changes necessary for Solaris 8.
+ *
+ * August 31st, 2001 by Robin Miller.
+ *	Increase size of di_capacity from 32 to 64 bits in preparation
+ * for larger capacity volumes, esp. logical volumes on array controllers.
  *
  * January 24th, 2001 by Robin Miller.
  *	For Windows/NT, use /dev/[n]rmt instead of "tapeN" for tape
@@ -96,18 +119,31 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
-#include <termios.h>
 #include <time.h> 				/* CLK_TCK defined here */
-#include <unistd.h>
 #include <math.h>
 #include <errno.h>
-#include <sys/types.h>
-#include <sys/times.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+
+#if defined(WIN32)
+#  include<windows.h>
+#  include<io.h>
+#  include<direct.h>
+#  include<process.h>
+#else /* !defined(WIN32) */
+#  include <unistd.h>
+#  include <termios.h>
+#  include <sys/times.h>
+#endif /* defined(WIN32) */
 
 #if defined(__QNXNTO__)
-#include <unix.h>
+#  include <unix.h>
 #endif
+
+/*
+ * Definition to control timestamps (may affect performance).
+ */
+#define TIMESTAMP       1
 
 /*
  * These are found in <tzfile.h> on Tru64 UNIX and Solaris.
@@ -133,7 +169,7 @@ dlm_lock_mode_t    munsa_lock;
 #endif /* defined(MUNSA) */
 
 #if !defined(HZ)
-#  if defined(sun) || defined(__WIN32__) || defined(SCO)
+#  if defined(sun) || defined(__WIN32__) || defined(SCO) || defined(HP_UX)
 #    include <sys/param.h>
 #  endif /* defined(sun) */
 #  if defined(CLK_TCK) && !defined(HZ)
@@ -148,23 +184,54 @@ dlm_lock_mode_t    munsa_lock;
 #  endif /* defined(CLK_TCK) */
 #endif /* !defined(HZ) */
 
-#if defined(ultrix) || defined(sun) && !defined(SOLARIS)
-#  define USE_VARARGS	1
-#else /* !defined(ultrix) */
-#  define USE_STDARG	1
-#endif /* defined(ultrix) */
-
 #if defined(DEC)
 #  define LOG_DIAG_INFO	1
 #endif /* defined(DEC) */
 
-#if defined(__alpha)
+#if defined(__alpha) || defined(__LP64__)
 #  define MACHINE_64BITS
 #endif /* defined(__alpha) */
 
+#if !defined(WIN32)
+  typedef int		 HANDLE;
+#  define OFF_T 	 off_t
+#endif /* !defined(WIN32) */
+
+#if defined(WIN32)
+#  define getuid()	 1
+#  define sleep(a)	Sleep(a*1000)
+#  define usleep(a)	Sleep(a/1000)
+#  define alarm(sec) 	winAlarm(sec)
+#  define times(a)	time(0)
+#  define getpid	_getpid
+#  define unlink	_unlink
+#  define stat		_stat
+#  define fileno	_fileno
+#  define isatty	_isatty
+#  define SIGALRM	14
+
+  struct AlrmArgs {
+      DWORD timeout;
+      HANDLE event;
+      HANDLE handle;
+  };
+
+  struct tms {                
+     clock_t  tms_utime;     
+     clock_t  tms_stime;     
+     clock_t  tms_cutime;    
+     clock_t  tms_cstime;    
+  };
+
+  typedef int pid_t;
+  typedef unsigned int speed_t;
+  typedef int	ssize_t; 
+  typedef LONGLONG OFF_T;
+
+#endif 
+
 /*
- * Macro to calculate block count from byte count (rounds up).
- * [ these are usually found in sys/param.h on DUNIX ]
+ * Block Processing Macros:
  */
 #if !defined(howmany)
 #  define howmany(x, y)   (((x)+((y)-1))/(y))
@@ -211,6 +278,19 @@ int     _EXFUN(fileno, (FILE *));
  */
 #if defined(MACHINE_64BITS)
 
+#if defined(_WIN64)
+#define QuadIsLong
+typedef ULONG64 		 large_t;
+typedef LONG64 	        	 slarge_t;
+typedef volatile large_t         v_large;
+typedef volatile slarge_t 	 v_slarge; 
+#define LUF	 "%I64u"
+#define LDF	 "%I64d"
+#define LXF	 "%I64x"
+#define FUF	 LUF 
+#define FXF	 LXF 
+
+#else
 #define QuadIsLong
 typedef unsigned long		large_t;
 typedef signed long		slarge_t;
@@ -221,15 +301,16 @@ typedef volatile slarge_t	v_slarge;
 #define LXF	"%#lx"
 #define FUF	LUF
 #define FXF	LXF
+#endif
 
-#elif defined(__GNUC__) && defined(_BSD_SOURCE) || defined(SCO) || defined(__QNXNTO__)
+#elif defined(__GNUC__) && defined(_BSD_SOURCE) || defined(SCO) || defined(__QNXNTO__) || defined(SOLARIS) || defined(HP_UX) || defined(AIX) || defined(_NT_SOURCE) 
 
 #define QuadIsLongLong
 typedef unsigned long long int	large_t;
 typedef signed long long int	slarge_t;
 typedef volatile large_t	v_large;
 typedef volatile slarge_t	v_slarge;
-#if defined(__QNXNTO__)
+#if defined(__QNXNTO__) || defined(SOLARIS) || defined(HP_UX) || defined(AIX)
 #  define LUF   "%llu"
 #  define LDF   "%lld"
 #  define LXF   "%#llx"
@@ -237,7 +318,7 @@ typedef volatile slarge_t	v_slarge;
 #  define LUF	"%Lu"
 #  define LDF	"%Ld"
 #  define LXF	"%#Lx"
-#else /* !defined(SCO) && !defined(__QNXNTO__) */
+#else /* !defined(SCO) && !defined(__QNXNTO__) && !defined(HP_UX) && !defined(AIX) */
 #  define LUF	"%qu"
 #  define LDF	"%qd"
 #  define LXF	"%#qx"
@@ -264,6 +345,20 @@ typedef volatile slarge_t	v_slarge;
 #define LXF	"%#qx"
 #define FUF	"%lu"
 #define FXF	"%#lx"
+
+#elif defined(WIN32)
+
+#define QuadIsLongLong
+
+typedef ULONGLONG		 large_t;
+typedef LONGLONG 		 slarge_t;
+typedef volatile large_t         v_large;
+typedef volatile slarge_t 	 v_slarge; 
+#define LUF	 "%I64u"
+#define LDF	 "%I64d"
+#define LXF	 "%I64x"
+#define FUF	 LUF 
+#define FXF	 LXF 
 
 #else /* !defined(MACHINE_64BITS) && !defined(__GNUC__) */
 
@@ -302,17 +397,30 @@ typedef volatile unsigned long	vu_long;
 #define TRUE		1			/* Boolean TRUE value.	*/
 #define FALSE		0			/* Boolean FALSE value.	*/
 #define UNINITIALIZED	255			/* Uninitialized flag.	*/
-#define NO_LBA		0xFFFFFFFF		/* No LBA vlaue.	*/
+#define NO_LBA		0xFFFFFFFFFFFFFFFFuLL	/* No LBA vlaue.	*/
 
 #define BLOCK_SIZE		512		/* Bytes in block.	*/
 #define KBYTE_SIZE		1024		/* Kilobytes value.	*/
 #define MBYTE_SIZE		1048576L	/* Megabytes value.	*/
 #define GBYTE_SIZE		1073741824L	/* Gigabytes value.	*/
 
+/*
+ * These buffer sizes are mainly for allocating stack space
+ * for pre-formatting strings to display.  Different sizes
+ * to prevent wasting stack space (my preference).
+ */
+#define SMALL_BUFFER_SIZE       32              /* Small buffer size.   */
+#define MEDIUM_BUFFER_SIZE      64              /* Medium buffer size.  */
+#define LARGE_BUFFER_SIZE       128             /* Large buffer size.   */
 #define STRING_BUFFER_SIZE	256		/* String buffer size.	*/
 
-#define MAX_PROCS	256			/* Maximum processes.	*/
+#if defined(WIN32)
+#  define MAX_PROCS       0  			/* Maximum processes.	*/
+#else /* !defined(WIN32) */
+#  define MAX_PROCS	256			/* Maximum processes.	*/
+#endif /* defined(WIN32) */
 #define MAX_SLICES	256			/* Maximum slices.	*/
+#define USE_PATTERN_BUFFER			/* Use pattern buffer.	*/
 
 #undef INFINITY
 #if defined(MACHINE_64BITS)
@@ -336,6 +444,10 @@ typedef volatile unsigned long	vu_long;
 #      define MAX_ULONG_LONG 0xffffffffffffffffui64
 #      define INFINITY	 MAX_ULONG_LONG	/* Maximum possible large value */
 #      define TBYTE_SIZE 1099511627776i64       /* Terabytes value.	*/
+#    elif defined(WIN32)
+#      define MAX_ULONG_LONG  ~((ULONGLONG) 0)
+#      define INFINITY  MAX_ULONG_LONG
+#      define TBYTE_SIZE (large_t)1095511627776
 #    else 
 #      define MAX_ULONG_LONG 0xffffffffffffffffULL
 #      define INFINITY	 MAX_ULONG_LONG	/* Maximum possible large value */
@@ -411,14 +523,17 @@ typedef volatile unsigned long	vu_long;
 #  define RCDROM_NAME	"rrz"		/* Start of raw CD-ROM names.	*/
 #endif /* !defined(_QNX_SOURCE) */
 
-#if defined(_QNX_SOURCE)
+#if defined(AIX)
+#  define DISK_NAME	"hd"		/* Start of disk device names.	*/
+#  define RDISK_NAME	"rhd"		/* Start of raw disk names.	*/
+#elif defined(_QNX_SOURCE)
 #  define DISK_NAME	"hd"		/* Start of disk device names.	*/
 #  define RDISK_NAME	"hd"		/* Start of raw disk names.	*/
 #elif defined(sun) || defined(__linux__)
 #  define DISK_NAME	"sd"		/* Start of disk device names.	*/
 #  define RDISK_NAME	"rsd"		/* Start of raw disk names.	*/
 /* NOTE: Linux (RedHat V6.0) currently has no raw disk names! */
-#elif defined(SCO)
+#elif defined(SCO) || defined(HP_UX)
 #  define DISK_NAME	"dsk"		/* Start of disk device names.	*/
 #  define RDISK_NAME	"rdsk"		/* Start of raw disk names.	*/
 #elif defined(_NT_SOURCE)
@@ -473,9 +588,12 @@ typedef volatile unsigned long	vu_long;
 /*
  * Define some Architecture dependent types:
  */
-#if defined(__alpha)
-
+#if defined(__alpha) || defined(__LP64__) || defined(_WIN64)
+#if defined(_WIN64)
+typedef ULONG64			ptr_t;
+#else
 typedef unsigned long		ptr_t;
+#endif
 typedef int			int32;
 typedef unsigned int		u_int32;
 typedef unsigned int		bool;
@@ -484,10 +602,12 @@ typedef volatile unsigned int	v_bool;
 #else /* !defined(__alpha) */
 
 typedef unsigned int		ptr_t;
+#if !defined(AIX)
 #if !defined(OSFMK)
 typedef int			int32;
 #endif /* !defined(OSFMK) */
 typedef unsigned int		u_int32;
+#endif /* !defined(AIX) */
 typedef unsigned char		bool;
 typedef volatile unsigned char	v_bool;
 
@@ -496,7 +616,7 @@ typedef volatile unsigned char	v_bool;
 /*
  * Some systems don't have these definitions:
  */
-#if defined(__MSDOS__)
+#if defined(__MSDOS__) || defined(WIN32)
 
 typedef	unsigned char		u_char;
 typedef	unsigned short		u_short;
@@ -505,13 +625,13 @@ typedef unsigned long		u_long;
 typedef char *			caddr_t;
 typedef unsigned long		daddr_t;
 
-#endif /* defined(_QNX_SOURCE) */
+#endif /* defined(__MSDOS__) || defined(WIN32) */
 
 #if defined(ultrix) || defined(sun)
 
-#if !defined(SOLARIS)
+#if !defined(SOLARIS) && !defined(AIX)
 typedef int			ssize_t;
-#endif /* !defined(SOLARIS) */
+#endif /* !defined(SOLARIS) && !defined(AIX) */
 
 #endif /* defined(ultrix) */
 
@@ -561,6 +681,35 @@ enum onerrors {ABORT, CONTINUE};
 enum iodir {FORWARD, REVERSE};
 enum iomode {COPY_MODE, TEST_MODE, VERIFY_MODE};
 enum iotype {SEQUENTIAL_IO, RANDOM_IO};
+enum statslevel {STATS_BRIEF, STATS_FULL, STATS_NONE};
+typedef enum stats_value {
+   ST_BYTES, ST_BLOCKS, ST_FILES, ST_RECORDS
+} stats_value_t;
+enum trigger_type {
+    TRIGGER_NONE, TRIGGER_BR, TRIGGER_BDR, TRIGGER_SEEK, TRIGGER_CMD, TRIGGER_INVALID=-1
+};
+enum trigger_action {
+    TRIGACT_CONTINUE = 0, TRIGACT_TERMINATE = 1, TRIGACT_SLEEP = 2, TRIGACT_ABORT = 3
+} trigger_action_t;
+
+enum logLevel {
+	logLevelCrit = -1,
+	logLevelError,
+	logLevelInfo,
+	logLevelWarn,
+	logLevelDiag,
+	logLevelQdiag,
+	logLevelLog,
+	logLevelSpecial,
+	logLevelTrace
+};
+
+/*
+ * Flags to control print behaviour:
+ */
+#define PRT_NOFLUSH	0x01
+#define PRT_NOIDENT	0x02
+#define PRT_NOLEVEL	0x04
 
 /*
  * Declare the external test functions:
@@ -568,7 +717,12 @@ enum iotype {SEQUENTIAL_IO, RANDOM_IO};
  * TODO:  Tape test functions...
  */
 #define NOFUNC		(int (*)()) 0	/* No test function exists yet. */
-#define NoFd		-1		/* No file descriptor open.	*/
+
+#if defined(WIN32)
+#  define NoFd          INVALID_HANDLE_VALUE
+#else /* !defined(WIN32) */
+#  define NoFd		-1		/* No file descriptor open.	*/
+#endif /* defined(WIN32) */
 
 extern int nofunc();			/* Stub return (no test func).	*/
 extern struct dtfuncs generic_funcs;	/* Generic test functions.	*/
@@ -614,7 +768,7 @@ extern struct dtype *output_dtype;
  * Define device type information:
  */
 typedef struct dinfo {
-	int	di_fd;			/* The file descriptor.		*/
+	HANDLE	di_fd;			/* The file descriptor.		*/
 	int	di_flags;		/* The file control flags.	*/
 	int	di_oflags;		/* The last file open flags.	*/
 	char	*di_dname;		/* The /dev device name.	*/
@@ -628,9 +782,9 @@ typedef struct dinfo {
 	 */
 	bool	di_closing;		/* The device is being closed.	*/
 	u_int32	di_dsize;		/* The device block size.	*/
-	u_int32	di_capacity;		/* The device capacity (blocks)	*/
-volatile off_t	di_offset;		/* The device/file offset.	*/
-	v_int	di_errno;		/* The last errno encountered.	*/
+	u_int32	di_rshift;		/* The random shift value.	*/
+        u_int   di_qdepth;              /* The device queue depth.      */
+	large_t	di_capacity;		/* The device capacity (blocks)	*/
 	v_bool	di_end_of_file;		/* End of file was detected.	*/
 	v_bool	di_end_of_logical;	/* End of logical tape detected	*/
 	v_bool	di_end_of_media;	/* End of media was detected.	*/
@@ -646,6 +800,10 @@ volatile off_t	di_offset;		/* The device/file offset.	*/
 	v_large	di_vbytes_written;	/* Number of volume bytes wrote.*/
 	vu_long	di_files_read;		/* Number of tape files read.	*/
 	vu_long	di_files_written;	/* Number of tape files written.*/
+        u_long  di_full_reads;          /* The # of full records read.  */
+        u_long  di_full_writes;         /* The # of full records written*/
+        u_long  di_partial_reads;       /* Partial # of records read.   */
+        u_long  di_partial_writes;      /* Partial # of records written */
 	vu_long	di_records_read;	/* Number of records read.	*/
 	vu_long	di_records_written;	/* Number of records written.	*/
 	vu_long	di_volume_records;	/* Number of volume records.	*/
@@ -653,6 +811,7 @@ volatile off_t	di_offset;		/* The device/file offset.	*/
 	vu_long di_write_errors;	/* Number of write errors.	*/
 	large_t	di_data_limit;		/* The data limit (in bytes).	*/
 	large_t	di_volume_bytes;	/* Accumulated volume bytes.	*/
+	time_t	di_initiated_time;	/* Time the I/O was initiated.	*/
 	/*
 	 * Extended Error Information (EEI) State:
 	 */
@@ -668,6 +827,14 @@ volatile off_t	di_offset;		/* The device/file offset.	*/
 	int	di_eei_retries;		/* The number of EEI retries.	*/
 	int	di_eei_sleep;		/* Time to sleep between retry.	*/
 #endif /* defined(EEI) */
+        /*
+         * Information for Error Reporting / Trigger:
+         */
+        OFF_T	di_offset;		/* Device/file offset at error.	*/
+        large_t di_lba;                 /* Logical/relative block addr. */
+        u_int32 di_position;            /* Position into failing block. */
+	v_int	di_errno;		/* The last errno encountered.	*/
+        enum trigger_type di_trigger;   /* The trigger type (if any).   */
 } dinfo_t;
 
 /*
@@ -727,19 +894,19 @@ struct dtfuncs {
 #if defined(INLINE_FUNCS)
 
 #define make_lba(dip, pos)	\
-	((pos == (off_t) 0) ? (u_int32) 0 : (pos / lbdata_size))
+	((pos == (OFF_T) 0) ? (u_int32) 0 : (pos / lbdata_size))
 
-#define make_offset(dip, lba)	((off_t)(lba * lbdata_size))
+#define make_offset(dip, lba)	((OFF_T)(lba * lbdata_size))
 
 #define make_lbdata(dip, pos)	\
-	((pos == (off_t) 0) ? (u_int32) 0 : (pos / lbdata_size))
+	((pos == (OFF_T) 0) ? (u_int32) 0 : (pos / lbdata_size))
 
-#define make_position(dip, lba)	((off_t)(lba * lbdata_size))
+#define make_position(dip, lba)	((OFF_T)(lba * lbdata_size))
 
 #if defined(_BSD)
-#  define get_position(dip) (seek_position (dip, (off_t) 0, L_INCR))
+#  define get_position(dip) (seek_position (dip, (OFF_T) 0, L_INCR))
 #else /* !defined(_BSD) */
-#  define get_position(dip) (seek_position (dip, (off_t) 0, SEEK_CUR))
+#  define get_position(dip) (seek_position (dip, (OFF_T) 0, SEEK_CUR))
 #endif /* defined(_BSD) */
 
 #endif /* defined(INLINE_FUNCS) */
@@ -758,8 +925,12 @@ extern dlm_valb_t	vb;
 
 #endif /* defined(MUNSA) */
 
+extern FILE *efp, *ofp;
 extern struct dinfo *active_dinfo, *input_dinfo, *output_dinfo;
 
+#if defined(AIX)
+#  undef hz
+#endif
 extern clock_t hz;
 extern bool tty_saved;
 extern int errno, exit_status;
@@ -776,10 +947,12 @@ extern enum iotype io_type;
 extern enum dispose dispose_mode;
 extern enum devtype device_type;
 extern enum onerrors oncerr_action;
-extern char *parity_str, *flow_str, *speed_str;
+extern enum statslevel stats_level;
+extern enum trigger_type trigger;
+extern char *parity_str, *flow_str, *speed_str, *trigger_cmd;
 
 extern bool user_pattern, unique_pattern;
-extern char *pattern_string;
+extern char *pattern_string, *prefix_string;
 extern int align_offset, rotate_offset;
 extern bool ade_flag, aio_flag, bypass_flag;
 extern bool compare_flag, core_dump, cerrors_flag;
@@ -787,13 +960,15 @@ extern bool debug_flag, Debug_flag, eDebugFlag, rDebugFlag;
 #if defined(EEI)
 extern bool eei_flag, eei_resets;
 #endif /* defined(EEI) */
-extern bool dump_flag, flush_flag, forked_flag, fsync_flag, header_flag;
-extern bool keep_existing, user_incr, user_min, user_max;
-extern bool lbdata_flag, user_lbdata, user_lbsize;
-extern bool user_position, iot_pattern, logdiag_flag;
+extern bool dio_flag, dump_flag, flush_flag, forked_flag, fsync_flag, fsalign_flag;
+extern bool header_flag, keep_existing, hazard_flag;
+extern bool lbdata_flag, noprog_flag, user_lbdata, user_lbsize;
+extern bool user_incr, user_min, user_max, user_ralign;
+extern bool user_position, incr_pattern, iot_pattern, logdiag_flag;
 extern bool loopback, micro_flag, mmap_flag, modem_flag, stdin_flag, stdout_flag;
 extern bool max_capacity, media_changed, multi_flag, variable_flag, volumes_flag;
-extern bool terminating_flag, ttyport_flag, verbose_flag, verify_flag, verify_only;
+extern bool terminating_flag, timestamp_flag, ttyport_flag;
+extern bool verbose_flag, verify_flag, verify_only;
 extern bool rotate_flag, pad_check, spad_check, pstats_flag, raw_flag, stats_flag;
 
 extern char *cmdname;
@@ -804,7 +979,7 @@ extern char *input_file, *output_file, *pattern_file;
 extern u_char *mmap_buffer, *mmap_bufptr;
 extern u_char *pattern_buffer, *pattern_bufptr, *pattern_bufend;
 extern size_t patbuf_size;
-extern int pattern_size, page_size;
+extern int pattern_size, prefix_size, page_size;
 extern size_t block_size, data_size, lbdata_size;
 extern u_int32 device_size, lbdata_addr;
 
@@ -813,12 +988,14 @@ extern size_t dump_limit, incr_count, min_size, max_size;
 extern u_long file_limit;
 extern u_long pass_count, pass_limit;
 extern u_long seek_count, skip_count;
-extern large_t record_limit, total_bytes, total_records;
+extern large_t record_limit, total_bytes;
+extern large_t total_records, total_records_read, total_records_written;
 extern large_t total_bytes_read, total_bytes_written;
 extern large_t total_files, total_files_read, total_files_written;
 extern u_long error_limit;
 extern vu_long total_errors;
-extern u_long total_partial, warning_errors;
+extern u_long total_partial, total_partial_reads, total_partial_writes;
+extern u_long warning_errors;
 extern u_int cdelay_count, edelay_count, rdelay_count, sdelay_count;
 extern u_int tdelay_count, wdelay_count;
 extern u_int random_seed;
@@ -832,13 +1009,14 @@ extern vu_long volume_records;
 extern bool eof_status;
 extern v_bool end_of_file;
 extern u_long random_align;
-extern vu_long error_count, partial_records, records_processed;
+extern vu_long error_count;
+extern u_long partial_records, records_processed;
 extern large_t data_limit, rdata_limit, user_capacity;
 
 extern bool tty_minflag;
 extern u_short tty_timeout, tty_minimum;
 
-extern off_t file_position, last_position, step_offset;
+extern OFF_T file_position, last_position, step_offset;
 
 extern clock_t start_time, end_time, pass_time;
 extern struct tms stimes, ptimes, etimes;
@@ -848,13 +1026,16 @@ extern bool table_flag;
 extern struct tbl_sysinfo s_table, p_table, e_table;
 #endif /* defined(DEC) */
 
-extern time_t runtime, elapsed_time;
+extern time_t alarmtime, lastalarm, noprogtime, runtime, elapsed_time;
 extern time_t program_start, program_end, error_time;
 extern bool TimerActive, TimerExpired;
+extern bool user_keepalive, user_pkeepalive, user_tkeepalive;
+extern char *keepalive, *pkeepalive, *tkeepalive;
+extern char *keepalive0, *keepalive1;
 extern char *user_runtime;
 
 extern pid_t child_pid;
-extern int cur_proc, num_procs, num_slices;
+extern int cur_proc, num_procs, num_slices, slice_num;
 
 #if defined(AIO)
 extern int aio_bufs;
@@ -865,6 +1046,17 @@ extern union wait child_status;
 #else /* !defined(_BSD) */
 extern int child_status;
 #endif /* defined(_BSD) */
+
+#if defined(HP_UX)
+extern u_int qdepth;
+#endif /* defined(HP_UX) */
+
+#if defined(SOLARIS)
+/* This is for enabling Direct I/O on VxFS! */
+#  define VX_IOCTL        (('V' << 24) | ('X' << 16) | ('F' << 8))
+#  define VX_SETCACHE     (VX_IOCTL | 1)   /* set cache advice */
+#  define VX_DIRECT       0x00004          /* perform direct (un-buffered) i/o */
+#endif /* defined(SOLARIS) */
 
 /*
  * Function Prototypes: (No ANSI compiler? too bad... buy one! :-)
@@ -877,10 +1069,12 @@ extern void report_record(
 			struct dinfo	*dip,
 			u_long		files,
 			u_long		records,
-			u_int32		lba,
+			large_t		lba,
+                        OFF_T           pos,
 			enum test_mode	mode,
 			void		*buffer,
 			size_t		bytes );
+extern void keepalive_alarm(int sig);
 extern void terminate(int code);
 extern int nofunc(struct dinfo *dip);
 extern int HandleMultiVolume(struct dinfo *dip);
@@ -901,6 +1095,9 @@ extern int flush_file(struct dinfo *dip);
 extern int read_file(struct dinfo *dip);
 extern int write_file(struct dinfo *dip);
 extern int validate_opts(struct dinfo *dip);
+#if defined(SOLARIS)
+extern int SolarisDIO(struct dinfo *dip, char *file);
+#endif /* defined(SOLARIS) */
 
 /* dtinfo.c */
 extern struct dtype *setup_device_type(char *str);
@@ -937,11 +1134,11 @@ extern int write_verify(	struct dinfo	*dip,
 				u_char		*buffer,
 				size_t		bsize,
 				size_t		dsize,
-				off_t		pos );
+				OFF_T		pos );
 
 /* dtstats.c */
 extern void gather_stats(struct dinfo *dip);
-extern void gather_totals(void);
+extern void gather_totals(struct dinfo *dip);
 extern void init_stats(struct dinfo *dip);
 extern void report_pass(struct dinfo *dip, enum stats stats_type);
 extern void report_stats(struct dinfo *dip, enum stats stats_type);
@@ -980,31 +1177,41 @@ extern void fill_buffer(	u_char		*buffer,
 extern void init_buffer(	u_char		*buffer,
 				size_t		count,
 				u_int32		pattern );
+#if _BIG_ENDIAN_
+extern void init_swapped (	u_char		*buffer,
+		                size_t		count,
+		                u_int32		pattern );
+#endif /* _BIG_ENDIAN_ */
+
 extern u_int32 init_lbdata(	u_char		*buffer,
 				size_t		count,
 				u_int32		lba,
 				u_int32		lbsize );
+extern void init_timestamp (    u_char		*buffer,
+                        	size_t		count,
+                        	u_int32		dsize );
 #if !defined(INLINE_FUNCS)
 extern u_int32 make_lba(	struct dinfo	*dip,
-				off_t		pos );
-extern off_t make_offset(	struct dinfo	*dip,
+				OFF_T		pos );
+extern OFF_T make_offset(	struct dinfo	*dip,
 				u_int32		lba);
 extern u_int32 make_lbdata(	struct dinfo	*dip,
-				off_t		pos );
+				OFF_T		pos );
 #endif /* !defined(INLINE_FUNCS) */
 extern u_int32 winit_lbdata(	struct dinfo	*dip,
-				off_t		pos,
+				OFF_T		pos,
 				u_char		*buffer,
 				size_t		count,
 				u_int32		lba,
 				u_int32		lbsize );
-extern u_int32 init_iotdata(	size_t		count,
+extern u_int32 init_iotdata(	size_t		bcount,
 				u_int32		lba,
 				u_int32		lbsize );
 extern void init_padbytes(	u_char		*buffer,
 				size_t		offset,
 				u_int32		pattern);
-extern void print_time(clock_t time);
+extern char *bformat_time (char *bp, clock_t time);
+extern void print_time(FILE *fp, clock_t time);
 extern void format_time(clock_t time);
 #if defined(DEC)
 extern void format_ltime (long time, int tps);
@@ -1028,26 +1235,26 @@ extern int verify_padbytes(	struct dinfo	*dip,
 				size_t		count,
 				u_int32		pattern,
 				size_t		offset );
-extern void process_pfile(int *fd, char *file, int mode);
+extern void process_pfile(HANDLE *fd, char *file, int mode);
 extern void copy_pattern(u_int32 pattern, u_char *buffer);
 extern void setup_pattern(u_char *buffer, size_t size);
-extern off_t seek_file(int fd, u_long records, off_t size, int whence);
-extern off_t seek_position(struct dinfo *dip, off_t size, int whence);
+extern OFF_T seek_file(HANDLE fd, u_long records, OFF_T size, int whence);
+extern OFF_T seek_position(struct dinfo *dip, OFF_T size, int whence);
 #if !defined(INLINE_FUNCS)
-extern off_t get_position(struct dinfo *dip);
+extern OFF_T get_position(struct dinfo *dip);
 #endif /* !defined(INLINE_FUNCS) */
 extern u_int32 get_lba(struct dinfo *dip);
-extern off_t incr_position(struct dinfo *dip, off_t offset);
-extern off_t set_position(struct dinfo *dip, off_t offset);
+extern OFF_T incr_position(struct dinfo *dip, OFF_T offset);
+extern OFF_T set_position(struct dinfo *dip, OFF_T offset);
 #if !defined(INLINE_FUNCS)
-extern off_t make_position(struct dinfo *dip, u_int32 lba);
+extern OFF_T make_position(struct dinfo *dip, u_int32 lba);
 #endif /* !defined(INLINE_FUNCS) */
-extern void show_position(struct dinfo *dip, off_t pos);
+extern void show_position(struct dinfo *dip, OFF_T pos);
 extern u_long get_random(void);
 extern size_t get_variable(struct dinfo *dip);
 extern void set_rseed(u_int seed);
-extern off_t do_random(struct dinfo *dip, bool doseek, size_t xfer_size);
-extern int skip_records(struct dinfo *dip, u_long records, u_char *buffer, off_t size);
+extern OFF_T do_random(struct dinfo *dip, bool doseek, size_t xfer_size);
+extern int skip_records(struct dinfo *dip, u_long records, u_char *buffer, OFF_T size);
 extern void *myalloc(size_t size, int offset);
 extern void *Malloc(size_t size);
 extern u_long CvtStrtoValue(char *nstr, char **eptr, int base);
@@ -1060,18 +1267,23 @@ extern clock_t times(struct tms *tmsp);
 extern void *valloc(size_t size);
 #endif /* defined(ultrix) */
 extern void Ctime(time_t timer);
+extern void LogMsg(FILE *fp, enum logLevel level, int flags, char *fmtstr, ...);
 extern u_long RecordError(void);
 extern u_long RecordWarning(u_long record);
-#if defined(USE_STDARG)
+#if defined(WIN32)
+extern LPVOID error_msg(void);
+extern OFF_T SetFilePtr(HANDLE hf, OFF_T distance, DWORD MoveMethod);
+#endif /* defined(WIN32) */
+#if 1
 extern void Fprintf(char *format, ...);
 extern void Fprint(char *format, ...);
 extern void Lprintf(char *format, ...);
-#if !defined(_QNX_SOURCE) && !defined(__linux__) && !defined(FreeBSD) && !defined(__osf__) && !defined(__NUTC__)
+extern void Printf(char *format, ...);
+extern void Print(char *format, ...);
+#endif
+#if !defined(_QNX_SOURCE) && !defined(__linux__) && !defined(FreeBSD) && !defined(__osf__) && !defined(__NUTC__) && !defined(__CYGWIN__)
 extern void bzero(char *buffer, size_t length);
 #endif /* !defined(_QNX_SOURCE) && !defined(__linux__) && !defined(FreeBSD) && !defined(__osf__) && !defined(__NUTC__) */
-#else /* !defined(USE_STDARG) */
-extern void Fprintf(), Fprint(), Lprintf();
-#endif /* defined(USE_STDARG) */
 extern void Lflush(void);
 extern int Sprintf(char *bufptr, char *msg, ...);
 extern int Fputs(char *str, FILE *stream);
@@ -1094,10 +1306,15 @@ extern void ReportLbdataError(	struct dinfo	*dip,
 				u_int32		data_found );
 
 extern int IS_HexString(char *s);
+extern int FmtKeepAlive(struct dinfo *dip, char *keepalivefmt, char *buffer);
+extern int FmtPrefix(struct dinfo *dip, char **prefix, int *psize);
 extern int StrCopy(void *to_buffer, void *from_buffer, size_t length);
-extern u_long stoh(u_char *bp, size_t size);
-extern void htos(u_char *bp, u_long value, size_t size);
+extern large_t stoh(u_char *bp, size_t size);
+extern void htos(u_char *bp, large_t value, size_t size);
 extern void LogDiagMsg(char *msg);
+extern enum trigger_type check_trigger_type(char *str);
+extern int ExecuteTrigger(struct dinfo *dip, ...);
+extern large_t GetStatsValue(struct dinfo *dip, stats_value_t stv, bool pass_stats, int *secs);
 
 /* dtusage.c */
 extern char *version_str;
@@ -1109,6 +1326,7 @@ extern void await_procs(void);
 extern pid_t fork_process(void);
 extern pid_t start_procs(void);
 extern pid_t start_slices(void);
+extern void init_slice(struct dinfo *dip, int slice);
 
 #if !defined(_QNX_SOURCE)
 /*
@@ -1154,7 +1372,19 @@ extern int DoWriteFileMark(dinfo_t *dip, daddr_t count);
 
 #if defined(AIO)
 
+#if defined(WIN32)
+/* we are defining aiocb structure similer to POSIX aiocb structure */
+struct aiocb {					/* aiocb structure for windows */
+	OVERLAPPED	overlap;		/* Overlapped structure */
+	char		*aio_buf;		/* buffer pointer */
+	HANDLE		aio_fildes;		/* file descriptro */
+	OFF_T		aio_offset;		/* file offset */
+	size_t		aio_nbytes;		/* Length of transfer */
+	u_int32		bytes_rw;		/* bytes read/write at time of checking status by GetOverlappedResult */
+};
+#else
 #include <aio.h>
+#endif
 
 extern struct aiocb *current_acb;
 

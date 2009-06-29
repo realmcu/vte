@@ -1,12 +1,10 @@
+static char *whatHeader = "@(#) dt.d/dtgen.c /main/4 Jan_20_06:08";
 /****************************************************************************
  *									    *
- *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			  COPYRIGHT (c) 1990 - 2004			    *
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
- *			       Hudson, NH 03051				    *
- *			       (603) 883-2355				    *
  *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
  * its documentation for any purpose and without fee is hereby granted,	    *
@@ -34,6 +32,41 @@
  *	Generic test functions for the 'dt' program.
  *
  * Modification History:
+ *
+ * January 19th, 2005 by Nagendra Vadlakunta.
+ *	Added AIO support for Windows.
+ *
+ * November 11th, 2004 by Robin Miller.
+ *      For Solaris, if Direct I/O (DIO) is enabled, use directio() API
+ * after the file is open'ed to enable DIO.
+ *
+ * June 23rd, 2004 by Robin Miller.
+ *      Added support for triggers on corruption.
+ *      Allow non-modulo record sizes for regular files.
+ *
+ * February 27th, 2004 by Robin Miller.
+ *      In open_file() pre-format error string for Hazard printing.
+ *
+ * November 17th, 2003 by Robin Miller.
+ *	Breakup output to stdout or stderr, rather than writing
+ * all output to stderr.  If output file is stdout ('-') or a log
+ * file is specified, then all output reverts to stderr.
+ *
+ * September 27th, 2003 by Robin Miller.
+ *      Added support for AIX.
+ *
+ * February 21st, 2002 by Robin Miller.
+ *	Fix regression introduced by January 29th, 2002 update!
+ * When AIO is specified the base buffer is not setup, only the
+ * data buffer, so referencing this NULL pointer dumped core.
+ *
+ * January 29th, 2002 by Robin Miller.
+ *	If compare is disabled, initialize the data buffer to be written.
+ * This is important to honor the user specified pattern, and to avoid
+ * problems writing data to tapes in compressed mode (user may wish to
+ * specify a non-repeating data pattern).  In retrospect, it may not
+ * be a good idea to use !compare to disable buffer initialization,
+ * but changing this now will break too many folks :-)
  *
  * February 24th, 2001 by Robin Miller.
  *	Add conditionalization for QNX RTP (Neutrino).
@@ -146,11 +179,13 @@
  *		"dt: 'close' - Bad file number"
  */
 #include "dt.h"
-#if defined(_QNX_SOURCE)
-#  include <fcntl.h>
-#else /* !defined(_QNX_SOURCE) */
-#  include <sys/file.h>
-#endif /* defined(_QNX_SOURCE) */
+#if !defined(WIN32)
+#  if defined(_QNX_SOURCE) 
+#    include <fcntl.h>
+#  else /* !defined(_QNX_SOURCE) */
+#    include <sys/file.h>
+#  endif /* defined(_QNX_SOURCE) */
+#endif /* !defined(WIN32) */
 
 /*
  * Declare the generic (default) test functions.
@@ -196,23 +231,53 @@ open_file (struct dinfo *dip, int oflags)
 #if defined(EEI)
     int open_retries = EEI_OPEN_RETRIES;
 #endif
+    char fmt[STRING_BUFFER_SIZE];
+
+    end_of_file = FALSE;
+    dip->di_end_of_file = FALSE;
+    dip->di_end_of_media = FALSE;
+    dip->di_end_of_logical = FALSE;
+
+    dip->di_errno = 0;
+    dip->di_offset = 0L;
+    dip->di_position = 0;
+    dip->di_lba = 0;
 
     if ( (strlen(file) == 1) && (*file == '-') ) {
+#if defined(WIN32)
+	if (hazard_flag) {
+	    Fprintf("option '-' not supported\n");
+	    exit(FATAL_ERROR);
+	}
+#endif /* defined(WIN32) */
 	if (debug_flag) {
-	    Fprintf ("Dup'ing standard %s...\n",
+	    Printf ("Dup'ing standard %s...\n",
 		(dip->di_ftype == INPUT_FILE) ? "input" : "output");
 	}
 	if (dip->di_ftype == INPUT_FILE) {
 	    stdin_flag = TRUE;
+#if defined(WIN32)
+	    dip->di_fd = GetStdHandle(STD_INPUT_HANDLE);
+#else /* !defined(WIN32) */
 	    dip->di_fd = dup (fileno(stdin));
+#endif /* defined(WIN32) */
 	} else {
+	    ofp = efp; 		/* Redirect output to stderr. */
 	    stdout_flag = TRUE;
+#if defined(WIN32)
+	    dip->di_fd = GetStdHandle(STD_OUTPUT_HANDLE);
+#else /* !defined(WIN32) */
 	    dip->di_fd = dup (fileno(stdout));
+#endif /* defined(WIN32) */
 	    verify_flag = FALSE;
 	}
 	if (dip->di_fd < 0) {
+#if defined(WIN32)
+	    report_error ("GetStdHandle", TRUE);
+#else /* !defined(WIN32) */
 	    Fprintf ("dup -> ");
 	    report_error (file, TRUE);
+#endif /* defined(WIN32) */
 	    status = FAILURE;
 	}
     } else {
@@ -223,46 +288,69 @@ open_file (struct dinfo *dip, int oflags)
 retry:
 #endif
 	if (debug_flag) {
-	    Fprintf (
+	    Printf (
 		"Attempting to open %s file '%s', open flags = %#o (%#x)...\n",
 		(dip->di_ftype == INPUT_FILE) ? "input" : "output",
 							file, oflags, oflags);
 	}
 	dip->di_oflags = oflags;
 	if (dip->di_ftype == INPUT_FILE) {
+#if defined(WIN32)
+	    if (aio_flag) { /* if its AIO testing file should be opened/created with a flag FILE_FLAG_OVERLAPPED */
+		dip->di_fd = CreateFile (file, oflags, (FILE_SHARE_READ | FILE_SHARE_WRITE), NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+	    } else {
+		dip->di_fd = CreateFile (file, oflags, (FILE_SHARE_READ | FILE_SHARE_WRITE), NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	    }
+#else
 	    dip->di_fd = open (file, oflags);
+#endif
 	} else {
+#if defined(WIN32)
+	    if (aio_flag) { /* if its AIO testing file should be opened/created with a flag FILE_FLAG_OVERLAPPED */
+		dip->di_fd = CreateFile (file, oflags, (FILE_SHARE_READ | FILE_SHARE_WRITE), NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+	    } else {
+		dip->di_fd = CreateFile (file, oflags, (FILE_SHARE_READ | FILE_SHARE_WRITE), NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	    }
+#else
 	    dip->di_fd = open (file, oflags, 0666);
+#endif
 	}
+#if defined(WIN32)
+	if (dip->di_fd == INVALID_HANDLE_VALUE) {
+#else /* !defined(WIN32) */
 	if (dip->di_fd < 0) {
+#endif /* defined(WIN32) */
+            char fmt[STRING_BUFFER_SIZE];
 #if defined(EEI)
 	    if ( (errno == EIO) && eei_resets &&
 		 (dip->di_dtype &&
 		  (dip->di_dtype->dt_dtype == DT_TAPE)) ) {
 		if (--open_retries) {
 		    if (verbose_flag) {
-			Fprintf("Warning, ignoring open error and retrying...\n");
+			Printf("Warning, ignoring open error and retrying...\n");
 		    }
 		    goto retry;
 		}
 	    }
 #endif /* defined(EEI) */
-	    Fprintf ("open -> ");
-	    report_error (file, TRUE);
+	    (void)sprintf(fmt, "open -> %s", file);
+	    report_error (fmt, TRUE);
+            (void)ExecuteTrigger(dip, "open");
 	    status = FAILURE;
 	}
     }
-
-    end_of_file = FALSE;
-    dip->di_end_of_file = FALSE;
-    dip->di_end_of_media = FALSE;
-    dip->di_end_of_logical = FALSE;
-
     if ( (status != FAILURE) && debug_flag) {
-	Fprintf ("%s file '%s' successfully opened, fd = %d\n",
+	Printf ("%s file '%s' successfully opened, fd = %d\n",
 		(dip->di_ftype == INPUT_FILE) ? "Input" : "Output",
 						file, dip->di_fd);
     }
+
+#if defined(SOLARIS)
+    if ( (status == SUCCESS) && dio_flag ) {
+        status = SolarisDIO(dip, file);
+    }
+#endif /* defined(SOLARIS) */
+
     return (status);
 }
 
@@ -294,23 +382,38 @@ close_file (struct dinfo *dip)
 	mySleep (cdelay_count);
     }
     if (debug_flag) {
-	Fprintf ("Closing file '%s', fd = %d...\n", file, dip->di_fd);
+	Printf ("Closing file '%s', fd = %d...\n", file, dip->di_fd);
     }
+#if defined(WIN32)
+    if ((CloseHandle (dip->di_fd)) == 0) {
+	status = FAILURE;
+#else /* !defined(WIN32) */
     if ((status = close (dip->di_fd)) == FAILURE) {
+#endif /* defined(WIN32) */
 	if (cerrors_flag) {
+#if defined(WIN32)
+	    report_error ("CloseHandle", TRUE);
+#else /* !defined(WIN32) */
 	    report_error ("close", TRUE);
+#endif /* defined(WIN32) */
+            (void)ExecuteTrigger(dip, "close");
 	} else if (verbose_flag) {
 	    status = SUCCESS;
-	    Fprintf("Warning, close failed, errno = %d - %s\n",
+#if defined(WIN32)
+	    Printf("Warning, close failed, errno = %d - %s\n",
+					GetLastError(),error_msg());
+#else /* !defined(WIN32) */
+	    Printf("Warning, close failed, errno = %d - %s\n",
 					errno, strerror(errno));
-	    Fprintf("Warning, ignoring close failure and continuing...\n");
+#endif /* defined(WIN32) */
+	    Printf("Warning, ignoring close failure and continuing...\n");
 	}
 #if defined(EEI)
 	if ( (errno == EIO) && eei_resets &&
 	     (dip->di_dtype->dt_dtype == DT_TAPE) ) {
 	    if (dip->di_proc_eei) {
 		if (verbose_flag) {
-		    Fprintf("Warning, ignoring close failure and continuing...\n");
+		    Printf("Warning, ignoring close failure and continuing...\n");
 		}
 		error_count--;
 		status = SUCCESS;
@@ -344,6 +447,7 @@ reopen_file (struct dinfo *dip, int oflags)
 #if defined(EEI)
     int open_retries = EEI_OPEN_RETRIES;
 #endif
+    char fmt[STRING_BUFFER_SIZE];
 
     /*
      * For stdin or stdout, do not attempt close/open.
@@ -366,6 +470,11 @@ reopen_file (struct dinfo *dip, int oflags)
     dip->di_end_of_media = FALSE;
     dip->di_end_of_logical = FALSE;
 
+    dip->di_errno = 0;
+    dip->di_offset = 0L;
+    dip->di_position = 0;
+    dip->di_lba = 0;
+
 #if defined(__WIN32__)
     oflags |= O_BINARY;
 #endif /* defined(__WIN32__) */
@@ -373,31 +482,51 @@ reopen_file (struct dinfo *dip, int oflags)
 retry:
 #endif
     if (debug_flag) {
-	Fprintf ("Attempting to reopen file '%s', open flags = %#o (%#x)...\n",
+	Printf ("Attempting to reopen file '%s', open flags = %#o (%#x)...\n",
 							file, oflags, oflags);
     }
 
     dip->di_oflags = oflags;
+#if defined(WIN32)
+    if (aio_flag) { /* if its AIO testing file should be opened/created with a flag FILE_FLAG_OVERLAPPED */
+	dip->di_fd = CreateFile(file, oflags, (FILE_SHARE_READ | FILE_SHARE_WRITE), NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+    } else {
+	dip->di_fd = CreateFile(file, oflags, (FILE_SHARE_READ | FILE_SHARE_WRITE), NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    }
+    if ( dip->di_fd  == NoFd) {
+#else /* !defined(WIN32) */
     if ( (dip->di_fd = open (file, oflags)) == FAILURE) {
+#endif /* defined(WIN32) */
+
 #if defined(EEI)
 	if ( (dip->di_dtype->dt_dtype == DT_TAPE) &&
 	     (errno == EIO) && eei_resets) {
 	    if (--open_retries) {
 		if (verbose_flag) {
-		    Fprintf("Warning, ignoring open error and retrying...\n");
+		    Printf("Warning, ignoring open error and retrying...\n");
 		}
 		goto retry;
 	    }
 	}
 #endif /* defined(EEI) */
 	report_error ("reopen", TRUE);
+        (void)ExecuteTrigger(dip, "open");
 	return (FAILURE);
     }
 
     if (debug_flag) {
-	Fprintf ("File '%s' successfully reopened, fd = %d\n",
+	Printf ("File '%s' successfully reopened, fd = %d\n",
 						file, dip->di_fd);
     }
+
+#if defined(SOLARIS)
+    if ( dio_flag ) {
+        if ( (status = SolarisDIO(dip, file)) == FAILURE) {
+            return (status);
+        }
+    }
+#endif /* defined(SOLARIS) */
+
 #if defined(EEI)
     if ( (status == SUCCESS) && eei_flag &&
 	 (dip->di_dtype->dt_dtype == DT_TAPE) ) {
@@ -444,7 +573,7 @@ int
 init_file (struct dinfo *dip)
 {
     int status = SUCCESS;
-    int fd = dip->di_fd;
+    HANDLE fd = dip->di_fd;
 
     /*
      * If the lba option is specified, and we're a disk device,
@@ -455,7 +584,8 @@ init_file (struct dinfo *dip)
 	  (dip->di_dtype->dt_dtype == DT_BLOCK)) ) {
 	file_position = make_position(dip, lbdata_addr);
 	if ( (io_type == RANDOM_IO) && (rdata_limit <= file_position) ) {
-	    Fprintf ("Please specify a random data limit > lba file position!\n");
+	    LogMsg (efp, logLevelCrit, 0,
+		    "Please specify a random data limit > lba file position!\n");
 	    exit (FATAL_ERROR);
 	}
     }
@@ -476,7 +606,7 @@ init_file (struct dinfo *dip)
 #else /* !defined(_BSD) */
 	last_position = seek_file (fd, seek_count, block_size, SEEK_CUR);
 #endif /* defined(_BSD) */
-	if (last_position == (off_t) FAILURE) return (FAILURE);
+	if (last_position == (OFF_T) FAILURE) return (FAILURE);
 	show_position (dip, last_position);
     }
 
@@ -486,7 +616,7 @@ init_file (struct dinfo *dip)
     if (skip_count) {
 	status = skip_records (dip, skip_count, data_buffer, block_size);
 	if (debug_flag && (status != FAILURE)) {
-	    Fprintf ("Successfully skipped %d records.\n", skip_count);
+	    Printf ("Successfully skipped %d records.\n", skip_count);
 	}
     }
     return (status);
@@ -510,23 +640,30 @@ int
 flush_file (struct dinfo *dip)
 {
     int status = SUCCESS;
-    int fd = dip->di_fd;
+    HANDLE  fd = dip->di_fd;
 
     /*
      * Ensure data is sync'ed to disk file.
      */
     if ( fsync_flag ) {
 	if (debug_flag) {
-	    Fprintf ("Flushing data to file '%s'...\n", dip->di_dname);
+	    Printf ("Flushing data to file '%s'...\n", dip->di_dname);
 	}
 #if defined(_QNX_SOURCE)
 	if ((status = fcntl (fd, F_SETFL, O_DSYNC)) < 0) {
  	    report_error("F_SETFL", TRUE);
 	}
 #else /* !defined(_QNX_SOURCE) */
-	if ((status = fsync (fd)) < 0) {	/* Force data to disk. */
+#  if defined(WIN32)
+	if(!FlushFileBuffers(fd)) {
+	    status = FAILURE;
+	    report_error ("FlushFileBuffers", TRUE);
+	} else status = SUCCESS;
+#  else /* !defined(WIN32) */
+	if ((status = fsync ((int)fd)) < 0) {	/* Force data to disk. */
 	    report_error ("fsync", TRUE);
 	}
+#  endif /* defined(WIN32) */
 #endif /* !defined(_QNX_SOURCE) */
     }
     return (status);
@@ -551,7 +688,7 @@ read_file (struct dinfo *dip)
 #if defined(MUNSA)
     if (munsa_flag) {
 	if (debug_flag) {
-	    Fprintf ("converting to dlm NL-> %d \n", 
+	    Printf ("converting to dlm NL-> %d \n", 
 					input_munsa_lock_type);
 	}
 	gen_stat = dlm_cvt(&lkid, input_munsa_lock_type, 
@@ -562,7 +699,7 @@ read_file (struct dinfo *dip)
 	}
 
 	if (debug_flag) {
-	    Fprintf ("done, converting to dlm NL-> %d \n", 
+	    Printf ("done, converting to dlm NL-> %d \n", 
 					input_munsa_lock_type);
 	}
     } /* end if(munsa_flag) .... */
@@ -612,12 +749,12 @@ read_some_more:
 	     * so we read and check for an expected end of file here.
 	     */
 	    if (!end_of_file) {
-#if defined(__NUTC__) || defined(__QNXNTO__)
+#if defined(__NUTC__) || defined(__QNXNTO__) || defined(AIX) || defined(WIN32)
 		if ((status = read_eof(dip)) != SUCCESS) break;
-#else /* !defined(__NUTC__) && !defined(__QNXNTO__) */
+#else /* !defined(__NUTC__) && !defined(__QNXNTO__) && !defined(AIX) */
 		status = DoForwardSpaceFile (dip, (daddr_t) 1);
 		if (status != SUCCESS) break;
-#endif /* defined(__NUTC__) || defined(__QNXNTO__) */
+#endif /* defined(__NUTC__) || defined(__QNXNTO__) || defined(AIX) || defined(WIN32) */
 		if (++dip->di_files_read == file_limit) break;
 	    }
 	    dip->di_fbytes_read =(v_large) 0;
@@ -656,7 +793,7 @@ write_file (struct dinfo *dip)
 #if defined(MUNSA)
     if (munsa_flag) {
 	if (debug_flag) {
-	    Fprintf ("converting to dlm NL-> %d .\n", 
+	    Printf ("converting to dlm NL-> %d .\n", 
 					output_munsa_lock_type);
 	}
 
@@ -667,7 +804,7 @@ write_file (struct dinfo *dip)
 	    dlm_error(&lkid, gen_stat);	 /* exit with FATAL ERROR */ 
 	}
 	if (debug_flag) {
-	    Fprintf ("done, converting to dlm NL-> %d .\n", 
+	    Printf ("done, converting to dlm NL-> %d .\n", 
 					output_munsa_lock_type);
 	}
     }  /*  end if(munsa_flag)...  */
@@ -676,14 +813,26 @@ write_file (struct dinfo *dip)
     dip->di_offset = make_offset(dip, lbdata_addr);
 
     /*
+     * Initialize the data buffer with a pattern if compare is
+     * disabled, so we honor the user specified pattern.
+     */
+    if ((io_mode == TEST_MODE) && !compare_flag) {
+	if (iot_pattern) {
+	    u_int32 lba = make_lbdata (dip, dip->di_offset);
+	    (void)init_iotdata(block_size, lba, lbdata_size);
+	}
+	fill_buffer (data_buffer, block_size, pattern);
+    }
+
+    /*
      * Loop writing data until end of media or data limit reached.
      */
     do {					/* Write data pattern.	*/
 	if (raw_flag) {
-	    dip->di_fbytes_read =(v_large) 0;
+	    dip->di_fbytes_read = (v_large) 0;
 	    dip->di_records_read = (v_large) 0;
 	}
-	dip->di_fbytes_written =(v_large) 0;
+	dip->di_fbytes_written = (v_large) 0;
 	dip->di_records_written = (v_large) 0;
 	if ((status = (*dtf->tf_write_data)(dip)) == FAILURE) break;
 
@@ -700,12 +849,12 @@ write_file (struct dinfo *dip)
 	     * For tapes, write a file mark for all but last file.
 	     * The last file mark(s) are written when closing tape.
 	     */
-#if !defined(__NUTC__) && !defined(__QNXNTO__)
+#if !defined(__NUTC__) && !defined(__QNXNTO__) && !defined(AIX) && !defined(WIN32) 
 	    if ((dip->di_files_written + 1) < file_limit) {
 		status = DoWriteFileMark (dip, (daddr_t) 1);
 		if (status != SUCCESS) break;
 	    }
-#endif /* !defined(__NUTC__) && !defined(__QNXNTO__) */
+#endif /* !defined(__NUTC__) && !defined(__QNXNTO__) && !defined(AIX) && !defined(WIN32) */
 	    if (++dip->di_files_written < file_limit) {
 		dip->di_fbytes_written =(v_large) 0;
 		dip->di_records_written = (v_large) 0;
@@ -742,7 +891,7 @@ validate_opts (struct dinfo *dip)
     /*
      * Validation checks *before* the device is open.
      */
-    if (min_size) {
+    if (min_size && (dip->di_dtype->dt_dtype != DT_REGULAR)) {
 	size_t value;
 	char *emsg = NULL;
 	if (dip->di_dsize > min_size) {
@@ -761,12 +910,16 @@ validate_opts (struct dinfo *dip)
     /*
      * Validation checks *after* the device is open.
      */
+#if defined(WIN32)
+    if ( (dip->di_dtype->dt_dtype == DT_DISK) &&
+#else /* !defined(WIN32) */
     if ( (dip->di_dtype->dt_dtype == DT_REGULAR) &&
+#endif /* defined(WIN32) */
 	 (dip->di_ftype == OUTPUT_FILE)          &&
 	 num_slices && (dispose_mode == DELETE_FILE) ) {
       dispose_mode = KEEP_FILE;
       if (verbose_flag) {
-	Fprintf("Warning: Multiple slices to same file, setting dispose=keep!\n");
+	Printf("Warning: Multiple slices to same file, setting dispose=keep!\n");
       }
     }
     if ( (io_dir == REVERSE) || (io_type == RANDOM_IO) ) {
@@ -775,13 +928,20 @@ validate_opts (struct dinfo *dip)
     "Random I/O or reverse direction, is only valid for random access device!\n");
 	return (FAILURE);
       }
+#if defined(WIN32)
+      if ( (dip->di_dtype->dt_dtype == DT_DISK) && !user_capacity ) {
+#else /* !defined(WIN32) */
       if ( (dip->di_dtype->dt_dtype == DT_REGULAR) && !user_capacity ) {
+#endif /* defined(WIN32) */
 	Fprintf(
     "Please specify a data limit, record count, or capacity for random I/O.\n");
 	return (FAILURE);
       }
     }
-    if (dip->di_random_access) {
+    /*
+     * Note: Non-modulo device sizes permitted to regular files!
+     */
+    if (dip->di_random_access && (dip->di_dtype->dt_dtype != DT_REGULAR) ) {
 	size_t value;
 	char *emsg = NULL;
 	if (block_size % dip->di_dsize) {
@@ -803,3 +963,49 @@ validate_opts (struct dinfo *dip)
   }
   return (SUCCESS);
 }
+
+#if defined(SOLARIS)
+/*
+ * SolarisDIO - Enable Direct I/O (DIO) for Solaris FS's.
+ *
+ * Description:
+ *      Sadly, Solaris is an odd ball when it comes to enabling Direct I/O.
+ * Solaris does NOT support O_DIRECT like other Unix systems.  Instead, if
+ * using UFS, DIO is enabled via the directio() API after the file is open.
+ * Furthermore, if Veritas VxFS is used, the directio() API is not supported,
+ * so a vendor unique IOCTL must be used to enable DIO.
+ *
+ * Inputs:
+ *      dip = The device information pointer.
+ *      file = The file name we're working on.
+ *
+ * Return Value:
+ *      Returns SUCCESS (if enabled) or FAILURE (couldn't enable DIO).
+ *
+ */
+int
+SolarisDIO(struct dinfo *dip, char *file)
+{
+    char fmt[STRING_BUFFER_SIZE];
+    int status;
+
+    if (debug_flag) {
+        Printf("Attemping to enable direct I/O via directio() API...\n");
+    }
+    if ( (status = directio(dip->di_fd, DIRECTIO_ON)) < 0) {
+        if (errno == ENOTTY) {
+            if (debug_flag) {
+                Printf("Attemping to enable direct I/O via VX_SETCACHE/VX_DIRECT IOCTL...\n");
+            }
+            if ( (status = ioctl(dip->di_fd, VX_SETCACHE, VX_DIRECT)) < 0) {
+                (void)sprintf(fmt, "VX_DIRECT -> %s", file);
+                report_error (fmt, TRUE);
+            }
+        } else {
+            (void)sprintf(fmt, "directio -> %s", file);
+            report_error (fmt, TRUE);
+        }
+    }
+    return (status);
+}
+#endif /* defined(SOLARIS) */

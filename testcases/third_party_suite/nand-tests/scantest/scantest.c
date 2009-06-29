@@ -1,11 +1,5 @@
 /*
- * scantest.c
- *
- * Test reading a MTD device.
- *
- * Copyright (C) 2007 Nokia Corporation
- *
- * Author: Adrian Hunter <ext-adrian.hunter@nokia.com>
+ * Copyright (C) 2006-2008 Nokia Corporation
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published by
@@ -20,46 +14,40 @@
  * this program; see the file COPYING. If not, write to the Free Software
  * Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * Check MTD device read.
+ *
+ * Author: Adrian Hunter <ext-adrian.hunter@nokia.com>
  */
 
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/moduleparam.h>
-#include <linux/kobject.h>
-#include <linux/device.h>
 #include <linux/err.h>
 #include <linux/mtd/mtd.h>
 #include <linux/sched.h>
-#include <linux/jiffies.h>
-#include <linux/vmalloc.h>
 
-#define PRINT_PREF KERN_CRIT "scantest: "
+#define PRINT_PREF KERN_INFO "mtd_readtest: "
 
-/* Uncomment this if you have old MTD sources */
-/* #define writesize oobblock */
-
-static int dev = 0;
+static int dev;
 module_param(dev, int, S_IRUGO);
 MODULE_PARM_DESC(dev, "MTD device number to use");
 
 static struct mtd_info *mtd;
-
-static unsigned char *iobuf = NULL;
-static unsigned char *iooobbuf = NULL;
-static unsigned char *bbt = NULL;
+static unsigned char *iobuf;
+static unsigned char *iobuf1;
+static unsigned char *bbt;
 
 static int pgsize;
 static int ebcnt;
 static int pgcnt;
-static int goodebcnt;
 
-static inline int read_eraseblock_by_page(int ebnum)
+static int read_eraseblock_by_page(int ebnum)
 {
 	size_t read = 0;
 	int i, ret, err = 0;
 	loff_t addr = ebnum * mtd->erasesize;
 	void *buf = iobuf;
-	void *oobbuf = iooobbuf;
+	void *oobbuf = iobuf1;
 
 	for (i = 0; i < pgcnt; i++) {
 		memset(buf, 0 , pgcnt);
@@ -67,8 +55,8 @@ static inline int read_eraseblock_by_page(int ebnum)
 		if (ret == -EUCLEAN)
 			ret = 0;
 		if (ret || read != pgsize) {
-			printk(PRINT_PREF "error: read failed at 0x%08x\n",
-			       (unsigned) addr);
+			printk(PRINT_PREF "error: read failed at %#llx\n",
+			       (long long)addr);
 			if (!err)
 				err = ret;
 			if (!err)
@@ -83,12 +71,12 @@ static inline int read_eraseblock_by_page(int ebnum)
 			ops.ooblen    = mtd->oobsize;
 			ops.oobretlen = 0;
 			ops.ooboffs   = 0;
-			ops.datbuf    = 0;
+			ops.datbuf    = NULL;
 			ops.oobbuf    = oobbuf;
 			ret = mtd->read_oob(mtd, addr, &ops);
 			if (ret || ops.oobretlen != mtd->oobsize) {
 				printk(PRINT_PREF "error: read oob failed at "
-						  "0x%08x\n", (unsigned) addr);
+						  "%#llx\n", (long long)addr);
 				if (!err)
 					err = ret;
 				if (!err)
@@ -109,28 +97,29 @@ static void dump_eraseblock(int ebnum)
 	char line[128];
 	int pg, oob;
 
-	printk(PRINT_PREF "Dumping eraseblock %d\n", ebnum);
+	printk(PRINT_PREF "dumping eraseblock %d\n", ebnum);
 	n = mtd->erasesize;
 	for (i = 0; i < n;) {
 		char *p = line;
 
-		p += sprintf(p, "%05x: ", (unsigned)i);
+		p += sprintf(p, "%05x: ", i);
 		for (j = 0; j < 32 && i < n; j++, i++)
-			p += sprintf(p, "%02x", (unsigned)iobuf[i]);
+			p += sprintf(p, "%02x", (unsigned int)iobuf[i]);
 		printk(KERN_CRIT "%s\n", line);
 		cond_resched();
 	}
 	if (!mtd->oobsize)
 		return;
-	printk(PRINT_PREF "Dumping oob from eraseblock %d\n", ebnum);
+	printk(PRINT_PREF "dumping oob from eraseblock %d\n", ebnum);
 	n = mtd->oobsize;
 	for (pg = 0, i = 0; pg < pgcnt; pg++)
 		for (oob = 0; oob < n;) {
 			char *p = line;
 
-			p += sprintf(p, "%05x: ", (unsigned)i);
+			p += sprintf(p, "%05x: ", i);
 			for (j = 0; j < 32 && oob < n; j++, oob++, i++)
-				p += sprintf(p, "%02x", (unsigned)iooobbuf[i]);
+				p += sprintf(p, "%02x",
+					     (unsigned int)iobuf1[i]);
 			printk(KERN_CRIT "%s\n", line);
 			cond_resched();
 		}
@@ -143,18 +132,40 @@ static int is_block_bad(int ebnum)
 
 	ret = mtd->block_isbad(mtd, addr);
 	if (ret)
-		printk(PRINT_PREF "Block %d is bad\n", ebnum);
+		printk(PRINT_PREF "block %d is bad\n", ebnum);
 	return ret;
 }
 
-static int __init scantest_init(void)
+static int scan_for_bad_eraseblocks(void)
 {
-	int err = 0, i, bad;
+	int i, bad = 0;
 
-	printk("\n");
-	printk("=========================================================="
-	       "===============================\n");
-	printk("scantest: ver 0.1 dev = %d\n", dev);
+	bbt = kmalloc(ebcnt, GFP_KERNEL);
+	if (!bbt) {
+		printk(PRINT_PREF "error: cannot allocate memory\n");
+		return -ENOMEM;
+	}
+	memset(bbt, 0 , ebcnt);
+
+	printk(PRINT_PREF "scanning for bad eraseblocks\n");
+	for (i = 0; i < ebcnt; ++i) {
+		bbt[i] = is_block_bad(i) ? 1 : 0;
+		if (bbt[i])
+			bad += 1;
+		cond_resched();
+	}
+	printk(PRINT_PREF "scanned %d eraseblocks, %d are bad\n", i, bad);
+	return 0;
+}
+
+static int __init mtd_readtest_init(void)
+{
+	uint64_t tmp;
+	int err, i;
+
+	printk(KERN_INFO "\n");
+	printk(KERN_INFO "=================================================\n");
+	printk(PRINT_PREF "MTD device: %d\n", dev);
 
 	mtd = get_mtd_device(NULL, dev);
 	if (IS_ERR(mtd)) {
@@ -164,59 +175,41 @@ static int __init scantest_init(void)
 	}
 
 	if (mtd->writesize == 1) {
-		printk(PRINT_PREF "warning: this test was written for NAND."
-		       "Assume page size is 512 bytes.\n");
+		printk(PRINT_PREF "not NAND flash, assume page size is 512 "
+		       "bytes.\n");
 		pgsize = 512;
 	} else
 		pgsize = mtd->writesize;
 
-	ebcnt = mtd->size / mtd->erasesize;
-	pgcnt = mtd->erasesize / pgsize;
+	tmp = mtd->size;
+	do_div(tmp, mtd->erasesize);
+	ebcnt = tmp;
+	pgcnt = mtd->erasesize / mtd->writesize;
 
-	printk(PRINT_PREF "Size=%u  EB size=%u  Write size=%u  EB count=%u  "
-	       "Pages per EB=%u  Page size=%u  Oob size=%u\n",
-	       mtd->size, mtd->erasesize, mtd->writesize, ebcnt, pgcnt, pgsize,
-	       mtd->oobsize);
+	printk(PRINT_PREF "MTD device size %llu, eraseblock size %u, "
+	       "page size %u, count of eraseblocks %u, pages per "
+	       "eraseblock %u, OOB size %u\n",
+	       (unsigned long long)mtd->size, mtd->erasesize,
+	       pgsize, ebcnt, pgcnt, mtd->oobsize);
 
 	err = -ENOMEM;
-
-	iobuf = vmalloc(mtd->erasesize);
+	iobuf = kmalloc(mtd->erasesize, GFP_KERNEL);
 	if (!iobuf) {
 		printk(PRINT_PREF "error: cannot allocate memory\n");
 		goto out;
 	}
-
-	iooobbuf = vmalloc(mtd->erasesize);
-	if (!iooobbuf) {
+	iobuf1 = kmalloc(mtd->erasesize, GFP_KERNEL);
+	if (!iobuf1) {
 		printk(PRINT_PREF "error: cannot allocate memory\n");
 		goto out;
 	}
 
-	bbt = vmalloc(ebcnt);
-	if (!bbt) {
-		printk(PRINT_PREF "error: cannot allocate memory\n");
+	err = scan_for_bad_eraseblocks();
+	if (err)
 		goto out;
-	}
-	memset(bbt, 0 , ebcnt);
-
-	err = 0;
-
-	/* Scan for bad blocks */
-	printk(PRINT_PREF "scanning for bad blocks\n");
-	bad = 0;
-	for (i = 0; i < ebcnt; ++i) {
-		bbt[i] = is_block_bad(i) ? 1 : 0;
-		if (bbt[i])
-			bad += 1;
-		if (i % 256 == 0)
-			printk(PRINT_PREF "scanned %d\n", i);
-		cond_resched();
-	}
-	printk(PRINT_PREF "scanned %d, found %d bad\n", i, bad);
-	goodebcnt = ebcnt - bad;
 
 	/* Read all eraseblocks 1 page at a time */
-	printk(PRINT_PREF "Testing page read\n");
+	printk(PRINT_PREF "testing page read\n");
 	for (i = 0; i < ebcnt; ++i) {
 		int ret;
 
@@ -232,34 +225,29 @@ static int __init scantest_init(void)
 	}
 
 	if (err)
-		printk(PRINT_PREF "scantest finished with errors\n");
+		printk(PRINT_PREF "finished with errors\n");
 	else
-		printk(PRINT_PREF "scantest finished\n");
+		printk(PRINT_PREF "finished\n");
 
 out:
 
-	vfree(iobuf);
-	vfree(iooobbuf);
-	vfree(bbt);
-
+	kfree(iobuf);
+	kfree(iobuf1);
+	kfree(bbt);
 	put_mtd_device(mtd);
-
 	if (err)
 		printk(PRINT_PREF "error %d occurred\n", err);
-
-	printk("=========================================================="
-	       "===============================\n");
-
-	return -1;
+	printk(KERN_INFO "=================================================\n");
+	return err;
 }
-module_init(scantest_init);
+module_init(mtd_readtest_init);
 
-static void __exit scantest_exit(void)
+static void __exit mtd_readtest_exit(void)
 {
 	return;
 }
-module_exit(scantest_exit);
+module_exit(mtd_readtest_exit);
 
-MODULE_DESCRIPTION("Scan test module");
+MODULE_DESCRIPTION("Read test module");
 MODULE_AUTHOR("Adrian Hunter");
 MODULE_LICENSE("GPL");

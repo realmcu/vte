@@ -1,0 +1,2 @@
+#!/bin/sh
+AR="ar rc" && CC=cc && ./configure --prefix=$(pwd)/../ 

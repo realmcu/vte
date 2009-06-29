@@ -1,5 +1,5 @@
 ifndef KERNEL_PATH
-	KERNEL_PATH=/root/git/ubi-2.6.git
+	KERNEL_PATH=/home/vobs/linux-2.6-imx
 endif
 
 obj-m += oobtest.o

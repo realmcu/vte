@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if [ $# -eq 0 ]
+then
+CMDFILE=9WK11_GOV
+elif [ $1 == "one" ]
+then
+CMDFILE=ONSHOT
+else
+CMDFILE=$1
+fi
+
+export STREAM_PATH=/mnt/nfs/test_stream
+
+TEST_PATH=$(dirname $0)
+
+dos2unix ${TEST_PATH}/runtest/$CMDFILE
+ 
+${TEST_PATH}/runalltests.sh -v -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${CMDFILE}_log_$(date +"%y%m%d")
+
+echo "FREESCALE LBG TEST END"
