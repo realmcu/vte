@@ -1,12 +1,10 @@
+static char *whatHeader = "WHATSTRING";
 /****************************************************************************
  *									    *
- *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			  COPYRIGHT (c) 1990 - 2004			    *
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
- *			       Hudson, NH 03051				    *
- *			       (603) 883-2355				    *
  *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
  * its documentation for any purpose and without fee is hereby granted,	    *
@@ -37,23 +35,149 @@
 #include <fcntl.h>
 #include <math.h>
 #include <signal.h>
-#if !defined(_QNX_SOURCE)
-#  if !defined(sun)
-#    include <sys/ioctl.h>
-#  endif /* !defined(sun) */
-#  include <sys/file.h>
-#  include <sys/param.h>
-#  if defined(sun) || defined(_OSF_SOURCE)
-#    include <sys/mman.h>
-#  endif /* defined(sun) || defined(_OSF_SOURCE) */
-#endif /* !defined(_QNX_SOURCE) */
+#if !defined(WIN32)
+#  if !defined(_QNX_SOURCE) 
+#    if !defined(sun)
+#      include <sys/ioctl.h>
+#    endif /* !defined(sun) */
+#    include <sys/file.h>
+#    include <sys/param.h>
+#    if defined(sun) || defined(_OSF_SOURCE)
+#      include <sys/mman.h>
+#    endif /* defined(sun) || defined(_OSF_SOURCE) */
+#  endif /* !defined(_QNX_SOURCE) */
 #include <sys/wait.h>
+#endif /* !defined(WIN32) */
 #if defined(DEC)
 #  include <sys/utsname.h>
 #endif /* defined(DEC) */
+
+#if defined(HP_UX)
+#  include <sys/scsi.h>
+#  if !defined(SCSI_MAX_Q_DEPTH)
+#    define SCSI_MAX_Q_DEPTH 255
+#  endif
+#endif /* defined(HP_UX) */
 
 /*
  * Modification History:
+ *
+ * October 27th, 2006 by Robin T. Miller.
+ *      Fixed logic error where we were reopen'ing the file in preparation
+ * for the next write pass, when we've reached the error limit.  This was
+ * a problem if oflags=trunc and dispose=keep were used since the resulting
+ * output file would be zero length.
+ *
+ * January 6th, 2007 by Robin T. Miller.
+ *	Updated report_record(), used by debug code, since LBA's are now
+ * treated as 64-bit values to support capacities over 2TB!
+ *
+ * October 16th, 2006 by Robin T. Miller.
+ *      Added support for "enable=timestamp" option to write a timestamp
+ * at the beginning of each data block to help troubleshooting corruptions.
+ *
+ * October 4th, 2006 by Robin Miller.
+ *      If regular file is not open when terminating, do not try to delete.
+ *      Added check for non-modulo block size patterns, when random I/O is
+ * enabled, to avoid false data corruption when blocks are overwritten.
+ *
+ * May 16th, 2006 by Robin Miller.
+ *	Added options "noprog" and "noprogt" to be used in conjunction with
+ * alarm option to detect no I/O progress being made.
+ *
+ * December 7th, 2005 by Robin Miller.
+ *	Added __linux__ conditional for hz initialization, so compiles will
+ * work on Red Hat RHEL4 (patch from Alan Brunelle, thanks!).
+ *
+ * November 22nd, 2005 by Robin Miller.
+ *      For Hazard, allow empty prefix string so users can override default.
+ *
+ * January 4th, 2005 by Robin Miller.
+ *	Fix bug in terminate() where signal code was getting overwritten when
+ * a timer was active.  Now, only set code with exit_status on SIGALRM.
+ *
+ * December 23rd, 2004 by Robin Miller.
+ *      Added "stats={brief,full,none}" option to provide finer control
+ * over pass and total statistics.  This finer control was previously
+ * provided by the "verbose" flag, but that was inadequate.
+ *
+ * December 21st, 2004 by Robin Miller.
+ *      Added per pass and total keepalive format control messages.
+ *
+ * December 20th, 2004 by Robin Miller.
+ *      Added support for alarm/keepalive options. The alarm=time specifies
+ * the alarm time (same format as runtime), and keepalive=string specifies
+ * the alive message with special format control characters to display when
+ * the alarm expires.
+ *
+ * November 22nd, 2004 by Robin Miller.
+ *      Change the dump data limit from 64 byte to one block (512 bytes).
+ * If read-after-write (raw) is enabled, don't enable FS align logic.
+ *
+ * November 11th, 2004 by Robin Miller.
+ *      For Solaris, since O_DIRECT isn't supported, set dio_flag so
+ * directio() API can be used after the file is open'ed.
+ *
+ * October 21st, 2004 by Robin Miller.
+ *      Enable file system alignments by default for random I/O,
+ * since variable sizes and offsets cause false data corruptions.
+ * When logic is added to track previously written blocks, this
+ * can be reverted.
+ *
+ * July 7th, 2004 by Robin Miller.
+ *      For HP-UX, add option qdepth=N" to set the queue depth.
+ *
+ * June 24th, 2004 by Robin Miller.
+ *      Handle errors from ctime_r() - two flavors are around!
+ *      Added "enable/disable=fsalign" option to control behaviour
+ * of aligning FS offsets and variable record sizes to device size.
+ * This option is off by default so random non-device sized values
+ * will now be generated (useful for file system testing).  This
+ * option can be enabled to return to previous behaviour for FS's.
+ *
+ * June 22nd, 2004 by Robin Miller.
+ *      Added support for triggers on corruption.
+ *
+ * February 27th, 2004 by Robin Miller.
+ *       Switch ctime() to ctime_r() in preparation for threads.
+ *
+ * February 24th, 2004 by Robin Miller.
+ *      Allow parsing of aios=0, to ease supporting of OS's which
+ * don't support POSIX AIO.  Makes script writing a little simpler.
+ *
+ * December 6th, 2003 by Robin Miller.
+ *      Conditionalize to exclude tty code.
+ *
+ * November 17th, 2003 by Robin Miller.
+ *	Breakup output to stdout or stderr, rather than writing
+ * all output to stderr.  If output file is stdout ('-') or a log
+ * file is specified, then all output reverts to stderr.
+ *	Parse AIO options, but then emit warning if not supported.
+ * This allows portable scripts to be written without parameterizing
+ * exlusion of AIO if a platform (OS) does not support it.
+ *
+ * October 31st, 2003 by Robin Miller.
+ *	In terminate(), don't attempt flush if device or file is
+ * not open when we receive the alarm signal.
+ *
+ * September 27th, 2003 by Robin Miller.
+ *	Added support for AIX.
+ *
+ * June 9th, 2003 by Robin Miller.
+ *	When terminating as result of alarm, flush output data if we
+ * were writing a file.  Thanks to Hank Jakiela for reporting this.
+ *
+ * March 20th, 2003 by Robin Miller.
+ *	Fix bug or'ing O_LARGEFILE into open flags (thanks Kris Corwin!).
+ *
+ * March 15th, 2003 by Robin Miller.
+ *	Added "prefix=" option to support data pattern prefix string.
+ *
+ * March 14th, 2003 by Robin Miller.
+ *	Added "slice=" option to support testing an individual slice.
+ *
+ * February 23rd, 2002 by Robin Miller.
+ *      Make porting changes for HP-UX IA64.
  *
  * May 31st, 2001 by Robin Miller.
  *	Don't allow different data patterns with multiple processes,
@@ -578,6 +702,11 @@ extern char *sys_errlist[];
 /*
  * Forward References:
  */
+#if defined(WIN32)
+void winAlarm(u_int sec);
+void ReadStdin(void);
+#endif /* defined(WIN32) */
+
 static u_long number(int base);		/* Numeric conversion function.	*/
 static large_t large_number(int base);	/* Large numeric conversions.	*/
 void parse_args(int argc, char **argv);
@@ -586,6 +715,9 @@ static time_t time_value(void);		/* Time conversion function.	*/
 /*
  * Variable Declarations:
  */
+#if !defined(AIO)
+int	aio_bufs = 0; /* Normally declared in dtaio.c, but for parsing. */
+#endif /* !defined(AIO) */
 
 #if defined(MUNSA)
 bool	munsa_flag = FALSE;		/* if TRUE enable MUNSA features*/
@@ -603,13 +735,16 @@ u_int32 pattern = DEFAULT_PATTERN;	/* Default data pattern.	*/
 bool	user_pattern = FALSE;		/* Flags user specified pattern	*/
 bool	unique_pattern = TRUE;		/* Unique pattern per process.	*/
 char	*pattern_string;		/* Pointer to pattern string.	*/
+char	*prefix_string;			/* User defined prefix string.	*/
 
 bool	aio_flag = FALSE;		/* Asynchronous I/O (AIO) flag.	*/
 int	align_offset = 0;		/* Align buffer at this offset.	*/
+#if defined(TTY)
 speed_t	baud_rate;			/* The user selected baud rate.	*/
+#endif /* defined(TTY) */
 size_t	block_size = BLOCK_SIZE;	/* Default block size to use.	*/
 size_t	data_size;			/* Data buffer size + pad bytes	*/
-size_t	dump_limit = 64;		/* The dump buffer data limit.	*/
+size_t	dump_limit = BLOCK_SIZE;	/* The dump buffer data limit.	*/
 u_int32	device_size = 0;		/* Default device block size.	*/
 pid_t	child_pid;			/* For the child process ID.	*/
 bool	bypass_flag = FALSE;		/* Bypass (some) sanity checks.	*/
@@ -620,6 +755,7 @@ bool	debug_flag = FALSE;		/* Enable debug output flag.	*/
 bool	Debug_flag = FALSE;		/* Verbose debug output flag.	*/
 bool	eDebugFlag = FALSE;		/* End of file debug flag.	*/
 bool	rDebugFlag = FALSE;		/* Random (seek) debug flag.	*/
+bool    dio_flag = FALSE;               /* Solaris Direct I/O flag.     */
 bool	dump_flag = TRUE;		/* Dump data buffer on errors.	*/
 #if defined(EEI)
 bool	eei_flag = TRUE;		/* Extended Error Information.	*/
@@ -641,15 +777,19 @@ int	exit_status = SUCCESS;		/* Normal success exit status.	*/
 u_long	file_limit;			/* # of tape files to process.	*/
 bool	forked_flag = FALSE;		/* Forked child process flag.	*/
 bool	fsync_flag = UNINITIALIZED;	/* fsync() after writes flag.	*/
-off_t	file_position;			/* File position to lseek to.	*/
-off_t	last_position;			/* Last position lseeked to.	*/
-off_t	step_offset;			/* Step offset for disk seeks.	*/
+bool    fsalign_flag = FALSE;           /* Align FS offsets and sizes.  */
+OFF_T	file_position;			/* File position to lseek to.	*/
+OFF_T	last_position;			/* Last position lseeked to.	*/
+OFF_T	step_offset;			/* Step offset for disk seeks.	*/
 bool	flush_flag = TRUE;		/* Flush tty input/output queue	*/
 bool	keep_existing = TRUE;		/* Don't delete existing files.	*/
 bool	header_flag = TRUE;		/* The log file header flag.	*/
+bool	hazard_flag = FALSE;		/* Emit Hazard RPCLOGn: prefix.	*/
+bool	noprog_flag = FALSE;		/* Check for no I/O progress.	*/
 bool	user_incr = FALSE;		/* User specified incr count.	*/
 bool	user_min = FALSE;		/* User specified min size.	*/
 bool	user_max = FALSE;		/* User specified max size.	*/
+bool    user_ralign = FALSE;            /* User specified random align. */
 size_t	incr_count;			/* Record increment byte count.	*/
 size_t	min_size;			/* The minimum record size.	*/
 size_t	max_size;			/* The maximum record size.	*/
@@ -659,19 +799,27 @@ size_t	lbdata_size = 0;		/* Logical block data size.	*/
 bool	user_lbdata = FALSE;		/* User specified starting lba.	*/
 bool	user_lbsize = FALSE;		/* User specified lbdata size.	*/
 bool	user_position = FALSE;		/* User specified file position.*/
+bool	incr_pattern = FALSE;		/* Incrementing data pattern.	*/
 bool	iot_pattern = FALSE;		/* IOT test pattern selected.	*/
 bool	logdiag_flag = FALSE;		/* Log diagnostic messages.	*/
 bool	loopback = FALSE;		/* Loopback to the same device.	*/
 bool	micro_flag = FALSE;		/* Controls micro-second delay.	*/
 bool	mmap_flag = FALSE;		/* Do memory mapped file I/O.	*/
+#if defined(TTY)
 bool	modem_flag = FALSE;		/* Testing tty modem control.	*/
+#endif /* defined(TTY) */
 bool	media_changed = FALSE;		/* Shows when media changed.	*/
 bool	multi_flag = FALSE;		/* Multi-volume media flag.	*/
 v_int	multi_volume = 1;		/* Multi-volume media count.	*/
 int	open_flags = 0;			/* Common file open flags.	*/
 int	wopen_flags = 0;		/* Additional write open flags.	*/
+#if defined(WIN32)
+int	ropen_mode = GENERIC_READ ;	/* The read open mode to use.	*/
+int	wopen_mode = GENERIC_WRITE;	/* The write open mode to use.	*/
+#else /* !defined(WIN32) */
 int	ropen_mode = O_RDONLY;		/* The read open mode to use.	*/
 int	wopen_mode = O_WRONLY;		/* The write open mode to use.	*/
+#endif /* defined(WIN32) */
 bool	pad_check = TRUE;		/* Check data buffer pad bytes.	*/
 bool	spad_check = FALSE;		/* Check short record pad bytes.*/
 u_long	pass_count;			/* Number of passes completed.	*/
@@ -679,8 +827,8 @@ u_long	pass_limit = 1UL;		/* Default number of passes.	*/
 u_long	skip_count;			/* # of input record to skip.	*/
 u_long	seek_count;			/* # of output records to seek.	*/
 large_t	record_limit;			/* Max # of records to process.	*/
-vu_long records_processed;		/* # of full records processed.	*/
-vu_long	partial_records;		/* # of partial records proc'ed	*/
+u_long  records_processed;		/* # of full records processed.	*/
+u_long	partial_records;		/* # of partial records proc'ed	*/
 large_t	data_limit;			/* Total data limit per pass.	*/
 u_long	random_align = 0UL;		/* Random I/O offset alignment.	*/
 large_t	rdata_limit = 0;		/* The random I/O data limit.	*/
@@ -692,7 +840,11 @@ large_t	total_files;			/* Total files (all passes).	*/
 large_t total_files_read;		/* Total files read.		*/
 large_t total_files_written;		/* Total files written.		*/
 large_t	total_records;			/* Total records (all passes).	*/
+large_t total_records_read;             /* Total records read (test).   */
+large_t total_records_written;          /* Total records written (test) */
 u_long	total_partial;			/* Total partial records.	*/
+u_long	total_partial_reads;   		/* Total partial record reads.  */
+u_long	total_partial_writes;		/* Total partial record writes. */
 u_long	warning_errors;			/* Total non-fatal error count.	*/
 bool	pstats_flag = TRUE;		/* Display per pass statistics.	*/
 bool	raw_flag = FALSE;		/* The read after write flag.	*/
@@ -702,6 +854,7 @@ bool	stats_flag = TRUE;		/* Display total statistics.	*/
 bool	stdin_flag = FALSE;		/* Presume not reading stdin.	*/
 bool	stdout_flag = FALSE;		/* Presume not writing stdout.	*/
 bool	terminating_flag = FALSE;	/* Program terminating flag.	*/
+bool    timestamp_flag = FALSE;         /* Timestamp each data block.   */
 bool	ttyport_flag = FALSE;		/* Input/output is a terminal.	*/
 bool	verbose_flag = TRUE;		/* Verbose messages output.	*/
 bool	verify_flag = TRUE;		/* Verify the read/write data.	*/
@@ -724,7 +877,11 @@ u_char	*mmap_bufptr;			/* Pointer into mmapped buffer.	*/
 u_char	*verify_buffer;			/* The data verification buffer.*/
 size_t	patbuf_size;			/* The pattern buffer size.	*/
 int	pattern_size;			/* User specified pattern size.	*/
+int	prefix_size;			/* User defined prefix size.	*/
 int	page_size = 0;			/* Define number of bytes/page.	*/
+#if defined(HP_UX)
+u_int   qdepth = 0xFFFFFFFF;            /* Value to set queue depth to. */
+#endif
 u_int	cdelay_count = 0;		/* Delay before closing file.	*/
 u_int	edelay_count = 0;		/* Delay between multiple passes*/
 u_int	rdelay_count = 0;		/* Delay before reading record.	*/
@@ -740,20 +897,26 @@ bool	volumes_flag = FALSE;		/* Flags the volumes option.	*/
 int	volume_limit = 0;		/* Number of volumes to process.*/
 vu_long	volume_records = 1;		/* The last volume record limit.*/
 
+#if defined(TTY)
 enum opt softcar_opt = OPT_NONE;	/* Leave tty soft carrier alone.*/
 enum flow flow_type = XON_XOFF;		/* Terminal flow type to use.	*/
+#endif /* defined(TTY) */
 enum iodir  io_dir  = FORWARD;		/* Default is forward I/O.	*/
 enum iomode io_mode = TEST_MODE;	/* Default to testing mode.	*/
 enum iotype io_type = SEQUENTIAL_IO;	/* Default to sequential I/O.	*/
-enum dispose dispose_mode = DELETE_FILE; /* Output file dispose mode.	*/
+enum dispose dispose_mode = DELETE_FILE;/* Output file dispose mode.	*/
 enum onerrors oncerr_action = CONTINUE;	/* The child error action.	*/
 					/* Error limit controls tests.	*/
-#if defined(SOLARIS) || defined(OSFMK) || defined(__QNXNTO__)
+enum statslevel stats_level = STATS_FULL; /* Type of statistics to report.*/
+enum trigger_type trigger = TRIGGER_NONE; /* Trigger for corruptions.   */
+char *trigger_cmd = NULL;               /* The users' trigger command.  */
+#if defined(SOLARIS) || defined(OSFMK) || defined(__QNXNTO__) || defined(AIX) || defined(__linux__)
 clock_t hz;
 #else
 clock_t	hz = HZ;			/* Default clock ticks / second	*/
 #endif
 
+#if defined(TTY)
 /*
  * Values for Terminal (serial) Line Testing:
  */
@@ -761,8 +924,11 @@ u_short	tty_timeout = 3*10;		/* Default tty timeout (3 sec).	*/
 					/* VTIME = 0.10 second interval	*/
 bool	tty_minflag = FALSE;		/* User specified VMIN value.	*/
 u_short	tty_minimum = 0;		/* The tty minimum (VMIN) value	*/
+#endif /* defined(TTY) */
 
-int	pfd = NoFd;			/* Pattern file descriptor.	*/
+FILE	*efp;				/* Default error data stream.	*/
+FILE	*ofp;				/* Default output data stream.	*/
+HANDLE	pfd = NoFd;			/* Pattern file descriptor.	*/
 char	*cmdname;			/* Pointer to our program name.	*/
 char	*string;			/* Pointer to argument string.	*/
 
@@ -793,14 +959,40 @@ int	child_status;			/* For child exit status.	*/
 /*
  * Program run time information.
  */
+time_t  alarmtime;                      /* The alarm interval time.     */
+time_t  lastalarm;                      /* The last alarm time (secs).  */
+time_t	noprogtime;			/* The no progress time (secs).	*/
 time_t	runtime;			/* The program run time.	*/
+time_t  runtime_end;                    /* The ending future runtime.   */
 time_t	elapsed_time;			/* Amount of time program ran.	*/
 time_t	program_start, program_end;	/* Program start & end times,	*/
 time_t	error_time;			/* Time last error occurred.	*/
 bool	TimerActive;			/* Set after timer activated.	*/
 bool	TimerExpired;			/* Set after timer has expired.	*/
+/*
+ * Default alarm message is per pass statistics, user can override.
+ */
+char    *keepalive;
+char    *keepalive0 = "%d Stats: mode %i, blocks %l, %m Mbytes, pass %p/%P,"
+                      " elapsed %t";
+char    *keepalive1 = "%d Stats: mode %i, blocks %L, %M Mbytes, pass %p/%P,"
+                      " elapsed %T";
+                                        /* Default keepalive messages.  */
+/*
+ * When stats is set to brief, these message strings get used:
+ */
+char    *pkeepalive;
+char    *pass_msg = "pass %p/%P, %l blocks, %m Mbytes, %c records,"
+                    " errors %e/%E, elapsed %t";
+                                        /* Per pass keepalive message.  */
+char    *tkeepalive;
+char    *totals_msg = "%d Totals: %L blocks, %M Mbytes,"
+                      " errors %e/%E, passes %p/%P, elapsed %T";
+                                        /* Totals keepalive message.    */ 
+bool    user_keepalive = FALSE;         /* User specified keepalive flag*/
+bool    user_pkeepalive = FALSE;        /*        ... ditto ...         */
+bool    user_tkeepalive = FALSE;        /*        ... ditto ...         */
 char	*user_runtime;			/* User specific runtime string	*/
-
 /*
  * Data patterns used for multiple passes.
  */
@@ -831,6 +1023,12 @@ main (int argc, char **argv)
 	struct dtfuncs *dtf;
 	char *tmp;
 	int status;
+#if defined(WIN32)
+        SYSTEM_INFO pgsize;
+#endif /* defined(WIN32) */
+
+	efp = stderr;			/* Initialize our error stream.	*/
+	ofp = stdout;			/* Initialize our output stream.*/
 
 #if defined(_BSD)
 	tmp = rindex (argv[0], '/');
@@ -842,9 +1040,12 @@ main (int argc, char **argv)
 	page_size = 0;		/* Presume page size doesn't matter. */
 #elif defined(_QNX_SOURCE) && defined(_QNX_32BIT)
 	page_size = 4096;	/* Not sure how to query for this... */
-#elif defined(DEC) || defined(SOLARIS) || defined(__linux__) || defined(SCO) || defined(__NUTC__)
+#elif defined(DEC) || defined(SOLARIS) || defined(__linux__) || defined(SCO) || defined(__NUTC__) || defined(HP_UX) || defined(AIX)
 	hz = sysconf(_SC_CLK_TCK);
 	page_size = sysconf(_SC_PAGESIZE);
+#elif defined(WIN32)
+	GetSystemInfo(&pgsize);
+	page_size = pgsize.dwPageSize;
 #else /* !defined(_QNX_SOURCE) && !defined(_QNX_32BIT) */
 	page_size = getpagesize();
 #endif /* defined(_QNX_SOURCE) && !defined(_QNX_32BIT) */
@@ -865,6 +1066,11 @@ main (int argc, char **argv)
 
 	parse_args (argc, argv);
 
+#if defined(WIN32)
+	if(hazard_flag) 
+	    ReadStdin();
+#endif
+
 	/*
 	 * Options parsed, validate options, do initialization, and open
 	 * input & output files to be tested.
@@ -875,9 +1081,16 @@ main (int argc, char **argv)
 	 * If a log file was specified, redirect stderr to that file.
 	 */
 	if (log_file) {
-	    if (freopen (log_file, "a", stderr) == NULL) {
+	    ofp = efp;			/* Send all output to stderr. */
+	    if (freopen (log_file, "a", efp) == NULL) {
+#if defined(WIN32)
+	        LogMsg (efp, logLevelCrit, 0,
+		    "freopen failed!,exiting...\n");
+	        exit(FAILURE);
+#else /* !defined(WIN32) */
 		report_error (log_file, TRUE);
 		exit (exit_status);
+#endif /* defined(WIN32) */
 	    }
 	}
 
@@ -885,9 +1098,14 @@ main (int argc, char **argv)
 	 * Make stderr buffered, so timing is not affected by output.
 	 */
 	if ((log_buffer = (char *) malloc (LOG_BUFSIZE)) == NULL) {
-	    Fprintf ("Unable to allocate log file buffer of %d bytes, exiting...\n",
+	    LogMsg (efp, logLevelCrit, 0,
+		    "Unable to allocate log file buffer of %d bytes, exiting...\n",
 								LOG_BUFSIZE);
+#if defined(WIN32)
+	    exit(ERROR_OUTOFMEMORY);
+#else /* !defined(WIN32) */
 	    exit (ENOMEM);
+#endif /* defined(WIN32) */
 	}
 
 	/*
@@ -896,22 +1114,34 @@ main (int argc, char **argv)
 	 * problematic, so it you have problems with garbled output, remove it.
 	 */
 	log_bufptr = log_buffer;
+
 	/*
 	 * Since stderr is normally unbuffered, we make it buffered here.
 	 */
-	if ( isatty(fileno(stderr)) ) {
+	if ( isatty(fileno(efp)) ) {
 	    char *stderr_buffer = (char *)malloc(LOG_BUFSIZE);
 	    if (stderr_buffer == NULL) {
-		Fprintf ("Unable to allocate stderr buffer of %d bytes, exiting...\n",
+		LogMsg (efp, logLevelCrit, 0,
+			"Unable to allocate stderr buffer of %d bytes, exiting...\n",
 									LOG_BUFSIZE);
+#if defined(WIN32)
+		exit(ERROR_OUTOFMEMORY);
+#else /* !defined(WIN32) */
 		exit (ENOMEM);
+#endif /* defined(WIN32) */
 	    }
 	    /*
 	     * Can't use log buffer, or we get undesirable results :-)
 	     */
-	    if (setvbuf(stderr, stderr_buffer, _IOFBF, LOG_BUFSIZE) < 0) {
+	    if (setvbuf(efp, stderr_buffer, _IOFBF, LOG_BUFSIZE) < 0) {
+#if defined(WIN32)
+		LogMsg (efp, logLevelCrit, 0,
+			"setvbuf failed!,exiting...\n");
+		exit(FAILURE);
+#else /* !defined(WIN32) */
 		report_error ("setvbuf", TRUE);
 		exit (exit_status);
+#endif /* defined(WIN32) */
 	    }
 	}
 
@@ -932,7 +1162,8 @@ main (int argc, char **argv)
 	}
 
 	if (!input_file && !output_file) {
-	    Fprintf ("You must specify an input file, an output file, or both.\n");
+	    LogMsg (efp, logLevelCrit, 0,
+		    "You must specify an input file, an output file, or both.\n");
 	    exit (FATAL_ERROR);
 	}
 
@@ -940,8 +1171,22 @@ main (int argc, char **argv)
 	 * Disallow both seek type options, to simplify test loops.
 	 */
 	if ( (io_dir == REVERSE) && (io_type == RANDOM_IO) ) {
-	    Fprintf ("Please specify one of iodir=reverse or iotype=random, not both!\n");
+	    LogMsg (efp, logLevelCrit, 0,
+		    "Please specify one of iodir=reverse or iotype=random, not both!\n");
 	    exit (FATAL_ERROR);
+	}
+
+	if (slice_num) {
+	    if (!num_slices) {
+		LogMsg (efp, logLevelCrit, 0,
+			"Please specify number of slices with slice option!\n");
+		exit (FATAL_ERROR);
+	    } else if (slice_num > num_slices) {
+		LogMsg (efp, logLevelCrit, 0,
+			"Please specify slice (%d) <= max slices (%d)\n",
+						slice_num, num_slices);
+		exit (FATAL_ERROR);
+	    }
 	}
 
 #if defined(MUNSA)
@@ -950,7 +1195,7 @@ main (int argc, char **argv)
 	    if (input_file && !output_file) {
 	        input_munsa_lock_type =  munsa_lock_type;
 		if (debug_flag) {
-		    Fprintf ("input_munsa_lock_type = %d\n",
+		    Printf ("input_munsa_lock_type = %d\n",
 					input_munsa_lock_type);
 		}
 	    }
@@ -960,11 +1205,12 @@ main (int argc, char **argv)
 		    (munsa_lock_type == DLM_EXMODE)) {
 		    output_munsa_lock_type =  munsa_lock_type;
 		    if (debug_flag) {
-			Fprintf ("output_munsa_lock_type = %d\n",
+			Printf ("output_munsa_lock_type = %d\n",
 					output_munsa_lock_type);
 		    }
 		} else {
-		    Fprintf ("invalid write lock type it should be pw,ex\n");
+		    LogMsg (efp, logLevelCrit, 0,
+			    "invalid write lock type it should be pw,ex\n");
 		    exit(FATAL_ERROR);
 		}
 	    }
@@ -973,9 +1219,9 @@ main (int argc, char **argv)
 		input_munsa_lock_type =  DLM_PRMODE;
 		output_munsa_lock_type =  DLM_PWMODE;
 		if (debug_flag) {
-		    Fprintf ("input_munsa_lock_type = %d\n",
+		    Printf ("input_munsa_lock_type = %d\n",
 					input_munsa_lock_type);
-		    Fprintf ("output_munsa_lock_type = %d\n",
+		    Printf ("output_munsa_lock_type = %d\n",
 					output_munsa_lock_type);
 		}
 	    }
@@ -984,7 +1230,8 @@ main (int argc, char **argv)
 
 	if ( (!input_file || !output_file) &&
 	      ((io_mode == COPY_MODE) || (io_mode == VERIFY_MODE)) ) {
-	    Fprintf ("Copy/verify modes require both input and output devices.\n");
+	    LogMsg (efp, logLevelCrit, 0,
+		    "Copy/verify modes require both input and output devices.\n");
 	    exit (FATAL_ERROR);
 	}
 
@@ -1016,39 +1263,39 @@ main (int argc, char **argv)
 	 * Process the pattern file (if one was specified).
 	 */
 	if (pattern_file) {
+#if defined(WIN32)
+	    process_pfile (&pfd, pattern_file, GENERIC_READ);
+#else /* !defined(WIN32) */
 	    process_pfile (&pfd, pattern_file, O_RDONLY);
+#endif /* defined(WIN32) */
 	}
 
 	if (min_size && (max_size <= min_size)) {
-	    Fprintf ("Please specify max count > min count for record sizes.\n");
+	    LogMsg (efp, logLevelCrit, 0,
+		    "Please specify max count > min count for record sizes.\n");
 	    exit (FATAL_ERROR);
 	}
 
 	/*
 	 * Verify counts are large enough, to avoid false compare errors.
 	 */
-#if 0
-	if ( !bypass_flag && (iot_pattern || lbdata_flag) &&
-	     ((block_size < sizeof(u_int32)) ||
-	      (min_size && (min_size <= sizeof(u_int32)))) ) {
-	    Fprintf("Please specify block sizes > %d for IOT or Lbdata options!\n",
-								sizeof(u_int32));
-	    exit (FATAL_ERROR);
-	}
-#endif
-	if ( (iot_pattern || lbdata_flag) && (block_size < lbdata_size) ) {
-	    Fprintf(
-	"Please specify a block size >= %u (lbdata size) for IOT or Lbdata options!\n",
+	if ( (iot_pattern || lbdata_flag || timestamp_flag) && (block_size < lbdata_size) ) {
+	    LogMsg (efp, logLevelCrit, 0,
+	"Please specify a block size >= %u (lbdata size) for iot, lbdata, or timestamp options!\n",
 								lbdata_size);
 	    exit (FATAL_ERROR);
 	}
 
 	if ( ((io_mode == COPY_MODE) || (io_mode == VERIFY_MODE)) &&
-	     (iot_pattern || lbdata_flag) ) {
-	    Fprintf ("IOT and Lbdata options disallowed with Copy/Verify options!\n");
+	     (iot_pattern || lbdata_flag || timestamp_flag) ) {
+	    LogMsg (efp, logLevelCrit, 0,
+		    "IOT, Lbdata, & timestamp options disallowed with Copy/Verify options!\n");
 	    exit (FATAL_ERROR);
 	}
 
+        /*
+         * Do special handling of IOT data pattern.
+         */
 	if (iot_pattern) {
 	    size_t size = block_size;
 	    u_char *buffer = (u_char *) myalloc(size, 0);
@@ -1058,10 +1305,10 @@ main (int argc, char **argv)
 	    lbdata_flag = FALSE;
 	    user_lbdata = FALSE;
 	}
-#if 1
+
 	/*
 	 * Setup the pattern as a pattern string, so non-modulo
-	 * sizeof(u_int) read counts will data compare properly.
+	 * sizeof(u_int) read counts will compare data properly.
 	 */
 	if (!pattern_buffer) {
 	    size_t size = sizeof(u_int32);
@@ -1069,8 +1316,8 @@ main (int argc, char **argv)
 	    copy_pattern (pattern, buffer);
 	    setup_pattern (buffer, size);
 	}
-#endif
 
+#if defined(TTY)
 	/*
 	 * The following check was added for tty loopback to same port.
 	 * [ A future version may extend this support to other devices. ]
@@ -1083,6 +1330,7 @@ main (int argc, char **argv)
 	    if (!input_file && output_file) input_file = output_file;
 	    if (input_file && !output_file) output_file = input_file;
 	}
+#endif /* defined(TTY) */
 
 	/*
 	 * Setup the initial device information & validate options.
@@ -1114,15 +1362,48 @@ main (int argc, char **argv)
 	     */
 	    if ( (pass_limit > 1) && (num_procs > 1) &&
 		 !user_pattern && dip->di_random_access ) {
-		Fprintf (
+		LogMsg (ofp, logLevelWarn, 0,
 	    "Warning: Multiple passes with multiple processes can cause unpredictable\n");
-	 	Fprintf (
+	 	LogMsg (ofp, logLevelWarn, 0,
 	    "results due to process scheduling, since each pass uses a different pattern!\n");
 	    }
 #endif
 	}
 
-#if defined(sun)
+#if 1 /* #if def'ed out for debug only!!! */
+
+        /*
+         * When doing random I/O, enable file system alignments, to help
+         * prevent false corruptions.  This only affects regular files,
+         * and only when read-after-write (raw) is disabled.  When raw
+         * is enabled, we don't have to worry about data overwrites,
+         * unless POSIX Async I/O (AIO) is enabled.
+         */
+        active_dinfo = dip = (input_file) ? input_dinfo : output_dinfo;
+        if ( (dip->di_dtype->dt_dtype == DT_REGULAR) && (io_type == RANDOM_IO) &&
+             (!raw_flag || aio_flag) && !bypass_flag) {
+            if (debug_flag || Debug_flag) {
+                LogMsg(efp, logLevelWarn, 0,
+                       "Enabling FS alignment for sizes and random offsets!\n");
+            }
+            fsalign_flag = TRUE;    /* Align FS sizes & random offsets. */
+            /*
+             * Sanity check the pattern size is modulo the device size,
+             * otherwise this too will cause false failures w/random I/O.
+             */
+            if (patbuf_size && dip->di_dsize) {
+                if ( ((patbuf_size > dip->di_dsize) && (patbuf_size % dip->di_dsize)) ||
+                     ((patbuf_size < dip->di_dsize) && (dip->di_dsize % patbuf_size)) ) {
+                    LogMsg(efp, logLevelCrit, 0,
+                           "Please specify a pattern size (%u) modulo the device size (%u)!\n",
+                            patbuf_size, dip->di_dsize);
+                    exit (FATAL_ERROR);
+                }
+            }
+        }
+#endif /* #if def'ed out for debug only!!! */
+
+#if defined(sun) && defined(TTY)
 	/*
 	 * Soft carrier existed on the Sun/386i (Roadrunner) system.
 	 * Setting O_NDELAY was necessary to open the terminal line.
@@ -1136,14 +1417,15 @@ main (int argc, char **argv)
 	if (ttyport_flag) {
 	    open_flags = O_NDELAY;	/* Incase no soft carrier.	*/
 	}
-#endif /* defined(sun) */
+#endif /* defined(sun) && defined(TTY) */
 
     /*
      * Do multiple slices processing.
      */
     if (num_slices) {
 	if (input_file && output_file) {
-	    Fprintf ("Please specify only an input or output file, not both!\n");
+	    LogMsg (efp, logLevelCrit, 0,
+		    "Please specify only an input or output file, not both!\n");
 	    exit (FATAL_ERROR);
 	}
 
@@ -1152,7 +1434,8 @@ main (int argc, char **argv)
 	 */
 	active_dinfo = dip = (input_file) ? input_dinfo : output_dinfo;
 	if (!dip->di_random_access) {
-	    Fprintf ("Multiple slices is only supported on random access devices!\n");
+	    LogMsg (efp, logLevelCrit, 0,
+		    "Multiple slices is only supported on random access devices!\n");
 	    exit (FATAL_ERROR);
 	}
 	if ((status = FindCapacity (dip)) == FAILURE) {
@@ -1161,12 +1444,23 @@ main (int argc, char **argv)
 	/*
 	 * The remaining work is done when starting the processes.
 	 */
-	if ( start_slices() ) {
-	    await_procs();
-	    exit (exit_status);
+	if (slice_num) {
+	    init_slice(active_dinfo, slice_num);
+	    num_slices = 0;	/* Operate on a single slice. */
+	} else {
+#if defined(WIN32)
+            LogMsg (efp, logLevelCrit, 0,
+		    "Please specify the slice number to operate on!\n");
+	    exit (FATAL_ERROR);
+#else /* !defined(WIN32) */
+	    if ( start_slices() ) {
+		await_procs();
+		exit (exit_status);
+	    }
+#endif /* defined(WIN32) */
 	}
     }
-
+#if !defined(WIN32)
 	/*
 	 * Create multiple processes (if requested).
 	 */
@@ -1176,7 +1470,7 @@ main (int argc, char **argv)
 		exit (exit_status);
 	    }
 	}
-
+#endif /* !defined(WIN32) */
 	/*
 	 * Open device / Setup system / device specific test information.
 	 */
@@ -1207,9 +1501,9 @@ main (int argc, char **argv)
 		dlm_set_signal(SIGIO, &i);
 		resnlen = strlen(resnam);
 		if (debug_flag) {
-		    Fprintf ("dlm_set_signal: i %d\n", i);
-		    Fprintf ("resnam %s\n", resnam);
-		    Fprintf ("grab a NL mode lock\n");
+		    Printf ("dlm_set_signal: i %d\n", i);
+		    Printf ("resnam %s\n", resnam);
+		    Printf ("grab a NL mode lock\n");
 		}
 		l_stat = dlm_lock(nsp, 
 				  (uchar_t *)resnam,
@@ -1257,7 +1551,11 @@ main (int argc, char **argv)
 	     * since skips are accomplished via read()'s. (for pelle)
 	     */
 	    if (skip_count || raw_flag) {
+#if defined(WIN32)
+		open_mode = (GENERIC_READ | GENERIC_WRITE);
+#else /* !defined(WIN32) */
 		open_mode = (O_RDWR  | wopen_flags | open_flags);
+#endif /* defined(WIN32) */
 	    } else {
 		open_mode = (wopen_mode | wopen_flags | open_flags);
 	    }
@@ -1295,9 +1593,9 @@ main (int argc, char **argv)
 
 		resnlen = strlen(resnam);
 		if (debug_flag) {
-		    Fprintf ("dlm_set_signal: i %d\n", i);
-		    Fprintf ("resnam %s\n", resnam);
-		    Fprintf ("grab a NL mode lock\n");
+		    Printf ("dlm_set_signal: i %d\n", i);
+		    Printf ("resnam %s\n", resnam);
+		    Printf ("grab a NL mode lock\n");
 		}
 		l_stat = dlm_lock(nsp, 
 				  (uchar_t *)resnam, 
@@ -1315,11 +1613,11 @@ main (int argc, char **argv)
 		}
 	    }  /* end if (munsa_flag)... */
 #endif /* defined(MUNSA) */
-
 	    system_device_info (dip);
 	    output_dtype = dip->di_dtype;
+#if !defined(WIN32)
 	    open_flags &= ~O_CREAT;	/* Only create on first open. */
-
+#endif /* !defined(WIN32) */
 	    status = (*dip->di_funcs->tf_validate_opts)(dip);
 	    if (status == FAILURE) exit (FATAL_ERROR);
 
@@ -1359,7 +1657,7 @@ main (int argc, char **argv)
 	 */
 	if ( (rdata_limit || random_align) &&
 	     ((io_dir != REVERSE) && (io_type != RANDOM_IO)) ) {
-	    Fprintf ("Warning, random options have no effect without iotype=random!\n");
+	    Printf ("Warning, random options have no effect without iotype=random!\n");
 	}
 
 	/*
@@ -1368,7 +1666,8 @@ main (int argc, char **argv)
 	 */
 	if (rdata_limit == 0UL) rdata_limit = data_limit;
 	if ( (rdata_limit == 0) && (io_type == RANDOM_IO) ) {
-	    Fprintf ("Please specify a record or data limit for random I/O.\n");
+	    LogMsg (efp, logLevelCrit, 0,
+		    "Please specify a record or data limit for random I/O.\n");
 	    exit (FATAL_ERROR);
 	}
 
@@ -1377,7 +1676,12 @@ main (int argc, char **argv)
 	 */
 	if ( (io_type == RANDOM_IO) &&
 	     ((file_position + block_size + random_align) > rdata_limit)) {
-	    Fprintf ("The max block size is too large for random data limits!\n");
+	    LogMsg (efp, logLevelCrit, 0,
+		    "The max block size is too large for random data limits!\n");
+	    if (Debug_flag) {
+	        Printf ("file position " FUF ", bs=%ld, ralign=%ld, rlimit=" LUF "\n",
+			file_position, block_size, random_align, rdata_limit);
+	    }
 	    exit (FATAL_ERROR);
 	}
 
@@ -1385,9 +1689,15 @@ main (int argc, char **argv)
 	 * Ensure either a data limit and/or a record count was specified.
 	 */
 	if (!record_limit) {
-	    Fprintf ("You must specify a data limit, a record count, or both.\n");
+	    LogMsg (efp, logLevelCrit, 0,
+		    "You must specify a data limit, a record count, or both.\n");
 	    exit (FATAL_ERROR);
 	}
+
+	/*
+	 * Allocate buffer for pre-formatting messages.
+	 */
+	msg_buffer = (char *)Malloc(LOG_BUFSIZE);
 
 #if defined(LOG_DIAG_INFO)
 	/*
@@ -1397,7 +1707,6 @@ main (int argc, char **argv)
 	    int arg;
 	    char *bp;
 	    bp = cmd_line = (char *)Malloc(LOG_BUFSIZE);
-	    msg_buffer = (char *)Malloc(LOG_BUFSIZE);
 	    for (arg = 0; arg < argc; arg++) {
 		(void)sprintf(bp, "%s ", argv[arg]);
 		bp += strlen(bp);
@@ -1409,15 +1718,17 @@ main (int argc, char **argv)
 	/*
 	 * Catch a couple signals to do elegant cleanup.
 	 */
+	(void) signal (SIGTERM, terminate);
+#if !defined(WIN32)
 	(void) signal (SIGHUP, terminate);
 	(void) signal (SIGINT, terminate);
-	(void) signal (SIGTERM, terminate);
 	(void) signal (SIGPIPE, terminate);
-
+#endif /* !defined(WIN32) */
 	/*
 	 * If both an input and an output files were specified, then
 	 * fork and make child process the reader, parent the writer.
 	 */
+#if !defined(WIN32)
 	if ( (io_mode == TEST_MODE) && input_file && output_file) {
 	    if ( (child_pid = fork()) == (pid_t) -1) {
 		report_error ("fork", TRUE);
@@ -1429,19 +1740,19 @@ main (int argc, char **argv)
 		(void) close_file (dip);
 		input_file = NULL;
 		if (debug_flag) {
-		    Fprintf ("Parent PID (Writer) = %d, Child PID (Reader) = %d\n",
+		    Printf ("Parent PID (Writer) = %d, Child PID (Reader) = %d\n",
 						getpid(), child_pid);
 		}
 #if !defined(__MSDOS__) || defined(__NUTC__)
 		signal (SIGCHLD, terminate);
-#endif
+#endif /* !defined(__MSDOS__) || defined(__NUTC__) */
 	    } else {				/* Child = reader. */
 		struct dinfo *dip = output_dinfo;
 		(void) close_file (dip);
 		output_file = NULL;
 	    }
 	}
-
+#endif /* !defined(WIN32) */
 	/*
 	 * Some drivers require the input device to open before we start
 	 * writing.  For example, terminal devices must have speed, parity,
@@ -1489,13 +1800,71 @@ main (int argc, char **argv)
 	if (rotate_flag) data_size -= ROTATE_SIZE;
 
 	/*
+	 * Finally format the prefix string (if any), after the device is
+	 * setup and processes are forked so we can setup a unique prefix.
+	 */
+	if (prefix_string) {
+	    status = FmtPrefix(dip, &prefix_string, &prefix_size);
+	    if (status == FAILURE) exit (FATAL_ERROR);
+            if ((prefix_size) > lbdata_size) {
+                LogMsg (efp, logLevelCrit, 0,
+                        "The prefix size (%d) is larger than lbdata size (%d)!\n",
+                        prefix_size, lbdata_size);
+                exit (FATAL_ERROR);
+            }
+	}
+
+	/*
 	 * Start an alarm timer if the run time was specified.
 	 */
-	if (runtime) {
-	    (void) signal (SIGALRM, terminate);
-	    (void) alarm (runtime);
-	    TimerActive = TRUE;
+	if (alarmtime || runtime) {
+	    /*
+	     * With monitor no I/O progress, user must specify a keepalive
+	     * string, otherwise we won't log anything (just monitor).
+	     */
+	    if (noprog_flag && !noprogtime) { noprogtime = alarmtime; }
+	    if (noprog_flag && !user_keepalive) {
+		keepalive = "";
+		user_keepalive = TRUE;
+	    }
+	    /*
+	     * Only enable keepalive alarm for child processes.
+	     */
+            if (alarmtime && (child_pid == (pid_t)0) ) {
+                if ( !keepalive || (!user_keepalive && !strlen(keepalive)) ) {
+                    if (pstats_flag) {
+                        keepalive = keepalive0;
+                    } else {
+                        keepalive = keepalive1;
+                    }
+                }
+#if !defined(WIN32)
+                (void) signal (SIGALRM, keepalive_alarm);
+#endif /* !defined(WIN32) */
+                (void) alarm (alarmtime);
+		TimerActive = TRUE;
+                if (runtime) {
+                    runtime_end = time((time_t *)NULL) + runtime;
+                }
+            } else {
+#if !defined(WIN32)
+	        (void) signal (SIGALRM, terminate);
+#endif /* !defined(WIN32) */
+	        (void) alarm (runtime);
+		TimerActive = TRUE;
+            }
 	}
+        /*
+         * When stats=brief, we allow a one line format for pass and totals.
+         * If the user has not specified their own format, set our defaults.
+         * Note:  They aren't really keepalive, just use the same logic. :-)
+         */
+        if ( !pkeepalive || !strlen(pkeepalive) ) {
+            pkeepalive = pass_msg;
+        }
+        if ( !tkeepalive || !strlen(tkeepalive) ) {
+            tkeepalive = totals_msg;
+        }
 
 	/*
 	 * Start of main test loop.
@@ -1593,7 +1962,11 @@ main (int argc, char **argv)
 		 */
 		if ( unique_pattern &&
 		     ( (!num_procs && num_slices) ||
+#if defined(WIN32)
+		       (num_procs && (dip->di_dtype->dt_dtype == DT_DISK)) ) ) {
+#else /* !defined(WIN32) */
 		       (num_procs && (dip->di_dtype->dt_dtype == DT_REGULAR)) ) ) {
+#endif /* defined(WIN32) */
 		    int pindex = ((cur_proc - 1) + pass_count);
 		    pattern = data_patterns[pindex % npatterns];
 		} else if (!num_procs) {
@@ -1601,7 +1974,7 @@ main (int argc, char **argv)
 		}
 		if (pattern_buffer) copy_pattern (pattern, pattern_buffer);
 		if (debug_flag) {
-		    Fprintf ("Using data pattern 0x%08x for pass %u\n",
+		    Printf ("Using data pattern 0x%08x for pass %u\n",
 						pattern, (pass_count + 1));
 		}
 	    }
@@ -1668,7 +2041,7 @@ main (int argc, char **argv)
 		    pass_count++;			/* End read/write pass. */
 		    report_pass (dip, READ_STATS);	/* Report read stats.	*/
 		} else {
-		    pass_count++;		/* End of write pass.	*/
+		    pass_count++;		        /* End of write pass.	*/
 		    if ( (pass_limit > 1) || runtime) {
 			/* Report write stats. */
 			if (raw_flag) {
@@ -1678,10 +2051,19 @@ main (int argc, char **argv)
 			}
 		    }
 		}
-		if ( (pass_count < pass_limit) || runtime) {
+                /*
+                 * Don't reopen if we've reached the error limit or the
+                 * pass count, since we'll be terminating shortly.
+                 */
+		if ( (total_errors < error_limit) &&
+                     ((pass_count < pass_limit) || runtime) ) {
 		    int open_mode;
 		    if (skip_count || raw_flag) {
+#if defined(WIN32)
+			open_mode = (GENERIC_READ | GENERIC_WRITE);
+#else /* !defined(WIN32) */
 			open_mode = (O_RDWR | wopen_flags | open_flags);
+#endif /* defined(WIN32) */
 		    } else {
 			open_mode = (wopen_mode | wopen_flags | open_flags);
 		    }
@@ -1713,7 +2095,7 @@ main (int argc, char **argv)
 #if defined(MUNSA)
 	    if (munsa_flag) {
 		if (debug_flag) {
-		    Fprintf ("converting to dlm NL-> %d \n", DLM_NLMODE);
+		    Printf ("converting to dlm NL-> %d \n", DLM_NLMODE);
 		}
 		l_stat = dlm_cvt(&lkid, DLM_NLMODE, NULL, 0, 0, 0, NULL, 0);
 		if (l_stat !=  DLM_SUCCESS) {
@@ -1731,7 +2113,7 @@ main (int argc, char **argv)
 	    dlm_error(&lkid, l_stat);  /* exit with FATAL ERROR  */
 
 	if (debug_flag) {
-	    Fprintf("\n   %s:  unlocked...\n", resnam);
+	    Printf("\n   %s:  unlocked...\n", resnam);
 	}
     }  /*  end if(munsa_flag)...  */
 #endif /* defined(MUNSA) */
@@ -1757,7 +2139,8 @@ dlm_error(dlm_lkid_t *lk, dlm_status_t err_stat)
 {
 	dlm_rsbinfo_t rsb;		/* used by dlm_sperrno() */
 
-	Fprintf ("lock error %s on lkid 0x%lx\n",
+	LogMsg (efp, logLevelCrit, 0,
+		"lock error %s on lkid 0x%lx\n",
 			dlm_sperrno(err_stat), *lk);
 	exit (FATAL_ERROR);
 }
@@ -1781,13 +2164,45 @@ parse_args (int argc, char **argv)
 	if (argc == 1) dtusage();
 	for (i = 1; i < argc; i++) {
 	    string = argv[i];
-#if defined(AIO)
 	    if (match ("aios=")) {
 		aio_bufs = (int)number(ANY_RADIX);
 		if (aio_bufs) aio_flag = TRUE;
 		continue;
 	    }
-#endif /* defined(AIO) */
+            if (match ("alarm=")) {
+                alarmtime = time_value();
+                continue;
+            }
+            if (match ("keepalive=")) {
+                keepalive = string;
+                user_keepalive = TRUE;
+                continue;
+            }
+            if (match ("pkeepalive=")) {
+                pkeepalive = string;
+                user_pkeepalive = TRUE;
+                continue;
+            }
+            if (match ("tkeepalive=")) {
+                tkeepalive = string;
+                user_tkeepalive = TRUE;
+                continue;
+            }
+            if (match ("pass=")) {
+                pass_msg = string;
+                continue;
+            }
+            if (match ("noprogt=")) {
+                noprogtime = time_value();
+                if (noprogtime) {
+		    noprog_flag = TRUE;
+                }
+                continue;
+            }
+            if (match ("totals=")) {
+                totals_msg = string;
+                continue;
+            }
 	    if (match ("align=")) {
 		if (match ("rotate")) {
 		    rotate_flag = TRUE;
@@ -1799,7 +2214,8 @@ parse_args (int argc, char **argv)
 	    if (match ("bs=")) {
 		block_size = number(ANY_RADIX);
 		if ((ssize_t)block_size <= (ssize_t) 0) {
-		    Fprintf ("block size must be positive and non-zero.\n");
+		    LogMsg (efp, logLevelCrit, 0,
+			    "block size must be positive and non-zero.\n");
 		    exit (FATAL_ERROR);
 		}
 		continue;
@@ -1827,7 +2243,8 @@ parse_args (int argc, char **argv)
 		lbdata_size = number(ANY_RADIX);
 		user_lbsize = TRUE;
 		if ((ssize_t)lbdata_size <= (ssize_t) 0) {
-		    Fprintf ("lbdata size must be positive and non-zero.\n");
+		    LogMsg (efp, logLevelCrit, 0,
+			    "lbdata size must be positive and non-zero.\n");
 		    exit (FATAL_ERROR);
 		}
 		continue;
@@ -1894,6 +2311,7 @@ parse_args (int argc, char **argv)
 	    }
 	    if (match ("ralign=")) {
 		io_type = RANDOM_IO;
+                user_ralign = TRUE;
 		random_align = number(ANY_RADIX);
 		continue;
 	    }
@@ -1918,12 +2336,10 @@ parse_args (int argc, char **argv)
 		    goto eloop;
 		if (*string == '\0')
 		    continue;
-#if defined(AIO)
 		if (match("aio")) {
 		    aio_flag = TRUE;
 		    goto eloop;
 		}
-#endif /* defined(AIO) */
 		if (match("bypass")) {
 		    bypass_flag = TRUE;
 		    goto eloop;
@@ -1986,6 +2402,10 @@ parse_args (int argc, char **argv)
 		    fsync_flag = TRUE;
 		    goto eloop;
 		}
+		if (match("fsalign")) {
+		    fsalign_flag = TRUE;
+		    goto eloop;
+		}
 		if (match("header")) {
 		    header_flag = TRUE;
 		    goto eloop;
@@ -2010,13 +2430,19 @@ parse_args (int argc, char **argv)
 		    goto eloop;
 		}
 #endif /* defined(MMAP) */
+#if defined(TTY)
 		if (match("modem")) {
 		    open_flags = O_NONBLOCK;
 		    modem_flag = TRUE;
 		    goto eloop;
 		}
+#endif /* defined(TTY) */
 		if (match("multi")) {
 		    multi_flag = TRUE;
+		    goto eloop;
+		}
+		if (match("noprog")) {
+		    noprog_flag = TRUE;
 		    goto eloop;
 		}
 		if (match("pstats")) {
@@ -2027,27 +2453,44 @@ parse_args (int argc, char **argv)
 		    raw_flag = TRUE;
 		    goto eloop;
 		}
+		if (match("hazard")) {
+		    efp = ofp;			/* Write errors to stdout. */
+		    hazard_flag = TRUE;
+		    goto eloop;
+		}
 		if (match("spad")) {
 		    spad_check = TRUE;
 		    goto eloop;
 		}
-#if defined(sun)
+		if (match("stats")) {
+		    stats_flag = TRUE;
+		    goto eloop;
+		}
+#if defined(sun) && defined(TTY)
 		if (match("softcar")) {
 		    open_flags = O_NDELAY;
 		    softcar_opt = ON;
 		    goto eloop;
 		}
-#endif /* defined(sun) */
+#endif /* defined(sun) && defined(TTY) */
 #if defined(DEC)
 		if (match("table")) {
 		    table_flag = TRUE;
 		    goto eloop;
 		}
 #endif /* defined(DEC) */
+#if defined(TIMESTAMP)
+		if (match("timestamp")) {
+		    timestamp_flag = TRUE;
+		    goto eloop;
+		}
+#endif /* !defined(TIMESTAMP) */
+#if defined(TTY)
 		if (match("ttyport")) {
 		    ttyport_flag = TRUE;
 		    goto eloop;
 		}
+#endif /* defined(TTY) */
 		if (match("unique")) {
 		    unique_pattern = TRUE;
 		    goto eloop;
@@ -2060,7 +2503,8 @@ parse_args (int argc, char **argv)
 		    verify_flag = TRUE;
 		    goto eloop;
 		}
-		Fprintf ("Invalid enable keyword: %s\n", string);
+		LogMsg (efp, logLevelCrit, 0,
+			"Invalid enable keyword: %s\n", string);
 		exit (FATAL_ERROR);
 	    }
 	    if (match ("disable=")) {
@@ -2069,12 +2513,10 @@ parse_args (int argc, char **argv)
 		    goto dloop;
 		if (*string == '\0')
 		    continue;
-#if defined(AIO)
 		if (match("aio")) {
 		    aio_flag = FALSE;
 		    goto dloop;
 		}
-#endif /* defined(AIO) */
 		if (match("bypass")) {
 		    bypass_flag = FALSE;
 		    goto dloop;
@@ -2117,6 +2559,10 @@ parse_args (int argc, char **argv)
 		    fsync_flag = FALSE;
 		    goto dloop;
 		}
+		if (match("fsalign")) {
+		    fsalign_flag = FALSE;
+		    goto dloop;
+		}
 		if (match("header")) {
 		    header_flag = FALSE;
 		    goto dloop;
@@ -2140,9 +2586,15 @@ parse_args (int argc, char **argv)
 		    goto dloop;
 		}
 #endif /* defined(MMAP) */
+#if defined(TTY)
 		if (match("modem")) {
 		    open_flags &= ~(O_NONBLOCK);
 		    modem_flag = FALSE;
+		    goto dloop;
+		}
+#endif /* defined(TTY) */
+		if (match("noprog")) {
+		    noprog_flag = FALSE;
 		    goto dloop;
 		}
 		if (match("pad")) {
@@ -2157,16 +2609,23 @@ parse_args (int argc, char **argv)
 		    raw_flag = FALSE;
 		    goto dloop;
 		}
+		if (match("hazard")) {
+		    hazard_flag = FALSE;
+		    goto dloop;
+		}
 		if (match("spad")) {
 		    spad_check = FALSE;
 		    goto dloop;
 		}
+#if defined(TTY)
 		if (match("softcar")) {
 		    softcar_opt = OFF;
 		    goto dloop;
 		}
+#endif /* defined(TTY) */
 		if (match("stats")) {
 		    stats_flag = FALSE;
+                    stats_level = STATS_NONE;
 		    goto dloop;
 		}
 #if defined(DEC)
@@ -2175,6 +2634,10 @@ parse_args (int argc, char **argv)
 		    goto dloop;
 		}
 #endif /* defined(DEC) */
+		if (match("timestamp")) {
+		    timestamp_flag = FALSE;
+		    goto dloop;
+		}
 		if (match("unique")) {
 		    unique_pattern = FALSE;
 		    goto dloop;
@@ -2187,7 +2650,8 @@ parse_args (int argc, char **argv)
 		    verify_flag = FALSE;
 		    goto dloop;
 		}
-		Fprintf ("Invalid disable keyword: %s\n", string);
+		LogMsg (efp, logLevelCrit, 0,
+			"Invalid disable keyword: %s\n", string);
 		exit (FATAL_ERROR);
 	    }
 	    if (match ("dispose=")) {
@@ -2198,7 +2662,8 @@ parse_args (int argc, char **argv)
 		    keep_existing = TRUE;
 		    dispose_mode = KEEP_FILE;
 		} else {
-		    Fprintf ("Dispose modes are 'delete' or 'keep'.\n", string);
+		    LogMsg (efp, logLevelCrit, 0,
+			    "Dispose modes are 'delete' or 'keep'.\n", string);
 		    exit (FATAL_ERROR);
 		}
 		continue;
@@ -2218,12 +2683,14 @@ parse_args (int argc, char **argv)
 		} else if (match("ex")) {
 		    munsa_lock_type = DLM_EXMODE;  /* EXclusive mode */
 		} else {
-		    Fprintf ("Invalid munsa lock type it must be 'cr', 'pr','cw', 'pw', or 'ex'.\n");
+		    LogMsg (efp, logLevelCrit, 0,
+		"Munsa lock types are 'cr', 'pr','cw', 'pw', or 'ex'.\n");
 		    exit (FATAL_ERROR);
 		}
 		continue;
 	    }
 #endif /* defined(MUNSA) */
+#if defined(TTY)
 	    if (match ("flow=")) {
 		flow_str = string;
 		if (match("none")) {
@@ -2233,11 +2700,13 @@ parse_args (int argc, char **argv)
 		} else if (match("xon_xoff")) {
 		    flow_type = XON_XOFF;	/* XON/XOFF flow control. */
 		} else {
-		    Fprintf ("Flow types are 'none', 'cts_rts', or 'xon_xoff'.\n");
+		    LogMsg (efp, logLevelCrit, 0,
+			    "Flow types are 'none', 'cts_rts', or 'xon_xoff'.\n");
 		    exit (FATAL_ERROR);
 		}
 		continue;
 	    }
+#endif /* defined(TTY) */
 	    if (match ("if=")) {
 		input_file = string;
 		continue;
@@ -2261,7 +2730,8 @@ parse_args (int argc, char **argv)
 		} else if (match ("rev")) {
 		    io_dir = REVERSE;
 		} else {
-		    Fprintf ("Valid I/O directions are: 'forward' or 'reverse'.\n");
+		    LogMsg (efp, logLevelCrit, 0,
+			    "Valid I/O directions are: 'forward' or 'reverse'.\n");
 		    exit (FATAL_ERROR);
 		}
 		continue;
@@ -2276,7 +2746,8 @@ parse_args (int argc, char **argv)
 		    io_mode = VERIFY_MODE;
 		    verify_only = TRUE;
 		} else {
-		    Fprintf ("Valie I/O modes are: 'copy', 'test', or verify.\n");
+		    LogMsg (efp, logLevelCrit, 0,
+			    "Valid I/O modes are: 'copy', 'test', or verify.\n");
 		    exit (FATAL_ERROR);
 		}
 		continue;
@@ -2287,7 +2758,8 @@ parse_args (int argc, char **argv)
 		} else if (match ("sequential")) {
 		    io_type = SEQUENTIAL_IO;
 		} else {
-		    Fprintf ("Valid I/O types are: 'random' or 'sequential'.\n");
+		    LogMsg (efp, logLevelCrit, 0,
+			    "Valid I/O types are: 'random' or 'sequential'.\n");
 		    exit (FATAL_ERROR);
 		}
 		continue;
@@ -2303,6 +2775,7 @@ parse_args (int argc, char **argv)
 		    goto floop;
 		if (*string == '\0')
 		    continue;
+#if !defined(WIN32)
 #if defined(O_EXCL)
 		if (match("excl")) {
 		    open_flags |= O_EXCL;	/* Exclusive open. */
@@ -2339,6 +2812,13 @@ parse_args (int argc, char **argv)
 		    goto floop;
 		}
 #endif /* defined(O_DIRECTIO) */
+#if defined(SOLARIS)
+
+		if (match("direct")) {
+		    dio_flag = TRUE;            /* No O_DIRECT on Solaris! */
+		    goto floop;
+		}
+#endif /* defined(SOLARIS) */
 #if defined(O_FSYNC)
 		if (match("fsync")) {		/* File integrity. */
 		    open_flags |= O_FSYNC;	/* Syncronize file I/O. */
@@ -2359,10 +2839,11 @@ parse_args (int argc, char **argv)
 #endif /* defined(O_SYNC) */
 #if defined(O_LARGEFILE)
 		if (match("large")) {
-		    open_flags = O_LARGEFILE;	/* Enable large file support. */
+		    open_flags |= O_LARGEFILE;	/* Enable large file support. */
 		    goto floop;			/* Same as _FILE_OFFSET_BITS=64 */
 		}
 #endif /* defined(O_LARGEFILE) */
+#endif /* !defined(WIN32) */
 	    } /* End if "flags=" option. */
 	    /*
 	     * Flags which apply to opening a file for writes.
@@ -2373,6 +2854,7 @@ parse_args (int argc, char **argv)
 		    goto oloop;
 		if (*string == '\0')
 		    continue;
+#if !defined(WIN32)
 #if defined(O_APPEND)
 		if (match("append")) {
 		    wopen_flags |= O_APPEND;	/* Append to file. */
@@ -2409,7 +2891,9 @@ parse_args (int argc, char **argv)
 		    goto oloop;
 		}
 #endif /* defined(O_TEMP) */
+#endif /* !defined(WIN32) */
 	    } /* End of "oflags=" option. */
+#if defined(TTY)
 	    if (match ("parity=")) {
 		parity_str = string;
 		if (match("even")) {
@@ -2431,9 +2915,11 @@ parse_args (int argc, char **argv)
 #endif /* defined(_QNX_SOURCE) */
 		} else {
 #if defined(_QNX_SOURCE)
-		   Fprintf ("Valid parity settings are: even, odd, mark, space, or none.\n");
+		   LogMsg (efp, logLevelCrit, 0,
+			   "Valid parity settings are: even, odd, mark, space, or none.\n");
 #else /* !defined(_QNX_SOURCE) */
-		   Fprintf ("Valid parity settings are: even, odd, or none.\n");
+		   LogMsg (efp, logLevelCrit, 0,
+			   "Valid parity settings are: even, odd, or none.\n");
 #endif /* defined(_QNX_SOURCE) */
 		   exit (FATAL_ERROR);
 		}
@@ -2446,13 +2932,15 @@ parse_args (int argc, char **argv)
 		}
 		continue;
 	    }
+#endif /* defined(TTY) */
 	    if (match ("oncerr=")) {
 		if (match("abort")) {
 		    oncerr_action = ABORT;
 		} else if (match("continue")) {
 		    oncerr_action = CONTINUE;
 		} else {
-		    Fprintf ("On error actions are 'abort' or 'continue'.\n");
+		    LogMsg (efp, logLevelCrit, 0,
+			    "On error actions are 'abort' or 'continue'.\n");
 		    exit (FATAL_ERROR);
 		}
 		continue;
@@ -2460,7 +2948,8 @@ parse_args (int argc, char **argv)
 	    if (match ("passes=")) {
 		pass_limit = number(ANY_RADIX);
 		if (pass_limit == 0) {
-		    Fprintf("Please specify a pass limit greater than zero!\n");
+		    LogMsg (efp, logLevelCrit, 0,
+			    "Please specify a pass limit greater than zero!\n");
 		    exit (FATAL_ERROR);
 		}
 		continue;
@@ -2468,7 +2957,7 @@ parse_args (int argc, char **argv)
 	    if (match ("pattern=")) {	/* TODO: Needs to be cleaned up. */
 		int size = strlen(string);
 		if (size == 0) {
-		    Fprintf(
+		    LogMsg (efp, logLevelCrit, 0,
 		"Please specify pattern of: { hex-pattern | incr | string }\n");
 		    exit (FATAL_ERROR);
 		}
@@ -2480,6 +2969,7 @@ parse_args (int argc, char **argv)
 		    for (v = 0; v < size; v++) {
 			*bp++ = v;
 		    }
+		    incr_pattern = TRUE;
 		    setup_pattern (buffer, size);
 		} else if ( (size == 3) && match("iot") ) {
 		    iot_pattern = TRUE;
@@ -2496,19 +2986,59 @@ parse_args (int argc, char **argv)
 		}
 		continue;
 	    }
+	    if (match ("prefix=")) {
+                if (prefix_string) { /* Free previous prefix (if any). */
+                    free(prefix_string);
+                    prefix_string = NULL;
+                }
+		prefix_size = strlen(string);
+		if (prefix_size == 0) {
+                    if (hazard_flag) {
+                        continue;   /* Allow NULL override for Hazard. */
+                    }
+		    LogMsg (efp, logLevelCrit, 0,
+			    "Please specify a non-empty prefix string!\n");
+		    exit (FATAL_ERROR);
+		} else if (prefix_size > BLOCK_SIZE) {
+		    LogMsg (efp, logLevelCrit, 0,
+			    "Please specify a prefix string < %d bytes!\n",
+								prefix_size);
+		    exit (FATAL_ERROR);
+		}
+		prefix_string = Malloc(++prefix_size); /* plus NULL! */
+		(void)strcpy(prefix_string, string);
+		continue;
+	    }
 	    if (match ("position=")) {
-		file_position = (off_t)large_number(ANY_RADIX);
+		file_position = (OFF_T)large_number(ANY_RADIX);
 		user_position = TRUE;
 		continue;
 	    }
 	    if (match ("procs=")) {
 		num_procs = (u_short)number(ANY_RADIX);
 		if (num_procs > MAX_PROCS) {
-		    Fprintf("Please limit procs to <= %d!\n", MAX_PROCS);
+#if defined(WIN32)
+		    LogMsg (efp, logLevelError, 0,
+			    "Multiple procs currently not supported!");
+#else /* !defined(WIN32) */
+		    LogMsg (efp, logLevelCrit, 0,
+			    "Please limit procs to <= %d!\n", MAX_PROCS);
+#endif /* defined(WIN32) */
 		    exit (FATAL_ERROR);
 		}
 		continue;
 	    }
+#if defined(HP_UX)
+            if (match ("qdepth=")) {
+                qdepth = (u_int)number(ANY_RADIX);
+                if (qdepth > SCSI_MAX_Q_DEPTH) {
+                    LogMsg (efp, logLevelCrit, 0,
+                            "Please specify a SCSI queue depth <= %d!\n", SCSI_MAX_Q_DEPTH);
+                    exit (FATAL_ERROR);
+                }
+                continue;
+            }
+#endif /* defined(HP_UX) */
 	    if (match ("rseed=")) {
 		random_seed = (u_int)number(ANY_RADIX);
 		user_rseed = TRUE;
@@ -2530,18 +3060,44 @@ parse_args (int argc, char **argv)
 		skip_count = number(ANY_RADIX);
 		continue;
 	    }
+	    if (match ("slice=")) {
+		slice_num = (u_short)number(ANY_RADIX);
+		if ( (slice_num < 1) || (slice_num > MAX_SLICES) ) {
+		    LogMsg (efp, logLevelCrit, 0,
+			    "Please limit slice to (1 - %d)!\n", MAX_SLICES);
+		    exit (FATAL_ERROR);
+		}
+		continue;
+	    }
 	    if (match ("slices=")) {
 		num_slices = (u_short)number(ANY_RADIX);
 		if (num_slices > MAX_SLICES) {
-		    Fprintf("Please limit slices to <= %d!\n", MAX_SLICES);
+		    LogMsg (efp, logLevelCrit, 0,
+			    "Please limit maximum slices to <= %d!\n", MAX_SLICES);
 		    exit (FATAL_ERROR);
 		}
 		continue;
 	    }
 	    if (match ("step=")) {
-		step_offset = (off_t)large_number(ANY_RADIX);
+		step_offset = (OFF_T)large_number(ANY_RADIX);
 		continue;
 	    }
+	    if (match ("stats=")) {
+                if (match ("brief")) {
+                    stats_level = STATS_BRIEF;
+		} else if (match ("full")) {
+		    stats_level = STATS_FULL;
+		} else if (match ("none")) {
+                    pstats_flag = stats_flag = FALSE;
+		    stats_level = STATS_NONE;
+		} else {
+		    LogMsg (efp, logLevelCrit, 0,
+			    "Valid stat levels are: 'brief', 'full', or 'none'\n");
+		    exit (FATAL_ERROR);
+		}
+		continue;
+	    }
+#if defined(TTY)
 	    if (match ("speed=")) {
 		speed_str = string;
 		baud_rate = (u_int32) number(ANY_RADIX);
@@ -2559,6 +3115,7 @@ parse_args (int argc, char **argv)
 		tty_minimum = (u_short)number(ANY_RADIX);
 		continue;
 	    }
+#endif /* defined(TTY) */
 	    if (match ("dtype=")) {
 		struct dtype *dtp;
 		if ((dtp = setup_device_type (string)) == NULL) {
@@ -2579,6 +3136,12 @@ parse_args (int argc, char **argv)
 		}
 		continue;
 	    }
+            if (match ("trigger=")) {
+                if ((trigger = check_trigger_type (string)) == TRIGGER_INVALID) {
+                    exit (FATAL_ERROR);
+                }
+                continue;
+            }
 	    if (match ("vrecords=")) {
 	        volume_records = number(ANY_RADIX);
 		continue;
@@ -2595,10 +3158,17 @@ parse_args (int argc, char **argv)
 	    if (match ("version")) {
 		dtversion();
 	    }
-	    Fprintf ("Invalid option '%s' specified, use 'help' for valid options.\n",
+	    LogMsg (efp, logLevelCrit, 0,
+		    "Invalid option '%s' specified, use 'help' for valid options.\n",
 									string);
 	    exit (FATAL_ERROR);
 	}
+#if !defined(AIO)
+	if (aio_flag) {
+	    Printf ("Warning, POSIX AIO is NOT supported on this platform, disabling AIO!\n");
+	    aio_flag = FALSE;
+	}
+#endif /* !defined(AIO) */
 }
 
 /************************************************************************
@@ -2649,7 +3219,8 @@ number (int base)
 	value = CvtStrtoValue (str, &eptr, base);
 
 	if (*eptr != '\0') {
-	    Fprintf ("Invalid character detected in number: '%c'\n", *eptr);
+	    LogMsg (efp, logLevelCrit, 0,
+		    "Invalid character detected in number: '%c'\n", *eptr);
 	    exit (FATAL_ERROR);
 	}
 	return (value);
@@ -2664,7 +3235,8 @@ large_number(int base)
 	value = CvtStrtoLarge (str, &eptr, base);
 
 	if (*eptr != '\0') {
-	    Fprintf ("Invalid character detected in number: '%c'\n", *eptr);
+	    LogMsg (efp, logLevelCrit, 0,
+		    "Invalid character detected in number: '%c'\n", *eptr);
 	    exit (FATAL_ERROR);
 	}
 	return (value);
@@ -2679,7 +3251,8 @@ time_value(void)
 	value = CvtTimetoValue (str, &eptr);
 
 	if (*eptr != '\0') {
-	    Fprintf ("Invalid character detected in time string: '%c'\n", *eptr);
+	    LogMsg (efp, logLevelCrit, 0,
+		    "Invalid character detected in time string: '%c'\n", *eptr);
 	    exit (FATAL_ERROR);
 	}
 	return (value);
@@ -2699,27 +3272,54 @@ report_error(
 	int		record_flag)
 {
     struct dinfo *dip = active_dinfo;
-    int saved_errno = errno;
-
+    int saved_errno;
+#if defined(WIN32)
+    errno = GetLastError();
+#endif /* defined(WIN32) */
+    saved_errno = errno;
     if (dip) dip->di_errno = errno;
 
 #if defined(LOG_DIAG_INFO)
     if (logdiag_flag) {
 	(void)sprintf(msg_buffer, "%s: '%s', errno = %d - %s\n",
+#if defined(WIN32)
+			cmdname, error_info, errno, error_msg());
+#else /* !defined(WIN32) */
 			cmdname, error_info, errno, strerror(errno));
+#endif /* defined(WIN32) */
 	LogDiagMsg(msg_buffer);
     }
 #endif /* defined(LOG_DIAG_INFO) */
 
-    Fprintf ("'%s', errno = %d - %s\n", error_info, errno, strerror(errno));
+    LogMsg (efp, logLevelCrit, 0,
+#if defined(WIN32)
+	    "'%s', errno = %d - %s\n", error_info, errno, error_msg());
+#else /* !defined(WIN32) */
+	    "'%s', errno = %d - %s\n", error_info, errno, strerror(errno));
+#endif /* defined(WIN32) */
+
     exit_status = FAILURE;
     if (record_flag) {
+#if defined(WIN32) || defined(__sun)
 	error_time = time((time_t *) 0);
-	/* ctime() adds newline '\n' to time stamp. */
-	Fprintf ("Error number %lu occurred on %s",
-			++error_count, ctime(&error_time));
+	Fprintf ("Error number %lu occured on %s", ++error_count, ctime(&error_time));
+#else /* !defined(WIN32) */
+	char fmt[SMALL_BUFFER_SIZE];
+	error_time = time((time_t *) 0);
+        /* Two flavors of ctime_r(), this is a problem! */
+	if (ctime_r(&error_time, fmt) == NULL) {
+            //perror("ctime_r()"); /* wrong ctime_r()? */
+            Fprintf("Error number %lu occurred on %s",
+                     ++error_count, ctime(&error_time));
+        } else {
+            /* ctime_r() adds a newline '\n' to time stamp. */
+	    Fprintf("Error number %lu occurred on %s",
+                     ++error_count, fmt);
+        }
+#endif /* defined(WIN32) || defined(__sun) */
     }
     errno = saved_errno;
+    return;
 }
 
 /*
@@ -2730,36 +3330,133 @@ report_record(
 	struct dinfo	*dip,
 	u_long		files,
 	u_long		records,
-	u_int32		lba,
+	large_t		lba,
+        OFF_T           pos,
 	enum test_mode	mode,
 	void		*buffer,
 	size_t		bytes )
 {
     char msg[STRING_BUFFER_SIZE];
     char *bp = msg;
+    u_int32 boff = 0, eoff = 0;
+    u_int32 blocks = 0;
+    large_t elba = 0;
 
+    /*
+     * Depending on data supplied, calculate ending block,
+     * and block offsets (for file system testing).
+     */
+    if ( (lba != NO_LBA) && dip->di_dsize) {
+        elba = ((lba + howmany(bytes, dip->di_dsize)) - 1);
+        blocks = ((elba - lba) + 1);
+        if (pos) {
+            boff = (u_int32)(pos % dip->di_dsize);
+            eoff = (u_int32)((pos + bytes) % dip->di_dsize);
+        }
+    }
     if (dip->di_dtype->dt_dtype == DT_TAPE) {
 	bp += sprintf(bp, "File #%lu, ", files);
     }
-    bp += sprintf(bp, "Record #%lu", records);
-#if 0
-    if (lbdata_flag || iot_pattern || aio_flag) {
-#else
+    bp += sprintf(bp, "Record #%lu - ", records);
+    bp += sprintf(bp, "%s %ld byte%s ",
+                  (mode == READ_MODE) ? "Reading" : "Writing",
+                  bytes, (bytes > 1) ? "s" : "");
     if (lba != NO_LBA) {
-#endif
-	bp += sprintf(bp, " (lba %u), ", lba);
-    } else {
-	bp += sprintf(bp, ", ");
+        bp += sprintf(bp, "(%u block%s) ", blocks, (blocks > 1) ? "s" : "");
     }
-    bp += sprintf(bp, "%s %ld bytes %s buffer %#lx...\n",
-		 (mode == READ_MODE) ? "Reading" : "Writing",
-		 (long)bytes,
-		 (mode == READ_MODE) ? "into" : "from",
-		 (u_long)buffer);
-    Fprintf (msg);
+    bp += sprintf(bp, "%s buffer %#lx, ",
+             (mode == READ_MODE) ? "into" : "from",
+             (u_long)buffer);
+    if (lba != NO_LBA) {
+        bp += sprintf(bp, "lba%s ", (elba > lba) ? "'s" : "");
+        if (boff && eoff) {
+            bp += sprintf(bp, LUF ".%u - " LUF ".%u", lba, boff, elba, eoff);
+        } else if (boff) {
+            bp += sprintf(bp, LUF ".%u - " LUF, lba, boff, elba);
+        } else if (eoff) {
+            bp += sprintf(bp, LUF " - " LUF ".%u", lba, elba, eoff);
+        } else if (lba != elba) {
+	    bp += sprintf(bp, LUF " - " LUF, lba, elba);
+        } else {
+            bp += sprintf(bp, LUF, lba);
+        }
+    }
+    bp += sprintf(bp, " (pos " FUF ")", pos);
+    bp += sprintf(bp, "\n");
+    Printf (msg);
+}
+
+/*
+ * keepalive_alarm() - Format and Display the Keepalive Message.
+ *
+ * Description:
+ *    This function serves two purposes:
+ *    1) handle alarms for keepalives.
+ *    2) determine if our runtime is up.
+ *
+ * Basically, alarm() which is implemented using setitimer() on most
+ * Unixes, does not allow more than one alarm, so we do double duty.
+ *
+ * Inputs:
+ *    sig = The signal number (SIGALRM)
+ */
+void
+keepalive_alarm(int sig)
+{
+    struct dinfo *dip = active_dinfo;
+    char alivemsg[STRING_BUFFER_SIZE];
+    int trig_action;
+
+    lastalarm = time((time_t *)0);
+    /*
+     * Check for no progress being made?
+     */
+    if (noprog_flag && dip->di_initiated_time &&
+	((lastalarm - dip->di_initiated_time) > noprogtime) ) {
+	Printf("No progress made for %d seconds!\n",
+		(lastalarm - dip->di_initiated_time));
+	trig_action = ExecuteTrigger(dip, "noprog");
+	switch ( trig_action ) {
+	    case TRIGACT_CONTINUE:
+		break;
+	    case TRIGACT_TERMINATE:
+		terminate(sig);
+		break;
+	    case TRIGACT_SLEEP:
+		Printf("Sleeping forever...\n");
+		while (1) { sleep(60); }
+		break;
+	    case TRIGACT_ABORT:
+		Printf("Aborting...\n");
+		core_dump = TRUE;
+		terminate(sig);
+		break;
+	    default:
+		Printf("Unknown trigger action %d, continuing...\n", trig_action);
+		break;
+	}
+    }
+    /*
+     * If runtime specified, see if we hit our end time.
+     */
+    if (runtime) {
+        if (time((time_t *)NULL) >= runtime_end) {
+            terminate(sig); /* End of our runtime, exit. */
+        }
+    }
+    /*
+     * Allow empty keepalive to monitor I/O progress only.
+     */
+    if ( keepalive && strlen(keepalive) ) {
+        if (FmtKeepAlive(dip, keepalive, alivemsg) == SUCCESS) {
+            LogMsg (ofp, logLevelLog, PRT_NOIDENT, "%s\n", alivemsg);
+	}
+    }
+    /* Reenable us! */
+    (void) signal (SIGALRM, keepalive_alarm);
+    (void) alarm (alarmtime);
 }
 
-
 /*
  * terminate() - Terminate program with specified exit code.
  *
@@ -2771,6 +3468,7 @@ terminate (int code)
 {
     struct dinfo *dip = active_dinfo;
     int status;
+    bool was_open;
 
     /*
      * If we enter here more than once, just exit to avoid
@@ -2787,26 +3485,47 @@ terminate (int code)
     }
 
     /*
+     * If we're here due to our timer expiring, and we were writing
+     * a file, then flush the data (to regular file).
+     */
+    if ( (code == SIGALRM) && dip && (dip->di_mode == WRITE_MODE) ) {
+	/*
+	 * We may get alarm while open() is in progress, so handle.
+	 */
+	if ( !dip->di_closing && (dip->di_fd != NoFd) ) {
+	    (void) (*dip->di_funcs->tf_flush_data)(dip);
+	}
+    }
+
+    /*
      * If an alarm timer is active, cancel it and calculate
      * the elapsed run time.
      */
     if (TimerActive) {
+#if !defined(WIN32)
 	elapsed_time = runtime - alarm(0);
+#endif /* !defined(WIN32) */
 	TimerActive = FALSE;
-	code = exit_status;	/* Set the exit status! */
+	/*
+	 * Be careful not to overwrite other signal codes.
+	 */
+	if (code == SIGALRM) {
+	    code = exit_status;	/* Set the exit status! */
+	}
     }
 
     /*
      * We only come here for signals when executing multiple
      * processes, so abort active procs and continue waiting.
      */
+#if !defined(WIN32)
     if ((num_procs || num_slices) && child_pid) {
 	abort_procs();		/* Abort any active procs. */
 	return;
     }
 #if !defined(__MSDOS__) || defined(__NUTC__)
     if (debug_flag && (code == SIGCHLD)) {
-	Fprintf ("Child process exited prematurely, parent exiting...\n");
+	Printf ("Child process exited prematurely, parent exiting...\n");
     } else 
 #endif
 
@@ -2820,15 +3539,19 @@ terminate (int code)
      * Close file, which for AIO waits for outstanding I/O's,
      * before reporting statistics so they'll be correct.
      */
+#endif /* !defined(WIN32) */
+    was_open = (dip->di_fd != NoFd) ? TRUE : FALSE;
     if (dip) {
 	dip->di_proc_eei = FALSE;
+
 	status = (*dip->di_funcs->tf_close)(dip);
 	if (status != SUCCESS) code = status;
     }
     gather_stats(dip);		/* Gather the device statistics. */
-    gather_totals();		/* Update the total statistics.	*/
+    gather_totals(dip);		/* Update the total statistics.	*/
     report_stats(dip, TOTAL_STATS);
 
+#if !defined(WIN32)
     if (child_pid) {		/* Always wait for child status. */
 	pid_t wpid = (pid_t) 0;
 	/*
@@ -2838,7 +3561,7 @@ terminate (int code)
 	    (void) kill (child_pid, SIGTERM);
 	}
 	if (debug_flag) {
-	    Fprintf ("Waiting for child PID %d to exit...\n", child_pid);
+	    Printf ("Waiting for child PID %d to exit...\n", child_pid);
 	}
 #if defined(_BSD)
 	do {
@@ -2858,16 +3581,16 @@ terminate (int code)
 	}
 #endif /* defined(_BSD) */
 	if (debug_flag && (wpid != FAILURE)) {
-	    Fprintf("Child PID %d, exited with status = %d\n",
+	    Printf("Child PID %d, exited with status = %d\n",
 					wpid, WEXITSTATUS(child_status));
 	}
     }
-
+#endif /* !defined(WIN32) */
     /*
      * Delete the output file, if requested to do so.
      */
-    if (output_file && (io_mode == TEST_MODE) &&
-	(dispose_mode == DELETE_FILE)         &&
+    if (was_open && output_file && (io_mode == TEST_MODE) &&
+	(dispose_mode == DELETE_FILE)                     &&
 	(dip && dip->di_dtype && (dip->di_dtype->dt_dtype == DT_REGULAR)) ) {
 	(void) delete_file (dip);
     }
@@ -2883,7 +3606,7 @@ terminate (int code)
 	code = SUCCESS;		/* Map end-of-file status to Success! */
     }
     if (debug_flag && (code != SUCCESS)) {
-	Fprintf ("Exiting with status code %d...\n", code);
+	Printf ("Exiting with status code %d...\n", code);
     }
     if (core_dump && (code != SUCCESS) && (code != END_OF_FILE)) {
 	abort();			/* Generate a core dump. */
@@ -2917,10 +3640,10 @@ HandleMultiVolume (struct dinfo *dip)
 	dip->di_volume_bytes = (large_t)(dip->di_dbytes_read + total_bytes_read);
 	if (verbose_flag) {
 	  if (dip->di_dtype->dt_dtype == DT_TAPE) {
-	    Fprint ("    [ Continuing in file #%lu, record #%lu, bytes read so far " LUF "... ]\n",
+	    Print ("    [ Continuing in file #%lu, record #%lu, bytes read so far " LUF "... ]\n",
 		(dip->di_files_read + 1), (dip->di_records_read + 1), dip->di_volume_bytes);
 	  } else {
-	    Fprint ("    [ Continuing at record #%lu, bytes read so far " LUF "... ]\n",
+	    Print ("    [ Continuing at record #%lu, bytes read so far " LUF "... ]\n",
 			(dip->di_records_read + 1), dip->di_volume_bytes);
 	  }
 	}
@@ -2929,16 +3652,16 @@ HandleMultiVolume (struct dinfo *dip)
 	dip->di_volume_bytes = (large_t)(dip->di_dbytes_written + total_bytes_written);
 	if (verbose_flag) {
 	  if (dip->di_dtype->dt_dtype == DT_TAPE) {
-	    Fprint ("    [ Continuing in file #%lu, record #%lu, bytes written so far " LUF "... ]\n",
+	    Print ("    [ Continuing in file #%lu, record #%lu, bytes written so far " LUF "... ]\n",
 		(dip->di_files_written + 1), (dip->di_records_written + 1), dip->di_volume_bytes);
 	  } else {
-	    Fprint ("    [ Continuing at record #%lu, bytes written so far " LUF "... ]\n",
+	    Print ("    [ Continuing at record #%lu, bytes written so far " LUF "... ]\n",
 			(dip->di_records_written + 1), dip->di_volume_bytes);
 	  }
 	}
 	dip->di_vbytes_written = (v_large) 0;
     }
-    (void)fflush(stderr);
+    (void)fflush(ofp);
     media_changed = TRUE;
     dip->di_volume_records = 0;
     if (exit_status == END_OF_FILE) {
@@ -2989,7 +3712,7 @@ RequestMultiVolume (struct dinfo *dip, bool reopen, int oflags)
 
     (void) fputs (bp, fp); fflush(fp);
     if (fgets (bp, sizeof(buffer), fp) == NULL) {
-	Fprint ("\n");
+	Print ("\n");
 	status = FAILURE;	/* eof or an error */
 	return (status);
     }
@@ -3007,19 +3730,19 @@ RequestMultiVolume (struct dinfo *dip, bool reopen, int oflags)
 	    status = (*dtf->tf_reopen_file)(dip, oflags);
 	}
 	if (status == SUCCESS) {
-#if !defined(__NUTC__) && !defined(__QNXNTO__)
+#if !defined(__NUTC__) && !defined(__QNXNTO__) && !defined(AIX) && !defined(WIN32)
 	    if (dip->di_dtype->dt_dtype == DT_TAPE) {
 		status = DoRewindTape (dip);
 		if (status == FAILURE) {
 		    (void)(*dtf->tf_close)(dip);
 		}
 	    }
-#endif /* !defined(__NUTC__) && !defined(__QNX_NTO__) */
+#endif /* !defined(__NUTC__) && !defined(__QNX_NTO__) && !defined(AIX) && !defined(WIN32) */
 	}
 	if (status == FAILURE) {
 	    (void) fputs (multi_nready, fp); fflush(fp);
 	    if (fgets (bp, sizeof(buffer), fp) == NULL) {
-		Fprint ("\n");
+		Print ("\n");
 		break;
 	    }
 	    if ( (bp[0] == 'N') || (bp[0] == 'n') ) {
@@ -3035,3 +3758,76 @@ RequestMultiVolume (struct dinfo *dip, bool reopen, int oflags)
     (void)fclose(fp);
     return (status);
 }
+
+#if defined(WIN32)
+
+DWORD WINAPI
+Alarm(struct AlrmArgs *aa)
+{
+    while (WaitForSingleObject(aa->event, aa->timeout) == WAIT_TIMEOUT) {
+	if(TerminateThread(aa->handle ,0 ) == 0)
+	   Fprintf("TerminateThread failed %d error\n",GetLastError());
+        terminate(SIGALRM);
+	}
+    return 0;
+}
+
+void
+winAlarm(u_int sec)
+{
+    static struct AlrmArgs aArgs = {1, INVALID_HANDLE_VALUE, INVALID_HANDLE_VALUE};
+    if (aArgs.event == INVALID_HANDLE_VALUE) {
+        char line[64];
+        sprintf(line, "AlarmHndl%d", getpid());
+        if ((aArgs.event = CreateEvent(NULL, FALSE, FALSE, line)) == 0) {
+	    Fprintf("winAlarm: CreateEvent failed\n");
+	    aArgs.event = INVALID_HANDLE_VALUE;
+	    return;
+	}
+    }
+    if (sec > 0) {
+	HANDLE h,hmain;
+	DWORD tid;
+	if(!DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &hmain, 0, TRUE, DUPLICATE_SAME_ACCESS))
+	   Fprintf("winAlarm DuplicateHandle failed\n");
+	aArgs.timeout = sec*1000;
+	aArgs.handle = hmain;
+	if ((h = CreateThread(NULL, 0, Alarm, &aArgs, 0, &tid)) == 0)
+	   Fprintf("winAlarm: CreateThread failed\n");
+	else 
+	    CloseHandle(h);
+    } else {
+	if (SetEvent(aArgs.event) == 0)
+	    Fprintf("winAlarm: SetEvent failed\n");
+    }
+}
+
+DWORD WINAPI
+Rdstdin(HANDLE h)
+{
+    char buf[4096];
+    DWORD n;
+	if(ReadFile(GetStdHandle(STD_INPUT_HANDLE), buf, sizeof(buf), &n, NULL) == 0) {
+	    Fprintf("Rdstdin: ReadFile failed %d error\n",GetLastError());
+	    if(TerminateThread(h, 0 ) == 0)
+	        Fprintf("TerminateThread failed %d error\n",GetLastError());
+	    Printf("Exiting...\n"); 
+	    terminate(SUCCESS);
+	}
+    return 0;
+}
+
+void
+ReadStdin()
+{
+    HANDLE h,hmain;
+    DWORD tid;
+    if(!DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &hmain, 0, TRUE, DUPLICATE_SAME_ACCESS))
+	Fprintf("ReadStdin: DuplicateHandle failed\n");
+    if ((h = CreateThread(NULL, 0, Rdstdin, hmain, 0, &tid)) == 0)
+	  Fprintf("ReadStdin: CreateThread failed\n");
+    else
+	CloseHandle(h);
+}
+    
+#endif /* defined(WIN32) */

@@ -1,12 +1,10 @@
+static char *whatHeader = "@(#) dt.d/dttape.c /main/2 Jan_18_15:13";
 /****************************************************************************
  *									    *
- *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			  COPYRIGHT (c) 1990 - 2004			    *
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
- *			       Hudson, NH 03051				    *
- *			       (603) 883-2355				    *
  *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
  * its documentation for any purpose and without fee is hereby granted,	    *
@@ -34,6 +32,27 @@
  *	This file contains the tape support functions.
  *
  * Modification History:
+ *
+ * August 16th, 2005 by W Liu
+ *      Changed for Mac Darwin
+ *
+ * April 24th, 2006 by Robin T. Miller.
+ *	Added support for AIX tape operations.
+ *
+ * June 23rd, 2004 by Robin Miller.
+ *      Added support for triggers on corruption.
+ *
+ * November 17th, 2003 by Robin Miller.
+ *	Breakup output to stdout or stderr, rather than writing
+ * all output to stderr.  If output file is stdout ('-') or a log
+ * file is specified, then all output reverts to stderr.
+ *
+ * February 23rd, 2002 by Robin Miller.
+ *      Make porting changes for HP-UX IA64.
+ *
+ * June 25th, 2001 by Robin Miller.
+ *	Restructured code associated with Tru64 Unix EEI, so we obtain
+ * the EEI status for all tape errors, not just EIO errors.
  *
  * January 15th, 2001 by Robin Miller.
  *	On errors, do not terminate() if the error limit is exceeded.
@@ -70,7 +89,7 @@
 
 #if defined(_QNX_SOURCE)
 #  include <sys/qioctl.h>
-#elif defined(SCO)
+#elif defined(SCO) || defined(AIX)
 #  include <sys/ioctl.h>
 #  include <sys/tape.h>
 #elif defined(__WIN32__)
@@ -80,7 +99,7 @@
 #  include <sys/mtio.h>
 #endif /* defined(_QNX_SOURCE) */
 
-#if !defined(_QNX_SOURCE) && !defined(SCO)
+#if !defined(_QNX_SOURCE) && !defined(SCO) && !defined(AIX)
 /************************************************************************
  *									*
  * DoMtOp()	Setup & Do a Magtape Operation.				*
@@ -110,7 +129,7 @@ DoMtOp (dinfo_t *dip, short cmd, daddr_t count, caddr_t msgp)
     }
 
     if (debug_flag) {
-	Fprintf(
+	Printf(
 	"Issuing '%s', count = %d (%#x) [file #%lu, record #%lu]\n",
 			msgp,  mtop->mt_count, mtop->mt_count,
 		(dip->di_mode == READ_MODE) ?
@@ -179,18 +198,18 @@ DoTapeOffline (dinfo_t *dip)
 	return (DoMtOp (dip, cmd, (daddr_t) 0, "tape offline"));
 }
 
-#if !defined(OSFMK)
+#if !defined(OSFMK) && !defined(HP_UX) && !defined(AIX)
 int
 DoRetensionTape (dinfo_t *dip)
 {
-#if defined(FreeBSD)
+#if defined(FreeBSD) && !defined(MacDarwin)
 	short cmd = MTRETENS;
-#else /* !defined(FreeBSD) */
+#else /* !defined(FreeBSD) || defined(MacDarwin) */
 	short cmd = MTRETEN;
 #endif /* defined(FreeBSD) */
 	return (DoMtOp (dip, cmd, (daddr_t) 0, "retension tape"));
 }
-#endif /* !defined(OSFMK) */
+#endif /* !defined(OSFMK) && !defined(HP_UX) && !defined(AIX) */
 
 #if defined(__osf__)			/* Really DEC specific. */
 
@@ -276,9 +295,9 @@ retry:
 #endif
     status = ioctl (dip->di_fd, cmd, argp);
 #if defined(EEI)
-    if ( (status == FAILURE) && (errno == EIO) &&
+    if ( (status == FAILURE) &&
 	 (dip->di_dtype->dt_dtype == DT_TAPE) ) {
-	if (eei_resets) {
+	if ( (errno == EIO) && eei_resets) {
 	    if ( HandleTapeResets(dip) ) {
 		goto retry;
 	    } else if (dip->di_reset_condition) {
@@ -292,12 +311,127 @@ retry:
     }
 #endif /* defined(EEI) */
     if (status == FAILURE) {
+        dip->di_errno = errno;
 	perror (msgp);
 	(void)RecordError();
+        ExecuteTrigger(dip, msgp);
     }
     return (status);
 }
 
+#elif defined(AIX)
+
+int
+DoForwardSpaceFile (dinfo_t *dip, daddr_t count)
+{
+	int cmd = STFSF;
+	return (DoMtOp (dip, cmd, count, "forward space file"));
+}
+
+int
+DoBackwardSpaceFile (dinfo_t *dip, daddr_t count)
+{
+	int cmd = STRSF;
+	return (DoMtOp (dip, cmd, count, "backward space file"));
+}
+
+int
+DoForwardSpaceRecord (dinfo_t *dip, daddr_t count)
+{
+	int cmd = STFSR;
+	return (DoMtOp (dip, cmd, count, "forward space record"));
+}
+
+int
+DoBackwardSpaceRecord (dinfo_t *dip, daddr_t count)
+{
+	int cmd = STRSR;
+	return (DoMtOp (dip, cmd, count, "backward space record"));
+}
+
+int
+DoRewindTape (dinfo_t *dip)
+{
+	int cmd = STREW;
+	return (DoMtOp (dip, cmd, 0, "rewind tape"));
+}
+
+int
+DoRetensionTape (dinfo_t *dip)
+{
+	int cmd = STRETEN;
+	return (DoMtOp (dip, cmd, 0, "retension tape"));
+}
+
+int
+DoSpaceEndOfData (dinfo_t *dip)
+{
+    	errno = EINVAL;
+	return (FAILURE);
+}
+
+int
+DoEraseTape (dinfo_t *dip)
+{
+	int cmd = STERASE;
+	return (DoMtOp (dip, cmd, 0, "erase tape"));
+}
+
+int
+DoWriteFileMark (dinfo_t *dip, daddr_t count)
+{
+	int cmd = STWEOF;
+	return (DoMtOp (dip, cmd, count, "write file mark"));
+}
+
+/************************************************************************
+ *									*
+ * DoMtOp()	Setup & Do a Magtape Operation.				*
+ *									*
+ * Inputs:	dip = The device information.				*
+ *		cmd = The magtape command to issue.			*
+ *		count = The command count (if any).			*
+ *		msg = The error message for failures.			*
+ *									*
+ * Return Value:							*
+ *		Returns 0 / -1 = SUCCESS / FAILURE.			*
+ *									*
+ ************************************************************************/
+int
+DoMtOp (dinfo_t *dip, short cmd, daddr_t count, caddr_t msgp)
+{
+    struct stop Stop;
+    struct stop *stop = &Stop;
+    int status;
+
+    stop->st_op = cmd;
+
+    /*
+     * Setup the 'mt' command count (if any).
+     */
+    if ((stop->st_count = count) < 0) {
+	 stop->st_count = 1;
+    }
+
+    if (debug_flag) {
+	Printf(
+	"Issuing '%s', count = %d (%#x) [file #%lu, record #%lu]\n",
+			msgp,  stop->st_count, stop->st_count,
+		(dip->di_mode == READ_MODE) ?
+		 (dip->di_files_read + 1) : (dip->di_files_written + 1),
+		(dip->di_mode == READ_MODE) ?
+		 dip->di_records_read : dip->di_records_written);
+    }
+    status = ioctl (dip->di_fd, STIOCTOP, stop);
+    if (status == FAILURE) {
+        dip->di_errno = errno;
+	perror (msgp);
+	(void)RecordError();
+        ExecuteTrigger(dip, msgp);
+    }
+    return (status);
+}
+
 #elif defined(_QNX_SOURCE)
 /************************************************************************
  *									*
@@ -378,7 +512,7 @@ DoIoctl (dinfo_t *dip, int cmd, int count, caddr_t msgp)
 	int status;
 
 	if (debug_flag) {
-	    Fprintf ("Issuing '%s', count = %d (%#x)\n",
+	    Printf ("Issuing '%s', count = %d (%#x)\n",
 					msgp,  count, count);
 	}
 	bzero((char *)&qic02ms, sizeof(qic02ms));
@@ -470,7 +604,7 @@ DoIoctl (dinfo_t *dip, int cmd, int count, caddr_t msgp)
 	int status;
 
 	if (debug_flag) {
-	    Fprintf ("Issuing '%s', count = %d (%#x)\n",
+	    Printf ("Issuing '%s', count = %d (%#x)\n",
 					msgp,  count, count);
 	}
 	status = ioctl (dip->di_fd, cmd, count);

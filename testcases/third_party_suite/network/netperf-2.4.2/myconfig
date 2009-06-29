@@ -1,2 +1,5 @@
-echo "./configure_local  --build=arm-none-linux-gnueabi --host=arm-none-linux-gnueabi CC=${CROSS_COMPILER}gcc"
-./configure_local --host=arm-none-linux-gnueabi --build=arm CC=${CROSS_COMPILER}gcc
+#!/bin/sh
+
+if [ ! -e Makefile ]; then
+./configure --host=arm-none-linux-gnueabi --build=arm CC=${CROSS_COMPILER}gcc
+fi

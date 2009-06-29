@@ -1,15 +1,16 @@
+#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 ####################################################################################################
 #
 #    @file   Makefile
 #
 #    @brief  configuration file to compile the CSPI module driver.
-#
-####################################################################################################
-#
-#    Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
-#    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-#    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-#    Freescale Semiconductor, Inc.
 #
 ####################################################################################################
 #Revision History:
@@ -23,11 +24,11 @@
 #Portability: ARM GCC
 #
 ####################################################################################################
-CFLAGS    += -Wall -I$(KLINUX_SRCDIR)/drivers/mxc
-LOADLIBES +=
 
-obj-m := spi_test_module.o
+obj-m = spi_test_module.o
+obj-m += mxc_spi_testmod.o 
 TARGET = spi_test_module.ko
+TARGET += mxc_spi_testmod.ko
 
 all:
 	make -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules

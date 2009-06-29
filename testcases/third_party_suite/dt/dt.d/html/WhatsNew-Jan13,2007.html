@@ -1,0 +1,160 @@
+<HTML>
+<HEAD>
+<TITLE>Data Test Program (dt) January 13th, 2007</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#D19275">
+
+<CENTER><H2><STRONG>What's New as of January 13th, 2007</STRONG></H2></CENTER>
+
+<H2>Changes For This Release</H2>
+This is a major release of <I>dt</I>, which includes several bug
+fixes and new features.
+<P>
+The following changes were made to <I>dt</I> Version 15.34:
+<UL>
+<LI>
+For AIX, implemented IOCINFO to obtain the device size and capacity.
+<LI>     
+When random I/O is used, scale the random number by a multiplier
+and the device block size, to obtain larger offset for >1TB capacities.
+<LI>
+Updated report_record(), used by debug code, since LBA's are now
+treated as 64-bit values to support capacities over 2TB!
+<LI>
+Converted User's Guide from troff/tbl to MS Word and updated the documentation!
+<LI>
+Fixed logic error where we were reopen'ing the file in preparation
+for the next write pass, when we've reached the error limit.  This was
+a problem if oflags=trunc and dispose=keep were used since the resulting
+output file would be zero length.
+<LI>
+Added support for "enable=timestamp" option to write a timestamp
+at the beginning of each data block to help troubleshooting corruptions.
+<LI>
+If regular file is not open when terminating, do not try to delete.
+Added warning in delete_file() if file cannot be unlink'ed, but
+this should never occur now that terminate() only calls if it's open.
+<LI>
+Added check for non-modulo block size patterns, when random I/O is
+enabled, to avoid false data corruption when blocks are overwritten.
+<LI>
+The exit status of programs/scripts executed via "trigger=cmd:" is now
+used to determine subsequent action when returning to <i>dt</i>.<br>
+The actions supported are:
+<pre>
+	0 = Continue running
+	1 = Terminate test
+	2 = Sleep indefinitely
+	3 = Abort generating core.
+</pre>
+<LI>
+Added options "noprog" and "noprogt" to be used in conjunction with
+alarm option to detect no (or slow) I/O progress being made.  This
+is very handy when doing cluster failover testing, to determine how
+long it takes for I/O to continue.  For example: alarm=2s noprogt=45s
+means set an alarm for every 2 seconds, and if I/O has not made progress
+in 45 seconds, report the fact and optionally execute a trigger script.
+<LI>
+For AIX, added support for POSIX Asynchronous I/O.<br>
+Note: Legacy AIO can be enabled for pre-AIX 5.2 (see dtaio.c)
+<LI>
+Added support for AIX tape operations.
+<LI>
+Added AIO support for Windows.
+<LI>
+Added keepalive format control string parsing.
+<pre>
+    Keepalive Format Control:
+            %b = The bytes read or written.  %B = Total bytes read and written.
+            %c = Record count for this pass. %C = Total records for this test.
+            %d = The device name.            %D = The real device name.
+            %e = The number of errors.       %E = The error limit.
+            %f = The files read or written.  %F = Total files read and written.
+            %h = The host name.              %H = The full host name.
+            %k = The kilobytes this pass.    %K = Total kilobytes for this test.
+            %l = Blocks read or written.     %L = Total blocks read and written.
+            %m = The megabytes this pass.    %M = Total megabytes for this test.
+            %p = The pass count.             %P = The pass limit.
+            %r = Records read this pass.     %R = Total records read this test.
+            %s = The seconds this pass.      %S = The total seconds this test.
+            %t = The pass elapsed time.      %T = The total elapsed time.
+            %i = The I/O mode (read/write)   %u = The user (login) name.
+            %w = Records written this pass.  %W = Total records written this test.
+
+    Performance Keywords:
+            %bps  = The bytes per second.    %lbps = Logical blocks per second.
+            %kbps = Kilobytes per second.    %mbps = The megabytes per second.
+            %iops = The I/O's per second.    %spio = The seconds per I/O.
+
+      Lowercase means per pass stats, while uppercase means total stats.
+
+      Default: %d Stats: mode %i, blocks %l, %m Mbytes, pass %p/%P, elapsed %t
+                     or if pass statistics summary is disabled:
+               %d Stats: mode %i, blocks %L, %M Mbytes, pass %p/%P, elapsed %T
+
+</pre>
+<LI>
+For QNX, change hardware flow control flags (IHFLOW | OHFLOW)
+from c_lflag to c_cflag field in the termios structure.
+</PRE>
+<P>
+<CENTER>Within NetApp, the updated <I>dt</I> kits are located @ URL:</CENTER>
+<P>
+<CENTER><A HREF="http://web.rtp.netapp.com/~rtmiller/dt.html">http://web.rtp.netapp.com/~rtmiller/dt.html</A></CENTER>
+<P>
+<CENTER>External to HP, you can obtain <I>dt</I> kits from URL:</CENTER>
+<P>
+<CENTER>TBD</CENTER>
+</UL>
+<HR>
+<A HREF="mailto:Robin.Miller@netapp.com"><IMG SRC="../gifs/mailbox.gif" ALT="Mail"></A>
+Send mail to admin of this page: <EM>Robin.Miller@netapp.com</EM>
+<A HREF="../index.html"><IMG SRC="../gifs/home04.gif" ALT="Home"></A>
+To Robin's home page.
+<P>
+Last Modified: January 17th, 2007
+<HR>
+
+<H2>Examples:</H2>
+<HR SIZE=5 NOSHADE>
+<pre>
+# <b>./dt version</b>
+    --> Date: January 13th, 2007, Version: 15.34, Author: Robin T. Miller <--
+# ./dt if=/dev/rhd5 count=1 disable=compare,stats enable=debug    
+dt: IOCINFO Capacity: 131072 blocks, device size 512 bytes.
+dt: Attempting to open input file '/dev/rhd5', open flags = 0 (0)...
+dt: Input file '/dev/rhd5' successfully opened, fd = 3
+dt: Data limit set to 67108864 bytes (64.000 Mbytes), 131072 blocks.
+dt: Allocated buffer at address 0x20007000 of 516 bytes, using offset 0
+dt: Closing file '/dev/rhd5', fd = 3...
+# <b>./dt if=/dev/rhdisk12 count=1 disable=compare,stats enable=debug</b>
+dt: IOCINFO Capacity: 34288435200 blocks, device size 512 bytes.
+dt: Attempting to open input file '/dev/rhdisk12', open flags = 0 (0)...
+dt: Input file '/dev/rhdisk12' successfully opened, fd = 3
+dt: Data limit set to 17555678822400 bytes (16742400.000 Mbytes), 34288435200 blocks.
+dt: Allocated buffer at address 0x20007000 of 516 bytes, using offset 0
+dt: Closing file '/dev/rhdisk12', fd = 3...
+# 
+# <b>./dt of=/mnt/MPIO/mpio_0/MPIO-File alarm=2s noprogt=45s \
+  trigger=cmd:/u/jhaynes/bin/collect_stats.sh oncerr=abort \
+  min=2k max=256k incr=var iotype=random disable=pstats \
+  capacity=550m procs=12 runtime=30m</b>
+dt (21702): No progress made for 330 seconds!
+dt (21702): Executing: /u/jhaynes/bin/collect_stats.sh
+/mnt/MPIO/mpio_0/MPIO-18642-21702 noprog 512 266665472 0 0 0
+		...
+# <b>cat trigger</b>
+echo $*
+exit 2
+# <b>./dt of=/var/tmp/dt.data alarm=3s trigger="cmd:trigger" disable=stats flags=direct \
+  enable=noprog bs=32k noprogt=1s limit=1m procs=100</b>
+dt (16308): No progress made for 2 seconds!
+dt (16308): Executing: trigger /var/tmp/dt.data-16308 noprog 512 131072 0 0 0
+/var/tmp/dt.data-16308 noprog 512 131072 0 0 0
+dt (16308): Trigger exited with status 2!
+dt (16308): Sleeping forever...
+            ...
+</pre>
+</BODY>
+</HTML>

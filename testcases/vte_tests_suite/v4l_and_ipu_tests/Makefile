@@ -1,19 +1,17 @@
+#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 ###################################################################################################
 #
 #    @file   Makefile
 #
 #    @brief  configuration file to compile the VTE MC13783 test applications.
 #
-###################################################################################################
-#
-#                              Motorola Confidential Proprietary
-#                   (c) Copyright 2004, Motorola, Inc.  All rights reserved.  
-#            
-#Presence of a copyright notice is not an acknowledgement of publication.  
-#This software file listing contains information of Motorola, Inc. that is of a confidential and 
-#proprietary nature and any viewing or use of this file is prohibited without specific written 
-#permission from Motorola, Inc.
-#     
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking
@@ -44,7 +42,7 @@ all: config
 install:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
 	ln -f pxp_test-1.01/pxp_test ../../bin/
-	ln -f pxp_test-1.01/testfiles/* ../../bin/
+	ln -f pxp_test-1.01/testfiles/*.s* ../../bin/
 
 clean:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done

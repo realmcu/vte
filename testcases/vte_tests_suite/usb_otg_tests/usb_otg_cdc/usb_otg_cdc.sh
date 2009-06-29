@@ -1,3 +1,11 @@
+#Copyright 2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 #!/bin/sh
 ###################################################################################################
 #
@@ -6,18 +14,11 @@
 #    @brief  shell script template for testcase design "TODO" is where to modify block.
 #
 ###################################################################################################
-#
-#   Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
-#   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-#   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-#   Freescale Semiconductor, Inc.
-#
-###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-#Hake Huang/-----             02/12/2008     N/A          Initial version
+#Hake Huang/-----             02/12/2009     N/A          Initial version
 # 
 ###################################################################################################
 
@@ -56,11 +57,14 @@ echo "please connect the board to host with usb cable"
 sleep 3
 
 echo "please set up the host usb0 to $HOSTIP"
+echo "plese run following command on host"
 echo "modprobe usbnet;modprobe cdc_ether;modprobe g_ether"
-echo "like ifconfig usb0 $HOSTIP up"
+echo "ifconfig usb0 $HOSTIP up"
 
-sleep 12
+echo "press enter when ready"
+read -p tt
 
+RC=0
 return $RC
 }
 

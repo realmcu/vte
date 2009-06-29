@@ -1,12 +1,10 @@
+static char *whatHeader = "WHATSTRING";
 /****************************************************************************
  *									    *
- *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			  COPYRIGHT (c) 1990 - 2004			    *
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
- *			       Hudson, NH 03051				    *
- *			       (603) 883-2355				    *
  *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
  * its documentation for any purpose and without fee is hereby granted,	    *
@@ -34,6 +32,29 @@
  *	Functions to handle multiple processes for 'dt' program.
  *
  * Modification History:
+ *
+ * January 5th, 2007 by Robin T. Miller.
+ *	When displaying slice information w/debug enabled, format lba's
+ * and block length values as 64-bits (32-bits is limited to 2TB!).
+ *
+ * August 3rd, 2005 by Robin T. Miller.
+ *      Fixed bug in init_slice_info() where the position was not taken
+ * into account when calculating the slice resid. We would end up writing
+ * too much, and in the case of Hazard, we were destroying the GDID!.
+ *
+ * April 12th, 2005 by Robin T. Miller
+ *	Fixed debug output in setup_slice(), when there was a mismatch
+ * between 32 and 64 bit values and format control characters.  Also
+ * removed WINDOWS conditionalization, which shouldn't be needed, now
+ * that the root cause has been identified and fixed.
+ *
+ * November 17th, 2003 by Robin Miller.
+ *	Breakup output to stdout or stderr, rather than writing
+ * all output to stderr.  If output file is stdout ('-') or a log
+ * file is specified, then all output reverts to stderr.
+ *
+ * March 14th, 2003 by Robin Miller.
+ *	Added support for testing an individual slice.
  *
  * May 31st, 2001 by Robin Miller.
  *	Update abort_procs() to use max_procs, valid for both multiple
@@ -93,9 +114,11 @@
  *	  causing terminating children to be ignored by wait(). Yuck!!! ]
  */
 #include "dt.h"
-#include <signal.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
+#if !defined(WIN32)
+#  include <signal.h>
+#  include <sys/stat.h>
+#  include <sys/wait.h>
+#endif /* !defined(WIN32) */
 
 #define PROC_ALLOC (sizeof(pid_t) * 3)	/* Extra allocation for PID.	*/
 
@@ -112,9 +135,16 @@ struct dt_procs {
  * Slice Range Definition:
  */
 typedef struct slice_info {
+	int	slice;			/* Slice number.		*/
 	large_t	slice_position;		/* Starting slice position.	*/
 	large_t	slice_length;		/* The slice data length.	*/
 } slice_info_t;
+
+/*
+ * Forward References:
+ */
+static void init_slice_info(struct dinfo *dip, slice_info_t *sip, large_t *data_resid);
+static void setup_slice(struct dinfo *dip, slice_info_t *sip);
 
 struct dt_procs *ptable;		/* Multiple 'dt' procs table.	*/
 int num_procs = 0;			/* Number of procs to create.	*/
@@ -122,6 +152,8 @@ int cur_proc = 0;			/* Current count of processes.	*/
 int max_procs = 0;			/* Maximum processes started.	*/
 int procs_active = 0;			/* Number of active processes.	*/
 int num_slices = 0;			/* Number of slices to create.	*/
+int slice_num = 0;			/* Slice number to operate on.	*/
+#if !defined(WIN32)
 
 /*
  * abort_procs - Abort processes started by the parent.
@@ -141,7 +173,7 @@ abort_procs(void)
     for (dtp = ptable, procs=0; procs < max_procs; procs++, dtp++) {
 	if ((pid = dtp->dt_pid) == (pid_t) 0) continue;
 	if (debug_flag) {
-	    Fprintf("Aborting child process %d via a SIGINT (%d)...\n",
+	    Printf("Aborting child process %d via a SIGINT (%d)...\n",
 								pid, SIGINT);
 	}
 	if (dtp->dt_active) (void) kill (pid, SIGINT);
@@ -157,7 +189,7 @@ await_procs(void)
     int procs, status;
 
     if (debug_flag) {
-	Fprintf ("Waiting for %d child processes to complete...\n", procs_active);
+	Printf ("Waiting for %d child processes to complete...\n", procs_active);
     }
     while (1) {
 	if ((wpid = waitpid ((pid_t) -1, &child_status, 0)) == FAILURE) {
@@ -176,7 +208,7 @@ await_procs(void)
 	 * Examine the child process status.
 	 */
 	if ( WIFSTOPPED(child_status) ) {
-	    Fprintf ("Child process %d, stopped by signal %d.\n",
+	    Printf ("Child process %d, stopped by signal %d.\n",
 					wpid, WSTOPSIG(child_status));
 	    continue; /* Maybe attached from debugger... */
 	} else if ( WIFSIGNALED(child_status) ) {
@@ -186,7 +218,7 @@ await_procs(void)
 	} else { /* Process must be exiting... */
 	    status = WEXITSTATUS (child_status);
 	    if (debug_flag) {
-		Fprintf ("Child process %d, exiting with status %d\n",
+		Printf ("Child process %d, exiting with status %d\n",
 							wpid, status);
 	    }
 	}
@@ -230,11 +262,11 @@ fork_process(void)
     if ((pid = fork()) == (pid_t) -1) {
 	if (errno == EAGAIN) {
 	    if (procs_active == 0) {
-		Fprintf (
+		LogMsg (efp, logLevelCrit, 0,
 	"ERROR: could NOT start any processes, please check your system...\n");
 		exit (FATAL_ERROR);
 	    } else {
-		Fprintf (
+		Printf (
 	"WARNING: system imposed process limit reached, only %d procs started...\n",
 								procs_active);
 	    }
@@ -280,7 +312,7 @@ start_procs(void)
 	    dtp->dt_active = TRUE;
 	    procs_active++;
 	    if (debug_flag) {
-		Fprintf ("Started process %d...\n", child_pid);
+		Printf ("Started Process %d...\n", child_pid);
 	    }
 	} else {			/* Child process... */
 	    struct stat sb;
@@ -321,7 +353,7 @@ start_slices(void)
     size_t psize;
     struct slice_info slice_info;
     slice_info_t *sip = &slice_info;
-    large_t slice_length, data_resid;
+    large_t data_resid;
     int procs;
 
     max_procs = num_slices;
@@ -339,21 +371,13 @@ start_slices(void)
     (void) signal (SIGINT, terminate);
     (void) signal (SIGTERM, terminate);
 
-    sip->slice_position = file_position;
-    slice_length = ((dip->di_data_limit - file_position) / num_slices);
-    sip->slice_length = rounddown(slice_length, dip->di_dsize);
-    if (sip->slice_length < dip->di_dsize) {
-	Fprintf("Slice length of " LUF " bytes is too small!\n",
-						sip->slice_length);
-	exit (FATAL_ERROR);
-    }
-    data_resid = (dip->di_data_limit - (sip->slice_length * num_slices));
-    data_resid = rounddown(data_resid, dip->di_dsize);
+    init_slice_info(dip, sip, &data_resid);
 
     cur_proc = 1;
     procs_active = 0;
 
     for (dtp = ptable, procs = 0; procs < max_procs; procs++, dtp++) {
+	sip->slice++;
 	if ((child_pid = fork_process()) == (pid_t) -1) {
 	    break;
 	} else if (child_pid) {		/* Parent process gets the PID. */
@@ -362,7 +386,7 @@ start_slices(void)
 	    dtp->dt_active = TRUE;
 	    procs_active++;
 	    if (debug_flag) {
-		Fprintf ("Started slice %d...\n", child_pid);
+		Printf ("Started Slice %d, PID %d...\n", sip->slice, child_pid);
 	    }
 	    if (procs < max_procs) {
 		sip->slice_position += sip->slice_length;
@@ -377,29 +401,86 @@ start_slices(void)
 	    if (unique_pattern) {
 		pattern = data_patterns[(cur_proc - 1) % npatterns];
 	    }
-	    file_position = sip->slice_position;
-	    if (dip->di_random_io) {
-		rdata_limit = (file_position + sip->slice_length);
-	    }
-	    /*
-	     * Restrict data limit to slice length or user set limit.
-	     */
-	    data_limit = MIN(data_limit, sip->slice_length);
-	    if (debug_flag || Debug_flag) {
-		if (dip->di_random_io) {
-		    Fprintf(
-		"Start Position " FUF " (lba %u), Data Limit " LUF ", Random Limit " LUF "\n",
-			file_position, (u_int32)(file_position / dip->di_dsize),
-			data_limit, rdata_limit);
-		} else {
-		    Fprintf("Start Position " FUF " (lba %u), Data Limit " LUF " bytes\n",
-			file_position, (u_int32)(file_position / dip->di_dsize),
-			data_limit);
-		}
-		break;
-	    }
+	    setup_slice(dip, sip);
 	    break;			/* Child process, continue... */
 	}
     }
     return (child_pid);
+}
+#endif /* !defined(WIN32) */
+
+void
+init_slice(struct dinfo *dip, int slice)
+{
+    struct slice_info slice_info;
+    slice_info_t *sip = &slice_info;
+    large_t data_resid;
+
+    init_slice_info(dip, sip, &data_resid);
+    sip->slice_position += (sip->slice_length * (slice - 1));
+    /*
+     * Any residual goes to the last slice.
+     */
+    if (slice == num_slices) {
+	sip->slice_length += data_resid;
+    }
+    sip->slice = slice;
+    setup_slice(dip, sip);
+
+    /*
+     * Initialize the starting data pattern for each slice.
+     */
+    if (unique_pattern) {
+	pattern = data_patterns[(slice - 1) % npatterns];
+    }
+    return;
+}
+
+static void
+init_slice_info(struct dinfo *dip, slice_info_t *sip, large_t *data_resid)
+{
+    large_t dlimit = (dip->di_data_limit - file_position);
+    large_t slice_length;
+
+    sip->slice = 0;
+    sip->slice_position = file_position;
+    slice_length = (dlimit / num_slices);
+    sip->slice_length = rounddown(slice_length, dip->di_dsize);
+    if (sip->slice_length < dip->di_dsize) {
+	LogMsg (efp, logLevelCrit, 0,
+		"Slice length of " LUF " bytes is too small!\n",
+						sip->slice_length);
+	exit (FATAL_ERROR);
+    }
+    *data_resid = (dlimit - (sip->slice_length * num_slices));
+    *data_resid = rounddown(*data_resid, dip->di_dsize);
+    return;
+}
+
+static void
+setup_slice(struct dinfo *dip, slice_info_t *sip)
+{
+    file_position = sip->slice_position;
+    if (dip->di_random_io) {
+	rdata_limit = (file_position + sip->slice_length);
+    }
+    /*
+     * Restrict data limit to slice length or user set limit.
+     */
+    data_limit = MIN(data_limit, sip->slice_length);
+    if (debug_flag || Debug_flag) {
+	large_t dlimit = (dip->di_random_io) ? rdata_limit : data_limit;
+	Printf("Slice %d Information:\n"
+		"\t\t Start: " FUF " offset (lba " LUF ")\n"
+		"\t\t   End: " FUF " offset (lba " LUF ")\n"
+		"\t\tLength: " FUF " bytes (" LUF " blocks)\n"
+		"\t\t Limit: " FUF " bytes (" LUF " blocks)\n",
+		sip->slice,
+		file_position, (large_t)(file_position / dip->di_dsize),
+		(file_position + sip->slice_length),
+		(large_t)((file_position + sip->slice_length) / dip->di_dsize),
+		sip->slice_length, (large_t)(sip->slice_length / dip->di_dsize),
+		dlimit, (large_t)(dlimit / dip->di_dsize));
+    }
+    return;
 }

@@ -1,0 +1,107 @@
+# WHATSTRING
+#
+# %Z%%M% %I% %E% 1990 by Robin Miller
+#
+#/****************************************************************************
+# *									     *
+# *			  COPYRIGHT (c) 1990 - 2003			     *
+# *			   This Software Provided			     *
+# *				     By					     *
+# *			  Robin's Nest Software Inc.			     *
+# *									     *
+# * Permission to use, copy, modify, distribute and sell this software and   *
+# * its documentation for any purpose and without fee is hereby granted	     *
+# * provided that the above copyright notice appear in all copies and that   *
+# * both that copyright notice and this permission notice appear in the	     *
+# * supporting documentation, and that the name of the author not be used    *
+# * in advertising or publicity pertaining to distribution of the software   *
+# * without specific, written prior permission.				     *
+# *									     *
+# * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, 	     *
+# * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN	     *
+# * NO EVENT SHALL HE BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL   *
+# * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR    *
+# * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS  *
+# * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF   *
+# * THIS SOFTWARE.							     *
+# *									     *
+# ****************************************************************************/
+#
+# Makefile -- makefile for program 'dt'
+#	
+
+CC = cl
+LD = link
+# Libraries the program links to which are considered volatile
+
+LIBS=
+
+# Libraries considered static
+
+EXTLIBS=
+
+LINTLIBS=
+
+# P or G flag ( override on command line by invoking make PORG=-g )
+
+# PORG      = -O3
+
+#AWK=	awk
+#CFLAGS= $(PORG) -D__WIN32__ -D_NT_SOURCE
+#CPP=	/lib/cpp
+#CPPOPTS= 
+#LDFLAGS= -s
+
+HDRS=		dt.h
+
+### MKMF:SOURCES ###
+
+CFILES=		\
+		dt.c		\
+		dtaio.c		\
+		dtgen.c		\
+		dtinfo.c	\
+		dtread.c	\
+		dtwrite.c	\
+		dtstats.c	\
+		dtutil.c	\
+		dtusage.c	\
+		dtprocs.c
+#		dttape.c
+
+
+### MKMF:OBJECTS ###
+
+OBJS=		$(CFILES:.c=.obj)
+
+
+### MKMF:LINTOBJS ###
+
+LINTOBJS=	$(CFILES:.c=.ln)
+
+
+PROGRAM=	dt.exe
+
+$(PROGRAM):	$(OBJS) $(XOBJS) $(LIBS)
+		@echo loading $(PROGRAM) ... 
+		$(LD) $(LDFLAGS) /out:$(PROGRAM) $(LDFLAGS) $(OBJS) $(LIBS) $(EXTLIBS)
+		@echo done
+
+$(OBJS):	%.obj:%.c
+		$(CC) $(CFLAGS) /DAIO /c $<
+		
+		
+
+lint:		$(LINTOBJS)
+		lint $(LINTFLAGS) $(LINTOBJS) $(LINTLIBS)
+		touch lint
+
+clean:
+		@del $(OBJS) $(PROGRAM)
+
+tags:	$(CFILES) $(HDRS)
+	ctags $(CFILES) $(HDRS)
+
+
+# DO NOT DELETE THIS LINE
+

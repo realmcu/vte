@@ -1,12 +1,10 @@
+static char *whatHeader = "@(#) dt.d/dtread.c /main/3 Jan_18_15:13";
 /****************************************************************************
  *									    *
- *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			  COPYRIGHT (c) 1990 - 2004			    *
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
- *			       Hudson, NH 03051				    *
- *			       (603) 883-2355				    *
  *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
  * its documentation for any purpose and without fee is hereby granted,	    *
@@ -33,13 +31,43 @@
  *	Read routines for generic data test program.
  */
 #include "dt.h"
-#if !defined(_QNX_SOURCE)
+#if !defined(_QNX_SOURCE) && !defined(WIN32)
 #  include <sys/file.h>
-#endif /* !defined(_QNX_SOURCE) */
+#endif /* !defined(_QNX_SOURCE) && !defined(WIN32) */
 #include <sys/stat.h>
 
 /*
  * Modification History:
+ *
+ * October 21st, 2004 by Robin Miller.
+ *      For variable record lengths, ensure we prime the first size
+ * to ensure it meets device size alignment requirements.
+ *
+ * June 23rd, 2004 by Robin Miller.
+ *      Added support for triggers on corruption.
+ *
+ * February 13th, 2004 by Robin Miller.
+ *      Factor in the file position when doing reverse I/O, to avoid
+ * reading into that area (which is now deemed protected).
+ *
+ * November 17th, 2003 by Robin Miller.
+ *	Breakup output to stdout or stderr, rather than writing
+ * all output to stderr.  If output file is stdout ('-') or a log
+ * file is specified, then all output reverts to stderr.
+ *
+ * October 8th, 2003 by Robin Miller.
+ *	On AIX, accept ENXIO for I/O's pass EOF.
+ *
+ * March 4th, 2003 by Robin Miller.
+ *      Add EOF support for older SunOS release.  This means reads
+ * past EOF return EIO, but continue on this to find real capacity.
+ *
+ * November 20th, 2002 by Robin Miller.
+ *	Updated FindCapacity() to expect ENXIO for reads past EOM.
+ *
+ * June 25th, 2001 by Robin Miller.
+ *	Restructured code associated with Tru64 Unix EEI, so we obtain
+ * the EEI status for all tape errors, not just EIO errors.
  *
  * January 28th, 2001 by Robin Miller.
  *	Allow FindCapacity() to be called prior to the file being opened
@@ -209,8 +237,8 @@
 int
 read_data (struct dinfo *dip)
 {
-    ssize_t count;
-    size_t bsize, dsize;
+    register ssize_t count;
+    register size_t bsize, dsize;
     int status = SUCCESS;
     struct dtfuncs *dtf = dip->di_funcs;
     u_int32 lba;
@@ -219,13 +247,17 @@ read_data (struct dinfo *dip)
      * For variable length records, initialize to minimum record size.
      */
     if (min_size) {
-	dsize = min_size;
+        if (variable_flag) {
+            dsize = get_variable (dip);
+        } else {
+	    dsize = min_size;
+        }
     } else {
 	dsize = block_size;
     }
     if (dip->di_random_access) {
 	if (io_dir == REVERSE) {
-	    (void)set_position(dip, (off_t)rdata_limit);
+	    (void)set_position(dip, (OFF_T)rdata_limit);
 	}
 	lba = get_lba(dip);
 	dip->di_offset = get_position(dip);
@@ -254,23 +286,24 @@ read_data (struct dinfo *dip)
 	 */
 	if ( (dip->di_fbytes_read + dsize) > data_limit) {
 	    bsize = (size_t)(data_limit - dip->di_fbytes_read);
-	    if (debug_flag && !variable_flag) {
-		Fprintf ("Record #%lu, Reading a partial record of %lu bytes...\n",
-					(dip->di_records_read + 1), bsize);
-	    }
 	} else {
 	    bsize = dsize;
 	}
 
 	if (io_dir == REVERSE) {
-	    bsize = MIN(dip->di_offset, bsize);
-	    dip->di_offset = set_position(dip, (off_t)(dip->di_offset - bsize));
+	    bsize = MIN((dip->di_offset-file_position), bsize);
+	    dip->di_offset = set_position(dip, (OFF_T)(dip->di_offset - bsize));
 	} else if (io_type == RANDOM_IO) {
 	    dip->di_offset = do_random (dip, TRUE, bsize);
 	}
 
+        if (debug_flag && (bsize != dsize) && !variable_flag) {
+            Printf ("Record #%lu, Reading a partial record of %lu bytes...\n",
+                                    (dip->di_records_read + 1), bsize);
+        }
+
 	if (iot_pattern || lbdata_flag) {
-	    lba = make_lbdata (dip, (off_t)(dip->di_volume_bytes + dip->di_offset));
+	    lba = make_lbdata (dip, (OFF_T)(dip->di_volume_bytes + dip->di_offset));
 	}
 
 	/*
@@ -295,14 +328,17 @@ read_data (struct dinfo *dip)
 	}
 
 	if (Debug_flag) {
-	    u_int32 iolba = NO_LBA;
+	    large_t iolba = NO_LBA;
+            off_t iopos = (off_t) 0;
 	    if (dip->di_random_access) {
-		iolba = (get_position(dip) / dip->di_dsize);
+                iopos = get_position(dip);
+		iolba = (iopos / dip->di_dsize);
 	    } else if (lbdata_flag || iot_pattern) {
-		iolba = make_lbdata (dip, (off_t)(dip->di_volume_bytes + dip->di_offset));
+                iopos = (OFF_T)(dip->di_volume_bytes + dip->di_offset);
+		iolba = make_lbdata (dip, iopos);
 	    }
 	    report_record(dip, (dip->di_files_read + 1), (dip->di_records_read + 1),
-				iolba, READ_MODE, data_buffer, bsize);
+				iolba, iopos, READ_MODE, data_buffer, bsize);
 	}
 
 	count = read_record (dip, data_buffer, bsize, dsize, &status);
@@ -359,7 +395,7 @@ read_data (struct dinfo *dip)
 	if (io_dir == FORWARD) {
 	    dip->di_offset += count;	/* Maintain our own position too! */
 	} else if ( (io_type == SEQUENTIAL_IO) &&
-		    (dip->di_offset == (off_t) 0) ) {
+		    (dip->di_offset == (OFF_T) file_position) ) {
 	    set_Eof(dip);
 	    break;
 	}
@@ -367,7 +403,7 @@ read_data (struct dinfo *dip)
 	if (step_offset) {
 	    if (io_dir == FORWARD) {
 		dip->di_offset = incr_position (dip, step_offset);
-	    } else if ((dip->di_offset -= step_offset) <= (off_t) 0) {
+	    } else if ((dip->di_offset -= step_offset) <= (OFF_T) file_position) {
 		set_Eof(dip);
 		break;
 	    }
@@ -394,8 +430,14 @@ check_read (struct dinfo *dip, ssize_t count, size_t size)
 
     if ((size_t)count != size) {
 	if (count == FAILURE) {
+#if defined(WIN32)
+	    report_error ("ReadFile", FALSE);
+	    ReportDeviceInfo (dip, 0, 0, (bool)((errno=GetLastError()) == ERROR_IO_DEVICE));
+#else /* !defined(WIN32) */
 	    report_error ("read", FALSE);
 	    ReportDeviceInfo (dip, 0, 0, (bool)(errno == EIO));
+#endif /* defined(WIN32) */
+            (void)ExecuteTrigger(dip, "read");
 	} else {
 	    /*
 	     * For reads at end of file or reads at end of block
@@ -408,7 +450,7 @@ check_read (struct dinfo *dip, ssize_t count, size_t size)
 	     */
 	    if ( (debug_flag || verbose_flag || ((size_t)count > size)) &&
 		 (io_mode == TEST_MODE) /*&& (io_type == SEQUENTIAL_IO)*/ ) {
-		Fprintf(
+		Printf(
 	"WARNING: Record #%lu, attempted to read %lu bytes, read only %lu bytes.\n",
 						(dip->di_records_read + 1), size, count);
 	    }
@@ -439,7 +481,7 @@ read_eof(struct dinfo *dip)
     int status = SUCCESS;
 
     if (debug_flag) {
-	Fprintf("Processing end of file... [file #%lu, record #%lu]\n",
+	Printf("Processing end of file... [file #%lu, record #%lu]\n",
 			(dip->di_files_read + 1), (dip->di_records_read + 1));
     }
     dip->di_eof_processing = TRUE;
@@ -471,7 +513,7 @@ read_eom(struct dinfo *dip)
     int status = SUCCESS;
 
     if (debug_flag) {
-	Fprintf("Processing end of media... [file #%lu, record #%lu]\n",
+	Printf("Processing end of media... [file #%lu, record #%lu]\n",
 			(dip->di_files_read + 1), (dip->di_records_read + 1));
     }
     dip->di_eom_processing = TRUE;
@@ -522,12 +564,18 @@ read_record (	struct dinfo	*dip,
 
 retry:
     *status = SUCCESS;
+    if (noprog_flag) { dip->di_initiated_time = time((time_t *)0); }
+#if defined(WIN32)
+   if (!ReadFile (dip->di_fd, buffer, bsize, &count, NULL)) { count = -1; }
+#else /* !defined(WIN32) */
     count = read (dip->di_fd, buffer, bsize);
+#endif /* defined(WIN32) */
+    if (noprog_flag) { dip->di_initiated_time = (time_t) 0; }
 
 #if defined(EEI)
-    if ( (count == FAILURE) && (errno == EIO) &&
+    if ( (count == FAILURE) &&
 	 (dip->di_dtype->dt_dtype == DT_TAPE) ) {
-	if (eei_resets) {
+	if ( (errno == EIO) && eei_resets) {
 	    if ( HandleTapeResets(dip) ) {
 		goto retry;
 	    }
@@ -550,7 +598,7 @@ retry:
 		    return (count);	/* Expect two file marks @ EOM. */
 		}
 		*status = HandleMultiVolume (dip);
-		dip->di_offset = (off_t) 0;
+		dip->di_offset = (OFF_T) 0;
 		if ( !dip->di_eof_processing && !dip->di_eom_processing ) {
 		    if (*status == SUCCESS) goto retry;
 		}
@@ -571,9 +619,9 @@ retry:
 	dip->di_fbytes_read += count;
 	dip->di_vbytes_read += count;
 	if ((size_t)count == dsize) {
-	    records_processed++;
+	    dip->di_full_reads++;
 	} else {
-	    partial_records++;
+	    dip->di_partial_reads++;
 	}
     }
 
@@ -637,26 +685,27 @@ int
 FindCapacity (struct dinfo *dip)
 {
     u_int32 dsize = dip->di_dsize;
-    off_t lba, max_seek = (MAX_SEEK - dsize);
+    OFF_T lba, max_seek = (MAX_SEEK - dsize);
     long adjust = ((250 * MBYTE_SIZE) / dsize);
     int attempts = 0;
     ssize_t count, last;
     u_char *buffer;
-    int fd, saved_fd = NoFd, status = SUCCESS;
+    HANDLE fd, saved_fd = NoFd;
+    int status = SUCCESS;
     bool temp_fd = FALSE;
 
     /*
      * Use the user specified capacity (if specified).
      */
     if (user_capacity) {
-	lba = (off_t)(user_capacity / dsize);
+	lba = (OFF_T)(user_capacity / dsize);
 	goto set_capacity;
     } else if (dip->di_data_limit) {
 	return (status);
     }
 
     if (debug_flag || Debug_flag || rDebugFlag) {
-	Fprintf ("Attempting to calculate capacity via seek/read algorithm...\n");
+	Printf ("Attempting to calculate capacity via seek/read algorithm...\n");
     }
     /*
      * If the device is open in write mode, open another
@@ -665,12 +714,18 @@ FindCapacity (struct dinfo *dip)
     if ( (dip->di_fd == NoFd) || (dip->di_mode == WRITE_MODE) ) {
 	temp_fd = TRUE;
 	saved_fd = dip->di_fd;
-#if defined(__WIN32__)
+#if defined(WIN32)
+	if ( (fd = CreateFile (dip->di_dname, GENERIC_READ, (FILE_SHARE_READ | FILE_SHARE_WRITE), NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL)) == NoFd) {
+#elif defined(__WIN32__)
 	if ( (fd = open (dip->di_dname, (O_RDONLY|O_BINARY))) < 0) {
 #else /* !defined(__WIN32__) */
 	if ( (fd = open (dip->di_dname, O_RDONLY)) < 0) {
 #endif /* defined(__WIN32__) */
+#if defined(WIN32)
+	    report_error ("FindCapacity() CreateFile", FALSE);
+#else /* !defined(WIN32) */
 	    report_error ("FindCapacity() open", FALSE);
+#endif /* defined(WIN32) */
 	    return (FAILURE);
 	}
 	dip->di_fd = fd;
@@ -688,7 +743,7 @@ FindCapacity (struct dinfo *dip)
     while (TRUE) {
 	attempts++;
 #if defined(DEBUG)
-	Fprintf("lba = " LUF ", adjust = %lu\n", lba, adjust);
+	Printf("lba = " LUF ", adjust = %lu\n", lba, adjust);
 #endif
 	/*
 	 * We cannot seek past the maximum allowable file position,
@@ -696,24 +751,44 @@ FindCapacity (struct dinfo *dip)
 	 * limit seeks appropriately, and break out of this loop
 	 * if we hit the upper seek limit.
 	 */
-	if ( (off_t)(lba * dsize) < (off_t) 0 ) {
+	if ( (OFF_T)(lba * dsize) < (OFF_T) 0 ) {
 	    lba = (max_seek / dsize);
 	}
-	(void) set_position (dip, (off_t)(lba * dsize));
+	(void) set_position (dip, (OFF_T)(lba * dsize));
+#if defined(WIN32)
+	if(!ReadFile(dip->di_fd, buffer, dsize, &count, NULL)) count = -1;
+	if( count == dsize) {
+#else /* !defined(WIN32) */
 	if ( (count = read (dip->di_fd, buffer, dsize)) == (ssize_t)dsize) {
-	    if (lba == (off_t)(max_seek / dsize)) break;
+#endif /* defined(WIN32) */
+	    if (lba == (OFF_T)(max_seek / dsize)) break;
 	    lba += adjust;
 	    if (adjust == 1) break;
-#if defined(SCO)
-	} else if ( (count == 0) || ((errno == ENOSPC) || (errno == ENXIO)) ) {
+#if defined(SCO) || defined(HP_UX) || defined(AIX)
+	} else if ( (count == 0) ||
+		    ( (count < 0) &&
+		      ((errno == ENOSPC) || (errno == ENXIO)) ) ) {
+#elif defined(BrokenEOF)
+	} else if ( (count == 0) ||
+		    ( (count < 0) &&
+		      ((errno == ENOSPC) || (errno == EIO)) ) ) {
+#elif defined(WIN32)
+	} else if ( (count == 0) ||
+		    ((count < 0) && 
+		    ((errno = GetLastError()) == ERROR_DISK_FULL) ) ) { 
 #else /* !defined(SCO) */
-	} else if ( (count == 0) || (errno == ENOSPC) ) {
-#endif /* defined(SCO) */
+	} else if ( (count == 0) ||
+		    ( (count < 0) && (errno == ENOSPC) ) ) {
+#endif /* defined(SCO) || defined(HP_UX) || defined(AIX) */
 	    if (last) adjust /= 2;
 	    if (!adjust) adjust++;
 	    lba -= adjust;
 	} else {
+#if defined(WIN32)
+	    report_error ("FindCapacity() ReadFile", FALSE);
+#else /* !defined(WIN32) */
 	    report_error ("FindCapacity() read", FALSE);
+#endif /* defined(WIN32) */
 	    status = FAILURE;
 	    break;
 	}
@@ -721,10 +796,14 @@ FindCapacity (struct dinfo *dip)
     }
     free (buffer);
     if (temp_fd) {
+#if defined(WIN32)
+	CloseHandle(dip->di_fd);
+#else /* !defined(WIN32) */
 	(void) close (dip->di_fd);
+#endif /* defined(WIN32) */
 	dip->di_fd = saved_fd;
     } else {
-	(void) set_position (dip, (off_t) 0);
+	(void) set_position (dip, (OFF_T) 0);
     }
 
     /*
@@ -735,7 +814,7 @@ FindCapacity (struct dinfo *dip)
     if (status == FAILURE) {
 #if 1
 #if defined(DEBUG)
-	Fprintf("failed, last good lba was " LUF ", adjust was %ld\n",
+	Printf("failed, last good lba was " LUF ", adjust was %ld\n",
 							 lba, adjust);
 #endif /* defined(DEBUG) */
 	lba -= adjust;
@@ -746,7 +825,7 @@ FindCapacity (struct dinfo *dip)
     }
 
 #if defined(DEBUG)
-    Fprintf ("read attempts was %d, the max lba is " LUF "\n", attempts, lba);
+    Printf ("read attempts was %d, the max lba is " LUF "\n", attempts, lba);
 #endif /* defined(DEBUG) */
 
 set_capacity:
@@ -765,35 +844,48 @@ set_capacity:
 	}
 	if (debug_flag || Debug_flag || rDebugFlag || (status == FAILURE)) {
 /* TODO: Cleanup this mess! */
-#if !defined(__GNUC__) && defined(_NT_SOURCE)
+#if !defined(__GNUC__) && ( defined(_NT_SOURCE) || defined(WIN32) )
     /* Avoid:  error C2520: conversion from unsigned __int64 to double not implemented, use signed __int64 */
-	    Fprintf ("Random data limit set to " LUF " bytes (%.3f Mbytes), " LUF " blocks.\n",
+	    Printf ("Random data limit set to " LUF " bytes (%.3f Mbytes), " LUF " blocks.\n",
 		     rdata_limit, ((double)(slarge_t)rdata_limit/(double)MBYTE_SIZE), (rdata_limit / dsize));
 #else /* !defined(_NT_SOURCE) */
-	    Fprintf ("Random data limit set to " LUF " bytes (%.3f Mbytes), " LUF " blocks.\n",
+	    Printf ("Random data limit set to " LUF " bytes (%.3f Mbytes), " LUF " blocks.\n",
 		rdata_limit, ((double)rdata_limit/(double)MBYTE_SIZE), (rdata_limit / dsize));
-#endif /* !defined(__GNUC__) && defined(_NT_SOURCE) */
+#endif /* !defined(__GNUC__) && ( defined(_NT_SOURCE) || defined(WIN32) ) */
 	}
 	if (rdata_limit <= file_position) {
-	    Fprintf ("Please specify a random data limit > file position!\n");
+	    LogMsg (efp, logLevelCrit, 0,
+		    "Please specify a random data limit > file position!\n");
 	    exit (FATAL_ERROR);
 	}
     } else if (debug_flag || Debug_flag || (status == FAILURE)) {
-#if !defined(__GNUC__) && defined(_NT_SOURCE)
+#if !defined(__GNUC__) && ( defined(_NT_SOURCE) || defined(WIN32) )
     /* Avoid:  error C2520: conversion from unsigned __int64 to double not implemented, use signed __int64 */
-	    Fprintf ("Data limit set to " LUF " bytes (%.3f Mbytes), " LUF " blocks.\n",
+	    Printf ("Data limit set to " LUF " bytes (%.3f Mbytes), " LUF " blocks.\n",
 			dip->di_data_limit,
 			((double)(slarge_t)dip->di_data_limit / (double)MBYTE_SIZE),
 			 (dip->di_data_limit / dsize));
 #else /* !defined(_NT_SOURCE) */
-	    Fprintf ("Data limit set to " LUF " bytes (%.3f Mbytes), " LUF " blocks.\n",
+	    Printf ("Data limit set to " LUF " bytes (%.3f Mbytes), " LUF " blocks.\n",
 		dip->di_data_limit, ((double)dip->di_data_limit/(double)MBYTE_SIZE),
 				     (dip->di_data_limit / dsize));
-#endif /* !defined(__GNUC__) && defined(_NT_SOURCE) */
+#endif /* !defined(__GNUC__) && ( defined(_NT_SOURCE) || defined(WIN32) ) */
 	if (file_position > dip->di_data_limit) {
-	    Fprintf ("Please specify a file position < media capacity!\n");
+	    LogMsg (efp, logLevelCrit, 0,
+		    "Please specify a file position < media capacity!\n");
 	    exit (FATAL_ERROR);
 	}
     }
+
+    /*
+     * Calculate a random I/O offset shift value for generating offsets
+     * greather than 1TB.  This is necessary since the random number
+     * generate returns a maximum of 31 bits.
+     * Note: Shift value used for speed (avoid multiply).
+     * See dtutil.c: do_random() for more details on usage!
+     */
+    dip->di_rshift = 8;		/* log2(512)-1 shift value. */
+    /* Now adjust based on capacity: 1TB = 1, 2TB = 2, etc. */
+    dip->di_rshift += howmany(dip->di_data_limit, TBYTE_SIZE);
     return (SUCCESS);
 }

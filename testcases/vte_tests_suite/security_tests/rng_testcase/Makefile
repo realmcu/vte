@@ -1,15 +1,16 @@
+#Copyright 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 ####################################################################################################
 #                                                                                                  #
 #    @file   Makefile                                                                              #
 #                                                                                                  #
 #    @brief  configuration file to compile the sockets test.                                       #
-#                                                                                                  #
-####################################################################################################
-#                                                                                                  #
-#   Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved                          #
-#   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT                                   #
-#   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF                                       #
-#   Freescale Semiconductor, Inc.                                                                  #
 #                                                                                                  #
 ####################################################################################################
 #Revision History:                                                                                 #
@@ -20,58 +21,13 @@
 #L.DELASPRE/rc149c            25/11/2004     TLSbo44180   VTE 1.6 integration                      #
 #L.Delaspre/rc149c            08/12/2004     TLSbo40142   update with Freescale identity           #
 #A.URUSOV                     06/09/2005     TLSbo53754   CFLAGS and LOADLIBES changed             #
-#A.URUSOV                     01/11/2005     TLSbo57925   CFLAGS and LOADLIBES changed             ####################################################################################################
+#A.URUSOV                     01/11/2005     TLSbo57925   CFLAGS and LOADLIBES changed             #
+###################################################################################################
 #include $(KLINUX_BLTDIR)/include/linux/autoconf.h
-
-include $(KLINUX_BLTDIR)/.config
 
 LTP_DIR = ../../../../
 BIN_DIR = ../../../
 MODULE_DIR = ../rng_test_module
-
-ifeq "$(CONFIG_ARCH_MXC91331)" "y"
-CFLAGS += -DCONFIG_ARCH_MXC91331
-endif
-
-ifeq "$(CONFIG_ARCH_MXC91221)" "y"
-CFLAGS += -DCONFIG_ARCH_MXC91221
-endif
-
-ifeq "$(CONFIG_ARCH_MXC91321)" "y"
-CFLAGS += -DCONFIG_ARCH_MXC91321
-endif
-
-ifeq "$(CONFIG_ARCH_MXC91231)" "y"
-CFLAGS += -DCONFIG_ARCH_MXC91231
-endif
-
-ifeq "$(CONFIG_ARCH_MXC91131)" "y"
-CFLAGS += -DCONFIG_ARCH_MXC91131
-endif
-
-ifeq "$(CONFIG_ARCH_MX3)" "y"
-CFLAGS += -DCONFIG_ARCH_MX3
-endif
-
-ifeq "$(CONFIG_ARCH_MX27)" "y"
-CFLAGS += -DCONFIG_ARCH_MX27
-endif
-
-ifeq "$(CONFIG_ARCH_MX21)" "y"
-CFLAGS += -DCONFIG_ARCH_MX21
-endif
-
-ifeq "$(CONFIG_ARCH_MX35)" "y"
-CFLAGS += -DCONFIG_ARCH_MX35
-endif
-
-ifeq "$(CONFIG_ARCH_MX37)" "y"
-CFLAGS += -DCONFIG_ARCH_MX37
-endif
-
-ifeq "$(CONFIG_ARCH_MX51)" "y"
-CFLAGS += -DCONFIG_ARCH_MX51
-endif
 
 CFLAGS += -Wall -I$(LTP_DIR)include/ \
           -I$(MODULE_DIR) \

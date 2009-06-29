@@ -1,3 +1,11 @@
+#Copyright 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 ####################################################################################################
 #                                                                                                  #
 #    @file   Makefile                                                                              #
@@ -20,7 +28,8 @@
 #L.DELASPRE/rc149c            25/11/2004     TLSbo44180   VTE 1.6 integration                      #
 #L.Delaspre/rc149c            08/12/2004     TLSbo40142   update with Freescale identity           #
 #A.URUSOV                     06/09/2005     TLSbo53754   CFLAGS and LOADLIBES changed             #
-#A.URUSOV                     01/11/2005     TLSbo57925   CFLAGS and LOADLIBES changed             ####################################################################################################
+#A.URUSOV                     01/11/2005     TLSbo57925   CFLAGS and LOADLIBES changed             #
+###################################################################################################
 #include $(KLINUX_BLTDIR)/include/linux/autoconf.h
 
 include $(KLINUX_BLTDIR)/.config

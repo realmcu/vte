@@ -1,3 +1,13 @@
+/***
+**Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**
+**The code contained herein is licensed under the GNU General Public
+**License. You may obtain a copy of the GNU General Public License
+**Version 2 or later at the following locations:
+**
+**http://www.opensource.org/licenses/gpl-license.html
+**http://www.gnu.org/copyleft/gpl.html
+**/
 /*================================================================================================*/
 /**
         @file   scc_test_module.c
@@ -7,14 +17,6 @@
                The module runs in a Linux environment.  Portation notes are
                included at various points which should be helpful in moving the
                code to a different environment.
-*/
-/*==================================================================================================
-
-        Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
-        THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-        BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-        Freescale Semiconductor, Inc.
-
 ====================================================================================================
 Revision History:
                             Modification     Tracking
@@ -39,12 +41,14 @@ Test Strategy: Examine the SCC driver common software operations
 #include <linux/module.h>
 #include <linux/device.h>
 #include <linux/version.h>
+#include <linux/io.h>
 //---#include <linux/devfs_fs_kernel.h>
 #include <linux/fs.h>
 #include <asm/uaccess.h>
 
-#include <asm/arch-mxc/mxc_security_api.h>
-#include <asm/arch-mxc/mxc_scc.h>
+//#include <asm/arch-mxc/mxc_security_api.h>
+//#include <asm/arch-mxc/mxc_scc.h>
+#include <mach/mxc_scc.h>
 #include "scc_test_module.h"
 
 
@@ -163,10 +167,15 @@ static int scc_test_init(void)
         if (IS_ERR(class_device_create(scc_class, NULL,
                                            MKDEV(major_dev_num, 0), NULL,
                                            "scc_test_module")))
+#elif (LINUX_VERSION_CODE == KERNEL_VERSION(2,6,28))
+        if (IS_ERR(device_create(scc_class, NULL,
+                                           MKDEV(major_dev_num, 0),NULL,
+                                           "scc_test_module")))
 #else
         if (IS_ERR(device_create(scc_class, NULL,
                                            MKDEV(major_dev_num, 0),
                                            "scc_test_module")))
+
 #endif
         {
             printk(KERN_ALERT "class simple  add failed\n");

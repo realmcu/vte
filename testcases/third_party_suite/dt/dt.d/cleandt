@@ -1,0 +1,71 @@
+#!/bin/ksh
+
+typeset -x BLDIR="Tools/dt.d-WIP"
+typeset -x PROGRAM="dt"
+
+OSs=$(uname -s)
+if [ "$OSs" = "HP-UX" ] ; then
+    typeset -x REMCMD="remsh"
+else
+    typeset -x REMCMD="rsh"
+fi
+
+cleanup()
+{
+    if [ $# -lt 3 ]; then
+	print "Usage: cleanup SUBDIR MAKEXT BLDSYS"
+	exit 1
+    fi
+
+    SUBDIR=$1
+    OSNAME=$2
+    BLDSYS=$3
+
+    # Cleanup files from a previous build.
+
+    print "\n\t--> Cleaning up '$PROGRAM' for $OSNAME on $BLDSYS in subdirectory $SUBDIR <--\n"
+
+    $REMCMD $BLDSYS -n "cd ~/$BLDIR/$SUBDIR; umask 022; PATH=/usr/local/bin:$PATH ; make -f ../Makefile.$OSNAME clean"
+
+    return
+}
+
+# ppc AIX 5.3
+
+cleanup aix5.3 aix-aio shaix11
+
+# ppc AIX 5.2
+
+cleanup aix5.2 aix-aio ibmp505-fak01
+
+# pa HP-UX 11.00
+
+cleanup hpux-parisc hpux shopvac
+
+# ia64 HP-UX 11.23
+
+cleanup hpux-ia64 hpux-ia64 bissell
+
+# i386 Linux
+
+cleanup linux2.4-x86 linux crunch
+
+# ia64 Linux
+
+#cleanup linux-ia64 linux 15.11.146.54 # antares.fc.hp.com
+
+# alpha Tru64 5.1B
+
+#cleanup tru64 zuluos evinrude
+
+# sparc Solaris 5.8
+
+#cleanup solaris-sparc solaris roanoke
+#cleanup solaris-sparc solaris-aio roanoke
+cleanup solaris-sparc solaris-aio shsun03
+
+# x86 Solaris
+
+cleanup solaris-x86 solaris-x86-aio l22.rtp.netapp.com
+
+exit $?

@@ -1,26 +1,14 @@
+#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 ####################################################################################################
 #
 #    @file   Makefile
-#
-#    @brief  configuration file to compile the sockets test.
-#
-####################################################################################################
-#
-#    Copyright (C) 2006 Freescale Semiconductor, Inc. All Rights Reserved
-#    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-#    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-#    Freescale Semiconductor, Inc.
-#
-####################################################################################################
-#Revision History:
-#                            Modification     Tracking
-#Author/core ID                  Date          Number    Description of Changes
-#-------------------------   ------------    ----------  -------------------------------------------
-#S.ZAVJALOV/ZVJS001C          27/07/2004     TLSbo40261  Initial version
-#L.DELASPRE/rc149c            02/08/2004     TLSbo40891  VTE 1.4 integration
-#L.DELASPRE/rc149c            06/10/2004     TLSbo42821  VTE 1.5.1 integration
-#L.Delaspre/rc149c            08/12/2004     TLSbo40142  Update with Freescale identity
-#A.Ozerov/b00320              19/04/2006     TLSbo61865  Minor fixes.
 #
 ####################################################################################################
 CFLAGS    +=     -Wall -I../../../../include -I$(KLINUX_BLTDIR)/include -I$(KLINUX_SRCDIR)/include

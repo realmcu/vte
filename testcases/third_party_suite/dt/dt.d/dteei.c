@@ -1,13 +1,11 @@
+static char *whatHeader = "@(#) dt.d/dteei.c /main/1 Mar_23_2004";
 #if defined(EEI)
 /****************************************************************************
  *									    *
- *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			  COPYRIGHT (c) 1990 - 2003			    *
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
- *			       Hudson, NH 03051				    *
- *			       (603) 883-2355				    *
  *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
  * its documentation for any purpose and without fee is hereby granted,	    *
@@ -35,6 +33,11 @@
  *	This file contains functions for support of DEC EEI interface.
  *
  * Modification History:
+ *
+ * November 17th, 2003 by Robin Miller.
+ *	Breakup output to stdout or stderr, rather than writing
+ * all output to stderr.  If output file is stdout ('-') or a log
+ * file is specified, then all output reverts to stderr.
  *
  * April 21st, 2000 by Robin Miller.
  *	Converted tabs to spaces in all messages, so formatting is not
@@ -196,7 +199,7 @@ HandleTapeResets(struct dinfo *dip)
 		    return (FALSE);		/* Exhausted retries. */
 		}
 		if (verbose_flag) {
-		    Fprintf("Retry %d after %s status...\n",
+		    Printf("Retry %d after %s status...\n",
 			    (EEI_RETRIES - dip->di_eei_retries),
 			    cdbg_EEIStatus(mt->eei.status, CDBG_BRIEF));
 		}
@@ -212,7 +215,7 @@ HandleTapeResets(struct dinfo *dip)
 
 	if ( is_StatusRetryable(dip, &mt->eei) ) {
 	    if (verbose_flag) {
-		Fprintf("Retrying after %s status...\n",
+		Printf("Retrying after %s status...\n",
 				cdbg_EEIStatus(mt->eei.status, CDBG_BRIEF));
 	    }
 	    (void)sleep(dip->di_eei_sleep);
@@ -226,7 +229,7 @@ HandleTapeResets(struct dinfo *dip)
 	dip->di_eei_retries = EEI_RETRIES;
 
 	if (verbose_flag) {
-	    Fprintf("Processing reset condition (%s) - file %lu, record %lu\n",
+	    Printf("Processing reset condition (%s) - file %lu, record %lu\n",
 				cdbg_EEIStatus(mt->eei.status, CDBG_BRIEF),
 					mt->mt_fileno, mt->mt_blkno);
 	}
@@ -323,7 +326,7 @@ reposition:
 	if (mt->mt_fileno) {
 	    long fileno = mt->mt_fileno;
 	    if (verbose_flag) {
-		Fprintf("Positioning to file %lu...\n", fileno);
+		Printf("Positioning to file %lu...\n", fileno);
 	    }
 	    status = DoForwardSpaceFile(dip, fileno);
 	    if (status) {
@@ -337,7 +340,7 @@ reposition:
 	    long record = MIN(mt->mt_blkno, records);
 	    if (record) {
 		if (verbose_flag) {
-		    Fprintf("Positioning to record %lu...\n", record);
+		    Printf("Positioning to record %lu...\n", record);
 		}
 		status = DoForwardSpaceRecord(dip, record);
 		if (status) {
@@ -494,7 +497,7 @@ check_eei_status(struct dinfo *dip, bool retry)
 	int saved_errno = errno;
 
 	if (debug_flag) {
-	    Fprintf (
+	    Printf (
 		"Attempting to open %s file '%s', open flags = %#o...\n",
 			(dip->di_ftype == INPUT_FILE) ? "input" : "output",
 								file, oflags);
@@ -537,7 +540,7 @@ clear_eei_status(int fd, bool startup)
 	struct mtget mt;
 	int status;
 
-	if (debug_flag) Fprintf("Clearing EEI data...\n");
+	if (debug_flag) Printf("Clearing EEI data...\n");
 
 	if ( get_eei_status(fd, &mt) != ESUCCESS) return;
 

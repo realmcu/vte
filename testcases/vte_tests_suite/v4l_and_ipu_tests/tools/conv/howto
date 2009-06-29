@@ -1,0 +1,25 @@
+
+usage:
+command line:
+-i [input file name], *
+-I [format], *
+-b [offset], 
+-x [xsize], *
+-y [ysize], *
+-o [output file name]
+-O [out format]; //RAW_DATA, otherwise will be BMP
+-f [raw out encoding]; only available when -O RAW_RGB24
+-C conver yuv420 to formal yuv420P as input for mx25 
+e.g.
+./conv -i green_480x640.bmp -I BMP24 -b 54 -x 480 -y 640 -o out.raw -O RAW_RGB24 -f 1
+
+#convert to bmp
+./conv -i green_RGB24 -I RGB24 -b 256 -x 240 -y 184 -o out.bmp
+
+#for mx25 case
+/rootfs/wb/util/x86/conv -i /rootfs/wb/temp/still_RGB565_640_480.yuv -I RGB565 -x 640 -y 480 -o out_rgb565_640_480.bmp
+/rootfs/wb/util/x86/conv -i /rootfs/wb/temp/still_UYVY_640_480.yuv -I UYVY -x 640 -y 480 -o out_yuv422_640_480.bmp
+/rootfs/wb/util/x86/conv -i /rootfs/wb/temp/still_YUV420_640_480.yuv -I YUV420 -C -x 640 -y 480 -o out_yuv420_640_480.bmp
+/rootfs/wb/util/x86/conv -i /rootfs/wb/temp/still_RGB565_1280_960.yuv -I RGB565 -x 1280 -y 960 -o out_rgb565_1280_960.bmp
+/rootfs/wb/util/x86/conv -i /rootfs/wb/temp/still_UYVY_1280_960.yuv -I UYVY -x 1280 -y 960 -o out_yuv422_1280_960.bmp
+/rootfs/wb/util/x86/conv -i /rootfs/wb/temp/still_YUV420_1280_960.yuv -I YUV420 -C -x 1280 -y 960 -o out_yuv420_1280_960.bmp

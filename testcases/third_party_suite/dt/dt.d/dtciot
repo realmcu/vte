@@ -1,0 +1,173 @@
+#!/bin/tclsh
+#
+#	Date:	November 8th, 1999
+#	Author:	Robin T. Miller
+#
+#	Description:	[ My first Tcl program, yea! ]
+#
+#	This script is used for testing CD-ROM's using the IOT Test Disc.
+#
+# Arguments:
+#	1	The device name.
+#	2	The log file name.
+#	3	The block limit.
+#	4	The block size(s).
+#	5	The pass count.
+#	6	Enable debug flag.
+#
+
+set PROGRAM [file tail $argv0]
+
+if {$argc < 1} {
+    puts stderr "Usage: $PROGRAM device \[ log_file data_limit block_sizes pass_count debug \]"
+    puts stderr "Example: $PROGRAM rrz4c rrd42.log 250m &"
+    exit 1
+}
+
+#
+# Local Definitions:
+#
+set END_OF_FILE		254
+set FAILURE		-1
+set SUCCESS		0
+set TRUE		1
+set FALSE		0
+
+#
+# Local Variables:
+#
+set DebugFlag		$FALSE
+set ErrorCount		0
+set ExitStatus		$SUCCESS
+set ExitOnError		$FALSE
+set NoisyFlag		$TRUE
+set StartTime		[clock seconds]
+set DateString		[clock format [clock seconds] -format "%b%d,%Y"]
+
+#
+# Grab/construct the device name first.
+#
+set Device [lindex $argv 0]
+if { ![string match {/dev*} $Device] } {
+    set Device "/dev/$Device"
+}
+incr argc -1
+
+#
+# Set Default Parameters:
+#
+set DEF_BLOCK_SIZES	{128k 64k 32k 16k 5k 2k 1b}
+set DEF_DATA_LIMIT	{limit=650m}
+set DEF_DEBUG_FLAG	$FALSE
+set DEF_DEBUG_OPTS	{enable=dump}
+set DEF_LOG_FILE	"$PROGRAM-[file tail $Device]-$DateString.log"
+set DEF_PASS_COUNT	1
+
+#
+# Parse Remaining Arguments:
+#
+if { $argc } {
+    set LogFile [lindex $argv 1]
+    incr argc -1
+}
+
+if { $argc } {
+    set DataLimit "limit=[lindex $argv 2]"
+    incr argc -1
+}
+
+if { $argc } {
+    set BlockSizes "[lindex $argv 3]"
+    incr argc -1
+}
+
+if { $argc } {
+    set PassCount [lindex $argv 4]
+    incr argc -1
+}
+
+if { $argc } {
+    set DebugFlag $TRUE
+    set DebugOpts "enable=[lindex $argv 5]"
+    incr argc -1
+}
+
+#
+# Set Variables NOT Specified by the User:
+#
+if { ![info exists BlockSizes] || ![string length $BlockSizes] } {
+    set BlockSizes $DEF_BLOCK_SIZES
+}
+
+if { ![info exists DataLimit] || ![string length $DataLimit] } {
+    set DataLimit $DEF_DATA_LIMIT
+}
+
+if { ![info exists DebugFlag] }		{ set DebugFlag  $DEF_DEBUG_FLAG }
+if { ![info exists DebugOpts] }		{ set DebugOpts  $DEF_DEBUG_OPTS }
+
+if { ![info exists LogFile] || ![string length $LogFile] } {
+    set LogFile $DEF_LOG_FILE
+}
+
+if { ![info exists PassCount] || ![string length $PassCount] } {
+     set PassCount $DEF_PASS_COUNT
+}
+
+if { [string compare $tcl_platform(os) "OSF1"] == 0 } {
+    set DT_OPTS "aios=4"
+} else {
+    set DT_OPTS "procs=4"
+}
+
+if [file exists $LogFile] {
+    catch {file delete $LogFile}
+}
+
+set iotype sequential
+
+foreach bs $BlockSizes {
+    if [catch {exec dt if=$Device align=rotate bs=$bs $DataLimit $DebugOpts \
+	iotype=$iotype log=$LogFile pattern=iot passes=$PassCount $DT_OPTS} result] {
+	if { $DebugFlag } {
+#	    puts stderr "$PROGRAM: Command failed with status = '$result'"
+	    puts stderr "$PROGRAM: $errorInfo"
+	    puts stderr "$PROGRAM: $errorCode"
+	}
+	set errno [lindex $errorCode 2]
+	if { $errno == $END_OF_FILE } {
+	    # end of file is Ok
+	} else {
+	    incr ErrorCount
+	    if { $ExitOnError } break
+	}
+    } else {
+        # success!
+    }
+    #
+    # Alternate between sequential and random I/O.
+    #
+    if { [string compare $iotype "sequential"] == 0 } {
+	set iotype random
+    } else {
+	set iotype sequential
+    }
+}
+
+if { $ErrorCount } {
+    puts "$PROGRAM: Encountered $ErrorCount errors, please review $LogFile!" 
+    set ExitStatus $FAILURE
+}
+
+if { $NoisyFlag } {
+    puts ""
+    puts "        Script Name: $PROGRAM"
+    puts "      Device Tested: $Device"
+    puts "    Errors Detected: $ErrorCount"
+    puts "          Host Name: [info hostname]"
+    puts "         Start Time: [clock format $StartTime]"
+    puts "           End Time: [clock format [clock seconds]]"
+    puts ""
+}
+
+exit $ExitStatus

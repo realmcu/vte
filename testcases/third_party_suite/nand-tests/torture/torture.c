@@ -1,42 +1,39 @@
 /*
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * Copyright (C) 2006-2008 Artem Bityutskiy
+ * Copyright (C) 2006-2008 Jarkko Lavinen
+ * Copyright (C) 2006-2008 Adrian Hunter
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published by
+ * the Free Software Foundation.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- * Authors: Artem Bityutskiy, Jarkko Lavinen
+ * You should have received a copy of the GNU General Public License along with
+ * this program; see the file COPYING. If not, write to the Free Software
+ * Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * Authors: Artem Bityutskiy, Jarkko Lavinen, Adria Hunter
  *
  * WARNING: this test program may kill your flash and your device. Do not
- * use it. Authors are not responsible for any damage caused by this
- * program.
+ * use it unless you know what you do. Authors are not responsible for any
+ * damage caused by this program.
  */
 
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/moduleparam.h>
-#include <linux/kobject.h>
-#include <linux/device.h>
 #include <linux/err.h>
 #include <linux/mtd/mtd.h>
 #include <linux/sched.h>
-#include <linux/jiffies.h>
 
-#define PRINT_PREF KERN_CRIT "EB torture: "
+#define PRINT_PREF KERN_INFO "mtd_torturetest: "
 #define RETRIES 3
 
-/* Uncomment this if you have old MTD sources
-#define writesize oobblock */
-
-static int eb = 20;
+static int eb = 8;
 module_param(eb, int, S_IRUGO);
 MODULE_PARM_DESC(eb, "eraseblock number within the selected MTD device");
 
@@ -44,15 +41,15 @@ static int ebcnt = 32;
 module_param(ebcnt, int, S_IRUGO);
 MODULE_PARM_DESC(ebcnt, "number of consecutive eraseblocks to torture");
 
-static int pgcnt = 0;
+static int pgcnt;
 module_param(pgcnt, int, S_IRUGO);
 MODULE_PARM_DESC(pgcnt, "number of pages per eraseblock to torture (0 => all)");
 
-static int dev = 0;
+static int dev;
 module_param(dev, int, S_IRUGO);
 MODULE_PARM_DESC(dev, "MTD device number to use");
 
-static int gran = 1000;
+static int gran = 512;
 module_param(gran, int, S_IRUGO);
 MODULE_PARM_DESC(gran, "how often the status information should be printed");
 
@@ -60,9 +57,10 @@ static int check = 1;
 module_param(check, int, S_IRUGO);
 MODULE_PARM_DESC(check, "if the written data should be checked");
 
-static unsigned int cycles_count = 0;
+static unsigned int cycles_count;
 module_param(cycles_count, uint, S_IRUGO);
-MODULE_PARM_DESC(cycles_count, "how many erase cycles to do (infinite by default)");
+MODULE_PARM_DESC(cycles_count, "how many erase cycles to do "
+			       "(infinite by default)");
 
 static struct mtd_info *mtd;
 
@@ -78,15 +76,26 @@ static unsigned char *check_buf;
 static unsigned int erase_cycles;
 
 static int pgsize;
+static struct timeval start, finish;
 
 static void report_corrupt(unsigned char *read, unsigned char *written);
+
+static inline void start_timing(void)
+{
+	do_gettimeofday(&start);
+}
+
+static inline void stop_timing(void)
+{
+	do_gettimeofday(&finish);
+}
 
 /*
  * Erase eraseblock number @ebnum.
  */
 static inline int erase_eraseblock(int ebnum)
 {
- 	int err;
+	int err;
 	struct erase_info ei;
 	loff_t addr = ebnum * mtd->erasesize;
 
@@ -96,13 +105,14 @@ static inline int erase_eraseblock(int ebnum)
 	ei.len  = mtd->erasesize;
 
 	err = mtd->erase(mtd, &ei);
-	if (unlikely(err)) {
+	if (err) {
 		printk(PRINT_PREF "error %d while erasing EB %d\n", err, ebnum);
 		return err;
 	}
 
-	if (unlikely(ei.state == MTD_ERASE_FAILED)) {
-		printk(PRINT_PREF "some erase error occurred at EB %d\n", ebnum);
+	if (ei.state == MTD_ERASE_FAILED) {
+		printk(PRINT_PREF "some erase error occurred at EB %d\n",
+		       ebnum);
 		return -EIO;
 	}
 
@@ -127,23 +137,23 @@ static inline int check_eraseblock(int ebnum, unsigned char *buf)
 
 retry:
 	err = mtd->read(mtd, addr, len, &read, check_buf);
-	if (unlikely(err == -EUCLEAN))
+	if (err == -EUCLEAN)
 		printk(PRINT_PREF "single bit flip occurred at EB %d "
 		       "MTD reported that it was fixed.\n", ebnum);
-	else if (unlikely(err)) {
+	else if (err) {
 		printk(PRINT_PREF "error %d while reading EB %d, "
 		       "read %zd\n", err, ebnum, read);
 		return err;
 	}
 
-	if (unlikely(read != len)) {
-		printk(PRINT_PREF "failed to read %d bytes from EB %d, "
+	if (read != len) {
+		printk(PRINT_PREF "failed to read %zd bytes from EB %d, "
 		       "read only %zd, but no error reported\n",
 		       len, ebnum, read);
 		return -EIO;
 	}
 
-	if (unlikely(memcmp(buf, check_buf, len))) {
+	if (memcmp(buf, check_buf, len)) {
 		printk(PRINT_PREF "read wrong data from EB %d\n", ebnum);
 		report_corrupt(check_buf, buf);
 
@@ -161,7 +171,8 @@ retry:
 	}
 
 	if (retries != 0)
-		printk(PRINT_PREF "only attempt number %d was OK (!!!)\n", retries);
+		printk(PRINT_PREF "only attempt number %d was OK (!!!)\n",
+		       retries);
 
 	return 0;
 }
@@ -178,13 +189,13 @@ static inline int write_pattern(int ebnum, void *buf)
 		len = pgcnt * pgsize;
 	}
 	err = mtd->write(mtd, addr, len, &written, buf);
-	if (unlikely(err)) {
+	if (err) {
 		printk(PRINT_PREF "error %d while writing EB %d, written %zd"
 		      " bytes\n", err, ebnum, written);
 		return err;
 	}
-	if (unlikely(written != len)) {
-		printk(PRINT_PREF "written only %zd bytes of %d, but no error"
+	if (written != len) {
+		printk(PRINT_PREF "written only %zd bytes of %zd, but no error"
 		       " reported\n", written, len);
 		return -EIO;
 	}
@@ -196,29 +207,29 @@ static int __init tort_init(void)
 {
 	int err = 0, i, infinite = !cycles_count;
 	int bad_ebs[ebcnt];
-	long start;
 
-	printk("\n");
-	printk("=========================================================="
-	       "===============================\n");
-	printk(PRINT_PREF "Torture %d eraseblocks (%d-%d) of mtd%d\n",
+	printk(KERN_INFO "\n");
+	printk(KERN_INFO "=================================================\n");
+	printk(PRINT_PREF "Warning: this program is trying to wear out your "
+	       "flash, stop it if this is not wanted.\n");
+	printk(PRINT_PREF "MTD device: %d\n", dev);
+	printk(PRINT_PREF "torture %d eraseblocks (%d-%d) of mtd%d\n",
 	       ebcnt, eb, eb + ebcnt - 1, dev);
 	if (pgcnt)
-		printk(PRINT_PREF "Torturing just %d pages per eraseblock\n",
+		printk(PRINT_PREF "torturing just %d pages per eraseblock\n",
 			pgcnt);
-	printk(PRINT_PREF "Write verify %s\n", check ? "enabled" : "disabled");
-	printk(PRINT_PREF "HZ = %u\n",HZ);
+	printk(PRINT_PREF "write verify %s\n", check ? "enabled" : "disabled");
 
 	mtd = get_mtd_device(NULL, dev);
 	if (IS_ERR(mtd)) {
 		err = PTR_ERR(mtd);
-		printk(PRINT_PREF "error: Cannot get MTD device\n");
+		printk(PRINT_PREF "error: cannot get MTD device\n");
 		return err;
 	}
 
 	if (mtd->writesize == 1) {
-		printk(PRINT_PREF "warning: this test was written for NAND."
-		       "Assume page size is 512 bytes.\n");
+		printk(PRINT_PREF "not NAND flash, assume page size is 512 "
+		       "bytes.\n");
 		pgsize = 512;
 	} else
 		pgsize = mtd->writesize;
@@ -272,11 +283,11 @@ static int __init tort_init(void)
 	 */
 	memset(&bad_ebs[0], 0, sizeof(int) * ebcnt);
 	if (mtd->block_isbad) {
-		for(i = eb; i < eb + ebcnt; i++) {
+		for (i = eb; i < eb + ebcnt; i++) {
 			err = mtd->block_isbad(mtd,
 					       (loff_t)i * mtd->erasesize);
 
-			if (unlikely(err < 0)) {
+			if (err < 0) {
 				printk(PRINT_PREF "block_isbad() returned %d "
 				       "for EB %d\n", err, i);
 				goto out;
@@ -289,28 +300,28 @@ static int __init tort_init(void)
 		}
 	}
 
-	start = jiffies;
+	start_timing();
 	while (1) {
 		int i;
 		void *patt;
 
 		/* Erase all eraseblocks */
-		for(i = eb; i < eb + ebcnt; i++) {
+		for (i = eb; i < eb + ebcnt; i++) {
 			if (bad_ebs[i - eb])
 				continue;
 			err = erase_eraseblock(i);
-			if (unlikely(err))
+			if (err)
 				goto out;
 			cond_resched();
 		}
 
 		/* Check if the eraseblocks contain only 0xFF bytes */
 		if (check) {
-			for(i = eb; i < eb + ebcnt; i++) {
+			for (i = eb; i < eb + ebcnt; i++) {
 				if (bad_ebs[i - eb])
 					continue;
 				err = check_eraseblock(i, patt_FF);
-				if (unlikely(err)) {
+				if (err) {
 					printk(PRINT_PREF "verify failed"
 					       " for 0xFF... pattern\n");
 					goto out;
@@ -320,7 +331,7 @@ static int __init tort_init(void)
 		}
 
 		/* Write the pattern */
-		for(i = eb; i < eb + ebcnt; i++) {
+		for (i = eb; i < eb + ebcnt; i++) {
 			if (bad_ebs[i - eb])
 				continue;
 			if ((eb + erase_cycles) & 1)
@@ -328,14 +339,14 @@ static int __init tort_init(void)
 			else
 				patt = patt_A5A;
 			err = write_pattern(i, patt);
-			if (unlikely(err))
+			if (err)
 				goto out;
 			cond_resched();
 		}
 
 		/* Verify what we wrote */
 		if (check) {
-			for(i = eb; i < eb + ebcnt; i++) {
+			for (i = eb; i < eb + ebcnt; i++) {
 				if (bad_ebs[i - eb])
 					continue;
 				if ((eb + erase_cycles) & 1)
@@ -343,7 +354,7 @@ static int __init tort_init(void)
 				else
 					patt = patt_A5A;
 				err = check_eraseblock(i, patt);
-				if (unlikely(err)) {
+				if (err) {
 					printk(PRINT_PREF "verify failed for %s"
 					       " pattern\n",
 					       ((eb + erase_cycles) & 1) ?
@@ -356,14 +367,16 @@ static int __init tort_init(void)
 
 		erase_cycles += 1;
 
-		if (unlikely(erase_cycles % gran == 0)) {
-			long end = jiffies;
-			unsigned long tm = end - start;
+		if (erase_cycles % gran == 0) {
+			long ms;
 
-			printk(PRINT_PREF "- %08u erase cycles done. Timing: jiffies "
-			       "%lu, milliseconds %u\n", erase_cycles, tm,
-			       jiffies_to_msecs(tm));
-			start = jiffies;
+			stop_timing();
+			ms = (finish.tv_sec - start.tv_sec) * 1000 +
+			     (finish.tv_usec - start.tv_usec) / 1000;
+			printk(PRINT_PREF "%08u erase cycles done, took %lu "
+			       "milliseconds (%lu seconds)\n",
+			       erase_cycles, ms, ms / 1000);
+			start_timing();
 		}
 
 		if (!infinite && --cycles_count == 0)
@@ -371,7 +384,7 @@ static int __init tort_init(void)
 	}
 out:
 
-	printk(PRINT_PREF "torture finished after %u erase cycles\n",
+	printk(PRINT_PREF "finished after %u erase cycles\n",
 	       erase_cycles);
 	kfree(check_buf);
 out_patt_FF:
@@ -384,8 +397,7 @@ out_mtd:
 	put_mtd_device(mtd);
 	if (err)
 		printk(PRINT_PREF "error %d occurred during torturing\n", err);
-	printk("=========================================================="
-	       "===============================\n");
+	printk(KERN_INFO "=================================================\n");
 	return err;
 }
 module_init(tort_init);
@@ -417,12 +429,12 @@ static void report_corrupt(unsigned char *read, unsigned char *written)
 		check_len = pgcnt * pgsize;
 
 	bytes = bits = pages = 0;
-	for(i = 0; i < check_len; i += pgsize)
+	for (i = 0; i < check_len; i += pgsize)
 		if (countdiffs(written, read, i, pgsize, &bytes,
 			       &bits) >= 0)
-			pages ++;
+			pages++;
 
-	printk(PRINT_PREF "Verify fails on %d pages, %d bytes/%d bits\n",
+	printk(PRINT_PREF "verify fails on %d pages, %d bytes/%d bits\n",
 	       pages, bytes, bits);
 	printk(PRINT_PREF "The following is a list of all differences between"
 	       " what was read from flash and what was expected\n");
@@ -438,13 +450,13 @@ static void report_corrupt(unsigned char *read, unsigned char *written)
 		printk("-------------------------------------------------------"
 		       "----------------------------------\n");
 
-		printk(PRINT_PREF "Page %d has %d bytes/%d bits failing verify, "
-		       "starting at offset 0x%x\n",
+		printk(PRINT_PREF "Page %zd has %d bytes/%d bits failing verify,"
+		       " starting at offset 0x%x\n",
 		       (mtd->erasesize - check_len + i) / pgsize,
 		       bytes, bits, first);
 
 		offset = first & ~0x7;
-		len    = ((first + bytes) | 0x7) + 1 - offset;
+		len = ((first + bytes) | 0x7) + 1 - offset;
 
 		print_bufs(read, written, offset, len);
 	}
@@ -457,23 +469,23 @@ static void print_bufs(unsigned char *read, unsigned char *written, int start,
 	char *diff;
 
 	printk("Offset       Read                          Written\n");
-	while(i < len) {
+	while (i < len) {
 		printk("0x%08x: ", start + i);
 		diff = "   ";
-		for(j1 = 0; j1 < 8 && i + j1 < len; j1++) {
+		for (j1 = 0; j1 < 8 && i + j1 < len; j1++) {
 			printk(" %02x", read[start + i + j1]);
 			if (read[start + i + j1] != written[start + i + j1])
 				diff = "***";
 		}
 
-		while(j1 < 8) {
+		while (j1 < 8) {
 			printk(" ");
 			j1 += 1;
 		}
 
 		printk("  %s ", diff);
 
-		for(j2 = 0; j2 < 8 && i + j2 < len; j2++)
+		for (j2 = 0; j2 < 8 && i + j2 < len; j2++)
 			printk(" %02x", written[start + i + j2]);
 		printk("\n");
 		i += 8;
@@ -497,13 +509,13 @@ static int countdiffs(unsigned char *buf, unsigned char *check_buf,
 			break;
 		}
 
-	while(i < offset + len) {
+	while (i < offset + len) {
 		if (buf[i] != check_buf[i]) {
-			(*bytesp) ++;
+			(*bytesp)++;
 			bit = 1;
-			while(bit < 256) {
+			while (bit < 256) {
 				if ((buf[i] & bit) != (check_buf[i] & bit))
-					(*bitsp) ++;
+					(*bitsp)++;
 				bit <<= 1;
 			}
 		}
@@ -513,42 +525,6 @@ static int countdiffs(unsigned char *buf, unsigned char *check_buf,
 	return first;
 }
 
-#define BYTES_PER_LINE 64
-
-#if 0
-/*
- * Dump the contents of @ptr buffer.
- */
-static void hexdump(const void *ptr, int size)
-{
-	int i, k = 0;
-	int rows, columns;
-	const uint8_t *p = ptr;
-
-	size = ALIGN(size, 4);
-	rows = size/BYTES_PER_LINE + size % BYTES_PER_LINE;
-	for (i = 0; i < rows; i++) {
-		int j;
-
-		columns = min(size - k, BYTES_PER_LINE) / 4;
-		if (columns == 0)
-			break;
-
-		printk("%5d:  ", i*BYTES_PER_LINE);
-
-		for (j = 0; j < columns; j++) {
-			int n, N;
-
-			N = size - k > 4 ? 4 : size - k;
-			for (n = 0; n < N; n++)
-				printk("%02x", p[k++]);
-			printk(" ");
-		}
-		printk("\n");
-	}
-}
-#endif
-
 MODULE_DESCRIPTION("Eraseblock torturing module");
-MODULE_AUTHOR("Artem Bityutskiy, Jarkko Lavinen");
+MODULE_AUTHOR("Artem Bityutskiy, Jarkko Lavinen, Adrian Hunter");
 MODULE_LICENSE("GPL");

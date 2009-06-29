@@ -1,3 +1,13 @@
+/***
+**Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**
+**The code contained herein is licensed under the GNU General Public
+**License. You may obtain a copy of the GNU General Public License
+**Version 2 or later at the following locations:
+**
+**http://www.opensource.org/licenses/gpl-license.html
+**http://www.gnu.org/copyleft/gpl.html
+**/
 #define I2C_SMBUS_I2C_BLOCK_BROKEN 6
 
 static inline __s32 i2c_smbus_access(int file, char read_write, __u8 command, 

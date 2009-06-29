@@ -1,16 +1,19 @@
+/***
+**Copyright 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**
+**The code contained herein is licensed under the GNU General Public
+**License. You may obtain a copy of the GNU General Public License
+**Version 2 or later at the following locations:
+**
+**http://www.opensource.org/licenses/gpl-license.html
+**http://www.gnu.org/copyleft/gpl.html
+**/
 /*================================================================================================*/
 /**
     @file   fbdraw_test.c
 
     @brief  C source file of the fbdraw test application that checks SLCDC driver by
             producing simple output to Sharp/Epson fb.
-*/
-/*==================================================================================================
-
-Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
-THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-Freescale Semiconductor, Inc.
      
 ====================================================================================================
 Revision History:
@@ -61,9 +64,7 @@ extern "C"{
 #include "pict/lcd-shade_gradient.h"  
 #include "pict/lcd-flower.h"
 #include "pict/lcd-color_pallet_176x220.h"
-#ifndef MAD_TEST_MODIFY
 #include "pict/test01.h"
-#endif
 
 
 /*==================================================================================================
@@ -131,10 +132,8 @@ extern int bpp;
 extern char fb_path[PATH_LEN];
 extern char fb_path_1[PATH_LEN];
 
-#ifndef MAD_TEST_MODIFY
 extern int X_flag;
 extern int wait_sec;
-#endif
 
 /*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
@@ -182,34 +181,6 @@ int VT_lcd_setup(void)
                 tst_resm(TFAIL,"Can't map framebuffer device into memory: %s", strerror(errno));
                 return rv;
         }	        
-        /* Open the framebuffer device 2*/		
-#ifndef MAD_TEST_MODIFY
-	if(0)
-#else
-	if(O_flag)
-#endif
-        {
-                fb1_fd = open(fb_path_1, O_RDWR);
-                if (fb1_fd < 0)
-                {
-                        tst_resm(TFAIL, "Cannot open LCD framebuffer 2: %s", strerror(errno));
-                        return rv;
-                }
-				/* Get constant 2th fb info */
-                if ((ioctl(fb1_fd, FBIOGET_FSCREENINFO, &fb1_info)) < 0)
-                {
-                        tst_resm(TFAIL, "Cannot get LCD framebuffer_2 fixed parameters due to ioctl error: %s",
-                                strerror(errno));
-                        return rv;
-                }                
-                /* Map fb device file into memory */
-                fb1_mem_ptr = mmap(NULL, fb1_info.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, fb1_fd, 0);
-                if ((int)fb1_mem_ptr == -1)
-                {
-                        tst_resm(TFAIL,"Can't map framebuffer_2 device into memory: %s", strerror(errno));
-                        return rv;
-                }
-        }	
         
         rv = TPASS;
         return rv;
@@ -235,18 +206,6 @@ int VT_lcd_cleanup(void)
         
         if (fb_fd)
                 close(fb_fd);
-#ifndef MAD_TEST_MODIFY
-	if(0)
-#else        
-        if(O_flag)
-#endif			
-        {
-                if (fb1_mem_ptr)
-                        munmap(fb1_mem_ptr, fb1_info.smem_len);
-                if (fb1_fd)
-                        close(fb1_fd);
-        }	 
-        
         return TPASS;
 }
 
@@ -357,52 +316,6 @@ int VT_lcd_test(void)
         px.trans = 0x00;
         px.line_length = fb_info.line_length / px.bpp;
 
-#ifndef MAD_TEST_MODIFY
-	if(0)
-#else
-        if(O_flag)
-#endif
-        {
-                
-                /* Store video mode parameters */
-                if ((ioctl(fb1_fd, FBIOGET_VSCREENINFO, &mode_info_old)) < 0)
-                {
-                        tst_resm(TFAIL, "Cannot get LCD framebuffer current mode info due to ioctl error: %s",strerror(errno));
-                        return rv;
-                }
-                
-                tst_resm(TINFO, " Current video mode information for 2nd FB");	
-                if (get_modeinfo(fb1_fd,&mode_info1))
-                {
-                        rv = TFAIL;
-                        return rv;
-                }	 
-                
-                /* Check that 2nd fb configured at <BPP> */
-                if (mode_info1.bits_per_pixel != bpp)
-                {
-                        tst_resm(TFAIL, "LCD display 2nd framebuffer BPP has wrong value");
-                        tst_resm(TFAIL, "Your framebuffer configured to have %d bits per pixel", mode_info.bits_per_pixel);
-                        rv = TFAIL;
-                        return rv;
-                }
-                
-                /* Fill in the px struct */
-                px1.bpp = mode_info1.bits_per_pixel / 8;
-                px1.xres = mode_info1.xres;
-                px1.yres = mode_info1.yres;
-                px1.r_field.offset = mode_info1.red.offset;
-                px1.r_field.length = mode_info1.red.length;
-                px1.g_field.offset = mode_info1.green.offset;
-                px1.g_field.length = mode_info1.green.length;
-                px1.b_field.offset = mode_info1.blue.offset;
-                px1.b_field.length = mode_info1.blue.length;
-                px1.t_field.offset = mode_info1.transp.offset;
-                px1.t_field.length = mode_info1.transp.length;
-                px1.trans = 0x00;
-                px1.line_length = fb1_info.line_length /px1.bpp; 
-        }
-        
         switch (testcase_nb)
         {
                 /* color test */
@@ -475,9 +388,7 @@ int VT_lcd_test(void)
                         
                         /* Draw  pictures */
                         tst_resm(TINFO,"Draw Color_pallet picture in the LCD");
-#ifndef MAD_TEST_MODIFY
                         tst_resm(TINFO,"Draw picture size is x %d, y %d in the LCD\n", px.xres, px.yres);
-#endif                      
                         
                         if ((px.xres == COLOR_PALLET_WIDTH ) && (px.yres == COLOR_PALLET_HEIGHT))
                         {
@@ -494,20 +405,9 @@ int VT_lcd_test(void)
 			}else
                         {
 
-#ifndef MAD_TEST_MODIFY
-				//printf("%d, %c\n", sizeof(gImage_test01)/sizeof(char), COLOR_PALLET_pixel_data[0]);
 				if (picture_test(fb_mem_ptr,&px,gImage_test01,test01_pic_xlen,test01_pic_ylen,3))
-
 				rv = TFAIL;
 
-#else
-                                if (picture_test(fb_mem_ptr,&px,COLOR_PALLET_pixel_data,COLOR_PALLET_WIDTH,COLOR_PALLET_HEIGHT,COLOR_PALLET_BYTES_PER_PIXEL))
-                                        rv = TFAIL;
-                                //tst_resm(TFAIL,"LCD panel size is not suitable for COLOR_PALLET pictures!");
-                                //return TFAIL;
-#endif                        
-
-                                
                         }
                         
                         memset(fb_mem_ptr, 0x00, screensize);
@@ -1247,13 +1147,11 @@ unsigned char *draw_px(unsigned char *where, struct pixel *p)
 /*================================================================================================*/
 int ask_user(void)
 {
-#ifndef MAD_TEST_MODIFY
 	 if (X_flag)
 	 {
               sleep(wait_sec);
 	 	return 0;
 	 }
-#endif
 
         unsigned char answer;
         int   ret = 2;

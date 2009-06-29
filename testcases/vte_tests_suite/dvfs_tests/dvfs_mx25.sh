@@ -1,16 +1,17 @@
+#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 #!/bin/bash
 ###################################################################################################
 #
 #    @file   dvfs_mx25.sh
 #
 #    @brief  shell script template for testcase design "cpu freq test" is where to modify block.
-#
-###################################################################################################
-#
-#   Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
-#   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-#   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-#   Freescale Semiconductor, Inc.
 #
 ###################################################################################################
 #Revision History:
@@ -121,21 +122,27 @@ return $RC
 }
 
 # Function:     test_case_02
-# Description   - Test if <TODO test function> ok
+# Description   - Test if PMIC DVFS test ok
 #  
 test_case_02()
 {
 #TODO give TCID 
-TCID="test_demo2_test"
+TCID="PMIC_DVFS_test"
 #TODO give TST_COUNT
 TST_COUNT=2
-RC=0
+RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
+BIN_PROG=/unit_tests/mc34704_testapp.out
 
+$BIN_PROG  -T SU || return $RC
+$BIN_PROG  -T OC || return $RC
+$BIN_PROG  -T CA || return $RC
+
+RC=0
 return $RC
 
 }

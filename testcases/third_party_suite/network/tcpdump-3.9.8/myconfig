@@ -1,4 +1,9 @@
+#!/bin/sh
+
+if [ ! -e Makefile ]; then
+export ac_cv_linux_vers=2.6.28 && \
 ./configure --host=arm-none-linux-gnueabi \
 CFLAGS=-I$(pwd)/../../../../openlibs/include/ \
 LDFLAGS=-L$(pwd)/../../../../openlibs/lib/ \
 --oldincludedir=$(pwd)
+fi

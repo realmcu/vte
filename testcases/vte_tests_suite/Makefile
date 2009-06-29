@@ -1,15 +1,16 @@
+#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 ###############################################################################
 #
 #    @file   Makefile
 #
 #    @brief  configuration file to compile the VTE tests.
-#
-###############################################################################
-#
-#    Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
-#    THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-#    BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-#    Freescale Semiconductor, Inc.
 #
 ###############################################################################
 #Revision History:
@@ -95,8 +96,8 @@ SUBDIRS += pm_tests
 #SUBDIRS += rm_tests
 SUBDIRS += GPT_tests
 SUBDIRS += rtc_tests
-#SUBDIRS += security_tests
-#SUBDIRS += spi_tests
+SUBDIRS += security_tests
+SUBDIRS += spi_tests
 #SUBDIRS += ssi_dam_tests
 SUBDIRS += uart_tests
 SUBDIRS += slcdc_tests
@@ -108,13 +109,11 @@ SUBDIRS += ts_tests
 #modified by Spring, control in sub-Makefile
 SUBDIRS += keypad_tests
 
-SUBDIRS += udma_tests
+#SUBDIRS += udma_tests
 SUBDIRS += i2c_tests
 SUBDIRS += watchdog_tests
 SUBDIRS += owire
 SUBDIRS += systest
-SUBDIRS += ata_tests
-
 
 ifeq ($(ARCH_PLATFORM), $(filter imx25stack, $(ARCH_PLATFORM)))
 SUBDIRS += can_tests

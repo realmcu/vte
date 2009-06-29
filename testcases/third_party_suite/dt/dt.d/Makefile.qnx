@@ -1,0 +1,238 @@
+#
+# %Z%%M% %I% %E% 1990 by Robin Miller
+#
+#/****************************************************************************
+# *									     *
+# *			  COPYRIGHT (c) 1990 - 2004			     *
+# *			   This Software Provided			     *
+# *				     By					     *
+# *			  Robin's Nest Software Inc.			     *
+# *									     *
+# * Permission to use, copy, modify, distribute and sell this software and   *
+# * its documentation for any purpose and without fee is hereby granted	     *
+# * provided that the above copyright notice appear in all copies and that   *
+# * both that copyright notice and this permission notice appear in the	     *
+# * supporting documentation, and that the name of the author not be used    *
+# * in advertising or publicity pertaining to distribution of the software   *
+# * without specific, written prior permission.				     *
+# *									     *
+# * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, 	     *
+# * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN	     *
+# * NO EVENT SHALL HE BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL   *
+# * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR    *
+# * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS  *
+# * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF   *
+# * THIS SOFTWARE.							     *
+# *									     *
+# ****************************************************************************/
+#
+# Makefile -- makefile for program 'dt'
+#	
+
+# System makefile definitions for program makefiles
+
+.SUFFIXES:	.ln
+
+.c.ln:
+		@lint -c $(LINTFLAGS) $<
+
+.c~.ln:
+		@echo $<
+		@$(GET) -G$*.c $(GFLAGS) $<
+		@lint -c $(LINTFLAGS) $*.c
+		@rm -f $*.c
+
+PRINTER=	lpr
+
+PR_FLAGS=	-p -P28
+
+TR_PRINTER=	$(PRINTER)
+
+TR_FLAGS=	-t -P28
+
+# Libraries the program links to which are considered volatile
+
+LIBS=
+
+# Libraries considered static
+
+EXTLIBS=
+
+LINTLIBS=
+
+# P or G flag ( override on command line by invoking make PORG=-g )
+
+#PORG=	-Otail -mc
+#PORG=	-Otail -mf -w3
+PORG=	-Otail -mf
+
+AWK=	awk
+CFLAGS= $(PORG) -DFIFO -DTTY -DRAND48 -D_QNX_SOURCE -D_QNX_32BIT -fi=unix.h
+#CFLAGS= $(PORG) -DFIFO -DTTY -DRAND48 -D_QNX_SOURCE -D_QNX_32BIT -fi=unix.h -v 9.52
+CPP=	/lib/cpp
+CPPOPTS= -D_QNX_SOURCE
+#CPPOPTS= -P
+LDFLAGS=
+
+# end of system makefile definitions
+
+HDRS=		dt.h
+
+### MKMF:SOURCES ###
+
+CFILES=		\
+		dt.c	\
+		dtgen.c		\
+		dtinfo.c	\
+		dtread.c	\
+		dtwrite.c	\
+		dtstats.c	\
+		dttty.c		\
+		dtutil.c	\
+		dtusage.c	\
+		dtprocs.c	\
+		dtfifo.c	\
+		dttape.c
+
+
+### MKMF:OBJECTS ###
+
+OBJS=		${CFILES:.c=.o}
+
+
+### MKMF:LINTOBJS ###
+
+LINTOBJS=	${CFILES:.c=.ln}
+
+### MKMF:TARGETS ###
+
+PROGRAM=	dt
+
+# system targets for program makefile
+
+$(PROGRAM):	$(OBJS) $(XOBJS) $(LIBS)
+		@echo -n loading $(PROGRAM) ... 
+		@$(CC) -o $(PROGRAM) $(CFLAGS) $(LDFLAGS) $(OBJS) $(LIBS) $(EXTLIBS)
+		@echo done
+
+print:;
+		@$(PRINTER) $(PRINTFLAGS) $(CFILES)
+
+prettyprint:;
+		@vgrind $(CFILES) | $(TROFFPRINTER) $(TROFFPRINTERFLAGS)
+
+lint:		$(LINTOBJS)
+		lint $(LINTFLAGS) $(LINTOBJS) $(LINTLIBS)
+		touch lint
+
+clean:;
+		@rm -f $(OBJS) $(PROGRAM)
+
+tags:	$(CFILES) $(HDRS)
+	ctags -st $(CFILES) $(HDRS)
+
+# end of system targets for program makefile
+
+depend: makedep
+	echo '/^# DO NOT DELETE THIS LINE/+1,$$d' >eddep
+	echo '$$r makedep' >>eddep
+	echo 'w' >>eddep
+	cp Makefile Makefile.bak
+	ex - Makefile < eddep
+	rm eddep makedep makedep1 makedeperrs
+
+makedep: ${CFILES}
+	@cat /dev/null >makedep
+	-(for i in ${CFILES} ; do \
+		${CPP} -M ${CPPOPTS} $$i >> makedep; done) \
+		2>makedeperrs
+	sed \
+		-e 's,^.*genassym\.o:,assym.s assym.L:,' \
+		-e 's,^\(.*\)\.o:,\1.o \1.ln:,' makedep > makedep1
+	${AWK} ' { if ($$1 != prev) { print rec; rec = $$0; prev = $$1; } \
+		else { if (length(rec $$3) > 78) { print rec; rec = $$0; } \
+		       else rec = rec " " $$3 } } \
+	      END { print rec } ' makedep1 > makedep
+	@cat makedeperrs
+	@(if [ -s makedeperrs ]; then false; fi)
+
+
+# DO NOT DELETE THIS LINE
+
+dt.o dt.ln:	dt.c ./dt.h /usr/include/stdio.h
+dt.o dt.ln:	/usr/include/float.h
+dt.o dt.ln:	/usr/include/stdlib.h
+dt.o dt.ln:	/usr/include/sys/types.h /usr/include/string.h
+dt.o dt.ln: /usr/include/termios.h
+dt.o dt.ln:	/usr/include/time.h
+dt.o dt.ln:	/usr/include/unistd.h 
+dt.o dt.ln:	/usr/include/errno.h
+dt.o dt.ln:	/usr/include/sys/times.h 
+dt.o dt.ln:	/usr/include/fcntl.h
+dt.o dt.ln:	/usr/include/signal.h
+dt.o dt.ln:	/usr/include/sys/wait.h 
+dt.o dt.ln:	/usr/include/sys/types.h 
+dt.o dt.ln:	/usr/include/signal.h
+dtread.o dtread.ln:	dtread.c ./dt.h /usr/include/stdio.h
+dtread.o dtread.ln:	/usr/include/float.h
+dtread.o dtread.ln:	/usr/include/stdlib.h 
+dtread.o dtread.ln:	/usr/include/string.h
+dtread.o dtread.ln:	/usr/include/termios.h
+dtread.o dtread.ln:	/usr/include/time.h 
+dtread.o dtread.ln:	/usr/include/unistd.h 
+dtread.o dtread.ln:	/usr/include/errno.h
+dtread.o dtread.ln:	/usr/include/sys/times.h 
+dtread.o dtread.ln:	/usr/include/sys/types.h
+dtwrite.o dtwrite.ln:	dtwrite.c ./dt.h /usr/include/stdio.h
+dtwrite.o dtwrite.ln:	/usr/include/float.h
+dtwrite.o dtwrite.ln:	/usr/include/stdlib.h 
+dtwrite.o dtwrite.ln:	/usr/include/string.h
+dtwrite.o dtwrite.ln:	/usr/include/termios.h
+dtwrite.o dtwrite.ln:	/usr/include/time.h 
+dtwrite.o dtwrite.ln:	/usr/include/unistd.h 
+dtwrite.o dtwrite.ln:	/usr/include/errno.h
+dtwrite.o dtwrite.ln:	/usr/include/sys/times.h 
+dtwrite.o dtwrite.ln:	/usr/include/sys/types.h
+dtstats.o dtstats.ln:	dtstats.c ./dt.h /usr/include/stdio.h
+dtstats.o dtstats.ln:	/usr/include/float.h
+dtstats.o dtstats.ln:	/usr/include/stdlib.h 
+dtstats.o dtstats.ln:	/usr/include/string.h
+dtstats.o dtstats.ln:	/usr/include/termios.h
+dtstats.o dtstats.ln:	/usr/include/time.h 
+dtstats.o dtstats.ln:	/usr/include/unistd.h 
+dtstats.o dtstats.ln:	/usr/include/errno.h
+dtstats.o dtstats.ln:	/usr/include/sys/times.h 
+dtstats.o dtstats.ln:	/usr/include/sys/types.h
+dttty.o dttty.ln:	dttty.c ./dt.h /usr/include/stdio.h 
+dttty.o dttty.ln:	/usr/include/float.h
+dttty.o dttty.ln:	/usr/include/stdlib.h 
+dttty.o dttty.ln:	/usr/include/string.h
+dttty.o dttty.ln:	/usr/include/termios.h
+dttty.o dttty.ln:	/usr/include/time.h 
+dttty.o dttty.ln:	/usr/include/unistd.h 
+dttty.o dttty.ln:	/usr/include/errno.h
+dttty.o dttty.ln:	/usr/include/sys/times.h 
+dttty.o dttty.ln:	/usr/include/sys/types.h
+dtutil.o dtutil.ln:	dtutil.c ./dt.h /usr/include/stdio.h
+dtutil.o dtutil.ln:	/usr/include/float.h
+dtutil.o dtutil.ln:	/usr/include/stdlib.h 
+dtutil.o dtutil.ln:	/usr/include/string.h
+dtutil.o dtutil.ln:	/usr/include/termios.h
+dtutil.o dtutil.ln:	/usr/include/time.h 
+dtutil.o dtutil.ln:	/usr/include/unistd.h 
+dtutil.o dtutil.ln:	/usr/include/errno.h
+dtutil.o dtutil.ln:	/usr/include/sys/times.h 
+dtutil.o dtutil.ln:	/usr/include/fcntl.h
+dtutil.o dtutil.ln:	/usr/include/malloc.h
+dtutil.o dtutil.ln:	/usr/include/sys/stat.h 
+dtutil.o dtutil.ln:	/usr/include/sys/types.h 
+dtusage.o dtusage.ln:	dtusage.c ./dt.h /usr/include/stdio.h
+dtusage.o dtusage.ln:	/usr/include/float.h
+dtusage.o dtusage.ln:	/usr/include/stdlib.h 
+dtusage.o dtusage.ln:	/usr/include/sys/types.h /usr/include/string.h
+dtusage.o dtusage.ln:	/usr/include/termios.h
+dtusage.o dtusage.ln:	/usr/include/time.h 
+dtusage.o dtusage.ln:	/usr/include/unistd.h 
+dtusage.o dtusage.ln:	/usr/include/errno.h
+dtusage.o dtusage.ln:	/usr/include/sys/times.h 
+dtusage.o dtusage.ln:	/usr/include/sys/types.h

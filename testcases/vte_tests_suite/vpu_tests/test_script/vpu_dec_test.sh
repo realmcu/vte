@@ -1,16 +1,17 @@
+#Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
 #!/bin/sh
 ###################################################################################################
 #
 #    @file   mx37_vpu_dec_test.sh
 #
 #    @brief  shell script for testcase design for VPU decode
-#
-###################################################################################################
-#
-#   Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
-#   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-#   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-#   Freescale Semiconductor, Inc.
 #
 ###################################################################################################
 #Revision History:
@@ -436,6 +437,52 @@ return $RC
 }
 
 
+# Function:     test_case_12
+# Description   - Test if H264 ipu deInterlace VDI ok
+#  
+test_case_12()
+{
+#TODO give TCID 
+TCID="vpu_H264_VDI_test"
+#TODO give TST_COUNT
+TST_COUNT=1
+RC=1
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+#TODO add function test scripte here
+echo "TST_INFO: h264 MP VDI test"
+${TSTCMD} -D "-i ${STREAM_PATH}/video/H264_MP30_interlaced_poc2_720x576.h264 -f 2" || return $RC
+RC=0
+
+return $RC
+}
+
+# Function:     test_case_13
+# Description   - Test if VC1 ipu deInterlace VDI ok
+#  
+test_case_13()
+{
+#TODO give TCID 
+TCID="vpu_VC1_VDI_test"
+#TODO give TST_COUNT
+TST_COUNT=1
+RC=1
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+#TODO add function test scripte here
+echo "TST_INFO: vc1 MPHL VDI test"
+${TSTCMD} -D "-i ${STREAM_PATH}/video/WMV9_MPHL_NTSCV9.rcv -f 3" || return $RC
+RC=0
+
+return $RC
+}
+
+
+
 
 usage()
 {
@@ -451,12 +498,14 @@ echo "8: H264 BP decoder test"
 echo "9: MPEG4 decoder+ deblock test"
 echo "10: H263 basic test"
 echo "11: MPEG2 decoder + deblock test"
+echo "12: H264 vdi test"
+echo "13: VC1 vdi test"
 }
 
 #TODO check parameter
 if [ $# -ne 1 ]
 then
-echo "usage $0 <1/2/3/4/5/6/7/8/9/10/11>"
+echo "usage $0 <1/2/3/4/5/6/7/8/9/10/11/12/13>"
 usage
 exit 1 
 fi
@@ -510,6 +559,12 @@ case "$1" in
 11)
   test_case_11 || exit $RC
   ;;
+12)
+  test_case_12 || exit $RC
+  ;;
+13)
+  test_case_13 || exit $RC
+  ;;
 *)
 #TODO check parameter
   usage
@@ -517,10 +572,3 @@ case "$1" in
 esac
 
 tst_resm TINFO "Test PASS"
-
-
-
-
-
-
-

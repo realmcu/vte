@@ -1,12 +1,10 @@
+static char *whatHeader = "@(#) dt.d/dtinfo.c /main/4 Jan_18_15:13";
 /****************************************************************************
  *									    *
- *			  COPYRIGHT (c) 1990 - 2000			    *
+ *			  COPYRIGHT (c) 1990 - 2004			    *
  *			   This Software Provided			    *
  *				     By					    *
  *			  Robin's Nest Software Inc.			    *
- *			       2 Paradise Lane  			    *
- *			       Hudson, NH 03051				    *
- *			       (603) 883-2355				    *
  *									    *
  * Permission to use, copy, modify, distribute and sell this software and   *
  * its documentation for any purpose and without fee is hereby granted,	    *
@@ -35,7 +33,7 @@
  */
 #include "dt.h"
 #if !defined(_QNX_SOURCE)
-#  if !defined(sun)
+#  if !defined(sun) && !defined(WIN32)
 #    include <sys/ioctl.h>
 #  endif /* !defined(sun) */
 #endif /* !defined(_QNX_SOURCE) */
@@ -43,6 +41,55 @@
 
 /*
  * Modification History:
+ *
+ * January 13th, 2007 by Robin T. Miller
+ *      For AIX, implement IOCINFO to obtain device size & capacity.
+ *
+ * October 20th, 2004 by Robin Miller.
+ *      In SetupRegularFile() set user capacity to the max of the
+ * data limit or the file size, so repeated random I/O with same
+ * random seed, provides the same results when file is re-read.
+ *
+ * July 7th, 2004 by Robin Miller.
+ *      For HP-UX, allow setting the queue depth.
+ *
+ * March 30th, 2004 by Robin Miller.
+ *      Add os_system_device_info() for Linux to try to obtain the
+ * sector size and partition capacity.  If this can be obtained for
+ * random I/O, then do_random() can be avoided, which is a good thing
+ * since it's broken in 2.4 kernels (can't lseek past end of partition).
+ *
+ * February 27th, 2003 by Robin Miller.
+ *      A little more tweaking of the fsync() flag... only enable
+ * fsync for block or regular file, not for character (raw) disks.
+ *
+ * December 5th, 2003 by Robin Miller.
+ *      Conditionalize to exclude tty code.
+ *
+ * November 17th, 2003 by Robin Miller.
+ *	Breakup output to stdout or stderr, rather than writing
+ * all output to stderr.  If output file is stdout ('-') or a log
+ * file is specified, then all output reverts to stderr.
+ *
+ * June 9th, 2003 by Robin Miller.
+ *	Fix problem setting fsync_flag when dtype=disk/block/regular
+ * is specified (should do fsync() after writes, but it is *not*).
+ *
+ * March 13th, 2003 by Robin Miller.
+ *	Add support for DIOC_DESCRIBE IOCTL to determine device type,
+ * capacity, and block size.
+ *
+ * March 16th, 2002 by Robin Miller.
+ *	In dec_system_device_info() open device with O_NDELAY, incase
+ * this is a tape device, we don't want a looong delay during the open.
+ *
+ * October 4th, 2001 by Robin Miller.
+ *	Fix problem with idtype/odtype options were being overridden by
+ * dec_system_device_info().  Assume the user is right :-)
+ *
+ * August 31st, 2001 by Robin Miller.
+ *	Add casts to values being used to calculate user capacity, which
+ * is in bytes (64 bits), to ensure 32-bit truncation does not occur.
  *
  * June 2nd, 2001 by Robin Miller.
  *	After setting up a "regular" device type, ensure the device
@@ -146,7 +193,7 @@
  */
 static void setup_device_defaults(struct dinfo *dip);
 static void SetupRegularFile(struct dinfo *dip, struct stat *sbp);
-#if defined(__MSDOS__) || defined(__WIN32__) || defined(_NT_SOURCE)
+#if defined(__MSDOS__) || defined(__WIN32__) || defined(_NT_SOURCE) || defined(WIN32)
 static bool IsDriveLetter(char *bufptr);
 #endif /* defined(__MSDOS__) || defined(__WIN32__) || defined(_NT_SOURCE) */
 #if defined(ultrix) || defined(DEC)
@@ -205,12 +252,12 @@ setup_device_type (char *str)
 	    return (dtp);
 	}
     }
-    fprintf (stderr, "Device type '%s' is invalid, valid entrys are:\n", str);
+    fprintf (efp, "Device type '%s' is invalid, valid entrys are:\n", str);
     for (dtp = dtype_table, i = 0; i < num_dtypes; i++, dtp++) {
-	if ( (i % 4) == 0) fprintf (stderr, "\n");
-	fprintf (stderr, "    %-12s", dtp->dt_type);
+	if ( (i % 4) == 0) fprintf (efp, "\n");
+	fprintf (efp, "    %-12s", dtp->dt_type);
     }
-    fprintf (stderr, "\n");
+    fprintf (efp, "\n");
     return ((struct dtype *) 0);
 }
 
@@ -252,6 +299,20 @@ setup_device_defaults (struct dinfo *dip)
 	if (dip->di_random_io) {
 	    if (!random_align) random_align = device_size;
 	}
+	if (fsync_flag == UNINITIALIZED) {
+            if ( (dtp->dt_dtype == DT_BLOCK)   ||
+                 (dtp->dt_dtype == DT_REGULAR) ) {
+                fsync_flag = TRUE;
+            } else if ( (dtp->dt_dtype == DT_DISK) )
+                /*
+                 * Devices identified as DT_DISK should be the
+                 * raw (character) device.  Since some OS's,
+                 * such as AIX don't like fsync() to disks,
+                 * we'll disable it since it really only has
+                 * meaning to block or regular (FS) files.
+                 */
+                fsync_flag = FALSE;
+            }
     } else {
 	if (!device_size) device_size = 1;
 	if (max_size && !user_min) min_size = 1;
@@ -260,12 +321,13 @@ setup_device_defaults (struct dinfo *dip)
 	if (max_size && !min_size) min_size = 1;
 	if (min_size && !incr_count) incr_count = 1;
     }
+    dip->di_trigger = trigger;
     return;
 }
 
 /************************************************************************
  *									*
- * system_device_info() - Get system device information (if possible).	*
+ * os_system_device_info() - Get OS System Device Information.		*
  *									*
  * Description:								*
  *	This function attempts to obtain device information necessary	*
@@ -278,6 +340,93 @@ setup_device_defaults (struct dinfo *dip)
  *		None.							*
  *									*
  ************************************************************************/
+#if defined(AIX)
+
+#include <sys/devinfo.h>
+
+
+void
+os_system_device_info (struct dinfo *dip)
+{
+    struct devinfo devinfo;
+    struct devinfo *devinfop = &devinfo;
+    int fd = dip->di_fd;
+    bool temp_fd = FALSE;
+    short category;
+    int i;
+	
+    if (fd == NoFd) {
+        temp_fd = TRUE;
+        if ( (fd = open(dip->di_dname, O_RDONLY)) < 0) {
+            return;
+        }
+    }
+
+    (void)memset(devinfop, '\0', sizeof(*devinfop));
+    if (ioctl (fd, IOCINFO, devinfop) == SUCCESS) {
+
+        switch (devinfop->devtype) {
+
+            case DD_DISK: { /* Includes LV's! */
+                if (devinfop->flags & DF_LGDSK) {
+                    dip->di_dsize = devinfop->un.dk64.bytpsec;
+                    dip->di_capacity = (large_t)
+                                       ((u_int64_t)devinfop->un.dk64.hi_numblks << 32L) |
+                                        (uint32_t)devinfop->un.dk64.lo_numblks;
+                } else {
+                    dip->di_dsize = devinfop->un.dk.bytpsec;
+                    dip->di_capacity = (large_t)devinfop->un.dk.numblks;
+                }
+                break;
+            }
+            case DD_SCDISK: {
+                if (devinfop->flags & DF_LGDSK) {
+                    dip->di_dsize = devinfop->un.scdk64.blksize;
+                    dip->di_capacity = (large_t)
+                                       ((u_int64_t)devinfop->un.scdk64.hi_numblks << 32L) |
+                                        (uint32_t)devinfop->un.scdk64.lo_numblks;
+                } else {
+                    dip->di_dsize = devinfop->un.scdk.blksize;
+                    dip->di_capacity = (large_t)devinfop->un.scdk.numblks;
+                }
+                break;
+            }
+            case DD_TAPE:
+            case DD_SCTAPE:
+                dip->di_dtype = setup_device_type("tape");
+                break;
+
+            case DD_TTY:
+                dip->di_dtype = setup_device_type("terminal");
+                break;
+
+            default:
+                break;
+        }
+
+        /*
+         * Common Disk Setup:
+         */
+        if ( (devinfop->devtype == DD_DISK) || (devinfop->devtype == DD_SCDISK) ) {
+            if (!device_size) device_size = dip->di_dsize;
+            user_capacity = (dip->di_capacity * (large_t)dip->di_dsize);
+            if (debug_flag) {
+                Printf("IOCINFO Capacity: " LUF " blocks, device size %u bytes.\n",
+                       dip->di_capacity, dip->di_dsize);
+            }
+            if (dip->di_dsize && !user_lbsize && !lbdata_size) {
+                lbdata_size = dip->di_dsize;
+            }
+	    dip->di_dtype = setup_device_type("disk");
+        }
+    }
+
+    if (temp_fd) (void)close(fd);
+    return;
+}
+
+#endif /* defined(AIX) */
+
 #if defined(ultrix) || defined(DEC)
 
 #include <sys/devio.h>
@@ -288,7 +437,7 @@ setup_device_defaults (struct dinfo *dip)
 #endif /* defined(DEC) */
 
 void
-dec_system_device_info (struct dinfo *dip)
+os_system_device_info (struct dinfo *dip)
 {
     struct devget devget, *devgp = NULL;
     device_info_t devinfo, *devip = NULL;
@@ -299,7 +448,7 @@ dec_system_device_info (struct dinfo *dip)
 
     if (fd == NoFd) {
 	temp_fd = TRUE;
-	if ( (fd = open (dip->di_dname, O_RDONLY)) < 0) {
+	if ( (fd = open (dip->di_dname, (O_RDONLY | O_NDELAY))) < 0) {
 	    return;
 	}
     }
@@ -382,7 +531,7 @@ dec_system_device_info (struct dinfo *dip)
 	     * Note: Only setup maximum capacity for random I/O, or else
 	     * we will inhibit End of Media (EOM) testing.
 	     */
-	    if (dip->di_random_io) {
+	    if (dip->di_random_io || num_slices) {
 		if (dip->di_dname[strlen(dip->di_dname)-1] == 'c') {
 		    if ( !max_capacity && !user_capacity ) {
 			max_capacity = TRUE;
@@ -405,9 +554,9 @@ dec_system_device_info (struct dinfo *dip)
 		 */
 		if (max_capacity) {
 		    dip->di_capacity = diskinfo->capacity;
-		    user_capacity = (dip->di_capacity * dip->di_dsize);
+		    user_capacity = (dip->di_capacity * (large_t)dip->di_dsize);
 		    if (debug_flag) {
-			Fprintf("DEVGETINFO Capacity: %lu blocks.\n", dip->di_capacity);
+			Printf("DEVGETINFO Capacity: " LUF " blocks.\n", dip->di_capacity);
 		    }
 		}
 		if (dip->di_dsize && !user_lbsize && !lbdata_size) {
@@ -481,7 +630,7 @@ SetupDiskAttributes (struct dinfo *dip, int fd)
      * Note: Only setup maximum capacity for random I/O, or else
      * we will inhibit End of Media (EOM) testing.
      */
-    if (dip->di_random_io) {
+    if (dip->di_random_io || num_slices) {
 	if ( (dip->di_device && EQ(dip->di_device,"LSM")) ||
 	     (dip->di_dname[strlen(dip->di_dname)-1] == 'c') ) {
 	    if ( !max_capacity && !user_capacity ) {
@@ -505,9 +654,9 @@ SetupDiskAttributes (struct dinfo *dip, int fd)
 	 */
 	if (max_capacity) {
 	    dip->di_capacity = devgeom.geom_info.dev_size;
-	    user_capacity = (dip->di_capacity * dip->di_dsize);
+	    user_capacity = (dip->di_capacity * (large_t)dip->di_dsize);
 	    if (debug_flag) {
-		Fprintf("DEVGETGEOM Capacity: %lu blocks.\n", dip->di_capacity);
+		Printf("DEVGETGEOM Capacity: " LUF " blocks.\n", dip->di_capacity);
 	    }
 	}
 	if (dip->di_dsize && !user_lbsize && !lbdata_size) {
@@ -525,6 +674,246 @@ SetupDiskAttributes (struct dinfo *dip, int fd)
 
 #endif /* defined(ultrix) || defined(DEC) */
 
+#if defined(HP_UX)
+
+#include <sys/diskio.h>
+#include <sys/scsi.h>
+
+static int get_queue_depth(int fd, unsigned int *qdepth);
+static int set_queue_depth(int fd, unsigned int qdepth);
+
+void
+os_system_device_info (struct dinfo *dip)
+{
+    disk_describe_type disk_type, *disktp = &disk_type;
+    union inquiry_data inquiry;
+    int fd = dip->di_fd;
+    bool temp_fd = FALSE;
+    short category;
+    int i;
+
+    if (fd == NoFd) {
+	temp_fd = TRUE;
+	if ( (fd = open (dip->di_dname, (O_RDONLY | O_NDELAY))) < 0) {
+	    return;
+	}
+    }
+
+    /*
+     * Attempt to obtain the device information.
+     */
+    bzero ((char *) disktp, sizeof(*disktp));
+    if (ioctl (fd, DIOC_DESCRIBE, disktp) == SUCCESS) {
+	if (disktp->dev_type != UNKNOWN_DEV_TYPE) {
+	    size_t size = sizeof(disktp->model_num);
+	    dip->di_device = Malloc(size + 1);
+	    (void) strncpy (dip->di_device, disktp->model_num, size);
+	    /*
+	     * Strip trailing spaces from the device name.
+	     */
+	    for (i = size; i--; ) {
+		if ( isspace(dip->di_device[i]) ) {
+		    dip->di_device[i] = '\0';
+		} else {
+		    break;
+		}
+	    }
+	    dip->di_dsize = disktp->lgblksz;
+	    /*
+	     * Only setup capacity for random I/O, since we want to test
+	     * end of file conditions on sequential reads and writes.
+	     */
+	    if (dip->di_random_io || num_slices) {
+		if ( !max_capacity && !user_capacity ) {
+		    max_capacity = TRUE;
+		    dip->di_capacity = (disktp->maxsva + 1);
+		    user_capacity = (dip->di_capacity * (large_t)dip->di_dsize);
+		    if (debug_flag) {
+			Printf("DIOC_DESCRIBE Capacity: " LUF " blocks (%u byte blocks).\n",
+					dip->di_capacity, dip->di_dsize);
+		    }
+		}
+	    }
+ 	}
+
+	switch (disktp->dev_type) {
+
+	    case CDROM_DEV_TYPE:	/* CDROM device */
+	    case DISK_DEV_TYPE:		/* Disk device */
+	    case WORM_DEV_TYPE:		/* Write once read many optical device */
+	    case MO_DEV_TYPE:		/* Magneto Optical device */
+		dip->di_dtype = setup_device_type("disk");
+                if (dip->di_qdepth != 0xFFFFFFFF) {
+                    (void)set_queue_depth(fd, dip->di_qdepth);
+                }                                                       
+		break;
+
+	    case CTD_DEV_TYPE:		/* Cartridge tape device */
+		dip->di_dtype = setup_device_type("tape");
+		break;
+
+	    default:
+		break;
+	}
+    } else if (ioctl (fd, SIOC_INQUIRY, &inquiry) == SUCCESS) {
+	struct inquiry_2 *inq = (struct inquiry_2 *)&inquiry;
+	size_t size = sizeof(inq->product_id);
+
+	if (debug_flag) {
+	    Printf("SIOC_INQUIRY device type %u\n", inq->dev_type);
+	}
+	dip->di_device = Malloc(size + 1);
+	(void) strncpy (dip->di_device, inq->product_id, size);
+	for (i = size; i--; ) {
+	    if ( isspace(dip->di_device[i]) ) {
+		dip->di_device[i] = '\0';
+	    } else {
+		break;
+	    }
+	}
+
+	switch (inq->dev_type) {
+
+	    case SCSI_DIRECT_ACCESS:
+	    case SCSI_WORM:
+	    case SCSI_CDROM:
+	    case SCSI_MO:
+		dip->di_dtype = setup_device_type("disk");
+                if (dip->di_qdepth != 0xFFFFFFFF) {
+                    (void)set_queue_depth(fd, dip->di_qdepth);
+                }                                                       
+		break;
+
+	    case SCSI_SEQUENTIAL_ACCESS:
+		dip->di_dtype = setup_device_type("tape");
+		break;
+
+	    default:
+		break;
+	}
+    }
+    if (temp_fd) (void)close(fd);
+    return;
+}
+
+static int
+get_queue_depth(int fd, unsigned int *qdepth)
+{
+    struct sioc_lun_limits lun_limits;
+    int status;
+
+    (void)memset(&lun_limits, '\0', sizeof(lun_limits));
+    if ( (status = ioctl(fd, SIOC_GET_LUN_LIMITS, &lun_limits)) < 0) {
+        if (debug_flag) {
+            perror("SIOC_SET_LUN_LIMITS failed");
+        }
+    } else {
+        *qdepth = lun_limits.max_q_depth;
+    }
+    return (status);
+}
+
+static int
+set_queue_depth(int fd, unsigned int qdepth)
+{
+    struct sioc_lun_limits lun_limits;
+    int status;
+
+    if (debug_flag) {
+        unsigned int qd;
+        if (get_queue_depth (fd, &qd) == 0) {
+            Printf("Current queue depth is %u\n", qd);
+        }
+    }
+    (void)memset(&lun_limits, '\0', sizeof(lun_limits));
+    lun_limits.max_q_depth = qdepth;
+    /*
+     * For performance testing, allow disabling tags.
+     */
+    if (qdepth == 0) {
+#if defined(SCTL_DISABLE_TAGS)
+        lun_limits.flags = SCTL_DISABLE_TAGS;
+#else /* !defined(SCTL_DISABLE_TAGS) */
+        lun_limits.flags = 0;
+#endif /* defined(SCTL_DISABLE_TAGS) */
+    } else {
+        lun_limits.flags = SCTL_ENABLE_TAGS;
+    }
+    if ( (status = ioctl(fd, SIOC_SET_LUN_LIMITS, &lun_limits)) < 0) {
+        if (debug_flag) {
+            perror("SIOC_SET_LUN_LIMITS failed");
+        }
+    } else if (debug_flag) {
+        Printf("Queue depth set to %u\n", qdepth);
+    }
+    return (status);
+}
+
+#endif /* defined(HP_UX) */
+
+#if defined(__linux__)
+
+/* Ugly stuff to avoid conflict with Linux BLOCK_SIZE definition. */
+#undef BLOCK_SIZE
+#include <linux/fs.h>
+#undef BLOCK_SIZE
+#define BLOCK_SIZE 512
+
+void
+os_system_device_info (struct dinfo *dip)
+{
+    int fd = dip->di_fd;
+    bool temp_fd = FALSE;
+    unsigned long nr_sects;
+    int sect_size;
+
+    if (fd == NoFd) {
+	temp_fd = TRUE;
+	if ( (fd = open (dip->di_dname, (O_RDONLY | O_NDELAY))) < 0) {
+	    return;
+	}
+    }
+
+    /*
+     * Try to obtain the sector size.
+     */
+    if (ioctl (fd, BLKSSZGET, &sect_size) == SUCCESS) {
+        dip->di_dsize = sect_size;
+        if (debug_flag) {
+            Printf("BLKSSZGET Sector Size: %d bytes\n", sect_size);
+        }
+    }
+
+    /*
+     * If this IOCTL succeeds, we will assume it's a disk device.
+     *
+     * Note: The size returned is for the partition (thank-you!).
+     */
+    if (ioctl (fd, BLKGETSIZE, &nr_sects) == SUCCESS) {
+        if (!dip->di_dsize) dip->di_dsize = BLOCK_SIZE;
+        /*
+	 * Only setup capacity for random I/O, since we want to test
+	 * end of file conditions on sequential reads and writes.
+	 */
+	if (dip->di_random_io || num_slices) {
+	    if ( !max_capacity && !user_capacity ) {
+		max_capacity = TRUE;
+		dip->di_capacity = nr_sects;
+		user_capacity = (dip->di_capacity * (large_t)dip->di_dsize);
+		if (debug_flag) {
+		    Printf("BLKGETSIZE Capacity: " LUF " blocks (%u byte blocks).\n",
+					dip->di_capacity, dip->di_dsize);
+		}
+	    }
+        }
+    }
+
+    if (temp_fd) (void)close(fd);
+    return;
+}
+
+#endif /* defined(__linux__) */
+
 /*
  * Note: This function called after the device is opened!
  */
@@ -532,6 +921,15 @@ void
 system_device_info (struct dinfo *dip)
 {
     if (dip->di_dtype == NULL) {
+#if defined(WIN32)
+	if( GetFileType(dip->di_fd) == FILE_TYPE_DISK) {
+	   dip->di_random_access = TRUE;
+	   dip->di_dtype = setup_device_type("disk");
+	   setup_device_defaults(dip);
+	} else {
+            Fprint("This device is not currently supported!\n");
+        }
+#else /* !defined(WIN32) */
 	struct stat sb;
 	/*
 	 * For regular files, set the fsync flag to flush writes.
@@ -543,6 +941,7 @@ system_device_info (struct dinfo *dip)
 	} else {
 	    dip->di_dtype = setup_device_type("unknown");
 	}
+#endif /* defined(WIN32) */
     }
     if (fsync_flag == UNINITIALIZED) { fsync_flag = FALSE; }
     return;
@@ -573,6 +972,9 @@ setup_device_info (char *dname, struct dtype *dtp)
     dip = (struct dinfo *) Malloc (sizeof(*dip));
     dip->di_fd = NoFd;
     dip->di_dname = dname;
+#if defined(HP_UX)
+    dip->di_qdepth = qdepth;
+#endif
     dip->di_funcs = &generic_funcs;
     if ( (io_dir == REVERSE) || (io_type == RANDOM_IO) ) {
 	dip->di_random_io = TRUE;
@@ -589,15 +991,17 @@ setup_device_info (char *dname, struct dtype *dtp)
     }
 #endif /* defined(MMAP) */
 
-#if defined(ultrix) || defined(DEC)
+#if defined(ultrix) || defined(DEC) || defined(HP_UX) || defined(__linux__) || defined(AIX)
     /*
      * Must do this early on, to set device type and size.
+     *
+     * TODO: Create stub and remove ugly conditionalization!
      */
     if (dtp == NULL) {
-	dec_system_device_info (dip);
+	os_system_device_info (dip);
+	dtp = dip->di_dtype;
     }
-    dtp = dip->di_dtype;
-#endif /* defined(ultrix) || defined(DEC) */
+#endif /* defined(ultrix) || defined(DEC) || defined(HP_UX) || defined(__linux__) || defined(AIX) */
 
     /*
      * If user specified a device type, don't override it.
@@ -606,6 +1010,10 @@ setup_device_info (char *dname, struct dtype *dtp)
 	/*
 	 * Determine test functions based on device name.
 	 */
+#if defined(WIN32)
+	Fprint("Please specify the device type!\n");
+	exit(FATAL_ERROR);
+#else /* !defined(WIN32) */
 	if ( (EQL (dname, DEV_PREFIX, DEV_LEN))   ||
 	     (EQL (dname, ADEV_PREFIX, ADEV_LEN)) ||
 	     (EQL (dname, NDEV_PREFIX, NDEV_LEN)) ) {
@@ -643,7 +1051,7 @@ setup_device_info (char *dname, struct dtype *dtp)
 			(EQL (dentry, RCDROM_NAME, sizeof(RCDROM_NAME)-1)) ) {
 		dtp = setup_device_type("disk");
 	    }
-#if defined(__MSDOS__) || defined(__WIN32__) || defined(_NT_SOURCE)
+#if defined(__MSDOS__) || defined(__WIN32__) || defined(_NT_SOURCE) || defined(WIN32)
 	    if ( (dtp == NULL) && (IsDriveLetter (dentry)) ) {
 		dtp = setup_device_type("block");
 	    }
@@ -665,21 +1073,22 @@ setup_device_info (char *dname, struct dtype *dtp)
 	}
 	if ( (dtp == NULL) &&
 	     (stat (dname, &sb) == SUCCESS)) {
-	    if ( S_ISBLK(sb.st_mode) ) {
-		dtp = setup_device_type("block");
-		if (fsync_flag == UNINITIALIZED) {
-		     fsync_flag = TRUE;
-		}
-	    } else if ( S_ISCHR(sb.st_mode) ) {
-		/*
-		 * Character devices are NOT treated as disks!
-		 */
+	    if ( S_ISBLK(sb.st_mode)) {
+        	dtp = setup_device_type("block");
+                if (fsync_flag == UNINITIALIZED) {
+    	            fsync_flag = TRUE;
+                }
+            } else if ( S_ISCHR(sb.st_mode) ) {
+                /*
+                 * Character devices are NOT treated as disks!
+                 */
 #if defined(ultrix) || defined(DEC)
-		if (SetupDiskAttributes(dip, dip->di_fd) != SUCCESS)
+                if (SetupDiskAttributes(dip, dip->di_fd) != SUCCESS)
 #endif
-		    dtp = setup_device_type("character");
-	    }
+                    dtp = setup_device_type("character");
+            } 
 	}
+#endif
     } /* if (dtp == NULL) */
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -690,13 +1099,16 @@ setup_device_info (char *dname, struct dtype *dtp)
      * Do special setup for certain device types.
      */
     if (dip->di_dtype = dtp) {
+#if defined(TTY)
 	if (dtp->dt_dtype == DT_TERMINAL) {
 	    ttyport_flag = TRUE;		/* this should go away... */
 	    dip->di_funcs = &tty_funcs;
-	} else if ( (dtp->dt_dtype == DT_BLOCK) ||
-		    (dtp->dt_dtype == DT_DISK)  || dip->di_random_io ) {
-	    dip->di_random_access = TRUE;
-	}
+	} else 
+#endif /* defined(TTY) */
+            if ( (dtp->dt_dtype == DT_BLOCK) ||
+		 (dtp->dt_dtype == DT_DISK)  || dip->di_random_io ) {
+	        dip->di_random_access = TRUE;
+	    }
 	setup_device_defaults (dip);
     }
 
@@ -716,6 +1128,7 @@ setup_device_info (char *dname, struct dtype *dtp)
     /*
      * Note: This handles *existing* input/output files.
      */
+#if !defined(WIN32)
     if (stat (dname, &sb) == SUCCESS) {
 	if ( S_ISREG(sb.st_mode) ) {
 	    SetupRegularFile (dip, &sb);
@@ -725,10 +1138,18 @@ setup_device_info (char *dname, struct dtype *dtp)
 	}
 #if defined(_QNX_SOURCE)
 	else if ( S_ISBLK(sb.st_mode) ) {
-	    user_capacity = (large_t)(sb.st_size * dip->di_dsize);
+	    user_capacity = ((large_t)sb.st_size * (large_t)dip->di_dsize);
 	}
 #endif /* defined(_QNX_SOURCE) */
+    } else if (errno == ENOENT) {
+        /*
+         * File doesn't exist, assume a regular file will be created,
+         */
+        if (dtp == NULL) {
+            SetupRegularFile (dip, NULL);
+        }
     }
+#endif /* !defined(WIN32) */
     return (dip);
 }
 
@@ -743,8 +1164,18 @@ SetupRegularFile (struct dinfo *dip, struct stat *sbp)
      */
     if ( (dip->di_random_io || num_slices) &&
 	 (rdata_limit == (large_t)0) && !user_capacity) {
-	if (sbp->st_size) {
-	    user_capacity = (large_t) sbp->st_size;
+	if (sbp && sbp->st_size) {
+            /*
+             * This MAX is done, so random I/O to a file can be
+             * duplicated when specifying the same random seed.
+             * If file size is used, and it's less than limit,
+             * then random limit gets set too low.
+             */
+            if (data_limit != INFINITY) {
+                user_capacity = MAX(data_limit, (large_t)sbp->st_size);
+            } else {
+                user_capacity = (large_t) sbp->st_size;
+            }
 	} else if (data_limit != INFINITY) {
 	    user_capacity = data_limit;
 	}
@@ -757,7 +1188,7 @@ SetupRegularFile (struct dinfo *dip, struct stat *sbp)
     setup_device_defaults (dip);
 }
 
-#if defined(__MSDOS__) || defined(__WIN32__) || defined(_NT_SOURCE)
+#if defined(__MSDOS__) || defined(__WIN32__) || defined(_NT_SOURCE) || defined(WIN32)
 
 static bool
 IsDriveLetter(char *bufptr)

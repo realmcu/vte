@@ -126,9 +126,9 @@ clean:
 
 maintainer-clean: distclean
 distclean: clean
-	cp -p Makefile.in Makefile
-	cp -p zconf.in.h zconf.h
-	rm -f .DS_Store
+	#cp -p Makefile.in Makefile
+	#cp -p zconf.in.h zconf.h
+	rm -f .DS_Store Makefile zconf.h
 
 tags:
 	etags *.[ch]
