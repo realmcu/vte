@@ -440,7 +440,7 @@ int VT_nand_mtd_test_thrdrwe(void)
 int VT_nand_mtd_test_thrdrwonepage(void)
 {
 	int i,numOfRead;
-	#ifdef PROJECT_MARLEY
+	#ifdef PROJECT_MX37
 	i=0;
 	#endif
 	numOfRead=10;
@@ -496,7 +496,7 @@ int VT_nand_mtd_test_perform(void)
 	#endif
 	struct  erase_info_user mxc_erase_mtd;
 	
-	#ifdef PROJECT_MARLEY
+	#ifdef PROJECT_MX37
 	if(fullPageFlag)
 	{
 		//full page performance
@@ -524,7 +524,7 @@ int VT_nand_mtd_test_perform(void)
 
 	//test everage read speed
 	//start count on begin of read
-	#ifndef PROJECT_MARLEY
+	#ifndef PROJECT_MX37
 	gettimeofday(&tv1, NULL);
 
 	for(lcount=0;lcount<writeloop;lcount++)
@@ -589,7 +589,7 @@ int VT_nand_mtd_test_perform(void)
 		//calculate write speed 
 		readspeed=(double)(kbyte*((double)(writepage*readloop))/(double)((readinterval)));
 	}
-	#ifndef PROJECT_MARLEY
+	#ifndef PROJECT_MX37
 	tst_resm(TINFO,"nand page everage read speed:%lf KBps",readspeed);
 	#endif
 	//end of test read speed
@@ -604,7 +604,7 @@ int VT_nand_mtd_test_perform(void)
 	#else
 		gettimeofday(&tv1, NULL);
 	#endif
-	#ifdef PROJECT_MARLEY
+	#ifdef PROJECT_MX37
 	for(lcount=0;lcount<writeloop;lcount++)
 	#else
 		for(lcount=0;lcount<eraseloop;lcount++)
@@ -615,7 +615,7 @@ int VT_nand_mtd_test_perform(void)
 		//mxc_erase_mtd.start = addr_offset;
 		mxc_erase_mtd.start = addr_offset+lcount*mxc_info_mtd.erasesize;
 		mxc_erase_mtd.length = mxc_info_mtd.erasesize;
-	#ifdef PROJECT_MARLEY
+	#ifdef PROJECT_MX37
 		gettimeofday(&tv1, NULL);
 	#endif
 		if (ioctl(file_desc, MEMERASE, &mxc_erase_mtd) != 0)
@@ -626,7 +626,7 @@ int VT_nand_mtd_test_perform(void)
 					
 			return TFAIL;
 		}
-	#ifdef PROJECT_MARLEY
+	#ifdef PROJECT_MX37
 		gettimeofday(&tv2, NULL);
 		//get erase time
 		eraseinterval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
@@ -635,7 +635,7 @@ int VT_nand_mtd_test_perform(void)
 			sumEraseInterval=sumEraseInterval+eraseinterval;
 	#endif
 		}
-	#ifdef PROJECT_MARLEY
+	#ifdef PROJECT_MX37
 		gettimeofday(&tv1, NULL);
 		//if(pwrite(file_desc, rw_buf, length_tmem, addr_offset) < 0)
 		if(pwrite(file_desc, buf, writepage, addr_offset) < 0)
@@ -646,7 +646,7 @@ int VT_nand_mtd_test_perform(void)
 	#endif
 		gettimeofday(&tv2, NULL);
 		//get write time
-	#ifdef PROJECT_MARLEY
+	#ifdef PROJECT_MX37
 		writeinterval=(tv2.tv_sec-tv1.tv_sec)*1000000+(tv2.tv_usec-tv1.tv_usec);
 		if(writeinterval>0)
 		{
@@ -690,7 +690,7 @@ int VT_nand_mtd_test_perform(void)
 	
 	#endif
 	//end of test erase speed 
-	#ifdef PROJECT_MARLEY
+	#ifdef PROJECT_MX37
 	if(fullPageFlag)
 	{
 		tst_resm(TINFO,"nand page everage read speed:%lf KBps",readspeed);
