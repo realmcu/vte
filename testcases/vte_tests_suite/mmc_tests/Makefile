@@ -31,7 +31,7 @@
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################
-ifeq ( $(PROJECT_MARLEY), 1)
+ifeq ( $(PROJECT_MX37), 1)
 SUBDIRS = \
 eject_mmc_testcase \
 rw_mmc_testcase \

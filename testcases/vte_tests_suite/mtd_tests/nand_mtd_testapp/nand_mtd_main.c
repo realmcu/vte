@@ -73,7 +73,7 @@ option_t options[] =
         {"L:", &l_num, &l_copt},        /* Length test memory         */
         {"V",  &v_num,    NULL},        /* Verbose mode               */
         {"T:", &t_num, &t_copt},        /* Test number                */
-		#ifdef PROJECT_MARLEY
+		#ifdef PROJECT_MX37
         {"F:", &f_num, &f_copt},        //full page or not 1 full page, 0 half page
 		#endif
         {NULL,   NULL,    NULL}         /* NULL required to end array */
@@ -108,7 +108,7 @@ void help(void)
         printf("  -D x    Device name\n");
         printf("  -A x    Start test address (hex)\n");
         printf("  -L x    Length test memory (hex)\n");
-		#ifdef PROJECT_MARLEY
+		#ifdef PROJECT_MX37
 		printf("  -F x    full page for performance or half page performance 1: full page and 0: half page");
 		#endif
         printf("\nUsage: %s -T <testcase> [-V] [-D device_name] [-A start_address] [-L length_memory] [-F flag]\n\n", TCID);
@@ -231,7 +231,7 @@ int main(int argc, char **argv)
         {
                 addr_offset = ADDR_OFFSET;
         }
-		#ifdef  PROJECT_MARLEY
+		#ifdef  PROJECT_MX37
 		if(f_num)
 		{
 			fullPageFlag=atoi(f_copt);

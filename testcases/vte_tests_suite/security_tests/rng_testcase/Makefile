@@ -25,9 +25,55 @@
 ###################################################################################################
 #include $(KLINUX_BLTDIR)/include/linux/autoconf.h
 
+include $(KLINUX_BLTDIR)/.config
+
 LTP_DIR = ../../../../
 BIN_DIR = ../../../
 MODULE_DIR = ../rng_test_module
+
+ifeq "$(CONFIG_ARCH_MXC91331)" "y"
+CFLAGS += -DCONFIG_ARCH_MXC91331
+endif
+
+ifeq "$(CONFIG_ARCH_MXC91221)" "y"
+CFLAGS += -DCONFIG_ARCH_MXC91221
+endif
+
+ifeq "$(CONFIG_ARCH_MXC91321)" "y"
+CFLAGS += -DCONFIG_ARCH_MXC91321
+endif
+
+ifeq "$(CONFIG_ARCH_MXC91231)" "y"
+CFLAGS += -DCONFIG_ARCH_MXC91231
+endif
+
+ifeq "$(CONFIG_ARCH_MXC91131)" "y"
+CFLAGS += -DCONFIG_ARCH_MXC91131
+endif
+
+ifeq "$(CONFIG_ARCH_MX3)" "y"
+CFLAGS += -DCONFIG_ARCH_MX3
+endif
+
+ifeq "$(CONFIG_ARCH_MX27)" "y"
+CFLAGS += -DCONFIG_ARCH_MX27
+endif
+
+ifeq "$(CONFIG_ARCH_MX21)" "y"
+CFLAGS += -DCONFIG_ARCH_MX21
+endif
+
+ifeq "$(CONFIG_ARCH_MX35)" "y"
+CFLAGS += -DCONFIG_ARCH_MX35
+endif
+
+ifeq "$(CONFIG_ARCH_MX37)" "y"
+CFLAGS += -DCONFIG_ARCH_MX37
+endif
+
+ifeq "$(CONFIG_ARCH_MX51)" "y"
+CFLAGS += -DCONFIG_ARCH_MX51
+endif
 
 CFLAGS += -Wall -I$(LTP_DIR)include/ \
           -I$(MODULE_DIR) \

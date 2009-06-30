@@ -33,10 +33,10 @@
 #		CFLAGS+= -DPROJECT_LPDK=1
 #	endif
 #	ifeq ($(MARLEY), 1)
-#		CFLAGS+= -DPROJECT_MARLEY=1	
+#		CFLAGS+= -DPROJECT_MX37=1	
 #	endif
 #	ifeq ($(RINGO), 1)
-#		CFLAGS+= -DPROJECT_RINGO=1
+#		CFLAGS+= -DPROJECT_MX35=1
 #	endif
 #	ifeq ($(mx51), 1)
 #		CFLAGS+= -DPROJECT_MX51=1	

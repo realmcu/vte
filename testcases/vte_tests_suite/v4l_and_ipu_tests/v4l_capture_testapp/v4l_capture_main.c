@@ -264,7 +264,7 @@ int main(int argc, char **argv)
         }       
         
         /* Init struct sV4LTestConfig*/
-//#ifdef PROJECT_MARLEY        
+//#ifdef PROJECT_MX37        
        // gV4LTestConfig.mV4LDevice =  Dflag ? Dopt : "/dev/v4l/video16";
 //#eles
 	gV4LTestConfig.mV4LDevice =  Dflag ? Dopt : "/dev/video0";
