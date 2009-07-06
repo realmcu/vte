@@ -135,7 +135,7 @@ cp ${STREAM_PATH}/video/nokia6_720x576.mpg /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_mpeg2 
 ${TSTCMD} -D "-i /tmp/nokia6_720x576.mpg -f 4" || return $RC 
-
+rm -rf /tmp/nokia6_720x576.mpg
 RC=0
 return $RC
 }
@@ -160,6 +160,7 @@ cp ${STREAM_PATH}/video/SD720x480.vc1.rcv /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_vc1  
 ${TSTCMD} -D "-i /tmp/SD720x480.vc1.rcv -f 3" || return $RC  
+rm -rf /tmp/SD720x480.vc1.rcv
 RC=0
 return $RC
 }
@@ -182,7 +183,9 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/divx311_320x240.avi /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_divx 
-${TSTCMD} -D "/tmp/divx311_320x240.avi -f 5" || return $RC  
+${TSTCMD} -D "-i /tmp/divx311_320x240.avi -f 5" || return $RC  
+rm -rf /tmp/divx311_320x240.avi
+
 RC=0
 
 return $RC
@@ -209,10 +212,7 @@ cd /tmp
 ${TSTCMD} -D "-i /tmp/akiyo.mp4 -f 0" || return $RC
 rm -rf /tmp/akiyo.mp4
 
-if [ $SIZE -ne 0 ]
-then
 RC=0
-fi
 return $RC
 }
 
@@ -237,11 +237,7 @@ cd /tmp
 ${TSTCMD} -D "-i /tmp/COASTGUARD_CIF_IJT.263 -f 1" || return $RC
 rm -rf /tmp/COASTGUARD_CIF_IJT.263
 
-if [ $SIZE -ne 0 ]
-then
 RC=0
-fi
-
 return $RC
 
 }
