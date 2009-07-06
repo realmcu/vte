@@ -27,7 +27,7 @@
 ###############################################################################
 
 SUBDIRS=
-TARGETS=gps_basic.sh rc.gps
+TARGETS=gps_basic.sh
 #Need platform identify script from ALSA test cases
 
 all:
