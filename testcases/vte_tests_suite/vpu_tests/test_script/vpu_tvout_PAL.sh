@@ -1,17 +1,16 @@
-#Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
-#
-#The code contained herein is licensed under the GNU General Public
-#License. You may obtain a copy of the GNU General Public License
-#Version 2 or later at the following locations:
-#
-#http://www.opensource.org/licenses/gpl-license.html
-#http://www.gnu.org/copyleft/gpl.html
 #!/bin/sh
 ###################################################################################################
 #
 #    @file   mx37_vpu_dec_test.sh
 #
 #    @brief  shell script for testcase design for VPU decode
+#
+###################################################################################################
+#
+#   Copyright (C) 2004, Freescale Semiconductor, Inc. All Rights Reserved
+#   THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
+#   BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
+#   Freescale Semiconductor, Inc.
 #
 ###################################################################################################
 #Revision History:
@@ -135,15 +134,9 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/nokia6_720x576.mpg /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_mpeg2 
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_mpeg2 
-SIZE=$(ls -s sd_d1_mpeg2.yuv | awk '{print $1}') 
-rm -rf sd_d1_mpeg2.yuv nokia6_720x576.mpg 
+${TSTCMD} -D "-i /tmp/nokia6_720x576.mpg -f 4" || return $RC 
 
-if [ $SIZE -ne 0 ]
-then
 RC=0
-fi
-
 return $RC
 }
 
@@ -166,15 +159,8 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/SD720x480.vc1.rcv /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_vc1  
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_vc1  
-SIZE=$(ls -s SD720x480.yuv | awk '{print $1}') 
-rm -rf SD720x480.vc1.rcv SD720x480.yuv
-
-if [ $SIZE -ne 0 ]
-then 
+${TSTCMD} -D "-i /tmp/SD720x480.vc1.rcv -f 3" || return $RC  
 RC=0
-fi
-
 return $RC
 }
 
@@ -196,15 +182,8 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/divx311_320x240.avi /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_divx 
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_divx 
-SIZE=$(ls -s divx311_320x240.yuv | awk '{print $1}') 
-rm -rf divx311_320x240.yuv divx311_320x240.avi
-
-
-if [ $SIZE -ne 0 ]
-then
+${TSTCMD} -D "/tmp/divx311_320x240.avi -f 5" || return $RC  
 RC=0
-fi
 
 return $RC
 }
@@ -227,9 +206,8 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/akiyo.mp4 /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_mpeg4
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_mpeg4
-SIZE=$(ls -s akiyomp4.yuv| awk '{print $1}') 
-rm -rf akiyomp4.yuv akiyo.mp4
+${TSTCMD} -D "-i /tmp/akiyo.mp4 -f 0" || return $RC
+rm -rf /tmp/akiyo.mp4
 
 if [ $SIZE -ne 0 ]
 then
@@ -256,9 +234,8 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.263 /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_h263
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_h263
-SIZE=$(ls -s COASTGUARD_CIF_IJT.yuv | awk '{print $1}')
-rm -rf COASTGUARD_CIF_IJT.yuv COASTGUARD_CIF_IJT.263
+${TSTCMD} -D "-i /tmp/COASTGUARD_CIF_IJT.263 -f 1" || return $RC
+rm -rf /tmp/COASTGUARD_CIF_IJT.263
 
 if [ $SIZE -ne 0 ]
 then
@@ -286,14 +263,10 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/cif.263 /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_h263-2
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_h263-2
-SIZE=$(ls -s cif.yuv | awk '{print $1}')  
-rm -rf cif.yuv cif.263 
+${TSTCMD} -D " -i /tmp/cif.263 -f 1" || return $RC
+rm -rf /tmp/cif.263 
 
-if [ $SIZE -ne 0 ]
-then
 RC=0
-fi
 
 return $RC
 }
@@ -315,14 +288,10 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/HPCV_BRCM_A.264 /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_h264-hp 
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_h264-hp 
-SIZE=$(ls -s HPCV_BRCM_A.yuv | awk '{print $1}') 
-rm -rf HPCV_BRCM_A.yuv HPCV_BRCM_A.264 
+${TSTCMD} -D "-i /tmp/HPCV_BRCM_A.264 -f 2" || return $RC
+rm -rf /tmp/HPCV_BRCM_A.264 
 
-if [ $SIZE -ne 0 ]
-then
 RC=0
-fi
 return $RC
 }
 
@@ -343,15 +312,10 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/starwars640x480.264 /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_h264-bp 
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_h264-bp 
-SIZE=$(ls -s starwars640x480.yuv | awk '{print $1}')
-rm -rf starwars640x480.yuv starwars640x480.264
+${TSTCMD} -D "-i /tmp/starwars640x480.264 -f 2" || return $RC 
+rm -rf starwars640x480.264
 
-if [ $SIZE -ne 0 ]
-then
 RC=0
-fi
-
 return $RC
 }
 
@@ -372,14 +336,10 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/akiyo.mp4 /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_mpeg4
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_mpeg4_d
-SIZE=$(ls -s akiyomp4.yuv| awk '{print $1}') 
-rm -rf akiyomp4.yuv akiyo.mp4
+${TSTCMD} -D "-i /tmp/akiyo.mp4 -f 0" || return $RC
+rm -rf /tmp/akiyo.mp4
 
-if [ $SIZE -ne 0 ]
-then
 RC=0
-fi
 return $RC
 }
 
@@ -400,14 +360,10 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/stream.263 /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_mpeg4
-${TSTCMD} -D "-f 1 -i stream.263 -o stream.yuv"
-SIZE=$(ls -s stream.yuv| awk '{print $1}') 
-rm -rf stream.yuv stream.263
+${TSTCMD} -D "-f 1 -i /tmp/stream.263" || return $RC
+rm -rf /tmp/stream.263
 
-if [ $SIZE -ne 0 ]
-then
 RC=0
-fi
 return $RC
 }
 
@@ -429,16 +385,9 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_mpeg2 
-${TSTCMD} -D "-i ${STREAM_PATH}/video/nokia6_720x576.mpg -o /tmp/sd_d1_mpeg2.yuv -f 4 -d 1" || return $RC
-SIZE=$(ls -s /tmp/sd_d1_mpeg2.yuv | awk '{print $1}')
+${TSTCMD} -D "-i ${STREAM_PATH}/video/nokia6_720x576.mpg -f 4 -d 1" || return $RC
 
-rm -f /tmp/sd_d1_mpeg2.yuv
-
-if [ $SIZE -ne 0 ]
-then
 RC=0
-fi
-
 return $RC
 }
 
