@@ -112,7 +112,7 @@ setup
 
 egl_test 1000
 
-read -p "Did the TV display normal y/n?" RC
+read -p "Did the LCD display normal y/n?" RC
 
 if [ $RC == 'y' ]
 then
