@@ -204,11 +204,16 @@ RC=0
 #print test info
 tst_resm TINFO "test #3: usercase 04"
 
+cleanup
+
 #enable TV out 
 echo U:640x480p-60 > /sys/class/graphics/fb0/mode 
 
+#reinitial the MBX module 
+/etc/rc.d/init.d/rc.pvr start
+
 #display the 3D image
-egl_test 1000 &
+egl_test 100 
 
 sleep 1
 
@@ -223,8 +228,7 @@ sleep 1
 #display the 3D image
 egl_test 100
 
-read -p "Is there any displaying on LCD/TVout y/n?" RC
-
+read -p "Is there any displaying on TVout y/n?" RC
 
 if [ $RC == 'y' ]
 then
