@@ -1,9 +1,0 @@
-input/akiyo.qcif         mpeg4e_output/akiyo_qcif.bits       ref/akiyo_qcif.bits      
-input/claire.qcif        mpeg4e_output/claire_qcif.bits      ref/claire_qcif.bits
-input/coastguard.qcif    mpeg4e_output/coastguard_qcif.bits  ref/coastguard_qcif.bits
-input/football.qcif      mpeg4e_output/football_qcif.bits    ref/football_qcif.bits
-input/mad900.qcif        mpeg4e_output/mad900_qcif.bits      ref/mad900_qcif.bits
-input/medley.qcif        mpeg4e_output/medley_qcif.bits      ref/medley_qcif.bits
-input/random.qcif        mpeg4e_output/random_qcif.bits      ref/random_qcif.bits
-input/soccer.qcif        mpeg4e_output/soccer_qcif.bits      ref/soccer_qcif.bits
-input/students.qcif      mpeg4e_output/students_qcif.bits    ref/students_qcif.bits  

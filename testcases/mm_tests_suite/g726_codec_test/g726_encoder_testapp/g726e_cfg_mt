@@ -1,9 +1,0 @@
-test_vectors/mu-law/PCM_INIT.M  BIT_RATE_16KBPS PCM_ULAW    test_vectors/mu-law/NRM.M    test_vectors/mu-law/HN16FM.I~ test_vectors/mu-law/HN16FM.I
-test_vectors/mu-law/PCM_INIT.M  BIT_RATE_24KBPS PCM_ULAW    test_vectors/mu-law/OVR.M    test_vectors/mu-law/HV24FM.I~ test_vectors/mu-law/HV24FM.I
-test_vectors/a-law/PCM_INIT.A   BIT_RATE_32KBPS PCM_ALAW    test_vectors/a-law/NRM.A     test_vectors/a-law/HN32FA.I~  test_vectors/a-law/HN32FA.I
-test_vectors/a-law/PCM_INIT.A   BIT_RATE_40KBPS PCM_ALAW    test_vectors/a-law/OVR.A     test_vectors/a-law/HV40FA.I~  test_vectors/a-law/HV40FA.I
-
-
-
-
-
