@@ -1,2 +1,0 @@
-rgb888 n/a 320 200 ./input/sample_test_cases/16bit_BMP_2.bmp   ./bmpd_output/16bit_BMP_2.bmp.888.mt.ppm   n/a   
-rgb888 n/a 230 200 ./input/sample_test_cases/airplane.BMP      ./bmpd_output/airplane.BMP.888.mt.ppm      n/a

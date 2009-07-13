@@ -1,4 +1,0 @@
-input/sample_test_cases/3bpp gifd_output/ references/ E_OUTPUTFORMAT_RGB888 E_NO_SCALE 400 400
-input/sample_test_cases/Image44 gifd_output/ references/ E_OUTPUTFORMAT_RGB888 E_NO_SCALE 400 400
-input/sample_test_cases/office gifd_output/ references/ E_OUTPUTFORMAT_RGB888 E_INT_SCALE_PRESERVE_AR 400 400
-input/sample_test_cases/1bpp gifd_output/ references/ E_OUTPUTFORMAT_RGB888 E_NO_SCALE 100 100

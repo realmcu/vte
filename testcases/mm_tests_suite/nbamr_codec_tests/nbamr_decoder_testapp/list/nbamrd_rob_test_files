@@ -1,6 +1,0 @@
-test_vectors/no_dtx/t_102/T01_102.OUT 0 nbamrd_output/NA.raw NA
-test_vectors/no_dtx/t_122/T15_122.OUT 0 nbamrd_output/NA.raw NA
-test_vectors/no_dtx/t_475/T19_475.OUT 0 nbamrd_output/NA.raw NA
-test_vectors/no_dtx/t_515/T01_515.OUT 0 nbamrd_output/NA.raw NA
-test_vectors/no_dtx/t_59/T11_59.OUT 0 nbamrd_output/NA.raw NA
-list/nbamrd_full_list 0 nbamrd_output/NA.raw NA 

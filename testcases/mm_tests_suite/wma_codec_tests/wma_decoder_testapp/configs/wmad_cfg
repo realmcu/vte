@@ -1,5 +1,0 @@
-1 ./input/physics.wma                        ./wmad_output/physics.hex                        ./ref/physics.ref
-1 ./input/test1_wma_v8_192kbps_48khz_S.wma   ./wmad_output/test1_wma_v8_192kbps_48khz_S.hex   ./ref/test1_wma_v8_192kbps_48khz_S.ref
-1 ./input/test1_wma_v8_32kbps_22khz_S.wma    ./wmad_output/test1_wma_v8_32kbps_22khz_S.hex    ./ref/test1_wma_v8_32kbps_22khz_S.ref 
-1 ./input/test1_wma_v8_5kbps_8khz_M.wma      ./wmad_output/test1_wma_v8_5kbps_8khz_M.hex      ./ref/test1_wma_v8_5kbps_8khz_M.ref   
-1 ./input/test1_wma_v8_8kbps_8khz_M.wma      ./wmad_output/test1_wma_v8_8kbps_8khz_M.hex      ./ref/test1_wma_v8_8kbps_8khz_M.ref   
