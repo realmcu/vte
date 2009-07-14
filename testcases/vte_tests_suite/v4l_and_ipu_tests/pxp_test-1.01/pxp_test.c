@@ -156,7 +156,7 @@ static struct pxp_control *pxp_init(int argc, char **argv)
 		perror("failed to allocate PxP control object");
 		return NULL;
 	}
-
+        /*Hake: allocate 2 buffers here*/
 	pxp->buffers = calloc(2, sizeof(*pxp->buffers));
 
 	if (!pxp->buffers) {
@@ -166,7 +166,7 @@ static struct pxp_control *pxp_init(int argc, char **argv)
 
 	/* Init pxp control struct */
 	pxp->s0_infile = argv[argc-2];
-	pxp->s1_infile = argv[argc-1];
+	pxp->s1_infile = strcmp(argv[argc-1],"BLANK")==0?NULL:argv[argc-1];
 	pxp->outfile = calloc(1, MAX_LEN);
 	pxp->outfile_state = 0;
 	pxp->vdevfile = calloc(1, MAX_LEN);
@@ -334,11 +334,12 @@ static int pxp_config_output(struct pxp_control *pxp, int pass)
 static int pxp_config_buffer(struct pxp_control *pxp, int b)
 {
 	struct v4l2_requestbuffers req;
-
+    int ibcnt = b + 1;
+	int i =0;
 	/*
 	 * Hardcoded to one buffer for now
 	 */
-	req.count = 1;
+	req.count = ibcnt; /*Hake enlarge the buffer*/
 	req.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
 	req.memory = V4L2_MEMORY_MMAP;
 
@@ -347,33 +348,36 @@ static int pxp_config_buffer(struct pxp_control *pxp, int b)
 		return 1;
 	}
 
-	if (req.count < 1) {
+	if (req.count < ibcnt) {
 		perror("insufficient buffer control memory");
 		return 1;
 	}
+        
+	/*Hake add more buffer prepared code*/
+	for(i = 0; i < ibcnt ; i++) 
+	{
+	pxp->buffers[i].buf.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
+	pxp->buffers[i].buf.memory = V4L2_MEMORY_MMAP;
+	pxp->buffers[i].buf.index = i;
 
-	pxp->buffers[b].buf.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
-	pxp->buffers[b].buf.memory = V4L2_MEMORY_MMAP;
-	pxp->buffers[b].buf.index = 0;
-
-	if (ioctl(pxp->vfd, VIDIOC_QUERYBUF, &pxp->buffers[b].buf) < 0) {
+	if (ioctl(pxp->vfd, VIDIOC_QUERYBUF, &pxp->buffers[i].buf) < 0) {
 		perror("VIDIOC_QUERYBUF");
 		return 1;
-	}
+	   }   
 
-	pxp->buffers[b].start =
+	pxp->buffers[i].start =
 		mmap(NULL /* start anywhere */,
-				pxp->buffers[b].buf.length,
+				pxp->buffers[i].buf.length,
 				PROT_READ | PROT_WRITE,
 				MAP_SHARED,
 				pxp->vfd,
-				pxp->buffers[b].buf.m.offset);
+				pxp->buffers[i].buf.m.offset);
 
-	if (pxp->buffers[b].start == MAP_FAILED) {
+	if (pxp->buffers[i].start == MAP_FAILED) {
 		perror("failed to mmap pxp buffer");
 		return 1;
-	}
-
+	   }
+    }
 	return 0;
 }
 
@@ -387,7 +391,6 @@ static int pxp_read_infiles(struct pxp_control *pxp)
 	int fb_size;
 	char *fb;
 	int n;
-
 	if ((fd = open(pxp->s0_infile, O_RDWR, 0)) < 0) {
 		perror("s0 data open failed");
 		return 1;
@@ -401,7 +404,6 @@ static int pxp_read_infiles(struct pxp_control *pxp)
 	}
 
 	close(fd);
-
 	if ((ffd = open("/dev/fb0", O_RDWR, 0)) < 0) {
 		perror("fb device open failed");
 		return 1;
@@ -425,20 +427,22 @@ static int pxp_read_infiles(struct pxp_control *pxp)
 		perror("failed to mmap output buffer");
 		return 1;
 	}
-
-	if ((fd = open(pxp->s1_infile, O_RDWR, 0)) < 0) {
+        /* Hake may not use sencodary input*/
+	if (pxp->s1_infile){
+	 if ((fd = open(pxp->s1_infile, O_RDWR, 0)) < 0) {
 		perror("s1 data open failed");
 		return 1;
-	}
+	 }
 
-	n = read(fd, fb, fb_size);
-	if (n != (fb_size)) {
+	 n = read(fd, fb, fb_size);
+	 if (n != (fb_size)) {
 		perror("error reading s1 data into fb");
 		close(fd);
 		return 1;
-	}
+	 } 
 
-	close(fd);
+	 close(fd);
+	 }
 	close(ffd);
 
 	return 0;
@@ -569,21 +573,63 @@ static int pxp_config_controls(struct pxp_control *pxp)
 static int pxp_start(struct pxp_control *pxp, int pass)
 {
 	enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
-
+    int i = 0, cnt = 0;
+	int fd;
+	int bpp = pxp_video_formats[pxp->fmt_idx].bpp;
+	int s0_size = pxp->s0.width * pxp->s0.height * bpp;
 	/* Queue buffer */
-	if (ioctl(pxp->vfd, VIDIOC_QBUF, &pxp->buffers[pass].buf) < 0) {
-		perror("VIDIOC_QBUF");
+	/*Hake add more buffer support*/
+	if ((fd = open(pxp->s0_infile, O_RDWR, 0)) < 0) {
+		perror("s0 data open failed");
+		return 1;
+	}
+
+
+        for(i = 0; i <= pass; i ++){
+	/*blank first pass + 1 frames */
+        pxp->buffers[i].buf.index = i;
+	if (ioctl(pxp->vfd, VIDIOC_QBUF, &pxp->buffers[i].buf) < 0) {
+		perror("VIDIOC_QBUF 1");
 		return 1;
 	}
 	
+	}
 	/* Enable PxP */
         if (ioctl(pxp->vfd, VIDIOC_STREAMON, &type) < 0) {
                perror("VIDIOC_STREAMON");
                return 1;
         }
-
+        
 	printf("PxP processing: start...");
+    do
+	{
+	/* Query buffer */
+	struct v4l2_buffer buf;
+	buf.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
+	buf.memory = V4L2_MEMORY_MMAP;
+	if (ioctl(pxp->vfd, VIDIOC_DQBUF, &buf) < 0) {
+		perror("VIDIOC_DQBUF");
+		return 1;
+	}
+	/*
+	 printf("\ndisplay buff %d\n",buf.index);
+	 */
+	cnt = read(fd, pxp->buffers[buf.index].start, s0_size);
+	if(cnt < s0_size)
+	   break;
+	/*
+	printf("\nread cnt=%d (%d), at buf %d\n",cnt, s0_size, buf.index);
+	*/
+        pxp->buffers[buf.index].buf.index = buf.index;
+	if (ioctl(pxp->vfd, VIDIOC_QBUF, &pxp->buffers[buf.index].buf) < 0) {
+		perror("VIDIOC_QBUF 2");
+		return 1;
+	    }
+	 i = i==0?0:i--;
+	}while(cnt == s0_size && i >= 0);
 
+
+        close(fd);
 	return 0;
 }
 
@@ -591,12 +637,14 @@ static int pxp_stop(struct pxp_control *pxp, int pass)
 {
 	enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
 
+        #if 0
+	/*Hake no use here*/
 	/* Query buffer */
 	if (ioctl(pxp->vfd, VIDIOC_DQBUF, &pxp->buffers[pass].buf) < 0) {
 		perror("VIDIOC_DQBUF");
 		return 1;
 	}
-	
+        #endif
 	printf("complete\n");
 
 	if (((pxp->rotate_pass) && pass) || !pxp->rotate_pass)
