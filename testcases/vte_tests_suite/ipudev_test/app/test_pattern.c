@@ -1,13 +1,16 @@
-/***
-**Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
-**
-**The code contained herein is licensed under the GNU General Public
-**License. You may obtain a copy of the GNU General Public License
-**Version 2 or later at the following locations:
-**
-**http://www.opensource.org/licenses/gpl-license.html
-**http://www.gnu.org/copyleft/gpl.html
-**/
+/*
+ * Copyright 2009 Freescale Semiconductor, Inc. All Rights Reserved.
+ *
+ */
+
+/*
+ * The code contained herein is licensed under the GNU Lesser General
+ * Public License.  You may obtain a copy of the GNU Lesser General
+ * Public License Version 2.1 or later at the following locations:
+ *
+ * http://www.opensource.org/licenses/lgpl-license.html
+ * http://www.gnu.org/copyleft/lgpl.html
+ */
 
 /*!
  * @file test_pattern.c
@@ -359,6 +362,16 @@ int color_bar(int two_output, int overlay, ipu_test_handle_t * test_handle)
 		goto done;
 	}
 
+	if(fb_var.yres_virtual != 2*fb_var.yres)
+	{
+		fb_var.yres_virtual = 2*fb_var.yres;
+		if ( ioctl(fd_fb, FBIOPUT_VSCREENINFO, &fb_var) < 0) {
+			printf("Get FB var info failed!\n");
+			ret = -1;
+			goto done;
+		}
+	}
+
 	screen_size = fb_var.yres * fb_fix.line_length;
 	fb[0] = mmap(NULL, screen_size, PROT_READ | PROT_WRITE, MAP_SHARED,
 			fd_fb, 0);
@@ -416,27 +429,58 @@ int color_bar(int two_output, int overlay, ipu_test_handle_t * test_handle)
 			ov.fmt = v4l2_fourcc('B', 'G', 'R', '3');
 		else
 			ov.fmt = v4l2_fourcc('R', 'G', 'B', 'P');
-		ov.ov_crop_win.pos.x = fb_var.xres/4;
-		ov.ov_crop_win.pos.y = fb_var.yres/4;
-		ov.ov_crop_win.win_w = fb_var.xres/2;
-		ov.ov_crop_win.win_h = fb_var.yres/2;
-		if (overlay == LOC_ALP_OV) {
+
+		if (overlay == IC_LOC_SEP_ALP_OV) {
+			ov.ov_crop_win.pos.x = fb_var.xres/4;
+			ov.ov_crop_win.pos.y = fb_var.yres/4;
+			ov.ov_crop_win.win_w = fb_var.xres/2;
+			ov.ov_crop_win.win_h = fb_var.yres/2;
 			ov.local_alpha_en = 1;
 			ov.global_alpha_en = 0;
-		} else {
-			ov.global_alpha_en = 1;
+			ov_fake_fb_size = screen_size;
+			ov_alpha_fake_fb_size = ov.width * ov.height;
+
+			test_handle->output0.width = fb_var.xres/2;
+			test_handle->output0.height = fb_var.yres/2;
+			test_handle->output0.fb_disp.pos.x = fb_var.xres/4;
+			test_handle->output0.fb_disp.pos.y = fb_var.yres/4;
+		} else if (overlay == IC_GLB_ALP_OV) {
+			ov.ov_crop_win.pos.x = fb_var.xres/4;
+			ov.ov_crop_win.pos.y = fb_var.yres/4;
+			ov.ov_crop_win.win_w = fb_var.xres/2;
+			ov.ov_crop_win.win_h = fb_var.yres/2;
 			ov.local_alpha_en = 0;
+			ov.global_alpha_en = 1;
+			ov_fake_fb_size = screen_size;
+
+			test_handle->output0.width = fb_var.xres/2;
+			test_handle->output0.height = fb_var.yres/2;
+			test_handle->output0.fb_disp.pos.x = fb_var.xres/4;
+			test_handle->output0.fb_disp.pos.y = fb_var.yres/4;
+		} else if (overlay == IC_LOC_PIX_ALP_OV) {
+			ov.fmt = v4l2_fourcc('R', 'G', 'B', 'A');
+			ov.ov_crop_win.pos.x = 0;
+			ov.ov_crop_win.pos.y = 0;
+			ov.ov_crop_win.win_w = fb_var.xres;
+			ov.ov_crop_win.win_h = fb_var.yres;
+			ov.global_alpha_en = 0;
+			ov.local_alpha_en = 0;
+			ov_fake_fb_size = ov.width * ov.height * 4;
+
+			/*
+			 * RGB32A is not the pixel format of FB0(RGB565),
+			 * so we cannot do memory copy from graphic plane to
+			 * FB0. We choose to set graphic plane and video plane
+			 * to be the same resolution with FB0.
+			 */
+			test_handle->output0.width = fb_var.xres;
+			test_handle->output0.height = fb_var.yres;
+			test_handle->output0.fb_disp.pos.x = 0;
+			test_handle->output0.fb_disp.pos.y = 0;
 		}
 		ov.key_color_en = 0;
 		ov.alpha = 0;
 		ov.key_color = 0x808080;
-		ov_fake_fb_size = screen_size;
-		if (overlay == LOC_ALP_OV)
-			ov_alpha_fake_fb_size = ov.width * ov.height;
-		test_handle->output0.width = fb_var.xres/2;
-		test_handle->output0.height = fb_var.yres/2;
-		test_handle->output0.fb_disp.pos.x = fb_var.xres/4;
-		test_handle->output0.fb_disp.pos.y = fb_var.yres/4;
 	} else {
 		/* one output case -- full screen */
 		test_handle->output0.width = fb_var.xres;
@@ -468,7 +512,7 @@ int color_bar(int two_output, int overlay, ipu_test_handle_t * test_handle)
 		ov.user_def_paddr[0] = ov_fake_fb_paddr;
 		ov.user_def_paddr[1] = ov.user_def_paddr[0];
 
-		if (overlay == LOC_ALP_OV) {
+		if (overlay == IC_LOC_SEP_ALP_OV) {
 			ov_alpha_fake_fb_paddr = ov_alpha_fake_fb_size;
 			if (ioctl(fd_fb, FBIO_ALLOC,
 				  &(ov_alpha_fake_fb_paddr)) < 0) {
@@ -516,7 +560,7 @@ int color_bar(int two_output, int overlay, ipu_test_handle_t * test_handle)
 
 	while((done_cnt < test_handle->fcount) && (ctrl_c_rev == 0)) {
 		if (overlay) {
-			if (overlay == GLB_ALP_OV) {
+			if (overlay == IC_GLB_ALP_OV) {
 				if (done_cnt % 50 == 0) {
 					static int j = 0;
 					if ((j % 3) == 0)
@@ -534,7 +578,98 @@ int color_bar(int two_output, int overlay, ipu_test_handle_t * test_handle)
 				       ov_fake_fb_size);
 				if (mxc_ipu_lib_task_buf_update(test_handle->ipu_handle, paddr[i], ov_fake_fb_paddr, 0, NULL, NULL) < 0)
 					break;
-			} else if (overlay == LOC_ALP_OV) {
+			} else if (overlay == IC_LOC_PIX_ALP_OV) {
+				if (done_cnt == 1) {
+					/* RGBA32 red */
+					/* 2 planes */
+					for (k = 0; k < ov_fake_fb_size; k++) {
+						if (k % 4 == 0)
+							memset(ov_fake_fb + k,
+							       0xFF, 1);
+						else
+							memset(ov_fake_fb + k,
+							       0x00, 1);
+
+						if (k % 4 == 3)
+							memset(ov_fake_fb + k,
+							       0x80, 1);
+					}
+				} else if (done_cnt == 1*fcount/9) {
+					/* video plane */
+					for (k = 0; k < ov_fake_fb_size; k++) {
+						if (k % 4 == 3)
+							memset(ov_fake_fb + k,
+							       0x00, 1);
+					}
+				} else if (done_cnt == 2*fcount/9) {
+					/* graphic plane */
+					for (k = 0; k < ov_fake_fb_size; k++) {
+						if (k % 4 == 3)
+							memset(ov_fake_fb + k,
+							       0xFF, 1);
+					}
+				} else if (done_cnt == fcount/3) {
+					/* RGBA32 green */
+					/* 2 planes */
+					for (k = 0; k < ov_fake_fb_size; k++) {
+						if (k % 4 == 1)
+							memset(ov_fake_fb + k,
+							       0xFF, 1);
+						else
+							memset(ov_fake_fb + k,
+							       0x00, 1);
+
+						if (k % 4 == 3)
+							memset(ov_fake_fb + k,
+							       0x80, 1);
+					}
+				} else if (done_cnt == 4*fcount/9) {
+					/* video plane */
+					for (k = 0; k < ov_fake_fb_size; k++) {
+						if (k % 4 == 3)
+							memset(ov_fake_fb + k,
+							       0x00, 1);
+					}
+				} else if (done_cnt == 5*fcount/9) {
+					/* graphic plane */
+					for (k = 0; k < ov_fake_fb_size; k++) {
+						if (k % 4 == 3)
+							memset(ov_fake_fb + k,
+							       0xFF, 1);
+					}
+				} else if (done_cnt == 2*fcount/3) {
+					/* RGBA32 blue */
+					/* 2 planes */
+					for (k = 0; k < ov_fake_fb_size; k++) {
+						if (k % 4 == 2)
+							memset(ov_fake_fb + k,
+							       0xFF, 1);
+						else
+							memset(ov_fake_fb + k,
+							       0x00, 1);
+
+						if (k % 4 == 3)
+							memset(ov_fake_fb + k,
+							       0x80, 1);
+					}
+				} else if (done_cnt == 7*fcount/9) {
+					/* video plane */
+					for (k = 0; k < ov_fake_fb_size; k++) {
+						if (k % 4 == 3)
+							memset(ov_fake_fb + k,
+							       0x00, 1);
+					}
+				} else if (done_cnt == 8*fcount/9) {
+					/* graphic plane */
+					for (k = 0; k < ov_fake_fb_size; k++) {
+						if (k % 4 == 3)
+							memset(ov_fake_fb + k,
+							       0xFF, 1);
+					}
+				}
+				if (mxc_ipu_lib_task_buf_update(test_handle->ipu_handle, paddr[i], ov_fake_fb_paddr, 0, NULL, NULL) < 0)
+					break;
+			} else if (overlay == IC_LOC_SEP_ALP_OV) {
 				if (done_cnt == 1) {
 					/* RGB565 red */
 					for (k = 0; k < ov_fake_fb_size; k++) {
@@ -878,7 +1013,7 @@ void * thread_func_color_bar(void *arg)
 	memset(&test_handle, 0, sizeof(ipu_test_handle_t));
 
 	test_handle.ipu_handle = &ipu_handle;
-	color_bar(0, NO_OV, &test_handle);
+	ret = color_bar(0, NO_OV, &test_handle);
 
 	pthread_exit((void*)ret);
 }
@@ -1217,22 +1352,26 @@ int run_test_pattern(int pattern, ipu_test_handle_t * test_handle)
 		return ret;
 	}
 	if (pattern == 5) {
-		printf("Color bar global alpha overlay test:\n");
-		return color_bar(0, GLB_ALP_OV, test_handle);
+		printf("Color bar IC global alpha overlay test:\n");
+		return color_bar(0, IC_GLB_ALP_OV, test_handle);
 	}
 	if (pattern == 6) {
-		printf("Color bar local alpha overlay test:\n");
-		return color_bar(0, LOC_ALP_OV, test_handle);
+		printf("Color bar IC separate local alpha overlay test:\n");
+		return color_bar(0, IC_LOC_SEP_ALP_OV, test_handle);
 	}
 	if (pattern == 7) {
+		printf("Color bar IC local alpha within pixel overlay test:\n");
+		return color_bar(0, IC_LOC_PIX_ALP_OV, test_handle);
+	}
+	if (pattern == 8) {
 		printf("Copy test:\n");
 		return copy_test(test_handle);
 	}
-	if (pattern == 8) {
+	if (pattern == 9) {
 		printf("Screen layer with 2 layers test:\n");
 		return screenlayer_test(0);
 	}
-	if (pattern == 9) {
+	if (pattern == 10) {
 		printf("Screen layer with 3 layers test:\n");
 		return screenlayer_test(1);
 	}

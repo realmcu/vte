@@ -601,7 +601,7 @@ static int pxp_start(struct pxp_control *pxp, int pass)
         }
         
 	printf("PxP processing: start...");
-    do
+	do
 	{
 	/* Query buffer */
 	struct v4l2_buffer buf;
