@@ -1,13 +1,17 @@
-/***
-**Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
-**
-**The code contained herein is licensed under the GNU General Public
-**License. You may obtain a copy of the GNU General Public License
-**Version 2 or later at the following locations:
-**
-**http://www.opensource.org/licenses/gpl-license.html
-**http://www.gnu.org/copyleft/gpl.html
-**/
+/*
+ * Copyright 2009 Freescale Semiconductor, Inc. All Rights Reserved.
+ *
+ */
+
+/*
+ * The code contained herein is licensed under the GNU Lesser General
+ * Public License.  You may obtain a copy of the GNU Lesser General
+ * Public License Version 2.1 or later at the following locations:
+ *
+ * http://www.opensource.org/licenses/lgpl-license.html
+ * http://www.gnu.org/copyleft/lgpl.html
+ */
+
 /*!
  * @file mxc_ipudev_test.c
  *
@@ -122,11 +126,12 @@ int main(int argc, char *argv[])
 			"2: video pattern with user define dma buffer queue, with two output\n" \
 			"3: hopping block screen save\n" \
 			"4: color bar + hopping block\n" \
-			"5: color bar global alpha overlay\n" \
-			"6: color bar local alpha overlay\n" \
-			"7: ipu dma copy test\n" \
-			"8: 2 screen layer test\n" \
-			"9: 3 screen layer test\n\n");
+			"5: color bar IC global alpha overlay\n" \
+			"6: color bar IC separate local alpha overlay\n" \
+			"7: color bar IC local alpha within pixel overlay\n" \
+			"8: ipu dma copy test\n" \
+			"9: 2 screen layer test\n" \
+			"10: 3 screen layer test\n\n");
 		return -1;
 	}
 
