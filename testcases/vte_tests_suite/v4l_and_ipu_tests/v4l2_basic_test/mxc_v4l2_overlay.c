@@ -37,7 +37,9 @@ extern "C"{
 #include <stdio.h>
 #include <stdlib.h>
 #include <asm/types.h>
+/*
 #include <linux/compiler.h>
+*/
 #include <linux/videodev.h>
 #include <linux/fb.h>
 #include <sys/mman.h>

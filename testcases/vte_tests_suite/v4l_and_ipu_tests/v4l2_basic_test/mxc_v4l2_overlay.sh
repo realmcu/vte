@@ -293,7 +293,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 
 ROTATION="0 1 2 3 4 5 6 7"
-OFFSET="10 11 12 13 14 15 16 17 18 19 20 30 40 50 60 70 80 90 100"
+OFFSET="10 15 80 100"
 RESLIST="320x240 640x480 352x288 176x144 320x240 352x288 640x480"" "${RESSIZE}
 echo "rotation with offset"
 for k in $ROTATION

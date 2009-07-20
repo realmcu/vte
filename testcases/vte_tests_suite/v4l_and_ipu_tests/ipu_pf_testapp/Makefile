@@ -42,8 +42,8 @@ all: $(TARGET)
 	@echo
 
 install:
-	ln -f $(TARGET) ../../../bin
-	cp -f ring.yuv blocks.yuv ../../../bin
+	ln -f $(TARGET) ../../../bin/
+	cp -f ring.yuv blocks.yuv ../../../bin/
 	@echo "***********************************************"
 	@echo "** INSTALL : $(TARGET)                  **"
 	@echo "***********************************************"
