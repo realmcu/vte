@@ -46,7 +46,7 @@ install:
 	@echo "****************************************************"
 	@echo "** INSTALL : v4l_capture_testapp                  **"
 	@echo "****************************************************"
-	ln -f $(TARGET) ../../../bin
+	ln -f $(TARGET) ../../../bin/
 	@echo
 
 clean:

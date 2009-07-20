@@ -58,7 +58,9 @@ extern "C"{
 
 #include <stdlib.h>             /* atoi()       */
 #include <asm/types.h>          /* for videodev2.h */
-#include <linux/compiler.h>     /* for videodev2.h */
+/*
+#include <linux/compiler.h> 
+*/
 #include <linux/videodev2.h>
 #include <linux/fb.h>
 #include <sys/mman.h>
