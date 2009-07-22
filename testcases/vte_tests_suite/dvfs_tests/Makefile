@@ -13,6 +13,9 @@
 #    @brief  configuration file to compile the dvfs test.
 #
 ###################################################################################################
+all:
+	
+
 install:
 	@ln -f dvfs.sh  ../../bin
 	@if [ $(ARCH_PLATFORM) == "imx25stack" ]; then ln -f dvfs_mx25.sh ../../bin ; fi

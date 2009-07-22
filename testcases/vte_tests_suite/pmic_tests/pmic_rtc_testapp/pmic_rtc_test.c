@@ -338,7 +338,7 @@ int VT_pmic_rtc_test(int switch_fct)
                 do
                 {
                         ret = poll(&fds, 1, 0);
-                        tst_resm(TINFO, "Poll ret = %d", ret);
+                        //tst_resm(TINFO, "Poll ret = %d", ret);
                         counter++;
                 }
                 while (ret == 0);

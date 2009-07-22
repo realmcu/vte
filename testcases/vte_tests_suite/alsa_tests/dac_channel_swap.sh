@@ -1,33 +1,36 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
-#
-#The code contained herein is licensed under the GNU General Public
-#License. You may obtain a copy of the GNU General Public License
-#Version 2 or later at the following locations:
-#
-#http://www.opensource.org/licenses/gpl-license.html
-#http://www.gnu.org/copyleft/gpl.html
 #!/bin/sh
+##############################################################################
+#
+#  Copyright 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+##############################################################################
+#
+#  The code contained herein is licensed under the GNU Lesser General Public
+#  License.  You may obtain a copy of the GNU Lesser General Public License
+#  Version 2.1 or later at the following locations:
+#
+#  http://www.opensource.org/licenses/lgpl-license.html
+#  http://www.gnu.org/copyleft/lgpl.html
+#
 ##############################################################################
 #
 # Revision History:
 #                      Modification     Tracking
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
-# Spring Zhang          25/07/2008       n/a        Initial ver. 
-# Spring                24/10/2008       n/a        Add -A automation option   
-# Spring                28/11/2008       n/a        Modify COPYRIGHT header
+# Spring Zhang          25/03/2009       n/a        Initial ver. 
 #############################################################################
 # Portability:  ARM sh 
 #
 # File Name:    
 # Total Tests:        1
-# Test Strategy: play audio streams
+# Test Strategy: test channel swap
 # 
 # Input:	- $1 - audio stream
 #
 # Return:       - 
 #
-# Use command "./dac_test1.sh [audio stream]" 
+# Use command "./dac_channel_swap.sh [short audio stream] [long audio stream]" 
 
 # Function:     setup
 #
@@ -45,7 +48,7 @@ setup()
 
     export TST_TOTAL=1   # Total number of test cases in this file.
     LTPTMP=${TMP}        # Temporary directory to create files, etc.
-    export TCID="TGE_LV_DAC"       # Test case identifier
+    export TCID="TGE_LV_DAC_CHNL_SWAP"       # Test case identifier
     export TST_COUNT=0   # Set up is initialized as test 0
     BIN_DIR=`dirname $0`
     export PATH=$PATH:$BIN_DIR
@@ -55,16 +58,8 @@ setup()
         LTPTMP=/tmp
     fi
 
-    while getopts f:ANM arg
-    do 
-        case $arg in
-        f) FILE=$OPTARG;;
-        A) AUTO="true";;
-        N|M) ;;
-        \?) usage
-        exit 67;;
-        esac
-    done
+    s_stream=$1
+    l_stream=$2
 
     trap "cleanup" 0
 
@@ -76,7 +71,12 @@ setup()
         return $RC
     fi
 
-    if [ ! -e $FILE ]
+    if [ -z "$s_stream" ] || [ -z "$l_stream" ]
+    then
+        usage
+    fi
+
+    if [ ! -e $s_stream ] || [ ! -e $l_stream ]
     then
         tst_resm TBROK "Test #1: audio stream is not ready, \
              pls check..."
@@ -95,58 +95,56 @@ setup()
 cleanup() 
 {
     RC=0
-
-    needpause=$(cat /proc/cpuinfo | grep 378 | wc -l)
-    if [ ! -z $needpause ]; then
-      sleep 3;
-    fi
-    
-    rm -f /tmp/$basefn
     return $RC
 }
 
-# Function:     dac_play()
+# Function:     test_swap()
 #
-# Description:  play an WAV stream file
+# Description:  play an long and short stream file to test channel swap
 #
 # Exit:         zero on success
 #               non-zero on failure.
 #
-dac_play()
+test_swap()
 {
     RC=0    # Return value from setup, and test functions.
 
-    tst_resm TINFO "Test #1: play the audio stream, please check the HEADPHONE,\
- hear if there is voice."
-    #aplay -D hw:0,0 $1 || RC=$?
-    #args=`echo $@|sed 's/-A//g'`
-    basefn=$(basename $FILE)
-    cp -f $FILE /tmp
-    if [ $RC -ne 0 ]; then
-        tst_resm TFAIL "Test #1: copy from NFS to tmp error, no space left in /tmp"
-        return $RC
-    fi
-    aplay -N -M /tmp/$basefn || RC=$?
+    tst_resm TINFO "Test #1: play the long audio stream, please check the \
+    HEADPHONE, see if channel is swapped."
+    aplay -N -M $l_stream || RC=$?
     if [ $RC -ne 0 ]
     then
         tst_resm TFAIL "Test #1: play error, please check the stream file"
         return $RC
     fi
 
-    #if auto, ignore ask the answer!
-    if [ -n "$AUTO" ]
+    tst_resm TINFO "Do you hear the channel is swapped?[y/n]"
+    read answer
+    if [ "$answer" = "y" ]
     then
-        return $RC
+        tst_resm TFAIL "Test #1: ALSA DAC channel swap fail when long stream \
+        plackback "
+        RC=67
     fi
 
-    tst_resm TINFO "Do you hear the music from the headphone?[y/n]"
+    i=1
+    tst_resm TINFO "Test #1: play a short audio stream for 50 times, please \
+    check the HEADPHONE, see if channel is swapped."
+    while [ $i -le 50 ]; do
+        aplay -N -M $s_stream
+        let i=$i+1
+        echo $i
+        sleep 5
+    done
+
+    tst_resm TINFO "Do you hear the channel is swapped?[y/n]"
     read answer
-    if [ $answer = "y" ]
+    if [ "$answer" = "y" ]
     then
-        tst_resm TPASS "Test #1: ALSA DAC test success."
-    else
-        tst_resm TFAIL "Test #1: ALSA DAC play audio fail"
+        tst_resm TFAIL "Test #1: ALSA DAC channel swap fail"
         RC=67
+    else
+        tst_resm TPASS "Test #1: ALSA DAC channel swap test success."
     fi
 
     return $RC
@@ -161,9 +159,10 @@ usage()
 {
     cat <<-EOF 
 
-    Use this command to test ALSA DAC play functions.
-    usage: ./${0##*/} [audio stream]
-    e.g.: ./${0##*/} audio44k16M.wav
+    Use this command to test ALSA DAC channel swap.
+    usage: ./${0##*/} [short audio stream] [long audio stream]
+
+    e.g.: ./${0##*/} audio44k16S_onlyright_short.wav audio44k16S_onlyright_long.wav
 
 EOF
 }
@@ -181,5 +180,5 @@ RC=0    # Return value from setup, and test functions.
 #"" will pass the whole args to function setup()
 setup "$@" || exit $RC
 
-dac_play "$@" || exit $RC
+test_swap "$@" || exit $RC
 
