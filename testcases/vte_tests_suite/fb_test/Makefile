@@ -32,4 +32,4 @@ clean:
 	-@set -e; for i in $(CONFIG); do $(MAKE) -C $$i clean ; done
 
 config:
-	@set -e; for i in $(CONFIG); do cd $$i && ./myconfig cd -; done
+	-@set -e; for i in $(CONFIG); do cd $$i && ./myconfig cd -; done

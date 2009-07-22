@@ -41,8 +41,10 @@ setup()
 	#trap "cleanup" 0 
  
 	#TODO add setup scripts
+	Platform=`cat /proc/cpuinfo | grep "Revision" | awk '{print $3}'| cut -c1-2`;
+
 	echo "--------------------begin--------------------"
-	echo "do all modules insert and remove two times"
+	echo "Mx${Platform}: do all modules insert and remove two times"
 	# do all modules insert and remove two times
 	C_TIMES=2;
 	i=0;
@@ -66,6 +68,10 @@ cleanup()
 { 
 	RC=0 
 	#TODO add cleanup code here 
+	lsmod | grep "fsl_otg_arc";
+	if [ $? -eq 0 ] && [ $Platform -eq 25 ]; then
+		modprobe -r fsl_otg_arc;
+	fi
 	echo "-------------------- end --------------------" 
 
 	return $RC 
@@ -94,11 +100,22 @@ module_verify_test()
 	
 	case $line in
 		g_file_storage)
+			if [ $Platform -eq 25 ]; then
+				modprobe fsl_otg_arc;
+				sleep 2;
+			fi
 			mtd_nand_number=`cat /proc/mtd | wc -l`
 			let mtd_nand_number=$mtd_nand_number-2
 		  	echo "$mtd_nand_number ----"
 			modprobe $line file=/dev/mtdblock$mtd_nand_number
 			;;
+		g_ether | g_serial)
+			if [ $Platform -eq 25 ]; then
+				modprobe fsl_otg_arc;
+				sleep 2;
+			fi
+				modprobe $line;
+			;;		
 		*)
 			modprobe $line;
 			;;

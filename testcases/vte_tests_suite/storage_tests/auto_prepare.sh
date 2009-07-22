@@ -14,11 +14,14 @@
 #Spring Zhang                 20/04/2009     add return value in preparation 
 #                                            used by Linux plugin
 #Spring Zhang                 17/06/2009     add prepare vpu for 37&51 
+#Victor Cui                   09/07/2009     add -M(mount) option
 #notes:
 # -I insert modules(SD, ATA, V4L, BT, USBH or ALL)          
 # 	eg. ./auto_prepare.sh -I SD
 # -R remove modules(SD, ATA, V4L, BT, USBH or ALL)          
 #	eg. ./auto_prepare.sh -R SD
+# -M mount devices(NAND, NOR, SD, ATA, USBH)          
+#	eg. ./auto_prepare.sh -M SD
 # -P partition, format and mount device to /mnt/~   
 #    the devices may be NAND, SD, ATA, USBH or ALL
 #	eg. ./auto_prepare.sh -P SD
@@ -88,8 +91,39 @@ prepare_platform()
 	echo $vte_name;
 }
 
+modules_buildin()
+{
+	# sd
+	ls /sys/block/ | grep mmcblk;
+	if [ $? -eq 0 ]; then
+		sd_buildin=1;
+		sd_dev_point=`ls /sys/block/ | grep mmcblk`;
+		echo "sd/mmc device has been detected! do not need to insmod modules! the device point is $sd_dev_point";
+	fi
+	# ata/usbh	
+        # ata device: size > 33554432 (16G); usbh device: size <= 33554432 (16G)	
+	for line in `ls /sys/block | grep sdd*`
+	do
+		#echo $line
+	        size=`cat /sys/block/$line/device/block:$line/size` 
+	      	if [ $size -gt 33554432 ]; then
+			ata_buildin=1;
+			ata_dev_point=$line;
+			echo "ata has been detected! do not need to insmod modules! the device point is $ata_dev_point";
+		else
+			usbh_buildin=1;
+			usbh_dev_point=$line;
+			dev_node_usbh=$usbh_dev_point;
+			echo "usbh has been detected! do not need to insmod modules! the device point is $usbh_dev_point";
+		fi
+        done     
+}
+
 insmod_SD()
 {
+modules_buildin;
+if [ $sd_buildin -eq 0 ]; then
+
 	echo "sd: prepare insmod modules";
 	find=0;
 
@@ -128,6 +162,7 @@ insmod_SD()
 	else 
 		echo "sd: insmod modules fail!";
 	fi	
+fi
 }
 
 rmmod_SD()
@@ -163,6 +198,9 @@ rmmod_SD()
 
 insmod_ATA()
 {	
+modules_buildin;
+if [ $ata_buildin -eq 0 ]; then
+
 	echo "ata: prepare insmod modules";
 	find=0;
 	line=0;
@@ -227,6 +265,7 @@ insmod_ATA()
 					let line=$line_num1-$line_num2;
 					dev_node_ata=`cat /proc/partitions | tail -n $line | head -n 1 | awk '{print $4}'`;
 					echo "the device node is:$dev_node_ata";
+					ata_dev_point=$dev_node_ata;
 				else
 					echo "ata: insmod modules fail!";
 				fi
@@ -236,6 +275,7 @@ insmod_ATA()
 		fi
 
 	fi
+fi
 }
 
 rmmod_ATA()
@@ -291,6 +331,9 @@ insmod_V4L()
 	echo "v4l: prepare insmod modules";
 	find=0;
 	
+    #turn on backlight
+    echo -e "\033[9;0]" > /dev/tty0
+        
 	echo "enalbe tvout module" 
         echo U:720x576i-50 > /sys/class/graphics/fb0/mode
 
@@ -321,6 +364,22 @@ insmod_V4L()
         	modprobe ipu_still;
 		sleep 2;
 	fi
+
+	# Mx25
+        find=`find /lib/modules/$sys_name -name fsl_csi.ko | wc -l`;
+	lsmod | grep fsl_csi;
+	if [ $? -ne 0 ] && [ $find -eq 1 ]; then
+        	modprobe fsl_csi;
+		sleep 2;
+	fi
+
+	find=`find /lib/modules/$sys_name -name csi_v4l2_capture.ko | wc -l`;
+	lsmod | grep csi_v4l2_capture;
+	if [ $? -ne 0 ] && [ $find -eq 1 ]; then
+        	modprobe csi_v4l2_capture;
+		sleep 2;
+	fi
+	#
 
 	find=`find /lib/modules/$sys_name -name ov2640_camera.ko | wc -l`;
 	lsmod | grep ov2640_camera;

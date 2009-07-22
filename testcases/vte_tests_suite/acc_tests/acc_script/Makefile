@@ -17,5 +17,5 @@
 all:
 
 install:
-	ln -f *.sh ../../../bin
+	ln -f *.sh ../../../bin/
 clean:

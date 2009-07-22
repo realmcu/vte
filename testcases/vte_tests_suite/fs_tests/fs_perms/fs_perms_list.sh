@@ -51,87 +51,87 @@ RC=0
 # the last error test number
 last_err_no=0
 
-fs_perms 001 99 99 12 100 x 1 \
+fs_perms 001 99 99 12 100 x 0 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 010 99 99 200 99 x 1 \
+fs_perms 010 99 99 200 99 x 0 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 100 99 99 99 500 x 1 \
+fs_perms 100 99 99 99 500 x 0 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 002 99 99 12 100 w 1 \
+fs_perms 002 99 99 12 100 w 0 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 001 99 99 12 100 x 1 \
+fs_perms 001 99 99 12 100 x 0 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 020 99 99 200 99 w 1 \
+fs_perms 020 99 99 200 99 w 0 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 200 99 99 99 500 w 1 \
+fs_perms 200 99 99 99 500 w 0 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 004 99 99 12 100 r 1 \
+fs_perms 004 99 99 12 100 r 0 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 040 99 99 200 99 r 1 \
+fs_perms 040 99 99 200 99 r 0 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 004 99 99 12 100 r 1 \
+fs_perms 004 99 99 12 100 r 0 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 004 99 99 12 100 r 1 \
+fs_perms 004 99 99 12 100 r 0 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 000 99 99 99 99 w 0 \
+fs_perms 000 99 99 99 99 w 1 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 000 99 99 99 99 x 0 \
+fs_perms 000 99 99 99 99 x 1 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 010 99 99 99 500 x 0 \
+fs_perms 010 99 99 99 500 x 1 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 100 99 99 200 99 x 0 \
+fs_perms 100 99 99 200 99 x 1 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 020 99 99 99 500 w 0 \
+fs_perms 020 99 99 99 500 w 1 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 200 99 99 200 99 w 0 \
+fs_perms 200 99 99 200 99 w 1 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 040 99 99 99 500 r 0 \
+fs_perms 040 99 99 99 500 r 1 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 400 99 99 200 99 r 0 \
+fs_perms 400 99 99 200 99 r 1 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 # Two additional
-fs_perms 755 50084 1026 0 0 r 1 \
+fs_perms 755 50084 1026 0 0 r 0 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 
-fs_perms 755 50084 1026 0 0 w 1 \
+fs_perms 755 50084 1026 0 0 w 0 \
 || RC=$?&& last_err=`expr $last_err_no + 1`
 sleep 1
 

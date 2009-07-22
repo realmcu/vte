@@ -8,7 +8,7 @@
 #http://www.gnu.org/copyleft/gpl.html
 
 CFLAGS+= -Wall -I../../../../include -D_LARGEFILE64_SOURCE
-LDLIBS+= -L../../../../lib -lltp
+LDLIBS+= -L../../../../lib -lltp -lrt
 
 TARGETS=growfiles
 

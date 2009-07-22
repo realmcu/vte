@@ -91,6 +91,7 @@ cleanup()
 {
     echo "clean up environment..."
     if [ $platform -eq 51 ] || [ $platform -eq 41 ]
+    then
         amixer cset name='Speaker Function' 1 
     fi
     echo "clean up environment end"

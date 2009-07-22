@@ -213,14 +213,14 @@ echo U:640x480p-60 > /sys/class/graphics/fb0/mode
 /etc/rc.d/init.d/rc.pvr start
 
 #display the 3D image
-egl_test 100 
+egl_test 100
 
 sleep 1
 
+read -p "press any key"
 echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 echo "press resume key in 10s..."
 echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-
 echo standby > /sys/power/state
 
 sleep 1

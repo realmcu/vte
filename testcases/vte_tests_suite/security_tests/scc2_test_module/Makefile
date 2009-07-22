@@ -41,7 +41,7 @@ all:
 	@echo
 
 clean:
-	@rm -f scc_test_module.ko *.mod.ko *.mod.c .*.cmd *.o .*.o.d
+	@rm -f *.ko *.mod.ko *.mod.c .*.cmd *.o .*.o.d
 	@rm -rf ./.tmp_versions
 	@echo "***********************************************"
 	@echo "** CLEAN: SCC2_TEST_MODULE                    **"

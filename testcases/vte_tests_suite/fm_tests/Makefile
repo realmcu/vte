@@ -30,7 +30,10 @@ SUBDIRS = ../../third_party_suite/fmtools-1.0.2
 TARGETS = fm_basic.sh 
 
 all:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i CC=$(CROSS_COMPILER)gcc; done
+	@set -e; for i in $(SUBDIRS); do \
+	if [ -d $$i ]; then \
+	$(MAKE)  -C $$i CC=$(CROSS_COMPILER)gcc; fi \
+	done
 
 install:
 	@for i in $(TARGETS); do \
