@@ -6,7 +6,8 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-CFLAGS+= -Wall
+CFLAGS+= -Wall -I../../../../include
+LDFLAGS+= -L../../../../lib -lltp
 
 TARGETS=fs_perms testx.file test.txt
 TARGETS+=fs_perms_list.sh
