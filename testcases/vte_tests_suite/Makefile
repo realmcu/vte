@@ -67,6 +67,11 @@ ifneq ($(ARCH_PLATFORM), $(filter imx27ads imx233 imx27evb imx32ads, $(ARCH_PLAT
 SUBDIRS += sdma_tests
 endif
 
+ifneq ($(ARCH_PLATFORM), $(filter imx233, $(ARCH_PLATFORM)))
+SUBDIRS += iim_test
+endif
+
+
 # ARM11 processor and the StarCore DSP existing on MXC91231 and MXC91331 platforms
 
 ifeq ($(ARCH_PLATFORM), $(filter mxc27530evb mxc27520evb mxc30030evb mxc30030ads mxc30030ads mxc30031ads mxc30020evb, $(ARCH_PLATFORM)))
