@@ -505,7 +505,7 @@ static int process_img()
     for(j = 0; j < xres - 2; j = j + 2)
     {
      long u,y1,v,y2;
-     long k = xres * yres * 2 - (i * xres + j) * 2 - 4;
+     long k = (i * xres + j) * 2;
      if (0x01)
      {
      u  = pdata[k];
@@ -529,7 +529,7 @@ static int process_img()
      rgb.rgbBlue  = BOUND255(y1 + 1.732446 * (u - 128));
      #endif
      rgb.rgbReserved = 0;
-     k = i * l  + j * 3;
+     k = (yres - i - 1) * l  + j * 3;
      pout[k + 2] = rgb.rgbRed;
      pout[k + 1] = rgb.rgbGreen;
      pout[k] = rgb.rgbBlue;
