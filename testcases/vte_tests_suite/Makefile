@@ -67,7 +67,7 @@ ifneq ($(ARCH_PLATFORM), $(filter imx27ads imx233 imx27evb imx32ads, $(ARCH_PLAT
 SUBDIRS += sdma_tests
 endif
 
-ifneq ($(ARCH_PLATFORM), $(filter imx233, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx233, $(ARCH_PLATFORM)))
 SUBDIRS += iim_test
 endif
 
