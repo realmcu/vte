@@ -201,7 +201,7 @@ while [ $count -lt 5 ]; do
   value=${cpufreq_value[$RANDOM%3]}
   cpufreq-set -f $value
   value_ret=$(cpufreq-info -f)
-if [ "$value_ret" -eq "$value" ] ; then
+if [ $value_ret -eq "$value" ] ; then
    echo sleep...
    sleep 3
    #test list
@@ -233,7 +233,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 echo "case can not run on nfs"
 declare -a cpufreq_value;
-cpufreq_value="454740 64000";
+cpufreq_value=(454740 64000);
 count=0
 
 for i in $cpufreq_value
