@@ -48,7 +48,7 @@ TARGET += ubi_test.sh
 #usb ptp
 TARGET += usb_ptp_test.sh
 
-TOOL_BIN = dd.exe activeperl.rar InstallUSBCV132.msi ptpinstall.tar.gz
+TOOL_BIN = dd.exe activeperl.rar InstallUSBCV132.msi ptpinstall.tar.gz Agl.sh
 
 #all modules insert and remove test 
 TARGET += modules_verify.sh

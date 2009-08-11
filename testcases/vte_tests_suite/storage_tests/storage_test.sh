@@ -331,7 +331,7 @@ copy_test()
 		
 	i=0
 	while [ $i -lt $C_TIMES ]; do
-		if [ -d "/$D_PATH/test$i" ]; then
+		if [ -e "/$D_PATH/test$i" ]; then
 			rm -rf /$D_PATH/test$i
                 	mkdir /$D_PATH/test$i
 		else
@@ -368,7 +368,7 @@ delete_test()
 
 	i=0
 	while [ $i -lt $C_TIMES ]; do
-		if [ -d "/$D_PATH/test$i" ]; then 
+		if [ -e "/$D_PATH/test$i" ]; then 
 			rm -rf /$D_PATH/test$i
     			TMP_RC=$?
     			TMP_TIME=$i
@@ -392,6 +392,8 @@ stress_test()
 			# 4% is used for log or backup data(jffs2 filesystem)
 			SIZE=`expr $SIZE "*" 100 "/" 104 `
 		fi
+		# the size must be divided exactly by the 4K, vfat is alignment with 4K 
+		SIZE=`expr $SIZE "/" 4 "*" 4`
 	fi
 
 	cd /$S_PATH

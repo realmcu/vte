@@ -20,7 +20,7 @@
 #
 # File Name:    jffs2_test3.sh
 # Total Tests:      1
-# Test Strategy: file system stress test
+# Test Strategy: file system permission test
 # 
 # Input:	- $1 - device type
 #		    - $2 - device name
