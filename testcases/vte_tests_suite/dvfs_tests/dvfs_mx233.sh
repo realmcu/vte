@@ -136,42 +136,43 @@ run_manual_test_list()
 
 run_auto_test_list()
 {
-   RC=1
+   RC=0
    echo "uart test"
    cat /etc/passwd > /dev/ttyAM0 || return $RC
    echo "rtc test"
-   rtc_test.sh 2 || return $RC
+   rtc_test.sh 2 || return 1
    echo "frambuffer test"
-   dd if=/dev/urandom of=/dev/fb0 bs=1k count=150 || return $RC
+   dd if=/dev/urandom of=/dev/fb0 bs=1k count=150 || return 2
    echo "tv out test"
-   fbset -xres 720 -yres 576 -vxres 720 -vyres 576 || return $RC
-   fbset -xres 320 -yres 240 -vxres 320 -vyres 240 || return $RC
-   fbset -xres 720 -yres 480 -vxres 720 -vyres 480 || return $RC 
-   fbset -xres 320 -yres 240 -vxres 320 -vyres 240 || return $RC
+   fbset -xres 720 -yres 576 -vxres 720 -vyres 576 || return 3
+   fbset -xres 320 -yres 240 -vxres 320 -vyres 240 || return 4
+   fbset -xres 720 -yres 480 -vxres 720 -vyres 480 || return 5 
+   fbset -xres 320 -yres 240 -vxres 320 -vyres 240 || return 6
    echo "back light test"
-   echo 0 > /sys/class/graphics/fb0/blank || return $RC
-   cat /sys/class/backlight/stmp3xxx-bl/max_brightness || return $RC
+   echo 0 > /sys/class/graphics/fb0/blank || return 7
+   cat /sys/class/backlight/stmp3xxx-bl/max_brightness || return 8
    LEVEL="0 10 20 30 40 50 60 70 80 90 100 80 50 40 30 20 10 0 50" 
    for i in $LEVEL
    do
    echo $i level test  
-   echo $i > /sys/class/backlight/stmp3xxx-bl/brightness || return $RC
+   echo $i > /sys/class/backlight/stmp3xxx-bl/brightness || return 9
    sleep 1
    done
    echo "NAND test"
    modprobe gpmi
    sleep 2
-   ubiattach /dev/ubi_ctrl -m 1 || return $RC
+   flash_eraseall /dev/mtd1
+   ubiattach /dev/ubi_ctrl -m 1 || return 10
    mkdir -p /mnt/ubifs
-   mount -t ubifs ubi0:test /mnt/ubifs || return $RC
-   bonnie -d /mnt/ubifs -u 0:0 -s 10 -r 5 || return $RC
-   dt of=/mnt/ubifs/test_file bs=4k limit=128m passes=20 || return $RC
+   ubimkvol /dev/ubi0 -N test -m || return 11
+   mount -t ubifs ubi0:test /mnt/ubifs || return 12
+   bonnie++ -d /mnt/ubifs -u 0:0 -s 10 -r 5 || RC=$(expr $RC + 1)
+   dt of=/mnt/ubifs/test_file bs=4k limit=128m passes=20 || RC=$(expr $RC + 1)
    umount /mnt/ubifs
-   ubidetach /dev/ubi_ctrl -m 1 || return $RC
+   ubidetach /dev/ubi_ctrl -m 1 || return 13
    modprobe -r gpmi
    echo "ALSA test"
-   aplay -vv $STREAM_PATH/alsa_stream/audio44k16M.wav || return $RC
-   RC=0
+   aplay -vv $STREAM_PATH/alsa_stream/audio44k16M.wav || return 14
    return $RC
 }
 
@@ -185,7 +186,7 @@ test_case_01()
 TCID="test_CPUFreq_stress"
 #TODO give TST_COUNT
 TST_COUNT=1
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -193,25 +194,25 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 
 declare -a cpufreq_value;
-cpufreq_value=(454740 64000);
+cpufreq_value=(454740 392730 360000 261820 64000);
 count=0
 
-while [ $count -lt 5 ]; do
+while [ $count -lt 7 ]; do
   count=$(expr $count + 1)
-  value=${cpufreq_value[$RANDOM%3]}
+  value=${cpufreq_value[$RANDOM%5]}
   cpufreq-set -f $value
   value_ret=$(cpufreq-info -f)
-if [ $value_ret -eq "$value" ] ; then
+if [ $value_ret -eq $value ] ; then
    echo sleep...
    sleep 3
+   echo "TSTINFO: CPUFREQ at $value "
    #test list
-   run_auto_test_list
+   run_auto_test_list || RC=$(expr $RC + 1)
 else
   return $RC
 fi
 done
 
-RC=0
 return $RC
 
 }
@@ -233,7 +234,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 echo "case can not run on nfs"
 declare -a cpufreq_value;
-cpufreq_value=(454740 64000);
+cpufreq_value=(454740 392730 360000 261820 64000);
 count=0
 
 for i in $cpufreq_value
@@ -241,6 +242,7 @@ do
    echo -n $i > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
    echo sleep...
    sleep 3
+   echo "TSTINFO: CPUFREQ at $i"
    #test list
    run_manual_test_list
 done

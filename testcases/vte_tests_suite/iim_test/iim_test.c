@@ -35,6 +35,14 @@ int main()
 
   close(fd);
 
+  printf("clock 0x%x\n",*(int*)(piim+0xC0));
+  printf("hclock 0x%x\n",*(int*)(piim+0x20));
+  printf("chip:%s\n",piim+0x1300);
+  printf("fuse:0x%x\n",*(int *)(piim+0x11A0));
+  printf("test address equal 8k:0x%x\n",*(int *)(piim+0x2000));
+  printf("test address exceed 8k:0x%x\n",*(int *)(piim+0x21a0));
+
+
   ret = munmap(piim, 4 * 1024);
   if(ret == -1)
     perror("iim OCR unmap");

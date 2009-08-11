@@ -89,7 +89,7 @@ cleanup()
 {
     RC=0
     echo "clean up environment..."
-    rmmod scull
+    rmmod scull > /dev/null
     echo "clean up environment end"
     return $RC
 }
@@ -131,10 +131,12 @@ sysfs_mech()
         return $RC
     fi
 
+    sleep 5
+
     tst_resm TINFO "Test #1: detect /dev node"
     if [ -e /dev/scull1 ]
     then
-        tst_resm TFAIL "Test #1: There is still /dev/scull0 node"
+        tst_resm TFAIL "Test #1: There is still /dev/scull1 node"
         RC=2
         return $RC
     fi
