@@ -13,23 +13,50 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <signal.h>
 
 #define IIM_DEVICE "/dev/mxs_viim"
 #ifndef NULL
 #define NULL 0
 #endif
+
+static int RC = 0;
+static char * piim = NULL;
+
+static void exit_sighandler(int x)
+{
+  int ret = 0;
+  if ( x == SIGSEGV && RC == 1)
+  {
+   printf("excepted SEGSEGV result\n");
+   RC = 0;
+   printf("TST_INFO: iim test PASS\n");
+  ret = munmap(piim, 4 * 1024);
+  if(ret == -1)
+    perror("iim OCR unmap");
+   exit(0);
+  }else{
+   printf("un-excepted SEGSEGV result\n");
+   RC = 0;
+   printf("TST_INFO: iim test FAIL\n");
+   exit(-1);
+  }
+}
+
 int main()
 {
  int fd;
  int ret = 0;
- char * piim = NULL;
+
+ signal(SIGSEGV,exit_sighandler);
+
  fd = open(IIM_DEVICE,O_RDONLY);
  if(fd < 0){
    perror("open");
    return 1;
  }
   
-  piim = mmap(NULL, 4 * 1024, PROT_READ, MAP_SHARED ,fd, 0);
+  piim = mmap(NULL, 8 * 1024, PROT_READ, MAP_SHARED ,fd, 0);
   if(piim == (void *)-1 )
    perror("iim OCR");
 
@@ -39,14 +66,14 @@ int main()
   printf("hclock 0x%x\n",*(int*)(piim+0x20));
   printf("chip:%s\n",piim+0x1300);
   printf("fuse:0x%x\n",*(int *)(piim+0x11A0));
-  printf("test address equal 8k:0x%x\n",*(int *)(piim+0x2000));
+  printf("test address equal 8k:0x%x\n",*(int *)(piim+0x1ffff));
+  RC = 1;
   printf("test address exceed 8k:0x%x\n",*(int *)(piim+0x21a0));
-
-
+    
+  
   ret = munmap(piim, 4 * 1024);
   if(ret == -1)
     perror("iim OCR unmap");
-  
    printf("TST_INFO: iim test PASS\n");
   return  0;
 }
