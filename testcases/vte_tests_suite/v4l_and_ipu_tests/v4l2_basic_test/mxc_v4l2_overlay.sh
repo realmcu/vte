@@ -57,27 +57,27 @@ RESSIZE=$(fbset | grep "mode \"" |  sed "s/\"//g" | sed "s/-/ /" | awk {'print $
 
 if [ $TARGET == "25" ]
 then
-RESSIZE="640x480"
+RESSIZE="640x480 720x480"
 fi
 
 if [ $TARGET == "31" ]
 then
-RESSIZE="240x320"
+RESSIZE="240x320 720x480"
 fi
 
 if [ $TARGET == 35 ]
 then
-RESSIZE="800x480"
+RESSIZE="800x480 720x480"
 fi
 
 if [ $TARGET == 37 ]
 then
-RESSIZE="240x320"
+RESSIZE="240x320 720x480"
 fi
 
 if [ $TARGET == 51 ]
 then
-RESSIZE="240x320"
+RESSIZE="240x320 720x480"
 fi
 
 return $RC
