@@ -33,6 +33,7 @@ SUBDIRS =rtc_testapp_1 \
          rtc_testapp_4 \
          rtc_testapp_5 \
          rtc_testapp_6 \
+         rtc_testapp_7 \
 	 rtc_scripts
 endif
 
