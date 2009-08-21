@@ -130,7 +130,7 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-simple_draw 100 
+simple_draw 100 && torusknot 100 
 
 if [ $? -eq 0 ]; then
 echo "TEST PASS"
