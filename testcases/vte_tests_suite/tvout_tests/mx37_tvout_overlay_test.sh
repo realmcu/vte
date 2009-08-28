@@ -131,6 +131,12 @@ for ROT in 0 1 2 3 4 5 6 7; do
   /unit_tests/mxc_v4l2_output.out -iw 352 -ih 288 -ow 720 -oh 480 -f YU12 -d $DISPLAY -r $ROT || exit $RC
 done
 
+# crop test
+for OL in 10 15 25 30 50 100 ; do
+for OT in 10 15 25 30 50 100 ; do
+/unit_tests/mxc_v4l2_output.out -iw 640 -ih 480 -ol $OL -ot $OT -ow 320 -oh 240 -f YU12 -d $DISPLAY -r 0 || exit $RC
+done
+done
 # SDC max input size test case
 
 /unit_tests/mxc_v4l2_output.out -iw 480 -ih 640 -ow 720 -oh 480 -f YU12 -d $DISPLAY -fr 60 || exit $RC
