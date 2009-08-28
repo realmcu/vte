@@ -93,6 +93,9 @@ cleanup()
     else
         amixer cset name='Loopback Line-in' 0 > /dev/null
     fi
+
+    sleep 1
+    modprobe mxc_si4702 -r
 }
 
 # Function:     fm_probe()   
