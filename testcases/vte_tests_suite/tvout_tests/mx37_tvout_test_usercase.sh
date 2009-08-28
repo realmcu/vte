@@ -158,17 +158,41 @@ RC=0
 # SDC input size test cases
 for SIZE in 32 40 48 64 80 96 112 128 144 160 176 192 208 224 240 
 do
- /unit_tests/mxc_v4l2_output.out -iw $SIZE -ih $SIZE -ow 720 -oh 480 -d 5 -r 0 -f YU12
+ /unit_tests/mxc_v4l2_output.out -iw $SIZE -ih $SIZE -ow 720 -oh 480 -d 5 -r 0 -f YU12 || RC=1
  sleep 1
 done
+
+if [ $RC = 1 ]; then
+ echo "input size test fail"
+ return $RC
+fi
 
 # SDC output rotation test cases
 for ROT in 0 1 2 3 4 5 6 7
 do
- /unit_tests/mxc_v4l2_output.out -iw 352 -ih 288 -ow 720 -oh 480 -d 5 -r $ROT -f YU12
+ /unit_tests/mxc_v4l2_output.out -iw 352 -ih 288 -ow 720 -oh 480 -d 5 -r $ROT -f YU12 || RC=1 
  sleep 1
 done
 
+if [ $RC = 1 ]; then
+ echo "rotation test fail"
+ return $RC
+fi
+
+# SDC crop test
+for OL in 10 16 20 720
+do
+ for OT in 10 16 20 480
+ do
+ /unit_tests/mxc_v4l2_output.out -iw 320 -ih 240 -ot $OT -ol $OL -ow 320  -oh 240 -d 5 -r $ROT -f YU12 || RC=1
+ sleep 1
+ done
+done
+
+if [ $RC = 1 ]; then
+ echo "crop test fail"
+ return $RC
+fi
 # SDC max input size test case
 /unit_tests/mxc_v4l2_output.out -iw 480 -ih 640 -ow 720 -oh 480 -d 5 -fr 60 -f YU12 
 /unit_tests/mxc_v4l2_output.out -iw 720 -ih 512 -ow 720 -oh 480 -d 5 -fr 60 -f YU12 
