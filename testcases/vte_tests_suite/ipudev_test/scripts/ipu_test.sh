@@ -184,30 +184,38 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 BWLIST="10 32 51 255"
 
 #TODO add function test scripte here
-for i in $BWLIST
-do
 echo "TST INFO: now block size is $i"
 
 echo "TST INFO: video pattern with user define dma buffer queue, one full-screen output"
-ipu_dev_test -P 1 -bw $i || return $RC
+ipu_dev_test -P 1 || return $RC
 
 if [ $TARGET == "37" ] || [ $TARGET == "51" ]; then
 echo "TST INFO: ipu v3 only"
 echo "TST INFO: video pattern with user define dma buffer queue, with two output"
-ipu_dev_test -P 2 -bw $i || return $RC
-
-ipu_dev_test -P 5 -bw $i || return $RC
-ipu_dev_test -P 6 -bw $i || return $RC
-ipu_dev_test -P 7 -bw $i || return $RC
-ipu_dev_test -P 8 -bw $i || return $RC
-ipu_dev_test -P 9 -bw $i || return $RC
+ipu_dev_test -P 2 || return $RC
+ipu_dev_test -P 5 || return $RC
+ipu_dev_test -P 6 || return $RC
+ipu_dev_test -P 7 || return $RC
+ipu_dev_test -P 8 || return $RC
+ipu_dev_test -P 9 || return $RC
+ipu_dev_test -P 10 || return $RC
+ipu_dev_test -P 11 || return $RC
+ipu_dev_test -P 12 || return $RC
+ipu_dev_test -P 13 || return $RC
+ipu_dev_test -P 14 || return $RC
+ipu_dev_test -P 15 || return $RC
+ipu_dev_test -P 16 || return $RC
+ipu_dev_test -P 17 || return $RC
+ipu_dev_test -P 18 || return $RC
+ipu_dev_test -P 19 || return $RC
+ipu_dev_test -P 20 || return $RC
+ipu_dev_test -P 21 || return $RC
 fi
-
-done
-
 echo "TST INFO hopping block screen save"
-ipu_dev_test -P 3 || return $RC
-
+for i in $BWLIST
+do
+ipu_dev_test -P 3 -bw $i || return $RC
+done
 echo "TST INFO: color bar + hopping block for 10 secondes"
 ipu_dev_test -P 4 || return $RC
 
