@@ -15,6 +15,7 @@
 #-----------------------   ------------    ----------  ---------------------
 # Spring Zhang               03/07/2008       n/a        Initial ver. 
 # Spring                     28/11/2008       n/a      Modify COPYRIGHT header
+# Spring                     04/09/2009       n/a      Add testx to test file
 #############################################################################
 # Portability:  ARM sh bash 
 #
@@ -136,6 +137,13 @@ perms_files()
     if [ $RC -ne 0 ]
     then 
         tst_resm TBROK "Test #1: copy test.txt failed"
+        return $RC
+    fi
+
+    cp $BIN_DIR/testx $mount_dir || RC=$?
+    if [ $RC -ne 0 ]
+    then 
+        tst_resm TBROK "Test #1: copy testx failed"
         return $RC
     fi
 
