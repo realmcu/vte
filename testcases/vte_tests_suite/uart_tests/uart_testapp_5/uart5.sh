@@ -11,7 +11,7 @@
  LTPROOT=`cd \`dirname $0\` && echo $PWD`
 
  cd $LTPROOT
- TESTAPP5=./uart_testapp_5
+ TESTAPP5=uart_testapp_5
  TMP_RC=0
  rc=0
 
