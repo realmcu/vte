@@ -11,7 +11,7 @@
  LTPROOT=`cd \`dirname $0\` && echo $PWD`
 
  cd $LTPROOT
- TESTAPP5=./uart_testapp_9
+ TESTAPP=uart_testapp_9
  TMP_RC=0
  rc=0
 
@@ -35,7 +35,7 @@
 
  if [ $# -eq 1 ]
  then
-  $TESTAPP5 $1 
+  $TESTAPP $1 
   anal_res
  else exit 1
  fi
