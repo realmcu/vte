@@ -67,7 +67,7 @@ int main()
   printf("hclock 0x%x\n",*(int*)(piim+0x20));
   printf("chip:%s\n",piim+0x1300);
   printf("fuse:0x%x\n",*(int *)(piim+0x11A0));
-  printf("test address equal 8k:0x%x\n",*(char *)(piim+0x1ffff));
+  printf("test address equal 8k:0x%x\n",*(char *)(piim+0x1fff));
   RC = 1;
   printf("test address exceed 8k:0x%x\n",*(int *)(piim+0x21a0));
     

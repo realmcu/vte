@@ -159,7 +159,7 @@ void* run(void* arg)
 	call_cond_signal(&parent, buf, sizeof(buf));
 	call_mutex_lock(&req, buf, sizeof(buf));
 	call_mutex_unlock(&ack, buf, sizeof(buf));
-	
+
 	call_mutex_lock(&wait, buf, sizeof(buf));
 	call_cond_signal(&parent, buf, sizeof(buf));
 	call_mutex_unlock(&wait, buf, sizeof(buf));
@@ -179,7 +179,7 @@ void create_child_thread(char* buf, size_t buf_len)
 	tst_brkm(TBROK, cleanup, "pthread_attr_init failed: %s",
 		strerror_r(ret, buf, buf_len));
     }
-    if ((ret = pthread_attr_setdetachstate(&attr, 
+    if ((ret = pthread_attr_setdetachstate(&attr,
 					   PTHREAD_CREATE_DETACHED)) != 0) {
 	tst_brkm(TBROK, cleanup, "pthread_attr_setdetachstate failed: %s",
 		strerror_r(ret, buf, buf_len));
@@ -208,7 +208,7 @@ int PM_main(int argc, char** argv)
     call_cond_init(&child, buf, sizeof(buf));
 
     call_mutex_lock(&ack, buf, sizeof(buf));
-    
+   
     create_child_thread(buf, sizeof(buf));
 
     tst_resm(TINFO,"Starting test, please wait.");
