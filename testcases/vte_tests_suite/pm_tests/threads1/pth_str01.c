@@ -117,7 +117,7 @@ static void	parse_args( int argc, char *argv[] )
 	}
 
 }
-
+
 /*
  * num_nodes
  *
@@ -141,7 +141,7 @@ int	num_nodes( int b, int d )
 
 	return( sum );
 }
-
+
 /*
  * synchronize_children
  *
@@ -291,7 +291,7 @@ int	synchronize_children( c_info *parent ) {
 	return( my_index );
 
 }
-
+
 /*
  * doit
  *
@@ -344,7 +344,7 @@ int	doit( c_info *parent ) {
 	    fflush( stdout );
 	}
 
-	if ( cdepth <= depth ) { 
+	if ( cdepth <= depth ) {
 
 	    /*
 	     * Since the tree is not yet complete (it is not yet tall enough),
@@ -494,7 +494,7 @@ int	doit( c_info *parent ) {
 	fflush( stdout );
 
 	pthread_exit( 0 );
-		
+
 }
 
 /*
@@ -562,7 +562,7 @@ int	PM_main( int argc, char *argv[] ) {
 		}
 		bzero( child_info[ind].child_ptrs,
 		    breadth * sizeof(c_info *) );
-		
+
 		if ((rc = pthread_mutex_init(&child_info[ind].child_mutex,
 		    NULL))) {
 			fprintf( stderr, "pthread_mutex_init child_mutex: %s\n",
@@ -576,7 +576,7 @@ int	PM_main( int argc, char *argv[] ) {
 			    strerror(rc) );
 			exit( 14 );
 		}
-		
+
 		if ((rc = pthread_cond_init(&child_info[ind].child_condvar,
 		    NULL))) {
 			fprintf( stderr,
