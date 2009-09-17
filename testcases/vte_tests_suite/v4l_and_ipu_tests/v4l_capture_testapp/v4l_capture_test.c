@@ -281,11 +281,21 @@ int open_device(void)
                 return TFAIL;
         }
 
-        if((gFdV4L = open(gV4LTestConfig.mV4LDevice, O_RDWR|O_NONBLOCK, 0)) < 0)
-        {
+	if ( gV4LTestConfig.mIsBlock == 0 )
+	{
+        	if((gFdV4L = open(gV4LTestConfig.mV4LDevice, O_RDWR|O_NONBLOCK, 0)) < 0)
+        	{
                 tst_resm(TBROK, "Unable to open %s", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
-        }
+       		}	
+	}else{
+	
+        	if((gFdV4L = open(gV4LTestConfig.mV4LDevice, O_RDWR, 0)) < 0)
+        	{
+                tst_resm(TBROK, "Unable to open %s", gV4LTestConfig.mV4LDevice);
+                return TFAIL;
+		}
+	}
 
         return TPASS;
 }
@@ -1324,7 +1334,7 @@ int read_frame(void)
                         {
                                 tst_resm(TINFO,"read_frame() for Encoder");
                         }
-
+	AGAIN:
                         CLEAR(buffer); 
                              
                         buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;      
@@ -1339,11 +1349,16 @@ int read_frame(void)
                                               
                                 switch(errno)        
                                 {          
-                                        case EAGAIN:                
+                                        case EAGAIN:  
+					/*
                                                 tst_resm(TWARN,
                                                          "Non-blocking I/O has been selected using O_NONBLOCK and no buffer was in the outgoing queue");
-                                                return TFAIL;      
-                                        
+                                          */      
+						usleep(200);
+                                                goto AGAIN;
+						/*
+						return TFAIL;      
+                                                */
                                         case EIO:                               
                                         default:                
                                                 tst_resm(TWARN, "VIDIOC_DQBUF fail");           

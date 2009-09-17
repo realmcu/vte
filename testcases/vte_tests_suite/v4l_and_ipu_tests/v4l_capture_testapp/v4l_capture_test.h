@@ -112,6 +112,7 @@ typedef struct
         const char * mPixFormat;
         int mOverlayType;
 	int mFrameRate;
+	int mIsBlock;
 } sV4LTestConfig; 
 /*======================== GLOBAL VARIABLE DECLARATIONS =====================*/
 

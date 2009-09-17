@@ -212,7 +212,8 @@ int main(int argc, char **argv)
 #endif  
 	     Yflag = 0,
             vflag = 0,
-	    rflag = 0;
+	    rflag = 0,
+	    Kflag = 0;
 
 
         char *Dopt, 
@@ -229,6 +230,7 @@ int main(int argc, char **argv)
 	      *Nopt,
 #endif
 	      *ropt,
+	      *Kopt,
 	      *Bopt;  
 	    
 
@@ -254,7 +256,8 @@ int main(int argc, char **argv)
 
 #endif
 		  { "v",  &vflag,         NULL  },        /* Verbose mode                         */
-                  {"r", &rflag,         &ropt },
+                  {"r:", &rflag,         &ropt },
+		  {"K:", &Kflag,         &Kopt},     /*block IO */
   		  { NULL, NULL,           NULL  }         /* NULL required to end array           */
         };
 
@@ -291,6 +294,8 @@ int main(int argc, char **argv)
         gV4LTestConfig.mCropRect.height = 480;
         gV4LTestConfig.mOverlayType = Yflag ? atoi(Yopt) : V4L2_FBUF_FLAG_OVERLAY;
         gV4LTestConfig.mFrameRate = rflag ? atoi(ropt) : 30;
+        gV4LTestConfig.mIsBlock = Kflag ? atoi(Kopt) : 0;	
+	tst_resm(TINFO, "IO blocking is %d\n",  gV4LTestConfig.mIsBlock);
 
 	if (gV4LTestConfig.mFrameRate > 30 || gV4LTestConfig.mFrameRate < 15)
 	{
