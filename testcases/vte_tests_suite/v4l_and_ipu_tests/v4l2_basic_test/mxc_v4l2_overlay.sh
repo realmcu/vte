@@ -57,27 +57,27 @@ RESSIZE=$(fbset | grep "mode \"" |  sed "s/\"//g" | sed "s/-/ /" | awk {'print $
 
 if [ $TARGET == "25" ]
 then
-RESSIZE="640x480 720x480"
+RESSIZE=" "
 fi
 
 if [ $TARGET == "31" ]
 then
-RESSIZE="240x320 720x480"
+RESSIZE="240x320"
 fi
 
 if [ $TARGET == 35 ]
 then
-RESSIZE="800x480 720x480"
+RESSIZE=" "
 fi
 
 if [ $TARGET == 37 ]
 then
-RESSIZE="240x320 720x480"
+RESSIZE="240x320"
 fi
 
 if [ $TARGET == 51 ]
 then
-RESSIZE="240x320 720x480"
+RESSIZE="240x320"
 fi
 
 return $RC
@@ -114,7 +114,7 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-RESLIST="320x240 640x480 352x288 176x144 320x240 352x288 640x480"" "${RESSIZE}
+RESLIST="320x240 176x144 320x240"" "${RESSIZE}
 echo "pure size change test"
 for i in $RESLIST
 do
@@ -165,8 +165,8 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test script here
-INSIZE="320x240 640x480 352x288 176x144 320x240 352x288 640x512"
-RESLIST="320x240 640x480 352x288 176x144 320x240 352x288 640x480"" "${RESSIZE}
+INSIZE="320x240 176x144 320x240"
+RESLIST="320x240 176x144 320x240"" "${RESSIZE}
 echo "pure size change test"
 for i in $INSIZE
 do
@@ -206,8 +206,8 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test script here
 ROTATION="0 1 2 3 4 5 6 7"
-INSIZE="320x240 640x480 352x288 176x144 320x240 352x288 640x512"
-RESLIST="320x240 640x480 352x288 176x144 320x240 352x288 640x480"" "${RESSIZE}
+INSIZE="320x240 176x144 320x240"
+RESLIST="320x240 176x144 320x240"" "${RESSIZE}
 echo "rotation change test"
 for k in $ROTATION
 do
@@ -251,7 +251,7 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 ROTATION="0 1 2 3 4 5 6 7"
-RESLIST="320x240 640x480 352x288 176x144 320x240 352x288 640x480"" "${RESSIZE}
+RESLIST="320x240 176x144 320x240"" "${RESSIZE}
 OFFSET="10 11 12 13 14 15 16 17 18 19 20 30 40 50 60 70 80 90 100"
 echo "rotation with offset"
 for k in $ROTATION
@@ -294,7 +294,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 ROTATION="0 1 2 3 4 5 6 7"
 OFFSET="10 15 80 100"
-RESLIST="320x240 640x480 352x288 176x144 320x240 352x288 640x480"" "${RESSIZE}
+RESLIST="320x240 176x144 320x240"" "${RESSIZE}
 echo "rotation with offset"
 for k in $ROTATION
 do
