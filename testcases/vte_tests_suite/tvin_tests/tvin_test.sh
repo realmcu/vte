@@ -22,9 +22,8 @@
 # 
 ###################################################################################################
 
-#MLIST="mxc_v4l2_capture ipu_prp_enc ipu_prp_vf_sdc ipu_prp_vf_sdc_bg ipu_still adv7180_tvin"
-MLIST="ipu_prp_enc.ko ipu_prp_vf_sdc.ko ipu_prp_vf_sdc_bg.ko ipu_still.ko adv7180_tvin.ko mxc_v4l2_capture.ko"
-RMLIST="adv7180_tvin ipu_prp_enc ipu_prp_vf_sdc_bg ov2640_camera ipu_prp_vf_sdc ipu_still mxc_v4l2_capture"
+MLIST="ipu_prp_enc.ko ipu_prp_vf_sdc.ko ipu_prp_vf_sdc_bg.ko ipu_still.ko ipu_csi_enc.ko adv7180_tvin.ko mxc_v4l2_capture.ko"
+RMLIST="adv7180_tvin ipu_prp_enc ipu_prp_vf_sdc_bg ov2640_camera ipu_prp_vf_sdc ipu_still ipu_csi_enc mxc_v4l2_capture"
 
 
 # Function:     setup
