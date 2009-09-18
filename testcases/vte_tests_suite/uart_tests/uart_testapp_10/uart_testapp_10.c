@@ -106,7 +106,7 @@ int main(int argc, char **argv)
 		    case B3000000:
 		    case B3500000:
 		    case B4000000:
-		     printf("set baud rate to %d \n", speed);
+		     printf("set baud rate to %o \n", speed);
 		     break;
 		    default:
 		    printf("suooprted baud rate is: \n");
@@ -126,7 +126,8 @@ int main(int argc, char **argv)
 	if(iBaud)
 	{
 	/*  mxc.c_cflag &= ~mxc.c_cflag;*/
-	  printf("old baud %x\n", mxc.c_cflag);
+	  printf("old baud %o\n", mxc.c_cflag&CBAUD);
+	  mxc.c_cflag &= ~CBAUD;
 	  mxc.c_cflag |= speed;
 	}
         retval = tcsetattr(uart_file1, TCSANOW, &mxc);
