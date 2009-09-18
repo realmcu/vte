@@ -16,6 +16,7 @@
 #Victor Cui                  14/10/2008      n/a        add nor function
 #Victor Cui                  22/10/2008      n/a        modify copy_test function to automation
 #                                                       adapt the fact device volume
+#Victor Cui                  17/09/2009      n/a        add check_validity
 #====================================================================================================
 #Portability:  ARM GCC  gnu compiler
 #==================================================================================================*/
@@ -108,6 +109,101 @@ probe_platform()
 		if_tmp=/dev/urandom
 	fi
 	echo $if_tmp	
+}
+check_validity()
+{
+        S_PATH_TMP=""
+        D_PATH_TMP=""
+        RW_TMP=""
+        DEVICE_NODE_TMP=""
+
+        case $1 in
+        "F" | "Format")
+                case $2 in
+                        "SD")
+                                S_PATH_TMP="/mnt/mmcblk0p$3"
+                                D_PATH_TMP="/mnt/mmcblk0p$3"
+                                ;;
+                        "HDD")
+                                S_PATH_TMP="/mnt/ata$3"
+                                D_PATH_TMP="/mnt/ata$3"
+                                ;;
+                        "USBH")
+                                S_PATH_TMP="/mnt/msc"
+                                D_PATH_TMP="/mnt/msc"
+                                ;;
+                        "NAND")
+                                S_PATH_TMP="/mnt/flc"
+                                D_PATH_TMP="/mnt/flc"
+                                ;;
+                        "NOR")
+                                S_PATH_TMP="/mnt/flb"
+                                D_PATH_TMP="/mnt/flb"
+                                ;;
+                esac
+                ;;
+        "C" | "Copy" | "D" | "Delete" | "CD" | "CopyDelete" )
+                S_PATH_TMP=$2
+                D_PATH_TMP=$3
+                ;;
+        "CDF" | "CopyDeleteFormat")
+                S_PATH_TMP=$4
+                D_PATH_TMP=$5
+                ;;
+        "STRESS")
+                S_PATH_TMP=$2
+                D_PATH_TMP=$2
+                ;;
+        "--help" | "--h")
+                print_help
+                exit $rc
+                ;;
+        *)
+                echo "please input right parameter! F or Format,CopyDelete,CopyDeleteFormat)";
+                ;;
+esac
+
+# check the directory
+        if [ ! -d "$S_PATH_TMP" ]; then
+                echo "The S_PATH: $S_PATH_TMP are not exist, please check!"
+                rc=1
+                exit $rc
+        fi
+        if [ ! -d "$D_PATH_TMP" ]; then
+                echo "The D_PATH: $D_PATH_TMP are not exist, please check!"
+                rc=1
+                exit $rc
+        fi
+
+# check the D_PATH write property
+	# special operation for some subdirectory(storage_test_concurrent.sh)
+	# eg: /mnt/msc/test --> /mnt/msc
+	NF_TMP=`echo $D_PATH_TMP | awk -F / '{print NF}'`
+	if [ $NF_TMP -gt 3 ]; then
+		D_PATH_TMP=`echo $D_PATH_TMP | awk -F / '{print "/" $2 "/" $3}'`
+	fi
+	# end
+
+	DEVICE_NODE_TMP=`cat /proc/mounts | grep $D_PATH_TMP | awk '{print $1}'`
+        if [ -z $DEVICE_NODE_TMP ]; then
+                echo "Not find the device node mount to $D_PATH_TMP, please check! "
+                rc=1
+                exit $rc
+        fi
+        RW_TMP=`cat /proc/mounts | grep $D_PATH_TMP | awk '{print $4}' | awk -F , '{print $1}'`
+        if [ $RW_TMP != "rw" ]; then
+                echo "The D_PATH: $D_PATH_TMP can not write, please check!"
+                rc=1
+                exit $rc
+        fi
+
+# check the device node
+        ls /dev/ | grep `echo $DEVICE_NODE_TMP | awk -F / '{print $3}'`
+        if [ $? -ne 0 ]; then
+                echo "The DEVICE_NODE: $DEVICE_NODE_TMP is not exist, please check!"
+                rc=1
+                exit $rc
+        fi
 }
  anal_copy_res()
 {
@@ -433,6 +529,7 @@ echo ""
 echo "[Storage Copy/Delete/Format test begin]"
 
 probe_platform
+check_validity $*
 case $1 in 
 	"F" | "Format")
                 D_TYPE=$2
