@@ -187,6 +187,43 @@ return $RC
 
 }
 
+# Function:     test_case_03
+# Description   - Test if PAL overlay test ok
+#  
+test_case_03()
+{
+#TODO give TCID 
+TCID="overlay_PAL_test_Simple"
+#TODO give TST_COUNT
+TST_COUNT=3
+RC=0
+
+echo U:720x576i-50 > /sys/class/graphics/fb1/mode
+
+#this will last for 200s
+/unit_tests/mxc_v4l2_output.out -iw 480 -ih 640 -ow 720 -oh 576 -f YU12 -d $DISPLAY -fr 60 -l 12000 || RC=2 &
+
+times=100
+
+while [ $times -gt 0 ]
+do
+
+echo "times $times"
+
+cleanup 
+
+sleep 1
+
+setup
+
+sleep 1
+
+times=$(expr $times - 1)
+
+done
+
+return $RC
+}
 
 
 # main function
@@ -196,7 +233,7 @@ RC=0
 #TODO check parameter
 if [ $# -ne 1 ]
 then
-echo "usage $0 <1/2>"
+echo "usage $0 <1/2/3>"
 exit 1 
 fi
 
@@ -211,9 +248,12 @@ case "$1" in
 2)
   test_case_02 || exit $RC
   ;;
+3)
+  test_case_03 || exit $RC
+  ;;
 *)
 *#TODO check parameter
-  echo "usage $0 <1/2>"
+  echo "usage $0 <1/2/3>"
   ;;
 esac
 
