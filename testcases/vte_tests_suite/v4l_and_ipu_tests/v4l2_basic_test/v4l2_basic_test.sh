@@ -14,7 +14,7 @@ STATUS=0
 DISPLAY=3
 PassCount=0
 echo "Turn off fb blanking"
-echo -e "\033[9;0]" > /dev/vc/0
+echo -e "\033[9;0]" > /dev/fb0
 #setup the fb on
 echo 0 > /sys/class/graphics/fb0/blank
 
