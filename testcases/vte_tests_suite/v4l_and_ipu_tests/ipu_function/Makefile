@@ -9,10 +9,10 @@ SUBDIRS = tools
 TARGET = scripts/ipuv3_test.sh 
 
 all:	
-	@set -e; for i in $(SUBDIRS); $(MAKE) -C $$i; done 
+	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i; done 
 install:
-	@set -e; for i in $(SUBDIRS); $(MAKE) -C $$i install; done 
+	@set -e; for i in $(SUBDIRS);do  $(MAKE) -C $$i install; done 
 	-ln -f $(TARGET) ../../../bin
 clean:
-	@set -e; for i in $(SUBDIRS); $(MAKE) -C $$i clean; done 
+	@set -e; for i in $(SUBDIRS);do  $(MAKE) -C $$i clean; done 
 	
