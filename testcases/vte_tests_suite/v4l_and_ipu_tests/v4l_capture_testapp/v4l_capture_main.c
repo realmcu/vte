@@ -210,10 +210,11 @@ int main(int argc, char **argv)
 	     Xflag = 0,
 	     Nflag = 0,
 #endif  
-	     Yflag = 0,
+	    Yflag = 0,
             vflag = 0,
 	    rflag = 0,
-	    Kflag = 0;
+	    Kflag = 0, /*block io*/
+            sflag = 0; /*capture input select*/
 
 
         char *Dopt, 
@@ -231,6 +232,7 @@ int main(int argc, char **argv)
 #endif
 	      *ropt,
 	      *Kopt,
+	      *sopt,
 	      *Bopt;  
 	    
 
@@ -258,6 +260,7 @@ int main(int argc, char **argv)
 		  { "v",  &vflag,         NULL  },        /* Verbose mode                         */
                   {"r:", &rflag,         &ropt },
 		  {"K:", &Kflag,         &Kopt},     /*block IO */
+		  {"s:", &sflag,         &sopt},
   		  { NULL, NULL,           NULL  }         /* NULL required to end array           */
         };
 
@@ -294,8 +297,32 @@ int main(int argc, char **argv)
         gV4LTestConfig.mCropRect.height = 480;
         gV4LTestConfig.mOverlayType = Yflag ? atoi(Yopt) : V4L2_FBUF_FLAG_OVERLAY;
         gV4LTestConfig.mFrameRate = rflag ? atoi(ropt) : 30;
-        gV4LTestConfig.mIsBlock = Kflag ? atoi(Kopt) : 0;	
+        gV4LTestConfig.mIsBlock = Kflag ? atoi(Kopt) : 0;
 	tst_resm(TINFO, "IO blocking is %d\n",  gV4LTestConfig.mIsBlock);
+	if(sflag)
+	{
+	 char mstr[255];
+	 char * pstr = mstr;
+	 int len = strlen(sopt);
+	 strncpy(mstr, sopt, len > 255 ? 255:len);
+	 mstr[len + 1] = 0;
+	 while(*pstr != '\0')
+	 {
+	   *pstr = toupper(*pstr);
+	   pstr++;
+         }
+	 if(strncmp(mstr,"CSI_IC_MEM",10) == 0)
+	 {
+	    gV4LTestConfig.inputSrc = eInCSI_IC_MEM;
+	 }else if(strncmp(mstr,"CSI_MEM",7) == 0){
+	   gV4LTestConfig.inputSrc = eInCSI_MEM;
+	 }else{
+	    gV4LTestConfig.inputSrc = -1;/*ignore the input*/
+	 }
+	tst_resm(TINFO, "capture source is %d\n",  gV4LTestConfig.inputSrc);
+        }else{
+	    gV4LTestConfig.inputSrc = -1;
+	}
 
 	if (gV4LTestConfig.mFrameRate > 30 || gV4LTestConfig.mFrameRate < 15)
 	{

@@ -968,6 +968,27 @@ int init_device (void)
                 tst_resm(TWARN, "%s is not a v4l2 device", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
         }
+
+	#if 1
+        if( gV4LTestConfig.inputSrc == eInCSI_IC_MEM)
+	{
+	  int index = eInCSI_IC_MEM;
+	  if(ioctl (gFdV4L, VIDIOC_S_INPUT, &index)< 0)
+	  {
+            tst_resm(TFAIL, "select input CSI_IC_MEM FAIL" );
+	    return TFAIL;
+	  }
+	}else if( gV4LTestConfig.inputSrc == eInCSI_MEM){
+	  int index = eInCSI_MEM;
+	  if(ioctl (gFdV4L, VIDIOC_S_INPUT, &index)< 0)
+	  {
+            tst_resm(TFAIL, "select input CSI_MEM FAIL" );
+	    return TFAIL;
+	  }
+	}else
+	;/*no selection*/
+
+	#endif
         
         if(gUsecase == V4L2_BUF_TYPE_VIDEO_CAPTURE)
         {
