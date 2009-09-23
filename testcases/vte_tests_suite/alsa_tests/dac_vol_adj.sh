@@ -18,6 +18,7 @@
 # Spring                 26/09/2008       n/a      Fix some volume 0 bug
 # Spring                 27/10/2008       n/a      Add mx35&mx37 support  
 # Spring                 28/11/2008       n/a      Modify COPYRIGHT header
+# Spring                 22/09/2009       n/a      Optimize code
 #############################################################################
 # Portability:   ARM sh 
 # File Name:     dac_vol_adj.sh   
@@ -90,19 +91,68 @@ cleanup()
 {
     RC=0
     echo "clean up environment..."
-    if [ $platform = "mx31" ]
-    then
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 50 >/dev/null
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
-    then
-        amixer -c 0 cset name='Headphone Volume' 120 > /dev/null
-    elif [ $platform == "mx37" ]
-    then
-        amixer cset numid=3 150 >/dev/null
-    fi
+
+    ctl_id=`amixer_ctl_id`
+    max_vol || MAX=$?
+    MAX=`expr $MAX / 3 \* 2`
+    amixer -c 0 cset "$ctl_id" $MAX 
+
     echo "clean up environment end"
     return $RC
 }
+
+# Function:     amixer_ctl_id
+#
+# Description:  - return amixer control id
+#
+# Exit:         - success: id
+#               - "" on failure.
+#
+amixer_ctl_id()
+{
+    local ctl_id=""
+
+    if [ $platfm -eq 31 ]
+    then
+        ctl_id="name='Master Playback Volume'"
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
+    then
+        ctl_id="name='Headphone Volume'"
+    elif [ $platfm -eq 37 ]
+    then
+        ctl_id="name='Playback PCM Volume'"
+    fi
+ 
+    echo $ctl_id
+}
+
+# Function:     max_vol
+#
+# Description:  - return max volume based on platform
+#
+# Exit:         - max volume on success
+#               - 0 on failure.
+#
+max_vol()
+{
+    MAX_MX31=99
+    MAX_SGTL5K=127
+    MAX_MX37=255
+
+    if [ $platfm -eq 31 ]
+    then
+        return $MAX_MX31
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
+    then
+        return $MAX_SGTL5K
+    elif [ $platfm -eq 37 ]
+    then
+        return $MAX_MX37
+    fi
+
+    return 0
+}
+
 
 # Function:     adjust volume
 #
@@ -124,234 +174,43 @@ adj_vol()
     platform="mx$platfm"
 
     tst_resm TINFO "Test #1: play the audio stream, please check the HEADPHONE,\
- hear if the voice is from MIN(0) to MAX(MX31:100, MX51:128)."
-    if [ $platform = "mx31" ]
-    then
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 0
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
-    then
-        #Min:0, Max:127
-        amixer -c 0 cset name='Headphone Volume' 0
-    elif [ $platform == "mx37" ]
-    then
-        #Min:0, Max:255
-        amixer cset numid=3,iface=MIXER,name='Playback PCM Volume' 0
-    fi
-    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
-    if [ $RC -ne 0 ]
-    then
-        tst_resm TFAIL "Test #1: play error, please check the stream file"
-        return $RC
-    fi
+ hear if the voice is from MIN(0) to MAX(MX31:100, MX51:128, MX37:256)."
 
-    if [ $platform = "mx31" ]
-    then
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 10
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
-    then
-        amixer -c 0 cset name='Headphone Volume' 30
-    elif [ $platform == "mx37" ]
-    then
-        amixer cset numid=3 50
-    fi
-    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
-    if [ $RC -ne 0 ]
-    then
-        tst_resm TFAIL "Test #1: play error, please check the stream file"
-        return $RC
-    fi
+    STEP=5
+    #if DECREASE=0, vol: MIN->MAX; DECREASE=1, vol: MAX->MIN
+    for DECREASE in 0 1
+    do
+        i=0
+        while [ $i -le $STEP ]
+        do
+            max_vol || MAX=$?
+            vol=`expr $DECREASE % 2 \* -2 + 1` 
+            vol=`expr $vol \* $MAX \* $i / $STEP + $DECREASE % 2 \* $MAX`
+            ctl_id=`amixer_ctl_id`
+            amixer -c 0 cset "$ctl_id" $vol
 
-    if [ $platform = "mx31" ]
-    then
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 30
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
-    then
-        amixer -c 0 cset name='Headphone Volume' 60
-    elif [ $platform == "mx37" ]
-    then
-        amixer cset numid=3 100
-    fi
-    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
-    if [ $RC -ne 0 ]
-    then
-        tst_resm TFAIL "Test #1: play error, please check the stream file"
-        return $RC
-    fi
+            aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
+            if [ $RC -ne 0 ]
+            then
+                tst_resm TFAIL "Test #1: play error, please check the stream file"
+                return $RC
+            fi
 
-    if [ $platform = "mx31" ]
-    then
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 50
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
-    then
-        amixer -c 0 cset name='Headphone Volume' 90
-    elif [ $platform == "mx37" ]
-    then
-        amixer cset numid=3 150
-    fi
-    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
-    if [ $RC -ne 0 ]
-    then
-        tst_resm TFAIL "Test #1: play error, please check the stream file"
-        return $RC
-    fi
+            let "i=i+1"
+        done
 
-    if [ $platform = "mx31" ]
-    then
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 80
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
-    then
-        amixer -c 0 cset name='Headphone Volume' 110
-    elif [ $platform == "mx37" ]
-    then
-        amixer cset numid=3 200
-    fi
-    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
-    if [ $RC -ne 0 ]
-    then
-        tst_resm TFAIL "Test #1: play error, please check the stream file"
-        return $RC
-    fi
+        tst_resm TINFO "Do you hear the voice volume from MIN to MAX or MAX to MIN?[y/n]"
+        read answer
+        if [ "$answer" = "y" ]
+        then
+            tst_resm TPASS "Test #1: ALSA DAC volume adjust test from MIN to MAX or MAX to MIN success."
+        else
+            tst_resm TFAIL "Test #1: ALSA DAC volume adjust test fail"
+            RC=67
+            return $RC
+        fi
 
-    if [ $platform = "mx31" ]
-    then
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 100
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
-    then
-        amixer -c 0 cset name='Headphone Volume' 127
-    elif [ $platform == "mx37" ]
-    then
-        amixer cset numid=3 255
-    fi
-    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
-    if [ $RC -ne 0 ]
-    then
-        tst_resm TFAIL "Test #1: play error, please check the stream file"
-        return $RC
-    fi
-
-    tst_resm TINFO "Do you hear the voice volume from MIN to MAX?[y/n]"
-    read answer
-    if [ $answer = "y" ]
-    then
-        tst_resm TPASS "Test #1: ALSA DAC volume adjust test from MIN to MAX success."
-    else
-        tst_resm TFAIL "Test #1: ALSA DAC volume adjust test fail"
-        RC=67
-        return $RC
-    fi
-
-    # adjust volume from MAX to MIN
-    if [ $platform = "mx31" ]
-    then
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 100
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
-    then
-        amixer -c 0 cset name='Headphone Volume' 127
-    elif [ $platform == "mx37" ]
-    then
-        amixer cset numid=3 255
-    fi
-    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
-    if [ $RC -ne 0 ]
-    then
-        tst_resm TFAIL "Test #1: play error, please check the stream file"
-        return $RC
-    fi
-
-    if [ $platform = "mx31" ]
-    then
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 80
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
-    then
-        amixer -c 0 cset name='Headphone Volume' 110
-    elif [ $platform == "mx37" ]
-    then
-        amixer cset numid=3 200
-    fi
-    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
-    if [ $RC -ne 0 ]
-    then
-        tst_resm TFAIL "Test #1: play error, please check the stream file"
-        return $RC
-    fi
-
-    if [ $platform = "mx31" ]
-    then
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 50
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
-    then
-        amixer -c 0 cset name='Headphone Volume' 90 
-    elif [ $platform == "mx37" ]
-    then
-        amixer cset numid=3 150
-    fi
-    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
-    if [ $RC -ne 0 ]
-    then
-        tst_resm TFAIL "Test #1: play error, please check the stream file"
-        return $RC
-    fi
-
-    if [ $platform = "mx31" ]
-    then
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 30
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
-    then
-        amixer -c 0 cset name='Headphone Volume' 60
-    elif [ $platform == "mx37" ]
-    then
-        amixer cset numid=3 100
-    fi
-    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
-    if [ $RC -ne 0 ]
-    then
-        tst_resm TFAIL "Test #1: play error, please check the stream file"
-        return $RC
-    fi
-
-    if [ $platform = "mx31" ]
-    then
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 15
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
-    then
-        amixer -c 0 cset name='Headphone Volume' 30
-    elif [ $platform == "mx37" ]
-    then
-        amixer cset numid=3 50
-    fi
-    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
-    if [ $RC -ne 0 ]
-    then
-        tst_resm TFAIL "Test #1: play error, please check the stream file"
-        return $RC
-    fi
-
-    if [ $platform = "mx31" ]
-    then
-        amixer -c 0 cset numid=2,iface=MIXER,name='Master Playback Volume' 0
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
-    then
-        amixer -c 0 cset name='Headphone Volume' 0
-    elif [ $platform == "mx37" ]
-    then
-        amixer cset numid=3 0
-    fi
-    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
-    if [ $RC -ne 0 ]
-    then
-        tst_resm TFAIL "Test #1: play error, please check the stream file"
-        return $RC
-    fi
-
-    tst_resm TINFO "Do you hear the voice volume from MAX to MIN?[y/n]"
-    read answer
-    if [ $answer = "y" ]
-    then
-        tst_resm TPASS "Test #1: ALSA DAC volume adjust test success."
-    else
-        tst_resm TFAIL "Test #1: ALSA DAC volume adjust test fail"
-        RC=67
-    fi
+    done
 
     return $RC
 }
