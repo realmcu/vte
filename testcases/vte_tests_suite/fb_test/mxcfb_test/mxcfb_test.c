@@ -75,8 +75,20 @@ BOOL pan_test();
 BOOL colorkey_test();
 BOOL ovpos_test();
 BOOL draw_test();
+BOOL get_ipu_channel();
+
 int draw_pattern(int fd, unsigned char * pfb, int r, int g, int b );
 
+
+BOOL get_ipu_channel()
+{
+ int channel = 0;
+ CALL_IOCTL(ioctl(fb_fd_fg, MXCFB_GET_FB_IPU_CHAN, &channel));
+ tst_resm(TINFO, "the foreground ipu channel is %d", channel);
+ CALL_IOCTL(ioctl(fb_fd, MXCFB_GET_FB_IPU_CHAN, &channel));
+ tst_resm(TINFO, "the back ground ipu channel is %d",channel);
+ return TRUE;
+}
 
 /*
  * Draw test
@@ -109,6 +121,7 @@ BOOL ovpos_test()
  int x, y;
  struct mxcfb_pos pos; 
  struct fb_var_screeninfo mode_info;
+ struct fb_var_screeninfo bg_mode_info;
 
  tst_resm(TINFO, "draw a red screen in fore ground");
  if( TPASS != draw_pattern(fb_fd_fg,fb_fg_mem_ptr,255,0,0))
@@ -118,17 +131,22 @@ BOOL ovpos_test()
  }
 
  CALL_IOCTL(ioctl(fb_fd_fg, FBIOGET_VSCREENINFO, &mode_info));
+ CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &bg_mode_info));
 
  mode_info.xres_virtual = mode_info.xres;
  mode_info.yres_virtual = mode_info.yres;
 
  CALL_IOCTL(ioctl(fb_fd_fg, FBIOPUT_VSCREENINFO, &mode_info));
 
- for(x= 0; x < mode_info.xres; x += 8)
-   for(y = 0; y < mode_info.yres; y += 8)
+ for(x= 0; x < mode_info.xres / 2 - 8; x += 8)
+   for(y = 0; y < mode_info.yres / 2 - 8; y += 8)
    {
      pos.x = 8 * ((x + 7)/8);
      pos.y = 8 * ((y + 7)/8);
+     if (pos.x + mode_info.xres > bg_mode_info.xres )
+        pos.x = 0;
+     if (pos.y + mode_info.yres > bg_mode_info.yres )
+        pos.y = 0;
      printf( "\r x: %d / y: %d", pos.x,pos.y);
      CALL_IOCTL(ioctl(fb_fd_fg, MXCFB_SET_OVERLAY_POS, &pos));
      usleep(100);
@@ -186,7 +204,7 @@ BOOL pan_test()
  mode_info.yres_virtual = old_yvres;
  CALL_IOCTL(ioctl(fb_fd, FBIOPUT_VSCREENINFO, &mode_info));
 #endif
- tst_resm(TINFO,"test fb1 pan");
+ tst_resm(TINFO,"test fore-ground fb pan");
  CALL_IOCTL(ioctl(fb_fd_fg, FBIOGET_VSCREENINFO, &mode_info));
  old_yvres = mode_info.yres_virtual;
  mode_info.yres_virtual = mode_info.yres * 2;
@@ -508,6 +526,15 @@ int VT_fb_test()
        }else
          tst_resm(TPASS, "draw test ok");
        break;
+  case 7:
+       tst_resm(TINFO,"get ipu channel test");
+        if(!get_ipu_channel())
+	{
+         rv = TFAIL; 
+         tst_resm(TFAIL, "get ipu channel FAIL");
+	}else
+         tst_resm(TPASS, "ipu get channel ok");
+	  break;
   default:
        break;
  }
