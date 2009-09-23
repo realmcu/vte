@@ -26,7 +26,7 @@
 #
 ###############################################################################
 
-SUBDIRS=
+SUBDIRS= dumpmem
 #Platform identify script
 TARGETS=platfm.sh
 
