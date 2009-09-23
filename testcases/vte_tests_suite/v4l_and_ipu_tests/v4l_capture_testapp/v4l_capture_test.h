@@ -90,6 +90,12 @@ typedef enum
         PRP_ENC_TO_F,
 } eCases;
 
+typedef enum
+{
+  eInCSI_IC_MEM = 0,
+  eInCSI_MEM,
+} eInputs;
+
 /*======================== STRUCTURES AND OTHER TYPEDEFS ====================*/
 typedef struct 
 {
@@ -113,6 +119,7 @@ typedef struct
         int mOverlayType;
 	int mFrameRate;
 	int mIsBlock;
+	int inputSrc;
 } sV4LTestConfig; 
 /*======================== GLOBAL VARIABLE DECLARATIONS =====================*/
 
