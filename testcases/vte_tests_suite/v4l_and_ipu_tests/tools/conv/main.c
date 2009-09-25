@@ -462,22 +462,25 @@ static int process_img()
      pout[k + 2] = rgb.rgbBlue;
     }
    case eYUV422P:
-   if(isz - offset < yres * xres * 2)
    {
-       printf("file size or offset wrong\n");
-       exit(-2);
-   }
-   /*serial 2 pixels in 4 byte*/
-   for(i = 0 ; i < yres; i++)
-    for(j = 0; j < xres - 2; j = j + 2)
+    long bias = xres * yres;
+    if(isz - offset < yres * xres * 2)
     {
-     long y1,u,y2,v;
-     long k = (i * xres + j) * 2;
-     y1 = pdata[k];
-     u  = pdata[k + 1]; 
-     y2 = pdata[k + 2];
-     v  = pdata[k + 3];
-     /*refer to http://www.fourcc.org/fccyvrgb.php */
+       printf("file size or offset wrong %d - %d < %d * %d * 2 \n", isz, offset ,yres, xres);
+       exit(-2);
+    }
+    /*http://hi.baidu.com/whandsome/blog/item/d060ffef3f1c6b37acafd580.html*/
+    for(i = 0 ; i < yres; i++)
+     for(j = 0; j < xres; j = j + 2)
+     {
+     long y1,u,y2,v,k;
+     long ky = i * xres + j; 
+     long ku = ((i * xres)>>1) + (j>>1) + bias;/*u plane*/
+     long kv = ((i * xres)>>1) + (j>>1) + bias + (bias>>1);/*v plane*/   
+     y1 = pdata[ky];
+     u  = pdata[ku]; 
+     y2 = pdata[ky + 1];
+     v  = pdata[kv];
      rgb.rgbRed   = BOUND255((A1 * (y1 - 16) + A2 * (v - 128))>>10); 
      rgb.rgbGreen = BOUND255((A1 * (y1 - 16) - A3 * (v - 128) - A4 * (u - 128))>>10);
      rgb.rgbBlue  = BOUND255((A1 * (y1 - 16) + A5 * (u - 128))>>10);
@@ -492,6 +495,7 @@ static int process_img()
      pout[k + 5] = rgb.rgbRed;
      pout[k + 4] = rgb.rgbGreen;
      pout[k + 3] = rgb.rgbBlue;
+     }
     }
     break;
    case eUYVY422:
@@ -501,7 +505,7 @@ static int process_img()
        exit(-2);
    }
    /*serial 2 pixels in 4 byte*/
-   for(i = 0 ; i < yres; i++)
+   for(i = 0; i < yres; i++)
     for(j = 0; j < xres - 2; j = j + 2)
     {
      long u,y1,v,y2;
@@ -561,7 +565,8 @@ static int process_img()
    {
      temp = (unsigned char *)malloc(file_stat.st_size);
      conv_mx25_yuv(pdata,xres,yres,temp);
-     pdata = temp;    
+     pdata = temp;
+     //printf("temp size is %ld\n", file_stat.st_size);
    }
    /*http://www.fourcc.org/yuv.php#IYUV*/
    /*2x2 pixel for one time*/
