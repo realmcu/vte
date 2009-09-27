@@ -45,7 +45,11 @@ RC=0
 trap "cleanup" 0
 
 #TODO add setup scripts
-modprobe gpu_z160 
+modprobe gpu_z160
+
+gpu_maj=`grep "gsl_kmod" /proc/devices | cut -b1,2,3`
+
+mknod /dev/gsl_kmod c "$gpu_maj" 0
 
 return $RC
 }
@@ -62,6 +66,7 @@ RC=0
 
 #TODO add cleanup code here
 modprobe -r gpu_z160
+rm -f /dev/gsl_kmod
 return $RC
 }
 
