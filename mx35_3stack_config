@@ -17,5 +17,5 @@ ARCH_PLATFORM=imx35stack
 export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM
 
 CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-
-export CFLAGS=-DPROJECT_MX35=1
+export CFLAGS="-DPROJECT_RINGO=1 -O2 -fsigned-char -mfloat-abi=softfp -mfpu=vfp"
 export CROSS_COMPILER
