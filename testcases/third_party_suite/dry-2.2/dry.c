@@ -737,7 +737,7 @@ main (argc, argv) int argc; char *argv[];
     printf ("Dhrystones per Second:                      ");
     printf ("%10.0f \n", Dhrystones_Per_Second);
     printf ("\n");
-  
+    exit(0);  
 }
 
 
