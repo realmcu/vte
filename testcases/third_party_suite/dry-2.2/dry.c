@@ -453,6 +453,9 @@ struct tms      time_info;
 #include <stdio.h>
                 /* for strcpy, strcmp */
 
+#include <string.h>
+#include <stdlib.h>
+
 #define Null 0 
                 /* Value of a Null pointer */
 #define true  1
@@ -500,7 +503,7 @@ char            Ch_1_Glob,
 int             Arr_1_Glob [50];
 int             Arr_2_Glob [50] [50];
 
-extern char     *malloc ();
+void            *malloc (size_t size);
 Enumeration     Func_1 ();
   /* forward declaration necessary since Enumeration may not simply be int */
 
