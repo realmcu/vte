@@ -668,6 +668,12 @@ main (argc, argv) int argc; char *argv[];
     } else Done = true;
   }
 
+
+/*
+ * Prevent the variables used in the benchmark getting output to stderr as
+ * this information is not really needed, only the benchmark results. - Stevep
+ */
+  #if 0
   fprintf (stderr, "Final values of the variables used in the benchmark:\n");
   fprintf (stderr, "\n");
   fprintf (stderr, "Int_Glob:            %d\n", Int_Glob);
@@ -718,6 +724,7 @@ main (argc, argv) int argc; char *argv[];
   fprintf (stderr, "Str_2_Loc:           %s\n", Str_2_Loc);
   fprintf (stderr, "        should be:   DHRYSTONE PROGRAM, 2'ND STRING\n");
   fprintf (stderr, "\n");
+  # endif /* Disable output of benchmark variables. */
 
 
     Microseconds = (float) User_Time * Mic_secs_Per_Second 
