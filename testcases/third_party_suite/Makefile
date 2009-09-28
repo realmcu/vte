@@ -33,7 +33,7 @@
 ###############################################################################
 CLEAN_DIRS=`ls */Makefile | sed "s/Makefile//g"`
 
-SUBDIRS = bonnie++ dt iozone network nand-tests cpufrequtils-005 crashme-2.4
+SUBDIRS = bonnie++ dt iozone network nand-tests cpufrequtils-005 crashme-2.4 dry-2.2
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
