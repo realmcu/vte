@@ -870,7 +870,7 @@ int erase_flash_block(long offset, long length)
                 }
                 for (j = 0; j < mxc_info_mtd.erasesize; j++)
                 {
-                        if (temp_buf[j] != 0xFF)
+                        if ((unsigned char)(temp_buf[j]) != 0xFF)
                         {
                                 tst_resm(TFAIL, "ERASE: temp_buf[%d] = 0x%x != 0xFF(255)", j, temp_buf[j]);
                                 free(temp_buf);
