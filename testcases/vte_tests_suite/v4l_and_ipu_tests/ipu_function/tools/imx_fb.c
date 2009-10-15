@@ -62,9 +62,9 @@ extern "C"{
     }\
 }
 /*operation type*/
-enum{eTP_SET = 0, eTP_GET, eTP_DRAW, eTP_INVALID};
+enum{eTP_SET = 10, eTP_GET, eTP_DRAW, eTP_INVALID};
 /*operation name*/
-enum{eTN_ALPHA = 10, eTN_COLORKEY, eTN_PATTERN, eTN_INVALID};
+enum{eTN_ALPHA, eTN_COLORKEY, eTN_PATTERN, eTN_INVALID};
 
 enum{ePT_RED, ePT_GREEN, ePT_BLUE, ePT_INVALID};
 
@@ -160,14 +160,14 @@ int parse_arg(int argc, char ** argv)
  if(argc < 2)
    return -1;
 
- sprintf(fb_dev, "/dev/fb%s", argv[argc]);
+ sprintf(fb_dev, "/dev/fb%s", argv[argc - 1]);
  fb_fd = open(fb_dev, O_RDWR);
  if(fb_fd == -1)
  {
-   printf("frame buffer device setting is error /dev/fb%s\n", argv[argc]);
+   printf("frame buffer device setting is error /dev/fb%s\n", argv[argc - 1]);
    return -1;
  }
- while(argc-- > 1)
+ while(pcn < argc - 1)
  {
   switch(stage)
   {
@@ -233,6 +233,7 @@ int parse_arg(int argc, char ** argv)
   }
   stage++;
  }
+ return 0;
 }
 
 BOOL draw_op(void * pr)
