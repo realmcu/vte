@@ -93,13 +93,13 @@ echo 0 > /sys/class/graphics/fb1/blank
 
 sleep 2
 #set fb1 alpha to 255
-ipu_fb SET ALPHA 255 1
+imx_fb SET ALPHA 255 1
 
 #set fb1 color key to red
-ipu_fb SET COLORKEY 255 0 0 1
+imx_fb SET COLORKEY 255 0 0 1
 
 #draw a red pattern on fb
-ipu_fb PATTERN RED 1
+imx_fb PATTERN RED 1
 
 echo "please see the screen with video"
 
@@ -110,7 +110,7 @@ echo "please see the screen with video"
 echo "now only green screen is displayed"
 
 #draw a red pattern on fb
-ipu_fb PATTERN GREEN 1
+imx_fb PATTERN GREEN 1
 
 #play a v4l video in fb0
 /unit_tests/mxc_v4l2_overlay.out -iw 640 -ih 480  -r 0 -t 5

@@ -51,10 +51,16 @@ if [ ! -z $kerv ]
 then
    if [ $TARGET == "37" ]
    then
+    echo 4 > /sys/class/graphics/fb0/blank
+    echo 4 > /sys/class/graphics/fb1/blank
+    echo 4 > /sys/class/graphics/fb2/blank
    echo 1-layer-fb > /sys/class/graphics/fb0/fsl_disp_property
    echo U:720x576i-50 > /sys/class/graphics/fb1/mode
    echo 0 > /sys/class/graphics/fb1/blank
    else
+     echo 4 > /sys/class/graphics/fb0/blank
+     echo 4 > /sys/class/graphics/fb1/blank
+     echo 4 > /sys/class/graphics/fb2/blank
     echo 0 > /sys/class/graphics/fb1/blank
     echo U:720x480i-60 > /sys/class/graphics/fb1/mode
    fi
