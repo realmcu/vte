@@ -93,7 +93,7 @@ echo -n standby > /sys/power/state
 echo wait the decode task to finish
 sleep 10
 SIZE=$(ls -l /tmp/stream.yuv| awk '{print $5}')
-if [ $SIZE == "152064" ]
+if [ $SIZE = "152064" ]
 then 
 RC=0
 fi
@@ -148,7 +148,7 @@ sleep 10
 
 SIZE2=$(ls -s /tmp/enc/test.263 | awk '{print $1}')
 
-if [ $SIZE1 == $SIZE2 ]
+if [ $SIZE1 = $SIZE2 ]
 then
 RC=0
 fi
