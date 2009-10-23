@@ -306,7 +306,7 @@ int main(int argc, char ** argv)
       goto ERROR;
     }
   
-   if ( 0 == m_ops[m_op.op_tn]((void* )&m_op))
+   if ( 0 == m_ops[m_op.op_tn]((void* )(m_op.operants)))
      goto ERROR;
    
    close(fb_fd);
