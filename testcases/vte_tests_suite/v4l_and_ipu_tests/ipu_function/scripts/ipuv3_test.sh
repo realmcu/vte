@@ -99,7 +99,7 @@ imx_fb SET ALPHA 255 1
 imx_fb SET COLORKEY 255 0 0 1
 
 #draw a red pattern on fb
-imx_fb PATTERN RED 1
+imx_fb DRAW PATTERN RED 1
 
 echo "please see the screen with video"
 
@@ -110,7 +110,7 @@ echo "please see the screen with video"
 echo "now only green screen is displayed"
 
 #draw a red pattern on fb
-imx_fb PATTERN GREEN 1
+imx_fb DRAW PATTERN GREEN 1
 
 #play a v4l video in fb0
 /unit_tests/mxc_v4l2_overlay.out -iw 640 -ih 480  -r 0 -t 5
@@ -120,7 +120,7 @@ echo "no video when green "
 
 read -p "y / n? :" re
 
-if [ $re -eq 'y' ]; then
+if [ $re = 'y' ]; then
 RC=0
 else
 RC=1
