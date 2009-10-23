@@ -114,13 +114,13 @@ amixer_ctl_id()
 
     if [ $platfm -eq 31 ]
     then
-        ctl_id="name='Master Playback Volume'"
+        ctl_id=name='Master Playback Volume'
     elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
     then
-        ctl_id="name='Headphone Volume'"
+        ctl_id=name='Headphone Volume'
     elif [ $platfm -eq 37 ]
     then
-        ctl_id="name='Playback PCM Volume'"
+        ctl_id=name='Playback PCM Volume'
     fi
  
     echo $ctl_id
