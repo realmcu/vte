@@ -1,4 +1,4 @@
 #!/bin/bash
 if [ ! -e Makefile ]; then
-export ac_cv_linux_vers=2.6.28 && ./configure --host=arm-none-linux-gnueabi --with-pcap=linux --prefix=$(pwd)/../
+export ac_cv_linux_vers=2.6.31 && ./configure --host=arm-none-linux-gnueabi --with-pcap=linux --prefix=$(pwd)/../
 fi
