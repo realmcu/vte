@@ -2,7 +2,7 @@
 
 if [ ! -e Makefile ]; then
 ./configure --host=arm-none-linux-gnueabi \
-CFLAGS="-I../../../../../openlibs/zlib-1.2.3" \
-LDFLAGS="-L../../../../../openlibs/lib" \
+CFLAGS="-I../zlib-1.2.3" \
+LDFLAGS="-L../lib" \
 --prefix=$(pwd)/../
 fi
