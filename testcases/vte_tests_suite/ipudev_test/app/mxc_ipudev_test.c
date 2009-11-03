@@ -30,6 +30,7 @@
 #include <signal.h>
 #include "mxc_ipudev_test.h"
 
+extern int time_sec, time_usec;
 int ctrl_c_rev = 0;
 
 void ctrl_c_handler(int signum, siginfo_t *info, void *myact)
@@ -203,22 +204,31 @@ int main(int argc, char *argv[])
 			first_time = 0;
 			done_cnt++;
 		}
+              {
+             /*calculate the exact ipu function time*/
+	      struct timeval frame_begin,frame_end;
+	       gettimeofday(&frame_begin, NULL);
+
 		next_update_idx = mxc_ipu_lib_task_buf_update(test_handle.ipu_handle, 0, 0, 0, output_to_file_cb, &test_handle);
-		if (next_update_idx < 0)
+
+               gettimeofday(&frame_end, NULL);
+	       time_sec += frame_end.tv_sec - frame_begin.tv_sec;
+	       time_usec += frame_end.tv_usec - frame_begin.tv_usec;
+	       }
+	       if (next_update_idx < 0)
 			break;
 		done_cnt++;
 	}
-
 	mxc_ipu_lib_task_uninit(test_handle.ipu_handle);
-
+	/*display the duration*/
+	printf("the time for frames %d is: %d usec\n", done_cnt /
+	time_sec * 1000000 + time_usec);
 done:
 	fclose(file_in);
 	if (test_handle.file_out0)
 		fclose(test_handle.file_out0);
 	if (test_handle.file_out1)
 		fclose(test_handle.file_out1);
-
 	system("echo 0,0 > /sys/class/graphics/fb0/pan");
-
 	return ret;
 }
