@@ -167,7 +167,7 @@ static int scc_test_init(void)
         if (IS_ERR(class_device_create(scc_class, NULL,
                                            MKDEV(major_dev_num, 0), NULL,
                                            "scc_test_module")))
-#elif (LINUX_VERSION_CODE == KERNEL_VERSION(2,6,28))
+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28))
         if (IS_ERR(device_create(scc_class, NULL,
                                            MKDEV(major_dev_num, 0),NULL,
                                            "scc_test_module")))
