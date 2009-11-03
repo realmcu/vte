@@ -28,6 +28,7 @@
 
 #include "mxc_ipudev_test.h"
 
+int time_sec = 0, time_usec = 0;
 
 #define deb_msg 0
 #if deb_msg
