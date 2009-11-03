@@ -478,7 +478,7 @@ static int __init rng_test_init(void)
         if (IS_ERR(class_device_create(rng_class,NULL,
                                               MKDEV(major_dev_num, 0), NULL,
                                               RNG_DEVICE_NAME)))
-#elif (LINUX_VERSION_CODE == KERNEL_VERSION(2,6,28))
+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28))
         if (IS_ERR(device_create(rng_class,NULL,
                                               MKDEV(major_dev_num, 0),NULL,
                                               RNG_DEVICE_NAME)))
