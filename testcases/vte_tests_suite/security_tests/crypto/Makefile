@@ -20,10 +20,10 @@
 
 SRC = cryptodev-demo1.c 
 TARGET = cryptodev-demo1
-
+CFLAGS += -I$(KLINUX_SRCDIR)/include 
 
 all:
-	$(CC) -o $(TARGET) $(SRC) 
+	$(CC) -o $(TARGET) $(CFLAGS) $(SRC) 
 
 install:
 	ln -f $(TARGET) ../../../bin/
