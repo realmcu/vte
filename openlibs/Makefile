@@ -1,4 +1,4 @@
-SUBDIRS += zlib-1.2.3 libpcap-0.9.6 libpng-1.2.20
+SUBDIRS += libpcap-0.9.6 libpng-1.2.20
 
 all: config
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i CC=$(CROSS_COMPILER)gcc; done
@@ -12,5 +12,8 @@ clean:
 	-@set -e; for i in $(SUBDIRS) ; do $(MAKE) -C $$i distclean ; done
 	rm -rf bin lib share man include
 config:
+	cd zlib-1.2.3; ./myconfig ; cd ..
+	make -C zlib-1.2.3 CC=$(CROSS_COMPILER)gcc
+	make -C zlib-1.2.3 install
 	@set -e; for i in $(SUBDIRS) ; do cd $$i ; ./myconfig ; cd ..; done
 
