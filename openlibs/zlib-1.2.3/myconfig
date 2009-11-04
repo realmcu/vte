@@ -1,2 +1,6 @@
 #!/bin/sh
-AR="ar rc" && CC=cc && ./configure --prefix=$(pwd)/../ 
+export CC=arm-none-linux-gnueabi-gcc
+export AR="arm-none-linux-gnueabi-ar rc"
+./configure --prefix=$(pwd)/../
+unset CC
+unset AR
