@@ -33,6 +33,9 @@ TARGET += vpu_dec_test.sh
 TARGET += vpu_multi_dec_test.sh
 TARGET += vpu_pm_test.sh
 TARGET += vpu_app_test.sh
+TARGET += vpu_sequence_test.sh
+TARGET += vpu_create_test_sequence.sh
+TARGET += vpu_create_task.sh
 endif
 
 ifeq ($(ARCH_PLATFORM), imx51stack)
