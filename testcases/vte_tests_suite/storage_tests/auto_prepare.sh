@@ -1,3 +1,4 @@
+#!/bin/sh
 #Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -6,7 +7,7 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
+
 #filename: prepare.sh
 #Author                          Date        Description of Changes
 #-------------------------   ------------    -------------------------------------------
@@ -444,11 +445,31 @@ rmmod_V4L()
 		sleep 2;
 	fi
 
+	lsmod | grep ov3640_camera;
+        if [ $? -eq 0 ]; then
+        	modprobe -r ov3640_camera;
+		sleep 2;
+	fi
+
 	lsmod | grep mxc_v4l2_capture;
         if [ $? -eq 0 ]; then
         	modprobe -r mxc_v4l2_capture;
 		sleep 2;
 	fi
+
+	#Mx25
+	lsmod | grep fsl_csi;
+        if [ $? -eq 0 ]; then
+        	modprobe -r fsl_csi;
+		sleep 2;
+	fi
+	
+	lsmod | grep csi_v4l2_capture;
+        if [ $? -eq 0 ]; then
+        	modprobe -r csi_v4l2_capture;
+		sleep 2;
+	fi
+	#
 
 	echo "v4l: rmmod modules success!";
 
@@ -485,6 +506,9 @@ rmmod_BT()
 
 insmod_USBH()
 {
+modules_buildin;
+if [ $usbh_buildin -eq 0 ]; then
+
 	echo "usbh: prepare insmod modules";
 	find=0;
 	line=0;
@@ -507,13 +531,15 @@ insmod_USBH()
 				let line=$line_num1-$line_num2;
 				dev_node_usbh=`cat /proc/partitions | tail -n $line | head -n 1 | awk '{print $4}'`;
 				echo "the device node is:$dev_node_usbh";
+				usbh_dev_point=$dev_node_usbh;
 			else
         			echo "usbh: insmod modules fail!";
 			fi
 		fi
 	else
 		echo "usbh: the modules have existed!";
-	fi	
+	fi
+fi	
 }
 
 rmmod_USBH()
@@ -787,7 +813,7 @@ prepare_ata()
     device_total=`ls /dev/ | grep $ata_dev_point | wc -l`;
 	if [ $device_total -gt 0 ]; then
 		# umount devices
-		cat /proc/mounts | grep "$ata_dev_point*" | awk '{print $1}'| while read line
+		cat /proc/mounts | grep "$ata_dev_point" | awk '{print $1}'| while read line
 		do
   			echo $line;
   			umount $line;
@@ -1017,6 +1043,173 @@ prepare_usbh()
     return 0
 }
 
+mount_nand()
+{
+	return_value=0;
+	mtd_nand_number=0;
+	find=0;
+	mount_point=/mnt/flc;
+
+        prepare_platform;
+	
+	mtd_nand_number=`cat /proc/mtd | wc -l`;
+	echo $mtd_nand_number;
+	let mtd_nand_number=$mtd_nand_number-2;
+	echo $mtd_nand_number;
+
+	confirm=`cat /proc/mtd | grep "mtd${mtd_nand_number}" | grep "nand.userfs" | wc -l`;
+	if [ $confirm -eq 1 ]; then
+		echo "It is right!";
+	else
+		echo "not found right mtd number!";
+        return 1
+	fi
+
+	# mount
+	find=`cat /proc/mounts | grep "mtdblock$mtd_nand_number" | wc -l`;
+	if [ $find -eq 1 ]; then
+		umount /dev/mtdblock$mtd_nand_number;
+		if [ $? -eq 0 ]; then
+			echo "umount /dev/mtdblock$mtd_nand_number success!";
+			sleep 1;
+		else
+			echo "umount /dev/mtdblock$mtd_nand_number fail!";
+			sleep 1;
+		fi	
+		
+	fi
+
+	if [ ! -d $mount_point ]; then
+		mkdir $mount_point;
+	fi
+
+	mount -t jffs2 /dev/mtdblock${mtd_nand_number} $mount_point;
+
+	if [ $? -eq 0 ]; then
+		echo "the /dev/mtdblock${mtd_nand_number} mount to $mount_point success!";
+		sleep 3;
+        return 0
+	else
+		echo "the /dev/mtdblock${mtd_nand_number} mount to $mount_point fail!"
+        return 1
+	fi	
+}
+
+mount_nor()
+{
+	return_value=0;
+	mtd_nor_number=0;
+	find=0;
+	mount_point=/mnt/flb;
+
+        prepare_platform;
+
+	if [ $platform = MX35 ]; then
+		mtd_nor_number=2;
+
+		# mount
+		find=`cat /proc/mounts | grep "mtdblock$mtd_nor_number" | wc -l`;
+		if [ $find -eq 1 ]; then
+			umount /dev/mtdblock$mtd_nor_number;
+			if [ $? -eq 0 ]; then
+				echo "umount /dev/mtdblock$mtd_nor_number success!";
+				sleep 1;
+			else
+				echo "umount /dev/mtdblock$mtd_nor_number fail!";
+				sleep 1;
+			fi	
+		fi
+
+		if [ ! -d $mount_point ]; then
+			mkdir $mount_point;
+		fi
+
+		mount -t jffs2 /dev/mtdblock${mtd_nor_number} $mount_point;
+
+		if [ $? -eq 0 ]; then
+			echo "the /dev/mtdblock${mtd_nor_number} mount to $mount_point success!";
+			sleep 3;
+		else
+			echo "the /dev/mtdblock${mtd_nor_number} mount to $mount_point fail!"
+            return 1
+		fi
+	else
+		echo "Only Mx35 platform has nor device"
+        return 1
+	fi	
+
+    return 0
+}
+
+mount_sd()
+{
+	echo "only mount the sd first partition!"
+	insmod_SD;
+	sd_mount_point=`cat /proc/partitions | grep "mmcblk.p1" | awk '{print $4}'`
+	mkdir -p /mnt/mmcblk0p1;
+	cat /proc/mounts | grep $sd_mount_point
+	if [ $? -eq 0 ]; then
+		echo "the $sd_mount_point has been mounted!";
+	else
+		mount -t vfat /dev/$sd_mount_point /mnt/mmcblk0p1;
+		sleep 2;
+		cat /proc/mounts | grep $sd_mount_point
+		if [ $? -eq 0 ]; then
+			echo "mount sd/mmc success!"
+			return 0;
+		else
+			echo "please use -P to prepare!"
+			return 1;
+		fi
+	fi 	
+}
+
+mount_ata()
+{
+	echo "only mount the ata first partition!"
+	insmod_ATA;
+	ata_mount_point=`cat /proc/partitions | grep "${ata_dev_point}1" | awk '{print $4}'`
+	mkdir -p /mnt/ata1;
+	cat /proc/mounts | grep $ata_mount_point
+	if [ $? -eq 0 ]; then
+		echo "the $ata_mount_point has been mounted!";
+	else
+		mount -t vfat /dev/$ata_mount_point /mnt/ata1;
+		sleep 2;
+		cat /proc/mounts | grep $ata_mount_point
+		if [ $? -eq 0 ]; then
+			echo "mount ata success!"
+			return 0;	
+		else
+			echo "please use -P to prepare!"
+			return 1;
+		fi
+	fi
+}
+
+mount_usbh()
+{
+	echo "only mount the usbh first partition!"
+	insmod_USBH;
+	usbh_mount_point=`cat /proc/partitions | grep "${usbh_dev_point}1" | awk '{print $4}'`
+	mkdir -p /mnt/msc;
+	cat /proc/mounts | grep $usbh_mount_point
+	if [ $? -eq 0 ]; then
+		echo "the $usbh_mount_point has been mounted!";
+	else
+		mount -t vfat /dev/$usbh_mount_point /mnt/msc;
+		sleep 2;
+		cat /proc/mounts | grep $usbh_mount_point
+		if [ $? -eq 0 ]; then
+			echo "mount usbh success!"
+			return 0;
+		else
+			echo "please use -P to prepare!"
+			return 1;
+		fi	
+	fi
+}
+
 #for MX37&51 only
 prepare_vpu()
 {
@@ -1044,6 +1237,8 @@ help()
  	echo "		eg. ./auto_prepare.sh -I SD";
         echo "-R remove modules(SD, ATA, V4L, BT, USBH or ALL)";          
 	echo "		eg. ./auto_prepare.sh -R SD";
+	echo "-M mount devices(NAND, NOR, SD, ATA, USBH)";          
+	echo "		eg. ./auto_prepare.sh -M SD";
         echo "-P partition, format and mount device to /mnt/~";   
         echo "the devices may be NAND, NOR, SD, ATA, USBH or ALL";
 	echo "		eg. ./auto_prepare.sh -P SD";
@@ -1057,10 +1252,17 @@ help()
 echo "--------------------------------------------------------------------------------";
 return_value=0;
 platform=MX31;
+sd_dev_point=mmcblk0
 ata_dev_point=hda;
+usbh_dev_point=sdb;
 vte_name=imx31stack-vte-test;
 vte_path=/home;
 sys_name=`uname -r`/
+
+sd_buildin=0;
+ata_buildin=0;
+usbh_buildin=0;
+bt_buildin=0;
 
 case $# in
 	1) if [ $1 = "-H" ]; then
@@ -1113,6 +1315,22 @@ case $# in
 					;;
 		      esac
 		      ;;
+		"-M") case $2 in
+			
+				"nand" | "NAND") mount_nand;
+					;;
+				"nor" | "NOR") mount_nor;
+					;;
+				"sd" | "SD" | "mmc" | "MMC") mount_sd;
+					;;
+				"ata" | "ATA") mount_ata;
+					;;
+				"usbh" | "USBH") mount_usbh;
+					;;
+				*) help;
+					;;
+		      esac
+		      ;;
 		"-P") case $2 in
 				"nand" | "NAND") prepare_nand;
 					;;
@@ -1133,6 +1351,7 @@ case $# in
 					       prepare_ata;
 					       prepare_usbh;
 					;;
+
 				*) help;
 					;;
 		      esac
