@@ -1,3 +1,5 @@
+#!/bin/sh
+##############################################################################
 #Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -6,7 +8,6 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
 ##############################################################################
 #
 # Revision History:
@@ -18,6 +19,7 @@
 # Spring                15/01/2008       n/a        Add MX35TO2 judgement,
 #                                                   move to tools/
 # Spring                02/04/2009       n/a        Add MX51Babbage support
+# Spring                02/08/2009       n/a        Use own determination
 #############################################################################
 # Usage1(return string):
 #   platform=`platfm.sh`
@@ -135,19 +137,8 @@ determine_platform()
 
 # main
 RC=0
-if [ -e /unit_tests/test-utils.sh ] 
-then
-    #source unit test, align to Dev.
-    source /unit_tests/test-utils.sh 
-    p=`platform`
-    echo "$p"
-    # get $RC to exit
-    determine_platform
-else
-    #if no file, use our own
-    determine_platform
-    echo "$p"
-fi
+determine_platform
+echo "$p"
 
 exit $RC
 
