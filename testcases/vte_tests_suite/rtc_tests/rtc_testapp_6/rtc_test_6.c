@@ -424,6 +424,8 @@ int VT_rtc_test6(int seconds)
 
         tst_resm(TINFO, "  Waiting %d seconds for alarm......." ,seconds);
 
+	system("echo -n standby > /sys/power/state");
+
         /* This blocks until the alarm ring causes an interrupt */
         retval = read( file_desc, &data, sizeof(unsigned long) );
         if( retval < 0 )
