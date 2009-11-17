@@ -1,18 +1,19 @@
 /***
-**Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
-**
-**The code contained herein is licensed under the GNU General Public
-**License. You may obtain a copy of the GNU General Public License
-**Version 2 or later at the following locations:
-**
-**http://www.opensource.org/licenses/gpl-license.html
-**http://www.gnu.org/copyleft/gpl.html
-**/
+ ** Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+ **
+ ** The code contained herein is licensed under the GNU General Public
+ ** License. You may obtain a copy of the GNU General Public License
+ ** Version 2 or later at the following locations:
+ **
+ ** http://www.opensource.org/licenses/gpl-license.html
+ ** http://www.gnu.org/copyleft/gpl.html
+ **/
 
 /* Update History
  * 3/4/09, 1. Fix driver upgrade from 2.6.26 -> 28
  * Spring, 2. Comment hardware.h for no such file available
- *
+ * 16/11/2009, Spring Zhang
+ * change include header file from asm/dma.h to mach/dma.h
  */
 
 /* THIS_MODULE, */
@@ -31,12 +32,17 @@
 #include <linux/fs.h>    
 #include <linux/version.h> /* KENREL_VERSION macro */
 
-/* include asm/mach/dma.h, mxc_dma_request(), mxc_dma_free(), mxc_dma_config(), 
- * mxc_dma_enable() 
+/* #include <asm/dma.h>, from 2.6.31, need to include mach/dma.h, <=2.6.26,
+ * include asm/hardware.h. 
+ * include asm/mach/dma.h, mxc_dma_request(), mxc_dma_free(), 
+ * mxc_dma_config(), mxc_dma_enable() 
  * MXC_DMA_MEMORY, MXC_DMA_MODE_READ, 
  * */
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,31))
+#include <mach/dma.h>
+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,28))
 #include <asm/dma.h>
-/* #include <asm/mach/dma.h>  */
+#endif
 
 /* udelay(), */
 /* #include <asm/delay.h> */
