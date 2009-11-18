@@ -210,6 +210,7 @@ ipu_dev_test -P 18 || return $RC
 ipu_dev_test -P 19 || return $RC
 ipu_dev_test -P 20 || return $RC
 ipu_dev_test -P 21 || return $RC
+ipu_dev_test -P 22 || return $RC
 fi
 echo "TST INFO hopping block screen save"
 for i in $BWLIST
