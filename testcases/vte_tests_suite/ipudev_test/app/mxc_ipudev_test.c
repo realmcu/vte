@@ -137,13 +137,14 @@ int main(int argc, char *argv[])
 			"12: 3 screen layer test using IC local alpha blending with alpha value in separate buffer\n" \
 			"13: 2 screen layer test using IC local alpha blending with alpha value in pixel\n" \
 			"14: 3 screen layer test using IC local alpha blending with alpha value in pixel\n" \
-			"15: 2 screen layer test IPC ProcessA + ProcessB with globla alpha blending)\n" \
-			"16: 2 screen layer test IPC ProcessA + ProcessB with local alpha blending)\n" \
-			"17: 3 screen layer test IPC ProcessA(first_layer + sencond_layer) + ProcessB(third_layer) with globla alpha blending)\n" \
-			"18: 3 screen layer test IPC ProcessA(first_layer + sencond_layer) + ProcessB(third_layer) with local alpha blending)\n" \
-			"19: 3 screen layer test IPC ProcessA(first_layer) ProcessB(sencond_layer) ProcessC(third_layer) with local alpha blending)\n" \
-			"20: 2 screen layer test IPC ProcessA(first_layer) ProcessB(sencond_layer) with DP local alpha blending)\n" \
-			"21: 2 screen layer test IPC ProcessA(first_layer) ProcessB(sencond_layer) with local alpha blending plus tv copy)\n\n");
+			"15: 2 screen layer test IPC ProcessA + ProcessB with globla alpha blending\n" \
+			"16: 2 screen layer test IPC ProcessA + ProcessB with local alpha blending\n" \
+			"17: 3 screen layer test IPC ProcessA(first_layer + sencond_layer) + ProcessB(third_layer) with globla alpha blending\n" \
+			"18: 3 screen layer test IPC ProcessA(first_layer + sencond_layer) + ProcessB(third_layer) with local alpha blending\n" \
+			"19: 3 screen layer test IPC ProcessA(first_layer) ProcessB(sencond_layer) ProcessC(third_layer) with local alpha blending\n" \
+			"20: 2 screen layer test IPC ProcessA(first_layer) ProcessB(sencond_layer) with DP local alpha blending\n" \
+			"21: 2 screen layer test IPC ProcessA(first_layer) ProcessB(sencond_layer) with local alpha blending plus tv copy\n" \
+			"22: Horizontally splitted video test on TV(support upsizing), assuming the TV uses MEM_DC_SYNC channel\n\n");
 		return -1;
 	}
 
@@ -215,13 +216,13 @@ int main(int argc, char *argv[])
 	       time_sec += frame_end.tv_sec - frame_begin.tv_sec;
 	       time_usec += frame_end.tv_usec - frame_begin.tv_usec;
 	       }
-	       if (next_update_idx < 0)
-			break;
+		if (next_update_idx < 0)
+		break;
 		done_cnt++;
 	}
 	mxc_ipu_lib_task_uninit(test_handle.ipu_handle);
-	/*display the duration*/
-	printf("the time for frames %d is: %d usec\n", done_cnt /
+    /*display the duration*/
+		printf("the time for frames %d is: %d usec\n", done_cnt ,
 	time_sec * 1000000 + time_usec);
 done:
 	fclose(file_in);
