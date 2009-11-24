@@ -6,30 +6,36 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-###################################################################################################
+###############################################################################
 #
 #    @file   Makefile
 #
 #    @brief  configuration file to compile the sahara_testapp test.
 #
-###################################################################################################
+###############################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author/Core ID                  Date          Number    Description of Changes
-#-------------------------   ------------    ----------  ------------------------------------------
+#-------------------------   ------------    ----------  ----------------------
 #A.Ozerov/NONE                10/10/2005     TLSbo55834   Initial version
 #A.Urusov/NONE                09/11/2005     TLSbo57926   APIINCDIR is added
 #A.Ozerov/NONE                01/12/2005     TLSbo58662   Update for linux-2.6.10-rel-L26_1_14
 #D.Simakov/smkd001c           21/09/2006     TLSbo76069   Compilation issue
+#Spring Zhang                 24/11/2009     ENGR118408   disable -mfpu=vfp
 #                                                        
-###################################################################################################
+###############################################################################
 #Portability: ARM GCC 
 #
-###################################################################################################
+###############################################################################
 LTP_DIR = ../../../..
 BIN_DIR = ../../..
 MODULE_DIR = ../sahara_module
 APIINCDIR = $(KLINUX_SRCDIR)/drivers/mxc/security/sahara2/include
+
+#disable -mfpu=vfp defined in top Makefile, which will cause error.
+#Error: After calling ioctl successfully first time, it will return errno 22(EINVAL) 
+#       at the second time, even not enter ioctl().
+CFLAGS="-DPROJECT_ELVIS=1 -O2 -fsigned-char -mfloat-abi=softfp"
 
 ifeq ($(ARCH_PLATFORM), mxc27530evb)
 CFLAGS += -DCONFIG_ARCH_MXC91231
