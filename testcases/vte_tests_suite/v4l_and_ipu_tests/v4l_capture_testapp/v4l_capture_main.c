@@ -155,7 +155,7 @@ void help(void)
         printf("Usage : -u <output device>. To put output device\n");  
         printf("Usage : -Y <overlay_type>. 1=V4L2_FBUF_FLAG_PRIMARY, 2=V4L2_FBUF_FLAG_OVERLAY\n");  
         printf("Usage : -r capture frame rate setting. <15 to 30 > default is  30\n");  
-        
+        printf("Usage: -M <camera input mode> <0 - 5>\n");
 }
 
 /*===== main =====*/
@@ -205,7 +205,8 @@ int main(int argc, char **argv)
             Oflag = 0,
             Cflag = 0,
             uflag = 0, 
-            Eflag = 0, 
+            Eflag = 0,
+	    Mflag = 0,
 #ifndef MAD_TEST_MODIFY
 	     Xflag = 0,
 	     Nflag = 0,
@@ -227,6 +228,7 @@ int main(int argc, char **argv)
              *Copt,
              *uopt,
              *Yopt,
+	     *Mopt,
 #ifndef MAD_TEST_MODIFY
 	      *Nopt,
 #endif
@@ -261,6 +263,7 @@ int main(int argc, char **argv)
                   {"r:", &rflag,         &ropt },
 		  {"K:", &Kflag,         &Kopt},     /*block IO */
 		  {"s:", &sflag,         &sopt},
+		  {"M:", &Mflag,         &Mopt},
   		  { NULL, NULL,           NULL  }         /* NULL required to end array           */
         };
 
@@ -286,6 +289,7 @@ int main(int argc, char **argv)
         gV4LTestConfig.mOutputFormat = Oflag;
         gV4LTestConfig.mCrop = Bflag;
         gV4LTestConfig.mRotation = Rflag;
+	gV4LTestConfig.mMode = Mflag? atoi(Mopt): 0;
 #ifndef MAD_TEST_MODIFY
         gV4LTestConfig.mNeedAsk = Xflag;
 #endif

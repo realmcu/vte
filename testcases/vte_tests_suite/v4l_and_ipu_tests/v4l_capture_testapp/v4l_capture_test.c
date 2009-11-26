@@ -567,7 +567,7 @@ int init_overlay(void)
         streamParm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         streamParm.parm.capture.timeperframe.numerator = 1;
         streamParm.parm.capture.timeperframe.denominator = gV4LTestConfig.mFrameRate;
-        streamParm.parm.capture.capturemode = 0;
+        streamParm.parm.capture.capturemode =  gV4LTestConfig.mMode;
         
         if(ioctl(gFdV4L, VIDIOC_S_PARM, &streamParm) < 0)
         {
