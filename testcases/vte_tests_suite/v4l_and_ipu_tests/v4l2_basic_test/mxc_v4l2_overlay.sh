@@ -77,7 +77,7 @@ fi
 
 if [ $TARGET == 51 ]
 then
-RESSIZE="240x320"
+RESSIZE="240x320 720x480"
 fi
 
 return $RC
@@ -291,7 +291,6 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-
 ROTATION="0 1 2 3 4 5 6 7"
 OFFSET="10 15 80 100"
 RESLIST="320x240 176x144 320x240"" "${RESSIZE}
@@ -304,13 +303,22 @@ do
   echo "now offset input & output is $i"
   for j in $RESLIST
   do
+   echo "frame rate 15"
    OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
    OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
-   echo "low resolution"
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 || return $RC
-   echo "high resolution"
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5|| return $RC
-   sleep 1
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 15 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 15 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 15 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 15 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 15 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 15 || return $RC
+    echo "farme rate 30"
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 30 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 30 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 30 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 30 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 30 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 30 || return $RC
   done 
  done
 done
