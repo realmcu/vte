@@ -120,6 +120,7 @@ typedef struct
 	int mFrameRate;
 	int mIsBlock;
 	int inputSrc;
+	int mMode;
 } sV4LTestConfig; 
 /*======================== GLOBAL VARIABLE DECLARATIONS =====================*/
 
