@@ -57,6 +57,7 @@ struct pxp_control {
 	struct v4l2_rect dst;
 	int wait;
 	int screen_w, screen_h;
+	int en_ov_crop;
 };
 
 struct pxp_video_format
@@ -133,6 +134,7 @@ static void help(char *bin)
 	printf("\t-res <w>:<h>  \tinput resolution\n");
 	printf("\t-vf   \tflip image vertically\n");
 	printf("\t-w n   \twait n seconds before exiting\n");
+	printf("\t-c    \tcorp input\n");
 	printf("\t-?    \tprint this usage information\n");
 }
 
@@ -177,7 +179,7 @@ static struct pxp_control *pxp_init(int argc, char **argv)
 	pxp->fmt_idx = 4;	/* YUV422 */
 	pxp->wait = 1;
 
-	static const char *opt_string = "a:hk:o:ir:w:?";
+	static const char *opt_string = "a:hk:o:ir:w:c?";
 
 	static const struct option long_opts[] = {
 		{ "dst", required_argument, NULL, PXP_DST},
@@ -241,6 +243,9 @@ static struct pxp_control *pxp_init(int argc, char **argv)
 			case 'w':
 				pxp->wait = atoi(optarg);
 				break;
+			case 'c':
+			        pxp->en_ov_crop = 1;
+			       break;
 			case '?':
 				help(argv[0]);
 				goto error;
@@ -473,10 +478,20 @@ static int pxp_config_windows(struct pxp_control *pxp, int pass)
 	format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY;
 	format.fmt.win.global_alpha = pxp->global_alpha_val;
 	format.fmt.win.chromakey = pxp->colorkey_val;
+	if (pxp->en_ov_crop)
+	{
+	/*codec need 16 pixels offset*/
+	printf("crop offset set for output overlay\n");
+	format.fmt.win.w.left = 16;
+	format.fmt.win.w.top = 16;
+	format.fmt.win.w.width = pxp->s0.width - 32;
+	format.fmt.win.w.height = pxp->s0.height - 32;
+	}else{
 	format.fmt.win.w.left = 0;
 	format.fmt.win.w.top = 0;
 	format.fmt.win.w.width = pxp->s0.width;
 	format.fmt.win.w.height = pxp->s0.height;
+	}
 	if (ioctl(pxp->vfd, VIDIOC_S_FMT, &format) < 0) {
 		perror("VIDIOC_S_FMT output overlay");
 		return 1;
