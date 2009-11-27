@@ -53,6 +53,9 @@
  *          at least 20 clock-ticks.  This will provide rate estimates
  *          that should be good to about 5% precision.
  */
+#ifdef PROJECT_MX25
+#   define N    500000
+#endif
 
 #ifndef N
 #   define N	2000000
