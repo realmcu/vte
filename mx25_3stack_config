@@ -8,4 +8,4 @@ ARCH_PLATFORM=imx25stack
 export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM
 CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.3.3-glibc-2.8-cs2009q1-203/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-
 export CROSS_COMPILER
-export CFLAGS="-DPROJECT_MX25=1 -O2 -fsigned-char -msoft-float"
+export CFLAGS="-DPROJECT_MX25=1 -O2 -fsigned-char -msoft-float -mfpu=vfp -march=armv5t"
