@@ -64,7 +64,7 @@ SUBDIRS += v4l_and_ipu_tests
 endif
 
 ifneq ($(ARCH_PLATFORM), $(filter imx27ads imx233 imx27evb imx32ads, $(ARCH_PLATFORM)))
-#SUBDIRS += sdma_tests
+SUBDIRS += sdma_tests
 endif
 
 ifeq ($(ARCH_PLATFORM), $(filter imx233, $(ARCH_PLATFORM)))
