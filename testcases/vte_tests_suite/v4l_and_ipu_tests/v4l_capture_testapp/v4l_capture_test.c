@@ -507,6 +507,7 @@ int init_overlay(void)
         streamParm.parm.capture.timeperframe.denominator = gV4LTestConfig.mFrameRate;
         streamParm.parm.capture.capturemode =  gV4LTestConfig.mMode;
         
+        
         if(ioctl(gFdV4L, VIDIOC_S_PARM, &streamParm) < 0)
         {
                 tst_resm(TWARN,"ERROR init_overlay() : set frame rate failed");
