@@ -498,7 +498,27 @@ int init_overlay(void)
                 tst_resm(TWARN, "%s formatting failed", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
         }
+        streamParm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        streamParm.parm.capture.timeperframe.numerator = 1;
+        streamParm.parm.capture.timeperframe.denominator = gV4LTestConfig.mFrameRate;
+        streamParm.parm.capture.capturemode =  gV4LTestConfig.mMode;
         
+        if(ioctl(gFdV4L, VIDIOC_S_PARM, &streamParm) < 0)
+        {
+                tst_resm(TWARN,"ERROR init_overlay() : set frame rate failed");
+                return TFAIL;
+        } 
+        
+        streamParm.parm.capture.timeperframe.numerator = 0;
+        streamParm.parm.capture.timeperframe.denominator = 0;
+                
+        if(ioctl(gFdV4L, VIDIOC_G_PARM, &streamParm) < 0)
+        {
+                tst_resm(TWARN,"ERROR init_overlay() : get frame rate failed");
+                return TFAIL;
+        } 
+
+
         gOrigFormatRect.left = gFormat.fmt.win.w.left;
         gOrigFormatRect.top = gFormat.fmt.win.w.top;
         gOrigFormatRect.width = gFormat.fmt.win.w.width;
@@ -563,7 +583,6 @@ int init_overlay(void)
                 tst_resm(TWARN,"ERROR init_overlay() : VIDIOC_S_OUTPUT failed");
                 return TFAIL;
         } 
-	*/
         streamParm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         streamParm.parm.capture.timeperframe.numerator = 1;
         streamParm.parm.capture.timeperframe.denominator = gV4LTestConfig.mFrameRate;
@@ -585,6 +604,7 @@ int init_overlay(void)
         } 
 
 
+	*/
         /* Set Frame Buffer Format */
         if(ioctl(gFdV4L, VIDIOC_S_FBUF, &fbuffer) < 0)
         {
