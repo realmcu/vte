@@ -264,7 +264,9 @@ do
   do
    OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
    OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -t 5|| return $RC
+   OW=$(expr $OWD - $i)
+   OH=$(expr $OHT - $i)
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OW -oh $OH -ol $i -ot $i -r $k -t 5|| return $RC
    sleep 1
   done 
  done
