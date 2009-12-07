@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Freescale Semiconductor, Inc. All Rights Reserved.
+ * Copyright (C) 2009 Freescale Semiconductor, Inc. All Rights Reserved.
  *
  */
 
@@ -30,7 +30,10 @@
 #include <signal.h>
 #include "mxc_ipudev_test.h"
 
-extern int time_sec, time_usec;
+/*extern int time_sec, time_usec;*/
+
+
+
 int ctrl_c_rev = 0;
 
 void ctrl_c_handler(int signum, siginfo_t *info, void *myact)
@@ -99,6 +102,20 @@ int main(int argc, char *argv[])
 	FILE * file_in = NULL;
 	struct sigaction act;
 
+    /*for performance test -- begin*/
+    struct timeval tvProf;
+    long timeBefore =0, timeAfter=0;
+    int retVal = -1;
+    int minFrameNumber=0, maxFrameNumber=0, numFrame =0 ,FrameNo=0;
+    long minFrameTime=0x7FFFFFFF;
+    long maxFrameTime =0, totalTime =0;
+    long timeVal=0;
+    unsigned char timeFlag =0;
+    FILE    *fSysTime;
+    unsigned char chname[] = "[PROFILE-INFO]";
+    fSysTime = fopen ("/tmp/ipu_dev/sys_time.txt", "w");
+    /*for performance test -- end*/
+
 	memset(&ipu_handle, 0, sizeof(ipu_lib_handle_t));
 	memset(&test_handle, 0, sizeof(ipu_test_handle_t));
 	test_handle.ipu_handle = &ipu_handle;
@@ -131,20 +148,8 @@ int main(int argc, char *argv[])
 			"6: color bar IC separate local alpha overlay\n" \
 			"7: color bar IC local alpha within pixel overlay\n" \
 			"8: ipu dma copy test\n" \
-			"9: 2 screen layer test using IC global alpha blending\n" \
-			"10: 3 screen layer test using IC global alpha blending\n" \
-			"11: 2 screen layer test using IC local alpha blending with alpha value in separate buffer\n" \
-			"12: 3 screen layer test using IC local alpha blending with alpha value in separate buffer\n" \
-			"13: 2 screen layer test using IC local alpha blending with alpha value in pixel\n" \
-			"14: 3 screen layer test using IC local alpha blending with alpha value in pixel\n" \
-			"15: 2 screen layer test IPC ProcessA + ProcessB with globla alpha blending\n" \
-			"16: 2 screen layer test IPC ProcessA + ProcessB with local alpha blending\n" \
-			"17: 3 screen layer test IPC ProcessA(first_layer + sencond_layer) + ProcessB(third_layer) with globla alpha blending\n" \
-			"18: 3 screen layer test IPC ProcessA(first_layer + sencond_layer) + ProcessB(third_layer) with local alpha blending\n" \
-			"19: 3 screen layer test IPC ProcessA(first_layer) ProcessB(sencond_layer) ProcessC(third_layer) with local alpha blending\n" \
-			"20: 2 screen layer test IPC ProcessA(first_layer) ProcessB(sencond_layer) with DP local alpha blending\n" \
-			"21: 2 screen layer test IPC ProcessA(first_layer) ProcessB(sencond_layer) with local alpha blending plus tv copy\n" \
-			"22: Horizontally splitted video test on TV(support upsizing), assuming the TV uses MEM_DC_SYNC channel\n\n");
+			"9: 2 screen layer test\n" \
+			"10: 3 screen layer test\n\n");
 		return -1;
 	}
 
@@ -205,25 +210,72 @@ int main(int argc, char *argv[])
 			first_time = 0;
 			done_cnt++;
 		}
-              {
-             /*calculate the exact ipu function time*/
-	      struct timeval frame_begin,frame_end;
-	       gettimeofday(&frame_begin, NULL);
+        
+        /*calculate the exact ipu function time*/
+        /*
+	    struct timeval frame_begin,frame_end;
+	    gettimeofday(&frame_begin, NULL);
+        */
+
+        retVal = gettimeofday(&tvProf, 0);
+        if (retVal == 0)
+        {
+            timeBefore = tvProf.tv_sec * 1000000 + tvProf.tv_usec;
+            timeFlag = 1;
+        }
 
 		next_update_idx = mxc_ipu_lib_task_buf_update(test_handle.ipu_handle, 0, 0, 0, output_to_file_cb, &test_handle);
 
-               gettimeofday(&frame_end, NULL);
-	       time_sec += frame_end.tv_sec - frame_begin.tv_sec;
-	       time_usec += frame_end.tv_usec - frame_begin.tv_usec;
-	       }
-		if (next_update_idx < 0)
-		break;
+        /*
+        gettimeofday(&frame_end, NULL);
+	    time_sec = frame_end.tv_sec - frame_begin.tv_sec;
+	    time_usec = frame_end.tv_usec - frame_begin.tv_usec;
+        */
+
+        if (timeFlag == 1)
+        {
+            retVal = gettimeofday(&tvProf, 0);
+            if (retVal == 0)
+            {
+                timeAfter = tvProf.tv_sec * 1000000 + tvProf.tv_usec;
+                timeVal = timeAfter - timeBefore;
+                numFrame++;
+                if (timeVal > maxFrameTime)
+                {
+                    maxFrameTime = timeVal;
+                    /*maxFrameNumber = FrameNo;*/
+                    maxFrameNumber = done_cnt;
+                }
+                if (timeVal < minFrameTime)
+                {
+                    minFrameTime = timeVal;
+                    /*minFrameTime = timeVal;*/
+                    minFrameNumber = done_cnt;
+                }
+                totalTime += timeVal;
+            }
+            timeFlag = 0;
+        }
+
+	    if (next_update_idx < 0)
+			break;
 		done_cnt++;
 	}
 	mxc_ipu_lib_task_uninit(test_handle.ipu_handle);
-    /*display the duration*/
-		printf("the time for frames %d is: %d usec\n", done_cnt ,
-	time_sec * 1000000 + time_usec);
+	/*display the duration*/
+	/*printf("the time for frames %d is: %d usec\n", done_cnt, time_sec * 1000000 + time_usec);*/
+/*
+    fprintf(stdout,"\nEncoder");
+    fprintf(stdout,"\n%s\t%s\t%s\t%ld\t%ld\t%d\t%d\t%d\t%ld\t",chname,psArgv[1],psArgv[3],
+                        maxFrameTime,minFrameTime,numFrame,maxFrameNumber, minFrameNumber,totalTime);
+    fprintf(fSysTime,"\n%s\t%s\t%s\t%ld\t%ld\t%d\t%d\t%d\t%ld\t",chname,psArgv[1],psArgv[3],
+                            maxFrameTime,minFrameTime,numFrame,maxFrameNumber, minFrameNumber,totalTime);
+    fclose(fSysTime);
+*/
+    fprintf(stdout,"%d\t%ld\t%ld\t%ld\t%ld\t%d\t%d\t\n", numFrame,totalTime,maxFrameTime,minFrameTime,totalTime/numFrame,maxFrameNumber, minFrameNumber);
+    fprintf(fSysTime,"%d\t%ld\t%ld\t%ld\t%ld\t%d\t%d\t\n", numFrame,totalTime,maxFrameTime,minFrameTime,totalTime/numFrame,maxFrameNumber, minFrameNumber);
+    fclose(fSysTime);
+
 done:
 	fclose(file_in);
 	if (test_handle.file_out0)
