@@ -19,6 +19,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake Huang/-----             <20081209>     N/A          Initial version
+#Justin Qiu                   <20091201>     N/A          add ipu performance test
 # 
 ###################################################################################################
 
@@ -187,38 +188,37 @@ BWLIST="10 32 51 255"
 echo "TST INFO: now block size is $i"
 
 echo "TST INFO: video pattern with user define dma buffer queue, one full-screen output"
-ipu_dev_test -P 1 || return $RC
+${TST_CMD} -P 1 || return $RC
 
 if [ $TARGET == "37" ] || [ $TARGET == "51" ]; then
 echo "TST INFO: ipu v3 only"
 echo "TST INFO: video pattern with user define dma buffer queue, with two output"
-ipu_dev_test -P 2 || return $RC
-ipu_dev_test -P 5 || return $RC
-ipu_dev_test -P 6 || return $RC
-ipu_dev_test -P 7 || return $RC
-ipu_dev_test -P 8 || return $RC
-ipu_dev_test -P 9 || return $RC
-ipu_dev_test -P 10 || return $RC
-ipu_dev_test -P 11 || return $RC
-ipu_dev_test -P 12 || return $RC
-ipu_dev_test -P 13 || return $RC
-ipu_dev_test -P 14 || return $RC
-ipu_dev_test -P 15 || return $RC
-ipu_dev_test -P 16 || return $RC
-ipu_dev_test -P 17 || return $RC
-ipu_dev_test -P 18 || return $RC
-ipu_dev_test -P 19 || return $RC
-ipu_dev_test -P 20 || return $RC
-ipu_dev_test -P 21 || return $RC
-ipu_dev_test -P 22 || return $RC
+${TST_CMD} -P 2 || return $RC
+${TST_CMD} -P 5 || return $RC
+${TST_CMD} -P 6 || return $RC
+${TST_CMD} -P 7 || return $RC
+${TST_CMD} -P 8 || return $RC
+${TST_CMD} -P 9 || return $RC
+${TST_CMD} -P 10 || return $RC
+${TST_CMD} -P 11 || return $RC
+${TST_CMD} -P 12 || return $RC
+${TST_CMD} -P 13 || return $RC
+${TST_CMD} -P 14 || return $RC
+${TST_CMD} -P 15 || return $RC
+${TST_CMD} -P 16 || return $RC
+${TST_CMD} -P 17 || return $RC
+${TST_CMD} -P 18 || return $RC
+${TST_CMD} -P 19 || return $RC
+${TST_CMD} -P 20 || return $RC
+${TST_CMD} -P 21 || return $RC
 fi
 echo "TST INFO hopping block screen save"
 for i in $BWLIST
 do
-ipu_dev_test -P 3 -bw $i || return $RC
+${TST_CMD} -P 3 -bw $i || return $RC
 done
 echo "TST INFO: color bar + hopping block for 10 secondes"
-ipu_dev_test -P 4 || return $RC
+${TST_CMD} -P 4 || return $RC
 
 RC=0
 
@@ -369,81 +369,106 @@ mkdir -p /tmp/ipu_dev
 #output 1 enalble
  for i in $FMLIST
  do
-   echo "TST INFO: Format is $i"
-   if [ $i != $tf ]; then
-   for j in $IN_FILE
-   do
-     echo "TST INFO: file $j"
-     WD=$(echo $j | sed "s/+/ /g" | awk '{print $1}' )
-     HT=$(echo $j | sed "s/+/ /g" | awk '{print $2}' )
-     INFILE=$(echo $j | sed "s/+/ /g"| awk '{print $3}')
-     echo "${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},I420 \
-     -o  ${WD},${HT},${i} -n /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}"
-     ${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},I420 \
-     -o  ${WD},${HT},${i} -n /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}
-     if [ $? != 0 ]; then
-      echo "TST ERROR: can not convert from 422P to $i"
-     else
-        for k in $RESLIST
+    echo "TST INFO: Format is $i"
+    if [ $i != $tf ]; then
+        for j in $IN_FILE
         do
-          echo "TST INFO: output $k"
-	  w=$(echo $k | sed "s/,/ /g" | awk '{print $1}')
-	  h=$(echo $k | sed "s/,/ /g" | awk '{print $2}')
-          if [ $w -gt $FB0XRES ] || [ $h -gt $FB0YRES ]; then
-              echo "TST INFO: skip this resolution for fb not support\n"
-          else
-            for l in $FBPOS ; do
-	    echo "TST INFO: output fb pos $l" 
-	    echo "TST INFO: output1 disable"
-	    efb0=1
-            check_format_bits $tf
-            if [ $? -ne $FB0BITS ]; then
-	     efb0=0
-             echo "TST INFO: mute fb0 out"
-	    fi
-	    echo "${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},${i} -c ${CRP} \
-            -o  ${k},${tf},$r -s ${efb0},0,$l -n /dev/null /tmp/ipu_dev/tmp.dat \
-	    || RC=$(expr $RC + 1)"
-	    ${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},${i} -c ${CRP} \
-            -o  ${k},${tf},$r -s ${efb0},0,$l -n /dev/null /tmp/ipu_dev/tmp.dat \
-	    || RC=$(expr $RC + 1)
-	    if [ $MODE == "0x13"  ] || [ $MODE == "0x23"  ]; then
-             echo "TST INFO: output1 enable"
-              if [ $w -gt $FB1XRES ] || [ $h -gt $FB1YRES ]; then
-                 echo "TST INFO: skip this resolution for fb not support\n"
-              else
-	         efb2=1
-                 check_format_bits $tf
-                 if [ $? -ne $FB2BITS ]; then
-                   efb2=0
-                   echo "TST INFO: mute fb2"
-		 fi
-	    echo "${TST_CMD} -m $MODE -E 1 -f $fc -i ${WD},${HT},${i} -c ${CRP} \
-            -o  ${k},${tf},$r -s ${efb0},0,${l} -n /dev/null \
-	    -O ${k},${tf},$r -S ${efb2},2,${l} -N /dev/null /tmp/ipu_dev/tmp.dat \
-	    || RC=$(expr $RC + 1)"
-	    ${TST_CMD} -m $MODE -E 1 -f $fc -i ${WD},${HT},${i} -c ${CRP} \
-            -o  ${k},${tf},$r -s ${efb0},0,${l} -n /dev/null \
-	    -O ${k},${tf},$r -S ${efb2},2,${l} -N /dev/null /tmp/ipu_dev/tmp.dat \
-	    || RC=$(expr $RC + 1)
-	      fi
-	    fi
-            sleep 1
-	#end for l fb pos
-	   done
-	 fi
-      #end for k out res
-       done
-     fi
-     rm -f /tmp/ipu_dev/temp.dat
-   #end for j in file
-   done
-   fi
+            echo "TST INFO: file $j"
+            WD=$(echo $j | sed "s/+/ /g" | awk '{print $1}' )
+            HT=$(echo $j | sed "s/+/ /g" | awk '{print $2}' )
+            INFILE=$(echo $j | sed "s/+/ /g"| awk '{print $3}')
+            
+            echo "${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},I420 \
+                    -o  ${WD},${HT},${i} -n /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}"
+            
+            ${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},I420 \
+                    -o  ${WD},${HT},${i} -n /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}
+
+            if [ $IPU_PERFORMANCE_TEST -eq 1 ]
+            then            
+                run_time=`cat /tmp/ipu_dev/sys_time.txt`
+                echo -e "$j\t$run_time \t -m $MODE -f $fc -i ${WD},${HT},I420 -o ${WD},${HT},${i}" >> ipu_performance.txt
+            fi
+
+            if [ $? != 0 ]; then
+                echo "TST ERROR: can not convert from 422P to $i"
+            else
+                for k in $RESLIST
+                do
+                    echo "TST INFO: output $k"
+	                w=$(echo $k | sed "s/,/ /g" | awk '{print $1}')
+	                h=$(echo $k | sed "s/,/ /g" | awk '{print $2}')
+                    if [ $w -gt $FB0XRES ] || [ $h -gt $FB0YRES ]; then
+                        echo "TST INFO: skip this resolution for fb not support\n"
+                    else
+                        for l in $FBPOS ; do
+	                        echo "TST INFO: output fb pos $l" 
+	                        echo "TST INFO: output1 disable"
+	                        efb0=1
+                            check_format_bits $tf
+                            if [ $? -ne $FB0BITS ]; then
+	                            efb0=0
+                                echo "TST INFO: mute fb0 out"
+	                        fi
+	                        echo "${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},${i} -c ${CRP} \
+                                -o  ${k},${tf},$r -s ${efb0},0,$l -n /dev/null /tmp/ipu_dev/tmp.dat \
+	                            || RC=$(expr $RC + 1)"
+
+	                        ${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},${i} -c ${CRP} \
+                                -o  ${k},${tf},$r -s ${efb0},0,$l -n /dev/null /tmp/ipu_dev/tmp.dat \
+	                            || RC=$(expr $RC + 1)
+            
+                                if [ $IPU_PERFORMANCE_TEST -eq 1 ]
+                                then            
+                                    run_time=`cat /tmp/ipu_dev/sys_time.txt`
+                                    echo -e "$j\t $run_time \t -m $MODE -f $fc -i ${WD},${HT},${i} -c ${CRP} -o  ${k},${tf},$r -s ${efb0},0,$l" >> ipu_performance.txt
+                                fi
+
+	                        if [ $MODE == "0x13"  ] || [ $MODE == "0x23"  ]; then
+                                echo "TST INFO: output1 enable"
+                                if [ $w -gt $FB1XRES ] || [ $h -gt $FB1YRES ]; then
+                                    echo "TST INFO: skip this resolution for fb not support\n"
+                                else
+	                                efb2=1
+                                    check_format_bits $tf
+                                    if [ $? -ne $FB2BITS ]; then
+                                        efb2=0
+                                        echo "TST INFO: mute fb2"
+		                            fi
+	                                echo "${TST_CMD} -m $MODE -E 1 -f $fc -i ${WD},${HT},${i} -c ${CRP} \
+                                        -o  ${k},${tf},$r -s ${efb0},0,${l} -n /dev/null \
+	                                    -O ${k},${tf},$r -S ${efb2},2,${l} -N /dev/null /tmp/ipu_dev/tmp.dat \
+	                                    || RC=$(expr $RC + 1)"
+	                                
+                                    ${TST_CMD} -m $MODE -E 1 -f $fc -i ${WD},${HT},${i} -c ${CRP} \
+                                        -o  ${k},${tf},$r -s ${efb0},0,${l} -n /dev/null \
+	                                    -O ${k},${tf},$r -S ${efb2},2,${l} -N /dev/null /tmp/ipu_dev/tmp.dat \
+	                                    || RC=$(expr $RC + 1)
+
+                                    if [ $IPU_PERFORMANCE_TEST -eq 1 ]
+                                    then            
+                                        run_time=`cat /tmp/ipu_dev/sys_time.txt`
+                                        echo -e "$j\t $run_time \t -m $MODE -E 1 -f $fc -i ${WD},${HT},${i} -c ${CRP} -o  ${k},${tf},$r -s ${efb0},0,${l} -O ${k},${tf},$r -S ${efb2},2,${l}" >> ipu_performance.txt
+                                    fi
+
+	                            fi
+	                        fi
+                            sleep 1
+	                    #end for l fb pos
+	                    done
+	                fi
+                #end for k out res
+                done
+            fi
+            rm -f /tmp/ipu_dev/temp.dat
+        #end for j in file
+        done
+    fi
  #end for i from format
  done
 
-rm -rf /tmp/ipu_dev
-return $RC
+ rm -rf /tmp/ipu_dev
+ return $RC
 }
 
 # Function:     test_case_05
@@ -510,11 +535,11 @@ for r in $ROTATION
 do
   echo "TST INFO: Rotation is $r"
   echo "for single display"
-  ipu_dev_test -m 0x21 -f 50 -i 352,288,I420 -o 352,288,RGBP,$r \
+  ${TST_CMD} -m 0x21 -f 50 -i 352,288,I420 -o 352,288,RGBP,$r \
   -s 1,0,0,0 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv \
   || return $RC
   echo "for multi display"
-  ipu_dev_test -m 0x23 -f 50 -E 1 -i 352,288,I420 \
+  ${TST_CMD} -m 0x23 -f 50 -E 1 -i 352,288,I420 \
   -o 352,288,RGBP,$r -s 1,0,0,0 -O 352,288,RGBP,$r \
   -S 1,2,0,288 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv \
   || return $RC
@@ -524,6 +549,35 @@ RC=0
 return $RC
 }
 
+# Function:     test_case_07
+# Description   - Performance for IPU decoder
+#
+test_case_07()
+{
+    #TODO give TCID
+    TCID="IPU_Performance_TEST"
+    #TODO give TST_COUNT
+    TST_COUNT=7
+    RC=1
+
+    #print test info
+    tst_resm TINFO "test $TST_Count: $TCID "
+
+    #TODO add function test scripts here
+
+    IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv 720+480+SD720x480.yuv"
+    RESLIST="160,120 320,240"
+    fc=10
+    #FMLIST="I420 422P"
+    IPU_PERFORMANCE_TEST=1
+    rm -f ipu_performance.txt
+    test_case_02
+    RC=$?
+    IPU_PERFORMANCE_TEST=0
+    IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv"
+    RESLIST="160,120"
+    return $RC
+}
 
 # main function
 
@@ -542,7 +596,7 @@ RESLIST="160,120"
 fc=1
 CROPLIST="32,32,64,64"
 FBPOS="5,10"
-TST_CMD=ipu_dev_test
+TST_CMD=ipu_dev_test_pt
 
 MODE=
 CRP=
@@ -555,6 +609,8 @@ FB2XRES=
 FB2YRES=
 FB2BITS=
 
+IPU_PERFORMANCE_TEST=0
+
 usage()
 {
  echo "$0 <case ID> "
@@ -564,6 +620,7 @@ usage()
  echo "4: IPU VF task test"
  echo "5: IPU VF+ENC task test"
  echo "6: IPU rotation test"
+ echo "7: IPU performance test"
  echo "the iput size and corp mixing need to be round of 8"
 }
 
@@ -597,6 +654,9 @@ case "$1" in
   ;;
 6)
   test_case_06 || exit $RC
+  ;;
+7)
+  test_case_07 || exit $RC
   ;;
 *)
   usage
