@@ -65,8 +65,8 @@ then
     echo U:720x480i-60 > /sys/class/graphics/fb1/mode
    fi
 else
-   echo 0 > /sys/class/graphics/fb1/blank
    echo U:720x480i-60 > /sys/class/graphics/fb1/mode
+   echo 0 > /sys/class/graphics/fb1/blank
 #echo U:720x576i-50 > /sys/class/graphics/fb1/mode
 fi
 
