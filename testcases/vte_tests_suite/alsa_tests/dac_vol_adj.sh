@@ -1,12 +1,13 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
-#
-#The code contained herein is licensed under the GNU General Public
-#License. You may obtain a copy of the GNU General Public License
-#Version 2 or later at the following locations:
-#
-#http://www.opensource.org/licenses/gpl-license.html
-#http://www.gnu.org/copyleft/gpl.html
 #!/bin/sh
+##############################################################################
+# Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+# The code contained herein is licensed under the GNU General Public
+# License. You may obtain a copy of the GNU General Public License
+# Version 2 or later at the following locations:
+#
+# http://www.opensource.org/licenses/gpl-license.html
+# http://www.gnu.org/copyleft/gpl.html
 ##############################################################################
 #
 # Revision History:
@@ -19,13 +20,13 @@
 # Spring                 27/10/2008       n/a      Add mx35&mx37 support  
 # Spring                 28/11/2008       n/a      Modify COPYRIGHT header
 # Spring                 22/09/2009       n/a      Optimize code
+# Spring                 11/12/2009       n/a      Add support to other case
 #############################################################################
 # Portability:   ARM sh 
 # File Name:     dac_vol_adj.sh   
 # Total Tests:   1
 # Test Strategy: play audio streams with volume up and down
 # 
-# Use command "./dac_vol_adj.sh [audio stream]" 
 # Tested on : i.MX51&35&37
 # Support: i.MX31&MX51&MX35&MX37
 
@@ -55,7 +56,7 @@ setup()
         LTPTMP=/tmp
     fi
 
-    if [ $# -lt 1 ]
+    if [ $# -lt 2 ]
     then
         usage
         exit 1
@@ -71,7 +72,9 @@ setup()
         return $RC
     fi
 
-    if [ ! -e $1 ]
+    audio_file=$2
+
+    if [ ! -e $2 ]
     then
         tst_resm TBROK "Test #1: audio stream is not ready, \
         pls check..."
@@ -196,12 +199,12 @@ adj_vol()
                 return $RC
             fi
 
-            let "i=i+1"
+            i=`expr $i + 1`
         done
 
         tst_resm TINFO "Do you hear the voice volume from MIN to MAX or MAX to MIN?[y/n]"
         read answer
-        if [ "$answer" = "y" ]
+        if [ "x$answer" = "xy" ]
         then
             tst_resm TPASS "Test #1: ALSA DAC volume adjust test from MIN to MAX or MAX to MIN success."
         else
@@ -215,6 +218,65 @@ adj_vol()
     return $RC
 }
 
+# Function:     left_right_channel
+#
+# Description:  - Test left channel then test right channel
+#
+# Exit:         - zero on success
+#               - non-zero on failure.
+#
+left_right_channel()
+{
+    RC=0    # Return value from setup, and test functions.
+
+    platfm.sh || platfm=$?
+    if [ $platfm -eq 67 ]
+    then
+        RC=$platfm
+        return $RC
+    fi
+    platform="mx$platfm"
+
+    max_vol || MAX=$?
+    if [ $MAX == 0 ]; then
+        tst_resm TFAIL "Test #2: Platform not supported, please check."
+        return 67
+    fi
+    vol=`expr $MAX / 3 \* 2`
+    ctl_id=`amixer_ctl_id`
+    amixer -c 0 cset "$ctl_id" $vol,0
+
+    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
+    if [ $RC -ne 0 ]
+    then
+        tst_resm TFAIL "Test #2: play error, please check the stream file"
+        return $RC
+    fi
+
+    amixer -c 0 cset "$ctl_id" 0,$vol
+
+    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
+    if [ $RC -ne 0 ]
+    then
+        tst_resm TFAIL "Test #2: play error, please check the stream file"
+        return $RC
+    fi
+
+    tst_resm TINFO "Do you hear the voice from left channel then from right channel[y/n]"
+    read answer
+    if [ "x$answer" = "xy" ]
+    then
+        tst_resm TPASS "Test #2: left and right channel test."
+    else
+        tst_resm TFAIL "Test #2: left and right channel test fail."
+        RC=67
+        return $RC
+    fi
+
+
+    return $RC
+
+}
 # Function:     usage
 #
 # Description:  - display help info.
@@ -225,9 +287,10 @@ usage()
     cat <<-EOF 
 
     Use this command to test ALSA DAC volume adjust functions.
-    The volume will turn from MIN(0) to MAX(100) and then from MAX to MIN.
-    usage: ./${0##*/} [audio stream]
-    e.g.: ./${0##*/} audio48k16S.wav
+    TCID 1: The volume will turn from MIN(0) to MAX(100) and then from MAX to MIN.
+    TCID 2: Test mute left and then right channel.
+    usage: ./${0##*/} [TC Id] [audio stream]
+    e.g.: ./${0##*/} 1 audio48k16S.wav
 
 EOF
 }
@@ -244,5 +307,17 @@ RC=0    # Return value from setup, and test functions.
 #"" will pass the whole args to function setup()
 setup "$@" || exit $RC
 
-adj_vol "$@" || exit $RC
+case "$1" in
+    1)
+    adj_vol "$audio_file" || exit $RC
+    ;;
+    2)
+    left_right_channel "$audio_file" || exit $RC
+    ;;
+    *)
+    usage
+    exit 1
+    ;;
+esac
+
 
