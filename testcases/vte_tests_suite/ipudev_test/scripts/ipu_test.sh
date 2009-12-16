@@ -384,12 +384,6 @@ mkdir -p /tmp/ipu_dev
             ${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},I420 \
                     -o  ${WD},${HT},${i} -n /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}
 
-            if [ $IPU_PERFORMANCE_TEST -eq 1 ]
-            then            
-                run_time=`cat /tmp/ipu_dev/sys_time.txt`
-                echo -e "$j\t$run_time \t -m $MODE -f $fc -i ${WD},${HT},I420 -o ${WD},${HT},${i}" >> ipu_performance.txt
-            fi
-
             if [ $? != 0 ]; then
                 echo "TST ERROR: can not convert from 422P to $i"
             else
@@ -418,12 +412,6 @@ mkdir -p /tmp/ipu_dev
                                 -o  ${k},${tf},$r -s ${efb0},0,$l -n /dev/null /tmp/ipu_dev/tmp.dat \
 	                            || RC=$(expr $RC + 1)
             
-                                if [ $IPU_PERFORMANCE_TEST -eq 1 ]
-                                then            
-                                    run_time=`cat /tmp/ipu_dev/sys_time.txt`
-                                    echo -e "$j\t $run_time \t -m $MODE -f $fc -i ${WD},${HT},${i} -c ${CRP} -o  ${k},${tf},$r -s ${efb0},0,$l" >> ipu_performance.txt
-                                fi
-
 	                        if [ $MODE == "0x13"  ] || [ $MODE == "0x23"  ]; then
                                 echo "TST INFO: output1 enable"
                                 if [ $w -gt $FB1XRES ] || [ $h -gt $FB1YRES ]; then
@@ -444,13 +432,6 @@ mkdir -p /tmp/ipu_dev
                                         -o  ${k},${tf},$r -s ${efb0},0,${l} -n /dev/null \
 	                                    -O ${k},${tf},$r -S ${efb2},2,${l} -N /dev/null /tmp/ipu_dev/tmp.dat \
 	                                    || RC=$(expr $RC + 1)
-
-                                    if [ $IPU_PERFORMANCE_TEST -eq 1 ]
-                                    then            
-                                        run_time=`cat /tmp/ipu_dev/sys_time.txt`
-                                        echo -e "$j\t $run_time \t -m $MODE -E 1 -f $fc -i ${WD},${HT},${i} -c ${CRP} -o  ${k},${tf},$r -s ${efb0},0,${l} -O ${k},${tf},$r -S ${efb2},2,${l}" >> ipu_performance.txt
-                                    fi
-
 	                            fi
 	                        fi
                             sleep 1
@@ -661,7 +642,7 @@ RESLIST="160,120"
 fc=1
 CROPLIST="32,32,64,64"
 FBPOS="5,10"
-TST_CMD=ipu_dev_test_pt
+TST_CMD=ipu_dev_test
 
 MODE=
 CRP=
@@ -674,10 +655,7 @@ FB2XRES=
 FB2YRES=
 FB2BITS=
 
-<<<<<<< HEAD
-=======
 IPU_PERFORMANCE_TEST=0
->>>>>>> ltp-vte: IPU-performance-code-update
 
 usage()
 {
