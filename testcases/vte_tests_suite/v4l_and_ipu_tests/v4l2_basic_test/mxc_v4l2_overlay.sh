@@ -19,7 +19,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake Huang/-----             20090217        N/A          Initial version
-# 
+#
 ###################################################################################################
 
 
@@ -101,10 +101,10 @@ return $RC
 
 # Function:     test_case_01
 # Description   - Test if output size ok
-#  
+#
 test_case_01()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="test_size_output"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -140,7 +140,7 @@ do
     ${TSTCMD}  -iw 640 -ih 480 -ow $OWD -oh $OHT -ol $i -ot $i -r 0 -t 5|| return $RC
     sleep 1
    fi
- done 
+ done
 done
 
 
@@ -152,10 +152,10 @@ return $RC
 
 # Function:     test_case_02
 # Description   - Test if input size ok
-#  
+#
 test_case_02()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="input_test"
 #TODO give TST_COUNT
 TST_COUNT=2
@@ -192,10 +192,10 @@ return $RC
 
 # Function:     test_case_03
 # Description   - Test if rotation ok
-#  
+#
 test_case_03()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="rotation"
 #TODO give TST_COUNT
 TST_COUNT=3
@@ -238,10 +238,10 @@ return $RC
 
 # Function:     test_case_04
 # Description   - Test if rotation with offset ok
-#  
+#
 test_case_04()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="rotation_offset_test"
 #TODO give TST_COUNT
 TST_COUNT=4
@@ -268,7 +268,7 @@ do
    OH=$(expr $OHT - $i)
    ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OW -oh $OH -ol $i -ot $i -r $k -t 5|| return $RC
    sleep 1
-  done 
+  done
  done
 done
 #TODO add function test scripte here
@@ -280,10 +280,10 @@ return $RC
 
 # Function:     test_case_05
 # Description   - Test if capture mode ok
-#  
+#
 test_case_05()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="capture_mode"
 #TODO give TST_COUNT
 TST_COUNT=5
@@ -321,11 +321,58 @@ do
    ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 30 || return $RC
    ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 30 || return $RC
    ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 30 || return $RC
-  done 
+  done
  done
 done
 return $RC
 
+}
+# Function:     test_case_06
+# Description   - Test if gamma setting ok
+#
+test_case_06()
+{
+#TODO give TCID
+TCID="gamma setting"
+#TODO give TST_COUNT
+TST_COUNT=6
+RC=0
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+GAMMA="0 1 2 3 4 5"
+OFFSET="10 15 80 100"
+RESLIST="320x240 176x144 320x240"" "${RESSIZE}
+echo "rotation with offset"
+for k in $GAMMA
+do
+ echo "rotation is $k"
+ for i in $OFFSET
+ do
+  echo "now offset input & output is $i"
+  for j in $RESLIST
+  do
+   echo "frame rate 15"
+   OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
+   OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 0 -t 5 -fr 15 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 1 -t 5 -fr 15 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 2 -t 5 -fr 15 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 3 -t 5 -fr 15 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 4 -t 5 -fr 15 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 5 -t 5 -fr 15 || return $RC
+    echo "farme rate 30"
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 0 -t 5 -fr 30 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 1 -t 5 -fr 30 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 2 -t 5 -fr 30 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 3 -t 5 -fr 30 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 4 -t 5 -fr 30 || return $RC
+   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 5 -t 5 -fr 30 || return $RC
+  done
+ done
+done
+return $RC
 }
 
 check_platform()
@@ -350,6 +397,7 @@ echo "2: output with input size change"
 echo "3: rotation test"
 echo "4: rotation and offset test"
 echo "5: capture resolution test"
+echo "6: gamma test"
 }
 
 # main function
@@ -361,7 +409,7 @@ RC=0
 if [ $# -ne 1 ]
 then
 usage
-exit 1 
+exit 1
 fi
 
 TARGET=
@@ -373,7 +421,7 @@ setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC 
+  test_case_01 || exit $RC
   ;;
 2)
   test_case_02 || exit $RC
@@ -386,6 +434,9 @@ case "$1" in
   ;;
 5)
   test_case_05 || exit $RC
+  ;;
+6)
+  test_case_06 || exit $RC
   ;;
 *)
   usage
