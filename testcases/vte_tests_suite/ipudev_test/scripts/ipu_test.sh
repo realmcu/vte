@@ -384,12 +384,6 @@ mkdir -p /tmp/ipu_dev
             ${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},I420 \
                     -o  ${WD},${HT},${i} -n /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}
 
-            if [ $IPU_PERFORMANCE_TEST -eq 1 ]
-            then            
-                run_time=`cat /tmp/ipu_dev/sys_time.txt`
-                echo -e "$j\t$run_time \t -m $MODE -f $fc -i ${WD},${HT},I420 -o ${WD},${HT},${i}" >> ipu_performance.txt
-            fi
-
             if [ $? != 0 ]; then
                 echo "TST ERROR: can not convert from 422P to $i"
             else
@@ -418,12 +412,6 @@ mkdir -p /tmp/ipu_dev
                                 -o  ${k},${tf},$r -s ${efb0},0,$l -n /dev/null /tmp/ipu_dev/tmp.dat \
 	                            || RC=$(expr $RC + 1)
             
-                                if [ $IPU_PERFORMANCE_TEST -eq 1 ]
-                                then            
-                                    run_time=`cat /tmp/ipu_dev/sys_time.txt`
-                                    echo -e "$j\t $run_time \t -m $MODE -f $fc -i ${WD},${HT},${i} -c ${CRP} -o  ${k},${tf},$r -s ${efb0},0,$l" >> ipu_performance.txt
-                                fi
-
 	                        if [ $MODE == "0x13"  ] || [ $MODE == "0x23"  ]; then
                                 echo "TST INFO: output1 enable"
                                 if [ $w -gt $FB1XRES ] || [ $h -gt $FB1YRES ]; then
@@ -444,13 +432,6 @@ mkdir -p /tmp/ipu_dev
                                         -o  ${k},${tf},$r -s ${efb0},0,${l} -n /dev/null \
 	                                    -O ${k},${tf},$r -S ${efb2},2,${l} -N /dev/null /tmp/ipu_dev/tmp.dat \
 	                                    || RC=$(expr $RC + 1)
-
-                                    if [ $IPU_PERFORMANCE_TEST -eq 1 ]
-                                    then            
-                                        run_time=`cat /tmp/ipu_dev/sys_time.txt`
-                                        echo -e "$j\t $run_time \t -m $MODE -E 1 -f $fc -i ${WD},${HT},${i} -c ${CRP} -o  ${k},${tf},$r -s ${efb0},0,${l} -O ${k},${tf},$r -S ${efb2},2,${l}" >> ipu_performance.txt
-                                    fi
-
 	                            fi
 	                        fi
                             sleep 1
@@ -564,18 +545,83 @@ test_case_07()
     tst_resm TINFO "test $TST_Count: $TCID "
 
     #TODO add function test scripts here
-
-    IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv 720+480+SD720x480.yuv"
-    RESLIST="160,120 320,240"
-    fc=10
-    #FMLIST="I420 422P"
-    IPU_PERFORMANCE_TEST=1
+    
+    #TST_CMD=ipu_dev_test_pt
+    #IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv 720+480+SD720x480.yuv"
+    IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv"
+    fc=300
+    FMLIST="RGBP"
+    MODELIST="0x11 0x12 0x14 0x21 0x22 0x24 0x23"
     rm -f ipu_performance.txt
-    test_case_02
+    
+    mkdir -p /tmp/ipu_dev
+
+    for infile in ${IN_FILE}
+    do
+        echo "TST_INFO: ---------------------------------------"
+        echo "TST_INFO: IPU performance test for file ${infile}"
+        
+        WD=$(echo $infile | sed "s/+/ /g" | awk '{print $1}' )
+        HT=$(echo $infile | sed "s/+/ /g" | awk '{print $2}' )
+        infilename=$(echo $infile | sed "s/+/ /g"| awk '{print $3}')
+
+        for mode_task in ${MODELIST}
+        do
+            echo "TST_INFO: Mode is ${mode_task}"
+            for format in ${FMLIST}
+            do
+                echo "TST_INFO: output format is: ${format}"
+                if [ $mode_task == "0x23"  ]; then
+                
+                    echo "TST INFO: -----------multi-display test------------"
+                    ${TST_CMD} -m ${mode_task} -f 300 -E 1 -i $WD,$HT,I420 -o \
+                    $WD,$HT,$format,0 -s 1,0,0,0 -O $WD,$HT,$format,0 -S 1,1,0,$HT \
+                    ${STREAM_PATH}/video/${infilename} 
+                    sleep 3
+
+                    run_time=`cat /tmp/ipu_dev/sys_time.txt`
+                    echo -e "${infilename}\t multi-dispaly\t $run_time \t -m ${mode_task} -i $WD,$HT,I420 -o $WD,$HT,$format,0 -s 1,0,0,0 -O $WD,$HT,$format,0 -S 1,1,0,$HT" >> ipu_performance.txt
+                    echo ""
+
+                else
+
+                    echo "TST_INFO: --------single display---------------"
+                    ${TST_CMD} -m ${mode_task} -f 300 -i $WD,$HT,I420 -o \
+                    $WD,$HT,$format,0 -s 1,0,0,0 ${STREAM_PATH}/video/${infilename}
+                    sleep 3
+                
+                    run_time=`cat /tmp/ipu_dev/sys_time.txt`
+                    echo -e "${infilename}\t sigle-display \t $run_time \t -m ${mode_task} -i ${WD},${HT},I420 -o ${WD},${HT},$format,0 -s 1,0,0,0" >> ipu_performance.txt
+
+                    echo "TST_INFO: ---------crop test------------"
+                    ${TST_CMD} -m ${mode_task} -f 300 -i $WD,$HT,I420 -c 32,32,64,64 -o \
+                    $WD,$HT,$format,0 -s 1,0,0,0 ${STREAM_PATH}/video/${infilename} 
+                    sleep 3
+
+                    run_time=`cat /tmp/ipu_dev/sys_time.txt`
+                    echo -e "${infilename}\t crop test \t $run_time \t -m ${mode_task} -i ${WD},${HT},I420 -c 32,32,64,64 -o ${WD},${HT},$format,0 -s 1,0,0,0" >> ipu_performance.txt
+
+                    echo "TST_INFO: --------- resize test --------------------"
+                
+                    for outsize in $RESLIST
+                    do
+                        echo "TST INFO: output $outsize"
+	                    out_w=$(echo $outsize | sed "s/,/ /g" | awk '{print $1}')
+	                    out_h=$(echo $outsize | sed "s/,/ /g" | awk '{print $2}')
+
+                        ${TST_CMD} -m ${mode_task} -f 300 -i $WD,$HT,I420 -o \
+                        $out_w,$out_h,$format,0 -s 1,0,0,0 ${STREAM_PATH}/video/${infilename}
+                        sleep 3
+                
+                        run_time=`cat /tmp/ipu_dev/sys_time.txt`
+                        echo -e "${infilename}\t resize test \t $run_time \t -m ${mode_task} -i ${WD},${HT},I420 -o ${out_w},${out_h},$format,0 -s 1,0,0,0" >> ipu_performance.txt
+                    done
+                fi
+            done
+        done
+    done
+
     RC=$?
-    IPU_PERFORMANCE_TEST=0
-    IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv"
-    RESLIST="160,120"
     return $RC
 }
 
@@ -596,7 +642,7 @@ RESLIST="160,120"
 fc=1
 CROPLIST="32,32,64,64"
 FBPOS="5,10"
-TST_CMD=ipu_dev_test_pt
+TST_CMD=ipu_dev_test
 
 MODE=
 CRP=
@@ -609,7 +655,6 @@ FB2XRES=
 FB2YRES=
 FB2BITS=
 
-IPU_PERFORMANCE_TEST=0
 
 usage()
 {
