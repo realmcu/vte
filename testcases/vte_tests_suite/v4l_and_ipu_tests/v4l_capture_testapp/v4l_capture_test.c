@@ -154,6 +154,7 @@ struct v4l2_crop crop;
 
 unsigned long gOrigPixFormat = V4L2_PIX_FMT_RGB565;
 
+static int inSrc = -1;
 /*======================== GLOBAL CONSTANTS =================================*/
 
 
@@ -312,6 +313,9 @@ int open_device(void)
 int close_device(void)
 {
         int retValue = TPASS;
+	
+	if( gFdV4L > 0 && inSrc != -1)
+	   ioctl(gFdV4L, VIDIOC_S_INPUT, &inSrc);
 
         if((gFdV4L > 0) && (close(gFdV4L) < 0))
         {
@@ -993,6 +997,7 @@ int init_device (void)
         if( gV4LTestConfig.inputSrc == eInCSI_IC_MEM)
 	{
 	  int index = eInCSI_IC_MEM;
+	  ioctl (gFdV4L, VIDIOC_G_INPUT, &inSrc);
 	  if(ioctl (gFdV4L, VIDIOC_S_INPUT, &index)< 0)
 	  {
             tst_resm(TFAIL, "select input CSI_IC_MEM FAIL" );
@@ -1000,6 +1005,7 @@ int init_device (void)
 	  }
 	}else if( gV4LTestConfig.inputSrc == eInCSI_MEM){
 	  int index = eInCSI_MEM;
+	  ioctl (gFdV4L, VIDIOC_G_INPUT, &inSrc);
 	  if(ioctl (gFdV4L, VIDIOC_S_INPUT, &index)< 0)
 	  {
             tst_resm(TFAIL, "select input CSI_MEM FAIL" );
