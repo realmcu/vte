@@ -79,11 +79,13 @@ typedef struct COLORKEY_DATA{
 int pc;
 union{
 unsigned char value[4];
+struct sPIXEL{
 unsigned char alpa;
 unsigned char r;
 unsigned char g;
 unsigned char b;
-} uValue;
+}pixel;
+}uValue;
 } sCOLOR_KEY;
 
 typedef struct DRAW_PATTERN{
@@ -289,7 +291,7 @@ BOOL ck_op(void * pr)
  struct mxcfb_color_key key;
  sCOLOR_KEY * mp = (sCOLOR_KEY *) pr; 
  key.enable = 1;
- key.color_key = ((mp->uValue.r)<<16)&((mp->uValue.g)<<8)&(mp->uValue.b);
+ key.color_key = ((mp->uValue.pixel.r)<<16)|((mp->uValue.pixel.g)<<8)|(mp->uValue.pixel.b);
  CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_CLR_KEY, &key));
  return TRUE;
 }
