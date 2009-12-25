@@ -25,7 +25,7 @@ SRCS=$(wildcard *.c)
 OBJS=$(patsubst %.c,%.o,$(SRCS))
 
 TARGET=asrc_testapp
-SCRIPT=asrc_test1.sh
+SCRIPT=asrc_test1.sh asrc_grp_conv.sh asrc_clock_source_test1.sh asrc_clock_source_test2.sh asrc_clock_source_test3.sh
 
 all: $(TARGET)
 	rm -f $(OBJS)
