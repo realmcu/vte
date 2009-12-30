@@ -163,6 +163,15 @@ int parse_arg(int argc, char ** argv)
    return -1;
 
  sprintf(fb_dev, "/dev/fb%s", argv[argc - 1]);
+
+  /*for imx system has only 3 fb*/
+ if(strcmp(fb_dev,"/dev/fb0") == 0)
+ system("echo 0 > /sys/class/graphics/fb0/blank");
+ if(strcmp(fb_dev,"/dev/fb1") == 0)
+ system("echo 0 > /sys/class/graphics/fb1/blank");
+ if(strcmp(fb_dev,"/dev/fb2") == 0)
+ system("echo 0 > /sys/class/graphics/fb2/blank");
+
  fb_fd = open(fb_dev, O_RDWR);
  if(fb_fd == -1)
  {
@@ -282,6 +291,7 @@ BOOL alpha_op(void * pr)
  sALPHA * mp = (sALPHA *)pr; 
  gbl_alpha.enable = 1;
  gbl_alpha.alpha = mp->value;
+ printf("alpha value %d \n", mp->value);
  CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_GBL_ALPHA, &gbl_alpha));
  return TRUE; 
 }
@@ -328,12 +338,14 @@ void help()
 {
  printf(
   "USAGE: \n imx_fb [OPS] [OPN] <Values> <fb number> \r\n  \
-   OPS: SET / GET \r\n                           \
-   OPN: ALPHA / COLORKEY \r\n                    \
-   Values:               \r\n                    \
-   for ALPHA 1 integer.  \r\n                    \
-   for COLORKEY 3 interger \r\n                  \
-   fb number: 0 / 1 / 2  \r\n                    \
+   OPS: SET / GET / DRAW \r\n          \
+   OPN: ALPHA / COLORKEY / PATTERN \r\n   \
+   Values:               \r\n   \
+   for ALPHA 1 integer.  \r\n   \
+   for COLORKEY 3 interger \r\n \
+   for PATTERN RED/GREEN/BLUE \r\n \
+   fb number:           \r\n    \
+   0 / 1 / 2  \r\n   \
   "
  );
 }
