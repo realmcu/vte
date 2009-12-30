@@ -82,41 +82,25 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-echo "swith two layer to TVOUT"
-echo 0 > /sys/class/graphics/fb0/blank 
-echo 4 > /sys/class/graphics/fb0/blank
-echo 4 > /sys/class/graphics/fb1/blank
-echo 4 > /sys/class/graphics/fb2/blank
-echo 1-layer-fb > /sys/class/graphics/fb0/fsl_disp_property
-echo U:720x480i-60 > /sys/class/graphics/fb1/mode
-echo 0 > /sys/class/graphics/fb1/blank
+#set fb0 alpha to 255
+imx_fb SET ALPHA 255 0
 
-sleep 2
-#set fb1 alpha to 255
-imx_fb SET ALPHA 255 1
+#set fb0 color key to red
+imx_fb SET COLORKEY 255 0 0 0
 
-#set fb1 color key to red
-imx_fb SET COLORKEY 255 0 0 1
+#draw a red pattern on fb0
+imx_fb DRAW PATTERN RED 0
 
-#draw a red pattern on fb
-imx_fb DRAW PATTERN RED 1
+#draw a green pattern on fb2
+imx_fb DRAW PATTERN GREEN 2
 
-echo "please see the screen with video"
+echo  "did you see the screen in GREEN ?"
 
-#play a v4l video in fb0
-/unit_tests/mxc_v4l2_overlay.out -iw 640 -ih 480  -r 0 -t 5
+read -p "y / n? :" re
 
+imx_fb DRAW PATTERN BLUE 0
 
-echo "now only green screen is displayed"
-
-#draw a red pattern on fb
-imx_fb DRAW PATTERN GREEN 1
-
-#play a v4l video in fb0
-/unit_tests/mxc_v4l2_overlay.out -iw 640 -ih 480  -r 0 -t 5
-
-echo "please confirm that you see video with red block and"
-echo "no video when green "
+echo  "did you see the screen in BLUE ?"
 
 read -p "y / n? :" re
 
