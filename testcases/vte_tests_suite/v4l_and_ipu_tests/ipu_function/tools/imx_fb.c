@@ -64,7 +64,7 @@ extern "C"{
 /*operation type*/
 enum{eTP_SET = 10, eTP_GET, eTP_DRAW, eTP_INVALID};
 /*operation name*/
-enum{eTN_ALPHA, eTN_COLORKEY, eTN_PATTERN, eTN_INVALID};
+enum{eTN_ALPHA, eTN_COLORKEY, eTN_PATTERN, eTN_LALPHA, eTN_INVALID};
 
 enum{ePT_RED, ePT_GREEN, ePT_BLUE, ePT_INVALID};
 
@@ -74,6 +74,17 @@ typedef struct ALPHA_DATA{
 int pc;
 int value;
 } sALPHA;
+
+typedef struct LALPHA_DATA{
+int pc;
+union{
+int value[2];
+struct SLALPHA{
+int enable;
+int lav;
+}la;
+}la_d;
+}sLALPHA;
 
 typedef struct COLORKEY_DATA{
 int pc;
@@ -128,6 +139,7 @@ static sOP m_op;
 static sALPHA m_alpha;
 static sCOLOR_KEY m_ck;
 static sDRAW_PAT m_dr;
+static sLALPHA m_lalpha;
 
 char *TCID = "imx_ipu";
 int TST_TOTAL = 1;
@@ -139,6 +151,7 @@ void help();
 BOOL alpha_op(void *);
 BOOL ck_op(void * );
 BOOL draw_op(void *);
+BOOL lalpha_op(void *);
 
 int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b);
 
@@ -148,6 +161,7 @@ ops m_ops[]={
      alpha_op,
      ck_op,
      draw_op,
+     lalpha_op,
      NULL
 };
 
@@ -208,6 +222,11 @@ int parse_arg(int argc, char ** argv)
         m_op.op_tn = eTN_PATTERN;
         m_op.operants = &m_dr;
 	m_dr.pc = 1;
+      }else if(strncmp(argv[2],"LOCALALPHA",10) == 0)
+      {
+        m_op.op_tn = eTN_LALPHA;
+	m_op.operants = &m_lalpha;
+	m_lalpha.pc = 2;
       }else
          return -1;
       pcn = 3;
@@ -220,11 +239,14 @@ int parse_arg(int argc, char ** argv)
         case eTN_ALPHA:
 	  ((sALPHA *)(m_op.operants))->value = atoi(argv[pcn]);
 	  break;
+	case eTN_LALPHA:
+           if( pcn >= ((sLALPHA *)(m_op.operants))->pc + 3)
+	     break;
+	  ((sLALPHA *)(m_op.operants))->la_d.value[pcn - 2] = atoi(argv[pcn]);
+	   break;
 	case eTN_COLORKEY:
 	   if( pcn >= ((sCOLOR_KEY *)(m_op.operants))->pc + 3)
-	   {
 	     break;
-	   }
 	   /*skip the alpha*/
 	  ((sCOLOR_KEY *)(m_op.operants))->uValue.value[pcn - 2] = atoi(argv[pcn]);
 	  break;
@@ -294,6 +316,17 @@ BOOL alpha_op(void * pr)
  printf("alpha value %d \n", mp->value);
  CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_GBL_ALPHA, &gbl_alpha));
  return TRUE; 
+}
+
+BOOL lalpha_op(void * pr)
+{
+ struct mxcfb_loc_alpha gbl_lalpha;
+ sLALPHA * mp = (sLALPHA *)pr;
+ gbl_lalpha.enable = mp->la_d.la.enable;
+ gbl_lalpha.alpha_in_pixel = mp->la_d.la.lav;
+ printf("local alpha value %d: %d \n", mp->la_d.la.enable,mp->la_d.la.lav);
+ CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_LOC_ALPHA, &gbl_lalpha));
+ return TRUE;
 }
 
 BOOL ck_op(void * pr)
