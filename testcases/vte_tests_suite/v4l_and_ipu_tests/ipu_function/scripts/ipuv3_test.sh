@@ -115,12 +115,12 @@ return $RC
 }
 
 # Function:     test_case_02
-# Description   - Test if <TODO test function> ok
+# Description   - Test if local alpha ok
 #  
 test_case_02()
 {
 #TODO give TCID 
-TCID="test_demo2_test"
+TCID="test_local_alpha"
 #TODO give TST_COUNT
 TST_COUNT=2
 RC=0
@@ -129,6 +129,26 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
+fbset -depth 32
+
+imx_fb SET ALPHA 255 0
+
+imx_fb DRAW PATTERN RED_ALPHA 128 0
+
+imx_fb DRAW PATTERN GREEN 2
+
+imx_fb SET LOCALALPHA 1 1 0
+
+imx_fb DRAW PATTERN RED_ALPHA 255 0
+
+
+read -p  "see the screen  should be yellowi and red? y/n:" re
+
+if [ $re = 'y' ]; then
+RC=0
+else
+RC=1
+fi
 
 return $RC
 
