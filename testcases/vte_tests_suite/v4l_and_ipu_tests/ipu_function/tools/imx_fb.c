@@ -66,7 +66,7 @@ enum{eTP_SET = 10, eTP_GET, eTP_DRAW, eTP_INVALID};
 /*operation name*/
 enum{eTN_ALPHA, eTN_COLORKEY, eTN_PATTERN, eTN_LALPHA, eTN_INVALID};
 
-enum{ePT_RED, ePT_GREEN, ePT_BLUE, ePT_INVALID};
+enum{ePT_RED, ePT_GREEN, ePT_BLUE, ePT_RED_ALPHA, ePT_GREEN_ALPHA, ePT_BLUE_ALPHA,ePT_INVALID};
 
 typedef unsigned char BOOL;
 
@@ -102,6 +102,7 @@ unsigned char b;
 typedef struct DRAW_PATTERN{
 int pc;
 int value;
+int alpha;
 } sDRAW_PAT;
 
 typedef struct sOP_ARRAY{
@@ -154,6 +155,7 @@ BOOL draw_op(void *);
 BOOL lalpha_op(void *);
 
 int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b);
+int draw_pattern_alpha(int fd ,unsigned char * pfb, int r, int g, int b, int alpha);
 
 unsigned char *draw_px(unsigned char *where, struct pixel *p);
 
@@ -242,7 +244,8 @@ int parse_arg(int argc, char ** argv)
 	case eTN_LALPHA:
            if( pcn >= ((sLALPHA *)(m_op.operants))->pc + 3)
 	     break;
-	  ((sLALPHA *)(m_op.operants))->la_d.value[pcn - 2] = atoi(argv[pcn]);
+	  ((sLALPHA *)(m_op.operants))->la_d.value[pcn - 3] = atoi(argv[pcn]);
+	  printf("lalpha %d is %d\n", pcn ,((sLALPHA *)(m_op.operants))->la_d.value[pcn - 3] );
 	   break;
 	case eTN_COLORKEY:
 	   if( pcn >= ((sCOLOR_KEY *)(m_op.operants))->pc + 3)
@@ -251,13 +254,26 @@ int parse_arg(int argc, char ** argv)
 	  ((sCOLOR_KEY *)(m_op.operants))->uValue.value[pcn - 2] = atoi(argv[pcn]);
 	  break;
 	case eTN_PATTERN:
-	  if(0 == strcmp(argv[pcn],"RED"))
-	  ((sDRAW_PAT *)(m_op.operants))->value = ePT_RED;
-	  else if(0 == strcmp(argv[pcn],"GREEN"))
-	  ((sDRAW_PAT *)(m_op.operants))->value = ePT_GREEN;
-	  else
-	  ((sDRAW_PAT *)(m_op.operants))->value = ePT_BLUE;
-	   break;
+	  if(pcn == 3)
+	  {
+	    if(0 == strcmp(argv[pcn],"RED"))
+	     ((sDRAW_PAT *)(m_op.operants))->value = ePT_RED;
+	    else if(0 == strcmp(argv[pcn],"GREEN"))
+	     ((sDRAW_PAT *)(m_op.operants))->value = ePT_GREEN;
+	    else if(0 == strcmp(argv[pcn],"BLUE"))
+	     ((sDRAW_PAT *)(m_op.operants))->value = ePT_BLUE;
+	    else if(0 == strcmp(argv[pcn],"RED_ALPHA"))
+	     ((sDRAW_PAT *)(m_op.operants))->value = ePT_RED_ALPHA;
+	    else if(0 == strcmp(argv[pcn],"GREEN_ALPHA"))
+	     ((sDRAW_PAT *)(m_op.operants))->value = ePT_GREEN_ALPHA;
+	    else if(0 == strcmp(argv[pcn],"BLUE_ALPHA"))
+	     ((sDRAW_PAT *)(m_op.operants))->value = ePT_BLUE_ALPHA;
+	    else
+	     ((sDRAW_PAT *)(m_op.operants))->value = ePT_RED;
+	  }else if(pcn == 4){
+	   ((sDRAW_PAT *)(m_op.operants))->alpha = atoi(argv[pcn]);
+	   printf("transparent value is %d \n", ((sDRAW_PAT *)(m_op.operants))->alpha);
+	  }
 	 break;
 	default:
 	 return -1;
@@ -291,13 +307,22 @@ BOOL draw_op(void * pr)
  {
   case ePT_RED:
    ret = draw_pattern(fb_fd,fb_mem_ptr,255,0,0);
-  break;
+   break;
+  case ePT_RED_ALPHA:
+   ret = draw_pattern_alpha(fb_fd,fb_mem_ptr,255,0,0,mp->alpha);
+   break;
   case ePT_GREEN:
    ret = draw_pattern(fb_fd,fb_mem_ptr,0,255,0);
-  break;
+   break;
+  case ePT_GREEN_ALPHA:
+   ret = draw_pattern_alpha(fb_fd,fb_mem_ptr,0,255,0,mp->alpha);
+   break;
   default:
   case ePT_BLUE:
    ret = draw_pattern(fb_fd,fb_mem_ptr,0,0,255);
+  break;
+  case ePT_BLUE_ALPHA:
+   ret = draw_pattern_alpha(fb_fd,fb_mem_ptr,0,0,255,mp->alpha);
   break;
  } 
  munmap(fb_mem_ptr, fb_info.smem_len);
@@ -372,16 +397,80 @@ void help()
  printf(
   "USAGE: \n imx_fb [OPS] [OPN] <Values> <fb number> \r\n  \
    OPS: SET / GET / DRAW \r\n          \
-   OPN: ALPHA / COLORKEY / PATTERN \r\n   \
+   OPN: ALPHA / COLORKEY / PATTERN / LOCALALPHA \r\n   \
    Values:               \r\n   \
-   for ALPHA 1 integer.  \r\n   \
-   for COLORKEY 3 interger \r\n \
-   for PATTERN RED/GREEN/BLUE \r\n \
+   for ALPHA 1 integer(alpha value).  \r\n   \
+   for COLORKEY 3 interger(r/g/b value) \r\n \
+   for PATTERN            \r\n \
+       1 string in (RED/GREEN/BLUE) \r\n \
+       1 string in (RED_ALPHA/GREEN_ALPHA/BLUE_ALPHA) and 1 int for local alpha \r\n \
+   for LOCALALPHA  \r\n \
+       2 values (enable local alpha & enable pix alpha) \r\n \
    fb number:           \r\n    \
    0 / 1 / 2  \r\n   \
   "
  );
 }
+
+int draw_pattern_alpha(int fd ,unsigned char * pfb, int r, int g, int b, int alpha)
+{
+    struct pixel       px;       /* Store basic screen info and current pixel color      */
+    int                size;     /* Screen size in pixels                                */
+    int                i;
+    unsigned char      *fb_wr_ptr = pfb; /* Pointer to the current pixel location */
+    int                act_mode;
+    int                rv = TPASS;
+    struct fb_fix_screeninfo fx_fb_info;       /* Framebuffer constant information              */
+    struct fb_var_screeninfo mode_info;
+
+    /* Print some fb information */
+    if ((ioctl(fd, FBIOGET_VSCREENINFO, &mode_info)) < 0)
+    {
+       perror("ioctl");
+       rv = TFAIL;
+       return rv;
+    }
+
+    /* Change activation flag and apply it */
+    act_mode = mode_info.activate;
+    mode_info.activate = FB_ACTIVATE_NOW | FB_ACTIVATE_FORCE;
+    if (ioctl(fd, FBIOPUT_VSCREENINFO, &mode_info))
+    {
+       perror("ioctl");
+       rv = TFAIL;
+       return rv;
+    }
+    CALL_IOCTL(ioctl(fd, FBIOGET_FSCREENINFO, &fx_fb_info));
+    /* Fill in the px struct */
+    px.bpp = mode_info.bits_per_pixel / 8;
+    px.xres = mode_info.xres;
+    px.yres = mode_info.yres;
+    px.r_field.offset = mode_info.red.offset;
+    px.r_field.length = mode_info.red.length;
+    px.g_field.offset = mode_info.green.offset;
+    px.g_field.length = mode_info.green.length;
+    px.b_field.offset = mode_info.blue.offset;
+    px.b_field.length = mode_info.blue.length;
+    px.trans = alpha;
+    px.t_field.offset = mode_info.transp.offset;
+    px.t_field.length = mode_info.transp.length;
+    px.line_length = fx_fb_info.line_length / px.bpp;
+    size = px.line_length * px.yres;
+    /* Clear screen and fill it with some pattern */
+    px.r_color = r;
+    px.g_color = g;
+    px.b_color = b; /* Set color values */
+    for (i = 0; i < size; i++)
+        fb_wr_ptr = draw_px(fb_wr_ptr, &px);
+
+     /* Restore activation flag */
+    #if 1
+    mode_info.activate = act_mode;
+    ioctl(fd, FBIOPUT_VSCREENINFO, &mode_info);
+    #endif
+    return rv;
+}
+
 
 int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
 {
@@ -455,49 +544,6 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
 */
 unsigned char *draw_px(unsigned char *where, struct pixel *p)
 {
-#ifdef MAD_TEST
-    __u32 value;
-
-    if (!where)
-    {
-        fprintf(stderr, "where isn't a valid pointer to 'unsigned char'\n");
-        return where;
-    }
-    if (!p)
-    {
-        fprintf(stderr, "p isn't a valid pointer to 'struct pixel'\n");
-        return where;
-    }
-    /* Convert pixel color represented by 3 bytes to appropriate color depth */
-    value = (p->r_color * (1 << p->r_field.length) / (1 << 8) ) << p->r_field.offset;
-    value |= (p->g_color * (1 << p->g_field.length) / (1 << 8) ) << p->g_field.offset;
-    value |= (p->b_color * (1 << p->b_field.length) / (1 << 8) ) << p->b_field.offset;
-    switch (p->bpp * 8)
-    {
-        case 12 ... 16:
-            *where++ = *((unsigned char *)&value + 1);
-            *where++ = *((unsigned char *)&value);
-            break;
-
-        case 24:
-            *where++ = *((unsigned char *)&value + 2);
-            *where++ = *((unsigned char *)&value + 1);
-            *where++ = *((unsigned char *)&value);
-            break;
-
-        case 32:
-            /* Don't use transparency byte; this byte always equals 0 */
-            *where++; 
-            *where++ = *((unsigned char *)&value + 2);
-            *where++ = *((unsigned char *)&value + 1);
-            *where++ = *((unsigned char *)&value);
-            break;
-
-        default:
-            break;
-    }
-    return where;
-#else
         __u32 value;
         
         if (!where)
@@ -512,10 +558,19 @@ unsigned char *draw_px(unsigned char *where, struct pixel *p)
         }
         
         /* Convert pixel color represented by 3 bytes to appropriate color depth */
-        value = (p->r_color * (1 << p->r_field.length) / (1 << 8) ) << p->r_field.offset;
-        value |= (p->g_color * (1 << p->g_field.length) / (1 << 8) ) << p->g_field.offset;
-        value |= (p->b_color * (1 << p->b_field.length) / (1 << 8) ) << p->b_field.offset;
-        
+        value = (p->r_color * (1 << p->r_field.length) / (1 << 8)) << p->r_field.offset;
+        value |= (p->g_color * (1 << p->g_field.length) / (1 << 8)) << p->g_field.offset;
+        value |= (p->b_color * (1 << p->b_field.length) / (1 << 8)) << p->b_field.offset;
+        value |= (p->trans * (1 << p->t_field.length) / (1 << 8)) << p->t_field.offset;
+	if(0){
+	  static int a = 1;
+	  if(a)
+	  {
+	   printf("alpha value %d, %d \n",*((unsigned char *)&value + 3), p->trans);
+	   printf("t_field.length= %d, t_field.offset=%d \n",  p->t_field.length,  p->t_field.offset);
+	   a = 0;
+	  }
+	}
         switch (p->bpp * 8)
         {
         case 12 ... 16:
@@ -541,7 +596,6 @@ unsigned char *draw_px(unsigned char *where, struct pixel *p)
         }
         
         return where;
-#endif
 }
 
 #ifdef __cplusplus
