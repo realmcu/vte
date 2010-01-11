@@ -9,17 +9,18 @@
 #http://www.gnu.org/copyleft/gpl.html
 #
 #
-# File :        dvfs_test.sh
+# File :        dvfs.sh
 #
-# Description: enable/disable dvfs 
+# Description:  DVFS test
 #    
-#=====================================================================================
+#===============================================================================
 #Revision History:
 #                            Modification     Tracking
 # Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -----------------------
 # Blake                      20081015
 # Spring Zhang               20100108            n/a      Reduce code
+# Spring Zhang               Jan.11,2010         n/a      Add dvfs suspend test
 
 
 # Function:     setup
@@ -47,6 +48,15 @@ setup()
     export TST_COUNT=0
     # Initialize cleanup function to execute on program exit.
     # This function will be called before the test program exits.
+    BIN_DIR=`dirname $0`
+    export PATH=$PATH:$BIN_DIR
+
+    LTPTMP=${TMP}        # Temporary directory to create files, etc.
+    if [ -z $LTPTMP ]
+    then
+        LTPTMP=/tmp
+    fi
+
     trap "cleanup" 0
 
     return $RC
@@ -55,9 +65,27 @@ setup()
 cleanup()
 {
     #resume to old status
-    echo "Resume to old dvfs status"
-    echo $cur_status > ${DVFS_DIR[$PLATFORM]}/enable
+    tst_resm TINFO "Resume to old dvfs status"
+    echo $cur_status > ${DVFS_DIR[$PLATFORM]}/${status[$PLATFORM]} 
 }
+
+# Function:     usage
+#
+# Description:  - display help info.
+#
+# Return        - none
+usage()
+{
+cat <<-EOF
+
+    Use this command to test DVFS functions.
+    usage: ./${0##*/} 1  -- basic test 
+           ./${0##*/} 2  -- suspend test 
+    e.g.: ./${0##*/} 2
+
+EOF
+}
+
 
 dvfs_dir_set()
 {
@@ -117,6 +145,60 @@ dvfs_test()
     return $RC
 }
 
+dvfs_suspend()
+{
+    export TCID="TGE_LV_DVFS_SUSPEND"
+
+    RC=0
+
+    platfm.sh || PLATFORM=$?
+    if [ $PLATFORM -eq 67 ]
+    then
+        RC=$PLATFORM
+        return $RC
+    fi
+
+    #store current dvfs status. cur_status=1 - enabled, =0 - disabled
+    cur_status=`cat ${DVFS_DIR[$PLATFORM]}/${status[$PLATFORM]} | grep "enabled" | wc -l`
+
+    # For imx31/35/37/51 
+    echo 1 > ${DVFS_DIR[$PLATFORM]}/enable
+    res=`cat ${DVFS_DIR[$PLATFORM]}/${status[$PLATFORM]} | grep "enabled" | wc -l`
+    if [ $res -eq 1 ];then
+        tst_resm TINFO "dvfs is enabled"
+    else
+        tst_resm TFAIL "fail to enable dvfs"
+        RC=1
+        return $RC
+    fi
+    sleep 3 
+    
+    echo "*************************************"
+    echo "* please press key to resume system *"
+    echo "*************************************"
+    echo -n standby > /sys/power/state
+    tst_resm TPASS "Resume from suspend..."
+
+    sleep 5
+    echo "*************************************"
+    echo "* please press key to resume system *"
+    echo "*************************************"
+    echo -n mem > /sys/power/state
+    tst_resm TPASS "Resume from mem..."
+    
+    echo 0 > ${DVFS_DIR[$PLATFORM]}/enable
+    res=`cat ${DVFS_DIR[$PLATFORM]}/${status[$PLATFORM]} | grep "disabled" | wc -l`
+    if [ $res -eq 1 ];then
+        tst_resm TINFO "dvfs is disabled"
+    else
+        tst_resm TFAIL "fail to disable dvfs"
+        RC=1
+    fi
+	
+    return $RC
+}
+
+
 # Function:     main
 #
 # Description:  - Execute all tests, exit with test status.
@@ -130,5 +212,18 @@ RC=0
 # bash specified script, using array, not dash-compatibility
 setup  || exit $RC
 dvfs_dir_set || exit $RC
-dvfs_test || exit $RC
+
+case "$1" in
+    1)
+    dvfs_test || exit $RC
+    ;;
+    2)
+    dvfs_suspend || exit $RC
+    ;;
+    *)
+    usage
+    exit 67
+    ;;
+esac
+
 
