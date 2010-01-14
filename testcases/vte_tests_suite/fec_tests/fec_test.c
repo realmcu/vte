@@ -1,5 +1,5 @@
 /***
-**Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright 2005-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -8,37 +8,38 @@
 **http://www.opensource.org/licenses/gpl-license.html
 **http://www.gnu.org/copyleft/gpl.html
 **/
-/*================================================================================================*/
+/*===========================================================================*/
 /**
         @file   fec_test.c
 
         @brief  Test scenario C source for fec driver test.
-====================================================================================================
+===============================================================================
 Revision History:
-                            Modification     Tracking
-Author/core ID                  Date          Number    Description of Changes
--------------------------   ------------    ----------  -------------------------------------------
-D.Khoroshev/b00313           10/05/2006     TLSbo76803  Initial version
+                   Modification     Tracking
+Author/core ID         Date          Number    Description of Changes
+---------------   ------------    ----------  ---------------------------------
+D.Khoroshev/b00313 10/05/2006     TLSbo76803  Initial version
+S.Zhang/b17931     14/01/2010     ENGR119014  FEC driver change
 
-====================================================================================================
+===============================================================================
 Portability:  ARM GCC
-==================================================================================================*/
+=============================================================================*/
 
-/*==================================================================================================
-                                        INCLUDE FILES
-==================================================================================================*/
+/*=============================================================================
+                               INCLUDE FILES
+=============================================================================*/
 /* Verification Test Environment Include Files */
 #include "fec_test.h"
 #include <ctype.h>
 
-/*==================================================================================================
-                                       LOCAL MACROS
-===================================================================================================*/ 
+/*=============================================================================
+                               LOCAL MACROS
+=============================================================================*/
 #define        SOCKET_AF(af)        (((af) == AF_UNSPEC) ? AF_INET : (af))
 
-/*==================================================================================================
-                                       GLOBAL VARIABLES
-===================================================================================================*/
+/*============================================================================
+                              GLOBAL VARIABLES
+=============================================================================*/
 int sock = -1;
 int af = AF_UNSPEC;
 char *hostname = NULL;
@@ -170,9 +171,9 @@ static struct if_name_t af_names[] = {
         /* For now...                   */
 };
 
-/*==================================================================================================
-                                 LOCAL FUNCTIONS PROTOTYPES 
-==================================================================================================*/
+/*============================================================================
+                        LOCAL FUNCTIONS PROTOTYPES 
+=============================================================================*/
 int  fec_test_on(void);
 int  fec_test_off(void);
 int  fec_test_config(void);
@@ -201,11 +202,10 @@ int in_cksum(unsigned short *buf, int sz);
 int ping(const char *hostname);
 void VT_noresp_handler(int arg);
 int VT_ask_user(char *msg);
-/*==================================================================================================
-                                       LOCAL FUNCTIONS
-==================================================================================================*/
+/*=============================================================================
+                               LOCAL FUNCTIONS
+=============================================================================*/
 
-/*================================================================================================*/
 /*===== VT_fec_test_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution
@@ -215,7 +215,6 @@ int VT_ask_user(char *msg);
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
 int VT_fec_test_setup(void)
 {
         int rv = TPASS;
@@ -246,7 +245,6 @@ int VT_fec_test_setup(void)
         return rv;
 }
 
-/*================================================================================================*/
 /*===== VT_fec_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
@@ -256,7 +254,6 @@ int VT_fec_test_setup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
 int VT_fec_test_cleanup(void)
 {
         if (sock >= 0)
@@ -264,7 +261,6 @@ int VT_fec_test_cleanup(void)
         return TPASS;
 }
 
-/*================================================================================================*/
 /*===== VT_fec_test =====*/
 /**
 @brief  Pmic power test scenario  function
@@ -274,7 +270,6 @@ int VT_fec_test_cleanup(void)
 @return On success - return TPASS
         On failure - return TFAIL
 */
-/*================================================================================================*/
 int VT_fec_test(void)
 {
         int VT_rv = TPASS;
@@ -350,7 +345,6 @@ int VT_fec_test(void)
         return VT_rv;
 }
 
-/*================================================================================================*/
 /*===== fec_get_info =====*/
 /**
 @brief  Display information about fec controller
@@ -360,7 +354,6 @@ int VT_fec_test(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
 int fec_get_info(void)
 {
         struct ifreq ifr;
@@ -388,7 +381,6 @@ int fec_get_info(void)
         return TPASS;
 }
 
-/*================================================================================================*/
 /*===== c_flagname =====*/
 /**
 @brief  Returns flag name by it's value.
@@ -398,7 +390,6 @@ int fec_get_info(void)
 @return On success - returns pointer to string containing flag name
         On failure - returns NULL
 */
-/*================================================================================================*/
 char *c_flagname(short flag)
 {
         int i, nb_flags = sizeof(ifflag_names) / sizeof(struct if_name_t);
@@ -413,7 +404,6 @@ char *c_flagname(short flag)
         return NULL;
 }
 
-/*================================================================================================*/
 /*===== c_afname =====*/
 /**
 @brief  Returns flag name by it's value.
@@ -423,7 +413,6 @@ char *c_flagname(short flag)
 @return On success - returns pointer to string containing flag name
         On failure - returns NULL
 */
-/*================================================================================================*/
 char *c_afname(sa_family_t af)
 {
         int i, l;
@@ -443,7 +432,6 @@ char *c_afname(sa_family_t af)
         return NULL;
 }
 
-/*================================================================================================*/
 /*===== print_if_info =====*/
 /**
 @brief  print common info about interface.
@@ -453,7 +441,6 @@ char *c_afname(sa_family_t af)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
 int print_if_info(void)
 {
         int goterror = 0;
@@ -530,7 +517,6 @@ int print_if_info(void)
 }
 
 
-/*================================================================================================*/
 /*===== check_entries =====*/
 /**
 @brief  Change main parameters of ethernet interface such as ip address, broadcast address, netmask,
@@ -541,7 +527,6 @@ int print_if_info(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
 int check_entries(void)
 {
         int goterror = 0;
@@ -817,7 +802,10 @@ int check_entries(void)
                 memcpy(hwa, hwa_test, sizeof hwa_test);
                 if (gTestConfig.mVerbose)
                         tst_resm(TINFO, "\t+shutting down %s interface!", gTestConfig.ifname);
-                interface_down();
+                /* Spring: FEC driver changed, clocks will be disabled if down eth0 
+                 * ENGR00118714, ENGR00119014
+                 * */
+                /* interface_down(); */
                 if (ioctl(sock, SIOCSIFHWADDR, &ifr) == -1)
                 {        
                         tst_resm(TWARN, "ioctl SIOCSIFHWADDR: %s", strerror(errno));
@@ -1037,7 +1025,6 @@ int check_entries(void)
         return goterror ? TFAIL : TPASS;
 }
 
-/*================================================================================================*/
 /*===== print_ifmap_info =====*/
 /**
 @brief  print device memory map info.
@@ -1047,7 +1034,6 @@ int check_entries(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
 int print_ifmap_info(void)
 {
         int goterror = 0;
@@ -1072,7 +1058,6 @@ int print_ifmap_info(void)
         return goterror ? TFAIL : TPASS;
 }
 
-/*================================================================================================*/
 /*===== print_ifflags_info =====*/
 /**
 @brief  Display information about the IF flags.
@@ -1081,7 +1066,6 @@ int print_ifmap_info(void)
 
 @return none
 */
-/*================================================================================================*/
 void print_ifflags_info(short ifflags)
 {
         int i = 0, nb_flags = sizeof(ifflag_names) / sizeof(struct if_name_t);
@@ -1096,7 +1080,6 @@ void print_ifflags_info(short ifflags)
         tst_resm(TINFO, "------------------------------");
 }
 
-/*================================================================================================*/
 /*===== in_cksum =====*/
 /**
 @brief  This function generates packet checksums.
@@ -1105,7 +1088,6 @@ void print_ifflags_info(short ifflags)
 
 @return checksum
 */
-/*================================================================================================*/
 int in_cksum(unsigned short *buf, int sz)
 {
         int nleft = sz;
@@ -1129,7 +1111,6 @@ int in_cksum(unsigned short *buf, int sz)
         return ans;
 }
 
-/*================================================================================================*/
 /*===== inet_ntoa =====*/
 /**
 @brief  This function returns string containing ip address, string is allocated in static buffer
@@ -1138,7 +1119,6 @@ int in_cksum(unsigned short *buf, int sz)
 
 @return pointer to string
 */
-/*================================================================================================*/
 char *inet_ntoa(const struct in_addr in)
 {
         static char addr_buf[sizeof "255.255.255.255"];
@@ -1153,7 +1133,6 @@ char *inet_ntoa(const struct in_addr in)
         return addr_buf;
 }
 
-/*================================================================================================*/
 /*===== inet_ntoha =====*/
 /**
 @brief  This function returns string containing hardware address, string is allocated in static buffer
@@ -1162,7 +1141,6 @@ char *inet_ntoa(const struct in_addr in)
 
 @return pointer to string
 */
-/*================================================================================================*/
 char *inet_ntoha(const char *sa_data)
 {
         static char haddr[sizeof "00:11:22:33:44:55"];
@@ -1173,7 +1151,6 @@ char *inet_ntoha(const char *sa_data)
         return haddr;
 }
 
-/*================================================================================================*/
 /*===== inet_aton =====*/
 /**
 @brief  This function parse string containing ip address and store it in struct in_addr
@@ -1183,7 +1160,6 @@ char *inet_ntoha(const char *sa_data)
 
 @return 1 if success, otherwise zero
 */
-/*================================================================================================*/
 int inet_aton(const char *cp, struct in_addr *inp)
 {
         unsigned char *hin=(unsigned char *)inp;
@@ -1198,7 +1174,6 @@ int inet_aton(const char *cp, struct in_addr *inp)
         return read_val == 4;
 }
 
-/*================================================================================================*/
 /*===== inet_haton =====*/
 /**
 @brief  This function parse string containing hardware address and store it in buffer sa_data
@@ -1208,7 +1183,6 @@ int inet_aton(const char *cp, struct in_addr *inp)
 
 @return 1 if success, otherwise zero
 */
-/*================================================================================================*/
 int inet_haton(const char *cp, char *sa_data)
 {
         /* Hardware address */
@@ -1224,7 +1198,6 @@ int inet_haton(const char *cp, char *sa_data)
         return 1;
 }
 
-/*================================================================================================*/
 /*===== detect_beat_ethtool =====*/
 /**
 @brief  This function get link status via ethtool interface.
@@ -1233,7 +1206,6 @@ int inet_haton(const char *cp, char *sa_data)
 
 @return IFSTATUS_UP or IF_STATUS down if no error occured else IFSTATUS_ERR
 */
-/*================================================================================================*/
 ifstatus_t detect_beat_ethtool(void)
 {
         struct ifreq ifr;
@@ -1255,7 +1227,6 @@ ifstatus_t detect_beat_ethtool(void)
         return edata.data ? IFSTATUS_UP : IFSTATUS_DOWN;
 }
 
-/*================================================================================================*/
 /*===== detect_beat_iff =====*/
 /**
 @brief  This function get link status via standart IFF interface.
@@ -1264,7 +1235,6 @@ ifstatus_t detect_beat_ethtool(void)
 
 @return IFSTATUS_UP or IF_STATUS down if no error occured else IFSTATUS_ERR
 */
-/*================================================================================================*/
 ifstatus_t detect_beat_iff(void)
 {
         struct ifreq ifr;
@@ -1281,7 +1251,6 @@ ifstatus_t detect_beat_iff(void)
         return ifr.ifr_flags & IFF_RUNNING ? IFSTATUS_UP : IFSTATUS_DOWN;
 }
 
-/*================================================================================================*/
 /*===== detect_beat_mii =====*/
 /**
 @brief  This function get link status via mii interface.
@@ -1290,7 +1259,6 @@ ifstatus_t detect_beat_iff(void)
 
 @return IFSTATUS_UP or IF_STATUS down if no error occured else IFSTATUS_ERR
 */
-/*================================================================================================*/
 ifstatus_t detect_beat_mii(void)
 {
         struct ifreq ifr;
@@ -1317,7 +1285,6 @@ ifstatus_t detect_beat_mii(void)
         return (((unsigned short*) &ifr.ifr_data)[3] & 0x0004) ? IFSTATUS_UP : IFSTATUS_DOWN;
 }
 
-/*================================================================================================*/
 /*===== interface_up =====*/
 /**
 @brief  This function sets flag IF_UP unless flag is already set.
@@ -1327,7 +1294,6 @@ ifstatus_t detect_beat_mii(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
 int interface_up(void)
 {
         struct ifreq ifr;
@@ -1361,7 +1327,6 @@ int interface_up(void)
         return TPASS;
 }
 
-/*================================================================================================*/
 /*===== interface_down =====*/
 /**
 @brief  This function resets flag IF_UP unless flag is no set.
@@ -1371,7 +1336,6 @@ int interface_up(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
 int interface_down(void)
 {
         struct ifreq ifr;
@@ -1405,7 +1369,6 @@ int interface_down(void)
         return TPASS;
 }
 
-/*================================================================================================*/
 /*===== store_config =====*/
 /**
 @brief  This function stores parameters of ethernet interface in global structure.
@@ -1415,7 +1378,6 @@ int interface_down(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
 int store_config(void)
 {
         struct ifreq ifr;
@@ -1487,7 +1449,6 @@ int store_config(void)
         return goterror ? TFAIL : TPASS;        
 }
 
-/*================================================================================================*/
 /*===== print_config =====*/
 /**
 @brief  This function prints stored ethernet interface's parameters.
@@ -1497,7 +1458,6 @@ int store_config(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
 int print_config(void)
 {
         def_config *dc = &gTestConfig.dc;
@@ -1519,7 +1479,6 @@ int print_config(void)
 }
 
 
-/*================================================================================================*/
 /*===== fill_defconfig =====*/
 /**
 @brief  This function initializes global structure gTestConfig.
@@ -1529,7 +1488,6 @@ int print_config(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
 void fill_defconfig(void)
 {
         def_config *dc = &gTestConfig.dc;
@@ -1551,8 +1509,6 @@ void fill_defconfig(void)
         dc->sifr_qlen = 0;
 }
 
-/* ping */
-/*================================================================================================*/
 /*===== ping =====*/
 /**
 @brief  Send ping to specified ip address.
@@ -1562,7 +1518,6 @@ void fill_defconfig(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
 int ping(const char *host_ip)
 {
         struct sockaddr_in pingaddr;
@@ -1621,7 +1576,6 @@ int ping(const char *host_ip)
         return TPASS;
 }
 
-/*================================================================================================*/
 /*===== VT_noresp_handler =====*/
 /**
 @brief  Function for handling alarm signal in ping test.
@@ -1630,7 +1584,6 @@ int ping(const char *host_ip)
 
 @return none
 */
-/*================================================================================================*/
 void VT_noresp_handler(int arg)
 {
         tst_resm(TWARN, "No response from %s", gTestConfig.dc.def_test_ping_addr);
@@ -1638,7 +1591,6 @@ void VT_noresp_handler(int arg)
         exit(TFAIL);
 }
 
-/*================================================================================================*/
 /*===== VT_ask_user =====*/
 /**
 @brief  Show message and read answer('y'|'n'|'q')
@@ -1647,7 +1599,6 @@ void VT_noresp_handler(int arg)
 
 @return TPASS, TFAIL or TRETR according to the user's answer
 */
-/*================================================================================================*/
 int VT_ask_user(char *msg)
 {
         int answer = TRETR;
