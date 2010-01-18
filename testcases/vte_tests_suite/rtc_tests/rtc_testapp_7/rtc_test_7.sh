@@ -1,4 +1,5 @@
-#Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#!/bin/sh
+#Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -6,7 +7,6 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
 #
 #
 # File :        rtc_test_7.sh
@@ -14,14 +14,11 @@
 # Description:  wakeup system by rtc alarm.
 #==============================================================================
 #Revision History:
-#                            Modification     Tracking
-# Author                          Date          Number    Description of Changes
-#-------------------------   ------------    ----------  ----------------------
-# Blake                      29/12/2008 
-
-#Set path variable to add vte binaries
-#export TESTCASES_HOME= `pwd`
-#export PATH=${PATH}:${TESTCASES_HOME}
+#                    Modification     Tracking
+# Author                 Date          Number    Description of Changes
+#-----------------   ------------    ----------  ----------------------
+# Blake               29/12/2008 
+# Spring              18/10/2010        n/a       Add WAIT mode test
 
 # Function:     setup
 #        
@@ -78,14 +75,29 @@ wakeup_test()
 {
     RC=0
 
-    rtc_testapp_7 -O on -T 5 
+    rtc_testapp_7 -O on -T 10
     sleep 2    
     echo standby > /sys/power/state
     
     rtc_testapp_7 -O off 
     if [ $? -eq 0 ]
     then
-        tst_resm TPASS " test case work as expected"
+        tst_resm TPASS " RTC wakeup from STOP mode"
+    else
+        tst_resm TFAIL " test case do NOT work as expected"
+        RC=1
+        return $RC
+    fi
+
+    #Test WAIT mode
+    rtc_testapp_7 -O on -T 10
+    sleep 2    
+    echo mem > /sys/power/state
+    
+    rtc_testapp_7 -O off 
+    if [ $? -eq 0 ]
+    then
+        tst_resm TPASS " RTC wakeup from WAIT mode"
     else
         tst_resm TFAIL " test case do NOT work as expected"
         RC=1
