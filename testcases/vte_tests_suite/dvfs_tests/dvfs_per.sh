@@ -140,11 +140,7 @@ dvfs_per_basic()
     anl_res $? V4L2
 
     #suspend test
-    sleep 3 
-    echo "*************************************"
-    echo "* please press key to resume system *"
-    echo "*************************************"
-    echo -n standby > /sys/power/state
+    rtc_testapp_6 -m standby -T 10
     tst_resm TPASS "Resume from suspend..."
 
     #enable dvfs-core
@@ -161,10 +157,7 @@ dvfs_per_basic()
     anl_res $? ALSA
 
     sleep 5
-    echo "*************************************"
-    echo "* please press key to resume system *"
-    echo "*************************************"
-    echo -n mem > /sys/power/state
+    rtc_testapp_6 -m mem -T 10
     tst_resm TPASS "Resume from mem..."
 
     res=`cat /proc/cpu/clocks | grep ahb | grep 33250000 | wc -l`
@@ -227,10 +220,21 @@ dvfs_per_stress()
         bonnie++ -d /mnt/msc -s 32 -r 16 -u 0:0 -m FSL
         anl_res $? bonnie_test
         tst_resm TINFO "bonnie++ times: $i"
-        i=`expr i + 1`
+        i=`expr $i + 1`
     done
 
-    tst_resm TPASS "Pass bonnie++ stress test"
+    i=0
+    while [ $i -lt 50 ]; do
+        rtc_testapp_6 -m standby -T 10
+        anl_res $? suspend_test
+        rtc_testapp_6 -m mem -T 10
+        anl_res $? suspend_test
+        tst_resm TINFO "suspend test times: $i"
+        i=`expr $i + 1`
+    done
+
+
+    tst_resm TPASS "Pass bonnie++ and suspend stress test"
 }
 
 # Function:     main
