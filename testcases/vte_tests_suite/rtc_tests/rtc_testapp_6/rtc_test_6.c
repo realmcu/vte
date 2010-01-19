@@ -1,5 +1,5 @@
 /***
-**Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -8,29 +8,30 @@
 **http://www.opensource.org/licenses/gpl-license.html
 **http://www.gnu.org/copyleft/gpl.html
 **/
-/*================================================================================================*/
+/*===========================================================================*/
 /**
         @file   rtc_test_6.c
 
         @brief  RTC time and date test
-====================================================================================================
+===============================================================================
 Revision History:
-                            Modification     Tracking
-Author                          Date          Number    Description of Changes
--------------------------   ------------    ----------  -------------------------------------------
+                Modification     Tracking
+Author              Date          Number    Description of Changes
+-------------   ------------    ----------  -----------------------------------
 
-Blake                       12/29/2008                   Initial version
-====================================================================================================
+Blake            12/29/2008                   Initial version
+Spring Zhang     01/19/2010                  Add standby/mem options 
+===============================================================================
 Portability:  ARM GCC
-==================================================================================================*/
+=============================================================================*/
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*==================================================================================================
+/*=============================================================================
                                         INCLUDE FILES
-==================================================================================================*/
+=============================================================================*/
 /* Standard Include Files */
 #include <errno.h>
     
@@ -40,18 +41,18 @@ extern "C"{
 /* Verification Test Environment Include Files */
 #include "rtc_test_6.h"
 
-/*==================================================================================================
+/*=============================================================================
                                         LOCAL MACROS
-==================================================================================================*/
+=============================================================================*/
 #if !defined(TRUE) && !defined(FALSE)
         #define TRUE  1
         #define FALSE 0
 #endif  
 #define PRECISION 2
 
-/*==================================================================================================
+/*=============================================================================
                           LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
-==================================================================================================*/
+=============================================================================*/
 enum RTC_STATE
 {
         RTC_TIME = 0,     /* Current time */	
@@ -60,14 +61,14 @@ enum RTC_STATE
         RTC_TOTAL_STATES  /* Total count of the states */
 };
 
-/*==================================================================================================
+/*=============================================================================
                                        LOCAL CONSTANTS
-==================================================================================================*/
+=============================================================================*/
 
 
-/*==================================================================================================
+/*=============================================================================
                                        LOCAL VARIABLES
-==================================================================================================*/
+=============================================================================*/
 int               file_desc = -1; 
 struct rtc_time   saved_time;    /* Saved time value */	
 struct rtc_time   saved_alarm;   /* Saved alarms time value */
@@ -75,28 +76,27 @@ struct rtc_wkalrm saved_wkalarm; /* Saved wake up alarms time value */
 int               saved_states[RTC_TOTAL_STATES] = {0}; /* Flags */
 int               is_ok = 1;			
 
-/*==================================================================================================
+/*=============================================================================
                                        GLOBAL CONSTANTS
-==================================================================================================*/
+=============================================================================*/
 
 
-/*==================================================================================================
+/*=============================================================================
                                        GLOBAL VARIABLES
-==================================================================================================*/
+=============================================================================*/
 
 
-/*==================================================================================================
+/*=============================================================================
                                    LOCAL FUNCTION PROTOTYPES
-==================================================================================================*/
+=============================================================================*/
 int save_rtc_state( enum RTC_STATE rtc_state );
 int restore_rtc_state( enum RTC_STATE rtc_state );
 int ask_user(char *question);
 
-/*==================================================================================================
+/*=============================================================================
                                        LOCAL FUNCTIONS
-==================================================================================================*/
+=============================================================================*/
 
-/*================================================================================================*/
 /*===== save_rtc_state =====*/
 /**
 @brief  Saves the current rtc state
@@ -106,7 +106,6 @@ int ask_user(char *question);
 @return On success - return 1 (TRUE)
         On failure - return 0 (FALSE)
 */
-/*================================================================================================*/
 int save_rtc_state( enum RTC_STATE rtc_state )
 {
         int retval;
@@ -158,7 +157,6 @@ int save_rtc_state( enum RTC_STATE rtc_state )
         return 1;
 }
 
-/*================================================================================================*/
 /*===== restore_rtc_state =====*/
 /**
 @brief  Restores the saved rtc_state
@@ -168,7 +166,6 @@ int save_rtc_state( enum RTC_STATE rtc_state )
 @return On success - return 1 (TRUE)
         On failure - return 0 (FALSE)
 */
-/*================================================================================================*/
 int restore_rtc_state( enum RTC_STATE rtc_state )
 {	
         int retval;
@@ -261,7 +258,6 @@ int ask_user(char *question)
 }
 
 
-/*================================================================================================*/
 /*===== VT_rtc_test6_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution
@@ -271,16 +267,15 @@ int ask_user(char *question)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
-int VT_rtc_test6_setup(void)
+int VT_rtc_test6_setup(char* rtc_dev)
 {
         int rv = TFAIL;
 
-        file_desc = open (RTC_DRIVER_NAME, O_RDONLY);
+        file_desc = open (rtc_dev, O_RDONLY);
         if (file_desc ==  -1)
         {
                 tst_brkm(TBROK, cleanup, "ERROR : Open RTC driver fails");
-                perror("cannot open /dev/misc/rtc");
+                perror("cannot open RTC device");
         }
         else
         {
@@ -291,7 +286,6 @@ int VT_rtc_test6_setup(void)
 }
 
 
-/*================================================================================================*/
 /*===== VT_rtc_test6_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution
@@ -301,7 +295,6 @@ int VT_rtc_test6_setup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
 int VT_rtc_test6_cleanup(void)
 {
         int rv = TFAIL;
@@ -323,7 +316,7 @@ int VT_rtc_test6_cleanup(void)
         if (ret == -1)
         {
                 tst_resm(TWARN, "ERROR : Close RTC driver fails");
-                perror("cannot close /dev/misc/rtc");
+                perror("cannot close RTC device");
         }
         else
         {
@@ -334,7 +327,6 @@ int VT_rtc_test6_cleanup(void)
 }
 
 
-/*================================================================================================*/
 /*===== VT_rtc_test6 =====*/
 /**
 @brief  - Read and set time and date
@@ -346,18 +338,14 @@ int VT_rtc_test6_cleanup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-/*================================================================================================*/
-int VT_rtc_test6(int seconds)
+int VT_rtc_test6(char* sleep_mode, int seconds)
 {
         int rv = TFAIL;
         int retval, irqcount = 0;
         unsigned long data = 0;
+        char sleep_string[128];
 
         struct rtc_time rtc_tm = {0,0,0,0,0,0};
-
-        tst_resm( TINFO, "RTC Driver Test 6" );
-        tst_resm( TINFO, "RTC date, time and alarm" );
-
 
         /***************************************/
         /* saved current state of rtc          */
@@ -372,7 +360,6 @@ int VT_rtc_test6(int seconds)
         /***************************************/
         /* Test for alarm                      */
         /***************************************/
-        tst_resm( TINFO, "" );
         tst_resm( TINFO, "ALARM TEST: RTC_ALM_SET & RTC_ALM_READ" );
 
         /* Read the RTC time/date */
@@ -424,7 +411,10 @@ int VT_rtc_test6(int seconds)
 
         tst_resm(TINFO, "  Waiting %d seconds for alarm......." ,seconds);
 
-	system("echo -n standby > /sys/power/state");
+        strcpy(sleep_string, "echo -n ");
+        strcat(sleep_string, sleep_mode);
+        strcat(sleep_string, " > /sys/power/state");
+        system(sleep_string);
 
         /* This blocks until the alarm ring causes an interrupt */
         retval = read( file_desc, &data, sizeof(unsigned long) );
