@@ -75,11 +75,7 @@ wakeup_test()
 {
     RC=0
 
-    rtc_testapp_7 -O on -T 10
-    sleep 2    
-    echo standby > /sys/power/state
-    
-    rtc_testapp_7 -O off 
+    rtc_testapp_6 -m standby -T 10
     if [ $? -eq 0 ]
     then
         tst_resm TPASS " RTC wakeup from STOP mode"
@@ -90,11 +86,7 @@ wakeup_test()
     fi
 
     #Test WAIT mode
-    rtc_testapp_7 -O on -T 10
-    sleep 2    
-    echo mem > /sys/power/state
-    
-    rtc_testapp_7 -O off 
+    rtc_testapp_6 -m mem -T 10
     if [ $? -eq 0 ]
     then
         tst_resm TPASS " RTC wakeup from WAIT mode"

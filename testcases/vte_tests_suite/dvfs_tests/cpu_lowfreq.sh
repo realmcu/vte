@@ -86,17 +86,11 @@ lowfreq_suspend()
     fi
 
     sleep 3 
-    echo "*************************************"
-    echo "* please press key to resume system *"
-    echo "*************************************"
-    echo -n standby > /sys/power/state
+    rtc_testapp_6 -m standby -T 10
     tst_resm TPASS "Resume from suspend..."
 
     sleep 5
-    echo "*************************************"
-    echo "* please press key to resume system *"
-    echo "*************************************"
-    echo -n mem > /sys/power/state
+    rtc_testapp_6 -m mem -T 10
     tst_resm TPASS "Resume from mem..."
     
     return $RC
