@@ -1,11 +1,9 @@
 #Update /home/VTE/vte-3.3/mx25_3stack_config at 20080825
 KLINUX_SRCDIR=/home/vobs/linux-2.6-imx
 KLINUX_BLTDIR=/home/vobs/linux-2.6-imx
-#KLINUX_SRCDIR=/home/smb/nfs_root/temp2/L2.6.28_4.3.0_ER_Jun2009_source/linux-2.6.28
-#KLINUX_BLTDIR=/home/smb/nfs_root/temp2/L2.6.28_4.3.0_ER_Jun2009_source/linux-2.6.28
 ARCH_CPU=arm
 ARCH_PLATFORM=imx25stack
 export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM
-CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.3.3-glibc-2.8-cs2009q1-203/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-
+CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-
 export CROSS_COMPILER
-export CFLAGS="-DPROJECT_MX25=1 -O2 -fsigned-char -msoft-float -mfpu=vfp -march=armv5t"
+export CFLAGS="-DPROJECT_MX25=1 -O2 -fsigned-char -msoft-float -mfpu=vfp"
