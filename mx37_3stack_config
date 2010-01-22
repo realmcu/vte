@@ -4,6 +4,6 @@ KLINUX_BLTDIR=/home/vobs/linux-2.6-imx
 ARCH_CPU=arm
 ARCH_PLATFORM=imx37stack
 export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM
-CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.3.3-glibc-2.8-cs2009q1-203/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-
-export CFLAGS="-DPROJECT_MX37=1 -O2 -fsigned-char -mfloat-abi=softfp -mfpu=vfp -march=armv6"
+CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-
+export CFLAGS="-DPROJECT_MX37=1 -O2 -fsigned-char -mfloat-abi=softfp -mfpu=vfp"
 export CROSS_COMPILER
