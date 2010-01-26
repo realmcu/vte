@@ -248,6 +248,39 @@ return $RC
 
 }
 
+# Function:     test_case_06
+# Description   - Test if encode VC1 ok
+#
+test_case_06()
+{
+#TODO give TCID
+TCID="vpu_enc_vc1_test"
+#TODO give TST_COUNT
+TST_COUNT=6
+RC=1
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+#TODO add function test scripte here
+cp -f ${LTPROOT}/testcases/bin/config_enc_vc1 .
+cp -f ${STREAM_PATH}/video/akiyomp4.yuv .
+
+$TSTCMD -C config_enc_vc1 || return $TST_COUNT
+
+rm -f config_enc_vc1
+rm -f akiyomp4.yuv
+
+$TSTCMD -D "-i test.wmv -f 3" || return $TST_COUNT
+
+rm -f test.wmv
+
+RC=0
+return $RC
+
+}
+
+
 # main function
 
 RC=0
