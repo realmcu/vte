@@ -1,4 +1,5 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#!/bin/sh
+#Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -6,8 +7,7 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
-###############################################################################
+##############################################################################
 #
 #    @file   fm_basic.sh
 #
@@ -21,6 +21,7 @@
 #-------------------   ------------    ----------  ---------------------
 # Spring Zhang          11/12/2008     ENGR102289      Initial ver. 
 # Spring Zhang          11/3/2009          n/a      35/51 switch to sgtl5000
+# Spring Zhang          1/2/2010          n/a       add ioctl tests
 #############################################################################
 # Portability:  ARM sh 
 #
@@ -111,7 +112,7 @@ fm_probe()
     TST_COUNT=1
     RC=0    # Return value from setup, and test functions.
 
-    tst_resm TINFO "Test #1: Probe FM module"
+    tst_resm TINFO "Test #1: Probe FM module and ioctl test"
 
     modprobe mxc_si4702 || RC=$?
     [ $RC -ne 0 ] && {
@@ -151,11 +152,39 @@ fm_probe()
         return $RC
     }
 
+    #Test 'volup' cmd
+    echo volup > $FM_CTL || RC=$?
+    [ $RC -ne 0 ] && {
+        tst_resm TFAIL "FM volup fail"
+        return $RC
+    }
+
+    #Test 'voldown' cmd
+    echo voldown > $FM_CTL || RC=$?
+    [ $RC -ne 0 ] && {
+        tst_resm TFAIL "FM voldown fail"
+        return $RC
+    }
+
+    #Test 'mute' cmd
+    echo mute > $FM_CTL || RC=$?
+    [ $RC -ne 0 ] && {
+        tst_resm TFAIL "FM mute fail"
+        return $RC
+    }
+
+    #Test 'unmute' cmd
+    echo unmute > $FM_CTL || RC=$?
+    [ $RC -ne 0 ] && {
+        tst_resm TFAIL "FM unmute fail"
+        return $RC
+    }
+
     if [ $RC -eq 0 ]
     then
-        tst_resm TPASS "Test #1: FM module probe success."
+        tst_resm TPASS "Test #1: FM module probe and ioctl success."
     else
-        tst_resm TFAIL "Test #1: FM module probe fail."
+        tst_resm TFAIL "Test #1: FM module probe and ioctl fail."
     fi
 
     return $RC
