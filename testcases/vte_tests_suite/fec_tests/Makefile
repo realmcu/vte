@@ -25,7 +25,9 @@
 ####################################################################################################
 BIN_DIR = ../../bin
 
-CFLAGS+= -Wall -I../../../include -I$(KLINUX_SRCDIR)/include -I$(KLINUX_BLTDIR)/include -I$(KLINUX_SRCDIR)/drivers/net
+CFLAGS+= -Wall -I../../../include -I$(KLINUX_SRCDIR)/include \
+         -I$(KLINUX_BLTDIR)/include -I$(KLINUX_SRCDIR)/drivers/net \
+		 -I$(KLINUX_SRCDIR)/arch/arm/include
 LOADLIBES+=     -L../../../lib -lltp
 
 ifeq ($(ARCH_PLATFORM), mxc91131evb)
