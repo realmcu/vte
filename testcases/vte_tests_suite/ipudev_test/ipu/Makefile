@@ -14,6 +14,9 @@ AR=$(CROSS_COMPILER)ar
 
 OBJS = mxc_ipu_hl_lib.o mxc_ipu_lib.o
 
+# list of platforms which want this test case
+INCLUDE_LIST:= IMX37_3STACK IMX51
+
 LIBNAME=libipu
 
 INCLUDE = -I$(KLINUX_SRCDIR)/include
