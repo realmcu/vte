@@ -19,7 +19,8 @@
 LTP_DIR=../../../..
 BIN_DIR=../../..
 
-CFLAGS+= -Wall -I$(LTP_DIR)/include -I$(KLINUX_SRCDIR)/include
+CFLAGS+= -Wall -I$(LTP_DIR)/include -I$(KLINUX_SRCDIR)/include \
+         -I$(KLINUX_SRCDIR)/arch/arm/include
 LOADLIBES+= -L$(LTP_DIR)/lib -lltp
 
 SRCS=$(wildcard *.c)
