@@ -103,8 +103,9 @@ SUBDIRS += rnga_test_module  \
           rnga_testcase  
 endif
  
-ifeq ($(ARCH_PLATFORM), $(filter imx233, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx233 imx28, $(ARCH_PLATFORM)))
 SUBDIRS += crypto 
+SUBDIRS += crypto_scripts
 endif
 
 
