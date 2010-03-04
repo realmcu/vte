@@ -191,6 +191,7 @@ int main(int argc, char **argv)
         char *rtc_device;
         char *sleep_mode;
         char *alarm_time;
+        char rtc_real_device[64];
 
         /*Parse options*/
         option_t options[]=
@@ -209,12 +210,17 @@ int main(int argc, char **argv)
         if (d_opt){
             strcpy(tmp, "/dev/");
             strcat(tmp, rtc_device);
-            strcpy(rtc_device, tmp);
+            strcpy(rtc_real_device, tmp);
         } else{
-            strcpy(rtc_device, RTC_DRIVER_NAME);
+            strcpy(rtc_real_device, RTC_DRIVER_NAME);
         }
+
         if (!m_opt){
             help();
+            return VT_rv;
+        } else if (strcmp(sleep_mode, "standby") && strcmp(sleep_mode, "mem")){
+            help();
+            tst_resm(TFAIL,"sleep mode can only be standby|mem");
             return VT_rv;
         }
         if (t_opt)
@@ -227,7 +233,7 @@ int main(int argc, char **argv)
             return VT_rv;
         }
         /* perform global test setup */
-        setup(rtc_device);
+        setup(rtc_real_device);
 
         VT_rv = VT_rtc_test6(sleep_mode, seconds);
 
