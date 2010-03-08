@@ -1,5 +1,5 @@
-#!/bin/sh
-#Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#!/bin/bash
+#Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -16,6 +16,8 @@
 #                                            used by Linux plugin
 #Spring Zhang                 17/06/2009     add prepare vpu for 37&51 
 #Victor Cui                   09/07/2009     add -M(mount) option
+#Spring Zhang                 03/03/2010     change interpreter from sh to bash
+#                                            for 'let' command
 #notes:
 # -I insert modules(SD, ATA, V4L, BT, USBH or ALL)          
 # 	eg. ./auto_prepare.sh -I SD
