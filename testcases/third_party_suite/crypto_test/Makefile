@@ -1,0 +1,16 @@
+
+obj-m += tcrypt.o
+
+modules:
+	make -C $(KLINUX_SRCDIR) SUBDIRS=$$PWD modules
+
+modules_install:
+	make -C $(KLINUX_SRCDIR) SUBDIRS=$$PWD modules_install
+
+install:
+	ln -f  tcrypt.ko ../../bin/
+
+all: modules modules_install
+
+clean:
+	rm -rf *.ko *.o *.mod.c modules.order  Module.symvers
