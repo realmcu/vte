@@ -308,6 +308,7 @@ static int process_img()
        int bc=((aFmt[oenc].bs + 7)&(~7)) / 8;  
        lseek(fdout,xres * yres * bc - 1,SEEK_SET);
        write(fdout,"",1);
+       printf("the output file size is %d * %d * %d \n",  xres , yres , bc);
        if( ( p_ft = mmap(NULL, xres * yres * bc, PROT_READ|PROT_WRITE, MAP_SHARED, fdout, 0 )) == MAP_FAILED)
        {
          perror("mmap"); 
@@ -647,7 +648,19 @@ static int process_img()
        }else if(oenc ==  eYUV422P){
        /*yuv422*/
          unsigned char r,g,b;
-
+	 long ubias = xres * yres;
+	 int vbias = ubias + (ubias>>1);
+         long k2 = i * xres + j;
+	 r = pdata[k + 2];
+	 g = pdata[k + 1];
+         b = pdata[k];
+	 pout[k2] =  (unsigned char)(0.257 * r + 0.504 * g + 0.098 * b + 16);/*y*/
+	 if(k2&0x01)
+	 {
+	  int ko = (k2>>1);
+	  pout[ko + ubias] = (unsigned char)(-0.148 * r - 0.291 * g + 0.439 * b + 128);/*u*/
+	  pout[ko + vbias] = (unsigned char)(0.439 * r - 0.368 * g - 0.071 * b + 128);/*v*/
+	 }
        }else if(oenc == eYUV420){
        /*yuv420*/
        }else if(oenc == eRGB24){ 
