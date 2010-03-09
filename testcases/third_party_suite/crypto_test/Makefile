@@ -1,3 +1,5 @@
+export ARCH=$(ARCH_CPU)
+export CROSS_COMPILE=$(CROSS_COMPILER)
 
 obj-m += tcrypt.o
 
