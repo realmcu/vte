@@ -303,6 +303,7 @@ static int process_img()
     memcpy(p_ft,(unsigned char *)&BitmapFileHeader,14);
     memcpy((unsigned char *)p_ft + 14, (unsigned char *)&BitmapInfoHeader, 40);
   }else{
+      l = ((xres * 24 + 31) & ~31) / 8;
       if ( strcmp(iformat,"BMP24") ==0)
       {
        int bc=((aFmt[oenc].bs + 7)&(~7)) / 8;  
