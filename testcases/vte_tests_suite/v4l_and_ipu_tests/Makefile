@@ -42,7 +42,7 @@ all: config
 install:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
 	ln -f pxp_test-1.01/pxp_test ../../bin/
-	ln -f pxp_test-1.01/testfiles/*.s* ../../bin/
+	ln -f pxp_test-1.01/testfiles/*.rgba32 ../../bin/
 
 clean:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
