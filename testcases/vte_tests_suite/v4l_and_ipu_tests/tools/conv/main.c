@@ -669,6 +669,13 @@ static int process_img()
        pout[k + 2] = pdata[k];
        pout[k + 1] = pdata[k + 1];
        pout[k] = pdata[k + 2];
+       }else if(oenc == eRGBA32){
+       /*rgba32*/
+       long k2 = (i * xres + j) * 4;
+       pout[k2] = pdata[k];
+       pout[k2 + 1] = pdata[k + 1];
+       pout[k2 + 2] = pdata[k + 2];
+       pout[k2 + 3] = 0; /*alpha=0*/
        }else{
         printf("unsupported format");
 	goto END;
