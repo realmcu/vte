@@ -1,6 +1,6 @@
 #!/bin/sh
 ##############################################################################
-#Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -14,12 +14,13 @@
 #                      Modification     Tracking
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
-# Spring Zhang          27/11/2008       n/a        Initial ver. 
+# Spring Zhang/B17931   27/11/2008       n/a        Initial ver. 
 # Spring                28/11/2008       n/a        Modify COPYRIGHT header
 # Spring                15/01/2008       n/a        Add MX35TO2 judgement,
 #                                                   move to tools/
 # Spring                02/04/2009       n/a        Add MX51Babbage support
 # Spring                02/08/2009       n/a        Use own determination
+# Spring                11/03/2009       n/a        Add MX28EVK support
 #############################################################################
 # Usage1(return string):
 #   platform=`platfm.sh`
@@ -34,6 +35,7 @@
 #   IMX37_3STACK IMX37_3STACK
 #   IMX51_3STACK IMX51_3STACK
 #   IMX51_BABBAGE IMX51_BABBAGE
+#   IMX28EVK    IMX28EVK
 #
 #
 # Usage2(return number): 
@@ -46,6 +48,8 @@
 # e.g.  31       mx31
 #       35       mx35
 #       41       mx51 babbage
+#       51       mx51 3ds
+#       28       mx28 evk
 #
 # 2. 378%256(=122) for SMTP378X board.(for return value is 0~255)
 #       rt value    Board
@@ -102,6 +106,14 @@ determine_platform()
         p=SMTP378X
     fi
 
+    #find MX28EVK
+    find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX28EVK" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+        p=IMX28EVK
+    fi
+
+
     if [ $p = "IMX31_3STACK" ]
     then
         #echo "Platform MX31"
@@ -126,6 +138,10 @@ determine_platform()
     then
         #echo  "Platform SMTP378X" 
         let RC=378%256
+    elif [ $p = "IMX28EVK" ]
+    then
+        #echo  "Platform MX28 EVK" 
+        RC=28
     else
         #echo  "Platform not recognized!"
         RC=67
@@ -142,4 +158,40 @@ echo "$p"
 
 exit $RC
 
+#############################
+allcpu_info()
+{
+    cat << EOF
+MX28EVK TO1.0 - 201011
+root@localhost /staf/retail$ cat /proc/cpuinfo
+Processor       : ARM926EJ-S rev 5 (v5l)
+BogoMIPS        : 478.41
+Features        : swp half thumb fastmult edsp java
+CPU implementer : 0x41
+CPU architecture: 5TEJ
+CPU variant     : 0x0
+CPU part        : 0x926
+CPU revision    : 5
+
+Hardware        : Freescale MX28EVK board
+Revision        : 0000
+Serial          : 0000000000000000
+
+MX51 Babbage TO3.0 - 201011
+root@freescale ~$ cat /proc/cpuinfo
+Processor       : ARMv7 Processor rev 5 (v7l)
+BogoMIPS        : 799.53
+Features        : swp half thumb fastmult vfp edsp neon vfpv3
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x2
+CPU part        : 0xc08
+CPU revision    : 5
+
+Hardware        : Freescale MX51 Babbage Board
+Revision        : 51130
+Serial          : 0000000000000000
+
+EOF
+}
 
