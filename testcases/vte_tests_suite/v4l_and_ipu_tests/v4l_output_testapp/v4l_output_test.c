@@ -153,7 +153,13 @@ int pixel_format(char *string)
         else if (!strcasecmp(string, "BGR32"))
         {
                 format = V4L2_PIX_FMT_BGR32;
-        }
+        }else if (!strcasecmp(string,"UYVY"))
+	{
+	        format = V4L2_PIX_FMT_UYVY;
+	}else if (!strcasecmp(string,"YUYV"))
+	{
+	        format = V4L2_PIX_FMT_YUYV;
+	}
         else
         {
                 tst_resm(TBROK, "Unsupported file format");
