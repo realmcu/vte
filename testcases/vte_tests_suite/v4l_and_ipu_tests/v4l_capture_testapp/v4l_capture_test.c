@@ -79,29 +79,33 @@ extern "C"{
 /*======================== LOCAL CONSTANTS ==================================*/
 
 
-const char gaPixFormat[7][10] = {
+const char gaPixFormat[9][10] = {
                                     "RGB565",
                                     "BGR24",
                                     "RGB24", 
                                     "BGR32",
                                     "RGB32", 
                                     "YUV422P",
-                                    "YUV420"
+                                    "YUV420",
+                                    "YUYV",
+				    "UYVY"
                                 };
                                 
                                 
-const int gaPixFormatID[7] =   {
+const int gaPixFormatID[9] =   {
                                     V4L2_PIX_FMT_RGB565, 
                                     V4L2_PIX_FMT_BGR24, 
                                     V4L2_PIX_FMT_RGB24,  
                                     V4L2_PIX_FMT_BGR32,  
                                     V4L2_PIX_FMT_RGB32,  
                                     V4L2_PIX_FMT_YUV422P, 
-                                    V4L2_PIX_FMT_YUV420
+                                    V4L2_PIX_FMT_YUV420,
+				    V4L2_PIX_FMT_YUYV,
+				    V4L2_PIX_FMT_UYVY
                                 };
 /*======================== LOCAL MACROS =====================================*/
 //#define mxc91131evb_CSI_STRIPS_FIX      1
-#define PIX_FMT_NUM                     7
+#define PIX_FMT_NUM                     9
 #define CLEAR(x)                        memset(&x, 0, sizeof(x));
 #define MXCFB_MEM_ADDRESS               0x83F00000
 #define MAX_STR_LEN 50
