@@ -101,6 +101,7 @@ typedef enum {
      eYUV422P,
      eBMP24,
      eUYVY422,
+     eYUY2,/*YUYV*/
      eUNKNOWN
    }eEPType_Format;
 
@@ -129,6 +130,7 @@ static sFmt aFmt[ ]= {
        {"YUV422P",14, 16},
        {"BMP24",15, 24},
        {"UYVY",16,16},
+       {"YUY2",16,16},
        {NULL, 17, 0}
       };
 
@@ -499,6 +501,60 @@ static int process_img()
      pout[k + 3] = rgb.rgbBlue;
      }
     }
+    break;
+   case eYUY2:
+   if(isz - offset < yres * xres * 2)
+   {
+       printf("file size or offset wrong\n");
+       exit(-2);
+   }
+   /*serial 2 pixels in 4 byte*/
+   for(i = 0; i < yres; i++)
+    for(j = 0; j < xres - 2; j = j + 2)
+    {
+     long u,y1,v,y2;
+     long k = (i * xres + j) * 2;
+     if (0x01)
+     {
+     y1  = pdata[k];
+     u  = pdata[k + 1];
+     y2 = pdata[k + 2];
+     v  = pdata[k + 3];
+     }else{
+     y1 = pdata[k];
+     v  = pdata[k + 1];
+     y2 = pdata[k + 2];
+     u  = pdata[k + 3];
+     }
+     /*refer to http://www.vckbase.com/document/viewdoc/?id=1780 */
+     #if OPT
+     rgb.rgbRed   = BOUND255(((y1<<SBIT) +  B1 * (v - 128))>>SBIT);
+     rgb.rgbGreen = BOUND255(((y1<<SBIT) - B2 * (v -128) - B3 * (u - 128))>>SBIT);
+     rgb.rgbBlue  = BOUND255(((y1<<SBIT) + B4 * (u - 128))>>SBIT);
+     #else
+     rgb.rgbRed   = BOUND255(y1 +  1.370705 * (v - 128));
+     rgb.rgbGreen = BOUND255(y1 - 0.698001 * (v -128) - 0.337633 * (u - 128));
+     rgb.rgbBlue  = BOUND255(y1 + 1.732446 * (u - 128));
+     #endif
+     rgb.rgbReserved = 0;
+     k = (yres - i - 1) * l  + j * 3;
+     pout[k + 2] = rgb.rgbRed;
+     pout[k + 1] = rgb.rgbGreen;
+     pout[k] = rgb.rgbBlue;
+     #if OPT
+     rgb.rgbRed   = BOUND255(((y2<<SBIT) +  B1 * (v - 128))>>SBIT);
+     rgb.rgbGreen = BOUND255(((y2<<SBIT) - B2 * (v - 128) - B3 * (u - 128))>>SBIT);
+     rgb.rgbBlue  = BOUND255(((y2<<SBIT) + B4 * (u - 128))>>SBIT);
+     #else
+     rgb.rgbRed   = BOUND255(y2 +  1.370705 * (v - 128));
+     rgb.rgbGreen = BOUND255(y2 - 0.698001 * (v -128) - 0.337633 * (u - 128));
+     rgb.rgbBlue  = BOUND255(y2 + 1.732446 * (u - 128));
+     #endif
+     pout[k + 5] = rgb.rgbRed;
+     pout[k + 4] = rgb.rgbGreen;
+     pout[k + 3] = rgb.rgbBlue;
+    }
+
     break;
    case eUYVY422:
    if(isz - offset < yres * xres * 2)
