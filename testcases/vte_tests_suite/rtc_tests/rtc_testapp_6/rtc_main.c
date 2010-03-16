@@ -192,6 +192,7 @@ int main(int argc, char **argv)
         char *sleep_mode;
         char *alarm_time;
         char rtc_real_device[64];
+	const char * dft_mode = "standby";
 
         /*Parse options*/
         option_t options[]=
@@ -216,8 +217,11 @@ int main(int argc, char **argv)
         }
 
         if (!m_opt){
-            help();
+	    sleep_mode = (char *)dft_mode;
+	    /*
+	    help();
             return VT_rv;
+	    */
         } else if (strcmp(sleep_mode, "standby") && strcmp(sleep_mode, "mem")){
             help();
             tst_resm(TFAIL,"sleep mode can only be standby|mem");
