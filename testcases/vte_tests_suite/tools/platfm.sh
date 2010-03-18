@@ -21,6 +21,7 @@
 # Spring                02/04/2009       n/a        Add MX51Babbage support
 # Spring                02/08/2009       n/a        Use own determination
 # Spring                11/03/2009       n/a        Add MX28EVK support
+# Spring                18/03/2009       n/a        Add MX53EVK support
 #############################################################################
 # Usage1(return string):
 #   platform=`platfm.sh`
@@ -36,6 +37,7 @@
 #   IMX51_3STACK IMX51_3STACK
 #   IMX51_BABBAGE IMX51_BABBAGE
 #   IMX28EVK    IMX28EVK
+#   IMX53EVK    IMX53EVK
 #
 #
 # Usage2(return number): 
@@ -43,13 +45,14 @@
 #   Then use $platform to judge the platform
 #
 # Return value:
-# 1. 31~51 for mx31~mx51 board.
+# 1. 31~53 for mx31~mx53 board.
 #     rt value  Board
 # e.g.  31       mx31
 #       35       mx35
 #       41       mx51 babbage
 #       51       mx51 3ds
 #       28       mx28 evk
+#       53       mx53 evk
 #
 # 2. 378%256(=122) for SMTP378X board.(for return value is 0~255)
 #       rt value    Board
@@ -93,10 +96,18 @@ determine_platform()
     fi
 
     # MX51 Babbage TO1.1: Revision: 51011
+    # MX51 Babbage TO3.0: Revision: 51130
     find=`cat /proc/cpuinfo | grep "Hardware" | grep "Babbage" | wc -l`;
     if [ $find -eq 1 ]
     then
         p=IMX51_BABBAGE
+    fi
+
+    # MX53 EVK TO1.0: Revision: 53010
+    find=`cat /proc/cpuinfo | grep "Revision" | grep "53.*" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+        p=IMX53EVK
     fi
 
     #find STMP378X
@@ -134,7 +145,11 @@ determine_platform()
     then
         #echo  "Platform MX51 Babbage" 
         RC=41
-    elif [ $p = "SMTP378X" ]
+    elif [ $p = "IMX53EVK" ]
+    then
+        #echo  "Platform MX53 EVK" 
+        RC=53
+     elif [ $p = "SMTP378X" ]
     then
         #echo  "Platform SMTP378X" 
         let RC=378%256
@@ -190,6 +205,21 @@ CPU revision    : 5
 
 Hardware        : Freescale MX51 Babbage Board
 Revision        : 51130
+Serial          : 0000000000000000
+
+
+MX53 EVK TO1.0 - 201012
+Processor       : ARMv7 Processor rev 5 (v7l)
+BogoMIPS        : 799.53
+Features        : swp half thumb fastmult vfp edsp neon vfpv3
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x2
+CPU part        : 0xc08
+CPU revision    : 5
+
+Hardware        : Freescale MX53 EVK Board
+Revision        : 53010
 Serial          : 0000000000000000
 
 EOF
