@@ -14,8 +14,8 @@
 #with this program; if not, write to the Free Software Foundation, Inc.,
 #51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-KLINUX_SRCDIR=/home/vobs/linux-2.6-imx_53
-KLINUX_BLTDIR=/home/vobs/linux-2.6-imx_53
+KLINUX_SRCDIR=/home/vobs/linux-2.6-imx
+KLINUX_BLTDIR=/home/vobs/linux-2.6-imx
 ARCH_CPU=arm
 ARCH_PLATFORM=imx53
 export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM
