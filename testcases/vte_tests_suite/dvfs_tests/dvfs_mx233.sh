@@ -194,12 +194,12 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 
 declare -a cpufreq_value;
-cpufreq_value=(454740 392730 360000 261820 64000);
+cpufreq_value=(454740 392730 360000 261820);
 count=0
 
 while [ $count -lt 7 ]; do
   count=$(expr $count + 1)
-  value=${cpufreq_value[$RANDOM%5]}
+  value=${cpufreq_value[$RANDOM%4]}
   cpufreq-set -f $value
   value_ret=$(cpufreq-info -f)
 if [ $value_ret -eq $value ] ; then
