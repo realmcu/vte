@@ -85,23 +85,23 @@ typedef struct tagBITMAPFILEHEADER
 
 typedef enum {
      e1Index = 0,
-     e4Index,
-     e8Index,
-     e16Gray,
-     eRGB555,
-     eRGB565,
-     eARGB1555,
-     eRGB24,
-     eBGR24,
-     eRGB32,
-     eBGR32,
-     eARGB32,
-     eRGBA32,
-     eYUV420,
-     eYUV422P,
-     eBMP24,
-     eUYVY422,
-     eYUY2,/*YUYV*/
+     e4Index = 1,
+     e8Index = 2,
+     e16Gray = 3,
+     eRGB555 = 4,
+     eRGB565 = 5,
+     eARGB1555 = 6,
+     eRGB24 = 7,
+     eBGR24 = 8,
+     eRGB32 = 9,
+     eBGR32 = 10,
+     eARGB32 = 11,
+     eRGBA32 = 12,
+     eYUV420 = 13,
+     eYUV422P = 14,
+     eBMP24 = 15,
+     eUYVY422 = 16,
+     eYUY2 = 17,/*YUYV*/
      eUNKNOWN
    }eEPType_Format;
 
@@ -308,7 +308,10 @@ static int process_img()
       l = ((xres * 24 + 31) & ~31) / 8;
       if ( strcmp(iformat,"BMP24") ==0)
       {
-       int bc=((aFmt[oenc].bs + 7)&(~7)) / 8;  
+       int bc=((aFmt[oenc].bs + 7)&(~7)) / 8;
+       if(oenc == eYUV420)
+       lseek(fdout, (xres * yres * 3) / 2 - 1,SEEK_SET);
+       else
        lseek(fdout,xres * yres * bc - 1,SEEK_SET);
        write(fdout,"",1);
        printf("the output file size is %d * %d * %d \n",  xres , yres , bc);
@@ -720,6 +723,25 @@ static int process_img()
 	 }
        }else if(oenc == eYUV420){
        /*yuv420*/
+         unsigned char r,g,b;
+	 long ubias = xres * yres;
+	 int vbias = ubias + (ubias>>2);
+         long k2 = i * xres + j;
+	 r = pdata[k + 2];
+	 g = pdata[k + 1];
+         b = pdata[k];
+	 pout[k2] =  (unsigned char)(0.257 * r + 0.504 * g + 0.098 * b + 16);/*y*/
+	 if(k2&0x01)
+	 {
+	  if(i&0x01)
+	  {/* odd line*/
+	   int ko = (((i>>1) * xres + j)>>1);
+	   pout[ko + ubias] = (unsigned char)(-0.148 * r - 0.291 * g + 0.439 * b + 128);/*u*/
+	   pout[ko + vbias] = (unsigned char)(0.439 * r - 0.368 * g - 0.071 * b + 128);/*v*/
+	  }else{
+	  /*even line skip*/
+	  }
+	 }
        }else if(oenc == eRGB24){ 
        /*rgb24*/
        pout[k + 2] = pdata[k];
