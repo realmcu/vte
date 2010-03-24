@@ -1,6 +1,6 @@
 #!/bin/sh
 ##############################################################################
-# Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+# Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # The code contained herein is licensed under the GNU General Public
 # License. You may obtain a copy of the GNU General Public License
@@ -21,14 +21,15 @@
 # Spring                 28/11/2008       n/a      Modify COPYRIGHT header
 # Spring                 22/09/2009       n/a      Optimize code
 # Spring                 11/12/2009       n/a      Add support to other case
+# Spring                 24/03/2010       n/a      Add support to mx53
 #############################################################################
 # Portability:   ARM sh 
 # File Name:     dac_vol_adj.sh   
 # Total Tests:   1
 # Test Strategy: play audio streams with volume up and down
 # 
-# Tested on : i.MX51&35&37
-# Support: i.MX31&MX51&MX35&MX37
+# Tested on : i.MX51&35&37&53
+# Support: i.MX31&MX51&MX35&MX37&MX53
 
 # Function:     setup
 #
@@ -118,7 +119,8 @@ amixer_ctl_id()
     if [ $platfm -eq 31 ]
     then
         ctl_id=name='Master Playback Volume'
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] \
+        || [ $platfm -eq 41 ] || [ $platfm -eq 53 ] #sgtl5k
     then
         ctl_id=name='Headphone Volume'
     elif [ $platfm -eq 37 ]
@@ -145,7 +147,8 @@ max_vol()
     if [ $platfm -eq 31 ]
     then
         return $MAX_MX31
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] || [ $platfm -eq 41 ]  #sgtl5k
+    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] \
+        || [ $platfm -eq 41 ] || [ $platfm -eq 53 ]  #sgtl5k
     then
         return $MAX_SGTL5K
     elif [ $platfm -eq 37 ]
