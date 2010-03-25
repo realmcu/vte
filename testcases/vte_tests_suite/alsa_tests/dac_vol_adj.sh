@@ -241,7 +241,7 @@ left_right_channel()
     platform="mx$platfm"
 
     max_vol || MAX=$?
-    if [ $MAX == 0 ]; then
+    if [ $MAX -eq 0 ]; then
         tst_resm TFAIL "Test #2: Platform not supported, please check."
         return 67
     fi

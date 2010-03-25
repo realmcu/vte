@@ -1,7 +1,7 @@
 #!/bin/sh
 ##############################################################################
 #
-#  Copyright 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#  Copyright 2009-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 ##############################################################################
 #
@@ -19,6 +19,7 @@
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
 # Spring Zhang          25/03/2009       n/a        Initial ver. 
+# Spring Zhang          25/03/2010       n/a        Compatible with sh
 #############################################################################
 # Portability:  ARM sh 
 #
@@ -132,7 +133,7 @@ test_swap()
     check the HEADPHONE, see if channel is swapped."
     while [ $i -le 50 ]; do
         aplay -N -M $s_stream
-        let i=$i+1
+        i=$(expr $i + 1)
         echo $i
         sleep 5
     done
