@@ -724,16 +724,9 @@ static int _ipu_task_check(ipu_lib_input_param_t * input,
 	} else {
 		/* 1 output case */
 		if (ipu_priv_handle->output[0].task_mode == NULL_MODE) {
-			if (input->user_def_paddr[0] && output0->user_def_paddr[0]) {
 				ipu_priv_handle->output[0].task_mode = COPY_MODE;
 				dbg(DBG_INFO, "Copy case!\n");
 				goto done;
-
-			} else {
-				dbg(DBG_ERR, "Do not need any operation! Will do nothing!\n");
-				ret = -1;
-				goto done;
-			}
 		}
 
 		/* try ENC first */
@@ -1848,25 +1841,50 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 	}
 
 	/*only need one irq even for 2 output case*/
-	switch (ipu_priv_handle->output[0].begin_chan) {
-	case MEM_ROT_ENC_MEM:
-		ipu_priv_handle->irq = IPU_IRQ_PRP_ENC_ROT_IN_EOF;
-		break;
-	case MEM_ROT_VF_MEM:
-		ipu_priv_handle->irq = IPU_IRQ_PRP_VF_ROT_IN_EOF;
-		break;
-	case MEM_ROT_PP_MEM:
-		ipu_priv_handle->irq = IPU_IRQ_PP_ROT_IN_EOF;
-		break;
-	case MEM_PRP_ENC_MEM:
-	case MEM_PRP_VF_MEM:
-		ipu_priv_handle->irq = IPU_IRQ_PRP_IN_EOF;
-		break;
-	case MEM_PP_MEM:
-		ipu_priv_handle->irq = IPU_IRQ_PP_IN_EOF;
-		break;
-	default:
-		dbg(DBG_ERR, "Should not be here!\n");
+	if (output->show_to_fb) {
+		switch (ipu_priv_handle->output[0].begin_chan) {
+			case MEM_ROT_ENC_MEM:
+				ipu_priv_handle->irq = IPU_IRQ_PRP_ENC_ROT_IN_EOF;
+				break;
+			case MEM_ROT_VF_MEM:
+				ipu_priv_handle->irq = IPU_IRQ_PRP_VF_ROT_IN_EOF;
+				break;
+			case MEM_ROT_PP_MEM:
+				ipu_priv_handle->irq = IPU_IRQ_PP_ROT_IN_EOF;
+				break;
+			case MEM_PRP_ENC_MEM:
+			case MEM_PRP_VF_MEM:
+				ipu_priv_handle->irq = IPU_IRQ_PRP_IN_EOF;
+				break;
+			case MEM_PP_MEM:
+				ipu_priv_handle->irq = IPU_IRQ_PP_IN_EOF;
+				break;
+			default:
+				dbg(DBG_ERR, "Should not be here!\n");
+		}
+	} else {
+		switch (ipu_priv_handle->output[0].end_chan) {
+			case MEM_ROT_ENC_MEM:
+				ipu_priv_handle->irq = IPU_IRQ_PRP_ENC_ROT_OUT_EOF;
+				break;
+			case MEM_ROT_VF_MEM:
+				ipu_priv_handle->irq = IPU_IRQ_PRP_VF_ROT_OUT_EOF;
+				break;
+			case MEM_ROT_PP_MEM:
+				ipu_priv_handle->irq = IPU_IRQ_PP_ROT_OUT_EOF;
+				break;
+			case MEM_PRP_ENC_MEM:
+				ipu_priv_handle->irq = IPU_IRQ_PRP_ENC_OUT_EOF;
+				break;
+			case MEM_PRP_VF_MEM:
+				ipu_priv_handle->irq = IPU_IRQ_PRP_VF_OUT_EOF;
+				break;
+			case MEM_PP_MEM:
+				ipu_priv_handle->irq = IPU_IRQ_PP_OUT_EOF;
+				break;
+			default:
+				dbg(DBG_ERR, "Should not be here!\n");
+		}
 	}
 done:
 	return ret;
