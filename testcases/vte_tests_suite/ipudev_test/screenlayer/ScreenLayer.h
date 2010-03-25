@@ -1,13 +1,16 @@
-/***
-**Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
-**
-**The code contained herein is licensed under the GNU General Public
-**License. You may obtain a copy of the GNU General Public License
-**Version 2 or later at the following locations:
-**
-**http://www.opensource.org/licenses/gpl-license.html
-**http://www.gnu.org/copyleft/gpl.html
-**/
+/*
+ * Copyright 2009 Freescale Semiconductor, Inc. All Rights Reserved.
+ *
+ */
+
+/*
+ * The code contained herein is licensed under the GNU Lesser General
+ * Public License.  You may obtain a copy of the GNU Lesser General
+ * Public License Version 2.1 or later at the following locations:
+ *
+ * http://www.opensource.org/licenses/lgpl-license.html
+ * http://www.gnu.org/copyleft/lgpl.html
+ */
 #ifndef __SCREENLAYER_H__
 #define __SCREENLAYER_H__
 
@@ -43,7 +46,7 @@ typedef enum {
 } SLRetCode;
 
 typedef enum {
-	F_FBDIRECT_PRIMARYONLY = 0x1,
+	F_DUMMY = 0x1,
 } SLFlag;
 
 typedef enum {
