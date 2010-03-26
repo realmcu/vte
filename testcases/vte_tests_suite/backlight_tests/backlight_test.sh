@@ -1,4 +1,6 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#!/bin/sh
+#######################################################################
+#Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -6,8 +8,7 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
-#
+#######################################################################
 #
 # File :        backlight_test.sh
 #
@@ -15,10 +16,11 @@
 #
 #======================================================================
 #Revision History:
-#                            Modification     Tracking
-# Author                          Date          Number    Description of Changes
-#-------------------------   ------------    ----------  -------------------------------------------
-# Blake                      20081015
+#                       Modification     Tracking
+# Author                    Date          Number    Description of Changes
+#--------------------   ------------    ----------  -----------------------
+# Blake                   20081015
+# Spring.Zhang/b17931     20100323         n/a      Add MX53 support
 
 #Set path variable to add vte binaries
 #export TESTCASES_HOME= `pwd`
@@ -42,7 +44,7 @@ setup()
     # command line harness APIs, these variables are not local to this program.
 
     # Test case identifier
-    export TCID="backlight_test"
+    export TCID="BACKLIGHT_TEST"
     # Set up is initialized as test 0
     export TST_COUNT=0
     # Initialize cleanup function to execute on program exit.
@@ -54,7 +56,7 @@ setup()
 
 cleanup()
 {
-    echo "CLEANUP ";
+    echo "CLEANUP "
 }
 
 env_test()
@@ -76,11 +78,14 @@ env_test()
         RGB_DIR=0
     fi
 
-    info=`cat /proc/cpuinfo | grep "Revision" | grep "51.*" | wc -l`
-    if [ $info -eq 1 ]
-    then
+    platfm.sh || platfm=$?
+    if [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
         BL_DIR=/sys/class/backlight/mxc_mc13892_bl.0
         RGB_DIR=/sys/class/leds/pmic_leds
+    fi
+
+    if [ $platfm -eq 53 ]; then  #WVGA
+        BL_DIR=/sys/class/backlight/pwm-backlight
     fi
 
     if [ ! -d $BL_DIR ]
@@ -209,10 +214,10 @@ RC=0
 
 setup  || exit $RC
 env_test || exit $RC
-if [ "$1" == "LCD" ]
+if [ "$1" = "LCD" ]
 then
     brightness_test || exit $RC
-else if [ "$1" == "LED" ] && [ "$RGB_DIR" != "0" ]
+else if [ "$1" = "LED" ] && [ "$RGB_DIR" != "0" ]
 then
     rgb_test r 
     rgb_test g
