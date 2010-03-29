@@ -91,6 +91,9 @@ ifeq ($(ARCH_PLATFORM), $(filter imx32ads mxc30031ads, $(ARCH_PLATFORM)))
 SUBDIRS += dvfs_dptc_tests
 endif
 
+ifeq ($(ARCH_PLATFORM), $(filter imx53 imx51stack, $(ARCH_PLATFORM)))
+SUBDIRS += power_manager
+endif
 #Hake mxc fb test extension
 SUBDIRS += fb_test
 SUBDIRS += mmc_tests
