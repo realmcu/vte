@@ -618,8 +618,8 @@ static int pxp_start(struct pxp_control *pxp, int pass)
 		return 1;
 	}
 	printf("prepare buffers\n");
-	#if 0
-        for(i = 0; i < V4L2_BUF_NUM; i++){
+        #if 1
+	for(i = 0; i < V4L2_BUF_NUM; i++){
         /*prepare 2 buffers */
         struct v4l2_buffer buf;
 	buf.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
