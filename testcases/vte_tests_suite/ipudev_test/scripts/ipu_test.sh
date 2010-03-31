@@ -47,7 +47,7 @@ trap "cleanup" 0
 
 #TODO add setup scripts
 
-if [ $TARGET = "31" ]
+if [ "$TARGET" = "31" ]
 then
  MLIST="ipu_prp_enc ipu_prp_vf_sdc_bg ov2640_camera ipu_prp_vf_sdc ipu_still mxc_v4l2_capture"
  for i in $MLIST
@@ -56,7 +56,7 @@ then
  done
 fi
 
-if [ $TARGET = "35" ]
+if [ "$TARGET" = "35" ]
 then
  MLIST="ipu_prp_enc ipu_prp_vf_sdc_bg ov2640_camera ipu_prp_vf_sdc ipu_still mxc_v4l2_capture"
  for i in $MLIST
@@ -101,7 +101,7 @@ return $RC
 
 check_platform()
 {
-  PLATFORM="31 35 37 51"
+  PLATFORM="31 35 37 51 53"
   FB_AVAIL="37 51"
 #  CPU_REV=$(cat /proc/cpuinfo | grep "Revision")
   CPU_REV=$(platfm.sh)
@@ -190,7 +190,7 @@ echo "TST INFO: now block size is $i"
 echo "TST INFO: video pattern with user define dma buffer queue, one full-screen output"
 ${TST_CMD} -P 1 || return $RC
 
-if [ $TARGET == "37" ] || [ $TARGET == "51" ]; then
+if [ "$TARGET" == "37" ] || [ "$TARGET" == "51" ]; then
 echo "TST INFO: ipu v3 only"
 echo "TST INFO: video pattern with user define dma buffer queue, with two output"
 ${TST_CMD} -P 2 || return $RC
