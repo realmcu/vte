@@ -51,7 +51,7 @@ echo 0 > /sys/class/graphics/fb0/blank
 
 check_platform
 
-if [ $TARGET = 25 ]
+if [ "$TARGET" = "25" ]
 then
 DISPLAY=0
 else
@@ -160,7 +160,7 @@ do
 done
 
 echo "MAX input test"
-if [ $TARGET = 25 ]
+if [ "$TARGET" = 25 ]
 then
 ${TSTCMD} -iw 640 -ih 512 -ow 240 -oh 320 -d $DISPLAY -fr 60 -r 0 || return $RC
 else
@@ -277,7 +277,7 @@ return $RC
 
 check_platform()
 {
- PLATFORM="25 31 35 37 51"
+ PLATFORM="25 31 35 37 51 53"
  CPU_REV=$(platfm.sh)
  for i in $PLATFORM
  do
