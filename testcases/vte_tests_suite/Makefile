@@ -1,4 +1,4 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright 2004-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -43,13 +43,14 @@
 #O.Davard/b02578              03/05/2006     TLSbo68696  imx27ads platform added
 #V.Khalabuda/b00306           14/07/2006     TLSbo61860  Option behaviour for IPC
 #V.Khalabuda/b00306           12/09/2006     TLSbo76799  Update the iMX27 test suite environment
-#O.DAVARD/b02578	      10/06/2006     TLSbo80013  Remove mc13783_tests folder
+#O.DAVARD/b02578     	      10/06/2006     TLSbo80013  Remove mc13783_tests folder
 #D.Kardakov/ID                02/26/2007     TLSbo79826  vpu_tests folder added
 #V.Khalabuda/b00306           12/09/2006     ENGR37140   Update the Carmel test suite environment
 #D.Khoroshev/b00313           07/22/2007     engr42278   Added imx32ads and mxc30031ads
-#Z.Spring                           11/24/2008      n/a             Add GPS module test cases
-#Z.Spring                           11/27/2008      ENGR100588  Reconstruct Wifi test cases
+#Z.Spring                     11/24/2008     n/a             Add GPS module test cases
+#Z.Spring                     11/27/2008     ENGR100588  Reconstruct Wifi test cases
 #                                                        platforms    
+#Z.Spring                     03/31/2010     n/a         Add support for imx53
 ###############################################################################
 #Portability: ARM GCC
 #
@@ -122,6 +123,9 @@ SUBDIRS += i2c_tests
 SUBDIRS += watchdog_tests
 SUBDIRS += owire
 SUBDIRS += systest
+ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx25stack imx51stack imx53, $(ARCH_PLATFORM)))
+SUBDIRS += libata_tests
+endif
 
 ifeq ($(ARCH_PLATFORM), $(filter imx25stack, $(ARCH_PLATFORM)))
 SUBDIRS += can_tests
@@ -131,7 +135,6 @@ endif
 ifeq ($(ARCH_PLATFORM), $(filter imx35stack, $(ARCH_PLATFORM)))
 SUBDIRS += asrc_tests
 SUBDIRS += cdrom_tests
-SUBDIRS += libata_tests
 SUBDIRS += can_tests
 SUBDIRS += mlb_tests
 SUBDIRS += tvin_tests
@@ -144,21 +147,20 @@ SUBDIRS += acc_tests
 SUBDIRS += mbx_tests
 endif
 
-ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack imx53, $(ARCH_PLATFORM)))
 SUBDIRS += vpu_tests
-SUBDIRS += libata_tests
 endif
 
 
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack imx37stack imx51stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack imx37stack imx51stack imx53, $(ARCH_PLATFORM)))
 SUBDIRS += ipudev_test
 endif
 
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx51stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx51stack imx53, $(ARCH_PLATFORM)))
 SUBDIRS += camera_test
 endif
 
-ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx51stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx51stack imx53, $(ARCH_PLATFORM)))
 SUBDIRS += gpu_test
 endif
 SUBDIRS += emi_tests
@@ -196,20 +198,17 @@ SUBDIRS += spdif_tests
 
 #add by Victor
 SUBDIRS += storage_tests
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack, $(ARCH_PLATFORM)))
-SUBDIRS += libata_tests
-endif
 
 #added by Blake 
 ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx37stack, $(ARCH_PLATFORM)))
 SUBDIRS += dptc_tests
 endif
 #added by Blake
-ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx35stack imx51stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx35stack imx51stack imx53, $(ARCH_PLATFORM)))
 SUBDIRS += dvfs_tests
 endif
 #added by Blake
-ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack imx53, $(ARCH_PLATFORM)))
 SUBDIRS += backlight_tests
 endif
 
