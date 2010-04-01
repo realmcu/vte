@@ -1,5 +1,5 @@
 /***
-**Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright 2010 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -10,5 +10,5 @@
 **/
 #include <stdio.h>
 int main(void) {
-    return 1;
+    return 0;
 }
