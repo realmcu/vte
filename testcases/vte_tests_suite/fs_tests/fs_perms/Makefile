@@ -1,4 +1,4 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -10,12 +10,14 @@ CFLAGS+= -Wall -I../../../../include
 LDFLAGS+= -L../../../../lib -lltp
 
 TARGETS=fs_perms testx.file test.txt
-TARGETS+=fs_perms_list.sh
-all: fs_perms testx.file
+TARGETS+=fs_perms_list.sh testx
+all: fs_perms testx.file testx
 fs_perms: fs_perms.o
 	$(CC) fs_perms.o -o fs_perms $(CFLAGS) $(LDFLAGS)
 testx.file: testx.o
 	$(CC) testx.o -o testx.file $(CFLAGS) $(LDFLAGS)
+testx: testx_r0.c
+	$(CC) testx_r0.c -o testx $(CFLAGS) $(LDFLAGS)
 text.txt:
 	;
 install:

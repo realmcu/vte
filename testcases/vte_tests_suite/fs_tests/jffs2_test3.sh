@@ -1,4 +1,4 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -159,7 +159,7 @@ perms_files()
 
     if [ $RC -ne 0 ]
     then
-        tst_resm TFAIL "Test #1: the last failure test cases no. is #$RC"
+        tst_resm TFAIL "Test #1: the total failure test cases no. is $RC"
         return $RC
     fi
 
