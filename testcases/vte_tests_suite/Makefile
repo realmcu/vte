@@ -60,7 +60,7 @@
 #add tools(platfm.sh), 2009.1.15, by Spring
 SUBDIRS += tools
 
-ifneq ($(ARCH_PLATFORM), $(filter imx27ads mx233 imx27evb imx32ads, $(ARCH_PLATFORM)))
+ifneq ($(ARCH_PLATFORM), $(filter imx27ads imx233 imx28 imx27evb imx32ads, $(ARCH_PLATFORM)))
 SUBDIRS += v4l_and_ipu_tests
 endif
 
