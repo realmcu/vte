@@ -1,5 +1,5 @@
-KLINUX_SRCDIR=/home/vobs/linux-2.6-imx_28
-KLINUX_BLTDIR=/home/vobs/linux-2.6-imx_28
+KLINUX_SRCDIR=/home/vobs/linux-2.6-imx
+KLINUX_BLTDIR=/home/vobs/linux-2.6-imx
 ARCH_CPU=arm
 ARCH_PLATFORM=imx28
 export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM
