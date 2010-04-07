@@ -115,7 +115,7 @@ PACKSIZE="64 128 256 512 1024 2048 4096 8192 16384"
 for i in $PACKSIZE
 do
 loss=$(ping $HOSTIP -c 4 -s $i | grep "0% packet loss")
-if [ -z $loss ]
+if [ -z "$loss" ]
 then
 return 1
 fi 
