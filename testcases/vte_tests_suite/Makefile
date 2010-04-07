@@ -192,7 +192,9 @@ SUBDIRS += alsa_tests
 SUBDIRS += fs_tests
 SUBDIRS += gps_tests
 SUBDIRS += bt_tests
+ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx35stack imx51stack imx53, $(ARCH_PLATFORM)))
 SUBDIRS += wifi_tests
+endif
 SUBDIRS += fm_tests
 SUBDIRS += spdif_tests
 
