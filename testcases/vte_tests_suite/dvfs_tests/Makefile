@@ -13,7 +13,7 @@
 #    @brief  configuration file to compile the dvfs test.
 #
 ###############################################################################
-TARGET=dvfs.sh cpu_lowfreq.sh dvfs_per.sh pm_suspend_stress.sh
+TARGETS=dvfs.sh cpu_lowfreq.sh dvfs_per.sh pm_suspend_stress.sh
 
 all:
 	
