@@ -1122,6 +1122,7 @@ int config_device_for_rotation(int aRotNum)
                 memset(&control, 0, sizeof(control));    
         
                 control.id = V4L2_CID_PRIVATE_BASE;
+                //control.id = V4L2_CID_PRIVATE_BASE + 2;
                 control.value = aRotNum;
                 
                 switch(aRotNum)   /* print rotation type */
@@ -1900,16 +1901,14 @@ int VT_v4l_capture_test(void)
                 if(read_frame() == TFAIL) 
                         return retValue;
         }  
-        
-        if((gV4LTestConfig.mCaseNum != PRP_ENC_TO_F) || gV4LTestConfig.mRotation || gV4LTestConfig.mCrop) 
-                retValue = ask_user();  
-        else 
-                retValue = TPASS; 
-        
+       /*
+	if((gV4LTestConfig.mCaseNum != PRP_ENC_TO_F) || gV4LTestConfig.mRotation || gV4LTestConfig.mCrop)
+                retValue = ask_user();
+        else
+	*/
+       retValue = TPASS;
         sleep(1);
-                
         if(cleanup_device() != TPASS) return TFAIL; 
-                
         return retValue;
 }
 
