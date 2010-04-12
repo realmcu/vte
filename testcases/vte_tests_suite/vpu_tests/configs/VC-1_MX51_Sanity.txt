@@ -1,0 +1,21 @@
+      Bitstream Name	      Profile	      Level	      Number of Frames	      Width	      Height	      i.MX37 Static Test	      i.MX51 Static Test	      i.MX51 C-model Static Test	      i.MX37 Sanity Test	      i.MX51 Sanity Test	      i.MX51 C-Model Sanity Test
+MA10064.vc1	AP	L1	31	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+MA10065.vc1	AP	L1	26	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+MA10066.vc1	AP	L1	25	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+MA10067.vc1	AP	L1	25	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+MA10069.vc1	AP	L1	26	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+MA10075.vc1	AP	L1	31	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+ma20134.wmv.vc1	AP	L2	31	1280	720		¡Ì	¡Ì		¡Ì	¡Ì
+ma20136.wmv.vc1	AP	L2	31	1280	720		¡Ì	¡Ì		¡Ì	¡Ì
+ma20138.wmv.vc1	AP	L2	31	1280	720		¡Ì	¡Ì		¡Ì	¡Ì
+ma20146.wmv.vc1	AP	L2	25	1280	720		¡Ì	¡Ì		¡Ì	¡Ì
+ma20149.wmv.vc1	AP	L2	25	1280	720		¡Ì	¡Ì		¡Ì	¡Ì
+ma20150.wmv.vc1	AP	L2	25	1280	720		¡Ì	¡Ì		¡Ì	¡Ì
+MMM0054.rcv	MP	ML	25	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+MMM0055.rcv	MP	ML	30	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+MMM0056.rcv	MP	ML	30	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+MMM0059.rcv	MP	ML	25	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+mmm0082.wmv.rcv	MP	ML	30	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+mmm0083.wmv.rcv	MP	ML	25	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+stress19.wmv.vc1	AP			720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+stress20.wmv.vc1	AP			720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì

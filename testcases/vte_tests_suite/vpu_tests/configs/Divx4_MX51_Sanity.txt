@@ -1,0 +1,8 @@
+a02_divx505b_640x304_870kbps_mp3_44khz_cbr128.avi	Portable Device		2994	640	304	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+b02_divx1_smpte720x480_412_prog_3mbps.avi	Portable Device		1200	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+b03_divx1_smpte_720x480_divx51sp_4mbps.avi	Portable Device		1200	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+c01_640x352_divx505b_1mbps_mp3.avi	Portable Device		1795	640	352	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+c06_576x320_divx505b_1mbps_mp3.divx	Portable Device		1795	576	320	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+c16_divx51_stretch720x576_4mbps_mp3_48khz_vbr192.avi	Portable Device		2350	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+d01_divx1_interlaced_botfieldfirst_smpte_720x480_3mbps.avi	Portable Device		1200	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+s01_smpte_bframes_720x480_divx505_2mbps.avi	Portable Device		1200	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
