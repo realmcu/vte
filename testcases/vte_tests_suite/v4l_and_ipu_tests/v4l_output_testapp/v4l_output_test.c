@@ -279,10 +279,10 @@ int VT_v4l_output_test(void)
         /* process frames and display on LCD */
         if (process_image())
                 goto final;
-
+        #if 0
         if (ask_user())
                 goto final;
-
+        #endif
         rv = TPASS;
 
     final:
@@ -578,12 +578,18 @@ int process_image(void)
                                 goto final;
                         }
                 }
+		extern int iLOOP;
+		if(0 == iLOOP--){
+		    break;
+		}
+		/*
                 if (kbhit(&sleeptime))
                 {
                         ch = getchar();
                         if (ch == 'q' || ch == 'Q')
                                 break;
                 }
+		*/
         }
         rv = TPASS;
     final:

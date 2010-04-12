@@ -85,9 +85,8 @@ extern "C"{
 /* Global Variables */
 char   *TCID = "v4l_output_testapp";    /* test program identifier.  */
 int     TST_TOTAL = 1;  /* total number of tests in this file.  */
-
-                                        /* binary flags: opt or not */
-
+int iLOOP = 20;
+/* binary flags: opt or not */
 int     Cflag = 0,
     dflag = 0,
     Rflag = 0,
@@ -98,6 +97,7 @@ int     Cflag = 0,
 int     Oflag = 0,
     oflag = 0,
     Pflag = 0,
+    rflag = 0,
     Sflag = 0,
     Uflag = 0;
 /*hake add offset test in crop*/
@@ -113,6 +113,7 @@ char   *Copt,
        *oopt,
        *Bopt,
        *Uopt,
+       *ropt,
        *Sopt;
 
 /* opt values */
@@ -122,6 +123,7 @@ option_t options[] = {
         {"B:", &Bflag, &Bopt},
         {"d:", &dflag, &dopt},
         {"R:", &Rflag, &Ropt},
+        {"r:", &rflag, &ropt},
         {"S:", &Sflag, &Sopt},
         {"X:", &Xflag, &Xopt},
         {"Y:", &Yflag, &Yopt},
@@ -353,7 +355,9 @@ int main(int argc, char **argv)
         }
         else
                 p.nb_buffers = 4;
-        /* perform global test setup, call setup() function. */
+        if(rflag)
+	    iLOOP = atoi(ropt);
+	/* perform global test setup, call setup() function. */
         setup();
 
         /* Print test Assertion using tst_resm() function with argument TINFO. */
