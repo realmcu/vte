@@ -1,0 +1,21 @@
+BitstreamName	      Profile	      Level	      Number of Frames	      Width	      Height	      i.MX37 Static Test	      i.MX51 Static Test	      i.MX51 C-Model Static Test	      i.MX37 Sanity Test	      i.MX51 Sanity Test	      i.MX51 C-Model Sanity Test
+Allegro_BDWIDTH_CAVLC_B01_L30_SD480_10.0.26l						¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_COMBINED_CAVLC_B01_L30_SD480_10.0.26l	Baseline	3.0	800	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_LOOP_RESIDUAL_CAVLC_B01_L30_SD480_10.0.26l	Baseline	3.0	400	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_PROCESSING_CAVLC_B01_L30_SD480_10.0.26l	Baseline	3.0	480	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_BDWIDTH_CAVLC_B00_L30_SD576@25Hz_10.0.26l	Baseline	3.0	600	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_COMBINED_CAVLC_B00_L30_SD576@25Hz_10.0.26l	Baseline	3.0	800	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_LOOP_RESIDUAL_CAVLC_B00_L30_SD576@25Hz_10.0.26l	Baseline	3.0	400	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_PROCESSING_CAVLC_B00_L30_SD576@25Hz_10.0.26l	Baseline	3.0	480	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_SmallRes_CABAC_H00_SR_10.2.26l	High	2.1	1200	480	352	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_SmallRes_CABAC_H01_SR_10.1.26l	High	2.1	900	480	352	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_SmallRes_CAVLC_H00_SR_10.2.26l	High	2.1	1200	480	352	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_SmallRes_CAVLC_H01_SR_10.1.26l	High	2.1	900	480	352	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_BdWidth_CABAC_04_L30_SD480_10.1.26l	Main	3.0	640	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_Combined_CABAC_06_L30_SD480_10.3.26l	Main	3.0	880	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_Loop_Residual_CABAC_00_L30_SD480_10.3.26l	Main	3.0	600	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_Processing_CAVLC_00_L30_SD480_10.1.26l	Main	3.0	480	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_BdWidth_CABAC_03_L30_SD576@25Hz_10.1.26l	Main	3.0	600	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_Combined_CABAC_02_L30_SD576@25Hz_10.3.26l	Main	3.0	880	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_Loop_Residual_CAVLC_00_L30_SD576@25Hz_10.3.26l	Main	3.0	600	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì
+Allegro_Processing_CABAC_03_L30_SD576@25Hz_10.3.26l	Main	3.0	484	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì

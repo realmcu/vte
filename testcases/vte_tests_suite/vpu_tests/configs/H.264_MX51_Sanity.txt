@@ -1,0 +1,27 @@
+BitstreamName	      Profile	      Level	      Number of Frames	      Width	      Height	      i.MX37 Static Test	      i.MX51 Static Test	      i.MX51 C-Model Static Test	      i.MX37 Sanity Test	      i.MX51 Sanity Test	      i.MX51 C-Model Sanity Test	      constrained_set0_flag	      constrained_set1_flag	      constrained_set2_flag	      constrained_set3_flag	      Chroma Format	      Frame Cropping Enable	      Number of Reference Frames	      Number of Slices	      I Slice	      P Slice	      B Slice	      Number of Frame Slices	      Number of Field Slices	      Number of MBAFF Slices	      Number of Slice Groups	      Slice Group Type	      Mixed Slice Types Within Picture	      Max Number of Slices Within Picture	      POC Type	      Loop Filter Disable	      Entropy Coding mode	      weighted_pred_flag	      weighted_bipred_idc	      Redundant Slices	      8x8 vs. 4x4 Transform Adaptivity	      constrained_intra_pred_flag	      Quantization Scaling Matrices	      Separate Cb and Cr QP Control	      direct_8x8_inference_flag	      Comments
+Allegro_BDWIDTH_CAVLC_B01_L30_SD480_10.0.26l						¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì																														
+Allegro_COMBINED_CAVLC_B01_L30_SD480_10.0.26l	Baseline	3.0	800	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì																														
+Allegro_LOOP_RESIDUAL_CAVLC_B01_L30_SD480_10.0.26l	Baseline	3.0	400	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	3	7825	3894	3931	0	7825	0	0	1 8	6	0	136	0	0	CAVLC	0	0	0	0	1	0	0	0	
+Allegro_PROCESSING_CAVLC_B01_L30_SD480_10.0.26l	Baseline	3.0	480	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	4	62556	20	62536	0	62556	0	0	1 8	6	0	136	0	0	CAVLC	0	0	0	0	1	0	0	0	
+Allegro_BDWIDTH_CAVLC_B00_L30_SD576@25Hz_10.0.26l	Baseline	3.0	600	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	4	600	20	580	0	600	0	0	1	N/A	0	1	0	0	CAVLC	0	0	0	0	0	0	0	0	
+Allegro_COMBINED_CAVLC_B00_L30_SD576@25Hz_10.0.26l	Baseline	3.0	800	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	4	1580	20	1560	0	1580	0	0	1	N/A	0	2	0	0	CAVLC	0	0	0	0	1	0	0	0	
+Allegro_LOOP_RESIDUAL_CAVLC_B00_L30_SD576@25Hz_10.0.26l	Baseline	3.0	400	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	3	400	114	286	0	400	0	0	1	N/A	0	1	0	0	CAVLC	0	0	0	0	1	0	0	0	
+Allegro_PROCESSING_CAVLC_B00_L30_SD576@25Hz_10.0.26l	Baseline	3.0	480	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	4	960	40	920	0	960	0	0	1	N/A	0	2	0	0	CAVLC	0	0	0	0	1	0	0	0	
+Allegro_Inter_CABAC_H00_HD2_10.2.26l	High	4.0	600	1280	736		¡Ì	¡Ì		¡Ì	¡Ì	0	0	0	0	4:02:00	1	3	19249	6043	6603	6603	0	7877	11372	1	N/A	1	67	0	1	CABAC	0	0	0	1	1	1	1	1	
+Allegro_Inter_CAVLC_H00_HD2_10.2.26l	High	4.0	600	1280	736		¡Ì	¡Ì		¡Ì	¡Ì	0	0	0	0	4:02:00	1	3	19249	6043	6603	6603	0	7877	11372	1	N/A	1	67	0	1	CAVLC	0	0	0	1	1	1	1	1	
+Allegro_Intra_CABAC_H00_HD2_10.1.26l	High	4.0	900	1280	736		¡Ì	¡Ì		¡Ì	¡Ì	0	0	0	0	4:02:00	1	3	14402	13952	450	0	0	6814	7588	1	N/A	0	67	0	1	CABAC	0	0	0	1	1	0	1	1	
+Allegro_Intra_CAVLC_H00_HD2_10.1.26l	High	4.0	900	1280	736		¡Ì	¡Ì		¡Ì	¡Ì	0	0	0	0	4:02:00	1	3	14402	13952	450	0	0	6814	7588	1	N/A	0	67	0	1	CAVLC	0	0	0	1	1	0	1	1	
+Allegro_Monochrome_CABAC_H00_HD2_10.2.26l							¡Ì	¡Ì		¡Ì	¡Ì																														
+Allegro_Monochrome_CAVLC_H00_HD2_10.2.26l							¡Ì	¡Ì		¡Ì	¡Ì																														
+Allegro_SmallRes_CABAC_H00_SR_10.2.26l	High	2.1	1200	480	352	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	3	91931	18548	13305	60078	0	22471	69460	1	N/A	1	232	0	 0  1  2 	CABAC	0	0	0	1	1	1	1	1	
+Allegro_SmallRes_CABAC_H01_SR_10.1.26l	High	2.1	900	480	352	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	3	8212	2780	2714	2718	8212	0	0	1	N/A	1	19	0	 0  1  2 	CABAC	0	0	0	1	1	1	1	0	
+Allegro_SmallRes_CAVLC_H00_SR_10.2.26l	High	2.1	1200	480	352	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	3	91931	18548	13305	60078	0	22471	69460	1	N/A	1	232	0	 0  1  2 	CAVLC	0	0	0	1	1	1	1	1	
+Allegro_SmallRes_CAVLC_H01_SR_10.1.26l	High	2.1	900	480	352	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	3	8212	2780	2714	2718	8212	0	0	1	N/A	1	19	0	 0  1  2 	CAVLC	0	0	0	1	1	1	1	0	
+Allegro_BdWidth_CABAC_04_L30_SD480_10.1.26l	Main	3.0	640	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	4	1280	32	0	1248	0	1280	0	1	N/A	0	2	0	0	CABAC	0	0	0	0	0	0	0	1	
+Allegro_Combined_CABAC_06_L30_SD480_10.3.26l	Main	3.0	880	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	3	6424	22	704	5698	0	0	6424	1	N/A	0	57	0	0	CABAC	0	0 1 2	0	0	0	0	0	1	
+Allegro_Loop_Residual_CABAC_00_L30_SD480_10.3.26l	Main	3.0	600	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	3	600	118	454	28	0	0	600	1	N/A	0	1	0	0	CABAC	0	0	0	0	1	0	0	1	
+Allegro_Processing_CAVLC_00_L30_SD480_10.1.26l	Main	3.0	480	720	480	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	4	960	40	920	0	0	0	960	1	N/A	0	2	0	0	CAVLC	0	0	0	0	1	0	0	1	
+Allegro_BdWidth_CABAC_03_L30_SD576@25Hz_10.1.26l	Main	3.0	600	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	4	1200	40	1160	0	0	1200	0	1	N/A	0	2	0	0	CABAC	0	0	0	0	0	0	0	1	
+Allegro_Combined_CABAC_02_L30_SD576@25Hz_10.3.26l	Main	3.0	880	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	3	1738	22	1364	352	0	0	1738	1	N/A	0	2	0	0	CABAC	0	0	0	0	1	0	0	1	
+Allegro_Loop_Residual_CAVLC_00_L30_SD576@25Hz_10.3.26l	Main	3.0	600	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	3	600	118	454	28	0	0	600	1	N/A	0	1	0	0	CAVLC	0	0	0	0	1	0	0	1	
+Allegro_Processing_CABAC_03_L30_SD576@25Hz_10.3.26l	Main	3.0	484	720	576	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	¡Ì	0	0	0	0	4:02:00	0	2	946	22	44	880	0	0	946	1	N/A	0	2	0	0	CABAC	0	0	0	0	1	0	0	1	
