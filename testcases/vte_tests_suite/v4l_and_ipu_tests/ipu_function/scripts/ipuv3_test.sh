@@ -154,13 +154,26 @@ return $RC
 
 }
 
+run_bg()
+{
+LOOP=21;
+while [ $LOOP -gt 1 ];
+do
+echo 1 > /sys/class/graphics/fb0/blank ;
+sleep 1 ;
+echo 0 > /sys/class/graphics/fb0/blank;
+LOOP=$(expr $LOOP - 1);
+echo "next loop";
+done;
+}
+
 # Function:     test_case_03
-# Description   - Test if <TODO test function> ok
+# Description   - Test if ipu blank / unblank ok
 #  
 test_case_03()
 {
 #TODO give TCID 
-TCID="test_demo3_test"
+TCID="test_blank_test"
 #TODO give TST_COUNT
 TST_COUNT=3
 RC=0
@@ -169,9 +182,12 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-
+run_bg &
+v4l_output_testapp -B 10,10,320,240  -C 2 -R 3 -r 2000 -F $LTPROOT/testcases/bin/green_RGB24
+RC=$?
+wait
+rm -rf /tmp/v4llog
 return $RC
-
 }
 
 # Function:     test_case_04
