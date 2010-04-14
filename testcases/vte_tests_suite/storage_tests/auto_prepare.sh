@@ -333,13 +333,10 @@ insmod_V4L()
 {
 	echo "v4l: prepare insmod modules";
 	find=0;
-	
     #turn on backlight
     echo -e "\033[9;0]" > /dev/tty0
-        
-	echo "enalbe tvout module" 
-        echo U:720x576i-50 > /sys/class/graphics/fb0/mode
-
+	#echo "enalbe tvout module"
+	#echo U:720x576i-50 > /sys/class/graphics/fb0/mode
 	find=`find /lib/modules/$sys_name -name ipu_prp_enc.ko | wc -l`;
 	lsmod | grep ipu_prp_enc;
 	if [ $? -ne 0 ] && [ $find -eq 1 ]; then
