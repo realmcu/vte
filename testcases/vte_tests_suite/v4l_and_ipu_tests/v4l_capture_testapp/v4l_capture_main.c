@@ -138,7 +138,7 @@ void help(void)
         printf("Usage : -D <V4L_Device>.To put V4L device (default /dev/video0)\n");
         printf("Usage : -H <height>. To put capture image height\n");
         printf("Usage : -W <width>. Capture image width\n");
-        printf("Usage : -R <n>, n - [0-7] is the type of rotation, 8 - configurable\n");
+        printf("Usage : -R <n>, n - [0-7] is the type of rotation, 8 - configurable, 9 - 15 VF rotation\n");
         printf("Usage : -S To do interactive resizing\n");
         printf("Usage : -B <left,top,width,height> To do cropping of the video.\n");
         printf("                                   The cropping restangle size is (width,heyght) pixels.\n");
@@ -420,8 +420,7 @@ int main(int argc, char **argv)
         /* Rotations tests */
         if(gV4LTestConfig.mRotation)
         {
-         
-                if((gV4LTestConfig.mRotationMode < 0) || (gV4LTestConfig.mRotationMode > 8))
+                if((gV4LTestConfig.mRotationMode < 0) || (gV4LTestConfig.mRotationMode > 15))
                 {
                         tst_resm(TBROK, "You are entered wrong rotation option");    
                         return TFAIL;      
