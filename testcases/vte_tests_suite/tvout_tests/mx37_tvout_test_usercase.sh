@@ -180,9 +180,9 @@ if [ $RC = 1 ]; then
 fi
 
 # SDC crop test
-for OL in 10 16 20 720
+for OL in 10 16 20
 do
- for OT in 10 16 20 480
+ for OT in 10 16 20
  do
  /unit_tests/mxc_v4l2_output.out -iw 320 -ih 240 -ot $OT -ol $OL -ow 320  -oh 240 -d 5 -r $ROT -f YU12 || RC=1
  sleep 1
