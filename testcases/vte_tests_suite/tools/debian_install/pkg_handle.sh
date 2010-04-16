@@ -14,7 +14,7 @@ install_debian_package()
  list=$(ls $1/*.deb)
  for i in $list
  do
- dpkg -i $1/$i
+ dpkg -i $i
  done
  return 0
 }
@@ -24,7 +24,7 @@ remove_debian_package()
  list=$(ls $1/*.deb)
  for i in $list
  do
- dpkg -r $(echo $i | cut -f 1 -d _)
+ dpkg -r $(basename $i | cut -f 1 -d _)
  done
  return 0
 }
