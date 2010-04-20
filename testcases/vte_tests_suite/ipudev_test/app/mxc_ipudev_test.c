@@ -62,6 +62,7 @@ void output_to_file_cb(void * arg, int index)
 int process_cmdline(int argc, char **argv, ipu_test_handle_t * test_handle)
 {
 	int i;
+	int pre_set = 0;
 
 	if (argc == 1)
 		return -1;
@@ -69,8 +70,10 @@ int process_cmdline(int argc, char **argv, ipu_test_handle_t * test_handle)
 	for (i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "-C") == 0) {
 			parse_config_file(argv[++i], test_handle);
+			pre_set = 1;
 		} else if (strcmp(argv[i], "-P") == 0) {
 			test_handle->test_pattern = atoi(argv[++i]);
+			pre_set = 1;
 		} else if (strcmp(argv[i], "-bw") == 0) {
 			test_handle->block_width = atoi(argv[++i]);
 			if (test_handle->block_width < 16)
@@ -79,6 +82,7 @@ int process_cmdline(int argc, char **argv, ipu_test_handle_t * test_handle)
 	}
 
 	/*add command line support*/
+	if(pre_set == 0)
 	parse_cmd_input(argc,argv,test_handle);
 
 	if (test_handle->test_pattern)

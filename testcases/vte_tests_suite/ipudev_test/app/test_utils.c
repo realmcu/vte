@@ -78,6 +78,7 @@ int parse_cmd_input(int argc, char ** argv, ipu_test_handle_t *test_handle)
  char fourcc[5];
   
  printf("pass cmdline \n", argc, argv[0]);
+
  /*default settings*/
  test_handle->mode = 0x22;
  test_handle->fcount = 50;
