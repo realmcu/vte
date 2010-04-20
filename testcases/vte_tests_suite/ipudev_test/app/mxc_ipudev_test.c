@@ -113,7 +113,12 @@ int main(int argc, char *argv[])
     unsigned char timeFlag =0;
     FILE    *fSysTime;
     unsigned char chname[] = "[PROFILE-INFO]";
+    system("mkdir -p /tmp/ipu_dev");
     fSysTime = fopen ("/tmp/ipu_dev/sys_time.txt", "w");
+    if(fSysTime == NULL)
+    {
+       printf("open time file error\n");
+    }
     /*for performance test -- end*/
 
 	memset(&ipu_handle, 0, sizeof(ipu_lib_handle_t));
@@ -283,10 +288,13 @@ int main(int argc, char *argv[])
                             maxFrameTime,minFrameTime,numFrame,maxFrameNumber, minFrameNumber,totalTime);
     fclose(fSysTime);
 */
+    if(fSysTime != NULL )
+    {
     fprintf(stdout,"%d\t%ld\t%ld\t%ld\t%ld\t%d\t%d\t\n", numFrame,totalTime,maxFrameTime,minFrameTime,totalTime/numFrame,maxFrameNumber, minFrameNumber);
     fprintf(fSysTime,"%d\t%ld\t%ld\t%ld\t%ld\t%d\t%d\t\n", numFrame,totalTime,maxFrameTime,minFrameTime,totalTime/numFrame,maxFrameNumber, minFrameNumber);
     fclose(fSysTime);
-
+    }
+    printf("test finish\n");
 done:
 	fclose(file_in);
 	if (test_handle.file_out0)
