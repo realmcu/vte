@@ -77,8 +77,33 @@ int parse_cmd_input(int argc, char ** argv, ipu_test_handle_t *test_handle)
  int status = 0;
  char fourcc[5];
   
-  printf("pass cmdline ", argc, argv[0]);
- 
+ printf("pass cmdline \n", argc, argv[0]);
+ /*default settings*/
+ test_handle->mode = 0x22;
+ test_handle->fcount = 50;
+ test_handle->output1_enabled = 0;
+ test_handle->input.width = 320;
+ test_handle->input.height = 240;
+ test_handle->input.fmt = v4l2_fourcc('I', '4','2', '0');
+ test_handle->input.input_crop_win.pos.x = 0;
+ test_handle->input.input_crop_win.pos.y = 0;
+ test_handle->input.input_crop_win.win_w = 0;
+ test_handle->input.input_crop_win.win_h = 0;
+ test_handle->output0.show_to_fb = 1;
+ test_handle->output0.fb_disp.fb_num = 0;
+ test_handle->output0.fb_disp.pos.x = 0;
+ test_handle->output0.fb_disp.pos.y = 0;
+ memcpy(test_handle->outfile0,"output0.dat",11);
+ test_handle->output1.width = 320;
+ test_handle->output1.height = 240;
+ test_handle->output1.fmt =  v4l2_fourcc('R', 'G','B', 'P');
+ test_handle->output1.rot = 0;
+ test_handle->output1.show_to_fb = 1;
+ test_handle->output1.fb_disp.fb_num = 2;
+ test_handle->output1.fb_disp.pos.x = 0;
+ test_handle->output1.fb_disp.pos.y = 0;
+ memcpy(test_handle->outfile1 ,"output1.dat",11);
+
  while((opt = getopt(argc, argv, options)) > 0)
  {
   deb_printf("new option : %c \n", opt);
