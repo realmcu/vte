@@ -194,7 +194,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 
 declare -a cpufreq_value;
-cpufreq_value=(454740 392730 360000 261820);
+cpufreq_value=(454736 392727 360000 261818);
 count=0
 
 while [ $count -lt 7 ]; do
@@ -234,7 +234,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 echo "case can not run on nfs"
 declare -a cpufreq_value;
-cpufreq_value=(454740 392730 360000 261820 64000);
+cpufreq_value=(454736 392727 360000 261818);
 count=0
 
 for i in $cpufreq_value
