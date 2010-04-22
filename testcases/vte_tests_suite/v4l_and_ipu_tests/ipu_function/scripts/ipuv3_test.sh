@@ -156,6 +156,9 @@ return $RC
 
 run_bg()
 {
+echo 0 > /sys/class/graphics/fb0/blank;
+#wait till the v4l output start
+sleep 5
 LOOP=21;
 while [ $LOOP -gt 1 ];
 do
@@ -183,7 +186,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 run_bg &
-v4l_output_testapp -B 10,10,320,240  -C 2 -R 3 -r 2000 -F $LTPROOT/testcases/bin/green_RGB24
+v4l_output_testapp -B 10,10,320,240  -C 2 -R 3 -r 1000 -F $LTPROOT/testcases/bin/green_RGB24
 RC=$?
 wait
 rm -rf /tmp/v4llog
