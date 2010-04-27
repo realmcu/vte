@@ -57,6 +57,7 @@ ifeq ($(ARCH_PLATFORM), imx51stack)
 CFLAGS+=    -DCONFIG_MACH_MX51STACK
 endif
 
+
 SRCS = $(wildcard *.c)
 OBJS = $(patsubst %.c,%.o,$(SRCS))
 

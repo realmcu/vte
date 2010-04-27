@@ -1,4 +1,4 @@
-ifeq ($(ARCH_PLATFORM), $(filter imx51stack imx53, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS = usb_pm
 endif
 

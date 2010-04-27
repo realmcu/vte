@@ -26,7 +26,7 @@
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack imx37stack imx51stack imx25stack imx233, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack imx37stack imx51stack imx25stack imx233 imx28 imx51, $(ARCH_PLATFORM)))
 SUBDIRS =rtc_testapp_1 \
          rtc_testapp_2 \
          rtc_testapp_3 \

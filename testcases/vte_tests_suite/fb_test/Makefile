@@ -16,7 +16,7 @@
 
 CONFIG = ../../third_party_suite/fbv-1.0b
 
-ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx25stack imx51stack imx53, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx25stack imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS = mxcfb_test
 endif
 

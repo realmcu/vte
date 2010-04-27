@@ -78,7 +78,7 @@ iMX31 = imx31ads
 #           sahara_module
 #endif
 
-ifeq ($(ARCH_PLATFORM),$(filter imx27ads imx51stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM),$(filter imx27ads imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS += sahara_testapp \
            sahara_module
 endif
@@ -88,7 +88,7 @@ SUBDIRS += scc_test_module  \
           scc_testcases  
 endif
              
-ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS += scc2_test_module  \
           scc2_testcases    
 endif

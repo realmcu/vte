@@ -93,7 +93,7 @@ ifeq ($(ARCH_PLATFORM), $(filter imx32ads mxc30031ads, $(ARCH_PLATFORM)))
 SUBDIRS += dvfs_dptc_tests
 endif
 
-ifeq ($(ARCH_PLATFORM), $(filter imx53 imx51stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx53 imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS += power_manager
 endif
 #Hake mxc fb test extension
@@ -124,7 +124,7 @@ SUBDIRS += i2c_tests
 SUBDIRS += watchdog_tests
 SUBDIRS += owire
 SUBDIRS += systest
-ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx25stack imx51stack imx53, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx25stack imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS += libata_tests
 endif
 
@@ -148,20 +148,20 @@ SUBDIRS += acc_tests
 SUBDIRS += mbx_tests
 endif
 
-ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack imx53, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS += vpu_tests
 endif
 
 
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack imx37stack imx51stack imx53, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack imx37stack imx51stack imx5q, $(ARCH_PLATFORM)))
 SUBDIRS += ipudev_test
 endif
 
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx51stack imx53, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS += camera_test
 endif
 
-ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx51stack imx53, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS += gpu_test
 endif
 SUBDIRS += emi_tests
@@ -193,7 +193,7 @@ SUBDIRS += alsa_tests
 SUBDIRS += fs_tests
 SUBDIRS += gps_tests
 SUBDIRS += bt_tests
-ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx35stack imx51stack imx53, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx35stack imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS += wifi_tests
 endif
 SUBDIRS += fm_tests
@@ -207,11 +207,11 @@ ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx37stack, $(ARCH_PLATFO
 SUBDIRS += dptc_tests
 endif
 #added by Blake
-ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx35stack imx51stack imx53, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx35stack imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS += dvfs_tests
 endif
 #added by Blake
-ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack imx53, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS += backlight_tests
 endif
 

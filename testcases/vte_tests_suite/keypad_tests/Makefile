@@ -28,7 +28,7 @@
 #
 ###################################################################################################
 
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx37stack imx51stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx37stack imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS = keypad_testapp_1
 endif
 SUBDIRS += keypad_test_script
