@@ -1,6 +1,8 @@
 /*
  * Copyright (c) International Business Machines  Corp., 2004.
  *
+ * Copyright (c) 2004-2009 Freescale Semiconductor, Inc.
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
@@ -131,7 +133,7 @@ void do_timedwait(pthread_cond_t* cond, pthread_mutex_t* mutex,
 	tst_brkm(TBROK, cleanup, "gettimeofday failed: %s",
 		strerror_r(errno, buf, buf_len));
     }
-	
+
     ts.tv_sec = tv.tv_sec;
     ts.tv_nsec = (tv.tv_usec * 1000) + NSECS_TO_WAIT;
     ts.tv_sec += ts.tv_nsec / 1000000000;
@@ -241,7 +243,7 @@ int PM_main(int argc, char** argv)
     tst_exit();
 #endif
     /* NOT REACHED */
-    return(1);
+    return 1;
 }
 
 /*

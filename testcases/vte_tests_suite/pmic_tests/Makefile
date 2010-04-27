@@ -1,4 +1,4 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -31,8 +31,8 @@
 #Portability: ARM GCC
 #
 ####################################################################################################
-export CFLAGS+=-Wall -I../../../../include
-export LOADLIBES+=-L../../../../lib -lltp -lpthread
+CFLAGS+= -Wall -I../../../../include
+LOADLIBES+= -L../../../../lib -lltp -lpthread
 
 # - PMIC for MXC91131 have headers not synchronized with other platforms
 # - PMIC for MXC91131 have not yet RTC support
@@ -73,22 +73,6 @@ SUBDIRS +=\
 	pmic_protocol_testapp	\
         pmic_rtc_testapp
 endif
-endif
-
-ifeq ($(ARCH_PLATFORM),imx37stack)
-#CFLAGS+=   
-#SUBDIRS +=\
-	pmic_protocol_testapp	\
-	pmic_light_testapp      
-
-endif
-
-ifeq ($(ARCH_PLATFORM),imx51stack)
-#CFLAGS+=    -DCONFIG_MXC_PMIC_MC13892
-#SUBDIRS +=\
-          pmic_13892   \
-          pmic_adc_testapp   \
-          pmic_rtc_testapp   
 endif
 
 CFLAGS+=-Dbool=int -Dture=1 -Dfalse=0

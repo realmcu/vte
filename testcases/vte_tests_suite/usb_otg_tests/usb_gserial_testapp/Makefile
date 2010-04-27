@@ -1,4 +1,4 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -20,7 +20,7 @@
 LTP_DIR = ../../../..
 BIN_DIR = ../../../bin
 
-CFLAGS += -Wall -I$(LTP_DIR)/include -I$(KLINUX_SRCDIR)/include -I$(KLINUX_BLTDIR)    
+CFLAGS += -Wall -I$(LTP_DIR)/include -I$(KLINUX_SRCDIR)/include 
 LOADLIBES += -L$(LTP_DIR)/lib -lltp
 
 SRCS=$(wildcard *.c)

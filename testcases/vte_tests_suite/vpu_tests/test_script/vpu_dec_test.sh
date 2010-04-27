@@ -1,4 +1,4 @@
-#Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -126,12 +126,12 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-cp ${STREAM_PATH}/video/nokia6_720x576.mpg /tmp
+cp ${STREAM_PATH}/video/mpeg2_720x576.mpg /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_mpeg2 
 ${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_mpeg2 
 SIZE=$(ls -s sd_d1_mpeg2.yuv | awk '{print $1}') 
-rm -rf sd_d1_mpeg2.yuv nokia6_720x576.mpg 
+rm -rf sd_d1_mpeg2.yuv mpeg2_720x576.mpg 
 
 if [ $SIZE -ne 0 ]
 then
@@ -423,7 +423,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_mpeg2 
-${TSTCMD} -D "-i ${STREAM_PATH}/video/nokia6_720x576.mpg -o /tmp/sd_d1_mpeg2.yuv -f 4 -d 1" || return $RC
+${TSTCMD} -D "-i ${STREAM_PATH}/video/mpeg2_720x576.mpg -o /tmp/sd_d1_mpeg2.yuv -f 4 -d 1" || return $RC
 SIZE=$(ls -s /tmp/sd_d1_mpeg2.yuv | awk '{print $1}')
 
 rm -f /tmp/sd_d1_mpeg2.yuv

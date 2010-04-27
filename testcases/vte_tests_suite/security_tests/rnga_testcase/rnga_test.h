@@ -1,5 +1,5 @@
 /***
-**Copyright 2006-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2006-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -14,7 +14,7 @@
 
         @brief  rng API
 
-/*====================================================================================================
+====================================================================================================
 Revision History:
                 Modification     Tracking
 Author                          Date          Number    Description of Changes

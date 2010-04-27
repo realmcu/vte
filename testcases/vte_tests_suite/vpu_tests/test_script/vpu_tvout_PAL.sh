@@ -1,4 +1,4 @@
-#Copyright 2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -132,11 +132,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-cp ${STREAM_PATH}/video/nokia6_720x576.mpg /tmp
+cp ${STREAM_PATH}/video/mpeg2_720x576.mpg /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_mpeg2 
-${TSTCMD} -D "-i /tmp/nokia6_720x576.mpg -f 4" || return $RC 
-rm -rf /tmp/nokia6_720x576.mpg
+${TSTCMD} -D "-i /tmp/mpeg2_720x576.mpg -f 4" || return $RC 
+rm -rf /tmp/mpeg2_720x576.mpg
 RC=0
 return $RC
 }
@@ -382,7 +382,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_mpeg2 
-${TSTCMD} -D "-i ${STREAM_PATH}/video/nokia6_720x576.mpg -f 4 -d 1" || return $RC
+${TSTCMD} -D "-i ${STREAM_PATH}/video/mpeg2_720x576.mpg -f 4 -d 1" || return $RC
 
 RC=0
 return $RC

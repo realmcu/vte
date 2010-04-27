@@ -1,4 +1,4 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -6,17 +6,17 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-###############################################################################
+###################################################################################################
 #
 #    @file   Makefile
 #
 #    @brief  configuration file to compile the sahara_testapp test.
 #
-###############################################################################
+###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author/Core ID                  Date          Number    Description of Changes
-#-------------------------   ------------    ----------  ----------------------
+#-------------------------   ------------    ----------  ------------------------------------------
 #A.Ozerov/NONE                10/10/2005     TLSbo55834   Initial version
 #A.Urusov/NONE                09/11/2005     TLSbo57926   APIINCDIR is added
 #A.Ozerov/NONE                01/12/2005     TLSbo58662   Update for linux-2.6.10-rel-L26_1_14
@@ -24,10 +24,10 @@
 #Spring Zhang                 24/11/2009     ENGR118408   disable -mfpu=vfp in 2.6.28
 #Spring Zhang                 10/12/2009     ENGR118408   disable -O2 in 2.6.31
 #                                                        
-###############################################################################
+###################################################################################################
 #Portability: ARM GCC 
 #
-###############################################################################
+###################################################################################################
 LTP_DIR = ../../../..
 BIN_DIR = ../../..
 MODULE_DIR = ../sahara_module

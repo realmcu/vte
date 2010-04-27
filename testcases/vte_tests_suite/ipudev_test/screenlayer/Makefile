@@ -1,4 +1,4 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -9,7 +9,7 @@
 CC=$(CROSS_COMPILER)gcc
 AR=$(CROSS_COMPILER)ar
 
-INCLUDE = -I$(KLINUX_SRCDIR)/include
+INCLUDE = -I$(KLINUX_SRCDIR)/include -I$(KLINUX_BLTDIR)/include
 INC = $(INCLUDE) -I../ipu
 
 OBJS = ScreenLayer.o

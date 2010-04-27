@@ -1,4 +1,4 @@
-#Copyright 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -28,7 +28,7 @@
 #
 ###################################################################################################
 
-CFLAGS+=	-Wall -I../../../../include -I$(KLINUX_BLTDIR)/include
+CFLAGS+=	-Wall -I../../../../include -I$(KLINUX_SRCDIR)/include
 LOADLIBES+=	-L../../../../lib -lltp
 
 SRCS=$(wildcard *.c)

@@ -1,4 +1,4 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -18,7 +18,10 @@
 ####################################################################################################
 BIN_DIR = ../../bin
 
-CFLAGS+= -Wall -I../../../include -I$(KLINUX_SRCDIR)/include -I$(KLINUX_BLTDIR)/include -I$(KLINUX_SRCDIR)/drivers/net
+CFLAGS+= -Wall -I../../../include -I$(KLINUX_SRCDIR)/include \
+         -I$(KLINUX_BLTDIR)/include \
+	 -I$(KLINUX_SRCDIR)/drivers/net
+
 LOADLIBES+=     -L../../../lib -lltp
 
 SRCS=$(wildcard *.c)

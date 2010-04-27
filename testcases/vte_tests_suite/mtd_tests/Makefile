@@ -30,9 +30,6 @@
 ###################################################################################################
 SUBDIRS = nor_mtd_testapp nor_mtd_testapp_2 nand_mtd_testapp
 
-ifneq ($(ARCH_PLATFORM), $(filter mxc27520evb mxc30020evb, $(ARCH_PLATFORM)))
-SUBDIRS += nand_mtd_testapp
-endif
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
