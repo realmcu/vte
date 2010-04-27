@@ -1,4 +1,4 @@
-#Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -152,7 +152,7 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 TSTCMD="/unit_tests/mxc_vpu_test.out"
 VPATH="${STREAM_PATH}/video/"
-SRCLIST="4+nokia6_720x576.mpg 3+SD720x480.vc1.rcv 0+akiyo.mp4 2+starwars640x480.264 1+stream.263"
+SRCLIST="4+mpeg2_720x576.mpg 3+SD720x480.vc1.rcv 0+akiyo.mp4 2+starwars640x480.264 1+stream.263"
 EFORMAT="0 1 2 3 7"
 
 #${TSTCMD} -E "-o enc.264 -w 176 -h 144 -f 0" -D "-i /vectors/vga.264 -f 2"
@@ -201,7 +201,7 @@ RC=1
 
 echo "this case will run for 24 hours"
 
-STRLIST="4+nokia6_720x576.mpg 3+SD720x480.vc1.rcv 0+akiyo.mp4 2+starwars640x480.264 1+stream.263"
+STRLIST="4+mpeg2_720x576.mpg 3+SD720x480.vc1.rcv 0+akiyo.mp4 2+starwars640x480.264 1+stream.263"
 SRCLIST="1+stream.263 1+CITY_640x480_30.263 1+CREW_640x480_30.263 \
 1+HARBOUR_640x480_30.263 1+ICE_640x480_30.263 1+SOCCER_640x480_30.263"
 RAWLIST="ICE_640x480_30.yuv SOCCER_640x480_30.yuv HARBOUR_640x480_30.yuv \
@@ -278,7 +278,7 @@ TST_COUNT=2
 RC=1
 echo "this case will run for 24 hours"
 
-STRLIST="4+nokia6_720x576.mpg 3+SD720x480.vc1.rcv  0+akiyo.mp4 2+starwars640x480.264 1+stream.263"
+STRLIST="4+mpeg2_720x576.mpg 3+SD720x480.vc1.rcv  0+akiyo.mp4 2+starwars640x480.264 1+stream.263"
 SRCLIST="2+starwars640x480.264 2+CITY_640x480_30.264 2+CREW_640x480_30.264 \
 2+HARBOUR_640x480_30.264 2+ICE_640x480_30.264 2+SOCCER_640x480_30.264"
 RAWLIST="ICE_640x480_30.yuv SOCCER_640x480_30.yuv HARBOUR_640x480_30.yuv \

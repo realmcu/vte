@@ -1,5 +1,5 @@
 /***
-**Copyright 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -12,7 +12,7 @@
 /**
     @file   PM_main.c
 
-    @brief  LTP Motorola template.
+    @brief  LTP Freescale template.
 ====================================================================================================
 Revision History:
                             Modification     Tracking

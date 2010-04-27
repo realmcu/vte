@@ -1,4 +1,4 @@
-#Copyright 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -27,7 +27,7 @@
 #
 ###################################################################################################
 
-CFLAGS+=	-Wall -I../../../../include -D_LINUX_
+CFLAGS+=	-Wall -I../../../../include -I../../../kernel/sched/pthreads  -D_LINUX_
 LOADLIBES+=	-L../../../../lib -lltp -lpthread
 
 SRCS=$(wildcard *.c)

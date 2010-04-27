@@ -1,4 +1,4 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -14,12 +14,9 @@ AR=$(CROSS_COMPILER)ar
 
 OBJS = mxc_ipu_hl_lib.o mxc_ipu_lib.o
 
-# list of platforms which want this test case
-INCLUDE_LIST:= IMX37_3STACK IMX51
-
 LIBNAME=libipu
 
-INCLUDE = -I$(KLINUX_SRCDIR)/include
+INCLUDE = -I$(KLINUX_SRCDIR)/include -I$(KLINUX_BLTDIR)/include
 
 
 all: $(LIBNAME).so

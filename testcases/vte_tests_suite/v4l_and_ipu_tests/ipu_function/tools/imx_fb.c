@@ -544,8 +544,7 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
 */
 unsigned char *draw_px(unsigned char *where, struct pixel *p)
 {
-        __u32 value;
-        
+        __u32 value; 
         if (!where)
         {
                 tst_resm(TFAIL, "where isn't a valid pointer to 'unsigned char' ");

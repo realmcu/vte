@@ -1,4 +1,4 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -12,13 +12,6 @@
 #
 #        @brief  configuration file.
 #
-###################################################################################################
-#
-#        Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
-#        THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-#        BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-#        Freescale Semiconductor, Inc.
-#     
 ###################################################################################################
 #Revision History:
 #                            Modification     Tracking

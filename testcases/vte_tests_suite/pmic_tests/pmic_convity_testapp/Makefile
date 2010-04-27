@@ -1,4 +1,4 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -31,9 +31,9 @@ BIN_DIR = ../../../
 MC13783_LEGACY_DIR = $(KLINUX_SRCDIR)/drivers/mxc/mc13783_legacy
 
 ifeq ($(ARCH_PLATFORM), mxc91131evb)
-CFLAGS += -DCONFIG_MXC_PMIC_SC55112 -Wall -I$(LTP_DIR)include -I$(KLINUX_BLTDIR)/include
+CFLAGS += -DCONFIG_MXC_PMIC_SC55112 -Wall -I$(LTP_DIR)include -I$(KLINUX_SRCDIR)/include
 else
-CFLAGS += -DCONFIG_MXC_PMIC_MC13783 -Wall -I$(LTP_DIR)include -I$(KLINUX_BLTDIR)/include
+CFLAGS += -DCONFIG_MXC_PMIC_MC13783 -Wall -I$(LTP_DIR)include -I$(KLINUX_SRCDIR)/include
 endif
 
 LOADLIBES += -L$(LTP_DIR)lib -lltp

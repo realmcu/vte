@@ -1,7 +1,7 @@
 #!/bin/sh
 ##############################################################################
 #
-#  Copyright 2009-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+#  Copyright (C) 2004-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 ##############################################################################
 #

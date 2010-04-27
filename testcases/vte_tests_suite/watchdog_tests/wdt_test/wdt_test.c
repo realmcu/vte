@@ -3,7 +3,9 @@
  *
  * Vladislav Buzov <vbuzov@embeddedalley.com>
  *
- * Copyright 2008 Embedded Alley Solutions, Inc
+ * Copyright (C) 2008 Embedded Alley Solutions, Inc
+ *
+ * Copyright (C) 2009 Freescale Semiconductor, Inc. All Rights Reserved.
  *
  * This file is licensed under the terms of the GNU General Public License
  * version 2.  This program  is licensed "as is" without any warranty of any

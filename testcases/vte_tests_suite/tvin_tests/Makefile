@@ -1,4 +1,4 @@
-#Copyright 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -31,6 +31,9 @@ TARGET_SCRIPT = tvin_test.sh
 
 SRCS=$(wildcard *.c)
 OBJS=$(patsubst %.c,%.o,$(SRCS))
+
+CFLAGS += -I$(KLINUX_SRCDIR)/include \
+          -I$(KLINUX_BLTDIR)/include
 
 all: $(TARGET_BIN)
 	@echo "***********************************************"

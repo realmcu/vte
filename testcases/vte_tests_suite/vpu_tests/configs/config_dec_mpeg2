@@ -5,7 +5,7 @@ operation=2
 
 # read input from file. Mandatory for decode. If not specified for encode
 # then default is camera
-input=nokia6_720x576.mpg
+input=mpeg2_720x576.mpg
 
 # write output to file. For decode, if not specified, then default is LCD
 output=sd_d1_mpeg2.yuv

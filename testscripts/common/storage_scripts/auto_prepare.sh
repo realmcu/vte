@@ -252,8 +252,8 @@ insmod_V4L()
 	echo "v4l: prepare insmod modules";
 	find=0;
 	
-	echo "enalbe tvout module" 
-        echo U:720x576i-50 > /sys/class/graphics/fb0/mode
+	#echo "enalbe tvout module" 
+        #echo U:720x576i-50 > /sys/class/graphics/fb0/mode
 
 	find=`find /lib/ -name ipu_prp_enc.ko | wc -l`;
 	lsmod | grep ipu_prp_enc;

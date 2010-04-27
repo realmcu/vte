@@ -1,16 +1,13 @@
-/*
- * Copyright 2009-2010 Freescale Semiconductor, Inc. All Rights Reserved.
- *
- */
-
-/*
- * The code contained herein is licensed under the GNU Lesser General
- * Public License.  You may obtain a copy of the GNU Lesser General
- * Public License Version 2.1 or later at the following locations:
- *
- * http://www.opensource.org/licenses/lgpl-license.html
- * http://www.gnu.org/copyleft/lgpl.html
- */
+/***
+**Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**
+**The code contained herein is licensed under the GNU General Public
+**License. You may obtain a copy of the GNU General Public License
+**Version 2 or later at the following locations:
+**
+**http://www.opensource.org/licenses/gpl-license.html
+**http://www.gnu.org/copyleft/gpl.html
+**/
 
 /*!
  * @file mxc_ipu_hl_lib.c
@@ -38,6 +35,7 @@ extern "C"{
 #include <sys/time.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
+#include <linux/autoconf.h>
 #include <linux/videodev.h>
 #include "mxc_ipu_hl_lib.h"
 

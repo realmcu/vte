@@ -1,6 +1,5 @@
 #!/bin/sh
-##############################################################################
-# Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2005-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # The code contained herein is licensed under the GNU General Public
 # License. You may obtain a copy of the GNU General Public License
@@ -248,23 +247,19 @@ left_right_channel()
     vol=`expr $MAX / 3 \* 2`
     ctl_id=`amixer_ctl_id`
     amixer -c 0 cset "$ctl_id" $vol,0
-
     aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
     if [ $RC -ne 0 ]
     then
         tst_resm TFAIL "Test #2: play error, please check the stream file"
         return $RC
     fi
-
     amixer -c 0 cset "$ctl_id" 0,$vol
-
     aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
     if [ $RC -ne 0 ]
     then
         tst_resm TFAIL "Test #2: play error, please check the stream file"
         return $RC
     fi
-
     tst_resm TINFO "Do you hear the voice from left channel then from right channel[y/n]"
     read answer
     if [ "x$answer" = "xy" ]
@@ -272,13 +267,10 @@ left_right_channel()
         tst_resm TPASS "Test #2: left and right channel test."
     else
         tst_resm TFAIL "Test #2: left and right channel test fail."
-        RC=67
-        return $RC
-    fi
-
-
+     RC=67
     return $RC
-
+    fi
+    return $RC
 }
 # Function:     usage
 #
@@ -294,7 +286,6 @@ usage()
     TCID 2: Test mute left and then right channel.
     usage: ./${0##*/} [TC Id] [audio stream]
     e.g.: ./${0##*/} 1 audio48k16S.wav
-
 EOF
 }
 
@@ -322,5 +313,3 @@ case "$1" in
     exit 1
     ;;
 esac
-
-

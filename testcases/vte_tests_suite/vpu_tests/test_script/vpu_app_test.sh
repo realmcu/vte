@@ -1,4 +1,4 @@
-#Copyright 2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -118,7 +118,7 @@ test_dec_exec()
 RC=1
 
 #check local file decode
-#srcfile=${STREAM_PATH}/video/nokia6_720x576.mpg
+#srcfile=${STREAM_PATH}/video/mpeg2_720x576.mpg
 
 echo "pure decode 1 frame to LCD"
 ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1" || return $RC
@@ -258,7 +258,7 @@ RC=1
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-srcfile=${STREAM_PATH}/video/nokia6_720x576.mpg
+srcfile=${STREAM_PATH}/video/mpeg2_720x576.mpg
 FORMAT=4
 
 echo "test decode app"

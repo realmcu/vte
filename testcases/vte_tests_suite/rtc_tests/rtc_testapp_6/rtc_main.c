@@ -1,6 +1,5 @@
 /***
-**Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
-**
+**Copyright (C) 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
 **Version 2 or later at the following locations:
@@ -215,7 +214,6 @@ int main(int argc, char **argv)
         } else{
             strcpy(rtc_real_device, RTC_DRIVER_NAME);
         }
-
         if (!m_opt){
 	    sleep_mode = (char *)dft_mode;
 	    /*

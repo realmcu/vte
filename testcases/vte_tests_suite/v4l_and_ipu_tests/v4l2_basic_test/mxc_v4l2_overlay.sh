@@ -1,4 +1,4 @@
-#Copyright 2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -57,7 +57,7 @@ RESSIZE=$(fbset | grep "mode \"" |  sed "s/\"//g" | sed "s/-/ /" | awk {'print $
 
 if [ "$TARGET" == "25" ]
 then
-RESSIZE=" "
+RESSIZE=""
 fi
 
 if [ "$TARGET" == "31" ]
@@ -67,7 +67,7 @@ fi
 
 if [ "$TARGET" == "35" ]
 then
-RESSIZE=" "
+RESSIZE=""
 fi
 
 if [ "$TARGET" == "37" ]
