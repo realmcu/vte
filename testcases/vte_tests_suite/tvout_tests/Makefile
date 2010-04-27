@@ -34,11 +34,11 @@ ifeq ($(ARCH_PLATFORM), imx31stack)
 SUBTARGET = mx31_tvout_test_usercase.sh
 endif
 
-ifeq ($(ARCH_PLATFORM),$(filter imx37stack imx51stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM),$(filter imx37stack imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS = app
 endif
 
-ifeq ($(ARCH_PLATFORM),$(filter imx37stack imx51stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM),$(filter imx37stack imx51stack imx51, $(ARCH_PLATFORM)))
 SUBTARGET = mx37_tvout_test_usercase.sh
 SUBTARGET2 = mx37_tvout_overlay_test.sh
 TARGET = $(TARGET_BIN)

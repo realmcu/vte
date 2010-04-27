@@ -28,7 +28,7 @@ BIN_DIR = $(LTP_DIR)testcases/
 
 #TARGET = $(wildcard *.sh)
 
-ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack imx51, $(ARCH_PLATFORM)))
 TARGET += vpu_dec_test.sh
 TARGET += vpu_multi_dec_test.sh
 TARGET += vpu_pm_test.sh
@@ -45,6 +45,15 @@ TARGET +=  vpu_tvout_720P.sh
 TARGET +=  vpu_tvout_NTSC.sh
 TARGET +=  vpu_tvout_PAL.sh
 endif
+
+ifeq ($(ARCH_PLATFORM), imx51)
+TARGET +=  vpu_enc_test.sh
+TARGET += vpu_multi_enc_test.sh
+TARGET +=  vpu_tvout_720P.sh
+TARGET +=  vpu_tvout_NTSC.sh
+TARGET +=  vpu_tvout_PAL.sh
+endif
+
 
 
 
