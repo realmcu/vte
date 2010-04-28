@@ -7,20 +7,6 @@
 **
 **http://www.opensource.org/licenses/gpl-license.html
 **http://www.gnu.org/copyleft/gpl.html
-**/
-/*================================================================================================*/
-/**
-        @file   sc55112_protocol_module.h
-
-        @brief  Protocol driver module header file
-*/
-/*==================================================================================================
-
-        Copyright (C) 2006, Freescale Semiconductor, Inc. All Rights Reserved
-        THIS SOURCE CODE IS CONFIDENTIAL AND PROPRIETARY AND MAY NOT
-        BE USED OR DISTRIBUTED WITHOUT THE WRITTEN PERMISSION OF
-        reescale Semiconductor, Inc.
-
 ====================================================================================================
 Revision History:
                             Modification     Tracking
