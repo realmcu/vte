@@ -190,7 +190,7 @@ echo "TST INFO: now block size is $i"
 echo "TST INFO: video pattern with user define dma buffer queue, one full-screen output"
 ${TST_CMD} -P 1 || return $RC
 
-if [ "$TARGET" == "37" ] || [ "$TARGET" == "51" ]; then
+if [ "$TARGET" == "37" ] || [ "$TARGET" == "51" ] || [ "$TARGET" == "53"  ]; then
 echo "TST INFO: ipu v3 only"
 echo "TST INFO: video pattern with user define dma buffer queue, with two output"
 ${TST_CMD} -P 2 || return $RC
