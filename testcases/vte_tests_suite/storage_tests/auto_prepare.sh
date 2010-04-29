@@ -18,6 +18,8 @@
 #Victor Cui                   09/07/2009     add -M(mount) option
 #Spring Zhang                 03/03/2010     change interpreter from sh to bash
 #                                            for 'let' command
+#Spring Zhang                 29/04/2010     MX53:change SD partition 1 from cylinder 80
+#
 #notes:
 # -I insert modules(SD, ATA, V4L, BT, USBH or ALL)          
 # 	eg. ./auto_prepare.sh -I SD
@@ -712,13 +714,14 @@ prepare_sd()
 		echo "n" >> format_command_sd;
 		echo "p" >> format_command_sd;
 		echo "1" >> format_command_sd;
-		echo "" >> format_command_sd;
+		echo "80" >> format_command_sd;
 		echo "$middle_cyclinders" >> format_command_sd;
 
 		echo "n" >> format_command_sd;
 		echo "p" >> format_command_sd;
 		echo "2" >> format_command_sd;
-		echo "" >> format_command_sd;
+		second_par_start=`expr $middle_cyclinders + 1`
+		echo "$second_par_start" >> format_command_sd;
 		echo "" >> format_command_sd;
 
 		echo "" >> format_command_sd;
