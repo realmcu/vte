@@ -24,7 +24,8 @@
 #                       Modification     Tracking
 # Author                    Date          Number    Description of Changes
 #--------------------   ------------    ----------  ----------------------
-# Spring Zhang           Jan.12,2010         n/a      Initial version
+# Spring Zhang           Jan.12,2010       n/a      Initial version
+# Spring Zhang           May.10,2010       n/a      Add support for mx53
 
 # Function:     usage
 #
@@ -110,7 +111,7 @@ dvfs_per_basic()
     fi
 
     DVFS_PER_DIR=/sys/devices/platform/mxc_dvfsper.0
-    if [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
+    if [ $platfm -eq 51 ] || [ $platfm -eq 41 ] || [ $platfm -eq 53 ]; then
         echo 1 > $DVFS_PER_DIR/enable
     else
         tst_resm TWARN "platform not support"

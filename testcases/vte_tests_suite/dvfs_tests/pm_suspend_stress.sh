@@ -19,6 +19,7 @@
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ----------------------
 # Spring Zhang          Jan.19,2010      n/a        Initial version
+# Spring Zhang          May.10,2010      n/a        Delay the time
 
 # Function:     setup
 #        
@@ -79,14 +80,14 @@ wakeup_test()
 
     i=0
     while [ $i -lt 1000 ]; do
-        rtc_testapp_6 -m standby -T 5
+        rtc_testapp_6 -m standby -T 15
         echo -e "\033[;31m PM_SUSPEND_STRESS: Test STOP mode times: $i \033[0m"
         i=`expr $i + 1`
     done
 
     i=0
     while [ $i -lt 1000 ]; do
-        rtc_testapp_6 -m mem -T 5
+        rtc_testapp_6 -m mem -T 15
         echo -e "\033[;31m PM_SUSPEND_STRESS: Test WAIT mode times: $i \033[0m"
         i=`expr $i + 1`
     done

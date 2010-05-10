@@ -21,6 +21,7 @@
 # Blake                      20081015
 # Spring Zhang               20100108            n/a      Reduce code
 # Spring Zhang               Jan.11,2010         n/a      Add dvfs suspend test
+# Spring Zhang               May.10,2010         n/a      Add mx53 support
 
 
 # Function:     setup
@@ -98,6 +99,7 @@ dvfs_dir_set()
 	DVFS_DIR[51]=/sys/devices/platform/mxc_dvfs_core.0
     #i.MX51 BBG
 	DVFS_DIR[41]=/sys/devices/platform/mxc_dvfs_core.0
+	DVFS_DIR[53]=/sys/devices/platform/mxc_dvfs_core.0
 
     #dvfs status query
     status[31]=status
@@ -105,6 +107,7 @@ dvfs_dir_set()
     status[37]=enable
     status[51]=enable
     status[41]=enable
+    status[53]=enable
 }
 
 dvfs_test()
@@ -121,7 +124,7 @@ dvfs_test()
     #store current dvfs status. cur_status=1 - enabled, =0 - disabled
     cur_status=`cat ${DVFS_DIR[$PLATFORM]}/${status[$PLATFORM]} | grep "enabled" | wc -l`
 
-    # For imx31/35/37/51 
+    # For imx31/35/37/51/53 
     echo 1 > ${DVFS_DIR[$PLATFORM]}/enable
     res=`cat ${DVFS_DIR[$PLATFORM]}/${status[$PLATFORM]} | grep "enabled" | wc -l`
     if [ $res -eq 1 ];then

@@ -24,7 +24,8 @@
 #                       Modification     Tracking
 # Author                    Date          Number    Description of Changes
 #--------------------   ------------    ----------  ----------------------
-# Spring Zhang           Jan.11,2010         n/a      Initial version
+# Spring Zhang           Jan.11,2010       n/a      Initial version
+# Spring Zhang           May.10,2010       n/a      Add support for mx53
 
 # Function:     setup
 #        
@@ -77,7 +78,7 @@ lowfreq_suspend()
     old_freq=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq`
     if [ $platfm -eq 37 ]; then
         echo 200000 > $CPU_CTRL
-    elif [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
+    elif [ $platfm -eq 51 ] || [ $platfm -eq 41 ] || [ $platfm -eq 53 ]; then
         echo 160000 > $CPU_CTRL
     else
         tst_resm TWARN "platform not support"
@@ -86,11 +87,19 @@ lowfreq_suspend()
     fi
 
     sleep 3 
-    rtc_testapp_6 -m standby -T 10
+    if [ -e /dev/rtc ]; then
+       rtc_testapp_6 -m standby -T 10
+    else
+       rtc_testapp_6 -m standby -T 10 -d rtc0 
+    fi
     tst_resm TPASS "Resume from suspend..."
 
     sleep 5
-    rtc_testapp_6 -m mem -T 10
+    if [ -e /dev/rtc ]; then
+        rtc_testapp_6 -m mem -T 15
+    else
+        rtc_testapp_6 -m mem -T 15 -d rtc0
+    fi
     tst_resm TPASS "Resume from mem..."
     
     return $RC
