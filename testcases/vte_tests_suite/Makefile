@@ -207,7 +207,7 @@ ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx37stack, $(ARCH_PLATFO
 SUBDIRS += dptc_tests
 endif
 #added by Blake
-ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx35stack imx51stack imx51, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx35stack imx51stack imx51 imx233, $(ARCH_PLATFORM)))
 SUBDIRS += dvfs_tests
 endif
 #added by Blake
