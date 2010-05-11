@@ -144,18 +144,18 @@ run_auto_test_list()
    echo "frambuffer test"
    dd if=/dev/urandom of=/dev/fb0 bs=1k count=150 || return 2
    echo "tv out test"
-   fbset -xres 720 -yres 576 -vxres 720 -vyres 576 || return 3
-   fbset -xres 320 -yres 240 -vxres 320 -vyres 240 || return 4
-   fbset -xres 720 -yres 480 -vxres 720 -vyres 480 || return 5 
-   fbset -xres 320 -yres 240 -vxres 320 -vyres 240 || return 6
+   #fbset -xres 720 -yres 576 -vxres 720 -vyres 576 || return 3
+   #fbset -xres 320 -yres 240 -vxres 320 -vyres 240 || return 4
+   #fbset -xres 720 -yres 480 -vxres 720 -vyres 480 || return 5
+   #fbset -xres 320 -yres 240 -vxres 320 -vyres 240 || return 6
    echo "back light test"
    echo 0 > /sys/class/graphics/fb0/blank || return 7
-   cat /sys/class/backlight/stmp3xxx-bl/max_brightness || return 8
+   cat /sys/class/backlight/mxs-bl/max_brightness || return 8
    LEVEL="0 10 20 30 40 50 60 70 80 90 100 80 50 40 30 20 10 0 50" 
    for i in $LEVEL
    do
    echo $i level test  
-   echo $i > /sys/class/backlight/stmp3xxx-bl/brightness || return 9
+   echo $i > /sys/class/backlight/mxs-bl/brightness || return 9
    sleep 1
    done
    echo "NAND test"
