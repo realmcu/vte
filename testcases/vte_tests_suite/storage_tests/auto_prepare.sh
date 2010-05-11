@@ -19,6 +19,8 @@
 #Spring Zhang                 03/03/2010     change interpreter from sh to bash
 #                                            for 'let' command
 #Spring Zhang                 29/04/2010     MX53:change SD partition 1 from cylinder 80
+#Spring Zhang                 11/05/2010     MX53:change SD partition 1 
+#                                            from relative cylinders
 #
 #notes:
 # -I insert modules(SD, ATA, V4L, BT, USBH or ALL)          
@@ -697,7 +699,7 @@ prepare_sd()
 		echo "number_cyclinders=$number_cyclinders";
 		let third_cyclinders=$number_cyclinders/3;
 		let middle_cyclinders=$third_cyclinders*2;
-		echo "middle_cyclinders=$middle_cyclinders";
+        echo "middle_cyclinders=$middle_cyclinders";
 
 		# create the fdisk command line file
 		echo "" >> format_command_sd;
@@ -714,7 +716,10 @@ prepare_sd()
 		echo "n" >> format_command_sd;
 		echo "p" >> format_command_sd;
 		echo "1" >> format_command_sd;
-		echo "80" >> format_command_sd;
+		total_size=`fdisk -l /dev/mmcblk0 | sed -n '/Disk \/dev\/mmcblk0/p'| awk '{ print $5 }'`
+		#reserve 16M for uboot and uboot config
+		first_par_start=`expr 16000000 \* $number_cyclinders / $total_size`
+		echo "$first_par_start" >> format_command_sd;
 		echo "$middle_cyclinders" >> format_command_sd;
 
 		echo "n" >> format_command_sd;
