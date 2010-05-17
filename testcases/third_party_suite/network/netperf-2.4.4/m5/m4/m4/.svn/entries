@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="33"
+   name=""
+   committed-date="2005-10-17T22:25:24.828295Z"
+   url="http://www.netperf.org/svn/netperf2/trunk/m4/m4"
+   last-author="raj"
+   kind="dir"
+   uuid="5bbd99f3-5903-0410-b283-f1d88047b228"
+   revision="70"/>
+<entry
+   committed-rev="33"
+   name="sockaddrin6.m4"
+   text-time="2005-10-20T22:57:55.000000Z"
+   committed-date="2005-10-17T22:25:24.828295Z"
+   checksum="19d9c4f1138e5876254228d1b554c13d"
+   last-author="raj"
+   kind="file"
+   prop-time="2005-10-20T22:57:55.000000Z"/>
+<entry
+   committed-rev="33"
+   name="sockinttypes.m4"
+   text-time="2005-10-20T22:57:55.000000Z"
+   committed-date="2005-10-17T22:25:24.828295Z"
+   checksum="d5b12afdcfa72f3b6846639f0f91dd5f"
+   last-author="raj"
+   kind="file"
+   prop-time="2005-10-20T22:57:55.000000Z"/>
+</wc-entries>

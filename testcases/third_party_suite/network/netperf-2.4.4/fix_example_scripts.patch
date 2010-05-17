@@ -1,0 +1,141 @@
+---
+ doc/examples/arr_script         |    3 +--
+ doc/examples/packet_byte_script |    2 +-
+ doc/examples/sctp_stream_script |    4 +---
+ doc/examples/snapshot_script    |    2 +-
+ doc/examples/tcp_range_script   |    3 +--
+ doc/examples/tcp_rr_script      |    4 +---
+ doc/examples/tcp_stream_script  |    4 +---
+ doc/examples/udp_rr_script      |    4 +---
+ doc/examples/udp_stream_script  |    4 +---
+ 9 files changed, 9 insertions(+), 21 deletions(-)
+
+Index: netperf-2.4.2/doc/examples/arr_script
+===================================================================
+--- netperf-2.4.2.orig/doc/examples/arr_script
++++ netperf-2.4.2/doc/examples/arr_script
+@@ -10,8 +10,7 @@ init_parms() {
+   TOLERANCE=15
+   MAX_RETRIES=3
+ 
+-  NETPERF="/usr/local/netperf/netperf"
+-  NETPERF="./netperf"
++  NETPERF="/usr/bin/netperf"
+ 
+   NPROC_LIST=""
+   RR_SIZES=""
+Index: netperf-2.4.2/doc/examples/packet_byte_script
+===================================================================
+--- netperf-2.4.2.orig/doc/examples/packet_byte_script
++++ netperf-2.4.2/doc/examples/packet_byte_script
+@@ -22,7 +22,7 @@ if [ $# -eq 0 ]; then
+ fi
+ 
+ # where is netperf
+-NETPERF_CMD=${NETPERF_CMD:=/opt/netperf/netperf}
++NETPERF_CMD=/usr/bin/netperf
+ 
+ # at what port will netserver be waiting? If you decide to run
+ # netserver at a differnet port than the default of 12865, then set
+Index: netperf-2.4.2/doc/examples/sctp_stream_script
+===================================================================
+--- netperf-2.4.2.orig/doc/examples/sctp_stream_script
++++ netperf-2.4.2/doc/examples/sctp_stream_script
+@@ -22,9 +22,7 @@ if [ $# -eq 0 ]; then
+ fi
+ 
+ # where the programs are
+-#NETHOME=/usr/local/netperf
+-#NETHOME="/opt/netperf"
+-NETHOME=.
++NETHOME=/usr/bin
+ 
+ # at what port will netserver be waiting? If you decide to run
+ # netserver at a differnet port than the default of 12865, then set
+Index: netperf-2.4.2/doc/examples/snapshot_script
+===================================================================
+--- netperf-2.4.2.orig/doc/examples/snapshot_script
++++ netperf-2.4.2/doc/examples/snapshot_script
+@@ -37,7 +37,7 @@
+ #
+ # where is netperf installed, there are a few possible places:
+ 
+-NETPERF_CMD=${NETPERF_CMD:=/opt/netperf/netperf}
++NETPERF_CMD=/usr/bin/netperf
+ 
+ 
+ # there should be no more than two parms passed
+Index: netperf-2.4.2/doc/examples/tcp_range_script
+===================================================================
+--- netperf-2.4.2.orig/doc/examples/tcp_range_script
++++ netperf-2.4.2/doc/examples/tcp_range_script
+@@ -42,8 +42,7 @@ PORT=""
+ 
+ # where is netperf, and are there any "constant" options such as 
+ # the netserver port number
+-#NETHOME=/usr/etc/net_perf
+-NETHOME="."
++NETHOME=/usr/bin
+ NETPERF=$NETHOME/netperf $PORT
+ 
+ # How accurate we want the estimate of performance: 
+Index: netperf-2.4.2/doc/examples/tcp_rr_script
+===================================================================
+--- netperf-2.4.2.orig/doc/examples/tcp_rr_script
++++ netperf-2.4.2/doc/examples/tcp_rr_script
+@@ -23,9 +23,7 @@ if [ $# -eq 0 ]; then
+ fi
+ 
+ # where the programs are
+-#NETHOME=/usr/local/netperf
+-#NETHOME="/opt/netperf"
+-NETHOME=.
++NETHOME=/usr/bin
+ 
+ # at what port will netserver be waiting? If you decide to run
+ # netserver at a differnet port than the default of 12865, then set
+Index: netperf-2.4.2/doc/examples/tcp_stream_script
+===================================================================
+--- netperf-2.4.2.orig/doc/examples/tcp_stream_script
++++ netperf-2.4.2/doc/examples/tcp_stream_script
+@@ -22,9 +22,7 @@ if [ $# -eq 0 ]; then
+ fi
+ 
+ # where the programs are
+-#NETHOME=/usr/local/netperf
+-#NETHOME="/opt/netperf"
+-NETHOME=.
++NETHOME=/usr/bin
+ 
+ # at what port will netserver be waiting? If you decide to run
+ # netserver at a different port than the default of 12865, then set
+Index: netperf-2.4.2/doc/examples/udp_rr_script
+===================================================================
+--- netperf-2.4.2.orig/doc/examples/udp_rr_script
++++ netperf-2.4.2/doc/examples/udp_rr_script
+@@ -20,9 +20,7 @@ fi
+ 
+ # where the programs are
+ 
+-#NETHOME=/usr/local/netperf
+-#NETHOME="/opt/netperf"
+-NETHOME="."
++NETHOME=/usr/bin
+ 
+ # at what port will netserver be waiting? If you decide to run
+ # netserver at a differnet port than the default of 12865, then set
+Index: netperf-2.4.2/doc/examples/udp_stream_script
+===================================================================
+--- netperf-2.4.2.orig/doc/examples/udp_stream_script
++++ netperf-2.4.2/doc/examples/udp_stream_script
+@@ -17,9 +17,7 @@ fi
+ 
+ # where the programs are
+ 
+-#NETHOME=/usr/local/netperf
+-#NETHOME="/opt/netperf"
+-NETHOME="."
++NETHOME=/usr/bin
+ 
+ # at what port will netserver be waiting? If you decide to run
+ # netserver at a differnet port than the default of 12865, then set
