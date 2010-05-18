@@ -1,4 +1,4 @@
-cmd_/home/smb/vte/testcases/third_party_suite/crypto_test/tcrypt.o := arm-none-linux-gnueabi-gcc -Wp,-MD,/home/smb/vte/testcases/third_party_suite/crypto_test/.tcrypt.o.d  -nostdinc -isystem /opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi/lib/gcc/arm-none-linux-gnueabi/4.1.2/include -Iinclude  -I/home/vobs/linux-2.6-imx/arch/arm/include -include include/linux/autoconf.h -D__KERNEL__ -mlittle-endian -Iarch/arm/mach-stmp378x/include -Iarch/arm/plat-stmp3xxx/include -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -fno-delete-null-pointer-checks -Os -marm -mabi=aapcs-linux -mno-thumb-interwork -funwind-tables -D__LINUX_ARM_ARCH__=5 -march=armv5te -mtune=arm9tdmi -msoft-float -Uarm -fno-stack-protector -fomit-frame-pointer -Wdeclaration-after-statement -Wno-pointer-sign  -DMODULE -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(tcrypt)"  -D"KBUILD_MODNAME=KBUILD_STR(tcrypt)"  -c -o /home/smb/vte/testcases/third_party_suite/crypto_test/.tmp_tcrypt.o /home/smb/vte/testcases/third_party_suite/crypto_test/tcrypt.c
+cmd_/home/smb/vte/testcases/third_party_suite/crypto_test/tcrypt.o := /opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-gcc -Wp,-MD,/home/smb/vte/testcases/third_party_suite/crypto_test/.tcrypt.o.d  -nostdinc -isystem /opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi/lib/gcc/arm-none-linux-gnueabi/4.1.2/include -Iinclude  -I/home/vobs/linux-2.6-imx/arch/arm/include -include include/linux/autoconf.h -D__KERNEL__ -mlittle-endian -Iarch/arm/mach-mx23/include -Iarch/arm/plat-mxs/include -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -fno-delete-null-pointer-checks -Os -marm -mabi=aapcs-linux -mno-thumb-interwork -funwind-tables -D__LINUX_ARM_ARCH__=5 -march=armv5te -mtune=arm9tdmi -msoft-float -Uarm -fno-stack-protector -fomit-frame-pointer -g -Wdeclaration-after-statement -Wno-pointer-sign  -DMODULE -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(tcrypt)"  -D"KBUILD_MODNAME=KBUILD_STR(tcrypt)"  -c -o /home/smb/vte/testcases/third_party_suite/crypto_test/.tmp_tcrypt.o /home/smb/vte/testcases/third_party_suite/crypto_test/tcrypt.c
 
 deps_/home/smb/vte/testcases/third_party_suite/crypto_test/tcrypt.o := \
   /home/smb/vte/testcases/third_party_suite/crypto_test/tcrypt.c \
@@ -208,11 +208,12 @@ deps_/home/smb/vte/testcases/third_party_suite/crypto_test/tcrypt.o := \
     $(wildcard include/config/cpu/pabrt/ifar.h) \
     $(wildcard include/config/cpu/pabrt/noifar.h) \
   /home/vobs/linux-2.6-imx/arch/arm/include/asm/memory.h \
+    $(wildcard include/config/runtime/phys/offset.h) \
     $(wildcard include/config/page/offset.h) \
     $(wildcard include/config/dram/size.h) \
     $(wildcard include/config/dram/base.h) \
   include/linux/const.h \
-  arch/arm/plat-stmp3xxx/include/mach/memory.h \
+  arch/arm/plat-mxs/include/mach/memory.h \
     $(wildcard include/config/dma/zone/size.h) \
   /home/vobs/linux-2.6-imx/arch/arm/include/asm/sizes.h \
   include/asm-generic/memory_model.h \
@@ -291,7 +292,7 @@ deps_/home/smb/vte/testcases/third_party_suite/crypto_test/tcrypt.o := \
   include/linux/timex.h \
     $(wildcard include/config/no/hz.h) \
   /home/vobs/linux-2.6-imx/arch/arm/include/asm/timex.h \
-  arch/arm/plat-stmp3xxx/include/mach/timex.h \
+  arch/arm/plat-mxs/include/mach/timex.h \
   include/linux/debugobjects.h \
     $(wildcard include/config/debug/objects/free.h) \
   include/linux/kmemtrace.h \
@@ -358,7 +359,7 @@ deps_/home/smb/vte/testcases/third_party_suite/crypto_test/tcrypt.o := \
     $(wildcard include/config/cpu/v6.h) \
     $(wildcard include/config/cpu/v7.h) \
   /home/vobs/linux-2.6-imx/arch/arm/include/asm/cpu-single.h \
-  arch/arm/plat-stmp3xxx/include/mach/vmalloc.h \
+  arch/arm/plat-mxs/include/mach/vmalloc.h \
   /home/vobs/linux-2.6-imx/arch/arm/include/asm/pgtable-hwdef.h \
   include/asm-generic/pgtable.h \
   include/linux/page-flags.h \
@@ -369,7 +370,7 @@ deps_/home/smb/vte/testcases/third_party_suite/crypto_test/tcrypt.o := \
   include/linux/vmstat.h \
     $(wildcard include/config/vm/event/counters.h) \
   /home/vobs/linux-2.6-imx/arch/arm/include/asm/io.h \
-  arch/arm/plat-stmp3xxx/include/mach/io.h \
+  arch/arm/plat-mxs/include/mach/io.h \
   include/linux/interrupt.h \
     $(wildcard include/config/pm/sleep.h) \
     $(wildcard include/config/generic/irq/probe.h) \
@@ -458,7 +459,7 @@ deps_/home/smb/vte/testcases/third_party_suite/crypto_test/tcrypt.o := \
     $(wildcard include/config/ftrace/nmi/enter.h) \
   /home/vobs/linux-2.6-imx/arch/arm/include/asm/hardirq.h \
   /home/vobs/linux-2.6-imx/arch/arm/include/asm/irq.h \
-  arch/arm/mach-stmp378x/include/mach/irqs.h \
+  arch/arm/mach-mx23/include/mach/irqs.h \
   include/linux/irq_cpustat.h \
   /home/smb/vte/testcases/third_party_suite/crypto_test/tcrypt.h \
   /home/smb/vte/testcases/third_party_suite/crypto_test/internal.h \

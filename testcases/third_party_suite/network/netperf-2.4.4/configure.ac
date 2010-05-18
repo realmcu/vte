@@ -2,22 +2,26 @@
 # Process this file with autoconf to produce a configure script.
 
 FULL-PACKAGE-NAME=netperf
-VERSION=2.4.2
+VERSION=2.4.4
 BUG-REPORT-ADDRESS=netperf-feedback@netperf.org
 
 AC_PREREQ(2.59)
-AC_INIT(netperf, 2.4.2)
+AC_INIT(netperf, 2.4.4)
 # use the target version rather than host - one day we may want cross-compile
 AC_CANONICAL_TARGET
 AC_CONFIG_SRCDIR([src/hist.h])
-AM_INIT_AUTOMAKE(netperf, 2.4.2)
+AM_INIT_AUTOMAKE([dist-zip])
 AM_CONFIG_HEADER(config.h)
 # AC_CONFIG_HEADER(config.h)
 
 AC_CONFIG_LIBOBJ_DIR(src/missing)
 
+# make sure we build netperf_version.h
+touch src/netperf_version.h.in
+
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_RANLIB
 
 AC_C_CONST
 
@@ -33,6 +37,8 @@ AC_CHECK_HEADERS([arpa/inet.h endian.h errno.h fcntl.h limits.h malloc.h netdb.h
 AC_HAVE_LIBRARY(socket)
 if test "$ac_cv_lib_socket_main" = yes ; then
     AC_HAVE_LIBRARY(nsl)
+    AC_HAVE_LIBRARY(sendfile)
+    AC_SYS_LARGEFILE
 fi
 
 # this one is for Tru64 and bind_to_cpu_id
@@ -74,13 +80,15 @@ AC_CHECK_FUNCS([getnameinfo getaddrinfo inet_ntop])
 
 if test "$ac_cv_func_getaddrinfo$ac_cv_func_getnameinfo" != yesyes ; then
    AC_MSG_NOTICE([Requesting replacement getaddrinfo/getnameinfo])
-   AC_LIBOBJ(missing/getaddrinfo)
+   AC_LIBOBJ(getaddrinfo)
+   HAVE_MISSING=yes
 fi
 if test "$ac_cv_func_inet_ntop" != yes ; then
    AC_MSG_NOTICE([Requesting replacement inet_ntop])
-   AC_LIBOBJ(missing/inet_ntop)
+   AC_LIBOBJ(inet_ntop)
+   HAVE_MISSING=yes
 fi
-
+AM_CONDITIONAL(NEED_LIBCOMPAT, test "$HAVE_MISSING" = "yes")
 
 AC_CHECK_FUNCS(sendfile)
 
@@ -269,8 +277,6 @@ AC_ARG_ENABLE(xti,
 
 case "$enable_xti" in
      yes)
-		# probably need to be a bit more sophisticated here
-		AC_CHECK_LIB(xti,t_open)
 		use_xti=true
 		;;
      no)	
@@ -294,6 +300,42 @@ fi
 if $use_xti
 then
 	AC_DEFINE([WANT_XTI],,[Define to one to include XTI tests.])
+fi
+
+# see if we should be including the SDP tests
+
+AC_MSG_CHECKING(whether to include SDP tests)
+
+AC_ARG_ENABLE(sdp,
+	[AS_HELP_STRING([--enable-sdp],[include SDP socket tests])])
+
+case "$enable_sdp" in
+     yes)
+		# probably need to be a bit more sophisticated here
+		AC_CHECK_LIB(sdp,t_open)
+		use_sdp=true
+		;;
+     no)	
+		use_sdp=false
+		;;
+     '')
+		use_sdp=false
+		;;
+     *)
+		AC_MSG_ERROR([--enable-sdp takes yes or no])
+		;;
+esac
+
+if $use_sdp
+then
+	AC_MSG_RESULT(yes)
+else
+	AC_MSG_RESULT(no)
+fi
+
+if $use_sdp
+then
+	AC_DEFINE([WANT_SDP],,[Define to one to include SDP tests.])
 fi
 
 # see if we should be including the ICSC-EXS tests
@@ -345,7 +387,20 @@ case "$enable_sctp" in
 [[
 #include <sys/socket.h>
 ]])
-		AC_HAVE_LIBRARY(sctp,,use_sctp=false)
+		case "$host" in
+		*-*-freebsd7.*)
+			# FreeBSD 7.x SCTP support doesn't need -lsctp.
+			;;
+		*)
+			AC_HAVE_LIBRARY(sctp,,use_sctp=false)
+			;;
+		esac
+		AC_CHECK_MEMBER(struct sctp_event_subscribe.sctp_adaptation_layer_event,
+				, , [#include <netinet/sctp.h>])
+		if test "$ac_cv_member_struct_sctp_event_subscribe_sctp_adaptation_layer_event" = "yes"; then
+			AC_DEFINE([HAVE_SCTP_ADAPTATION_LAYER_EVENT], 1,
+				  [Define to 1 if `struct sctp_event_subscribe' has a `sctp_adaptation_layer_event' member])
+		fi
 		;;
 	no)
 		use_sctp=false
@@ -551,7 +606,7 @@ case "$enable_cpuutil" in
 			enable_cpuutil="perfstat - auto"
 			NETCPU_SOURCE="perfstat"
 			;;
-		     *-*-solaris2.10)
+		     *-*-solaris2.1*)
 			use_cpuutil=true
 			AC_DEFINE([USE_KSTAT],,[Use Solaris's kstat interface to measure CPU util.])
 			AC_HAVE_LIBRARY(kstat)
@@ -595,12 +650,15 @@ esac
 	AC_MSG_RESULT("$enable_cpuutil")
 
 AC_SUBST(NETCPU_SOURCE)
-AC_SUBST(LIBOJBS)
 
 # now spit it all out
 AC_CONFIG_FILES([Makefile
+                 src/netperf_version.h
                  src/Makefile
-		 doc/Makefile])
-
+		 src/missing/Makefile
+		 src/missing/m4/Makefile
+		 doc/Makefile
+		 doc/examples/Makefile
+                 netperf.spec])
 
 AC_OUTPUT

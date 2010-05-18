@@ -1,5 +1,0 @@
-#!/bin/sh
-
-if [ ! -e Makefile ]; then
-./configure --host=arm-none-linux-gnueabi --build=arm CC=${CROSS_COMPILER}gcc
-fi

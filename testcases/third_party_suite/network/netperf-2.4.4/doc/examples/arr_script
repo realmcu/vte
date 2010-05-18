@@ -1,3 +1,5 @@
+# this is retained mostly for historical purposes and may not be
+# up to date for contemporary netperf versions
 #
 # a script that can be used to measure aggregate netperf performance,
 # original author is Mike Traynor. Modifications to create the
@@ -10,7 +12,8 @@ init_parms() {
   TOLERANCE=15
   MAX_RETRIES=3
 
-  NETPERF="netperf"
+  NETPERF="/usr/local/netperf/netperf"
+  NETPERF="./netperf"
 
   NPROC_LIST=""
   RR_SIZES=""
