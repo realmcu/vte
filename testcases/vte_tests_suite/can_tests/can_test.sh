@@ -169,11 +169,10 @@ return $RC
 #
 subtest_02()
 {
-  BLK_TIME=50000
   while true;
   do
   cansend $CANID 123#1122334455667788
-  usleep $BLK_TIME
+  sleep 1
   done
 
 }
