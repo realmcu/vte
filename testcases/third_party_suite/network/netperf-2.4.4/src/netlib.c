@@ -2086,6 +2086,7 @@ bind_to_specific_processor(int processor_affinity, int use_cpu_map)
 #endif
 }
 
+
 /*
  * Sets a socket to non-blocking operation.
  */
@@ -3044,6 +3045,7 @@ cpu_stop(int measure_cpu, float *elapsed)
   *elapsed = lib_elapsed;
   
 }
+
 
 double
 calc_thruput_interval(double units_received,double elapsed)

@@ -22,7 +22,9 @@ if [ $# -eq 0 ]; then
 fi
 
 # where the programs are
-NETHOME=${LTPROOT}/testcases/bin
+#NETHOME=/usr/local/netperf
+#NETHOME="/opt/netperf"
+NETHOME=.
 
 # at what port will netserver be waiting? If you decide to run
 # netserver at a different port than the default of 12865, then set
