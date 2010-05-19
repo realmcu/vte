@@ -16,11 +16,10 @@
 #                      Modification     Tracking
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
-# Linux BSP Dev.Team       2009           n/a         Initial ver. 
+# Linux BSP Dev.Team       2009           n/a         Initial ver.
 # Spring Zhang          18/05/2010        n/a      Make to fit Ubuntu tgz rootfs
 ##############################################################################
 # Used for update bootloader, kernel or rootfs to SD card
-
 
 # Default Offset values
 OFF_KERNEL=1048576    			# 1M after the start 
@@ -192,10 +191,10 @@ done
 
 ############### here the script starts
 # can not have -k and -r 
-if [ $DO_REDBOOT -eq 1 -a $DO_KERNEL -eq 1 ] ; then
-	echo "Error: Should offset apply to -k or -r ? Choose"
-	exit -1
-fi
+#if [ $DO_REDBOOT -eq 1 -a $DO_KERNEL -eq 1 ] ; then
+#	echo "Error: Should offset apply to -k or -r ? Choose"
+#	exit -1
+#fi
 
 # anything to do ?
 if [ $DO_REDBOOT -eq 0 -a $DO_KERNEL -eq 0 -a $DO_INIT -eq 0 -a $DO_CLEAN -eq 0 -a $DO_RFS -eq 0 ] ; then
@@ -289,11 +288,11 @@ if [ $DO_RFS -eq 1 ] ; then
     #fdisk & format
     gen_fdisk_cmd  > ./format_rootfs.cmd
     fdisk $DEVNODE < ./format_rootfs.cmd >> ${LOGFILE} 2>&1
-    mkfs.ext3 /dev/sdb2 >> ${LOGFILE} 2>&1
-    mkfs.vfat /dev/sdb1 >> ${LOGFILE} 2>&1
+    mkfs.ext3 ${DEVNODE}2 >> ${LOGFILE} 2>&1
+    mkfs.vfat ${DEVNODE}1 >> ${LOGFILE} 2>&1
 
     #mount
-    mkdir -p /mnt/msc && mount -t ext3 /dev/sdb2 /mnt/msc >> ${LOGFILE} 2>&1
+    mkdir -p /mnt/msc && mount -t ext3 ${DEVNODE}2 /mnt/msc >> ${LOGFILE} 2>&1
     tar --numeric-owner -xzf $RFS -C /mnt/msc >> ${LOGFILE} 2>&1
     sync
     umount /mnt/msc >> ${LOGFILE} 2>&1
