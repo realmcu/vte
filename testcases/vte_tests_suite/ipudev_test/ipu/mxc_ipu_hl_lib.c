@@ -1,13 +1,16 @@
-/***
-**Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
-**
-**The code contained herein is licensed under the GNU General Public
-**License. You may obtain a copy of the GNU General Public License
-**Version 2 or later at the following locations:
-**
-**http://www.opensource.org/licenses/gpl-license.html
-**http://www.gnu.org/copyleft/gpl.html
-**/
+/*
+ * Copyright 2009-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+ *
+ */
+
+/*
+ * The code contained herein is licensed under the GNU Lesser General
+ * Public License.  You may obtain a copy of the GNU Lesser General
+ * Public License Version 2.1 or later at the following locations:
+ *
+ * http://www.opensource.org/licenses/lgpl-license.html
+ * http://www.gnu.org/copyleft/lgpl.html
+ */
 
 /*!
  * @file mxc_ipu_hl_lib.c
@@ -35,7 +38,6 @@ extern "C"{
 #include <sys/time.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
-#include <linux/autoconf.h>
 #include <linux/videodev.h>
 #include "mxc_ipu_hl_lib.h"
 
@@ -1435,7 +1437,7 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 
 			if (ipu_priv_handle->split_mode) {
 				params.mem_prp_vf_mem.out_width = ipu_priv_handle->left_stripe.output_width;
-				params.mem_prp_vf_mem.out_resize_ratio = ipu_priv_handle->left_stripe.irr;
+				params.mem_prp_vf_mem.outh_resize_ratio = ipu_priv_handle->left_stripe.irr;
 			} else
 				params.mem_prp_vf_mem.out_width = ipu_priv_handle->output[i].owidth;
 			params.mem_prp_vf_mem.out_height = ipu_priv_handle->output[i].oheight;
