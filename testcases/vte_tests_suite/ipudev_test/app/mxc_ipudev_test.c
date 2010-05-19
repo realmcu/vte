@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Freescale Semiconductor, Inc. All Rights Reserved.
+ * Copyright 2009-2010 Freescale Semiconductor, Inc. All Rights Reserved.
  *
  */
 
@@ -29,10 +29,6 @@
 #include <string.h>
 #include <signal.h>
 #include "mxc_ipudev_test.h"
-
-/*extern int time_sec, time_usec;*/
-
-
 
 int ctrl_c_rev = 0;
 
@@ -87,7 +83,6 @@ int process_cmdline(int argc, char **argv, ipu_test_handle_t * test_handle)
 
 	if (test_handle->test_pattern)
 		return 0;
-
 
 	if ((test_handle->input.width == 0) || (test_handle->input.height == 0) ||
 			(test_handle->output0.width == 0) ||
@@ -181,6 +176,9 @@ int main(int argc, char *argv[])
 		ret = run_test_pattern(test_handle.test_pattern, &test_handle);
 		system("echo 0,0 > /sys/class/graphics/fb0/pan");
 		return ret;
+	} else if (argc < 4) {
+		printf("Pls set input file\n");
+		return -1;
 	}
 
 	if (test_handle.mode & OP_STREAM_MODE) {
