@@ -143,7 +143,7 @@ $TSTCMD -C config_enc_h263_P3 || return $TST_COUNT
 rm -f config_enc_h263_P3
 rm -f COASTGUARD_CIF_IJT.yuv 
 
-$TSTCMD -D "-i test.263 -f 1" || return $TST_COUNT
+$TSTCMD -D "-i test.263 -f 1 -o /dev/null" || return $TST_COUNT
 
 rm -f test.h263
 
@@ -175,7 +175,7 @@ $TSTCMD -C config_enc_h264_BP || return $TST_COUNT
 rm -f config_enc_h264_BP
 rm -f starwars640x480.yuv
 
-$TSTCMD -D "-i test.264 -f 2" || return $TST_COUNT
+$TSTCMD -D "-i test.264 -f 2 -o /dev/null" || return $TST_COUNT
 
 rm -f test.h264
 
@@ -207,7 +207,7 @@ $TSTCMD -C config_enc_MPEG4_SP || return $TST_COUNT
 rm -f config_enc_MPEG4_SP
 rm -f akiyomp4.yuv
 
-$TSTCMD -D "-i test.mp4 -f 0" || return $TST_COUNT
+$TSTCMD -D "-i test.mp4 -f 0 -o /dev/null" || return $TST_COUNT
 
 rm -f test.mp4
 
@@ -239,7 +239,7 @@ $TSTCMD -C config_enc_MJPEG_BL || return $TST_COUNT
 rm -f config_enc_MJPEG_BL
 rm -f akiyomp4.yuv
 
-$TSTCMD -D "-i test.mpg -f 7" || return $TST_COUNT
+$TSTCMD -D "-i test.mpg -f 7 -o /dev/null" || return $TST_COUNT
 
 rm -f test.mpg
 
@@ -271,7 +271,7 @@ $TSTCMD -C config_enc_vc1 || return $TST_COUNT
 rm -f config_enc_vc1
 rm -f akiyomp4.yuv
 
-$TSTCMD -D "-i test.wmv -f 3" || return $TST_COUNT
+$TSTCMD -D "-i test.wmv -f 3 -o /dev/null" || return $TST_COUNT
 
 rm -f test.wmv
 
