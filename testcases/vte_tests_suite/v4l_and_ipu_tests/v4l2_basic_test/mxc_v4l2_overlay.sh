@@ -55,32 +55,32 @@ TSTCMD=/unit_tests/mxc_v4l2_overlay.out
 
 RESSIZE=$(fbset | grep "mode \"" |  sed "s/\"//g" | sed "s/-/ /" | awk {'print $2'})
 
-if [ "$TARGET" == "25" ]
+if [ "$TARGET" = "25" ]
 then
 RESSIZE=""
 fi
 
-if [ "$TARGET" == "31" ]
+if [ "$TARGET" = "31" ]
 then
 RESSIZE="240x320"
 fi
 
-if [ "$TARGET" == "35" ]
+if [ "$TARGET" = "35" ]
 then
 RESSIZE=""
 fi
 
-if [ "$TARGET" == "37" ]
+if [ "$TARGET" = "37" ]
 then
 RESSIZE="240x320"
 fi
 
-if [ "$TARGET" == "51" ]
+if [ "$TARGET" = "51" ]
 then
 RESSIZE="240x320 720x480"
 fi
 
-if [ "$TARGET" == "53" ]
+if [ "$TARGET" = "53" ]
 then
 RESSIZE="240x320 720x480 1280x720"
 fi
