@@ -1,25 +1,4 @@
 #!/bin/sh  -x
-##############################################################################
-#
-#Copyright (C) 2009-2010 Freescale Semiconductor, Inc. All Rights Reserved.
-#
-#The code contained herein is licensed under the GNU General Public
-#License. You may obtain a copy of the GNU General Public License
-#Version 2 or later at the following locations:
-#
-#http://www.opensource.org/licenses/gpl-license.html
-#http://www.gnu.org/copyleft/gpl.html
-#
-##############################################################################
-#
-# Revision History:
-#                      Modification     Tracking
-# Author                   Date          Number    Description of Changes
-#-------------------   ------------    ----------  ---------------------
-# Linux BSP Dev.Team       2009           n/a         Initial ver.
-# Spring Zhang          18/05/2010        n/a      Make to fit Ubuntu tgz rootfs
-##############################################################################
-# Used for update bootloader, kernel or rootfs to SD card
 
 # Default Offset values
 OFF_KERNEL=1048576    			# 1M after the start 
@@ -175,8 +154,8 @@ while [ "$moreoptions" = 1  -a $# -gt 0 ] ; do
 #  echo parse $1
   case $1 in
     -h) showhelp ; exit ;;
-    -k) ZIMAGE=$2; OFFSET=${OFF_KERNEL} ; DO_KERNEL=1 ; shift ;;
-    -b) REDBOOT=$2 ; OFFSET=${OFF_REDBOOT} ; DO_REDBOOT=1 ; shift ;;
+    -k) ZIMAGE=$2; KN_OFFSET=${OFF_KERNEL} ; DO_KERNEL=1 ; shift ;;
+    -b) REDBOOT=$2 ; BL_OFFSET=${OFF_REDBOOT} ; DO_REDBOOT=1 ; shift ;;
     -r) RFS=$2 ; DO_RFS=1 ; shift ;;
     -o) OFFSET=$2 ; DO_OFFSET=1 ; shift ;;
     -n) DEVNODE=$2 ; shift ;;    
@@ -239,7 +218,7 @@ if [ $DO_KERNEL -eq 1 ] ; then
 		exit -1
 	fi
 	#            FILE       NODE       OFFSET   
-	update_chunk ${ZIMAGE} ${DEVNODE} ${OFFSET} 	
+	update_chunk ${ZIMAGE} ${DEVNODE} ${KN_OFFSET} 	
 	echo " Done"
 fi
 
@@ -259,14 +238,14 @@ if [ $DO_REDBOOT -eq 1 ] ; then
 		read yes_or_no
 		if [ "${yes_or_no}" == "yes" ] ; then 
             #            FILE       NODE       OFFSET   
-            ${DD} if=${REDBOOT} of=${DEVNODE} bs=${OFFSET} seek=1 skip=1
+            ${DD} if=${REDBOOT} of=${DEVNODE} bs=${BL_OFFSET} seek=1 skip=1
 			echo "Proceed with padding data"
         else
             exit 67
 		fi
     else
         #            FILE       NODE       OFFSET   
-        update_chunk ${REDBOOT} ${DEVNODE} ${OFFSET} 
+        update_chunk ${REDBOOT} ${DEVNODE} ${BL_OFFSET} 
 	fi
 
     ${SYNC} ; ${SYNC} ; ${SYNC}
