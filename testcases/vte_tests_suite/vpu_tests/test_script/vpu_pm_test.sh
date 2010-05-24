@@ -1,3 +1,4 @@
+#!/bin/sh
 #Copyright (C) 2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -6,7 +7,6 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
 ###################################################################################################
 #
 #    @file   vpu_pm_test.sh
