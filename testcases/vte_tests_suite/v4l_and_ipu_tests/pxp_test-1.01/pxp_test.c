@@ -7,16 +7,6 @@
  * 
  * This program is free software, see the COPYING file
  */
-/***
-**Copyright (C) 2009 Freescale Semiconductor, Inc. All Rights Reserved.
-**
-**The code contained herein is licensed under the GNU General Public
-**License. You may obtain a copy of the GNU General Public License
-**Version 2 or later at the following locations:
-**
-**http://www.opensource.org/licenses/gpl-license.html
-**http://www.gnu.org/copyleft/gpl.html
-**/
 
 #include <errno.h>
 #include <fcntl.h>
@@ -523,10 +513,17 @@ static int pxp_config_windows(struct pxp_control *pxp, int pass)
 	/* Set cropping window */
 	crop.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY;
 	if (!pass) {
+		if (pxp->dst_state) {
+			crop.c.left = pxp->dst.left;
+			crop.c.top = pxp->dst.top;
+			crop.c.width = pxp->dst.width;
+			crop.c.height = pxp->dst.height;
+		}else{
 		crop.c.left = 0;
 		crop.c.top = 0;
 		crop.c.width = pxp->s0.width;
 		crop.c.height = pxp->s0.height;
+		}
 	} else {
 		if (pxp->dst_state) {
 			crop.c.left = pxp->dst.left;
