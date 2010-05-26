@@ -88,14 +88,16 @@ endif
 ifneq ($(ARCH_PLATFORM), mxc27520evb)
 SUBDIRS += mtd_tests
 endif
+
 # Updated by Blake, drop this directory
 ifeq ($(ARCH_PLATFORM), $(filter imx32ads mxc30031ads, $(ARCH_PLATFORM)))
 SUBDIRS += dvfs_dptc_tests
 endif
 
-ifeq ($(ARCH_PLATFORM), $(filter  imx51stack imx51, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS += power_manager
 endif
+
 #Hake mxc fb test extension
 SUBDIRS += fb_test
 SUBDIRS += mmc_tests
@@ -124,25 +126,24 @@ SUBDIRS += i2c_tests
 SUBDIRS += watchdog_tests
 SUBDIRS += owire
 SUBDIRS += systest
-ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx25stack imx51stack imx51, $(ARCH_PLATFORM)))
+
+ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx25stack imx51stack, $(ARCH_PLATFORM)))
 SUBDIRS += libata_tests
 endif
 
-ifeq ($(ARCH_PLATFORM), $(filter imx25stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx35stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS += can_tests
+endif
+
+ifeq ($(ARCH_PLATFORM), $(filter imx25stack, $(ARCH_PLATFORM)))
 SUBDIRS += usb_host_test
 endif
 
 ifeq ($(ARCH_PLATFORM), $(filter imx35stack, $(ARCH_PLATFORM)))
 SUBDIRS += asrc_tests
 SUBDIRS += cdrom_tests
-SUBDIRS += can_tests
 SUBDIRS += mlb_tests
 SUBDIRS += tvin_tests
-endif
-
-ifeq ($(ARCH_PLATFORM), $(filter imx51, $(ARCH_PLATFORM)))
-SUBDIRS += can_tests
 endif
 
 SUBDIRS += tvout_tests
@@ -168,6 +169,7 @@ endif
 ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS += gpu_test
 endif
+
 SUBDIRS += emi_tests
 SUBDIRS += network_tests
 #tina changed SUBDIRS += dpm_tests
@@ -197,7 +199,7 @@ SUBDIRS += alsa_tests
 SUBDIRS += fs_tests
 SUBDIRS += gps_tests
 SUBDIRS += bt_tests
-ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx35stack imx51stack imx51, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx35stack imx51stack, $(ARCH_PLATFORM)))
 SUBDIRS += wifi_tests
 endif
 SUBDIRS += fm_tests
