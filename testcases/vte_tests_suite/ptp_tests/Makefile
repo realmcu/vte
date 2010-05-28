@@ -8,7 +8,7 @@
 #http://www.gnu.org/copyleft/gpl.html
 ##############################################################################
 
-TRAGET = mxs_ptp_test
+TARGET = mxs_ptp_test
 SRC = $(wildcard *.c)
 OBJ=$(patsubst %.c,%.o,$(SRC))
 
@@ -19,6 +19,5 @@ install:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
 
 clean:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
-
+	-rm -rf $(OBJ) $(TARGET)
 $(OBJ) : $(SRC)
