@@ -1,11 +1,11 @@
 #!/bin/bash
-###################################################################################################
+################################################################################
 #
 #    @file   vpu_sequence_test.sh
 #
 #    @brief  shell script for testcase design for VPU
 #
-#Copyright (C) 2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2009-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -17,12 +17,13 @@
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
-#-------------------------   ------------    ----------  -------------------------------------------
+#-------------------------   ------------    ----------  -----------------------
 #<Justin Qiu>/-----             <2009/06/04>     N/A          Initial version
 #<Justin Qiu>/-----             <2009/07/27>     N/A          Delete absolute path
 #<Justin Qiu>/-----             <2009/10/29>     N/A          Add VPU performance test case
+#Spring Zhang                2010/05/28          N/A      Add MX53 support
 # 
-###################################################################################################
+################################################################################
 
 
 
@@ -60,7 +61,7 @@ echo 1100 > /sys/class/regulator/regulator_1_SW2/uV
 fi
 fi
 
-if [ $TARGET == "37" ] || [ $TARGET == "51"  ]
+if [ $TARGET = "37" -o $TARGET = "51" -o $TARGET = "53" ]
 then
  echo 1 > /proc/sys/vm/lowmem_reserve_ratio
 fi
@@ -95,8 +96,7 @@ check_platform()
 {
 LOCAL=0
 if [ $LOCAL -eq 1 ]; then
-PLATFORM="31 35 37 51"
-#  CPU_REV=$(cat /proc/cpuinfo | grep "Revision")
+PLATFORM="31 35 37 51 53"
   CPU_REV=$(platfm.sh)
   for i in $PLATFORM
   do
