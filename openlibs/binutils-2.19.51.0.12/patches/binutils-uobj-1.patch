@@ -1,0 +1,257 @@
+bfd/
+
+2009-06-27  Ulrich Drepper  <drepper@redhat.com>
+
+	* elf-bfd.h (elf_link_hash_entry): Add unique_global.
+
+	* elf.c (swap_out_syms): Handle STB_GNU_UNIQUE.
+	* elfcode.h (elf_slurp_symbol_table): Likewise.
+	* elflink.c (_bfd_elf_merge_symbol): Likewise.
+	(elf_link_add_object_symbols): Likewise.
+	(elf_link_output_extsym): Likewise.
+
+	* syms.c (BSF_GNU_UNIQUE): New.
+	(bfd_print_symbol_vandf): Handle BSF_GNU_UNIQUE.
+	(bfd_decode_symclass): Likewise.
+	* bfd-in2.h: Regenerated.
+
+binutils/
+
+2009-06-27  Ulrich Drepper  <drepper@redhat.com>
+
+	* readelf.c (get_symbol_binding): Handle STB_GNU_UNIQUE.
+
+elfcpp/
+
+2009-06-27  Ulrich Drepper  <drepper@redhat.com>
+
+	* elfcpp.h (STB): Add STB_GNU_UNIQUE.
+
+gas/
+
+2009-06-27  Ulrich Drepper  <drepper@redhat.com>
+
+	* config/obj-elf.c (obj_elf_type): Handle gnu_unique_object.
+
+gas/testsuite/
+
+2009-06-27  Ulrich Drepper  <drepper@redhat.com>
+
+	* gas/elf/type.s: Add gnu_unique_object test.
+	* gas/elf/type.e: Updated.
+
+include/elf/
+
+2009-06-27  Ulrich Drepper  <drepper@redhat.com>
+
+	* common.h (STB_GNU_UNIQUE): New.
+
+diff -up binutils-2.19.51.0.7/bfd/bfd-in2.h.uobject binutils-2.19.51.0.7/bfd/bfd-in2.h
+--- binutils-2.19.51.0.7/bfd/bfd-in2.h.uobject	2009-06-01 09:44:22.000000000 -0700
++++ binutils-2.19.51.0.7/bfd/bfd-in2.h	2009-06-01 12:51:46.130983889 -0700
+@@ -4627,6 +4627,11 @@ typedef struct bfd_symbol
+      also be also set.  */
+ #define BSF_GNU_INDIRECT_FUNCTION (1 << 22)
+ 
++  /* This symbol is a globally unique data object.  The dynamic linker
++     will make sure that in the entire process there is one symbol with
++     this name and type in use.  BSF_OBJECT must also be set.  */
++#define BSF_GNU_UNIQUE		(1 << 23)
++
+   flagword flags;
+ 
+   /* A pointer to the section to which this symbol is
+diff -up binutils-2.19.51.0.7/bfd/elf-bfd.h.uobject binutils-2.19.51.0.7/bfd/elf-bfd.h
+--- binutils-2.19.51.0.7/bfd/elf-bfd.h.uobject	2009-06-01 09:44:22.000000000 -0700
++++ binutils-2.19.51.0.7/bfd/elf-bfd.h	2009-06-01 12:51:46.132984171 -0700
+@@ -176,6 +176,8 @@ struct elf_link_hash_entry
+   /* Symbol is referenced with a relocation where C/C++ pointer equality
+      matters.  */
+   unsigned int pointer_equality_needed : 1;
++  /* Symbol is a unique global symbol.  */
++  unsigned int unique_global : 1;
+ 
+   /* String table index in .dynstr if this is a dynamic symbol.  */
+   unsigned long dynstr_index;
+diff -up binutils-2.19.51.0.7/bfd/elfcode.h.uobject binutils-2.19.51.0.7/bfd/elfcode.h
+--- binutils-2.19.51.0.7/bfd/elfcode.h.uobject	2009-06-01 12:51:46.125985770 -0700
++++ binutils-2.19.51.0.7/bfd/elfcode.h	2009-06-01 12:51:46.134985988 -0700
+@@ -1342,6 +1342,9 @@ elf_slurp_symbol_table (bfd *abfd, asymb
+ 	    case STB_WEAK:
+ 	      sym->symbol.flags |= BSF_WEAK;
+ 	      break;
++	    case STB_GNU_UNIQUE:
++	      sym->symbol.flags |= BSF_GNU_UNIQUE;
++	      break;
+ 	    }
+ 
+ 	  switch (ELF_ST_TYPE (isym->st_info))
+diff -up binutils-2.19.51.0.7/bfd/elf.c.uobject binutils-2.19.51.0.7/bfd/elf.c
+--- binutils-2.19.51.0.7/bfd/elf.c.uobject	2009-06-01 09:44:22.000000000 -0700
++++ binutils-2.19.51.0.7/bfd/elf.c	2009-06-01 12:51:46.141984388 -0700
+@@ -6566,6 +6566,8 @@ Unable to find equivalent output section
+ 
+ 	  if (flags & BSF_LOCAL)
+ 	    bind = STB_LOCAL;
++	  else if (flags & BSF_GNU_UNIQUE)
++	    bind = STB_GNU_UNIQUE;
+ 	  else if (flags & BSF_WEAK)
+ 	    bind = STB_WEAK;
+ 	  else if (flags & BSF_GLOBAL)
+diff -up binutils-2.19.51.0.7/bfd/elflink.c.uobject binutils-2.19.51.0.7/bfd/elflink.c
+--- binutils-2.19.51.0.7/bfd/elflink.c.uobject	2009-06-01 09:44:22.000000000 -0700
++++ binutils-2.19.51.0.7/bfd/elflink.c	2009-06-01 12:51:46.151989426 -0700
+@@ -1285,6 +1285,9 @@ _bfd_elf_merge_symbol (bfd *abfd,
+   oldweak = (h->root.type == bfd_link_hash_defweak
+ 	     || h->root.type == bfd_link_hash_undefweak);
+ 
++  if (bind == STB_GNU_UNIQUE)
++    h->unique_global = 1;
++
+   /* If a new weak symbol definition comes from a regular file and the
+      old symbol comes from a dynamic library, we treat the new one as
+      strong.  Similarly, an old weak symbol definition from a regular
+@@ -3925,6 +3928,8 @@ elf_link_add_object_symbols (bfd *abfd, 
+ 	}
+       else if (bind == STB_WEAK)
+ 	flags = BSF_WEAK;
++      else if (bind == STB_GNU_UNIQUE)
++	flags = BSF_GNU_UNIQUE;
+       else
+ 	{
+ 	  /* Leave it up to the processor backend.  */
+@@ -4183,6 +4188,7 @@ elf_link_add_object_symbols (bfd *abfd, 
+ 	     || h->root.type == bfd_link_hash_warning)
+ 	h = (struct elf_link_hash_entry *) h->root.u.i.link;
+       *sym_hash = h;
++      h->unique_global = (flags & BSF_GNU_UNIQUE) != 0;
+ 
+       new_weakdef = FALSE;
+       if (dynamic
+@@ -8633,6 +8639,8 @@ elf_link_output_extsym (struct elf_link_
+   sym.st_other = h->other;
+   if (h->forced_local)
+     sym.st_info = ELF_ST_INFO (STB_LOCAL, h->type);
++  else if (h->unique_global)
++    sym.st_info = ELF_ST_INFO (STB_GNU_UNIQUE, h->type);
+   else if (h->root.type == bfd_link_hash_undefweak
+ 	   || h->root.type == bfd_link_hash_defweak)
+     sym.st_info = ELF_ST_INFO (STB_WEAK, h->type);
+diff -up binutils-2.19.51.0.7/bfd/syms.c.uobject binutils-2.19.51.0.7/bfd/syms.c
+--- binutils-2.19.51.0.7/bfd/syms.c.uobject	2009-05-25 07:02:20.000000000 -0700
++++ binutils-2.19.51.0.7/bfd/syms.c	2009-06-01 12:51:46.153990196 -0700
+@@ -302,6 +302,10 @@ CODE_FRAGMENT
+ .     calling the function that it points to.  BSF_FUNCTION must
+ .     also be also set.  *}
+ .#define BSF_GNU_INDIRECT_FUNCTION (1 << 22)
++.  {* This symbol is a globally unique data object.  The dynamic linker
++.     will make sure that in the entire process there is one symbol with
++.     this name and type in use.  BSF_OBJECT must also be set.  *}
++.#define BSF_GNU_UNIQUE		(1 << 23)
+ .
+ .  flagword flags;
+ .
+@@ -485,7 +489,8 @@ bfd_print_symbol_vandf (bfd *abfd, void 
+   fprintf (file, " %c%c%c%c%c%c%c",
+ 	   ((type & BSF_LOCAL)
+ 	    ? (type & BSF_GLOBAL) ? '!' : 'l'
+-	    : (type & BSF_GLOBAL) ? 'g' : ' '),
++	    : (type & BSF_GLOBAL) ? 'g'
++	    : (type & BSF_GNU_UNIQUE) ? 'u' : ' '),
+ 	   (type & BSF_WEAK) ? 'w' : ' ',
+ 	   (type & BSF_CONSTRUCTOR) ? 'C' : ' ',
+ 	   (type & BSF_WARNING) ? 'W' : ' ',
+@@ -686,6 +691,8 @@ bfd_decode_symclass (asymbol *symbol)
+       else
+ 	return 'W';
+     }
++  if (symbol->flags & BSF_GNU_UNIQUE)
++    return 'u';
+   if (!(symbol->flags & (BSF_GLOBAL | BSF_LOCAL)))
+     return '?';
+ 
+diff -up binutils-2.19.51.0.7/binutils/readelf.c.uobject binutils-2.19.51.0.7/binutils/readelf.c
+--- binutils-2.19.51.0.7/binutils/readelf.c.uobject	2009-06-01 09:44:22.000000000 -0700
++++ binutils-2.19.51.0.7/binutils/readelf.c	2009-06-01 12:51:46.155984401 -0700
+@@ -7035,7 +7035,14 @@ get_symbol_binding (unsigned int binding
+ 	snprintf (buff, sizeof (buff), _("<processor specific>: %d"),
+ 		  binding);
+       else if (binding >= STB_LOOS && binding <= STB_HIOS)
+-	snprintf (buff, sizeof (buff), _("<OS specific>: %d"), binding);
++	{
++	  if (binding == STB_GNU_UNIQUE
++	      && (elf_header.e_ident[EI_OSABI] == ELFOSABI_LINUX
++		  /* GNU/Linux is still using the default value 0.  */
++		  || elf_header.e_ident[EI_OSABI] == ELFOSABI_NONE))
++	    return "UNIQUE";
++	  snprintf (buff, sizeof (buff), _("<OS specific>: %d"), binding);
++	}
+       else
+ 	snprintf (buff, sizeof (buff), _("<unknown>: %d"), binding);
+       return buff;
+diff -up binutils-2.19.51.0.7/elfcpp/elfcpp.h.uobject binutils-2.19.51.0.7/elfcpp/elfcpp.h
+--- binutils-2.19.51.0.7/elfcpp/elfcpp.h.uobject	2009-05-29 14:08:38.000000000 -0700
++++ binutils-2.19.51.0.7/elfcpp/elfcpp.h	2009-06-01 12:51:46.156983144 -0700
+@@ -476,6 +476,7 @@ enum STB
+   STB_GLOBAL = 1,
+   STB_WEAK = 2,
+   STB_LOOS = 10,
++  STB_GNU_UNIQUE = 10,
+   STB_HIOS = 12,
+   STB_LOPROC = 13,
+   STB_HIPROC = 15
+diff -up binutils-2.19.51.0.7/gas/config/obj-elf.c.uobject binutils-2.19.51.0.7/gas/config/obj-elf.c
+--- binutils-2.19.51.0.7/gas/config/obj-elf.c.uobject	2009-06-01 09:44:21.000000000 -0700
++++ binutils-2.19.51.0.7/gas/config/obj-elf.c	2009-06-01 12:51:46.157985520 -0700
+@@ -1720,6 +1720,18 @@ obj_elf_type (int ignore ATTRIBUTE_UNUSE
+ 		typename);
+       type = BSF_FUNCTION | BSF_GNU_INDIRECT_FUNCTION;
+     }
++  else if (strcmp (typename, "gnu_unique_object") == 0)
++    {
++      const struct elf_backend_data *bed;
++
++      bed = get_elf_backend_data (stdoutput);
++      if (!(bed->elf_osabi == ELFOSABI_LINUX
++	    /* GNU/Linux is still using the default value 0.  */
++	    || bed->elf_osabi == ELFOSABI_NONE))
++	as_bad (_("symbol type \"%s\" is supported only by GNU targets"),
++		typename);
++      type = BSF_OBJECT | BSF_GNU_UNIQUE;
++    }
+ #ifdef md_elf_symbol_type
+   else if ((type = md_elf_symbol_type (typename, sym, elfsym)) != -1)
+     ;
+diff -up binutils-2.19.51.0.7/gas/testsuite/gas/elf/type.e.uobject binutils-2.19.51.0.7/gas/testsuite/gas/elf/type.e
+--- binutils-2.19.51.0.7/gas/testsuite/gas/elf/type.e.uobject	2009-06-01 16:31:33.689011111 -0700
++++ binutils-2.19.51.0.7/gas/testsuite/gas/elf/type.e	2009-06-01 16:33:53.068990389 -0700
+@@ -3,4 +3,5 @@
+      .: 0+0     1 OBJECT  LOCAL  DEFAULT    . object
+      .: 0+1     1 TLS     LOCAL  DEFAULT    . tls_object
+     ..: 0+2     1 NOTYPE  LOCAL  DEFAULT    . notype
++    ..: 0+3     1 OBJECT  UNIQUE DEFAULT    . gnu_unique_object
+     ..: 0+1     1 (COMMON|OBJECT)  GLOBAL DEFAULT  COM common
+diff -up binutils-2.19.51.0.7/gas/testsuite/gas/elf/type.s.uobject binutils-2.19.51.0.7/gas/testsuite/gas/elf/type.s
+--- binutils-2.19.51.0.7/gas/testsuite/gas/elf/type.s.uobject	2009-06-01 16:27:07.177740759 -0700
++++ binutils-2.19.51.0.7/gas/testsuite/gas/elf/type.s	2009-06-01 16:25:42.452735892 -0700
+@@ -20,5 +20,9 @@ tls_object:
+         .size   notype,1
+ notype:
+ 	.byte	0x0
++	.type	gnu_unique_object,%gnu_unique_object
++	.size	gnu_unique_object,1
++gnu_unique_object:
++	.byte	0x0
+ 	.comm	common, 1
+ 	.type   common,STT_COMMON
+diff -up binutils-2.19.51.0.7/include/elf/common.h.uobject binutils-2.19.51.0.7/include/elf/common.h
+--- binutils-2.19.51.0.7/include/elf/common.h.uobject	2009-06-01 09:44:21.000000000 -0700
++++ binutils-2.19.51.0.7/include/elf/common.h	2009-06-01 12:51:46.157985520 -0700
+@@ -558,6 +558,7 @@
+ #define STB_GLOBAL	1		/* Symbol visible outside obj */
+ #define STB_WEAK	2		/* Like globals, lower precedence */
+ #define STB_LOOS	10		/* OS-specific semantics */
++#define STB_GNU_UNIQUE	10		/* Symbol is unique in namespace */
+ #define STB_HIOS	12		/* OS-specific semantics */
+ #define STB_LOPROC	13		/* Processor-specific semantics */
+ #define STB_HIPROC	15		/* Processor-specific semantics */

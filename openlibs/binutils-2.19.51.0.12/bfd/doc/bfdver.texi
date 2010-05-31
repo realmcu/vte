@@ -1,0 +1,4 @@
+@set VERSION 2.19.51.0.12
+@set VERSION_PACKAGE (Linux/GNU Binutils) 
+@set UPDATED May 2010
+@set BUGURL @uref{http://www.sourceware.org/bugzilla/ and mailto:hjl.tools@@gmail.com}

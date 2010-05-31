@@ -1,0 +1,536 @@
+bfd/
+
+2008-04-21  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR binutils/6412
+	* bfd.c (bfd): Add has_gap_in_elf_shndx.
+	* bfd-in2.h: Regenerated.
+
+	* bfd-in.h (bfd_has_gap_in_elf_shndx): New.
+
+	* elf.c (setup_group): Handle gap in section indices.
+	* elfcode.h (elf_swap_symbol_in): Likewise.
+	(elf_object_p): Likewise.  Use %B where reporting corrupt
+	string table index.
+
+include/elf/
+
+2008-04-21  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR binutils/6412
+	* internal.h (ELF_SECTION_HEADER_INDEX_GAP): New.
+
+2008-04-21  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR binutils/6412
+	* readelf.c (hole_in_shndx): New.
+	(original_shndx_info): Likewise.
+	(original_shndx): Likewise.
+	(process_file_header): Move ELF magic bytes check to ...
+	(get_file_header): Here.
+	(get_32bit_section_headers): Set hole_in_shndx if sh_link
+	>= number of sections.
+	(get_64bit_section_headers): Likewise.
+	(get_32bit_elf_symbols): Adjust st_shndx if hole_in_shndx
+	isn't 0.
+	(get_64bit_elf_symbols): Likewise.
+	(process_section_headers): Adjust elf_header.e_shstrndx,
+	sh_link and sh_info, save original sh_link and sh_info,
+	display adjustment for sh_link and sh_info if hole_in_shndx
+	isn't 0.
+	(process_section_groups): Adjust member section index if
+	hole_in_shndx isn't 0.
+	(process_object): Free original_shndx if needed.
+
+--- binutils/bfd/bfd-in.h.sec64k	2008-08-12 07:24:00.000000000 -0700
++++ binutils/bfd/bfd-in.h	2008-10-11 17:02:40.000000000 -0700
+@@ -495,6 +495,7 @@ extern void warn_deprecated (const char 
+ #define bfd_my_archive(abfd) ((abfd)->my_archive)
+ #define bfd_has_map(abfd) ((abfd)->has_armap)
+ #define bfd_is_thin_archive(abfd) ((abfd)->is_thin_archive)
++#define bfd_has_gap_in_elf_shndx(abfd) ((abfd)->has_gap_in_elf_shndx)
+ 
+ #define bfd_valid_reloc_types(abfd) ((abfd)->xvec->valid_reloc_types)
+ #define bfd_usrdata(abfd) ((abfd)->usrdata)
+--- binutils/bfd/bfd-in2.h.sec64k	2008-10-06 18:00:16.000000000 -0700
++++ binutils/bfd/bfd-in2.h	2008-10-11 17:02:40.000000000 -0700
+@@ -502,6 +502,7 @@ extern void warn_deprecated (const char 
+ #define bfd_my_archive(abfd) ((abfd)->my_archive)
+ #define bfd_has_map(abfd) ((abfd)->has_armap)
+ #define bfd_is_thin_archive(abfd) ((abfd)->is_thin_archive)
++#define bfd_has_gap_in_elf_shndx(abfd) ((abfd)->has_gap_in_elf_shndx)
+ 
+ #define bfd_valid_reloc_types(abfd) ((abfd)->xvec->valid_reloc_types)
+ #define bfd_usrdata(abfd) ((abfd)->usrdata)
+@@ -4836,6 +4837,9 @@ struct bfd
+ 
+   /* Set if this is a thin archive.  */
+   unsigned int is_thin_archive : 1;
++
++  /* Set if there is a gap in ELF section index.  */
++  unsigned int has_gap_in_elf_shndx : 1;
+ };
+ 
+ typedef enum bfd_error
+--- binutils/bfd/bfd.c.sec64k	2008-08-18 09:01:49.000000000 -0700
++++ binutils/bfd/bfd.c	2008-10-11 17:02:40.000000000 -0700
+@@ -278,6 +278,9 @@ CODE_FRAGMENT
+ .
+ .  {* Set if this is a thin archive.  *}
+ .  unsigned int is_thin_archive : 1;
++.
++.  {* Set if there is a gap in ELF section index.  *}
++.  unsigned int has_gap_in_elf_shndx : 1;
+ .};
+ .
+ */
+--- binutils/bfd/elf.c.sec64k	2008-10-11 17:02:39.000000000 -0700
++++ binutils/bfd/elf.c	2008-10-11 17:02:40.000000000 -0700
+@@ -624,6 +624,12 @@ setup_group (bfd *abfd, Elf_Internal_Shd
+ 			      |= SEC_LINK_ONCE | SEC_LINK_DUPLICATES_DISCARD;
+ 			  break;
+ 			}
++
++		      /* Handle gap in section indices.  */
++		      if (bfd_has_gap_in_elf_shndx (abfd)
++			  && idx > (SHN_HIRESERVE & 0xffff))
++			idx -= ELF_SECTION_HEADER_INDEX_GAP;
++
+ 		      if (idx >= shnum)
+ 			{
+ 			  ((*_bfd_error_handler)
+--- binutils/bfd/elfcode.h.sec64k	2008-10-11 17:02:39.000000000 -0700
++++ binutils/bfd/elfcode.h	2008-10-11 17:02:40.000000000 -0700
+@@ -194,6 +194,10 @@ elf_swap_symbol_in (bfd *abfd,
+       if (shndx == NULL)
+ 	return FALSE;
+       dst->st_shndx = H_GET_32 (abfd, shndx->est_shndx);
++      /* Handle gap in section indices.  */
++      if (bfd_has_gap_in_elf_shndx (abfd)
++	  && dst->st_shndx > (SHN_HIRESERVE & 0xffff))
++	dst->st_shndx -= ELF_SECTION_HEADER_INDEX_GAP;
+     }
+   else if (dst->st_shndx >= (SHN_LORESERVE & 0xffff))
+     dst->st_shndx += SHN_LORESERVE - (SHN_LORESERVE & 0xffff);
+@@ -764,15 +768,29 @@ elf_object_p (bfd *abfd)
+ 	    goto got_no_match;
+ 	  elf_swap_shdr_in (abfd, &x_shdr, i_shdrp + shindex);
+ 
+-	  /* Sanity check sh_link and sh_info.  */
++	  /* Sanity check sh_link and sh_info.  The older linker before
++	     fix for PR ld/5900 creates a gap in section indices.  Set
++	     bfd_has_gap_in_elf_shndx to 1 if there is a gap.  */
+ 	  if (i_shdrp[shindex].sh_link >= num_sec)
+-	    goto got_wrong_format_error;
++	    {
++	      if (i_shdrp[shindex].sh_link <= (SHN_HIRESERVE & 0xffff)
++		  || ((i_shdrp[shindex].sh_link
++		       - ELF_SECTION_HEADER_INDEX_GAP) >= num_sec))
++		goto got_wrong_format_error;
++	      bfd_has_gap_in_elf_shndx (abfd) = 1;
++	    }
+ 
+ 	  if (((i_shdrp[shindex].sh_flags & SHF_INFO_LINK)
+ 	       || i_shdrp[shindex].sh_type == SHT_RELA
+ 	       || i_shdrp[shindex].sh_type == SHT_REL)
+ 	      && i_shdrp[shindex].sh_info >= num_sec)
+-	    goto got_wrong_format_error;
++	    {
++	      if (i_shdrp[shindex].sh_info <= (SHN_HIRESERVE & 0xffff)
++		  || ((i_shdrp[shindex].sh_info
++		       - ELF_SECTION_HEADER_INDEX_GAP) >= num_sec))
++		goto got_wrong_format_error;
++	      bfd_has_gap_in_elf_shndx (abfd) = 1;
++	    }
+ 
+ 	  /* If the section is loaded, but not page aligned, clear
+ 	     D_PAGED.  */
+@@ -784,6 +802,28 @@ elf_object_p (bfd *abfd)
+ 		  != 0))
+ 	    abfd->flags &= ~D_PAGED;
+ 	}
++
++      /* To support files generated by the older linker, we adjust
++	 section indices if there is a gap.  */
++      if (bfd_has_gap_in_elf_shndx (abfd))
++	{
++	  BFD_ASSERT (i_ehdrp->e_shstrndx == i_shdrp->sh_link);
++
++	  for (; num_sec > 0; num_sec--, i_shdrp++)
++	    {
++	      if (i_shdrp->sh_link > (SHN_HIRESERVE & 0xffff))
++		i_shdrp->sh_link -= ELF_SECTION_HEADER_INDEX_GAP;
++
++	      if (i_shdrp->sh_info > (SHN_HIRESERVE & 0xffff)
++		  && ((i_shdrp->sh_flags & SHF_INFO_LINK)
++		      || i_shdrp->sh_type == SHT_RELA
++		      || i_shdrp->sh_type == SHT_REL))
++		i_shdrp->sh_info -= ELF_SECTION_HEADER_INDEX_GAP;
++	    }
++
++	  if (i_ehdrp->e_shstrndx > (SHN_HIRESERVE & 0xffff))
++	    i_ehdrp->e_shstrndx -= ELF_SECTION_HEADER_INDEX_GAP;
++	}
+     }
+ 
+   /* A further sanity check.  */
+@@ -798,7 +838,8 @@ elf_object_p (bfd *abfd)
+ 	     So we are kind, and reset the string index value to 0
+ 	     so that at least some processing can be done.  */
+ 	  i_ehdrp->e_shstrndx = SHN_UNDEF;
+-	  _bfd_error_handler (_("warning: %s has a corrupt string table index - ignoring"), abfd->filename);
++	  _bfd_error_handler (_("warning: %B has a corrupt string table index - ignoring"),
++			      abfd);
+ 	}
+     }
+   else if (i_ehdrp->e_shstrndx != SHN_UNDEF)
+--- binutils/binutils/readelf.c.sec64k	2008-10-11 17:02:38.000000000 -0700
++++ binutils/binutils/readelf.c	2008-10-11 18:46:18.000000000 -0700
+@@ -209,6 +209,15 @@ static int do_notes;
+ static int do_archive_index;
+ static int is_32bit_elf;
+ 
++struct original_shndx_info
++{
++  unsigned int sh_link;
++  unsigned int sh_info;
++};
++static struct original_shndx_info *original_shndx;
++/* The largest section index in sh_link if it isn't 0.  */
++static unsigned int hole_in_shndx;
++
+ struct group_list
+ {
+   struct group_list *next;
+@@ -3247,16 +3256,6 @@ get_data_encoding (unsigned int encoding
+ static int
+ process_file_header (void)
+ {
+-  if (   elf_header.e_ident[EI_MAG0] != ELFMAG0
+-      || elf_header.e_ident[EI_MAG1] != ELFMAG1
+-      || elf_header.e_ident[EI_MAG2] != ELFMAG2
+-      || elf_header.e_ident[EI_MAG3] != ELFMAG3)
+-    {
+-      error
+-	(_("Not an ELF file - it has the wrong magic bytes at the start\n"));
+-      return 0;
+-    }
+-
+   init_dwarf_regnames (elf_header.e_machine);
+ 
+   if (do_header)
+@@ -3737,6 +3736,10 @@ get_32bit_section_headers (FILE *file, u
+       internal->sh_info      = BYTE_GET (shdrs[i].sh_info);
+       internal->sh_addralign = BYTE_GET (shdrs[i].sh_addralign);
+       internal->sh_entsize   = BYTE_GET (shdrs[i].sh_entsize);
++      /* The older linker generates section header indices with
++	 hole.  */
++      if (i > 0 && internal->sh_link >= elf_header.e_shnum)
++	hole_in_shndx = internal->sh_link;
+     }
+ 
+   free (shdrs);
+@@ -3778,6 +3781,10 @@ get_64bit_section_headers (FILE *file, u
+       internal->sh_info      = BYTE_GET (shdrs[i].sh_info);
+       internal->sh_offset    = BYTE_GET (shdrs[i].sh_offset);
+       internal->sh_addralign = BYTE_GET (shdrs[i].sh_addralign);
++      /* The older linker generates section header indices with
++	 hole.  */
++      if (i > 0 && internal->sh_link >= elf_header.e_shnum)
++	hole_in_shndx = internal->sh_link;
+     }
+ 
+   free (shdrs);
+@@ -3835,8 +3842,12 @@ get_32bit_elf_symbols (FILE *file, Elf_I
+       psym->st_size  = BYTE_GET (esyms[j].st_size);
+       psym->st_shndx = BYTE_GET (esyms[j].st_shndx);
+       if (psym->st_shndx == (SHN_XINDEX & 0xffff) && shndx != NULL)
+-	psym->st_shndx
+-	  = byte_get ((unsigned char *) &shndx[j], sizeof (shndx[j]));
++	{
++	  psym->st_shndx
++	    = byte_get ((unsigned char *) &shndx[j], sizeof (shndx[j]));
++	  if (hole_in_shndx && psym->st_shndx > (SHN_HIRESERVE & 0xffff))
++	    psym->st_shndx -= ELF_SECTION_HEADER_INDEX_GAP;
++	}
+       else if (psym->st_shndx >= (SHN_LORESERVE & 0xffff))
+ 	psym->st_shndx += SHN_LORESERVE - (SHN_LORESERVE & 0xffff);
+       psym->st_info  = BYTE_GET (esyms[j].st_info);
+@@ -3900,8 +3911,12 @@ get_64bit_elf_symbols (FILE *file, Elf_I
+       psym->st_other = BYTE_GET (esyms[j].st_other);
+       psym->st_shndx = BYTE_GET (esyms[j].st_shndx);
+       if (psym->st_shndx == (SHN_XINDEX & 0xffff) && shndx != NULL)
+-	psym->st_shndx
+-	  = byte_get ((unsigned char *) &shndx[j], sizeof (shndx[j]));
++	{
++	  psym->st_shndx
++	    = byte_get ((unsigned char *) &shndx[j], sizeof (shndx[j]));
++	  if (hole_in_shndx && psym->st_shndx > (SHN_HIRESERVE & 0xffff))
++	    psym->st_shndx -= ELF_SECTION_HEADER_INDEX_GAP;
++	}
+       else if (psym->st_shndx >= (SHN_LORESERVE & 0xffff))
+ 	psym->st_shndx += SHN_LORESERVE - (SHN_LORESERVE & 0xffff);
+       psym->st_value = BYTE_GET (esyms[j].st_value);
+@@ -4126,6 +4141,7 @@ process_section_headers (FILE *file)
+   unsigned int i;
+ 
+   section_headers = NULL;
++  original_shndx = NULL;
+ 
+   if (elf_header.e_shnum == 0)
+     {
+@@ -4147,6 +4163,44 @@ process_section_headers (FILE *file)
+   else if (! get_64bit_section_headers (file, elf_header.e_shnum))
+     return 0;
+ 
++  if (hole_in_shndx
++      && ((hole_in_shndx - ELF_SECTION_HEADER_INDEX_GAP)
++	  < elf_header.e_shnum))
++    {
++      Elf_Internal_Shdr *internal;
++      struct original_shndx_info *p;
++
++      if (elf_header.e_shstrndx > (SHN_HIRESERVE & 0xffff))
++	elf_header.e_shstrndx -= ELF_SECTION_HEADER_INDEX_GAP;
++
++      original_shndx = cmalloc (elf_header.e_shnum, 
++				sizeof (*original_shndx));
++      if (original_shndx == NULL)
++	{
++	  error (_("Out of memory\n"));
++	  return 0;
++	}
++
++      internal = section_headers;
++      p = original_shndx;
++      for (i = elf_header.e_shnum;
++	   i > 0;
++	   i--, internal++, p++)
++	{
++	  p->sh_link = internal->sh_link;
++	  p->sh_info = internal->sh_info;
++
++	  if (internal->sh_link > (SHN_HIRESERVE & 0xffff))
++	    internal->sh_link -= ELF_SECTION_HEADER_INDEX_GAP;
++
++	  if (internal->sh_info > (SHN_HIRESERVE & 0xffff)
++	      && (internal->sh_flags & SHF_INFO_LINK
++		  || internal->sh_type == SHT_REL
++		  || internal->sh_type == SHT_RELA))
++	    internal->sh_info -= ELF_SECTION_HEADER_INDEX_GAP;
++	}
++    }
++
+   /* Read in the string table, so that we have names to display.  */
+   if (elf_header.e_shstrndx != SHN_UNDEF
+        && elf_header.e_shstrndx < elf_header.e_shnum)
+@@ -4398,10 +4452,27 @@ process_section_headers (FILE *file)
+ 	  else
+ 	    printf (" %3s ", get_elf_section_flags (section->sh_flags));
+ 
+-	  printf ("%2u %3u %2lu\n",
+-		  section->sh_link,
+-		  section->sh_info,
+-		  (unsigned long) section->sh_addralign);
++	  if (hole_in_shndx && original_shndx)
++	    {
++	      if (original_shndx[i].sh_link != section->sh_link)
++		printf ("%2u/-%3u ",
++			original_shndx[i].sh_link,
++			ELF_SECTION_HEADER_INDEX_GAP);
++	      else
++		printf ("%2u ", section->sh_link);
++	      if (original_shndx[i].sh_info != section->sh_info)
++		printf ("%3u/-%3u ",
++			original_shndx[i].sh_info,
++			ELF_SECTION_HEADER_INDEX_GAP);
++	      else
++		printf ("%3u ", section->sh_info);
++	      printf ("%2lu\n", (unsigned long) section->sh_addralign);
++	    }
++	  else
++	    printf ("%2u %3u %2lu\n",
++		    section->sh_link,
++		    section->sh_info,
++		    (unsigned long) section->sh_addralign);
+ 	}
+       else if (do_wide)
+ 	{
+@@ -4436,7 +4507,23 @@ process_section_headers (FILE *file)
+ 	  else
+ 	    printf (" %3s ", get_elf_section_flags (section->sh_flags));
+ 
+-	  printf ("%2u %3u ", section->sh_link, section->sh_info);
++	  if (hole_in_shndx)
++	    {
++	      if (original_shndx[i].sh_link != section->sh_link)
++		printf ("%2u/-%3u ",
++			original_shndx[i].sh_link,
++			ELF_SECTION_HEADER_INDEX_GAP);
++	      else
++		printf ("%2u ", section->sh_link);
++	      if (original_shndx[i].sh_info != section->sh_info)
++		printf ("%3u/-%3u ",
++			original_shndx[i].sh_info,
++			ELF_SECTION_HEADER_INDEX_GAP);
++	      else
++		printf ("%3u ", section->sh_info);
++	    }
++	  else
++	    printf ("%2u %3u ", section->sh_link, section->sh_info);
+ 
+ 	  if ((unsigned long) section->sh_addralign == section->sh_addralign)
+ 	    printf ("%2lu\n", (unsigned long) section->sh_addralign);
+@@ -4458,14 +4545,35 @@ process_section_headers (FILE *file)
+ 	      printf ("  ");
+ 	      print_vma (section->sh_offset, LONG_HEX);
+ 	    }
+-	  printf ("  %u\n       ", section->sh_link);
++	  if (hole_in_shndx)
++	    {
++	      if (original_shndx[i].sh_link != section->sh_link)
++		printf ("  %u/-%3u\n       ",
++			original_shndx[i].sh_link,
++			ELF_SECTION_HEADER_INDEX_GAP);
++	      else
++		printf ("  %u\n       ", section->sh_link);
++	    }
++	  else
++	    printf ("  %u\n       ", section->sh_link);
+ 	  print_vma (section->sh_size, LONG_HEX);
+ 	  putchar (' ');
+ 	  print_vma (section->sh_entsize, LONG_HEX);
+ 
+-	  printf ("  %-16u  %lu\n",
+-		  section->sh_info,
+-		  (unsigned long) section->sh_addralign);
++	  if (hole_in_shndx)
++	    {
++	      if (original_shndx[i].sh_info != section->sh_info)
++		printf ("  %-11u/-%3u",
++			original_shndx[i].sh_info,
++			ELF_SECTION_HEADER_INDEX_GAP);
++	      else
++		printf ("  %-16u", section->sh_info);
++	      printf ("  %lu\n", (unsigned long) section->sh_addralign);
++	    }
++	  else
++	    printf ("  %-16u  %lu\n",
++		    section->sh_info,
++		    (unsigned long) section->sh_addralign);
+ 	}
+       else
+ 	{
+@@ -4485,10 +4593,28 @@ process_section_headers (FILE *file)
+ 
+ 	  printf (" %3s ", get_elf_section_flags (section->sh_flags));
+ 
+-	  printf ("     %2u   %3u     %lu\n",
+-		  section->sh_link,
+-		  section->sh_info,
+-		  (unsigned long) section->sh_addralign);
++	  if (hole_in_shndx)
++	    {
++	      if (original_shndx[i].sh_link != section->sh_link)
++		printf ("  %2u/-%3u",
++			original_shndx[i].sh_link,
++			ELF_SECTION_HEADER_INDEX_GAP);
++	      else
++		printf ("     %2u", section->sh_link);
++	      if (original_shndx[i].sh_info != section->sh_info)
++		printf (" %3u/-%3u",
++			original_shndx[i].sh_info,
++			ELF_SECTION_HEADER_INDEX_GAP);
++	      else
++		printf ("   %3u", section->sh_info);
++	      printf ("     %lu\n",
++		      (unsigned long) section->sh_addralign);
++	    }
++	  else
++	    printf ("     %2u   %3u     %lu\n",
++		    section->sh_link,
++		    section->sh_info,
++		    (unsigned long) section->sh_addralign);
+ 	}
+ 
+       if (do_section_details)
+@@ -4682,10 +4808,15 @@ process_section_groups (FILE *file)
+ 	  for (j = 0; j < size; j++)
+ 	    {
+ 	      struct group_list * g;
++	      unsigned int orig;
+ 
+ 	      entry = byte_get (indices, 4);
+ 	      indices += 4;
+ 
++	      orig = entry;
++	      if (hole_in_shndx && entry > (SHN_HIRESERVE & 0xffff))
++		entry -= ELF_SECTION_HEADER_INDEX_GAP;
++
+ 	      if (entry >= elf_header.e_shnum)
+ 		{
+ 		  error (_("section [%5u] in group section [%5u] > maximum section [%5u]\n"),
+@@ -4722,7 +4853,13 @@ process_section_groups (FILE *file)
+ 	      if (do_section_groups)
+ 		{
+ 		  sec = section_headers + entry;
+-		  printf ("   [%5u]   %s\n", entry, SECTION_NAME (sec));
++		  if (orig != entry)
++		    printf ("   [%5u/-%3u]   %s\n",
++			    orig, ELF_SECTION_HEADER_INDEX_GAP,
++			    SECTION_NAME (sec));
++		  else
++		    printf ("   [%5u]   %s\n",
++			    entry, SECTION_NAME (sec));
+ 		}
+ 
+ 	      g = xmalloc (sizeof (struct group_list));
+@@ -10385,6 +10522,15 @@ get_file_header (FILE *file)
+   if (fread (elf_header.e_ident, EI_NIDENT, 1, file) != 1)
+     return 0;
+ 
++  if (elf_header.e_ident[EI_MAG0] != ELFMAG0
++      || elf_header.e_ident[EI_MAG1] != ELFMAG1
++      || elf_header.e_ident[EI_MAG2] != ELFMAG2
++      || elf_header.e_ident[EI_MAG3] != ELFMAG3)
++    {
++      error (_("Not an ELF file - it has the wrong magic bytes at the start\n"));
++      return 0;
++    }
++
+   /* Determine how to read the rest of the header.  */
+   switch (elf_header.e_ident[EI_DATA])
+     {
+@@ -10480,6 +10626,8 @@ process_object (char *file_name, FILE *f
+ {
+   unsigned int i;
+ 
++  hole_in_shndx = 0;
++
+   if (! get_file_header (file))
+     {
+       error (_("%s: Failed to read file header\n"), file_name);
+@@ -10567,6 +10715,12 @@ process_object (char *file_name, FILE *f
+       section_headers = NULL;
+     }
+ 
++  if (original_shndx)
++    {
++      free (original_shndx);
++      original_shndx = NULL; 
++    }
++
+   if (string_table)
+     {
+       free (string_table);
+--- binutils/include/elf/internal.h.sec64k	2008-04-02 09:37:43.000000000 -0700
++++ binutils/include/elf/internal.h	2008-10-11 17:02:40.000000000 -0700
+@@ -328,4 +328,8 @@ struct elf_segment_map
+   (ELF_SECTION_SIZE(sec_hdr, segment) > 0			\
+    && ELF_IS_SECTION_IN_SEGMENT (sec_hdr, segment))
+ 
++/* The gap in section indices created by the older linker before
++   bug fix for PR ld/5900.  */
++#define ELF_SECTION_HEADER_INDEX_GAP (SHN_HIRESERVE + 1 - SHN_LORESERVE)
++
+ #endif /* _ELF_INTERNAL_H */
