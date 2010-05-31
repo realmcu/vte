@@ -1,0 +1,9 @@
+#!/bin/bash
+if [ ! -z makefile ]; then
+./configure  \
+--host=arm-none-linux-gnueabi \
+--with-kernel-support \
+--with-extra-includes=$(pwd)/../../../../openlibs/include/ \
+--with-extra-libs=$(pwd)/../../../../openlibs/lib/  \
+--with-x
+fi
