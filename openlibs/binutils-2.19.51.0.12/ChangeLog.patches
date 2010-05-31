@@ -1,0 +1,397 @@
+bfd/
+
+2006-10-17  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/3351
+	* elflink.c (_bfd_elf_update_dynamic_flags): New.
+	(_bfd_elf_merge_symbol): Update both real and indirect symbol
+	dynamic flags.
+	(_bfd_elf_add_default_symbol): Make the real symbol dynamic if
+	the indirect symbol is defined in a shared library.
+	(elf_link_add_object_symbols): Likewise.  If the indirect
+	symbol has been forced local, don't make the real symbol
+	dynamic.
+	(elf_link_check_versioned_symbol): Check indirect symbol.
+	(elf_link_output_extsym): Use real symbol definition when
+	reporting indirect symbol error.  Check version info for
+	dynamic versioned symbol.
+
+ld/testsuite/
+
+2006-10-17  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/3351
+	* ld-elf/indirect.exp: New file.
+	* ld-elf/indirect1a.c: Likewise.
+	* ld-elf/indirect1b.c: Likewise.
+	* ld-elf/indirect1c.c: Likewise.
+	* ld-elf/indirect2.c: Likewise.
+	* ld-elf/indirect3.out: Likewise.
+	* ld-elf/indirect3a.c: Likewise.
+	* ld-elf/indirect3b.c: Likewise.
+	* ld-elf/indirect3c.c: Likewise.
+	* ld-elf/indirect4.out: Likewise.
+	* ld-elf/indirect4a.c: Likewise.
+	* ld-elf/indirect4b.c: Likewise.
+	* ld-elf/indirect4c.c: Likewise.
+
+bfd/
+
+2007-01-23  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elf-bfd.h (_bfd_elf_sharable_com_section): New.
+	(_bfd_elf_add_sharable_symbol): Likewise.
+	(_bfd_elf_sharable_section_from_bfd_section): Likewise.
+	(_bfd_elf_sharable_symbol_processing): Likewise.
+	(_bfd_elf_sharable_common_definition): Likewise.
+	(_bfd_elf_sharable_common_section_index): Likewise.
+	(_bfd_elf_sharable_common_section): Likewise.
+	(_bfd_elf_sharable_merge_symbol): Likewise.
+
+	* elf.c (special_sections_g): Add ".gnu.linkonce.shrb" and
+	".gnu.linkonce.shrd".
+	(special_sections_s): Add ".sharable_bss" and ".sharable_data".
+	(get_program_header_size): Handle PT_GNU_SHR segment.
+	(_bfd_elf_map_sections_to_segments): Likewise.
+	(assign_file_positions_for_load_sections): Likewise.
+
+	* elf32-i386.c (elf_i386_link_hash_table): Add sdynsharablebss
+	and srelsharablebss fields.
+	(elf_i386_link_hash_table_create): Initialize sdynsharablebss
+	and srelsharablebss.
+	(elf_i386_create_dynamic_sections): Handle sdynsharablebss and
+	srelsharablebss.
+	(elf_i386_adjust_dynamic_symbol): Likewise.
+	(elf_i386_size_dynamic_sections): Likewise.
+	(elf_i386_finish_dynamic_symbol): Likewise.
+	(elf_backend_add_symbol_hook): Defined.
+	(elf_backend_section_from_bfd_section): Likewise.
+	(elf_backend_symbol_processing): Likewise.
+	(elf_backend_common_section_index): Likewise.
+	(elf_backend_common_section): Likewise.
+	(elf_backend_common_definition): Likewise.
+	(elf_backend_merge_symbol): Likewise.
+
+	* elf64-x86-64.c (elf64_x86_64_link_hash_table): Add
+	sdynsharablebss and srelsharablebss fields.
+	(elf64_x86_64_link_hash_table_create): Initialize sdynsharablebss
+	and srelsharablebss.
+	(elf64_x86_64_create_dynamic_sections): Handle sdynsharablebss
+	and srelsharablebss.
+	(elf64_x86_64_adjust_dynamic_symbol): Likewise.
+	(elf64_x86_64_size_dynamic_sections): Likewise.
+	(elf64_x86_64_finish_dynamic_symbol): Likewise.
+	(elf64_x86_64_add_symbol_hook): Handle sharable symbols.
+	(elf64_x86_64_elf_section_from_bfd_section): Likewise.
+	(elf64_x86_64_symbol_processing): Likewise.
+	(elf64_x86_64_merge_symbol): Likewise.
+	(elf64_x86_64_common_definition): Handle sharable sections.
+	(elf64_x86_64_common_section_index): Likewise.
+	(elf64_x86_64_common_section): Likewise.
+
+	* elflink.c (_bfd_elf_create_dynamic_sections): Handle
+	.dynsharablebss section.
+	(_bfd_elf_sharable_com_section): New.
+	(get_sharable_common_section): Likewise.
+	(_bfd_elf_add_sharable_symbol): Likewise.
+	(_bfd_elf_sharable_section_from_bfd_section): Likewise.
+	(_bfd_elf_sharable_symbol_processing): Likewise.
+	(_bfd_elf_sharable_common_definition): Likewise.
+	(_bfd_elf_sharable_common_section_index): Likewise.
+	(_bfd_elf_sharable_common_section): Likewise.
+	(_bfd_elf_sharable_merge_symbol): Likewise.
+
+	* elfxx-ia64.c (elfNN_ia64_add_symbol_hook): Handle sharable
+	symbols.
+	(elf_backend_add_symbol_hook): Defined.
+	(elf_backend_section_from_bfd_section): Likewise.
+	(elf_backend_symbol_processing): Likewise.
+	(elf_backend_common_section_index): Likewise.
+	(elf_backend_common_section): Likewise.
+	(elf_backend_common_definition): Likewise.
+	(elf_backend_merge_symbol): Likewise.
+
+binutils/
+
+2007-01-04  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* readelf.c (dump_relocations): Handle sharable sections.
+	(get_segment_type): Handle sharable segment.
+	(get_symbol_index_type): Handle sharable sections.
+
+gas/
+
+2007-01-04  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* config/obj-elf.c (obj_elf_sharable_common): New.
+	(elf_pseudo_table): Add "sharable_common".
+	(obj_elf_change_section): Handle sharable sections.
+
+include/
+
+2007-01-23  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* bfdlink.h (bfd_link_info): Add sharable_sections.
+
+include/elf/
+
+2007-01-04  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* common.h (PT_GNU_SHR): New.
+	(SHF_GNU_SHARABLE): Likewise.
+	(SHN_GNU_SHARABLE_COMMON): Likewise.
+
+ld/
+
+2007-01-04  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* emulparams/elf64_ia64.sh (SHARABLE_SECTIONS): Set to yes.
+	* emulparams/elf_i386.sh (SHARABLE_SECTIONS): Likewise.
+	* emulparams/elf_x86_64.sh (SHARABLE_SECTIONS): Likewise.
+
+	* emultempl/elf32.em (gld${EMULATION_NAME}_before_parse): Set
+	link_info.sharable_sections based on $SHARABLE_SECTIONS.
+	(gld${EMULATION_NAME}_place_orphan): Don't allow orphaned
+	sharable sections.
+
+	* ldmain.c (main): Initialize link_info.sharable_sections.
+	* scripttempl/elf.sc: Support sharable sections.
+
+2007-01-24  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* NEWS: Mention LD_SYMBOLIC and LD_SYMBOLIC_FUNCTIONS.
+
+	* ld.texinfo: Document LD_SYMBOLIC and LD_SYMBOLIC_FUNCTIONS.
+
+	* ldmain.c (main): Handle LD_SYMBOLIC and
+	LD_SYMBOLIC_FUNCTIONS.
+
+bfd/
+
+2007-07-03  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/4409
+	* elf-bfd.h (RELOC_FOR_GLOBAL_SYMBOL): Add an argument for
+	error ignored.
+	* elf-m10200.c (mn10200_elf_relocate_section): Updated.
+	* elf-m10300.c (mn10300_elf_relocate_section): Likewise.
+	* elf32-arm.c (elf32_arm_relocate_section): Likewise.
+	* elf32-avr.c (elf32_avr_relocate_section): Likewise.
+	* elf32-bfin.c (bfinfdpic_relocate_section): Likewise.
+	(bfin_relocate_section): Likewise.
+	* elf32-cr16.c (elf32_cr16_relocate_section): Likewise.
+	* elf32-cr16c.c (elf32_cr16c_relocate_section): Likewise.
+	* elf32-cris.c (cris_elf_relocate_section): Likewise.
+	* elf32-crx.c (elf32_crx_relocate_section): Likewise.
+	* elf32-d10v.c (elf32_d10v_relocate_section): Likewise.
+	* elf32-fr30.c (fr30_elf_relocate_section): Likewise.
+	* elf32-frv.c (elf32_frv_relocate_section): Likewise.
+	* elf32-h8300.c (elf32_h8_relocate_section): Likewise.
+	* elf32-hppa.c (elf32_hppa_relocate_section): Likewise.
+	* elf32-i386.c (elf_i386_relocate_section): Likewise.
+	* elf32-i860.c (elf32_i860_relocate_section): Likewise.
+	* elf32-ip2k.c (ip2k_elf_relocate_section): Likewise.
+	* elf32-iq2000.c (iq2000_elf_relocate_section): Likewise.
+	* elf32-lm32.c (lm32_elf_relocate_section): Likewise.
+	* elf32-m68hc1x.c (elf32_m68hc11_relocate_section): Likewise.
+	* elf32-m68k.c (elf_m68k_relocate_section): Likewise.
+	* elf32-mcore.c (mcore_elf_relocate_section): Likewise.
+	* elf32-mep.c (mep_elf_relocate_section): Likewise.
+	* elf32-msp430.c (elf32_msp430_relocate_section): Likewise.
+	* elf32-mt.c (mt_elf_relocate_section): Likewise.
+	* elf32-openrisc.c (openrisc_elf_relocate_section): Likewise.
+	* elf32-ppc.c (ppc_elf_relocate_section): Likewise.
+	* elf32-s390.c (elf_s390_relocate_section): Likewise.
+	* elf32-v850.c (v850_elf_relocate_section): Likewise.
+	* elf32-vax.c (elf_vax_relocate_section): Likewise.
+	* elf32-xc16x.c (elf32_xc16x_relocate_section): Likewise.
+	* elf32-xstormy16.c (xstormy16_elf_relocate_section): Likewise.
+	* elf32-xtensa.c (elf_xtensa_relocate_section): Likewise.
+	* elf64-alpha.c (elf64_alpha_relocate_section): Likewise.
+	* elf64-mmix.c (mmix_elf_relocate_section): Likewise.
+	* elf64-ppc.c (ppc64_elf_relocate_section): Likewise.
+	* elf64-s390.c (elf_s390_relocate_section): Likewise.
+	* elf64-x86-64.c (elf64_x86_64_relocate_section): Likewise.
+	* elfxx-sparc.c (_bfd_sparc_elf_relocate_section): Likewise.
+
+	* elfxx-ia64.c (elfNN_ia64_relocate_section): Skip if error
+	from RELOC_FOR_GLOBAL_SYMBOL in executable is ignored.
+
+ld/
+
+2007-07-03  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/4409
+	* ldmain.c (how_to_report_unresolved_symbols): New.
+	(main): Set link_info.unresolved_syms_in_objects and
+	link_info.unresolved_syms_in_shared_libs if they aren't set
+	yet.
+
+	* ldmain.h (how_to_report_unresolved_symbols): New.
+
+	* lexsup.c (how_to_report_unresolved_symbols): Removed.
+	(parse_args): Set link_info.pie to FALSE for -shared. Don't
+	set default values for link_info.unresolved_syms_in_objects nor
+	link_info.unresolved_syms_in_shared_libs.
+
+ld/testsuite/
+
+2007-07-03  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/4409
+	* ld-ia64/error1.d: New file.
+	* ld-ia64/error1.s: Likewise.
+	* ld-ia64/error2.d: Likewise.
+	* ld-ia64/error3.d: Likewise.
+	* ld-ia64/error4.d: Likewise.
+
+binutils/
+
+2007-06-22  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* objdump.c (disassemble_bytes): Print addend as signed.
+	(dump_reloc_set): Likewise.
+
+gas/testsuite/
+
+2007-06-22  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* gas/alpha/elf-reloc-1.d: Expect addend as signed.
+	* gas/i386/mixed-mode-reloc64.d: Likewise.
+	* gas/i386/reloc64.d: Likewise.
+	* gas/ia64/pcrel.d: Likewise.
+	* gas/mips/branch-misc-2-64.d: Likewise.
+	* gas/mips/branch-misc-2pic-64.d: Likewise.
+	* gas/mips/ldstla-n64-sym32.d: Likewise.
+	* gas/mips/mips16-hilo-n32.d: Likewise.
+	* gas/ppc/astest.d: Likewise.
+	* gas/ppc/astest2.d: Likewise.
+	* gas/ppc/astest2_64.d: Likewise.
+	* gas/ppc/astest64.d: Likewise.
+	* gas/ppc/test1elf32.d: Likewise.
+	* gas/ppc/test1elf64.d: Likewise.
+	* gas/sparc/reloc64.d: Likewise.
+
+bfd/
+
+2007-07-19  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elflink.c (elf_link_add_object_symbols): Check symbol type
+	for symbol alias in a dynamic object.
+
+ld/testsuite/
+
+2007-07-19  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* ld-elf/data2.c: New.
+	* ld-elf/weakdef1.c: Likewise.
+
+	* ld-elf/shared.exp: Add tests for libdata2 and weakdef1.
+
+2008-03-12  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elf.c (assign_section_numbers): Check if number of sections
+	>= SHN_LORESERVE.
+	* elfcode.h (elf_object_p): Likewise.
+
+bfd/
+
+2008-04-21  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR binutils/6412
+	* bfd.c (bfd): Add has_gap_in_elf_shndx.
+	* bfd-in2.h: Regenerated.
+
+	* bfd-in.h (bfd_has_gap_in_elf_shndx): New.
+
+	* elf.c (setup_group): Handle gap in section indices.
+	* elfcode.h (elf_swap_symbol_in): Likewise.
+	(elf_object_p): Likewise.  Use %B where reporting corrupt
+	string table index.
+
+include/elf/
+
+2008-04-21  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR binutils/6412
+	* internal.h (ELF_SECTION_HEADER_INDEX_GAP): New.
+
+2008-04-21  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR binutils/6412
+	* readelf.c (hole_in_shndx): New.
+	(original_shndx_info): Likewise.
+	(original_shndx): Likewise.
+	(process_file_header): Move ELF magic bytes check to ...
+	(get_file_header): Here.
+	(get_32bit_section_headers): Set hole_in_shndx if sh_link
+	>= number of sections.
+	(get_64bit_section_headers): Likewise.
+	(get_32bit_elf_symbols): Adjust st_shndx if hole_in_shndx
+	isn't 0.
+	(get_64bit_elf_symbols): Likewise.
+	(process_section_headers): Adjust elf_header.e_shstrndx,
+	sh_link and sh_info, save original sh_link and sh_info,
+	display adjustment for sh_link and sh_info if hole_in_shndx
+	isn't 0.
+	(process_section_groups): Adjust member section index if
+	hole_in_shndx isn't 0.
+	(process_object): Free original_shndx if needed.
+
+2009-05-06  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* NEWS: Mention LD_AS_NEEDED.
+
+	* ld.texinfo: Document LD_AS_NEEDED.
+
+	* ldmain.c (main): Handle LD_AS_NEEDED.
+
+bfd/
+
+2009-06-27  Ulrich Drepper  <drepper@redhat.com>
+
+	* elf-bfd.h (elf_link_hash_entry): Add unique_global.
+
+	* elf.c (swap_out_syms): Handle STB_GNU_UNIQUE.
+	* elfcode.h (elf_slurp_symbol_table): Likewise.
+	* elflink.c (_bfd_elf_merge_symbol): Likewise.
+	(elf_link_add_object_symbols): Likewise.
+	(elf_link_output_extsym): Likewise.
+
+	* syms.c (BSF_GNU_UNIQUE): New.
+	(bfd_print_symbol_vandf): Handle BSF_GNU_UNIQUE.
+	(bfd_decode_symclass): Likewise.
+	* bfd-in2.h: Regenerated.
+
+binutils/
+
+2009-06-27  Ulrich Drepper  <drepper@redhat.com>
+
+	* readelf.c (get_symbol_binding): Handle STB_GNU_UNIQUE.
+
+elfcpp/
+
+2009-06-27  Ulrich Drepper  <drepper@redhat.com>
+
+	* elfcpp.h (STB): Add STB_GNU_UNIQUE.
+
+gas/
+
+2009-06-27  Ulrich Drepper  <drepper@redhat.com>
+
+	* config/obj-elf.c (obj_elf_type): Handle gnu_unique_object.
+
+gas/testsuite/
+
+2009-06-27  Ulrich Drepper  <drepper@redhat.com>
+
+	* gas/elf/type.s: Add gnu_unique_object test.
+	* gas/elf/type.e: Updated.
+
+include/elf/
+
+2009-06-27  Ulrich Drepper  <drepper@redhat.com>
+
+	* common.h (STB_GNU_UNIQUE): New.
+
+diff -up binutils-2.19.51.0.7/bfd/bfd-in2.h.uobject binutils-2.19.51.0.7/bfd/bfd-in2.h

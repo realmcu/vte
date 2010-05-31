@@ -1,0 +1,4 @@
+#!/bin/sh
+if [ ! -z Makefile ]; then
+./configure --host=arm-none-linux-gnueabi --prefix=$(pwd)/../../
+fi

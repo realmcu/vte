@@ -1,0 +1,60 @@
+2007-01-24  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* NEWS: Mention LD_SYMBOLIC and LD_SYMBOLIC_FUNCTIONS.
+
+	* ld.texinfo: Document LD_SYMBOLIC and LD_SYMBOLIC_FUNCTIONS.
+
+	* ldmain.c (main): Handle LD_SYMBOLIC and
+	LD_SYMBOLIC_FUNCTIONS.
+
+--- ld/NEWS.env	2008-09-08 09:34:53.000000000 -0700
++++ ld/NEWS	2008-09-08 09:36:43.000000000 -0700
+@@ -1,5 +1,8 @@
+ -*- text -*-
+ 
++* ELF: Support environment variables, LD_SYMBOLIC for -Bsymbolic and
++  LD_SYMBOLIC_FUNCTIONS for -Bsymbolic-functions.
++
+ Changes in 2.19:
+ 
+ * Linker scripts support a new INSERT command that makes it easier to
+--- ld/ld.texinfo.env	2008-07-22 07:19:39.000000000 -0700
++++ ld/ld.texinfo	2008-09-08 09:35:29.000000000 -0700
+@@ -1147,14 +1147,21 @@ When creating a shared library, bind ref
+ definition within the shared library, if any.  Normally, it is possible
+ for a program linked against a shared library to override the definition
+ within the shared library.  This option is only meaningful on ELF
+-platforms which support shared libraries.
++platforms which support shared libraries.  If @option{-Bsymbolic} is not
++used when linking a shared library, the linker will also turn on this
++option if the environment variable @code{LD_SYMBOLIC} is set.
+ 
+ @kindex -Bsymbolic-functions
+ @item -Bsymbolic-functions
+ When creating a shared library, bind references to global function
+ symbols to the definition within the shared library, if any.
+ This option is only meaningful on ELF platforms which support shared
+-libraries.
++libraries.  If @option{-Bsymbolic-functions} is not used when linking a
++shared library, the linker will also turn on this option if the
++environment variable @code{LD_SYMBOLIC_FUNCTIONS} is set.  When
++both environment variables @code{LD_SYMBOLIC} and
++@code{LD_SYMBOLIC_FUNCTIONS} are set, @code{LD_SYMBOLIC} will take
++precedent.
+ 
+ @kindex --dynamic-list=@var{dynamic-list-file}
+ @item --dynamic-list=@var{dynamic-list-file}
+--- ld/ldmain.c.env	2008-09-08 09:35:29.000000000 -0700
++++ ld/ldmain.c	2008-09-08 09:35:29.000000000 -0700
+@@ -253,6 +253,11 @@ main (int argc, char **argv)
+   command_line.warn_search_mismatch = TRUE;
+   command_line.check_section_addresses = TRUE;
+ 
++  if (getenv ("LD_SYMBOLIC") != NULL)
++    command_line.symbolic = symbolic;
++  else if (getenv ("LD_SYMBOLIC_FUNCTIONS") != NULL)
++    command_line.symbolic = symbolic_functions;
++
+   /* We initialize DEMANGLING based on the environment variable
+      COLLECT_NO_DEMANGLE.  The gcc collect2 program will demangle the
+      output of the linker, unless COLLECT_NO_DEMANGLE is set in the
