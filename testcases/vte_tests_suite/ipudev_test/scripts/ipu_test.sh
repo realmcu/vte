@@ -378,12 +378,15 @@ mkdir -p /tmp/ipu_dev
             HT=$(echo $j | sed "s/+/ /g" | awk '{print $2}' )
             INFILE=$(echo $j | sed "s/+/ /g"| awk '{print $3}')
             
+            if [ $i != "I420" ];then
             echo "${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},I420 \
-                    -o  ${WD},${HT},${i} -n /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}"
+                    -o  ${WD},${HT},${i} -s 0,0,0,0 -n /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}"
             
             ${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},I420 \
-                    -o  ${WD},${HT},${i} -n /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}
-
+                    -o  ${WD},${HT},${i} -s 0,0,0,0 -n /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}
+            else
+            cp ${STREAM_PATH}/video/${INFILE} /tmp/ipu_dev/tmp.dat
+            fi
             if [ $? != 0 ]; then
                 echo "TST ERROR: can not convert from 422P to $i"
             else
