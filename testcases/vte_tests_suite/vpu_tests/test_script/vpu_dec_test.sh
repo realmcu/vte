@@ -453,7 +453,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 echo "TST_INFO: h264 MP VDI test"
-${TSTCMD} -D "-i ${STREAM_PATH}/video/H264_MP30_interlaced_poc2_720x576.h264 -f 2" || return $RC
+${TSTCMD} -D "-i ${STREAM_PATH}/video/H264_MP30_interlaced_poc2_720x576.h264 -f 2 -w 720 -h 640" || return $RC
 RC=0
 
 return $RC
@@ -475,7 +475,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 echo "TST_INFO: vc1 MPHL VDI test"
-${TSTCMD} -D "-i ${STREAM_PATH}/video/WMV9_MPHL_NTSCV9.rcv -f 3" || return $RC
+${TSTCMD} -D "-i ${STREAM_PATH}/video/WMV9_MPHL_NTSCV9.rcv -f 3 -w 720 -h 640" || return $RC
 RC=0
 
 return $RC
