@@ -1,5 +1,5 @@
 /***
-**Copyright (C) 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2004-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -420,7 +420,7 @@ int main(int argc, char **argv)
         /* Rotations tests */
         if(gV4LTestConfig.mRotation)
         {
-                if((gV4LTestConfig.mRotationMode < 0) || (gV4LTestConfig.mRotationMode > 15))
+                if((gV4LTestConfig.mRotationMode < 0) || (gV4LTestConfig.mRotationMode > 16))
                 {
                         tst_resm(TBROK, "You are entered wrong rotation option");    
                         return TFAIL;      
