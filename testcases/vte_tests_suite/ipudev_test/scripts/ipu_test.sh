@@ -209,8 +209,6 @@ ${TST_CMD} -P 16 || return $RC
 ${TST_CMD} -P 17 || return $RC
 ${TST_CMD} -P 18 || return $RC
 ${TST_CMD} -P 19 || return $RC
-${TST_CMD} -P 20 || return $RC
-${TST_CMD} -P 21 || return $RC
 fi
 echo "TST INFO hopping block screen save"
 for i in $BWLIST
