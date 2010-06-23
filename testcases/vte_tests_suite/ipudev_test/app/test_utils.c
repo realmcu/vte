@@ -30,7 +30,7 @@
 
 int time_sec = 0, time_usec = 0;
 
-#define deb_msg 0
+#define deb_msg 1
 #if deb_msg
 #define deb_printf printf
 #else
