@@ -21,6 +21,7 @@
 #Spring Zhang                 29/04/2010     MX53:change SD partition 1 from cylinder 80
 #Spring Zhang                 11/05/2010     MX53:change SD partition 1 
 #                                            from relative cylinders
+#Spring Zhang                 23/06/2010     kernel change: get right block device size
 #
 #notes:
 # -I insert modules(SD, ATA, V4L, BT, USBH or ALL)          
@@ -113,6 +114,9 @@ modules_buildin()
 	do
 		#echo $line
 	        size=`cat /sys/block/$line/device/block:$line/size` 
+		if [ $? -ne 0 ]; then
+			size=`cat /sys/block/$line/device/block/$line/size`
+		fi
 	      	if [ $size -gt 33554432 ]; then
 			ata_buildin=1;
 			ata_dev_point=$line;
