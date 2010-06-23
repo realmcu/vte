@@ -1,4 +1,4 @@
-#Copyright (C) 2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2009-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -293,7 +293,7 @@ test_case_05()
 TCID="capture_mode"
 #TODO give TST_COUNT
 TST_COUNT=5
-RC=0
+RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -330,6 +330,7 @@ do
   done
  done
 done
+RC=0
 return $RC
 
 }
@@ -342,7 +343,7 @@ test_case_06()
 TCID="gamma setting"
 #TODO give TST_COUNT
 TST_COUNT=6
-RC=0
+RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -378,6 +379,7 @@ do
   done
  done
 done
+RC=0
 return $RC
 }
 
