@@ -12,11 +12,11 @@ BIN = ../../../bin
 
 all:
 	-rm -rf $(TARGET)
-	if [ $$ARCH_PLATFORM == "imx51stack" ]; \
+	if [ $$ARCH_PLATFORM = "imx51stack" ]; \
 		then cp mx5x_gpu_test.sh $(TARGET); fi
-	if [ $$ARCH_PLATFORM == "imx51" ] || [ $$ARCH_PLATFORM == "imx53" ]; \
+	if [ $$ARCH_PLATFORM = "imx51" ] || [ $$ARCH_PLATFORM = "imx53" ]; \
 		then cp mx5x_gpu_test.sh $(TARGET); fi
-	if [ $$ARCH_PLATFORM == "imx35stack" ]; then cp mx35_gpu_test.sh $(TARGET); fi
+	if [ $$ARCH_PLATFORM = "imx35stack" ]; then cp mx35_gpu_test.sh $(TARGET); fi
 
 install:
 	ln -f $(TARGET) $(BIN)
