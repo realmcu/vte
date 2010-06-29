@@ -77,6 +77,9 @@ ifeq ($(ARCH_PLATFORM), $(filter imx233 imx508, $(ARCH_PLATFORM)))
 SUBDIRS += iim_test
 endif
 
+ifeq ($(ARCH_PLATFORM), $(filter imx508, $(ARCH_PLATFORM)))
+SUBDIRS += epdc_test
+endif
 
 # ARM11 processor and the StarCore DSP existing on MXC91231 and MXC91331 platforms
 
