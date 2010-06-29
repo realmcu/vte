@@ -169,7 +169,7 @@ endif
 
 # the actual make rules
 
-all: ccdv libcpufreq utils $(COMPILE_NLS)
+all: libcpufreq utils $(COMPILE_NLS)
 
 ccdv:
 	@echo "Building ccdv"
@@ -191,7 +191,7 @@ libcpufreq.la: $(LIB_OBJS) $(LIB_HEADERS) $(LIB_PARTS) Makefile
 
 libcpufreq: libcpufreq.la
 
-cpufreq-%: libcpufreq.la $(UTIL_OBJS)
+cpufreq-%: ccdv libcpufreq.la $(UTIL_OBJS)
 	$(QUIET) $(CC) $(CFLAGDEF) $(CFLAGS) -g -I. -I./lib/ -c -o utils/$@.o utils/$*.c
 	$(QUIET) $(CC)  -L. -o $@ utils/$@.o libcpufreq.a
 	$(QUIET) $(STRIPCMD) $@
