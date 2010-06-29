@@ -32,18 +32,21 @@ export LOADLIBES=-L../../../../lib -lltp -lpthread -lm
 ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack, $(ARCH_PLATFORM)))
 SUBDIRS = v4l_capture_testapp v4l_output_testapp v4l2_basic_test  ipu_pf_testapp 
 else
+ifeq ($(ARCH_PALTFORM), $(filter imx233 imx28 imx508, $(ARCH_PLATFORM)))
+SUBDIRS = pxp_test-1.01
+else
 SUBDIRS = v4l_capture_testapp v4l_output_testapp v4l2_basic_test ipu_function 
 endif
-
+endif
 
 all: config
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
-	$(MAKE) -C pxp_test-1.01
+	#$(MAKE) -C pxp_test-1.01
 install:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
-	ln -f pxp_test-1.01/pxp_test ../../bin/
-	ln -f pxp_test-1.01/testfiles/*.rgba32 ../../bin/
-	ln -f pxp_test-1.01/testfiles/*.s* ../../bin/
+	-ln -f pxp_test-1.01/pxp_test ../../bin/
+	-ln -f pxp_test-1.01/testfiles/*.rgba32 ../../bin/
+	-ln -f pxp_test-1.01/testfiles/*.s* ../../bin/
 
 clean:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
