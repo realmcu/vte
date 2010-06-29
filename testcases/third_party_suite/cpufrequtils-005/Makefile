@@ -178,7 +178,7 @@ ccdv:
 %.lo: $(LIB_OBJS) $(LIB_HEADERS)
 	$(QUIET) $(LIBTOOL) $(LIBTOOL_OPT) --tag=CXX --mode=compile $(CC) $(CFLAGDEF) $(CFLAGS) -o $@ -c $*.c
 
-libcpufreq.la: $(LIB_OBJS) $(LIB_HEADERS) $(LIB_PARTS) Makefile
+libcpufreq.la: ccdv $(LIB_OBJS) $(LIB_HEADERS) $(LIB_PARTS) Makefile
 	@if [ $(strip $(SYSFS)) != true -a $(strip $(PROC)) != true ]; then \
 		echo '*** At least one of /sys support or /proc support MUST be enabled ***'; \
 		exit -1; \
@@ -191,7 +191,7 @@ libcpufreq.la: $(LIB_OBJS) $(LIB_HEADERS) $(LIB_PARTS) Makefile
 
 libcpufreq: libcpufreq.la
 
-cpufreq-%: ccdv libcpufreq.la $(UTIL_OBJS)
+cpufreq-%: libcpufreq.la $(UTIL_OBJS)
 	$(QUIET) $(CC) $(CFLAGDEF) $(CFLAGS) -g -I. -I./lib/ -c -o utils/$@.o utils/$*.c
 	$(QUIET) $(CC)  -L. -o $@ utils/$@.o libcpufreq.a
 	$(QUIET) $(STRIPCMD) $@
