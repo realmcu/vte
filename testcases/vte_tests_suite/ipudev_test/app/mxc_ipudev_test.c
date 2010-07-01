@@ -207,7 +207,7 @@ again:
 			printf("Can not read enough data from input file!\n");
 			break;
 		}
-		if (first_time && (test_handle.mode & OP_STREAM_MODE)) {
+		if (first_time && (test_handle.mode == (TASK_VDI_VF_MODE | OP_NORMAL_MODE)) && (test_handle.input.motion_sel != HIGH_MOTION)) {
 			if (fread(test_handle.ipu_handle->inbuf_start[1], 1, test_handle.ipu_handle->ifr_size, file_in)
 					< test_handle.ipu_handle->ifr_size) {
 				ret = -1;
@@ -218,54 +218,29 @@ again:
 			done_cnt++;
 			total_cnt++;
 		}
-        
-        /*calculate the exact ipu function time*/
-        /*
-	    struct timeval frame_begin,frame_end;
-	    gettimeofday(&frame_begin, NULL);
-        */
-
-        retVal = gettimeofday(&tvProf, 0);
-        if (retVal == 0)
-        {
-            timeBefore = tvProf.tv_sec * 1000000 + tvProf.tv_usec;
-            timeFlag = 1;
-        }
-
+		if (first_time && (test_handle.mode & OP_STREAM_MODE)) {
+			if (fread(test_handle.ipu_handle->inbuf_start[1], 1, test_handle.ipu_handle->ifr_size, file_in)
+					< test_handle.ipu_handle->ifr_size) {
+				ret = -1;
+				printf("Can not read enough data from input file!\n");
+				break;
+			}
+			if ((test_handle.mode & TASK_VDI_VF_MODE) && (test_handle.input.motion_sel != HIGH_MOTION)) {
+				if (fread(test_handle.ipu_handle->inbuf_start[2], 1, test_handle.ipu_handle->ifr_size, file_in)
+						< test_handle.ipu_handle->ifr_size) {
+					ret = -1;
+					printf("Can not read enough data from input file!\n");
+					break;
+				}
+				done_cnt++;
+				total_cnt++;
+			}
+			first_time = 0;
+			done_cnt++;
+			total_cnt++;
+		}
 		next_update_idx = mxc_ipu_lib_task_buf_update(test_handle.ipu_handle, 0, 0, 0, output_to_file_cb, &test_handle);
-
-        /*
-        gettimeofday(&frame_end, NULL);
-	    time_sec = frame_end.tv_sec - frame_begin.tv_sec;
-	    time_usec = frame_end.tv_usec - frame_begin.tv_usec;
-        */
-
-        if (timeFlag == 1)
-        {
-            retVal = gettimeofday(&tvProf, 0);
-            if (retVal == 0)
-            {
-                timeAfter = tvProf.tv_sec * 1000000 + tvProf.tv_usec;
-                timeVal = timeAfter - timeBefore;
-                numFrame++;
-                if (timeVal > maxFrameTime)
-                {
-                    maxFrameTime = timeVal;
-                    /*maxFrameNumber = FrameNo;*/
-                    maxFrameNumber = done_cnt;
-                }
-                if (timeVal < minFrameTime)
-                {
-                    minFrameTime = timeVal;
-                    /*minFrameTime = timeVal;*/
-                    minFrameNumber = done_cnt;
-                }
-                totalTime += timeVal;
-            }
-            timeFlag = 0;
-        }
-
-	    if (next_update_idx < 0)
+		if (next_update_idx < 0)
 			break;
 		done_cnt++;
 		total_cnt++;
@@ -290,6 +265,15 @@ again:
 
 	printf("total frame count %d avg frame time %d us, fps %f\n", total_cnt, run_time/total_cnt, total_cnt/(run_time/1000000.0));
 
+ /*for performance test -- begin*/
+	if(fSysTime != NULL )
+	{
+		fprintf(stdout,"%d\t%ld\t%ld\t%ld\t%ld\t%d\t%d\t\n", numFrame,totalTime,maxFrameTime,minFrameTime,totalTime/numFrame,maxFrameNumber, minFrameNumber);
+		fprintf(fSysTime,"%d\t%ld\t%ld\t%ld\t%ld\t%d\t%d\t\n", numFrame,totalTime,maxFrameTime,minFrameTime,totalTime/numFrame,maxFrameNumber, minFrameNumber);
+		fclose(fSysTime);
+	}
+	/*for performance test -- end*/
+
 	mxc_ipu_lib_task_uninit(test_handle.ipu_handle);
 
 done:
@@ -298,5 +282,6 @@ done:
 		fclose(test_handle.file_out);
 
 	system("echo 0,0 > /sys/class/graphics/fb0/pan");
+
 	return ret;
 }
