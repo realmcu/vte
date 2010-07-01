@@ -1,0 +1,8 @@
+-r rotation(0-3)
+-s size(h:w)
+-l invert lut(0-1)
+-m multi-instance number(0-16)
+-a alpha value
+-z each update with different color loop from (128r-255g-128b)
+-c frame count (default 100)
+-k color key (0x00D60000 rgba)
