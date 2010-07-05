@@ -397,24 +397,9 @@ mkdir -p /tmp/ipu_dev
                         echo "TST INFO: skip this resolution for fb not support\n"
                     else
                         for l in $FBPOS ; do
-	                        echo "TST INFO: output fb pos $l" 
-	                        echo "TST INFO: output1 disable"
-	                        efb0=1
                             check_format_bits $tf
-                            if [ $? -ne $FB0BITS ]; then
-	                            efb0=0
-                                echo "TST INFO: mute fb0 out"
-	                        fi
-	                        echo "${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},${i} -c ${CRP} \
-                                -o  ${k},${tf},$r -s ${efb0},0,$l -n /dev/null /tmp/ipu_dev/tmp.dat \
-	                            || RC=$(expr $RC + 1)"
-
-	                        ${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},${i} -c ${CRP} \
-                                -o  ${k},${tf},$r -s ${efb0},0,$l -n /dev/null /tmp/ipu_dev/tmp.dat \
-	                            || RC=$(expr $RC + 1)
-            
+							efb0=0
 	                        if [ $MODE == "0x13"  ] || [ $MODE == "0x23"  ]; then
-                                echo "TST INFO: output1 enable"
                                 if [ $w -gt $FB1XRES ] || [ $h -gt $FB1YRES ]; then
                                     echo "TST INFO: skip this resolution for fb not support\n"
                                 else
@@ -424,12 +409,18 @@ mkdir -p /tmp/ipu_dev
                                         efb2=0
                                         echo "TST INFO: mute fb2"
 		                            fi
-	                                echo "${TST_CMD} -m $MODE -E 1 -f $fc -i ${WD},${HT},${i} -c ${CRP} \
+									echo "motion_sel = 0(medium_motion)"
+	                                echo "${TST_CMD} -m $MODE -E 0 -f $fc -i ${WD},${HT},${i} -c ${CRP} \
                                         -o  ${k},${tf},$r -s ${efb0},0,${l} -n /dev/null \
 	                                    -O ${k},${tf},$r -S ${efb2},2,${l} -N /dev/null /tmp/ipu_dev/tmp.dat \
 	                                    || RC=$(expr $RC + 1)"
-	                                
+									echo "motion_sel = 1(low_motion)"
                                     ${TST_CMD} -m $MODE -E 1 -f $fc -i ${WD},${HT},${i} -c ${CRP} \
+                                        -o  ${k},${tf},$r -s ${efb0},0,${l} -n /dev/null \
+	                                    -O ${k},${tf},$r -S ${efb2},2,${l} -N /dev/null /tmp/ipu_dev/tmp.dat \
+	                                    || RC=$(expr $RC + 1)
+									echo "motion_sel = 2(high_motion)"
+                                    ${TST_CMD} -m $MODE -E 2 -f $fc -i ${WD},${HT},${i} -c ${CRP} \
                                         -o  ${k},${tf},$r -s ${efb0},0,${l} -n /dev/null \
 	                                    -O ${k},${tf},$r -S ${efb2},2,${l} -N /dev/null /tmp/ipu_dev/tmp.dat \
 	                                    || RC=$(expr $RC + 1)

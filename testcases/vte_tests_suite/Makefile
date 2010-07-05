@@ -165,7 +165,7 @@ SUBDIRS += vpu_tests
 endif
 
 
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack imx37stack imx51stack, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PLATFORM), $(filter imx51, $(ARCH_PLATFORM)))
 SUBDIRS += ipudev_test
 endif
 

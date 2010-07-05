@@ -82,7 +82,6 @@ int parse_cmd_input(int argc, char ** argv, ipu_test_handle_t *test_handle)
  /*default settings*/
  test_handle->mode = 0x22;
  test_handle->fcount = 50;
- test_handle->output1_enabled = 0;
  test_handle->input.width = 320;
  test_handle->input.height = 240;
  test_handle->input.fmt = v4l2_fourcc('I', '4','2', '0');
@@ -90,20 +89,19 @@ int parse_cmd_input(int argc, char ** argv, ipu_test_handle_t *test_handle)
  test_handle->input.input_crop_win.pos.y = 0;
  test_handle->input.input_crop_win.win_w = 0;
  test_handle->input.input_crop_win.win_h = 0;
- test_handle->output0.show_to_fb = 1;
- test_handle->output0.fb_disp.fb_num = 0;
- test_handle->output0.fb_disp.pos.x = 0;
- test_handle->output0.fb_disp.pos.y = 0;
- memcpy(test_handle->outfile0,"output0.dat",11);
- test_handle->output1.width = 320;
- test_handle->output1.height = 240;
- test_handle->output1.fmt =  v4l2_fourcc('R', 'G','B', 'P');
- test_handle->output1.rot = 0;
- test_handle->output1.show_to_fb = 1;
- test_handle->output1.fb_disp.fb_num = 2;
- test_handle->output1.fb_disp.pos.x = 0;
- test_handle->output1.fb_disp.pos.y = 0;
- memcpy(test_handle->outfile1 ,"output1.dat",11);
+ test_handle->output.width = 320;
+ test_handle->output.height = 240;
+ test_handle->output.fmt =  v4l2_fourcc('R', 'G','B', 'P');
+ test_handle->output.rot = 0;
+ test_handle->output.show_to_fb = 1;
+ test_handle->output.fb_disp.fb_num = 2;
+ test_handle->output.fb_disp.pos.x = 0;
+ test_handle->output.fb_disp.pos.y = 0;
+ test_handle->output.output_win.pos.y = 0;
+ test_handle->output.output_win.pos.y = 0;
+ test_handle->output.output_win.win_w = 320;
+ test_handle->output.output_win.win_h = 240;
+ memcpy(test_handle->outfile ,"output.dat",11);
 
  while((opt = getopt(argc, argv, options)) > 0)
  {
@@ -122,11 +120,11 @@ int parse_cmd_input(int argc, char ** argv, ipu_test_handle_t *test_handle)
       test_handle->fcount = strtol(optarg, NULL, 10);
       deb_printf("frame count set %d \n",test_handle->fcount);
       break;
-   case 'E':/*enable output1*/
+   case 'E':/*motion select*/
      if(NULL == optarg)
        break;
-      test_handle->output1_enabled = strtol(optarg, NULL, 10);
-      deb_printf("enable output set %d \n",test_handle->output1_enabled);
+	   test_handle->input.motion_sel = atoi(optarg);
+      deb_printf("motion_sel set %d \n",test_handle->input.motion_sel);
       break;
    case 'i': /*input param*/
      if(NULL == optarg)
@@ -154,66 +152,44 @@ int parse_cmd_input(int argc, char ** argv, ipu_test_handle_t *test_handle)
    case 'o':/*output0 setting*/
      if(NULL == optarg)
        break;
-     sscanf(optarg,"%d,%d,%s,%d", 
-       &(test_handle->output0.width),
-       &( test_handle->output0.height),fourcc,
-       &(test_handle->output0.rot));
-     test_handle->output0.fmt = v4l2_fourcc(fourcc[0], 
-       fourcc[1],fourcc[2], fourcc[3]);
-      deb_printf("output0 setting: w=%d,h=%d,%s=%d,r=%d \n",test_handle->output0.width,
-      test_handle->output0.height,fourcc,test_handle->output0.fmt,test_handle->output0.rot);
-      break;
    case 's':/*output0 to fb setting*/
      if(NULL == optarg)
        break;
-     sscanf(optarg,"%d,%d,%d,%d", 
-       &(test_handle->output0.show_to_fb),
-       &(test_handle->output0.fb_disp.fb_num),
-       &(test_handle->output0.fb_disp.pos.x),
-       &(test_handle->output0.fb_disp.pos.y)
-       );
-       deb_printf("output0 fb setting: enable=%d,fb=/dev/fb%d,x=%d,y=%d \n",
-         test_handle->output0.show_to_fb,test_handle->output0.fb_disp.fb_num,
-	 test_handle->output0.fb_disp.pos.x,test_handle->output0.fb_disp.pos.y
-       );
-      break;
    case 'n':/*output0 file name*/
      if(NULL == optarg)
        break;
-     sscanf(optarg,"%s",test_handle->outfile0);
-     deb_printf("output0 file name %s \n", test_handle->outfile0);
       break;
    case 'O':/*output1 setting*/
      if(NULL == optarg)
        break;
      sscanf(optarg,"%d,%d,%s,%d", 
-       &(test_handle->output1.width),
-       &( test_handle->output1.height),fourcc,
-       &(test_handle->output1.rot));
-     test_handle->output1.fmt = v4l2_fourcc(fourcc[0], 
+       &(test_handle->output.width),
+       &( test_handle->output.height),fourcc,
+       &(test_handle->output.rot));
+     test_handle->output.fmt = v4l2_fourcc(fourcc[0],
        fourcc[1],fourcc[2], fourcc[3]);
-      deb_printf("output1 setting: w=%d,h=%d,%s=%d,r=%d \n",test_handle->output1.width,
-      test_handle->output1.height,fourcc,test_handle->output1.fmt,test_handle->output1.rot);
+      deb_printf("output1 setting: w=%d,h=%d,%s=%d,r=%d \n",test_handle->output.width,
+      test_handle->output.height,fourcc,test_handle->output.fmt,test_handle->output.rot);
       break;
    case 'S':/*output1 to fb setting*/
      if(NULL == optarg)
        break;
      sscanf(optarg,"%d,%d,%d,%d", 
-       &(test_handle->output1.show_to_fb),
-       &(test_handle->output1.fb_disp.fb_num),
-       &(test_handle->output1.fb_disp.pos.x),
-       &(test_handle->output1.fb_disp.pos.y)
+       &(test_handle->output.show_to_fb),
+       &(test_handle->output.fb_disp.fb_num),
+       &(test_handle->output.fb_disp.pos.x),
+       &(test_handle->output.fb_disp.pos.y)
        );
        deb_printf("output1 fb setting: enable=%d,fb=/dev/fb%d,x=%d,y=%d \n",
-         test_handle->output1.show_to_fb,test_handle->output1.fb_disp.fb_num,
-	 test_handle->output1.fb_disp.pos.x,test_handle->output1.fb_disp.pos.y
+         test_handle->output.show_to_fb,test_handle->output.fb_disp.fb_num,
+	 test_handle->output.fb_disp.pos.x,test_handle->output.fb_disp.pos.y
        );
       break;
    case 'N':/*output1 to filename */
      if(NULL == optarg)
        break;
-      sscanf(optarg,"%s ",test_handle->outfile1);
-      deb_printf("output1 file name %s \n",test_handle->outfile1);
+      sscanf(optarg,"%s ",test_handle->outfile);
+      deb_printf("output1 file name %s \n",test_handle->outfile);
       break;
    default:
       return 0;
