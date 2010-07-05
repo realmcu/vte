@@ -160,20 +160,28 @@ return $RC
 }
 
 # Function:     test_case_03
-# Description   - Test if <TODO test function> ok
+# Description   - Test if vpu dec with display PM ok
 #  
 test_case_03()
 {
 #TODO give TCID 
-TCID="test_demo3_test"
+TCID="test_playback_PM"
 #TODO give TST_COUNT
 TST_COUNT=3
-RC=0
+RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+cd /tmp
+
+$TSTCMD -D "-f 1 -i ${STREAM_PATH}/video/stream.263" &
+
+rtc_testapp_6 -T 5
+rtc_testapp_6 -T 5
+rtc_testapp_6 -T 5
+
+RC=0
 
 return $RC
 
