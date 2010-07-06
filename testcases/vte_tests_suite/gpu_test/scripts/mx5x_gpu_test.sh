@@ -1,6 +1,5 @@
-
 #!/bin/sh
-#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2009-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -9,22 +8,21 @@
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
 #
-###################################################################################################
+###############################################################################
 #
 #    @file   gpu_test.sh
 #
 #    @brief  shell script template for testcase design "gpu" is where to modify block.
 #
-###################################################################################################
+################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
-#-------------------------   ------------    ----------  -------------------------------------------
+#------------------------   ------------    ----------  -----------------------
 #Hake Huang/-----             20090512     N/A          Initial version
+#Spring Zhang                 20100706     N/A          Use common module installer
 # 
-###################################################################################################
-
-
+################################################################################
 
 # Function:     setup
 #
@@ -47,7 +45,7 @@ RC=0
 trap "cleanup" 0
 
 #TODO add setup scripts
-modprobe gpu_z430 
+gpu-install install
 
 gpu_maj=`grep "gsl_kmod" /proc/devices | cut -b1,2,3`
 
@@ -67,7 +65,7 @@ cleanup()
 RC=0
 
 #TODO add cleanup code here
-modprobe -r gpu_z430
+gpu-install remove
 rm -f /dev/gsl_kmod
 return $RC
 }

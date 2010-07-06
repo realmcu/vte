@@ -1,4 +1,5 @@
-#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#!/bin/sh
+#Copyright (C) 2008,2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -6,7 +7,6 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
 ##############################################################################
 #
 # Revision History:
@@ -16,6 +16,7 @@
 # Spring Zhang          25/07/2008       n/a        Initial ver. 
 # Spring                24/10/2008       n/a        Add -A automation option   
 # Spring                28/11/2008       n/a        Modify COPYRIGHT header
+# Spring                06/07/2010       n/a        Add -D hw option
 #############################################################################
 # Portability:  ARM sh 
 #
@@ -55,11 +56,12 @@ setup()
         LTPTMP=/tmp
     fi
 
-    while getopts f:ANM arg
+    while getopts f:ANMD arg
     do 
         case $arg in
         f) FILE=$OPTARG;;
         A) AUTO="true";;
+        D) HW="true";;
         N|M) ;;
         \?) usage
         exit 67;;
@@ -68,16 +70,14 @@ setup()
 
     trap "cleanup" 0
 
-    if [ ! -e /usr/bin/aplay ]
-    then
+    if [ ! -e /usr/bin/aplay ]; then
         tst_resm TBROK "Test #1: ALSA utilities are not ready, \
         pls check..."
         RC=65
         return $RC
     fi
 
-    if [ ! -e $FILE ]
-    then
+    if [ ! -e $FILE ]; then
         tst_resm TBROK "Test #1: audio stream is not ready, \
              pls check..."
         RC=66
@@ -126,23 +126,29 @@ dac_play()
         tst_resm TFAIL "Test #1: copy from NFS to tmp error, no space left in /tmp"
         return $RC
     fi
+
+    if [ -n "$HW" ]; then
+        aplay -Dhw:0,0 -N -M /tmp/$basefn || RC=$?
+        if [ $RC -ne 0 ]; then
+            tst_resm TFAIL "Test #1: play error with HW, please check"
+            return $RC
+        fi
+    fi
+
     aplay -N -M /tmp/$basefn || RC=$?
-    if [ $RC -ne 0 ]
-    then
-        tst_resm TFAIL "Test #1: play error, please check the stream file"
+    if [ $RC -ne 0 ]; then
+        tst_resm TFAIL "Test #2: play error, please check"
         return $RC
     fi
 
     #if auto, ignore ask the answer!
-    if [ -n "$AUTO" ]
-    then
+    if [ -n "$AUTO" ]; then
         return $RC
     fi
 
     tst_resm TINFO "Do you hear the music from the headphone?[y/n]"
     read answer
-    if [ $answer = "y" ]
-    then
+    if [ $answer = "y" ]; then
         tst_resm TPASS "Test #1: ALSA DAC test success."
     else
         tst_resm TFAIL "Test #1: ALSA DAC play audio fail"
@@ -162,8 +168,10 @@ usage()
     cat <<-EOF 
 
     Use this command to test ALSA DAC play functions.
-    usage: ./${0##*/} [audio stream]
-    e.g.: ./${0##*/} audio44k16M.wav
+    usage: ./${0##*/} -f [audio stream] -D
+            -D: if using hw to playback
+            -A: automation mode without interaction
+    e.g.: ./${0##*/} -f audio44k16M.wav -A -D
 
 EOF
 }
