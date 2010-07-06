@@ -200,6 +200,117 @@ int main(int argc, char **argv)
 		  strcpy(m_opt.dev,d_opt);
 		else
 		  strcpy(m_opt.dev,"/dev/fb");
+		if(F_flag)
+			sscanf(F_opt,"%d,%d,%d,%d,%d,%d",
+			m_opt.waveform.mode_init,
+			m_opt.waveform.mode_du,
+			m_opt.waveform.mode_gc4,
+			m_opt.waveform.mode_gc8,
+			m_opt.waveform.mode_gc16,
+			m_opt.waveform.mode_gc32
+			);
+		else{
+			m_opt.waveform.mode_init = 0;
+			m_opt.waveform.mode_du = 1;
+			m_opt.waveform.mode_gc4 = 3;
+			m_opt.waveform.mode_gc8 = 2;
+			m_opt.waveform.mode_gc16 = 2;
+			m_opt.waveform.mode_gc32 = 2;
+		}
+		if(g_flag)
+		{
+			m_opt.grayscale = atoi(g_opt);
+		}else{
+			m_opt.grayscale = -1;
+		}
+		if(H_flag)
+		{
+			m_opt.temp = atoi(H_opt);
+		}else{
+			m_opt.temp = -1;
+		}
+		if(u_flag)
+		{
+			m_opt.au = atoi(u_opt);
+		}else{
+			m_opt.au = -1;
+		}
+		if(s_flag)
+		{
+		/*the phy addr will get from get_mem
+		  can not defined by commandline*/
+			sscanf(s_opt,"%d:%d:%d:%d,%d,%d,%d,%d,%d,%d,%d:%d:%d:%d"
+			m_opt.update.update_region.top,
+			m_opt.update.update_region.left,
+			m_opt.update.update_region.width,
+			m_opt.update.update_region.height,
+			m_opt.update.waveform_mode,
+			m_opt.update.update_marker,
+			m_opt.update.temp,
+			m_opt.update.use_alt_buffer,
+			m_opt.update.alt_buffer_data.width,
+			m_opt.update.alt_buffer_data.height,
+			m_opt.update.alt_buffer_data.alt_update_region.top,
+			m_opt.update.alt_buffer_data.alt_update_region.left,
+			m_opt.update.alt_buffer_data.alt_update_region.width,
+			m_opt.update.alt_buffer_data.alt_update_region.height
+			);
+			m_opt.su = 1;
+		}
+		if(w_flag)
+		{
+			m_opt.wt = atoi(w_opt);
+		}else{
+			m_opt.wt = -1;
+		}
+
+		printf("current settings\n");
+		printf("TestID = %d \n
+		\rdevice is %s \n
+		\rwaveform setting is %d,%d,%d,%d,%d,%d \n
+		\rtempture is %d \n
+		\rgrayscale is %d \n
+		\rauto update mode is %d \n
+		\rwait makermask is %d \n
+		\rupdate setting is %d \n",
+		m_opt.Tid,
+		m_opt.dev,
+		m_opt.waveform.mode_init,
+		m_opt.waveform.mode_du,
+		m_opt.waveform.mode_gc4,
+		m_opt.waveform.mode_gc8,
+		m_opt.waveform.mode_gc16,
+		m_opt.waveform.mode_gc32,
+		m_opt.temp,
+		m_opt.grayscale,
+		m_opt.au,
+		m_opt.wt,
+		m_opt.su
+		);
+		if(m_opt.su)
+		{
+			printf("\r\talt update region %d,%d,%d,%d \n
+			\r\talt waveform_mode %d \n
+			\r\talt update_mode %d \n
+			\r\talt tempture %d \n
+			\r\talt buffer width = %d \n
+			\r\talt buffer Height = %d \n
+			\r\tupdate region within %d,%d,%d,%d \n",
+			m_opt.update.update_region.top,
+			m_opt.update.update_region.left,
+			m_opt.update.update_region.width,
+			m_opt.update.update_region.height,
+			m_opt.update.waveform_mode,
+			m_opt.update.update_marker,
+			m_opt.update.temp,
+			m_opt.update.alt_buffer_data.width,
+			m_opt.update.alt_buffer_data.height,
+			m_opt.update.alt_buffer_data.alt_update_region.top,
+			m_opt.update.alt_buffer_data.alt_update_region.left,
+			m_opt.update.alt_buffer_data.alt_update_region.width,
+			m_opt.update.alt_buffer_data.alt_update_region.height
+			);
+		}
   /* perform global test setup, call setup() function. */
         setup();
  /* Print test Assertion using tst_resm() function with argument TINFO. */

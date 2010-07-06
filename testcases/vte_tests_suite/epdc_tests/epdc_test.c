@@ -10,7 +10,7 @@
 **/
 /*================================================================================================*/
 /**
-    @file   mxcfb_test.c
+    @file   epdc_test.c
 */
 #ifdef __cplusplus
 extern "C"{
@@ -30,6 +30,7 @@ extern "C"{
 #include <asm/types.h>
 #include <time.h>
 #include <linux/mxcfb.h>
+#include <linux/pxp_dma.h>
 /* Harness Specific Include Files. */
 #include "test.h"
 
@@ -52,110 +53,36 @@ extern "C"{
     }\
 }
 
-int                      fb_fd;         /* Framebuffer device file descriptor            */
-int                      fb_fd_fg;         /* Framebuffer device file descriptor            */
-struct fb_fix_screeninfo fb_info;       /* Framebuffer constant information              */
-struct fb_fix_screeninfo fb_fg_info;       /* Framebuffer constant information              */
-unsigned char            *fb_mem_ptr;   /* Pointer to the mapped momory of the fb device */
-unsigned char            *fb_fg_mem_ptr;   /* Pointer to the mapped momory of the fb device */
+#define MAX_WAIT 4
 
-static int iID = 0;
+/*global virable*/
+extern epdc_opt m_opt;
 
+int fb_fd; /* Framebuffer device file descriptor            */
+struct fb_fix_screeninfo fb_info; /* Framebuffer constant information */
+unsigned char  *fb_mem_ptr;   /* Pointer to the mapped momory of the fb device */
 
-extern char *T_opt;
-extern char *d_opt;
-extern char *D_opt;
 int get_modeinfo(struct fb_var_screeninfo *info);
-int blank_test(int blank_mode);
 void print_fbinfo(void);
 unsigned char *draw_px(unsigned char *where, struct pixel *p);
-BOOL vsync_test();
-BOOL galpha_test();
-BOOL pan_test();
-BOOL colorkey_test();
-BOOL ovpos_test();
-BOOL draw_test();
-BOOL get_ipu_channel();
-
 int draw_pattern(int fd, unsigned char * pfb, int r, int g, int b );
-
-
-BOOL get_ipu_channel()
-{
- int channel = 0;
- CALL_IOCTL(ioctl(fb_fd_fg, MXCFB_GET_FB_IPU_CHAN, &channel));
- tst_resm(TINFO, "the foreground ipu channel is %d", channel);
- CALL_IOCTL(ioctl(fb_fd, MXCFB_GET_FB_IPU_CHAN, &channel));
- tst_resm(TINFO, "the back ground ipu channel is %d",channel);
- return TRUE;
-}
+BOOL pan_test();
+BOOL draw_test();
 
 /*
  * Draw test
  */
 BOOL draw_test()
 {
-
- tst_resm(TINFO, "draw a red screen in bg ground");
- if( TPASS != draw_pattern(fb_fd,fb_mem_ptr,255,0,0))
- {
-   tst_resm(TINFO, "fail to draw patter on bg");
-   return FALSE;
- }
- sleep(6);
  tst_resm(TINFO, "draw a green screen in bg ground");
  if( TPASS != draw_pattern(fb_fd,fb_mem_ptr,0,255,0))
  {
    tst_resm(TINFO, "fail to draw patter on bg");
    return FALSE;
  }
- sleep(6);
  return TRUE;
 }
 
-/*
- * overlay postion test
- */
-BOOL ovpos_test()
-{
- int x, y;
- struct mxcfb_pos pos;
- struct fb_var_screeninfo mode_info;
- struct fb_var_screeninfo bg_mode_info;
-
- tst_resm(TINFO, "draw a red screen in fore ground");
- if( TPASS != draw_pattern(fb_fd_fg,fb_fg_mem_ptr,255,0,0))
- {
-   tst_resm(TINFO, "fail to draw patter on fb1");
-   return FALSE;
- }
-
- CALL_IOCTL(ioctl(fb_fd_fg, FBIOGET_VSCREENINFO, &mode_info));
- CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &bg_mode_info));
-
- mode_info.xres_virtual = mode_info.xres;
- mode_info.yres_virtual = mode_info.yres;
-
- CALL_IOCTL(ioctl(fb_fd_fg, FBIOPUT_VSCREENINFO, &mode_info));
-
- for(x= 0; x < mode_info.xres / 2 - 8; x += 8)
-   for(y = 0; y < mode_info.yres / 2 - 8; y += 8)
-   {
-     pos.x = 8 * ((x + 7)/8);
-     pos.y = 8 * ((y + 7)/8);
-     if (pos.x + mode_info.xres > bg_mode_info.xres )
-        pos.x = 0;
-     if (pos.y + mode_info.yres > bg_mode_info.yres )
-        pos.y = 0;
-     printf( "\r x: %d / y: %d", pos.x,pos.y);
-     CALL_IOCTL(ioctl(fb_fd_fg, MXCFB_SET_OVERLAY_POS, &pos));
-     usleep(100);
-   }
-   pos.x = 0;
-   pos.y = 0;
-   CALL_IOCTL(ioctl(fb_fd_fg, MXCFB_SET_OVERLAY_POS, &pos));
- return TRUE;
-}
 /*
  * pan test
  */
@@ -167,11 +94,6 @@ BOOL pan_test()
 /*x pan is not supported*/
 
 #if 1
- tst_resm(TINFO, "ensure thr global alpha is 50");
- gbl_alpha.enable = 1;
- gbl_alpha.alpha = 50;
- CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_GBL_ALPHA, &gbl_alpha));
-
  tst_resm(TINFO,"test fb0 pan");
  CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
  old_yvres = mode_info.yres_virtual;
@@ -181,7 +103,7 @@ BOOL pan_test()
  /*remap the devices*/
   munmap(fb_mem_ptr, fb_info.smem_len);
   CALL_IOCTL(ioctl(fb_fd, FBIOGET_FSCREENINFO, &fb_info));
-    fb_mem_ptr = mmap(NULL, fb_info.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, fb_fd, 0);
+  fb_mem_ptr = mmap(NULL, fb_info.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, fb_fd, 0);
     if ((int)fb_mem_ptr == -1)
     {
         tst_brkm(TFAIL, cleanup, "Can't map framebuffer device into memory: %s\n", strerror(errno));
@@ -194,191 +116,178 @@ BOOL pan_test()
    return FALSE;
  }
  sleep(5);
-   for (y = 0; y <= mode_info.yres; y += mode_info.yres / 2)
+   for (y = 0; y <= mode_info.yres; y += mode_info.yres / 8)
    {
         mode_info.yoffset = y;
-	printf("\r offset at %d", y);
+		printf("\r offset at %d", y);
         CALL_IOCTL(ioctl(fb_fd, FBIOPAN_DISPLAY, &mode_info));
-	sleep(1);
+		sleep(1);
   }
  mode_info.yres_virtual = old_yvres;
  CALL_IOCTL(ioctl(fb_fd, FBIOPUT_VSCREENINFO, &mode_info));
 #endif
- tst_resm(TINFO,"test fore-ground fb pan");
- CALL_IOCTL(ioctl(fb_fd_fg, FBIOGET_VSCREENINFO, &mode_info));
- old_yvres = mode_info.yres_virtual;
- mode_info.yres_virtual = mode_info.yres * 2;
- CALL_IOCTL(ioctl(fb_fd_fg, FBIOPUT_VSCREENINFO, &mode_info));
-
- /*remap the device*/
-  munmap(fb_fg_mem_ptr, fb_fg_info.smem_len);
-  CALL_IOCTL(ioctl(fb_fd_fg, FBIOGET_FSCREENINFO, &fb_fg_info));
-  fb_fg_mem_ptr = mmap(NULL, fb_fg_info.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, fb_fd_fg, 0);
-      if ((int)fb_fg_mem_ptr == -1)
-        tst_brkm(TFAIL, cleanup, "Can't map framebuffer device into memory: %s\n", strerror(errno));
- tst_resm(TINFO, "draw a red screen in fore ground");
-
- if( TPASS != draw_pattern(fb_fd_fg,fb_fg_mem_ptr,255,0,0))
- {
-   tst_resm(TINFO, "fail to draw patter on fb1");
-   return FALSE;
- }
- for (y = 0; y <= mode_info.yres ; y += mode_info.yres / 2)
- {
-   mode_info.yoffset = y;
-   printf("\r offset at %d", y);
-   CALL_IOCTL(ioctl(fb_fd_fg, FBIOPAN_DISPLAY, &mode_info));
-   sleep(1);
- }
- mode_info.yres_virtual = old_yvres;
- CALL_IOCTL(ioctl(fb_fd_fg, FBIOPUT_VSCREENINFO, &mode_info));
-  munmap(fb_fg_mem_ptr, fb_fg_info.smem_len);
-  CALL_IOCTL(ioctl(fb_fd_fg, FBIOGET_FSCREENINFO, &fb_fg_info));
-  fb_fg_mem_ptr = mmap(NULL, fb_fg_info.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, fb_fd_fg, 0);
-      if ((int)fb_fg_mem_ptr == -1)
-        tst_brkm(TFAIL, cleanup, "Can't map framebuffer device into memory: %s\n", strerror(errno));
- tst_resm(TINFO, "draw a red screen in fore ground");
  return TRUE;
 }
 
-
-/*
- * color key test
- */
-BOOL colorkey_test()
+BOOL test_alt_update()
 {
- struct mxcfb_gbl_alpha gbl_alpha;
- struct mxcfb_color_key key;
+BOOL ret = FALSE
+int fd_pxp;
+int i= 0 ,j = 0;
+int count = 100;
+int update_maker = 0x112;
+struct pxp_mem_desc mem;
+#define PXP_DEVICE_NAME "/dev/pxp_device"
+#define BUFFER_WIDTH 16
+#define BUFFER_HEIGHT 16
+#define PXP_BUFFER_SIZE (BUFFER_WIDTH*BUFFER_HEIGHT)
+struct mxcfb_update_data im_update = {
+  {0,0,BUFFER_WIDTH*2,BUFFER_HEIGHT*2},/*region round to 8*/
+  257,/*waveform mode 0-255, 257 auto*/
+  0, /*update mode 0(partial),1(Full)*/
+  update_maker,/*update_maker assigned by user*/
+  0x56,/*use ambient temperature set*/
+  1,/*enable alt buffer*/
+  {0,0,0,{0,0,0,0}}/*set this later*/
+  };
 
- tst_resm(TINFO, "draw a green screen in back ground");
-  if( TPASS != draw_pattern(fb_fd,fb_mem_ptr,0,255,0))
+/*step 1: set up update data*/
+ fd_pxp = open(PXP_DEVICE_NAME, O_RDWR, 0);
+ mem.size = PXP_BUFFER_SIZE;
+ if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
  {
-   tst_resm(TINFO, "fail to draw patter on fb0");
-   return FALSE;
+	mem.phys_addr = 0;
+	mem.cpu_addr = 0;
+	goto END;
  }
+ im_update.alt_buffer_data.phys_addr = mem.phys_addr;
+ im_update.alt_buffer_data.width = BUFFER_WIDTH;
+ im_update.alt_buffer_data.height = BUFFER_HEIGHT;
+ im_update.alt_buffer_data.alt_update_region.top = 0;
+ im_update.alt_buffer_data.alt_update_region.left = 0;
+ im_update.alt_buffer_data.alt_update_region.width = BUFFER_WIDTH;
+ im_update.alt_buffer_data.alt_update_region.height = BUFFER_HEIGHT;
+ for(i= 0; i < BUFFER_WIDTH; i++)
+	for(j = 0; j < BUFFER_HEIGHT; j++)
+	{
+		mem.virt_uaddr[i*BUFFER_HEIGHT + j] = 128;
+	}
 
- tst_resm(TINFO, "draw a red screen in fore ground");
- if( TPASS != draw_pattern(fb_fd_fg,fb_fg_mem_ptr,255,0,0))
+/*step 2: start test*/
+  /*partial update*/
+  while(count--)
+  {
+	/*black and white alternative*/
+	draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_maker)< 0)
+    {
+		wait_time++;
+		if(wait_time > MAX_WAIT)
+		{
+		 printf("wait time exceed!!!\n");
+		 break;
+		}
+	}
+	wait_time = 0;
+	printf("partial mode next update\n");
+	draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+  }
+  /*full update*/
+  count = 100;
+  im_update.update_mode = 1;
+  while(count--)
+  {
+	/*black and white alternative*/
+	draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_maker)< 0)
+	{
+		wait_time++;
+		if(wait_time > MAX_WAIT)
+		{
+		printf("wait time exceed!!!\n");
+		break;
+		}
+	}
+	wait_time = 0;
+	printf("partial mode next update\n");
+	draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+  }
+
+ /*step 4: clean up */
+ if (ioctl(fd_pxp, PXP_IOC_PUT_PHYMEM, &mem) < 0)
  {
-   tst_resm(TINFO, "fail to draw patter on fb1");
-   return FALSE;
+	mem.phys_addr = 0;
+	mem.cpu_addr = 0;
+	goto END;
  }
+END:
+ if(fd_pxp > 0)
+	close(fd_pxp);
+ ret = TRUE;
+ return ret;
+}
 
-  key.enable = 1;
-  key.color_key = 0x00FF0000; // Red
-
-  tst_resm(TINFO,"Color key enabled\n");
-  tst_resm(TINFO,"Now the forground is green\n");
-  CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_CLR_KEY, &key));
-  sleep(3);
-
-  /*make fore ground opaque*/
-  gbl_alpha.enable = 1;
-  gbl_alpha.alpha = 128;
-  CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_GBL_ALPHA, &gbl_alpha));
-  tst_resm(TINFO,"Now the forground is yellow\n");
-
-
-  sleep(3);
-
-  key.enable = 0;
-  CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_CLR_KEY, &key));
-  tst_resm(TINFO,"Color key disabled\n");
-
-  /* gbl_alpha.enable = 0; */
-  gbl_alpha.alpha = 50;
-  ioctl(fb_fd, MXCFB_SET_GBL_ALPHA, &gbl_alpha);
-  tst_resm(TINFO,"Global alpha restore to 50\n");
+BOOL test_wait_update()
+{
+/*suppose you have set up the device before run this case*/
+	/*step 1: set up update data*/
+  int count = 100;
+  int update_maker = 0x111;
+  struct mxcfb_update_data im_update = {
+  {0,0,16,16},/*region round to 8*/
+  257,/*waveform mode 0-255, 257 auto*/
+  0, /*update mode 0(partial),1(Full)*/
+  update_maker,/*update_maker assigned by user*/
+  0x56,/*use ambient temperature set*/
+  0,/*do not use alt buffer*/
+  {0,0,0,{0,0,0,0}}
+  };
+  /*step 2: update and wait finished*/
+  while(count--)
+  {
+	/*black and white alternative*/
+  draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+  CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_maker)< 0)
+  {
+     wait_time++;
+	if(wait_time > MAX_WAIT)
+	{
+	  printf("wait time exceed!!!\n");
+	  break;
+	}
+  }
+  wait_time = 0;
+  printf("partial mode next update\n");
+  draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+  }
+  /*step 3: now using full update mode*/
+  count = 100;
+  im_update.update_mode = 1;
+  while(count--)
+  {
+	/*black and white alternative*/
+  draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+  CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_maker)< 0)
+  {
+     wait_time++;
+	if(wait_time > MAX_WAIT)
+	{
+	  printf("full mode wait time exceed!!!\n");
+	  break;
+	}
+  }
+  wait_time = 0;
+  printf("next update\n");
+  draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+  }
   return TRUE;
 }
 
-
-/*
- * global alpha test
- */
-BOOL galpha_test()
-{
- int i;
- struct mxcfb_gbl_alpha gbl_alpha;
-#if 1
- tst_resm(TINFO, "draw a green screen in back ground");
- if( TPASS != draw_pattern(fb_fd,fb_mem_ptr,0,255,0))
- {
-   tst_resm(TINFO, "fail to draw patter on fb0");
-   return FALSE;
- }
-#endif
-#if 1
- tst_resm(TINFO, "draw a red screen in fore ground");
- if( TPASS != draw_pattern(fb_fd_fg,fb_fg_mem_ptr,255,0,0))
- {
-   tst_resm(TINFO, "fail to draw patter on fb1");
-   return FALSE;
- }
-#endif
- /*now set alpha*/
- tst_resm(TINFO, "the overlay screen is change from red to yellow to green");
- gbl_alpha.enable = 1;
- for (i = 0; i < 0x100; i+=10)
- {
-     gbl_alpha.alpha = i;
-     CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_GBL_ALPHA, &gbl_alpha));
-     sleep(1);
- }
-  gbl_alpha.enable = 0;
-  gbl_alpha.alpha = 0;
-  CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_GBL_ALPHA, &gbl_alpha));
-  tst_resm(TINFO,"Global alpha disabled\n");
-
-#if 1
- tst_resm(TINFO, "clear back ground");
- if( TPASS != draw_pattern(fb_fd,fb_mem_ptr,0,0,0))
- {
-   tst_resm(TINFO, "fail to draw patter on fb0");
-   return FALSE;
- }
-#endif
-#if 1
- tst_resm(TINFO, "clear fore ground");
- if( TPASS != draw_pattern(fb_fd_fg,fb_fg_mem_ptr,0,0,0))
- {
-   tst_resm(TINFO, "fail to draw patter on fb1");
-   return FALSE;
- }
-#endif
-
- return TRUE;
-}
-
-/*
- * VSYNC test
- */
-BOOL vsync_test()
-{
- int ifn = 120, ifrate = 0, i = 0, r = 0;
- clock_t stime, etime;
- long ldur = 0;
- stime = clock();
- for (i = 0, r = 0; i < ifn; i++, r++)
- {
-  r = r == 255 ? 0 : r;
-  if( TPASS != draw_pattern(fb_fd, fb_mem_ptr, 0, r, 0))
-  {
-   tst_resm(TINFO, "fail to draw patter on fb0");
-   return FALSE;
-   }
-  CALL_IOCTL(ioctl(fb_fd, MXCFB_WAIT_FOR_VSYNC, &i));
- }
- etime = clock();
- ldur = (etime - stime);
- ifrate = 1000 * ldur/CLOCKS_PER_SEC;/*ms*/
- if(ifrate > 0)
-   ifrate = ifn * 1000 / ifrate;
- tst_resm(TINFO,"the sw draw rate for BG is %d\n",ifrate);
- return TRUE;
-}
-
-/*===== VT_fb_setup =====*/
+/*===== epdc_fb_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution. Opens the framebuffer device,
         gets information into the fb_fix_screeninfo structure, and maps fb device into memory.
@@ -389,21 +298,14 @@ BOOL vsync_test()
 @return On success - return TPASS
         On failure - return the error code
 */
-int VT_fb_setup(void)
+int epdc_fb_setup(void)
 {
     int rv = TFAIL;
-    if (T_opt)
-    {
-      iID = atoi(T_opt);
-    }
-    if(NULL == D_opt || NULL == d_opt)
-      return rv;
-
     /* Open the framebuffer device */
-    fb_fd = open(D_opt, O_RDWR);
+    fb_fd = open(d_opt, O_RDWR);
     if (fb_fd < 0)
     {
-        tst_brkm(TBROK, cleanup, "Cannot open fb0 framebuffer: %s", strerror(errno));
+        tst_brkm(TBROK, cleanup, "Cannot open framebuffer: %s", strerror(errno));
     }
     /* Get constant fb info */
     if ((ioctl(fb_fd, FBIOGET_FSCREENINFO, &fb_info)) < 0)
@@ -418,30 +320,27 @@ int VT_fb_setup(void)
         tst_brkm(TFAIL, cleanup, "Can't map framebuffer device into memory: %s\n", strerror(errno));
     }
 
-    if (iID == 3 || iID == 1 || iID == 4 || iID == 5)
-    {
-      /*global alpha test */
-      fb_fd_fg = open(d_opt, O_RDWR);
-      if ( fb_fd_fg < 0 )
-        tst_brkm(TBROK, cleanup, "Cannot open fb1 framebuffer: %s", strerror(errno));
+	CALL_IOCTL(ioctl(fd, MXCFB_SET_WAVEFORM_MODES, &m_opt.waveform));
 
-      CALL_IOCTL(ioctl(fb_fd_fg, FBIOBLANK, FB_BLANK_UNBLANK));
-      sleep(3);
-      if ((ioctl(fb_fd_fg, FBIOGET_FSCREENINFO, &fb_fg_info)) < 0)
-        tst_brkm(TFAIL, cleanup, "Cannot get framebuffer fixed parameters due to ioctl error: %s",
-                 strerror(errno));
-
-      fb_fg_mem_ptr = mmap(NULL, fb_fg_info.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, fb_fd_fg, 0);
-      if ((int)fb_fg_mem_ptr == -1)
-        tst_brkm(TFAIL, cleanup, "Can't map framebuffer device into memory: %s\n", strerror(errno));
-    }
+	if(m_opt.grayscale != -1)
+	{
+		struct fb_var_screeninfo mode_info;
+		CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
+		mode_info.grayscale = m_opt.grayscale;
+		CALL_IOCTL(ioctl(fd, FBIOPUT_VSCREENINFO, &mode_info));
+		printf("set gray scale mode to %d\n", mode_info.grayscale);
+	}
+	if (m_opt.temp != -1)
+	CALL_IOCTL(ioctl(fd, MXCFB_SET_TEMPERATURE, &m_opt.waveform));
+	if (m_opt.au != -1)
+	CALL_IOCTL(ioctl(fd, MXCFB_SET_AUTO_UPDATE_MODE, &m_opt.waveform));
 
     rv = TPASS;
     return rv;
 }
 
 
-/*===== VT_sleep_cleanup =====*/
+/*===== epdc_fb_cleanup =====*/
 /**
 @brief  assumes the post-condition of the test case execution. Closes the framebuffer device.
 
@@ -451,55 +350,22 @@ int VT_fb_setup(void)
 @return On success - return TPASS
         On failure - return the error code
 */
-int VT_fb_cleanup(void)
+int epdc_fb_cleanup(void)
 {
     draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
     munmap(fb_mem_ptr, fb_info.smem_len);
     close(fb_fd);
-    if(iID == 3 || iID == 1 || iID == 4 || iID == 5)
-    {
-    draw_pattern(fb_fd_fg,fb_fg_mem_ptr,0,0,0);
-     munmap(fb_fg_mem_ptr, fb_fg_info.smem_len);
-     close(fb_fd_fg);
-    }
-
     return TPASS;
 }
 
-int VT_fb_test()
+int epdc_fb_test()
 {
  int  rv = TPASS;
  switch(iID)
  {
+  case 0:
+       tst_resm(TINFO, "normal test");
   case 1:
-       tst_resm(TINFO, "color key test");
-       if (!colorkey_test())
-       {
-         rv = TFAIL;
-         tst_resm(TFAIL, "color key test FAIL");
-       }else
-         tst_resm(TPASS, "color key test ok");
-       break;
-  case 2:
-       tst_resm(TINFO, "vsync test");
-       if (!vsync_test())
-       {
-         rv = TFAIL;
-         tst_resm(TFAIL, "vsync test FAIL");
-       }else{
-         tst_resm(TPASS, "vsync test ok");
-       }
-       break;
-  case 3:
-       tst_resm(TINFO, "global alpha test");
-       if (!galpha_test())
-       {
-         rv = TFAIL;
-         tst_resm(TFAIL, "alpha test FAIL");
-       }else
-         tst_resm(TPASS, "alpha test ok");
-       break;
-  case 4:
        tst_resm(TINFO, "pan test");
        if (!pan_test())
        {
@@ -508,16 +374,7 @@ int VT_fb_test()
        }else
          tst_resm(TPASS, "pan test ok");
        break;
-  case 5:
-       tst_resm(TINFO, "overlay pos test");
-       if (!ovpos_test())
-       {
-         rv = TFAIL;
-         tst_resm(TFAIL, "overlay test FAIL");
-       }else
-         tst_resm(TPASS, "overlay test ok");
-       break;
-  case 6:
+  case 2:
        tst_resm(TINFO, "draw test test");
        if (!draw_test())
        {
@@ -526,29 +383,41 @@ int VT_fb_test()
        }else
          tst_resm(TPASS, "draw test ok");
        break;
-  case 7:
-       tst_resm(TINFO,"get ipu channel test");
-        if(!get_ipu_channel())
-	{
-         rv = TFAIL;
-         tst_resm(TFAIL, "get ipu channel FAIL");
-	}else
-         tst_resm(TPASS, "ipu get channel ok");
-	  break;
+  case 3: /*wait update test*/
+		if(!test_wait_update())
+		{
+          rv = TFAIL;
+          tst_resm(TFAIL, "wait update FAIL");
+		}else
+          tst_resm(TPASS, "wait update ok");
+		break;
+  case 4: /*alt buffer overlay test*/
+		if(!test_alt_update())
+		{
+          rv = TFAIL;
+          tst_resm(TFAIL, "alt update FAIL");
+		}else
+          tst_resm(TPASS, "alt update ok");
+		break;
+  case 5:/*collision region update test*/
+		break;
+  case 6:/*max update region count test */
+		break;
+  case 7:/*1000 frames sequence region no collision frame rate test*/
+		break;
   default:
-       break;
+		break;
  }
-
  return rv;
 }
 
 
 int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
 {
-    struct pixel       px;       /* Store basic screen info and current pixel color      */
-    int                size;     /* Screen size in pixels                                */
-    int                i;
-    unsigned char      *fb_wr_ptr = pfb; /* Pointer to the current pixel location */
+    struct pixel  px;
+    int           size;
+    int           i;
+    unsigned char      *fb_wr_ptr = pfb;
     int                act_mode;
     int                rv = TPASS;
     struct fb_fix_screeninfo fx_fb_info;       /* Framebuffer constant information              */
@@ -593,8 +462,15 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
     px.g_color = g;
     px.b_color = b; /* Set color values */
     for (i = 0; i < size; i++)
+	{
+		if(i % 10 == 0 && i!=0 )
+		{
+		 px.r_color = px.r_color - 5;
+		 px.g_color = px.g_color - 5;
+		 px.b_color = px.b_color - 5;
+		}
         fb_wr_ptr = draw_px(fb_wr_ptr, &px);
-
+	}
      /* Restore activation flag */
     #if 1
     mode_info.activate = act_mode;
@@ -639,6 +515,8 @@ unsigned char *draw_px(unsigned char *where, struct pixel *p)
         }*/
         switch (p->bpp * 8)
         {
+		case 8:
+			*where++ = value;
         case 12 ... 16:
                 *where++ = *((unsigned char *)&value);
                 *where++ = *((unsigned char *)&value + 1);

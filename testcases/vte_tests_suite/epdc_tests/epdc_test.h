@@ -8,26 +8,19 @@
 **http://www.opensource.org/licenses/gpl-license.html
 **http://www.gnu.org/copyleft/gpl.html
 **/
-#ifndef SLEEP_TEST_H
-#define SLEEP_TEST_H
+#ifndef EPDC_TEST_H
+#define EPDC_TEST_H
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-/*==================================================================================================
-                                         INCLUDE FILES
-==================================================================================================*/
+/*INCLUDE FILES */
 #include <linux/fb.h>   /* framebuffer related information */
+#include <linux/mxcfb.h>
+/* CONSTANTS */
 
-/*==================================================================================================
-                                           CONSTANTS
-==================================================================================================*/
-
-
-/*==================================================================================================
-                                       DEFINES AND MACROS
-==================================================================================================*/
+/* DEFINES AND MACROS */
 #define PATH_LEN  128
 
 #ifndef TRUE
@@ -36,14 +29,9 @@ extern "C"{
 #endif
 
 typedef unsigned char BOOL;
-/*==================================================================================================
-                                             ENUMS
-==================================================================================================*/
+/* ENUMS */
 
-
-/*==================================================================================================
-                                 STRUCTURES AND OTHER TYPEDEFS
-==================================================================================================*/
+/* STRUCTURES AND OTHER TYPEDEFS */
 /* This structure contains information taken from fb_var_screeninfo struct */
 struct px_field
 {
@@ -68,17 +56,24 @@ struct pixel
    int line_length;            /* length of a line in px  */
 };
 
-/*==================================================================================================
-                                 GLOBAL VARIABLE DECLARATIONS
-==================================================================================================*/
+typtdef struct epdc_opts {
+   int Tid;
+   char dev[128];
+   int waveform;
+   int temp;
+   int graysacle;
+   int au;
+   char format[256];
+   int wt;
+ } epdc_opt;
+
+/* GLOBAL VARIABLE DECLARATIONS */
 
 
-/*==================================================================================================
-                                     FUNCTION PROTOTYPES
-==================================================================================================*/
-int VT_fb_setup();
-int VT_fb_cleanup();
-int VT_fb_test(void);
+/* FUNCTION PROTOTYPES */
+int epdc_fb_setup();
+int epdc_fb_cleanup();
+int epdc_fb_test(void);
 
 void cleanup();
 
@@ -87,4 +82,4 @@ void cleanup();
 }
 #endif
 
-#endif  /* SLEEP_TEST_H */
+#endif  /* EPDC_TEST_H */
