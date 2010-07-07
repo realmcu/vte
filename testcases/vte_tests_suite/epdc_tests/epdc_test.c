@@ -31,6 +31,8 @@ extern "C"{
 #include <time.h>
 #include <linux/mxcfb.h>
 #include <linux/pxp_dma.h>
+#include <unistd.h>
+
 /* Harness Specific Include Files. */
 #include "test.h"
 
@@ -54,14 +56,19 @@ extern "C"{
 }
 
 #define MAX_WAIT 4
-
-/*global virable*/
+/*update interval in us*/
+#define UPDATE_INTERVAL 500
+/*global virables*/
 extern epdc_opt m_opt;
 
+/*internal virables*/
 int fb_fd; /* Framebuffer device file descriptor            */
 struct fb_fix_screeninfo fb_info; /* Framebuffer constant information */
 unsigned char  *fb_mem_ptr;   /* Pointer to the mapped momory of the fb device */
-
+sigset_t sigset;
+int quitflag;
+unsigned long last_t = 0;
+/*local functions*/
 int get_modeinfo(struct fb_var_screeninfo *info);
 void print_fbinfo(void);
 unsigned char *draw_px(unsigned char *where, struct pixel *p);
@@ -129,14 +136,238 @@ BOOL pan_test()
  return TRUE;
 }
 
-BOOL test_alt_update()
+static BOOL update_once(void * p_update)
 {
-BOOL ret = FALSE
+ /*step 1: set up update data*/
+  int  wait_time = 0;
+  int count = 1;
+  unsigned long st = 0i,et = 0;
+  struct timeval tv;
+  struct timezone tz;
+  struct mxcfb_update_data *  p_im_update = (struct mxcfb_update_data *)p_update;
+   /*do not use alt buffer*/
+   p_im_update->use_alt_buffer = 0;
+#if 0
+  /*step 2: update and wait finished*/
+  while(count--)
+  {
+	/*black and white alternative*/
+  CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
+  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_maker))< 0)
+  {
+    wait_time++;
+	if(wait_time > MAX_WAIT)
+	{
+	  printf("wait time exceed!!!\n");
+	  break;
+	}
+  }
+  wait_time = 0;
+  printf("partial mode next update\n");
+  }
+#endif
+  /*step 3: now using full update mode*/
+  count = 1;
+  im_update.update_mode = 1;
+  gettimeofday(&tv, &tz);
+  st = tv.tv_usec + tv.tv_sec * 1000000;
+  while(count--)
+  {
+	/*black and white alternative*/
+  CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
+  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_maker))< 0)
+  {
+     wait_time++;
+	if(wait_time > MAX_WAIT)
+	{
+	  printf("full mode wait time exceed!!!\n");
+	  break;
+	}
+  }
+  gettimeofday(&tv, &tz);
+  et = tv.tv_usec + tv.tv_sec * 1000000;
+  last_t += (et - st);
+  wait_time = 0;
+  printf("next update\n");
+  }
+  return TRUE;
+}
+
+static BOOL single_update(void * p_update)
+{
+ /*step 1: set up update data*/
+  int  wait_time = 0;
+  int count = 100;
+  struct mxcfb_update_data *  p_im_update = (struct mxcfb_update_data *)p_update;
+   /*do not use alt buffer*/
+   p_im_update->use_alt_buffer = 0;
+  /*step 2: update and wait finished*/
+  while(count--)
+  {
+	/*black and white alternative*/
+  CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
+  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_maker))< 0)
+  {
+    wait_time++;
+	if(wait_time > MAX_WAIT)
+	{
+	  printf("wait time exceed!!!\n");
+	  break;
+	}
+  }
+  if(quitflag)
+		return TRUE;
+  wait_time = 0;
+  printf("partial mode next update\n");
+  }
+  /*step 3: now using full update mode*/
+  count = 100;
+  im_update.update_mode = 1;
+  while(count--)
+  {
+	/*black and white alternative*/
+  CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
+  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_maker))< 0)
+  {
+     wait_time++;
+	if(wait_time > MAX_WAIT)
+	{
+	  printf("full mode wait time exceed!!!\n");
+	  break;
+	}
+  }
+	if(quitflag)
+		return TRUE;
+  wait_time = 0;
+  printf("next update\n");
+  }
+  return TRUE;
+}
+
+static void draw_thread(int *pon)
+{
+	while(*pon == 1)
+	{
+		if(quitflag)return;
+		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+		usleep(UPDATE_INTERVAL);
+		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+		usleep(UPDATE_INTERVAL);
+	}
+}
+
+static int signal_thread(void *arg)
+{
+     int sig, err;
+     pthread_sigmask(SIG_BLOCK, &sigset, NULL);
+     while (1) {
+         err = sigwait(&sigset, &sig);
+         if (sig == SIGINT) {
+             printf("Ctrl-C received\n");
+         } else {
+             printf("Unknown signal. Still exiting\n");
+         }
+         quitflag = 1;
+         break;
+     }
+     return 0;
+}
+
+BOOL test_rate_update()
+{
+	#define FRAME_CNT 1000
+	struct mxcfb_update_data im_update[2];
+	int i = 0;
+	struct fb_var_screeninfo mode_info;
+	CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
+	while(i++ < FRAME_CNT)
+	{
+		int x,y w,h;
+		x = 0;
+		y = 0;
+		w = (mode_info.xres>>1)&(~0x03);
+		h = mode_info.yres;
+		im_update[i].update_region.top = x;
+		im_update[i].update_region.left = y;
+		im_update[i].update_region.width = w;
+		im_update[i].update_region.height = h;
+		im_update[i].waveform_mode = 257;
+		im_update[i].update_marker = 0x300;
+		im_update[i].temp = 24;
+		update_once(&(im_update[0]));
+		x = (mode_info.xres>>1)&(~0x03);
+		y = 0;
+		w = (mode_info.xres>>1)&(~0x03);
+		h = mode_info.yres;
+		im_update[i].update_region.top = x;
+		im_update[i].update_region.left = y;
+		im_update[i].update_region.width = w;
+		im_update[i].update_region.height = h;
+		im_update[i].waveform_mode = 257;
+		im_update[i].update_marker = 0x301;
+		im_update[i].temp = 24;
+		update_once(&(im_update[1]));
+	}
+    if(last_t > 0)
+		printf("total update fps is:%f",FRAME_CNT/last_t);
+    return TRUE;
+}
+
+BOOL test_max_update()
+{
+   int state = 1;
+   int i = 0, j = 0;
+#define MAX_CNT 32
+   struct mxcfb_update_data im_update[MAX_CNT];
+   pthread_t sigtid,drawid,updates_id[MAX_CNT];
+   sigemptyset(&sigset);
+   sigaddset(&sigset, SIGINT);
+   pthread_sigmask(SIG_BLOCK, &sigset, NULL);
+   pthread_create(&sigtid, NULL, (void *)&signal_thread, NULL);
+   pthread_create(&drawid, NULL, (void *)&draw_thread, &state);
+   if(state)
+   {
+		struct fb_var_screeninfo mode_info;
+		CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
+		memset(im_update, 0, sizeof(im_update));
+		for(i = 0 ; i < MAX_CNT / 2; i++)
+			for(j = 0; j < MAX_CNT / 2; j++)
+			{
+			int x,y w,h;
+			x = i*((2 * mode_info.xres/MAX_CNT)&(~0x03));
+			y = j*((2 * mode_info.yres/MAX_CNT)&(~0x03));
+			w = (2 * mode_info.xres/MAX_CNT)&(~0x03);
+			h = (2 * mode_info.yres/MAX_CNT)&(~0x03);
+			im_update[i].update_region.top = x;
+			im_update[i].update_region.left = y;
+			im_update[i].update_region.width = w;
+			im_update[i].update_region.height = h;
+			im_update[i].waveform_mode = 257;
+			im_update[i].update_marker = i + 0x200;
+			im_update[i].temp = 24;
+			pthread_create(&(updates_id[i]), NULL,
+				(void *)&single_update, (void *)&(im_update[i]));
+			}
+		for (i = 0; i < MAX_CNT; i++)
+		{
+			if (updates_id[i] != 0)
+				pthread_join(updates_id[i], NULL);
+		}
+   }
+   state = 0;
+   return TRUE;
+}
+
+BOOL test_collision_update()
+{
+ BOOL ret = FALSE;
 int fd_pxp;
+int  wait_time = 0;
 int i= 0 ,j = 0;
 int count = 100;
-int update_maker = 0x112;
+int update_maker = 0x113;
 struct pxp_mem_desc mem;
+struct fb_var_screeninfo mode_info;
 #define PXP_DEVICE_NAME "/dev/pxp_device"
 #define BUFFER_WIDTH 16
 #define BUFFER_HEIGHT 16
@@ -152,21 +383,27 @@ struct mxcfb_update_data im_update = {
   };
 
 /*step 1: set up update data*/
+CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
  fd_pxp = open(PXP_DEVICE_NAME, O_RDWR, 0);
- mem.size = PXP_BUFFER_SIZE;
+ mem.size = m_opt.su == 1? (m_opt.update.width * m_opt.update.height) :PXP_BUFFER_SIZE;
  if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
  {
 	mem.phys_addr = 0;
 	mem.cpu_addr = 0;
 	goto END;
  }
- im_update.alt_buffer_data.phys_addr = mem.phys_addr;
+ if(m_opt.su == 1)
+ {
+   memcpy(&im_update,&m_opt.update, sizeof(struct mxcfb_update_data));
+ }else{
  im_update.alt_buffer_data.width = BUFFER_WIDTH;
  im_update.alt_buffer_data.height = BUFFER_HEIGHT;
  im_update.alt_buffer_data.alt_update_region.top = 0;
  im_update.alt_buffer_data.alt_update_region.left = 0;
- im_update.alt_buffer_data.alt_update_region.width = BUFFER_WIDTH;
+ im_update.alt_buffer_data.alt_update_region.width =  BUFFER_WIDTH;
  im_update.alt_buffer_data.alt_update_region.height = BUFFER_HEIGHT;
+ }
+ im_update.alt_buffer_data.phys_addr = mem.phys_addr;
  for(i= 0; i < BUFFER_WIDTH; i++)
 	for(j = 0; j < BUFFER_HEIGHT; j++)
 	{
@@ -191,7 +428,21 @@ struct mxcfb_update_data im_update = {
 	}
 	wait_time = 0;
 	printf("partial mode next update\n");
-	draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+	/*shift the update position a bit*/
+	if(im_update.update_region.top + im_update.update_region.heigh < mode_info.yres - 5)
+	im_update.update_region.top += 5;
+	else
+		im_update.update_region.top = 0;
+	if(im_update.update_region.left + im_update.update_region.width < mode_info.yres - 5)
+		im_update.update_region.left += 5;
+	else
+		im_update.update_region.left = 0;
+	/*change the content*/
+	for(i= 0; i < BUFFER_WIDTH; i++)
+		for(j = 0; j < BUFFER_HEIGHT; j++)
+		{
+			mem.virt_uaddr[i*BUFFER_HEIGHT + j] = random()&0xff;
+		}
   }
   /*full update*/
   count = 100;
@@ -212,7 +463,131 @@ struct mxcfb_update_data im_update = {
 	}
 	wait_time = 0;
 	printf("partial mode next update\n");
-	draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+	/*shift the update position a bit*/
+	if(im_update.update_region.top + im_update.update_region.heigh < mode_info.yres - 5)
+	im_update.update_region.top += 5;
+	else
+	  im_update.update_region.top = 0;
+	if(im_update.update_region.left + im_update.update_region.width < mode_info.yres - 5)
+	im_update.update_region.left += 5;
+	else
+	  im_update.update_region.left = 0;
+	/*change the content*/
+	for(i= 0; i < BUFFER_WIDTH; i++)
+		for(j = 0; j < BUFFER_HEIGHT; j++)
+		{
+			mem.virt_uaddr[i*BUFFER_HEIGHT + j] = random()&0xff;
+		}
+  }
+
+ /*step 4: clean up */
+ if (ioctl(fd_pxp, PXP_IOC_PUT_PHYMEM, &mem) < 0)
+ {
+	mem.phys_addr = 0;
+	mem.cpu_addr = 0;
+	goto END;
+ }
+END:
+ if(fd_pxp > 0)
+	close(fd_pxp);
+ ret = TRUE;
+ return ret;
+}
+
+BOOL test_alt_update()
+{
+BOOL ret = FALSE;
+int  wait_time = 0;
+int fd_pxp;
+int i= 0 ,j = 0;
+int count = 100;
+int update_maker = 0x112;
+struct pxp_mem_desc mem;
+#define PXP_DEVICE_NAME "/dev/pxp_device"
+#define BUFFER_WIDTH 16
+#define BUFFER_HEIGHT 16
+#define PXP_BUFFER_SIZE (BUFFER_WIDTH*BUFFER_HEIGHT)
+struct mxcfb_update_data im_update = {
+  {0,0,BUFFER_WIDTH*2,BUFFER_HEIGHT*2},/*region round to 8*/
+  257,/*waveform mode 0-255, 257 auto*/
+  0, /*update mode 0(partial),1(Full)*/
+  update_maker,/*update_maker assigned by user*/
+  0x56,/*use ambient temperature set*/
+  1,/*enable alt buffer*/
+  {0,0,0,{0,0,0,0}}/*set this later*/
+  };
+
+/*step 1: set up update data*/
+ fd_pxp = open(PXP_DEVICE_NAME, O_RDWR, 0);
+ mem.size = m_opt.su == 1? (m_opt.update.width * m_opt.update.height) :PXP_BUFFER_SIZE;
+ if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
+ {
+	mem.phys_addr = 0;
+	mem.cpu_addr = 0;
+	goto END;
+ }
+ if(m_opt.su == 1)
+ {
+  memcpy(&im_update,&m_opt.update, sizeof(struct mxcfb_update_data));
+ }else{
+ im_update.alt_buffer_data.width = BUFFER_WIDTH;
+ im_update.alt_buffer_data.height = BUFFER_HEIGHT;
+ im_update.alt_buffer_data.alt_update_region.top = 0;
+ im_update.alt_buffer_data.alt_update_region.left = 0;
+ im_update.alt_buffer_data.alt_update_region.width =  BUFFER_WIDTH;
+ im_update.alt_buffer_data.alt_update_region.height = BUFFER_HEIGHT;
+ }
+ im_update.alt_buffer_data.phys_addr = mem.phys_addr;
+ for(i= 0; i < BUFFER_WIDTH; i++)
+	for(j = 0; j < BUFFER_HEIGHT; j++)
+	{
+		mem.virt_uaddr[i*BUFFER_HEIGHT + j] = 128;
+	}
+
+/*step 2: start test*/
+  /*partial update*/
+  while(count--)
+  {
+	/*black and white alternative*/
+	if(count & 0x01)
+		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+	else
+		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_maker)< 0)
+    {
+		wait_time++;
+		if(wait_time > MAX_WAIT)
+		{
+		 printf("wait time exceed!!!\n");
+		 break;
+		}
+	}
+	wait_time = 0;
+	printf("partial mode next update\n");
+  }
+  /*full update*/
+  count = 100;
+  im_update.update_mode = 1;
+  while(count--)
+  {
+	/*black and white alternative*/
+	if(count & 0x01)
+		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+	else
+		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_maker)< 0)
+	{
+		wait_time++;
+		if(wait_time > MAX_WAIT)
+		{
+		printf("wait time exceed!!!\n");
+		break;
+		}
+	}
+	wait_time = 0;
+	printf("partial mode next update\n");
   }
 
  /*step 4: clean up */
@@ -234,6 +609,7 @@ BOOL test_wait_update()
 /*suppose you have set up the device before run this case*/
 	/*step 1: set up update data*/
   int count = 100;
+  int  wait_time = 0;
   int update_maker = 0x111;
   struct mxcfb_update_data im_update = {
   {0,0,16,16},/*region round to 8*/
@@ -244,11 +620,20 @@ BOOL test_wait_update()
   0,/*do not use alt buffer*/
   {0,0,0,{0,0,0,0}}
   };
+  if(m_opt.su == 1)
+  {
+   memcpy(&im_update,&m_opt.update, sizeof(struct mxcfb_update_data));
+  }
+   /*do not use alt buffer*/
+   im_update.use_alt_buffer = 0;
   /*step 2: update and wait finished*/
   while(count--)
   {
 	/*black and white alternative*/
-  draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+	if(count & 0x01)
+		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+	else
+		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
   CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
   while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_maker)< 0)
   {
@@ -269,20 +654,22 @@ BOOL test_wait_update()
   while(count--)
   {
 	/*black and white alternative*/
-  draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
-  CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
-  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_maker)< 0)
-  {
-     wait_time++;
-	if(wait_time > MAX_WAIT)
+	if(count & 0x01)
+		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+	else
+		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_maker)< 0)
 	{
-	  printf("full mode wait time exceed!!!\n");
-	  break;
+		wait_time++;
+		if(wait_time > MAX_WAIT)
+		{
+			printf("full mode wait time exceed!!!\n");
+			break;
+		}
 	}
-  }
-  wait_time = 0;
-  printf("next update\n");
-  draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+	wait_time = 0;
+	printf("next update\n");
   }
   return TRUE;
 }
@@ -400,10 +787,27 @@ int epdc_fb_test()
           tst_resm(TPASS, "alt update ok");
 		break;
   case 5:/*collision region update test*/
+		if(!test_collision_update())
+		{
+          rv = TFAIL;
+          tst_resm(TFAIL, "collision update FAIL");
+		}else
+          tst_resm(TPASS, "collision update ok");
 		break;
   case 6:/*max update region count test */
+		if(!test_max_update())
+		{
+          rv = TFAIL;
+          tst_resm(TFAIL, "max update FAIL");
+		}else
+          tst_resm(TPASS, "max update ok");
 		break;
   case 7:/*1000 frames sequence region no collision frame rate test*/
+		if(!test_rate_update())
+		{
+          rv = TFAIL;
+          tst_resm(TFAIL, "max update FAIL");
+		}else
 		break;
   default:
 		break;

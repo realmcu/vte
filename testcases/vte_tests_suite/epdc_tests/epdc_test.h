@@ -59,11 +59,12 @@ struct pixel
 typtdef struct epdc_opts {
    int Tid;
    char dev[128];
-   int waveform;
+   struct mxcfb_waveform_modes waveform;
    int temp;
    int graysacle;
-   int au;
-   char format[256];
+   int au;/*auto update or regional update*/
+   int su;/*use alt update*/
+   struct mxcfb_update_data update;
    int wt;
  } epdc_opt;
 
