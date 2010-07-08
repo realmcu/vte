@@ -32,12 +32,12 @@ extern "C"{
 #include <linux/mxcfb.h>
 #include <linux/pxp_dma.h>
 #include <unistd.h>
-
+#include <sys/time.h>
 /* Harness Specific Include Files. */
 #include "test.h"
 
 /* Verification Test Environment Include Files */
-#include "mxcfb_test.h"
+#include "epdc_test.h"
 
 
 /*********************************************************************************/
@@ -59,7 +59,7 @@ extern "C"{
 /*update interval in us*/
 #define UPDATE_INTERVAL 500
 /*global virables*/
-extern epdc_opt m_opt;
+extern epdc_opts m_opt;
 
 /*internal virables*/
 int fb_fd; /* Framebuffer device file descriptor            */
@@ -153,7 +153,7 @@ static BOOL update_once(void * p_update)
   {
 	/*black and white alternative*/
   CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
-  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_maker))< 0)
+  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
   {
     wait_time++;
 	if(wait_time > MAX_WAIT)
@@ -168,14 +168,14 @@ static BOOL update_once(void * p_update)
 #endif
   /*step 3: now using full update mode*/
   count = 1;
-  im_update.update_mode = 1;
+  p_im_update->update_mode = 1;
   gettimeofday(&tv, &tz);
   st = tv.tv_usec + tv.tv_sec * 1000000;
   while(count--)
   {
 	/*black and white alternative*/
   CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
-  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_maker))< 0)
+  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
   {
      wait_time++;
 	if(wait_time > MAX_WAIT)
@@ -206,7 +206,7 @@ static BOOL single_update(void * p_update)
   {
 	/*black and white alternative*/
   CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
-  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_maker))< 0)
+  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
   {
     wait_time++;
 	if(wait_time > MAX_WAIT)
@@ -222,12 +222,12 @@ static BOOL single_update(void * p_update)
   }
   /*step 3: now using full update mode*/
   count = 100;
-  im_update.update_mode = 1;
+  p_im_update->update_mode = 1;
   while(count--)
   {
 	/*black and white alternative*/
   CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
-  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_maker))< 0)
+  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
   {
      wait_time++;
 	if(wait_time > MAX_WAIT)
@@ -282,7 +282,7 @@ BOOL test_rate_update()
 	CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 	while(i++ < FRAME_CNT)
 	{
-		int x,y w,h;
+        int x,y,w,h;
 		x = 0;
 		y = 0;
 		w = (mode_info.xres>>1)&(~0x03);
@@ -333,7 +333,7 @@ BOOL test_max_update()
 		for(i = 0 ; i < MAX_CNT / 2; i++)
 			for(j = 0; j < MAX_CNT / 2; j++)
 			{
-			int x,y w,h;
+			int x,y,w,h;
 			x = i*((2 * mode_info.xres/MAX_CNT)&(~0x03));
 			y = j*((2 * mode_info.yres/MAX_CNT)&(~0x03));
 			w = (2 * mode_info.xres/MAX_CNT)&(~0x03);
@@ -365,7 +365,7 @@ int fd_pxp;
 int  wait_time = 0;
 int i= 0 ,j = 0;
 int count = 100;
-int update_maker = 0x113;
+int update_marker = 0x113;
 struct pxp_mem_desc mem;
 struct fb_var_screeninfo mode_info;
 #define PXP_DEVICE_NAME "/dev/pxp_device"
@@ -376,7 +376,7 @@ struct mxcfb_update_data im_update = {
   {0,0,BUFFER_WIDTH*2,BUFFER_HEIGHT*2},/*region round to 8*/
   257,/*waveform mode 0-255, 257 auto*/
   0, /*update mode 0(partial),1(Full)*/
-  update_maker,/*update_maker assigned by user*/
+  update_marker,/*update_marker assigned by user*/
   0x56,/*use ambient temperature set*/
   1,/*enable alt buffer*/
   {0,0,0,{0,0,0,0}}/*set this later*/
@@ -385,7 +385,7 @@ struct mxcfb_update_data im_update = {
 /*step 1: set up update data*/
 CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
  fd_pxp = open(PXP_DEVICE_NAME, O_RDWR, 0);
- mem.size = m_opt.su == 1? (m_opt.update.width * m_opt.update.height) :PXP_BUFFER_SIZE;
+ mem.size = m_opt.su == 1? (m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height) :PXP_BUFFER_SIZE;
  if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
  {
 	mem.phys_addr = 0;
@@ -407,7 +407,7 @@ CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
  for(i= 0; i < BUFFER_WIDTH; i++)
 	for(j = 0; j < BUFFER_HEIGHT; j++)
 	{
-		mem.virt_uaddr[i*BUFFER_HEIGHT + j] = 128;
+		((unsigned char *)(mem.virt_uaddr))[i*BUFFER_HEIGHT + j] = 128;
 	}
 
 /*step 2: start test*/
@@ -417,7 +417,7 @@ CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 	/*black and white alternative*/
 	draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
-	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_maker)< 0)
+	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
     {
 		wait_time++;
 		if(wait_time > MAX_WAIT)
@@ -429,7 +429,7 @@ CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 	wait_time = 0;
 	printf("partial mode next update\n");
 	/*shift the update position a bit*/
-	if(im_update.update_region.top + im_update.update_region.heigh < mode_info.yres - 5)
+	if(im_update.update_region.top + im_update.update_region.height < mode_info.yres - 5)
 	im_update.update_region.top += 5;
 	else
 		im_update.update_region.top = 0;
@@ -441,7 +441,7 @@ CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 	for(i= 0; i < BUFFER_WIDTH; i++)
 		for(j = 0; j < BUFFER_HEIGHT; j++)
 		{
-			mem.virt_uaddr[i*BUFFER_HEIGHT + j] = random()&0xff;
+			((unsigned char *)mem.virt_uaddr)[i*BUFFER_HEIGHT + j] = random()&0xff;
 		}
   }
   /*full update*/
@@ -452,7 +452,7 @@ CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 	/*black and white alternative*/
 	draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
-	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_maker)< 0)
+	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
 	{
 		wait_time++;
 		if(wait_time > MAX_WAIT)
@@ -464,7 +464,7 @@ CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 	wait_time = 0;
 	printf("partial mode next update\n");
 	/*shift the update position a bit*/
-	if(im_update.update_region.top + im_update.update_region.heigh < mode_info.yres - 5)
+	if(im_update.update_region.top + im_update.update_region.height < mode_info.yres - 5)
 	im_update.update_region.top += 5;
 	else
 	  im_update.update_region.top = 0;
@@ -476,7 +476,7 @@ CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 	for(i= 0; i < BUFFER_WIDTH; i++)
 		for(j = 0; j < BUFFER_HEIGHT; j++)
 		{
-			mem.virt_uaddr[i*BUFFER_HEIGHT + j] = random()&0xff;
+			((unsigned char *)mem.virt_uaddr)[i*BUFFER_HEIGHT + j] = random()&0xff;
 		}
   }
 
@@ -501,7 +501,7 @@ int  wait_time = 0;
 int fd_pxp;
 int i= 0 ,j = 0;
 int count = 100;
-int update_maker = 0x112;
+int update_marker = 0x112;
 struct pxp_mem_desc mem;
 #define PXP_DEVICE_NAME "/dev/pxp_device"
 #define BUFFER_WIDTH 16
@@ -511,7 +511,7 @@ struct mxcfb_update_data im_update = {
   {0,0,BUFFER_WIDTH*2,BUFFER_HEIGHT*2},/*region round to 8*/
   257,/*waveform mode 0-255, 257 auto*/
   0, /*update mode 0(partial),1(Full)*/
-  update_maker,/*update_maker assigned by user*/
+  update_marker,/*update_marker assigned by user*/
   0x56,/*use ambient temperature set*/
   1,/*enable alt buffer*/
   {0,0,0,{0,0,0,0}}/*set this later*/
@@ -519,7 +519,7 @@ struct mxcfb_update_data im_update = {
 
 /*step 1: set up update data*/
  fd_pxp = open(PXP_DEVICE_NAME, O_RDWR, 0);
- mem.size = m_opt.su == 1? (m_opt.update.width * m_opt.update.height) :PXP_BUFFER_SIZE;
+ mem.size = m_opt.su == 1? (m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height) :PXP_BUFFER_SIZE;
  if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
  {
 	mem.phys_addr = 0;
@@ -541,7 +541,7 @@ struct mxcfb_update_data im_update = {
  for(i= 0; i < BUFFER_WIDTH; i++)
 	for(j = 0; j < BUFFER_HEIGHT; j++)
 	{
-		mem.virt_uaddr[i*BUFFER_HEIGHT + j] = 128;
+		((unsigned char*)mem.virt_uaddr)[i*BUFFER_HEIGHT + j] = 128;
 	}
 
 /*step 2: start test*/
@@ -554,7 +554,7 @@ struct mxcfb_update_data im_update = {
 	else
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
-	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_maker)< 0)
+	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
     {
 		wait_time++;
 		if(wait_time > MAX_WAIT)
@@ -577,7 +577,7 @@ struct mxcfb_update_data im_update = {
 	else
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
-	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_maker)< 0)
+	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
 	{
 		wait_time++;
 		if(wait_time > MAX_WAIT)
@@ -610,12 +610,12 @@ BOOL test_wait_update()
 	/*step 1: set up update data*/
   int count = 100;
   int  wait_time = 0;
-  int update_maker = 0x111;
+  int update_marker = 0x111;
   struct mxcfb_update_data im_update = {
   {0,0,16,16},/*region round to 8*/
   257,/*waveform mode 0-255, 257 auto*/
   0, /*update mode 0(partial),1(Full)*/
-  update_maker,/*update_maker assigned by user*/
+  update_marker,/*update_marker assigned by user*/
   0x56,/*use ambient temperature set*/
   0,/*do not use alt buffer*/
   {0,0,0,{0,0,0,0}}
@@ -635,7 +635,7 @@ BOOL test_wait_update()
 	else
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
   CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
-  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_maker)< 0)
+  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
   {
      wait_time++;
 	if(wait_time > MAX_WAIT)
@@ -659,7 +659,7 @@ BOOL test_wait_update()
 	else
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
-	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_maker)< 0)
+	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
 	{
 		wait_time++;
 		if(wait_time > MAX_WAIT)
@@ -689,7 +689,7 @@ int epdc_fb_setup(void)
 {
     int rv = TFAIL;
     /* Open the framebuffer device */
-    fb_fd = open(d_opt, O_RDWR);
+    fb_fd = open(m_opt.dev, O_RDWR);
     if (fb_fd < 0)
     {
         tst_brkm(TBROK, cleanup, "Cannot open framebuffer: %s", strerror(errno));
@@ -707,20 +707,20 @@ int epdc_fb_setup(void)
         tst_brkm(TFAIL, cleanup, "Can't map framebuffer device into memory: %s\n", strerror(errno));
     }
 
-	CALL_IOCTL(ioctl(fd, MXCFB_SET_WAVEFORM_MODES, &m_opt.waveform));
+	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_WAVEFORM_MODES, &m_opt.waveform));
 
 	if(m_opt.grayscale != -1)
 	{
 		struct fb_var_screeninfo mode_info;
 		CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 		mode_info.grayscale = m_opt.grayscale;
-		CALL_IOCTL(ioctl(fd, FBIOPUT_VSCREENINFO, &mode_info));
+		CALL_IOCTL(ioctl(fb_fd, FBIOPUT_VSCREENINFO, &mode_info));
 		printf("set gray scale mode to %d\n", mode_info.grayscale);
 	}
 	if (m_opt.temp != -1)
-	CALL_IOCTL(ioctl(fd, MXCFB_SET_TEMPERATURE, &m_opt.waveform));
+	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_TEMPERATURE, &m_opt.waveform));
 	if (m_opt.au != -1)
-	CALL_IOCTL(ioctl(fd, MXCFB_SET_AUTO_UPDATE_MODE, &m_opt.waveform));
+	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_AUTO_UPDATE_MODE, &m_opt.waveform));
 
     rv = TPASS;
     return rv;
@@ -748,7 +748,7 @@ int epdc_fb_cleanup(void)
 int epdc_fb_test()
 {
  int  rv = TPASS;
- switch(iID)
+ switch(m_opt.Tid)
  {
   case 0:
        tst_resm(TINFO, "normal test");
