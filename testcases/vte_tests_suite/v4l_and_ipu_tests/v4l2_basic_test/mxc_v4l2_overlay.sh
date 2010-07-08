@@ -281,7 +281,6 @@ done
 
 RC=0
 return $RC
-
 }
 
 # Function:     test_case_05
@@ -452,10 +451,3 @@ case "$1" in
 esac
 
 tst_resm TINFO "Test PASS"
-
-
-
-
-
-
-
