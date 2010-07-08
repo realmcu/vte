@@ -1,5 +1,5 @@
 /***
-**Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2010 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -351,7 +351,7 @@ BOOL test_max_update()
 		for (i = 0; i < MAX_CNT; i++)
 		{
 			if (updates_id[i] != 0)
-				pthread_join(updates_id[i], NULL);
+				pthread_join(updatem_id[i], NULL);
 		}
    }
    state = 0;
