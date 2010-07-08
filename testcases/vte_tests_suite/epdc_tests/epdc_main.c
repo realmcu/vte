@@ -48,12 +48,12 @@ int      T_flag;        /* test case */
 char      *T_opt;        /* test case */
 int      d_flag;        /* fisrt fb to open */
 char     *d_opt;        /* fb name  */
-int      f_flag;        /* waveform setting*/
-char     *f_opt;
+int      F_flag;        /* waveform setting*/
+char     *F_opt;
 int      g_flag;        /* pixel format*/
 char     *g_opt;
-int      t_flag;        /* tempture setting*/
-char     *t_opt;
+int      H_flag;        /* tempture setting*/
+char     *H_opt;
 int      u_flag;        /* auto update*/
 char      *u_opt;        /* auto update*/
 int      s_flag;        /* send update setting*/
@@ -76,7 +76,7 @@ option_t opts[] =
 
 
 /* GLOBAL VARIABLES */
-epdc_opts m_opts;
+epdc_opts m_opt;
 
 
 /* Extern Global Variables */
@@ -87,33 +87,32 @@ char *TCID = "epdcfb"; /* test program identifier*/
 int  TST_TOTAL = 6;  /* total number of tests in this file*/
 
 /* GLOBAL FUNCTION PROTOTYPES */
+void cleanup();
 
 /* LOCAL FUNCTION PROTOTYPES */
 static void help(void);
 static void setup(void);
-static void cleanup();
 
 /* help */
 void help(void)
 {
-        printf("Usage:\n
-		[-T <int> : special test\n
-			0(setting framebuffer):
-			1(pan test):
-			2(draw test):\n
-			3(wait update test):
-			4(alt buffer overlay test):\n
-			5(collision region update test)]:\n
-			6(max update region count test)]\n
-			7(1000 frames sequence region no collision frame rate test)]\n
-		[-F <string> : wave form 0,1,3,2,2,2]\n
-		[-g <int> : grayscale 0(normal):1(inverion)]\n
-		[-H <int> : tempture ]\n
-		-d /dev/fb0: fb device\n
-		[-u <int> : auto update mode 0(partial)/1(full)]\n
-		[-s <string>: send update with format only in partial update]\n
-		[-r <int>: Rotation 0/1/2/3]\n
-		");
+        printf("Usage:\n");
+		printf("[-T <int> : special test\n");
+		printf("\t0(setting framebuffer):\n");
+		printf("\t1(pan test):\n");
+		printf("\t2(draw test):\n");
+		printf("\t3(wait update test):\n");
+		printf("\t4(alt buffer overlay test):\n");
+		printf("\t5(collision region update test)]:\n");
+		printf("\t6(max update region count test)]\n");
+		printf("\t7(1000 frames sequence region no collision frame rate test)]\n");
+		printf("[-F <string> : wave form 0,1,3,2,2,2]\n");
+		printf("[-g <int> : grayscale 0(normal):1(inverion)]\n");
+		printf("[-H <int> : tempture ]\n");
+		printf("[-d /dev/fb0: fb device]\n");
+		printf("[-u <int> : auto update mode 0(partial)/1(full)]\n");
+		printf("[-s <string>: send update with format only in partial update]\n");
+		printf("[-r <int>: Rotation 0/1/2/3]\n");
         return;
 }
 /* cleanup */
@@ -159,7 +158,7 @@ void setup(void)
 {
     int VT_rv = TFAIL;
     /* VTE : Actions needed to prepare the test running */
-    VT_rv = VT_fb_setup();
+    VT_rv = epdc_fb_setup();
     if (VT_rv != TPASS)
     {
       tst_brkm(TBROK , cleanup, "VT_fb_setup() Failed : error code = %d", VT_rv);
@@ -194,7 +193,7 @@ int main(int argc, char **argv)
           printf("An error occured while parsing options: %s\n", message);
           return VT_rv;
         }
-		memset(m_opt, 0, sizeof(m_opt));
+		memset(&m_opt, 0, sizeof(m_opt));
 		m_opt.Tid = T_flag?atoi(T_opt):0;
 		if(d_flag)
 		  strcpy(m_opt.dev,d_opt);
@@ -239,40 +238,27 @@ int main(int argc, char **argv)
 		{
 		/*the phy addr will get from get_mem
 		  can not defined by commandline*/
-			sscanf(s_opt,"%d:%d:%d:%d,%d,%d,%d,%d,%d,%d,%d:%d:%d:%d"
-			m_opt.update.update_region.top,
-			m_opt.update.update_region.left,
-			m_opt.update.update_region.width,
-			m_opt.update.update_region.height,
-			m_opt.update.waveform_mode,
-			m_opt.update.update_marker,
-			m_opt.update.temp,
-			m_opt.update.use_alt_buffer,
-			m_opt.update.alt_buffer_data.width,
-			m_opt.update.alt_buffer_data.height,
-			m_opt.update.alt_buffer_data.alt_update_region.top,
-			m_opt.update.alt_buffer_data.alt_update_region.left,
-			m_opt.update.alt_buffer_data.alt_update_region.width,
-			m_opt.update.alt_buffer_data.alt_update_region.height
+			sscanf(s_opt,"%d:%d:%d:%d,%d,%d,%d,%d,%d,%d,%d:%d:%d:%d",
+            m_opt.update.update_region.top,
+            m_opt.update.update_region.left,
+            m_opt.update.update_region.width,
+            m_opt.update.update_region.height,
+            m_opt.update.waveform_mode,
+            m_opt.update.update_marker,
+            m_opt.update.temp,
+            m_opt.update.use_alt_buffer,
+            m_opt.update.alt_buffer_data.width,
+            m_opt.update.alt_buffer_data.height,
+            m_opt.update.alt_buffer_data.alt_update_region.top,
+            m_opt.update.alt_buffer_data.alt_update_region.left,
+            m_opt.update.alt_buffer_data.alt_update_region.width,
+            m_opt.update.alt_buffer_data.alt_update_region.height
 			);
 			m_opt.su = 1;
 		}
-		if(w_flag)
-		{
-			m_opt.wt = atoi(w_opt);
-		}else{
-			m_opt.wt = -1;
-		}
 
 		printf("current settings\n");
-		printf("TestID = %d \n
-		\rdevice is %s \n
-		\rwaveform setting is %d,%d,%d,%d,%d,%d \n
-		\rtempture is %d \n
-		\rgrayscale is %d \n
-		\rauto update mode is %d \n
-		\rwait makermask is %d \n
-		\rupdate setting is %d \n",
+		printf("TestID = %d \ndevice is %s \n\rwaveform setting is %d,%d,%d,%d,%d,%d \n\rtempture is %d\n\rgrayscale is %d \n\rauto update mode is %d \n\rupdate setting is %d \n",
 		m_opt.Tid,
 		m_opt.dev,
 		m_opt.waveform.mode_init,
@@ -284,18 +270,11 @@ int main(int argc, char **argv)
 		m_opt.temp,
 		m_opt.grayscale,
 		m_opt.au,
-		m_opt.wt,
 		m_opt.su
 		);
 		if(m_opt.su)
 		{
-			printf("\r\talt update region %d,%d,%d,%d \n
-			\r\talt waveform_mode %d \n
-			\r\talt update_mode %d \n
-			\r\talt tempture %d \n
-			\r\talt buffer width = %d \n
-			\r\talt buffer Height = %d \n
-			\r\tupdate region within %d,%d,%d,%d \n",
+			printf("\r\talt update region %d,%d,%d,%d \n\r\talt waveform_mode %d \n\r\talt update_mode %d \n\r\talt tempture %d \n\r\talt buffer width = %d \n\r\talt buffer Height = %d \n\r\tupdate region within %d,%d,%d,%d \n",
 			m_opt.update.update_region.top,
 			m_opt.update.update_region.left,
 			m_opt.update.update_region.width,

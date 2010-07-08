@@ -9,14 +9,15 @@
 
 #CC = $(CROSS_COMPILER)gcc
 CC = $(CROSS_COMPILER)gcc
-CFLAGS +=
+CFLAGS += -I../../../include/ -I$(KLINUX_SRCDIR)/include
+LDFLAGS += -L../../../lib -lltp -lpthread
 
 TARGET = epdc_test
 SRC = $(wildcard *.c)
 OBJ=$(patsubst %.c,%.o,$(SRC))
 
 all: $(OBJ)
-	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJ)
+	$(CC) -o $(TARGET) $(OBJ) $(LDFLAGS)
 install:
 	-ln -f $(TARGET) ../../bin/
 

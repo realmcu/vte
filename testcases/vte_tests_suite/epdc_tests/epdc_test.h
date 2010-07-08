@@ -56,17 +56,17 @@ struct pixel
    int line_length;            /* length of a line in px  */
 };
 
-typtdef struct epdc_opts {
+typedef struct epdc_opts {
    int Tid;
    char dev[128];
    struct mxcfb_waveform_modes waveform;
    int temp;
-   int graysacle;
+   int grayscale;
    int au;/*auto update or regional update*/
    int su;/*use alt update*/
    struct mxcfb_update_data update;
    int wt;
- } epdc_opt;
+ } epdc_opts;
 
 /* GLOBAL VARIABLE DECLARATIONS */
 
