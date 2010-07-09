@@ -32,7 +32,7 @@ export LOADLIBES=-L../../../../lib -lltp -lpthread -lm
 ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack, $(ARCH_PLATFORM)))
 SUBDIRS = v4l_capture_testapp v4l_output_testapp v4l2_basic_test  ipu_pf_testapp 
 else
-ifeq ($(ARCH_PALTFORM), $(filter imx233 imx28 imx508, $(ARCH_PLATFORM)))
+ifeq ($(ARCH_PALTFORM), $(filter imx233 imx28 imx50, $(ARCH_PLATFORM)))
 SUBDIRS = pxp_test-1.01
 else
 SUBDIRS = v4l_capture_testapp v4l_output_testapp v4l2_basic_test ipu_function 

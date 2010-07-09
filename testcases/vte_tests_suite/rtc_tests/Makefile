@@ -26,7 +26,6 @@
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack imx37stack imx51stack imx25stack imx233 imx28 imx51, $(ARCH_PLATFORM)))
 SUBDIRS =rtc_testapp_1 \
          rtc_testapp_2 \
          rtc_testapp_3 \
@@ -34,8 +33,7 @@ SUBDIRS =rtc_testapp_1 \
          rtc_testapp_5 \
          rtc_testapp_6 \
          rtc_testapp_7 \
-	 rtc_scripts
-endif
+         rtc_scripts
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
