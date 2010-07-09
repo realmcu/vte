@@ -23,7 +23,7 @@ install:
 
 clean:
 	-@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
-	-@set -e; for i in $(DISTCLEAN_SUBDIRS); do echo $$i ; $(MAKE) -C $$i distclean ; done
+	-@set -e; for i in $(DISTCLEAN_SUBDIRS); do echo $$i ; ac_cv_func_setpgrp_void=yes  $(MAKE) -C $$i distclean ; done
 	-@$(MAKE) -C ppp-2.4.3 dist-clean
 config:
 	-@set -e;for i in $(CONFIG_SUBDIRS); do echo $$i ;cd $$i && ./myconfig && cd ..; done; 
