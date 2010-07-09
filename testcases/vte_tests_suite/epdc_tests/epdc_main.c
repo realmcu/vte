@@ -201,12 +201,12 @@ int main(int argc, char **argv)
 		  strcpy(m_opt.dev,"/dev/fb");
 		if(F_flag)
 			sscanf(F_opt,"%d,%d,%d,%d,%d,%d",
-			m_opt.waveform.mode_init,
-			m_opt.waveform.mode_du,
-			m_opt.waveform.mode_gc4,
-			m_opt.waveform.mode_gc8,
-			m_opt.waveform.mode_gc16,
-			m_opt.waveform.mode_gc32
+			&(m_opt.waveform.mode_init),
+			&(m_opt.waveform.mode_du),
+			&(m_opt.waveform.mode_gc4),
+			&(m_opt.waveform.mode_gc8),
+			&(m_opt.waveform.mode_gc16),
+			&(m_opt.waveform.mode_gc32)
 			);
 		else{
 			m_opt.waveform.mode_init = 0;
@@ -239,20 +239,20 @@ int main(int argc, char **argv)
 		/*the phy addr will get from get_mem
 		  can not defined by commandline*/
 			sscanf(s_opt,"%d:%d:%d:%d,%d,%d,%d,%d,%d,%d,%d:%d:%d:%d",
-            m_opt.update.update_region.top,
-            m_opt.update.update_region.left,
-            m_opt.update.update_region.width,
-            m_opt.update.update_region.height,
-            m_opt.update.waveform_mode,
-            m_opt.update.update_marker,
-            m_opt.update.temp,
-            m_opt.update.use_alt_buffer,
-            m_opt.update.alt_buffer_data.width,
-            m_opt.update.alt_buffer_data.height,
-            m_opt.update.alt_buffer_data.alt_update_region.top,
-            m_opt.update.alt_buffer_data.alt_update_region.left,
-            m_opt.update.alt_buffer_data.alt_update_region.width,
-            m_opt.update.alt_buffer_data.alt_update_region.height
+            &(m_opt.update.update_region.top),
+            &(m_opt.update.update_region.left),
+            &(m_opt.update.update_region.width),
+            &(m_opt.update.update_region.height),
+            &(m_opt.update.waveform_mode),
+            &(m_opt.update.update_marker),
+            &(m_opt.update.temp),
+            &(m_opt.update.use_alt_buffer),
+            &(m_opt.update.alt_buffer_data.width),
+            &(m_opt.update.alt_buffer_data.height),
+            &(m_opt.update.alt_buffer_data.alt_update_region.top),
+            &(m_opt.update.alt_buffer_data.alt_update_region.left),
+            &(m_opt.update.alt_buffer_data.alt_update_region.width),
+            &(m_opt.update.alt_buffer_data.alt_update_region.height)
 			);
 			m_opt.su = 1;
 		}
