@@ -33,6 +33,7 @@ extern "C"{
 #include <linux/pxp_dma.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <pthread.h>
 /* Harness Specific Include Files. */
 #include "test.h"
 
@@ -97,7 +98,6 @@ BOOL pan_test()
 {
    int y, old_yvres;
    struct fb_var_screeninfo mode_info;
-   struct mxcfb_gbl_alpha gbl_alpha;
 /*x pan is not supported*/
 
 #if 1
@@ -309,7 +309,7 @@ BOOL test_rate_update()
 		update_once(&(im_update[1]));
 	}
     if(last_t > 0)
-		printf("total update fps is:%f",FRAME_CNT/last_t);
+		printf("total update fps is:%f",(float)(FRAME_CNT/last_t));
     return TRUE;
 }
 
@@ -351,7 +351,7 @@ BOOL test_max_update()
 		for (i = 0; i < MAX_CNT; i++)
 		{
 			if (updates_id[i] != 0)
-				pthread_join(updatem_id[i], NULL);
+				pthread_join(updates_id[i], NULL);
 		}
    }
    state = 0;
