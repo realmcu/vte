@@ -14,12 +14,12 @@
 #with this program; if not, write to the Free Software Foundation, Inc.,
 #51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-KLINUX_SRCDIR=/home/vobs/linux-2.6-imx
-KLINUX_BLTDIR=/home/vobs/linux-2.6-imx
+KLINUX_SRCDIR=/home/smb/nfs_server/linux-2.6-testbuild
+KLINUX_BLTDIR=/home/smb/nfs_server/linux-2.6-testbuild
 ARCH_CPU=arm
 ARCH_PLATFORM=imx508
 export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM
 
 CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-
 export CROSS_COMPILER
-export CFLAGS="-DPROJECT_MX508=1 -O2 -fsigned-char -mfloat-abi=softfp -mfpu=vfp"
+export CFLAGS="-DPROJECT_MX508=1 -O2 -fsigned-char -mfloat-abi=softfp -mfpu=vfp -I${KLINUX_SRCDIR}/arch/arm/include"
