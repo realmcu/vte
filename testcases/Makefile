@@ -18,5 +18,6 @@ uclinux_install:
 		do $(MAKE) -C $$i uclinux_install ; done
 
 clean:
+	-rm -rf bin
 	@set -e; for i in $(SUBDIRS) ; do $(MAKE) -C $$i clean ; done
 
