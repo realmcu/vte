@@ -752,6 +752,7 @@ int epdc_fb_test()
  {
   case 0:
        tst_resm(TINFO, "normal test");
+	   break;
   case 1:
        tst_resm(TINFO, "pan test");
        if (!pan_test())
