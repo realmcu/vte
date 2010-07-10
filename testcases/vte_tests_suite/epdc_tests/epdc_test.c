@@ -130,6 +130,9 @@ BOOL pan_test()
         CALL_IOCTL(ioctl(fb_fd, FBIOPAN_DISPLAY, &mode_info));
 		sleep(1);
   }
+ /*reset pan postion*/
+ mode_info.yoffset = 0;
+ CALL_IOCTL(ioctl(fb_fd, FBIOPAN_DISPLAY, &mode_info));
  mode_info.yres_virtual = old_yvres;
  CALL_IOCTL(ioctl(fb_fd, FBIOPUT_VSCREENINFO, &mode_info));
 #endif
@@ -204,42 +207,42 @@ static BOOL single_update(void * p_update)
   /*step 2: update and wait finished*/
   while(count--)
   {
-	/*black and white alternative*/
-  CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
-  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
-  {
-    wait_time++;
-	if(wait_time > MAX_WAIT)
-	{
-	  printf("wait time exceed!!!\n");
-	  break;
-	}
-  }
-  if(quitflag)
-		return TRUE;
-  wait_time = 0;
-  printf("partial mode next update\n");
+		/*black and white alternative*/
+		CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
+		while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
+		{
+			wait_time++;
+			if(wait_time > MAX_WAIT)
+			{
+				printf("wait time exceed!!!\n");
+				break;
+			}
+		}
+		if(quitflag)
+			return TRUE;
+		wait_time = 0;
+		printf("partial mode next update\n");
   }
   /*step 3: now using full update mode*/
   count = 100;
   p_im_update->update_mode = 1;
   while(count--)
   {
-	/*black and white alternative*/
-  CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
-  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
-  {
-     wait_time++;
-	if(wait_time > MAX_WAIT)
-	{
-	  printf("full mode wait time exceed!!!\n");
-	  break;
-	}
-  }
-	if(quitflag)
-		return TRUE;
-  wait_time = 0;
-  printf("next update\n");
+		/*black and white alternative*/
+		CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
+		while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
+		{
+			wait_time++;
+			if(wait_time > MAX_WAIT)
+			{
+				printf("full mode wait time exceed!!!\n");
+				break;
+			}
+		}
+		if(quitflag)
+			return TRUE;
+		wait_time = 0;
+		printf("next update\n");
   }
   return TRUE;
 }
@@ -353,6 +356,8 @@ BOOL test_max_update()
 			if (updates_id[i] != 0)
 				pthread_join(updates_id[i], NULL);
 		}
+		pthread_join(sigtid,NULL);
+		pthread_join(drawid,NULL);
    }
    state = 0;
    return TRUE;
@@ -388,7 +393,6 @@ CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
  mem.size = m_opt.su == 1? (m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height) :PXP_BUFFER_SIZE;
  if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
  {
-	mem.phys_addr = 0;
 	mem.cpu_addr = 0;
 	goto END;
  }
@@ -487,10 +491,10 @@ CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 	mem.cpu_addr = 0;
 	goto END;
  }
+ ret = TRUE;
 END:
  if(fd_pxp > 0)
 	close(fd_pxp);
- ret = TRUE;
  return ret;
 }
 
@@ -597,11 +601,50 @@ struct mxcfb_update_data im_update = {
 	mem.cpu_addr = 0;
 	goto END;
  }
+ ret = TRUE;
 END:
  if(fd_pxp > 0)
 	close(fd_pxp);
- ret = TRUE;
  return ret;
+}
+
+BOOL full_update()
+{
+  /*step 1: set up update data*/
+  int  wait_time = 0;
+  int update_marker = 0x001;
+  struct mxcfb_update_data im_update = {
+  {0,0,16,16},/*region round to 8*/
+  257,/*waveform mode 0-255, 257 auto*/
+  0, /*update mode 0(partial),1(Full)*/
+  update_marker,/*update_marker assigned by user*/
+  0x56,/*use ambient temperature set*/
+  0,/*do not use alt buffer*/
+  {0,0,0,{0,0,0,0}}
+  };
+  struct fb_var_screeninfo mode_info;
+  CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
+  im_update.update_region.width = mode_info.xres;
+  im_update.update_region.height = mode_info.yres;
+  draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+  if(m_opt.su == 1)
+  {
+   memcpy(&im_update,&m_opt.update, sizeof(struct mxcfb_update_data));
+  }
+   /*do not use alt buffer*/
+   im_update.use_alt_buffer = 0;
+  /*step 2: update and wait finished*/
+  CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
+  {
+     wait_time++;
+	if(wait_time > MAX_WAIT)
+	{
+	  printf("wait time exceed!!!\n");
+	  break;
+	}
+  }
+  wait_time = 0;
 }
 
 BOOL test_wait_update()
@@ -752,7 +795,14 @@ int epdc_fb_test()
  {
   case 0:
        tst_resm(TINFO, "normal test");
-	   break;
+       if (!full_update())
+       {
+         rv = TFAIL;
+         tst_resm(TFAIL, "normal test FAIL");
+       }else
+         tst_resm(TPASS, "normal test ok");
+
+       break;
   case 1:
        tst_resm(TINFO, "pan test");
        if (!pan_test())
@@ -866,18 +916,12 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
     px.r_color = r;
     px.g_color = g;
     px.b_color = b; /* Set color values */
-    for (i = 0; i < size; i++)
-	{
-		if(i % 10 == 0 && i!=0 )
+		for (i = 0; i < size; i++)
 		{
-		 px.r_color = px.r_color - 5;
-		 px.g_color = px.g_color - 5;
-		 px.b_color = px.b_color - 5;
+			fb_wr_ptr = draw_px(fb_wr_ptr, &px);
 		}
-        fb_wr_ptr = draw_px(fb_wr_ptr, &px);
-	}
-     /* Restore activation flag */
-    #if 1
+	/* Restore activation flag */
+	#if 1
     mode_info.activate = act_mode;
     ioctl(fd, FBIOPUT_VSCREENINFO, &mode_info);
     #endif
@@ -896,55 +940,46 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
 */
 unsigned char *draw_px(unsigned char *where, struct pixel *p)
 {
-        __u32 value;
-
-        if (!where)
-        {
-                tst_resm(TFAIL, "where isn't a valid pointer to 'unsigned char' ");
-                return where;
-        }
-        if (!p)
-        {
-                tst_resm(TFAIL, "p isn't a valid pointer to 'struct pixel' ");
-                return where;
-        }
-
-        /* Convert pixel color represented by 3 bytes to appropriate color depth */
-        value = (p->r_color * (1 << p->r_field.length) / (1 << 8) ) << p->r_field.offset;
-        value |= (p->g_color * (1 << p->g_field.length) / (1 << 8) ) << p->g_field.offset;
-        value |= (p->b_color * (1 << p->b_field.length) / (1 << 8) ) << p->b_field.offset;
-
-/*        if ( p->t_field.length != 0)
-        {
-               value |= (p->trans * (1 << p->t_field.length) / (1 << 8) ) << p->t_field.offset;
-        }*/
-        switch (p->bpp * 8)
-        {
+	__u32 value;
+	if (!where)
+	{
+		tst_resm(TFAIL, "where isn't a valid pointer to 'unsigned char' ");
+		return where;
+	}
+	if (!p)
+	{
+		tst_resm(TFAIL, "p isn't a valid pointer to 'struct pixel' ");
+		return where;
+	}
+	/* Convert pixel color represented by 3 bytes to appropriate color depth */
+	value = (p->r_color * (1 << p->r_field.length) / (1 << 8) ) << p->r_field.offset;
+	value |= (p->g_color * (1 << p->g_field.length) / (1 << 8) ) << p->g_field.offset;
+	value |= (p->b_color * (1 << p->b_field.length) / (1 << 8) ) << p->b_field.offset;
+	switch (p->bpp * 8)
+	{
 		case 8:
-			*where++ = value;
-        case 12 ... 16:
-                *where++ = *((unsigned char *)&value);
-                *where++ = *((unsigned char *)&value + 1);
-                break;
-
-        case 24:
-                *where++ = *((unsigned char *)&value);
-                *where++ = *((unsigned char *)&value + 1);
-                *where++ = *((unsigned char *)&value + 2);
-                break;
-
-        case 32:
-                *where++ = *((unsigned char *)&value);
-                *where++ = *((unsigned char *)&value + 1);
-                *where++ = *((unsigned char *)&value + 2);
-                *where++ = *((unsigned char *)&value + 3);
-                break;
-
-        default:
-                break;
-        }
-
-        return where;
+			/*fix me*/
+			*where++ = value == 0? p->r_color:value;
+			break;
+		case 12 ... 16:
+			*where++ = *((unsigned char *)&value);
+			*where++ = *((unsigned char *)&value + 1);
+			break;
+		case 24:
+			*where++ = *((unsigned char *)&value);
+			*where++ = *((unsigned char *)&value + 1);
+			*where++ = *((unsigned char *)&value + 2);
+			break;
+		case 32:
+			*where++ = *((unsigned char *)&value);
+			*where++ = *((unsigned char *)&value + 1);
+			*where++ = *((unsigned char *)&value + 2);
+			*where++ = *((unsigned char *)&value + 3);
+			break;
+		default:
+			break;
+	}
+	return where;
 }
 
 #ifdef __cplusplus
