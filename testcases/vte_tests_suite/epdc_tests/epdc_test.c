@@ -56,6 +56,10 @@ extern "C"{
     }\
 }
 
+#define PXP_DEVICE_NAME "/dev/pxp_device"
+#define BUFFER_WIDTH 256
+#define BUFFER_HEIGHT 256
+#define PXP_BUFFER_SIZE (BUFFER_WIDTH*BUFFER_HEIGHT)
 #define MAX_WAIT 4
 /*update interval in us*/
 #define UPDATE_INTERVAL 500
@@ -398,12 +402,8 @@ int count = 100;
 int update_marker = 0x113;
 struct pxp_mem_desc mem;
 struct fb_var_screeninfo mode_info;
-#define PXP_DEVICE_NAME "/dev/pxp_device"
-#define BUFFER_WIDTH 16
-#define BUFFER_HEIGHT 16
-#define PXP_BUFFER_SIZE (BUFFER_WIDTH*BUFFER_HEIGHT)
 struct mxcfb_update_data im_update = {
-  {0,0,BUFFER_WIDTH*2,BUFFER_HEIGHT*2},/*region round to 8*/
+  {0,0,BUFFER_WIDTH,BUFFER_HEIGHT},/*region round to 8*/
   257,/*waveform mode 0-255, 257 auto*/
   0, /*update mode 0(partial),1(Full)*/
   update_marker,/*update_marker assigned by user*/
@@ -413,28 +413,49 @@ struct mxcfb_update_data im_update = {
   };
 
 /*step 1: set up update data*/
-CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
- fd_pxp = open(PXP_DEVICE_NAME, O_RDWR, 0);
- mem.size = m_opt.su == 1? (m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height) :PXP_BUFFER_SIZE;
- if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
- {
-	mem.cpu_addr = 0;
-	goto END;
- }
- if(m_opt.su == 1)
- {
-   memcpy(&im_update,&m_opt.update, sizeof(struct mxcfb_update_data));
- }else{
- im_update.alt_buffer_data.width = BUFFER_WIDTH;
- im_update.alt_buffer_data.height = BUFFER_HEIGHT;
- im_update.alt_buffer_data.alt_update_region.top = 0;
- im_update.alt_buffer_data.alt_update_region.left = 0;
- im_update.alt_buffer_data.alt_update_region.width =  BUFFER_WIDTH;
- im_update.alt_buffer_data.alt_update_region.height = BUFFER_HEIGHT;
+	CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
+	fd_pxp = open(PXP_DEVICE_NAME, O_RDWR, 0);
+	mem.size = m_opt.su == 1? (m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height) :PXP_BUFFER_SIZE;
+	if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
+	{
+		mem.cpu_addr = 0;
+		goto END;
+	}
+	#if 1
+	{
+		int fd_mem = open("/dev/mem",O_RDWR);
+		if(fd_mem < 0)
+		{
+			printf("open mem device error\n");
+			goto END;
+		}
+		mem.virt_uaddr = (unsigned long)mmap(NULL, mem.size, PROT_READ | PROT_WRITE,
+				      MAP_SHARED, fd_mem, mem.phys_addr);/* + 0x70000000);*/
+		close(fd_mem);
+	}
+#else
+ mem.virt_uaddr = (unsigned long)mmap(NULL, mem.size, PROT_READ | PROT_WRITE,
+				      MAP_SHARED, fd_pxp, mem.phys_addr);/* + 0x70000000);*/
+#endif
+	if(mem.virt_uaddr == 0)
+	{
+		printf("virtual address error!\n");
+		goto END;
+	}
+	if(m_opt.su == 1)
+	{
+		memcpy(&im_update,&m_opt.update, sizeof(struct mxcfb_update_data));
+	}else{
+		im_update.alt_buffer_data.width = BUFFER_WIDTH;
+		im_update.alt_buffer_data.height = BUFFER_HEIGHT;
+		im_update.alt_buffer_data.alt_update_region.top = 0;
+		im_update.alt_buffer_data.alt_update_region.left = 0;
+		im_update.alt_buffer_data.alt_update_region.width =  BUFFER_WIDTH;
+		im_update.alt_buffer_data.alt_update_region.height = BUFFER_HEIGHT;
  }
  im_update.alt_buffer_data.phys_addr = mem.phys_addr;
- for(i= 0; i < BUFFER_WIDTH; i++)
-	for(j = 0; j < BUFFER_HEIGHT; j++)
+ for(i= 0; i < BUFFER_HEIGHT; i++)
+	for(j = 0; j < BUFFER_WIDTH; j++)
 	{
 		((unsigned char *)(mem.virt_uaddr))[i*BUFFER_HEIGHT + j] = 128;
 	}
@@ -491,7 +512,7 @@ CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 		}
 	}
 	wait_time = 0;
-	printf("partial mode next update\n");
+	printf("full mode next update\n");
 	/*shift the update position a bit*/
 	if(im_update.update_region.top + im_update.update_region.height < mode_info.yres - 5)
 	im_update.update_region.top += 5;
@@ -532,12 +553,8 @@ int i= 0 ,j = 0;
 int count = 100;
 int update_marker = 0x112;
 struct pxp_mem_desc mem;
-#define PXP_DEVICE_NAME "/dev/pxp_device"
-#define BUFFER_WIDTH 16
-#define BUFFER_HEIGHT 16
-#define PXP_BUFFER_SIZE (BUFFER_WIDTH*BUFFER_HEIGHT)
 struct mxcfb_update_data im_update = {
-  {0,0,BUFFER_WIDTH*2,BUFFER_HEIGHT*2},/*region round to 8*/
+  {0,0,BUFFER_WIDTH,BUFFER_HEIGHT},/*region round to 8*/
   257,/*waveform mode 0-255, 257 auto*/
   0, /*update mode 0(partial),1(Full)*/
   update_marker,/*update_marker assigned by user*/
@@ -545,16 +562,45 @@ struct mxcfb_update_data im_update = {
   1,/*enable alt buffer*/
   {0,0,0,{0,0,0,0}}/*set this later*/
   };
-
+ printf("start alt update test\n");
 /*step 1: set up update data*/
  fd_pxp = open(PXP_DEVICE_NAME, O_RDWR, 0);
+ if(fd_pxp < 0)
+ {
+	 printf("open pxp devices fialed\n");
+	 return FALSE;
+ }
  mem.size = m_opt.su == 1? (m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height) :PXP_BUFFER_SIZE;
+ printf("try to get memory size %d\n",mem.size);
  if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
  {
 	mem.phys_addr = 0;
 	mem.cpu_addr = 0;
+	printf("get memory failed");
 	goto END;
  }
+#if 1
+{
+	int fd_mem = open("/dev/mem",O_RDWR);
+	if(fd_mem < 0)
+	{
+		printf("open mem device error\n");
+		goto END;
+	}
+	mem.virt_uaddr = (unsigned long)mmap(NULL, mem.size, PROT_READ | PROT_WRITE,
+				      MAP_SHARED, fd_mem, mem.phys_addr);/* + 0x70000000);*/
+	close(fd_mem);
+}
+#else
+ mem.virt_uaddr = (unsigned long)mmap(NULL, mem.size, PROT_READ | PROT_WRITE,
+				      MAP_SHARED, fd_pxp, mem.phys_addr);/* + 0x70000000);*/
+#endif
+if(mem.virt_uaddr == 0)
+ {
+	 printf("virtual address error!\n");
+	 goto END;
+ }
+ printf("success get memory at %x\n",mem.virt_uaddr);
  if(m_opt.su == 1)
  {
   memcpy(&im_update,&m_opt.update, sizeof(struct mxcfb_update_data));
@@ -567,12 +613,12 @@ struct mxcfb_update_data im_update = {
  im_update.alt_buffer_data.alt_update_region.height = BUFFER_HEIGHT;
  }
  im_update.alt_buffer_data.phys_addr = mem.phys_addr;
- for(i= 0; i < BUFFER_WIDTH; i++)
-	for(j = 0; j < BUFFER_HEIGHT; j++)
+ for(i= 0; i < BUFFER_HEIGHT; i++)
+	for(j = 0; j < BUFFER_WIDTH; j++)
 	{
 		((unsigned char*)mem.virt_uaddr)[i*BUFFER_HEIGHT + j] = 128;
 	}
-
+ printf("start test\n");
 /*step 2: start test*/
   /*partial update*/
   while(count--)
@@ -616,7 +662,7 @@ struct mxcfb_update_data im_update = {
 		}
 	}
 	wait_time = 0;
-	printf("partial mode next update\n");
+	printf("full mode next update\n");
   }
 
  /*step 4: clean up */

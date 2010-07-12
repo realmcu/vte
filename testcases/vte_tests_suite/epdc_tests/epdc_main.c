@@ -293,7 +293,7 @@ int main(int argc, char **argv)
   /* perform global test setup, call setup() function. */
         setup();
  /* Print test Assertion using tst_resm() function with argument TINFO. */
-        tst_resm(TINFO, "Testing if %s test case is OK", TCID);
+        tst_resm(TINFO, "Testing if %s test case %d is OK",TCID, m_opt.Tid);
         VT_rv = epdc_fb_test();
         /* VTE : print results and exit test scenario */
         if(VT_rv == TPASS)
