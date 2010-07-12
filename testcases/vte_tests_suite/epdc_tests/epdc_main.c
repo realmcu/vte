@@ -220,7 +220,7 @@ int main(int argc, char **argv)
 		{
 			m_opt.grayscale = atoi(g_opt);
 		}else{
-			m_opt.grayscale = -1;
+			m_opt.grayscale = GRAYSCALE_8BIT;
 		}
 		if(H_flag)
 		{
