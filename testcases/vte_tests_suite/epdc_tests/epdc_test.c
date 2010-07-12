@@ -34,6 +34,11 @@ extern "C"{
 #include <unistd.h>
 #include <sys/time.h>
 #include <pthread.h>
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
+
 /* Harness Specific Include Files. */
 #include "test.h"
 
@@ -62,7 +67,7 @@ extern "C"{
 #define PXP_BUFFER_SIZE (BUFFER_WIDTH*BUFFER_HEIGHT)
 #define MAX_WAIT 4
 /*update interval in us*/
-#define UPDATE_INTERVAL 500
+#define UPDATE_INTERVAL 1000
 /*global virables*/
 extern epdc_opts m_opt;
 
@@ -71,7 +76,7 @@ int fb_fd; /* Framebuffer device file descriptor            */
 struct fb_fix_screeninfo fb_info; /* Framebuffer constant information */
 unsigned char  *fb_mem_ptr;   /* Pointer to the mapped momory of the fb device */
 sigset_t sigset;
-int quitflag;
+static int quitflag = 0;
 unsigned long last_t = 0;
 /*local functions*/
 int get_modeinfo(struct fb_var_screeninfo *info);
@@ -179,6 +184,11 @@ static BOOL update_once(void * p_update)
   struct mxcfb_update_data *  p_im_update = (struct mxcfb_update_data *)p_update;
    /*do not use alt buffer*/
    p_im_update->use_alt_buffer = 0;
+	 printf("l = %d t= %d w = %d h = %d\n",
+	 p_im_update->update_region.left,
+	 p_im_update->update_region.top,
+	 p_im_update->update_region.width,
+	 p_im_update->update_region.height);
 #if 0
   /*step 2: update and wait finished*/
   while(count--)
@@ -227,16 +237,21 @@ static BOOL update_once(void * p_update)
 
 static BOOL single_update(void * p_update)
 {
- /*step 1: set up update data*/
+	/*step 1: set up update data*/
   int  wait_time = 0;
   int count = 100;
+	pid_t tid = syscall(SYS_gettid);
   struct mxcfb_update_data *  p_im_update = (struct mxcfb_update_data *)p_update;
-   /*do not use alt buffer*/
-   p_im_update->use_alt_buffer = 0;
+	/*do not use alt buffer*/
+	p_im_update->use_alt_buffer = 0;
+	printf("process %d runing at t= %d, l = %d, w= %d, h = %d\n",tid, p_im_update->update_region.top,p_im_update->update_region.left,
+	p_im_update->update_region.width,p_im_update->update_region.height);
+
   /*step 2: update and wait finished*/
   while(count--)
   {
 		/*black and white alternative*/
+#if 1
 		CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
 		while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
 		{
@@ -247,10 +262,12 @@ static BOOL single_update(void * p_update)
 				break;
 			}
 		}
+#endif
+		usleep(100);
+		printf("process %d update\n",tid);
 		if(quitflag)
-			return TRUE;
+			goto QUIT;
 		wait_time = 0;
-		printf("partial mode next update\n");
   }
   /*step 3: now using full update mode*/
   count = 100;
@@ -258,6 +275,7 @@ static BOOL single_update(void * p_update)
   while(count--)
   {
 		/*black and white alternative*/
+	#if 1
 		CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
 		while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
 		{
@@ -268,11 +286,15 @@ static BOOL single_update(void * p_update)
 				break;
 			}
 		}
+	#endif
+		usleep(100);
+		printf("process %d full update\n",tid);
 		if(quitflag)
-			return TRUE;
+			goto QUIT;
 		wait_time = 0;
-		printf("next update\n");
   }
+QUIT:
+	printf("process %d quit\n", tid);
   return TRUE;
 }
 
@@ -280,12 +302,13 @@ static void draw_thread(int *pon)
 {
 	while(*pon == 1)
 	{
-		if(quitflag)return;
+		if(quitflag)break;
 		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
 		usleep(UPDATE_INTERVAL);
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
 		usleep(UPDATE_INTERVAL);
 	}
+	printf("draw quit\n");
 }
 
 static int signal_thread(void *arg)
@@ -314,30 +337,32 @@ BOOL test_rate_update()
 	CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 	while(i++ < FRAME_CNT)
 	{
-        int x,y,w,h;
+    int x,y,w,h;
 		x = 0;
 		y = 0;
 		w = (mode_info.xres>>1)&(~0x03);
 		h = mode_info.yres;
-		im_update[i].update_region.top = x;
-		im_update[i].update_region.left = y;
-		im_update[i].update_region.width = w;
-		im_update[i].update_region.height = h;
-		im_update[i].waveform_mode = 257;
-		im_update[i].update_marker = 0x300;
-		im_update[i].temp = 24;
+		im_update[0].update_region.top = y;
+		im_update[0].update_region.left = x;
+		im_update[0].update_region.width = w;
+		im_update[0].update_region.height = h;
+		im_update[0].waveform_mode = 257;
+		im_update[0].update_marker = 0x300;
+		im_update[0].temp = 24;
+		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
 		update_once(&(im_update[0]));
+		draw_pattern(fb_fd,fb_mem_ptr,128,128,128);
 		x = (mode_info.xres>>1)&(~0x03);
 		y = 0;
 		w = (mode_info.xres>>1)&(~0x03);
 		h = mode_info.yres;
-		im_update[i].update_region.top = x;
-		im_update[i].update_region.left = y;
-		im_update[i].update_region.width = w;
-		im_update[i].update_region.height = h;
-		im_update[i].waveform_mode = 257;
-		im_update[i].update_marker = 0x301;
-		im_update[i].temp = 24;
+		im_update[1].update_region.top = y;
+		im_update[1].update_region.left = x;
+		im_update[1].update_region.width = w;
+		im_update[1].update_region.height = h;
+		im_update[1].waveform_mode = 257;
+		im_update[1].update_marker = 0x301;
+		im_update[1].temp = 24;
 		update_once(&(im_update[1]));
 	}
     if(last_t > 0)
@@ -349,9 +374,11 @@ BOOL test_max_update()
 {
    int state = 1;
    int i = 0, j = 0;
-#define MAX_CNT 32
-   struct mxcfb_update_data im_update[MAX_CNT];
-   pthread_t sigtid,drawid,updates_id[MAX_CNT];
+	 int id= 0;
+#define MAX_CNT_X 50
+#define MAX_CNT_Y 1
+   struct mxcfb_update_data im_update[MAX_CNT_X * MAX_CNT_Y];
+   pthread_t sigtid,drawid,updates_id[MAX_CNT_X * MAX_CNT_Y];
    sigemptyset(&sigset);
    sigaddset(&sigset, SIGINT);
    pthread_sigmask(SIG_BLOCK, &sigset, NULL);
@@ -362,25 +389,26 @@ BOOL test_max_update()
 		struct fb_var_screeninfo mode_info;
 		CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 		memset(im_update, 0, sizeof(im_update));
-		for(i = 0 ; i < MAX_CNT / 2; i++)
-			for(j = 0; j < MAX_CNT / 2; j++)
+		for(i = 0 ; i < MAX_CNT_X; i++)
+			for(j = 0; j < MAX_CNT_Y; j++)
 			{
 			int x,y,w,h;
-			x = i*((2 * mode_info.xres/MAX_CNT)&(~0x03));
-			y = j*((2 * mode_info.yres/MAX_CNT)&(~0x03));
-			w = (2 * mode_info.xres/MAX_CNT)&(~0x03);
-			h = (2 * mode_info.yres/MAX_CNT)&(~0x03);
-			im_update[i].update_region.top = x;
-			im_update[i].update_region.left = y;
+			x = i*(mode_info.xres/MAX_CNT_X);
+			y = j*(mode_info.yres/MAX_CNT_Y);
+			w = (mode_info.xres/MAX_CNT_X)&(~0x03);
+			h = (mode_info.yres/MAX_CNT_Y)&(~0x03);
+			im_update[i].update_region.top = y;
+			im_update[i].update_region.left = x;
 			im_update[i].update_region.width = w;
 			im_update[i].update_region.height = h;
 			im_update[i].waveform_mode = 257;
 			im_update[i].update_marker = i + 0x200;
 			im_update[i].temp = 24;
-			pthread_create(&(updates_id[i]), NULL,
+			pthread_create(&(updates_id[id++]), NULL,
 				(void *)&single_update, (void *)&(im_update[i]));
+			printf("carete pid %d\n", updates_id[i]);
 			}
-		for (i = 0; i < MAX_CNT; i++)
+		for (i = 0; i < (MAX_CNT_X * MAX_CNT_Y); i++)
 		{
 			if (updates_id[i] != 0)
 				pthread_join(updates_id[i], NULL);
