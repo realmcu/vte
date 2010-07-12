@@ -82,12 +82,37 @@ BOOL draw_test();
  */
 BOOL draw_test()
 {
- tst_resm(TINFO, "draw a green screen in bg ground");
- if( TPASS != draw_pattern(fb_fd,fb_mem_ptr,0,255,0))
- {
-   tst_resm(TINFO, "fail to draw patter on bg");
-   return FALSE;
- }
+	int wait_time = 0;
+	int update_marker = 0x101;
+   struct fb_var_screeninfo mode_info;
+  struct mxcfb_update_data im_update = {
+  {0,0,16,16},/*region round to 8*/
+  257,/*waveform mode 0-255, 257 auto*/
+  0, /*update mode 0(partial),1(Full)*/
+  update_marker,/*update_marker assigned by user*/
+  0x56,/*use ambient temperature set*/
+  0,/*do not use alt buffer*/
+  {0,0,0,{0,0,0,0}}
+  };
+	im_update.update_region.width = mode_info.xres;
+	im_update.update_region.height = mode_info.yres;
+	tst_resm(TINFO, "draw a white in bg ground");
+	if( TPASS != draw_pattern(fb_fd,fb_mem_ptr,255,255,255))
+	{
+		tst_resm(TINFO, "fail to draw patter on bg");
+		return FALSE;
+	}
+	printf("updating the screen now\n");
+	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
+	{
+		wait_time++;
+		if(wait_time > MAX_WAIT)
+		{
+			printf("full mode wait time exceed!!!\n");
+			return FALSE;
+		}
+	}
  return TRUE;
 }
 
