@@ -184,11 +184,13 @@ static BOOL update_once(void * p_update)
   struct mxcfb_update_data *  p_im_update = (struct mxcfb_update_data *)p_update;
    /*do not use alt buffer*/
    p_im_update->use_alt_buffer = 0;
+	 /*
 	 printf("l = %d t= %d w = %d h = %d\n",
 	 p_im_update->update_region.left,
 	 p_im_update->update_region.top,
 	 p_im_update->update_region.width,
 	 p_im_update->update_region.height);
+	 */
 #if 0
   /*step 2: update and wait finished*/
   while(count--)
@@ -228,9 +230,12 @@ static BOOL update_once(void * p_update)
   }
   gettimeofday(&tv, &tz);
   et = tv.tv_usec + tv.tv_sec * 1000000;
-  last_t += (et - st);
+  if(et > st)
+		last_t += (et - st);
+	else
+		printf("WARNING!!! gettimeof day wrong");
   wait_time = 0;
-  printf("next update\n");
+  /*printf("next update\n");*/
   }
   return TRUE;
 }
@@ -366,7 +371,7 @@ BOOL test_rate_update()
 		update_once(&(im_update[1]));
 	}
     if(last_t > 0)
-		printf("total update fps is:%f",(float)(FRAME_CNT/last_t));
+		printf("total update fps is:%f\n",(float)((FRAME_CNT*1000000.0f)/last_t));
     return TRUE;
 }
 
@@ -375,8 +380,8 @@ BOOL test_max_update()
    int state = 1;
    int i = 0, j = 0;
 	 int id= 0;
-#define MAX_CNT_X 50
-#define MAX_CNT_Y 1
+#define MAX_CNT_X 1
+#define MAX_CNT_Y 2
    struct mxcfb_update_data im_update[MAX_CNT_X * MAX_CNT_Y];
    pthread_t sigtid,drawid,updates_id[MAX_CNT_X * MAX_CNT_Y];
    sigemptyset(&sigset);
