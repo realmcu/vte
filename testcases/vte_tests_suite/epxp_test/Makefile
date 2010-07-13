@@ -1,6 +1,6 @@
 # list of platforms which want this test case
 
-#CC = $(CROSS_COMPILER)gcc
+CC = $(CROSS_COMPILER)gcc
 #CFLAGS +=
 
 SRC = $(wildcard *.c)
@@ -20,7 +20,7 @@ LIB:
 
 .PHONY: clean
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJ) $(TARGET)
 	$(MAKE) -C lib clean
 
 $(OBJ): $(SRC)

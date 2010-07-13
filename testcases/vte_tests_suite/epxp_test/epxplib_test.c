@@ -19,7 +19,8 @@
 #include <pthread.h>
 #include <signal.h>
 #include <string.h>
-
+#include <linux/fb.h>
+#include <linux/mxcfb.h>
 #include "pxp_lib.h"
 
 struct mrect{
@@ -46,16 +47,19 @@ struct mrect altresize;/*alternaticely size*/
 int vk;/*o0verlay colr key*/
 int ga;/*global alpha*/
 int la;/*local alpha*/
-} m_opts;
+};
 
-pthread_t * tid;
 int n_inst = 0;
+int fd_fb = 0;
 unsigned short * fb_map;
+char fb_device[] = "/dev/fb";
+int quitflag = 0;
+unsigned int marker_val = 1;
+sigset_t sigset;
 
 static void copy_image_to_fb(int left, int top, int width, int height, uint *img_ptr, struct fb_var_screeninfo *screen_info)
 {
 	int i;
-	uint *fb_ptr = (uint *)fb0;
 	uint bytes_per_pixel;
 
 	if ((width > screen_info->xres) || (height > screen_info->yres)) {
@@ -66,7 +70,7 @@ static void copy_image_to_fb(int left, int top, int width, int height, uint *img
 	bytes_per_pixel = screen_info->bits_per_pixel / 8;
 
 	for (i = 0; i < height; i++) {
-		memcpy(fb_ptr + ((i + top) * screen_info->xres + left) * bytes_per_pixel / 4,
+		memcpy(fb_map + ((i + top) * screen_info->xres + left) * bytes_per_pixel / 4,
 			img_ptr + (i * width) * bytes_per_pixel /4,
 			width * bytes_per_pixel);
 	}
@@ -93,12 +97,12 @@ static int update_to_display(int left, int top, int width, int height, int wave_
 		upd_data.update_marker = 0;
 	}
 
-	retval = ioctl(fd_fb0, MXCFB_SEND_UPDATE, &upd_data);
+	retval = ioctl(fd_fb, MXCFB_SEND_UPDATE, &upd_data);
 	while (retval < 0 && quitflag == 0) {
 		/* We have limited memory available for updates, so wait and
 		 * then try again after some updates have completed */
 		sleep(1);
-		retval = ioctl(fd_fb0, MXCFB_SEND_UPDATE, &upd_data);
+		retval = ioctl(fd_fb, MXCFB_SEND_UPDATE, &upd_data);
 	}
 
 //	if (wave_mode == WAVEFORM_MODE_AUTO)
@@ -106,7 +110,7 @@ static int update_to_display(int left, int top, int width, int height, int wave_
 
 	if (wait_for_complete) {
 		/* Wait for update to complete */
-		retval = ioctl(fd_fb0, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &upd_data.update_marker);
+		retval = ioctl(fd_fb, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &upd_data.update_marker);
 		if (retval < 0) {
 			printf("Wait for update complete failed.  Error = 0x%x", retval);
 			return retval;
@@ -115,11 +119,9 @@ static int update_to_display(int left, int top, int width, int height, int wave_
 	return 0;
 }
 
-
-int run_test()
+int run_test(void * p_opts)
 {
-	int fd,fd_fb;
-	int ret = 0;
+	int ret = 0,i;
 	int width = 640;
 	int height = 480;
 	int g_fb0_size = 0;
@@ -130,10 +132,23 @@ int run_test()
 	struct fb_var_screeninfo var;
 	struct fb_fix_screeninfo fix;
 	char fb_device[] = "/dev/fb0";
+	struct S_OPT im_opts;
 
-	ioctl(fd_fb0, FBIOGET_VSCREENINFO, &var);
-	width = m_opts.rsize.w == 0? width:m_opts.rsize.w;
-	height = m_opts.rsize.h == 0? height:m_opts.rsize.h;
+  if(p_opts == NULL)
+		return -1;
+
+	memcpy(&im_opts,p_opts,sizeof(struct S_OPT));
+  if(fd_fb == 0)
+	{
+		if ((fd_fb = open(fb_device, O_RDWR )) < 0)
+		{
+			printf("Unable to open frame buffer\n");
+			return 1;
+		}
+	}
+	ioctl(fd_fb, FBIOGET_VSCREENINFO, &var);
+	width = im_opts.rsize.w == 0? width:im_opts.rsize.w;
+	height = im_opts.rsize.h == 0? height:im_opts.rsize.h;
 	ret = pxp_init();
 	if (ret < 0) {
 		printf("pxp init err\n");
@@ -175,29 +190,29 @@ int run_test()
 	proc_data = &pxp_conf->proc_data;
 
 	/* Initialize non-channel-specific PxP parameters */
-	proc_data->srect.left = m_opt.rsize.l;
-	proc_data->srect.top = m_opt.rsize.t;
-	proc_data->drect.left = m_opt.rsize.l;
-	proc_data->drect.top = m_opt.rsize.t;
+	proc_data->srect.left = im_opts.rsize.l;
+	proc_data->srect.top = im_opts.rsize.t;
+	proc_data->drect.left = im_opts.rsize.l;
+	proc_data->drect.top = im_opts.rsize.t;
 	proc_data->srect.width = width;
 	proc_data->srect.height = height;
 	proc_data->drect.width =  width;
 	proc_data->drect.height = height;
-	proc_data->scaling = m_opts.scale;
-	proc_data->hflip = m_opts.hflip;
-	proc_data->vflip = m_opts.vflip;
-	proc_data->rotate = m_opts.rot;
-	proc_data->bgcolor = m_opts.bk;
-	proc_data->overlay_state = m_opts.altresize.w == 0?0: 1;
-	proc_data->lut_transform = m_opts.l == 0 ? PXP_LUT_NONE:PXP_LUT_INVERT;
+	proc_data->scaling = im_opts.scale;
+	proc_data->hflip = im_opts.hflip;
+	proc_data->vflip = im_opts.vflip;
+	proc_data->rotate = im_opts.rot;
+	proc_data->bgcolor = im_opts.bk;
+	proc_data->overlay_state = im_opts.altresize.w == 0?0: 1;
+	proc_data->lut_transform = im_opts.l == 0 ? PXP_LUT_NONE:PXP_LUT_INVERT;
 	/*
 	 * Initialize S0 parameters
 	 */
 	pxp_conf->s0_param.pixel_fmt = PXP_PIX_FMT_RGB565;
 	pxp_conf->s0_param.width = width;
 	pxp_conf->s0_param.height = height;
-	pxp_conf->s0_param.color_key = m_opts.k;
-	pxp_conf->s0_param.color_key_enable = m_opts.k == 0? false:true;
+	pxp_conf->s0_param.color_key = im_opts.k;
+	pxp_conf->s0_param.color_key_enable = im_opts.k == 0? false:true;
 	pxp_conf->s0_param.paddr = mem.phys_addr;
 
 	printf("pxp_test s0 paddr %08x\n", pxp_conf->s0_param.paddr);
@@ -206,15 +221,15 @@ int run_test()
 	 * No overlay will be used for PxP operation
 	 */
 	 for (i=0; i < 8; i++) {
-		pxp_conf->ol_param[i].combine_enable = m_opts.altresize.w ==0?false:true;
-		pxp_conf->ol_param[i].width = m_opts.altresize.w;
-		pxp_conf->ol_param[i].height = m_opts.altresize.h;
+		pxp_conf->ol_param[i].combine_enable = im_opts.altresize.w ==0?false:true;
+		pxp_conf->ol_param[i].width = im_opts.altresize.w;
+		pxp_conf->ol_param[i].height = im_opts.altresize.h;
 		pxp_conf->ol_param[i].pixel_fmt = PXP_PIX_FMT_RGB565;
-		pxp_conf->ol_param[i].color_key_enable = m_opts.vk == 0? false:true;
-		pxp_conf->ol_param[i].color_key = m_opts.vk;
-		pxp_conf->ol_param[i].global_alpha_enable = m_opts.alpha;
-		pxp_conf->ol_param[i].global_alpha = m_opts.ga;
-		pxp_conf->ol_param[i].local_alpha_enable = m_opts.la;
+		pxp_conf->ol_param[i].color_key_enable = im_opts.vk == 0? false:true;
+		pxp_conf->ol_param[i].color_key = im_opts.vk;
+		pxp_conf->ol_param[i].global_alpha_enable = im_opts.alpha;
+		pxp_conf->ol_param[i].global_alpha = im_opts.ga;
+		pxp_conf->ol_param[i].local_alpha_enable = im_opts.la;
 	}
 
 	/*
@@ -224,14 +239,10 @@ int run_test()
 	pxp_conf->out_param.width = width;
 	pxp_conf->out_param.height = height;
 	pxp_conf->out_param.pixel_fmt = PXP_PIX_FMT_GREY;
-	if ((fd_fb = open(fb_device, O_RDWR )) < 0) {
-		printf("Unable to open frame buffer\n");
-		goto err3;
-	}
 	if (ioctl(fd_fb, FBIOGET_FSCREENINFO, &fix) < 0) {
 		printf("FBIOGET_FSCREENINFO error!\n");
 		close(fd_fb);
-		goto err3;
+		goto err2;
 	}
 	pxp_conf->out_param.paddr = fix.smem_start;
 	printf("out addr (smem_start): 0x%08x\n", pxp_conf->out_param.paddr);
@@ -239,19 +250,19 @@ int run_test()
 	ret = pxp_config_channel(&pxp_chan, pxp_conf);
 	if (ret < 0) {
 		printf("pxp config channel err\n");
-		goto err3;
+		goto err2;
 	}
 
 	ret = pxp_start_channel(&pxp_chan);
 	if (ret < 0) {
 		printf("pxp start channel err\n");
-		goto err3;
+		goto err2;
 	}
 
 	ret = pxp_wait_for_completion(&pxp_chan, 3);
 	if (ret < 0) {
 		printf("pxp wait for completion err\n");
-		goto err3;
+		goto err2;
 	}
 
 	var.bits_per_pixel = 8;
@@ -261,10 +272,10 @@ int run_test()
 	var.yoffset = 0;
 	var.rotate = FB_ROTATE_UR;
 	var.activate = FB_ACTIVATE_FORCE;
-	ret = ioctl(fd_fb0, FBIOPUT_VSCREENINFO, &var);
+	ret = ioctl(fd_fb, FBIOPUT_VSCREENINFO, &var);
 	if (ret < 0)
 	{
-		dbg(DBG_ERR, "FBIOPUT_VSCREENINFO error\n");
+		printf("FBIOPUT_VSCREENINFO error\n");
 		goto err4;
 	}
   g_fb0_size = var.xres * var.yres * var.bits_per_pixel / 8;
@@ -277,25 +288,23 @@ int run_test()
 		goto err4;
 	}
 
-	if (pattern->rotate % 180) {
+	if (im_opts.rot % 180) {
 		width = height;
 		height = width;
 	}
-	copy_image_to_fb(pattern->disp_left, pattern->disp_top,
-			 width, height, (void *)mem_o.virt_uaddr, &var);
+	copy_image_to_fb(proc_data->srect.left, proc_data->srect.top,
+			 width, height, (void *)mem.virt_uaddr, &var);
 
 	printf("Update to display.\n");
 	printf("w/h %d/%d\n", width ,height);
-	update_to_display(pattern->disp_left, pattern->disp_top,
+	update_to_display(proc_data->srect.left, proc_data->srect.top,
 			  width, height, WAVEFORM_MODE_AUTO, true);
 
-	return 0;
-
+ ret = 0;
 err4:
-	close(fd_fb0);
-	close(fd);
-err3:
-	pxp_put_mem(&mem_o);
+	if(fd_fb != 0)
+		close(fd_fb);
+	fd_fb = 0;
 err2:
 	pxp_put_mem(&mem);
 err1:
@@ -303,13 +312,47 @@ err1:
 	pxp_release_channel(&pxp_chan);
 err0:
 	pxp_uninit();
-	return 1;
+	return ret;
 }
+
+
+static int signal_thread(void *arg)
+{
+	int sig, err;
+
+	pthread_sigmask(SIG_BLOCK, &sigset, NULL);
+
+	while (1) {
+		err = sigwait(&sigset, &sig);
+		if (sig == SIGINT) {
+			printf("Ctrl-C received\n");
+		} else {
+			printf("Unknown signal. Still exiting\n");
+		}
+		quitflag = 1;
+		break;
+	}
+	return 0;
+}
+
 
 int main(int argc, char ** argv)
 {
-  int oc;
-	memset(m_opts,0,sizeof(m_opts));
+  int oc,ret = 0;
+	pthread_t sigtid;
+	struct S_OPT m_opts;
+
+	sigemptyset(&sigset);
+	sigaddset(&sigset, SIGINT);
+	pthread_sigmask(SIG_BLOCK, &sigset, NULL);
+	pthread_create(&sigtid, NULL, (void *)&signal_thread, NULL);
+
+	memset(&m_opts,0,sizeof(struct S_OPT));
+	if ((fd_fb = open(fb_device, O_RDWR )) < 0) {
+		printf("Unable to open frame buffer\n");
+		return -1;
+	}
+	m_opts.m = 1;
   while((oc = getopt(argc, argv, "VHr:s:l:m:azc:k:o:")) != -1)
   {
 		switch(oc)
@@ -355,7 +398,7 @@ int main(int argc, char ** argv)
 				sscanf(optarg,"%d:%d:%d:%d:%d:%d:%d",&(m_opts.altresize.l),
 				&(m_opts.altresize.t),
 				&(m_opts.altresize.w),
-				&(m_opts.altresize.h)
+				&(m_opts.altresize.h),
 				&(m_opts.vk),
 				&(m_opts.ga),
 				&(m_opts.la));
@@ -370,7 +413,7 @@ int main(int argc, char ** argv)
 	m_opts.rsize.l,
 	m_opts.rsize.t,
 	m_opts.rsize.w,
-	m_opts.rsize.h,);
+	m_opts.rsize.h);
   printf("setings invert lut = %s\n",
 	m_opts.l == 1?"on":"off");
   printf("instance = %d\n",m_opts.m);
@@ -383,16 +426,39 @@ int main(int argc, char ** argv)
 	m_opts.altresize.l,
 	m_opts.altresize.t,
 	m_opts.altresize.w,
-	m_opts.altresize.h,);
+	m_opts.altresize.h);
 	printf("vertical flip %s\n", m_opts.vflip == 1? "on":"off");
 	printf("horlizontal flip %s\n",m_opts.hflip == 1? "on":"off");
 	printf("scale %d\n",m_opts.scale);
 	printf("back ground color %d\n", m_opts.bk);
 	printf("overlay color key %d\n", m_opts.vk);
 	printf("global alpha %d\n", m_opts.ga);
-	printf("local alpha %d\n", m_opts.la)
-	if(run_test() == 0)
-		return 0;
-	else
-		return 1;
+	printf("local alpha %d\n", m_opts.la);
+	printf("run %d instance\n", m_opts.m);
+  if(m_opts.m)
+	{
+		int i = 0;
+		pthread_t * pids = NULL;
+		pids = (pthread_t *)malloc(m_opts.m*sizeof(pthread_t));
+		for(i= 0; i < m_opts.m ; i++)
+		{
+			pids[i] = 0;
+			pthread_create(&(pids[i]), NULL,
+			(void *)&run_test, (void *)&(m_opts));
+		}
+		for(i = 0; i < m_opts.m; i++)
+		{
+			int tret = 0;
+			if(pids[i] != 0)
+				pthread_join(pids[i], (void **)&tret);
+			ret += tret;
+		}
+		if(pids != NULL)
+			free(pids);
+	}
+	pthread_join(sigtid, NULL);
+OK_OUT:
+	return ret;
+NG_OUT:
+	return 1;
 }
