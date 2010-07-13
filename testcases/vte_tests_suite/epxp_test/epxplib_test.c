@@ -36,7 +36,6 @@ struct mrect rsize; /*resize*/
 int l;/*invert*/
 int m;/*multi-instance*/
 int alpha;/*alpha value*/
-int z;/*change display*/
 int c;/*frame count*/
 int k;/*color key*/
 int scale;/*scale*/
@@ -352,7 +351,13 @@ int main(int argc, char ** argv)
 		printf("Unable to open frame buffer\n");
 		return -1;
 	}
+	/*default setting goes here*/
 	m_opts.m = 1;
+	m_opts.rsize.l = 0;
+	m_opts.rsize.t = 0;
+	m_opts.rsize.w = 512;
+	m_opts.rsize.h = 512;
+
   while((oc = getopt(argc, argv, "VHr:s:l:m:azc:k:o:")) != -1)
   {
 		switch(oc)
@@ -385,9 +390,6 @@ int main(int argc, char ** argv)
 			case 'a':
 				m_opts.alpha = 1;
 				break;
-			case 'z':
-				m_opts.z = atoi(optarg);
-				break;
 			case 'c':
 				m_opts.c = atoi(optarg);
 				break;
@@ -418,8 +420,6 @@ int main(int argc, char ** argv)
 	m_opts.l == 1?"on":"off");
   printf("instance = %d\n",m_opts.m);
   printf("alpha = %d\n",m_opts.alpha);
-  printf("loop mode for test = %s\n",
-	m_opts.z==1?"on":"off");
   printf("frame count = %d\n",m_opts.c);
   printf("color key = %x\n",m_opts.k);
   printf("alternative size = %d:%d:%d:%d\n",
