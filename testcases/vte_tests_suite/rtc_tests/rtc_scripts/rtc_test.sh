@@ -114,9 +114,10 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 
 date -u 032116582008
+date "2010-07-14 10:06:00"
 hwclock --systohc
 #only check the year suppose enough
-ret=$(hwclock | grep 2008 | wc -l)
+ret=$(hwclock | grep 2010 | wc -l)
 
 if [ $ret ]
 then
