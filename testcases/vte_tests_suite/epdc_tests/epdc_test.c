@@ -99,10 +99,11 @@ BOOL draw_test()
   257,/*waveform mode 0-255, 257 auto*/
   0, /*update mode 0(partial),1(Full)*/
   update_marker,/*update_marker assigned by user*/
-  0x56,/*use ambient temperature set*/
+  TEMP_USE_AMBIENT,/*use ambient temperature set*/
   0,/*do not use alt buffer*/
   {0,0,0,{0,0,0,0}}
   };
+	CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 	im_update.update_region.width = mode_info.xres;
 	im_update.update_region.height = mode_info.yres;
 	tst_resm(TINFO, "draw a white in bg ground");
@@ -244,7 +245,7 @@ static BOOL single_update(void * p_update)
 {
 	/*step 1: set up update data*/
   int  wait_time = 0;
-  int count = 100;
+  int count = 10;
 	pid_t tid = syscall(SYS_gettid);
   struct mxcfb_update_data *  p_im_update = (struct mxcfb_update_data *)p_update;
 	/*do not use alt buffer*/
@@ -275,7 +276,7 @@ static BOOL single_update(void * p_update)
 		wait_time = 0;
   }
   /*step 3: now using full update mode*/
-  count = 100;
+  count = 10;
   p_im_update->update_mode = 1;
   while(count--)
   {
@@ -378,10 +379,11 @@ BOOL test_rate_update()
 BOOL test_max_update()
 {
    int state = 1;
+	 int ret = 0;
    int i = 0, j = 0;
 	 int id= 0;
-#define MAX_CNT_X 1
-#define MAX_CNT_Y 2
+#define MAX_CNT_X 5
+#define MAX_CNT_Y 5
    struct mxcfb_update_data im_update[MAX_CNT_X * MAX_CNT_Y];
    pthread_t sigtid,drawid,updates_id[MAX_CNT_X * MAX_CNT_Y];
    sigemptyset(&sigset);
@@ -415,14 +417,18 @@ BOOL test_max_update()
 			}
 		for (i = 0; i < (MAX_CNT_X * MAX_CNT_Y); i++)
 		{
+			void * pret = NULL;
 			if (updates_id[i] != 0)
-				pthread_join(updates_id[i], NULL);
+				pthread_join(updates_id[i], &(pret));
+			ret = ((BOOL)pret)?0:ret + 1;
+			printf("%d return with %s\n", updates_id[i], ret == 0 ? "OK":"FAIL");
 		}
-		pthread_join(sigtid,NULL);
+		state = 0;
+		//pthread_join(sigtid,NULL);
 		pthread_join(drawid,NULL);
    }
    state = 0;
-   return TRUE;
+	 return ret == 0? TRUE: FALSE;
 }
 
 BOOL test_collision_update()
@@ -440,7 +446,7 @@ struct mxcfb_update_data im_update = {
   257,/*waveform mode 0-255, 257 auto*/
   0, /*update mode 0(partial),1(Full)*/
   update_marker,/*update_marker assigned by user*/
-  0x56,/*use ambient temperature set*/
+  TEMP_USE_AMBIENT,/*use ambient temperature set*/
   1,/*enable alt buffer*/
   {0,0,0,{0,0,0,0}}/*set this later*/
   };
@@ -591,7 +597,7 @@ struct mxcfb_update_data im_update = {
   257,/*waveform mode 0-255, 257 auto*/
   0, /*update mode 0(partial),1(Full)*/
   update_marker,/*update_marker assigned by user*/
-  0x56,/*use ambient temperature set*/
+  TEMP_USE_AMBIENT,/*use ambient temperature set*/
   1,/*enable alt buffer*/
   {0,0,0,{0,0,0,0}}/*set this later*/
   };
@@ -722,7 +728,7 @@ BOOL full_update()
   257,/*waveform mode 0-255, 257 auto*/
   0, /*update mode 0(partial),1(Full)*/
   update_marker,/*update_marker assigned by user*/
-  0x56,/*use ambient temperature set*/
+  TEMP_USE_AMBIENT,/*use ambient temperature set*/
   0,/*do not use alt buffer*/
   {0,0,0,{0,0,0,0}}
   };
@@ -749,6 +755,7 @@ BOOL full_update()
 	}
   }
   wait_time = 0;
+	return TRUE;
 }
 
 BOOL test_wait_update()
@@ -763,7 +770,7 @@ BOOL test_wait_update()
   257,/*waveform mode 0-255, 257 auto*/
   0, /*update mode 0(partial),1(Full)*/
   update_marker,/*update_marker assigned by user*/
-  0x56,/*use ambient temperature set*/
+  TEMP_USE_AMBIENT,/*use ambient temperature set*/
   0,/*do not use alt buffer*/
   {0,0,0,{0,0,0,0}}
   };
