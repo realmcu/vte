@@ -18,6 +18,9 @@ all: $(OBJ) LIB
 LIB:
 	$(MAKE) -C lib
 
+install:
+	-ln $(TARGET) ../../bin/
+
 .PHONY: clean
 clean:
 	rm -f $(OBJ) $(TARGET)
