@@ -456,7 +456,7 @@ int main(int argc, char ** argv)
 		if(pids != NULL)
 			free(pids);
 	}
-	pthread_join(sigtid, NULL);
+	/*pthread_join(sigtid, NULL);*/
 OK_OUT:
 	return ret;
 NG_OUT:
