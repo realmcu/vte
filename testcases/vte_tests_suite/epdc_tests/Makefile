@@ -9,7 +9,7 @@
 
 #CC = $(CROSS_COMPILER)gcc
 CC = $(CROSS_COMPILER)gcc
-CFLAGS += -I../../../include/ -I$(KLINUX_SRCDIR)/include
+CFLAGS += -I../../../include/ -I$(KLINUX_SRCDIR)/include -DUSE_PIC -trigraphs
 LDFLAGS += -L../../../lib -lltp -lpthread
 
 TARGET = epdc_test
