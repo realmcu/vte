@@ -64,6 +64,7 @@ typedef struct epdc_opts {
    int grayscale;
    int au;/*auto update or regional update*/
    int su;/*use alt update*/
+	 int rot;/*rotation mode*/
    struct mxcfb_update_data update;
    int wt;
  } epdc_opts;
