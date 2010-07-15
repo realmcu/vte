@@ -22,6 +22,7 @@
 #Spring Zhang                 11/05/2010     MX53:change SD partition 1 
 #                                            from relative cylinders
 #Spring Zhang                 23/06/2010     kernel change: get right block device size
+#Spring Zhang                 13/07/2010     Add MX53 SATA support
 #
 #notes:
 # -I insert modules(SD, ATA, V4L, BT, USBH or ALL)          
@@ -94,6 +95,15 @@ prepare_platform()
 		vte_name=imx51stack-vte-test;
 	fi
 
+	find=`cat /proc/cpuinfo | grep "Revision" | grep " 53.*" | wc -l`;
+	if [ $find -eq 1 ]; then
+   		platform=MX53
+		ata_dev_point=sda
+        if [ -e /dev/sda ]; then
+            ata_dev_point=/dev/sdb
+        fi
+	fi
+
 	echo $platform;
 	echo $ata_dev_point;
 	echo $vte_name;
@@ -113,8 +123,9 @@ modules_buildin()
 	for line in `ls /sys/block | grep sdd*`
 	do
 		#echo $line
-	        size=`cat /sys/block/$line/device/block:$line/size` 
-		if [ $? -ne 0 ]; then
+		if [ -e /sys/block/$line/device/block:$line/size ]; then
+			size=`cat /sys/block/$line/device/block:$line/size`
+		else 
 			size=`cat /sys/block/$line/device/block/$line/size`
 		fi
 	      	if [ $size -gt 33554432 ]; then
@@ -223,7 +234,6 @@ if [ $ata_buildin -eq 0 ]; then
 
 	line_num1=`cat /proc/partitions | wc -l`;
 
-	#if [ $platform = "MX31" ] || [ $platform = "MX32" ]; then
 	if [ $platform = "MX32" ]; then
 		find=`find /lib/modules/$sys_name -name ide-core.ko | wc -l`;
 		lsmod | grep ide-core;
@@ -260,7 +270,6 @@ if [ $ata_buildin -eq 0 ]; then
 		fi
 	fi
 
-	#if [ $platform = "MX35" ] || [ $platform = "MX37" ] || [ $platform = "MX51" ]; then
 	if [ $platform = "MX31" ] || [ $platform = "MX35" ] || [ $platform = "MX37" ] || [ $platform = "MX51" ]; then
 		find=`find /lib/modules/$sys_name -name pata_fsl.ko | wc -l`;
 		lsmod | grep pata_fsl;
@@ -284,8 +293,34 @@ if [ $ata_buildin -eq 0 ]; then
 		else
 			echo "ata: the modules have existed!"
 		fi
-
 	fi
+
+    #SATA
+    if [ "$platform" = "MX53" ]; then
+        find=`find /lib/modules/$sys_name -name ahci_platform.ko | wc -l`
+        lsmod |grep ahci_platform
+        if [ $? -ne 0 ]; then
+            if [ $find -eq 1 ]; then
+                modprobe ahci_platform
+                sleep 2
+
+                line_num2=`cat /proc/partitions | wc -l`;
+
+				if [ $line_num1 -lt $line_num2 ]; then
+					echo "ata: insmod modules success!";
+					let line=$line_num1-$line_num2;
+					dev_node_ata=`cat /proc/partitions | tail -n $line | head -n 1 | awk '{print $4}'`;
+					echo "the device node is:$dev_node_ata";
+					ata_dev_point=$dev_node_ata;
+				else
+					echo "ata: insmod modules fail!";
+				fi
+            fi
+        else
+            echo "ata: the modules have existed!"
+        fi
+    fi
+
 fi
 }
 
@@ -295,7 +330,6 @@ rmmod_ATA()
 	platform="MX31";
 	prepare_platform;
 
-	#if [ $platform = "MX31" ] || [ $platform = "MX32" ]; then
 	if [ $platform = "MX32" ]; then
 		lsmod | grep ide-core;
 		if [ $? -eq 0 ]; then
@@ -324,17 +358,27 @@ rmmod_ATA()
 		echo "ata: rmmod modules success!"
 	fi
 
-	#if [ $platform = "MX35" ] || [ $platform = "MX37" ] || [ $platform = "MX51" ]; then
 	if [ $platform = "MX31" ] || [ $platform = "MX35" ] || [ $platform = "MX37" ] || [ $platform = "MX51" ]; then
 		lsmod | grep pata_fsl;
-                if [ $? -eq 0 ]; then
-        		modprobe -r pata_fsl;
+        if [ $? -eq 0 ]; then
+            modprobe -r pata_fsl;
 			sleep 2;
 			echo "ata: rmmod modules success!"
 		else
 			echo "ata: the modules are not exist!"
 		fi
 	fi
+
+    if [ "$platform" = "MX53" ]; then
+        lsmod | grep ahci_platform
+        if [ $? -eq 0 ]; then
+            modprobe ahci_platform -r
+            sleep 2
+            echo "ata: rmmod modules success!"
+        else
+            echo "ata: the modules does not exist!"
+        fi
+    fi
 }
 
 insmod_V4L()
