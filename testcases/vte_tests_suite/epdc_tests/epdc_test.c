@@ -44,8 +44,9 @@ extern "C"{
 
 /* Verification Test Environment Include Files */
 #include "epdc_test.h"
-
-
+#ifdef USE_PIC
+#include "soc_blk.c"
+#endif
 /*********************************************************************************/
 /* Macro name:  CALL_IOCTL()                                                     */
 /* Description: Macro checks for any error in function execution                 */
@@ -86,6 +87,10 @@ int draw_pattern(int fd, unsigned char * pfb, int r, int g, int b );
 BOOL pan_test();
 BOOL draw_test();
 
+inline unsigned char  BOUND255(short a)
+{
+	return (a > 255) ? 255: (a < 0)? 0: a;
+}
 /*
  * Draw test
  */
@@ -982,7 +987,85 @@ int epdc_fb_test()
  return rv;
 }
 
+#ifdef USE_PIC
+int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
+{
+		struct pixel  px;
+    int           size;
+    int           i,j;
+    unsigned char      *fb_wr_ptr = pfb;
+		unsigned char * pdata;
+    int                act_mode;
+    int                rv = TPASS;
+    struct fb_fix_screeninfo fx_fb_info;       /* Framebuffer constant information              */
+    struct fb_var_screeninfo mode_info;
 
+    /* Print some fb information */
+    if ((ioctl(fd, FBIOGET_VSCREENINFO, &mode_info)) < 0)
+    {
+       perror("ioctl");
+       rv = TFAIL;
+       return rv;
+    }
+
+    /* Change activation flag and apply it */
+    act_mode = mode_info.activate;
+    mode_info.activate = FB_ACTIVATE_NOW | FB_ACTIVATE_FORCE;
+    if (ioctl(fd, FBIOPUT_VSCREENINFO, &mode_info))
+    {
+       perror("ioctl");
+       rv = TFAIL;
+       return rv;
+    }
+
+    CALL_IOCTL(ioctl(fd, FBIOGET_FSCREENINFO, &fx_fb_info));
+    /* Fill in the px struct */
+    px.bpp = mode_info.bits_per_pixel / 8;
+    px.xres = mode_info.xres;
+    px.yres = mode_info.yres;
+    px.r_field.offset = mode_info.red.offset;
+    px.r_field.length = mode_info.red.length;
+    px.g_field.offset = mode_info.green.offset;
+    px.g_field.length = mode_info.green.length;
+    px.b_field.offset = mode_info.blue.offset;
+    px.b_field.length = mode_info.blue.length;
+    px.trans = 0x00;
+    px.line_length = fx_fb_info.line_length / px.bpp;
+    size = px.line_length * px.yres;
+
+    for(j = 0; j < px.yres; j++)
+		{
+			for(i = 0 ; i < px.xres; i++)
+			{
+				unsigned long l = j * gimp_image.width + i;
+				if( i < gimp_image.width  || j < gimp_image.height)
+				{
+					px.r_color = gimp_image.pixel_data[l * 3];
+					px.g_color = gimp_image.pixel_data[l * 3 + 1];
+					px.b_color = gimp_image.pixel_data[l * 3 + 2];
+					fb_wr_ptr = draw_px(fb_wr_ptr, &px);
+				}else{
+					if(i %2 == 0)
+					{
+						px.r_color = 0;
+						px.g_color = 0;
+						px.b_color = 0; /* Set color values */
+					}else{
+						px.r_color = 255;
+						px.g_color = 255;
+						px.b_color = 255; /* Set color values */
+					}
+					fb_wr_ptr = draw_px(fb_wr_ptr, &px);
+				}
+			}
+		}
+	/* Restore activation flag */
+    mode_info.activate = act_mode;
+    ioctl(fd, FBIOPUT_VSCREENINFO, &mode_info);
+    return rv;
+
+}
+#else
 int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
 {
     struct pixel  px;
@@ -1043,7 +1126,7 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
     #endif
     return rv;
 }
-
+#endif
 /*===== draw_px =====*/
 /**
 @brief  Computes byte values from given color values depending on color depth and draws one pixel
@@ -1068,14 +1151,26 @@ unsigned char *draw_px(unsigned char *where, struct pixel *p)
 		return where;
 	}
 	/* Convert pixel color represented by 3 bytes to appropriate color depth */
+	if(p->r_field.offset == 0 &&  p->g_field.offset == 0 && p->b_field.offset == 0)
+	{
+		/*gray scale image*/
+		 #define PR (unsigned char)(0.257*256)
+		 #define PG (unsigned char)(0.504*256)
+		 #define PB (unsigned char)(0.098*256)
+		 unsigned char r = p->r_color;
+		 unsigned char g = p->g_color;
+		 unsigned char b = p->b_color;
+		 value = (unsigned char)BOUND255(((PR * r + PG * g + PB * b)>>8) + 16);
+	}else{
 	value = (p->r_color * (1 << p->r_field.length) / (1 << 8) ) << p->r_field.offset;
 	value |= (p->g_color * (1 << p->g_field.length) / (1 << 8) ) << p->g_field.offset;
 	value |= (p->b_color * (1 << p->b_field.length) / (1 << 8) ) << p->b_field.offset;
+	}
 	switch (p->bpp * 8)
 	{
 		case 8:
 			/*fix me*/
-			*where++ = value == 0? p->r_color:value;
+			*where++ = value;
 			break;
 		case 12 ... 16:
 			*where++ = *((unsigned char *)&value);
