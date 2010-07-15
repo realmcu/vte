@@ -417,9 +417,9 @@ BOOL test_max_update()
 			}
 		for (i = 0; i < (MAX_CNT_X * MAX_CNT_Y); i++)
 		{
-			void * pret = NULL;
+			int pret = 0;
 			if (updates_id[i] != 0)
-				pthread_join(updates_id[i], &(pret));
+				pthread_join(updates_id[i], (void **)&(pret));
 			ret = ((BOOL)pret)?0:ret + 1;
 			printf("%d return with %s\n", updates_id[i], ret == 0 ? "OK":"FAIL");
 		}
@@ -869,6 +869,7 @@ int epdc_fb_setup(void)
 		CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 		mode_info.bits_per_pixel = 8;
 		/*mode_info.grayscale = GRAYSCALE_8BIT;*/
+		mode_info.rotate = m_opt.rot;
 		mode_info.grayscale = m_opt.grayscale;
 		mode_info.yoffset = 0;
 		mode_info.activate = FB_ACTIVATE_FORCE;

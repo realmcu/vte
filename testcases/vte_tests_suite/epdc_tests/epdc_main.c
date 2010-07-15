@@ -112,7 +112,7 @@ void help(void)
 		printf("[-d /dev/fb0: fb device]\n");
 		printf("[-u <int> : auto update mode 0(partial)/1(full)]\n");
 		printf("[-s <string>: send update with format only in partial update]\n");
-		printf("[-r <int>: Rotation 0/1/2/3]\n");
+		printf("[-R <int>: Rotation 0/1/2/3]\n");
         return;
 }
 /* cleanup */
@@ -234,6 +234,10 @@ int main(int argc, char **argv)
 		}else{
 			m_opt.au = -1;
 		}
+		if (R_flag)
+		{
+			m_opt.rot = atoi(R_opt);
+		}
 		if(s_flag)
 		{
 		/*the phy addr will get from get_mem
@@ -258,7 +262,7 @@ int main(int argc, char **argv)
 		}
 
 		printf("current settings\n");
-		printf("TestID = %d \ndevice is %s \n\rwaveform setting is %d,%d,%d,%d,%d,%d \n\rtempture is %d\n\rgrayscale is %d \n\rauto update mode is %d \n\rupdate setting is %d \n",
+		printf("TestID = %d \ndevice is %s \n\rwaveform setting is %d,%d,%d,%d,%d,%d \n\rtempture is %d\n\rgrayscale is %d \n\rauto update mode is %d \n\rupdate setting is %d \n\r rotation is %d \n\r",
 		m_opt.Tid,
 		m_opt.dev,
 		m_opt.waveform.mode_init,
@@ -270,7 +274,8 @@ int main(int argc, char **argv)
 		m_opt.temp,
 		m_opt.grayscale,
 		m_opt.au,
-		m_opt.su
+		m_opt.su,
+		m_opt.rot
 		);
 		if(m_opt.su)
 		{
