@@ -8,7 +8,7 @@ OBJ=$(patsubst %.c,%.o,$(SRC))
 LIBPATH = .
 CFLAGS += -I$(KLINUX_SRCDIR)/include  -I./lib
 
-LIBS += -L$(LIBPATH)/lib -lpxp -lpthread
+LIBS += -L$(LIBPATH)/lib lib/libpxp.a -lpthread
 
 TARGET = epxp_test
 

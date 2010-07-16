@@ -2,7 +2,9 @@
  * pxp_lib - a user space library for PxP
  *
  * Copyright (C) 2010 Freescale Semiconductor, Inc.
- *
+ */
+
+/*
  * The code contained herein is licensed under the GNU Lesser General
  * Public License.  You may obtain a copy of the GNU Lesser General
  * Public License Version 2.1 or later at the following locations:
@@ -21,8 +23,6 @@
 #include <unistd.h>
 
 #include "pxp_lib.h"
-
-#define	PXP_FPGA
 
 #define	PXP_DEVICE_NAME	"/dev/pxp_device"
 
@@ -65,7 +65,7 @@ int pxp_request_channel(pxp_chan_handle_t *pxp_chan)
 	if (ret < 0)
 		return -1;
 
-	(*pxp_chan).chan_id = cid;
+	pxp_chan->chan_id = cid;
 	return 0;
 }
 
@@ -82,16 +82,16 @@ int pxp_config_channel(pxp_chan_handle_t *pxp_chan, struct pxp_config_data *pxp_
 	dbg(DBG_INFO, "chan_id %d\n\n", pxp_conf->chan_id);
 
 	ret = ioctl(fd, PXP_IOC_CONFIG_CHAN, pxp_conf);
-	if (ret < 0)
-		return -1;
 
-	return 0;
+	return ret;
 }
 
 int pxp_start_channel(pxp_chan_handle_t *pxp_chan)
 {
 	int ret = 0;
+
 	ret = ioctl(fd, PXP_IOC_START_CHAN, &(pxp_chan->chan_id));
+
 	return ret;
 }
 
@@ -102,14 +102,12 @@ int pxp_wait_for_completion(pxp_chan_handle_t *pxp_chan, int times)
 
 	while ((ret = ioctl(fd, PXP_IOC_WAIT4CMPLT, pxp_chan)) < 0) {
 		_times++;
-		if (_times >= times)
-			break;
+		if (_times >= times) {
+			return ret;
+		}
 	}
 
-	if (_times < times)
-		return 0;
-	else
-		return -1;
+	return ret;
 }
 
 void pxp_uninit(void)
@@ -161,14 +159,9 @@ int pxp_get_virtmem(struct pxp_mem_desc *mem)
 {
 	void *va_addr;
 
-#ifndef	PXP_FPGA
 	va_addr = mmap(NULL, mem->size, PROT_READ | PROT_WRITE,
 				      MAP_SHARED, fd, mem->phys_addr);
-#else
-	va_addr = mmap(NULL, mem->size, PROT_READ | PROT_WRITE,
-//				      MAP_SHARED, fd, 0);
-				      MAP_SHARED, fd, mem->phys_addr + 0x70000000);
-#endif
+
 	if (va_addr == MAP_FAILED) {
 		mem->virt_uaddr = 0;
 		dbg(DBG_ERR, "MAP_FAILED.\n");

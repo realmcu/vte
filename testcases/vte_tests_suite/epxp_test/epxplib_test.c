@@ -23,6 +23,12 @@
 #include <linux/mxcfb.h>
 #include "pxp_lib.h"
 
+#define USE_PIC
+
+#ifdef USE_PIC
+#include "fsl_logo_480x360.h"
+#endif
+
 struct mrect{
 int l;
 int t;
@@ -120,13 +126,13 @@ static int update_to_display(int left, int top, int width, int height, int wave_
 
 int run_test(void * p_opts)
 {
-	int ret = 0,i;
+	int ret = 0,i,j;
 	int width = 640;
 	int height = 480;
 	int g_fb0_size = 0;
 	struct pxp_config_data *pxp_conf = NULL;
 	struct pxp_proc_data *proc_data = NULL;
-	struct pxp_mem_desc mem;
+	struct pxp_mem_desc mem, mem_o;
 	pxp_chan_handle_t pxp_chan;
 	struct fb_var_screeninfo var;
 	struct fb_fix_screeninfo fix;
@@ -168,19 +174,28 @@ int run_test(void * p_opts)
 	}
 	printf("mem.virt_uaddr %08x, mem.phys_addr %08x, mem.size %d\n",
 				mem.virt_uaddr, mem.phys_addr, mem.size);
+	mem_o.size = width * height * 2;
+	ret = pxp_get_mem(&mem_o);
+	if (ret < 0) {
+		printf("get mem_o err\n");
+		goto err1;
+	}
+	printf("mem_o.virt_uaddr %08x, mem_o.phys_addr %08x, mem_o.size %d\n",
+				mem_o.virt_uaddr, mem_o.phys_addr, mem_o.size);
 
 	for (i = 0; i < width * height ; i++)
-		*((unsigned int*)mem.virt_uaddr + i) = 255;
-#if USE_PIC
-	for (i = 0; i < 360; i++)
+		*(((unsigned char *)(mem.virt_uaddr) + i)) = 255;
+#ifdef USE_PIC
+	printf("draw pic in\n");
+	for (j = 0; j < height; j++)
 	{
-		if(height < 360 && i >= 360)
+		if( j > 180)
 			break;
-		for(j = 0; j < 480; j++)
+		for(i = 0; i < width; i++)
 		{
-			if(width < 480 && j >= 480)
+			if(i > 240)
 				break;
-			(unsigned int*)mem.virt_uaddr[i * width + j] = fb_480x360_2[i * 480 + j];
+			((unsigned char*)(mem.virt_uaddr))[j * width + i] = fb_480x360_2[j * 240 + i];
 		}
 	}
 #endif
@@ -243,7 +258,7 @@ int run_test(void * p_opts)
 		close(fd_fb);
 		goto err2;
 	}
-	pxp_conf->out_param.paddr = fix.smem_start;
+	pxp_conf->out_param.paddr = mem_o.phys_addr;
 	printf("out addr (smem_start): 0x%08x\n", pxp_conf->out_param.paddr);
 
 	ret = pxp_config_channel(&pxp_chan, pxp_conf);
@@ -292,7 +307,7 @@ int run_test(void * p_opts)
 		height = width;
 	}
 	copy_image_to_fb(proc_data->srect.left, proc_data->srect.top,
-			 width, height, (void *)mem.virt_uaddr, &var);
+			 width, height, (void *)mem_o.virt_uaddr, &var);
 
 	printf("Update to display.\n");
 	printf("w/h %d/%d\n", width ,height);
@@ -306,6 +321,7 @@ err4:
 	fd_fb = 0;
 err2:
 	pxp_put_mem(&mem);
+	pxp_put_mem(&mem_o);
 err1:
 	free(pxp_conf);
 	pxp_release_channel(&pxp_chan);
