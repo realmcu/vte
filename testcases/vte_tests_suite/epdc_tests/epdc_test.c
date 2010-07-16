@@ -1038,7 +1038,7 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
 			for(i = 0 ; i < px.xres; i++)
 			{
 				unsigned long l = j * gimp_image.width + i;
-				if( i < gimp_image.width  || j < gimp_image.height)
+				if( i < gimp_image.width && j < gimp_image.height)
 				{
 					px.r_color = gimp_image.pixel_data[l * 3];
 					px.g_color = gimp_image.pixel_data[l * 3 + 1];
