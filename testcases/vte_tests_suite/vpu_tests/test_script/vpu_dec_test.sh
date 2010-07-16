@@ -93,7 +93,7 @@ check_platform()
 {
 LOCAL=0
 if [ $LOCAL -eq 1 ]; then
-PLATFORM="31 35 37 51"
+PLATFORM="31 35 37 51 53"
 #  CPU_REV=$(cat /proc/cpuinfo | grep "Revision")
   CPU_REV=$(platfm.sh)
   for i in $PLATFORM
@@ -481,6 +481,65 @@ RC=0
 return $RC
 }
 
+# Function:     test_case_14
+# Description   - Test if Real video  ok
+test_case_14()
+{
+#TODO give TCID
+TCID="vpu_REAL_test"
+#TODO give TST_COUNT
+TST_COUNT=1
+RC=1
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+#TODO add function test scripte here
+
+#install the firmware
+FIRMWARE_BASE=${STREAM_PATH}/vpu_firmware/VPU_firmware_release_v1.4.0
+FLIST=""
+
+if [ $TARGET == "51"  ]; then
+cp  /lib/firmware/vpu/vpu_fw_imx51.bin /lib/firmware/vpu/vpu_fw_imx51_bk.bin
+FLIST="vpu_fw_imx51.bin.14.4.0 vpu_fw_imx51.bin.1.4.0 "
+elif [ $TARGET == "53" ]; then
+cp /lib/firmware/vpu/vpu_fw_imx53.bin /lib/firmware/vpu/vpu_fw_imx53_bk.bin
+FLIST="vpu_fw_imx53.bin.1.4.0 vpu_fw_imx53.bin.14.4.0"
+fi
+
+for k in $FLIST
+do
+
+cp $FIRMWARE_BASE/$k /lib/firmware/vpu/vpu_fw_imx${TARGET}.bin
+
+echo "TST_INFO: Real video playback"
+RV8_LIST=$(ls ${STREAM_PATH}/REAL_TCK/rv8_test_clips/)
+for i in $RV8_LIST
+do
+${TSTCMD} -D "-i ${STREAM_PATH}/REAL_TCK/rv8_test_clips/$i -f 6" || return $RC
+done
+
+RV9_LIST=$(ls ${STREAM_PATH}/REAL_TCK/rv9_test_clips/)
+for i in $RV9_LIST
+do
+${TSTCMD} -D "-i ${STREAM_PATH}/REAL_TCK/rv9_test_clips/$i -f 6" || return $RC
+done
+
+sleep 5
+
+done
+
+if [ $TARGET == "51"  ]; then
+cp  /lib/firmware/vpu/vpu_fw_imx51_bk.bin /lib/firmware/vpu/vpu_fw_imx51.bin
+elif [ $TARGET == "53"  ]; then
+cp  /lib/firmware/vpu/vpu_fw_imx53_bk.bin /lib/firmware/vpu/vpu_fw_imx53.bin
+fi
+RC=0
+
+return $RC
+}
+
 
 
 
@@ -500,6 +559,7 @@ echo "10: H263 basic test"
 echo "11: MPEG2 decoder + deblock test"
 echo "12: H264 vdi test"
 echo "13: VC1 vdi test"
+echo "14: RV test"
 }
 
 #TODO check parameter
@@ -564,6 +624,9 @@ case "$1" in
   ;;
 13)
   test_case_13 || exit $RC
+  ;;
+14)
+  test_case_14 || exit $RC
   ;;
 *)
 #TODO check parameter
