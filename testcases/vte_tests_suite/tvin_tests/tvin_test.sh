@@ -1,4 +1,5 @@
-#Copyright (C) 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#!/bin/sh
+#Copyright (C) 2008,2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -6,7 +7,6 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
 ###################################################################################################
 #
 #    @file   tvin_test.sh
@@ -19,11 +19,13 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake.Huang/-----             08/01/2008     N/A          Initial version
+#Spring Zhang/---             07/16/2010     ENGR124683   Add MX53 support
 # 
 ###################################################################################################
 
 MLIST="ipu_prp_enc.ko ipu_prp_vf_sdc.ko ipu_prp_vf_sdc_bg.ko ipu_still.ko ipu_csi_enc.ko adv7180_tvin.ko mxc_v4l2_capture.ko"
-RMLIST="adv7180_tvin ipu_prp_enc ipu_prp_vf_sdc_bg ov2640_camera ipu_prp_vf_sdc ipu_still ipu_csi_enc mxc_v4l2_capture"
+#OV3640 module must be removed before ADV7180 TVIN test.
+RMLIST="adv7180_tvin ipu_prp_enc ipu_prp_vf_sdc_bg ov2640_camera ov3640_camera ipu_prp_vf_sdc ipu_still ipu_csi_enc mxc_v4l2_capture"
 
 
 # Function:     setup
@@ -93,7 +95,6 @@ killall mxc_v4l2_tvin
 
 sleep 2
 
-
 #rmmod for v4l2
 for i in $RMLIST
 do
@@ -121,7 +122,7 @@ mxc_v4l2_tvin &
 
 read -p "did you see the picture form tvin? y/n" RC
 
-if [ $RC == 'y' ]
+if [ "$RC" = "y" ]
 then
 RC=0
 return $RC
@@ -153,7 +154,7 @@ sleep 5
 
 read -p "did you see the picture form tvin? y/n" RC
 
-if [ $RC == 'y' ]
+if [ "$RC" = "y" ]
 then
 RC=0
 return $RC
@@ -185,7 +186,7 @@ mxc_v4l2_tvin &
 
 read -p "did you see the picture form tvin? y/n" RC
 
-if [ $RC == 'y' ]
+if [ "$RC" = "y" ]
 then
 RC=0
 return $RC
