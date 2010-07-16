@@ -34,7 +34,7 @@
 { \
     if( (ioctl_cmd) < 0 )\
     {\
-        printf("%s : %s fails #%d [File: %s, line: %d]", __FUNCTION__, "ioctl_", errno, __FILE__, __LINE__-2);\
+        printf("%s : %s fails #%d [File: %s, line: %d]\n", __FUNCTION__, "ioctl_", errno, __FILE__, __LINE__-2);\
         perror("ioctl"); \
         return 1;\
     }\
@@ -112,8 +112,17 @@ static int update_to_display(int left, int top, int width, int height, int wave_
 	} else {
 		upd_data.update_marker = 0;
 	}
-
-	CALL_IOCTL(ioctl(fd_fb, MXCFB_SEND_UPDATE, &upd_data));
+	retval = ioctl(fd_fb, MXCFB_SEND_UPDATE, &upd_data);
+	while (retval < 0 && quitflag == 0) {
+		static int cnt = 0;
+		sleep(1);
+		retval = ioctl(fd_fb, MXCFB_SEND_UPDATE, &upd_data);
+		if(cnt++ == 10)
+		{
+			printf("retry 10 s abort\n");
+			CALL_IOCTL(ioctl(fd_fb, MXCFB_SEND_UPDATE, &upd_data));
+		}
+	}
 
 //	if (wave_mode == WAVEFORM_MODE_AUTO)
 //		dbg(DBG_INFO, "Waveform mode used = %d\n", upd_data.waveform_mode);
@@ -134,7 +143,6 @@ int run_test(void * p_opts)
 	int ret = 0,i,j;
 	int width = 640;
 	int height = 480;
-	int g_fb0_size = 0;
 	struct pxp_config_data *pxp_conf = NULL;
 	struct pxp_proc_data *proc_data = NULL;
 	struct pxp_mem_desc mem, mem_o;
@@ -283,7 +291,7 @@ int run_test(void * p_opts)
 		printf("pxp wait for completion err\n");
 		goto err2;
 	}
-
+#if 0
 	var.bits_per_pixel = 8;
 	var.xres = width * 2;
 	var.yres = height * 2;
@@ -292,13 +300,7 @@ int run_test(void * p_opts)
 	var.rotate = FB_ROTATE_UR;
 	var.activate = FB_ACTIVATE_FORCE;
 	ret = ioctl(fd_fb, FBIOPUT_VSCREENINFO, &var);
-	if (ret < 0)
-	{
-		printf("FBIOPUT_VSCREENINFO error\n");
-		goto err4;
-	}
   g_fb0_size = var.xres * var.yres * var.bits_per_pixel / 8;
-
 	/* Map the device to memory, */
 	fb_map = (unsigned short *)mmap(0, g_fb0_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd_fb, 0);
 	if ((int)fb_map <= 0)
@@ -306,6 +308,7 @@ int run_test(void * p_opts)
 		printf("\nError: failed to map framebuffer device 0 to memory.\n");
 		goto err4;
 	}
+#endif
 
 	if (im_opts.rot % 180) {
 		width = height;
@@ -321,10 +324,6 @@ int run_test(void * p_opts)
 	ret = update_to_display(proc_data->srect.left, proc_data->srect.top,
 			  width, height, WAVEFORM_MODE_AUTO, true);
 	}
-err4:
-	if(fd_fb != 0)
-		close(fd_fb);
-	fd_fb = 0;
 err2:
 	pxp_put_mem(&mem);
 	pxp_put_mem(&mem_o);
@@ -360,8 +359,10 @@ static int signal_thread(void *arg)
 int main(int argc, char ** argv)
 {
   int oc,ret = 0;
+	int g_fb0_size = 0;
 	pthread_t sigtid;
 	struct S_OPT m_opts;
+	struct fb_var_screeninfo var;
 
 	sigemptyset(&sigset);
 	sigaddset(&sigset, SIGINT);
@@ -379,6 +380,7 @@ int main(int argc, char ** argv)
 	m_opts.rsize.t = 0;
 	m_opts.rsize.w = 512;
 	m_opts.rsize.h = 512;
+	m_opts.c = 1;
 
   while((oc = getopt(argc, argv, "VHr:s:l:m:azc:k:o:")) != -1)
   {
@@ -457,6 +459,26 @@ int main(int argc, char ** argv)
 	printf("global alpha %d\n", m_opts.ga);
 	printf("local alpha %d\n", m_opts.la);
 	printf("run %d instance\n", m_opts.m);
+
+/*default fb setting*/
+	CALL_IOCTL(ioctl(fd_fb, FBIOGET_VSCREENINFO, &var));
+	var.bits_per_pixel = 8;
+	var.xres = m_opts.rsize.w * 2;
+	var.yres = m_opts.rsize.h * 2;
+	var.grayscale = GRAYSCALE_8BIT;
+	var.yoffset = 0;
+	var.rotate = FB_ROTATE_UR;
+	var.activate = FB_ACTIVATE_FORCE;
+	CALL_IOCTL(ioctl(fd_fb, FBIOPUT_VSCREENINFO, &var));
+	g_fb0_size = var.xres * var.yres * var.bits_per_pixel / 8;
+	/* Map the device to memory, */
+	fb_map = (unsigned short *)mmap(0, g_fb0_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd_fb, 0);
+	if ((int)fb_map <= 0)
+	{
+		printf("\nError: failed to map framebuffer device 0 to memory.\n");
+		close(fd_fb);
+		return 1;
+	}
   if(m_opts.m)
 	{
 		int i = 0;
@@ -479,8 +501,6 @@ int main(int argc, char ** argv)
 			free(pids);
 	}
 	/*pthread_join(sigtid, NULL);*/
-OK_OUT:
+	close(fd_fb);
 	return ret;
-NG_OUT:
-	return 1;
 }
