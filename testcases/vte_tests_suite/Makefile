@@ -52,189 +52,84 @@
 #                                                        platforms
 #H.Huang/b20222              09/01/2009      --          update for vte release
 #Z.Spring                     03/31/2010     n/a         Add support for imx53
+#H.H/b20222					  07/16/2010	n/a			 use config_* define to build
 ###############################################################################
 #Portability: ARM GCC
 #
 ###############################################################################
-#SUBDIRS  = TEMPLATE_tests
 
-#add tools(platfm.sh), 2009.1.15, by Spring
-SUBDIRS += tools
-
-ifneq ($(ARCH_PLATFORM), $(filter imx28, $(ARCH_PLATFORM)))
-SUBDIRS += ptp_tests
-endif
-
-ifneq ($(ARCH_PLATFORM), $(filter imx27ads imx27evb imx32ads, $(ARCH_PLATFORM)))
-SUBDIRS += v4l_and_ipu_tests
-endif
-
-ifneq ($(ARCH_PLATFORM), $(filter imx27ads imx233 imx28 imx27evb imx32ads, $(ARCH_PLATFORM)))
-SUBDIRS += sdma_tests
-endif
-
-ifeq ($(ARCH_PLATFORM), $(filter imx233 imx50, $(ARCH_PLATFORM)))
-SUBDIRS += iim_test
-endif
-
-ifeq ($(ARCH_PLATFORM), $(filter imx50, $(ARCH_PLATFORM)))
-SUBDIRS += epdc_tests epxp_test
-endif
-
-# ARM11 processor and the StarCore DSP existing on MXC91231 and MXC91331 platforms
-
-ifeq ($(ARCH_PLATFORM), $(filter mxc27530evb mxc27520evb mxc30030evb mxc30030ads mxc30030ads mxc30031ads mxc30020evb, $(ARCH_PLATFORM)))
-SUBDIRS += ipc_tests
-endif
-
-# Driver MU is present only in the MXC91331, MXC91231 and MXC91131 architectures.
-ifeq ($(ARCH_PLATFORM), $(filter mxc30030evb mxc30030ads mxc30031ads mxc27530evb mxc27520evb mxc91131evb mxc30020evb, $(ARCH_PLATFORM)))
-SUBDIRS += mu_tests
-endif
-
-ifneq ($(ARCH_PLATFORM), mxc27520evb)
-SUBDIRS += mtd_tests
-endif
-
-# Updated by Blake, drop this directory
-ifeq ($(ARCH_PLATFORM), $(filter imx32ads mxc30031ads, $(ARCH_PLATFORM)))
-SUBDIRS += dvfs_dptc_tests
-endif
-
-ifeq ($(ARCH_PLATFORM), $(filter imx51stack imx51, $(ARCH_PLATFORM)))
-SUBDIRS += power_manager
-endif
-
-#Hake mxc fb test extension
-SUBDIRS += fb_test
-SUBDIRS += mmc_tests
-#tina changed SUBDIRS += irda_tests
-SUBDIRS += usb_otg_tests
-#SUBDIRS += oss_sound_driver_tests #spring deleted for aplay,arecord
-SUBDIRS += pm_tests
-#SUBDIRS += rm_tests
-SUBDIRS += GPT_tests
-SUBDIRS += rtc_tests
-SUBDIRS += security_tests
-#SUBDIRS += spi_tests
-#SUBDIRS += ssi_dam_tests
-SUBDIRS += uart_tests
-SUBDIRS += slcdc_tests
-#modified by Spring, mx35&37 need to update PMIC code, platform control in subfolder
-SUBDIRS += pmic_tests
-
-SUBDIRS += ts_tests
-
-#modified by Spring, control in sub-Makefile
-SUBDIRS += keypad_tests
-
-#SUBDIRS += udma_tests
-SUBDIRS += i2c_tests
-SUBDIRS += watchdog_tests
-SUBDIRS += owire
-SUBDIRS += systest
-
-ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx25stack imx51stack, $(ARCH_PLATFORM)))
-SUBDIRS += libata_tests
-endif
-
-ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx35stack imx51, $(ARCH_PLATFORM)))
-SUBDIRS += can_tests
-endif
-
-ifeq ($(ARCH_PLATFORM), $(filter imx25stack, $(ARCH_PLATFORM)))
-SUBDIRS += usb_host_test
-endif
-
-ifeq ($(ARCH_PLATFORM), $(filter imx35stack, $(ARCH_PLATFORM)))
-SUBDIRS += asrc_tests
-SUBDIRS += cdrom_tests
-SUBDIRS += mlb_tests
-SUBDIRS += tvin_tests
-endif
-
-SUBDIRS += tvout_tests
-
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack, $(ARCH_PLATFORM)))
-SUBDIRS += acc_tests
-SUBDIRS += mbx_tests
-endif
-
-ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack imx51, $(ARCH_PLATFORM)))
-SUBDIRS += vpu_tests
-endif
-
-
-ifeq ($(ARCH_PLATFORM), $(filter imx51, $(ARCH_PLATFORM)))
-SUBDIRS += ipudev_test
-endif
-
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx51stack imx51, $(ARCH_PLATFORM)))
-SUBDIRS += camera_test
-endif
-
-ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx51stack imx51, $(ARCH_PLATFORM)))
-SUBDIRS += gpu_test
-endif
-
-SUBDIRS += emi_tests
-SUBDIRS += network_tests
-#tina changed SUBDIRS += dpm_tests
-SUBDIRS += io_tests
-
-
-#ifneq ($(ARCH_PLATFORM), $(filter imx32ads mxc30020evb mxc30031ads, $(ARCH_PLATFORM)))
-SUBDIRS += fec_tests
-#endif
-
-ifeq ($(ARCH_PLATFORM), $(filter imx27ads imx27evb imx31ads imx32ads, $(ARCH_PLATFORM)))
-SUBDIRS += ata_tests
-endif
-
-ifeq ($(ARCH_PLATFORM), imx32ads)
-#SUBDIRS += i2c_tests
-endif
-
-#ifeq ($(ARCH_PLATFORM),$(filter imx27ads imx27evb mxc30031ads imx32ads, $(ARCH_PLATFORM)))
-#SUBDIRS += v4l_and_emma_tests
-#endif
-
-#added by Spring, 2008.7.25, 
-#add GPS, 2008.11.24, add BT, 2008.11.26, add WIFI, 2008.11.27, 
-#add FM, 2008.12.11, add SPDIF, 2009.5.21
-SUBDIRS += alsa_tests
-SUBDIRS += fs_tests
-SUBDIRS += gps_tests
-SUBDIRS += bt_tests
-ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx35stack imx51stack, $(ARCH_PLATFORM)))
-SUBDIRS += wifi_tests
-endif
-SUBDIRS += fm_tests
-SUBDIRS += spdif_tests
-
-#add by Victor
-SUBDIRS += storage_tests
-
-#added by Blake 
-ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx37stack, $(ARCH_PLATFORM)))
-SUBDIRS += dptc_tests
-endif
-#added by Blake
-ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx31stack imx35stack imx51stack imx51 imx233, $(ARCH_PLATFORM)))
-SUBDIRS += dvfs_tests
-endif
-#added by Blake
-ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack imx51, $(ARCH_PLATFORM)))
-SUBDIRS += backlight_tests
-endif
+SUBDIRS-y                         += tools
+SUBDIRS-$(CONFIG_VTE_ACC)         += acc_tests
+SUBDIRS-$(CONFIG_VTE_ALSA)        += alsa_tests
+SUBDIRS-$(CONFIG_VTE_ASRC)        += asrc_tests
+SUBDIRS-$(CONFIG_VTE_ATA)         += ata_tests
+SUBDIRS-$(CONFIG_VTE_BL)          += backlight_tests
+SUBDIRS-$(CONFIG_VTE_BT)          += bt_tests
+SUBDIRS-$(CONFIG_VTE_CAMERA)      += camera_test
+SUBDIRS-$(CONFIG_VTE_CAN)         += can_tests
+SUBDIRS-$(CONFIG_VTE_CDROM)       += cdrom_tests
+SUBDIRS-$(CONFIG_VTE_DPM)         += dpm_tests
+SUBDIRS-$(CONFIG_VTE_DPTC)        += dptc_tests
+SUBDIRS-$(CONFIG_VTE_DVFS_DPTC)   += dvfs_dptc_tests
+SUBDIRS-$(CONFIG_VTE_DVFS)        += dvfs_tests
+SUBDIRS-$(CONFIG_VTE_EMI)         += emi_tests
+SUBDIRS-$(CONFIG_VTE_EPXP)        += epdc_tests epxp_test
+SUBDIRS-$(CONFIG_VTE_FB)          += fb_test
+SUBDIRS-$(CONFIG_VTE_FEC)         += fec_tests
+SUBDIRS-$(CONFIG_VTE_FM)          += fm_tests
+SUBDIRS-$(CONFIG_VTE_FS)          += fs_tests
+SUBDIRS-$(CONFIG_VTE_GPT)         += GPT_tests
+SUBDIRS-$(CONFIG_VTE_GPU)         += gpu_test
+SUBDIRS-$(CONFIG_VTE_GPS)         += gps_tests
+SUBDIRS-$(CONFIG_VTE_I2C)         += i2c_tests
+SUBDIRS-$(CONFIG_VTE_IIM)         += iim_test
+SUBDIRS-$(CONFIG_VTE_IO)          += io_tests
+SUBDIRS-$(CONFIG_VTE_IPC)         += ipc_tests
+SUBDIRS-$(CONFIG_VTE_IPUDEV)      += ipudev_test
+SUBDIRS-$(CONFIG_VTE_IRDA)        += irda_tests
+SUBDIRS-$(CONFIG_VTE_KEYPAD)      += keypad_tests
+SUBDIRS-$(CONFIG_VTE_LIBATA)      += libata_tests
+SUBDIRS-$(CONFIG_VTE_MBX)         += mbx_tests
+SUBDIRS-$(CONFIG_VTE_MLB)         += mlb_tests
+SUBDIRS-$(CONFIG_VTE_MMC)         += mmc_tests
+SUBDIRS-$(CONFIG_VTE_MTD)         += mtd_tests
+SUBDIRS-$(CONFIG_VTE_MU)          += mu_tests
+SUBDIRS-$(CONFIG_VTE_NETWORK)     += network_tests
+SUBDIRS-${CONFIG_VTE_OSS}         += oss_sound_driver_tests
+SUBDIRS-$(CONFIG_VTE_1W)          += owire
+SUBDIRS-$(CONFIG_VTE_PM)          += pm_tests
+SUBDIRS-$(CONFIG_VTE_PMIC)        += pmic_tests
+SUBDIRS-$(CONFIG_VTE_POWER)       += power_manager
+SUBDIRS-$(CONFIG_VTE_PTP)         += ptp_tests
+SUBDIRS-$(CONFIG_VTE_RM)          += rm_tests
+SUBDIRS-$(CONFIG_VTE_RTC)         += rtc_tests
+SUBDIRS-$(CONFIG_VTE_SDMA)        += sdma_tests
+SUBDIRS-$(CONFIG_VTE_SEC)         += security_tests
+SUBDIRS-$(CONFIG_VTE_SLCDC)       += slcdc_tests
+SUBDIRS-$(CONFIG_VTE_SPDIF)       += spdif_tests
+SUBDIRS-$(CONFIG_VTE_SPI)         += spi_tests
+SUBDIRS-$(CONFIG_VTE_SSI_DMA)     += ssi_dam_tests
+SUBDIRS-$(CONFIG_VTE_STORAGE)     += storage_tests
+SUBDIRS-$(CONFIG_VTE_SYS)         += systest
+SUBDIRS-$(CONFIG_VTE_TS)          += ts_tests
+SUBDIRS-$(CONFIG_VTE_TVIN)        += tvin_tests
+SUBDIRS-$(CONFIG_VTE_TVOUT)       += tvout_tests
+SUBDIRS-$(CONFIG_VTE_UART)        += uart_tests
+SUBDIRS-$(CONFIG_VTE_UDMA)        += udma_tests
+SUBDIRS-$(CONFIG_VTE_USB_HOST)    += usb_host_test
+SUBDIRS-$(CONFIG_VTE_USB_OTG)     += usb_otg_tests
+SUBDIRS-$(CONFIG_VTE_V4L_IPU)     += v4l_and_ipu_tests
+SUBDIRS-$(CONFIG_VTE_V4L_EMMA)    += v4l_and_emma_tests
+SUBDIRS-$(CONFIG_VTE_VPU)         += vpu_tests
+SUBDIRS-$(CONFIG_VTE_WD)          += watchdog_tests
+SUBDIRS-$(CONFIG_VTE_WIFI)        += wifi_tests
 
 all:
-
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
 
 install:
 	-mkdir -p ../bin
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install ; done
 
 clean:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i clean ; done
