@@ -21,6 +21,7 @@
 #include <string.h>
 #include <linux/fb.h>
 #include <linux/mxcfb.h>
+#include <errno.h>      /* errno*/
 #include "pxp_lib.h"
 
 #define USE_PIC
@@ -28,6 +29,16 @@
 #ifdef USE_PIC
 #include "fsl_logo_480x360.h"
 #endif
+
+#define CALL_IOCTL(ioctl_cmd)\
+{ \
+    if( (ioctl_cmd) < 0 )\
+    {\
+        printf("%s : %s fails #%d [File: %s, line: %d]", __FUNCTION__, "ioctl_", errno, __FILE__, __LINE__-2);\
+        perror("ioctl"); \
+        return 1;\
+    }\
+}
 
 struct mrect{
 int l;
@@ -102,13 +113,7 @@ static int update_to_display(int left, int top, int width, int height, int wave_
 		upd_data.update_marker = 0;
 	}
 
-	retval = ioctl(fd_fb, MXCFB_SEND_UPDATE, &upd_data);
-	while (retval < 0 && quitflag == 0) {
-		/* We have limited memory available for updates, so wait and
-		 * then try again after some updates have completed */
-		sleep(1);
-		retval = ioctl(fd_fb, MXCFB_SEND_UPDATE, &upd_data);
-	}
+	CALL_IOCTL(ioctl(fd_fb, MXCFB_SEND_UPDATE, &upd_data));
 
 //	if (wave_mode == WAVEFORM_MODE_AUTO)
 //		dbg(DBG_INFO, "Waveform mode used = %d\n", upd_data.waveform_mode);
@@ -166,7 +171,7 @@ int run_test(void * p_opts)
 	}
 	printf("requested chan_id %d\n", pxp_chan.chan_id);
 	/* Prepare the channel parameters */
-	mem.size = width * height * 2;
+	mem.size = width * height * 2; /*RGB565 takes 2 bytes*/
 	ret = pxp_get_mem(&mem);
 	if (ret < 0) {
 		printf("get mem err\n");
@@ -174,7 +179,7 @@ int run_test(void * p_opts)
 	}
 	printf("mem.virt_uaddr %08x, mem.phys_addr %08x, mem.size %d\n",
 				mem.virt_uaddr, mem.phys_addr, mem.size);
-	mem_o.size = width * height * 2;
+	mem_o.size = width * height;/*to Y*/
 	ret = pxp_get_mem(&mem_o);
 	if (ret < 0) {
 		printf("get mem_o err\n");
@@ -193,9 +198,9 @@ int run_test(void * p_opts)
 			break;
 		for(i = 0; i < width; i++)
 		{
-			if(i > 240)
+			if(i > 480)
 				break;
-			((unsigned char*)(mem.virt_uaddr))[j * width + i] = fb_480x360_2[j * 240 + i];
+			((unsigned char*)(mem.virt_uaddr))[j * width + i] = fb_480x360_2[j * 480 + i];
 		}
 	}
 #endif
@@ -306,15 +311,16 @@ int run_test(void * p_opts)
 		width = height;
 		height = width;
 	}
+	while(im_opts.c--)
+	{
 	copy_image_to_fb(proc_data->srect.left, proc_data->srect.top,
 			 width, height, (void *)mem_o.virt_uaddr, &var);
 
 	printf("Update to display.\n");
 	printf("w/h %d/%d\n", width ,height);
-	update_to_display(proc_data->srect.left, proc_data->srect.top,
+	ret = update_to_display(proc_data->srect.left, proc_data->srect.top,
 			  width, height, WAVEFORM_MODE_AUTO, true);
-
- ret = 0;
+	}
 err4:
 	if(fd_fb != 0)
 		close(fd_fb);
