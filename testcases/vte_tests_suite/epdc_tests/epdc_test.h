@@ -23,6 +23,8 @@ extern "C"{
 /* DEFINES AND MACROS */
 #define PATH_LEN  128
 
+#define USE_PIC
+
 #ifndef TRUE
 #define TRUE 1
 #define FALSE 0
