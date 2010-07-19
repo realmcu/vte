@@ -89,8 +89,8 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 vpu_dec_test.sh 1  >> .temp_dec &
 vpu_dec_test.sh 2  >> .temp_dec || return 1
 
-vpu_dec_test.sh 3 >> .temp_dec &
-vpu_dec_test.sh 4 >> .temp_dec || return 1
+#vpu_dec_test.sh 3 >> .temp_dec &
+#vpu_dec_test.sh 4 >> .temp_dec || return 1
 
 vpu_dec_test.sh 10 >> .temp_dec &
 
@@ -101,7 +101,7 @@ wait
 
 CT=$(grep "Test PASS" .temp_dec | wc -l)
 
-if [ $CT = "7" ]
+if [ $CT = "5" ]
 then
 RC=0
 fi

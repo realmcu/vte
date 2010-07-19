@@ -1,4 +1,4 @@
-#Copyright (C) 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -181,12 +181,15 @@ test_case_03()
 TCID="vpu_dec_divx_test"
 #TODO give TST_COUNT
 TST_COUNT=3
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
+#install the firmware
+
+
 cp ${STREAM_PATH}/video/divx311_320x240.avi /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_divx 
@@ -194,10 +197,9 @@ ${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_divx
 SIZE=$(ls -s divx311_320x240.yuv | awk '{print $1}') 
 rm -rf divx311_320x240.yuv divx311_320x240.avi
 
-
-if [ $SIZE -ne 0 ]
+if [ $SIZE -eq 0 ]
 then
-RC=0
+RC=$(expr $RC + 1)
 fi
 
 return $RC
@@ -496,23 +498,6 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-#install the firmware
-FIRMWARE_BASE=${STREAM_PATH}/vpu_firmware/VPU_firmware_release_v1.4.0
-FLIST=""
-
-if [ $TARGET == "51"  ]; then
-cp  /lib/firmware/vpu/vpu_fw_imx51.bin /lib/firmware/vpu/vpu_fw_imx51_bk.bin
-FLIST="vpu_fw_imx51.bin.14.4.0 vpu_fw_imx51.bin.1.4.0 "
-elif [ $TARGET == "53" ]; then
-cp /lib/firmware/vpu/vpu_fw_imx53.bin /lib/firmware/vpu/vpu_fw_imx53_bk.bin
-FLIST="vpu_fw_imx53.bin.1.4.0 vpu_fw_imx53.bin.14.4.0"
-fi
-
-for k in $FLIST
-do
-
-cp $FIRMWARE_BASE/$k /lib/firmware/vpu/vpu_fw_imx${TARGET}.bin
-
 echo "TST_INFO: Real video playback"
 RV8_LIST=$(ls ${STREAM_PATH}/REAL_TCK/rv8_test_clips/)
 for i in $RV8_LIST
@@ -526,17 +511,8 @@ do
 ${TSTCMD} -D "-i ${STREAM_PATH}/REAL_TCK/rv9_test_clips/$i -f 6" || return $RC
 done
 
-sleep 5
 
-done
-
-if [ $TARGET == "51"  ]; then
-cp  /lib/firmware/vpu/vpu_fw_imx51_bk.bin /lib/firmware/vpu/vpu_fw_imx51.bin
-elif [ $TARGET == "53"  ]; then
-cp  /lib/firmware/vpu/vpu_fw_imx53_bk.bin /lib/firmware/vpu/vpu_fw_imx53.bin
-fi
 RC=0
-
 return $RC
 }
 
