@@ -16,7 +16,7 @@ all: config
 install:
 	ln -f $(SUBDIRS)/utils/opcontrol ../../bin/
 clean:
-	$(MAKE) -C $(SUBDIRS) distclean
+	-$(MAKE) -C $(SUBDIRS) distclean
 	-$(MAKE) -C $(LIBRARIES_DIR)/popt-1.7 distclean
 	-$(MAKE) -C $(LIBRARIES_DIR)/binutils-2.19.51.0.12/bfd distclean
 	

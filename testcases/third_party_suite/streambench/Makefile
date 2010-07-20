@@ -19,7 +19,7 @@
 LTP_DIR=../../../..
 BIN_DIR=../../
 
-LOADLIBES+= -L$(LTP_DIR)/lib -lltp
+LOADLIBES+= -L$(LTP_DIR)/lib
 
 SRCS=$(wildcard *.c)
 OBJS=$(patsubst %.c,%*.o,$(SRCS))
