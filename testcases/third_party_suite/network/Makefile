@@ -6,7 +6,7 @@
 #
 ##############################################################################
 
-include ../vte_configs/$(ARCH_PLATFORM)_tp_configs
+#include ../vte_configs/$(ARCH_PLATFORM)_tp_configs
 
 SUBDIRS-$(CONFIG_TP_ETHTOOL) += ethtool-6
 clean_SUBDIR-$(CONFIG_TP_ETHTOOL) += clean_ethtool-6
