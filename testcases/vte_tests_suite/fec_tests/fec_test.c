@@ -282,7 +282,9 @@ int VT_fec_test(void)
                         tst_resm(TINFO, "Supported control interfaces for %s", gTestConfig.ifname);
                         tst_resm(TINFO, "\tMII: %s", gTestConfig.avail_if & IF_MII ? "yes" : "no");
                         tst_resm(TINFO, "\tEthtool: %s", gTestConfig.avail_if & IF_ETHTOOL ? "yes" : "no");
-                        VT_rv = VT_ask_user("\n\tIs this information correct(y|n|q)?");
+                        /*
+												VT_rv = VT_ask_user("\n\tIs this information correct(y|n|q)?");
+												*/
                 break;
                 
                 case T_CHECK_ENTRIES:
