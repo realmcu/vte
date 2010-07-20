@@ -24,32 +24,16 @@
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################
-export CFLAGS=-Wall -I../../../../include -I$(KLINUX_SRCDIR)/include
-export LOADLIBES=-L../../../../lib -lltp -lpthread -lm
 
-#SUBDIRS = v4l_capture_testapp v4l_output_testapp v4l2_basic_test 
+SUBDIRS-$(CONFIG_VTE_V4l_IPU_PF)   += ipu_pf_testapp
+SUBDIRS-$(CONFIG_VTE_V4l_CAPTURE)  += v4l_capture_testapp
+SUBDIRS-$(CONFIG_VTE_V4l_OUTPUT)   += v4l_output_testapp
+SUBDIRS-$(CONFIG_VTE_V4l_BASIC)    += v4l2_basic_testapp
+SUBDIRS-$(CONFIG_VTE_V4l_IPU_FUNC) += ipu_function
 
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack, $(ARCH_PLATFORM)))
-SUBDIRS = v4l_capture_testapp v4l_output_testapp v4l2_basic_test  ipu_pf_testapp 
-else
-ifeq ($(ARCH_PALTFORM), $(filter imx233 imx28 imx50, $(ARCH_PLATFORM)))
-SUBDIRS = pxp_test-1.01
-else
-SUBDIRS = v4l_capture_testapp v4l_output_testapp v4l2_basic_test ipu_function 
-endif
-endif
-
-all: config
+all: 
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
-	#$(MAKE) -C pxp_test-1.01
 install:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
-	-ln -f pxp_test-1.01/pxp_test ../../bin/
-	-ln -f pxp_test-1.01/testfiles/*.rgba32 ../../bin/
-	-ln -f pxp_test-1.01/testfiles/*.s* ../../bin/
-
 clean:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
-	-$(MAKE) -C pxp_test-1.01 distclean
-config:
-	@set -e; cd pxp_test-1.01 && ./myconfig && cd ..

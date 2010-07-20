@@ -7,16 +7,14 @@
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
 TARGET = gpu_test.sh
-BIN = ../../../bin
+BIN = ../../../bin/
 
+SRC-$(CONFIG_VTE_IMX5)  =  mx5x_gpu_test.sh
+SRC-$(CONFIG_VTE_IMX35) =  mx35_gpu_test.sh
 
 all:
 	-rm -rf $(TARGET)
-	if [ $$ARCH_PLATFORM = "imx51stack" ]; \
-		then cp mx5x_gpu_test.sh $(TARGET); fi
-	if [ $$ARCH_PLATFORM = "imx51" ] || [ $$ARCH_PLATFORM = "imx53" ]; \
-		then cp mx5x_gpu_test.sh $(TARGET); fi
-	if [ $$ARCH_PLATFORM = "imx35stack" ]; then cp mx35_gpu_test.sh $(TARGET); fi
+	-ln -f $(SRC-y) $(TARGET)
 
 install:
 	ln -f $(TARGET) $(BIN)

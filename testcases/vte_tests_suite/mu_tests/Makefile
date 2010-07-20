@@ -36,16 +36,6 @@ mu_api_rw_test \
 mu_api_rwstress_test \
 mu_sdma_ipc_test 
 
-
-ifeq ($(ARCH_PLATFORM),imx31ads)
-SUBDIRS = 
-endif
-
-ifeq ($(ARCH_PLATFORM),imx27ads)
-SUBDIRS = 
-endif
-
-
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
 

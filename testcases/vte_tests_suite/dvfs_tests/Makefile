@@ -13,15 +13,19 @@
 #    @brief  configuration file to compile the dvfs test.
 #
 ###############################################################################
+
 TARGETS=dvfs.sh cpu_lowfreq.sh dvfs_per.sh pm_suspend_stress.sh
+
+SRC-$(CONFIG_VTE_IMX25) = dvfs_mx25.sh
+SRC-$(CONFIG_VTE_IMX233) = dvfs_mx233.sh
 
 all:
 	
 
 install:
 	@for i in $(TARGETS); do ln -f $$i ../../bin ; done
-	@if [ $(ARCH_PLATFORM) == "imx25stack" ]; then ln -f dvfs_mx25.sh ../../bin ; fi
-	@if [ $(ARCH_PLATFORM) == "imx233" ]; then ln -f dvfs_mx233.sh ../../bin ; fi
+	-ln -f dvfs_mx25.sh ../../bin/
+	-ln -f dvfs_mx233.sh ../../bin/
 	@echo "***********************************************"
 	@echo "** INSTALL : dvfs.sh                    **"
 	@echo "***********************************************"

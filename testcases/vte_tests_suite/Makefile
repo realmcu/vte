@@ -58,7 +58,10 @@
 #
 ###############################################################################
 
+include ./vte_configs/${ARCH_PLATFORM}_deconfigs
+
 SUBDIRS-y                         += tools
+SUBDIRS-$(CONFIG_VTE_DATA)        += test-data
 SUBDIRS-$(CONFIG_VTE_ACC)         += acc_tests
 SUBDIRS-$(CONFIG_VTE_ALSA)        += alsa_tests
 SUBDIRS-$(CONFIG_VTE_ASRC)        += asrc_tests
@@ -73,7 +76,8 @@ SUBDIRS-$(CONFIG_VTE_DPTC)        += dptc_tests
 SUBDIRS-$(CONFIG_VTE_DVFS_DPTC)   += dvfs_dptc_tests
 SUBDIRS-$(CONFIG_VTE_DVFS)        += dvfs_tests
 SUBDIRS-$(CONFIG_VTE_EMI)         += emi_tests
-SUBDIRS-$(CONFIG_VTE_EPXP)        += epdc_tests epxp_test
+SUBDIRS-$(CONFIG_VTE_EPDC)        += epdc_tests
+SUBDIRS-$(CONFIG_VTE_EPXP)        += epxp_test
 SUBDIRS-$(CONFIG_VTE_FB)          += fb_test
 SUBDIRS-$(CONFIG_VTE_FEC)         += fec_tests
 SUBDIRS-$(CONFIG_VTE_FM)          += fm_tests
@@ -95,7 +99,7 @@ SUBDIRS-$(CONFIG_VTE_MMC)         += mmc_tests
 SUBDIRS-$(CONFIG_VTE_MTD)         += mtd_tests
 SUBDIRS-$(CONFIG_VTE_MU)          += mu_tests
 SUBDIRS-$(CONFIG_VTE_NETWORK)     += network_tests
-SUBDIRS-${CONFIG_VTE_OSS}         += oss_sound_driver_tests
+SUBDIRS-$(CONFIG_VTE_OSS)         += oss_sound_driver_tests
 SUBDIRS-$(CONFIG_VTE_1W)          += owire
 SUBDIRS-$(CONFIG_VTE_PM)          += pm_tests
 SUBDIRS-$(CONFIG_VTE_PMIC)        += pmic_tests
@@ -120,6 +124,7 @@ SUBDIRS-$(CONFIG_VTE_USB_HOST)    += usb_host_test
 SUBDIRS-$(CONFIG_VTE_USB_OTG)     += usb_otg_tests
 SUBDIRS-$(CONFIG_VTE_V4L_IPU)     += v4l_and_ipu_tests
 SUBDIRS-$(CONFIG_VTE_V4L_EMMA)    += v4l_and_emma_tests
+SUBDIRS-$(CONFIG_VTE_V4L_PXP)     += v4l_and_pxp_tests
 SUBDIRS-$(CONFIG_VTE_VPU)         += vpu_tests
 SUBDIRS-$(CONFIG_VTE_WD)          += watchdog_tests
 SUBDIRS-$(CONFIG_VTE_WIFI)        += wifi_tests

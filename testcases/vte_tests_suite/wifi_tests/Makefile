@@ -27,8 +27,7 @@
 #
 ###############################################################################
 
-SUBDIRS=iperf
-TARGETS=
+SUBDIRS=
 # AP test scripts
 SCRIPTS=wifi_testap001.sh wifi_testap002.sh wifi_testap003.sh wifi_testap004.sh wifi_testap005.sh wifi_testap008.sh wifi_testap009.sh wifi_testap010.sh
 # ad-hoc test scripts

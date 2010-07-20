@@ -151,7 +151,7 @@ vte: libltp.a pandir tools
 	@echo "***********************************************"
 	@echo "          make libraries support               "
 	@echo "***********************************************"
-	$(MAKE) -C openlibs all
+	#$(MAKE) -C openlibs all
 	@echo "***********************************************"
 	@echo "** MAKE ALL - VTE tests suite                **"
 	@echo "***********************************************"

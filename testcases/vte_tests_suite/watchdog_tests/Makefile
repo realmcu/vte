@@ -29,8 +29,8 @@
 #
 ###################################################################################################
 SUBDIRS = watchdog_testapp_2 \
-watchdog_testapp_3 \
-wdt_test
+          watchdog_testapp_3 \
+          wdt_test
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

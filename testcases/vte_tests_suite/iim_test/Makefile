@@ -7,7 +7,6 @@
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
 
-#CC = $(CROSS_COMPILER)gcc
 CC = $(CROSS_COMPILER)gcc
 CFLAGS +=  
 

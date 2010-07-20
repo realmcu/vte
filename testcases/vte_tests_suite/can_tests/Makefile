@@ -26,7 +26,7 @@
 #  GNU GCC 
 ###################################################################################################
 
-SUBDIRS = ../../third_party_suite/cansocket/
+SUBDIRS = 
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

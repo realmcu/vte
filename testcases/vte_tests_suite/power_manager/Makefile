@@ -6,16 +6,14 @@
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
 
-ifeq ($(ARCH_PLATFORM), $(filter imx51_3stack imx51, $(ARCH_PLATFORM)))
-SUBDIRS = usb_pm
-endif
+SUBDIRS-$(CONFIG_VTE_IMX5) += usb_pm
 
 all:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
 
 install:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install ; done
 
 clean:
-	@set -e; for i in $(SUBDIRS) ; do $(MAKE) -C $$i clean ; done
+	@set -e; for i in $(SUBDIRS-y) ; do $(MAKE) -C $$i clean ; done
 

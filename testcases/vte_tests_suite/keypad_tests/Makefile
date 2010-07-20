@@ -28,10 +28,9 @@
 #
 ###################################################################################################
 
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx37stack imx51stack, $(ARCH_PLATFORM)))
-SUBDIRS = keypad_testapp_1
-endif
-SUBDIRS += keypad_test_script
+SUBDIRS-y += keypad_test_script
+#only enable below for imx31stack imx37stack imx51stack
+SUBDIRS-$(CONFIG_VTE_KEYPAD_TESTAPP) = keypad_testapp_1
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

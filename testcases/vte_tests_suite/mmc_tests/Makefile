@@ -31,28 +31,21 @@
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################
-ifeq ( $(PROJECT_MX37), 1)
-SUBDIRS = \
-eject_mmc_testcase \
-rw_mmc_testcase \
-perform_mmc_testcase \
-stressRW_mmc_testcase
-else
-SUBDIRS = \
-erw_mmc_testcase \
-lock_mmc_testcase \
-eject_mmc_testcase \
-rw_mmc_testcase \
-perform_mmc_testcase \
-stressRW_mmc_testcase
-endif
+SUBDIRS-y += eject_mmc_testcase
+SUBDIRS-y += rw_mmc_testcase
+SUBDIRS-y += perform_mmc_testcase
+SUBDIRS-y += stressRW_mmc_testcase
+#for non imx37 platform 
+SUBDIRS-$(CONFIG_VTE_MMC_ERW) += erw_mmc_testcase
+#for non imx37 platform 
+SUBDIRS-$(CONFIG_VTE_MMC_LOCK) += lock_mmc_testcase
 
 all:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
 
 install:
 	ln -f mmc_test_minix.sh ../../bin
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install ; done
 
 clean:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i clean ; done

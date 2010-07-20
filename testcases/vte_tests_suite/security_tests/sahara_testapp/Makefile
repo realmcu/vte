@@ -30,7 +30,7 @@
 ###################################################################################################
 LTP_DIR = ../../../..
 BIN_DIR = ../../..
-MODULE_DIR = ../sahara_module
+MODULE_DIR = ../../../module_test/vte_test_modules/sahara_module 
 APIINCDIR = $(KLINUX_SRCDIR)/drivers/mxc/security/sahara2/include
 
 #2.6.28: disable -mfpu=vfp defined in top Makefile, which will cause error.
@@ -52,7 +52,9 @@ ifeq ($(ARCH_PLATFORM), imx27ads)
 CFLAGS += -DCONFIG_ARCH_MX27
 endif
 
-CFLAGS += -Wall -DSAHARA -DLINUX -I$(LTP_DIR)/include -I$(MODULE_DIR) -I$(APIINCDIR) -I$(KLINUX_BLTDIR)/include
+CFLAGS += -Wall -DSAHARA -DLINUX -I$(LTP_DIR)/include -I$(MODULE_DIR) -I$(APIINCDIR) \
+          -I$(KLINUX_SRCDIR)/include \
+	  -I$(KLINUX_BLTDIR)/include
 
 LOADLIBES += -L$(LTP_DIR)/lib -lltp
 

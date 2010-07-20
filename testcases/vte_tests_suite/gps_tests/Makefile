@@ -28,7 +28,6 @@
 
 SUBDIRS=
 TARGETS=gps_basic.sh
-#Need platform identify script from ALSA test cases
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

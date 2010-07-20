@@ -34,23 +34,11 @@
 export CFLAGS+=-Wall -I../../../../include
 export LOADLIBES+=-L../../../../lib -lltp -lpthread
 
-# - PMIC for MXC91131 have headers not synchronized with other platforms
-# - PMIC for MXC91131 have not yet RTC support
-# - PMIC work only with MC13783 2.X
-
-# Only supported on MXC91131
-ifeq ($(ARCH_PLATFORM),mxc91131evb)
-CFLAGS+=    -DCONFIG_MXC_PMIC_SC55112
-else
-CFLAGS+=    -DCONFIG_MXC_PMIC_MC13783
-endif
-
 CFLAGS+=    -Dbool=int
 
 #add by Spring
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack, $(ARCH_PLATFORM)))
-SUBDIRS += ts_testapp1 
-endif
+#only for imx31stack
+SUBDIRS-$(CONFIG_VTE_TS_APP1) += ts_testapp1 
 
 SUBDIRS += ts_testapp2 
 SUBDIRS += ts_testapp3 

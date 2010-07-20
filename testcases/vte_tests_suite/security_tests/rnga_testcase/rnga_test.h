@@ -40,8 +40,10 @@ extern "C"{
 #include <stdio.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+/*
 #include <fsl_shw.h>
 #include "shw_driver.h"
+*/
 #include <rnga_test_module.h>
 
 

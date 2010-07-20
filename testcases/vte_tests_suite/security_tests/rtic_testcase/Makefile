@@ -33,7 +33,8 @@ OBJS = $(patsubst %.c,%.o,$(SRCS))
 
 CFLAGS += -Wall \
           -I$(LTP_DIR)include \
-          -I../rtic_test_module/
+          -I$(KLINUX_SRCDIR)/include \
+	  -I../../../module_test/vte_test_modules/rtic_test_module
 
 LOADLIBES = -L$(LTP_DIR)lib -lltp
 
