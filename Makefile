@@ -271,8 +271,6 @@ ltp: libltp.a pandir tools config.h config.mk
 	@echo "** MAKE ALL - third party suite               **"
 
 vte: libltp.a pandir tools
-	-@$(MAKE) -C openlib
-	-@$(MAKE) -C openlib install
 	@echo "***********************************************"
 	@echo "** MAKE ALL - VTE tests suite                **"
 	@echo "***********************************************"

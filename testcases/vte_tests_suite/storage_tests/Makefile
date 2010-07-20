@@ -46,9 +46,9 @@ TARGET += performance performance_command_line performance_prepare.sh performanc
 TARGET += ubi_test.sh
 
 #usb ptp
-TARGET += usb_ptp_test.sh
+TARGET += usb_ptp_test.sh Agl.sh
 
-TOOL_BIN = dd.exe activeperl.rar InstallUSBCV132.msi ptpinstall.tar.gz Agl.sh
+#TOOL_BIN = dd.exe activeperl.rar InstallUSBCV132.msi ptpinstall.tar.gz Agl.sh
 
 #all modules insert and remove test 
 TARGET += modules_verify.sh
@@ -61,7 +61,7 @@ all: $(TARGET)
 
 install:
 	ln -f $(TARGET) ../../bin
-	-ln -f $(TOOL_BIN) ../../bin/
+#	-ln -f $(TOOL_BIN) ../../bin/
 	@echo "***********************************************"
 	@echo "** INSTALL : ln all storage scripts to bin   **"
 	@echo "***********************************************"

@@ -26,14 +26,9 @@
 #
 ###############################################################################
 
-SUBDIRS = ../../third_party_suite/fmtools-1.0.2 
 TARGETS = fm_basic.sh 
 
 all:
-	@set -e; for i in $(SUBDIRS); do \
-	if [ -d $$i ]; then \
-	$(MAKE)  -C $$i CC=$(CROSS_COMPILER)gcc; fi \
-	done
 
 install:
 	@for i in $(TARGETS); do \
@@ -42,11 +37,7 @@ install:
 		echo "** INSTALL : $$i " ;\
 		echo "***********************************************" ; \
 	done
-	@echo
-	-ln -f ../../third_party_suite/fmtools-1.0.2/fm ../../bin/
-	-ln -f ../../third_party_suite/fmtools-1.0.2/fmscan ../../bin/
 
 clean:
-	-@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
 
 

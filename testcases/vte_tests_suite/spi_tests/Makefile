@@ -25,12 +25,7 @@
 #Portability: ARM GCC
 #
 ###################################################################################################
-SUBDIRS = spi_test_module 
-#	spi_testapp \
-#	spi_testapp_0
-#	spi_testapp_1 \
-#	spi_testapp_2 \
-#	spi_testapp_3
+SUBDIRS = 
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

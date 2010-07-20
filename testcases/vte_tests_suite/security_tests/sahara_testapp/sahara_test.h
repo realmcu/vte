@@ -47,9 +47,6 @@ extern "C" {
 #include <usctest.h>
 #include <linux/autoconf.h>
 
-/* API's Specific Include Files. */
-#include <fsl_shw.h>
-
 /* Verification Test Environment Include Files */
 #include <sahara_module.h>
 

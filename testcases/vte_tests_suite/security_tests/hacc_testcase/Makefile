@@ -33,7 +33,8 @@ SRCS = $(wildcard *.c)
 OBJS = $(patsubst %.c,%.o,$(SRCS))
 
 CFLAGS += -I$(LTP_DIR)include \
-          -I../hacc_test_module/ \
+          -I$(KLINUX_SRCDIR)/include \
+	  -I../../../module_test/vte_test_modules/hacc_test_module \
           -DCONFIG_PM
 
 LOADLIBES = -L$(LTP_DIR)lib -lltp

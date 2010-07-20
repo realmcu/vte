@@ -39,7 +39,7 @@ Test Strategy:  Examine the RNG module functions
 ==================================================================================================*/
 
 #include "rnga_test.h"
-#include "../rnga_test_module/rnga_test_module.h"
+#include "rnga_test_module.h"
 
 /*================================================================================================*/
 

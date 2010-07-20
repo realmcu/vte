@@ -23,55 +23,56 @@
 #A.URUSOV                     06/09/2005     TLSbo53754   CFLAGS and LOADLIBES changed             #
 #A.URUSOV                     01/11/2005     TLSbo57925   CFLAGS and LOADLIBES changed             #
 ###################################################################################################
-#include $(KLINUX_BLTDIR)/include/linux/autoconf.h
-
-include $(KLINUX_BLTDIR)/.config
 
 LTP_DIR = ../../../../
 BIN_DIR = ../../../
-MODULE_DIR = ../rng_test_module
+MODULE_DIR = ../../../module_test/vte_test_modules/rng_test_module 
 
-ifeq "$(CONFIG_ARCH_MXC91331)" "y"
+ifeq ($(ARCH_PLATFORM), mxc91331evb)
 CFLAGS += -DCONFIG_ARCH_MXC91331
 endif
 
-ifeq "$(CONFIG_ARCH_MXC91221)" "y"
+ifeq ($(ARCH_PLATFORM), mxc91221evb)
 CFLAGS += -DCONFIG_ARCH_MXC91221
 endif
 
-ifeq "$(CONFIG_ARCH_MXC91321)" "y"
+ifeq ($(ARCH_PLATFORM), mxc91321evb)
 CFLAGS += -DCONFIG_ARCH_MXC91321
 endif
 
-ifeq "$(CONFIG_ARCH_MXC91231)" "y"
+ifeq ($(ARCH_PLATFORM), mxc91231evb)
 CFLAGS += -DCONFIG_ARCH_MXC91231
 endif
 
-ifeq "$(CONFIG_ARCH_MXC91131)" "y"
+ifeq ($(ARCH_PLATFORM), mxc91131evb)
 CFLAGS += -DCONFIG_ARCH_MXC91131
 endif
 
-ifeq "$(CONFIG_ARCH_MX3)" "y"
+ifeq ($(ARCH_PLATFORM), imx31_3stack)
 CFLAGS += -DCONFIG_ARCH_MX3
 endif
 
-ifeq "$(CONFIG_ARCH_MX27)" "y"
+ifeq ($(ARCH_PLATFORM), imx27evb)
 CFLAGS += -DCONFIG_ARCH_MX27
 endif
 
-ifeq "$(CONFIG_ARCH_MX21)" "y"
+ifeq ($(ARCH_PLATFORM), imx21evb)
 CFLAGS += -DCONFIG_ARCH_MX21
 endif
 
-ifeq "$(CONFIG_ARCH_MX35)" "y"
+ifeq ($(ARCH_PLATFORM), imx35_3stack)
 CFLAGS += -DCONFIG_ARCH_MX35
 endif
 
-ifeq "$(CONFIG_ARCH_MX37)" "y"
+ifeq ($(ARCH_PLATFORM), imx37_3stack)
 CFLAGS += -DCONFIG_ARCH_MX37
 endif
 
-ifeq "$(CONFIG_ARCH_MX51)" "y"
+ifeq ($(ARCH_PLATFORM), imx51_3stack)
+CFLAGS += -DCONFIG_ARCH_MX51
+endif
+
+ifeq ($(ARCH_PLATFORM), imx51)
 CFLAGS += -DCONFIG_ARCH_MX51
 endif
 
@@ -80,11 +81,10 @@ CFLAGS += -Wall -I$(LTP_DIR)include/ \
           -I$(KLINUX_SRCDIR)/drivers/mxc/security/ \
           -I$(KLINUX_SRCDIR)/drivers/mxc/security/sahara2/include \
           -I$(KLINUX_SRCDIR)/drivers/mxc/security/rng/include \
+	  -I$(KLINUX_SRCDIR)/include \
+          -I$(KLINUX_BLTDIR)/include \
           -DCONFIG_PM
 
-#          -I$(KLINUX_SRCDIR)/drivers/mxc/security/sahara2/include \
-          -I$(KLINUX_BLTDIR)/include \
-#
 LOADLIBES = -L$(LTP_DIR)lib -lltp
 
 SRCS=$(wildcard *.c) 

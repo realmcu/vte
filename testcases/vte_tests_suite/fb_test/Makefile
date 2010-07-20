@@ -14,25 +14,13 @@
 #
 ##############################################################################
 
-CONFIG = ../../third_party_suite/fbv-1.0b
-
-ifeq ($(ARCH_PLATFORM), $(filter imx35stack imx25stack imx51stack imx51, $(ARCH_PLATFORM)))
 SUBDIRS = mxcfb_test
-endif
 
-all: config
+all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i CC=$(CROSS_COMPILER)gcc; done
-	-@set -e; for i in $(CONFIG); do $(MAKE) -C $$i CC=$(CROSS_COMPILER)gcc \
-	CFLAGS="-O2 -Wall -D_GNU_SOURCE -I../../../openlibs/include"; done
 
 install:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
-	-ln -f $(CONFIG)/fbv ../../bin/
-	-ln -f butterfly.png ../../bin/ 
 
 clean:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
-	-@set -e; for i in $(CONFIG); do $(MAKE) -C $$i clean ; done
-
-config:
-	-@set -e; for i in $(CONFIG); do cd $$i && ./myconfig cd -; done

@@ -19,13 +19,13 @@
 #-------------------------   ------------    ----------  -------------------------------------------
 #Blake
 
+TARGET-y += dptc.sh 
+TARGET-$(CONFIG_VTE_DRYICE) += dryice.sh
+
 all:
-	if [ ${ARCH_PLATFORM} == "imx25stack" ]; then $(MAKE) -C modules; fi
 
 install:
-	ln -f dptc.sh ../../bin
-	if [ ${ARCH_PLATFORM} == "imx25stack" ]; then $(MAKE) -C modules install; fi
-	if [ ${ARCH_PLATFORM} == "imx25stack" ]; then ln -f dryice.sh ../../bin/ ; fi
+	-ln -f $(TARGET-y) ../../bin/
 	@echo "***********************************************"
 	@echo "** INSTALL : dptc.sh                    **"
 	@echo "***********************************************"
@@ -36,4 +36,3 @@ clean:
 	@echo "** CLEAN : dptc.sh                      **"
 	@echo "***********************************************"
 	@echo
-	if [ ${ARCH_PLATFORM} == "imx25stack" ]; then $(MAKE) -C modules clean; fi

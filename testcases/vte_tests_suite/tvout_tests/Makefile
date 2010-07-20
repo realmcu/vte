@@ -24,43 +24,38 @@
 #
 ###################################################################################################
 LTP_DIR = ../../../
-BIN_DIR = $(LTP_DIR)testcases/
+BIN_DIR = $(LTP_DIR)testcases/bin/
 
-TARGET_BIN = tvout_test_usercase.sh
-TARGET_BIN2 = tvout_overlay_test.sh
-SUBTARGET = $(TARGET_BIN)
-SUBTARGET2 = $(TARGET_BIN2)
-ifeq ($(ARCH_PLATFORM), imx31stack)
-SUBTARGET = mx31_tvout_test_usercase.sh
-endif
+TARGET_UC = tvout_test_usercase.sh
+TARGET_OT = tvout_overlay_test.sh
 
-ifeq ($(ARCH_PLATFORM),$(filter imx37stack imx51stack imx51, $(ARCH_PLATFORM)))
-SUBDIRS = app
-endif
+SRC_UC-$(CONFIG_VTE_IMX31) = mx31_tvout_test_usercase.sh
+SRC_UC-$(CONFIG_VTE_IMX37) = mx37_tvout_test_usercase.sh
+SRC_UC-$(CONFIG_VTE_IMX51) = mx37_tvout_test_usercase.sh
 
-ifeq ($(ARCH_PLATFORM),$(filter imx37stack imx51stack imx51, $(ARCH_PLATFORM)))
-SUBTARGET = mx37_tvout_test_usercase.sh
-SUBTARGET2 = mx37_tvout_overlay_test.sh
-TARGET = $(TARGET_BIN)
-endif
+SRC_OT-$(CONFIG_VTE_IMX37) = mx37_tvout_overlay_test.sh
+SRC_OT-$(CONFIG_VTE_IMX51) = mx37_tvout_overlay_test.sh
+
+#for imx37 imx5x
+SUBDIRS-$(CONFIG_VTE_TVOUT_APP) += app
+
 
 all:
 	@echo "***********************************************"
 	@echo "** ALL : $(TARGET)  test application  **"
 	@echo "***********************************************"
 	@echo
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i; done
 
 install:
-	-cp -f $(SUBTARGET) $(TARGET_BIN)
-	-ln -f $(SUBTARGET2) $(BIN_DIR)bin/tvout_overlay_test.sh
-	-ln -f $(TARGET_BIN) $(BIN_DIR)bin
+	-ln -f $(SRC_UC-y) $(BIN_DIR)/$(TARGET_UC)
+	-ln -f $(SRC_OT-y) $(BIN_DIR)/$(TARGET_OT)
 	@echo "***********************************************"
 	@echo "** INSTALL : $(TARGET)                **"
 	@echo "***********************************************"
 	@echo
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install; done
 
 clean:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i clean; done
 

@@ -32,17 +32,6 @@
 #SUBDIRS = sdma_testapp_api sdma_testapp_rw
 SUBDIRS = sdma_testapp_rw
 
-#
-# Not supported by i.MX31 and MXC91131 EVB
-#
-ifneq ($(ARCH_PLATFORM),imx31ads)
-ifneq ($(ARCH_PLATFORM),mxc91131evb)
-ifneq ($(ARCH_PLATFORM),imx27ads)
-#SUBDIRS += sdma_testapp_tty
-endif
-endif
-endif
-
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
 

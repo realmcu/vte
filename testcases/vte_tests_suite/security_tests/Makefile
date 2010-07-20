@@ -31,89 +31,25 @@
 #Pradeep K /b01016            07/05/2007     ENGR38017   Update RTIC for Islay
 #D.Khoroshev/b00313           07/22/2007     engr42278   Added imx32ads and mxc30031ads
 #                                                        platforms
+#Hake huang/b20222            07/20/2010                 restructure
 #
 ###################################################################################################
 #Portability: ARM GCC
 #
 ###################################################################################################
-# Zeus (Zeus EVB)
-MXC91131 = mxc91131evb
-# SCMA-11 (SCMA-A11 EVB and Sonic)
-MXC91231 = mxc27530evb mxc27530ads
-# Argon LV (Argon LV EVB and MXC300-30 BB)
-MXC91321 = mxc30030evb mxc30030ads
-# Argon Plus (Argon Plus EVB and Odyssey)
-MXC91331 = i30030evb i30030ads
-# SCMA-9 (Islay) 
-MXC91221 = mxc27520evb
-# i.MX27 (i.MX27 ADS and i.MX27 EVB)
-iMX27 = imx27evb imx27ads 
-# i.MX31 (i.MX31 ADS)
-iMX31 = imx31ads
 
-# RNG is Supported by MXC27520evb
-#ifeq ($(ARCH_PLATFORM),mxc27520evb)
-#SUBDIRS += rnga_testcase \
-#           rnga_test_module
-#endif
-
-# SAHARA is supported by MXC27530evb, MXC30030evb, iMX27ads, imx27evb
-#ifeq ($(ARCH_PLATFORM),imx27evb)
-#SUBDIRS += sahara_testapp \
-#           sahara_module
-#endif
-
-#ifeq ($(ARCH_PLATFORM),mxc27530evb)
-#SUBDIRS += sahara_testapp \
-#           sahara_module
-#endif
-
-#ifeq ($(ARCH_PLATFORM),mxc30031ads)
-#SUBDIRS += sahara_testapp \
-#           sahara_module
-#endif
-
-#ifeq ($(ARCH_PLATFORM),mxc30030evb)
-#SUBDIRS += sahara_testapp \
-#           sahara_module
-#endif
-
-ifeq ($(ARCH_PLATFORM),$(filter imx27ads imx51stack imx51, $(ARCH_PLATFORM)))
-SUBDIRS += sahara_testapp \
-           sahara_module
-endif
-        
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack, $(ARCH_PLATFORM)))
-SUBDIRS += scc_test_module  \
-          scc_testcases  
-endif
-             
-ifeq ($(ARCH_PLATFORM), $(filter imx37stack imx51stack imx51, $(ARCH_PLATFORM)))
-SUBDIRS += scc2_test_module  \
-          scc2_testcases    
-endif
-
-ifeq ($(ARCH_PLATFORM),$(filter imx37stack imx35stack,$(ARCH_PLATFORM)))
-SUBDIRS += rng_test_module \
-           rng_testcase
-endif
-
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack, $(ARCH_PLATFORM)))
-SUBDIRS += rnga_test_module  \
-          rnga_testcase  
-endif
- 
-ifeq ($(ARCH_PLATFORM), $(filter imx233, $(ARCH_PLATFORM)))
-SUBDIRS += crypto 
-endif
-
-
+SUBDIRS-$(CONFIG_VTE_SAHARA) += sahara_testapp
+SUBDIRS-$(CONFIG_VTE_SCC)    += scc_testcases  
+SUBDIRS-$(CONFIG_VTE_SCC2)   += scc2_testcases    
+SUBDIRS-$(CONFIG_VTE_RNG)    += rng_testcase
+SUBDIRS-$(CONFIG_VTE_RNGA)   += rnga_testcase  
+SUBDIRS-$(CONFIG_VTE_CRYPTO) += crypto_scripts 
 
 all:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
 
 install:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install ; done
 
 clean:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i clean ; done

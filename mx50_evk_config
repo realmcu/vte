@@ -17,9 +17,9 @@
 KLINUX_SRCDIR=/home/vobs/linux-2.6-imx
 KLINUX_BLTDIR=/home/vobs/linux-2.6-imx
 ARCH_CPU=arm
-ARCH_PLATFORM=imx50
+ARCH_PLATFORM=imx51
 export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM
 
 CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-
 export CROSS_COMPILER
-export CFLAGS="-DPROJECT_MX50=1 -O2 -fsigned-char -mfloat-abi=softfp -mfpu=vfp -I${KLINUX_SRCDIR}/arch/arm/include"
+export CFLAGS="-O2 -fsigned-char -mfloat-abi=softfp -mfpu=vfp -I${KLINUX_SRCDIR}/arch/arm/include"

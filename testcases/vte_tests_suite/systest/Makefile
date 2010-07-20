@@ -21,12 +21,10 @@
 #D.Simakov                    10/04/2007      ENGR37676  systest2 was added
 ####################################################################################################
 
-ifeq ($(ARCH_PLATFORM), $(filter mxc27530evb mxc30030evb mxc30031ads imx27ads , $(ARCH_PLATFORM)))
-SUBDIRS += systest1
-endif
+SUBDIRS += systest2 systest4 systest5 systest6
+#for imx27 
+SUBDIRS-$(CONFIG_VTE_SYSTEST1) += systest1
 
-SUBDIRS = \
-	systest2 systest4 systest5 systest6
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

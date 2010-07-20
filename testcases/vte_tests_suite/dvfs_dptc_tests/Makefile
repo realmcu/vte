@@ -29,24 +29,6 @@
 ###################################################################################################
 SUBDIRS = dvfs_dptc_testapp
 
-#
-# DPTC only supported on MC13783
-#
-
-#dptc_module \
-# MXC300-30 EVB
-# ifeq ($(ARCH_PLATFORM),mxc30030evb)
-# SUBDIRS = dvfs_testapp
-# endif
-
-# ifeq ($(ARCH_PLATFORM),imx31ads)
-# SUBDIRS = dvfs_testapp
-# endif
-
-# ifeq ($(ARCH_PLATFORM),imx27ads)
-# SUBDIRS = dvfs_testapp
-# endif
-
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
 
