@@ -23,7 +23,7 @@
 #Author               Date          Number    Description of Changes
 #---------------  ------------    ----------  ----------------------
 # Victor Cui      01/12/2008                  Initial ver
-#                                          
+# Hake Huang      07/19/2010                  restructure
 #
 ###############################################################################
 #Portability: Indicate if this module is portable to other compilers 
@@ -31,15 +31,35 @@
 #             If not, indicate specific reasons why is it not portable.
 #
 ###############################################################################
-CLEAN_DIRS=`ls */Makefile | sed "s/Makefile//g"`
+#CLEAN_DIRS=`ls */Makefile | sed "s/Makefile//g"`
 
-SUBDIRS = bonnie++ dt iozone network nand-tests cpufrequtils-005 crashme-2.4 dry-2.2 streambench oprofile
+include ./vte_configs/$(ARCH_PLATFORM)_tp_configs
+
+SUBDIRS-$(CONFIG_TP_BONNIE)      += bonnie++ 
+SUBDIRS-$(CONFIG_TP_DT)          += dt 
+SUBDIRS-$(CONFIG_TP_IOZONE)      += iozone 
+SUBDIRS-$(CONFIG_TP_NETWORK)     += network 
+SUBDIRS-$(CONFIG_TP_NAND)        += nand-tests 
+SUBDIRS-$(CONFIG_TP_CPUFREQ)     += cpufrequtils-005 
+SUBDIRS-$(CONFIG_TP_CRASHME)     += crashme-2.4 
+SUBDIRS-$(CONFIG_TP_DRY)         += dry-2.2 
+SUBDIRS-$(CONFIG_TP_STREAMBENCH) += streambench 
+SUBDIRS-$(CONFIG_TP_OPROFILE)    +=	oprofile
+SUBDIRS-$(CONFIG_TP_FBV)         +=	fbv-1.0b
+SUBDIRS-$(CONFIG_TP_CANSOCKET)   += cansocket
+SUBDIRS-$(CONFIG_TP_CRYPTO)      += crypto_test
+SUBDIRS-$(CONFIG_TP_FMTOOL)      += fm_tool
+SUBDIRS-$(CONFIG_TP_CRYPTO_APP)  += crypto_app
+SUBDIRS-$(CONFIG_TP_HOST_TOOLS)  += host_tools
+SUBDIRS-$(CONFIG_TP_IPERF)       += iperf
 
 all:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
+	@set -e; for i in $(SUBDIRS-y); do \
+	$(MAKE) -C $$i ; \
+	done
 
 install:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install ; done
 
 clean:
-	@set -e; for i in $(CLEAN_DIRS); do $(MAKE) -C $$i clean ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i clean ; done

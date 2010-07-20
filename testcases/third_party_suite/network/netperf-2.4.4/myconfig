@@ -1,5 +1,3 @@
 #!/bin/sh
-if [ ! -e Makefile ]; then
 ac_cv_func_setpgrp_void=yes \
 ./configure --host=arm-none-linux-gnueabi --build=arm CC=${CROSS_COMPILER}gcc
-fi

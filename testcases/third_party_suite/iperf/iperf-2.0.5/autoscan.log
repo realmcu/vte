@@ -1,0 +1,75 @@
+autoscan: warning: missing AC_CHECK_FUNCS([gethostbyname]) wanted by: 
+	src/SocketAddr.c:185
+autoscan: warning: missing AC_CHECK_FUNCS([socket]) wanted by: 
+	src/Listener.cpp:315
+	src/Client.cpp:399
+autoscan: warning: missing AC_HEADER_STDBOOL wanted by: 
+	src/Listener.cpp:140
+	src/Listener.cpp:468
+	src/Client.cpp:128
+	src/Client.cpp:222
+	include/Timestamp.hpp:215
+	include/Timestamp.hpp:220
+	include/Timestamp.hpp:225
+	include/Timestamp.hpp:230
+	compat/signal.c:100
+	src/Listener.cpp:140
+	src/Listener.cpp:468
+	src/Settings.cpp:204
+	src/Settings.cpp:207
+	src/Settings.cpp:220
+	src/Settings.cpp:221
+	src/Settings.cpp:222
+	src/Settings.cpp:224
+	src/Settings.cpp:227
+	src/Settings.cpp:229
+	src/Settings.cpp:233
+	include/util.h:184
+	include/util.h:192
+	include/Condition.h:94
+	include/Condition.h:122
+	include/Condition.h:142
+	compat/signal.c:98
+	src/Listener.cpp:147
+	src/Listener.cpp:173
+	src/Listener.cpp:478
+	src/Listener.cpp:591
+	src/Client.cpp:128
+	src/Client.cpp:156
+	src/Client.cpp:222
+	src/Client.cpp:301
+	src/Settings.cpp:333
+	src/Settings.cpp:472
+	src/main.cpp:141
+	include/Condition.h:94
+autoscan: warning: missing AC_TYPE_INT32_T wanted by: 
+	src/Listener.cpp:426
+	src/Listener.cpp:472
+	include/Settings.hpp:293
+	include/Settings.hpp:296
+	include/Settings.hpp:329
+	include/Settings.hpp:330
+	include/Settings.hpp:331
+	include/Settings.hpp:332
+	include/Settings.hpp:333
+	include/Settings.hpp:334
+	include/Settings.hpp:364
+	include/Settings.hpp:365
+	include/Settings.hpp:366
+	include/Settings.hpp:367
+	include/Settings.hpp:368
+	include/Settings.hpp:369
+	include/Settings.hpp:370
+	include/Settings.hpp:371
+	include/Settings.hpp:372
+	include/Settings.hpp:373
+autoscan: warning: missing AC_TYPE_INT64_T wanted by: 
+	include/Settings.hpp:155
+	include/Reporter.h:99
+autoscan: warning: missing AC_TYPE_SSIZE_T wanted by: 
+	src/sockets.c:129
+	src/sockets.c:131
+	src/sockets.c:166
+	src/sockets.c:168
+autoscan: warning: missing AC_TYPE_UINT64_T wanted by: 
+	include/headers.h:183
