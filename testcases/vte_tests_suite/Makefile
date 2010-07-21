@@ -60,8 +60,9 @@
 
 include ./vte_configs/${ARCH_PLATFORM}_deconfigs
 
+
 SUBDIRS-y                         += tools
-SUBDIRS-$(CONFIG_VTE_DATA)        += test-data
+SUBDIRS-$(CONFIG_VTE_DATA)        += test_data
 SUBDIRS-$(CONFIG_VTE_ACC)         += acc_tests
 SUBDIRS-$(CONFIG_VTE_ALSA)        += alsa_tests
 SUBDIRS-$(CONFIG_VTE_ASRC)        += asrc_tests

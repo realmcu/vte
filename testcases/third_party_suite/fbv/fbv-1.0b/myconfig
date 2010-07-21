@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ ! -e config.h ]; then
+./configure \
+--without-libungif \
+--without-libjpeg \
+--without-bmp \
+--libs="$(pwd)/../../../../openlibs/lib/libpng.a $(pwd)/../../../../openlibs/lib/libz.a -lm"
+fi

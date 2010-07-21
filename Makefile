@@ -149,10 +149,6 @@ ltp: libltp.a pandir tools config.h config.mk
 
 vte: libltp.a pandir tools
 	@echo "***********************************************"
-	@echo "          make libraries support               "
-	@echo "***********************************************"
-	#$(MAKE) -C openlibs all
-	@echo "***********************************************"
 	@echo "** MAKE ALL - VTE tests suite                **"
 	@echo "***********************************************"
 	@echo
@@ -169,16 +165,15 @@ vte: libltp.a pandir tools
 	@echo "***********************************************"
 	@echo
 	@echo "***********************************************"
-	@echo "** open source programs are available        **"
+	@echo "**        build Finished                     **"
 	@echo "***********************************************"
-	@echo
+apps:
 	@$(MAKE) -C testcases/third_party_suite all
 	@$(MAKE) -C testcases/third_party_suite install
 	@echo
 	@echo "***********************************************"
-	@echo "**        build Finished                     **"
+	@echo "**        apps build Finished                **"
 	@echo "***********************************************"
-
 
 unit: libltp.a pandir tools
 	@echo

@@ -2,7 +2,7 @@
 PREFIX=/opt/ltp
 
 CFLAGS+= -Wall
-CFLAGS+= -D_USC_LIB_
+CFLAGS+= -D_USC_LIB -DLOCK_SH=1 -DLOCK_EX=2 -DLOCK_UN=8 -DLOCK_NB=4
 CPPFLAGS+= -I../include 
 ifeq ($(shell uname -s),HP-UX)
 CFLAGS+=-Ae -D_LARGEFILE64_SOURCE +DA1.1
