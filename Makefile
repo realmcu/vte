@@ -288,14 +288,14 @@ vte: libltp.a pandir tools
 	@echo "***********************************************"
 	@echo
 	@echo "***********************************************"
-	@echo "** open source programs are available        **"
+	@echo "**        build Finished                     **"
 	@echo "***********************************************"
-	@echo
+apps:
 	@$(MAKE) -C testcases/third_party_suite all
 	@$(MAKE) -C testcases/third_party_suite install
 	@echo
 	@echo "***********************************************"
-	@echo "**        build Finished                     **"
+	@echo "**        apps build Finished                **"
 	@echo "***********************************************"
 
-## End misc targets.
+## End misc targets

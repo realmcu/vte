@@ -4,10 +4,10 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
     <title>OProfile JIT agent developer guide</title>
-    <meta name="generator" content="DocBook XSL Stylesheets V1.69.1" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.75.1" />
   </head>
   <body>
-    <div class="book" lang="en" xml:lang="en">
+    <div class="book" title="OProfile JIT agent developer guide">
       <div class="titlepage">
         <div>
           <div>
@@ -20,7 +20,7 @@
                 <div class="affiliation">
                   <div class="address">
                     <p>
-                      <code class="email">&lt;<a href="mailto:maynardj@us.ibm.com">maynardj@us.ibm.com</a>&gt;</code>
+                      <code class="email">&lt;<a class="email" href="mailto:maynardj@us.ibm.com">maynardj@us.ibm.com</a>&gt;</code>
                     </p>
                   </div>
                 </div>
@@ -93,7 +93,7 @@
           </dd>
         </dl>
       </div>
-      <div class="chapter" lang="en" xml:lang="en">
+      <div class="chapter" title="Chapter 1. Developing a new JIT agent">
         <div class="titlepage">
           <div>
             <div>
@@ -124,7 +124,7 @@
 	virtual machines.  This developer guide describes these development files and how
 	to use them.
 	</p>
-        <div class="sect1" lang="en" xml:lang="en">
+        <div class="sect1" title="1. Overview">
           <div class="titlepage">
             <div>
               <div>
@@ -140,13 +140,13 @@
 	developing the JVMTI library.  Following are the high level steps to follow:
 	</p>
           <div class="orderedlist">
-            <ol type="1">
-              <li>Ensure your virtual machine provides an API that, at minimum,
+            <ol class="orderedlist" type="1">
+              <li class="listitem">Ensure your virtual machine provides an API that, at minimum,
 	can provide the following information about dynamically compiled code:
-		<div class="itemizedlist"><ul type="disc"><li>Notification when compilation occurs</li><li>Name of the symbol (i.e., function or class/method, etc.)</li><li>Address in anonymous memory where the compiled code was loaded</li><li>Length of the compiled code segment</li></ul></div></li>
-              <li>Write an agent library that communicates with your VM to obtain
+		<div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">Notification when compilation occurs</li><li class="listitem">Name of the symbol (i.e., function or class/method, etc.)</li><li class="listitem">Address in anonymous memory where the compiled code was loaded</li><li class="listitem">Length of the compiled code segment</li></ul></div></li>
+              <li class="listitem">Write an agent library that communicates with your VM to obtain
 	compiled code notifications.  Invoke the required functions from opagent.h
-	(<a href="#jit-interface" title="2. Implementing JIT support for a new virtual machine">Section 2, &#8220;Implementing JIT support for a new virtual machine&#8221;</a>) and link your library with libopagent.so
+	(<a class="xref" href="#jit-interface" title="2. Implementing JIT support for a new virtual machine">Section 2, &#8220;Implementing JIT support for a new virtual machine&#8221;</a>) and link your library with libopagent.so
 	(installed at <code class="filename">&lt;oprofile_install_dir&gt;/lib/oprofile</code>).
 	</li>
             </ol>
@@ -155,7 +155,7 @@
 
 	</p>
         </div>
-        <div class="sect1" lang="en" xml:lang="en">
+        <div class="sect1" title="2. Implementing JIT support for a new virtual machine">
           <div class="titlepage">
             <div>
               <div>
@@ -189,17 +189,17 @@ int op_write_native_code(op_agent_t hdl, char const * symbol_name,
 	following steps:
 	</p>
           <div class="orderedlist">
-            <ol type="1">
-              <li>Implement a function to set up initial communication with the VM.
+            <ol class="orderedlist" type="1">
+              <li class="listitem">Implement a function to set up initial communication with the VM.
 	Once communication to the VM is established, your agent library should call
 	<code class="function">op_op_agent()</code> and cache the returned <code class="code">op_agent_t</code> handle for use in
 	future calls.</li>
-              <li>Perform any necessary steps to register with the VM to be notified of
+              <li class="listitem">Perform any necessary steps to register with the VM to be notified of
 	compiled code load events.  Registration must include a callback function you
 	will implement in the library to handle the compiled code load events.</li>
-              <li>The callback function mentioned above must obtain all required
+              <li class="listitem">The callback function mentioned above must obtain all required
 	information from the VM to pass to libopagent via <code class="function">op_write_native_code()</code>.</li>
-              <li>When disconnecting from the VM, your library should call
+              <li class="listitem">When disconnecting from the VM, your library should call
 	<code class="function">op_agent_close()</code>.</li>
             </ol>
           </div>
@@ -224,12 +224,12 @@ int op_write_debug_line_info(op_agent_t hdl, void const * code,
           </table>
           <p>
 	</p>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>While the libopagent functions are thread-safe, you should not use them in
+          <div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>While the libopagent functions are thread-safe, you should not use them in
 	signal handlers.
 	</div>
         </div>
       </div>
-      <div class="chapter" lang="en" xml:lang="en">
+      <div class="chapter" title="Chapter 2. The JIT support API">
         <div class="titlepage">
           <div>
             <div>
@@ -272,7 +272,7 @@ int op_write_debug_line_info(op_agent_t hdl, void const * code,
         <p>
 	This chapter describes the JIT support API.  See opagent.h for more details.
         </p>
-        <div class="sect1" lang="en" xml:lang="en">
+        <div class="sect1" title="1. op_open_agent">
           <div class="titlepage">
             <div>
               <div>
@@ -281,16 +281,16 @@ int op_write_debug_line_info(op_agent_t hdl, void const * code,
             </div>
           </div>
           <div class="funcsynopsis">Initializes the agent library.
-<pre class="funcsynopsisinfo">#include &lt;opagent.h&gt;</pre><p><code class="funcdef">op_agent_t <b class="fsfunc">op_open_agent</b>(</code><code>)</code>;<br />void;</p></div>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Description</h3>
+<pre class="funcsynopsisinfo">#include &lt;opagent.h&gt;</pre><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" class="funcprototype-table"><tr><td><code class="funcdef">op_agent_t <b class="fsfunc">op_open_agent</b>(</code></td><td><code>)</code>;</td><td> </td></tr></table><div class="paramdef-list"><code>void</code>;</div><div class="funcprototype-spacer"> </div></div>
+          <div class="note" title="Description" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Description</h3>
 This function must be called by agents before any other function.
 Creates and opens a JIT dump file in <code class="filename">/var/lib/oprofile/jitdump</code>
 using the naming convention <code class="filename">&lt;process_id&gt;.dump</code>.
 </div>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Parameters</h3>
+          <div class="note" title="Parameters" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Parameters</h3>
 None
 </div>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <div class="note" title="Return value" style="margin-left: 0.5in; margin-right: 0.5in;">
             <h3 class="title">Return value</h3>
             <p>Returns a valid <code class="code">op_agent_t</code> handle or NULL.
 If NULL is returned, <code class="code">errno</code> is set to indicate the nature of the error. For a list
@@ -300,7 +300,7 @@ stat, creat, gettimeofday, fdopen, fwrite
 </code>
           </div>
         </div>
-        <div class="sect1" lang="en" xml:lang="en">
+        <div class="sect1" title="2. op_close_agent">
           <div class="titlepage">
             <div>
               <div>
@@ -309,13 +309,13 @@ stat, creat, gettimeofday, fdopen, fwrite
             </div>
           </div>
           <div class="funcsynopsis">Uninitialize the agent library.
-<pre class="funcsynopsisinfo">#include &lt;opagent.h&gt;</pre><p><code class="funcdef">int <b class="fsfunc">op_close_agent</b>(</code><var class="pdparam">hdl</var><code>)</code>;<br />op_agent_t <var class="pdparam">hdl</var>;</p></div>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Description</h3>
+<pre class="funcsynopsisinfo">#include &lt;opagent.h&gt;</pre><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" class="funcprototype-table"><tr><td><code class="funcdef">int <b class="fsfunc">op_close_agent</b>(</code></td><td><var class="pdparam">hdl</var><code>)</code>;</td><td> </td></tr></table><div class="paramdef-list"><code>op_agent_t <var class="pdparam">hdl</var></code>;</div><div class="funcprototype-spacer"> </div></div>
+          <div class="note" title="Description" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Description</h3>
 Frees all resources and closes open file handles.
 </div>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Parameters</h3><em class="parameter"><code>hdl : </code></em>Handle returned from an earlier call to
+          <div class="note" title="Parameters" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Parameters</h3><em class="parameter"><code>hdl : </code></em>Handle returned from an earlier call to
 <code class="function">op_open_agent()</code></div>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <div class="note" title="Return value" style="margin-left: 0.5in; margin-right: 0.5in;">
             <h3 class="title">Return value</h3>
             <p>Returns 0 on success; -1 otherwise. If -1 is returned, <code class="code">errno</code> is set
 to indicate the nature of the error. 
@@ -324,7 +324,7 @@ handle is passed. For a list of other possible <code class="code">errno</code> v
             <code class="code">gettimeofday, fwrite</code>
           </div>
         </div>
-        <div class="sect1" lang="en" xml:lang="en">
+        <div class="sect1" title="3. op_write_native_code">
           <div class="titlepage">
             <div>
               <div>
@@ -333,12 +333,12 @@ handle is passed. For a list of other possible <code class="code">errno</code> v
             </div>
           </div>
           <div class="funcsynopsis">Write information about compiled code to a JIT dump file.
-<pre class="funcsynopsisinfo">#include &lt;opagent.h&gt;</pre><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">int <b class="fsfunc">op_write_native_code</b>(</code></td><td><var class="pdparam">hdl</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">symbol_name</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">vma</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">code</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">code_size</var><code>)</code>;</td><td> </td></tr></table><table border="0" summary="Function argument synopsis" cellspacing="0" cellpadding="0"><tr><td>op_agent_t </td><td><var class="pdparam">hdl</var>;</td></tr><tr><td>char const * </td><td><var class="pdparam">symbol_name</var>;</td></tr><tr><td>uint64_t </td><td><var class="pdparam">vma</var>;</td></tr><tr><td>void const * </td><td><var class="pdparam">code</var>;</td></tr><tr><td>const unsigned int </td><td><var class="pdparam">code_size</var>;</td></tr></table></div>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Description</h3>
+<pre class="funcsynopsisinfo">#include &lt;opagent.h&gt;</pre><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" class="funcprototype-table"><tr><td><code class="funcdef">int <b class="fsfunc">op_write_native_code</b>(</code></td><td><var class="pdparam">hdl</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">symbol_name</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">vma</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">code</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">code_size</var><code>)</code>;</td><td> </td></tr></table><div class="paramdef-list"><code>op_agent_t<var class="pdparam">hdl</var></code>;<br /><code>char const *<var class="pdparam">symbol_name</var></code>;<br /><code>uint64_t<var class="pdparam">vma</var></code>;<br /><code>void const *<var class="pdparam">code</var></code>;<br /><code>const unsigned int<var class="pdparam">code_size</var></code>;</div><div class="funcprototype-spacer"> </div></div>
+          <div class="note" title="Description" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Description</h3>
 Signal the dynamic generation of native code from a virtual machine.
 Writes a JIT dump record to the open JIT dump file using the passed information.
 </div>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <div class="note" title="Parameters" style="margin-left: 0.5in; margin-right: 0.5in;">
             <h3 class="title">Parameters</h3>
             <p>
 <em class="parameter"><code>hdl : </code></em>Handle returned from an earlier call to
@@ -365,7 +365,7 @@ Writes a JIT dump record to the open JIT dump file using the passed information.
 <em class="parameter"><code>code_size : </code></em>Size of the compiled code
 </p>
           </div>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <div class="note" title="Return value" style="margin-left: 0.5in; margin-right: 0.5in;">
             <h3 class="title">Return value</h3>
             <p>Returns 0 on success; -1 otherwise. If -1 is returned, <code class="code">errno</code> is set
 to indicate the nature of the error. 
@@ -374,7 +374,7 @@ handle is passed. For a list of other possible <code class="code">errno</code> v
             <code class="code">gettimeofday, fwrite</code>
           </div>
         </div>
-        <div class="sect1" lang="en" xml:lang="en">
+        <div class="sect1" title="4. op_write_debug_line_info">
           <div class="titlepage">
             <div>
               <div>
@@ -383,14 +383,14 @@ handle is passed. For a list of other possible <code class="code">errno</code> v
             </div>
           </div>
           <div class="funcsynopsis">Write debug information about compiled code to a JIT dump file.
-<pre class="funcsynopsisinfo">#include &lt;opagent.h&gt;</pre><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">int <b class="fsfunc">op_write_debug_line_info</b>(</code></td><td><var class="pdparam">hdl</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">code</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">nr_entry</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">compile_map</var><code>)</code>;</td><td> </td></tr></table><table border="0" summary="Function argument synopsis" cellspacing="0" cellpadding="0"><tr><td>op_agent_t </td><td><var class="pdparam">hdl</var>;</td></tr><tr><td>void const * </td><td><var class="pdparam">code</var>;</td></tr><tr><td>size_t </td><td><var class="pdparam">nr_entry</var>;</td></tr><tr><td>struct debug_line_info const * </td><td><var class="pdparam">compile_map</var>;</td></tr></table></div>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Description</h3>
+<pre class="funcsynopsisinfo">#include &lt;opagent.h&gt;</pre><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" class="funcprototype-table"><tr><td><code class="funcdef">int <b class="fsfunc">op_write_debug_line_info</b>(</code></td><td><var class="pdparam">hdl</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">code</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">nr_entry</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">compile_map</var><code>)</code>;</td><td> </td></tr></table><div class="paramdef-list"><code>op_agent_t<var class="pdparam">hdl</var></code>;<br /><code>void const *<var class="pdparam">code</var></code>;<br /><code>size_t<var class="pdparam">nr_entry</var></code>;<br /><code>struct debug_line_info const *<var class="pdparam">compile_map</var></code>;</div><div class="funcprototype-spacer"> </div></div>
+          <div class="note" title="Description" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Description</h3>
 Add debug line information to a piece of code. An <code class="function">op_write_native_code()</code>
 with the same code pointer should have occurred before this call. It's not
 necessary to provide one lineno information entry per machine instruction;
 the array can contain hole.
 </div>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <div class="note" title="Parameters" style="margin-left: 0.5in; margin-right: 0.5in;">
             <h3 class="title">Parameters</h3>
             <p>
 <em class="parameter"><code>hdl : </code></em>Handle returned from an earlier call to
@@ -408,7 +408,7 @@ library implementation for an example of what information should be retrieved
 from a VM to fill out this data structure.
 </p>
           </div>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <div class="note" title="Return value" style="margin-left: 0.5in; margin-right: 0.5in;">
             <h3 class="title">Return value</h3>
             <p>Returns 0 on success; -1 otherwise. If -1 is returned, <code class="code">errno</code> is set
 to indicate the nature of the error. 
@@ -417,7 +417,7 @@ handle is passed. For a list of other possible <code class="code">errno</code> v
             <code class="code">gettimeofday, ftell, fwrite</code>
           </div>
         </div>
-        <div class="sect1" lang="en" xml:lang="en">
+        <div class="sect1" title="5. op_unload_native_code">
           <div class="titlepage">
             <div>
               <div>
@@ -426,10 +426,10 @@ handle is passed. For a list of other possible <code class="code">errno</code> v
             </div>
           </div>
           <div class="funcsynopsis">Write information to the JIT dump file about invalidated compiled code.
-<pre class="funcsynopsisinfo">#include &lt;opagent.h&gt;</pre><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">int <b class="fsfunc">op_unload_native_code</b>(</code></td><td><var class="pdparam">hdl</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">vma</var><code>)</code>;</td><td> </td></tr></table><table border="0" summary="Function argument synopsis" cellspacing="0" cellpadding="0"><tr><td>op_agent_t </td><td><var class="pdparam">hdl</var>;</td></tr><tr><td>uint64_t </td><td><var class="pdparam">vma</var>;</td></tr></table></div>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Description</h3>
+<pre class="funcsynopsisinfo">#include &lt;opagent.h&gt;</pre><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" class="funcprototype-table"><tr><td><code class="funcdef">int <b class="fsfunc">op_unload_native_code</b>(</code></td><td><var class="pdparam">hdl</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">vma</var><code>)</code>;</td><td> </td></tr></table><div class="paramdef-list"><code>op_agent_t<var class="pdparam">hdl</var></code>;<br /><code>uint64_t<var class="pdparam">vma</var></code>;</div><div class="funcprototype-spacer"> </div></div>
+          <div class="note" title="Description" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Description</h3>
 Signal the invalidation of native code from a virtual machine.</div>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <div class="note" title="Parameters" style="margin-left: 0.5in; margin-right: 0.5in;">
             <h3 class="title">Parameters</h3>
             <p>
 <em class="parameter"><code>hdl : </code></em>Handle returned from an earlier call to
@@ -440,7 +440,7 @@ Signal the invalidation of native code from a virtual machine.</div>
 An <code class="function">op_write_native_code()</code> with the same vma should have occurred before this call.
 </p>
           </div>
-          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <div class="note" title="Return value" style="margin-left: 0.5in; margin-right: 0.5in;">
             <h3 class="title">Return value</h3>
             <p>Returns 0 on success; -1 otherwise. If -1 is returned, <code class="code">errno</code> is set
 to indicate the nature of the error. 

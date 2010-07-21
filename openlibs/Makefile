@@ -1,4 +1,5 @@
 SUBDIRS += libpcap-0.9.6 libpng-1.2.20
+export CFLAGS +=  -I$(KLINUX_SRCDIR)/include
 
 all: config
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i CC=$(CROSS_COMPILER)gcc; done
@@ -10,6 +11,8 @@ install:
 clean:
 	-@set -e; for i in $(SUBDIRS) ; do $(MAKE) -C $$i clean ; done
 	-@set -e; for i in $(SUBDIRS) ; do $(MAKE) -C $$i distclean ; done
+	-$(MAKE) -C zlib-1.2.3 clean
+	-$(MAKE) -C zlib-1.2.3 distclean
 	rm -rf bin lib share man include
 config:
 	cd zlib-1.2.3; ./myconfig ; cd ..

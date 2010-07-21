@@ -21,7 +21,7 @@ install:
 		ln -f $(SUBDIRS)/src/$(BINS) ../../bin/
 
 clean:
-	$(MAKE) -C $(SUBDIRS) clean
-	$(MAKE) -C $(SUBDIRS) distclean
+	-$(MAKE) -C $(SUBDIRS) clean
+	-$(MAKE) -C $(SUBDIRS) distclean
 
 

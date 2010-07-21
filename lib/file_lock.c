@@ -37,7 +37,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
-#include <sys/sysmacros.h>
+//#include <sys/sysmacros.h>
 #include <string.h> /* memset, strerror */
 #include "file_lock.h"
 

@@ -17,7 +17,7 @@ clean_SUBDIR-$(CONFIG_TP_NETPERF) += clean_netperf-2.4.4
 SUBDIRS-$(CONFIG_TP_TCPDUMP) += tcpdump-3.9.8
 clean_SUBDIR-$(CONFIG_TP_TCPDUMP) += clean_tcpdump-3.9.8
 SUBDIRS-$(CONFIG_TP_MII)     += mii-tool-1.9.1.1
-clean_SUBDIRS-$(CONFIG_TP_MII) += clean_mii-tool-1.9.1.1
+clean_SUBDIR-$(CONFIG_TP_MII) += clean_mii-tool-1.9.1.1
 
 
 all: $(SUBDIRS-y)
