@@ -467,7 +467,7 @@ int main(int argc, char ** argv)
 	var.yres = m_opts.rsize.h * 2;
 	var.grayscale = GRAYSCALE_8BIT;
 	var.yoffset = 0;
-	var.rotate = FB_ROTATE_UR;
+	var.rotate = m_opts.rot;
 	var.activate = FB_ACTIVATE_FORCE;
 	CALL_IOCTL(ioctl(fd_fb, FBIOPUT_VSCREENINFO, &var));
 	g_fb0_size = var.xres * var.yres * var.bits_per_pixel / 8;
