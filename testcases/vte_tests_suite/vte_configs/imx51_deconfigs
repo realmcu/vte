@@ -86,6 +86,7 @@ export CONFIG_VM_SCC2=y
 export CONFIG_OM_NAND=y  
 export CONFIG_OM_RAMDISK=y  
 export CONFIG_OM_SCULL=y
+#export CONFIG_OM_CRYPTO=y
 
 #platform depended config need read the related Makefile in subfolder
 #CONFIG_VTE_KEYPAD_TESTAPP=y
@@ -96,7 +97,6 @@ export CONFIG_VTE_SAHARA=y
 export CONFIG_VTE_SCC2=y
 #CONFIG_VTE_RNG=y
 #CONFIG_VTE_RNGA=y
-#CONFIG_VTE_CRYPTO=y
 #CONFIG_VTE_TS_APP1=y
 export CONFIG_VTE_TVOUT_APP=y
 #CONFIG_VTE_V4L_IPU_PF=y
