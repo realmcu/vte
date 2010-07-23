@@ -1,9 +1,0 @@
-#!/bin/sh
-
-if [ ! -e config.h ]; then
-./configure \
---without-libungif \
---without-libjpeg \
---without-bmp \
---libs="../../../openlibs/lib/libpng.a ../../../openlibs/lib/libz.a -lm"
-fi
