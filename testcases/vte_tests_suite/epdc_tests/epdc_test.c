@@ -56,7 +56,7 @@ extern "C"{
 { \
     if( (ioctl_cmd) < 0 )\
     {\
-        tst_resm( TFAIL, "%s : %s fails #%d [File: %s, line: %d]", __FUNCTION__, "ioctl_", errno, __FILE__, __LINE__-2);\
+        tst_resm( TFAIL, "%s : %s fails #%d [File: %s, line: %d]", __FUNCTION__, "ioctl_", errno, __FILE__, __LINE__);\
         perror("ioctl"); \
         return FALSE;\
     }\
@@ -387,8 +387,8 @@ BOOL test_max_update()
 	 int ret = 0;
    int i = 0, j = 0;
 	 int id= 0;
-#define MAX_CNT_X 5
-#define MAX_CNT_Y 5
+#define MAX_CNT_X 2
+#define MAX_CNT_Y 2
    struct mxcfb_update_data im_update[MAX_CNT_X * MAX_CNT_Y];
    pthread_t sigtid,drawid,updates_id[MAX_CNT_X * MAX_CNT_Y];
    sigemptyset(&sigset);
@@ -884,7 +884,7 @@ int epdc_fb_setup(void)
 	if (m_opt.temp != -1)
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_TEMPERATURE, &m_opt.waveform));
 	if (m_opt.au != -1)
-	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_AUTO_UPDATE_MODE, &m_opt.waveform));
+	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_AUTO_UPDATE_MODE, &m_opt.au));
 
     rv = TPASS;
     return rv;
