@@ -233,8 +233,8 @@ config.mk:
 	touch $@
 
 ltp: libltp.a pandir tools config.h config.mk
-	@touch include/config.h.default
-	@$(MAKE) config.h
+	#@touch include/config.h.default
+	#@$(MAKE) config.h
 	@echo
 	@echo "***********************************************"
 	@echo "** MAKE ALL - Kernel LTP tests suite         **"
