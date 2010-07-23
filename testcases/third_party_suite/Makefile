@@ -47,7 +47,6 @@ SUBDIRS-$(CONFIG_TP_STREAMBENCH) += streambench
 SUBDIRS-$(CONFIG_TP_OPROFILE)    +=	oprofile
 SUBDIRS-$(CONFIG_TP_FBV)         +=	fbv
 SUBDIRS-$(CONFIG_TP_CANSOCKET)   += cansocket
-SUBDIRS-$(CONFIG_TP_CRYPTO)      += crypto_test
 SUBDIRS-$(CONFIG_TP_FMTOOL)      += fm_tool
 SUBDIRS-$(CONFIG_TP_CRYPTO_APP)  += crypto_app
 SUBDIRS-$(CONFIG_TP_HOST_TOOLS)  += host_tools
