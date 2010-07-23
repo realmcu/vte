@@ -1,0 +1,27 @@
+#imx5 opensource test tools
+
+export CONFIG_TP_BONNIE=y
+export CONFIG_TP_DT=y
+export CONFIG_TP_IOZONE=y
+export CONFIG_TP_NETWORK=y
+export CONFIG_TP_NAND=y
+export CONFIG_TP_CPUFREQ=y
+export CONFIG_TP_CRASHME=y
+export CONFIG_TP_DRY=y
+export CONFIG_TP_STREAMBENCH=y
+export CONFIG_TP_OPROFILE=y
+export CONFIG_TP_FBV=y
+export CONFIG_TP_CANSOCKET=y
+export CONFIG_TP_HOST_TOOLS=y
+#CONFIG_TP_CRYPTO=y
+#CONFIG_TP_FMTOOL=y
+#CONFIG_TP_CRYPTO_APP=y
+export CONFIG_TP_IPERF=y
+
+export CONFIG_TP_ETHTOOL=y
+export CONFIG_TP_PPP=y
+export CONFIG_TP_NETPERF=y
+export CONFIG_TP_TCPDUMP=y
+export CONFIG_TP_MII=y
+
+
