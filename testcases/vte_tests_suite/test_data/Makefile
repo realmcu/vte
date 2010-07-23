@@ -1,6 +1,7 @@
 
 DATA = butterfly.png 
 SUBDIRS-$(CONFIG_VTE_V4L_PXP) += pxp_test_files
+SUBDIRS-$(CONFIG_VTE_VPU)     += pc_tool
 
 all:
 	
