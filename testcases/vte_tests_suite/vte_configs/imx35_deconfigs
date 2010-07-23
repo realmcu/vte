@@ -1,0 +1,106 @@
+#imx5x vte default config setting
+
+#define platform
+export CONFIG_VTE_IMX35=y
+
+#define test sub folder
+#CONFIG_VTE_ACC=y
+export CONFIG_VTE_ALSA=y
+export CONFIG_VTE_ASRC=y
+#export CONFIG_VTE_ATA=y
+export CONFIG_VTE_BL=y
+export CONFIG_VTE_BT=y
+export CONFIG_VTE_CAMERA=y
+export CONFIG_VTE_CAN=y
+export CONFIG_VTE_CDROM=y
+export CONFIG_VTE_DATA=y
+#CONFIG_VTE_DPM=y
+#CONFIG_VTE_DPTC=y
+#CONFIG_VTE_DVFS_DPTC=y
+export CONFIG_VTE_DVFS=y
+#CONFIG_VTE_DRYICE=y
+export CONFIG_VTE_EMI=y
+#export CONFIG_VTE_EPDC=y
+#export CONFIG_VTE_EPXP=y
+export CONFIG_VTE_FB=y
+export CONFIG_VTE_FEC=y
+#export CONFIG_VTE_FM=y
+export CONFIG_VTE_FS=y
+export CONFIG_VTE_GPT=y
+export CONFIG_VTE_GPU=y
+export CONFIG_VTE_GPS=y
+export CONFIG_VTE_I2C=y
+#export CONFIG_VTE_IIM=y
+export CONFIG_VTE_IO=y
+#CONFIG_VTE_IPC
+export CONFIG_VTE_IPUDEV=y
+#CONFIG_VTE_IRDA
+export CONFIG_VTE_KEYPAD=y
+export CONFIG_VTE_LIBATA=y
+#CONFIG_VTE_MBX
+export CONFIG_VTE_MLB
+export CONFIG_VTE_MMC=y
+export CONFIG_VTE_MTD
+#CONFIG_VTE_MU
+export CONFIG_VTE_NETWORK=y
+#CONFIG_VTE_OSS
+export CONFIG_VTE_1W=y
+export CONFIG_VTE_PM=y
+#CONFIG_VTE_PMIC=y
+export CONFIG_VTE_POWER=y
+#CONFIG_VTE_PTP
+#CONFIG_VTE_RM
+export CONFIG_VTE_RTC=y
+#CONFIG_VTE_SDMA
+export CONFIG_VTE_SEC=y
+export CONFIG_VTE_SLCDC=y
+export CONFIG_VTE_SPDIF=y
+#CONFIG_VTE_SPI
+#CONFIG_VTE_SSI_DMA
+export CONFIG_VTE_STORAGE=y
+export CONFIG_VTE_SYS=y
+export CONFIG_VTE_TS=y
+export CONFIG_VTE_TVIN
+export CONFIG_VTE_UART=y
+export CONFIG_VTE_TVOUT=y
+#CONFIG_VTE_UDMA
+#CONFIG_VTE_USB_HOST
+#CONFIG_VTE_USB_OTG
+export CONFIG_VTE_V4L_IPU=y
+#CONFIG_VTE_V4L_EMMA
+#export CONFIG_VTE_V4L_PXP=y
+#export CONFIG_VTE_VPU=y
+export CONFIG_VTE_WD=y
+export CONFIG_VTE_WIFI=y
+
+#vte module config
+#CONFIG_VM_DPTC=y
+#CONFIG_VM_SDMA=y
+#export CONFIG_VM_SAHARA=y
+export CONFIG_VM_SCC=y
+#export CONFIG_VM_SCC2=y
+export CONFIG_VM_RNG=y
+#CONFIG_VM_RNGA=y
+
+#open source module config
+export CONFIG_OM_NAND=y  
+export CONFIG_OM_RAMDISK=y  
+export CONFIG_OM_SCULL=y
+#export CONFIG_OM_CRYPTO=y
+
+#platform depended config need read the related Makefile in subfolder
+#CONFIG_VTE_KEYPAD_TESTAPP=y
+export CONFIG_VTE_MMC_ERW=y
+export CONFIG_VTE_MMC_LOCK=y
+#export CONFIG_VTE_SAHARA=y
+export CONFIG_VTE_SCC=y
+#export CONFIG_VTE_SCC2=y
+export CONFIG_VTE_RNG=y
+#export CONFIG_VTE_RNGA=y
+#CONFIG_VTE_TS_APP1=y
+export CONFIG_VTE_TVOUT_APP=y
+#CONFIG_VTE_V4L_IPU_PF=y
+export CONFIG_VTE_V4L_CAPTURE=y
+export CONFIG_VTE_V4L_OUTPUT=y
+export CONFIG_VTE_V4L_BASIC=y
+export CONFIG_VTE_V4L_IPU_FUNC=y
