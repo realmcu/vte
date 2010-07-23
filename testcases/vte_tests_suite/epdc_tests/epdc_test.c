@@ -387,8 +387,8 @@ BOOL test_max_update()
 	 int ret = 0;
    int i = 0, j = 0;
 	 int id= 0;
-#define MAX_CNT_X 2
-#define MAX_CNT_Y 2
+#define MAX_CNT_X 4
+#define MAX_CNT_Y 4
    struct mxcfb_update_data im_update[MAX_CNT_X * MAX_CNT_Y];
    pthread_t sigtid,drawid,updates_id[MAX_CNT_X * MAX_CNT_Y];
    sigemptyset(&sigset);
@@ -398,6 +398,7 @@ BOOL test_max_update()
    pthread_create(&drawid, NULL, (void *)&draw_thread, &state);
    if(state)
    {
+		int cn = 0;
 		struct fb_var_screeninfo mode_info;
 		CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 		memset(im_update, 0, sizeof(im_update));
@@ -409,16 +410,17 @@ BOOL test_max_update()
 			y = j*(mode_info.yres/MAX_CNT_Y);
 			w = (mode_info.xres/MAX_CNT_X)&(~0x03);
 			h = (mode_info.yres/MAX_CNT_Y)&(~0x03);
-			im_update[i].update_region.top = y;
-			im_update[i].update_region.left = x;
-			im_update[i].update_region.width = w;
-			im_update[i].update_region.height = h;
-			im_update[i].waveform_mode = 257;
-			im_update[i].update_marker = i + 0x200;
-			im_update[i].temp = 24;
+			im_update[cn].update_region.top = y;
+			im_update[cn].update_region.left = x;
+			im_update[cn].update_region.width = w;
+			im_update[cn].update_region.height = h;
+			im_update[cn].waveform_mode = 257;
+			im_update[cn].update_marker = i + 0x200;
+			im_update[cn].temp = 24;
 			pthread_create(&(updates_id[id++]), NULL,
-				(void *)&single_update, (void *)&(im_update[i]));
+				(void *)&single_update, (void *)&(im_update[cn]));
 			printf("carete pid %d\n", updates_id[i]);
+			cn++;
 			}
 		for (i = 0; i < (MAX_CNT_X * MAX_CNT_Y); i++)
 		{
@@ -865,6 +867,12 @@ int epdc_fb_setup(void)
     {
         tst_brkm(TFAIL, cleanup, "Can't map framebuffer device into memory: %s\n", strerror(errno));
     }
+    /*keep system on*/
+		{
+			int tfd = open("/dev/tty0", O_RDWR);
+			write(tfd, "\033[9;0]", 7);
+			close(tfd);
+		}
 
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_WAVEFORM_MODES, &m_opt.waveform));
 

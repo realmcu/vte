@@ -8,7 +8,7 @@
 #http://www.gnu.org/copyleft/gpl.html
 
 CC = $(CROSS_COMPILER)gcc
-CFLAGS += -I../../../include/ -I$(KLINUX_SRCDIR)/include
+CFLAGS += -I../../../include/ -I$(KLINUX_SRCDIR)/include -trigraphs
 LDFLAGS += -L../../../lib -lltp -lpthread
 
 TARGET = epdc_test
