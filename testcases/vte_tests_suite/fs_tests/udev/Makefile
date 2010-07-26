@@ -23,14 +23,11 @@
 CFLAGS+= -Wall -I ../../../../include
 LOADLIBES += -L ../../../lib -lltp
 
-SUBDIRS=scull
 TARGETS=udev_sysfs_test1.sh
 
 all:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
 
 install:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
 	@echo "***********************************************"
 	@echo "** INSTALL : $(TARGETS)                      **"
 	@echo "***********************************************"
@@ -38,6 +35,5 @@ install:
 	@echo
 
 clean:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
 
 
