@@ -54,13 +54,13 @@ int l;/*invert*/
 int m;/*multi-instance*/
 int alpha;/*alpha value*/
 int c;/*frame count*/
-int k;/*color key*/
+long k;/*color key*/
 int scale;/*scale*/
 int hflip;/*horizontal flip*/
 int vflip;/*vertical flip*/
 int bk; /*back ground color*/
 struct mrect altresize;/*alternaticely size*/
-int vk;/*o0verlay colr key*/
+long vk;/*o0verlay colr key*/
 int ga;/*global alpha*/
 int la;/*local alpha*/
 };
@@ -119,8 +119,10 @@ static int update_to_display(int left, int top, int width, int height, int wave_
 		retval = ioctl(fd_fb, MXCFB_SEND_UPDATE, &upd_data);
 		if(cnt++ == 10)
 		{
-			printf("retry 10 s abort\n");
 			CALL_IOCTL(ioctl(fd_fb, MXCFB_SEND_UPDATE, &upd_data));
+			printf("retry 10 s abort\n");
+			cnt = 0;
+			break;
 		}
 	}
 
@@ -145,7 +147,7 @@ int run_test(void * p_opts)
 	int height = 480;
 	struct pxp_config_data *pxp_conf = NULL;
 	struct pxp_proc_data *proc_data = NULL;
-	struct pxp_mem_desc mem, mem_o;
+	struct pxp_mem_desc mem, mem_o, mem_ol;
 	pxp_chan_handle_t pxp_chan;
 	struct fb_var_screeninfo var;
 	struct fb_fix_screeninfo fix;
@@ -196,21 +198,37 @@ int run_test(void * p_opts)
 	printf("mem_o.virt_uaddr %08x, mem_o.phys_addr %08x, mem_o.size %d\n",
 				mem_o.virt_uaddr, mem_o.phys_addr, mem_o.size);
 
-	for (i = 0; i < width * height ; i++)
+	mem_ol.size = width * height * 2;/*to Y*/
+	ret = pxp_get_mem(&mem_ol);
+	if (ret < 0) {
+		printf("get mem_ol err\n");
+		goto err1;
+	}
+	printf("mem_ol.virt_uaddr %08x, mem_ol.phys_addr %08x, mem_ol.size %d\n",
+				mem_ol.virt_uaddr, mem_ol.phys_addr, mem_ol.size);
+
+
+	for (i = 0; i < width * height * 2 ; i++)
 		*(((unsigned char *)(mem.virt_uaddr) + i)) = 255;
 #ifdef USE_PIC
-	printf("draw pic in\n");
+	printf("draw pic in %d\n", sizeof(fb_480x360_2));
 	for (j = 0; j < height; j++)
 	{
-		if( j > 180)
+		if( j >= 360)
 			break;
-		for(i = 0; i < width; i++)
+		for(i = 0; i < width; i += 2)
 		{
-			if(i > 480)
+			long ps = (j * width + i)/2;
+			long ls = (j * 480 + i)/2;
+			if(i >= 480)
 				break;
-			((unsigned char*)(mem.virt_uaddr))[j * width + i] = fb_480x360_2[j * 480 + i];
+			if(quitflag == 1)
+				break;
+			((unsigned int*)(mem.virt_uaddr))[ps] = fb_480x360_2[ls];
+			((unsigned int*)(mem_ol.virt_uaddr))[ps] = fb_480x360_2[ls];
 		}
 	}
+
 #endif
 	/* Configure the channel */
 	pxp_conf = malloc(sizeof (*pxp_conf));
@@ -245,7 +263,6 @@ int run_test(void * p_opts)
 	printf("pxp_test s0 paddr %08x\n", pxp_conf->s0_param.paddr);
 	/*
 	 * Initialize OL parameters
-	 * No overlay will be used for PxP operation
 	 */
 	 for (i=0; i < 8; i++) {
 		pxp_conf->ol_param[i].combine_enable = im_opts.altresize.w ==0?false:true;
@@ -257,6 +274,7 @@ int run_test(void * p_opts)
 		pxp_conf->ol_param[i].global_alpha_enable = im_opts.alpha;
 		pxp_conf->ol_param[i].global_alpha = im_opts.ga;
 		pxp_conf->ol_param[i].local_alpha_enable = im_opts.la;
+		pxp_conf->ol_param[i].paddr  = mem_ol.phys_addr;
 	}
 
 	/*
@@ -318,7 +336,8 @@ int run_test(void * p_opts)
 	{
 	copy_image_to_fb(proc_data->srect.left, proc_data->srect.top,
 			 width, height, (void *)mem_o.virt_uaddr, &var);
-
+	if(quitflag == 1)
+		break;
 	printf("Update to display.\n");
 	printf("w/h %d/%d\n", width ,height);
 	ret = update_to_display(proc_data->srect.left, proc_data->srect.top,
@@ -327,6 +346,7 @@ int run_test(void * p_opts)
 err2:
 	pxp_put_mem(&mem);
 	pxp_put_mem(&mem_o);
+	pxp_put_mem(&mem_ol);
 err1:
 	free(pxp_conf);
 	pxp_release_channel(&pxp_chan);
@@ -364,6 +384,12 @@ int main(int argc, char ** argv)
 	struct S_OPT m_opts;
 	struct fb_var_screeninfo var;
 
+	/*kept the system on*/
+	{
+			int tfd = open("/dev/tty0", O_RDWR);
+			write(tfd, "\033[9;0]", 7);
+			close(tfd);
+	}
 	sigemptyset(&sigset);
 	sigaddset(&sigset, SIGINT);
 	pthread_sigmask(SIG_BLOCK, &sigset, NULL);
@@ -418,10 +444,10 @@ int main(int argc, char ** argv)
 				m_opts.c = atoi(optarg);
 				break;
 			case 'k':
-				m_opts.k = atoi(optarg);
+				sscanf(optarg, "%x",&(m_opts.k));
 				break;
 			case 'o':
-				sscanf(optarg,"%d:%d:%d:%d:%d:%d:%d",&(m_opts.altresize.l),
+				sscanf(optarg,"%d:%d:%d:%d:%x:%d:%d",&(m_opts.altresize.l),
 				&(m_opts.altresize.t),
 				&(m_opts.altresize.w),
 				&(m_opts.altresize.h),
@@ -445,7 +471,7 @@ int main(int argc, char ** argv)
   printf("instance = %d\n",m_opts.m);
   printf("alpha = %d\n",m_opts.alpha);
   printf("frame count = %d\n",m_opts.c);
-  printf("color key = %x\n",m_opts.k);
+  printf("color key = 0x%x\n",m_opts.k);
   printf("alternative size = %d:%d:%d:%d\n",
 	m_opts.altresize.l,
 	m_opts.altresize.t,
