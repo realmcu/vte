@@ -6,7 +6,8 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-TARGET = gpu_test.sh gpu_3dmark_cpuload.sh
+TARGET = gpu_test.sh
+TARGETS = gpu_3dmark_cpuload.sh gpu_test.sh
 BIN = ../../../bin/
 
 SRC-$(CONFIG_VTE_IMX5)  =  mx5x_gpu_test.sh
@@ -17,7 +18,7 @@ all:
 	-ln -f $(SRC-y) $(TARGET)
 
 install:
-	ln -f $(TARGET) $(BIN)
+	ln -f $(TARGETS) $(BIN)
 
 clean:
 	-rm -rf $(TARGET)
