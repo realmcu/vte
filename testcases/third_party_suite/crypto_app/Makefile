@@ -26,7 +26,7 @@ all:
 	$(CC) -o $(TARGET) $(CFLAGS) $(SRC) 
 
 install:
-	ln -f $(TARGET) ../../../bin/
+	ln -f $(TARGET) ../../bin/
 
 clean:
 	-rm -f $(TARGET)
