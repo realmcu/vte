@@ -276,12 +276,14 @@ vte: libltp.a pandir tools
 	@echo "***********************************************"
 	@echo
 	@$(MAKE) -C testcases/vte_tests_suite all
+	@$(MAKE) -C testcases/module_test all
 	@echo
 	@echo "***********************************************"
 	@echo "** MAKE INSTALL - VTE tests suite            **"
 	@echo "***********************************************"
 	@echo
 	@$(MAKE) -C testcases/vte_tests_suite install
+	@$(MAKE) -C testcases/module_test install
 	@echo
 	@echo "***********************************************"
 	@echo "** VTE tests suite is available              **"
