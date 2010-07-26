@@ -30,8 +30,6 @@
 SUBDIRS=
 TARGETS=dac_test1.sh adc_test1.sh dac_vol_adj.sh alsa_ctl.sh dac_channel_swap.sh
 TARGETS+=speaker_test1.sh speaker_switch_headset.sh
-#Platform identify script
-TARGETS+=platfm_identify.sh
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
