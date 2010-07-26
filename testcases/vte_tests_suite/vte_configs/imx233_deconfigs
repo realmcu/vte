@@ -44,8 +44,8 @@ export CONFIG_VTE_WIFI=y
 #CONFIG_VM_RNGA=y
 
 #open source module config
-export CONFIG_OM_NAND=y  
-export CONFIG_OM_RAMDISK=y  
+export CONFIG_OM_NAND=y
+export CONFIG_OM_RAMDISK=y
 export CONFIG_OM_SCULL=y
 export CONFIG_OM_CRYPTO=y
 
