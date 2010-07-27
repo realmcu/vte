@@ -129,20 +129,32 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-fbset -depth 32
+#fbset -depth 32
 
 imx_fb SET ALPHA 255 0
 
-imx_fb DRAW PATTERN RED_ALPHA 128 0
+imx_fb DRAW PATTERN RED 0
+
+sleep 2
 
 imx_fb DRAW PATTERN GREEN 2
 
-imx_fb SET LOCALALPHA 1 1 0
+sleep 2
 
-imx_fb DRAW PATTERN RED_ALPHA 255 0
+imx_fb SET LOCALALPHA 1 1 255 0 0
+echo "Pattern *** red only"
+read -p "press to continue"
 
+imx_fb SET LOCALALPHA 1 1 0 255 0
+echo "*** green only"
+read -p "press to continue"
 
-read -p  "see the screen  should be yellowi and red? y/n:" re
+imx_fb SET LOCALALPHA 1 1 128 128 0
+echo "*** mixer"
+read -p "press to continue"
+#imx_fb DRAW PATTERN RED 0
+
+read -p  "above description right? y/n:" re
 
 if [ $re = 'y' ]; then
 RC=0
@@ -150,8 +162,9 @@ else
 RC=1
 fi
 
-return $RC
+imx_fb SET LOCALALPHA 0 0 0 0 0
 
+return $RC
 }
 
 run_bg()
