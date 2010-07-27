@@ -13,7 +13,7 @@ all: config
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
 
 install:
-	-@set -e; for i in $(SUBDIRS); do ln -f $$i/bonnie++ $$i/zcav ../../bin/ ; done
+	-@set -e; for i in $(SUBDIRS); do ln -f $$i/bonnie++ $$i/zcav ../../../bin/ ; done
 
 clean:
 	-@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
