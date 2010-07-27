@@ -39,7 +39,6 @@ SUBDIRS-$(CONFIG_TP_BONNIE)      += bonnie++
 SUBDIRS-$(CONFIG_TP_DT)          += dt 
 SUBDIRS-$(CONFIG_TP_IOZONE)      += iozone 
 SUBDIRS-$(CONFIG_TP_NETWORK)     += network 
-SUBDIRS-$(CONFIG_TP_NAND)        += nand-tests 
 SUBDIRS-$(CONFIG_TP_CPUFREQ)     += cpufrequtils-005 
 SUBDIRS-$(CONFIG_TP_CRASHME)     += crashme-2.4 
 SUBDIRS-$(CONFIG_TP_DRY)         += dry-2.2 
