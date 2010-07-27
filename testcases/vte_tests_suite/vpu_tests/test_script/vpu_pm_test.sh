@@ -175,10 +175,8 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 cd /tmp
 
-$TSTCMD -D "-f 1 -i ${STREAM_PATH}/video/stream.263" &
+$TSTCMD -D "-f 1 -i ${STREAM_PATH}/video/test.263" &
 
-rtc_testapp_6 -T 5
-rtc_testapp_6 -T 5
 rtc_testapp_6 -T 5
 
 RC=0
