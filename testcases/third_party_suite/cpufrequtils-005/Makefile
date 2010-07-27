@@ -250,8 +250,8 @@ install-gmo:
 	done;
 
 install:
-	-ln -f cpufreq-info ../../bin
-	-ln -f cpufreq-set ../../bin
+	-ln -f cpufreq-info ../../bin/
+	-ln -f cpufreq-set ../../bin/
 
 uninstall:
 	- rm -f $(DESTDIR)${libdir}/libcpufreq.*
