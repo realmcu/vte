@@ -56,7 +56,7 @@ extern "C"{
 { \
     if( (ioctl_cmd) < 0 )\
     {\
-        printf("Error! %s : %s fails #%d [File: %s, line: %d]", __FUNCTION__, "ioctl_", errno, __FILE__, __LINE__-2);\
+        printf("Error! %s : %s fails #%d [File: %s, line: %d]", __FUNCTION__, "ioctl_", errno, __FILE__, __LINE__);\
         perror("ioctl"); \
         return FALSE;\
     }\
@@ -78,10 +78,12 @@ int value;
 typedef struct LALPHA_DATA{
 int pc;
 union{
-int value[2];
+int value[4];
 struct SLALPHA{
 int enable;
 int lav;
+int fb0_a_v;/*fb0 alpha value*/
+int fb2_a_v;/*fb2 alpha value*/
 }la;
 }la_d;
 }sLALPHA;
@@ -242,7 +244,7 @@ int parse_arg(int argc, char ** argv)
 	  ((sALPHA *)(m_op.operants))->value = atoi(argv[pcn]);
 	  break;
 	case eTN_LALPHA:
-           if( pcn >= ((sLALPHA *)(m_op.operants))->pc + 3)
+           if( pcn >= ((sLALPHA *)(m_op.operants))->pc + 5)
 	     break;
 	  ((sLALPHA *)(m_op.operants))->la_d.value[pcn - 3] = atoi(argv[pcn]);
 	  printf("lalpha %d is %d\n", pcn ,((sLALPHA *)(m_op.operants))->la_d.value[pcn - 3] );
@@ -346,11 +348,74 @@ BOOL alpha_op(void * pr)
 BOOL lalpha_op(void * pr)
 {
  struct mxcfb_loc_alpha gbl_lalpha;
+ struct fb_var_screeninfo mode_info;
+ long sbuf = 0;
+ char * alpha_buf0 = NULL;
+ char * alpha_buf1 = NULL;
+ int i = 0;
  sLALPHA * mp = (sLALPHA *)pr;
  gbl_lalpha.enable = mp->la_d.la.enable;
- gbl_lalpha.alpha_in_pixel = mp->la_d.la.lav;
- printf("local alpha value %d: %d \n", mp->la_d.la.enable,mp->la_d.la.lav);
+// gbl_lalpha.alpha_in_pixel = mp->la_d.la.lav;
+ gbl_lalpha.alpha_phy_addr0 = 0;
+ gbl_lalpha.alpha_phy_addr1 = 0;
  CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_LOC_ALPHA, &gbl_lalpha));
+
+ printf("local alpha value %d: %d \n", mp->la_d.la.enable,mp->la_d.la.lav);
+ if(!gbl_lalpha.enable)
+	 return TRUE;
+
+ if(gbl_lalpha.alpha_phy_addr0 == 0 || gbl_lalpha.alpha_phy_addr1 == 0)
+ {
+		printf("Error! can not get physical addr\n");
+		return FALSE;
+ }
+ printf("local alpha buffer %x: %x \n", gbl_lalpha.alpha_phy_addr0,gbl_lalpha.alpha_phy_addr1);
+ ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info);
+ printf("get fbinfo\n");
+ sbuf = mode_info.xres * mode_info.yres;
+ alpha_buf0 = (char *)mmap(0,sbuf,PROT_READ | PROT_WRITE,MAP_SHARED,
+ fb_fd,(unsigned long)(gbl_lalpha.alpha_phy_addr0));
+ if ((int)alpha_buf0 == -1)
+ {
+	 printf("\nError: failed to map alpha buffer 0 to memory.\n");
+	 return FALSE;
+ }
+ alpha_buf1 = (char *)mmap(0,sbuf,PROT_READ | PROT_WRITE,MAP_SHARED,
+ fb_fd,(unsigned long)(gbl_lalpha.alpha_phy_addr1));
+ if ((int)alpha_buf1 == -1)
+ {
+	 printf("\nError: failed to map alpha buffer 1 to memory.\n");
+	 return FALSE;
+ }
+
+/*now fill the alpha buffer*/
+printf("enabling local alpha please wait...\n");
+printf("set alpha buffer 0 to value %d\n", mp->la_d.la.fb0_a_v);
+printf("set alpha buffer 1 to value %d\n", mp->la_d.la.fb2_a_v);
+while(i < sbuf)
+{
+	alpha_buf0[i] = mp->la_d.la.fb0_a_v;
+	alpha_buf1[i] = mp->la_d.la.fb2_a_v;
+	i++;
+}
+sleep(5);
+/*enable buffer*/
+printf("enable buffer 1\n");
+CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_LOC_ALP_BUF, &(gbl_lalpha.alpha_phy_addr0)));
+printf("enable buffer 2\n");
+CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_LOC_ALP_BUF, &(gbl_lalpha.alpha_phy_addr1)));
+
+/*disable local alpha*/
+#if 0
+ gbl_lalpha.enable = 0;
+ gbl_lalpha.alpha_in_pixel = 0;
+ gbl_lalpha.alpha_phy_addr0 = 0;
+ gbl_lalpha.alpha_phy_addr1 = 0;
+ CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_LOC_ALPHA, &gbl_lalpha));
+#endif
+ munmap((void *)alpha_buf0, sbuf);
+ munmap((void *)alpha_buf1, sbuf);
+ printf("local alpha setting OK\n");
  return TRUE;
 }
 
