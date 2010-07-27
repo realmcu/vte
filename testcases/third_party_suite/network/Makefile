@@ -25,7 +25,7 @@ all: $(SUBDIRS-y)
 install:
 	-ln -f ethtool-6/ethtool ../../bin/
 	-ln -f netperf-2.4.4/src/netperf ../../bin/
-	-ln -f netperf-2.4.4/doc/examples/* ../../bin/
+	-ln -f netperf-2.4.4/doc/examples/*script ../../bin/
 	-ln -f mii-tool-1.9.1.1/mii-tool ../../bin/
 	-ln -f ppp-2.4.3/pppd/pppd ../../bin/
 	-ln -f tcpdump-3.9.8/tcpdump ../../bin/
