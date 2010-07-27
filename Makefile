@@ -293,6 +293,7 @@ vte: libltp.a pandir tools
 	@echo "**        build Finished                     **"
 	@echo "***********************************************"
 apps:
+	-mkdir -p testcases/bin/
 	@$(MAKE) -C testcases/third_party_suite all
 	@$(MAKE) -C testcases/third_party_suite install
 	@echo
