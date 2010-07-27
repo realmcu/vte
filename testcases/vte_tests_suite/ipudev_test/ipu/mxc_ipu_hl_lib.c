@@ -35,15 +35,14 @@ extern "C"{
 #include <signal.h>
 #include <pthread.h>
 #include <time.h>
+#include <semaphore.h>
 #include <sys/time.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <linux/videodev.h>
 #include "mxc_ipu_hl_lib.h"
-
-#define FBDEV0	"/dev/fb0"
-#define FBDEV1	"/dev/fb1"
-#define FBDEV2	"/dev/fb2"
 
 #define DBG_DEBUG		3
 #define DBG_INFO		2
@@ -51,28 +50,20 @@ extern "C"{
 #define DBG_ERR			0
 
 static int debug_level = DBG_ERR;
+
+#ifdef BUILD_FOR_ANDROID
+#include <cutils/ashmem.h>
+#include <utils/Log.h>
+#define FBDEV0	"/dev/graphics/fb0"
+#define FBDEV1	"/dev/graphics/fb1"
+#define FBDEV2	"/dev/graphics/fb2"
+#define dbg(flag, fmt, args...)	{ if(flag <= debug_level)  LOGI("%s:%d "fmt, __FILE__, __LINE__,##args); }
+#else
+#define FBDEV0	"/dev/fb0"
+#define FBDEV1	"/dev/fb1"
+#define FBDEV2	"/dev/fb2"
 #define dbg(flag, fmt, args...)	{ if(flag <= debug_level)  printf("%s:%d "fmt, __FILE__, __LINE__,##args); }
-
-/* this mutex only can protect within same process context,
- * for different process, pls add other mutex*/
-pthread_mutex_t prp_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t pp_mutex = PTHREAD_MUTEX_INITIALIZER;
-int g_task_in_use = 0;
-
-int _ipu_task_enable(ipu_lib_handle_t * ipu_handle);
-void _ipu_task_disable(ipu_lib_handle_t * ipu_handle);
-int ipu_get_interrupt_event(ipu_event_info *ev);
-int _ipu_wait_for_irq(int irq, int ms);
-
-enum {
-        IC_ENC = 0x1,
-        IC_VF = 0x2,
-        IC_PP = 0x4,
-        ROT_ENC = 0x8,
-        ROT_VF = 0x10,
-        ROT_PP = 0x20,
-	VDI_IC_VF = 0x40,
-};
+#endif
 
 /* spilt modes */
 enum {
@@ -103,7 +94,6 @@ typedef enum {
 } cs_t;
 
 typedef struct {
-        int fd_ipu;
         int mode;
 	int enabled;
 
@@ -118,8 +108,8 @@ typedef struct {
 	/* input param after cropping */
 	int ifmt;
 	int istride;
-	int iwidth;
-	int iheight;
+	unsigned int iwidth;
+	unsigned int iheight;
 	int i_off;
 	int i_uoff;
 	int i_voff;
@@ -127,8 +117,8 @@ typedef struct {
 	/* overlay param */
 	int overlay_en;
 	int overlay_local_alpha_en;
-	int ovwidth;
-	int ovheight;
+	unsigned int ovwidth;
+	unsigned int ovheight;
 	int ov_off;
 	int ov_uoff;
 	int ov_voff;
@@ -161,6 +151,7 @@ typedef struct {
 
 		int show_to_fb;
 		int fd_fb;
+		int fb_num;
 		int fb_stride;
 		void * fb_mem;
 		int screen_size;
@@ -169,13 +160,43 @@ typedef struct {
 		/* output param after cropping */
 		int ofmt;
 		int ostride;
-		int owidth;
-		int oheight;
+		unsigned int owidth;
+		unsigned int oheight;
 		int o_off;
 		int o_uoff;
 		int o_voff;
 	} output;
+
+	/* some backup for ipu_handle param*/
+	void * inbuf_start[3];
+	void * ovbuf_start[2];
+	void * ovbuf_alpha_start[2];
+	void * outbuf_start[3];
+	int ifr_size;
+	int ovfr_size;
+	int ovfr_alpha_size;
+	int ofr_size;
 } ipu_lib_priv_handle_t;
+
+typedef struct {
+	unsigned int task_in_use;
+	struct {
+		pid_t task_pid;
+		ipu_lib_priv_handle_t task_handle;
+	} task[MAX_TASK_NUM];
+} ipu_lib_shm_t;
+
+static ipu_lib_shm_t * g_ipu_shm = NULL;
+static sem_t * prp_sem = NULL;
+static sem_t * pp_sem = NULL;
+static sem_t * shm_sem = NULL;
+extern int fd_ipu;
+
+static int _ipu_task_enable(ipu_lib_priv_handle_t * ipu_priv_handle);
+static void _ipu_task_disable(ipu_lib_priv_handle_t * ipu_priv_handle);
+int ipu_get_interrupt_event(ipu_event_info *ev);
+static int _ipu_wait_for_irq(int irq, int ms);
+static void _mxc_ipu_lib_task_uninit(ipu_lib_priv_handle_t * ipu_priv_handle, pid_t pid);
 
 static u32 fmt_to_bpp(u32 pixelformat)
 {
@@ -299,7 +320,7 @@ static int get_system_rev(unsigned int * system_rev)
         return ret;
 }
 
-static int _ipu_get_arch_rot_begin()
+static unsigned int _ipu_get_arch_rot_begin()
 {
 	unsigned int system_rev, arch;
 
@@ -314,7 +335,7 @@ static int _ipu_get_arch_rot_begin()
 		return IPU_ROTATE_90_RIGHT;
 }
 
-static int _ipu_get_arch_ic_out_max_height()
+static unsigned int _ipu_get_arch_ic_out_max_height()
 {
 	unsigned int system_rev, arch;
 
@@ -329,7 +350,7 @@ static int _ipu_get_arch_ic_out_max_height()
 	return 1024;
 }
 
-static int _ipu_get_arch_ic_out_max_width()
+static unsigned int _ipu_get_arch_ic_out_max_width()
 {
 	unsigned int system_rev, arch;
 
@@ -344,7 +365,7 @@ static int _ipu_get_arch_ic_out_max_width()
 	return 1024;
 }
 
-static int _ipu_task_busy_in_hw(int ipu_task)
+static int _ipu_task_busy_in_hw(unsigned int ipu_task)
 {
 	int ret = 0;
 
@@ -366,23 +387,25 @@ static int _ipu_task_busy_in_hw(int ipu_task)
 	if (ipu_task & ROT_PP)
 		ret |= ipu_is_channel_busy(MEM_ROT_PP_MEM);
 
+	if (ret)
+		dbg(DBG_INFO, "ipu busy in hw\n");
+
 	return ret;
 }
 
-static int _ipu_is_task_busy(int ipu_task)
+static int _ipu_is_task_busy(unsigned int ipu_task)
 {
-	/* g_task_in_use is only useful in same process context*/
-	if (g_task_in_use & ipu_task)
+	if (g_ipu_shm->task_in_use & ipu_task)
 		return 1;
 	/* IC_ENC and IC_VF can not be enabled together in different task*/
-	if (((g_task_in_use & IC_ENC) && (ipu_task & IC_VF)) ||
-		((g_task_in_use & IC_VF) && (ipu_task & IC_ENC)))
+	if (((g_ipu_shm->task_in_use & IC_ENC) && (ipu_task & IC_VF)) ||
+		((g_ipu_shm->task_in_use & IC_VF) && (ipu_task & IC_ENC)))
 		return 1;
 	/* VDI_IC_VF can not be used together with IC_ENC or IC_VF */
-	if (((g_task_in_use & IC_ENC) && (ipu_task & VDI_IC_VF)) ||
-		((g_task_in_use & IC_VF) && (ipu_task & VDI_IC_VF)) ||
-		((g_task_in_use & VDI_IC_VF) && (ipu_task & IC_ENC)) ||
-		((g_task_in_use & VDI_IC_VF) && (ipu_task & IC_VF)))
+	if (((g_ipu_shm->task_in_use & IC_ENC) && (ipu_task & VDI_IC_VF)) ||
+		((g_ipu_shm->task_in_use & IC_VF) && (ipu_task & VDI_IC_VF)) ||
+		((g_ipu_shm->task_in_use & VDI_IC_VF) && (ipu_task & IC_ENC)) ||
+		((g_ipu_shm->task_in_use & VDI_IC_VF) && (ipu_task & IC_VF)))
 		return 1;
 	/* we need to check low level HW busy status */
 	if (_ipu_task_busy_in_hw(ipu_task))
@@ -426,7 +449,7 @@ static void _ipu_update_offset(unsigned int fmt, unsigned int width, unsigned in
 	}
 }
 
-int _ipu_split_mode_set_stripe(ipu_lib_priv_handle_t * ipu_priv_handle, dma_addr_t in_buf_paddr,
+static int _ipu_split_mode_set_stripe(ipu_lib_priv_handle_t * ipu_priv_handle, dma_addr_t in_buf_paddr,
 				dma_addr_t out_buf_paddr, int stripe, int select_buf)
 {
 	int i_hoff = 0, i_voff = 0, o_hoff = 0, o_voff = 0, i_eoff = 0, o_eoff = 0;
@@ -867,7 +890,7 @@ done:
 	return ret;
 }
 
-int fit_fb_setting(struct fb_var_screeninfo * var, int width,
+static int fit_fb_setting(struct fb_var_screeninfo * var, int width,
 	int height, int fmt, ipu_channel_t fb_chan, int bufs)
 {
 	if (fb_chan == MEM_BG_SYNC)
@@ -875,24 +898,70 @@ int fit_fb_setting(struct fb_var_screeninfo * var, int width,
 			(var->yres_virtual == bufs*var->yres));
 
 	if ((colorspaceofpixel(fmt) == YUV_CS) &&
-			(var->nonstd != fmt))
+			(var->nonstd != (unsigned int)fmt))
 		return 0;
 	if ((colorspaceofpixel(fmt) == RGB_CS) &&
 			(var->nonstd != 0) &&
-			(var->nonstd != fmt))
+			(var->nonstd != (unsigned int)fmt))
 		return 0;
 	if (fb_chan == MEM_DC_SYNC)
 		return ((var->xres_virtual == var->xres) &&
 			(var->yres_virtual == bufs*var->yres));
 	if (fb_chan == MEM_FG_SYNC) {
-		return ((var->xres == width) &&
-			(var->xres_virtual == width) &&
-			(var->yres == height) &&
-			(var->yres_virtual == bufs*height) &&
+		return ((var->xres == (unsigned int)width) &&
+			(var->xres_virtual == (unsigned int)width) &&
+			(var->yres == (unsigned int)height) &&
+			(var->yres_virtual == (unsigned int)(bufs*height)) &&
 			(var->bits_per_pixel == fmt_to_bpp(fmt)));
 	}
 
 	return 1;
+}
+
+static int __ipu_mem_alloc(ipu_mem_info * mem_info, void ** vbuf)
+{
+	int ret = 0;
+
+	if (mem_info->size <= 0) {
+		dbg(DBG_ERR, "allocate size should > 0!\n");
+		ret = -1;
+		goto done;
+	}
+
+	if ((ret = ipu_open()) < 0)
+		goto done;
+
+	if (ioctl(fd_ipu, IPU_ALOC_MEM, mem_info) < 0) {
+		dbg(DBG_ERR, "Ioctl IPU_ALOC_MEM failed!\n");
+		ret = -1;
+		ipu_close();
+		goto done;
+	}
+
+	/* mmap virtual addr for user*/
+	if (vbuf) {
+		*vbuf = mmap (NULL, mem_info->size,
+				PROT_READ | PROT_WRITE, MAP_SHARED,
+				fd_ipu, mem_info->paddr);
+		if (*vbuf == MAP_FAILED) {
+			dbg(DBG_ERR, "mmap failed!\n");
+			ret = -1;
+		}
+	}
+	ipu_close();
+done:
+	return ret;
+}
+
+static void __ipu_mem_free(ipu_mem_info * mem_info, void ** vbuf)
+{
+	if (ipu_open() < 0)
+		return;
+
+	if (vbuf)
+		munmap(*vbuf, mem_info->size);
+	ioctl(fd_ipu, IPU_FREE_MEM, mem_info);
+	ipu_close();
 }
 
 static int _ipu_mem_alloc(ipu_lib_input_param_t * input,
@@ -926,20 +995,12 @@ static int _ipu_mem_alloc(ipu_lib_input_param_t * input,
 		if (input->user_def_paddr[i] == 0) {
 			ipu_handle->ifr_size = ipu_priv_handle->i_minfo[i].size =
 					input->width/8*input->height*fmt_to_bpp(input->fmt);
-			if (ioctl(ipu_priv_handle->fd_ipu, IPU_ALOC_MEM, &(ipu_priv_handle->i_minfo[i])) < 0) {
-				dbg(DBG_ERR, "Ioctl IPU_ALOC_MEM failed!\n");
-				ret = -1;
+			ret = __ipu_mem_alloc(&ipu_priv_handle->i_minfo[i],
+					&ipu_handle->inbuf_start[i]);
+			ipu_priv_handle->ifr_size = ipu_handle->ifr_size;
+			ipu_priv_handle->inbuf_start[i] = ipu_handle->inbuf_start[i];
+			if (ret < 0)
 				goto err;
-			}
-			/* mmap virtual addr for user*/
-			ipu_handle->inbuf_start[i] = mmap (NULL, ipu_priv_handle->i_minfo[i].size,
-					PROT_READ | PROT_WRITE, MAP_SHARED,
-					ipu_priv_handle->fd_ipu, ipu_priv_handle->i_minfo[i].paddr);
-			if (ipu_handle->inbuf_start[i] == MAP_FAILED) {
-				dbg(DBG_ERR, "mmap failed!\n");
-				ret = -1;
-				goto err;
-			}
 			dbg(DBG_INFO, "\033[0;35mAlocate %d dma mem [%d] for input, dma addr 0x%x, mmap to %p!\033[0m\n",
 					ipu_handle->ifr_size, i, ipu_priv_handle->i_minfo[i].paddr, ipu_handle->inbuf_start[i]);
 		} else {
@@ -953,20 +1014,12 @@ static int _ipu_mem_alloc(ipu_lib_input_param_t * input,
 			if (overlay->user_def_paddr[i] == 0) {
 				ipu_handle->ovfr_size = ipu_priv_handle->ov_minfo[i].size =
 					overlay->width/8*overlay->height*fmt_to_bpp(overlay->fmt);
-				if (ioctl(ipu_priv_handle->fd_ipu, IPU_ALOC_MEM, &(ipu_priv_handle->ov_minfo[i])) < 0) {
-					dbg(DBG_ERR, "Ioctl IPU_ALOC_MEM failed!\n");
-					ret = -1;
+				ret = __ipu_mem_alloc(&ipu_priv_handle->ov_minfo[i],
+						&ipu_handle->ovbuf_start[i]);
+				ipu_priv_handle->ovfr_size = ipu_handle->ovfr_size;
+				ipu_priv_handle->ovbuf_start[i] = ipu_handle->ovbuf_start[i];
+				if (ret < 0)
 					goto err;
-				}
-				/* mmap virtual addr for user*/
-				ipu_handle->ovbuf_start[i] = mmap (NULL, ipu_priv_handle->ov_minfo[i].size,
-						PROT_READ | PROT_WRITE, MAP_SHARED,
-						ipu_priv_handle->fd_ipu, ipu_priv_handle->ov_minfo[i].paddr);
-				if (ipu_handle->ovbuf_start[i] == MAP_FAILED) {
-					dbg(DBG_ERR, "mmap failed!\n");
-					ret = -1;
-					goto err;
-				}
 				dbg(DBG_INFO, "\033[0;35mAlocate %d dma mem [%d] for overlay, dma addr 0x%x, mmap to %p!\033[0m\n",
 						ipu_handle->ovfr_size, i, ipu_priv_handle->ov_minfo[i].paddr, ipu_handle->ovbuf_start[i]);
 			} else {
@@ -978,20 +1031,12 @@ static int _ipu_mem_alloc(ipu_lib_input_param_t * input,
 				if (overlay->user_def_alpha_paddr[i] == 0) {
 					ipu_handle->ovfr_alpha_size = ipu_priv_handle->ov_alpha_minfo[i].size =
 						overlay->width * overlay->height;
-					if (ioctl(ipu_priv_handle->fd_ipu, IPU_ALOC_MEM, &(ipu_priv_handle->ov_alpha_minfo[i])) < 0) {
-						dbg(DBG_ERR, "Ioctl IPU_ALOC_MEM failed!\n");
-						ret = -1;
+					ret = __ipu_mem_alloc(&ipu_priv_handle->ov_alpha_minfo[i],
+							&ipu_handle->ovbuf_alpha_start[i]);
+					ipu_priv_handle->ovfr_alpha_size = ipu_handle->ovfr_alpha_size;
+					ipu_priv_handle->ovbuf_alpha_start[i] = ipu_handle->ovbuf_alpha_start[i];
+					if (ret < 0)
 						goto err;
-					}
-					/* mmap virtual addr for user*/
-					ipu_handle->ovbuf_alpha_start[i] = mmap (NULL, ipu_priv_handle->ov_alpha_minfo[i].size,
-							PROT_READ | PROT_WRITE, MAP_SHARED,
-							ipu_priv_handle->fd_ipu, ipu_priv_handle->ov_alpha_minfo[i].paddr);
-					if (ipu_handle->ovbuf_alpha_start[i] == MAP_FAILED) {
-						dbg(DBG_ERR, "mmap failed!\n");
-						ret = -1;
-						goto err;
-					}
 					dbg(DBG_INFO,
 						    "\033[0;35mAlocate %d dma mem [%d] for overlay local alpha blending, dma addr 0x%x, mmap to %p!\033[0m\n",
 							ipu_handle->ovfr_alpha_size, i, ipu_priv_handle->ov_alpha_minfo[i].paddr,
@@ -1009,12 +1054,9 @@ static int _ipu_mem_alloc(ipu_lib_input_param_t * input,
 			ipu_priv_handle->output.r_minfo[i].size =
 				ipu_priv_handle->output.owidth/8*ipu_priv_handle->output.oheight
 				*fmt_to_bpp(output->fmt);
-			if (ioctl(ipu_priv_handle->fd_ipu, IPU_ALOC_MEM,
-						&(ipu_priv_handle->output.r_minfo[i])) < 0) {
-				dbg(DBG_ERR, "Ioctl IPU_ALOC_MEM failed!\n");
-				ret = -1;
+			ret = __ipu_mem_alloc(&ipu_priv_handle->output.r_minfo[i], NULL);
+			if (ret < 0)
 				goto err;
-			}
 			dbg(DBG_INFO, "\033[0;35mAlocate %d dma mem [%d] for rotation, dma addr 0x%x!\033[0m\n",
 					ipu_priv_handle->output.r_minfo[i].size, i,
 					ipu_priv_handle->output.r_minfo[i].paddr);
@@ -1025,21 +1067,12 @@ again:
 		if ((output->show_to_fb == 0) && (output->user_def_paddr[i] == 0)) {
 			ipu_handle->ofr_size = ipu_priv_handle->output.o_minfo[i].size =
 				output->width/8*output->height*fmt_to_bpp(output->fmt);
-			if (ioctl(ipu_priv_handle->fd_ipu, IPU_ALOC_MEM,
-						&(ipu_priv_handle->output.o_minfo[i])) < 0) {
-				dbg(DBG_ERR, "Ioctl IPU_ALOC_MEM failed!\n");
-				ret = -1;
+			ret = __ipu_mem_alloc(&ipu_priv_handle->output.o_minfo[i],
+					&ipu_handle->outbuf_start[i]);
+			ipu_priv_handle->ofr_size = ipu_handle->ofr_size;
+			ipu_priv_handle->outbuf_start[i] = ipu_handle->outbuf_start[i];
+			if (ret < 0)
 				goto err;
-			}
-			/* mmap virtual addr for user*/
-			ipu_handle->outbuf_start[i] = mmap (NULL, ipu_priv_handle->output.o_minfo[i].size,
-					PROT_READ | PROT_WRITE, MAP_SHARED,
-					ipu_priv_handle->fd_ipu, ipu_priv_handle->output.o_minfo[i].paddr);
-			if (ipu_handle->outbuf_start[i] == MAP_FAILED) {
-				dbg(DBG_ERR, "mmap failed!\n");
-				ret = -1;
-				goto err;
-			}
 			dbg(DBG_INFO, "\033[0;35mAlocate %d dma mem [%d] for output, dma addr 0x%x, mmap to %p!\033[0m\n",
 					ipu_handle->ofr_size, i, ipu_priv_handle->output.o_minfo[i].paddr,
 					ipu_handle->outbuf_start[i]);
@@ -1048,7 +1081,7 @@ again:
 			dbg(DBG_INFO, "\033[0;35mSet output dma mem [%d] addr 0x%x by user!\033[0m\n",
 					i, output->user_def_paddr[i]);
 		}
-		/* allocate 3rd buf for output */
+		/* allocate 3rd buf for output in stream mode */
 		if(i == 1) {
 			i = 2;
 			goto again;
@@ -1057,13 +1090,15 @@ again:
 
 	/*for the case output direct to framebuffer*/
 	if (output->show_to_fb) {
-		int owidth, oheight;
+		unsigned int owidth, oheight;
 		struct fb_fix_screeninfo fb_fix;
 		struct fb_var_screeninfo fb_var;
 		int offset = 0;
 		int blank;
 		int fbbufs;
 		char *fbdev;
+
+		ipu_priv_handle->output.fb_num = output->fb_disp.fb_num;
 
 		if (output->fb_disp.fb_num == 0)
 			fbdev = FBDEV0;
@@ -1199,13 +1234,13 @@ again:
 		if ((ipu_priv_handle->output.fb_chan != MEM_FG_SYNC) &&
 		    ((owidth < fb_var.xres) || (oheight < fb_var.yres))) {
 			/*make two buffer be the same to avoid flick*/
-			memcpy(ipu_priv_handle->output.fb_mem +
-					ipu_priv_handle->output.screen_size,
-					ipu_priv_handle->output.fb_mem,
+			memcpy((void *)((char *)ipu_priv_handle->output.fb_mem +
+					ipu_priv_handle->output.screen_size),
+					(void *)ipu_priv_handle->output.fb_mem,
 					ipu_priv_handle->output.screen_size);
-			memcpy(ipu_priv_handle->output.fb_mem +
-					2*ipu_priv_handle->output.screen_size,
-					ipu_priv_handle->output.fb_mem,
+			memcpy((void *)((char *)ipu_priv_handle->output.fb_mem +
+					2*ipu_priv_handle->output.screen_size),
+					(void *)ipu_priv_handle->output.fb_mem,
 					ipu_priv_handle->output.screen_size);
 		}
 
@@ -1224,10 +1259,9 @@ err:
 	return ret;
 }
 
-static void _ipu_mem_free(ipu_lib_handle_t * ipu_handle)
+static void _ipu_mem_free(ipu_lib_priv_handle_t * ipu_priv_handle)
 {
 	int i, input_bufcnt, bufcnt;
-	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
 
 	if (ipu_priv_handle->mode & OP_STREAM_MODE) {
 		if ((ipu_priv_handle->mode & TASK_VDI_VF_MODE) &&
@@ -1247,32 +1281,30 @@ static void _ipu_mem_free(ipu_lib_handle_t * ipu_handle)
 
 	for (i=0;i<input_bufcnt;i++) {
 		if (ipu_priv_handle->i_minfo[i].vaddr) {
-			if (ipu_handle->inbuf_start[i])
-				munmap(ipu_handle->inbuf_start[i], ipu_priv_handle->i_minfo[i].size);
-			ioctl(ipu_priv_handle->fd_ipu, IPU_FREE_MEM, &(ipu_priv_handle->i_minfo[i]));
+			__ipu_mem_free(&ipu_priv_handle->i_minfo[i],
+					&ipu_priv_handle->inbuf_start[i]);
 			dbg(DBG_INFO, "\033[0;35mFree %d dma mem [%d] for input, dma addr 0x%x!\033[0m\n",
-					ipu_handle->ifr_size, i, ipu_priv_handle->i_minfo[i].paddr);
+					ipu_priv_handle->ifr_size, i, ipu_priv_handle->i_minfo[i].paddr);
 		}
 	}
 
 	for (i=0;i<bufcnt;i++) {
 		if (ipu_priv_handle->ov_minfo[i].vaddr) {
-			if (ipu_handle->ovbuf_start[i])
-				munmap(ipu_handle->ovbuf_start[i], ipu_priv_handle->ov_minfo[i].size);
-			ioctl(ipu_priv_handle->fd_ipu, IPU_FREE_MEM, &(ipu_priv_handle->ov_minfo[i]));
+			__ipu_mem_free(&ipu_priv_handle->ov_minfo[i],
+					&ipu_priv_handle->ovbuf_start[i]);
 			dbg(DBG_INFO, "\033[0;35mFree %d dma mem [%d] for overlay, dma addr 0x%x!\033[0m\n",
-					ipu_handle->ovfr_size, i, ipu_priv_handle->ov_minfo[i].paddr);
+					ipu_priv_handle->ovfr_size, i, ipu_priv_handle->ov_minfo[i].paddr);
 		}
 		if (ipu_priv_handle->ov_alpha_minfo[i].vaddr) {
-			if (ipu_handle->ovbuf_alpha_start[i])
-				munmap(ipu_handle->ovbuf_alpha_start[i], ipu_priv_handle->ov_alpha_minfo[i].size);
-			ioctl(ipu_priv_handle->fd_ipu, IPU_FREE_MEM, &(ipu_priv_handle->ov_alpha_minfo[i]));
+			__ipu_mem_free(&ipu_priv_handle->ov_alpha_minfo[i],
+					&ipu_priv_handle->ovbuf_alpha_start[i]);
 			dbg(DBG_INFO, "\033[0;35mFree %d dma mem [%d] for overlay local alpha blending, dma addr 0x%x!\033[0m\n",
-					ipu_handle->ovfr_alpha_size, i, ipu_priv_handle->ov_alpha_minfo[i].paddr);
+					ipu_priv_handle->ovfr_alpha_size, i, ipu_priv_handle->ov_alpha_minfo[i].paddr);
 		}
 
 		if (ipu_priv_handle->output.r_minfo[i].vaddr) {
-			ioctl(ipu_priv_handle->fd_ipu, IPU_FREE_MEM, &(ipu_priv_handle->output.r_minfo[i]));
+			__ipu_mem_free(&ipu_priv_handle->output.r_minfo[i],
+					NULL);
 			dbg(DBG_INFO, "\033[0;35mFree %d dma mem [%d] for rotation, dma addr 0x%x!\033[0m\n",
 					ipu_priv_handle->output.r_minfo[i].size, i,
 					ipu_priv_handle->output.r_minfo[i].paddr);
@@ -1281,14 +1313,10 @@ static void _ipu_mem_free(ipu_lib_handle_t * ipu_handle)
 again:
 		if (ipu_priv_handle->output.show_to_fb == 0) {
 			if (ipu_priv_handle->output.o_minfo[i].vaddr) {
-				if (ipu_handle->outbuf_start[i])
-					munmap(ipu_handle->outbuf_start[i],
-							ipu_priv_handle->output.o_minfo[i].size);
-				ioctl(ipu_priv_handle->fd_ipu, IPU_FREE_MEM,
-						&(ipu_priv_handle->output.o_minfo[i]));
-
+				__ipu_mem_free(&ipu_priv_handle->output.o_minfo[i],
+						&ipu_priv_handle->outbuf_start[i]);
 				dbg(DBG_INFO, "\033[0;35mFree %d dma mem [%d] for output, dma addr 0x%x!\033[0m\n",
-						ipu_handle->ofr_size, i, ipu_priv_handle->output.o_minfo[i].paddr);
+						ipu_priv_handle->ofr_size, i, ipu_priv_handle->output.o_minfo[i].paddr);
 			}
 		}
 		if (i == 1) {
@@ -1299,12 +1327,6 @@ again:
 
 	if (ipu_priv_handle->output.show_to_fb){
 		struct fb_var_screeninfo fb_var;
-
-		/* make sure buffer1 still at fbmem base*/
-		memcpy(ipu_priv_handle->output.fb_mem,
-				ipu_priv_handle->output.fb_mem +
-				ipu_priv_handle->output.screen_size,
-				ipu_priv_handle->output.screen_size);
 
 		ioctl(ipu_priv_handle->output.fd_fb, FBIOGET_VSCREENINFO, &fb_var);
 		fb_var.activate |= FB_ACTIVATE_FORCE;
@@ -2172,40 +2194,254 @@ static int _ipu_task_setup(ipu_lib_input_param_t * input,
 		ipu_lib_handle_t * ipu_handle)
 {
 	int ret = 0;
+	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
 
 	if ((ret = _ipu_mem_alloc(input, overlay, output, ipu_handle)) < 0) {
-		_ipu_mem_free(ipu_handle);
+		_ipu_mem_free(ipu_priv_handle);
 		return ret;
 	}
 
 	if ((ret = _ipu_channel_setup(input, overlay, output, ipu_handle)) < 0) {
-		_ipu_mem_free(ipu_handle);
+		_ipu_mem_free(ipu_priv_handle);
 		return ret;
 	}
 
 	return ret;
 }
 
-void mxc_ipu_lib_lock(ipu_lib_handle_t * ipu_handle)
+static void mxc_ipu_lib_lock_shm(void)
 {
-	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
-	unsigned int task = ipu_priv_handle->output.ipu_task;
-
-	if (task & (IC_ENC | ROT_ENC | IC_VF | ROT_VF | VDI_IC_VF))
-		pthread_mutex_lock(&prp_mutex);
-	if (task & (IC_PP | ROT_PP))
-		pthread_mutex_lock(&pp_mutex);
+	sem_wait(shm_sem);
 }
 
-void mxc_ipu_lib_unlock(ipu_lib_handle_t * ipu_handle)
+static void mxc_ipu_lib_unlock_shm(void)
 {
-	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
+	sem_post(shm_sem);
+}
+
+static void mxc_ipu_lib_lock_all(void)
+{
+	sem_wait(prp_sem);
+	sem_wait(pp_sem);
+}
+
+static void mxc_ipu_lib_unlock_all(void)
+{
+	sem_post(prp_sem);
+	sem_post(pp_sem);
+}
+
+static void mxc_ipu_lib_lock_task(ipu_lib_priv_handle_t * ipu_priv_handle)
+{
 	unsigned int task = ipu_priv_handle->output.ipu_task;
 
 	if (task & (IC_ENC | ROT_ENC | IC_VF | ROT_VF | VDI_IC_VF))
-		pthread_mutex_unlock(&prp_mutex);
+		sem_wait(prp_sem);
 	if (task & (IC_PP | ROT_PP))
-		pthread_mutex_unlock(&pp_mutex);
+		sem_wait(pp_sem);
+}
+
+static void mxc_ipu_lib_unlock_task(ipu_lib_priv_handle_t * ipu_priv_handle)
+{
+	unsigned int task = ipu_priv_handle->output.ipu_task;
+
+	if (task & (IC_ENC | ROT_ENC | IC_VF | ROT_VF | VDI_IC_VF))
+		sem_post(prp_sem);
+	if (task & (IC_PP | ROT_PP))
+		sem_post(pp_sem);
+}
+
+static void * _get_shm(char *name, int size, int *first)
+{
+	int fd;
+	struct	stat stat;
+	char * shm_dev = "/dev/shm/";
+	char shm_name[64];
+	void * buf;
+
+	strcpy(shm_name, shm_dev);
+	strcat(shm_name, name);
+
+	dbg(DBG_INFO, "get shm from %s\n", shm_name);
+
+	fd = open(shm_name, O_RDWR | O_SYNC, 0666);
+	if (fd < 0) {
+		dbg(DBG_INFO, "first create %s\n", shm_name)
+		umask(0);
+		fd = open(shm_name, O_CREAT | O_RDWR | O_SYNC, 0666);
+		if (fd < 0) {
+			dbg(DBG_ERR, "Can not open the shared memory for %s!\n",
+					shm_name);
+			return NULL;
+		}
+		*first = 1;
+	}
+	ftruncate(fd, size);
+	fstat(fd, &stat);
+	buf = mmap(NULL, stat.st_size, PROT_READ | PROT_WRITE,
+			MAP_SHARED, fd, 0);
+	if (buf == MAP_FAILED) {
+		dbg(DBG_ERR, "Can not mmap the shared memory for %s!\n",
+			shm_name);
+		close(fd);
+		return NULL;
+	}
+
+	close(fd);
+	return buf;
+}
+
+static int _ipu_ipc_prepare(void)
+{
+	int ret = 0;
+	int first = 0;
+
+	g_ipu_shm = (ipu_lib_shm_t *)
+			_get_shm("ipulib.shm", sizeof(ipu_lib_shm_t), &first);
+	if (!g_ipu_shm) {
+		ret = -1;
+		goto done;
+	} else if (first)
+		memset(g_ipu_shm, 0, sizeof(ipu_lib_shm_t));
+
+	first = 0;
+	prp_sem = (sem_t *)_get_shm("ipulib.sem.0", sizeof(sem_t), &first);
+	if (!prp_sem) {
+		ret = -1;
+		goto done;
+	} else if (first)
+		sem_init(prp_sem, 1, 1);
+
+	first = 0;
+	pp_sem = (sem_t *)_get_shm("ipulib.sem.1", sizeof(sem_t), &first);
+	if (!pp_sem) {
+		ret = -1;
+		goto done;
+	} else if (first)
+		sem_init(pp_sem, 1, 1);
+
+	first = 0;
+	shm_sem = (sem_t *)_get_shm("ipulib.sem.2", sizeof(sem_t), &first);
+	if (!shm_sem) {
+		ret = -1;
+		goto done;
+	} else if (first)
+		sem_init(shm_sem, 1, 1);
+
+done:
+	return ret;
+}
+
+static ipu_lib_priv_handle_t * _ipu_get_task_handle(pid_t pid)
+{
+	int i = 0;
+
+	while (g_ipu_shm->task[i].task_pid && (i < MAX_TASK_NUM))
+		i++;
+
+	if (i < MAX_TASK_NUM) {
+		g_ipu_shm->task[i].task_pid = pid;
+		return &(g_ipu_shm->task[i].task_handle);
+	} else
+		return NULL;
+}
+
+static void _ipu_remove_task_handle(pid_t pid, unsigned int ipu_task)
+{
+	int i = 0;
+
+	while (((g_ipu_shm->task[i].task_pid != pid) ||
+		(ipu_task != g_ipu_shm->task[i].task_handle.output.ipu_task))
+		&& (i < MAX_TASK_NUM))
+		i++;
+	if (i < MAX_TASK_NUM) {
+		g_ipu_shm->task[i].task_pid = 0;
+		memset(&(g_ipu_shm->task[i].task_handle),
+			0, sizeof(ipu_lib_priv_handle_t));
+	}
+
+	return;
+}
+
+static void dump_ipu_task()
+{
+	int i;
+
+	dbg(DBG_INFO, "\033[0;34mdump_ipu_task:\033[0m\n");
+	for (i = 0; i < MAX_TASK_NUM; i++) {
+		if (g_ipu_shm->task[i].task_pid) {
+			dbg(DBG_INFO, "\ttask %d:\n", i);
+			dbg(DBG_INFO, "\t\ttask pid %d:\n",
+				g_ipu_shm->task[i].task_pid);
+			dbg(DBG_INFO, "\t\ttask mode:\n");
+			if (g_ipu_shm->task[i].task_handle.output.ipu_task
+				& IC_ENC)
+				dbg(DBG_INFO, "\t\t\tIC_ENC\n");
+			if (g_ipu_shm->task[i].task_handle.output.ipu_task
+				& IC_VF)
+				dbg(DBG_INFO, "\t\t\tIC_VF\n");
+			if (g_ipu_shm->task[i].task_handle.output.ipu_task
+				& IC_PP)
+				dbg(DBG_INFO, "\t\t\tIC_PP\n");
+			if (g_ipu_shm->task[i].task_handle.output.ipu_task
+				& ROT_ENC)
+				dbg(DBG_INFO, "\t\t\tROT_ENC\n");
+			if (g_ipu_shm->task[i].task_handle.output.ipu_task
+				& ROT_VF)
+				dbg(DBG_INFO, "\t\t\tROT_VF\n");
+			if (g_ipu_shm->task[i].task_handle.output.ipu_task
+				& ROT_PP)
+				dbg(DBG_INFO, "\t\t\tROT_PP\n");
+			if (g_ipu_shm->task[i].task_handle.output.ipu_task
+				& VDI_IC_VF)
+				dbg(DBG_INFO, "\t\t\tVDI_IC_VF\n");
+		}
+	}
+}
+
+/*
+ * Get ipu priv task handle from g_ipu_shm, g_ipu_shm should already exist
+ */
+static ipu_lib_priv_handle_t * register_ipu_task(pid_t pid)
+{
+	ipu_lib_priv_handle_t * ipu_priv_handle;
+
+	mxc_ipu_lib_lock_shm();
+	ipu_priv_handle = _ipu_get_task_handle(pid);
+	mxc_ipu_lib_unlock_shm();
+	return ipu_priv_handle;
+}
+
+/*
+ * Remove ipu priv task handle from g_ipu_shm, g_ipu_shm should already exist
+ */
+static void unregister_ipu_task(pid_t pid, unsigned int ipu_task)
+{
+	mxc_ipu_lib_lock_shm();
+	_ipu_remove_task_handle(pid, ipu_task);
+	mxc_ipu_lib_unlock_shm();
+}
+
+/*
+ * Clear garbage ipu priv task handle from g_ipu_shm, g_ipu_shm should already exist
+ */
+static void clear_garbage_task(void)
+{
+	int i;
+
+	for (i = 0; i < MAX_TASK_NUM; i++) {
+		if (g_ipu_shm->task[i].task_pid) {
+			if (kill(g_ipu_shm->task[i].task_pid, 0) < 0)
+				if (errno == ESRCH) {
+					ipu_lib_ctl_task_t task;
+					dbg(DBG_INFO, "Clear garbage task[%d] pid %d\n",
+						i, g_ipu_shm->task[i].task_pid);
+					task.index = i;
+					mxc_ipu_lib_task_control(IPU_CTL_TASK_KILL,
+						(void *)(&task), NULL);
+				}
+		}
+	}
 }
 
 /*!
@@ -2234,21 +2470,39 @@ int mxc_ipu_lib_task_init(ipu_lib_input_param_t * input,
 {
 	int ret = 0;
 	ipu_lib_priv_handle_t * ipu_priv_handle;
+	char * dbg_env;
 
 	dbg(DBG_INFO, "\033[0;34m*** mxc_ipu_lib_task_init ***\033[0m\n");
 
 	if (ipu_handle == NULL) {
 		dbg(DBG_ERR, "Pls allocate ipu_handle!\n");
-		return -1;
+		ret = -1;
+		goto err0;
 	}
 
-	memset(ipu_handle, 0, sizeof(ipu_lib_handle_t));
+	dbg_env = getenv("IPU_DBG");
+	if (dbg_env) {
+		debug_level = atoi(dbg_env);
+		dbg(DBG_INFO, "ipu debug level %d\n", debug_level);
+	}
 
-	ipu_priv_handle = (ipu_lib_priv_handle_t *)malloc(sizeof(ipu_lib_priv_handle_t));
+	if (!g_ipu_shm) {
+		if (_ipu_ipc_prepare() < 0) {
+			ret = -1;
+			goto err0;
+		}
+	}
+
+	clear_garbage_task();
+
+	if ((ret = ipu_open()) < 0)
+		goto err0;
+
+	ipu_priv_handle = register_ipu_task(getpid());
 	if (ipu_priv_handle == NULL) {
-		dbg(DBG_ERR, "Can not malloc priv handle!\n");
+		dbg(DBG_ERR, "Register ipu task failed!\n");
 		ret = -1;
-		goto done;
+		goto err1;
 	}
 	ipu_handle->priv = ipu_priv_handle;
 
@@ -2256,37 +2510,34 @@ int mxc_ipu_lib_task_init(ipu_lib_input_param_t * input,
 
 	ipu_priv_handle->mode = mode;
 
-	if ((ret = ipu_priv_handle->fd_ipu  = ipu_open()) < 0)
-		goto done;
+	mxc_ipu_lib_lock_all();
 
-	if ((ret = _ipu_task_check(input, overlay, output, ipu_handle)) < 0) {
-		ipu_close();
-		goto done;
-	}
-
-	mxc_ipu_lib_lock(ipu_handle);
+	if ((ret = _ipu_task_check(input, overlay, output, ipu_handle)) < 0)
+		goto err2;
 
 	if (ipu_priv_handle->output.task_mode & COPY_MODE) {
-		if ((ret = _ipu_copy_setup(input, output, ipu_handle)) < 0) {
-			ipu_close();
-			mxc_ipu_lib_unlock(ipu_handle);
-			goto done;
-		}
+		if ((ret = _ipu_copy_setup(input, output, ipu_handle)) < 0)
+			goto err2;
 	} else {
-		if ((ret = _ipu_task_setup(input, overlay, output, ipu_handle)) < 0) {
-			ipu_close();
-			mxc_ipu_lib_unlock(ipu_handle);
-			goto done;
-		}
+		if ((ret = _ipu_task_setup(input, overlay, output, ipu_handle)) < 0)
+			goto err2;
 	}
 
-	g_task_in_use |= ipu_priv_handle->output.ipu_task;
+	g_ipu_shm->task_in_use |= ipu_priv_handle->output.ipu_task;
 
-	dbg(DBG_INFO, "g_task_in_use 0x%x\n", g_task_in_use);
+	dump_ipu_task();
 
-	mxc_ipu_lib_unlock(ipu_handle);
-done:
+	dbg(DBG_INFO, "task_in_use 0x%x\n", g_ipu_shm->task_in_use);
 
+	mxc_ipu_lib_unlock_all();
+
+	return ret;
+err2:
+	mxc_ipu_lib_unlock_all();
+	unregister_ipu_task(getpid(), ipu_priv_handle->output.ipu_task);
+err1:
+	ipu_close();
+err0:
 	return ret;
 }
 
@@ -2301,22 +2552,30 @@ done:
 void mxc_ipu_lib_task_uninit(ipu_lib_handle_t * ipu_handle)
 {
 	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
+	_mxc_ipu_lib_task_uninit(ipu_priv_handle, getpid());
+}
+static void _mxc_ipu_lib_task_uninit(ipu_lib_priv_handle_t * ipu_priv_handle, pid_t pid)
+{
+	int kill = 0;
 
 	dbg(DBG_INFO, "\033[0;34m*** mxc_ipu_lib_task_uninit ***\033[0m\n");
 
+	if (pid != getpid())
+		kill = 1;
+
+	mxc_ipu_lib_lock_all();
+
 	/* if stream mode, wait for latest frame finish */
-	if (ipu_priv_handle->mode & OP_STREAM_MODE) {
+	if ((ipu_priv_handle->mode & OP_STREAM_MODE) && !kill) {
 		if (_ipu_wait_for_irq(ipu_priv_handle->irq, 1)) {
 			dbg(DBG_ERR, "wait for irq %d time out!\n", ipu_priv_handle->irq);
 		} else
 			ipu_priv_handle->output_fr_cnt++;
 	}
 
-	mxc_ipu_lib_lock(ipu_handle);
-
 	if (ipu_priv_handle->output.show_to_fb) {
 		if (ipu_priv_handle->output.fb_chan == MEM_FG_SYNC) {
-			struct mxcfb_pos pos = {0};
+			struct mxcfb_pos pos = {0, 0};
 
 			if ( ioctl(ipu_priv_handle->output.fd_fb, MXCFB_SET_OVERLAY_POS,
 						&pos) < 0)
@@ -2324,7 +2583,7 @@ void mxc_ipu_lib_task_uninit(ipu_lib_handle_t * ipu_handle)
 		}
 	}
 
-	_ipu_task_disable(ipu_handle);
+	_ipu_task_disable(ipu_priv_handle);
 
 	dbg(DBG_INFO, "total input frame cnt is %d\n", ipu_priv_handle->input_fr_cnt);
 	dbg(DBG_INFO, "total output frame cnt is %d\n", ipu_priv_handle->output_fr_cnt);
@@ -2346,24 +2605,25 @@ void mxc_ipu_lib_task_uninit(ipu_lib_handle_t * ipu_handle)
 	if(ipu_priv_handle->output.task_mode & ROT_MODE)
 		ipu_uninit_channel(ipu_priv_handle->output.rot_chan);
 
-	g_task_in_use &= ~(ipu_priv_handle->output.ipu_task);
-
-	dbg(DBG_INFO, "g_task_in_use 0x%x\n", g_task_in_use);
+	g_ipu_shm->task_in_use &= ~(ipu_priv_handle->output.ipu_task);
 
 	if (!(ipu_priv_handle->output.task_mode & COPY_MODE))
-		_ipu_mem_free(ipu_handle);
+		_ipu_mem_free(ipu_priv_handle);
 
 	ipu_close();
 
-	free((void *)ipu_priv_handle);
+	mxc_ipu_lib_unlock_all();
 
-	mxc_ipu_lib_unlock(ipu_handle);
+	dbg(DBG_INFO, "task_in_use 0x%x\n", g_ipu_shm->task_in_use);
+
+	unregister_ipu_task(pid, ipu_priv_handle->output.ipu_task);
+
+	dump_ipu_task();
 }
 
-int _ipu_task_enable(ipu_lib_handle_t * ipu_handle)
+static int _ipu_task_enable(ipu_lib_priv_handle_t * ipu_priv_handle)
 {
 	int ret = 0, bufcnt;
-	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
 	unsigned int task_mode;
 
 	if (ipu_priv_handle->mode & OP_STREAM_MODE)
@@ -2393,7 +2653,8 @@ int _ipu_task_enable(ipu_lib_handle_t * ipu_handle)
 
 	/* set channel buffer ready */
 	task_mode = ipu_priv_handle->output.task_mode & ~(COPY_MODE);
-	if (task_mode == IC_MODE || task_mode == VDI_IC_MODE) {
+	if (
+				task_mode == IC_MODE || task_mode == VDI_IC_MODE) {
 		if ((task_mode == VDI_IC_MODE) && (ipu_priv_handle->motion_sel != HIGH_MOTION))
 			ipu_select_multi_vdi_buffer(0);
 		else
@@ -2454,10 +2715,8 @@ done:
 	return ret;
 }
 
-void _ipu_task_disable(ipu_lib_handle_t * ipu_handle)
+static void _ipu_task_disable(ipu_lib_priv_handle_t * ipu_priv_handle)
 {
-	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
-
 	ipu_free_irq(ipu_priv_handle->irq, NULL);
 
 	if(ipu_priv_handle->output.task_mode & (IC_MODE | VDI_IC_MODE)){
@@ -2498,7 +2757,7 @@ void _ipu_task_disable(ipu_lib_handle_t * ipu_handle)
 	}
 }
 
-int _ipu_wait_for_irq(int irq, int times)
+static int _ipu_wait_for_irq(int irq, int times)
 {
 	int wait = 0;
 	ipu_event_info info;
@@ -2517,7 +2776,7 @@ int _ipu_wait_for_irq(int irq, int times)
 		return 1;
 }
 
-int pan_display(ipu_lib_priv_handle_t * ipu_priv_handle, int idx)
+static int pan_display(ipu_lib_priv_handle_t * ipu_priv_handle, int idx)
 {
 	struct fb_var_screeninfo fb_var;
 	int ret = 0;
@@ -2599,14 +2858,14 @@ int mxc_ipu_lib_task_buf_update(ipu_lib_handle_t * ipu_handle,
 		 * update_bufnum = 0;
 		 * tri_output_bufnum = 2 or 1; (it manages output triple buf)
 		 */
-		mxc_ipu_lib_lock(ipu_handle);
+		mxc_ipu_lib_lock_task(ipu_priv_handle);
 
-		if ((ret = _ipu_task_enable(ipu_handle)) < 0) {
-			mxc_ipu_lib_unlock(ipu_handle);
+		if ((ret = _ipu_task_enable(ipu_priv_handle)) < 0) {
+			mxc_ipu_lib_unlock_task(ipu_priv_handle);
 			return ret;
 		}
 
-		mxc_ipu_lib_unlock(ipu_handle);
+		mxc_ipu_lib_unlock_task(ipu_priv_handle);
 
 		dbg(DBG_INFO, "\033[0;34mipu task begin:\033[0m\n");
 
@@ -2952,6 +3211,110 @@ int mxc_ipu_lib_task_buf_update(ipu_lib_handle_t * ipu_handle,
 			return ipu_priv_handle->input_fr_cnt % 2;
 	} else
 		return ipu_priv_handle->update_bufnum;
+}
+
+/*!
+ * This function control the ipu task according to param setting.
+ *
+ * @param	ctl_cmd		Control cmd.
+ *
+ * @param	arg		The control argument.
+ *
+ * @param	ipu_handle	User just allocate this structure for init.
+ * 				this parameter will provide some necessary
+ * 				info after task init function.
+ *
+ * @return	This function returns 0 on success or negative error code on
+ * 		fail.
+ */
+int mxc_ipu_lib_task_control(int ctl_cmd, void * arg, ipu_lib_handle_t * ipu_handle)
+{
+	int ret = 0;
+	ipu_lib_priv_handle_t * ipu_priv_handle;
+
+	if (ipu_handle)
+		ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
+
+	switch (ctl_cmd) {
+	case IPU_CTL_ALLOC_MEM:
+	{
+		ipu_lib_ctl_mem_t * ctl_mem_info =
+				(ipu_lib_ctl_mem_t *) arg;
+		ret = __ipu_mem_alloc(&ctl_mem_info->minfo,
+				&ctl_mem_info->mmap_vaddr);
+		break;
+	}
+	case IPU_CTL_FREE_MEM:
+	{
+		ipu_lib_ctl_mem_t * ctl_mem_info =
+				(ipu_lib_ctl_mem_t *) arg;
+		 __ipu_mem_free(&ctl_mem_info->minfo,
+				&ctl_mem_info->mmap_vaddr);
+		break;
+	}
+	case IPU_CTL_TASK_QUERY:
+	{
+		ipu_lib_ctl_task_t * ctl_task =
+				(ipu_lib_ctl_task_t *) arg;
+		if (!g_ipu_shm) {
+			if (_ipu_ipc_prepare() < 0) {
+				ret = -1;
+				goto done;
+			}
+		}
+		mxc_ipu_lib_lock_shm();
+		ctl_task->task_pid = g_ipu_shm->task[ctl_task->index].task_pid;
+		ctl_task->task_mode =
+			g_ipu_shm->task[ctl_task->index].task_handle.output.ipu_task;
+		mxc_ipu_lib_unlock_shm();
+		break;
+	}
+	case IPU_CTL_TASK_KILL:
+	{
+		ipu_lib_ctl_task_t * ctl_task =
+				(ipu_lib_ctl_task_t *) arg;
+		ipu_lib_priv_handle_t * ipu_priv_handle;
+
+		if (!g_ipu_shm) {
+			if (_ipu_ipc_prepare() < 0) {
+				ret = -1;
+				goto done;
+			}
+		}
+		ipu_priv_handle = &(g_ipu_shm->task[ctl_task->index].task_handle);
+		if (g_ipu_shm->task[ctl_task->index].task_pid) {
+			if ((ret = ipu_open()) < 0)
+				goto done;
+			if (ipu_priv_handle->output.show_to_fb) {
+				char *fbdev;
+
+				if (ipu_priv_handle->output.fb_num == 0)
+					fbdev = FBDEV0;
+				else if (ipu_priv_handle->output.fb_num == 1)
+					fbdev = FBDEV1;
+				else
+					fbdev = FBDEV2;
+				if ((ipu_priv_handle->output.fd_fb = open(fbdev, O_RDWR, 0)) < 0) {
+					dbg(DBG_ERR, "Unable to open %s\n", fbdev);
+					ret = -1;
+					ipu_close();
+					goto done;
+				}
+
+				ipu_priv_handle->output.fb_mem = NULL;
+			}
+			_mxc_ipu_lib_task_uninit(ipu_priv_handle,
+						g_ipu_shm->task[ctl_task->index].task_pid);
+		}
+		break;
+	}
+	default:
+		dbg(DBG_ERR, "No such control cmd\n");
+		ret = -1;
+	}
+
+done:
+	return ret;
 }
 
 #ifdef __cplusplus
