@@ -107,7 +107,7 @@ void help(void)
 		printf("\t6(max update region count test)]\n");
 		printf("\t7(1000 frames sequence region no collision frame rate test)]\n");
 		printf("[-F <string> : wave form 0,1,3,2,2,2]\n");
-		printf("[-g <int> : grayscale 0(normal):1(inverion)]\n");
+		printf("[-g <int> : grayscale 1(normal):2(inverion)]\n");
 		printf("[-H <int> : tempture ]\n");
 		printf("[-d /dev/fb0: fb device]\n");
 		printf("[-u <int> : auto update mode 0(partial)/1(full)]\n");
