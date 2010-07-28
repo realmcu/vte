@@ -444,7 +444,7 @@ BOOL test_collision_update()
 int fd_pxp;
 int  wait_time = 0;
 int i= 0 ,j = 0;
-int count = 100;
+int count = 20;
 int update_marker = 0x113;
 struct pxp_mem_desc mem;
 struct fb_var_screeninfo mode_info;
@@ -541,7 +541,7 @@ struct mxcfb_update_data im_update = {
 		}
   }
   /*full update*/
-  count = 100;
+  count = 20;
   im_update.update_mode = 1;
   while(count--)
   {
@@ -596,7 +596,7 @@ BOOL ret = FALSE;
 int  wait_time = 0;
 int fd_pxp;
 int i= 0 ,j = 0;
-int count = 100;
+int count = 20;
 int update_marker = 0x112;
 struct pxp_mem_desc mem;
 struct mxcfb_update_data im_update = {
@@ -670,10 +670,12 @@ if(mem.virt_uaddr == 0)
   while(count--)
   {
 	/*black and white alternative*/
+#if 0
 	if(count & 0x01)
 		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
 	else
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+#endif
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
 	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
     {
@@ -688,7 +690,7 @@ if(mem.virt_uaddr == 0)
 	printf("partial mode next update\n");
   }
   /*full update*/
-  count = 100;
+  count = 20;
   im_update.update_mode = 1;
   while(count--)
   {
