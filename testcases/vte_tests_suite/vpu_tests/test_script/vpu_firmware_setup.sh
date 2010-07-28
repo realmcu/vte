@@ -34,10 +34,10 @@ DIVX_ONLY | divx_only)
 	;;
 esac
 
-if [ $TARGET == "51" ] || [ $TARGET == "41" ]; then
+if [ $TARGET = "51" ] || [ $TARGET = "41" ]; then
 cp  /lib/firmware/vpu/vpu_fw_imx51.bin /lib/firmware/vpu/vpu_fw_imx51_bk.bin
 PLATF=51
-elif [ $TARGET == "53" ]; then
+elif [ $TARGET = "53" ]; then
 cp /lib/firmware/vpu/vpu_fw_imx53.bin /lib/firmware/vpu/vpu_fw_imx53_bk.bin
 PLATF=53
 fi
@@ -56,9 +56,9 @@ return $RC
 
 restore()
 {
-if [ $TARGET == "51" ] || [ $TARGET == "41" ]; then
+if [ $TARGET = "51" ] || [ $TARGET = "41" ]; then
 cp /lib/firmware/vpu/vpu_fw_imx51_bk.bin /lib/firmware/vpu/vpu_fw_imx51.bin
-elif [ $TARGET == "53" ]; then
+elif [ $TARGET = "53" ]; then
 cp /lib/firmware/vpu/vpu_fw_imx53_bk.bin /lib/firmware/vpu/vpu_fw_imx53.bin
 fi
 }
