@@ -46,6 +46,7 @@ extern "C"{
 #include "epdc_test.h"
 #ifdef USE_PIC
 #include "soc_blk.c"
+#include "diasy.c"
 #endif
 /*********************************************************************************/
 /* Macro name:  CALL_IOCTL()                                                     */
@@ -63,12 +64,15 @@ extern "C"{
 }
 
 #define PXP_DEVICE_NAME "/dev/pxp_device"
-#define BUFFER_WIDTH 256
-#define BUFFER_HEIGHT 256
+#define BUFFER_WIDTH 800
+#define BUFFER_HEIGHT 600
 #define PXP_BUFFER_SIZE (BUFFER_WIDTH*BUFFER_HEIGHT)
 #define MAX_WAIT 4
 /*update interval in us*/
 #define UPDATE_INTERVAL 1000
+#define PR (unsigned char)(0.257*256)
+#define PG (unsigned char)(0.504*256)
+#define PB (unsigned char)(0.098*256)
 /*global virables*/
 extern epdc_opts m_opt;
 
@@ -84,6 +88,7 @@ int get_modeinfo(struct fb_var_screeninfo *info);
 void print_fbinfo(void);
 unsigned char *draw_px(unsigned char *where, struct pixel *p);
 int draw_pattern(int fd, unsigned char * pfb, int r, int g, int b );
+int draw_pattern_diasy(unsigned char * pfb, int gwidth, int gheight);
 BOOL pan_test();
 BOOL draw_test();
 
@@ -112,7 +117,7 @@ BOOL draw_test()
 	im_update.update_region.width = mode_info.xres;
 	im_update.update_region.height = mode_info.yres;
 	tst_resm(TINFO, "draw a white in bg ground");
-	if( TPASS != draw_pattern(fb_fd,fb_mem_ptr,255,255,255))
+	if( TPASS != draw_pattern_pic(fb_fd,fb_mem_ptr,255,255,255))
 	{
 		tst_resm(TINFO, "fail to draw patter on bg");
 		return FALSE;
@@ -314,7 +319,11 @@ static void draw_thread(int *pon)
 	while(*pon == 1)
 	{
 		if(quitflag)break;
+#ifdef USE_PIC
+		draw_pattern_pic(fb_fd,fb_mem_ptr,255,255,255);
+#else
 		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+#endif
 		usleep(UPDATE_INTERVAL);
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
 		usleep(UPDATE_INTERVAL);
@@ -360,9 +369,12 @@ BOOL test_rate_update()
 		im_update[0].waveform_mode = 257;
 		im_update[0].update_marker = 0x300;
 		im_update[0].temp = 24;
+		#ifdef USE_PIC
+		draw_pattern_pic(fb_fd,fb_mem_ptr,255,255,255);
+		#else
 		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+		#endif
 		update_once(&(im_update[0]));
-		draw_pattern(fb_fd,fb_mem_ptr,128,128,128);
 		x = (mode_info.xres>>1)&(~0x03);
 		y = 0;
 		w = (mode_info.xres>>1)&(~0x03);
@@ -461,7 +473,7 @@ struct mxcfb_update_data im_update = {
 /*step 1: set up update data*/
 	CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 	fd_pxp = open(PXP_DEVICE_NAME, O_RDWR, 0);
-	mem.size = m_opt.su == 1? (m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height) :PXP_BUFFER_SIZE;
+	mem.size = m_opt.su == 1? 2 *(m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height) : 2 * PXP_BUFFER_SIZE;
 	if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
 	{
 		mem.cpu_addr = 0;
@@ -500,30 +512,37 @@ struct mxcfb_update_data im_update = {
 		im_update.alt_buffer_data.alt_update_region.height = BUFFER_HEIGHT;
  }
  im_update.alt_buffer_data.phys_addr = mem.phys_addr;
+#ifdef USE_PIC
+	draw_pattern_diasy((unsigned char*)mem.virt_uaddr ,BUFFER_WIDTH ,BUFFER_HEIGHT);
+#else
  for(i= 0; i < BUFFER_HEIGHT; i++)
 	for(j = 0; j < BUFFER_WIDTH; j++)
 	{
-		((unsigned char *)(mem.virt_uaddr))[i*BUFFER_HEIGHT + j] = 128;
+		((unsigned char *)(mem.virt_uaddr))[2*(i*BUFFER_HEIGHT + j)] = 128;
+		((unsigned char *)(mem.virt_uaddr))[2*(i*BUFFER_HEIGHT + j) + 1] = 128;
 	}
-
+ #endif
 /*step 2: start test*/
   /*partial update*/
   while(count--)
   {
 	/*black and white alternative*/
-	draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
-	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
-	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
+		if (count%2 == 0)
+		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+		else
+		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+		CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+		while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
     {
-		wait_time++;
-		if(wait_time > MAX_WAIT)
-		{
-		 printf("wait time exceed!!!\n");
-		 break;
+			wait_time++;
+			if(wait_time > MAX_WAIT)
+			{
+				printf("wait time exceed!!!\n");
+				break;
+			}
 		}
-	}
-	wait_time = 0;
-	printf("partial mode next update\n");
+		wait_time = 0;
+		printf("partial mode next update\n");
 	/*shift the update position a bit*/
 	if(im_update.update_region.top + im_update.update_region.height < mode_info.yres - 5)
 	im_update.update_region.top += 5;
@@ -533,20 +552,17 @@ struct mxcfb_update_data im_update = {
 		im_update.update_region.left += 5;
 	else
 		im_update.update_region.left = 0;
-	/*change the content*/
-	for(i= 0; i < BUFFER_WIDTH; i++)
-		for(j = 0; j < BUFFER_HEIGHT; j++)
-		{
-			((unsigned char *)mem.virt_uaddr)[i*BUFFER_HEIGHT + j] = random()&0xff;
-		}
-  }
+	}
   /*full update*/
   count = 20;
   im_update.update_mode = 1;
   while(count--)
   {
 	/*black and white alternative*/
-	draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+	if (count%2 == 0)
+		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+	else
+		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
 	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
 	{
@@ -568,12 +584,6 @@ struct mxcfb_update_data im_update = {
 	im_update.update_region.left += 5;
 	else
 	  im_update.update_region.left = 0;
-	/*change the content*/
-	for(i= 0; i < BUFFER_WIDTH; i++)
-		for(j = 0; j < BUFFER_HEIGHT; j++)
-		{
-			((unsigned char *)mem.virt_uaddr)[i*BUFFER_HEIGHT + j] = random()&0xff;
-		}
   }
 
  /*step 4: clean up */
@@ -616,7 +626,7 @@ struct mxcfb_update_data im_update = {
 	 printf("open pxp devices fialed\n");
 	 return FALSE;
  }
- mem.size = m_opt.su == 1? (m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height) :PXP_BUFFER_SIZE;
+ mem.size = m_opt.su == 1? (m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height)*2 :PXP_BUFFER_SIZE*2;
  printf("try to get memory size %d\n",mem.size);
  if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
  {
@@ -659,23 +669,26 @@ if(mem.virt_uaddr == 0)
  im_update.alt_buffer_data.alt_update_region.height = BUFFER_HEIGHT;
  }
  im_update.alt_buffer_data.phys_addr = mem.phys_addr;
+#ifdef USE_PIC
+	draw_pattern_diasy((unsigned char*)mem.virt_uaddr ,BUFFER_WIDTH ,BUFFER_HEIGHT);
+#else
  for(i= 0; i < BUFFER_HEIGHT; i++)
 	for(j = 0; j < BUFFER_WIDTH; j++)
 	{
-		((unsigned char*)mem.virt_uaddr)[i*BUFFER_HEIGHT + j] = 128;
+		((unsigned char*)mem.virt_uaddr)[2* (i*BUFFER_HEIGHT + j)] = 128;
+		((unsigned char*)mem.virt_uaddr)[2* (i*BUFFER_HEIGHT + j) + 1] = 128;
 	}
+#endif
  printf("start test\n");
 /*step 2: start test*/
   /*partial update*/
   while(count--)
   {
 	/*black and white alternative*/
-#if 0
 	if(count & 0x01)
 		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
 	else
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
-#endif
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
 	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
     {
@@ -998,7 +1011,55 @@ int epdc_fb_test()
 }
 
 #ifdef USE_PIC
-int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
+int draw_pattern_diasy(unsigned char * pfb, int gwidth, int gheight)
+{
+    int i,j;
+		unsigned char * pd = pfb;
+		struct pixel px;
+		long size;
+		px.bpp = 2;
+    px.xres = gwidth;
+    px.yres = gheight;
+    px.r_field.offset = 11;
+    px.r_field.length = 5;
+    px.g_field.offset = 5;
+    px.g_field.length = 6;
+    px.b_field.offset = 0;
+    px.b_field.length = 5;
+    px.trans = 0x00;
+    px.line_length = gwidth;
+    size = px.line_length * px.yres;
+
+		/* Set color values */
+    for(j = 0; j < px.yres; j++)
+		{
+			for(i = 0 ; i < px.xres; i++)
+			{
+				unsigned long l = j * gimp_diasy.width + i;
+				if( i < gimp_diasy.width && j < gimp_diasy.height)
+				{
+					px.r_color = gimp_diasy.pixel_data[l * 3];
+					px.g_color = gimp_diasy.pixel_data[l * 3 + 1];
+					px.b_color = gimp_diasy.pixel_data[l * 3 + 2];
+				}else{
+					if(i %2 == 0)
+					{
+						px.r_color = 0;
+						px.g_color = 0;
+						px.b_color = 0; /* Set color values */
+					}else{
+						px.r_color = 255;
+						px.g_color = 255;
+						px.b_color = 255; /* Set color values */
+					}
+				}
+				pd = draw_px(pd,&px);
+			}
+		}
+		return 0;
+}
+
+int draw_pattern_pic(int fd ,unsigned char * pfb, int r, int g, int b)
 {
 		struct pixel  px;
     int           size;
@@ -1075,7 +1136,7 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
     return rv;
 
 }
-#else
+#endif
 int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
 {
     struct pixel  px;
@@ -1136,7 +1197,6 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
     #endif
     return rv;
 }
-#endif
 /*===== draw_px =====*/
 /**
 @brief  Computes byte values from given color values depending on color depth and draws one pixel
@@ -1164,9 +1224,6 @@ unsigned char *draw_px(unsigned char *where, struct pixel *p)
 	if(p->r_field.offset == 0 &&  p->g_field.offset == 0 && p->b_field.offset == 0)
 	{
 		/*gray scale image*/
-		 #define PR (unsigned char)(0.257*256)
-		 #define PG (unsigned char)(0.504*256)
-		 #define PB (unsigned char)(0.098*256)
 		 unsigned char r = p->r_color;
 		 unsigned char g = p->g_color;
 		 unsigned char b = p->b_color;
