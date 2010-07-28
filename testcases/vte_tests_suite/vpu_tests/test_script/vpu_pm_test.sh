@@ -283,13 +283,13 @@ case "$1" in
   test_case_02 || exit $RC
   ;;
 3)
-  #test_case_03 || exit $RC
+  test_case_03 || exit $RC
   ;;
 4)
-  #test_case_04 || exit $RC
+  test_case_04 || exit $RC
   ;;
 5)
-  #test_case_05 || exit $RC
+  test_case_05 || exit $RC
   ;;
 *)
   usage
