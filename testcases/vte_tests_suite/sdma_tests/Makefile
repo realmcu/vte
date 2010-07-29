@@ -29,8 +29,8 @@
 #Portability: ARM GCC
 #
 ###############################################################################
-#SUBDIRS = sdma_testapp_api sdma_testapp_rw
-SUBDIRS = sdma_testapp_rw
+SUBDIRS-$(CONFIG_VTE_SDMAAPI) += sdma_testapp_api
+SUBDIRS-y += sdma_testapp_rw
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

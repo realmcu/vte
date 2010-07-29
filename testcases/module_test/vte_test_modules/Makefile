@@ -9,8 +9,9 @@ SUBDIRS-$(CONFIG_VM_SCC)    += scc_test_module
 SUBDIRS-$(CONFIG_VM_SCC2)   += scc2_test_module  
 SUBDIRS-$(CONFIG_VM_RNG)    += rng_test_module
 SUBDIRS-$(CONFIG_VM_RNGA)   += rnga_test_module
-SUBDIRS-$(CONFIG_VM_SPI)   += spi_test_module
+SUBDIRS-$(CONFIG_VM_SPI)    += spi_test_module
 SUBDIRS-$(CONFIG_VM_HACC)   += hacc_test_module
+SUBDIRS-$(CONFIG_VM_SDMA_API)   += sdma_module
 
 
 all:
