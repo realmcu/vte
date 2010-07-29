@@ -748,7 +748,7 @@ BOOL full_update()
   struct mxcfb_update_data im_update = {
   {0,0,16,16},/*region round to 8*/
   257,/*waveform mode 0-255, 257 auto*/
-  0, /*update mode 0(partial),1(Full)*/
+  1, /*update mode 0(partial),1(Full)*/
   update_marker,/*update_marker assigned by user*/
   TEMP_USE_AMBIENT,/*use ambient temperature set*/
   0,/*do not use alt buffer*/
