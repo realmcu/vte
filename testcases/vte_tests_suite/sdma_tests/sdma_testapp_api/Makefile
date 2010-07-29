@@ -32,7 +32,7 @@ BIN_DIR = ../../..
 CFLAGS +=    -Wall -I$(LTP_DIR)/include 
 LOADLIBES += -L$(LTP_DIR)/lib -lltp
 
-SUBDIRS = module
+SUBDIRS =
 
 SRCS = sdma_main.c sdma_test.c
 OBJS = sdma_main.o sdma_test.o
