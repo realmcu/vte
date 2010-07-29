@@ -23,8 +23,6 @@
 #Portability: ARM GCC
 #
 ###################################################################################################
-LTP_DIR =../../../../
-BIN_DIR = $(LTP_DIR)/testcases/
 
 TARGET = egl_test power_test sw_camera_ctrl glinfo ogles_camera_ext services_test  OGLESLighting
 
@@ -36,7 +34,7 @@ all:
 	@echo
 
 install:
-	ln -f $(TARGET) $(BIN_DIR)bin
+	ln -f $(TARGET) ../../bin/
 	@echo "***********************************************"
 	@echo "** INSTALL : $(TARGET)                **"
 	@echo "***********************************************"

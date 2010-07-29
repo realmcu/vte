@@ -26,7 +26,7 @@
 #  GNU GCC 
 ###################################################################################################
 
-SUBDIRS = 3rd_party testscripts
+SUBDIRS = testscripts
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
