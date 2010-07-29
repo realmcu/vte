@@ -232,7 +232,7 @@ do
 AL2=$(expr 255 - $AL1)
 imx_fb SET LOCALALPHA 1 1 $AL1 $AL2 0 || RC=$(expr $RC + 1)
 sleep 5
-AL1=$(expr $AL1 - 1)
+AL1=$(expr $AL1 - 10)
 done
 
 return $RC
