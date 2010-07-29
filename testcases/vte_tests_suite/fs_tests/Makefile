@@ -34,7 +34,7 @@ SUBDIRS+=fs_cr_rm fs_fsck fs_inod
 SUBDIRS+=fs_perms doio
 # New fs test cases
 SUBDIRS+=udev
-TARGETS=jffs2_test1.sh cramfs_test1.sh procfs_test1.sh sample.cramfs 
+TARGETS=jffs2_test1.sh cramfs_test1.sh procfs_test1.sh 
 TARGETS+=jffs2_test2.sh jffs2_test3.sh
 
 all:
