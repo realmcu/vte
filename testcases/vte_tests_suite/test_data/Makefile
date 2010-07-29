@@ -1,12 +1,12 @@
 
 DATA-y = butterfly.png 
 DATA-$(CONFIG_VTE_SYS)           += output_video_yuv420 
+DATA-$(CONFIG_VTE_FS)            += sample.cramfs
 SUBDIRS-$(CONFIG_VTE_V4L_PXP)    += pxp_test_files
 SUBDIRS-$(CONFIG_VTE_VPU)        += pc_tool
-SUBDIRS-$(CONFIG_VTE_V4l_IPU_PF) += ipu_pf 
+SUBDIRS-$(CONFIG_VTE_V4l_IPU_PF) += ipu_pf
 SUBDIRS-$(CONFIG_VTE_V4l_OUTPUT) += v4l_output_config
 SUBDIRS-$(CONFIG_VTE_MBX)        += mbx_3rd_party
-SUBDIRS-$(CONFIG_VTE_FS)         += sample.cramfs 
 
 all:
 	
