@@ -100,12 +100,12 @@ return $RC
 }
 
 # Function:     test_case_02
-# Description   - Test if openvg ok
+# Description   - Test if overnight ok
 #
 test_case_02()
 {
 #TODO give TCID
-TCID="none_test"
+TCID="overnight_test"
 #TODO give TST_COUNT
 TST_COUNT=2
 RC=0
@@ -114,6 +114,16 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
+
+while [ 1 ]
+do
+epdc_test -T 0 -g 1
+sleep 2
+epdc_test -T 0 -g 2
+sleep 2
+epdc_test -T 2 -g 1
+done
+
 
 return $RC
 }
