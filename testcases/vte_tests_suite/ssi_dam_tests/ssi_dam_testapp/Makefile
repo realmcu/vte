@@ -44,7 +44,7 @@ SRCS=$(wildcard *.c)
 OBJS=$(patsubst %.c,%.o,$(SRCS))
 
 TARGET=ssi_dam_testapp
-SAMPLES = samples/*
+#SAMPLES =
 
 all: $(TARGET)
 	@echo "***********************************************"
@@ -54,7 +54,7 @@ all: $(TARGET)
 
 install:
 	cp -f $(TARGET) $(BIN_DIR)
-	cp -f $(SAMPLES) $(BIN_DIR)
+	#cp -f $(SAMPLES) $(BIN_DIR)
 	@echo "***********************************************"
 	@echo "** INSTALL : ssi_dam_testapp                 **"
 	@echo "***********************************************"

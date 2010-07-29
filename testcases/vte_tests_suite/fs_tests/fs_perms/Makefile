@@ -27,4 +27,4 @@ fs_perms.o: fs_perms.c
 testx.o: testx.c
 	$(CC) -c testx.c $(CFLAGS) 
 clean:
-	rm -f *.o fs_perms testx.file
+	rm -f *.o fs_perms testx.file testx
