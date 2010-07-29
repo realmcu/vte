@@ -42,7 +42,7 @@ all: $(TARGET)
 
 install:
 	ln -f $(TARGET) ../../../bin/
-	ln -f config/* ../../../bin/
+	#ln -f config/* ../../../bin/
 	@echo "***********************************************"
 	@echo "** INSTALL : V4L output testapp              **"
 	@echo "***********************************************"
