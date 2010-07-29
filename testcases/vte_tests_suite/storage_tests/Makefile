@@ -37,7 +37,7 @@ TARGET += storage_test.sh storage_test_concurrent.sh storage_random_test.sh usbh
 TARGET += usbd_testall.pl usbd_test.pl
 
 # drivers
-TARGET += gserial.inf linux.inf usbser.sys
+#TARGET += gserial.inf linux.inf usbser.sys
 
 #performance
 TARGET += performance performance_command_line performance_prepare.sh performance_test.sh
