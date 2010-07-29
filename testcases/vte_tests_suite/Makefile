@@ -106,7 +106,6 @@ SUBDIRS-$(CONFIG_VTE_PM)          += pm_tests
 SUBDIRS-$(CONFIG_VTE_PMIC)        += pmic_tests
 SUBDIRS-$(CONFIG_VTE_POWER)       += power_manager
 SUBDIRS-$(CONFIG_VTE_PTP)         += ptp_tests
-SUBDIRS-$(CONFIG_VTE_RM)          += rm_tests
 SUBDIRS-$(CONFIG_VTE_RTC)         += rtc_tests
 SUBDIRS-$(CONFIG_VTE_SDMA)        += sdma_tests
 SUBDIRS-$(CONFIG_VTE_SEC)         += security_tests
