@@ -6,6 +6,8 @@ SUBDIRS-$(CONFIG_VTE_VPU)        += pc_tool
 SUBDIRS-$(CONFIG_VTE_V4l_IPU_PF) += ipu_pf 
 SUBDIRS-$(CONFIG_VTE_V4l_OUTPUT) += v4l_output_config
 SUBDIRS-$(CONFIG_VTE_MBX)        += mbx_3rd_party
+SUBDIRS-$(CONFIG_VTE_FS)         += sample.cramfs 
+
 all:
 	
 install:
