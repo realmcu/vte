@@ -1,4 +1,4 @@
-#Copyright (C) 2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2009-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -46,7 +46,7 @@ RC=0
 trap "cleanup" 0
 
 #TODO add setup scripts
-
+echo -e "\033[9;0]" > /dev/tty0
 return $RC
 }
 
@@ -142,11 +142,11 @@ imx_fb DRAW PATTERN GREEN 2
 sleep 2
 
 imx_fb SET LOCALALPHA 1 1 255 0 0
-echo "Pattern *** red only"
+echo "Pattern *** green only"
 read -p "press to continue"
 
 imx_fb SET LOCALALPHA 1 1 0 255 0
-echo "*** green only"
+echo "*** red only"
 read -p "press to continue"
 
 imx_fb SET LOCALALPHA 1 1 128 128 0
@@ -207,12 +207,12 @@ return $RC
 }
 
 # Function:     test_case_04
-# Description   - Test if <TODO test function> ok
+# Description   - Test if stress ok
 #  
 test_case_04()
 {
 #TODO give TCID 
-TCID="test_demo4_test"
+TCID="test_ipu_fb_stress"
 #TODO give TST_COUNT
 TST_COUNT=4
 RC=0
@@ -221,6 +221,19 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
+imx_fb DRAW PATTERN RED 0
+sleep 2
+imx_fb DRAW PATTERN GREEN 2
+sleep 2
+
+AL1=255
+while [ $AL1 -gt 0 ]
+do
+AL2=$(expr 255 - $AL1)
+imx_fb SET LOCALALPHA 1 1 $AL1 $AL2 0 || RC=$(expr $RC + 1)
+sleep 5
+AL1=$(expr $AL1 - 1)
+done
 
 return $RC
 
