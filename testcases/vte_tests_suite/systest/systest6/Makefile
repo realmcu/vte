@@ -22,7 +22,7 @@
 
 LTP_DIR = ../../../..
 BIN_DIR = ../../../bin
-DUMP_FILES = output_video_yuv420
+#DUMP_FILES = output_video_yuv420
 
 CFLAGS     += -Wall -I$(LTP_DIR)/include 
 CFLAGS     += -DDEBUG_TEST 
@@ -45,7 +45,7 @@ all: $(TARGET)
 
 install:
 	cp -f $(TARGET) $(BIN_DIR)
-	cp -f $(DUMP_FILES) $(BIN_DIR)
+	#cp -f $(DUMP_FILES) $(BIN_DIR)
 	@echo "***********************************************"
 	@echo "** INSTALL : systest_testapp6                **"
 	@echo "***********************************************"
@@ -58,7 +58,4 @@ $(TARGET): $(OBJS)
 	$(CC) $(OBJS) $(LOADLIBES) -o $@
 
 $(OBJS) : $(SRCS)
-
-
-
 
