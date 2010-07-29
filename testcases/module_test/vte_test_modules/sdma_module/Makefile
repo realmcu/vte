@@ -51,7 +51,7 @@ clean:
 	@echo
 
 install:
-	@ln -f $(TARGET) ../../../../bin
+	@ln -f $(TARGET) ../../../bin/
 	@echo "***********************************************"
 	@echo "** INSTALL : TEST_SDMA_MODULE                **"
 	@echo "***********************************************"
