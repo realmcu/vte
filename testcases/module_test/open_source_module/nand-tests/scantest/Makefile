@@ -14,4 +14,4 @@ all: modules modules_install
 
 clean:
 	rm -rf scantest.ko scantest.o scantest.mod.c scantest.mod.o \
-	Module.symvers .scantest* scantest.mod .tmp_versions scantest.c.bak
+	Module.symvers .scantest* scantest.mod .tmp_versions scantest.c.bak modules.order

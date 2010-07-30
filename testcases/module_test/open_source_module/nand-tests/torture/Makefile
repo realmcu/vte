@@ -14,4 +14,4 @@ all: modules modules_install
 
 clean:
 	rm -rf torture.ko torture.o torture.mod.c torture.mod.o \
-	Module.symvers .torture* torture.mod .tmp_versions torture.c.bak
+	Module.symvers .torture* torture.mod .tmp_versions torture.c.bak modules.order

@@ -14,4 +14,4 @@ all: modules modules_install
 
 clean:
 	rm -rf pagetest.ko pagetest.o pagetest.mod.c pagetest.mod.o \
-	Module.symvers .pagetest* pagetest.mod .tmp_versions pagetest.c.bak
+	Module.symvers .pagetest* pagetest.mod .tmp_versions pagetest.c.bak modules.order
