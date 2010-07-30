@@ -1,3 +1,4 @@
+#!/bin/bash
 #Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -6,7 +7,6 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
 
 LTPROOT=`cd \`dirname $0\` && echo $PWD`
 cd $LTPROOT
