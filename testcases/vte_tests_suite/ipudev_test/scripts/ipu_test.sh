@@ -1,4 +1,5 @@
-#Copyright 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#!/bin/sh
+#Copyright 2005-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -6,7 +7,6 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
 ###################################################################################################
 #
 #    @file   ipu_test.sh
@@ -190,7 +190,7 @@ echo "TST INFO: now block size is $i"
 echo "TST INFO: video pattern with user define dma buffer queue, one full-screen output"
 ${TST_CMD} -P 1 || return $RC
 
-if [ "$TARGET" == "37" ] || [ "$TARGET" == "51" ] || [ "$TARGET" == "53"  ]; then
+if [ "$TARGET" = "37" ] || [ "$TARGET" = "51" ] || [ "$TARGET" = "53"  ]; then
 echo "TST INFO: ipu v3 only"
 echo "TST INFO: video pattern with user define dma buffer queue, with two output"
 ${TST_CMD} -P 2 || return $RC
@@ -399,7 +399,7 @@ mkdir -p /tmp/ipu_dev
                         for l in $FBPOS ; do
                             check_format_bits $tf
 							efb0=0
-	                        if [ $MODE == "0x13"  ] || [ $MODE == "0x23"  ]; then
+	                        if [ "$MODE" = "0x13"  ] || [ "$MODE" = "0x23"  ]; then
                                 if [ $w -gt $FB1XRES ] || [ $h -gt $FB1YRES ]; then
                                     echo "TST INFO: skip this resolution for fb not support\n"
                                 else
@@ -511,11 +511,12 @@ do
   ${TST_CMD} -m 0x21 -f 50 -i 352,288,I420 -o 352,288,RGBP,$r \
   -s 1,0,0,0 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv \
   || return $RC
-  echo "for multi display"
-  ${TST_CMD} -m 0x23 -f 50 -E 1 -i 352,288,I420 \
-  -o 352,288,RGBP,$r -s 1,0,0,0 -O 352,288,RGBP,$r \
-  -S 1,2,0,288 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv \
-  || return $RC
+  #not support any more
+	#echo "for multi display"
+  #${TST_CMD} -m 0x23 -f 50 -E 1 -i 352,288,I420 \
+  #-o 352,288,RGBP,$r -s 1,0,0,0 -O 352,288,RGBP,$r \
+  #-S 1,2,0,288 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv \
+  #|| return $RC
 done
 
 RC=0
@@ -563,7 +564,7 @@ test_case_07()
             for format in ${FMLIST}
             do
                 echo "TST_INFO: output format is: ${format}"
-                if [ $mode_task == "0x23"  ]; then
+                if [ $mode_task = "0x23"  ]; then
                 
                     echo "TST INFO: -----------multi-display test------------"
                     ${TST_CMD} -m ${mode_task} -f 300 -E 1 -i $WD,$HT,I420 -o \
