@@ -17,7 +17,7 @@
 #include<sys/time.h>
 #include<unistd.h>
 
-#define TS_DEV	"/dev/input/event1"
+#define TS_DEV	"/dev/input/ts0"
 int waitkeyin(void)
 {
         fd_set rset;
