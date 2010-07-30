@@ -1,0 +1,6 @@
+#auto configure the arm target
+
+aclocal -I m4
+autoconf
+automake -a
+./configure --host=arm-none-linux-gnueabi
