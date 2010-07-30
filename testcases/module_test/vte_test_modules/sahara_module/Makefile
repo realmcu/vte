@@ -38,7 +38,7 @@ all:
 	@echo "***********************************************"
 
 clean:
-	rm -rf *.ko *.mod.ko *.mod.c .*.cmd *.o .tmp_versions .*.o.d
+	rm -rf *.ko *.mod.ko *.mod.c .*.cmd *.o .tmp_versions .*.o.d modules.order
 	@echo "***********************************************"
 	@echo "** CLEAN: SAHARA_MODULE                      **"
 	@echo "***********************************************"

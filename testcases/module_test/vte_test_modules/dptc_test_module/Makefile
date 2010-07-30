@@ -25,7 +25,7 @@ install:
 .PHONY: clean
 clean :
 	@rm -f *.o *.mod.c *.ko .*.cmd
-	@rm -rf .tmp_versions
+	@rm -rf .tmp_versions modules.order
 	@for X in $(shell /bin/ls -d */); do	\
 		cd $$X;				\
 		rm -f *.o *.mod.c *.ko .*.cmd;	\

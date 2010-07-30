@@ -55,7 +55,7 @@ install:
 
 clean:
 	@rm -f rng_test_module.ko *.mod.ko *.mod.c .*.cmd *.o .*.o.d
-	@rm -rf ./.tmp_versions
+	@rm -rf ./.tmp_versions modules.order
 	@echo "***********************************************"
 	@echo "** CLEAN: rng test module                   **"
 	@echo "***********************************************"
