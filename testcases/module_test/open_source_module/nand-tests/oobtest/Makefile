@@ -14,4 +14,4 @@ all: modules modules_install
 
 clean:
 	rm -rf oobtest.ko oobtest.o oobtest.mod.c oobtest.mod.o \
-	Module.symvers .oobtest* oobtest.mod .tmp_versions oobtest.c.bak
+	Module.symvers .oobtest* oobtest.mod .tmp_versions oobtest.c.bak modules.order

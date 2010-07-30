@@ -14,4 +14,4 @@ all: modules modules_install
 
 clean:
 	rm -rf speedtest.ko speedtest.o speedtest.mod.c speedtest.mod.o \
-	Module.symvers .speedtest* speedtest.mod .tmp_versions speedtest.c.bak
+	Module.symvers .speedtest* speedtest.mod .tmp_versions speedtest.c.bak modules.order
