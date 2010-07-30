@@ -43,7 +43,7 @@ all:
 
 clean:
 	@rm -f *.ko *.mod.ko *.mod.c .*.cmd *.o .*.o.d
-	@rm -rf ./.tmp_versions
+	@rm -rf ./.tmp_versions modules.order
 	@echo "***********************************************"
 	@echo "** CLEAN: SCC2_TEST_MODULE                    **"
 	@echo "***********************************************"

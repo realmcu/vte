@@ -75,7 +75,7 @@ all:
 	echo $(CFLAGS)
 	@make -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
 	@rm -f *.mod.ko *.mod.c .*.cmd *.o
-	@rm -rf ./.tmp_versions
+	@rm -rf ./.tmp_versions modules.order
 	@echo "***********************************************"
 	@echo "** ALL : rnga test module                    **"
 	@echo "***********************************************"
