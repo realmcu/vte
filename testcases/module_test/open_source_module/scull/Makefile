@@ -35,7 +35,7 @@ install:
 	@echo "****************************************"
 	ln -f $(TARGETS) ../../../bin/
 clean:
-	@rm -rf *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions Module.symvers
+	@rm -rf *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions Module.symvers modules.order
 	@echo "***********************************************"
 	@echo "** CLEAN: UDEV_MODULE                        **"
 	@echo "***********************************************"
