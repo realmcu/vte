@@ -31,7 +31,7 @@ all:
 
 clean:
 	@rm -f $(TARGET) *.mod.ko *.mod.c .*.cmd *.o .*.o.d
-	@rm -rf .tmp_versions
+	@rm -f .tmp_versions modules.order Module.symvers
 	@echo "***********************************************"
 	@echo "** CLEAN: TEST_RAMDISK_MODULE                **"
 	@echo "***********************************************"
