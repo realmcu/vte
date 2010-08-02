@@ -38,6 +38,7 @@
 #   IMX51_BABBAGE IMX51_BABBAGE
 #   IMX28EVK    IMX28EVK
 #   IMX53EVK    IMX53EVK
+#   IMX50ARM2   IMX50ARM2
 #
 #
 # Usage2(return number): 
@@ -124,8 +125,14 @@ determine_platform()
         p=IMX28EVK
     fi
 
+    #find MX28EVK
+    find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX50 ARM2" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+        p=IMX50ARM2
+    fi
 
-    if [ $p = "IMX31_3STACK" ]
+		if [ $p = "IMX31_3STACK" ]
     then
         #echo "Platform MX31"
         RC=31
@@ -157,6 +164,9 @@ determine_platform()
     then
         #echo  "Platform MX28 EVK" 
         RC=28
+		elif [ $p = "IMX50ARM2" ]
+		then
+				RC=50
     else
         #echo  "Platform not recognized!"
         RC=67
