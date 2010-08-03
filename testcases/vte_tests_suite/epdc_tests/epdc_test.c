@@ -64,8 +64,8 @@ extern "C"{
 }
 
 #define PXP_DEVICE_NAME "/dev/pxp_device"
-#define BUFFER_WIDTH 800
-#define BUFFER_HEIGHT 600
+#define BUFFER_WIDTH 256
+#define BUFFER_HEIGHT 256
 #define PXP_BUFFER_SIZE (BUFFER_WIDTH*BUFFER_HEIGHT)
 #define MAX_WAIT 4
 /*update interval in us*/
@@ -784,7 +784,7 @@ BOOL test_wait_update()
 {
 /*suppose you have set up the device before run this case*/
 	/*step 1: set up update data*/
-  int count = 100;
+  int count = 10;
   int  wait_time = 0;
   int update_marker = 0x111;
   struct mxcfb_update_data im_update = {
@@ -825,7 +825,7 @@ BOOL test_wait_update()
   draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
   }
   /*step 3: now using full update mode*/
-  count = 100;
+  count = 10;
   im_update.update_mode = 1;
   while(count--)
   {
