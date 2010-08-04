@@ -327,8 +327,8 @@ again:
  /*for performance test -- begin*/
 	if(fSysTime != NULL )
 	{
-		fprintf(stdout,"%d\t%ld\t%ld\t%ld\t%ld\t%d\t%d\t\n", numFrame,totalTime,maxFrameTime,minFrameTime,totalTime/numFrame,maxFrameNumber, minFrameNumber);
-		fprintf(fSysTime,"%d\t%ld\t%ld\t%ld\t%ld\t%d\t%d\t\n", numFrame,totalTime,maxFrameTime,minFrameTime,totalTime/numFrame,maxFrameNumber, minFrameNumber);
+		fprintf(stdout,"%d\t%ld\t%ld\t%ld\t%ld\t%d\t%d\t\n", total_cnt,run_time,maxFrameTime,minFrameTime,run_time/total_cnt,maxFrameNumber, minFrameNumber);
+		fprintf(fSysTime,"%d\t%ld\t%ld\t%ld\t%ld\t%d\t%d\t\n", total_cnt,run_time,maxFrameTime,minFrameTime,run_time/total_cnt,maxFrameNumber, minFrameNumber);
 		fclose(fSysTime);
 	}
 	/*for performance test -- end*/
