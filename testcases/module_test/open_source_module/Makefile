@@ -8,6 +8,7 @@ SUBDIRS-$(CONFIG_OM_NAND)    += nand-tests
 SUBDIRS-$(CONFIG_OM_RAMDISK) += ramdisk  
 SUBDIRS-$(CONFIG_OM_SCULL)   += scull 
 SUBDIRS-$(CONFIG_OM_CRYPTO)  += crypto_test
+SUBDIRS-$(CONFIG_OM_USB)     += usb
 
 all:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
