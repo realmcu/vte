@@ -27,8 +27,8 @@
 # Total Tests:   1
 # Test Strategy: play audio streams with volume up and down
 # 
-# Tested on : i.MX51&35&37&53
-# Support: i.MX31&MX51&MX35&MX37&MX53
+# Tested on : i.MX51&35&37&53&50
+# Support: i.MX31&MX51&MX35&MX37&MX53&50
 
 # Function:     setup
 #
@@ -125,7 +125,10 @@ amixer_ctl_id()
     elif [ $platfm -eq 37 ]
     then
         ctl_id=name='Playback PCM Volume'
-    fi
+    elif [ $platfm -eq 50 ]
+		then
+				ctl_id=name='Headphone Volume'
+		fi
  
     echo $ctl_id
 }
@@ -142,6 +145,7 @@ max_vol()
     MAX_MX31=99
     MAX_SGTL5K=127
     MAX_MX37=255
+		MAX_MX50=190
 
     if [ $platfm -eq 31 ]
     then
@@ -153,6 +157,9 @@ max_vol()
     elif [ $platfm -eq 37 ]
     then
         return $MAX_MX37
+		elif [ $platfm -eq 50 ]
+		then
+			  return $MAX_MX50
     fi
 
     return 0
