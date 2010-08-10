@@ -74,7 +74,7 @@ export CONFIG_VTE_WD=y
 export CONFIG_VTE_WIFI=y
 
 #vte module config
-#CONFIG_VM_DPTC=y
+#CONFIG_VM_DRYICE=y
 #CONFIG_VM_SDMA=y
 #export CONFIG_VM_SAHARA=y
 export CONFIG_VM_SCC=y
