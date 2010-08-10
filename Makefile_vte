@@ -106,6 +106,7 @@ vte: libltp.a tools
 	@echo
 	@$(MAKE) -C testcases/vte_tests_suite install
 	@$(MAKE) -C testcases/module_test install
+	@$(MAKE) -C tools $@
 	@$(MAKE) -C tools install
 	@echo
 	@echo "***********************************************"
