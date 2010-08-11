@@ -17,7 +17,6 @@ install:
 	@echo "** INSTALL : usbtest.ko                 **"
 	@echo "****************************************"
 	ln -f $(TARGETS) ../../../bin/
-	-ln -f test.sh ../../../bin/usb_test.sh
 clean:
 	@rm -rf *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions Module.symvers modules.order
 	@echo "***********************************************"

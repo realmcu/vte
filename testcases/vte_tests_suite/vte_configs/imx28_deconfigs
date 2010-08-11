@@ -20,7 +20,7 @@ export CONFIG_VTE_MTD=y
 export CONFIG_VTE_NETWORK=y
 export CONFIG_VTE_1W=y
 export CONFIG_VTE_PM=y
-export CONFIG_VTE_PTP
+export CONFIG_VTE_PTP=y
 export CONFIG_VTE_RTC=y
 export CONFIG_VTE_SEC=y
 export CONFIG_VTE_SLCDC=y
@@ -34,7 +34,7 @@ export CONFIG_VTE_WD=y
 export CONFIG_VTE_WIFI=y
 
 #vte module config
-#CONFIG_VM_DPTC=y
+#CONFIG_VM_DRYICE=y
 #CONFIG_VM_SDMA=y
 #export CONFIG_VM_SAHARA=y
 #CONFIG_VM_SCC=y

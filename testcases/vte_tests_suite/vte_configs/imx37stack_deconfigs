@@ -62,7 +62,7 @@ export CONFIG_VTE_VPU=y
 export CONFIG_VTE_WD=y
 
 #vte module config
-#CONFIG_VM_DPTC=y
+#CONFIG_VM_DRYICE=y
 #CONFIG_VM_SDMA=y
 #export CONFIG_VM_SAHARA=y
 #CONFIG_VM_SCC=y
