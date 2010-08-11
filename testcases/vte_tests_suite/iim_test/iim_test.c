@@ -20,6 +20,30 @@
 #ifndef NULL
 #define NULL 0
 #endif
+typedef struct{
+char name[32];	
+unsigned long offset;
+} t_regs;
+
+#ifdef MX5
+#define MAX_REGS 3
+/*mx5x mmap GPT and OCOTP*/
+t_regs mreg[] = {{"GPTOCR1",0x0010},
+						{"boundry",0x1fff},
+						{"exceed",0x21a0}
+	};
+#endif
+
+#ifdef MX233
+#define MAX_REGS 6
+t_regs mreg[] = {{"clock",0xC0},
+						{"hclock",0x20},
+						{"chip",0x1300},
+						{"fuse",0x11A0},
+						{"boundry",0x1fff},
+						{"exceed",0x21a0}
+	};
+#endif
 
 static int RC = 0;
 static char * piim = NULL;
@@ -47,6 +71,7 @@ static void exit_sighandler(int x)
 int main()
 {
  int fd;
+ int i=0;
  int ret = 0;
 
  signal(SIGSEGV,exit_sighandler);
@@ -63,15 +88,19 @@ int main()
 
   close(fd);
 
+  RC = 1;
+	for(i =0; i < MAX_REGS; i++)
+	{
+  printf("%s 0x%x\n",mreg[i].name ,*(int*)(piim+mreg[i].offset));
+	}
+	/*
   printf("clock 0x%x\n",*(int*)(piim+0xC0));
   printf("hclock 0x%x\n",*(int*)(piim+0x20));
   printf("chip:%s\n",piim+0x1300);
   printf("fuse:0x%x\n",*(int *)(piim+0x11A0));
   printf("test address equal 8k:0x%x\n",*(char *)(piim+0x1fff));
-  RC = 1;
   printf("test address exceed 8k:0x%x\n",*(int *)(piim+0x21a0));
-    
-  
+  */
   ret = munmap(piim, 8 * 1024);
   if(ret == -1)
     perror("iim OCR unmap");
