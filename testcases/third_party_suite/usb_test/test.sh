@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # test types can be passed on the command line:
 #
@@ -47,7 +47,7 @@ fi
 
 do_test ()
 {
-    if ! ./testusb $TEST_ARGS -s $BUFLEN -c $COUNT $* 2>/dev/null
+    if ! testusb $TEST_ARGS -s $BUFLEN -c $COUNT $* 2>/dev/null
     then
 	echo "FAIL"
 	exit 1
