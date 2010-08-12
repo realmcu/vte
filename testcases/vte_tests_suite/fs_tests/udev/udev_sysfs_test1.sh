@@ -1,4 +1,5 @@
-#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#!/bin/sh
+#Copyright (C) 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -6,7 +7,6 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
 ##############################################################################
 #
 # Revision History:
@@ -15,6 +15,7 @@
 #-----------------------   ------------    ----------  ---------------------
 # Spring Zhang               10/06/2008       n/a        Initial ver. 
 # Spring                     28/11/2008       n/a      Modify COPYRIGHT header
+# Spring                     12/08/2010       n/a      Delete cleanup action
 #############################################################################
 # Portability:  ARM sh bash 
 #
@@ -88,9 +89,6 @@ setup()
 cleanup() 
 {
     RC=0
-    echo "clean up environment..."
-    rmmod scull > /dev/null
-    echo "clean up environment end"
     return $RC
 }
 
