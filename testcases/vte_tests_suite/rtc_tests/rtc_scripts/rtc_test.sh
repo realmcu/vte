@@ -115,6 +115,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 date -u 032116582008
 date "2010-07-14 10:06:00"
+date -u 200808111730
 hwclock --systohc
 #only check the year suppose enough
 ret=$(hwclock | grep 2010 | wc -l)
