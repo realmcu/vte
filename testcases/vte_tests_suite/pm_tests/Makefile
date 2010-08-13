@@ -1,4 +1,4 @@
-#Copyright (C) 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2004-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -18,13 +18,14 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Dmitriy Kazachkov/e1403c    10/06/2004      TLSbo39741  Initial version
-#L.Delaspre/rc149c            08/12/2004     TLSbo40142   update with Freescale identity
+#L.Delaspre/rc149c           08/12/2004     TLSbo40142   update with Freescale identity
+#S.Zhang/b17931              08/13/2010         n/a      Add power consumption
 #
 ###################################################################################################
 #Portability: PM tests support i.MX31 ADS platform comilation under VTE
 #
 ###################################################################################################
-SUBDIRS = nptl sockets threads1 threads2  trace_shed process
+SUBDIRS = nptl sockets threads1 threads2 trace_shed process pwr_consumption
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
