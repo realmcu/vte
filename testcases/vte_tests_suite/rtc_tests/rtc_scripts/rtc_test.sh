@@ -67,9 +67,10 @@ return $RC
 usage()
 {
  echo "rtc_test.sh <test case ID>"
- echo "Test case ID <1/2>"
+ echo "Test case ID <1/2/3>"
  echo "1: module existence test"
  echo "2: set rtc hardware and check"
+ echo "3: rtc accuracy test"
 }
 
 # Function:     test_case_01
@@ -129,6 +130,78 @@ return $RC
 
 }
 
+# Function:     test_case_03
+# Description   - Test if rtc accuracy is ok
+#  
+test_case_03()
+{
+#TODO give TCID 
+TCID="rtc_ac"
+#TODO give TST_COUNT
+TST_COUNT=1
+RC=0
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+#TODO add function test scripte here
+#test 1hr and check rtc accuracy
+
+hwclock -w
+sleep 3600
+diffs=$(hwclock -r ;date)
+echo $diffs
+wd1=$(echo $diffs | awk '{print $1}')
+wd2=$(echo $diffs | awk '{print $8}')
+if [ $wd1 = $wd2 ];then
+  RC=1
+fi
+
+m1=$(echo $diffs | awk '{print $2}')
+m2=$(echo $diffs | awk '{print $9}')
+if [ $m1 = $m2 ];then
+  RC="$RC 2"
+fi
+
+d1=$(echo $diffs | awk '{print $3}')
+d2=$(echo $diffs | awk '{print $10}')
+if [ $d1 -ne $d2 ];then
+  RC="$RC 3"
+fi
+
+h1=$(echo $diffs | awk '{print $4}' | cut -d: -f 1)
+h2=$(echo $diffs | awk '{print $11}' | cut -d: -f 1)
+if [ $h1 -ne $h2 ];then
+  RC="$RC 4"
+fi
+
+mm1=$(echo $diffs | awk '{print $4}' | cut -d: -f 2)
+mm2=$(echo $diffs | awk '{print $11}' | cut -d: -f 2)
+if [ $mm1 -ne $mm2 ];then
+  RC="$RC 5"
+fi
+
+ss1=$(echo $diffs | awk '{print $4}' | cut -d: -f 3)
+ss2=$(echo $diffs | awk '{print $11}' | cut -d: -f 3)
+if [ $ss2 -lt $ss1 ];then
+offset=$(echo $ss2 $ss1 - p | dc)
+else
+offset=$(echo $ss1 $ss2 - p | dc)
+fi
+if [ $offset -lt 3 ];then
+RC="$RC 6"
+fi
+
+y1=$(echo $diffs | awk '{print $5}')
+y2=$(echo $diffs | awk '{print $13}')
+if [ $y1 -ne $y2 ];then
+  RC="$RC 6"
+fi
+
+return $RC
+}
+
+
 
 # main function
 
@@ -150,6 +223,9 @@ case "$1" in
   ;;
 2)
   test_case_02 || exit $RC 
+  ;;
+3)
+  test_case_03 || exit $RC 
   ;;
 *)
   usage
