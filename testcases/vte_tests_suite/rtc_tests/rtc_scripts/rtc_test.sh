@@ -153,13 +153,13 @@ diffs=$(hwclock -r ;date)
 echo $diffs
 wd1=$(echo $diffs | awk '{print $1}')
 wd2=$(echo $diffs | awk '{print $8}')
-if [ $wd1 = $wd2 ];then
+if [ $wd1 != $wd2 ];then
   RC=1
 fi
 
 m1=$(echo $diffs | awk '{print $2}')
 m2=$(echo $diffs | awk '{print $9}')
-if [ $m1 = $m2 ];then
+if [ $m1 != $m2 ];then
   RC="$RC 2"
 fi
 
@@ -188,7 +188,7 @@ offset=$(echo $ss2 $ss1 - p | dc)
 else
 offset=$(echo $ss1 $ss2 - p | dc)
 fi
-if [ $offset -lt 3 ];then
+if [ $offset -gt 3 ];then
 RC="$RC 6"
 fi
 
