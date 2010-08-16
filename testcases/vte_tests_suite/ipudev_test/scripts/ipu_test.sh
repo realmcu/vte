@@ -1,5 +1,5 @@
 #!/bin/sh
-#Copyright 2005-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -20,6 +20,7 @@
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake Huang/-----             <20081209>     N/A          Initial version
 #Justin Qiu                   <20091201>     N/A          add ipu performance test
+#Spring Zhang                 <20100816>     N/A          copy stream to mem
 # 
 ###################################################################################################
 
@@ -539,7 +540,6 @@ test_case_07()
 
     #TODO add function test scripts here
     
-    #TST_CMD=ipu_dev_test_pt
     #IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv 720+480+SD720x480.yuv"
     IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv"
     fc=300
@@ -558,6 +558,9 @@ test_case_07()
         HT=$(echo $infile | sed "s/+/ /g" | awk '{print $2}' )
         infilename=$(echo $infile | sed "s/+/ /g"| awk '{print $3}')
 
+        echo "TST_INFO: copy stream to memory"
+        cp ${STREAM_PATH}/video/${infilename} /dev
+
         for mode_task in ${MODELIST}
         do
             echo "TST_INFO: Mode is ${mode_task}"
@@ -569,7 +572,7 @@ test_case_07()
                     echo "TST INFO: -----------multi-display test------------"
                     ${TST_CMD} -m ${mode_task} -f 300 -E 1 -i $WD,$HT,I420 -o \
                     $WD,$HT,$format,0 -s 1,0,0,0 -O $WD,$HT,$format,0 -S 1,1,0,$HT \
-                    ${STREAM_PATH}/video/${infilename} 
+                    /dev/${infilename} 
                     sleep 3
 
                     run_time=`cat /tmp/ipu_dev/sys_time.txt`
@@ -580,7 +583,7 @@ test_case_07()
 
                     echo "TST_INFO: --------single display---------------"
                     ${TST_CMD} -m ${mode_task} -f 300 -i $WD,$HT,I420 -o \
-                    $WD,$HT,$format,0 -s 1,0,0,0 ${STREAM_PATH}/video/${infilename}
+                    $WD,$HT,$format,0 -s 1,0,0,0 /dev/${infilename}
                     sleep 3
                 
                     run_time=`cat /tmp/ipu_dev/sys_time.txt`
@@ -588,7 +591,7 @@ test_case_07()
 
                     echo "TST_INFO: ---------crop test------------"
                     ${TST_CMD} -m ${mode_task} -f 300 -i $WD,$HT,I420 -c 32,32,64,64 -o \
-                    $WD,$HT,$format,0 -s 1,0,0,0 ${STREAM_PATH}/video/${infilename} 
+                    $WD,$HT,$format,0 -s 1,0,0,0 /dev/${infilename} 
                     sleep 3
 
                     run_time=`cat /tmp/ipu_dev/sys_time.txt`
@@ -603,7 +606,7 @@ test_case_07()
 	                    out_h=$(echo $outsize | sed "s/,/ /g" | awk '{print $2}')
 
                         ${TST_CMD} -m ${mode_task} -f 300 -i $WD,$HT,I420 -o \
-                        $out_w,$out_h,$format,0 -s 1,0,0,0 ${STREAM_PATH}/video/${infilename}
+                        $out_w,$out_h,$format,0 -s 1,0,0,0 /dev/${infilename}
                         sleep 3
                 
                         run_time=`cat /tmp/ipu_dev/sys_time.txt`
@@ -612,6 +615,7 @@ test_case_07()
                 fi
             done
         done
+        rm -f /dev/${infilename} 
     done
 
     RC=$?
