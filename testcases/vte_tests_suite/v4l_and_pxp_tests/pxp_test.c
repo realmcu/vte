@@ -1,6 +1,8 @@
-/* pxp_test - test application for the STMP378x PxP
+/*
+ * pxp_test - test application for the MXS PxP
  *
- * Copyright (C) 2008-2009 Embedded Alley Solutions
+ * Copyright (C) 2009-2010 Freescale Semiconductor, Inc.
+ * Copyright 2008-2009 Embedded Alley Solutions
  * Matt Porter <mporter@embeddedalley.com>
  * 
  * This program is free software, see the COPYING file
@@ -25,13 +27,16 @@
 #include <linux/fb.h>
 #include <linux/videodev2.h>
 
-
 #define DEFAULT_WIDTH	320
 #define DEFAULT_HEIGHT	240
 
+#define	V4L2_BUF_NUM	2
+
+int g_num_buffers;
+
 struct buffer {
-        void    *start;
-        struct v4l2_buffer buf;
+	void *start;
+	struct v4l2_buffer buf;
 };
 
 struct pxp_control {
@@ -64,6 +69,7 @@ struct pxp_video_format
 {
 	char *name;
 	unsigned int bpp;
+	unsigned int bpp_demon;
 	unsigned int fourcc;
 	enum v4l2_colorspace colorspace;
 };
@@ -72,32 +78,37 @@ static struct pxp_video_format pxp_video_formats[] = {
 	{
 		.name = "24-bit RGB",
 		.bpp = 4,
+		.bpp_demon = 1,
 		.fourcc = V4L2_PIX_FMT_RGB24,
 		.colorspace = V4L2_COLORSPACE_SRGB,
 	}, {
 		.name = "16-bit RGB 5:6:5",
 		.bpp = 2,
+		.bpp_demon = 1,
 		.fourcc = V4L2_PIX_FMT_RGB565,
 		.colorspace = V4L2_COLORSPACE_SRGB,
 	}, {
 		.name = "16-bit RGB 5:5:5",
 		.bpp = 2,
+		.bpp_demon = 1,
 		.fourcc = V4L2_PIX_FMT_RGB555,
 		.colorspace = V4L2_COLORSPACE_SRGB,
 	}, {
 		.name = "YUV 4:2:0 Planar",
-		.bpp = 2,
+		.bpp = 3,
+		.bpp_demon = 2,
 		.fourcc = V4L2_PIX_FMT_YUV420,
 		.colorspace = V4L2_COLORSPACE_JPEG,
 	}, {
 		.name = "YUV 4:2:2 Planar",
 		.bpp = 2,
+		.bpp_demon = 1,
 		.fourcc = V4L2_PIX_FMT_YUV422P,
 		.colorspace = V4L2_COLORSPACE_JPEG,
 	},
 };
 
-#define VERSION	"0.7"
+#define VERSION	"1.0"
 #define MAX_LEN 512
 #define DEFAULT_OUTFILE "out.pxp"
 #define DEFAULT_V4L_DEVICE "/dev/video0"
@@ -152,14 +163,13 @@ static struct pxp_control *pxp_init(int argc, char **argv)
 	write(tfd, buf, 7);
 	close(tfd);
 
-
 	pxp = calloc(1, sizeof(struct pxp_control));
 	if (!pxp) {
 		perror("failed to allocate PxP control object");
 		return NULL;
 	}
-        /*Hake: allocate 2 buffers here*/
-	pxp->buffers = calloc(2, sizeof(*pxp->buffers));
+
+	pxp->buffers = calloc(V4L2_BUF_NUM, sizeof(*pxp->buffers));
 
 	if (!pxp->buffers) {
 		perror("insufficient buffer memory");
@@ -179,7 +189,7 @@ static struct pxp_control *pxp_init(int argc, char **argv)
 	pxp->fmt_idx = 4;	/* YUV422 */
 	pxp->wait = 1;
 
-	static const char *opt_string = "a:hk:o:ir:w:c?";
+	static const char *opt_string = "a:hk:o:ir:w:f:c?";
 
 	static const struct option long_opts[] = {
 		{ "dst", required_argument, NULL, PXP_DST},
@@ -245,6 +255,9 @@ static struct pxp_control *pxp_init(int argc, char **argv)
 				break;
 			case 'c':
 			        pxp->en_ov_crop = 1;
+			       break;
+			case 'f':
+			        pxp->fmt_idx = atoi(optarg);
 			       break;
 			case '?':
 				help(argv[0]);
@@ -339,12 +352,12 @@ static int pxp_config_output(struct pxp_control *pxp, int pass)
 static int pxp_config_buffer(struct pxp_control *pxp, int b)
 {
 	struct v4l2_requestbuffers req;
-    int ibcnt = b + 1;
+        int ibcnt = V4L2_BUF_NUM;
 	int i =0;
 	/*
-	 * Hardcoded to one buffer for now
+	 * Hardcoded to two buffers for now
 	 */
-	req.count = ibcnt; /*Hake enlarge the buffer*/
+	req.count = ibcnt; /*enlarge the buffer*/
 	req.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
 	req.memory = V4L2_MEMORY_MMAP;
 
@@ -358,7 +371,7 @@ static int pxp_config_buffer(struct pxp_control *pxp, int b)
 		return 1;
 	}
         
-	/*Hake add more buffer prepared code*/
+	/*add more buffer prepared code*/
 	for(i = 0; i < ibcnt ; i++) 
 	{
 	pxp->buffers[i].buf.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
@@ -390,7 +403,7 @@ static int pxp_read_infiles(struct pxp_control *pxp)
 {
 	int fd; 
 	int bpp = pxp_video_formats[pxp->fmt_idx].bpp;
-	int s0_size = pxp->s0.width * pxp->s0.height * bpp;
+	int s0_size = pxp->s0.width * pxp->s0.height * bpp / pxp_video_formats[pxp->fmt_idx].bpp_demon;
 	int ffd;
 	struct fb_var_screeninfo var;
 	int fb_size;
@@ -520,15 +533,8 @@ static int pxp_config_windows(struct pxp_control *pxp, int pass)
 		} else {
 			if (pxp->rotate_pass) {
 				int scale = 16 * pxp->screen_h / pxp->screen_w;
-				if (pxp->rotate == 90) {
-					crop.c.left = 0;
-					crop.c.top = 0;
-				} else { /* 270 */
-					crop.c.left = pxp->screen_w *
-							(16 - scale)/16;
-					crop.c.top = pxp->screen_h *
-							(16 - scale)/16;
-				}
+				crop.c.left = 0;
+				crop.c.top = 0;
 				crop.c.width = pxp->screen_w * scale/16;
 				crop.c.height = pxp->screen_h * scale/16;
 			} else {
@@ -539,6 +545,8 @@ static int pxp_config_windows(struct pxp_control *pxp, int pass)
 			}
 		}
 	}
+	printf("crop.c.l/t/w/h = %d/%d/%d/%d\n", crop.c.left,
+	       crop.c.top, crop.c.width, crop.c.height);
 	if (ioctl(pxp->vfd, VIDIOC_S_CROP, &crop) < 0) {
 		perror("VIDIOC_S_CROP");
 		return 1;
@@ -580,10 +588,9 @@ static int pxp_config_controls(struct pxp_control *pxp)
 		perror("VIDIOC_S_CTRL");
 		return 1;
 	}
-
 	/* Set background color */
 	vc.id = V4L2_CID_PRIVATE_BASE + 1;
-	vc.value = 0x00000000;
+	vc.value = 0x0;
 	if (ioctl(pxp->vfd, VIDIOC_S_CTRL, &vc) < 0) {
 		perror("VIDIOC_S_CTRL");
 		return 1;
@@ -595,37 +602,43 @@ static int pxp_config_controls(struct pxp_control *pxp)
 static int pxp_start(struct pxp_control *pxp, int pass)
 {
 	enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
-    int i = 0, cnt = 0;
+        int i = 0, cnt = 0;
 	int fd;
 	int bpp = pxp_video_formats[pxp->fmt_idx].bpp;
-	int s0_size = pxp->s0.width * pxp->s0.height * bpp;
+	int s0_size = pxp->s0.width * pxp->s0.height * bpp / pxp_video_formats[pxp->fmt_idx].bpp_demon;
 	/* Queue buffer */
 	/*Hake add more buffer support*/
 	if ((fd = open(pxp->s0_infile, O_RDWR, 0)) < 0) {
 		perror("s0 data open failed");
 		return 1;
 	}
-
-
-        for(i = 0; i <= pass; i ++){
-	/*blank first pass + 1 frames */
-        pxp->buffers[i].buf.index = i;
+	printf("prepare buffers\n");
+        #if 1
+	for(i = 0; i < V4L2_BUF_NUM; i++){
+        /*prepare 2 buffers */
+        struct v4l2_buffer buf;
+	buf.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
+        buf.memory = V4L2_MEMORY_MMAP;
+        buf.index = i;
+	if (ioctl(pxp->vfd, VIDIOC_QUERYBUF, &buf) < 0) {
+	  printf("VIDIOC_QUERYBUF failed\n");
+	  break;
+	}
+	pxp->buffers[i].buf.index = i;
 	if (ioctl(pxp->vfd, VIDIOC_QBUF, &pxp->buffers[i].buf) < 0) {
 		perror("VIDIOC_QBUF 1");
 		return 1;
+	   }
 	}
-	
-	}
+	#endif
 	/* Enable PxP */
         if (ioctl(pxp->vfd, VIDIOC_STREAMON, &type) < 0) {
                perror("VIDIOC_STREAMON");
                return 1;
         }
-        
 	printf("PxP processing: start...");
-    do
+	do
 	{
-	/* Query buffer */
 	struct v4l2_buffer buf;
 	buf.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
 	buf.memory = V4L2_MEMORY_MMAP;
@@ -639,16 +652,13 @@ static int pxp_start(struct pxp_control *pxp, int pass)
 	cnt = read(fd, pxp->buffers[buf.index].start, s0_size);
 	if(cnt < s0_size)
 	   break;
-	/*
 	printf("\nread cnt=%d (%d), at buf %d\n",cnt, s0_size, buf.index);
-	*/
         pxp->buffers[buf.index].buf.index = buf.index;
 	if (ioctl(pxp->vfd, VIDIOC_QBUF, &pxp->buffers[buf.index].buf) < 0) {
 		perror("VIDIOC_QBUF 2");
 		return 1;
 	    }
-	 i = i==0?0:i--;
-	}while(cnt == s0_size && i >= 0);
+	}while(cnt == s0_size );
 
 
         close(fd);
@@ -679,8 +689,12 @@ static int pxp_stop(struct pxp_control *pxp, int pass)
         }
 
 	if (!pass)
-		munmap(pxp->buffers[0].start, pxp->screen_w*pxp->screen_h*2);
-
+	{
+	 int i = 0;
+	 for(i = 0; i < V4L2_BUF_NUM ; i++)
+          munmap(pxp->buffers[i].start, pxp->buffers[i].buf.length);
+        }
+	printf("pxp stopped\n");
 	return 0;
 }
 
@@ -758,16 +772,8 @@ static int pxp_rotate_pass(struct pxp_control *pxp)
 	int bpp;
 	int s0_size;
  
-	w = pxp->s0.width;
-	pxp->s0.width = pxp->s0.height;
-	pxp->s0.height = w;
-	pxp->fmt_idx = 0;	/* RGB24 */
-	pxp->hflip = 0;
-	pxp->vflip = 0;
-/* FIXME */
-	pxp->rotate = 0;
  	bpp = pxp_video_formats[pxp->fmt_idx].bpp;
-	s0_size = pxp->s0.width * pxp->s0.height * bpp;
+	s0_size = pxp->s0.width * pxp->s0.height * bpp / pxp_video_formats[pxp->fmt_idx].bpp_demon;
 
 	if (pxp_config_output(pxp, 1))
 		return 1;
@@ -836,6 +842,8 @@ int main(int argc, char **argv)
 	if (pxp_check_capabilities(pxp))
 		return 1;
 
+	if (!pxp->rotate_pass)
+	{
 	if (pxp_config_output(pxp, 0))
 		return 1;
 
@@ -856,11 +864,10 @@ int main(int argc, char **argv)
 
 	if (pxp_stop(pxp, 0))
 		return 1;
-
-	if (pxp->rotate_pass)
-		if (pxp_rotate_pass(pxp))
-			return 1;
-
+	}else{
+	  if (pxp_rotate_pass(pxp))
+		return 1;
+	}
 	if (pxp->outfile_state)
 		if (pxp_write_outfile(pxp))
 			return 1;
