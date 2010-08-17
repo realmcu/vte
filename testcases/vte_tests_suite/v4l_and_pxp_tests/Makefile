@@ -4,6 +4,7 @@ TARGET=pxp_test
 SRC=pxp_test.c
 
 OBJ=$(patsubst %.c,%.o,$(SRC))
+CFLAGS+= -Wall -I$(KLINUX_SRCDIR)/include/
 
 
 .phony: all
