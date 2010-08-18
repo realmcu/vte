@@ -99,27 +99,25 @@ typedef enum
 /*======================== STRUCTURES AND OTHER TYPEDEFS ====================*/
 typedef struct 
 {
-        const char * mV4LDevice;
-        const char * mOutputDevice;
-        char * mOutputFile;
-        int mWidth;
-        int mHeight;
-        int mCount;
-        int mCaseNum;
-        int mRotationMode; 
-        int mOutputFormat;
-        int mCrop;
-        struct v4l2_rect mCropRect;
-        int mRotation;
-#ifndef MAD_TEST_MODIFY
-	 int mNeedAsk;
-#endif
-	 int mVerbose;
-        const char * mPixFormat;
-        int mOverlayType;
+	const char * mV4LDevice;
+	const char * mOutputDevice;
+	char * mOutputFile;
+	int mWidth;
+	int mHeight;
+	int mCount;
+	int mCaseNum;
+	int mRotationMode; 
+	int mOutputFormat;
+	int mCrop;
+	struct v4l2_rect mCropRect;
+	int mRotation;
+	int mVerbose;
+	const char * mPixFormat;
+	int mOverlayType;
 	int mFrameRate;
 	int mIsBlock;
 	int inputSrc;
+	int mNeedAsk;
 	int mMode;
 } sV4LTestConfig; 
 /*======================== GLOBAL VARIABLE DECLARATIONS =====================*/
