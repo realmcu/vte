@@ -8,18 +8,12 @@
 **http://www.opensource.org/licenses/gpl-license.html
 **http://www.gnu.org/copyleft/gpl.html
 **/
-
 /**
 @file   v4l_capture_test.c
-
 @brief  V4L capture test scenario C source.
-
 Description of the file
-
 @par Portability: ARM GCC
-
 */
-
 /*======================== REVISION HISTORY ==================================
 
 Author (core ID)      Date         CR Number    Description of Changes
@@ -53,18 +47,14 @@ Kardakov  Dmitriy     25/07/2006   TLSbo71971   Add the function which configure
 Kardakov  Dmitriy     30/08/2006   TLSbo75997   Bug with capture tests was fixed.
 
 =============================================================================*/
-
 #ifdef __cplusplus
 extern "C"{
 #endif
-
 /*======================== INCLUDE FILES ====================================*/
 /* Standard Include Files */
 #include <errno.h>
-
 /* Harness Specific Include Files. */
 #include "test.h"
-
 /* Verification Test Environment Include Files */
 #include "v4l_capture_test.h"
 #include <inttypes.h>
@@ -76,35 +66,29 @@ extern "C"{
 #define IPU_PIX_FMT_RGB565  ipu_fourcc('R','G','B','P') /*!< 16  RGB-5-6-5     */
 #define IPU_PIX_FMT_BGR24   ipu_fourcc('B','G','R','3') /*!< 24  BGR-8-8-8     */
 #define IPU_PIX_FMT_BGR32   ipu_fourcc('B','G','R','4') /*!< 32  BGR-8-8-8-8   */
-
-
 /*======================== LOCAL CONSTANTS ==================================*/
-
-
 const char gaPixFormat[9][10] = {
-                                    "RGB565",
-                                    "BGR24",
-                                    "RGB24", 
-                                    "BGR32",
-                                    "RGB32", 
-                                    "YUV422P",
-                                    "YUV420",
-                                    "YUYV",
-				    "UYVY"
-                                };
-                                
-                                
-const int gaPixFormatID[9] =   {
-                                    V4L2_PIX_FMT_RGB565, 
-                                    V4L2_PIX_FMT_BGR24, 
-                                    V4L2_PIX_FMT_RGB24,  
-                                    V4L2_PIX_FMT_BGR32,  
-                                    V4L2_PIX_FMT_RGB32,  
-                                    V4L2_PIX_FMT_YUV422P, 
-                                    V4L2_PIX_FMT_YUV420,
-				    V4L2_PIX_FMT_YUYV,
-				    V4L2_PIX_FMT_UYVY
-                                };
+"RGB565",
+"BGR24",
+"RGB24",
+"BGR32",
+"RGB32",
+"YUV422P",
+"YUV420",
+"YUYV",
+"UYVY"
+};
+const int gaPixFormatID[9] = {
+V4L2_PIX_FMT_RGB565,
+V4L2_PIX_FMT_BGR24,
+V4L2_PIX_FMT_RGB24,
+V4L2_PIX_FMT_BGR32,
+V4L2_PIX_FMT_RGB32,
+V4L2_PIX_FMT_YUV422P,
+V4L2_PIX_FMT_YUV420,
+V4L2_PIX_FMT_YUYV,
+V4L2_PIX_FMT_UYVY
+};
 /*======================== LOCAL MACROS =====================================*/
 //#define mxc91131evb_CSI_STRIPS_FIX      1
 #define PIX_FMT_NUM                     9
@@ -113,11 +97,10 @@ const int gaPixFormatID[9] =   {
 #define MAX_STR_LEN 50
 
 /*======================== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) =======*/
-
 typedef struct
 {
-        void    *mpStart;
-        size_t   mLength;
+  void    *mpStart;
+  size_t   mLength;
 	size_t offset;
 } sBuffer;
 
@@ -130,42 +113,29 @@ static struct fb_fix_screeninfo fScreenInfo;
 static struct fb_var_screeninfo var_info;
 static struct fb_var_screeninfo old_var_info;
 static unsigned long gVideoBufferSize;
-
 static sBuffer * gpBuffers = NULL;
 static unsigned int gBuffNumber = 0;
 static struct v4l2_format gFormat;
-
 static struct v4l2_framebuffer fbuffer;
 static struct v4l2_framebuffer fbuffer_save;
-
 static int gPixelFormat = V4L2_PIX_FMT_RGB565;
 static char gPixFmtName[40] = "RGB565";
 static char gOrigPixFmtName[40] = "Unknown";
 static FILE* pDumpFile = NULL;
 static int gFBPixFormat = V4L2_PIX_FMT_RGB565;//V4L2_PIX_FMT_BGR24;
 static char gFBPixFmtName[40] = "RGB565";
-
 static int gUsecase = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-
 static int gSnapshot = 0;
 static int gStartStream = 0;
-
 struct v4l2_rect gOrigCropRect;
 struct v4l2_rect gOrigFormatRect;
-
-#ifndef MAD_TEST_MODIFY
 struct v4l2_cropcap cropcap;
 struct v4l2_crop crop;
-#endif
-
 unsigned long gOrigPixFormat = V4L2_PIX_FMT_RGB565;
-
 static int inSrc = -1;
 /*======================== GLOBAL CONSTANTS =================================*/
 
-
 /*======================== GLOBAL VARIABLES =================================*/
-
 
 /*======================== LOCAL FUNCTION PROTOTYPES ========================*/
 
@@ -197,40 +167,33 @@ int cleanup_device(void);
 int register_conf(int div_ratio);
 #endif
 
-
 /*======================== LOCAL FUNCTIONS ==================================*/
 
 /*===== parse_options =====*/
 /**
 @brief  Parse options
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error code
 */
 int parse_options(void)
 {
-        /* Parse use case by buffer type */
-
-        gUsecase = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-
-        switch(gV4LTestConfig.mCaseNum)
-        {
-                case PRP_VF:
-                        gUsecase = V4L2_BUF_TYPE_VIDEO_OVERLAY;
-                        break;
-                case PRP_ENC_ON_D:
-                case PRP_ENC_TO_F:
-                        gUsecase = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-                        break;
-                default:
-                        tst_resm(TWARN,"Case number is erroneous : %d",gV4LTestConfig.mCaseNum);
-                        return TFAIL;
-        }
-
+	/* Parse use case by buffer type */
+  gUsecase = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	switch(gV4LTestConfig.mCaseNum)
+  {
+		case PRP_VF:
+			gUsecase = V4L2_BUF_TYPE_VIDEO_OVERLAY;
+      break;
+		case PRP_ENC_ON_D:
+    case PRP_ENC_TO_F:
+			gUsecase = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+      break;
+    default:
+			tst_resm(TWARN,"Case number is erroneous : %d",gV4LTestConfig.mCaseNum);
+      return TFAIL;
+   }
         /* Parse pixel format */
-
         if(gV4LTestConfig.mOutputFormat)
         {
                 int i = 0;
@@ -243,7 +206,6 @@ int parse_options(void)
                                 break;
                         }
                 }
-
                 /* If no parsed format in the array of formats */
                 if(i == PIX_FMT_NUM)
                 {
@@ -251,16 +213,13 @@ int parse_options(void)
                         return TFAIL;
                 }
         }
-
         return TPASS;
 }
 
 /*===== open_device =====*/
 /**
 @brief  Open V4L2 device
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error code
 */
@@ -281,58 +240,48 @@ int open_device(void)
                 tst_resm(TBROK, "Cannot identify '%s': %d, %s", gV4LTestConfig.mV4LDevice, errno, strerror (errno));
                 return TFAIL;
         }
-
         if(!S_ISCHR (st.st_mode))
         {
                 tst_resm(TBROK, "%s is not a char device", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
         }
-
-	if ( gV4LTestConfig.mIsBlock == 0 )
-	{
+				if ( gV4LTestConfig.mIsBlock == 0 )
+				{
         	if((gFdV4L = open(gV4LTestConfig.mV4LDevice, O_RDWR|O_NONBLOCK, 0)) < 0)
         	{
                 tst_resm(TBROK, "Unable to open %s", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
-       		}	
-	}else{
-	
+       		}
+				}else{
         	if((gFdV4L = open(gV4LTestConfig.mV4LDevice, O_RDWR, 0)) < 0)
         	{
                 tst_resm(TBROK, "Unable to open %s", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
-		}
-	}
-
+					}
+				}
         return TPASS;
 }
 
 /*===== close_device =====*/
 /**
 @brief  Close V4L2 device
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error code
 */
 int close_device(void)
 {
-        int retValue = TPASS;
-	
+	int retValue = TPASS;
 	if( gFdV4L > 0 && inSrc != -1)
 	   ioctl(gFdV4L, VIDIOC_S_INPUT, &inSrc);
-
-        if((gFdV4L > 0) && (close(gFdV4L) < 0))
-        {
-                tst_resm(TBROK, "Unable to close %s", gV4LTestConfig.mV4LDevice);
-                retValue = TFAIL;
-        }
-
-        if ( gpFB_buf != NULL )
-                free(gpFB_buf);
-
-        return retValue;
+  if((gFdV4L > 0) && (close(gFdV4L) < 0))
+  {
+		tst_resm(TBROK, "Unable to close %s", gV4LTestConfig.mV4LDevice);
+		retValue = TFAIL;
+  }
+  if ( gpFB_buf != NULL )
+    free(gpFB_buf);
+  return retValue;
 }
 
 /*===== open_out_device =====*/
@@ -347,13 +296,11 @@ int close_device(void)
 int open_out_device(void)
 {
         /* Open FrameBuffer Device */
-
         if((gFdFB = open(gV4LTestConfig.mOutputDevice, O_RDWR)) < 0)
         {
                 tst_resm(TBROK, "Unable to open frame buffer");
                 return TFAIL;
         }
-
         //Set the BGR24 framebuffer format
         memset(&var_info, 0, sizeof(var_info) );
         if(ioctl(gFdFB, FBIOGET_VSCREENINFO, &var_info))
@@ -361,25 +308,14 @@ int open_out_device(void)
                 tst_resm(TBROK, "Unable to read FB information");
                 return TFAIL;
         }
-
         memcpy(&old_var_info, &var_info, sizeof(var_info));
-
         var_info.red.offset = 11;
         var_info.green.offset = 5;
         var_info.blue.offset = 0;
-
         var_info.red.length = 5;
         var_info.green.length = 6;
         var_info.blue.length = 5;
         var_info.bits_per_pixel = 16;
-   #if 0
-        if(ioctl(gFdFB, FBIOPUT_VSCREENINFO, &var_info))
-        {
-                tst_resm(TBROK, "Unable to write FB information");
-                return TFAIL;
-        }
-#endif
-
         if(ioctl(gFdFB, FBIOGET_VSCREENINFO, &gScreenInfo))
         {
                 tst_resm(TBROK, "Unable to read FB information");
@@ -393,41 +329,32 @@ int open_out_device(void)
                         tst_resm(TINFO,"\t Framebuffer Height = %d\n", gScreenInfo.yres);
                 }
         }
-
         gVideoBufferSize = gScreenInfo.xres * gScreenInfo.yres * gScreenInfo.bits_per_pixel / 8;
-
         if((gpFB = mmap(0, gVideoBufferSize, PROT_READ | PROT_WRITE, MAP_SHARED, gFdFB, 0)) < 0)
         {
                 tst_resm(TBROK, "Error: failed to map framebuffer device to memory.");
                 return TFAIL;
         }
-
         return TPASS;
 }
 
 /*===== close_out_device =====*/
 /**
 @brief  Close output device
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error code
 */
 int close_out_device(void)
 {
         int retValue = TPASS;
-
         if((gFdFB > 0) && (close(gFdFB) < 0))
         {
                 tst_resm(TBROK, "Unable to close %s", gV4LTestConfig.mOutputDevice);
                 retValue = TFAIL;
         }
-
         return retValue;
 }
-
-
 
 /*===== init_overlay =====*/
 /**
@@ -441,9 +368,10 @@ int close_out_device(void)
 int init_overlay(void)
 {
         struct v4l2_streamparm streamParm;
-        v4l2_std_id stdID;
-        int displayLCD = 0;
-
+/*
+				v4l2_std_id stdID;
+				int displayLCD = 0;
+*/
         /* Get Frame Buffer overlay parametrs */
         if(ioctl(gFdV4L, VIDIOC_G_FBUF, &fbuffer) < 0)
         {
@@ -452,10 +380,8 @@ int init_overlay(void)
         }
         /* save the original values */
         memcpy(&fbuffer_save, &fbuffer, sizeof(fbuffer));;
-
         memset(&fbuffer, 0, sizeof(fbuffer) );
         fbuffer.flags = V4L2_FBUF_FLAG_OVERLAY;
-
         /* set framebuffer info for primary type overlay */
         if(gV4LTestConfig.mOverlayType == V4L2_FBUF_FLAG_PRIMARY)
         {
@@ -464,24 +390,19 @@ int init_overlay(void)
                         tst_resm(TBROK, "Unable to open frame buffer");
                         return TFAIL;
                 }
-
                 if(ioctl(gFdFB, FBIOGET_VSCREENINFO, &gScreenInfo))
                 {
                         tst_resm(TBROK, "Unable to read FB var information");
                         return TFAIL;
                 }
-
                 if(ioctl(gFdFB, FBIOGET_FSCREENINFO, &fScreenInfo))
                 {
                         tst_resm(TBROK, "Unable to read FB fix information");
                         return TFAIL;
                 }
-
-
                 fbuffer.fmt.width  = gScreenInfo.xres;
                 fbuffer.fmt.height = gScreenInfo.yres;
                 fbuffer.fmt.bytesperline = gScreenInfo.bits_per_pixel/8*fbuffer.fmt.width;
-
                 fbuffer.fmt.pixelformat = IPU_PIX_FMT_RGB565;
                 if(gScreenInfo.bits_per_pixel == 24 )
                 {
@@ -491,18 +412,13 @@ int init_overlay(void)
                 {
                         fbuffer.fmt.pixelformat = IPU_PIX_FMT_BGR24;
                 }
-
                 fbuffer.base = (void*)fScreenInfo.smem_start;
                 fbuffer.fmt.sizeimage = fbuffer.fmt.bytesperline * fbuffer.fmt.height;
                 fbuffer.flags = V4L2_FBUF_FLAG_PRIMARY;
         }
-
-
         /* Get original format */
         CLEAR(gFormat);
-
         gFormat.type = V4L2_BUF_TYPE_VIDEO_OVERLAY;
-
         if(ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0)
         {
                 tst_resm(TWARN, "%s formatting failed", gV4LTestConfig.mV4LDevice);
@@ -512,41 +428,32 @@ int init_overlay(void)
         streamParm.parm.capture.timeperframe.numerator = 1;
         streamParm.parm.capture.timeperframe.denominator = gV4LTestConfig.mFrameRate;
         streamParm.parm.capture.capturemode =  gV4LTestConfig.mMode;
-
         if(ioctl(gFdV4L, VIDIOC_S_PARM, &streamParm) < 0)
         {
                 tst_resm(TWARN,"ERROR init_overlay() : set frame rate failed");
                 return TFAIL;
         }
-
         streamParm.parm.capture.timeperframe.numerator = 0;
         streamParm.parm.capture.timeperframe.denominator = 0;
-
         if(ioctl(gFdV4L, VIDIOC_G_PARM, &streamParm) < 0)
         {
                 tst_resm(TWARN,"ERROR init_overlay() : get frame rate failed");
                 return TFAIL;
         }
-
-
         gOrigFormatRect.left = gFormat.fmt.win.w.left;
         gOrigFormatRect.top = gFormat.fmt.win.w.top;
         gOrigFormatRect.width = gFormat.fmt.win.w.width;
         gOrigFormatRect.height = gFormat.fmt.win.w.height;
-
         if(gV4LTestConfig.mVerbose)
         {
                 tst_resm(TINFO,"Original image size: left = %d, top = %d, width = %d, height = %d",
                         gOrigFormatRect.left, gOrigFormatRect.top, gOrigFormatRect.width, gOrigFormatRect.height);
         }
-
         if(gV4LTestConfig.mCrop)
         {
                 if(do_cropping())
                         return TFAIL;
         }
-
-
        gFormat.type = V4L2_BUF_TYPE_VIDEO_OVERLAY;
         /*gFormat.fmt.pix.pixelformat = IPU_PIX_FMT_RGB565;*/
 	if(gV4LTestConfig.mCrop)
@@ -555,14 +462,12 @@ int init_overlay(void)
         gFormat.fmt.win.w.top = crop.c.top;
         gFormat.fmt.win.w.height = crop.c.width;
         gFormat.fmt.win.w.width = crop.c.height;
-	
 	tst_resm(TINFO,"Crop to image: left = %d, top = %d, width = %d, height = %d", gFormat.fmt.win.w.left, gFormat.fmt.win.w.top, gFormat.fmt.win.w.width, gFormat.fmt.win.w.height);
 	}else{
 	gFormat.fmt.win.w.left = 0;
         gFormat.fmt.win.w.top = 0;
         gFormat.fmt.win.w.height = gV4LTestConfig.mHeight;
         gFormat.fmt.win.w.width = gV4LTestConfig.mWidth;
-
 	tst_resm(TINFO,"Default image: left = %d, top = %d, width = %d, height = %d", gFormat.fmt.win.w.left, gFormat.fmt.win.w.top, gFormat.fmt.win.w.width, gFormat.fmt.win.w.height);
 	}
         if(gV4LTestConfig.mRotation)
@@ -570,13 +475,11 @@ int init_overlay(void)
                 if(config_device_for_rotation(gV4LTestConfig.mRotationMode))
                         return TFAIL;
         }
-
         if(ioctl(gFdV4L, VIDIOC_S_FMT, &gFormat) < 0)
         {
                 tst_resm(TWARN,"ERROR init_overlay() : set format failed with code %d", errno);
                 return TFAIL;
         }
-
         if(ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0)
         {
                 tst_resm(TWARN,"ERROR init_overlay() : get format failed");
@@ -597,23 +500,18 @@ int init_overlay(void)
         streamParm.parm.capture.timeperframe.numerator = 1;
         streamParm.parm.capture.timeperframe.denominator = gV4LTestConfig.mFrameRate;
         streamParm.parm.capture.capturemode =  gV4LTestConfig.mMode;
-
         if(ioctl(gFdV4L, VIDIOC_S_PARM, &streamParm) < 0)
         {
                 tst_resm(TWARN,"ERROR init_overlay() : set frame rate failed");
                 return TFAIL;
         }
-
         streamParm.parm.capture.timeperframe.numerator = 0;
         streamParm.parm.capture.timeperframe.denominator = 0;
-
         if(ioctl(gFdV4L, VIDIOC_G_PARM, &streamParm) < 0)
         {
                 tst_resm(TWARN,"ERROR init_overlay() : get frame rate failed");
                 return TFAIL;
         }
-
-
 	*/
         /* Set Frame Buffer Format */
         if(ioctl(gFdV4L, VIDIOC_S_FBUF, &fbuffer) < 0)
@@ -632,51 +530,37 @@ int init_overlay(void)
                 }
                 return TFAIL;
         }
-
         tst_resm(TINFO, "VIDIOC_S_FBUF executed - overlay type %s is set",
                 gV4LTestConfig.mOverlayType==V4L2_FBUF_FLAG_PRIMARY?"PRIMARY":"OVERLAY");
-
-
-
         return TPASS;
 }
 
 /*===== init_capture =====*/
 /**
 @brief  Video capture device initialization
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error code
 */
 int init_capture(void)
 {
-
+				struct v4l2_streamparm parm;
+        int i = 0;
         /* Open Frame Buffer Device */
-
         if(gV4LTestConfig.mCaseNum == PRP_ENC_ON_D)
                 if(open_out_device() == TFAIL)
                         return TFAIL;
-
         /* Get original format */
-
         CLEAR(gFormat);
-
         gFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-
         if(ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0)
         {
                 tst_resm(TWARN, "%s formatting failed", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
         }
-
         gOrigFormatRect.width = gFormat.fmt.pix.width;
         gOrigFormatRect.height = gFormat.fmt.pix.height;
         gOrigPixFormat = gFormat.fmt.pix.pixelformat;
-
-        int i = 0;
-
         for(i=0; i < PIX_FMT_NUM; i++)
         {
                 if(gOrigPixFormat == gaPixFormatID[i])
@@ -686,77 +570,61 @@ int init_capture(void)
                         break;
                 }
         }
-
         if(gV4LTestConfig.mVerbose)
         {
                 tst_resm(TINFO,"Original image size: width = %d, height = %d",
                         gOrigFormatRect.width, gOrigFormatRect.height);
                 tst_resm(TINFO,"Original pixel format: %s",gOrigPixFmtName);
         }
-
         /* Set format */
-
         CLEAR(gFormat);
-
         gFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         gFormat.fmt.pix.width       = gV4LTestConfig.mWidth;
         gFormat.fmt.pix.height      = gV4LTestConfig.mHeight;
         gFormat.fmt.pix.pixelformat = gPixelFormat;
-
         if(ioctl(gFdV4L, VIDIOC_S_FMT, &gFormat) < 0)
         {
                 tst_resm(TWARN, "%s formatting failed", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
         }
-
         /* Verification pixel format of the device */
-
         if(ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0)
         {
                 tst_resm(TWARN, "%s formatting failed", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
         }
-
         if(gFormat.fmt.pix.pixelformat != gPixelFormat)
         {
                 tst_resm(TWARN, "Pixel format %s is not supported by device %s", gPixFmtName, gV4LTestConfig.mV4LDevice);
                 return TFAIL;
         }
-
         if ( (gpFB_buf = (unsigned char*) malloc(gFormat.fmt.pix.sizeimage)) == NULL)
         {
                 tst_resm(TFAIL, "gpFB_buf malloc error!");
                 return TFAIL;
         }
-
         if(gV4LTestConfig.mVerbose)
         {
                 tst_resm(TINFO,"\tCapture : Format image width = %d", gFormat.fmt.pix.width);
                 tst_resm(TINFO,"\tCapture : Format image height = %d", gFormat.fmt.pix.height);
         }
-
-	struct v4l2_streamparm parm;
 	memset(&parm, 0, sizeof(parm));
 	parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
    	parm.parm.capture.timeperframe.numerator = 1;
   	parm.parm.capture.timeperframe.denominator = gV4LTestConfig.mFrameRate;
 	parm.parm.capture.capturemode = 0;
-
 	if (ioctl(gFdV4L, VIDIOC_S_PARM, &parm) < 0)
 	{
 		tst_resm(TFAIL, "set parm error!");
 		close(gFdV4L);
 		return TFAIL;
 	}
-
         /* Set rotation */
-
         if(gV4LTestConfig.mRotation)
         {
                 if(config_device_for_rotation(gV4LTestConfig.mRotationMode))
                         return TFAIL;
         }
-
         return TPASS;
 }
 
@@ -774,46 +642,36 @@ int init_mmap(void)
 {
         struct v4l2_requestbuffers reqBuffers;
         struct v4l2_buffer buffer;
-
         CLEAR(reqBuffers);
-
         reqBuffers.count = 3;  /* 4 doesn't work */
         reqBuffers.type = gUsecase;
         reqBuffers.memory = V4L2_MEMORY_MMAP;
-
         if(ioctl (gFdV4L, VIDIOC_REQBUFS, &reqBuffers) < 0)
         {
                 tst_resm(TWARN, "%s does not support memory mapping : %s", gV4LTestConfig.mV4LDevice, strerror(errno));
                 return TFAIL;
         }
-
         if(reqBuffers.count < 2)
         {
                 tst_resm(TWARN, "Insufficient buffer memory on %s", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
         }
-
         if(!(gpBuffers = calloc(reqBuffers.count, sizeof(*gpBuffers))))
         {
                 tst_resm(TWARN, "Out of memory");
                 return TFAIL;
         }
-
         for(gBuffNumber = 0; gBuffNumber < reqBuffers.count; gBuffNumber++)
         {
-
                 CLEAR(buffer);
-
                 buffer.type = gUsecase;
                 buffer.memory = V4L2_MEMORY_MMAP;
                 buffer.index = gBuffNumber;
-
                 if (ioctl(gFdV4L, VIDIOC_QUERYBUF, &buffer) < 0)
                 {
                         tst_resm(TWARN, "VIDIOC_QUERYBUF error");
                         return TFAIL;
                 }
-
                 gpBuffers[gBuffNumber].mpStart = mmap (NULL, buffer.length,
                                                  PROT_READ | PROT_WRITE, MAP_SHARED,
                                                  gFdV4L, buffer.m.offset);
@@ -831,24 +689,19 @@ int init_mmap(void)
 /*===== start_capturing =====*/
 /**
 @brief  start capturing
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error code
 */
-
 int start_capturing (void)
 {
         unsigned int i;
         struct v4l2_buffer buffer;
         enum v4l2_buf_type typeBuffer = gUsecase;
         unsigned long start = 0;
-
         switch(gUsecase)
         {
                 case V4L2_BUF_TYPE_VIDEO_CAPTURE:
-
                         for(i = 0; i < gBuffNumber; i++)
                         {
                                 memset(&buffer, 0, sizeof (buffer));
@@ -856,22 +709,18 @@ int start_capturing (void)
                                 buffer.memory = V4L2_MEMORY_MMAP;
 				    buffer.m.offset = gpBuffers[i].offset;
                                 buffer.index = i;
-
                                 if (ioctl (gFdV4L, VIDIOC_QBUF, &buffer) < 0)
                                 {
                                         tst_resm(TBROK,"VIDIOC_QBUF failed. ERROR : %s", strerror(errno));
                                         return TFAIL;
                                 }
                         }
-
                         if(ioctl (gFdV4L, VIDIOC_STREAMON, &typeBuffer) < 0)
                         {
                                 tst_resm(TBROK,"VIDIOC_STREAMON failed. ERROR : %s", strerror(errno));
                                 return TFAIL;
                         }
-
                         break;
-
                 case V4L2_BUF_TYPE_VIDEO_OVERLAY:
                        {
 		        #define MX25_TEMP_SLT 0
@@ -886,7 +735,6 @@ int start_capturing (void)
 			 printf("Unable to get frame buffer parameter\n");
 			 return TFAIL;
 			}
-
                        #endif
 
                         if(gV4LTestConfig.mVerbose)
@@ -904,60 +752,43 @@ int start_capturing (void)
                                 tst_resm(TWARN,"Error start_capturing() for VIDIOC_OVERLAY : %s",strerror(errno));
                                 return TFAIL;
                         }
-
-
                         tst_resm(TINFO,"Please wait %d sec ... \n",gV4LTestConfig.mCount);
-
                         sleep(gV4LTestConfig.mCount);
                         }
                         break;
-
                 default:
                         tst_resm(TWARN,"The buffer type %d is not supported",gUsecase);
                         return TFAIL;
         }
-
         gStartStream = 1;
-
         return TPASS;
 }
 
 /*===== stop_capturing =====*/
 /**
 @brief  stop capturing
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error code
 */
-
 int stop_capturing (void)
 {
         enum v4l2_buf_type typeBuffer = gUsecase;
         int stop = 1;
-
         if(!gStartStream)
                 return TPASS;
-
         switch(gUsecase)
         {
                 case V4L2_BUF_TYPE_VIDEO_CAPTURE:
-
                         typeBuffer = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-
                         if(ioctl (gFdV4L, VIDIOC_STREAMOFF, &typeBuffer) < 0)
                         {
                                 tst_resm(TWARN,"Error stop_capturing() for VIDIOC_STREAMOFF : %s",strerror(errno));
                                 return TFAIL;
                         }
-
                         break;
-
                 case V4L2_BUF_TYPE_VIDEO_OVERLAY:
-
                         stop = 0;
-
                         if(ioctl (gFdV4L, VIDIOC_OVERLAY, &stop) < 0)
                         {
                                 tst_resm(TWARN,
@@ -965,40 +796,30 @@ int stop_capturing (void)
                                         strerror(errno));
                                 return TFAIL;
                         }
-
                         break;
-
                 default:
-
                         tst_resm(TWARN,"The buffer type %d is not supported",gUsecase);
                         return TFAIL;
         }
-
         return TPASS;
 }
 
 /*===== init_device =====*/
 /**
 @brief  init V4L device
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error code
 */
-
 int init_device (void)
 {
         struct v4l2_capability cap;
-
         /* Init device */
-
         if(ioctl (gFdV4L, VIDIOC_QUERYCAP, &cap) < 0)
         {
                 tst_resm(TWARN, "%s is not a v4l2 device", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
         }
-
 	#if 1
         if( gV4LTestConfig.inputSrc == eInCSI_IC_MEM)
 	{
@@ -1019,43 +840,34 @@ int init_device (void)
 	  }
 	}else
 	;/*no selection*/
-
 	#endif
-
         if(gUsecase == V4L2_BUF_TYPE_VIDEO_CAPTURE)
         {
-
                 if(!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE))
                 {
                         tst_resm(TWARN, "%s does not support capturing", gV4LTestConfig.mV4LDevice);
                         return TFAIL;
                 }
-
                 if(!(cap.capabilities & V4L2_CAP_STREAMING))
                 {
                         tst_resm(TWARN, "%s does not support streaming I/O", gV4LTestConfig.mV4LDevice);
                         return TFAIL;
                 }
-
                 if(init_capture() == TFAIL)
                         return TFAIL;
-
                 if(init_mmap() == TFAIL)
                         return TFAIL;
-
                 if(gV4LTestConfig.mCaseNum == PRP_ENC_ON_D)
                         if(detect_fb_fmt() == TFAIL)
                                 return TFAIL;
         }
         else
         {
-
                 if(!(cap.capabilities & V4L2_CAP_VIDEO_OVERLAY))
                 {
                         tst_resm(TWARN, "%s does not support overlaying", gV4LTestConfig.mV4LDevice);
                         return TFAIL;
                 }
-
                 if(init_overlay() == TFAIL)
                         return TFAIL;
         }
@@ -1063,25 +875,20 @@ int init_device (void)
         if ( register_conf(4) != TPASS )
                 return TFAIL;
 #endif
-
         return TPASS;
 }
 
 /*===== uninit_device =====*/
 /**
 @brief  uninit V4L device
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error code
 */
-
 int uninit_device (void)
 {
         int retValue = TPASS;
         unsigned int i;
-
         if(gUsecase == V4L2_BUF_TYPE_VIDEO_CAPTURE)
         {
                 for(i = 0; i < gBuffNumber; i++)
@@ -1094,43 +901,34 @@ int uninit_device (void)
         {
                 ioctl(gFdV4L, VIDIOC_S_FBUF, &fbuffer_save);
         }
-
         if(gpBuffers != NULL)
                 free(gpBuffers);
-
-
         if(close_out_device() == TFAIL)
                 return TFAIL;
-
         return retValue;
 }
 
 /*===== config_device_for_rotation =====*/
 /**
 @brief  config V4L device config for rotation
-
 @param  aRotNum - rotation mumber
-
 @return On success - return TPASS
         On failure - return the error code
 */
-
 int config_device_for_rotation(int aRotNum)
 {
         struct v4l2_control control;
-
         if(gV4LTestConfig.mRotation)
-        {    
-                memset(&control, 0, sizeof(control));    
-                if( aRotNum <= 8 )
-		control.id = V4L2_CID_PRIVATE_BASE;
-		else{
+        {
+					memset(&control, 0, sizeof(control));
+					if( aRotNum <= 8 )
+									control.id = V4L2_CID_PRIVATE_BASE;
+					else{
                 control.id = V4L2_CID_MXC_VF_ROT;
-		aRotNum -= 9;
-		}
+								aRotNum -= 9;
+					}
                 //control.id = V4L2_CID_PRIVATE_BASE + 2;
                 control.value = aRotNum;
-
                 switch(aRotNum)   /* print rotation type */
                 {
                         case 0:
@@ -1162,14 +960,12 @@ int config_device_for_rotation(int aRotNum)
                         default:
                                 tst_resm(TINFO, "Rotation type : unknown");
                 }
-
                 /* Perform the rotation */
                 if (ioctl(gFdV4L, VIDIOC_S_CTRL, &control) < 0)
                 {
                         tst_resm(TBROK, "Error: Rotation configuration failed");
                         return TFAIL;
                 }
-
                 /* Check the result  */
                 if (ioctl(gFdV4L, VIDIOC_G_CTRL, &control) < 0)
                 {
@@ -1179,9 +975,7 @@ int config_device_for_rotation(int aRotNum)
                             return TFAIL;
                         }
                 }
-
         }
-
         return TPASS;
 }
 
@@ -1198,40 +992,28 @@ int config_device_for_rotation(int aRotNum)
 int reset_device(void)
 {
         struct v4l2_crop crop;
-
-
-
         config_device_for_rotation(0);
-
         if(gV4LTestConfig.mCrop)
         {
                 CLEAR(crop);
-
                 crop.type = gUsecase;
-
                 crop.c.left   = gOrigCropRect.left;
                 crop.c.top    = gOrigCropRect.top;
                 crop.c.width  = gOrigCropRect.width;
                 crop.c.height = gOrigCropRect.height;
-
                 if(ioctl (gFdV4L, VIDIOC_S_CROP, &crop) < 0)
                 {
                         tst_resm(TBROK, "Error: VIDIOC_S_CROP ioctl failed");
                         return TFAIL;
                 }
-
                 if(gV4LTestConfig.mVerbose)
                 {
                         tst_resm(TINFO,"Reinit to default cropping settings: left = %d, top = %d, width = %d, height = %d",
                                 crop.c.left, crop.c.top, crop.c.width, crop.c.height);
                 }
         }
-
-
         CLEAR(gFormat);
-
         gFormat.type = gUsecase;
-
         if(gUsecase == V4L2_BUF_TYPE_VIDEO_OVERLAY)
         {
                 gFormat.fmt.win.w.left = gOrigFormatRect.left;
@@ -1245,13 +1027,11 @@ int reset_device(void)
                 gFormat.fmt.pix.height      = gOrigFormatRect.height;
                 gFormat.fmt.pix.pixelformat = gOrigPixFormat;
         }
-
         if(ioctl(gFdV4L, VIDIOC_S_FMT, &gFormat) < 0)
         {
                 tst_resm(TWARN, "%s formatting failed", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
         }
-
         if(gV4LTestConfig.mVerbose)
         {
                 if(gUsecase == V4L2_BUF_TYPE_VIDEO_OVERLAY)
@@ -1266,16 +1046,13 @@ int reset_device(void)
                                 tst_resm(TINFO,"Not reinit to default pixel format: %s",gPixFmtName);
                 }
         }
-
         return TPASS;
 }
 
 /*===== process_image =====*/
 /**
 @brief  Copy image to framebuffer
-
 @param  *aStart - capture buffer ptr
-
 @return On success - return TPASS
         On failure - return the error code
 */
@@ -1286,62 +1063,47 @@ int process_image(const unsigned char *aStart, int aLength)
         {
                 /* Write to file */
                 case PRP_ENC_TO_F:
-
                         if(gSnapshot)
                         {
                                 tst_resm(TINFO,"Writting to dump file...");
-
                                 char outFileName[MAX_STR_LEN];
-
                                 sprintf(outFileName,"%s%s%s",gV4LTestConfig.mOutputFile,"_",gPixFmtName);
-
                                 if (!(pDumpFile = fopen(outFileName,"ab")))
                                 {
                                         tst_resm(TWARN,
                                                  "Error process_image() : Unable to open file %s",
                                                  gV4LTestConfig.mOutputFile);
-
                                         return TFAIL;
                                 }
                                 else
                                 {
-
                                         int i = 0;
-
+                                        unsigned char *pData = (unsigned char *)aStart;
                                         if(gV4LTestConfig.mVerbose)
                                         {
                                                 tst_resm(TINFO,"Sizeimage = %d", gFormat.fmt.pix.sizeimage);
                                         }
-
-                                        unsigned char *pData = (unsigned char *)aStart;
-
                                         while(i < gFormat.fmt.pix.sizeimage)
                                         {
                                                 fwrite(pData,sizeof(unsigned char),1,pDumpFile);
                                                 pData++;
                                                 i++;
                                         }
-
                                         fclose(pDumpFile);
                                         pDumpFile = NULL;
                                 }
-
                                 tst_resm(TINFO,"Dump file is written!");
                         }
                 break;
-
                 /* Show on display */
                 case PRP_ENC_ON_D:
-
                         /* Here conversion of buffer pix foramt to FB pix format */
-
                         if(gFBPixFormat == gPixelFormat)
                         {
                                 if(gV4LTestConfig.mVerbose)
                                 {
                                         tst_resm(TINFO,"process_image() : displaying on framebuffer...");
                                 }
-
                                 sleep(1);
                                 display_to_fb((void*)aStart,aLength);
                         }
@@ -1350,32 +1112,24 @@ int process_image(const unsigned char *aStart, int aLength)
                                 tst_resm(TWARN,
                                         "Pixel format %s is not supported by frame buffer",
                                         gPixFmtName);
-
                                 return TFAIL;
                         }
                 break;
-
                 /* Overlay mode */
                 case PRP_VF:
-
                         if(gV4LTestConfig.mVerbose)
                         {
                                 tst_resm(TINFO,"process_image() : displaying overlay...");
                         }
                 break;
-
         }
-
         return TPASS;
 }
-
 
 /*===== read_frame =====*/
 /**
 @brief  Reading frame
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error code
 */
@@ -1383,53 +1137,39 @@ int read_frame(void)
 {
         struct v4l2_buffer buffer;
         void *aStart;
-
         switch(gUsecase)
         {
                 case V4L2_BUF_TYPE_VIDEO_CAPTURE:
-
                         if(gV4LTestConfig.mVerbose)
                         {
                                 tst_resm(TINFO,"read_frame() for Encoder");
                         }
 	AGAIN:
                         CLEAR(buffer);
-
                         buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
                         buffer.memory = V4L2_MEMORY_MMAP;
-
                         if(ioctl (gFdV4L, VIDIOC_DQBUF, &buffer) < 0)
                         {
                                 if(gV4LTestConfig.mVerbose)
                                 {
                                         tst_resm(TINFO,"ERROR read_frame(): %s",strerror(errno));
                                 }
-
                                 switch(errno)
                                 {
-                                        case EAGAIN:
-					/*
-                                                tst_resm(TWARN,
-                                                         "Non-blocking I/O has been selected using O_NONBLOCK and no buffer was in the outgoing queue");
-                                          */
-						usleep(200);
-                                                goto AGAIN;
-						/*
-						return TFAIL;
-                                                */
-                                        case EIO:
-                                        default:
-                                                tst_resm(TWARN, "VIDIOC_DQBUF fail");
-                                                return TFAIL;
+																	case EAGAIN:
+																		usleep(200);
+																		goto AGAIN;
+																	case EIO:
+																	default:
+																		tst_resm(TWARN, "VIDIOC_DQBUF fail");
+																		return TFAIL;
                                 }
                         }
-
                         if(buffer.index >= gBuffNumber)
                         {
                                 tst_resm(TWARN, "Invalid buffer index");
                                 return TFAIL;
                         }
-
                         if ( buffer.index == 0 && (gV4LTestConfig.mCaseNum == PRP_ENC_ON_D ||
                             (gV4LTestConfig.mCaseNum == PRP_ENC_TO_F && gSnapshot)) )
                         {
@@ -1438,48 +1178,36 @@ int read_frame(void)
                         }
                         else
                                 aStart = gpBuffers[buffer.index].mpStart;
-
                         if(process_image (aStart,gpBuffers[buffer.index].mLength) == TFAIL)
                                 return TFAIL;
-
                         if(ioctl (gFdV4L, VIDIOC_QBUF, &buffer) < 0)
                         {
                                 tst_resm(TWARN, "Buffer error");
                                 return TFAIL;
                         }
                 break;
-
                 case V4L2_BUF_TYPE_VIDEO_OVERLAY:
-
                 break;
-
                 default:
                         tst_resm(TWARN,"The buffer type %d is not supported", gUsecase);
                         return TFAIL;
         }
-
         return TPASS;
 }
 
 /*===== write_file_header =====*/
 /**
 @brief  Writting dump file header
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error code
 */
 int write_file_header(void)
 {
         char outFileName[MAX_STR_LEN];
-
         sprintf(outFileName, "%s%s%s", gV4LTestConfig.mOutputFile, "_", gPixFmtName);
-
         if(gV4LTestConfig.mVerbose)
                 tst_resm(TINFO,"Output Dump File : %s", outFileName);
-
-
         if(!(pDumpFile=fopen(outFileName,"w+b")))
         {
                 tst_resm(TWARN,
@@ -1491,58 +1219,44 @@ int write_file_header(void)
         {
                 char width[10];
                 char height[10];
-
                 sprintf(width, "%d", gFormat.fmt.pix.width);
                 sprintf(height,"%d", gFormat.fmt.pix.height);
-
                 fseek(pDumpFile,0,SEEK_SET);
-
                 fwrite(gPixFmtName,sizeof(unsigned char),strlen(gPixFmtName),pDumpFile);
                 putc('\0',pDumpFile);
                 write_zero_to_file(pDumpFile,0x000F - strlen(gPixFmtName));
-
                 fwrite(width,sizeof(unsigned char),strlen(width),pDumpFile);
                 putc('\0',pDumpFile);
                 write_zero_to_file(pDumpFile,(0x001F - 0x0010) - strlen(width));
-
                 fwrite(height,sizeof(unsigned char),strlen(height),pDumpFile);
                 putc('\0',pDumpFile);
                 write_zero_to_file(pDumpFile,(0x002F - 0x0020) - strlen(height));
                 write_zero_to_file(pDumpFile,0x0100 - 0x0030);
-
                 fclose(pDumpFile);
                 pDumpFile = NULL;
         }
-
         return TPASS;
 }
 
 /*===== write_zero_to_file =====*/
 /**
 @brief  Writting zero to dump file
-
 @param  apFile     - Pointer to offset of the file where to write zeros
         aBytes  - Number of bytes to write
-
 @return None
 */
 void write_zero_to_file(FILE* apFile, int aBytes)
 {
         char* zero = malloc(sizeof(unsigned char)*aBytes);
-
         memset(zero, 0, aBytes);
-
         fwrite(zero, sizeof(unsigned char), aBytes, apFile);
-
         free(zero);
 }
 
 /*===== detect_fb_fmt =====*/
 /**
 @brief  Detect frame buffer device pixel format
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error code
 */
@@ -1551,7 +1265,6 @@ int detect_fb_fmt(void)
         switch(gScreenInfo.bits_per_pixel)
         {
                 case 8:
-
                         if ((gScreenInfo.red.offset == 5) && (gScreenInfo.red.length == 3) &&
                             (gScreenInfo.green.offset == 2) && (gScreenInfo.green.length == 3) &&
                             (gScreenInfo.blue.offset == 0) && (gScreenInfo.blue.length == 2))
@@ -1559,11 +1272,8 @@ int detect_fb_fmt(void)
                                 gFBPixFormat = V4L2_PIX_FMT_RGB332;
                                 strcpy(gFBPixFmtName,"RGB332");
                         }
-
                         break;
-
                 case 16:
-
                         if ((gScreenInfo.red.offset == 11) && (gScreenInfo.red.length == 5) &&
                             (gScreenInfo.green.offset == 5) && (gScreenInfo.green.length == 6) &&
                             (gScreenInfo.blue.offset == 0) && (gScreenInfo.blue.length == 5))
@@ -1572,7 +1282,6 @@ int detect_fb_fmt(void)
                                 strcpy(gFBPixFmtName,"RGB565X");
                                 break;
                         }
-
                         if ((gScreenInfo.red.offset == 11) && (gScreenInfo.red.length == 5) &&
                             (gScreenInfo.green.offset == 6) && (gScreenInfo.green.length == 5) &&
                             (gScreenInfo.blue.offset == 1) && (gScreenInfo.blue.length == 5))
@@ -1581,7 +1290,6 @@ int detect_fb_fmt(void)
                                 strcpy(gFBPixFmtName,"RGB555X");
                                 break;
                         }
-
                         if ((gScreenInfo.red.offset == 0) && (gScreenInfo.red.length == 5) &&
                             (gScreenInfo.green.offset == 5) && (gScreenInfo.green.length == 6) &&
                             (gScreenInfo.blue.offset == 11) && (gScreenInfo.blue.length == 5))
@@ -1590,7 +1298,6 @@ int detect_fb_fmt(void)
                                 strcpy(gFBPixFmtName,"RGB565");
                                 break;
                         }
-
                         if ((gScreenInfo.red.offset == 0) && (gScreenInfo.red.length == 5) &&
                             (gScreenInfo.green.offset == 6) && (gScreenInfo.green.length == 5) &&
                             (gScreenInfo.blue.offset == 11) && (gScreenInfo.blue.length == 5))
@@ -1599,10 +1306,8 @@ int detect_fb_fmt(void)
                                 strcpy(gFBPixFmtName,"RGB555");
                                 break;
                         }
-
                         strcpy(gFBPixFmtName,"Unknown");
                         tst_resm(TWARN, "Unsupported FB format", gV4LTestConfig.mV4LDevice);
-
                         if(gV4LTestConfig.mVerbose)
                         {
                                 printf("\t Resolution = %d bpp\n", gScreenInfo.bits_per_pixel);
@@ -1611,11 +1316,8 @@ int detect_fb_fmt(void)
                                 printf("\t Green\t%d\t%d\n", gScreenInfo.green.offset, gScreenInfo.green.length);
                                 printf("\t Blue\t%d\t%d\n", gScreenInfo.blue.offset, gScreenInfo.blue.length);
                         }
-
                         return TFAIL;
-
                 case 24:
-
                         if ((gScreenInfo.red.offset == 16) && (gScreenInfo.red.length == 8) &&
                             (gScreenInfo.green.offset == 8) && (gScreenInfo.green.length == 8) &&
                             (gScreenInfo.blue.offset == 0) && (gScreenInfo.blue.length == 8))
@@ -1624,7 +1326,6 @@ int detect_fb_fmt(void)
                                 strcpy(gFBPixFmtName,"BGR24");
                                 break;
                         }
-
                         if ((gScreenInfo.red.offset == 0) && (gScreenInfo.red.length == 8) &&
                             (gScreenInfo.green.offset == 8) && (gScreenInfo.green.length == 8) &&
                             (gScreenInfo.blue.offset == 16) && (gScreenInfo.blue.length == 8))
@@ -1633,9 +1334,7 @@ int detect_fb_fmt(void)
                                 strcpy(gFBPixFmtName,"RGB24");
                                 break;
                         }
-
                         tst_resm(TWARN, "Unsupported FB format", gV4LTestConfig.mV4LDevice);
-
                         if(gV4LTestConfig.mVerbose)
                         {
                                 printf("\t Resolution = %d bpp\n", gScreenInfo.bits_per_pixel);
@@ -1644,11 +1343,8 @@ int detect_fb_fmt(void)
                                 printf("\t Green\t%d\t%d\n", gScreenInfo.green.offset, gScreenInfo.green.length);
                                 printf("\t Blue\t%d\t%d\n", gScreenInfo.blue.offset, gScreenInfo.blue.length);
                         }
-
                         return TFAIL;
-
                 case 32:
-
                         if ((gScreenInfo.red.offset == 16) && (gScreenInfo.red.length == 8) &&
                             (gScreenInfo.green.offset == 8) && (gScreenInfo.green.length == 8) &&
                             (gScreenInfo.blue.offset == 0) && (gScreenInfo.blue.length == 8))
@@ -1657,7 +1353,6 @@ int detect_fb_fmt(void)
                                 strcpy(gFBPixFmtName,"BGR32");
                                 break;
                         }
-
                         if ((gScreenInfo.red.offset == 0) && (gScreenInfo.red.length == 8) &&
                             (gScreenInfo.green.offset == 8) && (gScreenInfo.green.length == 8) &&
                             (gScreenInfo.blue.offset == 16) && (gScreenInfo.blue.length == 8))
@@ -1666,9 +1361,7 @@ int detect_fb_fmt(void)
                                 strcpy(gFBPixFmtName,"RGB32");
                                 break;
                         }
-
                         tst_resm(TWARN, "Unsupported FB format", gV4LTestConfig.mV4LDevice);
-
                         if(gV4LTestConfig.mVerbose)
                         {
                                 printf("\t Resolution = %d bpp\n", gScreenInfo.bits_per_pixel);
@@ -1677,13 +1370,9 @@ int detect_fb_fmt(void)
                                 printf("\t Green\t%d\t%d\n", gScreenInfo.green.offset, gScreenInfo.green.length);
                                 printf("\t Blue\t%d\t%d\n", gScreenInfo.blue.offset, gScreenInfo.blue.length);
                         }
-
                         return TFAIL;
-
                 default:
-
                         tst_resm(TWARN, "Unsupported FB resolution", gV4LTestConfig.mV4LDevice);
-
                         if(gV4LTestConfig.mVerbose)
                         {
                                 printf("\t Resolution = %d bpp\n", gScreenInfo.bits_per_pixel);
@@ -1692,15 +1381,10 @@ int detect_fb_fmt(void)
                                 printf("\t Green\t%d\t%d\n", gScreenInfo.green.offset, gScreenInfo.green.length);
                                 printf("\t Blue\t%d\t%d\n", gScreenInfo.blue.offset, gScreenInfo.blue.length);
                         }
-
                 return TFAIL;
-
         }
-
         if(gV4LTestConfig.mVerbose)
                 tst_resm(TINFO,"detect_fb_fmt() has detect framebuffer pix format : %s",gFBPixFmtName);
-
-
         return TPASS;
 }
 
@@ -1708,28 +1392,17 @@ int detect_fb_fmt(void)
 /*===== display_to_fb =====*/
 /**
 @brief  Display a image to frame buffer
-
 @param  aStart - Pointer to a output buffer
         aLength - Length of the output buffer
-
 @return None
 */
-
 void display_to_fb (unsigned char * aStart, int aLength)
 {
         int dstWidth = gScreenInfo.xres * gScreenInfo.bits_per_pixel/8;
         int srcWidth = gFormat.fmt.pix.width * gScreenInfo.bits_per_pixel/8;
-
         unsigned char *pDst = gpFB;
         unsigned char *pSrc = (unsigned char *)aStart;
-
-#ifndef MAD_TEST_MODIFY
-printf("\t Display to FB dstWidth and srcWidth\t%d\t%d\n", dstWidth, srcWidth);
-printf("\t Display to FB aLength\t%d\n", aLength);
-printf("\t sizeimage is \t%d\n", gFormat.fmt.pix.sizeimage);
-#endif
         int i = 0, j = 0;
-
         while(i < gFormat.fmt.pix.sizeimage)
         {
                 *pDst = *pSrc;
@@ -1750,60 +1423,44 @@ printf("\t sizeimage is \t%d\n", gFormat.fmt.pix.sizeimage);
 /*===== ask_user =====*/
 /**
 @brief  Asks user to answer the question: is the drawn picture right?
-
 @param  Input:  None
         Output: None
-
 @return 1 - if user asks "No,  wrong"
         0 - if user asks "Yes, right"
 */
-
 int ask_user(void)
 {
-#ifndef MAD_TEST_MODIFY
-
+  int retValue = TFAIL;
+  unsigned char answer;
+  int retKeyPress = 2;
 	if (gV4LTestConfig.mNeedAsk)
 	{
 	       tst_resm(TINFO, "Disable user enquiry\n");
 		return TPASS;
 	}
-#endif
-        int retValue = TFAIL;
-        unsigned char answer;
-        int retKeyPress = 2;
-
         do
         {
                 tst_resm(TINFO,"Is video displayed right? [y/n] ");
                 fflush(stdout);
                 answer = toupper(fgetc(stdin));
-
                 if(answer == 'Y')
                         retKeyPress = 0;
                 else
-
                 if(answer == 'N')
                         retKeyPress = 1;
 
-        }
-        while(retKeyPress == 2);
-
+        }while(retKeyPress == 2);
         fgetc(stdin);       /* Wipe CR character from stream */
-
         if(!retKeyPress)
                 retValue = TPASS;
-
         return retValue;
 }
 
 /*======================== GLOBAL FUNCTIONS =================================*/
-
 /*===== VT_v4l_capture_setup =====*/
 /**
 @brief  assumes the pre-condition of the test case execution
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error code
 */
@@ -1821,9 +1478,7 @@ int VT_v4l_capture_setup(void)
 /*===== VT_cleanup =====*/
 /**
 @brief  Assumes the post-condition of the test case execution
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error code
 */
@@ -1831,13 +1486,11 @@ int VT_v4l_capture_cleanup(void)
 {
         if(close_device() == TFAIL)
                 return TFAIL;
-
         if(pDumpFile)
         {
                 fclose(pDumpFile);
                 pDumpFile = NULL;
         }
-
         return TPASS;
 }
 
@@ -1863,16 +1516,13 @@ int VT_v4l_capture_test(void)
                 return TFAIL;
         }
         /* V4l test */
-
         if(gV4LTestConfig.mCaseNum == PRP_ENC_TO_F)
         {
 
                if(write_file_header()==TFAIL)
                         return retValue;
         }
-
         tst_resm(TINFO,"Start capturing...");
-
         while(cnt-- > 0)
         {
                 int ret = -1;
@@ -1880,61 +1530,41 @@ int VT_v4l_capture_test(void)
                 {
                         FD_ZERO (&fds);
                         FD_SET (gFdV4L, &fds);
-
                         tv.tv_sec = 2;
                         tv.tv_usec = 0;
-
                         ret = select (gFdV4L + 1, &fds, NULL, NULL, &tv);
-
                         if((ret < 0) && (errno != EINTR))
                         {
                                 tst_resm(TWARN, "Select fault");
                                 return retValue;
                         }
-
                         if(ret == 0)
                         {
                                 tst_resm(TWARN, "Select timeout");
                                 return retValue;
                         }
                 }
-
                 gSnapshot = 0;
-
                 if((cnt == (int)(gV4LTestConfig.mCount/2 + 1)) && (gV4LTestConfig.mCaseNum==PRP_ENC_TO_F))
                         gSnapshot = 1;
-
                 if(read_frame() == TFAIL)
                         return retValue;
         }  
-       /*
-	if((gV4LTestConfig.mCaseNum != PRP_ENC_TO_F) || gV4LTestConfig.mRotation || gV4LTestConfig.mCrop)
-                retValue = ask_user();
-        else
-	*/
        retValue = TPASS;
         sleep(1);
-
         if(cleanup_device() != TPASS) return TFAIL;
-
         return retValue;
 }
 
 /*===== do_cropping =====*/
 /**
 @brief  Performs cropping
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error code
 */
 int do_cropping(void)
 {
-#ifdef MAD_TEST_MODIFY
-        struct v4l2_cropcap cropcap;
-        struct v4l2_crop crop;
-#endif
         tst_resm(TINFO,
                  "Performing cropping of the video to the %dx%d framesize\n",
                  gV4LTestConfig.mCropRect.width,
@@ -1949,88 +1579,71 @@ int do_cropping(void)
                 tst_resm(TBROK, "Error: VIDIOC_CROPCAP ioctl failed");
                 return TFAIL;
         }
-
         if(gV4LTestConfig.mVerbose)
         {
                 tst_resm(TINFO,"Cropping bounds: left = %d, top = %d, width = %d, height = %d",
                        cropcap.bounds.left, cropcap.bounds.top, cropcap.bounds.width, cropcap.bounds.height);
         }
-
         memset(&crop, 0x0, sizeof(crop));
-
         crop.type = gUsecase; /* Defualt is  V4L2_BUF_TYPE_VIDEO_CAPTURE */
-
         if(ioctl (gFdV4L, VIDIOC_G_CROP, &crop) < 0)
         {
                 tst_resm(TBROK, "Error: VIDIOC_G_CROP ioctl failed");
                 return TFAIL;
         }
-
         if(gV4LTestConfig.mVerbose)
         {
                 tst_resm(TINFO,"Default cropping restangle: left = %d, top = %d, width = %d, height = %d",
                          crop.c.left, crop.c.top, crop.c.width, crop.c.height);
         }
-
         gOrigCropRect.left = crop.c.left;
         gOrigCropRect.top = crop.c.top;
         gOrigCropRect.width = crop.c.width;
         gOrigCropRect.height = crop.c.height;
-
         crop.c.left   = gV4LTestConfig.mCropRect.left;
         crop.c.top    = gV4LTestConfig.mCropRect.top;
         crop.c.width  = gV4LTestConfig.mCropRect.width;
         crop.c.height = gV4LTestConfig.mCropRect.height;
-
         if(ioctl (gFdV4L, VIDIOC_S_CROP, &crop) < 0)
         {
                 tst_resm(TBROK, "Error: VIDIOC_S_CROP ioctl failed");
                 return TFAIL;
         }
-
         if(gV4LTestConfig.mVerbose)
         {
                 tst_resm(TINFO,"Crop to image: left = %d, top = %d, width = %d, height = %d",
                          crop.c.left, crop.c.top, crop.c.width, crop.c.height);
         }
-
         return TPASS;
 }
 
 /*===== setup_device =====*/
 /**
 @brief  Setup and start device
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error
 */
 int setup_device(void)
 {
         /* V4l setup */
-
         if(init_device() != TPASS)
         {
                 tst_resm(TWARN, "%s init failed", gV4LTestConfig.mV4LDevice);
                 return  TFAIL;
         }
-
         if(start_capturing() != TPASS)
         {
                 tst_resm(TWARN, "%s capturing start failed", gV4LTestConfig.mV4LDevice);
                 return  TFAIL;
         }
-
         return TPASS;
 }
 
 /*===== cleanup_device =====*/
 /**
 @brief  Stop and cleanup device
-
 @param  None
-
 @return On success - return TPASS
         On failure - return the error
 */
@@ -2042,28 +1655,23 @@ int cleanup_device(void)
                 tst_resm(TBROK, "%s capturing stop failed", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
         }
-
         if(reset_device() != TPASS)
         {
                 tst_resm(TBROK, "%s reset failed", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
         }
-
         if(uninit_device() != TPASS)
         {
                 tst_resm(TBROK, "%s uninit failed", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
         }
-
         return TPASS;
 }
 #ifdef mxc91131evb_CSI_STRIPS_FIX
 /*===== register_conf =====*/
 /**
 @brief Configure the CSI_SENS_CONF register
-
 @param int div_ratio - division ratio of HSP_CLK into SENSB_MCLK minus 1
-
 @return On success - return TPASS
         On failure - return the error
 */
@@ -2073,15 +1681,12 @@ int register_conf(int div_ratio)
         unsigned int read_register_value     = 0;
         void *pCSIReg                        = MAP_FAILED;
         int  *pCSI_sens_conf_reg             = NULL;
-
         if ( div_ratio < 0 || div_ratio > 255 ) div_ratio = 4;
-
         if ((gmap_fd = open("/dev/mem", O_RDWR)) < 0)
         {
                 tst_resm( TFAIL, "Error open /dev/mem : %s", strerror(errno) );
                 return TFAIL;
         }
-
         pCSIReg = mmap(
                 NULL,
                 256,
@@ -2090,35 +1695,29 @@ int register_conf(int div_ratio)
                 gmap_fd,
                 0x53FC0000 //0x53FC0000 - the initial address CSI registers
         );
-
         if( MAP_FAILED == pCSIReg )
         {
                 tst_resm( TFAIL, "%s : Can't mmap /dev/mem %s", strerror(errno) );
                 return TFAIL;
         }
-
         pCSI_sens_conf_reg = (int *)pCSIReg + 24;
         // read register by address 0x53FC0060
         read_register_value = *pCSI_sens_conf_reg;
         // write registr by address 0x53FC0060
         *pCSI_sens_conf_reg = (read_register_value & 0xff00ffff) | (div_ratio << 16) | (1 << 7);
-
         if( MAP_FAILED != pCSIReg )
         {
                 munmap( pCSIReg, 256 );
                 pCSIReg = MAP_FAILED;
         }
-
         if( (gmap_fd > 0) && (close(gmap_fd) < 0) )
         {
                 tst_resm(TFAIL, "Unable to close /dev/mam : %s", strerror(errno) );
                 return TFAIL;
         }
-
         return TPASS;
 }
 #endif
-
 #ifdef __cplusplus
 }
 #endif
