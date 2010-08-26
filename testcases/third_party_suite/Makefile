@@ -35,6 +35,7 @@
 
 include ./vte_configs/$(ARCH_PLATFORM)_tp_configs
 
+SUBDIRS-y                        += util-linux
 SUBDIRS-$(CONFIG_TP_BONNIE)      += bonnie++ 
 SUBDIRS-$(CONFIG_TP_DT)          += dt 
 SUBDIRS-$(CONFIG_TP_IOZONE)      += iozone 
