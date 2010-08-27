@@ -1,0 +1,6 @@
+#compile
+make
+
+#how to use
+1. fdisk mmc with one partition type as "53",OnTrack DM6 Aux3
+2. ./sdimage -f <your boot sb file> -d <device node>
