@@ -100,6 +100,8 @@ dvfs_dir_set()
     #i.MX51 BBG
 	DVFS_DIR[41]=/sys/devices/platform/mxc_dvfs_core.0
 	DVFS_DIR[53]=/sys/devices/platform/mxc_dvfs_core.0
+	#imx50 arm2
+	DVFS_DIR[50]=/sys/devices/platform/mxc_dvfs_core.0
 
     #dvfs status query
     status[31]=status
@@ -108,6 +110,7 @@ dvfs_dir_set()
     status[51]=enable
     status[41]=enable
     status[53]=enable
+    status[50]=enable
 }
 
 dvfs_test()
@@ -124,7 +127,7 @@ dvfs_test()
     #store current dvfs status. cur_status=1 - enabled, =0 - disabled
     cur_status=`cat ${DVFS_DIR[$PLATFORM]}/${status[$PLATFORM]} | grep "enabled" | wc -l`
 
-    # For imx31/35/37/51/53 
+    # For imx31/35/37/51/53/50 
     echo 1 > ${DVFS_DIR[$PLATFORM]}/enable
     res=`cat ${DVFS_DIR[$PLATFORM]}/${status[$PLATFORM]} | grep "enabled" | wc -l`
     if [ $res -eq 1 ];then
@@ -179,14 +182,14 @@ dvfs_suspend()
     echo "*************************************"
     echo "* please press key to resume system *"
     echo "*************************************"
-    echo -n standby > /sys/power/state
-    tst_resm TPASS "Resume from suspend..."
+    rtc_testapp_6 -T 10
+		tst_resm TPASS "Resume from suspend..."
 
     sleep 5
     echo "*************************************"
     echo "* please press key to resume system *"
     echo "*************************************"
-    echo -n mem > /sys/power/state
+    rtc_testapp_6 -T 10 -m mem
     tst_resm TPASS "Resume from mem..."
     
     echo 0 > ${DVFS_DIR[$PLATFORM]}/enable
