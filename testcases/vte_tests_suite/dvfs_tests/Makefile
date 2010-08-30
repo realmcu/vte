@@ -18,6 +18,7 @@ TARGETS=dvfs.sh cpu_lowfreq.sh dvfs_per.sh pm_suspend_stress.sh
 
 SRC-$(CONFIG_VTE_IMX25) = dvfs_mx25.sh
 SRC-$(CONFIG_VTE_IMX233) = dvfs_mx233.sh
+SRC-$(CONFIG_VTE_IMX51) = dvfs_mx50.sh
 
 all:
 	
