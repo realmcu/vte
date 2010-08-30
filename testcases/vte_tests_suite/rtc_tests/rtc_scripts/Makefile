@@ -26,10 +26,10 @@
 LTP_DIR = ../../../../
 BIN_DIR = $(LTP_DIR)testcases/
 
-ifeq ($(ARCH_PLATFORM), $(filter imx233, $(ARCH_PLATFORM)))
+#ifeq ($(ARCH_PLATFORM), $(filter imx233, $(ARCH_PLATFORM)))
 #TARGET = $(wildcard *.sh)
 TARGET = rtc_test.sh
-endif
+#endif
 
 
 all:
