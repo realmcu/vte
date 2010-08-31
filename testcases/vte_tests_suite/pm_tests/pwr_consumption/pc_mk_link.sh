@@ -22,6 +22,7 @@ test_case_53()
     ln -sf /sys/devices/platform/mxc_dvfs_core.0/enable dvfscore
     ln -sf /sys/devices/platform/mxc_dvfsper.0/enable dvfsper
     ln -sf /sys/devices/platform/busfreq.0/enable busfreq
+    ln -sf /proc/cpu/clocks clocks
 }
 
 platfm=$1
