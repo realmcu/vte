@@ -45,12 +45,10 @@ RC=0
 trap "cleanup" 0
 
 #TODO add setup scripts
-gpu-install install
-
-gpu_maj=`grep "gsl_kmod" /proc/devices | cut -b1,2,3`
-
-mknod /dev/gsl_kmod c "$gpu_maj" 0
-
+#gpu-install install
+#gpu_maj=`grep "gsl_kmod" /proc/devices | cut -b1,2,3`
+#mknod /dev/gsl_kmod c "$gpu_maj" 0
+modprobe gpu
 return $RC
 }
 
