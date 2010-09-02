@@ -317,9 +317,11 @@ int run_test(void * p_opts)
 		goto err2;
 	}
 #if 0
+	{
+	int g_fb0_size = 0;
 	var.bits_per_pixel = 8;
-	var.xres = width * 2;
-	var.yres = height * 2;
+	var.xres = 800;
+	var.yres = 600;
 	var.grayscale = GRAYSCALE_8BIT;
 	var.yoffset = 0;
 	var.rotate = FB_ROTATE_UR;
@@ -331,13 +333,15 @@ int run_test(void * p_opts)
 	if ((int)fb_map <= 0)
 	{
 		printf("\nError: failed to map framebuffer device 0 to memory.\n");
-		goto err4;
+		goto err2;
+	}
 	}
 #endif
 
 	if (im_opts.rot % 180) {
+		int tmp = width;
 		width = height;
-		height = width;
+		height = tmp;
 	}
 	while(im_opts.c--)
 	{
@@ -494,13 +498,14 @@ int main(int argc, char ** argv)
 	printf("run %d instance\n", m_opts.m);
 
 /*default fb setting*/
+#if 1
 	CALL_IOCTL(ioctl(fd_fb, FBIOGET_VSCREENINFO, &var));
 	var.bits_per_pixel = 8;
 	var.xres = m_opts.rsize.w * 2;
 	var.yres = m_opts.rsize.h * 2;
 	var.grayscale = GRAYSCALE_8BIT;
 	var.yoffset = 0;
-	var.rotate = m_opts.rot;
+	var.rotate = FB_ROTATE_UR;/*Limitation only set framebuffer rotate to this value*/
 	var.activate = FB_ACTIVATE_FORCE;
 	CALL_IOCTL(ioctl(fd_fb, FBIOPUT_VSCREENINFO, &var));
 	g_fb0_size = var.xres * var.yres * var.bits_per_pixel / 8;
@@ -512,6 +517,7 @@ int main(int argc, char ** argv)
 		close(fd_fb);
 		return 1;
 	}
+#endif
   if(m_opts.m)
 	{
 		int i = 0;
