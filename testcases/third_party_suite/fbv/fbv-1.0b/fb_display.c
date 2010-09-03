@@ -271,10 +271,10 @@ void blit2FB(int fh, void *fbbuff, unsigned char *alpha,
 			}
 		}
 	}
-	else
+	else{
 	    for(i = 0; i < yc; i++, fbptr += scr_xs * cpp, imptr += pic_xs * cpp)
 			memcpy(fbptr, imptr, xc * cpp);
-		
+		}
 	if(cpp == 1)
 	    set8map(fh, &map_back);
 	
@@ -337,6 +337,16 @@ void* convertRGB2FB(int fh, unsigned char *rgbbuff, unsigned long count, int bpp
 	    fbbuff = (void *) s_fbbuff;
 	    break;
 	case 24:
+			*cpp = 3;
+	    c_fbbuff = (unsigned char *) malloc(3 * count * sizeof(unsigned char));
+	    for(i = 0; i < count ; i++)
+			{
+        c_fbbuff[3*i] = (unsigned char)(rgbbuff[i*3+2] & 0xFF);
+        c_fbbuff[3*i + 1] = (unsigned char)(rgbbuff[i*3+1] & 0xFF);
+        c_fbbuff[3*i + 2] = (unsigned char)(rgbbuff[i*3] & 0xFF);
+			}
+	    fbbuff = (void *) c_fbbuff;
+			 break;
 	case 32:
 	    *cpp = 4;
 	    i_fbbuff = (unsigned int *) malloc(count * sizeof(unsigned int));
