@@ -52,6 +52,7 @@ SUBDIRS-$(CONFIG_TP_CRYPTO_APP)  += crypto_app
 SUBDIRS-$(CONFIG_TP_HOST_TOOLS)  += host_tools
 SUBDIRS-$(CONFIG_TP_IPERF)       += iperf
 SUBDIRS-$(CONFIG_TP_USB)         += usb_test
+SUBDIRS-$(CONFIG_TP_WHETS)       += whets
 
 all:
 	@set -e; for i in $(SUBDIRS-y); do \
