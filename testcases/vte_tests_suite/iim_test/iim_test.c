@@ -88,11 +88,21 @@ int main()
 
   close(fd);
 
+#ifdef MX5
+  printf("print the fuse map for ocotp\n");
+	for (i=0x1000; i<0x1fff; i = i + 4)
+	{
+		static int ci = 0;
+		printf("word %d, value %x\n", ci++,*(int *)(piim+i));
+	}
+#endif
   RC = 1;
 	for(i =0; i < MAX_REGS; i++)
 	{
   printf("%s 0x%x\n",mreg[i].name ,*(int*)(piim+mreg[i].offset));
 	}
+
+
 	/*
   printf("clock 0x%x\n",*(int*)(piim+0xC0));
   printf("hclock 0x%x\n",*(int*)(piim+0x20));
