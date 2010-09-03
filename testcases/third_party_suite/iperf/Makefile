@@ -10,9 +10,7 @@
 SUBDIRS=iperf-2.0.5
 TARGETS=
 BINS=iperf
-
-CFLAGS += -Drpl_malloc=malloc 
-
+ 
 all:
 	cd iperf-2.0.5; ./configure --host=arm-none-linux-gnueabi CC=${CROSS_COMPILER}gcc; cd ..
 	$(MAKE) -C iperf-2.0.5 CC=${CROSS_COMPILER}gcc
