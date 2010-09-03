@@ -22,5 +22,6 @@ export CONFIG_TP_PPP=y
 export CONFIG_TP_NETPERF=y
 export CONFIG_TP_TCPDUMP=y
 export CONFIG_TP_MII=y
-
+export CONFIG_TP_USB=y
+export CONFIG_TP_WHETS=y
 
