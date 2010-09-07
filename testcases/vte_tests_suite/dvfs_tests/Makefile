@@ -24,9 +24,7 @@ all:
 	
 
 install:
-	@for i in $(TARGETS); do ln -f $$i ../../bin ; done
-	-ln -f dvfs_mx25.sh ../../bin/
-	-ln -f dvfs_mx233.sh ../../bin/
+	@for i in ${SRC-y}; do ln -f $$i ../../bin/ ; done
 	@echo "***********************************************"
 	@echo "** INSTALL : dvfs.sh                    **"
 	@echo "***********************************************"
