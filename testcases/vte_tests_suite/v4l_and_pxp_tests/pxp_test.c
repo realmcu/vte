@@ -325,6 +325,7 @@ static int pxp_config_output(struct pxp_control *pxp, int pass)
 	if (!pass)
 		out_idx = 1;
 
+  printf("set ouput to %d\n", out_idx);
 	if (ioctl(pxp->vfd, VIDIOC_S_OUTPUT, &out_idx) < 0) {
 		perror("failed to set output");
 		return 1;
@@ -411,7 +412,6 @@ static int pxp_read_infiles(struct pxp_control *pxp)
 	int fd; 
 	int bpp = pxp_video_formats[pxp->fmt_idx].bpp;
 	int s0_size = pxp->s0.width * pxp->s0.height * bpp / pxp_video_formats[pxp->fmt_idx].bpp_demon;
-	int ffd;
 	struct fb_var_screeninfo var;
 	int fb_size;
 	char *fb;
@@ -429,47 +429,42 @@ static int pxp_read_infiles(struct pxp_control *pxp)
 	}
 
 	close(fd);
-	if ((ffd = open("/dev/fb0", O_RDWR, 0)) < 0) {
-		perror("fb device open failed");
-		return 1;
-	}
-
-	if (ioctl(ffd, FBIOGET_VSCREENINFO, &var)) {
-		perror("FBIOGET_VSCREENINFO");
-		return 1;
-	}
-
-	fb_size = var.xres * var.yres * (var.bits_per_pixel >> 3);
-
-	fb = mmap(NULL /* start anywhere */,
+  /* Hake may not use sencodary input*/
+	if (pxp->s1_infile){
+		int ffd;
+		if ((ffd = open("/dev/fb0", O_RDWR, 0)) < 0) {
+			perror("fb device open failed");
+			return 1;
+		}
+		if (ioctl(ffd, FBIOGET_VSCREENINFO, &var)) {
+			perror("FBIOGET_VSCREENINFO");
+			return 1;
+		}
+		fb_size = var.xres * var.yres * (var.bits_per_pixel >> 3);
+		fb = mmap(NULL /* start anywhere */,
 			fb_size,
 			PROT_WRITE,
 			MAP_SHARED,
 			ffd,
 			0);
 
-	if (fb == MAP_FAILED) {
-		perror("failed to mmap output buffer");
-		return 1;
-	}
-        /* Hake may not use sencodary input*/
-	if (pxp->s1_infile){
-	 if ((fd = open(pxp->s1_infile, O_RDWR, 0)) < 0) {
-		perror("s1 data open failed");
-		return 1;
+		if (fb == MAP_FAILED) {
+			perror("failed to mmap output buffer");
+			return 1;
+		}
+	 	if ((fd = open(pxp->s1_infile, O_RDWR, 0)) < 0) {
+			perror("s1 data open failed");
+			return 1;
+	 	}
+	 	n = read(fd, fb, fb_size);
+	 	if (n != (fb_size)) {
+			perror("error reading s1 data into fb");
+			close(fd);
+			return 1;
+	 	}	 
+	 	close(fd);
+	 	close(ffd);
 	 }
-
-	 n = read(fd, fb, fb_size);
-	 if (n != (fb_size)) {
-		perror("error reading s1 data into fb");
-		close(fd);
-		return 1;
-	 } 
-
-	 close(fd);
-	 }
-	close(ffd);
-
 	return 0;
 }
 
@@ -620,9 +615,9 @@ static int pxp_start(struct pxp_control *pxp, int pass)
 		return 1;
 	}
 	printf("prepare buffers\n");
-        #if 1
+   #if 1
 	for(i = 0; i < V4L2_BUF_NUM; i++){
-        /*prepare 2 buffers */
+        /*prepare buffers */
         struct v4l2_buffer buf;
 	buf.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
         buf.memory = V4L2_MEMORY_MMAP;
@@ -631,12 +626,12 @@ static int pxp_start(struct pxp_control *pxp, int pass)
 	  printf("VIDIOC_QUERYBUF failed\n");
 	  break;
 	}
-	pxp->buffers[i].buf.index = i;
-	if (ioctl(pxp->vfd, VIDIOC_QBUF, &pxp->buffers[i].buf) < 0) {
+	}
+	pxp->buffers[0].buf.index = 0;
+	if (ioctl(pxp->vfd, VIDIOC_QBUF, &pxp->buffers[0].buf) < 0) {
 		perror("VIDIOC_QBUF 1");
 		return 1;
 	   }
-	}
 	#endif
 	/* Enable PxP */
         if (ioctl(pxp->vfd, VIDIOC_STREAMON, &type) < 0) {
@@ -659,16 +654,14 @@ static int pxp_start(struct pxp_control *pxp, int pass)
 	cnt = read(fd, pxp->buffers[buf.index].start, s0_size);
 	if(cnt < s0_size)
 	   break;
-	printf("\nread cnt=%d (%d), at buf %d\n",cnt, s0_size, buf.index);
+	/*printf("\nread cnt=%d (%d), at buf %d\n",cnt, s0_size, buf.index);*/
         pxp->buffers[buf.index].buf.index = buf.index;
 	if (ioctl(pxp->vfd, VIDIOC_QBUF, &pxp->buffers[buf.index].buf) < 0) {
 		perror("VIDIOC_QBUF 2");
 		return 1;
 	    }
 	}while(cnt == s0_size );
-
-
-        close(fd);
+  close(fd);
 	return 0;
 }
 
@@ -773,53 +766,32 @@ static int pxp_write_outfile(struct pxp_control *pxp)
 
 static int pxp_rotate_pass(struct pxp_control *pxp)
 {
-	int mfd;
-	char *out_buf;
-	int w;
 	int bpp;
 	int s0_size;
  
  	bpp = pxp_video_formats[pxp->fmt_idx].bpp;
 	s0_size = pxp->s0.width * pxp->s0.height * bpp / pxp_video_formats[pxp->fmt_idx].bpp_demon;
 
-	if (pxp_config_output(pxp, 1))
+	if (pxp_config_output(pxp, 0))
 		return 1;
 
-	if (pxp_config_buffer(pxp, 1))
+	if (pxp_config_buffer(pxp, 0))
+		return 1;
+	
+	if (pxp_read_infiles(pxp))
 		return 1;
 
-	if ((mfd = open("/dev/mem", O_RDWR, 0)) < 0) {
-		perror("mem device open failed");
-		return 1;
-	}
-
-	out_buf = mmap(NULL /* start anywhere */,
-			s0_size,
-			PROT_READ,
-			MAP_SHARED,
-			mfd,
-			pxp->out_addr);
-
-	if (out_buf == MAP_FAILED) {
-		perror("failed to mmap output buffer");
-		return 1;
-	}
-
-	memcpy(pxp->buffers[1].start, out_buf, s0_size);
-
-	if (pxp_config_windows(pxp, 1))
+	if (pxp_config_windows(pxp, 0))
 		return 1;
 
 	if (pxp_config_controls(pxp))
 		return 1;
 
-	if (pxp_start(pxp, 1))
+	if (pxp_start(pxp, 0))
 		return 1;
 
-	if (pxp_stop(pxp, 1))
+	if (pxp_stop(pxp, 0))
 		return 1;
-
-	close(mfd);
 
 	return 0;
 }
