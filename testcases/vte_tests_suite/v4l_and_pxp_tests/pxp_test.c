@@ -8,6 +8,7 @@
  * This program is free software, see the COPYING file
  */
 
+
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
@@ -119,6 +120,7 @@ static struct pxp_video_format pxp_video_formats[] = {
 #define PXP_VFLIP	3
 #define PXP_WIDTH	4
 #define PXP_HEIGHT	5
+#define PXP_FMT	  6
 
 
 static void usage(char *bin)
@@ -128,7 +130,7 @@ static void usage(char *bin)
 
 static void help(char *bin)
 {
-	printf("pxp_qa - PxP QA test, v%s\n", VERSION);
+	printf("pxp_test - PxP test, v%s\n", VERSION);
      
 	usage(bin);
     
@@ -146,6 +148,7 @@ static void help(char *bin)
 	printf("\t-vf   \tflip image vertically\n");
 	printf("\t-w n   \twait n seconds before exiting\n");
 	printf("\t-c    \tcorp input\n");
+	printf("\t-fm    \tinput format\n");
 	printf("\t-?    \tprint this usage information\n");
 }
 
@@ -198,6 +201,7 @@ static struct pxp_control *pxp_init(int argc, char **argv)
 		{ "vf", no_argument, NULL, PXP_VFLIP},
 		{ "sx", required_argument, NULL, PXP_WIDTH},
 		{ "sy", required_argument, NULL, PXP_HEIGHT},
+		{ "fm", required_argument, NULL, PXP_FMT},
 		{ NULL, no_argument, NULL, 0 }
 	};
 
@@ -229,6 +233,9 @@ static struct pxp_control *pxp_init(int argc, char **argv)
 				break;
 			case PXP_VFLIP:
 				pxp->vflip = 1;
+				break;
+			case PXP_FMT:
+				pxp->fmt_idx = atoi(optarg);
 				break;
 			case 'a':
 				pxp->global_alpha = 1;
