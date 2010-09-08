@@ -10,7 +10,8 @@ FILES = 800_480_s0.rgba32  \
 		large_w.s0         \
 		small.s0           \
 		tux.s1             \
-		yuv420_352_240.s0
+		yuv420_352_240.s0  \
+		fb-352x240.yuv
 
 all:
 	
