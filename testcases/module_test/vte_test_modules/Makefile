@@ -15,11 +15,11 @@ SUBDIRS-$(CONFIG_VM_SDMA_API) += sdma_module
 
 
 all:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
 
 install:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install ; done
 
 clean:
-	@set -e; for i in $(SUBDIRS) ; do $(MAKE) -C $$i clean ; done
+	@set -e; for i in $(SUBDIRS-y) ; do $(MAKE) -C $$i clean ; done
 
