@@ -204,7 +204,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 	 sh -c "modprobe ar6000 ; sleep 10; ifconfig wlan0 up && iwconfig wlan0 mode managed && sleep 5 &&iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key $(echo Happy123 | md5sum | cut -c 1-10) && iwconfig wlan0 essid FSLLBGAP_001 && sleep 5 && udhcpc -i wlan0"
 	 export LOCALIP=$(ifconfig wlan0 | grep inet |  cut -d: -f 2 | awk '{print $1}')
    cd ${LTPROOT}/testcases/bin
-	 sh -c "tcp_stream_2nd_script 10.192.225.222 CPU &"
+	 sh -c "tcp_stream_2nd_script 10.192.225.222 CPU $LOCALIP &"
    echo "gpu test"
 	 modprobe gpu
   echo "use Ctrl+c to quit"
