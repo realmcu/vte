@@ -96,7 +96,7 @@ for SOCKET_SIZE in $SOCKET_SIZES
     echo
     # since we have the confidence interval stuff, we do not
     # need to repeat a test multiple times from the shell
-    $NETHOME/netperf $PORT -PLOCAL -l $TEST_TIME -H $REM_HOST -t TCP_STREAM\
+    $NETHOME/netperf $PORT $PLOCAL -l $TEST_TIME -H $REM_HOST -t TCP_STREAM\
     $LOC_CPU $LOC_RATE $REM_CPU $REM_RATE $STATS_STUFF --\
     -m $SEND_SIZE -s $SOCKET_SIZE -S $SOCKET_SIZE
 
