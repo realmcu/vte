@@ -5,11 +5,6 @@
 # This script performs various UDP unidirectional stream tests.
 #
 
-if [ $# -gt 2 ]; then
-  echo "try again, correctly -> udp_stream_script hostname [CPU]"
-  exit 1
-fi
-
 if [ $# -eq 0 ]; then
   echo "try again, correctly -> udp_stream_script hostname [CPU]"
   exit 1
@@ -61,6 +56,13 @@ if [ $# -eq 2 ]; then
   LOC_CPU="-c"
   REM_CPU="-C"
 fi
+if [ $# -eq 3 ]; then
+  REM_HOST=$1
+  LOC_CPU="-c"
+  REM_CPU="-C"
+	PLOCAL="-L $LOCALIP"
+fi
+
 
 if [ $# -eq 1 ]; then
   LOC_CPU=""
