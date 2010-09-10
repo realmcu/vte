@@ -28,7 +28,7 @@ SUBDIRS=
 TARGETS=pc_off_lcd.sh pc_on_dvfs.sh pc_mk_link.sh pc_off_eth.sh pc_on_conservative.sh
 TARGETS+=pc_mp3_128k.sh
 TARGETS+=pc_h264_720p_2770k.sh pc_h264_720p_d1.sh pc_h264_720p_9M.sh
-TARGETS+=pc_h264_1080p.sh 
+TARGETS+=pc_h264_1080p_10M.sh pc_h264_1080p_20M.sh
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
