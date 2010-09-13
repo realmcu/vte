@@ -19,7 +19,7 @@
 test_case_53()
 {
     cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state
-    gst-launch-0.10 filesrc location=/root/128kbps_44khz_s_mp3.mp3 ! mfw_mp3decoder  ! alsasink
+    gst-launch-0.10 filesrc location=./128kbps_44khz_s_mp3.mp3 ! mfw_mp3decoder  ! alsasink
     cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state
 }
 
