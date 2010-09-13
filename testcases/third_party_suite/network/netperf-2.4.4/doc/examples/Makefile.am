@@ -7,5 +7,8 @@ EXTRA_DIST =                                   \
        tcp_rr_script                           \
        tcp_stream_script                       \
        udp_rr_script                           \
-       udp_stream_script
+       udp_stream_script                       \
+       tcp_stream_2nd_script                   \
+       udp_stream_2nd_script   
+
 
