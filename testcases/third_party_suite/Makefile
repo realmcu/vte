@@ -53,6 +53,7 @@ SUBDIRS-$(CONFIG_TP_HOST_TOOLS)  += host_tools
 SUBDIRS-$(CONFIG_TP_IPERF)       += iperf
 SUBDIRS-$(CONFIG_TP_USB)         += usb_test
 SUBDIRS-$(CONFIG_TP_WHETS)       += whets
+SUBDIRS-$(CONFIG_TP_LMBENCH)    += lmbench
 
 all:
 	@set -e; for i in $(SUBDIRS-y); do \
