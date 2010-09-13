@@ -22,7 +22,7 @@ test_case_53()
     cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state
 
     #no audio
-    gst-launch-0.10 filesrc location=./Allegro_Intra_CABAC_H00_HD_10.1.mp4 ! 'video/quicktime' ! aiurdemux name=demux demux. ! queue max-size-time=0 max-size-buffers=0 ! mfw_vpudecoder ! queue max-size-buffers=3 ! mfw_v4lsink disp-width=800 disp-height=480
+    gst-launch-0.10 filesrc location=./E18_HD_1080p11_1920x1080x30_01.avi ! 'video/x-msvideo' ! aiurdemux name=demux demux. ! queue max-size-time=0 max-size-buffers=0 ! mfw_vpudecoder ! queue max-size-buffers=3 ! mfw_v4lsink disp-width=800 disp-height=480 demux. ! queue ! mfw_mp3decoder ! alsasink
 
     cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state
 }
