@@ -39,6 +39,7 @@
 #   IMX28EVK    IMX28EVK
 #   IMX53EVK    IMX53EVK
 #   IMX50ARM2   IMX50ARM2
+#   IMX50RDP    IMX50RDP
 #
 #
 # Usage2(return number): 
@@ -125,11 +126,18 @@ determine_platform()
         p=IMX28EVK
     fi
 
-    #find MX28EVK
+    #find MX50ARM2
     find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX50 ARM2" | wc -l`;
     if [ $find -eq 1 ]
     then
         p=IMX50ARM2
+    fi
+    
+		#find MX50RDP
+    find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX50 Reference Design" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+        p=IMX50RDP
     fi
 
 		if [ $p = "IMX31_3STACK" ]
@@ -165,6 +173,9 @@ determine_platform()
         #echo  "Platform MX28 EVK" 
         RC=28
 		elif [ $p = "IMX50ARM2" ]
+		then
+				RC=50
+		elif [ $p = "IMX50RDP" ]
 		then
 				RC=50
     else
