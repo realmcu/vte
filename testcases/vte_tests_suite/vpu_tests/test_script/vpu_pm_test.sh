@@ -120,6 +120,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 mkdir /tmp/enc
 cd /tmp/enc
 
+<<<<<<< HEAD:testcases/vte_tests_suite/vpu_tests/test_script/vpu_pm_test.sh
 if [ $TARGET = "51" ]
 then
 echo 1 > /proc/sys/vm/lowmem_reserve_ratio
@@ -147,6 +148,9 @@ echo -n standby > /sys/power/state
 sleep 10
 
 SIZE2=$(ls -s /tmp/enc/test.263 | awk '{print $1}')
+=======
+MODE_LIST="200 303 304"
+>>>>>>> ltp-vte Module-security:testcases/vte_tests_suite/security_tests/crypto_scripts/tcryp.sh
 
 if [ $SIZE1 = $SIZE2 ]
 then
