@@ -114,7 +114,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-date -u 032116582008
+date -u 200803211658
 date "2010-07-14 10:06:00"
 date -u 200808111730
 hwclock --systohc
