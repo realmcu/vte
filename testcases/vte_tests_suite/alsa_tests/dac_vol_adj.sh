@@ -145,7 +145,7 @@ max_vol()
     MAX_MX31=99
     MAX_SGTL5K=127
     MAX_MX37=255
-		MAX_MX50=190
+		MAX_MX50=127
 
     if [ $platfm -eq 31 ]
     then
@@ -253,6 +253,10 @@ left_right_channel()
     fi
     vol=`expr $MAX / 3 \* 2`
     ctl_id=`amixer_ctl_id`
+#for mx50 set the palyback voulme as well
+		if [ $platfm -eq 50 ]; then
+		amixer -c 0 cset "name='Playback Volume'" 190,0
+		fi
     amixer -c 0 cset "$ctl_id" $vol,0
     aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
     if [ $RC -ne 0 ]
@@ -260,7 +264,11 @@ left_right_channel()
         tst_resm TFAIL "Test #2: play error, please check the stream file"
         return $RC
     fi
-    amixer -c 0 cset "$ctl_id" 0,$vol
+#for mx50 set the palyback voulme as well
+		if [ $platfm -eq 50 ]; then
+		amixer -c 0 cset "name='Playback Volume'" 0,190
+    fi
+		amixer -c 0 cset "$ctl_id" 0,$vol
     aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
     if [ $RC -ne 0 ]
     then
