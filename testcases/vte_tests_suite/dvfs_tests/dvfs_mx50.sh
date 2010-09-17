@@ -193,24 +193,29 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
    echo "ADC DAC test"
-	 sh -c "arecord -D plughw:0 -d 100 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 &" 
+	 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k16M.wav -A
+	 sh -c "arecord -D plughw:0 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 || RC='$RC 1' &" 
+	 sleep 2
 	 echo "USB Host test"
-   sh -c "mkfs.vfat /dev/sda1 && mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 && bonnie\+\+ -d /media/sda1 -u 0:0 -s 10 -r 5 && dt of=/media/sda1/test_file bs=4k limit=128m passes=20 &"
+   sh -c "mkfs.vfat /dev/sda1 && mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 && bonnie\+\+ -d /media/sda1 -u 0:0 -s 10 -r 5 && dt of=/media/sda1/test_file bs=4k limit=128m passes=20 || RC='$RC 2' &"
 	 echo "SD test"
-	 sh -c "mkdir -p /mnt/mmc && mkfs.vfat /dev/mmcblk0p1 && mount /dev/mmcblk0p1 /mnt/mmc && bonnie\+\+ -d /mnt/mmc -u 0:0 -s 10 -r 5 && dt of=/mnt/mmc/test_file bs=4k limit=128m passes=20 &"
+	 sleep 2
+	 sh -c "mkdir -p /mnt/mmc && mkfs.vfat /dev/mmcblk0p1 && mount /dev/mmcblk0p1 /mnt/mmc && bonnie\+\+ -d /mnt/mmc -u 0:0 -s 10 -r 5 && dt of=/mnt/mmc/test_file bs=4k limit=128m passes=20 || RC='$RC 3' &"
 	 echo "epdc test"
-	 sh -c "epdc_test -T 7 &"
+	 sh -c "epdc_test -T 7 || RC='$RC 4' &"
+	 sleep 2
 	 echo "wifi test"
 	 sh -c "modprobe ar6000 ; sleep 10; ifconfig wlan0 up && iwconfig wlan0 mode managed && sleep 5 &&iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key $(echo Happy123 | md5sum | cut -c 1-10) && iwconfig wlan0 essid FSLLBGAP_001 && sleep 5 && udhcpc -i wlan0"
 	 export LOCALIP=$(ifconfig wlan0 | grep inet |  cut -d: -f 2 | awk '{print $1}')
    cd ${LTPROOT}/testcases/bin
-	 sh -c "tcp_stream_2nd_script 10.192.225.222 CPU $LOCALIP &"
+	 if [ ! -z $LOCALIP ];then
+	 sh -c "tcp_stream_2nd_script 10.192.225.222 CPU $LOCALIP || RC='$RC 5' &"
+	 fi
    echo "gpu test"
 	 modprobe gpu
-  echo "use Ctrl+c to quit"
-  wait
+	 #sh -c "gpu_test.sh 2 || RC='$RC 6' &"
+  read -p "use Ctrl+c to quit"
 return $RC
-
 }
 
 # Function:     test_case_04
