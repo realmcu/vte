@@ -85,7 +85,7 @@ run_manual_test_list()
  echo "mkdir /mnt/flash"
  read -p "press any key when ready" key
  dd if=/dev/zero of=/var/storage.img bs=1M count=64
- mkfs.ext3 /var/storage.img
+ mkfs.vfat /var/storage.img
  modprobe g_file_storage file=/var/storage.img
  echo "now please mount the usb device on PC"
  echo "please run bwloe on pc"
