@@ -270,6 +270,8 @@ REGISTERS_RW_BIT="abort bcc boff_rec fifo listen local_priority \
 #not test for read only register                 
 REGISTER_RO="bitrate state"
 
+ifconfig $CANID down
+
 bk=$(cat /sys/devices/platform/FlexCAN$CANBUS/br_clksrc)
 echo "bus" > /sys/devices/platform/FlexCAN$CANBUS/br_clksrc
 Rnt=$(cat /sys/devices/platform/FlexCAN$CANBUS/br_clksrc)
@@ -387,6 +389,47 @@ TST_COUNT=6
 return $RC
 }
 
+#
+# Function: test_can_07
+# Description: basic module available test
+# catalog: auto test
+#
+test_can_07()
+{
+RC=0
+TCID="test_can_bitrate"
+TST_COUNT=7
+#ref 
+#http://www.softing.com/home/en/industrial-automation/products/can-bus/more-can-bus/high-speed/cia-ds-102-baudrates.php
+STAND_BIT_RATES="1000000 800000 500000 250000 125000 50000 20000 10000"
+
+read -p "please connect the boards two can buses: then press any key"
+
+for i in $STAND_BIT_RATES
+do
+ifconfig can0 down
+ifconfig can1 down
+sleep 2
+echo $i > /sys/devices/platform/FlexCAN.0/bitrate
+cat /sys/devices/platform/FlexCAN.0/bitrate | grep $i || RC=1
+
+echo $i > /sys/devices/platform/FlexCAN.1/bitrate
+cat /sys/devices/platform/FlexCAN.1/bitrate | grep $i || RC=1
+
+
+canecho can1 -v &
+
+cansend can0 123#1122334455667788 || RC=2
+
+if [ $RC -ne 0 ]; then
+RC="$RC $i"
+fi
+
+done
+return $RC
+}
+
+
 usage()
 {
 echo "can_test.sh [TEST ID]"
@@ -396,6 +439,7 @@ echo "3: loop back test"
 echo "4: CAN register setting test"
 echo "5: power management test"
 echo "6: module available test"
+echo "7: bit rate test"
 
 }
 
@@ -432,6 +476,9 @@ case "$2" in
 6)
    test_can_06 || exit $RC
    ;;
+7)
+	 test_can_07 || exit $RC
+	 ;;
 *)
   usage
   ;;
