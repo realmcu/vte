@@ -95,6 +95,9 @@ cleanup()
 {
 RC=0
 
+#ipu mem is write back need sync
+fsync
+
 #TODO add cleanup code here
 
 return $RC
