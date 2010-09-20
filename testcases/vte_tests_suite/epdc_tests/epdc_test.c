@@ -97,6 +97,8 @@ int draw_pattern(int fd, unsigned char * pfb, int r, int g, int b );
 int draw_pattern_diasy(unsigned char * pfb, int gwidth, int gheight);
 BOOL pan_test();
 BOOL draw_test();
+BOOL full_update();
+static BOOL test_power_delay();
 
 inline unsigned char  BOUND255(short a)
 {
@@ -255,6 +257,22 @@ static BOOL update_once(void * p_update)
   /*printf("next update\n");*/
   }
   return TRUE;
+}
+
+static BOOL test_power_delay()
+{
+	int id = FB_POWERDOWN_DISABLE; 
+	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_PWRDOWN_DELAY, &(m_opt.delay)));
+	CALL_IOCTL(ioctl(fb_fd, MXCFB_GET_PWRDOWN_DELAY, &id));
+	printf("delay time set to %dms\n", id);
+	if(id  !=  m_opt.delay)
+		return FALSE;
+  full_update();
+  sleep(1);
+  full_update();
+	id = FB_POWERDOWN_DISABLE;
+	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_PWRDOWN_DELAY, &id));
+ return TRUE;	
 }
 
 static BOOL single_update(void * p_update)
@@ -632,7 +650,7 @@ struct mxcfb_update_data im_update = {
 	 printf("open pxp devices fialed\n");
 	 return FALSE;
  }
- mem.size = m_opt.su == 1? (m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height)*2 :PXP_BUFFER_SIZE*2;
+ mem.size = m_opt.su == 1? (m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height)*2:PXP_BUFFER_SIZE*2;
  printf("try to get memory size %d\n",mem.size);
  if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
  {
@@ -1009,6 +1027,14 @@ int epdc_fb_test()
           rv = TFAIL;
           tst_resm(TFAIL, "max update FAIL");
 		}else
+		break;
+	case 8:
+		if(!test_power_delay())
+		{
+					rv = TFAIL;
+					tst_resm(TFAIL, "power delay FAIL");
+		}else
+					tst_resm(TPASS, "power delay OK");
 		break;
   default:
 		break;

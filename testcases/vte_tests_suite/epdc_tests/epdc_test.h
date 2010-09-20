@@ -77,6 +77,7 @@ typedef struct epdc_opts {
 	 int rot;/*rotation mode*/
    struct mxcfb_update_data update;
    int wt;
+	 int delay;
  } epdc_opts;
 
 /* GLOBAL VARIABLE DECLARATIONS */
