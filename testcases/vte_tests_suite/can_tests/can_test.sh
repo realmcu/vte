@@ -416,6 +416,8 @@ cat /sys/devices/platform/FlexCAN.0/bitrate | grep $i || RC=1
 echo $i > /sys/devices/platform/FlexCAN.1/bitrate
 cat /sys/devices/platform/FlexCAN.1/bitrate | grep $i || RC=1
 
+ifconfig can0 up
+ifconfig can1 up
 
 canecho can1 -v &
 
