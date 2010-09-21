@@ -16,15 +16,11 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 ###############################################################################
-
 test_case_53()
 {
-    cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state
-
-    #no audio
-    gst-launch-0.10 filesrc location=./Allegro_Intra_CABAC_H00_HD_10.1.mp4 ! 'video/quicktime' ! aiurdemux name=demux demux. ! queue max-size-time=0 max-size-buffers=0 ! mfw_vpudecoder ! queue max-size-buffers=3 ! mfw_v4lsink #disp-width=800 disp-height=480
-
-    cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state
+    echo 0 > /sys/devices/platform/mxc_dvfs_core.0/enable
+    #echo 1 > /sys/devices/platform/mxc_dvfsper.0/enable
+    echo 0 > /sys/devices/platform/busfreq.0/enable 
 }
 
 platfm=$1
