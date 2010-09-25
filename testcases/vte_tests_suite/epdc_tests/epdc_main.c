@@ -66,6 +66,9 @@ int      s_flag;        /* send update setting*/
 char     *s_opt;
 int      R_flag;        /* Rotation */
 char     *R_opt;
+int      y_flag;        /* power down delay */
+char     *y_opt;
+
 
 option_t opts[] =
 {
@@ -77,6 +80,7 @@ option_t opts[] =
     { "u:", &u_flag, &u_opt},
     { "s:", &s_flag, &s_opt},
     { "R:", &R_flag, &R_opt},
+    { "y:", &y_flag, &y_opt},
     { NULL, NULL,    NULL}
 };
 
@@ -119,6 +123,7 @@ void help(void)
 		printf("[-u <int> : auto update mode 0(partial)/1(full)]\n");
 		printf("[-s <string>: send update with format only in partial update]\n");
 		printf("[-R <int>: Rotation 0/1/2/3]\n");
+		printf("[-y <int>: power down delay after last update]\n");
         return;
 }
 /* cleanup */
@@ -266,6 +271,12 @@ int main(int argc, char **argv)
 			);
 			m_opt.su = 1;
 		}
+		if(y_flag)
+		{
+			m_opt.delay = atoi(y_opt);	
+		}else{
+		  m_opt.delay = FB_POWERDOWN_DISABLE;	
+	  }
 
 		printf("current settings\n");
 		printf("TestID = %d \ndevice is %s \n\rwaveform setting is %d,%d,%d,%d,%d,%d \n\rtempture is %d\n\rgrayscale is %d \n\rauto update mode is %d \n\rupdate setting is %d \n\r rotation is %d \n\r",

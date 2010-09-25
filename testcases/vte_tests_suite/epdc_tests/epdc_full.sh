@@ -80,7 +80,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 LOOP_TIMES=2
-ROT_LIST="0 90 180 270"
+ROT_LIST="0 1 2 3"
 CASE_LIST="2 3 4 5 6 7"
 
 while [ $LOOP_TIMES -gt 0 ]
