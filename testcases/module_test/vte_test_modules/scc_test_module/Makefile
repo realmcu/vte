@@ -27,12 +27,12 @@
           -I$(KLINUX_SRCDIR)/include/asm-arm/arch-mxc \
           -DSCC_MODULE \
           -DSCC_DEBUG
-EXTRA_CFLAGS += -I$(KLINUX_SRCDIR)/drivers/mxc/security \
-          -I$(KLINUX_SRCDIR)/include \
-          -I$(KLINUX_SRCDIR)/include/asm-arm/arch-mxc \
+EXTRA_CFLAGS += -I$(KLINUX_SRCDIR)/include \
+          -I$(KLINUX_SRCDIR)/arch/arm/plat-mxc/include \
 	  -I$(KLINUX_BLTDIR)/include \
           -DSCC_MODULE \
-          -DSCC_DEBUG
+          -DSCC_DEBUG  \
+          -DIMX_NEEDS_DEPRECATED_SYMBOLS
 
 LOADLIBES =
 
