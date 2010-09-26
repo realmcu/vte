@@ -1,17 +1,28 @@
 ifndef KERNEL_PATH
-	export KERNEL_PATH=$(KLINUX_BLTDIR)
+	KERNEL_PATH=/home/vobs/linux-2.6-imx
 endif
 
-export ARCH=$(ARCH_CPU)
-export CROSS_COMPILE=$(CROSS_COMPILER)
+obj-m += mtd_nandecctest.o  
+obj-m += mtd_oobtest.o
+obj-m += mtd_pagetest.o  
+obj-m += mtd_readtest.o  
+obj-m += mtd_speedtest.o  
+obj-m += mtd_stresstest.o  
+obj-m += mtd_subpagetest.o  
+obj-m += mtd_torturetest.o
 
-SUBDIRS = oobtest pagetest subpagetest torture scantest speedtest stresstest
 
-all clean tests: $(SUBDIRS)
+modules:
+	make -C $(KERNEL_PATH) SUBDIRS=$$PWD modules
+
+modules_install:
+	make -C $(KERNEL_PATH) SUBDIRS=$$PWD modules_install
 
 install:
-	@set -e; for i in $(SUBDIRS); do cp $$i/$$i.ko ../../../bin/ ; done
+	@set -e; ln -f *.ko ../../../bin/
 
-.PHONY: $(SUBDIRS)
-$(SUBDIRS):
-	$(MAKE) -C $@ $(MAKECMDGOALS)
+all: modules modules_install
+
+clean:
+	rm -rf *.ko *.o *.mod.c  \
+	Module.symvers  .*.cmd *.mod .tmp_versions *.c.bak modules.order
