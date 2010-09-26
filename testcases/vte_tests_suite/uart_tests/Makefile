@@ -37,6 +37,7 @@ uart_testapp_7 \
 uart_testapp_8 \
 uart_testapp_9 \
 uart_testapp_10 \
+uart_testapp_11 \
 uart_scripts
 
 
