@@ -15,9 +15,9 @@
 #include <linux/blkdev.h>
 #include <linux/bio.h>
 #include <linux/highmem.h>
-#include <linux/gfp.h>
 #include <linux/radix-tree.h>
 #include <linux/buffer_head.h> /* invalidate_bh_lrus() */
+#include <linux/slab.h>
 
 #include <asm/uaccess.h>
 
@@ -133,6 +133,28 @@ static struct page *brd_insert_page(struct brd_device *brd, sector_t sector)
 	return page;
 }
 
+static void brd_free_page(struct brd_device *brd, sector_t sector)
+{
+	struct page *page;
+	pgoff_t idx;
+
+	spin_lock(&brd->brd_lock);
+	idx = sector >> PAGE_SECTORS_SHIFT;
+	page = radix_tree_delete(&brd->brd_pages, idx);
+	spin_unlock(&brd->brd_lock);
+	if (page)
+		__free_page(page);
+}
+
+static void brd_zero_page(struct brd_device *brd, sector_t sector)
+{
+	struct page *page;
+
+	page = brd_lookup_page(brd, sector);
+	if (page)
+		clear_highpage(page);
+}
+
 /*
  * Free all backing store pages and radix tree. This must only be called when
  * there are no other users of the device.
@@ -187,6 +209,24 @@ static int copy_to_brd_setup(struct brd_device *brd, sector_t sector, size_t n)
 			return -ENOMEM;
 	}
 	return 0;
+}
+
+static void discard_from_brd(struct brd_device *brd,
+			sector_t sector, size_t n)
+{
+	while (n >= PAGE_SIZE) {
+		/*
+		 * Don't want to actually discard pages here because
+		 * re-allocating the pages can result in writeback
+		 * deadlocks under heavy load.
+		 */
+		if (0)
+			brd_free_page(brd, sector);
+		else
+			brd_zero_page(brd, sector);
+		sector += PAGE_SIZE >> SECTOR_SHIFT;
+		n -= PAGE_SIZE;
+	}
 }
 
 /*
@@ -275,8 +315,10 @@ static int brd_do_bvec(struct brd_device *brd, struct page *page,
 	if (rw == READ) {
 		copy_from_brd(mem + off, brd, sector, len);
 		flush_dcache_page(page);
-	} else
+	} else {
+		flush_dcache_page(page);
 		copy_to_brd(brd, mem + off, sector, len);
+	}
 	kunmap_atomic(mem, KM_USER0);
 
 out:
@@ -298,6 +340,12 @@ static int brd_make_request(struct request_queue *q, struct bio *bio)
 						get_capacity(bdev->bd_disk))
 		goto out;
 
+	if (unlikely(bio_rw_flagged(bio, BIO_RW_DISCARD))) {
+		err = 0;
+		discard_from_brd(brd, sector, bio->bi_size);
+		goto out;
+	}
+
 	rw = bio_rw(bio);
 	if (rw == READA)
 		rw = READ;
@@ -318,7 +366,7 @@ out:
 }
 
 #ifdef CONFIG_BLK_DEV_XIP
-static int brd_direct_access (struct block_device *bdev, sector_t sector,
+static int brd_direct_access(struct block_device *bdev, sector_t sector,
 			void **kaddr, unsigned long *pfn)
 {
 	struct brd_device *brd = bdev->bd_disk->private_data;
@@ -373,7 +421,7 @@ static int brd_ioctl(struct block_device *bdev, fmode_t mode,
 	return error;
 }
 
-static struct block_device_operations brd_fops = {
+static const struct block_device_operations brd_fops = {
 	.owner =		THIS_MODULE,
 	.locked_ioctl =		brd_ioctl,
 #ifdef CONFIG_BLK_DEV_XIP
@@ -405,12 +453,7 @@ static int __init ramdisk_size(char *str)
 	rd_size = simple_strtol(str, NULL, 0);
 	return 1;
 }
-static int __init ramdisk_size2(char *str)
-{
-	return ramdisk_size(str);
-}
-__setup("ramdisk=", ramdisk_size);
-__setup("ramdisk_size=", ramdisk_size2);
+__setup("ramdisk_size=", ramdisk_size);
 #endif
 
 /*
@@ -436,8 +479,14 @@ static struct brd_device *brd_alloc(int i)
 	if (!brd->brd_queue)
 		goto out_free_dev;
 	blk_queue_make_request(brd->brd_queue, brd_make_request);
-	blk_queue_max_sectors(brd->brd_queue, 1024);
+	blk_queue_ordered(brd->brd_queue, QUEUE_ORDERED_TAG, NULL);
+	blk_queue_max_hw_sectors(brd->brd_queue, 1024);
 	blk_queue_bounce_limit(brd->brd_queue, BLK_BOUNCE_ANY);
+
+	brd->brd_queue->limits.discard_granularity = PAGE_SIZE;
+	brd->brd_queue->limits.max_discard_sectors = UINT_MAX;
+	brd->brd_queue->limits.discard_zeroes_data = 1;
+	queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, brd->brd_queue);
 
 	disk = brd->brd_disk = alloc_disk(1 << part_shift);
 	if (!disk)
