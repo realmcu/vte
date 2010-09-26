@@ -38,19 +38,21 @@ Test Strategy: Examine the SCC driver common software operations
 /*==================================================================================================
                                         INCLUDE FILES
 ==================================================================================================*/
+#include <linux/version.h>
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35))
+#include <generated/autoconf.h>
+#include <linux/slab.h>
+#endif
 #include <linux/module.h>
 #include <linux/device.h>
-#include <linux/version.h>
 #include <linux/io.h>
 //---#include <linux/devfs_fs_kernel.h>
 #include <linux/fs.h>
 #include <asm/uaccess.h>
-
 //#include <asm/arch-mxc/mxc_security_api.h>
 //#include <asm/arch-mxc/mxc_scc.h>
 #include <mach/mxc_scc.h>
 #include <scc_test_module.h>
-
 
 /*==================================================================================================
                                    LOCAL VARIABLE DECLARATIONS
@@ -192,7 +194,6 @@ static int scc_test_init(void)
         }
 */
         scc_base = ioremap_nocache(SCC_BASE, SCC_ADDRESS_RANGE);
-
         printk(KERN_INFO "Module load successful\n");
         return 0;
 

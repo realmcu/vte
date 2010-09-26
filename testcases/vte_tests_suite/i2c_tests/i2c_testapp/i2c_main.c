@@ -416,7 +416,7 @@ int i2c_test_ioctl_tenbit()
 		tst_resm(TFAIL, "fail to set seven bit address ");	
 		VT_rv = 0;
 	}
-	#elif 
+	#else 
 	tst_resm(TFAIL, " your request for setting bit address is invalid");
 	VT_rv = 0;
 	#endif
@@ -444,7 +444,7 @@ int i2c_test_ioctl_pec()
 		tst_resm(TFAIL, "fail to disnable SMBUS PEC ");	
 		VT_rv = 0;
 	}
-	#elif 
+	#else 
 	tst_resm(TFAIL, " your request for enable/disnable SMBUS PEC is  invalid");
 	VT_rv = 0;
 	#endif

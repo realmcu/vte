@@ -45,7 +45,7 @@ extern "C" {
 /* Harness Specific Include Files. */
 #include <test.h>
 #include <usctest.h>
-#include <linux/autoconf.h>
+//#include <linux/autoconf.h>
 
 /* Verification Test Environment Include Files */
 #include <sahara_module.h>
