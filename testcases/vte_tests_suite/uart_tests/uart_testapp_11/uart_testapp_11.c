@@ -137,7 +137,7 @@ int main(int argc, char **argv)
   }              
   tcgetattr(uart_file1, &old);
   mxc = old;
-  mxc.c_lflag &= ~(ICANON | ECHO | ISIG);
+  mxc.c_lflag &= ~(ICANON | ECHO | ISIG | IXON | IXOFF | CRTSCTS);
 	if(iBaud)
 	{
 	/*  mxc.c_cflag &= ~mxc.c_cflag;*/
