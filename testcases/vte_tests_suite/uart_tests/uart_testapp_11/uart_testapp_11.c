@@ -137,7 +137,7 @@ int main(int argc, char **argv)
   }              
   tcgetattr(uart_file1, &old);
   mxc = old;
-  mxc.c_lflag &= ~(ICANON | ECHO | ISIG | IXON | IXOFF | CRTSCTS);
+  mxc.c_lflag &= ~(ICANON | ECHO | ISIG);
 	if(iBaud)
 	{
 	/*  mxc.c_cflag &= ~mxc.c_cflag;*/
@@ -177,6 +177,7 @@ int main(int argc, char **argv)
 				exit(-1);
 			}
 			printf("send %d\n", volumn);
+#if 1
 			while(volumn){
 				gettimeofday(&begin, NULL);
    			rt = write(uart_file1,tx,step);
@@ -195,8 +196,9 @@ int main(int argc, char **argv)
 					usec -= 1000000;
 				}
 				volumn -= step;
-			//	usleep(100);
+				usleep(100);
 			}
+#endif
 			if(sec > 0)
 			printf("\n\raverage speed %d at %o baud\n",SEND_SIZE/(sec+1),speed);
 			exit(0);
@@ -204,7 +206,7 @@ int main(int argc, char **argv)
 			static int iores = 0;
 			int iocount;
 			int cont = 1;
-			char * rx = NULL;
+			unsigned char * rx = NULL;
 			int cbuff = 1024;
       int retry = 0;
 
@@ -212,7 +214,7 @@ int main(int argc, char **argv)
 			act.sa_flags = SA_SIGINFO;
 			act.sa_sigaction = ctrl_c_handler;
 
-      rx = (char *)calloc(cbuff,sizeof(char));
+      rx = (unsigned char *)calloc(cbuff,sizeof(unsigned char));
 			if(NULL == rx){
 				perror("malloc");
 				return -1;
@@ -237,17 +239,18 @@ int main(int argc, char **argv)
 					}else{
 						retry = 0;
 						if(iocount > cbuff){
-							rx = realloc(rx, iocount * sizeof(char));
+							rx = realloc(rx, iocount * sizeof(unsigned char));
 							cbuff = iocount;
 						}
    					iores += read(uart_file1, rx, iocount);
 						iocount = 0;
 						printf("\rreceive %d bytes", iores);
-						if(rx[0] != PATTERN){
-							printf("receive error 0x%x at %d!!!\n",rx[0], iores);
+						if((unsigned char)rx[0] != PATTERN){
+							printf("receive error %x at %d!!!\n",(unsigned char)rx[0], iores);
 							cont = 1;
 							retval = 1;
 						}
+						iocount = 0;
 					}
 			}
 			free(rx);
