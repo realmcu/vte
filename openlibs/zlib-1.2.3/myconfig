@@ -1,6 +1,6 @@
 #!/bin/sh
 export CC=arm-none-linux-gnueabi-gcc
 export AR="arm-none-linux-gnueabi-ar rc"
-./configure --prefix=$(pwd)/../
+CFLAGS="$CFLAGS -fPIC" ./configure --prefix=$(pwd)/../
 unset CC
 unset AR
