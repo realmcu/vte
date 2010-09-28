@@ -989,9 +989,10 @@ test_ctrl_queue (struct usbtest_dev *dev, struct usbtest_param *param)
 		reqp->setup = req;
 		reqp->number = i % NUM_SUBCASES;
 		reqp->expected = expected;
-		u->setup_packet = (char *) &reqp->setup;
+		u->setup_packet = (char *) &reqp->setup;	
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35))
 		u->transfer_flags |= URB_NO_SETUP_DMA_MAP;
-
+#endif
 		u->context = &context;
 		u->complete = ctrl_complete;
 	}
@@ -1583,11 +1584,12 @@ usbtest_ioctl (struct usb_interface *intf, unsigned int code, void *buf)
 		return -ERESTARTSYS;
 
 	/* FIXME: What if a system sleep starts while a test is running? */
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35))
 	if (!intf->is_active) {
 		mutex_unlock(&dev->lock);
 		return -EHOSTUNREACH;
 	}
-
+#endif
 	/* some devices, like ez-usb default devices, need a non-default
 	 * altsetting to have any active endpoints.  some tests change
 	 * altsettings; force a default so most tests don't need to check.
