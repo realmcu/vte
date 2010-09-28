@@ -7,9 +7,15 @@
 #include <linux/moduleparam.h>
 #include <linux/scatterlist.h>
 #include <linux/mutex.h>
-
 #include <linux/usb.h>
 
+#include <linux/version.h>
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35))
+#include <generated/autoconf.h>
+#include <linux/slab.h>
+#define usb_buffer_alloc usb_alloc_coherent
+#define usb_buffer_free usb_free_coherent
+#endif
 
 /*-------------------------------------------------------------------------*/
 
