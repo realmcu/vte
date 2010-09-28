@@ -37,6 +37,7 @@ extern "C" {
                                         INCLUDE FILES
 ==================================================================================================*/
 /* Standard Include Files */
+#include <linux/version.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h> 
@@ -45,8 +46,12 @@ extern "C" {
 /* Harness Specific Include Files. */
 #include <test.h>
 #include <usctest.h>
-//#include <linux/autoconf.h>
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35))
+#include <generated/autoconf.h>
+#else
+#include <linux/autoconf.h>
+#endif
 /* Verification Test Environment Include Files */
 #include <sahara_module.h>
 
