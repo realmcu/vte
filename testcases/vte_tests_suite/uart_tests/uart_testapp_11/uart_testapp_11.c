@@ -230,7 +230,7 @@ int main(int argc, char **argv)
 					{
 						  char cmd[64];
 	            int rt = 0;
-							sprintf(cmd, "ps -aux | grep %d | awk '{print $4}' | grep 'Z' > /dev/null", pid);
+							sprintf(cmd, "ps -a | grep %d | awk '{print $4}' | grep 'Z' > /dev/null", pid);
 							rt = system(cmd);
 							if(rt != 0)
 								continue;
