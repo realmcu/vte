@@ -15,8 +15,14 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-/**
-    @file   epdc_test.c
+/*
+ * <p> Title: EDPC Frame buffer test </p>
+ * <p> Description: this file include test cases for epdc </p>
+ * <p> Copyright: 2010 Freescale Semiconductor, Inc. </p>
+ * <p> Company: Freescale Semiconductor, Inc. </p>
+ * @author: b20222
+ * @file   epdc_test.c
+ * @version: 9
 */
 #ifdef __cplusplus
 extern "C"{
@@ -104,8 +110,23 @@ inline unsigned char  BOUND255(short a)
 {
 	return (a > 255) ? 255: (a < 0)? 0: a;
 }
+
+
 /*
- * Draw test
+ * <p>Draw a 512*512 text image </p>
+ * <p>procedure:</p> 
+ * <p>1. setting up update_data structure. </p>
+ * <p>2. draw a text pic in framebeuffer. </p>
+ * <p>3. send update ioctl, and wait finish. </p>
+ * <p>4. check whether timeout occurs </p>
+ * @param: hard coded, region: full screen
+ * @param: hard coded, waveform mode:auto
+ * @param: hard coded, update mode: partial
+ * @param: hard coded, update marker: 0x111
+ * @param: hard coded, tempture: ambient temperature
+ * @param: hard coded, alt buffer: no use
+ * @returns: TRUE success, FALSE failure.
+ * @error: ioctl fail or update request timeout
  */
 BOOL draw_test()
 {
@@ -145,7 +166,15 @@ BOOL draw_test()
 }
 
 /*
- * pan test
+ * <p>Pan test </p>
+ * <p>procedure:</p> 
+ * <p>1. double the yres size </p>
+ * <p>2. remap the framebuffer memory </p>
+ * <p>3. draw a text pattern in framebuffer </p>
+ * <p>4. send y pan 8 times in step of 1/8 screen height</p>
+ * <p>5. reset pan setting</p>
+ * @returns: TRUE success, FALSE failure.
+ * @error: ioctl fail
  */
 BOOL pan_test()
 {
@@ -259,6 +288,18 @@ static BOOL update_once(void * p_update)
   return TRUE;
 }
 
+/*
+ * <p>test power delay </p>
+ * <p>procedure:</p> 
+ * <p>1. set and get the power delay </p>
+ * <p>2. verify the setting is OK </p>
+ * <p>3. update screen once </p>
+ * <p>4. wait 1 second, the framebuffer will powerdown</p>
+ * <p>5. update screen again</p>
+ * <p>6. verify the update is OK.</p>
+ * @returns: TRUE success, FALSE failure.
+ * @error: ioctl fail or update fail.
+ */
 static BOOL test_power_delay()
 {
 	int id = FB_POWERDOWN_DISABLE; 
@@ -267,9 +308,12 @@ static BOOL test_power_delay()
 	printf("delay time set to %dms\n", id);
 	if(id  !=  m_opt.delay)
 		return FALSE;
-  full_update();
+  if( !full_update())
+		return FALSE; 
   sleep(1);
-  full_update();
+  if(!full_update())
+		return FALSE;
+
 	id = FB_POWERDOWN_DISABLE;
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_PWRDOWN_DELAY, &id));
  return TRUE;	
@@ -372,6 +416,17 @@ static int signal_thread(void *arg)
      return 0;
 }
 
+/*
+ * <p>test update rate</p>
+ * <p>procedure:</p> 
+ * <p>1. devide the update region half screen</p>
+ * <p>2. update the left half. culmulate the updating time</p>
+ * <p>2. update the right half. culmulate the updating time</p>
+ * <p>3. loop 1000 times </p>
+ * <p>4. calculate the average update time for 2 halves</p>
+ * @returns: TRUE success, FALSE failure.
+ * @error: ioctl fail or update fail.
+ */
 BOOL test_rate_update()
 {
 	#define FRAME_CNT 1000
@@ -417,6 +472,19 @@ BOOL test_rate_update()
     return TRUE;
 }
 
+/*
+ * <p>test max update</p>
+ * <p>procedure:</p> 
+ * <p>1. devide screen into 4x4 blocks</p>
+ * <p>2. create a thread to draw a image then black alternatively</p> 
+ * <p>3. in each blocks create a thread to send update 10 times</p>
+ * <p>2. the parent thread wait all child to finish</p>
+ * @param: hard coded, waveform mode:auto
+ * @param: hard coded, update mode: partial
+ * @param: hard coded, tempture: ambient temperature
+ * @returns: TRUE success, FALSE failure.
+ * @error: ioctl fail or update fail.
+ */
 BOOL test_max_update()
 {
    int state = 1;
@@ -474,6 +542,25 @@ BOOL test_max_update()
 	 return ret == 0? TRUE: FALSE;
 }
 
+/*
+ * <p>test collision update</p>
+ * <p>procedure:</p> 
+ * <p>1. setup update data</p>
+ * <p>2. get phy memory for alt buffer, and memory map it</p> 
+ * <p>3. draw a daisy image to alt buffet</p>
+ * <p>4. loop 20 time for below</p>
+ * <p>5. in odd loop draws black pattern in frame buffer, while draws white in even </p>
+ * <p>6. send regional update ioctl with alt buffer enabled</p>
+ * <p>7. shift the update region x,y at offset 5. </p>
+ * @param: hard coded, region update size: BUFFER_WIDTH,BUFFER_HEIGH
+ * @param: hard coded, waveform mode:auto
+ * @param: hard coded, update mode: partial
+ * @param: hard coded, tempture: ambient temperature
+ * @param: alt buffer: enable
+ * @param: alt buffer size: usergiven or use PXP_BUFFER_SIZE
+ * @returns: TRUE success, FALSE failure.
+ * @error: ioctl fail or update fail.
+ */
 BOOL test_collision_update()
 {
  BOOL ret = FALSE;
@@ -624,6 +711,25 @@ END:
  return ret;
 }
 
+/*
+ * <p>test alt update</p>
+ * <p>procedure:</p> 
+ * <p>1. setup update data</p>
+ * <p>2. get phy memory for alt buffer, and memory map it</p> 
+ * <p>3. draw a daisy image to alt buffet</p>
+ * <p>4. loop 20 time for below</p>
+ * <p>5. in odd loop draws black pattern in frame buffer, while draws white in even </p>
+ * <p>6. send regional update ioctl with alt buffer enabled</p>
+ * <p>6. send full update ioctl with alt buffer enabled</p>
+ * @param: hard coded, region update size: BUFFER_WIDTH,BUFFER_HEIGH
+ * @param: hard coded, waveform mode:auto
+ * @param: hard coded, update mode: partial
+ * @param: hard coded, tempture: ambient temperature
+ * @param: alt buffer: enable
+ * @param: alt buffer size: usergiven or use PXP_BUFFER_SIZE
+ * @returns: TRUE success, FALSE failure.
+ * @error: ioctl fail or update fail.
+ */
 BOOL test_alt_update()
 {
 BOOL ret = FALSE;
@@ -764,6 +870,20 @@ END:
  return ret;
 }
 
+/*
+ * <p>test full update</p>
+ * <p>procedure:</p> 
+ * <p>1. setup update data</p>
+ * <p>2. draw txt image to framebuffer. </p>
+ * <p> send update ioctl. </p.
+ * @param: hard coded, region update size: full screen
+ * @param: hard coded, waveform mode:auto
+ * @param: hard coded, update mode: partial
+ * @param: hard coded, tempture: ambient temperature
+ * @param: alt buffer: disable
+ * @returns: TRUE success, FALSE failure.
+ * @error: ioctl fail or update fail.
+ */
 BOOL full_update()
 {
   /*step 1: set up update data*/
@@ -804,6 +924,22 @@ BOOL full_update()
 	return TRUE;
 }
 
+/*
+ * <p>test wait update</p>
+ * <p>procedure:</p> 
+ * <p>1. setup update data</p>
+ * <p> partila update mode. draw pattern black and white</p>
+ * <p> verify no update timeout occure.</p>
+ * <p> run in full update mode. </p>
+ * @param: hard coded, region update size: BUFFER_WIDTH,BUFFER_HEIGH
+ * @param: hard coded, waveform mode:auto
+ * @param: hard coded, update mode: partial
+ * @param: hard coded, tempture: ambient temperature
+ * @param: alt buffer: enable
+ * @param: alt buffer size: usergiven or use PXP_BUFFER_SIZE
+ * @returns: TRUE success, FALSE failure.
+ * @error: ioctl fail or update fail.
+ */
 BOOL test_wait_update()
 {
 /*suppose you have set up the device before run this case*/
