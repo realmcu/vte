@@ -335,7 +335,7 @@ echo standby > /sys/power/state
 
 read -p "Can you see me?y/n" Rnt
 
-if [ $Rnt = "n" ]
+if [ "$Rnt" = "n" ]
 then
 RC=$TST_COUNT
 return $RC
@@ -343,7 +343,7 @@ fi
 
 read -p "Is the can cable ok? y/n" Rnt
 
-if [ $Rnt = "n" ]
+if [ "$Rnt" = "n" ]
 then
 RC=$TST_COUNT
 return $RC
@@ -365,7 +365,7 @@ echo please check the data in receiver
 
 read -p "is the data match? y/n" Rnt
 
-if [ $Rnt = "y" ]
+if [ "$Rnt" = "y" ]
 then
 return $RC
 fi
