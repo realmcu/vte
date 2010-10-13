@@ -32,4 +32,5 @@
 
 MAINTAINERCLEANFILES 	= Makefile.in 
 
-SUBDIRS			= hld 
+SUBDIRS			= @HLD@ @MAN@
+DIST_SUBDIRS		= hld man

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #
 #    testcases Makefile.
 #
@@ -40,28 +39,36 @@ FILTER_OUT_DIRS		+= realtime
 endif
 
 include $(top_srcdir)/include/mk/generic_trunk_target.mk
-=======
-SUBDIRS = `ls */Makefile | sed "s/Makefile//g" | grep -v open | grep -v pounder | grep -v DOTS`
-UCLINUX_SUBDIRS = kernel
 
-all:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
+top_srcdir		?= ..
 
-install:
-	-rm -rf bin
-	-mkdir -p bin
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
+include $(top_srcdir)/include/mk/env_pre.mk
 
-uclinux:
-	@set -e; for i in $(UCLINUX_SUBDIRS); do $(MAKE) -C $$i uclinux; done
+# XXX (garrcoop):
+# 1. ballista is broken (working on it).
+# 2. kdump shouldn't be compiled by default, because it's runtime based and
+#    WILL crash the build host (the tests need to be fixed to just build, not run).
+# 3. mce-test doesn't fit cleanly in the build, yet.
+# 4. pounder21 is just broken.
+#5. vte third_party_suite module_test are not fit to build together
+FILTER_OUT_DIRS		:= ballista kdump mce-test open% pounder21 vte_tests_suite third_party_suite module_test 
 
-uclinux_install:
-	mkdir -p bin
-	@set -e; for i in $(UCLINUX_SUBDIRS); \
-		do $(MAKE) -C $$i uclinux_install ; done
+# XXX (garrcoop): Not sure why realtime is still in this list; this was the
+# original list of disabled items...
+# XXX (garrcoop): kdump was in this list.
+# XXX (garrcoop): open_hpi_testsuite was in this list.
+ifneq ($(UCLINUX),1)
+FILTER_OUT_DIRS		+= audit-test DOTS realtime
+endif
 
-clean:
-	-rm -rf bin
-	@set -e; for i in $(SUBDIRS) ; do $(MAKE) -C $$i clean ; done
-
->>>>>>> vte 20080401
+#
+# XXX (garrcoop): disabling the open_posix_testsuite by request from Subrata
+# due to build times (open_posix_testsuite runs serially by design to
+# deterministically catch build errors -- see
+# testcases/open_posix_testsuite/Makefile for more details).
+#
+#trunk-all: open_posix_testsuite-all
+#
+#trunk-clean:: open_posix_testsuite-clean
+#
+#trunk-install: open_posix_testsuite-install

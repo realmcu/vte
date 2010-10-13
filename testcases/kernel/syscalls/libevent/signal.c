@@ -63,22 +63,20 @@ void evsignal_process(void);
 int evsignal_recalc(sigset_t *);
 int evsignal_deliver(sigset_t *);
 
-void
-evsignal_init(sigset_t *evsigmask)
+void evsignal_init(sigset_t * evsigmask)
 {
 	sigemptyset(evsigmask);
 }
 
-int
-evsignal_add(sigset_t *evsigmask, struct event *ev)
+int evsignal_add(sigset_t * evsigmask, struct event *ev)
 {
 	int evsignal;
-	
-	if (ev->ev_events & (EV_READ|EV_WRITE))
+
+	if (ev->ev_events & (EV_READ | EV_WRITE))
 		errx(1, "%s: EV_SIGNAL incompatible use", __func__);
 	evsignal = EVENT_SIGNAL(ev);
 	sigaddset(evsigmask, evsignal);
-	
+
 	return (0);
 }
 
@@ -86,8 +84,7 @@ evsignal_add(sigset_t *evsigmask, struct event *ev)
  * Nothing to be done here.
  */
 
-int
-evsignal_del(sigset_t *evsigmask, struct event *ev)
+int evsignal_del(sigset_t * evsigmask, struct event *ev)
 {
 	int evsignal;
 
@@ -95,18 +92,16 @@ evsignal_del(sigset_t *evsigmask, struct event *ev)
 	sigdelset(evsigmask, evsignal);
 	needrecalc = 1;
 
-	return (sigaction(EVENT_SIGNAL(ev),(struct sigaction *)SIG_DFL, NULL));
+	return (sigaction(EVENT_SIGNAL(ev), (struct sigaction *)SIG_DFL, NULL));
 }
 
-static void
-evsignal_handler(int sig)
+static void evsignal_handler(int sig)
 {
 	evsigcaught[sig]++;
 	evsignal_caught = 1;
 }
 
-int
-evsignal_recalc(sigset_t *evsigmask)
+int evsignal_recalc(sigset_t * evsigmask)
 {
 	struct sigaction sa;
 	struct event *ev;
@@ -117,13 +112,13 @@ evsignal_recalc(sigset_t *evsigmask)
 
 	if (sigprocmask(SIG_BLOCK, evsigmask, NULL) == -1)
 		return (-1);
-	
+
 	/* Reinstall our signal handler. */
 	memset(&sa, 0, sizeof(sa));
 	sa.sa_handler = evsignal_handler;
 	sa.sa_mask = *evsigmask;
 	sa.sa_flags |= SA_RESTART;
-	
+
 	TAILQ_FOREACH(ev, &signalqueue, ev_signal_next) {
 		if (sigaction(EVENT_SIGNAL(ev), &sa, NULL) == -1)
 			return (-1);
@@ -131,8 +126,7 @@ evsignal_recalc(sigset_t *evsigmask)
 	return (0);
 }
 
-int
-evsignal_deliver(sigset_t *evsigmask)
+int evsignal_deliver(sigset_t * evsigmask)
 {
 	if (TAILQ_FIRST(&signalqueue) == NULL)
 		return (0);
@@ -141,8 +135,7 @@ evsignal_deliver(sigset_t *evsigmask)
 	/* XXX - pending signals handled here */
 }
 
-void
-evsignal_process(void)
+void evsignal_process(void)
 {
 	struct event *ev;
 	short ncalls;
@@ -159,4 +152,3 @@ evsignal_process(void)
 	memset(evsigcaught, 0, sizeof(evsigcaught));
 	evsignal_caught = 0;
 }
-

@@ -268,9 +268,12 @@ ltp: libltp.a pandir tools config.h config.mk
 	@echo "** LTP Network tests suite is available      **"
 	@echo "***********************************************"
 
-	@echo "** MAKE ALL - third party suite               **"
+## Package
+package: 
+	@$(RPMBUILD) -ba ltp-devel.spec
 
-vte: libltp.a pandir tools
+#vte related
+vte: libltp.a tools
 	@echo "***********************************************"
 	@echo "** MAKE ALL - VTE tests suite                **"
 	@echo "***********************************************"
@@ -284,6 +287,9 @@ vte: libltp.a pandir tools
 	@echo
 	@$(MAKE) -C testcases/vte_tests_suite install
 	@$(MAKE) -C testcases/module_test install
+	@$(MAKE) -C pan
+	@$(MAKE) -C tools
+	@$(MAKE) -C tools install
 	@echo
 	@echo "***********************************************"
 	@echo "** VTE tests suite is available              **"

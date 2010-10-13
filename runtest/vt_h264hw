@@ -1,6 +1,0 @@
-#VT H.264/AVC decoder IPU pf tests
-#files: h264_decoder_testapp
-#files: h264d_cfg_hw
-
-TG-LV-H264D-0011 h264_decoder_testapp -T 0 -C $LTPROOT/testcases/bin/configs/h264d_cfg_hw -V -S
-

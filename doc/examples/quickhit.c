@@ -152,7 +152,7 @@ int Nlinks=0;
  * the string that should be added to optstring in getopt(3), an integer that
  * will be used as a flag if the option is given, and a pointer to a string that
  * should receive the optarg parameter from getopt(3).  Here we add a -N
- * option.  Long options are not supported at this time. 
+ * option.  Long options are not supported at this time.
  */
 char *Nlinkarg;
 int Nflag = 0;
@@ -330,7 +330,7 @@ help(void)
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void 
+void
 setup()
 {
 	int fd;

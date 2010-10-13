@@ -1,5 +1,11 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+#ifndef __OPENHPI_CONFIG_H
+#define __OPENHPI_CONFIG_H
+
+/* openhpi specific config path */
+#undef CONFPATH
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
@@ -18,11 +24,26 @@
 /* Define to 1 if you have the `ltdl' library (-lltdl). */
 #undef HAVE_LIBLTDL
 
+/* Define to 1 if you have the <libxml2/libxml/xmlexports.h> header file. */
+#undef HAVE_LIBXML2_LIBXML_XMLEXPORTS_H
+
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
 /* Define to 1 if you have the `memset' function. */
 #undef HAVE_MEMSET
+
+/* Define to 1 if you have the <netinet/in.h> header file. */
+#undef HAVE_NETINET_IN_H
+
+/* openssl library was found */
+#undef HAVE_OPENSSL
+
+/* Define to 1 if you have the <openssl/bio.h> header file. */
+#undef HAVE_OPENSSL_BIO_H
+
+/* Define to 1 if you have the <openssl/err.h> header file. */
+#undef HAVE_OPENSSL_ERR_H
 
 /* Define to 1 if you have the <openssl/md2.h> header file. */
 #undef HAVE_OPENSSL_MD2_H
@@ -30,11 +51,20 @@
 /* Define to 1 if you have the <openssl/md5.h> header file. */
 #undef HAVE_OPENSSL_MD5_H
 
+/* Define to 1 if you have the <openssl/ssl.h> header file. */
+#undef HAVE_OPENSSL_SSL_H
+
+/* Define to 1 if you have the <stdarg.h> header file. */
+#undef HAVE_STDARG_H
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the `strdup' function. */
+#undef HAVE_STRDUP
 
 /* Define to 1 if cpp supports the ANSI # stringizing operator. */
 #undef HAVE_STRINGIZE
@@ -54,17 +84,30 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
-/* Define to 1 if you want thread-safe implementation */
-#undef HAVE_THREAD_SAFE
-
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
 /* Define to 1 if you have the `vprintf' function. */
 #undef HAVE_VPRINTF
 
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#undef LT_OBJDIR
+
+/* default client configfile */
+#undef OH_CLIENT_DEFAULT_CONF
+
+/* Enables dynamic debug messages */
+#undef OH_DBG_MSGS
+
+/* default configfile */
+#undef OH_DEFAULT_CONF
+
 /* uid map */
 #undef OH_DEFAULT_UID_MAP
+
+/* openhpi plugin path */
+#undef OH_PLUGIN_PATH
 
 /* Name of package */
 #undef PACKAGE
@@ -92,3 +135,5 @@
 
 /* Version number of package */
 #undef VERSION
+
+#endif /* __OPENHPI_CONFIG_H */
