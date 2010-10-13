@@ -20,10 +20,14 @@
 
 
 #include <stdio.h>
+#include "config.h"
+#if HAVE_SYS_CAPABILITY_H
 #include <sys/capability.h>
+#endif
 
 int main()
 {
+#ifdef HAVE_LIBCAP
 	cap_t caps, caps2;
 	int ret;
 
@@ -31,9 +35,13 @@ int main()
 	caps2 = cap_from_text("cap_setpcap+ep");
 	ret = cap_set_proc(caps);
 	ret = cap_compare(caps, caps2);
-	printf("Caps were %s the same\n", ret ? "not" : "");
+	printf("Caps were %sthe same\n", ret ? "not " : "");
 
 	cap_free(caps);
 	cap_free(caps2);
 	return ret;
+#else
+	printf("System doesn't support full POSIX capabilities.\n");
+	return 1;
+#endif
 }

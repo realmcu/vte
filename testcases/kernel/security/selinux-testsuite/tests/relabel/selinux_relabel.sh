@@ -15,8 +15,8 @@ setup()
 	export TST_COUNT=0
 	export TST_TOTAL=3
 
-	# Remove any leftover test file from prior failed runs.
-	rm -rf $SELINUXTMPDIR/test_file
+	SELINUXTMPDIR=$(mktemp -d)
+	chcon -t test_file_t $SELINUXTMPDIR
 
 	# Create a test file with the test_relabel_oldtype_t
 	# type for use in the tests.
@@ -31,13 +31,13 @@ test01()
 	RC=0
 
 	# Verify that test_relabel_t can relabel the file.
-	runcon -t test_relabel_t chcon system_u:object_r:test_relabel_newtype_t $SELINUXTMPDIR/test_file 2>&1
+	runcon -t test_relabel_t -- chcon -t test_relabel_newtype_t $SELINUXTMPDIR/test_file 2>&1
         RC=$?
         if [ $RC -eq 0 ]
         then
-                echo "$TCID   PASS : relabel passed."
+                tst_resm TPASS "relabel passed."
         else
-                echo "$TCID   FAIL : relabel failed."
+                tst_resm TFAIL "relabel failed."
         fi
         return $RC
 }
@@ -57,10 +57,10 @@ test02()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : relabel passed."
+                tst_resm TPASS "relabel passed."
 		RC=0
         else
-                echo "$TCID   FAIL : relabel failed."
+                tst_resm TFAIL "relabel failed."
 		RC=1
         fi
 	return $RC
@@ -79,10 +79,10 @@ test03()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : relabel passed."
+                tst_resm TPASS "relabel passed."
 		RC=0
         else
-                echo "$TCID   FAIL : relabel failed."
+                tst_resm TFAIL "relabel failed."
 		RC=1
         fi
 	return $RC
@@ -90,8 +90,7 @@ test03()
 
 cleanup()
 {
-	# Cleanup.
-	rm -rf $SELINUXTMPDIR/test_file
+	rm -rf $SELINUXTMPDIR
 }
 
 # Function:     main

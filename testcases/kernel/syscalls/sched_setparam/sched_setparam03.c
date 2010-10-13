@@ -15,29 +15,29 @@
  *
  */
 /**********************************************************
- * 
+ *
  *    TEST IDENTIFIER	: sched_setparam03
- * 
+ *
  *    EXECUTED BY	: root / superuser
- * 
+ *
  *    TEST TITLE	: Checks functionality for sched_setparam(2) for pid!=0
- * 
+ *
  *    TEST CASE TOTAL	: 1
- * 
+ *
  *    AUTHOR		: Saji Kumar.V.R <saji.kumar@wipro.com>
- * 
+ *
  *    SIGNALS
  * 	Uses SIGUSR1 to pause before test if option set.
  * 	(See the parse_opts(3) man page).
  *
  *    DESCRIPTION
  *	This test forks a child & changes its parent's scheduling priority
- * 
+ *
  * 	Setup:
  * 	  Setup signal handling.
  *	  Pause for SIGUSR1 if option specified.
  *	  Change scheduling policy to SCHED_FIFO
- * 
+ *
  * 	Test:
  *	 Loop if the proper options are given.
  *	 Fork a child
@@ -50,10 +50,10 @@
  *		TEST passed
  *	  else
  *		TEST failed
- * 
+ *
  * 	Cleanup:
  * 	  Print errno log and/or timing stats if options given
- * 
+ *
  * USAGE:  <for command-line>
  *  sched_setparam03 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-h] [-f] [-p]
  *			where,  -c n : Run n copies concurrently.
@@ -86,18 +86,17 @@ extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static struct sched_param param = { NEW_PRIORITY };
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 
-	int lc;		/* loop counter */
-	char *msg;	/* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 	int status;
 	pid_t child_pid;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL))
-	     != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
+	    != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -110,13 +109,13 @@ main(int ac, char **av)
 		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		switch(child_pid = FORK_OR_VFORK()) {
- 
+		switch (child_pid = FORK_OR_VFORK()) {
+
 		case -1:
 			/* fork() failed */
 			tst_resm(TFAIL, "fork() failed");
 			continue;
- 
+
 		case 0:
 			/* Child */
 
@@ -128,47 +127,43 @@ main(int ac, char **av)
 			TEST(sched_setparam(getppid(), &param));
 
 			if (TEST_RETURN == -1) {
-				tst_resm(TWARN, "sched_setparam() returned %d,"
-					" errno = %d : %s", TEST_RETURN,
-					TEST_ERRNO, strerror(TEST_ERRNO));
+				tst_resm(TWARN|TTERRNO, "sched_setparam() returned %ld", TEST_RETURN);
 				exit(0);
 			}
 			exit(1);
 
-		default :
+		default:
 			/* Parent */
 			if ((waitpid(child_pid, &status, 0)) < 0) {
 				tst_resm(TFAIL, "wait() failed");
 				continue;
 			}
-		
+
 			/*
 			 * Verify that parent's scheduling priority has
 			 * changed.
 			 */
 			if ((WIFEXITED(status)) && (WEXITSTATUS(status)) &&
-				(verify_priority())) {
+			    (verify_priority())) {
 				tst_resm(TPASS, "Test Passed");
 			} else {
 				tst_resm(TFAIL, "Test Failed");
 			}
 		}
-	}	/* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 
 	/* cleanup and exit */
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	 /*NOTREACHED*/ return 0;
 
-}	/* End main */
+}				/* End main */
 
 /* setup() - performs all ONE TIME setup for this test */
-void
-setup()
+void setup()
 {
 	struct sched_param p = { 1 };
-	
+
 	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
@@ -180,15 +175,13 @@ setup()
 		tst_brkm(TBROK, cleanup, "sched_setscheduler() failed");
 	}
 
-}	/* End setup() */
-
+}				/* End setup() */
 
 /*
  *cleanup() -   performs all ONE TIME cleanup for this test at
  *		completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 
 	/*
@@ -199,14 +192,13 @@ cleanup()
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-}	/* End cleanup() */
+}				/* End cleanup() */
 
 /*
  * verify_priority() -  This function checks whether the priority is
  *			set correctly
- */		
-int
-verify_priority()
+ */
+int verify_priority()
 {
 	struct sched_param p;
 
@@ -215,7 +207,7 @@ verify_priority()
 			return 1;
 		} else {
 			tst_resm(TWARN, "sched_getparam() returned priority"
-					" value as %d", p.sched_priority);
+				 " value as %d", p.sched_priority);
 			return 0;
 		}
 	}

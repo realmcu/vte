@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 {
 	int lc;
 	char *msg;
-	
+
 	struct stat statbuf;
 	int mskval = 0000;
 	int failcnt = 0;
@@ -76,12 +76,11 @@ int main(int argc, char **argv)
 
 	/* parse standard options */
 	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL))
-	    != (char *) NULL) {
+	    != (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-		/*NOTREACHED*/
-	}
+	 /*NOTREACHED*/}
 
-	setup();			/* global setup */
+	setup();		/* global setup */
 
 	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
@@ -90,7 +89,7 @@ int main(int argc, char **argv)
 		Tst_count = 0;
 
 		for (umask(mskval = 0077), i = 1; mskval < 01000;
-				i++, umask(++mskval)) {
+		     i++, umask(++mskval)) {
 			unlink(filname);
 			if ((fildes = creat(filname, 0777)) == -1) {
 				tst_resm(TBROK, "cannot create "
@@ -102,25 +101,22 @@ int main(int argc, char **argv)
 				} else {
 					low9mode = statbuf.st_mode & 0777;
 					if (low9mode != (~mskval & 0777)) {
-						tst_resm(TFAIL, 
-							 "got %0 expected %o"
+						tst_resm(TFAIL,
+							 "got %o expected %o"
 							 "mask didnot take",
 							 low9mode,
 							 (~mskval & 0777));
-						/*NOTREACHED*/
-					}
+					 /*NOTREACHED*/}
 				}
 			}
 			close(fildes);
 		}
 		if (!failcnt)
 			tst_resm(TPASS, "umask correctly returns the "
-					"previous value for all masks");
+				 "previous value for all masks");
 	}
 	cleanup();
-	/*NOTREACHED*/
-
-  return(0);
+	 /*NOTREACHED*/ return 0;
 
 }
 
@@ -128,13 +124,11 @@ int main(int argc, char **argv)
  * setup
  *	performs all ONE TIME setup for this test
  */
-void
-setup()
+void setup()
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	
 	/* Pause if that option was specified
 	 * TEST_PAUSE contains the code to fork the test with the -i option.
 	 * You want to make sure you do this before you create your temporary
@@ -153,8 +147,7 @@ setup()
  *	performs all ONE TIME cleanup for this test at completion or
  *	premature exit
  */
-void
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified

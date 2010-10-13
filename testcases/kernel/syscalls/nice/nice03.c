@@ -22,7 +22,7 @@
  *
  * Test Description:
  *  Verify that any user can successfully increase the nice value of
- *  the process by passing an increment value (< max. applicable limits) to 
+ *  the process by passing an increment value (< max. applicable limits) to
  *  nice() system call.
  *
  * Expected Result:
@@ -40,7 +40,7 @@
  *   Check return code, if system call failed (return=-1)
  *   	Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *   	Verify the Functionality of system call
  *      if successful,
  *      	Issue Functionality-Pass message.
  *      Otherwise,
@@ -75,8 +75,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID="nice03";		/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
+char *TCID = "nice03";		/* Test program identifier.    */
+int TST_TOTAL = 1;		/* Total number of test cases. */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 #define	NICEINC		2
@@ -85,15 +85,14 @@ int Org_nice;			/* original priority of the test process */
 void setup();			/* Main setup function of test */
 void cleanup();			/* cleanup function for the test */
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 	int New_nice;		/* priority of process after nice() */
-    
+
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
+	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
 	if (msg != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
@@ -104,9 +103,9 @@ main(int ac, char **av)
 	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
+		Tst_count = 0;
 
-		/* 
+		/*
 		 * Call nice(2) with an 'incr' parameter set
 		 * to a +ve value < max. applicable limit.
 		 * (Linux - 20)
@@ -139,13 +138,13 @@ main(int ac, char **av)
 		} else {
 			tst_resm(TPASS, "call succeeded");
 		}
-	}	/* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 
 	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	return(0);
-}	/* End main */
+	return 0;
+}				/* End main */
 
 /*
  * void
@@ -155,8 +154,7 @@ main(int ac, char **av)
  *  Get the current nice value of test process and save it in a file.
  *  Read the nice value from file into a variable.
  */
-void 
-setup()
+void setup()
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -172,8 +170,7 @@ setup()
  * cleanup() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
  */
-void 
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.

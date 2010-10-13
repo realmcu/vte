@@ -18,9 +18,11 @@
 #include <selinux/selinux.h>
 #include <selinux/context.h>
 #include <sched.h>
+#include "test.h"
 
-int clone_fn(char **argv)
+int clone_fn(void *in)
 {
+	char **argv = (char **) in;
 	execv(argv[3], argv+3);
 	perror(argv[3]);
 	return -1;
@@ -28,9 +30,7 @@ int clone_fn(char **argv)
 
 int main(int argc, char **argv)
 {
-	int pagesize;
-	void *clone_stack, *page;
-	int pid, rc, len, status, cloneflags;
+	int pid, rc, status, cloneflags;
 	security_context_t context_s;
 	context_t context;
 
@@ -45,14 +45,6 @@ int main(int argc, char **argv)
 		exit(-1);
 	}
 
-	pagesize = getpagesize();
-	page = malloc(pagesize);
-	if (!page) {
-		perror("malloc");
-		exit(-1);
-	}
-	clone_stack = page + pagesize;
-
 	rc = getcon(&context_s);
 	if (rc < 0) {
 		fprintf(stderr, "%s:  unable to get my context\n", argv[0]);
@@ -65,12 +57,12 @@ int main(int argc, char **argv)
 		fprintf(stderr, "%s:  unable to create context structure\n", argv[0]);
 		exit(-1);
 	}
-	
+
 	if (context_type_set(context, argv[2])) {
 		fprintf(stderr, "%s:  unable to set new type\n", argv[0]);
 		exit(-1);
 	}
-	
+
 	freecon(context_s);
 	context_s = context_str(context);
 	if (!context_s) {
@@ -83,17 +75,11 @@ int main(int argc, char **argv)
 		fprintf(stderr, "%s:  unable to set exec context to %s\n", argv[0], context_s);
 		exit(-1);
 	}
-#if defined(__hppa__)
-	pid = clone(clone_fn, page, cloneflags | SIGCHLD, argv);
-#elif defined(__ia64__)
-	pid = __clone2(clone_fn, clone_stack, pagesize, cloneflags | SIGCHLD, argv, NULL, NULL, NULL);
-#else
-	pid = clone(clone_fn, clone_stack, cloneflags | SIGCHLD, argv);
-#endif
+	pid = ltp_clone_quick(cloneflags | SIGCHLD, clone_fn, argv);
 	if (pid < 0) {
 		perror("clone");
 		exit(-1);
-	} 
+	}
 
 	pid = wait(&status);
 	if (pid < 0) {

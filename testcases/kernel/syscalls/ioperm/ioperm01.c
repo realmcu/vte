@@ -15,17 +15,17 @@
  *
  */
 /**********************************************************
- * 
+ *
  *    TEST IDENTIFIER	: ioperm01
- * 
+ *
  *    EXECUTED BY	: superuser
- * 
+ *
  *    TEST TITLE	: Basic test for ioperm(2)
- * 
+ *
  *    TEST CASE TOTAL	: 1
  *
  *    AUTHOR		: Subhab Biswas <subhabrata.biswas@wipro.com>
- * 
+ *
  *    SIGNALS
  * 	Uses SIGUSR1 to pause before test if option set.
  * 	(See the parse_opts(3) man page).
@@ -38,17 +38,17 @@
  * 	  Setup signal handling.
  *	  Test caller is superuser
  *	  Pause for SIGUSR1 if option specified.
- * 
+ *
  * 	Test:
  *	 Loop if the proper options are given.
  * 	  Execute system call
  *        Check return code, if system call failed (return=-1)
- *              Issue FAIL message with errno. 
+ *              Issue FAIL message with errno.
  *        Otherwise, Issue PASS message.
- * 
+ *
  * 	Cleanup:
  * 	  Print errno log and/or timing stats if options given
- * 
+ *
  * USAGE:  <for command-line>
  * ioperm01 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-h] [-f] [-p]
  *			where,  -c n : Run n copies concurrently.
@@ -65,7 +65,7 @@
 
 char *TCID = "ioperm01";	/* Test program identifier.    */
 
-#if defined __i386__ || defined(__x86_64__) 
+#if defined __i386__ || defined(__x86_64__)
 
 #include <errno.h>
 #include <unistd.h>
@@ -74,9 +74,9 @@ char *TCID = "ioperm01";	/* Test program identifier.    */
 #include "test.h"
 #include "usctest.h"
 
-int io_addr;     /*kernel version dependant io start address */
+unsigned long io_addr;			/*kernel version dependant io start address */
 #define NUM_BYTES 3		/* number of bytes from start address */
-#define TURN_ON 1		
+#define TURN_ON 1
 #define TURN_OFF 0
 #ifndef IO_BITMAP_BITS
 #define IO_BITMAP_BITS 1024
@@ -88,22 +88,20 @@ static void cleanup();
 int TST_TOTAL = 1;		/* Total number of test cases. */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 
-	int lc;		/* loop counter */
-	char *msg;	/* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL))
-	     != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
+	    != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	/* perform global setup for test */
 	setup();
-
 
 	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
@@ -118,63 +116,58 @@ main(int ac, char **av)
 
 		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL, "ioperm() failed for port address "
-				 "%ld,  errno=%d : %s", io_addr,
+				 "%lu,  errno=%d : %s", io_addr,
 				 TEST_ERRNO, strerror(TEST_ERRNO));
 		} else {
 			tst_resm(TPASS, "ioperm() passed for port "
-				 "address %ld, returned %d",
-				  io_addr, TEST_RETURN);
-		} 
-	}	/* End for TEST_LOOPING */
+				 "address %lu, returned %lu",
+				 io_addr, TEST_RETURN);
+		}
+	}			/* End for TEST_LOOPING */
 
 	/* cleanup and exit */
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	 /*NOTREACHED*/ return 0;
 
-}	/* End main */
+}				/* End main */
 
 /* setup() - performs all ONE TIME setup for this test */
-void
-setup()
+void setup()
 {
-	
+
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Check whether we are root  */
 	if (geteuid() != 0) {
 		tst_brkm(TBROK, tst_exit, "Must be root for this test!");
-		/*NOTREACHED*/
-	}
+	 /*NOTREACHED*/}
 
 	/*
-	 * The value of IO_BITMAP_BITS (include/asm-i386/processor.h) changed 
+	 * The value of IO_BITMAP_BITS (include/asm-i386/processor.h) changed
 	 * from kernel 2.6.8 to permit 16-bits ioperm
 	 *
 	 * Ricky Ng-Adam, rngadam@yahoo.com
 	 * */
-	if (tst_kvercmp(2,6,8) < 0) {
-		/*get ioperm on 1021, 1022, 1023*/
+	if (tst_kvercmp(2, 6, 8) < 0) {
+		/*get ioperm on 1021, 1022, 1023 */
 		io_addr = IO_BITMAP_BITS - NUM_BYTES;
 	} else {
-		/*get ioperm on 65533, 65534, 65535*/
+		/*get ioperm on 65533, 65534, 65535 */
 		io_addr = IO_BITMAP_BITS - NUM_BYTES;
 	}
 
 	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}	/* End setup() */
-
+}				/* End setup() */
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
  *		completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 
 	/*
@@ -183,7 +176,7 @@ cleanup()
 	if ((ioperm(io_addr, NUM_BYTES, TURN_OFF)) == -1) {
 		tst_brkm(TBROK, tst_exit, "ioperm() cleanup failed");
 	}
-	
+
 	/*
 	 * print timing stats if that option was specified.
 	 * print errno log if that option was specified.
@@ -193,7 +186,7 @@ cleanup()
 	/* exit with return code appropriate for results */
 	tst_exit();
 
-}	/* End cleanup() */
+}				/* End cleanup() */
 
 #else /* __i386__ */
 
@@ -202,12 +195,12 @@ cleanup()
 
 int TST_TOTAL = 0;		/* Total number of test cases. */
 
-int
-main()
+int main()
 {
-	tst_resm(TPASS, "LSB v1.3 does not specify ioperm() for this architecture.");
+	tst_resm(TPASS,
+		 "LSB v1.3 does not specify ioperm() for this architecture.");
 	tst_exit();
-	return(0);
+	return 0;
 }
 
 #endif /* __i386__ */

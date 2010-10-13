@@ -17,6 +17,9 @@ setup()
 	export TST_COUNT=0
 	export TST_TOTAL=2
 
+	SELINUXTMPDIR=$(mktemp -d)
+	chcon -t test_file_t $SELINUXTMPDIR
+
 	# Create a temporary file for testing
 	rm -f $SELINUXTMPDIR/temp_file 2>&1
 	touch $SELINUXTMPDIR/temp_file 2>&1
@@ -35,9 +38,9 @@ test01()
 	RC=$?
 	if [ $RC -eq 0 ]
 	then
-		echo "$TCID   PASS : ioctl passed."
+		tst_resm TPASS "ioctl passed."
 	else
-		echo "$TCID   FAIL : ioctl failed."
+		tst_resm TFAIL "ioctl failed."
 	fi
 	return $RC
 }
@@ -56,16 +59,16 @@ test02()
 	RC=$?
 	if [ $RC -eq 0 ]
 	then
-		echo "$TCID   PASS : ioctl passed."
+		tst_resm TPASS "ioctl passed."
 	else
-		echo "$TCID   FAIL : ioctl failed."
+		tst_resm TFAIL "ioctl failed."
 	fi
 	return $RC
 }
 
 cleanup()
 {
-	rm -f $SELINUXTMPDIR/temp_file 2>&1
+	rm -rf $SELINUXTMPDIR
 }
 
 # Function:     main

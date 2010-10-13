@@ -26,26 +26,14 @@ int dummy(void *v)
 }
 int main()
 {
-        void *childstack, *stack;
         int pid;
 
         if (tst_kvercmp(2,6,19) < 0)
                 return 1;
-        stack = malloc(getpagesize());
-        if (!stack) {
-                perror("malloc");
-                return 2;
-        }
 
-        childstack = stack + getpagesize();
+	pid = ltp_clone_quick(CLONE_NEWIPC, dummy, NULL);
 
-#ifdef __ia64__
-        pid = clone2(dummy, childstack, getpagesize(), CLONE_NEWIPC, NULL, NULL, NULL, NULL);
-#else
-        pid = clone(dummy, childstack, CLONE_NEWIPC, NULL);
-#endif
-
-        if (pid == -1) 
+        if (pid == -1)
                 return 3;
         return 0;
 }

@@ -3,11 +3,11 @@
  * From:	Stephen Hemminger <shemminger@osdl.org>
  * Modified by Daniel McNeil <daniel@osdl.org> for testing aio.
  *	- added -a alignment
- *	- added -b blksize option 
+ *	- added -b blksize option
  *	_ added -s size	option
  *	- added -f open_flag option
  *	- added -w (no write) option (reads from source only)
- *	- added -n (num aio) option 
+ *	- added -n (num aio) option
  *	- added -z (zero dest) opton (writes zeros to dest only)
  *	- added -D delay_ms option
  *
@@ -17,12 +17,11 @@
  * 3. When write completes decrement counter and free resources
  *
  *
- * Usage: aiocp [-b blksize] -n [num_aio] [-w] [-z] [-s filesize] 
+ * Usage: aiocp [-b blksize] -n [num_aio] [-w] [-z] [-s filesize]
  *		[-f DIRECT|TRUNC|CREAT|SYNC|LARGEFILE] src dest
  */
 
 #define _GNU_SOURCE
-
 
 #include <unistd.h>
 #include <stdio.h>
@@ -33,6 +32,9 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <sys/select.h>
+#include "config.h"
+
+#if HAVE_LIBAIO_H
 
 #include <libaio.h>
 
@@ -226,7 +228,7 @@ void usage()
 		"This does sequential AIO reads (no writes).\n\n"
 		"Usage: aiocp [options] -z DEST\n"
 		"This does sequential AIO writes of zeros.\n");
-		
+	
 	exit(1);
 }
 
@@ -326,7 +328,7 @@ int main(int argc, char *const *argv)
 
 	argc -= optind;
 	argv += optind;
-	
+
 	if (argc < 1) {
 		usage();
 	}
@@ -497,7 +499,7 @@ int main(int argc, char *const *argv)
 	exit(0);
 }
 
-/* 
+/*
  * Results look like:
  * [alanm@toolbox ~/MOT3]$ ../taio -d kernel-source-2.4.8-0.4g.ppc.rpm abc
  * rrrrrrrrrrrrrrrwwwrwrrwwrrwrwwrrwrwrwwrrwrwrrrrwwrwwwrrwrrrwwwwwwwwwwwwwwwww
@@ -510,3 +512,13 @@ int main(int argc, char *const *argv)
  * rrrwwwwwwwrrrrwwrrrrrrrrrrrrwrwrrrrwwwwwwwwwwwwwwrwrrrrwwwwrwrrrrwrwwwrrrwww
  * rwwrrrrrrrwrrrrrrrrrrrrwwwwrrrwwwrwrrwwwwwwwwwwwwwwwwwwwwwrrrrrrrwwwwwwwrw
  */
+
+#else
+
+int
+main(void) {
+	fprintf(stderr, "System doesn't have libaio support.\n");
+	return 1;
+}
+
+#endif

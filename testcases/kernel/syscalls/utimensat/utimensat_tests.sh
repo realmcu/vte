@@ -31,9 +31,9 @@ if tst_kvercmp 2 6 22 ; then
        exit 0
 fi
 
-RESULT_FILE=/tmp/utimensat.result
+RESULT_FILE=$TMPDIR/utimensat.result
 
-TEST_DIR=/tmp/utimensat_tests
+TEST_DIR=$TMPDIR/utimensat_tests
 FILE=$TEST_DIR/utimensat.test_file
 
 TEST_PROG=utimensat01
@@ -42,6 +42,23 @@ if [ ! -f $LTPROOT/testcases/bin/$TEST_PROG ]; then
      echo "${TEST_PROG} 1 WARN : Build/Install was not proper,"
      exit 1;
 fi
+
+# Since some automated testing systems have no tty while testing,
+# comment this line in /etc/sudoers to avoid the error message:
+# `sudo: sorry, you must have a tty to run sudo'
+# Use trap to restore this line after program terminates.
+pattern="[[:space:]]*Defaults[[:space:]]*requiretty.*"
+if grep -q "^${pattern}" /etc/sudoers; then
+	echo "${TEST_PROG} 0 INFO : Comment requiretty in /etc/sudoers for automated testing systems"
+	sed -E -i"" -e "s/^($pattern)/#\1/" /etc/sudoers
+	trap 'trap "" EXIT; teardown' EXIT
+fi
+
+teardown()
+{
+	echo "${TEST_PROG} 0 INFO : Restore requiretty in /etc/sudoers"
+	sed -E -i"" -e "s/^#($pattern)/\1/" /etc/sudoers
+}
 
 # Summary counters of all test results
 
@@ -61,16 +78,16 @@ setup_file()
 
     FILE=$1
 
-    # Make sure any old verion of file is deleted
+    # Make sure any old version of file is deleted
 
     if test -e $FILE; then
-        sudo chattr -ai $FILE
-        sudo rm -f $FILE
+        sudo $s_arg chattr -ai $FILE || return $?
+        sudo $s_arg rm -f $FILE || return $?
     fi
 
     # Create file and make atime and mtime zero.
 
-    sudo -u $user_tester touch $FILE
+    sudo $s_arg -u $user_tester touch $FILE || return $?
     if ! $TEST_PROG -q $FILE 0 0 0 0 > $RESULT_FILE; then
         echo "Failed to set up test file $FILE" 1>&2
         exit 1
@@ -86,19 +103,23 @@ setup_file()
     # Set owner, permissions, and EFAs for file.
 
     if test -n "$2"; then
-        sudo chown $2 $FILE
+        sudo $s_arg chown $2 $FILE || return $?
     fi
-    
-    sudo chmod $3 $FILE
+
+    sudo $s_arg chmod $3 $FILE || return $?
 
     if test -n "$4"; then
-        sudo chattr $4 $FILE
+        sudo $s_arg chattr $4 $FILE || return $?
     fi
 
     # Display file setup, for visual verification
 
     ls -l $FILE | awk '{ printf "Owner=%s; perms=%s; ", $3, $1}'
-    sudo lsattr -l $FILE | sed 's/, /,/g' | awk '{print "EFAs=" $2}'
+    if ! sudo $s_arg lsattr -l $FILE | sed 's/, /,/g' | awk '{print "EFAs=" $2}'
+    then
+        return $?
+    fi
+
 }
 
 test_failed()
@@ -126,7 +147,7 @@ check_result()
     fi
 
     read res atime mtime < $RESULT_FILE
-    
+
     echo "EXPECTED: $EXPECTED_RESULT $EXPECT_ATIME_CHANGED "\
          "$EXPECT_MTIME_CHANGED"
     echo "RESULT:   $res $atime $mtime"
@@ -135,7 +156,7 @@ check_result()
         test_failed
         return
     fi
-    
+
     passed=1
 
     # If the test program exited successfully, then check that atime and
@@ -153,7 +174,7 @@ check_result()
                 passed=0
             fi
         fi
-    
+
         if test $EXPECT_MTIME_CHANGED = "y"; then
             if test $mtime -eq 0; then
                 echo "mtime should have changed, but did not"
@@ -165,7 +186,7 @@ check_result()
                 passed=0
             fi
         fi
-    
+
         if test $passed -eq 0; then
             test_failed
             return
@@ -182,7 +203,7 @@ run_test()
     # a) pathname (pathname != NULL)
     # b) readable file descriptor (pathname == NULL, dirfd opened O_RDONLY)
     # c) writable file descriptor (pathname == NULL, dirfd opened O_RDWR).
-    #    For this case we also inclue O_APPEND in open flags, since that
+    #    For this case we also include O_APPEND in open flags, since that
     #    is needed if testing with a file that has the Append-only
     #    attribute enabled.
 
@@ -211,7 +232,7 @@ run_test()
     cp $LTPROOT/testcases/bin/$TEST_PROG ./
     CMD="./$TEST_PROG -q $FILE $4"
     echo "$CMD"
-    sudo -u $user_tester $CMD > $RESULT_FILE
+    sudo $s_arg -u $user_tester $CMD > $RESULT_FILE
     check_result $? $5 $6 $7
     echo
 
@@ -220,33 +241,57 @@ run_test()
         setup_file $FILE "$1" "$2" "$3"
         CMD="./$TEST_PROG -q -d $FILE NULL $4"
         echo "$CMD"
-        sudo -u $user_tester $CMD > $RESULT_FILE
+        sudo $s_arg -u $user_tester $CMD > $RESULT_FILE
         check_result $? $5 $6 $7
         echo
     fi
 
     # Can't do the writable file descriptor test for immutable files
-    # (even root can't open an immutable file for writing) 
+    # (even root can't open an immutable file for writing)
 
     if test $do_write_fd_test -ne 0; then
         echo "Writable file descriptor (futimens(3)) test"
         setup_file $FILE "$1" "$2" "$3"
         CMD="./$TEST_PROG -q -w -d $FILE NULL $4"
         echo "$CMD"
-        sudo -u $user_tester $CMD > $RESULT_FILE
+        sudo $s_arg -u $user_tester $CMD > $RESULT_FILE
         check_result $? $5 $6 $7
         echo
     fi
 
-    sudo chattr -ai $FILE
-    sudo rm -f $FILE
+    sudo $s_arg chattr -ai $FILE
+    sudo $s_arg rm -f $FILE
+}
+
+cleanup_test()
+{
+	if test $sudoers_clean; then
+		sudo rm -f $sudoers
+	fi
 }
 #=====================================================================
 
-user_tester=utimensat_tester
-useradd $user_tester
-sudo -u $user_tester mkdir -p $TEST_DIR
+user_tester=nobody
+echo "test sudo for -n option, non-interactive"
+sudo -n true
+if test $? -eq 0; then
+	s_arg="-n"
+	echo "sudo supports -n"
+else
+	s_arg=
+	echo "sudo does not support -n"
+fi
+sudoers=/etc/sudoers
+if test ! -e $sudoers
+then
+	echo "root    ALL=(ALL)    ALL" > $sudoers
+	sudoers_clean=1
+	chmod 440 $sudoers
+	trap 'trap "" EXIT; cleanup_test' EXIT
+fi
 
+sudo $s_arg -u $user_tester mkdir -p $TEST_DIR
+cd $TEST_DIR
 chown root $LTPROOT/testcases/bin/$TEST_PROG
 chmod ugo+x,u+s $LTPROOT/testcases/bin/$TEST_PROG
 
@@ -255,57 +300,57 @@ chmod ugo+x,u+s $LTPROOT/testcases/bin/$TEST_PROG
 
 echo "============================================================"
 
-echo 
+echo
 echo "Testing read-only file, owned by self"
-echo 
+echo
 
 echo "***** Testing times==NULL case *****"
-run_test "" 400 "" "" SUCCESS y y
+run_test -W "" 400 "" "" SUCCESS y y
 
 echo "***** Testing times=={ UTIME_NOW, UTIME_NOW } case *****"
-run_test "" 400 "" "0 n 0 n" SUCCESS y y
+run_test -W "" 400 "" "0 n 0 n" SUCCESS y y
 
 echo "***** Testing times=={ UTIME_OMIT, UTIME_OMIT } case *****"
-run_test "" 400 "" "0 o 0 o" SUCCESS n n
+run_test -W "" 400 "" "0 o 0 o" SUCCESS n n
 
 echo "***** Testing times=={ UTIME_NOW, UTIME_OMIT } case *****"
-run_test "" 400 "" "0 n 0 o" SUCCESS y n
+run_test -W "" 400 "" "0 n 0 o" SUCCESS y n
 
 echo "***** Testing times=={ UTIME_OMIT, UTIME_NOW } case *****"
-run_test "" 400 "" "0 o 0 n" SUCCESS n y
+run_test -W "" 400 "" "0 o 0 n" SUCCESS n y
 
 echo "***** Testing times=={ x, y } case *****"
-run_test "" 400 "" "1 1 1 1" SUCCESS y y
+run_test -W "" 400 "" "1 1 1 1" SUCCESS y y
 
 echo "============================================================"
 
-echo 
+echo
 echo "Testing read-only file, not owned by self"
-echo 
+echo
 
 echo "***** Testing times==NULL case *****"
-run_test root 400 "" "" EACCES
+run_test -RW root 400 "" "" EACCES
 
 echo "***** Testing times=={ UTIME_NOW, UTIME_NOW } case *****"
-run_test root 400 "" "0 n 0 n" EACCES
+run_test -RW root 400 "" "0 n 0 n" EACCES
 
 echo "***** Testing times=={ UTIME_OMIT, UTIME_OMIT } case *****"
-run_test root 400 "" "0 o 0 o" SUCCESS n n
+run_test -RW root 400 "" "0 o 0 o" SUCCESS n n
 
 echo "***** Testing times=={ UTIME_NOW, UTIME_OMIT } case *****"
-run_test root 400 "" "0 n 0 o" EPERM
+run_test -RW root 400 "" "0 n 0 o" EPERM
 
 echo "***** Testing times=={ UTIME_OMIT, UTIME_NOW } case *****"
-run_test root 400 "" "0 o 0 n" EPERM
+run_test -RW root 400 "" "0 o 0 n" EPERM
 
 echo "***** Testing times=={ x, y } case *****"
-run_test root 400 "" "1 1 1 1" EPERM
+run_test -RW root 400 "" "1 1 1 1" EPERM
 
 echo "============================================================"
 
-echo 
+echo
 echo "Testing writable file, not owned by self"
-echo 
+echo
 
 echo "***** Testing times==NULL case *****"
 run_test root 666 "" "" SUCCESS y y
@@ -327,9 +372,9 @@ run_test root 666 "" "1 1 1 1" EPERM
 
 echo "============================================================"
 
-echo 
+echo
 echo "Testing append-only file, owned by self"
-echo 
+echo
 
 echo "***** Testing times==NULL case *****"
 run_test "" 600 "+a" "" SUCCESS y y
@@ -351,9 +396,9 @@ run_test "" 600 "+a" "1 1 1 1" EPERM
 
 echo "============================================================"
 
-echo 
+echo
 echo "Testing immutable file, owned by self"
-echo 
+echo
 
 echo "***** Testing times==NULL case *****"
 run_test -W "" 600 "+i" "" EACCES
@@ -377,9 +422,9 @@ echo "============================================================"
 
 # Immutable+append-only should have same results as immutable
 
-echo 
+echo
 echo "Testing immutable append-only file, owned by self"
-echo 
+echo
 
 echo "***** Testing times==NULL case *****"
 run_test -W "" 600 "+ai" "" EACCES
@@ -401,7 +446,7 @@ run_test -W "" 600 "+ai" "1 1 1 1" EPERM
 
 echo "============================================================"
 
-echo 
+echo
 
 # EINVAL should result, if pathname is NULL, dirfd is not
 # AT_FDCWD, and flags contains AT_SYMLINK_NOFOLLOW.
@@ -417,7 +462,7 @@ echo
 
 echo "============================================================"
 
-echo 
+echo
 
 # If UTIME_NOW / UTIME_OMIT in tv_nsec field, the tv_sec should
 # be ignored.
@@ -432,10 +477,9 @@ run_test -RW "" 600 "" "1 o 1 o" SUCCESS n n
 
 echo "============================================================"
 
-echo 
+echo
 
-userdel -r utimensat_tester
-rm -rf $TEST_PROG
+rm -rf "$TEST_DIR"
 uname -a
 date
 echo "Total tests: $test_num; passed: $passed_cnt; failed: $failed_cnt"

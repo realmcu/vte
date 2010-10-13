@@ -15,8 +15,8 @@ setup()
 	export TST_COUNT=0
 	export TST_TOTAL=3
 
-	# Remove any leftover test file from prior failed runs.
-	rm -rf $SELINUXTMPDIR/test_file $SELINUXTMPDIR/test_file2 $SELINUXTMPDIR/test_sock
+	SELINUXTMPDIR=$(mktemp -d)
+	chcon -t test_file_t $SELINUXTMPDIR
 
 	# Create and label the test files.
 	touch $SELINUXTMPDIR/test_file $SELINUXTMPDIR/test_file2
@@ -42,9 +42,9 @@ test01()
 	RC=$?
 	if [ $RC -eq 0 ]
 	then
-		echo "$TCID   PASS : fdreceive passed."
+		tst_resm TPASS "fdreceive passed."
 	else
-		echo "$TCID   FAIL : fdreceive failed."
+		tst_resm TFAIL "fdreceive failed."
 	fi
 	return $RC
 }
@@ -63,10 +63,10 @@ test02()
 	RC=$?
 	if [ $RC -ne 0 ]
 	then
-		echo "$TCID   PASS : fdreceive passed."
+		tst_resm TPASS "fdreceive passed."
 		RC=0
 	else
-		echo "$TCID   FAIL : fdreceive failed."
+		tst_resm TFAIL "fdreceive failed."
 		RC=1
 	fi
 	return $RC
@@ -86,10 +86,10 @@ test03()
 	RC=$?
 	if [ $RC -ne 0 ]
 	then
-		echo "$TCID   PASS : fdreceive passed."
+		tst_resm TPASS "fdreceive passed."
 		RC=0
 	else
-		echo "$TCID   FAIL : fdreceive failed."
+		tst_resm TFAIL "fdreceive failed."
 		RC=1
 	fi
 	return $RC
@@ -100,8 +100,7 @@ cleanup()
 	# Kill the server.
 	kill -s TERM $PID
 
-	# Cleanup.
-	rm -rf $SELINUXTMPDIR/test_file $SELINUXTMPDIR/test_file2 $SELINUXTMPDIR/test_sock
+	rm -rf $SELINUXTMPDIR
 }
 
 # Function:     main

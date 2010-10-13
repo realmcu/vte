@@ -15,31 +15,31 @@
  *
  */
 /**********************************************************
- * 
+ *
  *    TEST IDENTIFIER	: clone06
- * 
+ *
  *    EXECUTED BY	: anyone
- * 
+ *
  *    TEST TITLE	: Test to verify inheritance of environment variables.
- * 
+ *
  *    TEST CASE TOTAL	: 1
- * 
+ *
  *    AUTHOR		: Saji Kumar.V.R <saji.kumar@wipro.com>
- * 
+ *
  *    SIGNALS
- * 	Uses SIGUSR1 to pause before test if option set.
- * 	(See the parse_opts(3) man page).
+ *	Uses SIGUSR1 to pause before test if option set.
+ *	(See the parse_opts(3) man page).
  *
  *    DESCRIPTION
  *	Test to verify inheritance of environment variables by child.
- * 
- * 	Setup:
- * 	  Setup signal handling.
+ *
+ *	Setup:
+ *	  Setup signal handling.
  *	  Pause for SIGUSR1 if option specified.
- * 
- * 	Test:
+ *
+ *	Test:
  *	 Loop if the proper options are given.
- * 	  Call clone()
+ *	  Call clone()
  *
  *	  CHILD:
  *		get the value for environment variable, TERM  and write it
@@ -52,10 +52,10 @@
  *			Test Passed.
  *		else
  *			Test failed.
- * 
- * 	Cleanup:
- * 	  Print errno log and/or timing stats if options given
- * 
+ *
+ *	Cleanup:
+ *	  Print errno log and/or timing stats if options given
+ *
  * USAGE:  <for command-line>
  *  clone06 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-h] [-f] [-p]
  *			where,  -c n : Run n copies concurrently.
@@ -95,8 +95,7 @@ char *TCID = "clone06";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 
 	int lc;			/* loop counter */
@@ -104,9 +103,9 @@ main(int ac, char **av)
 	void *child_stack;	/* stack for child */
 	char *parent_env;
 	char buff[MAX_LINE_LENGTH];
- 
+
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL))
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
 	    != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
@@ -115,7 +114,7 @@ main(int ac, char **av)
 	setup();
 
 	/* Allocate stack for child */
-	if((child_stack = (void *) malloc(CHILD_STACK_SIZE)) == NULL) {
+	if ((child_stack = (void *)malloc(CHILD_STACK_SIZE)) == NULL) {
 		tst_brkm(TBROK, cleanup, "Cannot allocate stack for child");
 	}
 
@@ -127,42 +126,34 @@ main(int ac, char **av)
 
 		/* Open a pipe */
 		if ((pipe(pfd)) == -1) {
-			tst_brkm(TBROK, cleanup, "pipe() failed");
+			tst_brkm(TBROK|TERRNO, cleanup, "pipe() failed");
 		}
 
-		/* 
+		/*
 		 * Call clone(2)
 		 */
-#if defined(__hppa__)
-		TEST(clone(child_environ, child_stack, 0, NULL));
-#elif defined(__ia64__)
-		TEST(clone2(child_environ, child_stack,
-					CHILD_STACK_SIZE, 0, NULL,
-					NULL, NULL, NULL));
-#else
-		TEST(clone(child_environ, child_stack + CHILD_STACK_SIZE, 0, NULL));
-#endif
-	
+		TEST(ltp_clone(0, child_environ, NULL, CHILD_STACK_SIZE,
+				child_stack));
+
 		/* check return code */
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL, "clone() Failed, errno = %d :"
-				" %s", TEST_ERRNO, strerror(TEST_ERRNO));
+			tst_resm(TFAIL|TTERRNO, "clone() failed");
 			cleanup();
 		}
 
 		/* close write end from parent */
 		if ((close(pfd[1])) == -1) {
-			tst_resm(TWARN, "close(pfd[1]) failed");
+			tst_resm(TWARN|TERRNO, "close(pfd[1]) failed");
 		}
 
 		/* Read env var from read end */
 		if ((read(pfd[0], buff, sizeof(buff))) == -1) {
-			tst_brkm(TBROK, cleanup, "read from pipe failed");
+			tst_brkm(TBROK|TERRNO, cleanup, "read from pipe failed");
 		}
 
 		/* Close read end from parent */
 		if ((close(pfd[0])) == -1) {
-			tst_resm(TWARN, "close(pfd[0]) failed");
+			tst_resm(TWARN|TERRNO, "close(pfd[0]) failed");
 		}
 
 		parent_env = getenv("TERM");
@@ -172,36 +163,32 @@ main(int ac, char **av)
 		} else {
 			tst_resm(TFAIL, "Test Failed");
 		}
-	}	/* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 
 	free(child_stack);
 
 	/* cleanup and exit */
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	 /*NOTREACHED*/ return 0;
 
-}	/* End main */
+}				/* End main */
 
 /* setup() - performs all ONE TIME setup for this test */
-void 
-setup()
+void setup()
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Pause if that option was specified */
 	TEST_PAUSE;
-}	/* End setup() */
-
+}				/* End setup() */
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
  *		completion or premature exit.
  */
-void 
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.
@@ -211,37 +198,35 @@ cleanup()
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-}	/* End cleanup() */
+}				/* End cleanup() */
 
 /*
  * child_environ() -	function executed by child.
  *			Gets the value for environment variable,TERM &
  *			writes it to  a pipe.
  */
-int
-child_environ(void)
+int child_environ(void)
 {
 
 	char var[MAX_LINE_LENGTH];
 
 	/* Close read end from child */
 	if ((close(pfd[0])) == -1) {
-		tst_brkm(TBROK, cleanup, "close(pfd[0]) failed");
+		tst_brkm(TBROK|TERRNO, cleanup, "close(pfd[0]) failed");
 	}
-	
-	if ((sprintf(var, getenv("TERM"))) <= 0){
-		tst_resm(TWARN, "sprintf() failed");
+
+	if ((sprintf(var, "%s", getenv("TERM") ? : "")) <= 0) {
+		tst_resm(TWARN|TERRNO, "sprintf() failed");
 	}
 
 	if ((write(pfd[1], var, MAX_LINE_LENGTH)) == -1) {
-		tst_resm(TWARN, "write to pipe failed");
+		tst_resm(TWARN|TERRNO, "write to pipe failed");
 	}
 
 	/* Close write end of pipe from child */
 	if ((close(pfd[1])) == -1) {
-		tst_resm(TWARN, "close(pfd[1]) failed");
+		tst_resm(TWARN|TERRNO, "close(pfd[1]) failed");
 	}
-	
+
 	exit(0);
 }
-

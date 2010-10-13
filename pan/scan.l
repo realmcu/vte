@@ -31,7 +31,7 @@
  * http://oss.sgi.com/projects/GenInfo/NoticeExplan/
  *
  */
-/* $Id: scan.l,v 1.1.1.1 2008/04/14 08:59:15 b06080 Exp $ */
+/* $Id: scan.l,v 1.1 2000/09/21 21:35:06 alaffin Exp $ */
 /*
  * Lex rules for input processing.
  *

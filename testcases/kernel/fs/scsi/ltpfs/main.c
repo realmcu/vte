@@ -45,7 +45,7 @@ char rootPath[BUFFSIZE];
 int LTP_fs_open_block_device(void);
 int do_fs_thump_tests(char * path);
 int do_create_file_test(char * path);
-int makedir(char *dir1); 
+int makedir(char *dir1);
 int changedir(char *dir);
 int do_random_access_test(int maxNum);
 int do_random_create_delete(int maxNum);
@@ -299,7 +299,7 @@ int do_create_file_test(char * path)
     return rc;
 }
 
-int makedir(char *dir1) 
+int makedir(char *dir1)
 {
   if (mkdir(dir1, S_IRWXU) < 0) {
     perror(dir1);
@@ -318,7 +318,7 @@ int changedir(char *dir) {
 }
 
 
-int create_file(char *filename) 
+int create_file(char *filename)
 {
   int fileHandle;
   int randomsize;
@@ -347,7 +347,7 @@ int create_file(char *filename)
   return 0;
 }
 
-int delete_file(char *filename) 
+int delete_file(char *filename)
 {
     struct stat buf;
     int st;
@@ -479,13 +479,13 @@ int do_random_access_test(int maxNum)
     time_t t;
     int i;
 
-    
+   
     printf("Running random access test...\n");
     changedir(rootPath);
 
     if ( maxNum < 1 || maxNum > MAXNUM ) {
         printf("out of size %d\n",maxNum);
-        return(1);
+        return 1;
     }
 
     time(&t);
@@ -513,7 +513,7 @@ int do_random_access_test(int maxNum)
     }
     close(nullFileHandle);
     printf("Success:\t%d\nFail:\t%d\n",openlog[SUCCESS],openlog[FAIL]);
-    return(0);
+    return 0;
 }
 
 int open_read_close(char *fname)

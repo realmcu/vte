@@ -61,7 +61,7 @@ extern int Tst_count;
 int exp_enos[] = {ENOSPC, 0};	/* 0 terminated list of expected errnos */
 void setup2(unsigned long huge_pages_shm_to_be_allocated);
 /*
- * The MAXIDS value is somewhat arbitrary and may need to be increased 
+ * The MAXIDS value is somewhat arbitrary and may need to be increased
  * depending on the system being tested.
  */
 #define MAXIDS	8192
@@ -84,14 +84,14 @@ int main(int ac, char **av)
 	}
 
 	/* The following loop checks looping state if -i option given */
-        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 ) 
-             tst_brkm(TBROK, cleanup, "Test cannot be continued owning to sufficient availability of Hugepages on the system");
-        else              
+        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 )
+             tst_brkm(TCONF, tst_exit, "Not enough available Hugepages");
+        else             
              huge_pages_shm_to_be_allocated = ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
 
 	setup2(huge_pages_shm_to_be_allocated);			/* local  setup */
 
-     
+    
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -99,14 +99,14 @@ int main(int ac, char **av)
 		/*
 		 * use the TEST() macro to make the call
 		 */
-	        
+	       
 		TEST(shmget(IPC_PRIVATE, huge_pages_shm_to_be_allocated, SHM_HUGETLB | IPC_CREAT | IPC_EXCL | SHM_RW));
-	
+
 		if (TEST_RETURN != -1) {
 			tst_resm(TFAIL, "call succeeded when error expected");
 			continue;
 		}
-	
+
 		TEST_ERROR_LOG(TEST_ERRNO);
 
 		switch(TEST_ERRNO) {
@@ -119,13 +119,13 @@ int main(int ac, char **av)
 				 "unexpected error - %d : %s",
 				 TEST_ERRNO, strerror(TEST_ERRNO));
 			break;
-		}			
+		}		
 	}
 
 	cleanup();
 
 	/*NOTREACHED*/
-	return(0);
+	return 0;
 }
 
 /*

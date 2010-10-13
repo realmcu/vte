@@ -33,7 +33,7 @@
  * RESTRICTIONS
  */
 
-#include <stdio.h>		/* needed by testhead.h		*/
+#include <stdio.h>		/* needed by testhead.h         */
 #ifdef CONFIG_COLDFIRE
 #define __MALLOC_STANDARD__
 #endif
@@ -51,33 +51,32 @@ int local_flag = PASSED;
 
 char *TCID = "mallopt01";
 int block_number;
-int errno;
 FILE *temp;
 int TST_TOTAL = 1;
-extern int Tst_COUNT;	/* Test Case counter for tst_routines */
+extern int Tst_COUNT;		/* Test Case counter for tst_routines */
 
 void printinfo();
+
+#if !defined(UCLINUX)
 /*****	*	*	*****/
 struct mallinfo info;
 
-#if !defined(UCLINUX)
-
 /*--------------------------------------------------------------*/
-int main (int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-	char * buf;
+	char *buf;
 	int flag;
 
-  	temp = stderr;
+	temp = stderr;
 	tst_tmpdir();
 /*--------------------------------------------------------------*/
-        local_flag = PASSED;
+	local_flag = PASSED;
 
 	flag = 0;
 
 	if ((buf = malloc(20480)) == NULL) {
 		tst_resm(TBROK, "Reason: Malloc failed! %s", strerror(errno));
-        	tst_exit();
+		tst_exit();
 	}
 
 	/*
@@ -99,7 +98,7 @@ int main (int argc, char *argv[])
 		printinfo();
 		flag = 0;
 	}
-	free(buf); 
+	free(buf);
 
 	/*
 	 * Test mallopt's M_MXFAST and M_NLBLKS cmds.
@@ -113,15 +112,18 @@ int main (int argc, char *argv[])
 
 	free(buf);
 
-  	(local_flag == PASSED ) ? tst_resm(TPASS, "Test passed") : tst_resm(TFAIL, "Test failed");
+	(local_flag == PASSED) ? tst_resm(TPASS,
+					  "Test passed") : tst_resm(TFAIL,
+								    "Test failed");
 /*--------------------------------------------------------------*/
 /* Clean up any files created by test before call to anyfail.	*/
 
 	unlink("core");
 	tst_rmdir();
-	tst_exit();	/* THIS CALL DOES NOT RETURN - EXITS!!	*/
-	return(0);
+	tst_exit();		/* THIS CALL DOES NOT RETURN - EXITS!!  */
+	return 0;
 }
+
 /*--------------------------------------------------------------*/
 void printinfo()
 {

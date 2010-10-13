@@ -15,17 +15,17 @@
  *
  */
 /**********************************************************
- * 
+ *
  *    TEST IDENTIFIER	: prctl02
- * 
+ *
  *    EXECUTED BY	: anyone
- * 
+ *
  *    TEST TITLE	: Tests for error conditions
- * 
+ *
  *    TEST CASE TOTAL	: 2
- * 
+ *
  *    AUTHOR		: Saji Kumar.V.R <saji.kumar@wipro.com>
- * 
+ *
  *    SIGNALS
  * 	Uses SIGUSR1 to pause before test if option set.
  * 	(See the parse_opts(3) man page).
@@ -36,11 +36,11 @@
  *	   option
  *	2) prctl() fails with errno, EINVAL when option is PR_SET_PDEATHSIG
  *	   & arg2 is not zero or a valid signal number
- * 
+ *
  * 	Setup:
  * 	  Setup signal handling.
  *	  Pause for SIGUSR1 if option specified.
- * 
+ *
  * 	Test:
  *	 Loop if the proper options are given.
  *	 fork a child
@@ -57,10 +57,10 @@
  *			Test passed
  *		else
  *			Test Failed
- *		
+ *	
  * 	Cleanup:
  * 	  Print errno log and/or timing stats if options given
- * 
+ *
  * USAGE:  <for command-line>
  *  prctl02 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-h] [-f] [-p]
  *			where,  -c n : Run n copies concurrently.
@@ -91,21 +91,21 @@ static void cleanup(void);
 
 char *TCID = "prctl02";		/* Test program identifier.    */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
-static int exp_enos[] = {EINVAL, EINVAL, 0};
+static int exp_enos[] = { EINVAL, EINVAL, 0 };
 
 struct test_cases_t {
 	int option;
 	unsigned long arg2;
 	int exp_errno;
 } test_cases[] = {
-	{ OPTION_INVALID, 0, EINVAL },
-	{ PR_SET_PDEATHSIG, INVALID_ARG, EINVAL }
+	{
+	OPTION_INVALID, 0, EINVAL}, {
+	PR_SET_PDEATHSIG, INVALID_ARG, EINVAL}
 };
-	
+
 int TST_TOTAL = sizeof(test_cases) / sizeof(test_cases[0]);
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 
 	int lc, i;		/* loop counter */
@@ -114,8 +114,8 @@ main(int ac, char **av)
 	int status;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL))
-	     != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
+	    != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -143,13 +143,12 @@ main(int ac, char **av)
 				TEST(prctl(test_cases[i].option,
 					   test_cases[i].arg2));
 				if ((TEST_RETURN == -1) && (TEST_ERRNO ==
-						test_cases[i].exp_errno)) {
+							    test_cases[i].
+							    exp_errno)) {
 					exit(TEST_ERRNO);
 				} else {
-					tst_resm(TWARN, "prctl() returned %d"
-						" errno = %d : %s", TEST_RETURN,
-						TEST_ERRNO,
-						strerror(TEST_ERRNO));
+					tst_resm(TWARN|TTERRNO, "prctl() returned %ld",
+						 TEST_RETURN);
 					exit(TEST_ERRNO);
 				}
 
@@ -161,7 +160,8 @@ main(int ac, char **av)
 				}
 
 				if ((WIFEXITED(status)) && (WEXITSTATUS(status)
-						== test_cases[i].exp_errno)) {
+							    == test_cases[i].
+							    exp_errno)) {
 					tst_resm(TPASS, "Test Passed");
 				} else {
 					tst_resm(TFAIL, "Test Failed");
@@ -170,39 +170,35 @@ main(int ac, char **av)
 
 			}
 		}
-	}	/* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 
 	/* cleanup and exit */
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	 /*NOTREACHED*/ return 0;
 
-}/* End main */
+}				/* End main */
 
 /* setup() - performs all ONE TIME setup for this test */
-void
-setup()
+void setup()
 {
 
 	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
-	
+
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
 	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}	/* End setup() */
-
+}				/* End setup() */
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
  *		completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 
 	/*
@@ -213,5 +209,4 @@ cleanup()
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-}	/* End cleanup() */
-
+}				/* End cleanup() */

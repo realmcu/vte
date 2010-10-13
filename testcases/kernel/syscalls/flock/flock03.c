@@ -18,17 +18,17 @@
  */
 
 /**********************************************************
- * 
+ *
  *    TEST IDENTIFIER   : flock03
- * 
+ *
  *    EXECUTED BY       : anyone
- * 
+ *
  *    TEST TITLE        : Error condition test for flock(2)
- * 
+ *
  *    TEST CASE TOTAL   : 1
- * 
+ *
  *    AUTHOR            : Paul Larson <plars@linuxtestproject.org>
- * 
+ *
  *    SIGNALS
  *      Uses SIGUSR1 to pause before test if option set.
  *      (See the parse_opts(3) man page).
@@ -36,7 +36,7 @@
  *    DESCRIPTION
  * 	This test verifies that flock cannot unlock a file locked
  * 	by another task
- *		
+ *	
  *	Test:
  * 		Fork a child processes
  * 		The parent flocks a file with LOCK_EX
@@ -44,8 +44,8 @@
  * 		it is locked.  Child then tries to unlock the file. If
  *		the unlock succeeds, the child attempts to lock the
  *		file with LOCK_EX. The test passes if the child is
- *		able to lock the file. 
- * 
+ *		able to lock the file.
+ *
  * USAGE:  <for command-line>
  *      flock03 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-h] [-f] [-p]
  *                      where,  -c n : Run n copies concurrently
@@ -59,8 +59,6 @@
  *                              -t   : Turn on syscall timing
  *
  ****************************************************************/
-
-
 
 #include <stdio.h>
 #include <errno.h>
@@ -78,32 +76,30 @@ void childfunc(int);
 
 #ifdef UCLINUX
 static int fd_uc;
-void childfunc_uc() {
+void childfunc_uc()
+{
 	childfunc(fd_uc);
 }
 #endif
 
-char *TCID = "flock03";			/* Test program identifier */
-int TST_TOTAL = 3;			/* Total number of test cases */
+char *TCID = "flock03";		/* Test program identifier */
+int TST_TOTAL = 3;		/* Total number of test cases */
 extern int Tst_count;
 char filename[100];
 
 int main(int argc, char **argv)
 {
-	int lc;		/* loop counter */
-	char *msg;	/* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 	pid_t pid;
 	int status;
-	int fd;			 /* for opening the temporary file */
-
+	int fd;			/* for opening the temporary file */
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) !=
-	    (char *) NULL) {
+	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
+	    (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-		/*NOTREACHED*/
-	}
-
+	 /*NOTREACHED*/}
 #ifdef UCLINUX
 	maybe_run_child(&childfunc_uc, "ds", &fd_uc, filename);
 #endif
@@ -117,17 +113,17 @@ int main(int argc, char **argv)
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
-		 /* PARENT */
+		/* PARENT */
 		fd = open(filename, O_RDWR);
-		if(fd == -1)
-		 	tst_brkm(TFAIL, cleanup, "parent failed to open the"
-						 "file, errno %d", errno);
+		if (fd == -1)
+			tst_brkm(TFAIL, cleanup, "parent failed to open the"
+				 "file, errno %d", errno);
 
 		pid = FORK_OR_VFORK();
-		if(pid == -1)
+		if (pid == -1)
 			tst_brkm(TFAIL, cleanup, "fork() failed, errno %d",
-					errno);
-		if(pid == 0) {
+				 errno);
+		if (pid == 0) {
 #ifdef UCLINUX
 			if (self_exec(argv[0], "ds", fd, filename) < 0)
 				tst_brkm(TFAIL, cleanup, "self_exec failed, "
@@ -138,13 +134,15 @@ int main(int argc, char **argv)
 		}
 
 		TEST(flock(fd, LOCK_EX | LOCK_NB));
-		if(TEST_RETURN != 0)
-			tst_resm(TFAIL, "Parent: Initial attempt to flock() failed, "
-				 "errno %d",TEST_ERRNO); 
+		if (TEST_RETURN != 0)
+			tst_resm(TFAIL,
+				 "Parent: Initial attempt to flock() failed, "
+				 "errno %d", TEST_ERRNO);
 		else
-			tst_resm(TPASS, "Parent: Initial attempt to flock() passed");
+			tst_resm(TPASS,
+				 "Parent: Initial attempt to flock() passed");
 
-		if((waitpid(pid, &status, 0)) < 0) {
+		if ((waitpid(pid, &status, 0)) < 0) {
 			tst_resm(TFAIL, "wait() failed");
 			continue;
 		}
@@ -152,10 +150,10 @@ int main(int argc, char **argv)
 			tst_resm(TPASS, "flock03 Passed");
 		else
 			tst_resm(TFAIL, "flock03 Failed");
-	
+
 		close(fd);
 
-	}/* End of TEST_LOOPING */
+	}			/* End of TEST_LOOPING */
 
 	cleanup();
 
@@ -171,26 +169,27 @@ void childfunc(int fd)
 	sleep(2);
 
 	fd2 = open(filename, O_RDWR);
-	if(fd2 == -1)
+	if (fd2 == -1)
 		tst_brkm(TFAIL, cleanup, "child failed to open the"
-			"file, errno %d", errno);
-	if(flock(fd2, LOCK_EX | LOCK_NB) != -1)
+			 "file, errno %d", errno);
+	if (flock(fd2, LOCK_EX | LOCK_NB) != -1)
 		tst_resm(TFAIL, "Child: The file was not already locked");
 
 	TEST(flock(fd, LOCK_UN));
 	/* XXX: LOCK_UN does not return an error if there was nothing to
 	 * unlock.
 	 */
-	if(TEST_RETURN == -1)
-		tst_resm(TFAIL, "Child: Unable to unlock file locked by parent, "
-				"errno %d", TEST_ERRNO);
+	if (TEST_RETURN == -1)
+		tst_resm(TFAIL,
+			 "Child: Unable to unlock file locked by parent, "
+			 "errno %d", TEST_ERRNO);
 	else
 		tst_resm(TPASS, "Child: Unlocked file locked by parent");
 
 	TEST(flock(fd2, LOCK_EX | LOCK_NB));
-	if(TEST_RETURN == -1)
+	if (TEST_RETURN == -1)
 		tst_resm(TFAIL, "Child: Unable to relock file after unlocking, "
-				"errno %d", TEST_ERRNO);
+			 "errno %d", TEST_ERRNO);
 	else
 		tst_resm(TPASS, "Child: flock after unlocking passed");
 
@@ -201,7 +200,6 @@ void childfunc(int fd)
 	/* NOT REACHED */
 	return;
 }
-
 
 /*
  * setup()
@@ -229,7 +227,7 @@ void setup(void)
 	fd = creat(filename, 0666);
 	if (fd < 0) {
 		tst_resm(TFAIL, "creating a new file failed");
-		
+
 		TEST_CLEANUP;
 
 		/* Removing temp dir */
@@ -259,5 +257,4 @@ void cleanup(void)
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-	/*NOTREACHED*/
-}
+ /*NOTREACHED*/}

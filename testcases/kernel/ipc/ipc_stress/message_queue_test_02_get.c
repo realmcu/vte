@@ -68,7 +68,7 @@
 
 /*
  * Defines
- * 
+ *
  * BUF_SIZE: size of message buffer...
  */
 #define DEFAULT_PROJECT_NAME 	"/tmp/message_queue_test"
@@ -90,7 +90,7 @@ static void error (const char *, int);
 
 /*
  * Global variables
- * 
+ *
  * project_name: Unique path used to create key (ftok)
  * project_id:   Unique number used to create key (ftok)
  */
@@ -135,7 +135,7 @@ int main (int argc, char **argv)
 
 	return (0);
 }
-	
+
 
 /*---------------------------------------------------------------------+
 |                             parse_args ()                            |

@@ -190,7 +190,7 @@ delete_zombies(struct server_info *info_p)
 	    if (status != EXIT_SUCCESS) {
 		++info_p->lost_connection;
 		if (debug)
-		    fprintf (stderr, "The number of lost conncections is %d\n",
+		    fprintf (stderr, "The number of lost conncections is %zu\n",
 					info_p->lost_connection);
 	    }
 	}
@@ -306,7 +306,7 @@ communicate_client(struct server_info *info_p, int sock_fd)
 {
     char *sendmsg;		/* pointer to the message to send */
     int sndbuf_size;		/* size of the send buffer */
-    int sock_optlen;		/* size of the result parameter */
+    socklen_t sock_optlen;		/* size of the result parameter */
     ssize_t sntbyte_size;	/* size of the sent byte */
     int ret = EXIT_SUCCESS;	/* The return value of this function */
 
@@ -493,7 +493,7 @@ handle_client(struct server_info *info_p)
 			if (info_p->max_connection < info_p->current_connection) {
 			    info_p->max_connection = info_p->current_connection;
 			    if (debug)
-				fprintf (stderr, "The maximum connection is updated. The number is %d.\n", info_p->max_connection);
+				fprintf (stderr, "The maximum connection is updated. The number is %zu.\n", info_p->max_connection);
 			}
 			delete_zombies(info_p);
 		    }

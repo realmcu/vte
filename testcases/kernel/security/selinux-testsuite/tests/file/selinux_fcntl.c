@@ -8,14 +8,15 @@
  *
  */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<sys/types.h>
-#include<sys/file.h>
-#include<fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/file.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 /*
- * Test the fcntl file operation on a file whose name is given as the first 
+ * Test the fcntl file operation on a file whose name is given as the first
  * argument.
  */
 int main(int argc, char **argv) {
@@ -30,7 +31,7 @@ int main(int argc, char **argv) {
   }
 
   fd = open(argv[1], O_RDONLY | O_APPEND, 0);
-  
+ 
   if(fd == -1) {
     perror("selinux_fcntl:open");
     exit(2);

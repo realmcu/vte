@@ -63,7 +63,7 @@ char nobody_uid[] = "nobody";
 char testfile[256] = "";
 struct passwd *ltpuser;
 
-int exp_enos[] = {EACCES, 0};
+int exp_enos[] = { EACCES, 0 };
 int fd = -1;
 
 void setup(void);
@@ -73,14 +73,13 @@ void do_master_child();
 int main(int ac, char **av)
 {
 	pid_t pid;
-	char *msg;			/* message returned from parse_opts */
+	char *msg;		/* message returned from parse_opts */
 	int status;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-		/*NOTREACHED*/
-	}
+	 /*NOTREACHED*/}
 
 	/*
 	 * perform global setup for the test
@@ -92,21 +91,19 @@ int main(int ac, char **av)
 	pid = FORK_OR_VFORK();
 	if (pid < 0)
 		tst_brkm(TBROK, cleanup, "Fork failed");
-	
+
 	if (pid == 0) {
 		do_master_child();
 		return 0;
-	}
-	else {
+	} else {
 		waitpid(pid, &status, 0);
 		if (!WIFEXITED(status) || (WEXITSTATUS(status) != 0))
-			tst_resm(WEXITSTATUS(status), "son process exits with error");
+			tst_resm(WEXITSTATUS(status),
+				 "son process exits with error");
 	}
 
 	cleanup();
-	/*NOTREACHED*/
-
-	return(0);
+	 /*NOTREACHED*/ return 0;
 }
 
 /*
@@ -114,7 +111,7 @@ int main(int ac, char **av)
  */
 void do_master_child()
 {
-	int lc;				/* loop counter */
+	int lc;			/* loop counter */
 	int pid;
 	int status;
 
@@ -126,7 +123,7 @@ void do_master_child()
 		Tst_count = 0;
 
 		if (setfsuid(ltpuser->pw_uid) == -1) {
-			tst_brkm(TBROK, cleanup, 
+			tst_brkm(TBROK, cleanup,
 				 "setfsuid failed to set the euid to %d",
 				 ltpuser->pw_uid);
 		}
@@ -157,7 +154,7 @@ void do_master_child()
 			tst_brkm(TBROK, cleanup, "Fork failed");
 
 		if (pid == 0) {
-			int tst_fd2; 
+			int tst_fd2;
 
 			/* Test to open the file in son process */
 			TEST(tst_fd2 = open(testfile, O_RDWR));
@@ -168,16 +165,16 @@ void do_master_child()
 			}
 
 			TEST_ERROR_LOG(TEST_ERRNO);
-			
+
 			if (TEST_ERRNO == EACCES) {
 				tst_resm(TPASS, "open returned errno EACCES");
 			} else {
-				tst_resm(TFAIL, "open returned unexpected errno - %d",
+				tst_resm(TFAIL,
+					 "open returned unexpected errno - %d",
 					 TEST_ERRNO);
 			}
 			continue;
-		}
-		else {
+		} else {
 			/* Wait for son completion */
 			waitpid(pid, &status, 0);
 			if (!WIFEXITED(status) || (WEXITSTATUS(status) != 0))
@@ -189,7 +186,7 @@ void do_master_child()
 		 */
 		Tst_count++;
 		if (setfsuid(0) == -1) {
-			tst_brkm(TBROK, cleanup, 
+			tst_brkm(TBROK, cleanup,
 				 "setfsuid failed to set the euid to 0");
 		}
 
@@ -199,10 +196,9 @@ void do_master_child()
 			tst_resm(TFAIL, "open returned unexpected errno %d",
 				 TEST_ERRNO);
 			continue;
-		}
-		else {
+		} else {
 			tst_resm(TPASS, "open call succeeded");
-			close (tst_fd);
+			close(tst_fd);
 		}
 	}
 }
@@ -210,14 +206,13 @@ void do_master_child()
 /*
  * setup() - performs all ONE TIME setup for this test
  */
-void
-setup(void)
+void setup(void)
 {
-        if (geteuid() != 0) {
-                tst_brkm(TBROK, tst_exit, "Test must be run as root");
-        }
+	if (geteuid() != 0) {
+		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+	}
 
-	ltpuser = getpwnam(nobody_uid);	
+	ltpuser = getpwnam(nobody_uid);
 
 	/* make a temp directory and cd to it */
 	tst_tmpdir();
@@ -240,10 +235,9 @@ setup(void)
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
  * 	       or premature exit
  */
-void
-cleanup(void)
+void cleanup(void)
 {
-	close (fd);
+	close(fd);
 
 	/*
 	 * print timing status if that option was specified

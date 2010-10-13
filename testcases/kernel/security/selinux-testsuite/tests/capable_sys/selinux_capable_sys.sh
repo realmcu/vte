@@ -17,8 +17,8 @@ setup()
         export TST_COUNT=0
 	export TST_TOTAL=8
 
-        # Clean up from a previous run
-        rm -f $SELINUXTMPDIR/temp_file 2>&1
+	SELINUXTMPDIR=$(mktemp -d)
+	chcon -t test_file_t $SELINUXTMPDIR
 }
 
 #
@@ -36,9 +36,9 @@ test01()
 	RC=$?
 	if [ $RC -ne 0 ]
 	then
-		echo "$TCID   FAIL : capable_sys failed."
+		tst_resm TFAIL "capable_sys failed."
 	else
-		echo "$TCID   PASS : capable_sys passed."
+		tst_resm TPASS "capable_sys passed."
 	fi
 	return $RC
 }
@@ -54,9 +54,9 @@ test02()
 	RC=$?
 	if [ $RC -ne 0 ]
 	then
-		echo "$TCID   FAIL : capable_sys failed."
+		tst_resm TFAIL "capable_sys failed."
 	else
-		echo "$TCID   PASS : capable_sys passed."
+		tst_resm TPASS "capable_sys passed."
 	fi
 	return $RC
 }
@@ -75,9 +75,9 @@ test03()
 	RC=$?
 	if [ $RC -ne 0 ]
 	then
-		echo "$TCID   FAIL : capable_sys failed."
+		tst_resm TFAIL "capable_sys failed."
 	else
-		echo "$TCID   PASS : capable_sys passed."
+		tst_resm TPASS "capable_sys passed."
 	fi
 	return $RC
 }
@@ -95,9 +95,9 @@ test04()
 	RC=$?
 	if [ $RC -ne 0 ]
 	then
-		echo "$TCID   FAIL : capable_sys failed."
+		tst_resm TFAIL "capable_sys failed."
 	else
-		echo "$TCID   PASS : capable_sys passed."
+		tst_resm TPASS "capable_sys passed."
 	fi
 	return $RC
 }
@@ -124,10 +124,10 @@ test05()
 	RC=$?
 	if [ $RC -ne 0 ]
 	then
-		echo "$TCID   PASS : capable_sys passed."
+		tst_resm TPASS "capable_sys passed."
 		RC=0
 	else
-		echo "$TCID   FAIL : capable_sys failed."
+		tst_resm TFAIL "capable_sys failed."
 		RC=1
 	fi
 	return $RC
@@ -144,10 +144,10 @@ test06()
 	RC=$?
 	if [ $RC -ne 0 ]
 	then
-		echo "$TCID   PASS : capable_sys passed."
+		tst_resm TPASS "capable_sys passed."
 		RC=0
 	else
-		echo "$TCID   FAIL : capable_sys failed."
+		tst_resm TFAIL "capable_sys failed."
 		RC=1
 	fi
 	return $RC
@@ -164,10 +164,10 @@ test07()
 	RC=$?
 	if [ $RC -ne 0 ]
 	then
-		echo "$TCID   PASS : capable_sys passed."
+		tst_resm TPASS "capable_sys passed."
 		RC=0
 	else
-		echo "$TCID   FAIL : capable_sys failed."
+		tst_resm TFAIL "capable_sys failed."
 		RC=1
 	fi
 	return $RC
@@ -184,10 +184,10 @@ test08()
 	RC=$?
 	if [ $RC -ne 0 ]
 	then
-		echo "$TCID   PASS : capable_sys passed."
+		tst_resm TPASS "capable_sys passed."
 		RC=0
 	else
-		echo "$TCID   FAIL : capable_sys failed."
+		tst_resm TFAIL "capable_sys failed."
 		RC=1
 	fi
 	return $RC
@@ -195,8 +195,7 @@ test08()
 
 cleanup()
 {
-	# Remove files
-	rm -f $SELINUXTMPDIR/temp_file 2>&1
+	rm -rf $SELINUXTMPDIR
 }
 
 # Function:     main
@@ -215,6 +214,7 @@ test02 || EXIT_VAL=$RC
 test03 || EXIT_VAL=$RC
 test04 || EXIT_VAL=$RC
 cleanup
+setup
 test05 || EXIT_VAL=$RC
 test06 || EXIT_VAL=$RC
 test07 || EXIT_VAL=$RC

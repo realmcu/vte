@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <errno.h>
+#include <ctype.h>
 
 #include <sys/wait.h>
 
@@ -63,6 +64,7 @@ runcc(char *tname, char *filename0, char *program)
 {
 	static char filename[1024];
 	int fd, es, saved_errno;
+	char * cflags = "";
 
 	fd = mkstemp(filename0);
 	if (fd < 0) {
@@ -79,14 +81,22 @@ runcc(char *tname, char *filename0, char *program)
 	}
 	if (write(fd, program, strlen(program)) < 0) {
 		perror("write");
+		unlink(filename);
 		return -1;
 	}
 	(void) close(fd);
-	snprintf(cmd, sizeof(cmd), "%s -o %s %s > /tmp/test 2>&1", "cc",
-		filename0, filename);
+
+	cflags = getenv("CFLAGS");
+	if (cflags == NULL){
+		tst_resm(TINFO, "CFLAGS not found, using default cc arch.");
+		cflags = "";
+	}
+
+	snprintf(cmd, sizeof(cmd), "%s %s -o %s %s > /tmp/test 2>&1", "cc",
+		cflags, filename0, filename);
 	es = system(cmd);
 	if (WEXITSTATUS(es) == 127) {
-		tst_resm(TBROK, "%s: can't run C compiler: \"%s\"", cmd);
+		tst_resm(TBROK, "can't run C compiler: \"%s\"", cmd);
 		if (unlink(filename) < 0)
 			tst_resm(TWARN, "%s; unlink \"%s\" failed: %s", tname,
 				filename, strerror(errno));
@@ -102,7 +112,7 @@ runcc(char *tname, char *filename0, char *program)
 
 	if (WEXITSTATUS(es)) {
 		tst_resm(TFAIL, "%s: not present", tname);
-		return;
+		return -1;
 	}
 	/* run the test */
 
@@ -151,7 +161,8 @@ structcheck(char *tname, char *incl, char *structure, char *field,
 	sprintf(program, stmpl, incl, structure, fieldref);
 	snprintf(filename, sizeof(filename), filetmpl, strfpn(structure),
 		structure);
-	runcc(tname, filename, program);
+	rv = runcc(tname, filename, program);
+	return rv;
 }
 
 char *aliasfmt = "exit(&tst.%s != &tst.%s || sizeof(tst.%s) != sizeof(tst.%s));";
@@ -166,7 +177,8 @@ aliascheck(char *tname, char *incl, char *structure, char *field, char *dname)
 	sprintf(program, stmpl, incl, structure, fieldref);
 	snprintf(filename, sizeof(filename), filetmpl, strfpn(structure),
 		structure);
-	runcc(tname, filename, program);
+	rv = runcc(tname, filename, program);
+	return rv;
 }
 
 const char *dtmpl =
@@ -180,7 +192,8 @@ valuecheck(char *tname, char *incl, char *dname, char *dval)
 
 	sprintf(program, dtmpl, incl, dname, dval);
 	snprintf(filename, sizeof(filename), filetmpl, strfpn(dname), dname);
-	runcc(tname, filename, program);
+	rv = runcc(tname, filename, program);
+	return rv;
 }
 
 const char *ftmpl =
@@ -195,5 +208,6 @@ funccheck(char *tname, char *incl, char *fname)
 
 	sprintf(program, ftmpl, incl, fname);
 	snprintf(filename, sizeof(filename), filetmpl, strfpn(fname), fname);
-	runcc(tname, filename, program);
+	rv = runcc(tname, filename, program);
+	return rv;
 }

@@ -15,17 +15,17 @@
  *
  */
 /**************************************************************************
- * 
+ *
  *    TEST IDENTIFIER	: umount01
- * 
+ *
  *    EXECUTED BY	: root / superuser
- * 
+ *
  *    TEST TITLE	: Basic test for umount(2)
- * 
+ *
  *    TEST CASE TOTAL	: 1
- * 
+ *
  *    AUTHOR		: Nirmala Devi Dhanasekar <nirmala.devi@wipro.com>
- * 
+ *
  *    SIGNALS
  * 	Uses SIGUSR1 to pause before test if option set.
  * 	(See the parse_opts(3) man page).
@@ -33,23 +33,23 @@
  *    DESCRIPTION
  *	This is a Phase I test for the umount(2) system call.
  *	It is intended to provide a limited exposure of the system call.
- * 
+ *
  * 	Setup:
  *	  Setup signal handling.
  *	  Create a mount point.
  *	  Pause for SIGUSR1 if option specified.
- * 
+ *
  * 	Test:
  *	 Loop if the proper options are given.
  *	  Execute system call
  *	  Check return code, if system call failed (return=-1)
  *		Log the errno and Issue a FAIL message.
  *	  Otherwise, Issue a PASS message.
- * 
+ *
  * 	Cleanup:
  *	  Delete the mount point.
  * 	  Print errno log and/or timing stats if options given
- * 
+ *
  * USAGE:  <for command-line>
  *  umount01 [-T type] -D device [-e] [-i n] [-I x] [-p x] [-t]
  *			where,  -T type : specifies the type of filesystem to
@@ -79,32 +79,31 @@ static void help(void);
 static void setup(void);
 static void cleanup(void);
 
-char	*TCID = "umount01";		/* Test program identifier.    */
-int	TST_TOTAL = 1;			/* Total number of test cases. */
-extern int Tst_count;			/* TestCase counter for tst_* routine */
+char *TCID = "umount01";	/* Test program identifier.    */
+int TST_TOTAL = 1;		/* Total number of test cases. */
+extern int Tst_count;		/* TestCase counter for tst_* routine */
 
 #define DEFAULT_FSTYPE	"ext2"
 #define DIR_MODE	S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH
 
 static char *Fstype;
 
-static char	mntpoint[20];
-static char	*fstype;
-static char	*device;
-static int	Tflag = 0;
-static int	Dflag = 0;
+static char mntpoint[20];
+static char *fstype;
+static char *device;
+static int Tflag = 0;
+static int Dflag = 0;
 
-static option_t options[] = {		/* options supported by umount01 test */
-	{ "T:", &Tflag, &fstype },	/* -T type of filesystem	*/
-	{ "D:", &Dflag, &device },	/* -D device used for mounting	*/
-	{ NULL, NULL, NULL }
+static option_t options[] = {	/* options supported by umount01 test */
+	{"T:", &Tflag, &fstype},	/* -T type of filesystem        */
+	{"D:", &Dflag, &device},	/* -D device used for mounting  */
+	{NULL, NULL, NULL}
 };
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
-	int	lc;			/* loop counter */
-	char	*msg;			/* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
 	if ((msg = parse_opts(ac, av, options, &help)) != (char *)NULL) {
@@ -122,16 +121,16 @@ main(int ac, char **av)
 
 	if (Tflag == 1) {
 		Fstype = strdup(fstype);
-		if(Fstype == NULL) {
+		if (Fstype == NULL) {
 			tst_brkm(TBROK, NULL, "malloc - failed to alloc %d"
-				"errno %d", strlen(fstype), errno);
+				 "errno %d", strlen(fstype), errno);
 			tst_exit();
 		}
 	} else {
 		Fstype = strdup(DEFAULT_FSTYPE);
-		if(Fstype == NULL) {
+		if (Fstype == NULL) {
 			tst_brkm(TBROK, NULL, "malloc - failed to alloc %d"
-				"errno %d", strlen(DEFAULT_FSTYPE), errno);
+				 "errno %d", strlen(DEFAULT_FSTYPE), errno);
 			tst_exit();
 		}
 	}
@@ -174,24 +173,22 @@ main(int ac, char **av)
 				tst_resm(TPASS, "umount(2) Passed ");
 			}
 		}
-	}	/* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 
 	/* cleanup and exit */
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	 /*NOTREACHED*/ return 0;
 
-}	/* End main */
+}				/* End main */
 
 /* setup() - performs all ONE TIME setup for this test */
-void 
-setup()
+void setup()
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Check whether we are root*/
+	/* Check whether we are root */
 	if (geteuid() != 0) {
 		if (Fstype != NULL) {
 			free(Fstype);
@@ -199,8 +196,7 @@ setup()
 		tst_brkm(TBROK, tst_exit, "Test must be run as root");
 	}
 
-
-	/* make a temp directory */ 
+	/* make a temp directory */
 	tst_tmpdir();
 
 	/* Unique mount point */
@@ -209,21 +205,19 @@ setup()
 	if (mkdir(mntpoint, DIR_MODE) < 0) {
 		tst_brkm(TBROK, cleanup, "mkdir(%s, %#o) failed; "
 			 "errno = %d: %s", mntpoint, DIR_MODE, errno,
-			  strerror(errno));
+			 strerror(errno));
 	}
 
 	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}	/* End setup() */
+}				/* End setup() */
 
-
-/* 
+/*
  *cleanup() -  performs all ONE TIME cleanup for this test at
  *		completion or premature exit.
  */
-void 
-cleanup()
+void cleanup()
 {
 	if (Fstype != NULL) {
 		free(Fstype);
@@ -240,15 +234,14 @@ cleanup()
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-}	/* End cleanup() */
+}				/* End cleanup() */
 
 /*
  * issue a help message
  */
-void
-help()
+void help()
 {
 	printf("-T type	  : specifies the type of filesystem to be mounted."
-		" Default ext2. \n");
+	       " Default ext2. \n");
 	printf("-D device : device used for mounting \n");
 }

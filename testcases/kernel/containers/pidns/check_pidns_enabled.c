@@ -42,6 +42,10 @@
 #include "../libclone/libclone.h"
 #include "test.h"
 
+char *TCID = "check_pidns_enabled";
+int TST_COUNT = 1;
+int TST_TOTAL = 1;
+
 int dummy(void *v)
 {
 	/* Simply return from the child */
@@ -53,13 +57,10 @@ int main()
 {
         int pid;
 
-	/* Test for the running kernel version
-	 * provided by LTP library API
-	 */
         if (tst_kvercmp(2,6,24) < 0)
                 return 1;
 
-        pid = do_clone(CLONE_NEWPID, dummy, NULL);
+        pid = do_clone_unshare_test(T_CLONE, CLONE_NEWPID, dummy, NULL);
 
 	/* Check for the clone function return value */
         if (pid == -1)

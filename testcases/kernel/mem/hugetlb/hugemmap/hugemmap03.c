@@ -20,9 +20,9 @@
 /*
  * Test Name: hugemmap03
  *
- * Test Description: Test that a normal page cannot be mapped into a high 
+ * Test Description: Test that a normal page cannot be mapped into a high
  * memory region.
- * 
+ *
  * Usage:  <for command-line>
  *  hugemmap03 [-c n] [-f] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
@@ -55,7 +55,7 @@
 #include "usctest.h"
 
 #define PAGE_SIZE      ((1UL) << 12) 	/* Normal page size */
-#define HIGH_ADDR      (void *)(0x10000000000)
+#define HIGH_ADDR      (void *)(0x1000000000000)
 
 char* TEMPFILE="mmapfile";
 
@@ -81,7 +81,7 @@ main(int ac, char **av)
       	tst_resm(TCONF,"This test is only for 64bit");
 	tst_exit();
        	/*NOTREACHED*/
-       	return(1);
+       	return 1;
 #else	/* 64-bit compiled */
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
@@ -103,20 +103,20 @@ main(int ac, char **av)
 		tst_brkm(TBROK, NULL, "-H option is REQUIRED for this test, use -h for options help");
 		tst_exit();
 	}
-	
+
 	/* Perform global setup for test */
 	setup();
 
 	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-	
+
 	        /* Creat a temporary file used for huge mapping */
 		if ((fildes = open(TEMPFILE, O_RDWR | O_CREAT, 0666)) < 0) {
 			tst_brkm(TFAIL, cleanup,
 				 "open() on %s Failed, errno=%d : %s",
 				 TEMPFILE, errno, strerror(errno));
 		}
-		
+	
 		/* Reset Tst_count in case we are looping. */
 		Tst_count=0;
 
@@ -130,6 +130,7 @@ main(int ac, char **av)
 			continue;
 		} else {
 			tst_resm(TPASS, "Normal mmap() into high region failed correctly");
+			break;
 		}
 
 		close(fildes);
@@ -153,7 +154,7 @@ main(int ac, char **av)
  * 	     Creat a temporary directory and a file under it.
  * 	     Write some known data into file and get the size of the file.
  */
-void 
+void
 setup()
 {
 	char mypid[40];
@@ -176,7 +177,7 @@ setup()
  *             completion or premature exit.
  * 	       Remove the temporary directory created.
  */
-void 
+void
 cleanup()
 {
 	/*

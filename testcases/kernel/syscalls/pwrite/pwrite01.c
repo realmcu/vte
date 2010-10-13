@@ -43,7 +43,7 @@
  *   Check return code, if system call failed (return=-1)
  *   	Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *   	Verify the Functionality of system call
  *      if successful,
  *      	Issue Functionality-Pass message.
  *      Otherwise,
@@ -75,6 +75,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 
 #include "test.h"
 #include "usctest.h"
@@ -87,27 +88,26 @@
 #define K4              (K1 * 4)
 #define NBUFS           4
 
-char *TCID="pwrite01";		/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
+char *TCID = "pwrite01";	/* Test program identifier.    */
+int TST_TOTAL = 1;		/* Total number of test cases. */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 int fildes;			/* file descriptor for tempfile */
 char *write_buf[NBUFS];		/* buffer to hold data to be written */
 
 void setup();			/* Main setup function of test */
 void cleanup();			/* cleanup function for the test */
-void l_seek(int, off_t, int, off_t); /* function to call lseek() */
+void l_seek(int, off_t, int, off_t);	/* function to call lseek() */
 void init_buffers();		/* function to initialize/allocate buffers */
 void check_file_contents();	/* function to verify the contents of file */
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 	int nwrite;		/* no. of bytes written by pwrite() */
-	
+
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
+	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
 	if (msg != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
@@ -121,8 +121,8 @@ main(int ac, char **av)
 		/* Reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		/* 
-		 * Call pwrite() to write K1 bytes of data (0's) at offset 0 
+		/*
+		 * Call pwrite() to write K1 bytes of data (0's) at offset 0
 		 * of temporary file
 		 */
 		nwrite = pwrite(fildes, write_buf[0], K1, 0);
@@ -138,13 +138,13 @@ main(int ac, char **av)
 		l_seek(fildes, 0, SEEK_CUR, 0);
 
 		/*
-		 * Now, lseek() to a non K boundary, 
+		 * Now, lseek() to a non K boundary,
 		 * just to be different.
 		 */
-		l_seek(fildes, K1/2, SEEK_SET, K1/2);
+		l_seek(fildes, K1 / 2, SEEK_SET, K1 / 2);
 
 		/*
-		 * Again, pwrite() K1 of data (2's) at offset K2 of 
+		 * Again, pwrite() K1 of data (2's) at offset K2 of
 		 * temporary file.
 		 */
 		nwrite = pwrite(fildes, write_buf[2], K1, K2);
@@ -156,14 +156,14 @@ main(int ac, char **av)
 		}
 
 		/* We should still be at our non K boundary. */
-		l_seek(fildes, 0, SEEK_CUR, K1/2);
+		l_seek(fildes, 0, SEEK_CUR, K1 / 2);
 
 		/* lseek() to an offset of K3. */
 		l_seek(fildes, K3, SEEK_SET, K3);
 
 		/*
-		 * Using write(), write of K1 of data (3's) which 
-		 * should take place at an offset of K3, 
+		 * Using write(), write of K1 of data (3's) which
+		 * should take place at an offset of K3,
 		 * moving the file pointer to K4.
 		 */
 		nwrite = write(fildes, write_buf[3], K1);
@@ -204,12 +204,12 @@ main(int ac, char **av)
 		/* reset to offset 0 in case we are looping */
 		l_seek(fildes, 0, SEEK_SET, 0);
 
-	}	/* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	return(0);
-}	/* End main */
+	return 0;
+}				/* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -217,8 +217,7 @@ main(int ac, char **av)
  *  Initialize/allocate read/write buffers.
  *  Create a temporary directory and a file under it and
  */
-void 
-setup()
+void setup()
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -247,8 +246,7 @@ setup()
  *    write_buf[0] has 0's, write_buf[1] has 1's, write_buf[2] has 2's
  *    write_buf[3] has 3's.
  */
-void
-init_buffers()
+void init_buffers()
 {
 	int count;		/* counter variable for loop */
 
@@ -256,7 +254,7 @@ init_buffers()
 	for (count = 0; count < NBUFS; count++) {
 		write_buf[count] = (char *)malloc(K1);
 
-		if (write_buf[count] == NULL)  {
+		if (write_buf[count] == NULL) {
 			tst_brkm(TBROK, tst_exit, "malloc() failed ");
 		}
 		memset(write_buf[count], count, K1);
@@ -269,31 +267,29 @@ init_buffers()
  *  "checkoff" is the offset at which we believe we should be at.
  *  Used to validate pread/pwrite don't move the offset.
  */
-void
-l_seek(int fdesc, off_t offset, int whence, off_t checkoff)
+void l_seek(int fdesc, off_t offset, int whence, off_t checkoff)
 {
 	off_t offloc;		/* offset ret. from lseek() */
 
 	if ((offloc = lseek(fdesc, offset, whence)) != checkoff) {
-		tst_resm(TWARN, "lseek returned %d, expected %d", offloc,
-			 checkoff);
-		tst_brkm(TBROK, cleanup, "lseek() on %s Failed, error=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
+		tst_resm(TWARN, "lseek returned %"PRId64", expected %"PRId64, (int64_t)offloc,
+			 (int64_t)checkoff);
+		tst_brkm(TBROK|TERRNO, cleanup, "lseek() on %s Failed",
+			 TEMPFILE);
 	}
 }
 
 /*
- * check_file_contents() - Check the contents of the file we wrote with 
+ * check_file_contents() - Check the contents of the file we wrote with
  *			   pwrite()'s.
  *  The contents of the file are verified by using a plain read() and
  *  Compare the data read with the original write_buf[] contents.
  */
-void
-check_file_contents()
+void check_file_contents()
 {
-	int count, err_flg = 0;		/* index variable and error flag */
-	int nread;			/* return value of read() */
-	off_t offloc;			/* offset. ret. by lseek() */
+	int count, err_flg = 0;	/* index variable and error flag */
+	int nread;		/* return value of read() */
+	off_t offloc;		/* offset. ret. by lseek() */
 	char *read_buf;		/* buffer to hold read data */
 
 	/* Allocate space for read buffer */
@@ -307,17 +303,17 @@ check_file_contents()
 		/* Seek to specified offset position from beginning */
 		offloc = lseek(fildes, count * K1, SEEK_SET);
 		if (offloc != (count * K1)) {
-			tst_brkm(TBROK, cleanup,
-				 "lseek() failed: offloc=%d, errno=%d",
-				 offloc, errno);
+			tst_brkm(TBROK|TERRNO, cleanup,
+				 "lseek() failed: offloc=%"PRId64,
+				 (int64_t)offloc);
 		}
 
 		/* Read the data from file into a buffer */
 		nread = read(fildes, read_buf, K1);
 		if (nread != K1) {
-			tst_brkm(TBROK, cleanup,
-				 "read() failed: nread=%d, errno=%d",
-				 nread, errno);
+			tst_brkm(TBROK|TERRNO, cleanup,
+				 "read() failed: nread=%d",
+				 nread);
 		}
 
 		/* Compare the read data with the data written using pwrite */
@@ -344,8 +340,7 @@ check_file_contents()
  * Close the temporary file.
  * Remove the temporary directory created.
  */
-void 
-cleanup()
+void cleanup()
 {
 	int count;		/* index for the loop */
 

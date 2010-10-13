@@ -91,7 +91,7 @@ void ok_exit();
  */
 
 #define MAXLOOPS	500	/* max pages for map children to write */
-#define	FILESIZE	4096	/* initial filesize set up by parent */	
+#define	FILESIZE	4096	/* initial filesize set up by parent */
 
 #ifdef roundup
 #undef roundup
@@ -166,7 +166,7 @@ main(int argc, char *argv[])
 	tst_tmpdir();
 	if (argc < 2) {
 		tst_resm(TBROK, "usage: %s %s\n", progname, usage);
-                tst_exit(0);
+                tst_exit();
 	}
 
 	while ((c = getopt(argc, argv, "S:omdlrf:p:t:")) != -1) {
@@ -211,21 +211,21 @@ main(int argc, char *argv[])
 			sparseoffset = atoi(optarg);
 #endif /* LARGE_FILE */
 			if (sparseoffset % pagesize != 0) {
-				fprintf(stderr, 
+				fprintf(stderr,
 				    "sparseoffset must be pagesize multiple\n");
 				anyfail();
 			}
 			break;
 		default:
 			(void)fprintf(stderr,"usage: %s %s\n", progname, usage);
-                        tst_exit(0);
+                        tst_exit();
 		}
 	}
 
 	/* nprocs is >= 0 since it's unsigned */
 	if (nprocs > 255) {
 		(void)fprintf(stderr, "invalid nprocs %d - (range 0-255)\n",
-			nprocs); 
+			nprocs);
 		anyfail();
 	}
 
@@ -237,10 +237,10 @@ main(int argc, char *argv[])
 
 	if (debug) {
 #ifdef LARGE_FILE
-		(void)printf("creating file <%s> with %Ld bytes, pattern %d\n", 
+		(void)printf("creating file <%s> with %Ld bytes, pattern %d\n",
 			filename, filesize, pattern);
 #else /* LARGE_FILE */
-		(void)printf("creating file <%s> with %ld bytes, pattern %d\n", 
+		(void)printf("creating file <%s> with %ld bytes, pattern %d\n",
 			filename, filesize, pattern);
 #endif /* LARGE_FILE */
 		if (alarmtime)
@@ -353,7 +353,7 @@ main(int argc, char *argv[])
 	/*
 	 *  Now wait for children and refork them as needed.
 	 */
-	
+
 	while (!finished) {
 		pid = wait(&wait_stat);
 		/*
@@ -370,7 +370,7 @@ main(int argc, char *argv[])
 			 *  Check exit status, then refork with the
 			 *  appropriate procno.
 			 */
-			if (!WIFEXITED(wait_stat) 
+			if (!WIFEXITED(wait_stat)
 			    || WEXITSTATUS(wait_stat) != 0) {
 				(void)fprintf(stderr, "child exit with err "
 					"<x%x>\n", wait_stat);
@@ -410,7 +410,7 @@ main(int argc, char *argv[])
 			goto cleanup;
 		}
 	}
-	
+
 	/*
 	 *  Finished!  Check the file for sanity, then kill all
 	 *  the children and done!.
@@ -445,7 +445,7 @@ cleanup:
 		}
 	} else
 		(void)printf("  leaving file <%s>\n", filename);
-	
+
 	(void)time(&t);
 	//(void)printf("%s: Finished %s", argv[0], ctime(&t)); LTP Port
 	ok_exit();
@@ -481,7 +481,7 @@ child_mapper(char *file, unsigned procno, unsigned nprocs)
 	unsigned int seed;
 	unsigned loopcnt;
 	unsigned nloops;
-	unsigned mappages; 
+	unsigned mappages;
 	unsigned i;
 
 	seed = initrand();		/* initialize random seed */
@@ -536,10 +536,10 @@ child_mapper(char *file, unsigned procno, unsigned nprocs)
 	}
 
 #ifdef LARGE_FILE
-	if ((maddr = mmap64(0, mapsize, PROT_READ|PROT_WRITE, MAP_SHARED, 
+	if ((maddr = mmap64(0, mapsize, PROT_READ|PROT_WRITE, MAP_SHARED,
 			  fd, offset)) == (caddr_t)-1) {
 #else /* LARGE_FILE */
-	if ((maddr = mmap(0, mapsize, PROT_READ|PROT_WRITE, MAP_SHARED, 
+	if ((maddr = mmap(0, mapsize, PROT_READ|PROT_WRITE, MAP_SHARED,
 			  fd, offset)) == (caddr_t)-1) {
 #endif /* LARGE_FILE */
 		perror("mmap error");
@@ -562,7 +562,7 @@ child_mapper(char *file, unsigned procno, unsigned nprocs)
 			validsize = mapsize % pagesize;
 
 		for (i = procno; i < validsize; i += nprocs) {
-			if (*((unsigned char *)(paddr+i)) 
+			if (*((unsigned char *)(paddr+i))
 			    != ((procno + pattern) & 0xff)) {
 				(void)fprintf(stderr, "child %d: invalid data "
 					"<x%x>", procno,
@@ -585,12 +585,16 @@ child_mapper(char *file, unsigned procno, unsigned nprocs)
 		 */
 		randpage = lrand48() % mappages;
 		paddr = maddr + (randpage * pagesize);	 /* page address */
-		if (msync(paddr, (mappages - randpage)*pagesize, 
+		if (msync(paddr, (mappages - randpage)*pagesize,
 		    MS_SYNC) == -1) {
 			anyfail();
 		}
 	}
-
+	if (munmap(maddr, mapsize) == -1) {
+		perror("munmap failed");
+		local_flag = FAILED;
+		anyfail();
+	}
 	exit(0);
 }
 
@@ -623,7 +627,7 @@ fileokay(char *file, uchar_t *expbuf)
 		local_flag = FAILED;
 		anyfail();
 		/*****	**	*****/
-		return(0);	
+		return 0;
 	}
 #ifdef LARGE_FILE
 	if (fstat64(fd, &statbuf) == -1) {
@@ -635,7 +639,7 @@ fileokay(char *file, uchar_t *expbuf)
 		local_flag = FAILED;
 		anyfail();
 		/*****	**	*****/
-		return(0);
+		return 0;
 	}
 #ifdef LARGE_FILE
 	if (lseek64(fd, sparseoffset, SEEK_SET) < 0) {
@@ -663,16 +667,16 @@ fileokay(char *file, uchar_t *expbuf)
 			local_flag = FAILED;
 			anyfail();
 			/*****	**	*****/
-			return(0);	
+			return 0;
 		} else if (cnt != pagesize) {
 			/*
-			 *  Okay if at last page in file... 
+			 *  Okay if at last page in file...
 			 */
 			if ((i * pagesize) + cnt != mapsize) {
 				(void)fprintf(stderr, "read %d of %ld bytes\n",
-					      (i*pagesize)+cnt, 
+					      (i*pagesize)+cnt,
 					      (long)mapsize);
-				return(0);
+				return 0;
 			}
 		}
 		/*
@@ -680,7 +684,7 @@ fileokay(char *file, uchar_t *expbuf)
 		 */
 		for (j = 0; j < cnt; j++) {
 			if (expbuf[j] != readbuf[j]) {
-				(void)fprintf(stderr, 
+				(void)fprintf(stderr,
 					"read bad data: exp %c got %c)",
 					expbuf[j], readbuf[j]);
 #ifdef LARGE_FILE
@@ -690,12 +694,13 @@ fileokay(char *file, uchar_t *expbuf)
 				(void)fprintf(stderr, ", pg %d off %d, "
 					"(fsize %ld)\n", i, j, statbuf.st_size);
 #endif /* LARGE_FILE */
-				return(0);
+				return 0;
 			}
 		}
 	}
-					
-	return(1);
+	close(fd);
+				
+	return 1;
 }
 
 /*ARGSUSED*/
@@ -741,7 +746,7 @@ int anyfail()
   	tst_resm(TFAIL, "Test failed");
 	tst_rmdir();
 	tst_exit();
-	return(0);
+	return 0;
 }
 
 /*****  **      **      *****/

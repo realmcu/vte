@@ -12,31 +12,31 @@ Setting up your machine
 
 * There is nothing to install, the suite is intended to be run directly.
 
-* See the "BUILD" file for info on how to set up the Makefile and your developer machine,  
-depending on what specific area you are concentrating on. 
-(Signals, Semaphores, Threads, Timers or Message Qs).  
-
-* "LDFLAGS" is a file used by the Makefile to link to what you specify in it. e.g. if you want to link with lpthread, you would open LDFLAGS and insert the line "-lpthread".  LDFLAGS has a few
-simple examples contained in it.
+* See the "BUILD" file for info on how to set up the Makefile and your machine,
+  depending on what specific area you are concentrating on. 
+(Signals, Semaphores, Threads, Timers or Message Queues).
 
 ===================
 Running the tests
 ===================
 
-* Easiest way to run all the tests is to do a "make" in the top-level directory.
+* Easiest way to run all the tests is to do a "make all" in the top-level
+  directory.
 
-* To run tests for a specific directory, first export the POSIX_TARGET variable
-to the directory you want, then perform a "make".  e.g.:
-	# export POSIX_TARGET=conformance/interfaces/pthread_create 
-	# make
+* To run tests for a specific directory, do the following
+  - make generate-makefiles # only required for the first shot.
+  - cd <subdir> ; make all test
 
-* An easy way to run all tests specific to your area of focus, run:
+  Example:
 
-	# ./run_tests [MEM|MSG|SEM|SIG|THR|TMR|TPS]
-	the argument is the 3 letter POSIX abbreviation for area
+  - make generate-makefiles
+  - cd conformance/interfaces/pthread_create ; make all test
+
+* Running tests for a specific focus can be done like so:
+  run-posix-option-group-test.sh [OPTION-GROUP]
 
 * For additional information on how to build and run the tests in this
-suite, see Documentation/HOWTO_RunTests.
+  suite, see Documentation/HOWTO_RunTests.
 
 ==========================
 Documentation & Resources
@@ -45,7 +45,6 @@ Documentation & Resources
 POSIX* Test Suite project page: http://posixtest.sf.net
 
 BUILD			- describes how to set up your developer machine to build and test
-LDFLAGS			- File that Makefile uses to link to what you specify
 
 The following files give developers information on how to write test
 cases for the project (under Documentation):

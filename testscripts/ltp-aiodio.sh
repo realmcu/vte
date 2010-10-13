@@ -16,6 +16,8 @@ if [ $? -eq 0 ]; then
  cd ..
  export LTPROOT=${PWD}
 fi
+export PATH=$LTPROOT/testcases/bin:$PATH
+export TMP=${TMP:=/tmp}
 
 run0=0
 runTest=0
@@ -129,9 +131,9 @@ if [ "$run0" -eq 0 ]; then
   usage;
 fi
 
-mkdir /test  > /dev/nul 2>&1 
-mkdir /test/aiodio > /dev/nul  2>&1 
-mkdir /test/aiodio2 > /dev/nul  2>&1 
+mkdir $TMP  > /dev/null 2>&1 
+mkdir $TMP/aiodio > /dev/null  2>&1 
+mkdir $TMP/aiodio2 > /dev/null  2>&1 
 
 while [ "$runTest" -lt "$run0" ]
 do
@@ -143,16 +145,16 @@ if [ -n "$ext2" -a $nextTest -eq 0 ]; then
   echo "* Testing ext2 filesystem *" 
   echo "***************************"
   mkfs -t ext2 $part1
-  mount -t ext2 $part1 /test/aiodio
+  mount -t ext2 $part1 $TMP/aiodio
   if [ "$runExtendedStress" -eq 1 -a -n "$ext3" ]; then
     mkfs -t ext3 $part2
-    mount -t ext3 $part2 /test/aiodio2
+    mount -t ext3 $part2 $TMP/aiodio2
   elif [ "$runExtendedStress" -eq 1 -a -n "$jfs" ]; then
     mkfs.jfs  $part2 <testscripts/yesenter.txt
-    mount -t jfs $part2 /test/aiodio2
+    mount -t jfs $part2 $TMP/aiodio2
   elif [ "$runExtendedStress" -eq 1 -a -n "$xfs" ]; then
     mkfs.xfs -f $part2
-    mount -t xfs $part2 /test/aiodio2
+    mount -t xfs $part2 $TMP/aiodio2
   fi
 elif [ $nextTest -eq 0 ]; then
   nextTest=$(($nextTest+1))
@@ -163,16 +165,16 @@ if [ -n "$ext3" -a $nextTest -eq 1 ]; then
   echo "* Testing ext3 filesystem *"
   echo "***************************"
   mkfs -t ext3 $part1
-  mount -t ext3 $part1 /test/aiodio
+  mount -t ext3 $part1 $TMP/aiodio
   if [ "$runExtendedStress" -eq 1 -a -n "$jfs" ]; then
     mkfs.jfs  $part2 <testscripts/yesenter.txt
-    mount -t jfs $part2 /test/aiodio2
+    mount -t jfs $part2 $TMP/aiodio2
   elif [ "$runExtendedStress" -eq 1 -a -n "$xfs" ]; then
     mkfs.xfs -f $part2
-    mount -t xfs $part2 /test/aiodio2
+    mount -t xfs $part2 $TMP/aiodio2
   elif [ "$runExtendedStress" -eq 1 -a -n "$ext2" ]; then
     mkfs -t ext2 $part2
-    mount -t ext2 $part2 /test/aiodio2
+    mount -t ext2 $part2 $TMP/aiodio2
   fi
 elif [ $nextTest -eq 1 ]; then
   nextTest=$(($nextTest+1))
@@ -183,16 +185,16 @@ if [ -n "$jfs" -a $nextTest -eq 2 ]; then
   echo "* Testing jfs filesystem *"
   echo "**************************"
   mkfs.jfs  $part1 <testscripts/yesenter.txt
-  mount -t jfs $part1 /test/aiodio
+  mount -t jfs $part1 $TMP/aiodio
   if [ "$runExtendedStress" -eq 1 -a -n "$ext3" ]; then
     mkfs -t ext3  $part2
-    mount -t ext3 $part2 /test/aiodio2
+    mount -t ext3 $part2 $TMP/aiodio2
   elif [ "$runExtendedStress" -eq 1 -a -n "$xfs" ]; then
     mkfs.xfs -f $part2
-    mount -t xfs $part2 /test/aiodio2
+    mount -t xfs $part2 $TMP/aiodio2
   elif [ "$runExtendedStress" -eq 1 -a -n "$ext2" ]; then
     mkfs -t ext2 $part2
-    mount -t ext2 $part2 /test/aiodio2
+    mount -t ext2 $part2 $TMP/aiodio2
   fi
 elif [ $nextTest -eq 2 ]; then
   nextTest=$(($nextTest+1))
@@ -203,16 +205,16 @@ if [ -n "$xfs" -a $nextTest -eq 3 ]; then
   echo "* Testing xfs filesystem *"
   echo "**************************"
   mkfs.xfs -f $part1
-  mount -t xfs $part1 /test/aiodio
+  mount -t xfs $part1 $TMP/aiodio
   if [ "$runExtendedStress" -eq 1 -a -n "$ext2" ]; then
     mkfs -t ext2 $part2
-    mount -t ext2 $part2 /test/aiodio2
+    mount -t ext2 $part2 $TMP/aiodio2
   elif [ "$runExtendedStress" -eq 1 -a -n "$ext3" ]; then
     mkfs -t ext3  $part2
-    mount -t ext3 $part2 /test/aiodio2
+    mount -t ext3 $part2 $TMP/aiodio2
   elif [ "$runExtendedStress" -eq 1 -a -n "$jfs" ]; then
     mkfs.jfs  $part2 <testscripts/yesenter.txt
-    mount -t jfs $part2 /test/aiodio2
+    mount -t jfs $part2 $TMP/aiodio2
   fi
 elif [ $nextTest -eq 3 ]; then
   nextTest=$(($nextTest+1))
@@ -221,15 +223,15 @@ fi
 nextTest=$(($nextTest+1))
 runTest=$(($runTest+1))
 
-mkdir /test/aiodio/junkdir
-dd if=$file1 of=/test/aiodio/junkfile bs=8192 conv=block,sync
+mkdir $TMP/aiodio/junkdir
+dd if=$file1 of=$TMP/aiodio/junkfile bs=8192 conv=block,sync
 
 date
 echo "************ Running aio-stress tests " 
 echo "current working dir = ${PWD}"
-${LTPROOT}/tools/rand_lines -g ${LTPROOT}/runtest/ltp-aio-stress.part1 > ${TMPBASE}/ltp-aio-stress.part1
+${LTPROOT}/bin/rand_lines -g ${LTPROOT}/runtest/ltp-aio-stress.part1 > ${TMPBASE}/ltp-aio-stress.part1
 
-${LTPROOT}/pan/pan -e -S -a ltpaiostresspart1 -n ltp-aiostresspart1 -l ltpaiostress.logfile -o ltpaiostress.outfile -p -f ${TMPBASE}/ltp-aio-stress.part1 &
+${LTPROOT}/bin/ltp-pan -e -S -a ltpaiostresspart1 -n ltp-aiostresspart1 -l ltpaiostress.logfile -o ltpaiostress.outfile -p -f ${TMPBASE}/ltp-aio-stress.part1 &
 
 wait $!
 
@@ -239,24 +241,24 @@ echo ""
 
 if [ "$runExtendedStress" -eq 1 ];then
 echo "************ Running EXTENDED aio-stress tests " 
-${LTPROOT}/tools/rand_lines -g ${LTPROOT}/runtest/ltp-aio-stress.part2 > ${TMPBASE}/ltp-aio-stress.part2
+${LTPROOT}/bin/rand_lines -g ${LTPROOT}/runtest/ltp-aio-stress.part2 > ${TMPBASE}/ltp-aio-stress.part2
 
-${LTPROOT}/pan/pan -e -S -a ltpaiostresspart2 -n ltp-aiostresspart2 -l ltpaiostress.logfile -o ltpaiostress.outfile -p -f ${TMPBASE}/ltp-aio-stress.part2 &
+${LTPROOT}/bin/ltp-pan -e -S -a ltpaiostresspart2 -n ltp-aiostresspart2 -l ltpaiostress.logfile -o ltpaiostress.outfile -p -f ${TMPBASE}/ltp-aio-stress.part2 &
 
 wait $!
 sync
 fi
 
-dd if=$file1 of=/test/aiodio/junkfile bs=8192 conv=block,sync
-dd if=$file1 of=/test/aiodio/fff      bs=4096 conv=block,sync
-dd if=$file1 of=/test/aiodio/ff1      bs=2048 conv=block,sync
-dd if=$file1 of=/test/aiodio/ff2      bs=1024 conv=block,sync
-dd if=$file1 of=/test/aiodio/ff3      bs=512  conv=block,sync
+dd if=$file1 of=$TMP/aiodio/junkfile bs=8192 conv=block,sync
+dd if=$file1 of=$TMP/aiodio/fff      bs=4096 conv=block,sync
+dd if=$file1 of=$TMP/aiodio/ff1      bs=2048 conv=block,sync
+dd if=$file1 of=$TMP/aiodio/ff2      bs=1024 conv=block,sync
+dd if=$file1 of=$TMP/aiodio/ff3      bs=512  conv=block,sync
 
 echo "************ Running aiocp tests " 
-${LTPROOT}/tools/rand_lines -g ${LTPROOT}/runtest/ltp-aiodio.part1 > ${TMPBASE}/ltp-aiodio.part1
+${LTPROOT}/bin/rand_lines -g ${LTPROOT}/runtest/ltp-aiodio.part1 > ${TMPBASE}/ltp-aiodio.part1
 
-${LTPROOT}/pan/pan -e -S -a ltpaiodiopart1 -n ltp-aiodiopart1 -l ltpaiodio1.logfile -o ltpaiodio1.outfile -p -f ${TMPBASE}/ltp-aiodio.part1 &
+${LTPROOT}/bin/ltp-pan -e -S -a ltpaiodiopart1 -n ltp-aiodiopart1 -l ltpaiodio1.logfile -o ltpaiodio1.outfile -p -f ${TMPBASE}/ltp-aiodio.part1 &
 
 wait $!
 sync
@@ -264,9 +266,9 @@ echo "************ End Running aiocp tests "
 echo ""
 
 echo "************ Running aiodio_sparse tests " 
-${LTPROOT}/tools/rand_lines -g ${LTPROOT}/runtest/ltp-aiodio.part2 > ${TMPBASE}/ltp-aiodio.part2
+${LTPROOT}/bin/rand_lines -g ${LTPROOT}/runtest/ltp-aiodio.part2 > ${TMPBASE}/ltp-aiodio.part2
 
-${LTPROOT}/pan/pan -e -S -a ltpaiodiopart2 -n ltp-aiodiopart2 -l ltpaiodio2.logfile -o ltpaiodio2.outfile -p -f ${TMPBASE}/ltp-aiodio.part2 &
+${LTPROOT}/bin/ltp-pan -e -S -a ltpaiodiopart2 -n ltp-aiodiopart2 -l ltpaiodio2.logfile -o ltpaiodio2.outfile -p -f ${TMPBASE}/ltp-aiodio.part2 &
 
 wait $!
 sync
@@ -276,9 +278,9 @@ echo ""
 
 if [ "$runExtendedStress" -eq 1 ];then
 echo "************ Running fsx-linux tests "
-${LTPROOT}/tools/rand_lines -g ${LTPROOT}/runtest/ltp-aiodio.part3 > ${TMPBASE}/ltp-aiodio.part3
+${LTPROOT}/bin/rand_lines -g ${LTPROOT}/runtest/ltp-aiodio.part3 > ${TMPBASE}/ltp-aiodio.part3
 
-${LTPROOT}/pan/pan -e -S -a ltpaiodiopart3 -n ltp-aiodiopart3 -l ltpaiodio3.logfile -o ltpaiodio3.outfile -p -f ${TMPBASE}/ltp-aiodio.part3 &
+${LTPROOT}/bin/ltp-pan -e -S -a ltpaiodiopart3 -n ltp-aiodiopart3 -l ltpaiodio3.logfile -o ltpaiodio3.outfile -p -f ${TMPBASE}/ltp-aiodio.part3 &
 
 
 
@@ -286,17 +288,17 @@ wait $!
 sync
 fi
 
-dd if=$file1 of=/test/aiodio/file2      bs=2048 conv=block,sync
-dd if=$file1 of=/test/aiodio/file3      bs=1024 conv=block,sync
-dd if=$file1 of=/test/aiodio/file4      bs=512  conv=block,sync
-dd if=$file1 of=/test/aiodio/file5      bs=4096 conv=block,sync
+dd if=$file1 of=$TMP/aiodio/file2      bs=2048 conv=block,sync
+dd if=$file1 of=$TMP/aiodio/file3      bs=1024 conv=block,sync
+dd if=$file1 of=$TMP/aiodio/file4      bs=512  conv=block,sync
+dd if=$file1 of=$TMP/aiodio/file5      bs=4096 conv=block,sync
 
 
 
  
 echo "************ Running dio_sparse & miscellaneous tests "
-${LTPROOT}/tools/rand_lines -g ${LTPROOT}/runtest/ltp-aiodio.part4 > ${TMPBASE}/ltp-aiodio.part4
-${LTPROOT}/pan/pan -e -S -a ltpaiodiopart4 -n ltp-aiodiopart4 -l ltpaiodio4.logfile -o ltpaiodio4.outfile -p -f ${TMPBASE}/ltp-aiodio.part4 &
+${LTPROOT}/bin/rand_lines -g ${LTPROOT}/runtest/ltp-aiodio.part4 > ${TMPBASE}/ltp-aiodio.part4
+${LTPROOT}/bin/ltp-pan -e -S -a ltpaiodiopart4 -n ltp-aiodiopart4 -l ltpaiodio4.logfile -o ltpaiodio4.outfile -p -f ${TMPBASE}/ltp-aiodio.part4 &
 
 wait $!
 sync
@@ -305,13 +307,13 @@ echo ""
 
 echo "************ Cleaning/Umounting" 
 
-rm -f /test/aiodio/fff
-rm -f /test/aiodio/ff1
-rm -f /test/aiodio/ff2
-rm -f /test/aiodio/ff3
-rm -f /test/aiodio/junkfile*
-rm -f /test/aiodio/file*
-rm -rf /test/aiodio/junkdir
+rm -f $TMP/aiodio/fff
+rm -f $TMP/aiodio/ff1
+rm -f $TMP/aiodio/ff2
+rm -f $TMP/aiodio/ff3
+rm -f $TMP/aiodio/junkfile*
+rm -f $TMP/aiodio/file*
+rm -rf $TMP/aiodio/junkdir
 
 umount $part1
 

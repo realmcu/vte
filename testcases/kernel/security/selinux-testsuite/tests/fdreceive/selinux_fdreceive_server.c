@@ -30,22 +30,22 @@ int main(int argc, char **argv)
 {
 	struct sockaddr_un sun;
 	char buf[1024];
-	int i, s, sunlen, ret, buflen, ctrl, c, contextlen, *fdptr, fd;
+	int i, s, sunlen, ret, ctrl, *fdptr, fd;
 	struct msghdr msg = { 0 };
 	struct iovec iov;
 	struct cmsghdr *cmsg;
 	char cmsgbuf[CMSG_SPACE(sizeof(int))];
 
 	if (argc != 2) {
-		fprintf(stderr, "usage:  %s address\n");
+		fprintf(stderr, "usage:  %s address\n", argv[0]);
 		exit(-1);
-	}	
+	}
 
 	for (i = 0; i < 32; i++) {
 		signal(i, handler);
 	}
 
-	
+
 	s = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (s < 0) {
 		perror("socket");
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 		perror("listen");
 		CLEANUP_AND_EXIT;
 	}
-	
+
 	while (1) {
 		sunlen = sizeof(struct sockaddr_un);
 		ctrl = accept(s, (struct sockaddr*)&sun, (socklen_t *)&sunlen);
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 		if (ret < 0) {
 			perror("recv");
 			CLEANUP_AND_EXIT;
-		}	
+		}
 
 		for (cmsg = CMSG_FIRSTHDR(&msg); cmsg; cmsg = CMSG_NXTHDR(&msg,cmsg)) {
 			if (cmsg->cmsg_level == SOL_SOCKET &&

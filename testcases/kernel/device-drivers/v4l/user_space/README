@@ -3,7 +3,47 @@
 
 Release History
 ---------------
-
+23 Jul 2009  0.17 Test cases added for VIDIOC_ENUM_FRAMESIZES and
+                  VIDIOC_G_JPEGCOMP. New V4L2_PIX_FMT_* formats also
+                  used in test cases.
+ 6 Jul 2009  0.16 Iterate through all available inputs in VIDIOC_G_STD and
+                  VIDIOC_S_STD test cases
+25 May 2009  0.15 Test cases added for VIDIOC_G_EXT_CTRLS, VIDIOC_S_EXT_CTRLS
+                  and VIDIOC_TRY_EXT_CTRLS
+ 7 May 2009  0.14 Test cases added for VIDIOC_QUERYBUF;
+                  Debug functions separated
+29 Apr 2009  0.13 Added string content validation;
+                  Test cases added for VIDIOC_REQBUFS
+19 Apr 2009  0.12 Test cases added for VIDIOC_S_FMT;
+                  NULL parameter test suite split to read only, write only
+                  and write/read ioctl suite;
+                  More verbose debug output in VIDIOC_S_FREQUENCY and in some
+                  other test cases;
+                  More strict check added for strings in different test cases
+ 9 Apr 2009  0.11 Test cases added for VIDIOC_G_OUTPUT, VIDIOC_S_OUTPUT,
+                  VIDIOC_G_FMT, VIDIOC_G_SLICED_VBI_CAP, VIDIOC_QUERYMENU;
+                  Cleaned up ret and errno variable names;
+                  Separated the NULL parameter test cases to a spearated testsuite
+                  and reworked most of the NULL parameter test cases;
+                  Added camera enabling through /sys/devices/platform/eeepc/camera;
+                  Added results page to documentation;
+                  Follow kernel API changes in video_dummy.ko
+18 Mar 2009  0.10 Test cases added for VIDIOC_G_PARM;
+                  Duplicated test for V4L2_BUF_TYPE_VIDEO_CAPTURE removed in
+                  VIDIOC_ENUM_FMT test
+14 Mar 2009  0.9  Test cases added for VIDIOC_S_CROP;
+                  Test steps added for VIDIOC_S_CTRL
+22 Feb 2009  0.8  Test cases added for VIDIOC_G_CROP, VIDIOC_G_CTRL and VIDIOC_S_CTRL
+ 9 Feb 2009  0.7  Test cases added for VIDIOC_G_AUDIO, VIDIOC_G_AUDOUT,
+                  VIDIOC_S_AUDIO and VIDIOC_G_CROP;
+                  Added video_dummy kernel driver to verify the test
+                  environment;
+                  Some cleanup
+ 4 Feb 2009  0.6  Test cases added for VIDIOC_G_AUDIO, VIDIOC_G_AUDOUT,
+                  VIDIOC_G_MODULATOR, VIDIOC_G_PRIORITY, VIDIOC_S_PRIORITY
+                  and VIDIOC_S_FREQUENCY
+31 Jan 2009  0.5  Test cases added for VIDIOC_QUERYSTD, VIDIOC_G_FREQUENCY
+                  and VIDIOC_G_TUNER
 24 Jan 2009  0.4  Test cases for MAX_EM28XX_INPUT, MAX_EM28XX_TVNORMS removed;
                   some typos fixed
  4 Jan 2008  0.3  Test cases for VIDIOC_ENUMOUTPUT, VIDIOC_ENUMAUDOUT,
@@ -19,11 +59,17 @@ Released under GPL
 
 What is this?
 -------------
-v4l-test is a test test environment for V4L2 drivers. The V4L2 drivers
+v4l-test is a test environment for V4L2 drivers. The V4L2 drivers
 are running under Linux in kernel space. This test environment is running
 in userspace and tries what normal video application would do. It also
 tries some things which are supposed to test the error handling mechanisms
 of a V4L2 driver. These are the "invalid test cases".
+
+The V4L2 API only covers webcams and analog tuner cards, the digital broadcast
+is out of the scope of V4L2 API so it is also out of the scope of this test
+environment. See Linux DVB API at http://linuxtv.org/docs/dvbapi/dvbapi.html
+for digital broadcast and Chapter 6.3 "Relation of V4L2 to other Linux multimedia APIs"
+in V4L2 specification.
 
 How to build?
 -------------
@@ -67,92 +113,12 @@ Currently all test are running and evaluated automatically. This might
 change in future if we want to test for example plugging and unplugging
 a USB video device or ask the user if a received picture make sense or not.
 
-The following table gives an overview about the current state of implemented
-test cases.
+See doc/index.html about how much of the specification is covered by the
+different test cases.
 
- V4L API element                  | Covered?
- ---------------------------------+---------------------------------------------
- V4L2 open()                      | yes, partly
- V4L2 close()                     | yes
- V4L2 ioctl()                     | yes
- ioctl VIDIOC_CROPCAP             | yes, only when STREAM_OFF
- ioctl VIDIOC_DBG_G_REGISTER      | no
- ioctl VIDIOC_DBG_S_REGISTER      | no
- ioctl VIDIOC_ENCODER_CMD         | no
- ioctl VIDIOC_TRY_ENCODER_CMD     | no
- ioctl VIDIOC_ENUMAUDIO           | yes, only when STREAM_OFF
- ioctl VIDIOC_ENUMAUDOUT          | yes, only when STREAM_OFF
- ioctl VIDIOC_ENUM_FMT            | yes, only when STREAM_OFF
- ioctl VIDIOC_ENUM_FRAMESIZES     | no
- ioctl VIDIOC_ENUM_FRAMEINTERVALS | no
- ioctl VIDIOC_ENUMINPUT           | yes, only when STREAM_OFF
- ioctl VIDIOC_ENUMOUTPUT          | yes, only when STREAM_OFF
- ioctl VIDIOC_ENUMSTD             | yes, only when STREAM_OFF
- ioctl VIDIOC_G_AUDIO             | no
- ioctl VIDIOC_S_AUDIO             | no
- ioctl VIDIOC_G_AUDOUT            | no
- ioctl VIDIOC_S_AUDOUT            | no
- ioctl VIDIOC_G_CHIP_IDENT        | no
- ioctl VIDIOC_G_CROP              | no
- ioctl VIDIOC_S_CROP              | no
- ioctl VIDIOC_G_CTRL              | no
- ioctl VIDIOC_S_CTRL              | no
- ioctl VIDIOC_G_ENC_INDEX         | no
- ioctl VIDIOC_G_EXT_CTRLS         | no
- ioctl VIDIOC_S_EXT_CTRLS         | no
- ioctl VIDIOC_TRY_EXT_CTRLS       | no
- ioctl VIDIOC_G_FBUF              | no
- ioctl VIDIOC_S_FBUF              | no
- ioctl VIDIOC_G_FMT               | no
- ioctl VIDIOC_S_FMT               | no
- ioctl VIDIOC_TRY_FMT             | no
- ioctl VIDIOC_G_FREQUENCY         | no
- ioctl VIDIOC_S_FREQUENCY         | no
- ioctl VIDIOC_G_INPUT             | yes, only when STREAM_OFF
- ioctl VIDIOC_S_INPUT             | yes, only when STREAM_OFF
- ioctl VIDIOC_G_JPEGCOMP          | no
- ioctl VIDIOC_S_JPEGCOMP          | no
- ioctl VIDIOC_G_MODULATOR         | no
- ioctl VIDIOC_S_MODULATOR         | no
- ioctl VIDIOC_G_OUTPUT            | no
- ioctl VIDIOC_S_OUTPUT            | no
- ioctl VIDIOC_G_PARM              | no
- ioctl VIDIOC_S_PARM              | no
- ioctl VIDIOC_G_PRIORITY          | no
- ioctl VIDIOC_S_PRIORITY          | no
- ioctl VIDIOC_G_SLICED_VBI_CAP    | no
- ioctl VIDIOC_G_STD               | yes, only when STREAM_OFF
- ioctl VIDIOC_S_STD               | yes, only when STREAM_OFF
- ioctl VIDIOC_G_TUNER             | no
- ioctl VIDIOC_S_TUNER             | no
- ioctl VIDIOC_LOG_STATUS          | yes
- ioctl VIDIOC_OVERLAY             | no
- ioctl VIDIOC_QBUF                | no
- ioctl VIDIOC_DQBUF               | no
- ioctl VIDIOC_QUERYBUF            | no
- ioctl VIDIOC_QUERYCAP            | no
- ioctl VIDIOC_QUERYCTRL           | yes, only private and user controls;
-                                  | only user controls with V4L2_CTRL_FLAG_NEXT_CTRL
- ioctl VIDIOC_QUERYMENU           | no
- ioctl VIDIOC_QUERYSTD            | no
- ioctl VIDIOC_REQBUFS             | no
- ioctl VIDIOC_STREAMON            | no
- ioctl VIDIOC_STREAMOFF           | no
- V4L2 mmap()                      | no
- V4L2 munmap()                    | no
- V4L2 poll()                      | no
- V4L2 read()                      | no
- V4L2 select()                    | no
- V4L2 write()                     | no
-
-Similar projects
-----------------
- - v4ltest: http://www.linuxowl.com/v4ltest.html
- - test cases in dvb-apps repository, under /test directory: http://linuxtv.org/hg/dvb-apps/file
- - test cases in v4l-dvb repository, under /v4l2-apps/test directory:
-http://linuxtv.org/hg/v4l-dvb/file
- - this test environment is also available under Linux Test Project (LTP),
-   under directory testcases/kernel/device-drivers/v4l/user_space: http://ltp.sourceforge.net/
+See also
+--------
+See also doc/index.html for further references and recommended readings.
 
 Feedbacks
 ---------

@@ -1,8 +1,0 @@
-#Verification Tests Command File
-
-#VT EMI drivers tests
-#files: emi_testapp_1
-
-#EMI
-TGE-LV-EMI-0010 emi_testapp_1
-TGE-LV-EMI-0011 emi_testapp_1 /dev/mtdblock/0

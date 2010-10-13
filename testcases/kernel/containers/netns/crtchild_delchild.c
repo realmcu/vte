@@ -24,12 +24,12 @@
 * It returns PASS on Success else returns FAIL.
 *
 * Scripts used: parentns.sh, childns.sh , delchild.sh rename_net.sh
-* 
-* Author: Veerendra C <vechandr@in.ibm.com> 
+*
+* Author: Veerendra C <vechandr@in.ibm.com>
 *                      31/07/2008
 * =========================================================================*/
 
-#include "../libclone/libclone.h"
+#include "libclone.h"
 
 int main()
 {

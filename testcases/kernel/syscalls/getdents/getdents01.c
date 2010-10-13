@@ -30,7 +30,7 @@
  *	check the errno value
  *	  if failure, log the errno and issue a FAIL message
  *	otherwise,
- *	  if doing functionality testing, 
+ *	  if doing functionality testing,
  *	    if the directory name of the first entry is "."
  *	      issue a PASS message
  *	    otherwise,
@@ -74,31 +74,31 @@ extern int Tst_count;
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 	int rval, fd;
 	int count;
 	size_t size = 0;
 	char *dir_name = NULL;
 	struct dirent *dirp;
 
-	 /*
-	  * Here's a case where invoking the system call directly
-	  * doesn't seem to work.  getdents.h has an assembly
-	  * macro to do the job.
-	  *
-	  * equivalent to  - getdents(fd, dirp, count);
-	  * if we could call getdents that way.
-	  */
+	/*
+	 * Here's a case where invoking the system call directly
+	 * doesn't seem to work.  getdents.h has an assembly
+	 * macro to do the job.
+	 *
+	 * equivalent to  - getdents(fd, dirp, count);
+	 * if we could call getdents that way.
+	 */
 
 #define getdents(arg1, arg2, arg3) syscall(__NR_getdents, arg1, arg2, arg3)
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
-	setup();			/* global setup */
+	setup();		/* global setup */
 
 	/* The following loop checks looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
@@ -106,71 +106,71 @@ int main(int ac, char **av)
 		Tst_count = 0;
 
 		/* get the current working directory */
-	
+
 		if ((dir_name = getcwd(dir_name, size)) == NULL) {
 			tst_brkm(TBROK, cleanup, "Can not get current "
 				 "directory name");
 		}
-	
+
 		/* allocate some space for the dirent structure */
-	
+
 		if ((dirp =
 		     (struct dirent *)malloc(sizeof(struct dirent))) == NULL) {
 			tst_brkm(TBROK, cleanup, "malloc failed");
 		}
-	
+
 		/*
 		 * Set up count to be equal to the sizeof struct dirent,
 		 * just to pick a decent size.
 		 */
-	
+
 		count = (int)sizeof(struct dirent);
-	
+
 		/* open the directory and get a file descriptor */
-	
+
 		if ((fd = open(dir_name, O_RDONLY)) == -1) {
 			tst_brkm(TBROK, cleanup, "open of directory failed");
 		}
 
 		rval = getdents(fd, dirp, count);
-		if (rval < 0) {		/* call returned an error */
-	
+		if (rval < 0) {	/* call returned an error */
+
 			rval *= -1;
 			TEST_ERROR_LOG(rval);
-	
+
 			tst_resm(TFAIL, "%s call failed - errno = %d "
 				 ": %s", TCID, rval, strerror(rval));
 			continue;
 		}
-	
+
 		if (rval == 0) {	/* call returned end of directory */
 			tst_resm(TFAIL, "%s call failed - returned "
 				 "end of directory", TCID);
 			continue;
 		}
-	
-	/* Removed this b/c there isn't any documentation on its validity
-         */
-	//	if (STD_FUNCTIONAL_TEST) {
-	//		/*
-	//		 * Now we have dirp pointing to the "base" dirent
-	//		 * structure for the directory that we opened.
-	//		 */
-	//	
-	//		/*
-	//		 * The first dirent structure returned should point
-	//		 * to the current directory, AKA "."
-	//		 */
-	//	
-	//		if (strcmp(".", dirp->d_name) == 0) {
-	//			tst_resm(TPASS, "%s call succeeded", TCID);
-	//		} else {
-	//			tst_resm(TFAIL, "%s call failed - "
-	//				 "unexpected directory name: %s", TCID, dirp->d_name);
-	//		}
-	//	} else {
-			tst_resm(TPASS, "call succeeded");
-	//	}
+
+		/* Removed this b/c there isn't any documentation on its validity
+		 */
+		//      if (STD_FUNCTIONAL_TEST) {
+		//              /*
+		//               * Now we have dirp pointing to the "base" dirent
+		//               * structure for the directory that we opened.
+		//               */
+		//
+		//              /*
+		//               * The first dirent structure returned should point
+		//               * to the current directory, AKA "."
+		//               */
+		//
+		//              if (strcmp(".", dirp->d_name) == 0) {
+		//                      tst_resm(TPASS, "%s call succeeded", TCID);
+		//              } else {
+		//                      tst_resm(TFAIL, "%s call failed - "
+		//                               "unexpected directory name: %s", TCID, dirp->d_name);
+		//              }
+		//      } else {
+		tst_resm(TPASS, "call succeeded");
+		//      }
 
 		/*
 		 * clean up things in case we are looping
@@ -187,15 +187,13 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	/*NOTREACHED*/
-	return(0);
+	 /*NOTREACHED*/ return 0;
 }
 
 /*
  * setup() - performs all the ONE TIME setup for this test.
  */
-void
-setup(void)
+void setup(void)
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -209,10 +207,9 @@ setup(void)
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
- * 	       or premature exit.
+ *	       or premature exit.
  */
-void
-cleanup(void)
+void cleanup(void)
 {
 	/* remove the test directory */
 	tst_rmdir();
@@ -226,4 +223,3 @@ cleanup(void)
 	/* exit with return code appropriate for results */
 	tst_exit();
 }
-

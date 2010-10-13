@@ -1,12 +1,5 @@
 SHELL = /bin/sh
 
-PREFIX=/usr/local
-INSTDIR=$(DESTDIR)/$(PREFIX)/bin
-MANDIR=$(DESTDIR)/$(PREFIX)/man
-
-CC = gcc
-LD = gcc
-
 EXECS = scsimain
 
 LARGE_FILE_FLAGS = -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
@@ -20,7 +13,7 @@ LDFLAGS =
 all: $(EXECS)
 
 depend dep:
-	for i in *.c; do $(CC) $(INCLUDES) $(CFLAGS) -M $$i; \
+	@set -e; for i in *.c; do $(CC) $(INCLUDES) $(CFLAGS) -M $$i; \
 	done > .depend
 
 clean:
@@ -31,21 +24,21 @@ scsimain: scsimain.o sg_err.o llseek.o
 
 install: $(EXECS)
 	install -d $(INSTDIR)
-	for name in $^; \
+	@set -e; for name in $^; \
 	 do install -s -o root -g root -m 755 $$name $(INSTDIR); \
 	done
 	install -d $(MANDIR)/$(MAN_PREF)
-	for mp in $(MAN_PGS); \
+	@set -e; for mp in $(MAN_PGS); \
 	 do install -o root -g root -m 644 $$mp $(MANDIR)/$(MAN_PREF); \
 	 gzip -9f $(MANDIR)/$(MAN_PREF)/$$mp; \
 	done
 
 uninstall:
 	dists="$(EXECS)"; \
-	for name in $$dists; do \
+	@set -e; for name in $$dists; do \
 	 rm -f $(INSTDIR)/$$name; \
 	done
-	for mp in $(MAN_PGS); do \
+	@set -e; for mp in $(MAN_PGS); do \
 	 rm -f $(MANDIR)/$(MAN_PREF)/$$mp.gz; \
 	done
 

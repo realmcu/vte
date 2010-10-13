@@ -85,11 +85,11 @@ int main(int ac, char **av)
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
-        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 ) 
-             tst_brkm(TBROK, cleanup, "Test cannot be continued owning to sufficient availability of Hugepages on the system");
-        else              
+        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 )
+             tst_brkm(TCONF, cleanup, "Not enough available Hugepages");
+        else             
              huge_pages_shm_to_be_allocated = ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
-        
+       
 	setup();			/* global setup */
 
 	if ((pid = fork()) == -1) {
@@ -120,7 +120,7 @@ int main(int ac, char **av)
 		/* Remove the temporary directory */
 		tst_rmdir();
 	}
-	return(0);
+	return 0;
 }
 
 /*
@@ -140,14 +140,14 @@ do_child()
 		/*
 		 * Look for a failure ...
 		 */
-	
+
 		TEST(shmget(shmkey, huge_pages_shm_to_be_allocated, SHM_HUGETLB | SHM_RW));
-	
+
 		if (TEST_RETURN != -1) {
 			tst_resm(TFAIL, "call succeeded when error expected");
 			continue;
 		}
-	
+
 		TEST_ERROR_LOG(TEST_ERRNO);
 
 		switch(TEST_ERRNO) {
@@ -160,7 +160,7 @@ do_child()
 				 "unexpected error - %d : %s",
 				 TEST_ERRNO, strerror(TEST_ERRNO));
 			break;
-		}			
+		}		
 	}
 }
 

@@ -74,7 +74,7 @@ void	*addr;				/* for result of shmat-call */
 #if __WORDSIZE==64
 #define NADDR   0x10000000eef           /* a 64bit non alligned address value */
 #else
-#define NADDR	0x90000eef		/* a non alligned address value */
+#define NADDR	0x60000eef		/* a non alligned address value */
 #endif
 
 struct test_case_t {
@@ -101,9 +101,9 @@ int main(int ac, char **av)
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
-        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 ) 
-             tst_brkm(TBROK, cleanup, "Test cannot be continued owning to sufficient availability of Hugepages on the system");
-        else              
+        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 )
+             tst_brkm(TCONF, tst_exit, "Not enough available Hugepages");
+        else             
              huge_pages_shm_to_be_allocated = ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
 
 	setup();			/* global setup */
@@ -128,7 +128,7 @@ int main(int ac, char **av)
 				tst_resm(TFAIL, "call succeeded unexpectedly");
 				continue;
 			}
-	
+
 			TEST_ERROR_LOG(TEST_ERRNO);
 
 			if (TEST_ERRNO == TC[i].error) {
@@ -139,7 +139,7 @@ int main(int ac, char **av)
 				tst_resm(TFAIL, "call failed with an "
 					 "unexpected error - %d : %s",
 					 TEST_ERRNO, strerror(TEST_ERRNO));
-			
+		
 			}
 		}
 	}
@@ -147,7 +147,7 @@ int main(int ac, char **av)
 	cleanup();
 
 	/*NOTREACHED*/
-	return(0);
+	return 0;
 }
 
 /*

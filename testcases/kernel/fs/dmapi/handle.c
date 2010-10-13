@@ -71,17 +71,17 @@ int main(int argc, char **argv)
 	char *szSessionInfo = "dm_test session info";
 	void *mtpthanp, *curdirhanp;
 	size_t mtpthlen, curdirhlen;
-	
+
 	DMOPT_PARSE(argc, argv);
 	DMLOG_START();
-	
+
 	if ((mountPt = DMOPT_GET("mtpt")) == NULL) {
 		DMLOG_PRINT(DMLVL_ERR, "Missing mount point, use -mtpt (for example, -mtpt /dmapidir)\n");
 		DM_EXIT();
 	} else {
 		DMLOG_PRINT(DMLVL_DEBUG, "Mount point is %s\n", mountPt);
 	}
-	
+
 	/* CANNOT DO ANYTHING WITHOUT SUCCESSFUL INITIALIZATION!!! */
 	if ((rc = dm_init_service(&varstr)) != 0) {
 		DMLOG_PRINT(DMLVL_ERR, "dm_init_service failed! (rc = %d, errno = %d)\n", rc, errno);
@@ -114,7 +114,7 @@ int main(int argc, char **argv)
 	}
 
 	DMLOG_PRINT(DMLVL_DEBUG, "Starting DMAPI handle tests\n") ;
-	
+
 	szFuncName = "dm_path_to_handle";
 
 	/*
@@ -133,7 +133,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid path)\n", szFuncName);
 		rc = dm_path_to_handle((char *)INVALID_ADDR, &hanp, &hlen);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 		/* Variation clean up */
 	}
@@ -151,11 +151,11 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(nonexistent path in curdir)\n", szFuncName);
 		rc = dm_path_to_handle(DUMMY_FILE, &hanp, &hlen);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENOENT); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENOENT);
 
 		/* Variation clean up */
 	}
-	
+
 	/*
 	 * TEST    : dm_path_to_handle - file in current directory
 	 * EXPECTED: rc = 0
@@ -178,7 +178,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -217,7 +217,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -229,7 +229,7 @@ int main(int argc, char **argv)
 			dm_handle_free(hanp, hlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_path_to_handle - directory in current directory
 	 * EXPECTED: rc = 0
@@ -250,7 +250,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = rmdir(DUMMY_SUBDIR);
@@ -278,7 +278,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(nonexistent path in subdir)\n", szFuncName);
 			rc = dm_path_to_handle(DUMMY_SUBDIR_FILE, &hanp, &hlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENOENT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENOENT);
 
 			/* Variation clean up */
 			rc = rmdir(DUMMY_SUBDIR);
@@ -287,7 +287,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_path_to_handle - file in subdirectory
 	 * EXPECTED: rc = 0
@@ -314,7 +314,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -357,7 +357,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -396,7 +396,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = rmdir(DUMMY_SUBDIR_SUBDIR);
@@ -422,7 +422,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(path too long)\n", szFuncName);
 		rc = dm_path_to_handle(szTooLong, &hanp, &hlen);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENAMETOOLONG); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENAMETOOLONG);
 
 		/* Variation clean up */
 	}
@@ -445,7 +445,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(path not dir)\n", szFuncName);
 			rc = dm_path_to_handle(PATH_NOTDIR, &hanp, &hlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENOTDIR); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENOTDIR);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -472,7 +472,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(path not DMAPI)\n", szFuncName);
 		rc = dm_path_to_handle(FILE_NOTDMAPI, &hanp, &hlen);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENXIO); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENXIO);
 
 		/* Variation clean up */
 	}
@@ -482,7 +482,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(PATH_TO_HANDLE_BASE + 13)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		int	fd;
 		size_t	hlen;
 
@@ -495,7 +495,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hanpp)\n", szFuncName);
 			rc = dm_path_to_handle(DUMMY_FILE, (void **)INVALID_ADDR, &hlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -506,8 +506,8 @@ int main(int argc, char **argv)
 		}
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -527,7 +527,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hlenp)\n", szFuncName);
 			rc = dm_path_to_handle(DUMMY_FILE, &hanp, (size_t *)INVALID_ADDR);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -537,7 +537,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_path_to_handle - different paths to same file
 	 * EXPECTED: rc = 0
@@ -677,7 +677,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid fd)\n", szFuncName);
 		rc = dm_fd_to_handle(INVALID_ADDR, &hanp, &hlen);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF);
 
 		/* Variation clean up */
 	}
@@ -704,7 +704,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -747,7 +747,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd_f);
@@ -760,7 +760,7 @@ int main(int argc, char **argv)
 			dm_handle_free(hanp, hlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_fd_to_handle - directory fd in current directory
 	 * EXPECTED: rc = 0
@@ -787,7 +787,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -825,7 +825,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -873,7 +873,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd_f);
@@ -917,7 +917,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -951,7 +951,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(fd not DMAPI)\n", szFuncName);
 			rc = dm_fd_to_handle(fd, &hanp, &hlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENXIO); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENXIO);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -966,7 +966,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(FD_TO_HANDLE_BASE + 9)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		int	fd;
 		size_t	hlen;
 
@@ -979,7 +979,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hanpp)\n", szFuncName);
 			rc = dm_fd_to_handle(fd, (void **)INVALID_ADDR, &hlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -990,8 +990,8 @@ int main(int argc, char **argv)
 		}
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -1011,7 +1011,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hlenp)\n", szFuncName);
 			rc = dm_fd_to_handle(fd, &hanp, (size_t *)INVALID_ADDR);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -1035,7 +1035,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(stdin fd)\n", szFuncName);
 		rc = dm_fd_to_handle(0, &hanp, &hlen);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENXIO); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENXIO);
 
 		/* Variation clean up */
 	}
@@ -1053,7 +1053,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(stdout fd)\n", szFuncName);
 		rc = dm_fd_to_handle(1, &hanp, &hlen);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENXIO); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENXIO);
 
 		/* Variation clean up */
 	}
@@ -1071,7 +1071,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(stderr fd)\n", szFuncName);
 		rc = dm_fd_to_handle(2, &hanp, &hlen);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENXIO); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENXIO);
 
 		/* Variation clean up */
 	}
@@ -1096,7 +1096,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalidated fd)\n", szFuncName);
 			rc = dm_fd_to_handle(fd, &hanp, &hlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF);
 
 			/* Variation clean up */
 			rc = remove(DUMMY_FILE);
@@ -1124,7 +1124,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid path)\n", szFuncName);
 		rc = dm_path_to_fshandle((char *)INVALID_ADDR, &hanp, &hlen);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 		/* Variation clean up */
 	}
@@ -1142,11 +1142,11 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(nonexistent path in curdir)\n", szFuncName);
 		rc = dm_path_to_fshandle(DUMMY_FILE, &hanp, &hlen);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENOENT); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENOENT);
 
 		/* Variation clean up */
 	}
-	
+
 	/*
 	 * TEST    : dm_path_to_fshandle - file in current directory
 	 * EXPECTED: rc = 0
@@ -1169,7 +1169,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -1208,7 +1208,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -1220,7 +1220,7 @@ int main(int argc, char **argv)
 			dm_handle_free(hanp, hlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_path_to_fshandle - directory in current directory
 	 * EXPECTED: rc = 0
@@ -1242,7 +1242,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = rmdir(DUMMY_SUBDIR);
@@ -1270,7 +1270,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(nonexistent path in subdir)\n", szFuncName);
 			rc = dm_path_to_fshandle(DUMMY_SUBDIR_FILE, &hanp, &hlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENOENT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENOENT);
 
 			/* Variation clean up */
 			rc = rmdir(DUMMY_SUBDIR);
@@ -1279,7 +1279,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_path_to_fshandle - file in subdirectory
 	 * EXPECTED: rc = 0
@@ -1306,7 +1306,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -1349,7 +1349,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -1388,7 +1388,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 				dm_LogHandle(hanp, hlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = rmdir(DUMMY_SUBDIR_SUBDIR);
@@ -1414,7 +1414,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(path too long)\n", szFuncName);
 		rc = dm_path_to_fshandle(szTooLong, &hanp, &hlen);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENAMETOOLONG); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENAMETOOLONG);
 
 		/* Variation clean up */
 	}
@@ -1437,7 +1437,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(path not dir)\n", szFuncName);
 			rc = dm_path_to_fshandle(PATH_NOTDIR, &hanp, &hlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENOTDIR); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENOTDIR);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -1464,7 +1464,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(path not DMAPI)\n", szFuncName);
 		rc = dm_path_to_fshandle(FILE_NOTDMAPI, &hanp, &hlen);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENXIO); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, ENXIO);
 
 		/* Variation clean up */
 	}
@@ -1474,7 +1474,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(PATH_TO_FSHANDLE_BASE + 13)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		int	fd;
 		size_t	hlen;
 
@@ -1487,7 +1487,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hanpp)\n", szFuncName);
 			rc = dm_path_to_fshandle(DUMMY_FILE, (void **)INVALID_ADDR, &hlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -1498,8 +1498,8 @@ int main(int argc, char **argv)
 		}
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -1519,7 +1519,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hlenp)\n", szFuncName);
 			rc = dm_path_to_fshandle(DUMMY_FILE, &hanp, (size_t *)INVALID_ADDR);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -1547,7 +1547,7 @@ int main(int argc, char **argv)
 			DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 			dm_LogHandle(hanp, hlen);
 		}
-		DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+		DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 		/* Variation clean up */
 		dm_handle_free(hanp, hlen);
@@ -1570,7 +1570,7 @@ int main(int argc, char **argv)
 			DMLOG_PRINT(DMLVL_DEBUG, "hanp = %p, hlen = %d\n", hanp, hlen);
 			dm_LogHandle(hanp, hlen);
 		}
-		DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+		DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 		/* Variation clean up */
 		dm_handle_free(hanp, hlen);
@@ -1583,7 +1583,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(HANDLE_TO_FSHANDLE_BASE + 1)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		int	fd;
 		void	*hanp, *fshanp;
 		size_t	hlen, fshlen;
@@ -1602,7 +1602,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hanp)\n", szFuncName);
 			rc = dm_handle_to_fshandle((void *)INVALID_ADDR, hlen, &fshanp, &fshlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -1614,8 +1614,8 @@ int main(int argc, char **argv)
 		}
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -1641,7 +1641,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hlen)\n", szFuncName);
 			rc = dm_handle_to_fshandle(hanp, INVALID_ADDR, &fshanp, &fshlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -1652,7 +1652,7 @@ int main(int argc, char **argv)
 			dm_handle_free(hanp, hlen);
 		}
 	}
- 
+
 	/*
 	 * TEST    : dm_handle_to_fshandle - file handle
 	 * EXPECTED: rc = 0
@@ -1680,7 +1680,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "fshanp = %p, fshlen = %d\n", fshanp, fshlen);
 				dm_LogHandle(fshanp, fshlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -1718,7 +1718,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "fshanp = %p, fshlen = %d\n", fshanp, fshlen);
 				dm_LogHandle(fshanp, fshlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = rmdir(DUMMY_SUBDIR);
@@ -1757,7 +1757,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_DEBUG, "fshanp = %p, fshlen = %d\n", fshanp, fshlen);
 				dm_LogHandle(fshanp, fshlen);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -1775,7 +1775,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(HANDLE_TO_FSHANDLE_BASE + 6)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		int	fd;
 		void	*hanp;
 		size_t	hlen, fshlen;
@@ -1794,7 +1794,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid fshanpp)\n", szFuncName);
 			rc = dm_handle_to_fshandle(hanp, hlen, (void **)INVALID_ADDR, &fshlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -1806,8 +1806,8 @@ int main(int argc, char **argv)
 		}
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -1815,7 +1815,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(HANDLE_TO_FSHANDLE_BASE + 7)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		int	fd;
 		void	*hanp, *fshanp;
 		size_t	hlen;
@@ -1834,7 +1834,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid fshlenp)\n", szFuncName);
 			rc = dm_handle_to_fshandle(hanp, hlen, &fshanp, (void *)INVALID_ADDR);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -1846,8 +1846,8 @@ int main(int argc, char **argv)
 		}
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -1859,7 +1859,7 @@ int main(int argc, char **argv)
 		size_t	fshlen;
 
 		/* Variation set up */
-		
+	
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(global handle)\n", szFuncName);
 		rc = dm_handle_to_fshandle(DM_GLOBAL_HANP, DM_GLOBAL_HLEN, &fshanp, &fshlen);
@@ -1875,7 +1875,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc != 0
 	 */
 	if (DMVAR_EXEC(HANDLE_CMP_BASE + 1)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		int	fd;
 		void	*hanp;
 		size_t	hlen;
@@ -1912,8 +1912,8 @@ int main(int argc, char **argv)
 		}
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -1962,7 +1962,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc != 0
 	 */
 	if (DMVAR_EXEC(HANDLE_CMP_BASE + 3)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		int	fd;
 		void	*hanp;
 		size_t	hlen;
@@ -1999,8 +1999,8 @@ int main(int argc, char **argv)
 		}
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -2125,7 +2125,7 @@ int main(int argc, char **argv)
 			dm_handle_free(hanp, hlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_cmp - hanp1 == hanp2 (same fs handles)
 	 * EXPECTED: rc = 0
@@ -2572,7 +2572,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: return
 	 */
 	if (DMVAR_EXEC(HANDLE_FREE_BASE + 1)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		/* Variation set up */
 
 		/* Variation */
@@ -2584,8 +2584,8 @@ int main(int argc, char **argv)
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -2622,7 +2622,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_free - file handle from fd
 	 * EXPECTED: return
@@ -2657,7 +2657,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_free - fs handle from path
 	 * EXPECTED: return
@@ -2692,7 +2692,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_free - fs handle from handle
 	 * EXPECTED: return
@@ -2732,7 +2732,7 @@ int main(int argc, char **argv)
 			dm_handle_free(hanp1, hlen1);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_free - file handle from make
 	 * EXPECTED: return
@@ -2779,7 +2779,7 @@ int main(int argc, char **argv)
 			dm_handle_free(hanp2, hlen2);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_free - fs handle from make
 	 * EXPECTED: return
@@ -2827,7 +2827,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: return
 	 */
 	if (DMVAR_EXEC(HANDLE_FREE_BASE + 8)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		/* Variation set up */
 
 		/* Variation */
@@ -2839,8 +2839,8 @@ int main(int argc, char **argv)
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	szFuncName = "dm_handle_is_valid";
@@ -2850,19 +2850,19 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = DM_FALSE
 	 */
 	if (DMVAR_EXEC(HANDLE_IS_VALID_BASE + 1)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		/* Variation set up */
 
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hanp)\n", szFuncName);
 		bRC = dm_handle_is_valid((char *)INVALID_ADDR, FILE_HANDLELEN);
-		DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC); 
+		DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC);
 
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -2888,7 +2888,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(file handle)\n", szFuncName);
 			bRC = dm_handle_is_valid(hanp, hlen);
-			DMVAR_ENDPASSEXP(szFuncName, DM_TRUE, bRC); 
+			DMVAR_ENDPASSEXP(szFuncName, DM_TRUE, bRC);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -2899,7 +2899,7 @@ int main(int argc, char **argv)
 			dm_handle_free(hanp, hlen);
 		}
 	}
-		
+	
 	/*
 	 * TEST    : dm_handle_is_valid - file handle, hlen too small
 	 * EXPECTED: rc = DM_FALSE
@@ -2923,7 +2923,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(file hlen too small)\n", szFuncName);
 			bRC = dm_handle_is_valid(hanp, hlen-1);
-			DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC); 
+			DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -2958,7 +2958,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(file hlen too big)\n", szFuncName);
 			bRC = dm_handle_is_valid(hanp, hlen+1);
-			DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC); 
+			DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -2994,7 +2994,7 @@ int main(int argc, char **argv)
 			memset(hanp, 0, hlen);
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(modified file handle)\n", szFuncName);
 			bRC = dm_handle_is_valid(hanp, hlen);
-			DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC); 
+			DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -3029,7 +3029,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(fs handle)\n", szFuncName);
 			bRC = dm_handle_is_valid(hanp, hlen);
-			DMVAR_ENDPASSEXP(szFuncName, DM_TRUE, bRC); 
+			DMVAR_ENDPASSEXP(szFuncName, DM_TRUE, bRC);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -3040,7 +3040,7 @@ int main(int argc, char **argv)
 			dm_handle_free(hanp, hlen);
 		}
 	}
-		
+	
 	/*
 	 * TEST    : dm_handle_is_valid - fs handle, hlen too small
 	 * EXPECTED: rc = DM_FALSE
@@ -3064,7 +3064,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(fs hlen too small)\n", szFuncName);
 			bRC = dm_handle_is_valid(hanp, hlen-1);
-			DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC); 
+			DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -3099,7 +3099,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(fs hlen too big)\n", szFuncName);
 			bRC = dm_handle_is_valid(hanp, hlen+1);
-			DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC); 
+			DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -3135,7 +3135,7 @@ int main(int argc, char **argv)
 			memset(hanp, 0, hlen);
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(modified fs handle)\n", szFuncName);
 			bRC = dm_handle_is_valid(hanp, hlen);
-			DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC); 
+			DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -3153,11 +3153,11 @@ int main(int argc, char **argv)
 	 */
 	if (DMVAR_EXEC(HANDLE_IS_VALID_BASE + 10)) {
 		/* Variation set up */
-		
+	
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(global handle)\n", szFuncName);
 		bRC = dm_handle_is_valid(DM_GLOBAL_HANP, DM_GLOBAL_HLEN);
-		DMVAR_ENDPASSEXP(szFuncName, DM_TRUE, bRC); 
+		DMVAR_ENDPASSEXP(szFuncName, DM_TRUE, bRC);
 
 		/* Variation clean up */
 	}
@@ -3168,11 +3168,11 @@ int main(int argc, char **argv)
 	 */
 	if (DMVAR_EXEC(HANDLE_IS_VALID_BASE + 11)) {
 		/* Variation set up */
-		
+	
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid handle)\n", szFuncName);
 		bRC = dm_handle_is_valid(DM_INVALID_HANP, DM_INVALID_HLEN);
-		DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC); 
+		DMVAR_ENDPASSEXP(szFuncName, DM_FALSE, bRC);
 
 		/* Variation clean up */
 	}
@@ -3184,7 +3184,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = ?
 	 */
 	if (DMVAR_EXEC(HANDLE_HASH_BASE + 1)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		/* Variation set up */
 
 		/* Variation */
@@ -3196,8 +3196,8 @@ int main(int argc, char **argv)
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -3277,9 +3277,9 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = ?
 	 */
 	if (DMVAR_EXEC(HANDLE_HASH_BASE + 4)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		/* Variation set up */
-		
+	
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(global handle)\n", szFuncName);
 		rc = dm_handle_hash(DM_GLOBAL_HANP, DM_GLOBAL_HLEN);
@@ -3289,8 +3289,8 @@ int main(int argc, char **argv)
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	szFuncName = "dm_handle_to_fsid";
@@ -3300,7 +3300,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(HANDLE_TO_FSID_BASE + 1)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		dm_fsid_t fsidp;
 
 		/* Variation set up */
@@ -3308,13 +3308,13 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hanp)\n", szFuncName);
 		rc = dm_handle_to_fsid((char *)INVALID_ADDR, FILE_HANDLELEN, &fsidp);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -3322,7 +3322,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(HANDLE_TO_FSID_BASE + 2)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		int	fd;
 		void	*hanp;
 		size_t	hlen;
@@ -3341,7 +3341,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid fsidp)\n", szFuncName);
 			rc = dm_handle_to_fsid(hanp, hlen, (dm_fsid_t *)INVALID_ADDR);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -3353,8 +3353,8 @@ int main(int argc, char **argv)
 		}
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -3408,7 +3408,7 @@ int main(int argc, char **argv)
 			dm_handle_free(fshanp, fshlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_to_fsid - fs handle
 	 * EXPECTED: rc = 0
@@ -3460,7 +3460,7 @@ int main(int argc, char **argv)
 			dm_handle_free(fshanp, fshlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_to_fsid - global handle
 	 * EXPECTED: rc = -1, errno = EBADF
@@ -3473,7 +3473,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(global handle)\n", szFuncName);
 		rc = dm_handle_to_fsid(DM_GLOBAL_HANP, DM_GLOBAL_HLEN, &fsidp);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF);
 
 		/* Variation clean up */
 	}
@@ -3485,7 +3485,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(HANDLE_TO_IGEN_BASE + 1)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		dm_igen_t igen;
 
 		/* Variation set up */
@@ -3493,13 +3493,13 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hanp)\n", szFuncName);
 		rc = dm_handle_to_igen((char *)INVALID_ADDR, FILE_HANDLELEN, &igen);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -3507,7 +3507,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(HANDLE_TO_IGEN_BASE + 2)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		int	fd;
 		void	*hanp;
 		size_t	hlen;
@@ -3526,7 +3526,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid igenp)\n", szFuncName);
 			rc = dm_handle_to_igen(hanp, hlen, (dm_igen_t *)INVALID_ADDR);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -3538,10 +3538,10 @@ int main(int argc, char **argv)
 		}
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_to_igen - file handle
 	 * EXPECTED: rc = 0
@@ -3566,7 +3566,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(file handle)\n", szFuncName);
 			rc = dm_handle_to_igen(hanp, hlen, &igen);
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -3577,7 +3577,7 @@ int main(int argc, char **argv)
 			dm_handle_free(hanp, hlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_to_igen - directory handle
 	 * EXPECTED: rc = 0
@@ -3600,7 +3600,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(dir handle)\n", szFuncName);
 			rc = dm_handle_to_igen(hanp, hlen, &igen);
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = rmdir(DUMMY_SUBDIR);
@@ -3610,7 +3610,7 @@ int main(int argc, char **argv)
 			dm_handle_free(hanp, hlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_to_igen - fs handle from file
 	 * EXPECTED: rc = -1, errno = EBADF
@@ -3635,7 +3635,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(fs handle from file)\n", szFuncName);
 			rc = dm_handle_to_igen(hanp, hlen, &igen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -3646,7 +3646,7 @@ int main(int argc, char **argv)
 			dm_handle_free(hanp, hlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_to_igen - fs handle from directory
 	 * EXPECTED: rc = -1, errno = EBADF
@@ -3669,7 +3669,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(fs handle from dir)\n", szFuncName);
 			rc = dm_handle_to_igen(hanp, hlen, &igen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF);
 
 			/* Variation clean up */
 			rc = rmdir(DUMMY_SUBDIR);
@@ -3679,7 +3679,7 @@ int main(int argc, char **argv)
 			dm_handle_free(hanp, hlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_to_igen - global handle
 	 * EXPECTED: rc = -1, errno = EBADF
@@ -3704,7 +3704,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(HANDLE_TO_INO_BASE + 1)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		dm_ino_t ino;
 
 		/* Variation set up */
@@ -3712,13 +3712,13 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hanp)\n", szFuncName);
 		rc = dm_handle_to_ino((char *)INVALID_ADDR, FILE_HANDLELEN, &ino);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -3726,7 +3726,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(HANDLE_TO_INO_BASE + 2)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		int	fd;
 		void	*hanp;
 		size_t	hlen;
@@ -3745,7 +3745,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid inop)\n", szFuncName);
 			rc = dm_handle_to_ino(hanp, hlen, (dm_ino_t *)INVALID_ADDR);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -3757,8 +3757,8 @@ int main(int argc, char **argv)
 		}
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -3894,7 +3894,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(fs handle from file)\n", szFuncName);
 			rc = dm_handle_to_ino(hanp, hlen, &ino);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -3928,7 +3928,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(fs handle from dir)\n", szFuncName);
 			rc = dm_handle_to_ino(hanp, hlen, &ino);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF);
 
 			/* Variation clean up */
 			rc = rmdir(DUMMY_SUBDIR);
@@ -3962,7 +3962,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(MAKE_HANDLE_BASE + 1)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		void	*hanp;
 		size_t	hlen;
 		dm_ino_t ino;
@@ -3978,16 +3978,16 @@ int main(int argc, char **argv)
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
-	
+
 	/*
 	 * TEST    : dm_make_handle - invalid inop
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(MAKE_HANDLE_BASE + 2)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		void	*hanp;
 		size_t	hlen;
 		dm_fsid_t fsid;
@@ -4003,8 +4003,8 @@ int main(int argc, char **argv)
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -4012,7 +4012,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(MAKE_HANDLE_BASE + 3)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		void	*hanp;
 		size_t	hlen;
 		dm_fsid_t fsid;
@@ -4028,8 +4028,8 @@ int main(int argc, char **argv)
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -4037,7 +4037,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(MAKE_HANDLE_BASE + 4)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		size_t	hlen;
 		dm_fsid_t fsid;
 		dm_igen_t igen;
@@ -4053,8 +4053,8 @@ int main(int argc, char **argv)
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -4062,7 +4062,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(MAKE_HANDLE_BASE + 5)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		void	*hanp;
 		dm_fsid_t fsid;
 		dm_igen_t igen;
@@ -4078,8 +4078,8 @@ int main(int argc, char **argv)
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
 
 	/*
@@ -4141,7 +4141,7 @@ int main(int argc, char **argv)
 			dm_handle_free(hanp2, hlen2);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_make_handle - directory
 	 * EXPECTED: rc = 0
@@ -4205,7 +4205,7 @@ int main(int argc, char **argv)
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(MAKE_FSHANDLE_BASE + 1)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		void	*hanp;
 		size_t	hlen;
 
@@ -4219,16 +4219,16 @@ int main(int argc, char **argv)
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
-	
+
 	/*
 	 * TEST    : dm_make_fshandle - invalid hanpp
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(MAKE_FSHANDLE_BASE + 2)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		size_t	hlen;
 		dm_fsid_t fsid;
 
@@ -4242,16 +4242,16 @@ int main(int argc, char **argv)
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
-	
+
 	/*
 	 * TEST    : dm_make_fshandle - invalid hlenp
 	 * EXPECTED: rc = -1, errno = EFAULT
 	 */
 	if (DMVAR_EXEC(MAKE_FSHANDLE_BASE + 3)) {
-#ifdef USER_SPACE_FAULTS	
+#ifdef USER_SPACE_FAULTS
 		void	*hanp;
 		dm_fsid_t fsid;
 
@@ -4265,10 +4265,10 @@ int main(int argc, char **argv)
 		/* Variation clean up */
 #else
 		DMLOG_PRINT(DMLVL_WARN, "Test case not built with USER_SPACE_FAULTS defined\n");
-		DMVAR_SKIP();		
-#endif	
+		DMVAR_SKIP();	
+#endif
 	}
-	
+
 	/*
 	 * TEST    : dm_make_fshandle - file handle
 	 * EXPECTED: rc = 0
@@ -4407,7 +4407,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid dirhanp)\n", szFuncName);
 			rc = dm_handle_to_path((void *)INVALID_ADDR, dirhlen, targhanp, targhlen, PATHBUF_LEN, pathbuf, &rlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -4419,7 +4419,7 @@ int main(int argc, char **argv)
 			dm_handle_free(targhanp, targhlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_to_path - invalid dirhlen
 	 * EXPECTED: rc = -1, errno = EBADF
@@ -4460,7 +4460,7 @@ int main(int argc, char **argv)
 			dm_handle_free(targhanp, targhlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_to_path - invalid targhanp
 	 * EXPECTED: rc = -1, errno = EFAULT
@@ -4489,7 +4489,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid targhanp)\n", szFuncName);
 			rc = dm_handle_to_path(dirhanp, dirhlen, (void *)INVALID_ADDR, targhlen, PATHBUF_LEN, pathbuf, &rlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -4501,7 +4501,7 @@ int main(int argc, char **argv)
 			dm_handle_free(targhanp, targhlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_to_path - invalid targhlen
 	 * EXPECTED: rc = -1, errno = EBADF
@@ -4841,7 +4841,7 @@ int main(int argc, char **argv)
 			rc = dm_handle_to_path(dirhanp, dirhlen, targhanp, targhlen, sizeof(pathbuf), pathbuf, &rlen);
 			if (rc == 0) {
 				DMLOG_PRINT(DMLVL_DEBUG, "rlen = %d, pathbuf = \"%s\"\n", rlen, pathbuf);
-				
+			
 				if (strncmp(pathbuf, DUMMY_FILE, rlen) == 0) {
 					*(pathbuf+rlen) = 0;
 				  	DMLOG_PRINT(DMLVL_DEBUG, "%s passed with expected rc = %d and path = %s (length %d)\n", szFuncName, rc, pathbuf, rlen);
@@ -4900,7 +4900,7 @@ int main(int argc, char **argv)
 			rc = dm_handle_to_path(dirhanp, dirhlen, targhanp, targhlen, sizeof(pathbuf), pathbuf, &rlen);
 			if (rc == 0) {
 				DMLOG_PRINT(DMLVL_DEBUG, "rlen = %d, pathbuf = \"%s\"\n", rlen, pathbuf);
-				
+			
 				if (strncmp(pathbuf, DUMMY_SUBDIR_FILE, rlen) == 0) {
 					*(pathbuf+rlen) = 0;
 				  	DMLOG_PRINT(DMLVL_DEBUG, "%s passed with expected rc = %d and path = %s (length %d)\n", szFuncName, rc, pathbuf, rlen);
@@ -4966,7 +4966,7 @@ int main(int argc, char **argv)
 			rc = dm_handle_to_path(dirhanp, dirhlen, targhanp, targhlen, sizeof(pathbuf), pathbuf, &rlen);
 			if (rc == 0) {
 				DMLOG_PRINT(DMLVL_DEBUG, "rlen = %d, pathbuf = \"%s\"\n", rlen, pathbuf);
-				
+			
 				if (strncmp(pathbuf, DUMMY_SUBDIR_LINK, rlen) == 0) {
 					*(pathbuf+rlen) = 0;
 				  	DMLOG_PRINT(DMLVL_DEBUG, "%s passed with expected rc = %d and path = %s (length %d)\n", szFuncName, rc, pathbuf, rlen);
@@ -5045,7 +5045,7 @@ int main(int argc, char **argv)
 			rc = dm_handle_to_path(dirhanp, dirhlen, targhanp, targhlen, sizeof(pathbuf), pathbuf, &rlen);
 			if (rc == 0) {
 				DMLOG_PRINT(DMLVL_DEBUG, "rlen = %d, pathbuf = \"%s\"\n", rlen, pathbuf);
-				
+			
 				if (strncmp(pathbuf, FILE_LEVEL4, rlen) == 0) {
 					*(pathbuf+rlen) = 0;
 				  	DMLOG_PRINT(DMLVL_DEBUG, "%s passed with expected rc = %d and path = %s (length %d)\n", szFuncName, rc, pathbuf, rlen);
@@ -5181,7 +5181,7 @@ int main(int argc, char **argv)
 			dm_handle_free(targhanp, targhlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_to_path - fs targhanp
 	 * EXPECTED: rc = -1, errno = EBADF
@@ -5222,7 +5222,7 @@ int main(int argc, char **argv)
 			dm_handle_free(targhanp, targhlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_to_path - global dirhanp
 	 * EXPECTED: rc = -1, errno = EBADF
@@ -5259,7 +5259,7 @@ int main(int argc, char **argv)
 			dm_handle_free(targhanp, targhlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_to_path - global targhanp
 	 * EXPECTED: rc = -1, errno = EBADF
@@ -5285,7 +5285,7 @@ int main(int argc, char **argv)
 			dm_handle_free(dirhanp, dirhlen);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_handle_to_path - invalidated dirhanp
 	 * EXPECTED: rc = -1, errno = EBADF
@@ -5390,7 +5390,7 @@ int main(int argc, char **argv)
 	}
 
 	szFuncName = "dm_sync_by_handle";
-	
+
 	/*
 	 * TEST    : dm_sync_by_handle - invalid sid
 	 * EXPECTED: rc = -1, errno = EINVAL
@@ -5414,7 +5414,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid sid)\n", szFuncName);
 			rc = dm_sync_by_handle(INVALID_ADDR, hanp, hlen, DM_NO_TOKEN);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -5449,7 +5449,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(DM_NO_SESSION sid)\n", szFuncName);
 			rc = dm_sync_by_handle(DM_NO_SESSION, hanp, hlen, DM_NO_TOKEN);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -5484,7 +5484,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hanp)\n", szFuncName);
 			rc = dm_sync_by_handle(sid, (void *)INVALID_ADDR, hlen, DM_NO_TOKEN);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -5519,7 +5519,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hlen)\n", szFuncName);
 			rc = dm_sync_by_handle(sid, hanp, INVALID_ADDR, DM_NO_TOKEN);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -5554,7 +5554,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid token)\n", szFuncName);
 			rc = dm_sync_by_handle(sid, hanp, hlen, INVALID_ADDR);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -5593,7 +5593,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(file handle)\n", szFuncName);
 			rc = dm_sync_by_handle(sid, hanp, hlen, DM_NO_TOKEN);
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -5682,7 +5682,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(global handle)\n", szFuncName);
 		rc = dm_sync_by_handle(sid, DM_GLOBAL_HANP, DM_GLOBAL_HLEN, DM_NO_TOKEN);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF);
 
 		/* Variation clean up */
 	}
@@ -5715,7 +5715,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalidated hanp)\n", szFuncName);
 			rc = dm_sync_by_handle(sid, hanp, hlen, DM_NO_TOKEN);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF);
 
 			/* Variation clean up */
 			dm_handle_free(hanp, hlen);
@@ -5725,8 +5725,8 @@ int main(int argc, char **argv)
 	dm_handle_free(mtpthanp, mtpthlen);
 	dm_handle_free(curdirhanp, curdirhlen);
 
-	DMLOG_STOP(); 
-			
+	DMLOG_STOP();
+		
 	return 0;
 
-}	
+}

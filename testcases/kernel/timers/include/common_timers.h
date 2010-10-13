@@ -7,74 +7,66 @@
 #ifndef __COMMON_TIMERS_H__
 #define __COMMON_TIMERS_H__
 
+#define CLEANUP cleanup
+#include "config.h"
+#include "linux_syscall_numbers.h"
+
 #ifndef NSEC_PER_SEC
 #define NSEC_PER_SEC (1000000000L)
-#endif
-#ifndef CLOCK_REALTIME
-#define CLOCK_REALTIME 0
-#endif
-#ifndef CLOCK_MONOTONIC
-#define CLOCK_MONOTONIC 1
-#endif
-#ifndef CLOCK_PROCESS_CPUTIME_ID
-#define CLOCK_PROCESS_CPUTIME_ID 2
-#endif
-#ifndef CLOCK_THREAD_CPUTIME_ID
-#define CLOCK_THREAD_CPUTIME_ID 3
 #endif
 clock_t clock_list[] = {
 	CLOCK_REALTIME,
 	CLOCK_MONOTONIC,
 	CLOCK_PROCESS_CPUTIME_ID,
-	CLOCK_THREAD_CPUTIME_ID
+	CLOCK_THREAD_CPUTIME_ID,
+#if HAVE_CLOCK_MONOTONIC_RAW
+	CLOCK_MONOTONIC_RAW,
+#endif
+#if HAVE_CLOCK_REALTIME_COARSE
+	CLOCK_REALTIME_COARSE,
+#endif
+#if HAVE_CLOCK_MONOTONIC_COARSE
+	CLOCK_MONOTONIC_COARSE,
+#endif
 };
-#define MAX_CLOCKS (sizeof(clock_list) / sizeof(*clock_list))
+/* CLOCKS_DEFINED is the number of clock sources defined for sure */
+#define CLOCKS_DEFINED (sizeof(clock_list) / sizeof(*clock_list))
+/* MAX_CLOCKS is the maximum number of clock sources supported by kernel */
+#define MAX_CLOCKS 16
+
+#define CLOCK_TO_STR(def_name)	\
+	case def_name:		\
+		return #def_name;
 
 const char *get_clock_str(const int clock_id)
 {
 	switch(clock_id) {
-		case CLOCK_REALTIME:           return "CLOCK_REALTIME";
-		case CLOCK_MONOTONIC:          return "CLOCK_MONOTONIC";
-		case CLOCK_PROCESS_CPUTIME_ID: return "CLOCK_PROCESS_CPUTIME_ID";
-		case CLOCK_THREAD_CPUTIME_ID:  return "CLOCK_THREAD_CPUTIME_ID";
-		default:                       return "CLOCK_!?!?!?";
+	CLOCK_TO_STR(CLOCK_REALTIME);
+	CLOCK_TO_STR(CLOCK_MONOTONIC);
+	CLOCK_TO_STR(CLOCK_PROCESS_CPUTIME_ID);
+	CLOCK_TO_STR(CLOCK_THREAD_CPUTIME_ID);
+#if HAVE_CLOCK_MONOTONIC_RAW
+	CLOCK_TO_STR(CLOCK_MONOTONIC_RAW);
+#endif
+#if HAVE_CLOCK_REALTIME_COARSE
+	CLOCK_TO_STR(CLOCK_REALTIME_COARSE);
+#endif
+#if HAVE_CLOCK_MONOTONIC_COARSE
+	CLOCK_TO_STR(CLOCK_MONOTONIC_COARSE);
+#endif
+	default:
+		return "CLOCK_!?!?!?";
 	}
 }
 
 #include "linux_syscall_numbers.h"
 
-/* Weak symbols. In newer glibc, these funcs should be defined. Then
- * it will superseed the definition from this file
- */
-#pragma weak timer_create
-#pragma weak timer_settime
-#pragma weak timer_delete
-#pragma weak clock_settime
-#pragma weak clock_gettime
-
 #include <time.h>
-#include <sys/syscall.h>
 #include <unistd.h>
 
-int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
-{
-	return syscall(__NR_timer_create, clockid, evp, timerid);
-}
-int timer_settime(timer_t timerid, int flags, const struct itimerspec *value, struct itimerspec *ovalue)
-{
-	return syscall(__NR_timer_settime, timerid, flags, value, ovalue);
-}
-int timer_delete(timer_t timerid)
-{
-	return syscall(__NR_timer_delete, timerid);
-}
-int clock_settime(clockid_t clock_id, const struct timespec *tp)
-{
-	return syscall(__NR_clock_settime, clock_id, tp);
-}
-int clock_gettime(clockid_t clock_id, struct timespec *tp)
-{
-	return syscall(__NR_clock_gettime, clock_id, tp);
-}
+/* timer_t in kernel(int) is different from  Glibc definition(void*).
+ * Use the kernel definition for syscall tests
+ */
+typedef int kernel_timer_t;
 
 #endif

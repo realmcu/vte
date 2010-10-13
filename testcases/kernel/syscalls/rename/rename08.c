@@ -77,12 +77,12 @@ void setup();
 void cleanup();
 extern void do_file_setup(char *);
 
-char *TCID="rename08";		/* Test program identifier.    */
+char *TCID = "rename08";	/* Test program identifier.    */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-int exp_enos[]={EFAULT, 0};     /* List must end with 0 */
+int exp_enos[] = { EFAULT, 0 };	/* List must end with 0 */
 
-char * bad_addr = 0;
+char *bad_addr = 0;
 
 int fd;
 char fname[255];
@@ -94,28 +94,28 @@ struct test_case_t {
 } TC[] = {
 #if !defined(UCLINUX)
 	/* "new" file is invalid - EFAULT */
-	{fname, (char *)-1, EFAULT},
-
-	/* "old" file is invalid - EFAULT */
-	{(char *)-1, fname, EFAULT},
+	{
+	fname, (char *)-1, EFAULT},
+	    /* "old" file is invalid - EFAULT */
+	{
+	(char *)-1, fname, EFAULT},
 #endif
-
-	/* both files are NULL - EFAULT */
-	{NULL, NULL, EFAULT}
+	    /* both files are NULL - EFAULT */
+	{
+	NULL, NULL, EFAULT}
 };
-int TST_TOTAL=(sizeof(TC) / sizeof(*TC));
+int TST_TOTAL = (sizeof(TC) / sizeof(*TC));
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
-	int lc;             /* loop counter */
-	char *msg;          /* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 	int i;
 
 	/*
 	 * parse standard options
 	 */
-	if ((msg=parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -123,17 +123,17 @@ main(int ac, char **av)
 	 * perform global setup for test
 	 */
 	setup();
-	
+
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
-	
+
 	/*
 	 * check looping state if -i option given
 	 */
-	for (lc=0; TEST_LOOPING(lc); lc++) {
-	  
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+
 		/* reset Tst_count in case we are looping. */
-		Tst_count=0;
+		Tst_count = 0;
 
 		/* loop through the test cases */
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -157,40 +157,37 @@ main(int ac, char **av)
 					 strerror(TEST_ERRNO), TC[i].error);
 			}
 		}
-	}   /* End for TEST_LOOPING */
-	
+	}			/* End for TEST_LOOPING */
+
 	/*
 	 * cleanup and exit
 	 */
 	cleanup();
-	/*NOTREACHED*/	
-
-  return(0);
+	 /*NOTREACHED*/ return 0;
 
 }
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void 
-setup()
+void setup()
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Pause if that option was specified */
-	TEST_PAUSE; 
+	TEST_PAUSE;
 
 	/* Create a temporary directory and make it current. */
 	tst_tmpdir();
-	
-	sprintf(fname,"./tfile_%d",getpid());
+
+	sprintf(fname, "./tfile_%d", getpid());
 
 	do_file_setup(fname);
 
 #if !defined(UCLINUX)
 	bad_addr = mmap(0, 1, PROT_NONE,
-			MAP_PRIVATE_EXCEPT_UCLINUX|MAP_ANONYMOUS, 0, 0);
+			MAP_PRIVATE_EXCEPT_UCLINUX | MAP_ANONYMOUS, 0, 0);
 	if (bad_addr == MAP_FAILED) {
 		tst_brkm(TBROK, cleanup, "mmap failed");
 	}
@@ -203,8 +200,7 @@ setup()
  * cleanup() - performs all ONE TIME cleanup for this test at
  *              completion or premature exit.
  */
-void 
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.
@@ -216,7 +212,7 @@ cleanup()
 	 * Remove the temporary directory.
 	 */
 	tst_rmdir();
-	
+
 	/*
 	 * Exit with return code appropriate for results.
 	 */

@@ -17,7 +17,7 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* 
+/*
  * Test Name: setgroups02
  *
  * Test Description:
@@ -28,7 +28,7 @@
  *  The call succeeds in setting all the supplementary group IDs of the
  *  calling process. The new group should be set in the process  supplemental
  *  group list.
- *	
+ *
  * Algorithm:
  *  Setup:
  *   Setup signal handling.
@@ -40,7 +40,7 @@
  *   Check return code, if system call failed (return=-1)
  *   	Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *   	Verify the Functionality of system call
  *      if successful,
  *      	Issue Functionality-Pass message.
  *      Otherwise,
@@ -78,7 +78,7 @@
 #define TESTUSER	"nobody"
 
 TCID_DEFINE(setgroups02);	/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test conditions */
+int TST_TOTAL = 1;		/* Total number of test conditions */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 GID_T groups_list[NGROUPS];	/* Array to hold gids for getgroups() */
 
@@ -86,16 +86,15 @@ struct passwd *user_info;	/* struct. to hold test user info */
 void setup();			/* setup function for the test */
 void cleanup();			/* cleanup function for the test */
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
-	int lc,i;			/* loop counters */
-	char *msg;			/* message returned from parse_opts */
-	int gidsetsize = 1;		/* only one GID, the GID of TESTUSER */
-	int PASS_FLAG = 0;		/* used for checking group array */
-	
+	int lc, i;		/* loop counters */
+	char *msg;		/* message returned from parse_opts */
+	int gidsetsize = 1;	/* only one GID, the GID of TESTUSER */
+	int PASS_FLAG = 0;	/* used for checking group array */
+
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
+	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
 	if (msg != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
@@ -114,7 +113,7 @@ main(int ac, char **av)
 		 * the calling super-user process to gid of TESTUSER.
 		 */
 		TEST(SETGROUPS(gidsetsize, groups_list));
-	
+
 		/* check return code of setgroups(2) */
 		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL, "setgroups(%d, groups_list) Failed, "
@@ -129,7 +128,7 @@ main(int ac, char **av)
 		 */
 		if (STD_FUNCTIONAL_TEST) {
 			/*
-			 * Call getgroups(2) to verify that 
+			 * Call getgroups(2) to verify that
 			 * setgroups(2) successfully set the
 			 * supp. gids of TESTUSER.
 			 */
@@ -138,13 +137,14 @@ main(int ac, char **av)
 				tst_brkm(TFAIL, cleanup, "getgroups() Fails, "
 					 "error=%d", errno);
 			}
-			for (i=0;i<NGROUPS;i++) {
-			  if (groups_list[i] == user_info->pw_gid) {
-				tst_resm(TPASS, "Functionality of setgroups"
-					 "(%d, groups_list) successful",
-					 gidsetsize);
-				PASS_FLAG=1;
-			  } 
+			for (i = 0; i < NGROUPS; i++) {
+				if (groups_list[i] == user_info->pw_gid) {
+					tst_resm(TPASS,
+						 "Functionality of setgroups"
+						 "(%d, groups_list) successful",
+						 gidsetsize);
+					PASS_FLAG = 1;
+				}
 			}
 			if (PASS_FLAG == 0) {
 				tst_resm(TFAIL, "Supplimentary gid %d not set "
@@ -153,13 +153,12 @@ main(int ac, char **av)
 		} else {
 			tst_resm(TPASS, "call succeeded");
 		}
-	}	/* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 
 	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	/*NOTREACHED*/
-	return(0);
+	 /*NOTREACHED*/ return 0;
 }
 
 /*
@@ -168,8 +167,7 @@ main(int ac, char **av)
  *  Make sure the test process uid is root.
  *  Get the supplimentrary group id of test user from /etc/passwd file.
  */
-void 
-setup()
+void setup()
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -192,7 +190,7 @@ setup()
 			 cleanup,
 			 "gid returned from getpwnam is too large for testing setgroups16");
 	}
-	  
+
 	groups_list[0] = user_info->pw_gid;
 }
 
@@ -200,8 +198,7 @@ setup()
  * cleanup() - performs all ONE TIME cleanup for this test at
  *	       completion or premature exit.
  */
-void 
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.

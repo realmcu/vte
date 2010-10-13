@@ -15,19 +15,22 @@ setup()
 	export TST_COUNT=0
 	export TST_TOTAL=9
 
-	# Remove any leftover test directories from prior failed runs.
-	rm -rf $SELINUXTMPDIR/src_dir $SELINUXTMPDIR/dst_dir
+	SELINUXTMPDIR=$(mktemp -d)
+	chcon -t test_file_t $SELINUXTMPDIR
 
 	# Create the source and destination test directories for the rename.
-	mkdir --context=system_u:object_r:test_rename_src_dir_t $SELINUXTMPDIR/src_dir 2>&1
-	mkdir --context=system_u:object_r:test_rename_dst_dir_t $SELINUXTMPDIR/dst_dir 2>&1
+	mkdir $SELINUXTMPDIR/src_dir
+	chcon -t test_rename_src_dir_t $SELINUXTMPDIR/src_dir
+	mkdir $SELINUXTMPDIR/dst_dir
+	chcon -t test_rename_dst_dir_t $SELINUXTMPDIR/dst_dir
 
 	# Create a test file to try renaming.
 	touch $SELINUXTMPDIR/src_dir/test_file
 	chcon -t test_rename_file_t $SELINUXTMPDIR/src_dir/test_file
 
 	# Create a test directory to try renaming.
-	mkdir --context=system_u:object_r:test_rename_dir_t $SELINUXTMPDIR/src_dir/test_dir
+	mkdir $SELINUXTMPDIR/src_dir/test_dir
+	chcon -t test_rename_dir_t $SELINUXTMPDIR/src_dir/test_dir
 
 }
 
@@ -42,9 +45,9 @@ test01()
         RC=$?
         if [ $RC -eq 0 ]
         then
-                echo "$TCID   PASS : rename passed."
+                tst_resm TPASS "rename passed."
         else
-                echo "$TCID   FAIL : rename failed."
+                tst_resm TFAIL "rename failed."
         fi
         return $RC
 }
@@ -67,9 +70,9 @@ test02()
         RC=$?
         if [ $RC -eq 0 ]
         then
-                echo "$TCID   PASS : rename passed."
+                tst_resm TPASS "rename passed."
         else
-                echo "$TCID   FAIL : rename failed."
+                tst_resm TFAIL "rename failed."
         fi
         return $RC
 }
@@ -88,9 +91,9 @@ test03()
         RC=$?
         if [ $RC -eq 0 ]
         then
-                echo "$TCID   PASS : rename passed."
+                tst_resm TPASS "rename passed."
         else
-                echo "$TCID   FAIL : rename failed."
+                tst_resm TFAIL "rename failed."
         fi
         return $RC
 }
@@ -110,10 +113,10 @@ test04()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : rename passed."
+                tst_resm TPASS "rename passed."
 		RC=0
         else
-                echo "$TCID   FAIL : rename failed."
+                tst_resm TFAIL "rename failed."
 		RC=1
         fi
 	return $RC
@@ -131,10 +134,10 @@ test05()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : rename passed."
+                tst_resm TPASS "rename passed."
 		RC=0
         else
-                echo "$TCID   FAIL : rename failed."
+                tst_resm TFAIL "rename failed."
 		RC=1
 	fi
 	return $RC
@@ -152,10 +155,10 @@ test06()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : rename passed."
+                tst_resm TPASS "rename passed."
 		RC=0
         else
-                echo "$TCID   FAIL : rename failed."
+                tst_resm TFAIL "rename failed."
 		RC=1
 	fi
 	return $RC
@@ -177,10 +180,10 @@ test07()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : rename passed."
+                tst_resm TPASS "rename passed."
 		RC=0
         else
-                echo "$TCID   FAIL : rename failed."
+                tst_resm TFAIL "rename failed."
 		RC=1
 	fi
 	return $RC
@@ -199,10 +202,10 @@ test08()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : rename passed."
+                tst_resm TPASS "rename passed."
 		RC=0
         else
-                echo "$TCID   FAIL : rename failed."
+                tst_resm TFAIL "rename failed."
 		RC=1
 	fi
 	return $RC
@@ -220,10 +223,10 @@ test09()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : rename passed."
+                tst_resm TPASS "rename passed."
 		RC=0
         else
-                echo "$TCID   FAIL : rename failed."
+                tst_resm TFAIL "rename failed."
 		RC=1
 	fi
 	return $RC
@@ -231,8 +234,7 @@ test09()
 
 cleanup()
 {
-	# Cleanup.
-	rm -rf $SELINUXTMPDIR/src_dir $SELINUXTMPDIR/dst_dir
+	rm -rf $SELINUXTMPDIR
 }
 
 # Function:     main

@@ -1,59 +1,79 @@
 #
-#  Copyright (c) International Business Machines  Corp., 2001
+#    testcases/kernel/syscalls Makefile.
 #
-#  This program is free software;  you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
+#    Copyright (C) 2009, Cisco Systems Inc.
 #
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY;  without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
-#  the GNU General Public License for more details.
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
 #
-#  You should have received a copy of the GNU General Public License
-#  along with this program;  if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License along
+#    with this program; if not, write to the Free Software Foundation, Inc.,
+#    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# Garrett Cooper, July 2009
 #
 
-DEBUG_CFLAGS=-O
-DEBUG_LDFLAGS=-s
-CFLAGS+=-I../../include -g -Wall
-LDLIBS+=
-EXCLUDE_DIR=epoll
+top_srcdir		?= ../../..
 
-#
-# Commented this out since there are directories here we don't want built by default
-#
-# 2009.2.6, Spring
-#dup3,eventfd2,inotify_init,pipe2,signalfd4 only work on sh arch, need __NR_dup3 __NR_eventfd2
-#signalfd, no sys/signalfd.h
-SUBDIR = `ls */[Mm]akefile | sed "s/[Mm]akefile//g" | grep -vE "^epoll|dup3|eventfd2|inotify_init|pipe2|signalfd4|signalfd"`
+include	$(top_srcdir)/include/mk/env_pre.mk
 
-UCLINUX_SUBDIR = `ls */[Mm]akefile | sed "s/[Mm]akefile//g" | grep -vE "^fork|epoll|capget|capset|chmod|chown|llseek|nftw|clone|profil|getcontext"`
+# libevent requires some massaging to get this to work.
+FILTER_OUT_DIRS		:= libevent
+# pcllib is busted as all heck because of libtool
+FILTER_OUT_DIRS		+= pcllib
 
-all:
-	@set -e; for i in $(SUBDIR); do \
-		$(MAKE) -C $$i  all; \
-	done
+ifeq ($(wildcard $(abs_srcdir)/libevent/test/Makefile),)
+$(warning libevent/test/Makefile does not exist; skipping to avoid compile errors)
+$(warning Please run "make autotools" and "configure" at the top-level LTP)
+$(warning directory if you want to run this test)
+else
 
-install:
-	@set -e; for i in $(SUBDIR); do \
-		$(MAKE) -C $$i  install; \
-	done
+LIBEVENT		:= libevent/lib/libevent.a
 
-uclinux:  
-	@set -e; for i in $(UCLINUX_SUBDIR); do \
-		$(MAKE) -C $$i UCLINUX=1 all; \
-	done
+CLEAN_DEPS		:= libevent-clean
 
-uclinux_install:
-	@set -e; for i in $(UCLINUX_SUBDIR); do \
-		$(MAKE) -C $$i UCLINUX=1 all; \
-	done
+CLEAN_TARGETS		:= $(LIBEVENT)
 
-clean:
-	@set -e; for i in $(SUBDIR); do \
-		$(MAKE) -C $$i  clean; \
-	done
+INSTALL_DEPS		:= libevent-install
 
+INSTALL_TARGETS		:= libevent/run_libevent.sh libevent/test/test-libevent.sh
+
+LIBEVENT_APPS		:= regress test-eof test-init test-time test-weof
+
+TEST_APPS		:= $(addprefix libevent/test/,$(LIBEVENT_APPS))
+
+MAKE_DEPS		:= libevent-all
+
+MAKE_TARGETS		+= $(TEST_APPS)
+
+libevent libevent/test: %:
+	mkdir -p "$@"
+
+$(TEST_APPS): CPPFLAGS += -I$(abs_srcdir)/libevent
+$(TEST_APPS): LDFLAGS += -L$(abs_builddir)/libevent
+$(TEST_APPS): LDLIBS += -levent
+
+$(LIBEVENT): $(abs_srcdir)/libevent/Makefile libevent
+	$(MAKE) -C libevent -f "$(firstword $^)" libevent.a
+
+libevent-all: $(abs_srcdir)/libevent/test/Makefile | $(LIBEVENT) libevent/test
+	$(MAKE) -C libevent/test -f "$(firstword $^)" $(LIBEVENT_APPS)
+
+libevent-clean libevent-install: libevent-%: $(abs_srcdir)/libevent/test/Makefile | libevent/test
+	$(MAKE) -C libevent/test -f "$(firstword $^)" $*
+
+endif
+
+ifeq ($(UCLINUX),1)
+FILTER_OUT_DIRS	+= capget capset chmod chown clone fork getcontext llseek \
+		   nftw profil remap_file_pages
+endif
+
+include $(top_srcdir)/include/mk/generic_trunk_target.mk

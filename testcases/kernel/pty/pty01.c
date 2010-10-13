@@ -70,7 +70,7 @@ extern int Tst_count;           /* Test Case counter for tst_* routines */
  * number of procs for parallel test
  */
 #define NUMPROCS 15
-	
+
 
 /*
  * test slave locking
@@ -89,7 +89,7 @@ test1(void)
 		tst_resm(TBROK,"%s",MASTERCLONE);
 		tst_exit();
 	}
-	
+
 	slavename = ptsname(masterfd);
 	if (slavename == (char *)0) {
 		tst_resm(TBROK,"ptsname() call failed");
@@ -128,7 +128,7 @@ test1(void)
 		tst_resm(TBROK,"unlockpt() failed");
 		tst_exit();
 	}
-	
+
 	slavefd = open(slavename, O_RDWR);
 	if (slavefd < 0) {
 		tst_resm(TBROK,"Could not open %s",slavename);
@@ -140,7 +140,7 @@ test1(void)
 	 */
 	if (write(masterfd, STRING, strlen(STRING)) != strlen(STRING)) {
 		tst_resm(TFAIL,"write to master");
-		tst_exit();	
+		tst_exit();
 	}
 
 	if (read(slavefd, buf, strlen(STRING)) != strlen(STRING)) {
@@ -202,7 +202,7 @@ test1(void)
 	}
 	tst_resm(TPASS,"test1");
 	/** NOT REACHED **/
-	return(0);
+	return 0;
 }
 
 /*
@@ -222,7 +222,7 @@ test2(void)
 		tst_resm(TBROK,"%s",MASTERCLONE);
 		tst_exit();
 	}
-	
+
 	slavename = ptsname(masterfd);
 	if (slavename == (char *)0) {
 		tst_resm(TBROK,"ptsname() call failed");
@@ -280,7 +280,7 @@ test2(void)
 	}
 	tst_resm(TPASS,"test2");
 	/** NOT REACHED **/
-	return(0);
+	return 0;
 }
 
 /*
@@ -304,7 +304,7 @@ test3(void)
 	}
 	tst_resm(TPASS,"test3");
 	/** NOT REACHED **/
-	return(0);
+	return 0;
 }
 
 /*
@@ -315,8 +315,8 @@ test4(void)
 {
 	int masterfd;		/* master pty fd */
 	int slavefd;		/* slave pty fd */
-	int slavefd2;	
-	int slavefd3;	
+	int slavefd2;
+	int slavefd3;
 	char *slavename;
 
 	masterfd = open(MASTERCLONE, O_RDWR);
@@ -324,7 +324,7 @@ test4(void)
 		tst_resm(TBROK,"%s",MASTERCLONE);
 		tst_exit();
 	}
-	
+
 	slavename = ptsname(masterfd);
 	if (slavename == (char *)0) {
 		tst_resm(TBROK,"ptsname() call failed");
@@ -380,16 +380,16 @@ test4(void)
 	if (close(masterfd) != 0) {
 		tst_resm(TBROK,"close master");
 		tst_exit();
-	}	
+	}
 	tst_resm(TPASS,"test4");
 	/** NOT REACHED **/
-	return(0);
+	return 0;
 }
 
 /*
  * test opening/closing lots of ptys in parallel.  We may run out
  * of ptys for this test depending on how the system is configured,
- * but that's not a fatal error.  
+ * but that's not a fatal error. 
  */
 static int
 test5(void)
@@ -423,7 +423,7 @@ test5(void)
 			if (close(masterfd) != 0) {
 				tst_resm(TFAIL,"proc %d: close",i);
 				tst_exit();
-			}	
+			}
 			tst_exit();
 		default:
 			break;
@@ -437,9 +437,9 @@ test5(void)
 	}
 	tst_resm(TPASS,"test5");
 	/** NOT REACHED **/
-	return(0);
-}	
-		
+	return 0;
+}
+	
 /*
  * main test driver
  */
@@ -457,5 +457,5 @@ main(int argc, char **argv)
 	 */
 	tst_exit();
 	/*NOTREACHED*/
-	return(0);
+	return 0;
 }

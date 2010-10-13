@@ -62,7 +62,7 @@ LTPROOT=${LTPROOT:-`(cd ../../../../.. ; pwd)`}
 export LTPROOT
 
 # Check the environmanet variable
-source check_envval || exit $TST_TOTAL
+. check_envval || exit $TST_TOTAL
 
 # Dulation of the test [sec]
 NS_DURATION=${NS_DURATION:-3600}      # 1 hour
@@ -123,7 +123,7 @@ do_cleanup()
 ulimit -u unlimited
 
 # Output the informaion
-tst_resm TINFO "- Test dulation is $NS_DURATION [sec]"
+tst_resm TINFO "- Test duration is $NS_DURATION [sec]"
 
 link_total=`echo $LHOST_HWADDRS | wc -w`
 rhost_link_total=`echo $RHOST_HWADDRS | wc -w`

@@ -44,6 +44,7 @@
 #include <semaphore.h>
 
 #include <sys/time.h>
+#include <sys/socket.h>
 #include <netinet/in.h>
 
 #include "test.h"
@@ -75,13 +76,13 @@ struct {
 
 void do_tests(void);
 void setup(void), cleanup(void);
+int csum_test(char *rhost);
 
 int
 main(int argc, char *argv[])
 {
 	char *msg;		/* message returned from parse_opts */
 	int lc;
-	int fd;
 
 	/* Parse standard options given to run the test. */
 	msg = parse_opts(argc, argv, 0, 0);
@@ -191,7 +192,7 @@ struct csent {
 
 #define CSCOUNT	(sizeof(cstab)/sizeof(cstab[0]))
 
-static int recvtprot(int sd, char *packet, int psize)
+static int recvtprot(int sd, unsigned char *packet, int psize)
 {
 	struct tprot *tpt;
 	int cc, total, expected;
@@ -245,7 +246,7 @@ struct ph {
 	uint8_t ph_nh;
 } ph;
 
-static char client(int prot, int sfd)
+static int client(int prot, int sfd)
 {
 	struct tprot *pttp = (struct tprot *)tpbuf;
 	struct tprot *prtp = (struct tprot *)rpbuf;
@@ -269,7 +270,7 @@ static char client(int prot, int sfd)
 	}
 	for (i=0; i<CSCOUNT; ++i) {
 		int offset, len, xlen;
-		int cc, rv, j;
+		int rv;
 		unsigned char *p, *pend;
 
 		offset = sizeof(struct tprot) + cstab[i].cs_offset;
@@ -286,9 +287,9 @@ static char client(int prot, int sfd)
 		TEST(setsockopt(sd, IPPROTO_IPV6, IPV6_CHECKSUM, &offset,
 				sizeof(offset)));
 		if (TEST_RETURN != cstab[i].cs_setresult) {
-			tst_resm(TFAIL, "IPV6_CHECKSUM offset %d len %d "
-				"- result %d != %d errno %d", offset, len,
-				TEST_RETURN, cstab[i].cs_setresult, TEST_ERRNO);
+			tst_resm(TFAIL|TTERRNO, "IPV6_CHECKSUM offset %d len %d "
+				"- result %ld != %d", offset, len,
+				TEST_RETURN, cstab[i].cs_setresult);
 			continue;
 		}
 		if (TEST_RETURN < 0) {
@@ -307,9 +308,9 @@ static char client(int prot, int sfd)
 			sizeof(rsin6)));
 		xlen = (cstab[i].cs_sndresult < 0) ? -1 : len;
 		if (TEST_RETURN != xlen) {
-			tst_resm(TFAIL, "IPV6_CHECKSUM offset %d len %d "
-				"- sndresult %d != %d snderrno %d",
-				offset, len, TEST_RETURN, xlen, TEST_ERRNO);
+			tst_resm(TFAIL|TTERRNO, "IPV6_CHECKSUM offset %d len %d "
+				"- sndresult %ld != %d",
+				offset, len, TEST_RETURN, xlen);
 			continue;
 		}
 		if (TEST_RETURN < 0 && TEST_ERRNO != cstab[i].cs_snderrno) {
@@ -323,7 +324,7 @@ static char client(int prot, int sfd)
 				offset, len);
 			continue;
 		}
-		while (cc = recvtprot(sfd, rpbuf, sizeof(rpbuf))) {
+		while ((cc = recvtprot(sfd, rpbuf, sizeof(rpbuf)))) {
 			if (htonl(prtp->tp_pid) == pid &&
 			    htonl(prtp->tp_seq) == seq)
 				break;
@@ -354,6 +355,7 @@ static char client(int prot, int sfd)
 		}
 		tst_resm(TPASS, "IPV6_CHECKSUM offset %d len %d", offset, len);
 	}
+	return 0;
 }
 
 static int listen_fd, connect_fd;
@@ -365,7 +367,7 @@ ilistener(void *arg)
 	connect_fd = accept(listen_fd, 0, 0);
 	close(listen_fd);
 	sem_post(&ilsem);
-	return;
+	return NULL;
 }
 
 int
@@ -373,7 +375,7 @@ isocketpair(int pf, int type, int proto, int fd[2])
 {
 	pthread_t	thid;
 	struct sockaddr_in sin4;
-	int namelen;
+	socklen_t namelen;
 
 /* restrict to PF_INET for now */
 	if (pf != PF_INET) {
@@ -516,6 +518,7 @@ csum_test(char *rhost)
 		tv.tv_sec = READ_TIMEOUT;
 		tv.tv_usec = 0;
 	}
+	return 0;
 }
 
 void

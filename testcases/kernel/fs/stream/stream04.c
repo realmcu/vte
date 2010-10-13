@@ -27,7 +27,7 @@
 >HOW:   < 1) Open a file, write to it, and then check it.
 	< 2) Fwrite a know quanity, check return value.
 	<    Fread a know quanity, check return value.
->BUGS:  < 
+>BUGS:  <
 ======================================================================*/
 
 #include <stdio.h>
@@ -77,7 +77,7 @@ int main(int ac, char *av[])
 
 		sprintf(tempfile1, "stream04.%d", getpid());
 	/*--------------------------------------------------------------------*/
-	//block0:	
+	//block0:
 		if((stream=fopen(tempfile1,"a+")) == NULL) {
 			tst_resm(TFAIL,"fopen(%s) a+ failed: %s", tempfile1, strerror(errno));
 			tst_rmdir();
@@ -126,5 +126,5 @@ int main(int ac, char *av[])
 	} /* end for */
 	tst_rmdir();
 	tst_exit();
-	return(0);
+	return 0;
 }

@@ -35,8 +35,8 @@
 #include <fcntl.h>
 #include <string.h>
 #include <errno.h>
+#include <signal.h>
 #include <stdlib.h>
-#include <malloc.h>
 #include <aio.h>
 
 #include "posixtest.h"
@@ -72,9 +72,8 @@ int main()
 	struct sigaction action;
 	int i;
 
-#if _POSIX_ASYNCHRONOUS_IO != 200112L
-	return PTS_UNSUPPORTED;
-#endif
+	if (sysconf(_SC_ASYNCHRONOUS_IO) != 200112L)
+		return PTS_UNSUPPORTED;
 
 	snprintf(tmpfname, sizeof(tmpfname), "/tmp/pts_aio_cancel_3_1_%d", 
 		  getpid());
@@ -128,6 +127,7 @@ int main()
 		aiocb->aio_sigevent.sigev_notify = SIGEV_SIGNAL;
 		aiocb->aio_sigevent.sigev_signo = SIGRTMIN+1;
 		aiocb->aio_sigevent.sigev_value.sival_ptr = aiocb;
+		aiocb->aio_reqprio = 0;
 
 		if (aio_write(aiocb) == -1)
 		{

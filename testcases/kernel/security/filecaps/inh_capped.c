@@ -24,24 +24,23 @@
  * Uses no command line arguments.
  */
 
-#define _GNU_SOURCE
 #include <stdio.h>
+#include "config.h"
+#if HAVE_SYS_CAPABILITY_H
 #include <sys/capability.h>
+#endif
 #include <test.h>
 
 char *TCID = "filecaps";
 int TST_TOTAL=1;
 
-#define DEBUG 1
-
+#ifdef HAVE_LIBCAP
 void debug_print_caps(char *when)
 {
-#ifdef DEBUG
 	char buf[2000];
 	tst_resm(TINFO, "%s", when);
 	snprintf(buf, 2000, "%s", cap_to_text(cap_get_proc(), NULL));
 	tst_resm(TINFO, "%s", buf);
-#endif
 }
 
 int set_caps_from_text(char *capstr)
@@ -57,9 +56,11 @@ int set_caps_from_text(char *capstr)
 	cap_free(caps);
 	return ret;
 }
+#endif
 
 int main()
 {
+#ifdef HAVE_LIBCAP
 	int ret;
 
 	debug_print_caps("start");
@@ -67,14 +68,14 @@ int main()
 	debug_print_caps("after raising all caps");
 	if (ret) {
 		tst_resm(TFAIL, "failed to raise all caps");
-		tst_exit(ret);
+		tst_exit();
 	}
 
 	ret = set_caps_from_text("all=iep cap_sys_admin-iep");
 	debug_print_caps("after first drop cap_sys_admin");
 	if (ret) {
 		tst_resm(TFAIL, "failed to drop capsysadmin from pI");
-		tst_exit(ret);
+		tst_exit();
 	}
 
 	/* we can't regain cap_sys_admin in pE or pP, only pI */
@@ -82,14 +83,14 @@ int main()
 	debug_print_caps("after first raise cap_sys_admin");
 	if (ret) {
 		tst_resm(TFAIL, "failed to raise capsysadmin in pI");
-		tst_exit(ret);
+		tst_exit();
 	}
 
 	ret = set_caps_from_text("all=ip cap_setpcap-e+ip cap_sys_admin+i-ep");
 	debug_print_caps("after drop cappset");
 	if (ret) {
 		tst_resm(TFAIL, "failed to drop cappset from pE");
-		tst_exit(ret);
+		tst_exit();
 	}
 
 	ret = set_caps_from_text("all=iep cap_sys_admin-iep cap_setpcap-e+ip");
@@ -97,17 +98,20 @@ int main()
 	if (ret) {
 		tst_resm(TFAIL, "failed to drop capsysadmin from pI "
 				"after dropping cappset from pE");
-		tst_exit(ret);
+		tst_exit();
 	}
 
 	ret = set_caps_from_text("all=iep cap_sys_admin-ep+i cap_setpcap-e+ip");
 	debug_print_caps("final");
 	if (ret) {
 		tst_resm(TPASS, "pI is properly capped\n");
-		tst_exit(0);
+		tst_exit();
 	}
 
 	tst_resm(TFAIL, "succeeded raising capsysadmin in pI "
 			"without having setpcap");
-	tst_exit(ret);
+#else
+	tst_resm(TCONF, "System doesn't have POSIX capabilities support.");
+#endif
+	tst_exit();
 }

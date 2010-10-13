@@ -37,7 +37,7 @@
 char dmMsgBuf[4096];
 
 void LogSessions(dm_sessid_t *sid, u_int nelem)
-{	
+{
 	int i;
 
 	DMLOG_PRINT(DMLVL_DEBUG, "Sessions:\n");
@@ -54,10 +54,10 @@ int main(int argc, char **argv)
 	char *varstr;
 	int   i;
 	int   rc;
-	
+
 	DMOPT_PARSE(argc, argv);
 	DMLOG_START();
-	
+
 	/* CANNOT DO ANYTHING WITHOUT SUCCESSFUL INITIALIZATION!!! */
 	if ((rc = dm_init_service(&varstr)) != 0) {
 		DMLOG_PRINT(DMLVL_ERR, "dm_init_service failed! (rc = %d, errno = %d)\n", rc, errno);
@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 	}
 
 	DMLOG_PRINT(DMLVL_DEBUG, "Starting DMAPI session tests\n") ;
-	
+
 	szFuncName = "dm_create_session";
 
 	/*
@@ -111,11 +111,11 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid oldsid)\n", szFuncName);
 		rc = dm_create_session(INVALID_ADDR, szSessionInfo, &newsid);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL);
 
 		/* Variation clean up */
 	}
-	
+
 	/*
 	 * TEST    : dm_create_session - NULL sessinfop
 	 * EXPECTED: rc = 0
@@ -128,11 +128,11 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(NULL sessinfop)\n", szFuncName);
 		rc = dm_create_session(DM_NO_SESSION, NULL, &newsid);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 		/* Variation clean up */
 	}
-	
+
 	/*
 	 * TEST    : dm_create_session - invalid sessinfop
 	 * EXPECTED: rc = -1, errno = EFAULT
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid sessinfop)\n", szFuncName);
 		rc = dm_create_session(DM_NO_SESSION, (char *)INVALID_ADDR, &newsid);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 		/* Variation clean up */
 	}
@@ -164,11 +164,11 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(NULL newsidp)\n", szFuncName);
 		rc = dm_create_session(DM_NO_SESSION, szSessionInfo, NULL);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 		/* Variation clean up */
 	}
-	
+
 	/*
 	 * TEST    : dm_create_session - invalid newsidp
 	 * EXPECTED: rc = -1, errno = EFAULT
@@ -179,7 +179,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid newsidp)\n", szFuncName);
 		rc = dm_create_session(DM_NO_SESSION, szSessionInfo, (dm_sessid_t *)INVALID_ADDR);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 		/* Variation clean up */
 	}
@@ -199,7 +199,7 @@ int main(int argc, char **argv)
 		if (rc == 0) {
 			DMLOG_PRINT(DMLVL_DEBUG, "newsid = %d\n", newsid);
 		}
-		DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+		DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 		/* Variation clean up */
 		rc = dm_destroy_session(newsid);
@@ -207,7 +207,7 @@ int main(int argc, char **argv)
 			DMLOG_PRINT(DMLVL_DEBUG, "Unable to clean up variation! (errno = %d)\n", errno);
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_create_session - valid oldsid
 	 * EXPECTED: rc = 0
@@ -229,7 +229,7 @@ int main(int argc, char **argv)
 			if (rc == 0) {
 				DMLOG_PRINT(DMLVL_DEBUG, "newsid = %d\n", newsid);
 			}
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = dm_destroy_session(newsid);
@@ -238,7 +238,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_create_session - invalidated oldsid
 	 * EXPECTED: rc = -1, errno = EINVAL
@@ -257,7 +257,7 @@ int main(int argc, char **argv)
 			DMVAR_SKIP();
 		} else {
 			delsid = newsid;
-			
+		
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalidated oldsid)\n", szFuncName);
 			rc = dm_create_session(oldsid, szSessionInfo, &newsid);
@@ -270,7 +270,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_create_session - maximum sessinfo
 	 * EXPECTED: rc = 0
@@ -287,7 +287,7 @@ int main(int argc, char **argv)
 		if (rc == 0) {
 			DMLOG_PRINT(DMLVL_DEBUG, "newsid = %d\n", newsid);
 		}
-		DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+		DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 		/* Variation clean up */
 		rc = dm_destroy_session(newsid);
@@ -312,7 +312,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(sessinfo too big)\n", szFuncName);
 		rc = dm_create_session(DM_NO_SESSION, szTooBig, &newsid);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, E2BIG); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, E2BIG);
 
 		/* Variation clean up */
 	}
@@ -355,7 +355,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	
+
 	szFuncName = "dm_destroy_session";
 
 	/*
@@ -368,7 +368,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(DM_NO_SESSION sid)\n", szFuncName);
 		rc = dm_destroy_session(DM_NO_SESSION);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL);
 
 		/* Variation clean up */
 	}
@@ -383,7 +383,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid sid)\n", szFuncName);
 		rc = dm_destroy_session(INVALID_ADDR);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL);
 
 		/* Variation clean up */
 	}
@@ -406,12 +406,12 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalidated sid)\n", szFuncName);
 			rc = dm_destroy_session(newsid);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL); 
-	
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL);
+
 			/* Variation clean up */
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_destroy_session - valid sid
 	 * EXPECTED: rc = 0
@@ -428,12 +428,12 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(valid sid)\n", szFuncName);
 			rc = dm_destroy_session(newsid);
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
-	
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
+
 			/* Variation clean up */
 		}
 	}
-	
+
 	/*
 	 * TEST    : dm_destroy_session - sid with oustanding events
 	 * EXPECTED: rc = -1, erno = EBUSY
@@ -454,8 +454,8 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(valid sid)\n", szFuncName);
 			rc = dm_destroy_session(newsid);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBUSY); 
-	
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBUSY);
+
 			/* Variation clean up */
 			rc = dm_get_events(newsid, 1, 0, sizeof(dmMsgBuf), dmMsgBuf, &rlen);
 			rc |= dm_destroy_session(newsid);
@@ -464,9 +464,9 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	
+
 	szFuncName = "dm_getall_sessions";
-	
+
 	/*
 	 * TEST    : dm_getall_sessions - NULL sidbufp
 	 * EXPECTED: rc = -1, errno EFAULT
@@ -484,7 +484,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(NULL sidbufp)\n", szFuncName);
 			rc = dm_getall_sessions(1, NULL, &nelem);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = dm_destroy_session(newsid);
@@ -511,7 +511,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid sidbufp)\n", szFuncName);
 			rc = dm_getall_sessions(1, (dm_sessid_t *)INVALID_ADDR, &nelem);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = dm_destroy_session(newsid);
@@ -537,7 +537,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(NULL nelemp)\n", szFuncName);
 			rc = dm_getall_sessions(1, sidArray, NULL);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = dm_destroy_session(newsid);
@@ -563,7 +563,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid nelemp)\n", szFuncName);
 			rc = dm_getall_sessions(1, sidArray, (u_int *)INVALID_ADDR);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = dm_destroy_session(newsid);
@@ -599,7 +599,7 @@ int main(int argc, char **argv)
 			DMLOG_PRINT(DMLVL_ERR, "%s failed with unexpected rc = %d (errno = %d)\n", szFuncName, rc, errno);
 			DMVAR_FAIL();
 		}
-		
+	
 		/* Variation clean up */
 	}
 
@@ -667,8 +667,8 @@ int main(int argc, char **argv)
 			rc = dm_getall_sessions(1, sidArray, &nelem);
 			if (rc == 0) {
 				DMLOG_PRINT(DMLVL_DEBUG, "nelem = %d\n", nelem);
-				
-				if (nelem == 1) {  
+			
+				if (nelem == 1) { 
 					LogSessions(sidArray, nelem);
 
 					if (newsid == sidArray[0]) {
@@ -766,7 +766,7 @@ int main(int argc, char **argv)
 			rc = dm_getall_sessions(sizeof(sidArray)/sizeof(dm_sessid_t), sidArray, &nelem);
 			if (rc == 0) {
 				DMLOG_PRINT(DMLVL_DEBUG, "nelem = %d\n", nelem);
-				
+			
 				if (nelem == NUM_SESSIONS) {
 					LogSessions(sidArray, nelem);
 
@@ -811,11 +811,11 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(DM_NO_SESSION sid)\n", szFuncName);
 		rc = dm_query_session(DM_NO_SESSION, sizeof(buf), buf, &rlen);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL);
 
 		/* Variation clean up */
 	}
-	
+
 	/*
 	 * TEST    : dm_query_session - invalid sid
 	 * EXPECTED: rc = -1, errno = EINVAL
@@ -829,11 +829,11 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid sid)\n", szFuncName);
 		rc = dm_query_session(INVALID_ADDR, sizeof(buf), buf, &rlen);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL);
 
 		/* Variation clean up */
 	}
-	
+
 	/*
 	 * TEST    : dm_query_session - invalidated sid
 	 * EXPECTED: rc = -1, errno = EINVAL
@@ -854,8 +854,8 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalidated sid)\n", szFuncName);
 			rc = dm_query_session(newsid, sizeof(buf), buf, &rlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL); 
-	
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL);
+
 			/* Variation clean up */
 		}
 	}
@@ -878,7 +878,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(NULL bufp)\n", szFuncName);
 			rc = dm_query_session(newsid, sizeof(buf), NULL, &rlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = dm_destroy_session(newsid);
@@ -906,7 +906,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid bufp)\n", szFuncName);
 			rc = dm_query_session(newsid, sizeof(buf), (void *)INVALID_ADDR, &rlen);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = dm_destroy_session(newsid);
@@ -933,7 +933,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(NULL rlenp)\n", szFuncName);
 			rc = dm_query_session(newsid, sizeof(buf), buf, NULL);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = dm_destroy_session(newsid);
@@ -960,7 +960,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid rlenp)\n", szFuncName);
 			rc = dm_query_session(newsid, sizeof(buf), buf, (size_t *)INVALID_ADDR);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = dm_destroy_session(newsid);
@@ -991,7 +991,7 @@ int main(int argc, char **argv)
 			if (rc == -1) {
 				if (errno == E2BIG) {
 					DMLOG_PRINT(DMLVL_DEBUG, "rlen = %d\n", rlen);
-					
+				
 					if (rlen == strlen(szSessionInfo)+1) {
 						DMLOG_PRINT(DMLVL_DEBUG, "%s passed with expected rc = %d and expected errno = %d\n", szFuncName, -1, E2BIG);
 						DMVAR_PASS();
@@ -1007,7 +1007,7 @@ int main(int argc, char **argv)
 	  			DMLOG_PRINT(DMLVL_ERR, "%s failed with unexpected rc = %d\n", szFuncName, rc);
 				DMVAR_FAIL();
 			}
-	
+
 			/* Variation clean up */
 			rc = dm_destroy_session(newsid);
 			if (rc == -1) {
@@ -1055,7 +1055,7 @@ int main(int argc, char **argv)
 				DMLOG_PRINT(DMLVL_ERR, "%s failed with unexpected rc = %d (errno = %d)\n", szFuncName, rc, errno);
 				DMVAR_FAIL();
 			}
-	
+
 			/* Variation clean up */
 			rc = dm_destroy_session(newsid);
 			if (rc == -1) {
@@ -1066,7 +1066,7 @@ int main(int argc, char **argv)
 
 	/*
 	 * TEST    : dm_query_session - maximum sessionfo
-	 *           sessioninfo 
+	 *           sessioninfo
 	 * EXPECTED: rc = 0
 	 */
 	if (DMVAR_EXEC(QUERY_SESSION_BASE + 10)) {
@@ -1086,7 +1086,7 @@ int main(int argc, char **argv)
 			rc = dm_query_session(newsid, sizeof(buf), buf, &rlen);
 			if (rc == 0) {
 				DMLOG_PRINT(DMLVL_DEBUG, "rlen = %d\n", rlen);
-				
+			
 				if (rlen == DM_SESSION_INFO_LEN) {
 					DMLOG_PRINT(DMLVL_DEBUG, "buf = \"%s\"\n", buf);
 
@@ -1113,9 +1113,9 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	
+
 	DMLOG_STOP();
-			
+		
 	return 0;
 
 }

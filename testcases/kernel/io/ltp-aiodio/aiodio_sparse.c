@@ -36,6 +36,7 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/wait.h>
+#include <limits.h>
 
 #include <libaio.h>
 
@@ -110,7 +111,7 @@ int read_sparse(char *filename, int filesize)
 		char *badbuf;
 
 		if (debug > 1 && (i % 10) == 0) {
-			fprintf(stderr, "child %d, read loop count %d\n", 
+			fprintf(stderr, "child %d, read loop count %d\n",
 				getpid(), i);
 		}
 		lseek(fd, SEEK_SET, 0);
@@ -221,7 +222,7 @@ void aiodio_sparse(char *filename, int align, int writesize, int filesize, int n
 		);
 		return;
 	}
-	if (debug) 
+	if (debug)
 		fprintf(stderr, "io_submit() return %d\n", w);
 
 	/*
@@ -262,7 +263,7 @@ void aiodio_sparse(char *filename, int align, int writesize, int filesize, int n
 		if (debug)
 			fprintf(stderr, "aiodio_sparse: io_getevent() res %ld res2 %ld\n",
 				event.res, event.res2);
-		
+	
 		/* start next write */
 		io_prep_pwrite(iocbp, fd, iocbp->u.c.buf, writesize, offset);
 		offset += writesize;
@@ -272,7 +273,7 @@ void aiodio_sparse(char *filename, int align, int writesize, int filesize, int n
 			perror("");
 			break;
 		}
-		if (debug) 
+		if (debug)
 			fprintf(stderr, "io_submit() return %d\n", w);
 		aio_inflight++;
 	}
@@ -393,10 +394,10 @@ long long scale_by_kmg(long long value, char scale)
 
 int main(int argc, char **argv)
 {
+	char filename[PATH_MAX];
 	int pid[NUM_CHILDREN];
 	int num_children = 1;
 	int i;
-	char *filename = "/test/aiodio/file";
 	long alignment = 512;
 	int readsize = 65536;
 	int writesize = 65536;
@@ -407,8 +408,10 @@ int main(int argc, char **argv)
 	extern char *optarg;
 	extern int optind, optopt, opterr;
 
-    printf("Begin aiodio_sparse tests...\n");
+	printf("Begin aiodio_sparse tests...\n");
 
+	snprintf(filename, sizeof(filename), "%s/aiodio/file",
+		getenv("TMP") ? getenv("TMP") : "/tmp");
 
 	while ((c = getopt(argc, argv, "dr:w:n:a:s:i:")) != -1) {
 		char *endp;

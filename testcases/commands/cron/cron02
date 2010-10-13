@@ -13,7 +13,7 @@
 #   the GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
-#   along with this pronram;  if not, write to the Free Software
+#   along with this program;  if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 #  FILE   : cron02 
@@ -37,7 +37,7 @@ TEST_USER_HOMEDIR="/home/$TEST_USER"
 
 do_setup(){
 	#erase any data from potential defunt cron test
-	rm -rf /tmp/crontest &> /dev/null
+	rm -rf /tmp/crontest > /dev/null 2>&1
 
     #erase user if he may exist , so we can have a clean env
         rm -rf /home/$TEST_USER
@@ -53,17 +53,15 @@ do_setup(){
         fi
 
 	# restart cron daemon
-# Red Hat uses crond, SuSE/Other uses cron. Check if this is Red Hat/SuSE/Other
-tvar=${MACHTYPE%-*}
-tvar=${tvar#*-}
-echo "Distro type is: $tvar \n"
-
-if [ $tvar != "redhat" -a $tvar != "redhat-linux" ]; then
-
-	/etc/init.d/cron restart
-else
-	/etc/init.d/crond restart
-fi
+	# Red Hat uses crond, SuSE/Other uses cron.
+	if [ -x /etc/init.d/crond ]; then
+		/etc/init.d/crond restart
+	elif [ -x /etc/init.d/cron ]; then
+		/etc/init.d/cron restart
+	else
+		echo "Could not determine cron init.d script."
+		exit 1
+	fi
 }
 
 #-----------------------------------------------------------------------

@@ -62,27 +62,28 @@ char *TCID = "shmat03";
 int TST_TOTAL = 1;
 extern int Tst_count;
 
-int exp_enos[] = {EACCES, 0};	/* 0 terminated list of expected errnos */
+int exp_enos[] = { EACCES, 0 };	/* 0 terminated list of expected errnos */
 
 int shm_id_1 = -1;
 
-void	*addr;			/* for result of shmat-call */
+void *addr;			/* for result of shmat-call */
 
 uid_t ltp_uid;
 char *ltp_user = "nobody";
 
+void do_child(void);
+
 int main(int ac, char **av)
 {
-	char *msg;			/* message returned from parse_opts */
+	char *msg;		/* message returned from parse_opts */
 	int pid;
-	void do_child(void);
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
-	setup();			/* global setup */
+	setup();		/* global setup */
 
 	if ((pid = FORK_OR_VFORK()) == -1) {
 		tst_brkm(TBROK, cleanup, "could not fork");
@@ -91,7 +92,7 @@ int main(int ac, char **av)
 	if (pid == 0) {		/* child */
 		/* set the user ID of the child to the non root user */
 		if (setuid(ltp_uid) == -1) {
-			tst_resm(TBROK, "setuid() failed");
+			perror("setuid() failed");
 			exit(1);
 		}
 
@@ -111,14 +112,13 @@ int main(int ac, char **av)
 	}
 
 	cleanup();
-	return(0);
+	return 0;
 }
 
 /*
  * do_child - make the TEST call as the child process
  */
-void
-do_child()
+void do_child()
 {
 	int lc;
 
@@ -134,34 +134,30 @@ do_child()
 		errno = 0;
 		addr = shmat(shm_id_1, (const void *)0, 0);
 		TEST_ERRNO = errno;
-	
+
 		if (addr != (char *)-1) {
-			tst_resm(TFAIL, "call succeeded when error expected");
+			tst_resm(TFAIL, "call succeeded unexpectedly");
 			continue;
 		}
-	
+
 		TEST_ERROR_LOG(TEST_ERRNO);
 
-		switch(TEST_ERRNO) {
+		switch (TEST_ERRNO) {
 		case EACCES:
-			tst_resm(TPASS, "expected failure - errno = "
-				 "%d : %s", TEST_ERRNO,
-				 strerror(TEST_ERRNO));
+			tst_resm(TPASS|TTERRNO, "expected failure");
 			break;
 		default:
-			tst_resm(TFAIL, "call failed with an "
-				 "unexpected error - %d : %s",
-				 TEST_ERRNO, strerror(TEST_ERRNO));
+			tst_resm(TFAIL|TTERRNO,
+			    "call failed with an unexpected error");
 			break;
-		}			
+		}
 	}
 }
 
 /*
  * setup() - performs all the ONE TIME setup for this test.
  */
-void
-setup(void)
+void setup(void)
 {
 	/* check for root as process owner */
 	check_root();
@@ -186,7 +182,7 @@ setup(void)
 	shmkey = getipckey();
 
 	/* create a shared memory segment with read and write permissions */
-	if ((shm_id_1 = shmget(shmkey, SHM_SIZE, 
+	if ((shm_id_1 = shmget(shmkey, SHM_SIZE,
 			       SHM_RW | IPC_CREAT | IPC_EXCL)) == -1) {
 		tst_brkm(TBROK, cleanup, "Failed to create shared memory "
 			 "segment in setup");
@@ -200,8 +196,7 @@ setup(void)
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
  * 	       or premature exit.
  */
-void
-cleanup(void)
+void cleanup(void)
 {
 	/*
 	 * print timing stats if that option was specified.
@@ -212,4 +207,3 @@ cleanup(void)
 	/* exit with return code appropriate for results */
 	tst_exit();
 }
-

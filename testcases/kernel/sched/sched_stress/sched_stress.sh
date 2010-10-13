@@ -14,7 +14,7 @@
 #   the GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
-#   along with this pronram;  if not, write to the Free Software
+#   along with this program;  if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 #
@@ -31,5 +31,5 @@ touch $KERNEL
 echo 0.000000 > sch.measure
 export RAWDEV=`df / | grep dev | awk {'print $1'}`
 sched_driver -s 0.9 -t 0.02 -p 2 > /tmp/tmp$$
-tail -5 /tmp/tmp$$
+tail -n 5 /tmp/tmp$$
 rm -rf /tmp/tmp$$ ./sched_datafile sch.measure

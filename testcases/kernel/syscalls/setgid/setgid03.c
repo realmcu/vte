@@ -63,15 +63,14 @@ static void cleanup(void);
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-		/*NOTREACHED*/
-	}
-	
+	 /*NOTREACHED*/}
+
 	setup();
 
 	/* Check for looping state if -i option is given */
@@ -101,15 +100,13 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	/*NOTREACHED*/
-	return(0);
+	 /*NOTREACHED*/ return 0;
 }
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void
-setup()
+void setup()
 {
 	/* test must be run as root */
 	if (geteuid() != 0) {
@@ -139,21 +136,19 @@ setup()
 	}
 
 	if (!(GID_SIZE_CHECK(rootpwent->pw_gid))) {
-		tst_brkm(TBROK, 
-			 cleanup, 
-			 "gid for `%s' is too large for testing setgid16", 
+		tst_brkm(TBROK,
+			 cleanup,
+			 "gid for `%s' is too large for testing setgid16",
 			 root);
 	}
-	  
-	
+
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
  *	       completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.

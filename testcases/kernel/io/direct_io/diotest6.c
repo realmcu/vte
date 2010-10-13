@@ -36,7 +36,7 @@
  * USAGE
  *	diotest6 [-b bufsize] [-o offset] [-n numchild] [-i iterations]
  *			[-v nvector] [-f fileaname]
- * 
+ *
  * History
  *	04/30/2002	Narasimha Sharoff nsharoff@us.ibm.com
  *
@@ -76,6 +76,10 @@ static int	bufsize = BUFSIZE;	/* Buffersize. Default 4k */
 static off64_t	offset = 0;		/* Offset. Default 0 */
 static int	nvector = 20;		/* Vector array. Default 20 */
 static char	filename[LEN];		/* Test data file */
+static int fd1 = -1;
+
+static void setup(void);
+static void cleanup(void);
 
 /*
  * prg_usage: display the program usage
@@ -89,7 +93,7 @@ prg_usage()
 
 /*
  * runtest: write the data to the file. Read the data from the file and compare.
- *	For each iteration, write data starting at offse+iter*bufsize 
+ *	For each iteration, write data starting at offse+iter*bufsize
  *	location in the file and read from there.
 */
 int
@@ -133,7 +137,7 @@ runtest(int fd_r, int fd_w, int childnum, int action)
 		*/
 		vfillbuf(iov1, nvector, childnum+i);
 		if (lseek(fd_w, seekoff, SEEK_SET) < 0) {
-			tst_resm(TFAIL, "lseek before write failed: %s", 
+			tst_resm(TFAIL, "lseek before write failed: %s",
 				strerror(errno));
 			return(-1);
 		}
@@ -150,7 +154,7 @@ runtest(int fd_r, int fd_w, int childnum, int action)
 			}
 		}
 		if (lseek(fd_r, seekoff, SEEK_SET) < 0) {
-			tst_resm(TFAIL, "lseek before read failed: %s", 
+			tst_resm(TFAIL, "lseek before read failed: %s",
 				strerror(errno));
 			return(-1);
 		}
@@ -159,12 +163,12 @@ runtest(int fd_r, int fd_w, int childnum, int action)
 			return(-1);
 		}
 		if (bufcmp((char*)iov1, (char*)iov2, bufsize) != 0) {
-			tst_resm(TFAIL, "comparsion failed. Child=%d offset=%d", 
+			tst_resm(TFAIL, "comparsion failed. Child=%d offset=%d",
 				childnum, (int)seekoff);
 			return(-1);
 		}
 	}
-	return(0);
+	return 0;
 }
 /*
  * child_function: open the file for read and write. Call the runtest routine.
@@ -185,6 +189,7 @@ child_function(int childnum, int action)
 			tst_resm(TFAIL, "fd_r open failed for %s: %s",
 				filename, strerror(errno));
 			close(fd_w);
+			unlink(filename);
 			return(-1);
 		}
 		if (runtest(fd_r, fd_w, childnum, action) == -1) {
@@ -205,6 +210,7 @@ child_function(int childnum, int action)
 			tst_resm(TFAIL, "fd_r open failed for %s: %s",
 				filename, strerror(errno));
 			close(fd_w);
+			unlink(filename);
 			return(-1);
 		}
 		if (runtest(fd_r, fd_w, childnum, action) == -1) {
@@ -251,7 +257,6 @@ main(int argc, char *argv[])
 	int	*pidlst;
 	int	numchild = 1;	/* Number of children. Default 5 */
 	int	i, fail_count = 0, failed = 0, total = 0;
-	int	fd1;
 
 	/* Options */
 	sprintf(filename,"testdata-6.%ld", syscall(__NR_gettid));
@@ -299,13 +304,7 @@ main(int argc, char *argv[])
 		}
 	}
 
-        /* Test for filesystem support of O_DIRECT */
-        if ((fd1 = open(filename, O_DIRECT|O_CREAT, 0666)) < 0) {
-                 tst_resm(TCONF,"O_DIRECT is not supported by this filesystem.");
-                 tst_exit();
-        }else{
-                close(fd1);
-        }
+	setup();
 
 	/* Testblock-1: Read with Direct IO, Write without */
 	if (forkchldrn(&pidlst, numchild, READ_DIRECT, child_function) < 0 ) {
@@ -366,15 +365,40 @@ main(int argc, char *argv[])
 	total++;
 
 	if (failed)
-		tst_resm(TINFO, "%d/%d testblocks failed", 
+		tst_resm(TINFO, "%d/%d testblocks failed",
 			fail_count, total);
 	else
-		tst_resm(TINFO, "%d testblocks %d iterations with %d children completed", 
+		tst_resm(TINFO, "%d testblocks %d iterations with %d children completed",
 			total, iter, numchild);
-	tst_exit();
+	cleanup();
 	return 0;
 }
 
+static void setup(void)
+{
+	tst_tmpdir();
+
+	if ((fd1 = open(filename, O_CREAT|O_EXCL, 0600)) < 0) {
+		tst_brkm(TBROK, cleanup, "Couldn't create test file %s: %s", filename, strerror(errno));
+	}
+	close(fd1);
+
+	/* Test for filesystem support of O_DIRECT */
+	if ((fd1 = open(filename, O_DIRECT, 0600)) < 0) {
+		tst_brkm(TCONF, cleanup, "O_DIRECT is not supported by this filesystem. %s", strerror(errno));
+	}
+	close(fd1);
+}
+
+static void cleanup(void)
+{
+	if(fd1 != -1)
+		unlink(filename);
+
+	tst_rmdir();
+
+	tst_exit();
+}
 
 #else /* O_DIRECT */
 

@@ -20,20 +20,19 @@
 # name of file	: Makefile						  #
 # description	: make(1) description file for lib6 tests.	  	  #
 ###########################################################################
-CFLAGS+=	-I../../../include -g
-LOADLIBES+=	-L../../../lib runcc.a -lltp -lpthread
 
-SRCS=$(wildcard *.c)
-TARGETS= asapi_01 asapi_02 asapi_03 asapi_04 asapi_05 asapi_06 asapi_07 \
-	getaddrinfo_01 in6_01 in6_02
+top_srcdir			?= ../../..
 
-all: runcc.a $(TARGETS)
+include $(top_srcdir)/include/mk/testcases.mk
 
-install:
-	@set -e; for i in $(TARGETS); do ln -f $$i ../../bin/$$i ; done
+CPPFLAGS			+= -D_GNU_SOURCE
 
-clean:
-	rm -f $(TARGETS) *.a *.o
+LDLIBS				+= -lpthread
 
-runcc.a: runcc.o
-	ar cr runcc.a runcc.o
+CLEAN_TARGETS			+= $(LIB)
+
+FILTER_OUT_MAKE_TARGETS		:= runcc
+
+include $(top_srcdir)/include/mk/generic_leaf_target.mk
+
+$(MAKE_TARGETS): %: %.o runcc.o

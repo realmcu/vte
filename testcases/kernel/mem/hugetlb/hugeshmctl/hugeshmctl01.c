@@ -129,9 +129,9 @@ int main(int ac, char **av)
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
-        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 ) 
-             tst_brkm(TBROK, cleanup, "Test cannot be continued owning to sufficient availability of Hugepages on the system");
-        else              
+        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 )
+             tst_brkm(TCONF, tst_exit, "Not enough available Hugepages");
+        else             
              huge_pages_shm_to_be_allocated = ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
 
 	setup();			/* global setup */
@@ -200,7 +200,7 @@ int main(int ac, char **av)
 	cleanup();
 
 	/*NOTREACHED*/
-	return(0);
+	return 0;
 }
 
 /*
@@ -217,7 +217,7 @@ set_shmat()
 	rval = shmat(shm_id_1, 0, 0);
 
 	/*
-	 * if shmat() fails, the only thing we can do is 
+	 * if shmat() fails, the only thing we can do is
 	 * print a message to that effect.
 	 */
 	if (rval == (void *)-1) {
@@ -352,8 +352,8 @@ func_stat()
 	 * that memory so the attaches equal N_ATTACH + stat_time (1).
 	 */
 	if (!fail && buf.shm_nattch != N_ATTACH + stat_time) {
-		tst_resm(TFAIL, "# of attaches is incorrect - %d",
-			 buf.shm_nattch);
+		tst_resm(TFAIL, "# of attaches is incorrect - %lu",
+			 (unsigned long)buf.shm_nattch);
 		fail = 1;
 	}
 
@@ -430,7 +430,7 @@ func_set()
 		return;
 	}
 
-	if ((buf.shm_perm.mode & MODE_MASK) != 
+	if ((buf.shm_perm.mode & MODE_MASK) !=
 			((SHM_RW | NEWMODE) & MODE_MASK)) {
 		tst_resm(TFAIL, "new mode is incorrect");
 		fail = 1;

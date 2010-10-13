@@ -35,6 +35,7 @@
  *	by the test hanging and not completing execution.
  *
  ****************************************************************/
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -135,7 +136,7 @@ void do_timedwait(pthread_cond_t* cond, pthread_mutex_t* mutex,
 	tst_brkm(TBROK, cleanup, "gettimeofday failed: %s",
 		strerror_r(errno, buf, buf_len));
     }
-	
+
     ts.tv_sec = tv.tv_sec;
     ts.tv_nsec = (tv.tv_usec * 1000) + NSECS_TO_WAIT;
     ts.tv_sec += ts.tv_nsec / 1000000000;
@@ -163,7 +164,7 @@ void* run(void* arg)
 	call_cond_signal(&parent, buf, sizeof(buf));
 	call_mutex_lock(&req, buf, sizeof(buf));
 	call_mutex_unlock(&ack, buf, sizeof(buf));
-	
+
 	call_mutex_lock(&wait, buf, sizeof(buf));
 	call_cond_signal(&parent, buf, sizeof(buf));
 	call_mutex_unlock(&wait, buf, sizeof(buf));
@@ -183,7 +184,7 @@ void create_child_thread(char* buf, size_t buf_len)
 	tst_brkm(TBROK, cleanup, "pthread_attr_init failed: %s",
 		strerror_r(ret, buf, buf_len));
     }
-    if ((ret = pthread_attr_setdetachstate(&attr, 
+    if ((ret = pthread_attr_setdetachstate(&attr,
 					   PTHREAD_CREATE_DETACHED)) != 0) {
 	tst_brkm(TBROK, cleanup, "pthread_attr_setdetachstate failed: %s",
 		strerror_r(ret, buf, buf_len));
@@ -224,14 +225,14 @@ int main(int argc, char** argv)
             if (optarg)
                 numloops = atoi(optarg);
             else
-                fprintf(stderr, "%s: option -l requires an argument\n", argv[0]);    
+                fprintf(stderr, "%s: option -l requires an argument\n", argv[0]);   
             break;
         default:
             usage(argv[0]);
             exit(1);
         }
     }
-         
+        
     signal(SIGALRM, trap_alarm);
     alarm(MAXTIME);
 
@@ -242,7 +243,7 @@ int main(int argc, char** argv)
     call_cond_init(&child, buf, sizeof(buf));
 
     call_mutex_lock(&ack, buf, sizeof(buf));
-    
+   
     create_child_thread(buf, sizeof(buf));
 
     tst_resm(TINFO,"Starting test, please wait.");
@@ -276,7 +277,7 @@ int main(int argc, char** argv)
     tst_exit();
 #endif
     /* NOT REACHED */
-    return(1);
+    return 1;
 }
 
 /*

@@ -21,13 +21,15 @@
  */
 
 #define _XOPEN_SOURCE 600
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <errno.h>
-#include <stdlib.h>
+#include <sys/stat.h>
 #include <aio.h>
-
+#include <errno.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include "posixtest.h"
 
 #define TNAME "lio_listio/11-1.c"
@@ -64,9 +66,8 @@ int main()
 	int err;
 	int i;
 
-#if _POSIX_ASYNCHRONOUS_IO != 200112L
-	exit(PTS_UNSUPPORTED);
-#endif
+	if (sysconf(_SC_ASYNCHRONOUS_IO) != 200112L)
+		exit(PTS_UNSUPPORTED);
 
 	snprintf(tmpfname, sizeof(tmpfname), "/tmp/pts_lio_listio_11_1_%d", 
 		  getpid());
@@ -143,7 +144,7 @@ int main()
 	}
 
 	if (errno != EIO) {
-		printf(TNAME " lio_listio() sould set errno to EIO %d\n", errno);
+		printf(TNAME " lio_listio() should set errno to EIO %d\n", errno);
 
 		for (i=0; i<NUM_AIOCBS; i++)
 			free (aiocbs[i]);

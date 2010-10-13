@@ -19,22 +19,22 @@
 
 /*
  * NAME
- * 	fcntl11.c
+ *	fcntl11.c
  *
  * DESCRIPTION
- * 	Testcase to check locking of regions of a file
+ *	Testcase to check locking of regions of a file
  *
  * ALGORITHM
- * 	Test changing lock sections around a write lock
+ *	Test changing lock sections around a write lock
  *
  * USAGE
- * 	fcntl11
+ *	fcntl11
  *
  * HISTORY
  *	07/2001 Ported by Wayne Boyer
  *
  * RESTRICTIONS
- * 	None
+ *	None
  */
 
 #include <fcntl.h>
@@ -43,6 +43,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <inttypes.h>
 #include "test.h"
 #include "usctest.h"
 
@@ -75,11 +76,10 @@ int fail;
 
 /*
  * cleanup()
- * 	performs all ONE TIME cleanup for this test at completion or
- * 	premature exit
+ *	performs all ONE TIME cleanup for this test at completion or
+ *	premature exit
  */
-void
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified
@@ -87,9 +87,8 @@ cleanup()
 	 */
 	TEST_CLEANUP;
 
-
-        /* Remove tmp dir and all files in it */
-        tst_rmdir();
+	/* Remove tmp dir and all files in it */
+	tst_rmdir();
 
 	/* exit with return code appropriate for results */
 	tst_exit();
@@ -97,10 +96,9 @@ cleanup()
 
 /*
  * setup
- * 	performs all ONE TIME setup for this test
+ *	performs all ONE TIME setup for this test
  */
-void
-setup()
+void setup()
 {
 	char *buf = STRING;
 	char template[PATH_MAX];
@@ -108,7 +106,7 @@ setup()
 
 	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
-		 tst_tmpdir();
+	tst_tmpdir();
 
 	umask(0);
 
@@ -121,20 +119,20 @@ setup()
 	snprintf(template, PATH_MAX, "fcntl11XXXXXX");
 
 	if ((fd = mkstemp(template)) < 0) {
-                tst_resm(TFAIL, "Couldn't open temp file! errno = %d", errno);
-        }
+		tst_resm(TFAIL, "Couldn't open temp file! errno = %d", errno);
+	}
 
-        if (write(fd, buf, STRINGSIZE) < 0) {
-                tst_resm(TFAIL, "Couldn't write to temp file! errno = %d", errno);
-        }
+	if (write(fd, buf, STRINGSIZE) < 0) {
+		tst_resm(TFAIL, "Couldn't write to temp file! errno = %d",
+			 errno);
+	}
 
 	memset(&act, 0, sizeof(act));
 	act.sa_handler = catch_child;
 	sigemptyset(&act.sa_mask);
 	sigaddset(&act.sa_mask, SIGCLD);
 	if ((sigaction(SIGCLD, &act, NULL)) < 0) {
-		tst_resm(TFAIL, "SIGCLD signal setup failed, errno: %d",
-			 errno);
+		tst_resm(TFAIL, "SIGCLD signal setup failed, errno: %d", errno);
 		fail = 1;
 	}
 }
@@ -145,11 +143,11 @@ void do_child()
 
 	close(parent_pipe[1]);
 	close(child_pipe[0]);
-	while(1) {
+	while (1) {
 		child_get(&fl);
 		if (fcntl(fd, F_GETLK, &fl) < 0) {
 			tst_resm(TFAIL, "fcntl on file failed, errno =%d",
-				  errno);
+				 errno);
 			fail = 1;
 		}
 		child_put(&fl);
@@ -164,11 +162,10 @@ int do_lock(int cmd, short type, short whence, int start, int len)
 	fl.l_whence = whence;
 	fl.l_start = start;
 	fl.l_len = len;
-	return(fcntl(fd, cmd, &fl));
+	return (fcntl(fd, cmd, &fl));
 }
 
-void
-do_test(struct flock *fl, short type, short whence, int start, int len)
+void do_test(struct flock *fl, short type, short whence, int start, int len)
 {
 	fl->l_type = type;
 	fl->l_whence = whence;
@@ -197,14 +194,14 @@ compare_lock(struct flock *fl, short type, short whence, int start, int len,
 	}
 
 	if (fl->l_start != start) {
-		 		 tst_resm(TFAIL, "region starts in wrong place, should be "
-			 "%d is %d", start, fl->l_start);
+		tst_resm(TFAIL, "region starts in wrong place, should be "
+			 "%d is %"PRId64, start, (int64_t)fl->l_start);
 		fail = 1;
 	}
 
 	if (fl->l_len != len) {
-		tst_resm(TFAIL, "region length is wrong, should be %d is %d",
-			 len, fl->l_len);
+		tst_resm(TFAIL, "region length is wrong, should be %d is %"PRId64,
+			 len, (int64_t)fl->l_len);
 		fail = 1;
 	}
 
@@ -215,40 +212,36 @@ compare_lock(struct flock *fl, short type, short whence, int start, int len,
 	}
 }
 
-void
-unlock_file()
+void unlock_file()
 {
 	struct flock fl;
 
 	if (do_lock(F_SETLK, (short)F_UNLCK, (short)0, 0, 0) < 0) {
-		tst_resm(TFAIL, "fcntl on file failed, errno =%d", 
-			 errno);
+		tst_resm(TFAIL, "fcntl on file failed, errno =%d", errno);
 		fail = 1;
 	}
 	do_test(&fl, F_WRLCK, 0, 0, 0);
-	compare_lock(&fl, (short)F_UNLCK, (short)0, 0, 0, (pid_t)0);
+	compare_lock(&fl, (short)F_UNLCK, (short)0, 0, 0, (pid_t) 0);
 }
 
-char *
-str_type(int type)
+char *str_type(int type)
 {
 	static char buf[20];
 
 	switch (type) {
-		 case 0:
-		return("F_RDLCK");
-		 case 1:
-		return("F_WRLCK");
-		 case 2:
-		return("F_UNLCK");
+	case 0:
+		return ("F_RDLCK");
+	case 1:
+		return ("F_WRLCK");
+	case 2:
+		return ("F_UNLCK");
 	default:
 		sprintf(buf, "BAD VALUE: %d", type);
-		return(buf);
+		return (buf);
 	}
 }
 
-void
-parent_put(struct flock *l)
+void parent_put(struct flock *l)
 {
 	if (write(parent_pipe[1], l, sizeof(*l)) != sizeof(*l)) {
 		tst_resm(TFAIL, "couldn't send message to child");
@@ -256,8 +249,7 @@ parent_put(struct flock *l)
 	}
 }
 
-void
-parent_get(struct flock *l)
+void parent_get(struct flock *l)
 {
 	if (read(child_pipe[0], l, sizeof(*l)) != sizeof(*l)) {
 		tst_resm(TFAIL, "couldn't get message from child");
@@ -265,8 +257,7 @@ parent_get(struct flock *l)
 	}
 }
 
-void
-child_put(struct flock *l)
+void child_put(struct flock *l)
 {
 	if (write(child_pipe[1], l, sizeof(*l)) != sizeof(*l)) {
 		tst_resm(TFAIL, "couldn't send message to parent");
@@ -274,8 +265,7 @@ child_put(struct flock *l)
 	}
 }
 
-void
-child_get(struct flock *l)
+void child_get(struct flock *l)
 {
 	if (read(parent_pipe[0], l, sizeof(*l)) != sizeof(*l)) {
 		tst_resm(TFAIL, "couldn't get message from parent");
@@ -285,19 +275,17 @@ child_get(struct flock *l)
 	}
 }
 
-void
-stop_child()
+void stop_child()
 {
 	struct flock fl;
 
-	(void) signal(SIGCLD, (void (*)())SIG_DFL);
+	(void)signal(SIGCLD, (void (*)())SIG_DFL);
 	fl.l_type = STOP;
 	parent_put(&fl);
 	wait(0);
 }
 
-void
-catch_child()
+void catch_child()
 {
 	tst_resm(TFAIL, "Unexpected death of child process");
 	cleanup();
@@ -307,20 +295,19 @@ int main(int ac, char **av)
 {
 	struct flock tl;
 
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
-
 #ifdef UCLINUX
 	maybe_run_child(&do_child, "ddddd", &parent_pipe[0],
 			&parent_pipe[1], &child_pipe[0], &child_pipe[1], &fd);
 #endif
 
-	setup();			/* global setup */
+	setup();		/* global setup */
 
 	/* Check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
@@ -329,8 +316,9 @@ int main(int ac, char **av)
 
 		if ((child_pid = FORK_OR_VFORK()) == 0) {	/* parent */
 #ifdef UCLINUX
-			if (self_exec(av[0], "ddddd", parent_pipe[0], parent_pipe[1],
-				      child_pipe[0], child_pipe[1], fd) < 0) {
+			if (self_exec
+			    (av[0], "ddddd", parent_pipe[0], parent_pipe[1],
+			     child_pipe[0], child_pipe[1], fd) < 0) {
 				tst_resm(TFAIL, "self_exec failed");
 				cleanup();
 			}
@@ -351,7 +339,7 @@ int main(int ac, char **av)
 		tst_resm(TINFO, "Enter block 1");
 
 		/*
-		 * Add a write lock to the middle of the file and a read 
+		 * Add a write lock to the middle of the file and a read
 		 * at the begining
 		 */
 		if (do_lock(F_SETLK, (short)F_WRLCK, (short)0, 10, 5) < 0) {
@@ -399,14 +387,14 @@ int main(int ac, char **av)
 /* //block2: */
 		tst_resm(TINFO, "Enter block 2");
 		fail = 0;
-		
+
 		/*
 		 * Set a write lock at the middle of the file and a
 		 * read lock just before
 		 */
 		if (do_lock(F_SETLK, (short)F_WRLCK, (short)0, 10, 5) < 0) {
 			tst_resm(TFAIL, "fcntl on file failed, errno =%d",
-				  errno);
+				 errno);
 			fail = 1;
 		}
 
@@ -569,7 +557,7 @@ int main(int ac, char **av)
 		/*
 		 * Test the first write lock
 		 */
-		do_test(&tl, (short)F_WRLCK, (short)0 , 0, 0);
+		do_test(&tl, (short)F_WRLCK, (short)0, 0, 0);
 		compare_lock(&tl, (short)F_WRLCK, (short)0, 10, 3, parent_pid);
 
 		/*
@@ -820,6 +808,5 @@ int main(int ac, char **av)
 		close(fd);
 	}
 	cleanup();
-	return(0);
+	return 0;
 }
-

@@ -35,7 +35,7 @@
  *      -t   : Turn on syscall timing.
  *
  * Author
- *	Yi Yang <yyangcdl@cn.ibm.com> 
+ *	Yi Yang <yyangcdl@cn.ibm.com>
  *
  * History
  *      08/24/2006      Created first by Yi Yang <yyangcdl@cn.ibm.com>
@@ -97,11 +97,11 @@ int myfstatat(int dirfd, const char *filename, struct stat *statbuf, int flags)
 {
 	return syscall(__NR_newfstatat, dirfd, filename, statbuf, flags);
 }
-#else 
+#else
 /* stub - will never run */
 int myfstatat(int dirfd, const char *filename, struct stat *statbuf, int flags)
 {
-        return syscall(0, dirfd, filename, statbuf, flags);
+	return syscall(0, dirfd, filename, statbuf, flags);
 }
 #endif
 
@@ -111,26 +111,26 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 	int i;
 
-       /* Disable test if the version of the kernel is less than 2.6.16 */
-        if((tst_kvercmp(2,6,16)) < 0)
-          {
-             tst_resm(TWARN, "This test can only run on kernels that are ");
-             tst_resm(TWARN, "2.6.16 and higher");
-             exit(0);
-          }
+	/* Disable test if the version of the kernel is less than 2.6.16 */
+	if ((tst_kvercmp(2, 6, 16)) < 0) {
+		tst_resm(TWARN, "This test can only run on kernels that are ");
+		tst_resm(TWARN, "2.6.16 and higher");
+		exit(0);
+	}
 
 	/* report failure if run with stubs */
 #ifdef __NR_fstatat64
-        if(__NR_fstatat64 == 0)
+	if (__NR_fstatat64 == 0)
 #endif
-#ifdef __NR_newfstatat 
-        if(__NR_newfstatat == 0)
+#ifdef __NR_newfstatat
+		if (__NR_newfstatat == 0)
 #endif
-	  {
-	     tst_resm(TFAIL, "fstatat() Failed, neither __NR_fstatat64 "
-	                     "no __NR_newfstatat is implemented ");
-	     exit(0);
-	  }
+		{
+			tst_resm(TFAIL,
+				 "fstatat() Failed, neither __NR_fstatat64 "
+				 "no __NR_newfstatat is implemented ");
+			exit(0);
+		}
 
 	/***************************************************************
 	 * parse standard options
@@ -152,8 +152,8 @@ int main(int ac, char **av)
 		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		/* 
-		 * Call openat 
+		/*
+		 * Call openat
 		 */
 		for (i = 0; i < TST_TOTAL; i++) {
 			TEST(myfstatat

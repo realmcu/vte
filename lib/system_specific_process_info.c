@@ -22,15 +22,15 @@
  *	get_max_pids(): Return the maximum number of pids for this system by
  *			reading /proc/sys/kernel/pid_max
  *
- *	get_free_pids(): Return number of free pids by subtracting the number 
+ *	get_free_pids(): Return number of free pids by subtracting the number
  *			 of pids currently used ('ps -eT') from max_pids
  */
 
 
-
 #include <fcntl.h>
+#include <limits.h>
 #include <sys/types.h>
-#include <test.h>
+#include "test.h"
 
 #define BUFSIZE 512
 
@@ -62,7 +62,7 @@ int get_max_pids(void)
 int get_free_pids(void)
 {
 	FILE *f;
-	int used_pids, max_pids;
+	int rc, used_pids, max_pids;
 
 	f = popen("ps -eT | wc -l", "r");
 	if (!f) {
@@ -70,10 +70,10 @@ int get_free_pids(void)
 				"pids");
 		return -1;
 	}
-	fscanf(f, "%i", &used_pids);
+	rc = fscanf(f, "%i", &used_pids);
 	pclose(f);
 
-	if (used_pids < 0) {
+	if (rc != 1 || used_pids < 0) {
 		tst_resm(TBROK, "Could not read output of 'ps' to "
 				"calculate used pids");
 		return -1;

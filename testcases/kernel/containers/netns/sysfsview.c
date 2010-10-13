@@ -24,19 +24,19 @@
 * Also it checks the sysfs contents of the child are visible from the parent NS.
 * On Success it returns PASS else returns FAIL
 *
-* Scripts used: parent_share.sh parent_view.sh child_propagate.sh 
+* Scripts used: parent_share.sh parent_view.sh child_propagate.sh
 *               parentns.sh childns.sh
 *
-* 
+*
 * Authors:      Poornima Nayak <poornima.nayak@in.ibm.com>
-*               Veerendra C <vechandr@in.ibm.com> 
+*               Veerendra C <vechandr@in.ibm.com>
 *                      31/07/2008
 * ============================================================================*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include "../libclone/libclone.h"
+#include "libclone.h"
 
 int main()
 {
@@ -56,7 +56,7 @@ int main()
         exit(1);
     }
 
-    sprintf(script, "%s/testcases/kernel/containers/netns/parent_share.sh" , ltproot);
+    sprintf(script, "%s/testcases/bin/parent_share.sh" , ltproot);
 
     /* Parent should be able to view child sysfs and vice versa */
     ret = system(script);

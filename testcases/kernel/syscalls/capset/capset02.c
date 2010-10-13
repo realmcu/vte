@@ -15,17 +15,17 @@
  *
  */
 /**********************************************************
- * 
+ *
  *    TEST IDENTIFIER	: capset02
- * 
+ *
  *    EXECUTED BY	: anyone
- * 
+ *
  *    TEST TITLE	: Tests for error conditions.
- * 
+ *
  *    TEST CASE TOTAL	: 4
- * 
+ *
  *    AUTHOR		: Saji Kumar.V.R <saji.kumar@wipro.com>
- * 
+ *
  *    SIGNALS
  * 	Uses SIGUSR1 to pause before test if option set.
  * 	(See the parse_opts(3) man page).
@@ -40,13 +40,13 @@
  *	   is given for header->version
  *	4) capset() fails with errno set to EPERM the process does not
  *	   have enough privilege to set capabilities
- *	
- * 
+ *
+ *
  * 	Setup:
  * 	  Setup signal handling.
  *	  Pause for SIGUSR1 if option specified.
  *	  Call capget() to save current capability data
- * 
+ *
  * 	Test:
  *	 Loop if the proper options are given.
  *	  do test specific setup.
@@ -56,10 +56,10 @@
  *	  Otherwise
  *		Test failed
  *	  do test specific cleanup
- * 
+ *
  * 	Cleanup:
  * 	  Print errno log and/or timing stats if options given
- * 
+ *
  * USAGE:  <for command-line>
  * capset02 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-h] [-f] [-p]
  *			where,  -c n : Run n copies concurrently.
@@ -120,28 +120,27 @@ struct test_case_t {
 } test_cases[] = {
 #ifndef UCLINUX
 	/* Skip since uClinux does not implement memory protection */
-	{ (cap_user_header_t)-1, &data, EFAULT, "EFAULT" },
-	{ &header, (cap_user_data_t)-1, EFAULT, "EFAULT" },
+	{
+	(cap_user_header_t) - 1, &data, EFAULT, "EFAULT"}, {
+	&header, (cap_user_data_t) - 1, EFAULT, "EFAULT"},
 #endif
-	{ &header, &data, EINVAL, "EINVAL" },
-	{ &header, &data, EPERM, "EPERM" },
-};
+	{
+	&header, &data, EINVAL, "EINVAL"}, {
+&header, &data, EPERM, "EPERM"},};
 
 int TST_TOTAL = sizeof(test_cases) / sizeof(test_cases[0]);
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 
 	int lc, i;		/* loop counter */
-	char *msg;	/* message returned from parse_opts */
+	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL))
-	     != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
+	    != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
-
 #ifdef UCLINUX
 	maybe_run_child(&child_func, "");
 #endif
@@ -162,29 +161,26 @@ main(int ac, char **av)
 				    test_cases[i].datap));
 
 			if ((TEST_RETURN == -1) && (TEST_ERRNO ==
-						test_cases[i].exp_errno)) {
+						    test_cases[i].exp_errno)) {
 				tst_resm(TPASS, "capset() returned -1,"
-					" errno: %s", test_cases[i].errdesc);
+					 " errno: %s", test_cases[i].errdesc);
 			} else {
-				tst_resm(TFAIL, "Test Failed, capset()"
-				 " returned %d, errno = %d : %s", TEST_RETURN,
-				 TEST_ERRNO, strerror(TEST_ERRNO));
+				tst_resm(TFAIL|TTERRNO, "Test Failed, capset() returned %ld",
+					 TEST_RETURN);
 			}
 			TEST_ERROR_LOG(TEST_ERRNO);
-		} 
-	}	/* End for TEST_LOOPING */
+		}
+	}			/* End for TEST_LOOPING */
 
 	/* cleanup and exit */
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	 /*NOTREACHED*/ return 0;
 
-}	/* End main */
+}				/* End main */
 
 /* setup() - performs all ONE TIME setup for this test */
-void
-setup()
+void setup()
 {
 
 	/* capture signals */
@@ -202,21 +198,19 @@ setup()
 	 */
 	header.version = _LINUX_CAPABILITY_VERSION;
 	if ((capget(&header, &data)) == -1) {
-		tst_brkm(TBROK, tst_exit, "capget() failed");
+		tst_brkm(TBROK|TERRNO, tst_exit, "capget() failed");
 	}
 
-}	/* End setup() */
-
+}				/* End setup() */
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
  *		completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
-	if(child_pid > 0)
-		kill(child_pid,SIGTERM);
+	if (child_pid > 0)
+		kill(child_pid, SIGTERM);
 	/*
 	 * print timing stats if that option was specified.
 	 * print errno log if that option was specified.
@@ -225,39 +219,40 @@ cleanup()
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-}	/* End cleanup() */
+}				/* End cleanup() */
 
 void child_func()
 {
-	signal(SIGTERM,SIG_DFL);
-	for(;;) { sleep(10); }
+	signal(SIGTERM, SIG_DFL);
+	for (;;) {
+		sleep(10);
+	}
 }
 
-void
-test_setup(int i, char *argv0)
+void test_setup(int i, char *argv0)
 {
 	char nobody_uid[] = "nobody";
 	struct passwd *ltpuser;
 
 #ifdef UCLINUX
-	i = i+2;
+	i = i + 2;
 #endif
 	switch (i) {
 
-	case 0 :
+	case 0:
 		break;
 
-	case 1 :
+	case 1:
 		header.version = _LINUX_CAPABILITY_VERSION;
 		header.pid = 0;
 		break;
 
-	case 2 :
+	case 2:
 		header.version = INVALID_VERSION;
 		header.pid = 0;
 		break;
 
-	case 3 :
+	case 3:
 		header.version = _LINUX_CAPABILITY_VERSION;
 		/*
 		 * when a non-zero pid is specified, process should have
@@ -265,20 +260,20 @@ test_setup(int i, char *argv0)
 		 * by default, CAP_SETPCAP is not enabled. So giving
 		 * a non-zero pid results in capset() failing with
 		 * errno EPERM
-		 * 
+		 *
 		 * Note: this seems to have changed with recent kernels
 		 * => create a child and try to set its capabilities
 		 */
 		child_pid = FORK_OR_VFORK();
-		switch(child_pid) {
+		switch (child_pid) {
 		case -1:
-			tst_resm(TBROK,"fork() failed: %s",strerror(errno));
+			tst_resm(TBROK|TERRNO, "fork() failed");
 			cleanup();
 			break;
 		case 0:
 #ifdef UCLINUX
 			if (self_exec(argv0, "") < 0) {
-				tst_resm(TBROK,"self_exec() failed");
+				tst_resm(TBROK, "self_exec() failed");
 				cleanup();
 				break;
 			}
@@ -287,12 +282,12 @@ test_setup(int i, char *argv0)
 #endif
 			break;
 		default:
-			signal(SIGCHLD,SIG_IGN);
+			signal(SIGCHLD, SIG_IGN);
 			header.pid = child_pid;
 			ltpuser = getpwnam(nobody_uid);
 			if (seteuid(ltpuser->pw_uid) == -1) {
-				tst_resm(TBROK,"seteuid() failed: %s",strerror(errno));
-			cleanup();
+				tst_resm(TBROK|TERRNO, "seteuid() failed");
+				cleanup();
 			}
 
 			break;

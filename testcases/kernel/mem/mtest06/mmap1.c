@@ -92,7 +92,6 @@
 /*	        read must be a success between map and unmap of the region.   */
 /*									      */
 /******************************************************************************/
-/* Include Files.							      */
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -114,7 +113,6 @@
 #include "test.h"
 #include "usctest.h"
 
-/* Defines								      */
 #define M_SUCCESS 	0	/* exit code - on success, clone functions    */
 #define MWU_FAIL 	1	/* error code - map_write_unmap()  on error   */
 #define RM_FAIL 	1	/* error code - read_mem()  on error          */
@@ -137,7 +135,6 @@
 
 
 
-/* Global Variables						              */
 int 	   verbose_print = FALSE;/* when called with -v print more info       */
 caddr_t    *map_address;	/* address of the file mapped.	              */
 sigjmp_buf jmpbuf;		/* argument to sigsetjmp and siglongjmp       */
@@ -236,7 +233,7 @@ int
 mkfile(int size	/* size of the temp file that needs to be created.    */ )
 {
     int  fd;			/* file descriptor of the temp file created.  */
-    char template[PATH_MAX];    /* template for temp file name		      */	
+    char template[PATH_MAX];    /* template for temp file name		      */
 
     snprintf(template, PATH_MAX, "ashfileXXXXXX");
 
@@ -267,7 +264,7 @@ mkfile(int size	/* size of the temp file that needs to be created.    */ )
             perror("mkfile(): fsync()");
 	    return -1;
         }
-        
+       
         return fd;
    }
 }
@@ -288,7 +285,7 @@ mkfile(int size	/* size of the temp file that needs to be created.    */ )
 /*              MWU_SUCCESS on error less completion of the loop.             */
 /*									      */
 /******************************************************************************/
-void * 
+void *
 map_write_unmap(void *args)	/* file descriptor of the file to be mapped.  */
 {
     int     mwu_ndx = 0;	/* index to number of map/write/unmap         */
@@ -307,22 +304,22 @@ map_write_unmap(void *args)	/* file descriptor of the file to be mapped.  */
 
     while (mwu_ndx++ < (int)mwuargs[2])
     {
-        if ((map_address = mmap(0, (size_t)mwuargs[1],  PROT_WRITE|PROT_READ, 
-				MAP_SHARED, (int)mwuargs[0], 0)) 
+        if ((map_address = mmap(0, (size_t)mwuargs[1],  PROT_WRITE|PROT_READ,
+				MAP_SHARED, (int)mwuargs[0], 0))
 			 == (caddr_t *) -1)
         {
             perror("map_write_unmap(): mmap()");
             exit_val = MWU_FAIL;
             pthread_exit((void *)exit_val);
         }
-        
+       
         if(verbose_print)
             tst_resm(TINFO, "map address = %p", map_address);
 
 	prtln();
 
         memset(map_address, 'a', mwuargs[1]);
-         
+        
         if (verbose_print)
             tst_resm(TINFO, "[%d] times done: of total [%d] iterations, "
 			"map_write_unmap():memset() content of memory = %s",
@@ -376,7 +373,7 @@ read_mem(void *args)		/* number of reads performed		      */
 	    tst_resm(TINFO,
 	        "read_mem() in while loop  %d times to go %ld times",
 		rd_index, rmargs[2]);
-        
+       
         if (setjmp(jmpbuf) == 1)
         {
             if (verbose_print)
@@ -392,13 +389,13 @@ read_mem(void *args)		/* number of reads performed		      */
             if (strncmp((char *)map_address, "a", 1) != 0)
             {
                 exit_val = -1;
-		pthread_exit((void *)exit_val);    
+		pthread_exit((void *)exit_val);   
             }
             usleep(1);
-	}        
-            
+	}       
+           
     }
-    exit_val = M_SUCCESS; 
+    exit_val = M_SUCCESS;
     pthread_exit((void *)exit_val);
 }
 
@@ -467,10 +464,10 @@ main(int  argc,		/* number of input parameters.			      */
     long         chld_args[3];	/* arguments to funcs execed by child process */
     extern  char *optarg;	/* arguments passed to each option	      */
     struct sigaction sigptr;	/* set up signal, for interval timer          */
-    
+   
     static struct signal_info
     {
-        int  signum;    /* signal number that hasto be handled                */
+        int  signum;    /* signal number that has to be handled               */
 	char *signame;  /* name of the signal to be handled.                  */
     } sig_info[] =
                    {
@@ -517,7 +514,7 @@ main(int  argc,		/* number of input parameters.			      */
                 break;
 	    case 'x':
                 exec_time = atof(optarg);
-		if (exec_time == 0) 
+		if (exec_time == 0)
 	     	    OPT_MISSING(argv[0], optopt);
 		else
 	             if (exec_time < 0)
@@ -532,7 +529,7 @@ main(int  argc,		/* number of input parameters.			      */
     if (verbose_print)
         tst_resm(TINFO, "Input parameters are: "
                     "File size:  %d; "
-                    "Scheduled to run:  %ld hours; "
+                    "Scheduled to run:  %lf hours; "
                     "Number of mmap/write/read:  %d",
 			file_size, exec_time, num_iter);
     set_timer(exec_time);
@@ -550,8 +547,8 @@ main(int  argc,		/* number of input parameters.			      */
                 (struct sigaction *)NULL) == -1 )
         {
             perror( "man(): sigaction()" );
-            fprintf(stderr, "could not set handler for SIGALRM, errno = %d\n",
-                    errno);
+            fprintf(stderr, "could not set handler for %s, errno = %d\n",
+                    sig_info[sig_ndx].signame, errno);
             exit(-1);
         }
     }
@@ -561,7 +558,7 @@ main(int  argc,		/* number of input parameters.			      */
         /* create temporary file */
         if ((fd = mkfile(file_size)) == -1)
         {
-	    fprintf(stderr, 
+	    fprintf(stderr,
 			"main(): mkfile(): Failed to create temporary file\n");
             exit (-1);
         }
@@ -597,7 +594,7 @@ main(int  argc,		/* number of input parameters.			      */
             tst_resm(TINFO, "created thread[%ld]", thid[1]);
         }
         sched_yield();
-        
+       
         for (thrd_ndx = 0; thrd_ndx < 2; thrd_ndx++)
         {
             if (pthread_join(thid[thrd_ndx], (void *)&status[thrd_ndx]))
@@ -609,7 +606,7 @@ main(int  argc,		/* number of input parameters.			      */
             {
                 if (status[thrd_ndx])
                 {
-                    fprintf(stderr, 
+                    fprintf(stderr,
 			    "thread [%ld] - process exited with errors %d\n",
 			        thid[thrd_ndx], status[thrd_ndx]);
 	            exit (-1);

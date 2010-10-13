@@ -16,10 +16,25 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-SUBDIRS = $(patsubst %/Makefile,%,$(wildcard */Makefile))
+top_srcdir		?= ../../../..
 
-all %::
-	@set -e; \
-	for i in $(SUBDIRS); do \
-		$(MAKE) -C $$i $@; \
-	done
+include $(top_srcdir)/include/mk/env_pre.mk
+
+LIBDIR			:= lib
+FILTER_OUT_DIRS		:= $(LIBDIR)
+LIB			:= $(LIBDIR)/libipc.a
+
+$(LIBDIR):
+	mkdir -p "$@"
+
+$(LIB): $(LIBDIR)
+	$(MAKE) -C $^ -f "$(abs_srcdir)/$^/Makefile" all
+
+MAKE_DEPS		:= $(LIB)
+
+trunk-clean:: | lib-clean
+
+lib-clean:: $(LIBDIR)
+	$(MAKE) -C $^ -f "$(abs_srcdir)/$^/Makefile" clean
+
+include $(top_srcdir)/include/mk/generic_trunk_target.mk

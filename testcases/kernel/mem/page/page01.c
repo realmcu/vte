@@ -148,7 +148,7 @@ int main(argc, argv)
 			/*				*/
 			/********************************/
 
-			for(j = 1; j <= memory_size; j++) 
+			for(j = 1; j <= memory_size; j++)
 				*(number_pointer++) = j;
 			sleep(1);
 
@@ -161,9 +161,9 @@ int main(argc, argv)
 			/********************************/
 
 			number_pointer = memory_pointer;
-			for(j = 1; j <= memory_size; j++) { 
+			for(j = 1; j <= memory_size; j++) {
 				if(*(number_pointer++) != j) error_count++;
-			}	
+			}
 			exit(error_count);
 		}
 	}
@@ -194,7 +194,7 @@ int main(argc, argv)
 
 	anyfail();
 	/** NOT REACHED **/
-	return(0);
+	return 0;
 }
 
 int bd_arg(str)
@@ -294,7 +294,7 @@ instress()
 {
         tst_resm(TINFO, "System resource may be too low, fork() malloc()"
                                 " etc are likely to fail.\n");
-        return(1);
+        return 1;
 }
 
 

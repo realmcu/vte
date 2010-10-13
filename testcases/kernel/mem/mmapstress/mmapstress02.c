@@ -91,7 +91,7 @@ main(int argc, char *argv[]) {
 	int			i;
         struct sigaction        sa;
 
-	tst_tmpdir();	
+	tst_tmpdir();
 	if (!argc) {
 		(void)fprintf(stderr, "argc == 0\n");
 		return 1;
@@ -101,7 +101,7 @@ main(int argc, char *argv[]) {
 		return 1;
 	}
 	(void)time(&t);
-	if (!(fd = mkstemp(tmpname))) {
+	if ((fd = mkstemp(tmpname)) == -1) {
 		ERROR("mkstemp failed");
 		anyfail();
 	}
@@ -114,10 +114,6 @@ main(int argc, char *argv[]) {
         CATCH_SIG(SIGINT);
         CATCH_SIG(SIGQUIT);
         CATCH_SIG(SIGTERM);
-	if ((fd = open(tmpname, O_CREAT|O_RDWR, 0777)) == -1) {
-		ERROR("couldn't open temporary file");
-		anyfail();
-	}
 	if (sbrk(2*pagesize - ((ulong)sbrk(0) & (pagesize-1))) == (char *)-1) {
 		CLEANERROR("couldn't round up brk");
 		anyfail();
@@ -169,6 +165,10 @@ main(int argc, char *argv[]) {
 		CLEANERROR("close failed");
 		anyfail();
 	}
+	if (munmap(mmapaddr, pagesize) == -1) {
+		CLEANERROR("munmap failed");
+		anyfail();
+	}
 	if (unlink(tmpname) == -1) {
 		ERROR("unlink failed");
 		anyfail();
@@ -176,7 +176,7 @@ main(int argc, char *argv[]) {
 	(void)time(&t);
 //	(void)printf("%s: Finished %s", argv[0], ctime(&t));
 	ok_exit(); /* LTP Port */
-	return(0);
+	return 0;
 }
 
 /*****  LTP Port        *****/
@@ -193,7 +193,7 @@ int anyfail()
   tst_resm(TFAIL, "Test failed");
   tst_rmdir();
   tst_exit();
-  return(0);
+  return 0;
 }
 
 /*****  **      **      *****/

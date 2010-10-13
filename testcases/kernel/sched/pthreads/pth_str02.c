@@ -94,7 +94,7 @@ int main (int argc, char **argv)
         }
 	thread (0);
 
-	/* 
+	/*
 	 * Program completed successfully...
 	 */
 	tst_resm(TPASS, "Test passed");
@@ -145,13 +145,13 @@ void *thread (void *parm)
 			    tst_resm (TINFO, "Thread [%d]: unable to create more threads!", (int)num);
 			    return NULL;
 			}
-			else 
+			else
 			    sys_error ("pthread_create failed", __LINE__);
 		}
 		pthread_join (th, (void *) NULL);
 	}
 
-	return(0);
+	return 0;
 	/*
 	pthread_exit(0);
 	*/

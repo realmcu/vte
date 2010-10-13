@@ -17,7 +17,7 @@ void handler(int sig)
 	return;
 }
 
-int main(void) 
+int main(void)
 {
   struct sigaction sa;
   int i;
@@ -28,7 +28,7 @@ int main(void)
   for (i = 0; i < 32; i++) {
 	  sigaction(i, &sa, NULL);
   }
-	
+
   while (1)
 	  ;
 }

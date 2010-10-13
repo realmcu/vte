@@ -22,8 +22,8 @@
 * On Success returns PASS else returns FAIL.
 *
 * scripts used: parent_1.sh parent_2.sh child_1.sh child_2.sh
-* 
-* Authors: Veerendra C <vechandr@in.ibm.com> , 
+*
+* Authors: Veerendra C <vechandr@in.ibm.com> ,
            Munipradeep <mbeeraka@in.ibm.com>
 *                      31/07/2008
 *******************************************************************************/
@@ -42,21 +42,11 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <test.h>
-#include "../libclone/libclone.h"
+#include "libclone.h"
+#include "config.h"
 
 char *TCID = "netns_2children";
-int TST_TOTAL=1;
-
-/* Creating Network Namespace */
-int crtchild(char *s)
-{
-    char *cmd[] = { "/bin/bash", s, (char *)0 };
-    
-    execve("/bin/bash", cmd, __environ);
-    tst_resm(TINFO, "The code never reaches here on success\n");
-    perror("execve");
-    return 1;
-}
+int TST_TOTAL = 1;
 
 int main()
 {
@@ -68,9 +58,14 @@ int main()
     flags |= CLONE_NEWNS;
     flags |= CLONE_NEWNET;
 
+#if ! HAVE_UNSHARE
+    tst_resm(TCONF, "System doesn't support unshare.");
+    tst_exit();
+#endif
+    
     /* Checking for Kernel Version */
-	if (tst_kvercmp(2,6,19) < 0)
-		return 1;
+    if (tst_kvercmp(2,6,19) < 0)
+	return 1;
 
     ltproot = getenv("LTPROOT");
     if (! ltproot) {
@@ -84,30 +79,32 @@ int main()
     par[0] = malloc (FILENAME_MAX);
     par[1] = malloc (FILENAME_MAX);
     if (child[0] == NULL || child[1] == NULL || \
-	par[0] == NULL || par[1] == NULL) 
+	par[0] == NULL || par[1] == NULL)
     {
         	tst_resm(TFAIL, "error while allocating mem");
         	exit(1);
     }
 
-    sprintf(child[0], "%s/testcases/kernel/containers/netns/child_1.sh" , ltproot);
-    sprintf(child[1], "%s/testcases/kernel/containers/netns/child_2.sh" , ltproot);
-    sprintf(par[0], "%s/testcases/kernel/containers/netns/parent_1.sh" , ltproot);
-    sprintf(par[1], "%s/testcases/kernel/containers/netns/parent_2.sh" , ltproot);
+    sprintf(child[0], "%s/testcases/bin/child_1.sh" , ltproot);
+    sprintf(child[1], "%s/testcases/bin/child_2.sh" , ltproot);
+    sprintf(par[0], "%s/testcases/bin/parent_1.sh" , ltproot);
+    sprintf(par[1], "%s/testcases/bin/parent_2.sh" , ltproot);
 
     /* Loop for creating two child Network Namespaces */
     for(i=0;i<2;i++) {
 
         if ((pid[i] = fork()) == 0) {
-            // Child1 and Child2 based on the iteration.
+		/* Child1 and Child2 based on the iteration. */
 
-            ret = unshare(flags);
-            if (ret < 0) {
-                perror("Unshare");
-	        tst_resm(TFAIL, "Error:Unshare syscall failed for network namespace\n");
-                return ret;
-            }
-        return crtchild(child[i]);
+#if HAVE_UNSHARE
+		ret = unshare(flags);
+		if (ret < 0) {
+			perror("Unshare");
+			tst_resm(TFAIL, "Error:Unshare syscall failed for network namespace\n");
+			return ret;
+		}
+#endif
+	    return crtchild(child[i]);
         }
         else{
             //Parent

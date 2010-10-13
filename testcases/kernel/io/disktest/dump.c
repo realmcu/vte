@@ -22,7 +22,7 @@
 *
 *  Project Website:  TBD
 *
-* $Id: dump.c,v 1.5 2008/10/20 06:30:33 subrata_modak Exp $
+* $Id: dump.c,v 1.7 2009/02/26 12:02:22 subrata_modak Exp $
 *
 */
 #include <stdio.h>	/* *printf() */
@@ -64,7 +64,7 @@ int format_str(size_t iBytes, const char *ibuff, size_t ibuff_siz, char *obuff, 
 		if((i%8) == 0) strncat(obuff, " ", (obuff_siz-1)-strlen(obuff));
 		strncat(obuff, "   ", (obuff_siz-1)-strlen(obuff));
 	}
-	strncat(obuff, " ", (obuff_siz-1)-strlen(obuff)); 
+	strncat(obuff, " ", (obuff_siz-1)-strlen(obuff));
 	for(i=0;i<iBytes;i++) {
 		sprintf(buff, "%c", (isprint(*(ibuff+i))) ? *(ibuff+i) : '.');
 		strncat(obuff, buff, (obuff_siz-1)-strlen(obuff));
@@ -156,7 +156,7 @@ int dump_data(FILE *stream, const char *buff, const size_t buff_siz, const size_
 	}
 	FREE(ibuff);
 	FREE(obuff);
-	return(0);
+	return 0;
 }
 
 int do_dump(child_args_t *args)

@@ -17,12 +17,12 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 
- * This is the main of your user space test program, 
- * which will open the correct kernel module, find the 
- * file descriptor value and use that value to make 
+ * This is the main of your user space test program,
+ * which will open the correct kernel module, find the
+ * file descriptor value and use that value to make
  * ioctl calls to the system
  *
- * Use the ki_generic and other ki_testname functions 
+ * Use the ki_generic and other ki_testname functions
  * to abstract the calls from the main
  *
  * author: Sean Ruyle
@@ -46,7 +46,7 @@
 static int tbase_fd = -1;		/* file descriptor */
 
 
-int 
+int
 tbaseopen() {
 
     dev_t devt;
@@ -119,14 +119,14 @@ tbaseopen() {
 
 }
 
-int 
+int
 tbaseclose() {
 
 	if (tbase_fd != -1) {
 		close (tbase_fd);
 		tbase_fd = -1;
 	}
-		
+	
 	return 0;
 }
 
@@ -141,7 +141,7 @@ int main() {
                 exit(1);
         }
 
-	
+
 	/* test bus rescan */
 	if(ki_generic(tbase_fd, BUS_RESCAN))
                 printf("Failed on bus rescan\n");
@@ -164,7 +164,7 @@ int main() {
 	if(ki_generic(tbase_fd, REG_FIRM))
                 printf("Failed on register firmware\n\tPossibly because parent nodes already set\n");
         else
-                printf("Success on register firmware\n");	
+                printf("Success on register firmware\n");
 
 	/* test create driver file sysfs */
         if(ki_generic(tbase_fd, CREATE_FILE))
@@ -177,7 +177,7 @@ int main() {
                 printf("Failed on suspending device\n");
         else
                 printf("Success on suspending device\n");
-	
+
 	/* test device create file sysfs */
 	if(ki_generic(tbase_fd, DEV_FILE))
                 printf("Failed on creating device file\n");
@@ -195,13 +195,13 @@ int main() {
                 printf("Failed on registering class\n");
         else
                 printf("Success on registering class\n");
-	
+
 	/* test get class */
 	if(ki_generic(tbase_fd, CLASS_GET))
                 printf("Failed on get class\n");
         else
                 printf("Success on get class\n");
-	
+
 	/* test class create file sysfs */
 	if(ki_generic(tbase_fd, CLASS_FILE))
                 printf("Failed on creating class file\n");
@@ -249,7 +249,7 @@ int main() {
         if(ki_generic(tbase_fd, SYSDEV_CLS_UNREG))
                 printf("Failed on unregistering sysdev_class\n");
         else
-                printf("Success on unregistering sysdev_class\n");	
+                printf("Success on unregistering sysdev_class\n");
 
 
 

@@ -15,12 +15,13 @@ setup()
         export TST_COUNT=0
 	export TST_TOTAL=4
 
-	# Remove any leftover test directory from prior failed runs.
-	rm -rf $SELINUXTMPDIR/test_dir
+	SELINUXTMPDIR=$(mktemp -d)
+	chcon -t test_file_t $SELINUXTMPDIR
 
 	# Create a test dir with the test_rxdir_dir_t type
 	# for use in the tests.
-	mkdir --context=system_u:object_r:test_rxdir_dir_t $SELINUXTMPDIR/test_dir
+	mkdir $SELINUXTMPDIR/test_dir
+	chcon -t test_rxdir_dir_t $SELINUXTMPDIR/test_dir
 
 	# Touch a file in the directory.
 	touch $SELINUXTMPDIR/test_dir/test_file
@@ -37,9 +38,9 @@ test01()
         RC=$?
         if [ $RC -eq 0 ]
         then
-                echo "$TCID   PASS : rxdir passed."
+                tst_resm TPASS "rxdir passed."
         else
-                echo "$TCID   FAIL : rxdir failed."
+                tst_resm TFAIL "rxdir failed."
         fi
         return $RC
 }
@@ -54,10 +55,10 @@ test02()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : rxdir passed."
+                tst_resm TPASS "rxdir passed."
 		RC=0
         else
-                echo "$TCID   FAIL : rxdir failed."
+                tst_resm TFAIL "rxdir failed."
 		RC=1
         fi
 	return $RC
@@ -74,9 +75,9 @@ test03()
         RC=$?
         if [ $RC -eq 0 ]
         then
-                echo "$TCID   PASS : rxdir passed."
+                tst_resm TPASS "rxdir passed."
         else
-                echo "$TCID   FAIL : rxdir failed."
+                tst_resm TFAIL "rxdir failed."
         fi
 	return $RC
 }
@@ -91,10 +92,10 @@ test04()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : rxdir passed."
+                tst_resm TPASS "rxdir passed."
 		RC=0
         else
-                echo "$TCID   FAIL : rxdir failed."
+                tst_resm TFAIL "rxdir failed."
 		RC=1
         fi
 	return $RC
@@ -102,8 +103,7 @@ test04()
 
 cleanup()
 {
-	# Cleanup.
-	rm -rf $SELINUXTMPDIR/test_dir
+	rm -rf $SELINUXTMPDIR
 }
 
 # Function:     main

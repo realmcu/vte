@@ -37,16 +37,16 @@
  *      Verify that,
  *   1) sethostname(2) returns -1 and sets errno to EINVAL if the parameter,
  *	len is less than zero.
- *   2) sethostname(2) returns -1 and sets errno to EINVAL if len is greater 
+ *   2) sethostname(2) returns -1 and sets errno to EINVAL if len is greater
  *	than the maximum allowed size.
- *   3) sethostname(2) returns -1 and sets errno to EFAULT if an invalid 
+ *   3) sethostname(2) returns -1 and sets errno to EFAULT if an invalid
  *	address is given for name.
  *
  * Setup:
  *   Setup signal handling.
  *   Save current hostname
  *   Pause for SIGUSR1 if option specified.
- * 
+ *
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
@@ -60,8 +60,8 @@
  *	Print errno log and/or timing stats if options given
  *
  *   Side Effects :
- *	sethostname() is resetting value to NULL, if an invalid address 
- *	is given for name. So, to overcome this problem, hostname is 
+ *	sethostname() is resetting value to NULL, if an invalid address
+ *	is given for name. So, to overcome this problem, hostname is
  *	resetting to original value as part of cleanup() routine.
  *
  * USAGE:  <for command-line>
@@ -96,34 +96,37 @@ static char hostname[MAX_LENGTH];
 static char hname[MAX_LENGTH];
 static char largehost[LARGE_LENGTH];
 static struct test_case_t {
-	char *err_desc;		/* error description 		*/
-	int exp_errno;		/* Expected error no 		*/
-	char *exp_errval;	/* Expected error value string 	*/
-	char *name;		/* hostname 			*/
-	int len;		/* length 			*/
+	char *err_desc;		/* error description            */
+	int exp_errno;		/* Expected error no            */
+	char *exp_errval;	/* Expected error value string  */
+	char *name;		/* hostname                     */
+	int len;		/* length                       */
 } testcases[] = {
-	{ "Length is -ve", EINVAL, "EINVAL", hostname, -1 },
-	{ "Length > max allowed size", EINVAL, "EINVAL", largehost, 
-		sizeof(largehost)},
+	{
+	"Length is -ve", EINVAL, "EINVAL", hostname, -1}, {
+	"Length > max allowed size", EINVAL, "EINVAL", largehost,
+		    sizeof(largehost)}
+	,
 #ifndef UCLINUX
-	/* Skip since uClinux does not implement memory protection */
-	{ "Invalid address ", EFAULT, "EFAULT", (void *)-1, sizeof(hostname)}
+	    /* Skip since uClinux does not implement memory protection */
+	{
+	"Invalid address ", EFAULT, "EFAULT", (void *)-1,
+		    sizeof(hostname)}
 #endif
 };
 
-static int exp_enos[] = {EINVAL, EINVAL, EFAULT, 0};
+static int exp_enos[] = { EINVAL, EINVAL, EFAULT, 0 };
 
-int TST_TOTAL = sizeof(testcases)/sizeof(*testcases);
+int TST_TOTAL = sizeof(testcases) / sizeof(*testcases);
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 	int i;
-	int lc;				/* loop counter */
-	char *msg;			/* parse_opts() return message */
+	int lc;			/* loop counter */
+	char *msg;		/* parse_opts() return message */
 
 	/* Parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -135,22 +138,21 @@ main(int ac, char **av)
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		Tst_count = 0;
 
-		for (i=0; i<TST_TOTAL; ++i) {
+		for (i = 0; i < TST_TOTAL; ++i) {
 
 			/*
 			 * Test the system call.
 			 */
 			TEST(sethostname(testcases[i].name, testcases[i].len));
- 
-			if ((TEST_RETURN == -1) && 
+
+			if ((TEST_RETURN == -1) &&
 			    (TEST_ERRNO == testcases[i].exp_errno)) {
 				tst_resm(TPASS, "expected failure; Got %s",
-					testcases[i].exp_errval);
-			}
-			else {
+					 testcases[i].exp_errval);
+			} else {
 				tst_resm(TFAIL, "call failed to produce "
-					"expected error;  errno: %d : %s",
-					TEST_ERRNO, strerror(TEST_ERRNO));
+					 "expected error;  errno: %d : %s",
+					 TEST_ERRNO, strerror(TEST_ERRNO));
 			}
 			TEST_ERROR_LOG(TEST_ERRNO);
 		}
@@ -164,8 +166,7 @@ main(int ac, char **av)
 /*
  * setup() - performs all one time setup for this test.
  */
-void
-setup()
+void setup()
 {
 	int ret;
 
@@ -181,9 +182,9 @@ setup()
 	}
 
 	/* Keep the host name before starting the test */
-	if((ret = gethostname (hname, sizeof(hname))) < 0 ) {
+	if ((ret = gethostname(hname, sizeof(hname))) < 0) {
 		tst_brkm(TBROK, tst_exit, "gethostname() failed while"
-				" getting current host name");
+			 " getting current host name");
 	}
 
 	/* Pause if the option was specified */
@@ -194,8 +195,7 @@ setup()
  * cleanup()  - performs all one time cleanup for this test
  *		completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 	int ret;
 
@@ -206,10 +206,10 @@ cleanup()
 	TEST_CLEANUP;
 
 	/* Set the host name back to original name */
-	if( (ret = sethostname (hname, strlen(hname))) < 0 ) {
+	if ((ret = sethostname(hname, strlen(hname))) < 0) {
 		tst_resm(TWARN, "sethostname() failed while restoring"
-			" hostname to \"%s\"", hname);
-	} 
+			 " hostname to \"%s\"", hname);
+	}
 
 	/* exit with return code appropriate for results */
 	tst_exit();

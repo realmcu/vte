@@ -70,7 +70,7 @@ void cleanup(void);
 char user1name[] = "nobody";
 char user2name[] = "bin";
 
-int exp_enos[] = {EACCES, 0};
+int exp_enos[] = { EACCES, 0 };
 
 char good_dir[100];
 
@@ -80,14 +80,14 @@ extern struct passwd *my_getpwnam(char *);
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 
 	pid_t pid, pid1;
 	int status;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -105,7 +105,7 @@ int main(int ac, char **av)
 			tst_brkm(TBROK, cleanup, "first fork failed");
 		}
 
-		if (pid == 0) {			/* first child */
+		if (pid == 0) {	/* first child */
 			/* set the child's ID to ltpuser1 */
 			if (setreuid(ltpuser1->pw_uid, ltpuser1->pw_uid) != 0) {
 				tst_resm(TINFO, "setreuid failed in child #1");
@@ -123,7 +123,7 @@ int main(int ac, char **av)
 			tst_brkm(TBROK, cleanup, "second fork failed");
 		}
 
-		if (pid1 == 0) {		/* second child */
+		if (pid1 == 0) {	/* second child */
 			/*
 			 * set the child's ID to ltpuser2 using seteuid()
 			 * so that the ID can be changed back after the
@@ -139,21 +139,18 @@ int main(int ac, char **av)
 			if (TEST_RETURN != -1) {
 				tst_resm(TFAIL, "call succeeded unexpectedly");
 			} else if (TEST_ERRNO != EACCES) {
-				tst_resm(TFAIL, "expected EACCES - got %d", 
-					 TEST_ERRNO);
+				tst_resm(TFAIL|TTERRNO, "expected EACCES");
 			} else {
 				TEST_ERROR_LOG(TEST_ERRNO);
-				tst_resm(TPASS, "expected failure - errno = %d"
-					 " : %s", TEST_ERRNO,
-					 strerror(TEST_ERRNO));
+				tst_resm(TPASS|TTERRNO, "expected failure");
 			}
 
 			/* reset the process ID to the saved ID (root) */
 			if (setuid(0) == -1) {
-				tst_resm(TINFO, "setuid(0) failed");
+				tst_resm(TINFO|TERRNO, "setuid(0) failed");
 			}
 
-		} else {		/* parent */
+		} else {	/* parent */
 			wait(&status);
 
 			/* let the child carry on */
@@ -162,20 +159,18 @@ int main(int ac, char **av)
 
 		/* clean up things in case we are looping */
 		if (rmdir(good_dir) == -1) {
-			tst_brkm(TBROK, cleanup, "Couldn't remove directory");
+			tst_brkm(TBROK|TERRNO, cleanup, "rmdir(%s) failed", good_dir);
 		}
 	}
 	cleanup();
 
 	return 0;
-	/*NOTREACHED*/
-}
+ /*NOTREACHED*/}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void
-setup()
+void setup()
 {
 	char *cur_dir = NULL;
 
@@ -195,7 +190,7 @@ setup()
 
 	/* get the currect directory name */
 	if ((cur_dir = getcwd(cur_dir, 0)) == NULL) {
-		tst_brkm(TBROK, cleanup, "Couldn't get current directory name");
+		tst_brkm(TBROK|TERRNO, cleanup, "Couldn't get current directory name");
 	}
 
 	sprintf(good_dir, "%s/%d", cur_dir, getpid());
@@ -208,8 +203,7 @@ setup()
  * cleanup() - performs all ONE TIME cleanup for this test at
  *	       completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.

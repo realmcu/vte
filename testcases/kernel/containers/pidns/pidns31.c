@@ -43,7 +43,9 @@
 *              <Nadia.Derbey@bull.net>
 *
 ******************************************************************************/
-#define _GNU_SOURCE 1
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <signal.h>
@@ -51,9 +53,10 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <mqueue.h>
-#include <usctest.h>
-#include <test.h>
-#include <libclone.h>
+#include "usctest.h"
+#include "test.h"
+#include "linux_syscall_numbers.h"
+#include "libclone.h"
 
 char *TCID = "pidns31";
 int TST_TOTAL = 1;
@@ -92,7 +95,7 @@ static void remove_pipe(int *fd)
 static void remove_mqueue(mqd_t mqd)
 {
 	mq_close(mqd);
-	mq_unlink(mqname);
+	syscall(__NR_mq_unlink, mqname);
 }
 
 /*
@@ -115,7 +118,7 @@ static void cleanup_resources(int step, mqd_t mqd)
 		break;
 
 	case F_STEP_2:
-		mq_notify(mqd, NULL);
+		syscall(__NR_mq_notify, mqd, NULL);
 		/* fall through */
 	case F_STEP_1:
 		remove_mqueue(mqd);
@@ -130,11 +133,11 @@ static void cleanup_resources(int step, mqd_t mqd)
 }
 
 /*
- * cleanup() - performs all ONE TIME cleanup for this test at
+ * cleanup_mqueue() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
  * step == -1 means no local resource to remove.
  */
-static void cleanup(int result, int step, mqd_t mqd)
+void cleanup_mqueue(int result, int step, mqd_t mqd)
 {
 	if (step != NO_STEP)
 		cleanup_resources(step, mqd);
@@ -143,7 +146,7 @@ static void cleanup(int result, int step, mqd_t mqd)
 	TEST_CLEANUP;
 
 	/* exit with return code appropriate for results */
-	tst_exit(result);
+	tst_exit();
 }
 
 /*
@@ -161,7 +164,7 @@ int child_fn(void *arg)
 
 	if (pid != CHILD_PID || ppid != PARENT_PID) {
 		tst_resm(TBROK, "cinit: pidns is not created");
-		cleanup(TBROK, NO_STEP, 0);
+		cleanup_mqueue(TBROK, NO_STEP, 0);
 	}
 
 	/* Close the appropriate end of pipe */
@@ -171,22 +174,23 @@ int child_fn(void *arg)
 	read(father_to_child[0], buf, 5);
 	if (strcmp(buf, "f:ok")) {
 		tst_resm(TBROK, "cinit: parent did not send the message!");
-		cleanup(TBROK, NO_STEP, 0);
+		cleanup_mqueue(TBROK, NO_STEP, 0);
 	}
 	tst_resm(TINFO, "cinit: my father is ready to receive a message");
 
-	mqd = mq_open(mqname, O_WRONLY);
+	mqd = syscall(__NR_mq_open, mqname, O_WRONLY);
 	if (mqd == (mqd_t)-1) {
 		tst_resm(TBROK, "cinit: mq_open() failed (%s)",
 			strerror(errno));
-		cleanup(TBROK, NO_STEP, 0);
+		cleanup_mqueue(TBROK, NO_STEP, 0);
 	}
 	tst_resm(TINFO, "cinit: mq_open succeeded");
 
-	if (mq_send(mqd, MSG, strlen(MSG), MSG_PRIO) == (mqd_t)-1) {
+	if (mq_send(mqd, MSG, strlen(MSG), MSG_PRIO) ==
+		(mqd_t)-1) {
 		tst_resm(TBROK, "cinit: mq_send() failed (%s)",
 			strerror(errno));
-		cleanup(TBROK, C_STEP_0, mqd);
+		cleanup_mqueue(TBROK, C_STEP_0, mqd);
 	}
 	tst_resm(TINFO, "cinit: mq_send() succeeded");
 
@@ -256,23 +260,23 @@ int main(int argc, char *argv[])
 
 	if (pipe(father_to_child) == -1) {
 		tst_resm(TBROK, "parent: pipe() failed. aborting!");
-		cleanup(TBROK, NO_STEP, 0);
+		cleanup_mqueue(TBROK, NO_STEP, 0);
 	}
 
-	mq_unlink(mqname);
-	mqd = mq_open(mqname, O_RDWR|O_CREAT|O_EXCL, 0777, NULL);
+	syscall(__NR_mq_unlink, mqname);
+	mqd = syscall(__NR_mq_open, mqname, O_RDWR|O_CREAT|O_EXCL, 0777, NULL);
 	if (mqd == (mqd_t)-1) {
 		tst_resm(TBROK, "parent: mq_open() failed (%s)",
 			strerror(errno));
-		cleanup(TBROK, F_STEP_0, 0);
+		cleanup_mqueue(TBROK, F_STEP_0, 0);
 	}
 	tst_resm(TINFO, "parent: successfully created posix mqueue");
 
 	/* container creation on PID namespace */
-	cpid = do_clone(CLONE_NEWPID|SIGCHLD, child_fn, NULL);
+	cpid = ltp_clone_quick(CLONE_NEWPID|SIGCHLD, child_fn, NULL);
 	if (cpid < 0) {
 		tst_resm(TBROK, "parent: clone() failed(%s)", strerror(errno));
-		cleanup(TBROK, F_STEP_1, mqd);
+		cleanup_mqueue(TBROK, F_STEP_1, mqd);
 	}
 	tst_resm(TINFO, "parent: successfully created child (pid = %d)", cpid);
 
@@ -282,10 +286,10 @@ int main(int argc, char *argv[])
 	info.mqd = mqd;
 	info.pid = cpid;
 	notif.sigev_value.sival_ptr = &info;
-	if (mq_notify(mqd, &notif) == (mqd_t)-1) {
+	if (syscall(__NR_mq_notify, mqd, &notif) == (mqd_t)-1) {
 		tst_resm(TBROK, "parent: mq_notify() failed (%s)",
 			strerror(errno));
-		cleanup(TBROK, F_STEP_1, mqd);
+		cleanup_mqueue(TBROK, F_STEP_1, mqd);
 	}
 	tst_resm(TINFO, "parent: successfully registered for notification");
 
@@ -296,7 +300,7 @@ int main(int argc, char *argv[])
 	if (sigaction(SIGUSR1, &sa, NULL) == -1) {
 		tst_resm(TBROK, "parent: sigaction() failed(%s)",
 			strerror(errno));
-		cleanup(TBROK, F_STEP_2, mqd);
+		cleanup_mqueue(TBROK, F_STEP_2, mqd);
 	}
 	tst_resm(TINFO, "parent: successfully registered handler for SIGUSR1");
 
@@ -306,7 +310,7 @@ int main(int argc, char *argv[])
 	/* Tell the child a message can be sent */
 	if (write(father_to_child[1], "f:ok", 5) != 5) {
 		tst_resm(TBROK, "parent: pipe is broken(%s)", strerror(errno));
-		cleanup(TBROK, F_STEP_2, mqd);
+		cleanup_mqueue(TBROK, F_STEP_2, mqd);
 	}
 
 	sleep(3);
@@ -314,10 +318,10 @@ int main(int argc, char *argv[])
 	/* Wait for child to finish */
 	if (wait(&status) == -1) {
 		tst_resm(TBROK, "parent: wait() failed(%s)", strerror(errno));
-		cleanup(TBROK, F_STEP_1, mqd);
+		cleanup_mqueue(TBROK, F_STEP_1, mqd);
 	}
 
-	cleanup(result, F_STEP_3, mqd);
+	cleanup_mqueue(result, F_STEP_3, mqd);
 
 	/* NOT REACHED */
 	return 0;

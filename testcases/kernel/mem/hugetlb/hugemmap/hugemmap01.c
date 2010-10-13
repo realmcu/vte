@@ -73,7 +73,7 @@
 #include "test.h"
 #include "usctest.h"
 
-#define BUFFER_SIZE  256 
+#define BUFFER_SIZE  256
 
 char* TEMPFILE="mmapfile";
 
@@ -122,13 +122,13 @@ main(int ac, char **av)
 		tst_brkm(TBROK, NULL, "-H option is REQUIRED for this test, use -h for options help");
 		tst_exit();
 	}
-	
+
 	/* Perform global setup for test */
 	setup();
 
 	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-	
+
 	        /* Creat a temporary file used for mapping */
 		if ((fildes = open(TEMPFILE, O_RDWR | O_CREAT, 0666)) < 0) {
 			tst_brkm(TFAIL, cleanup,
@@ -144,7 +144,7 @@ main(int ac, char **av)
 		/* Note the size of huge page size BEFORE testing */
 		page_sz = get_huge_pagesize();
 
-		/* 
+		/*
 		 * Call mmap
 		 */
 		errno = 0;
@@ -196,7 +196,7 @@ main(int ac, char **av)
  * 	     Creat a temporary directory and a file under it.
  * 	     Write some known data into file and get the size of the file.
  */
-void 
+void
 setup()
 {
 	char mypid[40];
@@ -214,7 +214,7 @@ setup()
 }
 
 /*
- * getfreehugepages() - Reads the number of free huge pages from /proc/meminfo	
+ * getfreehugepages() - Reads the number of free huge pages from /proc/meminfo
  */
 int
 getfreehugepages()
@@ -225,19 +225,19 @@ getfreehugepages()
 	char buff[BUFFER_SIZE];
 
         f = fopen("/proc/meminfo", "r");
-	if (!f) 	 
+	if (!f) 
      		tst_brkm(TFAIL, cleanup, "Could not open /proc/meminfo for reading");
 
 	while(fgets(buff,BUFFER_SIZE, f) != NULL){
 		if((retcode = sscanf(buff, "HugePages_Free: %d ", &hugefree)) == 1)
 	  		break;
 	}
-	
-        if (retcode != 1) { 	 
-        	fclose(f); 	 
+
+        if (retcode != 1) { 
+        	fclose(f); 
        		tst_brkm(TFAIL, cleanup, "Failed reading number of huge pages free.");
-     	}	
-	fclose(f);	
+     	}
+	fclose(f);
 	return(hugefree);
 }
 
@@ -274,7 +274,7 @@ get_huge_pagesize()
  *             completion or premature exit.
  * 	       Remove the temporary directory created.
  */
-void 
+void
 cleanup()
 {
 	/*

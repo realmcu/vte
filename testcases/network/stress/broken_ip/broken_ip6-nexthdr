@@ -58,7 +58,7 @@ LTPROOT=${LTPROOT:-`(cd ../../../.. ; pwd)`}
 export LTPROOT
 
 # Check the environmanet variable
-source check_envval || exit $TST_TOTAL
+. check_envval || exit $TST_TOTAL
 
 # Dulation of the test [sec]
 NS_DURATION=${NS_DURATION:-3600}      # 1 hour
@@ -89,7 +89,7 @@ do_cleanup()
 #
 
 # Output the informaion
-tst_resm TINFO "- Test dulation is $NS_DURATION [sec]"
+tst_resm TINFO "- Test duration is $NS_DURATION [sec]"
 
 # Get the MAC address of the interface at the local host
 field=`expr $LINK_NUM + 1` 

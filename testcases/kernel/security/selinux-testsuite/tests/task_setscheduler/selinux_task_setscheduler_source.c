@@ -30,11 +30,11 @@ int main(int argc, char *argv[])
 	}
 	p.sched_priority = atol(argv[3]);
 	printf("pid = %d \t policy = %d \t priority = %d\n",
-		pid,policy,p.sched_priority); 
+		pid,policy,p.sched_priority);
 	if (sched_setscheduler(pid,policy,&p) < 0) {
 		perror("sched_setscheduler");
 		exit(1);
 	}
-		
+	
 	exit(0);
 }

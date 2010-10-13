@@ -20,24 +20,11 @@
 #include <syscall.h>
 #include <unistd.h>
 #include <semaphore.h>
-#include <numa.h>
-#include <numaif.h>
-#include <errno.h>
-
 #include <test.h>
 #include <usctest.h>
-#include <linux_syscall_numbers.h>
-
 #include "move_pages_support.h"
 
-#ifndef __NR_move_pages
-	int arch_support = 0;
-#else
-	int arch_support = 1;
-#endif
-
-long
-get_page_size()
+long get_page_size()
 {
 	return sysconf(_SC_PAGESIZE);
 }
@@ -47,9 +34,10 @@ get_page_size()
  * @pages: array of page pointers to be freed
  * @num: no. of pages in the array
  */
-void
-free_pages(void **pages, unsigned int num)
+void free_pages(void **pages, unsigned int num)
 {
+
+#if HAS_NUMA_H
 	int i;
 	size_t onepage = get_page_size();
 
@@ -58,6 +46,7 @@ free_pages(void **pages, unsigned int num)
 			numa_free(pages[i], onepage);
 		}
 	}
+#endif
 }
 
 /*
@@ -72,11 +61,12 @@ free_pages(void **pages, unsigned int num)
  * RETURNS:
  * 0 on success, -1 on allocation failure.
  */
-int
-alloc_pages_on_nodes(void **pages, unsigned int num, int *nodes)
+int alloc_pages_on_nodes(void **pages, unsigned int num, int *nodes)
 {
 	int i;
+#if HAVE_NUMA_ALLOC_ONNODE
 	size_t onepage = get_page_size();
+#endif
 
 	for (i = 0; i < num; i++) {
 		pages[i] = NULL;
@@ -85,7 +75,9 @@ alloc_pages_on_nodes(void **pages, unsigned int num, int *nodes)
 	for (i = 0; i < num; i++) {
 		char *page;
 
+#if HAVE_NUMA_ALLOC_ONNODE
 		pages[i] = numa_alloc_onnode(onepage, nodes[i]);
+#endif
 		if (pages[i] == NULL) {
 			tst_resm(TBROK, "allocation of page on node "
 				 "%d failed", nodes[i]);
@@ -116,12 +108,13 @@ alloc_pages_on_nodes(void **pages, unsigned int num, int *nodes)
  * RETURNS:
  * 0 on success, -1 on allocation failure.
  */
-int
-alloc_pages_linear(void **pages, unsigned int num)
+int alloc_pages_linear(void **pages, unsigned int num)
 {
+	int nodes[num];
+
+#if HAS_NUMA_H
 	unsigned int i;
 	unsigned int n;
-	int nodes[num];
 
 	n = 0;
 	for (i = 0; i < num; i++) {
@@ -131,6 +124,7 @@ alloc_pages_linear(void **pages, unsigned int num)
 		if (n > numa_max_node())
 			n = 0;
 	}
+#endif
 
 	return alloc_pages_on_nodes(pages, num, nodes);
 }
@@ -147,8 +141,7 @@ alloc_pages_linear(void **pages, unsigned int num)
  * RETURNS:
  * 0 on success, -1 on allocation failure.
  */
-int
-alloc_pages_on_node(void **pages, unsigned int num, int node)
+int alloc_pages_on_node(void **pages, unsigned int num, int node)
 {
 	unsigned int i;
 	int nodes[num];
@@ -169,6 +162,7 @@ alloc_pages_on_node(void **pages, unsigned int num, int node)
 void
 verify_pages_on_nodes(void **pages, int *status, unsigned int num, int *nodes)
 {
+#if HAVE_NUMA_H
 	unsigned int i;
 	int which_node;
 	int ret;
@@ -176,8 +170,7 @@ verify_pages_on_nodes(void **pages, int *status, unsigned int num, int *nodes)
 	for (i = 0; i < num; i++) {
 		if (status[i] != nodes[i]) {
 			tst_resm(TFAIL, "page %d on node %d, "
-				 "expected on node %p", i,
-				 status[i], nodes[i]);
+				 "expected on node %d", i, status[i], nodes[i]);
 			return;
 		}
 
@@ -187,11 +180,10 @@ verify_pages_on_nodes(void **pages, int *status, unsigned int num, int *nodes)
 		 * not seem to be documented in the man pages.
 		 */
 		ret = get_mempolicy(&which_node, NULL, 0,
-				    pages[i],
-				    MPOL_F_NODE | MPOL_F_ADDR);
+				    pages[i], MPOL_F_NODE | MPOL_F_ADDR);
 		if (ret == -1) {
-			tst_resm(TBROK, "error getting memory policy for "
-				 "page %p: %s", pages[i], strerror(errno));
+			tst_resm(TBROK | TERRNO, "error getting memory policy "
+				 		 "for page %p", pages[i]);
 			return;
 		}
 
@@ -203,6 +195,9 @@ verify_pages_on_nodes(void **pages, int *status, unsigned int num, int *nodes)
 	}
 
 	tst_resm(TPASS, "pages are present in expected nodes");
+#else
+	tst_resm(TCONF, "NUMA support not provided");
+#endif
 }
 
 /*
@@ -211,14 +206,15 @@ verify_pages_on_nodes(void **pages, int *status, unsigned int num, int *nodes)
  * @status: the NUMA node of each page
  * @num: the no. of pages
  */
-void
-verify_pages_linear(void **pages, int *status, unsigned int num)
+void verify_pages_linear(void **pages, int *status, unsigned int num)
 {
+#if HAS_NUMA_H
 	unsigned int i;
 	unsigned int n;
 	int nodes[num];
 
 	n = 0;
+
 	for (i = 0; i < num; i++) {
 		nodes[i] = i;
 
@@ -228,6 +224,7 @@ verify_pages_linear(void **pages, int *status, unsigned int num)
 	}
 
 	verify_pages_on_nodes(pages, status, num, nodes);
+#endif
 }
 
 /*
@@ -237,8 +234,7 @@ verify_pages_linear(void **pages, int *status, unsigned int num)
  * @num: the no. of pages
  * @node: the expected NUMA node
  */
-void
-verify_pages_on_node(void **pages, int *status, unsigned int num, int node)
+void verify_pages_on_node(void **pages, int *status, unsigned int num, int node)
 {
 	unsigned int i;
 	int nodes[num];
@@ -259,21 +255,18 @@ verify_pages_on_node(void **pages, int *status, unsigned int num, int node)
  * RETURNS:
  * 0 on success, -1 on allocation failure
  */
-int
-alloc_shared_pages_on_node(void **pages, unsigned int num,
-			   int node)
+int alloc_shared_pages_on_node(void **pages, unsigned int num, int node)
 {
+#if HAS_NUMA_H
 	char *shared;
 	unsigned int i;
 	int nodes[num];
 	size_t total_size = num * get_page_size();
 
 	shared = mmap(NULL, total_size,
-		      PROT_READ | PROT_WRITE,
-		      MAP_SHARED | MAP_ANONYMOUS, 0, 0);
+		      PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, 0, 0);
 	if (shared == MAP_FAILED) {
-		tst_resm(TBROK, "allocation of shared pages failed: %s",
-			 strerror(errno));
+		tst_resm(TBROK | TERRNO, "allocation of shared pages failed");
 		return -1;
 	}
 
@@ -293,6 +286,9 @@ alloc_shared_pages_on_node(void **pages, unsigned int num,
 	}
 
 	return 0;
+#else
+	return -1;
+#endif
 }
 
 /*
@@ -300,15 +296,13 @@ alloc_shared_pages_on_node(void **pages, unsigned int num,
  * @pages: array of pages to be freed
  * @num: the no. of pages to free
  */
-void
-free_shared_pages(void **pages, unsigned int num)
+void free_shared_pages(void **pages, unsigned int num)
 {
 	int ret;
 
 	ret = munmap(pages[0], num * get_page_size());
 	if (ret == -1)
-		tst_resm(TWARN, "unmapping of shared pages failed: %s",
-			 strerror(errno));
+		tst_resm(TWARN | TERRNO, "unmapping of shared pages failed");
 }
 
 /*
@@ -321,8 +315,7 @@ free_shared_pages(void **pages, unsigned int num)
  * RETURNS:
  * Array of initialized semaphores.
  */
-sem_t *
-alloc_sem(int num)
+sem_t *alloc_sem(int num)
 {
 	sem_t *sem;
 	void *sem_mem;
@@ -332,8 +325,7 @@ alloc_sem(int num)
 		       PROT_READ | PROT_WRITE,
 		       MAP_SHARED | MAP_ANONYMOUS, 0, 0);
 	if (sem_mem == MAP_FAILED) {
-		tst_resm(TBROK, "allocation of semaphore page failed: %s",
-			 strerror(errno));
+		tst_resm(TBROK | TERRNO, "allocation of semaphore page failed");
 		goto err_exit;
 	}
 
@@ -342,20 +334,19 @@ alloc_sem(int num)
 	for (i = 0; i < num; i++) {
 		ret = sem_init(&sem[i], 1, 0);
 		if (ret == -1) {
-			tst_resm(TBROK, "semaphore initialization failed: %s",
-				 strerror(errno));
+			tst_resm(TBROK | TERRNO, "semaphore initialization "
+						 "failed");
 			goto err_free_mem;
 		}
 	}
 
 	return sem;
 
- err_free_mem:
+err_free_mem:
 	ret = munmap(sem_mem, get_page_size());
 	if (ret == -1)
-		tst_resm(TWARN, "error freeing semaphore memory: %s",
-			 strerror(errno));
- err_exit:
+		tst_resm(TWARN | TERRNO, "error freeing semaphore memory");
+err_exit:
 	return NULL;
 }
 
@@ -364,8 +355,7 @@ alloc_sem(int num)
  * @sem - array of semphores to be freed
  * @num - no. of semaphores in the array
  */
-void
-free_sem(sem_t *sem, int num)
+void free_sem(sem_t * sem, int num)
 {
 	int i;
 	int ret;
@@ -373,14 +363,12 @@ free_sem(sem_t *sem, int num)
 	for (i = 0; i < num; i++) {
 		ret = sem_destroy(&sem[i]);
 		if (ret == -1)
-			tst_resm(TWARN, "error destroying semaphore: %s",
-				 strerror(errno));
+			tst_resm(TWARN | TERRNO, "error destroying semaphore");
 	}
 
 	ret = munmap(sem, get_page_size());
 	if (ret == -1)
-		tst_resm(TWARN, "error freeing semaphore memory: %s",
-			 strerror(errno));
+		tst_resm(TWARN | TERRNO, "error freeing semaphore memory");
 }
 
 /*
@@ -390,27 +378,18 @@ free_sem(sem_t *sem, int num)
  * Checks if numa support is availabe, kernel is >= 2.6.18, arch is
  * one of the supported architectures.
  */
-void
-check_config(unsigned int min_nodes)
+void check_config(unsigned int min_nodes)
 {
+#if HAS_NUMA_H
 	if (numa_available() < 0) {
 		tst_resm(TCONF, "NUMA support is not available");
-		tst_exit();
-	}
-
-	if (numa_max_node() < (min_nodes - 1)) {
+	} else if (numa_max_node() < (min_nodes - 1)) {
 		tst_resm(TCONF, "atleast 2 NUMA nodes are required");
-		tst_exit();
-	}
-
-	if (tst_kvercmp(2, 6, 18) < 0) {
+	} else if (tst_kvercmp(2, 6, 18) < 0) {
 		tst_resm(TCONF, "2.6.18 or greater kernel required");
-		tst_exit();
 	}
-
-	if (arch_support == 0) {
-		tst_resm(TCONF, "this arch does not support move_pages");
-		tst_exit();
-	}
+#else
+	tst_resm(TCONF, "NUMA support not provided");
+#endif
+	tst_exit();
 }
-

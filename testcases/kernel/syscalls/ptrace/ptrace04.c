@@ -8,21 +8,22 @@
 
 #define _GNU_SOURCE
 
-#if defined(__bfin__)
-
 #include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/ptrace.h>
-#include <asm/ptrace.h>
+
+#include <config.h>
+#include "ptrace.h"
 
 #include "test.h"
 #include "usctest.h"
 #include "spawn_ptrace_child.h"
 
 char *TCID = "ptrace04";
+
+static void cleanup ();
 
 #define R(r) { .name = "PT_" #r, .off = PT_##r },
 static struct {
@@ -49,46 +50,61 @@ int TST_TOTAL = 2;
 
 void compare_registers(unsigned char poison)
 {
-	struct pt_regs pt_regs;
+#ifdef HAVE_STRUCT_PTRACE_REGS
+	ptrace_regs _pt_regs;
 	size_t i;
 	long ret;
 	bool failed = false;
 
-	memset(&pt_regs, poison, sizeof(pt_regs));
+	memset(&_pt_regs, poison, sizeof(_pt_regs));
 	errno = 0;
-	ret = ptrace(PTRACE_GETREGS, pid, NULL, &pt_regs);
+	ret = ptrace(PTRACE_GETREGS, pid, NULL, &_pt_regs);
 	if (ret && errno) {
-		tst_resm(TINFO, "PTRACE_GETREGS failed: %s", strerror(errno));
-		goto done;
-	}
+		tst_resm(TFAIL | TERRNO, "PTRACE_GETREGS failed");
+	} else {
 
-	for (i = 0; i < ARRAY_SIZE(regs); ++i) {
-		errno = 0;
-		ret = ptrace(PTRACE_PEEKUSER, pid, (void *)regs[i].off, NULL);
-		if (ret && errno) {
-			tst_resm(TINFO, "PTRACE_PEEKUSER: register %s (offset %li) failed: %s",
-				regs[i].name, regs[i].off, strerror(errno));
-			failed = true;
-			continue;
+		for (i = 0; i < ARRAY_SIZE(regs); ++i) {
+			errno = 0;
+			ret = ptrace(PTRACE_PEEKUSER, pid,
+				(void *)regs[i].off, NULL);
+			if (ret && errno) {
+				tst_resm(TFAIL | TERRNO,
+					"PTRACE_PEEKUSER: register %s "
+					"(offset %li) failed",
+					regs[i].name, regs[i].off);
+				failed = true;
+				continue;
+			}
+
+			long *pt_val = (void *)&_pt_regs + regs[i].off;
+			if (*pt_val != ret) {
+				tst_resm(TFAIL,
+					"register %s (offset %li) did not "
+					"match\n\tGETREGS: 0x%08lx "
+					"PEEKUSER: 0x%08lx",
+					regs[i].name, regs[i].off, *pt_val,
+					ret);
+				failed = true;
+			}
+
 		}
 
-		long *pt_val = (void *)&pt_regs + regs[i].off;
-		if (*pt_val != ret) {
-			tst_resm(TINFO, "register %s (offset %li) did not match",
-				regs[i].name, regs[i].off, *pt_val, ret);
-			tst_resm(TINFO, "\tGETREGS: 0x%08lx  PEEKUSER: 0x%08lx",
-				*pt_val, ret);
-			failed = true;
-		}
 	}
 
- done:
-	tst_resm((failed ? TFAIL : TPASS), "PTRACE PEEKUSER/GETREGS (poison 0x%02x)", poison);
+	tst_resm((failed ? TFAIL : TPASS),
+		"PTRACE PEEKUSER/GETREGS (poison 0x%02x)", poison);
+#else
+	tst_brkm(TCONF, cleanup, "System doesn't have ptrace_regs structure");
+#endif
 }
 
 int main(int argc, char *argv[])
 {
 	char *msg;
+
+	if (ARRAY_SIZE(regs) == 0)
+		tst_brkm(TCONF, tst_exit,
+			"test not supported for your arch (yet)");
 
 	if ((msg = parse_opts(argc, argv, NULL, NULL)))
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
@@ -116,14 +132,4 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-#else
-
-#include <stdio.h>
-
-int main()
-{
-	puts("ptrace04: test not supported for your arch (yet)");
-	return 0;
-}
-
-#endif
+static void cleanup() { }

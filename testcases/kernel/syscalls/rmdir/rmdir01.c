@@ -24,7 +24,7 @@
  * DESCRIPTION
  *	This test will verify that rmdir(2) syscall basic functionality.
  *	verify rmdir(2) returns a value of 0 and the directory being
- *	removed 
+ *	removed
  *
  * ALGORITHM
  *	Setup:
@@ -62,7 +62,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "test.h" 
+#include "test.h"
 #include "usctest.h"
 
 void setup();
@@ -70,23 +70,22 @@ void cleanup();
 
 #define PERMS		0777
 
-char *TCID="rmdir01";           /* Test program identifier.    */
-int TST_TOTAL=1;                /* Total number of test cases. */
-extern int Tst_count;           /* Test Case counter for tst_* routines */
+char *TCID = "rmdir01";		/* Test program identifier.    */
+int TST_TOTAL = 1;		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-char tstdir [100];
+char tstdir[100];
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
-	int lc;             /* loop counter */
-	char *msg;          /* message returned from parse_opts */
-	struct stat buf;	
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
+	struct stat buf;
 
 	/*
 	 * parse standard options
 	 */
-	if ((msg=parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -94,14 +93,14 @@ main(int ac, char **av)
 	 * perform global setup for test
 	 */
 	setup();
-	
+
 	/*
 	 * check looping state if -i option given
 	 */
-	for (lc=0; TEST_LOOPING(lc); lc++) {
-	  
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+
 		/* reset Tst_count in case we are looping. */
-		Tst_count=0;
+		Tst_count = 0;
 
 		/*
 		 * TEST rmdir() base functionality
@@ -110,16 +109,15 @@ main(int ac, char **av)
 		/* Initialize the test directory name */
 
 		/* create a directory */
-		if ( mkdir(tstdir, PERMS) == -1 ) {
+		if (mkdir(tstdir, PERMS) == -1) {
 			tst_brkm(TBROK, cleanup, "mkdir(%s, %#o) Failed",
 				 tstdir, PERMS);
-			/*NOTREACHED*/
-		}
+		 /*NOTREACHED*/}
 		/* call rmdir using TEST macro */
 
 		TEST(rmdir(tstdir));
 
-		if (TEST_RETURN == -1 ) {
+		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL, "rmdir(%s) Failed", tstdir);
 			continue;
 		}
@@ -127,34 +125,31 @@ main(int ac, char **av)
 		if (STD_FUNCTIONAL_TEST) {
 			/* check whether tstdir been removed */
 			if (stat(tstdir, &buf) != -1) {
-		      		tst_resm(TFAIL, "directory %s still exists",
+				tst_resm(TFAIL, "directory %s still exists",
 					 tstdir);
-				continue;  
+				continue;
 			} else {
 				tst_resm(TPASS, "directory has been removed");
 			}
 		} else {
 			tst_resm(TPASS, "call succeeded");
 		}
-	
-	}   /* End for TEST_LOOPING */
-	
+
+	}			/* End for TEST_LOOPING */
+
 	/*
 	 * cleanup and exit
 	 */
 	cleanup();
 
-	/*NOTREACHED*/	
-
-  return(0);
+	 /*NOTREACHED*/ return 0;
 
 }
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void 
-setup()
+void setup()
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -164,16 +159,15 @@ setup()
 
 	/* Create a temporary directory and make it current. */
 	tst_tmpdir();
-	
-	sprintf(tstdir,"./tstdir_%d",getpid());	
+
+	sprintf(tstdir, "./tstdir_%d", getpid());
 }
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
  *              completion or premature exit.
  */
-void 
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.
@@ -185,7 +179,7 @@ cleanup()
 	 * Remove the temporary directory.
 	 */
 	tst_rmdir();
-	
+
 	/*
 	 * Exit with return code appropriate for results.
 	 */

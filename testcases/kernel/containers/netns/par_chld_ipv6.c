@@ -15,13 +15,13 @@
 *
 ***************************************************************************/
 /*=========================================================================
-* This testcase creates the network namespace. 
+* This testcase creates the network namespace.
 * It creates veth pair . Also assigns IP addresses to the childNS.
 * Also it starts the sshd daemon @ port 7890
 *
 * Scripts Used: paripv6.sh childipv6.sh
-* 
-* Author: Veerendra C <vechandr@in.ibm.com> 
+*
+* Author: Veerendra C <vechandr@in.ibm.com>
 *                      31/07/2008
 =========================================================================*/
 
@@ -29,7 +29,7 @@
 #include <sched.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../libclone/libclone.h"
+#include "libclone.h"
 #include <sched.h>
 #include <sys/syscall.h>
 #include <unistd.h>
@@ -41,21 +41,10 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <test.h>
+#include "config.h"
 
 char *TCID = "netns_ipv6";
-int TST_TOTAL=1;
- 
-extern pid_t getpgid(pid_t pid);
-extern pid_t getsid(pid_t pid);
-
-int crtchild(char *s1)
-{
-    char *cmd[] = { "/bin/bash", s1, (char *)0 };
-    execve("/bin/bash", cmd, __environ);
-    tst_resm(TFAIL, "The code would not reach here on success\n");
-    perror("execve");
-    return 1;
-}
+int TST_TOTAL = 1;
 
 int main()
 {
@@ -65,7 +54,7 @@ int main()
 
     flags |= CLONE_NEWNS;
     flags |= CLONE_NEWNET;
- 
+
 
     if (tst_kvercmp(2,6,19) < 0)
 	return 1;
@@ -76,29 +65,31 @@ int main()
         tst_resm(TINFO,"LTPROOT env variable is not set\n");
         tst_resm(TINFO,"Please set LTPROOT and re-run the test.. Thankyou\n");
         return -1;
-    } 
+    }
 
     par = malloc (FILENAME_MAX);
     child = malloc (FILENAME_MAX);
 
-    if (par == NULL || child == NULL ) {
+    if (par == NULL || child == NULL) {
         tst_resm(TFAIL, "error while allocating mem");
         exit(1);
     }
-    sprintf(par, "%s/testcases/kernel/containers/netns/paripv6.sh" ,     \
-ltproot);
-    sprintf(child, "%s/testcases/kernel/containers/netns/childipv6.sh" , \
-ltproot);
+    sprintf(par, "%s/testcases/bin/paripv6.sh", ltproot);
+    sprintf(child, "%s/testcases/bin/childipv6.sh", ltproot);
 
     if ((pid = fork()) == 0) {
 
         // Child.
+#if HAVE_UNSHARE
         ret = unshare(flags);
         if (ret < 0) {
             perror("unshare");
 	    tst_resm(TFAIL, "Error:Unshare syscall failed for network namespace\n");
             return 1;
         }
+#else
+	tst_resm(TCONF, "System doesn't have unshare support");
+#endif
     return crtchild(child);
     }
     else{

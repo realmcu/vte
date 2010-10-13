@@ -268,7 +268,7 @@ main(int argc, char *argv[])
 			{
 				CLEANERROR("'a' missing from mmap");
 				(void)fprintf(stderr, "i=%d\nj=%d\n"
-					"val=0x%x\n", i, j, 
+					"val=0x%x\n", i, j,
 					(int)(*(mmapaddr+pagesize*(6*i+j))));
 				anyfail();	//LTP Port
 			}
@@ -293,7 +293,7 @@ int anyfail()
   tst_resm(TFAIL, "Test failed\n");
   tst_rmdir();
   tst_exit();
-  return(0);
+  return 0;
 }
 
 /*****	**	**	*****/

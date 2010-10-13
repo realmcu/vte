@@ -23,7 +23,7 @@
  *
  * DESCRIPTION
  *	Testcase to test whether chdir(2) sets errno correctly.
- * 
+ *
  * ALGORITHM
  *	1.	Test for ENAMETOOLONG:
  *		Create a bad directory name with length more than
@@ -64,9 +64,10 @@
 char *TCID = "chdir04";
 extern int Tst_count;
 
-int exp_enos[] = {ENAMETOOLONG, ENOENT, EFAULT, 0};
+int exp_enos[] = { ENAMETOOLONG, ENOENT, EFAULT, 0 };
 
-char bad_dir[] = "abcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyz"; 
+char bad_dir[] =
+    "abcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyz";
 
 char noexist_dir[] = "/tmp/noexistdir";
 
@@ -75,23 +76,24 @@ struct test_case_t {
 	int error;
 } TC[] = {
 	/*
- 	 * to test whether chdir() is setting ENAMETOOLONG if the
+	 * to test whether chdir() is setting ENAMETOOLONG if the
 	 * directory is more than VFS_MAXNAMELEN
- 	 */
-	{bad_dir, ENAMETOOLONG},
-
-	/*
-	 * to test whether chdir() is setting ENOENT if the
-	 * directory is not existing.
 	 */
-	{noexist_dir, ENOENT},
-
+	{
+	bad_dir, ENAMETOOLONG},
+	    /*
+	     * to test whether chdir() is setting ENOENT if the
+	     * directory is not existing.
+	     */
+	{
+	noexist_dir, ENOENT},
 #if !defined(UCLINUX)
-	/*
-	 * to test whether chdir() is setting EFAULT if the
-	 * directory is an invalid address.
-	 */
-	{(void *)-1, EFAULT}
+	    /*
+	     * to test whether chdir() is setting EFAULT if the
+	     * directory is an invalid address.
+	     */
+	{
+	(void *)-1, EFAULT}
 #endif
 };
 
@@ -103,17 +105,16 @@ int flag;
 void setup(void);
 void cleanup(void);
 
-char * bad_addr = 0;
+char *bad_addr = 0;
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
+	int lc;			/* loop counter */
 	int i;
-	char *msg;			/* message returned from parse_opts */
+	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -128,7 +129,7 @@ main(int ac, char **av)
 		Tst_count = 0;
 
 		/* loop through the test cases */
-		for (i=0; i<TST_TOTAL; i++) {
+		for (i = 0; i < TST_TOTAL; i++) {
 
 			TEST(chdir(TC[i].dname));
 
@@ -140,27 +141,22 @@ main(int ac, char **av)
 			TEST_ERROR_LOG(TEST_ERRNO);
 
 			if (TEST_ERRNO == TC[i].error) {
-				tst_resm(TPASS, "expected failure - "
-					 "errno = %d : %s", TEST_ERRNO,
-					 strerror(TEST_ERRNO));
+				tst_resm(TPASS|TTERRNO, "expected failure");
 			} else {
-				tst_resm(TFAIL, "unexpected error - %d : %s - "
-					 "expected %d", TEST_ERRNO,
-					 strerror(TEST_ERRNO), TC[i].error);
+				tst_resm(TFAIL|TTERRNO, "unexpected error (expected %d)",
+					TC[i].error);
 			}
 		}
 	}
 	cleanup();
 
 	return 0;
-	/*NOTREACHED*/
-}
+ /*NOTREACHED*/}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void
-setup()
+void setup()
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -173,21 +169,19 @@ setup()
 
 #if !defined(UCLINUX)
 	bad_addr = mmap(0, 1, PROT_NONE,
-			MAP_PRIVATE_EXCEPT_UCLINUX|MAP_ANONYMOUS, 0, 0);
+			MAP_PRIVATE_EXCEPT_UCLINUX | MAP_ANONYMOUS, 0, 0);
 	if (bad_addr == MAP_FAILED) {
-		tst_brkm(TBROK, cleanup, "mmap failed");
+		tst_brkm(TBROK|TERRNO, cleanup, "mmap() failed");
 	}
 	TC[2].dname = bad_addr;
 #endif
 }
 
-
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
  *	       completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.

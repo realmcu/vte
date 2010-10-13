@@ -25,9 +25,9 @@
  *	hugeshmdt01 - check that largr shared memory is detached correctly
  *
  * ALGORITHM
- *	create a large shared memory resource 
+ *	create a large shared memory resource
  *	attach it to the current process and give it a value
- *	call shmdt() using the TEST macro	
+ *	call shmdt() using the TEST macro
  *	check the return code
  *	  if failure, issue a FAIL message.
  *	otherwise,
@@ -86,9 +86,9 @@ int main(int ac, char **av)
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
-        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 ) 
-             tst_brkm(TBROK, cleanup, "Test cannot be continued owning to sufficient availability of Hugepages on the system");
-        else              
+        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 )
+             tst_brkm(TCONF, tst_exit, "Not enough available Hugepages");
+        else             
              huge_pages_shm_to_be_allocated = ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
 
 	setup();			/* global setup */
@@ -130,7 +130,7 @@ int main(int ac, char **av)
 	cleanup();
 
 	/*NOTREACHED*/
-	return(0);
+	return 0;
 }
 
 /*
@@ -159,7 +159,7 @@ check_functionality()
 	 * with the call to siglongjmp() in the signal handler.
 	 *
 	 * An attempt to do the assignment without using the sigsetjmp()
-	 * and siglongjmp() calls will result in an infinite loop.  Program 
+	 * and siglongjmp() calls will result in an infinite loop.  Program
 	 * control is returned to the assignment statement after the execution
 	 * of the signal handler and another SIGSEGV will be generated.
 	 */
@@ -174,7 +174,7 @@ check_functionality()
 		tst_resm(TFAIL, "huge shared memory was not detached correctly");
 	}
 }
- 
+
 /*
  * sighandler()
  */

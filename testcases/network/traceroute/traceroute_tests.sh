@@ -1,3 +1,4 @@
+#!/bin/sh
 ################################################################################
 ##                                                                            ##
 ## Copyright (c) International Business Machines  Corp., 2001                 ##
@@ -28,10 +29,6 @@
 #
 # History:       Mar 03 2003 - Created - Manoj Iyer.
 #
-#! /bin/sh
-
-
-
 # Function:     chk_ifexists
 #
 # Description:  - Check if command required for this test exits.
@@ -45,7 +42,7 @@ chk_ifexists()
 {
     RC=0
 
-    which $2 &>$LTPTMP/tst_traceroute.err || RC=$?
+    which $2 > $LTPTMP/tst_traceroute.err 2>&1 || RC=$?
     if [ $RC -ne 0 ]
     then
         tst_brkm TBROK NULL "$1: command $2 not found."
@@ -81,7 +78,7 @@ init()
         LTPTMP=$TMP/tst_traceroute.$$
     fi
 
-    mkdir -p $LTPTMP &>/dev/null || RC=$?
+    mkdir -p $LTPTMP > /dev/null 2>&1 || RC=$?
     if [ $RC -ne 0 ]
     then
          tst_brkm TBROK "INIT: Unable to create temporary directory"
@@ -143,7 +140,7 @@ test01()
     tst_resm TINFO "Test #1: traceroute returns the path taken by IP packet"
     tst_resm TINFO "Test #1: to that host."
 
-    traceroute `hostname` 38 &>$LTPTMP/tst_traceroute.out || RC=$?
+    traceroute `hostname` 38 > $LTPTMP/tst_traceroute.out 2>&1 || RC=$?
     if [ $RC -ne 0 ]
     then
         tst_res TFAIL $LTPTMP/tst_traceroute.out \
@@ -151,9 +148,9 @@ test01()
         return $RC
     fi
 
-    cat $LTPTMP/tst_traceroute.out | head -n 1 &>$LTPTMP/tst_traceroute.out.1    
+    cat $LTPTMP/tst_traceroute.out | head -n 1 > $LTPTMP/tst_traceroute.out.1 2>&1    
     diff -iwB $LTPTMP/tst_traceroute.out.1 $LTPTMP/tst_traceroute.exp \
-        &>$LTPTMP/tst_traceroute.err || RC=$?
+        > $LTPTMP/tst_traceroute.err 2>&1 || RC=$?
     if [ $RC -ne 0 ]
     then
         tst_res TFAIL $LTPTMP/tst_traceroute.err \

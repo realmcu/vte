@@ -21,12 +21,12 @@
 * from parent-NS to child-NS and vice-versa.
 *
 * Scripts Used: parentns.sh, childns.sh ,  parent.sh , child.sh.
-* 
-* Author: Veerendra C <vechandr@in.ibm.com> 
+*
+* Author: Veerendra C <vechandr@in.ibm.com>
 *                      31/07/2008
 * =============================================================================*/
 
-#include "../libclone/libclone.h"
+#include "libclone.h"
 
 int main()
 {

@@ -19,7 +19,16 @@
  
 
 // Use gcc -o xmm xmm.c -pthread -lm to compile.
+#include "test.h"
+#include "usctest.h"
 
+/* Extern Global Variables */
+extern int  Tst_count;               /* counter for tst_xxx routines.         */
+extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
+/* Global Variables */
+char *TCID     = "tcore";            /* test program identifier.              */
+
+#if defined __i386__ || defined(__x86_64__)
 #include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -27,6 +36,8 @@
 #include <pthread.h>
 
 #define BUFFER_SIZE 16
+
+int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 
 /* Circular buffer of integers. */
 
@@ -110,11 +121,11 @@ producer (void *data)
   a3 += b3;
   a3 *= pow(b3, 2);
   pid = getpid();
-  printf("producer pid=%d\n", pid);
+  tst_resm(TINFO,"producer pid=%d", pid);
   sleep(1);
   for (n = 0; n < 10000; n++)
     {
-      printf ("%d --->\n", n);
+      tst_resm(TINFO,"%d --->", n);
       put (&buffer, n);
 
       if (n==7686) {
@@ -126,7 +137,7 @@ producer (void *data)
  	{
 	char buf[16];
 	sprintf(buf, "%d%d\n", pid, pid);
-	__asm__ ("movups %0, %%xmm1;"::"m"(buf));
+        asm volatile ("movups (%0), %%xmm1;"::"r" (buf):"memory");
 	}
 	    sleep(1);
       }
@@ -142,17 +153,17 @@ consumer (void *data)
   char *junk = NULL;
   pid_t pid;
   long double a2 = 10002.5, b2 = 2888883.5;
-  long double c2, d2, e2, f2;
+  long double d2, e2, f2;
   a2 += b2;
   pid = getpid();
-  printf("consumer pid=%d\n", pid);
+  tst_resm(TINFO,"consumer pid=%d", pid);
   sleep(1);
   while (1)
     {
       d = get (&buffer);
       if (d == OVER)
 	break;
-      printf ("---> %d\n", d);
+      tst_resm(TINFO,"---> %d", d);
       if (d==7688) {
 	    system("ps ax | grep ex");
 	    d2 = pid * a2 / b2;
@@ -162,9 +173,9 @@ consumer (void *data)
 	char buf[16];
 	char buf1[16];
 	sprintf(buf, "%d%d\n", pid, pid);
-	sprintf(buf1,"%d",d2);
-	__asm__ ("movups %0,%%xmm2;"::"m"(buf));
-	__asm__ ("movups %0, %%xmm5;"::"m"(buf));
+	sprintf(buf1,"%Lf",d2);
+        asm volatile ("movups (%0), %%xmm2;":: "r" (buf):"memory");
+        asm volatile ("movups (%0), %%xmm5;":: "r" (buf):"memory");
 	}
 	    *junk = 0;
       }
@@ -178,7 +189,7 @@ main (void)
   pthread_t th_a, th_b;
   void *retval;
   double a1 = 1.5, b1 = 2.5;
-  long double c1, d1, e1;
+  long double c1 ;
   pid_t pid;
   a1 += b1;
 
@@ -195,3 +206,15 @@ main (void)
   pthread_join (th_b, &retval);
   return 0;
 }
+
+#else /* Not __i386__ */
+
+
+int TST_TOTAL = 0;              /* Total number of test cases. */
+
+int main() {
+        tst_resm(TCONF, "tcore only works on x86 systems ...");
+        tst_exit();
+}
+
+#endif /* __i386__ */

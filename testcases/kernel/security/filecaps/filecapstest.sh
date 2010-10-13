@@ -19,24 +19,15 @@
 ##                                                                            ##
 ################################################################################
 
-checkforlibcap
-ret=$?
-if [ $ret -ne 0 ]; then
-	echo "Filecaps 0 CONF : System doesn't support execution of the test"
-	echo setcap not installed.  Please install libcap-2.11 or newer from
-	echo ftp://ftp.kernel.org/pub/linux/libs/security/linux-privs/libcap2
-	exit 0
-fi
-checkforfilecaps.sh
-ret=$?
-if [ $ret -ne 0 ]; then
-	exit 1
-fi
-
 echo "Running in:"
-cp $LTPROOT/testcases/bin/print_caps .
-mkfifo caps_fifo
-chmod 777 caps_fifo
+#rm -f print_caps
+#cp $LTPROOT/testcases/bin/print_caps .
+#FIFOFILE="$LTPROOT/testcases/bin/caps_fifo"
+TMP=${TMP:=/tmp}
+FIFOFILE="$TMP/caps_fifo"
+rm -f $FIFOFILE
+mkfifo $FIFOFILE
+chmod 777 $FIFOFILE
 exit_code=0
 echo "cap_sys_admin tests"
 verify_caps_exec 0
@@ -59,4 +50,5 @@ if [ $tmp -ne 0 ]; then
 	exit_code=$tmp
 fi
 
+unlink $FIFOFILE
 exit $exit_code

@@ -25,7 +25,9 @@
 #   HISTORY     :
 #       02/11/2003 Robbie Williamson (robbiew@austin.ibm.com)
 #               written
-####################################################
+#	11/20/2008 Aime Le Rouzic (aime.lerouzic@bull.net)
+#		adapt script to work with portmap and rpcbind
+##############################################################
 
 export LTPROOT=${PWD}
 echo $LTPROOT | grep testscripts > /dev/null 2>&1
@@ -43,6 +45,7 @@ leftover_memsize=0
 duration=86400
 datafile="/tmp/ltpstress.data"
 iofile="/tmp/ltpstress.iodata"
+logfile="/tmp/ltpstress.log"
 interval=10
 Sar=0
 Top=0
@@ -59,7 +62,7 @@ usage()
     -d datafile     Data file for 'sar' or 'top' to log to. Default is "/tmp/ltpstress.data".
     -i # (in sec)   Interval that 'sar' or 'top' should take snapshots. Default is 10 seconds.
     -I iofile       Log results of 'iostat' to a file every interval. Default is "/tmp/ltpstress.iodata".
-    -l logfile      Log results of test in a logfile.
+    -l logfile      Log results of test in a logfile. Default is "/tmp/ltpstress.log"
     -m # (in Mb)    Specify the _minimum_ memory load of # megabytes in background. Default is all the RAM + 1/2 swap.
     -n              Disable networking stress.
     -S              Use 'sar' to measure data. 
@@ -103,7 +106,7 @@ do  case $arg in
 	I)	Iostat=1
 		iofile=$OPTARG;;
 
-        l)      logfile="-l $OPTARG"
+        l)      logfile=$OPTARG
 		LOGGING=1;;
 
         m)	memsize=$(($OPTARG * 1024))
@@ -152,43 +155,62 @@ if [ $NO_NETWORK -eq 0 ];then
 
   ps -ef | grep portmap | grep -v grep
   if [ $? -eq 1 ];then
-    /sbin/portmap &
-  fi
-  sleep 1
-  ps -ef | grep portmap | grep -v grep
-  if [ $? -eq 1 ];then
-    echo "Error: Could not start portmap daemon."
-    exit 1
+    ps -ef | grep rpcbind | grep -v grep
+    if [ $? -eq 1 ];then
+      echo "Portmap and rpcbind not running"
+      echo "Let's start portmap"
+      /sbin/portmap &
+      sleep 1
+      ps -ef | grep portmap | grep -v grep
+      if [ $? -eq 1 ];then
+        echo "Could not start portmap, Let's start rpcbind"
+        /sbin/rpcbind &
+        sleep 1
+        ps -ef | grep rpcbind | grep -v grep
+        if [ $? -eq 1 ];then
+          Echo "Error: Could not start rpcbind daemon."
+          exit 1
+        else
+          echo "The RPC test suite is using rpcbind"	
+        fi
+      else
+	echo "The RPC test suite is using portmap"
+      fi
+    else
+      echo "The RPC test suite is using rpcbind"
+    fi
+  else
+    echo "The RPC test suite is using portmap"
   fi
 
-  rpcinfo -p | grep nfs 
+  ps -e | grep nfsd
   if [ $? -eq 1 ];then
     /usr/sbin/rpc.nfsd 
   fi
   sleep 1
-  rpcinfo -p | grep nfs 
+  ps -e | grep nfsd
   if [ $? -eq 1 ];then
     echo "Error: Could not start nfs server daemon."
     exit 1
   fi
 
-  rpcinfo -p | grep status 
+  ps -e | grep rpc.statd
   if [ $? -eq 1 ];then
     /sbin/rpc.statd 
   fi
   sleep 1
-  rpcinfo -p | grep status 
+  ps -e | grep rpc.statd
   if [ $? -eq 1 ];then
     echo "Error: Could not start statd daemon."
     exit 1
   fi
 
-  rpcinfo -p | grep mount 
+  ps -e | grep rpc.mountd
   if [ $? -eq 1 ];then
     /usr/sbin/rpc.mountd 
   fi
   sleep 1
-  rpcinfo -p | grep mount 
+  ps -e | grep rpc.mountd
   if [ $? -eq 1 ];then
     echo "Error: Could not start mountd daemon."
     exit 1
@@ -201,7 +223,12 @@ if [ $memsize -eq 0 ]; then
   TOTALRAM=$(free -m | grep Mem: | awk {'print $2'})
   TOTALSWAP=$(free -m | grep Swap: | awk {'print $2'})
   TESTSWAP=$(($TOTALSWAP / 2))
-  TESTMEM=$(($TESTSWAP + $TOTALRAM))
+  if [ $TESTSWAP -eq 0 ]; then
+       #if there is no swap in the system, use only the free RAM
+       TESTMEM=$(free -m | grep Mem: | awk {'print $4'})
+  else
+       TESTMEM=$(($TESTSWAP + $TOTALRAM))
+  fi
  #Convert to kilobytes
   memsize=$(($TESTMEM * 1024))
   check_memsize	
@@ -220,9 +247,9 @@ fi
 if [ $NO_NETWORK -eq 0 ];then
  netpipe.sh >/dev/null 2>/dev/null &
 fi
-${LTPROOT}/tools/rand_lines -g ${LTPROOT}/runtest/stress.part1 > ${TMP}/stress.part1
-${LTPROOT}/tools/rand_lines -g ${LTPROOT}/runtest/stress.part2 > ${TMP}/stress.part2
-${LTPROOT}/tools/rand_lines -g ${LTPROOT}/runtest/stress.part3 > ${TMP}/stress.part3
+${LTPROOT}/bin/rand_lines -g ${LTPROOT}/runtest/stress.part1 > ${TMP}/stress.part1
+${LTPROOT}/bin/rand_lines -g ${LTPROOT}/runtest/stress.part2 > ${TMP}/stress.part2
+${LTPROOT}/bin/rand_lines -g ${LTPROOT}/runtest/stress.part3 > ${TMP}/stress.part3
 
 sleep 2
 
@@ -248,18 +275,18 @@ output1=${TMPBASE}/ltpstress.$$.output1
 output2=${TMPBASE}/ltpstress.$$.output2
 output3=${TMPBASE}/ltpstress.$$.output3
 
-${LTPROOT}/pan/pan -e -p -q -S -t ${hours}h -a stress1 -n stress1 $logfile -f ${TMP}/stress.part1 -o $output1 & 
-${LTPROOT}/pan/pan -e -p -q -S -t ${hours}h -a stress2 -n stress2 $logfile -f ${TMP}/stress.part2 -o $output2 &
-${LTPROOT}/pan/pan -e -p -q -S -t ${hours}h -a stress3 -n stress3 $logfile -f ${TMP}/stress.part3 -o $output3 &
+${LTPROOT}/bin/ltp-pan -e -p -q -S -t ${hours}h -a stress1 -n stress1 -l $logfile -f ${TMP}/stress.part1 -o $output1 & 
+${LTPROOT}/bin/ltp-pan -e -p -q -S -t ${hours}h -a stress2 -n stress2 -l $logfile -f ${TMP}/stress.part2 -o $output2 &
+${LTPROOT}/bin/ltp-pan -e -p -q -S -t ${hours}h -a stress3 -n stress3 -l $logfile -f ${TMP}/stress.part3 -o $output3 &
 
-echo "Running LTP Stress for $hours hour(s) using $memsize Mb"
+echo "Running LTP Stress for $hours hour(s) using $(($memsize/1024)) Mb"
 echo ""
 echo "Test output recorded in:"
 echo "        $output1"
 echo "        $output2"
 echo "        $output3"
 
-# Sleep a little longer than duration to let pan "try" to gracefully end itself.
+# Sleep a little longer than duration to let ltp-pan "try" to gracefully end itself.
 sleep $(($duration + 10))  
 
 if [ $Sar -eq 1 ]; then
@@ -268,7 +295,7 @@ fi
 if [ $Top -eq 1 ]; then
   kill $SCREEN_PID >/dev/null 2>&1
 fi
-killall -9 pan >/dev/null 2>&1
+killall -9 ltp-pan >/dev/null 2>&1
 killall -9 genload >/dev/null 2>&1
 if [ $NO_NETWORK -eq 0 ];then
   killall -9 netpipe.sh >/dev/null 2>&1

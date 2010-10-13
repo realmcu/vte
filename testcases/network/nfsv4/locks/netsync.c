@@ -47,7 +47,8 @@ int clientReceiveNet(){
 
 int setupConnectionServeur(){
     struct sockaddr_in local;
-    int size,c;
+    int c;
+    socklen_t size;
     int sock;
     struct sockaddr_in remote;
 
@@ -57,11 +58,11 @@ int setupConnectionServeur(){
         perror ("socket");
         exit(1);
     }
-    bzero(&local, sizeof(local));
+    memset(&local, 0x00, sizeof(local));
     local.sin_family = AF_INET;
     local.sin_port = htons(PORT);
     local.sin_addr.s_addr = INADDR_ANY;
-    bzero(&(local.sin_zero), 8);
+    memset(&(local.sin_zero), 0x00, 8);
 
     if(bind(sock, (struct sockaddr *)&local, sizeof(struct sockaddr))== -1){
         perror("bind"); 

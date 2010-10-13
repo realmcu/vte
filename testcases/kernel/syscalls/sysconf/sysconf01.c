@@ -1,20 +1,20 @@
 /*
  *
- *   Copyright (c) International Business Machines  Corp., 2002
+ * Copyright (c) International Business Machines  Corp., 2002
  *
- *   This program is free software;  you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2 of the License, or
- *   (at your option) any later version.
+ * This program is free software;  you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY;  without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
- *   the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY;  without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
+ * the GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program;  if not, write to the Free Software
- *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program;  if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 /*
@@ -42,25 +42,44 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID="sysconf01";            /* Test program identifier.    */
-int TST_TOTAL = 56;                /* Total number of test cases. */
-extern int Tst_count;           /* Test Case counter for tst_* routines */
+char *TCID = "sysconf01";	/* Test program identifier.    */
+int TST_TOTAL = 56;		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-
-static void _test_sysconf(int name, const char *strname)
+static void _test_sysconf(long name, const char *strname)
 {
 	long retval;
 
 	/* make sure we reset this as sysconf() will not */
 	errno = 0;
 	retval = sysconf(name);
-	if((retval == -1) && (errno))
-		tst_resm(TWARN, "Bad option %s\n", strname);
-	else if((retval == -1) && (!errno))
-		tst_resm(TINFO, "%s NOT SUPPORTED\n", strname);
-	else
+	if (retval == -1) {
+
+		/*
+		 * The manpage for sysconf(2) specifically states that:
+		 * 1. If -1 is returned and errno is EINVAL, then the resource
+		 * name doesn't exist.
+		 * 2. If errno remains 0, then the limit isn't implemented.
+		 * 3. Else, something weird happened with the syscall.
+		 */
+		switch (errno) {
+		case EINVAL:
+			tst_resm(TCONF, "Resource doesn't exist: %s", strname);
+			break;
+		case 0:
+			tst_resm(TCONF, "Not supported sysconf resource: %s",
+					strname);
+			break;
+		default:
+			tst_resm(TFAIL | TERRNO, "Unexpected errno value for "
+						 "%s", strname);
+			break;
+		}
+	} else
 		tst_resm(TPASS, "%s = %li", strname, retval);
+
 }
+
 #define test_sysconf(name) _test_sysconf(name, #name)
 
 int main()
@@ -134,23 +153,26 @@ int main()
 
 	/* 56 */
 	{
-		int retval;
+		int retval, actual;
 		errno = 0;
 		retval = sysconf(INVAL_FLAG);
-		if (retval != -1)
+		actual = errno;
+		if (retval != -1) {
 			tst_resm(TFAIL,
-				"sysconf succeeded for invalid flag (%i), retval=%d errno=%d: %s",
-				INVAL_FLAG, retval, errno, strerror(errno));
-		else if (errno != EINVAL)
+				 "sysconf succeeded for invalid flag (%i), "
+				 " retval=%d errno=%d: %s",
+				 INVAL_FLAG, retval, actual, strerror(actual));
+		} else if (actual != EINVAL) {
 			tst_resm(TFAIL,
-				"sysconf correctly failed, but expected errno (%i) != actual (%i)\n",
-				EINVAL, retval);
-		else
-			tst_resm(TPASS, "using invalid name");
+				 "sysconf correctly failed, but expected "
+				 "errno (%i) != actual (%i)", EINVAL, actual);
+		} else
+			tst_resm(TPASS, "The invalid sysconf key was trapped "
+					"appropriately");
 	}
 
 	tst_exit();
 
-	/**NOT REACHED**/
-	return(0);
+	/* NOT REACHED */
+	return 0;
 }

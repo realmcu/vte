@@ -15,8 +15,8 @@ setup()
         export TST_COUNT=0
 	export TST_TOTAL=3
 
-	# Remove any leftover test files from prior failed runs.
-	rm -rf $SELINUXTMPDIR/test_file $SELINUXTMPDIR/test_symlink
+	SELINUXTMPDIR=$(mktemp -d)
+	chcon -t test_file_t $SELINUXTMPDIR
 
 	# Create a test file.  
 	touch $SELINUXTMPDIR/test_file 2>&1
@@ -38,9 +38,9 @@ test01()
 	RC=$?
         if [ $RC -eq 0 ]
         then
-                echo "$TCID   PASS : readlink passed."
+                tst_resm TPASS "readlink passed."
         else
-                echo "$TCID   FAIL : readlink failed."
+                tst_resm TFAIL "readlink failed."
         fi
         return $RC
 }
@@ -56,10 +56,10 @@ test02()
 	RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : readlink passed."
+                tst_resm TPASS "readlink passed."
 		RC=0
         else
-                echo "$TCID   FAIL : readlink failed."
+                tst_resm TFAIL "readlink failed."
 		RC=1
         fi
 	return $RC
@@ -75,10 +75,10 @@ test03()
 	RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : readlink passed."
+                tst_resm TPASS "readlink passed."
 		RC=0
         else
-                echo "$TCID   FAIL : readlink failed."
+                tst_resm TFAIL "readlink failed."
 		RC=1
         fi
 	return $RC
@@ -86,8 +86,7 @@ test03()
 
 cleanup()
 {
-	# Cleanup.
-	rm -rf $SELINUXTMPDIR/test_file $SELINUXTMPDIR/test_symlink
+	rm -rf $SELINUXTMPDIR
 }
 
 # Function:     main

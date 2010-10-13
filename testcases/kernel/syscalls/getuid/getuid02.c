@@ -44,8 +44,9 @@
 #include <errno.h>
 #include <test.h>
 #include <usctest.h>
+#include "compat_16.h"
 
-char *TCID = "getuid02";
+TCID_DEFINE(getuid02);
 int TST_TOTAL = 1;
 extern int Tst_count;
 
@@ -54,13 +55,13 @@ void cleanup(void);
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned by parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned by parse_opts */
 
 	struct passwd *getpwuid(), *pwent;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -71,7 +72,7 @@ int main(int ac, char **av)
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
-		TEST(geteuid());
+		TEST(GETEUID());
 
 		if (TEST_RETURN < 0) {
 			tst_brkm(TBROK, cleanup, "This should never happen");
@@ -82,12 +83,17 @@ int main(int ac, char **av)
 			pwent = getpwuid(TEST_RETURN);
 			if (pwent == NULL) {
 				tst_resm(TFAIL, "geteuid() returned unexpected "
-					 "value %d", TEST_RETURN);
+					 "value %ld", TEST_RETURN);
+			} else if (!UID_SIZE_CHECK(pwent->pw_uid)) {
+				tst_brkm(TBROK,
+					 cleanup,
+					 "uid(%ld) is too large for testing geteuid16",
+					 TEST_RETURN);
 			} else {
 				if (pwent->pw_uid != TEST_RETURN) {
 					tst_resm(TFAIL, "getpwuid() value, %d, "
 						 "does not match geteuid() "
-						 "value, %d", pwent->pw_uid,
+						 "value, %ld", pwent->pw_uid,
 						 TEST_RETURN);
 				} else {
 					tst_resm(TPASS, "values from geteuid()"
@@ -100,15 +106,13 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	/*NOTREACHED*/
-	return(0);
+	 /*NOTREACHED*/ return 0;
 }
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void
-setup()
+void setup()
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -117,13 +121,11 @@ setup()
 	TEST_PAUSE;
 }
 
-
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
  *	       completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.
@@ -134,4 +136,3 @@ cleanup()
 	/* exit with return code appropriate for results */
 	tst_exit();
 }
-

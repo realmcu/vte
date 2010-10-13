@@ -2,7 +2,7 @@
 # Makefile for GCOV profiling kernel module
 #
 
-EXTRA_CFLAGS := -Wall -Wextra -Wno-unused-parameter
+EXTRA_CFLAGS := -Wall -W -Wno-unused-parameter
 
 ifneq ($(KERNELRELEASE),)
 
@@ -13,7 +13,7 @@ PWD	:= $(shell pwd)
 
 default:
 	$(MAKE) -C $(KDIR) SUBDIRS=$(PWD) modules
-	gcc $(EXTRA_CFLAGS) -o userBlockNLS userBlockNLS.c
+	${CC} $(EXTRA_CFLAGS) -o userBlockNLS userBlockNLS.c
 #	$(MAKE) -C $(KERNELDIR) SUBDIRS=$(PWD) modules
 
 clean:

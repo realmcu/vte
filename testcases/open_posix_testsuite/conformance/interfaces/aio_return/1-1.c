@@ -34,27 +34,25 @@
 #include "posixtest.h"
 
 #define TNAME "aio_return/1-1.c"
+#define BUF_SIZE 111
 
-int main()
+int main(void)
 {
 	char tmpfname[256];
-#define BUF_SIZE 111
 	char buf[BUF_SIZE];
-	int fd;
 	struct aiocb aiocb;
-	int retval;
+	int fd, retval;
 
-#if _POSIX_ASYNCHRONOUS_IO != 200112L
-	exit(PTS_UNSUPPORTED);
-#endif
+	if (sysconf(_SC_ASYNCHRONOUS_IO) != 200112L)
+		return PTS_UNSUPPORTED;
 
 	snprintf(tmpfname, sizeof(tmpfname), "/tmp/pts_aio_return_1_1_%d", 
 		  getpid());
 	unlink(tmpfname);
 	fd = open(tmpfname, O_CREAT | O_RDWR | O_EXCL,
 		  S_IRUSR | S_IWUSR);
-	if (fd == -1)
-	{
+	
+	if (fd == -1) {
 		printf(TNAME " Error at open(): %s\n",
 		       strerror(errno));
 		exit(PTS_UNRESOLVED);
@@ -65,22 +63,20 @@ int main()
 	memset(buf, 0xaa, BUF_SIZE);
 	memset(&aiocb, 0, sizeof(struct aiocb));
 	aiocb.aio_fildes = fd;
-	aiocb.aio_buf = buf;
+	aiocb.aio_buf    = buf;
 	aiocb.aio_nbytes = BUF_SIZE;
 
-	if (aio_write(&aiocb) == -1)
-	{
+	if (aio_write(&aiocb) == -1) {
+		close(fd);
 		printf(TNAME " Error at aio_write(): %s\n",
 		       strerror(errno));
 		exit(PTS_FAIL);
 	}
 
-	close(fd);
-
 	do {
-		retval = aio_error( &aiocb);
-		if (retval == -1)
-		{
+		retval = aio_error(&aiocb);
+		if (retval == -1) {
+			close(fd);
 			printf(TNAME " Error at aio_error(): %s\n",
 				strerror(errno));
 			exit(PTS_FAIL);
@@ -88,13 +84,15 @@ int main()
 	} while (retval == EINPROGRESS);
 
 	retval = aio_return(&aiocb);
-	if (retval != BUF_SIZE)
-	{
+
+	if (retval != BUF_SIZE) {
+		close(fd);
 		printf(TNAME " Error at aio_return(): %s\n",
 		       strerror(errno));
 		exit(PTS_FAIL);
 	}
 	
-	printf ("Test PASSED\n");
-	return PTS_PASS;
+	close(fd);
+	printf("Test PASSED\n");
+	exit(PTS_PASS);
 }

@@ -30,83 +30,83 @@
  * http://oss.sgi.com/projects/GenInfo/NoticeExplan/
  *
  */
-/* $Id: unlink06.c,v 1.1 2001/08/27 22:15:15 plars Exp $ */
+/* $Id: unlink06.c,v 1.5 2009/11/02 13:57:19 subrata_modak Exp $ */
 /**********************************************************
- * 
+ *
  *    OS Test - Silicon Graphics, Inc.
- * 
+ *
  *    TEST IDENTIFIER	: unlink06
- * 
+ *
  *    EXECUTED BY	: anyone
- * 
+ *
  *    TEST TITLE	: unlink(2) of a FIFO
- * 
+ *
  *    PARENT DOCUMENT	: usctpl01
- * 
+ *
  *    TEST CASE TOTAL	: 1
- * 
+ *
  *    WALL CLOCK TIME	: 1
- * 
+ *
  *    CPU TYPES		: ALL
- * 
+ *
  *    AUTHOR		: Richard Logan
- * 
+ *
  *    CO-PILOT		: William Roske
- * 
+ *
  *    DATE STARTED	: 03/30/94
- * 
+ *
  *    INITIAL RELEASE	: UNICOS 7.0
- * 
+ *
  *    TEST CASES
- * 
+ *
  * 	1.) unlink(2) returns...(See Description)
- *	
+ *
  *    INPUT SPECIFICATIONS
  * 	The standard options for system call tests are accepted.
  *	(See the parse_opts(3) man page).
- * 
+ *
  *    OUTPUT SPECIFICATIONS
- * 	
+ *$
  *    DURATION
  * 	Terminates - with frequency and infinite modes.
- * 
+ *
  *    SIGNALS
  * 	Uses SIGUSR1 to pause before test if option set.
  * 	(See the parse_opts(3) man page).
  *
  *    RESOURCES
  * 	None
- * 
+ *
  *    ENVIRONMENTAL NEEDS
  *      No run-time environmental needs.
- * 
+ *
  *    SPECIAL PROCEDURAL REQUIREMENTS
  * 	None
- * 
+ *
  *    INTERCASE DEPENDENCIES
  * 	None
- * 
+ *
  *    DETAILED DESCRIPTION
  *	This is a Phase I test for the unlink(2) system call.  It is intended
  *	to provide a limited exposure of the system call, for now.  It
  *	should/will be extended when full functional tests are written for
  *	unlink(2).
- * 
+ *
  * 	Setup:
  * 	  Setup signal handling.
  *	  Pause for SIGUSR1 if option specified.
- * 
+ *
  * 	Test:
  *	 Loop if the proper options are given.
  * 	  Execute system call
  *	  Check return code, if system call failed (return=-1)
  *		Log the errno and Issue a FAIL message.
  *	  Otherwise, Issue a PASS message.
- * 
+ *
  * 	Cleanup:
  * 	  Print errno log and/or timing stats if options given
- * 
- * 
+ *
+ *
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
 #include <sys/types.h>
@@ -123,133 +123,126 @@ void setup();
 void create_file();
 void cleanup();
 
-
-char *TCID="unlink06"; 		/* Test program identifier.    */
-int TST_TOTAL=1;    		/* Total number of test cases. */
+char *TCID = "unlink06";	/* Test program identifier.    */
+int TST_TOTAL = 1;		/* Total number of test cases. */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-int exp_enos[]={0, 0};
+int exp_enos[] = { 0, 0 };
 
 char Fname[255];
 
 /***********************************************************************
  * Main
  ***********************************************************************/
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
-    int lc;		/* loop counter */
-    char *msg;		/* message returned from parse_opts */
-    
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
+
     /***************************************************************
      * parse standard options
      ***************************************************************/
-    if ( (msg=parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *) NULL ) {
-	tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	tst_exit();
-    }
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+		tst_exit();
+	}
 
     /***************************************************************
      * perform global setup for test
      ***************************************************************/
-    setup();
+	setup();
 
-    /* set the expected errnos... */
-    TEST_EXP_ENOS(exp_enos);
+	/* set the expected errnos... */
+	TEST_EXP_ENOS(exp_enos);
 
     /***************************************************************
      * check looping state if -c option given
      ***************************************************************/
-    for (lc=0; TEST_LOOPING(lc); lc++) {
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-	/* reset Tst_count in case we are looping. */
-	Tst_count=0;
-	
-	create_file();
+		/* reset Tst_count in case we are looping. */
+		Tst_count = 0;
 
-        /*
-	 *  Call unlink(2)
-	 */
-	TEST(unlink(Fname));
-	
-	/* check return code */
-	if ( TEST_RETURN == -1 ) {
-	    TEST_ERROR_LOG(TEST_ERRNO);
-	    tst_resm(TFAIL, "unlink(%s) Failed, errno=%d : %s", Fname,
-		     TEST_ERRNO, strerror(TEST_ERRNO));
-	} else if ( STD_FUNCTIONAL_TEST ) {
-	    if ( access(Fname, F_OK) != -1 ) {
-	        tst_resm(TFAIL,
-	           "unlink(%s) returned %d, but access says file still exists.", 
-	           Fname, TEST_RETURN);
-	    }
-	    else {
-	        tst_resm(TPASS, "unlink(%s) returned %d", Fname, TEST_RETURN);
-	    }
-	}
-	else
-	    Tst_count++;
-	
-    }	/* End for TEST_LOOPING */
+		create_file();
+
+		/*
+		 *  Call unlink(2)
+		 */
+		TEST(unlink(Fname));
+
+		/* check return code */
+		if (TEST_RETURN == -1) {
+			TEST_ERROR_LOG(TEST_ERRNO);
+			tst_resm(TFAIL, "unlink(%s) Failed, errno=%d : %s",
+				 Fname, TEST_ERRNO, strerror(TEST_ERRNO));
+		} else if (STD_FUNCTIONAL_TEST) {
+			if (access(Fname, F_OK) != -1) {
+				tst_resm(TFAIL,
+					 "unlink(%s) returned %ld, but access says file still exists.",
+					 Fname, TEST_RETURN);
+			} else {
+				tst_resm(TPASS, "unlink(%s) returned %ld", Fname,
+					 TEST_RETURN);
+			}
+		} else
+			Tst_count++;
+
+	}			/* End for TEST_LOOPING */
 
     /***************************************************************
      * cleanup and exit
      ***************************************************************/
-    cleanup();
+	cleanup();
 
-    return 0;
-}	/* End main */
+	return 0;
+}				/* End main */
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
-void 
-setup()
+void setup()
 {
-    /* capture signals */
-    tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-    /* Pause if that option was specified */
-    TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
-    /* make a temp directory and cd to it */
-    tst_tmpdir();
+	/* make a temp directory and cd to it */
+	tst_tmpdir();
 
-    sprintf(Fname, "fifo_unlink%d", getpid());
+	sprintf(Fname, "fifo_unlink%d", getpid());
 
-}	/* End setup() */
-
+}				/* End setup() */
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
  *		completion or premature exit.
  ***************************************************************/
-void 
-cleanup()
+void cleanup()
 {
-    /*
-     * print timing stats if that option was specified.
-     * print errno log if that option was specified.
-     */
-    TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
-    /* Remove tmp dir and all files in it */
-    tst_rmdir();
+	/* Remove tmp dir and all files in it */
+	tst_rmdir();
 
-    /* exit with return code appropriate for results */
-    tst_exit();
+	/* exit with return code appropriate for results */
+	tst_exit();
 
-}	/* End cleanup() */
+}				/* End cleanup() */
 
 /******************************************************************
  *
  ******************************************************************/
-void
-create_file()
+void create_file()
 {
-    if(mkfifo(Fname, 0777) == -1) {
-        tst_brkm(TBROK, cleanup,
-	   "mkfifo(%s, 0777) failed errno:%d %s\n", Fname,
-	   errno, strerror(errno));
-    }
+	if (mkfifo(Fname, 0777) == -1) {
+		tst_brkm(TBROK, cleanup,
+			 "mkfifo(%s, 0777) failed errno:%d %s\n", Fname,
+			 errno, strerror(errno));
+	}
 }

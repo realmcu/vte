@@ -1,8 +1,9 @@
-test_pci: tpci_ki.o user_tpci.o
-	gcc tpci_ki.o user_tpci.o -o test_pci
 
-tpci_ki.o: tpci_ki.c 
-	gcc -c tpci_ki.c
+CFLAGS += -Wall
+OBJS = tpci_ki.o user_tpci.o
 
-user_tpci.o: user_tpci.c
-	gcc -c user_tpci.c
+test_pci: $(OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
+
+clean:
+	rm -f $(OBJS) test_pci

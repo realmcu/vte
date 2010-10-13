@@ -64,7 +64,7 @@ char *TCID = "shmget05";
 int TST_TOTAL = 1;
 extern int Tst_count;
 
-int exp_enos[] = {EACCES, 0};	/* 0 terminated list of expected errnos */
+int exp_enos[] = { EACCES, 0 };	/* 0 terminated list of expected errnos */
 
 int shm_id_1 = -1;
 
@@ -73,16 +73,16 @@ char *ltp_user = "nobody";
 
 int main(int ac, char **av)
 {
-	char *msg;			/* message returned from parse_opts */
+	char *msg;		/* message returned from parse_opts */
 	int pid;
 	void do_child(void);
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
-	setup();			/* global setup */
+	setup();		/* global setup */
 
 	if ((pid = FORK_OR_VFORK()) == -1) {
 		tst_brkm(TBROK, cleanup, "could not fork");
@@ -99,8 +99,7 @@ int main(int ac, char **av)
 
 		cleanup();
 
-		/*NOTREACHED*/
-	} else {		/* parent */
+	 /*NOTREACHED*/} else {	/* parent */
 		/* wait for the child to return */
 		if (waitpid(pid, NULL, 0) == -1) {
 			tst_brkm(TBROK, cleanup, "waitpid failed");
@@ -112,14 +111,13 @@ int main(int ac, char **av)
 		/* Remove the temporary directory */
 		tst_rmdir();
 	}
-	return(0);
+	return 0;
 }
 
 /*
  * do_child - make the TEST call as the child process
  */
-void
-do_child()
+void do_child()
 {
 	int lc;
 
@@ -132,17 +130,17 @@ do_child()
 		/*
 		 * Look for a failure ...
 		 */
-	
+
 		TEST(shmget(shmkey, SHM_SIZE, SHM_RW));
-	
+
 		if (TEST_RETURN != -1) {
 			tst_resm(TFAIL, "call succeeded when error expected");
 			continue;
 		}
-	
+
 		TEST_ERROR_LOG(TEST_ERRNO);
 
-		switch(TEST_ERRNO) {
+		switch (TEST_ERRNO) {
 		case EACCES:
 			tst_resm(TPASS, "expected failure - errno = "
 				 "%d : %s", TEST_ERRNO, strerror(TEST_ERRNO));
@@ -152,15 +150,14 @@ do_child()
 				 "unexpected error - %d : %s",
 				 TEST_ERRNO, strerror(TEST_ERRNO));
 			break;
-		}			
+		}
 	}
 }
 
 /*
  * setup() - performs all the ONE TIME setup for this test.
  */
-void
-setup(void)
+void setup(void)
 {
 	/* check for root as process owner */
 	check_root();
@@ -185,7 +182,7 @@ setup(void)
 	shmkey = getipckey();
 
 	/* create a shared memory segment with read and write permissions */
-	if ((shm_id_1 = shmget(shmkey, SHM_SIZE, 
+	if ((shm_id_1 = shmget(shmkey, SHM_SIZE,
 			       SHM_RW | IPC_CREAT | IPC_EXCL)) == -1) {
 		tst_brkm(TBROK, cleanup, "Failed to create shared memory "
 			 "segment in setup");
@@ -199,8 +196,7 @@ setup(void)
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
  * 	       or premature exit.
  */
-void
-cleanup(void)
+void cleanup(void)
 {
 	/*
 	 * print timing stats if that option was specified.
@@ -211,4 +207,3 @@ cleanup(void)
 	/* exit with return code appropriate for results */
 	tst_exit();
 }
-

@@ -30,7 +30,7 @@
  * http://oss.sgi.com/projects/GenInfo/NoticeExplan/
  *
  */
-/* $Header: /cvsroot/ltp/ltp/testcases/kernel/ipc/pipeio/pipeio.c,v 1.15 2008/12/11 13:17:49 subrata_modak Exp $ */
+/* $Header: /cvsroot/ltp/ltp/testcases/kernel/ipc/pipeio/pipeio.c,v 1.18 2009/03/19 07:10:02 subrata_modak Exp $ */
 /*
  *  This tool can be used to beat on system or named pipes.
  *  See the help() function below for user information.
@@ -64,7 +64,7 @@ extern int Tst_count;		/* Test Case counter for tst_* routines */
 void
 myexit (int x)
 {
-  if (x) 
+  if (x)
     tst_resm (TFAIL, "Test failed");
   else
     tst_resm (TPASS, "Test passed");
@@ -155,7 +155,13 @@ char *av[];
 	char *toutput;		/* for getenv() */
 	int sem_id;
 	struct sembuf sem_op;
-
+	union semun {		/* for semctl() */
+	  int val;
+	  struct semid_ds *buf;
+	  unsigned short int *array;
+	} u;
+	
+	u.val = 0;
 	format = HEX;
 	blk_type = NON_BLOCKING_IO;
 	dir[0] = '\0';
@@ -298,7 +304,7 @@ char *av[];
 			}
 			else if ( num_writes < 0 ) {
 				fprintf(stderr,
-				    "%s: --i/n option must be greater than equal to zero.\n", 
+				    "%s: --i/n option must be greater than equal to zero.\n",
 				    TCID);
 				usage();
 				exit(1);
@@ -397,13 +403,13 @@ char *av[];
 		format_size = size;
 
 	/*
-	 * 
+	 *
 	 * If there is more than one writer, all writes and reads
 	 * must be the same size.  Only writes of a size <= PIPE_BUF
 	 * are atomic.  T
 	 * Therefore, if size is greater than PIPE_BUF, we will break
 	 * the writes into PIPE_BUF chunks.  We will also increase the
-	 * number of writes to ensure the same (or more) amount of 
+	 * number of writes to ensure the same (or more) amount of
 	 * data is written.  This is the same as erroring and telling
 	 * the user the new cmd line to do the same thing.
 	 * Example:
@@ -424,14 +430,14 @@ char *av[];
 		tst_resm (TINFO, "adjusting i/o size to %d", PIPE_BUF);
 	    }
 	    size=PIPE_BUF;
-	
+
 	}
 
 	if ((writebuf = (char *) malloc(size)) == NULL ||
 	    (readbuf = (char *) malloc(size)) == NULL) {
 		tst_resm (TFAIL, "malloc() failed: %s", strerror(errno));
   		SAFE_FREE(writebuf);
-		SAFE_FREE(readbuf);	
+		SAFE_FREE(readbuf);
 		exit(1);
 	}
 
@@ -443,7 +449,7 @@ char *av[];
 		tst_brkm(TBROK, tst_exit, "Couldn't allocate semaphore: %s", strerror(errno));
 	}
 
-	if(semctl(sem_id, 0, SETVAL, 0) == -1)
+	if(semctl(sem_id, 0, SETVAL, u) == -1)
 		tst_brkm(TBROK, tst_exit, "Couldn't initialize semaphore value: %s", strerror(errno));
 
 	if ( background ) {
@@ -557,7 +563,7 @@ printf("child after fork pid = %d\n", getpid());
 
 			*count_word = j;
 			*pid_word = getpid();
-			
+		
                         if ((nb = lio_write_buffer(write_fd, iotype, writebuf, size,
                                                         SIGUSR1, &cp, 0)) < 0 ) {
 			/*
@@ -579,7 +585,7 @@ printf("child after fork pid = %d\n", getpid());
                 		clock=time(0);
                			srand48(clock);
                 		n = lrand48() % chld_wait;
-				usleep(n); 
+				usleep(n);
 			}
 			fflush(stderr);
 		}
@@ -666,11 +672,11 @@ printf("child after fork pid = %d\n", getpid());
 							if ( exit_error && exit_error == error )
 								goto output;
 
-							else 
+							else
 								break;
 						}
 					}
-				} 
+				}
 				if (verbose || (num_rpt && !(count % num_rpt))) {
 					current_time = time(0);
 					diff_time = current_time - start_time;	/* elapsed time */
@@ -698,7 +704,7 @@ output:
 	}
 
  	SAFE_FREE(writebuf);
-	SAFE_FREE(readbuf);	
+	SAFE_FREE(readbuf);
 	return (error);
 }
 
@@ -744,7 +750,7 @@ help()
   -v           - verbose mode, all writes/reads resutlts printed\n");
 
 	fflush(stdout);
-        
+       
 }
 
 void
@@ -782,7 +788,7 @@ prt_buf(long addr, char * buf, int length, int format)
 			   */
 				memset(c,0x00,width*NBPW);
 			   /*
-			    * get the last 2 words printed 
+			    * get the last 2 words printed
 			    */
 				memcpy(c,a-(width*NBPW),width*NBPW);
 				for (p = c; (p-c) < width*NBPW; ++p) {
@@ -827,7 +833,7 @@ prt_buf(long addr, char * buf, int length, int format)
 			if (*p < '!' || *p > '~')
 				*p = '.';
 		}
-		if (width == 2) 
+		if (width == 2)
 			printf("\t%16.16s",c);
 		else
 			printf("\t\t%16.8s",c);

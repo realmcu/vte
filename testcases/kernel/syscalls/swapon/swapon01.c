@@ -15,17 +15,17 @@
  *
  */
 /**************************************************************************
- * 
- *    TEST IDENTIFIER	: swapon1 
- * 
+ *
+ *    TEST IDENTIFIER	: swapon1
+ *
  *    EXECUTED BY	: root / superuser
- * 
+ *
  *    TEST TITLE	: Basic test for swapon(2)
- * 
+ *
  *    TEST CASE TOTAL	: 1
- * 
+ *
  *    AUTHOR		: Aniruddha Marathe <aniruddha.marathe@wipro.com>
- * 
+ *
  *    SIGNALS
  * 	Uses SIGUSR1 to pause before test if option set.
  * 	(See the parse_opts(3) man page).
@@ -33,14 +33,14 @@
  *    DESCRIPTION
  *    This is a Phase I test for the swapon(2) system call.
  *    It is intended to provide a limited exposure of the system call.
- * 
+ *
  * 	Setup:
  *	  Setup signal handling.
  *	  Pause for SIGUSR1 if option specified.
  *	  Create a temporary directory.
  *	  Create file of size 32Mb .
  *	  Make this file as swap file using mkswap(8)
- * 
+ *
  * 	Test:
  *	 Loop if the proper options are given.
  *	 Turn on the swapfile to test the system call
@@ -48,10 +48,10 @@
  *	  Check return code, if system call failed (return=-1)
  *		Log the errno and Issue a FAIL message.
  *	  Otherwise, Issue a PASS message.
- * 
+ *
  * 	Cleanup:
  * 	  Print errno log and/or timing stats if options given
- * 
+ *
  * USAGE:  <for command-line>
  * swapon01 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-h] [-f] [-p]
  * where:
@@ -74,29 +74,30 @@
  *****************************************************************************/
 
 #include <unistd.h>
+#include <errno.h>
+#include <stdlib.h>
 #include "test.h"
 #include "usctest.h"
-#include <errno.h>
-#include <sys/swap.h>
-#include <stdlib.h>
+#include "config.h"
+#include "linux_syscall_numbers.h"
+#include "swaponoff.h"
 
 static void setup();
 static void cleanup();
 
-char *TCID = "swapon01"; /* Test program identifier.    */
-int TST_TOTAL = 1;	/* Total number of test cases. */
-extern int Tst_count;	/* Test Case counter for tst_* routines */
+char *TCID = "swapon01";	/* Test program identifier.    */
+int TST_TOTAL = 1;		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 
-	int lc;		/* loop counter */
-	char *msg;	/* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL))
-		!= (char *)NULL) {
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
+	    != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -109,44 +110,41 @@ main(int ac, char **av)
 		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		TEST(swapon("./swapfile01", 0));
+		TEST(syscall(__NR_swapon, "./swapfile01", 0));
 
 		/* check return code */
 		if (TEST_RETURN == -1) {
 			TEST_ERROR_LOG(TEST_ERRNO);
 			tst_resm(TFAIL, "swapon(2) Failed to turn on"
-				" swapfile.");
+				 " swapfile.");
 		} else {
 			tst_resm(TPASS, "swapon(2) passed and turned on"
-					" swapfile");
+				 " swapfile");
 			/*we need to turn this swap file off for -i option */
-			if(swapoff("./swapfile01") != 0) {
+			if (syscall(__NR_swapoff, "./swapfile01") != 0) {
 				tst_brkm(TBROK, cleanup, "Failed to turn off"
-							" swapfile. system"
-							" reboot after"
-							" execution of LTP"
-							" test suite is"
-							" recommended.");
+					 " swapfile. system"
+					 " reboot after"
+					 " execution of LTP"
+					 " test suite is" " recommended.");
 			}
 		}
-	}	/*End for TEST_LOOPING*/
+	}			/*End for TEST_LOOPING */
 
-	/*Clean up and exit*/
+	/*Clean up and exit */
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	 /*NOTREACHED*/ return 0;
 }
 
 /* setup() - performs all ONE TIME setup for this test */
-void
-setup()
+void setup()
 {
 
 	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Check whether we are root*/
+	/* Check whether we are root */
 	if (geteuid() != 0) {
 		tst_brkm(TBROK, tst_exit, "Test must be run as root");
 	}
@@ -157,42 +155,43 @@ setup()
 	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
-	if(tst_is_cwd_tmpfs()) {
-		tst_brkm(TCONF, cleanup, "Cannot do swapon on a file located on a tmpfs filesystem");
+	if (tst_is_cwd_tmpfs()) {
+		tst_brkm(TCONF, cleanup,
+			 "Cannot do swapon on a file located on a tmpfs filesystem");
 	}
 
-	if(tst_is_cwd_nfs()) {
-		tst_brkm(TCONF, cleanup, "Cannot do swapon on a file located on a nfs filesystem");
+	if (tst_is_cwd_nfs()) {
+		tst_brkm(TCONF, cleanup,
+			 "Cannot do swapon on a file located on a nfs filesystem");
 	}
 
-	if(!tst_cwd_has_free(65536)) {
-		tst_brkm(TBROK, cleanup, "Insufficient disk space to create swap file");
+	if (!tst_cwd_has_free(65536)) {
+		tst_brkm(TBROK, cleanup,
+			 "Insufficient disk space to create swap file");
 	}
 
-	/*create file*/
-	if(system("dd if=/dev/zero of=swapfile01 bs=1024  count=65536 >"
-				" tmpfile 2>&1") != 0) {
+	/*create file */
+	if (system("dd if=/dev/zero of=swapfile01 bs=1024  count=65536 >"
+		   " tmpfile 2>&1") != 0) {
 		tst_brkm(TBROK, cleanup, "Failed to create file for swap");
 	}
 
-
-	/* make above file a swap file*/
-	if( system("mkswap swapfile01 > tmpfile 2>&1") != 0) {
+	/* make above file a swap file */
+	if (system("mkswap swapfile01 > tmpfile 2>&1") != 0) {
 		tst_brkm(TBROK, cleanup, "Failed to make swapfile");
 	}
-}	/* End setup() */
+}				/* End setup() */
 
 /*
  * cleanup() - Performs one time cleanup for this test at
  * completion or premature exit
  */
-void
-cleanup()
+void cleanup()
 {
 	/*
-	* print timing stats if that option was specified.
-	* print errno log if that option was specified.
-	*/
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
 	TEST_CLEANUP;
 
 	/* Remove tmp dir and all files inside it. */
@@ -200,4 +199,4 @@ cleanup()
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-}	/* End cleanup() */
+}				/* End cleanup() */

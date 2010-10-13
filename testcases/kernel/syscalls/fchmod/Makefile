@@ -16,21 +16,8 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-CFLAGS += -I../../../../include -Wall
-LDLIBS += -L../../../../lib -lltp
+top_srcdir		?= ../../../..
 
-SRCS    = $(wildcard *.c)
-TARGETS = $(patsubst %.c,%,$(SRCS))
+include $(top_srcdir)/include/mk/testcases.mk
 
-all: $(TARGETS)
-
-install: change_owner.mode
-	@set -e; for i in $(TARGETS); do ln -f $$i ../../../bin/$$i ; done
-
-clean:
-	rm -f $(TARGETS)
-
-change_owner.mode: 
-	@/bin/sh ./change_owner.mode.sh
-
-.PHONY: change_owner.mode
+include $(top_srcdir)/include/mk/generic_leaf_target.mk

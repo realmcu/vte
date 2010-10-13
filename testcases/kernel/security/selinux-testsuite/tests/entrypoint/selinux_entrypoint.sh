@@ -15,8 +15,8 @@ setup()
         export TST_COUNT=0
 	export TST_TOTAL=2
 
-        # Clean up from a previous run
-        rm -f $SELINUXTMPDIR/true 2>&1
+	SELINUXTMPDIR=$(mktemp -d)
+	chcon -t test_file_t $SELINUXTMPDIR
 }
 
 test01()
@@ -31,10 +31,10 @@ test01()
 	RC=$?   # this should fail
         if [ $RC -ne 0 ]
         then
-		echo "$TCID   PASS : entrypoint passed."
+		tst_resm TPASS "entrypoint passed."
 		RC=0
 	else
-		echo "$TCID   FAIL : entrypoint failed."
+		tst_resm TFAIL "entrypoint failed."
 		RC=1
 	fi
 	return $RC
@@ -52,19 +52,19 @@ test02()
 
 	# Verify that test_entrypoint_t can be entered via this program.
 	runcon -t test_entrypoint_t $SELINUXTMPDIR/true
+	RC=$?
         if [ $RC -ne 0 ]
         then
-		echo "$TCID   FAIL : entrypoint failed."
+		tst_resm TFAIL "entrypoint failed."
 	else
-		echo "$TCID   PASS : entrypoint passed."
+		tst_resm TPASS "entrypoint passed."
 	fi
 	return $RC
 }
 
 cleanup()
 {
-	# Cleanup.
-	rm -f $SELINUXTMPDIR/true
+	rm -rf $SELINUXTMPDIR
 }
 
 # Function:     main

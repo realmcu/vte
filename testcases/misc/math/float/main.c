@@ -27,6 +27,7 @@
 
 #include "test.h"
 
+#define SAFE_FREE(p) { if(p) { free(p); (p)=NULL; } }
 /* LTP status reporting */
 char *TCID;	 		/* Test program identifier.    */
 int TST_TOTAL=1;    		/* Total number of test cases. */
@@ -79,13 +80,16 @@ const double EPS=  0.1e-300;
 
 const int nb_func = NB_FUNC;
 
-int generate(char *datadir)
+int generate(char *datadir, char *bin_path)
 {
- char *fmt = "cd %s; ./%s";
- char *cmdline = malloc (strlen(fmt) + strlen(datadir) + strlen(GENERATOR));
+ char *cmdline;
+ char *fmt = "cd %s; %s/%s %s";
+ 
+ cmdline = malloc (2 * strlen(bin_path) + strlen(datadir) + 
+		   strlen(GENERATOR) + strlen(fmt));
  if (cmdline == NULL)
      return(1);
- sprintf(cmdline,fmt,datadir,GENERATOR);
+ sprintf(cmdline,fmt,datadir,bin_path,GENERATOR,bin_path);
  system(cmdline);
  free(cmdline);
  return(0);
@@ -97,6 +101,7 @@ int main(int argc, char *argv[])
         pid_t           pid;
         extern char     *optarg;
 
+	char *bin_path, *ltproot;
         void *exit_value;
         pthread_attr_t newattr;
         pthread_t sig_hand;
@@ -113,6 +118,19 @@ int main(int argc, char *argv[])
 	  TCID++;
 	else
 	  TCID = argv[0];
+	ltproot = getenv("LTPROOT");
+	if(!ltproot || !strlen(ltproot)){
+                tst_resm (TFAIL, "Not set the $LTPROOT, Please set it firstly.");
+                tst_exit();
+        }
+	bin_path = malloc (strlen(ltproot) + 16);
+	if(!bin_path){
+                tst_resm (TFAIL, "malloc error.");
+                tst_exit();
+	}
+	sprintf (bin_path, "%s/testcases/bin", ltproot);
+
+	tst_tmpdir();
 
 	setbuf(stdout, (char *)0);
 	setbuf(stderr, (char *)0);
@@ -136,8 +154,8 @@ int main(int argc, char *argv[])
                         strncpy(datadir, optarg, PATH_MAX);
 			break;
                 default:
-                        fprintf (stderr, "Usage: %s [-n number_of_threads] [-v]", argv[0]);
-                        fprintf (stderr, "[-l number_of_loops]\n");
+                        fprintf (stderr, "Usage: %s [-n number_of_threads] [-v]\n", argv[0]);
+                        fprintf (stderr, "[-l number_of_loops] ");
                         fprintf (stderr, "[-D DATAs absolute path]\n");
                         exit (1);
                 }
@@ -145,19 +163,20 @@ int main(int argc, char *argv[])
 	}
 	pid=fork();
         if ( pid == 0 ){                    /*Child*/
-		generate((char*)&datadir);          
+		generate(datadir,bin_path);          
 		return(0);} 
 	else                                /*Parent*/
 		waitpid(pid,NULL,0);
+	SAFE_FREE(bin_path);
 
 	if(debug)
-		printf("%s: will run for %d loops\n", argv[0], num_loops);
+		tst_resm(TINFO, "%s: will run for %d loops", argv[0], num_loops);
 
 	if(debug)
-		printf("%s: using %s as data directory\n", argv[0], datadir);
+		tst_resm(TINFO, "%s: using %s as data directory", argv[0], datadir);
 
 	if(num_threads <= 0) {
-		printf("WARNING: num_threads undefined or incorrect, using \"1\"\n");
+		tst_resm(TWARN, "WARNING: num_threads undefined or incorrect, using \"1\"");
 		num_threads = 1;
 	}
 
@@ -166,7 +185,7 @@ int main(int argc, char *argv[])
 			--num_threads;
 	}
 	if(debug)
-		printf("%s: will run %d functions, %d threads per function\n",
+		tst_resm(TINFO, "%s: will run %d functions, %d threads per function",
 			argv[0], nb_func, num_threads);
 
         retval = pthread_mutex_init (&sig_mutex, (pthread_mutexattr_t *)NULL);
@@ -183,9 +202,17 @@ int main(int argc, char *argv[])
          */
         threads = (pthread_t * ) malloc ((size_t) (nb_func 
                                   * num_threads * sizeof (pthread_t)));
+	if(!threads){
+                tst_resm (TFAIL, "malloc error.");
+                tst_exit();
+	}
 
 	tabcom  = (TH_DATA **) malloc ( (size_t)(sizeof (TH_DATA *)
                                        * nb_func*num_threads));
+	if(!tabcom){
+                tst_resm (TFAIL, "malloc error.");
+                tst_exit();
+	}
 	tabcour = tabcom;
 
 	retval = pthread_attr_init(&newattr);
@@ -211,6 +238,10 @@ int main(int argc, char *argv[])
 
 		/* allocate struct of commucation  with the thread */
 		pcom =  calloc ((size_t)1, (size_t)sizeof(TH_DATA));
+		if(!pcom){
+                	tst_resm (TFAIL, "calloc error.");
+	                tst_exit();
+		}
 		*tabcour = (TH_DATA *) pcom;
 		tabcour++;
 		/* */
@@ -244,7 +275,7 @@ int main(int argc, char *argv[])
 
 finished:
 	if (debug) {
-		printf ("Initial thread: Waiting for %d threads to finish\n", indice);
+		tst_resm(TINFO, "Initial thread: Waiting for %d threads to finish", indice);
 	}
         tabcour = tabcom;
 
@@ -257,15 +288,21 @@ finished:
 		pcom = * tabcour++; 
 		if(pcom->th_result !=0 ) {
 	           error++;
-                   fprintf (stderr, "thread %d (%s) terminated unsuccessfully %d errors/%d loops\n", th_num,pcom->th_func.fident,pcom->th_nerror,pcom->th_nloop);
-                   fprintf (stderr, "%s", pcom->detail_data);
+                   tst_resm(TFAIL, "thread %d (%s) terminated unsuccessfully %d errors/%d loops", th_num,pcom->th_func.fident,pcom->th_nerror,pcom->th_nloop);
+                   tst_resm(TFAIL, "%s", pcom->detail_data);
 		}
 		else if (debug) {
-			printf ("thread %d (%s) terminated successfully %d loops.\n",
+			tst_resm(TINFO, "thread %d (%s) terminated successfully %d loops.",
 				th_num, pcom->th_func.fident, pcom->th_nloop-1);
 		}
+		SAFE_FREE(pcom);
 
 	}
+	pthread_cancel(sig_hand);
+	pthread_join(sig_hand,NULL);
+	SAFE_FREE(tabcom);
+	SAFE_FREE(threads);
+	tst_rmdir();
 	if (error) exit (1);
 	else exit(0);
 	return 0;
@@ -291,7 +328,7 @@ static void *handle_signals (void *arg)
 	int	retvalsig = 0;
 
 	if (debug) {
-		printf ("signal handler %lu started\n", pthread_self());
+		tst_resm(TINFO, "signal handler %lu started", pthread_self());
 	}
 	/*
          * Set up the signals that we want to handle...
@@ -305,12 +342,12 @@ static void *handle_signals (void *arg)
 	do
 	{
 		if (debug) {
-			printf ("Signal handler starts waiting...\n");
+			tst_resm(TINFO, "Signal handler starts waiting...");
 		}
 
 		sigwait (&signals_set, &sig);
 		if (debug) {
-			printf ("Signal handler caught signal %d\n", sig);
+			tst_resm(TINFO, "Signal handler caught signal %d", sig);
 		}
 
 		switch (sig) {
@@ -318,7 +355,7 @@ static void *handle_signals (void *arg)
 		case SIGUSR1:
 		case SIGINT:
 			if (sig_cancel) {
-				printf ("Signal handler: Already finished, Ignoring signal\n");
+				tst_resm(TINFO, "Signal handler: Already finished, Ignoring signal");
 			}
 			else {
 				/*
@@ -339,7 +376,7 @@ static void *handle_signals (void *arg)
 		     	       	 */
 				for (thd = 0; thd < indice; thd++) {
 					if (debug) {
-						printf ("Signal handler: canceling thread  (%d of %d)\n", thd, indice);
+						tst_resm(TINFO, "Signal handler: canceling thread (%d of %d)", thd, indice);
 					}
 					retvalsig = pthread_cancel (threads[thd]);
 					if (retvalsig != 0)
@@ -348,15 +385,17 @@ static void *handle_signals (void *arg)
 			}
 			break;
 		case SIGQUIT:
-			printf ("Signal handler: Caught Quit, Doing nothing\n");
+			tst_resm(TINFO, "Signal handler: Caught Quit, Doing nothing");
 			break;
 		case SIGTERM:
-			printf ("Signal handler: Caught Termination, Doing nothing\n");
+			tst_resm(TINFO, "Signal handler: Caught Termination, Doing nothing");
 			break;
 		default:
 			exit (-1);
 		}
-	}while (TRUE);
+	} while (TRUE);
+
+	return NULL;
 }
 /*---------------------------------------------------------------------+
 |                               error ()                               |
@@ -367,7 +406,8 @@ static void *handle_signals (void *arg)
 +---------------------------------------------------------------------*/
 static void error (const char *msg, int line)
 {
-        fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
+        tst_resm(TFAIL, "ERROR [line: %d] %s", line, msg);
+	tst_rmdir();
         exit (-1);
 }
 
@@ -385,7 +425,7 @@ static void sys_error (const char *msg, int line)
 {
         char syserr_msg [256];
 
-        sprintf (syserr_msg, "%s: %s\n", msg, strerror(errno));
+        sprintf (syserr_msg, "%s: %s", msg, strerror(errno));
         error (syserr_msg, line);
 }
 

@@ -15,17 +15,17 @@
  *
  */
 /**************************************************************************
- * 
+ *
  *    TEST IDENTIFIER	: munlock01
- * 
+ *
  *    EXECUTED BY	: root / superuser
- * 
+ *
  *    TEST TITLE	: Basic test for munlock(2)
- * 
+ *
  *    TEST CASE TOTAL	: 4
- * 
+ *
  *    AUTHOR		: Nirmala Devi Dhanasekar <nirmala.devi@wipro.com>
- * 
+ *
  *    SIGNALS
  * 	Uses SIGUSR1 to pause before test if option set.
  * 	(See the parse_opts(3) man page).
@@ -33,21 +33,21 @@
  *    DESCRIPTION
  *	This is a Phase I test for the munlock(2) system call.
  *	It is intended to provide a limited exposure of the system call.
- * 
+ *
  * 	Setup:
  *	  Setup signal handling.
  *	  Pause for SIGUSR1 if option specified.
- * 
+ *
  * 	Test:
  *	 Loop if the proper options are given.
  *	  Execute system call
  *	  Check return code, if system call failed (return=-1)
  *		Log the errno and Issue a FAIL message.
  *	  Otherwise, Issue a PASS message.
- * 
+ *
  * 	Cleanup:
  * 	  Print errno log and/or timing stats if options given
- * 
+ *
  * USAGE:  <for command-line>
  *  munlock01 [-c n] [-e] [-i n] [-I x] [-p x] [-t]
  *		where,		-c n : Run n copies concurrently
@@ -73,9 +73,9 @@ void setup();
 void setup1(int);
 void cleanup();
 
-char *TCID = "munlock01";		/* Test program identifier.    */
-int TST_TOTAL = 4;			/* Total number of test cases. */
-extern int Tst_count;			/* TestCase counter for tst_* routine */
+char *TCID = "munlock01";	/* Test program identifier.    */
+int TST_TOTAL = 4;		/* Total number of test cases. */
+extern int Tst_count;		/* TestCase counter for tst_* routine */
 
 int exp_enos[] = { 0 };
 
@@ -86,10 +86,11 @@ struct test_case_t {
 	int len;
 	void (*setupfunc) ();
 } TC[] = {
-	{&addr1, 1, setup1}, 
-	{&addr1, 1024, setup1}, 
-	{&addr1, 1024 * 1024, setup1}, 
-	{&addr1, 1024 * 1024 * 10, setup1}
+	{
+	&addr1, 1, setup1}, {
+	&addr1, 1024, setup1}, {
+	&addr1, 1024 * 1024, setup1}, {
+	&addr1, 1024 * 1024 * 10, setup1}
 };
 
 int main(int ac, char **av)
@@ -97,7 +98,7 @@ int main(int ac, char **av)
 	int lc, i;		/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 
-	if ((msg = parse_opts(ac, av, NULL, NULL)) != (char *) NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -121,11 +122,10 @@ int main(int ac, char **av)
 			/* check return code */
 			if (TEST_RETURN == -1) {
 				TEST_ERROR_LOG(TEST_ERRNO);
-				tst_resm(TFAIL, "mlock(%p, %d) Failed with "
-					 "return=%d, errno=%d : %s",
+				tst_resm(TFAIL|TTERRNO, "mlock(%p, %d) Failed with "
+					 "return=%ld",
 					 TC[i].addr, TC[i].len,
-					 TEST_RETURN, TEST_ERRNO,
-					 strerror(TEST_ERRNO));
+					 TEST_RETURN);
 			} else {
 				tst_resm(TPASS, "test %d passed length = %d",
 					 i, TC[i].len);
@@ -141,7 +141,7 @@ int main(int ac, char **av)
 
 void setup1(int i)
 {
-	addr1 = (char *) malloc(TC[i].len);
+	addr1 = (char *)malloc(TC[i].len);
 	if (addr1 == NULL)
 		tst_brkm(TFAIL, cleanup, "malloc failed");
 	TEST(mlock(*(TC[i].addr), TC[i].len));
@@ -149,10 +149,9 @@ void setup1(int i)
 	/* check return code */
 	if (TEST_RETURN == -1) {
 		TEST_ERROR_LOG(TEST_ERRNO);
-		tst_brkm(TFAIL, cleanup, "mlock(%p, %d) Failed with return=%d,"
-			"errno=%d : %s", TC[i].addr, TC[i].len, TEST_RETURN,
-		       	TEST_ERRNO, strerror(TEST_ERRNO));
-	} 
+		tst_brkm(TFAIL|TTERRNO, cleanup, "mlock(%p, %d) Failed with return=%ld",
+			 TC[i].addr, TC[i].len, TEST_RETURN);
+	}
 }
 
 /* setup() - performs all ONE TIME setup for this test. */
@@ -161,7 +160,7 @@ void setup()
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Check whether we are root*/
+	/* Check whether we are root */
 	if (geteuid() != 0) {
 		tst_brkm(TBROK, tst_exit, "Test must be run as root");
 	}

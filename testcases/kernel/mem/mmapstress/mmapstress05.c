@@ -61,6 +61,15 @@ void ok_exit();
 #define ERROR(M)	(void)fprintf(stderr, "%s:  errno = %d; " M "\n", \
 				progname, errno);
 #define CLEAN	(void)close(fd); \
+		if (munmap(mmapaddr+pagesize, pagesize) == -1) { \
+			ERROR("munmap failed"); \
+		} \
+		if (munmap(mmapaddr, pagesize) == -1) { \
+			ERROR("munmap failed"); \
+		} \
+		if (munmap(mmapaddr+2*pagesize, pagesize) == -1) { \
+			ERROR("munmap failed"); \
+		} \
 		if (unlink(tmpname)) { \
 			ERROR("couldn't clean up temp file"); \
 		}
@@ -126,14 +135,14 @@ main(int argc, char *argv[])
 		ERROR("couldn't find top of brk");
 		anyfail();
 	}
-       
+      
 	/* i changed the second argument to NULL
-	from argv[0]. otherwise it causes the 
+	from argv[0]. otherwise it causes the
 	open to fail
 	-- sreeni
 	*/
 
-	if (!(fd = mkstemp(tmpname))) {
+	if ((fd = mkstemp(tmpname))==-1) {
 		ERROR("mkstemp failed");
 		anyfail();
 	}
@@ -146,10 +155,6 @@ main(int argc, char *argv[])
 	CATCH_SIG(SIGINT);
         CATCH_SIG(SIGQUIT);
         CATCH_SIG(SIGTERM);
-	if ((fd = open(tmpname, O_RDWR|O_CREAT, 0777)) == -1) {
-		ERROR("open failed");
-		anyfail();
-	}
 	for (i = 0; i < pagesize; i++)
 		buf[i] = 'a';
 	if (write(fd, buf, pagesize) != pagesize) {
@@ -216,7 +221,7 @@ int anyfail()
   tst_resm(TFAIL, "Test failed\n");
   tst_rmdir();
   tst_exit();
-  return(0);
+  return 0;
 }
 
 

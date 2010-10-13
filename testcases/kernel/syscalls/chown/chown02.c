@@ -17,7 +17,7 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* 
+/*
  * Test Name: chown02
  *
  * Test Description:
@@ -28,9 +28,9 @@
  *	- preserves setgid bit set on a non-group-executable file.
  *
  * Expected Result:
- *  chown(2) should return 0 and the ownership set on the file should match 
+ *  chown(2) should return 0 and the ownership set on the file should match
  *  the numeric values contained in owner and group respectively.
- *	
+ *
  * Algorithm:
  *  Setup:
  *   Setup signal handling.
@@ -43,7 +43,7 @@
  *   Check return code, if system call failed (return=-1)
  *   	Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *   	Verify the Functionality of system call
  *      if successful,
  *      	Issue Functionality-Pass message.
  *      Otherwise,
@@ -87,8 +87,8 @@
 #define TESTFILE1	"testfile1"
 #define TESTFILE2	"testfile2"
 
-char *TCID="chown02";		/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test conditions */
+char *TCID = "chown02";		/* Test program identifier.    */
+int TST_TOTAL = 1;		/* Total number of test conditions */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int no_setup();
@@ -101,18 +101,17 @@ struct test_case_t {
 	uid_t user_id;
 	gid_t group_id;
 	int test_flag;
-	int (*setupfunc)();
+	int (*setupfunc) ();
 } Test_cases[] = {
-	{ TESTFILE1, "Setuid/Setgid bits cleared", 700, 701, 1, setup1 },
-	{ TESTFILE2, "Setgid bit not cleared", 700, 701, 2, setup2 },
-	{ NULL, NULL, 0, 0, 0, no_setup },
-};
+	{
+	TESTFILE1, "Setuid/Setgid bits cleared", 700, 701, 1, setup1}, {
+	TESTFILE2, "Setgid bit not cleared", 700, 701, 2, setup2}, {
+NULL, NULL, 0, 0, 0, no_setup},};
 
 void setup();			/* setup function for the test */
 void cleanup();			/* cleanup function for the test */
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 	struct stat stat_buf;	/* stat(2) struct contents */
 	int lc;			/* loop counter */
@@ -123,10 +122,10 @@ main(int ac, char **av)
 	int test_flag;		/* test condition specific flag variable */
 	char *file_name;	/* ptr. for test file name */
 	char *test_desc;	/* test specific message */
-    
+
 	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *) NULL) {
+	if (msg != (char *)NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -147,15 +146,15 @@ main(int ac, char **av)
 			Group_id = Test_cases[ind].group_id;
 			test_flag = Test_cases[ind].test_flag;
 
-			/* 
+			/*
 			 * Call chown(2) with different user id and
 			 * group id (numeric values) to set it on testfile.
-		 	 */
+			 */
 			TEST(chown(file_name, User_id, Group_id));
 
 			/* check return code of chown(2) */
 			if (TEST_RETURN == -1) {
-				tst_resm(TFAIL, \
+				tst_resm(TFAIL,
 					 "chown() Fails on %s, errno=%d",
 					 file_name, TEST_ERRNO);
 				continue;
@@ -167,7 +166,7 @@ main(int ac, char **av)
 			 */
 			if (STD_FUNCTIONAL_TEST) {
 				/*
-			 	 * Get the testfile information using stat(2).
+				 * Get the testfile information using stat(2).
 				 */
 				if (stat(file_name, &stat_buf) < 0) {
 					tst_brkm(TFAIL, cleanup, "stat(2) of "
@@ -194,7 +193,7 @@ main(int ac, char **av)
 				 */
 				if ((test_flag == 1) &&
 				    ((stat_buf.st_mode &
-				       (S_ISUID | S_ISGID)))) {
+				      (S_ISUID | S_ISGID)))) {
 					tst_resm(TFAIL, "%s: Incorrect mode "
 						 "permissions %#o, Expected "
 						 "%#o", file_name, NEW_PERMS1,
@@ -207,21 +206,20 @@ main(int ac, char **av)
 						 stat_buf.st_mode, NEW_PERMS2);
 				} else {
 					tst_resm(TPASS,
-					 	 "chown() on %s succeeds : %s",
+						 "chown() on %s succeeds : %s",
 						 file_name, test_desc);
 				}
 			} else {
 				tst_resm(TPASS, "call succeeded");
 			}
 		}
-	}	/* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 
 	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
 	return 0;
-	/*NOTREACHED*/
-}	/* End main */
+ /*NOTREACHED*/}		/* End main */
 
 /*
  * void
@@ -229,8 +227,7 @@ main(int ac, char **av)
  *  Create a temporary directory and change directory to it.
  *  Create a test file under temporary directory and close it
  */
-void 
-setup()
+void setup()
 {
 	int ind;
 
@@ -245,7 +242,7 @@ setup()
 
 	/* Pause if that option was specified */
 	TEST_PAUSE;
-		
+
 	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
@@ -253,39 +250,38 @@ setup()
 	for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
 		Test_cases[ind].setupfunc();
 	}
-}	/* End setup() */
+}				/* End setup() */
 
 /*
  * int
  * setup1() - Setup function for chown(2) to verify setuid/setgid bits
  *	      set on an executable file will not be cleared.
- *  Creat a testfile and set setuid/setgid bits on the mode of file.  
+ *  Creat a testfile and set setuid/setgid bits on the mode of file.$
  */
-int
-setup1()
+int setup1()
 {
 	int fd;			/* File descriptor for testfile1 */
 
 	/* Creat a testfile and close it */
-	if ((fd = open(TESTFILE1, O_RDWR|O_CREAT, FILE_MODE)) == -1) {
-		tst_brkm(TBROK, cleanup,
-			 "open(%s, O_RDWR|O_CREAT, %o) Failed, errno=%d : %s",
-			 TESTFILE1, FILE_MODE, errno, strerror(errno));
+	if ((fd = open(TESTFILE1, O_RDWR | O_CREAT, FILE_MODE)) == -1) {
+		tst_brkm(TBROK|TERRNO, cleanup,
+			 "open(%s, O_RDWR|O_CREAT, %o) failed",
+			 TESTFILE1, FILE_MODE);
 	}
 	if (close(fd) == -1) {
-		tst_brkm(TBROK, cleanup,
-			 "close(%s) Failed, errno=%d : %s",
-			 TESTFILE1, errno, strerror(errno));
+		tst_brkm(TBROK|TERRNO, cleanup,
+			 "close(%s) failed",
+			 TESTFILE1);
 	}
 
 	/* Set setuid/setgid bits on the test file created */
 	if (chmod(TESTFILE1, NEW_PERMS1) != 0) {
-		tst_brkm(TBROK, cleanup,
-			 "chmod(%s) Failed, errno=%d : %s",
-			 TESTFILE1, errno, strerror(errno));
+		tst_brkm(TBROK|TERRNO, cleanup,
+			 "chmod(%s) failed",
+			 TESTFILE1);
 	}
 	return 0;
-}	/* End setup1() */
+}				/* End setup1() */
 
 /*
  * int
@@ -293,28 +289,27 @@ setup1()
  *	      set on non-group executable file will not be cleared.
  *  Creat a testfile and set setgid bit on the mode of file.
  */
-int
-setup2()
+int setup2()
 {
 	int fd;			/* File descriptor for testfile2 */
 
 	/* Creat a testfile and close it */
-	if ((fd = open(TESTFILE2, O_RDWR|O_CREAT, FILE_MODE)) == -1) {
-		tst_brkm(TBROK, cleanup,
-			 "open(%s, O_RDWR|O_CREAT, %o) Failed, errno=%d : %s",
-			 TESTFILE2, FILE_MODE, errno, strerror(errno));
+	if ((fd = open(TESTFILE2, O_RDWR | O_CREAT, FILE_MODE)) == -1) {
+		tst_brkm(TBROK|TERRNO, cleanup,
+			 "open(%s, O_RDWR|O_CREAT, %o) failed",
+			 TESTFILE2, FILE_MODE);
 	}
 	if (close(fd) == -1) {
-		tst_brkm(TBROK, cleanup,
-			 "close(%s) Failed, errno=%d : %s",
-			 TESTFILE2, errno, strerror(errno));
+		tst_brkm(TBROK|TERRNO, cleanup,
+			 "close(%s) failed",
+			 TESTFILE2);
 	}
 
 	/* Set setgid bit on the test file created */
 	if (chmod(TESTFILE2, NEW_PERMS2) != 0) {
-		tst_brkm(TBROK, cleanup,
-			 "chmod(%s) Failed, errno=%d : %s",
-			 TESTFILE2, errno, strerror(errno));
+		tst_brkm(TBROK|TERRNO, cleanup,
+			 "chmod(%s) failed",
+			 TESTFILE2);
 	}
 	return 0;
 }
@@ -325,8 +320,7 @@ setup2()
  * 		Hence, this function just returns 0.
  *  This function simply returns 0.
  */
-int
-no_setup()
+int no_setup()
 {
 	return 0;
 }
@@ -337,8 +331,7 @@ no_setup()
  *	       completion or premature exit.
  *  Remove the test directory and testfile created in the setup.
  */
-void 
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.
@@ -350,4 +343,4 @@ cleanup()
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-}	/* End cleanup() */
+}				/* End cleanup() */

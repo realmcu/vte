@@ -138,7 +138,7 @@ main(int argc, char *argv[])
                 anyfail();
 	}
 	/* sbrked over about half the holes */
-	
+
 	hole_addr = hole_start + pagesize; /* munmap the other pages */
 	while (hole_addr + pagesize < brk_max_addr) {
 		if (munmap(hole_addr, pagesize) == -1) {
@@ -166,14 +166,14 @@ main(int argc, char *argv[])
 		ERROR("really large mmap didn't fail");
                 anyfail();
 	}
-	if (errno != ENOMEM) {
-		ERROR("really large mmap didn't set errno = ENOMEM");
+	if (errno != ENOMEM && errno != EINVAL) {
+		ERROR("really large mmap didn't set errno = ENOMEM nor EINVAL");
                 anyfail();
 	}
 	(void)time(&t);
 //	(void)printf("%s: Finished %s", argv[0], ctime(&t));
 	ok_exit();
-	return(0);
+	return 0;
 }
 
 /*
@@ -233,7 +233,7 @@ int anyfail()
 {
   tst_resm(TFAIL, "Test failed");
   tst_exit();
-  return(0);
+  return 0;
 }
 
 /*****  **      **      *****/

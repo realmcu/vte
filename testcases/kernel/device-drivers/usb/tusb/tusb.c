@@ -17,18 +17,18 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 
- * This is a kernel module for testing usb 
+ * This is a kernel module for testing usb
  * kernel functions found in /usr/src/<linux_
- * dir>/drivers/usb. The module is registered 
- * as a char device with the system so that 
- * ioctl calls can be made in a user space 
- * program that has attained the correct 
- * file descriptor for this module. A usb 
- * driver is registered with the system also 
+ * dir>/drivers/usb. The module is registered
+ * as a char device with the system so that
+ * ioctl calls can be made in a user space
+ * program that has attained the correct
+ * file descriptor for this module. A usb
+ * driver is registered with the system also
  * so that it may be used in testing usb
- * system calls. 
- * 
- * Reference: "Linux Device Drivers" by 
+ * system calls.
+ *
+ * Reference: "Linux Device Drivers" by
  * Alessandro Rubini and Jonathan Corbet
  *
  * Module name:	tusb
@@ -37,8 +37,8 @@
  *
  * tusb.c
  */
-	
-#include <linux/config.h>
+
+#include <linux/autoconf.h>
 #include <linux/types.h>
 #include <linux/kernel.h>
 #include <linux/ioctl.h>
@@ -70,7 +70,7 @@ static int test_hcd_probe(void);
 static int test_hcd_remove(void);
 static int test_hcd_suspend(void);
 static int test_hcd_resume(void);
-/* 
+/*
  * File operations stuff
  */
 static int Major = TUSB_MAJOR;
@@ -113,7 +113,7 @@ static void tusb_disconnect(struct usb_interface *intf) {
 static int tusb_probe(struct usb_interface *intf,  const struct usb_device_id *id) {
         printk("tusb: Entered probe function\n");
         return 0;
-	
+
 }
 
 
@@ -140,6 +140,7 @@ static struct usb_driver test_usb_driver = {
 	id_table:	tusb_id_table,
 };
 
+#if 0
 static int test_alloc_dev(struct usb_device *dev) {
 	printk("Entered test_alloc_dev\n");
 	return 0;
@@ -172,19 +173,18 @@ static struct usb_operations test_device_operations = {
 	.submit_urb = 			test_submit_urb,
 	.unlink_urb = 			test_unlink_urb,
 };
+#endif
 
-
-
-static int tusb_ioctl(struct inode *ino, struct file *f, 
+static int tusb_ioctl(struct inode *ino, struct file *f,
 			unsigned int cmd, unsigned long l) {
 	int 			rc;
 	tusb_interface_t	tif;
 	caddr_t			*inparms;
-	caddr_t			*outparms;	
+	caddr_t			*outparms;
 
 	printk("tusb: Entered the ioctl call\n");
-	
-	rc = 0;		
+
+	rc = 0;	
 	inparms = NULL;
 	outparms = NULL;
 
@@ -215,7 +215,7 @@ static int tusb_ioctl(struct inode *ino, struct file *f,
                         return(-ENOMEM);
                 }
         }
-	
+
 	switch(cmd) {
 		case FIND_DEV:		rc = test_find_usbdev(); break;
 		case TEST_FIND_HCD:	rc = test_find_hcd(); break;
@@ -225,7 +225,7 @@ static int tusb_ioctl(struct inode *ino, struct file *f,
 		case TEST_HCD_RESUME:	rc = test_hcd_resume(); break;
 		default:
 			printk("Mismatching ioctl command\n");
-			rc = 1;	
+			rc = 1;
 			break;
 	}
 
@@ -268,14 +268,14 @@ static int tusb_ioctl(struct inode *ino, struct file *f,
 
 /*
  * test_find_usbdev
- *	using our driver, attempt to find 
- *	a usb device that our driver can use, 
+ *	using our driver, attempt to find
+ *	a usb device that our driver can use,
  *	and set the pointers in our test interface
  *	structure to the device pointer so that
  *	it can be used future test calls
  */
 static int test_find_usbdev() {
-	struct usb_device *udev = (struct usb_device *)kmalloc(sizeof(struct usb_device), GFP_KERNEL); 
+	struct usb_device *udev = (struct usb_device *)kmalloc(sizeof(struct usb_device), GFP_KERNEL);
 	struct usb_bus *bus =  (struct usb_bus *)kmalloc(sizeof(struct usb_bus), GFP_KERNEL);
 
 	/* Zero out the ltp_usb */
@@ -283,14 +283,15 @@ static int test_find_usbdev() {
 
 	ltp_usb.bus = bus;
 	ltp_usb.dev = udev;
-	
+
 	/* allocate the usb_bus pointer */
+#if 0
 	bus = usb_alloc_bus(&test_device_operations);
 	if(!bus) {
 		printk("tusb: Did not allocate a bus\n");
 		return 1;
 	}
-	else { 
+	else {
 		printk("tusb: Allocated a bus pointer\n");
 		memcpy(ltp_usb.bus, bus, sizeof(struct usb_bus));
 		printk("test1\n");
@@ -310,6 +311,7 @@ static int test_find_usbdev() {
 	/* connect the new device and setup pointers */
 	usb_connect(udev);
 	usb_new_device(udev);
+#endif
 
 	return 0;
 }
@@ -317,8 +319,8 @@ static int test_find_usbdev() {
 
 /*
  * test_find_hcd
- *	make call to pci_find_class with correct flags 
- * 	to attempt to find a usb hostcontroller, that 
+ *	make call to pci_find_class with correct flags
+ * 	to attempt to find a usb hostcontroller, that
  *	we can later use to test hcd functions, must
  * 	have either uchi or ohci usb options enabled
  *	or will not find a device
@@ -328,17 +330,18 @@ static int test_find_hcd() {
 
 	ltp_usb.pdev = pdev;
 
+#if 0
 	/* try and get a usb hostcontroller if possible */
 	pdev = pci_find_class(PCI_CLASS_SERIAL_USB << 8, NULL);
 	if(pdev) {
 		printk("tusb: WOOT! Found a usb host controller!\n");
 		printk("tusb: Slot number: %d\n", pdev->devfn);
-		
+	
 		memcpy(ltp_usb.pdev, pdev, sizeof(struct pci_dev));
 
 		if(pdev->driver->id_table)
 			printk("tusb: id_table exists\n");
-		
+	
 		return 0;
 	}
 	else {
@@ -346,14 +349,17 @@ static int test_find_hcd() {
 		printk("tusb: Check kernel options enabled\n");
 		return 1;
 	}
+#else
+	return 1;
+#endif
 
 }
-		
-/* 
- * test_hcd_probe 
+	
+/*
+ * test_hcd_probe
  * 	make call to usb_hcd_pci_probe which will
- *	enable the usb hostcontroller, pass in a pci_dev 
- * 	and a pci_device_id 
+ *	enable the usb hostcontroller, pass in a pci_dev
+ * 	and a pci_device_id
  */
 static int test_hcd_probe() {
 	int rc;
@@ -373,38 +379,38 @@ static int test_hcd_probe() {
 
 	/* release regions before probe call */
 	hcd = pci_get_drvdata(pdev);
-	
+
 	if(!hcd) {
 		printk("tusb: hcd pointer not found\n");
 		return 1;
 	}
-	else 
+	else
 		release_region(pci_resource_start (pdev, hcd->region),
 				pci_resource_len (pdev, hcd->region));
 
 	/* make test call */
 	rc = usb_hcd_pci_probe(pdev, id);
 
-	if(rc) 
+	if(rc)
 		printk("tusb: retval hcd probe = %d\n", rc);
 	else
 		printk("tusb: Success for usb_hcd_pci_probe\n");
-	
+
 	return rc;
-}	
-	
+}
+
 /*
  * test_hcd_remove
- *	make call to usb_hcd_pci_remove which will 
+ *	make call to usb_hcd_pci_remove which will
  * 	remove setup for the usb host controller
- * 	from the system, attempting to call this 
- * 	before probe test call so that regions 
+ * 	from the system, attempting to call this
+ * 	before probe test call so that regions
  *	will be available to the probe test call
  */
 static int test_hcd_remove() {
 	struct pci_dev *pdev = NULL;
 	struct usb_hcd *hcd = NULL;
-	struct hc_driver *hdrv = NULL; 
+	struct hc_driver *hdrv = NULL;
 
 	/* check that hcd pointer exists */
 	if(!ltp_usb.pdev) {
@@ -414,48 +420,48 @@ static int test_hcd_remove() {
 	else {
 		pdev = ltp_usb.pdev;
 		hcd = pci_get_drvdata(pdev);
-	} 
-		
+	}
+	
 	if(!hdrv->stop) {
 		printk("tusb: stop function not found\n");
 		return 1;
 	}
 	else
 		hcd->driver->stop(hcd);
-		
+	
 	return 0;
 }
 
 /*
  * test_hcd_suspend
- *	make call to suspend with a dev pointer and 
- *	a u32 state variable that is the state to 
+ *	make call to suspend with a dev pointer and
+ *	a u32 state variable that is the state to
  *	move into
  */
 static int test_hcd_suspend() {
 	int rc;
 	struct pci_dev *pdev = NULL;
-	
+
 	/* check that pdev is set */
 	if(!(pdev = ltp_usb.pdev)) {
 		printk("tusb: Cant find host controller pci_dev pointer\n");
 		return 1;
 	}
-	
+
 	/* make call and check return value */
 	rc = usb_hcd_pci_suspend(pdev, (u32) 2);
-	if(rc) 
+	if(rc)
 		printk("tusb: Suspend retval failure\n");
-	else	
+	else
 		printk("tusb: Suspend success\n");
 
 	return rc;
-}	
+}
 
 /*
  * test_hcd_resume
  *	make call to resume device for power management
- *	so that device will be active and able to use 
+ *	so that device will be active and able to use
  *	again
  */
 static int test_hcd_resume() {
@@ -467,7 +473,7 @@ static int test_hcd_resume() {
                 printk("tusb: Cant find host controller pci_dev pointer\n");
                 return 1;
         }
-	
+
         /* make call and check return value */
         rc = usb_hcd_pci_resume(pdev);
         if(rc)
@@ -476,7 +482,7 @@ static int test_hcd_resume() {
                 printk("tusb: Resume success\n");
 
         return rc;
-}		
+}	
 
 
 
@@ -499,16 +505,14 @@ static int tusb_init_module(void) {
 }
 
 static void tusb_exit_module(void) {
-	int rc;
 
 	kfree(ltp_usb.dev);
-	usb_free_bus(ltp_usb.bus);
 
-	rc = unregister_chrdev(Major, DEVICE_NAME);
-	if(rc < 0) 
-		printk("tusb: unregister failed\n");
-	else
-		printk("tusb: unregister success\n");
+#if 0
+	usb_free_bus(ltp_usb.bus);
+#endif
+
+	unregister_chrdev(Major, DEVICE_NAME);
 
 	usb_deregister(&test_usb_driver);
 }

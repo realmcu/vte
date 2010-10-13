@@ -56,11 +56,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <errno.h>
-#include <numa.h>
-
 #include <test.h>
 #include <usctest.h>
-
 #include "move_pages_support.h"
 
 #define SHARED_PAGE 0
@@ -88,7 +85,7 @@ extern int Tst_count;
  * child() - touches pages, and waits for signal from parent.
  * @pages: shared pages allocated in parent
  */
-void child(void **pages, sem_t *sem)
+void child(void **pages, sem_t * sem)
 {
 	int i;
 
@@ -101,22 +98,18 @@ void child(void **pages, sem_t *sem)
 
 	/* Setup complete. Ask parent to continue. */
 	if (sem_post(&sem[SEM_CHILD_SETUP]) == -1)
-		tst_resm(TWARN, "error post semaphore: %s", strerror(errno));
+		tst_resm(TWARN | TERRNO, "error post semaphore");
 
 	/* Wait for testcase in parent to complete. */
 	if (sem_wait(&sem[SEM_PARENT_TEST]) == -1)
-		tst_resm(TWARN, "error wait semaphore: %s", strerror(errno));
+		tst_resm(TWARN | TERRNO, "error waiting for semaphore");
 
 	exit(0);
 }
 
 int main(int argc, char **argv)
 {
-	unsigned int i;
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
-	unsigned int from_node = 0;
-	unsigned int to_node = 1;
+	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
 	msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
@@ -127,6 +120,12 @@ int main(int argc, char **argv)
 	}
 
 	setup();
+
+#if HAVE_NUMA_MOVE_PAGES
+	unsigned int i;
+	int lc;			/* loop counter */
+	unsigned int from_node = 0;
+	unsigned int to_node = 1;
 
 	/* check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
@@ -141,14 +140,12 @@ int main(int argc, char **argv)
 		Tst_count = 0;
 
 		ret = alloc_shared_pages_on_node(pages + SHARED_PAGE,
-						 N_SHARED_PAGES,
-						 from_node);
+						 N_SHARED_PAGES, from_node);
 		if (ret == -1)
 			continue;
 
 		ret = alloc_pages_on_node(pages + UNSHARED_PAGE,
-					  N_UNSHARED_PAGES,
-					  from_node);
+					  N_UNSHARED_PAGES, from_node);
 		if (ret == -1)
 			goto err_free_shared;
 
@@ -175,15 +172,13 @@ int main(int argc, char **argv)
 
 		/* Wait for child to setup and signal. */
 		if (sem_wait(&sem[SEM_CHILD_SETUP]) == -1)
-			tst_resm(TWARN, "error wait semaphore: %s",
-				 strerror(errno));
+			tst_resm(TWARN | TERRNO, "error wait semaphore");
 
 		ret = numa_move_pages(0, N_TEST_PAGES, pages, nodes,
 				      status, MPOL_MF_MOVE);
 		TEST_ERRNO = errno;
 		if (ret == -1) {
-			tst_resm(TFAIL, "move_pages unexpectedly failed: %s",
-				 strerror(errno));
+			tst_resm(TFAIL | TERRNO, "move_pages unexpectedly failed");
 			goto err_kill_child;
 		}
 
@@ -194,20 +189,22 @@ int main(int argc, char **argv)
 			tst_resm(TFAIL, "status[%d] is %d",
 				 SHARED_PAGE, status[SHARED_PAGE]);
 
-	err_kill_child:
+	      err_kill_child:
 		/* Test done. Ask child to terminate. */
 		if (sem_post(&sem[SEM_PARENT_TEST]) == -1)
-			tst_resm(TWARN, "error post semaphore: %s",
-				 strerror(errno));
+			tst_resm(TWARN | TERRNO, "error post semaphore");
 		/* Read the status, no zombies! */
 		wait(NULL);
-	err_free_sem:
+	      err_free_sem:
 		free_sem(sem, MAX_SEMS);
-	err_free_unshared:
+	      err_free_unshared:
 		free_pages(pages + UNSHARED_PAGE, N_UNSHARED_PAGES);
-	err_free_shared:
+	      err_free_shared:
 		free_shared_pages(pages + SHARED_PAGE, N_SHARED_PAGES);
 	}
+#else
+	tst_resm(TCONF, "move_pages support not found.");
+#endif
 
 	cleanup();
 	/* NOT REACHED */
@@ -218,8 +215,7 @@ int main(int argc, char **argv)
 /*
  * setup() - performs all ONE TIME setup for this test
  */
-void
-setup(void)
+void setup(void)
 {
 	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
@@ -235,8 +231,7 @@ setup(void)
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at completion
  */
-void
-cleanup(void)
+void cleanup(void)
 {
 	/*
 	 * print timing stats if that option was specified.
@@ -246,5 +241,4 @@ cleanup(void)
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-	/*NOTREACHED*/
-}
+ /*NOTREACHED*/}

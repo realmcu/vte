@@ -15,8 +15,8 @@ setup()
         export TST_COUNT=0
 	export TST_TOTAL=8
 
-	# Remove any leftover test directories from prior failed runs.
-	rm -rf $SELINUXTMPDIR/test_file
+	SELINUXTMPDIR=$(mktemp -d)
+	chcon -t test_file_t $SELINUXTMPDIR
 
 	# Create a test file.
 	touch $SELINUXTMPDIR/test_file
@@ -34,9 +34,9 @@ test01()
         RC=$?
         if [ $RC -eq 0 ]
         then
-                echo "$TCID   PASS : open passed."
+                tst_resm TPASS "open passed."
         else
-                echo "$TCID   FAIL : open failed."
+                tst_resm TFAIL "open failed."
         fi
         return $RC
 }
@@ -53,10 +53,10 @@ test02()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : open passed."
+                tst_resm TPASS "open passed."
 		RC=0
         else
-                echo "$TCID   FAIL : open failed."
+                tst_resm TFAIL "open failed."
 		RC=1
         fi
 	return $RC
@@ -71,10 +71,10 @@ test03()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : open passed."
+                tst_resm TPASS "open passed."
 		RC=0
         else
-                echo "$TCID   FAIL : open failed."
+                tst_resm TFAIL "open failed."
 		RC=1
         fi
 	return $RC
@@ -90,10 +90,10 @@ test04()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : open passed."
+                tst_resm TPASS "open passed."
 		RC=0
         else
-                echo "$TCID   FAIL : open failed."
+                tst_resm TFAIL "open failed."
 		RC=1
         fi
 	return $RC
@@ -111,10 +111,10 @@ test05()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : open passed."
+                tst_resm TPASS "open passed."
 		RC=0
         else
-                echo "$TCID   FAIL : open failed."
+                tst_resm TFAIL "open failed."
 		RC=1
         fi
 	return $RC
@@ -131,9 +131,9 @@ test06()
         RC=$?
         if [ $RC -eq 0 ]
         then
-                echo "$TCID   PASS : open passed."
+                tst_resm TPASS "open passed."
         else
-                echo "$TCID   FAIL : open failed."
+                tst_resm TFAIL "open failed."
         fi
 	return $RC
 }
@@ -150,10 +150,10 @@ test07()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : open passed."
+                tst_resm TPASS "open passed."
 		RC=0
         else
-                echo "$TCID   FAIL : open failed."
+                tst_resm TFAIL "open failed."
 		RC=1
         fi
 	return $RC
@@ -171,17 +171,16 @@ test08()
         RC=$?
         if [ $RC -eq 0 ]
         then
-                echo "$TCID   PASS : open passed."
+                tst_resm TPASS "open passed."
         else
-                echo "$TCID   FAIL : open failed."
+                tst_resm TFAIL "open failed."
         fi
 	return $RC
 }
 
 cleanup()
 {
-	# Cleanup.
-	rm -rf $SELINUXTMPDIR/test_file
+	rm -rf $SELINUXTMPDIR
 }
 
 # Function:     main

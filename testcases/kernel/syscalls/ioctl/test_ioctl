@@ -25,7 +25,7 @@ export TST_COUNT=0
 
 for tttype in `ls /dev/tty*`
 do
-device_no=${tttype:8}
+device_no=${tttype#/dev/tty}
 case "$device_no" in
 [0-9]|[0-9][0-9])
     tst_resm TINFO "Testing ioctl01 with $tttype"
@@ -43,13 +43,13 @@ done
 
 for tttype in `ls /dev/tty*`
 do
-device_no=${tttype:8}
+device_no=${tttype#/dev/tty}
 case "$device_no" in
 [0-9]|[0-9][0-9])
     tst_resm TINFO "Testing ioctl02 with $tttype"
     ioctl02 -D $tttype
     RC=$?
-    if  [ $RC -eq 0 ]  
+    if  [ $RC -eq 0 ]
     then
      tst_resm TPASS "ioctl02 Passed with $tttype"
     else

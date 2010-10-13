@@ -53,52 +53,53 @@
 #include <test.h>
 #include <usctest.h>
 #include <signal.h>
+#include <stdint.h>
 
 char *TCID = "times03";
 int TST_TOTAL = 1;
 extern int Tst_count;
-int exp_enos[]={0};
+int exp_enos[] = { 0 };
 volatile int timeout;		/* Did we timeout in alarm() ? */
 
 void work(void);
-void sighandler(int signal, siginfo_t *info, void *uc);
+void sighandler(int signal, siginfo_t * info, void *uc);
 
 void setup(void);
 void cleanup(void);
 
 int main(int argc, char **argv)
 {
-	char *msg;			/* message returned from parse_opts */
+	char *msg;		/* message returned from parse_opts */
 
 	struct tms buf1, buf2;
 	time_t start_time, end_time;
-	int pid2, status, fail=0;
+	int pid2, status, fail = 0;
 	struct sigaction sa;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) !=
-		(char *)NULL) {
+	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
+	    (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-		/*NOT REACHED*/
+		/*NOT REACHED */
 	}
 
 	setup();
 
-	/* 
+	/*
 	 * We spend time in userspace using the following mechanism :
 	 * Setup an alarm() for 3 secs and do some simple loop operations
-	 * until we get the signal. This makes the test independent of 
+	 * until we get the signal. This makes the test independent of
 	 * processor speed.
 	 */
 	sa.sa_sigaction = sighandler;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_SIGINFO;
-	
+
 	if (sigaction(SIGALRM, &sa, NULL) < 0) {
 		tst_brkm(TBROK, cleanup, "Sigaction failed !\n");
 		/* NOT REACHED */
 	}
-	
+
 	timeout = 0;
 	alarm(3);
 
@@ -134,39 +135,39 @@ int main(int argc, char **argv)
 		if (STD_FUNCTIONAL_TEST) {
 			if (buf1.tms_utime == 0) {
 				tst_resm(TFAIL, "Error: times() report "
-					"0 user time");
-				fail=1;
+					 "0 user time");
+				fail = 1;
 			}
 			if (buf1.tms_stime == 0) {
 				tst_resm(TFAIL, "Error: times() report "
-					"0 system time");
-				fail=1;
+					 "0 system time");
+				fail = 1;
 			}
 			if (buf1.tms_cutime != 0) {
 				tst_resm(TFAIL, "Error: times() report "
-					"%d child user time",
-					buf1.tms_cutime);
-				fail=1;
+					 "%ld child user time",
+					 buf1.tms_cutime);
+				fail = 1;
 			}
 			if (buf1.tms_cstime != 0) {
-				tst_resm(TFAIL, "Error: times() report "							"%d child system time",
-						buf1.tms_cstime);
-				fail=1;
+				tst_resm(TFAIL,
+					 "Error: times() report "
+					 "%ld child system time",
+					 buf1.tms_cstime);
+				fail = 1;
 			}
 
 			pid2 = FORK_OR_VFORK();
 			if (pid2 < 0) {
 				tst_brkm(TFAIL, cleanup, "Fork failed");
-				/*NOTREACHED*/
-			} else if (pid2 == 0) {
-				
+			 /*NOTREACHED*/} else if (pid2 == 0) {
+
 				/* Spend some cycles in userspace */
 
 				timeout = 0;
 				alarm(3);
-				
-				work();
 
+				work();
 
 				/*
 				 * Atleast some CPU system ime must be used
@@ -179,15 +180,14 @@ int main(int argc, char **argv)
 				for (;;) {
 					if (times(&buf2) == -1) {
 						tst_resm(TFAIL,
-							"Call to times "
-							"failed, "
-							"errno = %d",
-							errno);
+							 "Call to times "
+							 "failed, "
+							 "errno = %d", errno);
 						exit(1);
 					}
 					end_time = time(NULL);
 					if ((end_time - start_time)
-							> 10) {
+					    > 10) {
 						break;
 					}
 				}
@@ -197,50 +197,47 @@ int main(int argc, char **argv)
 			waitpid(pid2, &status, 0);
 			if (WEXITSTATUS(status) != 0) {
 				tst_resm(TFAIL, "Call to times(2) "
-						"failed in child");
+					 "failed in child");
 			}
-			if (times(&buf2) == -1) {	
+			if (times(&buf2) == -1) {
 				TEST_ERROR_LOG(TEST_ERRNO);
 				tst_resm(TFAIL, "Call to times failed "
-						"errno = %d", errno);
-				fail=1;
+					 "errno = %d", errno);
+				fail = 1;
 			}
 			if (buf1.tms_utime > buf2.tms_utime) {
 				tst_resm(TFAIL, "Error: parents's "
-					 "user time(%d) before child "
-					 "> parent's user time (%d) "
+					 "user time(%ld) before child "
+					 "> parent's user time (%ld) "
 					 "after child",
-					 buf1.tms_utime,
-					 buf2.tms_utime);
-				fail=1;
+					 (intmax_t)buf1.tms_utime, (intmax_t)buf2.tms_utime);
+				fail = 1;
 			}
 			if (buf2.tms_cutime == 0) {
 				tst_resm(TFAIL, "Error: times() "
-					 "report %d child user "
+					 "report %ld child user "
 					 "time should be > than "
-					 "zero", buf2.tms_cutime);
-				fail=1;
+					 "zero", (intmax_t)buf2.tms_cutime);
+				fail = 1;
 			}
 			if (buf2.tms_cstime == 0) {
 				tst_resm(TFAIL, "Error: times() "
-					 "report %d child system time "
+					 "report %ld child system time "
 					 "should be > than zero",
-					 buf2.tms_cstime);
-				fail=1;
+					 (intmax_t)buf2.tms_cstime);
+				fail = 1;
 			}
 			if (fail == 0) {
 				tst_resm(TPASS, "%s: Functionality "
-				"test passed", TCID);
+					 "test passed", TCID);
 			}
-					
+
 		} else {
 			tst_resm(TPASS, "%s call succeeded", TCID);
 		}
 	}
 	cleanup();
-	/*NOTREACHED*/
-
-  return(0);
+	 /*NOTREACHED*/ return 0;
 
 }
 
@@ -249,12 +246,12 @@ int main(int argc, char **argv)
  *	Set the timeout to indicate we timed out in the alarm().
  */
 
-void sighandler (int signal, siginfo_t *info, void *uc)
+void sighandler(int signal, siginfo_t * info, void *uc)
 {
-	if (signal == SIGALRM) 
+	if (signal == SIGALRM)
 		timeout = 1;
 	else
-		tst_brkm (TBROK, cleanup, "Unexpected signal %d\n", signal);
+		tst_brkm(TBROK, cleanup, "Unexpected signal %d\n", signal);
 }
 
 /*
@@ -267,8 +264,8 @@ void work(void)
 	int i, j, k;
 
 	while (!timeout)
-		for (i = 0; i < 10000; i ++)
-			for (j = 0; j < 100; j ++)
+		for (i = 0; i < 10000; i++)
+			for (j = 0; j < 100; j++)
 				k = i * j;
 	timeout = 0;
 }
@@ -277,8 +274,7 @@ void work(void)
  * setup()
  *	performs all ONE TIME setup for this test
  */
-void
-setup(void)
+void setup(void)
 {
 	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
@@ -297,8 +293,7 @@ setup(void)
  *	performs all ONE TIME cleanup for this test at
  *	completion or premature exit
  */
-void
-cleanup(void)
+void cleanup(void)
 {
 	/*
 	 * print timing stats if that option was specified.
@@ -308,5 +303,4 @@ cleanup(void)
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-	/*NOTREACHED*/
-}
+ /*NOTREACHED*/}

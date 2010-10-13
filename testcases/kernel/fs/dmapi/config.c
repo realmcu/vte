@@ -38,10 +38,10 @@ int main(int argc, char **argv)
 	char *varstr;
 	int   rc;
 	int   i;
-	
+
 	DMOPT_PARSE(argc, argv);
 	DMLOG_START();
-	
+
 	/* CANNOT DO ANYTHING WITHOUT SUCCESSFUL INITIALIZATION AND NO PREEXISTING FILES!!! */
 	if ((rc = dm_init_service(&varstr)) != 0) {
 		DMLOG_PRINT(DMLVL_ERR, "dm_init_service failed! (rc = %d, errno = %d)\n", rc, errno);
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 	}
 
 	DMLOG_PRINT(DMLVL_DEBUG, "Starting DMAPI configuration tests\n") ;
-	
+
 	szFuncName = "dm_get_config";
 
 	/*
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hanp)\n", szFuncName);
 			rc = dm_get_config((void *)INVALID_ADDR, hlen, DM_CONFIG_BULKALL, &retval);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid hlen)\n", szFuncName);
 			rc = dm_get_config(hanp, INVALID_ADDR, DM_CONFIG_BULKALL, &retval);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid flagname)\n", szFuncName);
 			rc = dm_get_config(hanp, hlen, INVALID_ADDR, &retval);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EINVAL);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -183,7 +183,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalid retvalp)\n", szFuncName);
 			rc = dm_get_config(hanp, hlen, DM_CONFIG_BULKALL, (dm_size_t *)INVALID_ADDR);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EFAULT);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -207,7 +207,7 @@ int main(int argc, char **argv)
 		/* Variation */
 		DMLOG_PRINT(DMLVL_DEBUG, "%s(global handle)\n", szFuncName);
 		rc = dm_get_config(DM_GLOBAL_HANP, DM_GLOBAL_HLEN, DM_CONFIG_BULKALL, &retval);
-		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF); 
+		DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF);
 
 		/* Variation clean up */
 	}
@@ -236,7 +236,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(file handle)\n", szFuncName);
 			rc = dm_get_config(hanp, hlen, DM_CONFIG_BULKALL, &retval);
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -271,7 +271,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(dir handle)\n", szFuncName);
 			rc = dm_get_config(hanp, hlen, DM_CONFIG_BULKALL, &retval);
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = rmdir(DUMMY_SUBDIR);
@@ -306,7 +306,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(fs handle)\n", szFuncName);
 			rc = dm_get_config(hanp, hlen, DM_CONFIG_BULKALL, &retval);
-			DMVAR_ENDPASSEXP(szFuncName, 0, rc); 
+			DMVAR_ENDPASSEXP(szFuncName, 0, rc);
 
 			/* Variation clean up */
 			rc = close(fd);
@@ -347,7 +347,7 @@ int main(int argc, char **argv)
 			/* Variation */
 			DMLOG_PRINT(DMLVL_DEBUG, "%s(invalidated handle)\n", szFuncName);
 			rc = dm_get_config(hanp, hlen, DM_CONFIG_BULKALL, &retval);
-			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF); 
+			DMVAR_ENDFAILEXP(szFuncName, -1, rc, EBADF);
 
 			/* Variation clean up */
 			dm_handle_free(hanp, hlen);
@@ -404,7 +404,7 @@ int main(int argc, char **argv)
 	}
 
 	DMLOG_STOP();
-			
+		
 	return 0;
 
-}	
+}

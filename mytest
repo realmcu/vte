@@ -2,7 +2,8 @@
 
 if [ $# -eq 0 ]
 then
-CMDFILE=9WK11_GOV
+CMDFILE=MX50_EVK_Linux_ER2
+#CMDFILE=re-test
 elif [ $1 == "one" ]
 then
 CMDFILE=ONSHOT
@@ -10,12 +11,19 @@ else
 CMDFILE=$1
 fi
 
+ARCH_PLATFORM=imx50
+TEST_TYPE=AUTO
+
 export STREAM_PATH=/mnt/nfs/test_stream
+mount -t ext4 /dev/mmcblk0p1 /tmp
+export TMPDIR=/tmp
+
 
 TEST_PATH=$(dirname $0)
 
 dos2unix ${TEST_PATH}/runtest/$CMDFILE
  
-${TEST_PATH}/runalltests.sh -v -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${CMDFILE}_log_$(date +"%y%m%d")
+${TEST_PATH}/runltp -K ${ARCH_PLATFORM} -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${CMDFILE}_log_$(date +"%y%m%d")
+#${TEST_PATH}/runalltests.sh -v -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt
 
 echo "FREESCALE LBG TEST END"

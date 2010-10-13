@@ -70,38 +70,37 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID="nice04";		/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
+char *TCID = "nice04";		/* Test program identifier.    */
+int TST_TOTAL = 1;		/* Total number of test cases. */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
+int exp_enos[] = { EPERM, 0 };
 
-int exp_enos[]={EPERM, 0};
-
-struct test_case_t {		/* test case struct. to hold ref. test cond's*/
+struct test_case_t {		/* test case struct. to hold ref. test cond's */
 	int nice_val;
 	char *desc;
 	int exp_errno;
 } Test_cases[] = {
-	{-5, "Non-root cannot specify higher priority", EPERM}
+	{
+	-5, "Non-root cannot specify higher priority", EPERM}
 };
 
 void setup();			/* Main setup function of test */
 void cleanup();			/* cleanup function for the test */
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 	int i;			/* counter variable for test case looping */
 	int incr_val;		/* nice value for the process */
-	char *test_desc; 	/* test specific error message */
-    
+	char *test_desc;	/* test specific error message */
+
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
+	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
 	if (msg != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
@@ -115,13 +114,13 @@ main(int ac, char **av)
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
+		Tst_count = 0;
 
-		for (i=0; i<TST_TOTAL; i++) {
+		for (i = 0; i < TST_TOTAL; i++) {
 			incr_val = Test_cases[i].nice_val;
 			test_desc = Test_cases[i].desc;
 
-			/* 
+			/*
 			 * Call nice(2) with different 'incr' parameter
 			 * values and verify that it fails as expected.
 			 */
@@ -130,44 +129,41 @@ main(int ac, char **av)
 			/* check return code from nice(2) */
 			if (TEST_RETURN == -1) {
 				TEST_ERROR_LOG(TEST_ERRNO);
-				tst_resm(TPASS, "nice(2) returned %d for %s",
+				tst_resm(TPASS, "nice(2) returned %ld for %s",
 					 TEST_RETURN, test_desc);
 			} else {
-				tst_resm(TFAIL,
-				 	 "nice() returned %d for %s, errno:%d",
-					 TEST_RETURN, test_desc, errno);
+				tst_resm(TFAIL|TTERRNO,
+					 "nice() returned %ld for %s",
+					 TEST_RETURN, test_desc);
 			}
-		}	/* End of TEST CASE LOOPING. */
-	}	/* End for TEST_LOOPING */
+		}		/* End of TEST CASE LOOPING. */
+	}			/* End for TEST_LOOPING */
 
 	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	return(0);
-}	/* End main */
+	return 0;
+}				/* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  *  Make sure the test process uid is non-root only.
  */
-void 
-setup()
+void setup()
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	 /* Switch to nobody user for correct error code collection */
-        if (geteuid() != 0) {
-                tst_brkm(TBROK, tst_exit, "Test must be run as root");
-        }
-        ltpuser = getpwnam(nobody_uid);
-        if (setuid(ltpuser->pw_uid) == -1) {
-                tst_resm(TINFO, "setuid failed to "
-                         "to set the effective uid to %d",
-                         ltpuser->pw_uid);
-                perror("setuid");
-        }
-
+	/* Switch to nobody user for correct error code collection */
+	if (geteuid() != 0) {
+		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+	}
+	ltpuser = getpwnam(nobody_uid);
+	if (setuid(ltpuser->pw_uid) == -1) {
+		tst_resm(TINFO, "setuid failed to "
+			 "to set the effective uid to %d", ltpuser->pw_uid);
+		perror("setuid");
+	}
 
 	/* Pause if that option was specified */
 	TEST_PAUSE;
@@ -177,8 +173,7 @@ setup()
  * cleanup() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
  */
-void 
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.

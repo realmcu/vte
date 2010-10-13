@@ -70,7 +70,7 @@ unsigned long huge_pages_shm_to_be_allocated;
 #if __WORDSIZE==64
 #define UNALIGNED      0x10000000eee
 #else
-#define UNALIGNED      0x90000eee
+#define UNALIGNED      0x60000eee
 #endif
 
 int shm_id_1 = -1;
@@ -104,9 +104,9 @@ int main(int ac, char **av)
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
-        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 ) 
-             tst_brkm(TBROK, cleanup, "Test cannot be continued owning to sufficient availability of Hugepages on the system");
-        else              
+        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 )
+             tst_brkm(TCONF, tst_exit, "Not enough available Hugepages");
+        else             
              huge_pages_shm_to_be_allocated = ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
 
 	setup();			/* global setup */
@@ -127,7 +127,7 @@ int main(int ac, char **av)
 			addr = shmat(*(TC[i].shmid), (void *)(TC[i].addr),
 				   TC[i].flags);
 			TEST_ERRNO = errno;
-	
+
 			if (addr == (void *)-1) {
 				tst_brkm(TFAIL, cleanup, "%s call failed - "
 					 "errno = %d : %s", TCID, TEST_ERRNO,
@@ -154,11 +154,11 @@ int main(int ac, char **av)
 	cleanup();
 
 	/*NOTREACHED*/
-	return(0);
+	return 0;
 }
 
 /*
- * check_functionality - check various conditions to make sure they 
+ * check_functionality - check various conditions to make sure they
  *			 are correct.
  */
 void

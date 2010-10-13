@@ -49,7 +49,7 @@ LTPROOT=${LTPROOT:-`(cd ../../../../ ; pwd)`}
 export LTPROOT
 
 # Check the environmanet variable for the test
-source check_envval || exit 1
+. check_envval || exit 1
 
 # Waiting time before outputting a warning message [sec]
 WARN_WAIT=300
@@ -80,7 +80,13 @@ done
 # Verify the client is dead.
 start_epoc=`date +%s`
 while true ; do
-    ret=`$LTP_RSH $RHOST 'ps auxw | fgrep -v grep | grep -l '[[:blank:]]ns-tcpclient[[:blank:]]' >/dev/null 2>&1; echo $?'`
+    ##ret=`$LTP_RSH $RHOST 'ps auxw | fgrep -v grep | grep -l '[[:blank:]]ns-tcpclient[[:blank:]]' >/dev/null 2>&1; echo $?'`
+    ret=`$LTP_RSH $RHOST 'ps auxw | fgrep -v grep | grep -l '/ns-tcpclient[[:blank:]]' >/dev/null 2>&1; echo $?'`
+
+    if [ -z $ret ]; then
+	continue
+    fi 
+
     if [ $ret -ne 0 ]; then
 	break
     fi

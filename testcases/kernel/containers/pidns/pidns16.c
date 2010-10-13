@@ -52,9 +52,6 @@
 #define CHILD_PID	1
 #define PARENT_PID	0
 
-#if defined(HAVE_SYS_CAPABILITY)
-#include <sys/capability.h>
-
 char *TCID = "pidns16";
 int TST_TOTAL = 1;
 pid_t globalpid;
@@ -132,7 +129,7 @@ int main(int argc, char *argv[])
 
 	globalpid = getpid();
 
-	cpid = do_clone(CLONE_NEWPID | SIGCHLD, child_fn, NULL);
+	cpid = ltp_clone_quick(CLONE_NEWPID | SIGCHLD, child_fn, NULL);
 
 	if (cpid < 0) {
 		tst_resm(TBROK, "clone() failed.");
@@ -158,17 +155,3 @@ int main(int argc, char *argv[])
 	cleanup();
 	return 0;
 }	/* End main */
-
-#else
-
-char *TCID = "pidns16";
-int TST_TOTAL = 0;              /* Total number of test cases. */
-
-int
-main()
-{
-    tst_resm(TBROK, "can't find header sys/capability.h");
-    return 1;
-}
-
-#endif

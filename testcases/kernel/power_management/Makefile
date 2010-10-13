@@ -18,27 +18,14 @@
 ##                                                                            ##
 ################################################################################
 
-all:
-	@set -e; $(MAKE) check_kv_arch ;
+top_srcdir		?= ../../..
 
-check_kv_arch: check_kv_arch.c
-	$(CC) -o $@ $< ../../../lib/tst_kvercmp.c -I../../../include
+include $(top_srcdir)/include/mk/testcases.mk
 
-install:
-	@set -e; ln -f check_kv_arch ../../bin/check_kv_arch; \
-	ln -f  change_freq.sh ../../bin/change_freq.sh; \
-	ln -f  change_govr.sh ../../bin/change_govr.sh; \
-	ln -f  check_cpufreq_sysfs_files.sh ../../bin/check_cpufreq_sysfs_files.sh; \
-	ln -f  check_config.sh ../../bin/check_config.sh; \
-	ln -f  pwkm_load_unload.sh ../../bin/pwkm_load_unload.sh; \
-	ln -f  pm_include.sh ../../bin/pm_include.sh; \
-	ln -f  runpwtests.sh ../../bin/runpwtests.sh; \
-	ln -f  test_sched_mc.sh ../../bin/test_sched_mc.sh; \
-	ln -f  config_cpu_freq ../../bin/config_cpu_freq; \
-	ln -f  config_cpu_idle ../../bin/config_cpu_idle; \
-	ln -f  config_sched_mc ../../bin/config_sched_mc;
-	ln -f  check_cpuidle_sysfs_files.sh ../../bin/check_cpuidle_sysfs_files.sh;
-	chmod ugo+x *.sh
-clean:
-	rm -f check_kv_arch
+vpath %.c $(srcdir):$(top_srcdir)/lib
 
+INSTALL_TARGETS		:= lib/*.py *.py *.sh
+
+MAKE_DEPS		+= $(APICMDS_DIR)/tst_kvercmp
+
+include $(top_srcdir)/include/mk/generic_leaf_target.mk

@@ -16,26 +16,26 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 
-#########################################################################
-# name of file	: Makefile						#
-# description	: make(1) description file                           	#
-#########################################################################
-CFLAGS+=-I../../../../../include -g -Wall
-LOADLIBES+=-L../../../../lib -lltp
-TESTS=hugeshmget hugeshmat hugeshmdt hugeshmctl hugemmap
+top_srcdir		?= ../../../..
 
-all: $& $(TESTS)
-	@set -e; for i in lib $(TESTS); do \
-		$(MAKE) -C $$i  all; \
-	done
+include	$(top_srcdir)/include/mk/env_pre.mk
 
-clean:
-	@set -e; for i in lib $(TESTS); do \
-		$(MAKE) -C $$i  clean; \
-	done
+LDLIBS			+= -lmm
+LIBDIR			:= lib
+LIB			:= $(LIBDIR)/libipc_hugetlb.a
+FILTER_OUT_DIRS		:= $(LIBDIR)
 
-install:
-	@set -e; for i in lib $(TESTS); do \
-		$(MAKE) -C $$i  install; \
-	done
+$(LIBDIR):
+	mkdir -p "$@"
 
+$(LIB): $(LIBDIR)
+	$(MAKE) -C $^ -f "$(abs_srcdir)/$^/Makefile" all
+
+MAKE_DEPS		:= $(LIB)
+
+trunk-clean:: | lib-clean
+
+lib-clean:: $(LIBDIR)
+	$(MAKE) -C $^ -f "$(abs_srcdir)/$^/Makefile" clean 
+
+include $(top_srcdir)/include/mk/generic_trunk_target.mk

@@ -10,9 +10,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 /*
- * Test the chroot() call on a directory whose name is given as the first 
+ * Test the chroot() call on a directory whose name is given as the first
  * argument. This call will result in a CAP_SYS_CHROOT capable check.
  */
 int main(int argc, char **argv) {

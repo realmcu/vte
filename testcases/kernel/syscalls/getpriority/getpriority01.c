@@ -21,7 +21,7 @@
  * Test Name: getpriority01
  *
  * Test Description:
- *  Verify that getpriority() succeeds get the scheduling priority of 
+ *  Verify that getpriority() succeeds get the scheduling priority of
  *  the current process, process group or user.
  *
  * Expected Result:
@@ -38,7 +38,7 @@
  *   Check return code, if system call failed (return=-1)
  *   	Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *   	Verify the Functionality of system call
  *      if successful,
  *      	Issue Functionality-Pass message.
  *      Otherwise,
@@ -76,8 +76,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID="getpriority01";	/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
+char *TCID = "getpriority01";	/* Test program identifier.    */
+int TST_TOTAL = 1;		/* Total number of test cases. */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 void setup();			/* setup function for the test */
@@ -85,19 +85,18 @@ void cleanup();			/* cleanup function for the test */
 
 int prio_which[] = { PRIO_PROCESS, PRIO_PGRP, PRIO_USER };
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 	int ind;		/* counter for test case looping */
 	int which;		/* scheduling priority category */
-    
+
 	TST_TOTAL = sizeof(prio_which) / sizeof(int);
 
 	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *) NULL) {
+	if (msg != (char *)NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -108,18 +107,18 @@ main(int ac, char **av)
 	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
+		Tst_count = 0;
 
 		for (ind = 0; ind < TST_TOTAL; ind++) {
 			which = prio_which[ind];
 
-			/* 
+			/*
 			 * Invoke getpriority with the specified
 			 * 'which' argument for the calling process.
 			 */
 			TEST(getpriority(which, 0));
 
-			/* check return code of getpriority()*/
+			/* check return code of getpriority() */
 			if (TEST_RETURN < 0 && TEST_ERRNO != 0) {
 				tst_resm(TFAIL, "getpriority(%d, 0) "
 					 "Failed, errno=%d : %s",
@@ -127,24 +126,22 @@ main(int ac, char **av)
 					 strerror(TEST_ERRNO));
 			} else {
 				tst_resm(TPASS, "getpriority(%d, 0) returned "
-					 "%d priority value",
+					 "%ld priority value",
 					 which, TEST_RETURN);
 			}
-		}	/* End of TEST CASE LOOPING */
-	}	/* End for TEST_LOOPING */
+		}		/* End of TEST CASE LOOPING */
+	}			/* End for TEST_LOOPING */
 
 	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	/*NOTREACHED*/
-	return(0);
-}	/* End main */
+	 /*NOTREACHED*/ return 0;
+}				/* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void 
-setup()
+void setup()
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -157,8 +154,7 @@ setup()
  * cleanup() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
  */
-void 
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.

@@ -25,6 +25,7 @@
 /******************************************************************************/
 #include "tfloat.h"
 
+#define SAFE_FREE(p) { if(p) { free(p); (p)=NULL; } }
 /*
  * allocates a buffer and read a file to it
  * input parameters:
@@ -87,7 +88,7 @@ static size_t read_file(char *fname, void **data)
 			if(maxretries--)
 				continue;
 		}
-		free(buffer);
+		SAFE_FREE(buffer);
 		return (size_t)0;
 	}
 
@@ -103,7 +104,7 @@ static size_t read_file(char *fname, void **data)
 			}
 		}
 		(void)close(fd);
-		free(buffer);
+		SAFE_FREE(buffer);
 		return (size_t)0;
 	}
 
@@ -123,7 +124,7 @@ static void check_error(TH_DATA *th_data, double e, double r, int index)
 
 	x = fabs(r - e); /* diff expected/computed */
 
-	if(x > EPS) { /* error ? */
+	if (x > EPS) { /* error ? */
 		/* compute exponent parts */
 		(void)frexp(r, &pr); /* for computed */
 		(void)frexp(x, &px); /* for difference */
@@ -290,6 +291,7 @@ void * thread_code(void * arg)
 			th_data->th_func.din_fname,
 			strerror(errno));
 		th_data->th_result = 1;
+		SAFE_FREE(din);
 		pthread_exit((void *)1);
 	}
 	fsize2 = read_file(th_data->th_func.dex_fname, (void **)&dex);
@@ -300,7 +302,8 @@ void * thread_code(void * arg)
 			th_data->th_func.dex_fname,
 			strerror(errno));
 		th_data->th_result = 1;
-		free(din);
+		SAFE_FREE(din);
+		SAFE_FREE(dex);
 		pthread_exit((void *)1);
 	}
 
@@ -321,8 +324,8 @@ void * thread_code(void * arg)
 					th_data->th_func.dex2_fname,
 					strerror(errno));
 				th_data->th_result = 1;
-				free(din);
-				free(dex);
+				SAFE_FREE(din);
+				SAFE_FREE(dex);
 				pthread_exit((void *)1);
 			}
 	}
@@ -353,16 +356,16 @@ file_size_error:
 			    "FAIL: %s: file sizes don't match\n",
 			    th_data->th_func.fident);
 			th_data->th_result = 1;
-			free(din);
-			free(dex);
+			SAFE_FREE(din);
+			SAFE_FREE(dex);
 			if(fsize3)
-				free(dex2);
+				SAFE_FREE(dex2);
 			pthread_exit((void *)1);
 	}
 
 	imax = fsize / sizeof(double);
 
-	while(th_data->th_nloop <= num_loops) {   
+	while(th_data->th_nloop <= num_loops) {
 	/* loop stopped by pthread_cancel */
 
 		for(index = th_data->th_num;
@@ -401,11 +404,19 @@ file_size_error:
 					 "FAIL: %s: unexpected function type\n",
 					 th_data->th_func.fident);
 					th_data->th_result = 1;
+					SAFE_FREE(din);
+					SAFE_FREE(dex);
+					if(fsize3)
+						SAFE_FREE(dex2);
 					pthread_exit((void *)1);
 			}
 			pthread_testcancel();
 		} /* end of computation loop */
 		++th_data->th_nloop;
 	}   /* end of loop */
+	SAFE_FREE(din);
+	SAFE_FREE(dex);
+	if(fsize3)
+		SAFE_FREE(dex2);
 	pthread_exit((void *)0);
 }

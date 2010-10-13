@@ -17,9 +17,9 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* 
+/*
  * Test Name: chmod05
- * 
+ *
  * Test Description:
 //wjh
 //This test seems to be invalid see comments below
@@ -46,11 +46,11 @@
  *   Loop if the proper options are given.
  *   Execute system call
  *   Check return code, if system call failed (return=-1)
- *   	Log the errno and Issue a FAIL message.
+ *	Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *	Verify the Functionality of system call
  *      if successful,
- *      	Issue Functionality-Pass message.
+ *		Issue Functionality-Pass message.
  *      Otherwise,
  *		Issue Functionality-Fail message.
  *  Cleanup:
@@ -105,13 +105,13 @@
 
 #define DEBUG 0
 
-#define MODE_RWX 	(mode_t)(S_IRWXU | S_IRWXG | S_IRWXO)
+#define MODE_RWX	(mode_t)(S_IRWXU | S_IRWXG | S_IRWXO)
 #define DIR_MODE	(mode_t)(S_ISVTX | S_ISGID | S_IFDIR)
 #define PERMS		(mode_t)(MODE_RWX | DIR_MODE)
 #define TESTDIR		"testdir"
 
-char *TCID="chmod05"; 		/* Test program identifier.    */
-int TST_TOTAL=1;    		/* Total number of test cases. */
+char *TCID = "chmod05";		/* Test program identifier.    */
+int TST_TOTAL = 1;		/* Total number of test cases. */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 void setup();			/* Main setup function for test */
@@ -119,88 +119,79 @@ void cleanup();			/* Main cleanup function for test */
 
 int main(int ac, char **av)
 {
-   struct stat stat_buf;	/* stat struct */
-   int lc;			/* loop counter */
-   char *msg;		/* message returned from parse_opts */
-   mode_t dir_mode;	/* mode permissions set on test directory */
-    
-   /* Parse standard options given to run the test. */
-   msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-   if (msg != (char *) NULL) {
-      tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-      tst_exit();
-   }
+	struct stat stat_buf;	/* stat struct */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
+	mode_t dir_mode;	/* mode permissions set on test directory */
 
-   /* Perform global setup for test */
-   setup();
+	/* Parse standard options given to run the test. */
+	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
+	if (msg != (char *)NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+		tst_exit();
+	}
 
-   /* Check looping state if -i option given */
-   for (lc = 0; TEST_LOOPING(lc); lc++) 
-   {
-      /* Reset Tst_count in case we are looping. */
-      Tst_count = 0;
+	/* Perform global setup for test */
+	setup();
 
-      /* 
-       * Call chmod(2) with mode argument to
-       * set setgid bit on TESTDIR.
-       */
-      TEST(chmod(TESTDIR, PERMS));
-	
-      /* check return code of chmod(2) */
-      if (TEST_RETURN == -1) 
-      {
-         tst_resm(TFAIL, "chmod(%s, %#o) Failed, errno=%d : %s",
-         TESTDIR, PERMS, TEST_ERRNO,
-         strerror(TEST_ERRNO));
-         continue;
-      }
+	/* Check looping state if -i option given */
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		/* Reset Tst_count in case we are looping. */
+		Tst_count = 0;
+
+		/*
+		 * Call chmod(2) with mode argument to
+		 * set setgid bit on TESTDIR.
+		 */
+		TEST(chmod(TESTDIR, PERMS));
+
+		/* check return code of chmod(2) */
+		if (TEST_RETURN == -1) {
+			tst_resm(TFAIL, "chmod(%s, %#o) failed",
+				 TESTDIR, PERMS);
+			continue;
+		}
 //wjh should this even be an option? Run but don't test anything?
-      /*
-       * Perform functional verification if test
-       * executed without (-f) option.
-       */
-      if (STD_FUNCTIONAL_TEST) 
-      {
-         /*
-          * Get the directory information using
-          * stat(2).
-          */
-         if (stat(TESTDIR, &stat_buf) < 0) 
-         {
-            tst_brkm(TFAIL, cleanup,
-            "stat() of %s failed, errno:%d",
-            TESTDIR, TEST_ERRNO);
-         }
-         dir_mode = stat_buf.st_mode;
+		/*
+		 * Perform functional verification if test
+		 * executed without (-f) option.
+		 */
+		if (STD_FUNCTIONAL_TEST) {
+			/*
+			 * Get the directory information using
+			 * stat(2).
+			 */
+			if (stat(TESTDIR, &stat_buf) < 0) {
+				tst_brkm(TFAIL, cleanup,
+					 "stat() of %s failed, errno:%d",
+					 TESTDIR, TEST_ERRNO);
+			}
+			dir_mode = stat_buf.st_mode;
 #if DEBUG
-         printf("DIR_MODE = 0%03o\n", DIR_MODE);
-         printf("MODE_RWX = 0%03o\n", MODE_RWX);
-         printf("PERMS = 0%03o\n", PERMS);
-	 printf("dir_mode = 0%03o\n", dir_mode);
+			printf("DIR_MODE = 0%03o\n", DIR_MODE);
+			printf("MODE_RWX = 0%03o\n", MODE_RWX);
+			printf("PERMS = 0%03o\n", PERMS);
+			printf("dir_mode = 0%03o\n", dir_mode);
 #endif
-         if ( PERMS != dir_mode) 
-         {
-            tst_resm(TFAIL, "%s: Incorrect modes 0%03o, "
-                            "Expected 0%03o", TESTDIR, dir_mode, PERMS);
-         }
-         else 
-         {
-            tst_resm(TPASS, "Functionality of chmod(%s, %#o) successful",
-                             TESTDIR, PERMS);
-         }
-      } 
-      else 
-      {
-         tst_resm(TPASS, "call succeeded");
-      }
-   }  /* End for TEST_LOOPING */
+			if ((PERMS & ~S_ISGID) != dir_mode) {
+				tst_resm(TFAIL, "%s: Incorrect modes 0%03o, "
+					 "Expected 0%03o", TESTDIR, dir_mode,
+					 PERMS & ~S_ISGID);
+			} else {
+				tst_resm(TPASS,
+					 "Functionality of chmod(%s, %#o) successful",
+					 TESTDIR, PERMS);
+			}
+		} else {
+			tst_resm(TPASS, "call succeeded");
+		}
+	}			/* End for TEST_LOOPING */
 
-   /* Call cleanup() to undo setup done for the test. */
-   cleanup();
-  
-   return 0;
-   /*NOTREACHED*/
-}  /* End main */
+	/* Call cleanup() to undo setup done for the test. */
+	cleanup();
+
+	return 0;
+ /*NOTREACHED*/}		/* End main */
 
 /*
  * void
@@ -208,71 +199,55 @@ int main(int ac, char **av)
  *  Create a temporary directory and cd to it.
  *  Create a test directory under temporary directory.
 //wjh we are root so do we really need this kluged helper program?
- *  Invoke setuid to root program to modify group ownership 
+ *  Invoke setuid to root program to modify group ownership
  *  on test directory.
  */
 void setup()
 {
-   char *test_home;		/* variable to hold TESTHOME env */
-   char Path_name[PATH_MAX];	/* Buffer to hold command string */
-   char Cmd_buffer[BUFSIZ];        /* Buffer to hold command string */
+	struct passwd *nobody_u;
+	struct group *bin_group;
 
-   /* capture signals */
-   tst_sig(FORK, DEF_HANDLER, cleanup);
-   
 //wjh Improper comment! This makes sure we _are_ "root" not "nobody"
-   /* Switch to nobody user for correct error code collection */
-   if (geteuid() != 0) 
-   {
-      tst_brkm(TBROK, tst_exit, "Test must be run as root");
-   }
+	/* Switch to nobody user for correct error code collection */
+	if (geteuid() != 0) {
+		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+	}
 
-   test_home = get_current_dir_name();
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
-   /* Pause if that option was specified */
-   TEST_PAUSE;
+	/* make a temp directory and cd to it */
+	tst_tmpdir();
 
-   /* make a temp directory and cd to it */
-   tst_tmpdir();
+	nobody_u = getpwnam("nobody");
+	if (!nobody_u)
+		tst_brkm(TBROK|TERRNO, cleanup, "Couldn't find uid of nobody");
 
-   /*
-    * Create a test directory under temporary directory with specified
-    * mode permissions and change the gid of test directory to that of
-//wjh Improper comment! Ownership it changed to "nobody"
-    * guest user2.
-    */
-   if (mkdir(TESTDIR, MODE_RWX) < 0) 
-   {
-      tst_brkm(TBROK, cleanup, "mkdir(2) of %s failed", TESTDIR);
-   }
- 
-   /* Get the current working directory of the process */
-   if (getcwd(Path_name, sizeof(Path_name)) == NULL) 
-   {
-      tst_brkm(TBROK, cleanup,
-               "getcwd(3) fails to get working directory of process");
-   }
+	bin_group = getgrnam("bin");
+	if (!bin_group)
+		tst_brkm(TBROK|TERRNO, cleanup, "Couldn't find gid of bin");
 
-   /*
-    * Get the complete path of TESTDIR created
-    * under temporary directory
-    */
-   strcat(Path_name, "/"TESTDIR);
+	/*
+	 * Create a test directory under temporary directory with specified
+	 * mode permissions and change the gid of test directory to that of
+	 //wjh Improper comment! Ownership it changed to "nobody"
+	 * guest user2.
+	 */
+	if (mkdir(TESTDIR, MODE_RWX) < 0)
+		tst_brkm(TBROK|TERRNO, cleanup, "mkdir(%s) failed", TESTDIR);
 
-   /* Get the command name to be executed as setuid to root */
-   strcpy((char *)Cmd_buffer, (const char *)test_home);
-   strcat((char *)Cmd_buffer, (const char *)"/change_owner ");
-   strcat((char *)Cmd_buffer, TCID);
-   strcat((char *)Cmd_buffer, " ");
-   strcat((char *)Cmd_buffer, Path_name);
+	if(setgroups(1, &nobody_u->pw_gid) == -1)
+		tst_brkm(TBROK, cleanup, "Couldn't change supplementary group Id: %s",
+				strerror(errno));
 
-   if (system((const char *)Cmd_buffer) != 0) 
-   {
-      tst_brkm(TBROK, cleanup,
-                  "Fail to modify %s group ownership", TESTDIR);
-   }
+	if (chown(TESTDIR, nobody_u->pw_uid, bin_group->gr_gid) == -1)
+		tst_brkm(TBROK|TERRNO, cleanup, "chown() of testdir failed");
 
-}  /* End setup() */
+	/* change to nobody:nobody */
+	if (setegid(nobody_u->pw_gid) == -1 || 
+		 seteuid(nobody_u->pw_uid) == -1)
+		tst_brkm(TBROK|TERRNO, cleanup, "Couldn't switch to nobody:nobody");
+}				/* End setup() */
 
 /*
  * void
@@ -283,15 +258,18 @@ void setup()
  */
 void cleanup()
 {
-   /*
-    * print timing stats if that option was specified.
-    */
-   TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 */
+	TEST_CLEANUP;
 
-   /* Remove tmp dir and all files in it */
-   tst_rmdir();
+	setegid(0);
+	seteuid(0);
 
-   /* exit with return code appropriate for results */
-   tst_exit();
+	/* Remove tmp dir and all files in it */
+	tst_rmdir();
 
-}  /* End cleanup() */
+	/* exit with return code appropriate for results */
+	tst_exit();
+
+}				/* End cleanup() */

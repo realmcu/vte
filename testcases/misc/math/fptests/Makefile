@@ -19,18 +19,11 @@
 ###########################################################################
 # name of file	: Makefile						  #
 ###########################################################################
-CFLAGS+=	-I../../../../include -O -g -Wall
-LOADLIBES+=	-lm -L../../../../lib -lltp 
 
-SRCS=$(wildcard *.c)
-TARGETS=$(patsubst %.c,%,$(SRCS))
+top_srcdir		?= ../../../..
 
-all: $(TARGETS)
+include $(top_srcdir)/include/mk/testcases.mk
 
-install:
-	@set -e; for i in $(TARGETS); do ln -f $$i ../../../bin/$$i ; done
+LDLIBS			+= -lm
 
-clean:
-	rm -f $(TARGETS)
-
-
+include $(top_srcdir)/include/mk/generic_leaf_target.mk

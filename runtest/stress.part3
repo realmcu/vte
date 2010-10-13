@@ -18,7 +18,6 @@ adjtimex02 adjtimex02
 alarm01 alarm01
 alarm02 alarm02
 alarm03 alarm03
-alarm04 cp -f $LTPROOT/testcases/bin/sig_rev $TMP;alarm04
 alarm05 alarm05
 alarm06 alarm06
 alarm07 alarm07
@@ -109,9 +108,8 @@ execv01 execv01
 execve01 execve01
 execve02 execve02 -F $LTPROOT/testcases/bin/test3
 execve03 execve03
-execve04 cp -f $LTPROOT/testcases/bin/test3 $TMP; execve04 -F test3
-execve05 execve05 -F $LTPROOT/testcases/bin/test3
-execve06 execve06 20 $LTPROOT/testcases/bin/execve06 $LTPROOT/testcases/bin/execve06 4
+execve04 execve04 -F $LTPROOT/testcases/bin/test3
+execve05 execve05 20 $LTPROOT/testcases/bin/execve05 $LTPROOT/testcases/bin/execve05 4
 execvp01 execvp01
 
 exit01 exit01
@@ -228,7 +226,6 @@ getegid01 getegid01
 geteuid01 geteuid01
 
 getgid01 getgid01
-getgid02 getgid02
 getgid03 getgid03
 
 getgroups01 getgroups01
@@ -309,7 +306,7 @@ kill11 ulimit -c 1024;kill11
 kill12 kill12
 
 lchown01 lchown01
-lchown02 cp -p $LTPROOT/testcases/bin/create_link $TMP; lchown02
+lchown02 prep_create_link; lchown02
 
 link01 symlink01 -T link01
 link02 link02
@@ -669,6 +666,7 @@ setresgid03 setresgid03
 setresuid01 setresuid01
 setresuid02 setresuid02
 setresuid03 setresuid03
+setresuid04 setresuid04
 
 setreuid01 setreuid01
 setreuid02 setreuid02
@@ -676,6 +674,7 @@ setreuid03 setreuid03
 setreuid04 setreuid04
 setreuid05 setreuid05
 setreuid06 setreuid06
+setreuid07 setreuid07
 
 setrlimit01 setrlimit01
 setrlimit02 setrlimit02
@@ -691,6 +690,7 @@ settimeofday02 settimeofday02
 setuid01 setuid01
 setuid02 setuid02
 setuid03 setuid03
+setuid04 setuid04
 
 shmat01 shmat01
 shmat02 shmat02
@@ -771,6 +771,7 @@ swapoff02 swapoff02
 
 swapon01 swapon01
 swapon02 swapon02
+swapon03 swapon03
 
 symlink01 symlink01
 symlink02 symlink02
@@ -802,7 +803,6 @@ sysinfo02 sysinfo02
 #time02 time02
 
 times01 times01
-times02 times02
 times03 times03
 
 truncate01 truncate01
@@ -874,12 +874,14 @@ writev02 writev02
 writev03 writev03
 writev04 writev04
 writev05 writev05
+writev06 writev06
 
 pty01 pty01
 hangup01 hangup01
 
 mc_cmds mc_cmds
 mc_opts export TCsrc=$LTPROOT/testcases/network/multicast/mc_opts; mc_opts
-rpc01 export TCbin=$LTPROOT/testcases/network/rpc/rpc01; rpc01
-perf_lan export TCbin=$LTPROOT/testcases/network/tcp_cmds/perf_lan; perf_lan
+rpc01 export TCbin=$LTPROOT/testcases/network/rpc/basic_tests/rpc01; rpc01
+run_rpc_tests.sh export TCbin=$LTPROOT/testcases/network/rpc/rpc-tirpc-full-test-suite; run_rpc_tests.sh
+perf_lan perf_lan
 

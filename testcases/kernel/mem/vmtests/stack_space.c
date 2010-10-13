@@ -78,9 +78,9 @@ char	*prog;				/* invoked name */
 int usage(char* prog)
 {
 	tst_resm(TCONF,"Usage: %s <nchild> <chunk_size> <iterations>",prog);
-        tst_resm(TCONF,"DEFAULTS: 20 1024 50", prog);
+        tst_resm(TCONF,"DEFAULTS: 20 1024 50");
         tst_exit();
-        return(0);
+        return 0;
 }
 
 int main(argc, argv)
@@ -97,7 +97,7 @@ int main(argc, argv)
 	if (signal(SIGTERM,term) == SIG_ERR) {
 		tst_resm(TBROK,"first sigset failed");
                 tst_exit();
-	
+
 	}
 
 	if (argc == 1) {
@@ -126,7 +126,7 @@ int main(argc, argv)
 	tst_tmpdir();
 	runtest();
 	/**NOT REACHED**/
-        return(0);
+        return 0;
 
 }
 
@@ -135,7 +135,7 @@ int bd_arg(str)
 {
 	tst_resm(TCONF,"Bad argument - %s - could not parse as number.\n", str);
         tst_exit();
-        return(0);
+        return 0;
 }
 
 
@@ -194,7 +194,7 @@ int runtest()
         tst_exit();
 
         /**NOT REACHED**/
-        return(0);
+        return 0;
 
 
 }
@@ -275,7 +275,7 @@ int dotest(int testers, int me)
 
 			if ((bits[chunk/8] & (1<<(chunk%8))) == 0) {
 				if (memcmp(buf, zero_buf, csize)) {
-					tst_resm(TFAIL,"%s[%d] bad verify @ %d (0x%x) for val %d count %d, should be 0.\n",
+					tst_resm(TFAIL,"%s[%d] bad verify @ %d (%p) for val %d count %d, should be 0.\n",
 						prog, me, chunk, buf, val, count);
 					tst_resm(TINFO,"Prev "); dumpbuf(buf-csize);
 					dumpbuf(buf);
@@ -288,7 +288,7 @@ int dotest(int testers, int me)
 			} else {
 				++collide;
 				if (memcmp(buf, val_buf, csize)) {
-					tst_resm(TFAIL,"%s[%d] bad verify @ %d (0x%x) for val %d count %d.\n",
+					tst_resm(TFAIL,"%s[%d] bad verify @ %d (%p) for val %d count %d.\n",
 						prog, me, chunk, buf, val, count);
 					tst_resm(TINFO,"Prev "); dumpbuf(buf-csize);
 					dumpbuf(buf);
@@ -323,7 +323,7 @@ int dotest(int testers, int me)
 	free(val_buf);
 	free(zero_buf);
 
-	return(0);
+	return 0;
 }
 
 int bfill(buf, val, size)
@@ -335,7 +335,7 @@ int bfill(buf, val, size)
 
 	for(i = 0; i < size; i++)
 		buf[i] = val;
-	return(0);
+	return 0;
 }
 
 
@@ -380,7 +380,7 @@ int dumpbuf(buf)
 #ifdef DEBUG
                         tst_resm(TINFO, " ... more\n");
 #endif
-                        return(0);
+                        return 0;
                 }
         }
 #ifdef DEBUG
@@ -389,7 +389,7 @@ int dumpbuf(buf)
         else
                 tst_resm(TINFO, "%d*%x\n", i-idx, buf[idx]);
 #endif
-        return(0);
+        return 0;
 
 }
 

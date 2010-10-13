@@ -34,15 +34,12 @@ int TST_TOTAL = 1;
 #include <errno.h>
 #include <string.h>
 
-
-
 /*
  * cleanup()
  * 	performs all the ONE TIME cleanup for this test at completion or
  * 	premature exit
  */
-void
-cleanup(void)
+void cleanup(void)
 {
 	/*
 	 * print timing status if that option was specified
@@ -56,31 +53,28 @@ cleanup(void)
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void 
-setup()
+void setup()
 {
-    /* capture signals */
-    tst_sig(NOFORK, DEF_HANDLER, cleanup);
+	/* capture signals */
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-    /* Pause if that option was specified */
-    TEST_PAUSE;
+	/* Pause if that option was specified */
+	TEST_PAUSE;
 
-}	/* End setup() */
+}				/* End setup() */
 
-int
-main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-	int   lc;			/* loop counter */
-	char *msg;			/* parse_opts() return message */
+	int lc;			/* loop counter */
+	char *msg;		/* parse_opts() return message */
 
 	io_context_t ctx;
 	long expected_return;
 
-	
-	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg =
+	     parse_opts(argc, argv, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-		/*NOTREACHED*/
-	}
+	 /*NOTREACHED*/}
 
 	setup();
 
@@ -102,28 +96,26 @@ ERRORS
        EINVAL The AIO context specified by ctx is invalid.
 */
 		expected_return = -EINVAL;
-		TEST(io_destroy( ctx ));
-
+		TEST(io_destroy(ctx));
 
 		if (TEST_RETURN == 0) {
 			tst_resm(TFAIL, "call succeeded unexpectedly");
 		} else if (TEST_RETURN == expected_return) {
 			tst_resm(TPASS, "expected failure - "
-				 "returned value = %d : %s", TEST_RETURN,
+				 "returned value = %ld : %s", TEST_RETURN,
 				 strerror(-1 * TEST_RETURN));
 		} else {
-			tst_resm(TFAIL, "unexpected returned value - %d - "
-				 "expected %d", TEST_RETURN,
-				 expected_return);
+			tst_resm(TFAIL, "unexpected returned value - %ld - "
+				 "expected %ld", TEST_RETURN, expected_return);
 		}
 
 		/*
-		  EFAULT The context pointed to is invalid.
-		*/
+		   EFAULT The context pointed to is invalid.
+		 */
 
 		/*
-		  ENOSYS io_destroy is not implemented on this architecture.
-		*/
+		   ENOSYS io_destroy is not implemented on this architecture.
+		 */
 		/* Crackerjack has a test case for ENOSYS. But Testing for ENOSYS
 		   is not meaningful for LTP, I think.
 		   -- Masatake */

@@ -15,17 +15,17 @@
  *
  */
 /**********************************************************
- * 
+ *
  *    TEST IDENTIFIER	: iopl01
- * 
+ *
  *    EXECUTED BY	: superuser
- * 
+ *
  *    TEST TITLE	: Basic test for iopl(2)
- * 
+ *
  *    TEST CASE TOTAL	: 4
  *
  *    AUTHOR		: Subhab Biswas <subhabrata.biswas@wipro.com>
- * 
+ *
  *    SIGNALS
  * 	Uses SIGUSR1 to pause before test if option set.
  * 	(See the parse_opts(3) man page).
@@ -38,17 +38,17 @@
  * 	  Setup signal handling.
  *	  Test caller is superuser
  *	  Pause for SIGUSR1 if option specified.
- * 
+ *
  * 	Test:
  *	 Loop if the proper options are given.
  * 	  Execute system call
  *        Check return code, if system call failed (return=-1)
- *              Issue FAIL message with errno. 
+ *              Issue FAIL message with errno.
  *        Otherwise, Issue PASS message.
- * 
+ *
  * 	Cleanup:
  * 	  Print errno log and/or timing stats if options given
- * 
+ *
  * USAGE:  <for command-line>
  * iopl01 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-h] [-f] [-p]
  *			where,  -c n : Run n copies concurrently.
@@ -82,16 +82,15 @@ extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int level;			/* I/O privilege level of the process */
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 
-	int lc;		/* loop counter */
-	char *msg;	/* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL))
-	     != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
+	    != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -106,11 +105,11 @@ main(int ac, char **av)
 
 		/*
 		 * Test the system call for possible privelege levels.
-		 * As the privelge level for a normal process is 0, 
+		 * As the privelge level for a normal process is 0,
 		 * start by setting/changing the level to 0.
 		 */
 		for (level = 0; level < TST_TOTAL; ++level) {
-		
+
 			TEST(iopl(level));
 
 			if (TEST_RETURN == -1) {
@@ -119,46 +118,40 @@ main(int ac, char **av)
 					 TEST_ERRNO, strerror(TEST_ERRNO));
 			} else {
 				tst_resm(TPASS, "iopl() passed for level %d, "
-					 "returned %d", level,
-				 	 TEST_RETURN);
-			} 
+					 "returned %ld", level, TEST_RETURN);
+			}
 		}
-	}	/* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 
 	/* cleanup and exit */
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	 /*NOTREACHED*/ return 0;
 
-}	/* End main */
+}				/* End main */
 
 /* setup() - performs all ONE TIME setup for this test */
-void
-setup()
+void setup()
 {
-	
+
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Check whether we are root  */
 	if (geteuid() != 0) {
 		tst_brkm(TBROK, tst_exit, "Must be root for this test!");
-		/*NOTREACHED*/
-	}
+	 /*NOTREACHED*/}
 
 	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}	/* End setup() */
-
+}				/* End setup() */
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
  *		completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 
 	/*
@@ -167,7 +160,7 @@ cleanup()
 	if (iopl(0) == -1) {
 		tst_resm(TWARN, "iopl() cleanup failed");
 	}
-	
+
 	/*
 	 * print timing stats if that option was specified.
 	 * print errno log if that option was specified.
@@ -177,7 +170,7 @@ cleanup()
 	/* exit with return code appropriate for results */
 	tst_exit();
 
-}	/* End cleanup() */
+}				/* End cleanup() */
 
 #else /* __i386__ */
 
@@ -186,12 +179,12 @@ cleanup()
 
 int TST_TOTAL = 0;		/* Total number of test cases. */
 
-int
-main()
+int main()
 {
-	tst_resm(TPASS, "LSB v1.3 does not specify iopl() for this architecture.");
+	tst_resm(TPASS,
+		 "LSB v1.3 does not specify iopl() for this architecture.");
 	tst_exit();
-	return(0);
+	return 0;
 }
 
 #endif /* __i386__ */

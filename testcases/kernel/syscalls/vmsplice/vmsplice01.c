@@ -35,7 +35,7 @@
  *      -t   : Turn on syscall timing.
  *
  * Author
- *	Yi Yang <yyangcdl@cn.ibm.com> 
+ *	Yi Yang <yyangcdl@cn.ibm.com>
  *
  * History
  *      09/01/2006      Created first by Yi Yang <yyangcdl@cn.ibm.com>
@@ -90,13 +90,12 @@ int main(int ac, char **av)
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 
-       /* Disable test if the version of the kernel is less than 2.6.17 */
-        if((tst_kvercmp(2,6,17)) < 0)
-          {
-             tst_resm(TWARN, "This test can only run on kernels that are ");
-             tst_resm(TWARN, "2.6.17 and higher");
-             exit(0);
-          }
+	/* Disable test if the version of the kernel is less than 2.6.17 */
+	if ((tst_kvercmp(2, 6, 17)) < 0) {
+		tst_resm(TWARN, "This test can only run on kernels that are ");
+		tst_resm(TWARN, "2.6.17 and higher");
+		exit(0);
+	}
 
 	/***************************************************************
 	 * parse standard options
@@ -118,8 +117,8 @@ int main(int ac, char **av)
 		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		/* 
-		 * Call vmsplice_test 
+		/*
+		 * Call vmsplice_test
 		 */
 		TEST(vmsplice_test());
 
@@ -138,7 +137,7 @@ int main(int ac, char **av)
 			 ***************************************************************/
 			if (STD_FUNCTIONAL_TEST) {
 				/* No Verification test, yet... */
-				tst_resm(TPASS, "vmsplice() returned %d",
+				tst_resm(TPASS, "vmsplice() returned %ld",
 					 TEST_RETURN);
 			}
 		}
@@ -211,19 +210,18 @@ static int vmsplice_test(void)
 		else {
 			v.iov_base += written;
 			v.iov_len -= written;
-			flag  = 1;
+			flag = 1;
 		}
 
 		/*
-                * check if the current filesystem is nfs
-                */
-                if(tst_is_cwd_nfs()) {
+		 * check if the current filesystem is nfs
+		 */
+		if (tst_is_cwd_nfs()) {
 			if (flag == 1)
 				tst_resm(TINFO, "vmplice() passes");
 			tst_brkm(TCONF, cleanup, "Cannot do splice() "
-				"on a file located on an NFS filesystem");
+				 "on a file located on an NFS filesystem");
 		}
-
 
 		ret = mysplice(pipes[0], NULL, fd_out, &offset, written, 0);
 		if (ret < 0) {
@@ -232,7 +230,7 @@ static int vmsplice_test(void)
 			close(pipes[0]);
 			close(pipes[1]);
 			return ret;
-		} 
+		}
 		//printf("offset = %lld\n", (long long)offset);
 
 	}

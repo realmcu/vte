@@ -18,17 +18,17 @@
  */
 
 /**********************************************************
- * 
+ *
  *    TEST IDENTIFIER   : flock06
- * 
+ *
  *    EXECUTED BY       : anyone
- * 
+ *
  *    TEST TITLE        : Error condition test for flock(2)
- * 
+ *
  *    TEST CASE TOTAL   : 1
- * 
+ *
  *    AUTHOR            : Matthew Wilcox <willy@debian.org>
- * 
+ *
  *    SIGNALS
  *      Uses SIGUSR1 to pause before test if option set.
  *      (See the parse_opts(3) man page).
@@ -36,7 +36,7 @@
  *    DESCRIPTION
  * 		 This test verifies that flock locks held on one fd conflict with
  * 		 flock locks held on a different fd.
- *		 		 
+ *		 	
  *		 Test:
  * 		 		 The process opens two file descriptors on the same file.
  * 		 		 It acquires an exclusive flock on the first descriptor,
@@ -44,7 +44,7 @@
  * 		 		 descriptor fails.  Then it removes the first descriptor's
  * 		 		 lock and attempts to acquire an exclusive lock on the
  * 		 		 second descriptor.
- * 
+ *
  * USAGE:  <for command-line>
  *      flock06 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-h] [-f] [-p]
  *                      where,  -c n : Run n copies concurrently
@@ -59,8 +59,6 @@
  *
  ****************************************************************/
 
-
-
 #include <stdio.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -74,80 +72,77 @@
 void setup(void);
 void cleanup(void);
 
-
-char *TCID = "flock06";		 		 		 /* Test program identifier */
-int TST_TOTAL = 3;		 		 		 /* Total number of test cases */
+char *TCID = "flock06";		/* Test program identifier */
+int TST_TOTAL = 3;		/* Total number of test cases */
 extern int Tst_count;
 char filename[100];
 
 int main(int argc, char **argv)
 {
-		 int lc;		 		 /* loop counter */
-		 char *msg;		 /* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 
-		 /* parse standard options */
-		 if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) !=
-		     (char *) NULL) {
-		 		 tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-		 		 /*NOTREACHED*/
-		 }
+	/* parse standard options */
+	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
+	    (char *)NULL) {
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	 /*NOTREACHED*/}
 
-		 setup();
+	setup();
 
-		 /* The following loop checks looping state if -i option given */
+	/* The following loop checks looping state if -i option given */
 
-		 for (lc = 0; TEST_LOOPING(lc); lc++) {
-		 	int fd1, fd2;
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		int fd1, fd2;
 
-			 /* reset Tst_count in case we are looping */
-			 Tst_count = 0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
-			 fd1 = open(filename, O_RDWR);
-			 if (fd1 == -1)
-				 tst_brkm(TFAIL, cleanup, "failed to open the"
-									 "file, errno %d", errno);
+		fd1 = open(filename, O_RDWR);
+		if (fd1 == -1)
+			tst_brkm(TFAIL, cleanup, "failed to open the"
+				 "file, errno %d", errno);
 
-			 TEST(flock(fd1, LOCK_EX | LOCK_NB));
-			 if (TEST_RETURN != 0)
-				 tst_resm(TFAIL, "First attempt to flock() failed, "
-									 "errno %d",TEST_ERRNO); 
-			 else
-				 tst_resm(TPASS, "First attempt to flock() passed");
+		TEST(flock(fd1, LOCK_EX | LOCK_NB));
+		if (TEST_RETURN != 0)
+			tst_resm(TFAIL, "First attempt to flock() failed, "
+				 "errno %d", TEST_ERRNO);
+		else
+			tst_resm(TPASS, "First attempt to flock() passed");
 
-			 fd2 = open(filename, O_RDWR);
-			 if (fd2 == -1)
-				 tst_brkm(TFAIL, cleanup, "failed to open the"
-									 "file, errno %d", errno);
+		fd2 = open(filename, O_RDWR);
+		if (fd2 == -1)
+			tst_brkm(TFAIL, cleanup, "failed to open the"
+				 "file, errno %d", errno);
 
-			 TEST(flock(fd2, LOCK_EX | LOCK_NB));
-			 if (TEST_RETURN == -1)
-				 tst_resm(TPASS, "Second attempt to flock() denied");
-			 else
-				 tst_resm(TFAIL, "Second attempt to flock() succeeded!");
+		TEST(flock(fd2, LOCK_EX | LOCK_NB));
+		if (TEST_RETURN == -1)
+			tst_resm(TPASS, "Second attempt to flock() denied");
+		else
+			tst_resm(TFAIL, "Second attempt to flock() succeeded!");
 
-			 TEST(flock(fd1, LOCK_UN));
-			 if (TEST_RETURN == -1)
-				 tst_resm(TFAIL, "Failed to unlock fd1, errno %d",
-									 TEST_ERRNO);
-			 else
-				 tst_resm(TPASS, "Unlocked fd1");
+		TEST(flock(fd1, LOCK_UN));
+		if (TEST_RETURN == -1)
+			tst_resm(TFAIL, "Failed to unlock fd1, errno %d",
+				 TEST_ERRNO);
+		else
+			tst_resm(TPASS, "Unlocked fd1");
 
-			 TEST(flock(fd2, LOCK_EX | LOCK_NB));
-			 if (TEST_RETURN == -1)
-				 tst_resm(TFAIL, "Third attempt to flock() denied!");
-			 else
-				 tst_resm(TPASS, "Third attempt to flock() succeeded");
-			close(fd1);
-			close(fd2);
+		TEST(flock(fd2, LOCK_EX | LOCK_NB));
+		if (TEST_RETURN == -1)
+			tst_resm(TFAIL, "Third attempt to flock() denied!");
+		else
+			tst_resm(TPASS, "Third attempt to flock() succeeded");
+		close(fd1);
+		close(fd2);
 
-		 }/* End of TEST_LOOPING */
+	}			/* End of TEST_LOOPING */
 
-		 cleanup();
+	cleanup();
 
-		 return 0;
+	return 0;
 
 }
-
 
 /*
  * setup()
@@ -155,36 +150,36 @@ int main(int argc, char **argv)
  */
 void setup(void)
 {
-		int fd;
-		/* capture signals */
-		tst_sig(FORK, DEF_HANDLER, cleanup);
+	int fd;
+	/* capture signals */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-		/* Pause if that option was specified
-		 * TEST_PAUSE contains the code to fork the test with the -i option.
-		 * You want to make sure you do this before you create your temporary
-		 * directory.
-		 */
-		TEST_PAUSE;
+	/* Pause if that option was specified
+	 * TEST_PAUSE contains the code to fork the test with the -i option.
+	 * You want to make sure you do this before you create your temporary
+	 * directory.
+	 */
+	TEST_PAUSE;
 
-		/* Create a unique temporary directory and chdir() to it. */
-		tst_tmpdir();
+	/* Create a unique temporary directory and chdir() to it. */
+	tst_tmpdir();
 
-		sprintf(filename, "flock06.%d", getpid());
+	sprintf(filename, "flock06.%d", getpid());
 
-		/* creating temporary file */
-		fd = creat(filename, 0666);
-		if (fd < 0) {
-			tst_resm(TFAIL, "creating a new file failed");
-				 
-			TEST_CLEANUP;
+	/* creating temporary file */
+	fd = creat(filename, 0666);
+	if (fd < 0) {
+		tst_resm(TFAIL, "creating a new file failed");
 
-			/* Removing temp dir */
-			tst_rmdir();
+		TEST_CLEANUP;
 
-			/* exit with return code appropriate for result */
-			tst_exit();
-		}
-		close(fd);
+		/* Removing temp dir */
+		tst_rmdir();
+
+		/* exit with return code appropriate for result */
+		tst_exit();
+	}
+	close(fd);
 }
 
 /*
@@ -194,16 +189,15 @@ void setup(void)
  */
 void cleanup(void)
 {
-		 /*
-		  * print timing stats if that option was specified.
-		  * print errno log if that option was specified.
-		  */
-		 TEST_CLEANUP;
+	/*
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
-		 unlink(filename);
-		 tst_rmdir();
+	unlink(filename);
+	tst_rmdir();
 
-		 /* exit with return code appropriate for results */
-		 tst_exit();
-		 /*NOTREACHED*/
-}
+	/* exit with return code appropriate for results */
+	tst_exit();
+ /*NOTREACHED*/}

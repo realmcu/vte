@@ -69,7 +69,7 @@
 
 /*
  * Defines
- * 
+ *
  * BUF_SIZE: size of message buffer...
  */
 #define BUF_SIZE		256
@@ -92,7 +92,7 @@ static void error (const char *, int);
 
 /*
  * Global variables
- * 
+ *
  * project_name: Unique path used to create key (ftok)
  * project_id:   Unique number used to create key (ftok)
  */
@@ -119,7 +119,7 @@ int main (int argc, char **argv)
 	 * Parse command line options
 	 */
 	parse_args (argc, argv);
-	
+
 	if ((key = ftok (project_name, project_id)) < 0)
 		sys_error ("ftok failed", __LINE__);
 

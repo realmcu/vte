@@ -49,6 +49,7 @@
 
 #include "test.h"
 #include "usctest.h"
+#include "config.h"
 
 char *TCID = "aio01";
 int TST_TOTAL=6;
@@ -67,9 +68,9 @@ int TST_TOTAL=6;
 #include <sys/time.h>
 #include <sys/resource.h>
 
-void help();
-void setup();
-void cleanup();
+static void help(void);
+static void setup(void);
+static void cleanup(void);
 
 #define mapsize (1 << 14)
 
@@ -95,7 +96,8 @@ struct test_case_t {
 	{0, "ftruncate mmaped file to 0 size"},
 };
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 	int i, j, sec, usec;
 	int failflag=0;
 	int bflag=0, nflag=0, Fflag=0;
@@ -269,7 +271,7 @@ int main(int argc, char **argv) {
 		if (TEST_RETURN < 0) {
 			TEST_ERROR_LOG(TEST_ERRNO);
 			tst_resm(TFAIL, "Test 5: write io_submit failed - "
-					"retval=%d, errno=%d", TEST_RETURN, 
+					"retval=%d, errno=%d", TEST_RETURN,
 					TEST_ERRNO);
 			failflag=1;
 			continue;
@@ -284,7 +286,7 @@ int main(int argc, char **argv) {
 		if (TEST_RETURN < 0) {
 			TEST_ERROR_LOG(TEST_ERRNO);
 			tst_resm(TFAIL, "Test 5: read io_submit failed - "
-					"retval=%d, errno=%d", TEST_RETURN, 
+					"retval=%d, errno=%d", TEST_RETURN,
 					TEST_ERRNO);
 			failflag=1;
 			continue;
@@ -317,7 +319,7 @@ int main(int argc, char **argv) {
 		if (TEST_RETURN < 0) {
 			TEST_ERROR_LOG(TEST_ERRNO);
 			tst_resm(TFAIL, "Test 6: write io_submit failed - "
-					"retval=%d, errno=%d", TEST_RETURN, 
+					"retval=%d, errno=%d", TEST_RETURN,
 					TEST_ERRNO);
 			failflag=1;
 			continue;
@@ -332,7 +334,7 @@ int main(int argc, char **argv) {
 		if (TEST_RETURN < 0) {
 			TEST_ERROR_LOG(TEST_ERRNO);
 			tst_resm(TFAIL, "Test 6: read io_submit failed - "
-					"retval=%d, errno=%d", TEST_RETURN, 
+					"retval=%d, errno=%d", TEST_RETURN,
 					TEST_ERRNO);
 			failflag=1;
 			continue;
@@ -341,7 +343,7 @@ int main(int argc, char **argv) {
 		for (j = 0; j < bufsize; j++) {
 			if (srcbuf[j] != dstbuf[j])
 				tst_resm(TFAIL, "Test 6: compare failed - "
-						"read: %c, " "actual: %c", 
+						"read: %c, " "actual: %c",
 						dstbuf[j], srcbuf[j]);
 				break;
 		}
@@ -357,19 +359,21 @@ int main(int argc, char **argv) {
 		tst_resm(TPASS, "Test 6: %d read,write,verify in %d.%06d sec",
 				i, sec, usec);
 	}
-	
+
 	cleanup();
 
 	return 0;
 }
 
-void help() {
+static void help(void)
+{
 	printf("  -b n    Buffersize\n");
 	printf("  -n n    Number of requests\n");
 	printf("  -F s    Filename to run the tests against\n");
 }
 
-void setup() {
+static void setup(void)
+{
 	int ret;
 
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -410,7 +414,7 @@ void setup() {
 				strerror(ret));
 }
 
-void cleanup() {
+static void cleanup(void) {
 	TEST_CLEANUP;
 	free(dstbuf);
 	free(srcbuf);
@@ -426,7 +430,8 @@ void cleanup() {
 
 int main(void)
 {
-  tst_brkm(TCONF, tst_exit, "libaio missing");
+  tst_resm(TCONF, "libaio missing");
+  tst_exit();
 }
 
 #endif

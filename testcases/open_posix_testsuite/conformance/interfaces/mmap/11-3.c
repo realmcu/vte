@@ -17,21 +17,21 @@
 
 #define _XOPEN_SOURCE 600
 
-#include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
-#include <fcntl.h>
-#include <string.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <pthread.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include "posixtest.h"
  
 #define TNAME "mmap/11-3.c"
-
 
 void sigbus_handler (int signum)
 {
@@ -50,7 +50,7 @@ int main()
   long total_size; 
 
   void *pa = NULL; 
-  void *addr = NULL;
+  void *addr;
   size_t len;
   int flag;
   int fd;
@@ -73,7 +73,7 @@ int main()
   sa.sa_handler = sigbus_handler;
   sigaction(SIGBUS, &sa, NULL);
 
-  snprintf(tmpfname, sizeof(tmpfname), "pts_mmap_11_3_%d",
+  snprintf(tmpfname, sizeof(tmpfname), "/pts_mmap_11_3_%d",
            getpid());
   /* Create shared object */
   shm_unlink(tmpfname);

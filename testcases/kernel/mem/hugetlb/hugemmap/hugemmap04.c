@@ -21,7 +21,7 @@
  * Test Name: hugemmap04
  *
  * Test Description:
- *  Verify that, a hugetlb mmap() succeeds when used to map the largest size possible. 
+ *  Verify that, a hugetlb mmap() succeeds when used to map the largest size possible.
  *
  * Expected Result:
  *  mmap() should succeed returning the address of the hugetlb mapped region.
@@ -72,8 +72,9 @@
 
 #include "test.h"
 #include "usctest.h"
+#include "system_specific_hugepages_info.h"
 
-#define BUFFER_SIZE  256 
+#define BUFFER_SIZE  256
 
 char* TEMPFILE="mmapfile";
 
@@ -123,7 +124,11 @@ main(int ac, char **av)
 		tst_brkm(TBROK, NULL, "-H option is REQUIRED for this test, use -h for options help");
 		tst_exit();
 	}
-	
+
+	/* Check number of hugepages */
+	if (get_no_of_hugepages() <= 0 || hugepages_size() <= 0)
+		tst_brkm(TCONF, cleanup, "Not enough available Hugepages");
+
 	/* Perform global setup for test */
 	setup();
 
@@ -153,7 +158,7 @@ main(int ac, char **av)
 		if ( freepages > 128 )
 		  freepages=128;
 #endif
-		/* 
+		/*
 		 * Call mmap
 		 */
 		errno = 0;
@@ -172,7 +177,7 @@ main(int ac, char **av)
 			/* force to allocate page and change HugePages_Free */
 			*(int*)addr = 0;
 		}
-		
+	
 		/* Make sure the number of free huge pages AFTER testing decreased */
 		aftertest = getfreehugepages();
 		hugepagesmapped = beforetest - aftertest;
@@ -206,7 +211,7 @@ main(int ac, char **av)
  * 	     Creat a temporary directory and a file under it.
  * 	     Write some known data into file and get the size of the file.
  */
-void 
+void
 setup()
 {
 	char mypid[40];
@@ -224,7 +229,7 @@ setup()
 }
 
 /*
- * getfreehugepages() - Reads the number of free huge pages from /proc/meminfo	
+ * getfreehugepages() - Reads the number of free huge pages from /proc/meminfo
  */
 int
 getfreehugepages()
@@ -235,7 +240,7 @@ getfreehugepages()
 	char buff[BUFFER_SIZE];
 
         f = fopen("/proc/meminfo", "r");
-	if (!f) 	 
+	if (!f) 
      		tst_brkm(TFAIL, cleanup, "Could not open /proc/meminfo for reading");
 
 	while(fgets(buff,BUFFER_SIZE, f) != NULL){
@@ -243,16 +248,16 @@ getfreehugepages()
 			break;
 	}
 
-        if (retcode != 1) { 	 
-        	fclose(f); 	 
+        if (retcode != 1) { 
+        	fclose(f); 
        		tst_brkm(TFAIL, cleanup, "Failed reading number of huge pages free.");
-     	}	
-	fclose(f);	
+     	}
+	fclose(f);
 	return(hugefree);
 }
 
 /*
- * get_huge_pagesize() - Reads the size of huge page size from /proc/meminfo	
+ * get_huge_pagesize() - Reads the size of huge page size from /proc/meminfo
 */
 int
 get_huge_pagesize()
@@ -263,7 +268,7 @@ get_huge_pagesize()
 	char buff[BUFFER_SIZE];
 
         f = fopen("/proc/meminfo", "r");
-	if (!f) 	 
+	if (!f) 
      		tst_brkm(TFAIL, cleanup, "Could not open /proc/meminfo for reading");
 
 	while(fgets(buff,BUFFER_SIZE, f) != NULL){
@@ -271,11 +276,11 @@ get_huge_pagesize()
 			break;
 	}
 
-        if (retcode != 1) { 	 
-        	fclose(f); 	 
+        if (retcode != 1) { 
+        	fclose(f); 
        		tst_brkm(TFAIL, cleanup, "Failed reading size of huge page.");
-     	}	
-	fclose(f);	
+     	}
+	fclose(f);
 	return(hugesize);
 }
 
@@ -284,7 +289,7 @@ get_huge_pagesize()
  *             completion or premature exit.
  * 	       Remove the temporary directory created.
  */
-void 
+void
 cleanup()
 {
 	/*

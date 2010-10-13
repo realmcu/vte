@@ -1,18 +1,49 @@
-SUBDIRS = power_management numa containers controllers connectors include fs io ipc mem pty sched security syscalls timers
+#
+#    kernel test suite Makefile.
+#
+#    Copyright (C) 2009, Cisco Systems Inc.
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License along
+#    with this program; if not, write to the Free Software Foundation, Inc.,
+#    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# Garrett Cooper, July 2009
+#
 
-UCLINUX_SUBDIRS = syscalls
+top_srcdir	?= ../..
 
-all:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
+include $(top_srcdir)/include/mk/env_pre.mk
 
-install:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
+# NOTE (garrcoop): directories to traverse for building testcases.
+#
+# KEEP THIS LIST ALPHABETIZED PLEASE!
+ifneq ($(UCLINUX),1)
+SUBDIRS		:= containers connectors controllers fs hotplug io ipc mem \
+		   numa performance_counters power_management pty sched \
+		   security syscalls timers
+else
+SUBDIRS		:= syscalls
+endif
 
-uclinux:
-	@set -e; for i in $(UCLINUX_SUBDIRS); do $(MAKE) -C $$i uclinux ; done
+MAKE_DEPS	:= include/linux_syscall_numbers.h
 
-uclinux_install:
-	@set -e; for i in $(UCLINUX_SUBDIRS); do $(MAKE) -C $$i uclinux_install ; done
+include:
+	mkdir -p "$@"
 
-clean:
-	@set -e; for i in $(SUBDIRS) timers; do $(MAKE) -C $$i clean ; done
+linux-syscall-numbers-clean:: include
+	$(MAKE) -C $^ -f "$(abs_srcdir)/$^/Makefile" clean
+
+include/linux_syscall_numbers.h: include
+	$(MAKE) -C $^ -f "$(abs_srcdir)/$^/Makefile" all
+
+include $(top_srcdir)/include/mk/generic_trunk_target.mk

@@ -1,12 +1,12 @@
 /* IBM Corporation */
 /* 01/02/2003	Port to LTP avenakt@us.ibm.com */
 /* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
-/*   
+/*  
  *   This program is free software;  you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 2 of the License, or
  *   (at your option) any later version.
- *   
+ *  
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY;  without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
@@ -53,7 +53,7 @@ void ok_exit();
  *
  *  This program continues to run until it either receives a SIGINT,
  *  or times out (if a timeout value is specified).  When either of
- *  these things happens, it cleans up its kids, then checks 
+ *  these things happens, it cleans up its kids, then checks
  *  the map to make sure it has the correct data.
  *
  *  usage:
@@ -75,7 +75,7 @@ void ok_exit();
  */
 
 #define MAXLOOPS	500	/* max pages for map children to write */
-#define	MAPSIZE		(64*1024)   /* default mapsize set up by parent */	
+#define	MAPSIZE		(64*1024)   /* default mapsize set up by parent */
 #ifdef roundup
 #undef roundup
 #endif
@@ -174,7 +174,7 @@ main(int argc, char *argv[])
 	/* nprocs is unsigned */
 	if (nprocs > 255) {
 		(void)fprintf(stderr, "invalid nprocs %d - (range 0-255)\n",
-			nprocs); 
+			nprocs);
                 anyfail();
 	}
 	(void)time(&t);
@@ -184,7 +184,7 @@ main(int argc, char *argv[])
 	pattern = seed & 0xff;
 
 	if (debug) {
-		(void)printf("%s mapsize %d bytes, pattern %d\n", 
+		(void)printf("%s mapsize %d bytes, pattern %d\n",
 			progname, mapsize, pattern);
 		if (alarmtime)
 			(void)printf("running for %f minutes\n", alarmtime/60);
@@ -273,7 +273,7 @@ main(int argc, char *argv[])
 	/*
 	 *  Now wait for children and refork them as needed.
 	 */
-	
+
 	while (!finished) {
 		do {
 			pid = wait(&wait_stat);
@@ -292,7 +292,7 @@ main(int argc, char *argv[])
 			 *  Check exit status, then refork with the
 			 *  appropriate procno.
 			 */
-			if (!WIFEXITED(wait_stat) 
+			if (!WIFEXITED(wait_stat)
 			    || WEXITSTATUS(wait_stat) != 0) {
 				(void)fprintf(stderr, "child exit with err "
 					"<x%x>\n", wait_stat);
@@ -302,7 +302,7 @@ main(int argc, char *argv[])
 				if (pid == pidarray[i])
 					break;
 			if (i == nprocs) {
-				(void)fprintf(stderr, 
+				(void)fprintf(stderr,
 					"unknown child pid %d, <x%x>\n",
 					pid, wait_stat);
 				goto cleanup;
@@ -333,7 +333,7 @@ main(int argc, char *argv[])
 			goto cleanup;
 		}
 	}
-	
+
 	/*
 	 *  Finished!  Check the map for sanity, then kill all
 	 *  the children and done!.
@@ -361,11 +361,11 @@ cleanup:
 		else
 			(void)printf("map data okay\n");
 	}
-	
+
 	(void)time(&t);
 //	(void)printf("%s: Finished %s", argv[0], ctime(&t)); LTP POrt
 	ok_exit();
-	return(0);
+	return 0;
 }
 
 
@@ -404,7 +404,7 @@ child_mapper(unsigned procno, unsigned nprocs)
 		paddr = (uchar_t *)(mapaddr + (randpage * pagesize));
 
 		for (i = procno; i < pagesize; i += nprocs) {
-			if (*((unsigned char *)(paddr+i)) 
+			if (*((unsigned char *)(paddr+i))
 			    != ((procno + pattern) & 0xff)) {
 				(void)fprintf(stderr,
 					"child %d: invalid data <x%x>", procno,
@@ -453,7 +453,7 @@ mapokay(uchar_t *expbuf)
 		 */
 		for (j = 0; j < pagesize; j++) {
 			if (*ptr != expbuf[j]) {
-				(void)fprintf(stderr, 
+				(void)fprintf(stderr,
 					"bad map data: exp %c got %c)",
 					expbuf[j], *ptr);
 				(void)fprintf(stderr, ", pg %d off %d\n", i, j);
@@ -462,8 +462,8 @@ mapokay(uchar_t *expbuf)
 			ptr++;
 		}
 	}
-					
-	return(1);
+				
+	return 1;
 }
 
 /*ARGSUSED*/
@@ -507,7 +507,7 @@ int anyfail()
 {
   tst_resm(TFAIL, "Test failed\n");
   tst_exit();
-  return(0);
+  return 0;
 }
 
 /*****  **      **      *****/

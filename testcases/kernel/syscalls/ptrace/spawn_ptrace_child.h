@@ -46,11 +46,41 @@ static void child_signal(int sig)
 	child_stopped = true;
 }
 
+#ifdef __sparc__
+/* sparce swaps addr/data for get/set regs */
+# define maybe_swap(request, addr, data) \
+do { \
+	if (request == PTRACE_GETREGS || request == PTRACE_SETREGS) { \
+		void *__s = addr; \
+		addr = data; \
+		data = __s; \
+	} \
+} while (0)
+#else
+# define maybe_swap(...)
+#endif
+#define vptrace(request, pid, addr, data) \
+({ \
+	errno = 0; \
+	long __ret; \
+	void *__addr = (void *)(addr); \
+	void *__data = (void *)(data); \
+	maybe_swap(request, __addr, __data); \
+	__ret = ptrace(request, pid, __addr, __data); \
+	if (__ret && errno) \
+		perror("ptrace(" #request ", " #pid ", " #addr ", " #data ")"); \
+	__ret; \
+})
+
 static void make_a_baby(int argc, char *argv[])
 {
 	if (argc > 1 && !strcmp(argv[1], "child")) {
 		/* if we're the child, just sit around doing nothing */
-		sleep(60);
+		int i = 60;
+		while (i--) {
+			close(-100);
+			sleep(1);
+		}
 		exit(1);
 	}
 
@@ -94,8 +124,12 @@ static char *strings[] = {
 #ifdef PTRACE_SETREGS
 	SPT(SETREGS)
 #endif
+#ifdef PTRACE_GETSIGINFO
 	SPT(GETSIGINFO)
+#endif
+#ifdef PTRACE_SETSIGINFO
 	SPT(SETSIGINFO)
+#endif
 #ifdef PTRACE_GETFGREGS
 	SPT(GETFGREGS)
 #endif
@@ -105,7 +139,7 @@ static char *strings[] = {
 	SPT(KILL)
 	SPT(SINGLESTEP)
 };
-static char *strptrace(enum __ptrace_request request)
+static inline char *strptrace(enum __ptrace_request request)
 {
 	return strings[request];
 }

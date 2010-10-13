@@ -15,8 +15,8 @@ setup()
 	export TST_COUNT=0
 	export TST_TOTAL=4
 
-	# Remove any leftover test file from prior failed runs.
-	rm -rf $SELINUXTMPDIR/test_file
+	SELINUXTMPDIR=$(mktemp -d)
+	chcon -t test_file_t $SELINUXTMPDIR
 
 	# Create a test file with the test_setattr_file_t type
 	# for use in the tests.
@@ -35,9 +35,9 @@ test01()
         RC=$?
         if [ $RC -eq 0 ]
         then
-                echo "$TCID   PASS : setattr passed."
+                tst_resm TPASS "setattr passed."
         else
-                echo "$TCID   FAIL : setattr failed."
+                tst_resm TFAIL "setattr failed."
         fi
         return $RC
 }
@@ -52,9 +52,9 @@ test02()
         RC=$?
         if [ $RC -eq 0 ]
         then
-                echo "$TCID   PASS : setattr passed."
+                tst_resm TPASS "setattr passed."
         else
-                echo "$TCID   FAIL : setattr failed."
+                tst_resm TFAIL "setattr failed."
         fi
         return $RC
 }
@@ -70,10 +70,10 @@ test03()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : setattr passed."
+                tst_resm TPASS "setattr passed."
 		RC=0
         else
-                echo "$TCID   FAIL : setattr failed."
+                tst_resm TFAIL "setattr failed."
 		RC=1
         fi
 	return $RC
@@ -89,10 +89,10 @@ test04()
         RC=$?
         if [ $RC -ne 0 ]
         then
-                echo "$TCID   PASS : setattr passed."
+                tst_resm TPASS "setattr passed."
 		RC=0
         else
-                echo "$TCID   FAIL : setattr failed."
+                tst_resm TFAIL "setattr failed."
 		RC=1
         fi
 	return $RC
@@ -100,8 +100,7 @@ test04()
 
 cleanup()
 {
-	# Cleanup.
-	rm -rf $SELINUXTMPDIR/test_file
+	rm -rf $SELINUXTMPDIR
 }
 
 # Function:     main

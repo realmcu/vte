@@ -15,32 +15,32 @@
  *
  */
 /**********************************************************
- * 
+ *
  *    TEST IDENTIFIER	: clone03
- * 
+ *
  *    EXECUTED BY	: anyone
- * 
+ *
  *    TEST TITLE	: test for clone(2)
- * 
+ *
  *    TEST CASE TOTAL	: 1
- * 
+ *
  *    AUTHOR		: Saji Kumar.V.R <saji.kumar@wipro.com>
- * 
+ *
  *    SIGNALS
- * 	Uses SIGUSR1 to pause before test if option set.
- * 	(See the parse_opts(3) man page).
+ *	Uses SIGUSR1 to pause before test if option set.
+ *	(See the parse_opts(3) man page).
  *
  *    DESCRIPTION
  *	Check for equality of pid of child & return value of clone(2)
- * 
- * 	Setup:
- * 	  Setup signal handling.
+ *
+ *	Setup:
+ *	  Setup signal handling.
  *	  Pause for SIGUSR1 if option specified.
- * 
- * 	Test:
+ *
+ *	Test:
  *	 Open a pipe.
  *	 Loop if the proper options are given.
- * 	  Call clone(2) called without SIGCHLD
+ *	  Call clone(2) called without SIGCHLD
  *
  *	  CHILD:
  *		writes the pid to pipe
@@ -50,9 +50,9 @@
  *			Test passed
  *		else
  *			test failed
- * 	Cleanup:
- * 	  Print errno log and/or timing stats if options given
- * 
+ *	Cleanup:
+ *	  Print errno log and/or timing stats if options given
+ *
  * USAGE:  <for command-line>
  *  clone03 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-h] [-f] [-p]
  *			where,  -c n : Run n copies concurrently.
@@ -77,8 +77,6 @@
 #include "test.h"
 #include "usctest.h"
 
-
-
 #include "clone_platform.h"
 
 static void setup();
@@ -87,12 +85,11 @@ static int child_fn();
 
 static int pfd[2];
 
-char *TCID="clone03";		/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
+char *TCID = "clone03";		/* Test program identifier.    */
+int TST_TOTAL = 1;		/* Total number of test cases. */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 
 	int lc;			/* loop counter */
@@ -100,9 +97,9 @@ main(int ac, char **av)
 	void *child_stack;	/* stack for child */
 	char buff[10];
 	int child_pid;
-    
+
 	/* parse standard options */
-	if ((msg=parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -110,98 +107,86 @@ main(int ac, char **av)
 	setup();
 
 	/* Allocate stack for child */
-	if((child_stack = (void *) malloc(CHILD_STACK_SIZE)) == NULL) {
+	if ((child_stack = (void *)malloc(CHILD_STACK_SIZE)) == NULL) {
 		tst_brkm(TBROK, cleanup, "Cannot allocate stack for child");
 	}
 
 	/* check looping state if -i option given */
-	for (lc=0; TEST_LOOPING(lc); lc++) {
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* reset Tst_count in case we are looping. */
-		Tst_count=0;
-		
+		Tst_count = 0;
+
 		/* Open a pipe */
 		if ((pipe(pfd)) == -1) {
-			tst_brkm(TBROK, cleanup, "pipe() failed");
+			tst_brkm(TBROK|TERRNO, cleanup, "pipe() failed");
 		}
 
-		/* 
+		/*
 		 * Call clone(2)
 		 */
-#if defined(__hppa__)
-		TEST(clone(child_fn, child_stack, 0, NULL));
-#elif defined(__ia64__)
-		TEST(clone2(child_fn, child_stack,
-				CHILD_STACK_SIZE, 0, NULL,
-				NULL, NULL, NULL));
-#else
-		TEST(clone(child_fn, child_stack + CHILD_STACK_SIZE, 0, NULL));
-#endif
-	
+		TEST(ltp_clone(0, child_fn, NULL, CHILD_STACK_SIZE,
+				child_stack));
+
 		/* check return code */
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL, "clone() Failed, errno = %d :"
-				" %s", TEST_ERRNO, strerror(TEST_ERRNO));
+			tst_resm(TFAIL|TTERRNO, "clone() failed");
 			cleanup();
 		}
 
 		/* close write end from parent */
 		if ((close(pfd[1])) == -1) {
-			tst_brkm(TBROK, cleanup, "close(pfd[1]) failed");
+			tst_brkm(TBROK|TERRNO, cleanup, "close(pfd[1]) failed");
 		}
 
 		/* Read pid from read end */
 		if ((read(pfd[0], buff, sizeof(buff))) == -1) {
-			tst_brkm(TBROK, cleanup, "read from pipe failed");
+			tst_brkm(TBROK|TERRNO, cleanup, "read from pipe failed");
 		}
 
 		/* Close read end from parent */
 		if ((close(pfd[0])) == -1) {
-			tst_resm(TWARN, "close(pfd[0]) failed");
+			tst_resm(TWARN|TERRNO, "close(pfd[0]) failed");
 		}
 
 		/* Get child's pid from pid string */
 		child_pid = atoi(buff);
 
-		if(TEST_RETURN == child_pid) {
+		if (TEST_RETURN == child_pid) {
 			tst_resm(TPASS, "Test passed");
 		} else {
 			tst_resm(TFAIL, "Test failed");
 		}
 
-	}	/* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 
 	free(child_stack);
 	/* cleanup and exit */
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	 /*NOTREACHED*/ return 0;
 
-}	/* End main */
+}				/* End main */
 
 /* setup() - performs all ONE TIME setup for this test */
-void 
-setup()
+void setup()
 {
-	
+
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}	/* End setup() */
+}				/* End setup() */
 
-
-/* 
+/*
  *cleanup() -  performs all ONE TIME cleanup for this test at
  *		completion or premature exit.
  */
-void 
-cleanup()
+void cleanup()
 {
-	
+
 	/*
 	 * print timing stats if that option was specified.
 	 * print errno log if that option was specified.
@@ -210,35 +195,33 @@ cleanup()
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-}	/* End cleanup() */
+}				/* End cleanup() */
 
 /*
  * child_fn() - function executed by child
  */
 
-int
-child_fn(void)
+int child_fn(void)
 {
-	
+
 	char pid[10];
 
-	/* Close read end from child */	
+	/* Close read end from child */
 	if ((close(pfd[0])) == -1) {
-		tst_brkm(TBROK, cleanup, "close(pfd[0]) failed");
+		tst_brkm(TBROK|TERRNO, cleanup, "close(pfd[0]) failed");
 	}
 
 	/* Construct pid string */
-	sprintf(pid,"%d", getpid());
+	sprintf(pid, "%d", getpid());
 
 	/* Write pid string to pipe */
 	if ((write(pfd[1], pid, sizeof(pid))) == -1) {
-		tst_brkm(TBROK, cleanup, "write to pipe failed");
+		tst_brkm(TBROK|TERRNO, cleanup, "write to pipe failed");
 	}
 
 	/* Close write end of pipe from child */
 	if ((close(pfd[1])) == -1) {
-		tst_resm(TWARN, "close(pfd[1]) failed");
+		tst_resm(TWARN|TERRNO, "close(pfd[1]) failed");
 	}
 	exit(1);
 }
-

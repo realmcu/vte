@@ -32,11 +32,11 @@
  *	if SIGKILL is caught set the shared memory flag.
  *	fork a child
  *	execute the kill system call
- *	check the return value 
+ *	check the return value
  *	if return value is -1
  *		issue a FAIL message, break remaining tests and cleanup
  *	if we are doing functional testing
- *		if the process was terminated with the expected signal and the 
+ *		if the process was terminated with the expected signal and the
  *		signal was not caught.
  *			issue a PASS message
  *		otherwise
@@ -73,7 +73,7 @@ void setup(void);
 void sighandler(int sig);
 void do_child(void);
 
-char *TCID= "kill07";
+char *TCID = "kill07";
 int TST_TOTAL = 1;
 int shmid1;
 extern key_t semkey;
@@ -94,15 +94,14 @@ int main(int ac, char **av)
 	struct sigaction my_act, old_act;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
-
 #ifdef UCLINUX
 	maybe_run_child(&do_child, "");
 #endif
 
-	setup();                        /* global setup */
+	setup();		/* global setup */
 
 	/* The following loop checks looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
@@ -115,15 +114,15 @@ int main(int ac, char **av)
 		my_act.sa_flags = SA_RESTART;
 		sigemptyset(&my_act.sa_mask);
 
-		if ((shmid1 = shmget(semkey, (int)getpagesize(), \
-			 0666|IPC_CREAT)) == -1) {
+		if ((shmid1 = shmget(semkey, (int)getpagesize(),
+				     0666 | IPC_CREAT)) == -1) {
 			tst_brkm(TBROK, cleanup,
-				"Failed to setup shared memory");
+				 "Failed to setup shared memory");
 		}
 
 		if (*(flag = (int *)shmat(shmid1, 0, 0)) == -1) {
 			tst_brkm(TBROK, cleanup,
-				"Failed to attatch shared memory:%d", *flag);
+				 "Failed to attatch shared memory:%d", *flag);
 		}
 
 		*flag = 0;
@@ -137,7 +136,8 @@ int main(int ac, char **av)
 		} else if (pid == 0) {
 #ifdef UCLINUX
 			if (self_exec(av[0], "") < 0) {
-				tst_brkm(TBROK, cleanup, "self_exec of child failed");
+				tst_brkm(TBROK, cleanup,
+					 "self_exec of child failed");
 			}
 #else
 			do_child();
@@ -152,9 +152,8 @@ int main(int ac, char **av)
 
 		if (TEST_RETURN == -1) {
 			tst_brkm(TFAIL, cleanup, "%s failed - errno = %d : %s",
-				TCID, TEST_ERRNO, strerror(TEST_ERRNO));
-			/*NOTREACHED*/
-		}
+				 TCID, TEST_ERRNO, strerror(TEST_ERRNO));
+		 /*NOTREACHED*/}
 
 		if (STD_FUNCTIONAL_TEST) {
 			/*
@@ -165,37 +164,34 @@ int main(int ac, char **av)
 			asig = WIFSIGNALED(status);
 			if ((asig == 0) & (*flag == 1)) {
 				tst_resm(TFAIL, "SIGKILL was unexpectedly"
-							" caught");
+					 " caught");
 			} else if ((asig == 1) & (nsig == TEST_SIG)) {
 				tst_resm(TINFO, "received expected signal %d",
-					nsig);
+					 nsig);
 				tst_resm(TPASS,
-					"Did not catch signal as expected");
+					 "Did not catch signal as expected");
 			} else if (nsig) {
 				tst_resm(TFAIL,
-					"expected signal %d received %d",
-					TEST_SIG,nsig);
+					 "expected signal %d received %d",
+					 TEST_SIG, nsig);
 			} else {
 				tst_resm(TFAIL, "No signals received");
 			}
 		}
 		if (shmdt(flag)) {
 			tst_brkm(TBROK, cleanup, "shmdt failed ");
-				/*NOTREACHED*/
-		}
+		 /*NOTREACHED*/}
 	}
 	cleanup();
 
-	/*NOTREACHED*/
-	return(0);
+	 /*NOTREACHED*/ return 0;
 }
 
 /*
  * sighandler() - try to catch SIGKILL
  */
 
-void
-sighandler(int sig)
+void sighandler(int sig)
 {
 	/* do nothing */
 	*flag = 1;
@@ -205,27 +201,31 @@ sighandler(int sig)
 /*
  * do_child()
  */
-void
-do_child()
+void do_child()
 {
 	int exno = 1;
 
 	sleep(300);
-	/*NOTREACHED*/
-	tst_resm(TINFO, "Child never recieved a signal");
+	 /*NOTREACHED*/ tst_resm(TINFO, "Child never recieved a signal");
 	exit(exno);
 }
 
 /*
  * setup() - performs all ONE TIME setup for this test
  */
-void
-setup(void)
+void setup(void)
 {
 
 	/* Pause if that option was specified */
 	TEST_PAUSE;
-	
+
+	/*
+	 * Create a temporary directory and cd into it.
+	 * This helps to ensure that a unique msgkey is created.
+	 * See ../lib/libipc.c for more information.
+	 */
+	tst_tmpdir();
+
 	/* get an IPC resource key */
 	semkey = getipckey();
 
@@ -235,8 +235,7 @@ setup(void)
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
  * or premature exit.
  */
-void
-cleanup(void)
+void cleanup(void)
 {
 	/*
 	 * print timing status if that option was specified.
@@ -244,10 +243,13 @@ cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-  	/*
-  	 * remove the shared memory
-  	 */
+	/*
+	 * remove the shared memory
+	 */
 	rm_shm(shmid1);
+
+	/* Remove the temporary directory */
+	tst_rmdir();
 
 	/* exit with return code appropriate for results */
 	tst_exit();

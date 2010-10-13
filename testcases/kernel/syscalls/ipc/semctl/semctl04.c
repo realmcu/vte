@@ -31,7 +31,7 @@
  *	if child
  *	  set the ID of the child process to that of "nobody"
  *	  loop if that option was specified
- *	    call semctl() with two different invalid cases	
+ *	    call semctl() with two different invalid cases
  *	    check the errno value
  *	      issue a PASS message if we get EPERM
  *	    otherwise, the tests fails
@@ -66,27 +66,27 @@ char *TCID = "semctl04";
 int TST_TOTAL = 2;
 extern int Tst_count;
 
-int exp_enos[] = {EPERM, 0};	/* 0 terminated list of expected errnos */
+int exp_enos[] = { EPERM, 0 };	/* 0 terminated list of expected errnos */
 
 int sem_id_1 = -1;
 
 uid_t ltp_uid;
 char *ltp_user = "nobody";
 
-int TC[] = {IPC_SET, IPC_RMID};
+int TC[] = { IPC_SET, IPC_RMID };
 
 int main(int ac, char **av)
 {
-	char *msg;			/* message returned from parse_opts */
+	char *msg;		/* message returned from parse_opts */
 	pid_t pid;
 	void do_child(void);
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
-	setup();			/* global setup */
+	setup();		/* global setup */
 
 	if ((pid = FORK_OR_VFORK()) == -1) {
 		tst_brkm(TBROK, cleanup, "could not fork");
@@ -116,19 +116,18 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	return(0);
+	return 0;
 }
 
 /*
  * do_child() - make the TEST call as the child process
  */
-void
-do_child()
+void do_child()
 {
-	int lc;				/* loop counter */
+	int lc;			/* loop counter */
 	int i;
 	union semun arg;
-	struct semid_ds perm; 
+	struct semid_ds perm;
 
 	/* The following loop checks looping state if -i option given */
 
@@ -136,27 +135,26 @@ do_child()
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
-		for (i=0; i<TST_TOTAL; i++) {
+		for (i = 0; i < TST_TOTAL; i++) {
 
-			if (TC[i] == IPC_SET)  {
-				arg.buf =  &perm;
-				memset(&perm, 0, sizeof perm); 
+			if (TC[i] == IPC_SET) {
+				arg.buf = &perm;
+				memset(&perm, 0, sizeof perm);
 				perm.sem_perm.uid = getuid() + 1;
-				perm.sem_perm.gid = getgid() + 1; 
-				perm.sem_perm.mode = 0666; 
+				perm.sem_perm.gid = getgid() + 1;
+				perm.sem_perm.mode = 0666;
 			}
 
-
 			TEST(semctl(sem_id_1, 0, TC[i], arg));
-	
+
 			if (TEST_RETURN != -1) {
 				tst_resm(TFAIL, "call succeeded unexpectedly");
 				continue;
 			}
-	
+
 			TEST_ERROR_LOG(TEST_ERRNO);
 
-			switch(TEST_ERRNO) {
+			switch (TEST_ERRNO) {
 			case EPERM:
 				tst_resm(TPASS, "expected failure - errno ="
 					 " %d : %s", TEST_ERRNO,
@@ -175,8 +173,7 @@ do_child()
 /*
  * setup() - performs all the ONE TIME setup for this test.
  */
-void
-setup(void)
+void setup(void)
 {
 	/* check for root as user id of process */
 	check_root();
@@ -213,8 +210,7 @@ setup(void)
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
  * 	       or premature exit.
  */
-void
-cleanup(void)
+void cleanup(void)
 {
 	/*
 	 * print timing stats if that option was specified.
@@ -225,4 +221,3 @@ cleanup(void)
 	/* exit with return code appropriate for results */
 	tst_exit();
 }
-

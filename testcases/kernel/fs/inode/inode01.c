@@ -37,7 +37,7 @@ CALLS:	mkdir, stat, open
 /* modified by dale 25-Jul-84 */
 
 /************************************************/
-#define PATH_STRING_LENGTH  100 
+#define PATH_STRING_LENGTH  100
 #define NAME_LENGTH  8
 #define MAX_PATH_STRING_LENGTH  (PATH_STRING_LENGTH - NAME_LENGTH)
 #define MAX_DEPTH   3
@@ -132,7 +132,7 @@ int main()
 	}
 
 	blenter();
-	
+
 
 	/********************************/
 	/*				*/
@@ -172,10 +172,10 @@ int main()
 		fprintf(temp,"\t\n%s The path_list file cannot be created, errno=%d \n", root, errno);
 		fail_exit();
 	}
-	
+
 	/****************************************/
 	/*					*/
-	/*   and store its name in path_list	*/ 
+	/*   and store its name in path_list	*/
 	/*					*/
 	/****************************************/
 
@@ -271,7 +271,7 @@ int main()
 
 	anyfail();
         /***** NOT REACHED ******/
-	return(0);
+	return 0;
 }
 
 int generate(string, level)
@@ -314,7 +314,7 @@ int level;    	/* the tree depth variable */
 
 		/********************************/
 		/*				*/
-		/*   Maximum path name length	*/ 
+		/*   Maximum path name length	*/
 		/*     	    reached 		*/
 		/*				*/
 		/********************************/
@@ -323,11 +323,11 @@ int level;    	/* the tree depth variable */
 		return(-1);
 	}
 	else if(level < MAX_DEPTH) {
-		for(i = 0; i <= MAX_BREADTH; i++) { 
+		for(i = 0; i <= MAX_BREADTH; i++) {
 			get_next_name();
 			strcpy(new_string, string);
 			strcat(new_string, slash);
-			strcat(new_string, name);	
+			strcat(new_string, name);
 
 			/****************************************/
 			/*					*/
@@ -348,7 +348,7 @@ int level;    	/* the tree depth variable */
 				file_id = creat(new_string, FILE_MODE);
 				if(file_id == -1) {
 					fprintf(temp,"\tImpossible to create file %s, errno=%d\n",
-						new_string, errno);		
+						new_string, errno);	
 					return(-2);
 				}
 
@@ -364,19 +364,19 @@ int level;    	/* the tree depth variable */
 				/****************************************/
 
 				len = strlen(new_string);
-				for(j = 1; j <= FILE_LENGTH; j++) { 
+				for(j = 1; j <= FILE_LENGTH; j++) {
 					ret_len = write(file_id, new_string, len);
 					if(ret_len != len) {
 						fprintf(temp,"\tUnsuccessful write to file %s, expected return of %d, got %d, errno=%d\n",
 						new_string, len, ret_len, errno);
-						return(-3);	
-					}		
+						return(-3);
+					}	
 				}
 				close(file_id);
 
 				/****************************************/
 				/*					*/
-				/*   and store its name in path_list	*/ 
+				/*   and store its name in path_list	*/
 				/*					*/
 				/****************************************/
 
@@ -384,7 +384,7 @@ int level;    	/* the tree depth variable */
 				len = strlen(write_string);
 				write_string[len++] = 'F';
 				write_string[len] = '\0';
-				escrivez(write_string);	
+				escrivez(write_string);
 			}
 			else {
 				switch_flag = TRUE;
@@ -409,7 +409,7 @@ int level;    	/* the tree depth variable */
 
 				/****************************************/
 				/*					*/
-				/*     store its name in path_list	*/ 
+				/*     store its name in path_list	*/
 				/*					*/
 				/****************************************/
 
@@ -417,7 +417,7 @@ int level;    	/* the tree depth variable */
 				len = strlen(write_string);
 				write_string[len++] = 'D';
 				write_string[len] = '\0';
-				escrivez(write_string);	
+				escrivez(write_string);
 
 				/****************************************/
 				/*					*/
@@ -427,8 +427,8 @@ int level;    	/* the tree depth variable */
 
 				new_level = level + 1;
 				new_ret_val = generate(new_string, new_level);
-				if(new_ret_val < ret_val) 
-					ret_val = new_ret_val;	
+				if(new_ret_val < ret_val)
+					ret_val = new_ret_val;
 			}
 		}
 
@@ -446,8 +446,8 @@ int level;    	/* the tree depth variable */
 		/*				*/
 		/********************************/
 
-		return(0);
-} 
+		return 0;
+}
 int check()
 
 /****************************************/
@@ -471,14 +471,14 @@ int check()
 		/*					*/
 		/****************************************/
 
-		
+	
 		if(fscanf(list_stream, "%s", path_string) == EOF) {
 
 #ifdef PRINT
 			printf("\nEnd of path_list file reached \n");
 #endif
-		
-			return(0);
+	
+			return 0;
 		}
 
 #ifdef PRINT
@@ -502,14 +502,14 @@ int check()
 					path_string, errno);
 				return(-1);
 			}
-				
+			
 			else {
 				/********************************/
 				/*				*/
 				/*    check its contents	*/
 				/*				*/
 				/********************************/
-				
+			
 				len = strlen(path_string);
 				for(j = 1; j <= FILE_LENGTH; j++) {
 					ret_len = read(file_id, read_string, len);
@@ -530,9 +530,9 @@ int check()
 					if(ret_len <= 0) {
 						fprintf(temp,"\tImpossible to read file %s\n", path_string);
 						return(-2);
-					}	
+					}
 		}
-		else { 
+		else {
 
 	     	/********************************/
 		/*				*/
@@ -549,7 +549,7 @@ int check()
 			}
 			if((040000 & path_mode) != 040000){
 				fprintf(temp,"\tPath %s was not recognized to be a directory\n", path_string);
-				fprintf(temp,"\tIts mode is %o\n", path_mode); 
+				fprintf(temp,"\tIts mode is %o\n", path_mode);
 				return(-5);
 			}
 		}
@@ -590,7 +590,7 @@ int  get_next_name()
 					    /* position			    */
 					    /*				    */
 					    /********************************/
-	return(0);
+	return 0;
 }
 
 int increment_name(position)
@@ -607,23 +607,23 @@ int position;
 {
 	int next_position;
 
-	if(name[position] == 'z') 
-		if(position == 0) {	
+	if(name[position] == 'z')
+		if(position == 0) {
 			fprintf(temp,"\tERROR: There are no more available names\n");
 			fail_exit();
 		}
 		else {
-			name[position] = 'a';          /**********************/	
+			name[position] = 'a';          /**********************/
 			next_position = --position;    /*		     */
 			increment_name(next_position); /*  increment the     */
 						       /*  previous letter   */
 						       /*		     */
-						       /**********************/	
+						       /**********************/
 		}
 				  /*********************************/
 				  /*				   */
 	else name[position]++;    /* otherwise, increment this one */
-	return(0);		  /*				   */
+	return 0;		  /*				   */
 				  /*********************************/
 }
 
@@ -666,7 +666,7 @@ char string[];
 				ret_len, errno);
 		fail_exit();
 	}
-	return(0);
+	return 0;
 }
 
 int term()
@@ -688,7 +688,7 @@ int term()
 
 	ok_exit();
 	/***NOT REACHED***/
-	return(0);
+	return 0;
 
 }
 

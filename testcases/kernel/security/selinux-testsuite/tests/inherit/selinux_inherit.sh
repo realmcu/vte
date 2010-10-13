@@ -15,8 +15,8 @@ setup()
 	export TST_COUNT=0
 	export TST_TOTAL=3
 
-	# Clean up from a previous run
-	rm -f $SELINUXTMPDIR/test_file 2>&1
+	SELINUXTMPDIR=$(mktemp -d)
+	chcon -t test_file_t $SELINUXTMPDIR
 
 	# Create a test file with the test_inherit_file_t type 
 	# for use in the tests.
@@ -25,6 +25,7 @@ setup()
 
 	# run tests in $LTPROOT/testcases/bin directory
 	SAVEPWD=${PWD}
+	LTPBIN=${LTPBIN:-$LTPROOT/testcases/bin}
 	cd ${LTPBIN}
 	CURRENTDIR="."
 }
@@ -39,14 +40,14 @@ test01()
 	# the test_file from test_inherit_parent_t.
 	# Should fail on fd use permission.
 
-	runcon -t test_inherit_parent_t -- selinux_inherit_parent test_inherit_nouse_t $SELINUXTMPDIR/test_file selinux_inherit_child 2>&1
+	runcon -t test_inherit_parent_t -- $CURRENTDIR/selinux_inherit_parent test_inherit_nouse_t $SELINUXTMPDIR/test_file $CURRENTDIR/selinux_inherit_child 2>&1
 	RC=$?
 	if [ $RC -ne 0 ]
 	then
-		echo "$TCID   PASS : inherit passed."
+		tst_resm TPASS "inherit passed."
 		RC=0
 	else
-		echo "$TCID   FAIL : inherit failed."
+		tst_resm TFAIL "inherit failed."
 		RC=1
 	fi
 	return $RC
@@ -66,10 +67,10 @@ test02()
 	RC=$?
 	if [ $RC -ne 0 ]
 	then
-		echo "$TCID   PASS : inherit passed."
+		tst_resm TPASS "inherit passed."
 		RC=0
 	else
-		echo "$TCID   FAIL : inherit failed."
+		tst_resm TFAIL "inherit failed."
 		RC=1
 	fi
 	return $RC
@@ -88,18 +89,16 @@ test03()
 	RC=$?
 	if [ $RC -ne 0 ]
 	then
-		echo "$TCID   FAIL : inherit failed."
+		tst_resm TFAIL "inherit failed."
 	else
-		echo "$TCID   PASS : inherit passed."
+		tst_resm TPASS "inherit passed."
 	fi
 	return $RC
 }
 
 cleanup()
 {
-	# Cleanup.
-	rm -rf $SELINUXTMPDIR/test_file
-	cd $SAVEPWD
+	rm -rf $SELINUXTMPDIR
 }
 
 # Function:     main

@@ -31,7 +31,7 @@
  *	test2:
  *		Invoke mincore() when the vector points to an invalid address. EFAULT
  *	test3:
- *		Invoke mincore() when the starting address + length contained unmapped 
+ *		Invoke mincore() when the starting address + length contained unmapped
  *		memory. ENOMEM
  *
  * USAGE:  <for command-line>
@@ -45,12 +45,12 @@
  *
  * HISTORY
  *  Author: Rajeev Tiwari: rajeevti@in.ibm.com
- *	08/2004 Rajeev Tiwari : does a basic sanity check for the various error 
+ *	08/2004 Rajeev Tiwari : does a basic sanity check for the various error
  *  conditions possible with the mincore system call.
  *
  * 	2004/09/10 Gernot Payer <gpayer@suse.de>
  * 		code cleanup
- * 	
+ *$
  * RESTRICTIONS
  *	None
  */
@@ -75,48 +75,48 @@ static void setup1(void);
 static void setup2(void);
 static void setup3(void);
 
-char *TCID= "mincore01";
+char *TCID = "mincore01";
 int TST_TOTAL = 3;
 extern int Tst_count;
 
 static char file_name[] = "fooXXXXXX";
-static char* global_pointer = NULL;
-static unsigned char* global_vec = NULL;
+static char *global_pointer = NULL;
+static unsigned char *global_vec = NULL;
 static int global_len = 0;
 static int file_desc = 0;
 
 #if !defined(UCLINUX)
 
 static struct test_case_t {
-        char *addr;
-        int len;
+	char *addr;
+	int len;
 	unsigned char *vector;
 	int exp_errno;
-        void (*setupfunc)();
+	void (*setupfunc) ();
 } TC[] = {
-		  { NULL,0,NULL,EINVAL,setup1 },
-		  { NULL,0,NULL,EFAULT,setup2 },
-		  { NULL,0,NULL,ENOMEM,setup3 },
-}; 
+	{
+	NULL, 0, NULL, EINVAL, setup1}, {
+	NULL, 0, NULL, EFAULT, setup2}, {
+NULL, 0, NULL, ENOMEM, setup3},};
 
 int main(int ac, char **av)
 {
-	int lc;                         /* loop counter */
+	int lc;			/* loop counter */
 	int i;
-	char *msg;                      /* message returned from parse_opts */
+	char *msg;		/* message returned from parse_opts */
 
-        /* parse standard options */
-        if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	/* parse standard options */
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "error parsing options: %s", msg);
-        }
+	}
 
-        setup();                        /* global setup */
+	setup();		/* global setup */
 
 	/* The following loop checks looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-                /* reset Tst_count in case we are looping */
-                Tst_count = 0;
+		/* reset Tst_count in case we are looping */
+		Tst_count = 0;
 
 		/* loop through the test cases */
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -127,34 +127,33 @@ int main(int ac, char **av)
 			}
 			TEST(mincore(TC[i].addr, TC[i].len, TC[i].vector));
 
-                        if (TEST_RETURN != -1) {
-                                tst_resm(TFAIL, "call succeeded unexpectedly");
-                                continue;
-                        }
+			if (TEST_RETURN != -1) {
+				tst_resm(TFAIL, "call succeeded unexpectedly");
+				continue;
+			}
 
-                        TEST_ERROR_LOG(TEST_ERRNO);
+			TEST_ERROR_LOG(TEST_ERRNO);
 
-                        if (TEST_ERRNO == TC[i].exp_errno) {
-                                tst_resm(TPASS, "expected failure: "
-                                         "errno = %d (%s)", TEST_ERRNO,
-                                         strerror(TEST_ERRNO));
-                        } else {
-                                tst_resm(TFAIL, "unexpected error %d (%s), "
-                                         "expected %d", TEST_ERRNO,
-                                         strerror(TEST_ERRNO), TC[i].exp_errno);
+			if (TEST_ERRNO == TC[i].exp_errno) {
+				tst_resm(TPASS, "expected failure: "
+					 "errno = %d (%s)", TEST_ERRNO,
+					 strerror(TEST_ERRNO));
+			} else {
+				tst_resm(TFAIL, "unexpected error %d (%s), "
+					 "expected %d", TEST_ERRNO,
+					 strerror(TEST_ERRNO), TC[i].exp_errno);
 			}
 		}
 	}
-        cleanup();
-	return(0);
+	cleanup();
+	return 0;
 }
 
 /*
- * setup1() - sets up conditions for the first test. the start address is not 
+ * setup1() - sets up conditions for the first test. the start address is not
  * multiple of page size
  */
-void
-setup1()
+void setup1()
 {
 	TC[0].addr = global_pointer + 1;
 	TC[0].len = global_len;
@@ -165,25 +164,29 @@ setup1()
  * setup2() - sets up conditions for the test 2. the vector points to an
  * invalid address.
  */
-void
-setup2()
+void setup2()
 {
 	unsigned char *t;
-    struct rlimit limit;
+	struct rlimit limit;
 
 	/* Create pointer to invalid address */
-	if( MAP_FAILED == (t = mmap(0,global_len,PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS,0,0)) ) {
-		tst_brkm(TBROK,cleanup,"mmaping anonymous memory failed: %s",strerror(errno));
+	if (MAP_FAILED ==
+	    (t =
+	     mmap(0, global_len, PROT_READ | PROT_WRITE,
+		  MAP_PRIVATE | MAP_ANONYMOUS, 0, 0))) {
+		tst_brkm(TBROK, cleanup, "mmaping anonymous memory failed: %s",
+			 strerror(errno));
 	}
-	munmap(t,global_len);
+	munmap(t, global_len);
 
-    /* set stack limit so that the unmaped pointer is invalid for architectures like s390 */
-    limit.rlim_cur = STACK_LIMIT;
-    limit.rlim_max = STACK_LIMIT;
+	/* set stack limit so that the unmaped pointer is invalid for architectures like s390 */
+	limit.rlim_cur = STACK_LIMIT;
+	limit.rlim_max = STACK_LIMIT;
 
-    if (setrlimit(RLIMIT_STACK, &limit) != 0) {
-        tst_brkm(TBROK,cleanup,"setrlimit failed: %s",strerror(errno));
-    }
+	if (setrlimit(RLIMIT_STACK, &limit) != 0) {
+		tst_brkm(TBROK, cleanup, "setrlimit failed: %s",
+			 strerror(errno));
+	}
 
 	TC[1].addr = global_pointer;
 	TC[1].len = global_len;
@@ -192,78 +195,82 @@ setup2()
 
 /*
  *  setup3() - performs the setup for test3(the starting address + length
- *  contained unmapped memory). we give the length of mapped file equal to 5 
+ *  contained unmapped memory). we give the length of mapped file equal to 5
  *  times the mapped file size.
  */
-void 
-setup3()
+void setup3()
 {
 	TC[2].addr = global_pointer;
-	TC[2].len = global_len*2;
-        munmap(global_pointer+global_len, global_len);
+	TC[2].len = global_len * 2;
+	munmap(global_pointer + global_len, global_len);
 	TC[2].vector = global_vec;
 }
 
 /*
  * setup() - performs all ONE TIME setup for this test
  */
-void
-setup()
+void setup()
 {
 	char *buf;
-	
+
 	PAGESIZE = getpagesize();
-	
+
 	/* global_pointer will point to a mmapped area of global_len bytes */
-	global_len = PAGESIZE*2;
-	
-	buf = (char*)malloc(global_len);
-	memset(buf,42,global_len);
-	
+	global_len = PAGESIZE * 2;
+
+	buf = (char *)malloc(global_len);
+	memset(buf, 42, global_len);
+
 	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Pause if that option was specified */
 	TEST_PAUSE;
-	
+
 	/* create a temporary file */
-	if( -1 == (file_desc = mkstemp(file_name)) )
-	{
-		tst_brkm(TBROK, cleanup, "Error while creating temporary file: %s", strerror(errno));
+	if (-1 == (file_desc = mkstemp(file_name))) {
+		tst_brkm(TBROK, cleanup,
+			 "Error while creating temporary file: %s",
+			 strerror(errno));
 	}
-	
+
 	/* fill the temporary file with two pages of data */
-	if( -1 == write(file_desc,buf,global_len) )
-	{
-		tst_brkm(TBROK, cleanup, "Error while writing to temporary file: %s", strerror(errno));
+	if (-1 == write(file_desc, buf, global_len)) {
+		tst_brkm(TBROK, cleanup,
+			 "Error while writing to temporary file: %s",
+			 strerror(errno));
 	}
 	free(buf);
-	
+
 	/* map the file in memory */
-	if( MAP_FAILED == (global_pointer = (char *)mmap(NULL,global_len*2,PROT_READ|PROT_WRITE|PROT_EXEC,MAP_SHARED,file_desc,0)) )
-	{
-		tst_brkm(TBROK, cleanup, "Temporary file could not be mmapped: %s", strerror(errno));
+	if (MAP_FAILED ==
+	    (global_pointer =
+	     (char *)mmap(NULL, global_len * 2,
+			  PROT_READ | PROT_WRITE | PROT_EXEC, MAP_SHARED,
+			  file_desc, 0))) {
+		tst_brkm(TBROK, cleanup,
+			 "Temporary file could not be mmapped: %s",
+			 strerror(errno));
 	}
-	
+
 	/* initialize the vector buffer to collect the page info */
-	global_vec = malloc( (global_len+PAGESIZE-1) / PAGESIZE );	
+	global_vec = malloc((global_len + PAGESIZE - 1) / PAGESIZE);
 }
 
 /*
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
  * or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing status if that option was specified.
 	 * print errno log if that option was specified
 	 */
 	TEST_CLEANUP;
-	
+
 	free(global_vec);
-	munmap(global_pointer,global_len);
+	munmap(global_pointer, global_len);
 	close(file_desc);
 	remove(file_name);
 

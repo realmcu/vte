@@ -39,15 +39,97 @@
 #                            accordingly.
 
 
-export TST_TOTAL=10                # Number of tests in this testcase
+#
+# Description of individual test cases
+# ------------------------------------
+#
+# Test01: Test if file command recognizes ASCII text files
+# -------
+# 1) Write text to a known file 
+# 2) Use 'file' command to get the type of the known file
+#    Ex: file xyz.txt
+# 3) Grep for the keyword "ASCII text" in the output of the 
+#    'file' command
+# 4) Declare test as PASS if above step is successful else 
+#    declare test as FAIL
+#
+# Test02: Test if file command can recognize bash shell script
+# -------
+# 1) Write a small bash shell script to a known file
+# 2) Use 'file' command to get the type of the known file
+#    Ex: file xyz.sh
+# 3) Grep for the keyword "Bourne-Again shell script" in 
+#    the output of the 'file' command
+# 4) Declare test as PASS if above step is successful else 
+#    declare test as FAIL
+#
+# Test03: Test if file command can recognize bash shell script
+# -------
+#   Similar test(as Test02) is performed with Korn shell script
+#
+# Test04: Test if file command can recognize C shell script
+# -------
+#   Similar test(as Test02) is performed with C shell script
+#
+# Test05: Test if file command can recognize C program text
+# -------
+#   Similar test(as Test02) is performed with C program text
+#
+# Test06: Test if file command can recognize ELF binay executables
+# -------  
+# 1) Grep for 'm68k' or 'sparc' or 'mips' or 'mipseb' or 'sh.eb' 
+#    or 'powerpc' or 'ppc' or 's390' from the output of the command 
+#    'uname -m'
+# 2) If the above step is successful, assign string 'MSB' to variable 
+#    TARGET_ARCH else assign string 'LSB'
+# 3) Write small C program to a known '.c' file
+# 4) Compile it using "cc"
+#    Ex: cc xyz xyz.c
+# 5) Use file command to get the type of the object file
+# 6) Grep for the string "ELF .*-bit $TEST_ARCH executable, .*" 
+#    in the output of the 'file' command
+# 7) If the above command is successful, declare test as PASS
+#    else declare test as FAIL
+#
+# Test07: Test if file command can recognize tar files
+# -------
+# 1) Write text to three different files
+# 2) Archive the files using "tar" command
+#    Ex: tar -cf ...
+# 3) Use 'file' command to get the type of the archive file
+#    Ex: file xyz.tar
+# 4) Grep for the string "tar archive" from the output of
+#    the above 'file' command
+# 5) Declare test as PASS, if the above step is successfull else
+#    declare test as FAIL
+#
+# Test08: Test if file command can tar zip files
+# -------
+# 1) Write text to three different files
+# 2) Archive the files using "tar" command
+#    Ex: tar -cf ...
+# 3) Use 'gzip' command to zip tar files
+#    Ex: gzip -f xyz.tar
+# 4) Use 'file' command to get the type of the archive file
+#    Ex: file xyz.tar.gz
+# 5) Grep for the string "gzip compressed data, .*" from the above 
+#    file commnand
+# 6) Declare test as PASS, if the above step is successfull else
+#    declare test as FAIL
+#
 
+
+export TST_TOTAL=10                # Number of tests in this testcase
+ 
 if [ -z "$LTPTMP" -a -z "$TMPBASE" ]
 then 
     LTPTMP=/tmp/
 else
-	LTPTMP=$TMPBASE
+    LTPTMP=$TMPBASE
 fi
 
+# 'LTPBIN' where actual test cases (test binaries) reside
+# 'LTPROOT' where the actual LTP test suite resides
 if [ -z "$LTPBIN" -a -z "$LTPROOT" ]
 then
     LTPBIN=./
@@ -65,9 +147,9 @@ RC=0
 # Test if file command recognizes ASCII text files.
 
 export TCID=file01
-export TST_COUNT=7
+export TST_COUNT=1
 
-$LTPBIN/tst_resm TINFO "TEST #1: file commad recogizes ASCII text files"
+$LTPBIN/tst_resm TINFO "TEST #1: file command recogizes ASCII text files"
 
 cat > $LTPTMP/test_file.txt <<EOF
 This is a text file 
@@ -109,7 +191,7 @@ cat > $LTPTMP/bash_script.sh <<EOF
 #! /bin/bash
 
 echo "this is a shell script"
-echo "used to test file commad"
+echo "used to test file command"
 
 EOF
 
@@ -144,7 +226,7 @@ cat > $LTPTMP/ksh_script.sh <<EOF
 #! /bin/ksh
 
 echo "this is a shell script"
-echo "used to test file commad"
+echo "used to test file command"
 
 EOF
 
@@ -180,7 +262,7 @@ cat > $LTPTMP/C_script.sh <<EOF
 #! /bin/csh
 
 echo "this is a shell script"
-echo "used to test file commad"
+echo "used to test file command"
 
 EOF
 
@@ -390,13 +472,10 @@ export TCID=file09
 export TST_COUNT=9
 
 $LTPBIN/tst_resm TINFO "TEST #9: file command recognizes RPM files"
-if [ -f /etc/redhat-release ]; then
-	bDIR=/usr/src/redhat
-	bCMD=rpmbuild
-else
-	bDIR=/usr/src/packages
-	bCMD=rpmbuild
-fi
+type rpm > /dev/null 2>&1
+if [ $? = 0 ]; then
+bDIR=$(rpm --eval "%{_topdir}")
+bCMD=rpmbuild
 
 rpmversion=`rpm --version | awk -F ' ' '{print $3}' | cut -d '.' -f1 `
 
@@ -450,7 +529,7 @@ fi
 
 if [ $RC -ne 0 ]
 then
-    $LTPBIN/tst_brk TBROK $LTPTMP/file.out NULL "mkdir: brok. Reason:"
+    $LTPBIN/tst_brk TBROK $LTPTMP/file.out NULL "mkdir: broke. Reason:"
 fi
 
 cat > $bDIR/SOURCES/cprog.c <<EOF
@@ -467,17 +546,17 @@ then
     $LTPBIN/tst_brkm TBROK NULL "cat: failed to create test file cprog.c"
 fi
 
-$bCMD -bs  $LTPTMP/files.spec > $LTPTMP/file.out 2>&1
+$bCMD --define "_topdir $bDIR" -bs  $LTPTMP/files.spec > $LTPTMP/file.out 2>&1
 if [ $? -ne 0 ]
 then
-    $LTPBIN/tst_brk TBROK $LTPTMP/file.out NULL "rpm command brok. Reason:"
+    $LTPBIN/tst_brk TBROK $LTPTMP/file.out NULL "rpm command broke. Reason:"
 fi
 
 file $bDIR/SRPMS/cprog-0.0.7-3.src.rpm > $LTPTMP/file.out 2>&1
 
 if [ $? -eq 0 ]
 then
-    grep "RPM v3 src" $LTPTMP/file.out > /dev/null 2>&1
+    grep -E "RPM v3(\.0)? src" $LTPTMP/file.out > /dev/null 2>&1
     if [ $? -eq 0 ]
     then
         $LTPBIN/tst_resm TPASS "file: Recognised RPM file correctly"
@@ -492,6 +571,9 @@ else
     $LTPBIN/tst_resm TFAIL "file: Failed to recognize RPM file"
     TFAILCNT=$(( $TFAILCNT+1 ))
 fi
+else
+    $LTPBIN/tst_resm TCONF "rpm not installed"
+fi
 
 
 # TEST #10
@@ -500,11 +582,7 @@ fi
 export TCID=file10
 export TST_COUNT=10
 
-if [ -f /etc/redhat-release ]; then
-   KERNEL=vmlinuz
-else
-   KERNEL=vmlinux
-fi
+KERNEL=vmlinu
 
 $LTPBIN/tst_resm TINFO "TEST #10: file command recognizes $KERNEL file"
 
@@ -518,7 +596,7 @@ $LTPBIN/tst_resm TINFO "TEST #10: file command recognizes $KERNEL file"
 #>2      leshort         x       \b, first line number %d
 
 # Red Hat creates a user-mode-linux vmlinuz file (ends in .uml) - ignore it
-KERNFILE=$(find /boot ! -type l -name "$KERNEL*" | grep -v '.uml' | tail -1)
+KERNFILE=$(find /boot ! -type l -name "$KERNEL*" | grep -v '.uml' | tail -n 1)
 file $KERNFILE > $LTPTMP/file.out 2>&1
 
 if [ $? -eq 0 ]

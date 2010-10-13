@@ -15,7 +15,7 @@ fptest02 fptest02
 nextafter01 nextafter01
 
 #DESCRIPTION:fsx filesystem stress tests
-fsx-linux export TCbin=$LTPROOT/testcases/kernel/fs/fsx-linux;fsxtest02 10000
+fsx-linux export TCbin=$LTPROOT/testcases/bin;fsxtest02 10000
 #fsx-ext2 fsxtest $SCRATCHDEV ext2 10000
 #fsx-ext3 fsxtest $SCRATCHDEV ext3 10000
 #fsx-jfs fsxtest $SCRATCHDEV jfs 10000
@@ -76,7 +76,6 @@ adjtimex02 adjtimex02
 alarm01 alarm01
 alarm02 alarm02
 alarm03 alarm03
-alarm04 cp -f $LTPROOT/testcases/bin/sig_rev $TMP;alarm04
 alarm05 alarm05
 alarm06 alarm06
 alarm07 alarm07
@@ -168,9 +167,8 @@ execv01 execv01
 execve01 execve01
 execve02 execve02 -F $LTPROOT/testcases/bin/test3
 execve03 execve03
-execve04 cp -f $LTPROOT/testcases/bin/test3 $TMP; execve04 -F test3
-execve05 execve05 -F $LTPROOT/testcases/bin/test3
-execve06 execve06 20 $LTPROOT/testcases/bin/execve06 $LTPROOT/testcases/bin/execve06 4
+execve04 execve04 -F $LTPROOT/testcases/bin/test3
+execve05 execve05 20 $LTPROOT/testcases/bin/execve05 $LTPROOT/testcases/bin/execve05 4
 execvp01 execvp01
 
 exit01 exit01
@@ -289,7 +287,6 @@ getegid01 getegid01
 geteuid01 geteuid01
 
 getgid01 getgid01
-getgid02 getgid02
 getgid03 getgid03
 
 getgroups01 getgroups01
@@ -353,6 +350,9 @@ getuid03 getuid03
 #ioctl01 ioctl01 -D /dev/tty0
 #ioctl02 ioctl02 -D /dev/tty0
 
+# Introducing ioctl tests for all /dev/tty* devices
+ioctl test_ioctl
+
 ioperm01 ioperm01
 ioperm02 ioperm02
 
@@ -373,7 +373,7 @@ kill11 ulimit -c 1024;kill11
 kill12 kill12
 
 lchown01 lchown01
-lchown02 cp -p $LTPROOT/testcases/bin/create_link $TMP; lchown02
+lchown02 prep_create_link; lchown02
 
 link01 symlink01 -T link01
 link02 link02
@@ -585,6 +585,7 @@ pselect01 pselect01
 ptrace01 ptrace01
 ptrace02 ptrace02
 ptrace03 ptrace03
+ptrace05 ptrace05
 
 pwrite01 pwrite01
 pwrite02 pwrite02
@@ -715,6 +716,7 @@ setfsgid03 setfsgid03
 setfsuid01 setfsuid01
 setfsuid02 setfsuid02
 setfsuid03 setfsuid03
+setfsuid04 setfsuid04
 
 setgid01 setgid01
 setgid02 setgid02
@@ -760,6 +762,7 @@ setresgid03 setresgid03
 setresuid01 setresuid01
 setresuid02 setresuid02
 setresuid03 setresuid03
+setresuid04 setresuid04
 
 setreuid01 setreuid01
 setreuid02 setreuid02
@@ -767,6 +770,7 @@ setreuid03 setreuid03
 setreuid04 setreuid04
 setreuid05 setreuid05
 setreuid06 setreuid06
+setreuid07 setreuid07
 
 setrlimit01 setrlimit01
 setrlimit02 setrlimit02
@@ -782,6 +786,7 @@ settimeofday02 settimeofday02
 setuid01 setuid01
 setuid02 setuid02
 setuid03 setuid03
+setuid04 setuid04
 
 shmat01 shmat01
 shmat02 shmat02
@@ -860,6 +865,7 @@ swapoff02 swapoff02
 
 swapon01 swapon01
 swapon02 swapon02
+swapon03 swapon03
 
 symlink01 symlink01
 symlink02 symlink02
@@ -907,7 +913,6 @@ syslog12 syslog12
 # time02 time02
 
 times01 times01
-times02 times02
 times03 times03
 
 truncate01 truncate01
@@ -991,6 +996,7 @@ writev02 writev02
 writev03 writev03
 writev04 writev04
 writev05 writev05
+writev06 writev06
 
 #DESCRIPTION:Memory Mgmt tests
 mm01 mmap001 -m 10000
@@ -1008,7 +1014,7 @@ mtest01w mtest01 -p80 -w
 
 #test for race conditions
 mtest05 mmstress
-mtest06 mmap1
+mtest06 mmap1 -x 0.05
 
 mem01 mem01
 mem02 mem02

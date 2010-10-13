@@ -53,11 +53,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <errno.h>
-#include <numa.h>
-
 #include <test.h>
 #include <usctest.h>
-
 #include "move_pages_support.h"
 
 #define TEST_PAGES 2
@@ -72,8 +69,7 @@ extern int Tst_count;
 
 int main(int argc, char **argv)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
 	msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
@@ -84,6 +80,9 @@ int main(int argc, char **argv)
 	}
 
 	setup();
+
+#if HAVE_NUMA_MOVE_PAGES
+	int lc;			/* loop counter */
 
 	/* check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
@@ -100,6 +99,7 @@ int main(int argc, char **argv)
 
 		ret = numa_move_pages(0, TEST_PAGES, pages, NULL, status, 0);
 		TEST_ERRNO = errno;
+
 		if (ret != 0) {
 			tst_resm(TFAIL, "retrieving NUMA nodes failed");
 			free_pages(pages, TEST_PAGES);
@@ -109,7 +109,11 @@ int main(int argc, char **argv)
 		verify_pages_linear(pages, status, TEST_PAGES);
 
 		free_pages(pages, TEST_PAGES);
+
 	}
+#else
+	tst_resm(TCONF, "move_pages support not found.");
+#endif
 
 	cleanup();
 	/* NOT REACHED */
@@ -120,8 +124,7 @@ int main(int argc, char **argv)
 /*
  * setup() - performs all ONE TIME setup for this test
  */
-void
-setup(void)
+void setup(void)
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -136,8 +139,7 @@ setup(void)
 /*
  * cleanup() - performs all ONE TIME cleanup for this test
  */
-void
-cleanup(void)
+void cleanup(void)
 {
 	/*
 	 * print timing stats if that option was specified.
@@ -147,5 +149,4 @@ cleanup(void)
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-	/*NOTREACHED*/
-}
+ /*NOTREACHED*/}

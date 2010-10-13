@@ -62,7 +62,7 @@
 char *program_name;		/* program name */
 
 struct sigaction handler;	/* Behavior for a signal */
-int catch_sighup;		/* When catch the SIGHUP, set to non-zero */
+volatile int catch_sighup;		/* When catch the SIGHUP, set to non-zero */
 
 sa_family_t family;		/* protocol family */
 int level;			/* protocol levels */
@@ -401,7 +401,7 @@ join_group(void)
 	freeaddrinfo(maddr_info);
     }
 
-    fprintf(stdout, "%u groups\n", num_group);
+    fprintf(stdout, "%zu groups\n", num_group);
     fflush(stdout);
 
     /* Become a daemon for the next step in shell script */

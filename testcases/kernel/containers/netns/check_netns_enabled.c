@@ -21,26 +21,33 @@
 ***************************************************************************/
 #include <stdio.h>
 #include <sched.h>
-#include "../libclone/libclone.h"
+#include "config.h"
+#include "libclone.h"
+#include "linux_syscall_numbers.h"
 #include "test.h"
 
-int main()
+char *TCID = "check_netns_enabled";
+int TST_COUNT = 1;
+int TST_TOTAL = 1; 
+
+#ifndef CLONE_NEWNET
+#define CLONE_NEWNET -1
+#endif
+
+#ifndef CLONE_NEWNS
+#define CLONE_NEWNS -1
+#endif
+
+int
+main()
 {
-    int ret;
-    long flags = 0;
-
-    flags |= CLONE_NEWNS;
-    flags |= CLONE_NEWNET;
-
-
-	// Checking if the kernel ver is enough to do NET-NS testing.
-	if (tst_kvercmp(2,6,24) < 0)
-		return 1;
-
-        ret = unshare(flags);
-	if ( ret < 0 ) {
-		printf ("Error:Unshare syscall failed for network namespace\n");
-		return 3;
+	/* Checking if the kernel supports unshare with netns capabilities. */
+	if (syscall(__NR_unshare, CLONE_NEWNET | CLONE_NEWNS) < 0) {
+		if (errno == EINVAL) {
+			tst_resm (TWARN | TERRNO, "unshare syscall not support CLONE_NEWNET or CLONE_NEWNS");
+		} else {
+			tst_resm (TFAIL | TERRNO, "unshare syscall smoke test failed");
+		}
 	}
-	return 0;
+	tst_exit();
 }

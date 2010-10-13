@@ -15,17 +15,17 @@
  *
  */
 /**********************************************************
- * 
+ *
  *    TEST IDENTIFIER	: capget01
- * 
+ *
  *    EXECUTED BY	: anyone
- * 
+ *
  *    TEST TITLE	: Basic test for capget(2)
- * 
+ *
  *    TEST CASE TOTAL	: 1
- * 
+ *
  *    AUTHOR		: Saji Kumar.V.R <saji.kumar@wipro.com>
- * 
+ *
  *    SIGNALS
  * 	Uses SIGUSR1 to pause before test if option set.
  * 	(See the parse_opts(3) man page).
@@ -33,11 +33,11 @@
  *    DESCRIPTION
  *	This is a Phase I test for the capget(2) system call.
  *	It is intended to provide a limited exposure of the system call.
- * 
+ *
  * 	Setup:
  * 	  Setup signal handling.
  *	  Pause for SIGUSR1 if option specified.
- * 
+ *
  * 	Test:
  *	 Loop if the proper options are given.
  * 	  call capget()
@@ -45,10 +45,10 @@
  *		Test passed
  *	  Otherwise
  *		Test failed
- * 
+ *
  * 	Cleanup:
  * 	  Print errno log and/or timing stats if options given
- * 
+ *
  * USAGE:  <for command-line>
  * capget01 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-h] [-f] [-p]
  *			where,  -c n : Run n copies concurrently.
@@ -85,24 +85,21 @@ char *TCID = "capget01";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 
+static struct __user_cap_header_struct header;	/* cap_user_header_t is a pointer
+						   to __user_cap_header_struct */
 
-static struct __user_cap_header_struct header; /* cap_user_header_t is a pointer
-						  to __user_cap_header_struct */
+static struct __user_cap_data_struct data;	/* cap_user_data_t is a pointer to
+						   __user_cap_data_struct */
 
-static struct __user_cap_data_struct data; /* cap_user_data_t is a pointer to
-					      __user_cap_data_struct */
-
-
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 
-	int lc;		/* loop counter */
-	char *msg;	/* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL))
-	     != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
+	    != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -120,25 +117,22 @@ main(int ac, char **av)
 		TEST(capget(&header, &data));
 
 		if (TEST_RETURN == 0) {
-			tst_resm(TPASS, "capget() returned %d", TEST_RETURN);
+			tst_resm(TPASS, "capget() returned %ld", TEST_RETURN);
 		} else {
-			tst_resm(TFAIL, "Test Failed, capget()"
-				 " returned %d, errno = %d : %s", TEST_RETURN,
-				 TEST_ERRNO, strerror(TEST_ERRNO));
-		} 
-	}	/* End for TEST_LOOPING */
+			tst_resm(TFAIL|TTERRNO, "Test Failed, capget() returned %ld",
+				 TEST_RETURN);
+		}
+	}			/* End for TEST_LOOPING */
 
 	/* cleanup and exit */
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	 /*NOTREACHED*/ return 0;
 
-}	/* End main */
+}				/* End main */
 
 /* setup() - performs all ONE TIME setup for this test */
-void
-setup()
+void setup()
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -146,15 +140,13 @@ setup()
 	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}	/* End setup() */
-
+}				/* End setup() */
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
  *		completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.

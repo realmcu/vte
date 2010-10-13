@@ -35,7 +35,7 @@
  *      -t   : Turn on syscall timing.
  *
  * Author
- *	Yi Yang <yyangcdl@cn.ibm.com> 
+ *	Yi Yang <yyangcdl@cn.ibm.com>
  *
  * History
  *      08/23/2006      Created first by Yi Yang <yyangcdl@cn.ibm.com>
@@ -45,8 +45,8 @@
 #define _GNU_SOURCE
 
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <error.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -88,14 +88,12 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 	int i;
 
-      /* Disable test if the version of the kernel is less than 2.6.16 */
-        if((tst_kvercmp(2,6,16)) < 0)
-          {
-             tst_resm(TWARN, "This test can only run on kernels that are ");
-             tst_resm(TWARN, "2.6.16 and higher");
-             exit(0);
-          }
-
+	/* Disable test if the version of the kernel is less than 2.6.16 */
+	if (tst_kvercmp(2, 6, 16) < 0) {
+		tst_resm(TWARN, "This test can only run on kernels that are ");
+		tst_resm(TWARN, "2.6.16 and higher");
+		exit(0);
+	}
 
 	/***************************************************************
 	 * parse standard options
@@ -117,10 +115,11 @@ int main(int ac, char **av)
 		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		/* 
-		 * Call mknodat 
+		/*
+		 * Call mknodat
 		 */
 		for (i = 0; i < TST_TOTAL; i++) {
+
 			TEST(mymknodat(fds[i], filenames[i], S_IFREG, dev));
 
 			/* check return code */
@@ -131,17 +130,15 @@ int main(int ac, char **av)
 				 ***************************************************************/
 				if (STD_FUNCTIONAL_TEST) {
 					/* No Verification test, yet... */
-					tst_resm(TPASS,
-						 "mknodat() returned the expected errno %d: %s",
-						 TEST_ERRNO,
-						 strerror(TEST_ERRNO));
+					tst_resm(TPASS | TTERRNO,
+						 "mknodat() returned the "
+						 "expected errno");
 				}
 			} else {
 				TEST_ERROR_LOG(TEST_ERRNO);
-				tst_resm(TFAIL,
-					 "mknodat() Failed, errno=%d : %s",
-					 TEST_ERRNO, strerror(TEST_ERRNO));
+				tst_resm(TFAIL | TTERRNO, "mknodat() failed");
 			}
+
 		}
 
 	}			/* End for TEST_LOOPING */

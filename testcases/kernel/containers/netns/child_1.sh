@@ -30,6 +30,7 @@ export TST_COUNT
 export TST_TOTAL
 
 . initialize.sh
+status=0
 
     # Writing child PID number into /tmp/FIFO
     echo $$ > /tmp/FIFO2
@@ -65,7 +66,7 @@ export TST_TOTAL
         # Pinging CHILD2 from CHILD1
         debug "INFO: Trying for pinging CHILD2..."
         ping -qc 2 $IP4 > /dev/null
-        if [ $? == 0 ];
+        if [ $? = 0 ];
         then
             tst_resm TINFO "PASS: Child2 is pinging from CHILD1 !" 
         else 

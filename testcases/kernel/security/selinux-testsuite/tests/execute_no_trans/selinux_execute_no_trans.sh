@@ -15,8 +15,8 @@ setup()
         export TST_COUNT=0
 	export TST_TOTAL=2
 
-        # Clean up from a previous run
-        rm -f $SELINUXTMPDIR/true 2>&1
+	SELINUXTMPDIR=$(mktemp -d)
+	chcon -t test_file_t $SELINUXTMPDIR
 }
 
 test01()
@@ -34,10 +34,10 @@ test01()
 	RC=$?		# this should fail
 	if [ $RC -ne 0 ]
 	then
-		echo "$TCID   PASS : execute_no_trans passed."
+		tst_resm TPASS "execute_no_trans passed."
 		RC=0
         else
-                echo "$TCID   FAIL : execute_no_trans failed."
+                tst_resm TFAIL "execute_no_trans failed."
 		RC=1
         fi
 	return $RC
@@ -57,17 +57,16 @@ test02()
 	RC=$?
 	if [ $RC -ne 0 ]
 	then
-		echo "$TCID   FAIL : execute_no_trans failed."
+		tst_resm TFAIL "execute_no_trans failed."
         else
-                echo "$TCID   PASS : execute_no_trans passed."
+                tst_resm TPASS "execute_no_trans passed."
         fi
 	return $RC
 }
 
 cleanup()
 {
-	# Cleanup.
-	rm -f $SELINUXTMPDIR/true
+	rm -rf $SELINUXTMPDIR
 }
 
 # Function:     main

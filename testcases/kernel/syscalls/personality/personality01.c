@@ -58,7 +58,7 @@
 #include "usctest.h"
 
 #include <errno.h>
-#include <linux/personality.h>
+#include <sys/personality.h>
 #undef personality
 
 extern int personality(unsigned long);
@@ -66,32 +66,34 @@ extern int personality(unsigned long);
 void cleanup(void);
 void setup(void);
 
-char *TCID= "personality01";
+char *TCID = "personality01";
 int TST_TOTAL = 13;
 extern int Tst_count;
 
-int pers[] = {PER_LINUX, PER_LINUX_32BIT, PER_SVR4, PER_SVR3, PER_SCOSVR3,
-		PER_WYSEV386, PER_ISCR4, PER_BSD, PER_XENIX, PER_LINUX32,
-		PER_IRIX32, PER_IRIXN32, PER_IRIX64};
+int pers[] = { PER_LINUX, PER_LINUX_32BIT, PER_SVR4, PER_SVR3, PER_SCOSVR3,
+	PER_WYSEV386, PER_ISCR4, PER_BSD, PER_XENIX, PER_LINUX32,
+	PER_IRIX32, PER_IRIXN32, PER_IRIX64
+};
 
+#ifdef __NR_personality
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 	int i, start_pers;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
-	setup();			/* global setup */
+	setup();		/* global setup */
 
-        start_pers = personality(PER_LINUX);
-        if (start_pers == -1) {
-           printf("personality01:  Test Failed\n");
-           exit(-1);
-        }
+	start_pers = personality(PER_LINUX);
+	if (start_pers == -1) {
+		printf("personality01:  Test Failed\n");
+		exit(-1);
+	}
 
 	/* The following checks the looping state if -i option given */
 
@@ -104,8 +106,8 @@ int main(int ac, char **av)
 		 * make sure that we can change to each one and the return
 		 * value is the previous one.
 		 */
-		for(i=0; i<TST_TOTAL; i++) {
-			
+		for (i = 0; i < TST_TOTAL; i++) {
+
 			TEST(personality(pers[i]));
 
 			if (TEST_RETURN == -1) {
@@ -123,7 +125,7 @@ int main(int ac, char **av)
 				 * i == 0 is a special case since the return
 				 * value should equal pers[0].
 				 */
-				if (TEST_RETURN == pers[i == 0 ? 0 : i-1]) {
+				if (TEST_RETURN == pers[i == 0 ? 0 : i - 1]) {
 					tst_resm(TPASS, "personality set "
 						 "correctly");
 				} else {
@@ -143,15 +145,20 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	/*NOTREACHED*/
-	return(0);
+	 /*NOTREACHED*/ return 0;
 }
+#else
+int main(int ac, char **av)
+{
+	tst_resm(TCONF, "personality() not defined in your system");
+	tst_exit();
+}
+#endif
 
 /*
  * setup() - performs all the ONE TIME setup for this test.
  */
-void
-setup(void)
+void setup(void)
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -164,8 +171,7 @@ setup(void)
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
  * 	       or premature exit.
  */
-void
-cleanup(void)
+void cleanup(void)
 {
 	/*
 	 * print timing stats if that option was specified.

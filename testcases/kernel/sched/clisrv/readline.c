@@ -22,7 +22,7 @@
 
 #include <unistd.h>
 
-/* Read line from a descriptor, byte at a time, return number of 
+/* Read line from a descriptor, byte at a time, return number of
    characters up to the null */
 
 int readline(fd, ptr, maxlen)
@@ -46,7 +46,7 @@ register int maxlen;
 	else if (rc == 0)
 	    {
 	    if (n ==1)
-		return(0); /* EOF no data read */
+		return 0; /* EOF no data read */
 	    else
 		break; /* EOF, some data read */
 	    }

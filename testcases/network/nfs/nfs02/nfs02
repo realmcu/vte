@@ -87,7 +87,7 @@ $trace_logic
    rsh -n $RHOST "mkdir -p $TESTDIR"
    [ $? -eq 0 ] || end_testcase "Could not create $TESTDIR from $RHOST"
 
-   if [ "x$NFS_TYPE" == "xnfs4" ]; then
+   if [ "x$NFS_TYPE" = "xnfs4" ]; then
       rsh -n $RHOST "mkdir -p /export$TESTDIR"
       [ $? = 0 ] || end_testcase "Could not create /export$TESTDIR on server"
       rsh -n $RHOST "mount --bind $TESTDIR /export$TESTDIR"
@@ -179,7 +179,7 @@ do_test3()
 {
 $trace_logic
    echo "do_test3 $TC "
-   chmod a-w $TCtmp/ascii.sm &
+   chmod a-wx $TCtmp/ascii.sm &
    wait $!
    ls -l $TCtmp/ascii.sm | grep "r--" 
    [ $? -eq 0 ] || end_testcase "Removal of write permissions not honored on ascii.sm"

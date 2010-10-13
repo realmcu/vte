@@ -22,7 +22,6 @@
 #
 
 # Prompt user if ids/groups should be created
-clear
 echo "Checking for required user/group ids"
 echo ""
 
@@ -35,40 +34,27 @@ NO_BIN_GRP=1
 NO_DAEMON_GRP=1
 NO_USERS_GRP=1
 NO_SYS_GRP=1
-I_AM_ROOT=0
 
-#
-# id(1) for entry.
-#
-ife() {
-	id "$@" > /dev/null
-}
+group="$DESTDIR/etc/group"
+passwd="$DESTDIR/etc/passwd"
 
-#
-# grep(1) for entry.
-#
-gfe() {
-	grep -q "$@"
+# find entry.
+fe() {
+    ID=$1
+    FILE=$2
+    [ -e "$FILE" ] || return $?
+    grep -q "^$ID:" "$FILE"
 }
 
 prompt_for_create() {
-	if [ -n "$CREATE_ENTRIES" ] ; then
+	if [ -z "$CREATE_ENTRIES" ] ; then
 
-		if [ $I_AM_ROOT -eq 0 ] ; then
-			echo "Not root; can't create user / group entries on local machine".
-			CREATE_ENTRIES=0
-		fi
-		echo "CREATE_ENTRIES variable set to $CREATE_ENTRIES ..."
-		echo
-
-	else
-
-		if [ $NO_NOBODY_ID -ne 0 -o $NO_BIN_ID -ne 0 -o $NO_DAEMON_ID -ne 0 -o $NO_NOBODY_GRP -ne 0 -o $NO_BIN_GRP -ne 0 -o $NO_DAEMON_GRP -ne 0 -o $NO_USERS_GRP -ne 0 -o $NO_SYS_GRP -ne 0 -a $I_AM_ROOT -ne 0 ] ; then
-			echo -n "If any required user ids and/or groups are missing, would you like these created? Y/N "
+		if [ $NO_NOBODY_ID -ne 0 -o $NO_BIN_ID -ne 0 -o $NO_DAEMON_ID -ne 0 -o $NO_NOBODY_GRP -ne 0 -o $NO_BIN_GRP -ne 0 -o $NO_DAEMON_GRP -ne 0 -o $NO_USERS_GRP -ne 0 -o $NO_SYS_GRP -ne 0 ] ; then
+			echo -n "If any required user ids and/or groups are missing, would you like these created? [y/N]"
 			read ans
 			case "$ans" in
-				Y*|y*) CREATE_ENTRIES=1 ;;
-				*)     CREATE_ENTRIES=0 ;;
+			[Yy]*) CREATE_ENTRIES=1 ;;
+			*)     CREATE_ENTRIES=0 ;;
 			esac
 		else
 			CREATE_ENTRIES=0
@@ -81,43 +67,38 @@ if [ -z ${EUID} ] ; then
 	EUID=$(id -u)
 fi
 
-if [ -e /etc/passwd -a ! -r /etc/passwd ] ; then
-	echo "/etc/passwd not readable by uid $EUID"
+for i in "$passwd" "$group"; do
+    if [ -e "$i" -a ! -r "$i" ] ; then
+	echo "$i not readable by uid $EUID"
 	exit 1
-elif [ -e /etc/group -a ! -r /etc/group ] ; then
-	echo "/etc/group not readable by uid $EUID"
-	exit 1
-fi
+    fi
+done
 
-ife bin; NO_BIN_ID=$?
-ife daemon; NO_DAEMON_ID=$?
-ife nobody; NO_NOBODY_ID=$?
+fe bin "$passwd"; NO_BIN_ID=$?
+fe daemon "$passwd"; NO_DAEMON_ID=$?
+fe nobody "$passwd"; NO_NOBODY_ID=$?
 
-gfe '^bin:' /etc/group; NO_BIN_GRP=$?
-gfe '^daemon:' /etc/group; NO_DAEMON_GRP=$?
-gfe '^nobody:' /etc/group; NO_NOBODY_GRP=$?
-gfe '^sys:' /etc/group; NO_SYS_GRP=$?
-gfe '^users:' /etc/group; NO_USERS_GRP=$?
-
-if [ $EUID -eq 0 ] ; then
-	I_AM_ROOT=1
-fi
+fe bin "$group"; NO_BIN_GRP=$?
+fe daemon "$group"; NO_DAEMON_GRP=$?
+fe nobody "$group" || fe nogroup "$group"; NO_NOBODY_GRP=$?
+fe sys "$group"; NO_SYS_GRP=$?
+fe users "$group"; NO_USERS_GRP=$?
 
 prompt_for_create
 
 debug_vals() {
 
 echo "Missing the following group / user entries:"
-echo "nobody:        $NO_NOBODY_ID"
-echo "bin:           $NO_BIN_ID"
-echo "daemon:        $NO_DAEMON_ID"
-echo "nobody grp:    $NO_NOBODY_GRP"
-echo "bin grp:       $NO_BIN_GRP"
-echo "daemon grp:    $NO_DAEMON_GRP"
-echo "sys grp:       $NO_SYS_GRP"
-echo "users grp:     $NO_USERS_GRP"
-echo ""
-echo "i am root:     $I_AM_ROOT"
+echo "Group file:		$group"
+echo "Password file:		$passwd"
+echo "nobody:			$NO_NOBODY_ID"
+echo "bin:			$NO_BIN_ID"
+echo "daemon:			$NO_DAEMON_ID"
+echo "nobody[/nogroup] grp:	$NO_NOBODY_GRP"
+echo "bin grp:			$NO_BIN_GRP"
+echo "daemon grp:		$NO_DAEMON_GRP"
+echo "sys grp:			$NO_SYS_GRP"
+echo "users grp:		$NO_USERS_GRP"
 echo ""
 
 }
@@ -125,10 +106,10 @@ echo ""
 #debug_vals
 
 if [ $CREATE_ENTRIES -ne 0 ] ; then
-	if ! touch /etc/group ; then
-		echo "Couldn't touch /etc/group"
-		exit 1
-	fi
+    if ! touch "$group" "$passwd" 2>/dev/null; then
+        echo "Failed to touch $group or $passwd"
+        exit 1
+    fi
 fi
 
 make_user_group() {
@@ -141,37 +122,62 @@ make_user_group() {
 
 		# Avoid chicken and egg issue with id(1) call
 		# made above and below.
-		if ! gfe "^${name}:" /etc/passwd && [ $no_id -ne 0 ] ; then
-			echo "${name}:x:${id}:${id}:${name}::" >> /etc/passwd
+		if ! fe "$name" "$passwd" && [ $no_id -ne 0 ] ; then
+			echo "${name}:x:${id}:${id}:${name}::" >> "$passwd"
 		fi
 		if [ $no_grp -ne 0 ] ; then
-			echo "${name}:x:$(id -u ${name}):" >> /etc/group
+			echo "${name}:x:$(id -u ${name}):" >> "$group"
 		fi
 	fi
 }
-make_user_group nobody 99 $NO_NOBODY_ID $NO_NOBODY_GRP
+make_user_group nobody 65534 $NO_NOBODY_ID $NO_NOBODY_GRP
 make_user_group bin 1 $NO_BIN_ID $NO_BIN_GRP
 make_user_group daemon 2 $NO_DAEMON_ID $NO_DAEMON_GRP
 
 if [ $NO_USERS_GRP -eq 0 ] ; then
 	echo "Users group found."
 elif [ $CREATE_ENTRIES -ne 0 ] ; then
-	echo 'users:x:100:' >> /etc/group
+	echo 'users:x:100:' >> "$group"
 fi
 
 if [ $NO_SYS_GRP -eq 0 ] ; then
 	echo "Sys group found."
 elif [ $CREATE_ENTRIES -ne 0 ] ; then
-	echo 'sys:x:3:' >> /etc/group
+	echo 'sys:x:3:' >> "$group"
 fi
 
-if ife nobody    && ife bin    && ife daemon &&
-   ife -g nobody && ife -g bin && ife -g daemon &&
-   gfe '^users:' /etc/group && gfe '^sys:' /etc/group
+MISSING_ENTRY=0
+
+# For entries that exist in both $group and $passwd.
+for i in bin daemon; do
+    for file in "$group" "$passwd"; do
+        if ! fe "$i" "$file"; then
+            MISSING_ENTRY=1
+            break
+        fi
+    done
+    if [ $MISSING_ENTRY -ne 0 ]; then
+        break
+    fi
+done
+
+# nobody is a standard group on all distros, apart from debian based ones;
+# let's account for the fact that they use the nogroup group instead.
+if ! fe "nobody" "$passwd" || ! (fe "nogroup" "$group" || fe "nobody" "$group")
 then
-	echo ""
-	echo "Required users/groups exist."
-	exit 0
+    MISSING_ENTRY=1
+fi
+
+# For entries that only exist in $group.
+for i in users sys; do
+    if ! fe "$i" "$group" ; then
+        MISSING_ENTRY=1
+    fi
+done
+
+if [ $MISSING_ENTRY -eq 0 ] ; then
+    echo "Required users/groups exist."
+    exit 0
 fi
 
 echo ""

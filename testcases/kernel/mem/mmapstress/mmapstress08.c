@@ -43,8 +43,7 @@ FILE *temp;
 int TST_TOTAL = 1;
 extern int Tst_count;
 
-/* 2009.2.6, Spring, in ltp_081231, mmapstress08 is set to only applicable in IA_64 & x86_64,
-    but it also work on ARM by test */
+#if defined(__i386__) || defined(__x86_64__)
 int anyfail();
 void ok_exit();
 /*****  **      **      *****/
@@ -110,7 +109,7 @@ main(int argc, char *argv[])
 	(void)time(&t);
 	//(void)printf("%s: Finished %s", argv[0], ctime(&t));
 	ok_exit();
-	return(0);
+	return 0;
 }
 
 
@@ -126,8 +125,16 @@ int anyfail()
 {
   tst_resm(TFAIL, "Test failed\n");
   tst_exit();
-  return(0);
+  return 0;
 }
 
+#else /* defined(__i386__) || defined(__x86_64__) */
+int
+main (void)
+{
+  tst_resm (TCONF, "Test is only applicable for IA-32 and x86-64.");
+  tst_exit ();
+}
+#endif
 /*****  **      **      *****/
 

@@ -35,7 +35,7 @@
  *      -t   : Turn on syscall timing.
  *
  * Author
- *	Yi Yang <yyangcdl@cn.ibm.com> 
+ *	Yi Yang <yyangcdl@cn.ibm.com>
  *
  * History
  *      08/22/2006      Created first by Yi Yang <yyangcdl@cn.ibm.com>
@@ -87,14 +87,12 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 	int i;
 
-       /* Disable test if the version of the kernel is less than 2.6.16 */
-        if((tst_kvercmp(2,6,16)) < 0)
-          {
-             tst_resm(TWARN, "This test can only run on kernels that are ");
-             tst_resm(TWARN, "2.6.16 and higher");
-             exit(0);
-          }
-
+	/* Disable test if the version of the kernel is less than 2.6.16 */
+	if ((tst_kvercmp(2, 6, 16)) < 0) {
+		tst_resm(TWARN, "This test can only run on kernels that are ");
+		tst_resm(TWARN, "2.6.16 and higher");
+		exit(0);
+	}
 
 	/***************************************************************
 	 * parse standard options
@@ -116,12 +114,12 @@ int main(int ac, char **av)
 		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		/* 
-		 * Call openat 
+		/*
+		 * Call openat
 		 */
 		for (i = 0; i < TST_TOTAL; i++) {
 			TEST(myopenat
-				 (fds[i], filenames[i], O_CREAT | O_WRONLY, 0600));
+			     (fds[i], filenames[i], O_CREAT | O_WRONLY, 0600));
 
 			/* check return code */
 			if (TEST_ERRNO == expected_errno[i]) {

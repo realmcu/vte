@@ -15,17 +15,17 @@
  *
  */
 /**********************************************************
- * 
+ *
  *    TEST IDENTIFIER	: sched_getparam02
- * 
+ *
  *    EXECUTED BY	: anyone
- * 
+ *
  *    TEST TITLE	: Get scheduling parametes for parent process
- * 
+ *
  *    TEST CASE TOTAL	: 1
- * 
+ *
  *    AUTHOR		: Saji Kumar.V.R <saji.kumar@wipro.com>
- * 
+ *
  *    SIGNALS
  * 	Uses SIGUSR1 to pause before test if option set.
  * 	(See the parse_opts(3) man page).
@@ -34,11 +34,11 @@
  *	Verifies functionality of sched_getparam() for a process other than
  *	current process (ie, pid != 0). Here we get the scheduling parameters
  *	for parent process.
- * 
+ *
  * 	Setup:
  * 	  Setup signal handling.
  *	  Pause for SIGUSR1 if option specified.
- * 
+ *
  * 	Test:
  *	 Loop if the proper options are given.
  *	 fork a child
@@ -52,10 +52,10 @@
  *
  *	 PARENT:
  *	  wait for child to finish
- * 
+ *
  * 	Cleanup:
  * 	  Print errno log and/or timing stats if options given
- * 
+ *
  * USAGE:  <for command-line>
  *  sched_getparam02 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-h] [-f] [-p]
  *			where,  -c n : Run n copies concurrently.
@@ -80,24 +80,23 @@
 static void setup();
 static void cleanup();
 
-char *TCID = "sched_getparam02"; /* Test program identifier.    */
-int TST_TOTAL = 1;		 /* Total number of test cases. */
-extern int Tst_count;		 /* Test Case counter for tst_* routines */
+char *TCID = "sched_getparam02";	/* Test program identifier.    */
+int TST_TOTAL = 1;		/* Total number of test cases. */
+extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static struct sched_param param;
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 
-	int lc;		/* loop counter */
-	char *msg;	/* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 	int status;
 	pid_t child_pid;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL))
-	     != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
+	    != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -109,8 +108,8 @@ main(int ac, char **av)
 
 		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
-	
-		switch(child_pid = FORK_OR_VFORK()) {
+
+		switch (child_pid = FORK_OR_VFORK()) {
 
 		case -1:
 			/* fork() failed */
@@ -121,15 +120,15 @@ main(int ac, char **av)
 			/* Child */
 			param.sched_priority = 100;
 
-			/* 
+			/*
 			 * Call sched_getparam(2) with pid = getppid() sothat
 			 * it will get the scheduling parameters for parent
 			 * process
 			 */
 			TEST(sched_getparam(getppid(), &param));
-	
+
 			/*
-		 	 * Check return code & priority. For normal process,
+			 * Check return code & priority. For normal process,
 			 * scheduling policy is SCHED_OTHER. For this
 			 * scheduling policy, only allowed priority value is 0.
 			 * So we should get 0 for priority value
@@ -138,7 +137,7 @@ main(int ac, char **av)
 				exit(0);
 			} else {
 				tst_resm(TWARN, "sched_getparam()"
-					 "returned %d, errno = %d : %s;"
+					 "returned %ld, errno = %d : %s;"
 					 " returned process priority value"
 					 " is %d", TEST_RETURN, TEST_ERRNO,
 					 strerror(TEST_ERRNO),
@@ -159,19 +158,17 @@ main(int ac, char **av)
 			}
 		}
 
-	}	/* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 
 	/* cleanup and exit */
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	 /*NOTREACHED*/ return 0;
 
-}	/* End main */
+}				/* End main */
 
 /* setup() - performs all ONE TIME setup for this test */
-void
-setup()
+void setup()
 {
 	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
@@ -179,15 +176,13 @@ setup()
 	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}	/* End setup() */
-
+}				/* End setup() */
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
  *		completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 
 	/*
@@ -198,4 +193,4 @@ cleanup()
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-}	/* End cleanup() */
+}				/* End cleanup() */

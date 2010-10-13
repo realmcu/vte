@@ -70,27 +70,26 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID="nanosleep04";	/* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test cases. */
+char *TCID = "nanosleep04";	/* Test program identifier.    */
+int TST_TOTAL = 1;		/* Total number of test cases. */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 struct timespec timereq;	/* time struct. buffer for nanosleep() */
 
-int exp_enos[]={EINVAL, 0};
+int exp_enos[] = { EINVAL, 0 };
 
 void setup();			/* Main setup function of test */
 void cleanup();			/* cleanup function for the test */
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 	pid_t cpid;		/* Child process id */
 	int status;		/* child exit status */
-    
+
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *)NULL, NULL);
+	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
 	if (msg != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
@@ -105,7 +104,7 @@ main(int ac, char **av)
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* Reset Tst_count in case we are looping. */
-		Tst_count=0;
+		Tst_count = 0;
 
 		/*
 		 * Creat a child process and suspend its
@@ -116,8 +115,8 @@ main(int ac, char **av)
 				 "fork() fails to create child process");
 		}
 
-		if (cpid == 0) {		/* Child process */
-			/* 
+		if (cpid == 0) {	/* Child process */
+			/*
 			 * Call nanosleep() to suspend child process
 			 * for specified time 'tv_sec'.
 			 */
@@ -136,7 +135,7 @@ main(int ac, char **av)
 					exit(1);
 				}
 			} else {
-				tst_resm(TFAIL, "nanosleep() returns %d, "
+				tst_resm(TFAIL, "nanosleep() returns %ld, "
 					 "expected -1, errno:%d",
 					 TEST_RETURN, EINVAL);
 				exit(1);
@@ -148,28 +147,28 @@ main(int ac, char **av)
 
 		/* Wait for child to execute */
 		wait(&status);
-		if (WEXITSTATUS(status) == 0) {
-			tst_resm(TPASS, "nanosleep() fails, invalid pause "
-				 "time, error:%d", EINVAL);
+		if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
+			tst_resm(TPASS, "nanosleep() failed, when provided "
+					"invalid pause time, with expected "
+					"errno: %d", EINVAL);
 		} else if (WEXITSTATUS(status) == 1) {
-			tst_resm(TFAIL, "child process exited abnormally");
+			tst_resm(TFAIL, "child process exited abnormally; "
+					"status = %d", status);
 		}
-	}	/* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 
 	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	/*NOTREACHED*/
-	return(0);
-}	/* End main */
+	 /*NOTREACHED*/ return 0;
+}				/* End main */
 
 /*
  * setup() - performs all ONE TIME setup for this test.
- *  Initialise time structure elements, such that pause time 
+ *  Initialise time structure elements, such that pause time
  *  points to -ve value.
  */
-void 
-setup()
+void setup()
 {
 	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
@@ -187,8 +186,7 @@ setup()
  * cleanup() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
  */
-void 
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.

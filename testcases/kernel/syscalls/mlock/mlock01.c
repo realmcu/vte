@@ -23,10 +23,10 @@
  *
  * DESCRIPTION
  * 	Test to see that mlock works
- * 	
+ *$
  * ALGORITHM
  * 	test 1:
- *		Call mlock with various valid addresses and lengths.  No 
+ *		Call mlock with various valid addresses and lengths.  No
  *		error should be returned
  *
  * USAGE:  <for command-line>
@@ -69,14 +69,15 @@ struct test_case_t {
 	int len;
 	void (*setupfunc) ();
 } TC[] = {
-	/* mlock should return ENOMEM when some or all of the address 
+	/* mlock should return ENOMEM when some or all of the address
 	 * range pointed to by addr and len are not valid mapped pages
 	 * in the address space of the process
 	 */
-	{&addr1, 1, setup1}, 
-	{&addr1, 1024, setup1}, 
-	{&addr1, 1024 * 1024, setup1}, 
-	{&addr1, 1024 * 1024 * 10, setup1}
+	{
+	&addr1, 1, setup1}, {
+	&addr1, 1024, setup1}, {
+	&addr1, 1024 * 1024, setup1}, {
+	&addr1, 1024 * 1024 * 10, setup1}
 };
 
 #if !defined(UCLINUX)
@@ -89,7 +90,7 @@ int main(int ac, char **av)
 	int lc, i;		/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 
-	if ((msg = parse_opts(ac, av, NULL, NULL)) != (char *) NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -103,10 +104,10 @@ int main(int ac, char **av)
 	TEST_EXP_ENOS(exp_enos);
 
     /***************************************************************
-     * check looping state 
+     * check looping state
      ***************************************************************/
 	/* TEST_LOOPING() is a macro that will make sure the test continues
-	 * looping according to the standard command line args. 
+	 * looping according to the standard command line args.
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
@@ -124,7 +125,7 @@ int main(int ac, char **av)
 			if (TEST_RETURN == -1) {
 				TEST_ERROR_LOG(TEST_ERRNO);
 				tst_resm(TFAIL, "mlock(%p, %d) Failed with "
-					 "return=%d, errno=%d : %s",
+					 "return=%ld, errno=%d : %s",
 					 TC[i].addr, TC[i].len,
 					 TEST_RETURN, TEST_ERRNO,
 					 strerror(TEST_ERRNO));
@@ -163,7 +164,7 @@ void setup()
 
 void setup1(int len)
 {
-	addr1 = (char *) malloc(len);
+	addr1 = (char *)malloc(len);
 	if (addr1 == NULL)
 		tst_brkm(TFAIL, cleanup, "malloc failed");
 }

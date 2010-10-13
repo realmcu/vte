@@ -1,8 +1,9 @@
-test_agp: tagp_ki.o user_tagp.o
-	gcc tagp_ki.o user_tagp.o -o test_agp 
 
-tagp_ki.o: tagp_ki.c
-	gcc -c tagp_ki.c
+CFLAGS += -Wall
+OBJS = tagp_ki.o user_tagp.o
 
-user_tagp.o: user_tagp.c
-	gcc -c user_tagp.c
+test_agp: $(OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
+
+clean:
+	rm -f $(OBJS) test_agp

@@ -22,7 +22,7 @@
 *
 *  Project Website:  TBD
 *
-* $Id: sfunc.c,v 1.6 2008/02/14 08:22:23 subrata_modak Exp $
+* $Id: sfunc.c,v 1.8 2009/02/26 12:02:23 subrata_modak Exp $
 *
 */
 #include <sys/types.h>
@@ -185,7 +185,7 @@ int pMsg(lvl_t level, const child_args_t *args, char *Msg,...)
 #endif
 
 	if((glb_flags & GLB_FLG_QUIET) && (level == INFO))
-		return(0);
+		return 0;
 
 	va_start(l, Msg);
 
@@ -496,7 +496,7 @@ OFF_T get_file_size(char *device) {
 #ifdef WINDOWS
 	SetLastError(0);
 
-	fd = CreateFile(device, 
+	fd = CreateFile(device,
 		GENERIC_READ,
 		FILE_SHARE_READ,
 		NULL,
@@ -534,7 +534,7 @@ OFF_T get_vsiz(const char *device)
 	GET_LENGTH_INFORMATION myLengthInfo;
 	DISK_GEOMETRY DiskGeom;
 
-	hFileHandle = CreateFile(device, 
+	hFileHandle = CreateFile(device,
 		GENERIC_READ,
 		FILE_SHARE_READ,
 		NULL,

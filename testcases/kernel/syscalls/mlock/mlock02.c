@@ -23,7 +23,7 @@
  *
  * DESCRIPTION
  * 	Test to see the proper errors are returned by mlock
- * 	
+ *$
  * ALGORITHM
  * 	test 1:
  *		Call mlock with a NULL address.  ENOMEM should be returned
@@ -69,11 +69,12 @@ struct test_case_t {
 	int error;
 	void (*setupfunc) ();
 } TC[] = {
-	/* mlock should return ENOMEM when some or all of the address 
+	/* mlock should return ENOMEM when some or all of the address
 	 * range pointed to by addr and len are not valid mapped pages
 	 * in the address space of the process
 	 */
-	{&addr1, 1024, ENOMEM, setup1}
+	{
+	&addr1, 1024, ENOMEM, setup1}
 };
 
 #if !defined(UCLINUX)
@@ -86,7 +87,7 @@ int main(int ac, char **av)
 	int lc, i;		/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 
-	if ((msg = parse_opts(ac, av, NULL, NULL)) != (char *) NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -100,10 +101,10 @@ int main(int ac, char **av)
 	TEST_EXP_ENOS(exp_enos);
 
     /***************************************************************
-     * check looping state 
+     * check looping state
      ***************************************************************/
 	/* TEST_LOOPING() is a macro that will make sure the test continues
-	 * looping according to the standard command line args. 
+	 * looping according to the standard command line args.
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
@@ -136,7 +137,7 @@ int main(int ac, char **av)
 			} else {
 				tst_brkm(TFAIL, cleanup,
 					 "mlock() Failed, expected "
-					 "return value=-1, got %d",
+					 "return value=-1, got %ld",
 					 TEST_RETURN);
 			}
 		}

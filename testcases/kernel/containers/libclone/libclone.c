@@ -16,43 +16,13 @@
 ***************************************************************************/
 #include "libclone.h"
 
-/* Serge: should I be passing in strings for error messages? */
-
-int do_clone(unsigned long clone_flags,
-			int(*fn1)(void *arg), void *arg1)
-{
-	int ret;
-	int stack_size = getpagesize() * 4;
-	void *stack = malloc (stack_size);
-
-	if (!stack) {
-		perror("malloc");
-		return -1;
-	}
-
-#if defined(__hppa__)
-	ret = clone(fn1, stack, clone_flags, arg1);
-#elif defined(__ia64__)
-	ret = clone2(fn1, stack, stack_size, clone_flags, arg1, NULL, NULL, NULL);
-#else
-	ret = clone(fn1, stack + stack_size, clone_flags, arg1);
-#endif
-
-	if (ret == -1) {
-		perror("clone");
-		free(stack);
-	}
-
-	return ret;
-}
-
 int do_clone_tests(unsigned long clone_flags,
 			int(*fn1)(void *arg), void *arg1,
 			int(*fn2)(void *arg), void *arg2)
 {
 	int ret;
 
-	ret = do_clone(clone_flags | SIGCHLD, fn1, arg1);
+	ret = ltp_clone_quick(clone_flags | SIGCHLD, fn1, arg1);
 
 	if (ret == -1) {
 		return -1;
@@ -88,18 +58,24 @@ int do_unshare_tests(unsigned long clone_flags,
 		close(retpipe[0]);
 		ret = syscall(SYS_unshare, clone_flags);
 		if (ret == -1) {
-			write(retpipe[1], "0", 2);
+			if (write(retpipe[1], "0", 2) < 0) {
+				perror("unshare:write(retpipe[1], ..)");
+			}
 			close(retpipe[1]);
-			perror("unshare");
 			exit(1);
-		} else
-			write(retpipe[1], "1", 2);
+		} else {
+			if (write(retpipe[1], "1", 2) < 0) {
+				perror("unshare:write(retpipe[1], ..)");
+			}
+		}
 		close(retpipe[1]);
 		ret = fn1(arg1);
 		exit(ret);
 	} else {
 		close(retpipe[1]);
-		read(retpipe[0], &buf, 2);
+		if (read(retpipe[0], &buf, 2) < 0) {
+			perror("unshare:read(retpipe[0], ..)");
+		}
 		close(retpipe[0]);
 		if (*buf == '0')
 			return -1;

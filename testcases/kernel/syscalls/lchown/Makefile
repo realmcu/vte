@@ -16,23 +16,16 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-CFLAGS += -I../../../../include -Wall
-LDLIBS += -L../../../../lib -lltp
+top_srcdir		?= ../../../..
 
-include ../utils/compat_16.mk
+include $(top_srcdir)/include/mk/testcases.mk
 
-SRCS    = $(wildcard *.c)
-TARGETS += $(patsubst %.c,%,$(SRCS))
+SRCS			:= $(wildcard $(abs_srcdir)/lchown*.c)
 
-all: $(TARGETS)
+include $(abs_srcdir)/../utils/compat_16.mk
 
-install: create_link.mode
-	@set -e; for i in $(TARGETS); do ln -f $$i ../../../bin/$$i ; done
+INSTALL_TARGETS		:= prep_create_link
 
-clean:
-	rm -f $(TARGETS)
+MAKE_TARGETS		+= create_link
 
-create_link.mode: 
-	@/bin/sh ./create_link.mode.sh
-
-.PHONY: create_link.mode
+include $(top_srcdir)/include/mk/generic_leaf_target.mk

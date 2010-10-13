@@ -1,3 +1,4 @@
+#!/bin/sh
 ################################################################################
 ##                                                                            ##
 ## Copyright (c) International Business Machines  Corp., 2001                 ##
@@ -35,9 +36,6 @@
 #		  - Ported test01, test02 from Manoj Iyer's ipchains_tests.sh
 #		  - Added test03, test04, test05, test06
 #
-#! /bin/sh
-
-
 # Function:	init
 #
 # Description:	- Check if command iptables is available.
@@ -63,7 +61,7 @@ init()
 	# Initialize cleanup function.
 	trap "cleanup" 0
 
-	which tst_resm  &>$LTPTMP/tst_iptables.out || RC=$?
+	which tst_resm  > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_brkm TBROK \
 			"Test INIT: USCTEST commands not found, set PATH correctly."
@@ -71,17 +69,17 @@ init()
 	fi
 
 	tst_resm TINFO "INIT: Inititalizing tests."
-	which iptables &> $LTPTMP/tst_iptables.out || RC=$?
+	which iptables > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_brk TBROK $LTPTMP/tst_iptables.out NULL \
 			"Test INIT: iptables command does not exist. Reason:"
 		return $RC
 	fi
 
-	modprobe ip_tables &>$LTPTMP/tst_iptables.out || RC=$?
+	modprobe ip_tables > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		RC=0
-		iptables -L &>$LTPTMP/tst_iptables.out || RC=$?
+		iptables -L > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 		if [ $RC -ne 0 ]; then
 			tst_brk TBROK $LTPTMP/tst_iptables.out NULL \
 				"Test INIT: no iptables support in kenrel. Reason:"
@@ -90,9 +88,9 @@ init()
 	fi
 
 	tst_resm TINFO "INIT: Flushing all rules."
-	iptables -F -t filter &>$LTPTMP/tst_iptables.out || RC=$?
-	iptables -F -t nat &>$LTPTMP/tst_iptables.out || RC=$?
-	iptables -F -t mangle &>$LTPTMP/tst_iptables.out || RC=$?
+	iptables -F -t filter > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
+	iptables -F -t nat > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
+	iptables -F -t mangle > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	return $RC
 }
 
@@ -109,12 +107,12 @@ cleanup()
 	TST_COUNT=0
 	RC=0
 
-	lsmod | grep "ip_tables" &>$LTPTMP/tst_iptables.out || RC=0
+	lsmod | grep "ip_tables" > $LTPTMP/tst_iptables.out 2>&1 || RC=0
 	if [ $RC -eq 0 ]; then
-		iptables -F -t filter &>$LTPTMP/tst_iptables.out
-		iptables -F -t nat &>$LTPTMP/tst_iptables.out
-		iptables -F -t mangle &>$LTPTMP/tst_iptables.out
-		rmmod -v ipt_limit ipt_multiport ipt_LOG ipt_REJECT iptable_mangle iptable_nat ip_conntrack iptable_filter ip_tables &>$LTPTMP/tst_iptables.out 
+		iptables -F -t filter > $LTPTMP/tst_iptables.out 2>&1
+		iptables -F -t nat > $LTPTMP/tst_iptables.out 2>&1
+		iptables -F -t mangle > $LTPTMP/tst_iptables.out 2>&1
+		rmmod -v ipt_limit ipt_multiport ipt_LOG ipt_REJECT iptable_mangle iptable_nat ip_conntrack iptable_filter ip_tables > $LTPTMP/tst_iptables.out 2>&1 
 	fi
 	rm -fr $LTPTMP/tst_iptables.*
 	return $RC
@@ -141,14 +139,14 @@ test01()
 	local cmd="iptables -L -t filter"
 	tst_resm TINFO \
 		"$TCID: $cmd will list all rules in table filter."
-	$cmd &>$LTPTMP/tst_iptables.out || RC=$?
+	$cmd > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_res TFAIL $LTPTMP/tst_iptables.out \
 			"$TCID: $cmd failed to list rules. Reason:"
 		return $RC
 	else
 		chaincnt=$(grep -c Chain $LTPTMP/tst_iptables.out)
-		if [ $chaincnt -ne 3 ]; then
+		if [ $chaincnt -lt 3 ]; then
 			tst_res TFAIL $LTPTMP/tst_iptables.out \
 				"$TCID: $cmd failed to list rules. Reason:"
 			return $chaincnt
@@ -160,7 +158,7 @@ test01()
 	local cmd="iptables -L -t nat"
 	tst_resm TINFO \
 		"$TCID: $cmd will list all rules in table nat."
-	$cmd &>$LTPTMP/tst_iptables.out || RC=$?
+	$cmd > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_res TFAIL $LTPTMP/tst_iptables.out \
 			"$TCID: $cmd failed to list rules. Reason:"
@@ -179,7 +177,7 @@ test01()
 	local cmd="iptables -L -t mangle" 
 	tst_resm TINFO \
 		"$TCID: $cmd will list all rules in table mangle."
-	$cmd &>$LTPTMP/tst_iptables.out || RC=$?
+	$cmd > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_res TFAIL $LTPTMP/tst_iptables.out \
 			"$TCID: $cmd failed to list rules. Reason:"
@@ -221,7 +219,7 @@ test02()
 	tst_resm TINFO "$TCID: Rule to block icmp from 127.0.0.1"
 
 	iptables -A INPUT -s 127.0.0.1 -p icmp -j DROP \
-		&>$LTPTMP/tst_iptables.out || RC=$?
+		> $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_brk TBROK $LTPTMP/tst_iptables.out NULL \
 			"$TCID: iptables command failed to append new rule. Reason:"
@@ -229,11 +227,11 @@ test02()
 	fi
 
 	tst_resm TINFO "$TCID: Pinging 127.0.0.1"
-	ping -c 2 127.0.0.1 &>$LTPTMP/tst_iptables.out || RC=$?
+	ping -c 2 127.0.0.1 > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		RC=0
 		grep "100% packet loss" $LTPTMP/tst_iptables.out \
-			&>$LTPTMP/tst_iptables.err || RC=$?
+			> $LTPTMP/tst_iptables.err 2>&1 || RC=$?
 		if [ $RC -ne 0 ]; then
 			tst_res TFAIL $LTPTMP/tst_iptables.out \
 				"$TCID: iptables did not block packets from loopback"
@@ -248,17 +246,17 @@ test02()
 	fi
 
 	tst_resm TINFO "$TCID: Deleting icmp DROP from 127.0.0.1 rule."
-	iptables -D INPUT 1 &>$LTPTMP/tst_iptables.out || RC=$?
+	iptables -D INPUT 1 > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_res TFAIL $LTPTMP/tst_iptables.out \
 			"$TCID: iptables did not remove the rule. Reason:"
 		return $RC
 	fi
 	tst_resm TINFO "$TCID: Pinging 127.0.0.1 again"
-	ping -c 2 127.0.0.1 &>$LTPTMP/tst_iptables.out || RC=$?
+	ping -c 2 127.0.0.1 > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_res TFAIL $LTPTMP/tst_iptables.out \
-			"$TCID: iptables blocking loopback. Reason:"
+			"$TCID: iptables blocking loopback. This is expected behaviour on certain distributions where enabling firewall drops all packets by default."
 		return $RC
 	else
 		tst_resm TINFO "$TCID: Ping succsess"
@@ -290,7 +288,7 @@ test03()
 	tst_resm TINFO "$TCID: Rule to reject ping request."
 
 	iptables -A INPUT -p icmp --icmp-type echo-request -d 127.0.0.1 -j REJECT \
-		&>$LTPTMP/tst_iptables.out || RC=$?
+		> $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_brk TBROK $LTPTMP/tst_iptables.out NULL \
 			"$TCID: iptables command failed to append new rule. Reason:"
@@ -298,11 +296,11 @@ test03()
 	fi
 
 	tst_resm TINFO "$TCID: Pinging 127.0.0.1"
-	ping -c 2 127.0.0.1 &>$LTPTMP/tst_iptables.out || RC=$?
+	ping -c 2 127.0.0.1 > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		RC=0
 		grep "100% packet loss" $LTPTMP/tst_iptables.out \
-			&>$LTPTMP/tst_iptables.err || RC=$?
+			> $LTPTMP/tst_iptables.err 2>&1 || RC=$?
 		if [ $RC -ne 0 ]; then
 			tst_res TFAIL $LTPTMP/tst_iptables.out \
 				"$TCID: iptables did not block ping request."
@@ -317,17 +315,17 @@ test03()
 	fi
 
 	tst_resm TINFO "$TCID: Deleting icmp request REJECT rule."
-	iptables -D INPUT 1 &>$LTPTMP/tst_iptables.out || RC=$?
+	iptables -D INPUT 1 > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_res TFAIL $LTPTMP/tst_iptables.out \
 			"$TCID: iptables did not remove the rule. Reason:"
 		return $RC
 	fi
 	tst_resm TINFO "$TCID: Pinging 127.0.0.1 again"
-	ping -c 2 127.0.0.1 &>$LTPTMP/tst_iptables.out || RC=$?
+	ping -c 2 127.0.0.1 > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_res TFAIL $LTPTMP/tst_iptables.out \
-			"$TCID: iptables blocking ping requests. Reason:"
+			"$TCID: iptables blocking ping requests. This is expected behaviour on certain distributions where enabling firewall drops all packets by default."
 		return $RC
 	else
 		tst_resm TINFO "$TCID: Ping succsess"
@@ -361,7 +359,7 @@ test04()
 	tst_resm TINFO "$TCID: Rule to log tcp packets to particular port."
 
 	iptables -A INPUT -p tcp -d 127.0.0.1 --dport $dport -j LOG --log-prefix "$logprefix" \
-		&>$LTPTMP/tst_iptables.out || RC=$?
+		> $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_brk TBROK $LTPTMP/tst_iptables.out NULL \
 			"$TCID: iptables command failed to append new rule. Reason:"
@@ -369,12 +367,12 @@ test04()
 	fi
 
 	tst_resm TINFO "$TCID: telnet 127.0.0.1 $dport"
-	telnet 127.0.0.1 $dport &>$LTPTMP/tst_iptables.out || RC=$?
+	telnet 127.0.0.1 $dport > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		RC=0
 		sleep 2
 		dmesg | grep "$logprefix" \
-			&>$LTPTMP/tst_iptables.err || RC=$?
+			> $LTPTMP/tst_iptables.err 2>&1 || RC=$?
 		if [ $RC -ne 0 ]; then
 			tst_res TFAIL $LTPTMP/tst_iptables.out \
 				"$TCID: iptables did not log packets to port $dport"
@@ -389,7 +387,7 @@ test04()
 	fi
 
 	tst_resm TINFO "$TCID: Deleting the rule to log."
-	iptables -D INPUT 1 &>$LTPTMP/tst_iptables.out || RC=$?
+	iptables -D INPUT 1 > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_res TFAIL $LTPTMP/tst_iptables.out \
 			"$TCID: iptables did not remove the rule. Reason:"
@@ -426,7 +424,7 @@ test05()
 		"$TCID: Use iptables to log packets to multiple ports."
 	tst_resm TINFO "$TCID: Rule to log tcp packets to port 45801 - 45803."
 	iptables -A INPUT -p tcp -d 127.0.0.1 --dport 45801:45803 -j LOG --log-prefix "$logprefix" \
-		&>$LTPTMP/tst_iptables.out || RC=$?
+		> $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_brk TBROK $LTPTMP/tst_iptables.out NULL \
 			"$TCID: iptables command failed to append new rule. Reason:"
@@ -435,7 +433,7 @@ test05()
 
 	tst_resm TINFO "$TCID: Rule to log tcp packets to port 45804 - 45806."
 	iptables -A INPUT -p tcp -d 127.0.0.1 -m multiport --dports 45804,45806,45805 -j LOG --log-prefix "$logprefix" \
-		&>$LTPTMP/tst_iptables.out || RC=$?
+		> $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_brk TBROK $LTPTMP/tst_iptables.out NULL \
 			"$TCID: iptables command failed to append new rule. Reason:"
@@ -444,12 +442,12 @@ test05()
 
 	for dport in 45801 45802 45803 45804 45805 45806; do
 		tst_resm TINFO "$TCID: telnet 127.0.0.1 $dport"
-		telnet 127.0.0.1 $dport &>$LTPTMP/tst_iptables.out || RC=$?
+		telnet 127.0.0.1 $dport > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 		if [ $RC -ne 0 ]; then
 			RC=0
 			sleep 2
 			dmesg | grep "$logprefix" | grep "=$dport " \
-				&>$LTPTMP/tst_iptables.err || RC=$?
+				> $LTPTMP/tst_iptables.err 2>&1 || RC=$?
 			if [ $RC -ne 0 ]; then
 				tst_res TFAIL $LTPTMP/tst_iptables.out \
 					"$TCID: iptables did not log packets to port $dport"
@@ -465,7 +463,7 @@ test05()
 	done
 
 	tst_resm TINFO "$TCID: Flushing all rules."
-	iptables -F &>$LTPTMP/tst_iptables.out || RC=$?
+	iptables -F > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_res TFAIL $LTPTMP/tst_iptables.out \
 			"$TCID: iptables did not flush all rules. Reason:"
@@ -502,7 +500,7 @@ test06()
 	tst_resm TINFO "$TCID: Rule to log ping request."
 
 	iptables -A INPUT -p icmp --icmp-type echo-request -d 127.0.0.1 -m limit -j LOG --log-prefix "$logprefix" \
-		&>$LTPTMP/tst_iptables.out || RC=$?
+		> $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_brk TBROK $LTPTMP/tst_iptables.out NULL \
 			"$TCID: iptables command failed to append new rule. Reason:"
@@ -510,7 +508,7 @@ test06()
 	fi
 
 	tst_resm TINFO "$TCID: ping 127.0.0.1"
-	ping -c 10 127.0.0.1 &>$LTPTMP/tst_iptables.out || RC=$?
+	ping -c 10 127.0.0.1 > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -eq 0 ]; then
 		RC=0
 		sleep 2
@@ -524,12 +522,12 @@ test06()
 		fi
 	else
 		tst_res TFAIL $LTPTMP/tst_iptables.out \
-			"$TCID: ping to 127.0.0.1 failed."
+			"$TCID: ping to 127.0.0.1 failed. This is expected behaviour on certain distributions where enabling firewall drops all packets by default."
 		return $RC
 	fi
 
 	tst_resm TINFO "$TCID: Deleting the rule to log."
-	iptables -D INPUT 1 &>$LTPTMP/tst_iptables.out || RC=$?
+	iptables -D INPUT 1 > $LTPTMP/tst_iptables.out 2>&1 || RC=$?
 	if [ $RC -ne 0 ]; then
 		tst_res TFAIL $LTPTMP/tst_iptables.out \
 			"$TCID: iptables did not remove the rule. Reason:"

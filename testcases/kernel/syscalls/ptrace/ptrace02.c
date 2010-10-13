@@ -15,17 +15,17 @@
  *
  */
 /**********************************************************
- * 
+ *
  *    TEST IDENTIFIER	: ptrace02
- * 
+ *
  *    EXECUTED BY	: anyone
- * 
+ *
  *    TEST TITLE	: functionality test for ptrace(2)
- * 
+ *
  *    TEST CASE TOTAL	: 2
- * 
+ *
  *    AUTHOR		: Saji Kumar.V.R <saji.kumar@wipro.com>
- * 
+ *
  *    SIGNALS
  * 	Uses SIGUSR1 to pause before test if option set.
  * 	(See the parse_opts(3) man page).
@@ -43,11 +43,11 @@
  *			2) By installing a signal handler for child for SIGUSR2
  *		In both cases, child should stop & notify parent on reception
  *		of SIGUSR2
- * 
+ *
  * 	Setup:
  * 	  Setup signal handling.
  *	  Pause for SIGUSR1 if option specified.
- * 
+ *
  * 	Test:
  *	 Loop if the proper options are given.
  *	 setup signal handler for SIGUSR2 signal
@@ -69,10 +69,10 @@
  * 				TEST failed
  *		else
  *			TEST failed
- *		
+ *	
  * 	Cleanup:
  * 	  Print errno log and/or timing stats if options given
- * 
+ *
  * USAGE:  <for command-line>
  *  ptrace02 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-h] [-f] [-p]
  *			where,  -c n : Run n copies concurrently.
@@ -89,8 +89,10 @@
 
 #include <errno.h>
 #include <signal.h>
-#include <sys/ptrace.h>
 #include <sys/wait.h>
+
+#include <config.h>
+#include "ptrace.h"
 
 #include "test.h"
 #include "usctest.h"
@@ -105,12 +107,11 @@ static int got_signal = 0;
 
 char *TCID = "ptrace02";	/* Test program identifier.    */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
-static int i;		/* loop test case counter, shared with do_child */
+static int i;			/* loop test case counter, shared with do_child */
 
 int TST_TOTAL = 2;
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 
 	int lc;			/* loop counter */
@@ -118,13 +119,12 @@ main(int ac, char **av)
 	pid_t child_pid;
 	int status;
 	struct sigaction parent_act;
-    
+
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL))
-	     != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
+	    != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
-
 #ifdef UCLINUX
 	maybe_run_child(&do_child, "d", &i);
 #endif
@@ -137,10 +137,10 @@ main(int ac, char **av)
 
 		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
-		
+
 		for (i = 0; i < TST_TOTAL; ++i) {
 			got_signal = 0;
-		
+
 			/* Setup signal handler for parent */
 			if (i == 1) {
 				parent_act.sa_handler = parent_handler;
@@ -149,13 +149,13 @@ main(int ac, char **av)
 				if ((sigaction(SIGUSR2, &parent_act, NULL))
 				    == -1) {
 					tst_resm(TWARN, "sigaction() failed"
-							" in parent");
+						 " in parent");
 					continue;
 				}
 			}
 
 			switch (child_pid = FORK_OR_VFORK()) {
-	
+
 			case -1:
 				/* fork() failed */
 				tst_resm(TFAIL, "fork() failed");
@@ -186,7 +186,7 @@ main(int ac, char **av)
 				 */
 
 				if (((WIFEXITED(status)) &&
-				    (WEXITSTATUS(status))) ||
+				     (WEXITSTATUS(status))) ||
 				    (got_signal == 1)) {
 					tst_resm(TFAIL, "Test Failed");
 					continue;
@@ -195,9 +195,9 @@ main(int ac, char **av)
 					if ((ptrace(PTRACE_CONT, child_pid,
 						    0, 0)) == -1) {
 						tst_resm(TFAIL, "Test Failed:"
-						" Parent was not able to do"
-						" ptrace(PTRACE_CONT, ..) on"
-						" child");
+							 " Parent was not able to do"
+							 " ptrace(PTRACE_CONT, ..) on"
+							 " child");
 						continue;
 					}
 				}
@@ -215,20 +215,18 @@ main(int ac, char **av)
 				}
 
 			}
-		} 
-	}	/* End for TEST_LOOPING */
+		}
+	}			/* End for TEST_LOOPING */
 
 	/* cleanup and exit */
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	 /*NOTREACHED*/ return 0;
 
-}/* End main */
+}				/* End main */
 
 /* do_child() */
-void
-do_child()
+void do_child()
 {
 	struct sigaction child_act;
 
@@ -239,17 +237,17 @@ do_child()
 		child_act.sa_handler = child_handler;
 	}
 	child_act.sa_flags = SA_RESTART;
-	
+
 	if ((sigaction(SIGUSR2, &child_act, NULL)) == -1) {
 		tst_resm(TWARN, "sigaction() failed in child");
 		exit(1);
 	}
-	
-	if ((ptrace(PTRACE_TRACEME, 0, 0 ,0)) == -1) {
+
+	if ((ptrace(PTRACE_TRACEME, 0, 0, 0)) == -1) {
 		tst_resm(TWARN, "ptrace() failed in child");
 		exit(1);
 	}
-	
+
 	/* ensure that child bypasses signal handler */
 	if ((kill(getpid(), SIGUSR2)) == -1) {
 		tst_resm(TWARN, "kill() failed in child");
@@ -257,27 +255,24 @@ do_child()
 	}
 	exit(1);
 }
-	
+
 /* setup() - performs all ONE TIME setup for this test */
-void
-setup()
+void setup()
 {
-	
+
 	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}	/* End setup() */
-
+}				/* End setup() */
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
  *		completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 
 	/*
@@ -288,13 +283,12 @@ cleanup()
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-}	/* End cleanup() */
+}				/* End cleanup() */
 
 /*
  * child_handler() - Signal handler for child
  */
-void
-child_handler()
+void child_handler()
 {
 
 	if ((kill(getppid(), SIGUSR2)) == -1) {
@@ -306,10 +300,8 @@ child_handler()
 /*
  * parent_handler() - Signal handler for parent
  */
-void
-parent_handler()
+void parent_handler()
 {
 
 	got_signal = 1;
 }
-

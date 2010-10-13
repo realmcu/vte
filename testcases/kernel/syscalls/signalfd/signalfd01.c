@@ -44,15 +44,16 @@
 #include <signal.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <inttypes.h>
+#include "ltp_signal.h"
 
 TCID_DEFINE(signalfd01);
 int TST_TOTAL = 1;
 extern int Tst_count;
 
-
 #ifndef HAVE_SIGNALFD
 #define  USE_STUB
-#endif 
+#endif
 
 #if defined HAVE_SYS_SIGNALFD_H
 #include <sys/signalfd.h>
@@ -76,8 +77,6 @@ extern int Tst_count;
 # define USE_STUB
 #endif
 
-
-
 #ifdef USE_STUB
 int main(int argc, char **argv)
 {
@@ -91,7 +90,7 @@ int main(int argc, char **argv)
 int signalfd(int fd, const sigset_t * mask, int flags)
 {
 	/* Taken from GLIBC. */
-	return (syscall(__NR_signalfd, fd, mask, _NSIG / 8));
+	return (syscall(__NR_signalfd, fd, mask, SIGSETSIZE));
 }
 #endif
 
@@ -149,7 +148,7 @@ int do_test1(int ntst, int sig)
 	if ((s > 0) && (s != sizeof(struct signalfd_siginfo))) {
 		tst_resm(TFAIL,
 			 "getting incomplete signalfd_siginfo data: "
-			 "actual-size=%d, expected-size= %d",
+			 "actual-size=%"PRId32", expected-size=%"PRId32,
 			 s, sizeof(struct signalfd_siginfo));
 		sfd_for_next = -1;
 		close(sfd);
@@ -187,7 +186,7 @@ int do_test1(int ntst, int sig)
 		goto out;
 	}
 
- out:
+      out:
 	return sfd_for_next;
 }
 
@@ -239,7 +238,7 @@ void do_test2(int ntst, int fd, int sig)
 	if ((s > 0) && (s != sizeof(struct signalfd_siginfo))) {
 		tst_resm(TFAIL,
 			 "getting incomplete signalfd_siginfo data: "
-			 "actual-size=%d, expected-size= %d",
+			 "actual-size=%"PRId32", expected-size= %"PRId32,
 			 s, sizeof(struct signalfd_siginfo));
 		goto out;
 	} else if (s < 0) {
@@ -268,7 +267,7 @@ void do_test2(int ntst, int fd, int sig)
 		goto out;
 	}
 
- out:
+      out:
 	return;
 }
 

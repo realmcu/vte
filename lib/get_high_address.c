@@ -1,4 +1,4 @@
-/* $Header: /cvsroot/ltp/ltp/lib/get_high_address.c,v 1.4 2006/07/19 14:00:55 robbiew Exp $ */
+/* $Header: /cvsroot/ltp/ltp/lib/get_high_address.c,v 1.6 2009/07/20 10:59:32 vapier Exp $ */
 
 /*
  * Copyright (c) 2000 Silicon Graphics, Inc.  All Rights Reserved.
@@ -32,10 +32,9 @@
  * http://oss.sgi.com/projects/GenInfo/NoticeExplan/
  */
 
-#include <unistd.h> 
+#include <unistd.h>
 
-char *
-get_high_address()
+char *get_high_address(void)
 {
        return (char *)sbrk(0) + (4 * getpagesize());
 }

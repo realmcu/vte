@@ -44,14 +44,14 @@
 #include <errno.h>
 #include <usctest.h>
 #include <test.h>
-#include <libclone.h>
+#define CLEANUP cleanup
+#include "libclone.h"
 
 char *TCID = "pidns17";
 int TST_TOTAL = 1;
 int errno;
 
 int child_fn(void *);
-void cleanup(void);
 
 #define CHILD_PID       1
 #define PARENT_PID      0
@@ -68,39 +68,49 @@ int child_fn(void *arg)
 	pid = getpid();
 	ppid = getppid();
 	if (pid != CHILD_PID || ppid != PARENT_PID) {
-		tst_resm(TBROK, "cinit: pidns is not created.");
-		cleanup();
+		tst_brkm(TBROK | TERRNO, CLEANUP, "cinit: pidns is not created.");
 	}
 
 	/* Spawn many children */
-	for (i = 0; i < 10; i++)
-		if ((children[i] = fork()) == 0)
-			sleep(10);
-
+	for (i = 0; i < (sizeof(children) / sizeof(children[0])); i++) {
+		switch ((children[i] = fork())) {
+		case -1:
+			tst_brkm(TBROK | TERRNO, CLEANUP, "fork failed");
+			break;
+		case 0:
+			pause();
+			exit(2);
+			break;
+		default:
+			/* fork succeeded. */
+			break;
+		}
+	}
 	/* wait for last child to get scheduled */
 	sleep(1);
 
 	if (kill(-1, SIGUSR1) == -1) {
-		tst_resm(TBROK, "cinit: kill(-1, SIGUSR1) failed");
-		cleanup();
+		tst_resm(TBROK | TERRNO, "cinit: kill(-1, SIGUSR1) failed");
+		CLEANUP();
 	}
 
-	for (i = 0; i < 10; i++) {
-		if (waitpid(children[i], &status, WNOHANG) == -1) {
-			tst_resm(TBROK, "cinit: waitpid() failed(%s)",\
-					strerror(errno));
-			cleanup();
+	for (i = 0; i < (sizeof(children) / sizeof(children[0])); i++) {
+		if (waitpid(children[i], &status, 0) == -1) {
+			tst_resm(TBROK | TERRNO, "cinit: waitpid() failed");
+			CLEANUP();
 		}
-		if (!(WIFSIGNALED(&status) && WTERMSIG(status) == SIGUSR1)) {
-			tst_resm(TFAIL, "cinit: found a child alive still.");
-			cleanup();
+		if (!(WIFSIGNALED(status) && WTERMSIG(status) == SIGUSR1)) {
+			tst_resm(TFAIL, "cinit: found a child alive still "
+					"%d exit: %d, %d, signal %d, %d", i,
+					WIFEXITED(status), WEXITSTATUS(status),
+					WIFSIGNALED(status), WTERMSIG(status));
+			CLEANUP();
 		}
 	}
 	tst_resm(TPASS, "cinit: all children are terminated.");
 
 	/* cleanup and exit */
-	cleanup();
-	exit(0);
+	CLEANUP();
 }
 
 /***********************************************************************
@@ -115,26 +125,22 @@ int main(int argc, char *argv[])
 	pid = getpid();
 
 	/* Container creation on PID namespace */
-	ret = do_clone_unshare_test(T_CLONE,\
-					CLONE_NEWPID, child_fn, NULL);
+	ret = do_clone_unshare_test(T_CLONE, CLONE_NEWPID, child_fn, NULL);
 	if (ret != 0) {
-		tst_resm(TBROK, "parent: clone() failed. rc=%d(%s)",\
-				ret, strerror(errno));
-		/* Cleanup & continue with next test case */
-		cleanup();
+		tst_resm(TBROK | TERRNO, "parent: clone() failed");
+		CLEANUP();
 	}
 
 	sleep(1);
-	if (wait(&status) < 0)
+	if (waitpid(-1, &status, __WALL) < 0)
 		tst_resm(TWARN, "parent: waitpid() failed.");
 
 	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
-		tst_resm(TWARN, "parent: container was terminated by %s",\
+		tst_resm(TWARN, "parent: container was terminated by %s",
 				strsignal(WTERMSIG(status)));
 
 	/* cleanup and exit */
-	cleanup();
-	exit(0);
+	CLEANUP();
 }	/* End main */
 
 /*
@@ -145,7 +151,6 @@ void cleanup()
 {
 	/* Clean the test testcase as LTP wants*/
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
 	tst_exit();
+	/* NOTREACHED */
 }

@@ -112,7 +112,7 @@ int main (int argc, char **argv)
     sigset_t set;
     static char *usage =
         "time-schedule [-h] [-thread] [-notest] [-pipe] [-fpu] [num_running]";
-	
+
     setpgrp();
     /*  First create pipe used to sychronise low priority processes  */
     if (pipe (fds) != 0)
@@ -372,7 +372,7 @@ static void *yielder_main (void *arg)
 
     sched_count = 0;
     write (pipe_write_fd, &ch, 1);
-    while (TRUE)    
+    while (TRUE)   
     {
         if (pipe_read_fd >= 0)
         {
@@ -409,7 +409,7 @@ static void run_low_priority (unsigned int num, int read_fd)
             if (geteuid () == 0)
             {
                 struct sched_param sp;
-                
+               
                 memset (&sp, 0, sizeof sp);
                 sp.sched_priority = 0;
                 if (sched_setscheduler (0, SCHED_OTHER, &sp) != 0)

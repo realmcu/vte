@@ -56,11 +56,8 @@
 #include <unistd.h>
 #include <signal.h>
 #include <errno.h>
-#include <numa.h>
-
 #include <test.h>
 #include <usctest.h>
-
 #include "move_pages_support.h"
 
 #define TEST_PAGES 2
@@ -75,15 +72,11 @@ char *TCID = "move_pages04";
 int TST_TOTAL = 1;
 extern int Tst_count;
 
-typedef void (*sighandler_t)(int);
+typedef void (*sighandler_t) (int);
 
 int main(int argc, char **argv)
 {
-	unsigned int i;
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
-	unsigned int from_node = 0;
-	unsigned int to_node = 1;
+	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
 	msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
@@ -94,6 +87,12 @@ int main(int argc, char **argv)
 	}
 
 	setup();
+
+#if HAVE_NUMA_MOVE_PAGES
+	unsigned int i;
+	int lc;			/* loop counter */
+	unsigned int from_node = 0;
+	unsigned int to_node = 1;
 
 	/* check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
@@ -125,8 +124,7 @@ int main(int argc, char **argv)
 				      status, MPOL_MF_MOVE);
 		TEST_ERRNO = errno;
 		if (ret == -1) {
-			tst_resm(TFAIL, "move_pages unexpectedly failed: %s",
-				 strerror(errno));
+			tst_resm(TFAIL | TERRNO, "move_pages unexpectedly failed");
 			goto err_free_pages;
 		}
 
@@ -137,12 +135,15 @@ int main(int argc, char **argv)
 			tst_resm(TFAIL, "status[%d] is %d", UNTOUCHED_PAGE,
 				 status[UNTOUCHED_PAGE]);
 
-	err_free_pages:
-		/* This is capable of freeing both the touched and
-		 * untouched pages.
-		 */
-		free_pages(pages, TEST_PAGES);
+		err_free_pages:
+		    /* This is capable of freeing both the touched and
+		     * untouched pages.
+		     */
+		    free_pages(pages, TEST_PAGES);
 	}
+#else
+	tst_resm(TCONF, "move_pages support not found.");
+#endif
 
 	cleanup();
 	/* NOT REACHED */
@@ -153,8 +154,7 @@ int main(int argc, char **argv)
 /*
  * setup() - performs all ONE TIME setup for this test
  */
-void
-setup(void)
+void setup(void)
 {
 	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
@@ -170,8 +170,7 @@ setup(void)
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at completion
  */
-void
-cleanup(void)
+void cleanup(void)
 {
 	/*
 	 * print timing stats if that option was specified.
@@ -181,5 +180,4 @@ cleanup(void)
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-	/*NOTREACHED*/
-}
+ /*NOTREACHED*/}

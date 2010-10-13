@@ -29,7 +29,7 @@
 
 static int tusb_fd = -1;		//file descriptor
 
-int 
+int
 tusbopen() {
 
     dev_t devt;
@@ -102,16 +102,16 @@ tusbopen() {
 
 }
 
-int 
+int
 tusbclose() {
 	/*
-	 * Close the tusb driver 
+	 * Close the tusb driver
 	 */
 	if (tusb_fd != -1) {
 		close (tusb_fd);
 		tusb_fd = -1;
 	}
-	
+
 	return 0;
 }
 
@@ -130,7 +130,7 @@ int main() {
 		printf("Failed to find usb device pointer\n");
 	else
 		printf("Found usb device pointer\n");
-	
+
 	/* test find usb hostcontroller */
 	if(ki_generic(tusb_fd, TEST_FIND_HCD))
                 printf("Failed to find usb hcd pointer\n");
@@ -155,7 +155,7 @@ int main() {
         else
                 printf("Success hcd resume\n");
 
-#if 0 
+#if 0
 	/* test hcd remove */
 	if(ki_generic(tusb_fd, TEST_HCD_REMOVE))
 		printf("Failed on hcd remove call\n");

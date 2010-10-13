@@ -16,13 +16,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/ptrace.h>
-#include <linux/ptrace.h>
-#include <asm/ptrace.h>
+
+#include <config.h>
+#include "ptrace.h"
 
 #include "test.h"
 #include "usctest.h"
 #include "spawn_ptrace_child.h"
+#include "config.h"
 
 /* this should be sizeof(struct user), but that info is only found
  * in the kernel asm/user.h which is not exported to userspace.
@@ -140,6 +141,7 @@ struct test_case_t {
 	{ PTRACE_SETFGREGS, .data = -4 },
 #endif
 
+#if HAVE_DECL_PTRACE_GETSIGINFO
 	{ PTRACE_GETSIGINFO, .data = 0 },
 	{ PTRACE_GETSIGINFO, .data = 1 },
 	{ PTRACE_GETSIGINFO, .data = 2 },
@@ -148,7 +150,9 @@ struct test_case_t {
 	{ PTRACE_GETSIGINFO, .data = -2 },
 	{ PTRACE_GETSIGINFO, .data = -3 },
 	{ PTRACE_GETSIGINFO, .data = -4 },
-
+#endif
+	
+#if HAVE_DECL_PTRACE_SETSIGINFO
 	{ PTRACE_SETSIGINFO, .data = 0 },
 	{ PTRACE_SETSIGINFO, .data = 1 },
 	{ PTRACE_SETSIGINFO, .data = 2 },
@@ -157,6 +161,7 @@ struct test_case_t {
 	{ PTRACE_SETSIGINFO, .data = -2 },
 	{ PTRACE_SETSIGINFO, .data = -3 },
 	{ PTRACE_SETSIGINFO, .data = -4 },
+#endif
 };
 
 int TST_TOTAL = ARRAY_SIZE(test_cases);
@@ -180,14 +185,14 @@ int main(int argc, char *argv[])
 		ret = ptrace(tc->request, pid, (void *)tc->addr, (void *)tc->data);
 		saved_errno = errno;
 		if (ret != -1)
-			tst_resm(TFAIL, "ptrace(%s, ..., %p, %p) returned %li instead of -1",
+			tst_resm(TFAIL, "ptrace(%s, ..., %li, %li) returned %li instead of -1",
 				strptrace(tc->request), tc->addr, tc->data, ret);
 		else if (saved_errno != EIO && saved_errno != EFAULT)
-			tst_resm(TFAIL, "ptrace(%s, ..., %p, %p) expected errno EIO or EFAULT; actual: %i (%s)",
+			tst_resm(TFAIL, "ptrace(%s, ..., %li, %li) expected errno EIO or EFAULT; actual: %i (%s)",
 				strptrace(tc->request), tc->addr, tc->data,
 				saved_errno, strerror(saved_errno));
 		else
-			tst_resm(TPASS, "ptrace(%s, ..., %p, %p) failed as expected",
+			tst_resm(TPASS, "ptrace(%s, ..., %li, %li) failed as expected",
 				strptrace(tc->request), tc->addr, tc->data);
 	}
 

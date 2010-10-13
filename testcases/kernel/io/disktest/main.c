@@ -22,7 +22,7 @@
 *
 *  Project Website:  TBD
 *
-* $Id: main.c,v 1.8 2008/12/22 07:33:03 subrata_modak Exp $
+* $Id: main.c,v 1.11 2009/02/26 12:14:53 subrata_modak Exp $
 *
 */
 #include <stdio.h>
@@ -179,7 +179,7 @@ unsigned long init_data(test_ll_t *test, unsigned char **data_buffer_unaligned)
 		pMsg(ERR,test->args,  "Failed to allocate static data buffer memory.\n");
 		return(-1);
 	}
-	
+
 	test->env->data_buffer = (unsigned char *) BUFALIGN(*data_buffer_unaligned);
 
 	if((test->env->shared_mem = (void *) ALLOC(test->env->bmp_siz+BMP_OFFSET)) == NULL) {
@@ -229,7 +229,7 @@ unsigned long init_data(test_ll_t *test, unsigned char **data_buffer_unaligned)
 			return(-1);
 	}
 
-	return(0);
+	return 0;
 }
 
 #ifdef WINDOWS
@@ -404,10 +404,10 @@ test_ll_t *getNewTest(test_ll_t *testList) {
 
 test_ll_t *run() {
 	test_ll_t *newTest = NULL, *lastTest = NULL;
-	
+
 	if(cleanArgs.flags & CLD_FLG_FSLIST) {
 		char *filespec = cleanArgs.device;
-		char *aFilespec = NULL; 
+		char *aFilespec = NULL;
 		FILE *file = NULL;
 
 		if((aFilespec = (char *)ALLOC(80)) == NULL) {
@@ -442,7 +442,7 @@ test_ll_t *run() {
 				}
 			}
 		}
-	
+
 		fclose(file);
 		FREE(aFilespec);
 	} else {
@@ -465,9 +465,9 @@ int main(int argc, char **argv)
 	WORD wVersionRequested;
 	WSADATA wsaData;
 	int err;
- 
+
 	wVersionRequested = MAKEWORD( 2, 2 );
- 
+
 	err = WSAStartup( wVersionRequested, &wsaData );
 	if(err != 0) {
 		pMsg(WARN, &cleanArgs, "Windows setup of Winsock failed, can't retrieve host name, continuing");

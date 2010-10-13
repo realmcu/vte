@@ -1,0 +1,7 @@
+#auto configure the arm target
+aclocal -I m4
+autoheader
+autoconf
+automake -a
+make autotools
+./configure --prefix=$(pwd)/

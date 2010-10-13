@@ -16,24 +16,8 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-CFLAGS += -I../../../../include -Wall
-LDLIBS += -L../../../../lib -lltp
+top_srcdir		?= ../../../..
 
-LIBC_HAS_EPOLL := $(shell echo '\#include <sys/epoll.h>' | $(CC) -E - > /dev/null 2>&1 && echo yes)
-ifeq ($(LIBC_HAS_EPOLL),yes)
-CFLAGS += -DLTP_EPOLL_USE_SYS_LIBC
-else
-CFLAGS += -I. -DLTP_EPOLL_USE_LIB
-LDLIBS += -lepoll
-endif
+include $(top_srcdir)/include/mk/testcases.mk
 
-SRCS    = $(wildcard *.c)
-TARGETS = $(patsubst %.c,%,$(SRCS))
-
-all: $(TARGETS)
-
-install:
-	@set -e; for i in $(TARGETS); do ln -f $$i ../../../bin/$$i ; done
-
-clean:
-	rm -f $(TARGETS)
+include $(top_srcdir)/include/mk/generic_leaf_target.mk

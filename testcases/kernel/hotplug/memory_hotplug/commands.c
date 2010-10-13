@@ -27,10 +27,13 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  */
+
+#include "config.h"
+#if HAVE_NUMA_H && HAVE_NUMAIF_H && HAVE_LINUX_MEMPOLICY_H
+#include <linux/mempolicy.h>
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/mman.h>
-
 #include <ctype.h>
 #include <errno.h>
 #include <numa.h>
@@ -40,28 +43,37 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/syscall.h>
 
 #include "memtoy.h"
-#include "migrate_pages.h"
+#include "test.h"
 
 #define CMD_SUCCESS 0
 #define CMD_ERROR   1
+
+#ifndef __NR_migrate_pages
+#define __NR_migrate_pages 0
+#endif
+
+#ifndef MPOL_MF_WAIT
+#define MPOL_MF_WAIT    (1<<2)  /* Wait for existing pages to migrate */
+#endif
 
 static inline int nodemask_isset(nodemask_t *mask, int node)
 {
 	if ((unsigned)node >= NUMA_NUM_NODES)
 		return 0;
-	if (mask->n[node / (8*sizeof(unsigned long))] & 
+	if (mask->n[node / (8*sizeof(unsigned long))] &
 		(1UL<<(node%(8*sizeof(unsigned long)))))
 		return 1;
-	return 0;	
+	return 0;
 }
 
 static inline void nodemask_set(nodemask_t *mask, int node)
 {
 	mask->n[node / (8*sizeof(unsigned long))] |=
-		(1UL<<(node%(8*sizeof(unsigned long))));		
-} 
+		(1UL<<(node%(8*sizeof(unsigned long))));	
+}
 
 static char *whitespace = " \t";
 
@@ -186,7 +198,7 @@ get_shared(char *args)
 		segflag = MAP_SHARED;
 	else if (*args != '\0' && strcmp(args, "private")) {
 		fprintf(stderr, "%s:  anon seg access type must be one of:  "
-			"'private' or 'shared'\n", gcp->program_name); 
+			"'private' or 'shared'\n", gcp->program_name);
 		return -1;
 	}
 	return segflag;
@@ -221,7 +233,7 @@ static bool
 numa_supported(void)
 {
 	glctx_t      *gcp = &glctx;
-	
+
 	if (gcp->numa_max_node <= 0) {
 		fprintf(stderr, "%s:  no NUMA support on this platform\n",
 			gcp->program_name);
@@ -423,12 +435,16 @@ get_arg_nodeid_list(char *args, unsigned int *list)
 
 /*
  * get_current_nodeid_list() - fill arg array with nodes from
- * current thread's allowed node mask.  return # of nodes in 
+ * current thread's allowed node mask.  return # of nodes in
  * mask.
  */
 static int
 get_current_nodeid_list(unsigned int *fromids)
 {
+	/*
+	 * FIXME (garrcoop): gcp is unitialized and shortly hereafter used in
+	 * an initialization statement..... UHHHHHHH... test writer fail?
+	 */
 	glctx_t    *gcp;
 	nodemask_t my_allowed_nodes;
 	int        nr_nodes = 0, max_node = gcp->numa_max_node;
@@ -446,11 +462,15 @@ get_current_nodeid_list(unsigned int *fromids)
 	 */
 	if (nr_nodes == 0)
 		fprintf(stderr, "%s:  my allowed node mask is empty !!???\n",
-
 			gcp->program_name);
 	return nr_nodes;
 }
 
+/*
+ * NOTE (garrcoop): Get rid of an -Wunused warning. This wasn't deleted because
+ * I don't know what the original intent was for this code.
+ */
+#if 0
 static void
 not_implemented()
 {
@@ -459,6 +479,7 @@ not_implemented()
 	fprintf(stderr, "%s:  %s not implemented yet\n",
 		gcp->program_name, gcp->cmd_name);
 }
+#endif
 
 /*
  * =========================================================================
@@ -473,7 +494,7 @@ static int
 show_pid(char *args)
 {
 	glctx_t *gcp = &glctx;
-	
+
 	printf("%s:  pid = %d\n", gcp->program_name, getpid());
 
 	return CMD_SUCCESS;
@@ -483,7 +504,7 @@ static int
 pause_me(char *args)
 {
 	// glctx_t *gcp = &glctx;
-	
+
 	pause();
 	reset_signal();
 
@@ -499,7 +520,7 @@ numa_info(char *args)
 	unsigned int *nodeids;
 	int           nr_nodes, i;
 	bool          do_header = true;
-	
+
 	if (!numa_supported())
 		return CMD_ERROR;
 
@@ -521,7 +542,7 @@ numa_info(char *args)
 
 		if (do_header) {
 			do_header = false;
-			printf(numa_header);
+			puts(numa_header);
 		}
 		printf("  %3d  %9ld      %8ld\n", node,
 			 node_size/(1024*1024), node_free/(1024*1024));
@@ -548,7 +569,7 @@ migrate_process(char *args)
 	int            nr_to, nr_from;
 	int            nr_migrated;
 	int            ret = CMD_ERROR;
-	
+
 	if (!numa_supported())
 		return CMD_ERROR;
 
@@ -619,7 +640,7 @@ migrate_process(char *args)
 	}
 
 	gettimeofday(&t_start, NULL);
-	nr_migrated = migrate_pages(getpid(), nr_from, fromids, toids);
+	nr_migrated = syscall(__NR_migrate_pages, getpid(), nr_from, fromids, toids);
 	if (nr_migrated < 0) {
 		int err = errno;
 		fprintf(stderr, "%s: migrate_pages failed - %s\n",
@@ -642,9 +663,9 @@ static int
 show_seg(char *args)
 {
 	glctx_t *gcp = &glctx;
-	
+
 	char *segname = NULL, *nextarg;
-	
+
 	args += strspn(args, whitespace);
 	if (*args != '\0')
 		segname = strtok_r(args, whitespace, &nextarg);
@@ -662,7 +683,7 @@ static int
 anon_seg(char *args)
 {
 	glctx_t *gcp = &glctx;
-	
+
 	char    *segname, *nextarg;
 	range_t  range = { 0L, 0L };
 	int      segflag = 0;
@@ -701,7 +722,7 @@ static int
 file_seg(char *args)
 {
 	glctx_t *gcp = &glctx;
-	
+
 	char *pathname, *nextarg;
 	range_t range = { 0L, 0L };
 	int  segflag = MAP_PRIVATE;
@@ -752,7 +773,7 @@ remove_seg(char *args)
 
 		segment_remove(segname);
 	}
-	
+	return 0;
 }
 
 /*
@@ -807,7 +828,7 @@ unmap_seg(char *args)
 
 	if(!segment_unmap(segname))
 		return CMD_ERROR;
-	
+
 
 	return CMD_SUCCESS;
 }
@@ -882,7 +903,7 @@ mbind_seg(char *args)
 	if (get_range(args, &range, &nextarg) == CMD_ERROR)
 		return CMD_ERROR;
 	args = nextarg;
-	
+
 
 	if(!required_arg(args, "<policy>"))
 		return CMD_ERROR;
@@ -926,7 +947,7 @@ static int
 shmem_seg(char *args)
 {
 	glctx_t *gcp = &glctx;
-	
+
 	char *segname, *nextarg;
 	range_t range = { 0L, 0L };
 
@@ -956,7 +977,7 @@ shmem_seg(char *args)
  * of specified range of segment.
  *
  * NOTE: if neither <offset> nor <length> specified, <offset> defaults
- * to 0 [start of segment], as usual, and length defaults to 64 pages 
+ * to 0 [start of segment], as usual, and length defaults to 64 pages
  * rather than the entire segment.  Suitable for a "quick look" at where
  * segment resides.
  */
@@ -964,7 +985,7 @@ static int
 where_seg(char *args)
 {
 	glctx_t *gcp = &glctx;
-	
+
 	char  *segname, *nextarg;
 	range_t range = { 0L, 0L };
 	int    ret;
@@ -983,7 +1004,7 @@ where_seg(char *args)
 	 */
 	if (get_range(args, &range, &nextarg) == CMD_ERROR)
 		return CMD_ERROR;
-	if (args == nextarg) 
+	if (args == nextarg)
 		range.length = 64 * gcp->pagesize;	/* default length */
 
 	if(!segment_location(segname, &range))
@@ -997,7 +1018,7 @@ static int
 command(char *args)
 {
 	glctx_t *gcp = &glctx;
-	
+
 
 	return CMD_SUCCESS;
 }
@@ -1009,10 +1030,10 @@ command(char *args)
 typedef int (*cmd_func_t)(char *);
 
 struct command {
-	char       *cmd_name;    
+	char       *cmd_name;   
 	cmd_func_t  cmd_func;    /* */
 	char       *cmd_help;
-	
+
 } cmd_table[] = {
 	{
 		.cmd_name="quit",
@@ -1056,7 +1077,7 @@ struct command {
 			"migrate <to-node-id[s]> [<from-node-id[s]>] - \n"
 			"\tmigrate this process' memory from <from-node-id[s]>\n"
 			"\tto <to-node-id[s]>.  Specify multiple node ids as a\n"
-			"\tcomma-separated list. TODO - more info\n" 
+			"\tcomma-separated list. TODO - more info\n"
 	},
 
 	{
@@ -1174,8 +1195,10 @@ help_me(char *args)
 	if (*args != '\0') {
 		cmd    = strtok_r(args, whitespace, &nextarg);
 		cmdlen = strlen(cmd);
-	} else
+	} else {
 		cmd = NULL;
+		cmdlen = 0;
+	}
 
 	for( cmdp = cmd_table; cmdp->cmd_name != NULL; ++cmdp) {
 		if (cmd == NULL ||
@@ -1253,7 +1276,7 @@ process_commands()
 		char  *cmdline;
 		size_t cmdlen;
 
-		
+	
 		if(is_option(INTERACTIVE))
 			printf("%s>", gcp->program_name);
 
@@ -1319,3 +1342,4 @@ process_commands()
 
 	} while(1);
 }
+#endif

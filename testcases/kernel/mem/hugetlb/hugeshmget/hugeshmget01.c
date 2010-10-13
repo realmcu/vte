@@ -78,14 +78,14 @@ int main(int ac, char **av)
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
+	/* The following loop checks looping state if -i option given */
+        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 )
+             tst_brkm(TCONF, tst_exit, "Not enough available Hugepages");
+        else             
+              huge_pages_shm_to_be_allocated = ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
+        
 	setup();			/* global setup */
 
-	/* The following loop checks looping state if -i option given */
-        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 ) 
-             tst_brkm(TBROK, cleanup, "Test cannot be continued owning to sufficient availability of Hugepages on the system");
-        else              
-              huge_pages_shm_to_be_allocated = ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
-         
         for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -93,9 +93,9 @@ int main(int ac, char **av)
 		/*
 		 * Use TEST macro to make the call
 		 */
-	
+
                 TEST(shmget(shmkey, huge_pages_shm_to_be_allocated, (SHM_HUGETLB | IPC_CREAT | IPC_EXCL | SHM_RW)));
-	
+
 		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL, "%s call failed - errno = %d : %s",
 				 TCID, TEST_ERRNO, strerror(TEST_ERRNO));
@@ -109,7 +109,7 @@ int main(int ac, char **av)
 					continue;
 				}
 				/* check the seqment size */
-				if (buf.shm_segsz != HUGE_SHM_SIZE) {
+				if (buf.shm_segsz != huge_pages_shm_to_be_allocated) {
 					tst_resm(TFAIL, "seqment size is not "
 						 "correct");
 					continue;
@@ -150,7 +150,7 @@ int main(int ac, char **av)
 	cleanup();
 
 	/*NOTREACHED*/
-        return(0);
+        return 0;
 }
 
 /*

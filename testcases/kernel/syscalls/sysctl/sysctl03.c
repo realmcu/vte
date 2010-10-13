@@ -32,6 +32,19 @@
  *		to the kernel_table[]. Since the table does not have write
  *		permission for the regular user, it should fail with EPERM.
  *
+ * NOTE: There is a documentation bug in 2.6.33-rc1 where unfortunately the
+ * behavior of sysctl(2) isn't properly documented, as discussed in detail in
+ * the following thread:
+ * http://sourceforge.net/mailarchive/message.php?msg_name=4B7BA24F.2010705%40linux.vnet.ibm.com.
+ *
+ * The documentation bug is filed as:
+ * https://bugzilla.kernel.org/show_bug.cgi?id=15446 . If you want the message
+ * removed, please ask your fellow kernel maintainer to fix his/her
+ * documentation.
+ *
+ * Thanks!
+ * -Garrett
+ *
  * USAGE:  <for command-line>
  *  sysctl03 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
@@ -43,6 +56,7 @@
  *
  * HISTORY
  *	07/2001 Ported by Wayne Boyer
+ *	02/2010 Updated by shiwh@cn.fujitsu.com
  *
  * RESTRICTIONS
  *	Test must be run as root.
@@ -62,13 +76,13 @@ char *TCID = "sysctl03";
 int TST_TOTAL = 2;
 extern int Tst_count;
 
-int sysctl(int *name, int nlen, void *oldval, size_t *oldlenp,
-           void *newval, size_t newlen)
+int sysctl(int *name, int nlen, void *oldval, size_t * oldlenp,
+	   void *newval, size_t newlen)
 {
-	struct __sysctl_args args={name,nlen,oldval,oldlenp,newval,newlen};
+	struct __sysctl_args args =
+	    { name, nlen, oldval, oldlenp, newval, newlen };
 	return syscall(__NR__sysctl, &args);
 }
-
 
 #define SIZE(x) sizeof(x)/sizeof(x[0])
 #define OSNAMESZ 100
@@ -76,10 +90,11 @@ int sysctl(int *name, int nlen, void *oldval, size_t *oldlenp,
 void setup(void);
 void cleanup(void);
 
-int exp_enos[] = {EPERM, 0};
+int exp_enos[] = { EPERM, 0 };
 
 int main(int ac, char **av)
 {
+	int exp_eno;
 	int lc;
 	char *msg;
 
@@ -90,11 +105,21 @@ int main(int ac, char **av)
 	struct passwd *ltpuser;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) !=
+	    (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
+
+	if ((tst_kvercmp(2, 6, 32)) <= 0) {
+		exp_eno = EPERM;
+	} else {
+		/* ^^ Look above this warning. ^^ */
+		tst_resm(TWARN, "this test's results are based on potentially undocumented behavior in the kernel. read the NOTE in the source file for more details");
+		exp_eno = EACCES;
+		exp_enos[0] = EACCES;
+	}
 
 	TEST_EXP_ENOS(exp_enos);
 
@@ -104,7 +129,7 @@ int main(int ac, char **av)
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
-		strcpy(osname, "Linux"); 
+		strcpy(osname, "Linux");
 		osnamelth = SIZE(osname);
 
 		TEST(sysctl(name, SIZE(name), 0, 0, osname, osnamelth));
@@ -114,11 +139,10 @@ int main(int ac, char **av)
 		} else {
 			TEST_ERROR_LOG(TEST_ERRNO);
 
-			if (TEST_ERRNO != EPERM) {
-				tst_resm(TFAIL, "Expected EPERM (%d), got %d: %s",
-					 EPERM, TEST_ERRNO, strerror(TEST_ERRNO));
+			if (TEST_ERRNO == exp_eno) {
+				tst_resm(TPASS|TTERRNO, "Got expected error");
 			} else {
-				tst_resm(TPASS, "Got expected EPERM error");
+				tst_resm(TFAIL|TTERRNO, "Got unexpected error");
 			}
 		}
 
@@ -137,27 +161,26 @@ int main(int ac, char **av)
 			tst_brkm(TBROK, cleanup, "fork() failed");
 		}
 
-		if (pid == 0) {			/* child */
-			TEST(sysctl(name, SIZE(name), 0, 0, osname,
-				   osnamelth));
+		if (pid == 0) {	/* child */
+			TEST(sysctl(name, SIZE(name), 0, 0, osname, osnamelth));
 
 			if (TEST_RETURN != -1) {
 				tst_resm(TFAIL, "call succeeded unexpectedly");
 			} else {
 				TEST_ERROR_LOG(TEST_ERRNO);
 
-				if (TEST_ERRNO != EPERM) {
-					tst_resm(TFAIL, "Expected EPERM, got "
-						 "%d", TEST_ERRNO);
+				if (TEST_ERRNO == exp_eno) {
+					tst_resm(TFAIL|TTERRNO,
+						"Got expected error");
 				} else {
-					tst_resm(TPASS, "Got expected EPERM "
-						 "error");
+					tst_resm(TPASS|TTERRNO,
+						"Got unexpected error");
 				}
 			}
 
 			cleanup();
-	
-		} else {			/* parent */
+
+		} else {	/* parent */
 			/* wait for the child to finish */
 			wait(&status);
 		}
@@ -169,15 +192,13 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	/*NOTREACHED*/
-	return(0);
+	 /*NOTREACHED*/ return 0;
 }
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
-void
-setup()
+void setup()
 {
 	/* test must be run as root */
 	if (geteuid() != 0) {
@@ -195,8 +216,7 @@ setup()
  * cleanup() - performs all ONE TIME cleanup for this test at
  *	       completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.

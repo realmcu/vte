@@ -2,7 +2,7 @@
  * $Copyright: $
  * Copyright (c) 1984-2000
  * Sequent Computer Systems, Inc.   All rights reserved.
- *  
+ *$
  * This software is furnished under a license and may be used
  * only in accordance with the terms of that license and with the
  * inclusion of the above copyright notice.   This software may not
@@ -11,7 +11,7 @@
  * hereby transferred.
  */
 
-#ident "$Header: /cvsroot/ltp/ltp/testcases/kernel/syscalls/getitimer/getitimer03.c,v 1.2 2003/03/26 19:40:14 robbiew Exp $"
+/* $Header: /cvsroot/ltp/ltp/testcases/kernel/syscalls/getitimer/getitimer03.c,v 1.7 2009/08/28 10:18:24 vapier Exp $ */
 
 /*
  * NAME
@@ -63,24 +63,24 @@
 void cleanup(void);
 void setup(void);
 
-char *TCID= "getitimer03";
+char *TCID = "getitimer03";
 int TST_TOTAL = 1;
 extern int Tst_count;
 
-int exp_enos[] = {EINVAL, 0};
+int exp_enos[] = { EINVAL, 0 };
 
 int main(int ac, char **av)
 {
-	int lc;				/* loop counter */
-	char *msg;			/* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 	struct itimerval *value;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
-	setup();			/* global setup */
+	setup();		/* global setup */
 
 	/* The following loop checks looping state if -i option given */
 
@@ -89,27 +89,29 @@ int main(int ac, char **av)
 		Tst_count = 0;
 
 		/* allocate some space for the timer structure */
-	
+
 		if ((value = (struct itimerval *)malloc((size_t)
-		     sizeof(struct itimerval))) == NULL) {
+							sizeof(struct
+							       itimerval))) ==
+		    NULL) {
 			tst_brkm(TBROK, cleanup, "value malloc failed");
 		}
-	
+
 		/*
 		 * issue the system call with the TEST() macro
 		 * ITIMER_REAL = 0, ITIMER_VIRTUAL = 1 and ITIMER_PROF = 2
 		 */
-	
+
 		/* make the first value negative to get a failure */
 		TEST(getitimer(-ITIMER_PROF, value));
-	
+
 		if (TEST_RETURN == 0) {
 			tst_resm(TFAIL, "call failed to produce expected error "
 				 "- errno = %d - %s", TEST_ERRNO,
 				 strerror(TEST_ERRNO));
 			continue;
 		}
-	
+
 		TEST_ERROR_LOG(TEST_ERRNO);
 
 		switch (TEST_ERRNO) {
@@ -133,15 +135,13 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	/*NOTREACHED*/
-	return(0);
+	 /*NOTREACHED*/ return 0;
 }
 
 /*
  * setup() - performs all the ONE TIME setup for this test.
  */
-void
-setup(void)
+void setup(void)
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -157,8 +157,7 @@ setup(void)
  * cleanup() - performs all the ONE TIME cleanup for this test at completion
  * 	       or premature exit.
  */
-void
-cleanup(void)
+void cleanup(void)
 {
 	/*
 	 * print timing stats if that option was specified.
@@ -169,4 +168,3 @@ cleanup(void)
 	/* exit with return code appropriate for results */
 	tst_exit();
 }
-

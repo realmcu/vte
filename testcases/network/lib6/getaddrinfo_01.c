@@ -45,6 +45,7 @@
 
 #include <sys/socket.h>
 #include <netdb.h>
+#include <arpa/inet.h>
 
 #include "test.h"
 #include "usctest.h"
@@ -137,7 +138,7 @@ gaiv4(void)
 		}
 		if (err) {
 			tst_resm(TFAIL, "getaddrinfo IPv4 basic lookup: "
-				"fam %d alen %d addr 0x%08X addr/fam %d "
+				"fam %d alen %d addr 0x%p addr/fam %d "
 				"addr/port %d H[%d]",
 				pai->ai_family, pai->ai_addrlen, psin,
 				psin ? psin->sin_family : 0,
@@ -148,7 +149,7 @@ gaiv4(void)
 		freeaddrinfo(aires);
 	} else
 		tst_resm(TEST_RETURN ? TFAIL : TPASS, "getaddrinfo IPv4 basic "
-			"lookup (\"%s\") returns %d (\"%s\")", hostname,
+			"lookup (\"%s\") returns %ld (\"%s\")", hostname,
 			TEST_RETURN, gai_strerror(TEST_RETURN));
 
 	/* test 2, IPv4 canonical name */
@@ -172,7 +173,7 @@ gaiv4(void)
 		freeaddrinfo(aires);
 	} else
 		tst_resm(TEST_RETURN ? TFAIL : TPASS, "getaddrinfo IPv4 "
-			"canonical name (\"%s\") returns %d (\"%s\")",
+			"canonical name (\"%s\") returns %ld (\"%s\")",
 			shortname, TEST_RETURN, gai_strerror(TEST_RETURN));
 
 	/* test 3, IPv4 host+service name */
@@ -205,7 +206,7 @@ gaiv4(void)
 		}
 		if (err) {
 			tst_resm(TFAIL, "getaddrinfo IPv4 host+service: "
-				"fam %d alen %d addr 0x%08X addr/fam %d "
+				"fam %d alen %d addr 0x%p addr/fam %d "
 				"addr/port %d H[%d]",
 				pai->ai_family, pai->ai_addrlen, psin,
 				psin ? psin->sin_family : 0,
@@ -216,7 +217,7 @@ gaiv4(void)
 		freeaddrinfo(aires);
 	} else
 		tst_resm(TEST_RETURN ? TFAIL : TPASS, "getaddrinfo IPv4 host+"
-			"service returns %d (\"%s\")", TEST_RETURN,
+			"service returns %ld (\"%s\")", TEST_RETURN,
 			gai_strerror(TEST_RETURN));
 
 	/* test 4, IPv4 hostname+service, AI_PASSIVE */
@@ -249,7 +250,7 @@ gaiv4(void)
 		}
 		if (err) {
 			tst_resm(TFAIL, "getaddrinfo IPv4 host+service, PASSIVE"
-				": fam %d alen %d addr 0x%08X addr/fam %d "
+				": fam %d alen %d addr 0x%p addr/fam %d "
 				"addr/port %d H[%d]",
 				pai->ai_family, pai->ai_addrlen, psin,
 				psin ? psin->sin_family : 0,
@@ -260,7 +261,7 @@ gaiv4(void)
 		freeaddrinfo(aires);
 	} else
 		tst_resm(TEST_RETURN ? TFAIL : TPASS, "getaddrinfo IPv4 host+"
-			"service, PASSIVE (\"%s\", \"%s\") returns %d (\"%s\")",
+			"service, PASSIVE (\"%s\", \"%s\") returns %ld (\"%s\")",
 			hostname, service, TEST_RETURN,
 			gai_strerror(TEST_RETURN));
 
@@ -274,7 +275,7 @@ gaiv4(void)
 	TEST(getaddrinfo(hostname, service, &hints, &aires));
 	if (TEST_RETURN != EAI_NONAME) {
 		tst_resm(TFAIL, "getaddrinfo IPv4 AI_NUMERICHOST w/ hostname: "
-				"returns %d expected %d (EAI_NONAME)",
+				"returns %ld expected %d (EAI_NONAME)",
 				TEST_RETURN, EAI_NONAME);
 	} else
 		tst_resm(TPASS, "getaddrinfo IPv4 AI_NUMERICHOST w/ hostname");
@@ -310,7 +311,7 @@ gaiv4(void)
 		}
 		if (err) {
 			tst_resm(TFAIL, "getaddrinfo IPv4 0+service, PASSIVE:"
-				" fam %d alen %d addr 0x%08X addr/fam %d "
+				" fam %d alen %d addr 0x%p addr/fam %d "
 				"addr/port %d H[%d]",
 				pai->ai_family, pai->ai_addrlen, psin,
 				psin ? psin->sin_family : 0,
@@ -322,7 +323,7 @@ gaiv4(void)
 	} else
 		tst_resm(TEST_RETURN == EAI_BADFLAGS ? TPASS : TFAIL,
 			"getaddrinfo IPv4 0+service, PASSIVE (\"\", \"%s\") "
-			"returns %d (\"%s\")", service, TEST_RETURN,
+			"returns %ld (\"%s\")", service, TEST_RETURN,
 			gai_strerror(TEST_RETURN));
 
 
@@ -355,7 +356,7 @@ gaiv4(void)
 		}
 		if (err) {
 			tst_resm(TFAIL, "getaddrinfo IPv4 0+service: "
-				"fam %d alen %d addr 0x%08X addr/fam %d "
+				"fam %d alen %d addr 0x%p addr/fam %d "
 				"addr/port %d H[%d]",
 				pai->ai_family, pai->ai_addrlen, psin,
 				psin ? psin->sin_family : 0,
@@ -366,7 +367,7 @@ gaiv4(void)
 		freeaddrinfo(aires);
 	} else
 		tst_resm(TEST_RETURN == EAI_BADFLAGS ? TPASS : TFAIL,
-			"getaddrinfo IPv4 0+service (\"\", \"%s\") returns %d "
+			"getaddrinfo IPv4 0+service (\"\", \"%s\") returns %ld "
 			"(\"%s\")", service, TEST_RETURN,
 			gai_strerror(TEST_RETURN));
 
@@ -384,7 +385,7 @@ gaiv4(void)
 	TEST(getaddrinfo(hostname, service, &hints, &aires));
 	if (TEST_RETURN != EAI_NONAME) {
 		tst_resm(TFAIL,"getaddrinfo IPv4 host+service, AI_NUMERICSERV: "
-				"returns %d (\"%s\") expected %d (EAI_NONAME)",
+				"returns %ld (\"%s\") expected %d (EAI_NONAME)",
 				TEST_RETURN, gai_strerror(TEST_RETURN),
 				EAI_NONAME);
 	} else
@@ -443,7 +444,7 @@ gaiv4(void)
 		}
 		if (err) {
 			tst_resm(TFAIL, "getaddrinfo IPv4 socktype 0,513: "
-				"fam %d alen %d addr 0x%08X addr/fam %d "
+				"fam %d alen %d addr 0x%p addr/fam %d "
 				"addr/port %d H[%d]",
 				pai->ai_family, pai->ai_addrlen, psin,
 				psin ? psin->sin_family : 0,
@@ -458,7 +459,7 @@ gaiv4(void)
 	} else
 		tst_resm(TEST_RETURN == EAI_BADFLAGS ? TPASS : TFAIL,
 			"getaddrinfo IPv4 socktype 0,513 (\"\", \"%s\") returns"
-			" %d (\"%s\")", service, TEST_RETURN,
+			" %ld (\"%s\")", service, TEST_RETURN,
 			gai_strerror(TEST_RETURN));
 
 	/* test 11, IPv4 AI_V4MAPPED */
@@ -486,7 +487,7 @@ gaiv4(void)
 		}
 		if (err) {
 			tst_resm(TFAIL, "getaddrinfo IPv4 AI_V4MAPPED: "
-				"fam %d alen %d addr 0x%08X addr/fam %d "
+				"fam %d alen %d addr 0x%p addr/fam %d "
 				"addr/port %d H[%d]",
 				pai->ai_family, pai->ai_addrlen, psin,
 				psin ? psin->sin_family : 0,
@@ -497,7 +498,7 @@ gaiv4(void)
 		freeaddrinfo(aires);
 	} else
 		tst_resm(TEST_RETURN ? TFAIL : TPASS, "getaddrinfo IPv4 "
-			"AI_V4MAPPED (\"%s\") returns %d (\"%s\")", hostname,
+			"AI_V4MAPPED (\"%s\") returns %ld (\"%s\")", hostname,
 			TEST_RETURN, gai_strerror(TEST_RETURN));
 }
 /* getaddrinfo tests (v6) */
@@ -543,7 +544,7 @@ gaiv6(void)
 		}
 		if (err) {
 			tst_resm(TFAIL, "getaddrinfo IPv6 basic lookup: "
-				"fam %d alen %d addr 0x%08X addr/fam %d "
+				"fam %d alen %d addr 0x%p addr/fam %d "
 				"addr/port %d H[%d]",
 				pai->ai_family, pai->ai_addrlen, psin6,
 				psin6 ? psin6->sin6_family : 0,
@@ -554,7 +555,7 @@ gaiv6(void)
 		freeaddrinfo(aires);
 	} else
 		tst_resm(TEST_RETURN ? TFAIL : TPASS, "getaddrinfo IPv6 basic "
-			"lookup (\"%s\") returns %d (\"%s\")", hostname,
+			"lookup (\"%s\") returns %ld (\"%s\")", hostname,
 			TEST_RETURN, gai_strerror(TEST_RETURN));
 
 	/* test 13, IPv6 canonical name */
@@ -578,7 +579,7 @@ gaiv6(void)
 		freeaddrinfo(aires);
 	} else
 		tst_resm(TEST_RETURN ? TFAIL : TPASS, "getaddrinfo IPv6 "
-			"canonical name (\"%s\") returns %d (\"%s\")",
+			"canonical name (\"%s\") returns %ld (\"%s\")",
 			shortname, TEST_RETURN, gai_strerror(TEST_RETURN));
 
 	/* test 14, IPv6 host+service name */
@@ -611,7 +612,7 @@ gaiv6(void)
 		}
 		if (err) {
 			tst_resm(TFAIL, "getaddrinfo IPv6 host+service: "
-				"fam %d alen %d addr 0x%08X addr/fam %d "
+				"fam %d alen %d addr 0x%p addr/fam %d "
 				"addr/port %d H[%d]",
 				pai->ai_family, pai->ai_addrlen, psin6,
 				psin6 ? psin6->sin6_family : 0,
@@ -622,7 +623,7 @@ gaiv6(void)
 		freeaddrinfo(aires);
 	} else
 		tst_resm(TEST_RETURN ? TFAIL : TPASS, "getaddrinfo IPv6 host+"
-			"service returns %d (\"%s\")", TEST_RETURN,
+			"service returns %ld (\"%s\")", TEST_RETURN,
 			gai_strerror(TEST_RETURN));
 
 	/* test 15, IPv6 hostname+service, AI_PASSIVE */
@@ -656,7 +657,7 @@ gaiv6(void)
 		}
 		if (err) {
 			tst_resm(TFAIL, "getaddrinfo IPv6 host+service, PASSIVE"
-				": fam %d alen %d addr 0x%08X addr/fam %d "
+				": fam %d alen %d addr 0x%p addr/fam %d "
 				"addr/port %d H[%d]",
 				pai->ai_family, pai->ai_addrlen, psin6,
 				psin6 ? psin6->sin6_family : 0,
@@ -667,7 +668,7 @@ gaiv6(void)
 		freeaddrinfo(aires);
 	} else
 		tst_resm(TEST_RETURN ? TFAIL : TPASS, "getaddrinfo IPv6 host+"
-			"service, PASSIVE (\"%s\", \"%s\") returns %d (\"%s\")",
+			"service, PASSIVE (\"%s\", \"%s\") returns %ld (\"%s\")",
 			hostname, service, TEST_RETURN,
 			gai_strerror(TEST_RETURN));
 
@@ -681,7 +682,7 @@ gaiv6(void)
 	TEST(getaddrinfo(hostname, service, &hints, &aires));
 	if (TEST_RETURN != EAI_NONAME) {
 		tst_resm(TFAIL, "getaddrinfo IPv6 AI_NUMERICHOST w/ hostname: "
-				"returns %d expected %d (EAI_NONAME)",
+				"returns %ld expected %d (EAI_NONAME)",
 				TEST_RETURN, EAI_NONAME);
 	} else
 		tst_resm(TPASS, "getaddrinfo IPv6 AI_NUMERICHOST w/ hostname");
@@ -718,7 +719,7 @@ gaiv6(void)
 		}
 		if (err) {
 			tst_resm(TFAIL, "getaddrinfo IPv6 0+service, PASSIVE:"
-				" fam %d alen %d addr 0x%08X addr/fam %d "
+				" fam %d alen %d addr 0x%p addr/fam %d "
 				"addr/port %d H[%d]",
 				pai->ai_family, pai->ai_addrlen, psin6,
 				psin6 ? psin6->sin6_family : 0,
@@ -730,7 +731,7 @@ gaiv6(void)
 	} else
 		tst_resm(TEST_RETURN == EAI_BADFLAGS ? TPASS : TFAIL,
 			"getaddrinfo IPv6 0+service, PASSIVE (\"\", \"%s\") "
-			"returns %d (\"%s\")", service, TEST_RETURN,
+			"returns %ld (\"%s\")", service, TEST_RETURN,
 			gai_strerror(TEST_RETURN));
 
 
@@ -764,7 +765,7 @@ gaiv6(void)
 		}
 		if (err) {
 			tst_resm(TFAIL, "getaddrinfo IPv6 0+service: "
-				"fam %d alen %d addr 0x%08X addr/fam %d "
+				"fam %d alen %d addr 0x%p addr/fam %d "
 				"addr/port %d H[%d]",
 				pai->ai_family, pai->ai_addrlen, psin6,
 				psin6 ? psin6->sin6_family : 0,
@@ -775,7 +776,7 @@ gaiv6(void)
 		freeaddrinfo(aires);
 	} else
 		tst_resm(TEST_RETURN == EAI_BADFLAGS ? TPASS : TFAIL,
-			"getaddrinfo IPv6 0+service (\"\", \"%s\") returns %d "
+			"getaddrinfo IPv6 0+service (\"\", \"%s\") returns %ld "
 			"(\"%s\")", service, TEST_RETURN,
 			gai_strerror(TEST_RETURN));
 
@@ -793,7 +794,7 @@ gaiv6(void)
 	TEST(getaddrinfo(hostname, service, &hints, &aires));
 	if (TEST_RETURN != EAI_NONAME) {
 		tst_resm(TFAIL,"getaddrinfo IPv6 host+service, AI_NUMERICSERV: "
-				"returns %d (\"%s\") expected %d (EAI_NONAME)",
+				"returns %ld (\"%s\") expected %d (EAI_NONAME)",
 				TEST_RETURN, gai_strerror(TEST_RETURN),
 				EAI_NONAME);
 	} else
@@ -853,7 +854,7 @@ gaiv6(void)
 		}
 		if (err) {
 			tst_resm(TFAIL, "getaddrinfo IPv6 socktype 0,513: "
-				"fam %d alen %d addr 0x%08X addr/fam %d "
+				"fam %d alen %d addr 0x%p addr/fam %d "
 				"addr/port %d H[%d]",
 				pai->ai_family, pai->ai_addrlen, psin6,
 				psin6 ? psin6->sin6_family : 0,
@@ -868,7 +869,7 @@ gaiv6(void)
 	} else
 		tst_resm(TEST_RETURN == EAI_BADFLAGS ? TPASS : TFAIL,
 			"getaddrinfo IPv6 socktype 0,513 (\"\", \"%s\") returns"
-			" %d (\"%s\")", service, TEST_RETURN,
+			" %ld (\"%s\")", service, TEST_RETURN,
 			gai_strerror(TEST_RETURN));
 
 	/* test 22, IPv6 AI_V4MAPPED */
@@ -895,7 +896,7 @@ gaiv6(void)
 		}
 		if (err) {
 			tst_resm(TFAIL, "getaddrinfo IPv6 AI_V4MAPPED: "
-				"fam %d alen %d addr 0x%08X addr/fam %d "
+				"fam %d alen %d addr 0x%p addr/fam %d "
 				"addr/port %d H[%d]",
 				pai->ai_family, pai->ai_addrlen, psin6,
 				psin6 ? psin6->sin6_family : 0,
@@ -906,7 +907,7 @@ gaiv6(void)
 		freeaddrinfo(aires);
 	} else
 		tst_resm(TEST_RETURN ? TFAIL : TPASS, "getaddrinfo IPv6 "
-			"AI_V4MAPPED (\"%s\") returns %d (\"%s\")", hostname,
+			"AI_V4MAPPED (\"%s\") returns %ld (\"%s\")", hostname,
 			TEST_RETURN, gai_strerror(TEST_RETURN));
 }
 
@@ -916,7 +917,7 @@ dumpres(struct addrinfo *pai)
 {
 	int	count = 1;
 	for (; pai; pai = pai->ai_next, count++) {
-		printf("result %d [0x%08X]\n", count, pai);
+		printf("result %d [0x%p]\n", count, pai);
 		printf("\tai_flags %x\n", pai->ai_flags);
 		printf("\tai_family %d\n", pai->ai_family);
 		printf("\tai_socktype %d\n", pai->ai_socktype);
@@ -944,7 +945,7 @@ dumpres(struct addrinfo *pai)
 			printf("\tai_addr.sin6_addr \"%s\"\n", buf);
 
 		}
-		printf("\tai_next %X\n", pai->ai_next);
+		printf("\tai_next %p\n", pai->ai_next);
 	}
 }
 

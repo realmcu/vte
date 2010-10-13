@@ -34,6 +34,8 @@
  *
  */
 
+#include "config.h"
+
 #include <stdio.h>
 #include <unistd.h>
 #include <errno.h>
@@ -49,7 +51,10 @@
 #include <sys/socket.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
+#ifdef HAVE_IFADDRS_H
 #include <ifaddrs.h>
+#endif
+#include <arpa/inet.h>
 
 #include "test.h"
 #include "usctest.h"
@@ -78,7 +83,6 @@ main(int argc, char *argv[])
 {
 	char *msg;		/* message returned from parse_opts */
 	int lc;
-	int fd;
 
 	/* Parse standard options given to run the test. */
 	msg = parse_opts(argc, argv, 0, 0);
@@ -153,6 +157,7 @@ union soval {
 #define IN6_LOOP	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }
 #define IN6_ANY		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 
+/* so_clrval and so_setval members are initilized in the body */
 struct soent {
 	char		*so_tname;
 	int		so_opt;
@@ -165,31 +170,31 @@ struct soent {
 } sotab[] = {
 /* RFC 3542, Section 4 */
 	{ "IPV6_RECVPKTINFO", IPV6_RECVPKTINFO, 1, IPV6_PKTINFO, 1,
-		.so_clrval.sou_bool=0, .so_setval.sou_bool=1, sizeof(int) },
+		{{{{{0}}}}}, {{{{{0}}}}}, sizeof(int) },
 	{ "IPV6_RECVHOPLIMIT", IPV6_RECVHOPLIMIT, 1, IPV6_HOPLIMIT, 1,
-		.so_clrval.sou_bool=0, .so_setval.sou_bool=1, sizeof(int) },
+		{{{{{0}}}}}, {{{{{0}}}}}, sizeof(int) },
 	{ "IPV6_RECVRTHDR", IPV6_RECVRTHDR, 0, IPV6_RTHDR, 1,
-		.so_clrval.sou_bool=0, .so_setval.sou_bool=1, sizeof(int) },
+		{{{{{0}}}}}, {{{{{0}}}}}, sizeof(int) },
 	{ "IPV6_RECVHOPOPTS", IPV6_RECVHOPOPTS, 0, IPV6_HOPOPTS, 1,
-		.so_clrval.sou_bool=0, .so_setval.sou_bool=1, sizeof(int) },
+		{{{{{0}}}}}, {{{{{0}}}}}, sizeof(int) },
 	{ "IPV6_RECVDSTOPTS", IPV6_RECVDSTOPTS, 0, IPV6_DSTOPTS, 1,
-		.so_clrval.sou_bool=0, .so_setval.sou_bool=1, sizeof(int) },
+		{{{{{0}}}}}, {{{{{0}}}}}, sizeof(int) },
 	{ "IPV6_RECVTCLASS", IPV6_RECVTCLASS, 1, IPV6_TCLASS, 1,
-		.so_clrval.sou_bool=0, .so_setval.sou_bool=1, sizeof(int) },
+		{{{{{0}}}}}, {{{{{0}}}}}, sizeof(int) },
 /* make sure TCLASS stays when setting another opt */
 	{ "IPV6_RECVTCLASS (2)", IPV6_RECVHOPLIMIT, 1, IPV6_TCLASS, 0,
-		.so_clrval.sou_bool=0, .so_setval.sou_bool=1, sizeof(int) },
+		{{{{{0}}}}}, {{{{{0}}}}}, sizeof(int) },
 /* OLD values */
 	{ "IPV6_2292PKTINFO", IPV6_2292PKTINFO, 1, IPV6_2292PKTINFO, 1,
-		.so_clrval.sou_bool=0, .so_setval.sou_bool=1, sizeof(int) },
+		{{{{{0}}}}}, {{{{{0}}}}}, sizeof(int) },
 	{ "IPV6_2292HOPLIMIT", IPV6_2292HOPLIMIT, 1, IPV6_2292HOPLIMIT, 1,
-		.so_clrval.sou_bool=0, .so_setval.sou_bool=1, sizeof(int) },
+		{{{{{0}}}}}, {{{{{0}}}}}, sizeof(int) },
 	{ "IPV6_2292RTHDR", IPV6_2292RTHDR, 0, IPV6_2292RTHDR, 1,
-		.so_clrval.sou_bool=0, .so_setval.sou_bool=1, sizeof(int) },
+		{{{{{0}}}}}, {{{{{0}}}}}, sizeof(int) },
 	{ "IPV6_2292HOPOPTS", IPV6_2292HOPOPTS, 0, IPV6_2292HOPOPTS, 1,
-		.so_clrval.sou_bool=0, .so_setval.sou_bool=1, sizeof(int) },
+		{{{{{0}}}}}, {{{{{0}}}}}, sizeof(int) },
 	{ "IPV6_2292DSTOPTS", IPV6_2292DSTOPTS, 0, IPV6_2292DSTOPTS, 1,
-		.so_clrval.sou_bool=0, .so_setval.sou_bool=1, sizeof(int) },
+		{{{{{0}}}}}, {{{{{0}}}}}, sizeof(int) },
 };
 
 #define SOCOUNT	(sizeof(sotab)/sizeof(sotab[0]))
@@ -225,18 +230,18 @@ struct cme {
 		uint32_t cmu_hops;
 	} cmu;
 } cmtab[] = {
-	{ sizeof(uint32_t), SOL_IPV6, IPV6_TCLASS, .cmu.cmu_tclass=0x12 },
-	{ sizeof(uint32_t), SOL_IPV6, IPV6_HOPLIMIT, .cmu.cmu_hops=0x21 },
+	{ sizeof(uint32_t), SOL_IPV6, IPV6_TCLASS, {0x12} },
+	{ sizeof(uint32_t), SOL_IPV6, IPV6_HOPLIMIT, {0x21} },
 };
 
 #define CMCOUNT	(sizeof(cmtab)/sizeof(cmtab[0]))
 
+ssize_t
 sendall(int st)
 {
 	struct sockaddr_in6 sin6;
 	struct msghdr msg;
 	struct iovec iov;
-	struct cmsghdr *pcmsg;
 	struct soprot	*psop;
 	unsigned char *pd;
 	int i, ctotal;
@@ -280,9 +285,7 @@ void
 so_test(struct soent *psoe)
 {
 	struct sockaddr_in6 sin6;
-	struct soprot	*psop;
 	union soval	sobuf;
-	int onoff;
         socklen_t valsize;
 	static int sr = -1;
 	int st;
@@ -349,7 +352,7 @@ so_test(struct soent *psoe)
 
 	/* receiver processing */
 	{ fd_set rfds, rfds_saved;
-	  int nfds, cc, len;
+	  int nfds, cc;
 	  int gotone;
 	  struct timeval tv;
 	  struct msghdr msg;
@@ -400,12 +403,10 @@ so_test(struct soent *psoe)
 			break;
 		}
 		gotone = 0;
-		pcmsg = (struct cmsghdr *)msg.msg_control;
-		for (len=0; len < msg.msg_controllen; len += pcmsg->cmsg_len) {
+		for (pcmsg = CMSG_FIRSTHDR(&msg); pcmsg != NULL;
+				pcmsg = CMSG_NXTHDR(&msg, pcmsg)) {
 			if (!psoe->so_dorecv)
 				break;
-			pcmsg = (struct cmsghdr *)(((unsigned char *)
-				msg.msg_control) + len);
 			gotone = pcmsg->cmsg_level == SOL_IPV6 &&
 			    pcmsg->cmsg_type == psoe->so_cmtype;
 			if (gotone)
@@ -418,10 +419,6 @@ so_test(struct soent *psoe)
 				return;
 			}
 		}
-		if (gotone && pcmsg->cmsg_len > 0) {
-			unsigned int *cmdat = (unsigned int *)
-				((unsigned char *)pcmsg+sizeof(struct cmsghdr));
-		}
 /* check contents here */
 		if (psoe->so_dorecv)
 			tst_resm(gotone ? TPASS : TFAIL, "%s receive",
@@ -433,6 +430,7 @@ so_test(struct soent *psoe)
 #define IPV6_ADDR_LINK		2
 #define IPV6_ADDR_GLOBAL	3
 
+#ifdef HAVE_IFADDRS_H
 static int ipv6_addr_scope(struct in6_addr *pin6)
 {
 	if ((ntohl(pin6->s6_addr32[0]) & 0xFFC00000) == 0xFE800000)
@@ -441,9 +439,11 @@ static int ipv6_addr_scope(struct in6_addr *pin6)
 		return IPV6_ADDR_NODE;
 	return IPV6_ADDR_GLOBAL;
 }
+#endif	/* HAVE_IFADDRS_H */
 
 int getsock(char *tname, struct sockaddr_in6 *psin6_arg, int scope)
 {
+#ifdef HAVE_IFADDRS_H
 	static struct ifaddrs *pifa_head;
 	struct ifaddrs *pifa;
 	struct sockaddr_in6 *psin6;
@@ -519,6 +519,9 @@ int getsock(char *tname, struct sockaddr_in6 *psin6_arg, int scope)
 				tname,  scopestr);
 	}
 	return -1;
+#else /* HAVE_IFADDRS_H */
+	return -1;
+#endif
 }
 
 #ifdef notyet
@@ -620,6 +623,8 @@ do_tests(void)
 	int	i;
 
 	for (i=0; i<SOCOUNT; ++i) {
+		sotab[i].so_clrval.sou_bool = 0;
+		sotab[i].so_setval.sou_bool = 1;
 		so_test(&sotab[i]);
 	}
 #ifdef notyet

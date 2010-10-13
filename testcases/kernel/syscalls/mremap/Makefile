@@ -16,16 +16,26 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-CFLAGS += -I../../../../include -Wall
-LDLIBS += -L../../../../lib -lltp -L../ipc -lipc
+top_srcdir		?= ../../../..
 
-SRCS    = $(wildcard *.c)
-TARGETS = $(patsubst %.c,%,$(SRCS))
+include $(top_srcdir)/include/mk/testcases.mk
 
-all: $(TARGETS)
+LDLIBS			+= -lipc
 
-install:
-	@set -e; for i in $(TARGETS); do ln -f $$i ../../../bin/$$i ; done
+LIBDIR			:= ../ipc/lib
 
-clean:
-	rm -f $(TARGETS)
+LIB                     := $(LIBDIR)/libipc.a
+
+$(LIBDIR):
+	mkdir -p "$@"
+
+$(LIB): $(LIBDIR)
+	$(MAKE) -C $^ -f "$(abs_srcdir)/$^/Makefile" all
+
+all: | $(LIB)
+
+CPPFLAGS                += -I$(abs_srcdir)/$(LIBDIR)
+
+LDFLAGS                 += -L$(abs_builddir)/$(LIBDIR)
+
+include $(top_srcdir)/include/mk/generic_leaf_target.mk

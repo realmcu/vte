@@ -27,23 +27,23 @@ int main(int argc, char *argv[]){
 	if (fd < 0) {
 		printf ("Unable to open file %s !", file);
 		return -1;
-	} 
-	
-       if(-1 == (s = flistxattr(fd, list, 1024)) ) {
-               perror("flistxattr");
-               return 1;
-       }
-       if(s == 0) {
-               printf("No xattrs defined for %s, further testcase useless\n",file);
-               return 1;
-       }
-       tok = strtok(list, "\0");
-       s = fgetxattr(fd, tok, (void*)value, 1024);
-       if(s == -1) {
-               perror("fgetxattr");
-               return 1;
-       }
-       s = fsetxattr(fd, tok, (void*)value, s, 0);
+	}
+
+	if(-1 == (s = flistxattr(fd, list, 1024)) ) {
+		perror("flistxattr");
+		return 1;
+	}
+	if(s == 0) {
+		printf("No xattrs defined for %s, further testcase useless\n",file);
+		return 1;
+	}
+	tok = strtok(list, "\0");
+	s = fgetxattr(fd, tok, (void*)value, 1024);
+	if(s == -1) {
+		perror("fgetxattr");
+		return 1;
+	}
+	s = fsetxattr(fd, tok, (void*)value, s, 0);
 
 	if (s == -1) {
 		printf ("User unable to change extended attributes on file %s !\n", argv[1]);
@@ -59,11 +59,11 @@ int main(int argc, char *argv[]){
 	errno = ENOSYS;
 #endif
 	if (s == -1) {
-                printf ("User unable to remove extended attributes file %s !\n", argv[1]);
-                printf("errno = %i\n", errno);
-                rc = 1;
-        }
-	
-	close (fd);	
-	return  rc;		
+		printf ("User unable to remove extended attributes file %s !\n", argv[1]);
+		printf("errno = %i\n", errno);
+		rc = 1;
+	}
+
+	close (fd);
+	return  rc;	
 }

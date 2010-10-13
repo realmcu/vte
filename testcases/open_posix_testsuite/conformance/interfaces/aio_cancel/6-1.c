@@ -36,7 +36,6 @@
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
-#include <malloc.h>
 #include <aio.h>
 
 #include "posixtest.h"
@@ -55,9 +54,8 @@ int main()
 	int in_progress;
 	int gret;
 
-#if _POSIX_ASYNCHRONOUS_IO != 200112L
-	return PTS_UNSUPPORTED;
-#endif
+	if (sysconf(_SC_ASYNCHRONOUS_IO) != 200112L)
+		return PTS_UNSUPPORTED;
 
 	snprintf(tmpfname, sizeof(tmpfname), "/tmp/pts_aio_cancel_6_1_%d", 
 		  getpid());

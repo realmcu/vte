@@ -27,7 +27,7 @@
 * 2. When parent clone a process with flag CLONE_NEWPID, the parent process ID
 * of should be zero.
 *
-* 3. The container init process (one), should not get killed by the SIGKILL in 
+* 3. The container init process (one), should not get killed by the SIGKILL in
 * the childNS
 *
 * Total Tests:
@@ -36,8 +36,8 @@
 *
 * Test Assertion & Strategy:
 *
-* From main() clone a new child process with passing the clone_flag as 
-* CLONE_NEWPID. 
+* From main() clone a new child process with passing the clone_flag as
+* CLONE_NEWPID.
 * The container init, should not get killed by the SIGKILL inside the child NS.
 * Usage: <for command-line>
 * pidns04
@@ -58,7 +58,8 @@
 #include <errno.h>
 #include <usctest.h>
 #include <test.h>
-#include <libclone.h>
+#define CLEANUP cleanup
+#include "libclone.h"
 
 #define INIT_PID        1
 #define CHILD_PID       1
@@ -67,7 +68,6 @@
 char *TCID = "pid_namespace4";
 int TST_TOTAL=1;
 int     fd[2] ;
-void cleanup(void);
 
 /*
  * child_fn1() - Inside container
@@ -92,14 +92,12 @@ static int child_fn1(void *ttype)
         	write(fd[1], mesg, (strlen(mesg)+1));
 	}
 	else {
-		tst_resm(TFAIL, "FAIL: Got unexpected result of"
-		" cpid=%d ppid=%d\n", cpid, ppid);
+		tst_resm(TFAIL, "got unexpected result of cpid=%d ppid=%d",
+				cpid, ppid);
 	}
+	CLEANUP();
 	close(fd[1]);
-	cleanup();
-
-	/* NOT REACHED */
-	return 0;
+	tst_exit();
 }
 
 /***********************************************************************
@@ -116,13 +114,13 @@ int main(int argc, char *argv[])
 	if ((wait(&status)) < 0) {
 		tst_resm(TWARN, "wait() failed, skipping this test case");
 		/* Cleanup & continue with next test case */
-		cleanup();
+		CLEANUP();
 	}
 	if (ret == -1) {
 		tst_resm(TFAIL, "clone() Failed, errno = %d :"
 			" %s", ret, strerror(ret));
 		/* Cleanup & continue with next test case */
-		cleanup();
+		CLEANUP();
 	}
 
 	/* Parent process closes up write side of pipe */
@@ -142,11 +140,10 @@ int main(int argc, char *argv[])
 		WTERMSIG(status));
 	}
         /* cleanup and exit */
-	cleanup();
+	CLEANUP();
 	close(fd[0]);
 
-	/*NOTREACHED*/
-	return 0;
+	tst_exit();
 
 }	/* End main */
 
@@ -154,12 +151,9 @@ int main(int argc, char *argv[])
  * cleanup() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
  */
-void
+static void
 cleanup()
 {
 	/* Clean the test testcase as LTP wants*/
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

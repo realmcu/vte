@@ -36,13 +36,13 @@ CALLS:	mkdir, stat, open
 >BUGS:  <
 ======================================================================*/
 
-#define PATH_STRING_LENGTH  1024 
+#define PATH_STRING_LENGTH  1024
 #define NAME_LENGTH  8
 #define MAX_PATH_STRING_LENGTH  (PATH_STRING_LENGTH - NAME_LENGTH - 40)
 #define DIRECTORY_MODE  00777
 #define FILE_MODE       00777
 
-#define MKDIR_STRING_LENGTH  (MAX_PATH_STRING_LENGTH + 7) 
+#define MKDIR_STRING_LENGTH  (MAX_PATH_STRING_LENGTH + 7)
 
 /* #define DEBUG	 you can watch the generation with this flag */
 
@@ -221,7 +221,7 @@ int main(argc, argv)
 
 	anyfail();
 	/** NOT REACHED **/
-	return(0);
+	return 0;
 }
 
 
@@ -301,10 +301,10 @@ int tree()
 		  path_list_string, errno);
 		exit(-7);
 	}
-	
+
 	/****************************************/
 	/*					*/
-	/*   and store its name in path_list	*/ 
+	/*   and store its name in path_list	*/
 	/*					*/
 	/****************************************/
 
@@ -419,7 +419,7 @@ int level;    	/* the tree depth variable */
 
 		/********************************/
 		/*				*/
-		/*   Maximum path name length	*/ 
+		/*   Maximum path name length	*/
 		/*     	    reached 		*/
 		/*				*/
 		/********************************/
@@ -428,11 +428,11 @@ int level;    	/* the tree depth variable */
 		return(-1);
 	}
 	else if(level < max_depth) {
-		for(i = 0; i <= max_breadth; i++) { 
+		for(i = 0; i <= max_breadth; i++) {
 			get_next_name();
 			strcpy(new_string, string);
 			strcat(new_string, slash);
-			strcat(new_string, name);	
+			strcat(new_string, name);
 
 			/****************************************/
 			/*					*/
@@ -453,7 +453,7 @@ int level;    	/* the tree depth variable */
 				file_id = creat(new_string, FILE_MODE);
 				if(file_id == -1) {
 					fprintf(temp,"\nImpossible to create file %s, errno=%d\n",
-						new_string, errno);		
+						new_string, errno);	
 					return(-2);
 				}
 
@@ -469,19 +469,19 @@ int level;    	/* the tree depth variable */
 				/****************************************/
 
 				len = strlen(new_string);
-				for(j = 1; j <= file_length; j++) { 
+				for(j = 1; j <= file_length; j++) {
 					ret_len = write(file_id, new_string, len);
 					if(ret_len != len) {
-						fprintf(temp,"\nUnsuccessful write to file %s, errno=%d\n", 
+						fprintf(temp,"\nUnsuccessful write to file %s, errno=%d\n",
 						  new_string, errno);
-						return(-3);	
-					}		
+						return(-3);
+					}	
 				}
 				close(file_id);
 
 				/****************************************/
 				/*					*/
-				/*   and store its name in path_list	*/ 
+				/*   and store its name in path_list	*/
 				/*					*/
 				/****************************************/
 
@@ -489,7 +489,7 @@ int level;    	/* the tree depth variable */
 				len = strlen(write_string);
 				write_string[len++] = 'F';
 				write_string[len] = '\0';
-				escrivez(write_string);	
+				escrivez(write_string);
 			}
 			else {
 				switch_flag = TRUE;
@@ -499,7 +499,7 @@ int level;    	/* the tree depth variable */
 				/*	 or make a directory		*/
 				/*					*/
 				/*  (mknod can only be called when in	*/
-				/*   super user mode)			*/	
+				/*   super user mode)			*/
 				/*					*/
 				/****************************************/
 
@@ -507,7 +507,7 @@ int level;    	/* the tree depth variable */
 				ret_val = mkdir(new_string, DIRECTORY_MODE);
 
 				if(ret_val != 0) {
-					fprintf(temp,"\nImpossible to create directory %s, errno=%d\n", 
+					fprintf(temp,"\nImpossible to create directory %s, errno=%d\n",
 					 new_string, errno);
 					return(-5);
 				}
@@ -518,7 +518,7 @@ int level;    	/* the tree depth variable */
 
 				/****************************************/
 				/*					*/
-				/*     store its name in path_list	*/ 
+				/*     store its name in path_list	*/
 				/*					*/
 				/****************************************/
 
@@ -526,7 +526,7 @@ int level;    	/* the tree depth variable */
 				len = strlen(write_string);
 				write_string[len++] = 'D';
 				write_string[len] = '\0';
-				escrivez(write_string);	
+				escrivez(write_string);
 
 				/****************************************/
 				/*					*/
@@ -536,8 +536,8 @@ int level;    	/* the tree depth variable */
 
 				new_level = level + 1;
 				new_ret_val = generate(new_string, new_level);
-				if(new_ret_val < ret_val) 
-					ret_val = new_ret_val;	
+				if(new_ret_val < ret_val)
+					ret_val = new_ret_val;
 			}
 		}
 
@@ -555,8 +555,8 @@ int level;    	/* the tree depth variable */
 		/*				*/
 		/********************************/
 
-		return(0);
-} 
+		return 0;
+}
 int check()
 
 /****************************************/
@@ -580,14 +580,14 @@ int check()
 		/*					*/
 		/****************************************/
 
-		
+	
 		if(fscanf(list_stream, "%s", path_string) == EOF) {
 
 #ifdef DEBUG
 			tst_resm(TINFO,"\nEnd of path_list file reached \n");
 #endif
-		
-			return(0);
+	
+			return 0;
 		}
 
 #ifdef DEBUG
@@ -611,20 +611,20 @@ int check()
 					path_string, errno);
 				return(-1);
 			}
-				
+			
 			else {
 				/********************************/
 				/*				*/
 				/*    check its contents	*/
 				/*				*/
 				/********************************/
-			
-				ret_len=0;	
+		
+				ret_len=0;
 				len = strlen(path_string);
 				for(j = 1; j <= file_length; j++) {
 					ret_len = read(file_id, read_string, len);
 					if(len != ret_len) {
-						fprintf(temp,"\nFile read error for file %s, errno=%d\n", 
+						fprintf(temp,"\nFile read error for file %s, errno=%d\n",
 						path_string, errno);
 						return(-3);
 					}
@@ -638,12 +638,12 @@ int check()
 				close(file_id);
 			}  /* else for */
 					if(ret_len <= 0) {
-						fprintf(temp,"\nImpossible to read file %s, errno=%d\n", 
+						fprintf(temp,"\nImpossible to read file %s, errno=%d\n",
 						path_string, errno);
 						return(-2);
-					}	
+					}
 		}
-		else { 
+		else {
 
 	     	/********************************/
 		/*				*/
@@ -655,14 +655,14 @@ int check()
 			path_string[len] = '\0';
 			path_mode = mode(path_string);
 			if(path_mode == -1) {
-				fprintf(temp,"\nPreviously created directory path %s was not open\n", 
+				fprintf(temp,"\nPreviously created directory path %s was not open\n",
 				path_string);
 				return(-4);
 			}
 			if((040000 & path_mode) != 040000){
-				fprintf(temp,"\nPath %s was not recognized to be a directory\n", 
+				fprintf(temp,"\nPath %s was not recognized to be a directory\n",
 				path_string);
-				fprintf(temp,"Its mode is %o\n", path_mode); 
+				fprintf(temp,"Its mode is %o\n", path_mode);
 				return(-5);
 			}
 		}
@@ -703,7 +703,7 @@ int get_next_name()
 					    /* position			    */
 					    /*				    */
 					    /********************************/
-	return(0);
+	return 0;
 }
 
 int increment_name(position)
@@ -720,23 +720,23 @@ int position;
 {
 	int next_position;
 
-	if(name[position] == 'z') 
-		if(position == 0) {	
+	if(name[position] == 'z')
+		if(position == 0) {
 			fprintf(temp,"ERROR: There are no more available names\n");
 			exit(-1);
 		}
 		else {
-			name[position] = 'a';          /**********************/	
+			name[position] = 'a';          /**********************/
 			next_position = --position;    /*		     */
 			increment_name(next_position); /*  increment the     */
 						       /*  previous letter   */
 						       /*		     */
-						       /**********************/	
+						       /**********************/
 		}
 				  /*********************************/
 				  /*				   */
 	else name[position]++;    /* otherwise, increment this one */
-	return(0);		  /*				   */
+	return 0;		  /*				   */
 				  /*********************************/
 }
 
@@ -779,8 +779,8 @@ char string[];
 				ret_len, errno);
 		exit(-2);
 	}
-	return(0);
-} 
+	return 0;
+}
 
 int term()
 {
@@ -804,7 +804,7 @@ int term()
 		}
 		exit(0);
 	}
-	return(0);
+	return 0;
 }
 int massmurder()
 {
@@ -816,7 +816,7 @@ int massmurder()
 			kill(allchild[i], SIGTERM);
 		}
 	}
-	return(0);
+	return 0;
 }
 
 /** LTP Port **/
@@ -911,6 +911,6 @@ instress()
 {
         tst_resm(TINFO, "System resource may be too low, fork() malloc()"
                                 " etc are likely to fail.\n");
-        return(1);
+        return 1;
 }
 

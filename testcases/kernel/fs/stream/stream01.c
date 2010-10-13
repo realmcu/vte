@@ -26,7 +26,7 @@
 >HOW:   < 1) open a stream, write something to it, perform freopen and
 	<    write some more. Check that second write to stream went to
 	<    the file specified by freopen.
->BUGS:  < 
+>BUGS:  <
 ======================================================================*/
 
 #include <stdio.h>
@@ -72,7 +72,7 @@ int main(int ac, char *av[])
 		sprintf(tempfile1, "stream011.%d", getpid());
 		sprintf(tempfile2, "stream012.%d", getpid());
 	/*--------------------------------------------------------------------*/
-	//block0:	
+	//block0:
 		if((stream=fopen(tempfile1,"a+")) == NULL) {
 			tst_resm(TFAIL,"fopen(%s) a+ failed: %s", tempfile1, strerror(errno));
 			tst_exit();
@@ -123,9 +123,9 @@ int main(int ac, char *av[])
 	/*--------------------------------------------------------------------*/
 		unlink(tempfile1);
 		unlink(tempfile2);
-	
+
 	} /* end for */
 	tst_rmdir();
 	tst_exit();
-	return(0);
+	return 0;
 }

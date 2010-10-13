@@ -88,7 +88,7 @@ struct test_case_t {
 
 	/* EPERM - IPC_SET - child doesn't have permission to change segment */
 	{&shm_id_1, IPC_SET, &buf, EPERM},
-	
+
 	/* EPERM - IPC_RMID - child can not remove the segment */
 	{&shm_id_1, IPC_RMID, &buf, EPERM},
 };
@@ -104,9 +104,9 @@ int main(int ac, char **av)
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 	}
 
-        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 ) 
-             tst_brkm(TBROK, cleanup, "Test cannot be continued owning to sufficient availability of Hugepages on the system");
-        else              
+        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 )
+             tst_brkm(TCONF, cleanup, "Not enough available Hugepages");
+        else             
              huge_pages_shm_to_be_allocated = ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
 
 	setup();			/* global setup */
@@ -135,9 +135,9 @@ int main(int ac, char **av)
 		/* Remove the temporary directory */
 		tst_rmdir();
 	}
-	
+
 	cleanup ();
-	return(0);
+	return 0;
 }
 
 /*
@@ -159,14 +159,14 @@ do_child()
 			/*
 			 * use the TEST() macro to make the call
 			 */
-	
+
 			TEST(shmctl(*(TC[i].shmid), TC[i].cmd, TC[i].sbuf));
-	
+
 			if (TEST_RETURN != -1) {
 				tst_resm(TFAIL, "call succeeded unexpectedly");
 				continue;
 			}
-	
+
 			TEST_ERROR_LOG(TEST_ERRNO);
 
 			if (TEST_ERRNO == TC[i].error) {
@@ -177,7 +177,7 @@ do_child()
 				tst_resm(TFAIL, "call failed with an "
 					 "unexpected error - %d : %s",
 					 TEST_ERRNO, strerror(TEST_ERRNO));
-			}			
+			}		
 		}
 	}
 }

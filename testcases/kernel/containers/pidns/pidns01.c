@@ -46,7 +46,7 @@
 * 27/12/07  RISHIKESH K RAJAK <risrajak@in.ibm.com> Created this test
 *
 *******************************************************************************************/
-#define _GNU_SOURCE 1
+#define _GNU_SOURCE
 #include <sys/wait.h>
 #include <assert.h>
 #include <stdio.h>
@@ -56,16 +56,14 @@
 #include <errno.h>
 #include <usctest.h>
 #include <test.h>
-#include <libclone.h>
+#define CLEANUP cleanup
+#include "libclone.h"
 
 char *TCID = "pid_namespace1";
 int TST_TOTAL=1;
 
-void cleanup(void);
-
 #define CHILD_PID       1
 #define PARENT_PID      0
-
 
 /*
  * child_fn1() - Inside container
@@ -137,13 +135,10 @@ int main(int argc, char *argv[])
  * cleanup() - performs all ONE TIME cleanup for this test at
  *             completion or premature exit.
  */
-void
-cleanup()
+static void cleanup()
 {
-
-	/* Clean the test testcase as LTP wants*/
+	/* Clean the test testcase as LTP wants */
 	TEST_CLEANUP;
-
 	/* exit with return code appropriate for results */
 	tst_exit();
 }

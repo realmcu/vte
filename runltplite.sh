@@ -57,9 +57,9 @@ setup()
         exit 1
     }
 
-    [ -e $LTPROOT/pan/pan ] ||
+    [ -e $LTPROOT/bin/ltp-pan ] ||
     {
-        echo "FATAL: Test suite driver 'pan' not found"
+        echo "FATAL: Test suite driver 'ltp-pan' not found"
         echo "INFO: as root user type 'make ; make install'"
         exit 1
     }
@@ -85,9 +85,8 @@ usage()
     -p              Human readable format logfiles. 
     -q              Print less verbose output to screen.
     -r LTPROOT      Fully qualified path where testsuite is installed.
-    -v              Print more verbose output to screen.                   
 
-    example: ./${0##*/} -i 1024 -m 128 -p -q  -l /tmp/resultlog.$$ -d ${PWD}
+    example: ${0##*/} -i 1024 -m 128 -p -q  -l /tmp/resultlog.$$ -d ${PWD}
 
 
 	EOF
@@ -114,7 +113,7 @@ main()
     local TAG_RESTRICT_STRING=""
     local PAN_COMMAND=""
 
-    while getopts c:d:hi:l:m:No:pqr:v arg
+    while getopts c:d:hi:l:m:No:pqr: arg
     do  case $arg in
         c)       
 	    NUM_PROCS=$(($OPTARG))
@@ -138,9 +137,9 @@ main()
     
         l)      
 
-            echo "INFO: creating $LTPROOT/results directory"
             [ ! -d $LTPROOT/results ] && \
             {
+               echo "INFO: creating $LTPROOT/results directory"
                mkdir -p $LTPROOT/results || \
                {
                    echo "ERROR: failed to create $LTPROOT/results"
@@ -171,8 +170,6 @@ main()
     
         r)  LTPROOT=$OPTARG;;
     
-        v)  VERBOSE_MODE=1;;
-   
         \?) usage;;
         esac
     done
@@ -284,7 +281,7 @@ main()
     }
 
     [ ! -z "$QUIET_MODE" ] && { echo "INFO: Test start time: $(date)" ; }
-    PAN_COMMAND="${LTPROOT}/pan/pan $QUIET_MODE -e -S $INSTANCES $DURATION -a $$ \
+    PAN_COMMAND="${LTPROOT}/bin/ltp-pan $QUIET_MODE -e -S $INSTANCES $DURATION -a $$ \
     -n $$ $PRETTY_PRT -f ${TMP}/alltests $LOGFILE $OUTPUTFILE"
     if [ ! -z "$VERBOSE_MODE" ] ; then
       echo "COMMAND:    $PAN_COMMAND"
@@ -293,16 +290,19 @@ main()
       fi
     fi
     #$PAN_COMMAND #Duplicated code here, because otherwise if we fail, only "PAN_COMMAND" gets output
-    ${LTPROOT}/pan/pan $QUIET_MODE -e -S $INSTANCES $DURATION -a $$ \
+    # Some tests need to run inside the "bin" directory.
+    cd "${LTPROOT}/testcases/bin"
+    ${LTPROOT}/bin/ltp-pan $QUIET_MODE -e -S $INSTANCES $DURATION -a $$ \
     -n $$ $PRETTY_PRT -f ${TMP}/alltests $LOGFILE $OUTPUTFILE
     
     if [ $? -eq 0 ]; then
-      echo "INFO: pan reported all tests PASS"
+      echo "INFO: ltp-pan reported all tests PASS"
       VALUE=0
     else
-      echo "INFO: pan reported some tests FAIL"
+      echo "INFO: ltp-pan reported some tests FAIL"
       VALUE=1
     fi
+    cd ..
     [ ! -z "$QUIET_MODE" ] && { echo "INFO: Test end time: $(date)" ; }
     
     [ "$GENLOAD" -eq 1 ] && { killall -9 genload ; }

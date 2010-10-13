@@ -17,7 +17,7 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* 
+/*
  * Test Name: ftruncate01
  *
  * Test Description:
@@ -25,9 +25,9 @@
  *  length if the file indicated by file descriptor opened for writing.
  *
  * Expected Result:
- *  ftruncate(2) should return a value 0 and the length of the file after 
+ *  ftruncate(2) should return a value 0 and the length of the file after
  *  truncation should be equal to the length it is truncated to.
- *	
+ *
  * Algorithm:
  *  Setup:
  *   Setup signal handling.
@@ -38,11 +38,11 @@
  *   Loop if the proper options are given.
  *   Execute system call
  *   Check return code, if system call failed (return=-1)
- *   	Log the errno and Issue a FAIL message.
+ *	Log the errno and Issue a FAIL message.
  *   Otherwise,
- *   	Verify the Functionality of system call	
+ *	Verify the Functionality of system call
  *      if successful,
- *      	Issue Functionality-Pass message.
+ *		Issue Functionality-Pass message.
  *      Otherwise,
  *		Issue Functionality-Fail message.
  *  Cleanup:
@@ -72,35 +72,35 @@
 #include <errno.h>
 #include <string.h>
 #include <signal.h>
+#include <inttypes.h>
 
 #include "test.h"
 #include "usctest.h"
 
-#define TESTFILE	"testfile"		/* file under test */
+#define TESTFILE	"testfile"	/* file under test */
 #define FILE_MODE	S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
-#define BUF_SIZE	256			/* buffer size */
-#define FILE_SIZE	1024			/* test file size */
-#define TRUNC_LEN	256			/* truncation length */
+#define BUF_SIZE	256	/* buffer size */
+#define FILE_SIZE	1024	/* test file size */
+#define TRUNC_LEN	256	/* truncation length */
 
-TCID_DEFINE(ftruncate01);       /* Test program identifier.    */
-int TST_TOTAL=1;		/* Total number of test conditions */
+TCID_DEFINE(ftruncate01);	/* Test program identifier.    */
+int TST_TOTAL = 1;		/* Total number of test conditions */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 int fildes;			/* file descriptor for test file */
 
 void setup();			/* setup function for the test */
 void cleanup();			/* cleanup function for the test */
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 	struct stat stat_buf;	/* stat(2) struct contents */
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 	off_t file_length;	/* test file length */
-    
+
 	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *) NULL) {
+	if (msg != (char *)NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -113,18 +113,15 @@ main(int ac, char **av)
 		/* Reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		/* 
-		 * Call ftruncate(2) to truncate a test file to a 
+		/*
+		 * Call ftruncate(2) to truncate a test file to a
 		 * specified length.
 		 */
 		TEST(ftruncate(fildes, TRUNC_LEN));
 
 		/* check return code of ftruncate(2) */
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL,
-				 "ftruncate() of %s Failed, errno=%d : %s",
-				 TESTFILE, TEST_ERRNO,
-				 strerror(TEST_ERRNO));
+			tst_resm(TFAIL|TTERRNO, "ftruncate(%s) failed", TESTFILE);
 			continue;
 		}
 		/*
@@ -133,7 +130,7 @@ main(int ac, char **av)
 		 */
 		if (STD_FUNCTIONAL_TEST) {
 			/*
-		 	 * Get the testfile information using
+			 * Get the testfile information using
 			 * fstat(2).
 			 */
 			if (fstat(fildes, &stat_buf) < 0) {
@@ -149,8 +146,8 @@ main(int ac, char **av)
 			 * truncate(2) on it.
 			 */
 			if (file_length != TRUNC_LEN) {
-				tst_resm(TFAIL, "%s: Incorrect file size %d, "
-					 "Expected %d", TESTFILE, file_length,
+				tst_resm(TFAIL, "%s: Incorrect file size %"PRId64", "
+					 "Expected %d", TESTFILE, (int64_t)file_length,
 					 TRUNC_LEN);
 			} else {
 				tst_resm(TPASS, "Functionality of ftruncate() "
@@ -159,14 +156,13 @@ main(int ac, char **av)
 		} else {
 			tst_resm(TPASS, "call succeeded");
 		}
-	}	/* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 
 	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	/*NOTREACHED*/
-	return(0);
-}	/* End main */
+	 /*NOTREACHED*/ return 0;
+}				/* End main */
 
 /*
  * void
@@ -175,11 +171,10 @@ main(int ac, char **av)
  *  Create a test file under temporary directory and write some
  *  data into it.
  */
-void 
-setup()
+void setup()
 {
-	int i;				/* counter for for loop() */
-	int c, c_total = 0;		/* bytes to be written to file */
+	int i;			/* counter for for loop() */
+	int c, c_total = 0;	/* bytes to be written to file */
 	char tst_buff[BUF_SIZE];	/* buffer to hold data */
 
 	/* capture signals */
@@ -197,23 +192,21 @@ setup()
 	}
 
 	/* open a file for reading/writing */
-	if ((fildes = open(TESTFILE, O_RDWR|O_CREAT, FILE_MODE)) == -1) {
-		tst_brkm(TBROK, cleanup,
-			 "open(%s, O_RDWR|O_CREAT, %o) Failed, errno=%d : %s",
-			 TESTFILE, FILE_MODE, errno, strerror(errno));
-	}
+	fildes = open(TESTFILE, O_RDWR | O_CREAT, FILE_MODE);
+	if (fildes == -1)
+		tst_brkm(TBROK|TERRNO, cleanup,
+			 "open(%s, O_RDWR|O_CREAT, %o) failed",
+			 TESTFILE, FILE_MODE);
 
 	/* Write to the file 1k data from the buffer */
 	while (c_total < FILE_SIZE) {
 		if ((c = write(fildes, tst_buff, sizeof(tst_buff))) <= 0) {
-			tst_brkm(TBROK, cleanup,
-				 "write(2) on %s Failed, errno=%d : %s",
-				 TESTFILE, errno, strerror(errno));
+			tst_brkm(TBROK|TERRNO, cleanup, "write(%s) failed", TESTFILE);
 		} else {
 			c_total += c;
 		}
 	}
-}	/* End setup() */
+}				/* End setup() */
 
 /*
  * void
@@ -222,8 +215,7 @@ setup()
  *  Close the temporary file.
  *  Remove the test directory and testfile created in the setup.
  */
-void 
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.
@@ -231,15 +223,12 @@ cleanup()
 	TEST_CLEANUP;
 
 	/* Close the testfile after writing data into it */
-	if (close(fildes) == -1) {
-		tst_brkm(TFAIL, NULL,
-			 "close(%s) Failed, errno=%d : %s",
-			 TESTFILE, errno, strerror(errno));
-	}
+	if (close(fildes) == -1)
+		tst_brkm(TFAIL|TERRNO, NULL, "close(%s) failed", TESTFILE);
 
 	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-}	/* End cleanup() */
+}				/* End cleanup() */

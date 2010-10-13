@@ -20,7 +20,7 @@
 # 02/05/03  Modified - Manoj Iyer <manjo@mail.utexas.edu> use USCTEST macros
 #           fixed bugs.
 # 07/27/05  Michael Reed  <mreedltp@vnet.ibm.com>
-#            Made changes to account for the replacement of syslogd 
+#            Made changes to account for the replacement of syslogd
 #            with syslog-ng
 #
 ##################################################################
@@ -91,7 +91,7 @@ syslog_case4()
 	    status_flag=0
 	    cleanup	
 	fi
-	[ -x $syslog_cmd ] || syslog_cmd="/etc/init.d/syslog"
+	[ -x $syslog_cmd ] || syslog_cmd="/etc/rc.d/init.d/syslog"
 
 #Back up configuration file
         if [ ! -e $CONFIG_FILE ]
@@ -99,7 +99,7 @@ syslog_case4()
 	   tst_resm TBROK  "$CONFIG_FILE not found!"
         else
 #Pause if another LTP syslog test is running
-           while [ -e $CONFIG_FILE.ltpback ]  
+           while [ -e $CONFIG_FILE.ltpback ]
              do
                if [ $(( wait_count-- )) -gt 0 ]
                then
@@ -181,6 +181,7 @@ syslog_case4()
 export TST_TOTAL=1
 export TST_COUNT=1
 export TCID=$(basename $0)
+export SYSLOGD_OPTIONS="-O /var/log/messages"
 
 RC=0
 status_flag=0

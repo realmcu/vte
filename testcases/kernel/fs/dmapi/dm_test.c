@@ -108,7 +108,7 @@ void dm_ParseCommandLineOptions(int argc, char **argv) {
 				printf("\t-termlevel n: set terminal logging level to n\n");
 				printf("\t-logname s: set file log name to s\n");
 				exit(0);
-			} else if (i < argc - 1 && argv[i+1][0] != '-') 
+			} else if (i < argc - 1 && argv[i+1][0] != '-')
 				i++;
 		}
 	}
@@ -119,7 +119,7 @@ void dm_ParseCommandLineOptions(int argc, char **argv) {
 }
 
 char *dm_GetCommandLineOption(char *option) {
-	
+
    	int i;
 
 	if (!dm_argc)
@@ -128,7 +128,7 @@ char *dm_GetCommandLineOption(char *option) {
 	for (i = 1; i < dm_argc; i++)
 		if (dm_argv[i][0] == '-' &&
 		    strcmp(&dm_argv[i][1], option) == 0 &&
-		    i < dm_argc - 1 && dm_argv[i+1][0] != '-') 
+		    i < dm_argc - 1 && dm_argv[i+1][0] != '-')
 			return dm_argv[i+1];
 	return NULL;
 
@@ -146,7 +146,7 @@ void dm_StartLogging(void) {
 	if (dm_fpLogFile)
 		dm_Error("Cannot start logging when log file already open");
 
-	dm_fdLogFile = open(dm_LogFileName, O_CREAT|O_APPEND|O_SYNC|O_WRONLY, 
+	dm_fdLogFile = open(dm_LogFileName, O_CREAT|O_APPEND|O_SYNC|O_WRONLY,
 			S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
 
 	if (dm_fdLogFile == -1)
@@ -174,9 +174,9 @@ void dm_StartLogging(void) {
 			fprintf(dm_fpLogFile, "\n%s starting at %02u:%02u:%02u on %02u/%02u/%04u\n", dm_TestCaseName, pDT->tm_hour, pDT->tm_min, pDT->tm_sec, pDT->tm_mon+1, pDT->tm_mday, pDT->tm_year+1900);
 		else
 			fprintf(dm_fpLogFile, "\n%s starting\n", dm_TestCaseName);
-				
+			
 	}
-	
+
 	if (dm_TerminalLoggingLevel) {
 		printf("%s running on %s\n", TEST_NAME, version);
 		printf("%s invoked with ", dm_TestCaseName);
@@ -191,7 +191,7 @@ void dm_StartLogging(void) {
 }
 
 void dm_StopLogging(void) {
-	
+
    	struct timeval tv;
 	struct tm *pDT = NULL;
 	struct tm sDT;
@@ -205,7 +205,7 @@ void dm_StopLogging(void) {
 
 	if (dm_PassedVariations)
 		percentSuccess = (dm_PassedVariations * 100)/ranVariations;
-		
+	
 	if (gettimeofday(&tv, NULL) != -1)
 		pDT = (struct tm *)localtime_r(&tv.tv_sec, &sDT);
 
@@ -214,7 +214,7 @@ void dm_StopLogging(void) {
 			fprintf(dm_fpLogFile, "%s stopping at %02u:%02u:%02u on %02u/%02u/%04u\n", dm_TestCaseName, pDT->tm_hour, pDT->tm_min, pDT->tm_sec, pDT->tm_mon+1, pDT->tm_mday, pDT->tm_year+1900);
 		else
 			fprintf(dm_fpLogFile, "%s stopping\n", dm_TestCaseName);
-				
+			
 		fprintf(dm_fpLogFile, "%s status: %u executed, %u passed, %u failed, %u skipped (%u%%)\n", dm_TestCaseName, ranVariations, dm_PassedVariations, dm_FailedVariations, dm_SkippedVariations, percentSuccess);
 	}
 
@@ -223,7 +223,7 @@ void dm_StopLogging(void) {
 			printf("%s stopping at %02u:%02u:%02u on %02u/%02u/%04u\n", dm_TestCaseName, pDT->tm_hour, pDT->tm_min, pDT->tm_sec, pDT->tm_mon+1, pDT->tm_mday, pDT->tm_year+1900);
 		else
 			printf("%s stopping\n", dm_TestCaseName);
-				
+			
 		printf("%s status: %u executed, %u passed, %u failed, %u skipped (%u%%)\n", dm_TestCaseName, ranVariations, dm_PassedVariations, dm_FailedVariations, dm_SkippedVariations, percentSuccess);
 	}
 
@@ -272,7 +272,7 @@ void dm_LogPrintf(u_int level, char *format, ...) {
 }
 
 int dm_ExecuteVariation(int var) {
-	
+
 	if (dm_CurrentVariation)
 		dm_Error("Cannot execute variation while variation active\n");
 	if (var < dm_StartingVariation || var > dm_StoppingVariation)
@@ -303,7 +303,7 @@ void dm_PassVariation(void) {
 
 	dm_CurrentVariation = 0;
 
-}	
+}
 
 void dm_FailVariation(void) {
 
@@ -317,7 +317,7 @@ void dm_FailVariation(void) {
 
 	dm_CurrentVariation = 0;
 
-}	
+}
 
 void dm_SkipVariation(void) {
 
@@ -331,7 +331,7 @@ void dm_SkipVariation(void) {
 
 	dm_CurrentVariation = 0;
 
-}	
+}
 
 void dm_EndVariation_SuccessExpected(char *funcname, int expectedRC, int actualRC)
 {
@@ -344,7 +344,7 @@ void dm_EndVariation_SuccessExpected(char *funcname, int expectedRC, int actualR
 		DMVAR_FAIL();
 	}
 
-}	
+}
 
 void dm_EndVariation_FailureExpected(char *funcname, int expectedRC, int actualRC, int expectedErrno)
 {
@@ -361,8 +361,8 @@ void dm_EndVariation_FailureExpected(char *funcname, int expectedRC, int actualR
 	  	DMLOG_PRINT(DMLVL_ERR, "%s failed with unexpected rc = %d\n", funcname, actualRC);
 		DMVAR_FAIL();
 	}
-	
-}	
+
+}
 
 int dm_CheckVariation_SuccessExpected(int expectedRC, int actualRC, dm_eventtype_t expectedEvent, dm_eventtype_t actualEvent)
 {
@@ -380,7 +380,7 @@ int dm_CheckVariation_SuccessExpected(int expectedRC, int actualRC, dm_eventtype
 		return DMSTAT_FAIL;
 	}
 
-}	
+}
 
 int dm_CheckVariation_FailureExpected(int expectedRC, int actualRC, int expectedErrno, dm_eventtype_t expectedEvent, dm_eventtype_t actualEvent)
 {
@@ -403,7 +403,7 @@ int dm_CheckVariation_FailureExpected(int expectedRC, int actualRC, int expected
 		return DMSTAT_FAIL;
 	}
 
-}	
+}
 
 void dm_LogHandle(char *hdl, int len) {
 
@@ -417,7 +417,7 @@ void dm_LogHandle(char *hdl, int len) {
 
 	DMLOG_PRINT(DMLVL_DEBUG, "Handle: %s\n", outbuf);
 
-}	
+}
 
 /* This static array is for the persistent managed region test */
 dm_region_t dm_PMR_regbuf[PMR_NUM_REGIONS] = {

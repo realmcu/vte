@@ -15,17 +15,17 @@
  *
  */
 /**********************************************************
- * 
+ *
  *    TEST IDENTIFIER   : fdatasync01
- * 
+ *
  *    EXECUTED BY       : Any user
- * 
+ *
  *    TEST TITLE        : Basic test for fdatasync(2)
- * 
+ *
  *    TEST CASE TOTAL   : 1
- * 
+ *
  *    AUTHOR            : Madhu T L <madhu.tarikere@wipro.com>
- * 
+ *
  *    SIGNALS
  *	Uses SIGUSR1 to pause before test if option set.
  *	(See the parse_opts(3) man page).
@@ -33,24 +33,24 @@
  *    DESCRIPTION
  *	This is a Phase I test for the fdatasync(2) system call.
  *	It is intended to provide a limited exposure of the system call.
- * 
+ *
  *	Setup:
  *	  Setup signal handling.
  *	  Pause for SIGUSR1 if option specified.
  *	  Create a temp directory and cd to it
  *	  Initialize filename and open it in write mode for each child process.
- * 
+ *
  *	Test:
  *	 Loop if the proper options are given.
  *	  Execute system call
  *	  Check return code, if system call failed (return=-1)
  *		Issue FAIL message with errno.
  *	  Otherwise, Issue PASS message.
- * 
+ *
  *	Cleanup:
  *	  Print errno log and/or timing stats if options given
  *	  Remove temporary directory and all files in it.
- * 
+ *
  * USAGE:  <for command-line>
  *  fdatasync01 [-c n] [-e] [-f] [-h] [-i n] [-I x] [-p] [-P x] [-t]
  *		where,  -c n : Run n copies concurrently.
@@ -62,7 +62,7 @@
  *			-p   : Pause for SIGUSR1 before starting
  *			-P x : Pause for x seconds between iterations.
  *			-t   : Turn on syscall timing.
- * 
+ *
  ****************************************************************/
 #include <errno.h>
 #include <sys/types.h>
@@ -82,15 +82,14 @@ static void cleanup(void);
 char *TCID = "fdatasync01";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
 
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) !=
-			(char *)NULL) {
+	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
+	    (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -109,7 +108,7 @@ main(int argc, char **argv)
 		/* check return code */
 		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL, "fdatasync() failed, errno=%d : %s",
-				TEST_ERRNO, strerror(TEST_ERRNO));
+				 TEST_ERRNO, strerror(TEST_ERRNO));
 		} else {
 			/* No Functional verification yet */
 			tst_resm(TPASS, "fdatasync() successful");
@@ -119,14 +118,12 @@ main(int argc, char **argv)
 	/* perform global cleanup and exit */
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	 /*NOTREACHED*/ return 0;
 
-}	/* End main */
+}				/* End main */
 
 /* setup() - performs all ONE TIME setup for this test */
-void
-setup(void)
+void setup(void)
 {
 	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -140,18 +137,15 @@ setup(void)
 	tst_tmpdir();
 
 	/* Initialize unique filename for each child process */
-	if( sprintf(filename, "fdatasync_%d", getpid()) <= 0) {
+	if (sprintf(filename, "fdatasync_%d", getpid()) <= 0) {
 		tst_brkm(TBROK, cleanup, "Failed to initialize filename");
-		/*NOTREACHED*/
-	}
-	if((fd = open(filename, O_CREAT|O_WRONLY, 0777)) == -1) { //mode must be specified when O_CREATE is in the flag
+	 /*NOTREACHED*/}
+	if ((fd = open(filename, O_CREAT | O_WRONLY, 0777)) == -1) {	//mode must be specified when O_CREATE is in the flag
 		tst_brkm(TBROK, cleanup, "open() failed");
-		/*NOTREACHED*/
-	}
-	if((write(fd, filename, strlen(filename) + 1)) == -1) {
+	 /*NOTREACHED*/}
+	if ((write(fd, filename, strlen(filename) + 1)) == -1) {
 		tst_brkm(TBROK, cleanup, "write() failed");
-		/*NOTREACHED*/
-	}
+	 /*NOTREACHED*/}
 }
 
 /*
@@ -159,14 +153,13 @@ setup(void)
  *	performs all ONE TIME cleanup for this test at
  *	completion or premature exit
  */
-void
-cleanup(void)
+void cleanup(void)
 {
 	/*
 	 * print timing stats if that option was specified.
 	 * print errno log if that option was specified.
 	 */
-    close(fd);
+	close(fd);
 
 	TEST_CLEANUP;
 
@@ -175,6 +168,4 @@ cleanup(void)
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-	/*NOTREACHED*/
-}
-
+ /*NOTREACHED*/}

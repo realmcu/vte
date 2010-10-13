@@ -236,7 +236,7 @@ int initialise(int clnt){
         perror("Master pipe creation error\n");
         exit(1);
     }
-    printf("%s initalization\n",eType);
+    printf("%s initialization\n",eType);
     load();
     initTest();
     
@@ -718,7 +718,7 @@ void maitre()
                  */
                 /* Create a string to record in the test file. Length is exactly the number of sub process */
                 P("Maitre: BYTELOCK: %d\n", etat);
-                buf=(char *)malloc(clnt*maxClients);
+                buf=(char *)malloc(clnt*(maxClients+1));
                 memset(buf,'*', clnt);
                 write(dp.fd, buf, clnt);
                 free(buf);

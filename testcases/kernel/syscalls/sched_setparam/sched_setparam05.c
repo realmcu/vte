@@ -15,18 +15,18 @@
  *
  */
 /**********************************************************
- * 
+ *
  *    TEST IDENTIFIER	: sched_setparam05
- * 
+ *
  *    EXECUTED BY	: root/superuser
- * 
+ *
  *    TEST TITLE	: verify that sched_setparam() fails if the user does
  *			  not have proper privilages
- * 
+ *
  *    TEST CASE TOTAL	: 1
- * 
+ *
  *    AUTHOR		: Saji Kumar.V.R <saji.kumar@wipro.com>
- * 
+ *
  *    SIGNALS
  * 	Uses SIGUSR1 to pause before test if option set.
  * 	(See the parse_opts(3) man page).
@@ -34,11 +34,11 @@
  *    DESCRIPTION
  *	Verify that sched_setparam() fails if the user does
  *	not have proper privilages
- * 
+ *
  * 	Setup:
  * 	  Setup signal handling.
  *	  Pause for SIGUSR1 if option specified.
- * 
+ *
  * 	Test:
  *	 Loop if the proper options are given.
  *	 Fork a child
@@ -48,15 +48,15 @@
  *	  Try to Change scheduling priority for parent
  *	  If call failed with errno = EPERM,
  *		Test passed
- *	  else 
+ *	  else
  *		Test failed
  *
  *	 PARENT:
  *		wait for child to finish
- * 
+ *
  * 	Cleanup:
  * 	  Print errno log and/or timing stats if options given
- * 
+ *
  * USAGE:  <for command-line>
  *  sched_setparam05 [-c n] [-e] [-i n] [-I x] [-P x] [-t] [-h] [-f] [-p]
  *			where,  -c n : Run n copies concurrently.
@@ -78,7 +78,6 @@
 #include "test.h"
 #include "usctest.h"
 
-
 static void setup();
 static void cleanup();
 
@@ -87,22 +86,21 @@ int TST_TOTAL = 1;		/* Total number of test cases. */
 extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static struct sched_param param = { 0 };
-static int exp_enos[] = {EPERM, 0};
+static int exp_enos[] = { EPERM, 0 };
 static char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 
-	int lc;		/* loop counter */
-	char *msg;	/* message returned from parse_opts */
+	int lc;			/* loop counter */
+	char *msg;		/* message returned from parse_opts */
 	int status;
 	pid_t child_pid;
-    
+
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL))
-	     != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
+	    != (char *)NULL) {
 		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -115,25 +113,25 @@ main(int ac, char **av)
 		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		switch(child_pid = FORK_OR_VFORK()) {
- 
+		switch (child_pid = FORK_OR_VFORK()) {
+
 		case -1:
 			/* fork() failed */
 			tst_resm(TFAIL, "fork() failed");
 			continue;
- 
+
 		case 0:
 			/* Child */
 
-			 /* Switch to nobody user */
-			if((ltpuser = getpwnam(nobody_uid)) == NULL) {
+			/* Switch to nobody user */
+			if ((ltpuser = getpwnam(nobody_uid)) == NULL) {
 				tst_brkm(TBROK, tst_exit, "\"nobody\" user"
-					"not present");
+					 "not present");
 			}
 			if (seteuid(ltpuser->pw_uid) == -1) {
 				tst_resm(TWARN, "seteuid failed to "
-				"to set the effective uid to %d",
-				ltpuser->pw_uid);
+					 "to set the effective uid to %d",
+					 ltpuser->pw_uid);
 				exit(1);
 			}
 
@@ -143,17 +141,17 @@ main(int ac, char **av)
 			TEST(sched_setparam(getppid(), &param));
 
 			if ((TEST_RETURN == -1) && (TEST_ERRNO == EPERM)) {
-				TEST_ERROR_LOG(TEST_ERRNO); 
+				TEST_ERROR_LOG(TEST_ERRNO);
 				exit(0);
 			}
 
-			tst_resm(TWARN, "Test failed, sched_setparam()"
-				" returned : %d, Error number: %d, %s",
-				TEST_RETURN, TEST_ERRNO, strerror(TEST_ERRNO));
-			TEST_ERROR_LOG(TEST_ERRNO); 
+			tst_resm(TWARN|TTERRNO, "Test failed, sched_setparam()"
+				 " returned : %ld",
+				 TEST_RETURN);
+			TEST_ERROR_LOG(TEST_ERRNO);
 			exit(1);
 
-		default :
+		default:
 			/* Parent */
 			if ((waitpid(child_pid, &status, 0)) < 0) {
 				tst_resm(TFAIL, "wait() failed");
@@ -165,19 +163,17 @@ main(int ac, char **av)
 				tst_resm(TFAIL, "Test Failed");
 			}
 		}
-	}	/* End for TEST_LOOPING */
+	}			/* End for TEST_LOOPING */
 
 	/* cleanup and exit */
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	 /*NOTREACHED*/ return 0;
 
-}	/* End main */
+}				/* End main */
 
 /* setup() - performs all ONE TIME setup for this test */
-void
-setup()
+void setup()
 {
 
 	/* Check whether we are root */
@@ -194,15 +190,13 @@ setup()
 	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}	/* End setup() */
-
+}				/* End setup() */
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
  *		completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 
 	/*
@@ -213,4 +207,4 @@ cleanup()
 
 	/* exit with return code appropriate for results */
 	tst_exit();
-}	/* End cleanup() */
+}				/* End cleanup() */

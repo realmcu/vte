@@ -18,13 +18,13 @@
  *
 
  * This example module shows how a test driver
- * can be driven through various ioctl calls in 
- * a user space program that has attained the 
- * appropriate file descriptor for this device. 
+ * can be driven through various ioctl calls in
+ * a user space program that has attained the
+ * appropriate file descriptor for this device.
  *
  * author: Kai Zhao
  * date:   09/03/2003
- * 
+ *
  * module: tdrm
  */
 
@@ -85,13 +85,13 @@ int tdrm_test_stub_register(struct inode *inode,struct file *filp,
 	minor = DRM(stub_register)(DEVICE_NAME,&DRM(fops),dev);
 	printk("tdrm stub register : minor = %d\n",minor);
 	return 0;
-	
+
 }
 
 int tdrm_test_stub_unregister(struct inode *inode,struct file *filp,
 		unsigned int cmd , unsigned long arg)
 {
-	DRM(stub_unregister)(minor);	
+	DRM(stub_unregister)(minor);
 	return 0;
 }
 

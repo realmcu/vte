@@ -22,7 +22,7 @@
  *    TEST IDENTIFIER	: getrlimit01
  *
  *    TEST TITLE	: test for checking functionality of getrlimit(2)
- *    
+ *  $
  *    EXECUTED BY	: anyone
  *
  *    TEST CASE TOTAL	: 11
@@ -40,11 +40,11 @@
  * Setup:
  *   Setup signal handling.
  *   Pause for SIGUSR1 if option specified.
- * 
+ *
  *  Test:
  *   Loop if the proper options are given.
  *   Execute system call
- *   Check return code, if system call failed 
+ *   Check return code, if system call failed
  *		Issue sys call failed to get resource limits.
  *      Otherwise,
  *		Issue sys call is successful and got resource limits.
@@ -83,30 +83,30 @@ static struct test_t {
 	int res;
 	char *res_str;
 } testcases[] = {
-	{ RLIMIT_CPU, 		"RLIMIT_CPU" },
-	{ RLIMIT_FSIZE, 	"RLIMIT_FSIZE" },
-	{ RLIMIT_DATA, 		"RLIMIT_DATA" },
-	{ RLIMIT_STACK, 	"RLIMIT_STACK" },
-	{ RLIMIT_CORE, 		"RLIMIT_CORE" },
-	{ RLIMIT_RSS, 		"RLIMIT_RSS" },
-	{ RLIMIT_NPROC,		"RLIMIT_NPROC" },
-	{ RLIMIT_NOFILE, 	"RLIMIT_NOFILE" },
-	{ RLIMIT_MEMLOCK, 	"RLIMIT_MEMLOCK" },
-	{ RLIMIT_AS, 		"RLIMIT_AS" },
-	{ RLIMIT_LOCKS, 	"RLIMIT_LOCKS" }
+	{
+	RLIMIT_CPU, "RLIMIT_CPU"}, {
+	RLIMIT_FSIZE, "RLIMIT_FSIZE"}, {
+	RLIMIT_DATA, "RLIMIT_DATA"}, {
+	RLIMIT_STACK, "RLIMIT_STACK"}, {
+	RLIMIT_CORE, "RLIMIT_CORE"}, {
+	RLIMIT_RSS, "RLIMIT_RSS"}, {
+	RLIMIT_NPROC, "RLIMIT_NPROC"}, {
+	RLIMIT_NOFILE, "RLIMIT_NOFILE"}, {
+	RLIMIT_MEMLOCK, "RLIMIT_MEMLOCK"}, {
+	RLIMIT_AS, "RLIMIT_AS"}, {
+	RLIMIT_LOCKS, "RLIMIT_LOCKS"}
 };
 
-int TST_TOTAL = sizeof(testcases)/sizeof(*testcases);
+int TST_TOTAL = sizeof(testcases) / sizeof(*testcases);
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 	int i;
-	int lc;				/* loop counter */
-	char *msg;			/* parse_opts() return message */
+	int lc;			/* loop counter */
+	char *msg;		/* parse_opts() return message */
 
 	/* Parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -125,16 +125,15 @@ main(int ac, char **av)
 			 * with codes 0 to 10
 			 */
 			TEST(getrlimit(testcases[i].res, &rlim));
- 
+
 			if (TEST_RETURN == -1) {
 				tst_resm(TFAIL, "getrlimit() failed to get %s "
-					"values. errno is %d", 
-					testcases[i].res_str, TEST_ERRNO);
-			}
-			else {
+					 "values. errno is %d",
+					 testcases[i].res_str, TEST_ERRNO);
+			} else {
 				tst_resm(TPASS, "getrlimit() returned %d; "
-					"got %s values ", 
-					TEST_ERRNO, testcases[i].res_str);
+					 "got %s values ",
+					 TEST_ERRNO, testcases[i].res_str);
 			}
 		}
 	}
@@ -147,8 +146,7 @@ main(int ac, char **av)
 /*
  * setup() - performs all one time setup for this test.
  */
-void
-setup()
+void setup()
 {
 	/* capture the signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -161,8 +159,7 @@ setup()
  * cleanup()  - performs all one time cleanup for this test
  *		completion or premature exit.
  */
-void
-cleanup()
+void cleanup()
 {
 	/*
 	 * print timing stats if that option was specified.

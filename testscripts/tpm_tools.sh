@@ -132,7 +132,7 @@ then
 			RC=1
 		else
 			P11DIR=`which pkcsslotd | sed s-/sbin/pkcsslotd--`
-			if [ "$P11DIR" == "/usr" ]
+			if [ "$P11DIR" = "/usr" ]
 			then
 				P11DIR=""
 			fi
@@ -167,7 +167,7 @@ export P11_USER_PWD="P11 USER PWD"
 export NEW_P11_USER_PWD="NEW P11 USER PWD"
 
 echo "Running the tpm-tools testsuite..."
-$LTPROOT/pan/pan -d 5 -S -a $LTPROOT/results/tpm_tools -n ltp-tpm-tools -l $LTPROOT/results/tpm_tools.logfile -o $LTPROOT/results/tpm_tools.outfile -p -f $LTPROOT/runtest/tpm_tools
+$LTPROOT/bin/ltp-pan -d 5 -S -a $LTPROOT/results/tpm_tools -n ltp-tpm-tools -l $LTPROOT/results/tpm_tools.logfile -o $LTPROOT/results/tpm_tools.outfile -p -f $LTPROOT/runtest/tpm_tools
 
 echo "Done."
 exit 0

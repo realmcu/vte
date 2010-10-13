@@ -81,10 +81,10 @@
  * MAX_CHILDREN:   maximum number of child processes to spawn
  *
  * DEFAULT_NUM_SEMAPHORES: default number of semaphores to create unless
- * specified with (-s nsems) command line option 
+ * specified with (-s nsems) command line option
  *
  * DEFAULT_NUM_CHILDREN: default number of child processes to spawn unless
- * specified with (-p nprocs) command line option 
+ * specified with (-p nprocs) command line option
  *
  * USAGE: usage statement macro
  *
@@ -125,7 +125,7 @@ static void catch (int);
 
 /*
  * Structures and Global variables:
- * 
+ *
  * nsems: number of semaphores to create (per process)
  * nprocs: number of child processes to spawn
  * childpid: array containing process id's of the child processes
@@ -168,7 +168,7 @@ int main (int argc, char **argv)
 	fflush (stdout);
 	setup_signal_handler ();
 	errpid = parent_pid = getpid ();
-	
+
 	if (nsems < 8) nsems = 8;
 
 	/*
@@ -252,7 +252,7 @@ static void test_commands (pid_t proc_pid)
 		printf ("\n\tCreating %d semaphores ...\n", nsems);
 	if ((semid = semget (IPC_PRIVATE, nsems, IPC_CREAT|mode)) < 0)
 		sys_error ("semget (IPC_PRIVATE) failed", __LINE__);
-		    
+		   
 	/*
 	 * Set the semaphore uid, gid and mode
 	 */
@@ -278,10 +278,10 @@ static void test_commands (pid_t proc_pid)
 		error ("semctl: uid was not set", __LINE__);
 	if (arg.buf->sem_perm.gid != gid)
 		error ("semctl: gid was not set", __LINE__);
-	if ((arg.buf->sem_perm.mode & 0777) != mode) 
+	if ((arg.buf->sem_perm.mode & 0777) != mode)
 		error ("semctl: mode was not set", __LINE__);
-	if (arg.buf->sem_nsems != nsems) 
-		error ("semctl: nsems (number of semaphores) was not set", 
+	if (arg.buf->sem_nsems != nsems)
+		error ("semctl: nsems (number of semaphores) was not set",
 			__LINE__);
 	SAFE_FREE(arg.buf);
 
@@ -551,7 +551,7 @@ static void test_commands (pid_t proc_pid)
 
 		if (semop (semid, semoparray, 1) >= 0)
 			error ("semop did not return EINTR", __LINE__);
-		else 
+		else
 			if (errno != EINTR) {
 				printf ("semop returned: %d\n", errno);
 				sys_error ("semop failed", __LINE__);
@@ -606,7 +606,7 @@ static void test_commands (pid_t proc_pid)
 		exit (0);
 	} else if (pid < (pid_t)0) {
 		sys_error ("fork failed", __LINE__);
-	}	
+	}
 
 	/*
 	 * Wait for child process's semaphore request before proceeding...
@@ -654,7 +654,7 @@ static void test_commands (pid_t proc_pid)
 
 		if (semop (semid, semoparray, 1) >= 0)
 			error ("semop did not return ERMID", __LINE__);
-		else 
+		else
 			if (errno != EIDRM) {
 				printf ("semop returned: %d\n", errno);
 				sys_error ("semop failed", __LINE__);
@@ -662,7 +662,7 @@ static void test_commands (pid_t proc_pid)
 		exit (0);
 	} else if (pid < (pid_t)0) {
 		sys_error ("fork failed", __LINE__);
-	}	
+	}
 
 	/*
 	 * Wait for child process's semaphore request before deleting the
@@ -688,7 +688,7 @@ static void test_commands (pid_t proc_pid)
 	 */
 	if ((semid = semget (IPC_PRIVATE, nsems, IPC_CREAT|mode)) < 0)
 		sys_error ("semget (IPC_PRIVATE) failed", __LINE__);
-		    
+		   
 	/*
 	 * Set the semaphore uid, gid and mode
 	 */
@@ -710,10 +710,10 @@ static void test_commands (pid_t proc_pid)
 		error ("semctl: uid was not set", __LINE__);
 	if (arg.buf->sem_perm.gid != gid)
 		error ("semctl: gid was not set", __LINE__);
-	if ((arg.buf->sem_perm.mode & 0777) != mode) 
+	if ((arg.buf->sem_perm.mode & 0777) != mode)
 		error ("semctl: mode was not set", __LINE__);
-	if (arg.buf->sem_nsems != nsems) 
-		error ("semctl: nsems (number of semaphores) was not set", 
+	if (arg.buf->sem_nsems != nsems)
+		error ("semctl: nsems (number of semaphores) was not set",
 			__LINE__);
 	SAFE_FREE(arg.buf);
 
@@ -800,7 +800,7 @@ static void test_commands (pid_t proc_pid)
 
 		if (semop (semid, semoparray, 1) >= 0)
 			error ("semop did not return EINTR", __LINE__);
-		else 
+		else
 			if (errno != EINTR) {
 				printf ("semop returned: %d\n", errno);
 				sys_error ("semop failed", __LINE__);
@@ -870,7 +870,7 @@ static void test_commands (pid_t proc_pid)
 		sys_error ("child process terminated abnormally", __LINE__);
 
 	expected_value = 0;
-	arg.val = 0;	
+	arg.val = 0;
 	if ((val = semctl (semid, 0, GETVAL, arg)) < 0)
 		sys_error ("semctl (GETVAL) failed", __LINE__);
 	if (val != expected_value)
@@ -897,7 +897,7 @@ static void test_commands (pid_t proc_pid)
 
 		if (semop (semid, semoparray, 1) >= 0)
 			error ("semop did not return ERMID", __LINE__);
-		else 
+		else
 			if (errno != EIDRM) {
 				printf ("semop returned: %d\n", errno);
 				sys_error ("semop failed", __LINE__);
@@ -905,7 +905,7 @@ static void test_commands (pid_t proc_pid)
 		exit (0);
 	} else if (pid < 0) {
 		sys_error ("fork failed", __LINE__);
-	}	
+	}
 
 	/*
 	 * Wait for child process's semaphore request before proceeding...

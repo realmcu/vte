@@ -19,36 +19,22 @@
  *  4. Launch a thread which call sched_yield() and check that the counter has
  *     changed since the call.
  */
-#define LINUX
 
-#ifdef LINUX 
+#ifdef __linux__ 
 #define _GNU_SOURCE
 #endif
 
-#include <sched.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <pthread.h>
-#include <errno.h>
 #include <sys/wait.h>
+#include <errno.h>
+#include <pthread.h>
+#include <sched.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include "posixtest.h"
 
-#ifdef BSD
-# include <sys/types.h>
-# include <sys/param.h>
-# include <sys/sysctl.h>
-#endif
-
-#ifdef HPUX
-# include <sys/param.h>
-# include <sys/pstat.h>
-#endif
-
-
 #define LOOP 1000     /* Shall be >= 1 */
-
 
 volatile int nb_call = 0;
 
@@ -59,26 +45,12 @@ int get_ncpu() {
 	/* This syscall is not POSIX but it should work on many system */
 #ifdef _SC_NPROCESSORS_ONLN
 	ncpu = sysconf(_SC_NPROCESSORS_ONLN);
-#else
-# ifdef BSD
-	int mib[2];
-	size_t len = sizeof(ncpu);
-	mib[0] = CTL_HW;
-	mib[1] = HW_NCPU;
-	sysctl(mib, 2, &ncpu, &len, NULL, 0);
-# else
-#  ifdef HPUX
-	struct pst_dynamic psd; 
-	pstat_getdynamic(&psd, sizeof(psd), 1, 0);
-	ncpu = (int)psd.psd_proc_cnt; 
-#  endif /* HPUX */
-# endif /* BSD */
-#endif /* _SC_NPROCESSORS_ONLN */  
+#endif
 
 	return ncpu;
 }
 
-#ifdef LINUX
+#ifdef __linux__
 int set_process_affinity(int cpu)
 {
 	int retval = -1;
@@ -131,7 +103,7 @@ int set_thread_affinity(int cpu)
 void * runner(void * arg) {
 	int i=0, nc;
 	long result = 0;
-#ifdef LINUX        
+#ifdef __linux__       
         set_thread_affinity(*(int *)arg);
         fprintf(stderr, "%ld bind to cpu: %d\n", pthread_self(), *(int*)arg);
 #endif
@@ -154,7 +126,7 @@ void * runner(void * arg) {
 }
 
 void * busy_thread(void *arg){
-#ifdef LINUX        
+#ifdef __linux__
         set_thread_affinity(*(int *)arg);
         fprintf(stderr, "%ld bind to cpu: %d\n", pthread_self(), *(int*)arg);
 #endif
@@ -167,10 +139,10 @@ void * busy_thread(void *arg){
 }
 
 
-void buzy_process(int cpu){
+void busy_process(int cpu){
         struct sched_param param;
 
-#ifdef LINUX        
+#ifdef __linux__        
         /* Bind to a processor */
         set_process_affinity(cpu);
         fprintf(stderr, "%d bind to cpu: %d\n", getpid(), cpu);
@@ -226,7 +198,7 @@ int main() {
 			return PTS_UNRESOLVED;
 		} else if (child_pid[i] == 0){
 			
-			buzy_process(i);
+			busy_process(i);
 
 			printf("This code should not be executed.\n");
 			return PTS_UNRESOLVED;

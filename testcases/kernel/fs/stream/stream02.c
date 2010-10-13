@@ -23,7 +23,7 @@
 >KEYS:  < fseek() mknod() fopen()
 >WHAT:  < 1)
 >HOW:   < 1)
->BUGS:  < 
+>BUGS:  <
 ======================================================================*/
 
 #include <stdio.h>
@@ -98,7 +98,7 @@ int main(int ac, char *av[])
 		local_flag = PASSED;
 
 	/*--------------------------------------------------------------------*/
-	block1 : 
+	block1 :
 		if(( fd = open("/dev/tty",O_WRONLY)) >= 0 )
 		{
 			close(fd);
@@ -114,10 +114,10 @@ int main(int ac, char *av[])
 		} else {
 		         tst_resm(TFAIL, "Test failed in block1.");
 	        }
-			
+		
 	/*--------------------------------------------------------------------*/
 	} /* end for */
 	tst_rmdir();
 	tst_exit();
-        return(0);
+        return 0;
 }
