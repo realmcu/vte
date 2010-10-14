@@ -214,7 +214,7 @@ package:
 	@$(RPMBUILD) -ba ltp-devel.spec
 
 #vte related
-vte: libltp.a tools
+vte:  tools
 	@echo "***********************************************"
 	@echo "** MAKE ALL - VTE tests suite                **"
 	@echo "***********************************************"
@@ -229,8 +229,8 @@ vte: libltp.a tools
 	@$(MAKE) -C testcases/vte_tests_suite install
 	@$(MAKE) -C testcases/module_test install
 	@$(MAKE) -C pan
-	@$(MAKE) -C tools
-	@$(MAKE) -C tools install
+	#@$(MAKE) -C tools
+	#@$(MAKE) -C tools install
 	@echo
 	@echo "***********************************************"
 	@echo "** VTE tests suite is available              **"
