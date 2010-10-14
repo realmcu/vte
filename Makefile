@@ -214,7 +214,7 @@ package:
 	@$(RPMBUILD) -ba ltp-devel.spec
 
 #vte related
-vte:  tools
+vte:  tools lib-all
 	@echo "***********************************************"
 	@echo "** MAKE ALL - VTE tests suite                **"
 	@echo "***********************************************"
