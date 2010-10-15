@@ -1,2 +1,4 @@
 #!/bin/sh
+if [ ! -z Makefile ]; then
 CFLAGS="$CFLAGS -fPIC " ./configure --host=arm-none-linux-gnueabi --prefix=$(pwd)/../../
+fi
