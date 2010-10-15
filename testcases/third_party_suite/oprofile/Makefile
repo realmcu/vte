@@ -19,6 +19,7 @@ clean:
 	-$(MAKE) -C $(SUBDIRS) distclean
 	-$(MAKE) -C $(LIBRARIES_DIR)/popt-1.7 distclean
 	-$(MAKE) -C $(LIBRARIES_DIR)/binutils-2.19.51.0.12/bfd distclean
+	$(MAKE) -C $(LIBRARIES_DIR)/binutils-2.19.51.0.12/libiberty distclean
 	
 
 config: libs
@@ -31,3 +32,6 @@ libs:
 	cd $(LIBRARIES_DIR)/popt-1.7 ; ./myconfig
 	$(MAKE) -C $(LIBRARIES_DIR)/popt-1.7
 	$(MAKE) -C $(LIBRARIES_DIR)/popt-1.7 install
+	cd $(LIBRARIES_DIR)/binutils-2.19.51.0.12/libiberty ; ./myconfig
+	$(MAKE) -C $(LIBRARIES_DIR)/binutils-2.19.51.0.12/libiberty
+	$(MAKE) -C $(LIBRARIES_DIR)/binutils-2.19.51.0.12/libiberty install
