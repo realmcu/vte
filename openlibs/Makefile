@@ -17,6 +17,6 @@ clean:
 config:
 	cd zlib-1.2.3; ./myconfig ; cd ..
 	make -C zlib-1.2.3 CC=$(CROSS_COMPILER)gcc
-	make -C zlib-1.2.3 install
+	-make -C zlib-1.2.3 install
 	@set -e; for i in $(SUBDIRS) ; do cd $$i ; ./myconfig ; cd ..; done
 
