@@ -21,3 +21,4 @@ CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.4.4-glibc-2.11.1-multilib-1.0/arm-
 #export CFLAGS="-DPROJECT_RINGO=1 -O2 -fsigned-char -mfloat-abi=softfp -mfpu=vfp"
 export CFLAGS="-Wall -DPROJECT_MX25=1 -O2 -march=armv6"
 export CROSS_COMPILER
+export CC=${CROSS_COMPILER}gcc
