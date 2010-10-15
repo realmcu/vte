@@ -19,12 +19,7 @@
 LTP_DIR=../../../..
 BIN_DIR=../../
 
-ifeq ($(ARCH_PLATFORM), $(filter imx25stack imx233, $(ARCH_PLATFORM)))
-	CFLAGS += -O2 -fsigned-char -msoft-float
-endif
-ifeq ($(ARCH_PLATFORM), $(filter imx31stack imx35stack imx37stack imx51stack imx51, $(ARCH_PLATFORM)))
-	CFLAGS += -O2 -fsigned-char -mfloat-abi=softfp -mfpu=vfp
-endif
+CC=$(CROSS_COMPILER)gcc
 
 LOADLIBES+= -L$(LTP_DIR)/lib -lltp
 
