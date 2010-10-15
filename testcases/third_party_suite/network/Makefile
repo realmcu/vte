@@ -56,14 +56,14 @@ clean_netperf-2.4.4:
 	-$(MAKE) -C netperf-2.4.4 clean
 	-ac_cv_func_setpgrp_void=yes $(MAKE) -C netperf-2.4.4 distclean
 
-tcpdump-3.9.8:
-	$(MAKE) -C $(pwd)/../../../openlibs
+tcpdump-3.9.8: libs
 	cd $@; ./myconfig; cd ..
 	$(MAKE) -C $@
 
 clean_tcpdump-3.9.8:
 	-$(MAKE) -C  tcpdump-3.9.8 clean
 	-$(MAKE) -C  tcpdump-3.9.8 distclean
+	$(MAKE) -C $$(pwd)/../../../openlibs clean
 
 mii-tool-1.9.1.1:
 	$(MAKE) -C $@ CC=$(CROSS_COMPILER)gcc
@@ -71,4 +71,7 @@ mii-tool-1.9.1.1:
 clean_mii-tool-1.9.1.1:
 	-$(MAKE) -C mii-tool-1.9.1.1 clean
 	-$(MAKE) -C mii-tool-1.9.1.1 distclean
+
+libs:
+	$(MAKE) -C $$(pwd)/../../../openlibs
 

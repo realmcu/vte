@@ -56,7 +56,7 @@ SUBDIRS-$(CONFIG_TP_WHETS)       += whets
 SUBDIRS-$(CONFIG_TP_LMBENCH)    += lmbench
 
 all:
-	@set -e; for i in $(SUBDIRS-y); do \
+	for i in $(SUBDIRS-y); do \
 	$(MAKE) -C $$i ; \
 	done
 
@@ -64,4 +64,4 @@ install:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install ; done
 
 clean:
-	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i clean ; done
+	-@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i clean ; done
