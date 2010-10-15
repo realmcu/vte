@@ -157,6 +157,9 @@ endif
 
 clean:: $(CLEAN_TARGETS)
 	$(RM) -f Version
+	-$(MAKE) -C openlibs clean
+	@$(MAKE) -C testcases/third_party_suite clean
+
 
 $(foreach tgt,$(MAKE_TARGETS) include-all lib-all $(filter-out clean_install_dir,$(CLEAN_TARGETS)) $(INSTALL_TARGETS) include-install lib-install,$(eval $(call target_to_dir_dep_mapping,$(tgt))))
 
