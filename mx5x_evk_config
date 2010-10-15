@@ -23,5 +23,5 @@ export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM
 CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.4.4-glibc-2.11.1-multilib-1.0/arm-fsl-linux-gnueabi/bin/arm-none-linux-gnueabi-
 export CROSS_COMPILER
 #export CFLAGS="-O2 -fsigned-char -mfpu=vfp -mfloat-abi=softfp"
-export CFLAGS="-Wall -O2 -fsigned-char -march=armv7-a -mfpu=neon -mfloat-abi=softfp"
+export CFLAGS="-Wall -O2 -fsigned-char -march=armv7-a -mfpu=neon -mfloat-abi=softfp "
 export CC=$CROSS_COMPILERgcc
