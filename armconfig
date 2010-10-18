@@ -1,6 +1,7 @@
 #auto configure the arm target
 
-aclocal -I m4
-autoconf
-automake -a
+#aclocal -I m4
+#autoconf
+#automake -a
+make autotools
 ./configure --host=arm-none-linux-gnueabi --prefix=$(pwd)/ CFLAGS=-DFSL_ARM=1
