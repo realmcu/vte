@@ -1248,6 +1248,7 @@ write_test_end(struct tag_pgrp *running, const char *init_status,
 		int term_id, struct tms *tms1, struct tms *tms2)
 {
     if (!strcmp(reporttype, "rts")) {
+		system("/bin/dmesg -c");
 	printf("%s\ninitiation_status=\"%s\"\nduration=%ld termination_type=%s "
 		"termination_id=%d corefile=%s\ncutime=%d cstime=%d\n%s\n",
 		  	"<<<execution_status>>>", init_status,
