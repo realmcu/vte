@@ -23,7 +23,7 @@ TEST_PATH=$(dirname $0)
 
 dos2unix ${TEST_PATH}/runtest/$CMDFILE
  
-${TEST_PATH}/runltp -K ${ARCH_PLATFORM} -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${CMDFILE}_log_$(date +"%y%m%d")
+${TEST_PATH}/runltp -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${CMDFILE}_log_$(date +"%y%m%d")
 #${TEST_PATH}/runalltests.sh -v -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt
 
 echo "FREESCALE LBG TEST END"
