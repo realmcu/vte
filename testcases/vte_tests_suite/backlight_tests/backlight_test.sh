@@ -85,7 +85,7 @@ env_test()
     fi
 
     if [ $platfm -eq 53 ]; then  #WVGA
-        BL_DIR=/sys/class/backlight/pwm-backlight
+        BL_DIR=/sys/class/backlight/pwm-backlight.0
     fi
 
     if [ ! -d $BL_DIR ]
