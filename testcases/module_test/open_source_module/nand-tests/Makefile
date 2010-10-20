@@ -1,5 +1,5 @@
 ifndef KERNEL_PATH
-	KERNEL_PATH=/home/vobs/linux-2.6-imx
+	KERNEL_PATH=$(KLINUX_BLTDIR)
 endif
 
 obj-m += mtd_nandecctest.o  
