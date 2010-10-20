@@ -1,3 +1,6 @@
 #!/bin/bash
 
-sed -i 
+if [ -e $1 ]; then
+cp $1 vte_$1
+sed -i '/TGE-LV/s/$/ ;read RT -p \"test OK\?(y\/n):\" ; [ "$RT" = "y" ]/g' vte_$1
+fi
