@@ -1,5 +1,5 @@
 ifndef KERNEL_PATH
-	KERNEL_PATH=$(KLINUX_BLTDIR)
+	KERNEL_PATH=$(KLINUX_SRCDIR)
 endif
 
 obj-m += mtd_nandecctest.o  

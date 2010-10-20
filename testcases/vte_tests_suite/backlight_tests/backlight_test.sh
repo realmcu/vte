@@ -80,12 +80,12 @@ env_test()
 
     platfm.sh || platfm=$?
     if [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
-        BL_DIR=/sys/class/backlight/mxc_mc13892_bl.0
+        BL_DIR=/sys/class/backlight/pwm-backlight.0
         RGB_DIR=/sys/class/leds/pmic_leds
     fi
 
     if [ $platfm -eq 53 ]; then  #WVGA
-        BL_DIR=/sys/class/backlight/pwm-backlight
+        BL_DIR=/sys/class/backlight/pwm-backlight.0
     fi
 
     if [ ! -d $BL_DIR ]
