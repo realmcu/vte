@@ -157,10 +157,10 @@ TGE-LV-SECURITY-003	modprobe tcrypt mode=10 ; dmesg | grep "ecb" ; RT=$? ; echo 
 TGE-LV-SECURITY-001_CG	cat /proc/cpu/clocks | grep dcp | awk {'print $4'} | grep 0
 TGE-LV-SYS_DMA-1000	mkfs.ext3 /dev/mmcblk0p1; mkdir -p /mnt/mmc ; mount /dev/mmcblk0p1 /mnt/mmc; cd /; cp -a * /mnt/mmc ; umount /mnt/mmc
 TGE-LV-UART-0310	uart5.sh /dev/ttymxc0
-TGE-LV-UART-0330	uart_test.sh /dev/ttymxc0 1
+TGE-LV-UART-0330	uart_test.sh /dev/ttymxc1 1
 TGE-LV-UART-0016	sh -c "stty -ixon && stty ixon && stty -a | grep ixon && stty -a | grep crtscts"
 TGE-LV-UART-0017	ints1=$(cat /proc/interrupts | grep uart | awk {'print $2'}) ; start=0; for i in $ints1; do start=$(expr $start + $i);done;cat /etc/passwd > /dev/ttymxc0 ; ints2=$(cat /proc/interrupts | grep uart | awk {'print $2'});end=0;for i in $ints2; do end=$(expr $end + $i);done; [ $end -gt $start ] 
-TGE-LV-UART-0018	 stty 115200 cs8 -F /dev/ttymxc0 && stty -a | grep cs8 &&  stty -a | grep cstopb && stty -a | grep crtscts && stty -a | grep ignbrk 
+TGE-LV-UART-0018	 stty 115200 cs8 -F /dev/ttymxc1 && stty -a -F /dev/ttymxc1 | grep cs8 &&  stty -a -F /dev/ttymxc1 | grep cstopb && stty -a -F /dev/ttymxc1 | grep crtscts && stty -a -F /dev/ttymxc1 | grep ignbrk 
 TGE-LV-USB-HOST-1501	 modprobe ehci_hcd; sleep 10 && mount -t vfat /dev/sda1 /mnt/floppy && rtc_testapp_6 -T 5 && touch /mnt/floppy/test && echo "test" > /mnt/floppy/test && cat /mnt/floppy/test | grep "test" && umount /mnt/floppy 
 TGE-LV-USB-HOST-DVFS-0001	 modprobe ehci_hcd ; mount /dev/sda1 /mnt/msc ; echo 1 > /sys/devices/platform/mxc_dvfs_core.0/enable && rtc_testapp_6 -T 10 && echo "hello world" > /mnt/msc/test.txt && cat /mnt/msc/test.txt && umount /mnt/msc && cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state 
 TSG-LV-USB-HOST-0030	 sh -c "umount /dev/sda1 ;fdisk -l /dev/sda && mkfs.vfat /dev/sda1" 
