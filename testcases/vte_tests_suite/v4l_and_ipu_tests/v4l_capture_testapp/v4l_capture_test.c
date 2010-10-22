@@ -1405,6 +1405,7 @@ void display_to_fb (unsigned char * aStart, int aLength)
         int i = 0, j = 0;
         while(i < gFormat.fmt.pix.sizeimage)
         {
+							if(j < gVideoBufferSize)
                 *pDst = *pSrc;
                 i++; pSrc++;
                 j++; pDst++;
