@@ -198,7 +198,7 @@ int VT_v4l_output_setup(void)
 
         if (p.test_type == 1)
         {
-                output_fd = open(p.output_file, O_WRONLY | O_CREAT);
+                output_fd = open(p.output_file, O_WRONLY | O_CREAT,S_IRWXU |  S_IRWXG | S_IRWXO);
 
                 if (output_fd == -1)
                 {

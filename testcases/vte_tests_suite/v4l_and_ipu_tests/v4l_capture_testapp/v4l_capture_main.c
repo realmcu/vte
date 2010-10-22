@@ -483,7 +483,7 @@ void cleanup(void)
                 {
                         tst_resm(TWARN, "VT_cleanup() Failed : error code = %d", VT_rv);
                 }
-                tst_exit(VT_rv);
+                tst_exit();
         }
 }       
 

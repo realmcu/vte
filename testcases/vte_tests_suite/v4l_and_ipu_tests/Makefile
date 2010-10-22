@@ -24,16 +24,17 @@
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################
+#include ../vte_configs/${ARCH_PLATFORM}_deconfigs
 
-SUBDIRS-$(CONFIG_VTE_V4l_IPU_PF)   += ipu_pf_testapp
-SUBDIRS-$(CONFIG_VTE_V4l_CAPTURE)  += v4l_capture_testapp
-SUBDIRS-$(CONFIG_VTE_V4l_OUTPUT)   += v4l_output_testapp
-SUBDIRS-$(CONFIG_VTE_V4l_BASIC)    += v4l2_basic_testapp
-SUBDIRS-$(CONFIG_VTE_V4l_IPU_FUNC) += ipu_function
+SUBDIRS-$(CONFIG_VTE_V4L_IPU_PF)   += ipu_pf_testapp
+SUBDIRS-$(CONFIG_VTE_V4L_CAPTURE)  += v4l_capture_testapp
+SUBDIRS-$(CONFIG_VTE_V4L_OUTPUT)   += v4l_output_testapp
+SUBDIRS-$(CONFIG_VTE_V4L_BASIC)    += v4l2_basic_test
+SUBDIRS-$(CONFIG_VTE_V4L_IPU_FUNC) += ipu_function
 
 all: 
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
 install:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install ; done
 clean:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i clean ; done
