@@ -25,10 +25,10 @@ install:
 	echo "Caution !!! need check with unit test library version"
 
 $(LIBNAME).so: $(OBJS)
-	-$(CC) -shared -nostartfiles -Wl,-soname,$@ -o $@ $^ -lpthread
+	-$(CC) -shared  -nostartfiles -fPIC -Wl,-soname,$@ -o $@ $^ -lpthread
 
 %.o: %.c
-	-$(CC)  $(INCLUDE) -Wall -O2 -c $^ -o $@
+	-$(CC)  $(INCLUDE) -Wall -O2 -fPIC -c $^ -o $@
 
 .PHONY: clean
 clean:

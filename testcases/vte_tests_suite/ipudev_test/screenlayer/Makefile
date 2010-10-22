@@ -22,10 +22,10 @@ install:
 	echo "Caution !!! need check with unit test library version"
 
 $(LIBNAME).so: $(OBJS)
-	$(CC) -shared -nostartfiles -Wl,-soname,$@ -o $@ $^ -L../ipu -lipu
+	$(CC) -shared -fPIC -nostartfiles -Wl,-soname,$@ -o $@ $^ -L../ipu -lipu
 
 %.o: %.c
-	$(CC) $(INC) -Wall -O2 -c $^ -o $@
+	$(CC) $(INC) -Wall -O2 -fPIC -c $^ -o $@
 
 .PHONY: clean
 clean:
