@@ -1,0 +1,8 @@
+Package                  License
+-----------------------  -------
+crypto_test_1010   				GPL
+nand_tests_1010           GPL
+ramdisk_1010              GPL
+scull_1010                O'Reilly & Associates(distributable)
+usbtest_1010              GPL
+VTE_1010                  GPL
