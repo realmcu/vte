@@ -206,7 +206,8 @@ SRCLIST="1+stream.263 1+CITY_640x480_30.263 1+CREW_640x480_30.263 \
 1+HARBOUR_640x480_30.263 1+ICE_640x480_30.263 1+SOCCER_640x480_30.263"
 RAWLIST="ICE_640x480_30.yuv SOCCER_640x480_30.yuv HARBOUR_640x480_30.yuv \
 CREW_640x480_30.yuv CITY_640x480_30.yuv"
-TSTCMD="/mnt/nfs/util/mxc_vpu_test.out.h263_jtk"
+TSTCMD="/unit_tests/mxc_vpu_test.out"
+#TSTCMD="/mnt/nfs/util/mxc_vpu_test.out.h263_jtk"
 VPATH="${STREAM_PATH}/video/"
 SPATH="${STREAM_PATH}/video/vga4v2ip"
 YY=$(date +"%Y")
