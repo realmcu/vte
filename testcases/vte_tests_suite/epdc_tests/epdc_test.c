@@ -1260,7 +1260,7 @@ int draw_pattern_pic(int fd ,unsigned char * pfb, int r, int g, int b)
     CALL_IOCTL(ioctl(fd, FBIOGET_FSCREENINFO, &fx_fb_info));
     /* Fill in the px struct */
     px.bpp = mode_info.bits_per_pixel / 8;
-    px.xres = mode_info.xres;
+    px.xres = mode_info.xres %32 == 0 ? mode_info.xres: mode_info.xres_virtual;
     px.yres = mode_info.yres;
     px.r_field.offset = mode_info.red.offset;
     px.r_field.length = mode_info.red.length;
@@ -1338,7 +1338,7 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
     CALL_IOCTL(ioctl(fd, FBIOGET_FSCREENINFO, &fx_fb_info));
     /* Fill in the px struct */
     px.bpp = mode_info.bits_per_pixel / 8;
-    px.xres = mode_info.xres;
+    px.xres = mode_info.xres % 32 == 0 ? mode_info.xres : mode_info.xres_virtual;
     px.yres = mode_info.yres;
     px.r_field.offset = mode_info.red.offset;
     px.r_field.length = mode_info.red.length;
