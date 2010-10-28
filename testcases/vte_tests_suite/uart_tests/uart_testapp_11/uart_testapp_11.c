@@ -200,7 +200,7 @@ int main(int argc, char **argv)
 			}
 #endif
 			if(sec > 0)
-			printf("\n\raverage speed %d at %o baud\n",SEND_SIZE/(sec+1),speed);
+			printf("\n\raverage speed %d Bytes at %o baud\n",SEND_SIZE/(sec+1),speed);
 			exit(0);
    }else{
 			static int iores = 0;
