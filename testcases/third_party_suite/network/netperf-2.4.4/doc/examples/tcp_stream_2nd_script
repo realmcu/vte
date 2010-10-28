@@ -16,7 +16,7 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
-if [ ! -z $LOCALIP ]:;then
+if [ ! -z "$LOCALIP" ]; then
 PLOCAL="-L $LOCALIP"
 fi
 
