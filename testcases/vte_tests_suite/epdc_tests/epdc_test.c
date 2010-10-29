@@ -101,6 +101,7 @@ void print_fbinfo(void);
 unsigned char *draw_px(unsigned char *where, struct pixel *p);
 int draw_pattern(int fd, unsigned char * pfb, int r, int g, int b );
 int draw_pattern_diasy(unsigned char * pfb, int gwidth, int gheight);
+int draw_pattern_pic(int fd ,unsigned char * pfb, int r, int g, int b);
 BOOL pan_test();
 BOOL draw_test();
 BOOL full_update();
@@ -152,6 +153,8 @@ BOOL draw_test()
 		return FALSE;
 	}
 	printf("updating the screen now\n");
+	if(m_opt.au != -1)
+		return TRUE; /*for auto update, not needs to send update request*/
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
 	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
 	{
@@ -178,7 +181,7 @@ BOOL draw_test()
  */
 BOOL pan_test()
 {
-   int y, old_yvres;
+   int y = 0, old_yvres;
    struct fb_var_screeninfo mode_info;
 /*x pan is not supported*/
 
@@ -205,12 +208,12 @@ BOOL pan_test()
    return FALSE;
  }
  sleep(5);
-   for (y = 0; y <= mode_info.yres; y += mode_info.yres / 8)
+   for (y = 0; y <= mode_info.yres; y += mode_info.yres/8)
    {
         mode_info.yoffset = y;
-		printf("\r offset at %d", y);
+				printf("\r offset at %d\n", y);
         CALL_IOCTL(ioctl(fb_fd, FBIOPAN_DISPLAY, &mode_info));
-		sleep(1);
+				sleep(1);
   }
  /*reset pan postion*/
  mode_info.yoffset = 0;
@@ -266,6 +269,8 @@ static BOOL update_once(void * p_update)
   while(count--)
   {
 	/*black and white alternative*/
+	if(m_opt.au != -1)
+		continue; /*for auto update, not needs to send update request*/
   CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
   while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
   {
@@ -336,6 +341,8 @@ static BOOL single_update(void * p_update)
   {
 		/*black and white alternative*/
 #if 1
+		if(m_opt.au != -1)
+			continue; /*for auto update, not needs to send update request*/
 		CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
 		while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
 		{
@@ -360,6 +367,8 @@ static BOOL single_update(void * p_update)
   {
 		/*black and white alternative*/
 	#if 1
+		if(m_opt.au != -1)
+			continue; /*for auto update, not needs to send update request*/
 		CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
 		while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
 		{
@@ -523,7 +532,7 @@ BOOL test_max_update()
 			im_update[cn].temp = 24;
 			pthread_create(&(updates_id[id++]), NULL,
 				(void *)&single_update, (void *)&(im_update[cn]));
-			printf("carete pid %d\n", updates_id[i]);
+			printf("carete pid %d\n", (int)updates_id[i]);
 			cn++;
 			}
 		for (i = 0; i < (MAX_CNT_X * MAX_CNT_Y); i++)
@@ -532,7 +541,7 @@ BOOL test_max_update()
 			if (updates_id[i] != 0)
 				pthread_join(updates_id[i], (void **)&(pret));
 			ret = ((BOOL)pret)?0:ret + 1;
-			printf("%d return with %s\n", updates_id[i], ret == 0 ? "OK":"FAIL");
+			printf("%d return with %s\n", (int)updates_id[i], ret == 0 ? "OK":"FAIL");
 		}
 		state = 0;
 		//pthread_join(sigtid,NULL);
@@ -566,7 +575,6 @@ BOOL test_collision_update()
  BOOL ret = FALSE;
 int fd_pxp;
 int  wait_time = 0;
-int i= 0 ,j = 0;
 int count = 20;
 int update_marker = 0x113;
 struct pxp_mem_desc mem;
@@ -642,6 +650,8 @@ struct mxcfb_update_data im_update = {
 		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
 		else
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+		if(m_opt.au != -1)
+			continue; /*for auto update, not needs to send update request*/
 		CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
 		while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
     {
@@ -674,6 +684,8 @@ struct mxcfb_update_data im_update = {
 		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
 	else
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+	if(m_opt.au != -1)
+		continue; /*for auto update, not needs to send update request*/
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
 	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
 	{
@@ -735,7 +747,6 @@ BOOL test_alt_update()
 BOOL ret = FALSE;
 int  wait_time = 0;
 int fd_pxp;
-int i= 0 ,j = 0;
 int count = 20;
 int update_marker = 0x112;
 struct pxp_mem_desc mem;
@@ -819,6 +830,8 @@ if(mem.virt_uaddr == 0)
 		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
 	else
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+	if(m_opt.au != -1)
+		continue; /*for auto update, not needs to send update request*/
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
 	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
     {
@@ -842,6 +855,8 @@ if(mem.virt_uaddr == 0)
 		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
 	else
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+	if(m_opt.au != -1)
+		continue; /*for auto update, not needs to send update request*/
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
 	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
 	{
@@ -903,6 +918,8 @@ BOOL full_update()
   im_update.update_region.width = mode_info.xres;
   im_update.update_region.height = mode_info.yres;
   draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+	if(m_opt.au != -1)
+		return TRUE; /*for auto update, not needs to send update request*/
   if(m_opt.su == 1)
   {
    memcpy(&im_update,&m_opt.update, sizeof(struct mxcfb_update_data));
@@ -910,6 +927,8 @@ BOOL full_update()
    /*do not use alt buffer*/
    im_update.use_alt_buffer = 0;
   /*step 2: update and wait finished*/
+	if(m_opt.au != -1)
+		return TRUE; /*for auto update, not needs to send update request*/
   CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
   while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
   {
@@ -970,6 +989,8 @@ BOOL test_wait_update()
 		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
 	else
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+	if(m_opt.au != -1)
+		continue; /*for auto update, not needs to send update request*/
   CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
   while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
   {
@@ -994,6 +1015,8 @@ BOOL test_wait_update()
 		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
 	else
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+	if(m_opt.au != -1)
+		continue; /*for auto update, not needs to send update request*/
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
 	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
 	{
@@ -1233,7 +1256,6 @@ int draw_pattern_pic(int fd ,unsigned char * pfb, int r, int g, int b)
     int           size;
     int           i,j;
     unsigned char      *fb_wr_ptr = pfb;
-		unsigned char * pdata;
     int                act_mode;
     int                rv = TPASS;
     struct fb_fix_screeninfo fx_fb_info;       /* Framebuffer constant information              */
