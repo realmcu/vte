@@ -191,7 +191,7 @@ int main(int argc, char **argv)
         char *sleep_mode;
         char *alarm_time;
         char rtc_real_device[64];
-	const char * dft_mode = "standby";
+	const char * dft_mode = "mem";
 
         /*Parse options*/
         option_t options[]=
