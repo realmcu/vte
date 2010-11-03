@@ -31,7 +31,7 @@ include $(top_srcdir)/include/mk/env_pre.mk
 #    run).
 # 3. mce-test doesn't fit cleanly in the build, yet.
 # 4. pounder21 is just broken.
-FILTER_OUT_DIRS		:= ballista kdump mce-test open% pounder21
+FILTER_OUT_DIRS		:= ballista kdump mce-test open% pounder21 module_test third_party_suite vte_tests_suite
 
 # XXX (garrcoop): Not sure why realtime is still in this list; this was the
 # original list of disabled items...
