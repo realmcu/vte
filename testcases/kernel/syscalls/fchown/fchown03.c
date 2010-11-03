@@ -169,7 +169,6 @@ int main(int ac, char **av)
 			 * set on the testfile in setup() are
 			 * cleared by fchown()
 			 */
-			#if !FSL_ARM
 			if (stat_buf.st_mode != FCHOWN_PERMS) {
 				tst_resm(TFAIL, "%s: Incorrect mode permissions"
 					 " %#o, Expected %#o", TESTFILE,
@@ -178,7 +177,6 @@ int main(int ac, char **av)
 				tst_resm(TPASS, "fchown() on %s succeeds: "
 					 "Setuid/gid bits cleared", TESTFILE);
 			}
-			#endif
 		} else {
 			tst_resm(TPASS, "call succeeded");
 		}

@@ -93,8 +93,6 @@
 #include <fcntl.h>
 #include <inttypes.h>
 #include <sys/utsname.h>
-#include <sys/vfs.h>
-#include <linux/magic.h>
 
 /* Harness Specific Include Files. */
 #include "test.h"
@@ -117,7 +115,6 @@ void populate_file();
 void create_fifo();
 void create_pipe();
 void get_blocksize(int fd);
-int check_support();
 
 /* Extern Global Variables */
 extern int Tst_count;		/* counter for tst_xxx routines */
@@ -261,16 +258,6 @@ static inline long fallocate(int fd, int mode, loff_t offset, loff_t len)
 	return syscall(__NR_fallocate, fd, mode, offset, len);
 }
 
-int check_support()
-{
-	struct statfs buf;
-	statfs(fnamer, &buf);
-	if(buf.f_type == EXT4_SUPER_MAGIC)
-		return TPASS;
-	return TFAIL;
-}
-
-
 /*****************************************************************************
  * Main function that calls the system call with the  appropriate parameters
  ******************************************************************************/
@@ -292,13 +279,6 @@ int main(int ac, char **av)
 
 	/* perform global test setup, call setup() function. */
 	setup();
-
-	if(check_support())
-	{
-		tst_resm(TWARN,"SYSCALL not support");
-		cleanup();
-		return 0;
-	}
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping. */

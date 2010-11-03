@@ -163,7 +163,6 @@ clean:: $(CLEAN_TARGETS)
 	@$(MAKE) -C testcases/vte_tests_suite clean
 	rm -rf testcases/bin/
 
-
 $(foreach tgt,$(MAKE_TARGETS) include-all lib-all $(filter-out clean_install_dir,$(CLEAN_TARGETS)) $(INSTALL_TARGETS) include-install lib-install,$(eval $(call target_to_dir_dep_mapping,$(tgt))))
 
 BINDIR_INSTALL_SCRIPTS	:= execltp

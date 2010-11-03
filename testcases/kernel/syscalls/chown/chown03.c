@@ -165,7 +165,6 @@ int main(int ac, char **av)
 			 * Verify that setuid/setgid bits set on the
 			 * testfile in setup() are cleared by chown()
 			 */
-			#if !FSL_ARM
 			if (stat_buf.st_mode != (NEW_PERMS & ~(S_ISUID | S_ISGID))) {
 				tst_resm(TFAIL, "%s: Incorrect mode permissions"
 					 " %#o, Expected %#o", TESTFILE,
@@ -175,13 +174,14 @@ int main(int ac, char **av)
 				tst_resm(TPASS, "chown() on %s succeeds, "
 					 "clears setuid/gid bits", TESTFILE);
 			}
-    #endif
 		} else {
 			tst_resm(TPASS, "call succeeded");
 		}
 	}			/* End for TEST_LOOPING */
+
 	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
+
 	return 0;
 /*NOTREACHED*/
 }		/* End main */

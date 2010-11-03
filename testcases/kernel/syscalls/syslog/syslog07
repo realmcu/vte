@@ -108,7 +108,7 @@ syslog_case7()
 	    status_flag=0
 	    cleanup	
 	fi
-	[ -x $syslog_cmd ] || syslog_cmd="/etc/rc.d/init.d/syslog"
+	[ -x $syslog_cmd ] || syslog_cmd="/etc/init.d/syslog"
 
 # Adds some clarification of log message when syslog-ng is used
         if [ $CONFIG_FILE = /etc/syslog.conf ]; then
@@ -242,7 +242,6 @@ fi
 export TST_TOTAL=1
 export TST_COUNT=1
 export TCID=$(basename $0)
-export SYSLOGD_OPTIONS="-O /var/log/messages"
 
 RC=0
 status_flag=0

@@ -97,8 +97,6 @@
 #include <error.h>
 #include <inttypes.h>
 #include <sys/utsname.h>
-#include <sys/vfs.h>
-#include <linux/magic.h>
 /* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
@@ -111,7 +109,6 @@ static inline long fallocate();
 void get_blocksize(int);
 void populate_files(int fd);
 void runtest(int, int, loff_t);
-int check_support();
 /* Extern Global Variables */
 extern int Tst_count;		/* counter for tst_xxx routines */
 /* Global Variables */
@@ -211,16 +208,6 @@ void populate_files(int fd)
 	}
 }
 
-
-int check_support()
-{
-	struct statfs buf;
-	statfs(fname_mode1, &buf);
-	if(buf.f_type == EXT4_SUPER_MAGIC)
-		return TPASS;
-	return TFAIL;
-}
-
 /* ac: number of command line parameters */
 /* av: pointer to the array of the command line parameters */
 int main(int ac, char **av)
@@ -242,12 +229,6 @@ int main(int ac, char **av)
 	/* perform global test setup, call setup() function. */
 	setup();
 
-	if(check_support())
-	{
-		tst_resm(TWARN,"SYSCALL not support");
-		cleanup();
-		return 0;
-	}
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;

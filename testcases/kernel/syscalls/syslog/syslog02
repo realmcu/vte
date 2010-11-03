@@ -97,7 +97,7 @@ syslog_case2()
 	    status_flag=0
 	    cleanup	
 	fi
-	[ -x $syslog_cmd ] || syslog_cmd="/etc/rc.d/init.d/syslog"
+	[ -x $syslog_cmd ] || syslog_cmd="/etc/init.d/syslog"
 
 #Back up configuration file
 	if [ ! -e $CONFIG_FILE ]
@@ -214,7 +214,6 @@ syslog_case2()
 export TST_TOTAL=1
 export TST_COUNT=1
 export TCID=$(basename $0)
-export SYSLOGD_OPTIONS="-O /var/log/maillog"
 
 RC=0
 status_flag=0
