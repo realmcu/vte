@@ -501,10 +501,7 @@ crte_mk_rm(void *args)
     int		filecnt;	/* index to the number of ".c" files created  */
     int		numchar[2];	/* number of characters written to buffer     */
     char 	*dirname;	/* name of the directory/idirectory tree      */
-<<<<<<< HEAD:testcases/network/nfs/nfsstress/make_tree.c
-=======
     char 	*tmpdirname;	/* name of a temporary directory, for swaping */
->>>>>>> ltp:testcases/network/nfs/nfsstress/make_tree.c
     char	*cfilename;     /* name of the ".c" file created	      */
     char	*mkfilename;	/* name of the makefile - which is "makefile" */
     char	*hostname;	/* hostname of the client machine             */
@@ -515,19 +512,12 @@ crte_mk_rm(void *args)
                              (long *)args; 
     volatile int exit_val = 0;  /* exit value of the pthreads		      */
 
-<<<<<<< HEAD:testcases/network/nfs/nfsstress/make_tree.c
-    if ((dirname = malloc(sizeof(char) * 1024)) == NULL) /* just paranoid */
-=======
     if ((dirname = malloc(sizeof(char) * 2048)) == NULL) /* just paranoid */
->>>>>>> ltp:testcases/network/nfs/nfsstress/make_tree.c
     {
         perror("crte_mk_rm(): dirname malloc()");
 	PTHREAD_EXIT(-1);
     }
 
-<<<<<<< HEAD:testcases/network/nfs/nfsstress/make_tree.c
-    if ((cfilename = malloc(sizeof(char) * 1024)) == NULL)
-=======
     if ((tmpdirname = malloc(sizeof(char) * 2048)) == NULL)
     {
         perror("crte_mk_rm(): tmpdirname malloc()");
@@ -535,17 +525,12 @@ crte_mk_rm(void *args)
     }
 
     if ((cfilename = malloc(sizeof(char) * 2048)) == NULL)
->>>>>>> ltp:testcases/network/nfs/nfsstress/make_tree.c
     {
         perror("crte_mk_rm(): cfilename malloc()");
 	PTHREAD_EXIT(-1);
     }
 
-<<<<<<< HEAD:testcases/network/nfs/nfsstress/make_tree.c
-    if ((mkfilename = malloc(sizeof(char) * 1024)) == NULL)
-=======
     if ((mkfilename = malloc(sizeof(char) * 2048)) == NULL)
->>>>>>> ltp:testcases/network/nfs/nfsstress/make_tree.c
     {
         perror("crte_mk_rm(): mkfilename malloc()");
 	PTHREAD_EXIT(-1);
@@ -586,11 +571,6 @@ crte_mk_rm(void *args)
     for (dircnt = 0; dircnt < (int)locargptr[0]; dircnt++)
     {
         /* First create the base directory, then create the subdirectories   */
-<<<<<<< HEAD:testcases/network/nfs/nfsstress/make_tree.c
-        (dircnt == 0) ?
-	    sprintf(dirname, "%s.%ld", hostname, gettid()):
-            sprintf(dirname, "%s/%ld.%d", dirname, gettid(), dircnt);
-=======
         if (dircnt == 0)
             sprintf(dirname, "%s.%ld", hostname, gettid());
         else
@@ -599,7 +579,6 @@ crte_mk_rm(void *args)
             sprintf(dirname, "%s", tmpdirname);
         }
         sync();
->>>>>>> ltp:testcases/network/nfs/nfsstress/make_tree.c
           
         dprt("pid[%d] creating directory: %s\n", gettid(), dirname); 
         if (mkdir(dirname, 0777) == -1)
@@ -613,11 +592,6 @@ crte_mk_rm(void *args)
     usleep(10);
     for (dircnt = 0; dircnt < (int)locargptr[0]; dircnt++)
     {
-<<<<<<< HEAD:testcases/network/nfs/nfsstress/make_tree.c
-        (dircnt == 0) ?
-	    sprintf(dirname, "%s/%s.%ld", pwd, hostname, gettid()):
-            sprintf(dirname, "%s/%ld.%d", dirname, gettid(), dircnt);
-=======
         if (dircnt == 0)
             sprintf(dirname, "%s/%s.%ld", pwd, hostname, gettid());
         else
@@ -626,7 +600,6 @@ crte_mk_rm(void *args)
             sprintf(dirname, "%s", tmpdirname);
         }
         sync();
->>>>>>> ltp:testcases/network/nfs/nfsstress/make_tree.c
         if ((make_buf = malloc(sizeof(char) * 4096)) == NULL)
         {
             perror("crte_mk_rm(): make_buf malloc()");
@@ -702,11 +675,6 @@ crte_mk_rm(void *args)
 
     for (dircnt = 0; dircnt < (int)locargptr[0]; dircnt++)
     {
-<<<<<<< HEAD:testcases/network/nfs/nfsstress/make_tree.c
-        (dircnt == 0) ?
-	    sprintf(dirname, "%s/%s.%ld", pwd, hostname, gettid()):
-            sprintf(dirname, "%s/%ld.%d", dirname, gettid(), dircnt);
-=======
         if (dircnt == 0)
             sprintf(dirname, "%s/%s.%ld", pwd, hostname, gettid());
         else
@@ -715,7 +683,6 @@ crte_mk_rm(void *args)
             sprintf(dirname, "%s", tmpdirname);
         }
         sync();
->>>>>>> ltp:testcases/network/nfs/nfsstress/make_tree.c
         /* In each directory create N ".c" files and a makefile. */
         for (filecnt = 0; filecnt < (int)locargptr[1]; filecnt++)
         {

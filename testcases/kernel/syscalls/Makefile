@@ -25,7 +25,7 @@ top_srcdir		?= ../../..
 include	$(top_srcdir)/include/mk/env_pre.mk
 
 # libevent requires some massaging to get this to work.
-FILTER_OUT_DIRS		:= libevent
+FILTER_OUT_DIRS		:= libevent keyctl
 # pcllib is busted as all heck because of libtool
 FILTER_OUT_DIRS		+= pcllib
 
