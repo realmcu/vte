@@ -181,8 +181,19 @@ BOOL draw_test()
  */
 BOOL pan_test()
 {
-   int y = 0, old_yvres;
-   struct fb_var_screeninfo mode_info;
+  int y = 0, old_yvres;
+	int wait_time = 0;
+	int update_marker = 0x101;
+  struct fb_var_screeninfo mode_info;
+	struct mxcfb_update_data im_update = {
+  {0,0,16,16},/*region round to 8*/
+  257,/*waveform mode 0-255, 257 auto*/
+  1, /*update mode 0(partial),1(Full)*/
+  update_marker,/*update_marker assigned by user*/
+  TEMP_USE_AMBIENT,/*use ambient temperature set*/
+  0,/*do not use alt buffer*/
+  {0,0,0,{0,0,0,0}}
+  };
 /*x pan is not supported*/
 
 #if 1
@@ -191,7 +202,8 @@ BOOL pan_test()
  old_yvres = mode_info.yres_virtual;
  mode_info.yres_virtual = mode_info.yres * 2;
  CALL_IOCTL(ioctl(fb_fd, FBIOPUT_VSCREENINFO, &mode_info));
-
+ im_update.update_region.width = mode_info.xres;
+ im_update.update_region.height = mode_info.yres;
  /*remap the devices*/
   munmap(fb_mem_ptr, fb_info.smem_len);
   CALL_IOCTL(ioctl(fb_fd, FBIOGET_FSCREENINFO, &fb_info));
@@ -213,6 +225,19 @@ BOOL pan_test()
         mode_info.yoffset = y;
 				printf("\r offset at %d\n", y);
         CALL_IOCTL(ioctl(fb_fd, FBIOPAN_DISPLAY, &mode_info));
+				if(m_opt.au != -1)
+					continue; /*for auto update, not needs to send update request*/
+				CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+				while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(im_update.update_marker))< 0)
+				{
+     			wait_time++;
+					if(wait_time > MAX_WAIT)
+					{
+						printf("full mode wait time exceed!!!\n");
+						break;
+					}
+  }
+
 				sleep(1);
   }
  /*reset pan postion*/
