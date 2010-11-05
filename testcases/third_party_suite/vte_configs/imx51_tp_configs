@@ -25,3 +25,4 @@ export CONFIG_TP_MII=y
 export CONFIG_TP_USB=y
 export CONFIG_TP_WHETS=y
 export CONFIG_TP_LMBENCH=y
+export CONFIG_TP_FBSET=y
