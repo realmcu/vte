@@ -122,15 +122,21 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 RESLIST="320x240 176x144 320x240"" "${RESSIZE}
 echo "pure size change test"
+
+FBX=$(fbset | grep geometry | awk '{print $2}')
+FBY=$(fbset | grep geometry | awk '{print $3}')
+
 for i in $RESLIST
 do
    OWD=$(echo $i | sed "s/x/ /g" | awk '{print $1}')
    OHT=$(echo $i | sed "s/x/ /g" | awk '{print $2}')
+	 if [ $OWD -lt $FBX  ] && [ $OHT -lt $FBY ]; then
    ${TSTCMD}  -iw 640 -ih 480 -ow $OWD -oh $OHT -r 0 -t 5|| return $RC
    sleep 1
+	 fi
 done
 
-OFFSET="10 11 12 13 14 15 16 17 18 19 20 30 40 50 60 70 80 90 100"
+OFFSET="10 11 12 13 14 15 16 17 18 19 20 30 40 50"
 echo "change size with offset"
 for i in $OFFSET
 do
@@ -139,7 +145,9 @@ do
  do
    OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
    OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
-   if [ $OWD -lt 640 ] && [ $OHT -lt 480  ]; then
+	 WL=$(expr $FBX - $i)
+	 HL=$(expr $FBY - $i)
+	 if [ $OWD -lt $WL  ] && [ $OHT -lt $HL ]; then
     echo "fore ground"
     ${TSTCMD}  -iw 640 -ih 480 -ow $OWD -oh $OHT -ol $i -ot $i -r 0  -fg -t 5|| return $RC
     echo "frame buffer"
@@ -174,6 +182,8 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 INSIZE="320x240 176x144 320x240"
 RESLIST="320x240 176x144 320x240"" "${RESSIZE}
 echo "pure size change test"
+FBX=$(fbset | grep geometry | awk '{print $2}')
+FBY=$(fbset | grep geometry | awk '{print $3}')
 for i in $INSIZE
 do
     echo "input size $i"
@@ -184,11 +194,13 @@ do
     echo "output size $j"
    OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
    OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
-   echo "foreground"
-   ${TSTCMD}  -iw $IWD -ih $IHT -ow $OWD -oh $OHT -r 0 -fg -t 5 || return $RC
-   echo "back ground"
-   ${TSTCMD}  -iw $IWD -ih $IHT -ow $OWD -oh $OHT -r 0 -t 5 || return $RC
-   sleep 1
+	 if [ $OWD -lt $FBX  ] && [ $OHT -lt $FBY ]; then
+		 echo "foreground"
+		 ${TSTCMD}  -iw $IWD -ih $IHT -ow $OWD -oh $OHT -r 0 -fg -t 5 || return $RC
+		 echo "back ground"
+		 ${TSTCMD}  -iw $IWD -ih $IHT -ow $OWD -oh $OHT -r 0 -t 5 || return $RC
+		 sleep 1
+	 fi
    done
 done
 
@@ -211,6 +223,8 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test script here
+FBX=$(fbset | grep geometry | awk '{print $2}')
+FBY=$(fbset | grep geometry | awk '{print $3}')
 ROTATION="0 1 2 3 4 5 6 7"
 INSIZE="320x240 176x144 320x240"
 RESLIST="320x240 176x144 320x240"" "${RESSIZE}
@@ -228,11 +242,13 @@ do
      echo "out size is $j"
    OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
    OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
-   echo "foreground"
-   ${TSTCMD}  -iw $IWD -ih $IHT -ow $OWD -oh $OHT -r $k -fg -t 5 || return $RC
-   echo "frame buffer"
-   ${TSTCMD}  -iw $IWD -ih $IHT -ow $OWD -oh $OHT -r $k -t 5|| return $RC
-   sleep 1
+	 if [ $OWD -lt $FBX  ] && [ $OHT -lt $FBY ]; then
+   	echo "foreground"
+		${TSTCMD}  -iw $IWD -ih $IHT -ow $OWD -oh $OHT -r $k -fg -t 5 || return $RC
+		echo "frame buffer"
+		${TSTCMD}  -iw $IWD -ih $IHT -ow $OWD -oh $OHT -r $k -t 5|| return $RC
+   	sleep 1
+	 fi
    done
  done
 done
@@ -256,9 +272,11 @@ RC=1
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
+FBX=$(fbset | grep geometry | awk '{print $2}')
+FBY=$(fbset | grep geometry | awk '{print $3}')
 ROTATION="0 1 2 3 4 5 6 7"
 RESLIST="320x240 176x144 320x240"" "${RESSIZE}
-OFFSET="10 11 12 13 14 15 16 17 18 19 20 30 40 50 60 70 80 90 100"
+OFFSET="10 11 12 13 14 15 16 17 18 19 20 30 40 50"
 echo "rotation with offset"
 for k in $ROTATION
 do
@@ -272,8 +290,12 @@ do
    OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
    OW=$(expr $OWD - $i)
    OH=$(expr $OHT - $i)
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OW -oh $OH -ol $i -ot $i -r $k -t 5|| return $RC
-   sleep 1
+	 WL=$(expr $FBX - $i)
+	 HL=$(expr $FBY - $i)
+	 if [ $OW -lt $WL  ] && [ $OH -lt $HL ]; then
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OW -oh $OH -ol $i -ot $i -r $k -t 5|| return $RC
+   	sleep 1
+	 fi
   done
  done
 done
@@ -296,6 +318,8 @@ RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
+FBX=$(fbset | grep geometry | awk '{print $2}')
+FBY=$(fbset | grep geometry | awk '{print $3}')
 
 #TODO add function test scripte here
 ROTATION="0 1 2 3 4 5 6 7"
@@ -310,22 +334,26 @@ do
   echo "now offset input & output is $i"
   for j in $RESLIST
   do
-   echo "frame rate 15"
    OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
    OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 15 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 15 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 15 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 15 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 15 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 15 || return $RC
-    echo "farme rate 30"
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 30 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 30 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 30 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 30 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 30 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 30 || return $RC
+	 WL=$(expr $FBX - $i)
+	 HL=$(expr $FBY - $i)
+	 if [ $OWD -lt $WL  ] && [ $OHT -lt $HL ]; then
+   	echo "frame rate 15"
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 15 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 15 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 15 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 15 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 15 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 15 || return $RC
+   	 echo "farme rate 30"
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 30 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 30 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 30 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 30 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 30 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 30 || return $RC
+	 fi
   done
  done
 done
@@ -347,6 +375,8 @@ RC=1
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
+FBX=$(fbset | grep geometry | awk '{print $2}')
+FBY=$(fbset | grep geometry | awk '{print $3}')
 GAMMA="0 1 2 3 4 5"
 OFFSET="10 15 80 100"
 RESLIST="320x240 176x144 320x240"" "${RESSIZE}
@@ -362,20 +392,24 @@ do
    echo "frame rate 15"
    OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
    OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 0 -t 5 -fr 15 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 1 -t 5 -fr 15 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 2 -t 5 -fr 15 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 3 -t 5 -fr 15 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 4 -t 5 -fr 15 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 5 -t 5 -fr 15 || return $RC
-    echo "farme rate 30"
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 0 -t 5 -fr 30 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 1 -t 5 -fr 30 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 2 -t 5 -fr 30 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 3 -t 5 -fr 30 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 4 -t 5 -fr 30 || return $RC
-   ${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 5 -t 5 -fr 30 || return $RC
-  done
+	 WL=$(expr $FBX - $i)
+	 HL=$(expr $FBY - $i)
+	 if [ $OWD -lt $WL  ] && [ $OHT -lt $HL ]; then
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 0 -t 5 -fr 15 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 1 -t 5 -fr 15 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 2 -t 5 -fr 15 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 3 -t 5 -fr 15 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 4 -t 5 -fr 15 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 5 -t 5 -fr 15 || return $RC
+    	echo "farme rate 30"
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 0 -t 5 -fr 30 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 1 -t 5 -fr 30 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 2 -t 5 -fr 30 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 3 -t 5 -fr 30 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 4 -t 5 -fr 30 || return $RC
+   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -v $k -m 5 -t 5 -fr 30 || return $RC
+   fi
+	done
  done
 done
 RC=0
