@@ -59,7 +59,7 @@ fi
 trap "cleanup" 0
 
 platfm.sh || platfm=$?
-if [ $platfm -eq 53 ]; then
+if [ $platfm -ne 53 ]; then
     modprobe flexcan
 fi
 
@@ -86,7 +86,7 @@ cleanup()
 RC=0
 ifconfig $CANID down
 sleep 1
-if [ $platfm -eq 53 ]; then
+if [ $platfm -ne 53 ]; then
     modprobe flexcan -r
 fi
 return $RC
