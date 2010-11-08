@@ -1,5 +1,5 @@
 #!/bin/bash
-#Copyright (C) 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2008,2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -19,6 +19,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake.Huang/-----             08/06/2008     N/A          Initial version
+#Spring.Zhang/---             11/08/2010     N/A          Fix MX53 built-in issue
 # 
 ###################################################################################################
 #
@@ -57,7 +58,10 @@ fi
 
 trap "cleanup" 0
 
-modprobe flexcan
+platfm.sh || platfm=$?
+if [ $platfm -eq 53 ]; then
+    modprobe flexcan
+fi
 
 ifconfig $CANID up
 
@@ -82,7 +86,9 @@ cleanup()
 RC=0
 ifconfig $CANID down
 sleep 1
-modprobe -r flexcan
+if [ $platfm -eq 53 ]; then
+    modprobe flexcan -r
+fi
 return $RC
 }
 
@@ -102,7 +108,7 @@ read -p "Is the can cable ok? y/n" Rnt
 
 echo $Rnt
 
-if [ $Rnt = "n" ]
+if [ "$Rnt" = "n" ]
 then
 RC=$TST_COUNT
 return $RC
@@ -155,7 +161,7 @@ echo please check the data in receiver
 
 read -p "is the data match? y/n" Rnt
 
-if [ $Rnt = "y" ]
+if [ "$Rnt" = "y" ]
 then
 return $RC
 fi
@@ -191,7 +197,7 @@ subtest_02 &
 
 read -p "q to quit the test" Rnt
 
-while [ $Rnt != "q" ]
+while [ "$Rnt" != "q" ]
 do
 read -p "q to quit the test" Rnt
 done
@@ -202,7 +208,7 @@ sleep 1
 
 read -p "the data still recived OK? y/n" Rnt
 
-if [ $Rnt = "y" ]
+if [ "$Rnt" = "y" ]
 then
 RC=0
 return $RC
@@ -237,7 +243,7 @@ read -p "whether the loop back data right? y/n" Rnt
 
 kill -9 $!
 
-if [ $Rnt = "y" ]
+if [ "$Rnt" = "y" ]
 then
 return $RC
 fi
@@ -275,14 +281,14 @@ ifconfig $CANID down
 bk=$(cat /sys/devices/platform/FlexCAN$CANBUS/br_clksrc)
 echo "bus" > /sys/devices/platform/FlexCAN$CANBUS/br_clksrc
 Rnt=$(cat /sys/devices/platform/FlexCAN$CANBUS/br_clksrc)
-if [ $Rnt != "bus" ]
+if [ "$Rnt" != "bus" ]
 then
 RC=$TST_COUNT
 return $RC
 fi
 echo "osc" > /sys/devices/platform/FlexCAN$CANBUS/br_clksrc
 Rnt=$(cat /sys/devices/platform/FlexCAN$CANBUS/br_clksrc)
-if [ $Rnt != "osc" ]
+if [ "$Rnt" != "osc" ]
 then
 RC=$TST_COUNT
 return $RC
@@ -351,7 +357,7 @@ fi
 
 read -p "Is the receiver deamon runs? y/n" Rnt
 
-if [ $Rnt = "n" ]
+if [ "$Rnt" = "n" ]
 then
 RC=$TST_COUNT
 return $RC
