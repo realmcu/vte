@@ -463,7 +463,7 @@ static int signal_thread(void *arg)
  */
 BOOL test_rate_update()
 {
-	#define FRAME_CNT 1000
+	#define FRAME_CNT 100
 	struct mxcfb_update_data im_update[2];
 	int i = 0;
 	struct fb_var_screeninfo mode_info;
@@ -502,7 +502,7 @@ BOOL test_rate_update()
 		update_once(&(im_update[1]));
 	}
     if(last_t > 0)
-		printf("total update fps is:%f\n",(float)((FRAME_CNT*1000000.0f)/last_t));
+		printf("total update fps is:%f\n",(float)((FRAME_CNT*1000000.0f*2)/last_t));
     return TRUE;
 }
 
