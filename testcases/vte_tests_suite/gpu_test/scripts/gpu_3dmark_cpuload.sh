@@ -101,7 +101,7 @@ gpu_cpuload()
     bpid_top=$!
 
     OLDPWD=`pwd`
-    cd /mnt/nfs/util/3dmarksmobile_EGL/bin/bin/linux_iMX51
+    cd /mnt/nfs/util/3DMarkMobile_EGL/bin/bin/linux_iMX51
     if [ "$1" = "FB" ]; then
         cd /mnt/nfs/util/3dmarks_FB/bin/bin/windows
     fi
