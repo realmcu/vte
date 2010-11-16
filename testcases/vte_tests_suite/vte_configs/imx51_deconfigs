@@ -51,7 +51,7 @@ export CONFIG_VTE_POWER=y
 #CONFIG_VTE_PTP
 #CONFIG_VTE_RM
 export CONFIG_VTE_RTC=y
-#CONFIG_VTE_SDMA
+export CONFIG_VTE_SDMA=y
 export CONFIG_VTE_SEC=y
 export CONFIG_VTE_SLCDC=y
 export CONFIG_VTE_SPDIF=y
@@ -75,7 +75,7 @@ export CONFIG_VTE_WIFI=y
 
 #vte module config
 #CONFIG_VM_DRYICE=y
-#CONFIG_VM_SDMA=y
+export CONFIG_VM_SDMA=y
 export CONFIG_VM_SAHARA=y
 #CONFIG_VM_SCC=y
 export CONFIG_VM_SCC2=y
@@ -88,6 +88,7 @@ export CONFIG_OM_RAMDISK=y
 export CONFIG_OM_SCULL=y
 #export CONFIG_OM_CRYPTO=y
 export CONFIG_OM_USB=y
+export CONFIG_OM_MMC=y
 
 #platform depended config need read the related Makefile in subfolder
 #CONFIG_VTE_KEYPAD_TESTAPP=y
@@ -105,3 +106,4 @@ export CONFIG_VTE_V4L_CAPTURE=y
 export CONFIG_VTE_V4L_OUTPUT=y
 export CONFIG_VTE_V4L_BASIC=y
 export CONFIG_VTE_V4L_IPU_FUNC=y
+export CONFIG_VTE_SDMAAPI=y
