@@ -45,6 +45,7 @@ all:
 
 install:
 	ln -f mmc_test_minix.sh ../../bin
+	ln -f mmc_module_test.sh ../../bin
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install ; done
 
 clean:
