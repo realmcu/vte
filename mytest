@@ -2,7 +2,7 @@
 
 if [ $# -eq 0 ]
 then
-CMDFILE=MX50_EVK_Linux_ER2
+CMDFILE=exec_table_rdp
 #CMDFILE=re-test
 elif [ $1 == "one" ]
 then
@@ -15,7 +15,7 @@ ARCH_PLATFORM=imx50
 TEST_TYPE=AUTO
 
 export STREAM_PATH=/mnt/nfs/test_stream
-mount -t ext4 /dev/mmcblk0p1 /tmp
+mount /dev/mmcblk0p1 /tmp
 export TMPDIR=/tmp
 
 
