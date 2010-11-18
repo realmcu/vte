@@ -207,7 +207,7 @@ int main(int argc, char **argv)
                 { "Y:", &Yflag, &Yopt },        /* Overlay Type (for Overlay only)      */
                 { "E", &Eflag, NULL  },        /* Error cases                          */
 								{ "X", &Xflag, NULL  },        /* Disable asking user                    */
-								{ "N", &Nflag, &Nopt},        /* Capture times                     */
+								{ "N:", &Nflag, &Nopt},        /* Capture times                     */
 								{ "v", &vflag, NULL  },        /* Verbose mode                         */
 								{"r:", &rflag, &ropt },
 								{"K:", &Kflag, &Kopt},     /*block IO */
