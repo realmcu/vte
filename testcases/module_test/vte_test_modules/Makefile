@@ -12,6 +12,7 @@ SUBDIRS-$(CONFIG_VM_RNGA)     += rnga_test_module
 SUBDIRS-$(CONFIG_VM_SPI)      += spi_test_module
 SUBDIRS-$(CONFIG_VM_HACC)     += hacc_test_module
 SUBDIRS-$(CONFIG_VM_SDMA_API) += sdma_module
+SUBDIRS-$(CONFIG_VM_MXC_WD)   += mxc_wd_module
 
 
 all:
