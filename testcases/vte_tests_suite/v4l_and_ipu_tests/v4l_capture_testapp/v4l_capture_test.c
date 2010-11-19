@@ -1307,7 +1307,7 @@ int detect_fb_fmt(void)
                                 break;
                         }
                         strcpy(gFBPixFmtName,"Unknown");
-                        tst_resm(TWARN, "Unsupported FB format", gV4LTestConfig.mV4LDevice);
+                        tst_resm(TWARN, "Unsupported FB format %s\n", gV4LTestConfig.mV4LDevice);
                         if(gV4LTestConfig.mVerbose)
                         {
                                 printf("\t Resolution = %d bpp\n", gScreenInfo.bits_per_pixel);
@@ -1334,7 +1334,7 @@ int detect_fb_fmt(void)
                                 strcpy(gFBPixFmtName,"RGB24");
                                 break;
                         }
-                        tst_resm(TWARN, "Unsupported FB format", gV4LTestConfig.mV4LDevice);
+                        tst_resm(TWARN, "Unsupported FB format %s\n", gV4LTestConfig.mV4LDevice);
                         if(gV4LTestConfig.mVerbose)
                         {
                                 printf("\t Resolution = %d bpp\n", gScreenInfo.bits_per_pixel);
@@ -1361,7 +1361,7 @@ int detect_fb_fmt(void)
                                 strcpy(gFBPixFmtName,"RGB32");
                                 break;
                         }
-                        tst_resm(TWARN, "Unsupported FB format", gV4LTestConfig.mV4LDevice);
+                        tst_resm(TWARN, "Unsupported FB format %s\n", gV4LTestConfig.mV4LDevice);
                         if(gV4LTestConfig.mVerbose)
                         {
                                 printf("\t Resolution = %d bpp\n", gScreenInfo.bits_per_pixel);
@@ -1372,7 +1372,7 @@ int detect_fb_fmt(void)
                         }
                         return TFAIL;
                 default:
-                        tst_resm(TWARN, "Unsupported FB resolution", gV4LTestConfig.mV4LDevice);
+                        tst_resm(TWARN, "Unsupported FB resolution %s\n", gV4LTestConfig.mV4LDevice);
                         if(gV4LTestConfig.mVerbose)
                         {
                                 printf("\t Resolution = %d bpp\n", gScreenInfo.bits_per_pixel);
