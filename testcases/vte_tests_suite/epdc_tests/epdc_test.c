@@ -259,7 +259,7 @@ static BOOL update_once(void * p_update)
   struct timezone tz;
   struct mxcfb_update_data *  p_im_update = (struct mxcfb_update_data *)p_update;
    /*do not use alt buffer*/
-   p_im_update->use_alt_buffer = 0;
+   p_im_update->flags = 0;
 	 /*
 	 printf("l = %d t= %d w = %d h = %d\n",
 	 p_im_update->update_region.left,
@@ -357,7 +357,7 @@ static BOOL single_update(void * p_update)
 	pid_t tid = syscall(SYS_gettid);
   struct mxcfb_update_data *  p_im_update = (struct mxcfb_update_data *)p_update;
 	/*do not use alt buffer*/
-	p_im_update->use_alt_buffer = 0;
+	p_im_update->flags = 0;
 	printf("process %d runing at t= %d, l = %d, w= %d, h = %d\n",tid, p_im_update->update_region.top,p_im_update->update_region.left,
 	p_im_update->update_region.width,p_im_update->update_region.height);
 
@@ -781,7 +781,7 @@ struct mxcfb_update_data im_update = {
   0, /*update mode 0(partial),1(Full)*/
   update_marker,/*update_marker assigned by user*/
   TEMP_USE_AMBIENT,/*use ambient temperature set*/
-  1,/*enable alt buffer*/
+  EPDC_FLAG_USE_ALT_BUFFER,/*enable alt buffer*/
   {0,0,0,{0,0,0,0}}/*set this later*/
   };
  printf("start alt update test\n");
@@ -950,7 +950,7 @@ BOOL full_update()
    memcpy(&im_update,&m_opt.update, sizeof(struct mxcfb_update_data));
   }
    /*do not use alt buffer*/
-   im_update.use_alt_buffer = 0;
+   im_update.flags = 0;
   /*step 2: update and wait finished*/
 	if(m_opt.au != -1)
 		return TRUE; /*for auto update, not needs to send update request*/
@@ -1005,7 +1005,7 @@ BOOL test_wait_update()
    memcpy(&im_update,&m_opt.update, sizeof(struct mxcfb_update_data));
   }
    /*do not use alt buffer*/
-   im_update.use_alt_buffer = 0;
+   im_update.flags = 0;
   /*step 2: update and wait finished*/
   while(count--)
   {
