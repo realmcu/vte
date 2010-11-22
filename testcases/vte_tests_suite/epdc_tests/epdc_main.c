@@ -261,7 +261,7 @@ int main(int argc, char **argv)
             &(m_opt.update.waveform_mode),
             &(m_opt.update.update_marker),
             &(m_opt.update.temp),
-            &(m_opt.update.use_alt_buffer),
+            &(m_opt.update.flags),
             &(m_opt.update.alt_buffer_data.width),
             &(m_opt.update.alt_buffer_data.height),
             &(m_opt.update.alt_buffer_data.alt_update_region.top),
