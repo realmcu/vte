@@ -82,7 +82,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 LOOP_TIMES=2
 ROT_LIST="0 1 2 3"
 CASE_LIST="2 3 4 5 6 7"
-EPDC_FLAGS="0x01 0x02"
+EPDC_FLAGS="1 2"
 #alt buffer is not test here
 
 while [ $LOOP_TIMES -gt 0 ]
