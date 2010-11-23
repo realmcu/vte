@@ -444,16 +444,32 @@ return $RC
 #
 test_can_08()
 {
-RC=0
+RC=1
 TCID="test_can_filter"
 TST_COUNT=8
-#ref 
+#ref
 
+if [ ! -e /etc/modprobe.d/vcan ]; then
+mkdir /etc/modprobe.d
+cat <<-EOF > /etc/modprobe.d/vcan
+# protocol family PF_CAN
+alias net-pf-29 can
+# protocols in PF_CAN
+alias can-proto-1 can-raw
+alias can-proto-2 can-bcm
+alias can-proto-3 can-tp16
+alias can-proto-4 can-tp20
+alias can-proto-5 can-mcnet
+alias can-proto-6 can-isotp
+EOF
+fi
+
+${LTPROOT}/testcases/bin/ip link add dev vcan0 type vcan || return $RC
 ifconfig vcan0 up
 tst-filter-server > output_ltp-can.txt &
 tst-filter-master | tee output_ltp-can-verify.txt
 diff output_ltp-can.txt output_ltp-can-verify.txt || RC=1
-
+RC=0
 return $RC
 }
 
