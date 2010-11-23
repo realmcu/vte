@@ -437,6 +437,27 @@ done
 return $RC
 }
 
+#
+# Function: test_can_08
+# Description: can filter test
+# catalog: maunal test
+#
+test_can_08()
+{
+RC=0
+TCID="test_can_filter"
+TST_COUNT=8
+#ref 
+
+ifconfig vcan0 up
+tst-filter-server > output_ltp-can.txt &
+tst-filter-master | tee output_ltp-can-verify.txt
+diff output_ltp-can.txt output_ltp-can-verify.txt || RC=1
+
+return $RC
+}
+
+
 
 usage()
 {
@@ -448,7 +469,7 @@ echo "4: CAN register setting test"
 echo "5: power management test"
 echo "6: module available test"
 echo "7: bit rate test"
-
+echo "8: vcan filter test"
 }
 
 # main function
@@ -486,6 +507,9 @@ case "$2" in
    ;;
 7)
 	 test_can_07 || exit $RC
+	 ;;
+8)
+	 test_can_08 || exit $RC
 	 ;;
 *)
   usage
