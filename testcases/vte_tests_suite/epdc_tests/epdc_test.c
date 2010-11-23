@@ -610,7 +610,7 @@ struct mxcfb_update_data im_update = {
   0, /*update mode 0(partial),1(Full)*/
   update_marker,/*update_marker assigned by user*/
   TEMP_USE_AMBIENT,/*use ambient temperature set*/
-  1,/*enable alt buffer*/
+  EPDC_FLAG_USE_ALT_BUFFER,/*enable alt buffer*/
   {0,0,0,{0,0,0,0}}/*set this later*/
   };
 
