@@ -464,11 +464,12 @@ alias can-proto-6 can-isotp
 EOF
 fi
 
-${LTPROOT}/testcases/bin/ip link add dev vcan0 type vcan || return $RC
+${LTPROOT}/testcases/bin/ip link add dev vcan0 type vcan
 ifconfig vcan0 up
 tst-filter-server > output_ltp-can.txt &
 tst-filter-master | tee output_ltp-can-verify.txt
 diff output_ltp-can.txt output_ltp-can-verify.txt || RC=1
+${LTPROOT}/testcases/bin/ip link del dev vcan0 type vcan
 RC=0
 return $RC
 }
