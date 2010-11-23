@@ -41,7 +41,7 @@
 #  Send feedback to <socketcan-users@lists.berlios.de>
 
 LTP_DIR = ../../
-BIN_DIR = $(LTP_DIR)/bin
+BIN_DIR = $(LTP_DIR)/bin/
 
 CFLAGS    = -O2 -Wall -Wno-parentheses \
 	-fno-strict-aliasing \
@@ -73,7 +73,7 @@ PROGRAMS =      tst-raw           \
 all: $(PROGRAMS)
 
 install:
-	ln -f $(PROGRAMS) /usr/local/bin
+	ln -f $(PROGRAMS) $(BIN_DIR)
 
 clean:
 	rm -f $(PROGRAMS)

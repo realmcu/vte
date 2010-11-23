@@ -6,7 +6,7 @@
 #
 ##############################################################################
 
-#include ../vte_configs/$(ARCH_PLATFORM)_tp_configs
+include ../vte_configs/$(ARCH_PLATFORM)_tp_configs
 
 SUBDIRS-$(CONFIG_TP_ETHTOOL) += ethtool-6
 clean_SUBDIR-$(CONFIG_TP_ETHTOOL) += clean_ethtool-6
@@ -22,7 +22,7 @@ SUBDIRS-$(CONFIG_TP_IPROUTE)     += iproute-20090324
 clean_SUBDIR-$(CONFIG_TP_IPROUTE) += iproute-20090324
 
 all: $(SUBDIRS-y)
-	#for i in $(SUBDIRS-y) ; do $(MAKE) $$i -B ; done
+	for i in $(SUBDIRS-y) ; do $(MAKE) $$i -B ; done
 install:
 	-ln -f ethtool-6/ethtool ../../bin/
 	-ln -f netperf-2.4.4/src/netperf ../../bin/
