@@ -17,7 +17,7 @@ TEST_TYPE=AUTO
 export STREAM_PATH=/mnt/nfs/test_stream
 mount /dev/mmcblk0p1 /tmp
 export TMPDIR=/tmp
-
+export LTPROOT=$(pwd)
 
 TEST_PATH=$(dirname $0)
 
