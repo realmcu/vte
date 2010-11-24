@@ -18,10 +18,11 @@ SUBDIRS-$(CONFIG_TP_TCPDUMP) += tcpdump-3.9.8
 clean_SUBDIR-$(CONFIG_TP_TCPDUMP) += clean_tcpdump-3.9.8
 SUBDIRS-$(CONFIG_TP_MII)     += mii-tool-1.9.1.1
 clean_SUBDIR-$(CONFIG_TP_MII) += clean_mii-tool-1.9.1.1
-
+SUBDIRS-$(CONFIG_TP_IPROUTE)     += iproute-20090324 
+clean_SUBDIR-$(CONFIG_TP_IPROUTE) += iproute-20090324
 
 all: $(SUBDIRS-y)
-	for i in $(SUBDIRS-y) ; do $(MAKE) $$i -B ; done
+	#for i in $(SUBDIRS-y) ; do $(MAKE) $$i -B ; done
 install:
 	-ln -f ethtool-6/ethtool ../../bin/
 	-ln -f netperf-2.4.4/src/netperf ../../bin/
@@ -29,6 +30,7 @@ install:
 	-ln -f mii-tool-1.9.1.1/mii-tool ../../bin/
 	-ln -f ppp-2.4.3/pppd/pppd ../../bin/
 	-ln -f tcpdump-3.9.8/tcpdump ../../bin/
+	-ln -f iproute-20090324/ip/ip ../../bin/
 
 clean: $(clean_SUBDIR-y)
 
@@ -71,6 +73,12 @@ mii-tool-1.9.1.1:
 clean_mii-tool-1.9.1.1:
 	-$(MAKE) -C mii-tool-1.9.1.1 clean
 	-$(MAKE) -C mii-tool-1.9.1.1 distclean
+
+iproute-20090324:
+	$(MAKE) -C $@ CC=$(CROSS_COMPILER)gcc
+
+clean_iproute-20090324:
+	$(MAKE) -C iproute-20090324 distclean
 
 libs:
 	$(MAKE) -C $$(pwd)/../../../openlibs
