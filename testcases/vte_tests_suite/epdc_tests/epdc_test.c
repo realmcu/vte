@@ -155,7 +155,9 @@ BOOL draw_test()
 	printf("updating the screen now\n");
 	if(m_opt.au != -1)
 		return TRUE; /*for auto update, not needs to send update request*/
-	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+	while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0){
+		sleep(1);
+		}
 	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
 	{
 		wait_time++;
@@ -227,7 +229,9 @@ BOOL pan_test()
         CALL_IOCTL(ioctl(fb_fd, FBIOPAN_DISPLAY, &mode_info));
 				if(m_opt.au != -1)
 					continue; /*for auto update, not needs to send update request*/
-				CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+				while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0){
+					sleep(1);
+					}
 				while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(im_update.update_marker))< 0)
 				{
      			wait_time++;
@@ -272,7 +276,10 @@ static BOOL update_once(void * p_update)
   while(count--)
   {
 	/*black and white alternative*/
-  CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
+  while(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update) < 0)
+	{
+		sleep(1)	
+	}
   while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
   {
     wait_time++;
@@ -296,7 +303,9 @@ static BOOL update_once(void * p_update)
 	/*black and white alternative*/
 	if(m_opt.au != -1)
 		continue; /*for auto update, not needs to send update request*/
-  CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
+  while(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update) < 0){
+			sleep(1);
+		}
   while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
   {
      wait_time++;
@@ -368,7 +377,9 @@ static BOOL single_update(void * p_update)
 #if 1
 		if(m_opt.au != -1)
 			continue; /*for auto update, not needs to send update request*/
-		CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
+		while(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update) < 0){
+				sleep(1);
+			}
 		while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
 		{
 			wait_time++;
@@ -394,7 +405,9 @@ static BOOL single_update(void * p_update)
 	#if 1
 		if(m_opt.au != -1)
 			continue; /*for auto update, not needs to send update request*/
-		CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update));
+		while(ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update) < 0){
+			sleep(1);
+			}
 		while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &(p_im_update->update_marker))< 0)
 		{
 			wait_time++;
@@ -677,7 +690,9 @@ struct mxcfb_update_data im_update = {
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
 		if(m_opt.au != -1)
 			continue; /*for auto update, not needs to send update request*/
-		CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+		while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0){
+			sleep(1);
+			}
 		while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
     {
 			wait_time++;
@@ -711,7 +726,9 @@ struct mxcfb_update_data im_update = {
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
 	if(m_opt.au != -1)
 		continue; /*for auto update, not needs to send update request*/
-	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+	while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0){
+		sleep(1);	
+		}
 	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
 	{
 		wait_time++;
@@ -857,7 +874,10 @@ if(mem.virt_uaddr == 0)
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
 	if(m_opt.au != -1)
 		continue; /*for auto update, not needs to send update request*/
-	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+	while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update)< 0)
+	{
+		sleep(1);	
+	}
 	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
     {
 		wait_time++;
@@ -882,7 +902,9 @@ if(mem.virt_uaddr == 0)
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
 	if(m_opt.au != -1)
 		continue; /*for auto update, not needs to send update request*/
-	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+	while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update)){
+		sleep(1);
+		}
 	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
 	{
 		wait_time++;
@@ -954,7 +976,9 @@ BOOL full_update()
   /*step 2: update and wait finished*/
 	if(m_opt.au != -1)
 		return TRUE; /*for auto update, not needs to send update request*/
-  CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+	while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0){
+	  sleep(1);	
+	}
   while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
   {
      wait_time++;
@@ -1016,7 +1040,9 @@ BOOL test_wait_update()
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
 	if(m_opt.au != -1)
 		continue; /*for auto update, not needs to send update request*/
-  CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+	while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0){
+	  sleep(1);	
+	}
   while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
   {
      wait_time++;
@@ -1042,7 +1068,9 @@ BOOL test_wait_update()
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
 	if(m_opt.au != -1)
 		continue; /*for auto update, not needs to send update request*/
-	CALL_IOCTL(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update));
+	while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0){
+		sleep(1);
+		}
 	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
 	{
 		wait_time++;
@@ -1093,7 +1121,8 @@ int epdc_fb_setup(void)
     /*keep system on*/
 		{
 			int tfd = open("/dev/tty0", O_RDWR);
-			write(tfd, "\033[9;0]", 7);
+			if(write(tfd, "\033[9;0]", 7)< 0)
+				perror("write");
 			close(tfd);
 		}
 
