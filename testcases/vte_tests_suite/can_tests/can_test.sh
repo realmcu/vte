@@ -444,7 +444,7 @@ return $RC
 #
 test_can_08()
 {
-RC=1
+RC=0
 TCID="test_can_filter"
 TST_COUNT=8
 #ref
@@ -471,7 +471,6 @@ sleep 1
 tst-filter-master | tee output_ltp-can-verify.txt
 diff output_ltp-can.txt output_ltp-can-verify.txt || RC=1
 ${LTPROOT}/testcases/bin/ip link del dev vcan0 type vcan
-RC=0
 return $RC
 }
 
