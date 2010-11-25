@@ -22,7 +22,7 @@ SUBDIRS-$(CONFIG_TP_IPROUTE)     += iproute-20090324
 clean_SUBDIR-$(CONFIG_TP_IPROUTE) += iproute-20090324
 
 all: $(SUBDIRS-y)
-	for i in $(SUBDIRS-y) ; do $(MAKE) $$i -B ; done
+
 install:
 	-ln -f ethtool-6/ethtool ../../bin/
 	-ln -f netperf-2.4.4/src/netperf ../../bin/
@@ -34,7 +34,7 @@ install:
 
 clean: $(clean_SUBDIR-y)
 
-ethtool-6:
+ethtool-6: blank
 	cd $@;./myconfig; cd ..
 	$(MAKE) -C $@ CC=$(CROSS_COMPILER)gcc
 
@@ -42,7 +42,7 @@ clean_ethtool-6:
 	-$(MAKE) -C ethtool-6 clean
 	-ac_cv_func_setpgrp_void=yes $(MAKE) -C ethtool-6 distclean
 
-ppp-2.4.3:
+ppp-2.4.3: blank
 	cd $@;./myconfig; cd ..
 	$(MAKE) -C $@ CC=$(CROSS_COMPILER)gcc
 
@@ -50,7 +50,7 @@ clean_ppp-2.4.3:
 	-$(MAKE) -C ppp-2.4.3 clean
 	-$(MAKE) -C ppp-2.4.3 dist-clean
 
-netperf-2.4.4:
+netperf-2.4.4: blank
 	cd $@; ./myconfig; cd ..
 	ac_cv_func_setpgrp_void=yes $(MAKE) -C $@ CC=$(CROSS_COMPILER)gcc
 
@@ -67,14 +67,14 @@ clean_tcpdump-3.9.8:
 	-$(MAKE) -C  tcpdump-3.9.8 distclean
 	$(MAKE) -C $$(pwd)/../../../openlibs clean
 
-mii-tool-1.9.1.1:
+mii-tool-1.9.1.1: blank
 	$(MAKE) -C $@ CC=$(CROSS_COMPILER)gcc
 
 clean_mii-tool-1.9.1.1:
 	-$(MAKE) -C mii-tool-1.9.1.1 clean
 	-$(MAKE) -C mii-tool-1.9.1.1 distclean
 
-iproute-20090324:
+iproute-20090324: blank
 	$(MAKE) -C $@ CC=$(CROSS_COMPILER)gcc
 
 clean_iproute-20090324:
@@ -83,3 +83,5 @@ clean_iproute-20090324:
 libs:
 	$(MAKE) -C $$(pwd)/../../../openlibs
 
+blank:
+	echo "start"
