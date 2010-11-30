@@ -117,6 +117,7 @@ SUBDIRS-$(CONFIG_VTE_SPI)         += spi_tests
 SUBDIRS-$(CONFIG_VTE_SSI_DMA)     += ssi_dam_tests
 SUBDIRS-$(CONFIG_VTE_STORAGE)     += storage_tests
 SUBDIRS-$(CONFIG_VTE_SYS)         += systest
+SUBDIRS-$(CONFIG_VTE_TIMER)       += timer_test
 SUBDIRS-$(CONFIG_VTE_TS)          += ts_tests
 SUBDIRS-$(CONFIG_VTE_TVIN)        += tvin_tests
 SUBDIRS-$(CONFIG_VTE_TVOUT)       += tvout_tests
