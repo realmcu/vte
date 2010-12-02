@@ -362,7 +362,7 @@ static BOOL single_update(void * p_update)
 {
 	/*step 1: set up update data*/
   int  wait_time = 0;
-  int count = 10;
+  int count = 3;
 	pid_t tid = syscall(SYS_gettid);
   struct mxcfb_update_data *  p_im_update = (struct mxcfb_update_data *)p_update;
 	/*do not use alt buffer*/
@@ -397,7 +397,7 @@ static BOOL single_update(void * p_update)
 		wait_time = 0;
   }
   /*step 3: now using full update mode*/
-  count = 10;
+  count = 3;
   p_im_update->update_mode = 1;
   while(count--)
   {
@@ -613,7 +613,7 @@ BOOL test_collision_update()
  BOOL ret = FALSE;
 int fd_pxp;
 int  wait_time = 0;
-int count = 20;
+int count = 3;
 int update_marker = 0x113;
 struct pxp_mem_desc mem;
 struct fb_var_screeninfo mode_info;
@@ -789,7 +789,7 @@ BOOL test_alt_update()
 BOOL ret = FALSE;
 int  wait_time = 0;
 int fd_pxp;
-int count = 20;
+int count = 3;
 int update_marker = 0x112;
 struct pxp_mem_desc mem;
 struct mxcfb_update_data im_update = {
@@ -1012,7 +1012,7 @@ BOOL test_wait_update()
 {
 /*suppose you have set up the device before run this case*/
 	/*step 1: set up update data*/
-  int count = 10;
+  int count = 3;
   int  wait_time = 0;
   int update_marker = 0x111;
   struct mxcfb_update_data im_update = {
