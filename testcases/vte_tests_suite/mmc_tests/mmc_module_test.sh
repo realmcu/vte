@@ -129,7 +129,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 echo "this test will destroy the MMC card partition"
 #the casesID are the struct list of mmc_test_case
 caseID="1 3 5 7 9 11 13 15 17"
-MMCP=$(cat /proc/partition | grep mmc)
+MMCP=$(cat /proc/partitions | grep mmc)
 
 if [ -z "$MMCP" ]; then
 echo "no mmc present"
