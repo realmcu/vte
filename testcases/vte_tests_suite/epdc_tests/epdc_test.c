@@ -630,7 +630,11 @@ struct mxcfb_update_data im_update = {
 /*step 1: set up update data*/
 	CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 	fd_pxp = open(PXP_DEVICE_NAME, O_RDWR, 0);
-	mem.size = m_opt.su == 1? 2 *(m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height) : 2 * PXP_BUFFER_SIZE;
+	if(m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height > 0)
+		mem.size = m_opt.su == 1? 2 *(m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height) : 2 * PXP_BUFFER_SIZE;
+	else
+		mem.size =  2 * PXP_BUFFER_SIZE;
+
 	if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
 	{
 		mem.cpu_addr = 0;
