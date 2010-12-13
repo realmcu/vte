@@ -715,7 +715,7 @@ struct mxcfb_update_data im_update = {
 		im_update.update_region.left = 0;
 	}
   /*full update*/
-  count = 20;
+  count = 2;
   im_update.update_mode = 1;
   while(count--)
   {
@@ -809,13 +809,16 @@ struct mxcfb_update_data im_update = {
 	 printf("open pxp devices fialed\n");
 	 return FALSE;
  }
- mem.size = m_opt.su == 1? (m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height)*2:PXP_BUFFER_SIZE*2;
+ if(m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height > 0)
+	 mem.size = m_opt.su == 1? (m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height)*2:PXP_BUFFER_SIZE*2;
+ else
+	 mem.size = PXP_BUFFER_SIZE*2;
  printf("try to get memory size %d\n",mem.size);
  if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
  {
 	mem.phys_addr = 0;
 	mem.cpu_addr = 0;
-	printf("get memory failed");
+	printf("get memory failed\n");
 	goto END;
  }
 #if 1
