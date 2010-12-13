@@ -64,6 +64,8 @@ int      u_flag;        /* auto update*/
 char      *u_opt;        /* auto update*/
 int      s_flag;        /* send update setting*/
 char     *s_opt;
+int      S_flag;        /* send update setting*/
+char     *S_opt;
 int      R_flag;        /* Rotation */
 char     *R_opt;
 int      y_flag;        /* power down delay */
@@ -79,6 +81,7 @@ option_t opts[] =
     { "H:", &H_flag, &H_opt},
     { "u:", &u_flag, &u_opt},
     { "s:", &s_flag, &s_opt},
+		{ "S:", &S_flag, &S_opt},
     { "R:", &R_flag, &R_opt},
     { "y:", &y_flag, &y_opt},
     { NULL, NULL,    NULL}
@@ -122,6 +125,7 @@ void help(void)
 		printf("[-d /dev/fb0: fb device]\n");
 		printf("[-u <int> : auto update mode 0(partial)/1(full)]\n");
 		printf("[-s <string>: send update with format only in partial update]\n");
+		printf("[-S <int>: SCHEME: 0/1/2 SNAPSHOT/QUEUE/QUEUE_AND_MERGE]\n");
 		printf("[-R <int>: Rotation 0/1/2/3]\n");
 		printf("[-y <int>: power down delay after last update]\n");
         return;
@@ -270,6 +274,11 @@ int main(int argc, char **argv)
             &(m_opt.update.alt_buffer_data.alt_update_region.height)
 			);
 			m_opt.su = 1;
+		}
+		if(S_flag){
+			m_opt.scheme = atoi(S_opt);	
+	  }else{
+	    m_opt.scheme = UPDATE_SCHEME_SNAPSHOT;		
 		}
 		if(y_flag)
 		{

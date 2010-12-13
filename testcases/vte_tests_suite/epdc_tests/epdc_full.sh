@@ -83,6 +83,7 @@ LOOP_TIMES=2
 ROT_LIST="0 1 2 3"
 CASE_LIST="2 3 4 5 6 7"
 EPDC_FLAGS="1 2"
+EDPC_SCHEME="0 1 2"
 #alt buffer is not test here
 
 while [ $LOOP_TIMES -gt 0 ]
@@ -94,7 +95,11 @@ do
 			echo "epdc_test -T $i -R $j"
 			for k in $EPDC_FLAGS
 			do
-			epdc_test -T $i -R $j -s 0:0:128:128,257,0,0,$k,0,0,0:0:0:0 || RC=$(expr $RC + 1)
+			epdc_test -T $i -R $j -S 0 -s 0:0:128:128,257,0,0,$k,0,0,0:0:0:0 || RC=$(expr $RC + 1)
+			sleep 1
+			epdc_test -T $i -R $j -S 1 -s 0:0:128:128,257,0,0,$k,0,0,0:0:0:0 || RC=$(expr $RC + 1)
+			sleep 1
+			epdc_test -T $i -R $j -S 2 -s 0:0:128:128,257,0,0,$k,0,0,0:0:0:0 || RC=$(expr $RC + 1)
 			sleep 1
 			done
 		done
