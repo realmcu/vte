@@ -1122,12 +1122,12 @@ int epdc_fb_setup(void)
 		{
 			int tfd = open("/dev/tty0", O_RDWR);
 			if(write(tfd, "\033[9;0]", 7)< 0)
-				perror("write");
+			perror("write");
 			close(tfd);
 		}
 
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_WAVEFORM_MODES, &m_opt.waveform));
-
+  CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_UPDATE_SCHEME, &m_opt.scheme));
 	if(m_opt.grayscale != -1)
 	{
 		struct fb_var_screeninfo mode_info;

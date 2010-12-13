@@ -78,6 +78,7 @@ typedef struct epdc_opts {
    struct mxcfb_update_data update;
    int wt;
 	 int delay;
+	 int scheme;
  } epdc_opts;
 
 /* GLOBAL VARIABLE DECLARATIONS */
