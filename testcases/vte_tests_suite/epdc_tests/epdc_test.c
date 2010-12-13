@@ -715,7 +715,7 @@ struct mxcfb_update_data im_update = {
 		im_update.update_region.left = 0;
 	}
   /*full update*/
-  count = 20;
+  count = 2;
   im_update.update_mode = 1;
   while(count--)
   {
