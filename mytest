@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 if [ $# -eq 0 ]
 then
@@ -14,16 +14,56 @@ fi
 ARCH_PLATFORM=imx50
 TEST_TYPE=AUTO
 
+CONTINUE=y
+
 export STREAM_PATH=/mnt/nfs/test_stream
 mount /dev/mmcblk0p1 /tmp
 export TMPDIR=/tmp
-export LTPROOT=$(pwd)
-
-TEST_PATH=$(dirname $0)
+export LTPROOT=$(dirname 0)
+TEST_PATH=$(dirname 0)
+export PATH=$PATH:${TEST_PATH}/testcases/bin
 
 dos2unix ${TEST_PATH}/runtest/$CMDFILE
- 
+if [ "$CONTINUE" = 'y' ];then
+tday=$(date +%m%d%Y)
+cp ${TEST_PATH}/runtest/$CMDFILE ${TEST_PATH}/runtest/temp_test
+if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt ]; then
+#not first run, need change the command file skip the last one
+#find the last execute one 
+	search=1
+	cnt=1
+	ll=0
+	step=1
+	while [ $search -eq 1 ];do
+   id=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | tail -n $cnt | head -n 1)
+	 ide=$(echo $id | wc -L)
+	 if [ "$ide" -eq 0 ]; then
+      cnt=$(expr $cnt + 1)
+	 else
+			ss=$(echo $id | awk '{print $1}')
+      line=$(grep -n "$ss" ${TEST_PATH}/runtest/$CMDFILE | awk '{print $1}' | cut -d ":" -f 1)
+			ll=$(cat ${TEST_PATH}/temp_cnt)
+			if [ -z $ll ]; then
+				ll=0
+			fi
+			if [ ! -z "$line" ]; then
+				if [ $ll -gt $line ]; then
+					line=$(expr $ll + 1)
+				else
+					line=$(expr $line + 1)
+				fi
+				echo $line > ${TEST_PATH}/temp_cnt
+				sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test"
+			fi
+			search=0
+	 fi
+	done
+fi
+${TEST_PATH}/runltp -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt -f temp_test -o ${TEST_PATH}/${CMDFILE}_log_$(date +"%y%m%d")
+else
+
 ${TEST_PATH}/runltp -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${CMDFILE}_log_$(date +"%y%m%d")
 #${TEST_PATH}/runalltests.sh -v -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt
-
+fi
+rm -f ${TEST_PATH}/temp_cnt
 echo "FREESCALE LBG TEST END"
