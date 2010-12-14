@@ -263,7 +263,7 @@ static BOOL update_once(void * p_update)
   struct timezone tz;
   struct mxcfb_update_data *  p_im_update = (struct mxcfb_update_data *)p_update;
    /*do not use alt buffer*/
-   p_im_update->flags = 0;
+   //p_im_update->flags = 0;
 	 /*
 	 printf("l = %d t= %d w = %d h = %d\n",
 	 p_im_update->update_region.left,
@@ -366,7 +366,7 @@ static BOOL single_update(void * p_update)
 	pid_t tid = syscall(SYS_gettid);
   struct mxcfb_update_data *  p_im_update = (struct mxcfb_update_data *)p_update;
 	/*do not use alt buffer*/
-	p_im_update->flags = 0;
+	//p_im_update->flags = 0;
 	printf("process %d runing at t= %d, l = %d, w= %d, h = %d\n",tid, p_im_update->update_region.top,p_im_update->update_region.left,
 	p_im_update->update_region.width,p_im_update->update_region.height);
 
@@ -979,7 +979,7 @@ BOOL full_update()
    memcpy(&im_update,&m_opt.update, sizeof(struct mxcfb_update_data));
   }
    /*do not use alt buffer*/
-   im_update.flags = 0;
+  // im_update.flags = 0;
   /*step 2: update and wait finished*/
 	if(m_opt.au != -1)
 		return TRUE; /*for auto update, not needs to send update request*/
@@ -1036,59 +1036,62 @@ BOOL test_wait_update()
    memcpy(&im_update,&m_opt.update, sizeof(struct mxcfb_update_data));
   }
    /*do not use alt buffer*/
-   im_update.flags = 0;
+   //im_update.flags = 0;
   /*step 2: update and wait finished*/
   while(count--)
   {
-	/*black and white alternative*/
-	if(count & 0x01)
-		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
-	else
-		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
-	if(m_opt.au != -1)
-		continue; /*for auto update, not needs to send update request*/
-	while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0){
-	  sleep(1);	
-	}
-  while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
-  {
-     wait_time++;
-	if(wait_time > MAX_WAIT)
-	{
-	  printf("wait time exceed!!!\n");
-	  break;
-	}
-  }
-  wait_time = 0;
-  printf("partial mode next update\n");
-  draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+   	im_update.update_marker++;
+		/*black and white alternative*/
+		if(count & 0x01)
+			draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+		else
+			draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+		if(m_opt.au != -1)
+			continue; /*for auto update, not needs to send update request*/
+		while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0){
+	  	sleep(1);	
+		}
+  	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
+  	{
+     	wait_time++;
+			if(wait_time > MAX_WAIT)
+			{
+	  		printf("wait time exceed!!!\n");
+	  		break;
+			}
+  	}
+  	wait_time = 0;
+  	printf("partial mode next update\n");
+  	draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
   }
   /*step 3: now using full update mode*/
   count = 1;
   im_update.update_mode = 1;
   while(count--)
   {
-	/*black and white alternative*/
-	if(count & 0x01)
-		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
-	else
-		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
-	if(m_opt.au != -1)
-		continue; /*for auto update, not needs to send update request*/
-	while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0){
-		sleep(1);
+  	im_update.update_marker++;
+		/*black and white alternative*/
+		if(count & 0x01)
+			draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+		else
+			draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
+		if(m_opt.au != -1)
+			continue; /*for auto update, not needs to send update request*/
+		while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0){
+			sleep(1);
 		}
-	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
-	{
-		wait_time++;
-		if(wait_time > MAX_WAIT)
+		while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
 		{
-			printf("full mode wait time exceed!!!\n");
-			break;
+			wait_time++;
+			if(wait_time > MAX_WAIT)
+			{
+				printf("full mode wait time exceed!!!\n");
+				break;
+			}
 		}
-	}
-	wait_time = 0;
-	printf("next update\n");
+		wait_time = 0;
+		printf("next update\n");
+  	draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
   }
   return TRUE;
 }
@@ -1134,7 +1137,6 @@ int epdc_fb_setup(void)
 		}
 
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_WAVEFORM_MODES, &m_opt.waveform));
-  CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_UPDATE_SCHEME, &m_opt.scheme));
 	if(m_opt.grayscale != -1)
 	{
 		struct fb_var_screeninfo mode_info;
@@ -1152,7 +1154,8 @@ int epdc_fb_setup(void)
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_TEMPERATURE, &m_opt.waveform));
 	if (m_opt.au != -1)
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_AUTO_UPDATE_MODE, &m_opt.au));
-
+  
+	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_UPDATE_SCHEME, &m_opt.scheme));
     rv = TPASS;
     return rv;
 }
