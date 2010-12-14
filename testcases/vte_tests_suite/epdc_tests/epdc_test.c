@@ -263,7 +263,7 @@ static BOOL update_once(void * p_update)
   struct timezone tz;
   struct mxcfb_update_data *  p_im_update = (struct mxcfb_update_data *)p_update;
    /*do not use alt buffer*/
-   //p_im_update->flags = 0;
+   p_im_update->flags = 0;
 	 /*
 	 printf("l = %d t= %d w = %d h = %d\n",
 	 p_im_update->update_region.left,
