@@ -36,14 +36,14 @@ int main()
 	
 	printf("begin to count time!\n");
 	signal(SIGALRM,handler);
-	rv=alarm(5);
+	rv=alarm(15);
 	if(rv!=0)
 	{
 		printf("test case doesn't work well!");
 	}
 	else
 	{
-	for(i=1;i<7;i++){
+	for(i=1;i<20;i++){
 		printf("sleep %d ...\n",i);
 		rv=sleep(1);
 		if(rv!=0)
