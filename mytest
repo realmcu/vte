@@ -35,6 +35,7 @@ if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt 
 	ll=0
 	step=1
 	while [ $search -eq 1 ];do
+	 lct=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | wc -l)
    id=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | tail -n $cnt | head -n 1)
 	 ide=$(echo $id | wc -L)
 	 if [ "$ide" -eq 0 ]; then
@@ -52,12 +53,16 @@ if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt 
 				else
 					line=$(expr $line + 1)
 				fi
-				echo $line > ${TEST_PATH}/temp_cnt
-				sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test"
+			else
+				line=$(expr $ll + 1)
 			fi
+			echo $line > ${TEST_PATH}/temp_cnt
+			sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test"
 			search=0
 	 fi
 	done
+else
+	rm -f ${TEST_PATH}/temp_cnt
 fi
 ${TEST_PATH}/runltp -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt -f temp_test -o ${TEST_PATH}/${CMDFILE}_log_$(date +"%y%m%d")
 else
