@@ -1,3 +1,4 @@
+#!/bin/sh -x
 # Copyright (C) 2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -173,14 +174,14 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 #the casesID are the struct list of mmc_test_case
 caseID="20 22"
-MMCP=$(cat /proc/partition | grep mmc${MMCID})
+MMCP=$(cat /proc/partitions | grep mmc)
 
 if [ -z "$MMCP" ]; then
 echo "no mmc present"
 return 1
 fi
 
-card=$(ls /sys/bus/mmc/drivers/mmcblk/ | grep mmc1)
+card=$(ls /sys/bus/mmc/drivers/mmcblk/ | grep mmc${MMCID})
 echo $card > /sys/bus/mmc/drivers/mmcblk/unbind
 echo $card > /sys/bus/mmc/drivers/mmc_test/bind
 test=$(find /sys -name test)
@@ -219,7 +220,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 echo "this test will destroy the MMC card partition"
 #the casesID are the struct list of mmc_test_case
 caseID="19 21"
-MMCP=$(cat /proc/partition | grep mmc)
+MMCP=$(cat /proc/partitions | grep mmc)
 
 if [ -z "$MMCP" ]; then
 echo "no mmc present"
