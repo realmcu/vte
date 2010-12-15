@@ -11,7 +11,8 @@ FILES = 800_480_s0.rgba32  \
 		small.s0           \
 		tux.s1             \
 		yuv420_352_240.s0  \
-		fb-352x240.yuv
+		fb-352x240.yuv     \
+		rgb565_800_480.s1
 
 all:
 	
