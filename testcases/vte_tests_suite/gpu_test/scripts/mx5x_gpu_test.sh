@@ -63,8 +63,8 @@ cleanup()
 RC=0
 
 #TODO add cleanup code here
-modprobe gpu -r
-rm -f /dev/gsl_kmod
+#modprobe gpu -r
+#rm -f /dev/gsl_kmod
 return $RC
 }
 
