@@ -75,6 +75,7 @@ extern "C"{
     }\
 }
 
+#define EPDC_STR_ID		"mxc_epdc_fb"
 #define PXP_DEVICE_NAME "/dev/pxp_device"
 #define BUFFER_WIDTH 256
 #define BUFFER_HEIGHT 256
@@ -94,6 +95,8 @@ struct fb_fix_screeninfo fb_info; /* Framebuffer constant information */
 unsigned char  *fb_mem_ptr;   /* Pointer to the mapped momory of the fb device */
 sigset_t sigset;
 static int quitflag = 0;
+static int g_fb_size;
+
 unsigned long last_t = 0;
 /*local functions*/
 int get_modeinfo(struct fb_var_screeninfo *info);
@@ -1110,12 +1113,62 @@ BOOL test_wait_update()
 int epdc_fb_setup(void)
 {
     int rv = TFAIL;
+		char fb_dev[10] = "/dev/fb";
+		int fb_num=0;
+		struct fb_fix_screeninfo screen_info_fix;
+		struct fb_var_screeninfo mode_info;
     /* Open the framebuffer device */
+		/* Find EPDC FB device */
+		while (1) {
+		fb_dev[7] = '0' + fb_num;
+		fb_fd = open(fb_dev, O_RDWR, 0);
+		if (fb_fd < 0) {
+			printf("Unable to open %s\n", fb_dev);
+			rv = TFAIL;
+			return rv;
+		}
+
+		/* Check that fb device is EPDC */
+		/* First get screen_info */
+		rv = ioctl(fb_fd, FBIOGET_FSCREENINFO, &screen_info_fix);
+		if (rv < 0)
+		{
+			printf("Unable to read fixed screeninfo for %s\n", fb_dev);
+			close(fb_fd);
+		}
+		/* If we found EPDC, exit loop */
+		if (!strcmp(EPDC_STR_ID, screen_info_fix.id))
+			break;
+		fb_num++;
+	}
+/*
     fb_fd = open(m_opt.dev, O_RDWR);
     if (fb_fd < 0)
     {
         tst_brkm(TBROK, cleanup, "Cannot open framebuffer: %s", strerror(errno));
     }
+*/
+	CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
+  if(m_opt.grayscale != -1)
+	{
+		mode_info.bits_per_pixel = 8;
+		/*mode_info.grayscale = GRAYSCALE_8BIT;*/
+		mode_info.rotate = m_opt.rot;
+		mode_info.grayscale = m_opt.grayscale;
+		mode_info.yoffset = 0;
+		mode_info.activate = FB_ACTIVATE_FORCE;
+		CALL_IOCTL(ioctl(fb_fd, FBIOPUT_VSCREENINFO, &mode_info));
+		printf("set gray scale mode to %d\n", mode_info.grayscale);
+	}else{
+		mode_info.bits_per_pixel = 16;
+		mode_info.grayscale = 0;
+		mode_info.yoffset = 0;
+		mode_info.rotate = FB_ROTATE_UR;
+		mode_info.activate = FB_ACTIVATE_FORCE;
+		CALL_IOCTL(ioctl(fb_fd, FBIOPUT_VSCREENINFO, &mode_info));
+		printf("set gray scale mode to %d\n", mode_info.grayscale);
+	}
+#if 1
     /* Get constant fb info */
     if ((ioctl(fb_fd, FBIOGET_FSCREENINFO, &fb_info)) < 0)
     {
@@ -1128,6 +1181,20 @@ int epdc_fb_setup(void)
     {
         tst_brkm(TFAIL, cleanup, "Can't map framebuffer device into memory: %s\n", strerror(errno));
     }
+		g_fb_size = fb_info.smem_len;
+    sleep(5);
+#else
+	g_fb_size = mode_info.xres_virtual * mode_info.yres_virtual * mode_info.bits_per_pixel / 8;
+	printf("screen_info.xres_virtual = %d\nscreen_info.yres_virtual = %d\nscreen_info.bits_per_pixel = %d\n",
+		mode_info.xres_virtual, mode_info.yres_virtual, mode_info.bits_per_pixel);
+	fb_mem_ptr = (unsigned char *)mmap(0, g_fb_size,PROT_READ | PROT_WRITE, MAP_SHARED, fb_fd, 0);
+	if ((int)fb_mem_ptr == -1)
+    {
+        tst_brkm(TFAIL, cleanup, "Can't map framebuffer device into memory: %s\n", strerror(errno));
+    }
+    sleep(1);
+		printf("mmaped\n");
+#endif
     /*keep system on*/
 		{
 			int tfd = open("/dev/tty0", O_RDWR);
@@ -1137,20 +1204,7 @@ int epdc_fb_setup(void)
 		}
 
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_WAVEFORM_MODES, &m_opt.waveform));
-	if(m_opt.grayscale != -1)
-	{
-		struct fb_var_screeninfo mode_info;
-		CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
-		mode_info.bits_per_pixel = 8;
-		/*mode_info.grayscale = GRAYSCALE_8BIT;*/
-		mode_info.rotate = m_opt.rot;
-		mode_info.grayscale = m_opt.grayscale;
-		mode_info.yoffset = 0;
-		mode_info.activate = FB_ACTIVATE_FORCE;
-		CALL_IOCTL(ioctl(fb_fd, FBIOPUT_VSCREENINFO, &mode_info));
-		printf("set gray scale mode to %d\n", mode_info.grayscale);
-	}
-	if (m_opt.temp != -1)
+		if (m_opt.temp != -1)
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_TEMPERATURE, &m_opt.waveform));
 	if (m_opt.au != -1)
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_AUTO_UPDATE_MODE, &m_opt.au));
@@ -1174,7 +1228,7 @@ int epdc_fb_setup(void)
 int epdc_fb_cleanup(void)
 {
     draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
-    munmap(fb_mem_ptr, fb_info.smem_len);
+    munmap(fb_mem_ptr, g_fb_size);
     close(fb_fd);
     return TPASS;
 }
@@ -1385,9 +1439,11 @@ int draw_pattern_pic(int fd ,unsigned char * pfb, int r, int g, int b)
 			}
 		}
 	/* Restore activation flag */
-    mode_info.activate = act_mode;
-    ioctl(fd, FBIOPUT_VSCREENINFO, &mode_info);
-    return rv;
+	  if(mode_info.activate != act_mode){
+			mode_info.activate = act_mode;
+			ioctl(fd, FBIOPUT_VSCREENINFO, &mode_info);
+			}
+		return rv;
 
 }
 #endif
