@@ -33,7 +33,7 @@ extern "C"{
 #include <sys/stat.h>   /* open()                          */
 #include <fcntl.h>      /* open()                          */
 #include <unistd.h>     /* close()                         */
-#include <stdio.h>      /* printf(), fgetc(), stdin        */
+#include <stdio.h>      /* tst_resm(TINFO,), fgetc(), stdin        */
 #include <errno.h>      /* errno                           */
 #include <string.h>     /* strerror()                      */
 #include <sys/ioctl.h>  /* ioctl()                         */
@@ -155,7 +155,7 @@ BOOL draw_test()
 		tst_resm(TINFO, "fail to draw patter on bg");
 		return FALSE;
 	}
-	printf("updating the screen now\n");
+	tst_resm(TINFO,"updating the screen now\n");
 	if(m_opt.au != -1)
 		return TRUE; /*for auto update, not needs to send update request*/
 	while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0){
@@ -166,7 +166,7 @@ BOOL draw_test()
 		wait_time++;
 		if(wait_time > MAX_WAIT)
 		{
-			printf("full mode wait time exceed!!!\n");
+			tst_resm(TINFO,"full mode wait time exceed!!!\n");
 			return FALSE;
 		}
 	}
@@ -228,7 +228,7 @@ BOOL pan_test()
    for (y = 0; y <= mode_info.yres; y += mode_info.yres/8)
    {
         mode_info.yoffset = y;
-				printf("\r offset at %d\n", y);
+				tst_resm(TINFO,"\r offset at %d\n", y);
         CALL_IOCTL(ioctl(fb_fd, FBIOPAN_DISPLAY, &mode_info));
 				if(m_opt.au != -1)
 					continue; /*for auto update, not needs to send update request*/
@@ -240,7 +240,7 @@ BOOL pan_test()
      			wait_time++;
 					if(wait_time > MAX_WAIT)
 					{
-						printf("full mode wait time exceed!!!\n");
+						tst_resm(TINFO,"full mode wait time exceed!!!\n");
 						break;
 					}
   }
@@ -268,7 +268,7 @@ static BOOL update_once(void * p_update)
    /*do not use alt buffer*/
    p_im_update->flags = 0;
 	 /*
-	 printf("l = %d t= %d w = %d h = %d\n",
+	 tst_resm(TINFO,"l = %d t= %d w = %d h = %d\n",
 	 p_im_update->update_region.left,
 	 p_im_update->update_region.top,
 	 p_im_update->update_region.width,
@@ -288,12 +288,12 @@ static BOOL update_once(void * p_update)
     wait_time++;
 	if(wait_time > MAX_WAIT)
 	{
-	  printf("wait time exceed!!!\n");
+	  tst_resm(TINFO,"wait time exceed!!!\n");
 	  break;
 	}
   }
   wait_time = 0;
-  printf("partial mode next update\n");
+  tst_resm(TINFO,"partial mode next update\n");
   }
 #endif
   /*step 3: now using full update mode*/
@@ -314,7 +314,7 @@ static BOOL update_once(void * p_update)
      wait_time++;
 	if(wait_time > MAX_WAIT)
 	{
-	  printf("full mode wait time exceed!!!\n");
+	  tst_resm(TINFO,"full mode wait time exceed!!!\n");
 	  break;
 	}
   }
@@ -323,9 +323,9 @@ static BOOL update_once(void * p_update)
   if(et > st)
 		last_t += (et - st);
 	else
-		printf("WARNING!!! gettimeof day wrong");
+		tst_resm(TINFO,"WARNING!!! gettimeof day wrong");
   wait_time = 0;
-  /*printf("next update\n");*/
+  /*tst_resm(TINFO,"next update\n");*/
   }
   return TRUE;
 }
@@ -347,7 +347,7 @@ static BOOL test_power_delay()
 	int id = FB_POWERDOWN_DISABLE; 
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_PWRDOWN_DELAY, &(m_opt.delay)));
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_GET_PWRDOWN_DELAY, &id));
-	printf("delay time set to %dms\n", id);
+	tst_resm(TINFO,"delay time set to %dms\n", id);
 	if(id  !=  m_opt.delay)
 		return FALSE;
   if( !full_update())
@@ -370,7 +370,7 @@ static BOOL single_update(void * p_update)
   struct mxcfb_update_data *  p_im_update = (struct mxcfb_update_data *)p_update;
 	/*do not use alt buffer*/
 	//p_im_update->flags = 0;
-	printf("process %d runing at t= %d, l = %d, w= %d, h = %d\n",tid, p_im_update->update_region.top,p_im_update->update_region.left,
+	tst_resm(TINFO,"process %d runing at t= %d, l = %d, w= %d, h = %d\n",tid, p_im_update->update_region.top,p_im_update->update_region.left,
 	p_im_update->update_region.width,p_im_update->update_region.height);
 
   /*step 2: update and wait finished*/
@@ -388,13 +388,13 @@ static BOOL single_update(void * p_update)
 			wait_time++;
 			if(wait_time > MAX_WAIT)
 			{
-				printf("wait time exceed!!!\n");
+				tst_resm(TINFO,"wait time exceed!!!\n");
 				break;
 			}
 		}
 #endif
 		usleep(100);
-		printf("process %d update\n",tid);
+		tst_resm(TINFO,"process %d update\n",tid);
 		if(quitflag)
 			goto QUIT;
 		wait_time = 0;
@@ -416,19 +416,19 @@ static BOOL single_update(void * p_update)
 			wait_time++;
 			if(wait_time > MAX_WAIT)
 			{
-				printf("full mode wait time exceed!!!\n");
+				tst_resm(TINFO,"full mode wait time exceed!!!\n");
 				break;
 			}
 		}
 	#endif
 		usleep(100);
-		printf("process %d full update\n",tid);
+		tst_resm(TINFO,"process %d full update\n",tid);
 		if(quitflag)
 			goto QUIT;
 		wait_time = 0;
   }
 QUIT:
-	printf("process %d quit\n", tid);
+	tst_resm(TINFO,"process %d quit\n", tid);
   return TRUE;
 }
 
@@ -446,7 +446,7 @@ static void draw_thread(int *pon)
 		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
 		usleep(UPDATE_INTERVAL);
 	}
-	printf("draw quit\n");
+	tst_resm(TINFO,"draw quit\n");
 }
 
 static int signal_thread(void *arg)
@@ -456,9 +456,9 @@ static int signal_thread(void *arg)
      while (1) {
          err = sigwait(&sigset, &sig);
          if (sig == SIGINT) {
-             printf("Ctrl-C received\n");
+             tst_resm(TINFO,"Ctrl-C received\n");
          } else {
-             printf("Unknown signal. Still exiting\n");
+             tst_resm(TINFO,"Unknown signal. Still exiting\n");
          }
          quitflag = 1;
          break;
@@ -518,7 +518,7 @@ BOOL test_rate_update()
 		update_once(&(im_update[1]));
 	}
     if(last_t > 0)
-		printf("total update fps is:%f\n",(float)((FRAME_CNT*1000000.0f*2)/last_t));
+		tst_resm(TINFO,"total update fps is:%f\n",(float)((FRAME_CNT*1000000.0f*2)/last_t));
     return TRUE;
 }
 
@@ -573,7 +573,7 @@ BOOL test_max_update()
 			im_update[cn].temp = 24;
 			pthread_create(&(updates_id[id++]), NULL,
 				(void *)&single_update, (void *)&(im_update[cn]));
-			printf("carete pid %d\n", (int)updates_id[i]);
+			tst_resm(TINFO,"carete pid %d\n", (int)updates_id[i]);
 			cn++;
 			}
 		for (i = 0; i < (MAX_CNT_X * MAX_CNT_Y); i++)
@@ -582,7 +582,7 @@ BOOL test_max_update()
 			if (updates_id[i] != 0)
 				pthread_join(updates_id[i], (void **)&(pret));
 			ret = ((BOOL)pret)?0:ret + 1;
-			printf("%d return with %s\n", (int)updates_id[i], ret == 0 ? "OK":"FAIL");
+			tst_resm(TINFO,"%d return with %s\n", (int)updates_id[i], ret == 0 ? "OK":"FAIL");
 		}
 		state = 0;
 		//pthread_join(sigtid,NULL);
@@ -648,7 +648,7 @@ struct mxcfb_update_data im_update = {
 		int fd_mem = open("/dev/mem",O_RDWR);
 		if(fd_mem < 0)
 		{
-			printf("open mem device error\n");
+			tst_resm(TINFO,"open mem device error\n");
 			goto END;
 		}
 		mem.virt_uaddr = (unsigned long)mmap(NULL, mem.size, PROT_READ | PROT_WRITE,
@@ -661,7 +661,7 @@ struct mxcfb_update_data im_update = {
 #endif
 	if(mem.virt_uaddr == 0)
 	{
-		printf("virtual address error!\n");
+		tst_resm(TINFO,"virtual address error!\n");
 		goto END;
 	}
 	if(m_opt.su == 1)
@@ -705,12 +705,12 @@ struct mxcfb_update_data im_update = {
 			wait_time++;
 			if(wait_time > MAX_WAIT)
 			{
-				printf("wait time exceed!!!\n");
+				tst_resm(TINFO,"wait time exceed!!!\n");
 				break;
 			}
 		}
 		wait_time = 0;
-		printf("partial mode next update\n");
+		tst_resm(TINFO,"partial mode next update\n");
 	/*shift the update position a bit*/
 	if(im_update.update_region.top + im_update.update_region.height < mode_info.yres - 5)
 	im_update.update_region.top += 5;
@@ -741,12 +741,12 @@ struct mxcfb_update_data im_update = {
 		wait_time++;
 		if(wait_time > MAX_WAIT)
 		{
-		printf("wait time exceed!!!\n");
+		tst_resm(TINFO,"wait time exceed!!!\n");
 		break;
 		}
 	}
 	wait_time = 0;
-	printf("full mode next update\n");
+	tst_resm(TINFO,"full mode next update\n");
 	/*shift the update position a bit*/
 	if(im_update.update_region.top + im_update.update_region.height < mode_info.yres - 5)
 	im_update.update_region.top += 5;
@@ -808,24 +808,24 @@ struct mxcfb_update_data im_update = {
   EPDC_FLAG_USE_ALT_BUFFER,/*enable alt buffer*/
   {0,0,0,{0,0,0,0}}/*set this later*/
   };
- printf("start alt update test\n");
+ tst_resm(TINFO,"start alt update test\n");
 /*step 1: set up update data*/
  fd_pxp = open(PXP_DEVICE_NAME, O_RDWR, 0);
  if(fd_pxp < 0)
  {
-	 printf("open pxp devices fialed\n");
+	 tst_resm(TINFO,"open pxp devices fialed\n");
 	 return FALSE;
  }
  if(m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height > 0)
 	 mem.size = m_opt.su == 1? (m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height)*2:PXP_BUFFER_SIZE*2;
  else
 	 mem.size = PXP_BUFFER_SIZE*2;
- printf("try to get memory size %d\n",mem.size);
+ tst_resm(TINFO,"try to get memory size %d\n",mem.size);
  if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
  {
 	mem.phys_addr = 0;
 	mem.cpu_addr = 0;
-	printf("get memory failed\n");
+	tst_resm(TINFO,"get memory failed\n");
 	goto END;
  }
 #if 1
@@ -833,7 +833,7 @@ struct mxcfb_update_data im_update = {
 	int fd_mem = open("/dev/mem",O_RDWR);
 	if(fd_mem < 0)
 	{
-		printf("open mem device error\n");
+		tst_resm(TINFO,"open mem device error\n");
 		goto END;
 	}
 	mem.virt_uaddr = (unsigned long)mmap(NULL, mem.size, PROT_READ | PROT_WRITE,
@@ -846,10 +846,10 @@ struct mxcfb_update_data im_update = {
 #endif
 if(mem.virt_uaddr == 0)
  {
-	 printf("virtual address error!\n");
+	 tst_resm(TINFO,"virtual address error!\n");
 	 goto END;
  }
- printf("success get memory at %x\n",mem.virt_uaddr);
+ tst_resm(TINFO,"success get memory at %x\n",mem.virt_uaddr);
  if(m_opt.su == 1)
  {
   memcpy(&im_update,&m_opt.update, sizeof(struct mxcfb_update_data));
@@ -872,7 +872,7 @@ if(mem.virt_uaddr == 0)
 		((unsigned char*)mem.virt_uaddr)[2* (i*BUFFER_HEIGHT + j) + 1] = 128;
 	}
 #endif
- printf("start test\n");
+ tst_resm(TINFO,"start test\n");
 /*step 2: start test*/
   /*partial update*/
   while(count--)
@@ -893,12 +893,12 @@ if(mem.virt_uaddr == 0)
 		wait_time++;
 		if(wait_time > MAX_WAIT)
 		{
-		 printf("wait time exceed!!!\n");
+		 tst_resm(TINFO,"wait time exceed!!!\n");
 		 break;
 		}
 	}
 	wait_time = 0;
-	printf("partial mode next update\n");
+	tst_resm(TINFO,"partial mode next update\n");
   }
   /*full update*/
   count = 1;
@@ -920,12 +920,12 @@ if(mem.virt_uaddr == 0)
 		wait_time++;
 		if(wait_time > MAX_WAIT)
 		{
-		printf("wait time exceed!!!\n");
+		tst_resm(TINFO,"wait time exceed!!!\n");
 		break;
 		}
 	}
 	wait_time = 0;
-	printf("full mode next update\n");
+	tst_resm(TINFO,"full mode next update\n");
   }
 
  /*step 4: clean up */
@@ -994,7 +994,7 @@ BOOL full_update()
      wait_time++;
 	if(wait_time > MAX_WAIT)
 	{
-	  printf("wait time exceed!!!\n");
+	  tst_resm(TINFO,"wait time exceed!!!\n");
 	  break;
 	}
   }
@@ -1059,12 +1059,12 @@ BOOL test_wait_update()
      	wait_time++;
 			if(wait_time > MAX_WAIT)
 			{
-	  		printf("wait time exceed!!!\n");
+	  		tst_resm(TINFO,"wait time exceed!!!\n");
 	  		break;
 			}
   	}
   	wait_time = 0;
-  	printf("partial mode next update\n");
+  	tst_resm(TINFO,"partial mode next update\n");
   	draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
   }
   /*step 3: now using full update mode*/
@@ -1088,12 +1088,12 @@ BOOL test_wait_update()
 			wait_time++;
 			if(wait_time > MAX_WAIT)
 			{
-				printf("full mode wait time exceed!!!\n");
+				tst_resm(TINFO,"full mode wait time exceed!!!\n");
 				break;
 			}
 		}
 		wait_time = 0;
-		printf("next update\n");
+		tst_resm(TINFO,"next update\n");
   	draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
   }
   return TRUE;
@@ -1123,7 +1123,7 @@ int epdc_fb_setup(void)
 		fb_dev[7] = '0' + fb_num;
 		fb_fd = open(fb_dev, O_RDWR, 0);
 		if (fb_fd < 0) {
-			printf("Unable to open %s\n", fb_dev);
+			tst_resm(TINFO,"Unable to open %s\n", fb_dev);
 			rv = TFAIL;
 			return rv;
 		}
@@ -1133,7 +1133,7 @@ int epdc_fb_setup(void)
 		rv = ioctl(fb_fd, FBIOGET_FSCREENINFO, &screen_info_fix);
 		if (rv < 0)
 		{
-			printf("Unable to read fixed screeninfo for %s\n", fb_dev);
+			tst_resm(TINFO,"Unable to read fixed screeninfo for %s\n", fb_dev);
 			close(fb_fd);
 		}
 		/* If we found EPDC, exit loop */
@@ -1158,7 +1158,7 @@ int epdc_fb_setup(void)
 		mode_info.yoffset = 0;
 		mode_info.activate = FB_ACTIVATE_FORCE;
 		CALL_IOCTL(ioctl(fb_fd, FBIOPUT_VSCREENINFO, &mode_info));
-		printf("set gray scale mode to %d\n", mode_info.grayscale);
+		tst_resm(TINFO,"set gray scale mode to %d\n", mode_info.grayscale);
 	}else{
 		mode_info.bits_per_pixel = 16;
 		mode_info.grayscale = 0;
@@ -1166,7 +1166,7 @@ int epdc_fb_setup(void)
 		mode_info.rotate = FB_ROTATE_UR;
 		mode_info.activate = FB_ACTIVATE_FORCE;
 		CALL_IOCTL(ioctl(fb_fd, FBIOPUT_VSCREENINFO, &mode_info));
-		printf("set gray scale mode to %d\n", mode_info.grayscale);
+		tst_resm(TINFO,"set gray scale mode to %d\n", mode_info.grayscale);
 	}
 #if 1
     /* Get constant fb info */
@@ -1185,7 +1185,7 @@ int epdc_fb_setup(void)
     sleep(5);
 #else
 	g_fb_size = mode_info.xres_virtual * mode_info.yres_virtual * mode_info.bits_per_pixel / 8;
-	printf("screen_info.xres_virtual = %d\nscreen_info.yres_virtual = %d\nscreen_info.bits_per_pixel = %d\n",
+	tst_resm(TINFO,"screen_info.xres_virtual = %d\nscreen_info.yres_virtual = %d\nscreen_info.bits_per_pixel = %d\n",
 		mode_info.xres_virtual, mode_info.yres_virtual, mode_info.bits_per_pixel);
 	fb_mem_ptr = (unsigned char *)mmap(0, g_fb_size,PROT_READ | PROT_WRITE, MAP_SHARED, fb_fd, 0);
 	if ((int)fb_mem_ptr == -1)
@@ -1193,7 +1193,7 @@ int epdc_fb_setup(void)
         tst_brkm(TFAIL, cleanup, "Can't map framebuffer device into memory: %s\n", strerror(errno));
     }
     sleep(1);
-		printf("mmaped\n");
+		tst_resm(TINFO,"mmaped\n");
 #endif
     /*keep system on*/
 		{
