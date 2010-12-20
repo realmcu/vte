@@ -6,7 +6,7 @@
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
 
-SUBDIRS-$(CONFIG_VTE_IMX5) += usb_pm
+SUBDIRS-y += usb_pm
 
 all:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done

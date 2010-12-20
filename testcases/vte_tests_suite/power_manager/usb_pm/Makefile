@@ -8,7 +8,7 @@
 #http://www.gnu.org/copyleft/gpl.html
 
 
-TARGET=stop-usb.sh
+TARGET=stop-usb.sh low_power_usb.sh
 
 all:
 
