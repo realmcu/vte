@@ -120,7 +120,7 @@ static void timer_handle(unsigned long arg)
 {
 	  if(mxc_wdt_data.enable == 1)
 			mxc_wdt_ping(wdt_base_reg);
-		mod_timer(mxc_wdt_data.timer, jiffies + HZ * (timer_margin - 1));
+		mod_timer(mxc_wdt_data.timer, jiffies + HZ * 1);
 }
 
 static int __exit mxc_wdt_test_remove(struct platform_device *pdev)
@@ -173,7 +173,7 @@ static int __init mxc_wdt_test_init(void)
 
 	init_timer(timer);
 	timer->data = dev_num;
-	timer->expires = jiffies + (timer_margin - 1) * HZ;
+	timer->expires = jiffies + HZ;
 	timer->function = timer_handle;
 	add_timer(timer);
   mxc_wdt_data.timer = timer;
