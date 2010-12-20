@@ -49,7 +49,7 @@ trap "cleanup" 0
 
 #TODO add setup scripts
 echo 1 > /sys/devices/platform/mxc_dvfs_core.0/enable
-
+echo 1 > /sys/devices/platform/busfreq.0/enable
 return $RC
 }
 
@@ -89,7 +89,7 @@ run_manual_test_list()
  modprobe g_file_storage file=/var/storage.img
  echo "now please mount the usb device on PC"
  echo "please run bwloe on pc"
- echo "mount -t ext3 /dev/sd? /mnt/flash"
+ echo "mount /dev/sd? /mnt/flash"
  echo "bonnie\+\+ -d /mnt/flash -u 0:0 -s 10 -r 5"
  echo "dt of=/mnt/flash/test_file bs=4k limit=128m passes=20"
 
@@ -168,6 +168,9 @@ RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
+
+echo enabled > /sys/devices/platform/fsl-usb2-otg/power/wakeup
+echo enabled > /sys/devices/platform/fsl-usb2-udc/power/wakeup
 
 #TODO add function test scripte here
    run_manual_test_list
