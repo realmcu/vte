@@ -37,7 +37,6 @@
 #include <errno.h>
 
 #define gettimeofday(a,b)  syscall(__NR_gettimeofday,a,b)
-#define MAX_LOOP 10
 
 char *TCID = "timer resolutions";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
@@ -46,7 +45,7 @@ int Tflag;
 char *tlen = "100";
 
 int Lflag;
-char *lres = "1000";
+char *lres = "10";
 
 sig_atomic_t done;
 
@@ -108,10 +107,7 @@ int main(int ac, char **av)
 		}
 		tv1 = tv2;
 		/*now try to get the minimum time interval*/
-		{
-			int i = MAX_LOOP;
-			while(i--);
-		}
+		usleep(1);//sleep 1us
 		if (gettimeofday(&tv2, NULL) != 0)
 			tst_brkm(TBROK, cleanup,
 				 "loop gettimeofday() failed: %s\n",
