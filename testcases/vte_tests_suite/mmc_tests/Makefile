@@ -35,6 +35,9 @@ SUBDIRS-y += eject_mmc_testcase
 SUBDIRS-y += rw_mmc_testcase
 SUBDIRS-y += perform_mmc_testcase
 SUBDIRS-y += stressRW_mmc_testcase
+SUBDIRS-y += mmc_test_minix.sh
+SUBDIRS-y += mmc_module_test.sh
+SUBDIRS-y += eMMC_boot_test.sh
 #for non imx37 platform 
 SUBDIRS-$(CONFIG_VTE_MMC_ERW) += erw_mmc_testcase
 #for non imx37 platform 
@@ -44,8 +47,6 @@ all:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
 
 install:
-	ln -f mmc_test_minix.sh ../../bin
-	ln -f mmc_module_test.sh ../../bin
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install ; done
 
 clean:
