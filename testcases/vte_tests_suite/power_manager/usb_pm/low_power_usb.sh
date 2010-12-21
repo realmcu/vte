@@ -47,7 +47,7 @@ enable_usb_wakeup()
  done
 
  #enable all usb device wakeup
- usb_ehci_ctrls=$(ls ${SYS_USB_DEV}/product)
+ usb_ehci_ctrls=$(ls ${SYS_USB_DEV}/configuration)
  for i in $usb_ehci_ctrls
  do
 	  ctrl=$(dirname $i)/power/wakeup
@@ -58,7 +58,7 @@ enable_usb_wakeup()
 
 auto_usb_dev()
 {
- prd_list=$(ls ${SYS_USB_DEV}/product)
+ prd_list=$(ls ${SYS_USB_DEV}/configuration)
  is_skip=""
  for i in $prd_list
  do
