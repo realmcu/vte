@@ -46,6 +46,10 @@ trap "cleanup" 0
 #TODO add setup scripts
 which ls || RC=1
 
+sync
+sleep 1
+echo 3 > /proc/sys/vm/drop_caches
+
 return $RC
 }
 
@@ -60,6 +64,8 @@ cleanup()
 RC=0
 
 #TODO add cleanup code here
+sleep 1
+echo 3 > /proc/sys/vm/drop_caches
 return $RC
 }
 
