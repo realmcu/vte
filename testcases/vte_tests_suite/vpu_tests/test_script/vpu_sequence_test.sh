@@ -135,6 +135,12 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
+if [ ! -e "${LTPROOT}/testcases/bin/mx${TARGET}_vpu_dec_sequence_sanity_filelist.txt" ]; then
+    echo "${LTPROOT}/testcases/bin/mx${TARGET}_vpu_dec_sequence_sanity_filelist.txt not exists"
+    RC=1
+    return $RC
+fi
+
 BS_TOTAL=`wc -l ${LTPROOT}/testcases/bin/mx${TARGET}_vpu_dec_sequence_sanity_filelist.txt | awk '{print $1}'`
 cat ${LTPROOT}/testcases/bin/mx${TARGET}_vpu_dec_sequence_sanity_filelist.txt | 
 #BS_TOTAL=`wc -l ${LTPROOT}/testcases/bin/mx37_vpu_dec_sequence_sanity_filelist.txt | awk '{print $1}'`
