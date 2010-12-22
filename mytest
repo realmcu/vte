@@ -25,6 +25,7 @@ export PATH=$PATH:${TEST_PATH}/testcases/bin
 
 dos2unix ${TEST_PATH}/runtest/$CMDFILE
 if [ "$CONTINUE" = 'y' ];then
+dmesg -c
 tday=$(date +%m%d%Y)
 cp ${TEST_PATH}/runtest/$CMDFILE ${TEST_PATH}/runtest/temp_test
 if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt ]; then
@@ -47,7 +48,7 @@ if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt 
 				if [ -z $ll ]; then
 		#4 no former fail? start from first case
 					echo 1 > ${TEST_PATH}/temp_cnt
-					sh -c "sed -i '1,1s/^/#/g' ${TEST_PATH}/runtest/temp_test"
+					#sh -c "sed -i '1,1s/^/#/g' ${TEST_PATH}/runtest/temp_test"
 				else
 		#4 skip formal fail
 					line=$(expr $ll + 1)
