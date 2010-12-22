@@ -16,18 +16,18 @@ install()
 {
 RC=0
 
-FIRMWARE_BASE=${STREAM_PATH}/vpu_firmware/VPU_firmware_release_v1.4.0
-FIRMWARE_sur=""
+FIRMWARE_BASE=${STREAM_PATH}/vpu_firmware/VPU_firmware_release_v$2
+FIRMWARE_sur=$2
 PLATF=""
 case "$1" in
 RV_ONLY | rv_only)
-	FIRMWARE_sur=14.4.0
+	FIRMWARE_sur=14.${FIRMWARE_sur}
   ;;
 FULL | full)
-	FIRMWARE_sur=1.4.0
+	FIRMWARE_sur=1.${FIRMWARE_sur}
   ;;
 DIVX_ONLY | divx_only)
-	FIRMWARE_sur=15.4.0
+	FIRMWARE_sur=15.${FIRMWARE_sur}
 	;;
 *)
 	echo "wrong setting"
@@ -51,7 +51,7 @@ echo "default vpu firmware backup OK"
 return 0
 fi
 echo "vpu install fail"
-return $RC
+exit $RC
 }
 
 restore()
@@ -67,15 +67,19 @@ fi
 platfm.sh
 TARGET=$?
 
-if [ $# -lt 2 ];then
-echo "not engouth parameter"
-echo "setup INSTALL/RESTORE RV_ONLY/FULL/DIVX_ONLY"
+if [ $# -lt 3 ];then
+echo "The parameters are not enough"
+echo "setup INSTALL/RESTORE RV_ONLY/FULL/DIVX_ONLY version"
+echo "e.g ./setup INSTALL DIVX_ONLY 4.24"
+echo
+echo "available VPU firmware version:"
+echo `ls -d ${STREAM_PATH}/vpu_firmware/*/`
 exit 1
 fi
 
 case $1 in
    INSTALL | install)
-	 install $2
+	 install $2 $3
 	 ;;
 	 RESTORE | restore)
 	 restore
