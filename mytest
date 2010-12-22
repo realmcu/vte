@@ -24,8 +24,8 @@ TEST_PATH=$(dirname 0)
 export PATH=$PATH:${TEST_PATH}/testcases/bin
 
 dos2unix ${TEST_PATH}/runtest/$CMDFILE
-if [ "$CONTINUE" = 'y' ];then
 dmesg -c
+if [ "$CONTINUE" = 'y' ];then
 tday=$(date +%m%d%Y)
 cp ${TEST_PATH}/runtest/$CMDFILE ${TEST_PATH}/runtest/temp_test
 if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt ]; then
@@ -105,10 +105,10 @@ else
 #1 fisrt run reset counter
 	rm -f ${TEST_PATH}/temp_cnt
 fi
-${TEST_PATH}/runltp -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt -f temp_test -o ${TEST_PATH}/${CMDFILE}_log_$(date +"%y%m%d")
+${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.html  -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt -f temp_test -o ${TEST_PATH}/${CMDFILE}_log_$(date +"%y%m%d")
 else
 
-${TEST_PATH}/runltp -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${CMDFILE}_log_$(date +"%y%m%d")
+${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.html -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${CMDFILE}_log_$(date +"%y%m%d")
 #${TEST_PATH}/runalltests.sh -v -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt
 fi
 rm -f ${TEST_PATH}/temp_cnt
