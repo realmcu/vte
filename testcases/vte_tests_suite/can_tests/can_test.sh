@@ -426,12 +426,15 @@ ifconfig can0 up
 ifconfig can1 up
 
 canecho can1 -v &
+bgpid=$!
 
 cansend can0 123#1122334455667788 || RC=2
 
 if [ $RC -ne 0 ]; then
 RC="$RC $i"
 fi
+
+kill -9 $bgpid >/dev/null 2>&1
 
 done
 return $RC
