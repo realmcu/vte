@@ -874,15 +874,15 @@ main()
 	fi
 
     if [ "$ALT_HTML_OUT" -eq 1 ] ; then        #User wants the HTML output to be created, it then needs to be generated
-       export LTP_VERSION=$version_date
-       export TEST_START_TIME=$test_start_time
-       export TEST_END_TIME=$(date)
-       OUTPUT_DIRECTORY=`echo $OUTPUTFILE | cut -c4-`
-       LOGS_DIRECTORY="$LTPROOT/results"
-       export TEST_OUTPUT_DIRECTORY="$LTPROOT/output"
-       export TEST_LOGS_DIRECTORY=$LOGS_DIRECTORY
-       echo "Generating HTML Output.....!!"
-       ( perl $LTPROOT/bin/genhtml.pl $LTPROOT/tools/html_report_header.txt test_start test_end test_output execution_status $OUTPUT_DIRECTORY  > $HTMLFILE; )   
+cat > $LTPROOT/output/latest_test_report <<EOF
+export LTP_VERSION=$version_date
+export TEST_START_TIME="$test_start_time"
+export TEST_END_TIME="$(date)"
+export OUTPUT_DIRECTORY=`echo $OUTPUTFILE | cut -c4-`
+export TEST_LOGS_DIRECTORY=$(basename $LOGS_DIRECTORY)
+export HTMLFILE=$(basename $HTMLFILE)	
+EOF
+			 #( perl $LTPROOT/bin/genhtml.pl $LTPROOT/tools/html_report_header.txt test_start test_end test_output execution_status $OUTPUT_DIRECTORY  > $HTMLFILE; )   
        echo "Generated HTML Output.....!!"
        echo "Location: $HTMLFILE";
 
