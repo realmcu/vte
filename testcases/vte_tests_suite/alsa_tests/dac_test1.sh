@@ -17,6 +17,7 @@
 # Spring                24/10/2008       n/a        Add -A automation option   
 # Spring                28/11/2008       n/a        Modify COPYRIGHT header
 # Spring                06/07/2010       n/a        Add -D hw option
+# Spring                22/12/2010       n/a        Use temp direcotry
 #############################################################################
 # Portability:  ARM sh 
 #
@@ -101,7 +102,7 @@ cleanup()
       sleep 3;
     fi
     
-    rm -f /tmp/$basefn
+    rm -f $tmpdir/$basefn
     return $RC
 }
 
@@ -121,21 +122,22 @@ dac_play()
     #aplay -D hw:0,0 $1 || RC=$?
     #args=`echo $@|sed 's/-A//g'`
     basefn=$(basename $FILE)
-    cp -f $FILE /tmp
+    tmpdir=`mktemp -d --tmpdir=/tmp`
+    cp -f $FILE $tmpdir
     if [ $RC -ne 0 ]; then
         tst_resm TFAIL "Test #1: copy from NFS to tmp error, no space left in /tmp"
         return $RC
     fi
 
     if [ -n "$HW" ]; then
-        aplay -Dhw:0,0 -N -M /tmp/$basefn || RC=$?
+        aplay -Dhw:0,0 -N -M $tmpdir/$basefn || RC=$?
         if [ $RC -ne 0 ]; then
             tst_resm TFAIL "Test #1: play error with HW, please check"
             return $RC
         fi
     fi
 
-    aplay -N -M /tmp/$basefn || RC=$?
+    aplay -N -M $tmpdir/$basefn || RC=$?
     if [ $RC -ne 0 ]; then
         tst_resm TFAIL "Test #2: play error, please check"
         return $RC
