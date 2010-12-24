@@ -114,6 +114,7 @@ run_auto_test_list()
    rtc_test.sh 2 || return 1
    echo "frambuffer test"
    dd if=/dev/urandom of=/dev/fb0 bs=1k count=150 || return 2
+	 epdc_test -T 7 || return 2
    echo "ALSA test"
    aplay -vv $STREAM_PATH/alsa_stream/audio44k16M.wav || return 14
 	 echo "USB Host test"
