@@ -1,5 +1,5 @@
 /***
-**Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2005-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -185,6 +185,7 @@ static int parse_input(int argc, char ** argv)
  int status = 0;
  
  strcpy(ofilename,"out.bmp");
+ strcpy(oformat,"BMP24");
  while((opt = getopt(argc, argv, options)) > 0)
  {
   switch(opt)
@@ -283,7 +284,7 @@ static int process_img()
    }
 
 
-  if(strcmp(OUTFORMAT, oformat)!=0)
+  if(strcmp("BMP24", oformat)==0)
   {
     l = ((xres * 24 + 31) & ~31) / 8;
     //Write bitmap header  
@@ -347,10 +348,10 @@ static int process_img()
   fwrite((unsigned char *)&BitmapInfoHeader,40,1,fpdst);
 */
    pdata = (unsigned char *)start_fp + offset;
-   if(strcmp(OUTFORMAT, oformat) != 0)
+   if(strcmp("BMP24", oformat) == 0)
    {
      pout = (unsigned char *)p_ft + 14 + 40;
-   }else{
+   }else if(strcmp("RAW_DATA", oformat) == 0){
     printf("%s \n", iformat);
     pout = (unsigned char *)p_ft;
     if (strcmp(iformat,"BMP24") == 0)
@@ -360,7 +361,10 @@ static int process_img()
       memcpy(pout,pdata,isz - offset);
       goto END; 
     }
-   }
+   }else{
+	   printf("only RAW_DATA / BMP24 support for -O \n");
+		 goto END;
+	 }
 
   for(i = 0; i < eUNKNOWN; i++)
   {
@@ -422,6 +426,7 @@ static int process_img()
        printf("file size or offset wrong\n");
        exit(-2);
    }
+	 printf("convert RGB24 to bmp\n");
    for(i = 0 ; i < yres; i++)
     for(j = 0; j < xres; j++)
     {

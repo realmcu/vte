@@ -13,7 +13,7 @@ command line:
 e.g.
 ./conv -i green_480x640.bmp -I BMP24 -b 54 -x 480 -y 640 -o out.raw -O RAW_DATA -f 1
 
-#convert to bmp
+#convert to bmp and skip the 256 bytes
 ./conv -i green_RGB24 -I RGB24 -b 256 -x 240 -y 184 -o out.bmp
 
 #for mx25 case
