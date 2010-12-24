@@ -770,7 +770,14 @@ static int process_img()
        pout[k2 + 1] = pdata[k + 1];
        pout[k2 + 2] = pdata[k + 2];
        pout[k2 + 3] = 0; /*alpha=0*/
-       }else{
+       }else if(oenc == eRGB555){
+         unsigned char r,g,b;
+         long k2 = (i * xres + j) * 2;
+				 r = pdata[k + 2];
+				 g = pdata[k + 1];b = pdata[k];
+				 pout[k2 + 1] = ((r&0xf8)>>1) + ((g&0xc0)>>6);
+				 pout[k2] = ((g&0x38)<<3) + ((b&0xf8)>>3);
+			}else{
         printf("unsupported format");
 	goto END;
        }
