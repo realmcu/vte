@@ -42,7 +42,7 @@ export CONFIG_VTE_WIFI=y
 #export CONFIG_VM_SCC2=y
 #CONFIG_VM_RNG=y
 #CONFIG_VM_RNGA=y
-
+CONFIG_VM_MXS_WD=y
 #open source module config
 export CONFIG_OM_NAND=y
 export CONFIG_OM_RAMDISK=y
