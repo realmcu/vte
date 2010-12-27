@@ -183,7 +183,8 @@ static int parse_input(int argc, char ** argv)
 {
  char opt;
  int status = 0;
- 
+ int i = 0;
+
  strcpy(ofilename,"out.bmp");
  strcpy(oformat,"BMP24");
  while((opt = getopt(argc, argv, options)) > 0)
@@ -216,7 +217,15 @@ static int parse_input(int argc, char ** argv)
       strncpy(oformat,optarg,sizeof(oformat) - 1);
       break;
    case 'f':
-      oenc = atoi(optarg);
+  	for(i = 0; i < eUNKNOWN; i++)
+  	{
+    	if(strcmp(optarg, aFmt[i].fmt) == 0)
+    	{
+        	oenc = aFmt[i].et;
+					printf("format %s found %d \n",optarg,oenc);
+					break;
+    	}
+  	}
       break;
    case 'H':
       
@@ -238,9 +247,10 @@ static int parse_input(int argc, char ** argv)
 
 static int process_img()
 {
-  int i,j;
+  int i,j,ret = 1;
   int fdin, fdout;
-  long l, fmt = -1;
+  long l;
+	int fmt = -1;
   size_t isz = 0;
   BITMAPINFOHEADER BitmapInfoHeader;  
   BITMAPFILEHEADER BitmapFileHeader; 
@@ -333,7 +343,7 @@ static int process_img()
          exit(0);
        }
       }else{
-       printf("the output file size is %d \n", isz - offset);
+       printf("the output file size is %ld \n", isz - offset);
        lseek(fdout,isz - offset,SEEK_SET);
        write(fdout,"",1);
        if( ( p_ft = mmap(NULL, isz - offset, PROT_READ|PROT_WRITE, MAP_SHARED, fdout, 0 )) == MAP_FAILED)
@@ -363,6 +373,7 @@ static int process_img()
     }
    }else{
 	   printf("only RAW_DATA / BMP24 support for -O \n");
+	   printf("and only  RAW_DATA <-> BMP24 supported \n");
 		 goto END;
 	 }
 
@@ -370,9 +381,9 @@ static int process_img()
   {
     if(strcmp(iformat, aFmt[i].fmt) == 0)
     {
-        fmt = aFmt[i].et;
-	printf("format %s found %d \n",iformat,fmt);
-	break;
+			fmt = aFmt[i].et;
+			printf("format %s found %d \n",iformat,fmt);
+			break;
     }
   }
    
@@ -381,7 +392,7 @@ static int process_img()
    case eRGB565:
    if(isz - offset < yres * xres * 2)
    {
-       printf("%d,%d,%d,%d\n", isz,offset, yres, xres);
+       printf("%d,%ld,%d,%d\n", isz,offset, yres, xres);
        printf("file size or offset wrong\n");
        exit(-2);
    }
@@ -402,7 +413,7 @@ static int process_img()
    case eBGR24:   
    if(isz - offset < yres * xres * 3)
    {
-       printf("%d,%d,%d,%d\n", isz,offset, yres, xres);
+       printf("%d,%ld,%d,%d\n", isz,offset, yres, xres);
        printf("file size or offset wrong\n");
        exit(-2);
    }
@@ -489,7 +500,7 @@ static int process_img()
     long bias = xres * yres;
     if(isz - offset < yres * xres * 2)
     {
-       printf("file size or offset wrong %d - %d < %d * %d * 2 \n", isz, offset ,yres, xres);
+       printf("file size or offset wrong %d - %ld < %d * %d * 2 \n", isz, offset ,yres, xres);
        exit(-2);
     }
     /*http://hi.baidu.com/whandsome/blog/item/d060ffef3f1c6b37acafd580.html*/
@@ -634,7 +645,7 @@ static int process_img()
     long bias = xres * yres;
    if(isz - offset < yres * xres * 1.5)
    {
-       printf("isz = %d, where %d * %d * 1.5, add offset %d \n", isz, xres, yres, offset);
+       printf("isz = %d, where %d * %d * 1.5, add offset %ld \n", isz, xres, yres, offset);
        printf("file size or offset wrong\n");
        exit(-2);
    }
@@ -787,21 +798,27 @@ static int process_img()
      printf("unsupported format %d \n", fmt);
      break;
   }
+ ret = 0;
  END:
  if(temp != NULL){
     free(temp);
     temp = NULL;
  }
  munmap(p_ft, l * yres + 54);
+ return ret;
 }
 
 int main(int argc,char ** argv)
 {
+	int ret = 1;
   if( parse_input(argc,argv))
     return 1;
-  process_img();
-  printf("\nwe done!\n");
-  return 0;
+  if(0 == process_img()){
+		printf("\nwe done!\n");
+		ret = 0;
+	}else
+		printf("\nwe failed\n");
+  return ret;
 }
 
 
