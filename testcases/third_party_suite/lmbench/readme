@@ -1,0 +1,9 @@
+1. usage 
+cross build the system
+2. in target board
+cd to lmbench3/src
+../scripts/config-run < ${LTPROOT}/testcases/bin/mx5x_lm_config
+../scripts/results
+3. back to host pc
+cd lmbench3
+make see
