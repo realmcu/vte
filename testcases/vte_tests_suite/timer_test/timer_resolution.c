@@ -129,7 +129,7 @@ int main(int ac, char **av)
       cd = 1000000 * (tv1.tv_sec - tv2.tv_sec) + (tv1.tv_usec - tv2.tv_usec) - 1;
 			delay = delay > cd ? delay : cd;
 		}
-		tst_resm(TINFO,"average task transfer delay is %d",delay);
+	//	tst_resm(TINFO,"average task transfer delay is %d",delay);
 		if (gettimeofday(&tv2, NULL) != 0)
 			tst_brkm(TBROK, cleanup,
 				 "loop gettimeofday() failed: %s\n",
@@ -149,8 +149,8 @@ int main(int ac, char **av)
 			cleanup();
 			return 1;
 		}
-	tst_resm(TPASS, "gettimeofday resolution is less than %s", lres);
  }
+	tst_resm(TPASS, "gettimeofday resolution is less than %s", lres);
 	cleanup();
 	return 0;
 }
