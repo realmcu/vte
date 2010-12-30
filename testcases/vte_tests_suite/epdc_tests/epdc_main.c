@@ -292,7 +292,7 @@ int main(int argc, char **argv)
 		waveform setting is %d,%d,%d,%d,%d,%d \n\r \
 		tempture is %d\n\rgrayscale is %d \n\r \
 		auto update mode is %d \n\rupdate setting is %d \n\r \
-		rotation is %d \n\r scheme is %d",
+		rotation is %d \n\r scheme is %d\n\r update flag is %d \n\r",
 		m_opt.Tid,
 		m_opt.dev,
 		m_opt.waveform.mode_init,
@@ -306,7 +306,8 @@ int main(int argc, char **argv)
 		m_opt.au,
 		m_opt.su,
 		m_opt.rot,
-		m_opt.scheme
+		m_opt.scheme,
+    m_opt.update.flags
 		);
 		if(m_opt.su)
 		{
