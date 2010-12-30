@@ -288,7 +288,11 @@ int main(int argc, char **argv)
 	  }
 
 		printf("current settings\n");
-		printf("TestID = %d \ndevice is %s \n\rwaveform setting is %d,%d,%d,%d,%d,%d \n\rtempture is %d\n\rgrayscale is %d \n\rauto update mode is %d \n\rupdate setting is %d \n\r rotation is %d \n\r",
+		printf("TestID = %d \ndevice is %s \n\r \
+		waveform setting is %d,%d,%d,%d,%d,%d \n\r \
+		tempture is %d\n\rgrayscale is %d \n\r \
+		auto update mode is %d \n\rupdate setting is %d \n\r \
+		rotation is %d \n\r scheme is %d",
 		m_opt.Tid,
 		m_opt.dev,
 		m_opt.waveform.mode_init,
@@ -301,7 +305,8 @@ int main(int argc, char **argv)
 		m_opt.grayscale,
 		m_opt.au,
 		m_opt.su,
-		m_opt.rot
+		m_opt.rot,
+		m_opt.scheme
 		);
 		if(m_opt.su)
 		{
