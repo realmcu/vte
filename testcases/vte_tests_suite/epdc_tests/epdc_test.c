@@ -146,6 +146,8 @@ BOOL draw_test()
   0,/*do not use alt buffer*/
   {0,0,0,{0,0,0,0}}
   };
+
+	im_update.flags = m_opt.update.flags; 
 	CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
 	im_update.update_region.width = mode_info.xres;
 	im_update.update_region.height = mode_info.yres;
@@ -200,7 +202,7 @@ BOOL pan_test()
   {0,0,0,{0,0,0,0}}
   };
 /*x pan is not supported*/
-
+	im_update.flags = m_opt.update.flags; 
 #if 1
  tst_resm(TINFO,"test fb0 pan");
  CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
@@ -358,6 +360,75 @@ static BOOL test_power_delay()
 
 	id = FB_POWERDOWN_DISABLE;
 	CALL_IOCTL(ioctl(fb_fd, MXCFB_SET_PWRDOWN_DELAY, &id));
+ return TRUE;	
+}
+
+
+static BOOL gray_scale_test()
+{
+	int i, j;
+	int wait_time = 0;
+	int update_marker = 0x101;
+  struct fb_var_screeninfo mode_info;
+  struct fb_fix_screeninfo fx_fb_info;       /* Framebuffer constant information*/
+  unsigned char  *fb_wr_ptr = fb_mem_ptr;
+  struct pixel  px;
+  struct mxcfb_update_data im_update = {
+  {0,0,16,16},/*region round to 8*/
+  257,/*waveform mode 0-255, 257 auto*/
+  0, /*update mode 0(partial),1(Full)*/
+  update_marker,/*update_marker assigned by user*/
+  TEMP_USE_AMBIENT,/*use ambient temperature set*/
+  0,/*do not use alt buffer*/
+  {0,0,0,{0,0,0,0}}
+  };
+
+	im_update.flags = m_opt.update.flags; 
+	CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
+	im_update.update_region.width = mode_info.xres;
+	im_update.update_region.height = mode_info.yres;
+	tst_resm(TINFO, "draw a gray scale");
+	CALL_IOCTL(ioctl(fb_fd, FBIOGET_FSCREENINFO, &fx_fb_info));
+  /* Fill in the px struct */
+  px.bpp = mode_info.bits_per_pixel / 8;
+  px.xres = mode_info.xres % 32 == 0 ? mode_info.xres : mode_info.xres_virtual;
+  px.yres = mode_info.yres;
+  px.r_field.offset = mode_info.red.offset;
+  px.r_field.length = mode_info.red.length;
+  px.g_field.offset = mode_info.green.offset;
+  px.g_field.length = mode_info.green.length;
+  px.b_field.offset = mode_info.blue.offset;
+  px.b_field.length = mode_info.blue.length;
+  px.trans = 0x00;
+  px.line_length = fx_fb_info.line_length / px.bpp;
+	px.r_color = px.g_color = px.b_color = 0;
+	for (j= 0 ; j < mode_info.yres; j++)
+	{ 
+		px.r_color = px.g_color = px.b_color = 0;
+		for(i = 0; i < mode_info.xres_virtual; i++)
+		{
+		  px.r_color = i%2==0? px.r_color + 1: px.r_color;
+			px.r_color = px.r_color > 255?0:px.r_color;
+    	px.g_color = px.r_color;
+    	px.b_color = px.r_color; /* Set color values */
+		 	fb_wr_ptr = draw_px(fb_wr_ptr, &px);   	
+		}
+	}
+	tst_resm(TINFO,"updating the screen now\n");
+	if(m_opt.au != -1)
+		return TRUE; /*for auto update, not needs to send update request*/
+	while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0){
+		sleep(1);
+		}
+	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
+	{
+		wait_time++;
+		if(wait_time > MAX_WAIT)
+		{
+			tst_resm(TINFO,"full mode wait time exceed!!!\n");
+			return FALSE;
+		}
+	}
  return TRUE;	
 }
 
@@ -613,163 +684,63 @@ BOOL test_max_update()
  */
 BOOL test_collision_update()
 {
- BOOL ret = FALSE;
-int fd_pxp;
-int  wait_time = 0;
-int count = 3;
-int update_marker = 0x113;
-struct pxp_mem_desc mem;
-struct fb_var_screeninfo mode_info;
-struct mxcfb_update_data im_update = {
-  {0,0,BUFFER_WIDTH,BUFFER_HEIGHT},/*region round to 8*/
-  257,/*waveform mode 0-255, 257 auto*/
-  0, /*update mode 0(partial),1(Full)*/
-  update_marker,/*update_marker assigned by user*/
-  TEMP_USE_AMBIENT,/*use ambient temperature set*/
-  EPDC_FLAG_USE_ALT_BUFFER,/*enable alt buffer*/
-  {0,0,0,{0,0,0,0}}/*set this later*/
-  };
-
-/*step 1: set up update data*/
-	CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
-	fd_pxp = open(PXP_DEVICE_NAME, O_RDWR, 0);
-	if(m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height > 0)
-		mem.size = m_opt.su == 1? 2 *(m_opt.update.alt_buffer_data.width * m_opt.update.alt_buffer_data.height) : 2 * PXP_BUFFER_SIZE;
-	else
-		mem.size =  2 * PXP_BUFFER_SIZE;
-
-	if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0)
-	{
-		mem.cpu_addr = 0;
-		goto END;
-	}
-	#if 1
-	{
-		int fd_mem = open("/dev/mem",O_RDWR);
-		if(fd_mem < 0)
-		{
-			tst_resm(TINFO,"open mem device error\n");
-			goto END;
-		}
-		mem.virt_uaddr = (unsigned long)mmap(NULL, mem.size, PROT_READ | PROT_WRITE,
-				      MAP_SHARED, fd_mem, mem.phys_addr);/* + 0x70000000);*/
-		close(fd_mem);
-	}
-#else
- mem.virt_uaddr = (unsigned long)mmap(NULL, mem.size, PROT_READ | PROT_WRITE,
-				      MAP_SHARED, fd_pxp, mem.phys_addr);/* + 0x70000000);*/
-#endif
-	if(mem.virt_uaddr == 0)
-	{
-		tst_resm(TINFO,"virtual address error!\n");
-		goto END;
-	}
-	if(m_opt.su == 1)
-	{
-		memcpy(&im_update,&m_opt.update, sizeof(struct mxcfb_update_data));
-	}else{
-		im_update.alt_buffer_data.width = BUFFER_WIDTH;
-		im_update.alt_buffer_data.height = BUFFER_HEIGHT;
-		im_update.alt_buffer_data.alt_update_region.top = 0;
-		im_update.alt_buffer_data.alt_update_region.left = 0;
-		im_update.alt_buffer_data.alt_update_region.width =  BUFFER_WIDTH;
-		im_update.alt_buffer_data.alt_update_region.height = BUFFER_HEIGHT;
- }
- im_update.alt_buffer_data.phys_addr = mem.phys_addr;
-#ifdef USE_PIC
-	draw_pattern_diasy((unsigned char*)mem.virt_uaddr ,BUFFER_WIDTH ,BUFFER_HEIGHT);
-#else
- for(i= 0; i < BUFFER_HEIGHT; i++)
-	for(j = 0; j < BUFFER_WIDTH; j++)
-	{
-		((unsigned char *)(mem.virt_uaddr))[2*(i*BUFFER_HEIGHT + j)] = 128;
-		((unsigned char *)(mem.virt_uaddr))[2*(i*BUFFER_HEIGHT + j) + 1] = 128;
-	}
- #endif
-/*step 2: start test*/
-  /*partial update*/
-  while(count--)
-  {
-	/*black and white alternative*/
-		if (count%2 == 0)
-		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
-		else
-		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
-		if(m_opt.au != -1)
-			continue; /*for auto update, not needs to send update request*/
-		while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0){
-			sleep(1);
-			}
-		while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
-    {
-			wait_time++;
-			if(wait_time > MAX_WAIT)
+	int state = 1;
+	 int ret = 0;
+   int i = 0, j = 0;
+	 int id= 0;
+#define CNT_X 2
+#define CNT_Y 2
+   struct mxcfb_update_data im_update[CNT_X * CNT_Y];
+   pthread_t updates_id[CNT_X * CNT_Y];
+   sigemptyset(&sigset);
+   sigaddset(&sigset, SIGINT);
+   pthread_sigmask(SIG_BLOCK, &sigset, NULL);
+   if( TPASS != draw_pattern_pic(fb_fd,fb_mem_ptr,255,255,255))
+	 {
+		tst_resm(TINFO, "fail to draw patter on bg");
+		return FALSE;
+	 }
+   if(state)
+   {
+		int cn = 0;
+		struct fb_var_screeninfo mode_info;
+		CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &mode_info));
+		memset(im_update, 0, sizeof(im_update));
+		for(i = 0 ; i < CNT_X; i++)
+			for(j = 0; j < CNT_Y; j++)
 			{
-				tst_resm(TINFO,"wait time exceed!!!\n");
-				break;
+			int x,y,w,h;
+			x = i*(mode_info.xres/CNT_X);
+			y = j*(mode_info.yres/CNT_Y);
+			w = (mode_info.xres/CNT_X)&(~0x03);
+			h = (mode_info.yres/CNT_Y)&(~0x03);
+			/*overlap a bit*/
+			x = x > 32? x - 16: x;
+			y = y > 32? y - 16: y;
+			im_update[cn].update_region.top = y;
+			im_update[cn].update_region.left = x;
+			im_update[cn].update_region.width = w;
+			im_update[cn].update_region.height = h;
+			im_update[cn].waveform_mode = 257;
+			im_update[cn].update_marker = i + 0x200;
+			im_update[cn].temp = 24;
+			pthread_create(&(updates_id[id++]), NULL,
+				(void *)&single_update, (void *)&(im_update[cn]));
+			tst_resm(TINFO,"carete pid %d\n", (int)updates_id[i]);
+			cn++;
 			}
-		}
-		wait_time = 0;
-		tst_resm(TINFO,"partial mode next update\n");
-	/*shift the update position a bit*/
-	if(im_update.update_region.top + im_update.update_region.height < mode_info.yres - 5)
-	im_update.update_region.top += 5;
-	else
-		im_update.update_region.top = 0;
-	if(im_update.update_region.left + im_update.update_region.width < mode_info.yres - 5)
-		im_update.update_region.left += 5;
-	else
-		im_update.update_region.left = 0;
-	}
-  /*full update*/
-  count = 2;
-  im_update.update_mode = 1;
-  while(count--)
-  {
-	/*black and white alternative*/
-	if (count%2 == 0)
-		draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
-	else
-		draw_pattern(fb_fd,fb_mem_ptr,0,0,0);
-	if(m_opt.au != -1)
-		continue; /*for auto update, not needs to send update request*/
-	while(ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0){
-		sleep(1);	
-		}
-	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &update_marker)< 0)
-	{
-		wait_time++;
-		if(wait_time > MAX_WAIT)
+		for (i = 0; i < (CNT_X * CNT_Y); i++)
 		{
-		tst_resm(TINFO,"wait time exceed!!!\n");
-		break;
+			int pret = 0;
+			if (updates_id[i] != 0)
+				pthread_join(updates_id[i], (void **)&(pret));
+			ret = ((BOOL)pret)?0:ret + 1;
+			tst_resm(TINFO,"%d return with %s\n", (int)updates_id[i], ret == 0 ? "OK":"FAIL");
 		}
-	}
-	wait_time = 0;
-	tst_resm(TINFO,"full mode next update\n");
-	/*shift the update position a bit*/
-	if(im_update.update_region.top + im_update.update_region.height < mode_info.yres - 5)
-	im_update.update_region.top += 5;
-	else
-	  im_update.update_region.top = 0;
-	if(im_update.update_region.left + im_update.update_region.width < mode_info.yres - 5)
-	im_update.update_region.left += 5;
-	else
-	  im_update.update_region.left = 0;
-  }
-
- /*step 4: clean up */
- if (ioctl(fd_pxp, PXP_IOC_PUT_PHYMEM, &mem) < 0)
- {
-	mem.phys_addr = 0;
-	mem.cpu_addr = 0;
-	goto END;
- }
- ret = TRUE;
-END:
- if(fd_pxp > 0)
-	close(fd_pxp);
- return ret;
+		state = 0;
+   }
+   state = 0;
+	 return ret == 0? TRUE: FALSE;
 }
 
 /*
@@ -975,6 +946,7 @@ BOOL full_update()
   im_update.update_region.width = mode_info.xres;
   im_update.update_region.height = mode_info.yres;
   draw_pattern(fb_fd,fb_mem_ptr,255,255,255);
+	im_update.flags = m_opt.update.flags; 
 	if(m_opt.au != -1)
 		return TRUE; /*for auto update, not needs to send update request*/
   if(m_opt.su == 1)
@@ -1034,6 +1006,7 @@ BOOL test_wait_update()
   0,/*do not use alt buffer*/
   {0,0,0,{0,0,0,0}}
   };
+	im_update.flags = m_opt.update.flags; 
   if(m_opt.su == 1)
   {
    memcpy(&im_update,&m_opt.update, sizeof(struct mxcfb_update_data));
@@ -1313,6 +1286,15 @@ int epdc_fb_test()
 		}else
 					tst_resm(TPASS, "power delay OK");
 		break;
+	case 9:
+		if(!gray_scale_test())
+		{
+					rv = TFAIL;
+					tst_resm(TFAIL, "gray scale FAIL");
+		}else
+					tst_resm(TPASS, "gray scale OK");
+		break;
+
   default:
 		break;
  }

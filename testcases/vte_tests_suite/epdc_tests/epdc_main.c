@@ -70,7 +70,8 @@ int      R_flag;        /* Rotation */
 char     *R_opt;
 int      y_flag;        /* power down delay */
 char     *y_opt;
-
+int      l_flag;
+char     *l_opt;
 
 option_t opts[] =
 {
@@ -84,6 +85,7 @@ option_t opts[] =
 		{ "S:", &S_flag, &S_opt},
     { "R:", &R_flag, &R_opt},
     { "y:", &y_flag, &y_opt},
+    { "l:", &l_flag, &l_opt},
     { NULL, NULL,    NULL}
 };
 
@@ -119,6 +121,8 @@ void help(void)
 		printf("\t5(collision region update test)]:\n");
 		printf("\t6(max update region count test)]\n");
 		printf("\t7(1000 frames sequence region no collision frame rate test)]\n");
+		printf("\t8(power delay test)]\n");
+		printf("\t9(draw graysacle 256)]\n");
 		printf("[-F <string> : wave form 0,1,3,2,2,2]\n");
 		printf("[-g <int> : grayscale 1(normal):2(inverion)]\n");
 		printf("[-H <int> : tempture ]\n");
@@ -128,6 +132,7 @@ void help(void)
 		printf("[-S <int>: SCHEME: 0/1/2 SNAPSHOT/QUEUE/QUEUE_AND_MERGE]\n");
 		printf("[-R <int>: Rotation 0/1/2/3]\n");
 		printf("[-y <int>: power down delay after last update]\n");
+		printf("[-l <int>: set update flag 0,1,2 ]\n");
         return;
 }
 /* cleanup */
@@ -214,6 +219,8 @@ int main(int argc, char **argv)
 		  strcpy(m_opt.dev,d_opt);
 		else
 		  strcpy(m_opt.dev,"/dev/fb");
+		if(l_flag)
+			m_opt.update.flags = atoi(l_opt);
 		if(F_flag)
 			sscanf(F_opt,"%d,%d,%d,%d,%d,%d",
 			&(m_opt.waveform.mode_init),
