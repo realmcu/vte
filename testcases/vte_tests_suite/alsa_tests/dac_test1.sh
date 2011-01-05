@@ -123,7 +123,7 @@ dac_play()
     #args=`echo $@|sed 's/-A//g'`
     basefn=$(basename $FILE)
     tmpdir=`mktemp -d -p /tmp`
-    cp -f $FILE $tmpdir
+    cp -f $FILE $tmpdir || RC=$?
     if [ $RC -ne 0 ]; then
         tst_resm TFAIL "Test #1: copy from NFS to tmp error, no space left in /tmp"
         return $RC
