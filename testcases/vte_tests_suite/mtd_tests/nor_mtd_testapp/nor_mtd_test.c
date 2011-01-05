@@ -132,10 +132,12 @@ int VT_nor_mtd_test_info(void)
                         tst_resm(TFAIL, "VT_nor_mtd_test() Failed ioctl MEMGETREGIONINFO");
                         return TFAIL;
                 }
+								/*
                 tst_resm(TINFO, "\nInformation on memory region index %d :\n \
                 - number of blocks : 0x%lx\n \
                 - erase size : 0x%lx\n \
                 - offset : 0x%lx", i, mxc_region_mtd.numblocks, mxc_region_mtd.erasesize, mxc_region_mtd.offset);
+								*/
         }
 
         return TPASS;
@@ -211,10 +213,12 @@ int VT_nor_mtd_test_regionInfo(void)
                         tst_resm(TFAIL, "VT_nor_mtd_test() Failed ioctl MEMGETREGIONINFO");
                         return TFAIL;
                 }
+								/*
                 tst_resm(TINFO, "\nInformation on memory region index %d :\n \
                 - number of blocks : 0x%lx\n \
                 - erase size : 0x%lx\n \
                 - offset : 0x%lx", i, mxc_region_info.numblocks, mxc_region_info.erasesize, mxc_region_info.offset);
+								*/
         }
 	numblocks=mxc_region_info.numblocks;
 	offset=mxc_region_info.offset;
@@ -783,12 +787,12 @@ int erase_flash_block(long offset, long length)
                 else
                 */
                 {
-                       tst_resm(TINFO,"start:=%d",i);
-                       tst_resm(TINFO,"length:=%d",mxc_info_mtd.erasesize); 
                         mxc_erase_mtd.start = i;
                         mxc_erase_mtd.length = mxc_info_mtd.erasesize;
                         if (ioctl(file_desc, MEMERASE, &mxc_erase_mtd) != 0)
                         {
+                       					tst_resm(TINFO,"start:=%d",i);
+                       					tst_resm(TINFO,"length:=%d",mxc_info_mtd.erasesize); 
                                 tst_resm(TFAIL, "%s: MTD Erase failure: %s", file_desc, strerror(errno));
                                 free(temp_buf);
                                 return TFAIL;
