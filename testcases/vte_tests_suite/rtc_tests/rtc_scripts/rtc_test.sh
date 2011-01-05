@@ -148,7 +148,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #test 1hr and check rtc accuracy
 
 hwclock -w
-sleep 3600
+sleep 300
 diffs=$(hwclock -r ;date)
 echo $diffs
 wd1=$(echo $diffs | awk '{print $1}')
