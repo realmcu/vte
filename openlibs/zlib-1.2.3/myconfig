@@ -1,6 +1,7 @@
 #!/bin/sh
 export CC=arm-none-linux-gnueabi-gcc
 export AR="arm-none-linux-gnueabi-ar rc"
-CFLAGS="$CFLAGS -fPIC" prefix=$(pwd)/../ libdir=$(pwd)/../lib ./configure
+CFLAGS="$CFLAGS -fPIC" includedir=$(pwd)/../ \
+prefix=$(pwd)/../ libdir=$(pwd)/../lib ./configure
 unset CC
 unset AR
