@@ -26,16 +26,9 @@
 LTP_DIR = ../../../
 BIN_DIR = $(LTP_DIR)testcases/
 
-TARGET_BIN = mxc_v4l2_tvin
 TARGET_SCRIPT = tvin_test.sh
 
-SRCS=$(wildcard *.c)
-OBJS=$(patsubst %.c,%.o,$(SRCS))
-
-CFLAGS += -I$(KLINUX_SRCDIR)/include \
-          -I$(KLINUX_BLTDIR)/include
-
-all: $(TARGET_BIN)
+all:
 	@echo "***********************************************"
 	@echo "** ALL : $(TARGET)  test application  **"
 	@echo "***********************************************"
@@ -43,20 +36,8 @@ all: $(TARGET_BIN)
 
 install:
 	-ln -f $(TARGET_SCRIPT) $(BIN_DIR)bin
-	-ln -f $(TARGET_BIN) $(BIN_DIR)bin
 	@echo "***********************************************"
 	@echo "** INSTALL : $(TARGET)                **"
 	@echo "***********************************************"
 	@echo
-
-$(TARGET_BIN): $(OBJS)
-	$(CC) $(OBJS) -o $@
-
-$(OBJS) : $(SRCS)
-
-$(SRCS) : 
-
-.phone:
-clean:
-	rm -rf $(OBJS) $(TARGET_BIN)
 

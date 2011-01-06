@@ -118,17 +118,45 @@ RC=0
 #print test info
 tst_resm TINFO "test #1: tvout_usercase 01"
 
-mxc_v4l2_tvin &
+RES_LIST="640x480 320x240 1024x768 800x600"
+#topxleft
+WIN_POS="0x0 16x16 32x32"
+ROT="90 180 270"
+MOTION="0 1 2"
+#FORMAT="YU12 YUYV UYVY NV12"
 
-read -p "did you see the picture form tvin? y/n" RC
+for i in $RES_LIST
+	do
+		echo "resolution at $i"
+   for j in $WIN_POS
+		 do
+      echo "window position at $j"
+			for k in $ROT
+				do
+         echo "rotation at $k"
+				 for m in $MOTION
+					 do
+            echo "motion at $m"
+						for f in $FORMAT
+							do
+               echo "format at $f"
+							 w=$(echo $i | cut -d "x" -f 1)
+							 h=$(echo $i | cut -d "x" -f 2)
+							 t=$(echo $j | cut -d "x" -f 1)
+							 l=$(echo $j | cut -d "x" -f 2)
+echo "top field first"
+$TVIN_APP -ow $w -oh $h -ot $t -ol $l -r $k -c 60 -m $m -tb -f $f \
+|| RC=$(expr $RC + 1)
+echo "bottom field first"
+$TVIN_APP -ow $w -oh $h -ot $t -ol $l -r $k -c 60 -m $m -f $f \
+|| RC=$(expr $RC +1)
+							done
+					done
+				done
+		done
+	done
 
-if [ "$RC" = "y" ]
-then
-RC=0
-return $RC
-fi
-RC=1
-return $TST_COUNT
+return $RC 
 }
 
 
@@ -144,7 +172,7 @@ RC=0
 
 echo "now please play PAL TV"
 
-mxc_v4l2_tvin &
+$TVIN_APP &
 
 sleep 5
 
@@ -180,9 +208,9 @@ echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 echo "press resume key ..."
 echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
-echo standby > /sys/power/state
+echo mem > /sys/power/state
  
-mxc_v4l2_tvin &
+$TVIN_APP &
 
 read -p "did you see the picture form tvin? y/n" RC
 
@@ -201,8 +229,14 @@ setup || exit $RC
 
 if [ $# -ne 1 ]
 then
-echo "usage $0 <1/2/3>"
+echo "export FROMAT=UYVY"
+echo "$0 <1/2/3>"
 exit 1 
+fi
+
+TVIN_APP=/unit-tests/mxc_v4l2_tvin.out
+if [ -z $FORMAT ];then
+FORMAT=UYVY
 fi
 
 case "$1" in
