@@ -121,7 +121,7 @@ tst_resm TINFO "test #1: tvout_usercase 01"
 RES_LIST="640x480 320x240 1024x768 800x600"
 #topxleft
 WIN_POS="0x0 16x16 32x32"
-ROT="90 180 270"
+ROT="0 1 2 3 4 5 6 7"
 MOTION="0 1 2"
 #FORMAT="YU12 YUYV UYVY NV12"
 
@@ -145,17 +145,16 @@ for i in $RES_LIST
 							 t=$(echo $j | cut -d "x" -f 1)
 							 l=$(echo $j | cut -d "x" -f 2)
 echo "top field first"
-$TVIN_APP -ow $w -oh $h -ot $t -ol $l -r $k -c 60 -m $m -tb -f $f \
-|| RC=$(expr $RC + 1)
+$TVIN_APP -ow $w -oh $h -ot $t -ol $l -r $k -c 60 -m $m -tb -f $f || \
+RC=$(expr $RC + 1)
 echo "bottom field first"
-$TVIN_APP -ow $w -oh $h -ot $t -ol $l -r $k -c 60 -m $m -f $f \
-|| RC=$(expr $RC +1)
+$TVIN_APP -ow $w -oh $h -ot $t -ol $l -r $k -c 60 -m $m -f $f || \
+RC=$(expr $RC + 1)
 							done
 					done
 				done
 		done
 	done
-
 return $RC 
 }
 
@@ -234,7 +233,7 @@ echo "$0 <1/2/3>"
 exit 1 
 fi
 
-TVIN_APP=/unit-tests/mxc_v4l2_tvin.out
+TVIN_APP=mxc_v4l2_tvin
 if [ -z $FORMAT ];then
 FORMAT=UYVY
 fi

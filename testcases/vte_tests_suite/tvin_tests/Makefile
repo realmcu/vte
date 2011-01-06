@@ -26,18 +26,30 @@
 LTP_DIR = ../../../
 BIN_DIR = $(LTP_DIR)testcases/
 
+TARGET = mxc_v4l2_tvin
 TARGET_SCRIPT = tvin_test.sh
+SOURCE = mxc_v4l2_tvin.c
 
-all:
+CFLAGS += -I$(KLINUX_SRCDIR)/include \
+          -I$(KLINUX_BLTDIR)/include
+
+all: $(TARGET)
 	@echo "***********************************************"
 	@echo "** ALL : $(TARGET)  test application  **"
 	@echo "***********************************************"
 	@echo
 
 install:
-	-ln -f $(TARGET_SCRIPT) $(BIN_DIR)bin
+	-ln -f $(TARGET_SCRIPT) $(BIN_DIR)bin\
+	-ln -f $(TARGET) $(BIN_DIR)bin\
 	@echo "***********************************************"
 	@echo "** INSTALL : $(TARGET)                **"
 	@echo "***********************************************"
 	@echo
+
+clean:
+	-rm -f *.o $(TARGET)
+
+$(TARGET): $(SOURCE)
+	$(CC) $(CFLAGS) $(SOURCE) -o $@
 
