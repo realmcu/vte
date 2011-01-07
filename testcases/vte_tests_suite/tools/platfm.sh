@@ -38,6 +38,8 @@
 #   IMX51_BABBAGE IMX51_BABBAGE
 #   IMX28EVK    IMX28EVK
 #   IMX53EVK    IMX53EVK
+#   IMX53LOCO   IMX53LOCO
+#   IMX53SMD    IMX53SMD
 #   IMX50ARM2   IMX50ARM2
 #   IMX50RDP    IMX50RDP
 #
@@ -110,6 +112,10 @@ determine_platform()
     if [ $find -eq 1 ]
     then
         p=IMX53EVK
+		find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX50 SMD" | wc -l`;
+       if [ $find -eq 1 ]; then
+			 		p=IMX53SMD
+				fi
     fi
     
 		# MX53 LOCO TO2.0: Revision: 53020
