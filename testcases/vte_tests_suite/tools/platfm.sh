@@ -180,7 +180,7 @@ determine_platform()
     then
         #echo  "Platform MX51 Babbage" 
         RC=41
-    elif [ $p = "IMX53EVK" || $p = "IMX53LOCO" || $p = "IMX53SMD" ]
+    elif [ $p = "IMX53EVK" ] || [ $p = "IMX53LOCO" ] || [ $p = "IMX53SMD" ]
     then
         #echo  "Platform MX53 EVK" 
         RC=53
