@@ -106,11 +106,25 @@ determine_platform()
     fi
 
     # MX53 EVK TO1.0: Revision: 53010
-    find=`cat /proc/cpuinfo | grep "Revision" | grep "53.*" | wc -l`;
+    find=`cat /proc/cpuinfo | grep "Revision" | grep "53010" | wc -l`;
     if [ $find -eq 1 ]
     then
         p=IMX53EVK
     fi
+    
+		# MX53 LOCO TO2.0: Revision: 53020
+    find=`cat /proc/cpuinfo | grep "Revision" | grep "53020" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+		find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX50 LOCO" | wc -l`;
+       if [ $find -eq 1 ]; then
+			 p=IMX53LOCO
+			 fi
+		find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX50 SMD" | wc -l`;
+       if [ $find -eq 1 ]; then
+			 		p=IMX53SMD
+				fi
+		fi
 
     #find STMP378X
     find=`cat /proc/cpuinfo | grep "Hardware" | grep " 378X" | wc -l`;
@@ -160,7 +174,7 @@ determine_platform()
     then
         #echo  "Platform MX51 Babbage" 
         RC=41
-    elif [ $p = "IMX53EVK" ]
+    elif [ $p = "IMX53EVK" || $p = "IMX53LOCO" || $p = "IMX53SMD" ]
     then
         #echo  "Platform MX53 EVK" 
         RC=53
