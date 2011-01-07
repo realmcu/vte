@@ -112,7 +112,7 @@ determine_platform()
     if [ $find -eq 1 ]
     then
         p=IMX53EVK
-		find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX50 SMD" | wc -l`;
+		find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX53 SMD" | wc -l`;
        if [ $find -eq 1 ]; then
 			 		p=IMX53SMD
 				fi
@@ -122,11 +122,11 @@ determine_platform()
     find=`cat /proc/cpuinfo | grep "Revision" | grep "53020" | wc -l`;
     if [ $find -eq 1 ]
     then
-		find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX50 LOCO" | wc -l`;
+		find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX53 LOCO" | wc -l`;
        if [ $find -eq 1 ]; then
 			 p=IMX53LOCO
 			 fi
-		find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX50 SMD" | wc -l`;
+		find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX53 SMD" | wc -l`;
        if [ $find -eq 1 ]; then
 			 		p=IMX53SMD
 				fi
