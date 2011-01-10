@@ -44,14 +44,17 @@ trap "cleanup" 0
 
 CTRL_INTERFACE=/dev/null
  case "$mode" in
-   MODE_2G)
+   MODE_STANDBY)
 	 	cmd=0
+	 ;;
+	 MODE_2G)
+	 	cmd=1
 		;;
 	 MODE_4G)
-	 cmd=1
+	 cmd=2
 	 ;;
 	 *)
-	 cmd=2
+	 cmd=3
 	 ;;
 	esac
 echo $cmd > $CTRL_INTERFACE
@@ -110,7 +113,7 @@ acc_test()
 usage()
 {
  echo "-d /dev/input/event1 -m <mode>"
- echo "mode: MODE_2G/MODE_4G/MODE_8G"
+ echo "mode: MODE_STANDBY/MODE_2G/MODE_4G/MODE_8G"
 } 
  
 # main function 
