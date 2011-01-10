@@ -1,6 +1,6 @@
 #!/bin/sh
 ##############################################################################
-#Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright 2008-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -22,6 +22,7 @@
 # Spring                02/08/2009       n/a        Use own determination
 # Spring                11/03/2009       n/a        Add MX28EVK support
 # Spring                18/03/2009       n/a        Add MX53EVK support
+# Hake                  01/10/2011       n/a        Add LOCO and SMD 53. etc
 #############################################################################
 # Usage1(return string):
 #   platform=`platfm.sh`
@@ -30,12 +31,12 @@
 #   $platform   PLATFORM
 #   IMX31ADS    IMX31ADS
 #   IMX32ADS    IMX32ADS
-#   IMX25_3STACK IMX25_3STACK
-#   IMX31_3STACK IMX31_3STACK
-#   IMX35_3STACK IMX35_3STACK
-#   IMX37_3STACK IMX37_3STACK
-#   IMX51_3STACK IMX51_3STACK
-#   IMX51_BABBAGE IMX51_BABBAGE
+#   IMX25-3STACK IMX25-3STACK
+#   IMX31-3STACK IMX31-3STACK
+#   IMX35-3STACK IMX35-3STACK
+#   IMX37-3STACK IMX37-3STACK
+#   IMX51-3STACK IMX51-3STACK
+#   IMX51-BABBAGE IMX51-BABBAGE
 #   IMX28EVK    IMX28EVK
 #   IMX53EVK    IMX53EVK
 #   IMX53LOCO   IMX53LOCO
@@ -77,26 +78,26 @@ determine_platform()
     find=`cat /proc/cpuinfo | grep "Revision" | grep " 31.*" | wc -l`;
     if [ $find -eq 1 ]
     then
-        p=IMX31_3STACK
+        p=IMX31-3STACK
     fi
 
     find=`cat /proc/cpuinfo | grep "Revision" | grep " 35.*" | wc -l`;
     if [ $find -eq 1 ]
     then
-        p=IMX35_3STACK
+        p=IMX35-3STACK
     fi
 
     find=`cat /proc/cpuinfo | grep "Revision" | grep " 37.*" | wc -l`;
     if [ $find -eq 1 ]
     then
-        p=IMX37_3STACK
+        p=IMX37-3STACK
     fi
 
     # MX51 TO2.0: Revision: 51020
     find=`cat /proc/cpuinfo | grep "Revision" | grep " 51.*" | wc -l`;
     if [ $find -eq 1 ]
     then
-        p=IMX51_3STACK
+        p=IMX51-3STACK
     fi
 
     # MX51 Babbage TO1.1: Revision: 51011
@@ -104,7 +105,7 @@ determine_platform()
     find=`cat /proc/cpuinfo | grep "Hardware" | grep "Babbage" | wc -l`;
     if [ $find -eq 1 ]
     then
-        p=IMX51_BABBAGE
+        p=IMX51-BABBAGE
     fi
 
     # MX53 EVK TO1.0: Revision: 53010
@@ -139,6 +140,11 @@ determine_platform()
         p=SMTP378X
     fi
 
+    find=`cat /proc/cpuinfo | grep "Hardware" | grep " 23.*" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+        p=IMX23EVK
+    fi
     #find MX28EVK
     find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX28EVK" | wc -l`;
     if [ $find -eq 1 ]
@@ -160,23 +166,26 @@ determine_platform()
         p=IMX50RDP
     fi
 
-		if [ $p = "IMX31_3STACK" ]
+		if [ $p = "IMX31-3STACK" ]
     then
         #echo "Platform MX31"
         RC=31
-    elif [ $p = "IMX35_3STACK" ]
+    elif [ $p = "IMX35-3STACK" ]
     then
         #echo  "Platform MX35" 
         RC=35
-    elif [ $p = "IMX37_3STACK" ]
+    elif [ $p = "IMX37-3STACK" ]
     then
         #echo  "Platform MX37" 
         RC=37
-    elif [ $p = "IMX51_3STACK" ]
+		elif [ $p = "IMX23EVK" ]
+		then
+		    RC=23
+    elif [ $p = "IMX51-3STACK" ]
     then
         #echo  "Platform MX51" 
         RC=51
-    elif [ $p = "IMX51_BABBAGE" ]
+    elif [ $p = "IMX51-BABBAGE" ]
     then
         #echo  "Platform MX51 Babbage" 
         RC=41
