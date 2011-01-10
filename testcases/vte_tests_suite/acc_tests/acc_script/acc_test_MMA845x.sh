@@ -94,7 +94,7 @@ acc_test()
   echo "test start"
   sh -c "evtest $device > /tmp/acctmp" &
   pth=$!
-	echo "now shake the board!!"
+	echo "now shake the board!! for 30seconds"
 	sleep 30
 	cat /tmp/acctmp
 	echo "test done"
