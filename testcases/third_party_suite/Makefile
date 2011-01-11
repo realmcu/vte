@@ -55,7 +55,7 @@ SUBDIRS-$(CONFIG_TP_USB)         += usb_test
 SUBDIRS-$(CONFIG_TP_WHETS)       += whets
 SUBDIRS-$(CONFIG_TP_LMBENCH)     += lmbench
 SUBDIRS-$(CONFIG_TP_FBSET)       += fbset
-
+SUBDIRS-$(CONFIG_TP_I2C)         += i2c-tools
 all:
 	for i in $(SUBDIRS-y); do \
 	$(MAKE) -C $$i ; \
