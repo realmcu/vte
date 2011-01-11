@@ -234,9 +234,9 @@ vte:  tools lib-all utils
 	@$(MAKE) -C testcases/vte_tests_suite install
 	@$(MAKE) -C testcases/module_test install
 	@$(MAKE) -C pan
-	@ln -f tools/apicmds/tst_* testcases/bin/
-	#@$(MAKE) -C tools
+	@$(MAKE) -C tools
 	#@$(MAKE) -C tools install
+	@-ln -f tools/apicmds/tst_* testcases/bin/
 	@echo
 	@echo "***********************************************"
 	@echo "** VTE tests suite is available              **"
