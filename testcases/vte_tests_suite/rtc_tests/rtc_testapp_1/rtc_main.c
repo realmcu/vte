@@ -1,5 +1,5 @@
 /***
-**Copyright (C) 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2004-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -88,6 +88,7 @@ extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 /* Global Variables */
 char *TCID     = "rtc_testapp_1"; /* test program identifier.          */
 int  TST_TOTAL = 1;           /* total number of tests in this file.   */
+char * pdevice = NULL;
 
 /*==================================================================================================
                                    GLOBAL FUNCTION PROTOTYPES
@@ -192,6 +193,14 @@ int main(int argc, char **argv)
 {
         int VT_rv = TFAIL;
 
+        if(argc == 3)
+				{
+				  	if(0 == strcmp(argv[1],"-d"))
+						{
+							pdevice = argv[2];
+							tst_resm(TINFO, "set rtc to %s", pdevice);
+						}
+				}
         setup();
 
         /* Print test Assertion using tst_resm() function with argument TINFO. */

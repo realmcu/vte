@@ -69,7 +69,7 @@ int file_desc = 0;
 /*==================================================================================================
                                        GLOBAL VARIABLES
 ==================================================================================================*/
-
+extern char * pdevice;
 
 /*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
@@ -97,7 +97,10 @@ int VT_rtc_test1_setup(void)
         int rv = TFAIL;
     
         /* Open RTC driver file descriptor */
+				if (pdevice == NULL)
         file_desc = open (RTC_DRIVER_NAME, O_RDONLY);
+				else 
+        file_desc = open (pdevice, O_RDONLY);
         /* Open returns -1 in case of failure */
         if (file_desc == -1)
         {
