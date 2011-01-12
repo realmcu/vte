@@ -1,5 +1,4 @@
 TGE-LV-VPU-1013 vpu_dec_test.sh 13
-TGE-LV-STORAGE-1002 storage_test.sh F SD 1
 TGE-LV-STORAGE-1004 storage_test.sh F USBH
 TGE-LV-STORAGE-1202 storage_test.sh CD /mnt/mmcblk0p1 /mnt/ata1 5 1
 TGE-LV-STORAGE-1203 storage_test.sh CD /mnt/ata1 /mnt/mmcblk0p1 5 1
