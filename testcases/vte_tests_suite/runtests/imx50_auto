@@ -90,18 +90,17 @@ TGE-LV-ALSA-3001	sh -c "ls /sys/devices/platform/soc-audio.*"
 TGE-LV-ALSA-3002	arecord -D plughw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D hw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D hw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D hw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D plughw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D hw:0 -f S16_LE -r 44100 -c 2 -traw
 TGE-LV-ALSA-3005	AU=$(cat /sys/class/regulator/regulator.18/num_users) && [ $AU -eq 0 ] && CU=$(cat /proc/cpu/clocks | grep ssi_ext1 | awk '{print $3}') && [ $CU -eq 0 ]
 TGE-LV-ALSA-3006	AUDIO_MIN=$(amixer sget Playback | grep Limits | awk {'print $2'}) && [ $AUDIO_MIN -eq 0 ] && AUDIO_MAX=$(amixer sget Playback | grep Limits | awk {'print $4'}) && [ $AUDIO_MAX -eq 192 ]
-TGE-LV-LCD-BL-00002	echo 100 > /sys/class/backlight/pwm-backlight.0/brightness ; rtc_testapp_6 -T 20 ; BR=$(cat /sys/class/backlight/pwm-backlight.0/brightness) ; [ $BR -eg 100 ]
 TGE-LV-DVFS-0200	cpufreq-info
 TGE-LV-CLOCK-0301	cat /proc/cpu/clocks
 TGE-LV-ESLCD-0703	echo q | fbv ${LTPROOT}/testcases/bin/butterfly.png
-TGE-LV-FB-EPDC-0001	 fbset -v -depth 16 && echo q | fbv ${LTPROOT}/testcases/bin/butterfly.png && fbset -v -depth 8 && fbset -v -grayscale true && epdc_test -T 0 -g 1 && epdc_test -T 2  
+TGE-LV-FB-EPDC-0001	 epdc_test -T 0 -g 1 && epdc_test -T 2  
 TGE-LV-FB-EPDC-0002	 epdc_test -T 2 && epdc_test -T 0 -s 0:0:128:128,0,0,0,0,0,0,0:0:0:0 && epdc_test -T 0 -u 1 && epdc_test -T 2 -d /dev/fb0 
 TGE-LV-FB-EPDC-0003	 epdc_test -T 0 -u 0 && epdc_test -T 2 && epdc_test -T 0 -s 0:0:128:128,257,0,0,0,0,0,0:0:0:0 
 TGE-LV-FB-EPDC-0004	 epdc_test -T 0 -u 0 && epdc_test -T 3
 TGE-LV-FB-EPDC-0005	 epdc_test -T 0 -u 0 && epdc_test -T 2 && epdc_test -T 4 
 TGE-LV-FB-EPDC-0006	 epdc_test -T 2 && epdc_test -T 5
 TGE-LV-FB-EPDC-0007	 epdc_test -T 2 && epdc_test -T 6
-TGE-LV-FB-EPDC-0008	 fbset -v -depth 8 && fbset -v -grayscale true && epdc_test -T 0 -g 1 && epdc_test -T 2
+TGE-LV-FB-EPDC-0008	 epdc_test -T 0 -g 1 && epdc_test -T 2
 TGE-LV-FB-EPDC-0009	 epdc_test -R 0 -T 2 && epdc_test -R 1 -T 2 && epdc_test -R 2 -T 2 && epdc_test -R 3 -T 2   
 TGE-LV-FB-EPDC-0010	 epdc_test -T 1
 TGE-LV-FB-EPDC-0012	 epdc_test -T 2; epdc_test -T 7
@@ -119,7 +118,6 @@ TGE-LV-FEC-0010	fec_testapp -T 0
 TGE-LV-FEC-0011	fec_testapp -T 1 -H 10.192.225.219
 TGE-LV-LinuxFS-0561	 udev_sysfs_test1.sh 
 TGE-LV-FB-1004	fbset -depth 32 && LL1=$(fbset -i | grep LineLength | awk {'print $3'}) && rtc_testapp_6 -T 20 && LL2=$(fbset -i | grep LineLength | awk {'print $3'}) && [ $LL1 -eq $LL2 ]
-TGE-LV-FB-1002	fbset && fbset -depth 32 && fbset -depth 16 && fbset -depth 24 && fbset -depth 32
 TGE-LV-FB-1003	cat /dev/vcs
 TGE-LV-FB-1006	echo 1 > /sys/class/graphics/fb0/blank && echo 0 > /sys/class/graphics/fb0/blank
 TGE-LV-GPT-0010	gpt_testapp
@@ -153,10 +151,16 @@ TGE-LV-NOR-1115	nor_mtd_testapp -T WRNER -D /dev/mtd0 -L 0x100000 -V
 TGE-LV-NOR-1116	nor_mtd_testapp -T PERFORM -D /dev/mtd0 -V
 TGE-LV-PMIC_REG-0001	RT=0;list=$(ls /sys/class/regulator/*/microvolts); for i in $list; do cat $i || RT=1; done ; [ $RT -eq 0 ]
 TGE-LV-RTC-0102	rtc_testapp_6 -T 20 ; rtc_testapp_6 -T 10 -m mem
+TGE-LV-RTC-2102	rtc_testapp_6 -d rtc1 -T 20 ; rtc_testapp_6 -d rtc1 -T 10 -m mem
+TGE-LV-RTC-2010	rtc_testapp_1 -d /dev/rtc1 
 TGE-LV-RTC-0010	rtc_testapp_1 
+TGE-LV-RTC-2011	rtc_testapp_2 -d /dev/rtc1 
 TGE-LV-RTC-0011	rtc_testapp_2 
+TGE-LV-RTC-2013	rtc_testapp_5 -d /dev/rtc1 -T POLL
 TGE-LV-RTC-0013	rtc_testapp_5 -T POLL
+TGE-LV-RTC-2014	rtc_testapp_5 -d /dev/rtc1 -T FASYNC 
 TGE-LV-RTC-0014	rtc_testapp_5 -T FASYNC 
+TGE-LV-RTC-2020	rtc_testapp_4 -d /dev/rtc1
 TGE-LV-RTC-0020	rtc_testapp_4
 TGE-LV-RTC-0100	rtc_test.sh 2 
 TGE-LV-RTC-2000	rtc_test.sh 3 
