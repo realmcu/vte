@@ -1,5 +1,5 @@
 /***
-**Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2005-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -77,7 +77,7 @@ int is_ok = 1;
 /*==================================================================================================
                                        GLOBAL VARIABLES
 ==================================================================================================*/
-
+extern char * pdevice;
 
 /*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
@@ -103,7 +103,10 @@ int VT_rtc_test5_setup(void)
 {
         int rv = TFAIL;
 
-        file_desc = open (RTC_DRIVER_NAME, O_RDONLY );
+        if(pdevice == NULL)
+        	file_desc = open (RTC_DRIVER_NAME, O_RDONLY );
+				else
+        	file_desc = open (pdevice, O_RDONLY );
  
         if (file_desc ==  -1)
             tst_brkm(TBROK, cleanup, "ERROR : Open RTC driver fails");
