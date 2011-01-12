@@ -95,7 +95,7 @@ int               is_ok = 1;
 /*==================================================================================================
                                        GLOBAL VARIABLES
 ==================================================================================================*/
-
+extern char * pdevice;
 
 /*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
@@ -346,8 +346,11 @@ int ask_user(char *question)
 int VT_rtc_test2_setup(void)
 {
         int rv = TFAIL;
+				if(pdevice == NULL)
+        	file_desc = open (RTC_DRIVER_NAME, O_RDONLY);
+				else
+        	file_desc = open (pdevice, O_RDONLY);
 
-        file_desc = open (RTC_DRIVER_NAME, O_RDONLY);
         if (file_desc ==  -1)
         {
                 tst_brkm(TBROK, cleanup, "ERROR : Open RTC driver fails");
@@ -427,8 +430,6 @@ int VT_rtc_test2(void)
 
         struct rtc_time rtc_tm = {0,0,0,0,0,0};
         struct rtc_time rtc_tm_2 = {0,0,0,0,0,0};
-        struct rtc_wkalrm wakeup_alarm;
-        struct rtc_wkalrm wakeup_alarm_2;
 
         tst_resm( TINFO, "RTC Driver Test 2" );
         tst_resm( TINFO, "RTC date, time and alarm" );
@@ -443,7 +444,6 @@ int VT_rtc_test2(void)
                 is_ok = 0;
         }
 
-        tst_resm( TINFO, "" );
         tst_resm( TINFO, "SET TIME TEST: RTC_SET_TIME & RTC_RD_TIME" );
         tst_resm( TINFO, "  Read RTC date/time..." );
 
@@ -451,7 +451,7 @@ int VT_rtc_test2(void)
 
         if( retval < 0 )
         {
-                tst_resm(TFAIL, "    ioctl RTC_RD_TIME fails: %s \n", strerror(errno));
+                tst_resm(TFAIL, "ioctl RTC_RD_TIME fails: %s \n", strerror(errno));
                 is_ok = 0;
                 return rv;
         }
@@ -508,7 +508,6 @@ int VT_rtc_test2(void)
         /***************************************/
         /* Test for alarm                      */
         /***************************************/
-        tst_resm( TINFO, "" );
         tst_resm( TINFO, "ALARM TEST: RTC_ALM_SET & RTC_ALM_READ" );
 
         /* Read the RTC time/date */
