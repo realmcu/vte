@@ -9,7 +9,7 @@
 #!/bin/sh
 echo "UART stty cmd set test begin..."
 result=0
-for name in ttymxc0 ttymxc1 ttymxc2
+for name in ttymxc1 ttymxc2
 do
   echo "Device name is $name"
   stty -F /dev/$name 115200
