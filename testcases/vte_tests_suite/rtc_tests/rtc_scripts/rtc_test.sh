@@ -1,4 +1,4 @@
-#Copyright (C) 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2008-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -18,7 +18,8 @@
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-#<Hake Huang>/-----             <2008-11-27>     N/A          Initial version
+#<Hake Huang>/-----             <2010-03-12>     N/A          Initial version
+#<Hake Huang>/-----             <2011-01-12>     N/A          add 2 rtc cases
 # 
 ###################################################################################################
 
@@ -73,6 +74,7 @@ usage()
  echo "3: rtc accuracy test"
 }
 
+#
 # Function:     test_case_01
 # Description   - Test if rtc module exist
 #  
@@ -94,10 +96,9 @@ RC=0
 fi
 
 return $RC
-
 }
 
-
+#
 # Function:     test_case_02
 # Description   - Test if stty hw rtc is ok
 #  
@@ -114,12 +115,27 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-date -u 200803211658
+year=$(date %Y)
+
+date -u 201003211658
 date "2010-07-14 10:06:00"
-date -u 200808111730
+date -u 201008111730
 hwclock --systohc
 #only check the year suppose enough
 ret=$(hwclock | grep 2010 | wc -l)
+
+if [ -e /dev/rtc1 ]; then
+hwclock --systohc  --rtc=/dev/rtc1
+ret=$(hwclock | grep 2010 | wc -l)
+fi
+
+ntpdate 10.192.225.222
+sleep 1
+hwclock --systohc
+
+if [ -e /dev/rtc1 ]; then
+hwclock --systohc  --rtc=/dev/rtc1
+fi
 
 if [ $ret ]
 then
@@ -127,7 +143,6 @@ RC=0
 fi
 
 return $RC
-
 }
 
 # Function:     test_case_03
@@ -198,15 +213,65 @@ if [ $y1 -ne $y2 ];then
   RC="$RC 6"
 fi
 
-return $RC
+if [ -e /dev/rtc1  ]; then
+  hwclock -w --rtc=/dev/rtc1
+  sleep 300
+  diffs=$(hwclock -r --rtc=/dev/rtc1  ;date)
+  echo $diffs
+  wd1=$(echo $diffs | awk '{print $1}')
+  wd2=$(echo $diffs | awk '{print $8}')
+  if [ $wd1 != $wd2 ];then
+    RC=1
+  fi
+  m1=$(echo $diffs | awk '{print $2}')
+  m2=$(echo $diffs | awk '{print $9}')
+  if [ $m1 != $m2 ];then
+    RC="$RC 2"
+  fi
+
+  d1=$(echo $diffs | awk '{print $3}')
+  d2=$(echo $diffs | awk '{print $10}')
+  if [ $d1 -ne $d2 ];then
+   RC="$RC 3"
+  fi
+
+  h1=$(echo $diffs | awk '{print $4}' | cut -d: -f 1)
+  h2=$(echo $diffs | awk '{print $11}' | cut -d: -f 1)
+  if [ $h1 -ne $h2 ];then
+   RC="$RC 4"
+  fi
+
+  mm1=$(echo $diffs | awk '{print $4}' | cut -d: -f 2)
+  mm2=$(echo $diffs | awk '{print $11}' | cut -d: -f 2)
+  if [ $mm1 -ne $mm2 ];then
+    RC="$RC 5"
+  fi
+
+  ss1=$(echo $diffs | awk '{print $4}' | cut -d: -f 3)
+  ss2=$(echo $diffs | awk '{print $11}' | cut -d: -f 3)
+  if [ $ss2 -lt $ss1 ];then
+   offset=$(echo $ss2 $ss1 - p | dc)
+  else
+   offset=$(echo $ss1 $ss2 - p | dc)
+  fi
+  if [ $offset -gt 3 ];then
+   RC="$RC 6"
+  fi
+
+  y1=$(echo $diffs | awk '{print $5}')
+  y2=$(echo $diffs | awk '{print $13}')
+  if [ $y1 -ne $y2 ];then
+    RC="$RC 6"
+  fi
+ fi
+
+ return $RC
 }
 
 
 
 # main function
-
 RC=0
-
 
 #TODO check parameter
 if [ $# -ne 1 ]
@@ -233,10 +298,3 @@ case "$1" in
 esac
 
 tst_resm TINFO "Test PASS"
-
-
-
-
-
-
-
