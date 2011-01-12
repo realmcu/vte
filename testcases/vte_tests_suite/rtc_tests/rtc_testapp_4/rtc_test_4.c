@@ -1,5 +1,5 @@
 /***
-**Copyright (C) 2004-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2004-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -90,7 +90,7 @@ jmp_buf   jmpbuf;
 /*==================================================================================================
                                        GLOBAL VARIABLES
 ==================================================================================================*/
-
+extern char * pdevice;
 
 /*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
@@ -120,7 +120,11 @@ int VT_rtc_test4_setup(void)
         int is_passed = FALSE;
         
         /* Open RTC driver file descriptor */
-        file_desc = open (RTC_DRIVER_NAME, O_RDONLY | O_NONBLOCK);
+				if(pdevice == NULL)
+        	file_desc = open (RTC_DRIVER_NAME, O_RDONLY | O_NONBLOCK);
+				else
+        	file_desc = open (pdevice, O_RDONLY | O_NONBLOCK);
+
         if (file_desc ==  -1)
         {
                 tst_resm(TFAIL,"ERROR : Open RTC driver fails");
@@ -130,7 +134,12 @@ int VT_rtc_test4_setup(void)
         
         /* Opening driver a second time returns busy */
         tst_resm(TINFO, "Repeatedly open driver must return the -EBUSY" );
-        file_desc1 = open (RTC_DRIVER_NAME, O_RDONLY);
+        
+				if(pdevice == NULL)
+        	file_desc1 = open (RTC_DRIVER_NAME, O_RDONLY);
+				else
+        	file_desc1 = open (pdevice, O_RDONLY | O_NONBLOCK);
+
         if (file_desc1 == -1)
         {      
                 is_passed = ( errno == EBUSY ) ? TRUE : FALSE;                
