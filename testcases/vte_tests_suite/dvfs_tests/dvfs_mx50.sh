@@ -209,7 +209,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 	 sh -c "epdc_test -T 7 || RC='$RC 4' &"
 	 sleep 2
 	 echo "wifi test"
-	 sh -c "modprobe ar6000 ; sleep 10; ifconfig wlan0 up && iwconfig wlan0 mode managed && sleep 5 &&iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key $(echo Happy123 | md5sum | cut -c 1-10) && iwconfig wlan0 essid FSLLBGAP_001 && sleep 5 && udhcpc -i wlan0"
+	 sh -c "modprobe ath6kl ; sleep 10; ifconfig wlan0 up && iwconfig wlan0 mode managed && sleep 5 &&iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key $(echo Happy123 | md5sum | cut -c 1-10) && iwconfig wlan0 essid FSLLBGAP_001 && sleep 5 && udhcpc -i wlan0"
 	 export LOCALIP=$(ifconfig wlan0 | grep inet |  cut -d: -f 2 | awk '{print $1}')
    cd ${LTPROOT}/testcases/bin
 	 if [ ! -z $LOCALIP ];then
@@ -217,7 +217,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 	 fi
    echo "gpu test"
 	 modprobe gpu
-	 #sh -c "gpu_test.sh 2 || RC='$RC 6' &"
+	 sh -c "gpu_test.sh 2 || RC='$RC 6' &"
   read -p "use Ctrl+c to quit"
 return $RC
 }
