@@ -217,7 +217,8 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 	 fi
    echo "gpu test"
 	 modprobe gpu
-	 sh -c "gpu_test.sh 2 || RC='$RC 6' &"
+	 #sh -c "gpu_test.sh 2 || RC='$RC 6' &"
+	 sh -c "tiger &"
   read -p "use Ctrl+c to quit"
 return $RC
 }
