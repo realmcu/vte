@@ -136,8 +136,7 @@ all:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
 
 install:
-	-mkdir -p ../bin
-	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install ; done
+	-mkdir -p ../bin; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install ; done 
 
 clean:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i clean ; done
