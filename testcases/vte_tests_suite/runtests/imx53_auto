@@ -4,35 +4,11 @@ TGE-LV-STORAGE-1202 storage_test.sh CD /mnt/mmcblk0p1 /mnt/ata1 5 1
 TGE-LV-STORAGE-1203 storage_test.sh CD /mnt/ata1 /mnt/mmcblk0p1 5 1
 TGE-LV-STORAGE-1204 storage_test.sh CD /mnt/mmcblk0p1 /mnt/msc 5 1
 TGE-LV-STORAGE-1205 storage_test.sh CD /mnt/msc /mnt/mmcblk0p1 5 1
-TGE-LV-STORAGE-1212 storage_test.sh CD /mnt/mmcblk0p1 /mnt/ata1 50 1
-TGE-LV-STORAGE-1213 storage_test.sh CD /mnt/ata1 /mnt/mmcblk0p1 50 1
-TGE-LV-STORAGE-1214 storage_test.sh CD /mnt/mmcblk0p1 /mnt/msc 50 1
-TGE-LV-STORAGE-1215 storage_test.sh CD /mnt/msc /mnt/mmcblk0p1 50 1
-TGE-LV-STORAGE-1222 storage_test.sh CD /mnt/mmcblk0p1 /mnt/ata1 100 1
-TGE-LV-STORAGE-1223 storage_test.sh CD /mnt/ata1 /mnt/mmcblk0p1 100 1
-TGE-LV-STORAGE-1224 storage_test.sh CD /mnt/mmcblk0p1 /mnt/msc 100 1
-TGE-LV-STORAGE-1225 storage_test.sh CD /mnt/msc /mnt/mmcblk0p1 100 1
 TGE-LV-STORAGE-1302 storage_test.sh CD /mnt/ata1 /mnt/msc 5 1
 TGE-LV-STORAGE-1303 storage_test.sh CD /mnt/msc /mnt/ata1 5 1
-TGE-LV-STORAGE-1312 storage_test.sh CD /mnt/ata1 /mnt/msc 50 1
-TGE-LV-STORAGE-1313 storage_test.sh CD /mnt/msc /mnt/ata1 50 1
-TGE-LV-STORAGE-1322 storage_test.sh CD /mnt/ata1 /mnt/msc 100 1
-TGE-LV-STORAGE-1323 storage_test.sh CD /mnt/msc /mnt/ata1 100 1
 TGE-LV-STORAGE-2113 storage_test.sh CD /mnt/mmcblk0p1 /mnt/mmcblk0p1 10 10
-TGE-LV-STORAGE-2114 storage_test.sh CD /mnt/mmcblk0p1 /mnt/mmcblk0p1 100 5
-TGE-LV-STORAGE-2115 storage_test.sh CD /mnt/mmcblk0p1 /mnt/ata1 100 5
-TGE-LV-STORAGE-2116 storage_test.sh CD /mnt/ata1 /mnt/mmcblk0p1 100 5
-TGE-LV-STORAGE-2117 storage_test.sh CD /mnt/mmcblk0p1 /mnt/msc 100 5
-TGE-LV-STORAGE-2118 storage_test.sh CD /mnt/msc /mnt/mmcblk0p1 100 5
-TGE-LV-STORAGE-2119 storage_test_concurrent.sh CD /mnt/mmcblk0p1 /mnt/mmcblk0p1 100 1 5
 TGE-LV-STORAGE-2123 storage_test.sh CD /mnt/ata1 /mnt/ata1 10 10
-TGE-LV-STORAGE-2124 storage_test.sh CD /mnt/ata1 /mnt/ata1 100 5
-TGE-LV-STORAGE-2125 storage_test.sh CD /mnt/ata1 /mnt/msc 100 5
-TGE-LV-STORAGE-2126 storage_test.sh CD /mnt/msc /mnt/ata1 100 5
-TGE-LV-STORAGE-2127 storage_test_concurrent.sh CD /mnt/ata1 /mnt/ata1 100 1 5
 TGE-LV-STORAGE-2133 storage_test.sh CD /mnt/msc /mnt/msc 10 10
-TGE-LV-STORAGE-2134 storage_test.sh CD /mnt/msc /mnt/msc 100 5
-TGE-LV-STORAGE-2135 storage_test_concurrent.sh CD /mnt/msc /mnt/msc 100 1 5
 TGE-LV-NOR-1101 nor_mtd_testapp -T INFO -D /dev/mtd1
 TGE-LV-SD-1102 rw_mmc_test -D /dev/mmcblk0p1 -T BLOCK -O 0x0 -C 0x100 -V
 TGE-LV-SD-1103 rw_mmc_test -D /dev/mmcblk0p1 -T BLOCK -O 0x100 -C 0x100 -V
