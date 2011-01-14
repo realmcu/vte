@@ -10,34 +10,6 @@ TGE-LV-STORAGE-2113 storage_test.sh CD /mnt/mmcblk0p1 /mnt/mmcblk0p1 10 10
 TGE-LV-STORAGE-2123 storage_test.sh CD /mnt/ata1 /mnt/ata1 10 10
 TGE-LV-STORAGE-2133 storage_test.sh CD /mnt/msc /mnt/msc 10 10
 TGE-LV-NOR-1101 nor_mtd_testapp -T INFO -D /dev/mtd1
-TGE-LV-SD-1102 rw_mmc_test -D /dev/mmcblk0p1 -T BLOCK -O 0x0 -C 0x100 -V
-TGE-LV-SD-1103 rw_mmc_test -D /dev/mmcblk0p1 -T BLOCK -O 0x100 -C 0x100 -V
-TGE-LV-SD-1104 rw_mmc_test -D /dev/mmcblk0p1 -T BLOCK -O 0x7980 -C 0x100 -V
-TGE-LV-SD-1105 rw_mmc_test -D /dev/mmcblk0p1 -T BLOCK -O 0x100 -C 0x1 -V
-TGE-LV-SD-1106 rw_mmc_test -D /dev/mmcblk0p1 -T BLOCK -O 0x0 -C 0x1 -V
-TGE-LV-SD-1107 rw_mmc_test -D /dev/mmcblk0p1 -T BLOCK -O 0x7980 -C 0x1 -V
-TGE-LV-SD-1108 rw_mmc_test -D /dev/mmcblk0p1 -T SECTOR -O 0x0 -C 0x2 -V
-TGE-LV-SD-1109 rw_mmc_test -D /dev/mmcblk0p1 -T SECTOR -O 0x2 -C 0x2 -V
-TGE-LV-SD-1110 rw_mmc_test -D /dev/mmcblk0p1 -T SECTOR -O 0x1E -C 0x2 -V
-TGE-LV-SD-1111 rw_mmc_test -D /dev/mmcblk0p1 -T SECTOR -O 0x1E -C 0x1 -V
-TGE-LV-SD-1112 rw_mmc_test -D /dev/mmcblk0p1 -T SECTOR -O 0x2 -C 0x1 -V
-TGE-LV-SD-1113 rw_mmc_test -D /dev/mmcblk0p1 -T SECTOR -O 0x0 -C 0x2 -V
-TGE-LV-SD-1114 rw_mmc_test -D /dev/mmcblk0p1 -T BYTE -O 0x00 -C 0xF50000 -V
-TGE-LV-SD-1115 rw_mmc_test -D /dev/mmcblk0p1 -T BYTE -O 0x100 -C 0xF50000 -V
-TGE-LV-SD-1116 stressRW_mmc_test  -D /dev/mmcblk0p1 -T BLOCK -O 0x0 -C 0x100 -L 0x60 -V
-TGE-LV-SD-1117 stressRW_mmc_test -D /dev/mmcblk0p1 -T BLOCK -O C17 -C 0x100 -L 0x60 -V
-TGE-LV-SD-1118 stressRW_mmc_test -D /dev/mmcblk0p1 -T BLOCK -O 0x7980 -C 0x100 -L 0x60 -V
-TGE-LV-SD-1119 stressRW_mmc_test -D /dev/mmcblk0p1 -T BLOCK -O 0x100 -C 0x1 -L 0x100 -V
-TGE-LV-SD-1120 stressRW_mmc_test  -D /dev/mmcblk0p1 -T BLOCK -O 0x0 -C 0x1 -L 0x100 -V
-TGE-LV-SD-1121 stressRW_mmc_test -D /dev/mmcblk0p1 -T BLOCK -O 0x7980 -C 0x1 -L 0x100 -V
-TGE-LV-SD-1122 stressRW_mmc_test -D /dev/mmcblk0p1 -T SECTOR -O 0x0 -C 0x2 -L 0x100 -V
-TGE-LV-SD-1123 stressRW_mmc_test -D /dev/mmcblk0p1 -T SECTOR -O 0x2 -C 0x2 -L 0x100 -V
-TGE-LV-SD-1124 stressRW_mmc_test -D /dev/mmcblk0p1 -T SECTOR -O 0x1E -C 0x2 -L 0x100 -V
-TGE-LV-SD-1125 stressRW_mmc_test -D /dev/mmcblk0p1 -T SECTOR -O 0x1E -C 0x1 -L 0x100 -V
-TGE-LV-SD-1126 stressRW_mmc_test -D /dev/mmcblk0p1 -T SECTOR -O 0x2 -C 0x1 -L 0x100 -V
-TGE-LV-SD-1127 stressRW_mmc_test -D /dev/mmcblk0p1 -T SECTOR -O 0x0 -C 0x2  -L 0x100 -V
-TGE-LV-SD-1128 stressRW_mmc_test -D /dev/mmcblk0p1 -T BYTE -O 0x00 -C 0xF50000 -L 0x100 -V
-TGE-LV-SD-1129 stressRW_mmc_test -D /dev/mmcblk0p1 -T BYTE -O 0x100 -C 0xF50000 -L 0x100 -V
 TGE-LV-SDMA-0040 sdma_rw.sh
 TGE-LV-DVFS-0010 dvfs.sh 1
 TGE-LV-RTC-0010 rtc_testapp_1
