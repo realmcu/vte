@@ -1,0 +1,111 @@
+TGE-LV-ALSA-0501 adc_test1.sh -f S16_LE -d 5 -c 1 -r 8000 -A
+TGE-LV-ALSA-0502 adc_test1.sh -f S16_LE -d 5 -c 1 -r 11025 -A
+TGE-LV-ALSA-0503 adc_test1.sh -f S16_LE -d 5 -c 1 -r 16000 -A
+TGE-LV-ALSA-0504 adc_test1.sh -f S16_LE -d 5 -c 1 -r 22050 -A
+TGE-LV-ALSA-0506 adc_test1.sh -f S16_LE -d 5 -c 1 -r 32000 -A
+TGE-LV-ALSA-0507 adc_test1.sh -f S16_LE -d 5 -c 1 -r 44100 -A
+TGE-LV-ALSA-0508 adc_test1.sh -f S16_LE -d 5 -c 1 -r 48000 -A
+TGE-LV-ALSA-0509 adc_test1.sh -f S16_LE -d 5 -c 1 -r 88200 -A
+TGE-LV-ALSA-0510 adc_test1.sh -f S16_LE -d 5 -c 1 -r 96000 -A
+TGE-LV-ALSA-0511 adc_test1.sh -f S16_LE -d 5 -c 2 -r 8000 -A
+TGE-LV-ALSA-0513 adc_test1.sh -f S16_LE -d 5 -c 2 -r 16000 -A
+TGE-LV-ALSA-0516 adc_test1.sh -f S16_LE -d 5 -c 2 -r 32000 -A
+TGE-LV-ALSA-0517 adc_test1.sh -f S16_LE -d 5 -c 2 -r 44100 -A
+TGE-LV-ALSA-0518 adc_test1.sh -f S16_LE -d 5 -c 2 -r 48000 -A
+TGE-LV-ALSA-0519 adc_test1.sh -f S16_LE -d 5 -c 2 -r 88200 -A
+TGE-LV-ALSA-0520 adc_test1.sh -f S16_LE -d 5 -c 2 -r 96000 -A
+TGE-LV-ALSA-0101 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k16M.wav -A
+TGE-LV-ALSA-0102 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k16M.wav -A
+TGE-LV-ALSA-0103 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k16M.wav -A
+TGE-LV-ALSA-0104 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k16M.wav -A
+TGE-LV-ALSA-0105 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k16M.wav -A
+TGE-LV-ALSA-0106 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16M.wav -A
+TGE-LV-ALSA-0107 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k16M.wav -A
+TGE-LV-ALSA-0108 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k16M.wav -A
+TGE-LV-ALSA-0109 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k16M.wav -A
+TGE-LV-ALSA-0110 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k16M.wav -A
+TGE-LV-ALSA-0111 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k16S.wav -A -D
+TGE-LV-ALSA-0112 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k16S.wav -A -D
+TGE-LV-ALSA-0113 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k16S.wav -A -D
+TGE-LV-ALSA-0114 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k16S.wav -A -D
+TGE-LV-ALSA-0115 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k16S.wav -A
+TGE-LV-ALSA-0116 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16S.wav -A -D
+TGE-LV-ALSA-0117 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k16S.wav -A -D
+TGE-LV-ALSA-0118 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k16S.wav -A -D
+TGE-LV-ALSA-0119 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k16S.wav -A
+TGE-LV-ALSA-0120 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k16S.wav -A -D
+TGE-LV-ALSA-0121 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k24M-S24_LE.wav -A
+TGE-LV-ALSA-0122 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k24M-S24_LE.wav -A
+TGE-LV-ALSA-0123 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k24M-S24_LE.wav -A
+TGE-LV-ALSA-0124 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k24M-S24_LE.wav -A
+TGE-LV-ALSA-0125 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k24M-S24_LE.wav -A
+TGE-LV-ALSA-0126 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k24M-S24_LE.wav -A
+TGE-LV-ALSA-0127 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k24M-S24_LE.wav -A
+TGE-LV-ALSA-0128 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k24M-S24_LE.wav -A
+TGE-LV-ALSA-0129 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k24M-S24_LE.wav -A
+TGE-LV-ALSA-0130 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k24M-S24_LE.wav -A
+TGE-LV-ALSA-0131 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0132 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0133 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0134 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0135 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k24S-S24_LE.wav -A
+TGE-LV-ALSA-0136 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0137 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0138 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0139 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k24S-S24_LE.wav -A
+TGE-LV-ALSA-0140 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0150 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k16S.wav -A
+TGE-LV-ALSA-0151 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k16M.wav -A
+TGE-LV-ALSA-0171 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k32M.wav -A
+TGE-LV-ALSA-0172 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k32M.wav -A
+TGE-LV-ALSA-0173 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k32M.wav -A
+TGE-LV-ALSA-0174 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k32M.wav -A
+TGE-LV-ALSA-0175 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k32M.wav -A
+TGE-LV-ALSA-0176 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k32M.wav -A
+TGE-LV-ALSA-0177 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k32M.wav -A
+TGE-LV-ALSA-0178 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k32M.wav -A
+TGE-LV-ALSA-0179 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k32M.wav -A
+TGE-LV-ALSA-0180 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k32M.wav -A
+TGE-LV-ALSA-0181 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k32S.wav -A
+TGE-LV-ALSA-0182 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k32S.wav -A
+TGE-LV-ALSA-0183 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k32S.wav -A
+TGE-LV-ALSA-0184 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k32S.wav -A
+TGE-LV-ALSA-0185 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k32S.wav -A
+TGE-LV-ALSA-0186 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k32S.wav -A
+TGE-LV-ALSA-0187 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k32S.wav -A
+TGE-LV-ALSA-0188 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k32S.wav -A
+TGE-LV-ALSA-0189 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k32S.wav -A
+TGE-LV-ALSA-0190 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k32S.wav -A
+TGE-LV-ALSA-0146 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k24S-S24_LE.wav -A
+TGE-LV-ALSA-0147 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k24M-S24_LE.wav -A
+TGE-LV-ALSA-0191 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k32M.wav -A
+TGE-LV-ALSA-0192 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k32S.wav -A
+TGE-LV-ALSA-0210 aplay -l |grep -i sgtl5000
+TGE-LV-ALSA-0152 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio12k16M.wav -A
+TGE-LV-ALSA-0153 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio12k16S.wav -A
+TGE-LV-ALSA-0154 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio12k24M-S24_LE.wav -A
+TGE-LV-ALSA-0155 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio12k24S-S24_LE.wav -A
+TGE-LV-ALSA-0156 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k32M.wav -A
+TGE-LV-ALSA-0157 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio12k32S.wav -A
+TGE-LV-ALSA-0221 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k16M.wav -A
+TGE-LV-ALSA-0222 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k16S.wav -A
+TGE-LV-ALSA-0223 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k24M-S24_LE.wav -A
+TGE-LV-ALSA-0224 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k24S-S24_LE.wav -A
+TGE-LV-ALSA-0225 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k32M.wav -A
+TGE-LV-ALSA-0226 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k32S.wav -A
+TGE-LV-ALSA-0231 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k16M.wav -A
+TGE-LV-ALSA-0232 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k16S.wav -A
+TGE-LV-ALSA-0233 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k24M-S24_LE.wav -A
+TGE-LV-ALSA-0234 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k24S-S24_LE.wav -A
+TGE-LV-ALSA-0235 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k32M.wav -A
+TGE-LV-ALSA-0236 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k32S.wav -A
+TGE-LV-ALSA-0241 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k16M.wav -A
+TGE-LV-ALSA-0242 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k16S.wav -A
+TGE-LV-ALSA-0243 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k24M-S24_LE.wav -A
+TGE-LV-ALSA-0244 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k24S-S24_LE.wav -A
+TGE-LV-ALSA-0245 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32M.wav -A
+TGE-LV-ALSA-0246 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32S.wav -A
+TGE-LV-ALSA-0521 adc_test1.sh -f S16_LE -d 5 -c 1 -r 12000 -A
+TGE-LV-ALSA-0523 adc_test1.sh -f S16_LE -d 5 -c 1 -r 128000 -A
+TGE-LV-ALSA-0525 adc_test1.sh -f S16_LE -d 5 -c 1 -r 176400 -A
+TGE-LV-ALSA-0527 adc_test1.sh -f S16_LE -d 5 -c 1 -r 192000 -A
