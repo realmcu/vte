@@ -20,11 +20,11 @@
 #define EPDC_TEST_H
 
 #ifdef __cplusplus
-extern "C"{
+extern "C" {
 #endif
 
 /*INCLUDE FILES */
-#include <linux/fb.h>   /* framebuffer related information */
+#include <linux/fb.h>		/* framebuffer related information */
 #include <linux/mxcfb.h>
 /* CONSTANTS */
 
@@ -38,62 +38,57 @@ extern "C"{
 #define FALSE 0
 #endif
 
-typedef unsigned char BOOL;
+	typedef unsigned char BOOL;
 /* ENUMS */
 
 /* STRUCTURES AND OTHER TYPEDEFS */
 /* This structure contains information taken from fb_var_screeninfo struct */
-struct px_field
-{
-    int offset;                 /* Bitfield offset */
-    int length;                 /* Bitfield length */
-};
+	struct px_field {
+		int offset;	/* Bitfield offset */
+		int length;	/* Bitfield length */
+	};
 
 /* This structure is used when particular pixel is being written into fb memory */
-struct pixel
-{
-    int bpp;                    /* Color depth in bytes            */
-    int xres;                   /* X resolution in pixels          */
-    int yres;                   /* Y resolution in pixels          */
-    unsigned char   r_color;    /* Red color value to be written   */
-    struct px_field r_field;
-    unsigned char   g_color;    /* Green color value to be written */
-    struct px_field g_field;
-    unsigned char   b_color;    /* Blue color value to be written  */
-    struct px_field b_field;
-    unsigned char   trans;    /* Transparency value   */
-    struct px_field t_field;
-   int line_length;            /* length of a line in px  */
-};
+	struct pixel {
+		int bpp;	/* Color depth in bytes            */
+		int xres;	/* X resolution in pixels          */
+		int yres;	/* Y resolution in pixels          */
+		unsigned char r_color;	/* Red color value to be written   */
+		struct px_field r_field;
+		unsigned char g_color;	/* Green color value to be written */
+		struct px_field g_field;
+		unsigned char b_color;	/* Blue color value to be written  */
+		struct px_field b_field;
+		unsigned char trans;	/* Transparency value   */
+		struct px_field t_field;
+		int line_length;	/* length of a line in px  */
+	};
 
-typedef struct epdc_opts {
-   int Tid;
-   char dev[128];
-   struct mxcfb_waveform_modes waveform;
-   int temp;
-   int grayscale;
-   int au;/*auto update or regional update*/
-   int su;/*use alt update*/
-	 int rot;/*rotation mode*/
-   struct mxcfb_update_data update;
-   int wt;
-	 int delay;
-	 int scheme;
- } epdc_opts;
+	typedef struct epdc_opts {
+		int Tid;
+		char dev[128];
+		struct mxcfb_waveform_modes waveform;
+		int temp;
+		int grayscale;
+		int au;		/*auto update or regional update */
+		int su;		/*use alt update */
+		int rot;	/*rotation mode */
+		struct mxcfb_update_data update;
+		int wt;
+		int delay;
+		int scheme;
+	} epdc_opts;
 
 /* GLOBAL VARIABLE DECLARATIONS */
 
-
 /* FUNCTION PROTOTYPES */
-int epdc_fb_setup();
-int epdc_fb_cleanup();
-int epdc_fb_test(void);
+	int epdc_fb_setup();
+	int epdc_fb_cleanup();
+	int epdc_fb_test(void);
 
-void cleanup();
-
+	void cleanup();
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif  /* EPDC_TEST_H */
+#endif				/* EPDC_TEST_H */
