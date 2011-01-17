@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (C) 2010 Freescale Semiconductor, Inc. All Rights Reserved.
+# Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-#    @file   dvfs_mx50.sh
+#    @file   dvfs_mx53.sh
 #
 #    @brief  shell script template for testcase design "cpu freq test" is where to modify block.
 #
@@ -115,7 +115,6 @@ run_auto_test_list()
    rtc_test.sh 2 || return 1
    echo "frambuffer test"
    dd if=/dev/urandom of=/dev/fb0 bs=1k count=150 || return 2
-	 epdc_test -T 7 || return 2
    echo "ALSA test"
    aplay -vv $STREAM_PATH/alsa_stream/audio44k16M.wav || return 14
 	 echo "USB Host test"
