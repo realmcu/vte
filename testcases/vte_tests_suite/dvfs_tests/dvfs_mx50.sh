@@ -65,6 +65,7 @@ RC=0
 
 #TODO add cleanup code here
 echo 0 > /sys/devices/platform/mxc_dvfs_core.0/enable
+echo 1 > /sys/devices/platform/busfreq.0/enable
 
 return $RC
 }
