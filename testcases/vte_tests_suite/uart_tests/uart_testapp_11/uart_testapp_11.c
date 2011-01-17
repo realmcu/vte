@@ -244,7 +244,7 @@ int main(int argc, char **argv)
 						}
    					iores += read(uart_file1, rx, iocount);
 						iocount = 0;
-						printf("\rreceive %d bytes", iores);
+						/*printf("\rreceive %d bytes", iores);*/
 						if((unsigned char)rx[0] != PATTERN){
 							printf("receive error %x at %d!!!\n",(unsigned char)rx[0], iores);
 							cont = 1;
