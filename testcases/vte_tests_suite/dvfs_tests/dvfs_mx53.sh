@@ -206,8 +206,6 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 	 echo "SD test"
 	 sleep 2
 	 sh -c "mkdir -p /mnt/mmc && mkfs.vfat /dev/mmcblk0p1 && mount /dev/mmcblk0p1 /mnt/mmc && bonnie\+\+ -d /mnt/mmc -u 0:0 -s 10 -r 5 && dt of=/mnt/mmc/test_file bs=4k limit=128m passes=20 || RC='$RC 3' &"
-	 echo "epdc test"
-	 sh -c "epdc_test -T 7 || RC='$RC 4' &"
 	 sleep 2
 	 echo "wifi test"
 	 sh -c "modprobe ath6kl ; sleep 10; ifconfig wlan0 up && iwconfig wlan0 mode managed && sleep 5 &&iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key $(echo Happy123 | md5sum | cut -c 1-10) && iwconfig wlan0 essid FSLLBGAP_001 && sleep 5 && udhcpc -i wlan0"
