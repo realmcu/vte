@@ -125,7 +125,7 @@ hwclock --systohc
 ret=$(hwclock | grep 2010 | wc -l)
 
 if [ -e /dev/rtc1 ]; then
-hwclock --systohc  --rtc=/dev/rtc1
+hwclock --systohc  -f /dev/rtc1
 ret=$(hwclock | grep 2010 | wc -l)
 fi
 
@@ -134,7 +134,7 @@ sleep 1
 hwclock --systohc
 
 if [ -e /dev/rtc1 ]; then
-hwclock --systohc  --rtc=/dev/rtc1
+hwclock --systohc  -f /dev/rtc1
 fi
 
 if [ $ret ]
@@ -214,7 +214,7 @@ if [ $y1 -ne $y2 ];then
 fi
 
 if [ -e /dev/rtc1  ]; then
-  hwclock -w --rtc=/dev/rtc1
+  hwclock -w -f /dev/rtc1
   sleep 300
   diffs=$(hwclock -r --rtc=/dev/rtc1  ;date)
   echo $diffs
