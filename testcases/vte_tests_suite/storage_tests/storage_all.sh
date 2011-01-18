@@ -38,24 +38,14 @@ p_node()
 n
 p
 1
-
-+10M
-n
-p
-2
-
-
-d
-1
-
+20480
 
 
 w
 EOF
 
-fdisk $1 < tmpfile
+fdisk -u $1 < $tmpfile
 sleep 5
-
 }
 
 
@@ -80,44 +70,45 @@ trap "cleanup" 0
 
 clear
 tmp_dir=$(mktemp -d -p /mnt)
-if [ -nz $? ];then
+if [ $? -ne 0 ];then
 	RC=1
 	echo "can not mktemp folder"
 	return $RC
 fi
 #start detect devices
-for i in $device_list
+for i in $scsi_device_list
 do
   #1. find devices node
   d_list=$(cat /proc/partitions | grep -i $i | awk '{print $4}'| grep -vi "${i}[0-9]\+")
   #2. deteminate partition
 	for j in $d_list
 	do
-		p_list=$(cat /proc/partitions | grep -i "${j}.*[0-9]\+" \
+		p_list=$(cat /proc/partitions |grep -i "${j}.*[0-9]\+" \
 		| awk '{print $4}'| grep -i "${i}[0-9]\+")
 		for k in $p_list
 		do
 			#check whether mount
 	 		mount | grep $k
 	 		if [ $? -ne 0 ]; then
-     		echo "not mount then try mount if fail will format to vfat"
+     		echo "not mount then try mount if fail will format to ext3"
 				echo "then try mount again, if still fail then quit"
-				mount /dev/$k $tmp_dir || mkfs.vfat /dev/$k || break
+				mount /dev/$k $tmp_dir || mkfs.ext3 /dev/$k || break
 				sleep 2
 				umount $tmp_dir
 				sleep 2
-				target_list=$target_list" "$k
 			fi
       echo "$k mounted now check free space"
 			echo "..."
-      free_size=$(df /dev/$k | tail -1 | awk '{print $4}')
+			mount /dev/$k $tmp_dir
+      free_size=$(df -m /dev/$k | tail -1 | awk '{print $4}')
 #if free size is enough then add to target list
-			if [ $free_size -gt 100*1024*1024 ];then
+			if [ $free_size -gt 100 ];then
         target_list=$target_list" "$k
       else
 				 echo "$k free space is not enough for test"
 				 echo "skip it!"
 			fi
+			umount $tmp_dir
 		done
     if [ $(echo $p_list | wc -w) -eq 0 ]; then
 #no partition then partition it to 1 partition 
@@ -127,6 +118,51 @@ do
 	done
 done
 
+
+on_chip_controller_device_list="mmcblk.*[0-9]"
+for i in $on_chip_controller_device_list
+do
+  #1. find devices node
+  d_list=$(cat /proc/partitions | grep -i $i | awk '{print $4}'| grep -vi "${i}p")
+  #2. deteminate partition
+	for j in $d_list
+	do
+		p_list=$(cat /proc/partitions | awk '{print $4}' | grep -i "${j}p")
+		for k in $p_list
+		do
+			#check whether mount
+	 		mount | grep $k
+	 		if [ $? -ne 0 ]; then
+     		echo "not mount then try mount if fail will format to ext3"
+				echo "then try mount again, if still fail then quit"
+				mount /dev/$k $tmp_dir || mkfs.ext3 /dev/$k || break
+				sleep 2
+				umount $tmp_dir
+				sleep 2
+			fi
+      echo "$k mounted now check free space"
+			echo "..."
+			mount /dev/$k $tmp_dir
+      free_size=$(df -m /dev/$k | tail -1 | awk '{print $4}')
+#if free size is enough then add to target list
+			if [ $free_size -gt 100 ];then
+        target_list=$target_list" "$k
+      else
+				 echo "$k free space is not enough for test"
+				 echo "skip it!"
+			fi
+			umount $tmp_dir
+		done
+    if [ $(echo $p_list | wc -w) -eq 0 ]; then
+#no partition then partition it to 1 partition 
+       p_node /dev/$j || break
+			 target_list=${j}1
+		fi
+	done
+done
+
+rm -rf $tmp_dir
+echo $target_list
 RC=0
 
 #TODO add setup scripts
@@ -166,13 +202,17 @@ run_single_test_list()
 		 mount /dev/$i $mount_point || RC=$(echo $RC m$i)
      need_umount=1
 		fi
-	 	 bonnie\+\+ -d $mount_point -u 0:0 -s 96 -r 100 || RC=$(echo $RC b$i)  
+	 	 bonnie\+\+ -d $mount_point -u 0:0 -s 96 -r 48 || RC=$(echo $RC b$i)  
 	   dt of=$mount_point/test_file bs=4k limit=96m passes=10 || RC=$(echo $RC d$i)
 		 if [ $need_umount -eq 1  ];then
       umount $mount_point || RC=$(echo $RC u$i)
 			rm -rf $mount_point
 		 fi
 	 done
+	 if [ "$RC" != "0"  ];then
+	 echo $RC
+	 RC=1
+	 fi
 	 return $RC
 }
 
@@ -195,12 +235,16 @@ run_multi_test_list()
      mount_point=$(mktemp -d -p /tmp/storage)
 		 mount /dev/$i $mount_point || RC=$(echo $RC $i)
 		fi
-	 	 sh -c "bonnie\+\+ -d $mount_point -u 0:0 -s 96 -r 100 || RC=$(echo $RC $i)" &  
+	 	 sh -c "bonnie\+\+ -d $mount_point -u 0:0 -s 96 -r 48 || RC=$(echo $RC $i)" &  
 	   sh -c "dt of=$mount_point/test_file bs=4k limit=96m passes=10 || RC=$(echo $RC $i)" &
 	 done
 	 echo "wait till all process finished"
 	 wait
 	 rm -rf /tmp/storage
+	 if [ "$RC" != "0"  ];then
+	 echo $RC
+	 RC=1
+	 fi
 	 return $RC
 }
 
@@ -220,7 +264,6 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-
 
 #test list
 run_single_test_list
@@ -245,7 +288,6 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-
 #test list
 run_multi_test_list
 
@@ -265,7 +307,8 @@ echo "2: "
 
 RC=0
 
-device_list="sd.* mmcblk.*"
+scsi_device_list="sd.*"
+on_chip_controller_device_list="mmcblk.*[0-9]"
 
 target_list=""
 
