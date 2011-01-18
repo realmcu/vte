@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 # Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -99,7 +99,7 @@ do
 		do
 			#check whether mount
 	 		mount | grep $k
-	 		if [ $? -eq 0 ]; then
+	 		if [ $? -ne 0 ]; then
      		echo "not mount then try mount if fail will format to vfat"
 				echo "then try mount again, if still fail then quit"
 				mount /dev/$k $tmp_dir || mkfs.vfat /dev/$k || break
@@ -108,7 +108,7 @@ do
 				sleep 2
 				target_list=$target_list" "$k
 			fi
-      echo "$k can mounted now check free space"
+      echo "$k mounted now check free space"
 			echo "..."
       free_size=$(df /dev/$k | tail -1 | awk '{print $4}')
 #if free size is enough then add to target list
@@ -148,31 +148,70 @@ RC=0
 return $RC
 }
 
-run_auto_test_list()
+run_single_test_list()
 {
    RC=0
-	 echo "USB Host test"
-   mkfs.vfat /dev/sda1 || return 15
-   mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 || return $16
-	 bonnie\+\+ -d /media/sda1 -u 0:0 -s 10 -r 5 || return $17
-	 dt of=/media/sda1/test_file bs=4k limit=128m passes=20 || return $18
-	 echo "SD test"
-	 mkdir -p /mnt/mmc
-	 mkfs.vfat /dev/mmcblk0p1
-	 mount /dev/mmcblk0p1 /mnt/mmc
-	 bonnie\+\+ -d /mnt/mmc -u 0:0 -s 10 -r 5 
-	 dt of=/mnt/mmc/test_file bs=4k limit=128m passes=20
+   need_umount=1
+	 for i in $target_list
+	 do
+    #test if already mout
+    mount | grep $i
+		if [ $? -eq 0 ]; then
+     #is mounted
+		 mount_point=$(mount | grep $i |cut -d" " -f 3)
+		 need_umount=0
+    else
+     #not mount
+     mount_point=$(mktemp -d -p /tmp)
+		 mount /dev/$i $mount_point || RC=$(echo $RC m$i)
+     need_umount=1
+		fi
+	 	 bonnie\+\+ -d $mount_point -u 0:0 -s 96 -r 100 || RC=$(echo $RC b$i)  
+	   dt of=$mount_point/test_file bs=4k limit=96m passes=10 || RC=$(echo $RC d$i)
+		 if [ $need_umount -eq 1  ];then
+      umount $mount_point || RC=$(echo $RC u$i)
+			rm -rf $mount_point
+		 fi
+	 done
+	 return $RC
+}
+
+run_multi_test_list()
+{
+   RC=0
+   need_umount=1
+	 mkdir -p /tmp/storage
+	 for i in $target_list
+	 do
+    #test if already mout
+    mount | grep $i
+		if [ $? -eq 0 ]; then
+     #is mounted
+		 mount_point=$(mount | grep $i |cut -d" " -f 3)
+		 need_umount=0
+    else
+     #not mount
+     need_umount=1
+     mount_point=$(mktemp -d -p /tmp/storage)
+		 mount /dev/$i $mount_point || RC=$(echo $RC $i)
+		fi
+	 	 sh -c "bonnie\+\+ -d $mount_point -u 0:0 -s 96 -r 100 || RC=$(echo $RC $i)" &  
+	   sh -c "dt of=$mount_point/test_file bs=4k limit=96m passes=10 || RC=$(echo $RC $i)" &
+	 done
+	 echo "wait till all process finished"
+	 wait
+	 rm -rf /tmp/storage
 	 return $RC
 }
 
 
 # Function:     test_case_01
-# Description   - Test if <CPU freq> ok
+# Description   - Test if single ok
 #  
 test_case_01()
 {
 #TODO give TCID 
-TCID="test_storage_stress"
+TCID="test_storage_single"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=0
@@ -184,16 +223,42 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 
 #test list
-run_auto_test_list || RC=1
+run_single_test_list
 
 return $RC
 
 }
 
+# Function:     test_case_02
+# Description   - Test if multi ok
+#  
+test_case_02()
+{
+#TODO give TCID 
+TCID="test_storage_multi"
+#TODO give TST_COUNT
+TST_COUNT=1
+RC=0
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+#TODO add function test scripte here
+
+
+#test list
+run_multi_test_list
+
+return $RC
+
+}
+
+
 usage()
 {
 echo "$0 [case ID]"
 echo "1: "
+echo "2: "
 }
 
 # main function
@@ -216,6 +281,9 @@ setup || exit $RC
 case "$1" in
 1)
   test_case_01 || exit $RC 
+  ;;
+1)
+  test_case_02 || exit $RC 
   ;;
 *)
   usage
