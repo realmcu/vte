@@ -325,7 +325,7 @@ case "$1" in
 1)
   test_case_01 || exit $RC 
   ;;
-1)
+2)
   test_case_02 || exit $RC 
   ;;
 *)
