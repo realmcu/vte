@@ -53,6 +53,9 @@ TARGET += usb_ptp_test.sh Agl.sh
 #all modules insert and remove test 
 TARGET += modules_verify.sh
 
+#all block storage test
+TARGET += storage_all.sh
+
 all: $(TARGET)
 	@echo "***********************************************"
 	@echo "** ALL : do nothing only copy                **"
