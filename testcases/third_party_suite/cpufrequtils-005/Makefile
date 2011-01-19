@@ -192,9 +192,8 @@ libcpufreq.la: ccdv $(LIB_OBJS) $(LIB_HEADERS) $(LIB_PARTS) Makefile
 libcpufreq: libcpufreq.la
 
 cpufreq-%: libcpufreq.la $(UTIL_OBJS)
-	$(QUIET) $(CC) $(CFLAGDEF) $(CFLAGS) -g -I. -I./lib/ -c -o utils/$@.o utils/$*.c
-	$(QUIET) $(CC)  -L. -o $@ utils/$@.o libcpufreq.a
-	$(QUIET) $(STRIPCMD) $@
+	$(QUIET) $(CC) $(CFLAGDEF) $(CFLAGS) -g -I. -I./lib/ -c -o utils/$@.o utils/$*.c &&\
+	$(QUIET) $(CC)  -L. -o $@ utils/$@.o libcpufreq.a && $(QUIET) $(STRIPCMD) $@
 
 utils: cpufreq-info cpufreq-set
 
