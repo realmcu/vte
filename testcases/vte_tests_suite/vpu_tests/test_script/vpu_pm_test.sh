@@ -142,7 +142,7 @@ $TSTCMD -E "-f 1 -w 352 -h 288 -i ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv -o
 echo "***********"
 echo "press a key to resume power"
 echo "***********"
-echo -n standby > /sys/power/state
+echo -n mem > /sys/power/state
 
 sleep 10
 
