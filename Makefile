@@ -307,6 +307,7 @@ vte:  tools lib-all utils
 	@echo "***********************************************"
 apps:
 	-mkdir -p testcases/bin/
+	@$(MAKE) -C openlibs
 	@$(MAKE) -C testcases/third_party_suite all
 	@$(MAKE) -C testcases/third_party_suite install
 	@echo
