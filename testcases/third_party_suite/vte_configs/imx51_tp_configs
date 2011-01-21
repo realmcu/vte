@@ -1,5 +1,7 @@
 #imx5 opensource test tools
 
+export CONFIG_TP_IMX5=y
+
 export CONFIG_TP_BONNIE=y
 export CONFIG_TP_DT=y
 export CONFIG_TP_IOZONE=y
