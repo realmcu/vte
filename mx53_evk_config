@@ -26,3 +26,4 @@ export CROSS_COMPILER
 export CC=${CROSS_COMPILER}gcc
 #export CFLAGS="-DPROJECT_MX53=1 -O2 -fsigned-char -mfloat-abi=softfp -mfpu=vfp"
 export CFLAGS="-Wall -DPROJECT_MX53=1 -O2 -fsigned-char -march=armv7-a -mfpu=neon -mfloat-abi=softfp "
+export DEBUG_CFLAGS="-Wall"
