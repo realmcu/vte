@@ -27,7 +27,7 @@
 DEBUG ?=	false
 
 # make the build silent. Set this to something else to make it noisy again.
-V ?=		false
+V ?=		true
 
 # Internationalization support (output in different languages).
 # Requires gettext.
