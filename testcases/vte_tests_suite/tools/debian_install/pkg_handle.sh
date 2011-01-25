@@ -21,7 +21,7 @@ install_debian_package()
  list=$(ls $1/*.deb)
  for i in $list
  do
- dpkg -i $i
+ dpkg --root $ROOTFS -i $i
  done
  return 0
 }
@@ -31,7 +31,7 @@ remove_debian_package()
  list=$(ls $1/*.deb)
  for i in $list
  do
- dpkg -r $(basename $i | cut -f 1 -d _)
+ dpkg --root $ROOTFS -r $(basename $i | cut -f 1 -d _)
  done
  return 0
 }
@@ -39,6 +39,10 @@ remove_debian_package()
 if [ $# -ne 2 ];then
   helpme
   exit 1
+fi
+
+if [ -z $ROOTFS ]; then
+ROOTFS=/
 fi
 
 if [ $1 = "install" ];then
