@@ -12,6 +12,8 @@
 helpme()
 {
  echo "$1 [install/remove] [path to debian package]"
+ echo "or"
+ echo "sudo ROOTFS=$ROOTFS $1 [install/remove] [path to debian package]"
 }
 
 
@@ -21,7 +23,7 @@ install_debian_package()
  list=$(ls $1/*.deb)
  for i in $list
  do
- dpkg --root $ROOTFS -i $i
+ dpkg --force-architecture --root $ROOTFS -i $i
  done
  return 0
 }
@@ -31,7 +33,7 @@ remove_debian_package()
  list=$(ls $1/*.deb)
  for i in $list
  do
- dpkg --root $ROOTFS -r $(basename $i | cut -f 1 -d _)
+ dpkg --force-architecture --root $ROOTFS -r $(basename $i | cut -f 1 -d _)
  done
  return 0
 }
