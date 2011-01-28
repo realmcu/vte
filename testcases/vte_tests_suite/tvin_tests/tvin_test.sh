@@ -1,4 +1,5 @@
 #!/bin/sh
+###################################################################################################
 #Copyright (C) 2008,2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -87,6 +88,7 @@ return $RC
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
+#Fix me: why cleanup() is not invokded when "Ctrl+C"
 cleanup()
 {
 RC=0
@@ -209,7 +211,7 @@ echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
 echo mem > /sys/power/state
  
-$TVIN_APP &
+$TVIN_APP -ow 640 -oh 480 -ot 0 -ol 0 -r 0 -c 600 -m 2 -tb -f UYVY &
 
 read -p "did you see the picture form tvin? y/n" RC
 
