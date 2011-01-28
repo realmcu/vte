@@ -120,6 +120,17 @@ CTRL_INTERFACE=/dev/null
 #echo $cmd > $CTRL_INTERFACE
 write_reg 0 0x1c MMA8450_CTRL_REG1 $cmd
 RC=$?
+
+list=$(ls /sys/class/input/* | grep event)
+for i in $list
+do
+cat $i/device/name | grep mma
+if [ $? -eq 0 ];then
+device=/dev/input/$(basename $i)
+break
+fi
+done
+
 return $RC 
 }
 # Function:     cleanup 
