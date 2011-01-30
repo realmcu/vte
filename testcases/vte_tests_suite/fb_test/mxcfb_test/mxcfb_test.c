@@ -586,8 +586,16 @@ int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
     px.b_field.length = mode_info.blue.length;
     px.trans = 0x00;
     px.line_length = fx_fb_info.line_length / px.bpp; 
+  
+ 		if ((ioctl(fd, FBIOGET_VSCREENINFO, &mode_info)) < 0)
+    {
+       perror("ioctl");
+       rv = TFAIL;
+       return rv;
+    }
+    px.yres = mode_info.yres_virtual; 
     size = px.line_length * px.yres;
-    
+
     /* Clear screen and fill it with some pattern */
     px.r_color = r;
     px.g_color = g;
