@@ -54,6 +54,7 @@ export LTPSET=1
 fi
 
 trap "cleanup" 0
+trap "cleanup" 2
 
 #rmmod for camera which is conflict
 for i in $RMLIST
@@ -88,7 +89,6 @@ return $RC
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-#Fix me: why cleanup() is not invokded when "Ctrl+C"
 cleanup()
 {
 RC=0
