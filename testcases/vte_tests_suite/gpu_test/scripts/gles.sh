@@ -130,7 +130,7 @@ fi
 
 echo $RC
 
-if [ $RC = "0" ]; then
+if [ "$RC" = "0" ]; then
  RC=0
 else
   RC=1
@@ -245,7 +245,7 @@ fi
 
 echo $RC
 
-if [ $RC = "0" ]; then
+if [ "$RC" = "0" ]; then
  RC=0
 else
   RC=1
