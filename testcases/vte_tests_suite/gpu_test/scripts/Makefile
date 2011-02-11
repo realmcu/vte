@@ -7,7 +7,7 @@
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
 TARGET = gpu_test.sh
-TARGETS = gpu_3dmark_cpuload.sh gpu_test.sh
+TARGETS = gpu_3dmark_cpuload.sh gpu_test.sh gles.sh
 BIN = ../../../bin/
 
 SRC-$(CONFIG_VTE_IMX5)  =  mx5x_gpu_test.sh
