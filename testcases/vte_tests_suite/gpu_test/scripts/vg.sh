@@ -181,12 +181,44 @@ fi
 return $RC
 }
 
+test_case_04()
+{
+#TODO give TCID 
+TCID="gles_conform_test"
+#TODO give TST_COUNT
+TST_COUNT=3
+RC=0
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+tiger &
+td=$!
+
+rtc_testapp_6 -T 5
+sleep 1
+rtc_testapp_6 -T 5
+sleep 1
+rtc_testapp_6 -T 5
+sleep 1
+rtc_testapp_6 -T 5
+sleep 1
+rtc_testapp_6 -T 5
+sleep 1
+
+kill -9 $td
+
+echo "test PASS"
+
+return $RC
+}
 usage()
 {
 echo "$0 [case ID]"
 echo "1: sequence test"
 echo "2: concurrent test"
 echo "3: conformance test"
+echo "4: pm test"
 }
 
 # main function
@@ -237,6 +269,9 @@ case "$1" in
   ;;
 3)
   test_case_03 || exit $RC
+  ;;
+4)
+  test_case_04 || exit $RC
   ;;
 *)
   usage
