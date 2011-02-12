@@ -112,6 +112,7 @@ static int update_to_display(int left, int top, int width, int height, int wave_
 	upd_data.update_region.top = top;
 	upd_data.update_region.height = height;
 	upd_data.temp = 24; //TEMP_USE_AMBIENT;
+	upd_data.flags = 0;
 
 	if (wait_for_complete) {
 		/* Get unique marker value */
