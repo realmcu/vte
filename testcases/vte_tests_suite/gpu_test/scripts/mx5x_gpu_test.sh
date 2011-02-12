@@ -107,14 +107,12 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-tiger 
+tiger &
+td=$!
+sleep 10
+kill -9 $td
 
-if [ $? -eq 0 ]; then
 echo "TEST PASS"
-else
-RC=1
-echo "TEST FAIL"
-fi
 return $RC
 }
 
@@ -192,41 +190,36 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-tiger 
+tiger &
+td1=$!
+es11ex &
+td2=$!
 
-echo "now test standby mode"
-echo "press power key to recover"
-echo -n standby > /sys/power/state
+rtc_testapp_6 -T 15
 
-read -p "is lcd still display 3D image?y/n" Rnt
-echo "#########"
+kill -9 $td1
+kill -9 $td2
 
-if [ $Rnt = "n" ]; then
- RC=1
-fi
+#try again
+tiger &
+td1=$!
+es11ex &
+td2=$!
 
-sleep 5
+rtc_testapp_6 -T 15
+sleep 1
+rtc_testapp_6 -T 15
+sleep 1
+rtc_testapp_6 -T 15
+sleep 1
+rtc_testapp_6 -T 15
 
-echo "now test mem mode"
-echo "press power key to recover"
-echo -n mem > /sys/power/state
-read -p "is lcd still display 3D image?y/n" Rnt
-echo "#########"
-
-if [ $Rnt = "n" ]; then
- RC=1
-fi
-
-if [ $RC -eq 1 ]; then
-  echo "test FAIL"
- return $RC
-fi
+kill -9 $td1
+kill -9 $td2
 
 echo "test PASS"
-sleep 5
 echo "now reboot system!"
 reboot
-
 return $RC
 
 }
@@ -238,6 +231,7 @@ echo "1: GSL test"
 echo "2: openvg test"
 echo "3: gles test"
 echo "4: gles stress test"
+echo "5: power managerment test"
 }
 
 # main function
