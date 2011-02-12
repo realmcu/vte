@@ -254,7 +254,37 @@ fi
 return $RC
 }
 
+test_case_04()
+{
+#TODO give TCID 
+TCID="gles_pm_test"
+#TODO give TST_COUNT
+TST_COUNT=4
+RC=0
 
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+cd ${TEST_DIR}/${APP_SUB_DIR}
+if [ -e openGLES/opengles20/simple_draw/linux/simple_draw ]; then
+  cd openGLES/opengles20/simple_draw/linux
+	./simple_draw 10000 &
+fi
+
+rtc_testapp_6 -T 10
+sleep 1
+rtc_testapp_6 -T 10
+sleep 1
+rtc_testapp_6 -T 10
+sleep 1
+rtc_testapp_6 -T 10
+sleep 1
+rtc_testapp_6 -T 10
+sleep 1
+
+echo "TEST PASS"
+return $RC
+}
 
 usage()
 {
@@ -262,6 +292,7 @@ echo "$0 [case ID]"
 echo "1: sequence test"
 echo "2: concurrent test"
 echo "3: conformance test"
+echo "4: pm test"
 }
 
 # main function
@@ -309,6 +340,9 @@ case "$1" in
   ;;
 3)
   test_case_03 || exit $RC
+  ;;
+4)
+  test_case_04 || exit $RC
   ;;
 *)
   usage
