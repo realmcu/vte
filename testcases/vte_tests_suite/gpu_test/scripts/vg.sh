@@ -18,7 +18,7 @@
 #
 ###############################################################################
 #
-#    @file   gles_test.sh
+#    @file   vg.sh
 #
 #    @brief  shell script template for testcase design "gpu" is where to modify block.
 #
@@ -85,47 +85,15 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e 3DMarkMobile/bin/bin/fsl_imx_linux/fm_oes_player ]; then
-  cd 3DMarkMobile/bin/bin/fsl_imx_linux/
-	./fm_oes_player || RC="3Dmark"
-fi
+tiger &
+td=$!
+sleep 100
+kill -9 $td
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openGLES/egl_test/linux/egl_test ]; then
-  cd openGLES/egl_test/linux/
-	./egl_test || RC=$(echo $RC egl_test)
-fi
-
-
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e bbPinball/bbPinball ]; then
-  cd bbPinball
-	./bbPinball || RC=$(echo $RC bbPinBall)
-fi
-
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openGLES/opengles20/fps_triangle/linux/fps_triangle ]; then
-  cd openGLES/opengles20/fps_triangle/linux/
-	./fps_triangle || RC=$(echo $RC fps_triangle)
-fi
-
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openGLES/opengles20/simple_draw/linux/simple_draw ]; then
-  cd openGLES/opengles20/simple_draw/linux
-	./simple_draw 100 || RC=$(echo $RC simple draw)
-fi
-
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openGLES/opengles20/simple_triangle/linux/simple_triangle ]; then
-  cd openGLES/opengles20/simple_triangle/linux
-	./simple_triangle || RC=$(echo $RC simple_triangle)
-fi
-
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openGLES/opengles20/torusknot/linux/torusknot ]; then
-  cd openGLES/opengles20/torusknot/linux
-	./torusknot || RC=$(echo $RC torusknot)
+if [ -e openVG/VGMark_10_src/run/vgmark/run  ];then
+cd openVG/VGMark_10_src/run/vgmark
+./run || RC="vgmark"
 fi
 
 echo $RC
@@ -155,58 +123,25 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e 3DMarkMobile/bin/bin/fsl_imx_linux/fm_oes_player ]; then
-  cd 3DMarkMobile/bin/bin/fsl_imx_linux/
-	./fm_oes_player &
-fi
+tiger &
+td=$!
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openGLES/egl_test/linux/egl_test ]; then
-  cd openGLES/egl_test/linux/
-	./egl_test &
+if [ -e openVG/VGMark_10_src/run/vgmark/run  ];then
+cd openVG/VGMark_10_src/run/vgmark
+./run || RC="vgmark"
 fi
 
+kill -9 $td
 
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e bbPinball/bbPinball ]; then
-  cd bbPinball
-	./bbPinball &
-fi
+echo $RC
 
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openGLES/opengles20/fps_triangle/linux/fps_triangle ]; then
-  cd openGLES/opengles20/fps_triangle/linux/
-	./fps_triangle &
-fi
-
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openGLES/opengles20/simple_draw/linux/simple_draw ]; then
-  cd openGLES/opengles20/simple_draw/linux
-	./simple_draw 100 &
-fi
-
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openGLES/opengles20/simple_triangle/linux/simple_triangle ]; then
-  cd openGLES/opengles20/simple_triangle/linux
-	./simple_triangle &
-fi
-
-wait
-
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openGLES/opengles20/torusknot/linux/torusknot ]; then
-  cd openGLES/opengles20/torusknot/linux
-	./torusknot
-fi
-
-
-if [ $? -eq 0 ]; then
-echo "TEST PASS"
+if [ "$RC" = "0" ]; then
+ RC=0
 else
-RC=1
-echo "TEST FAIL"
+  RC=1
 fi
+
 return $RC
 }
 
@@ -226,26 +161,18 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openGLES/conformance/es11/conform/run_conformance_tests.sh ]; then
-  cd openGLES/conformance/es11/conform/
-	./run_conformance_tests.sh All || RC=$(echo $RC es10_conformance)
+if [ -e openVG/cts_1.1/generation/make/linux/bin/generator ]; then
+	./openVG/cts_1.1/generation/make/linux/bin/generator || RC="cts_1.1"
 fi
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openGLES/conformance/es20/GTF_ES/glsl/GTF/GTF ]; then
-  cd openGLES/conformance/es20/GTF_ES/glsl
-	./GTF/GTF -width=64 -height=64 -noimagefileio \
-	-l=/root/es20_conformance_mustpass_64x64 -run="$(pwd)/GTF/mustpass.run" \
-	&& ./GTF/GTF -width=113 -height=47 -noimagefileio \
-	-l=/root/es20_conformance_mustpass_113x47 -run="$(pwd)/GTF/mustpass.run" \
-	&& ./GTF/GTF -width=480 -height=640 -noimagefileio \
-	-l=/root/es20_conformance_mustpass_480x640 -run="$(pwd)/GTF/mustpass.run" \
-	|| RC=$(echo $RC es20_conformance)
+if [ -e openVG/cts_1.0.1/generation/make/linux/bin/generator ]; then
+	./openVG/cts_1.0.1/generation/make/linux/bin/generator || RC=$(echo $RC cts_1.0.1)
 fi
 
 echo $RC
 
-if [ "$RC" = "0" ]; then
+if [ $RC = "0" ]; then
  RC=0
 else
   RC=1
@@ -253,8 +180,6 @@ fi
 
 return $RC
 }
-
-
 
 usage()
 {
@@ -290,6 +215,9 @@ else
 #judge the rootfs
 platfm.sh
 case "$?" in
+50)
+  APP_SUB_DIR="imx50_rootfs/test"
+	;;
 53)
   APP_SUB_DIR="imx53_rootfs/test"
  ;;
