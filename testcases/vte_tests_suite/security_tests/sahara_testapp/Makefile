@@ -63,6 +63,8 @@ OBJS = $(patsubst %.c,%.o,$(SRCS))
 
 TARGET = sahara_testapp
 
+SCRIPTS = sahara.sh 
+
 all: $(TARGET)
 	rm -f $(OBJS)
 	@echo "************************************************"
@@ -71,6 +73,7 @@ all: $(TARGET)
 	@echo
 install:
 	ln -f $(TARGET) $(BIN_DIR)/bin
+	ln -f $(SCRIPTS) $(BIN_DIR)/bin
 	@echo "************************************************"
 	@echo "** INSTALL : $(TARGET)                   **"
 	@echo "************************************************"
