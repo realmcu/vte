@@ -85,28 +85,29 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-tiger &
-td=$!
-sleep 100
-kill -9 $td
 
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openVG/VGMark_10_src/run/vgmark/run  ];then
-cd openVG/VGMark_10_src/run/vgmark
-./run || RC="vgmark"
-fi
+sahara_testapp -C 0 || RC=$(expr $RC + 1)
+sahara_testapp -C 1 || RC=$(expr $RC + 1)
+sahara_testapp -C 2 || RC=$(expr $RC + 1)
+sahara_testapp -C 3 || RC=$(expr $RC + 1)
+sahara_testapp -C 4 || RC=$(expr $RC + 1)
+sahara_testapp -C 5 || RC=$(expr $RC + 1)
+sahara_testapp -C 6 || RC=$(expr $RC + 1)
+sahara_testapp -C 7 || RC=$(expr $RC + 1)
+sahara_testapp -C 8 || RC=$(expr $RC + 1)
+sahara_testapp -C 9 || RC=$(expr $RC + 1)
 
-echo $RC
-
-if [ "$RC" = "0" ]; then
+if [ $RC -eq 0 ]; then
  RC=0
+ echo "test PASS"
 else
   RC=1
+	echo "test Fail"
 fi
 
 echo "system reboot in 10 s"
 
-sh -c "sleep 5;reboot" &
+sh -c "sleep 10;reboot" &
 
 return $RC
 }
