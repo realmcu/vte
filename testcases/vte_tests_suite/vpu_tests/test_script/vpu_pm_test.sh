@@ -83,21 +83,17 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-cd /tmp
 
-$TSTCMD -D "-f 1 -i ${STREAM_PATH}/video/stream.263 -o stream.yuv" &
-echo "*********************"
-echo "please press key to resume power"
-echo "*********************"
-echo -n standby > /sys/power/state
-echo wait the decode task to finish
+tmpfile=$(mktemp)
+$TSTCMD -D "-f 1 -i ${STREAM_PATH}/video/stream.263 -o $tmpfile" &
+rtc_testapp_6 -T 10
 sleep 10
-SIZE=$(ls -l /tmp/stream.yuv| awk '{print $5}')
+SIZE=$(ls -l $tmpfile | awk '{print $5}')
 if [ $SIZE = "152064" ]
 then 
 RC=0
 fi
-rm -f /tmp/stream.yuv
+rm -f $tmpfile
 
 return $RC
 }
@@ -120,8 +116,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 mkdir /tmp/enc
 cd /tmp/enc
 
-<<<<<<< HEAD:testcases/vte_tests_suite/vpu_tests/test_script/vpu_pm_test.sh
-if [ $TARGET = "51" ]
+if [ $TARGET = "51" ] || [ $TARGET = "53"  ]
 then
 echo 1 > /proc/sys/vm/lowmem_reserve_ratio
 fi
@@ -140,17 +135,10 @@ rm -f /tmp/enc/test.263
 echo "start a process to test enc"
 #$TSTCMD -C config_enc_h263_P3 &
 $TSTCMD -E "-f 1 -w 352 -h 288 -i ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv -o /tmp/enc/test.263" & 
-echo "***********"
-echo "press a key to resume power"
-echo "***********"
-echo -n mem > /sys/power/state
-
+rtc_testapp_6 -T 10
 sleep 10
 
 SIZE2=$(ls -s /tmp/enc/test.263 | awk '{print $1}')
-=======
-MODE_LIST="200 303 304"
->>>>>>> ltp-vte Module-security:testcases/vte_tests_suite/security_tests/crypto_scripts/tcryp.sh
 
 if [ $SIZE1 = $SIZE2 ]
 then
