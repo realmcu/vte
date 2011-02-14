@@ -182,7 +182,7 @@ dvfs_suspend()
     echo "*************************************"
     echo "* please press key to resume system *"
     echo "*************************************"
-    rtc_testapp_6 -T 10
+    rtc_testapp_6 -T 10 -m standby
 		tst_resm TPASS "Resume from suspend..."
 
     sleep 5
