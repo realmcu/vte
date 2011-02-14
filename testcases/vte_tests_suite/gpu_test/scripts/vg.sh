@@ -184,7 +184,7 @@ return $RC
 test_case_04()
 {
 #TODO give TCID 
-TCID="gles_conform_test"
+TCID="gles_pm_test"
 #TODO give TST_COUNT
 TST_COUNT=3
 RC=0
