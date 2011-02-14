@@ -162,12 +162,14 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 cd ${TEST_DIR}/${APP_SUB_DIR}
 if [ -e openVG/cts_1.1/generation/make/linux/bin/generator ]; then
-	./openVG/cts_1.1/generation/make/linux/bin/generator || RC="cts_1.1"
+	cd openVG/cts_1.1/generation/make/linux/bin/
+	./generator || RC="cts_1.1"
 fi
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
 if [ -e openVG/cts_1.0.1/generation/make/linux/bin/generator ]; then
-	./openVG/cts_1.0.1/generation/make/linux/bin/generator || RC=$(echo $RC cts_1.0.1)
+	cd openVG/cts_1.0.1/generation/make/linux/bin
+	./generator || RC=$(echo $RC cts_1.0.1)
 fi
 
 echo $RC
