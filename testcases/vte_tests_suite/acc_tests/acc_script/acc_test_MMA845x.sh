@@ -168,18 +168,18 @@ acc_test()
 
  if [ -e $device ]; then 
   echo "test start"
-  sh -c "evtest $device > /tmp/acctmp" &
+	acctmp=$(mktemp)
+  sh -c "evtest $device > $acctmp" &
   pth=$!
 	echo "now shake the board!! for 30seconds"
 	sleep 30
-	cat /tmp/acctmp
+	ret=$(cat $acctmp | wc -l)
 	echo "test done"
-  read -p "is data reasonable?y/n" ret
-  if [ $ret = "y" ] || [ $ret ='Y' ];then
+  if [ -ne $ret ]
     RC=0
   fi
 	kill -9 $pth
-	rm -f /tmp/acctmp
+	rm -f $acctmp
  fi
  return $RC
 } 
