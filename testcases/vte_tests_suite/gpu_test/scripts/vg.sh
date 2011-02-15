@@ -76,7 +76,7 @@ return $RC
 test_case_01()
 {
 #TODO give TCID 
-TCID="gles_test"
+TCID="vg_test"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=0
@@ -114,7 +114,7 @@ return $RC
 test_case_02()
 {
 #TODO give TCID 
-TCID="gles_con_test"
+TCID="vg_multi_test"
 #TODO give TST_COUNT
 TST_COUNT=2
 RC=0
@@ -151,7 +151,7 @@ return $RC
 test_case_03()
 {
 #TODO give TCID 
-TCID="gles_conform_test"
+TCID="vg_conform_test"
 #TODO give TST_COUNT
 TST_COUNT=3
 RC=0
