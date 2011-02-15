@@ -241,7 +241,7 @@ APP_SUB_DIR=
 setup || exit $RC
 #judge rootfs type
 rt="Ubuntu"
-uname -a | grep Ubuntu || rt="others"
+cat /etc/issue | grep Ubuntu || rt="others"
 
 if [ $rt = "Ubuntu" ];then
 APP_SUB_DIR="ubuntu_10.10/test"

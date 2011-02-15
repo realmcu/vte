@@ -110,12 +110,8 @@ if [ -e openGLES/opengles20/fps_triangle/linux/fps_triangle ]; then
 	./fps_triangle || RC=$(echo $RC fps_triangle)
 fi
 
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openGLES/opengles20/simple_draw/linux/simple_draw ]; then
-  cd openGLES/opengles20/simple_draw/linux
-	./simple_draw 100 || RC=$(echo $RC simple draw)
-	./simple_draw 100 -s || RC=$(echo $RC simple draw -s)
-fi
+simple_draw 100 || RC=$(echo $RC simple draw)
+simple_draw 100 -s || RC=$(echo $RC simple draw -s)
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
 if [ -e openGLES/opengles20/simple_triangle/linux/simple_triangle ]; then
@@ -181,11 +177,8 @@ if [ -e openGLES/opengles20/fps_triangle/linux/fps_triangle ]; then
 	./fps_triangle &
 fi
 
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openGLES/opengles20/simple_draw/linux/simple_draw ]; then
-  cd openGLES/opengles20/simple_draw/linux
-	./simple_draw 100 &
-fi
+	simple_draw 1000 &
+	simple_draw 1000 -s &
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
 if [ -e openGLES/opengles20/simple_triangle/linux/simple_triangle ]; then
@@ -314,7 +307,7 @@ APP_SUB_DIR=
 setup || exit $RC
 #judge rootfs type
 rt="Ubuntu"
-uname -a | grep Ubuntu || rt="others"
+cat /etc/issue | grep Ubuntu || rt="others"
 
 if [ $rt = "Ubuntu" ];then
 APP_SUB_DIR="ubuntu_10.10/test"
