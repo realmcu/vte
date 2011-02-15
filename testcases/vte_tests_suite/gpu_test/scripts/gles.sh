@@ -114,6 +114,7 @@ cd ${TEST_DIR}/${APP_SUB_DIR}
 if [ -e openGLES/opengles20/simple_draw/linux/simple_draw ]; then
   cd openGLES/opengles20/simple_draw/linux
 	./simple_draw 100 || RC=$(echo $RC simple draw)
+	./simple_draw 100 -s || RC=$(echo $RC simple draw -s)
 fi
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
