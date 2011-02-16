@@ -112,10 +112,47 @@ return $RC
 
 }
 
+# Function:     test_case_02
+# Description   - Test if 4 multi decode test
+#  
+test_case_02()
+{
+#TODO give TCID 
+TCID="vpu_4multi_dec_test"
+#TODO give TST_COUNT
+TST_COUNT=1
+RC=1
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+#TODO add function test scripte here
+
+vpu_dec_test.sh 1  >> .temp_dec &
+vpu_dec_test.sh 10 >> .temp_dec &
+vpu_dec_test.sh 7 >> .temp_dec &
+vpu_dec_test.sh 8 >> .temp_dec || return 1
+
+wait
+
+CT=$(grep "Test PASS" .temp_dec | wc -l)
+
+if [ $CT = "4" ]
+then
+RC=0
+fi
+
+rm -f .temp_dec
+
+return $RC
+
+}
+
+
 #TODO check parameter
 if [ $# -ne 1 ]
 then
-echo "usage $0 <1>"
+echo "usage $0 <1/2>"
 exit 1 
 fi
 
@@ -124,6 +161,9 @@ setup || exit $RC
 case "$1" in
 1)
   test_case_01 || exit $RC 
+  ;;
+2)
+  test_case_02 || exit $RC 
   ;;
 *)
 #TODO check parameter
