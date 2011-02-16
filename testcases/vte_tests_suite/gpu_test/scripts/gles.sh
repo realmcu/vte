@@ -86,12 +86,18 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo 3DMark
+echo "==========================="
 if [ -e 3DMarkMobile/bin/bin/fsl_imx_linux/fm_oes_player ]; then
   cd 3DMarkMobile/bin/bin/fsl_imx_linux/
 	./fm_oes_player || RC="3Dmark"
 fi
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo egl_test
+echo "==========================="
 if [ -e openGLES/egl_test/linux/egl_test ]; then
   cd openGLES/egl_test/linux/
 	./egl_test || RC=$(echo $RC egl_test)
@@ -99,27 +105,42 @@ fi
 
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo bbPinball
+echo "==========================="
 if [ -e bbPinball/bbPinball ]; then
   cd bbPinball
 	./bbPinball || RC=$(echo $RC bbPinBall)
 fi
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo fps triangle
+echo "==========================="
 if [ -e openGLES/opengles20/fps_triangle/linux/fps_triangle ]; then
   cd openGLES/opengles20/fps_triangle/linux/
 	./fps_triangle || RC=$(echo $RC fps_triangle)
 fi
 
+echo "==========================="
+echo simple draw
+echo "==========================="
 simple_draw 100 || RC=$(echo $RC simple draw)
 simple_draw 100 -s || RC=$(echo $RC simple draw -s)
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo simple triangle
+echo "==========================="
 if [ -e openGLES/opengles20/simple_triangle/linux/simple_triangle ]; then
   cd openGLES/opengles20/simple_triangle/linux
 	./simple_triangle || RC=$(echo $RC simple_triangle)
 fi
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo torusknot
+echo "==========================="
 if [ -e openGLES/opengles20/torusknot/linux/torusknot ]; then
   cd openGLES/opengles20/torusknot/linux
 	./torusknot || RC=$(echo $RC torusknot)
@@ -153,12 +174,18 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo 3DMark
+echo "==========================="
 if [ -e 3DMarkMobile/bin/bin/fsl_imx_linux/fm_oes_player ]; then
   cd 3DMarkMobile/bin/bin/fsl_imx_linux/
 	./fm_oes_player &
 fi
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo egl test
+echo "==========================="
 if [ -e openGLES/egl_test/linux/egl_test ]; then
   cd openGLES/egl_test/linux/
 	./egl_test &
@@ -166,21 +193,33 @@ fi
 
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo bbPinball
+echo "==========================="
 if [ -e bbPinball/bbPinball ]; then
   cd bbPinball
 	./bbPinball &
 fi
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo fps triangle
+echo "==========================="
 if [ -e openGLES/opengles20/fps_triangle/linux/fps_triangle ]; then
   cd openGLES/opengles20/fps_triangle/linux/
 	./fps_triangle &
 fi
 
+echo "==========================="
+echo simple draw
+echo "==========================="
 	simple_draw 1000 &
 	simple_draw 1000 -s &
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo simple triangle
+echo "==========================="
 if [ -e openGLES/opengles20/simple_triangle/linux/simple_triangle ]; then
   cd openGLES/opengles20/simple_triangle/linux
 	./simple_triangle &
@@ -189,6 +228,9 @@ fi
 wait
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo torusknot
+echo "==========================="
 if [ -e openGLES/opengles20/torusknot/linux/torusknot ]; then
   cd openGLES/opengles20/torusknot/linux
 	./torusknot
@@ -220,12 +262,18 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo es11 conformance
+echo "==========================="
 if [ -e openGLES/conformance/es11/conform/run_conformance_tests.sh ]; then
   cd openGLES/conformance/es11/conform/
 	./run_conformance_tests.sh All || RC=$(echo $RC es10_conformance)
 fi
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo es20 conformance
+echo "==========================="
 if [ -e openGLES/conformance/es20/GTF_ES/glsl/GTF/GTF ]; then
   cd openGLES/conformance/es20/GTF_ES/glsl
 	./GTF/GTF -width=64 -height=64 -noimagefileio \
