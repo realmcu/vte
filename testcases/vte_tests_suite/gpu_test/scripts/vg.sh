@@ -88,10 +88,13 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 echo "==========================="
 echo tiger
 echo "==========================="
-tiger &
-td=$!
+tmpdir=$(mktemp -d)
+mkdir $tmpdir
+mkfifo $tmpdir/tiger_fifo
+sh -c "cat $tmpdir/tiger_fifo | tiger" &
 sleep 100
-kill -9 $td
+echo y > $tmpdir/tiger_fifo
+rm -rf $tmpdir
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
 echo "==========================="
