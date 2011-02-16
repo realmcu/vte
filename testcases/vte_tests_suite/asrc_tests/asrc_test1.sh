@@ -1,4 +1,5 @@
-#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#!/bin/sh
+#Copyright (C) 2008,2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -6,7 +7,6 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
 ##############################################################################
 #
 # Revision History:
@@ -15,6 +15,8 @@
 #-------------------   ------------    ----------  ---------------------
 # Spring Zhang          03/11/2008        n/a        Initial ver. 
 # Spring                28/11/2008       n/a        Modify COPYRIGHT header
+# Spring                16/02/2011       n/a        Auto check audio stream
+#                                                   parameters
 #############################################################################
 # Portability:  ARM sh 
 #
@@ -97,6 +99,7 @@ setup()
 cleanup() 
 {
     RC=0
+    rm play.info
     return $RC
 }
 
@@ -112,6 +115,8 @@ asrc_convert()
 {
     RC=0    # Return value from setup, and test functions.
 
+    SAM_FREQ=$2
+
     /unit_tests/mxc_asrc_test.out $@ /dev/target.wav ||RC=$?
     if [ $RC -ne 0 ]
     then
@@ -121,22 +126,17 @@ asrc_convert()
 
     tst_resm TINFO "Test #1: play the dest audio stream, please check the \
     HEADPHONE, hear if there is voice."
-    aplay -N -M /dev/target.wav || RC=$?
+    aplay -N -M /dev/target.wav 2> play.info || RC=$?
     if [ $RC -ne 0 ]
     then
-        tst_resm TFAIL "Test #1: play error, please check..."
+        tst_resm TFAIL "Test #1: converted stream play error, please check..."
         return $RC
     fi
 
-    tst_resm TINFO "Do you hear the voice from the headphone?[y/n]"
-    read answer
-    if [ $answer = "y" ]
-    then
-        tst_resm TPASS "Test #1: ASRC test success."
-    else
-        tst_resm TFAIL "Test #1: ASRC test fail"
-        RC=67
-    fi
+    grep $SAM_FREQ play.info > /dev/null || RC=$?
+    [ $RC -eq 0 ] || {
+        tet_resm TFAIL "Test #1: wrong sampling rate in coverted stream"
+    }
 
     return $RC
 }
