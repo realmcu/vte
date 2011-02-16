@@ -146,6 +146,19 @@ if [ -e openGLES/opengles20/torusknot/linux/torusknot ]; then
 	./torusknot || RC=$(echo $RC torusknot)
 fi
 
+
+echo "==========================="
+echo es11ex
+echo "==========================="
+tmpdir=$(mktemp -d)
+mkdir $tmpdir
+mkfifo $tmpdir/es11_fifo
+sh -c "cat $tmpdir/es11_fifo | es11ex || RC=$(echo $RC es11ex )" &
+sleep 20
+echo y > $tmpdir/es11_fifo
+rm -rf $tmpdir
+
+
 echo $RC
 
 if [ "$RC" = "0" ]; then
@@ -224,6 +237,24 @@ if [ -e openGLES/opengles20/simple_triangle/linux/simple_triangle ]; then
   cd openGLES/opengles20/simple_triangle/linux
 	./simple_triangle &
 fi
+
+wait
+
+echo "==========================="
+echo es11ex
+echo "==========================="
+tmpdir=$(mktemp -d)
+mkdir $tmpdir
+mkfifo $tmpdir/es11_fifo
+sh -c "cat $tmpdir/es11_fifo | es11ex || RC=$(echo $RC es11ex )" &
+
+simple_draw 1000 -s &
+
+sleep 20
+
+#terminate es11
+echo y > $tmpdir/es11_fifo
+rm -rf $tmpdir
 
 wait
 
