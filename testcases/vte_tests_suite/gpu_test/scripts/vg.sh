@@ -85,12 +85,18 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
+echo "==========================="
+echo tiger
+echo "==========================="
 tiger &
 td=$!
 sleep 100
 kill -9 $td
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo vgMark
+echo "==========================="
 if [ -e openVG/VGMark_10_src/run/vgmark/run  ];then
 cd openVG/VGMark_10_src/run/vgmark
 ./run || RC="vgmark"
@@ -161,12 +167,18 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo vg1.1 conformance
+echo "==========================="
 if [ -e openVG/cts_1.1/generation/make/linux/bin/generator ]; then
 	cd openVG/cts_1.1/generation/make/linux/bin/
 	./generator || RC="cts_1.1"
 fi
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo vg1.0.1 conformance
+echo "==========================="
 if [ -e openVG/cts_1.0.1/generation/make/linux/bin/generator ]; then
 	cd openVG/cts_1.0.1/generation/make/linux/bin
 	./generator || RC=$(echo $RC cts_1.0.1)
