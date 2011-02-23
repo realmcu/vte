@@ -1,0 +1,31 @@
+TGE-LV-ALSA-3000	CT=$(cat /sys/module/snd_pcm/parameters/preallocate_dma) && [ $CT = 1 ]
+TGE-LV-FB-EPDC-0002	 epdc_test -T 2 && epdc_test -T 0 -s 0:0:128:128,0,0,0,0,0,0,0:0:0:0 && epdc_test -T 0 -u 1 && epdc_test -T 2 -d /dev/fb0 
+TGE-LV-FB-EPDC-0003	 epdc_test -T 0 -u 0 && epdc_test -T 2 && epdc_test -T 0 -s 0:0:128:128,257,0,0,0,0,0,0:0:0:0 
+TGE-LV-FB-EPDC-0004	 epdc_test -T 0 -u 0 && epdc_test -T 3
+TGE-LV-FB-EPDC-0005	 epdc_test -T 0 -u 0 && epdc_test -T 2 && epdc_test -T 4 
+TGE-LV-FB-EPDC-0006	 epdc_test -T 2 && epdc_test -T 5
+TGE-LV-FB-EPDC-0007	 epdc_test -T 2 && epdc_test -T 6
+TGE-LV-FB-EPDC-0008	 epdc_test -T 0 -g 1 && epdc_test -T 2
+TGE-LV-FB-EPDC-0009	 epdc_test -R 0 -T 2 && epdc_test -R 1 -T 2 && epdc_test -R 2 -T 2 && epdc_test -R 3 -T 2   
+TGE-LV-FB-EPDC-0010	 epdc_test -T 1
+TGE-LV-FB-EPXP-001	 epxp_test -r 0 -s 0:0:320:240 && epxp_test -r 90 -s 0:0:320:240 && epxp_test -r 180 -s 0:0:320:240 && epxp_test -r 270 -s 0:0:320:240
+TGE-LV-FB-EPXP-002	 epxp_test -r 0 -s 0:0:320:240
+TGE-LV-FB-EPXP-003	 epxp_test -r 0 -s 0:0:320:240 -l 1
+TGE-LV-FB-EPXP-004	 epxp_test -m 15
+TGE-LV-FB-EPXP-005	 epxp_test -s 0:0:320:240 -a -c 100 -o 0:0:128:128:0x80000000:255:255 -k 0x80000000
+TGE-LV-FB-EPXP-006	 epxp_test -s 0:0:320:240 -a -c 100 -o 0:0:320:240:0:128:128
+TGE-LV-ETHERNET-1002	if [ -z $SERVER_IP ] ; then TSTIP=10.192.225.218 ;else TSTIP=$SERVER_IP;fi ; for i in 64 128 256 512 1024 2048 4096 8192 16384 32768; do ping -c 100 -s $i $TSTIP; done
+TGE-LV-ETHERNET-1007	touch readme && ftpget -u anonymous 10.192.225.218 readme readme && cat readme | grep welcome && rm readme
+TGE-LV-DVFS-0010	dvfs.sh 1
+TGE-LV-NAND-2001	flash_eraseall /dev/mtd1 && insmod ${LTPROOT}/testcases/bin/mtd_speedtest.ko dev=2
+TGE-LV-NOR-1102	nor_mtd_testapp -T RDRW -D /dev/mtd1 -L 0x300000 -V
+TGE-LV-NOR-1103	nor_mtd_testapp -T RDRW -D /dev/mtd0 -L 0x00100000 -V
+TGE-LV-NOR-1115	nor_mtd_testapp -T WRNER -D /dev/mtd0 -L 0x100000 -V
+TSG-LV-SD-1030	storage_all.sh 2
+TGE-LV-SD-1050	RC=0; ss=0;list=$(cat /proc/cpu/clocks | grep -i sdhc | awk '{print $3}'); for i in $list; do ss=$(expr $ss + $i); done; [ $ss -eq 0 ] || RC=1; sh -c "dd if=/dev/mmcblk0p1 of=/dev/null bs=1024k count=100 & "; ss=0;list=$(cat /proc/cpu/clocks | grep -i sdhc | awk \'{print $3}\'); for i in $list; do ss=$(expr $ss + $i); done; [ $ss -ne 0 ] || RC=$(expr $RC + 1); [ $RC -eq 0 ]
+TGE-LV-UART-0016	sh -c "stty -ixon -F /dev/ttymxc1 && stty ixon  -F /dev/ttymxc1 && stty -a -F /dev/ttymxc1  | grep ixon && stty -a -F /dev/ttymxc1 | grep crtscts"
+TGE-LV-UART-0700	uart_testapp_10 /dev/ttymxc1 115200 && uart_testapp_10 /dev/ttymxc2 115200
+TGE-LV-USB-HOST-1501	 mount -t vfat /dev/sda1 /mnt/floppy && rtc_testapp_6 -T 5 && touch /mnt/floppy/test && echo "test" > /mnt/floppy/test && cat /mnt/floppy/test | grep "test" && umount /mnt/floppy 
+TGE-LV-USB-HOST-DVFS-0001	 mkdir /mnt/msc; mount /dev/sda1 /mnt/msc ; echo 1 > /sys/devices/platform/mxc_dvfs_core.0/enable && rtc_testapp_6 -T 10 && echo "hello world" > /mnt/msc/test.txt && cat /mnt/msc/test.txt && umount /mnt/msc && cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state 
+TGE-LV-WDOG-1001	insmod ${LTPROOT}/testcases/bin/mxc_wd_test.ko
+TGE-LV-WIFI-0061	 LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ath6kl; sleep 5;ifconfig wlan0 up && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && ifconfig wlan0 down && RT=0 ; modprobe -r ath6kl; echo $LOOP; done ; [ $RT -eq 0 ] 

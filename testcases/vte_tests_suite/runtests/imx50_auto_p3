@@ -1,0 +1,18 @@
+TGE-LV-FB-EPDC-0012	 epdc_test -T 2; epdc_test -T 7
+TGE-LV-FB-EPDC-0013	 epdc_full.sh 1
+TGE-LV-FB-EPDC-0016	 epdc_test -T 8 -y 10
+TGE-LV-KERNEL-10000	 $(which crashme) +200 666 5 00:00:05 2 
+TGE-LV-DVFS-0140	dvfs_mx50.sh 1
+TGE-LV-DVFS-0040	dvfs.sh 2
+TGE-LV-DVFS-0150	cpufreq-set -f 160M && cpufreq-info -f | grep 160000 && cpufreq-set -f 800M && cpufreq-info -f | grep 800000
+TGE-LV-NOR-1104	nor_mtd_testapp -T THRDRWE -D /dev/mtd0 -L 0x00100000 -V
+TGE-LV-NOR-1116	nor_mtd_testapp -T PERFORM -D /dev/mtd0 -V
+TGE-LV-RTC-2000	rtc_test.sh 3 
+TGE-LV-SD-1302	sh -c "umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; mount -t vfat /dev/mmcblk0p1 /mnt/mmcblk0p1 && rtc_testapp_6 -T 20 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt | grep hello && umount /mnt/mmcblk0p1"
+TGE-LV-SD-1010	umount /mnt/mmcblk0p1; mount /dev/mmcblk0p1 /mnt/mmcblk0p1 && ints1=$(cat /proc/interrupts | grep mmc | grep dma | awk {'print $2'}) ; cp /etc/passwd /mnt/mmcblk0p1/ ; ints2=$(cat /proc/interrupts |grep mmc | grep dma | awk {'print $2'}); [ $ints2 -gt $ints1 ]
+TGE-LV-UART-0017	ints1=$(cat /proc/interrupts | grep uart | awk {'print $2'}) ; start=0; for i in $ints1; do start=$(expr $start + $i);done;cat /etc/passwd > /dev/ttymxc0 ; ints2=$(cat /proc/interrupts | grep uart | awk {'print $2'});end=0;for i in $ints2; do end=$(expr $end + $i);done; [ $end -gt $start ] 
+TGE-LV-UART-0018	 stty 115200 cs8 -F /dev/ttymxc1 && stty -a -F /dev/ttymxc1 | grep cs8 &&  stty -a -F /dev/ttymxc1 | grep cstopb && stty -a -F /dev/ttymxc1 | grep crtscts && stty -a -F /dev/ttymxc1 | grep ignbrk 
+TGE-LV-UART-0500	uart_testapp_10 /dev/ttymxc1 4000000
+TGE-LV-UART-0510	RT=0; for i in 4000000; do echo "Test Baud rate $i ==============" && uart_testapp_11 /dev/ttymxc1 $i || RT=$(expr $RT + 1); done; [ $RT -eq 0 ]
+TSG-LV-USB-HOST-0030	 sh -c "umount /dev/sda1 ;fdisk -l /dev/sda && mkfs.vfat /dev/sda1" 
+TSG-LV-USB-HOST-0040	 sh -c "umount /dev/sda1 ; mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 && bonnie\\+\\+ -d /media/sda1 -u 0:0 -s 10 -r 5 && dt of=/media/sda1/test_file bs=4k limit=128m passes=20" 
