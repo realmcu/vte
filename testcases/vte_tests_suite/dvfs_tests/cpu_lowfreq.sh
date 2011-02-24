@@ -1,14 +1,16 @@
 #!/bin/sh
-#Copyright 2010 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright 2010-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
 #the Free Software Foundation; either version 2 of the License, or
 #(at your option) any later version.
+#
 #This program is distributed in the hope that it will be useful,
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
+#
 #You should have received a copy of the GNU General Public License along
 #with this program; if not, write to the Free Software Foundation, Inc.,
 #51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -59,32 +61,25 @@ setup()
 
 cleanup()
 {
-    #resume to old frequency
-    echo "Resume to old frequency"
-    echo $old_freq > $CPU_CTRL
+    return 0
 }
 
 lowfreq_suspend()
 {
-    RC=0
-
-    platfm.sh || platfm=$?
-    if [ $platfm -eq 67 ]; then
-        RC=$platfm
-        return $RC
-    fi
+    RC=$WorkPoint
 
     CPU_CTRL=/sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
     old_freq=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq`
-    if [ $platfm -eq 37 ]; then
-        echo 200000 > $CPU_CTRL
-    elif [ $platfm -eq 51 ] || [ $platfm -eq 41 ] || [ $platfm -eq 53 ]; then
-        echo 160000 > $CPU_CTRL
-    else
-        tst_resm TWARN "platform not support"
-        RC=67
-        return $RC
+
+    echo $WorkPoint > $CPU_CTRL
+    echo =========To test cpu works at $WorkPoint
+    #cpufreq-info
+    cur_freq=`cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq`
+    if [ $cur_freq -ne $(cpufreq-info -f) ]; then
+       echo =========Current cpu does not work at $WorkPoint
+       return $RC
     fi
+
 
     sleep 3 
     if [ -e /dev/rtc ]; then
@@ -94,15 +89,18 @@ lowfreq_suspend()
     fi
     tst_resm TPASS "Resume from suspend..."
 
-    sleep 5
+    sleep 5 
     if [ -e /dev/rtc ]; then
         rtc_testapp_6 -m mem -T 15
     else
-        rtc_testapp_6 -m mem -T 15 -d rtc0
+        rtc_testapp_6 -m mem -T 15 -d rtc0 
     fi
     tst_resm TPASS "Resume from mem..."
-    
-    return $RC
+
+    #resume to old frequency
+    echo "Resume to old frequency"
+    echo $old_freq > $CPU_CTRL
+
 }
 
 # Function:     main
@@ -117,5 +115,23 @@ RC=0
 
 # bash specified script, using array, not dash-compatibility
 setup  || exit $RC
-lowfreq_suspend || exit $RC
+
+platfm.sh || platfm=$?
+if [ $platfm -eq 67 ]; then
+        RC=$platfm
+        return $RC
+fi
+if [ $platfm -eq 37 ]; then
+    WorkPoint=200000
+    lowfreq_suspend || exit $RC
+elif [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
+    WorkPoint=160000
+    lowfreq_suspend || exit $RC
+elif [ $platfm -eq 53 ]; then
+    for WorkPoint in 160000 400000 800000 1000000 
+    do
+    lowfreq_suspend || exit $RC
+    done
+fi
+
 
