@@ -26,6 +26,6 @@ TGE-LV-SD-1050	RC=0; ss=0;list=$(cat /proc/cpu/clocks | grep -i sdhc | awk '{pri
 TGE-LV-UART-0016	sh -c "stty -ixon -F /dev/ttymxc1 && stty ixon  -F /dev/ttymxc1 && stty -a -F /dev/ttymxc1  | grep ixon && stty -a -F /dev/ttymxc1 | grep crtscts"
 TGE-LV-UART-0700	uart_testapp_10 /dev/ttymxc1 115200 && uart_testapp_10 /dev/ttymxc2 115200
 TGE-LV-USB-HOST-1501	 mount -t vfat /dev/sda1 /mnt/floppy && rtc_testapp_6 -T 5 && touch /mnt/floppy/test && echo "test" > /mnt/floppy/test && cat /mnt/floppy/test | grep "test" && umount /mnt/floppy 
-TGE-LV-USB-HOST-DVFS-0001	 mkdir /mnt/msc; mount /dev/sda1 /mnt/msc ; echo 1 > /sys/devices/platform/mxc_dvfs_core.0/enable && rtc_testapp_6 -T 10 && echo "hello world" > /mnt/msc/test.txt && cat /mnt/msc/test.txt && umount /mnt/msc && cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state 
+TGE-LV-USB-HOST-DVFS-0001	 mkdir /mnt/msc; mount /dev/sda1 /mnt/msc ; echo 1 > /sys/devices/platform/mxc_dvfs_core.0/enable && rtc_testapp_6 -T 10 && echo "hello world" > /mnt/msc/test.txt && cat /mnt/msc/test.txt && umount /mnt/msc && cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state && echo 0 > /sys/devices/platform/mxc_dvfs_core.0/enable 
 TGE-LV-WDOG-1001	insmod ${LTPROOT}/testcases/bin/mxc_wd_test.ko
 TGE-LV-WIFI-0061	 LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ath6kl; sleep 5;ifconfig wlan0 up && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && ifconfig wlan0 down && RT=0 ; modprobe -r ath6kl; echo $LOOP; done ; [ $RT -eq 0 ] 
