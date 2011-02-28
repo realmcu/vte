@@ -1,155 +1,38 @@
-TGE-LV-V4L2-0010 v4l_capture_testapp -T 10
-TGE-LV-V4L2-0011 v4l_capture_testapp -T 300
-TGE-LV-V4L2-0012 v4l_capture_testapp -H 320 -W 240
-TGE-LV-V4L2-0013 v4l_capture_testapp -H 160 -W 120
-TGE-LV-V4L2-0015 v4l_capture_testapp -H 100 -W 100
-TGE-LV-V4L2-0016 v4l_capture_testapp -H 10 -W 200
-TGE-LV-V4L2-0017 v4l_capture_testapp -H 220 -W 176
-TGE-LV-V4L2-0018 v4l_capture_testapp -S
-TGE-LV-V4L2-0019 v4l_capture_testapp -B 0,0,100,100 -v 1
-TGE-LV-V4L2-0020 v4l_capture_testapp -B 0,0,320,240 -v 1
-TGE-LV-V4L2-0021 v4l_capture_testapp -B 100,100,320,240 -v 1
-TGE-LV-V4L2-0022 v4l_capture_testapp -B 10,10,320,240 -v 1
-TGE-LV-V4L2-0023 v4l_capture_testapp -B 50,50,100,100 -v 1
-TGE-LV-V4L2-0024 v4l_capture_testapp -B 0,0,220,176 -v 1
-TGE-LV-V4L2-0025 v4l_capture_testapp -B 100,100,100,100 -v 1
-TGE-LV-V4L2-0026 v4l_capture_testapp -B 0,200,100,100 -v 1
-TGE-LV-V4L2-0028 v4l_capture_testapp -B 320,240,100,100 -v 1
-TGE-LV-V4L2-0029 v4l_capture_testapp -B 0,0,640,480 -v 1
-TGE-LV-V4L2-0030 v4l_capture_testapp -R 1 -C 1
-TGE-LV-V4L2-0031 v4l_capture_testapp -R 2 -C 1
-TGE-LV-V4L2-0032 v4l_capture_testapp -R 3 -C 1
-TGE-LV-V4L2-0033 v4l_capture_testapp -R 4 -C 1
-TGE-LV-V4L2-0034 v4l_capture_testapp -R 5 -C 1
-TGE-LV-V4L2-0035 v4l_capture_testapp -R 6 -C 1
-TGE-LV-V4L2-0036 v4l_capture_testapp -R 7 -C 1
-TGE-LV-V4L2-0039 v4l_capture_testapp -Y1
-TGE-LV-V4L2-0040 v4l_capture_testapp -C 2 -H 100  -W 200
-TGE-LV-V4L2-0041 v4l_capture_testapp -C2 -R 9
-TGE-LV-V4L2-0042 v4l_capture_testapp -C2 -R 10
-TGE-LV-V4L2-0043 v4l_capture_testapp -C2 -R 11
-TGE-LV-V4L2-0044 v4l_capture_testapp -C2 -R 12
-TGE-LV-V4L2-0045 v4l_capture_testapp -C2 -R 13
-TGE-LV-V4L2-0046 v4l_capture_testapp -C2 -R 14
-TGE-LV-V4L2-0047 v4l_capture_testapp -C2 -R 15
-TGE-LV-V4L2-0048 v4l_capture_testapp -C2 -R 16
-TGE-LV-V4L2-0090 v4l_capture_testapp -S -R 10
-TGE-LV-V4L2-0091 v4l_capture_testapp -S -R 11
-TGE-LV-V4L2-0092 v4l_capture_testapp -S -R 12
-TGE-LV-V4L2-0093 v4l_capture_testapp -S -R 13
-TGE-LV-V4L2-0094 v4l_capture_testapp -S -R 14
-TGE-LV-V4L2-0095 v4l_capture_testapp -S -R 15
-TGE-LV-V4L2-0096 v4l_capture_testapp -S -R 16
-TGE-LV-V4L2-0107 v4l_capture_testapp -R 11 -N  -T 5
-TGE-LV-V4L2-0038 v4l_capture_testapp -Y2
-TGE-LV-V4L2-0064 v4l_capture_testapp -C 2 -H 480  -W 640 -T 20
-TGE-LV-PMICLIGHT-0070 backlight_test.sh LCD
-TGE-LV-ESLCD-0700 lcd_testapp -T 1 -B /dev/fb0 -D 16
-TGE-LV-ESLCD-0710 fbset -depth 32 && lcd_testapp -T 2 -B /dev/fb0 -D 32
-TGE-LV-TS-0031 ts_test3.sh 0
-TGE-LV-TS-0030 ts_test3.sh 1
-TGE-LV-TS-0032 ts_test3.sh 2
-TGE-LV-TS-0033 ts_test3.sh 3
-TGE-LV-TS-0034 ts_test3.sh 4
-TGE-LV-TS-0035 ts_test2.sh
-TGE-LV-ALSA-0160 dac_vol_adj.sh 1 $STREAM_PATH/alsa_stream/audio44k16S.wav
-TGE-LV-TV-0140 tvout_test_usercase.sh 1
-TGE-LV-TV-0150 tvout_test_usercase.sh 2
-TGE-LV-TV-0151 tvout_test_usercase.sh 3
-TGE-LV-TV-0160 tvout_test_usercase.sh 4
-TGE-LV-TV-0161 tvout_test_usercase.sh 5
-TGE-LV-CAN-0012 can_test.sh can0  3
-TGE-LV-TVIN-0010 tvin_test.sh 1
-TGE-LV-TVIN-0020 tvin_test.sh 2
-TGE-LV-TVIN-0030 tvin_test.sh 3
-TGE-LV-SCC2-0000 insmod $LTPROOT/testcases/bin/scc2_test_module.ko
-TGE-LV-SCC2-0010 scc2_test -R 0x0c
-TGE-LV-SCC2-0040 scc2_test -Lc
-TGE-LV-SCC2-0050 scc2_test -LC
-TGE-LV-SCC2-0060 scc2_test -Le
-TGE-LV-SCC2-0070 scc2_test -Lt
-TGE-LV-SCC2-0080 scc2_test -La
-TGE-LV-SAHARA-0000 insmod $LTPROOT/testcases/bin/sahara_module.ko
-TGE-LV-SAHARA-0010 sahara_testapp -C 0
-TGE-LV-SAHARA-0020 sahara_testapp -C 1
-TGE-LV-SAHARA-0030 sahara_testapp -C 2
-TGE-LV-SAHARA-0040 sahara_testapp -C 3
-TGE-LV-SAHARA-0050 sahara_testapp -C 4
-TGE-LV-SAHARA-0060 sahara_testapp -C 5
-TGE-LV-SAHARA-0070 sahara_testapp -C 6
-TGE-LV-SAHARA-0080 sahara_testapp -C 7
-TGE-LV-SAHARA-0090 sahara_testapp -C 8
-TGE-LV-SAHARA-0100 sahara_testapp -C 9
-TGE-LV-PM-0100 i=0; while [ "$i" -lt 3 ]; do echo standby > /sys/power/state ; sleep 5; i=`expr $i + 1`; done
-TGE-LV-NAND-1005 flash_eraseall /dev/mtd4 && ubiattach /dev/ubi_ctrl -m 4 &&   ubimkvol /dev/ubi0 -N test -m && mkdir /mnt/ubifs ; mount -t ubifs ubi0:test /mnt/ubifs && umount /mnt/ubifs &&  ubidetach /dev/ubi_ctrl -m 4
-TGE-LV-IPU_DEV-0020 ipu_test.sh 2
-TGE-LV-IPU_DEV-0030 ipu_test.sh 3
-TGE-LV-IPU_DEV-0040 ipu_test.sh 4
-TGE-LV-FB-0010 fbset -depth 16;  lcd_testapp -T 1 -D 16 -B /dev/fb0
-TGE-LV-FB-0011 fbset -depth 24;  lcd_testapp -T 1 -D 24 -B /dev/fb0 ; fbset -depth 16
-TGE-LV-PM-TVout-0001 tvout_test_usercase.sh 7
-TGE-LV-RTC-0102 rtc_test_7.sh
-TGE-LV-USB-OTG-HOST-1001 umount /mnt/msc; mkdir -p /mnt/msc; mount -t vfat /dev/sda1 /mnt/msc && dd if=/dev/urandom of=/mnt/msc/tempfile bs=1024k count=10 && echo "hello world" > /mnt/msc/hello.txt && cat /mnt/msc/hello.txt
-TGE-LV-V4L2-0171 v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24
-TGE-LV-ALSA-0166 dac_vol_adj.sh 2 $STREAM_PATH/alsa_stream/audio44k16S.wav
-TGE-LV-PM-0101 i=0; while [ "$i" -lt 3 ]; do echo -n mem > /sys/power/state ; sleep 5; i=`expr $i + 1`; done
-TGE-LV-DVFS-0040 dvfs.sh 2
-TGE-LV-DVFS-0041 cpu_lowfreq.sh
-TGE-LV-IPU_DEV-0021 ipu_dev_test -m 0x21 -f 50 -i 352,288,I420 -o 352,288,RGBP,0 -s 1,0,0,0 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv
-TGE-LV-IPU_DEV-0031 ipu_dev_test -m 0x24 -f 50 -i 352,288,I420 -o 352,288,RGBP,0 -s 1,0,0,0 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv
-TGE-LV-IPU_DEV-0041 ipu_dev_test -m 0x22 -f 50 -i 352,288,I420 -o 352,288,RGBP,0 -s 1,0,0,0 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv
-TGE-LV-IPU_DEV-0051 ipu_dev_test -m 0x23 -f 50 -E 1 -i 352,288,I420 -o 352,288,RGBP,0 -s 1,0,0,0 -O 352,288,RGBP,0 -S 1,2,0,288 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv
-TGE-LV-IPU_DEV-0060 ipu_test.sh 6
-TGE-LV-ALSA-0169 dac_channel_swap.sh $STREAM_PATH/alsa_stream/audio44k16S_onlyright_short.wav $STREAM_PATH/alsa_stream/audio44k16S_onlyright_long.wav
-TGE-LV-Bonnie-0060 bonnie\+\+ -d /mnt/msc -s 32 -r 16 -u 0:0 -m FSL
-TGE-LV-ESLCD-0800 mxcfb_test -T 1 -D /dev/fb0 -d /dev/fb2
-TGE-LV-ESLCD-0810 mxcfb_test -T 2 -D /dev/fb0 -d /dev/fb2
-TGE-LV-ESLCD-0820 mxcfb_test -T 3 -D /dev/fb0 -d /dev/fb2
-TGE-LV-ESLCD-0830 RC=0;LOOP=200; while [ $LOOP -gt 0 ]; do mxcfb_test -T 4 -D /dev/fb0 -d /dev/fb2 || RC=1; LOOP=$(expr $LOOP - 1); done; [ $RC -eq 0 ]
-TGE-LV-ESLCD-0840 mxcfb_test -T 5 -D /dev/fb0 -d /dev/fb2
-TGE-LV-ESAI-0100 modprobe snd-soc-imx-3stack-wm8580; aplay -l | grep -i wm8580
-TGE-LV-SYSTEST7-0020 modules_verify.sh
-TGE-LV-ESLCD-0704 echo q | fbv ${STREAM_PATH}/photo/wvga.png
-TGE-LV-ESLCD-0705 echo q | fbv ${LTPROOT}/testcases/bin/butterfly.png
-TGE-LV-ESAI-0201 speaker-test -c6 -f1000 -tsine -r44100 -D hw:1,0
-TGE-LVGPU-1001_VGA gpu_test.sh 1
-TGE-LVGPU-1003_VGA gpu_test.sh 3
-TGE-LV-VPU-0001_NTSC vpu_tvout_NTSC.sh 1
-TGE-LV-VPU-0001_PAL vpu_tvout_PAL.sh 1
-TGE-LV-VPU-0002-NTSC vpu_tvout_NTSC.sh 2
-TGE-LV-VPU-0002-PAL vpu_tvout_PAL.sh 2
-TGE-LV-VPU-0003_PAL vpu_tvout_PAL.sh 3
-TGE-LV-VPU-0004_NTSC vpu_tvout_NTSC.sh 4
-TGE-LV-VPU-0004_PAL vpu_tvout_PAL.sh 4
-TGE-LV-VPU-0007_NTSC vpu_tvout_NTSC.sh 7
-TGE-LV-VPU-0007_PAL vpu_tvout_PAL.sh 7
-TGE-LV-VPU-1010_NTSC vpu_tvout_NTSC.sh 10
-TGE-LV-VPU-0001_720P echo 1 > /sys/class/graphics/fb0/blank && vpu_tvout_720P.sh 1
-TGE-LV-VPU-0002_720P vpu_tvout_720P.sh 2
-TGE-LV-GPU-FB-PERF-OPENGLES-0001 modprobe gpu_z430; cd /mnt/nfs/util/3dmarks_FB/bin/bin/windows; ./fm_oes_player
-TSG-LV-GPU-FB-CONF-ES20-0001 cd /mnt/nfs/util/es20/GTF_ES/glsl && ./GTF/GTF -width=64 -height=64 -noimagefileio -l=/root/datacode_es20_conformance_mustpass_64x64 -run="$(pwd)/GTF/mustpass.run" && ./GTF/GTF -width=113 -height=47 -noimagefileio -l=/root/datacode_es20_conformance_mustpass_113x47 -run="$(pwd)/GTF/mustpass.run" && ./GTF/GTF -width=480 -height=640 -noimagefileio -l=/root/datacode_es20_conformance_mustpass_480x640 -run="$(pwd)/GTF/mustpass.run"
-TSG-LV-GPU-FB-CONF-VG11-0001 ./cts_1.1/generation/make/linux/bin/generator -v 2 && ./cts_1.1/generation/make/linux/bin/generator
-TGE-LV-ESAI-0401 adc_test1.sh -D hw:1,0 -d 10 -f S16_LE -r 8000 -c 2
-TGE-LV-ESAI-0402 adc_test1.sh -D hw:1,0 -d 10 -f S16_LE -r 11025 -c 2
-TGE-LV-ESAI-0403 adc_test1.sh -D plughw:1,0 -d 10 -f S16_LE -r 12000 -c 2
-TGE-LV-ESAI-0404 adc_test1.sh -D hw:1,0 -d 10 -f S16_LE -r 16000 -c 2
-TGE-LV-ESAI-0405 adc_test1.sh -D hw:1,0 -d 10 -f S16_LE -r 22050 -c 2
-TGE-LV-ESAI-0406 adc_test1.sh -D plughw:1,0 -d 10 -f S16_LE -r 24000 -c 2
-TGE-LV-ESAI-0407 adc_test1.sh -D hw:1,0 -d 10 -f S16_LE -r 32000 -c 2
-TGE-LV-ESAI-0408 adc_test1.sh -D hw:1,0 -d 10 -f S16_LE -r 44100 -c 2
-TGE-LV-ESAI-0409 adc_test1.sh -D hw:1,0 -d 10 -f S16_LE -r 48000 -c 2
-TGE-LV-TV-0151_CROP echo 1 > /sys/class/graphics/fb1/blank && echo U:720x480i-60 > /sys/class/graphics/fb1/mode && echo 0 > /sys/class/graphics/fb1/blank && /unit_tests/mxc_v4l2_output.out -iw 320 -ih 240 -ot 10 -ol 10 -ow 320  -oh 240 -d 5 -r 0 -f YU12 && echo 1 > /sys/class/graphics/fb1/blank && echo U:720x576i-50 > /sys/class/graphics/fb1/mode && echo 0 > /sys/class/graphics/fb1/blank && /unit_tests/mxc_v4l2_output.out -iw 320 -ih 240 -ot 10 -ol 10 -ow 320  -oh 240 -d 5 -r 0 -f YU12
-TGE-LV-V4L2-0124 v4l_capture_testapp -C 3 -H 480  -W 640 -O YUV420 -o ./test -s CSI_MEM && rm -f test_YUV420
-TGE-LV-V4L2-0125 v4l_capture_testapp -C 2 -H 240  -W 320 -s CSI_IC_MEM
-TGE-LV-SD-1501 mkdir -p /mnt/mmcblk1p1 && mount -t vfat /dev/mmcblk1p1 /mnt/mmcblk1p1 && storage_test.sh CD /mnt/mmcblk0p1 /mnt/mmcblk1p1 100 1 && storage_test.sh CD /mnt/mmcblk1p1 /mnt/mmcblk0p1 100 1
-TGE-LV-DVFS-0050 dvfs_per.sh 1
-TGE-LV-DVFS-0052 dvfs_per.sh 2
-TGE-LV-ALSA-0201 (arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav &); aplay $STREAM_PATH/alsa_stream/audio44k16S.wav && aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav && sleep 20 && aplay file.wav
-TGE-LV-ALSA-0200 (aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav &); arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav && aplay file.wav
-TGE-LV-TS-0037 evtest /dev/input/ts0
-TGE-LV-IPU-0070 fbset -depth 32 ; rtc_testapp_6 -d rtc0 -T 30 ; len=$(fbset -i | grep "LineLength" | awk {'print $3'}) && echo $len |grep 4096 && fbset -depth 16
-TGE-LV-IPU-0070-WVGA fbset -depth 32; rtc_testapp_6 -d rtc0 -T 30; len=$(fbset -i | grep "LineLength" | awk {'print $3'}) && echo $len |grep 3200 && fbset -depth 16
-TGE-LV-V4L2-0030_VF v4l_capture_testapp -R 10
-TGE-LV-GPU-C2D-PERF-0001 modprobe gpu; 2dblt_perf_z430 && 2dblt_perf_z160
-TGE-LV-GPU-XEGL-PERF-OPENGLES-0001 modprobe gpu; cd /mnt/nfs/util/3dmarksmobile_EGL/bin/bin/linux_iMX51 && ./fm_oes_player
-TGE-LV-GPU-C2D-0002 modprobe gpu; c2d_sanity_app_z430 && c2d_sanity_app_z160
+TGE-LV-LibATA-1201	auto_prepare.sh -P ATA; rtc_testapp_6 -T 5 && echo "hello world" > /mnt/ata1/test.txt && cat /mnt/ata1/test.txt
+TGE-LV-ALSA-0160	dac_vol_adj.sh 1 $STREAM_PATH/alsa_stream/audio44k16S.wav
+TGE-LV-SPDIF-0602	echo mem > /sys/power/state  && modprobe snd_spdif && aplay -l && aplay -D hw:1,0 $STREAM_PATH/spdif_stream/audio48k16S.wav
+TGE-LV-ETHERNET-1000	tcpdump -c 10 -i eth0
+TGE-LV-ETHERNET-1001	ifconfig eth0 up;udhcpc -i eth0
+TGE-LV-FEC-0012	fec_testapp -T 2
+TGE-LV-FEC-0013	fec_testapp -T 3
+TGE-LV-GPU-C2D-0002	modprobe gpu; c2d_sanity_app_z430 && c2d_sanity_app_z160
+TGE-LV-GPU-C2D-PERF-0001	modprobe gpu; 2dblt_perf  -l lib2dz160.so
+TGE-LV-GPU-OpenGL-PERF-0001	sleep 500; i=0; while [ "$i" -lt 3 ]; do simple_draw -f 1000 ; sleep 5; i=`expr $i + 1`; done && i=0; while [ "$i" -lt 3 ]; do simple_draw -f 1000 -s; sleep 5; i=`expr $i + 1`; done;
+TGE-LV-GPU-PERF-2D-XACC-0001	x11perf -all
+TGE-LV-GPU-XEGL-PERF-OPENGLES-0001	gles.sh 1
+TGE-LV-GPU-XEGL-PERF-OPENVG-0001	vg.sh 1
+TGE-LVGPU-1000	lsmod | grep gpu; cat /var/log/Xorg.0.log | grep EXA && cat /etc/X11/xorg.conf | grep imx && echo ===pass || echo ===fail
+TGE-LVGPU-1001_VGA	gpu_test.sh 1
+TGE-LVGPU-1002_VGA	gpu_test.sh 2
+TGE-LVGPU-1003_VGA	gpu_test.sh 3
+TSG-LV-GPU-XEGL-PM-0001	gpu_test.sh 5
+TGE-LV-ALSA-0161	(dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16S_long.wav -A &) && sleep 10 && rtc_testapp_6 -T 5 ; sleep 50
+TGE-LV-ALSA-0533	rtc_testapp_6 -T 10 && adc_test1.sh -f S16_LE -d 5 -c 1 -r 16000 -A
+TGE-LV-VPU-1021	vpu_pm_test.sh 3
+TGE-LVGPU-1006	vg.sh 4
+TGE-LV-SD_MODULE_0001	mmc_module_test.sh 1
+TGE-LV-SD_MODULE_0003	mmc_module_test.sh 3
+TGE-LV-SD-1050	mount | awk '{print $3}' | grep mmc && CT=0;for i in $(cat /proc/cpu/clocks | grep sdhci | awk '{print $3}') ; do CT=$(expr $CT + $i); done; [ $CT -eq 0 ]
+TGE-LV-SDMA-0042	
+TGE-LV-VPU-0001_720P	echo 1 > /sys/class/graphics/fb0/blank && vpu_tvout_720P.sh 1
+TGE-LV-VPU-0003_720P	echo 1 > /sys/class/graphics/fb1/blank ; sleep 2; echo U:1280x720p-60 > /sys/class/graphics/fb1/mode ; echo 0 > /sys/class/graphics/fb1/blank ; /unit_tests/mxc_v4l2_output.out -iw 1280 -ih 720 -ow 1280 -oh 720 -d 5
+TGE-LV-SYSTEST-0050	RC=0;cd /mnt/stream/SHAVectors/H264Dec/Conformance/1080p ; list=$(ls *); for i in $list; do gplay $i || RC=$(expr $RC + 1); done; [ $RC -eq 0 ]
+TGE-LV-WDOG-0020	watchdog_testapp_2 -T 3 -S 1 -W 0
+TGE-LV-WDOG-0021	watchdog_testapp_2 -T 1 -S 3 -W 0
+TGE-LV-WDOG-0022	watchdog_testapp_2 -T 3 -S 1 -W 1
+TGE-LV-WDOG-0023	watchdog_testapp_2 -T 1 -S 3 -W 1
+TGE-LV-WDOG-0030	watchdog_testapp_3  -W  0
+TGE-LV-WDOG-0031	watchdog_testapp_3 -W  1
+TGE-LV-WDOG-0033	watchdog_testapp_3 -W  2
+TGE-LV-WIFI-0050	modprobe ath6kl && sleep 5 && ifconfig wlan0 up && sleep 3 && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001
+TGE-LV-WIFI-0064	modprobe ath6kl && ifconfig wlan0 up && iwconfig wlan0 mode managed && sleep 10 && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001 && udhcpc -i wlan0 && sleep 10 && LOCALIP=$(ifconfig wlan0 | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}') && iperf -d -c 10.192.225.222 -n 100M -B $LOCALIP -t 100 && ifconfig wlan0 down && modprbe -r ath6kl
