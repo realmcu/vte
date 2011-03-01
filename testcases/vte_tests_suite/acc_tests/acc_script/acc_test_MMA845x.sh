@@ -175,7 +175,7 @@ acc_test()
 	sleep 30
 	ret=$(cat $acctmp | wc -l)
 	echo "test done"
-  if [ -ne $ret ]
+  if [ -ne $ret ]; then
     RC=0
   fi
 	kill -9 $pth
