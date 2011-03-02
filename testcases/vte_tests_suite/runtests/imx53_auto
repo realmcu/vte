@@ -135,7 +135,7 @@ TGE-LV-LinuxFS-0561	udev_sysfs_test1.sh
 TGE-LV-ESLCD-0151	lcd_testapp -T 1 -B /dev/fb0 -D 16 -X 10
 TGE-LV-ESLCD-0161	lcd_testapp -T 2 -B /dev/fb0 -D 16 -X 10 -N 10
 TGE-LV-ESLCD-0600	lcd_testapp_power -F /dev/fb0
-TGE-LV-ESLCD-0700	lcd_testapp -T 1 -B /dev/fb0 -D 16
+#TGE-LV-ESLCD-0700	lcd_testapp -T 1 -B /dev/fb0 -D 16
 TGE-LV-ESLCD-0702	dd if=/dev/urandom of=/dev/fb0 bs=1k count=150
 TGE-LV-ESLCD-0710	fbset -depth 32 && lcd_testapp -T 2 -B /dev/fb0 -D 32
 TGE-LV-ESLCD-0800	mxcfb_test -T 1 -D /dev/fb0 -d /dev/fb2
