@@ -174,8 +174,8 @@ acc_test()
 	echo "now shake the board!! for 30seconds"
 	sleep 30
 	ret=$(cat $acctmp | wc -l)
-	echo "test done"
-  if [ -ne $ret ]; then
+	echo "test done $ret"
+  if [ ! -z $ret ]; then
     RC=0
   fi
 	kill -9 $pth
