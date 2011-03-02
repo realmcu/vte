@@ -56,7 +56,7 @@ write_reg()
  value=$4
  get_regid $REG 
  if [ $ID -ne -1 ];then
- i2cset -f $BUSID $DEVICEID $ID $value
+ echo Y | i2cset -f $BUSID $DEVICEID $ID $value
   return $?
  else
   echo "invald register name"
