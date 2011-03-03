@@ -147,11 +147,9 @@ TGE-LV-FB-0011	fbset -depth 24;  lcd_testapp -T 1 -D 24 -B /dev/fb0 -X 10; fbset
 TGE-LV-FB-1003	cat /dev/vcs
 TGE-LV-GPU-C2D-0004	modprobe gpu; c2d_sanity_app_z430 && c2d_sanity_app_z160
 TGE-LV-GPU-C2D-PERF-0002	modprobe gpu; 2dblt_perf  -l lib2dz160.so
-TGE-LV-GPU-CONF-GLES-0005	gles.sh 3
 TGE-LV-GPU-EGL-FB-0001	gles.sh 1
 TGE-LV-GPU-FB-PERF-GLES-0006	gles.sh 2
 TGE-LV-GPU-PERF-OPENVG-0001	vg.sh 1
-TSG-LV-GPU-FB-CONF-VG-0001	vg.sh 3
 TSG-LV-GPU-FB-CONF-VG-0002	vg.sh 2
 TSG-LV-GPU-FB-MULTI-0001	sh -c "vg.sh 2 &"; gles.sh 2
 TGE-LV-I2C-0001	i2cdetect -y -a -r 0 && i2cdetect -y -a -r 1
