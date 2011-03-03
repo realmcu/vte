@@ -79,163 +79,98 @@ setup()
 
     trap "cleanup" 0
 
-    return $RC
-}
-
-cleanup()
-{
-    echo 0 > $DVFS_PER_DIR/enable
-    echo 0 > /sys/bus/platform/drivers/mxc_dvfs_core/mxc_dvfs_core.0/enable
-}
-
-# analyze the result
-anl_res()
-{
-    RC=$1
-    if [ $RC -ne 0 ]; then
-        tst_resm TFAIL "Fail in DVFS-PER test: $2"
-        exit $RC
-    fi
-}
-
-dvfs_per_basic()
-{
-    export TST_COUNT=1
-
-    RC=0
-
     platfm.sh || platfm=$?
     if [ $platfm -eq 67 ]; then
         RC=$platfm
         return $RC
     fi
 
+    #enable dvfs-per on MX51 only
     DVFS_PER_DIR=/sys/devices/platform/mxc_dvfsper.0
-    if [ $platfm -eq 51 ] || [ $platfm -eq 41 ] || [ $platfm -eq 53 ]; then
+    if [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
         echo 1 > $DVFS_PER_DIR/enable
-    else
-        tst_resm TWARN "platform not support"
-        RC=67
-        return $RC
+        res=`cat $DVFS_PER_DIR/enable | grep "enabled" | wc -l`
+        if [ $res -eq 1 ]; then
+            tst_resm TPASS "DVFS-PER is enabled"
+        else
+            tst_resm TFAIL "fail to enable DVFS-PER"
+            RC=1
+            return $RC
+        fi
     fi
-
-    res=`cat $DVFS_PER_DIR/enable | grep "enabled" | wc -l`
-    if [ $res -eq 1 ]; then
-        tst_resm TPASS "DVFS-PER is enabled"
-    else
-        tst_resm TFAIL "fail to enable DVFS-PER"
-        RC=1
-        return $RC
-    fi
-
-    #LCD test
-    lcd_testapp -T 1 -B /dev/fb0 -D 16 -X 10
-    anl_res $? LCD
-
-    #storage test
-    storage_test.sh CD /mnt/mmcblk0p1 /mnt/msc 100 3
-    anl_res $? STORAGE
-
-    #V4L2 test
-    v4l_capture_testapp -C 3 -O BGR32 -o ./output
-    anl_res $? V4L2
-
-    #suspend test
-    rtc_testapp_6 -m standby -T 10
-    tst_resm TPASS "Resume from suspend..."
 
     #enable dvfs-core
     echo 1 > /sys/bus/platform/drivers/mxc_dvfs_core/mxc_dvfs_core.0/enable
     res=`cat /sys/bus/platform/drivers/mxc_dvfs_core/mxc_dvfs_core.0/enable | grep "enabled" | wc -l`
+
     if [ $res -ne 1 ]; then
         tst_resm TFAIL "Fail to enable dvfs-core"
         RC=1
         return $RC
     fi
 
+    return $RC
+}
+
+cleanup()
+{
+    if [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
+        echo 0 > $DVFS_PER_DIR/enable
+    fi
+    echo 0 > /sys/bus/platform/drivers/mxc_dvfs_core/mxc_dvfs_core.0/enable
+}
+
+dvfs_per_basic()
+{
+    RC=1
+
+    #LCD test
+    lcd_testapp -T 1 -B /dev/fb0 -D 16 -X 10 || return $RC
+
+    #storage test
+    #storage_test.sh CD /mnt/mmcblk0p1 /mnt/msc 100 3
+
+    #V4L2 test
+    v4l_capture_testapp -C 3 -O BGR32 -o ./output || return $RC
+    vpu_dec_test.sh 1
+    
+    
+    #suspend test
+    rtc_testapp_6 -m standby -T 10 || return $RC
+
     #ALSA capture test
-    adc_test1.sh -f S16_LE -d 5 -c 1 -r 44100 -A
-    anl_res $? ALSA
+    adc_test1.sh -f S16_LE -d 5 -c 1 -r 44100 -A || return $RC
 
     sleep 5
-    rtc_testapp_6 -m mem -T 10
-    tst_resm TPASS "Resume from mem..."
+    rtc_testapp_6 -m mem -T 10 || return $RC
 
-    res=`cat /proc/cpu/clocks | grep ahb | grep 33250000 | wc -l`
-    if [ $res -eq 2 ]; then
-        tst_resm TPASS "DVFS-PER basic function test"
-    fi
-    
-    echo 0 > $DVFS_PER_DIR/enable
-    res=`cat $DVFS_PER_DIR/enable | grep "disabled" | wc -l`
-    if [ $res -eq 1 ]; then
-        tst_resm TPASS "DVFS-PER is disabled"
-    else
-        tst_resm TFAIL "fail to enable DVFS-PER"
-        RC=1
-        return $RC
-    fi
-
+    echo "Pass DVFS basic test"
+    RC=0
     return $RC
 }
 
 # ToDo: add suspend resume stress test
 dvfs_per_stress()
 {
-    export TST_COUNT=2
-    export TCID="TGE_LV_DVFS_PER_STRESS"
-
     RC=0
 
-    platfm.sh || platfm=$?
-    if [ $platfm -eq 67 ]; then
-        RC=$platfm
-        return $RC
-    fi
-
-    DVFS_PER_DIR=/sys/devices/platform/mxc_dvfsper.0
-    if [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
-        echo 1 > $DVFS_PER_DIR/enable
-    else
-        tst_resm TWARN "platform not support"
-        RC=67
-        return $RC
-    fi
-
-    res=`cat $DVFS_PER_DIR/enable | grep "enabled" | wc -l`
-    if [ $res -eq 1 ]; then
-        tst_resm TPASS "DVFS-PER is enabled"
-    else
-        tst_resm TFAIL "fail to enable DVFS-PER"
-        RC=1
-        return $RC
-    fi
-
-    mkdir -p /mnt/msc && mount -t vfat /dev/sda1 /mnt/msc
-    df | grep msc
-    anl_res $? MOUNT_MSC
-
-    tst_resm TINFO "Start bonnie++ stress test"
+    echo "Start USB bonnie++ stress test"
     i=0
     while [ $i -lt 100 ]; do
-        bonnie++ -d /mnt/msc -s 32 -r 16 -u 0:0 -m FSL
-        anl_res $? bonnie_test
+        bonnie++ -d /mnt/msc -s 32 -r 16 -u 0:0 -m FSL || return $i
         tst_resm TINFO "bonnie++ times: $i"
         i=`expr $i + 1`
     done
 
     i=0
     while [ $i -lt 50 ]; do
-        rtc_testapp_6 -m standby -T 10
-        anl_res $? suspend_test
-        rtc_testapp_6 -m mem -T 10
-        anl_res $? suspend_test
-        tst_resm TINFO "suspend test times: $i"
+        rtc_testapp_6 -m standby -T 10 || return $i
+        rtc_testapp_6 -m mem -T 10 || return $i
         i=`expr $i + 1`
     done
 
-
-    tst_resm TPASS "Pass bonnie++ and suspend stress test"
+    echo "Pass DVFS stress test"
+    return $RC
 }
 
 # Function:     main
