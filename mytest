@@ -29,7 +29,8 @@ platfm=$(platfm.sh)
 ARCH_PLATFORM=${platfm}
 
 if [ "$CONTINUE" = 'y' ];then
-tday=$(date +%m%d%Y)
+#tday=$(date +%m%d%Y)
+tday=$(uname -r)
 cp ${TEST_PATH}/runtest/$CMDFILE ${TEST_PATH}/runtest/temp_test
 if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt ]; then
 #1 not first run, need change the command file skip the last one

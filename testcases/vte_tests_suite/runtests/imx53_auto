@@ -121,7 +121,7 @@ TGE-LV-ASRC-0205	asrc_grp_conv.sh 44
 TGE-LV-ASRC-0206	asrc_grp_conv.sh 32
 TGE-LV-ASRC-0207	asrc_grp_conv.sh 48
 TGE-LV-ASRC-0208	asrc_grp_conv.sh 96
-TGE-LV-ASRC-0211	rtc_testapp_6 -T 5; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
+#TGE-LV-ASRC-0211	rtc_testapp_6 -T 5; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
 TGE-LV-SPDIF-0001	modprobe snd_spdif; aplay -l | grep MXC_SPDIF && modprobe -r snd_spdif
 TGE-LV-SPDIF-0004	spdif_basic.sh
 TGE-LV-ESLCD-0705	echo q | fbv ${LTPROOT}/testcases/bin/butterfly.png
@@ -135,7 +135,7 @@ TGE-LV-LinuxFS-0561	udev_sysfs_test1.sh
 TGE-LV-ESLCD-0151	lcd_testapp -T 1 -B /dev/fb0 -D 16 -X 10
 TGE-LV-ESLCD-0161	lcd_testapp -T 2 -B /dev/fb0 -D 16 -X 10 -N 10
 TGE-LV-ESLCD-0600	lcd_testapp_power -F /dev/fb0
-TGE-LV-ESLCD-0700	lcd_testapp -T 1 -B /dev/fb0 -D 16
+#TGE-LV-ESLCD-0700	lcd_testapp -T 1 -B /dev/fb0 -D 16
 TGE-LV-ESLCD-0702	dd if=/dev/urandom of=/dev/fb0 bs=1k count=150
 TGE-LV-ESLCD-0710	fbset -depth 32 && lcd_testapp -T 2 -B /dev/fb0 -D 32
 TGE-LV-ESLCD-0800	mxcfb_test -T 1 -D /dev/fb0 -d /dev/fb2
@@ -143,8 +143,8 @@ TGE-LV-ESLCD-0810	mxcfb_test -T 2 -D /dev/fb0 -d /dev/fb2
 TGE-LV-ESLCD-0820	mxcfb_test -T 3 -D /dev/fb0 -d /dev/fb2
 TGE-LV-ESLCD-0830	RC=0;LOOP=200; while [ $LOOP -gt 0 ]; do mxcfb_test -T 4 -D /dev/fb0 -d /dev/fb2 || RC=1; LOOP=$(expr $LOOP - 1); done; [ $RC -eq 0 ]
 TGE-LV-ESLCD-0840	mxcfb_test -T 5 -D /dev/fb0 -d /dev/fb2
-TGE-LV-FB-0010	fbset -depth 16;  lcd_testapp -T 1 -D 16 -B /dev/fb0
-TGE-LV-FB-0011	fbset -depth 24;  lcd_testapp -T 1 -D 24 -B /dev/fb0 ; fbset -depth 16
+TGE-LV-FB-0010	fbset -depth 16;  lcd_testapp -T 1 -D 16 -B /dev/fb0 -X 10
+TGE-LV-FB-0011	fbset -depth 24;  lcd_testapp -T 1 -D 24 -B /dev/fb0 -X 10 ; fbset -depth 16
 TGE-LV-FB-1003	cat /dev/vcs
 TGE-LV-GPU-C2D-0004	modprobe gpu; c2d_sanity_app_z430 && c2d_sanity_app_z160
 TGE-LV-GPU-C2D-PERF-0002	modprobe gpu; 2dblt_perf  -l lib2dz160.so
@@ -162,18 +162,18 @@ TGE-LV-KERNEL-10003	nanosleep_test
 TGE-LV-KERNEL-10004	int1=$(cat /proc/interrupts | grep -i time | awk '{print $2}'); sleep 1 ; int2=$(cat /proc/interrupts | grep -i time | awk '{print  $2}'); echo $int1; echo $int2;ret=$(expr $int2 - $int1); echo $ret; [ $ret -lt 100 ] && echo PASS || echo FAIL
 TGE-LV-KERNEL-10005	cat /proc/meminfo | grep HighTotal
 TGE-LV-EMMC-BOOT-0001	eMMC_boot_test.sh
-TGE-LV-LCD-BL-00002	echo 100 > /sys/class/backlight/pwm-backlight.0/brightness; rtc_testapp_6 -m standby -T 5 ; BR=$(cat /sys/class/backlight/pwm-backlight.0/brightness) ; [ $BR -eq 100 ]  && echo pass || echo fail
+#TGE-LV-LCD-BL-00002	echo 100 > /sys/class/backlight/pwm-backlight.0/brightness; rtc_testapp_6 -m standby -T 5 ; BR=$(cat /sys/class/backlight/pwm-backlight.0/brightness) ; [ $BR -eq 100 ]  && echo pass || echo fail
 TGE-LV-DVFS-0010	dvfs.sh 1
 TGE-LV-DVFS-0040	dvfs.sh 2
 TGE-LV-DVFS-0041	cpu_lowfreq.sh
 TGE-LV-DVFS-0050	dvfs_per.sh 1
 TGE-LV-DVFS-0052	dvfs_per.sh 2
 TGE-LV-DVFS-0200	cpufreq-info
-TGE-LV-IPU-0070	fbset -depth 32 ; rtc_testapp_6 -d rtc0 -T 30 ; len=$(fbset -i | grep "LineLength" | awk {\'print $3\'}) && echo $len |grep 4096 && fbset -depth 16
+#TGE-LV-IPU-0070	fbset -depth 32 ; rtc_testapp_6 -d rtc0 -T 30 ; len=$(fbset -i | grep "LineLength" | awk {\'print $3\'}) && echo $len |grep 4096 && fbset -depth 16
 TGE-LV-PM-USB-0010	stop-usb.sh
-TGE-LV-SD-1302	sh -c "umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; mount -t vfat /dev/mmcblk0p1 /mnt/mmcblk0p1 && rtc_testapp_6 -T 10 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt | grep hello && umount /mnt/mmcblk0p1"
-TGE-LV-SD-1303	umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; ln -sf /dev/rtc0 /dev/rtc; mount -t vfat /dev/mmcblk0p1 /mnt/mmcblk0p1 && rtc_testapp_6 -T 10 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt
-TGE-LV-V4L2-0200	v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565 && rtc_testapp_6 -T 5 && v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
+#TGE-LV-SD-1302	sh -c "umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; mount -t vfat /dev/mmcblk0p1 /mnt/mmcblk0p1 && rtc_testapp_6 -T 10 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt | grep hello && umount /mnt/mmcblk0p1"
+#TGE-LV-SD-1303	umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; ln -sf /dev/rtc0 /dev/rtc; mount -t vfat /dev/mmcblk0p1 /mnt/mmcblk0p1 && rtc_testapp_6 -T 10 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt
+#TGE-LV-V4L2-0200	v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565 && rtc_testapp_6 -T 5 && v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
 TGE-LVGPU-1005	gles.sh 4 ; vg.sh 4
 TGE-LV-RTC-0010	rtc_testapp_1
 TGE-LV-RTC-0011	rtc_testapp_2
@@ -197,8 +197,8 @@ TGE-LV-UART-0500	for i in 9600 115200 460800 500000 1000000 1152000 2000000 3500
 TGE-LV-UART-0510	RT=0; for i in 9600 115200 460800 500000 1000000 1152000 2000000 3500000 4000000; do echo "Test Baud rate $i ==============" && uart_testapp_11 /dev/ttymxc1 $i || RT=$(expr $RT + 1); done; [ $RT -eq 0 ]
 TGE-LV-UART-0601	isgate=$(fgrep "uart" /proc/cpu/clocks | awk \'{print $3}\') && echo $isgate | grep 0 && (cat /dev/ttymxc1 &) ; sleep 2 && isgate=$( fgrep "uart" /proc/cpu/clocks | awk \'{print $3}\') && echo $isgate | grep 1 && killall cat ; sleep 2 && isgate=$(fgrep "uart" /proc/cpu/clocks | awk \'{print $3}\') && echo $isgate | grep 0
 TGE-LV-UART-0700	uart_testapp_10 /dev/ttymxc1 115200 && uart_testapp_10 /dev/ttymxc2 115200
-TGE-LV-USB-HOST-1501	rtc_testapp_6 -T 5 && mount -t vfat /dev/sda1 /mnt/msc && echo "hello world" > /mnt/msc/test.txt && cat /mnt/msc/test.txt
-TGE-LV-USB-OTG-2601	modprobe ehci_hcd; sleep 10 && mount -t vfat /dev/sda1 /mnt/msc && rtc_testapp_6 -T 5 && touch /mnt/msc/test && echo "test" > /mnt/msc/test && cat /mnt/msc/test | grep "test" && umount /mnt/msc && echo $?
+#TGE-LV-USB-HOST-1501	rtc_testapp_6 -T 5 && mount -t vfat /dev/sda1 /mnt/msc && echo "hello world" > /mnt/msc/test.txt && cat /mnt/msc/test.txt
+#TGE-LV-USB-OTG-2601	modprobe ehci_hcd; sleep 10 && mount -t vfat /dev/sda1 /mnt/msc && rtc_testapp_6 -T 5 && touch /mnt/msc/test && echo "test" > /mnt/msc/test && cat /mnt/msc/test | grep "test" && umount /mnt/msc && echo $?
 TGE-LV-IPU_DEV-0010	ipu_test.sh 1
 TGE-LV-IPU_DEV-0020	ipu_test.sh 2
 TGE-LV-IPU_DEV-0021	ipu_dev_test -m 0x21 -f 50 -i 352,288,I420 -o 352,288,RGBP,0 -s 1,0,0,0 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv

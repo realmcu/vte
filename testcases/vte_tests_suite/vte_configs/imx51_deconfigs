@@ -6,7 +6,7 @@ export CONFIG_VTE_IMX5=y
 #define test sub folder
 CONFIG_VTE_ACC=y
 export CONFIG_VTE_ALSA=y
-#CONFIG_VTE_ASRC=y
+CONFIG_VTE_ASRC=y
 #CONFIG_VTE_ATA=y
 export CONFIG_VTE_BL=y
 export CONFIG_VTE_BT=y

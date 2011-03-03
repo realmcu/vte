@@ -56,7 +56,7 @@ write_reg()
  value=$4
  get_regid $REG 
  if [ $ID -ne -1 ];then
- i2cset -f $BUSID $DEVICEID $ID $value
+ echo Y | i2cset -f $BUSID $DEVICEID $ID $value
   return $?
  else
   echo "invald register name"
@@ -174,8 +174,8 @@ acc_test()
 	echo "now shake the board!! for 30seconds"
 	sleep 30
 	ret=$(cat $acctmp | wc -l)
-	echo "test done"
-  if [ -ne $ret ]
+	echo "test done $ret"
+  if [ ! -z $ret ]; then
     RC=0
   fi
 	kill -9 $pth
