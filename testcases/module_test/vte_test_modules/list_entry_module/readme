@@ -1,0 +1,6 @@
+#test approach
+test the list_del_init and list_del can use together
+#run
+insmod list_op_module.ko
+sleep 2
+rmmod list_op_module
