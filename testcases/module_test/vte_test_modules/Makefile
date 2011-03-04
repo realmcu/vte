@@ -14,6 +14,7 @@ SUBDIRS-$(CONFIG_VM_HACC)     += hacc_test_module
 SUBDIRS-$(CONFIG_VM_SDMA_API) += sdma_module
 SUBDIRS-$(CONFIG_VM_MXC_WD)   += mxc_wd_module
 SUBDIRS-$(CONFIG_VM_MXS_WD)   += mxs_wd_module
+SUBDIRS-$(CONFIG_LIST_OP)     += list_entry_module
 
 all:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
