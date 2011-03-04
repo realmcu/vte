@@ -18,7 +18,7 @@
 
 #define LOOPBACK 0x8000
 #define SUPPORT_BR      31
-#define SEND_SIZE (100*1024*1024)
+#define SEND_SIZE (100*1024)
 #define PATTERN 0xF0
 
 const char cBaud_rate[SUPPORT_BR][10] = 
