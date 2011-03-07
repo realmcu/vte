@@ -347,13 +347,17 @@ int open_out_device(void)
 */
 int close_out_device(void)
 {
-        int retValue = TPASS;
-        if((gFdFB > 0) && (close(gFdFB) < 0))
-        {
-                tst_resm(TBROK, "Unable to close %s", gV4LTestConfig.mOutputDevice);
-                retValue = TFAIL;
-        }
-        return retValue;
+	int retValue = TPASS;
+	/*clear the frame buffer*/
+	ioctl(gFdFB, FBIOBLANK, 1);
+	sleep(1);
+	ioctl(gFdFB, FBIOBLANK, 0);
+  if((gFdFB > 0) && (close(gFdFB) < 0))
+  {
+		tst_resm(TBROK, "Unable to close %s", gV4LTestConfig.mOutputDevice);
+    retValue = TFAIL;
+  }
+  return retValue;
 }
 
 /*===== init_overlay =====*/
