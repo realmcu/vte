@@ -75,6 +75,8 @@ extern "C" {
     }\
 }
 
+#define  ALIGN_PIXEL_128(x)  ((x+ 127) & ~127)
+
 #define EPDC_STR_ID		"mxc_epdc_fb"
 #define PXP_DEVICE_NAME "/dev/pxp_device"
 #define BUFFER_WIDTH 256
@@ -803,12 +805,24 @@ extern "C" {
 		else
 			mem.size = PXP_BUFFER_SIZE * 2;
 		tst_resm(TINFO, "try to get memory size %d\n", mem.size);
+#define USE_PMEM
+#ifdef USE_PMEM
 		if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0) {
 			mem.phys_addr = 0;
 			mem.cpu_addr = 0;
 			tst_resm(TINFO, "get memory failed\n");
 			goto END;
 		}
+#else
+		{
+		struct fb_var_screeninfo screen_info;
+		struct fb_fix_screeninfo fix_screen_info;
+		CALL_IOCTL(ioctl(fb_fd, FBIOGET_FSCREENINFO, &fix_screen_info));
+		CALL_IOCTL(ioctl(fb_fd, FBIOPUT_VSCREENINFO, &screen_info));
+    mem.phys_addr = fix_screen_info.smem_start + \
+		screen_info.xres_virtual*ALIGN_PIXEL_128(screen_info.yres)*screen_info.bits_per_pixel/8;
+		}
+#endif
 #if 1
 		{
 			int fd_mem = open("/dev/mem", O_RDWR);
@@ -914,11 +928,13 @@ extern "C" {
 		}
 
 		/*step 4: clean up */
+#ifdef USE_PMEM
 		if (ioctl(fd_pxp, PXP_IOC_PUT_PHYMEM, &mem) < 0) {
 			mem.phys_addr = 0;
 			mem.cpu_addr = 0;
 			goto END;
 		}
+#endif
 		ret = TRUE;
 	      END:
 		if (fd_pxp > 0)
@@ -1015,7 +1031,12 @@ extern "C" {
 			update_marker,	/*update_marker assigned by user */
 			TEMP_USE_AMBIENT,	/*use ambient temperature set */
 			0,	/*do not use alt buffer */
-			{0, 0, 0, {0, 0, 0, 0}}
+			{
+				0, 0, 0, 
+				{
+					0, 0, 0, 0
+				}
+			}
 		};
 		im_update.flags = m_opt.update.flags;
 		if (m_opt.su == 1) {
