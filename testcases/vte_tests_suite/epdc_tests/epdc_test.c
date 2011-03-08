@@ -805,7 +805,7 @@ extern "C" {
 		else
 			mem.size = PXP_BUFFER_SIZE * 2;
 		tst_resm(TINFO, "try to get memory size %d\n", mem.size);
-#define USE_PMEM
+/*#define USE_PMEM*/
 #ifdef USE_PMEM
 		if (ioctl(fd_pxp, PXP_IOC_GET_PHYMEM, &mem) < 0) {
 			mem.phys_addr = 0;
