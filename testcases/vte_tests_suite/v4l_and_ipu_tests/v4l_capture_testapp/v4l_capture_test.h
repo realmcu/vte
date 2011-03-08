@@ -42,22 +42,21 @@ D.Kazachkov/e1403c    15/03/2006   TLSbo63410	call VIDIOC_S_FBUF before call VID
 #define __V4L_CAPTURE_TEST_H
 
 #ifdef __cplusplus
-extern "C"{
+extern "C" {
 #endif
 
 /*======================== INCLUDE FILES ====================================*/
 
+#include <ctype.h>		/* toupper()    */
+#include <sys/types.h>		/* open()       */
+#include <sys/stat.h>		/* open()       */
+#include <fcntl.h>		/* open()       */
+#include <sys/ioctl.h>		/* ioctl()      */
+#include <unistd.h>		/* close()      */
+#include <stdio.h>		/* sscanf() & perror() */
 
-#include <ctype.h>              /* toupper()    */
-#include <sys/types.h>          /* open()       */
-#include <sys/stat.h>           /* open()       */
-#include <fcntl.h>              /* open()       */
-#include <sys/ioctl.h>          /* ioctl()      */
-#include <unistd.h>             /* close()      */
-#include <stdio.h>              /* sscanf() & perror() */
-
-#include <stdlib.h>             /* atoi()       */
-#include <asm/types.h>          /* for videodev2.h */
+#include <stdlib.h>		/* atoi()       */
+#include <asm/types.h>		/* for videodev2.h */
 /*
 #include <linux/compiler.h> 
 */
@@ -68,13 +67,11 @@ extern "C"{
 #include <string.h>
 #include <malloc.h>
 
-
 /*======================== CONSTANTS ========================================*/
-
 
 /*======================== DEFINES AND MACROS ===============================*/
 
-#if !defined(TRUE) 
+#if !defined(TRUE)
 #define TRUE    1
 #endif
 
@@ -83,56 +80,52 @@ extern "C"{
 #endif
 
 /*======================== ENUMS ============================================*/
-typedef enum 
-{
-        PRP_VF = 1,
-        PRP_ENC_ON_D,
-        PRP_ENC_TO_F,
-} eCases;
+	typedef enum {
+		PRP_VF = 1,
+		PRP_ENC_ON_D,
+		PRP_ENC_TO_F,
+	} eCases;
 
-typedef enum
-{
-  eInCSI_IC_MEM = 0,
-  eInCSI_MEM,
-} eInputs;
+	typedef enum {
+		eInCSI_IC_MEM = 0,
+		eInCSI_MEM,
+	} eInputs;
 
 /*======================== STRUCTURES AND OTHER TYPEDEFS ====================*/
-typedef struct 
-{
-	const char * mV4LDevice;
-	const char * mOutputDevice;
-	char * mOutputFile;
-	int mWidth;
-	int mHeight;
-	int mCount;
-	int mCaseNum;
-	int mRotationMode; 
-	int mOutputFormat;
-	int mCrop;
-	struct v4l2_rect mCropRect;
-	int mRotation;
-	int mVerbose;
-	const char * mPixFormat;
-	int mOverlayType;
-	int mFrameRate;
-	int mIsBlock;
-	int inputSrc;
-	int mNeedAsk;
-	int mMode;
-} sV4LTestConfig; 
+	typedef struct {
+		const char *mV4LDevice;
+		const char *mOutputDevice;
+		char *mOutputFile;
+		int mWidth;
+		int mHeight;
+		int mCount;
+		int mCaseNum;
+		int mRotationMode;
+		int mOutputFormat;
+		int mCrop;
+		struct v4l2_rect mCropRect;
+		int mRotation;
+		int mVerbose;
+		const char *mPixFormat;
+		int mOverlayType;
+		int mFrameRate;
+		int mIsBlock;
+		int inputSrc;
+		int mNeedAsk;
+		int mMode;
+	} sV4LTestConfig;
 /*======================== GLOBAL VARIABLE DECLARATIONS =====================*/
 
-extern sV4LTestConfig gV4LTestConfig;
+	extern sV4LTestConfig gV4LTestConfig;
 
 /*======================== FUNCTION PROTOTYPES ==============================*/
-void cleanup(void);
+	void cleanup(void);
 
-int VT_v4l_capture_setup(void);
-int VT_v4l_capture_cleanup(void);
-int VT_v4l_capture_test(void);
+	int VT_v4l_capture_setup(void);
+	int VT_v4l_capture_cleanup(void);
+	int VT_v4l_capture_test(void);
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif  // V4L_CAPTURE_TEST_H //
+#endif				// V4L_CAPTURE_TEST_H //
