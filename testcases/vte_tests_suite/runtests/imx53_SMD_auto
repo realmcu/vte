@@ -156,7 +156,7 @@ TSG-LV-GPU-FB-CONF-VG-0002	vg.sh 2
 TSG-LV-GPU-FB-MULTI-0001	sh -c "vg.sh 2 &"; gles.sh 2
 TSG-LV-GPU-FB-PM-0001	gles.sh 4 && vg.sh 4
 TGE-LV-I2C-0001	i2cdetect -y -a -r 0 && i2cdetect -y -a -r 1
-TGE-LV-KERNEL-10000	$(which crashme) +2000 666 50 00:00:05 2
+TGE-LV-KERNEL-10000	$(which crashme) +200 666 50 00:00:05 2
 TGE-LV-KERNEL-10001	RC=0;list=$(cat /proc/vmallocinfo | awk '{print $2}') ; for i in $list; do if [ $i -gt 4194304 ]; then RC=$(expr $RC + 1); fi; if [ $i -lt 0 ]; then RC=$(expr $RC + 1) ; fi;  done; echo $RC ; [ $RC -eq 0 ]
 TGE-LV-KERNEL-10002	timer_resolution
 TGE-LV-KERNEL-10003	nanosleep_test
