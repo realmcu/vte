@@ -109,7 +109,7 @@ determine_platform()
     fi
 
     # MX53 EVK TO1.0: Revision: 53010
-    find=`cat /proc/cpuinfo | grep "Revision" | grep "53010" | wc -l`;
+    find=`cat /proc/cpuinfo | grep "Revision" | grep "53.10" | wc -l`;
     if [ $find -eq 1 ]
     then
         p=IMX53EVK
@@ -120,7 +120,7 @@ determine_platform()
     fi
     
 		# MX53 LOCO TO2.0: Revision: 53020
-    find=`cat /proc/cpuinfo | grep "Revision" | grep "53020" | wc -l`;
+    find=`cat /proc/cpuinfo | grep "Revision" | grep "53.20" | wc -l`;
     if [ $find -eq 1 ]
     then
 		find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX53 LOCO" | wc -l`;
