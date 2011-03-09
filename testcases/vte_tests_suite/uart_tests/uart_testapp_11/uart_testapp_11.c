@@ -18,7 +18,6 @@
 
 #define LOOPBACK 0x8000
 #define SUPPORT_BR      31
-#define SEND_SIZE (100*1024)
 #define PATTERN 0xF0
 
 const char cBaud_rate[SUPPORT_BR][10] = 
@@ -35,6 +34,7 @@ const int LUT_B[SUPPORT_BR] = {
             B2500000,B3000000,B3500000,B4000000
             };
 
+int SEND_SIZE=1024*1024;
 int ctrl_c_rev = 0;
 pid_t pid;
 
@@ -69,25 +69,29 @@ int main(int argc, char **argv)
                 }
         } else {
                 /* Open the specified UART device */
-                if ((uart_file1 = open(*++argv, O_RDWR)) == -1) {
+                if ((uart_file1 = open(argv[1], O_RDWR)) == -1) {
                         printf("Error opening %s\n", *argv);
                         exit(1);
                 } else {
                         printf("%s opened\n", *argv);
                 }
 		/*option for baud rate*/
-		if( argc == 3 )
+		if( argc >= 3 )
 		{
 		  int i = 0;
 		  iBaud = 1;
 		  do{
-		    if(strcmp(cBaud_rate[i],argv[1]) == 0)
+		    if(strcmp(cBaud_rate[i],argv[2]) == 0)
 		    {
 		      printf("match at %d\n",i);
 		      speed = LUT_B[i];
 		      break;
 		    }
 		  }while(++i < SUPPORT_BR);
+     
+		 if(argc == 4)
+					SEND_SIZE=atoi(argv[3]);
+
 
       switch (speed)
 		  {
@@ -196,11 +200,16 @@ int main(int argc, char **argv)
 					usec -= 1000000;
 				}
 				volumn -= step;
+				//printf("remain %d\n", volumn);
 				usleep(100);
 			}
 #endif
 			if(sec > 0)
-			printf("\n\raverage speed %d Bytes at %o baud\n",SEND_SIZE/(sec+1),speed);
+			printf("\n\raverage speed %d Bits at %o baud\n",SEND_SIZE*8/(sec+1),speed);
+			else if(sec == 0){
+			printf("\n\raverage speed %ld Bits at %o baud\n",(long)(SEND_SIZE*1.0/usec)*8*1000000,speed);
+			printf("total time %d\n",usec);
+			}
 			exit(0);
    }else{
 			static int iores = 0;
