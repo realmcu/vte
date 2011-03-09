@@ -34,7 +34,7 @@ const int LUT_B[SUPPORT_BR] = {
             B2500000,B3000000,B3500000,B4000000
             };
 
-int SEND_SIZE=1024*1024;
+int SEND_SIZE=10*1024;
 int ctrl_c_rev = 0;
 pid_t pid;
 
