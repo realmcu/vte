@@ -28,7 +28,7 @@ LTPROOT=`cd \`dirname $0\` && echo $PWD`
 
 cd $LTPROOT
 
-TESTAPPSCC=./scc2_test
+TESTAPPSCC=scc2_test
 
 TMP_RC=0
 rc=0
@@ -70,13 +70,30 @@ anal_res_inv()
                echo""
 }
 
-$TESTAPPSCC -La
+insmod $LTPROOT/testcases/bin/scc2_test_module.ko || exit 1
+echo "read register"
+echo "================"
+$TESTAPPSCC -R 0x0c
 anal_res                          
-$TESTAPPSCC -Lr
+echo "AIC test"
+echo "================"
+$TESTAPPSCC -Lc
+anal_res                          
+echo "get scc2 configuration"
+echo "================"
+$TESTAPPSCC -LC
+anal_res                          
+echo "encryption and decryption"
+echo "================"
+$TESTAPPSCC -Le
 anal_res_inv
+echo "test timer"
+echo "================"
 $TESTAPPSCC -T -Lt
 anal_res_inv
-$TESTAPPSCC -Lzr
+echo "signal a software alaim to the scc2"
+echo "================"
+$TESTAPPSCC -La
 anal_res_inv
 
 echo""
