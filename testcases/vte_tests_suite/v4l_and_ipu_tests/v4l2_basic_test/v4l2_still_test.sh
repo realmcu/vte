@@ -8,10 +8,23 @@
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
 
+cleanup()
+{
+auto_prepare.sh -R V4L
+}
+
+
 LTPROOT=`cd \`dirname $0\` && echo $PWD`
 cd $LTPROOT
 #setup the fb on
 echo 0 > /sys/class/graphics/fb0/blank
+
+
+
+
+trap "cleanup" 0
+
+auto_prepare.sh -I V4L
 
 TSTCMD="/unit_tests/mxc_v4l2_still.out"
 PassCount=0

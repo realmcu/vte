@@ -90,8 +90,12 @@ extern "C" {
 */
 
 	void setup(void) {
-		int VT_rv = VT_v4l_capture_setup();
+		int VT_rv;
+		
+		system("auto_prepare.sh -I V4L; sleep 2");
 
+		VT_rv = VT_v4l_capture_setup();
+      
 		if (VT_rv != TPASS) {
 			tst_brkm(TBROK, cleanup,
 				 "VT_setup() Failed : error code = %d", VT_rv);
@@ -480,6 +484,7 @@ extern "C" {
 			free(gV4LTestConfig.mOutputFile);
 		gV4LTestConfig.mOutputFile = NULL;
 		VT_rv = VT_v4l_capture_cleanup();
+    system("auto_prepare.sh -R V4L; sleep 2");	
 		if (gExitCleanup) {
 			if (VT_rv != TPASS) {
 				tst_resm(TWARN,
