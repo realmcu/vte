@@ -121,9 +121,27 @@ TGE-LV-ASRC-0205	asrc_grp_conv.sh 44
 TGE-LV-ASRC-0206	asrc_grp_conv.sh 32
 TGE-LV-ASRC-0207	asrc_grp_conv.sh 48
 TGE-LV-ASRC-0208	asrc_grp_conv.sh 96
-TGE-LV-ASRC-0211	rtc_testapp_6 -T 5; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
+TGE-LV-ASRC-0302	asrc_clock_source_test1.sh 0302
+TGE-LV-ASRC-030a	asrc_clock_source_test1.sh 030a
+TGE-LV-ASRC-0362	asrc_clock_source_test1.sh 0362
+TGE-LV-ASRC-036a	asrc_clock_source_test1.sh 036a
+TGE-LV-ASRC-0372	asrc_clock_source_test1.sh 0372
+TGE-LV-ASRC-037a	asrc_clock_source_test1.sh 037a
+TGE-LV-ASRC-03a2	asrc_clock_source_test1.sh 03a2
+TGE-LV-ASRC-03aa	asrc_clock_source_test1.sh 03aa
+TGE-LV-ASRC-0409	asrc_clock_source_test2.sh 0409
+TGE-LV-ASRC-0449	asrc_clock_source_test2.sh 0449
+TGE-LV-ASRC-044a	asrc_clock_source_test2.sh 044a
+TGE-LV-ASRC-0504	asrc_clock_source_test3.sh 0504
+TGE-LV-ASRC-0564	asrc_clock_source_test3.sh 0564
+TGE-LV-ASRC-0574	asrc_clock_source_test3.sh 0574
+TGE-LV-ASRC-0591	asrc_clock_source_test3.sh 0591
+TGE-LV-ASRC-0592	asrc_clock_source_test3.sh 0592
+TGE-LV-ALSA-SPDIF-0002	modprobe snd_spdif; aplay -D plughw:1 ${STREAM_PATH}/spdif_stream/audio32k16S.wav && echo pass || echo fail
 TGE-LV-SPDIF-0001	modprobe snd_spdif; aplay -l | grep MXC_SPDIF && modprobe -r snd_spdif
 TGE-LV-SPDIF-0004	spdif_basic.sh
+TGE-LV-SPDIF-0601	rtc_testapp_6 -T 5 && aplay -l && aplay -D hw:1,0 $STREAM_PATH/spdif_stream/audio44k16S.wav
+TGE-LV-Bonnie-0010	bonnie\\+\\+ -d /mnt/flc -s 32 -r 16 -u 0:0 -m FSL
 TGE-LV-ESLCD-0705	echo q | fbv ${LTPROOT}/testcases/bin/butterfly.png
 TGE-LV-ETHERNET-1007	touch readme && ftpget -u anonymous 10.192.225.218 readme readme && cat readme | grep welcome && rm readme
 TGE-LV-FEC-0010	fec_testapp -T 0
@@ -131,6 +149,7 @@ TGE-LV-FEC-0011	fec_testapp -T 1 -H 10.192.225.219
 TGE-LV-LinuxFS-0511	jffs2_test1.sh "nfs -o nolock,rsize=1024,wsize=1024" 10.192.225.218:/rootfs/Release/rootfs_mx31_sdk1.4 /mnt/fnfs
 TGE-LV-LinuxFS-0513	jffs2_test3.sh "nfs -o nolock,rsize=1024,wsize=1024" 10.192.225.218:/rootfs/Release/rootfs_mx31_sdk1.4 /mnt/fnfs
 TGE-LV-LinuxFS-0521	cramfs_test1.sh $LTPROOT/testcases/bin/sample.cramfs /tmp/cramfs
+TGE-LV-LinuxFS-0541	procfs_test1.sh
 TGE-LV-LinuxFS-0561	udev_sysfs_test1.sh
 TGE-LV-ESLCD-0151	lcd_testapp -T 1 -B /dev/fb0 -D 16 -X 10
 TGE-LV-ESLCD-0161	lcd_testapp -T 2 -B /dev/fb0 -D 16 -X 10 -N 10
@@ -140,42 +159,45 @@ TGE-LV-ESLCD-0710	fbset -depth 32 && lcd_testapp -T 2 -B /dev/fb0 -D 32 -X 10
 TGE-LV-ESLCD-0800	mxcfb_test -T 1 -D /dev/fb0 -d /dev/fb2
 TGE-LV-ESLCD-0810	mxcfb_test -T 2 -D /dev/fb0 -d /dev/fb2
 TGE-LV-ESLCD-0820	mxcfb_test -T 3 -D /dev/fb0 -d /dev/fb2
-TGE-LV-ESLCD-0830	RC=0;LOOP=200; while [ $LOOP -gt 0 ]; do mxcfb_test -T 4 -D /dev/fb0 -d /dev/fb2 || RC=1; LOOP=$(expr $LOOP - 1); done; [ $RC -eq 0 ]
+TGE-LV-ESLCD-0830	RC=0;LOOP=20; while [ $LOOP -gt 0 ]; do mxcfb_test -T 4 -D /dev/fb0 -d /dev/fb2 || RC=1; LOOP=$(expr $LOOP - 1); done; [ $RC -eq 0 ]
 TGE-LV-ESLCD-0840	mxcfb_test -T 5 -D /dev/fb0 -d /dev/fb2
 TGE-LV-FB-0010	fbset -depth 16;  lcd_testapp -T 1 -D 16 -B /dev/fb0 -X 10
 TGE-LV-FB-0011	fbset -depth 24;  lcd_testapp -T 1 -D 24 -B /dev/fb0 -X 10; fbset -depth 16
 TGE-LV-FB-1003	cat /dev/vcs
 TGE-LV-GPU-C2D-0004	modprobe gpu; c2d_sanity_app_z430 && c2d_sanity_app_z160
 TGE-LV-GPU-C2D-PERF-0002	modprobe gpu; 2dblt_perf  -l lib2dz160.so
-TGE-LV-GPU-CONF-GLES-0005	gles.sh 3
 TGE-LV-GPU-EGL-FB-0001	gles.sh 1
 TGE-LV-GPU-FB-PERF-GLES-0006	gles.sh 2
 TGE-LV-GPU-PERF-OPENVG-0001	vg.sh 1
-TSG-LV-GPU-FB-CONF-VG-0001	vg.sh 3
 TSG-LV-GPU-FB-CONF-VG-0002	vg.sh 2
 TSG-LV-GPU-FB-MULTI-0001	sh -c "vg.sh 2 &"; gles.sh 2
-TSG-LV-GPU-FB-PM-0001	gles.sh 4 && vg.sh 4
 TGE-LV-I2C-0001	i2cdetect -y -a -r 0 && i2cdetect -y -a -r 1
-TGE-LV-KERNEL-10000	$(which crashme) +200 666 50 00:00:05 2
-TGE-LV-KERNEL-10001		RC=0;list=$(cat /proc/vmallocinfo | grep -v "kgsl" | grep -v "mxcfb"| awk '{print $2}') ; for i in $list; do if [ $i -gt 4194304 ]; then RC=$(expr $RC + 1); fi; if [ $i -lt 0 ]; then RC=$(expr $RC + 1) ; fi; done; echo $RC ; [ $RC -eq 0 ]
+TGE-LV-KERNEL-10000	$(which crashme) +200 666 5 00:00:05 2
+TGE-LV-KERNEL-10001	RC=0;list=$(cat /proc/vmallocinfo | grep -v "kgsl" | grep -v "mxcfb"| awk \'{print $2}\') ; for i in $list; do if [ $i -gt 4194304 ]; then RC=$(expr $RC + 1); fi; if [ $i -lt 0 ]; then RC=$(expr $RC + 1) ; fi;  done; echo $RC ; [ $RC -eq 0 ]
 TGE-LV-KERNEL-10002	timer_resolution
 TGE-LV-KERNEL-10003	nanosleep_test
 TGE-LV-KERNEL-10004	int1=$(cat /proc/interrupts | grep -i time | awk '{print $2}'); sleep 1 ; int2=$(cat /proc/interrupts | grep -i time | awk '{print  $2}'); echo $int1; echo $int2;ret=$(expr $int2 - $int1); echo $ret; [ $ret -lt 100 ] && echo PASS || echo FAIL
 TGE-LV-KERNEL-10005	cat /proc/meminfo | grep HighTotal
 TGE-LV-EMMC-BOOT-0001	eMMC_boot_test.sh
-TGE-LV-LCD-BL-00002	echo 100 > /sys/class/backlight/pwm-backlight.0/brightness; rtc_testapp_6 -m standby -T 5 ; BR=$(cat /sys/class/backlight/pwm-backlight.0/brightness) ; [ $BR -eq 100 ]  && echo pass || echo fail
+TGE-LV-NOR-1101	nor_mtd_testapp -T INFO -D /dev/mtd1
 TGE-LV-DVFS-0010	dvfs.sh 1
 TGE-LV-DVFS-0040	dvfs.sh 2
 TGE-LV-DVFS-0041	cpu_lowfreq.sh
 TGE-LV-DVFS-0050	dvfs_per.sh 1
 TGE-LV-DVFS-0052	dvfs_per.sh 2
 TGE-LV-DVFS-0200	cpufreq-info
+TGE-LV-ASRC-0211	rtc_testapp_6 -T 5; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
 TGE-LV-IPU-0070	fbset -depth 32 ; rtc_testapp_6 -d rtc0 -T 30 ; len=$(fbset -i | grep "LineLength" | awk {\'print $3\'}) && echo $len |grep 4096 && fbset -depth 16
+TGE-LV-LCD-BL-00002	echo 100 > /sys/class/backlight/pwm-backlight.0/brightness; rtc_testapp_6 -m standby -T 5 ; BR=$(cat /sys/class/backlight/pwm-backlight.0/brightness) ; [ $BR -eq 100 ]  && echo pass || echo fail
 TGE-LV-PM-USB-0010	stop-usb.sh
 TGE-LV-SD-1302	sh -c "umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; mount -t vfat /dev/mmcblk0p1 /mnt/mmcblk0p1 && rtc_testapp_6 -T 10 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt | grep hello && umount /mnt/mmcblk0p1"
 TGE-LV-SD-1303	umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; ln -sf /dev/rtc0 /dev/rtc; mount -t vfat /dev/mmcblk0p1 /mnt/mmcblk0p1 && rtc_testapp_6 -T 10 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt
+TGE-LV-USB-HOST-1501	rtc_testapp_6 -T 5 && mount -t vfat /dev/sda1 /mnt/msc && echo "hello world" > /mnt/msc/test.txt && cat /mnt/msc/test.txt
+TGE-LV-USB-OTG-2601	modprobe ehci_hcd; sleep 10 && mount -t vfat /dev/sda1 /mnt/msc && rtc_testapp_6 -T 5 && touch /mnt/msc/test && echo "test" > /mnt/msc/test && cat /mnt/msc/test | grep "test" && umount /mnt/msc && echo $?
 TGE-LV-V4L2-0200	v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565 && rtc_testapp_6 -T 5 && v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
+TGE-LV-VPU-1030	vpu_pm_test.sh 2
 TGE-LVGPU-1005	gles.sh 4 ; vg.sh 4
+TSG-LV-GPU-FB-PM-0001	gles.sh 4 && vg.sh 4
 TGE-LV-RTC-0010	rtc_testapp_1
 TGE-LV-RTC-0011	rtc_testapp_2
 TGE-LV-RTC-0013	rtc_testapp_5  -T POLL
@@ -184,10 +206,19 @@ TGE-LV-RTC-0020	rtc_testapp_4
 TGE-LV-RTC-2000	rtc_test.sh 3
 TGE-LV-SD-1300	cat /proc/partitions | grep mmcblk
 TGE-LV-SD-CLOCK_0001	RC=0; ss=0;list=$(cat /proc/cpu/clocks | grep -i sdhc | awk '{print $3}'); for i in $list; do ss=$(expr $ss + $i); done; [ $ss -eq 0 ]  || RC=1; sh -c "dd if=/dev/mmcblk0p1 of=/dev/null bs=1024k count=100 & ";  ss=0;list=$(cat /proc/cpu/clocks | grep -i sdhc | awk \'{print $3}\'); for i in $list; do ss=$(expr $ss + $i); done; [ $ss -ne 0 ] || RC=$(expr $RC + 1); [ $RC -eq 0 ]
+TGE-LV-SDMA-0040	sdma_rw.sh
+TGE-LV-STORAGE-1004	storage_test.sh F USBH
+TGE-LV-STORAGE-1202	storage_test.sh CD /mnt/mmcblk0p1 /mnt/ata1 5 1
+TGE-LV-STORAGE-1203	storage_test.sh CD /mnt/ata1 /mnt/mmcblk0p1 5 1
+TGE-LV-STORAGE-1204	storage_test.sh CD /mnt/mmcblk0p1 /mnt/msc 5 1
+TGE-LV-STORAGE-1205	storage_test.sh CD /mnt/msc /mnt/mmcblk0p1 5 1
 TGE-LV-STORAGE-2001	storage_all.sh 1
 TGE-LV-STORAGE-2002	storage_all.sh 2
-TGE-LV-STRESS-DVFS	dvfs_mx53.sh 3
+TGE-LV-STORAGE-2123	storage_test.sh CD /mnt/ata1 /mnt/ata1 10 10
+TGE-LV-STORAGE-2133	storage_test.sh CD /mnt/msc /mnt/msc 10 10
+TGE-LV-TVIN-0040	tvin_test.sh 4
 TGE-LV-VPU-0002_720P	vpu_tvout_720P.sh 2
+TGE-LV-VPU-0002_NTSC	vpu_tvout_NTSC.sh 2
 TGE-LV-UART-0250	uart5.sh  /dev/ttymxc2
 TGE-LV-UART-0251	uart5.sh  /dev/ttymxc0
 TGE-LV-UART-0252	uart5.sh  /dev/ttymxc1
@@ -198,8 +229,92 @@ TGE-LV-UART-0500	for i in 9600 115200 460800 500000 1000000 1152000 2000000 3500
 TGE-LV-UART-0510	RT=0; for i in 9600 115200 460800 500000 1000000 1152000 2000000 3500000 4000000; do echo "Test Baud rate $i ==============" && uart_testapp_11 /dev/ttymxc1 $i || RT=$(expr $RT + 1); done; [ $RT -eq 0 ]
 TGE-LV-UART-0601	isgate=$(fgrep "uart" /proc/cpu/clocks | awk \'{print $3}\') && echo $isgate | grep 0 && (cat /dev/ttymxc1 &) ; sleep 2 && isgate=$( fgrep "uart" /proc/cpu/clocks | awk \'{print $3}\') && echo $isgate | grep 1 && killall cat ; sleep 2 && isgate=$(fgrep "uart" /proc/cpu/clocks | awk \'{print $3}\') && echo $isgate | grep 0
 TGE-LV-UART-0700	uart_testapp_10 /dev/ttymxc1 115200 && uart_testapp_10 /dev/ttymxc2 115200
-TGE-LV-USB-HOST-1501	rtc_testapp_6 -T 5 && mount -t vfat /dev/sda1 /mnt/msc && echo "hello world" > /mnt/msc/test.txt && cat /mnt/msc/test.txt
-TGE-LV-USB-OTG-2601	modprobe ehci_hcd; sleep 10 && mount -t vfat /dev/sda1 /mnt/msc && rtc_testapp_6 -T 5 && touch /mnt/msc/test && echo "test" > /mnt/msc/test && cat /mnt/msc/test | grep "test" && umount /mnt/msc && echo $?
+TGE-LV-V4L2-0010	v4l_capture_testapp -T 10
+TGE-LV-V4L2-0011	v4l_capture_testapp -T 300
+TGE-LV-V4L2-0012	v4l_capture_testapp -H 320 -W 240
+TGE-LV-V4L2-0013	v4l_capture_testapp -H 160 -W 120
+TGE-LV-V4L2-0015	v4l_capture_testapp -H 100 -W 100
+TGE-LV-V4L2-0016	v4l_capture_testapp -H 10 -W 200
+TGE-LV-V4L2-0017	v4l_capture_testapp -H 220 -W 176
+TGE-LV-V4L2-0018	v4l_capture_testapp -S
+TGE-LV-V4L2-0019	v4l_capture_testapp -B 0,0,100,100 -v 1
+TGE-LV-V4L2-0020	v4l_capture_testapp -B 0,0,320,240 -v 1
+TGE-LV-V4L2-0021	v4l_capture_testapp -B 100,100,320,240 -v 1
+TGE-LV-V4L2-0022	v4l_capture_testapp -B 10,10,320,240 -v 1
+TGE-LV-V4L2-0023	v4l_capture_testapp -B 50,50,100,100 -v 1
+TGE-LV-V4L2-0024	v4l_capture_testapp -B 0,0,220,176 -v 1
+TGE-LV-V4L2-0025	v4l_capture_testapp -B 100,100,100,100 -v 1
+TGE-LV-V4L2-0026	v4l_capture_testapp -B 0,200,100,100 -v 1
+TGE-LV-V4L2-0028	v4l_capture_testapp -B 320,240,100,100 -v 1
+TGE-LV-V4L2-0029	v4l_capture_testapp -B 0,0,640,480 -v 1
+TGE-LV-V4L2-0030	v4l_capture_testapp -R 1 -C 1
+TGE-LV-V4L2-0030_VF	v4l_capture_testapp -R 10
+TGE-LV-V4L2-0031	v4l_capture_testapp -R 2 -C 1
+TGE-LV-V4L2-0032	v4l_capture_testapp -R 3 -C 1
+TGE-LV-V4L2-0033	v4l_capture_testapp -R 4 -C 1
+TGE-LV-V4L2-0034	v4l_capture_testapp -R 5 -C 1
+TGE-LV-V4L2-0035	v4l_capture_testapp -R 6 -C 1
+TGE-LV-V4L2-0036	v4l_capture_testapp -R 7 -C 1
+TGE-LV-V4L2-0038	v4l_capture_testapp -Y2
+TGE-LV-V4L2-0039	v4l_capture_testapp -Y1
+TGE-LV-V4L2-0040	v4l_capture_testapp -C 2 -H 100  -W 200
+TGE-LV-V4L2-0041	v4l_capture_testapp -C2 -R 9
+TGE-LV-V4L2-0042	v4l_capture_testapp -C2 -R 10
+TGE-LV-V4L2-0043	v4l_capture_testapp -C2 -R 11
+TGE-LV-V4L2-0044	v4l_capture_testapp -C2 -R 12
+TGE-LV-V4L2-0045	v4l_capture_testapp -C2 -R 13
+TGE-LV-V4L2-0046	v4l_capture_testapp -C2 -R 14
+TGE-LV-V4L2-0047	v4l_capture_testapp -C2 -R 15
+TGE-LV-V4L2-0048	v4l_capture_testapp -C2 -R 16
+TGE-LV-V4L2-0050	v4l_capture_testapp -C 3 -O BGR24 -o ./output
+TGE-LV-V4L2-0051	v4l_capture_testapp -C 3 -O BGR32 -o ./output
+TGE-LV-V4L2-0052	v4l_capture_testapp -C 3 -O RGB565 -o ./output
+TGE-LV-V4L2-0053	v4l_capture_testapp -C 3 -O RGB24 -o ./output
+TGE-LV-V4L2-0054	v4l_capture_testapp -C 3 -O RGB32 -o ./output
+TGE-LV-V4L2-0055	v4l_capture_testapp -C 3 -O YUV422P -o ./output && cp output_YUV422P /mnt/nfs/temp/ipu_YUV422P_240_190.bin && rm -f output_YUV422P
+TGE-LV-V4L2-0056	v4l_capture_testapp -C 3 -O YUV420 -o ./output && cp output_YUV420 /mnt/nfs/temp/ipu_YUV420_240_190.bin && rm -rf output_YUV420
+TGE-LV-V4L2-0058	v4l_capture_testapp -C 3 -H 100  -W 100
+TGE-LV-V4L2-0059	v4l_capture_testapp -C 3 -H 480  -W 640
+TGE-LV-V4L2-0064	v4l_capture_testapp -C 2 -H 480  -W 640 -T 20
+TGE-LV-V4L2-0065	v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -X
+TGE-LV-V4L2-0066	v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -M 0 -r 15  -X && v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -M 1 -r 15  -X && v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -M 2 -r 15  -X && v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -M 3 -r 15  -X && v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -M 4 -r 15  -X && v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -M 5 -r 15  -X && v4l_capture_testapp -C 2 -H 720  -W 480 -T 100 -M 4 -r 15 -X
+TGE-LV-V4L2-0067	v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 0 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 1 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 2 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 3 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 4 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 5 -r 30 && v4l_capture_testapp -C 2 -H 720 -W 480 -T 100 -X -M 4 -r 30
+TGE-LV-V4L2-0090	v4l_capture_testapp -S -R 10
+TGE-LV-V4L2-0091	v4l_capture_testapp -S -R 11
+TGE-LV-V4L2-0092	v4l_capture_testapp -S -R 12
+TGE-LV-V4L2-0093	v4l_capture_testapp -S -R 13
+TGE-LV-V4L2-0094	v4l_capture_testapp -S -R 14
+TGE-LV-V4L2-0095	v4l_capture_testapp -S -R 15
+TGE-LV-V4L2-0096	v4l_capture_testapp -S -R 16
+TGE-LV-V4L2-0100	v4l_capture_testapp -R 9 -N 5 -X
+TGE-LV-V4L2-0101	v4l_capture_testapp -R 11 -N 5 -X
+TGE-LV-V4L2-0102	v4l_capture_testapp -R 12 -N 5 -X
+TGE-LV-V4L2-0103	v4l_capture_testapp -R 13 -N 5 -X
+TGE-LV-V4L2-0104	v4l_capture_testapp -R 14 -N 5 -X
+TGE-LV-V4L2-0105	v4l_capture_testapp -R 15 -N 5 -X
+TGE-LV-V4L2-0106	v4l_capture_testapp -R 16 -N 5 -X
+TGE-LV-V4L2-0107	v4l_capture_testapp -R 11 -N  -T 5
+TGE-LV-V4L2-0108	v4l_capture_testapp -R 10 -N 5 -X
+TGE-LV-V4L2-0120	v4l_capture_testapp -C 3 -H 240  -W 320
+TGE-LV-V4L2-0121	v4l_capture_testapp -C 3 -H 240  -W 320 -K 1
+TGE-LV-V4L2-0122	v4l_capture_testapp -C 3 -H 240  -W 320 -s CSI_IC_MEM
+TGE-LV-V4L2-0123	v4l_capture_testapp -C 3 -H 240  -W 320 -s CSI_MEM
+TGE-LV-V4L2-0124	v4l_capture_testapp -C 3 -H 480  -W 640 -O YUV420 -o ./test -s CSI_MEM && rm -f test_YUV420
+TGE-LV-V4L2-0125	v4l_capture_testapp -C 2 -H 240  -W 320 -s CSI_IC_MEM
+TGE-LV-V4L2-0130	v4l2_basic_test.sh
+TGE-LV-V4L2-0131	v4l2_still_test.sh
+TGE-LV-V4L2-0136	mxc_v4l2_overlay.sh 1
+TGE-LV-V4L2-0137	mxc_v4l2_overlay.sh 2
+TGE-LV-V4L2-0138	mxc_v4l2_overlay.sh 3
+TGE-LV-V4L2-0139	mxc_v4l2_overlay.sh 4
+TGE-LV-V4L2-0140	mxc_v4l2_overlay.sh 5
+TGE-LV-V4L2-0141	mxc_v4l2_overlay.sh 6
+TGE-LV-V4L2-0152	echo 1 > /sys/class/graphics/fb0/blank ; echo 1 > /sys/class/graphics/fb2/blank ; sleep 5 && v4l_capture_testapp -C 3 -O RGB565 -o ./output && echo 0 > /sys/class/graphics/fb0/blank && echo 0 > /sys/class/graphics/fb2/blank
+TGE-LV-V4L2-0158	v4l_capture_testapp -C 3 -O YUYV -o ./output && cp output_YUYV /mnt/nfs/temp/ipu_YUYV.bin && rm -rf output_YUYV
+TGE-LV-V4L2-0159	v4l_capture_testapp -C 3 -O UYVY -o ./output && cp output_UYVY /mnt/nfs/temp/ipu_UYVY.bin && rm -rf output_UYVY
+TGE-LV-V4L2-0165	v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -X -K 1
+TGE-LV-V4L2-0171	v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24
+TGE-LV-V4l2-1001W	/unit_tests/mxc_v4l2_still.out -f YUYV -w 640 -h 480 && cp -f still.yuv /mnt/nfs/temp/still_YUYV_640_480.yuv
 TGE-LV-IPU_DEV-0010	ipu_test.sh 1
 TGE-LV-IPU_DEV-0020	ipu_test.sh 2
 TGE-LV-IPU_DEV-0021	ipu_dev_test -m 0x21 -f 50 -i 352,288,I420 -o 352,288,RGBP,0 -s 1,0,0,0 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv
@@ -210,6 +325,10 @@ TGE-LV-IPU_DEV-0041	ipu_dev_test -m 0x22 -f 50 -i 352,288,I420 -o 352,288,RGBP,0
 TGE-LV-IPU_DEV-0051	ipu_dev_test -m 0x23 -f 50 -E 1 -i 352,288,I420 -o 352,288,RGBP,0 -s 1,0,0,0 -O 352,288,RGBP,0 -S 1,2,0,288 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv
 TGE-LV-IPU_DEV-0060	ipu_test.sh 6
 TGE-LV-IPU_DEV-0061	ipu_dev_test -m 0x21 -f 50 -i 352,288,I420 -o 352,288,RGBP,1 -s 1,0,0,0 -c 160,120 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv
+TGE-LV-V4L2-0132	mxc_v4l2_output.sh 1
+TGE-LV-V4L2-0133	mxc_v4l2_output.sh 2
+TGE-LV-V4L2-0134	mxc_v4l2_output.sh 3
+TGE-LV-V4L2-0135	mxc_v4l2_output.sh 4
 TGE-LV-V4L2-0070	v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
 TGE-LV-V4L2-0071	v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24
 TGE-LV-V4L2-0072	v4l_output_testapp  -C 2 -F $LTPROOT/testcases/bin/yuv420
@@ -254,5 +373,3 @@ TGE-LV-VPU-10040	vpu_enc_test.sh 5
 TGE-LV-VPU-10210	vpu_multi_enc_test.sh 1
 TGE-LV-VPU-10220	vpu_multi_enc_test.sh 2
 TGE-LV-VPU-10221	vpu_multi_enc_test.sh 3
-TGE-LV-VPU-1030	vpu_pm_test.sh 2
-TGE-LV-WIFI-0061	LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ath6kl; sleep 5;ifconfig wlan0 up && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && ifconfig wlan0 down && RT=0 ; modprobe -r ath6kl; echo $LOOP; done ; [ $RT -eq 0 ]
