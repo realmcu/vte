@@ -19,6 +19,11 @@ echo -e "\033[9;0]" > /dev/fb0
 echo 0 > /sys/class/graphics/fb0/blank
 
 
+cleanup()
+{
+  auto_prepare.sh -R V4L
+}
+
 # V4L2 Output Tests
 
 TSTCMD="/unit_tests/mxc_v4l2_output.out"
@@ -74,6 +79,9 @@ fi
 
 #V4L2 Capture Tests
 TSTCMD="/unit_tests/mxc_v4l2_overlay.out"
+auto_prepare.sh -I V4L
+trap "cleanup" 0
+
 echo "V4L2 Capture Tests"
 ${TSTCMD} -iw 640 -ih 480 -ow 240 -oh 320 -r 4 -fr 30 -fg -t 10
 if [ $? -eq 0 ];then
