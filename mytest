@@ -114,10 +114,10 @@ else
 #1 fisrt run reset counter
 	rm -f ${TEST_PATH}/temp_cnt
 fi
-${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.html  -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt -f temp_test -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$(date +"%y%m%d")
+${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.html -t 12h -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt -f temp_test -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$(date +"%y%m%d")
 else
 rm -f ${LTPROOT}/output/${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$(date +"%y%m%d")
-${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.html -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$(date +"%y%m%d")
+${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.html -t 12h -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$(date +"%y%m%d")
 #${TEST_PATH}/runalltests.sh -v -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt
 fi
 rm -f ${TEST_PATH}/temp_cnt
