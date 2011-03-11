@@ -130,7 +130,7 @@ TGE-LV-ESLCD-0710	fbset -depth 32 && lcd_testapp -T 2 -B /dev/fb0 -D 32 -X 10
 TGE-LV-ESLCD-0800	mxcfb_test -T 1 -D /dev/fb0 -d /dev/fb2
 TGE-LV-ESLCD-0810	mxcfb_test -T 2 -D /dev/fb0 -d /dev/fb2
 TGE-LV-ESLCD-0820	mxcfb_test -T 3 -D /dev/fb0 -d /dev/fb2
-TGE-LV-ESLCD-0830	RC=0;LOOP=200; while [ $LOOP -gt 0 ]; do mxcfb_test -T 4 -D /dev/fb0 -d /dev/fb2 || RC=1; LOOP=$(expr $LOOP - 1); done; [ $RC -eq 0 ]
+TGE-LV-ESLCD-0830	RC=0;LOOP=20; while [ $LOOP -gt 0 ]; do mxcfb_test -T 4 -D /dev/fb0 -d /dev/fb2 || RC=1; LOOP=$(expr $LOOP - 1); done; [ $RC -eq 0 ]
 TGE-LV-ESLCD-0840	mxcfb_test -T 5 -D /dev/fb0 -d /dev/fb2
 TGE-LV-FB-0010	fbset -depth 16;  lcd_testapp -T 1 -D 16 -B /dev/fb0 -X 10
 TGE-LV-FB-0011	fbset -depth 24;  lcd_testapp -T 1 -D 24 -B /dev/fb0 -X 10; fbset -depth 16
