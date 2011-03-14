@@ -55,7 +55,7 @@ if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt 
 					#sh -c "sed -i '1,1s/^/#/g' ${TEST_PATH}/runtest/temp_test"
 				else
 		#4 skip formal fail
-		      sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test  >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_$(date +"%y%m%d").failed
+		      sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test  >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 					line=$(expr $ll + 1)
 					echo $line > ${TEST_PATH}/temp_cnt
 					sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test"
@@ -71,7 +71,7 @@ if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt 
 						echo 1 > ${TEST_PATH}/temp_cnt
 					else
 				#5 has former fail case
-		      	sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_$(date +"%y%m%d").failed
+		      	sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 						line=$(expr $ll + 1)
 						echo $line > ${TEST_PATH}/temp_cnt
 						sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test"
@@ -93,16 +93,16 @@ if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt 
 	#3 has last success case 
 				if [ $ll -gt $line ]; then
 			#4 former fail cases is after current success case
-		      sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test  >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_$(date +"%y%m%d").failed
+		      sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test  >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 					line=$(expr $ll + 1)
 				else
 			#4 former fail cases is before the last success cases 
-		      sed -n "${line}p" ${TEST_PATH}/runtest/temp_test >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_$(date +"%y%m%d").failed
+		      sed -n "${line}p" ${TEST_PATH}/runtest/temp_test >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 					line=$(expr $line + 1)
 				fi
 			else
 	#3 has not last success cases
-		    sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test  >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_$(date +"%y%m%d").failed
+		    sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test  >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 				line=$(expr $ll + 1)
 			fi
 			echo $line > ${TEST_PATH}/temp_cnt
@@ -114,10 +114,10 @@ else
 #1 fisrt run reset counter
 	rm -f ${TEST_PATH}/temp_cnt
 fi
-${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.html -t 12h -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt -f temp_test -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$(date +"%y%m%d")
+${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.html -t 12h -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt -f temp_test -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
 else
-rm -f ${LTPROOT}/output/${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$(date +"%y%m%d")
-${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.html -t 12h -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$(date +"%y%m%d")
+rm -f ${LTPROOT}/output/${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
+${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.html -t 12h -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
 #${TEST_PATH}/runalltests.sh -v -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt
 fi
 rm -f ${TEST_PATH}/temp_cnt
