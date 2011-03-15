@@ -202,12 +202,15 @@ run_single_test_list()
 		 mount /dev/$i $mount_point || RC=$(echo $RC m$i)
      need_umount=1
 		fi
-	 	 bonnie\+\+ -d $mount_point -u 0:0 -s 96 -r 48 || RC=$(echo $RC b$i)  
-	   dt of=$mount_point/test_file bs=4k limit=96m passes=10 || RC=$(echo $RC d$i)
+		for j in $mount_point
+		do
+	 	 bonnie\+\+ -d $j -u 0:0 -s 96 -r 48 || RC=$(echo $RC b$i)  
+	   dt of=$j/test_file bs=4k limit=96m passes=10 || RC=$(echo $RC d$i)
 		 if [ $need_umount -eq 1  ];then
       umount $mount_point || RC=$(echo $RC u$i)
 			rm -rf $mount_point
 		 fi
+		done
 	 done
 	 if [ "$RC" != "0"  ];then
 	 echo $RC
@@ -235,8 +238,11 @@ run_multi_test_list()
      mount_point=$(mktemp -d -p /tmp/storage)
 		 mount /dev/$i $mount_point || RC=$(echo $RC $i)
 		fi
-	 	 sh -c "bonnie\+\+ -d $mount_point -u 0:0 -s 96 -r 48 || RC=$(echo $RC $i)" &  
-	   sh -c "dt of=$mount_point/test_file bs=4k limit=96m passes=10 || RC=$(echo $RC $i)" &
+		for j in $mount_point
+		do
+	 	 sh -c "bonnie\+\+ -d $j -u 0:0 -s 96 -r 48 || RC=$(echo $RC $i)" &  
+	   sh -c "dt of=$j/test_file_$j bs=4k limit=96m passes=10 || RC=$(echo $RC $i)" &
+		 done
 	 done
 	 echo "wait till all process finished"
 	 wait
