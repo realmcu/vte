@@ -764,9 +764,12 @@ prepare_sd()
 		echo "n" >> format_command_sd;
 		echo "p" >> format_command_sd;
 		echo "1" >> format_command_sd;
-		total_size=`fdisk -l /dev/mmcblk0 | sed -n '/Disk \/dev\/mmcblk0/p'| awk '{ print $5 }'`
-		#reserve 16M for uboot and uboot config
-		first_par_start=`expr 16000000 \* $number_cyclinders / $total_size`
+        total_size=`fdisk -l /dev/mmcblk0 | sed -n '/Disk \/dev\/mmcblk0/p'| awk '{ print $5 }'`
+        #shrink to MB for the limitation in board shell script
+        #expr 16000000 '*' 122048 = -1442119680 in board shell script, it's ok on x86
+        total_size=`expr $total_size / 1000000`
+		#reserve 16M for uboot and uboot config, 16 is MB
+		first_par_start=`expr 16 \* $number_cyclinders / $total_size`
 		echo "$first_par_start" >> format_command_sd;
 		echo "$middle_cyclinders" >> format_command_sd;
 
