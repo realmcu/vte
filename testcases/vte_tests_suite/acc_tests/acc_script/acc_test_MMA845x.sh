@@ -179,6 +179,7 @@ acc_test()
     RC=0
   fi
 	kill -9 $pth
+	wait
 	rm -f $acctmp
  fi
  return $RC
