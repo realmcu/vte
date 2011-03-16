@@ -169,7 +169,7 @@ acc_test()
  if [ -e $device ]; then 
   echo "test start"
 	acctmp=$(mktemp)
-  sh -c "evtest $device > $acctmp" &
+  evtest $device > $acctmp &
   pth=$!
 	echo "now shake the board!! for 30seconds"
 	sleep 30
