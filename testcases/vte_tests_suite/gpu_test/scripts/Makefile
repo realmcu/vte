@@ -14,12 +14,10 @@ SRC-$(CONFIG_VTE_IMX5)  =  mx5x_gpu_test.sh
 SRC-$(CONFIG_VTE_IMX35) =  mx35_gpu_test.sh
 
 all:
-	-rm -rf $(TARGET)
-	-ln -f $(SRC-y) $(TARGET)
 
 install:
 	ln -f $(TARGETS) $(BIN)
+	ln -f $(SRC-y) $(BIN)/$(TARGET)
 
 clean:
-	-rm -rf $(TARGET)
 
