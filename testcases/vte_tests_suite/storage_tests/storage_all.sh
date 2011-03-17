@@ -113,13 +113,13 @@ do
     if [ $(echo $p_list | wc -w) -eq 0 ]; then
 #no partition then partition it to 1 partition 
        p_node /dev/$j || break
-			 target_list=${j}1
+			 target_list=$target_list" "${j}1
 		fi
 	done
 done
 
 
-on_chip_controller_device_list="mmcblk.*[0-9]"
+#on_chip_controller_device_list="mmcblk.*[0-9]"
 for i in $on_chip_controller_device_list
 do
   #1. find devices node
@@ -156,7 +156,7 @@ do
     if [ $(echo $p_list | wc -w) -eq 0 ]; then
 #no partition then partition it to 1 partition 
        p_node /dev/$j || break
-			 target_list=${j}1
+			 target_list=$target_list" "${j}p1
 		fi
 	done
 done
