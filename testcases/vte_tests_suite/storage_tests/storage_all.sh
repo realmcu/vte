@@ -210,6 +210,7 @@ run_single_test_list()
       umount $mount_point || RC=$(echo $RC u$i)
 			rm -rf $mount_point
 		 fi
+		 break
 		done
 	 done
 	 if [ "$RC" != "0"  ];then
@@ -242,6 +243,7 @@ run_multi_test_list()
 		do
 	 	 sh -c "bonnie\+\+ -d $j -u 0:0 -s 96 -r 48 || RC=$(echo $RC $i)" &  
 	   sh -c "dt of=$j/test_file_$j bs=4k limit=96m passes=10 || RC=$(echo $RC $i)" &
+	   break
 		 done
 	 done
 	 echo "wait till all process finished"
