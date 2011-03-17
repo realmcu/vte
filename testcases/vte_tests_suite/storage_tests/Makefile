@@ -54,7 +54,7 @@ TARGET += usb_ptp_test.sh Agl.sh
 TARGET += modules_verify.sh
 
 #all block storage test
-TARGET += storage_all.sh
+TARGET += storage_all.sh storage_storm.sh
 
 all: $(TARGET)
 	@echo "***********************************************"
