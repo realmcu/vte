@@ -24,7 +24,7 @@
 #       use rtstring=`match_alsa_dev.sh` to get
 #
 
-if [ "$1" == "-h" ]; then
+if [ "$1" = "-h" ]; then
     cat <<-EOF
 
         Use this command to test ALSA default device
@@ -34,7 +34,7 @@ EOF
     exit 255
 fi
 
-if [ "$1" == "ADC" ]; then
+if [ "$1" = "ADC" ]; then
     dfl_alsa_dev=`arecord -l |grep -i imx3stack|awk '{ print $2 }'|sed 's/://'`
 else
     dfl_alsa_dev=`aplay -l |grep -i imx3stack|awk '{ print $2 }'|sed 's/://'`

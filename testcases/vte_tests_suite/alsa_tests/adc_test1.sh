@@ -1,4 +1,5 @@
-#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#!/bin/sh
+#Copyright (C) 2008,2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -6,7 +7,6 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
 ##############################################################################
 #
 # Revision History:
@@ -101,6 +101,11 @@ setup()
         rm -f audio.wav
     fi
 
+    detect_alsa_dev.sh ADC
+    dfl_alsa_dev=$?
+    #parameter of HW playback and plughw record
+    hw="-Dhw:${dfl_alsa_dev},0"
+    plughw="-Dplughw:${dfl_alsa_dev},0"
 }
 
 # Function:     cleanup
@@ -130,7 +135,8 @@ adc_record()
     tst_resm TINFO "Test #1: record audio stream with format $SAM_FMT, channel $CHANNEL, \
  sample rate $SAM_FREQ, $DURATION seconds, please speak to the microphone" 
     args=`echo $@|sed 's/-A//g'`
-    arecord $args audio.wav 2> record.info || RC=$?
+
+    arecord $plughw $args audio.wav 2> record.info || RC=$?
     if [ $RC -ne 0 ]
     then
         tst_res TFAIL record.info "Test #1: record audio stream failed"
@@ -200,7 +206,7 @@ adc_record()
     #play the recorded audio
     tst_resm TINFO "Test #1: play the audio stream, please check the HEADPHONE,\
  hear if there is voice."
-    aplay audio.wav 2> play.info|| RC=$?
+    aplay $plughw audio.wav 2> play.info|| RC=$?
     if [ $RC -ne 0 ]
     then
         tst_res TFAIL play.info "Test #1: play error, please check the stream file"

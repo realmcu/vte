@@ -1,5 +1,6 @@
 #!/bin/sh
-#Copyright (C) 2008,2010 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2008,2010,2011 Freescale Semiconductor, Inc. 
+#All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -18,6 +19,7 @@
 # Spring                28/11/2008       n/a        Modify COPYRIGHT header
 # Spring                06/07/2010       n/a        Add -D hw option
 # Spring                22/12/2010       n/a        Use temp direcotry
+# Spring                17/03/2011       n/a        Match right ALSA device
 #############################################################################
 # Portability:  ARM sh 
 #
@@ -85,6 +87,11 @@ setup()
         return $RC
     fi
 
+    detect_alsa_dev.sh
+    dfl_alsa_dev=$?
+    #parameter of HW playback and plughw playback
+    hw_play="-Dhw:${dfl_alsa_dev},0"
+    plughw_play="-Dplughw:${dfl_alsa_dev},0"
 }
 
 # Function:     cleanup
@@ -119,8 +126,6 @@ dac_play()
 
     tst_resm TINFO "Test #1: play the audio stream, please check the HEADPHONE,\
  hear if there is voice."
-    #aplay -D hw:0,0 $1 || RC=$?
-    #args=`echo $@|sed 's/-A//g'`
     basefn=$(basename $FILE)
     tmpdir=`mktemp -d -p /tmp`
     cp -f $FILE $tmpdir || RC=$?
@@ -130,14 +135,14 @@ dac_play()
     fi
 
     if [ -n "$HW" ]; then
-        aplay -Dhw:0,0 -N -M $tmpdir/$basefn || RC=$?
+        aplay ${hw_play} -N -M $tmpdir/$basefn || RC=$?
         if [ $RC -ne 0 ]; then
             tst_resm TFAIL "Test #1: play error with HW, please check"
             return $RC
         fi
     fi
 
-    aplay -N -M $tmpdir/$basefn || RC=$?
+    aplay $plughw_play -N -M $tmpdir/$basefn || RC=$?
     if [ $RC -ne 0 ]; then
         tst_resm TFAIL "Test #2: play error, please check"
         return $RC

@@ -1,5 +1,5 @@
 #!/bin/sh
-#Copyright (C) 2005-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2008-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # The code contained herein is licensed under the GNU General Public
 # License. You may obtain a copy of the GNU General Public License
@@ -21,6 +21,7 @@
 # Spring                 22/09/2009       n/a      Optimize code
 # Spring                 11/12/2009       n/a      Add support to other case
 # Spring                 24/03/2010       n/a      Add support to mx53
+# Spring                 17/03/2011       n/a      Add default device match
 #############################################################################
 # Portability:   ARM sh 
 # File Name:     dac_vol_adj.sh   
@@ -82,6 +83,11 @@ setup()
         return $RC
     fi
 
+    detect_alsa_dev.sh
+    dfl_alsa_dev=$?
+    #parameter of HW playback and plughw playback
+    hw_play="-Dhw:${dfl_alsa_dev},0"
+    plughw_play="-Dplughw:${dfl_alsa_dev},0"
 }
 
 # Function:     cleanup
@@ -98,7 +104,7 @@ cleanup()
     ctl_id=`amixer_ctl_id`
     max_vol || MAX=$?
     MAX=`expr $MAX / 3 \* 2`
-    amixer -c 0 cset "$ctl_id" $MAX 
+    amixer -c $dfl_alsa_dev cset "$ctl_id" $MAX 
 
     echo "clean up environment end"
     return $RC
@@ -145,21 +151,18 @@ max_vol()
     MAX_MX31=99
     MAX_SGTL5K=127
     MAX_MX37=255
-		MAX_MX50=127
 
     if [ $platfm -eq 31 ]
     then
         return $MAX_MX31
     elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] \
-        || [ $platfm -eq 41 ] || [ $platfm -eq 53 ]  #sgtl5k
+        || [ $platfm -eq 41 ] || [ $platfm -eq 53 ] \
+        || [ $platfm -eq 50 ] #sgtl5k
     then
         return $MAX_SGTL5K
     elif [ $platfm -eq 37 ]
     then
         return $MAX_MX37
-		elif [ $platfm -eq 50 ]
-		then
-			  return $MAX_MX50
     fi
 
     return 0
@@ -199,9 +202,9 @@ adj_vol()
             vol=`expr $DECREASE % 2 \* -2 + 1` 
             vol=`expr $vol \* $MAX \* $i / $STEP + $DECREASE % 2 \* $MAX`
             ctl_id=`amixer_ctl_id`
-            amixer -c 0 cset "$ctl_id" $vol
+            amixer -c $dfl_alsa_dev cset "$ctl_id" $vol
 
-            aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
+            aplay -M -N $hw_play $1 2>/dev/null || RC=$?
             if [ $RC -ne 0 ]
             then
                 tst_resm TFAIL "Test #1: play error, please check the stream file"
@@ -253,23 +256,23 @@ left_right_channel()
     fi
     vol=`expr $MAX / 3 \* 2`
     ctl_id=`amixer_ctl_id`
-#for mx50 set the palyback voulme as well
+        #for mx50 set the palyback voulme as well
 		if [ $platfm -eq 50 ]; then
-		amixer -c 0 cset "name='Playback Volume'" 190,0
+		amixer -c $dfl_alsa_dev cset "name='Playback Volume'" 190,0
 		fi
-    amixer -c 0 cset "$ctl_id" $vol,0
-    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
+    amixer -c $dfl_alsa_dev cset "$ctl_id" $vol,0
+    aplay -M -N $hw_play $1 2>/dev/null || RC=$?
     if [ $RC -ne 0 ]
     then
         tst_resm TFAIL "Test #2: play error, please check the stream file"
         return $RC
     fi
-#for mx50 set the palyback voulme as well
+        #for mx50 set the palyback voulme as well
 		if [ $platfm -eq 50 ]; then
-		amixer -c 0 cset "name='Playback Volume'" 0,190
+		amixer -c $dfl_alsa_dev cset "name='Playback Volume'" 0,190
     fi
-		amixer -c 0 cset "$ctl_id" 0,$vol
-    aplay -M -N -D hw:0,0 $1 2>/dev/null || RC=$?
+		amixer -c $dfl_alsa_dev cset "$ctl_id" 0,$vol
+    aplay -M -N $hw_play $1 2>/dev/null || RC=$?
     if [ $RC -ne 0 ]
     then
         tst_resm TFAIL "Test #2: play error, please check the stream file"
