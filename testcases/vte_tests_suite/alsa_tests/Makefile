@@ -1,4 +1,4 @@
-#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2008,2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -19,6 +19,7 @@
 #------------------  ------------    ----------  ----------------------
 # Z.Spring            07/24/2008        N/A         Initial version
 # Z.Spring            11/24/2008        N/A       Add platform identify script
+# Spring              03/21/2011        N/A       Add device detection script
 #
 ###############################################################################
 #Portability: Indicate if this module is portable to other compilers 
@@ -30,6 +31,7 @@
 SUBDIRS=
 TARGETS=dac_test1.sh adc_test1.sh dac_vol_adj.sh alsa_ctl.sh dac_channel_swap.sh
 TARGETS+=speaker_test1.sh speaker_switch_headset.sh
+TARGETS+=detect_alsa_dev.sh
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
