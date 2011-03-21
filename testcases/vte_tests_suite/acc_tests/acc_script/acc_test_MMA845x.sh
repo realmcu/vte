@@ -280,7 +280,9 @@ while getopts d:m: OPTION
 			;;
     esac
 done
-setup || exit $RC 
+setup || exit $RC
+if [ ! $mode = "MODE_STANDBY" ];then
 acc_test || exit $RC
+fi
 echo "TEST PASS"
 
