@@ -1,5 +1,5 @@
 #!/bin/sh
-#Copyright (C) 2009-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2009-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -21,6 +21,7 @@
 #------------------------   ------------    ----------  -----------------------
 #Hake Huang/-----             20090512     N/A          Initial version
 #Spring Zhang                 20100706     N/A          Use common module installer
+#Spring Zhang                 20110321     N/A          use fifo to end tiger
 # 
 ################################################################################
 
@@ -35,21 +36,21 @@
 #               - non zero on failure. return value from commands ($RC)
 setup()
 {
-#TODO Total test case
-export TST_TOTAL=4
+    #TODO Total test case
+    export TST_TOTAL=4
 
-export TCID="setup"
-export TST_COUNT=0
-RC=0
+    export TCID="setup"
+    export TST_COUNT=0
+    RC=0
 
-trap "cleanup" 0
+    trap "cleanup" 0
 
-#TODO add setup scripts
-#gpu-install install
-#gpu_maj=`grep "gsl_kmod" /proc/devices | cut -b1,2,3`
-#mknod /dev/gsl_kmod c "$gpu_maj" 0
-modprobe gpu
-return $RC
+    #TODO add setup scripts
+    #gpu-install install
+    #gpu_maj=`grep "gsl_kmod" /proc/devices | cut -b1,2,3`
+    #mknod /dev/gsl_kmod c "$gpu_maj" 0
+    modprobe gpu
+    return $RC
 }
 
 # Function:     cleanup
@@ -60,12 +61,12 @@ return $RC
 #               - non zero on failure. return value from commands ($RC)
 cleanup()
 {
-RC=0
+    RC=0
 
-#TODO add cleanup code here
-#modprobe gpu -r
-#rm -f /dev/gsl_kmod
-return $RC
+    #TODO add cleanup code here
+    #modprobe gpu -r
+    #rm -f /dev/gsl_kmod
+    return $RC
 }
 
 
@@ -74,21 +75,20 @@ return $RC
 #  
 test_case_01()
 {
-#TODO give TCID 
-TCID="GSL_test"
-#TODO give TST_COUNT
-TST_COUNT=1
-RC=0
+    #TODO give TCID 
+    TCID="GSL_test"
+    #TODO give TST_COUNT
+    TST_COUNT=1
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+    #TODO add function test scripte here
 
-gsl_sanity_app || RC=1
+    gsl_sanity_app || RC=1
 
-return $RC
-
+    return $RC
 }
 
 # Function:     test_case_02
@@ -96,24 +96,28 @@ return $RC
 #  
 test_case_02()
 {
-#TODO give TCID 
-TCID="openvg_test"
-#TODO give TST_COUNT
-TST_COUNT=2
-RC=0
+    #TODO give TCID 
+    TCID="openvg_test"
+    #TODO give TST_COUNT
+    TST_COUNT=2
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+    #TODO add function test scripte here
 
-tiger &
-td=$!
-sleep 10
-kill -9 $td
+    tmpdir=$(mktemp -d)
+    mkdir $tmpdir
+    mkfifo $tmpdir/tiger_fifo
+    sh -c "cat $tmpdir/tiger_fifo | tiger" &
+    sleep 20
+    echo "" > $tmpdir/tiger_fifo
 
-echo "TEST PASS"
-return $RC
+    rm -rf $tmpdir
+
+    echo "TEST PASS"
+    return $RC
 }
 
 # Function:     test_case_03
@@ -121,27 +125,26 @@ return $RC
 #  
 test_case_03()
 {
-#TODO give TCID 
-TCID="gles_test"
-#TODO give TST_COUNT
-TST_COUNT=3
-RC=0
+    #TODO give TCID 
+    TCID="gles_test"
+    #TODO give TST_COUNT
+    TST_COUNT=3
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-simple_draw -f 100 && torusknot 100 
+    #TODO add function test scripte here
+    simple_draw -f 100 && torusknot 100 
 
-if [ $? -eq 0 ]; then
-echo "TEST PASS"
-else
-RC=1
-echo "TEST FAIL"
-fi
+    if [ $? -eq 0 ]; then
+    echo "TEST PASS"
+    else
+    RC=1
+    echo "TEST FAIL"
+    fi
 
-return $RC
-
+    return $RC
 }
 
 # Function:     test_case_04
@@ -149,29 +152,29 @@ return $RC
 #  
 test_case_04()
 {
-#TODO give TCID 
-TCID="stress_gles_test"
-#TODO give TST_COUNT
-TST_COUNT=4
-RC=0
+    #TODO give TCID 
+    TCID="stress_gles_test"
+    #TODO give TST_COUNT
+    TST_COUNT=4
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-echo "######################"
-echo "run this case overnight and check program still ok"
+    #TODO add function test scripte here
+    echo "######################"
+    echo "run this case overnight and check program still ok"
 
-es11ex
+    es11ex
 
-if [ $? -eq 0 ]; then
-echo "TEST PASS"
-else
-RC=1
-echo "TEST FAIL"
-fi
-return $RC
+    if [ $? -eq 0 ]; then
+    echo "TEST PASS"
+    else
+    RC=1
+    echo "TEST FAIL"
+    fi
 
+    return $RC
 }
 
 # Function:     test_case_05
@@ -179,59 +182,59 @@ return $RC
 #  
 test_case_05()
 {
-#TODO give TCID 
-TCID="eles_pm_test"
-#TODO give TST_COUNT
-TST_COUNT=5
-RC=0
+    #TODO give TCID 
+    TCID="eles_pm_test"
+    #TODO give TST_COUNT
+    TST_COUNT=5
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+    #TODO add function test scripte here
 
-tiger &
-td1=$!
-es11ex &
-td2=$!
+    tiger &
+    td1=$!
+    es11ex &
+    td2=$!
 
-rtc_testapp_6 -T 15
+    rtc_testapp_6 -T 15
 
-kill -9 $td1
-kill -9 $td2
+    kill -9 $td1
+    kill -9 $td2
 
-#try again
-tiger &
-td1=$!
-es11ex &
-td2=$!
+    #try again
+    tiger &
+    td1=$!
+    es11ex &
+    td2=$!
 
-rtc_testapp_6 -T 15
-sleep 1
-rtc_testapp_6 -T 15
-sleep 1
-rtc_testapp_6 -T 15
-sleep 1
-rtc_testapp_6 -T 15
+    rtc_testapp_6 -T 15
+    sleep 1
+    rtc_testapp_6 -T 15
+    sleep 1
+    rtc_testapp_6 -T 15
+    sleep 1
+    rtc_testapp_6 -T 15
 
-kill -9 $td1
-kill -9 $td2
+    kill -9 $td1
+    kill -9 $td2
 
-echo "test PASS"
-echo "now reboot system!"
-reboot
-return $RC
+    echo "test PASS"
+    echo "now reboot system!"
+    reboot
 
+    return $RC
 }
 
 usage()
 {
-echo "$0 [case ID]"
-echo "1: GSL test"
-echo "2: openvg test"
-echo "3: gles test"
-echo "4: gles stress test"
-echo "5: power managerment test"
+    echo "$0 [case ID]"
+    echo "1: GSL test"
+    echo "2: openvg test"
+    echo "3: gles test"
+    echo "4: gles stress test"
+    echo "5: power managerment test"
 }
 
 # main function
