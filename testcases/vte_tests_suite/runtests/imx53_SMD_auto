@@ -2,6 +2,7 @@ TGE-LV-ACC-0010	acc_test_MMA845x.sh -m MODE_8G
 TGE-LV-ACC-0011	acc_test_MMA845x.sh -m MODE_4G
 TGE-LV-ACC-0012	acc_test_MMA845x.sh -m MODE_2G
 TGE-LV-ACC-0013	acc_test_MMA845x.sh -m MODE_STANDBY
+TGE-LV-ACC-0014	acc_test_MMA845x.sh -m SUSPEND
 TGE-LV-ALSA-0501	adc_test1.sh -f S16_LE -d 5 -c 1 -r 8000 -A
 TGE-LV-ALSA-0502	adc_test1.sh -f S16_LE -d 5 -c 1 -r 11025 -A
 TGE-LV-ALSA-0503	adc_test1.sh -f S16_LE -d 5 -c 1 -r 16000 -A
