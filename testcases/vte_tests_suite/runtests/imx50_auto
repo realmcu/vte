@@ -109,7 +109,7 @@ TGE-LV-FB-EPDC-0016	 epdc_test -T 8 -y 10
 TGE-LV-FB-EPXP-001	 epxp_test -r 0 -s 0:0:320:240 && epxp_test -r 90 -s 0:0:320:240 && epxp_test -r 180 -s 0:0:320:240 && epxp_test -r 270 -s 0:0:320:240
 TGE-LV-FB-EPXP-002	 epxp_test -r 0 -s 0:0:320:240
 TGE-LV-FB-EPXP-003	 epxp_test -r 0 -s 0:0:320:240 -l 1
-TGE-LV-FB-EPXP-004	 epxp_test -m 15
+TGE-LV-FB-EPXP-004	 epxp_test -m 12
 TGE-LV-FB-EPXP-005	 epxp_test -s 0:0:320:240 -a -c 100 -o 0:0:128:128:0x80000000:255:255 -k 0x80000000
 TGE-LV-FB-EPXP-006	 epxp_test -s 0:0:320:240 -a -c 100 -o 0:0:320:240:0:128:128
 TGE-LV-ETHERNET-1002	if [ -z $SERVER_IP ] ; then TSTIP=10.192.225.218 ;else TSTIP=$SERVER_IP;fi ; for i in 64 128 256 512 1024 2048 4096 8192 16384 32768; do ping -c 100 -s $i $TSTIP; done
