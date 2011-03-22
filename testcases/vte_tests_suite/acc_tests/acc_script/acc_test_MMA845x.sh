@@ -172,6 +172,9 @@ acc_test()
   evtest $device > $acctmp &
   pth=$!
 	echo "now shake the board!! for 30seconds"
+	if [ $mode = "SUSPEND"  ]; then
+		rtc_testapp_6 -T 20
+	fi
 	sleep 30
 	ret=$(cat $acctmp | wc -l)
 	echo "test done $ret"
