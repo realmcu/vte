@@ -1,5 +1,5 @@
 /***
-**Copyright (C) 2004-2011 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2004,2011 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -21,6 +21,7 @@ Author                    Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 V. BECKER/rc023c     02/04/2004     TLSbo38652   Initial version 
 V. BECKER/rc023c     25/05/2004     TLSbo38652   Change file names 
+Z. Spring / b17931   23/03/2011        n/a       List an attempting device list
 ====================================================================================================
 Portability:  ARM GCC  gnu compiler
 ==================================================================================================*/
@@ -89,6 +90,7 @@ extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 char *TCID     = "rtc_testapp_2"; /* test program identifier.          */
 int  TST_TOTAL = 1;   /* total number of tests in this file.*/
 char * pdevice = NULL;
+char* RTC_DRIVER_NAME[RTC_DEVICE_NUM] = {"/dev/rtc", "/dev/rtc0"};    /* RTC devices list of attempting to open */
 /*==================================================================================================
                                    GLOBAL FUNCTION PROTOTYPES
 ==================================================================================================*/

@@ -21,6 +21,7 @@ Author                          Date          Number    Description of Changes
 V. BECKER/rc023c             01/04/2004     TLSbo38652   Initial version 
 V. BECKER/rc023c             25/05/2004     TLSbo38652   Change file name 
 L. DELASPRE/rc149c           23/06/2004     TLSbo39941   VTE 1.3 integration
+Z. Spring / b17931           23/03/2011        n/a       List an attempting device list
 
 ====================================================================================================
 Portability:  ARM GCC  gnu compiler
@@ -90,6 +91,7 @@ extern char *TESTDIR;                /* temporary dir created by tst_tmpdir(void
 char *TCID     = "rtc_testapp_4"; /* test program identifier.          */
 int  TST_TOTAL = 1;           /* total number of tests in this file.   */
 char * pdevice = NULL;
+char* RTC_DRIVER_NAME[RTC_DEVICE_NUM] = {"/dev/rtc", "/dev/rtc0"};    /* RTC devices list of attempting to open */
 /*==================================================================================================
                                    GLOBAL FUNCTION PROTOTYPES
 ==================================================================================================*/

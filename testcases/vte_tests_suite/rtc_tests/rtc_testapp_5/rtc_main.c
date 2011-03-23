@@ -20,6 +20,7 @@ Revision History:
 Author                      Date          Number    Description of Changes
 -------------------------   ------------    ----------  -------------------------------------------
 E.Gromazina                23/06/2005          TLSbo49951          Initial version
+Z.Spring                   23/03/2011        n/a         List an attempting device list
 ====================================================================================================
 Portability:  ARM GCC  gnu compiler
 ==================================================================================================*/
@@ -88,6 +89,7 @@ extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 char *TCID     = "rtc_testapp_5"; /* test program identifier.          */
 int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 char * pdevice = NULL;
+char* RTC_DRIVER_NAME[RTC_DEVICE_NUM] = {"/dev/rtc", "/dev/rtc0"};    /* RTC devices list of attempting to open */
 /*==================================================================================================
                                    GLOBAL FUNCTION PROTOTYPES
 ==================================================================================================*/

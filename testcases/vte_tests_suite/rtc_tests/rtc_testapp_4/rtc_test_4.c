@@ -27,6 +27,7 @@ L. DELASPRE/rc149c           03/08/2004     TLSbo40891   VTE 1.4 integration
 L. DELASPRE/rc149c           13/04/2005     TLSbo48760   VTE 1.9 integration
 S.ZAVJALOV/zvjs001c          26/05/2005     TLSbo49951   Removed wrong test. Repair "negative size of buffer" test
 E.Gromazina                  21/11/2005     TLSbo58720   update to confirm RTC_IRQP_SET  
+Spring Zhang                 13/04/2011     n/a          Attempt RTC devices
 ==================================================================================================== 
 Portability:  ARM   GCC  Montavista 
 ==================================================================================================*/
@@ -91,6 +92,7 @@ jmp_buf   jmpbuf;
                                        GLOBAL VARIABLES
 ==================================================================================================*/
 extern char * pdevice;
+extern char * RTC_DRIVER_NAME[];
 
 /*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
@@ -118,42 +120,47 @@ int VT_rtc_test4_setup(void)
         int rv = TFAIL;
         int file_desc1 = -1;
         int is_passed = FALSE;
-        
-        /* Open RTC driver file descriptor */
-				if(pdevice == NULL)
-        	file_desc = open (RTC_DRIVER_NAME, O_RDONLY | O_NONBLOCK);
-				else
-        	file_desc = open (pdevice, O_RDONLY | O_NONBLOCK);
+        int i = 0;
 
+        if (pdevice == NULL)
+            do {
+                file_desc = open(RTC_DRIVER_NAME[i], O_RDONLY|O_NONBLOCK);
+            } while (file_desc <= 0 && i++<RTC_DEVICE_NUM);
+        else 
+            file_desc = open(pdevice, O_RDONLY|O_NONBLOCK);
+        
         if (file_desc ==  -1)
         {
-                tst_resm(TFAIL,"ERROR : Open RTC driver fails");
-                perror("cannot open /dev/misc/rtc");                
-                return rv;
+            tst_resm(TFAIL,"ERROR : Open RTC driver fails");
+            perror("cannot open /dev/misc/rtc");                
+            return rv;
+        }
+        else {
+            tst_resm(TINFO, "Open RTC device successfully: %s \n", RTC_DRIVER_NAME[i]);
         }
         
         /* Opening driver a second time returns busy */
         tst_resm(TINFO, "Repeatedly open driver must return the -EBUSY" );
         
-				if(pdevice == NULL)
-        	file_desc1 = open (RTC_DRIVER_NAME, O_RDONLY);
-				else
+        if(pdevice == NULL)
+        	file_desc1 = open (RTC_DRIVER_NAME[i], O_RDONLY);
+        else
         	file_desc1 = open (pdevice, O_RDONLY | O_NONBLOCK);
 
         if (file_desc1 == -1)
         {      
-                is_passed = ( errno == EBUSY ) ? TRUE : FALSE;                
+            is_passed = ( errno == EBUSY ) ? TRUE : FALSE;                
         }
 
         if( is_passed )
         {
-                tst_resm( TPASS, "Test is working as expected\n" );
-                rv = TPASS;
+            tst_resm( TPASS, "Test is working as expected\n" );
+            rv = TPASS;
         }
         else
         {
-                tst_brkm( TFAIL, cleanup, "Test is not working as expected\n" );
-                rv = TFAIL;
+            tst_brkm( TFAIL, cleanup, "Test is not working as expected\n" );
+            rv = TFAIL;
         }
         
         is_ok = is_ok && is_passed;

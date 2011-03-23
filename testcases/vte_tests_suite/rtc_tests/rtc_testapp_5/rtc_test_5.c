@@ -21,6 +21,7 @@ Author             Date          Number         Description of Changes
 -------------   ------------    -----------------------------------------------------
 E.Gromazina      27/06/2005        TLSbo49951          Initial version
 S. V-Guilhou     07/11/2005        TLSbo56422          EPOCH_SET not supported
+Spring Zhang     13/04/2011        n/a                 Attempt RTC devices
 
 ====================================================================================================
 Portability:  ARM GCC  gnu compiler
@@ -78,6 +79,7 @@ int is_ok = 1;
                                        GLOBAL VARIABLES
 ==================================================================================================*/
 extern char * pdevice;
+extern char * RTC_DRIVER_NAME[];
 
 /*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
@@ -102,17 +104,22 @@ extern char * pdevice;
 int VT_rtc_test5_setup(void)
 {
         int rv = TFAIL;
+        int i = 0;
 
-        if(pdevice == NULL)
-        	file_desc = open (RTC_DRIVER_NAME, O_RDONLY );
-				else
-        	file_desc = open (pdevice, O_RDONLY );
- 
+        if (pdevice == NULL)
+            do {
+                file_desc = open(RTC_DRIVER_NAME[i], O_RDONLY);
+            } while (file_desc <= 0 && i++<RTC_DEVICE_NUM);
+        else 
+            file_desc = open(pdevice, O_RDONLY);
+
         if (file_desc ==  -1)
             tst_brkm(TBROK, cleanup, "ERROR : Open RTC driver fails");
-        else
+        else {
+            tst_resm(TINFO, "Open RTC device successfully: %s \n", RTC_DRIVER_NAME[i]);
             rv = TPASS;
-            
+        }
+
         return rv;
 }
 

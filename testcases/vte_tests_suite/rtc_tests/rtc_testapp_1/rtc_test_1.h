@@ -1,5 +1,5 @@
 /***
-**Copyright (C) 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2004,2007,2011 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -22,6 +22,7 @@ V. BECKER / rc023c     01/04/2004     TLSbo38652   Initial version
 V. BECKER / rc023c     25/05/2004     TLSbo38652   Change file name
 C.Gagneraud cgag1c     08/11/2004     TLSbo44474   Fix #include issues.
 Rakesh S Joshi / r65956      25/07/2007     ENGR46185   Changed the dev entry
+Z. Spring / b17931     23/03/2011      n/a         Move RTC driver macro to variables
 ====================================================================================================*/
 
 #ifndef RTC_TEST1_H
@@ -50,9 +51,8 @@ extern "C"{
 /*==================================================================================================
                                        DEFINES AND MACROS
 ==================================================================================================*/
-// Victor: /dev/rtc will link to the true device
-//#define RTC_DRIVER_NAME "/dev/rtc0"
-#define RTC_DRIVER_NAME "/dev/rtc"
+/* number of attempting RTC device list */
+#define RTC_DEVICE_NUM 2
 
 /*==================================================================================================
                                              ENUMS
