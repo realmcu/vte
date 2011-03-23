@@ -23,6 +23,7 @@
 # Spring                11/03/2009       n/a        Add MX28EVK support
 # Spring                18/03/2009       n/a        Add MX53EVK support
 # Hake                  01/10/2011       n/a        Add LOCO and SMD 53. etc
+# Hake                  03/23/2011       n/a        Add MX50 rdp3 etc
 #############################################################################
 # Usage1(return string):
 #   platform=`platfm.sh`
@@ -43,6 +44,7 @@
 #   IMX53SMD    IMX53SMD
 #   IMX50ARM2   IMX50ARM2
 #   IMX50RDP    IMX50RDP
+#   IMX50-RDP3    IMX50-RDP3
 #
 #
 # Usage2(return number): 
@@ -163,7 +165,13 @@ determine_platform()
     find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX50 Reference Design" | wc -l`;
     if [ $find -eq 1 ]
     then
+    	find=`cat /proc/cpuinfo | grep "Revision" | grep "50311" | wc -l`;
+			if [ $find -eq 1 ]
+			then
+        p=IMX50-RDP3
+			else
         p=IMX50RDP
+			fi
     fi
 
 		if [ $p = "IMX31-3STACK" ]
@@ -204,7 +212,7 @@ determine_platform()
 		elif [ $p = "IMX50ARM2" ]
 		then
 				RC=50
-		elif [ $p = "IMX50RDP" ]
+		elif [ $p = "IMX50RDP" ] || [ $p = "IMX50-RDP3" ]
 		then
 				RC=50
     else
