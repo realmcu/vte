@@ -1,5 +1,5 @@
-/***
-**Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+/**
+**Copyright (C) 2005-2009,2011 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -25,6 +25,7 @@ C. Gagneraud                 08/11/2004     TLSbo44474  Fix #include/warnings is
 L. DELASPRE / rc149c         08/12/2004     TLSbo40142   Update copyrights
 L. DELASPRE / rc149c         13/12/2004     TLSbo45058   Update printed message
 Rakesh S Joshi / r65956      25/07/2007		ENGR46185	Changed the dev entry
+Z. Spring / b17931       23/03/2011      n/a         Move RTC driver macro to variables
 
 ====================================================================================================
 Portability:  ARM GCC  gnu compiler
@@ -56,9 +57,8 @@ extern "C"{
 /*==================================================================================================
                                        DEFINES AND MACROS
 ==================================================================================================*/
-// Victor: /dev/rtc will link to the true device
-//#define RTC_DRIVER_NAME "/dev/rtc0"
-#define RTC_DRIVER_NAME "/dev/rtc"
+/* number of attempting RTC device list */
+#define RTC_DEVICE_NUM 2
 
 /*==================================================================================================
                                              ENUMS

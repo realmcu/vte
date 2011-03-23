@@ -1,5 +1,5 @@
 /***
-**Copyright (C) 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2004-2009,2011 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -27,6 +27,7 @@ D. Simakov                   19/07/2004     TLSbo39743   An errors are corrected
 L. Delaspre / rc149c         03/08/2004     TLSbo40891   VTE 1.4 integration
 S. V-Guilhou / svan01c       14/09/2005     TLSbo53745   unsupported ioctl
 E.Gromazina                  21/11/2005     TLSbo58720   update to confirm RTC_IRQP_SET 
+Spring Zhang                 13/04/2011     n/a          Attempt RTC devices
 ====================================================================================================
 Portability:  ARM   GCC  Montavista
 ==================================================================================================*/
@@ -76,7 +77,7 @@ unsigned long saved_periodic_rate = 0;
 /*==================================================================================================
                                        GLOBAL VARIABLES
 ==================================================================================================*/
-
+extern char * RTC_DRIVER_NAME[];
 
 /*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
@@ -101,30 +102,36 @@ unsigned long saved_periodic_rate = 0;
 /*================================================================================================*/
 int VT_rtc_test3_setup(void)
 {
-        int rv = TPASS;
-        int retval;
+    int rv = TPASS;
+    int retval;
+    int i = 0;
 
-        file_desc = open( RTC_DRIVER_NAME, O_RDONLY );
-        if( file_desc == -1 )
-        {
-                tst_resm(TFAIL, "Open RTC driver fails: %s \n", strerror(errno));
-                return TFAIL;
-        }
+    do {
+        file_desc = open(RTC_DRIVER_NAME[i], O_RDONLY);
+    } while (file_desc <= 0 && i++<RTC_DEVICE_NUM);
 
-        /*==============================================================*/
-        /* RTC_IRQP_READ & RTC_IRQP_SET:                                */
-        /*==============================================================*/
-        
-        retval = ioctl( file_desc, RTC_IRQP_READ, &saved_periodic_rate );
-        if( retval < 0 )
-        {
-                tst_resm(TWARN, "ioctl RTC_IRQP_READ not SUPPORTED by platform" );
-                perror( "ioctl fails for RTC_IRQP_READ" );
-        }
-        else
-                tst_resm(TINFO, "Store periodic IRQ rate = %ld Hz.", saved_periodic_rate );
+    if( file_desc == -1 )
+    {
+        tst_resm(TFAIL, "Open RTC driver fails: %s \n", strerror(errno));
+        return TFAIL;
+    }
+    else {
+        tst_resm(TINFO, "Open RTC device successfully: %s \n", RTC_DRIVER_NAME[i]);
+    }
 
-        
+    /*==============================================================*/
+    /* RTC_IRQP_READ & RTC_IRQP_SET:                                */
+    /*==============================================================*/
+    
+    retval = ioctl( file_desc, RTC_IRQP_READ, &saved_periodic_rate );
+    if( retval < 0 )
+    {
+        tst_resm(TWARN, "ioctl RTC_IRQP_READ not SUPPORTED by platform" );
+        perror( "ioctl fails for RTC_IRQP_READ" );
+    }
+    else
+        tst_resm(TINFO, "Store periodic IRQ rate = %ld Hz.", saved_periodic_rate );
+
     return rv;
 }
 

@@ -22,6 +22,7 @@ Author                          Date          Number    Description of Changes
 V. BECKER / rc023c           01/04/2004     TLSbo38652   Initial version 
 V. BECKER / rc023c           25/05/2004     TLSbo38652   Change file name 
 L.Delaspre/rc149c            13/04/2005     TLSbo48760   VTE 1.9 integration 
+Spring Zhang                 13/04/2011     n/a          Attempt RTC devices
 ====================================================================================================
 Portability:  ARM GCC  gnu compiler
 ==================================================================================================*/
@@ -70,6 +71,7 @@ int file_desc = 0;
                                        GLOBAL VARIABLES
 ==================================================================================================*/
 extern char * pdevice;
+extern char * RTC_DRIVER_NAME[];
 
 /*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
@@ -95,20 +97,22 @@ extern char * pdevice;
 int VT_rtc_test1_setup(void)
 {
         int rv = TFAIL;
-    
+        int i = 0;
+
         /* Open RTC driver file descriptor */
-				if (pdevice == NULL)
-        file_desc = open (RTC_DRIVER_NAME, O_RDONLY);
-				else 
-        file_desc = open (pdevice, O_RDONLY);
+        if (pdevice == NULL)
+            do {
+                file_desc = open(RTC_DRIVER_NAME[i], O_RDONLY);
+            } while (file_desc <= 0 && i++<RTC_DEVICE_NUM);
+        else 
+            file_desc = open(pdevice, O_RDONLY);
         /* Open returns -1 in case of failure */
-        if (file_desc == -1)
-        {
-                tst_resm(TFAIL, "Open RTC driver fails: %s \n", strerror(errno));
+        if (file_desc == -1){
+            tst_resm(TFAIL, "Open RTC driver fails: %s \n", strerror(errno));
         }
-        else
-        {
-                rv = TPASS;
+        else {
+            tst_resm(TINFO, "Open RTC device successfully: %s \n", RTC_DRIVER_NAME[i]);
+            rv = TPASS;
         }
   
         return rv;
