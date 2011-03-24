@@ -31,6 +31,7 @@ L. DELASPRE / rc149c         14/12/2004     TLSbo45058   Update printed message
 E.Gromazina				     08/06/2005	    TLSbo50973	 Update for automation test
 S. V-Guilhou / svan01c       13/09/2005     TLSbo53745   Unsupported ioctls
 A.Ozerov/b00320              11/12/2006     TLSbo84161   Minor changes.
+Spring Zhang                 13/04/2011     n/a          Attempt RTC devices
 
 ====================================================================================================
 Portability:  ARM GCC
@@ -96,6 +97,7 @@ int               is_ok = 1;
                                        GLOBAL VARIABLES
 ==================================================================================================*/
 extern char * pdevice;
+extern char * RTC_DRIVER_NAME[];
 
 /*==================================================================================================
                                    LOCAL FUNCTION PROTOTYPES
@@ -346,19 +348,23 @@ int ask_user(char *question)
 int VT_rtc_test2_setup(void)
 {
         int rv = TFAIL;
-				if(pdevice == NULL)
-        	file_desc = open (RTC_DRIVER_NAME, O_RDONLY);
-				else
-        	file_desc = open (pdevice, O_RDONLY);
+        int i = 0;
 
+        if (pdevice == NULL)
+            do {
+                file_desc = open(RTC_DRIVER_NAME[i], O_RDONLY);
+            } while (file_desc <= 0 && i++<RTC_DEVICE_NUM);
+        else 
+            file_desc = open(pdevice, O_RDONLY);
         if (file_desc ==  -1)
         {
-                tst_brkm(TBROK, cleanup, "ERROR : Open RTC driver fails");
-                perror("cannot open /dev/misc/rtc");
+            tst_brkm(TBROK, cleanup, "ERROR : Open RTC driver fails");
+            perror("cannot open /dev/misc/rtc");
         }
         else
         {
-                rv = TPASS;
+            tst_resm(TINFO, "Open RTC device successfully: %s \n", RTC_DRIVER_NAME[i]);
+            rv = TPASS;
         }
     
         return rv;
