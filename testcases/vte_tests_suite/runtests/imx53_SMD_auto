@@ -279,7 +279,8 @@ TGE-LV-V4L2-0059	v4l_capture_testapp -C 3 -H 480  -W 640
 TGE-LV-V4L2-0064	v4l_capture_testapp -C 2 -H 480  -W 640 -T 20
 TGE-LV-V4L2-0065	v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -X
 TGE-LV-V4L2-0066	v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -M 0 -r 15  -X && v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -M 1 -r 15  -X && v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -M 2 -r 15  -X && v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -M 3 -r 15  -X && v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -M 4 -r 15  -X && v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -M 5 -r 15  -X && v4l_capture_testapp -C 2 -H 720  -W 480 -T 100 -M 4 -r 15 -X
-TGE-LV-V4L2-0067	v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 0 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 1 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 2 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 3 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 4 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 5 -r 30 && v4l_capture_testapp -C 2 -H 720 -W 480 -T 100 -X -M 4 -r 30
+TGE-LV-V4L2-0067	v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 0 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 1 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 2 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 3 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 4 -r 30 && v4l_capture_testapp -C 2 -H 720 -W 480 -T 100 -X -M 4 -r 30
+TGE-LV-V4L2-0068	v4l_capture_testapp -C 2 -H 640 -W 480 -T 100 -X -M 5 -r 15 && v4l_capture_testapp -C 2 -H 640 -W 480 -T 100 -X -M 6 -r 15
 TGE-LV-V4L2-0090	v4l_capture_testapp -S -R 10
 TGE-LV-V4L2-0091	v4l_capture_testapp -S -R 11
 TGE-LV-V4L2-0092	v4l_capture_testapp -S -R 12
