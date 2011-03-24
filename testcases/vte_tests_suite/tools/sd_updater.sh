@@ -71,18 +71,17 @@ if [ ! -e ${GUNZIP} ] ; then
 fi
 	
 check_padding() {
-
-	local REDBOOT=$1
-	# REF is the first bytes of the padding
-	local REF="0000004 0000 0000 0000 0000 0000 0000 0000 0000" 
-	local NEW=`${OD} -x ${REDBOOT} +4 | ${HEAD} -1`
-        local RET=0
+    local REDBOOT=$1
+    # REF is the first bytes of the padding
+    local REF="0000004 0000 0000 0000 0000 0000 0000 0000 0000" 
+    local NEW="`${OD} -x ${REDBOOT} +4 | ${HEAD} -1`"
+    local RET=0
 	
-	if [ "${REF}" == "${NEW}" ] ; then
-		RET=1
-	fi
+    if [ "${REF}" = "${NEW}" ] ; then
+        RET=1
+    fi
 
-	return ${RET}
+    return ${RET}
 }
 
 update_chunk() {
@@ -236,7 +235,7 @@ if [ $DO_REDBOOT -eq 1 ] ; then
 		echo ""
 		echo -n "WARNING: ${REDBOOT} seems to have padding (leading zeros). Proceed anyway ? [yes|no]: "
 		read yes_or_no
-		if [ "${yes_or_no}" == "yes" ] ; then 
+		if [ "${yes_or_no}" = "yes" ] ; then 
             #            FILE       NODE       OFFSET   
             ${DD} if=${REDBOOT} of=${DEVNODE} bs=${BL_OFFSET} seek=1 skip=1
 			echo "Proceed with padding data"
