@@ -1,4 +1,4 @@
-#Copyright (C) 2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2009,2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -14,6 +14,8 @@
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
 # Spring Zhang          21/05/2009       n/a        Initial ver. 
+# Spring Zhang          25/03/2011       n/a        Detect SPDIF module and 
+#                                                   install
 #############################################################################
 # Portability:  ARM sh 
 #
@@ -25,7 +27,6 @@
 #
 # Return:       - 
 #
-# Use command "./spdif_basic.sh" 
 
 # Function:     setup
 #
@@ -54,15 +55,6 @@ setup()
     fi
 
     trap "cleanup" 0
-
-    if [ ! -e /usr/bin/aplay ]
-    then
-        tst_resm TBROK "Test #1: ALSA utilities are not ready, \
-        pls check..."
-        RC=65
-        return $RC
-    fi
-
 }
 
 # Function:     cleanup
@@ -89,12 +81,14 @@ spdif_probe()
 {
     RC=0    # Return value from setup, and test functions.
 
-    tst_resm TINFO "Test #1: Probe SPDIF module"
-    modprobe snd_spdif || RC=$?
-    if [ $RC -ne 0 ]
-    then
-        tst_resm TFAIL "Test #1: insert module error"
-        return $RC
+    if [ grep "snd-spdif" /lib/modules/`uname -r`/modules.dep ]; then
+        tst_resm TINFO "Test #1: Probe SPDIF module"
+        modprobe snd_spdif || RC=$?
+        if [ $RC -ne 0 ]
+        then
+            tst_resm TFAIL "Test #1: insert module error"
+            return $RC
+        fi
     fi
 
     tst_resm TINFO "Test #1: detect SPDIF device"
