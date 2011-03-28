@@ -28,7 +28,8 @@
 #--------------------   ------------    ----------  ----------------------
 # Spring Zhang           Jan.11,2010       n/a      Initial version
 # Spring Zhang           May.10,2010       n/a      Add support for mx53
-# Spring Zhang           Mar.28,2010       n/a      Add mx51 400MHz WP
+# Spring Zhang           Mar.28,2011       n/a      Add mx51 400MHz WP
+# Spring Zhang           Mar.28,2011       n/a      Add mx53 WPs convert test
 
 # Function:     setup
 #        
@@ -57,30 +58,58 @@ setup()
     # This function will be called before the test program exits.
     trap "cleanup" 0
 
+    platfm.sh || platfm=$?
+    if [ $platfm -eq 67 ]; then
+            RC=$platfm
+            return $RC
+    fi
+    
+    CUR_FREQ_GETTER=/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
+    CPU_CTRL=/sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
+    old_freq=`cat $CUR_FREQ_GETTER`
+
     return $RC
 }
 
 cleanup()
 {
+    #resume to old frequency
+    echo "Resume to old frequency"
+    echo $old_freq > $CPU_CTRL
+
     return 0
+}
+
+# Function:     usage
+#
+# Description:  - display help info.
+#
+# Return        - none
+usage()
+{
+cat <<-EOF
+
+    Use this command to test CPU Frequency functions.
+    usage: ./${0##*/} 1  -- suspend test at all WPs
+           ./${0##*/} 2  -- All working points inter-convert test
+    e.g.: ./${0##*/} 2
+
+EOF
 }
 
 lowfreq_suspend()
 {
     RC=$WorkPoint
 
-    CPU_CTRL=/sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
-    old_freq=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq`
 
     echo $WorkPoint > $CPU_CTRL
     echo =========To test cpu works at $WorkPoint
     #cpufreq-info
-    cur_freq=`cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq`
+    cur_freq=`cat $CUR_FREQ_GETTER`
     if [ $cur_freq -ne $(cpufreq-info -f) ]; then
        echo =========Current cpu does not work at $WorkPoint
        return $RC
     fi
-
 
     sleep 3 
     if [ -e /dev/rtc ]; then
@@ -97,11 +126,43 @@ lowfreq_suspend()
         rtc_testapp_6 -m mem -T 15 -d rtc0 
     fi
     tst_resm TPASS "Resume from mem..."
+}
 
-    #resume to old frequency
-    echo "Resume to old frequency"
-    echo $old_freq > $CPU_CTRL
+wp_convert()
+{
+    export TCID="TGE_LV_DVFS_WP_CONVERT"
+    RC=0
 
+    if [ $platfm -ne 53 ]; then
+        tst_resm TWARN "1GHz only support on MX53, ignore the test"
+        RC=67
+        return $RC
+    fi
+
+    WP_list="160000 400000 800000 1000000"
+    for i in $WP_list; do
+        echo $i > $CPU_CTRL
+        cur_freq=`cat $CUR_FREQ_GETTER`
+        for j in $WP_list; do
+            if [ $cur_freq -ne $j ]; then
+                echo $j > $CPU_CTRL
+                if [ $j -ne $(cpufreq-info -f) ]; then
+                    tst_resm TFAIL "Can't convert CPU Working point from $i to $j"
+                    RC=1
+                    return $RC
+                fi
+                echo $i > $CPU_CTRL
+                if [ $i -ne $(cpufreq-info -f) ]; then
+                    tst_resm TFAIL "Can't convert CPU Working point from $j to $i"
+                    RC=2
+                    return $RC
+                fi
+            fi
+        done
+    done
+
+    tst_resm TPASS "WP convert test"
+    return $RC
 }
 
 # Function:     main
@@ -117,26 +178,29 @@ RC=0
 # bash specified script, using array, not dash-compatibility
 setup  || exit $RC
 
-platfm.sh || platfm=$?
-if [ $platfm -eq 67 ]; then
-        RC=$platfm
-        return $RC
-fi
-
-if [ $platfm -eq 37 ]; then
-    WorkPoint=200000
-    lowfreq_suspend || exit $RC
-elif [ $platfm -eq 51 ]; then
-    WorkPoint=160000
-    lowfreq_suspend || exit $RC
-elif [ $platfm -eq 41 ]; then
-    for WorkPoint in 160000 400000 800000; do
+case "$1" in
+    1)
+    if [ $platfm -eq 37 ]; then
+        WorkPoint=200000
         lowfreq_suspend || exit $RC
-    done
-elif [ $platfm -eq 53 ]; then
-    for WorkPoint in 160000 400000 800000 1000000; do
+    elif [ $platfm -eq 51 ]; then
+        WorkPoint=160000
         lowfreq_suspend || exit $RC
-    done
-fi
-
-
+    elif [ $platfm -eq 41 ]; then
+        for WorkPoint in 160000 400000 800000; do
+            lowfreq_suspend || exit $RC
+        done
+    elif [ $platfm -eq 53 ]; then
+        for WorkPoint in 160000 400000 800000 1000000; do
+            lowfreq_suspend || exit $RC
+        done
+    fi
+    ;;
+    2)
+    wp_convert || exit $RC
+    ;;
+    *)
+    usage
+    exit 1
+    ;;
+esac
