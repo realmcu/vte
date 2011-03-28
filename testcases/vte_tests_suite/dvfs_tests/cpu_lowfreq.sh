@@ -139,6 +139,9 @@ wp_convert()
         return $RC
     fi
 
+    echo 0 > /sys/devices/platform/mxc_dvfs_core.0/enable
+    tst_resm TWARN "DVFS core is disabled and won't recover after test"
+
     WP_list="160000 400000 800000 1000000"
     for i in $WP_list; do
         echo $i > $CPU_CTRL
