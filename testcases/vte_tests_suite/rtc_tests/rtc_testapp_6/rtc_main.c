@@ -191,7 +191,8 @@ int main(int argc, char **argv)
         char *sleep_mode;
         char *alarm_time;
         char rtc_real_device[64];
-	const char * dft_mode = "mem";
+        /* default sleep mode */
+        const char * dfl_mode = "mem";
 
         /*Parse options*/
         option_t options[]=
@@ -215,11 +216,7 @@ int main(int argc, char **argv)
             strcpy(rtc_real_device, RTC_DRIVER_NAME);
         }
         if (!m_opt){
-	    sleep_mode = (char *)dft_mode;
-	    /*
-	    help();
-            return VT_rv;
-	    */
+            sleep_mode = (char *)dfl_mode;
         } else if (strcmp(sleep_mode, "standby") && strcmp(sleep_mode, "mem")){
             help();
             tst_resm(TFAIL,"sleep mode can only be standby|mem");
@@ -270,3 +267,7 @@ void help(void)
         printf("  -m standby|mem\t Set sleep mode\n");
         printf("  -T seconds\t Set RTC alarm time in second\n");
 }
+
+#ifdef __cplusplus
+}
+#endif
