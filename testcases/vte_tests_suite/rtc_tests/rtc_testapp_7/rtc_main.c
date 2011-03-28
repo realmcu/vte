@@ -282,3 +282,7 @@ void help(void)
         printf("  -O on/off\t enable/disable alarm\n");
         printf("  -T seconds\t Set RTC alarm time in second\n");
 }
+
+#ifdef __cplusplus
+}
+#endif
