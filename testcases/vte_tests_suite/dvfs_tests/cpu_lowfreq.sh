@@ -28,6 +28,7 @@
 #--------------------   ------------    ----------  ----------------------
 # Spring Zhang           Jan.11,2010       n/a      Initial version
 # Spring Zhang           May.10,2010       n/a      Add support for mx53
+# Spring Zhang           Mar.28,2010       n/a      Add mx51 400MHz WP
 
 # Function:     setup
 #        
@@ -121,16 +122,20 @@ if [ $platfm -eq 67 ]; then
         RC=$platfm
         return $RC
 fi
+
 if [ $platfm -eq 37 ]; then
     WorkPoint=200000
     lowfreq_suspend || exit $RC
-elif [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
+elif [ $platfm -eq 51 ]; then
     WorkPoint=160000
     lowfreq_suspend || exit $RC
+elif [ $platfm -eq 41 ]; then
+    for WorkPoint in 160000 400000 800000; do
+        lowfreq_suspend || exit $RC
+    done
 elif [ $platfm -eq 53 ]; then
-    for WorkPoint in 160000 400000 800000 1000000 
-    do
-    lowfreq_suspend || exit $RC
+    for WorkPoint in 160000 400000 800000 1000000; do
+        lowfreq_suspend || exit $RC
     done
 fi
 
