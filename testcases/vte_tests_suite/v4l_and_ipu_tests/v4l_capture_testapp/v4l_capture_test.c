@@ -429,6 +429,7 @@ extern "C" {
 		streamParm.parm.capture.timeperframe.denominator =
 		    gV4LTestConfig.mFrameRate;
 		streamParm.parm.capture.capturemode = gV4LTestConfig.mMode;
+		tst_resm(TINFO,"capture mode is %d\n", gV4LTestConfig.mMode);
 		if (ioctl(gFdV4L, VIDIOC_S_PARM, &streamParm) < 0) {
 			tst_resm(TWARN,
 				 "ERROR init_overlay() : set frame rate failed");
@@ -625,7 +626,7 @@ extern "C" {
 		parm.parm.capture.timeperframe.numerator = 1;
 		parm.parm.capture.timeperframe.denominator =
 		    gV4LTestConfig.mFrameRate;
-		parm.parm.capture.capturemode = 0;
+		parm.parm.capture.capturemode = gV4LTestConfig.mMode;
 		if (ioctl(gFdV4L, VIDIOC_S_PARM, &parm) < 0) {
 			tst_resm(TFAIL, "set parm error!");
 			close(gFdV4L);
