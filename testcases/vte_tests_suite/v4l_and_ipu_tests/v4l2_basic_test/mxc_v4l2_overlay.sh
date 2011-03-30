@@ -53,6 +53,8 @@ check_platform
 
 TSTCMD=/unit_tests/mxc_v4l2_overlay.out
 
+auto_prepare.sh -I V4L
+
 RESSIZE=$(fbset | grep "mode \"" |  sed "s/\"//g" | sed "s/-/ /" | awk {'print $2'})
 
 if [ "$TARGET" = "25" ]
@@ -101,6 +103,7 @@ RC=0
 
 #TODO add cleanup code here
 
+auto_prepare.sh -R V4L
 return $RC
 }
 
