@@ -60,6 +60,8 @@ fi
 
 TSTCMD=/unit_tests/mxc_v4l2_output.out
 
+auto_prepare.sh -I V4L
+
 return $RC
 }
 
@@ -75,6 +77,7 @@ RC=0
 
 #TODO add cleanup code here
 
+auto_prepare.sh -R V4L
 return $RC
 }
 
