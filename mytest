@@ -31,7 +31,7 @@ ARCH_PLATFORM=${platfm}
 if [ "$CONTINUE" = 'y' ];then
 #tday=$(date +%m%d%Y)
 tday=$(uname -r)
-cp ${TEST_PATH}/runtest/$CMDFILE ${TEST_PATH}/runtest/temp_test
+cp ${TEST_PATH}/runtest/$CMDFILE ${TEST_PATH}/runtest/temp_test_$CMDFILE_$tday
 if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt ]; then
 #1 not first run, need change the command file skip the last one
 #find the last execute one 
@@ -43,7 +43,7 @@ if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt 
 	 lct=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | wc -l)
    id=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | tail -n $cnt | head -n 1)
 	 ide=$(echo $id | wc -L)
-	 ll=$(cat ${TEST_PATH}/temp_cnt)
+	 ll=$(cat ${TEST_PATH}/temp_cnt_$CMDFILE_$tday)
 	 if [ "$ide" -eq 0 ]; then
 #2 the case id not find in this line
 			if [ $lct -eq 0 ]; then
@@ -51,13 +51,13 @@ if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt 
 				search=0
 				if [ -z $ll ]; then
 		#4 no former fail? start from first case
-					echo 1 > ${TEST_PATH}/temp_cnt
+					echo 1 > ${TEST_PATH}/temp_cnt_$CMDFILE_$tday
 					#sh -c "sed -i '1,1s/^/#/g' ${TEST_PATH}/runtest/temp_test"
 				else
 		#4 skip formal fail
-		      sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test  >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
+		      sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test_$CMDFILE_$tday  >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 					line=$(expr $ll + 1)
-					echo $line > ${TEST_PATH}/temp_cnt
+					echo $line > ${TEST_PATH}/temp_cnt_$CMDFILE_$tday
 					sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test"
 				fi
 			else
@@ -68,13 +68,13 @@ if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt 
 					echo "former test cases list is changed!"
 					if [ -z $ll ]; then
 				#5 if no former fail cases
-						echo 1 > ${TEST_PATH}/temp_cnt
+						echo 1 > ${TEST_PATH}/temp_cnt_$CMDFILE_$tday
 					else
 				#5 has former fail case
-		      	sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
+		      	sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test_$CMDFILE_$tday >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 						line=$(expr $ll + 1)
-						echo $line > ${TEST_PATH}/temp_cnt
-						sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test"
+						echo $line > ${TEST_PATH}/temp_cnt_$CMDFILE_$tday
+						sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_$CMDFILE_$tday"
 					fi
 				else
 		#4 search former line
@@ -93,32 +93,32 @@ if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt 
 	#3 has last success case 
 				if [ $ll -gt $line ]; then
 			#4 former fail cases is after current success case
-		      sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test  >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
+		      sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test_$CMDFILE_$tday  >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 					line=$(expr $ll + 1)
 				else
 			#4 former fail cases is before the last success cases 
-		      sed -n "${line}p" ${TEST_PATH}/runtest/temp_test >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
+		      sed -n "${line}p" ${TEST_PATH}/runtest/temp_test_$CMDFILE_$tday >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 					line=$(expr $line + 1)
 				fi
 			else
 	#3 has not last success cases
-		    sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test  >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
+		    sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test_$CMDFILE_$tday  >> ${TEST_PATH}/outpuit/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 				line=$(expr $ll + 1)
 			fi
-			echo $line > ${TEST_PATH}/temp_cnt
+			echo $line > ${TEST_PATH}/temp_cnt_$CMDFILE_$tday
 			sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test"
 			search=0
 	 fi
 	done
 else
 #1 fisrt run reset counter
-	rm -f ${TEST_PATH}/temp_cnt
+	rm -f ${TEST_PATH}/temp_cnt_$CMDFILE_$tday
 fi
-${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.html -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt -f temp_test -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
+${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.html -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt -f temp_test_$CMDFILE_$tday -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
 else
 rm -f ${LTPROOT}/output/${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
 ${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.html -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
 #${TEST_PATH}/runalltests.sh -v -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt
 fi
-rm -f ${TEST_PATH}/temp_cnt
+rm -f ${TEST_PATH}/temp_cnt_$CMDFILE_$tday
 echo "FREESCALE LBG TEST END"
