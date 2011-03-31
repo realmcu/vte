@@ -1,3 +1,4 @@
+TGE-LV-UNIT-0001 /unit_tests_d/autorun.sh
 TGE-LV-OWIRE-0016 modprobe wire.ko ; modprobe mxc_w1.ko ; modprobe w1_ds2438.ko ; modprobe ds2438_battery.ko; cd /sys/class/power_supply/ds2438-battery.0
 TGE-LV-ALSA-0501	adc_test1.sh -f S16_LE -d 5 -c 1 -r 8000 -A
 TGE-LV-ALSA-0502	adc_test1.sh -f S16_LE -d 5 -c 1 -r 11025 -A

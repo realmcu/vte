@@ -1,3 +1,4 @@
+TGE-LV-UNIT-0001 /unit_tests_d/autorun.sh
 TGE-LV-ALSA-0533	sh -c "rtc_testapp_6 -T 20 && adc_test1.sh -f S16_LE -d 5 -c 1 -r 16000 -A"
 TGE-LV-ALSA-1001	sh -c "arecord -D plughw:0 -d 10 -f S16_LE -t wav /tmp/sound.wav && rm -rf /tmp/sound.wav"
 TGE-LV-ALSA-3007	AUDIO_MIN=$(amixer sget Capture | grep Limits | awk {'print $3'}) && [ $AUDIO_MIN -eq 0 ] && AUDIO_MAX=$(amixer sget Capture | grep Limits | awk {'print $5'}) && [ $AUDIO_MAX -eq 15 ]

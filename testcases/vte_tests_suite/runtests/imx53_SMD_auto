@@ -1,4 +1,4 @@
-TGE-LV-UNIT-0001 /unit_tests/autorun.sh
+TGE-LV-UNIT-0001 /unit_tests_d/autorun.sh
 TGE-LV-ACC-0010	acc_test_MMA845x.sh -m MODE_8G
 TGE-LV-ACC-0011	acc_test_MMA845x.sh -m MODE_4G
 TGE-LV-ACC-0012	acc_test_MMA845x.sh -m MODE_2G
