@@ -18,13 +18,14 @@ TARGETS=dvfs.sh cpu_lowfreq.sh dvfs_per.sh pm_suspend_stress.sh
 
 SRC-$(CONFIG_VTE_IMX25) = dvfs_mx25.sh
 SRC-$(CONFIG_VTE_IMX233) = dvfs_mx233.sh
-SRC-$(CONFIG_VTE_IMX51) = dvfs_mx50.sh dvfs_mx53.sh $(TARGETS)
+SRC-$(CONFIG_VTE_IMX5) = dvfs_mx50.sh dvfs_mx53.sh
 
 all:
 	
 
 install:
 	@for i in ${SRC-y}; do ln -f $$i ../../bin/ ; done
+	@for i in ${TARGETS}; do ln -f $$i ../../bin/ ; done
 	@echo "***********************************************"
 	@echo "** INSTALL : dvfs.sh                    **"
 	@echo "***********************************************"
