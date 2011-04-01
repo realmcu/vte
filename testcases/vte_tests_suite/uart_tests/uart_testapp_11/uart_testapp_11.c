@@ -239,12 +239,20 @@ int main(int argc, char **argv)
 					{
 						  char cmd[64];
 	            int rt = 0;
+              #if 1
+							rt = waitpid(0,NULL,WNOHANG);
+							if (rt == 0)
+								continue;
+							else
+								cont = 0;
+              #else
 							sprintf(cmd, "ps -a | grep %d | awk '{print $4}' | grep 'Z' > /dev/null", pid);
 							rt = system(cmd);
 							if(rt != 0)
 								continue;
 							else
 								cont = 0;
+							#endif
 					}else{
 						retry = 0;
 						if(iocount > cbuff){
