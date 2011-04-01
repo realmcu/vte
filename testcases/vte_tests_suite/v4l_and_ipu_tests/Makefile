@@ -27,7 +27,7 @@
 #include ../vte_configs/${ARCH_PLATFORM}_deconfigs
 
 SUBDIRS-$(CONFIG_VTE_V4L_IPU_PF)   += ipu_pf_testapp
-SUBDIRS-$(CONFIG_VTE_V4L_CAPTURE)  += v4l_capture_testapp
+SUBDIRS-$(CONFIG_VTE_V4L_CAPTURE)  += v4l_capture_testapp tools
 SUBDIRS-$(CONFIG_VTE_V4L_OUTPUT)   += v4l_output_testapp
 SUBDIRS-$(CONFIG_VTE_V4L_BASIC)    += v4l2_basic_test
 SUBDIRS-$(CONFIG_VTE_V4L_IPU_FUNC) += ipu_function
