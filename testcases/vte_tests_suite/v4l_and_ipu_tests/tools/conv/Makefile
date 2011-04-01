@@ -20,6 +20,7 @@ all: $(objs)
 	$(CC) -o $(TARGET) $(LDFLAGS) $(objs)
 	
 install:
+	ln -f $(TARGET) ../../../../bin/
 
 clean:
 	rm -f *.o
