@@ -818,7 +818,7 @@ extern "C" {
 		struct fb_var_screeninfo screen_info;
 		struct fb_fix_screeninfo fix_screen_info;
 		CALL_IOCTL(ioctl(fb_fd, FBIOGET_FSCREENINFO, &fix_screen_info));
-		CALL_IOCTL(ioctl(fb_fd, FBIOPUT_VSCREENINFO, &screen_info));
+		CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &screen_info));
     mem.phys_addr = fix_screen_info.smem_start + \
 		screen_info.xres_virtual*ALIGN_PIXEL_128(screen_info.yres)*screen_info.bits_per_pixel/8;
 		}
