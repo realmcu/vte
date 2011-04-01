@@ -133,16 +133,20 @@ int ask_user(char *question)
 int VT_rtc_test7_setup(void)
 {
         int rv = TFAIL;
+        int i = 0;
 
-        file_desc = open (RTC_DRIVER_NAME, O_RDONLY);
+        do { 
+            file_desc = open(RTC_DRIVER_NAME[i], O_RDONLY)
+        } while (file_desc <= 0 && i++<RTC_DEVICE_NUM);
         if (file_desc ==  -1)
         {
-                tst_brkm(TBROK, cleanup, "ERROR : Open RTC driver fails");
-                perror("cannot open RTC device");
+            tst_brkm(TBROK, cleanup, "ERROR : Open RTC driver fails");
+            perror("cannot open RTC device");
         }
         else
         {
-                rv = TPASS;
+            tst_resm(TINFO, "Open RTC device successfully: %s \n", RTC_DRIVER_NAME[i]);
+            rv = TPASS;
         }
     
         return rv;

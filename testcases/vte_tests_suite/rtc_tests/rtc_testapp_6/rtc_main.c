@@ -87,6 +87,8 @@ extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 /* Global Variables */
 char *TCID     = "rtc_testapp_6"; /* test program identifier.          */
 int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
+/* RTC devices list of attempting to open */ 
+char* RTC_DRIVER_NAME[RTC_DEVICE_NUM] = {"/dev/rtc", "/dev/rtc0"};
 
 /*=============================================================================
                                    GLOBAL FUNCTION PROTOTYPES
@@ -213,7 +215,7 @@ int main(int argc, char **argv)
             strcat(tmp, rtc_device);
             strcpy(rtc_real_device, tmp);
         } else{
-            strcpy(rtc_real_device, RTC_DRIVER_NAME);
+            strcpy(rtc_real_device, "");
         }
         if (!m_opt){
             sleep_mode = (char *)dfl_mode;
