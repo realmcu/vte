@@ -87,6 +87,8 @@ extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 /* Global Variables */
 char *TCID     = "rtc_testapp_7"; /* test program identifier.          */
 int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
+/* RTC devices list of attempting to open */ 
+char* RTC_DRIVER_NAME[RTC_DEVICE_NUM] = {"/dev/rtc", "/dev/rtc0"};
 
 /*==================================================================================================
                                    GLOBAL FUNCTION PROTOTYPES
