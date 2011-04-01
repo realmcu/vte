@@ -84,7 +84,7 @@ int               is_ok = 1;
 /*=============================================================================
                                        GLOBAL VARIABLES
 =============================================================================*/
-
+extern char * RTC_DRIVER_NAME[];
 
 /*=============================================================================
                                    LOCAL FUNCTION PROTOTYPES
@@ -270,16 +270,23 @@ int ask_user(char *question)
 int VT_rtc_test6_setup(char* rtc_dev)
 {
         int rv = TFAIL;
+        int i = 0;
+        
+        if (0 == strcmp(rtc_dev, "")){
+            do { 
+                file_desc = open(RTC_DRIVER_NAME[i], O_RDONLY)
+            } while (file_desc <= 0 && i++<RTC_DEVICE_NUM);
+        } else file_desc = open(rtc_dev, O_RDONLY);
 
-        file_desc = open (rtc_dev, O_RDONLY);
         if (file_desc ==  -1)
         {
-                tst_brkm(TBROK, cleanup, "ERROR : Open RTC driver fails");
-                perror("cannot open RTC device");
+            tst_brkm(TBROK, cleanup, "ERROR : Open RTC driver fails");
+            perror("cannot open RTC device");
         }
         else
         {
-                rv = TPASS;
+            tst_resm(TINFO, "Open RTC device successfully: %s \n", RTC_DRIVER_NAME[i]);
+            rv = TPASS;
         }
     
         return rv;
