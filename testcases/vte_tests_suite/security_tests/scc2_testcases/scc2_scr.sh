@@ -24,7 +24,7 @@
 
 #!/bin/sh  
 
-LTPROOT=`cd \`dirname $0\` && echo $PWD`
+LTPROOT=$PWD
 
 cd $LTPROOT
 
