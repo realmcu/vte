@@ -853,6 +853,7 @@ main()
     if [ "$ALT_HTML_OUT" -eq 1 ] ; then        #User wants the HTML output to be created, it then needs to be generated
 #log the latest finished log file name
 echo latest_test_report_$CMDFILES >> $LTPROOT/output/latest_test_report
+chmod -R 777 $LTPROOT/output
 cat > $LTPROOT/output/latest_test_report_$CMDFILES <<EOF
 export LTP_VERSION=$version_date
 export TEST_START_TIME="$test_start_time"
