@@ -134,9 +134,9 @@ int VT_rtc_test7_setup(void)
 {
         int rv = TFAIL;
         int i = 0;
-
+        extern char * RTC_DRIVER_NAME[RTC_DEVICE_NUM];
         do { 
-            file_desc = open(RTC_DRIVER_NAME[i], O_RDONLY)
+            file_desc = open(RTC_DRIVER_NAME[i], O_RDONLY);
         } while (file_desc <= 0 && i++<RTC_DEVICE_NUM);
         if (file_desc ==  -1)
         {
@@ -166,7 +166,6 @@ int VT_rtc_test7_cleanup(void)
 {
         int rv = TFAIL;
         int ret = 0;
-        int i;
 
         /* close RTC driver file descriptor */
         ret = close(file_desc);
@@ -200,8 +199,7 @@ int VT_rtc_test7_cleanup(void)
 int VT_rtc_alarm_on(int seconds)
 {
         int rv = TFAIL;
-        int retval, irqcount = 0;
-        unsigned long data = 0;
+        int retval;
 
         struct rtc_time rtc_tm = {0,0,0,0,0,0};
 
@@ -213,9 +211,7 @@ int VT_rtc_alarm_on(int seconds)
         /***************************************/
         /* Test for alarm                      */
         /***************************************/
-        tst_resm( TINFO, "" );
         tst_resm( TINFO, "ALARM TEST: RTC_ALM_SET & RTC_ALM_READ" );
-
         /* Read the RTC time/date */
         tst_resm( TINFO, "  Read date/time..." );
         retval = ioctl( file_desc, RTC_RD_TIME, &rtc_tm );

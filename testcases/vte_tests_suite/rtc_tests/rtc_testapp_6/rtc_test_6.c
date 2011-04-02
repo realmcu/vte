@@ -274,7 +274,7 @@ int VT_rtc_test6_setup(char* rtc_dev)
         
         if (0 == strcmp(rtc_dev, "")){
             do { 
-                file_desc = open(RTC_DRIVER_NAME[i], O_RDONLY)
+                file_desc = open(RTC_DRIVER_NAME[i], O_RDONLY);
             } while (file_desc <= 0 && i++<RTC_DEVICE_NUM);
         } else file_desc = open(rtc_dev, O_RDONLY);
 
