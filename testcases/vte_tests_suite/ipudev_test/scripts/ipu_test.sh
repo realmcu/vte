@@ -382,10 +382,10 @@ mkdir -p /tmp/ipu_dev
             
             if [ $i != "I420" ];then
             echo "${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},I420 \
-                    -o  ${WD},${HT},${i} -s 0,0,0,0 -n /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}"
+                    -O  ${WD},${HT},${i} -S 0,0,0,0 -N /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}"
             
             ${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},I420 \
-                    -o  ${WD},${HT},${i} -s 0,0,0,0 -n /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}
+                    -O  ${WD},${HT},${i} -S 0,0,0,0 -N /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}
             else
             cp ${STREAM_PATH}/video/${INFILE} /tmp/ipu_dev/tmp.dat
             fi
@@ -572,7 +572,7 @@ test_case_07()
                 echo "TST_INFO: output format is: ${format}"
                 if [ $mode_task = "0x23"  ]; then
                 
-                    echo "TST INFO: -----------multi-display test------------"
+                    echo "TST INFO: -----------multi-display test not valid------------"
                     ${TST_CMD} -m ${mode_task} -f 300 -E 1 -i $WD,$HT,I420 -o \
                     $WD,$HT,$format,0 -s 1,0,0,0 -O $WD,$HT,$format,0 -S 1,1,0,$HT \
                     /dev/${infilename} 
@@ -585,20 +585,20 @@ test_case_07()
                 else
 
                     echo "TST_INFO: --------single display---------------"
-                    ${TST_CMD} -m ${mode_task} -f 300 -i $WD,$HT,I420 -o \
-                    $WD,$HT,$format,0 -s 1,0,0,0 /dev/${infilename}
+                    ${TST_CMD} -m ${mode_task} -f 300 -i $WD,$HT,I420 -O \
+                    $WD,$HT,$format,0 -S 1,0,0,0 /dev/${infilename}
                     sleep 3
                 
                     run_time=`cat /tmp/ipu_dev/sys_time.txt`
-                    echo -e "${infilename}\t sigle-display \t $run_time \t -m ${mode_task} -i ${WD},${HT},I420 -o ${WD},${HT},$format,0 -s 1,0,0,0" >> ipu_performance.txt
+                    echo -e "${infilename}\t sigle-display \t $run_time \t -m ${mode_task} -i ${WD},${HT},I420 -O ${WD},${HT},$format,0 -S 1,0,0,0" >> ipu_performance.txt
 
                     echo "TST_INFO: ---------crop test------------"
-                    ${TST_CMD} -m ${mode_task} -f 300 -i $WD,$HT,I420 -c 32,32,64,64 -o \
-                    $WD,$HT,$format,0 -s 1,0,0,0 /dev/${infilename} 
+                    ${TST_CMD} -m ${mode_task} -f 300 -i $WD,$HT,I420 -c 32,32,64,64 -O \
+                    $WD,$HT,$format,0 -S 1,0,0,0 /dev/${infilename} 
                     sleep 3
 
                     run_time=`cat /tmp/ipu_dev/sys_time.txt`
-                    echo -e "${infilename}\t crop test \t $run_time \t -m ${mode_task} -i ${WD},${HT},I420 -c 32,32,64,64 -o ${WD},${HT},$format,0 -s 1,0,0,0" >> ipu_performance.txt
+                    echo -e "${infilename}\t crop test \t $run_time \t -m ${mode_task} -i ${WD},${HT},I420 -c 32,32,64,64 -O ${WD},${HT},$format,0 -S 1,0,0,0" >> ipu_performance.txt
 
                     echo "TST_INFO: --------- resize test --------------------"
                 
@@ -608,12 +608,12 @@ test_case_07()
 	                    out_w=$(echo $outsize | sed "s/,/ /g" | awk '{print $1}')
 	                    out_h=$(echo $outsize | sed "s/,/ /g" | awk '{print $2}')
 
-                        ${TST_CMD} -m ${mode_task} -f 300 -i $WD,$HT,I420 -o \
-                        $out_w,$out_h,$format,0 -s 1,0,0,0 /dev/${infilename}
+                        ${TST_CMD} -m ${mode_task} -f 300 -i $WD,$HT,I420 -O \
+                        $out_w,$out_h,$format,0 -S 1,0,0,0 /dev/${infilename}
                         sleep 3
                 
                         run_time=`cat /tmp/ipu_dev/sys_time.txt`
-                        echo -e "${infilename}\t resize test \t $run_time \t -m ${mode_task} -i ${WD},${HT},I420 -o ${out_w},${out_h},$format,0 -s 1,0,0,0" >> ipu_performance.txt
+                        echo -e "${infilename}\t resize test \t $run_time \t -m ${mode_task} -i ${WD},${HT},I420 -O ${out_w},${out_h},$format,0 -S 1,0,0,0" >> ipu_performance.txt
                     done
                 fi
             done
