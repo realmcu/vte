@@ -215,6 +215,33 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
+ printf("test_handle->mode = %x\n",test_handle.mode );
+ printf("test_handle->fcount = %d\n", test_handle.fcount);
+ printf("test_handle->loop_cnt = %d\n", test_handle.loop_cnt);
+ printf("test_handle->input.width = %d\n",test_handle.input.width );
+ printf("test_handle->input.height = %d\n",test_handle.input.height);
+ printf("test_handle->input.fmt = %x\n",test_handle.input.fmt);
+ printf("test_handle->input.input_crop_win.pos.x = %d\n", test_handle.input.input_crop_win.pos.x);
+ printf("test_handle->input.input_crop_win.pos.y = %d \n",test_handle.input.input_crop_win.pos.y);
+ printf("test_handle->input.input_crop_win.win_w = %d \n",test_handle.input.input_crop_win.win_w);
+ printf("test_handle->input.input_crop_win.win_h = %d \n", test_handle.input.input_crop_win.win_h);
+ printf("test_handle->input.motion_sel = %d \n", test_handle.input.motion_sel);
+ printf("test_handle->output.width = %d \n", test_handle.output.width);
+ printf("test_handle->output.height = %d \n",test_handle.output.height );
+ printf("test_handle->output.fmt = %x \n",test_handle.output.fmt);
+ printf("test_handle->output.rot = %d \n",test_handle.output.rot );
+ printf("test_handle->output.show_to_fb = %d \n", test_handle.output.show_to_fb);
+ printf("test_handle->output.fb_disp.fb_num = %d \n",test_handle.output.fb_disp.fb_num );
+ printf("test_handle->output.fb_disp.pos.x = %d \n", test_handle.output.fb_disp.pos.x);
+ printf("test_handle->output.fb_disp.pos.y = %d\n",test_handle.output.fb_disp.pos.y);
+ printf("test_handle->output.output_win.pos.y = %d \n",test_handle.output.output_win.pos.x );
+ printf("test_handle->output.output_win.pos.y = %d\n",test_handle.output.output_win.pos.y );
+ printf("test_handle->output.output_win.win_w = %d\n",test_handle.output.output_win.win_w );
+ printf("test_handle->output.output_win.win_h= %d\n",test_handle.output.output_win.win_h);
+ printf("test_handle->outfile= %s \n",test_handle.outfile);
+
+
+ 
 	system("echo 0,0 > /sys/class/graphics/fb0/pan");
 
 	printf("test start \n");
