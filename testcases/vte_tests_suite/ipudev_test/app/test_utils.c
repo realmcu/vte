@@ -59,6 +59,7 @@ int time_sec = 0, time_usec = 0;
  *          NORMAL_MODE = 0x10, STREAM_MODE = 0x20
  *    should combine or TASK and MODE
  * f: frame count
+ * l: loop count
  * E: output1 enable
  * i: w,h,f input width,height,format
  * c: x,y,w,h crop x,y,width,height 
@@ -69,7 +70,7 @@ int time_sec = 0, time_usec = 0;
  * S: tofb,fbid,posx,posy, enable o1 to fb, fb id,position x/y
  * N: output1 file name
  * */
-char * options = "m:f:E:i:c:o:s:n:O:S:N:";
+char * options = "m:f:l:E:i:c:o:s:n:O:S:N:W:";
 
 int parse_cmd_input(int argc, char ** argv, ipu_test_handle_t *test_handle)
 {
@@ -80,28 +81,30 @@ int parse_cmd_input(int argc, char ** argv, ipu_test_handle_t *test_handle)
  printf("pass cmdline \n", argc, argv[0]);
 
  /*default settings*/
- test_handle->mode = 0x22;
- test_handle->fcount = 50;
- test_handle->input.width = 320;
- test_handle->input.height = 240;
- test_handle->input.fmt = v4l2_fourcc('I', '4','2', '0');
+ test_handle->mode = 0x24;
+ test_handle->fcount = 1;
+ test_handle->loop_cnt = 1;
+ test_handle->input.width = 880;
+ test_handle->input.height = 1312;
+ test_handle->input.fmt = v4l2_fourcc('4', '2','2', 'P');
  test_handle->input.input_crop_win.pos.x = 0;
  test_handle->input.input_crop_win.pos.y = 0;
- test_handle->input.input_crop_win.win_w = 0;
- test_handle->input.input_crop_win.win_h = 0;
- test_handle->output.width = 320;
- test_handle->output.height = 240;
- test_handle->output.fmt =  v4l2_fourcc('R', 'G','B', 'P');
- test_handle->output.rot = 0;
- test_handle->output.show_to_fb = 1;
+ test_handle->input.input_crop_win.win_w = 864;
+ test_handle->input.input_crop_win.win_h = 1300;
+ test_handle->input.motion_sel = 0;
+ test_handle->output.width = 464;
+ test_handle->output.height = 698;
+ test_handle->output.fmt =  v4l2_fourcc('R', 'G','B', '3');
+ test_handle->output.rot = 3;
+ test_handle->output.show_to_fb = 0;
  test_handle->output.fb_disp.fb_num = 2;
  test_handle->output.fb_disp.pos.x = 0;
  test_handle->output.fb_disp.pos.y = 0;
+ test_handle->output.output_win.pos.x = 0;
  test_handle->output.output_win.pos.y = 0;
- test_handle->output.output_win.pos.y = 0;
- test_handle->output.output_win.win_w = 320;
- test_handle->output.output_win.win_h = 240;
- memcpy(test_handle->outfile ,"output.dat",11);
+ test_handle->output.output_win.win_w = 0;
+ test_handle->output.output_win.win_h = 0;
+ memcpy(test_handle->outfile ,"/root/output.dat",16);
 
  while((opt = getopt(argc, argv, options)) > 0)
  {
@@ -120,6 +123,8 @@ int parse_cmd_input(int argc, char ** argv, ipu_test_handle_t *test_handle)
       test_handle->fcount = strtol(optarg, NULL, 10);
       deb_printf("frame count set %d \n",test_handle->fcount);
       break;
+	 case 'l':
+	   test_handle->loop_cnt = strtol(optarg, NULL, 10);
    case 'E':/*motion select*/
      if(NULL == optarg)
        break;
@@ -162,7 +167,7 @@ int parse_cmd_input(int argc, char ** argv, ipu_test_handle_t *test_handle)
    case 'O':/*output1 setting*/
      if(NULL == optarg)
        break;
-     sscanf(optarg,"%d,%d,%s,%d", 
+     sscanf(optarg,"%d,%d,%s,%d,%d,%d,%d,%d", 
        &(test_handle->output.width),
        &( test_handle->output.height),fourcc,
        &(test_handle->output.rot));
@@ -185,6 +190,14 @@ int parse_cmd_input(int argc, char ** argv, ipu_test_handle_t *test_handle)
 	 test_handle->output.fb_disp.pos.x,test_handle->output.fb_disp.pos.y
        );
       break;
+	 case 'W':
+	    sscanf(optarg,"%d,%d,%d,%d",
+			&(test_handle->output.output_win.pos.x),
+			&(test_handle->output.output_win.pos.y),
+			&(test_handle->output.output_win.win_w),
+			&(test_handle->output.output_win.win_h)
+			);
+	    break;
    case 'N':/*output1 to filename */
      if(NULL == optarg)
        break;
