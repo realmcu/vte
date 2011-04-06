@@ -124,5 +124,7 @@ rm -f ${LTPROOT}/output/${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
 ${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.html -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
 #${TEST_PATH}/runalltests.sh -v -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt
 fi
-echo OK > ${TEST_PATH}/temp_cnt_$CMDFILE_$tday
+if [ $? -eq 0  ]; then
+	echo OK > ${TEST_PATH}/temp_cnt_$CMDFILE_$tday
+fi
 echo "FREESCALE LBG TEST END"
