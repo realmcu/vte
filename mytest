@@ -44,7 +44,11 @@ if [ -e ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt 
    id=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | tail -n $cnt | head -n 1)
 	 ide=$(echo $id | wc -L)
 	 ll=$(cat ${TEST_PATH}/temp_cnt_$CMDFILE_$tday)
-	 if [ "$ide" -eq 0 ]; then
+	 if [ $ll = "OK" ]; then
+     echo "test finished for this kernel"
+		 exit 0
+	 fi
+	 if [ $ide -eq 0 ]; then
 #2 the case id not find in this line
 			if [ $lct -eq 0 ]; then
 	#3 if no case is run before
@@ -120,5 +124,5 @@ rm -f ${LTPROOT}/output/${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
 ${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.html -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
 #${TEST_PATH}/runalltests.sh -v -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt
 fi
-rm -f ${TEST_PATH}/temp_cnt_$CMDFILE_$tday
+echo OK > ${TEST_PATH}/temp_cnt_$CMDFILE_$tday
 echo "FREESCALE LBG TEST END"
