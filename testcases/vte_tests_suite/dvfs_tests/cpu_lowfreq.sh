@@ -103,11 +103,11 @@ lowfreq_suspend()
 
 
     echo $WorkPoint > $CPU_CTRL
-    echo =========To test cpu works at $WorkPoint
+    echo =========To test cpu works at $WorkPoint=========
     #cpufreq-info
     cur_freq=`cat $CUR_FREQ_GETTER`
     if [ $cur_freq -ne $(cpufreq-info -f) ]; then
-       echo =========Current cpu does not work at $WorkPoint
+       echo =========Current cpu does not work at $WorkPoint=========
        return $RC
     fi
 
@@ -177,6 +177,11 @@ wp_convert()
 #
 # Return value from setup, and test functions.
 RC=0
+
+if [ $# -lt 1 ]; then
+    usage
+    exit 1
+fi
 
 # bash specified script, using array, not dash-compatibility
 setup  || exit $RC
