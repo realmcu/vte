@@ -87,11 +87,24 @@ setup()
         return $RC
     fi
 
+    #enable dvfs-core
+    DVFS_CORE_DIR=/sys/bus/platform/drivers/mxc_dvfs_core/mxc_dvfs_core.0
+    dvfs_core_ctl=$DVFS_CORE_DIR/enable
+    echo 1 > $dvfs_core_ctl
+    res=`cat $dvfs_core_ctl | grep "enabled" | wc -l`
+
+    if [ $res -ne 1 ]; then
+        tst_resm TFAIL "Fail to enable dvfs-core"
+        RC=1
+        return $RC
+    fi
+
     #enable dvfs-per on MX51 only
     DVFS_PER_DIR=/sys/devices/platform/mxc_dvfsper.0
+    dvfs_per_ctl=${DVFS_PER_DIR}/enable
     if [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
-        echo 1 > $DVFS_PER_DIR/enable
-        res=`cat $DVFS_PER_DIR/enable | grep "enabled" | wc -l`
+        echo 1 > $dvfs_per_ctl
+        res=`cat $dvfs_per_ctl | grep "enabled" | wc -l`
         if [ $res -eq 1 ]; then
             tst_resm TPASS "DVFS-PER is enabled"
         else
@@ -101,14 +114,19 @@ setup()
         fi
     fi
 
-    #enable dvfs-core
-    echo 1 > /sys/bus/platform/drivers/mxc_dvfs_core/mxc_dvfs_core.0/enable
-    res=`cat /sys/bus/platform/drivers/mxc_dvfs_core/mxc_dvfs_core.0/enable | grep "enabled" | wc -l`
-
-    if [ $res -ne 1 ]; then
-        tst_resm TFAIL "Fail to enable dvfs-core"
-        RC=1
-        return $RC
+    #enable bus frequency scaling on MX53 only
+    BUS_FREQ_DIR=/sys/devices/platform/busfreq.0
+    bus_freq_ctl=${BUS_FREQ_DIR}/enable
+    if [ $platfm -eq 53 ]; then
+        echo 1 > $bus_freq_ctl
+        res=`cat $bus_freq_ctl | grep "enabled" | wc -l`
+        if [ $res -eq 1 ]; then
+            tst_resm TPASS "Bus Freq scaling is enabled"
+        else
+            tst_resm TFAIL "fail to enable BUS-FREQ"
+            RC=1
+            return $RC
+        fi
     fi
 
     return $RC
@@ -117,9 +135,12 @@ setup()
 cleanup()
 {
     if [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
-        echo 0 > $DVFS_PER_DIR/enable
+        echo 0 > $dvfs_per_ctl
     fi
-    echo 0 > /sys/bus/platform/drivers/mxc_dvfs_core/mxc_dvfs_core.0/enable
+    if [ $platfm -eq 53 ]; then
+        echo 0 > $bus_freq_ctl
+    fi
+    echo 0 > $dvfs_core_ctl
 }
 
 dvfs_per_basic()
