@@ -157,12 +157,34 @@ int parse_cmd_input(int argc, char ** argv, ipu_test_handle_t *test_handle)
    case 'o':/*output0 setting*/
      if(NULL == optarg)
        break;
+			 sscanf(optarg,"%d,%d,%s,%d,%d,%d,%d,%d", 
+       &(test_handle->output.width),
+       &( test_handle->output.height),fourcc,
+       &(test_handle->output.rot));
+     test_handle->output.fmt = v4l2_fourcc(fourcc[0],
+       fourcc[1],fourcc[2], fourcc[3]);
+      deb_printf("output1 setting: w=%d,h=%d,%s=%d,r=%d \n",test_handle->output.width,
+      test_handle->output.height,fourcc,test_handle->output.fmt,test_handle->output.rot);
+       break;
    case 's':/*output0 to fb setting*/
      if(NULL == optarg)
        break;
+			 sscanf(optarg,"%d,%d,%d,%d", 
+       &(test_handle->output.show_to_fb),
+       &(test_handle->output.fb_disp.fb_num),
+       &(test_handle->output.fb_disp.pos.x),
+       &(test_handle->output.fb_disp.pos.y)
+       );
+       deb_printf("output1 fb setting: enable=%d,fb=/dev/fb%d,x=%d,y=%d \n",
+         test_handle->output.show_to_fb,test_handle->output.fb_disp.fb_num,
+	 test_handle->output.fb_disp.pos.x,test_handle->output.fb_disp.pos.y
+       );
+      break;
    case 'n':/*output0 file name*/
      if(NULL == optarg)
        break;
+      sscanf(optarg,"%s ",test_handle->outfile);
+      deb_printf("output1 file name %s \n",test_handle->outfile);
       break;
    case 'O':/*output1 setting*/
      if(NULL == optarg)
@@ -210,5 +232,3 @@ int parse_cmd_input(int argc, char ** argv, ipu_test_handle_t *test_handle)
  }
  return 0;
 }
-
-
