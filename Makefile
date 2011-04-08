@@ -222,5 +222,41 @@ package:
 	@$(RPMBUILD) -ba ltp-devel.spec
 
 
-vte: pan utils tools libs
+vte:pan utils tools
+	$(MAKE) -C lib LIB=libltp.a
+	@echo "***********************************************"
+	@echo "** MAKE ALL - VTE tests suite                **"
+	@echo "***********************************************"
+	@echo
+	@$(MAKE) -C testcases/vte_tests_suite all
+	@$(MAKE) -C testcases/module_test all
+	@echo
+	@echo "***********************************************"
+	@echo "** MAKE INSTALL - VTE tests suite            **"
+	@echo "***********************************************"
+	@echo
+	@$(MAKE) -C testcases/vte_tests_suite install
+	@$(MAKE) -C testcases/module_test install
+	@$(MAKE) -C pan
+	@$(MAKE) -C tools
+	#@$(MAKE) -C tools install
+	@-ln -f tools/apicmds/tst_* testcases/bin/
+	@echo
+	@echo "***********************************************"
+	@echo "** VTE tests suite is available              **"
+	@echo "***********************************************"
+	@echo
+	@echo "***********************************************"
+	@echo "**        build Finished                     **"
+	@echo "***********************************************"
+apps:
+	-mkdir -p testcases/bin/
+	@$(MAKE) -C openlibs
+	@$(MAKE) -C testcases/third_party_suite all
+	@$(MAKE) -C testcases/third_party_suite install
+	@echo
+	@echo "***********************************************"
+	@echo "**        apps build Finished                **"
+	@echo "***********************************************"
+
 ## End misc targets.
