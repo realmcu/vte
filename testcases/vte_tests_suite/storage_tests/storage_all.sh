@@ -200,6 +200,10 @@ run_single_test_list()
      #not mount
      mount_point=$(mktemp -d -p /tmp)
 		 mount /dev/$i $mount_point || RC=$(echo $RC m$i)
+		 if [ ! -z $(echo $RC | grep -i $i)  ];then
+			 rm -rf $mount_point
+			 continue
+		 fi
      need_umount=1
 		fi
 		for j in $mount_point
