@@ -20,7 +20,6 @@
 #include "netdefs.h"
 
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 #if INET6
 char *TCID = "sendfile6_server";
@@ -41,7 +40,7 @@ main(int argc, char *argv[])
 	int pid, nbytes, flen,count;
 	char rbuf[PATH_MAX];
 	int chunks=0;
-	off_t *offset; 
+	off_t *offset;
 	char nbuf[PATH_MAX];
 	int port;
 
@@ -49,7 +48,7 @@ main(int argc, char *argv[])
 		tst_resm(TBROK, "usage: listen-address listen-port");
 		tst_exit();
 	}
- 
+
 	/* open socket */
 	if ((s = socket(AFI, SOCK_STREAM, 0)) < 0) {
 		tst_resm(TBROK, "socket error = %d\n", errno);
@@ -84,7 +83,7 @@ main(int argc, char *argv[])
 		close(s);
 		tst_exit();
 	}
- 
+
 	/* start to listen socket */
 	if (listen(s, LISTEN_BACKLOG) < 0) {
 		tst_resm(TBROK, "listen error = %d\n", errno);
@@ -98,7 +97,7 @@ main(int argc, char *argv[])
 	while (1) {
 
 		/* accept a connection from a client */
-		if ((as = accept(s, &from, &fromlen)) < 0 ) {
+		if ((as = accept(s, &from, &fromlen)) < 0) {
 			tst_resm(TBROK, "accept error = %d\n", errno);
 			if (errno == EINTR)
 				continue;
@@ -120,7 +119,7 @@ main(int argc, char *argv[])
 		}
 
 		/* child process to manage a connection */
-	
+
 		close(s); /* close service socket */
 
 		/* get client request information */
@@ -141,7 +140,7 @@ main(int argc, char *argv[])
 			lp++;
 		}
 		nbuf[count] = '\0';
-		flen = strtol(number, (char **)NULL, 10); 
+		flen = strtol(number, (char **)NULL, 10);
 
 		/* the file name */
 		lp++;
@@ -168,7 +167,6 @@ main(int argc, char *argv[])
 		} while (rc != 0);
 		tst_resm(TINFO, "File %s sent in %d parts\n", lp, chunks);
 
-
 		close(as); /* close connection */
 		close(fd); /* close requested file */
 
@@ -176,8 +174,8 @@ main(int argc, char *argv[])
 
 	}
 
-	close(s); /* close parent socket (never reached because of the while(1)) */
+	close(s); /* close parent socket (never reached because of the while (1)) */
 
-	return 0;
+	tst_exit();
 
 }

@@ -57,7 +57,6 @@
 
 char *TCID = "setuid04";
 int TST_TOTAL = 1;
-extern int Tst_count;
 char nobody_uid[] = "nobody";
 char testfile[256] = "";
 struct passwd *ltpuser;
@@ -76,9 +75,9 @@ int main(int ac, char **av)
 	int status;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	/*
 	 * perform global setup for the test
@@ -101,7 +100,9 @@ int main(int ac, char **av)
 	}
 
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
+	tst_exit();
+
 }
 
 /*
@@ -114,12 +115,11 @@ void do_master_child()
 	int status;
 
 	if (setuid(ltpuser->pw_uid) == -1) {
-		tst_brkm(TBROK, tst_exit,
+		tst_brkm(TBROK, NULL,
 			 "setuid failed to set the effective uid to %d",
 			 ltpuser->pw_uid);
 	}
 
-	/* Check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		int tst_fd;
 
@@ -143,7 +143,7 @@ void do_master_child()
 
 		pid = FORK_OR_VFORK();
 		if (pid < 0)
-			tst_brkm(TBROK, tst_exit, "Fork failed");
+			tst_brkm(TBROK, NULL, "Fork failed");
 
 		if (pid == 0) {
 			int tst_fd2;
@@ -182,7 +182,7 @@ void do_master_child()
 void setup(void)
 {
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 
 	ltpuser = getpwnam(nobody_uid);
@@ -194,10 +194,8 @@ void setup(void)
 	if (fd < 0)
 		tst_brkm(TBROK, cleanup, "cannot creat test file");
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -216,6 +214,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

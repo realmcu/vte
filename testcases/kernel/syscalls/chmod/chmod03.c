@@ -91,7 +91,6 @@
 
 char *TCID = "chmod03";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
@@ -100,52 +99,32 @@ void cleanup();			/* Main cleanup function for the test */
 
 int main(int ac, char **av)
 {
-	struct stat stat_buf;	/* stat struct. */
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-	mode_t file_mode;	/* mode permissions set on testfile */
+	struct stat stat_buf;
+	int lc;
+	char *msg;
+	mode_t file_mode;
 
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
-		/*
-		 * Call chmod(2) with specified mode permissions
-		 * (to set sticky bit) on testfile.
-		 */
 		TEST(chmod(TESTFILE, PERMS));
 
-		/* check return code of chmod(2) */
 		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL|TTERRNO, "chmod(%s, %#o) failed",
 				 TESTFILE, PERMS);
 			continue;
 		}
 
-		/*
-		 * Perform functional verification if test
-		 * executed without (-f) option.
-		 */
 		if (STD_FUNCTIONAL_TEST) {
-			/*
-			 * Get the file information using
-			 * stat(2).
-			 */
 			if (stat(TESTFILE, &stat_buf) < 0) {
-				tst_brkm(TFAIL, cleanup,
-					 "stat(2) of %s failed, errno:%d",
-					 TESTFILE, TEST_ERRNO);
+				tst_brkm(TFAIL|TERRNO, cleanup,
+				    "stat(%s) failed", TESTFILE);
 			}
 			file_mode = stat_buf.st_mode;
 
@@ -158,42 +137,30 @@ int main(int ac, char **av)
 					 "chmod(%s, %#o) successful",
 					 TESTFILE, PERMS);
 			}
-		} else {
+		} else
 			tst_resm(TPASS, "call succeeded");
-		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
+	tst_exit();
 
-	return 0;
- /*NOTREACHED*/}		/* End main */
+}
 
-/*
- * void
- * setup() - performs all ONE TIME setup for this test.
- *  Create a temporary directory and cd to it.
- *  Create a testfile under test directory.
- */
 void setup()
 {
-	int fd;			/* file descriptor for testfile */
+	int fd;
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Switch to nobody user for correct error code collection */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
-	}
+	tst_require_root(NULL);
 	ltpuser = getpwnam(nobody_uid);
+	if (ltpuser == NULL)
+		tst_brkm(TBROK|TERRNO, NULL, "getpwnam failed");
 	if (setuid(ltpuser->pw_uid) == -1)
-		tst_resm(TINFO|TERRNO, "setuid(%u) failed", ltpuser->pw_uid);
+		tst_brkm(TBROK|TERRNO, NULL, "setuid(%u) failed", ltpuser->pw_uid);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/*
@@ -201,18 +168,17 @@ void setup()
 	 * mode permissios and set the ownership of the test file to the
 	 * uid/gid of guest user.
 	 */
-	if ((fd = open(TESTFILE, O_RDWR | O_CREAT, FILE_MODE)) == -1) {
+	if ((fd = open(TESTFILE, O_RDWR|O_CREAT, FILE_MODE)) == -1) {
 		tst_brkm(TBROK|TERRNO, cleanup,
 			 "open(%s, O_RDWR|O_CREAT, %#o) failed",
 			 TESTFILE, FILE_MODE);
 	}
 
-	/* Close the test file created above */
 	if (close(fd) == -1) {
 		tst_brkm(TBROK|TERRNO, cleanup, "close(%s) failed",
 			 TESTFILE);
 	}
-}				/* End setup() */
+}
 
 /*
  * void
@@ -227,9 +193,6 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

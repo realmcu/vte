@@ -59,8 +59,8 @@
 #include <sys/resource.h>
 #include <unistd.h>
 #include <errno.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 void do_child(int);
 void setup(void);
@@ -68,7 +68,6 @@ void cleanup(void);
 
 char *TCID = "waitpid05";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 #ifdef UCLINUX
 void do_child_uclinux(void);
@@ -83,10 +82,10 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
+
+	 }
 #ifdef UCLINUX
 	maybe_run_child(&do_child_uclinux, "d", &sig_uclinux);
 #endif
@@ -105,7 +104,7 @@ int main(int ac, char **av)
 		if (signal(SIGTERM, SIG_DFL) == SIG_ERR) {
 			tst_resm(TFAIL, "Sigset SIGTERM failed, errno = %d",
 				 errno);
-			tst_exit();
+
 		}
 
 		exno = 1;
@@ -209,7 +208,7 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -277,6 +276,4 @@ void cleanup(void)
 
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

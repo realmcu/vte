@@ -52,8 +52,6 @@
 #include "linux_syscall_numbers.h"
 
 /* Extern Global Variables */
-extern int Tst_count;           /* counter for tst_xxx routines.         */
-extern char *TESTDIR;           /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
 char *TCID = "waitid01";  /* Test program identifier.*/
@@ -79,11 +77,10 @@ int  TST_TOTAL = 3;                   /* total number of tests in this file.   *
 /*                                                                            */
 /******************************************************************************/
 extern void cleanup() {
-        /* Remove tmp dir and all files in it */
+
         TEST_CLEANUP;
         tst_rmdir();
 
-        /* Exit with appropriate return code. */
         tst_exit();
 }
 
@@ -112,12 +109,11 @@ void setup() {
         tst_tmpdir();
 }
 
-
 void display_status(siginfo_t *infop)
 {
         tst_resm(TINFO,"Process %d terminated:", infop->si_pid);
         tst_resm(TINFO,"code = %d",infop->si_code);
-        if(infop->si_code == CLD_EXITED)
+        if (infop->si_code == CLD_EXITED)
                 tst_resm(TINFO,"exit value = %d",infop->si_status);
         else
 		tst_resm(TINFO,"signal = %d",infop->si_status);
@@ -128,41 +124,40 @@ int main(int ac, char **av) {
         siginfo_t infop;
         int lc;                 /* loop counter */
         char *msg;              /* message returned from parse_opts */
-	
+
         /* parse standard options */
-        if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-             tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+        if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+             tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
              tst_exit();
            }
 
         setup();
 
-        /* Check looping state if -i option given */
         for (lc = 0; TEST_LOOPING(lc); ++lc) {
                 Tst_count = 0;
                 for (testno = 0; testno < TST_TOTAL; ++testno) {
-                     
+
 	TEST(fork());
-	if(TEST_RETURN == 0){
+	if (TEST_RETURN == 0) {
                 exit(123);
         }
         else{
                 TEST(waitid(P_ALL,getpid(),&infop,WEXITED));
-		if(TEST_RETURN == -1){
+		if (TEST_RETURN == -1) {
                         tst_resm(TFAIL|TTERRNO, "waitid(getpid()) failed");
                         tst_exit();
-		}else 
+		}else
 		    display_status(&infop); //CLD_EXITED = 1
         }
 
         TEST(fork());
-        if(TEST_RETURN == 0){
+        if (TEST_RETURN == 0) {
 		int a, b = 0;
                 a = 1/b;
                 tst_exit();
         } else{
                 TEST(waitid(P_ALL,0,&infop,WEXITED));
-		if(TEST_RETURN == -1) {
+		if (TEST_RETURN == -1) {
                         tst_resm(TFAIL|TTERRNO, "waitid(0) failed");
                         tst_exit();
                 } else
@@ -170,21 +165,20 @@ int main(int ac, char **av) {
         }
 
         TEST(pid = fork());
-	if(TEST_RETURN == 0){
+	if (TEST_RETURN == 0) {
                 TEST(sleep(10));
                 tst_exit();
         }
         TEST(kill(pid,SIGHUP));
         TEST(waitid(P_ALL,0,&infop,WEXITED));
-	if(TEST_RETURN == -1) {
+	if (TEST_RETURN == -1) {
                 tst_resm(TFAIL|TTERRNO, "waitid(0) failed");
                 tst_exit();
-        } else 
+        } else
 		display_status(&infop); //CLD_KILLED = 2 ; SIGHUP = 1
                 }
-        }	
+        }
         tst_resm(TPASS, "waitid(): system call passed");
 	cleanup();
         tst_exit();
 }
-

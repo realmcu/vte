@@ -29,7 +29,7 @@
  * This is similar to fptest1.  Random values are used for some of the
  * math in routine "gauss".  The value "avgspd" computed in routine
  * "term()" should come out to a known value.  If this happens this
- * program prints a "passed" message and exits 0, otherwise a "failed" 
+ * program prints a "passed" message and exits 0, otherwise a "failed"
  * message is printed and it exits with value 1.
  *
  */
@@ -64,9 +64,7 @@
 
 char *TCID="fptest02";          /* Test program identifier.    */
 int TST_TOTAL=1;                /* Total number of test cases. */
-extern int Tst_count;           /* Test Case counter for tst_* routines */
 /**************/
-
 
 int init();
 int doevent();
@@ -112,17 +110,13 @@ char *argv[];
 
 	init();
 
-	while ( (ev=nextevent()) != (struct event *)NULL) {
+	while ((ev=nextevent()) != NULL) {
 		doevent(ev);
 	}
 
 	term();
 	tst_resm(TPASS,"PASS");
 	tst_exit();
-
-	/**NOT REACHED**/
-                 return(0);
-
 }
 
 /*
@@ -198,12 +192,10 @@ double t;
 			break;
 			}
 		}
-	if (ok) 
+	if (ok)
 		return(0);
-	else{
-                                 tst_resm(TBROK,"No room for event");
-                                 tst_exit();
-                 }
+	else
+		tst_brkm(TBROK, NULL, "No room for event");
 
 	return(0);
 }
@@ -217,12 +209,12 @@ struct event *nextevent()
 	int i;
 
 	for (i=1; i<=nproc; i++) {
-          if ((eventtab[i].type!=NULLEVENT) && (eventtab[i].time<mintime) ) {
+          if ((eventtab[i].type!=NULLEVENT) && (eventtab[i].time<mintime)) {
 		imin=i;
 		mintime=eventtab[i].time;
 		}
 	  }
-	
+
 	if (imin) {
 		rtrevent.type = eventtab[imin].type;
 		rtrevent.proc = eventtab[imin].proc;
@@ -282,7 +274,7 @@ struct event *ev;
 
 	switch (ev->type) {
 		case TRYCRIT :
-			if (critfree==TRUE) 
+			if (critfree==TRUE)
 				addevent(ENTERCRIT,proc,sgtime);
 			else
 				addwaiting(proc);
@@ -321,8 +313,7 @@ struct event *ev;
 			addevent(TRYCRIT,proc,sgtime);
 			break;
 		default:
-					tst_resm(TBROK,"Illegal event");
-					tst_exit();
+			tst_brkm(TBROK, NULL, "Illegal event");
 			break;
 		}
 	return(0);
@@ -345,7 +336,7 @@ int seed;
 	twopi=2.*acos((double)-1.0);
 	return;
 }
-	
+
 double gauss()
 {
 	double x1,x2;
@@ -363,4 +354,3 @@ double gauss()
 		return(mean + stdev*x2);
 		}
 }
-

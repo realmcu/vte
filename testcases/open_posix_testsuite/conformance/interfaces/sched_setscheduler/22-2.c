@@ -12,7 +12,6 @@
  * their scheduling parameters from the process.
  */
 
-
 #include <sched.h>
 #include <stdio.h>
 #include <pthread.h>
@@ -20,10 +19,9 @@
 #include <errno.h>
 #include "posixtest.h"
 
-
 void * runner(void * arg) {
 
-	while(1) sleep(1);
+	while (1) sleep(1);
 	return NULL;
 }
 
@@ -33,18 +31,18 @@ int main() {
 	pthread_t tid;
 	pthread_attr_t attr;
 
-	if(sched_getparam(getpid(), &param) != 0){
+	if (sched_getparam(getpid(), &param) != 0) {
 		perror("An error occurs when calling sched_getparam()");
 		pthread_exit((void*)-1);
 	}
 	/* Make sure new_priority != old_priority */
 	max_priority = sched_get_priority_max(SCHED_FIFO);
-	new_priority = (param.sched_priority == max_priority) ? 
+	new_priority = (param.sched_priority == max_priority) ?
 		sched_get_priority_min(SCHED_FIFO) :
 		max_priority;
 	param.sched_priority = new_priority;
-	if(sched_setscheduler(getpid(), SCHED_FIFO, &param) != 0){
-		if(errno == EPERM) {
+	if (sched_setscheduler(getpid(), SCHED_FIFO, &param) != 0) {
+		if (errno == EPERM) {
 			printf("This process does not have the permission to set its own scheduling policy.\nTry to launch this test as root.\n");
 			return PTS_UNRESOLVED;
 		}
@@ -52,33 +50,31 @@ int main() {
 		return PTS_UNRESOLVED;
 	}
 
-
-	if(pthread_attr_init(&attr) != 0) {
+	if (pthread_attr_init(&attr) != 0) {
 		printf("An error occurs when calling pthread_attr_init()");
 		return PTS_UNRESOLVED;
 	}
 	result = pthread_attr_setscope(&attr, PTHREAD_SCOPE_PROCESS);
-	if(result == ENOTSUP) {
+	if (result == ENOTSUP) {
 		printf("Process contention scope threads are not supported.\n");
 		return PTS_UNSUPPORTED;
-	} else if(result != 0) {
+	} else if (result != 0) {
 		printf("An error occurs when calling pthread_attr_setscope()");
 		return PTS_UNRESOLVED;
 	}
-	if(pthread_create(&tid, &attr, runner, NULL) != 0) {
+	if (pthread_create(&tid, &attr, runner, NULL) != 0) {
 		printf("An error occurs when calling pthread_create()");
 		return PTS_UNRESOLVED;
 	}
 
-
-	if(pthread_getschedparam(tid , &policy, &param) != 0) {
+	if (pthread_getschedparam(tid , &policy, &param) != 0) {
 		printf("An error occurs when calling pthread_getschedparam()");
 		return PTS_UNRESOLVED;
 	}
 
 	pthread_cancel(tid);
 
-	if(param.sched_priority == new_priority){
+	if (param.sched_priority == new_priority) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
 	}

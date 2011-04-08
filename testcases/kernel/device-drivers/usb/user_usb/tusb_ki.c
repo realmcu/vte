@@ -40,7 +40,6 @@
 #include <sys/ioctl.h>
 #include "../tusb/tusb.h"
 
-
 /*
  * this generic function can be used
  * for any test calls that need no
@@ -69,15 +68,14 @@ int ki_generic(int fd, int flag) {
          * ioctl call for flag
          */
         rc = ioctl(fd, flag, &tif);
-        if(rc) {
+        if (rc) {
                 printf("Ioctl error\n");
                 return rc;
         }
-        if(tif.out_rc) {
+        if (tif.out_rc) {
                 printf("Specific errorr: ");
                 return tif.out_rc;
         }
 
         return rc;
 }
-

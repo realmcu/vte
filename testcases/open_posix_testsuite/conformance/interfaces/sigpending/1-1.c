@@ -1,11 +1,11 @@
-/*   
+/*
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  julie.n.fleischer REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
- *  Test that the sigpending() function stores the set of signals that 
+ *  Test that the sigpending() function stores the set of signals that
  *  are blocked from delivery.  Steps are:
  *  1)  Block three signals from delivery.
  *  2)  Raise two of those signals.
@@ -23,16 +23,16 @@ int main()
 	sigset_t prevset;
 	sigset_t pendingset;
 
-	if ( (sigemptyset(&blockset) == -1) ||
+	if ((sigemptyset(&blockset) == -1) ||
 		(sigemptyset(&prevset) == -1) ||
-		(sigemptyset(&pendingset) == -1) ) {
+		(sigemptyset(&pendingset) == -1)) {
 		printf("Could not call sigemptyset()\n");
 		return PTS_UNRESOLVED;
 	}
 
-	if ( (sigaddset(&blockset, SIGALRM) == -1) ||
+	if ((sigaddset(&blockset, SIGUSR2) == -1) ||
 		(sigaddset(&blockset, SIGHUP) == -1) ||
-		(sigaddset(&blockset, SIGQUIT) == -1) ) {
+		(sigaddset(&blockset, SIGQUIT) == -1)) {
 		perror("Error calling sigaddset()\n");
 		return PTS_UNRESOLVED;
 	}
@@ -42,8 +42,8 @@ int main()
 		return PTS_UNRESOLVED;
 	}
 
-	if (raise(SIGALRM) != 0) {
-		printf("Could not raise SIGALRM\n");
+	if (raise(SIGUSR2) != 0) {
+		printf("Could not raise SIGUSR2\n");
 		return PTS_UNRESOLVED;
 	}
 	if (raise(SIGQUIT) != 0) {
@@ -56,7 +56,7 @@ int main()
 		return PTS_UNRESOLVED;
 	}
 
-	if (sigismember(&pendingset, SIGALRM) == 1) {
+	if (sigismember(&pendingset, SIGUSR2) == 1) {
 		if (sigismember(&pendingset, SIGQUIT) == 1) {
 			printf("All pending signals found\n");
 			if (sigismember(&pendingset, SIGHUP) == 0) {
@@ -73,4 +73,3 @@ int main()
 	printf("Not all pending signals found\n");
 	return PTS_FAIL;
 }
-

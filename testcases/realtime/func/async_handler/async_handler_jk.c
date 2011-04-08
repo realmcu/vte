@@ -57,23 +57,23 @@ void *handler1(void *arg);
 
 void usage(void)
 {
-        rt_help();
-        printf("async_handler_jk specific options:\n");
+	rt_help();
+	printf("async_handler_jk specific options:\n");
 }
 
 int parse_args(int c, char *v)
 {
 
-        int handled = 1;
-        switch (c) {
-                case 'h':
-                        usage();
-                        exit(0);
-                default:
-                        handled = 0;
-                        break;
-        }
-        return handled;
+	int handled = 1;
+	switch (c) {
+		case 'h':
+			usage();
+			exit(0);
+		default:
+			handled = 0;
+			break;
+	}
+	return handled;
 }
 
 void *async_event_server(void *arg)
@@ -84,7 +84,7 @@ void *async_event_server(void *arg)
 	thread->func = NULL;	// entrypoint
 	thread->flags |= THREAD_FLAG_SUSPENDED;
 
-	for ( ; ; ) {
+	for (; ;) {
 		if ((err = pthread_mutex_lock(&thread->mutex)))
 			return (void*)(intptr_t)err;
 
@@ -161,4 +161,3 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
-

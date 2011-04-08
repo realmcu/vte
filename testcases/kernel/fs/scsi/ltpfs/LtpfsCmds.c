@@ -3,9 +3,9 @@
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/types.h>
-#include <linux/fs.h>   
+#include <linux/fs.h>
 #include <linux/ioctl.h>
-#include <linux/pm.h>   
+#include <linux/pm.h>
 #include <linux/genhd.h>
 #include <linux/bio.h>
 #include <linux/mm.h>
@@ -47,7 +47,7 @@ ioctl:      ltpdev_ioctl,
 int ltp_fs_major = LTPMAJOR;
 int test_iteration = 0;
 
-static char genhd_flags = 0;  
+static char genhd_flags = 0;
 static struct gendisk * gd_ptr;
 static spinlock_t bdev_lock __cacheline_aligned_in_smp = SPIN_LOCK_UNLOCKED;
 
@@ -59,26 +59,23 @@ MODULE_LICENSE("GPL");
  * Device operations for the virtual FS devices
  */
 
-
 static struct pm_dev *ltp_pm_dev = NULL;
 struct block_device *ltplookup_bdev(const char *path);
 int path_lookup(const char *name, unsigned int flags, struct nameidata *nd);
 //static int __emul_lookup_dentry(const char *name, struct nameidata *nd);
 void path_release(struct nameidata *nd);
 
-
-
 static int ltpdev_open (struct inode *pinode, struct file *pfile)
 {
     printk(KERN_ALERT "ltpdev_open \n");
-    return 0;
+  return 0;
 }
 
 static int ltpdev_release (struct inode *pinode, struct file *pfile)
 {
 
     printk(KERN_ALERT "ltpdev_release \n");
-    return 0;
+  return 0;
 }
 
 static int ltpdev_ioctl ( struct inode *pinode, struct file *pfile, unsigned int cmd, unsigned long arg )
@@ -97,13 +94,10 @@ static int ltpdev_ioctl ( struct inode *pinode, struct file *pfile, unsigned int
 
     /*****************************************************************************/
 
-
-
-
     printk(KERN_ALERT "ltpdev_ioctl fs tests\n");
 
     switch (cmd) {
-   
+
     case LTPAIODEV_CMD:
         printk(KERN_ALERT "Running AIO FS tests \n");
         printk(KERN_ALERT "AIO FS tests complete\n");
@@ -171,26 +165,21 @@ static int ltpdev_ioctl ( struct inode *pinode, struct file *pfile, unsigned int
     break;
     }
 
-
-    return 0;
+  return 0;
 }
 
 static int ltp_pm_callback(struct pm_dev *dev, pm_request_t rqst, void *data)
 {
-    return 0;
+  return 0;
 }
-
 
 int init_module(void)
 {
     int                result;
 
-
-
     printk(KERN_ALERT "ltpdev_init_module \n");
 
 	ltp_pm_dev = pm_register(PM_UNKNOWN_DEV, 0, ltp_pm_callback);
-
 
     result = register_blkdev(ltp_fs_major, LTP_FS_DEV_NAME);
 
@@ -205,7 +194,7 @@ int init_module(void)
 
     if (!gd_ptr) {
         printk(KERN_ALERT "ERROR getting memory !!!\n");
-        return 0;
+      return 0;
     }
 
     gd_ptr = alloc_disk(1);
@@ -219,12 +208,11 @@ int init_module(void)
     gd_ptr->capacity = MAX_NUM_DISKS;
     gd_ptr->flags = genhd_flags;
 
-
     sprintf(gd_ptr->disk_name, LTP_FS_DEV_NAME);
 
     add_disk(gd_ptr);
 
-    return 0;
+  return 0;
 }
 
 void cleanup_module(void)
@@ -249,11 +237,9 @@ static int do_buffer_c_tests()
 
     __buffer_error("Test file", line_no);
 
-
-
     printk(KERN_ALERT "buffer.c coverage tests complete...\n");
 
-    return 0;
+  return 0;
 }
 /**
  * lookup_bdev  - lookup a struct block_device by name
@@ -321,4 +307,3 @@ int bd_acquire(struct inode *inode)
 	spin_unlock(&bdev_lock);
 	return 0;
 }
-

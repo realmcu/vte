@@ -1,7 +1,8 @@
 #
 #    Top-level Makefile for LTP. See INSTALL for more info.
 #
-#    Copyright (C) 2009, Cisco Systems Inc.
+#    Copyright (C) 2009-2010, Cisco Systems Inc.
+#    Copyright (C) 2010-2011, Linux Test Project.
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ top_srcdir		?= $(CURDIR)
 
 include $(top_srcdir)/include/mk/env_pre.mk
 include $(top_srcdir)/include/mk/automake.mk
+include $(top_srcdir)/include/mk/gitignore.mk
 
 .SUFFIXES:
 .SUFFIXES: .am .default .h .in .m4 .mk
@@ -71,8 +73,8 @@ endef
 COMMON_TARGETS		+= testcases tools
 # Don't want to nuke the original files if we're installing in-build-tree.
 ifneq ($(BUILD_TREE_STATE),$(BUILD_TREE_SRCDIR_INSTALL))
-INSTALL_TARGETS		+= runtest testscripts
-CLEAN_TARGETS		+= include runtest testscripts
+INSTALL_TARGETS		+= runtest scenario_groups testscripts
+CLEAN_TARGETS		+= include runtest scenario_groups testscripts
 endif
 INSTALL_TARGETS		+= $(COMMON_TARGETS)
 CLEAN_TARGETS		+= $(COMMON_TARGETS) lib
@@ -218,8 +220,9 @@ menuconfig:
 package: 
 	@$(RPMBUILD) -ba ltp-devel.spec
 
-#vte related
-vte:  tools lib-all utils
+
+vte:pan utils tools
+	$(MAKE) -C lib LIB=libltp.a
 	@echo "***********************************************"
 	@echo "** MAKE ALL - VTE tests suite                **"
 	@echo "***********************************************"
@@ -254,8 +257,5 @@ apps:
 	@echo "***********************************************"
 	@echo "**        apps build Finished                **"
 	@echo "***********************************************"
-
-
-
 
 ## End misc targets.

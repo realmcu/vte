@@ -73,35 +73,30 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "alarm07";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-int almreceived = 0;		/* flag to indicate SIGALRM received or not */
+char *TCID = "alarm07";
+int TST_TOTAL = 1;
+int alarms_received = 0;
 
-void setup();			/* Main setup function of test */
-void cleanup();			/* cleanup function for the test */
-void sigproc(int sig);		/* signal catching function */
+void setup();
+void cleanup();
+void sigproc(int sig);
 
 int main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
-	int time_sec = 3;	/* time for which alarm is set */
-	int sleep_time = 5;	/* waiting time for the SIGALRM signal */
-	pid_t cpid;		/* child process id */
+	int lc;
+	char *msg;
+	int sleep_time = 5;
+	int status;
+	int time_sec = 3;
+	pid_t cpid;
 
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -113,42 +108,39 @@ int main(int ac, char **av)
 		/* Now, fork a child process */
 		cpid = FORK_OR_VFORK();
 		if (cpid < 0) {
-			tst_resm(TFAIL, "fork() fails to create child, "
-				 "errno:%d", errno);
+			tst_resm(TFAIL|TERRNO, "fork() failed");
 		}
 
-		/* Wait for signal SIGALRM to be generated */
 		sleep(sleep_time);
 
 		if (STD_FUNCTIONAL_TEST) {
-			if (cpid == 0) {	/* Child process */
-				/*
-				 * For child process if almreceived is 0
-				 * means alarm request is cleared.
-				 */
-				if (almreceived == 0) {
-					tst_resm(TPASS, "Functionality of "
-						 "alarm(%u) successful",
-						 time_sec);
-				} else {
-					tst_resm(TFAIL, "alarm request not "
-						 "cleared in child, "
-						 "almreceived:%d", almreceived);
+			if (cpid == 0) {
+				if (alarms_received == 0)
+					exit(0);
+				else {
+					printf("alarm request not cleared in "
+					    "child; alarms received:%d\n",
+					    alarms_received);
+					exit(1);
 				}
-			} else {	/* Parent process */
+			} else {
 				/* Wait for child to complete execution */
-				wait(0);
+				if (wait(&status) == -1)
+					tst_brkm(TBROK|TERRNO, cleanup,
+					    "wait failed");
+				if (!WIFEXITED(status) ||
+				    WEXITSTATUS(status) != 0)
+					tst_brkm(TBROK|TERRNO, cleanup,
+					    "child exited abnormally");
 			}
-		} else {
+		} else
 			tst_resm(TPASS, "call returned %ld", TEST_RETURN);
-		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	return 0;
- /*NOTREACHED*/}		/* End main */
+	tst_exit();
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -156,16 +148,14 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Set the signal catching function */
 	if (signal(SIGALRM, sigproc) == SIG_ERR) {
-		tst_brkm(TFAIL, cleanup,
-			 "signal() fails to catch SIGALARM, errno=%d", errno);
+		tst_brkm(TFAIL|TERRNO, cleanup, "signal(SIGALRM, ..) failed");
 	}
 }
 
@@ -177,7 +167,7 @@ void setup()
  */
 void sigproc(int sig)
 {
-	almreceived = almreceived + 1;
+	alarms_received++;
 }
 
 /*
@@ -191,7 +181,4 @@ void cleanup()
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

@@ -30,12 +30,10 @@
 #include <sys/capability.h>
 #endif
 #include <sys/prctl.h>
-#include <test.h>
+#include "test.h"
 
 char *TCID = "cap_bounds_r";
 int TST_TOTAL=1;
-
-int errno;
 
 int main(int argc, char *argv[])
 {

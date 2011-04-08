@@ -73,7 +73,6 @@ extern int getresgid(gid_t *, gid_t *, gid_t *);
 
 char *TCID = "getresgid01";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 gid_t pr_gid, pe_gid, ps_gid;	/* calling process real/effective/saved gid */
 
 void setup();			/* Main setup function of test */
@@ -87,18 +86,16 @@ int main(int ac, char **av)
 	 eff_gid, sav_gid;
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -c option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -107,7 +104,6 @@ int main(int ac, char **av)
 		 */
 		TEST(getresgid(&real_gid, &eff_gid, &sav_gid));
 
-		/* check return code of getresgid(2) */
 		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL, "getresgid() Failed, errno=%d : %s",
 				 TEST_ERRNO, strerror(TEST_ERRNO));
@@ -134,13 +130,12 @@ int main(int ac, char **av)
 		} else {
 			tst_resm(TPASS, "call succeeded");
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -148,10 +143,9 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Real user-id of the calling process */
@@ -177,6 +171,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

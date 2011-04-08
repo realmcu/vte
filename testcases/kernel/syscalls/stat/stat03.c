@@ -128,7 +128,6 @@ struct test_case_t {		/* test case struct. to hold ref. test cond's */
 
 char *TCID = "stat03";		/* Test program identifier.    */
 int TST_TOTAL = (sizeof(Test_cases) / sizeof(*Test_cases));
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 int exp_enos[] = { EACCES,
 #if !defined(UCLINUX)
 	EFAULT, ENAMETOOLONG,
@@ -151,11 +150,8 @@ int main(int ac, char **av)
 	int ind;		/* counter to test different test conditions */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
 
 	/*
 	 * Invoke setup function to call individual test setup functions
@@ -166,9 +162,8 @@ int main(int ac, char **av)
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
@@ -207,18 +202,19 @@ int main(int ac, char **av)
 					 TEST_RETURN,
 					 Test_cases[ind].exp_errno);
 			}
-		}		/* End of TEST CASE LOOPING. */
+		}
 		Tst_count++;	/* incr TEST_LOOP counter */
-	}			/* End for TEST_LOOPING */
+	}
 
 	/*
 	 * Invoke cleanup() to delete the test directory/file(s) created
 	 * in the setup().
 	 */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
+	tst_exit();
 
-}				/* End main */
+}
 
 /*
  * void
@@ -230,14 +226,14 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	int ind;		/* counter for setup functions */
+	int ind;
 
 	/* Capture unexpected signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Switch to nobody user for correct error code collection */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 	ltpuser = getpwnam(nobody_uid);
 	if (setuid(ltpuser->pw_uid) == -1) {
@@ -269,7 +265,7 @@ void setup()
 	for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
 		Test_cases[ind].setupfunc();
 	}
-}				/* End setup() */
+}
 
 /*
  * int
@@ -300,25 +296,25 @@ int setup1()
 	/* Creat a test directory */
 	if (mkdir(DIR_TEMP, MODE_RWX) < 0) {
 		tst_brkm(TBROK, cleanup, "mkdir(2) of %s failed", DIR_TEMP);
-	 /*NOTREACHED*/}
+	 }
 
 	/* Creat a test file under above test directory */
 	if ((fd = open(TEST_FILE1, O_RDWR | O_CREAT, 0666)) == -1) {
 		tst_brkm(TBROK, cleanup,
 			 "open(%s, O_RDWR|O_CREAT, 0666) failed, errno=%d : %s",
 			 TEST_FILE1, errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 	/* Close the test file */
 	if (close(fd) == -1) {
 		tst_brkm(TBROK, cleanup,
 			 "close(%s) Failed, errno=%d : %s",
 			 TEST_FILE1, errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 
 	/* Modify mode permissions on test directory */
 	if (chmod(DIR_TEMP, FILE_MODE) < 0) {
 		tst_brkm(TBROK, cleanup, "chmod(2) of %s failed", DIR_TEMP);
-	 /*NOTREACHED*/}
+	 }
 	return 0;
 }
 
@@ -340,13 +336,13 @@ int setup2()
 		tst_brkm(TBROK, cleanup,
 			 "open(2) on t_file failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 	/* Close the test file created above */
 	if (close(fd) == -1) {
 		tst_brkm(TBROK, cleanup,
 			 "close(t_file) Failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 	return 0;
 }
 
@@ -388,9 +384,5 @@ void cleanup()
 		tst_brkm(TFAIL, NULL, "chmod(2) of %s failed", DIR_TEMP);
 	}
 
-	/* Remove files and temporary directory created */
 	tst_rmdir();
-
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

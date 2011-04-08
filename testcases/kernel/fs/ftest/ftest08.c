@@ -82,7 +82,6 @@ static int iterations;        /* # total iterations */
 static off64_t max_size;      /* max file size */
 static int misc_intvl;        /* for doing misc things; 0 ==> no */
 static int nchild;            /* number of child processes */
-static int nwait;
 static int parent_pid;
 static int pidlist[MAXCHILD];
 
@@ -97,7 +96,7 @@ int main(int ac, char *av[])
         /*
          * parse standard options
          */
-        if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != NULL){
+        if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
                 tst_resm(TBROK, "OPTION PARSING ERROR - %s", msg);
                 tst_exit();
         }
@@ -151,15 +150,16 @@ static void init(void)
 	misc_intvl = 10;
 
 	if (sigset(SIGTERM, term) == SIG_ERR) {
-		tst_resm(TBROK,"first sigset failed");
-		tst_exit();
+		tst_brkm(TBROK|TERRNO, NULL, "first sigset failed");
 	}
 
 }
 
 static void runtest(void)
 {
-	int i, child, status, count, fd;
+	int child, count, fd, i, nwait, status;
+
+	nwait = 0;
 
 	for (i = 0; i < nchild; i++) {
 
@@ -175,11 +175,7 @@ static void runtest(void)
 		}
 
 		if (child < 0) {
-			tst_resm(TINFO, "System resource may be too low, fork() malloc()"
-		                            " etc are likely to fail.");
-		        tst_resm(TBROK, "Test broken due to inability of fork.");
-		        tst_exit();
-
+			tst_brkm(TBROK|TERRNO, NULL, "fork failed");
 		} else {
 			pidlist[i] = child;
 			nwait++;
@@ -247,6 +243,7 @@ static void dotest(int testers, int me, int fd)
 	int	w_ioveclen;
 
 	nchunks = max_size / (testers * csize);
+	whenmisc = 0;
 
 	if ((bits = malloc((nchunks+7)/8)) == NULL) {
 		tst_resm(TBROK, "\tmalloc failed(bits)");
@@ -279,19 +276,19 @@ static void dotest(int testers, int me, int fd)
 			tst_exit();
 		}
 
-		if ((val0_iovec[i].iov_base = malloc(w_ioveclen)) == NULL){
+		if ((val0_iovec[i].iov_base = malloc(w_ioveclen)) == NULL) {
 			tst_resm(TBROK, "\tmalloc failed(val0_iovec)");
 			tst_exit();
 		}
 
 		val0_iovec[i].iov_len = w_ioveclen;
-	
+
 		if (malloc((i+1)*8) == NULL) {
 			tst_resm(TBROK, "\tmalloc failed((i+1)*8)");
 			tst_exit();
 		}
 
-		if ((val_iovec[i].iov_base = malloc(w_ioveclen)) == NULL){
+		if ((val_iovec[i].iov_base = malloc(w_ioveclen)) == NULL) {
 			tst_resm(TBROK, "\tmalloc failed(iov_base)");
 			tst_exit();
 		}
@@ -435,7 +432,7 @@ static void dotest(int testers, int me, int fd)
 		if (count < nchunks) {
 			//tst_resm(TINFO, "\tTest{%d} val %d stopping @ %d, collide = {%d}.",
 			//		me, val, count, collide);
-			for(i = 0; i < nchunks; i++) {
+			for (i = 0; i < nchunks; i++) {
 				if ((bits[i/8] & (1<<(i%8))) == 0) {
 					if (lseek64(fd, CHUNK(i), 0) < (off64_t)0) {
 						tst_resm(TFAIL, "\tTest[%d]: lseek64 fail at %"PRIx64"x, errno = %d.",
@@ -455,7 +452,7 @@ static void dotest(int testers, int me, int fd)
 		++misc_cnt[m_fsync];
 		//tst_resm(TINFO, "\tTest[%d] val %d done, count = %d, collide = %d.",
 		//		me, val, count, collide);
-		//for(i = 0; i < NMISC; i++)
+		//for (i = 0; i < NMISC; i++)
 		//	tst_resm(TINFO, "\t\tTest[%d]: %d %s's.", me, misc_cnt[i], m_str[i]);
 		val0 = val++;
 	}
@@ -518,4 +515,3 @@ void cleanup(void)
 
         tst_rmdir();
 }
-

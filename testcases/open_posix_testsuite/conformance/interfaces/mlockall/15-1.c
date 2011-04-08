@@ -24,7 +24,6 @@
 #include <sys/resource.h>
 #include "posixtest.h"
 
-
 /** Set the euid of this process to a non-root uid */
 int set_nonroot()
 {
@@ -33,12 +32,12 @@ int set_nonroot()
         int ret=0;
 
 	setpwent();
-	/* search for the first user which is non root */ 
-	while((pw = getpwent()) != NULL)
-		if(strcmp(pw->pw_name, "root"))
+	/* search for the first user which is non root */
+	while ((pw = getpwent()) != NULL)
+		if (strcmp(pw->pw_name, "root"))
 			break;
 	endpwent();
-	if(pw == NULL) {
+	if (pw == NULL) {
 		printf("There is no other user than current and root.\n");
 		return 1;
 	}
@@ -48,15 +47,15 @@ int set_nonroot()
         if ((ret = setrlimit(RLIMIT_MEMLOCK,&rlim)) != 0)
                 printf("Failed at setrlimit() return %d \n", ret);
 
-	if(seteuid(pw->pw_uid) != 0) {
-		if(errno == EPERM) {
+	if (seteuid(pw->pw_uid) != 0) {
+		if (errno == EPERM) {
 			printf("You don't have permission to change your UID.\n");
 			return 1;
 		}
 		perror("An error occurs when calling seteuid()");
 		return 1;
 	}
-	
+
 	printf("Testing with user '%s' (uid: %d)\n",
 	       pw->pw_name, (int)geteuid());
 	return 0;
@@ -68,17 +67,17 @@ int main() {
         /* This test should be run under standard user permissions */
         if (getuid() == 0) {
                 if (set_nonroot() != 0) {
-			printf("Cannot run this test as non-root user\n");	
+			printf("Cannot run this test as non-root user\n");
 			return PTS_UNTESTED;
 		}
         }
 
 	result = mlockall(MCL_CURRENT);
 
-	if(result == -1 && errno == EPERM) {
+	if (result == -1 && errno == EPERM) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
-	} else if(result == 0) {
+	} else if (result == 0) {
 		printf("You have the right to call mlockall\n");
 		return PTS_UNRESOLVED;
 	} else {

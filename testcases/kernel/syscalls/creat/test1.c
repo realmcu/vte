@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-int main()
+int main(void)
 {
 	for (;;) {
 		sleep(1);

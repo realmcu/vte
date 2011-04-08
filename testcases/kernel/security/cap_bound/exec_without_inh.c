@@ -32,12 +32,10 @@
 #include <sys/capability.h>
 #endif
 #include <sys/prctl.h>
-#include <test.h>
+#include "test.h"
 
 char *TCID = "exec_without_inh";
 int TST_TOTAL=1;
-
-int errno;
 
 int main(int argc, char *argv[])
 {
@@ -61,7 +59,7 @@ int main(int argc, char *argv[])
 			tst_exit();
 		}
 	} else if (ret) {
-		tst_brkm(TBROK | TERRNO, tst_exit, "Failed to add \
+		tst_brkm(TBROK | TERRNO, NULL, "Failed to add \
 			CAP_SYS_ADMIN to pI");
 	}
 	cap_free(cur);

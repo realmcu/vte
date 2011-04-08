@@ -55,8 +55,6 @@
 typedef int kernel_timer_t;
 
 /* Extern Global Variables */
-extern int Tst_count;           /* counter for tst_xxx routines.         */
-extern char *TESTDIR;           /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
 char *TCID = "timer_getoverrun01";  /* Test program identifier.*/
@@ -82,11 +80,10 @@ int  TST_TOTAL = 1;                   /* total number of tests in this file.   *
 /*                                                                            */
 /******************************************************************************/
 extern void cleanup() {
-        /* Remove tmp dir and all files in it */
+
         TEST_CLEANUP;
         tst_rmdir();
 
-        /* Exit with appropriate return code. */
         tst_exit();
 }
 
@@ -127,29 +124,28 @@ int main(int ac, char **av) {
         char *msg;              /* message returned from parse_opts */
 	kernel_timer_t created_timer_id;
         struct sigevent ev;
-	
+
         /* parse standard options */
-        if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-             tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+        if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+             tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
              tst_exit();
            }
 
         setup();
 
-        /* Check looping state if -i option given */
         for (lc = 0; TEST_LOOPING(lc); ++lc) {
                 Tst_count = 0;
                 for (testno = 0; testno < TST_TOTAL; ++testno) {
-                     
+
 		ev.sigev_value = (sigval_t)0;
                 ev.sigev_signo = SIGALRM;
                 ev.sigev_notify = SIGEV_SIGNAL;
 
                 TEST(syscall(__NR_timer_create, CLOCK_REALTIME, &ev, &created_timer_id ));
-                
+
 		ENTER(1);
                 TEST( syscall(__NR_timer_getoverrun, created_timer_id ));
-		if(TEST_RETURN == 0){
+		if (TEST_RETURN == 0) {
 			tst_resm(TPASS, "Block %d: test %d PASSED", block, Tst_count );
                 } else {
 			tst_resm(TFAIL, "Block %d: test %d FAILED... errno = %d : %s", block, Tst_count,TEST_ERRNO, strerror(TEST_ERRNO) );
@@ -157,10 +153,9 @@ int main(int ac, char **av) {
                         tst_exit();
                 }
 
-
 		ENTER(0);
                 TEST( syscall(__NR_timer_getoverrun, -1 ));
-                if(TEST_RETURN < 0 && TEST_ERRNO == EINVAL ) {
+                if (TEST_RETURN < 0 && TEST_ERRNO == EINVAL) {
                         tst_resm(TPASS, "Block %d: test %d PASSED", block, Tst_count );
                 } else {
                         tst_resm(TFAIL, "Block %d: test %d FAILED... errno = %d : %s", block, Tst_count,TEST_ERRNO, strerror(TEST_ERRNO) );
@@ -168,13 +163,11 @@ int main(int ac, char **av) {
                         tst_exit();
                 }
 
-
                 }
-        }	
+        }
 	cleanup();
         tst_exit();
 }
-
 
 /*
 

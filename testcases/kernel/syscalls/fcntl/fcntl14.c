@@ -47,8 +47,8 @@
 #include <errno.h>
 #include <sys/wait.h>
 #include <inttypes.h>
-#include <usctest.h>
-#include <test.h>
+#include "usctest.h"
+#include "test.h"
 
 #define SKIP 0x0c00
 #if SKIP == F_RDLCK || SKIP== F_WRLCK
@@ -545,7 +545,6 @@ extern void catch_alarm();
 
 char *TCID = "fcntl14";		/* Test program identifier */
 int TST_TOTAL = 1;		/* Total number of test cases */
-extern int Tst_count;		/* Test case counter */
 
 #ifdef UCLINUX
 static char *argv0;		/* Set by main(), passed to self_exec() */
@@ -566,7 +565,6 @@ void cleanup(void)
 
 	tst_rmdir();
 
-	tst_exit();
 }
 
 /*
@@ -577,10 +575,10 @@ void setup(void)
 {
 	struct sigaction act;
 
-	tst_sig(FORK, DEF_HANDLER, cleanup);	/* capture signals */
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 	signal(SIGHUP, SIG_IGN);
 	umask(0);
-	TEST_PAUSE;		/* Pause if that option is specified */
+	TEST_PAUSE;
 	tst_tmpdir();		/* make temp dir and cd to it */
 	parent = getpid();
 
@@ -596,7 +594,7 @@ void setup(void)
 		tst_resm(TFAIL, "SIGUSR1 signal setup failed, errno = %d",
 			 errno);
 		cleanup();
-	 /*NOTREACHED*/}
+	 }
 
 	memset(&act, 0, sizeof(act));
 	act.sa_handler = catch_alarm;
@@ -605,7 +603,7 @@ void setup(void)
 	if ((sigaction(SIGALRM, &act, NULL)) < 0) {
 		tst_resm(TFAIL, "SIGALRM signal setup failed");
 		cleanup();
-	 /*NOTREACHED*/}
+	 }
 }
 
 void wake_parent(void)
@@ -763,7 +761,7 @@ void dochild()
 			break;
 		case 0:	/* child */
 #ifdef UCLINUX
-			if (self_exec(argv0, "n", 1) < 0) {
+			if (self_exec(argv0, "nd", 1, parent) < 0) {
 				tst_resm(TFAIL, "self_exec failed");
 				break;
 			}
@@ -804,18 +802,18 @@ void run_test(int file_flag, int file_mode, int seek, int start, int end)
 		fd = open(tmpname, file_flag, file_mode);
 		if (fd < 0) {
 			tst_brkm(TBROK, cleanup, "open() failed");
-		 /*NOTREACHED*/}
+		 }
 
 		/* write some dummy data to the file */
 		if (write(fd, FILEDATA, 10) < 0) {
 			tst_brkm(TBROK, cleanup, "write() failed");
-		 /*NOTREACHED*/}
+		 }
 
 		/* seek into file if indicated */
 		if (seek) {
 			if (lseek(fd, seek, 0) < 0) {
 				tst_brkm(TBROK, cleanup, "lseek() failed");
-			 /*NOTREACHED*/}
+			 }
 		}
 
 		/* Initialize first parent lock structure */
@@ -871,7 +869,7 @@ void run_test(int file_flag, int file_mode, int seek, int start, int end)
 				      thiscase->a_type, fd, test, parent) < 0) {
 				tst_resm(TFAIL, "self_exec failed");
 				cleanup();
-			 /*NOTREACHED*/}
+			 }
 #else
 			dochild();
 #endif
@@ -879,7 +877,7 @@ void run_test(int file_flag, int file_mode, int seek, int start, int end)
 		if (child < 0) {
 			tst_resm(TFAIL, "Fork failed");
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 		/* parent process */
 		if ((thiscase->c_flag) == WILLBLOCK) {
 			/*
@@ -974,13 +972,13 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
 	argv0 = av[0];
 
-	maybe_run_child(&do_usleep_child, "n", 1);
+	maybe_run_child(&do_usleep_child, "nd", 1, &parent);
 	thiscase = malloc(sizeof(testcase));
 
 	maybe_run_child(&dochild, "nddddddddd", 2, &thiscase->c_type,
@@ -1067,12 +1065,12 @@ int main(int ac, char **av)
 		fd = open(tmpname, O_CREAT | O_RDWR | O_TRUNC, 0777);
 		if (fd < 0) {
 			tst_brkm(TBROK, cleanup, "open failed");
-		 /*NOTREACHED*/}
+		 }
 
 		/* Write some dummy data to the file */
 		if (write(fd, FILEDATA, 10) < 0) {
 			tst_brkm(TBROK, cleanup, "write failed");
-		 /*NOTREACHED*/}
+		 }
 
 		/* Initialize lock structure */
 		flock.l_type = F_WRLCK;
@@ -1118,12 +1116,12 @@ int main(int ac, char **av)
 		fd = open(tmpname, O_CREAT | O_RDWR | O_TRUNC, 0777);
 		if (fd < 0) {
 			tst_brkm(TBROK, cleanup, "open failed");
-		 /*NOTREACHED*/}
+		 }
 
 		/* Write some dummy data to the file */
 		if (write(fd, FILEDATA, 10) < 0) {
 			tst_brkm(TBROK, cleanup, "write failed");
-		 /*NOTREACHED*/}
+		 }
 
 		/* Initialize first parent lock structure */
 		thiscase = &testcases[58];
@@ -1142,12 +1140,12 @@ int main(int ac, char **av)
 		/* Write some additional data to end of file */
 		if (write(fd, FILEDATA, 10) < 0) {
 			tst_brkm(TBROK, cleanup, "write failed");
-		 /*NOTREACHED*/}
+		 }
 
 		/* Mask signal to avoid race */
 		if (sighold(SIGUSR1) < 0) {
 			tst_brkm(TBROK, cleanup, "sighold failed");
-		 /*NOTREACHED*/}
+		 }
 
 		/* spawn a child process */
 		if ((child = FORK_OR_VFORK()) == 0) {
@@ -1158,7 +1156,7 @@ int main(int ac, char **av)
 				      thiscase->a_type, fd, test, parent) < 0) {
 				tst_resm(TFAIL, "self_exec failed");
 				cleanup();
-			 /*NOTREACHED*/}
+			 }
 #else
 			dochild();
 #endif
@@ -1166,7 +1164,7 @@ int main(int ac, char **av)
 		if (child < 0) {
 			tst_resm(TFAIL, "Fork failed");
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 
 		/* parent process */
 
@@ -1234,5 +1232,5 @@ int main(int ac, char **av)
 		tst_resm(TINFO, "Exit block 4");
 	}
 	cleanup();
-	return 0;
+	tst_exit();
 }

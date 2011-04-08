@@ -391,7 +391,7 @@ int main(int argc, char **argv)
 
 	make_freq_table();
 
-	while ( (loopcntr <= loops) || (loops == 0) )
+	while ((loopcntr <= loops) || (loops == 0))
 	{
 		if (!dirname) {
 			/* no directory specified */
@@ -413,7 +413,7 @@ int main(int argc, char **argv)
 		dcache_init();
 		setlinebuf(stdout);
 		if (!seed) {
-			gettimeofday(&t, (void *)NULL);
+			gettimeofday(&t, NULL);
 			seed = (int)t.tv_sec ^ (int)t.tv_usec;
 			printf("seed = %ld\n", seed);
 		}
@@ -478,7 +478,7 @@ int main(int argc, char **argv)
 		if (errtag != 0) {
 			err_inj.errtag = 0;
 			err_inj.fd = fd;
-			if((srval = ioctl(fd, XFS_IOC_ERROR_CLEARALL, &err_inj)) != 0) {
+			if ((srval = ioctl(fd, XFS_IOC_ERROR_CLEARALL, &err_inj)) != 0) {
 				fprintf(stderr, "Bad ej clear on %d (%d).\n", fd, errno);
 				perror("fsstress - XFS_SYSSGI clear error injection call");
 				close(fd);
@@ -530,7 +530,7 @@ append_pathname(pathname_t *name, char *str)
 		fprintf(stderr, "fsstress: append_pathname failure\n");
 		chdir(homedir);
 		abort();
-		/* NOTREACHED */
+
 	}
 #endif
 	name->path = realloc(name->path, name->len + 1 + len);
@@ -612,7 +612,7 @@ check_cwd(void)
 	chdir(homedir);
 	fprintf(stderr, "fsstress: check_cwd failure\n");
 	abort();
-	/* NOTREACHED */
+
 #endif
 }
 
@@ -731,7 +731,6 @@ doproc(void)
 	for (opno = 0; opno < operations; opno++) {
 		p = &ops[freq_table[random() % freq_table_size]];
 		if ((unsigned long)p->func < 4096) abort();
-
 
 		p->func(opno, random());
 		/*
@@ -873,7 +872,7 @@ get_fname(int which, long r, pathname_t *name, flist_t **flpp, fent_t **fepp,
 	abort();
 #endif
 	return -1;
-	/* NOTREACHED */
+
 }
 
 void
@@ -1437,7 +1436,7 @@ allocsp_f(int opno, long r)
 	e = ioctl(fd, XFS_IOC_ALLOCSP64, &fl) < 0 ? errno : 0;
 	if (v)
 		printf("%d/%d: ioctl(XFS_IOC_ALLOCSP64) %s %lld 0 %d\n",
-			procid, opno, f.path, off, e);
+			procid, opno, f.path, (long long)off, e);
 	free_pathname(&f);
 	close(fd);
 }
@@ -1572,7 +1571,7 @@ bulkstat_f(int opno, long r)
 	free(t);
 	if (verbose)
 		printf("%d/%d: bulkstat nent %d total %lld\n",
-			procid, opno, nent, total);
+			procid, opno, nent, (long long)total);
 	close(fd);
 }
 
@@ -1588,7 +1587,6 @@ bulkstat1_f(int opno, long r)
 	xfs_bstat_t	t;
 	int		v;
 	xfs_fsop_bulkreq_t bsr;
-
 
 	good = random() & 1;
 	if (good) {
@@ -1706,7 +1704,7 @@ creat_f(int opno, long r)
 				geom.rtextsize * geom.blocksize * extsize;
 			if (ioctl(fd, XFS_IOC_FSSETXATTR, &a) < 0)
 				e1 = errno;
-			esz = a.fsx_estsize;
+			esz = a.fsx_extsize;
 
 		}
 #endif
@@ -1718,8 +1716,6 @@ creat_f(int opno, long r)
 			esz, e, e1);
 	free_pathname(&f);
 }
-
-
 
 int
 setdirect(int fd)
@@ -1750,7 +1746,7 @@ void
 dread_f(int opno, long r)
 {
 	__int64_t	align;
-	char		*buf;
+	char		*buf = NULL;
 	struct dioattr	diob;
 	int		e;
 	pathname_t	f;
@@ -1830,7 +1826,14 @@ dread_f(int opno, long r)
 		len = align;
 	else if (len > diob.d_maxiosz)
 		len = diob.d_maxiosz;
-	buf = memalign(diob.d_mem, len);
+	if ((e = posix_memalign((void **)&buf, diob.d_mem, len)) != 0) {
+		fprintf(stderr, "posix_memalign: %s\n", strerror(e));
+		exit(1);
+	}
+	if (buf == NULL) {
+		fprintf(stderr, "posix_memalign: buf is NULL\n");
+		exit(1);
+	}
 	e = read(fd, buf, len) < 0 ? errno : 0;
 	free(buf);
 	if (v)
@@ -1844,7 +1847,7 @@ void
 dwrite_f(int opno, long r)
 {
 	__int64_t	align;
-	char		*buf;
+	char		*buf = NULL;
 	struct dioattr	diob;
 	int		e;
 	pathname_t	f;
@@ -1913,7 +1916,14 @@ dwrite_f(int opno, long r)
 		len = align;
 	else if (len > diob.d_maxiosz)
 		len = diob.d_maxiosz;
-	buf = memalign(diob.d_mem, len);
+	if ((e = posix_memalign((void **)&buf, diob.d_mem, len)) != 0) {
+		fprintf(stderr, "posix_memalign: %s\n", strerror(e));
+		exit(1);
+	}
+	if (buf == NULL) {
+		fprintf(stderr, "posix_memalign: buf is NULL\n");
+		exit(1);
+	}
 	off %= maxfsize;
 	lseek64(fd, off, SEEK_SET);
 	memset(buf, nameseq & 0xff, len);
@@ -2006,7 +2016,7 @@ freesp_f(int opno, long r)
 	e = ioctl(fd, XFS_IOC_FREESP64, &fl) < 0 ? errno : 0;
 	if (v)
 		printf("%d/%d: ioctl(XFS_IOC_FREESP64) %s %lld 0 %d\n",
-			procid, opno, f.path, off, e);
+			procid, opno, f.path, (long long)off, e);
 	free_pathname(&f);
 	close(fd);
 }
@@ -2378,8 +2388,8 @@ resvsp_f(int opno, long r)
 	fl.l_len = (off64_t)(random() % (1024 * 1024));
 	e = ioctl(fd, XFS_IOC_RESVSP64, &fl) < 0 ? errno : 0;
 	if (v)
-		printf("%d/%d: ioctl(XFS_IOC_RESVSP64) %s %lld %lld %d\n",
-			procid, opno, f.path, off, fl.l_len, e);
+		printf("%d/%d: ioctl(XFS_IOC_RESVSP64) %s %lld %ld %d\n",
+			procid, opno, f.path, (long long)off, fl.l_len, e);
 	free_pathname(&f);
 	close(fd);
 }
@@ -2595,8 +2605,8 @@ unresvsp_f(int opno, long r)
 	fl.l_len = (off64_t)(random() % (1 << 20));
 	e = ioctl(fd, XFS_IOC_UNRESVSP64, &fl) < 0 ? errno : 0;
 	if (v)
-		printf("%d/%d: ioctl(XFS_IOC_UNRESVSP64) %s %lld %lld %d\n",
-			procid, opno, f.path, off, fl.l_len, e);
+		printf("%d/%d: ioctl(XFS_IOC_UNRESVSP64) %s %lld %ld %d\n",
+			procid, opno, f.path, (long long)off, fl.l_len, e);
 	free_pathname(&f);
 	close(fd);
 }

@@ -40,7 +40,6 @@
 #include <sys/ioctl.h>
 #include "../tpci/tpci.h"
 
-
 int ki_generic(int fd, int flag) {
         int                     rc;
         tpci_interface_t        tif;
@@ -58,11 +57,11 @@ int ki_generic(int fd, int flag) {
          * ioctl call for flag
          */
         rc = ioctl(fd, flag, &tif);
-        if(rc) {
+        if (rc) {
                 printf("Ioctl error\n");
                 return rc;
         }
-	if(tif.out_rc) {
+	if (tif.out_rc) {
 		printf("Specific errorr: ");
 		return tif.out_rc;
 	}
@@ -89,18 +88,17 @@ int ki_probe_pci_dev(int fd) {
 	 * ioctl call for PCI_PROBE
 	 */
 	rc = ioctl(fd, PCI_PROBE, &tif);
-	if(rc) {
+	if (rc) {
 		printf("Ioctl error\n");
 		return rc;
 	}
-	if(tif.out_rc) {
+	if (tif.out_rc) {
 		printf("Specific error in ioctl call\n");
 		return tif.out_rc;
 	}
 
 	return rc;
 }
-
 
 int ki_enable_pci(int fd) {
 
@@ -120,11 +118,11 @@ int ki_enable_pci(int fd) {
 	 * ioctl call for PCI_ENABLE
 	 */
 	rc = ioctl(fd, PCI_ENABLE, &tif);
-	if(rc) {
+	if (rc) {
                 printf("Ioctl error\n");
                 return rc;
         }
-        if(tif.out_rc) {
+        if (tif.out_rc) {
                 printf("Specific error in ioctl call\n");
                 return tif.out_rc;
         }
@@ -150,11 +148,11 @@ int ki_disable_pci(int fd) {
 	 * ioctl call for PCI_DISABLE
 	 */
 	rc = ioctl(fd, PCI_DISABLE, &tif);
-	if(rc) {
+	if (rc) {
 		printf("Ioctl error\n");
 		return rc;
 	}
-	if(tif.out_rc) {
+	if (tif.out_rc) {
 		printf("Specific error in ioctl call\n");
 		return tif.out_rc;
 	}
@@ -180,17 +178,16 @@ int ki_find_bus(int fd) {
          * ioctl call for PCI_DISABLE
          */
         rc = ioctl(fd, FIND_BUS, &tif);
-        if(rc) {
+        if (rc) {
                 printf("Ioctl error\n");
                 return rc;
         }
-        if(tif.out_rc) {
+        if (tif.out_rc) {
                 printf("Specific error in ioctl call\n");
                 return tif.out_rc;
         }
 
         return rc;
 }
-
 
 #endif

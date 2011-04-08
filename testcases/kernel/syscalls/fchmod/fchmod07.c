@@ -82,7 +82,6 @@
 int fd;				/* file descriptor for testfile */
 char *TCID = "fchmod07";	/* Test program identifier.    */
 int TST_TOTAL = 8;		/* Total number of test conditions */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int Modes[] = { 0, 07, 070, 0700, 0777, 02777, 04777, 06777 };
 
@@ -100,18 +99,16 @@ int main(int ac, char **av)
 	TST_TOTAL = sizeof(Modes) / sizeof(int);
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		for (ind = 0; ind < TST_TOTAL; ind++) {
@@ -123,7 +120,6 @@ int main(int ac, char **av)
 			 */
 			TEST(fchmod(fd, mode));
 
-			/* check return code of fchmod(2) */
 			if (TEST_RETURN == -1) {
 				tst_resm(TFAIL, "fchmod(%d, %#o) Failed, "
 					 "errno=%d : %s", fd, mode, TEST_ERRNO,
@@ -166,13 +162,12 @@ int main(int ac, char **av)
 				tst_resm(TPASS, "call succeeded");
 			}
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /*
  * void
@@ -182,13 +177,11 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	if ((fd = open(TESTFILE, O_RDWR | O_CREAT, FILE_MODE)) == -1) {
@@ -196,7 +189,7 @@ void setup()
 			 "open(%s, O_RDWR|O_CREAT, %o) Failed, errno=%d : %s",
 			 TESTFILE, FILE_MODE, errno, strerror(errno));
 	}
-}				/* End setup() */
+}
 
 /*
  * void
@@ -219,9 +212,6 @@ void cleanup()
 			 TESTFILE, errno, strerror(errno));
 	}
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

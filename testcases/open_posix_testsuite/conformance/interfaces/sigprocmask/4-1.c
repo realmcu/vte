@@ -3,12 +3,12 @@
  * Copyright (c) 2003, Intel Corporation. All rights reserved.
  * Created by:  salwan.searty REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
- The resulting set shall be the union of the current set and the signal 
+ The resulting set shall be the union of the current set and the signal
  set pointed to by set, if the value of the argument how is SIG_BLOCK.
-  
+
 */
 
 #include <signal.h>
@@ -29,7 +29,7 @@ int main()
 	sigemptyset(&blocked_set1);
 	sigemptyset(&blocked_set2);
 	sigaddset(&blocked_set1, SIGABRT);
-	sigaddset(&blocked_set2, SIGALRM);
+	sigaddset(&blocked_set2, SIGUSR2);
 
 	act.sa_handler = handler;
 	act.sa_flags = 0;
@@ -41,7 +41,7 @@ int main()
 		return PTS_UNRESOLVED;
 	}
 
-	if (sigaction(SIGALRM,  &act, 0) == -1) {
+	if (sigaction(SIGUSR2,  &act, 0) == -1) {
 		perror("Unexpected error while attempting to setup test "
 		       "pre-conditions");
 		return PTS_UNRESOLVED;
@@ -57,7 +57,7 @@ int main()
 		return PTS_UNRESOLVED;
 	}
 
-	if ((raise(SIGABRT) == -1) | (raise(SIGALRM) == -1)) {
+	if ((raise(SIGABRT) == -1) | (raise(SIGUSR2) == -1)) {
 		perror("Unexpected error while attempting to setup test "
 		       "pre-conditions");
 		return PTS_UNRESOLVED;
@@ -73,7 +73,7 @@ int main()
 		return PTS_UNRESOLVED;
 	}
 
-	if ((sigismember(&pending_set, SIGABRT) != 1) | (sigismember(&pending_set, SIGALRM) != 1)) {
+	if ((sigismember(&pending_set, SIGABRT) != 1) | (sigismember(&pending_set, SIGUSR2) != 1)) {
 		perror("FAIL: sigismember did not return 1\n");
 		return PTS_UNRESOLVED;
 	}
@@ -81,4 +81,3 @@ int main()
 	printf("Test PASSED: signal was added to the process's signal mask\n");
 	return PTS_PASS;
 }
-

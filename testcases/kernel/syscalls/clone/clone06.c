@@ -93,7 +93,6 @@ static int pfd[2];
 
 char *TCID = "clone06";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int main(int ac, char **av)
 {
@@ -105,29 +104,22 @@ int main(int ac, char **av)
 	char buff[MAX_LINE_LENGTH];
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
 	/* Allocate stack for child */
-	if ((child_stack = (void *)malloc(CHILD_STACK_SIZE)) == NULL) {
+	if ((child_stack = malloc(CHILD_STACK_SIZE)) == NULL)
 		tst_brkm(TBROK, cleanup, "Cannot allocate stack for child");
-	}
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/* Open a pipe */
-		if ((pipe(pfd)) == -1) {
+		if ((pipe(pfd)) == -1)
 			tst_brkm(TBROK|TERRNO, cleanup, "pipe() failed");
-		}
 
 		/*
 		 * Call clone(2)
@@ -136,10 +128,8 @@ int main(int ac, char **av)
 				child_stack));
 
 		/* check return code */
-		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL|TTERRNO, "clone() failed");
-			cleanup();
-		}
+		if (TEST_RETURN == -1)
+			tst_brkm(TFAIL|TTERRNO, cleanup, "clone failed");
 
 		/* close write end from parent */
 		if ((close(pfd[1])) == -1) {
@@ -156,33 +146,29 @@ int main(int ac, char **av)
 			tst_resm(TWARN|TERRNO, "close(pfd[0]) failed");
 		}
 
-		parent_env = getenv("TERM");
+		parent_env = getenv("TERM") ? : "";
 
 		if ((strcmp(buff, parent_env)) == 0) {
 			tst_resm(TPASS, "Test Passed");
 		} else {
 			tst_resm(TFAIL, "Test Failed");
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
 	free(child_stack);
 
-	/* cleanup and exit */
 	cleanup();
-
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
+	tst_exit();
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
-}				/* End setup() */
+}
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
@@ -196,9 +182,7 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}
 
 /*
  * child_environ() -	function executed by child.

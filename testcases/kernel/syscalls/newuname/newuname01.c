@@ -50,8 +50,6 @@
 #include "linux_syscall_numbers.h"
 
 /* Extern Global Variables */
-extern int Tst_count;           /* counter for tst_xxx routines.         */
-extern char *TESTDIR;           /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
 char *TCID = "newuname01";  /* Test program identifier.*/
@@ -77,11 +75,10 @@ int  TST_TOTAL = 1;                   /* total number of tests in this file.   *
 /*                                                                            */
 /******************************************************************************/
 extern void cleanup() {
-        /* Remove tmp dir and all files in it */
+
         TEST_CLEANUP;
         tst_rmdir();
 
-        /* Exit with appropriate return code. */
         tst_exit();
 }
 
@@ -114,28 +111,27 @@ int main(int ac, char **av) {
         struct utsname name;
 	int lc;                 /* loop counter */
         char *msg;              /* message returned from parse_opts */
-	
+
         /* parse standard options */
-        if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-             tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+        if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+             tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
              tst_exit();
            }
 
         setup();
 
-        /* Check looping state if -i option given */
         for (lc = 0; TEST_LOOPING(lc); ++lc) {
                 Tst_count = 0;
                 for (testno = 0; testno < TST_TOTAL; ++testno) {
                      TEST(syscall(__NR_uname,&name));     //call newuname()
-                     if(TEST_RETURN == -1) {
+                     if (TEST_RETURN == -1) {
                  	   tst_resm(TFAIL, "%s failed - errno = %d : %s", TCID, TEST_ERRNO, strerror(TEST_ERRNO));
                            cleanup();
 	  	           tst_exit();
                      }else {
 	   		tst_resm(TPASS, "newuname call succeed: return value = %ld ",TEST_RETURN);
 			TEST(strcmp(name.sysname,"Linux")); //Linux ?
-			if(TEST_RETURN == 0){
+			if (TEST_RETURN == 0) {
 				tst_resm(TINFO,"This system is %s",name.sysname);
 				tst_resm(TINFO,"The system infomation is :");
 				tst_resm(TINFO,"System is %s on %s hardware",name.sysname,name.machine);
@@ -151,11 +147,10 @@ int main(int ac, char **av) {
                            	cleanup();
 	  	           	tst_exit();
 			}
-				
-     		   }	
-        
+
+     		   }
+
 	}
-     }	
+     }
         tst_exit();
 }
-

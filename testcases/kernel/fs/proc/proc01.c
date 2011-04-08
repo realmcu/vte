@@ -51,7 +51,6 @@
 
 char *TCID = "proc01";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 static int	 opt_verbose = 0;
 static int	 opt_procpath = 0;
@@ -135,7 +134,7 @@ const char error_nonblock[][PATH_MAX] = {
     ""
 };
 
-/* 
+/*
  * Verify expected failures, and then let the test to continue.
  *
  * Return 0 when a problem errno is found.
@@ -169,7 +168,7 @@ int found_errno(const char *syscall, const char *obj, int tmperr)
 			return 1;
 		}
 	}
-	return 0; 
+	return 0;
 }
 
 void cleanup()
@@ -179,7 +178,6 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 	tst_rmdir();
-	tst_exit();
 
 }
 
@@ -297,7 +295,7 @@ long readproc(const char *obj)
 				 * starting point as directed by the
 				 * user).
 				 */
-				if ( strcmp(dir_ent->d_name, ".") &&
+				if (strcmp(dir_ent->d_name, ".") &&
 				     strcmp(dir_ent->d_name, "..") &&
 				     strcmp(dir_ent->d_name, "kcore") &&
 				     (fnmatch("[0-9]*", dir_ent->d_name,
@@ -466,5 +464,5 @@ int main(int argc, char *argv[])
 	}
 
 	cleanup();
-	return 0;
+	tst_exit();
 }

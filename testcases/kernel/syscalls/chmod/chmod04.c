@@ -91,7 +91,6 @@
 
 char *TCID = "chmod04";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
@@ -105,19 +104,13 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 	mode_t dir_mode;	/* mode permissions set on testdirectory */
 
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -126,7 +119,6 @@ int main(int ac, char **av)
 		 */
 		TEST(chmod(TESTDIR, PERMS));
 
-		/* check return code of chmod(2) */
 		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL|TTERRNO, "chmod(%s, %#o) failed",
 				 TESTDIR, PERMS);
@@ -159,16 +151,13 @@ int main(int ac, char **av)
 					 "Expected 0%03o",
 					 TESTDIR, dir_mode, PERMS);
 			}
-		} else {
+		} else
 			tst_resm(TPASS, "call succeeded");
-		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
-
-	return 0;
- /*NOTREACHED*/}		/* End main */
+	tst_exit();
+}
 
 /*
  * void
@@ -178,21 +167,16 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Switch to nobody user for correct error code collection */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
-	}
+	tst_require_root(NULL);
 	ltpuser = getpwnam(nobody_uid);
 	if (setuid(ltpuser->pw_uid) == -1)
 		tst_resm(TINFO|TERRNO, "setuid(%u) failed", ltpuser->pw_uid);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/*
@@ -202,7 +186,7 @@ void setup()
 	if (mkdir(TESTDIR, DIR_MODE) < 0) {
 		tst_brkm(TBROK, cleanup, "mkdir(2) of %s failed", TESTDIR);
 	}
-}				/* End setup() */
+}
 
 /*
  * void
@@ -217,9 +201,6 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

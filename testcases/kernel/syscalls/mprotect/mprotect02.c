@@ -49,197 +49,160 @@
  *	None
  */
 
+#include <sys/mman.h>
+#include <sys/wait.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <sys/mman.h>
-#include <limits.h>		/* for PAGESIZE */
-#include <signal.h>
-#include <wait.h>
-#include <test.h>
-#include <usctest.h>
+#include <limits.h>
+#include <stdlib.h>
+#include "test.h"
+#include "usctest.h"
 
-#ifndef PAGESIZE
-#define PAGESIZE 4096
-#endif
+#include "safe_macros.h"
 
-#define FAILED 1
-
-void cleanup(void);
-void setup(void);
+static void cleanup(void);
+static void setup(void);
 
 char *TCID = "mprotect02";
 int TST_TOTAL = 1;
-int status;
+int fd, status;
 char file1[BUFSIZ];
 
-extern int Tst_count;
+char *addr = MAP_FAILED;
+char buf[] = "abcdefghijklmnopqrstuvwxyz";
 
 #ifndef UCLINUX
 
 int main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
+	int lc;
+	char *msg;
 
-	char *addr;
-	int fd, pid;
-	char *buf = "abcdefghijklmnopqrstuvwxyz";
+	int bytes_to_write, fd, num_bytes;
+	pid_t pid;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	setup();		/* global setup */
+	setup();
 
-	/* The following loop checks looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
-		if ((fd = open(file1, O_RDWR | O_CREAT, 0777)) < 0) {	//mode must be specified when O_CREATE is in the flag
-			tst_brkm(TBROK, cleanup, "open failed");
-		 /*NOTREACHED*/}
-		(void)write(fd, buf, strlen(buf));
+		fd = SAFE_OPEN(cleanup, file1, O_RDWR|O_CREAT, 0777);
 
-		/*
-		 * mmap the PAGESIZE bytes as read only.
-		 */
-		addr = mmap(0, strlen(buf), PROT_READ, MAP_SHARED, fd, 0);
-		if (addr < 0) {
-			tst_brkm(TBROK, cleanup, "mmap failed");
-		 /*NOTREACHED*/}
+		num_bytes = getpagesize();
 
-		if ((pid = FORK_OR_VFORK()) == -1) {
-			tst_brkm(TBROK, cleanup, "fork() #1 failed");
+		do {
+
+			if (num_bytes > strlen(buf))
+				bytes_to_write = strlen(buf);
+			else
+				bytes_to_write = num_bytes;
+
+			num_bytes -= SAFE_WRITE(cleanup, 1, fd, buf, bytes_to_write);
+
+		} while (0 < num_bytes);
+
+		/* mmap the PAGESIZE bytes as read only. */
+		addr = SAFE_MMAP(cleanup, 0, sizeof(buf), PROT_READ,
+		    MAP_SHARED, fd, 0);
+
+		if ((pid = FORK_OR_VFORK()) == -1)
+			tst_brkm(TBROK|TERRNO, cleanup, "fork #1 failed");
+
+		if (pid == 0) {
+			(void)memcpy(addr, buf, strlen(buf));
+			printf("memcpy did not generate SIGSEGV\n");
+			exit(1);
 		}
 
-		if (pid == 0) {	/* child */
-			(void)memcpy((void *)addr, (void *)buf, strlen(buf));
-			tst_resm(TINFO, "memcpy() did not generate SIGSEGV");
-			exit(1);
-		 /*NOTREACHED*/}
+		if (waitpid(pid, &status, 0) == -1)
+			tst_brkm(TBROK|TERRNO, cleanup, "waitpid failed");
 
-		/* parent */
-		(void)waitpid(pid, &status, 0);
-		if (WIFEXITED(status) == 0) {
-			tst_brkm(TBROK, cleanup, "chiled exited abnormally");
-		 /*NOTREACHED*/}
-		/* exit status should be 1 */
-		if (WEXITSTATUS(status) != 1) {
-			tst_brkm(TBROK, cleanup, "child failed");
-		 /*NOTREACHED*/}
+		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGSEGV)
+			tst_resm(TPASS, "got SIGSEGV as expected");
+		else
+			tst_brkm(TBROK, cleanup,
+			    "child exited abnormally; wait status = %d",
+			    status);
 
-		/*
-		 * Change the protection to WRITE.
-		 */
-		TEST(mprotect(addr, strlen(buf), PROT_WRITE));
+		/* Change the protection to WRITE. */
+		TEST(mprotect(addr, sizeof(buf), PROT_WRITE));
 
 		if (TEST_RETURN != -1) {
-			if (STD_FUNCTIONAL_TEST) {
-				if ((pid = FORK_OR_VFORK()) == -1) {
-					tst_brkm(TBROK, cleanup,
-						 "fork() #2 failed");
-				}
 
-				if (pid == 0) {	/* child */
-					(void)memcpy((void *)addr, (void *)buf,
-						     strlen(buf));
+			if (STD_FUNCTIONAL_TEST) {
+
+				if ((pid = FORK_OR_VFORK()) == -1)
+					tst_brkm(TBROK|TERRNO, cleanup,
+						 "fork #2 failed");
+
+				if (pid == 0) {
+					(void)memcpy(addr, buf, strlen(buf));
 					exit(0);
 				}
 
-				/* parent */
-				(void)waitpid(pid, &status, 0);
-				if (WIFEXITED(status) == 0) {
-					tst_brkm(TBROK, cleanup, "child exited "
-						 "abnormally");
-				 /*NOTREACHED*/}
-				/*
-				 * if we get a SIGSEGV, the exit status
-				 * will be 1.
-				 */
-				if (WEXITSTATUS(status) != 0) {
-					tst_resm(TFAIL, "Got SIGSEGV, "
-						 "functional test failed");
-				} else {
-					tst_resm(TPASS, "Did not get SIGSEGV, "
-						 "functional test passed");
-				}
-			} else {
+				if (waitpid(pid, &status, 0) == -1)
+					tst_brkm(TBROK|TERRNO, cleanup,
+					    "waitpid failed");
+
+				if (WIFEXITED(status) &&
+				    WEXITSTATUS(status) == 0)
+					tst_resm(TPASS, "didn't get SIGSEGV");
+				else
+					tst_brkm(TBROK, cleanup,
+					    "child exited abnormally");
+
+			} else
 				tst_resm(TPASS, "call succeeded");
-			}
+
 		} else {
-			tst_resm(TFAIL, "mprotect failed unexpectedly - errno: "
-				 "%d", errno);
+			tst_resm(TFAIL|TERRNO, "mprotect failed");
 			continue;
 		}
 
-		/* clean up things in case we are looping */
-		if (munmap(addr, strlen(buf)) == -1) {
-			tst_brkm(TBROK, cleanup, "close() failed");
-		}
-		if (close(fd) == -1) {
-			tst_brkm(TBROK, cleanup, "close() failed");
-		}
-		if (unlink(file1) == -1) {
-			tst_brkm(TBROK, cleanup, "unlink() failed");
-		}
+		SAFE_MUNMAP(cleanup, addr, sizeof(buf));
+		addr = MAP_FAILED;
+
+		SAFE_CLOSE(cleanup, fd);
+
+		SAFE_UNLINK(cleanup, file1);
+
 	}
+
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 #else
 
 int main()
 {
-	tst_resm(TINFO, "Ignore this test on uClinux");
-	return 0;
+	tst_brkm(TCONF, NULL, "test not runnable on uClinux");
 }
 
 #endif /* UCLINUX */
 
-void sighandler(int sig)
+static void setup()
 {
-	tst_resm(TINFO, "received signal: %d", sig);
-	if (sig == SIGSEGV) {
-		exit(1);
-	} else {
-		tst_brkm(TBROK, 0, "Unexpected signal %d received.", sig);
-	}
-	tst_exit();
-}
 
-/*
- * setup() - performs all ONE TIME setup for this test
- */
-void setup()
-{
-	tst_sig(FORK, sighandler, NULL);
-
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	tst_tmpdir();		/* create a temporary directory, cd to it */
+	tst_tmpdir();
 
 	sprintf(file1, "mprotect02.tmp.%d", getpid());
 }
 
-/*
- * cleanup() - performs all the ONE TIME cleanup for this test at completion
- *	       or premature exit.
- */
-void cleanup()
+static void cleanup()
 {
-	/*
-	 * print timing status if that option was specified.
-	 * print errno log if that option was specified
-	 */
 	TEST_CLEANUP;
 
-	tst_rmdir();
+	if (addr != MAP_FAILED) {
+		SAFE_MUNMAP(NULL, addr, sizeof(buf));
+		SAFE_CLOSE(NULL, fd);
+	}
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+	tst_rmdir();
 }

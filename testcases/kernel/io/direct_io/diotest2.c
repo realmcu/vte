@@ -17,7 +17,6 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-
 /*
  * NAME
  *      diotest2.c
@@ -129,8 +128,7 @@ void
 prg_usage()
 {
 	fprintf(stderr, "Usage: diotest2 [-b bufsize] [-o offset] [-i iterations] [-f filename]\n");
-	tst_resm (TBROK, "usage");
-	tst_exit();
+	exit(1);
 }
 
 int fd1 = -1;
@@ -185,45 +183,38 @@ main(int argc, char *argv[])
 
 	/* Testblock-1: Read with Direct IO, Write without */
 	action = READ_DIRECT;
-	if ((fd_w = open(filename, O_WRONLY|O_CREAT, 0666)) < 0) {
-		tst_brkm(TBROK, cleanup, "fd_w,open failed for %s: %s",
-			filename, strerror(errno));
-	}
-	if ((fd_r = open(filename, O_DIRECT|O_RDONLY, 0666)) < 0) {
-		tst_brkm(TBROK, cleanup, "fd_r,open failed for %s: %s",
-			filename, strerror(errno));
-	}
+	if ((fd_w = open(filename, O_WRONLY|O_CREAT, 0666)) < 0)
+		tst_brkm(TBROK|TERRNO, cleanup,
+		    "open(%s, O_WRONLY..) failed", filename);
+	if ((fd_r = open(filename, O_DIRECT|O_RDONLY, 0666)) < 0)
+		tst_brkm(TBROK|TERRNO, cleanup,
+		    "open(%s, O_DIRECT|O_RDONLY..) failed", filename);
 	if (runtest(fd_r, fd_w, iter, offset, action) < 0) {
 		failed = TRUE;
 		fail_count++;
 		tst_resm (TFAIL, "Read with Direct IO, Write without");
-	}
-	else
-	  tst_resm (TPASS, "Read with Direct IO, Write without");
+	} else
+		tst_resm (TPASS, "Read with Direct IO, Write without");
 	close(fd_w);
 	close(fd_r);
 	unlink(filename);
 	total++;
 
-
-
 	/* Testblock-2: Write with Direct IO, Read without */
 	action = WRITE_DIRECT;
-	if ((fd_w = open(filename, O_DIRECT|O_WRONLY|O_CREAT, 0666)) < 0) {
-		tst_brkm(TBROK, cleanup, "fd_w,open failed for %s: %s",
-			filename, strerror(errno));
-	}
-	if ((fd_r = open(filename, O_RDONLY|O_CREAT, 0666)) < 0) {
-		tst_brkm(TBROK, cleanup, "fd_r,open failed for %s: %s",
-			filename, strerror(errno));
-	}
+	if ((fd_w = open(filename, O_DIRECT|O_WRONLY|O_CREAT, 0666)) == -1)
+		tst_brkm(TBROK|TERRNO, cleanup,
+		    "open(%s, O_DIRECT|O_WRONLY..) failed", filename);
+	if ((fd_r = open(filename, O_RDONLY|O_CREAT, 0666)) == -1)
+		tst_brkm(TBROK|TERRNO, cleanup,
+		    "open(%s, O_RDONLY..) failed", filename);
 	if (runtest(fd_r, fd_w, iter, offset, action) < 0) {
 		failed = TRUE;
 		fail_count++;
 		tst_resm (TFAIL, "Write with Direct IO, Read without");
 	}
 	else
-	  tst_resm (TPASS, "Write with Direct IO, Read without");
+		tst_resm(TPASS, "Write with Direct IO, Read without");
 	close(fd_w);
 	close(fd_r);
 	unlink(filename);
@@ -231,70 +222,64 @@ main(int argc, char *argv[])
 
 	/* Testblock-3: Read, Write with Direct IO. */
 	action = RDWR_DIRECT;
-	if ((fd_w = open(filename, O_DIRECT|O_WRONLY|O_CREAT, 0666)) < 0) {
-		tst_brkm(TBROK, cleanup, "fd_w,open failed for %s: %s",
-			filename, strerror(errno));
-	}
-	if ((fd_r = open(filename, O_DIRECT|O_RDONLY|O_CREAT, 0666)) < 0) {
-		tst_brkm(TBROK, cleanup, "fd_r,open failed for %s: %s",
-			filename, strerror(errno));
-	}
+	if ((fd_w = open(filename, O_DIRECT|O_WRONLY|O_CREAT, 0666)) == -1)
+		tst_brkm(TBROK|TERRNO, cleanup,
+		    "open(%s, O_DIRECT|O_WRONLY|O_CREAT, ..) failed", filename);
+	if ((fd_r = open(filename, O_DIRECT|O_RDONLY|O_CREAT, 0666)) == -1)
+		tst_brkm(TBROK|TERRNO, cleanup,
+		    "open(%s, O_DIRECT|O_RDONLY|O_CREAT, ..) failed", filename);
 	if (runtest(fd_r, fd_w, iter, offset, action) < 0) {
 		failed = TRUE;
 		fail_count++;
-		tst_resm (TFAIL, "Read, Write with Direct IO");
-	}
-	else
-	  tst_resm (TPASS, "Read, Write with Direct IO");
+		tst_resm(TFAIL, "Read, Write with Direct IO");
+	} else
+		tst_resm (TPASS, "Read, Write with Direct IO");
 	close(fd_w);
 	close(fd_r);
 	unlink(filename);
 	total++;
 
-	if (failed) {
+	if (failed)
 		tst_resm(TINFO, "%d/%d testblocks failed",
 			fail_count, total);
-	} else {
+	else
 		tst_resm(TINFO, "%d testblocks %d iterations completed",
 			total, iter);
-	}
 	cleanup();
-	return 0;
+
+	tst_exit();
+
 }
 
 static void setup(void)
 {
 	tst_tmpdir();
 
-	if ((fd1 = open(filename, O_CREAT|O_EXCL, 0600)) < 0) {
-		tst_brkm(TBROK, cleanup, "Couldn't create test file %s: %s", filename, strerror(errno));
-	}
+	if ((fd1 = open(filename, O_CREAT|O_EXCL, 0600)) == -1)
+		tst_brkm(TBROK|TERRNO, cleanup,
+		   "open(%s, O_CREAT|O_EXCL, ..) failed", filename);
 	close(fd1);
 
 	/* Test for filesystem support of O_DIRECT */
-	if ((fd1 = open(filename, O_DIRECT, 0600)) < 0) {
-		tst_brkm(TCONF, cleanup, "O_DIRECT is not supported by this filesystem. %s", strerror(errno));
-	}
+	if ((fd1 = open(filename, O_DIRECT, 0600)) == -1)
+		tst_brkm(TCONF|TERRNO, cleanup,
+		    "open(%s, O_DIRECT, ..) failed", filename);
 	close(fd1);
 
 }
 
 static void cleanup(void)
 {
-	if(fd1 != -1)
+	if (fd1 != -1)
 		unlink(filename);
 
 	tst_rmdir();
 
-	tst_exit();
 }
 
 #else /* O_DIRECT */
-
 int
 main() {
-
-		 tst_resm(TCONF,"O_DIRECT is not defined.");
-		 return 0;
+	tst_brkm(TCONF, NULL, "O_DIRECT is not defined.");
 }
 #endif /* O_DIRECT */

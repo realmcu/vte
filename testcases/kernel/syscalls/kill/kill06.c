@@ -70,7 +70,6 @@ void do_child(void);
 char *TCID = "kill06";
 int TST_TOTAL = 1;
 
-extern int Tst_count;
 
 #define TEST_SIG SIGKILL
 
@@ -82,8 +81,8 @@ int main(int ac, char **av)
 	int exno, status, nsig, i;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
 	maybe_run_child(&do_child, "");
@@ -126,7 +125,7 @@ int main(int ac, char **av)
 			/* Kill all processes in this process group */
 			TEST(kill(-getpgrp(), TEST_SIG));
 			sleep(300);
-			 /*NOTREACHED*/
+
 			    tst_resm(TINFO, "%d never recieved a"
 				     " signal", getpid());
 			exit(exno);
@@ -159,7 +158,7 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -170,7 +169,7 @@ void do_child()
 	int exno = 1;
 
 	sleep(299);
-	 /*NOTREACHED*/
+
 	    tst_resm(TINFO, "%d never recieved a" " signal", getpid());
 	exit(exno);
 }
@@ -183,7 +182,6 @@ void setup(void)
 	/* Setup default signal handling */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -199,6 +197,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

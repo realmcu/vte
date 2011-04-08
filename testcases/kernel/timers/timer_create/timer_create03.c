@@ -73,19 +73,18 @@
 #include "usctest.h"
 #include "common_timers.h"
 
-static void setup();
-static void setup_test(int option);
+void setup(void);
+void setup_test(int option);
 
 char *TCID = "timer_create03";	/* Test program identifier. */
 int TST_TOTAL = 3;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 static struct sigevent evp, *evp_ptr;
 
 /*
  * cleanup() - Performs one time cleanup for this test at
  * completion or premature exit
  */
-static void
+void
 cleanup(void)
 {
 	/*
@@ -93,7 +92,7 @@ cleanup(void)
 	* print errno log if that option was specified.
 	*/
 	TEST_CLEANUP;
-}	/* End cleanup() */
+}
 
 int
 main(int ac, char **av)
@@ -110,16 +109,13 @@ main(int ac, char **av)
 	/* parse standard options */
 	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) !=
 			(char *) NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -133,17 +129,16 @@ main(int ac, char **av)
 				(TEST_RETURN == 0 ? "passed" : "failed"),
 				message[i]);
 
-		}	/* End of TEST CASE LOOPING */
+		}
 
-	}		/* End for TEST_LOOPING */
+	}
 
-	/* Clean up and exit */
 	cleanup();
 	tst_exit();
 }
 
 /* setup_test() - sets up individual test */
-static void
+void
 setup_test(int option)
 {
 	switch (option) {
@@ -166,12 +161,11 @@ setup_test(int option)
 }
 
 /* setup() - performs all ONE TIME setup for this test */
-static void
-setup()
+void
+setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
-}	/* End setup() */
+}

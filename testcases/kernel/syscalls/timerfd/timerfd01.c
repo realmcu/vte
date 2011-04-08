@@ -49,7 +49,6 @@
 #define cleanup tst_exit
 
 char *TCID = "timerfd01";	/* Test program identifier */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 /*
  * This were good at the time of 2.6.23-rc7 ...
@@ -266,7 +265,7 @@ int main(int ac, char **av)
 		close(tfd);
 	}
 
-	return 0;
+	tst_exit();
 }
 
 #else
@@ -276,6 +275,6 @@ int main()
 {
 
 	tst_resm(TCONF, "This test needs a kernel that has timerfd syscall.");
-	return 0;
+	tst_exit();
 }
 #endif

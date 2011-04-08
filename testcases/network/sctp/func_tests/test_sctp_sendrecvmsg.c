@@ -39,7 +39,7 @@
 
 /* This is a basic functional test for the SCTP new library APIs
  * sctp_sendmsg() and sctp_recvmsg(). test_timetolive.c is rewritten using
- * these new APIs. 
+ * these new APIs.
  */
 
 #include <stdio.h>
@@ -148,16 +148,16 @@ int main(int argc, char *argv[])
 	 */
 	len = sizeof(int);
 	error = getsockopt(sk2, SOL_SOCKET, SO_RCVBUF, &oldlen, &len);
-       
+
 	if (error)
-		tst_brkm(TBROK, tst_exit, "can't get rcvbuf size: %s",
+		tst_brkm(TBROK, NULL, "can't get rcvbuf size: %s",
 			 strerror(errno));
 
 	len = SMALL_RCVBUF; /* Really becomes 2xlen when set. */
 
 	error = setsockopt(sk2, SOL_SOCKET, SO_RCVBUF, &len, sizeof(len));
 	if (error)
-		tst_brkm(TBROK, tst_exit, "setsockopt(SO_RCVBUF): %s",
+		tst_brkm(TBROK, NULL, "setsockopt(SO_RCVBUF): %s",
 			 strerror(errno));
 
        /* Mark sk2 as being able to accept new associations.  */
@@ -178,19 +178,18 @@ int main(int argc, char *argv[])
 	msgname_len = sizeof(msgname);
 	error = test_sctp_recvmsg(sk2, big_buffer, buflen,
 				  (struct sockaddr *)&msgname, &msgname_len,
-				  &sinfo, &msg_flags); 
+				  &sinfo, &msg_flags);
 	associd2 = ((struct sctp_assoc_change *)big_buffer)->sac_assoc_id;
 	test_check_buf_notification(big_buffer, error, msg_flags,
 				    sizeof(struct sctp_assoc_change),
 				    SCTP_ASSOC_CHANGE, SCTP_COMM_UP);
-
 
 	/* restore the rcvbuffer size for the receiving socket */
 	error = setsockopt(sk2, SOL_SOCKET, SO_RCVBUF, &oldlen,
 			   sizeof(oldlen));
 
 	if (error)
-		tst_brkm(TBROK, tst_exit, "setsockopt(SO_RCVBUF): %s",
+		tst_brkm(TBROK, NULL, "setsockopt(SO_RCVBUF): %s",
 			 strerror(errno));
 
 	/* Get the communication up message on sk1.  */
@@ -198,7 +197,7 @@ int main(int argc, char *argv[])
 	msgname_len = sizeof(msgname);
 	error = test_sctp_recvmsg(sk1, big_buffer, buflen,
 				  (struct sockaddr *)&msgname, &msgname_len,
-				  &sinfo, &msg_flags); 
+				  &sinfo, &msg_flags);
 	associd1 = ((struct sctp_assoc_change *)big_buffer)->sac_assoc_id;
 	test_check_buf_notification(big_buffer, error, msg_flags,
 				    sizeof(struct sctp_assoc_change),
@@ -211,9 +210,9 @@ int main(int argc, char *argv[])
 	msgname_len = sizeof(msgname);
 	error = test_sctp_recvmsg(sk2, big_buffer, buflen,
 				  (struct sockaddr *)&msgname, &msgname_len,
-				  &sinfo, &msg_flags); 
+				  &sinfo, &msg_flags);
 	test_check_buf_data(big_buffer, error, msg_flags, &sinfo,
-			    strlen(message) + 1, MSG_EOR, stream, ppid); 
+			    strlen(message) + 1, MSG_EOR, stream, ppid);
 
 	tst_resm(TPASS, "sctp_recvmsg data");
 
@@ -224,7 +223,7 @@ int main(int argc, char *argv[])
 	error = getsockopt(sk1, IPPROTO_SCTP, SCTP_STATUS, &gstatus, &len);
 
 	if (error)
-		tst_brkm(TBROK, tst_exit, "can't get rwnd size: %s",
+		tst_brkm(TBROK, NULL, "can't get rwnd size: %s",
 			strerror(errno));
 	tst_resm(TINFO, "creating a fillmsg of size %d",
 		gstatus.sstat_rwnd+RWND_SLOP);
@@ -235,7 +234,7 @@ int main(int argc, char *argv[])
 	fillmsg[gstatus.sstat_rwnd+RWND_SLOP-1] = '\0';
 	ppid++;
 	stream++;
-	test_sctp_sendmsg(sk1, fillmsg, gstatus.sstat_rwnd+RWND_SLOP, 
+	test_sctp_sendmsg(sk1, fillmsg, gstatus.sstat_rwnd+RWND_SLOP,
 			  (struct sockaddr *)&loop2, sizeof(loop2),
 			  ppid, 0, stream, 0, 0);
 
@@ -272,7 +271,7 @@ int main(int argc, char *argv[])
 		msgname_len = sizeof(msgname);
 		test_sctp_recvmsg(sk2, big_buffer, buflen,
 			  (struct sockaddr *)&msgname, &msgname_len,
-			  &sinfo, &msg_flags); 
+			  &sinfo, &msg_flags);
 	} while (!(msg_flags & MSG_EOR));
 
 	/* Get the message that did NOT time out. */
@@ -280,11 +279,11 @@ int main(int argc, char *argv[])
 	msgname_len = sizeof(msgname);
 	error = test_sctp_recvmsg(sk2, big_buffer, buflen,
 			  (struct sockaddr *)&msgname, &msgname_len,
-			  &sinfo, &msg_flags); 
+			  &sinfo, &msg_flags);
 	test_check_buf_data(big_buffer, error, msg_flags, &sinfo,
-			    strlen(nottlmsg) + 1, MSG_EOR, stream, ppid); 
+			    strlen(nottlmsg) + 1, MSG_EOR, stream, ppid);
 	if (0 != strncmp(big_buffer, nottlmsg, strlen(nottlmsg)))
-		tst_brkm(TBROK, tst_exit, "sctp_recvmsg: Wrong Message !!!");
+		tst_brkm(TBROK, NULL, "sctp_recvmsg: Wrong Message !!!");
 
 	tst_resm(TPASS, "sctp_recvmsg msg with zero ttl");
 
@@ -295,20 +294,20 @@ int main(int argc, char *argv[])
 	msgname_len = sizeof(msgname);
 	error = test_sctp_recvmsg(sk1, big_buffer, buflen,
 			  (struct sockaddr *)&msgname, &msgname_len,
-			  &sinfo, &msg_flags); 
+			  &sinfo, &msg_flags);
 	test_check_buf_notification(big_buffer, error, msg_flags,
 				    sizeof(struct sctp_send_failed) +
 							strlen(ttlmsg) + 1,
 				    SCTP_SEND_FAILED, 0);
 	ssf = (struct sctp_send_failed *)big_buffer;
 	if (0 != strncmp(ttlmsg, (char *)ssf->ssf_data, strlen(ttlmsg) + 1))
-		tst_brkm(TBROK, tst_exit, "SEND_FAILED data mismatch");
+		tst_brkm(TBROK, NULL, "SEND_FAILED data mismatch");
 
 	tst_resm(TPASS, "sctp_recvmsg SEND_FAILED for message with ttl");
 
 	offset = 0;
 
-	/* Get the SEND_FAILED notifications for the fragmented message that 
+	/* Get the SEND_FAILED notifications for the fragmented message that
 	 * timed out.
 	 */
 	do {
@@ -316,7 +315,7 @@ int main(int argc, char *argv[])
 		msgname_len = sizeof(msgname);
 		error = test_sctp_recvmsg(sk1, big_buffer, buflen,
 			  (struct sockaddr *)&msgname, &msgname_len,
-			  &sinfo, &msg_flags); 
+			  &sinfo, &msg_flags);
 		test_check_buf_notification(big_buffer, error, msg_flags,
 					    sizeof(struct sctp_send_failed) +
 							          SMALL_MAXSEG,
@@ -324,7 +323,7 @@ int main(int argc, char *argv[])
 		ssf = (struct sctp_send_failed *)big_buffer;
 		if (0 != strncmp(&ttlfrag[offset], (char *)ssf->ssf_data,
 				 SMALL_MAXSEG))
-			tst_brkm(TBROK, tst_exit, "SEND_FAILED data mismatch");
+			tst_brkm(TBROK, NULL, "SEND_FAILED data mismatch");
 		offset += SMALL_MAXSEG;
 	} while (!(ssf->ssf_info.sinfo_flags & 0x01)); /* LAST FRAG */
 
@@ -332,10 +331,10 @@ int main(int argc, char *argv[])
 		 "ttl");
 
 	snd_sinfo.sinfo_ppid = rand();
-	snd_sinfo.sinfo_flags = 0; 
-	snd_sinfo.sinfo_stream = 2; 
-	snd_sinfo.sinfo_timetolive = 0; 
-	snd_sinfo.sinfo_assoc_id = associd1; 
+	snd_sinfo.sinfo_flags = 0;
+	snd_sinfo.sinfo_stream = 2;
+	snd_sinfo.sinfo_timetolive = 0;
+	snd_sinfo.sinfo_assoc_id = associd1;
 	test_sctp_send(sk1, message, strlen(message) + 1, &snd_sinfo,
 		       MSG_NOSIGNAL);
 
@@ -343,10 +342,10 @@ int main(int argc, char *argv[])
 	msgname_len = sizeof(msgname);
 	error = test_sctp_recvmsg(sk2, big_buffer, buflen,
 				  (struct sockaddr *)&msgname, &msgname_len,
-				  &sinfo, &msg_flags); 
+				  &sinfo, &msg_flags);
 	test_check_buf_data(big_buffer, error, msg_flags, &sinfo,
 			    strlen(message) + 1, MSG_EOR, snd_sinfo.sinfo_stream,
-			    snd_sinfo.sinfo_ppid); 
+			    snd_sinfo.sinfo_ppid);
 
 	tst_resm(TPASS, "sctp_send");
 
@@ -358,7 +357,7 @@ int main(int argc, char *argv[])
 	msgname_len = sizeof(msgname);
 	error = test_sctp_recvmsg(sk2, big_buffer, buflen,
 		  (struct sockaddr *)&msgname, &msgname_len,
-		  &sinfo, &msg_flags); 
+		  &sinfo, &msg_flags);
 	test_check_buf_notification(big_buffer, error, msg_flags,
 				    sizeof(struct sctp_assoc_change),
 				    SCTP_ASSOC_CHANGE, SCTP_SHUTDOWN_COMP);
@@ -366,5 +365,5 @@ int main(int argc, char *argv[])
 	close(sk2);
 
 	/* Indicate successful completion.  */
-	return 0;	
+	tst_exit();
 }

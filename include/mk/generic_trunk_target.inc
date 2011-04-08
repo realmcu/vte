@@ -75,7 +75,7 @@ trunk-install: $(INSTALL_FILES)
 all: trunk-all
 
 clean:: trunk-clean
-	set -e; for dir in $(SUBDIRS); do \
+	@set -e; for dir in $(SUBDIRS); do \
 	    $(MAKE) -C "$$dir" -f "$(abs_srcdir)/$$dir/Makefile" $@; \
 	done
 ifneq ($(abs_builddir),$(abs_srcdir))

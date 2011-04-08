@@ -74,7 +74,6 @@
 
 #define MAX_LENGTH __NEW_UTS_LEN
 
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static void setup();
 static void cleanup();
@@ -91,9 +90,9 @@ int main(int ac, char **av)
 	char ltphost[] = "ltphost";	/* temporary host name to set */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
 	/* Do initial setup. */
@@ -102,7 +101,6 @@ int main(int ac, char **av)
 	/* check -c option for looping. */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/* Call sethostname(2) */
@@ -118,13 +116,13 @@ int main(int ac, char **av)
 				 ltphost);
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
 	/* cleanup and exit */
 	cleanup();
+	tst_exit();
 
-	return 0;
-}				/* End main */
+}
 
 /*
  * setup() - performs all one time setup for this test.
@@ -133,24 +131,22 @@ void setup()
 {
 	int ret;
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Test should be executed as root user */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 
 	/* Store the existing hostname to retain it before exiting */
 	if ((ret = gethostname(hname, sizeof(hname))) < 0) {
-		tst_brkm(TBROK, tst_exit, "gethostname() failed while getting"
+		tst_brkm(TBROK, NULL, "gethostname() failed while getting"
 			 " current host name");
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}				/* End setup() */
+}
 
 /*
  * cleanup() -	performs all one time cleanup for this test
@@ -172,6 +168,4 @@ void cleanup()
 			 " hostname to \"%s\": %s", hname, strerror(errno));
 	}
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

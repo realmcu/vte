@@ -24,18 +24,18 @@
 * Author : Veerendra C <vechandr@in.ibm.com>
 */
 
+#include <dlfcn.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <dlfcn.h>
-#include <linux/version.h>
+#include "test.h"
 
 int main(int argc, char **argv)
 {
 	void *handle;
 	void *ret;
 	char *error;
-	if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 16))
-	return 1;
+	if (tst_kvercmp(2, 6, 16) < 0)
+		return 1;
 
 	handle = dlopen(NULL, RTLD_LAZY);
 	if (!handle) {

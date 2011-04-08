@@ -85,7 +85,7 @@ int main( int argc, char *argv[] )
         switch(atoi(argv[1]))
 	{
 	case 1: printf("%d", PAGE_SIZE);
-		return 0;
+		tst_exit();
 	case 2:
 		buf = (char*) malloc(MB);
                	if (!buf)
@@ -101,13 +101,13 @@ int main( int argc, char *argv[] )
                		barrier();
        		}
 		free(buf);
-		return 0;
+		tst_exit();
 	case 3:
                 /* Trap SIGINT */
                 sa.sa_handler = sigfunc;
                 sa.sa_flags = SA_RESTART;
                 sigemptyset(&sa.sa_mask);
-                if( sigaction(SIGINT, &sa, 0) < 0 )
+                if (sigaction(SIGINT, &sa, 0) < 0)
 		{
 			tst_brkm(TBROK, NULL, "#Sigaction SIGINT failed\n");
 			tst_exit();
@@ -115,7 +115,7 @@ int main( int argc, char *argv[] )
 		}
                 /* wait for signat Int */
                 pause();
-		return 0;
+		tst_exit();
 	default:
 		exit(1);
 	}

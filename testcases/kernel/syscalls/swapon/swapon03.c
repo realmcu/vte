@@ -27,7 +27,7 @@
  *		Setup signal handling.
  *		Pause for SIGUSR1 if option specified.
  * 		Create MAX_SWAPFILES - 2 (to support latest kernels) swapfiles
- * 		  	
+ *
  *	Test:
  *		Loop if the proper options are given.
  *		Execute system call.
@@ -84,7 +84,6 @@ int create_swapfile(char *swapfile, int bs, int count);
 
 char *TCID = "swapon03";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static int exp_enos[] = { EPERM, 0 };
 static int swapfiles;		/* Number of swapfiles turned on */
@@ -110,11 +109,8 @@ int main(int ac, char **av)
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 
-	/***************************************************************
-	 * parse standard options
-	 ***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	/***************************************************************
 	 * perform global setup for test
@@ -141,14 +137,13 @@ int main(int ac, char **av)
 
 		/* Check return code */
 		if ((TEST_RETURN == -1) && (TEST_ERRNO == expected_errno)) {
-			tst_resm(TPASS, "swapon(2) got expected failure;"
-				 " Got errno = %d," , expected_errno);
+			tst_resm(TPASS, "swapon(2) got expected failure (%d),",
+				expected_errno);
 		} else if (TEST_RETURN < 0) {
-			tst_resm(TFAIL, "swapon(2) failed to produce"
-				 " expected error: %d, got %d (%s)."
-				 " System reboot after execution of LTP"
-				 " test suite is recommended.", expected_errno,
-				 TEST_ERRNO, strerror(TEST_ERRNO));
+			tst_resm(TFAIL|TTERRNO,
+				"swapon(2) failed to produce expected error "
+				"(%d). System reboot recommended.",
+				expected_errno);
 		} else {
 			/* Probably the system supports MAX_SWAPFILES > 30,
 			 * let's try with MAX_SWAPFILES == 32 */
@@ -159,10 +154,8 @@ int main(int ac, char **av)
 
 			/* Check return code (now we're expecting success) */
 			if (TEST_RETURN < 0) {
-				tst_resm(TFAIL,
-					 "swapon(2) got an unexpected failure;"
-					 " Got errno = %d : %s", TEST_ERRNO,
-					 strerror(TEST_ERRNO));
+				tst_resm(TFAIL|TTERRNO,
+					 "swapon(2) got an unexpected failure");
 			} else {
 				/* Call swapon sys call once again for 33
 				 * now we have to receive an error */
@@ -196,24 +189,20 @@ int main(int ac, char **av)
 
 		TEST_ERROR_LOG(TEST_ERRNO);
 
-	}			/* End of TEST LOOPING */
+	}
 
-	/***************************************************************
-	 * cleanup and exit
-	 ***************************************************************/
 	cleanup();
+	tst_exit();
 
-	return (0);
-
-}				/* End of main */
+}
 
 /***************************************************************
  * setup_swap() - Create 33 and activate 30 swapfiles.
  ***************************************************************/
 int setup_swap()
 {
+	pid_t pid;
 	int j, fd;		/*j is loop counter, fd is file descriptor */
-	int pid;		/* used for fork */
 	int status;		/* used for fork */
 	int res = 0, pagesize = getpagesize();
 	int bs, count;
@@ -224,20 +213,21 @@ int setup_swap()
 	swapfiles = 0;
 
 	if (seteuid(0) < 0) {
-		tst_brkm(TFAIL | TERRNO, cleanup, "Failed to call seteuid");
+		tst_brkm(TFAIL|TERRNO, cleanup, "Failed to call seteuid");
 	}
 
 	/* This includes the first (header) line */
 	if ((fd = open("/proc/swaps", O_RDONLY)) == -1) {
-		tst_brkm(TFAIL | TERRNO, cleanup,
+		tst_brkm(TFAIL|TERRNO, cleanup,
 			 "Failed to find out existing number of swap files");
 	}
 	do {
 		char *p = buf;
 		res = read(fd, buf, BUFSIZ);
 		if (res < 0) {
-			tst_brkm(TFAIL | TERRNO, cleanup,
-				 "Failed to find out existing number of swap files");
+			tst_brkm(TFAIL|TERRNO, cleanup,
+				 "Failed to find out existing number of swap "
+				 "files");
 		}
 		buf[res] = '\0';
 		while ((p = strchr(p, '\n'))) {
@@ -250,7 +240,8 @@ int setup_swap()
 		swapfiles--;	/* don't count the /proc/swaps header */
 
 	if (swapfiles < 0) {
-		tst_brkm(TFAIL, cleanup, "Failed to find existing number of swapfiles");
+		tst_brkm(TFAIL, cleanup,
+			"Failed to find existing number of swapfiles");
 	}
 
 	/* Determine how many more files are to be created */
@@ -278,37 +269,36 @@ int setup_swap()
 
 			/* prepare filename for the iteration */
 			if (sprintf(filename, "swapfile%02d", j + 2) < 0) {
-				tst_brkm(TFAIL | TERRNO, cleanup,
-					 "sprintf() failed to create filename");
+				printf( "sprintf() failed to create "
+					"filename");
+				exit(1);
 			}
 
 			/* Create the swapfile */
 			if (create_swapfile(filename, bs, count) < 0) {
-				tst_brkm(TFAIL, cleanup,
-					 "Failed to create swapfile for the test");
+				printf("Failed to create swapfile");
+				exit(1);
 			}
 
 			/* turn on the swap file */
 			if ((res = syscall(__NR_swapon, filename, 0)) != 0) {
 				if (errno == EPERM) {
-					printf("Successfully created %d swapfiles\n", j);
+					printf(	"Successfully created %d "
+						"swapfiles\n", j);
 					break;
 				} else {
-					tst_brkm(TFAIL | TERRNO, cleanup,
-						 "Failed swapon for file %s", filename);
-					/* must cleanup already swapon files */
-					clean_swap();
+					printf( "Failed to create "
+						"swapfile: %s\n", filename);
 					exit(1);
 				}
 			}
 		}
-		tst_exit();
+		exit(0);
 	} else
 		waitpid(pid, &status, 0);
 
 	if (WEXITSTATUS(status)) {
-		tst_resm(TFAIL, "Failed to setup swaps");
-		exit(1);
+		tst_brkm(TFAIL, cleanup, "Failed to setup swaps");
 	}
 
 	/* Create all needed extra swapfiles for testing */
@@ -329,7 +319,6 @@ int setup_swap()
  ***************************************************************/
 int create_swapfile(char *swapfile, int bs, int count)
 {
-
 	char *cmd_buffer;
 	int rc = -1;
 
@@ -361,9 +350,7 @@ int create_swapfile(char *swapfile, int bs, int count)
 		rc = 0;
 	}
 
-	if (cmd_buffer != NULL) {
-		free(cmd_buffer);
-	}
+	free(cmd_buffer);
 
 	return rc;
 }
@@ -436,14 +423,12 @@ int check_and_swapoff(char *filename)
 						"is recommended");
 				rc = -1;
 
-			} 
+			}
 
 		} /* else nothing to clean up. */
 
 	}
-	if (cmd_buffer != NULL) {
-		free(cmd_buffer);
-	}
+	free(cmd_buffer);
 
 	return rc;
 
@@ -454,7 +439,7 @@ int check_and_swapoff(char *filename)
  ***************************************************************/
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* set the expected errnos... */
@@ -462,10 +447,9 @@ void setup()
 
 	/* Check whether we are root */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	if (tst_is_cwd_tmpfs()) {
@@ -478,10 +462,9 @@ void setup()
 			 "Cannot do swapon on a file located on a nfs filesystem");
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}				/* End setup() */
+}
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
@@ -498,10 +481,6 @@ void cleanup()
 	/* Remove any remaining swap files */
 	clean_swap();
 
-	/* Remove tmp dir and all files inside it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-
-}	/* End cleanup() */
+}

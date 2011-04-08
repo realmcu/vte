@@ -17,7 +17,7 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-
+#include <sys/mman.h>
 #include <ctype.h>
 #include <errno.h>
 #include <signal.h>
@@ -74,7 +74,6 @@
 #define dprt(fmt, args...)
 #endif
 
-
 /* aliases for environment variable entries */
 #define    AUSDEBUG  (*edat[ADBG].eval.vint)	/* debug value */
 #define    BVAL  (*edat[BNDX].eval.vint)	/* # of childern per parent */
@@ -109,7 +108,6 @@ union semun {	/* to fix problem with 4th arg of semctl in 64 bits MARIOG */
 	struct semid_ds *buf;
 	unsigned short *array;
 } semarg = { 0 };
-
 
 /* structure of all environment variable used by program */
 struct envstruct {
@@ -148,7 +146,6 @@ FILE *debugfp = stderr;		/* debug file pointer, used if AUSDEBUG set */
 #define errfp stderr
 #define debugfp stderr
 #endif
-
 
 struct envstruct *edat = envdata;	/* pointer to environment data */
 
@@ -222,9 +219,9 @@ int send_message(int id, mtyp_t type, char *text)
 
 	strcpy(sndbuf.mtext, text);
 	sndbuf.mtyp = type;
-	while ( TRUE ) {
+	while (TRUE) {
 		rc = msgsnd(id, &sndbuf, sizeof(struct messagebuf), IPC_NOWAIT);
-		if ( rc == -1 && errno == EAGAIN ) {
+		if (rc == -1 && errno == EAGAIN) {
 			debugout("msgqueue %d of mtyp %d not ready to send\n",msgid,type);
 			errno = 0;
 		}
@@ -253,7 +250,6 @@ void severe(char *fmt, ...)
 		exit(1);
 	}
 }
-
 
 /*
  *  if AUSDEBUG set will print information to file associated with slot number.
@@ -408,7 +404,7 @@ Pinfo * put_proc_info(int tval)
 
 	/* calculate and store sibling slot numbers of current process */
 	for (sibslot = *smp->list * BVAL + 1; listp < smp->list + BVAL; sibslot++) {
-		if ( tval != sibslot)
+		if (tval != sibslot)
 			*(listp++) = sibslot;
 	}
 	return(smp);
@@ -540,12 +536,11 @@ int spawn(int val)
 
     level++;
 
-
     for (i = 1; i <= BVAL; i++) {
         tval = (val * BVAL) + i;
-        if ( !lvlflg ) {
+        if (!lvlflg) {
 			pid = fork();
-			if ( !pid ) { /* CHILD */
+			if (!pid) { /* CHILD */
 				if (AUSDEBUG) {
 					sprintf(foo, "%sslot%d", SLOTDIR, tval);
 					debugfp = fopen(foo, "a+");
@@ -555,8 +550,8 @@ int spawn(int val)
         		debugout("pid: %-6d ppid: %-6d lev: %-2d i: %-2d val: %-3d\n",pinfo->pid, pinfo->ppid, level, i, tval);
 
 				set_timer();	/* set up signal handlers and initialize pgrp */
-				if ( level < DVAL ) {
-					if ( spawn(tval) == -1 ) {
+				if (level < DVAL) {
+					if (spawn(tval) == -1) {
 						pslot = semoper(tval, sem_lock, -1);
 						semarg.val = 0; /* to fix problem with 4th arg of semctl in 64 bits MARIOG */
 						semval = semctl(sem_count, pslot, GETVAL, semarg);
@@ -573,9 +568,9 @@ int spawn(int val)
 				}
 			}
 #ifdef __64LDT__
-                        else if ( pid > 0 && i >= BVAL) { /* PARENT */
+                        else if (pid > 0 && i >= BVAL) { /* PARENT */
 #else
-                        else if ( pid > (pid_t)0 && i >= BVAL) { /* PARENT */
+                        else if (pid > (pid_t)0 && i >= BVAL) { /* PARENT */
 #endif
                                 pslot = semoper(tval, sem_count, 0);
 				pslot = semoper(pslot, sem_lock, -1);
@@ -613,18 +608,18 @@ void setup_msgqueue(void)
 
 	msgid = msgget(IPC_PRIVATE,
 				   IPC_CREAT|IPC_EXCL|S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
-	if ( msgid == -1 ) {
+	if (msgid == -1) {
 		perror("msgget msgid failed");
 		fprintf( stderr, " SEVERE : msgget msgid failed: errno %d\n", errno);
-		exit( 1 );
+		exit(1);
 	}
 
 	msgerr = msgget(IPC_PRIVATE,
 				   IPC_CREAT|IPC_EXCL|S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
-	if ( msgerr == -1 ) {
+	if (msgerr == -1) {
 		perror("msgget msgerr failed");
 		fprintf( stderr, " SEVERE : msgget msgerr failed: errno %d\n", errno);
-		exit( 1 );
+		exit(1);
 	}
 }
 
@@ -649,7 +644,7 @@ dprt("nodesum = %d, sem_lock = %d\n", nodesum, sem_lock);
 		perror("semget failed for sem_lock");
 		fprintf( stderr, " SEVERE : semget failed for sem_lock, errno: %d\n", errno);
 		rm_shmseg();
-		exit( 1 );
+		exit(1);
 	}
 
         prtln();
@@ -660,7 +655,7 @@ dprt("nodesum = %d, sem_lock = %d\n", nodesum, sem_lock);
 		perror("semget failed for sem_count");
 		fprintf( stderr, " SEVERE : semget failed for sem_count, errno: %d\n", errno);
 		rm_shmseg();
-		exit( 1 );
+		exit(1);
 	}
         prtln();
 
@@ -672,7 +667,7 @@ dprt("nodesum = %d, sem_lock = %d\n", nodesum, sem_lock);
 			perror("semctl failed for sem_lock failed");
 			fprintf( stderr, " SEVERE : semctl failed for sem_lock, errno: %d\n", errno);
 			rm_shmseg();
-			exit( 1 );
+			exit(1);
 		}
 
 		semarg.val = BVAL; /* to fix problem with 4th arg of semctl in 64 bits MARIOG */
@@ -682,7 +677,7 @@ dprt("nodesum = %d, sem_lock = %d\n", nodesum, sem_lock);
 			perror("semctl failed for sem_lock failed");
 			fprintf( stderr, " SEVERE : semctl failed for sem_lock, errno: %d\n", errno);
 			rm_shmseg();
-			exit( 1 );
+			exit(1);
 		}
 	}
 }
@@ -712,14 +707,14 @@ void setup_shm(void)
 	if (shmid < 0) {
 		perror("shmget failed");
 		fprintf( stderr, " SEVERE : shmget failed: errno %d\n", errno);
-		exit( 1 );
+		exit(1);
 	}
 
 	/* allocate shared memory */
 
-	if ((shmad = (Pinfo *)shmat(shmid, (char *)shmad, 0)) == -1 ) {
+	if ((shmad = (Pinfo *)shmat(shmid, (char *)shmad, 0)) == MAP_FAILED) {
 		printf("SEVERE : shmat failed\n");
-		exit( 1 );
+		exit(1);
 	}
 	else {
 		shmctl(shmid, IPC_RMID, NULL);
@@ -767,7 +762,7 @@ void set_signals(void *sighandler())
 	    {SIGQUIT,	"SIGQUIT"},
 	    {SIGABRT,	"SIGABRT"},
 	    {SIGBUS,	"SIGBUS"},
-	    {SIGSEGV,	"SIGSEGV"},        
+	    {SIGSEGV,	"SIGSEGV"},
 	    {SIGALRM,	"SIGALRM"},
 	    {SIGUSR1,	"SIGUSR1"},
 	    {SIGUSR2,	"SIGUSR2"},
@@ -797,13 +792,13 @@ void set_signals(void *sighandler())
 #else
 		SIGADDSET(action.sa_mask, siginfo[i].signum);
 #endif
-		rc = sigaction(siginfo[i].signum, &action, (struct sigaction *)NULL);
+		rc = sigaction(siginfo[i].signum, &action, NULL);
 		if (rc == -1) {
 			sprintf(tmpstr, "sigaction: %s\n", siginfo[i].signame);
 			perror(tmpstr);
 			fprintf( stderr, " SEVERE : Could not set %s signal action, errno=%d.",
 					  siginfo[i].signame, errno );
-			exit( 1 );
+			exit(1);
 		}
 	}
 }
@@ -816,10 +811,10 @@ void set_timer(void)
 {
 	struct itimerstruc_t    itimer, old_itimer;
 
-	if ( (timer = gettimerid( TIMERID_REAL, DELIVERY_SIGNALS )) == -1 ) {
+	if ((timer = gettimerid( TIMERID_REAL, DELIVERY_SIGNALS )) == -1) {
 		perror( "gettimerid" );
 		fprintf( stderr, " SEVERE : Could not get timer id, errno=%d.",errno );
-		exit( 1 );
+		exit(1);
 	}
 
 	/*
@@ -833,7 +828,7 @@ void set_timer(void)
 		perror( "incinterval" );
 		fprintf( stderr, " SEVERE : Could not set timer interval, errno=%d.", errno );
 		(void)reltimerid( timer );
-		exit( 1 );
+		exit(1);
 	}
 }
 #else
@@ -875,16 +870,16 @@ void parse_args( int argc, char *argv[] )
 	/* DVAL:	0  1     2      3   4  5  6  7  8  9  10 11 */
 	int limits[] = {-1,-1, MAXBVAL, 17, 8, 5, 4, 3, 2, 2, 2, 2};
 
-	while ( (opt = getopt( argc, argv, "b:d:ft:D?" )) != EOF ) {
+	while ((opt = getopt( argc, argv, "b:d:ft:D?" )) != EOF) {
 		switch ( opt ) {
 			case 'b':
-				if ( bflag )
+				if (bflag)
 					errflag++;
 				else {
 					bflag++;
 					errno = 0;
     				BVAL = atoi(optarg);
-					if ( errno ) {
+					if (errno) {
 						perror( "atoi" );
 						fprintf( stderr, " ERROR : atoi - errno %d.", errno );
 						errflag++;
@@ -892,13 +887,13 @@ void parse_args( int argc, char *argv[] )
 				}
 				break;
 			case 'd':
-				if ( dflag )
+				if (dflag)
 					errflag++;
 				else {
 					dflag++;
 					errno = 0;
 					DVAL = atoi(optarg);
-					if ( errno ) {
+					if (errno) {
 						perror( "atoi" );
 						fprintf( stderr, " ERROR : atoi - errno %d.", errno );
 						errflag++;
@@ -912,13 +907,13 @@ void parse_args( int argc, char *argv[] )
 				AUSDEBUG = 1;
 				break;
 			case 't':
-				if ( tflag )
+				if (tflag)
 					errflag++;
 				else {
 					tflag++;
 					errno = 0;
 					TVAL = atoi(optarg);
-					if ( !TVAL || errno ) {
+					if (!TVAL || errno) {
 						perror( "atoi" );
 						fprintf( stderr, " ERROR : atoi - errno %d.", errno );
 						errflag++;
@@ -937,24 +932,24 @@ void parse_args( int argc, char *argv[] )
 	} else if (DVAL < 2) {
 		errflag++;
 		fprintf(stderr,"The depth value must be greater than 1\n");
-	} else if (!fflag && (DVAL > MAXDVAL) ) {
+	} else if (!fflag && (DVAL > MAXDVAL)) {
 /* || BVAL > limits[DVAL])) { */
 		fprintf( stderr, "\tExceeded process creation limits.   \
 \n\tParameters will generate %lu processes.  \n\tThe preset limits are as \
 follows:\n\t\tdepth\tbreadth\ttotal\n", sumit(BVAL,DVAL));
-		for ( i = 2; i <= MAXDVAL; i++)
+		for (i = 2; i <= MAXDVAL; i++)
 			fprintf(stderr,"\t\t %-3d\t  %-5d\t%-5lu\n", i, limits[i], sumit(limits[i],i));
 		exit ( 1 );
 	}
 
-	if ( errflag ) {
+	if (errflag) {
 		fprintf( stderr, "usage: %s [-b number] [-d number] [-t number] \n", argv[0] );
 		fprintf( stderr, "where:\n" );
 		fprintf( stderr, "\t-b number\tnumber of children each parent will spawn ( > 1)\n");
 		fprintf( stderr, "\t-d number\tdepth of process tree ( > 1)\n");
 		fprintf( stderr, "\t-t\t\tset timeout value\n");
 		fprintf( stderr, " SEVERE : Command line parameter error.\n" );
-		exit( 1 );
+		exit(1);
 	}
 }
 
@@ -976,14 +971,14 @@ int getenv_val(void)
 	 * variable value if present.
 	 */
 	for (; *envd->env_name != '\0'; envd++) {
-		if ( (val.chptr = getenv(envd->env_name) ) == NULL)
+		if ((val.chptr = getenv(envd->env_name) ) == NULL)
 			val.chptr = envd->eval.chptr;
 
 		c = val.chptr;
-		while ( isdigit(*c) )
+		while (isdigit(*c))
 			c++;
 
-		if ( *c == '\0') {
+		if (*c == '\0') {
 			(envd->eval.vint) = (int *) malloc(sizeof(int));
 			*(envd->eval.vint) = atoi(val.chptr);
 		}
@@ -1015,7 +1010,7 @@ void messenger(void) /* AKA Assassin */
 	 *  Infinite loop used to receive error messages from children and
 	 *  to terminate process tree.
 	 */
-	while( TRUE ) {
+	while (TRUE) {
 		rc = msgrcv(msgerr, &rcvbuf, sizeof(struct messagebuf), 0, 0);
 		if (rc == -1) {
 			switch (errno) {
@@ -1084,8 +1079,8 @@ void messenger(void) /* AKA Assassin */
 					prtln();
 					exit(0);
 				}
-				exit( 1 );
-				/* NOT REACHED */
+				exit(1);
+
 				break;
 			}
 		}
@@ -1122,20 +1117,20 @@ void doit(void)
 		procgrp = setpgrp();
 #endif
 		if (AUSDEBUG) {
-			fprintf(stderr, "process group: %d\n", procgrp);   
-	        	fflush(stderr);    
+			fprintf(stderr, "process group: %d\n", procgrp);
+	        	fflush(stderr);
 		}
 		if (procgrp == -1) {
 			perror("setpgid failed");
 			fprintf( stderr, " SEVERE : setpgid failed, errno: %d\n", errno);
-			exit( 1 );
+			exit(1);
 		}
 		sprintf(mtext,"%d", procgrp);
 		rc = send_message(msgerr, 1, mtext);
 		if (rc == -1) {
 			perror("send_message failed");
 			fprintf( stderr, " SEVERE : send_message failed, errno: %d\n", errno);
-			exit( 1 );
+			exit(1);
 		}
 
 		put_proc_info(0); /* store process info for this (root) process */
@@ -1165,7 +1160,7 @@ void doit(void)
 	else {
 		perror("fork failed");
 		fprintf( stderr, " SEVERE : fork failed, exiting with errno %d\n", errno);
-		exit( 1 );
+		exit(1);
 	}
 }
 
@@ -1173,7 +1168,6 @@ void doit(void)
 int main(int argc, char *argv[])
 {
 	extern Pinfo *shmaddr;	/* start address of shared memory */
-
 
 	prtln();
 	getenv_val();		/* Get and initialize all environment variables */
@@ -1186,9 +1180,8 @@ int main(int argc, char *argv[])
                 fprintf( stderr, "\t-d number\tdepth of process tree ( > 1)\n");
                 fprintf( stderr, "\t-t\t\tset timeout value\n");
                 fprintf( stderr, " SEVERE : Command line parameter error.\n" );
-                exit( 1 );
+                exit(1);
         }
-
 
 	parse_args(argc, argv);	/* Get all command line arguments */
 dprt("value of BVAL = %d, value of DVAL = %d\n", BVAL, DVAL);
@@ -1203,7 +1196,6 @@ dprt("value of BVAL = %d, value of DVAL = %d\n", BVAL, DVAL);
 	}
 #endif
 
-	
 dprt("value of nodesum is initiallized to: %d\n", nodesum);
 
 	prtln();
@@ -1217,5 +1209,5 @@ dprt("value of nodesum is initiallized to: %d\n", nodesum);
 	doit(); 		/* spawn off processes */
 	prtln();
 	return 0;
-	/* NOTREACHED */
+
 }

@@ -18,7 +18,6 @@
 /*									      */
 /******************************************************************************/
 
-
 /******************************************************************************/
 /*			                                                      */
 /* History:	Feb - 21 - 2002 Created - Manoj Iyer, IBM Austin TX.          */
@@ -44,7 +43,6 @@
 /*			                                                      */
 /******************************************************************************/
 
-
 #include <fcntl.h>
 #include <limits.h>
 #include <pthread.h>
@@ -58,7 +56,7 @@
 #include <unistd.h>
 #include <string.h>
 
-void noprintf(char* string, ...){
+void noprintf(char* string, ...) {
 }
 
 #ifdef DEBUG		/* compile with this flag for debug, use dprt in code */
@@ -70,7 +68,6 @@ void noprintf(char* string, ...){
 #ifndef PID_MAX
 #define PID_MAX 0x8000
 #endif
-
 
 #define MAXT 100
 
@@ -90,7 +87,7 @@ void noprintf(char* string, ...){
                                usage(prog); \
                                    } while (0)
 
-#define SAFE_FREE(p) { if(p) { free(p); (p)=NULL; } }
+#define SAFE_FREE(p) { if (p) { free(p); (p)=NULL; } }
 
 typedef struct {        /* contains priority and CPU info of the task.        */
     int exp_prio;	/* priority that we wish to set.                      */
@@ -101,7 +98,6 @@ typedef struct {        /* contains priority and CPU info of the task.        */
 } thread_sched_t;
 
 int verbose = 0;        /* set verbose printing, makes output look ugly!      */
-
 
 /******************************************************************************/
 /*                                                                            */
@@ -125,7 +121,6 @@ usage(char *progname)	/* name of this program				      */
 	progname, MAXT);
    exit(-1);
 }
-
 
 /******************************************************************************/
 /*                                                                            */
@@ -170,7 +165,6 @@ get_proc_num(void)
     /* return the processor number last executed on. */
     return atoi(&fbuff[fsize - 2]);
 }
-
 
 /******************************************************************************/
 /*                                                                            */
@@ -233,8 +227,7 @@ thread_func(void *args)		/* arguments to the thread function           */
 		        * rand()/(RAND_MAX+1.0)));
         ssp.sched_priority = set_priority;
     }
-       
-   
+
     /* give other threads a chance */
     usleep(8);
 
@@ -253,7 +246,7 @@ thread_func(void *args)		/* arguments to the thread function           */
 	dprt("pid[%d]: exiting with -1\n", getpid());
         pthread_exit((void*)-1);
     }
-   
+
     if ((get_priority = sched_getparam(getpid(), &gsp)) == -1)
     {
         perror("main(): sched_setscheduler()");
@@ -290,7 +283,6 @@ thread_func(void *args)		/* arguments to the thread function           */
     dprt("pid[%d]: exiting with %ld\n", getpid(),locargptr);
     pthread_exit((void*)locargptr);
 }
-
 
 /******************************************************************************/
 /*                                                                            */
@@ -332,7 +324,7 @@ main(int  argc,		/* number of input parameters.			      */
             "ERROR: Only root user can run this program.\n");
         usage(argv[0]);
     }
-   
+
     if (argc < 2)
     {
         fprintf(stderr,
@@ -340,7 +332,7 @@ main(int  argc,		/* number of input parameters.			      */
         usage(argv[0]);
     }
 
-    while ((c = getopt(argc, argv, "c:hp:t:v")) != -1)  
+    while ((c = getopt(argc, argv, "c:hp:t:v")) != -1)
     {
         switch(c)
         {
@@ -404,12 +396,12 @@ main(int  argc,		/* number of input parameters.			      */
             default :
 	        usage(argv[0]);
  	        break;
-        }  
+        }
     }
-                   
+
     /* create num_thrd number of threads. */
     args_table = malloc(num_thrd * sizeof(thread_sched_t*));
-    if(!args_table)
+    if (!args_table)
     {
             perror("main(): malloc failed");
             exit(-1);
@@ -417,7 +409,7 @@ main(int  argc,		/* number of input parameters.			      */
     for (thrd_ndx = 0; thrd_ndx < num_thrd; thrd_ndx++)
     {
         args_table[thrd_ndx] = malloc(sizeof(thread_sched_t));
-        if(!args_table[thrd_ndx])
+        if (!args_table[thrd_ndx])
         {
             perror("main(): malloc failed");
             exit(-1);
@@ -439,7 +431,7 @@ main(int  argc,		/* number of input parameters.			      */
 
     /* wait for the children to terminate */
     status_table = malloc(num_thrd * sizeof(thread_sched_t*));
-    if(!status_table)
+    if (!status_table)
     {
             perror("main(): malloc failed");
             exit(-1);
@@ -447,7 +439,7 @@ main(int  argc,		/* number of input parameters.			      */
     for (thrd_ndx = 0; thrd_ndx<num_thrd; thrd_ndx++)
     {
         status_table[thrd_ndx] = malloc(sizeof(thread_sched_t));
-        if(!status_table[thrd_ndx])
+        if (!status_table[thrd_ndx])
         {
             perror("main(): malloc failed");
             exit(-1);

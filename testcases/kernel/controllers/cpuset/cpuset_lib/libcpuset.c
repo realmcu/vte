@@ -1079,7 +1079,7 @@ static int store_number(const char *path, const char *file, int val)
 {
 	char buf[PATH_MAX];
 	char data[SMALL_BUFSZ];
-	
+
 	memset(data, 0, sizeof(data));
 	pathcat2(buf, sizeof(buf), path, file);
 	snprintf(data, sizeof(data), "%d", val);
@@ -1861,7 +1861,6 @@ static int get_siblings()
 		siblings = 1;	/* old kernel, no siblings, default to 1 */
 	return siblings;
 }
-
 
 /*
  * Some 2.6.16 and 2.6.17 kernel versions have a bug in the dynamic
@@ -3081,16 +3080,20 @@ static int sched_setaffinity(pid_t pid, unsigned len, unsigned long *mask)
 	return syscall(__NR_sched_setaffinity, pid, len, mask);
 }
 
+#if HAVE_DECL_MPOL_F_ADDR && HAVE_DECL_MPOL_F_NODE
 static int get_mempolicy(int *policy, unsigned long *nmask,
 			unsigned long maxnode, void *addr, int flags)
 {
 	return syscall(__NR_get_mempolicy, policy, nmask, maxnode, addr, flags);
 }
+#endif
 
+#if HAVE_DECL_MPOL_BIND || HAVE_DECL_MPOL_DEFAULT
 static int set_mempolicy(int mode, unsigned long *nmask, unsigned long maxnode)
 {
 	return syscall(__NR_set_mempolicy, mode, nmask, maxnode);
 }
+#endif
 
 struct cpuset_placement {
 	struct bitmask *cpus;
@@ -3326,7 +3329,6 @@ const struct cpuset *cpuset_fts_get_cpuset(const struct cpuset_fts_entry *cs_ent
 {
 	return cs_entry->cpuset;
 }
-
 
 /* Return value of errno (0 if no error) on attempted cpuset operations */
 int cpuset_fts_get_errno(const struct cpuset_fts_entry *cs_entry)

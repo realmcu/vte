@@ -53,8 +53,8 @@
 #include <signal.h>
 #include <errno.h>
 #include <sys/wait.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 void do_child(int);
 void setup(void);
@@ -62,7 +62,6 @@ void cleanup(void);
 
 char *TCID = "waitpid03";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 #define	MAXUPRC	25
 
@@ -81,11 +80,11 @@ int main(int argc, char **argv)
 	int status, pid[25], ret;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
+
+	 }
 #ifdef UCLINUX
 	maybe_run_child(&do_child, "d", &ikids_uclinux);
 #endif
@@ -105,7 +104,7 @@ int main(int argc, char **argv)
 		if ((sig_t) signal(SIGTERM, SIG_DFL) == SIG_ERR) {
 			tst_resm(TFAIL, "Signal SIGTERM failed, errno = %d",
 				 errno);
-			tst_exit();
+
 		}
 
 		while (++ikids < MAXUPRC) {
@@ -162,7 +161,7 @@ int main(int argc, char **argv)
 		condition_number++;
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -213,6 +212,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

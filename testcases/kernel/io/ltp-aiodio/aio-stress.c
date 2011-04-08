@@ -27,7 +27,7 @@
  * aio-stress
  *
  * will open or create each file on the command line, and start a series
- * of aio to it. 
+ * of aio to it.
  *
  * aio is done in a rotating loop.  first file1 gets 8 requests, then
  * file2, then file3 etc.  As each file finishes writing, it is switched
@@ -336,14 +336,14 @@ static int check_finished_io(struct io_unit *io) {
 
   		 struct stat s;
   		 fstat(io->io_oper->fd, &s);
- 
+
   		 /*
   		  * If file size is large enough for the read, then this short
   		  * read is an error.
   		  */
   		 if ((io->io_oper->rw == READ || io->io_oper->rw == RREAD) &&
   		     s.st_size > (io->iocb.u.c.offset + io->res)) {
- 
+
   		 		 fprintf(stderr, "io err %lu (%s) op %d, off %Lu size %d\n",
   		 		 		 io->res, strerror(-io->res), io->iocb.aio_lio_opcode,
   		 		 		 io->iocb.u.c.offset, io->buf_size);
@@ -356,7 +356,7 @@ static int check_finished_io(struct io_unit *io) {
         if (memcmp(io->buf, verify_buf, io->io_oper->reclen)) {
 	    fprintf(stderr, "verify error, file %s offset %Lu contents (offset:bad:good):\n",
 	            io->io_oper->file_name, io->iocb.u.c.offset);
-	   
+
 	    for (i = 0 ; i < io->io_oper->reclen ; i++) {
 	        if (io->buf[i] != verify_buf[i]) {
 		    fprintf(stderr, "%d:%c:%c ", i, io->buf[i], verify_buf[i]);
@@ -366,7 +366,7 @@ static int check_finished_io(struct io_unit *io) {
 	}
 
     }
-    return 0;
+  return 0;
 }
 
 /* worker func to check the busy bits and get an io unit ready for use */
@@ -377,7 +377,7 @@ static int grab_iou(struct io_unit *io, struct io_oper *oper) {
     io->busy = IO_PENDING;
     io->res = 0;
     io->io_oper = oper;
-    return 0;
+  return 0;
 }
 
 char *stage_name(int rw) {
@@ -526,7 +526,7 @@ static int io_oper_wait(struct thread_info *t, struct io_oper *oper) {
     struct io_unit *event_io;
 
     if (oper == NULL) {
-        return 0;
+      return 0;
     }
 
     if (oper->num_pending == 0)
@@ -536,9 +536,9 @@ static int io_oper_wait(struct thread_info *t, struct io_oper *oper) {
      * more than one event at a time
      */
 #ifdef NEW_GETEVENTS
-    while(io_getevents(t->io_ctx, 1, 1, &event, NULL) > 0) {
+    while (io_getevents(t->io_ctx, 1, 1, &event, NULL) > 0) {
 #else
-    while(io_getevents(t->io_ctx, 1, &event, NULL) > 0) {
+    while (io_getevents(t->io_ctx, 1, &event, NULL) > 0) {
 #endif
 	struct timeval tv_now;
         event_io = (struct io_unit *)((unsigned long)event.obj);
@@ -554,7 +554,7 @@ done:
         fprintf(stderr, "%u errors on oper, last %u\n",
 	        oper->num_err, oper->last_err);
     }
-    return 0;
+  return 0;
 }
 
 off_t random_byte_offset(struct io_oper *oper) {
@@ -574,7 +574,7 @@ off_t random_byte_offset(struct io_oper *oper) {
     /* find a random mb offset */
     num = 1 + (int)((double)range * rand() / (RAND_MAX + 1.0 ));
     rand_byte += num * 1024 * 1024;
-   
+
     /* find a random byte offset */
     num = 1 + (int)((double)(1024 * 1024) * rand() / (RAND_MAX + 1.0));
 
@@ -629,7 +629,7 @@ static struct io_unit *build_iocb(struct thread_info *t, struct io_oper *oper)
 	oper->last_offset = rand_byte;
         io_prep_pwrite(&io->iocb,oper->fd, io->buf, oper->reclen,
 	              rand_byte);
-       
+
         break;
     }
 
@@ -702,12 +702,12 @@ int build_oper(struct thread_info *t, struct io_oper *oper, int num_ios,
         num_ios = oper->total_ios;
 
     if ((oper->started_ios + num_ios) > oper->total_ios)
-        num_ios = oper->total_ios - oper->started_ios;  
+        num_ios = oper->total_ios - oper->started_ios;
 
-    for( i = 0 ; i < num_ios ; i++) {
+    for (i = 0 ; i < num_ios ; i++) {
 	io = build_iocb(t, oper);
 	if (!io) {
-	    return -1;   
+	    return -1;
 	}
 	my_iocbs[i] = &io->iocb;
     }
@@ -771,7 +771,7 @@ resubmit:
     }
     update_iou_counters(my_iocbs, ret, &stop_time);
     t->num_global_pending += ret;
-    return 0;
+  return 0;
 }
 
 /*
@@ -781,7 +781,7 @@ resubmit:
 static int restart_oper(struct io_oper *oper) {
     int new_rw  = 0;
     if (oper->last_err)
-        return 0;
+      return 0;
 
     /* this switch falls through */
     switch(oper->rw) {
@@ -811,7 +811,7 @@ static int restart_oper(struct io_oper *oper) {
 	oper->rw = new_rw;
 	return 1;
     }
-    return 0;
+  return 0;
 }
 
 static int oper_runnable(struct io_oper *oper) {
@@ -833,7 +833,7 @@ static int oper_runnable(struct io_oper *oper) {
 	exit(1);
     }
     if (S_ISREG(buf.st_mode) && buf.st_size < oper->start)
-        return 0;
+      return 0;
     return 1;
 }
 
@@ -859,7 +859,7 @@ static int run_active_list(struct thread_info *t,
     int num_built = 0;
 
     oper = t->active_opers;
-    while(oper) {
+    while (oper) {
 	if (!oper_runnable(oper)) {
 	    oper = oper->next;
 	    if (oper == t->active_opers)
@@ -884,7 +884,7 @@ static int run_active_list(struct thread_info *t,
 	    fprintf(stderr, "error %d on run_built\n", ret);
 	    exit(1);
 	}
-	while(built_opers) {
+	while (built_opers) {
 	    oper = built_opers;
 	    oper_list_del(oper, &built_opers);
 	    oper_list_add(oper, &t->active_opers);
@@ -894,7 +894,7 @@ static int run_active_list(struct thread_info *t,
 	    }
 	}
     }
-    return 0;
+  return 0;
 }
 
 void drop_shm() {
@@ -968,13 +968,13 @@ int setup_ious(struct thread_info *t,
 
     t->num_global_ios = num_files * depth;
     t->num_global_events = t->num_global_ios;
-    return 0;
+  return 0;
 
 free_buffers:
     if (t->ios)
         free(t->ios);
     if (t->iocbs)
-        free(t->iocbs); 
+        free(t->iocbs);
     if (t->events)
         free(t->events);
     return -1;
@@ -992,7 +992,7 @@ int setup_shared_mem(int num_threads, int num_files, int depth,
 {
     char *p = NULL;
     size_t total_ram;
-   
+
     padded_reclen = (reclen + page_size_mask) / (page_size_mask+1);
     padded_reclen = padded_reclen * (page_size_mask+1);
     total_ram = num_files * depth * padded_reclen + num_threads;
@@ -1016,7 +1016,7 @@ int setup_shared_mem(int num_threads, int num_files, int depth,
 	/* won't really be dropped until we shmdt */
 	drop_shm();
     } else if (use_shm == USE_SHMFS) {
-        char mmap_name[16]; /* /dev/shm/ + null + XXXXXX */   
+        char mmap_name[16]; /* /dev/shm/ + null + XXXXXX */
 	int fd;
 
 	strcpy(mmap_name, "/dev/shm/XXXXXX");
@@ -1043,7 +1043,7 @@ int setup_shared_mem(int num_threads, int num_files, int depth,
     unaligned_buffer = p;
     p = (char*)((intptr_t) (p + page_size_mask) & ~page_size_mask);
     aligned_buffer = p;
-    return 0;
+  return 0;
 
 free_buffers:
     drop_shm();
@@ -1076,7 +1076,6 @@ void global_thread_throughput(struct thread_info *t, char *this_stage) {
         fprintf(stderr, "\n");
     }
 }
-
 
 /* this is the meat of the state machine.  There is a list of
  * active operations structs, and as each one finishes the required
@@ -1119,7 +1118,7 @@ restart:
 
     cnt = 0;
     /* first we send everything through aio */
-    while(t->active_opers && (cnt < iterations || iterations == RUN_FOREVER)) {
+    while (t->active_opers && (cnt < iterations || iterations == RUN_FOREVER)) {
 	if (stonewall && threads_ending) {
 	    oper = t->active_opers;
 	    oper->stonewalled = 1;
@@ -1143,13 +1142,13 @@ restart:
 		break;
 	io_oper_wait(t, oper);
 	oper = oper->next;
-    } while(oper != t->finished_opers);
+    } while (oper != t->finished_opers);
 
     /* then we do an fsync to get the timing for any future operations
      * right, and check to see if any of these need to get restarted
      */
     oper = t->finished_opers;
-    while(oper) {
+    while (oper) {
 	if (fsync_stages)
             fsync(oper->fd);
 	t->stage_mb_trans += oper_mb_trans(oper);
@@ -1179,11 +1178,11 @@ restart:
 	    pthread_cond_broadcast(&stage_cond);
 	    global_thread_throughput(t, this_stage);
 	}
-	while(threads_ending != num_threads)
+	while (threads_ending != num_threads)
 	    pthread_cond_wait(&stage_cond, &stage_mutex);
 	pthread_mutex_unlock(&stage_mutex);
     }
-   
+
     /* someone got restarted, go back to the beginning */
     if (t->active_opers && (cnt < iterations || iterations == RUN_FOREVER)) {
 	iteration++;
@@ -1191,7 +1190,7 @@ restart:
     }
 
     /* finally, free all the ram */
-    while(t->finished_opers) {
+    while (t->finished_opers) {
 	oper = t->finished_opers;
 	oper_list_del(oper, &t->finished_opers);
 	status = finish_oper(t, oper);
@@ -1201,7 +1200,7 @@ restart:
         fprintf(stderr, "global num pending is %d\n", t->num_global_pending);
     }
     io_queue_release(t->io_ctx);
-   
+
     return status;
 }
 
@@ -1212,21 +1211,21 @@ int run_workers(struct thread_info *t, int num_threads)
     int thread_ret;
     int i;
 
-    for(i = 0 ; i < num_threads ; i++) {
+    for (i = 0 ; i < num_threads ; i++) {
         ret = pthread_create(&t[i].tid, NULL, (start_routine)worker, t + i);
 	if (ret) {
 	    perror("pthread_create");
 	    exit(1);
 	}
     }
-    for(i = 0 ; i < num_threads ; i++) {
+    for (i = 0 ; i < num_threads ; i++) {
         ret = pthread_join(t[i].tid, (void *)&thread_ret);
         if (ret) {
 	    perror("pthread_join");
 	    exit(1);
 	}
     }
-    return 0;
+  return 0;
 }
 
 off_t parse_size(char *size_arg, off_t mult) {
@@ -1310,7 +1309,7 @@ int main(int ac, char **av)
 
     page_size_mask = getpagesize() - 1;
 
-    while(1) {
+    while (1) {
 	c = getopt(ac, av, "a:b:c:C:m:s:r:d:i:I:o:t:lLnhOSxvu");
 	if  (c < 0)
 	    break;
@@ -1466,11 +1465,10 @@ int main(int ac, char **av)
 	    open_fds++;
 
 	    rwfd = open(av[i], O_CREAT | O_RDWR | o_direct | o_sync, 0600);
-	    if(rwfd == -1) {
+	    if (rwfd == -1) {
 		fprintf(stderr, "error while creating file %s: %s", av[i], strerror(errno));
 		exit(1);
 	    }
-
 
 	    oper = create_oper(rwfd, first_stage, j * context_offset,
 	                       file_size - j * context_offset, rec_len,
@@ -1492,7 +1490,7 @@ int main(int ac, char **av)
 	if (setup_ious(&t[i], t[i].num_files, depth, rec_len, max_io_submit))
 		exit(1);
     }
-    if (num_threads > 1){
+    if (num_threads > 1) {
         printf("Running multi thread version num_threads:%d\n", num_threads);
         run_workers(t, num_threads);
     } else {

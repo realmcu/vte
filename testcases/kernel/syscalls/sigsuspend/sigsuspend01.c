@@ -82,7 +82,6 @@
 
 char *TCID = "sigsuspend01";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 int exp_enos[] = { EINTR, 0 };
 
 struct sigaction sa_new;	/* struct to hold signal info */
@@ -100,21 +99,16 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
 
-	/* Perform global setup for test */
 	setup();
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/* Set the alarm timer */
@@ -130,7 +124,6 @@ int main(int ac, char **av)
 		/* Reset the alarm timer */
 		alarm(0);
 
-		/* check return code of sigsuspend() */
 		if ((TEST_RETURN == -1) && (TEST_ERRNO == EINTR)) {
 			TEST_ERROR_LOG(TEST_ERRNO);
 			/*
@@ -142,8 +135,8 @@ int main(int ac, char **av)
 				 * Read the current signal mask of process,
 				 * Check whether previous signal mask preserved
 				 */
-				if (sigprocmask(SIG_UNBLOCK, 0, &sigset2)
-				    == -1) {
+				if (sigprocmask(SIG_UNBLOCK, 0, &sigset2) ==
+				    -1) {
 					tst_resm(TFAIL, "sigprocmask() Failed "
 						 "to get previous signal mask "
 						 "of process");
@@ -165,13 +158,12 @@ int main(int ac, char **av)
 		}
 
 		Tst_count++;	/* incr TEST_LOOP counter */
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /*
  * void
@@ -183,10 +175,9 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -197,12 +188,12 @@ void setup()
 		tst_brkm(TFAIL, cleanup,
 			 "sigemptyset() failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 	if (sigfillset(&sigset2) == -1) {
 		tst_brkm(TFAIL, cleanup,
 			 "sigfillset() failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 
 	/* Set the signal handler function to catch the signal */
 	sa_new.sa_handler = sig_handler;
@@ -210,15 +201,15 @@ void setup()
 		tst_brkm(TFAIL, cleanup,
 			 "sigaction() failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 
 	/* Read the test process's current signal mask. */
 	if (sigprocmask(SIG_UNBLOCK, 0, &sigset1) == -1) {
 		tst_brkm(TFAIL, cleanup,
 			 "sigprocmask() Failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 /*NOTREACHED*/}
-}				/* End setup() */
+	 }
+}
 
 /*
  * void
@@ -246,6 +237,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

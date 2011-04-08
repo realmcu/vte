@@ -87,7 +87,6 @@
 
 char *TCID = "pread01";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int fildes;			/* file descriptor for tempfile */
 char *write_buf[NBUFS];		/* buffer to hold data to be written */
@@ -106,15 +105,11 @@ int main(int ac, char **av)
 	int nread;		/* no. of bytes read by pread() */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* Reset Tst_count in case we are looping */
@@ -190,12 +185,13 @@ int main(int ac, char **av)
 
 		/* reset our location to offset K4 in case we are looping */
 		l_seek(fildes, K4, SEEK_SET, K4);
-	}			/* End for TEST_LOOPING */
-	/* Call cleanup() to undo setup done for the test. */
-	cleanup();
+	}
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+	cleanup();
+	tst_exit();
+	tst_exit();
+
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -208,16 +204,13 @@ void setup()
 {
 	int nwrite = 0;		/* no. of bytes written by pwrite() */
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Allocate/Initialize the read/write buffer with know data */
 	init_buffers();
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Creat a temporary file used for mapping */
@@ -289,7 +282,7 @@ void init_buffers()
 		read_buf[count] = (char *)malloc(K1);
 
 		if ((write_buf[count] == NULL) || (read_buf[count] == NULL)) {
-			tst_brkm(TBROK, tst_exit,
+			tst_brkm(TBROK, NULL,
 				 "malloc() failed on read/write buffers");
 		}
 		memset(write_buf[count], count, K1);
@@ -371,8 +364,6 @@ void cleanup()
 			 TEMPFILE, errno, strerror(errno));
 	}
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	tst_exit();
 }

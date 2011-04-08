@@ -90,7 +90,6 @@ static int iterations;        /* # total iterations */
 static int max_size;          /* max file size */
 static int misc_intvl;        /* for doing misc things; 0 ==> no */
 static int nchild;            /* how many children */
-static int nwait;
 static int fd;                /* file descriptor used by child */
 static int parent_pid;
 static int pidlist[MAXCHILD];
@@ -110,8 +109,7 @@ int main (int ac, char *av[])
          * parse standard options
          */
         if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
-	                tst_resm(TBROK, "OPTION PARSING ERROR - %s", msg);
-			tst_exit();
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
         }
 
 	setup();
@@ -133,7 +131,7 @@ int main (int ac, char *av[])
 		tst_exit();
 	}
 
-	return 0;
+	tst_exit();
 }
 
 static void setup(void)
@@ -147,8 +145,7 @@ static void setup(void)
 	tst_tmpdir();
 
 	if (getcwd(homedir, sizeof(homedir)) == NULL) {
-		tst_resm(TBROK, "getcwd() failed");
-		tst_exit();
+		tst_brkm(TBROK|TERRNO, NULL, "getcwd() failed");
 	}
 
 	parent_pid = getpid();
@@ -181,9 +178,12 @@ static void setup(void)
 
 static void runtest(void)
 {
-	int i, pid, child, status, count;
+	pid_t pid;
+	int child, count, i, nwait, status;
 
-	for(i = 0; i < nchild; i++) {
+	nwait = 0;
+
+	for (i = 0; i < nchild; i++) {
 
 		test_name[0] = 'a' + i;
 		test_name[1] = '\0';
@@ -203,11 +203,7 @@ static void runtest(void)
 		close(fd);
 
 		if (child < 0) {
-			tst_resm(TINFO, "System resource may be too low, fork() malloc()"
-					      " etc are likely to fail.");
-		        tst_resm(TBROK, "Test broken due to inability of fork.");
-		        tst_exit();
-
+			tst_brkm(TBROK|TERRNO, NULL, "fork failed");
 		} else {
 			pidlist[i] = child;
 			nwait++;
@@ -246,23 +242,18 @@ static void runtest(void)
 	pid = fork();
 
 	if (pid < 0) {
-		tst_resm(TINFO, "System resource may be too low, fork() malloc()"
-                              " etc are likely to fail.");
-                tst_resm(TBROK, "Test broken due to inability of fork.");
-		sync();
+		tst_brkm(TBROK|TERRNO, sync, "fork failed");
 		tst_exit();
 	}
 
 	if (pid == 0) {
 		execl("/bin/rm", "rm", "-rf", fuss, NULL);
-		tst_exit();
+		exit(1);
 	} else
 		wait(&status);
 
 	if (status) {
 		tst_resm(TINFO, "CAUTION - ftest03, '%s' may not be removed", fuss);
-		tst_resm(TINFO, "CAUTION - ftest03, '%s' may not be removed",
-		  fuss);
 	}
 
 	sync();
@@ -308,13 +299,14 @@ static void dotest(int testers, int me, int fd)
 	int	w_ioveclen;
 
 	nchunks = max_size / csize;
+	whenmisc = 0;
 
 	if ((bits = malloc((nchunks+7) / 8)) == 0) {
 		tst_resm(TBROK, "\tmalloc failed");
 		tst_exit();
 	}
 
-	if((hold_bits = malloc((nchunks+7) / 8)) == 0) {
+	if ((hold_bits = malloc((nchunks+7) / 8)) == 0) {
 		tst_resm(TBROK, "\tmalloc failed");
 		tst_exit();
 	}
@@ -345,7 +337,7 @@ static void dotest(int testers, int me, int fd)
 		}
 
 		val_iovec[i].iov_len = w_ioveclen;
-	
+
 		if (malloc((i+1)*8) == NULL) {
 			tst_resm(TBROK, "\tmalloc failed");
 			tst_exit();
@@ -372,7 +364,7 @@ static void dotest(int testers, int me, int fd)
 	 * For each iteration:
 	 *	zap bits array
 	 *	loop
-	 *		pick random chunk, read it. 
+	 *		pick random chunk, read it.
 	 *		if corresponding bit off {
 	 *			verify = 0. (sparse file)
 	 *			++count;
@@ -390,7 +382,7 @@ static void dotest(int testers, int me, int fd)
 
 	while (iterations-- > 0) {
 
-		for(i = 0; i < NMISC; i++)
+		for (i = 0; i < NMISC; i++)
 			misc_cnt[i] = 0;
 
 		ftruncate(fd,0);
@@ -438,7 +430,7 @@ static void dotest(int testers, int me, int fd)
 						me, xfr, csize);
 					tst_exit();
 				}
-				for(i=0;i<MAXIOVCNT; i++) {
+				for (i=0;i<MAXIOVCNT; i++) {
 					if (memcmp(r_iovec[i].iov_base, zero_iovec[i].iov_base, r_iovec[i].iov_len)) {
 						tst_resm(TFAIL,
 					  	"\tTest[%d] bad verify @ 0x%x for val %d count %d xfr %d file_max 0x%x, should be 0.",
@@ -463,7 +455,7 @@ static void dotest(int testers, int me, int fd)
 					tst_exit();
 				}
 				++collide;
-				for(i=0; i<MAXIOVCNT; i++) {
+				for (i=0; i<MAXIOVCNT; i++) {
 					if (memcmp(r_iovec[i].iov_base, val_iovec[i].iov_base, r_iovec[i].iov_len)) {
 						tst_resm(TFAIL, "\tTest[%d] bad verify @ 0x%x for val %d count %d xfr %d file_max 0x%x.",
 							me, CHUNK(chunk), val, count, xfr, file_max);
@@ -519,7 +511,7 @@ static void dotest(int testers, int me, int fd)
 		++misc_cnt[m_fsync];
 		//tst_resm(TINFO, "\tTest{%d} val %d done, count = %d, collide = {%d}",
 	        //		me, val, count, collide);
-		//for(i = 0; i < NMISC; i++)
+		//for (i = 0; i < NMISC; i++)
 		//	tst_resm(TINFO, "\t\tTest{%d}: {%d} %s's.", me, misc_cnt[i], m_str[i]);
 		++val;
 	}
@@ -560,9 +552,9 @@ static void domisc(int me, int fd, char *bits)
 			}
 			tr_flag = 1;
 		}
-		for(; chunk%8 != 0; chunk++)
+		for (; chunk%8 != 0; chunk++)
 			bits[chunk/8] &= ~(1<<(chunk%8));
-		for(; chunk < nchunks; chunk += 8)
+		for (; chunk < nchunks; chunk += 8)
 			bits[chunk/8] = 0;
 		break;
 	case m_fstat:

@@ -54,8 +54,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <errno.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 void do_child(void);
 void setup(void);
@@ -63,7 +63,6 @@ void cleanup(void);
 
 char *TCID = "waitpid02";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int main(int argc, char **argv)
 {
@@ -74,8 +73,8 @@ int main(int argc, char **argv)
 	int exno, nexno, status;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
@@ -153,7 +152,7 @@ int main(int argc, char **argv)
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -195,6 +194,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

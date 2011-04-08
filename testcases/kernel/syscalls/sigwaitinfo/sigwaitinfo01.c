@@ -29,11 +29,11 @@
 #include <limits.h>
 #include "linux_syscall_numbers.h"
 
-#define SUCCEED_OR_DIE(syscall, message, ...)														\
-	(errno = 0,																														\
-		({int ret=syscall(__VA_ARGS__);																			\
-			if(ret==-1)																												\
-				tst_brkm(TBROK|TERRNO, cleanup, message);												\
+#define SUCCEED_OR_DIE(syscall, message, ...)				 \
+	(errno = 0,							 \
+		({int ret=syscall(__VA_ARGS__);				 \
+			if (ret==-1)					 \
+				tst_brkm(TBROK|TERRNO, cleanup, message);\
 			ret;}))
 
 /* Report success iff TEST_RETURN and TEST_ERRNO are equal to
@@ -41,14 +41,14 @@
 	 true, report condition_errmsg
 */
 static void report_success_cond(const char *func, const char* file, int line,
-													 long exp_return, int exp_errno, int condition, char* condition_errmsg)
+		long exp_return, int exp_errno, int condition, char* condition_errmsg)
 {
 	if (exp_return == TEST_RETURN && (exp_return != -1 || exp_errno == TEST_ERRNO))
-		if(condition)
+		if (condition)
 			tst_resm(TPASS, "Test passed");
 		else
 			tst_resm(TFAIL, "%s (%s: %d): %s", func, file, line, condition_errmsg);
-	else if(TEST_RETURN != -1)
+	else if (TEST_RETURN != -1)
 		tst_resm(TFAIL, "%s (%s: %d): Unexpected return value; expected %ld, got %ld",
 						 func, file, line, exp_return, TEST_RETURN);
 	else
@@ -64,7 +64,7 @@ static void report_success_cond(const char *func, const char* file, int line,
 #define REPORT_SUCCESS(exp_return, exp_errno)					\
 	REPORT_SUCCESS_COND(exp_return, exp_errno, 1, "");
 
-static void cleanup(void) LTP_ATTRIBUTE_NORETURN;
+static void cleanup(void);
 
 static void empty_handler(int sig)
 {
@@ -82,40 +82,50 @@ static void setup(void)
 
 static void cleanup(void)
 {
-	TEST_CLEANUP;
 
-	tst_exit();
+	TEST_CLEANUP;
 }
 
 typedef int (*swi_func)(const sigset_t* set, siginfo_t* info, struct timespec* timeout);
 typedef void (*test_func)(swi_func, int);
 
+#ifdef TEST_SIGWAIT
 static int my_sigwait(const sigset_t* set, siginfo_t* info, struct timespec* timeout)
 {
 	int ret;
 	int err=sigwait(set, &ret);
 
-	if(err == 0)
+	if (err == 0)
 		return ret;
 	errno = err;
 	return -1;
 }
+#endif
 
+#ifdef TEST_SIGWAITINFO
 static int my_sigwaitinfo(const sigset_t* set, siginfo_t* info, struct timespec* timeout)
 {
+
 	return sigwaitinfo(set, info);
 }
+#endif
 
+#ifdef TEST_SIGTIMEDWAIT
 static int my_sigtimedwait(const sigset_t* set, siginfo_t* info, struct timespec* timeout)
 {
+
 	return sigtimedwait(set, info, timeout);
 }
+#endif
 
+#ifdef TEST_RT_SIGTIMEDWAIT
 static int my_rt_sigtimedwait(const sigset_t* set, siginfo_t* info, struct timespec* timeout)
 {
+
 	/* The last argument is (number_of_signals)/(bits_per_byte), which are 64 and 8, resp. */
 	return syscall(__NR_rt_sigtimedwait, set, info, timeout, 8);
 }
+#endif
 
 void test_empty_set(swi_func sigwaitinfo, int signo)
 {
@@ -214,7 +224,7 @@ void test_masked_matching(swi_func sigwaitinfo, int signo)
 
 	Tst_count--;
 
-	if(sigismember(&oldmask, signo))
+	if (sigismember(&oldmask, signo))
 		tst_resm(TPASS, "sigwaitinfo restored the original mask");
 	else
 		tst_resm(TFAIL, "sigwaitinfo failed to restore the original mask");
@@ -255,7 +265,7 @@ void test_masked_matching_rt(swi_func sigwaitinfo, int signo)
 
 	Tst_count--;
 
-	if(sigismember(&oldmask, signo))
+	if (sigismember(&oldmask, signo))
 		tst_resm(TPASS, "sigwaitinfo restored the original mask");
 	else
 		tst_resm(TFAIL, "sigwaitinfo failed to restore the original mask");
@@ -286,7 +296,7 @@ void test_masked_matching_noinfo(swi_func sigwaitinfo, int signo)
 
 	Tst_count--;
 
-	if(sigismember(&oldmask, signo))
+	if (sigismember(&oldmask, signo))
 		tst_resm(TPASS, "sigwaitinfo restored the original mask");
 	else
 		tst_resm(TFAIL, "sigwaitinfo failed to restore the original mask");
@@ -338,54 +348,54 @@ struct test_desc {
 	test_func tf;
 	swi_func swi;
 	int signo;
-} tests[]={
-#if defined TEST_RT_SIGTIMEDWAIT
-	test_empty_set, my_rt_sigtimedwait, SIGUSR1,
-	test_unmasked_matching, my_rt_sigtimedwait, SIGUSR1,
-	test_masked_matching, my_rt_sigtimedwait, SIGUSR1,
-	test_unmasked_matching_noinfo, my_rt_sigtimedwait, SIGUSR1,
-	test_masked_matching_noinfo, my_rt_sigtimedwait, SIGUSR1,
-	test_bad_address, my_rt_sigtimedwait, SIGUSR1,
-	test_bad_address2, my_rt_sigtimedwait, SIGUSR1,
-	test_bad_address3, my_rt_sigtimedwait, SIGUSR1,
-	test_timeout, my_rt_sigtimedwait, 0,
+} tests[] = {
+#ifdef TEST_RT_SIGTIMEDWAIT
+	{ test_empty_set, my_rt_sigtimedwait, SIGUSR1 },
+	{ test_unmasked_matching, my_rt_sigtimedwait, SIGUSR1 },
+	{ test_masked_matching, my_rt_sigtimedwait, SIGUSR1 },
+	{ test_unmasked_matching_noinfo, my_rt_sigtimedwait, SIGUSR1 },
+	{ test_masked_matching_noinfo, my_rt_sigtimedwait, SIGUSR1 },
+	{ test_bad_address, my_rt_sigtimedwait, SIGUSR1 },
+	{ test_bad_address2, my_rt_sigtimedwait, SIGUSR1 },
+	{ test_bad_address3, my_rt_sigtimedwait, SIGUSR1 },
+	{ test_timeout, my_rt_sigtimedwait, 0 },
 
 	/* Special cases */
 	/* 1: sigwaitinfo does respond to ignored signal */
-	test_masked_matching, my_rt_sigtimedwait, SIGUSR2,
+	{ test_masked_matching, my_rt_sigtimedwait, SIGUSR2 },
 
 	/* 2: An ignored signal doesn't cause sigwaitinfo to return EINTR */
-	test_timeout, my_rt_sigtimedwait, SIGUSR2,
+	{ test_timeout, my_rt_sigtimedwait, SIGUSR2 },
 
 	/* 3: The handler is not called when the signal is waited for by sigwaitinfo */
-	test_masked_matching, my_rt_sigtimedwait, SIGTERM,
+	{ test_masked_matching, my_rt_sigtimedwait, SIGTERM },
 
 	/* 4: Simultaneous realtime signals are delivered in the order of increasing signal number */
-	test_masked_matching_rt, my_rt_sigtimedwait, -1,
+	{ test_masked_matching_rt, my_rt_sigtimedwait, -1 },
 #endif
 #if defined TEST_SIGWAIT
-	test_unmasked_matching_noinfo, my_sigwait, SIGUSR1,
-	test_masked_matching_noinfo, my_sigwait, SIGUSR1,
+	{ test_unmasked_matching_noinfo, my_sigwait, SIGUSR1 },
+	{ test_masked_matching_noinfo, my_sigwait, SIGUSR1 },
 #endif
 #if defined TEST_SIGWAITINFO
-	test_empty_set, my_sigwaitinfo, SIGUSR1,
-	test_unmasked_matching, my_sigwaitinfo, SIGUSR1,
-	test_masked_matching, my_sigwaitinfo, SIGUSR1,
-	test_unmasked_matching_noinfo, my_sigwaitinfo, SIGUSR1,
-	test_masked_matching_noinfo, my_sigwaitinfo, SIGUSR1,
-	test_bad_address, my_sigwaitinfo, SIGUSR1,
-	test_bad_address2, my_sigwaitinfo, SIGUSR1,
+	{ test_empty_set, my_sigwaitinfo, SIGUSR1 },
+	{ test_unmasked_matching, my_sigwaitinfo, SIGUSR1 },
+	{ test_masked_matching, my_sigwaitinfo, SIGUSR1 },
+	{ test_unmasked_matching_noinfo, my_sigwaitinfo, SIGUSR1 },
+	{ test_masked_matching_noinfo, my_sigwaitinfo, SIGUSR1 },
+	{ test_bad_address, my_sigwaitinfo, SIGUSR1 },
+	{ test_bad_address2, my_sigwaitinfo, SIGUSR1 },
 #endif
 #if defined TEST_SIGTIMEDWAIT
-	test_empty_set, my_sigtimedwait, SIGUSR1,
-	test_unmasked_matching, my_sigtimedwait, SIGUSR1,
-	test_masked_matching, my_sigtimedwait, SIGUSR1,
-	test_unmasked_matching_noinfo, my_sigtimedwait, SIGUSR1,
-	test_masked_matching_noinfo, my_sigtimedwait, SIGUSR1,
-	test_bad_address, my_sigtimedwait, SIGUSR1,
-	test_bad_address2, my_sigtimedwait, SIGUSR1,
-	test_bad_address3, my_sigtimedwait, SIGUSR1,
-	test_timeout, my_sigtimedwait, 0,
+	{ test_empty_set, my_sigtimedwait, SIGUSR1 },
+	{ test_unmasked_matching, my_sigtimedwait, SIGUSR1 },
+	{ test_masked_matching, my_sigtimedwait, SIGUSR1 },
+	{ test_unmasked_matching_noinfo, my_sigtimedwait, SIGUSR1 },
+	{ test_masked_matching_noinfo, my_sigtimedwait, SIGUSR1 },
+	{ test_bad_address, my_sigtimedwait, SIGUSR1 },
+	{ test_bad_address2, my_sigtimedwait, SIGUSR1 },
+	{ test_bad_address3, my_sigtimedwait, SIGUSR1 },
+	{ test_timeout, my_sigtimedwait, 0 },
 #endif
 };
 
@@ -399,7 +409,6 @@ const char* TCID="sigtimedwait01";
 const char* TCID="sigwait01";
 #endif
 
-extern int Tst_count;
 
 int TST_TOTAL = sizeof(tests)/sizeof(*tests);
 
@@ -410,23 +419,22 @@ int main(int argc, char** argv)
 	char* msg;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-			(char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-		/*NOT REACHED */
-	}
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	setup();
 
-	for(lc = 0; TEST_LOOPING(lc); ++lc) {
+	for (lc = 0; TEST_LOOPING(lc); ++lc) {
 		Tst_count = 0;
 
-		for(i=0; i<sizeof(tests)/sizeof(*tests); i++) {
+		for (i=0; i<sizeof(tests)/sizeof(*tests); i++) {
 			alarm(10); /* arrange a 10 second timeout */
+			tst_resm(TINFO, "%p, %d", tests[i].swi, tests[i].signo);
 			tests[i].tf(tests[i].swi, tests[i].signo);
 		}
 		alarm(0);
 	}
 
 	cleanup();
+	tst_exit();
 }

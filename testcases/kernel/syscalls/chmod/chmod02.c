@@ -123,16 +123,12 @@ void cleanup();
 
 char *TCID = "chmod02";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 char fname[255];
 char *buf = "file contents\n";
 
 int Modes[] = { 0, 07, 070, 0700, 0777, 02777, 04777, 06777 };
 
-/***********************************************************************
- * Main
- ***********************************************************************/
 int main(int ac, char **av)
 {
 	int lc;			/* loop counter */
@@ -142,47 +138,27 @@ int main(int ac, char **av)
 
 	TST_TOTAL = sizeof(Modes) / sizeof(int);
 
-    /***************************************************************
-     * parse standard options
-     ***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
 
-    /***************************************************************
-     * perform global setup for test
-     ***************************************************************/
 	setup();
 
-    /***************************************************************
-     * check looping state if -c option given
-     ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		for (ind = 0; ind < TST_TOTAL; ind++) {
 			mode = Modes[ind];
 
-			/*
-			 * Call chmod(2) with mode argument on fname
-			 */
 			TEST(chmod(fname, mode));
 
-			/* check return code */
 			if (TEST_RETURN == -1) {
 				tst_resm(TFAIL|TTERRNO,
 					 "chmod(%s, %#o) failed",
 					 fname, mode);
 			} else {
 
-		/***************************************************************
-	         * only perform functional verification if flag set (-f not given)
-	         ***************************************************************/
 				if (STD_FUNCTIONAL_TEST) {
-					/* No Verification test, yet... */
 					tst_resm(TPASS,
 						 "chmod(%s, %#o) returned %ld",
 						 fname, mode, TEST_RETURN);
@@ -191,30 +167,21 @@ int main(int ac, char **av)
 			}
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
-    /***************************************************************
-     * cleanup and exit
-     ***************************************************************/
 	cleanup();
 
-	return 0;
-}				/* End main */
+	tst_exit();
+}
 
-/***************************************************************
- * setup() - performs all ONE TIME setup for this test.
- ***************************************************************/
 void setup()
 {
 	int fd;
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	strcat(fname, "tfile");
@@ -231,22 +198,12 @@ void setup()
 			 "close(%s) failed",
 			 fname);
 	}
-}				/* End setup() */
+}
 
-/***************************************************************
- * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
- ***************************************************************/
 void cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

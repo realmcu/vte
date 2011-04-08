@@ -290,7 +290,6 @@ void setup_signal_handlers ()
 
 }
 
-
 /*---------------------------------------------------------------------+
 |                             handler ()                               |
 | ==================================================================== |
@@ -325,7 +324,6 @@ void handler (int sig, int code, struct sigcontext *scp)
 	}
 }
 
-
 /*---------------------------------------------------------------------+
 |                             cleanup ()                               |
 | ==================================================================== |
@@ -352,7 +350,7 @@ static int create_lock_file (char *lock_name)
 {
 	int	fd;
 
-        if ((fd = open (lock_name, O_RDWR)) < 0){
+        if ((fd = open (lock_name, O_RDWR)) < 0) {
 		if ((fd = open (lock_name, O_RDWR|O_CREAT|O_EXCL, 0666)) < 0) {
 			perror ("cannot create lock file");
 			exit (-1);
@@ -360,7 +358,6 @@ static int create_lock_file (char *lock_name)
         }
 	return (fd);
 }
-
 
 /*---------------------------------------------------------------------+
 |                             parse_args ()                            |
@@ -403,7 +400,6 @@ void parse_args (int argc, char **argv)
 	}
 }
 
-
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
 | ==================================================================== |
@@ -419,7 +415,6 @@ void sys_error (const char *msg, int line)
 	error (syserr_msg, line);
 }
 
-
 /*---------------------------------------------------------------------+
 |                               error ()                               |
 | ==================================================================== |
@@ -432,4 +427,3 @@ void error (const char *msg, int line)
 	fprintf (stderr, "ERROR [line: %d] %s\n", line, msg);
 	cleanup ();
 }
-

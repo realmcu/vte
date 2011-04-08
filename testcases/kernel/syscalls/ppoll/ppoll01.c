@@ -79,67 +79,28 @@
 #define POLLRDHUP 0x2000
 #endif
 
-/* Extern Global Variables */
-extern int Tst_count; /* counter for tst_xxx routines.         */
-extern char *TESTDIR; /* temporary dir created by tst_tmpdir() */
-
-/* Global Variables */
 char *TCID = "ppoll01"; /* Test program identifier.*/
 int testno;
 int TST_TOTAL = 1; /* total number of tests in this file.   */
 
-/* Extern Global Functions */
-/******************************************************************************/
-/*                                                                            */
-/* Function:    cleanup                                                       */
-/*                                                                            */
-/* Description: Performs all one time clean up for this test on successful    */
-/*              completion,  premature exit or  failure. Closes all temporary */
-/*              files, removes all temporary directories exits the test with  */
-/*              appropriate return code by calling tst_exit() function.       */
-/*                                                                            */
-/* Input:       None.                                                         */
-/*                                                                            */
-/* Output:      None.                                                         */
-/*                                                                            */
-/* Return:      On failure - Exits calling tst_exit(). Non '0' return code.   */
-/*              On success - Exits calling tst_exit(). With '0' return code.  */
-/*                                                                            */
-/******************************************************************************/
-extern void cleanup() {
-	/* Remove tmp dir and all files in it */
-	TEST_CLEANUP;
-	tst_rmdir();
-
-	/* Exit with appropriate return code. */
-	tst_exit();
+void
+sighandler(int sig)
+{
+	if (sig == SIGINT)
+		return;
+	else
+		tst_brkm(TBROK, NULL, "received unexpected signal %d", sig);
 }
 
-void sighandler(int sig); /* signals handler function for the test */
+void cleanup() {
 
-/* Local  Functions */
-/******************************************************************************/
-/*                                                                            */
-/* Function:    setup                                                         */
-/*                                                                            */
-/* Description: Performs all one time setup for this test. This function is   */
-/*              typically used to capture signals, create temporary dirs      */
-/*              and temporary files that may be used in the course of this    */
-/*              test.                                                         */
-/*                                                                            */
-/* Input:       None.                                                         */
-/*                                                                            */
-/* Output:      None.                                                         */
-/*                                                                            */
-/* Return:      On failure - Exits by calling cleanup().                      */
-/*              On success - returns 0.                                       */
-/*                                                                            */
-/******************************************************************************/
+	TEST_CLEANUP;
+	tst_rmdir();
+}
+
 void setup() {
-	/* Capture signals if any */
-	signal(SIGINT, &sighandler);
+	tst_sig(FORK, sighandler, cleanup);
 
-	/* Create temporary directories */
 	TEST_PAUSE;
 	tst_tmpdir();
 }
@@ -349,8 +310,8 @@ static int do_test(struct test_case *tc) {
 	 * Execute system call
 	 */
 	errno = 0;
-	TEST(sys_ret = syscall(__NR_ppoll, p_fds, nfds, p_ts, p_sigmask, SIGSETSIZE));
-		sys_errno = errno;
+	sys_ret = syscall(__NR_ppoll, p_fds, nfds, p_ts, p_sigmask, SIGSETSIZE);
+	sys_errno = errno;
 	if (sys_ret <= 0 || tc->ret < 0)
 		goto TEST_END;
 
@@ -358,7 +319,7 @@ static int do_test(struct test_case *tc) {
 	tst_resm(TINFO, "EXPECT: revents=0x%04x", tc->expect_revents);
 	tst_resm(TINFO, "RESULT: revents=0x%04x", fds[0].revents);
 
-	TEST_END:
+TEST_END:
 	/*
 	 * Check results
 	 */
@@ -378,7 +339,8 @@ static int do_test(struct test_case *tc) {
 	}
 	result |= (sys_errno != tc->err) || !cmp_ok;
 	PRINT_RESULT_CMP(sys_ret >= 0, tc->ret, tc->err, sys_ret, sys_errno, cmp_ok);
-	cleanup: if (fd >= 0) {
+cleanup:
+	if (fd >= 0) {
 		close(fd);
 		cleanup_file(fpath);
 	}
@@ -394,67 +356,24 @@ static int do_test(struct test_case *tc) {
 }
 
 /*
- * sighandler()
- */
-void sighandler(int sig) {
-	if (sig == SIGINT)
-		return;
-	// NOTREACHED
-	return;
-}
-
-/*
  * main()
  */
 
 int main(int ac, char **av) {
-	int result = RESULT_OK;
 	int i;
-	int lc; /* loop counter */
-	char *msg; /* message returned from parse_opts */
-
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *) NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+	int ret;
 
 	setup();
 
-	/* Check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); ++lc) {
-		Tst_count = 0;
-		for (testno = 0; testno < TST_TOTAL; ++testno) {
-			/*
-			 * Execute test
-			 */
-			for (i = 0; i < (int) (sizeof(tcase) / sizeof(tcase[0])); i++) {
-				int ret;
-				tst_resm(TINFO, "(case%02d) START", i);
-				ret = do_test(&tcase[i]);
-				tst_resm(TINFO, "(case%02d) END => %s", i, (ret == 0) ? "OK"
-						: "NG");
-				TEST_ERROR_LOG(TEST_ERRNO);
-				result |= ret;
-			}
+	ret = 0;
 
-			/*
-			 * Check results
-			 */
-			switch (result) {
-			case RESULT_OK:
-				tst_resm(TPASS, "ppoll01 call succeeded ");
-				break;
-
-			default:
-				tst_resm(TFAIL | TTERRNO, "%s failed", TCID);
-				RPRINTF("NG");
-				cleanup();
-				break;
-			}
-
-		}
+	for (i = 0; ret == 0 &&
+	    i < (sizeof(tcase) / sizeof(tcase[0])); i++) {
+		tst_resm(TINFO, "(case%02d) START", i);
+		ret = do_test(&tcase[i]);
+		tst_resm(TINFO, "(case%02d) END => %s", i, (ret == 0) ? "OK"
+				: "NG");
 	}
 	cleanup();
-	return 0;
+	tst_exit();
 }
-

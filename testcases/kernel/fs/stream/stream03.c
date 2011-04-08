@@ -39,7 +39,6 @@
 
 char *TCID = "stream03";
 int TST_TOTAL = 1;
-extern int Tst_count;
 int     local_flag;
 
 #define PASSED 1
@@ -131,7 +130,7 @@ int main(int ac, char *av[])
 
 		pos = ftell(stream);
 
-		if (pos != strlen(junk) ) {
+		if (pos != strlen(junk)) {
 			tst_resm(TFAIL,"strlen(junk)=%zi: file pointer descrepancy 5 (pos=%li)", strlen(junk), pos);
 			local_flag = FAILED;
 		}
@@ -216,7 +215,7 @@ int main(int ac, char *av[])
 
 		opos = ftello(stream);
 
-		if (opos != strlen(junk) ) {
+		if (opos != strlen(junk)) {
 			tst_resm(TFAIL,"strlen(junk)=%zi: file pointer descrepancy 4 (opos=%"PRId64")", strlen(junk), (int64_t)opos);
 			local_flag = FAILED;
 		}
@@ -229,7 +228,7 @@ int main(int ac, char *av[])
 
 		opos = ftello(stream);
 
-		if (opos != strlen(junk) ) {
+		if (opos != strlen(junk)) {
 			tst_resm(TFAIL,"strlen(junk)=%zi: file pointer descrepancy 5 (opos=%"PRId64")", strlen(junk), (int64_t)opos);
 			local_flag = FAILED;
 		}
@@ -254,7 +253,7 @@ int main(int ac, char *av[])
 		getc(stream);
 		opos=ftello(stream);
 
-		if (opos != strlen(junk) ) {
+		if (opos != strlen(junk)) {
 			tst_resm(TFAIL,"strlen(junk)=%zi: file pointer descrepancy 7 (opos=%li)", strlen(junk), opos);
 			local_flag = FAILED;
 		}

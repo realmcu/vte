@@ -47,14 +47,9 @@
 #include "usctest.h"
 #include "linux_syscall_numbers.h"
 
-/* Extern Global Variables */
-extern int Tst_count;	   /* counter for tst_xxx routines.	 */
-extern char *TESTDIR;	   /* temporary dir created by tst_tmpdir() */
-
 /* Global Variables */
-char *TCID = "add_key01";  /* Test program identifier.*/
-int  testno;
-int  TST_TOTAL = 1;		   /* total number of tests in this file.   */
+char *TCID = "add_key01";	/* Test program identifier.*/
+int  TST_TOTAL = 1;		/* total number of tests in this file.   */
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -75,12 +70,9 @@ int  TST_TOTAL = 1;		   /* total number of tests in this file.   */
 /*									    */
 /******************************************************************************/
 extern void cleanup() {
-	/* Remove tmp dir and all files in it */
+
 	TEST_CLEANUP;
 	tst_rmdir();
-
-	/* Exit with appropriate return code. */
-	tst_exit();
 }
 
 /* Local  Functions */
@@ -109,43 +101,22 @@ void setup() {
 }
 
 int main(int ac, char **av) {
-	int lc;		 /* loop counter */
 	char *msg;	      /* message returned from parse_opts */
-	
+
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-	     tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	} else {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-		setup();
+	setup();
 
-		/* Check looping state if -i option given */
-		for (lc = 0; TEST_LOOPING(lc); ++lc) {
+	/* Call add_key. */
+	TEST(syscall(__NR_add_key, "keyring", "wjkey", NULL, 0, KEY_SPEC_THREAD_KEYRING));
+	if (TEST_RETURN == -1)
+		tst_resm(TFAIL|TTERRNO, "add_key call failed");
+	else
+		tst_resm(TPASS, "add_key call succeeded");
 
-			Tst_count = 0;
-
-			for (testno = 0; testno < TST_TOTAL; ++testno) {
-
-				/* Call add_key. */
-				TEST(syscall(__NR_add_key, "keyring", "wjkey",
-						NULL, 0,
-						KEY_SPEC_THREAD_KEYRING));
-
-				if (TEST_RETURN != -1) {
-					tst_resm(TPASS, "add_key call succeeded");
-					cleanup();
-				} else {
-					tst_resm(TFAIL | TTERRNO, "%s failed", TCID);
-				}
-
-			}
-
-		}
-
-		cleanup();
-
-	}	
-
+	cleanup();
 	tst_exit();
 
 }

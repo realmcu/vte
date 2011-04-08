@@ -37,10 +37,8 @@
 #include "test.h"
 #include "usctest.h"
 
-
 char *TCID="hangup01";            /* Test program identifier.    */
 int TST_TOTAL=5;                /* Total number of test cases. */
-extern int Tst_count;           /* Test Case counter for tst_* routines */
 /**************/
 
 /*
@@ -83,8 +81,6 @@ cleanup(void)
 		}
 
 	}
-
-	tst_exit();
 
 }
 
@@ -145,7 +141,7 @@ parent(int masterfd, int childpid)
 			default:
 				tst_brkm(TFAIL, cleanup,
 					"unexpected data message");
-				/*NOTREACHED*/
+
 			}
 		}
 	}
@@ -157,7 +153,6 @@ parent(int masterfd, int childpid)
 	tst_resm((status == 0 ? TPASS : TFAIL),
 		"child process exited with status %d", status);
 }
-
 
 /*
  * Child process for hangup test.  Write three messages to the slave
@@ -223,33 +218,28 @@ int main(int argc, char **argv)
 
 /*--------------------------------------------------------------------*/
 	masterfd = open(MASTERCLONE, O_RDWR);
-	if (masterfd < 0) {
+	if (masterfd < 0)
 		tst_brkm(TBROK|TERRNO, NULL, "open %s", MASTERCLONE);
-	}
 
 	slavename = ptsname(masterfd);
-	if (slavename == NULL) {
+	if (slavename == NULL)
 		tst_brkm(TBROK|TERRNO, NULL, "ptsname");
-	}
 
-	if (grantpt(masterfd) != 0) {
-		tst_resm(TBROK|TERRNO, NULL, "grantpt");
-	}
+	if (grantpt(masterfd) != 0)
+		tst_brkm(TBROK|TERRNO, NULL, "grantpt");
 
-	if (unlockpt(masterfd) != 0) {
+	if (unlockpt(masterfd) != 0)
 		tst_brkm(TBROK|TERRNO, NULL, "unlockpt");
-	}
 
 	childpid = fork();
-	if (childpid == -1) {
+	if (childpid == -1)
 		tst_brkm(TBROK|TERRNO, NULL, "fork");
-	} else if (childpid == 0) {
+	else if (childpid == 0)
 		exit(child(masterfd));
-	} else {
+	else
 		parent(masterfd, childpid);
-	}
 /*--------------------------------------------------------------------*/
 	cleanup();
-	/* NOTREACHED */
-	return 0;
+
+	tst_exit();
 }

@@ -50,21 +50,25 @@
  *	must be run with -F <test file> option
  */
 
-#include <stdio.h>
-#include <errno.h>
-#include <fcntl.h>
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <libgen.h>
+#include <stdio.h>
+
 #include "test.h"
 #include "usctest.h"
 #include "libtestsuite.h"
 
+char *test_app;
 char *TCID = "execve04";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
-void setup(void);
+void setup(char *);
 void cleanup(void);
 void help(void);
 void do_child_1(void);
@@ -75,7 +79,6 @@ int start_sync_pipes[2];
 int end_sync_pipes[2];
 
 int Fflag = 0;
-char *test_name;
 
 #ifdef UCLINUX
 #define PIPE_NAME_START		"execve04_start"
@@ -85,9 +88,8 @@ char *test_name;
 #define PIPE_NAME_END		NULL
 #endif
 
-/* for test specific parse_opts options - in this case "-F" */
 option_t options[] = {
-	{"F:", &Fflag, &test_name},
+	{"F:", &Fflag, &test_app},
 	{NULL, NULL, NULL}
 };
 
@@ -96,32 +98,25 @@ int main(int ac, char **av)
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 	pid_t pid, pid1;
-	int e_code, status, retval = 3;
+	int retval = 3, status;
 	char *argv[1], *env[1];
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, options, &help)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, options, &help)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 #ifdef UCLINUX
-	maybe_run_child(&do_child_1, "nS", 1, &test_name);
+	maybe_run_child(&do_child_1, "nS", 1, &test_app);
 #endif
 
-	if (!Fflag) {
-		tst_resm(TWARN, "You must specify an executable file with "
-			 "the -F option.");
-		tst_resm(TWARN, "Run '%s -h' for option information.", TCID);
-		cleanup();
-	}
+	if (!Fflag)
+		tst_brkm(TBROK, NULL,
+		    "You must specify an executable file with the -F option.");
 
-	setup();
+	setup(*av);
 
 	TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
 		if (sync_pipe_create(start_sync_pipes, PIPE_NAME_START) == -1)
@@ -134,15 +129,12 @@ int main(int ac, char **av)
 		 * child process attempts to execve the executable opened
 		 * by the first child process
 		 */
-		if ((pid = FORK_OR_VFORK()) == -1) {
+		if ((pid = FORK_OR_VFORK()) == -1)
 			tst_brkm(TBROK, cleanup, "fork #1 failed");
-		}
-
-		if (pid == 0) {	/* first child */
+		else if (pid == 0) {
 #ifdef UCLINUX
-			if (self_exec(av[0], "nS", 1, test_name) < 0) {
+			if (self_exec(av[0], "nS", 1, test_app) < 0)
 				tst_brkm(TBROK, cleanup, "self_exec failed");
-			}
 #else
 			do_child_1();
 #endif
@@ -157,7 +149,10 @@ int main(int ac, char **av)
 		if ((pid1 = FORK_OR_VFORK()) == -1)
 			tst_brkm(TBROK, cleanup, "fork #2 failed");
 
-		if (pid1 == 0) {	/* second child */
+		if (pid1 == 0) {
+
+			retval = 3;
+
 			argv[0] = 0;
 			env[0] = 0;
 
@@ -165,130 +160,80 @@ int main(int ac, char **av)
 			 * child */
 			sync_pipe_close(end_sync_pipes, PIPE_NAME_END);
 
-			TEST(execve(test_name, argv, env));
+			TEST(execve(test_app, argv, env));
 
 			TEST_ERROR_LOG(TEST_ERRNO);
 
 			if (TEST_ERRNO != ETXTBSY) {
 				retval = 1;
-				tst_resm(TFAIL, "expected ETXTBSY, received "
-					 "%d : %s", TEST_ERRNO,
-					 strerror(TEST_ERRNO));
-			} else {
-				tst_resm(TPASS, "call generated expected "
-					 "ETXTBSY error");
-			}
+				perror("didn't get ETXTBSY\n");
+			} else
+				printf("execve failed with ETXTBSY as "
+				    "expected\n");
 			exit(retval);
-		} else {	/* parent */
-			/* wait for the child to finish */
-			waitpid(pid1, &status, 0);
-			/* make sure the child returned a good exit status */
-			e_code = status >> 8;
-			/* If execve() succeeds, child cannot report the error */
-			if (status == 0)
-				tst_resm(TFAIL, "execve succeeded, "
-					 "expected failure");
-			if ((e_code != 3) || (retval != 3)) {
-				tst_resm(TFAIL, "Failures reported above");
-			}
-
-			/*  terminate first child */
-			sync_pipe_notify(end_sync_pipes);
-			waitpid(pid, NULL, 0);
-			cleanup();
 		}
-	}
+		/* wait for the child to finish */
+		if (waitpid(pid1, &status, 0) == -1)
+			tst_brkm(TBROK|TERRNO, cleanup, "waitpid failed");
+		if (WIFEXITED(status) && WEXITSTATUS(status) == 3)
+			tst_resm(TPASS, "execve failed as expected");
+		else
+			tst_resm(TFAIL, "execve succeeded, expected failure");
 
-	 /*NOTREACHED*/ return 0;
+		/*  terminate first child */
+		sync_pipe_notify(end_sync_pipes);
+		(void) waitpid(pid, NULL, 0);
+	}
+	cleanup();
+
+	tst_exit();
 }
 
-/*
- * help() - Prints out the help message for the -D option defined
- *          by this test.
- */
 void help()
 {
 	printf("  -F <test name> : for example, 'execve04 -F test3'\n");
 }
 
-/*
- * setup() - performs all ONE TIME setup for this test.
- */
-void setup()
+void setup(char *argv0)
 {
-	char *cmd, *dirc, *basec, *bname, *dname, *path, *pwd = NULL;
-	int res;
+	char *cmd, *pwd = NULL;
+	char test_path[MAXPATHLEN];
 
-	/* capture signals */
+	if (test_app[0] == '/')
+		strncpy(test_path, test_app, sizeof(test_path));
+	else {
+		if ((pwd = get_current_dir_name()) == NULL)
+			tst_brkm(TBROK|TERRNO, NULL, "getcwd failed");
+
+		snprintf(test_path, sizeof(test_path), "%s/%s",
+		    pwd, basename(test_app));
+
+		free(pwd);
+	}
+
+	cmd = malloc(strlen(test_path) + strlen("cp -p \"") + strlen("\" .") +
+	    1);
+	if (cmd == NULL)
+		tst_brkm(TBROK|TERRNO, NULL, "Cannot alloc command string");
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Get file name of the passed test file and the absolute path to it.
-	 * We will need these informations to copy the test file in the temp
-	 * directory.
-	 */
-	dirc = strdup(test_name);
-	basec = strdup(test_name);
-	dname = dirname(dirc);
-	bname = basename(basec);
-
-	if (dname[0] == '/')
-		path = dname;
-	else {
-		if ((pwd = getcwd(NULL, 0)) == NULL) {
-			tst_brkm(TBROK, tst_exit,
-				 "Could not get current directory");
-		}
-		path = malloc(strlen(pwd) + strlen(dname) + 2);
-		if (path == NULL) {
-			tst_brkm(TBROK, tst_exit, "Cannot alloc path string");
-		}
-		sprintf(path, "%s/%s", pwd, dname);
-	}
-
-	/* make a temp dir and cd to it */
 	tst_tmpdir();
 
-	/* Copy the given test file to the private temp directory.
-	 */
-	cmd = malloc(strlen(path) + strlen(bname) + 15);
-	if (cmd == NULL) {
-		tst_brkm(TBROK, tst_exit, "Cannot alloc command string");
-	}
-
-	sprintf(cmd, "cp -p %s/%s .", path, bname);
-	res = system(cmd);
+	sprintf(cmd, "cp -p \"%s\" .", test_path);
+	if (system(cmd) != 0)
+		tst_brkm(TBROK, NULL, "command failed: %s", cmd);
 	free(cmd);
-	if (res == -1) {
-		tst_brkm(TBROK, tst_exit, "Cannot copy file %s", test_name);
-	}
-
-	test_name = bname;
-	/* Pause if that option was specified */
-	TEST_PAUSE;
 }
 
-/*
- * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
- */
 void cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
 	TEST_CLEANUP;
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
 
-/*
- * do_child_1()
- */
 void do_child_1()
 {
 	int fildes;
@@ -300,24 +245,24 @@ void do_child_1()
 		tst_brkm(TBROK, cleanup, "sync_pipe_create failed");
 #endif
 
-	if ((fildes = open(test_name, O_WRONLY)) == -1) {
-		tst_brkm(TBROK, NULL, "open(2) failed");
+	if ((fildes = open(test_app, O_WRONLY)) == -1) {
+		printf("%s\n", test_app);
+		perror("open failed");
 		exit(1);
 	}
 
 	if (sync_pipe_notify(start_sync_pipes) == -1) {
-		tst_brkm(TBROK, NULL, "sync_pipe_notify failed");
+		perror("sync_pipe_notify failed");
 		exit(1);
 	}
 
 	if (sync_pipe_close(start_sync_pipes, PIPE_NAME_START) == -1) {
-		tst_brkm(TBROK, NULL, "sync_pipe_close failed");
+		perror("sync_pipe_close failed");
 		exit(1);
 	}
 
-	/* let other child execve same file */
 	if (sync_pipe_wait(end_sync_pipes) == -1) {
-		tst_brkm(TBROK, NULL, "sync_pipe_wait failed");
+		perror("sync_pipe_wait failed");
 		exit(1);
 	}
 	exit(0);

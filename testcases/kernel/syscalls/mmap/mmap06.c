@@ -86,7 +86,6 @@
 
 char *TCID = "mmap06";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 int exp_enos[] = { EACCES, 0 };
 
 size_t page_sz;			/* system page size */
@@ -102,21 +101,16 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
 
-	/* Perform global setup for test */
 	setup();
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -130,29 +124,28 @@ int main(int ac, char **av)
 
 		/* Check for the return value of mmap() */
 		if (addr != MAP_FAILED) {
-			tst_resm(TFAIL, "mmap() returned invalid value, "
-				 "expected: -1");
+			tst_resm(TFAIL|TERRNO,
+				"mmap() returned invalid value, expected: %p",
+				MAP_FAILED);
 			/* Unmap the mapped memory */
 			if (munmap(addr, page_sz) != 0) {
-				tst_brkm(TBROK, cleanup, "munmap() failed");
+				tst_resm(TBROK, "munmap() failed");
+				cleanup();
 			}
 			continue;
 		}
 		TEST_ERROR_LOG(TEST_ERRNO);
 		if (TEST_ERRNO == EACCES) {
-			tst_resm(TPASS, "mmap() fails, 'fd' doesn't allow "
-				 "desired access, errno:%d", errno);
+			tst_resm(TPASS, "mmap failed with EACCES");
 		} else {
-			tst_resm(TFAIL, "mmap() fails, 'fd' doesn't allow "
-				 "desired access, invalid errno:%d", errno);
+			tst_resm(TFAIL|TERRNO,
+				"mmap failed with unexpected errno");
 		}
-	}			/* End for TEST_LOOPING */
-
-	/* Call cleanup() to undo setup done for the test. */
+	}
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -164,48 +157,36 @@ void setup()
 {
 	char *tst_buff;		/* test buffer to hold known data */
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Get the system page size */
 	if ((page_sz = getpagesize()) < 0) {
 		tst_brkm(TFAIL, NULL,
-			 "getpagesize() fails to get system page size");
-		tst_exit();
+			"getpagesize() fails to get system page size");
 	}
 
 	/* Allocate space for the test buffer */
 	if ((tst_buff = (char *)calloc(page_sz, sizeof(char))) == NULL) {
-		tst_brkm(TFAIL, NULL,
-			 "calloc() failed to allocate space for tst_buff");
-		tst_exit();
+		tst_brkm(TFAIL, NULL, "calloc() failed (tst_buff)");
 	}
 
 	/* Fill the test buffer with the known data */
 	memset(tst_buff, 'A', page_sz);
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Creat a temporary file used for mapping */
 	if ((fildes = open(TEMPFILE, O_WRONLY | O_CREAT, 0666)) < 0) {
-		tst_brkm(TFAIL, NULL,
-			 "open() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
 		free(tst_buff);
-		cleanup();
+		tst_brkm(TFAIL, cleanup, "opening %s failed", TEMPFILE);
 	}
 
 	/* Write test buffer contents into temporary file */
 	if (write(fildes, tst_buff, page_sz) < page_sz) {
-		tst_brkm(TFAIL, NULL,
-			 "write() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
 		free(tst_buff);
-		cleanup();
+		tst_brkm(TFAIL, cleanup, "writing to %s failed", TEMPFILE);
 	}
 
 	/* Free the memory allocated for test buffer */
@@ -227,9 +208,5 @@ void cleanup()
 
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

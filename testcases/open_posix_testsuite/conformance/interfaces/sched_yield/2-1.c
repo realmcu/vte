@@ -1,4 +1,4 @@
-/* 
+/*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -15,11 +15,11 @@
 #include "posixtest.h"
 
 int main() {
-	if(sched_yield() == 0) {
+	if (sched_yield() == 0) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
 	}
-	
+
 	printf("sched_yield() does not return 0.\n");
 	return PTS_FAIL;
 }

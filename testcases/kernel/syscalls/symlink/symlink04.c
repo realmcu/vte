@@ -84,7 +84,6 @@
 
 char *TCID = "symlink04";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 int exp_enos[] = { 0 };
 
 void setup();			/* Setup function for the test */
@@ -97,21 +96,19 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
 
-	/* Perform global setup for test */
+	 }
+
 	setup();
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -120,7 +117,6 @@ int main(int ac, char **av)
 		 */
 		TEST(symlink(TESTFILE, SYMFILE));
 
-		/* Check return code of symlink(2) */
 		if (TEST_RETURN == -1) {
 			TEST_ERROR_LOG(TEST_ERRNO);
 			tst_resm(TFAIL, "symlink(%s, %s) Failed, errno=%d : %s",
@@ -140,7 +136,7 @@ int main(int ac, char **av)
 					tst_brkm(TFAIL, cleanup, "lstat(2) of "
 						 "%s failed, error:%d", SYMFILE,
 						 errno);
-				 /*NOTREACHED*/}
+				 }
 
 				/* Check if the st_mode contains a link  */
 				if (!S_ISLNK(stat_buf.st_mode)) {
@@ -162,15 +158,14 @@ int main(int ac, char **av)
 			tst_brkm(TBROK, cleanup,
 				 "unlink(%s) Failed, errno=%d : %s",
 				 SYMFILE, errno, strerror(errno));
-		 /*NOTREACHED*/}
+		 }
 		Tst_count++;	/* incr TEST_LOOP counter */
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /*
  * void
@@ -182,7 +177,6 @@ void setup()
 {
 	int fd;			/* file handle for testfile */
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Pause if that option was specified
@@ -192,7 +186,6 @@ void setup()
 	 */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* creat/open a testfile */
@@ -200,14 +193,14 @@ void setup()
 		tst_brkm(TBROK, cleanup,
 			 "open(%s, O_RDWR|O_CREAT, %#o) Failed, errno=%d : %s",
 			 TESTFILE, FILE_MODE, errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 
 	/* Close the temporary file created above */
 	if (close(fd) == -1) {
 		tst_resm(TBROK, "close(%s) Failed, errno=%d : %s",
 			 TESTFILE, errno, strerror(errno));
 	}
-}				/* End setup() */
+}
 
 /*
  * void
@@ -223,9 +216,6 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

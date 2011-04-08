@@ -30,14 +30,13 @@
  *		and test for ETXTBSY
  *
  * USAGE:  <for command-line>
- *  creat07 -F test1 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
+ *  creat07 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
  *     where,  -c n : Run n copies concurrently.
  *             -e   : Turn on errno logging.
  *             -i n : Execute test n times.
  *             -I x : Execute test for x seconds.
  *             -P x : Pause for x seconds between iterations.
  *             -t   : Turn on syscall timing.
- *	       -F <test file> : Specify the test executable to launch
  *
  * HISTORY
  *	07/2001 Ported by Wayne Boyer
@@ -46,205 +45,131 @@
  *	test must be run with the -F option
  */
 
-#include <stdio.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <libgen.h>
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <libgen.h>
+#include <stdio.h>
 #include "test.h"
 #include "usctest.h"
 
+#define test_app "test1"
+
 char *TCID = "creat07";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
-void setup(void);
+void setup(char *);
 void cleanup(void);
-void help(void);
 
 int exp_enos[] = { ETXTBSY, 0 };
-
-int Fflag = 0;
-char *fname;
-
-/* for test specific parse_opts options - in this case "-F" */
-option_t options[] = {
-	{"F:", &Fflag, &fname},
-	{NULL, NULL, NULL}
-};
 
 int main(int ac, char **av)
 {
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
-	int retval = 0, status, e_code;
+	int retval = 0, status;
 	pid_t pid, pid2;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, options, &help)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	if (!Fflag) {
-		tst_resm(TWARN, "You must specifiy the test executable 'test1' "
-			 "with the -F option");
-		tst_resm(TWARN, "Run '%s -h' for option information.", TCID);
-		tst_exit();
-	}
-
-	setup();
+	setup(av[0]);
 
 	TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
-		/*
-		 * test whether creat(2) is setting ETXTBSY if an attempt is
-		 * made to creat() an executable which is running.
-		 */
+		if ((pid = FORK_OR_VFORK()) == -1)
+			tst_brkm(TBROK|TERRNO, cleanup, "fork #1 failed");
 
-		if ((pid = FORK_OR_VFORK()) == -1) {
-			tst_brkm(TBROK, cleanup, "fork() #1 failed");
-		}
-
-		if (pid == 0) {	/* first child */
-			/* start up the test1 executable */
-			(void)execve(fname, NULL, NULL);
-			tst_resm(TFAIL, "execve() failed");
+		if (pid == 0) {
+			char *av[1];
+			av[0] = basename(test_app);
+			(void)execve(test_app, av, NULL);
+			perror("execve failed");
 			exit(1);
 		}
 
-		if ((pid2 = FORK_OR_VFORK()) == -1) {
-			tst_brkm(TBROK, cleanup, "fork() #2 failed");
-		}
+		if ((pid2 = FORK_OR_VFORK()) == -1)
+			tst_brkm(TBROK, cleanup, "fork #2 failed");
 
-		if (pid2 == 0) {	/* second child */
-			sleep(10);	/* let first child start */
+		if (pid2 == 0) {
+			sleep(10);
 
-			TEST(creat(fname, O_WRONLY));
+			TEST(creat(test_app, O_WRONLY));
 
 			if (TEST_RETURN != -1) {
 				retval = 1;
-				tst_resm(TFAIL, "creat(2) succeeded on "
-					 "expected fail");
-				continue;
-			}
-
-			TEST_ERROR_LOG(TEST_ERRNO);
-
-			if (TEST_ERRNO != ETXTBSY) {
+				printf("creat didn't fail as expected\n");
+			} else if (TEST_ERRNO == ETXTBSY)
+				printf("received ETXTBSY\n");
+			else {
 				retval = 1;
-				tst_resm(TFAIL|TTERRNO, "expected ETXTBSY");
-			} else {
-				tst_resm(TPASS, "received ETXTBSY");
+				perror("creat failed unexpectedly");
 			}
 
-			/* kill off the dummy test program */
 			if (kill(pid, SIGKILL) == -1) {
 				retval = 1;
-				tst_brkm(TBROK, cleanup, "kill failed");
+				perror("kill failed");
 			}
 			exit(retval);
-		} else {
-			/* wait for the child to finish */
-			wait(&status);
-			/* make sure the child returned a good exit status */
-			e_code = status >> 8;
-			if (e_code != 0) {
-				tst_resm(TFAIL, "Failures reported above");
-			}
 		}
+		if (wait(&status) == -1)
+			tst_brkm(TBROK|TERRNO, cleanup, "wait failed");
+		if (WIFEXITED(status) || WEXITSTATUS(status) == 0)
+			tst_resm(TPASS, "creat functionality correct");
+		else
+			tst_resm(TFAIL, "creat functionality incorrect");
 	}
 	cleanup();
 
-	return 0;
- /*NOTREACHED*/}
-
-/*
- * help() - Prints out the help message for the -F option defined
- *          by this test.
- */
-void help()
-{
-	printf("  -F <test file> : in this case the file is 'test1'\n");
+	tst_exit();
 }
 
-/*
- * setup() - performs all ONE TIME setup for this test.
- */
-void setup()
+void setup(char *app)
 {
-	char *cmd, *dirc, *basec, *bname, *dname, *path, *pwd = NULL;
-	int res;
-	/* capture signals */
+	char *cmd, *pwd = NULL;
+	char test_path[MAXPATHLEN];
+
+	if (test_app[0] == '/')
+		strncpy(test_path, test_app, sizeof(test_app));
+	else {
+		if ((pwd = get_current_dir_name()) == NULL)
+			tst_brkm(TBROK|TERRNO, NULL, "getcwd failed");
+
+		snprintf(test_path, sizeof(test_path), "%s/%s",
+		    pwd, basename(test_app));
+
+		free(pwd);
+	}
+
+	cmd = malloc(strlen(test_path) + strlen("cp -p \"") + strlen("\" .") +
+	    1);
+	if (cmd == NULL)
+		tst_brkm(TBROK|TERRNO, NULL, "Cannot alloc command string");
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Get file name of the passed test file and the absolute path to it.
-	 * We will need these informations to copy the test file in the temp
-	 * directory.
-	 */
-	dirc = strdup(fname);
-	basec = strdup(fname);
-	dname = dirname(dirc);
-	bname = basename(basec);
-
-	if (dname[0] == '/')
-		path = dname;
-	else {
-		if ((pwd = getcwd(NULL, 0)) == NULL) {
-			tst_brkm(TBROK, tst_exit,
-				 "Could not get current directory");
-		}
-		path = malloc(strlen(pwd) + strlen(dname) + 2);
-		if (path == NULL) {
-			tst_brkm(TBROK, tst_exit, "Cannot alloc path string");
-		}
-		sprintf(path, "%s/%s", pwd, dname);
-	}
-
-	/* make a temp dir and cd to it */
 	tst_tmpdir();
 
-	/* Copy the given test file to the private temp directory.
-	 */
-	cmd = malloc(strlen(path) + strlen(bname) + 15);
-	if (cmd == NULL) {
-		tst_brkm(TBROK, tst_exit, "Cannot alloc command string");
-	}
-
-	sprintf(cmd, "cp -p %s/%s .", path, bname);
-	res = system(cmd);
+	sprintf(cmd, "cp -p \"%s\" .", test_path);
+	if (system(cmd) != 0)
+		tst_brkm(TBROK, cleanup, "Cannot copy file %s", test_path);
 	free(cmd);
-	if (res == -1) {
-		tst_brkm(TBROK, tst_exit, "Cannot copy file %s", fname);
-	}
 
-	fname = bname;
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
-/*
- * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
- */
 void cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
 	TEST_CLEANUP;
 
-	/* Remove the temporary directory */
 	tst_rmdir();
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

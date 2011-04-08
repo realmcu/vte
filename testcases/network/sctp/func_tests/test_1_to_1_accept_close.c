@@ -2,7 +2,7 @@
  * Copyright (c) 2003 Hewlett-Packard Development Company, L.P
  * (C) Copyright IBM Corp. 2004
  *
- * This file has test cases to test the accept () and close () call for 
+ * This file has test cases to test the accept () and close () call for
  * 1-1 style sockets
  *
  * accept () Tests:
@@ -20,7 +20,7 @@
  * TEST8: Bad socket descriptor
  * TEST9: valid socket descriptor
  * TEST10: Closed socket descriptor
- * 
+ *
  * The SCTP reference implementation is free software;
  * you can redistribute it and/or modify it under the terms of
  * the GNU General Public License as published by
@@ -128,7 +128,7 @@ main(int argc, char *argv[])
 	/* accept() TEST1: Bad socket descriptor EBADF, Expected error */
         error = accept(-1, (struct sockaddr *) &acpt_addr, &len);
         if (error != -1 || errno != EBADF)
-		tst_brkm(TBROK, tst_exit, "accept with a bad socket descriptor"
+		tst_brkm(TBROK, NULL, "accept with a bad socket descriptor"
                          "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "accept() with a bad socket descriptor - EBADF");
@@ -136,7 +136,7 @@ main(int argc, char *argv[])
         /*accept() TEST2: Invalid socket ENOTSOCK, Expected error*/
         error = accept(0, (struct sockaddr *) &acpt_addr, &len);
         if (error != -1 || errno != ENOTSOCK)
-		tst_brkm(TBROK, tst_exit, "accept with invalid socket"
+		tst_brkm(TBROK, NULL, "accept with invalid socket"
                          "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "accept() with invalid socket - ENOTSOCK");
@@ -144,7 +144,7 @@ main(int argc, char *argv[])
         /*accept() TEST3: Invalid address EFAULT, Expected error*/
         error = accept(lstn_sk, (struct sockaddr *) -1, &len);
         if (error != -1 || errno != EFAULT)
-		tst_brkm(TBROK, tst_exit, "accept with invalid address"
+		tst_brkm(TBROK, NULL, "accept with invalid address"
                          "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "accept() with invalid address - EFAULT");
@@ -154,11 +154,11 @@ main(int argc, char *argv[])
         /*accept() TEST4: on a non-listening socket EINVAL, Expected error*/
         error = accept(sk, (struct sockaddr *) &acpt_addr, &len);
         if (error != -1 || errno != EINVAL)
-		tst_brkm(TBROK, tst_exit, "accept on a non-listening socket"
+		tst_brkm(TBROK, NULL, "accept on a non-listening socket"
                          "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "accept() on a non-listening socket - EINVAL");
-	
+
 	test_connect(clnt_sk[i++], (struct sockaddr *) &conn_addr, len);
 
 	/*Calling accept to establish the connection*/
@@ -167,7 +167,7 @@ main(int argc, char *argv[])
 	/*accept() TEST5: On a established socket EINVAL, Expected error*/
 	error = accept(acpt_sk, (struct sockaddr *) &acpt_addr, &len);
 	if (error != -1 || errno != EINVAL)
-		tst_brkm(TBROK, tst_exit, "accept on an established socket"
+		tst_brkm(TBROK, NULL, "accept on an established socket"
                          "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "accept() on an established socket - EINVAL");
@@ -180,7 +180,7 @@ main(int argc, char *argv[])
 	/*accept() TEST6: On the CLOSED association should succeed*/
 	acpt_sk = accept(lstn_sk, (struct sockaddr *) &acpt_addr, &len);
         if (acpt_sk < 0)
-		tst_brkm(TBROK, tst_exit, "accept a closed association"
+		tst_brkm(TBROK, NULL, "accept a closed association"
                          "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "accept() a closed association - SUCCESS");
@@ -198,11 +198,10 @@ main(int argc, char *argv[])
 
 	tst_resm(TPASS, "accept() on a listening socket - SUCCESS");
 
-	
         /*close() TEST8: Bad socket descriptor, EBADF Expected error*/
 	error = close(-1);
 	if (error != -1 || errno != EBADF)
-		tst_brkm(TBROK, tst_exit, "close with a bad socket descriptor "
+		tst_brkm(TBROK, NULL, "close with a bad socket descriptor "
                          "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "close() with a bad socket descriptor - EBADF");
@@ -210,7 +209,7 @@ main(int argc, char *argv[])
 	/*close() TEST9: valid socket descriptor should succeed*/
 	error = close(sk);
 	if (error < 0)
-		tst_brkm(TBROK, tst_exit, "close with a valid socket descriptor"
+		tst_brkm(TBROK, NULL, "close with a valid socket descriptor"
                          " error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "close() with a valid socket descriptor - SUCCESS");
@@ -218,16 +217,16 @@ main(int argc, char *argv[])
 	/*close() TEST10: closed socket descriptor, EBADF Expected error*/
         error = close(sk);
         if (error != -1 || errno != EBADF)
-		tst_brkm(TBROK, tst_exit, "close with a closed socket "
+		tst_brkm(TBROK, NULL, "close with a closed socket "
 			 "descriptor error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "close() with a closed socket descriptor - EBADF");
-	
+
 	for (i = 0 ; i < SK_MAX ; i++) {
 		close(clnt_sk[i]);
 		close(new_sk[i]);
 		close(clnt2_sk[i]);
 	}
 
-	return 0;
+	tst_exit();
 }

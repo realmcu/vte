@@ -17,7 +17,6 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-
 /*
  * NAME
  *      diotest6.c
@@ -250,7 +249,6 @@ child_function(int childnum, int action)
 	exit(0);
 }
 
-
 int
 main(int argc, char *argv[])
 {
@@ -307,7 +305,7 @@ main(int argc, char *argv[])
 	setup();
 
 	/* Testblock-1: Read with Direct IO, Write without */
-	if (forkchldrn(&pidlst, numchild, READ_DIRECT, child_function) < 0 ) {
+	if (forkchldrn(&pidlst, numchild, READ_DIRECT, child_function) < 0) {
 		failed = TRUE;
 		fail_count++;
 		tst_resm (TFAIL, "Read with Direct IO, Write without");
@@ -371,7 +369,7 @@ main(int argc, char *argv[])
 		tst_resm(TINFO, "%d testblocks %d iterations with %d children completed",
 			total, iter, numchild);
 	cleanup();
-	return 0;
+	tst_exit();
 }
 
 static void setup(void)
@@ -392,12 +390,11 @@ static void setup(void)
 
 static void cleanup(void)
 {
-	if(fd1 != -1)
+	if (fd1 != -1)
 		unlink(filename);
 
 	tst_rmdir();
 
-	tst_exit();
 }
 
 #else /* O_DIRECT */

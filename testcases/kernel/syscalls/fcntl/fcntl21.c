@@ -70,7 +70,6 @@ int do_lock(int, short, short, int, int);
 
 char *TCID = "fcntl21";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void setup(void);
 void cleanup(void);
@@ -86,12 +85,10 @@ void setup()
 	char template[PATH_MAX];
 	struct sigaction act;
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	umask(0);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	pipe(parent_pipe);
@@ -136,8 +133,6 @@ void cleanup()
 
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
 
 void do_child()
@@ -302,8 +297,8 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
 	maybe_run_child(&do_child, "ddddd", &parent_pipe[0], &parent_pipe[1],
@@ -873,5 +868,5 @@ int main(int ac, char **av)
 		close(fd);
 	}
 	cleanup();
-	return 0;
+	tst_exit();
 }

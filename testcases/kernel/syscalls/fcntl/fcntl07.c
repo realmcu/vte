@@ -143,6 +143,7 @@
 
 #include "test.h"
 #include "usctest.h"
+#include "safe_macros.h"
 #include "search_path.h"
 
 void setup();
@@ -151,9 +152,7 @@ void help();
 
 char *TCID = "fcntl07";		/* Test program identifier.    */
 int TST_TOTAL = 2;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-/* for parse_opts */
 int fflag, Tflag;		/* binary flags: opt or not */
 char *fopt, *Topt;		/* option arguments */
 
@@ -201,51 +200,32 @@ int main(int ac, char **av)
 	int **tcp;		/* testcase pointer (pointer to FD) */
 	char **tcd;		/* testcase description pointer */
 
-    /***************************************************************
-     * parse standard options, and exit if there is an error
-     ***************************************************************/
-	if ((msg = parse_opts(ac, av, options, &help)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, options, &help)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
 
-	if (fflag)		/* -F option */
+	if (fflag)
 		File1 = fopt;
 
-	if (Tflag) {		/* -T option */
+	if (Tflag)
 		exit(test_open(Topt));
-	}
 
-    /***************************************************************
-     * perform global setup for test
-     ***************************************************************/
 	setup(av[0]);
 
-    /***************************************************************
-     * check looping state if -c option given
-     ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		for (tcp = testfds, tcd = testfdtypes; *tcp; tcp++, tcd++) {
 
 			TEST(fcntl(**tcp, F_SETFD, FD_CLOEXEC));
 
-			/* check return code */
 			if (TEST_RETURN == -1) {
-				TEST_ERROR_LOG(TEST_ERRNO);
-				tst_resm(TFAIL,
-					 "fcntl(%s[%d], F_SETFD, FD_CLOEXEC) Failed, errno=%d : %s",
-					 *tcd, **tcp, TEST_ERRNO,
-					 strerror(TEST_ERRNO));
+				tst_resm(TFAIL|TTERRNO,
+					 "fcntl(%s[%d], F_SETFD, FD_CLOEXEC) "
+					 "failed",
+					 *tcd, **tcp);
 			} else {
 
-		/*************************************************************
-		 * only perform functional verification if flag set
-		 * (-f not given)
-		 *************************************************************/
 				if (STD_FUNCTIONAL_TEST) {
 
 					exec_return =
@@ -280,69 +260,39 @@ int main(int ac, char **av)
 				}
 			}
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-    /***************************************************************
-     * cleanup and exit
-     ***************************************************************/
 	cleanup();
 
-	return 0;
-}				/* End main */
+	tst_exit();
+}
 
-/***************************************************************
- * setup() - performs all ONE TIME setup for this test.
- ***************************************************************/
 void setup(char *path)
 {
 	search_path(path, subprog_path, X_OK, 1);
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* create a temporary directory and go to it */
 	tst_tmpdir();
 
-	/* set up a regular file */
-	if ((file_fd = open(File1, O_CREAT | O_RDWR, 0666)) == -1) {
-		tst_brkm(TBROK, cleanup, "Open of file %s failed errno %d (%s)",
-			 File1, errno, strerror(errno));
-	}
+	file_fd = SAFE_OPEN(cleanup, File1, O_CREAT|O_RDWR, 0666);
+	SAFE_PIPE(cleanup, pipe_fds);
+}
 
-	/* set up a system pipe (write side gets CLOSE-ON-EXEC) */
-	pipe(pipe_fds);
-}				/* End setup() */
-
-/***************************************************************
- * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
- ***************************************************************/
 void cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
 	TEST_CLEANUP;
 
-	/* close everything */
-	close(file_fd);
-	close(pipe_fds[0]);
-	close(pipe_fds[1]);
+	SAFE_CLOSE(NULL, file_fd);
+	SAFE_CLOSE(NULL, pipe_fds[0]);
+	SAFE_CLOSE(NULL, pipe_fds[1]);
 
-	/* remove temporary directory and all files in it. */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}
 
-/***************************************************************************
- * issue a help message
- ***************************************************************************/
 void help()
 {
 	printf

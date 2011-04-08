@@ -38,7 +38,7 @@
     TEST IDENTIFIER :  kill02  Sending a signal to processes with the same process group ID.
 
     PARENT DOCUMENT :  kiltds01  Kill System Call.
-	
+
     AUTHOR          :  Dave Baumgartner
 
     CO-PILOT        :  Barrie Kletscher
@@ -129,10 +129,10 @@
 
 ******************************************************************************/
 #include <sys/param.h>
-#include <signal.h>
 #include <sys/wait.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <signal.h>
 #include <string.h>
 #include <stdlib.h>
 #include "test.h"
@@ -203,8 +203,6 @@ void cleanup();
 
 char *TCID = "kill02";		/* Test program identifier.    */
 int TST_TOTAL = 2;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-extern int Tst_nobuf;		/* var. used to turn off tst_res buffering */
 
 int exp_enos[] = { 0 };		/* Array of expected errnos */
 
@@ -214,28 +212,15 @@ void childA_rout_uclinux();
 void childB_rout_uclinux();
 #endif
 
-/***********************************************************************
- * MAIN
- ***********************************************************************/
 int main(int ac, char **av)
 {
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 
-	Tst_nobuf = 1;
-
-    /***************************************************************
-     * parse standard options, and exit if there is an error
-     * the -t and -f options not support yet.
-     ***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
+
 #ifdef UCLINUX
-    /***************************************************************
-     * Save av[0], run child if needed
-     ***************************************************************/
 	argv0 = av[0];
 
 	maybe_run_child(&childA_rout_uclinux, "nd", 1, &pipeA_fd[1]);
@@ -245,32 +230,16 @@ int main(int ac, char **av)
 	maybe_run_child(&child2_rout, "nd", 4, &pipe2_fd[1]);
 #endif
 
-    /***************************************************************
-     * perform global setup for test
-     ***************************************************************/
 	setup();
 
-    /***************************************************************
-     * check looping state if -c option given
-     ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		if ((pid1 = FORK_OR_VFORK()) > 0) {
-			/*
-			 *  This is the parent, fork again to create child 2.
-			 */
 			if ((pid2 = FORK_OR_VFORK()) > 0) {
-				/*
-				 *  This is the parent.
-				 */
 				(void)parent_rout();
 			} else if (pid2 == 0) {
-				/*
-				 *  This is child 2.
-				 */
 #ifdef UCLINUX
 				if (self_exec(argv0, "nd", 4, pipe2_fd[1]) < 0) {
 					if (kill(pid1, SIGKILL) == -1
@@ -278,7 +247,7 @@ int main(int ac, char **av)
 						tst_resm(TWARN,
 							 "Child process may not have been killed.");
 					}
-					tst_brkm(TBROK|TERRNO, cleanup, "fork() failed");
+					tst_brkm(TBROK|TERRNO, cleanup, "fork failed");
 				}
 #else
 				(void)child2_rout();
@@ -291,7 +260,7 @@ int main(int ac, char **av)
 					tst_resm(TWARN,
 						 "Child process may not have been killed.");
 				}
-				tst_brkm(TBROK|TERRNO, cleanup, "fork() failed");
+				tst_brkm(TBROK|TERRNO, cleanup, "fork failed");
 			}
 
 		} else if (pid1 == 0) {
@@ -312,13 +281,12 @@ int main(int ac, char **av)
 			/*
 			 * Fork failed.
 			 */
-			tst_brkm(TBROK|TERRNO, cleanup, "fork() failed");
+			tst_brkm(TBROK|TERRNO, cleanup, "fork failed");
 		}
 	}
 
 	cleanup();
-
-	return 0;
+	tst_exit();
 }				/* END OF MAIN. */
 
 /******************************************************************************
@@ -475,14 +443,8 @@ void parent_rout()
 	while ((read(pipe1_fd[0], pipe_buf, 1) != 1) && (alarm_flag == FALSE))
 		strncpy(buf_tmp1, pipe_buf, 1);
 
-	return;
 }				/*End of parent_rout */
 
-/*******************************************************************************
- * This is child 1's routine.  It creates children A & B, checks their set up,
- * reports to the parent set up pass/fail info., then waits for
- * the parents signal.
- ******************************************************************************/
 void child1_rout()
 {
 	who_am_i = '1';
@@ -523,7 +485,7 @@ void child1_rout()
 			if (kill(pidA, SIGKILL) == -1)
 				tst_resm(TWARN,
 					 "Child process may not have been killed.");
-			tst_brkm(TBROK|TERRNO, NULL, "fork() failed");
+			tst_brkm(TBROK|TERRNO, NULL, "fork failed");
 			(void)write(pipe2_fd[1], CHAR_SET_FAILED, 1);
 			exit(0);
 		}
@@ -547,7 +509,7 @@ void child1_rout()
 		/*
 		 *  The fork of child A failed.
 		 */
-		tst_brkm(TBROK|TERRNO, NULL, "fork() failed");
+		tst_brkm(TBROK|TERRNO, NULL, "fork failed");
 		(void)write(pipe1_fd[1], CHAR_SET_FAILED, 1);
 		exit(0);
 	}
@@ -730,7 +692,7 @@ void childB_rout_uclinux()
 	childB_rout();
 }
 #endif
-
+
 /*******************************************************************************
  *  This routine sets up the interprocess communication pipes, signal handling,
  *  and process group information.
@@ -751,7 +713,7 @@ void setup()
 	 *  SIGUSR1 is set to be ignored because this is the signal we are using for
 	 *  the test and we are not concerned with the parent getting it.
 	 */
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	if (signal(SIGUSR1, SIG_IGN) == SIG_ERR) {
@@ -767,7 +729,6 @@ void setup()
 	/* Indicate which errnos are expected */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -853,7 +814,7 @@ void notify_timeout()
 	alarm_flag = TRUE;
 
 }				/*End of notify_timeout */
-
+
 /***********************************************************
  *  This routine handles the procedure for removing the
  *  children forked off during this test.
@@ -914,7 +875,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-
-}				/* End cleanup() */
+}

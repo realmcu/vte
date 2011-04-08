@@ -1,8 +1,8 @@
-/*   
+/*
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  bing.wei.liu REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
  * Test that pthread_mutex_timedlock()
@@ -13,7 +13,7 @@
  * The timeout expires when the absolute time 'abs_timeout' passes, or if 'abs_timeout'
  * has already been passed the time of the call.
 
- * Steps: 
+ * Steps:
  *
  * 1. Create a mutex in the main() thread and lock it.
  * 2. Create a thread, and call pthread_mutex_timedlock inside of it.  It should block for
@@ -41,9 +41,9 @@
 void *f1(void *parm);
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;	/* The mutex */
-struct timeval currsec1, currsec2;			/* Variables for saving time before 
+struct timeval currsec1, currsec2;			/* Variables for saving time before
 						           and after locking the mutex using
-							   pthread_mutex_timedlock(). */	   
+							   pthread_mutex_timedlock(). */
 /****************************
  *
  * MAIN()
@@ -55,33 +55,33 @@ int main()
 	struct timeval time_diff;
 
 	/* Lock the mutex. */
-	if(pthread_mutex_lock(&mutex) != 0)
+	if (pthread_mutex_lock(&mutex) != 0)
 	{
 		perror("Error in pthread_mutex_lock().\n");
 		return PTS_UNRESOLVED;
 	}
 
-	/* Create a thread that will call pthread_mutex_timedlock */	
-	if(pthread_create(&new_th, NULL, f1, NULL) != 0)
+	/* Create a thread that will call pthread_mutex_timedlock */
+	if (pthread_create(&new_th, NULL, f1, NULL) != 0)
 	{
 		perror("Error in pthread_create().\n");
 		return PTS_UNRESOLVED;
 	}
 
 	/* Wait for thread to end. */
-	if(pthread_join(new_th, NULL) != 0)
+	if (pthread_join(new_th, NULL) != 0)
 	{
 		perror("Error in pthread_join().\n");
 		return PTS_UNRESOLVED;
 	}
 
 	/* Cleaning up the mutexes. */
-	if(pthread_mutex_unlock(&mutex) != 0)
+	if (pthread_mutex_unlock(&mutex) != 0)
 	{
 		perror("Error in pthread_mutex_unlock().\n");
 		return PTS_UNRESOLVED;
 	}
-	if(pthread_mutex_destroy(&mutex) != 0)
+	if (pthread_mutex_destroy(&mutex) != 0)
 	{
 		perror("Error in pthread_mutex_destroy().\n");
 		return PTS_UNRESOLVED;
@@ -95,7 +95,7 @@ int main()
 		--time_diff.tv_sec;
 		time_diff.tv_usec += 1000000;
 	}
-	if(time_diff.tv_sec < TIMEOUT)
+	if (time_diff.tv_sec < TIMEOUT)
 	{
 		printf("Test FAILED: Timed lock did not wait long enough. (%d secs.)\n", TIMEOUT);
 		printf("time before mutex locked: %ld.%06ld, time after mutex timed out: %ld.%06ld.\n", (long)currsec1.tv_sec, (long)currsec1.tv_usec, (long)currsec2.tv_sec, (long)currsec2.tv_usec);
@@ -126,16 +126,16 @@ void *f1(void *parm)
 		exit(PTS_UNRESOLVED);
 	}
 	currsec1.tv_sec = ts.tv_sec;
-	currsec1.tv_usec = ts.tv_nsec / 1000; 
+	currsec1.tv_usec = ts.tv_nsec / 1000;
 #else
 	gettimeofday(&currsec1, NULL);
 #endif
 	/* Absolute time, not relative. */
 	timeout.tv_sec = currsec1.tv_sec + TIMEOUT;
-	timeout.tv_nsec = currsec1.tv_usec * 1000;	
+	timeout.tv_nsec = currsec1.tv_usec * 1000;
 
 	printf("Timed mutex lock will block for %d seconds starting from: %ld.%06ld\n", TIMEOUT, (long)currsec1.tv_sec, (long)currsec1.tv_usec);
-	if(pthread_mutex_timedlock(&mutex, &timeout) != ETIMEDOUT)
+	if (pthread_mutex_timedlock(&mutex, &timeout) != ETIMEDOUT)
 	{
 		perror("Error in pthread_mutex_timedlock().\n");
 		pthread_exit((void*)PTS_UNRESOLVED);
@@ -151,7 +151,7 @@ void *f1(void *parm)
 		exit(PTS_UNRESOLVED);
 	}
 	currsec2.tv_sec = ts.tv_sec;
-	currsec2.tv_usec = ts.tv_nsec / 1000; 
+	currsec2.tv_usec = ts.tv_nsec / 1000;
 #else
 	gettimeofday(&currsec2, NULL);
 #endif

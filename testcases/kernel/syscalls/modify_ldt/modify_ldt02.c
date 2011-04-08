@@ -49,7 +49,6 @@
 
 TCID_DEFINE(modify_ldt02);
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 #if defined(__i386__) && defined(HAVE_MODIFY_LDT)
 
@@ -101,9 +100,9 @@ int main(int ac, char **av)
 	int seg[4];
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	setup();		/* global setup */
 
@@ -120,7 +119,7 @@ int main(int ac, char **av)
 		seg[0] = 12345;
 		if (create_segment(seg, sizeof(seg)) == -1) {
 			tst_brkm(TINFO, cleanup, "Creation of segment failed");
-		 /*NOTREACHED*/}
+		 }
 
 		val = read_segment(0);
 
@@ -144,7 +143,7 @@ int main(int ac, char **av)
 
 		if (create_segment(0, 10) == -1) {
 			tst_brkm(TINFO, cleanup, "Creation of segment failed");
-		 /*NOTREACHED*/}
+		 }
 
 		tst_flush();
 		if ((pid = FORK_OR_VFORK()) == 0) {
@@ -167,7 +166,8 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
-	return 0;
+	tst_exit();
+
 }
 
 int create_segment(void *seg, size_t size)
@@ -213,13 +213,11 @@ void setup(void)
 	memset(&act, 0, sizeof(act));
 	sigemptyset(&act.sa_mask);
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	act.sa_handler = sigsegv_handler;
 	(void)sigaction(SIGSEGV, &act, NULL);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -235,15 +233,13 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
 #elif HAVE_MODIFY_LDT
 int main()
 {
 	tst_resm(TCONF,
 		 "modify_ldt is available but not tested on the platform than __i386__");
-	return 0;
+	tst_exit();
 }
 
 #else /* if defined(__i386__) */
@@ -251,7 +247,7 @@ int main()
 int main()
 {
 	tst_resm(TINFO, "modify_ldt02 test only for ix86");
-	return 0;
+	tst_exit();
 }
 
 #endif /* if defined(__i386__) */

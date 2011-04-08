@@ -88,6 +88,7 @@
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
+#include <endian.h>
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -109,14 +110,11 @@ static inline long fallocate();
 void get_blocksize(int);
 void populate_files(int fd);
 void runtest(int, int, loff_t);
-/* Extern Global Variables */
-extern int Tst_count;		/* counter for tst_xxx routines */
-/* Global Variables */
 char *TCID = "fallocate01";	/* test program identifier */
 char fname_mode1[255], fname_mode2[255];	/* Files used for testing */
 int fd_mode1, fd_mode2;
-int TST_TOTAL;
-int block_size;
+int TST_TOTAL = 2;
+loff_t block_size;
 int buf_size;
 
 /******************************************************************************
@@ -125,24 +123,18 @@ int buf_size;
  * files, removes all temporary directories exits the test with
  * appropriate return code by calling tst_exit() function.
 ******************************************************************************/
-extern void cleanup()
+void cleanup()
 {
-/* Close all open file descriptors. */
 
 	if (close(fd_mode1) == -1)
 		tst_resm(TWARN|TERRNO, "close(%s) failed", fname_mode1);
-
 	if (close(fd_mode2) == -1)
 		tst_resm(TWARN|TERRNO, "close(%s) failed", fname_mode2);
-
-	//remove tem directory and  all the files in it
 	tst_rmdir();
-	//Exit with appropriate return code
-	tst_exit();
 }
 
 /*****************************************************************************
- * Performs all one time setup for this test. This function is  
+ * Performs all one time setup for this test. This function is
  * used to create temporary dirs and temporary files
  * that may be used in the course of this test
  ******************************************************************************/
@@ -156,14 +148,16 @@ void setup()
 	sprintf(fname_mode1, "tfile_mode1_%d", getpid());
 	fd_mode1 = open(fname_mode1, O_RDWR | O_CREAT, 0700);
 	if (fd_mode1 == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "open(%s, O_RDWR) failed", fname_mode1);
+		tst_brkm(TBROK|TERRNO, cleanup, "open(%s, O_RDWR) failed",
+		    fname_mode1);
 	get_blocksize(fd_mode1);
 	populate_files(fd_mode1);
 
 	sprintf(fname_mode2, "tfile_mode2_%d", getpid());
-	fd_mode2 = open(fname_mode2, O_RDWR | O_CREAT, 0700);
+	fd_mode2 = open(fname_mode2, O_RDWR|O_CREAT, 0700);
 	if (fd_mode2 == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "open(%s, O_RDWR) failed", fname_mode2);
+		tst_brkm(TBROK|TERRNO, cleanup, "open(%s, O_RDWR) failed",
+		    fname_mode2);
 	populate_files(fd_mode2);
 }
 
@@ -177,7 +171,7 @@ void get_blocksize(int fd)
 	if (fstat(fd, &file_stat) < 0)
 		tst_resm(TFAIL|TERRNO, "fstat failed while getting block_size");
 
-	block_size = (int)file_stat.st_blksize;
+	block_size = file_stat.st_blksize;
 	buf_size = block_size;
 }
 
@@ -202,14 +196,11 @@ void populate_files(int fd)
 		for (index = 0; index < buf_size; index++)
 			buf[index] = 'A' + (index % 26);
 		buf[buf_size] = '\0';
-		if ((data = write(fd, buf, buf_size)) < 0)
-			tst_brkm(TBROK|TERRNO, cleanup,
-				 "Unable to write to %s", fname);
+		if ((data = write(fd, buf, buf_size)) == -1)
+			tst_brkm(TBROK|TERRNO, cleanup, "write failed");
 	}
 }
 
-/* ac: number of command line parameters */
-/* av: pointer to the array of the command line parameters */
 int main(int ac, char **av)
 {
 	int fd;
@@ -218,19 +209,13 @@ int main(int ac, char **av)
 	int lc;
 	char *msg;
 
-	TST_TOTAL = 2;
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/***************************************************************
-	* parse standard options
-	***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-
-	/* perform global test setup, call setup() function. */
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		for (mode = DEFAULT; mode <= FALLOC_FL_KEEP_SIZE; mode++) {
@@ -250,29 +235,18 @@ int main(int ac, char **av)
 	}
 
 	cleanup();
-	return 0;
+	tst_exit();
 }
 
-/*****************************************************************************
- * Wraper function to call fallocate system call
- ******************************************************************************/
 static inline long fallocate(int fd, int mode, loff_t offset, loff_t len)
 {
 #if __WORDSIZE == 32
-	struct utsname buf;
-	if (uname(&buf) == 0) {
-		if (!strcmp(buf.machine, "ppc64")
-		    || !strcmp(buf.machine, "ppc")
-		    || !strcmp(buf.machine, "x86_64"))
-			return syscall(__NR_fallocate, fd, mode,
-				       (int)(offset >> 32), (int)offset,
-				       (int)(len >> 32), (int)len);
-	} else {
-		perror("uname:");
-		return -1;
-	}
-#endif
+	return (long) syscall(__NR_fallocate, fd, mode,
+	    __LONG_LONG_PAIR((off_t)(offset >> 32), (off_t)offset),
+	    __LONG_LONG_PAIR((off_t)(len >> 32), (off_t)len));
+#else
 	return syscall(__NR_fallocate, fd, mode, offset, len);
+#endif
 }
 
 /*****************************************************************************

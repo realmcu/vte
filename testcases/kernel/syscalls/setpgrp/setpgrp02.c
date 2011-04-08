@@ -51,7 +51,6 @@
 
 char *TCID = "setpgrp02";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void setup(void);
 void cleanup(void);
@@ -65,13 +64,12 @@ int main(int ac, char **av)
 	int e_code, status, retval = 0;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* reset Tst_count in case we are looping */
@@ -118,8 +116,7 @@ int main(int ac, char **av)
 			cleanup();
 		}
 	}
-
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -127,10 +124,9 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -146,6 +142,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

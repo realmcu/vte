@@ -27,4 +27,10 @@ include $(top_srcdir)/include/mk/env_pre.mk
 CPPFLAGS			+= -DNO_XFS -I$(abs_srcdir) \
 				   -D_LARGEFILE64_SOURCE -D_GNU_SOURCE
 
+# if removed -DNO_XFS, you should unmask the following line
+#LDLIBS				+= -lattr
+
+# XXX (garrcoop): not -Wuninitialized clean.
+CPPFLAGS			+= -Wno-error
+
 include $(top_srcdir)/include/mk/generic_leaf_target.mk

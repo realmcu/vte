@@ -82,7 +82,6 @@ void cleanup();
 
 char *TCID = "readdir02";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int exp_enos[] = { EBADF, 0 };
 
@@ -97,8 +96,8 @@ int main(int ac, char **av)
 	struct dirent *dptr;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
     /***************************************************************
@@ -117,7 +116,6 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		if ((test_dir = opendir(".")) == NULL) {
@@ -153,15 +151,15 @@ int main(int ac, char **av)
 
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
     /***************************************************************
      * cleanup and exit
      ***************************************************************/
 	cleanup();
+	tst_exit();
 
-	return 0;
-}				/* End main */
+}
 
 void sigsegv_handler(int sig)
 {
@@ -186,7 +184,6 @@ void setup()
 	act.sa_handler = sigsegv_handler;
 	(void)sigaction(SIGSEGV, &act, NULL);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* If you are doing any file work, you should use a temporary directory.  We
@@ -215,6 +212,4 @@ void cleanup()
 	 */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

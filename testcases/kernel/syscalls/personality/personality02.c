@@ -66,6 +66,7 @@
 
 #include <errno.h>
 #include <linux/personality.h>
+#include "linux_syscall_numbers.h"
 #undef personality
 
 extern int personality(unsigned long);
@@ -75,11 +76,9 @@ void setup(void);
 
 char *TCID = "personality02";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 #define	PER_BAD	0x00dd		/* A non-existent personality type */
 
-#ifdef __NR_personality
 int main(int ac, char **av)
 {
 	int lc;			/* loop counter */
@@ -87,16 +86,15 @@ int main(int ac, char **av)
 	int start_pers;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	setup();		/* global setup */
 
 	start_pers = personality(PER_LINUX);
 	if (start_pers == -1) {
 		printf("personality01:  Test Failed\n");
-		exit(-1);
+		exit(1);
 	}
 
 	/* The following checks the looping state if -i option given */
@@ -126,27 +124,18 @@ int main(int ac, char **av)
 	}
 
 	cleanup();
-
-	 /*NOTREACHED*/ return 0;
-}
-#else
-int main(int ac, char **av)
-{
-	tst_resm(TCONF, "personality() not defined in your system");
 	tst_exit();
-}
-#endif
 
+}
 
 /*
  * setup() - performs all the ONE TIME setup for this test.
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -161,7 +150,4 @@ void cleanup(void)
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

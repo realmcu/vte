@@ -40,14 +40,14 @@
 #include "test.h"
 
 #define barrier() __asm__ __volatile__("": : :"memory")
-#define WITH_SIGNALS_BLOCKED(code) {											\
-		sigset_t held_sigs_;																	\
-		sigfillset(&held_sigs_);															\
+#define WITH_SIGNALS_BLOCKED(code) {					\
+		sigset_t held_sigs_;					\
+		sigfillset(&held_sigs_);				\
 		sigprocmask(SIG_SETMASK, &held_sigs_, &held_sigs_);	\
-		barrier(); \
-		code;																									\
-		barrier(); \
-		sigprocmask(SIG_SETMASK, &held_sigs_, NULL);					\
+		barrier();						\
+		code;							\
+		barrier();						\
+		sigprocmask(SIG_SETMASK, &held_sigs_, NULL);		\
 	}
 
 /*
@@ -121,16 +121,16 @@ pid_t create_sig_proc(unsigned long usec, int sig, unsigned count)
 
 	pid = getpid();
 	WITH_SIGNALS_BLOCKED(
-			if((cpid = fork()) == 0) {
-				tst_sig(NOFORK, SIG_DFL, NULL);
-				signal(SIGTERM, sigterm_handler);
-			}
+		if ((cpid = fork()) == 0) {
+			tst_sig(NOFORK, SIG_DFL, NULL);
+			signal(SIGTERM, sigterm_handler);
+		}
 	);
 	switch (cpid) {
 	case 0:
-		while(count-- > 0) {
+		while (count-- > 0) {
 			usleep(usec);
-			if(kill(pid, sig) == -1)
+			if (kill(pid, sig) == -1)
 				break;
 		}
 		_exit(0);
@@ -142,7 +142,6 @@ pid_t create_sig_proc(unsigned long usec, int sig, unsigned count)
 		return cpid;
 	}
 }
-
 
 /*
  * Create and delete test file
@@ -171,7 +170,6 @@ int cleanup_file(char *path)
 	unlink(path);
 	return 0;
 }
-
 
 /*
  * Create and delete swap file
@@ -230,7 +228,6 @@ int cleanup_swapfile(char *path)
 	return 0;
 }
 
-
 /*
  * Change user limit that the calling process can open
  */
@@ -280,7 +277,6 @@ int cleanup_ulimit_fnum(rlim_t oldlim)
 	}
 	return 0;
 }
-
 
 /*
  * Change /proc or /sys setting
@@ -336,7 +332,6 @@ int cleanup_proc_fs(char *path, int oldval)
 	return 0;
 }
 
-
 #if 0
 /*
  * Check max nodes from /sys/devices/system/node/node* files (for NUMA)
@@ -368,4 +363,3 @@ pid_t get_unexist_pid(void)
 		return pid;
 	}
 }
-

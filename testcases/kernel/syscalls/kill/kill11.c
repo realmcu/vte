@@ -54,7 +54,6 @@ int local_flag = PASSED;
 int block_number;
 FILE *temp;
 int TST_TOTAL = 1;
-extern int Tst_count;
 static int sig;
 
 int anyfail();
@@ -101,18 +100,15 @@ int main(int argc, char **argv)
 
 #ifdef UCLINUX
 	/* parse standard options */
-	if ((msg =
-	     parse_opts(argc, argv, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	}
 
 	maybe_run_child(&do_child, "dd", &temp, &sig);
 #endif
 
 	setup();
 	// tempdir();           /* move to new directory */
-/*--------------------------------------------------------------------*/
-	blenter();		/*<<<<<ENTER DATA HERE<<<<<<<< */
+	blenter();
 
 	exno = 1;
 	unlink("core");
@@ -146,7 +142,7 @@ int main(int argc, char **argv)
 				tst_resm(TBROK, "self_exec FAILED - "
 					 "terminating test.");
 				tst_exit();
-				return 0;
+				tst_exit();
 			}
 #else
 			do_child();
@@ -239,7 +235,7 @@ int main(int argc, char **argv)
 	tst_rmdir();
 /*--------------------------------------------------------------------*/
 	anyfail();
-	return 0;
+	tst_exit();
 }
 
 /****** LTP Port        *****/

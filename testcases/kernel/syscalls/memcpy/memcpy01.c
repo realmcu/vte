@@ -67,7 +67,6 @@ int TST_TOTAL = 1;
 char buf[BSIZE];
 
 /*****	LTP Port	*****/
-extern int Tst_count;
 
 int anyfail();
 int blenter();
@@ -197,7 +196,7 @@ int main(int argc, char *argv[])
 /* Clean up any files created by test before call to anyfail.	*/
 
 	anyfail();		/* THIS CALL DOES NOT RETURN - EXITS!!  */
-	return 0;
+	tst_exit();
 }
 
 /*--------------------------------------------------------------*/

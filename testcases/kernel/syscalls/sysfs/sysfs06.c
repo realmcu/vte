@@ -79,7 +79,6 @@ static void setup();
 static void cleanup();
 
 char *TCID = "sysfs06";		/* Test program identifier.    */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 static int option[3] = { 2, 4, 2 };	/* valid and invalid option */
 static int fsindex[3] = { 10000, 0, 1 };	/*invalid and valid fsindex */
 static int exp_enos[] = { EINVAL, EFAULT, 0 };
@@ -104,19 +103,17 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != NULL)
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
 #ifdef __NR_sysfs
-	/* check looping state if -i option given */
+
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		for (i = 0; i < TST_TOTAL; i++) {
 
-			/* reset Tst_count in case we are looping. */
 			Tst_count = 0;
 			TEST(syscall
 			     (__NR_sysfs, option[i], fsindex[i], bad_addr));
@@ -138,7 +135,7 @@ int main(int ac, char **av)
 			}
 			TEST_ERROR_LOG(TEST_ERRNO);
 		}		/*End of TEST LOOPS */
-	}			/* End of TEST_LOOPING */
+	}
 #else
 	tst_resm(TWARN,
 		 "This test can only run on kernels that support the sysfs system call");
@@ -147,19 +144,18 @@ int main(int ac, char **av)
 	/*Clean up and exit */
 	cleanup();
 
-	return 0;
+	tst_exit();
 }				/*End of main */
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Setting up expected errnos */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	bad_addr =
@@ -167,7 +163,7 @@ void setup()
 		 0);
 	if (bad_addr == MAP_FAILED)
 		tst_brkm(TBROK, cleanup, "mmap failed");
-}				/* End setup() */
+}
 
 /*
 * cleanup() - Performs one time cleanup for this test at
@@ -181,6 +177,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

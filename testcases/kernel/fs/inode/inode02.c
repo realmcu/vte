@@ -110,9 +110,7 @@ FILE *temp;
 
 char *TCID="inode02";           /* Test program identifier.    */
 int TST_TOTAL=1;                /* Total number of test cases. */
-extern int Tst_count;           /* Test Case counter for tst_* routines */
 /**************/
-
 
 int main(argc, argv)
 	int argc;
@@ -171,10 +169,10 @@ int main(argc, argv)
 	/*						*/
 	/************************************************/
 
-	for(p = 0; p < nchild; p++)
+	for (p = 0; p < nchild; p++)
 	{
 		pid = fork();
-		if(pid == 0)
+		if (pid == 0)
 		{
 			tree();
 		}
@@ -210,20 +208,16 @@ int main(argc, argv)
 		local_flag = FAILED;
 	}
 
-
-
 	/************************************************/
 	/*						*/
 	/*  And report the results..........		*/
 	/*						*/
 	/************************************************/
 
-
 	anyfail();
 	/** NOT REACHED **/
-	return 0;
+	tst_exit();
 }
-
 
 int bd_arg(str)
 	char *str;
@@ -258,7 +252,6 @@ int tree()
 	slash[0] = '/';
 	slash[1] = '\0';
 
-
 	/********************************/
 	/*				*/
 	/*  make the root directory for */
@@ -270,7 +263,7 @@ int tree()
 
 	ret_val = mkdir(path_string, DIRECTORY_MODE);
 
-	if(ret_val == -1) {
+	if (ret_val == -1) {
 		tst_resm(TBROK,"Reason: Impossible to create directory %s, errno=%d\n", path_string, errno);
 		exit(-5);
 	}
@@ -291,12 +284,11 @@ int tree()
 	/*					*/
 	/****************************************/
 
-
 	strcpy(path_list_string, path_string);
 	strcat(path_list_string, slash);
 	strcat(path_list_string, "path_list");
 	list_id = creat(path_list_string, FILE_MODE);
-	if(list_id == -1) {
+	if (list_id == -1) {
 		fprintf(temp,"\nThe path_list file '%s' cannot be created, errno=%d\n",
 		  path_list_string, errno);
 		exit(-7);
@@ -329,7 +321,7 @@ int tree()
 	gen_ret_val = generate(path_string, level);
 	close(list_id);
 	list_id = open(path_list_string, READ);
-	if(list_id == -1) {
+	if (list_id == -1) {
 		fprintf(temp,"\nThe path_list file cannot be opened for reading, errno=%d\n", errno);
 		exit(-8);
 	}
@@ -348,7 +340,7 @@ int tree()
 
 	ch_ret_val = check();
 
-	if(gen_ret_val > ch_ret_val)
+	if (gen_ret_val > ch_ret_val)
 		exit_val = ch_ret_val;
 	else
 		exit_val = gen_ret_val;
@@ -415,7 +407,7 @@ int level;    	/* the tree depth variable */
 	int i, j;	/* iteration counters */
 
 	switch_flag = level & TRUE;
-	if(strlen(string) >= MAX_PATH_STRING_LENGTH) {
+	if (strlen(string) >= MAX_PATH_STRING_LENGTH) {
 
 		/********************************/
 		/*				*/
@@ -427,8 +419,8 @@ int level;    	/* the tree depth variable */
 		fprintf(temp,"\nMaximum path_name length reached\n");
 		return(-1);
 	}
-	else if(level < max_depth) {
-		for(i = 0; i <= max_breadth; i++) {
+	else if (level < max_depth) {
+		for (i = 0; i <= max_breadth; i++) {
 			get_next_name();
 			strcpy(new_string, string);
 			strcat(new_string, slash);
@@ -441,7 +433,7 @@ int level;    	/* the tree depth variable */
 			/*					*/
 			/****************************************/
 
-			if(switch_flag) {
+			if (switch_flag) {
 				switch_flag = FALSE;
 
 				/****************************************/
@@ -451,16 +443,15 @@ int level;    	/* the tree depth variable */
 				/****************************************/
 
 				file_id = creat(new_string, FILE_MODE);
-				if(file_id == -1) {
+				if (file_id == -1) {
 					fprintf(temp,"\nImpossible to create file %s, errno=%d\n",
-						new_string, errno);	
+						new_string, errno);
 					return(-2);
 				}
 
 #ifdef DEBUG
 				tst_resm(TINFO,"%d  %s F\n", level, new_string);
 #endif
-
 
 				/****************************************/
 				/*					*/
@@ -469,13 +460,13 @@ int level;    	/* the tree depth variable */
 				/****************************************/
 
 				len = strlen(new_string);
-				for(j = 1; j <= file_length; j++) {
+				for (j = 1; j <= file_length; j++) {
 					ret_len = write(file_id, new_string, len);
-					if(ret_len != len) {
+					if (ret_len != len) {
 						fprintf(temp,"\nUnsuccessful write to file %s, errno=%d\n",
 						  new_string, errno);
 						return(-3);
-					}	
+					}
 				}
 				close(file_id);
 
@@ -503,10 +494,9 @@ int level;    	/* the tree depth variable */
 				/*					*/
 				/****************************************/
 
-
 				ret_val = mkdir(new_string, DIRECTORY_MODE);
 
-				if(ret_val != 0) {
+				if (ret_val != 0) {
 					fprintf(temp,"\nImpossible to create directory %s, errno=%d\n",
 					 new_string, errno);
 					return(-5);
@@ -536,7 +526,7 @@ int level;    	/* the tree depth variable */
 
 				new_level = level + 1;
 				new_ret_val = generate(new_string, new_level);
-				if(new_ret_val < ret_val)
+				if (new_ret_val < ret_val)
 					ret_val = new_ret_val;
 			}
 		}
@@ -572,7 +562,7 @@ int check()
 {
 	int len, path_mode, val, ret_len, j;
 
-	for(;;) {
+	for (;;) {
 
 		/****************************************/
 		/*					*/
@@ -580,13 +570,12 @@ int check()
 		/*					*/
 		/****************************************/
 
-	
-		if(fscanf(list_stream, "%s", path_string) == EOF) {
+		if (fscanf(list_stream, "%s", path_string) == EOF) {
 
 #ifdef DEBUG
 			tst_resm(TINFO,"\nEnd of path_list file reached \n");
 #endif
-	
+
 			return 0;
 		}
 
@@ -596,7 +585,7 @@ int check()
 
 		len = strlen(path_string);
 		len--;
-		if(path_string[len] == 'F') {
+		if (path_string[len] == 'F') {
 
 	     	/********************************/
 		/*				*/
@@ -606,38 +595,38 @@ int check()
 
 			path_string[len] = '\0';
 			file_id = open(path_string, READ);
-			if(file_id <= 0) {
+			if (file_id <= 0) {
 				fprintf(temp,"\nImpossible to open file %s, errno=%d\n",
 					path_string, errno);
 				return(-1);
 			}
-			
+
 			else {
 				/********************************/
 				/*				*/
 				/*    check its contents	*/
 				/*				*/
 				/********************************/
-		
+
 				ret_len=0;
 				len = strlen(path_string);
-				for(j = 1; j <= file_length; j++) {
+				for (j = 1; j <= file_length; j++) {
 					ret_len = read(file_id, read_string, len);
-					if(len != ret_len) {
+					if (len != ret_len) {
 						fprintf(temp,"\nFile read error for file %s, errno=%d\n",
 						path_string, errno);
 						return(-3);
 					}
 					read_string[len] = '\0';
 					val = strcmp(read_string, path_string);
-					if(val != 0) {
+					if (val != 0) {
 						fprintf(temp,"\nContents of file %s are different than expected: %s\n", path_string, read_string);
 						return(-4);
 					}
 				}
 				close(file_id);
 			}  /* else for */
-					if(ret_len <= 0) {
+					if (ret_len <= 0) {
 						fprintf(temp,"\nImpossible to read file %s, errno=%d\n",
 						path_string, errno);
 						return(-2);
@@ -654,12 +643,12 @@ int check()
 
 			path_string[len] = '\0';
 			path_mode = mode(path_string);
-			if(path_mode == -1) {
+			if (path_mode == -1) {
 				fprintf(temp,"\nPreviously created directory path %s was not open\n",
 				path_string);
 				return(-4);
 			}
-			if((040000 & path_mode) != 040000){
+			if ((040000 & path_mode) != 040000) {
 				fprintf(temp,"\nPath %s was not recognized to be a directory\n",
 				path_string);
 				fprintf(temp,"Its mode is %o\n", path_mode);
@@ -684,7 +673,7 @@ int get_next_name()
 	int last_position ;
 
 	last_position = NAME_LENGTH - 1;
-	if(k == 0) {
+	if (k == 0) {
 
 		/************************/
 		/*			*/
@@ -692,7 +681,7 @@ int get_next_name()
 		/*			*/
 		/************************/
 
-		for(i = 0; i < NAME_LENGTH; i++)
+		for (i = 0; i < NAME_LENGTH; i++)
 			name[i] = 'a';
 		name[NAME_LENGTH] = '\0';
 		k++;
@@ -720,8 +709,8 @@ int position;
 {
 	int next_position;
 
-	if(name[position] == 'z')
-		if(position == 0) {
+	if (name[position] == 'z')
+		if (position == 0) {
 			fprintf(temp,"ERROR: There are no more available names\n");
 			exit(-1);
 		}
@@ -755,7 +744,7 @@ char path_string[];
 	int ret_val, mod;
 
 	ret_val = stat(path_string, &buf);
-	if(ret_val == -1) return(-1);
+	if (ret_val == -1) return(-1);
 	else {
 		mod = buf.st_mode;
 		return(mod);
@@ -774,7 +763,7 @@ char string[];
 	write_string[len] = '\n';
 	len ++;
 	ret_len = write(list_id, write_string, len);
-	if(len != ret_len) {
+	if (len != ret_len) {
 		fprintf(temp,"A string of deviant length %d written to path_list, errno=%d\n",
 				ret_len, errno);
 		exit(-2);
@@ -809,9 +798,9 @@ int term()
 int massmurder()
 {
 	int i;
-	for( i=0 ; i < MAXCHILD ; i++ )
+	for (i=0 ; i < MAXCHILD ; i++)
 	{
-		if( allchild[i] )
+		if (allchild[i])
 		{
 			kill(allchild[i], SIGTERM);
 		}
@@ -831,7 +820,6 @@ setup()
     tst_tmpdir();
     temp = stderr;
 }
-
 
 /*
  * fail_exit()
@@ -913,4 +901,3 @@ instress()
                                 " etc are likely to fail.\n");
         return 1;
 }
-

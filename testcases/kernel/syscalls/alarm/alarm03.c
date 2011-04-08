@@ -102,36 +102,24 @@
 
 void setup();
 void cleanup();
+void trapper();
 
 char *TCID = "alarm03";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int main(int ac, char **av)
 {
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
-	int e_code, status, retval = 0;
+	int status, retval = 0;
 
-    /***************************************************************
-     * parse standard options
-     ***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
 
-    /***************************************************************
-     * perform global setup for test
-     ***************************************************************/
 	setup();
 
-    /***************************************************************
-     * check looping state if -c option given
-     ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/*
@@ -149,13 +137,13 @@ int main(int ac, char **av)
 
 			if (TEST_RETURN != 0) {
 				retval = 1;
-				tst_resm(TFAIL,
-					 "alarm(100), fork, alarm(0) child's alarm returned %ld",
-					 TEST_RETURN);
+				printf("%d: alarm(100), fork, alarm(0) child's "
+				    "alarm returned %ld\n",
+				    getpid(), TEST_RETURN);
 			} else if (STD_FUNCTIONAL_TEST) {
-				tst_resm(TPASS,
-					 "alarm(100), fork, alarm(0) child's alarm returned %ld",
-					 TEST_RETURN);
+				printf("%d: alarm(100), fork, alarm(0) child's "
+				    "alarm returned %ld\n",
+				    getpid(), TEST_RETURN);
 			}
 
 			exit(retval);
@@ -175,46 +163,30 @@ int main(int ac, char **av)
 					 "alarm(100), fork, alarm(0) parent's alarm returned %ld",
 					 TEST_RETURN);
 			}
-			/* wait for the child to finish */
-			wait(&status);
-			/* make sure the child returned a good exit status */
-			e_code = status >> 8;
-			if ((e_code != 0) || (retval != 0)) {
-				tst_resm(TFAIL, "Failures reported above");
-			}
+			if (wait(&status) == -1)
+				tst_brkm(TBROK|TERRNO, cleanup, "wait failed");
+			if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+				tst_resm(TFAIL, "see failures reported above");
 
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
-    /***************************************************************
-     * cleanup and exit
-     ***************************************************************/
 	cleanup();
 
-	return 0;
-}				/* End main */
+	tst_exit();
+}
 
-/***************************************************************
- * setup() - performs all ONE TIME setup for this test.
- ***************************************************************/
 void setup()
 {
-	void trapper();
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	signal(SIGALRM, trapper);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
-}				/* End setup() */
+}
 
-/***************************************************************
- * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
- ***************************************************************/
 void cleanup()
 {
 	/*
@@ -222,13 +194,9 @@ void cleanup()
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
+}
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
-
-void trapper(sig)
-int sig;
+void trapper(int sig)
 {
 	signal(SIGALRM, trapper);
 }

@@ -71,7 +71,6 @@ void do_child(void);
 
 char *TCID = "msgrcv01";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int msg_q_1;
 MSGBUF snd_buf, rcv_buf, cmp_buf;
@@ -86,8 +85,8 @@ int main(int ac, char **av)
 	int status, e_code;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
 	maybe_run_child(&do_child, "d", &msg_q_1);
@@ -135,9 +134,9 @@ int main(int ac, char **av)
 	}
 
 	cleanup();
+	tst_exit();
 
     /** NOT REACHED **/
-	return 0;
 
 }
 
@@ -182,10 +181,9 @@ void do_child()
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -215,7 +213,6 @@ void cleanup(void)
 	/* if it exists, remove the message queue that was created */
 	rm_queue(msg_q_1);
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
 	/*
@@ -224,6 +221,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

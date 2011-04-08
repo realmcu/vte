@@ -66,7 +66,6 @@
 #include "libtestsuite.h"
 
 char *TCID = "shmctl01";
-extern int Tst_count;
 
 int shm_id_1 = -1;
 struct shmid_ds buf;
@@ -82,8 +81,6 @@ void *set_shared;
 
 pid_t pid_arr[N_ATTACH];
 int sync_pipes[2];
-
-void sighandler(int);
 
 /*
  * These are the various setup and check functions for the commands
@@ -141,9 +138,8 @@ int main(int ac, char **av)
 	void check_functionality(void);
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 #ifdef UCLINUX
 	argv0 = av[0];
 	maybe_run_child(do_child, "ddd", &stat_i, &stat_time, &shm_id_1);
@@ -214,7 +210,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -372,7 +368,7 @@ void func_stat()
 	 * that memory so the attaches equal N_ATTACH + stat_time (1).
 	 */
 	if (!fail && buf.shm_nattch != N_ATTACH + stat_time) {
-		tst_resm(TFAIL, "# of attaches is incorrect - %d",
+		tst_resm(TFAIL, "# of attaches is incorrect - %ld",
 			 buf.shm_nattch);
 		fail = 1;
 	}
@@ -493,20 +489,15 @@ void func_rmid()
  */
 void sighandler(sig)
 {
-	if (sig != SIGUSR1) {
-		tst_resm(TINFO, "received unexpected signal %d", sig);
-	}
+	if (sig != SIGUSR1)
+		tst_resm(TBROK, "received unexpected signal %d", sig);
 }
 
-/*
- * setup() - performs all the ONE TIME setup for this test.
- */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, sighandler, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -529,7 +520,6 @@ void cleanup(void)
 	/* if it exists, remove the shared memory segment */
 	rm_shm(shm_id_1);
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
 	/*
@@ -538,6 +528,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

@@ -94,7 +94,6 @@ struct passwd *user1;		/* struct. to hold getpwnam(3) o/p contents */
 char *TCID = "mknod04";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
 char node_name[PATH_MAX];	/* buffer to hold node name created */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 gid_t group1_gid, group2_gid, mygid;	/* user and process group id's */
 uid_t save_myuid, user1_uid;	/* user and process user id's */
@@ -110,18 +109,16 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -197,8 +194,8 @@ int main(int ac, char **av)
 	 */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /*
  * void
@@ -224,7 +221,6 @@ void setup()
 		tst_exit();
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Make a temp dir and cd to it */
@@ -338,9 +334,6 @@ void cleanup()
 			 "resetting process real/effective uid failed");
 	}
 
-	/* Remove files and temporary directory created */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

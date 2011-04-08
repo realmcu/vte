@@ -233,7 +233,6 @@ int main(int argc, char *argv[])
 		((before_children.ru_utime.tv_sec +
 		  ((before_children.ru_utime.tv_usec)/USEC_PER_SEC)));
 
-
 	/* sum up self and children after */
 	systime = (after_self.ru_stime.tv_sec +
 		   ((after_self.ru_stime.tv_usec)/USEC_PER_SEC)) +

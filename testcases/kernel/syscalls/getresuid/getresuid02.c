@@ -83,7 +83,6 @@ extern int getresuid(uid_t *, uid_t *, uid_t *);
 
 char *TCID = "getresuid02";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 uid_t pr_uid, pe_uid, ps_uid;	/* calling process real/effective/saved uid */
 
 void setup();			/* Main setup function of test */
@@ -97,18 +96,16 @@ int main(int ac, char **av)
 	 eff_uid, sav_uid;
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -c option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -118,7 +115,6 @@ int main(int ac, char **av)
 		 */
 		TEST(getresuid(&real_uid, &eff_uid, &sav_uid));
 
-		/* check return code of getresuid(2) */
 		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL, "getresuid() Failed, errno=%d : %s",
 				 TEST_ERRNO, strerror(TEST_ERRNO));
@@ -146,13 +142,12 @@ int main(int ac, char **av)
 		} else {
 			tst_resm(TPASS, "call succeeded");
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /*
  * void
@@ -163,10 +158,8 @@ void setup()
 {
 	struct passwd *user_id;	/* passwd struct for test user */
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Check that the test process id is super/root  */
@@ -219,6 +212,4 @@ void cleanup()
 		tst_brkm(TBROK, NULL, "resetting process effective uid failed");
 	}
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

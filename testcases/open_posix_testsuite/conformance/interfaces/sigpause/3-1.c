@@ -1,8 +1,8 @@
-/*   
+/*
  * Copyright (c) 2003, Intel Corporation. All rights reserved.
  * Created by:  salwan.searty REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
  This program verifies that sigpause() returns -1 and sets errno to EINTR
@@ -71,7 +71,7 @@ int main()
 {
 	pthread_t new_th;
 
-	if(pthread_create(&new_th, NULL, a_thread_func, NULL) != 0)
+	if (pthread_create(&new_th, NULL, a_thread_func, NULL) != 0)
 	{
 		perror("Error creating thread\n");
 		return PTS_UNRESOLVED;
@@ -79,7 +79,7 @@ int main()
 
 	sleep(1);
 
-	if(pthread_kill(new_th, SIGTOTEST) != 0) 
+	if (pthread_kill(new_th, SIGTOTEST) != 0)
 	{
 		printf("Test UNRESOLVED: Couldn't send signal to thread\n");
 		return PTS_UNRESOLVED;
@@ -89,15 +89,13 @@ int main()
 	while (sem == INTHREAD)
 		sleep(1);
 
-	if(result == 2) {
+	if (result == 2) {
 		return PTS_UNRESOLVED;
 	}
-	if(result == 1) {
+	if (result == 1) {
 		return PTS_FAIL;
 	}
 
 	printf("Test PASSED\n");
-	return PTS_PASS;	
+	return PTS_PASS;
 }
-
-

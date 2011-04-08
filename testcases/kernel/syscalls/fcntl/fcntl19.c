@@ -19,7 +19,7 @@
 
 /*
  * NAME
- *	fcnlt08.c
+ *	fcntl19.c
  *
  * DESCRIPTION
  *	Testcase to check locking of regions of a file
@@ -47,8 +47,10 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <inttypes.h>
+
 #include "test.h"
 #include "usctest.h"
+#include "safe_macros.h"
 
 #define STRINGSIZE	27
 #define STRING		"abcdefghijklmnopqrstuvwxyz\n"
@@ -73,33 +75,26 @@ int do_lock(int, short, short, int, int);
 
 char *TCID = "fcntl19";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void setup(void);
 void cleanup(void);
 
 int fail = 0;
 
-/*
- * setup
- *	performs all ONE TIME setup for this test
- */
 void setup()
 {
 	char *buf = STRING;
 	char template[PATH_MAX];
 	struct sigaction act;
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	umask(0);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	pipe(parent_pipe);
-	pipe(child_pipe);
+	SAFE_PIPE(cleanup, parent_pipe);
+	SAFE_PIPE(cleanup, child_pipe);
 	parent_pid = getpid();
 
 	tst_tmpdir();
@@ -125,23 +120,12 @@ void setup()
 	}
 }
 
-/*
- * cleanup()
- *	performs all ONE TIME cleanup for this test at completion or
- *	premature exit
- */
 void cleanup()
 {
-	/*
-	 * print timing stats if that option was specified
-	 * print errno log if that option was specified
-	 */
 	TEST_CLEANUP;
 
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
 
 void do_child()
@@ -152,11 +136,8 @@ void do_child()
 	close(child_pipe[0]);
 	while (1) {
 		child_get(&fl);
-		if (fcntl(fd, F_GETLK, &fl) < 0) {
-			tst_resm(TFAIL, "fcntl on file failed, errno =%d",
-				 errno);
-			fail = 1;
-		}
+		if (fcntl(fd, F_GETLK, &fl) < 0)
+			tst_resm(TFAIL|TERRNO, "fcntl on file failed");
 		child_put(&fl);
 	}
 }
@@ -306,8 +287,8 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
 	maybe_run_child(&do_child, "ddddd", &parent_pipe[0], &parent_pipe[1],
@@ -659,5 +640,5 @@ int main(int ac, char **av)
 		close(fd);
 	}
 	cleanup();
-	return 0;
+	tst_exit();
 }

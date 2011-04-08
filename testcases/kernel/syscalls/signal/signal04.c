@@ -68,7 +68,6 @@ void setup(void);
 void sighandler(int);
 
 char *TCID = "signal04";
-extern int Tst_count;
 
 int siglist[] = { SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGTRAP, SIGABRT,
 	SIGBUS, SIGFPE, SIGUSR1, SIGSEGV, SIGUSR2, SIGPIPE, SIGALRM,
@@ -91,9 +90,9 @@ int main(int ac, char **av)
 	sighandler_t rval, first;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	setup();		/* global setup */
 
@@ -117,7 +116,7 @@ int main(int ac, char **av)
 			if ((rval = signal(siglist[i], &sighandler)) == SIG_ERR) {
 				tst_brkm(TBROK, cleanup, "initial signal call"
 					 " failed");
-			 /*NOTREACHED*/}
+			 }
 
 			/* store the return value */
 			first = rval;
@@ -131,7 +130,7 @@ int main(int ac, char **av)
 				tst_brkm(TFAIL, cleanup, "%s call failed - "
 					 "errno = %d : %s", TCID, TEST_ERRNO,
 					 strerror(TEST_ERRNO));
-			 /*NOTREACHED*/}
+			 }
 
 			if (STD_FUNCTIONAL_TEST) {
 				/* now set the handler back to our own */
@@ -139,7 +138,7 @@ int main(int ac, char **av)
 				    == SIG_ERR) {
 					tst_brkm(TBROK, cleanup, "initial "
 						 "signal call failed");
-				 /*NOTREACHED*/}
+				 }
 
 				/*
 				 * the first return value should equal the
@@ -153,7 +152,7 @@ int main(int ac, char **av)
 						 "values for signal(%d) don't "
 						 "match. Got %p, expected %p.",
 						 siglist[i], rval, first);
-				 /*NOTREACHED*/}
+				 }
 			} else {
 				tst_resm(TPASS, "Call of signal(%d) succeeded",
 					 siglist[i]);
@@ -162,7 +161,7 @@ int main(int ac, char **av)
 	}
 
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -178,7 +177,7 @@ void sighandler(int sig)
  */
 void setup(void)
 {
-	/* Pause if that option was specified */
+
 	TEST_PAUSE;
 }
 
@@ -194,6 +193,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

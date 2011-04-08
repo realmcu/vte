@@ -55,7 +55,6 @@
 
 char *TCID = "pipe07";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int exp_enos[] = { EMFILE, 0 };
 
@@ -77,9 +76,8 @@ int main(int ac, char **av)
 	FILE *f;		/* used for retrieving the used fds */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	setup();
 	/* Get the currently used number of file descriptors */
 	mypid = getpid();
@@ -125,9 +123,8 @@ int main(int ac, char **av)
 
 	}
 	cleanup();
+	tst_exit();
 
-	/* NOT REACHED */
-	return 0;
 }
 
 /*
@@ -148,10 +145,8 @@ void setup()
 	tempdir = mkdtemp(template);
 	chdir(tempdir);
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 }
@@ -174,9 +169,5 @@ void cleanup()
 	/* Chdir back to original working directory */
 	chdir(currdir);
 
-	/* Remove temporary test directory */
 	rmdir(tempdir);
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

@@ -88,7 +88,6 @@ void sig_handler(int sig);	/* signal catching function */
 
 char *TCID = "sigprocmask01";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 int exp_enos[] = { 0 };
 int sig_catch = 0;		/* variable to blocked/unblocked signals */
 
@@ -103,21 +102,19 @@ int main(int ac, char **av)
 	pid_t my_pid;		/* test process id */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	 /*NOTREACED*/}
 
-	/* Perform global setup for test */
 	setup();
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -133,7 +130,6 @@ int main(int ac, char **av)
 		/* Send SIGINT signal to the process */
 		kill(my_pid, SIGINT);
 
-		/* check return code of sigprocmask */
 		if (TEST_RETURN == -1) {
 			TEST_ERROR_LOG(TEST_ERRNO);
 			tst_resm(TFAIL,
@@ -175,7 +171,7 @@ int main(int ac, char **av)
 						tst_brkm(TFAIL, cleanup,
 							 "sigismember() failed, "
 							 "error:%d", errno);
-					 /*NOTREACHED*/}
+					 }
 
 					/*
 					 * Invoke sigprocmask() again to
@@ -190,7 +186,7 @@ int main(int ac, char **av)
 							 "sigprocmask() failed "
 							 "to unblock signal, "
 							 "error=%d", errno);
-					 /*NOTREACHED*/}
+					 }
 					if (sig_catch) {
 						tst_resm(TPASS, "Functionality "
 							 "of sigprocmask() "
@@ -209,13 +205,12 @@ int main(int ac, char **av)
 		}
 
 		Tst_count++;	/* incr TEST_LOOP counter */
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /*
  * void
@@ -228,10 +223,9 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -242,12 +236,12 @@ void setup()
 		tst_brkm(TFAIL, cleanup,
 			 "sigemptyset() failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 	if (sigfillset(&sigset2) == -1) {
 		tst_brkm(TFAIL, cleanup,
 			 "sigfillset() failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 
 	/* Set the signal handler function to catch the signal */
 	sa_new.sa_handler = sig_handler;
@@ -255,7 +249,7 @@ void setup()
 		tst_brkm(TFAIL, cleanup,
 			 "sigaction() failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 
 	/*
 	 * Add specified signal (SIGINT) to the signal set
@@ -265,8 +259,8 @@ void setup()
 		tst_brkm(TFAIL, cleanup,
 			 "sigaddset() failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 /*NOTREACHED*/}
-}				/* End setup() */
+	 }
+}
 
 /*
  * void
@@ -296,6 +290,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

@@ -54,7 +54,6 @@ char user1name[] = "nobody";
 
 char *TCID = "open05";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 extern struct passwd *my_getpwnam(char *);
 char fname[20];
@@ -74,15 +73,14 @@ int main(int ac, char **av)
 	pid_t pid;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
 	TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* reset Tst_count in case we are looping */
@@ -90,7 +88,7 @@ int main(int ac, char **av)
 
 		if ((pid = FORK_OR_VFORK()) == -1) {
 			tst_brkm(TBROK, cleanup, "fork() failed");
-		 /*NOTREACHED*/}
+		 }
 
 		if (pid == 0) {	/* child */
 			if (seteuid(nobody->pw_uid) == -1) {
@@ -136,8 +134,7 @@ int main(int ac, char **av)
 
 		}
 	}
-
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -147,13 +144,11 @@ void setup()
 {
 	/* test must be run as root */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Must run test as root");
+		tst_brkm(TBROK, NULL, "Must run test as root");
 	}
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* make a temporary directory and cd to it */
@@ -165,7 +160,7 @@ void setup()
 
 	if ((fd = open(fname, O_RDWR | O_CREAT, 0700)) == -1) {
 		tst_brkm(TBROK, cleanup, "open() failed, errno: %d", errno);
-	 /*NOTREACHED*/}
+	 }
 }
 
 /*
@@ -185,6 +180,4 @@ void cleanup()
 	/* delete the test directory created in setup() */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

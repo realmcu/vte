@@ -71,7 +71,6 @@ extern void do_file_setup(char *);
 
 char *TCID = "rename06";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int exp_enos[] = { EINVAL, 0 };	/* List must end with 0 */
 
@@ -89,9 +88,8 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	/*
 	 * perform global setup for test
@@ -106,7 +104,6 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/* rename a directory to a subdirectory of itself */
@@ -126,25 +123,21 @@ int main(int ac, char **av)
 		} else {
 			tst_resm(TPASS, "rename() returned EINVAL");
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/*
-	 * cleanup and exit
-	 */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Create a temporary directory and make it current. */
@@ -156,14 +149,14 @@ void setup()
 	/* create "old" directory */
 	if (stat(fdir, &buf1) != -1) {
 		tst_brkm(TBROK, cleanup, "tmp directory %s found!", fdir);
-	 /*NOTREACHED*/}
+	 }
 	if (mkdir(fdir, 00770) == -1) {
 		tst_brkm(TBROK, cleanup, "Could not create directory %s", fdir);
-	 /*NOTREACHED*/}
+	 }
 	if (stat(fdir, &buf1) == -1) {
 		tst_brkm(TBROK, cleanup, "failed to stat directory %s "
 			 "in rename()", fdir);
-		/* NOTREACHED */
+
 	}
 	/* save "old"'s dev and ino */
 	olddev = buf1.st_dev;
@@ -172,15 +165,15 @@ void setup()
 	/* create another directory */
 	if (stat(mdir, &buf2) != -1) {
 		tst_brkm(TBROK, cleanup, "tmp directory %s found!", mdir);
-	 /*NOTREACHED*/}
+	 }
 	if (mkdir(mdir, 00770) == -1) {
 		tst_brkm(TBROK, cleanup, "Could not create directory %s", mdir);
-	 /*NOTREACHED*/}
+	 }
 
 	if (stat(mdir, &buf2) == -1) {
 		tst_brkm(TBROK, cleanup, "failed to stat directory %s "
 			 "in rename()", mdir);
-		/* NOTREACHED */
+
 	}
 
 	/* save "new"'s dev and ino */
@@ -204,9 +197,4 @@ void cleanup()
 	 * Remove the temporary directory.
 	 */
 	tst_rmdir();
-
-	/*
-	 * Exit with return code appropriate for results.
-	 */
-	tst_exit();
 }

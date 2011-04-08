@@ -1,11 +1,11 @@
-/*   
+/*
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  julie.n.fleischer REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
- *  Test that the sigpending() function stores the set of signals that 
+ *  Test that the sigpending() function stores the set of signals that
  *  are blocked from delivery when there are signals blocked both
  *  in the main function and in the signal handler.
  *  1)  Block two signals from delivery to main process.
@@ -18,12 +18,11 @@
  *    6)  Verify the three signals not raised are not shown.
  */
 
-
-/*   
+/*
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  julie.n.fleischer REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
  *  Signal handler uses exit() to leave so that the signals are not executed.
@@ -42,8 +41,8 @@ void handler(int signo)
 		printf("Could not call sigemptyset()\n");
 		exit(-1);
 	}
-	if (raise(SIGALRM) != 0) {
-		printf("Could not raise SIGALRM\n");
+	if (raise(SIGUSR2) != 0) {
+		printf("Could not raise SIGUSR2\n");
 		exit(-1);
 	}
 	if (raise(SIGCONT) != 0) {
@@ -56,12 +55,12 @@ void handler(int signo)
 		exit(-1);
 	}
 
-	if ( (sigismember(&pendingset, SIGALRM) == 1) &&
-		(sigismember(&pendingset, SIGCONT) == 1) ) {
+	if (sigismember(&pendingset, SIGUSR2) == 1 &&
+	    sigismember(&pendingset, SIGCONT) == 1) {
 		printf("All pending signals found\n");
-		if ( (sigismember(&pendingset, SIGHUP) == 0) &&
+		if ((sigismember(&pendingset, SIGHUP) == 0) &&
 			(sigismember(&pendingset, SIGABRT) == 0) &&
-			(sigismember(&pendingset, SIGUSR1) == 0) ) {
+			(sigismember(&pendingset, SIGUSR1) == 0)) {
 			printf("Unsent signals not found\n");
 			printf("Test PASSED\n");
 			exit(0);
@@ -86,15 +85,15 @@ int main()
         act.sa_handler = handler;
         act.sa_flags = 0;
 
-	if ( (sigemptyset(&blockset) == -1) ||
+	if ((sigemptyset(&blockset) == -1) ||
 		(sigemptyset(&prevset) == -1) ||
-		(sigemptyset(&act.sa_mask) == -1) ) {
+		(sigemptyset(&act.sa_mask) == -1)) {
 		printf("Could not call sigemptyset()\n");
 		return PTS_UNRESOLVED;
 	}
 
-        if ( (sigaddset(&blockset, SIGALRM) == -1) ||
-                (sigaddset(&blockset, SIGHUP) == -1) ) {
+        if ((sigaddset(&blockset, SIGUSR2) == -1) ||
+            (sigaddset(&blockset, SIGHUP) == -1)) {
                 perror("Error calling sigaddset()\n");
                 return PTS_UNRESOLVED;
         }
@@ -104,10 +103,9 @@ int main()
                 return PTS_UNRESOLVED;
         }
 
-
-	if ( (sigaddset(&act.sa_mask, SIGCONT) == -1) ||
+	if ((sigaddset(&act.sa_mask, SIGCONT) == -1) ||
 		(sigaddset(&act.sa_mask, SIGABRT) == -1) ||
-		(sigaddset(&act.sa_mask, SIGUSR1) == -1) ) {
+		(sigaddset(&act.sa_mask, SIGUSR1) == -1)) {
 		perror("Error calling sigaddset()\n");
 		return PTS_UNRESOLVED;
 	}
@@ -124,4 +122,3 @@ int main()
 	printf("This code should not be reachable\n");
 	return PTS_UNRESOLVED;
 }
-

@@ -102,7 +102,7 @@
 	if (proc_pid == parent_pid)	\
 		printf ("\t   %3d    %3d    %-10s %-20s\n", p1, p2, p3, p4)
 
-#define SAFE_FREE(p) { if(p) { free(p); (p)=NULL; } }
+#define SAFE_FREE(p) { if (p) { free(p); (p)=NULL; } }
 
 /*
  * Function prototypes
@@ -121,7 +121,6 @@ static void sys_error (const char *, int);
 static void error (const char *, int);
 static void parse_args (int, char **);
 static void catch (int);
-
 
 /*
  * Structures and Global variables:
@@ -223,7 +222,6 @@ int main (int argc, char **argv)
 	return (0);
 }
 
-
 /*---------------------------------------------------------------------+
 |                             test_commands ()                         |
 | ==================================================================== |
@@ -252,14 +250,14 @@ static void test_commands (pid_t proc_pid)
 		printf ("\n\tCreating %d semaphores ...\n", nsems);
 	if ((semid = semget (IPC_PRIVATE, nsems, IPC_CREAT|mode)) < 0)
 		sys_error ("semget (IPC_PRIVATE) failed", __LINE__);
-		   
+
 	/*
 	 * Set the semaphore uid, gid and mode
 	 */
 	if (proc_pid == parent_pid)
 		printf ("\n\tSetting semaphore uid, gid and mode ... semid = %d\n", semid);
 	arg.buf = (struct semid_ds *) calloc (1, sizeof (struct semid_ds));
-	if(!arg.buf)
+	if (!arg.buf)
 		error("calloc failed", __LINE__);
 	arg.buf->sem_perm.uid = uid;
 	arg.buf->sem_perm.gid = gid;
@@ -289,7 +287,7 @@ static void test_commands (pid_t proc_pid)
 	 * Set the value of each semaphore in the set to 2.
 	 */
         arg.array = malloc(sizeof(int) * nsems);
-	if(!arg.array)
+	if (!arg.array)
 		error("malloc failed", __LINE__);
 	for (i = 0; i < nsems; i++)
 		arg.array [i] = 2;
@@ -385,7 +383,7 @@ static void test_commands (pid_t proc_pid)
 	/* ------------------------------------------------------------------ */
 	SEMOP_TABLE(5, 1, "0", "Return resource");
         arg.array = malloc(sizeof(int) * nsems);
-	if(!arg.array)
+	if (!arg.array)
 		error("malloc failed", __LINE__);
 	for (i = 0; i < nsems; i++) {
 		arg.array [i] = 5;
@@ -688,12 +686,12 @@ static void test_commands (pid_t proc_pid)
 	 */
 	if ((semid = semget (IPC_PRIVATE, nsems, IPC_CREAT|mode)) < 0)
 		sys_error ("semget (IPC_PRIVATE) failed", __LINE__);
-		   
+
 	/*
 	 * Set the semaphore uid, gid and mode
 	 */
 	arg.buf = (struct semid_ds *) calloc (1, sizeof (struct semid_ds));
-	if(!arg.buf)
+	if (!arg.buf)
 		error("calloc failed", __LINE__);
 	arg.buf->sem_perm.uid = uid;
 	arg.buf->sem_perm.gid = gid;
@@ -718,14 +716,13 @@ static void test_commands (pid_t proc_pid)
 	SAFE_FREE(arg.buf);
 
         arg.array = malloc(sizeof(int) * nsems);
-	if(!arg.array)
+	if (!arg.array)
 		error("malloc failed", __LINE__);
 	for (i = 0; i < nsems; i++)
 		arg.array [i] = 9;
 	if (semctl (semid, 0, SETALL, arg) < 0)
 		sys_error ("semctl (SETALL) failed", __LINE__);
 	SAFE_FREE(arg.array);
-
 
 	/* ------------------------------------------------------------------ */
 	/* TEST # 12 --- semval = 9, sem_op = -1, sem_flg = SEM_UN          */
@@ -775,7 +772,7 @@ static void test_commands (pid_t proc_pid)
 	}
 
         arg.array = malloc(sizeof(int) * nsems);
-	if(!arg.array)
+	if (!arg.array)
 		error("malloc failed", __LINE__);
 	for (i = 0; i < nsems; i++)
 		arg.array [i] = 9;
@@ -922,7 +919,6 @@ static void test_commands (pid_t proc_pid)
 		sys_error ("child process terminated abnormally", __LINE__);
 }
 
-
 /*---------------------------------------------------------------------+
 |                             parse_args ()                            |
 | ==================================================================== |
@@ -972,7 +968,6 @@ void parse_args (int argc, char **argv)
 	}
 }
 
-
 /*---------------------------------------------------------------------+
 |                          setup_signal_handler ()                     |
 | ==================================================================== |
@@ -994,7 +989,6 @@ static void setup_signal_handler ()
         if (sigaction (SIGUSR1, &sigact, NULL) < 0)
                 sys_error ("sigaction failed", __LINE__);
 }
-
 
 /*---------------------------------------------------------------------+
 |                             catch ()                                 |
@@ -1018,7 +1012,6 @@ static void catch (int sig)
 	}
 }
 
-
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
 | ==================================================================== |
@@ -1033,7 +1026,6 @@ static void sys_error (const char *msg, int line)
 	sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
 	error (syserr_msg, line);
 }
-
 
 /*---------------------------------------------------------------------+
 |                               error ()                               |

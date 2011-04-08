@@ -20,8 +20,8 @@
 /*                                                                            */
 /* File:        cacheflush01.c                                                */
 /*                                                                            */
-/* Description: The cacheflush_check() syscall                     	      */	
-/*		Tests EINVAL error of cacheflush system call.		      */		
+/* Description: The cacheflush_check() syscall                     	      */
+/*		Tests EINVAL error of cacheflush system call.		      */
 /* 		Its expected behaviour is cacheflush() should return -EINVAL  */
 /*		when cache parameter is not one of ICACHE, DCACHE, or BCACHE. */
 /*                                                                            */
@@ -75,8 +75,6 @@
 #endif
 
 /* Extern Global Variables */
-extern int Tst_count;           /* counter for tst_xxx routines.         */
-extern char *TESTDIR;           /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
 char *TCID = "cacheflush01";	/* Test program identifier.*/
@@ -101,7 +99,7 @@ int  TST_TOTAL = 1;		/* total number of tests in this file.   */
 /*                                                                            */
 /******************************************************************************/
 extern void cleanup() {
-        /* Remove tmp dir and all files in it */
+
         TEST_CLEANUP;
         tst_rmdir();
 }
@@ -136,10 +134,10 @@ int main(int ac, char **av)
 
 	char *addr = NULL;
         char *msg;              /* message returned from parse_opts */
-	
+
         /* parse standard options */
-        if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+        if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
         }
 
@@ -158,22 +156,22 @@ int main(int ac, char **av)
 		tst_resm(TPASS, "passed with no errno");
 	} else {
 		tst_resm(TFAIL, "failed with unexpected errno");
-	}		
-	
+	}
+
 	TEST(syscall(__NR_cacheflush, addr, getpagesize(), DCACHE));
 	if (TEST_RETURN == 0) {
 		tst_resm(TPASS, "passed with no errno");
 	} else {
 		tst_resm(TFAIL, "failed with unexpected errno");
-	}		
-	
+	}
+
 	TEST(syscall(__NR_cacheflush, addr, getpagesize(), BCACHE));
 	if (TEST_RETURN == 0) {
 		tst_resm(TPASS, "passed with no errno");
 	} else {
 		tst_resm(TFAIL, "failed with unexpected errno");
-	}		
+	}
 
-	cleanup(); 
+	cleanup();
         tst_exit();
 }

@@ -17,7 +17,7 @@
  *
  * TEST11: Sending data from server socket to client socket
  * TEST12: Sending data from client socket to server socket
- * TEST13: Sending data from unconnected client to server 
+ * TEST13: Sending data from unconnected client to server
  * TEST14: Sending a message on SHUT_RD socket
  *
  * The SCTP reference implementation is free software;
@@ -119,7 +119,7 @@ main(int argc, char *argv[])
         test_listen(lstn_sk, 10);
 
 	len = sizeof(struct sockaddr_in);
-	
+
 	test_connect(sk, (struct sockaddr *) &conn_addr, len);
 
 	acpt_sk = test_accept(lstn_sk, (struct sockaddr *)&svr_addr, &len);
@@ -153,15 +153,15 @@ main(int argc, char *argv[])
 	/*sendmsg () TEST1: Bad socket descriptor, EBADF Expected error*/
 	count = sendmsg(-1, &outmessage, flag);
 	if (count != -1 || errno != EBADF)
-		tst_brkm(TBROK, tst_exit, "sendmsg with a bad socket "
+		tst_brkm(TBROK, NULL, "sendmsg with a bad socket "
 			 "descriptor count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendmsg() with a bad socket descriptor - EBADF");
-	
+
 	/*sendmsg () TEST2: Invalid socket, ENOTSOCK Expected error*/
 	count = sendmsg(0, &outmessage, flag);
 	if (count != -1 || errno != ENOTSOCK)
-		tst_brkm(TBROK, tst_exit, "sendmsg with invalid socket "
+		tst_brkm(TBROK, NULL, "sendmsg with invalid socket "
 			 "count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendmsg() with invalid socket - ENOTSOCK");
@@ -169,7 +169,7 @@ main(int argc, char *argv[])
 	/*sendmsg () TEST3: sendmsg on listening socket, EPIPE Expected error*/
 	count = sendmsg(lstn_sk, &outmessage, flag);
 	if (count != -1 || errno != EPIPE)
-		tst_brkm(TBROK, tst_exit, "sendmsg on a listening socket "
+		tst_brkm(TBROK, NULL, "sendmsg on a listening socket "
 			 "count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendmsg() on a listening socket - EPIPE");
@@ -178,28 +178,28 @@ main(int argc, char *argv[])
 	outmessage.msg_iov = (struct iovec *)-1;
 	count = sendmsg(sk, &outmessage, flag);
 	if (count != -1 || errno != EFAULT)
-		tst_brkm(TBROK, tst_exit, "sendmsg with invalid iovec "
+		tst_brkm(TBROK, NULL, "sendmsg with invalid iovec "
 			 "pointer count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendmsg() with invalid iovec ptr - EFAULT");
-	
+
 	outmessage.msg_iov = &out_iov;
 
 	/*sendmsg () TEST5: Invalid iovec count EINVAL, Expected error*/
         outmessage.msg_iovlen = 0;
 	count = sendmsg(sk, &outmessage, flag);
 	if (count != -1 || errno != EINVAL)
-		tst_brkm(TBROK, tst_exit, "sendmsg with invalid iovec "
+		tst_brkm(TBROK, NULL, "sendmsg with invalid iovec "
 			 "length count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendmsg() with invalid iovec length - EINVAL");
 
 	outmessage.msg_iovlen = 1;
-	
+
 	/*sendmsg () TEST6: Invalid msghdr pointer EFAULT, Expected error*/
 	count = sendmsg(sk, (struct msghdr *)-1, flag);
 	if (count != -1 || errno != EFAULT)
-		tst_brkm(TBROK, tst_exit, "sendmsg with invalid msghdr "
+		tst_brkm(TBROK, NULL, "sendmsg with invalid msghdr "
 			 "pointer count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendmsg() with invalid msghdr ptr - EFAULT");
@@ -208,7 +208,7 @@ main(int argc, char *argv[])
 	sinfo->sinfo_flags = 999;
 	count = sendmsg(sk, &outmessage, -1);
 	if (count != -1 || errno != EINVAL)
-		tst_brkm(TBROK, tst_exit, "sendmsg with invalid sinfo "
+		tst_brkm(TBROK, NULL, "sendmsg with invalid sinfo "
 			 "flags count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendmsg() with invalid sinfo flags - EINVAL");
@@ -217,7 +217,7 @@ main(int argc, char *argv[])
 	sinfo->sinfo_flags = SCTP_EOF;
 	count = sendmsg(sk, &outmessage, flag);
 	if (count != -1 || errno != EINVAL)
-		tst_brkm(TBROK, tst_exit, "sendmsg with SCTP_EOF flag "
+		tst_brkm(TBROK, NULL, "sendmsg with SCTP_EOF flag "
 			 "count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendmsg() with SCTP_EOF flag - EINVAL");
@@ -226,15 +226,15 @@ main(int argc, char *argv[])
 	sinfo->sinfo_flags = SCTP_ABORT;
 	count = sendmsg(sk, &outmessage, flag);
 	if (count != -1 || errno != EINVAL)
-		tst_brkm(TBROK, tst_exit, "sendmsg with SCTP_ABORT flag "
+		tst_brkm(TBROK, NULL, "sendmsg with SCTP_ABORT flag "
 			 "count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendmsg() with SCTP_ABORT flag - EINVAL");
 
-	sinfo->sinfo_flags = 0; 
-	
+	sinfo->sinfo_flags = 0;
+
 	test_connect(sk1, (struct sockaddr *) &lstn_addr, len);
-		 
+
 	test_sendmsg(sk1, &outmessage, flag, strlen(message)+1);
 
 	close(sk1);
@@ -243,7 +243,7 @@ main(int argc, char *argv[])
 	/*sendmsg () TEST10:sendmsg on closed association, EPIPE Expected error*/
 	count = sendmsg(acpt1_sk, &outmessage, flag);
 	if (count != -1 || errno != EPIPE)
-		tst_brkm(TBROK, tst_exit, "sendmsg on a closed association "
+		tst_brkm(TBROK, NULL, "sendmsg on a closed association "
 			 "count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendmsg() on a closed association - EPIPE");
@@ -272,7 +272,7 @@ main(int argc, char *argv[])
 
 	len = sizeof(struct sockaddr_in);
 	flag = MSG_NOSIGNAL;
-	
+
 	test_connect(sk, (struct sockaddr *) &conn_addr, len);
 
 	acpt_sk = test_accept(lstn_sk, (struct sockaddr *)&svr_addr, &len);
@@ -317,7 +317,7 @@ main(int argc, char *argv[])
 	/*sendmsg() TEST11: Sending data from server socket to client socket*/
 	count = sendmsg(acpt_sk, &outmessage, flag);
 	if (count != msg_count)
-		tst_brkm(TBROK, tst_exit, "sendmsg from accept socket to "
+		tst_brkm(TBROK, NULL, "sendmsg from accept socket to "
 			 "client count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendmsg() from accept socket to client - SUCCESS");
@@ -330,7 +330,7 @@ main(int argc, char *argv[])
 	/*sendmsg() TEST12: Sending data from client socket to server socket*/
 	count = sendmsg(sk, &outmessage, flag);
 	if (count != msg_count)
-		tst_brkm(TBROK, tst_exit, "sendmsg from client to server "
+		tst_brkm(TBROK, NULL, "sendmsg from client to server "
                          "count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendmsg() from client to server - SUCCESS");
@@ -344,11 +344,11 @@ main(int argc, char *argv[])
 	close(acpt_sk);
 	sk1 = test_socket(pf_class, SOCK_STREAM, IPPROTO_SCTP);
 
-	/*sendmsg() TEST13: Sending data from unconnected client socket to 
+	/*sendmsg() TEST13: Sending data from unconnected client socket to
 	server socket*/
 	count = sendmsg(sk1, &outmessage, flag);
 	if (count != msg_count)
-		tst_brkm(TBROK, tst_exit, "sendmsg from unconnected client to "
+		tst_brkm(TBROK, NULL, "sendmsg from unconnected client to "
 			 "server count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendmsg() from unconnected clt to server - SUCCESS");
@@ -363,7 +363,7 @@ main(int argc, char *argv[])
 	/*sendmsg() TEST14: Sending a message on SHUT_RD socket*/
 	count = sendmsg(sk1, &outmessage, flag);
 	if (count != msg_count)
-		tst_brkm(TBROK, tst_exit, "sendmsg on a SHUT_RD socket "
+		tst_brkm(TBROK, NULL, "sendmsg on a SHUT_RD socket "
                          "count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendmsg() on a SHUT_RD socket - SUCCESS");
@@ -374,5 +374,5 @@ main(int argc, char *argv[])
 	close(sk1);
 	close(lstn_sk);
 	close(acpt_sk);
-	return 0;
+	tst_exit();
 }

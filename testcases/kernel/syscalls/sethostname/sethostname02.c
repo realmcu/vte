@@ -86,7 +86,6 @@
 #define LARGE_LENGTH MAX_LENGTH + 1
 #define MAX_LENGTH _UTSNAME_LENGTH - 1
 
-extern int Tst_count;
 
 static void cleanup(void);
 static void setup(void);
@@ -126,7 +125,7 @@ int main(int ac, char **av)
 	char *msg;		/* parse_opts() return message */
 
 	/* Parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -160,7 +159,7 @@ int main(int ac, char **av)
 	/* do cleanup and exit */
 	cleanup();
 
-	return 0;
+	tst_exit();
 }
 
 /*
@@ -178,12 +177,12 @@ void setup()
 
 	/* Test should be executed as root user */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 
 	/* Keep the host name before starting the test */
 	if ((ret = gethostname(hname, sizeof(hname))) < 0) {
-		tst_brkm(TBROK, tst_exit, "gethostname() failed while"
+		tst_brkm(TBROK, NULL, "gethostname() failed while"
 			 " getting current host name");
 	}
 
@@ -211,6 +210,4 @@ void cleanup()
 			 " hostname to \"%s\"", hname);
 	}
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

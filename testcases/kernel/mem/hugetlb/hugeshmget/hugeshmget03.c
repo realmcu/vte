@@ -56,7 +56,6 @@
 
 char *TCID = "hugeshmget03";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int exp_enos[] = {ENOSPC, 0};	/* 0 terminated list of expected errnos */
 void setup2(unsigned long huge_pages_shm_to_be_allocated);
@@ -71,27 +70,26 @@ int num_shms = 0;
 
 int shm_id_arr[MAXIDS];
 
-
 int main(int ac, char **av)
 {
 	int lc;				/* loop counter */
 	char *msg;			/* message returned from parse_opts */
         unsigned long huge_pages_shm_to_be_allocated;
 
+	huge_pages_shm_to_be_allocated = 0;
+
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
 
 	/* The following loop checks looping state if -i option given */
-        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 )
-             tst_brkm(TCONF, tst_exit, "Not enough available Hugepages");
-        else             
+        if (get_no_of_hugepages() <= 0 || hugepages_size() <= 0)
+             tst_brkm(TCONF, NULL, "Not enough available Hugepages");
+        else
              huge_pages_shm_to_be_allocated = ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
 
 	setup2(huge_pages_shm_to_be_allocated);			/* local  setup */
 
-    
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -99,7 +97,7 @@ int main(int ac, char **av)
 		/*
 		 * use the TEST() macro to make the call
 		 */
-	       
+
 		TEST(shmget(IPC_PRIVATE, huge_pages_shm_to_be_allocated, SHM_HUGETLB | IPC_CREAT | IPC_EXCL | SHM_RW));
 
 		if (TEST_RETURN != -1) {
@@ -119,26 +117,24 @@ int main(int ac, char **av)
 				 "unexpected error - %d : %s",
 				 TEST_ERRNO, strerror(TEST_ERRNO));
 			break;
-		}		
+		}
 	}
 
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	tst_exit();
 }
 
 /*
  * setup2() - performs all the ONE TIME setup for this test.
  */
 void setup2(unsigned long huge_pages_shm_to_be_allocated) {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -184,11 +180,10 @@ cleanup(void)
 	int i;
 
 	/* remove the shared memory resources that were created */
-	for(i=0; i<num_shms; i++) {
+	for (i=0; i<num_shms; i++) {
 		rm_shm(shm_id_arr[i]);
 	}
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
 	/*
@@ -197,7 +192,4 @@ cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
-

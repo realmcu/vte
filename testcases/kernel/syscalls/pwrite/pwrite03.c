@@ -79,7 +79,6 @@
 
 char *TCID = "pwrite03";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 char *write_buf[NBUFS];		/* buffer to hold data to be written */
 int fd1;			/* file descriptor of temporary file */
@@ -101,20 +100,15 @@ int main(int ac, char **av)
 	char *test_desc;	/* test specific error message */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* Perform global setup for test */
 	setup();
 
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* Reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		test_desc = "EFAULT";
@@ -151,20 +145,20 @@ int main(int ac, char **av)
 				 TEST_ERRNO, exp_enos[0]);
 		}
 
-	}			/* End of TEST_LOOPING. */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
+	tst_exit();
+	tst_exit();
 
-	return 0;
-}				/* End main */
+}
 
 #else
 
 int main()
 {
 	tst_resm(TINFO, "test is not available on uClinux");
-	return 0;
+	tst_exit();
 }
 
 #endif /* if !defined(UCLINUX) */
@@ -177,13 +171,10 @@ int main()
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Creat a temporary file used for mapping */
@@ -216,8 +207,6 @@ void cleanup()
 			 TEMPFILE, errno, strerror(errno));
 	}
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
-	/* exit with return code appropriate for results */
-	tst_exit();
+
 }

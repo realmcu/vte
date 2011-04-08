@@ -39,7 +39,7 @@
  *  the GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program; 
+ *  along with this program;
  *
  *  FILE        : user_tbio.c
  *  USAGE       : kernel_space:./load_tbio.sh
@@ -56,7 +56,6 @@
  *
  */
 
-
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
@@ -71,7 +70,6 @@
 #include "../kernel_space/tbio.h"
 
 static int tbio_fd = -1;		/* file descriptor */
-
 
 int
 tbioopen() {
@@ -102,7 +100,6 @@ tbioopen() {
             }
         }
     }
-
 
     /*
      * Check for the /dev/tbase node, and create if it does not
@@ -141,11 +138,10 @@ tbioopen() {
     }
     else {
         printf("Device opened successfully \n");
-        return 0;
+      return 0;
     }
 
 }
-
 
 int
 tbioclose() {
@@ -154,7 +150,7 @@ tbioclose() {
 		close (tbio_fd);
 		tbio_fd = -1;
 	}
-	
+
 	return 0;
 }
 
@@ -165,7 +161,7 @@ int tbio_to_dev(int fd  , int flag)
 
 	memset(&bif , 0 , sizeof(tbio_interface_t));
 	rc = posix_memalign(&bif.data , 512 , 1024);
-	if ( rc ) {
+	if (rc) {
 		printf("posix_memalign failed\n");
 		return -1;
 	}
@@ -174,7 +170,7 @@ int tbio_to_dev(int fd  , int flag)
 	bif.data_len = 1024;
 	bif.direction = TBIO_TO_DEV;
 	bif.cmd = (char *) malloc (6);
-	if(bif.cmd == NULL) {
+	if (bif.cmd == NULL) {
 		printf("malloc cmd space failed\n");
 		free (bif.data);
 		return -1;
@@ -183,7 +179,7 @@ int tbio_to_dev(int fd  , int flag)
 	bif.cmd_len = 6;
 
 	rc = ioctl(fd, flag, &bif);
-	if(rc) {
+	if (rc) {
 		free(bif.data);
 		free(bif.cmd);
 		printf("Ioctl error for TBIO_TO_DEV\n");
@@ -197,7 +193,6 @@ int tbio_to_dev(int fd  , int flag)
 
 }
 
-
 int tbio_from_dev(int fd  , int flag)
 {
 	int rc;
@@ -205,7 +200,7 @@ int tbio_from_dev(int fd  , int flag)
 
 	memset(&bif , 0 , sizeof(tbio_interface_t));
 	rc = posix_memalign(&bif.data , 512 , 1024);
-	if ( rc ) {
+	if (rc) {
 		printf("posix_memalign failed\n");
 		return -1;
 	}
@@ -215,7 +210,7 @@ int tbio_from_dev(int fd  , int flag)
 	bif.data_len = 1024;
 	bif.direction = TBIO_FROM_DEV;
 	bif.cmd = (char *) malloc (6);
-	if(bif.cmd == NULL) {
+	if (bif.cmd == NULL) {
 		printf("malloc cmd space failed\n");
 		free (bif.data);
 		return -1;
@@ -224,14 +219,14 @@ int tbio_from_dev(int fd  , int flag)
 	bif.cmd_len = 6;
 
 	rc = ioctl(fd, flag, &bif);
-	if(rc) {
+	if (rc) {
 		free(bif.data);
 		free(bif.cmd);
 		printf("Ioctl error for TBIO_TO_DEV\n");
 		return rc;
 	}
 	//printf("read from dev %s\n",bif.data);
-	if(strcmp(bif.data , "User space data")) {
+	if (strcmp(bif.data , "User space data")) {
 		printf("TBIO_FROM_DEV failed\n");
 		free(bif.data);
 		free(bif.cmd);
@@ -245,8 +240,6 @@ int tbio_from_dev(int fd  , int flag)
 
 }
 
-
-
 int tbio_split_to_dev(int fd  , int flag)
 {
 	int rc;
@@ -254,7 +247,7 @@ int tbio_split_to_dev(int fd  , int flag)
 
 	memset(&bif , 0 , sizeof(tbio_interface_t));
 	rc = posix_memalign(&bif.data , 512 , 2048);
-	if ( rc ) {
+	if (rc) {
 		printf("posix_memalign failed\n");
 		return -1;
 	}
@@ -263,7 +256,7 @@ int tbio_split_to_dev(int fd  , int flag)
 	bif.data_len = 2048;
 	bif.direction = TBIO_TO_DEV;
 	bif.cmd = (char *) malloc (6);
-	if(bif.cmd == NULL) {
+	if (bif.cmd == NULL) {
 		printf("malloc cmd space failed\n");
 		free (bif.data);
 		return -1;
@@ -272,7 +265,7 @@ int tbio_split_to_dev(int fd  , int flag)
 	bif.cmd_len = 6;
 
 	rc = ioctl(fd, flag, &bif);
-	if(rc) {
+	if (rc) {
 		free(bif.data);
 		free(bif.cmd);
 		printf("Ioctl error for TBIO_TO_DEV\n");
@@ -286,69 +279,63 @@ int tbio_split_to_dev(int fd  , int flag)
 
 }
 
-
 int main()
 {
 	int rc;
 
 	/* open the bioule */
 	rc = tbioopen();
-	if (rc ) {
+	if (rc) {
 		printf("Test bio Driver may not be loaded\n");
 		exit(1);
 	}
-	
-	if(ki_generic(tbio_fd , LTP_TBIO_ALLOC))
+
+	if (ki_generic(tbio_fd , LTP_TBIO_ALLOC))
 		printf("Failed on LTP_TBIO_ALLOC test\n");
 	else
 		printf("Success on LTP_TBIO_ALLOC test\n");
 
-	if(ki_generic(tbio_fd , LTP_TBIO_CLONE))
+	if (ki_generic(tbio_fd , LTP_TBIO_CLONE))
 		printf("Failed on LTP_TBIO_CLONE test\n");
 	else
 		printf("Success on LTP_TBIO_CLONE test\n");
 
-	if(ki_generic(tbio_fd , LTP_TBIO_GET_NR_VECS))
+	if (ki_generic(tbio_fd , LTP_TBIO_GET_NR_VECS))
 		printf("Failed on LTP_TBIO_GET_NR_VECS test\n");
 	else
 		printf("Success on LTP_TBIO_GET_NR_VECS test\n");
 
-	if(ki_generic(tbio_fd , LTP_TBIO_ADD_PAGE))
+	if (ki_generic(tbio_fd , LTP_TBIO_ADD_PAGE))
 		printf("Failed on LTP_TBIO_ADD_PAGE test\n");
 	else
 		printf("Success on LTP_TBIO_ADD_PAGE test\n");
 
-
-	if(tbio_split_to_dev(tbio_fd , LTP_TBIO_SPLIT))
+	if (tbio_split_to_dev(tbio_fd , LTP_TBIO_SPLIT))
 		printf("Failed on LTP_TBIO_SPLIT:write to dev\n");
 	else
 		printf("Success on LTP_TBIO_SPLIT:write to dev\n");
 
-
-	if(tbio_to_dev(tbio_fd , LTP_TBIO_DO_IO))
+	if (tbio_to_dev(tbio_fd , LTP_TBIO_DO_IO))
 		printf("Failed on LTP_TBIO_DO_IO:write to dev\n");
 	else
 		printf("Success on LTP_TBIO_DO_IO:write to dev\n");
 
-	if(tbio_from_dev(tbio_fd , LTP_TBIO_DO_IO))
+	if (tbio_from_dev(tbio_fd , LTP_TBIO_DO_IO))
 		printf("Failed on LTP_TBIO_DO_IO:read from dev\n");
 	else
 		printf("Success on LTP_TBIO_DO_IO:read from dev\n");
 
-
-	
-	if(ki_generic(tbio_fd , LTP_TBIO_PUT))
+	if (ki_generic(tbio_fd , LTP_TBIO_PUT))
 		printf("Failed on LTP_TBIO_PUT test\n");
 	else
 		printf("Success on LTP_TBIO_PUT test\n");
 
-	
 	/* close the bioule */
 	rc = tbioclose();
-	if (rc ) {
+	if (rc) {
                 printf("Test bio Driver may not be closed\n");
                 exit(1);
         }
 
-        return 0;
+      return 0;
 }

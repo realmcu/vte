@@ -1,8 +1,8 @@
 /*
     Copyright (c) 2002-2003, Intel Corporation. All rights reserved.
     Created by:  majid.awad REMOVE-THIS AT intel DOT com
-    This file is licensed under the GPL license.  For the full content 
-    of this license, see the COPYING file at the top level of this 
+    This file is licensed under the GPL license.  For the full content
+    of this license, see the COPYING file at the top level of this
     source tree.
  */
 /*
@@ -25,7 +25,6 @@
 #define FUNCTION "sem_open"
 #define ERROR_PREFIX "unexpected error: " FUNCTION " " TEST ": "
 
-
 int main()
 {
 	sem_t   *mysemp;
@@ -40,7 +39,7 @@ int main()
 	/* Opening the same existance SEM */
 	mysemp = sem_open(semname, O_CREAT|O_EXCL, 0444, 1);
 
-	if ((mysemp  == SEM_FAILED ) && ( errno == EEXIST)) {
+	if ((mysemp  == SEM_FAILED) && (errno == EEXIST)) {
 		puts("TEST PASSED");
 		sem_unlink(semname);
 		return PTS_PASS;

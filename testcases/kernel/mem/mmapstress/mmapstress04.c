@@ -20,7 +20,6 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-
 /*
  * weave:
  *	Mmap parts of a file, and then write to the file causing single
@@ -34,7 +33,6 @@
  *
  *  Compile with -DLARGE_FILE to enable file sizes > 2 GB.
  */
-
 
 #include <sys/types.h>
 #include <sys/mman.h>
@@ -71,7 +69,6 @@ int local_flag = PASSED;
 int block_number;
 FILE *temp;
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int anyfail();
 int blenter();
@@ -284,7 +281,7 @@ main(int argc, char *argv[])
   	tst_rmdir();
    	tst_exit();	//LTP Port
 
-	return 0;
+	tst_exit();
 }
 
 /*****	LTP Port	*****/
@@ -293,7 +290,7 @@ int anyfail()
   tst_resm(TFAIL, "Test failed\n");
   tst_rmdir();
   tst_exit();
-  return 0;
+        return 0;
 }
 
 /*****	**	**	*****/

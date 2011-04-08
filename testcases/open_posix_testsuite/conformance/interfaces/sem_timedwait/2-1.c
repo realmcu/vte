@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2003, Intel Corporation. All rights reserved.
  * Created by:  majid.awad REMOVE-THIS AT intel DOT com
- * This file is licensed under the GPL license.  For the full content 
- * of this license, see the COPYING file at the top level of this 
+ * This file is licensed under the GPL license.  For the full content
+ * of this license, see the COPYING file at the top level of this
  * source tree.
  */
 
-/* sem_timedwait will return successfully when sem_post 
+/* sem_timedwait will return successfully when sem_post
  * will unlock the semaphore from another process.
  */
 
@@ -23,32 +23,29 @@
 #include <time.h>
 #include "posixtest.h"
 
-
 #define TEST "2-1"
 #define FUNCTION "sem_timedwait"
 #define ERROR_PREFIX "unexpected error: " FUNCTION " " TEST ": "
 
-
 int main()
-{  
+{
         sem_t mysemp;
 	struct timespec ts;
 	int pid;
 
-
 	/* Semaphore started out locked */
-	 if ( sem_init (&mysemp, 0, 0) == -1 ) {
+	 if (sem_init (&mysemp, 0, 0) == -1) {
 		perror(ERROR_PREFIX "sem_init");
                 return PTS_UNRESOLVED;
          }
 
 	pid = fork();
 	if (pid == 0)  // child to lock semaphore
-	{  
+	{
 		ts.tv_sec=time(NULL)+2;
 		ts.tv_nsec=0;
 
-	       	if( sem_timedwait(&mysemp, &ts) == -1 ) {
+	       	if (sem_timedwait(&mysemp, &ts) == -1) {
 			puts ("TEST FAILED");
 			return PTS_FAIL;
 		} else {
@@ -58,10 +55,10 @@ int main()
 		}
 	}
 	else if (pid > 0) // parent to unlock semaphore
-	{  
+	{
 		int i;
 		sleep(1);
-		if (sem_post(&mysemp) == -1 ) {
+		if (sem_post(&mysemp) == -1) {
 			perror(ERROR_PREFIX "sem_post");
 			return PTS_FAIL;
 		}

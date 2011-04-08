@@ -35,7 +35,6 @@
 
 #define NUM_CHILDREN 8
 
-
 char *check_zero(unsigned char *buf, int size)
 {
 	unsigned char *p;
@@ -57,7 +56,6 @@ char *check_zero(unsigned char *buf, int size)
 	}
 	return 0;	/* all zeros */
 }
-
 
 int read_eof(char *filename)
 {
@@ -83,7 +81,7 @@ int read_eof(char *filename)
 			}
 		}
 	}
-    return 0;
+  return 0;
 }
 
 #define NUM_AIO 16
@@ -114,7 +112,7 @@ void aiodio_append(char *filename)
 	memset(&myctx, 0, sizeof(myctx));
 	io_queue_init(NUM_AIO, &myctx);
 
-	for (i = 0; i < NUM_AIO; i++ ) {
+	for (i = 0; i < NUM_AIO; i++) {
 		if (posix_memalign(&bufptr, 4096, AIO_SIZE)) {
 			perror("cannot malloc aligned memory");
 			return;
@@ -143,7 +141,7 @@ void aiodio_append(char *filename)
                 if (n > 0) {
 		  iocbp = (struct iocb *)event.obj;
 
-		if( n > 0){
+		if (n > 0) {
 		io_prep_pwrite(iocbp, fd, iocbp->u.c.buf, AIO_SIZE, offset);
 		offset += AIO_SIZE;
 		if ((w = io_submit(myctx, 1, &iocbp)) < 0) {
@@ -187,5 +185,5 @@ int main(int argc, char **argv)
 		kill(pid[i], SIGTERM);
 	}
 
-    return 0;
+  return 0;
 }

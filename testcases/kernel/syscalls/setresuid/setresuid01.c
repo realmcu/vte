@@ -64,13 +64,12 @@
 
 #define _GNU_SOURCE 1
 #include <pwd.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 #include <errno.h>
 
-extern int Tst_count;
 char *TCID = "setresuid01";
 
 uid_t nobody_pw_uid, root_pw_uid, bin_pw_uid;
@@ -128,15 +127,13 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
 
-	/* Perform global setup for test */
+	 }
+
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		int i;
 
@@ -172,7 +169,7 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -181,24 +178,24 @@ int main(int ac, char **av)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Check that the test process id is root  */
 	if (geteuid() != 0) {
 		tst_brkm(TBROK, NULL, "Must be root for this test!");
 		tst_exit();
-	 /*NOTREACHED*/}
+	 }
 
 	if (getpwnam("nobody") == NULL) {
 		tst_brkm(TBROK, NULL, "nobody must be a valid user.");
 		tst_exit();
-	 /*NOTREACHED*/}
+	 }
 
 	if (getpwnam("bin") == NULL) {
 		tst_brkm(TBROK, NULL, "bin must be a valid user.");
 		tst_exit();
-	 /*NOTREACHED*/}
+	 }
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
@@ -231,9 +228,7 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }
 
 void
 uid_verify(struct passwd *ru, struct passwd *eu, struct passwd *su, char *when)
@@ -241,7 +236,7 @@ uid_verify(struct passwd *ru, struct passwd *eu, struct passwd *su, char *when)
 	uid_t cur_ru, cur_eu, cur_su;
 	if (getresuid(&cur_ru, &cur_eu, &cur_su) != 0) {
 		tst_brkm(TBROK, cleanup, "Set getresuid() failed");
-	 /*NOTREACHED*/}
+	 }
 	if ((cur_ru != ru->pw_uid) || (cur_eu != eu->pw_uid) || (cur_su !=
 								 su->pw_uid)) {
 		tst_resm(TFAIL, "ERROR: %s real uid = %d; effective uid = %d; "

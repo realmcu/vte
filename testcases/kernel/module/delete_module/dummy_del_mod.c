@@ -35,7 +35,6 @@
 #include <linux/proc_fs.h>
 #include <linux/kernel.h>
 
-
 static int dummy_func_test(void);
 
 /* Dummy function called by dependent module */
@@ -49,7 +48,7 @@ static int __init dummy_init(void) {
         struct proc_dir_entry *proc_dummy;
 
         proc_dummy = proc_mkdir("dummy", 0);
-        return 0;
+      return 0;
 }
 
 static void __exit dummy_exit(void) {

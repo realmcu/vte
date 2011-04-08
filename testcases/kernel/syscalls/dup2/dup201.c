@@ -63,15 +63,14 @@
 #include <sys/resource.h>
 #include <unistd.h>
 #include <signal.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 void setup(void);
 void cleanup(void);
 
 char *TCID = "dup201";		/* Test program identifier.    */
 int TST_TOTAL = 4;		/* Total number of test cases. */
-extern int Tst_count;		/* Test counter for tst_* routines */
 
 int maxfd;
 int goodfd = 5;
@@ -90,17 +89,13 @@ struct test_case_t {
 	void (*setupfunc) ();
 } TC[] = {
 	/* First fd argument is less than 0 - EBADF */
-	{
-	&badfd, &goodfd, EBADF, NULL},
-	    /* First fd argument is getdtablesize() - EBADF */
-	{
-	&maxfd, &goodfd, EBADF, NULL},
-	    /* Second fd argument is less than 0 - EBADF */
-	{
-	&mystdout, &badfd, EBADF, NULL},
-	    /* Second fd argument is getdtablesize() - EBADF */
-	{
-&mystdout, &maxfd, EBADF, NULL},};
+	{ &badfd, &goodfd, EBADF, NULL},
+	/* First fd argument is getdtablesize() - EBADF */
+	{ &maxfd, &goodfd, EBADF, NULL},
+	/* Second fd argument is less than 0 - EBADF */
+	{ &mystdout, &badfd, EBADF, NULL},
+	/* Second fd argument is getdtablesize() - EBADF */
+	{ &mystdout, &maxfd, EBADF, NULL},};
 
 int main(int ac, char **av)
 {
@@ -109,18 +104,16 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	setup();
 
 	/* set up the expected errnos */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/* loop through the test cases */
@@ -128,9 +121,8 @@ int main(int ac, char **av)
 		for (i = 0; i < TST_TOTAL; i++) {
 
 			/* call the test case setup routine if necessary */
-			if (TC[i].setupfunc != NULL) {
-				(*TC[i].setupfunc) ();
-			}
+			if (TC[i].setupfunc != NULL)
+				(*TC[i].setupfunc)();
 
 			TEST(dup2(*TC[i].ofd, *TC[i].nfd));
 
@@ -142,13 +134,13 @@ int main(int ac, char **av)
 			TEST_ERROR_LOG(TEST_ERRNO);
 
 			if (TEST_ERRNO == TC[i].error) {
-				tst_resm(TPASS, "expected failure - "
-					 "errno = %d : %s", TEST_ERRNO,
-					 strerror(TEST_ERRNO));
+				tst_resm(TPASS,
+				    "failed as expected - errno = %d : %s",
+				    TEST_ERRNO, strerror(TEST_ERRNO));
 			} else {
-				tst_resm(TFAIL, "unexpected error - %d : %s - "
-					 "expected %d", TEST_ERRNO,
-					 strerror(TEST_ERRNO), TC[i].error);
+				tst_resm(TFAIL|TTERRNO, "failed unexpectedly; "
+				    "expected %d: %s", TC[i].error,
+				    strerror(TC[i].error));
 			}
 		}
 		/* cleanup things in case we are looping */
@@ -160,7 +152,7 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -168,13 +160,11 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* get some test specific values */
@@ -194,9 +184,5 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

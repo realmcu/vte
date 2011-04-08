@@ -87,7 +87,6 @@ void setup(void);
 
 char *TCID = "getsid02";
 int TST_TOTAL = 1;
-extern int Tst_count;
 int pid_max = 32768;		/* Default value for PID_MAX  */
 
 int exp_enos[] = { ESRCH, 0 };	/* 0 terminated list of expected errnos */
@@ -98,8 +97,8 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();		/* global setup */
@@ -138,7 +137,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -164,13 +163,12 @@ void setup(void)
 		exit(0);
 	}
 #endif
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -186,6 +184,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

@@ -54,7 +54,6 @@
 
 char *TCID = "sysctl01";
 int TST_TOTAL = 3;
-extern int Tst_count;
 
 int sysctl(int *name, int nlen, void *oldval, size_t * oldlenp,
 	   void *newval, size_t newlen)
@@ -77,7 +76,7 @@ struct test_case_t {
 	char *desc;
 	int name[2];
 	int size;
-	void *oldval;
+	char *oldval;
 	size_t *oldlen;
 	void *newval;
 	int newlen;
@@ -101,14 +100,14 @@ int main(int ac, char **av)
 	int i;
 	char *comp_string;
 
+	comp_string = NULL;
+
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* reset Tst_count in case we are looping */
@@ -157,7 +156,7 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -165,10 +164,9 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* get kernel name and information */
@@ -189,6 +187,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

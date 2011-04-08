@@ -107,11 +107,10 @@
  *
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
+#include <sys/types.h>
 #include <errno.h>
 #include <string.h>
 #include <signal.h>
-
-#include <sys/types.h>
 
 #include "test.h"
 #include "usctest.h"
@@ -123,7 +122,6 @@ void cleanup();
 
 TCID_DEFINE(getegid01);		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int exp_enos[] = { 0 };		/* must be a 0 terminated list */
 
@@ -132,91 +130,44 @@ int main(int ac, char **av)
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 
-	;
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-    /***************************************************************
-     * parse standard options
-     ***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-
-    /***************************************************************
-     * perform global setup for test
-     ***************************************************************/
 	setup();
 
-	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-    /***************************************************************
-     * check looping state if -c option given
-     ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		/*
-		 * TEST CASE:
-		 *  Get effective group id.
-		 */
-		;
-
-		/* Call getegid(2) */
 		TEST(GETEGID());
 
-		/* check return code */
-		if (TEST_RETURN < 0) {
-			TEST_ERROR_LOG(TEST_ERRNO);
-			tst_resm(TFAIL,
-				 "getegid -  Get effective group id. failed, errno=%d : %s",
-				 TEST_ERRNO, strerror(TEST_ERRNO));
+		if (TEST_RETURN == -1) {
+			tst_resm(TFAIL|TTERRNO, "getegid failed");
 			continue;	/* next loop for MTKERNEL */
 		}
 
-	/***************************************************************
-	 * only perform functional verification if flag set (-f not given)
-	 ***************************************************************/
 		if (STD_FUNCTIONAL_TEST) {
-			/* No Verification test, yet... */
-			tst_resm(TPASS,
-				 "getegid -  Get effective group id. returned %ld",
-				 TEST_RETURN);
+			tst_resm(TPASS, "getegid returned %ld", TEST_RETURN);
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-    /***************************************************************
-     * cleanup and exit
-     ***************************************************************/
 	cleanup();
 
-	return 0;
-}				/* End main */
+	tst_exit();
+}
 
-/***************************************************************
- * setup() - performs all ONE TIME setup for this test.
- ***************************************************************/
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
-}				/* End setup() */
+}
 
-/***************************************************************
- * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
- ***************************************************************/
 void cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

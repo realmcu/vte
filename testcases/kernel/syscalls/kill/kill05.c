@@ -66,18 +66,21 @@
  *	Looping with the -i option does not work correctly.
  */
 
-#include "test.h"
-#include "usctest.h"
-
-#include <errno.h>
-#include <malloc.h>
-#include <pwd.h>
-#include <signal.h>
-#include <unistd.h>
+#include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include <sys/types.h>
 #include <sys/wait.h>
+#include <errno.h>
+#include <pwd.h>
+#include <signal.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+#include "test.h"
+#include "usctest.h"
+#include "safe_macros.h"
 
 extern void rm_shm(int);
 
@@ -94,7 +97,6 @@ int *flag;
 
 int exp_enos[] = { EPERM, 0 };
 
-extern int Tst_count;
 extern int getipckey();
 
 #define TEST_SIG SIGKILL
@@ -106,9 +108,8 @@ int main(int ac, char **av)
 	int status;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 #ifdef UCLINUX
 	maybe_run_child(&do_child, "");
 #endif
@@ -116,18 +117,17 @@ int main(int ac, char **av)
 	setup();		/* global setup */
 
 	pid = FORK_OR_VFORK();
-	if (pid < 0)
+	if (pid == -1)
 		tst_brkm(TBROK, cleanup, "Fork failed");
-
-	if (pid == 0) {
+	else if (pid == 0)
 		do_master_child(av);
-		return (0);
-	} else {
-		waitpid(pid, &status, 0);
-	}
 
+	if (waitpid(pid, &status, 0) == -1)
+		tst_resm(TBROK|TERRNO, "waitpid failed");
+	else if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+		tst_resm(TFAIL, "child exited abnormally");
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -135,163 +135,111 @@ int main(int ac, char **av)
  */
 void do_master_child(char **av)
 {
-	int lc;			/* loop counter */
-
 	pid_t pid1;
 	int status;
 
 	char user1name[] = "nobody";
 	char user2name[] = "bin";
 
-	extern struct passwd *my_getpwnam(char *);
-
 	struct passwd *ltpuser1, *ltpuser2;
 
-	ltpuser1 = my_getpwnam(user1name);
-	ltpuser2 = my_getpwnam(user2name);
+	ltpuser1 = SAFE_GETPWNAM(NULL, user1name);
+	ltpuser2 = SAFE_GETPWNAM(NULL, user2name);
 
 	TEST_EXP_ENOS(exp_enos);
 
-	/* The following loop checks looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+	Tst_count = 0;
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+	*flag = 0;
 
-		*flag = 0;
+	pid1 = FORK_OR_VFORK();
 
-		/*
-		 * Fork a process and set the euid so that it is
-		 * different from this one.
-		 */
+	if (pid1 == -1)
+		tst_brkm(TBROK|TERRNO, cleanup, "Fork failed");
 
-		pid1 = FORK_OR_VFORK();
+	if (pid1 == 0) {
 
-		if (pid1 < 0) {
-			tst_brkm(TBROK, cleanup, "Fork failed");
+		if (setreuid(ltpuser1->pw_uid, ltpuser1->pw_uid) == -1) {
+			perror("setreuid failed (in child)");
+			exit(1);
 		}
-
-		if (pid1 == 0) {	/* child */
-			if (setreuid(ltpuser1->pw_uid, ltpuser1->pw_uid) == -1) {
-				tst_resm(TWARN, "setreuid failed in child");
-			}
 #ifdef UCLINUX
-			if (self_exec(av[0], "") < 0) {
-				tst_brkm(TBROK, cleanup,
-					 "self_exec of child failed");
-			}
+		if (self_exec(av[0], "") < 0) {
+			perror("self_exec failed");
+			exit(1);
+		}
 #else
-			do_child();
+		do_child();
 #endif
-		} else {	/* parent */
-			if (setreuid(ltpuser2->pw_uid, ltpuser2->pw_uid) == -1) {
-				tst_resm(TWARN, "seteuid failed in child");
-			}
-
-			TEST(kill(pid1, TEST_SIG));
-
-			/* signal the child that we're done */
-			*flag = 1;
-
-			waitpid(pid1, &status, 0);
-
-			if (TEST_RETURN != -1) {
-				tst_resm(TFAIL, "%s failed - errno = "
-					 "%d : %s Expected a return "
-					 "value of -1 got %ld", TCID, TEST_ERRNO,
-					 strerror(TEST_ERRNO), TEST_RETURN);
-
-				continue;
-			}
-		}
-
-		/*
-		 * Check to see if the errno was set to the expected
-		 * value of 1 : EPERM
-		 */
-		TEST_ERROR_LOG(TEST_ERRNO);
-
-		if (TEST_ERRNO == EPERM) {
-			tst_resm(TPASS, "errno set to %d : %s, as "
-				 "expected", TEST_ERRNO, strerror(TEST_ERRNO));
-		} else {
-			tst_resm(TFAIL, "errno set to %d : %s expected "
-				 "%d : %s", TEST_ERRNO,
-				 strerror(TEST_ERRNO), 1, strerror(1));
-		}
 	}
+	if (setreuid(ltpuser2->pw_uid, ltpuser2->pw_uid) == -1) {
+		perror("seteuid failed");
+		exit(1);
+	}
+
+	TEST(kill(pid1, TEST_SIG));
+
+	/* signal the child that we're done */
+	*flag = 1;
+
+	if (waitpid(pid1, &status, 0) == -1) {
+		perror("waitpid failed");
+		exit(1);
+	}
+
+	if (TEST_RETURN != -1) {
+		printf("kill succeeded unexpectedly\n");
+		exit(1);
+	}
+
+	/*
+	 * Check to see if the errno was set to the expected
+	 * value of 1 : EPERM
+	 */
+	if (TEST_ERRNO == EPERM) {
+		printf("kill failed with EPERM\n");
+		exit(0);
+	}
+	perror("kill failed unexpectedly");
+	exit(1);
 }
 
-/*
- * do_child()
- */
 void do_child()
 {
 	pid_t my_pid;
 
 	my_pid = getpid();
 	while (1) {
-		if (*flag == 1) {
+		if (*flag == 1)
 			exit(0);
-		} else {
+		else
 			sleep(1);
-		}
 	}
 }
 
-/*
- * setup() - performs all ONE TIME setup for this test
- */
 void setup(void)
 {
-	/* Check that the process is owned by root */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, cleanup, "Test must be run as root");
-	}
+	tst_require_root(NULL);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* Make a temp directory and cd to it.
-	 * Usefull to be sure getipckey generated different IPC keys.
-	 */
 	tst_tmpdir();
 
-	/* get an IPC resource key */
 	semkey = getipckey();
 
-	if ((shmid1 = shmget(semkey, (int)getpagesize(),
-			     0666 | IPC_CREAT)) == -1) {
+	if ((shmid1 = shmget(semkey, getpagesize(), 0666|IPC_CREAT)) == -1)
 		tst_brkm(TBROK, cleanup, "Failed to setup shared memory");
-	}
 
-	/*flag = (int *)shmat(shmid1, 0, 0); */
-	if ((flag = (int *)shmat(shmid1, 0, 0)) == (int *)-1) {
+	if ((flag = (int *)shmat(shmid1, 0, 0)) == (int *)-1)
 		tst_brkm(TBROK|TERRNO, cleanup,
-			 "Failed to attatch shared memory:%d", shmid1);
-	}
+			 "Failed to attach shared memory:%d", shmid1);
 }
 
-/*
- * cleanup() - performs all the ONE TIME cleanup for this test at completion
- * or premature exit.
- */
 void cleanup(void)
 {
-	/*
-	 * print timing status if that option was specified.
-	 * print errno log if that option was specified
-	 */
 	TEST_CLEANUP;
 
-	/* Remove the temporary directory */
-	tst_rmdir();
-
-	/*
-	 * if it exists, remove the shared memory
-	 */
 	rm_shm(shmid1);
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+	tst_rmdir();
 }

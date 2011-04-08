@@ -14,7 +14,6 @@
 * with this program; if not, write the Free Software Foundation, Inc., 59
 * Temple Place - Suite 330, Boston MA 02111-1307, USA.
 
-
 * This sample test aims to check the following assertions:
 *
 * If SA_SIGINFO is set in sa_flags and Real Time Signals extension is supported,
@@ -28,7 +27,6 @@
 
 * The test fails if the function is not called
 */
-
 
 /* We are testing conformance to IEEE Std 1003.1, 2003 Edition */
 #define _POSIX_C_SOURCE 200112L
@@ -50,23 +48,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -84,11 +82,11 @@
 /******************************************************************************/
 
 int called = 0;
-void handler( int sig, siginfo_t *info, void *context )
+void handler(int sig, siginfo_t *info, void *context)
 {
-	if ( info->si_signo != SIGNAL )
+	if (info->si_signo != SIGNAL)
 	{
-		FAILED( "Wrong signal generated?" );
+		FAILED("Wrong signal generated?");
 	}
 
 	called = 1;
@@ -106,11 +104,11 @@ int main()
 	output_init();
 
 	/* Test the RTS extension */
-	rts = sysconf( _SC_REALTIME_SIGNALS );
+	rts = sysconf(_SC_REALTIME_SIGNALS);
 
-	if ( rts < 0L )
+	if (rts < 0L)
 	{
-		UNTESTED( "This test needs the RTS extension" );
+		UNTESTED("This test needs the RTS extension");
 	}
 
 	/* Set the signal handler */
@@ -118,43 +116,42 @@ int main()
 
 	sa.sa_sigaction = handler;
 
-	ret = sigemptyset( &sa.sa_mask );
+	ret = sigemptyset(&sa.sa_mask);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to empty signal set" );
+		UNRESOLVED(ret, "Failed to empty signal set");
 	}
 
 	/* Install the signal handler for SIGURG */
-	ret = sigaction( SIGNAL, &sa, 0 );
+	ret = sigaction(SIGNAL, &sa, 0);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to set signal handler" );
+		UNRESOLVED(ret, "Failed to set signal handler");
 	}
 
-	if ( called )
+	if (called)
 	{
-		FAILED( "The signal handler has been called when no signal was raised" );
+		FAILED("The signal handler has been called when no signal was raised");
 	}
 
-	ret = raise( SIGNAL );
+	ret = raise(SIGNAL);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to raise SIGURG" );
+		UNRESOLVED(ret, "Failed to raise SIGURG");
 	}
 
-	if ( !called )
+	if (!called)
 	{
-		FAILED( "the sa_handler was not called whereas SA_SIGINFO was not set" );
+		FAILED("the sa_handler was not called whereas SA_SIGINFO was not set");
 	}
-
 
 	/* Test passed */
 #if VERBOSE > 0
 
-	output( "Test passed\n" );
+	output("Test passed\n");
 
 #endif
 

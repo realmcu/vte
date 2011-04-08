@@ -69,7 +69,6 @@ void do_child(void);
 char *TCID = "kill01";
 int TST_TOTAL = 1;
 
-extern int Tst_count;
 
 #define TEST_SIG SIGKILL
 
@@ -81,8 +80,8 @@ int main(int ac, char **av)
 	int exno, status, nsig;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
 	maybe_run_child(&do_child, "");
@@ -117,7 +116,7 @@ int main(int ac, char **av)
 		if (TEST_RETURN == -1) {
 			tst_brkm(TFAIL, cleanup, "%s failed - errno = %d : %s",
 				 TCID, TEST_ERRNO, strerror(TEST_ERRNO));
-		 /*NOTREACHED*/}
+		 }
 
 		if (STD_FUNCTIONAL_TEST) {
 			/*
@@ -139,7 +138,7 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -150,7 +149,7 @@ void do_child()
 	int exno = 1;
 
 	pause();
-	 /*NOTREACHED*/ exit(exno);
+	  exit(exno);
 }
 
 /*
@@ -158,7 +157,7 @@ void do_child()
  */
 void setup(void)
 {
-	/* Pause if that option was specified */
+
 	TEST_PAUSE;
 }
 
@@ -174,6 +173,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

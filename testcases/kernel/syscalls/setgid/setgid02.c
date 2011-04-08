@@ -45,12 +45,11 @@
  */
 #include <pwd.h>
 #include <errno.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 TCID_DEFINE(setgid02);
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 char root[] = "root";
 char nobody_uid[] = "nobody";
@@ -72,15 +71,14 @@ int main(int ac, char **av)
 	char *msg;		/* message returned by parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	setup();
 
 	TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -114,8 +112,9 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
+	tst_exit();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
 }
 
 /*
@@ -125,7 +124,7 @@ void setup()
 {
 /* Switch to nobody user for correct error code collection */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 	ltpuser = getpwnam(nobody_uid);
 
@@ -148,10 +147,8 @@ void setup()
 		perror("setuid");
 	}
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -167,6 +164,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

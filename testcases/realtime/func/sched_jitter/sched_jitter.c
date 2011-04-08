@@ -60,26 +60,25 @@ int array[WORKLEN];
 
 volatile int flag; /*let interrupter know we're done */
 
-
 void usage(void)
 {
-        rt_help();
-        printf("sched_jitter specific options:\n");
+	rt_help();
+	printf("sched_jitter specific options:\n");
 }
 
 int parse_args(int c, char *v)
 {
 
-        int handled = 1;
-        switch (c) {
-                case 'h':
-                        usage();
-                        exit(0);
-                default:
-                        handled = 0;
-                        break;
-        }
-        return handled;
+	int handled = 1;
+	switch (c) {
+		case 'h':
+			usage();
+			exit(0);
+		default:
+			handled = 0;
+			break;
+	}
+	return handled;
 }
 
 unsigned long long ts_sub(struct timespec a , struct timespec b)
@@ -113,8 +112,6 @@ void do_work(int runs)
 	}
 }
 
-
-
 void *thread_worker(void* arg)
 {
 	struct timespec start, stop;
@@ -127,7 +124,7 @@ void *thread_worker(void* arg)
 
 	stats_container_init(&dat, NUMRUNS);
 
-        for (i=0; i < NUMRUNS; i++) {
+	for (i=0; i < NUMRUNS; i++) {
 
 		do_work(1); /* warm cache */
 
@@ -135,7 +132,6 @@ void *thread_worker(void* arg)
 		clock_gettime(CLOCK_MONOTONIC, &start);
 		do_work(NUMLOOPS);
 		clock_gettime(CLOCK_MONOTONIC, &stop);
-
 
 		/* calc delta, min and max */
 		delta = ts_sub(stop, start);
@@ -157,7 +153,6 @@ void *thread_worker(void* arg)
 				"Iteration", "Delay (ns)", &dat, "points");
 	return NULL;
 }
-
 
 void *thread_interrupter(void* arg)
 {

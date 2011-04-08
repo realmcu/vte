@@ -2,7 +2,7 @@
  * Copyright (c) 2004, Bull SA. All rights reserved.
  * Created by:  Laurent.Vivier@bull.net
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
  */
 
@@ -47,10 +47,10 @@ int main()
 	int err;
 	int ret;
 
-	if (sysconf(_SC_ASYNCHRONOUS_IO) != 200112L)
+	if (sysconf(_SC_ASYNCHRONOUS_IO) < 200112L)
 		return PTS_UNSUPPORTED;
 
-	snprintf(tmpfname, sizeof(tmpfname), "/tmp/pts_aio_write_1_1_%d", 
+	snprintf(tmpfname, sizeof(tmpfname), "/tmp/pts_aio_write_1_1_%d",
 		  getpid());
 	unlink(tmpfname);
 	fd = open(tmpfname, O_CREAT | O_RDWR | O_EXCL, S_IRUSR | S_IWUSR);
@@ -116,7 +116,7 @@ int main()
 		exit(PTS_FAIL);
 	}
 
-	if ( check[BUF_SIZE] != 1)
+	if (check[BUF_SIZE] != 1)
 	{
 		printf(TNAME " Buffer overflow\n");
 		close(fd);

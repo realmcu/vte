@@ -63,7 +63,6 @@
 
 TCID_DEFINE(sendfile07);
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int in_fd, out_fd = 0, ignored_fd = 0;
 char in_file[100];
@@ -80,9 +79,9 @@ int main(int ac, char **av)
 	int lc;			/* loop counter */
 	char *msg;		/* parse_opts() return message */
 
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	setup();
 
@@ -112,8 +111,9 @@ int main(int ac, char **av)
 	}
 
 	cleanup();
+	tst_exit();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
 }
 
 /*
@@ -125,10 +125,8 @@ void setup()
 	int p[2];
 	int i, r;
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* make a temporary directory and cd to it */
@@ -138,20 +136,20 @@ void setup()
 	if ((in_fd = creat(in_file, 00700)) < 0) {
 		tst_brkm(TBROK, cleanup, "creat failed in setup, errno: %d",
 			 errno);
-	 /*NOTREACHED*/}
+	 }
 	sprintf(buf, "abcdefghijklmnopqrstuvwxyz");
 	if (write(in_fd, buf, strlen(buf)) < 0) {
 		tst_brkm(TBROK, cleanup, "write failed, errno: %d", errno);
-	 /*NOTREACHED*/}
+	 }
 	close(in_fd);
 	if ((in_fd = open(in_file, O_RDONLY)) < 0) {
 		tst_brkm(TBROK, cleanup, "open failed, errno: %d", errno);
-	 /*NOTREACHED*/}
+	 }
 
 	/* Make fulfilled out_fd. */
 	if (socketpair(PF_UNIX, SOCK_DGRAM, 0, p) < 0) {
 		tst_brkm(TBROK, cleanup, "socketpair failed, errno: %d", errno);
-	 /*NOTREACHED*/}
+	 }
 
 	/* Don't close.
 	   You cannot write nothing on out_fd if ignored_fd is closed. */
@@ -203,6 +201,4 @@ void cleanup()
 	/* delete the test directory created in setup() */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

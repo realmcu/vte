@@ -85,7 +85,6 @@
 
 TCID_DEFINE(ftruncate01);	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test conditions */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 int fildes;			/* file descriptor for test file */
 
 void setup();			/* setup function for the test */
@@ -99,18 +98,16 @@ int main(int ac, char **av)
 	off_t file_length;	/* test file length */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -119,7 +116,6 @@ int main(int ac, char **av)
 		 */
 		TEST(ftruncate(fildes, TRUNC_LEN));
 
-		/* check return code of ftruncate(2) */
 		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL|TTERRNO, "ftruncate(%s) failed", TESTFILE);
 			continue;
@@ -156,13 +152,12 @@ int main(int ac, char **av)
 		} else {
 			tst_resm(TPASS, "call succeeded");
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /*
  * void
@@ -173,17 +168,14 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	int i;			/* counter for for loop() */
+	int i;
 	int c, c_total = 0;	/* bytes to be written to file */
 	char tst_buff[BUF_SIZE];	/* buffer to hold data */
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Fill the test buffer with the known data */
@@ -206,7 +198,7 @@ void setup()
 			c_total += c;
 		}
 	}
-}				/* End setup() */
+}
 
 /*
  * void
@@ -226,9 +218,6 @@ void cleanup()
 	if (close(fildes) == -1)
 		tst_brkm(TFAIL|TERRNO, NULL, "close(%s) failed", TESTFILE);
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

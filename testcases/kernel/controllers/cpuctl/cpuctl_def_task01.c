@@ -71,7 +71,6 @@
 #define NUM_SETS	4	/* How many share values (with same ratio)*/
 #define MULTIPLIER   	10      /* Rate at which share value gets multiplied*/
 
-extern int Tst_count;
 char *TCID = "cpu_controller_tests";
 int TST_TOTAL = 1;
 pid_t scriptpid;
@@ -80,7 +79,7 @@ char path[FILENAME_MAX] = "/dev/cpuctl";
 extern void cleanup()
 {
 	kill(scriptpid, SIGUSR1);/* Inform the shell to do cleanup*/
-	tst_exit();		/* Report exit status*/
+		/* Report exit status*/
 }
 volatile int timer_expired = 0;
 
@@ -91,19 +90,23 @@ int main(int argc, char *argv[])
 	char mygroup[FILENAME_MAX], mytaskfile[FILENAME_MAX];
 	char mysharesfile[FILENAME_MAX], ch;
 	pid_t pid;
-	int my_group_num,	        /* A number attached with a group*/
-		fd,          	        /* To open a fifo for synchronization*/
-		first_counter = 0,  	/* To take n number of readings*/
-		second_counter = 0;    	/* no of times shares have changed*/
-	double total_cpu_time,  	/* Accumulated cpu time*/
-		delta_cpu_time,  	/* Time the task could run on cpu(s)*/
-		prev_cpu_time = 0;
+	int my_group_num;	        /* A number attached with a group*/
+	int fd;          	        /* To open a fifo for synchronization*/
+	int first_counter = 0;  	/* To take n number of readings*/
+	int second_counter = 0;    	/* no of times shares have changed*/
+	double total_cpu_time;  	/* Accumulated cpu time*/
+	double delta_cpu_time;  	/* Time the task could run on cpu(s)*/
+	double prev_cpu_time = 0;
 	double exp_cpu_time;		/* Exp time in % by shares calculation*/
 	struct rusage cpu_usage;
 	time_t current_time, prev_time, delta_time;
 	unsigned long int myshares = 2, baseshares = 1000;
 	unsigned int fmyshares, num_tasks;
 	struct sigaction newaction, oldaction;
+
+	num_cpus = 0;
+	test_num = 0;
+	my_group_num = -1;
 
 	/* Signal handling for alarm*/
 	sigemptyset(&newaction.sa_mask);
@@ -232,9 +235,8 @@ int main(int argc, char *argv[])
 				myshares = MULTIPLIER * myshares;
 				write_to_file(mysharesfile, "w", myshares);
 			}
-			 /* No need to change shares for def task for test 3 */
+			/* No need to change shares for def task for test 3 */
 
 		}/* end if*/
 	}/* end while*/
 }/* end main*/
-

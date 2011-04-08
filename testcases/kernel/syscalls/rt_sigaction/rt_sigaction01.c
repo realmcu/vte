@@ -58,8 +58,6 @@
 #include "ltp_signal.h"
 
 /* Extern Global Variables */
-extern int Tst_count;           /* counter for tst_xxx routines.         */
-extern char *TESTDIR;           /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
 char *TCID = "rt_sigaction01";  /* Test program identifier.*/
@@ -85,12 +83,10 @@ int  TST_TOTAL = 1;                   /* total number of tests in this file.   *
 /*                                                                            */
 /******************************************************************************/
 void cleanup() {
-	/* Remove tmp dir and all files in it */
+
 	TEST_CLEANUP;
 	tst_rmdir();
 
-	/* Exit with appropriate return code. */
-	tst_exit();
 }
 
 /* Local  Functions */
@@ -152,28 +148,27 @@ int main(int ac, char **av) {
 	int signal, flag;
 	int lc;                 /* loop counter */
 	char *msg;              /* message returned from parse_opts */
-	
+
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
 
 		Tst_count = 0;
 
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
 
-			for (signal = SIGRTMIN; signal <= (SIGRTMAX ); signal++){//signal for 34 to 65 
+			for (signal = SIGRTMIN; signal <= (SIGRTMAX ); signal++) {//signal for 34 to 65
 
 #ifdef __x86_64__
 				sig_initial(signal);
 #endif
 
-				for(flag = 0; flag < (sizeof(test_flags) / sizeof(test_flags[0])); flag++) {
+				for (flag = 0; flag < (sizeof(test_flags) / sizeof(test_flags[0])); flag++) {
 
 					TEST(set_handler(signal, 0, test_flags[flag]));
 
@@ -194,8 +189,7 @@ int main(int ac, char **av) {
 
 	        }
 
-	}	
+	}
 	cleanup();
-	return 0;
+	tst_exit();
 }
-

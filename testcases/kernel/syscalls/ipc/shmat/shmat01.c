@@ -58,7 +58,6 @@
 #include "ipcshm.h"
 
 char *TCID = "shmat01";
-extern int Tst_count;
 
 void check_functionality(int);
 
@@ -91,8 +90,8 @@ int main(int ac, char **av)
 	int i;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();		/* global setup */
@@ -139,8 +138,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	/* NOTREACHED */
-	return 0;
+	tst_exit();
 }
 
 /*
@@ -225,10 +223,9 @@ void check_functionality(int i)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	if ((TC = malloc(TST_TOTAL*sizeof(struct test_case_t))) == NULL)
@@ -294,7 +291,6 @@ void cleanup(void)
 	if (TC != NULL)
 		free(TC);
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
 	/*
@@ -303,6 +299,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

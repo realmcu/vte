@@ -88,7 +88,6 @@
 
 TCID_DEFINE(truncate02);	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test conditions */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 int fd;				/* file descriptor of testfile */
 char tst_buff[BUF_SIZE];	/* buffer to hold testfile contents */
 int exp_enos[] = { 0 };
@@ -108,21 +107,19 @@ int main(int ac, char **av)
 	int err_flag = 0;	/* error indicator flag */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
-	/* Perform global setup for test */
 	setup();
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -131,7 +128,6 @@ int main(int ac, char **av)
 		 */
 		TEST(truncate(TESTFILE, TRUNC_LEN1));
 
-		/* check return code of truncate(2) */
 		if (TEST_RETURN == -1) {
 			TEST_ERROR_LOG(TEST_ERRNO);
 			tst_resm(TFAIL,
@@ -152,7 +148,7 @@ int main(int ac, char **av)
 					tst_brkm(TFAIL, cleanup, "stat(2) of "
 						 "%s failed after 1st truncate, "
 						 "error:%d", TESTFILE, errno);
-				 /*NOTREACHED*/}
+				 }
 				file_length1 = stat_buf.st_size;
 
 				/*
@@ -163,7 +159,7 @@ int main(int ac, char **av)
 					tst_brkm(TFAIL, cleanup, "lseek(2) on "
 						 "%s failed after 1st truncate, "
 						 "error:%d", TESTFILE, errno);
-				 /*NOTREACHED*/}
+				 }
 
 				/* Read the testfile from the beginning. */
 				while ((rbytes = read(fd, tst_buff,
@@ -177,7 +173,6 @@ int main(int ac, char **av)
 				 */
 				TEST(truncate(TESTFILE, TRUNC_LEN2));
 
-				/* check return code of truncate(2) */
 				if (TEST_RETURN == -1) {
 					TEST_ERROR_LOG(TEST_ERRNO);
 					tst_resm(TFAIL, "truncate of %s to "
@@ -195,7 +190,7 @@ int main(int ac, char **av)
 					tst_brkm(TFAIL, cleanup, "stat(2) of "
 						 "%s failed after 2nd truncate, "
 						 "error:%d", TESTFILE, errno);
-				 /*NOTREACHED*/}
+				 }
 				file_length2 = stat_buf.st_size;
 
 				/*
@@ -206,7 +201,7 @@ int main(int ac, char **av)
 					tst_brkm(TFAIL, cleanup, "lseek(2) on "
 						 "%s failed after 2nd truncate, "
 						 "error:%d", TESTFILE, errno);
-				 /*NOTREACHED*/}
+				 }
 
 				/* Read the testfile contents till EOF */
 				while ((rbytes = read(fd, tst_buff,
@@ -239,13 +234,12 @@ int main(int ac, char **av)
 			}
 		}
 		Tst_count++;	/* incr. TEST_LOOP counter */
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /*
  * void
@@ -260,7 +254,6 @@ void setup()
 	int wbytes;		/* bytes written to testfile */
 	int write_len = 0;	/* total no. of bytes written to testfile */
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Pause if that option was specified
@@ -270,7 +263,6 @@ void setup()
 	 */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Fill the test buffer with the known data */
@@ -283,7 +275,7 @@ void setup()
 		tst_brkm(TBROK, cleanup,
 			 "open(%s, O_RDWR|O_CREAT, %o) Failed, errno=%d : %s",
 			 TESTFILE, FILE_MODE, errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 
 	/* Write to the file 1k data from the buffer */
 	while (write_len < FILE_SIZE) {
@@ -295,7 +287,7 @@ void setup()
 			write_len += wbytes;
 		}
 	}
-}				/* End setup() */
+}
 
 /*
  * void
@@ -318,9 +310,6 @@ void cleanup()
 			 TESTFILE, errno, strerror(errno));
 	}
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

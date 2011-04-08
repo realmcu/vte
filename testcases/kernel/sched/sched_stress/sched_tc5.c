@@ -50,7 +50,6 @@
 #include <sys/resource.h>
 #include   "sched.h"
 
-
 /*
  * Defines:
  *
@@ -82,7 +81,6 @@
 void parse_args (int, char **);
 void invert_matrix ();
 
-
 /*
  * Global variables:
  *
@@ -97,7 +95,6 @@ int	debug     = 0;
 int 	priority  = DEFAULT_PRIORITY;
 char	*logfile  = DEFAULT_LOGFILE;
 char 	*priority_type = DEFAULT_PRIORITY_TYPE;
-
 
 /*---------------------------------------------------------------------+
 |                                 main                                 |
@@ -161,14 +158,13 @@ int main (int argc, char **argv)
 
 	if (fclose (statfile) < 0)
 		sys_error ("fclose failed", __FILE__, __LINE__);
-  
+
 	/*
 	 * Exit with success!
 	 */
 	if (verbose) printf ("\nsuccessful!\n");
 	return (0);
 }
-
 
 /*---------------------------------------------------------------------+
 |                           invert_matrix ()                           |
@@ -200,9 +196,9 @@ printf("sched_tc5: invert_matrix: before first matrix inversion\n");
 	 * identity matrix in the result matrix
 	 */
 printf("sched_tc5: invert_matrix: before second matrix inversion\n");
-	for ( i = 0; i < MATRIX_SIZE; i++ )
-		for ( j = 0; j < MATRIX_SIZE; j++ )
-			if ( i == j )
+	for (i = 0; i < MATRIX_SIZE; i++)
+		for (j = 0; j < MATRIX_SIZE; j++)
+			if (i == j)
 				matrix_2[i][j] = 1;
 			else
 				matrix_2[i][j] = 0;
@@ -211,16 +207,16 @@ printf("sched_tc5: invert_matrix: before form identity matrix\n");
 	/*
 	 * Form an identity matrix in the random matrix
 	 */
-	for ( i = 0; i < MATRIX_SIZE; i++ ) {
+	for (i = 0; i < MATRIX_SIZE; i++) {
 		t1 = matrix_1[i][j];
-		for ( j = 0; j < MATRIX_SIZE; j++ ) {
+		for (j = 0; j < MATRIX_SIZE; j++) {
 			matrix_1[i][j] /= t1;
 			matrix_2[i][j] /= t1;
 		}
-		for ( j = 0; j < MATRIX_SIZE; j++ )
-			if ( i != j ) {
+		for (j = 0; j < MATRIX_SIZE; j++)
+			if (i != j) {
 				t1 = - matrix_1[j][i];
-				for ( k = 0; k < MATRIX_SIZE; k++ ) {
+				for (k = 0; k < MATRIX_SIZE; k++) {
 					matrix_1[j][k] += ( matrix_1[i][k] * t1 );
 					matrix_2[j][k] += ( matrix_2[i][k] * t1 );
 				}
@@ -228,7 +224,6 @@ printf("sched_tc5: invert_matrix: before form identity matrix\n");
 	}
 printf("sched_tc5: invert_matrix: after form identity matrix\n");
 }
-
 
 /*---------------------------------------------------------------------+
 |                             parse_args ()                            |
@@ -309,4 +304,3 @@ debug=1;
 		exit (2);
 	}
 }
-

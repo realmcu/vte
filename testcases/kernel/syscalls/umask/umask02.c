@@ -55,7 +55,6 @@
 
 char *TCID = "umask02";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void setup(void);
 void cleanup(void);
@@ -69,10 +68,10 @@ int main(int argc, char **argv)
 	int failcnt = 0;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	setup();
 
@@ -95,7 +94,7 @@ int main(int argc, char **argv)
 				 "values");
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -105,7 +104,7 @@ int main(int argc, char **argv)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Pause if that option was specified
@@ -127,6 +126,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

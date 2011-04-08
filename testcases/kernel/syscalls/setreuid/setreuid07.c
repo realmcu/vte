@@ -55,7 +55,6 @@
 
 char *TCID = "setreuid07";
 int TST_TOTAL = 1;
-extern int Tst_count;
 char nobody_uid[] = "nobody";
 char testfile[256] = "";
 struct passwd *ltpuser;
@@ -74,13 +73,8 @@ int main(int ac, char **av)
 	int status;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
-
-	/*
-	 * perform global setup for the test
-	 */
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	setup();
 
 	TEST_EXP_ENOS(exp_enos);
@@ -89,18 +83,16 @@ int main(int ac, char **av)
 	if (pid < 0)
 		tst_brkm(TBROK, cleanup, "Fork failed");
 
-	if (pid == 0) {
+	if (pid == 0)
 		do_master_child();
-		return 0;
-	} else {
-		waitpid(pid, &status, 0);
-		if (!WIFEXITED(status) || (WEXITSTATUS(status) != 0))
-			tst_resm(WEXITSTATUS(status),
-				 "son process exits with error");
-	}
+
+	if (waitpid(pid, &status, 0) == -1)
+		tst_resm(TBROK|TERRNO, "waitpid failed");
+	if (!WIFEXITED(status) || (WEXITSTATUS(status) != 0))
+		tst_resm(TFAIL, "child process terminated abnormally");
 
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -112,7 +104,6 @@ void do_master_child()
 	int pid;
 	int status;
 
-	/* Check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		int tst_fd;
 
@@ -120,9 +111,8 @@ void do_master_child()
 		Tst_count = 0;
 
 		if (setreuid(0, ltpuser->pw_uid) == -1) {
-			tst_brkm(TBROK, cleanup,
-				 "setreuid failed to set the euid to %d",
-				 ltpuser->pw_uid);
+			perror("setfsuid failed");
+			exit(1);
 		}
 
 		/* Test 1: Check the process with new uid cannot open the file
@@ -131,16 +121,16 @@ void do_master_child()
 		TEST(tst_fd = open(testfile, O_RDWR));
 
 		if (TEST_RETURN != -1) {
-			tst_resm(TFAIL, "call succeeded unexpectedly");
+			printf("open succeeded unexpectedly\n");
 			close(tst_fd);
+			exit(1);
 		}
 
 		if (TEST_ERRNO == EACCES) {
-			tst_resm(TPASS, "open returned errno EACCES");
+			printf("open failed with EACCES as expected\n");
 		} else {
-			tst_resm(TFAIL, "open returned unexpected errno - %d",
-				 TEST_ERRNO);
-			continue;
+			perror("open failed unexpectedly");
+			exit(1);
 		}
 
 		/* Test 2: Check a son process cannot open the file
@@ -157,23 +147,26 @@ void do_master_child()
 			TEST(tst_fd2 = open(testfile, O_RDWR));
 
 			if (TEST_RETURN != -1) {
-				tst_resm(TFAIL, "call succeeded unexpectedly");
+				printf("call succeeded unexpectedly\n");
 				close(tst_fd2);
+				exit(1);
 			}
 
 			TEST_ERROR_LOG(TEST_ERRNO);
 
 			if (TEST_ERRNO == EACCES) {
-				tst_resm(TPASS, "open returned errno EACCES");
+				printf("open failed with EACCES as expected\n");
+				exit(0);
 			} else {
-				tst_resm(TFAIL,
-					 "open returned unexpected errno - %d",
-					 TEST_ERRNO);
+				printf("open failed unexpectedly\n");
+				exit(1);
 			}
-			continue;
 		} else {
 			/* Wait for son completion */
-			waitpid(pid, &status, 0);
+			if (waitpid(pid, &status, 0) == -1) {
+				perror("waitpid failed");
+				exit(1);
+			}
 			if (!WIFEXITED(status) || (WEXITSTATUS(status) != 0))
 				exit(WEXITSTATUS(status));
 		}
@@ -183,21 +176,21 @@ void do_master_child()
 		 */
 		Tst_count++;
 		if (setreuid(0, 0) == -1) {
-			tst_brkm(TBROK, cleanup,
-				 "setreuid failed to set the euid to 0");
+			perror("setfsuid failed");
+			exit(1);
 		}
 
 		TEST(tst_fd = open(testfile, O_RDWR));
 
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL, "open returned unexpected errno %d",
-				 TEST_ERRNO);
-			continue;
+			perror("open failed unexpectedly");
+			exit(1);
 		} else {
-			tst_resm(TPASS, "open call succeeded");
+			printf("open call succeeded\n");
 			close(tst_fd);
 		}
 	}
+	exit(0);
 }
 
 /*
@@ -205,13 +198,10 @@ void do_master_child()
  */
 void setup(void)
 {
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
-	}
+	tst_require_root(NULL);
 
 	ltpuser = getpwnam(nobody_uid);
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	sprintf(testfile, "setreuid07file%d.tst", getpid());
@@ -221,10 +211,8 @@ void setup(void)
 	if (fd < 0)
 		tst_brkm(TBROK, cleanup, "cannot creat test file");
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -242,9 +230,6 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

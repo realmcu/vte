@@ -89,7 +89,6 @@ static int do_child();
 
 char *TCID = "clone07";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 void sigsegv_handler(int);
 void sigusr2_handler(int);
@@ -104,24 +103,18 @@ int main(int ac, char **av)
 	void *child_stack;	/* stack for child */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
                                /* Allocate stack for child */
-                if((child_stack = (void *) malloc(CHILD_STACK_SIZE)) == NULL) {
+                if ((child_stack = (void *) malloc(CHILD_STACK_SIZE)) == NULL) {
                         tst_brkm(TBROK, cleanup, "Cannot allocate stack for child");
                 }
-
 
 		/*
 		 * Call clone(2)
@@ -130,7 +123,7 @@ int main(int ac, char **av)
 				CHILD_STACK_SIZE, child_stack);
 		wait(NULL);
 		free(child_stack);
-	}			/* End for TEST_LOOPING */
+	}
 
 	if (fail == FALSE)
 		tst_resm(TPASS,
@@ -141,9 +134,9 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
@@ -151,7 +144,6 @@ void setup()
 	struct sigaction def_act;
 	struct sigaction act;
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	act.sa_handler = sigsegv_handler;
@@ -170,7 +162,7 @@ void setup()
 			 "sigaction() for SIGUSR2 failed in test_setup()");
 	}
 
-}				/* End setup() */
+}
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
@@ -186,9 +178,8 @@ void cleanup()
 	TEST_CLEANUP;
 
 	kill(child_pid, SIGKILL);
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+
+}
 
 /*
  * do_child() - function executed by child

@@ -65,7 +65,6 @@
 
 char *TCID = "hugeshmctl03";
 int TST_TOTAL = 3;
-extern int Tst_count;
 unsigned long huge_pages_shm_to_be_allocated;
 
 int exp_enos[] = {EACCES, EPERM, 0};	/* 0 terminated list of */
@@ -100,13 +99,12 @@ int main(int ac, char **av)
 	void do_child(void);
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
 
-        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 )
+        if (get_no_of_hugepages() <= 0 || hugepages_size() <= 0)
              tst_brkm(TCONF, cleanup, "Not enough available Hugepages");
-        else             
+        else
              huge_pages_shm_to_be_allocated = ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
 
 	setup();			/* global setup */
@@ -132,12 +130,11 @@ int main(int ac, char **av)
 		/* if it exists, remove the shared memory resource */
 		rm_shm(shm_id_1);
 
-		/* Remove the temporary directory */
 		tst_rmdir();
 	}
 
 	cleanup ();
-	return 0;
+	tst_exit();
 }
 
 /*
@@ -177,7 +174,7 @@ do_child()
 				tst_resm(TFAIL, "call failed with an "
 					 "unexpected error - %d : %s",
 					 TEST_ERRNO, strerror(TEST_ERRNO));
-			}		
+			}
 		}
 	}
 }
@@ -191,13 +188,11 @@ setup(void)
 	/* check for root as process owner */
 	check_root();
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -234,7 +229,4 @@ cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
-

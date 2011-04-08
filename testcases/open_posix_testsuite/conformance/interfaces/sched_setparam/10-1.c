@@ -1,4 +1,4 @@
-/* 
+/*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -8,7 +8,7 @@
  *  GNU General Public License for more details.
  *
  *
- * Test that the process that is the head of the highest priority list preempt 
+ * Test that the process that is the head of the highest priority list preempt
  * the process calling sched_setparam() when the calling process sets its own
  * priority lower than that of one or more other non-empty process lists.
  *
@@ -25,8 +25,6 @@
  *   5. Check if the shared value has been changed by a child process. If not,
  *      the test fail.
  */
-
-#define _XOPEN_SOURCE 600
 
 #include <sched.h>
 #include <stdio.h>
@@ -49,14 +47,11 @@
 # include <sys/pstat.h>
 #endif
 
-/* Max number of loop for child_process */
-#define NB_LOOP 100000
+static int nb_cpu;
+static int *shmptr;
 
-int nb_cpu;
-int *shmptr; /* shared memory */
-
-/* Get the number of CPUs */
-int get_ncpu() {
+static int get_ncpu(void)
+{
 	int ncpu = -1;
 
 	/* This syscall is not POSIX but it should work on many system */
@@ -71,57 +66,59 @@ int get_ncpu() {
 	sysctl(mib, 2, &ncpu, &len, NULL, 0);
 # else
 #  ifdef HPUX
-	struct pst_dynamic psd; 
+	struct pst_dynamic psd;
 	pstat_getdynamic(&psd, sizeof(psd), 1, 0);
-	ncpu = (int)psd.psd_proc_cnt; 
+	ncpu = (int)psd.psd_proc_cnt;
 #  endif /* HPUX */
 # endif /* BSD */
-#endif /* _SC_NPROCESSORS_ONLN */  
+#endif /* _SC_NPROCESSORS_ONLN */
 
 	return ncpu;
 }
 
-void child_process(){
+static void child_process(void)
+{
 	alarm(2);
 
-	while(1) {
+	while (1) {
 		(*shmptr)++;
 		sched_yield();
 	}
 }
 
-void kill_children(int *child_pid){
+static void kill_children(int *child_pid)
+{
 	int i;
 
-	for(i=0; i<nb_cpu; i++) {
-		kill(child_pid[i], SIGTERM);		
+	for (i = 0; i < nb_cpu; i++) {
+		kill(child_pid[i], SIGTERM);
 	}
 }
 
-
-int main(){
+int main(void)
+{
         int *child_pid, oldcount, newcount, shm_id, i, j;
 	struct sched_param param;
-	key_t key; 
+	key_t key;
 
-	/* Get the number of CPUs */
 	nb_cpu = get_ncpu();
-	if(nb_cpu == -1) {
+	
+	if (nb_cpu == -1) {
 		printf("Can not get the number of CPUs of your machines.\n");
 		return PTS_UNRESOLVED;
 	}
 
-	child_pid = malloc(nb_cpu);
+	child_pid = malloc(nb_cpu * sizeof(int));
 
 	key = ftok("conformance/interfaces/sched_setparam/10-1.c",1234);
 	shm_id = shmget(key, sizeof(int), IPC_CREAT|0600);
-	if(shm_id < 0) {
+	if (shm_id < 0) {
 		perror("An error occurs when calling shmget()");
 		return PTS_UNRESOLVED;
 	}
 
-	shmptr = (int *)shmat(shm_id, 0, 0);
-	if(shmptr < (int*)0) {
+	shmptr = shmat(shm_id, 0, 0);
+	if (shmptr == (void*)-1) {
 		perror("An error occurs when calling shmat()");
 		return PTS_UNRESOLVED;
 	}
@@ -129,25 +126,26 @@ int main(){
 
 	param.sched_priority = sched_get_priority_max(SCHED_FIFO);
 
-	if(sched_setscheduler(getpid(), SCHED_FIFO, &param) != 0) {
-		if(errno == EPERM) {
-			printf("This process does not have the permission to set its own scheduling parameter.\nTry to launch this test as root\n");
+	if (sched_setscheduler(getpid(), SCHED_FIFO, &param) != 0) {
+		if (errno == EPERM) {
+			printf("This process does not have the permission to set its own scheduling "
+			       "parameter.\nTry to launch this test as root\n");
 		} else {
 			perror("An error occurs when calling sched_setscheduler()");
 		}
 		return PTS_UNRESOLVED;
 	}
 
-	for(i=0; i<nb_cpu; i++) {
+	for (i = 0; i < nb_cpu; i++) {
 		child_pid[i] = fork();
-		if(child_pid[i] == -1){
+		if (child_pid[i] == -1) {
 			perror("An error occurs when calling fork()");
-			for(j=0; j<i; j++) {
-				kill(child_pid[j], SIGTERM);		
+			for (j=0; j<i; j++) {
+				kill(child_pid[j], SIGTERM);
 			}
 			return PTS_UNRESOLVED;
-		} else if (child_pid[i] == 0){
-			
+		} else if (child_pid[i] == 0) {
+
 			child_process();
 
 			printf("This code should not be executed.\n");
@@ -156,23 +154,23 @@ int main(){
 	}
 
 	sleep(1);
-	
+
 	param.sched_priority--;
 
 	oldcount = *shmptr;
-	if(sched_setparam(getpid(), &param) != 0) {
+	if (sched_setparam(getpid(), &param) != 0) {
 		perror("An error occurs when calling sched_setparam()");
 		kill_children(child_pid);
 		return PTS_UNRESOLVED;
 	}
 	newcount = *shmptr;
-	
-	if(newcount == oldcount){
+
+	if (newcount == oldcount) {
 		printf("The calling process does not relinquish the processor\n");
 		kill_children(child_pid);
 		return PTS_FAIL;
-	} 
-		
+	}
+
 	printf("Test PASSED\n");
 	kill_children(child_pid);
 	return PTS_PASS;

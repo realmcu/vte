@@ -64,16 +64,13 @@ static int	checkchars(int fd, char val, int n);
 
 char *TCID = "mmapstress07";
 
-
 int local_flag = PASSED;
 int block_number;
 FILE *temp;
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int anyfail();
 void ok_exit();
-
 
 /*ARGSUSED*/
 static
@@ -296,7 +293,7 @@ main(int argc, char **argv)
 	(void)time(&t);
 //	(void)printf("%s: Finished %s", argv[0], ctime(&t));
 	ok_exit();
-	return 0;
+	tst_exit();
 }
 
 /* checkchars
@@ -321,9 +318,8 @@ int anyfail()
   tst_resm(TFAIL, "Test failed\n");
   tst_rmdir();
   tst_exit();
-  return 0;
+        return 0;
 }
-
 
 void ok_exit()
 {

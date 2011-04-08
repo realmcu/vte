@@ -14,13 +14,11 @@
 * with this program; if not, write the Free Software Foundation, Inc., 59
 * Temple Place - Suite 330, Boston MA 02111-1307, USA.
 
-
 * This sample test aims to check the following assertion:
 *
-*  If a process calls sem_open several times with the same name, 
-* the same adress must be returned as long as the semaphore 
-* has not been unlinked or closed as many times as opened. 
-
+*  If a process calls sem_open several times with the same name,
+* the same adress must be returned as long as the semaphore
+* has not been unlinked or closed as many times as opened.
 
 * The steps are:
 * -> Create a semaphore with sem_open
@@ -30,7 +28,6 @@
 * The test fails if a different address is returned.
 
 */
-
 
 /* We are testing conformance to IEEE Std 1003.1, 2003 Edition */
 #define _POSIX_C_SOURCE 200112L
@@ -53,23 +50,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -85,7 +82,7 @@
 /******************************************************************************/
 
 /* The main test function. */
-int main( int argc, char * argv[] )
+int main(int argc, char * argv[])
 {
 	int ret, i;
 	char * name = "/sem_open_15_1";
@@ -97,77 +94,74 @@ int main( int argc, char * argv[] )
 
 	/* Initialize all semaphores */
 
-	for ( i = 0; i < 4; i++ )
+	for (i = 0; i < 4; i++)
 	{
-		sems[ i ] = sem_open( name, O_CREAT, 0777, 1 );
+		sems[ i ] = sem_open(name, O_CREAT, 0777, 1);
 
-		if ( sems[ i ] == SEM_FAILED )
+		if (sems[ i ] == SEM_FAILED)
 		{
-			UNRESOLVED( errno, "Failed to sem_open" );
+			UNRESOLVED(errno, "Failed to sem_open");
 		}
 
 	}
 
 	/* Check all calls returned the same @ */
-	for ( i = 0; i < 3; i++ )
+	for (i = 0; i < 3; i++)
 	{
-		if ( sems[ i ] != sems[ i + 1 ] )
+		if (sems[ i ] != sems[ i + 1 ])
 		{
-			FAILED( "sem_open returned a different address" );
+			FAILED("sem_open returned a different address");
 		}
 
 		/* Close some semaphores */
-		ret = sem_close( sems[ i ] );
+		ret = sem_close(sems[ i ]);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			UNRESOLVED( errno, "Failed to sem_close" );
+			UNRESOLVED(errno, "Failed to sem_close");
 		}
 	}
 
 	/* Now, reopen, we should still get the same address */
-	for ( i = 0; i < 3; i++ )
+	for (i = 0; i < 3; i++)
 	{
-		sems[ i ] = sem_open( name, O_CREAT, 0777, 1 );
+		sems[ i ] = sem_open(name, O_CREAT, 0777, 1);
 
-		if ( sems[ i ] == SEM_FAILED )
+		if (sems[ i ] == SEM_FAILED)
 		{
-			UNRESOLVED( errno, "Failed to sem_open" );
+			UNRESOLVED(errno, "Failed to sem_open");
 		}
 
 	}
 
 	/* Check all calls returned the same @ */
-	for ( i = 0; i < 3; i++ )
+	for (i = 0; i < 3; i++)
 	{
-		if ( sems[ i ] != sems[ i + 1 ] )
+		if (sems[ i ] != sems[ i + 1 ])
 		{
-			FAILED( "sem_open returned a different address" );
+			FAILED("sem_open returned a different address");
 		}
 	}
-
 
 	/* Close all semaphores */
-	for ( i = 0; i < 4; i++ )
+	for (i = 0; i < 4; i++)
 	{
-		ret = sem_close( sems[ i ] );
+		ret = sem_close(sems[ i ]);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			UNRESOLVED( errno, "Failed to sem_close" );
+			UNRESOLVED(errno, "Failed to sem_close");
 		}
 	}
 
-	sem_unlink( name );
+	sem_unlink(name);
 
 	/* Test passed */
 #if VERBOSE > 0
 
-	output( "Test passed\n" );
+	output("Test passed\n");
 
 #endif
 
 	PASSED;
 }
-
-

@@ -20,13 +20,14 @@
 /* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
 /* 11/22/2002	Port to Linux	dbarrera@us.ibm.com */
 
+#include <sys/types.h>
+#include <assert.h>
+#include <fcntl.h>
+#include <signal.h>
 #include <stdio.h>
 #include <syslog.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <time.h>
+#include <unistd.h>
 #include "test.h"
 #include "usctest.h"
 /*
@@ -35,7 +36,6 @@
 
 char *TCID = "syslogtst";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int exp_enos[] = { 0 };		/* List must end with 0 */
 
@@ -46,6 +46,8 @@ int main(int argc, char *argv[])
 	int status, flag3, fd, ch, ch1;
 	int exit_flag = 0;	/* used for syslog test case 6. */
 	time_t t;
+
+	ch1 = -1;
 
 	signal(SIGINT, sig_handler);
 	signal(SIGTERM, sig_handler);
@@ -71,7 +73,7 @@ int main(int argc, char *argv[])
 
 	else if (argc == 2) {
 		ch = atoi(argv[1]);
-		if (atoi(argv[1]) == 2 || atoi(argv[1]) == 8) {
+		if (ch == 2 || ch == 8) {
 			if (ch == 2)
 				ch1 = random() % 8;
 			if (ch == 8)
@@ -87,6 +89,9 @@ int main(int argc, char *argv[])
 		if (argc > 2)
 			ch1 = atoi(argv[2]);
 	}
+
+	/* Ensure ch1 is properly allocated when ch == 2 or ch == 8. */
+	assert (!((ch == 2 || ch == 8) && ch1 == -1));
 
 	/*
 	 * Send syslog messages according to the case number, which

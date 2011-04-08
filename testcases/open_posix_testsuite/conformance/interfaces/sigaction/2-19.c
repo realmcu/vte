@@ -3,7 +3,7 @@
  * Copyright (c) 2002-2003, Intel Corporation. All rights reserved.
  * Created by:  rusty.lynch REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
   Test case for assertion #2 of the sigaction system call that shows
@@ -11,9 +11,9 @@
   for a signal.
 
   Steps:
-  1. Call sigaction to set handler for SIGPOLL to use handler1
-  2. Call sigaction again to set handler for SIGPOLL to use handler2,
-     but this time use a non-null oarg and verify the sa_handler for 
+  1. Call sigaction to set handler for SIGALRM to use handler1
+  2. Call sigaction again to set handler for SIGALRM to use handler2,
+     but this time use a non-null oarg and verify the sa_handler for
      oarg is set for handler1.
 */
 
@@ -35,19 +35,19 @@ int main()
 {
 	struct sigaction act;
 	struct sigaction oact;
-	
+
 	act.sa_handler = handler1;
 	act.sa_flags = 0;
 	sigemptyset(&act.sa_mask);
-	if (sigaction(SIGPOLL,  &act, 0) == -1) {
+	if (sigaction(SIGALRM,  &act, 0) == -1) {
 		perror("Unexpected error while attempting to setup test "
 		       "pre-conditions");
 		return PTS_UNRESOLVED;
 	}
-	
+
 	act.sa_handler = handler2;
 	sigemptyset(&act.sa_mask);
-	if (sigaction(SIGPOLL,  &act, &oact) == -1) {
+	if (sigaction(SIGALRM,  &act, &oact) == -1) {
 		perror("Unexpected error while attempting to setup test "
 		       "pre-conditions");
 		return PTS_UNRESOLVED;

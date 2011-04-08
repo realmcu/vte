@@ -64,7 +64,6 @@
 #endif /* Not def: OFF_T */
 
 TCID_DEFINE(sendfile04);
-extern int Tst_count;
 
 char in_file[100];
 char out_file[100];
@@ -109,21 +108,21 @@ void do_sendfile(int prot, int pass_unmapped_buffer)
 				prot, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 	if (protected_buffer == MAP_FAILED) {
 		tst_brkm(TBROK, cleanup, "mmap failed: %d", errno);
-	 /*NOTREACHED*/}
+	 }
 
 	out_fd = create_server();
 
 	if ((in_fd = open(in_file, O_RDONLY)) < 0) {
 		tst_brkm(TBROK, cleanup, "open failed: %d", errno);
-	 /*NOTREACHED*/}
+	 }
 	if (stat(in_file, &sb) < 0) {
 		tst_brkm(TBROK, cleanup, "stat failed: %d", errno);
-	 /*NOTREACHED*/}
+	 }
 
 	if (pass_unmapped_buffer) {
 		if (munmap(protected_buffer, sizeof(*protected_buffer)) < 0) {
 			tst_brkm(TBROK, cleanup, "munmap failed: %d", errno);
-		 /*NOTREACHED*/}
+		 }
 	}
 
 	TEST(sendfile(out_fd, in_fd, protected_buffer, sb.st_size));
@@ -179,10 +178,8 @@ void setup()
 	int fd;
 	char buf[100];
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* make a temporary directory and cd to it */
@@ -191,11 +188,11 @@ void setup()
 	if ((fd = creat(in_file, 00700)) < 0) {
 		tst_brkm(TBROK, cleanup, "creat failed in setup, errno: %d",
 			 errno);
-	 /*NOTREACHED*/}
+	 }
 	sprintf(buf, "abcdefghijklmnopqrstuvwxyz");
 	if (write(fd, buf, strlen(buf)) < 0) {
 		tst_brkm(TBROK, cleanup, "write failed, errno: %d", errno);
-	 /*NOTREACHED*/}
+	 }
 	close(fd);
 	sprintf(out_file, "out.%d", getpid());
 }
@@ -216,8 +213,6 @@ void cleanup()
 	/* delete the test directory created in setup() */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
 
 int create_server(void)
@@ -278,9 +273,9 @@ int main(int ac, char **av)
 	int lc;			/* loop counter */
 	char *msg;		/* parse_opts() return message */
 
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 #ifdef UCLINUX
 	argv0 = av[0];
 	maybe_run_child(&do_child, "");
@@ -301,5 +296,5 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }

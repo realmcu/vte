@@ -55,9 +55,8 @@
 
 char *TCID="pipeio"; 		/* Test program identifier.    */
 int TST_TOTAL=1;    		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-#define SAFE_FREE(p) { if(p) { free(p); (p)=NULL; } }
+#define SAFE_FREE(p) { if (p) { free(p); (p)=NULL; } }
 
 /* To avoid extensive modifications to the code, use this bodge */
 #define exit(x) myexit(x)
@@ -68,13 +67,12 @@ myexit (int x)
     tst_resm (TFAIL, "Test failed");
   else
     tst_resm (TPASS, "Test passed");
-  tst_exit();
+ tst_exit();
 }
 
 #if defined(__linux__)
 # define NBPW sizeof(int)
 #endif
-
 
 #define PPATH "tpipe"
 #define OCTAL	'o'
@@ -143,7 +141,7 @@ char *av[];
 	int fds[2];		/* un-named pipe fds */
 	int read_fd = 0;
 	int write_fd = 0;
-	int empty_read = 0;	/* counter for the number of empty reads */
+	int empty_read = 0;
 	time_t start_time, current_time, diff_time;	/* start time, current time, diff of times */
 	int *count_word;	/* holds address where to write writers count */
 	int *pid_word;		/* holds address where to write writers pid */
@@ -160,15 +158,15 @@ char *av[];
 	  struct semid_ds *buf;
 	  unsigned short int *array;
 	} u;
-	
+
 	u.val = 0;
 	format = HEX;
 	blk_type = NON_BLOCKING_IO;
 	dir[0] = '\0';
 	sprintf(pname,"%s.%d",PPATH,getpid());
 
-	if( (toutput=getenv("TOUTPUT")) != NULL ) {
-	    if( strcmp( toutput, "NOPASS") == 0 ) {
+	if ((toutput = getenv("TOUTPUT")) != NULL) {
+	    if (strcmp(toutput, "NOPASS") == 0) {
 		quiet=1;
 	    }
 	}
@@ -208,7 +206,7 @@ char *av[];
 				usage();
 				exit(1);
 			}
-			else if ( num_wrters <= 0 ) {
+			else if (num_wrters <= 0) {
 				fprintf(stderr,
 				    "%s: --c option must be greater than zero.\n",
 				    TCID);
@@ -223,7 +221,7 @@ char *av[];
 				usage();
 				exit(1);
 			}
-			else if ( exit_error < 0 ) {
+			else if (exit_error < 0) {
 				fprintf(stderr,
 				    "%s: --e option must be greater than zero.\n",
 				    TCID);
@@ -269,8 +267,8 @@ char *av[];
 			}
 			cp = optarg;
 			cp++;
-			if ( *cp ) {
-			    if ( sscanf(cp, "%i", &format_size) != 1 ) {
+			if (*cp) {
+			    if (sscanf(cp, "%i", &format_size) != 1) {
 				fprintf(stderr,"%s: --f option invalid arg '%s'.\n",
 					TCID,optarg);
 				fprintf(stderr,
@@ -282,7 +280,7 @@ char *av[];
 			break;
 
     		case 'I':
-     			if((iotype=lio_parse_io_arg1(optarg)) == -1 ) {
+     			if ((iotype=lio_parse_io_arg1(optarg)) == -1) {
          		    fprintf(stderr,
              			"%s: --I arg is invalid, must be s, p, f, a, l, L or r.\n",
              			TCID);
@@ -302,7 +300,7 @@ char *av[];
 				usage();
 				exit(1);
 			}
-			else if ( num_writes < 0 ) {
+			else if (num_writes < 0) {
 				fprintf(stderr,
 				    "%s: --i/n option must be greater than equal to zero.\n",
 				    TCID);
@@ -326,7 +324,7 @@ char *av[];
 				usage();
 				exit(1);
 			}
-			else if ( num_rpt < 0 ) {
+			else if (num_rpt < 0) {
 				fprintf(stderr,
 					"%s: --p option must be greater than equal to zero.\n",
 					TCID);
@@ -344,7 +342,7 @@ char *av[];
 				usage();
 				exit(1);
 			}
-			else if ( size <= 0 ) {
+			else if (size <= 0) {
 				fprintf(stderr,
 				    "%s: --s option must be greater than zero.\n",
 				    TCID);
@@ -366,7 +364,7 @@ char *av[];
 				usage();
 				exit(1);
 			}
-			else if ( d < 0 ) {
+			else if (d < 0) {
 				fprintf(stderr,
 				    "%s: --w option must be greater than zero.\n",
 				    TCID);
@@ -383,7 +381,7 @@ char *av[];
 				usage();
 				exit(1);
 			}
-			else if ( d < 0 ) {
+			else if (d < 0) {
 				fprintf(stderr,
 				    "%s: --w option must be greater than zero.\n",
 				    TCID);
@@ -399,7 +397,7 @@ char *av[];
 	    }
 	}
 
-	if ( format_size == -1 )
+	if (format_size == -1)
 		format_size = size;
 
 	/*
@@ -419,8 +417,8 @@ char *av[];
 	 *	bytes will be written.)  This is the same as:
 	 *      pipeio -s 4096 -n 13 -c 5
 	 */
-	if ( size > PIPE_BUF && num_wrters > 1 ) {
-	    if ( ! loop ) {
+	if (size > PIPE_BUF && num_wrters > 1) {
+	    if (! loop) {
 	      /* we must set num_writes s.t. num_writes*num_wrters doesn't overflow later */
 		num_writes=MIN(((long long)num_writes*size+PIPE_BUF-1)/PIPE_BUF, INT_MAX/num_wrters);
 	        tst_resm (TINFO, "adjusting i/o size to %d, and # of writes to %d",
@@ -445,24 +443,24 @@ char *av[];
 
 	writebuf[size-1] = 'A';	/* to detect partial read/write problem */
 
-	if((sem_id = semget(IPC_PRIVATE, 1, IPC_CREAT|S_IRWXU)) == -1) {
-		tst_brkm(TBROK, tst_exit, "Couldn't allocate semaphore: %s", strerror(errno));
+	if ((sem_id = semget(IPC_PRIVATE, 1, IPC_CREAT|S_IRWXU)) == -1) {
+		tst_brkm(TBROK, NULL, "Couldn't allocate semaphore: %s", strerror(errno));
 	}
 
-	if(semctl(sem_id, 0, SETVAL, u) == -1)
-		tst_brkm(TBROK, tst_exit, "Couldn't initialize semaphore value: %s", strerror(errno));
+	if (semctl(sem_id, 0, SETVAL, u) == -1)
+		tst_brkm(TBROK, NULL, "Couldn't initialize semaphore value: %s", strerror(errno));
 
-	if ( background ) {
-	    if ( (n=fork() ) == -1 ) {
+	if (background) {
+	    if ((n=fork()) == -1) {
 		tst_resm (TFAIL, "fork() failed: %s", strerror(errno));
 		exit(1);
 	    }
-	    else if ( n != 0 ) /* parent */
+	    else if (n != 0) /* parent */
 		exit(0);
 	}
 
-	if ( unpipe ) {
-		if ( pipe(fds) == -1 ) {
+	if (unpipe) {
+		if (pipe(fds) == -1) {
 			tst_resm (TFAIL, "pipe() failed to create un-named pipe: %s", strerror(errno));
 			exit(1);
 		}
@@ -476,9 +474,9 @@ char *av[];
 			exit(1);
 		}
 
-		if ( stat(pname, &stbuf) == -1 ) {
+		if (stat(pname, &stbuf) == -1) {
 
-		    if ( mkfifo(pname,0777) == -1 ) {
+		    if (mkfifo(pname,0777) == -1) {
 			tst_resm (TFAIL, "mkfifo(%s,0777) failed: %s", pname, strerror(errno));
 			exit(1);
 		    }
@@ -521,13 +519,13 @@ printf("num_wrters = %d\n", num_wrters);
 #if DEBUG
 printf("child after fork pid = %d\n", getpid());
 #endif
-		if ( ! unpipe ) {
+		if (! unpipe) {
 			if ((write_fd = open(pname,O_WRONLY)) == -1) {
 				tst_resm (TFAIL, "child pipe open(%s, %#o) failed: %s", pname, O_WRONLY|ndelay, strerror(errno));
 				exit(1);
 			}
-			if(ndelay && fcntl(write_fd, F_SETFL, O_NONBLOCK) == -1) {
-				tst_brkm(TBROK, tst_exit, "Failed setting the pipe to nonblocking mode: %s", strerror(errno));
+			if (ndelay && fcntl(write_fd, F_SETFL, O_NONBLOCK) == -1) {
+				tst_brkm(TBROK, NULL, "Failed setting the pipe to nonblocking mode: %s", strerror(errno));
 			}
 		}
 		else {
@@ -540,9 +538,8 @@ printf("child after fork pid = %d\n", getpid());
 			.sem_flg = 0
 		};
 
-		if(semop(sem_id, &sem_op, 1) == -1)
-			tst_brkm(TBROK, tst_exit, "Couldn't raise the semaphore: %s", strerror(errno));
-
+		if (semop(sem_id, &sem_op, 1) == -1)
+			tst_brkm(TBROK, NULL, "Couldn't raise the semaphore: %s", strerror(errno));
 
 		pid_word = (int *)&writebuf[0];
 		count_word = (int *)&writebuf[NBPW];
@@ -563,7 +560,7 @@ printf("child after fork pid = %d\n", getpid());
 
 			*count_word = j;
 			*pid_word = getpid();
-		
+
                         if ((nb = lio_write_buffer(write_fd, iotype, writebuf, size,
                                                         SIGUSR1, &cp, 0)) < 0 ) {
 			/*
@@ -573,7 +570,7 @@ printf("child after fork pid = %d\n", getpid());
 													tst_resm (TFAIL, "pass %d: lio_write_buffer(%s) failed; it returned %d: %s", j, cp, nb, strerror(-nb));
 				exit(1);
 			}
-			else if (nb != size ) {
+			else if (nb != size) {
 				tst_resm (TFAIL, "pass %d: lio_write_buffer(%s) failed, write count %d, but expected to write %d",
 				          j, cp, nb, size);
 			}
@@ -592,13 +589,13 @@ printf("child after fork pid = %d\n", getpid());
 	}
 	if (c > 0) {	/***** if parent *****/
 
-		if ( ! unpipe ) {
+		if (! unpipe) {
 			if ((read_fd = open(pname,O_RDONLY)) == -1) {
 				tst_resm (TFAIL, "parent pipe open(%s, %#o) failed: %s", pname, O_RDONLY, strerror(errno));
 				exit(1);
 			}
-			if(ndelay && fcntl(read_fd, F_SETFL, O_NONBLOCK) == -1) {
-				tst_brkm(TBROK, tst_exit, "Failed setting the pipe to nonblocking mode: %s", strerror(errno));
+			if (ndelay && fcntl(read_fd, F_SETFL, O_NONBLOCK) == -1) {
+				tst_brkm(TBROK, NULL, "Failed setting the pipe to nonblocking mode: %s", strerror(errno));
 			}
 		}
 		else {
@@ -611,15 +608,15 @@ printf("child after fork pid = %d\n", getpid());
 			.sem_flg = 0
 		};
 
-		while(Nchildcomplete < num_wrters && semop(sem_id, &sem_op, 1) == -1) {
-			if(errno == EINTR) {
+		while (Nchildcomplete < num_wrters && semop(sem_id, &sem_op, 1) == -1) {
+			if (errno == EINTR) {
 				continue;
 			}
-			tst_brkm(TBROK, tst_exit, "Couldn't wait on semaphore: %s", strerror(errno));
+			tst_brkm(TBROK, NULL, "Couldn't wait on semaphore: %s", strerror(errno));
 		}
 
 		for (i=num_wrters*num_writes; i > 0 || loop; --i) {
-			if(error >= MAX_ERRS || empty_read >= MAX_EMPTY)
+			if (error >= MAX_ERRS || empty_read >= MAX_EMPTY)
 			  break;
 			if (parent_wait) {
                 		clock=time(0);
@@ -642,8 +639,8 @@ printf("child after fork pid = %d\n", getpid());
 
  			} else {
 				if (nb == 0) {
-					if ( Nchildcomplete >= num_wrters ) {
-						if(!loop)
+					if (Nchildcomplete >= num_wrters) {
+						if (!loop)
 							tst_resm(TWARN, "The children have died prematurely");
 						break; /* All children have died */
 					}
@@ -669,7 +666,7 @@ printf("child after fork pid = %d\n", getpid());
 							          j, count, size, pipe_type, blk_type, empty_read, error);
 							prt_buf(&readbuf,readbuf,format_size,format);
 							fflush(stdout);
-							if ( exit_error && exit_error == error )
+							if (exit_error && exit_error == error)
 								goto output;
 
 							else
@@ -686,15 +683,15 @@ printf("child after fork pid = %d\n", getpid());
 				}
 			}
 		}
-    if(empty_read)
+    if (empty_read)
       tst_resm(TWARN, "%d empty reads", empty_read);
 output:
 		if (error)
-			tst_resm (TFAIL, "1 FAIL %d data errors on pipe, read size = %d, %s %s",
-			          error,size,pipe_type,blk_type);
+			tst_resm(TFAIL, "1 FAIL %d data errors on pipe, read size = %d, %s %s",
+			         error,size,pipe_type,blk_type);
 		else
-			if( !quiet )
-				tst_resm (TPASS, "1 PASS %d pipe reads complete, read size = %d, %s %s",
+			if (!quiet)
+				tst_resm(TPASS, "1 PASS %d pipe reads complete, read size = %d, %s %s",
 				          count+1,size,pipe_type,blk_type);
 
 		semctl(sem_id, 0, IPC_RMID);
@@ -750,7 +747,7 @@ help()
   -v           - verbose mode, all writes/reads resutlts printed\n");
 
 	fflush(stdout);
-       
+
 }
 
 void
@@ -767,7 +764,7 @@ prt_buf(long addr, char * buf, int length, int format)
 	char *p;
 	long *word;
 
-	if ( format == NO_OUT )		/* if no output wanted, return */
+	if (format == NO_OUT)		/* if no output wanted, return */
 		return;
 
 	if (length % NBPW) ++num_words; /* is length in full words? */
@@ -778,7 +775,7 @@ prt_buf(long addr, char * buf, int length, int format)
 	    /* do we have an odd number of words? */
 		extra_words = num_words%width;
 	}
-	for(i=0; i < num_words; ++i, a += NBPW, addr++) {
+	for (i=0; i < num_words; ++i, a += NBPW, addr++) {
 		word = (long *) a;
 		if (!(i%width)) {
 			if (i > 0 && format != ASCII) {
@@ -872,7 +869,7 @@ void
 sig_handler(int sig)
 {
 #ifdef SIGRECOVERY
-    if ( sig == SIGRECOVERY) {
+    if (sig == SIGRECOVERY) {
 	printf("%s: received SIGRECOVERY, count = %d\n", TCID, count);
         fflush(stdout);
 #ifdef linux

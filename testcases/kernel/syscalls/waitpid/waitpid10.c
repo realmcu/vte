@@ -61,14 +61,13 @@
 #include <stdio.h>
 #include <signal.h>
 #include <errno.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 #define	MAXKIDS	8
 
 char *TCID = "waitpid10";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int alrmintr;
 volatile int intintr;
@@ -101,7 +100,7 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
@@ -122,7 +121,7 @@ int main(int ac, char **av)
 	if (ac == 2) {
 		if (sscanf(av[1], "%d", &runtime) != 1) {
 			tst_resm(TFAIL, "%s is an invalid argument", av[1]);
-			tst_exit();
+
 		}
 	} else {
 		runtime = 60;
@@ -130,7 +129,6 @@ int main(int ac, char **av)
 
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -139,7 +137,7 @@ int main(int ac, char **av)
 		if (signal(SIGALRM, alrmhandlr) == SIG_ERR) {
 			tst_resm(TFAIL, "signal SIGALRM failed.  errno = %d",
 				 errno);
-			tst_exit();
+
 		}
 		alrmintr = 0;
 
@@ -150,14 +148,14 @@ int main(int ac, char **av)
 		if (signal(SIGINT, inthandlr) == SIG_ERR) {
 			tst_resm(TFAIL, "signal SIGINT failed.  errno = %d",
 				 errno);
-			tst_exit();
+
 		}
 		intintr = 0;
 
 		/* Turn on the real time interval timer. */
 		if ((alarm(runtime)) < 0) {
 			tst_resm(TFAIL, "alarm failed.  errno = %d", errno);
-			tst_exit();
+
 		}
 
 		/* Run the test over and over until the timer expires */
@@ -184,7 +182,7 @@ int main(int ac, char **av)
 #ifdef UCLINUX
 				if (self_exec(argv0, "n", 1) < 0) {
 					tst_resm(TFAIL, "self_exec 0 failed");
-					tst_exit();
+
 				}
 #else
 				do_exit();
@@ -193,7 +191,7 @@ int main(int ac, char **av)
 			if (ret_val < 0) {
 				tst_resm(TFAIL, "Fork kid 0 failed. errno = "
 					 "%d", errno);
-				tst_exit();
+
 			}
 
 			/* parent */
@@ -205,7 +203,7 @@ int main(int ac, char **av)
 #ifdef UCLINUX
 				if (self_exec(argv0, "n", 1) < 0) {
 					tst_resm(TFAIL, "self_exec 1 failed");
-					tst_exit();
+
 				}
 #else
 				do_exit();
@@ -214,7 +212,7 @@ int main(int ac, char **av)
 			if (ret_val < 0) {
 				tst_resm(TFAIL, "Fork kid 1 failed. errno = "
 					 "%d", errno);
-				tst_exit();
+
 			}
 
 			/* parent */
@@ -226,7 +224,7 @@ int main(int ac, char **av)
 #ifdef UCLINUX
 				if (self_exec(argv0, "n", 2) < 0) {
 					tst_resm(TFAIL, "self_exec 2 failed");
-					tst_exit();
+
 				}
 #else
 				do_compute();
@@ -235,7 +233,7 @@ int main(int ac, char **av)
 			if (ret_val < 0) {
 				tst_resm(TFAIL, "Fork kid 2 failed. errno = "
 					 "%d", errno);
-				tst_exit();
+
 			}
 
 			/* parent */
@@ -247,7 +245,7 @@ int main(int ac, char **av)
 #ifdef UCLINUX
 				if (self_exec(argv0, "n", 2) < 0) {
 					tst_resm(TFAIL, "self_exec 3 failed");
-					tst_exit();
+
 				}
 #else
 				do_compute();
@@ -256,7 +254,7 @@ int main(int ac, char **av)
 			if (ret_val < 0) {
 				tst_resm(TFAIL, "Fork kid 3 failed. errno = "
 					 "%d", errno);
-				tst_exit();
+
 			}
 
 			/* parent */
@@ -268,7 +266,7 @@ int main(int ac, char **av)
 #ifdef UCLINUX
 				if (self_exec(argv0, "n", 3) < 0) {
 					tst_resm(TFAIL, "self_exec 4 failed");
-					tst_exit();
+
 				}
 #else
 				do_fork();
@@ -277,7 +275,7 @@ int main(int ac, char **av)
 			if (ret_val < 0) {
 				tst_resm(TFAIL, "Fork kid 4 failed. errno = "
 					 "%d", errno);
-				tst_exit();
+
 			}
 
 			/* parent */
@@ -289,7 +287,7 @@ int main(int ac, char **av)
 #ifdef UCLINUX
 				if (self_exec(argv0, "n", 3) < 0) {
 					tst_resm(TFAIL, "self_exec 5 failed");
-					tst_exit();
+
 				}
 #else
 				do_fork();
@@ -298,7 +296,7 @@ int main(int ac, char **av)
 			if (ret_val < 0) {
 				tst_resm(TFAIL, "Fork kid 5 failed. errno = "
 					 "%d", errno);
-				tst_exit();
+
 			}
 
 			/* parent */
@@ -310,7 +308,7 @@ int main(int ac, char **av)
 #ifdef UCLINUX
 				if (self_exec(argv0, "n", 4) < 0) {
 					tst_resm(TFAIL, "self_exec 6 failed");
-					tst_exit();
+
 				}
 #else
 				do_sleep();
@@ -319,7 +317,7 @@ int main(int ac, char **av)
 			if (ret_val < 0) {
 				tst_resm(TFAIL, "Fork kid 6 failed. errno = "
 					 "%d", errno);
-				tst_exit();
+
 			}
 
 			/* parent */
@@ -331,7 +329,7 @@ int main(int ac, char **av)
 #ifdef UCLINUX
 				if (self_exec(argv0, "n", 4) < 0) {
 					tst_resm(TFAIL, "self_exec 7 failed");
-					tst_exit();
+
 				}
 #else
 				do_sleep();
@@ -340,7 +338,7 @@ int main(int ac, char **av)
 			if (ret_val < 0) {
 				tst_resm(TFAIL, "Fork kid 7 failed. errno = "
 					 "%d", errno);
-				tst_exit();
+
 			}
 
 			/* parent */
@@ -361,7 +359,7 @@ int main(int ac, char **av)
 					tst_resm(TFAIL, "Kill of child %d "
 						 "failed, errno = %d", i,
 						 errno);
-					tst_exit();
+
 				}
 			}
 
@@ -424,7 +422,7 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -434,7 +432,7 @@ int main(int ac, char **av)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Pause if that option was specified
@@ -456,9 +454,7 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }
 
 void alrmhandlr()
 {

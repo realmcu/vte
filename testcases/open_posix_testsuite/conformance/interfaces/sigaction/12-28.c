@@ -3,7 +3,7 @@
  * Copyright (c) 2002-2003, Intel Corporation. All rights reserved.
  * Created by:  rusty.lynch REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
   Test case for assertion #12 of the sigaction system call that verifies
@@ -27,14 +27,14 @@ void handler(int signo)
 {
 	stack_t oss;
 
-	printf("Caught SIGALRM\n");
+	printf("Caught SIGUSR2\n");
 
 	if (sigaltstack((stack_t *)0, &oss) == -1) {
 		perror("Unexpected error while attempting to setup test "
 		       "pre-conditions");
 		exit(-1);
 	}
-	
+
 	if (oss.ss_sp != current.ss_sp || oss.ss_size != current.ss_size) {
 		printf("Test FAILED\n");
 		exit(-1);
@@ -44,23 +44,23 @@ void handler(int signo)
 int main()
 {
 	struct sigaction act;
-	
+
 	act.sa_handler = handler;
 	act.sa_flags = SA_ONSTACK;
 	sigemptyset(&act.sa_mask);
-	if (sigaction(SIGALRM,  &act, 0) == -1) {
+	if (sigaction(SIGUSR2,  &act, 0) == -1) {
 		perror("Unexpected error while attempting to setup test "
 		       "pre-conditions");
 		return PTS_UNRESOLVED;
 	}
-	
+
 	if (sigaltstack((stack_t *)0, &current) == -1) {
 		perror("Unexpected error while attempting to setup test "
 		       "pre-conditions");
 		return PTS_UNRESOLVED;
 	}
 
-	if (raise(SIGALRM) == -1) {
+	if (raise(SIGUSR2) == -1) {
 		perror("Unexpected error while attempting to setup test "
 		       "pre-conditions");
 		return PTS_UNRESOLVED;

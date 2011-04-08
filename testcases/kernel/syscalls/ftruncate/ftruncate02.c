@@ -86,7 +86,6 @@
 
 TCID_DEFINE(ftruncate02);	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test conditions */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 int fd;				/* file descriptor of testfile */
 char tst_buff[BUF_SIZE];	/* buffer to hold testfile contents */
 
@@ -105,18 +104,16 @@ int main(int ac, char **av)
 	int err_flag = 0;	/* error indicator flag */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -125,7 +122,6 @@ int main(int ac, char **av)
 		 */
 		TEST(ftruncate(fd, TRUNC_LEN1));
 
-		/* check return code of ftruncate(2) */
 		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL|TTERRNO, "ftruncate(%s) to size %d failed",
 				 TESTFILE, TRUNC_LEN1);
@@ -211,7 +207,6 @@ int main(int ac, char **av)
 			 * Both results are allowed according to the SUS.
 			 */
 
-			/* check return code of ftruncate(2) */
 			if (TEST_RETURN != -1) {
 				if ((file_length1 != TRUNC_LEN1) ||
 				    (file_length2 != TRUNC_LEN2) ||
@@ -243,13 +238,12 @@ int main(int ac, char **av)
 		} else {
 			tst_resm(TPASS, "call succeeded");
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /*
  * void
@@ -264,13 +258,10 @@ void setup()
 	int wbytes;		/* bytes written to testfile */
 	int write_len = 0;	/* total no. of bytes written to testfile */
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Fill the test buffer with the known data */
@@ -292,7 +283,7 @@ void setup()
 			write_len += wbytes;
 		}
 	}
-}				/* End setup() */
+}
 
 /*
  * void
@@ -312,9 +303,6 @@ void cleanup()
 	if (close(fd) == -1)
 		tst_brkm(TFAIL|TERRNO, NULL, "close(%s) failed", TESTFILE);
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

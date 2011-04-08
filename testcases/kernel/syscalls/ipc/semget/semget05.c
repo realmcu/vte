@@ -60,7 +60,6 @@
 
 char *TCID = "semget05";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 /*
  * The MAXIDS value is somewhat arbitrary and may need to be increased
@@ -80,8 +79,8 @@ int main(int ac, char **av)
 	FILE *fp;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	/* Set the MAXIDS for the specific machine by reading the system limit
@@ -132,7 +131,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	 /*NOTREACHED*/ return (0);
+	  return (0);
 }
 
 /*
@@ -142,13 +141,11 @@ void setup(void)
 {
 	int sem_q;
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -197,7 +194,6 @@ void cleanup(void)
 	/* free malloced memory */
 	free(sem_id_arr);
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
 	/*
@@ -206,6 +202,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

@@ -2,7 +2,7 @@
  * Copyright (c) 2004, Bull SA. All rights reserved.
  * Created by:  Laurent.Vivier@bull.net
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
  */
 
@@ -47,8 +47,7 @@ int received_all	= 0;
 void
 sigrt1_handler(int signum, siginfo_t *info, void *context)
 {
-	if (info->si_value.sival_int == WAIT_FOR_AIOCB)
-		received_selected = 1;
+	received_selected = 1;
 }
 
 void
@@ -68,16 +67,16 @@ main ()
 	char *bufs;
 	struct sigaction action;
 	struct sigevent event;
-	struct timespec ts = {0, 10000000}; /* 10 ms */
+	struct timespec ts = {0, 1000}; /* 1 us */
 	int errors = 0;
 	int ret;
 	int err;
 	int i;
 
-	if (sysconf(_SC_ASYNCHRONOUS_IO) != 200112L)
+	if (sysconf(_SC_ASYNCHRONOUS_IO) < 200112L)
 		return PTS_UNSUPPORTED;
 
-	snprintf(tmpfname, sizeof(tmpfname), "/tmp/pts_aio_suspend_4_1_%d", 
+	snprintf(tmpfname, sizeof(tmpfname), "/tmp/pts_aio_suspend_4_1_%d",
 		  getpid());
 	unlink(tmpfname);
 
@@ -106,8 +105,6 @@ main ()
 		exit(PTS_UNRESOLVED);
 	}
 
-
-
 	aiocbs = (struct aiocb**)malloc(sizeof(struct aiocb *) * NUM_AIOCBS);
 
 	/* Queue up a bunch of aio reads */
@@ -122,10 +119,12 @@ main ()
 		aiocbs[i]->aio_nbytes = BUF_SIZE;
 		aiocbs[i]->aio_lio_opcode = LIO_READ;
 
-		/* Use SIRTMIN+1 for individual completions */
-		aiocbs[i]->aio_sigevent.sigev_notify = SIGEV_SIGNAL;
-		aiocbs[i]->aio_sigevent.sigev_signo = SIGRTMIN+1;
-		aiocbs[i]->aio_sigevent.sigev_value.sival_int = i;
+		/* Use SIGRTMIN+1 for individual completions */
+		if (i == WAIT_FOR_AIOCB) {
+			aiocbs[i]->aio_sigevent.sigev_notify = SIGEV_SIGNAL;
+			aiocbs[i]->aio_sigevent.sigev_signo = SIGRTMIN+1;
+			aiocbs[i]->aio_sigevent.sigev_value.sival_int = i;
+		}
 	}
 
 	/* Use SIGRTMIN+2 for list completion */

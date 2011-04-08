@@ -89,7 +89,6 @@ struct passwd *ltpuser;
 
 TCID_DEFINE(truncate04);	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test conditions */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 char test_desc[] = "File is a directory";
 int exp_enos[] = { EISDIR, 0 };
@@ -106,10 +105,10 @@ int main(int ac, char **av)
 	char *file_name;	/* testfile name */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
 	/*
@@ -120,9 +119,8 @@ int main(int ac, char **av)
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -133,7 +131,6 @@ int main(int ac, char **av)
 		file_name = TEST_DIR;
 		TEST(truncate(file_name, TRUNC_LEN));
 
-		/* check return code of truncate(2) */
 		if (TEST_RETURN == -1) {
 			TEST_ERROR_LOG(TEST_ERRNO);
 			if (TEST_ERRNO == EISDIR) {
@@ -148,13 +145,13 @@ int main(int ac, char **av)
 			tst_resm(TFAIL, "truncate() returned %ld, "
 				 "expected -1, errno EISDIR", TEST_RETURN);
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
+	tst_exit();
 
-}				/* End main */
+}
 
 /*
  * void
@@ -165,12 +162,11 @@ int main(int ac, char **av)
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Switch to nobody user for correct error code collection */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 	ltpuser = getpwnam(nobody_uid);
 	if (setuid(ltpuser->pw_uid) == -1) {
@@ -184,7 +180,6 @@ void setup()
 	 */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/*
@@ -200,7 +195,7 @@ void setup()
 		tst_brkm(TBROK, cleanup, "open of directory failed");
 	}
 
-}				/* End setup() */
+}
 
 /*
  * void
@@ -219,9 +214,6 @@ void cleanup()
 		tst_brkm(TBROK, cleanup, "close failed: errno = %d", errno);
 	}
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

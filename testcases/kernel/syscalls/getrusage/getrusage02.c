@@ -82,7 +82,6 @@ static void cleanup();
 static int exp_enos[] = { EINVAL, EFAULT, 0 };
 
 char *TCID = "getrusage02";	/* Test program identifier.    */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static struct rusage usage;
 
@@ -91,12 +90,9 @@ struct test_cases_t {
 	struct rusage *usage;
 	int exp_errno;
 } test_cases[] = {
-	{
-	RUSAGE_BOTH, &usage, EINVAL},
+	{ RUSAGE_BOTH, &usage, EINVAL},
 #ifndef UCLINUX
-	    /* Skip since uClinux does not implement memory protection */
-	{
-	RUSAGE_SELF, (struct rusage *)-1, EFAULT}
+	{ RUSAGE_SELF, (struct rusage *)-1, EFAULT}
 #endif
 };
 
@@ -105,80 +101,52 @@ int TST_TOTAL = sizeof(test_cases) / sizeof(*test_cases);
 int main(int ac, char **av)
 {
 
-	int lc, ind;		/* loop counter */
+	int lc, i;		/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		for (ind = 0; ind < TST_TOTAL; ind++) {
-			/*
-			 * Call getrusage(2)
-			 */
-			TEST(getrusage(test_cases[ind].who,
-				       test_cases[ind].usage));
+		for (i = 0; i < TST_TOTAL; i++) {
+			TEST(getrusage(test_cases[i].who,
+				       test_cases[i].usage));
 
-			if ((TEST_RETURN == -1) && (TEST_ERRNO ==
-						    test_cases[ind].
-						    exp_errno)) {
-				tst_resm(TPASS, "TEST Passed");
-			} else {
-				tst_resm(TFAIL, "test Failed,"
-					 "getrusage() returned %ld"
-					 " errno = %d : %s", TEST_RETURN,
-					 TEST_ERRNO, strerror(TEST_ERRNO));
-			}
-			TEST_ERROR_LOG(TEST_ERRNO);
+			if (TEST_RETURN == -1 &&
+			    TEST_ERRNO == test_cases[i].exp_errno)
+				tst_resm(TPASS|TTERRNO,
+				    "getrusage failed as expected");
+			else
+				tst_resm(TFAIL|TTERRNO,
+				    "getrusage failed unexpectedly");
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* cleanup and exit */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
-/* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}				/* End setup() */
+}
 
-/*
- *cleanup() -  performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
- */
 void cleanup()
 {
 
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

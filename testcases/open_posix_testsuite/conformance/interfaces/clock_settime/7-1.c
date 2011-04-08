@@ -1,17 +1,17 @@
-/*   
+/*
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  julie.n.fleischer REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
  *
- * Test that if clock_settime() changes the time for CLOCK_REALTIME, 
- * then any threads blocked on clock_nanosleep() for the CLOCK_REALTIME 
+ * Test that if clock_settime() changes the time for CLOCK_REALTIME,
+ * then any threads blocked on clock_nanosleep() for the CLOCK_REALTIME
  * clock will use the new time for expiration.
  *
  * Steps:
  * - get time T0
- * - in child:  set clock_nanosleep() to sleep until time 
+ * - in child:  set clock_nanosleep() to sleep until time
  *   T1 = T0 + SLEEPOFFSET
  * - in parent:  sleep SMALLTIME (< SLEEPOFFSET)
  * - in parent:  set time back to T0
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 	int pid;
 
 	/* Check that we're root...can't call clock_settime with CLOCK_REALTIME otherwise */
-	if(getuid() != 0)
+	if (getuid() != 0)
 	{
 		printf("Run this test as ROOT, not as a Regular User\n");
 		return PTS_UNTESTED;
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 		}
 
 		if (tsT2.tv_sec >= tsT1.tv_sec) {
-			if ( (tsT2.tv_sec-tsT1.tv_sec) <= ACCEPTABLEDELTA) {
+			if ((tsT2.tv_sec-tsT1.tv_sec) <= ACCEPTABLEDELTA) {
 				return CHILDPASS;
 			} else {
 				printf("Ended too late.  %d >> %d\n",

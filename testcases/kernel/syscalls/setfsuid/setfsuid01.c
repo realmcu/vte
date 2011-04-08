@@ -58,7 +58,6 @@ void cleanup(void);
 
 char *TCID = "setfsuid01";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int main(int ac, char **av)
 {
@@ -68,8 +67,8 @@ int main(int ac, char **av)
 	uid_t uid;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
@@ -104,8 +103,9 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
+	tst_exit();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
 }
 
 /*
@@ -113,10 +113,9 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 

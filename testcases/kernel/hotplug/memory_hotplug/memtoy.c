@@ -66,7 +66,6 @@ Where:\n\
 More info - TODO\n\
 ";
 
-
 /*
  * die() - emit error message and exit w/ specified return code.
  *	   if exit_code < 0, save current errno, and fetch associated
@@ -97,14 +96,13 @@ die(int exit_code, char *format, ... )
 }
 
 void
-usage(char *mesg){
+usage(char *mesg) {
 	if (mesg != NULL) {
 		fprintf(stderr, "%s\n", mesg);
 	}
 	fprintf(stderr, USAGE, glctx.program_name);
 	exit(1);
 }
-
 
 #ifdef _DEBUG
 /*
@@ -183,7 +181,7 @@ signal_handler(int sig, siginfo_t *info, void *vcontext)
 	infocopy = *info;
 	gcp->siginfo   = &infocopy;
 
-	while(*sigp) {
+	while (*sigp) {
 		if (*sigp == sig)
 			break;
 		++isig; ++sigp;
@@ -238,7 +236,6 @@ set_signals()
 		char *sig_name = *(namep++);
 		int sig = *(sigp++);
 
-
 		if (0 != sigaction(sig, &act, NULL)) {
 			die(-1, "%s: Failed to set sigaction for %s\n",
 			        gcp->program_name, sig_name);
@@ -249,7 +246,6 @@ set_signals()
 #endif
 			;
 	}
-
 
 		return;
 }
@@ -340,7 +336,7 @@ touch_memory(bool rw, unsigned long *memp, size_t memlen)
 	vprint("!!!%s from 0x%lx thru 0x%lx\n",
 		rw ? "Writing" : "Reading", memp, memend);
 
-	for(pp = memp; pp < memend;  pp += longs_in_page) {
+	for (pp = memp; pp < memend;  pp += longs_in_page) {
 		// vprint("%s:  touching 0x%lx\n", __FUNCTION__, pp);
 		if (!sigsetjmp(gcp->sigjmp_env, true)) {
 			gcp->sigjmp = true;
@@ -363,7 +359,7 @@ touch_memory(bool rw, unsigned long *memp, size_t memlen)
 		/*
 		 * Any [handled] signal breaks the loop
 		 */
-		if(gcp->siginfo != NULL) {
+		if (gcp->siginfo != NULL) {
 			reset_signal();
 			break;
 		}
@@ -389,7 +385,7 @@ init_glctx(glctx_t *gcp)
 
 	segment_init(gcp);
 
-	if(isatty(fileno(stdin)))
+	if (isatty(fileno(stdin)))
 		set_option(INTERACTIVE);
 
 }
@@ -404,7 +400,6 @@ cleanup()
 
 	segment_cleanup(gcp);
 } /* cleanup() */
-
 
 int
 parse_command_line_args(int argc, char *argv[])
@@ -423,7 +418,7 @@ parse_command_line_args(int argc, char *argv[])
 	/*
 	 * process command line options.
 	 */
-	while ((c = getopt(argc, argv, OPTIONS)) != (char)EOF ) {
+	while ((c = getopt(argc, argv, OPTIONS)) != (char)EOF) {
 		char *next;
 
 		switch (c) {
@@ -435,7 +430,7 @@ parse_command_line_args(int argc, char *argv[])
 		case 'h':
 		case 'x':
 			usage(NULL);
-			/*NOTREACHED*/
+
 			break;
 
 		case 'V':
@@ -474,7 +469,7 @@ main(int argc, char *argv[])
 	int error;
 
 	init_glctx(gcp);
-	if(!is_option(INTERACTIVE))
+	if (!is_option(INTERACTIVE))
 		setbuf(stdout, NULL);
 
 	/*
@@ -490,7 +485,7 @@ main(int argc, char *argv[])
 
 	if (error /* || argc==1 */) {
 		usage(NULL);
-		/*NOTREACHED*/
+
 	}
 
 	/*
@@ -498,7 +493,7 @@ main(int argc, char *argv[])
 	 */
 	printf("memtoy pid:  %d\n", getpid());
 	vprint("%s:  pagesize = %d\n", gcp->program_name, gcp->pagesize);
-	if (gcp->numa_max_node >= 0) 
+	if (gcp->numa_max_node >= 0)
 		vprint("%s:  NUMA available - max node: %d\n",
 			gcp->program_name, gcp->numa_max_node);
 

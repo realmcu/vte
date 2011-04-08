@@ -79,7 +79,6 @@ void cleanup();
 
 char *TCID = "sysinfo01";	/* Test program identifier */
 int TST_TOTAL = 1;		/* Total number of test cases */
-extern int Tst_count;		/* Test case counter for tst_* routines */
 
 int main(int ac, char **av)
 {
@@ -92,9 +91,9 @@ int main(int ac, char **av)
 	sys_buf = (struct sysinfo *)malloc(sizeof(struct sysinfo));
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	setup();		/* Global setup */
 
@@ -110,7 +109,7 @@ int main(int ac, char **av)
 			/* To gather stats on errnos returned, log the errno */
 			tst_brkm(TFAIL, cleanup, "sysinfo() Failed, errno=%d"
 				 " : %s", TEST_ERRNO, strerror(TEST_ERRNO));
-		 /*NOTREACHED*/} else {
+		 } else {
 			/* Test succeeded */
 
 			/* This portion of the code generates information
@@ -153,7 +152,7 @@ int main(int ac, char **av)
 	}
 
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -164,12 +163,11 @@ int main(int ac, char **av)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	umask(0);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -180,5 +178,5 @@ void setup(void)
 void cleanup(void)
 {
 	TEST_CLEANUP;
-	tst_exit();
+
 }

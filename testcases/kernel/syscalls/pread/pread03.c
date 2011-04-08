@@ -87,7 +87,6 @@
 
 char *TCID = "pread03";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 char *read_buf[NBUFS];		/* buffer to hold data read from file */
 char test_dir[100];
@@ -107,12 +106,9 @@ int main(int ac, char **av)
 	char *test_desc;	/* test specific error message */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* Perform global setup for test */
 	setup();
 
 	TEST_EXP_ENOS(exp_enos);
@@ -152,8 +148,8 @@ int main(int ac, char **av)
 	}
 
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
 }
 
 /*
@@ -164,16 +160,13 @@ void setup()
 {
 	char *cur_dir = NULL;
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Allocate the read buffer */
 	init_buffers();
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* get the currect directory name */
@@ -189,7 +182,7 @@ void setup()
 	if (mkdir(PREAD_TEMPDIR, 0777) != 0) {
 		tst_resm(TFAIL, "mkdir() failed to create" " test directory");
 		exit(1);
-		/* NOTREACHED */
+
 	}
 
 	/* open temporary directory used for test */
@@ -214,7 +207,7 @@ void init_buffers()
 		read_buf[count] = (char *)malloc(K1);
 
 		if (read_buf[count] == NULL) {
-			tst_brkm(TBROK, tst_exit,
+			tst_brkm(TBROK, NULL,
 				 "malloc() failed on read buffers");
 		}
 	}
@@ -244,6 +237,4 @@ void cleanup()
 	/* delete the test directory created in setup() */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

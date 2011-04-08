@@ -27,15 +27,15 @@
  *       To be included in testcases.
  *
  * AUTHOR
- *        Darren Hart <dvhltc@us.ibm.com>
+ *	Darren Hart <dvhltc@us.ibm.com>
  *
  * HISTORY
  *      2006-Apr-26: Initial version by Darren Hart
  *      2006-May-08: Added atomic_{inc,set,get}, thread struct, debug function,
- *                      rt_init, buffered printing -- Vernon Mauery
+ *		      rt_init, buffered printing -- Vernon Mauery
  *      2006-May-09: improved command line argument handling
  *      2007-Jul-12: Added latency tracing functions and I/O helper functions
- *                                              -- Josh triplett
+ *					      -- Josh triplett
  *	2008-Jan-10: Added RR thread support to tests -- Chirag Jog
  *
  *****************************************************************************/
@@ -158,7 +158,7 @@ int rt_init_long(const char *options, const struct option *longopts,
 		}
 		cur_opt++;
 	}
-	
+
 	while ((c = getopt_long(argc, argv, all_options, longopts, NULL)) != -1) {
 		switch (c) {
 		case 'c':
@@ -255,20 +255,19 @@ void buffer_fini(void)
 }
 
 void cleanup(int i) {
-       printf("Test terminated with asynchronous signal\n");
-       buffer_print();
-       buffer_fini();
-       if (i)
-               exit (i);
+	printf("Test terminated with asynchronous signal\n");
+	buffer_print();
+	buffer_fini();
+	if (i)
+		exit (i);
 }
 
 void setup()
 {
-       signal(SIGINT,cleanup);
-       signal(SIGQUIT,cleanup);
-       signal(SIGTERM,cleanup);
+	signal(SIGINT, cleanup);
+	signal(SIGQUIT,cleanup);
+	signal(SIGTERM, cleanup);
 }
-
 
 int create_thread(void*(*func)(void*), void *arg, int prio, int policy)
 {
@@ -358,7 +357,7 @@ void join_thread(int i)
 	}
 	if (t) {
 		t->flags |= THREAD_QUIT;
-		if(t->pthread)
+		if (t->pthread)
 			pthread_join(t->pthread, NULL);
 		list_del(&t->_threads);
 	}
@@ -377,7 +376,7 @@ void join_threads(void)
 	all_threads_quit();
 	struct thread *p, *t;
 	list_for_each_entry_safe(p, t, &_threads, _threads) {
-		if(p->pthread)
+		if (p->pthread)
 			pthread_join(p->pthread, NULL);
 		list_del(&p->_threads);
 	}
@@ -553,12 +552,13 @@ void *busy_work_us(int us)
 
 	delta = (now - start)/NS_PER_US;
 	/* uncomment to tune to your machine */
-        /* printf("busy_work_us requested: %dus  actual: %dus\n", us, delta); */
+	/* printf("busy_work_us requested: %dus  actual: %dus\n", us, delta); */
 	return NULL;
 }
 
 void init_pi_mutex(pthread_mutex_t *m)
 {
+#if HAVE_DECL_PTHREAD_PRIO_INHERIT
 	pthread_mutexattr_t attr;
 	int ret;
 	int protocol;
@@ -575,6 +575,7 @@ void init_pi_mutex(pthread_mutex_t *m)
 	if ((ret = pthread_mutex_init(m, &attr)) != 0) {
 		printf("Failed to init mutex: %d (%s)\n", ret, strerror(ret));
 	}
+#endif
 
 	/* FIXME: does any of this need to be destroyed ? */
 }
@@ -639,7 +640,7 @@ static void read_and_print(const char *pathname, int output_fd)
 		if (ret < 0) {
 			if (errno != EAGAIN && errno != EINTR) {
 				printf("Failed to read from file \"%s\": %d (%s)\n",
-				       pathname, errno, strerror(errno));
+					pathname, errno, strerror(errno));
 				break;
 			}
 		} else if (ret == 0)
@@ -650,7 +651,7 @@ static void read_and_print(const char *pathname, int output_fd)
 
 	if (close(fd) < 0) {
 		printf("Failed to close file \"%s\": %d (%s)\n",
-		       pathname, errno, strerror(errno));
+			pathname, errno, strerror(errno));
 	}
 }
 
@@ -677,13 +678,13 @@ void latency_trace_enable(void)
 
 void latency_trace_start(void)
 {
-	if(prctl(PR_SET_TRACING, 1) < 0)
+	if (prctl(PR_SET_TRACING, 1) < 0)
 		perror("Failed to start tracing");
 }
 
 void latency_trace_stop(void)
 {
-	if(prctl(PR_SET_TRACING, 0) < 0)
+	if (prctl(PR_SET_TRACING, 0) < 0)
 		perror("Failed to stop tracing");
 }
 

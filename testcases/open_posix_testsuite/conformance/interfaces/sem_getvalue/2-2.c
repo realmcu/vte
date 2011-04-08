@@ -14,12 +14,10 @@
 * with this program; if not, write the Free Software Foundation, Inc., 59
 * Temple Place - Suite 330, Boston MA 02111-1307, USA.
 
-
 * This sample test aims to check the following assertion:
 *
-*  If the semaphore is locked, the sval value is set to 0 or to a negative 
-* value representing the number of waiters for the semaphore. 
-
+*  If the semaphore is locked, the sval value is set to 0 or to a negative
+* value representing the number of waiters for the semaphore.
 
 * The steps are:
 * -> init a semaphore (value = 0)
@@ -48,23 +46,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -84,16 +82,15 @@ void *threaded(void * arg)
 	int ret;
 
 	do {
-		ret = sem_wait( arg );
-	} while (( ret != 0 ) && (errno == EINTR));
+		ret = sem_wait(arg);
+	} while ((ret != 0) && (errno == EINTR));
 
 	if (ret != 0) {
-		UNRESOLVED( errno, "Failed to wait for the semaphore" );
+		UNRESOLVED(errno, "Failed to wait for the semaphore");
 	}
 
 	return NULL;
 }
-
 
 /* The main test function. */
 int main(int argc, char *argv[])
@@ -109,14 +106,14 @@ int main(int argc, char *argv[])
 	ret = sem_init(&sem, 0, 0);
 
 	if (ret != 0) {
-		UNRESOLVED( errno, "Failed to init semaphore" );
+		UNRESOLVED(errno, "Failed to init semaphore");
 	}
 
 	/* Create the thread */
 	ret = pthread_create(&th, NULL, threaded, &sem);
 
 	if (ret != 0) {
-		UNRESOLVED( ret, "Failed to create the thread" );
+		UNRESOLVED(ret, "Failed to create the thread");
 	}
 
 	/* Sleep 1 sec so the thread enters the sem_wait call */
@@ -126,11 +123,11 @@ int main(int argc, char *argv[])
 	ret = sem_getvalue(&sem, &val);
 
 	if (ret != 0) {
-		UNRESOLVED( errno, "Failed to get semaphore value" );
+		UNRESOLVED(errno, "Failed to get semaphore value");
 	}
 
 	if ((val != 0) && (val != -1)) {
-		output("Val: %d\n", val );
+		output("Val: %d\n", val);
 		FAILED("Semaphore count is neither 0 nor # of waiting processes");
 	}
 
@@ -145,14 +142,14 @@ int main(int argc, char *argv[])
 	ret = pthread_join(th, NULL);
 
 	if (ret != 0) {
-		UNRESOLVED( ret, "Failed to join the thread" );
+		UNRESOLVED(ret, "Failed to join the thread");
 	}
 
 	/* Destroy the semaphore */
 	ret = sem_destroy(&sem);
 
 	if (ret != 0) {
-		UNRESOLVED( errno, "Failed to sem_destroy" );
+		UNRESOLVED(errno, "Failed to sem_destroy");
 	}
 
 	/* Test passed */

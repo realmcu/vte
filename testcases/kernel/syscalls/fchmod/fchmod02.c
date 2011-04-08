@@ -61,7 +61,7 @@
  *	       -I x : Execute test for x seconds.
  *	       -P x : Pause for x seconds between iterations.
  *	       -t   : Turn on syscall timing.
- *	
+ *
  * HISTORY
  *	07/2001 Ported by Wayne Boyer
  *
@@ -95,7 +95,6 @@
 int fd;				/* file descriptor variable */
 char *TCID = "fchmod02";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 void setup();			/* Main setup function for the test */
 void cleanup();			/* Main cleanup function for the test */
@@ -107,18 +106,16 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -127,7 +124,6 @@ int main(int ac, char **av)
 		 */
 		TEST(fchmod(fd, PERMS));
 
-		/* check return code of fchmod(2) */
 		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL, "fchmod(%d, %#o) Failed, errno=%d : %s",
 				 fd, PERMS, TEST_ERRNO, strerror(TEST_ERRNO));
@@ -160,13 +156,12 @@ int main(int ac, char **av)
 		} else {
 			tst_resm(TPASS, "call succeeded");
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /*
  * void
@@ -182,10 +177,8 @@ void setup()
 	gid_t group1_gid;	/* user and process group id's */
 	uid_t user1_uid;
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Check that the test process id is super/root  */
@@ -194,7 +187,6 @@ void setup()
 		tst_exit();
 	}
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Get the uid of guest user - ltpuser1 */
@@ -228,7 +220,7 @@ void setup()
 	if (setgid(group1_gid) < 0) {
 		tst_brkm(TBROK, cleanup, "setgid(2) to %d failed", group1_gid);
 	}
-}				/* End setup() */
+}
 
 /*
  * void
@@ -250,9 +242,6 @@ void cleanup()
 			 TESTFILE, errno, strerror(errno));
 	}
 
-	/* Remove temporary directory and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

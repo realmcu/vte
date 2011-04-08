@@ -32,12 +32,10 @@
 #include <sys/capability.h>
 #endif
 #include <sys/prctl.h>
-#include <test.h>
+#include "test.h"
 
 char *TCID = "exec_with_inh";
 int TST_TOTAL=1;
-
-int errno;
 
 int main(int argc, char *argv[])
 {

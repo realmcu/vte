@@ -59,7 +59,6 @@
 |                                                                      |
 +---------------------------------------------------------------------*/
 
-
 #include <errno.h>
 #include <signal.h>
 #include <stdio.h>
@@ -83,7 +82,7 @@
 #define	FIRST_MSG	0
 #define BUF_SIZE        256
 
-#define SAFE_FREE(p) { if(p) { free(p); (p)=NULL; } }
+#define SAFE_FREE(p) { if (p) { free(p); (p)=NULL; } }
 
 /*
  * Function prototypes
@@ -95,7 +94,6 @@ static void sys_error (const char *, int);
 static void error (const char *, int);
 static void child (int []);
 enum { READ, WRITE };
-
 
 /*---------------------------------------------------------------------+
 |                               main                                   |
@@ -150,7 +148,7 @@ int main (int argc, char **argv)
 	 */
 	buf = (struct msgbuf *)calloc ((size_t)(sizeof(struct msgbuf) + BUF_SIZE),
 		sizeof (char));
-	if(!buf)
+	if (!buf)
 		sys_error ("calloc failed", __LINE__);
 
 	if (msgrcv (msqid, (void *)buf, (size_t)BUF_SIZE, FIRST_MSG, 0) < 0) {
@@ -173,7 +171,6 @@ int main (int argc, char **argv)
 	fflush (stdout);
 	return (0);
 }
-
 
 /*---------------------------------------------------------------------+
 |                               child                                  |
@@ -204,7 +201,7 @@ static void child (int fd[])
 	 */
 	buf = (struct msgbuf *)calloc ((size_t)(sizeof(struct msgbuf) + BUF_SIZE),
 		sizeof (char));
-	if(!buf)
+	if (!buf)
 		sys_error ("calloc failed", __LINE__);
 
 	buf->mtype = 1;
@@ -220,7 +217,6 @@ static void child (int fd[])
 	SAFE_FREE(buf);
 }
 
-
 /*---------------------------------------------------------------------+
 |                             sys_error ()                             |
 | ==================================================================== |
@@ -235,7 +231,6 @@ static void sys_error (const char *msg, int line)
 	sprintf (syserr_msg, "%s: %s\n", msg, strerror (errno));
 	error (syserr_msg, line);
 }
-
 
 /*---------------------------------------------------------------------+
 |                               error ()                               |

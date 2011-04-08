@@ -1,4 +1,4 @@
-/* 
+/*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -22,47 +22,45 @@
 #include "posixtest.h"
 
 int main(int argc, char **argv)
-{	       
+{
 
 	int result = -1, child_pid;
 	int stat_loc;
 
 	/* Create a child process which exit immediately */
 	child_pid = fork();
-	if(child_pid == -1){
-	  perror("An error occurs when calling fork()");
-	  return PTS_UNRESOLVED;
-	} else if (child_pid == 0){
-	  exit(0);
+	if (child_pid == -1) {
+		perror("fork failed");
+		return PTS_UNRESOLVED;
+	} else if (child_pid == 0) {
+		exit(0);
 	}
 
 	/* Wait for the child process to exit */
-	if(wait(&stat_loc) == -1){
-	  perror("An error occurs when calling wait()");
-	  return PTS_UNRESOLVED;
+	if (wait(&stat_loc) == -1) {
+		perror("wait failed");
+		return PTS_UNRESOLVED;
 	}
 
 	/* Assume the pid is not yet reatributed to an other process */
 	result = sched_getscheduler(child_pid);
-	
-	if(result == -1) {
+
+	if (result == -1) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
 	}
-	
-	if(errno != ESRCH ) {
+
+	if (errno != ESRCH) {
 		perror("ESRCH is not returned");
 		return PTS_FAIL;
 	}
 
-	if(result != -1) {
+	if (result != -1) {
 		printf("Returned code is not -1.\n");
 		return PTS_FAIL;
 	} else {
 		perror("Unresolved test error");
-		return PTS_UNRESOLVED;	
-	}        
+		return PTS_UNRESOLVED;
+	}
 
 }
-
-

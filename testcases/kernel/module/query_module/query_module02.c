@@ -94,7 +94,6 @@
 #define EXP_RET_VAL	-1
 #define QM_INVALID	(QM_INFO + 100)
 
-extern int Tst_count;
 
 struct test_case_t {			/* test case structure */
 	char 	*modname;
@@ -142,14 +141,13 @@ main(int argc, char **argv)
 	char *msg;			/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) !=
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
 	    (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -160,7 +158,7 @@ main(int argc, char **argv)
 				tdat[testno].which, tdat[testno].buf,
 				tdat[testno].bufsize, &ret_size));
 			TEST_ERROR_LOG(TEST_ERRNO);
-			if ( (TEST_RETURN == EXP_RET_VAL) &&
+			if ((TEST_RETURN == EXP_RET_VAL) &&
 				(TEST_ERRNO == tdat[testno].experrno) ) {
 				tst_resm(TPASS, "Expected %s, errno: %d",
 					tdat[testno].desc, TEST_ERRNO);
@@ -175,10 +173,8 @@ main(int argc, char **argv)
 	}
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	tst_exit();
 }
-
 
 /*
  * setup()
@@ -187,11 +183,11 @@ main(int argc, char **argv)
 void
 setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	if (tst_kvercmp(2,5,48) >= 0)
-		tst_brkm(TCONF, tst_exit, "This test will not work on "
+		tst_brkm(TCONF, NULL, "This test will not work on "
 				"kernels after 2.5.48");
 
 	/* Initialize longmodname to LONGMODNAMECHAR character */
@@ -220,7 +216,4 @@ cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-	/*NOTREACHED*/
 }

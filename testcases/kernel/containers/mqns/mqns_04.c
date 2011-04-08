@@ -30,6 +30,8 @@
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <assert.h>
 #include <stdio.h>
@@ -80,7 +82,6 @@ int check_mqueue(void *vtest)
 
 	tst_exit();
 }
-
 
 int main(int argc, char *argv[])
 {
@@ -159,8 +160,6 @@ int main(int argc, char *argv[])
 fail:
 	umount(DEV_MQUEUE2);
 	rmdir(DEV_MQUEUE2);
-	tst_exit();
 
-	/* NOT REACHED */
-	return 0;
+	tst_exit();
 }

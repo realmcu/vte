@@ -69,7 +69,6 @@
 void do_child(void);
 void cleanup(void);
 void setup(void);
-void sighandler(int);
 #ifdef UCLINUX
 #define PIPE_NAME	"msgrcv06"
 void do_child_uclinux(void);
@@ -77,7 +76,6 @@ void do_child_uclinux(void);
 
 char *TCID = "msgrcv06";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int exp_enos[] = { EIDRM, 0 };	/* 0 terminated list of expected errnos */
 
@@ -94,8 +92,8 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
 	maybe_run_child(&do_child_uclinux, "d", &msg_q_1);
@@ -164,7 +162,7 @@ int main(int ac, char **av)
 		}
 	}
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -217,32 +215,23 @@ void do_child_uclinux()
 	if (sync_pipe_create(sync_pipes, PIPE_NAME) == -1)
 		tst_brkm(TBROK, cleanup, "sync_pipe_create failed");
 
-	tst_sig(FORK, sighandler, cleanup);
+	tst_sig(FORK, SIG_IGN, cleanup);
 
 	do_child();
 }
 #endif
 
 /*
- * sighandler() - handle signals
- */
-void sighandler(int sig)
-{
-	/* we don't need to do anything here */
-}
-
-/*
  * setup() - performs all the ONE TIME setup for this test.
  */
 void setup(void)
 {
-	/* capture signals */
-	tst_sig(FORK, sighandler, cleanup);
+
+	tst_sig(FORK, SIG_IGN, cleanup);
 
 	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -259,7 +248,7 @@ void setup(void)
  */
 void cleanup(void)
 {
-	/* Remove the temporary directory */
+
 	tst_rmdir();
 
 	/*
@@ -268,6 +257,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

@@ -129,7 +129,6 @@ struct test_case_t {		/* test case structure */
 
 int TST_TOTAL = sizeof(tdat) / sizeof(tdat[0]);	/* Total number of test cases. */
 
-extern int Tst_count;
 
 int main(int argc, char *argv[])
 {
@@ -137,14 +136,14 @@ int main(int argc, char *argv[])
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(argc, argv, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
 
 	setup();
-	/* Check looping state if -i option given */
+
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
 		Tst_count = 0;
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
@@ -168,9 +167,9 @@ int main(int argc, char *argv[])
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 void setup(void)
 {
@@ -188,7 +187,7 @@ void setup(void)
 void cleanup(void)
 {
 	TEST_CLEANUP;
-	tst_exit();
+
 }
 
 void setup0(void)

@@ -49,7 +49,6 @@
 #include "memtoy.h"
 #include "segment.h"
 
-
 struct segment {
 	char         *seg_name;
 	void         *seg_start;
@@ -75,7 +74,6 @@ struct segment {
 #define SEG_OK  (1)
 
 #define SEG_OFFSET(SEGP, ADDR) ((char *)(ADDR) - (char *)(SEGP->seg_start))
-
 
 /*
  * =========================================================================
@@ -149,7 +147,7 @@ static void
 unmap_segment(segment_t *segp)
 {
 
-	if(segp->seg_start == MAP_FAILED)
+	if (segp->seg_start == MAP_FAILED)
 		return;		/* already unmapped */
 
 	switch (segp->seg_type) {
@@ -271,7 +269,7 @@ map_anon_segment(segment_t *segp)
 	char *memp;
 	int   flags = segp->seg_flags;
 
-	if(!flags)
+	if (!flags)
 		flags = MAP_PRIVATE;	/* default */
 
 	memp = (char *)mmap(0, segp->seg_length,
@@ -308,7 +306,7 @@ open_file(segment_t *segp)
 	struct stat stbuf;
 	int fd, flags;
 
-	if(stat(segp->seg_path, &stbuf) < 0) {
+	if (stat(segp->seg_path, &stbuf) < 0) {
 		int err = errno;
 		fprintf(stderr, "%s:  can't stat %s - %s\n",
 			gcp->program_name, segp->seg_path,
@@ -320,7 +318,7 @@ open_file(segment_t *segp)
 	/*
 	 * TODO:  for now, just regular files.  later?
 	 */
-	if(!S_ISREG(stbuf.st_mode)) {
+	if (!S_ISREG(stbuf.st_mode)) {
 		fprintf(stderr, "%s:  %s - is not a regular file\n",
 			gcp->program_name, segp->seg_path);
 		free_seg_slot(segp);
@@ -388,7 +386,7 @@ map_file_segment(segment_t *segp)
 	int fd;
 	int   flags = segp->seg_flags;
 
-	if(!flags)
+	if (!flags)
 		flags = MAP_PRIVATE;	/* default */
 
 	if ((fd = segp->seg_fd) == SEG_FD_NONE) {
@@ -419,7 +417,7 @@ map_file_segment(segment_t *segp)
 	memp = (char *)mmap(0, segp->seg_length,
 	                    segp->seg_prot,
 	                    flags,
-	                    fd,           
+	                    fd,
 	                    segp->seg_offset);
 
 	if (memp == MAP_FAILED) {
@@ -650,7 +648,7 @@ segment_show(char *name)
 	segment_t *segp, **segpp;
 	bool       header;
 
-	if(name != NULL) {
+	if (name != NULL) {
 		segp = segment_get(name);
 		if (segp == NULL) {
 			fprintf(stderr, "%s:  no such segment:  %s\n",
@@ -665,7 +663,7 @@ segment_show(char *name)
 	 * show all
 	 */
 	header = true;
-	for(segpp = gcp->seglist; (segp = *segpp); ++segpp) {
+	for (segpp = gcp->seglist; (segp = *segpp); ++segpp) {
 		if (segp->seg_type != SEGT_NONE) {
 			show_one_segment(segp, header);
 			header = false;		/* first time only */
@@ -739,7 +737,7 @@ segment_touch(char *name, range_t *range, int rw)
 	/*
 	 * note:  we silently truncate to max length [end of segment]
 	 */
-	if(length == 0 || length > maxlength)
+	if (length == 0 || length > maxlength)
 		length = maxlength;
 
 	gettimeofday(&t_start, NULL);
@@ -890,7 +888,7 @@ segment_mbind(char *name, range_t *range, int policy,
 	/*
 	 * note:  we silently truncate to max length [end of segment]
 	 */
-	if(length == 0 || length > maxlength)
+	if (length == 0 || length > maxlength)
 		length = maxlength;
 
 	ret = mbind(segp->seg_start+offset, length, policy, nodemask->n,
@@ -954,7 +952,7 @@ segment_location(char *name, range_t *range)
 	/*
 	 * note:  we silently truncate to max length [end of segment]
 	 */
-	if(length == 0 || length > maxlength)
+	if (length == 0 || length > maxlength)
 		length = maxlength;
 
 	end  = apage + length;
@@ -980,7 +978,7 @@ segment_location(char *name, range_t *range)
 	} else
 		need_nl = false;
 
-	for(; apage < end; apage += gcp->pagesize, ++pgid) {
+	for (; apage < end; apage += gcp->pagesize, ++pgid) {
 		int node;
 
 		node = get_node(apage);

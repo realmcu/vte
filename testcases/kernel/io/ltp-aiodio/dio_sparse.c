@@ -124,7 +124,7 @@ int read_sparse(char *filename, int filesize)
 			offset += r;
 		}
 	}
-    return 0;
+  return 0;
 }
 
 volatile int got_signal;
@@ -154,7 +154,7 @@ void dio_sparse(char *filename, int align, int writesize, int filesize)
 
 	WITH_SIGNALS_BLOCKED(
 		fd = open(filename, O_DIRECT|O_WRONLY|O_CREAT|O_EXCL, 0600);
-		if(fd >= 0)
+		if (fd >= 0)
 			filename1 = filename;
 	);
 
@@ -176,7 +176,7 @@ void dio_sparse(char *filename, int align, int writesize, int filesize)
 	}
 
 	memset(bufptr, 0, writesize);
-	for (i = 0; i < filesize; )  {
+	for (i = 0; i < filesize;)  {
 		if (debug > 1 && ((i % writesize) % 100)) {
 			fprintf(stderr, "DIO write # %d\n", i);
 		}
@@ -200,7 +200,6 @@ void dio_sparse(char *filename, int align, int writesize, int filesize)
 	);
 }
 
-
 void dirty_freeblocks(int size)
 {
 	int fd;
@@ -214,7 +213,7 @@ void dirty_freeblocks(int size)
 
 	WITH_SIGNALS_BLOCKED(
 		fd = open(filename, O_CREAT|O_RDWR|O_EXCL, 0600);
-		if(fd >= 0)
+		if (fd >= 0)
 			filename2=filename;
 	);
 	if (fd < 0) {
@@ -388,7 +387,7 @@ int main(int argc, char **argv)
 			children_errors);
 	if (children_errors)
 		exit(10);
-	return 0;
+	tst_exit();
 }
 
 static void setup(void)
@@ -399,8 +398,8 @@ static void setup(void)
 
 static void cleanup(void)
 {
-	if(filename1)
+	if (filename1)
 		unlink(filename1);
-	if(filename2)
+	if (filename2)
 		unlink(filename2);
 }

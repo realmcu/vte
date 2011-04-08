@@ -1,17 +1,16 @@
 /*
  * Copyright (c) 2004, Intel Corporation. All rights reserved.
- * This file is licensed under the GPL license.  For the full content 
- * of this license, see the COPYING file at the top level of this 
+ * This file is licensed under the GPL license.  For the full content
+ * of this license, see the COPYING file at the top level of this
  * source tree.
  *
  * adam.li@intel.com
- * If the Timers option is supported, the timeout shall be based on 
- * the CLOCK_REALTIME clock. If the Timers option is not supported, 
- * the timeout shall be based on the system clock as returned by 
+ * If the Timers option is supported, the timeout shall be based on
+ * the CLOCK_REALTIME clock. If the Timers option is not supported,
+ * the timeout shall be based on the system clock as returned by
  * the time() function.
- * 
+ *
  */
-
 
 #define _XOPEN_SOURCE 600
 
@@ -23,7 +22,6 @@
 #include <fcntl.h>
 #include <time.h>
 #include "posixtest.h"
-
 
 #define TEST "10-1"
 #define FUNCTION "sem_timedwait"
@@ -37,7 +35,7 @@ int main() {
 	int rc;
 
 	/* Init the value to 0 */
-        if ( sem_init (&mysemp, 0, 0) == -1 ) {
+        if (sem_init (&mysemp, 0, 0) == -1) {
                 perror(ERROR_PREFIX "sem_init");
                 return PTS_UNRESOLVED;
         }
@@ -50,20 +48,20 @@ int main() {
 		perror("clock_gettime()");
 		return PTS_UNRESOLVED;
 	}
-	ts.tv_sec += SLEEP_SEC;	
+	ts.tv_sec += SLEEP_SEC;
         ts.tv_nsec=0;
 #else
 	ts.tv_sec=time(NULL);
-	ts.tv_sec += SLEEP_SEC;	
+	ts.tv_sec += SLEEP_SEC;
         ts.tv_nsec=0;
 #endif
 	/* Lock Semaphore */
 	rc = sem_timedwait(&mysemp, &ts);
-        if ( rc != -1 || (rc == -1 && errno != ETIMEDOUT)) 
+        if (rc != -1 || (rc == -1 && errno != ETIMEDOUT))
 	{
 		perror(ERROR_PREFIX "sem_timedwait");
 		printf("Expect timedout\n");
-		return PTS_UNRESOLVED; 
+		return PTS_UNRESOLVED;
 	}
 
 	/* Check the time */
@@ -76,11 +74,11 @@ int main() {
 #else
 	ts_2.tv_sec = time(NULL);
 #endif
-	if(ts_2.tv_sec == ts.tv_sec) {
+	if (ts_2.tv_sec == ts.tv_sec) {
 		puts("TEST PASSED");
 		sem_destroy(&mysemp);
 		return PTS_PASS;
-	} else { 
+	} else {
 		puts("TEST FAILED");
 		return PTS_FAIL;
 	}

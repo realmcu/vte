@@ -53,7 +53,6 @@
 
 char *TCID = "fork09";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void setup(void);
 void cleanup(void);
@@ -75,9 +74,9 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	/*
 	 * perform global setup for the test
@@ -87,7 +86,7 @@ int main(int ac, char **av)
 	fildeses = (FILE **) malloc((OPEN_MAX + 10) * sizeof(FILE *));
 	if (fildeses == NULL) {
 		tst_brkm(TBROK, cleanup, "malloc failed");
-	 /*NOTREACHED*/}
+	 }
 
 	/*
 	 * check looping state if -i option is given
@@ -107,7 +106,7 @@ int main(int ac, char **av)
 		if ((first = creat(filname, 0660)) == -1) {
 			tst_brkm(TBROK, cleanup, "Cannot open first file %s, "
 				 "errno = %d", filname, errno);
-		 /*NOTREACHED*/}
+		 }
 		close(first);
 
 		tst_resm(TINFO, "first file descriptor is %d ", first);
@@ -115,7 +114,7 @@ int main(int ac, char **av)
 		if (unlink(filname) == -1) {
 			tst_brkm(TBROK, cleanup, "Cannot unlink file %s, "
 				 "errno = %d", filname, errno);
-		 /*NOTREACHED*/}
+		 }
 
 		/*
 		 * now open all the files for the test
@@ -129,7 +128,7 @@ int main(int ac, char **av)
 				tst_brkm(TBROK, cleanup, "Parent: cannot open "
 					 "file %d %s errno = %d", nfiles,
 					 filname, errno);
-			 /*NOTREACHED*/}
+			 }
 #ifdef DEBUG
 			tst_resm(TINFO, "filname: %s", filname);
 #endif
@@ -139,7 +138,7 @@ int main(int ac, char **av)
 
 		if ((pid = fork()) == -1) {
 			tst_brkm(TBROK, cleanup, "Fork failed");
-		 /*NOTREACHED*/}
+		 }
 
 		if (pid == 0) {	/* child */
 			nfiles--;
@@ -147,7 +146,7 @@ int main(int ac, char **av)
 				tst_resm(TINFO, "Child could not close file "
 					 "#%d, errno = %d", nfiles, errno);
 				exit(1);
-			 /*NOTREACHED*/} else {
+			 } else {
 				sprintf(childfile, "cfile.%d", getpid());
 				if ((fildeses[nfiles] =
 				     fopen(childfile, "a")) == NULL) {
@@ -155,7 +154,7 @@ int main(int ac, char **av)
 						 "file %s, errno = %d",
 						 childfile, errno);
 					exit(1);
-				 /*NOTREACHED*/} else {
+				 } else {
 					tst_resm(TINFO, "Child opened new "
 						 "file #%d", nfiles);
 					unlink(childfile);
@@ -180,7 +179,7 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -223,5 +222,4 @@ void cleanup()
 	 */
 	tst_rmdir();
 
-	tst_exit();
 }

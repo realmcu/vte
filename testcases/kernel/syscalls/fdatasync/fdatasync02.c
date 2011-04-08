@@ -78,7 +78,6 @@
 #include "test.h"
 #include "usctest.h"
 
-extern int Tst_count;
 
 #define EXP_RET_VAL	-1
 #define SPL_FILE	"/dev/null"
@@ -114,14 +113,13 @@ int main(int argc, char **argv)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -154,7 +152,7 @@ int main(int argc, char **argv)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 int setup1(void)
@@ -177,7 +175,7 @@ void cleanup2(void)
 {
 	/* close special file */
 	if (close(fd) == -1) {
-		tst_brkm(TBROK, tst_exit, "Failed to close fd of %s", SPL_FILE);
+		tst_brkm(TBROK, NULL, "Failed to close fd of %s", SPL_FILE);
 	}
 }
 
@@ -187,7 +185,7 @@ void cleanup2(void)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* set the expected errnos... */
@@ -213,6 +211,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

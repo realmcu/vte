@@ -56,7 +56,6 @@
 
 char *TCID = "umask03";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 char filname[40];
 
@@ -75,14 +74,11 @@ int main(int argc, char **argv)
 	unsigned low9mode;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	setup();		/* global setup */
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* reset Tst_count in case we are looping */
@@ -106,7 +102,7 @@ int main(int argc, char **argv)
 							 "mask didnot take",
 							 low9mode,
 							 (~mskval & 0777));
-					 /*NOTREACHED*/}
+					 }
 				}
 			}
 			close(fildes);
@@ -116,7 +112,7 @@ int main(int argc, char **argv)
 				 "previous value for all masks");
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -126,7 +122,7 @@ int main(int argc, char **argv)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Pause if that option was specified
@@ -164,5 +160,5 @@ void cleanup()
 	/*
 	 * exit with return code appropriate for results
 	 */
-	tst_exit();
+
 }

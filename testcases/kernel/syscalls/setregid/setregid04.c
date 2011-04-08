@@ -63,13 +63,12 @@
 
 #include <pwd.h>
 #include <grp.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 #include <errno.h>
 
-extern int Tst_count;
 
 char *TCID = "setregid04";
 gid_t users_gr_gid, root_gr_gid, daemon_gr_gid, bin_gr_gid;
@@ -133,16 +132,11 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)	{
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-		/*NOTREACHED*/
-	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		int i;
 
@@ -174,15 +168,16 @@ int main(int ac, char **av)
 			}
 		}
 	}
+
 	cleanup();
-	/*NOTREACHED*/
-	return 0;
+	tst_exit();
+	tst_exit();
+
 }
 
 #define SAFE_GETGROUP(GROUPNAME)	\
 	if ((junk = getgrnam(#GROUPNAME)) == NULL) { \
 		tst_brkm(TBROK, NULL, "Couldn't find the `" #GROUPNAME "' group"); \
-		tst_exit(); \
 	} \
 	memcpy((void*) &GROUPNAME ## _gr, (const void*) junk, sizeof(struct group)); \
 	GROUPNAME ## _gr_gid = GROUPNAME ## _gr.gr_gid
@@ -195,14 +190,9 @@ void setup(void)
 {
 	struct group *junk;
 
-	/* capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+	tst_require_root(NULL);
 
-	/* Check that the test process id is super/root  */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, NULL, "Must be root for this test!");
-		tst_exit();
-	}
+	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
@@ -230,10 +220,6 @@ void cleanup(void)
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
-	/*NOTREACHED*/
 }
 
 void gid_verify(struct group *rg, struct group *eg, const char *when)

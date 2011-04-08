@@ -45,8 +45,8 @@
 #include <sys/time.h>
 #include <signal.h>
 #include <stdlib.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 #include <sys/syscall.h>
 #include <unistd.h>
 #include <time.h>
@@ -73,7 +73,6 @@ void cleanup(void)
 {
 	TEST_CLEANUP;
 
-	tst_exit();
 }
 
 void help()
@@ -86,8 +85,8 @@ int main(int ac, char **av)
 	struct timeval tv1, tv2;
 	char *msg;
 
-	if ((msg = parse_opts(ac, av, opts, help)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, opts, help)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -123,5 +122,5 @@ int main(int ac, char **av)
 	tst_resm(TPASS, "gettimeofday monotonous in %s seconds", tlen);
 
 	cleanup();
-	return 0;
+	tst_exit();
 }

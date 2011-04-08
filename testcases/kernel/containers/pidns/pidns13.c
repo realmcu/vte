@@ -45,8 +45,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <usctest.h>
-#include <test.h>
+#include "usctest.h"
+#include "test.h"
 #include <libclone.h>
 
 char *TCID = "pidns13";
@@ -65,8 +65,6 @@ void cleanup()
 	/* Clean the test testcase as LTP wants*/
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
 
 /*
@@ -151,7 +149,7 @@ int child_fn(void *arg)
 		}
 
 		/* Recieved SIGUSR1. Check details. */
-		if (info.si_fd == pipe_fd[0] && info.si_code == POLL_IN )
+		if (info.si_fd == pipe_fd[0] && info.si_code == POLL_IN)
 			tst_resm(TPASS, "cinit1: si_fd is %d, si_code is %d",\
 					info.si_fd, info.si_code);
 		else
@@ -187,7 +185,6 @@ int child_fn(void *arg)
 	cleanup();
 	exit(0);
 }
-
 
 /***********************************************************************
 *   M A I N
@@ -248,5 +245,4 @@ int main(int argc, char *argv[])
 	/* Control won't reach below */
 	exit(0);
 
-}	/* End main */
-
+}

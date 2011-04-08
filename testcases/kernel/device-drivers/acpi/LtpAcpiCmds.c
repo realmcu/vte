@@ -51,7 +51,6 @@ static int ltpdev_open(struct block_device *bdev, fmode_t mode);
 static int ltpdev_release(struct gendisk *disk, fmode_t mode);
 static int ltpdev_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd, unsigned long arg);
 
-
 static u32 ltp_test_sleep_button_ev_handler(void *context);
 static u32 ltp_test_power_button_ev_handler(void *context);
 static u32 acpi_ec_gpe_handler(void *context);
@@ -81,7 +80,7 @@ ioctl:      ltpdev_ioctl,
 int ltp_acpi_major = LTPMAJOR;
 int test_iteration = 0;
 
-static char genhd_flags = 0;  
+static char genhd_flags = 0;
 static struct gendisk * gd_ptr;
 
 struct acpi_ec {
@@ -99,26 +98,23 @@ MODULE_AUTHOR("Martin Ridgeway <mridge@us.ibm.com>");
 MODULE_DESCRIPTION(ACPI_LTP_TEST_DRIVER_NAME);
 MODULE_LICENSE("GPL");
 
-
-
 /*
  * Device operations for the virtual ACPI devices
  */
-
 
 extern struct acpi_device		*acpi_root;
 
 static int ltpdev_open(struct block_device *dev, fmode_t mode)
 {
     printk(KERN_ALERT "ltpdev_open \n");
-    return 0;
+  return 0;
 }
 
 static int ltpdev_release(struct gendisk *disk, fmode_t mode)
 {
 
     printk(KERN_ALERT "ltpdev_release \n");
-    return 0;
+  return 0;
 }
 
 static u32 ltp_test_power_button_ev_handler(void *context)
@@ -164,9 +160,6 @@ static int ltpdev_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd, u
     int 		state = 0;
 
     /*****************************************************************************/
-
-
-
 
     printk(KERN_ALERT "ltpdev_ioctl \n");
     switch (cmd) {
@@ -227,22 +220,22 @@ static int ltpdev_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd, u
 
 	printk(KERN_ALERT "TEST -- acpi_install_fixed_event_handler \n");
 	status = acpi_install_fixed_event_handler(ACPI_EVENT_POWER_BUTTON, ltp_test_power_button_ev_handler, NULL);
-	if(status)
+	if (status)
 		printk(KERN_ALERT "Failed installing fixed event handler \n");
 
 	printk(KERN_ALERT "TEST -- acpi_remove_fixed_event_handler \n");
 	status = acpi_remove_fixed_event_handler(ACPI_EVENT_POWER_BUTTON, ltp_test_power_button_ev_handler);
-	if(status)
+	if (status)
 		printk(KERN_ALERT "Failed removing fixed event handler \n");
 
 	printk(KERN_ALERT "TEST -- acpi_install_fixed_event_handler \n");
 	status = acpi_install_fixed_event_handler(ACPI_EVENT_SLEEP_BUTTON, ltp_test_sleep_button_ev_handler, NULL);
-	if(status)
+	if (status)
 		printk(KERN_ALERT "Failed installing fixed event handler \n");
 
 	printk(KERN_ALERT "TEST -- acpi_remove_fixed_event_handler \n");
 	status = acpi_remove_fixed_event_handler(ACPI_EVENT_SLEEP_BUTTON, ltp_test_sleep_button_ev_handler);
-	if(status)
+	if (status)
 		printk(KERN_ALERT "Failed removing fixed event handler \n");
 
 	printk(KERN_ALERT "TEST -- acpi_acquire_global_lock \n");
@@ -262,14 +255,14 @@ static int ltpdev_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd, u
 
 	printk(KERN_ALERT "TEST -- acpi_bus_get_power \n");
 	status = acpi_bus_get_power(next_child_handle, &state);
-	if(status)
+	if (status)
 	printk(KERN_ALERT "Error reading power state \n");
 
         printk(KERN_ALERT "TEST -- acpi_driver_data \n");
 
         ec = acpi_driver_data(device);
 
-        if (!ec){
+        if (!ec) {
             printk(KERN_ALERT "Failure getting device data \n");
         }
         else {
@@ -292,7 +285,7 @@ static int ltpdev_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd, u
             printk(KERN_ALERT "TEST -- acpi_remove_gpe_handler \n");
             acpi_remove_gpe_handler(device, ec->gpe_bit, &acpi_ec_gpe_handler);
         }
-    
+
         printk(KERN_ALERT "TEST -- acpi_get_current_resources \n");
         status = acpi_get_current_resources (next_child_handle, &buffer);
 
@@ -319,7 +312,7 @@ static int ltpdev_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd, u
 
 	printk(KERN_ALERT "TEST -- acpi_evaluate_integer \n");
 	status = acpi_evaluate_integer(ec->handle, "_GPE", NULL, &ec->gpe_bit);
-	if(status)
+	if (status)
 	printk(KERN_ALERT "Error obtaining GPE bit assignment\n");
 
 #if 0
@@ -403,7 +396,6 @@ static int ltpdev_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd, u
             printk(KERN_ALERT "Failed get_devices %d\n",status);
         }
 
-
 //        status = acpi_os_create_semaphore(1, 1, &tmp_handle);
 
         if (status) {
@@ -455,8 +447,7 @@ static int ltpdev_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd, u
         break;
     }
 
-
-    return 0;
+  return 0;
 }
 
 static acpi_status ltp_get_dev_callback (acpi_handle obj, u32 depth, void *context, void **ret)
@@ -499,7 +490,7 @@ static u32 acpi_ec_gpe_handler(void *context)
 
 static acpi_status acpi_ec_io_ports (struct acpi_resource	*resource,   void			*context)
 {
-  return 0;
+        return 0;
 }
 
 #if 0
@@ -570,10 +561,7 @@ int init_module(void)
 {
     int                result;
 
-
-
     printk(KERN_ALERT "ltpdev_init_module \n");
-
 
     result = register_blkdev(ltp_acpi_major, LTP_ACPI_DEV_NAME);
 
@@ -590,7 +578,7 @@ int init_module(void)
 
     if (!gd_ptr) {
         printk(KERN_ALERT "ERROR getting memory !!!\n");
-        return 0;
+      return 0;
     }
 
     gd_ptr = alloc_disk(1);
@@ -605,12 +593,11 @@ int init_module(void)
 //    gd_ptr->disk_de = NULL;
     gd_ptr->flags = genhd_flags;
 
-
     sprintf(gd_ptr->disk_name, LTP_ACPI_DEV_NAME);
 
     add_disk(gd_ptr);
 
-    return 0;
+  return 0;
 }
 
 void cleanup_module(void)
@@ -625,4 +612,3 @@ void cleanup_module(void)
     unregister_blkdev(ltp_acpi_major, LTP_ACPI_DEV_NAME);
 
 }
-

@@ -66,13 +66,12 @@
 
 #include <pwd.h>
 #include <grp.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 #include <errno.h>
 
-extern int Tst_count;
 
 char *TCID = "setregid02";
 gid_t users_gr_gid, root_gr_gid, bin_gr_gid;
@@ -80,10 +79,10 @@ gid_t neg_one = -1;
 int exp_enos[] = { EPERM, 0 };
 gid_t inval_user = (USHRT_MAX);
 char nobody_uid[] = "nobody";
-struct passwd *ltpuser;
+struct passwd *nobody;
 
 struct group users, root, bin;
-struct passwd nobody;
+struct passwd *nobody;
 
 /*
  * The following structure contains all test data.  Each structure in the array
@@ -128,15 +127,11 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		int i;
 
@@ -189,7 +184,8 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
+	tst_exit();
 
 }
 
@@ -199,45 +195,41 @@ int main(int ac, char **av)
  */
 void setup(void)
 {
-	/* capture signals */
+	struct group *junk;
+
+	tst_require_root(NULL);
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	if (getpwnam("nobody") == NULL) {
-		tst_brkm(TBROK, NULL, "nobody must be a valid user.");
-		tst_exit();
-	 /*NOTREACHED*/}
-
-	nobody = *getpwnam("nobody");
-
-	/* Check that the test process id is nobody */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, NULL, "Must be root for this test!");
-		tst_exit();
+	if ((nobody = getpwnam("nobody")) == NULL) {
+		tst_brkm(TBROK, NULL, "getpwnam(\"nobody\") failed");
 	}
 
-	ltpuser = getpwnam(nobody_uid);
-	if (setgid(ltpuser->pw_gid) == -1) {
-		tst_resm(TINFO, "setgid failed to "
-			 "to set the effective gid to %d", ltpuser->pw_gid);
-		perror("setgid");
+	if (setgid(nobody->pw_gid) == -1) {
+		tst_brkm(TBROK|TERRNO, NULL,
+		    "setgid failed to set the effective gid to %d",
+		    nobody->pw_gid);
 	}
-	if (setuid(ltpuser->pw_uid) == -1) {
-		tst_resm(TINFO, "setuid failed to "
-			 "to set the effective uid to %d", ltpuser->pw_uid);
-		perror("setuid");
+	if (setuid(nobody->pw_uid) == -1) {
+		tst_brkm(TBROK|TERRNO, NULL,
+		    "setuid failed to to set the effective uid to %d",
+		    nobody->pw_uid);
 	}
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	root = *(getgrnam("root"));
-	root_gr_gid = root.gr_gid;
+#define GET_GID(group)	do {		\
+	junk = getgrnam(#group);	\
+	if (junk == NULL) {		\
+		tst_brkm(TBROK|TERRNO, NULL, "getgrnam(\"%s\") failed", #group); \
+	}				\
+	group ## _gr_gid = junk->gr_gid;\
+} while (0)
 
-	users = *(getgrnam("users"));
-	users_gr_gid = users.gr_gid;
-
-	bin = *(getgrnam("bin"));
-	bin_gr_gid = bin.gr_gid;
+	GET_GID(root);
+	GET_GID(users);
+	GET_GID(bin);
 
 	/* Pause if that option was specified
 	 * TEST_PAUSE contains the code to fork the test with the -c option.
@@ -257,10 +249,7 @@ void cleanup(void)
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }
 
 void gid_verify(struct group *rg, struct group *eg, char *when)
 {

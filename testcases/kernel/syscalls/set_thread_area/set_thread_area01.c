@@ -52,8 +52,6 @@ int  TST_TOTAL = 2;		  /* total number of tests in this file.  */
 
 #if defined(HAVE_ASM_LDT_H) && defined(HAVE_STRUCT_USER_DESC)
 /* Extern Global Variables */
-extern int Tst_count;	   /* counter for tst_xxx routines.	 */
-extern char *TESTDIR;	   /* temporary dir created by tst_tmpdir() */
 
 /* Extern Global Functions */
 /************************************************************************/
@@ -75,12 +73,10 @@ extern char *TESTDIR;	   /* temporary dir created by tst_tmpdir() */
 /*									*/
 /************************************************************************/
 extern void cleanup() {
-	/* Remove tmp dir and all files in it */
+
 	TEST_CLEANUP;
 	tst_rmdir();
 
-	/* Exit with appropriate return code. */
-	tst_exit();
 }
 
 /* Local  Functions */
@@ -113,16 +109,15 @@ int main(int ac, char **av) {
 	thread_area_s u_info;
 	int lc;		/* loop counter */
 	char *msg;	/* message returned from parse_opts */
-	
+
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		 tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		 tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		 tst_exit();
 	}
 
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
 
 		Tst_count = 0;
@@ -130,7 +125,7 @@ int main(int ac, char **av) {
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
 
 			u_info.entry_number = 6;
-	
+
 			/*
 			 * This call to get_thread_area function should be
 			 * successful.
@@ -138,7 +133,7 @@ int main(int ac, char **av) {
 
 			/* Call get_thread_area(). */
 			TEST(syscall(__NR_get_thread_area, &u_info));
-			if(TEST_RETURN == 0) {
+			if (TEST_RETURN == 0) {
 				tst_resm(TPASS, "get_thread_area call succeeded");
 			} else {
 				tst_resm(TFAIL, "failed - errno = %d : %s",
@@ -146,7 +141,7 @@ int main(int ac, char **av) {
 				cleanup();
 				tst_exit();
 			}
-		     
+
 			u_info.entry_number = -1;
 			/*
 			 * This call to set_thread_area function should be sucessful.
@@ -155,7 +150,7 @@ int main(int ac, char **av) {
 			/* Call set_thread_area(). */
 			TEST(syscall(__NR_set_thread_area, &u_info));
 
-			if(TEST_RETURN == 0) {
+			if (TEST_RETURN == 0) {
 				tst_resm(TPASS, "set_thread_area call succeeded");
 			} else {
 			     	tst_resm(TFAIL, "failed - errno = %d : %s",
@@ -166,7 +161,7 @@ int main(int ac, char **av) {
 
 		}
 
-	}	
+	}
 
 	cleanup();
 

@@ -72,7 +72,6 @@ void cleanup();
 
 char *TCID = "rmdir01";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 char tstdir[100];
 
@@ -85,8 +84,8 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	/*
@@ -99,7 +98,6 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/*
@@ -112,7 +110,7 @@ int main(int ac, char **av)
 		if (mkdir(tstdir, PERMS) == -1) {
 			tst_brkm(TBROK, cleanup, "mkdir(%s, %#o) Failed",
 				 tstdir, PERMS);
-		 /*NOTREACHED*/}
+		 }
 		/* call rmdir using TEST macro */
 
 		TEST(rmdir(tstdir));
@@ -135,14 +133,13 @@ int main(int ac, char **av)
 			tst_resm(TPASS, "call succeeded");
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
 	/*
 	 * cleanup and exit
 	 */
 	cleanup();
-
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -151,10 +148,9 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Create a temporary directory and make it current. */
@@ -183,5 +179,5 @@ void cleanup()
 	/*
 	 * Exit with return code appropriate for results.
 	 */
-	tst_exit();
+
 }

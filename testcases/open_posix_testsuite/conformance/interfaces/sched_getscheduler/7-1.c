@@ -1,4 +1,4 @@
-/* 
+/*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -8,7 +8,7 @@
  *  GNU General Public License for more details.
  *
  *
- * Test that sched_getscheduler() sets errno == EPERM when the requesting 
+ * Test that sched_getscheduler() sets errno == EPERM when the requesting
  * process does not have permission
  */
 #define _XOPEN_SOURCE 600
@@ -26,62 +26,60 @@ int set_nonroot()
 {
 	struct passwd *pw;
 	setpwent();
-	/* search for the first user which is non root */ 
-	while((pw = getpwent()) != NULL)
-		if(strcmp(pw->pw_name, "root"))
+	/* search for the first user which is non root */
+	while ((pw = getpwent()) != NULL)
+		if (strcmp(pw->pw_name, "root"))
 			break;
 	endpwent();
-	if(pw == NULL) {
+	if (pw == NULL) {
 		printf("There is no other user than current and root.\n");
 		return 1;
 	}
 
-	if(seteuid(pw->pw_uid) != 0) {
-		if(errno == EPERM) {
+	if (seteuid(pw->pw_uid) != 0) {
+		if (errno == EPERM) {
 			printf("You don't have permission to change your UID.\n");
 			return 1;
 		}
 		perror("An error occurs when calling seteuid()");
 		return 1;
 	}
-	
+
 	printf("Testing with user '%s' (uid: %d)\n",
 	       pw->pw_name, (int)geteuid());
 	return 0;
 }
 
 int main(int argc, char **argv)
-{	       
+{
 
 	int result = -1;
 
 	/* We assume process Number 1 is created by root */
-	/* and can only be accessed by root */ 
+	/* and can only be accessed by root */
 	/* This test should be run under standard user permissions */
         if (getuid() == 0) {
                 if (set_nonroot() != 0) {
-			printf("Cannot run this test as non-root user\n");	
+			printf("Cannot run this test as non-root user\n");
 			return PTS_UNTESTED;
 		}
         }
 
-	result = sched_getscheduler( 1 );
-	
-	if(result == -1 && errno == EPERM) {
+	result = sched_getscheduler(1);
+
+	if (result == -1 && errno == EPERM) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
 	}
-	if(result == 0) {
+	if (result == 0) {
 		printf("The function sched_getscheduler has successed.\n");
 		return PTS_FAIL;
 	}
-	if(errno != EPERM ) {
+	if (errno != EPERM) {
 		perror("errno is not EPERM");
 		return PTS_FAIL;
 	} else {
 		perror("Unresolved test error");
-		return PTS_UNRESOLVED;	
-	}        
+		return PTS_UNRESOLVED;
+	}
 }
-
-

@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* Copyright (c) Jens Axboe <axboe@kernel.dk>, 2009                           */ 
+/* Copyright (c) Jens Axboe <axboe@kernel.dk>, 2009                           */
 /*                                                                            */
 /* LKML Reference: http://lkml.org/lkml/2009/4/2/55                           */
 /*                                                                            */
@@ -37,15 +37,12 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-
 /* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
 #include "linux_syscall_numbers.h"
 
 /* Extern Global Variables */
-extern int Tst_count;           /* counter for tst_xxx routines.         */
-extern char *TESTDIR;           /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
 char *TCID = "splice02";  /* Test program identifier.*/
@@ -59,7 +56,6 @@ static inline long ltp_splice(int fd_in, loff_t *off_in,
 			return syscall(__NR_splice, fd_in, off_in, fd_out,
 					off_out, len, flags);
 }
-
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -80,11 +76,10 @@ static inline long ltp_splice(int fd_in, loff_t *off_in,
 /*                                                                            */
 /******************************************************************************/
 extern void cleanup() {
-        /* Remove tmp dir and all files in it */
+
         TEST_CLEANUP;
         tst_rmdir();
 
-        /* Exit with appropriate return code. */
         tst_exit();
 }
 
@@ -128,17 +123,17 @@ int main(int ac, char **av) {
 
         setup();
 
-        if (ac < 2 ) {
+        if (ac < 2) {
             tst_resm(TFAIL, "%s failed - Usage: %s outfile", TCID, av[0]);
             tst_exit();
 	}
 	fd=open(av[1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if(fd < 0 ) {
+	if (fd < 0) {
 		tst_resm(TFAIL, "open(%s) failed - errno = %d : %s", av[1], errno, strerror(errno));
 	   cleanup();
 	   tst_exit();
 	}
-			
+
         do {
 		TEST(ltp_splice(STDIN_FILENO, NULL, fd, NULL, SPLICE_SIZE, 0));
 	    if (TEST_RETURN < 0) {
@@ -146,12 +141,11 @@ int main(int ac, char **av) {
 	        cleanup();
 		tst_exit();
 	    } else
-            if (TEST_RETURN == 0){
+            if (TEST_RETURN == 0) {
 							tst_resm(TPASS, "splice() system call Passed");
 		close(fd);
 	        cleanup();
 	        tst_exit();
 	    }
-	} while(1);
+	} while (1);
 }
-

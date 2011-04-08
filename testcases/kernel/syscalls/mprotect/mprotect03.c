@@ -57,8 +57,8 @@
 #include <limits.h>		/* for PAGESIZE */
 #include <signal.h>
 #include <wait.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 #ifndef PAGESIZE
 #define PAGESIZE 4096
@@ -73,7 +73,6 @@ int TST_TOTAL = 1;
 int status;
 char file1[BUFSIZ];
 
-extern int Tst_count;
 
 #ifndef UCLINUX
 
@@ -87,8 +86,8 @@ int main(int ac, char **av)
 	char *buf = "abcdefghijklmnopqrstuvwxyz";
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();		/* global setup */
@@ -101,7 +100,7 @@ int main(int ac, char **av)
 
 		if ((fd = open(file1, O_RDWR | O_CREAT, 0777)) < 0) {	//mode must be specified when O_CREAT is in the flag
 			tst_brkm(TBROK, cleanup, "open failed");
-		 /*NOTREACHED*/}
+		 }
 
 		(void)write(fd, buf, strlen(buf));
 
@@ -112,7 +111,7 @@ int main(int ac, char **av)
 			    fd, 0);
 		if (addr < 0) {
 			tst_brkm(TBROK, cleanup, "mmap failed");
-		 /*NOTREACHED*/}
+		 }
 
 		/*
 		 * Try to change the protection to WRITE.
@@ -131,7 +130,7 @@ int main(int ac, char **av)
 					tst_resm(TINFO, "memcpy() did "
 						 "not generate SIGSEGV");
 					exit(1);
-				 /*NOTREACHED*/}
+				 }
 
 				/* parent */
 				(void)waitpid(pid, &status, 0);
@@ -148,7 +147,7 @@ int main(int ac, char **av)
 		} else {
 			tst_resm(TFAIL, "mprotect failed "
 				 "unexpectedly, errno: %d", errno);
-		 /*NOTREACHED*/}
+		 }
 
 		/* clean up things in case we are looping */
 		if (munmap(addr, strlen(buf)) == -1) {
@@ -162,7 +161,8 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
-	return 0;
+	tst_exit();
+
 }
 
 #else
@@ -170,7 +170,7 @@ int main(int ac, char **av)
 int main()
 {
 	tst_resm(TINFO, "Ignore this test on uClinux");
-	return 0;
+	tst_exit();
 }
 
 #endif /* UCLINUX */
@@ -179,10 +179,9 @@ void sighandler(int sig)
 {
 	if (sig == SIGSEGV) {
 		tst_resm(TINFO, "received signal: SIGSEGV");
-	} else {
+		tst_exit();
+	} else
 		tst_brkm(TBROK, 0, "Unexpected signal %d received.", sig);
-	}
-	tst_exit();
 }
 
 /*
@@ -192,7 +191,6 @@ void setup()
 {
 	tst_sig(FORK, sighandler, NULL);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	tst_tmpdir();		/* create a temporary directory, cd to it */
@@ -214,6 +212,4 @@ void cleanup()
 
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

@@ -92,7 +92,6 @@
 
 char *TCID = "mremap04";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 char *addr;			/* addr of memory mapped region */
 char *shmaddr;			/* pointer to shared memory segment */
 int shmid;			/* shared memory identifier. */
@@ -111,21 +110,16 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* Perform global setup for test */
 	setup();
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* Reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/*
@@ -163,13 +157,12 @@ int main(int ac, char **av)
 			tst_resm(TFAIL, "mremap() failed, "
 				 "Unexpected errno %d", TEST_ERRNO);
 		}
-	}			/* End of TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -187,18 +180,15 @@ void setup()
 {
 	key_t shmkey;
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Get the system page size */
 	if ((memsize = getpagesize()) < 0) {
-		tst_brkm(TBROK, tst_exit,
+		tst_brkm(TBROK, NULL,
 			 "getpagesize() failed to get system page size");
 	}
 
@@ -214,7 +204,7 @@ void setup()
 	 */
 	shmid = shmget(shmkey, newsize, IPC_CREAT | SHM_MODE);
 	if (shmid == -1) {
-		tst_brkm(TBROK, tst_exit, "shmget() Failed to create a shared "
+		tst_brkm(TBROK, NULL, "shmget() Failed to create a shared "
 			 "memory, error:%d", errno);
 	}
 
@@ -264,9 +254,8 @@ void cleanup()
 			 "memory, error:%d", errno);
 	}
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
 	/* Exit the program */
-	tst_exit();
+
 }

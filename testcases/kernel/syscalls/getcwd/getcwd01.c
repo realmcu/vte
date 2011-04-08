@@ -57,7 +57,6 @@
 #include "usctest.h"
 
 char *TCID = "getcwd01";
-extern int Tst_count;
 char buf[100];
 
 void cleanup(void);
@@ -94,8 +93,8 @@ int main(int ac, char **av)
 	char *msg;		/* parse_opts() return message */
 	char *test_erg;
 
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 	setup();
 
@@ -139,7 +138,7 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 void setup_test4()
@@ -149,10 +148,9 @@ void setup_test4()
 
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* create a test directory and cd into it */
@@ -170,6 +168,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

@@ -45,14 +45,12 @@ int local_flag = PASSED;
 char *TCID = "mmapstress06"; //mfile_swap
 FILE *temp;
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int anyfail();
 void ok_exit();
 /*****	**	**	*****/
 
 #define ANON_GRAN_PAGES_MAX	(32U)
-
 
 extern time_t	time(time_t *);
 extern char	*ctime(const time_t *);
@@ -99,7 +97,7 @@ main(int argc, char *argv[]) {
 	(void)time(&t);
 //	(void)printf("%s: Finished %s", argv[0], ctime(&t)); LTP Port
 	ok_exit();
-	return 0;
+	tst_exit();
 }
 
 /*****	LTP Port	*****/
@@ -109,12 +107,11 @@ void ok_exit()
 	tst_exit();
 }
 
-
 int anyfail()
 {
   tst_resm(TFAIL, "Test failed\n");
   tst_exit();
-  return 0;
+        return 0;
 }
 
 /*****	**	**	*****/

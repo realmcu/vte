@@ -71,13 +71,13 @@ main(int argc, char *argv[])
 	char msgbuf[100];
 	int pf_class;
 
-        /* Rather than fflush() throughout the code, set stdout to 
-	 * be unbuffered.  
-	 */ 
-	setvbuf(stdout, NULL, _IONBF, 0); 
-	setvbuf(stderr, NULL, _IONBF, 0); 
+        /* Rather than fflush() throughout the code, set stdout to
+	 * be unbuffered.
+	 */
+	setvbuf(stdout, NULL, _IONBF, 0);
+	setvbuf(stderr, NULL, _IONBF, 0);
 
-	/* Initialize the server and client addresses. */ 
+	/* Initialize the server and client addresses. */
 	pf_class = PF_INET;
 
 	lstn_addr.sin_family = AF_INET;
@@ -100,13 +100,13 @@ main(int argc, char *argv[])
 	for (i = 0; i < MAX_CLIENTS; i++) {
 		addrlen = sizeof(acpt_addr);
 		acpt_sk[i] = test_accept(lstn_sk, (struct sockaddr *)&acpt_addr,
-					 &addrlen); 
+					 &addrlen);
 	}
 
 	/*shutdown() TEST1: Bad socket descriptor, EBADF Expected error*/
 	error = shutdown(-1, SHUT_WR);
 	if (error != -1 || errno != EBADF)
-		tst_brkm(TBROK, tst_exit, "shutdown with a bad socket "
+		tst_brkm(TBROK, NULL, "shutdown with a bad socket "
 			 "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "shutdown() with a bad socket descriptor - EBADF");
@@ -114,7 +114,7 @@ main(int argc, char *argv[])
 	/*shutdown() TEST2: Invalid socket, ENOTSOCK Expected error*/
         error = shutdown(0, SHUT_WR);
 	if (error != -1 || errno != ENOTSOCK)
-		tst_brkm(TBROK, tst_exit, "shutdown with an invalid socket "
+		tst_brkm(TBROK, NULL, "shutdown with an invalid socket "
 			 "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "shutdown() with an invalid socket - ENOTSOCK");
@@ -126,26 +126,26 @@ main(int argc, char *argv[])
 	/*shutdown() TEST3: shutdown with SHUT_WR flag to disable new send*/
 	error = shutdown(clnt_sk[0], SHUT_WR);
 	if (error < 0)
-		tst_brkm(TBROK, tst_exit, "shutdown with SHUT_WR flag "
+		tst_brkm(TBROK, NULL, "shutdown with SHUT_WR flag "
 			 "error:%d, errno:%d", error, errno);
 
-	/* Reading on a socket that has received SHUTDOWN should return 0 
+	/* Reading on a socket that has received SHUTDOWN should return 0
 	 * indicating EOF.
 	 */
 	error = recv(acpt_sk[0], msgbuf, 100, 0);
 	if ((error != 0) || (errno != 0))
-		tst_brkm(TBROK, tst_exit, "recv on a SHUTDOWN received socket "
+		tst_brkm(TBROK, NULL, "recv on a SHUTDOWN received socket "
 			 "error:%d, errno:%d", error, errno);
 
 	/* Read the pending message on clnt_sk[0] that was received before
 	 * SHUTDOWN call.
-	 */  
+	 */
 	test_recv(clnt_sk[0], msgbuf, 100, 0);
 
 	/* No more messages and the association is SHUTDOWN, should fail. */
 	error = recv(clnt_sk[0], msgbuf, 100, 0);
 	if ((error != -1) || (errno != ENOTCONN))
-		tst_brkm(TBROK, tst_exit, "recv on a SHUT_WR socket with no "
+		tst_brkm(TBROK, NULL, "recv on a SHUT_WR socket with no "
 			 "messages error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "shutdown() with SHUT_WR flag - SUCCESS");
@@ -157,13 +157,13 @@ main(int argc, char *argv[])
 
 	error = recv(clnt_sk[1], msgbuf, 100, 0);
 	if ((error != 0) || (errno != 0))
-		tst_brkm(TBROK, tst_exit, "recv on a SHUT_RD socket "
+		tst_brkm(TBROK, NULL, "recv on a SHUT_RD socket "
 			 "error:%d, errno:%d", error, errno);
 
 	/* Sending a message on SHUT_RD socket. */
 	error = test_send(clnt_sk[1], message, strlen(message), 0);
 	if (error < 0)
-		tst_brkm(TBROK, tst_exit, "send on a SHUT_RD socket "
+		tst_brkm(TBROK, NULL, "send on a SHUT_RD socket "
 			 "error:%d, errno:%d", error, errno);
 
 	/* Receive the message sent on SHUT_RD socket. */
@@ -172,26 +172,26 @@ main(int argc, char *argv[])
 	/* Send a message to the SHUT_RD socket. */
 	test_send(acpt_sk[1], message, strlen(message), 0);
 
-	/* We should not receive the message as the socket is SHUT_RD */ 
+	/* We should not receive the message as the socket is SHUT_RD */
 	error = recv(clnt_sk[1], msgbuf, 100, 0);
 	if ((error != 0) || (errno != 0))
-		tst_brkm(TBROK, tst_exit, "recv on a SHUT_RD socket "
+		tst_brkm(TBROK, NULL, "recv on a SHUT_RD socket "
 			 "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "shutdown() with SHUT_RD flag - SUCCESS");
 
-	/*shutdown() TEST5: shutdown with SHUT_RDWR flag to disable new 
+	/*shutdown() TEST5: shutdown with SHUT_RDWR flag to disable new
 	receive/send*/
         test_shutdown(clnt_sk[2], SHUT_RDWR);
 
 	error = recv(acpt_sk[2], msgbuf, 100, 0);
 	if ((error != 0) || (errno != 0))
-		tst_brkm(TBROK, tst_exit, "recv on a SHUTDOWN received socket "
+		tst_brkm(TBROK, NULL, "recv on a SHUTDOWN received socket "
 			 "error:%d, errno:%d", error, errno);
 
 	error = recv(clnt_sk[2], msgbuf, 100, 0);
 	if ((error != 0) || (errno != 0))
-		tst_brkm(TBROK, tst_exit, "recv on a SHUT_RDWR socket "
+		tst_brkm(TBROK, NULL, "recv on a SHUT_RDWR socket "
 			 "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "shutdown() with SHUT_RDWR flag - SUCCESS");
@@ -199,7 +199,7 @@ main(int argc, char *argv[])
 	/*shutdown() TEST6: Unconnected socket, ENOTCONN Expected error*/
 	error = shutdown(sk, SHUT_RD);
 	if ((error != -1) || (errno != ENOTCONN))
-		tst_brkm(TBROK, tst_exit, "shutdown on an unconnected socket "
+		tst_brkm(TBROK, NULL, "shutdown on an unconnected socket "
 			 "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "shutdown() on an unconnected socket - SUCCESS");
@@ -209,9 +209,8 @@ main(int argc, char *argv[])
 	for (i = 0; i < MAX_CLIENTS; i++)
 		close(acpt_sk[i]);
 
-
 	close(lstn_sk);
 	close(sk);
 
-	return 0;
+	tst_exit();
 }

@@ -40,8 +40,10 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <test.h>
+#include "test.h"
 #include "config.h"
+
+extern int crtchild(char *);
 
 char *TCID = "netns_ipv6";
 int TST_TOTAL = 1;
@@ -55,13 +57,12 @@ int main()
     flags |= CLONE_NEWNS;
     flags |= CLONE_NEWNET;
 
-
     if (tst_kvercmp(2,6,19) < 0)
 	return 1;
 
     ltproot = getenv("LTPROOT");
 
-    if ( ! ltproot) {
+    if (! ltproot) {
         tst_resm(TINFO,"LTPROOT env variable is not set\n");
         tst_resm(TINFO,"Please set LTPROOT and re-run the test.. Thankyou\n");
         return -1;
@@ -107,7 +108,7 @@ parent & child NS\n");
 
     ret = waitpid(pid, &status, __WALL);
     status = WEXITSTATUS(status);
-    if (status != 0 || ret == -1){
+    if (status != 0 || ret == -1) {
         tst_resm(TFAIL, "waitpid() returns %d, errno %d\n", ret, errno);
         status =  errno;
     }

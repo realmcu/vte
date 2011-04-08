@@ -57,11 +57,10 @@
  *		accompanied by lex OUT or CUTS states.
  */
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <malloc.h>	/* malloc / realloc */
-#include <stdarg.h>
 
 #include "scan.h"
 #include "reporter.h"
@@ -86,6 +85,12 @@ static int check_mode(int, int, ...);
  * S    Space characters
  */
 %}
+
+%option noc++
+%option noinput
+%option nolex-compat
+%option nounput
+%option yylineno
 
 UI      [0-9]+
 A       [a-zA-Z]+

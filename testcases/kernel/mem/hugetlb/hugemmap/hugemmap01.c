@@ -79,7 +79,6 @@ char* TEMPFILE="mmapfile";
 
 char *TCID="hugemmap01";	/* Test program identifier.    */
 int TST_TOTAL=1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 long *addr;			/* addr of memory mapped region */
 int fildes;			/* file descriptor for tempfile */
 char *Hopt;                     /* location of hugetlbfs */
@@ -105,7 +104,6 @@ main(int ac, char **av)
         int Hflag=0;              /* binary flag: opt or not */
 	int page_sz=0;
 
-
        	option_t options[] = {
         	{ "H:",   &Hflag, &Hopt },    /* Required for location of hugetlbfs */
             	{ NULL, NULL, NULL }          /* NULL required to end array */
@@ -123,10 +121,8 @@ main(int ac, char **av)
 		tst_exit();
 	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 	        /* Creat a temporary file used for mapping */
@@ -135,7 +131,7 @@ main(int ac, char **av)
 				 "open() on %s Failed, errno=%d : %s",
 				 TEMPFILE, errno, strerror(errno));
 		}
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count=0;
 
 		/* Note the number of free huge pages BEFORE testing */
@@ -166,7 +162,7 @@ main(int ac, char **av)
 		/* Make sure the number of free huge pages AFTER testing decreased */
 		aftertest = getfreehugepages();
 		hugepagesmapped = beforetest - aftertest;
-		if (hugepagesmapped < 1){
+		if (hugepagesmapped < 1) {
 			tst_resm(TWARN,"Number of HUGEPAGES_FREE stayed the same. Okay if");
 			tst_resm(TWARN,"multiple copies running due to test collision.");
 		}
@@ -177,14 +173,12 @@ main(int ac, char **av)
 				 "memory, errno=%d", errno);
 		}
 		close(fildes);
-	}	/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	/*NOTREACHED*/
 	return 1;
-}	/* End main */
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -205,10 +199,8 @@ setup()
 	TEMPFILE=strcat(mypid,TEMPFILE);
 	TEMPFILE=strcat(Hopt,TEMPFILE);
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 }
@@ -225,16 +217,16 @@ getfreehugepages()
 	char buff[BUFFER_SIZE];
 
         f = fopen("/proc/meminfo", "r");
-	if (!f) 
+	if (!f)
      		tst_brkm(TFAIL, cleanup, "Could not open /proc/meminfo for reading");
 
-	while(fgets(buff,BUFFER_SIZE, f) != NULL){
-		if((retcode = sscanf(buff, "HugePages_Free: %d ", &hugefree)) == 1)
+	while (fgets(buff,BUFFER_SIZE, f) != NULL) {
+		if ((retcode = sscanf(buff, "HugePages_Free: %d ", &hugefree)) == 1)
 	  		break;
 	}
 
-        if (retcode != 1) { 
-        	fclose(f); 
+        if (retcode != 1) {
+        	fclose(f);
        		tst_brkm(TFAIL, cleanup, "Failed reading number of huge pages free.");
      	}
 	fclose(f);
@@ -256,8 +248,8 @@ get_huge_pagesize()
         if (!f)
                 tst_brkm(TFAIL, cleanup, "Could not open /proc/meminfo for reading");
 
-        while(fgets(buff,BUFFER_SIZE, f) != NULL){
-                if((retcode = sscanf(buff, "Hugepagesize: %d ", &hugesize)) == 1)
+        while (fgets(buff,BUFFER_SIZE, f) != NULL) {
+                if ((retcode = sscanf(buff, "Hugepagesize: %d ", &hugesize)) == 1)
                         break;
         }
 
@@ -284,6 +276,4 @@ cleanup()
 
 	unlink(TEMPFILE);
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

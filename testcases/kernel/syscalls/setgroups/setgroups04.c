@@ -74,7 +74,6 @@
 
 TCID_DEFINE(setgroups04);	/* Test program identifier.    */
 int TST_TOTAL = 1;
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 GID_T groups_list[NGROUPS];	/* Array to hold gids for getgroups() */
 int exp_enos[] = { EFAULT, 0 };
@@ -92,10 +91,8 @@ int main(int ac, char **av)
 	char *test_desc;	/* test specific error message */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	/* Perform setup for test */
 	setup();
@@ -103,10 +100,8 @@ int main(int ac, char **av)
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* Reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		gidsetsize = NGROUPS;
@@ -118,7 +113,7 @@ int main(int ac, char **av)
 		 * sets appropriate errno.
 		 */
 		TEST(SETGROUPS(gidsetsize, sbrk(0)));
-		/* check return code of setgroups */
+
 		if (TEST_RETURN != -1) {
 			tst_resm(TFAIL, "setgroups() returned %ld, "
 				 "expected -1, errno=%d", TEST_RETURN,
@@ -138,12 +133,12 @@ int main(int ac, char **av)
 			}
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() */
 	cleanup();
+	tst_exit();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
 }
 
 #else
@@ -151,7 +146,7 @@ int main(int ac, char **av)
 int main()
 {
 	tst_resm(TINFO, "test is not available on uClinux");
-	return 0;
+	tst_exit();
 }
 
 #endif /* if !defined(UCLINUX) */
@@ -164,13 +159,11 @@ void setup()
 
 	/* check root user */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 }
@@ -185,6 +178,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

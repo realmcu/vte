@@ -52,12 +52,11 @@
 #include <fcntl.h>
 #include <linux/limits.h>
 #include <unistd.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 char *TCID = "creat05";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 #define MODE	0666
 
@@ -77,15 +76,14 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
 	TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* reset Tst_count in case we are looping */
@@ -111,8 +109,8 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	return 0;
- /*NOTREACHED*/}
+	tst_exit();
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -121,10 +119,8 @@ void setup()
 {
 	int max_open;
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* make a temporary directory and cd to it */
@@ -148,7 +144,7 @@ void setup()
 	max_open = getdtablesize();
 	/* Allocate memory for stat and ustat structure variables */
 	if ((buf = (int *)malloc(sizeof(int) * max_open - first)) == NULL) {
-		tst_brkm(TBROK, tst_exit, "Failed to allocate Memory");
+		tst_brkm(TBROK, NULL, "Failed to allocate Memory");
 	}
 
 	/* now open as many files as we can up to max_open */
@@ -159,8 +155,8 @@ void setup()
 				 "#%d", ifile + 1);
 			if (errno != EMFILE) {
 				remove_files(ifile);
-				tst_brkm(TBROK, cleanup, "Expected "
-					 "EMFILE got %d", errno);
+				tst_brkm(TBROK|TERRNO, cleanup,
+				    "Failed unexpectedly (expected EMFILE)");
 			}
 			break;
 		}
@@ -199,6 +195,4 @@ void cleanup()
 	/* delete the test directory created in setup() */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

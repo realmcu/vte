@@ -46,8 +46,8 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <unistd.h>
-#include <usctest.h>
-#include <test.h>
+#include "usctest.h"
+#include "test.h"
 #include <libclone.h>
 #define CHILD_PID	1
 #define PARENT_PID	0
@@ -64,7 +64,7 @@ void cleanup()
 {
 	/* Clean the test testcase as LTP wants*/
 	TEST_CLEANUP;
-	tst_exit();
+
 }
 
 void child_signal_handler(int sig, siginfo_t *si, void *unused)
@@ -118,7 +118,6 @@ int child_fn(void *ttype)
 	_exit(10);
 }
 
-
 /***********************************************************************
 *   M A I N
 ***********************************************************************/
@@ -145,7 +144,6 @@ int main(int argc, char *argv[])
 	if (waitpid(cpid, &status, 0) < 0)
 		tst_resm(TWARN, "waitpid() failed.");
 
-
 	if ((WIFEXITED(status)) && (WEXITSTATUS(status) == 10))
 		tst_resm(TPASS, "container init continued successfuly, "
 			"after handling signal -USR1\n");
@@ -153,5 +151,5 @@ int main(int argc, char *argv[])
 		tst_resm(TFAIL, "c-init failed to continue after "
 				"passing kill -USR1");
 	cleanup();
-	return 0;
-}	/* End main */
+	tst_exit();
+}

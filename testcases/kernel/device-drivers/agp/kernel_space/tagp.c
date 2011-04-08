@@ -98,20 +98,19 @@ static struct file_operations tagp_fops = {
  * operations structure
  */
 static int tagp_open(struct inode *ino, struct file *f) {
-        return 0;
+      return 0;
 }
 
 static int tagp_close(struct inode *ino, struct file *f) {
-        return 0;
+      return 0;
 }
-
 
 /*
  * tagp_ioctl:
  *      a user space program can drive the test functions
  *      through a call to ioctl once the correct file
  *      descriptor has been attained
- * 
+ *
  * 	in user space the file descriptor that you attain
  * 	will represent the inode and file pointers in
  * 	the kernel ioctl function, and only 3 variables
@@ -140,7 +139,7 @@ static int tagp_ioctl(struct inode *ino, struct file *f,
 	 * parameter to the ioctl
 	 *
 	 */
-	if (copy_from_user(&tif, (void *)l, sizeof(tif)) ) {
+	if (copy_from_user(&tif, (void *)l, sizeof(tif))) {
                 /* Bad address */
                 return(-EFAULT);
         }
@@ -150,12 +149,12 @@ static int tagp_ioctl(struct inode *ino, struct file *f,
          */
         if (tif.in_len > 0) {
                 inparms = (caddr_t *)kmalloc(tif.in_len, GFP_KERNEL);
-		if(!inparms) {
+		if (!inparms) {
                         return(-ENOMEM);
                 }
 
                 rc = copy_from_user(inparms, tif.in_data, tif.in_len);
-                if(rc) {
+                if (rc) {
                         kfree(inparms);
                         return(-EFAULT);
                 }
@@ -168,7 +167,6 @@ static int tagp_ioctl(struct inode *ino, struct file *f,
                 }
         }
 
-
 	/*
 	 * Use a switch statement to determine which function
 	 * to call, based on the cmd flag that is specified
@@ -176,7 +174,7 @@ static int tagp_ioctl(struct inode *ino, struct file *f,
 	 * needed
 	 *
 	 */
- 	switch(cmd) {	
+ 	switch(cmd) {
 		case TEST_PCI_FIND_DEV: 		rc = test_pci_find_device();break;
 		case TEST_BACKEND_ACQUIRE:		rc = test_agp_backend_acquire();break;
 		case TEST_BACKEND_RELEASE:		rc = test_agp_backend_release();break;
@@ -197,7 +195,7 @@ static int tagp_ioctl(struct inode *ino, struct file *f,
 		case TEST_ENABLE:			rc = test_agp_enable();break;
 		case TEST_GLOBAL_CACHE_FLUSH:		rc = test_global_cache_flush();break;
 		case TEST_GENERIC_MASK_MEMORY:		rc = test_agp_generic_mask_memory();break;
-		
+
 		default:
 			printk("Mismatching ioctl command\n");
                         break;
@@ -218,15 +216,15 @@ static int tagp_ioctl(struct inode *ino, struct file *f,
 	 */
 
 	/* if outparms then copy outparms into tif.out_data */
-        if(outparms) {
-                if(copy_to_user(tif.out_data, outparms, tif.out_len)) {
+        if (outparms) {
+                if (copy_to_user(tif.out_data, outparms, tif.out_len)) {
                         printk("tpci: Unsuccessful copy_to_user of outparms\n");
                         rc = -EFAULT;
                 }
         }
 
         /* copy tif structure into l so that can be used by user program */
-        if(copy_to_user((void*)l, &tif, sizeof(tif)) ) {
+        if (copy_to_user((void*)l, &tif, sizeof(tif))) {
                 printk("tpci: Unsuccessful copy_to_user of tif\n");
                 rc = -EFAULT;
         }
@@ -253,10 +251,9 @@ static struct aper_size_info_fixed test_core_agp_sizes[] =
 	{ 0, 0, 0 },
 };
 
-
 static int test_fetch_size(void)
 {
-	printk("<1> tagp : Enter test fetch size\n");	
+	printk("<1> tagp : Enter test fetch size\n");
 	return 0;
 
 }
@@ -353,7 +350,7 @@ static int test_agp_create_and_free_memory(void)
 {
 	struct agp_memory *tmp_agp_memory = NULL;
 	/* int scratch_pages */
-	if(agp_bridge->scratch_page > 0)
+	if (agp_bridge->scratch_page > 0)
 	{
 		printk("<1> tagp : agp_bridge->scratch_page : %ld\n",agp_bridge->scratch_page);
 		tmp_agp_memory = agp_create_memory(agp_bridge->scratch_page);
@@ -363,7 +360,7 @@ static int test_agp_create_and_free_memory(void)
 		printk("<1> tagp : agp_bridge->scratch_page : %ld\n",agp_bridge->scratch_page);
 		tmp_agp_memory = agp_create_memory(64);
 	}
-	if(tmp_agp_memory != NULL)
+	if (tmp_agp_memory != NULL)
 	{
 		agp_free_memory(tmp_agp_memory);
 		return 0;
@@ -373,7 +370,7 @@ static int test_agp_create_and_free_memory(void)
 /*
 static int test_agp_free_memory(void)
 {
-	if(tmp_agp_memory != NULL)
+	if (tmp_agp_memory != NULL)
 	{
 		agp_free_memory(tmp_agp_memory);
 		return 0;
@@ -394,13 +391,13 @@ static int test_agp_copy_info(void)
 	int ret ;
 
 	info  = (struct agp_kern_info *) kmalloc(sizeof(struct agp_kern_info),GFP_KERNEL);
-	if(!info)
+	if (!info)
 	{
 		printk("<1> tagp : can not alloc spece\n");
 		return 1;
 	}
 	ret = agp_copy_info(info);
-	if(ret)
+	if (ret)
 	{
 		printk("<1> tagp : agp_copy_info failed\n");
 		return 1;
@@ -417,14 +414,14 @@ static int test_agp_allocate_memory(void)
 
 	local_agp_memory = agp_allocate_memory(8,AGP_NORMAL_MEMORY);
 
-	if(local_agp_memory == NULL)
+	if (local_agp_memory == NULL)
 	{
 		printk("<1> tagp : agp_allocate_memory failed\n");
 		return 1;
 	}
 
 	ret = agp_bind_memory(local_agp_memory, 64);
-	if(ret)
+	if (ret)
 	{
 		agp_free_memory(local_agp_memory);
 		printk("<1> tagp : agp bind memory failed\n");
@@ -432,7 +429,7 @@ static int test_agp_allocate_memory(void)
 	}
 	printk("<1> tagp : agp bind memory success\n");
 	ret = agp_unbind_memory(local_agp_memory);
-	if(ret)
+	if (ret)
 	{
 		agp_free_memory(local_agp_memory);
 		printk("<1> tagp : agp unband memory failed\n");
@@ -479,13 +476,13 @@ static int test_agp_generic_insert_memory(void)
 {
 	struct agp_memory *tmp_agp_memory = NULL;
 	/* int scratch_pages */
-	if(agp_bridge->scratch_page > 0)
+	if (agp_bridge->scratch_page > 0)
 		tmp_agp_memory = agp_create_memory(agp_bridge->scratch_page);
 	else
 		tmp_agp_memory = agp_create_memory(64);
-	if(tmp_agp_memory != NULL)
+	if (tmp_agp_memory != NULL)
 	{
-		if(agp_generic_insert_memory(tmp_agp_memory,16,0))
+		if (agp_generic_insert_memory(tmp_agp_memory,16,0))
 		{
 			printk("<1> tagp : agp_generic_insert_memory failed\n");
 			agp_free_memory(tmp_agp_memory);
@@ -512,7 +509,7 @@ static int test_agp_generic_alloc_page(void)
 {
 	printk("<1> tagp : Enter test_agp_generic_alloc_page\n");
 	void * ppage = agp_generic_alloc_page();
-	if(ppage != NULL)
+	if (ppage != NULL)
 		agp_generic_destroy_page(ppage);
 	return 0;
 }
@@ -546,10 +543,10 @@ static int test_pci_find_device()
 
 	pdev = pci_find_device (PCI_VENDOR_ID_ATI, PCI_ANY_ID, NULL);
 
-	if(pdev)
+	if (pdev)
 	{
 		printk("<1> tagp : pci find device success\n");
-	
+
 		u8 cap_ptr;
 
 		cap_ptr = pci_find_capability(pdev, PCI_CAP_ID_AGP);
@@ -580,15 +577,9 @@ static int test_pci_find_device()
 		printk("<1> tagp : agp set drvdata  success\n");
 		return agp_add_bridge(bridge);
 	}
-	
-
-
 
 	return 1;
 }
-
-
-
 
 static int __init agp_test_probe(struct pci_dev *pdev,
 				  const struct pci_device_id *ent)
@@ -629,7 +620,6 @@ static struct pci_driver agp_test_pci_driver = {
 	.remove		= agp_test_remove,
 };
 
-
 /*
  * tagp_init_module
  *      set the owner of tagp_fops, register the module
@@ -648,7 +638,7 @@ static int __init tagp_init_module(void) {
                 return rc;
         }
 
-        if(Major == 0)
+        if (Major == 0)
                 Major = rc;
 
 	rc = pci_module_init(&agp_test_pci_driver);
@@ -661,7 +651,7 @@ static int __init tagp_init_module(void) {
 	printk("tagp: PCI module init success.\n");
 	printk("tagp: Registration success.\n");
 
-        return 0;
+      return 0;
 }
 
 /*
@@ -681,7 +671,6 @@ static void __exit tagp_exit_module(void) {
 
 	pci_unregister_driver(&agp_test_pci_driver);
 }
-
 
 /* specify what that init is run when the module is first
 loaded and that exit is run when it is removed */

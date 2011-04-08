@@ -39,7 +39,6 @@
 
 char *TCID = "open09";
 int TST_TOTAL = 1;
-extern int Tst_count;
 int local_flag;
 
 #define PASSED 1
@@ -62,10 +61,10 @@ int main(int ac, char *av[])
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_resm(TBROK, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
-	 /*NOTREACHED*/}
+	 }
 	tst_tmpdir();
 	local_flag = PASSED;
 	sprintf(tempfile, "open09.%d", getpid());
@@ -128,5 +127,5 @@ int main(int ac, char *av[])
 			tst_resm(TFAIL, "Test failed due to above failures.");
 		}
 	}			/* end for */
-	return 0;
+	tst_exit();
 }

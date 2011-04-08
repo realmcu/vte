@@ -49,15 +49,14 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <errno.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 void setup(void);
 void cleanup(void);
 
 char *TCID = "waitpid01";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int main(int argc, char **argv)
 {
@@ -68,11 +67,11 @@ int main(int argc, char **argv)
 	int exno, nexno, status;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
+
+	 }
 
 	setup();
 
@@ -135,7 +134,7 @@ int main(int argc, char **argv)
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -158,7 +157,7 @@ void setup(void)
  */
 void cleanup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/*
@@ -167,6 +166,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

@@ -79,7 +79,6 @@
 
 char *TCID = "munmap03";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 size_t page_sz;			/* system page size */
 char *addr;			/* addr of memory mapped region */
@@ -98,21 +97,16 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* Reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		/* Perform global setup for test */
 		setup();
 
 		/*
@@ -129,28 +123,18 @@ int main(int ac, char **av)
 			continue;
 		}
 
-		TEST_ERROR_LOG(TEST_ERRNO);
-
 		/* Check for expected errno. */
 		if (TEST_ERRNO == EINVAL) {
-			tst_resm(TPASS, "munmap() fails, mapped address is "
-				 "invalid, errno:%d", TEST_ERRNO);
+			tst_resm(TPASS|TTERRNO, "munmap failed as expected");
 		} else {
-			tst_resm(TFAIL, "munmap() fails, invalid errno:%d, "
-				 "expected:%d", TEST_ERRNO, EINVAL);
+			tst_resm(TPASS|TTERRNO, "munmap didn't fail as expected");
 		}
 
-		/* Call cleanup() to undo setup done for the test. */
 		cleanup();
 
-	}			/* End for TEST_LOOPING */
-
-	/* exit with return code appropriate for results */
+	}
 	tst_exit();
-
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -163,10 +147,8 @@ void setup()
 {
 	struct rlimit brkval;	/* variable to hold max. break val */
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* call getrlimit function to get the maximum possible break value */
@@ -176,7 +158,6 @@ void setup()
 	if ((page_sz = getpagesize()) < 0) {
 		tst_brkm(TBROK, cleanup,
 			 "getpagesize() fails to get system page size");
-		tst_exit();
 	}
 
 	/*
@@ -185,14 +166,12 @@ void setup()
 	 */
 	map_len = 3 * page_sz;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Creat a temporary file used for mapping */
 	if ((fildes = open(TEMPFILE, O_RDWR | O_CREAT, 0666)) < 0) {
 		tst_brkm(TBROK, cleanup, "open() on %s Failed, errno=%d : %s",
 			 TEMPFILE, errno, strerror(errno));
-		tst_exit();
 	}
 
 	/*
@@ -202,14 +181,12 @@ void setup()
 	if (lseek(fildes, map_len, SEEK_SET) == -1) {
 		tst_brkm(TBROK, cleanup, "lseek() fails on %s, errno=%d : %s",
 			 TEMPFILE, errno, strerror(errno));
-		tst_exit();
 	}
 
 	/* Write one byte into temporary file */
 	if (write(fildes, "a", 1) != 1) {
 		tst_brkm(TBROK, cleanup, "write() on %s Failed, errno=%d : %s",
 			 TEMPFILE, errno, strerror(errno));
-		tst_exit();
 	}
 
 	/*
@@ -267,6 +244,5 @@ void cleanup()
 			 TEMPFILE, errno, strerror(errno));
 	}
 
-	/* Remove the temporary directory and all files in it */
 	tst_rmdir();
 }

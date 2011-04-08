@@ -122,7 +122,7 @@ static inline void gen_exit(void)
 	if (pid == 0) {
 		printf("exit pid: %d exit_code: %d\n", getpid(), 0);
 		exit(0);
-	} else if (pid < 0){
+	} else if (pid < 0) {
 		fprintf(stderr, "fork() failed\n");
 		exit(1);
 	}
@@ -232,4 +232,3 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-

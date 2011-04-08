@@ -66,7 +66,6 @@ void setup(void);
 
 char *TCID = "setpriority03";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int exp_enos[] = { EINVAL, 0 };
 
@@ -77,8 +76,8 @@ int main(int ac, char **av)
 	int new_val = 2;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();		/* global setup */
@@ -118,8 +117,7 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
-
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -128,13 +126,12 @@ int main(int ac, char **av)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -150,6 +147,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

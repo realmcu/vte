@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library General Public License for more details.
- * 
+ *
  * For their contributions to this program, the author wishes to thank:
  *    Albert D. Cahalan, <albert@users.sf.net>
  *    Craig Small, <csmall@small.dropbear.id.au>
@@ -164,7 +164,7 @@ static int       Frame_srtflg,          // the subject window's sort direction
                  Frame_cmdlin;          // the subject window's cmdlin flag
         /* ////////////////////////////////////////////////////////////// */
 
-
+
 /*######  Sort callbacks  ################################################*/
 
         /*
@@ -188,16 +188,16 @@ SCB_NUM1(P_CPU, pcpu)
 static int sort_P_TME (const proc_t **P, const proc_t **Q)
 {
    if (Frame_ctimes) {
-      if ( ((*P)->cutime + (*P)->cstime + (*P)->utime + (*P)->stime)
+      if (((*P)->cutime + (*P)->cstime + (*P)->utime + (*P)->stime)
         < ((*Q)->cutime + (*Q)->cstime + (*Q)->utime + (*Q)->stime) )
            return SORT_lt;
-      if ( ((*P)->cutime + (*P)->cstime + (*P)->utime + (*P)->stime)
+      if (((*P)->cutime + (*P)->cstime + (*P)->utime + (*P)->stime)
         > ((*Q)->cutime + (*Q)->cstime + (*Q)->utime + (*Q)->stime) )
            return SORT_gt;
    } else {
-      if ( ((*P)->utime + (*P)->stime) < ((*Q)->utime + (*Q)->stime))
+      if (((*P)->utime + (*P)->stime) < ((*Q)->utime + (*Q)->stime))
          return SORT_lt;
-      if ( ((*P)->utime + (*P)->stime) > ((*Q)->utime + (*Q)->stime))
+      if (((*P)->utime + (*P)->stime) > ((*Q)->utime + (*Q)->stime))
          return SORT_gt;
    }
    return SORT_eq;
@@ -444,7 +444,7 @@ static void suspend (int dont_care_sig)
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Rawtty);
 }
 
-
+
 /*######  Misc Color/Display support  ####################################*/
 
         /*
@@ -640,7 +640,7 @@ static void show_special (int interact, const char *glob)
    if (*glob) PUTT("%.*s", Screen_cols, glob);
 }
 
-
+
 /*######  Small Utility routines  ########################################*/
 
         /*
@@ -787,8 +787,8 @@ static int selection_type;
 static uid_t selection_uid;
 
 // FIXME: this is "temporary" code we hope
-static int good_uid(const proc_t *restrict const pp){
-   switch(selection_type){
+static int good_uid(const proc_t *restrict const pp) {
+   switch(selection_type) {
    case 'p':
       return 1;
    case 0:
@@ -808,19 +808,19 @@ static int good_uid(const proc_t *restrict const pp){
 }
 
 // swiped from ps, and ought to be in libproc
-static const char *parse_uid(const char *restrict const str, uid_t *restrict const ret){
+static const char *parse_uid(const char *restrict const str, uid_t *restrict const ret) {
    struct passwd *passwd_data;
    char *endp;
    unsigned long num;
    static const char uidrange[] = "User ID out of range.";
    static const char uidexist[] = "User name does not exist.";
    num = strtoul(str, &endp, 0);
-   if(*endp != '\0'){  /* hmmm, try as login name */
+   if (*endp != '\0') {  /* hmmm, try as login name */
       passwd_data = getpwnam(str);
-      if(!passwd_data)    return uidexist;
+      if (!passwd_data)    return uidexist;
       num = passwd_data->pw_uid;
    }
-   if(num > 0xfffffffeUL) return uidrange;
+   if (num > 0xfffffffeUL) return uidrange;
    *ret = num;
    return 0;
 }
@@ -996,7 +996,7 @@ static void prochlp (proc_t *this)
    const HST_t *ptr;
    tmp.pid = this->pid;
    ptr = bsearch(&tmp, hist_sav, maxt_sav, sizeof tmp, sort_HST_t);
-   if(ptr) tics -= ptr->tics;
+   if (ptr) tics -= ptr->tics;
 }
 #endif
 
@@ -1066,7 +1066,7 @@ static proc_t **procs_refresh (proc_t **table, int flags)
 #undef ENTsz
 }
 
-
+
 /*######  Field Table/RCfile compatability support  ######################*/
 
         /* These are the Fieldstab.lflg values used here and in reframewins.
@@ -1241,7 +1241,7 @@ static void rc_bugless (const RCF_t *const rc) {
 
    fprintf(stderr,"\n%d %d %f %d\n"
       , rc->mode_altscr, rc->mode_irixps, rc->delay_time, rc->win_index);
-   while(i < 4) {
+   while (i < 4) {
       w = &rc->win[i++];
       fprintf(stderr, "<%s> <%s> %d %08x %d %d %d %d %d\n"
          , w->winname, w->fieldscur, w->sortindx, w->winflags, w->maxtasks
@@ -1495,11 +1495,11 @@ static void rc_write_old (FILE *fp) {
    *cp++ = tmp + '0';
 
    tmp = Curwin->rc.winflags;
-// if ( Secure_mode)       *cp++ = 's';     // stupid to have in local rcfile
-   if ( tmp & Show_CTIMES) *cp++ = 'S';
-   if ( tmp & Show_CMDLIN) *cp++ = 'c';
+// if (Secure_mode)       *cp++ = 's';     // stupid to have in local rcfile
+   if (tmp & Show_CTIMES) *cp++ = 'S';
+   if (tmp & Show_CMDLIN) *cp++ = 'c';
    if (~tmp & Show_IDLEPS) *cp++ = 'i';
-// if (                  ) *cp++ = 'H';     // 'H' = show threads (yea, sure)
+// if () *cp++ = 'H';     // 'H' = show threads (yea, sure)
    if (~tmp & View_MEMORY) *cp++ = 'm';
    if (~tmp & View_LOADAV) *cp++ = 'l';
    if (~tmp & View_STATES) *cp++ = 't';
@@ -1590,7 +1590,7 @@ static void confighlp (char *fields) {
    for (;;) {
       c = *cp++;
       if (!c) break;
-      if(isupper(c)) upper[c&0x1f]++;
+      if (isupper(c)) upper[c&0x1f]++;
       else           lower[c&0x1f]++;
    }
 
@@ -1770,9 +1770,9 @@ static void parse_args (char **args)
                else std_err("-f requires argument");
 	       if ((datafile = fopen(cp,"r")) == NULL)
 	          std_err(fmtmk("bad file arg; failed to fopen '%s' for reading",cp));
-	       retcode = fscanf(datafile, " MaxTasks:%d RunningTasks:%d SleepingTasks:%d StoppedTasks:%d ZombieTasks:%d", 
+	       retcode = fscanf(datafile, " MaxTasks:%d RunningTasks:%d SleepingTasks:%d StoppedTasks:%d ZombieTasks:%d",
 		                &Task1, &Task2, &Task3, &Task4, &Task5);
-	       while( retcode == 5 )
+	       while ( retcode == 5 )
                {
 		  loopcntr++;
                   fgets(buff, BUFF_SIZE, datafile);
@@ -1781,29 +1781,29 @@ static void parse_args (char **args)
 	          AvgSleepingTasks+=Task3;
                   AvgStoppedTasks+=Task4;
                   AvgZombieTasks+=Task5;
-		  fscanf(datafile, " Cpu(s): User:%f\tSystem:%f\tNice:%f\t\tIdle:%f\tIO-wait:%f", 
-		                &CPU1, &CPU2, &CPU3, &CPU4, &CPU5); 
+		  fscanf(datafile, " Cpu(s): User:%f\tSystem:%f\tNice:%f\t\tIdle:%f\tIO-wait:%f",
+		                &CPU1, &CPU2, &CPU3, &CPU4, &CPU5);
 		  AvgCPUuser+=CPU1;
 		  AvgCPUsys+=CPU2;
 		  AvgCPUnice+=CPU3;
 		  AvgCPUidle+=CPU4;
                   AvgCPUiowait+=CPU5;
 		  fscanf(datafile, " TotalMem:%dk\tUsedMem:%dk\tFreeMem:%dk\t\tBuffers:%dk",
-			 &Mem1, &Mem2, &Mem3, &Mem4); 
+			 &Mem1, &Mem2, &Mem3, &Mem4);
                   fgets(buff, BUFF_SIZE, datafile);
 		  AvgMem1=Mem1/1024; //this data should not change
 		  AvgMem2+=Mem2/1024;
 		  AvgMem3+=Mem3/1024;
 		  AvgMem4+=Mem4/1024;
 		  fscanf(datafile, " TotalSwap:%dk\tUsedSwap:%dk\tFreeSwap:%dk\tCached:%dk",
-			 &Mem1, &Mem2, &Mem3, &Mem4); 
+			 &Mem1, &Mem2, &Mem3, &Mem4);
                   fgets(buff, BUFF_SIZE, datafile);
 		  AvgSwap1=Mem1/1024; //this data should not change
 		  AvgSwap2+=Mem2/1024;
 		  AvgSwap3+=Mem3/1024;
 		  AvgSwap4+=Mem4/1024;
                   fgets(buff, BUFF_SIZE, datafile);
-	          retcode = fscanf(datafile, " MaxTasks:%d RunningTasks:%d SleepingTasks:%d StoppedTasks:%d ZombieTasks:%d", 
+	          retcode = fscanf(datafile, " MaxTasks:%d RunningTasks:%d SleepingTasks:%d StoppedTasks:%d ZombieTasks:%d",
 		                   &Task1, &Task2, &Task3, &Task4, &Task5);
   	       }
 	       fclose(datafile);
@@ -1840,7 +1840,7 @@ static void parse_args (char **args)
    		        AvgSwap1,AvgSwap2,AvgSwap3,AvgSwap4);
 	       printf("\n UsedMem Percentage:%.2Lf\%\tUsedSwap Percentage:%.2Lf\%\n\n",UsedMemPercentage,UsedSwapPercentage);
 	       printf("A total of [%d] entries processed from %s.\n\n",loopcntr,cp);
-               exit(0);               
+               exit(0);
 	       break;
             case 'h': case 'H':
             case 'v': case 'V':
@@ -1866,7 +1866,7 @@ static void parse_args (char **args)
 	          std_err(fmtmk("bad file arg; failed to fopen '%s' for write",cp));
 	       else
 		  o_flag = 1;
-		  cp = cp + strlen(cp); 
+		  cp = cp + strlen(cp);
 	       break;
             case 'p':
                do {
@@ -1905,7 +1905,7 @@ static void parse_args (char **args)
                   if (errmsg) std_err(errmsg);
                   selection_type = 'u';
                   cp += snprintf(Curwin->colusrnam, USRNAMSIZ-1, "%s", cp); // FIXME: junk
-               } while(0);
+               } while (0);
                break;
             case 'U':
                do {
@@ -1918,7 +1918,7 @@ static void parse_args (char **args)
                   if (errmsg) std_err(errmsg);
                   selection_type = 'U';
                   cp += snprintf(Curwin->colusrnam, USRNAMSIZ-1, "%s", cp); // FIXME: junk
-               } while(0);
+               } while (0);
                break;
             default :
                std_err(fmtmk("unknown argument '%c'\nusage:\t%s%s"
@@ -1978,7 +1978,7 @@ static void whack_terminal (void)
    }
 }
 
-
+
 /*######  Field Selection/Ordering routines  #############################*/
 
 
@@ -2120,7 +2120,7 @@ static void fields_toggle (void)
    putp(Cap_curs_norm);
 }
 
-
+
 /*######  Windows/Field Groups support  #################################*/
 
         /*
@@ -2471,7 +2471,7 @@ static void windows_stage2 (void)
    wins_resize(0);
 }
 
-
+
 /*######  Main Screen routines  ##########################################*/
 
         /*
@@ -2701,7 +2701,7 @@ static void do_key (unsigned c)
                break;
             }
             selection_type = 'u';
-         } while(0);
+         } while (0);
          break;
 
       case 'U':
@@ -2723,7 +2723,7 @@ static void do_key (unsigned c)
                break;
             }
             selection_type = 'U';
-         } while(0);
+         } while (0);
          break;
 
       case 'w':
@@ -2885,7 +2885,7 @@ static void summaryhlp (CPU_t *cpu, const char *pfx)
       , (float)i_frme * scale
       , (float)w_frme * scale));
    if (o_flag)
-      fprintf(outfile, " %s User:%.2f\tSystem:%.2f\tNice:%.2f\t\tIdle:%.2f\tIO-wait:%.2f\n"  
+      fprintf(outfile, " %s User:%.2f\tSystem:%.2f\tNice:%.2f\t\tIdle:%.2f\tIO-wait:%.2f\n"
               , pfx
               , (float)u_frme * scale
       	      , (float)s_frme * scale
@@ -2947,14 +2947,14 @@ static proc_t **summary_show (void)
          , Frame_maxtask, Frame_running, Frame_sleepin
          , Frame_stopped, Frame_zombied));
       if (o_flag)
-         fprintf(outfile, " MaxTasks:%d\t\tRunningTasks:%d\tSleepingTasks:%d\tStoppedTasks:%d\tZombieTasks:%d\n\n" 
+         fprintf(outfile, " MaxTasks:%d\t\tRunningTasks:%d\tSleepingTasks:%d\tStoppedTasks:%d\tZombieTasks:%d\n\n"
                  , Frame_maxtask, Frame_running, Frame_sleepin
                  , Frame_stopped, Frame_zombied);
       Msg_row += 1;
 
       smpcpu = cpus_refresh(smpcpu);
 
-      if ( CHKw(Curwin, View_CPUSUM)) {
+      if (CHKw(Curwin, View_CPUSUM)) {
          // display just the 1st /proc/stat line
          summaryhlp(&smpcpu[Cpu_tot], "Cpu(s):");
 	 if (o_flag)
@@ -2977,7 +2977,7 @@ static proc_t **summary_show (void)
       show_special(0, fmtmk(MEMORY_line1
          , kb_main_total, kb_main_used, kb_main_free, kb_main_buffers));
       if (o_flag)
-         fprintf(outfile, " TotalMem:%dk\tUsedMem:%dk\tFreeMem:%dk\t\tBuffers:%dk\n" 
+         fprintf(outfile, " TotalMem:%dk\tUsedMem:%dk\tFreeMem:%dk\t\tBuffers:%dk\n"
                  , kb_main_total, kb_main_used, kb_main_free, kb_main_buffers);
       show_special(0, fmtmk(MEMORY_line2
          , kb_swap_total, kb_swap_used, kb_swap_free, kb_main_cached));
@@ -3192,7 +3192,7 @@ static void window_show (proc_t **ppt, WIN_t *q, int *lscr)
    lwin = 1;
    i = 0;
 
-   while ( -1 != ppt[i]->pid && *lscr < Max_lines  &&  (!q->winlines || (lwin <= q->winlines)) ) {
+   while (-1 != ppt[i]->pid && *lscr < Max_lines  &&  (!q->winlines || (lwin <= q->winlines))) {
       if ((CHKw(q, Show_IDLEPS) || ('S' != ppt[i]->state && 'Z' != ppt[i]->state))
       && good_uid(ppt[i]) ) {
          /*

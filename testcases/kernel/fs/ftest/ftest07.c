@@ -96,7 +96,6 @@ static int iterations;        /* # total iterations */
 static off64_t max_size;      /* max file size */
 static int misc_intvl;        /* for doing misc things; 0 ==> no */
 static int nchild;            /* how many children */
-static int nwait;
 static int fd;                /* file descriptor used by child */
 static int parent_pid;
 static int pidlist[MAXCHILD];
@@ -138,7 +137,7 @@ int main(int ac, char *av[])
 
 	}
 
-	return 0;
+	tst_exit();
 }
 
 static void setup(void)
@@ -149,7 +148,7 @@ static void setup(void)
 	 * Make a directory to do this in; ignore error if already exists.
 	 * Save starting directory.
 	 */
-	if ((cwd = getcwd(homedir, sizeof (homedir))) == NULL ) {
+	if ((cwd = getcwd(homedir, sizeof (homedir))) == NULL) {
 		tst_resm(TBROK,"Failed to get corrent directory") ;
 		tst_exit();
 	}
@@ -177,15 +176,17 @@ static void setup(void)
 	misc_intvl = 10;
 
 	if (sigset(SIGTERM, term) == SIG_ERR) {
-		tst_resm(TBROK, " sigset failed: signo = 15") ;
-		tst_exit() ;
+		tst_brkm(TBROK|TERRNO, NULL, "sigset (signo=SIGTERM) failed");
 	}
 
 }
 
 static void runtest(void)
 {
-	int pid, child, status, count, i;
+	pid_t pid;
+	int child, count, i, nwait, status;
+
+	nwait = 0;
 
 	for (i = 0; i < nchild; i++) {
 		test_name[0] = 'a' + i;
@@ -204,10 +205,7 @@ static void runtest(void)
 		close(fd);
 
 		if (child < 0) {
-			tst_resm(TINFO, "System resource may be too low, fork() malloc()"
-                                       " etc are likely to fail.");
-                        tst_resm(TBROK, "Test broken due to inability of fork.");
-                        tst_exit();
+			tst_brkm(TBROK|TERRNO, NULL, "fork failed");
 		} else {
 			pidlist[i] = child;
 			nwait++;
@@ -218,7 +216,7 @@ static void runtest(void)
 	 * Wait for children to finish.
 	 */
 	count = 0;
-	while(1) {
+	while (1) {
 		if ((child = wait(&status)) >= 0) {
 			//tst_resm(TINFO, "\tTest{%d} exited status = 0x%x", child, status);
 			if (status) {
@@ -245,10 +243,7 @@ static void runtest(void)
 
 	pid = fork();
 	if (pid < 0) {
-		tst_resm(TINFO, "System resource may be too low, fork() malloc()"
-                                    " etc are likely to fail.");
-                tst_resm(TBROK, "Test broken due to inability of fork.");
-                tst_exit();
+		tst_brkm(TBROK|TERRNO, NULL, "fork failed");
 	}
 
 	if (pid == 0) {
@@ -302,6 +297,8 @@ static void dotest(int testers, int me, int fd)
 	int	w_ioveclen;
 
 	nchunks = max_size / csize;
+	whenmisc = 0;
+
 	if ((bits = malloc((nchunks+7) / 8)) == NULL) {
 		tst_resm(TBROK, "\tmalloc failed(bits)");
 		tst_exit();
@@ -339,7 +336,7 @@ static void dotest(int testers, int me, int fd)
 			exit(1);
 		}
 		val_iovec[i].iov_len = w_ioveclen;
-	
+
 		if (malloc((i+1)*8) == NULL) {
 			tst_resm(TBROK, "\tmalloc failed((i+1)*8)");
 			tst_exit();
@@ -364,7 +361,7 @@ static void dotest(int testers, int me, int fd)
 	 * For each iteration:
 	 *	zap bits array
 	 *	loop
-	 *		pick random chunk, read it. 
+	 *		pick random chunk, read it.
 	 *		if corresponding bit off {
 	 *			verify = 0. (sparse file)
 	 *			++count;
@@ -505,7 +502,7 @@ static void dotest(int testers, int me, int fd)
 		++misc_cnt[m_fsync];
 		//tst_resm(TINFO, "\tTest{%d} val %d done, count = %d, collide = {%d}",
 		//		me, val, count, collide);
-		//for(i = 0; i < NMISC; i++)
+		//for (i = 0; i < NMISC; i++)
 		//	tst_resm(TINFO, "\t\tTest{%d}: {%d} %s's.", me, misc_cnt[i], m_str[i]);
 		++val;
 	}
@@ -546,9 +543,9 @@ static void domisc(int me, int fd, char *bits)
 			}
 			tr_flag = 1;
 		}
-		for(; chunk%8 != 0; chunk++)
+		for (; chunk%8 != 0; chunk++)
 			bits[chunk/8] &= ~(1<<(chunk%8));
-		for(; chunk < nchunks; chunk += 8)
+		for (; chunk < nchunks; chunk += 8)
 			bits[chunk/8] = 0;
 		break;
 	case m_sync:

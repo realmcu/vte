@@ -38,8 +38,8 @@
 #if defined(NO_XFS)
 # include "xfscompat.h"
 #else
-# include <libxfs.h>
-# include <attributes.h>
+# include <xfs/libxfs.h>
+# include <attr/attributes.h>
 #endif
 
 /* libc includes */
@@ -51,7 +51,7 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <dirent.h>
 #include <errno.h>
 #include <string.h>

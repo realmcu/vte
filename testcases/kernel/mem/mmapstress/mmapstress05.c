@@ -52,7 +52,6 @@ int local_flag = PASSED;
 char *TCID = "mmapstress05";//mfile_insque
 FILE *temp;
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int anyfail();
 void ok_exit();
@@ -135,7 +134,7 @@ main(int argc, char *argv[])
 		ERROR("couldn't find top of brk");
 		anyfail();
 	}
-      
+
 	/* i changed the second argument to NULL
 	from argv[0]. otherwise it causes the
 	open to fail
@@ -205,7 +204,7 @@ main(int argc, char *argv[])
 	(void)time(&t);
 //	(void)printf("%s: Finished %s", argv[0], ctime(&t)); LTP Port
 	ok_exit();
-	return 0;
+	tst_exit();
 }
 
 void ok_exit()
@@ -215,15 +214,10 @@ void ok_exit()
 	tst_exit();
 }
 
-
 int anyfail()
 {
   tst_resm(TFAIL, "Test failed\n");
   tst_rmdir();
   tst_exit();
-  return 0;
+        return 0;
 }
-
-
-
-

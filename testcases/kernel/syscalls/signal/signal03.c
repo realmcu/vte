@@ -67,7 +67,6 @@ void sighandler(int);
 
 char *TCID = "signal03";
 int TST_TOTAL;
-extern int Tst_count;
 
 typedef void (*sighandler_t) (int);
 
@@ -97,9 +96,9 @@ int main(int ac, char **av)
 	int i, rval;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	setup();		/* global setup */
 
@@ -122,7 +121,7 @@ int main(int ac, char **av)
 				tst_brkm(TFAIL, cleanup, "%s call failed - "
 					 "errno = %d : %s", TCID,
 					 TEST_ERRNO, strerror(TEST_ERRNO));
-			 /*NOTREACHED*/}
+			 }
 
 			if (STD_FUNCTIONAL_TEST) {
 				/*
@@ -135,7 +134,7 @@ int main(int ac, char **av)
 				if ((rval = kill(pid, siglist[i])) != 0) {
 					tst_brkm(TBROK, cleanup, "call to "
 						 "kill failed");
-				 /*NOTREACHED*/}
+				 }
 
 				if (fail == 0) {
 					tst_resm(TPASS, "%s call succeeded",
@@ -153,7 +152,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -174,7 +173,6 @@ void setup(void)
 	/* capture signals in our own handler */
 	tst_sig(NOFORK, sighandler, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -190,6 +188,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

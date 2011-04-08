@@ -62,7 +62,6 @@ void cleanup();
 
 char *TCID = "write04";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 /* 0 terminated list of expected errnos */
 int exp_enos[] = { 11, 0 };
@@ -83,10 +82,10 @@ int main(int argc, char **argv)
 	struct sigaction sigptr;	/* set up signal handler */
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	/* global setup */
 	setup();
@@ -101,15 +100,15 @@ int main(int argc, char **argv)
 		if (mknod(fifo, S_IFIFO | 0777, 0) < 0) {
 			tst_resm(TBROK, "mknod() failed, errno: %d", errno);
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 		if (stat(fifo, &buf) != 0) {
 			tst_resm(TBROK, "stat() failed, errno: %d", errno);
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 		if ((buf.st_mode & S_IFIFO) == 0) {
 			tst_resm(TBROK, "Mode does not indicate fifo file");
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 #if 0
 		sigset(SIGALRM, alarm_handler);
 #endif
@@ -117,7 +116,7 @@ int main(int argc, char **argv)
 		sigfillset(&sigptr.sa_mask);
 		sigptr.sa_flags = 0;
 		sigaddset(&sigptr.sa_mask, SIGALRM);
-		if (sigaction(SIGALRM, &sigptr, (struct sigaction *)NULL) == -1) {
+		if (sigaction(SIGALRM, &sigptr, NULL) == -1) {
 			tst_resm(TBROK, "sigaction(): Failed");
 			cleanup();
 		}
@@ -148,7 +147,7 @@ int main(int argc, char **argv)
 		if (sigsetjmp(jmp, 1)) {
 			tst_resm(TBROK, "setjmp() failed");
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 		(void)alarm(10);	/* set alarm for 10 seconds */
 		wfd = open(fifo, O_WRONLY | O_NONBLOCK);
 		(void)alarm(0);
@@ -207,7 +206,7 @@ int main(int argc, char **argv)
 		unlink(fifo);
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 void alarm_handler()
@@ -221,7 +220,7 @@ void alarm_handler()
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Set up the expected error numbers for -e option */
@@ -254,6 +253,4 @@ void cleanup()
 	unlink(fifo);
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

@@ -79,7 +79,6 @@ int shmid1;
 extern key_t semkey;
 int *flag;
 
-extern int Tst_count;
 extern int getipckey();
 extern void rm_shm(int);
 
@@ -94,8 +93,8 @@ int main(int ac, char **av)
 	struct sigaction my_act, old_act;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
 	maybe_run_child(&do_child, "");
@@ -153,7 +152,7 @@ int main(int ac, char **av)
 		if (TEST_RETURN == -1) {
 			tst_brkm(TFAIL, cleanup, "%s failed - errno = %d : %s",
 				 TCID, TEST_ERRNO, strerror(TEST_ERRNO));
-		 /*NOTREACHED*/}
+		 }
 
 		if (STD_FUNCTIONAL_TEST) {
 			/*
@@ -180,11 +179,11 @@ int main(int ac, char **av)
 		}
 		if (shmdt(flag)) {
 			tst_brkm(TBROK, cleanup, "shmdt failed ");
-		 /*NOTREACHED*/}
+		 }
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -206,7 +205,7 @@ void do_child()
 	int exno = 1;
 
 	sleep(300);
-	 /*NOTREACHED*/ tst_resm(TINFO, "Child never recieved a signal");
+	  tst_resm(TINFO, "Child never recieved a signal");
 	exit(exno);
 }
 
@@ -216,7 +215,6 @@ void do_child()
 void setup(void)
 {
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -248,9 +246,6 @@ void cleanup(void)
 	 */
 	rm_shm(shmid1);
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

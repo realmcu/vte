@@ -74,7 +74,6 @@ static int iterations;         /* # total iterations */
 static int max_size;           /* max file size */
 static int misc_intvl;         /* for doing misc things; 0 ==> no */
 static int nchild;             /* number of child processes */
-static int nwait;
 static int parent_pid;
 static int pidlist[MAXCHILD];
 
@@ -90,7 +89,7 @@ int main(int ac, char *av[])
         /*
          * parse standard options
          */
-        if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL){
+        if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 	                tst_resm(TBROK, "OPTION PARSING ERROR - %s", msg);
 			tst_exit();
         }
@@ -111,7 +110,7 @@ int main(int ac, char *av[])
 	       	tst_exit();
 	}
 
-	return 0;
+	tst_exit();
 }
 
 static void setup(void)
@@ -154,7 +153,9 @@ static void setup(void)
 
 static void runtest(void)
 {
-	int i, child, status, count, fd;
+	int count, child, fd, i, nwait, status;
+
+	nwait = 0;
 
 	for (i = 0; i < nchild; i++) {
 		if ((child = fork()) == 0) {
@@ -168,11 +169,7 @@ static void runtest(void)
 			tst_exit();
 		}
 		if (child < 0) {
-			 tst_resm(TINFO, "System resource may be too low, fork() malloc()"
-	                                   " etc are likely to fail.");
-                         tst_resm(TBROK, "Test broken due to inability of fork.");
-                         tst_exit();
-
+			tst_brkm(TBROK|TERRNO, NULL, "fork failed");
 		} else {
 			pidlist[i] = child;
 			nwait++;
@@ -240,6 +237,7 @@ static void dotest(int testers, int me, int fd)
 	int	w_ioveclen;
 
 	nchunks = max_size / (testers * csize);
+	whenmisc = 0;
 
 	if ((bits = malloc((nchunks+7)/8)) == NULL) {
 		tst_resm(TBROK, "\tmalloc failed(bits)");
@@ -274,19 +272,19 @@ static void dotest(int testers, int me, int fd)
 			tst_exit();
 		}
 
-		if ((val0_iovec[i].iov_base = malloc(w_ioveclen)) == NULL){
+		if ((val0_iovec[i].iov_base = malloc(w_ioveclen)) == NULL) {
 			tst_resm(TBROK, "\tmalloc failed(val0_iovec[])");
 			tst_exit();
 		}
 
 		val0_iovec[i].iov_len = w_ioveclen;
-	
+
 		if (malloc((i+1)*8) == NULL) {
 			tst_resm(TBROK, "\tmalloc failed");
 			tst_exit();
 		}
 
-		if ((val_iovec[i].iov_base = malloc(w_ioveclen)) == NULL){
+		if ((val_iovec[i].iov_base = malloc(w_ioveclen)) == NULL) {
 			tst_resm(TBROK, "\tmalloc failed(iov_base)");
 			tst_exit();
 		}
@@ -324,12 +322,12 @@ static void dotest(int testers, int me, int fd)
 	if (misc_intvl)
 		whenmisc = NEXTMISC;
 
-	while(iterations-- > 0) {
-		for(i = 0; i < NMISC; i++)
+	while (iterations-- > 0) {
+		for (i = 0; i < NMISC; i++)
 			misc_cnt[i] = 0;
 		memset(bits, 0, (nchunks+7)/8);
 		/* Have to fill the val0 and val iov buffers in a different manner */
-		for(i = 0; i < MAXIOVCNT; i++) {
+		for (i = 0; i < MAXIOVCNT; i++) {
 			memset(val0_iovec[i].iov_base,val0,val0_iovec[i].iov_len);
 			memset(val_iovec[i].iov_base,val,val_iovec[i].iov_len);
 
@@ -364,7 +362,7 @@ static void dotest(int testers, int me, int fd)
 						me, xfr, csize);
 					tst_exit();
 				}
-				for(i = 0; i < MAXIOVCNT; i++) {
+				for (i = 0; i < MAXIOVCNT; i++) {
 					if (memcmp(r_iovec[i].iov_base, val0_iovec[i].iov_base, r_iovec[i].iov_len)) {
 						tst_resm(TFAIL, "\tTest[%d] bad verify @ 0x%x for val %d count %d xfr %d.",
 							me, CHUNK(chunk), val0, count, xfr);
@@ -382,7 +380,7 @@ static void dotest(int testers, int me, int fd)
 					tst_exit();
 				}
 				++collide;
-				for(i = 0; i < MAXIOVCNT; i++) {
+				for (i = 0; i < MAXIOVCNT; i++) {
 					if (memcmp(r_iovec[i].iov_base, val_iovec[i].iov_base, r_iovec[i].iov_len)) {
 						tst_resm(TFAIL, "\tTest[%d] bad verify @ 0x%x for val %d count %d xfr %d.",
 							me, CHUNK(chunk), val, count, xfr);
@@ -428,7 +426,7 @@ static void dotest(int testers, int me, int fd)
 		if (count < nchunks) {
 			//tst_resm(TINFO, "\tTest{%d} val %d stopping @ %d, collide = {%d}.",
 			//		me, val, count, collide);
-			for(i = 0; i < nchunks; i++) {
+			for (i = 0; i < nchunks; i++) {
 				if ((bits[i/8] & (1<<(i%8))) == 0) {
 					if (lseek(fd, CHUNK(i), 0) < 0) {
 						tst_resm(TFAIL, "\tTest[%d]: lseek fail at %x, errno = %d.",
@@ -448,7 +446,7 @@ static void dotest(int testers, int me, int fd)
 		++misc_cnt[m_fsync];
 		//tst_resm(TINFO, "\tTest[%d] val %d done, count = %d, collide = %d.",
 		//		me, val, count, collide);
-		//for(i = 0; i < NMISC; i++)
+		//for (i = 0; i < NMISC; i++)
 		//	tst_resm(TINFO, "\t\tTest[%d]: %d %s's.", me, misc_cnt[i], m_str[i]);
 		val0 = val++;
 	}

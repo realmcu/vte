@@ -151,7 +151,7 @@ struct test_case_t {
 	{ PTRACE_GETSIGINFO, .data = -3 },
 	{ PTRACE_GETSIGINFO, .data = -4 },
 #endif
-	
+
 #if HAVE_DECL_PTRACE_SETSIGINFO
 	{ PTRACE_SETSIGINFO, .data = 0 },
 	{ PTRACE_SETSIGINFO, .data = 1 },
@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
 	char *msg;
 
 	if ((msg = parse_opts(argc, argv, NULL, NULL)))
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	make_a_baby(argc, argv);
 

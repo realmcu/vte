@@ -78,7 +78,6 @@
 
 char *TCID = "msync01";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 char *addr;			/* addr of memory mapped region */
 size_t page_sz;			/* system page size */
@@ -95,50 +94,25 @@ int main(int ac, char **av)
 	char read_buf[BUF_SIZE];	/* buffer to hold data read from file */
 	int nread = 0, count, err_flg = 0;
 
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* Reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		/* Perform global setup for test */
 		setup();
 
-		/*
-		 * Call msync to synchronize the mapped region
-		 * with the specified file.
-		 */
 		TEST(msync(addr, page_sz, MS_ASYNC));
 
-		/* Check for the return value of msync() */
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL, "msync() failed to synchronize mapped "
-				 "file %s, errno=%d : %s",
-				 TEMPFILE, errno, strerror(errno));
+			tst_resm(TFAIL|TERRNO, "msync failed");
 			continue;
 		}
 
-		/*
-		 * Perform functional verification if test
-		 * executed without (-f) option.
-		 */
 		if (STD_FUNCTIONAL_TEST) {
-			/*
-			 * Seek to the offset pos. where bytes were
-			 * set in the setup.
-			 */
-			if (lseek(fildes, (off_t) 100, SEEK_SET) != (off_t) 100) {
-				tst_brkm(TBROK, cleanup, "lseek() to specified "
-					 "offset pos. Failed, error=%d : %s",
-					 errno, strerror(errno));
-				tst_exit();
-			}
+			if (lseek(fildes, (off_t) 100, SEEK_SET) != 100)
+				tst_brkm(TBROK|TERRNO, cleanup, "lseek failed");
 
 			/*
 			 * Seeking to specified offset. successful.
@@ -146,46 +120,33 @@ int main(int ac, char **av)
 			 * them with the expected.
 			 */
 			nread = read(fildes, read_buf, sizeof(read_buf));
-			if (nread != BUF_SIZE) {
-				tst_brkm(TBROK, cleanup, "read() on %s Failed, "
-					 "error : %d", TEMPFILE, errno);
-				tst_exit();
-			} else {
+			if (nread != BUF_SIZE)
+				tst_brkm(TBROK, cleanup, "read failed");
+			else {
 				/*
 				 * Check whether read data (from mapped
 				 * file) contains the expected data
 				 * which was initialised in the setup.
 				 */
-				for (count = 0; count < nread; count++) {
-					if (read_buf[count] != 1) {
-						/* invalid data */
+				for (count = 0; count < nread; count++)
+					if (read_buf[count] != 1)
 						err_flg++;
-					}
-				}
 			}
 
-			if (err_flg != 0) {
+			if (err_flg != 0)
 				tst_resm(TFAIL,
 					 "data read from file doesn't match");
-			} else {
+			else
 				tst_resm(TPASS,
 					 "Functionality of msync() successful");
-			}
-		} else {
+		} else
 			tst_resm(TPASS, "call succeeded");
-		}
 
-		/* Call cleanup() to undo setup done for the test. */
 		cleanup();
 
-	}			/* End for TEST_LOOPING */
-
-	/* exit with return code appropriate for results */
+	}
 	tst_exit();
-
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -199,87 +160,50 @@ void setup()
 {
 	int c_total = 0, nwrite = 0;	/* no. of bytes to be written */
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
+	if ((page_sz = getpagesize()) == -1)
+		tst_brkm(TBROK|TERRNO, NULL, "getpagesize failed");
+
 	tst_tmpdir();
 
-	/* Get the system page size */
-	if ((page_sz = getpagesize()) < 0) {
-		tst_brkm(TBROK, cleanup,
-			 "getpagesize() fails to get system page size");
-		tst_exit();
-	}
+	if ((fildes = open(TEMPFILE, O_RDWR|O_CREAT, 0666)) < 0)
+		tst_brkm(TBROK|TERRNO, cleanup, "open failed");
 
-	/* Creat a temporary file used for mapping */
-	if ((fildes = open(TEMPFILE, O_RDWR | O_CREAT, 0666)) < 0) {
-		tst_brkm(TBROK, cleanup, "open() on %s failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
-		tst_exit();
-	}
-
-	/* Write one page size of char data into temporary file */
 	while (c_total < page_sz) {
 		nwrite = write(fildes, write_buf, sizeof(write_buf));
-		if (nwrite <= 0) {
-			tst_brkm(TBROK, cleanup, "write() on %s failed, errno "
-				 " = %d : %s", TEMPFILE, errno,
-				 strerror(errno));
-			tst_exit();
-		} else {
+		if (nwrite <= 0)
+			tst_brkm(TBROK|TERRNO, cleanup, "write failed");
+		else
 			c_total += nwrite;
-		}
 	}
 
 	/*
 	 * Call mmap to map virtual memory (mul. of page size bytes) from the
 	 * beginning of temporary file (offset is 0) into memory.
 	 */
-	addr = mmap(0, page_sz, PROT_READ | PROT_WRITE, MAP_FILE | MAP_SHARED,
+	addr = mmap(0, page_sz, PROT_READ|PROT_WRITE, MAP_FILE|MAP_SHARED,
 		    fildes, 0);
 
 	/* Check for the return value of mmap() */
-	if (addr == (char *)MAP_FAILED) {
-		tst_brkm(TBROK, cleanup, "mmap() failed on %s, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
-		tst_exit();
-	}
+	if (addr == MAP_FAILED)
+		tst_brkm(TBROK|TERRNO, cleanup, "mmap failed");
 
 	/* Set 256 bytes, at 100 byte offset in the mapped region */
 	memset(addr + 100, 1, 256);
 }
 
-/*
- * cleanup() - performs all ONE TIME cleanup for this test at
- *             completion or premature exit.
- *	       Unmap the mapped memory area done in the test.
- *	       Close the temporary file.
- *	       Remove the temporary directory created.
- */
 void cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
 	TEST_CLEANUP;
 
-	/* Unmap the mapped memory */
-	if (munmap(addr, page_sz) != 0) {
-		tst_brkm(TBROK, NULL, "munmap() failed to unmap the memory, "
-			 "errno=%d", errno);
-	}
+	if (munmap(addr, page_sz) == -1)
+		tst_resm(TBROK|TERRNO, "munmap failed");
 
-	/* Close the temporary file */
-	if (close(fildes) < 0) {
-		tst_brkm(TBROK, NULL, "close() on %s failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
-	}
+	if (close(fildes) == -1)
+		tst_resm(TWARN|TERRNO, "close failed");
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 }

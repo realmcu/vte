@@ -76,7 +76,6 @@ char *buf_list[NBUFS];
 
 char *TCID = "readv01";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int init_buffs(char **);
 int fill_mem(char *, int, int);
@@ -91,9 +90,9 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	setup();
 
@@ -124,15 +123,15 @@ int main(int ac, char **av)
 	}
 	close(fd);
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
 }
 
 int init_buffs(char *pbufs[])
 {
 	int i;
 
-	for (i = 0; pbufs[i] != (char *)NULL; i++) {
+	for (i = 0; pbufs[i] != NULL; i++) {
 		switch (i) {
 		case 0:
 		 /*FALLTHROUGH*/ case 1:
@@ -179,10 +178,8 @@ void setup()
 {
 	int nbytes;
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* make a temporary directory and cd to it */
@@ -191,7 +188,7 @@ void setup()
 	buf_list[0] = buf1;
 	buf_list[1] = buf2;
 	buf_list[2] = buf3;
-	buf_list[3] = (char *)NULL;
+	buf_list[3] = NULL;
 
 	init_buffs(buf_list);
 
@@ -234,5 +231,5 @@ void cleanup()
 			 f_name, errno);
 	}
 	tst_rmdir();
-	tst_exit();
+
 }

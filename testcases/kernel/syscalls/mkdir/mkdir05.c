@@ -81,7 +81,6 @@ void cleanup();
 
 char *TCID = "mkdir05";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
@@ -97,8 +96,8 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	/*
@@ -111,7 +110,6 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/*
@@ -134,7 +132,7 @@ int main(int ac, char **av)
 			if (stat(tstdir1, &buf) == -1) {
 				tst_brkm(TBROK, cleanup, "failed to stat the "
 					 "new directory");
-			 /*NOTREACHED*/}
+			 }
 			/* check the owner */
 			if (buf.st_uid != geteuid()) {
 				tst_resm(TFAIL, "mkdir() FAILED to set owner ID"
@@ -157,14 +155,15 @@ int main(int ac, char **av)
 			tst_brkm(TBROK, cleanup, "could not remove directory");
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
 	/*
 	 * cleanup and exit
 	 */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+	tst_exit();
+
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -173,7 +172,7 @@ void setup()
 {
 	/* Switch to nobody user for correct error code collection */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 	ltpuser = getpwnam(nobody_uid);
 	if (setuid(ltpuser->pw_uid) == -1) {
@@ -182,10 +181,8 @@ void setup()
 		perror("setuid");
 	}
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Create a temporary directory and make it current. */
@@ -212,5 +209,5 @@ void cleanup()
 	/*
 	 * Exit with return code appropriate for results.
 	 */
-	tst_exit();
+
 }

@@ -90,7 +90,6 @@ unsigned int max_cpuid(size_t, cpu_set_t *);
 
 char *TCID = "getcpu01";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int main(int ac, char **av)
 {
@@ -113,8 +112,8 @@ int main(int ac, char **av)
 	}
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	setup();		/* global setup */
 
@@ -135,14 +134,14 @@ int main(int ac, char **av)
 				tst_resm(TFAIL, "getcpu() returned wrong value"
 					 " expected cpuid:%d, returned value cpuid: %d",
 					 cpu_set, cpu_id);
-				tst_exit();
+
 			}
 #ifdef __i386__
 			else if (node_id != node_set) {
 				tst_resm(TFAIL, "getcpu() returned wrong value"
 					 " expected  node id:%d returned  node id:%d",
 					 node_set, node_id);
-				tst_exit();
+
 			}
 #endif
 			else
@@ -152,13 +151,13 @@ int main(int ac, char **av)
 		} else {
 			tst_resm(TFAIL, "getcpu() Failed, errno=%d:%s",
 				 TEST_ERRNO, strerror(TEST_ERRNO));
-			tst_exit();
+
 		}
 	}
 
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -180,9 +179,9 @@ static inline int getcpu(unsigned *cpu_id, unsigned *node_id,
  */
 void setup(void)
 {
-	/* capture signals */
+
 	/* ?? */
-	/* Pause if that option was specified */
+
 	TEST_PAUSE;
 }
 
@@ -317,6 +316,5 @@ void cleanup(void)
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
-	/* exit with return code appropriate for results */
-	tst_exit();
+
 }

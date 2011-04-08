@@ -90,7 +90,6 @@ char user2name[] = "bin";
 
 char *TCID = "mkdir04";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 int fail;
 
 char tstdir1[100];
@@ -110,8 +109,8 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	/*
@@ -127,7 +126,6 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/* Initialize the test directories name */
@@ -136,7 +134,7 @@ int main(int ac, char **av)
 
 		if ((pid = FORK_OR_VFORK()) < 0) {
 			tst_brkm(TBROK, cleanup, "fork #1 failed");
-		 /*NOTREACHED*/}
+		 }
 
 		if (pid == 0) {	/* first child */
 			/* set to ltpuser1 */
@@ -148,13 +146,13 @@ int main(int ac, char **av)
 					 ltpuser1->pw_uid, ltpuser1->pw_uid);
 				perror("setreuid");
 				exit(1);
-			 /*NOTREACHED*/}
+			 }
 			/* create the parent directory with 0700 permits */
 			if (mkdir(tstdir1, PERMS) == -1) {
 				tst_resm(TFAIL, "mkdir(%s, %#o) Failed",
 					 tstdir1, PERMS);
 				exit(1);
-			 /*NOTREACHED*/}
+			 }
 			/* create tstdir1 succeeded */
 			exit(0);
 		}
@@ -170,7 +168,7 @@ int main(int ac, char **av)
 
 		if ((pid1 = FORK_OR_VFORK()) < 0) {
 			tst_brkm(TBROK, cleanup, "fork #2 failed");
-		 /*NOTREACHED*/}
+		 }
 
 		if (pid1 == 0) {	/* second child */
 			/* set to ltpuser2 */
@@ -182,17 +180,17 @@ int main(int ac, char **av)
 					 ltpuser2->pw_uid, ltpuser2->pw_uid);
 				perror("setreuid");
 				exit(1);
-			 /*NOTREACHED*/}
+			 }
 			if (mkdir(tstdir2, PERMS) != -1) {
 				tst_resm(TFAIL, "mkdir(%s, %#o) unexpected "
 					 "succeeded", tstdir2, PERMS);
 				exit(1);
-			 /*NOTREACHED*/}
+			 }
 			if (errno != EACCES) {
 				tst_resm(TFAIL, "Expected EACCES got %d",
 					 errno);
 				exit(1);
-			 /*NOTREACHED*/}
+			 }
 			/* PASS */
 			exit(0);
 		}
@@ -206,15 +204,15 @@ int main(int ac, char **av)
 				 "in a directory having no permissions FAILED");
 			cleanup();
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
 	/*
 	 * cleanup and exit
 	 */
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -223,13 +221,11 @@ void setup()
 {
 	/* must run as root */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Must run this as root");
-	 /*NOTREACHED*/}
+		tst_brkm(TBROK, NULL, "Must run this as root");
+	 }
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Create a temporary directory and make it current. */
@@ -258,5 +254,5 @@ void cleanup()
 	/*
 	 * Exit with return code appropriate for results.
 	 */
-	tst_exit();
+
 }

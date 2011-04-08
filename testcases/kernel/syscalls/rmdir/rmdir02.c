@@ -94,7 +94,6 @@ void do_file_setup(char *);
 #define PERMS		0777
 
 char *TCID = "rmdir02";		/* Test program identifier.    */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int exp_enos[] = { ENOTEMPTY, EBUSY, ENAMETOOLONG, ENOENT, ENOTDIR, EFAULT, 0 };
 
@@ -145,8 +144,8 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	/*
@@ -162,7 +161,6 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/* save current working directory */
@@ -204,15 +202,15 @@ int main(int ac, char **av)
 		(void)rmdir(tstdir2);
 		(void)rmdir(tstdir3);
 
-	}			/* End for TEST_LOOPING */
+	}
 
 	/*
 	 * cleanup and exit
 	 */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /*
  * set_condition - set up starting conditions for the individual tests
@@ -230,7 +228,7 @@ void set_condition(int num)
 		if (mkdir(tstdir1, PERMS) == -1) {
 			tst_brkm(TBROK, cleanup, "mkdir(%s, %#o) Failed",
 				 tstdir1, PERMS);
-		 /*NOTREACHED*/}
+		 }
 
 		/* create a file under tstdir1 */
 		do_file_setup(tstfile);
@@ -251,7 +249,7 @@ void set_condition(int num)
 		/* create a file */
 		if ((fd = creat(tstfile, PERMS)) == -1) {
 			tst_brkm(TBROK, cleanup, "creat() failed");
-		 /*NOTREACHED*/}
+		 }
 		close(fd);
 		break;
 	default:
@@ -338,10 +336,9 @@ void remove_longpath()
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Create a temporary directory and make it current. */
@@ -379,5 +376,5 @@ void cleanup()
 	/*
 	 * Exit with return code appropriate for results.
 	 */
-	tst_exit();
+
 }

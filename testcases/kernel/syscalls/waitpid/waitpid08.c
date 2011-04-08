@@ -50,8 +50,8 @@
 #include <signal.h>
 #include <errno.h>
 #include <sys/wait.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 void inthandlr();
 void do_exit();
@@ -65,7 +65,6 @@ int TST_TOTAL = 1;
 volatile int intintr;
 int fail;
 
-extern int Tst_count;
 
 #define	MAXKIDS	8
 
@@ -83,11 +82,11 @@ int main(int argc, char **argv)
 	int pid;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
+
+	 }
 #ifdef UCLINUX
 	argv0 = argv[0];
 
@@ -105,7 +104,7 @@ int main(int argc, char **argv)
 
 		if ((pid = FORK_OR_VFORK()) < 0) {
 			tst_resm(TFAIL, "Fork Failed, may be OK under stress");
-			tst_exit();
+
 		} else if (pid == 0) {
 			/*
 			 * Child:
@@ -135,8 +134,7 @@ int main(int argc, char **argv)
 		}
 	}
 	cleanup();
-
-	return 0;
+	tst_exit();
 
 }
 
@@ -219,7 +217,7 @@ void do_child_1(void)
 			tst_resm(TFAIL, "Kill of child %d "
 				 "failed, errno = %d", i, errno);
 			tst_exit();
-		 /*NOTREACHED*/}
+		 }
 	}
 
 	/*
@@ -350,9 +348,7 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }
 
 void inthandlr()
 {

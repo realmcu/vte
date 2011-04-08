@@ -12,6 +12,7 @@
  * (Linux 2.6.9 and later) and its RLIMIT_MEMLOCK soft resource limit set to 0.
  */
 
+#define _GNU_SOURCE 1 /* XXX: Read baloney below about CAP_* */
 #define _XOPEN_SOURCE 600
 
 #include <sys/mman.h>
@@ -35,12 +36,12 @@ int set_nonroot()
         int ret=0;
 
 	setpwent();
-	/* search for the first user which is non root */ 
-	while((pw = getpwent()) != NULL)
-		if(strcmp(pw->pw_name, "root"))
+	/* search for the first user which is non root */
+	while ((pw = getpwent()) != NULL)
+		if (strcmp(pw->pw_name, "root"))
 			break;
 	endpwent();
-	if(pw == NULL) {
+	if (pw == NULL) {
 		printf("There is no other user than current and root.\n");
 		return 1;
 	}
@@ -57,15 +58,15 @@ int set_nonroot()
         if ((ret = setrlimit(RLIMIT_MEMLOCK,&rlim)) != 0)
                 printf("Failed at setrlimit() return %d \n", ret);
 
-	if(seteuid(pw->pw_uid) != 0) {
-		if(errno == EPERM) {
+	if (seteuid(pw->pw_uid) != 0) {
+		if (errno == EPERM) {
 			printf("You don't have permission to change your UID.\n");
 			return 1;
 		}
 		perror("An error occurs when calling seteuid()");
 		return 1;
 	}
-	
+
 	printf("Testing with user '%s' (uid: %d)\n",
 	       pw->pw_name, (int)geteuid());
 	return 0;
@@ -78,23 +79,23 @@ int main() {
         /* This test should be run under standard user permissions */
         if (getuid() == 0) {
                 if (set_nonroot() != 0) {
-			printf("Cannot run this test as non-root user\n");	
+			printf("Cannot run this test as non-root user\n");
 			return PTS_UNTESTED;
 		}
         }
 
 	ptr = malloc(BUFSIZE);
-	if(ptr == NULL) {
+	if (ptr == NULL) {
                 printf("Can not allocate memory.\n");
                 return PTS_UNRESOLVED;
         }
 
 	result = mlock(ptr, BUFSIZE);
 
-	if(result == -1 && errno == EPERM) {
+	if (result == -1 && errno == EPERM) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
-	} else if(result == 0) {
+	} else if (result == 0) {
 		printf("You have the right to call mlock\n");
 		return PTS_FAIL;
 	} else {

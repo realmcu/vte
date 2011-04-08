@@ -45,8 +45,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <errno.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 void setup(void);
 void cleanup(void);
@@ -56,7 +56,6 @@ int exp_enos[] = { 10, 22, 0 };
 
 char *TCID = "waitpid04";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 #define INVAL_FLAG	-1
 
@@ -70,10 +69,10 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
+
+	 }
 
 	setup();
 
@@ -143,7 +142,7 @@ int main(int ac, char **av)
 		condition_number++;
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -175,6 +174,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

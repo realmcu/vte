@@ -31,7 +31,7 @@
  *     Use run_auto.sh script in current directory to build and run test.
  *
  * AUTHOR
- *      Darren Hart <dvhltc@us.ibm.com> 
+ *      Darren Hart <dvhltc@us.ibm.com>
  *
  * HISTORY
  *    2006-Oct-20: Initial version by Darren Hart <dvhltc@us.ibm.com>
@@ -70,29 +70,26 @@ atomic_t step;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t mutex;
 
-
-
 void usage(void)
 {
-        rt_help();
-        printf("async_handler_tsc specific options:\n");
+	rt_help();
+	printf("async_handler_tsc specific options:\n");
 }
 
 int parse_args(int c, char *v)
 {
 
-        int handled = 1;
-        switch (c) {
-                case 'h':
-                        usage();
-                        exit(0);
-                default:
-                        handled = 0;
-                        break;
-        }
-        return handled;
+	int handled = 1;
+	switch (c) {
+		case 'h':
+			usage();
+			exit(0);
+		default:
+			handled = 0;
+			break;
+	}
+	return handled;
 }
-
 
 /* calculate the tsc period */
 unsigned long long tsc_period_ps(void)

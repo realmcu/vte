@@ -54,7 +54,6 @@ void setup();
 void cleanup();
 
 TCID_DEFINE(posix_fadvise04);	/* Test program identifier.    */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 #define GIVEN_IN_SETUP 42	/* No mean. Just used as padding.
 				   This is overwritten by setup(). */
@@ -101,8 +100,8 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	/*
 	 * perform global setup for test
@@ -114,7 +113,6 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/* loop through the test cases */
@@ -141,15 +139,15 @@ int main(int ac, char **av)
 					 strerror(TEST_RETURN), TC[i].error);
 			}
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
 	/*
 	 * cleanup and exit
 	 */
 	cleanup();
 
-	return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -158,10 +156,8 @@ void setup()
 {
 	int pipedes[2];
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Make a pipe */
@@ -181,7 +177,7 @@ void setup()
 			TC[i].fd = pipedes[0];
 		}
 	}
-}				/* End setup() */
+}
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
@@ -198,6 +194,4 @@ void cleanup()
 	/* Close pipe of read side */
 	close(TC[0].fd);
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

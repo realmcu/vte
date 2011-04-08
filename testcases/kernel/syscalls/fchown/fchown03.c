@@ -91,7 +91,6 @@
 int fildes;			/* File descriptor for test file */
 char *TCID = "fchown03";	/* Test program identifier. */
 int TST_TOTAL = 1;		/* Total number of test conditions */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
@@ -103,36 +102,33 @@ int main(int ac, char **av)
 	struct stat stat_buf;	/* stat(2) struct contents */
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
-	uid_t User_id;		/* Owner id of the test file. */
-	gid_t Group_id;		/* Group id of the test file. */
+	uid_t user_id;		/* Owner id of the test file. */
+	gid_t group_id;		/* Group id of the test file. */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/* Get the euid/egid of the process */
-		User_id = geteuid();
-		Group_id = getegid();
+		user_id = geteuid();
+		group_id = getegid();
 
 		/*
 		 * Call fchwon(2) with different user id and
 		 * group id (numeric values) to set it on
 		 * testfile.
 		 */
-		TEST(fchown(fildes, -1, Group_id));
+		TEST(fchown(fildes, -1, group_id));
 
-		/* check return code of fchown(2) */
 		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL, "fchown() on %s Fails, errno=%d",
 				 TESTFILE, TEST_ERRNO);
@@ -157,11 +153,11 @@ int main(int ac, char **av)
 			 * Check for expected Ownership ids
 			 * set on testfile.
 			 */
-			if ((stat_buf.st_uid != User_id) ||
-			    (stat_buf.st_gid != Group_id)) {
+			if ((stat_buf.st_uid != user_id) ||
+			    (stat_buf.st_gid != group_id)) {
 				tst_resm(TFAIL, "%s: Incorrect "
 					 "ownership set, Expected %d %d",
-					 TESTFILE, User_id, Group_id);
+					 TESTFILE, user_id, group_id);
 			}
 
 			/*
@@ -180,13 +176,12 @@ int main(int ac, char **av)
 		} else {
 			tst_resm(TPASS, "call succeeded");
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	 /*NOTREACHED*/ return (0);
-}				/* End main */
+	  return (0);
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -197,12 +192,11 @@ int main(int ac, char **av)
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Switch to nobody user for correct error code collection */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 	ltpuser = getpwnam(nobody_uid);
 	if (seteuid(ltpuser->pw_uid) == -1) {
@@ -211,10 +205,8 @@ void setup()
 				strerror(errno));
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* Make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Create a test file under temporary directory */
@@ -235,7 +227,7 @@ void setup()
 	setegid(ltpuser->pw_gid);
 	seteuid(ltpuser->pw_uid);
 
-}				/* End setup() */
+}
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
@@ -256,9 +248,6 @@ void cleanup()
 			 TESTFILE, errno, strerror(errno));
 	}
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

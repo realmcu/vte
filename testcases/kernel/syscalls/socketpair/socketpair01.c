@@ -91,7 +91,6 @@ PF_INET, SOCK_STREAM, 1, sv, -1, ESOCKTNOSUPPORT, "ICMP stream"},};
 
 int TST_TOTAL = sizeof(tdat) / sizeof(tdat[0]);	/* Total number of test cases. */
 
-extern int Tst_count;
 
 int main(int argc, char *argv[])
 {
@@ -99,16 +98,11 @@ int main(int argc, char *argv[])
 	char *msg;		/* message returned from parse_opts */
 	int s;
 
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
 
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
 		Tst_count = 0;
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
@@ -141,9 +135,8 @@ int main(int argc, char *argv[])
 
 	cleanup();
 
-	return 0;
-
-}				/* End main */
+	tst_exit();
+}
 
 void setup(void)
 {
@@ -156,5 +149,4 @@ void setup(void)
 void cleanup(void)
 {
 	TEST_CLEANUP;
-	tst_exit();
 }

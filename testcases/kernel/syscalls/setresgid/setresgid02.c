@@ -84,7 +84,6 @@
 
 #define EXP_RET_VAL	0
 
-extern int Tst_count;
 
 struct test_case_t {		/* test case structure */
 	uid_t *rgid;		/* real GID */
@@ -129,14 +128,13 @@ int main(int argc, char **argv)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -170,7 +168,7 @@ int main(int argc, char **argv)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 static int test_functionality(uid_t exp_rgid, uid_t exp_egid, uid_t exp_sgid)
@@ -188,7 +186,7 @@ static int test_functionality(uid_t exp_rgid, uid_t exp_egid, uid_t exp_sgid)
 	/* Get current real, effective and saved group id */
 	if (getresgid(&cur_rgid, &cur_egid, &cur_sgid) == -1) {
 		tst_brkm(TBROK, cleanup, "getresgid() failed");
-		/* NOT REACHED */
+
 	}
 
 	if ((cur_rgid == exp_rgid) && (cur_egid == exp_egid)
@@ -206,40 +204,39 @@ void setup(void)
 {
 	struct passwd *passwd_p;
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Check whether we are root  */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Must be root for this test!");
-	 /*NOTREACHED*/}
+		tst_brkm(TBROK, NULL, "Must be root for this test!");
+	 }
 
 	if ((passwd_p = getpwnam("root")) == NULL) {
-		tst_brkm(TBROK, tst_exit, "getpwnam() failed for root");
-		/* NOTREACHED */
+		tst_brkm(TBROK, NULL, "getpwnam() failed for root");
+
 	}
 	root = *passwd_p;
 	root_gid = root.pw_gid;
 
 	if ((passwd_p = getpwnam("bin")) == NULL) {
-		tst_brkm(TBROK, tst_exit, "bin user id doesn't exist");
-		/* NOTREACHED */
+		tst_brkm(TBROK, NULL, "bin user id doesn't exist");
+
 	}
 	bin = *passwd_p;
 	bin_gid = bin.pw_gid;
 
 	if ((passwd_p = getpwnam("nobody")) == NULL) {
-		tst_brkm(TBROK, tst_exit, "nobody user id doesn't exist");
-		/* NOTREACHED */
+		tst_brkm(TBROK, NULL, "nobody user id doesn't exist");
+
 	}
 	nobody = *passwd_p;
 	nobody_gid = nobody.pw_gid;
 
 	/* Set effective/saved gid to nobody */
 	if (setresgid(-1, nobody_gid, nobody_gid) == -1) {
-		tst_brkm(TBROK, tst_exit, "setup() failed for setting while"
+		tst_brkm(TBROK, NULL, "setup() failed for setting while"
 			 " setting real/effective/saved gid");
-		/* NOTREACHED */
+
 	}
 
 	/* Pause if that option was specified
@@ -262,6 +259,4 @@ void cleanup(void)
 
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

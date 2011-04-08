@@ -77,7 +77,6 @@ static void setup3(void);
 
 char *TCID = "mincore01";
 int TST_TOTAL = 3;
-extern int Tst_count;
 
 static char file_name[] = "fooXXXXXX";
 static char *global_pointer = NULL;
@@ -106,7 +105,7 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, cleanup, "error parsing options: %s", msg);
 	}
 
@@ -146,7 +145,7 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
-	return 0;
+	tst_exit();
 }
 
 /*
@@ -221,10 +220,8 @@ void setup()
 	buf = (char *)malloc(global_len);
 	memset(buf, 42, global_len);
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* create a temporary file */
@@ -274,8 +271,6 @@ void cleanup()
 	close(file_desc);
 	remove(file_name);
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
 
 #else
@@ -283,7 +278,7 @@ void cleanup()
 int main()
 {
 	tst_resm(TINFO, "test is not available on uClinux");
-	return 0;
+	tst_exit();
 }
 
 #endif /* if !defined(UCLINUX) */

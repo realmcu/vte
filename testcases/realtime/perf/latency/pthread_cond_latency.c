@@ -47,26 +47,25 @@ pthread_mutex_t child_mutex = PTHREAD_MUTEX_INITIALIZER;
 volatile int child_waiting = 0;
 double endtime;
 
-
 void usage(void)
 {
-        rt_help();
-        printf("testpi-1 specific options:\n");
+	rt_help();
+	printf("testpi-1 specific options:\n");
 }
 
 int parse_args(int c, char *v)
 {
 
-        int handled = 1;
-        switch (c) {
-                case 'h':
-                        usage();
-                        exit(0);
-                default:
-                        handled = 0;
-                        break;
-        }
-        return handled;
+	int handled = 1;
+	switch (c) {
+		case 'h':
+			usage();
+			exit(0);
+		default:
+			handled = 0;
+			break;
+	}
+	return handled;
 }
 
 /*
@@ -78,7 +77,7 @@ double d_gettimeofday(void)
 	int retval;
 	struct timeval tv;
 
-	retval = gettimeofday(&tv, (struct timezone *)NULL);
+	retval = gettimeofday(&tv, NULL);
 	if (retval != 0) {
 		perror("gettimeofday");
 		exit(-1);

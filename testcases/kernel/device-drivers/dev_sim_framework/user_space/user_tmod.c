@@ -48,7 +48,6 @@
 
 static int tmod_fd = -1;		/* file descriptor */
 
-
 int
 tmodopen() {
 
@@ -78,7 +77,6 @@ tmodopen() {
             }
         }
     }
-
 
     /*
      * Check for the /dev/tmod node, and create if it does not
@@ -117,11 +115,10 @@ tmodopen() {
     }
     else {
         printf("Device opened successfully \n");
-        return 0;
+      return 0;
     }
 
 }
-
 
 int
 tmodclose() {
@@ -130,37 +127,32 @@ tmodclose() {
 		close (tmod_fd);
 		tmod_fd = -1;
 	}
-	
+
 	return 0;
 }
-
 
 int main() {
 	int rc;
 
 	/* open the module */
 	rc = tmodopen();
-        if (rc ) {
+        if (rc) {
                 printf("Test MOD Driver may not be loaded\n");
                 exit(1);
         }
 
-
-
 	/* make test calls */
-	if(ki_generic(tmod_fd, LTP_OPTION1))
+	if (ki_generic(tmod_fd, LTP_OPTION1))
 		printf("Failed on option 1 test\n");
 	else
 		printf("Success on option 1 test\n");
 
-
-
 	/* close the module */
 	rc = tmodclose();
-	if (rc ) {
+	if (rc) {
                 printf("Test MOD Driver may not be closed\n");
                 exit(1);
         }
 
-        return 0;
+      return 0;
 }

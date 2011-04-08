@@ -15,17 +15,17 @@
 *
 ***************************************************************************/
 #include <stdio.h>
-#include <test.h>
+#include "test.h"
 
 int get_supp_sched_mc(void) {
-	if (tst_kvercmp(2,6,29) < 0 )
+	if (tst_kvercmp(2,6,29) < 0)
 		return 1;
 	else
 		return 2;
 }
 
 int get_supp_sched_smt(void) {
-	if (tst_kvercmp(2,6,29) < 0 )
+	if (tst_kvercmp(2,6,29) < 0)
 		return 1;
 	else
 		return 2;

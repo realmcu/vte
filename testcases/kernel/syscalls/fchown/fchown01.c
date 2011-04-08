@@ -123,102 +123,60 @@ void cleanup();
 
 char *TCID = "fchown01";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-int Fd;				/* file descriptor for fchown */
+int fd;				/* file descriptor for fchown */
 
 int main(int ac, char **av)
 {
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 
-    /***************************************************************
-     * parse standard options
-     ***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-    /***************************************************************
-     * perform global setup for test
-     ***************************************************************/
 	setup();
 
-    /***************************************************************
-     * check looping state if -c option given
-     ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		/* Call fchown(2) just once */
-		TEST(fchown(Fd, geteuid(), getegid()));
+		TEST(fchown(fd, geteuid(), getegid()));
 
-		/* check return code */
-		if (TEST_RETURN == -1) {
-			TEST_ERROR_LOG(TEST_ERRNO);
-			tst_resm(TFAIL,
-				 "fchown(Fd, geteuid(), getegid()) failed, errno=%d : %s",
-				 TEST_ERRNO, strerror(TEST_ERRNO));
-		} else {
-		    /***************************************************************
-		     * only perform functional verification if flag set (-f not given)
-	    	 ***************************************************************/
-			if (STD_FUNCTIONAL_TEST) {
-				/* Perform functional verification here */
+		if (TEST_RETURN == -1)
+			tst_resm(TFAIL|TTERRNO, "fchown failed");
+		else
+			if (STD_FUNCTIONAL_TEST)
 				tst_resm(TPASS,
-					 "fchown(Fd, geteuid(), getegid()) returned %ld",
-					 TEST_RETURN);
-			}
-		}
-	}			/* End for TEST_LOOPING */
+				    "fchown(fd, geteuid(), getegid()) "
+				    "returned %ld",
+				    TEST_RETURN);
+	}
 
-    /***************************************************************
-     * cleanup and exit
-     ***************************************************************/
 	cleanup();
 
-	return 0;
-}				/* End main */
+	tst_exit();
+}
 
-/***************************************************************
- * setup() - performs all ONE TIME setup for this test.
- ***************************************************************/
 void setup()
 {
 	char fname[1024];
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a tempdir and change to it */
 	tst_tmpdir();
 
-	/* open a file for read/write */
 	sprintf(fname, "./tmpfile.%d", getpid());
-	if ((Fd = open(fname, O_RDWR | O_CREAT, 0700)) == -1)
-		tst_brkm(TBROK, cleanup, "Unable to open %s for read/write.  Error:%d, %s", fname, errno, strerror(errno));	/* this exits */
-}				/* End setup() */
+	if ((fd = open(fname, O_RDWR | O_CREAT, 0700)) == -1)
+		tst_brkm(TBROK|TERRNO, cleanup, "open failed");
+}
 
-/***************************************************************
- * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
- ***************************************************************/
 void cleanup()
 {
-	close(Fd);
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
+	close(fd);
+
 	TEST_CLEANUP;
 
-	/* remove temp dir and files */
 	tst_rmdir();
-
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

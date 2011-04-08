@@ -91,7 +91,7 @@
 #include <sys/signal.h>
 #include <limits.h>
 #include "test.h"
-#include "usctest.h"		/* required for usctest   */
+#include "usctest.h"
 
 void setup();
 void cleanup();
@@ -99,13 +99,8 @@ void alarm_received();
 
 char *TCID = "alarm02";		/* Test program identifier.    */
 int TST_TOTAL = 3;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_ * routines */
 
 int received_alarm = 0;		/* Indicates a SIGALRM was received */
-
-/************************************************************
- * Main program
- ***********************************************************/
 
 int main(int ac, char **av)
 {
@@ -120,106 +115,68 @@ int main(int ac, char **av)
 	int exp[] = { 0, 0, 0 };
 	int i;
 
-    /***************************************************************
-     * parse standard options
-     ***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
-
-    /***************************************************************
-     * perform global setup for test
-     ***************************************************************/
 
 	setup();
 
-   /***************************************************************
-    * check looping state
-    ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-
-		/* reset Tst_count in case we are looping. */
 
 		Tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 
-			/* capture an SIGALRM signal */
 			received_alarm = 0;
 			signal(SIGALRM, alarm_received);
 
 			TEST(alarm(sec[i]));
-			/* reset the alarm */
 			alarm(0);
-			if (TEST_RETURN != 0) {
+			if (TEST_RETURN != 0)
 				tst_resm(TFAIL,
-					 "alarm(%lu) returned %ld, when %u was expected for value %s",
-					 sec[i], TEST_RETURN, exp[i], buf[i]);
-
-			}
-	    /***************************************************************
-             * only perform functional verification if flag set (-f not given)
-             ***************************************************************/
+				    "alarm(%lu) returned %ld, when %u was "
+				    "expected for value %s",
+				    sec[i], TEST_RETURN, exp[i], buf[i]);
 			else if (STD_FUNCTIONAL_TEST) {
 				if (received_alarm == 1) {
 					tst_resm(TFAIL,
-						 "alarm(%lu) returned %ldu but an alarm signal was received for value %s",
-						 sec[i], TEST_RETURN, buf[i]);
+					    "alarm(%lu) returned %ldu but an "
+					    "alarm signal was received for "
+					    "value %s",
+					    sec[i], TEST_RETURN, buf[i]);
 				} else {
 					tst_resm(TPASS,
-						 "alarm(%lu) returned %ld as expected for value %s",
-						 sec[i], TEST_RETURN, buf[i]);
+					    "alarm(%lu) returned %ld as "
+					    "expected for value %s",
+					    sec[i], TEST_RETURN, buf[i]);
 				}
 
-			}	/* End of STD_FUNCTIONAL_TEST */
-		}		/* End of for loop */
+			}
+		}
 		/*
 		 *  Reset alarm before cleanup.
 		 */
 
 		alarm(0);
 
-	}			/* End for TEST_LOOPING */
+	}
 
 	cleanup();
+	tst_exit();
 
-	return 0;
 }
-
-/***************************************************************
- * setup() - performs all ONE TIME setup for this test.
- ***************************************************************/
 
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
-
-	/* End setup() */
 
 }
 
-/***********************************************************
- * Cleanup:
- *  exit using tst_exit.
- ***********************************************************/
-
 void cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-
-	tst_exit();
 }
 
 void alarm_received()

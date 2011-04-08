@@ -14,7 +14,6 @@
 * with this program; if not, write the Free Software Foundation, Inc., 59
 * Temple Place - Suite 330, Boston MA 02111-1307, USA.
 
-
 * This sample test aims to check the following assertions:
 *
 * If the signal action was set with the signal() function, getting it into oact
@@ -30,7 +29,6 @@ then reinstalling it with act must be valid.
 
 * The test fails if a signal handler does not work as expected.
 */
-
 
 /* We are testing conformance to IEEE Std 1003.1, 2003 Edition */
 #define _POSIX_C_SOURCE 200112L
@@ -51,21 +49,21 @@ then reinstalling it with act must be valid.
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 #include "posixtest.h"
@@ -123,7 +121,7 @@ void output_init()
 	return ;
 }
 
-void output( char * string, ... )
+void output(char * string, ...)
 {
 	va_list ap;
 #ifndef PLOT_OUTPUT
@@ -134,20 +132,20 @@ void output( char * string, ... )
 #endif
 
 #ifndef PLOT_OUTPUT
-	nw = time( NULL );
-	now = localtime( &nw );
+	nw = time(NULL);
+	now = localtime(&nw);
 
-	if ( now == NULL )
-		printf( ts );
+	if (now == NULL)
+		printf(ts);
 	else
-		printf( "[%2.2d:%2.2d:%2.2d]", now->tm_hour, now->tm_min, now->tm_sec );
+		printf("[%2.2d:%2.2d:%2.2d]", now->tm_hour, now->tm_min, now->tm_sec);
 
 #endif
-	va_start( ap, string );
+	va_start(ap, string);
 
-	vprintf( string, ap );
+	vprintf(string, ap);
 
-	va_end( ap );
+	va_end(ap);
 
 }
 
@@ -172,12 +170,12 @@ void output_fini()
 
 sig_atomic_t called = 1;
 
-void handler_1( int sig )
+void handler_1(int sig)
 {
 	called++;
 }
 
-void handler_2( int sig )
+void handler_2(int sig)
 {
 	called--;
 }
@@ -194,9 +192,9 @@ int main()
 
 	/* Register the signal handler with signal */
 
-	if ( SIG_ERR == signal( SIGNAL, handler_1 ) )
+	if (SIG_ERR == signal(SIGNAL, handler_1))
 	{
-		UNRESOLVED( errno, "Failed to register signal handler with signal()" );
+		UNRESOLVED(errno, "Failed to register signal handler with signal()");
 	}
 
 	/* As whether signal handler is restored to default when executed
@@ -207,60 +205,59 @@ int main()
 
 	sa.sa_handler = handler_2;
 
-	ret = sigemptyset( &sa.sa_mask );
+	ret = sigemptyset(&sa.sa_mask);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to empty signal set" );
+		UNRESOLVED(ret, "Failed to empty signal set");
 	}
 
 	/* Install the signal handler for SIGTTIN */
-	ret = sigaction( SIGNAL, &sa, &save );
+	ret = sigaction(SIGNAL, &sa, &save);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to set signal handler" );
+		UNRESOLVED(ret, "Failed to set signal handler");
 	}
 
 	/* Check the signal handler has been set up */
-	ret = raise( SIGNAL );
+	ret = raise(SIGNAL);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret , "Failed to raise the signal" );
+		UNRESOLVED(ret , "Failed to raise the signal");
 	}
 
-	if ( called != 0 )
+	if (called != 0)
 	{
-		FAILED( "handler not executed" );
+		FAILED("handler not executed");
 	}
 
 	/* Restore the first signal handler */
-	ret = sigaction( SIGNAL, &save, 0 );
+	ret = sigaction(SIGNAL, &save, 0);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to set signal handler" );
+		UNRESOLVED(ret, "Failed to set signal handler");
 	}
 
 	/* Check the signal handler has been set up */
-	ret = raise( SIGNAL );
+	ret = raise(SIGNAL);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret , "Failed to raise the signal" );
+		UNRESOLVED(ret , "Failed to raise the signal");
 	}
 
-	if ( called != 1 )
+	if (called != 1)
 	{
-		FAILED( "handler not executed" );
+		FAILED("handler not executed");
 	}
-
 
 	/* Test passed */
 #if VERBOSE > 0
 
-	output( "Test passed\n" );
+	output("Test passed\n");
 
 #endif
 

@@ -71,7 +71,6 @@
 void do_child(void);
 void cleanup(void);
 void setup(void);
-void sighandler(int);
 #ifdef UCLINUX
 #define PIPE_NAME	"msgsnd05"
 void do_child_uclinux(void);
@@ -79,7 +78,6 @@ void do_child_uclinux(void);
 
 char *TCID = "msgsnd05";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int exp_enos[] = { EINTR, 0 };	/* 0 terminated list of expected errnos */
 
@@ -96,8 +94,8 @@ int main(int ac, char **av)
 	pid_t c_pid;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
 	maybe_run_child(&do_child_uclinux, "d", &msg_q_1);
@@ -162,7 +160,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -200,6 +198,15 @@ void do_child()
 	exit(0);
 }
 
+void
+sighandler(int sig)
+{
+	if (sig == SIGHUP)
+		return;
+	else
+		tst_brkm(TBROK, NULL, "received unexpected signal %d", sig);
+}
+
 #ifdef UCLINUX
 /*
  * do_child_uclinux() - capture signals, initialize buffer, then run do_child()
@@ -219,14 +226,6 @@ void do_child_uclinux()
 #endif
 
 /*
- * sighandler() - handle signals
- */
-void sighandler(int sig)
-{
-	/* we don't need to do anything here */
-}
-
-/*
  * setup() - performs all the ONE TIME setup for this test.
  */
 void setup(void)
@@ -237,7 +236,6 @@ void setup(void)
 	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -272,7 +270,6 @@ void cleanup(void)
 	/* if it exists, remove the message queue that was created */
 	rm_queue(msg_q_1);
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
 	/*
@@ -281,6 +278,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

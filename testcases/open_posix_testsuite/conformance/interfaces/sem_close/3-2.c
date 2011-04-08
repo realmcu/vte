@@ -14,12 +14,10 @@
 * with this program; if not, write the Free Software Foundation, Inc., 59
 * Temple Place - Suite 330, Boston MA 02111-1307, USA.
 
-
 * This sample test aims to check the following assertion:
 *
-*  If sem_unlink has not been called after sem_open for this semaphore, 
+*  If sem_unlink has not been called after sem_open for this semaphore,
 * the function has no effect on the semaphore.
-
 
 * The steps are:
 * -> open a semaphore with a value of 2.
@@ -33,7 +31,6 @@
 * The test fails if the semaphore value is not 1 after semaphore is reopened.
 
 */
-
 
 /* We are testing conformance to IEEE Std 1003.1, 2003 Edition */
 #define _POSIX_C_SOURCE 200112L
@@ -56,23 +53,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -90,7 +87,7 @@
 /******************************************************************************/
 
 /* The main test function. */
-int main( int argc, char * argv[] )
+int main(int argc, char * argv[])
 {
 	int ret, value;
 
@@ -100,82 +97,78 @@ int main( int argc, char * argv[] )
 	output_init();
 
 	/* Create the semaphore */
-	sem = sem_open( SEM_NAME, O_CREAT | O_EXCL, 0777, 2 );
+	sem = sem_open(SEM_NAME, O_CREAT | O_EXCL, 0777, 2);
 
-	if ( ( sem == SEM_FAILED ) && ( errno == EEXIST ) )
+	if (sem == SEM_FAILED && errno == EEXIST)
 	{
-		sem_unlink( SEM_NAME );
-		sem = sem_open( SEM_NAME, O_CREAT | O_EXCL, 0777, 2 );
+		sem_unlink(SEM_NAME);
+		sem = sem_open(SEM_NAME, O_CREAT | O_EXCL, 0777, 2);
 	}
 
-	if ( sem == SEM_FAILED )
+	if (sem == SEM_FAILED)
 	{
-		UNRESOLVED( errno, "Failed to create the semaphore" );
+		UNRESOLVED(errno, "Failed to create the semaphore");
 	}
 
 	/* Use the semaphore to change its value. */
-	do
-	{
-		ret = sem_wait( sem );
-	}
-	while ( ( ret != 0 ) && ( errno == EINTR ) );
+	do {
+		ret = sem_wait(sem);
+	} while (ret != 0 && errno == EINTR);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( errno, "Failed to wait for the semaphore" );
+		UNRESOLVED(errno, "Failed to wait for the semaphore");
 	}
 
 	/* Here, count is 1. Now, close the semaphore */
-	ret = sem_close( sem );
+	ret = sem_close(sem);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( errno, "Failed to close the semaphore" );
+		UNRESOLVED(errno, "Failed to close the semaphore");
 	}
 
 	/* Open the semaphore again */
-	sem = sem_open( SEM_NAME, O_CREAT, 0777, 3 );
+	sem = sem_open(SEM_NAME, O_CREAT, 0777, 3);
 
-	if ( sem == SEM_FAILED )
+	if (sem == SEM_FAILED)
 	{
-		UNRESOLVED( errno, "Failed to re-open the semaphore" );
+		UNRESOLVED(errno, "Failed to re-open the semaphore");
 	}
 
 	/* Check current semaphore count */
-	ret = sem_getvalue( sem, &value );
+	ret = sem_getvalue(sem, &value);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( errno, "Failed to get semaphore value" );
+		UNRESOLVED(errno, "Failed to get semaphore value");
 	}
 
-	if ( value != 1 )
+	if (value != 1)
 	{
-		output( "Got value: %d\n", value );
-		FAILED( "The semaphore count has changed after sem_close" );
+		output("Got value: %d\n", value);
+		FAILED("The semaphore count has changed after sem_close");
 	}
 
 	/* Now, we can destroy all */
-	ret = sem_close( sem );
+	ret = sem_close(sem);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( errno, "Failed to close the semaphore" );
+		UNRESOLVED(errno, "Failed to close the semaphore");
 	}
 
-	ret = sem_unlink( SEM_NAME );
+	ret = sem_unlink(SEM_NAME);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( errno, "Failed to unlink the semaphore" );
+		UNRESOLVED(errno, "Failed to unlink the semaphore");
 	}
 
 	/* Test passed */
 #if VERBOSE > 0
-	output( "Test passed\n" );
+	output("Test passed\n");
 
 #endif
 	PASSED;
 }
-
-

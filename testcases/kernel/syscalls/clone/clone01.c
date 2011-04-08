@@ -87,76 +87,52 @@ static int do_child();
 
 char *TCID = "clone01";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int main(int ac, char **av)
 {
-
-	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 	void *child_stack;	/* stack for child */
 	int status, child_pid;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
-	/* Allocate stack for child */
-	if ((child_stack = (void *)malloc(CHILD_STACK_SIZE)) == NULL) {
+	if ((child_stack = malloc(CHILD_STACK_SIZE)) == NULL)
 		tst_brkm(TBROK, cleanup, "Cannot allocate stack for child");
-	}
 
-	/* check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
+	Tst_count = 0;
 
-		/* reset Tst_count in case we are looping. */
-		Tst_count = 0;
-
-		/*
-		 * Call clone(2)
-		 */
-		TEST(ltp_clone(SIGCHLD, do_child, NULL, CHILD_STACK_SIZE,
-				child_stack));
+	TEST(ltp_clone(SIGCHLD, do_child, NULL, CHILD_STACK_SIZE, child_stack));
 
 again:
-		if ((child_pid = wait(&status)) == -1)
-			tst_brkm(TBROK|TERRNO, cleanup, "wait() failed");
+	child_pid = wait(&status);
 
-		/* check return code */
-		if (TEST_RETURN == child_pid) {
-			tst_resm(TPASS, "clone() returned %ld", TEST_RETURN);
-		} else if (TEST_RETURN == -1) {
-			tst_resm(TFAIL|TTERRNO, "clone() returned %ld for child %d", TEST_RETURN, child_pid);
-		} else
-			goto again;
-
-	}			/* End for TEST_LOOPING */
+	/* check return code */
+	if (TEST_RETURN == child_pid)
+		tst_resm(TPASS, "clone returned %ld", TEST_RETURN);
+	else if (TEST_RETURN == -1)
+		tst_resm(TFAIL|TTERRNO, "clone failed for pid = %d", child_pid);
+	else
+		goto again;
 
 	free(child_stack);
 
-	/* cleanup and exit */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
+	tst_exit();
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}				/* End setup() */
+}
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
@@ -171,9 +147,7 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}
 
 /*
  * do_child() - function executed by child

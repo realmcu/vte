@@ -86,7 +86,6 @@ static void setup();
 static void cleanup();
 
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int main(int ac, char **av)
 {
@@ -95,18 +94,13 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/*
@@ -123,26 +117,24 @@ int main(int ac, char **av)
 				 "address %lu, returned %lu",
 				 io_addr, TEST_RETURN);
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
 	/* cleanup and exit */
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Check whether we are root  */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Must be root for this test!");
-	 /*NOTREACHED*/}
+		tst_brkm(TBROK, NULL, "Must be root for this test!");
+	 }
 
 	/*
 	 * The value of IO_BITMAP_BITS (include/asm-i386/processor.h) changed
@@ -158,10 +150,9 @@ void setup()
 		io_addr = IO_BITMAP_BITS - NUM_BYTES;
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}				/* End setup() */
+}
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
@@ -174,7 +165,7 @@ void cleanup()
 	 * Reset I/O privileges for the specified port.
 	 */
 	if ((ioperm(io_addr, NUM_BYTES, TURN_OFF)) == -1) {
-		tst_brkm(TBROK, tst_exit, "ioperm() cleanup failed");
+		tst_brkm(TBROK, NULL, "ioperm() cleanup failed");
 	}
 
 	/*
@@ -183,10 +174,7 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-
-}				/* End cleanup() */
+}
 
 #else /* __i386__ */
 
@@ -200,7 +188,7 @@ int main()
 	tst_resm(TPASS,
 		 "LSB v1.3 does not specify ioperm() for this architecture.");
 	tst_exit();
-	return 0;
+	tst_exit();
 }
 
 #endif /* __i386__ */

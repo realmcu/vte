@@ -44,7 +44,6 @@
 
 char *TCID = "stream05";
 int TST_TOTAL = 1;
-extern int Tst_count;
 int     local_flag;
 
 #define PASSED 1
@@ -66,11 +65,8 @@ int main(int ac, char *av[])
          /*
           * parse standard options
           */
-        if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-                         tst_resm(TBROK, "OPTION PARSING ERROR - %s", msg);
-                 tst_exit();
-                 /*NOTREACHED*/
-        }
+        if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+                 tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	tst_tmpdir();
         local_flag = PASSED;
 
@@ -80,20 +76,20 @@ int main(int ac, char *av[])
 		sprintf(tempfile, "stream05.%d", getpid());
 	/*--------------------------------------------------------------------*/
 	//block0:
-		if((stream=fopen(tempfile,"a+")) == NULL) {
+		if ((stream=fopen(tempfile,"a+")) == NULL) {
 			tst_resm(TFAIL,"fopen(%s) a+ failed: %s", tempfile, strerror(errno));
 			tst_exit();
 		}
 		fprintf(stream,"a");
 		fclose(stream);
 
-		if((stream=fopen(tempfile,"r+")) == NULL) {
+		if ((stream=fopen(tempfile,"r+")) == NULL) {
 			tst_resm(TFAIL,"fopen(%s) r+ failed: %s", tempfile, strerror(errno));
 			tst_exit();
 		}
 
 		/* check that ferror returns zero */
-		if(ferror(stream) != 0) {
+		if (ferror(stream) != 0) {
 			tst_resm(TFAIL, "ferror did not return zero: %s", strerror(errno));
 			local_flag = FAILED;
 		}
@@ -111,15 +107,15 @@ int main(int ac, char *av[])
 
 		/* check that fileno returns valid file descriptor */
 		fd=fileno(stream);
-		if((nr=read(fd,buf,1)) < 0) {
+		if ((nr=read(fd,buf,1)) < 0) {
 			tst_resm(TFAIL, "read failed: %s", strerror(errno));
 			tst_exit();
 		}
-		if(nr != 1) {
+		if (nr != 1) {
 			tst_resm(TFAIL,"read did not read right number");
 			local_flag = FAILED;
 		}
-		if(buf[0] != 'a') {
+		if (buf[0] != 'a') {
 			tst_resm(TFAIL, "read returned bad values");
 			local_flag = FAILED;
 		}
@@ -136,16 +132,16 @@ int main(int ac, char *av[])
 		/* read to EOF and ensure feof returns non-zero */
 		fclose(stream);
 
-		if((stream=fopen(tempfile,"r+")) == NULL) {
+		if ((stream=fopen(tempfile,"r+")) == NULL) {
 			tst_resm(TFAIL,"fopen(%s) r+ failed: %s", tempfile, strerror(errno));
 			tst_exit();
 		}
-		if(feof(stream) != 0) {
+		if (feof(stream) != 0) {
 			tst_resm(TFAIL, "feof returned non-zero when it should not: %s", strerror(errno));
 			local_flag = FAILED;
 		}
 		fread(buf,1,2,stream);	/* read to EOF */
-		if(feof(stream) == 0) {
+		if (feof(stream) == 0) {
 			tst_resm(TFAIL, "feof returned zero when it should not: %s", strerror(errno));
 			local_flag = FAILED;
 		}
@@ -161,7 +157,7 @@ int main(int ac, char *av[])
 	//block3:
 		/* ensure clearerr works */
 		clearerr(stream);
-		if(feof(stream) != 0) {
+		if (feof(stream) != 0) {
 			tst_resm(TFAIL, "clearerr failed: %s", strerror(errno));
 			local_flag = FAILED;
 		}
@@ -220,6 +216,6 @@ int main(int ac, char *av[])
 	} /* end for */
 	tst_rmdir();
 	tst_exit();
-	/* NOTREACHED */
-	return 0;
+
+	tst_exit();
 }

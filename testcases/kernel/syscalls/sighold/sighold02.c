@@ -121,7 +121,6 @@ extern int sighold(int __sig);
 
 char *TCID = "sighold02";	/* Test program identifier.    */
 int TST_TOTAL = 2;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 char signals_received[MAXMESG];
 int pid;			/* process id of child */
@@ -167,9 +166,9 @@ int main(int ac, char **av)
     /***************************************************************
      * parse standard options, and exit if there is an error
      ***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 #ifdef UCLINUX
 	maybe_run_child(&do_child, "dd", &CHILDSWRITEFD, &CHILDSREADFD);
@@ -185,7 +184,6 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		signals_received[0] = '\0';
@@ -309,8 +307,8 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
+	tst_exit();
 
-	return 0;
 }
 
 /*****************************************************************************
@@ -596,7 +594,7 @@ static void getout()
  ***************************************************************/
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* set up pipe for child sending to parent communications */
@@ -612,10 +610,9 @@ void setup()
 	printf("parent 2 child Fds2[0] = %d, Fds2[1] = %d\n", Fds2[0], Fds2[1]);
 #endif
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}				/* End setup() */
+}
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
@@ -629,7 +626,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-
-}				/* End cleanup() */
+}

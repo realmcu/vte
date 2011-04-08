@@ -33,7 +33,7 @@
 static int valid_framesize_type(__u32 type) {
 	int valid = 0;
 
-	if ( (type == V4L2_FRMSIZE_TYPE_DISCRETE) ||
+	if ((type == V4L2_FRMSIZE_TYPE_DISCRETE) ||
 	     (type == V4L2_FRMSIZE_TYPE_CONTINUOUS) ||
 	     (type == V4L2_FRMSIZE_TYPE_STEPWISE) ) {
 		valid = 1;
@@ -292,7 +292,6 @@ static void do_test_VIDIOC_ENUM_FRAMESIZES_type_invalid_index(enum v4l2_buf_type
 	} while (ret_enum == 0 && i != 0);
 
 }
-
 
 void test_VIDIOC_ENUM_FRAMESIZES_invalid_index() {
 	do_test_VIDIOC_ENUM_FRAMESIZES_type_invalid_index(V4L2_BUF_TYPE_VIDEO_CAPTURE);

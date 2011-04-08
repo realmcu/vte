@@ -8,9 +8,9 @@
 
 /*
  * mq_timedreceive() test plan:
- * Test that if the message queue is empty and O_NONBLOCK is not set, 
- * mq_timedreceive() will block until a message is enqueued on the 
- * message queue. 
+ * Test that if the message queue is empty and O_NONBLOCK is not set,
+ * mq_timedreceive() will block until a message is enqueued on the
+ * message queue.
  *
  * NOTE:  This test makes some assumptions and has some potential race
  * conditions, but seems the best way to test for now.
@@ -56,7 +56,7 @@ int main()
                 perror(ERROR_PREFIX "mq_open");
 		unresolved = 1;
         }
-	
+
 	if ((pid = fork()) != 0) {
 		/* Parent process */
 		int status;
@@ -74,7 +74,7 @@ int main()
 			wait(NULL); /* wait for child to exit */
 			perror(ERROR_PREFIX "mq_timedreceive");
 			failure = 1;
-		}	
+		}
         	if (mq_close(mqdes) != 0) {
 			perror(ERROR_PREFIX "mq_close");
 			unresolved = 1;
@@ -96,7 +96,7 @@ int main()
 	}
 	else {
 		/*  Child Process */
-		sleep(2); /* sleep 2 seconds, 
+		sleep(2); /* sleep 2 seconds,
 			      assume that parent will block on waiting then */
 		if (mq_send(mqdes, msgptr, strlen(msgptr), prio) == -1) {
 			perror(ERROR_PREFIX "mq_send");
@@ -106,4 +106,3 @@ int main()
 	}
 	return PTS_UNRESOLVED;
 }
-

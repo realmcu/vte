@@ -53,7 +53,6 @@
 
 char *TCID = "pipe04";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int exp_enos[] = { EBADF, 0 };
 
@@ -81,16 +80,15 @@ int main(int ac, char **av)
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 	pid_t c1pid, c2pid;
-	int wtchild, wtstatus;
+	int wtstatus;
 	int bytesread;
 	int acnt = 0, bcnt = 0;
 
 	char rbuf[BUFSIZ];
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 #ifdef UCLINUX
 	maybe_run_child(&c1func, "ndd", 1, &fildes[0], &fildes[1]);
 	maybe_run_child(&c2func, "ndd", 2, &fildes[0], &fildes[1]);
@@ -174,25 +172,25 @@ int main(int ac, char **av)
 		 * Set action for the alarm
 		 */
 		if (signal(SIGALRM, alarmfunc) == SIG_ERR)
-			tst_resm(TWARN, "call to signal failed, errno=%d",
-				 errno);
+			tst_resm(TWARN|TERRNO, "call to signal failed");
 		/*
 		 * Set an alarm for 60 seconds just in case the child
 		 * processes don't die
 		 */
 		alarm(60);
-		if ((wtchild = waitpid(c1pid, &wtstatus, 0)) != -1) {
+		if (waitpid(c1pid, &wtstatus, 0) != -1) {
 			if (wtstatus != SIGKILL)
-				tst_resm(TFAIL, "unexpected wait status %d, "
-					 "errno=%d", wtstatus, errno);
+				tst_resm(TFAIL|TERRNO, "unexpected wait status "
+				    "%d", wtstatus);
 			else
 				tst_resm(TPASS, "Child 1 killed while "
 					 "writing to a pipe");
 		}
-		if ((wtchild = waitpid(c2pid, &wtstatus, 0)) != -1) {
-			if (wtstatus != SIGKILL)
-				tst_resm(TFAIL, "unexpected wait status %d, "
-					 "errno=%d", wtstatus, errno);
+		if (waitpid(c2pid, &wtstatus, 0) != -1) {
+			if (!WIFSIGNALED(wtstatus) ||
+			    WTERMSIG(wtstatus) != SIGKILL)
+				tst_resm(TFAIL|TERRNO, "unexpected wait status "
+				    "%d", wtstatus);
 			else
 				tst_resm(TPASS, "Child 2 killed while "
 					 "writing to a pipe");
@@ -202,7 +200,7 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -210,10 +208,9 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -228,9 +225,6 @@ void cleanup()
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
 
 void c1func()
@@ -239,8 +233,7 @@ void c1func()
 		tst_resm(TWARN, "Could not close fildes[0] - errno %d", errno);
 	while (1)
 		if (write(fildes[1], "bbbbbbbbbbbbbbbbbbbbbbbbb", 25) == -1)
-			tst_resm(TBROK, "Child 1 error writing to pipe - "
-				 "errno %d", errno);
+			tst_resm(TBROK|TERRNO, "[child 1] pipe write failed");
 }
 
 void c2func()
@@ -249,13 +242,12 @@ void c2func()
 		tst_resm(TWARN, "Could not close fildes[0] - errno %d", errno);
 	while (1)
 		if (write(fildes[1], "AAAAAAAAAAAAAAAAAAAAAAAAA", 25) == -1)
-			tst_resm(TBROK, "Child 2 error writing to pipe - "
-				 "errno %d", errno);
+			tst_resm(TBROK|TERRNO, "[child 2] pipe write failed");
 }
 
 void alarmfunc(int sig)
 {
 	/* for some reason tst_brkm doesn't seem to work in a signal handler */
-	tst_resm(TFAIL, "One or more children did not die within 60 seconds");
-	cleanup();
+	tst_brkm(TFAIL, cleanup, "one or more children did't die in 60 second "
+	    "time limit");
 }

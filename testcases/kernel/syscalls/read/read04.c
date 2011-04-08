@@ -58,7 +58,6 @@ void setup(void);
 
 char *TCID = "read04";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 #define TST_SIZE	27	/* could also do strlen(palfa) */
 char fname[255];
@@ -76,20 +75,19 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	setup();		/* global setup for test */
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		Tst_count = 0;	/* reset Tst_count while looping */
 
 		if ((rfild = open(fname, O_RDONLY)) == -1) {
 			tst_brkm(TBROK, cleanup, "can't open for reading");
-		 /*NOTREACHED*/}
+		 }
 		TEST(read(rfild, prbuf, BUFSIZ));
 
 		if (TEST_RETURN == -1) {
@@ -114,10 +112,11 @@ int main(int ac, char **av)
 		}
 		if (close(rfild) == -1) {
 			tst_brkm(TBROK, cleanup, "close() failed");
-		 /*NOTREACHED*/}
+		 }
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
+
 }
 
 /*
@@ -125,15 +124,13 @@ int main(int ac, char **av)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	umask(0);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	sprintf(fname, "tfile_%d", getpid());
@@ -141,10 +138,10 @@ void setup(void)
 	if ((fild = creat(fname, 0777)) == -1) {
 		tst_brkm(TBROK, cleanup, "creat(%s, 0777) Failed, errno = %d"
 			 " : %s", fname, errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 	if (write(fild, palfa, TST_SIZE) != TST_SIZE) {
 		tst_brkm(TBROK, cleanup, "can't write to Xread");
-	 /*NOTREACHED*/}
+	 }
 	close(fild);
 }
 
@@ -160,10 +157,7 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	unlink(fname);
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

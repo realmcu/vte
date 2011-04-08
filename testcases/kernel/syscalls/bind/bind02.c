@@ -61,7 +61,6 @@
 char *TCID = "bind02";		/* Test program identifier.    */
 int testno;
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 /* This port needs to be a Privledged port */
 #define TCP_PRIVLEGED_COM_PORT 463
@@ -161,6 +160,5 @@ int main(int argc, char *argv[])
 	try_bind();
 	tst_exit();
 
-	/* NOT REACHED */
-	return 0;
+	tst_exit();
 }

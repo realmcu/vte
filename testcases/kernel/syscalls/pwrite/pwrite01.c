@@ -90,7 +90,6 @@
 
 char *TCID = "pwrite01";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 int fildes;			/* file descriptor for tempfile */
 char *write_buf[NBUFS];		/* buffer to hold data to be written */
 
@@ -107,18 +106,13 @@ int main(int ac, char **av)
 	int nwrite;		/* no. of bytes written by pwrite() */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* Reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/*
@@ -204,12 +198,13 @@ int main(int ac, char **av)
 		/* reset to offset 0 in case we are looping */
 		l_seek(fildes, 0, SEEK_SET, 0);
 
-	}			/* End for TEST_LOOPING */
-	/* Call cleanup() to undo setup done for the test. */
-	cleanup();
+	}
 
-	return 0;
-}				/* End main */
+	cleanup();
+	tst_exit();
+	tst_exit();
+
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -219,16 +214,14 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Allocate/Initialize the write buffer with known data */
 	init_buffers();
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Creat a temporary file used for mapping */
@@ -255,7 +248,7 @@ void init_buffers()
 		write_buf[count] = (char *)malloc(K1);
 
 		if (write_buf[count] == NULL) {
-			tst_brkm(TBROK, tst_exit, "malloc() failed ");
+			tst_brkm(TBROK, NULL, "malloc() failed ");
 		}
 		memset(write_buf[count], count, K1);
 	}
@@ -361,9 +354,6 @@ void cleanup()
 			 TEMPFILE, errno, strerror(errno));
 	}
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

@@ -72,7 +72,6 @@ void do_child(void);
 
 char *TCID = "msgsnd06";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int exp_enos[] = { EIDRM, 0 };	/* 0 terminated list of expected errnos */
 
@@ -90,8 +89,8 @@ int main(int ac, char **av)
 	int status, e_code;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
 #define PIPE_NAME	"msgsnd06"
@@ -172,7 +171,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -232,13 +231,12 @@ void do_child()
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -256,7 +254,6 @@ void setup(void)
 void cleanup(void)
 {
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
 	/*
@@ -265,6 +262,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

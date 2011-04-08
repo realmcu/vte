@@ -86,7 +86,6 @@ static void cleanup(void);
 static void cleanup1(void);
 
 char *TCID = "umount03";	/* Test program identifier.    */
-extern int Tst_count;		/* TestCase counter for tst_* routine */
 
 #define DEFAULT_FSTYPE "ext2"
 #define FSTYPE_LEN	20
@@ -126,7 +125,7 @@ int main(int ac, char **av)
 	int status;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, options, &help)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, options, &help)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -161,13 +160,10 @@ int main(int ac, char **av)
 		STD_COPIES = 1;
 	}
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		switch (fork()) {
@@ -182,7 +178,7 @@ int main(int ac, char **av)
 
 			/* Switch to nobody user */
 			if ((ltpuser = getpwnam(nobody_uid)) == NULL) {
-				tst_brkm(TBROK, tst_exit, "\"nobody\" user"
+				tst_brkm(TBROK, NULL, "\"nobody\" user"
 					 "not present");
 			}
 			if (setuid(ltpuser->pw_uid) == -1) {
@@ -216,14 +212,14 @@ int main(int ac, char **av)
 			}
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
 	/* cleanup and exit */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
@@ -231,7 +227,6 @@ void setup()
 	char nobody_uid[] = "nobody";
 	struct passwd *ltpuser;
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Check whether we are root */
@@ -239,7 +234,7 @@ void setup()
 		if (Type != NULL) {
 			free(Type);
 		}
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 
 	/* Switch to nobody user */
@@ -247,13 +242,13 @@ void setup()
 		if (Type != NULL) {
 			free(Type);
 		}
-		tst_brkm(TBROK, tst_exit, "\"nobody\" user not present");
+		tst_brkm(TBROK, NULL, "\"nobody\" user not present");
 	}
 	if (seteuid(ltpuser->pw_uid) == -1) {
 		if (Type != NULL) {
 			free(Type);
 		}
-		tst_brkm(TBROK, tst_exit, "setuid failed to set the "
+		tst_brkm(TBROK, NULL, "setuid failed to set the "
 			 "effective uid to %d", ltpuser->pw_uid);
 	}
 	/* make a temp directory */
@@ -273,7 +268,7 @@ void setup()
 	/* set up expected error numbers */
 	TEST_EXP_ENOS(exp_enos);
 
-	if(access(device,F_OK)) {
+	if (access(device,F_OK)) {
 		tst_brkm(TBROK, cleanup1,
 			"Device '%s' does not exist", device);
 	}
@@ -286,11 +281,10 @@ void setup()
 			 strerror(TEST_ERRNO));
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	return;
-}				/* End setup() */
+}
 
 /*
  *cleanup1() -  performs cleanup for this test at premature exit.
@@ -307,14 +301,12 @@ void cleanup1()
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it. */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
 	tst_exit();
 
 	return;
-}				/* End cleanup() */
+}
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
@@ -339,14 +331,10 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it. */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-
 	return;
-}				/* End cleanup() */
+}
 
 /*
  * issue a help message

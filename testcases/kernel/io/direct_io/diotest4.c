@@ -17,7 +17,6 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-
 /*
  * NAME
  *      diotest4.c
@@ -87,7 +86,6 @@ int TST_TOTAL=17;		 		 /* Total number of test conditions */
 #else
 # define ADDRESS_OF_MAIN main
 #endif
-
 
 /*
  * runtest_f: Do read, writes. Verify the error value obtained by
@@ -328,7 +326,6 @@ main(int argc, char *argv[])
 	}
 	total++;
 
-
 	/* Test-7: Closed file descriptor */
 	offset = 4096;
 	count = bufsize;
@@ -365,7 +362,6 @@ main(int argc, char *argv[])
 	}
 	total++;
 
-
 	/* Test-10: read, write to a mmaped file */
 	shm_base = (char *)(((long)sbrk(0) + (shmsz-1)) & ~(shmsz-1));
         if (shm_base == NULL) {
@@ -390,8 +386,7 @@ main(int argc, char *argv[])
 	}
 	else
 		tst_resm (TPASS, "read, write to a mmaped file");
-	total++; 
-
+	total++;
 
 	/* Test-11: read, write to an unmaped file with munmap */
 	if ((ret = munmap(shm_base, 0x100000)) < 0) {
@@ -406,7 +401,6 @@ main(int argc, char *argv[])
 	else
 		tst_resm (TPASS, "read, write to an unmapped file");
 	total++;
-
 
 	/* Test-12: read from file not open for reading */
 	offset = 4096;
@@ -502,7 +496,6 @@ main(int argc, char *argv[])
 	total++;
 	close(fd);
 
-
 	/* Test-15: read, write buffer in read-only space */
 	offset = 4096;
 	count = bufsize;
@@ -531,7 +524,7 @@ main(int argc, char *argv[])
 	}
 	else {
 		ret = write(fd, (char *)((ulong)ADDRESS_OF_MAIN & pagemask), count);
-		if (ret < 0 ) {
+		if (ret < 0) {
 			tst_resm(TFAIL,"write to read-only space. returns %d: %s",
 				ret, strerror(errno));
 			l_fail = TRUE;
@@ -551,13 +544,13 @@ main(int argc, char *argv[])
 	offset = 4096;
 	count = bufsize;
 	if ((buf1 = (char *) (((long)sbrk(0) + (shmsz-1)) & ~(shmsz-1))) == NULL) {
-                tst_brkm(TBROK, cleanup,"sbrk: %s", strerror(errno));
+                tst_brkm(TBROK|TERRNO, cleanup, "sbrk failed");
         }
         if ((fd = open(filename, O_DIRECT|O_RDWR)) < 0) {
-		tst_brkm(TBROK, cleanup, "can't open %s: %s",
-			filename, strerror(errno));
+		tst_brkm(TBROK|TERRNO, cleanup,
+		    "open(%s, O_DIRECT|O_RDWR) failed", filename);
         }
-	ret =runtest_f(fd, buf1, offset, count, EFAULT, 16, " nonexistant space");
+	ret = runtest_f(fd, buf1, offset, count, EFAULT, 16, " nonexistant space");
 	if (ret != 0) {
 		failed = TRUE;
 		fail_count++;
@@ -572,8 +565,8 @@ main(int argc, char *argv[])
 	offset = 4096;
 	count = bufsize;
         if ((fd = open(filename,O_DIRECT|O_RDWR|O_SYNC)) < 0) {
-		tst_brkm(TBROK, cleanup, "can't open %s: %s",
-			filename, strerror(errno));
+		tst_brkm(TBROK, cleanup,
+		    "open(%s, O_DIRECT|O_RDWR|O_SYNC failed)", filename);
         }
 	ret = runtest_s(fd, buf2, offset, count, 17, "opened with O_SYNC");
 	if (ret != 0) {
@@ -587,15 +580,15 @@ main(int argc, char *argv[])
 	close(fd);
 
 	unlink(filename);
-	if (failed) {
+	if (failed)
 		tst_resm(TINFO, "%d/%d test blocks failed",
 			fail_count, total);
-	} else {
+	else
 		tst_resm(TINFO, "%d testblocks completed",
 		 		 total);
-	}
 	cleanup();
-	return 0;
+
+	tst_exit();
 }
 
 static void setup(void)
@@ -621,20 +614,17 @@ static void setup(void)
 
 static void cleanup(void)
 {
-	if(fd1 != -1)
+	if (fd1 != -1)
 		unlink(filename);
 
 	tst_rmdir();
 
-	tst_exit();
 }
 
 #else /* O_DIRECT */
 
 int
 main() {
-
-		 tst_resm(TCONF,"O_DIRECT is not defined.");
-		 return 0;
+	tst_brkm(TCONF, NULL, "O_DIRECT is not defined.");
 }
 #endif /* O_DIRECT */

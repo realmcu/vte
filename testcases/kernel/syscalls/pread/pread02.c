@@ -80,7 +80,6 @@
 
 char *TCID = "pread02";		/* Test program identifier.    */
 int TST_TOTAL = 2;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 char *write_buf[NBUFS];		/* buffer to hold data to be written */
 char *read_buf[NBUFS];		/* buffer to hold data read from file */
@@ -121,20 +120,15 @@ int main(int ac, char **av)
 	char *test_desc;	/* test specific error message */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* Perform global setup for test */
 	setup();
 
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* Reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/* loop through the test cases */
@@ -178,13 +172,12 @@ int main(int ac, char **av)
 					 "errno:%d, expected:%d", test_desc,
 					 TEST_ERRNO, Test_cases[i].exp_errno);
 			}
-		}		/* End of TEST CASE LOOPING */
-	}			/* End of TEST_LOOPOING. */
+		}
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -194,12 +187,10 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	int i;			/* counter for setup functions */
+	int i;
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Allocate/Initialize the read/write buffer with known data */
@@ -253,7 +244,7 @@ int setup1()
  */
 int setup2()
 {
-	/* make a temp directory and cd to it */
+
 	tst_tmpdir();
 
 	/* Creat a temporary file used for mapping */
@@ -283,7 +274,7 @@ void init_buffers()
 		read_buf[count] = (char *)malloc(K1);
 
 		if ((write_buf[count] == NULL) || (read_buf[count] == NULL)) {
-			tst_brkm(TBROK, tst_exit,
+			tst_brkm(TBROK, NULL,
 				 "malloc() failed on read/write buffers");
 		}
 		memset(write_buf[count], count, K1);
@@ -320,8 +311,6 @@ void cleanup()
 			 TEMPFILE, errno, strerror(errno));
 	}
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	tst_exit();
 }

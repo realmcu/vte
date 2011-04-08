@@ -64,7 +64,6 @@
 
 char *TCID = "hugeshmget05";
 int TST_TOTAL = 1;
-extern int Tst_count;
 unsigned long huge_pages_shm_to_be_allocated;
 
 int exp_enos[] = {EACCES, 0};	/* 0 terminated list of expected errnos */
@@ -82,15 +81,14 @@ int main(int ac, char **av)
 	void do_child(void);
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
 
-        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 )
+        if (get_no_of_hugepages() <= 0 || hugepages_size() <= 0)
              tst_brkm(TCONF, cleanup, "Not enough available Hugepages");
-        else             
+        else
              huge_pages_shm_to_be_allocated = ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
-       
+
 	setup();			/* global setup */
 
 	if ((pid = fork()) == -1) {
@@ -107,7 +105,7 @@ int main(int ac, char **av)
 		do_child();
 
 		tst_exit();
-		/*NOTREACHED*/
+
 	} else {		/* parent */
 		/* wait for the child to return */
 		if (waitpid(pid, &status, 0) == -1) {
@@ -121,8 +119,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	/* NOTREACHED */
-	return 0;
+	tst_exit();
 }
 
 /*
@@ -160,7 +157,7 @@ do_child()
 			tst_resm(TFAIL|TTERRNO, "call failed with an "
 				 "unexpected error");
 			break;
-		}		
+		}
 	}
 }
 
@@ -173,13 +170,11 @@ setup(void)
 	/* check for root as process owner */
 	check_root();
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -218,7 +213,4 @@ cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
-

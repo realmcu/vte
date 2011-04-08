@@ -73,12 +73,11 @@
 #include "usctest.h"
 #include "common_timers.h"
 
-static void setup();
+void setup(void);
 static int setup_test(int option);
 
 char *TCID = "timer_settime02";	/* Test program identifier.    */
 int TST_TOTAL = 4;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static struct itimerspec new_set, old_set, *old_temp;
 static kernel_timer_t timer;
@@ -92,16 +91,13 @@ main(int ac, char **av)
 
 	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) !=
 			(char *) NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -118,10 +114,9 @@ main(int ac, char **av)
 				);
 			}
 
-		}	/* End of TEST CASE LOOPING */
-	}		/* End for TEST_LOOPING */
+		}
+	}
 
-	/* Clean up and exit */
 	cleanup();
 	tst_exit();
 }
@@ -165,7 +160,7 @@ setup_test(int option)
 		 * absolute time for timer
 		 */
 		flag = TIMER_ABSTIME;
-		/* 
+		/*
 		 * Let's not use the linux_syscall_number syscall(2)
 		 * wrapper here because our primary test focus is
 		 * timer_create, not clock_gettime. That's covered in
@@ -184,24 +179,23 @@ setup_test(int option)
 }
 
 /* setup() - performs all ONE TIME setup for this test */
-static void
-setup()
+void
+setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	if (syscall(__NR_timer_create, CLOCK_REALTIME, NULL, &timer) < 0)
-		tst_brkm(TBROK, tst_exit, "timer_create failed");
-}	/* End setup() */
+		tst_brkm(TBROK, NULL, "timer_create failed");
+}
 
 /*
  * cleanup() - Performs one time cleanup for this test at
  * completion or premature exit
  */
-static void
+void
 cleanup(void)
 {
 	/*
@@ -209,7 +203,4 @@ cleanup(void)
 	* print errno log if that option was specified.
 	*/
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
-}	/* End cleanup() */
+}

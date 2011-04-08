@@ -2,7 +2,7 @@
  * Copyright (c) 2004, Bull SA. All rights reserved.
  * Created by:  Laurent.Vivier@bull.net
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
  */
 
@@ -52,10 +52,10 @@ int main()
 	int in_progress;
 	static int check_one;
 
-	if (sysconf(_SC_ASYNCHRONOUS_IO) != 200112L)
+	if (sysconf(_SC_ASYNCHRONOUS_IO) < 200112L)
 		return PTS_UNSUPPORTED;
 
-	snprintf(tmpfname, sizeof(tmpfname), "/tmp/pts_aio_cancel_5_1_%d", 
+	snprintf(tmpfname, sizeof(tmpfname), "/tmp/pts_aio_cancel_5_1_%d",
 		  getpid());
 	unlink(tmpfname);
 	fd = open(tmpfname, O_CREAT | O_RDWR | O_EXCL,
@@ -138,12 +138,12 @@ int main()
 
 				/* check iocb is not modified */
 
-				if ( (aiocb[i]->aio_fildes != fd) ||
-				     (aiocb[i]->aio_buf != buf[i]) ||
-				     (aiocb[i]->aio_nbytes != BUF_SIZE) ||
-				     (aiocb[i]->aio_offset != 0) ||
-				     (aiocb[i]->aio_sigevent.sigev_notify 
-							!= SIGEV_NONE) )
+				if ((aiocb[i]->aio_fildes != fd) ||
+				    (aiocb[i]->aio_buf != buf[i]) ||
+				    (aiocb[i]->aio_nbytes != BUF_SIZE) ||
+				    (aiocb[i]->aio_offset != 0) ||
+				    (aiocb[i]->aio_sigevent.sigev_notify !=
+				     SIGEV_NONE))
 				{
 					printf(TNAME " aiocbp modified\n");
 					return PTS_FAIL;

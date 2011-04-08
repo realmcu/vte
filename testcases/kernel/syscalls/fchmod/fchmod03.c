@@ -82,17 +82,13 @@
 #include "test.h"
 #include "usctest.h"
 
-#define FILE_MODE       S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
-#define PERMS		01777	/*
-				 * Mode permissions of test file with sticky
-				 * bit set.
-				 */
+#define FILE_MODE       (S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)
+#define PERMS		01777
 #define TESTFILE	"testfile"
 
 int fd;				/* file descriptor for test file */
 char *TCID = "fchmod03";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
@@ -107,31 +103,19 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 	mode_t file_mode;	/* mode permissions set on testfile */
 
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
-		/*
-		 * Call fchmod(2) with specified mode permissions
-		 * (to set sticky bit) on testfile.
-		 */
 		TEST(fchmod(fd, PERMS));
 
-		/* check return code of fchmod(2) */
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL, "fchmod(%d, %#o) Failed, errno=%d : %s",
-				 fd, PERMS, TEST_ERRNO, strerror(TEST_ERRNO));
+			tst_resm(TFAIL|TTERRNO, "fchmod failed");
 			continue;
 		}
 		/*
@@ -143,58 +127,41 @@ int main(int ac, char **av)
 			 * Get the file information using
 			 * fstat(2).
 			 */
-			if (fstat(fd, &stat_buf) < 0) {
-				tst_brkm(TFAIL, cleanup,
-					 "fstat(2) of %s failed, errno:%d",
-					 TESTFILE, TEST_ERRNO);
-			}
+			if (fstat(fd, &stat_buf) == -1)
+				tst_brkm(TFAIL|TERRNO, cleanup, "fstat failed");
 			file_mode = stat_buf.st_mode;
 
 			/* Verify STICKY BIT set on testfile */
-			if ((file_mode & PERMS) != PERMS) {
+			if ((file_mode & PERMS) != PERMS)
 				tst_resm(TFAIL, "%s: Incorrect modes 0%3o, "
 					 "Expected 0777", TESTFILE, file_mode);
-			} else {
+			else
 				tst_resm(TPASS, "Functionality of fchmod(%d, "
 					 "%#o) successful", fd, PERMS);
-			}
-		} else {
+		} else
 			tst_resm(TPASS, "call succeeded");
-		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+	tst_exit();
+}
 
-/*
- * void
- * setup() - performs all ONE TIME setup for this test.
- *  Create a temporary directory and cd to it.
- *  Create a testfile under test directory.
- */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Switch to nobody user for correct error code collection */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
-	}
-	ltpuser = getpwnam(nobody_uid);
-	if (seteuid(ltpuser->pw_uid) == -1) {
-		tst_resm(TINFO, "seteuid failed to "
-			 "to set the effective uid to %d", ltpuser->pw_uid);
-		perror("seteuid");
-	}
+	tst_require_root(NULL);
 
-	/* Pause if that option was specified */
+	ltpuser = getpwnam(nobody_uid);
+	if (ltpuser == NULL)
+		tst_brkm(TBROK|TERRNO, NULL, "getpwnam failed");
+	if (seteuid(ltpuser->pw_uid) == -1)
+		tst_brkm(TBROK|TERRNO, NULL, "seteuid failed");
+
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/*
@@ -202,36 +169,17 @@ void setup()
 	 * mode permissios and set the ownership of the test file to the
 	 * uid/gid of guest user.
 	 */
-	if ((fd = open(TESTFILE, O_RDWR | O_CREAT, FILE_MODE)) == -1) {
-		tst_brkm(TBROK, cleanup,
-			 "open(%s, O_RDWR|O_CREAT, %#o) Failed, errno=%d : %s",
-			 TESTFILE, FILE_MODE, errno, strerror(errno));
-	}
-}				/* End setup() */
+	if ((fd = open(TESTFILE, O_RDWR | O_CREAT, FILE_MODE)) == -1)
+		tst_brkm(TBROK|TERRNO, cleanup, "open failed");
+}
 
-/*
- * void
- * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
- *  Close the testfile created in the setup.
- *  Delete the testfile and temporary directory created in setup().
- */
 void cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 */
 	TEST_CLEANUP;
 
-	/* Close the testfile created/opened in the setup */
-	if (close(fd) == -1) {
-		tst_brkm(TBROK, NULL, "close(%s) Failed, errno=%d : %s",
-			 TESTFILE, errno, strerror(errno));
-	}
+	if (close(fd) == -1)
+		tst_resm(TWARN|TERRNO, "close failed");
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

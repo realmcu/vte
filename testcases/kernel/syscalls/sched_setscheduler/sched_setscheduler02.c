@@ -58,7 +58,6 @@
 
 char *TCID = "sched_setscheduler02";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int exp_enos[] = { EPERM, 0 };
 extern struct passwd *my_getpwnam(char *);
@@ -79,15 +78,14 @@ int main(int ac, char **av)
 	int status;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	setup();
 
 	TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* reset Tst_count in case we are looping */
@@ -136,7 +134,7 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -147,13 +145,11 @@ void setup()
 {
 	/* must run test as root */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Must run test as root");
+		tst_brkm(TBROK, NULL, "Must run test as root");
 	}
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -168,8 +164,5 @@ void cleanup()
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 
 }

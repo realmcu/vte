@@ -98,8 +98,8 @@
 #include "config.h"
 #include "test.h"
 
-char *TCID = "sys_epoll02";	/* test program identifier */
-int TST_TOTAL = 1;		/* total number of tests in this file */
+char *TCID = "epoll01";
+int TST_TOTAL = 1;
 
 #ifdef HAVE_SYS_EPOLL_H
 
@@ -162,7 +162,7 @@ do {					\
 				WTERMSIG(kid_status), strsignal(WTERMSIG(kid_status)));	\
 		}								\
 	}									\
-} while(0)
+} while (0)
 
 /*
  * Call a function in a "protected" context.
@@ -195,9 +195,6 @@ do {					\
 kid_status = kid_status;})
 
 /* Extern Global Variables */
-extern int Tst_count;		/* counter for tst_xxx routines */
-extern char *TESTDIR;		/* temporary dir created by tst_tmpdir() */
-
 
 /*
  * Given the number of random size requests to test,
@@ -220,16 +217,14 @@ int test_epoll_create(unsigned int num_rand_attempts)
 	num_epoll_create_test_calls++;
 	epoll_fd = epoll_create(fd_set_size);
 	if (epoll_fd >= 0) {
-		tst_resm(TFAIL,
-			 "epoll_create with negative set size returned a valid fd (errno = %d:%s)",
-			 errno, strerror(errno));
+		tst_resm(TFAIL|TERRNO,
+			 "epoll_create with negative set size succeeded unexpectedly");
 		num_epoll_create_test_fails++;
 		close(epoll_fd);
 	} else {
 		if (errno != EINVAL) {
-			tst_resm(TFAIL,
-				 "epoll_create with negative set size failed to set errno to EINVAL (%d:%s)",
-				 errno, strerror(errno));
+			tst_resm(TFAIL|TERRNO,
+				 "epoll_create with negative set size didn't set errno to EINVAL");
 			num_epoll_create_test_fails++;
 		} else {
 			tst_resm(TPASS, "epoll_create with negative set size");
@@ -357,7 +352,7 @@ static const char *result_strings[] = {
 #if EPOLL_CTL_TEST_RESULTS_SHOW_PARAMS
 #define EPOLL_CTL_TEST_FAIL(msg , ...) \
 ({ \
-	if (ev_ptr != NULL){ \
+	if (ev_ptr != NULL) { \
 		tst_resm(TFAIL, ( "(epoll_ctl(%d,%08x,%d,%p = {%08x,%08d}) returned %d:%s)" ) , ##__VA_ARGS__ , \
 			epoll_fds[epfd_index], epoll_ctl_ops[op_index], \
 			epoll_fds[fd_index], ev_ptr, ev_ptr->events, ev_ptr->data.fd, errno, \
@@ -371,7 +366,7 @@ static const char *result_strings[] = {
 
 #define EPOLL_CTL_TEST_PASS(msg , ...) \
 ({ \
-	if (ev_ptr != NULL){ \
+	if (ev_ptr != NULL) { \
 		tst_resm(TPASS, ( "(epoll_ctl(%d,%08x,%d,%p = {%08x,%08d}) returned %d:%s)" ) , ##__VA_ARGS__ , \
 			epoll_fds[epfd_index], epoll_ctl_ops[op_index], \
 			epoll_fds[fd_index], ev_ptr, ev_ptr->events, ev_ptr->data.fd, errno, \
@@ -618,7 +613,7 @@ int test_epoll_ctl(int epoll_fd)
 						/* Now test the result */
 						if (!((result == RES_PASS)
 						      || (result == RES_PASS_RETV_MAT_ERRNO_IGN))) {
-							if (result > sizeof(result_strings) / sizeof(const char *)) {
+							if (result > (sizeof(result_strings) / sizeof(const char *))) {
 							/* Returned a result which has no corresponding text description */
 								EPOLL_CTL_TEST_FAIL
 								    ("FIXME FIX ME BUG in Test Program itself!");
@@ -632,9 +627,13 @@ int test_epoll_ctl(int epoll_fd)
 									      [result]));
 							}
 							num_epoll_ctl_test_fails++;
+#ifdef DEBUG
 						} else	/* The call of epoll_ctl behaved as expected */
 							EPOLL_CTL_TEST_PASS((result_strings
 									     [result]));
+#else
+						}
+#endif
 					}
 				}
 			}
@@ -660,8 +659,7 @@ int main(int argc, char **argv)
 
 	/* Get the current time */
 	if (gettimeofday(&tv, NULL) != 0) {
-		tst_brkm(TBROK, NULL, "gettimeofday failed");
-		tst_exit();
+		tst_brkm(TBROK|TERRNO, NULL, "gettimeofday failed");
 	} else {
 		tst_resm(TINFO, "gettimeofday() works");
 	}
@@ -680,7 +678,7 @@ int main(int argc, char **argv)
 	/* Create an epoll_fd for testing epoll_ctl */
 	epoll_fd = epoll_create(BACKING_STORE_SIZE_HINT);
 	if (epoll_fd < 0) {
-		return -1;
+		tst_brkm(TFAIL|TERRNO, NULL, "epoll_create failed");
 	}
 
 	tst_resm(TINFO, "Testing epoll_ctl");
@@ -689,15 +687,14 @@ int main(int argc, char **argv)
 		/* ctl test(s) failed */
 	}
 
-	return 0;
+	tst_exit();
 }
 
 #else
 
 int main(void)
 {
-	tst_resm(TCONF, "No epoll support found.");
-	tst_exit();
+	tst_brkm(TCONF, NULL, "No epoll support found.");
 }
 
 #endif

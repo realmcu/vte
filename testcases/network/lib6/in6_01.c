@@ -92,9 +92,9 @@ main(int argc, char *argv[])
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(argc, argv, (option_t *)NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	msg = parse_opts(argc, argv, NULL, NULL);
+	if (msg != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
@@ -144,7 +144,7 @@ main(int argc, char *argv[])
 		TEST(IN6_IS_ADDR_V4MAPPED(in6.s6_addr));
 		if (TEST_RETURN == maptab[i].ismap)
 		tst_resm(TEST_RETURN == maptab[i].ismap ? TPASS : TFAIL,
-			"IN6_IS_ADDR_V4MAPPED(\"%s\") %d",
+			"IN6_IS_ADDR_V4MAPPED(\"%s\") %ld",
 			maptab[i].addr, TEST_RETURN);
 	}
 
@@ -182,9 +182,9 @@ main(int argc, char *argv[])
 	}
 
 	cleanup();
-	/* NOTREACHED */
+
 	return(0);
-}	/* End main */
+}
 
 pid_t pid;
 
@@ -198,5 +198,5 @@ void
 cleanup(void)
 {
 	TEST_CLEANUP;
-	tst_exit();
+
 }

@@ -89,7 +89,6 @@ static void setup(void);
 
 char *TCID = "setdomainname02";
 int TST_TOTAL = 3;
-extern int Tst_count;
 
 static int exp_enos[] = { EINVAL, EFAULT, 0 };	/* 0 terminated list of *
 						 * expected errnos */
@@ -114,8 +113,8 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL))
+	    != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -153,7 +152,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -163,7 +162,6 @@ int main(int ac, char **av)
 void setup(void)
 {
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Set up the expected error numbers for -e option */
@@ -171,16 +169,15 @@ void setup(void)
 
 	/* Check whether we are root */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 
 	/* Save current domainname */
 	if ((getdomainname(old_domain_name, MAX_NAME_LEN)) < 0) {
-		tst_brkm(TBROK, tst_exit, "getdomainname() failed while"
+		tst_brkm(TBROK, NULL, "getdomainname() failed while"
 			 " getting current domain name");
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 }
@@ -205,6 +202,4 @@ void cleanup(void)
 			 " domainname to \"%s\"", old_domain_name);
 	}
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

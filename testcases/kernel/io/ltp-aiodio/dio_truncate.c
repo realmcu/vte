@@ -39,8 +39,6 @@
 
 #define NUM_CHILDREN 8
 
-
-
 char *check_zero(unsigned char *buf, int size)
 {
 	unsigned char *p;
@@ -94,9 +92,8 @@ int dio_read(char *filename)
 			}
 		} while (r > 0);
 	}
-    return 0;
+  return 0;
 }
-
 
 void dio_append(char *filename, int fill)
 {
@@ -167,5 +164,5 @@ int main(int argc, char **argv)
 		kill(pid[i], SIGTERM);
 	}
 
-    return 0;
+  return 0;
 }

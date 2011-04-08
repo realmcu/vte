@@ -49,7 +49,6 @@
 
 TCID_DEFINE(signalfd01);
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 #ifndef HAVE_SIGNALFD
 #define  USE_STUB
@@ -81,7 +80,7 @@ extern int Tst_count;
 int main(int argc, char **argv)
 {
 	tst_resm(TCONF, "System doesn't support execution of the test");
-	return 0;
+	tst_exit();
 }
 
 #else
@@ -284,7 +283,7 @@ int main(int argc, char **argv)
 	}
 
 	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
@@ -301,7 +300,7 @@ int main(int argc, char **argv)
 
 	cleanup();
 
-	return 0;
+	tst_exit();
 }
 
 /*
@@ -309,7 +308,7 @@ int main(int argc, char **argv)
  */
 void setup(void)
 {
-	/* Pause if that option was specified */
+
 	TEST_PAUSE;
 }
 
@@ -325,8 +324,6 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
 
 #endif

@@ -121,7 +121,7 @@ EOF
 	fi
 
 	cat >> "$makefile.2" <<EOF
-INSTALL_TARGETS+=	${prereq_cache}
+INSTALL_TARGETS+=	${tests}
 MAKE_TARGETS+=		${make_target_prereq_cache}
 
 EOF
@@ -152,11 +152,11 @@ EOF
 
 	fi
 
-	if [ "$tests" != "" ] && ! grep -q '^run.sh' "$makefile.3"; then
+	if ! grep -q '^run.sh' "$makefile.3"; then
 		cat >> "$makefile.3" <<EOF
 run.sh:
 	@echo '#/bin/sh' > \$@
-	@echo "\$(top_srcdir)/bin/run-tests.sh \$(subdir) $tests" >> \$@
+	@echo "\$(top_srcdir)/bin/run-tests.sh \$(subdir) \$(INSTALL_TARGETS)" >> \$@
 	@chmod +x run.sh
 
 EOF

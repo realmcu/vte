@@ -84,14 +84,12 @@ static struct file_operations tbase_fops = {
 };
 
 static int tbase_open(struct inode *ino, struct file *f) {
-        return 0;
+      return 0;
 }
 
 static int tbase_close(struct inode *ino, struct file *f) {
-        return 0;
+      return 0;
 }
-
-
 
 /* my bus stuff */
 struct device_driver test_driver;
@@ -113,13 +111,10 @@ static int test_device_match (struct device *dev, struct device_driver *drv) {
 
 }
 
-
 struct bus_type test_bus_type = {
 	.name = "test_bus",
 	.match = test_device_match,
 };
-
-
 
 /* my driver stuff */
 int test_dev_probe(struct device *dev) {
@@ -139,14 +134,12 @@ struct device_driver test_driver = {
 	.remove = test_dev_remove,
 };
 
-
 /* my device stuff */
 struct device test_device = {
 //	.name = "TestDevice",
 	.bus = &test_bus_type,
 	.bus_id = "test_bus",
 };
-
 
 /* my class stuff */
 static void test_class_release(struct class_device *class_dev) {
@@ -165,14 +158,12 @@ struct class test_class = {
 	.release = test_class_release,
 };
 
-
 /* my class device stuff */
 struct class_device test_class_dev = {
 	.class_id = "test_bus",
 	.dev = &test_device,
 	.class = &test_class,
 };
-
 
 /* my class interface stuff */
 int test_intf_add(struct class_device *class_dev) {
@@ -189,7 +180,6 @@ struct class_interface test_interface = {
 	.add = &test_intf_add,
 	.remove = &test_intf_rem,
 };
-
 
 /* my sys_device stuff */
 int test_resume(struct sys_device *dev) {
@@ -256,7 +246,7 @@ static int tbase_ioctl(struct inode *ino, struct file *f,
 	 * parameter to the ioctl
 	 *
 	 */
-	if (copy_from_user(&tif, (void *)l, sizeof(tif)) ) {
+	if (copy_from_user(&tif, (void *)l, sizeof(tif))) {
                 /* Bad address */
                 return(-EFAULT);
         }
@@ -265,12 +255,12 @@ static int tbase_ioctl(struct inode *ino, struct file *f,
          * Setup inparms and outparms as needed
          */
         if (tif.in_len > 0) {
-                inparms = (caddr_t *)kmalloc(tif.in_len, GFP_KERNEL);                if(!inparms) {
+                inparms = (caddr_t *)kmalloc(tif.in_len, GFP_KERNEL);                if (!inparms) {
                         return(-ENOMEM);
                 }
 
                 rc = copy_from_user(inparms, tif.in_data, tif.in_len);
-                if(rc) {
+                if (rc) {
                         kfree(inparms);
                         return(-EFAULT);
                 }
@@ -282,7 +272,6 @@ static int tbase_ioctl(struct inode *ino, struct file *f,
                         return(-ENOMEM);
                 }
         }
-
 
 	/*
 	 * Use a switch statement to determine which function
@@ -333,15 +322,15 @@ static int tbase_ioctl(struct inode *ino, struct file *f,
 	 */
 
 	/* if outparms then copy outparms into tif.out_data */
-        if(outparms) {
-                if(copy_to_user(tif.out_data, outparms, tif.out_len)) {
+        if (outparms) {
+                if (copy_to_user(tif.out_data, outparms, tif.out_len)) {
                         printk("tbase: Unsuccessful copy_to_user of outparms\n");
                         rc = -EFAULT;
                 }
         }
 
         /* copy tif structure into l so that can be used by user program */
-        if(copy_to_user((void*)l, &tif, sizeof(tif)) ) {
+        if (copy_to_user((void*)l, &tif, sizeof(tif))) {
                 printk("tbase: Unsuccessful copy_to_user of tif\n");
                 rc = -EFAULT;
         }
@@ -358,8 +347,6 @@ static int tbase_ioctl(struct inode *ino, struct file *f,
 
 	return rc;
 }
-
-
 
 /*
  * test_device_register
@@ -379,9 +366,7 @@ static int test_device_register() {
 	else
 		printk("tbase: Device registered\n");
 
-
 	driver_unregister(drv);
-
 
 	/* check if driver_register returns an error */
 	if (driver_register(drv)) {
@@ -394,7 +379,6 @@ static int test_device_register() {
 	return 0;
 
 }
-	
 
 /*
  * test_device_unregister
@@ -418,9 +402,6 @@ static int test_device_unregister() {
 	return 0;
 }
 
-
-
-
 /*
  * test_bus_add
  *	make call to bus_add_device, which will
@@ -435,10 +416,9 @@ static int test_bus_add() {
         }
         else {
                 printk("tbase: Device added to bus\n");
-                return 0;
+              return 0;
         }
 }
-	
 
 /*
  * test_get_drv
@@ -451,7 +431,7 @@ static int test_get_drv() {
 	int a, rc;
 	struct device_driver    *drv = &test_driver,
 				*tmp = NULL;
-	
+
 	/* get reference count before test call */
 	a = atomic_read(&drv->kobj.refcount);
 
@@ -477,7 +457,7 @@ static int test_get_drv() {
 
 	return rc;
 }
-	
+
 /*
  * test_class_get
  *	make test call to class_get which should return
@@ -532,7 +512,6 @@ static int test_put_drv() {
         return rc;
 }
 
-
 /*
  * test_reg_firm
  *	test call to register_firmware, which will
@@ -564,7 +543,7 @@ static int test_reg_firm() {
 		return 0;
 	}
 
-}	
+}
 
 /*
  * test_create_file
@@ -632,11 +611,10 @@ static int test_dev_file() {
         else {
                 printk("tbase: created dev sysfs file\n");
                 device_remove_file(dev, &dev_attr_test_id);
-                return 0;
+              return 0;
         }
 
 }
-
 
 /*
  * test_bus_rescan
@@ -678,7 +656,7 @@ static int test_bus_file() {
         else {
                 printk("tbase: created bus sysfs file\n");
                 bus_remove_file(bus, &bus_attr_test_id);
-                return 0;
+              return 0;
         }
 
 }
@@ -699,7 +677,7 @@ static int test_class_file() {
         else {
                 printk("tbase: created class sysfs file\n");
                 class_remove_file(cls, &class_attr_test_id);
-                return 0;
+              return 0;
         }
 
 }
@@ -723,7 +701,6 @@ static int test_class_reg() {
 	return error;
 }
 
-
 /*
  * test_classdev_reg
  *	make test call to class_device_register
@@ -739,7 +716,7 @@ static int test_classdev_reg() {
 	}
 	else {
 		printk("tbase: Registered class device\n");
-	
+
 		/* make class device sysfs file */
 		if (class_device_create_file(&test_class_dev, &class_device_attr_test_id)) {
 			rc = 1;
@@ -749,13 +726,12 @@ static int test_classdev_reg() {
 			printk("tbase: Created class device sysfs file\n");
 			class_device_remove_file(&test_class_dev, &class_device_attr_test_id);
 		}
-	
+
 		class_device_unregister(&test_class_dev);
 	}
 
 	return rc;
 }
-
 
 /*
  * test_classint_reg
@@ -797,7 +773,6 @@ static int test_sysdev_cls_reg() {
 
 }
 
-
 /*
  * test_sysdev_reg
  *      make test call to sys_device_register
@@ -813,13 +788,10 @@ static int test_sysdev_reg() {
         }
         else {
                 printk("tbase: Registered sysdev \n");
-                return 0;
+              return 0;
         }
 
 }
-
-
-
 
 /*
  * tbase_init_module
@@ -844,13 +816,13 @@ static int tbase_init_module(void) {
                 return rc;
         }
 
-        if(Major == 0)
+        if (Major == 0)
                 Major = rc;
 
 	/* call any other init functions you might use here */
 
 	printk("tbase: Registration success.\n");
-        return 0;
+      return 0;
 }
 
 /*
@@ -874,10 +846,6 @@ static void tbase_exit_module(void) {
                 printk("tbase: unregister success\n");
 
 }
-
-
-
-
 
 /* specify what that init is run when the module is first
 loaded and that exit is run when it is removed */

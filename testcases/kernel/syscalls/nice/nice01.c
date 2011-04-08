@@ -79,7 +79,6 @@
 
 char *TCID = "nice01";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int Org_nice;			/* original priority of the test process */
 FILE *fp;
@@ -95,18 +94,13 @@ int main(int ac, char **av)
 	int rval;
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* Reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/*
@@ -144,13 +138,12 @@ int main(int ac, char **av)
 		/* return the process to the original priority */
 		rval = nice(-NICEINC);
 
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
+	tst_exit();
 
-	return 0;
-}				/* End main */
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -159,15 +152,14 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Make sure the calling process is super-user only */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Must be ROOT to run this test.");
+		tst_brkm(TBROK, NULL, "Must be ROOT to run this test.");
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	Org_nice = getpriority(PRIO_PROCESS, 0);
@@ -186,6 +178,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

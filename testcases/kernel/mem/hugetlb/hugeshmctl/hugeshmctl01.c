@@ -66,7 +66,6 @@
 
 char *TCID = "hugeshmctl01";
 int TST_TOTAL = 4;
-extern int Tst_count;
 unsigned long huge_pages_shm_to_be_allocated;
 
 int shm_id_1 = -1;
@@ -125,13 +124,12 @@ int main(int ac, char **av)
 	void check_functionality(void);
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
 
-        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 )
-             tst_brkm(TCONF, tst_exit, "Not enough available Hugepages");
-        else             
+        if (get_no_of_hugepages() <= 0 || hugepages_size() <= 0)
+             tst_brkm(TCONF, NULL, "Not enough available Hugepages");
+        else
              huge_pages_shm_to_be_allocated = ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
 
 	setup();			/* global setup */
@@ -199,8 +197,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	tst_exit();
 }
 
 /*
@@ -388,7 +385,7 @@ stat_cleanup()
 
 	/* wake up the childern so they can detach the memory and exit */
 	for (i=0; i<N_ATTACH; i++) {
-		if(kill(pid_arr[i], SIGUSR1) == -1) {
+		if (kill(pid_arr[i], SIGUSR1) == -1) {
 			tst_brkm(TBROK, cleanup, "kill failed");
 		}
 	}
@@ -474,9 +471,8 @@ func_rmid()
 void
 sighandler(sig)
 {
-	if (sig != SIGUSR1) {
+	if (sig != SIGUSR1)
 		tst_resm(TINFO, "received unexpected signal %d", sig);
-	}
 }
 
 /*
@@ -485,10 +481,9 @@ sighandler(sig)
 void
 setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, sighandler, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -512,7 +507,6 @@ cleanup(void)
 	/* if it exists, remove the shared memory segment */
 	rm_shm(shm_id_1);
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
 	/*
@@ -521,7 +515,4 @@ cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
-

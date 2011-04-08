@@ -103,7 +103,6 @@ extern struct passwd *my_getpwnam(char *);
 
 char *TCID = "fstat05";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 int exp_enos[] = { EFAULT, 0 };
 int fildes;			/* testfile descriptor */
 
@@ -137,11 +136,8 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
 
 	/* Buffer points outside user's accessible address space. */
 	ptr_str = &stat_buf;	/* if it was for conformance testing */
@@ -155,9 +151,8 @@ int main(int ac, char **av)
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -170,34 +165,30 @@ int main(int ac, char **av)
 		/* Check return code from fstat(2) */
 		if (TEST_RETURN == -1) {
 			TEST_ERROR_LOG(TEST_ERRNO);
-			if (TEST_ERRNO == EFAULT) {
-				tst_resm(TPASS, "fstat() fails with "
-					 "expected error EFAULT");
-			} else {
-				tst_resm(TFAIL, "fstat() fails with "
-					 "wrong errno:%d", TEST_ERRNO);
-			}
-		} else {
+			if (TEST_ERRNO == EFAULT)
+				tst_resm(TPASS,
+				    "fstat failed with EFAULT as expected");
+			else
+				tst_resm(TFAIL|TTERRNO, "fstat failed unexpectedly");
+		} else
 			tst_resm(TFAIL, "fstat() returned %ld but we wanted -1",
 				 TEST_RETURN);
-		}
 
-	}			/* End of TEST CASE LOOPING. */
+	}
 
 	/*
 	 * Invoke cleanup() to delete the test directory/file(s) created
 	 * in the setup().
 	 */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+	tst_exit();
+}
 
 #else
 
 int main()
 {
-	tst_resm(TINFO, "test is not available on uClinux");
-	return 0;
+	tst_brkm(TCONF, NULL, "test is not available on uClinux");
 }
 
 #endif /* if !defined(UCLINUX) */
@@ -212,32 +203,19 @@ void setup()
 {
 	int i;
 
+	tst_require_root(NULL);
+
 	/*
 	 * Capture unexpected signals SIGSEGV included
 	 * SIGSEGV being considered as acceptable as returned value
 	 */
-	for (i = 0; i < SIG_SEEN; i++) {
-
+	for (i = 0; i < SIG_SEEN; i++)
 		signal(siglist[i], &sighandler);
-	}
-
-	/* Switch to nobody user for correct error code collection */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
-	}
 
 	ltpuser = getpwnam(nobody_uid);
 	if (setuid(ltpuser->pw_uid) == -1)
-		tst_resm(TINFO, "setuid(%d) failed", ltpuser->pw_uid);
+		tst_brkm(TBROK|TERRNO, NULL, "setuid(%d) failed", ltpuser->pw_uid);
 
-	/* Pause if that option was specified
-	 * TEST_PAUSE contains the code to fork the test with the -i option.
-	 * You want to make sure you do this before you create your temporary
-	 * directory.
-	 */
-	TEST_PAUSE;
-
-	/* Make a temp dir and cd to it */
 	tst_tmpdir();
 
 	/* Create a testfile under temporary directory */
@@ -246,7 +224,8 @@ void setup()
 		tst_brkm(TBROK|TERRNO, cleanup,
 			 "open(%s, O_RDWR|O_CREAT, 0666) failed", TEST_FILE);
 
-}				/* End setup() */
+	TEST_PAUSE;
+}
 
 /*
  * void
@@ -268,12 +247,9 @@ void cleanup()
 	if (close(fildes) == -1)
 		tst_brkm(TBROK|TERRNO, cleanup, "close(%s) failed", TEST_FILE);
 
-	/* Remove files and temporary directory created */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}
 
 /*
  * sighandler() - handle the signals
@@ -281,13 +257,10 @@ void cleanup()
 
 void sighandler(int sig)
 {
-	if (sig == SIGSEGV) {
-		tst_resm(TPASS, "fstat() fails with "
-			 "expected signal SIGSEGV");
-	} else {
-		tst_brkm(TBROK, 0, "Unexpected signal %d received.", sig);
-	}
+	if (sig == SIGSEGV)
+		tst_resm(TPASS, "fstat failed as expected with SIGSEGV");
+	else
+		tst_brkm(TBROK, NULL, "Unexpected signal %d received.", sig);
 	cleanup();
-	/*NOT REACHED */
-
+	tst_exit();
 }

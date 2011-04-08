@@ -60,7 +60,6 @@ int dbg;
 int print_delays;
 int print_io_accounting;
 int print_task_context_switch_counts;
-__u64 stime, utime;
 
 #define PRINTF(fmt, arg...) {			\
 	    if (dbg) {				\
@@ -362,7 +361,6 @@ int main(int argc, char *argv[])
 	if ((nl_sd = create_nl_socket(NETLINK_GENERIC)) < 0)
 		err(1, "error creating Netlink socket\n");
 
-
 	mypid = getpid();
 	id = get_family_id(nl_sd);
 	if (!id) {
@@ -441,7 +439,6 @@ int main(int argc, char *argv[])
 
 		PRINTF("nlmsghdr size=%zu, nlmsg_len=%d, rep_len=%d\n",
 			sizeof(struct nlmsghdr), msg.n.nlmsg_len, rep_len);
-
 
 		rep_len = GENLMSG_PAYLOAD(&msg.n);
 

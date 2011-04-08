@@ -96,7 +96,6 @@ int parse_args(int c, char *v)
 	return handled;
 }
 
-
 struct periodic_arg {
 	int period;
 	int iterations;
@@ -109,7 +108,7 @@ void *calc(void *arg)
 	int i, j;
 	int loops = (intptr_t)arg;
 	for (i = 0; i < loops; i++) {
-		for (j = 0; j < 125; j++ ) {
+		for (j = 0; j < 125; j++) {
 			// Sum of the numbers up to J
 			int temp = j * ( j + 1 ) / 2;
 			(void)temp;

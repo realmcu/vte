@@ -88,7 +88,6 @@
 
 char *TCID = "utime01";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 time_t curr_time;		/* current time in seconds */
 time_t tloc;			/* argument var. for time() */
 int exp_enos[] = { 0 };
@@ -105,13 +104,12 @@ int main(int ac, char **av)
 	time_t pres_time;	/* file modification/access/present time */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
-	/* Perform global setup for test */
 	setup();
 
 	/*
@@ -122,12 +120,16 @@ int main(int ac, char **av)
 			 "Cannot do utime on a file located on an NFS filesystem");
 	}
 
+        if (tst_is_cwd_v9fs()) {
+                tst_brkm(TCONF, cleanup,
+                         "Cannot do utime on a file located on an 9P filesystem");
+        }
+
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -136,7 +138,6 @@ int main(int ac, char **av)
 		 */
 		TEST(utime(TEMP_FILE, NULL));
 
-		/* check return code of utime(2) */
 		if (TEST_RETURN == -1) {
 			TEST_ERROR_LOG(TEST_ERRNO);
 			tst_resm(TFAIL, "utime(%s) Failed, errno=%d : %s",
@@ -163,7 +164,7 @@ int main(int ac, char **av)
 						 "failed to get present time "
 						 "after utime, error=%d",
 						 errno);
-				 /*NOTREACHED*/}
+				 }
 
 				/*
 				 * Get the modification and access times of
@@ -173,7 +174,7 @@ int main(int ac, char **av)
 					tst_brkm(TFAIL, cleanup, "stat(2) of "
 						 "%s failed, error:%d",
 						 TEMP_FILE, TEST_ERRNO);
-				 /*NOTREACHED*/}
+				 }
 				modf_time = stat_buf.st_mtime;
 				access_time = stat_buf.st_atime;
 
@@ -195,13 +196,12 @@ int main(int ac, char **av)
 			}
 		}
 		Tst_count++;
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /*
  * void
@@ -213,7 +213,6 @@ void setup()
 {
 	int fildes;		/* file handle for temp file */
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Check that the test process id is super/root  */
@@ -222,10 +221,8 @@ void setup()
 		tst_exit();
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Creat a temporary file under above directory */
@@ -233,20 +230,20 @@ void setup()
 		tst_brkm(TBROK, cleanup,
 			 "creat(%s, %#o) Failed, errno=%d :%s",
 			 TEMP_FILE, FILE_MODE, errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 
 	/* Close the temporary file created */
 	if (close(fildes) < 0) {
 		tst_brkm(TBROK, cleanup,
 			 "close(%s) Failed, errno=%d : %s:",
 			 TEMP_FILE, errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 
 	/* Get the current time */
 	if ((curr_time = time(&tloc)) < 0) {
 		tst_brkm(TBROK, cleanup,
 			 "time() failed to get current time, errno=%d", errno);
-	 /*NOTREACHED*/}
+	 }
 
 	/*
 	 * Sleep for a second so that mod time and access times will be
@@ -254,7 +251,7 @@ void setup()
 	 */
 	sleep(2);		/* sleep(1) on IA64 sometimes sleeps < 1 sec!! */
 
-}				/* End setup() */
+}
 
 /*
  * void
@@ -270,9 +267,6 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

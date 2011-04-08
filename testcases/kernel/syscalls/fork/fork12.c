@@ -50,7 +50,6 @@
 
 char *TCID = "fork12";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void setup(void);
 void cleanup(void);
@@ -68,9 +67,9 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	/*
 	 * perform global setup for the test
@@ -122,7 +121,7 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -158,16 +157,13 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	tst_exit();
 }
 
 void fork12_sigs(int signum)
 {
 	if (signum == SIGQUIT) {
 		/* Children will continue, parent will ignore */
-	} else {
-		tst_brkm(TBROK, 0, "Unexpected signal %d received.", signum);
-		cleanup();
-		tst_exit();
-	}
+	} else
+		tst_brkm(TBROK, cleanup,
+		    "Unexpected signal %d received.", signum);
 }

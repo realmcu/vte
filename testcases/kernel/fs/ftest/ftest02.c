@@ -43,7 +43,6 @@
  *
  */
 
-
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/param.h>
@@ -62,7 +61,6 @@
 #define K_1		1024
 #define K_2		2048
 #define K_4		4096
-
 
 char *TCID = "ftest02";
 int TST_TOTAL = 1;
@@ -109,7 +107,7 @@ int main(void)
 
 	if (signal(SIGTERM, term) == SIG_ERR) {
 		tst_resm(TFAIL, "first signal failed");
-		tst_exit();
+
 	}
 
 	/*
@@ -122,7 +120,7 @@ int main(void)
 	if (!startdir[0]) {
 		if (getcwd(startdir, MAXPATHLEN) == NULL) {
 			tst_resm(TBROK,"getcwd failed");
-			tst_exit();
+
 		}
 	}
 	cwd = startdir;
@@ -138,15 +136,14 @@ int main(void)
 	if (chdir(dirname) < 0) {
 		tst_resm(TBROK,"\tCan't chdir(%s), error %d.", dirname, errno);
 		cleanup();
-		tst_exit();
+
 	}
 	dirlen = strlen(dirname);
 	if (chdir(homedir) < 0) {
 		tst_resm(TBROK,"\tCan't chdir(%s), error %d.", homedir, errno);
 		cleanup();
-		tst_exit();
-	}
 
+	}
 
 	for (k = 0; k < nchild; k++) {
 		if ((child = fork()) == 0) {
@@ -154,10 +151,7 @@ int main(void)
 			exit(0);
 		}
 		if (child < 0) {
-			tst_resm(TINFO, "System resource may be too low, fork() malloc()"
-					   " etc are likely to fail.");
-			tst_resm(TBROK, "Test broken due to inability of fork.");
-			cleanup();
+			tst_brkm(TBROK|TERRNO, cleanup, "fork failed");
 		}
 		pidlist[k] = child;
 	}
@@ -204,10 +198,7 @@ int main(void)
 	pid = fork();
 
 	if (pid < 0) {
-		tst_resm(TINFO, "System resource may be too low, fork() malloc()"
-				    " etc are likely to fail.");
-		tst_resm(TBROK, "Test broken due to inability of fork.");
-		cleanup();
+		tst_brkm(TBROK|TERRNO, cleanup, "fork failed");
 	}
 
 	if (pid == 0) {
@@ -223,10 +214,7 @@ int main(void)
 	pid = fork();
 
 	if (pid < 0) {
-		tst_resm(TINFO, "System resource may be too low, fork() malloc()"
-	                        " etc are likely to fail.");
-	        tst_resm(TBROK, "Test broken due to inability of fork.");
-	        cleanup();
+		tst_brkm(TBROK|TERRNO, cleanup, "fork failed");
 	}
 
 	if (pid == 0) {
@@ -243,6 +231,7 @@ int main(void)
 	sync();
 
 	cleanup();
+
 	tst_exit();
 }
 
@@ -307,7 +296,7 @@ static void unlfile(int me, int count)
 	for (; i < count; i++) {
 		ft_mkname(fname, dirname, me, i);
 		val = rmdir(fname);
-		if (val < 0 )
+		if (val < 0)
 			val = unlink(fname);
 		if (val == 0 || errno == ENOENT)
 			continue;
@@ -377,7 +366,6 @@ static void fussdir(int me, int count)
 	strcpy(dirname, savedir);
 }
 
-
 /*
  * dotest()
  *	Children execute this.
@@ -417,7 +405,6 @@ static void dotest(int me, int count)
 
 	//tst_resm(TINFO,"Test %d pid %d exiting.", me, getpid());
 }
-
 
 static void dowarn(int me, char *m1, char *m2)
 {

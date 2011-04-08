@@ -58,9 +58,10 @@
 #include "test.h"
 #include "usctest.h"
 
-#include <errno.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include <fcntl.h>
+#include <libgen.h>
 #include <string.h>
 
 void cleanup(void);
@@ -68,7 +69,6 @@ void setup(void);
 
 char *TCID = "fchdir01";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int fd;
 char *temp_dir;
@@ -83,53 +83,37 @@ int main(int ac, char **av)
 	void check_functionality(void);
 	int r_val;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	setup();		/* global setup */
 
-	/* The following loop checks looping state if -i option given */
-
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
 		/* get the name of the test dirctory */
-		if ((temp_dir = (getcwd(temp_dir, 0))) == NULL) {
-			tst_brkm(TBROK, cleanup, "%s - getcwd() in main() "
-				 "failed", TCID);
-		}
+		if ((temp_dir = (getcwd(temp_dir, 0))) == NULL)
+			tst_brkm(TBROK, cleanup, "getcwd failed");
 
 		/*
 		 * create a new directory and open it
 		 */
 
-		if ((r_val = mkdir(TEST_DIR, MODES)) == -1) {
-			tst_brkm(TBROK, cleanup, "%s - mkdir() in main() "
-				 "failed", TCID);
-		}
+		if ((r_val = mkdir(TEST_DIR, MODES)) == -1)
+			tst_brkm(TBROK, cleanup, "mkdir failed");
 
-		if ((fd = open(TEST_DIR, O_RDONLY)) == -1) {
+		if ((fd = open(TEST_DIR, O_RDONLY)) == -1)
 			tst_brkm(TBROK, cleanup, "open of directory failed");
-		}
-
-		/*
-		 * Use TEST macro to make the call
-		 */
 
 		TEST(fchdir(fd));
 
-		if (TEST_RETURN == -1) {
-			tst_brkm(TFAIL, cleanup, "%s call failed - errno = %d :"
-				 " %s", TCID, TEST_ERRNO, strerror(TEST_ERRNO));
-		} else {
-			if (STD_FUNCTIONAL_TEST) {
+		if (TEST_RETURN == -1)
+			tst_brkm(TFAIL|TTERRNO, cleanup, "fchdir call failed");
+		else {
+			if (STD_FUNCTIONAL_TEST)
 				check_functionality();
-			} else {
+			else
 				tst_resm(TPASS, "call succeeded");
-			}
 		}
 
 		/*
@@ -144,96 +128,52 @@ int main(int ac, char **av)
 		 */
 
 		/* chdir back to our temporary work directory */
-		if ((r_val = chdir("..")) == -1) {
-			tst_resm(TBROK, "fchdir failed - errno = %d : %s",
-				 errno, strerror(errno));
-		}
+		if ((r_val = chdir("..")) == -1)
+			tst_resm(TBROK|TERRNO, "chdir failed");
 
-		if ((r_val = rmdir(TEST_DIR)) == -1) {
-			tst_resm(TBROK, "rmdir failed - errno = %d : %s",
-				 errno, strerror(errno));
-		}
+		if ((r_val = rmdir(TEST_DIR)) == -1)
+			tst_resm(TBROK|TERRNO, "rmdir failed");
 
-		/*
-		 * clean up things in case we are looping
-		 */
 		free(temp_dir);
 		temp_dir = NULL;
 	}
 
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
-/*
- * check_functionality() - check that we are in the correct directory.
- */
 void check_functionality(void)
 {
 	char *buf = NULL;
-	char **bufptr = &buf;
 	char *dir;
 
-	/*
-	 * Get the current directory path.
-	 */
 	if ((buf = (getcwd(buf, 0))) == NULL) {
-		tst_brkm(TBROK, cleanup, "%s - getcwd() in "
-			 "check_functionality() failed", TCID);
+		tst_brkm(TBROK, cleanup, "getcwd failed");
 	}
 
-	/*
-	 * strip off all but the last directory name in the
-	 * current working directory.
-	 */
-	do {
-		if ((dir = strsep(bufptr, "/")) == NULL) {
-			tst_brkm(TBROK, cleanup, "%s - strsep() in "
-				 "check_functionality() failed", TCID);
-		}
-	} while (*bufptr != NULL);
+	if ((dir = basename(buf)) == NULL)
+		tst_brkm(TBROK, cleanup, "basename failed");
 
-	/*
-	 * Make sure we are in the right place.
-	 */
-	if (strcmp(TEST_DIR, dir) == 0) {
-		tst_resm(TPASS, "%s call succeeded", TCID);
-	} else {
-		tst_resm(TFAIL, "%s functionality test failed", TCID);
-	}
+	if (strcmp(TEST_DIR, dir) == 0)
+		tst_resm(TPASS, "fchdir call succeeded");
+	else
+		tst_resm(TFAIL, "fchdir call failed");
 }
 
-/*
- * setup() - performs all the ONE TIME setup for this test.
- */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* create a test directory and cd into it */
 	tst_tmpdir();
 }
 
-/*
- * cleanup() - performs all the ONE TIME cleanup for this test at completion
- * 	       or premature exit.
- */
 void cleanup(void)
 {
-	/* remove the test directory */
 	tst_rmdir();
 
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

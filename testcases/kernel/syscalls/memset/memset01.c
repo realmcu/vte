@@ -59,7 +59,6 @@ int local_flag = PASSED;
 int block_number;
 int TST_TOTAL = 1;
 
-extern int Tst_count;
 
 int anyfail();
 void setup();
@@ -110,7 +109,7 @@ int main(int argc, char *argv[])
 								    "Test passed");
 	tst_exit();
 	/* THIS CALL DOES NOT RETURN - EXITS!!  */
-	return 0;
+	tst_exit();
 }
 
 /*--------------------------------------------------------------*/

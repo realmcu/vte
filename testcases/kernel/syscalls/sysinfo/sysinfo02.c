@@ -78,7 +78,6 @@ void cleanup();
 
 char *TCID = "sysinfo02";	/* Test program identifier */
 int TST_TOTAL = 1;		/* Total number of test cases */
-extern int Tst_count;		/* Test case counter for tst_* routines */
 
 #if !defined(UCLINUX)
 
@@ -91,9 +90,9 @@ int main(int ac, char **av)
 	sysinfo_buf = (void *)INVALID_ADDRESS;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	setup();		/* Global setup */
 
@@ -113,10 +112,10 @@ int main(int ac, char **av)
 			/* Test Failed */
 			tst_brkm(TFAIL, cleanup, "sysinfo() Failed, Expected -1"
 				 "returned %d/n", TEST_ERRNO);
-		 /*NOTREACHED*/}
+		 }
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -125,7 +124,7 @@ int main(int ac, char **av)
 int main()
 {
 	tst_resm(TINFO, "test is not available on uClinux");
-	return 0;
+	tst_exit();
 }
 
 #endif /* if !defined(UCLINUX) */
@@ -137,12 +136,11 @@ int main()
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	umask(0);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -153,5 +151,5 @@ void setup(void)
 void cleanup(void)
 {
 	TEST_CLEANUP;
-	tst_exit();
+
 }

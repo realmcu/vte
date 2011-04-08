@@ -42,8 +42,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <usctest.h>
-#include <test.h>
+#include "usctest.h"
+#include "test.h"
 #include <libclone.h>
 
 char *TCID = "pidns12";
@@ -63,8 +63,6 @@ void cleanup()
 	/* Clean the test testcase as LTP wants*/
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
 
 /*
@@ -126,7 +124,6 @@ int child_fn(void *arg)
 	exit(0);
 }
 
-
 /***********************************************************************
 *   M A I N
 ***********************************************************************/
@@ -184,4 +181,4 @@ int main(int argc, char *argv[])
 	/* Control won't reach below */
 	exit(0);
 
-}	/* End main */
+}

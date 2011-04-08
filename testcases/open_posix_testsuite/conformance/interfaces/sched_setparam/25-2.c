@@ -1,4 +1,4 @@
-/* 
+/*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -15,7 +15,6 @@
  * @pt:SS
  */
 
-
 #include <sched.h>
 #include <stdio.h>
 #include <errno.h>
@@ -24,30 +23,29 @@
 
 #if defined(_POSIX_SPORADIC_SERVER)&&(_POSIX_SPORADIC_SERVER != -1)
 
-int main(){
+int main() {
 	int policy, invalid_priority, result;
 	struct sched_param param;
 
 	policy = sched_getscheduler(0);
-	if(policy == -1){
+	if (policy == -1) {
 		perror("An error occurs when calling sched_getscheduler()");
 		return PTS_UNRESOLVED;
-	} else if(policy != SCHED_SPORADIC){
+	} else if (policy != SCHED_SPORADIC) {
 
-		if(sched_getparam(0, &param) != 0){
+		if (sched_getparam(0, &param) != 0) {
 			perror("An error occurs when calling sched_getparam()");
 			return PTS_UNRESOLVED;
 		}
-		
-		if(sched_setscheduler(0, SCHED_SPORADIC, &param) != 0){
+
+		if (sched_setscheduler(0, SCHED_SPORADIC, &param) != 0) {
 			perror("An error occurs when calling sched_getparam()");
 			return PTS_UNRESOLVED;
 		}
-	}	
-
+	}
 
 	invalid_priority = sched_get_priority_max(SCHED_SPORADIC);
-	if(invalid_priority == -1){
+	if (invalid_priority == -1) {
 		perror("An error occurs when calling sched_get_priority_max()");
 		return PTS_UNRESOLVED;
 	}
@@ -58,18 +56,18 @@ int main(){
 	param.sched_ss_low_priority = invalid_priority;
 
 	result = sched_setparam(0,&param);
-	
-	if(result == -1 && errno == EINVAL){
+
+	if (result == -1 && errno == EINVAL) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
-	} else if(result != -1) {
+	} else if (result != -1) {
 		printf("The returned code is not -1.\n");
 		return PTS_FAIL;
-	} else if(errno == EPERM) {
+	} else if (errno == EPERM) {
 		printf("This process does not have the permission to set its own scheduling parameter.\nTry to launch this test as root\n");
 		return PTS_UNRESOLVED;
 	} else {
-	        perror("Unknow error");	        
+	        perror("Unknow error");
 		return PTS_FAIL;
 	}
 }

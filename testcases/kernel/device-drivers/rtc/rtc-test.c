@@ -35,7 +35,6 @@ int rtc_fd = -1;
 char *TCID = "rtc01";
 int TST_TOTAL = 3;
 
-
 /* Read and Alarm Tests :  Read test reads the Date/time from RTC
  * while Alarm test, sets the alarm to 5 seconds in future and
  * waits for it to ring.The ioctls tested in these tests are
@@ -203,7 +202,7 @@ int main(int argc, char **argv)
        rtc_fd = open(rtc_dev, O_RDONLY);
 
        if (rtc_fd < 0)
-               tst_brkm(TBROK | TERRNO, tst_exit, "couldn't open %s", rtc_dev);
+               tst_brkm(TBROK | TERRNO, NULL, "couldn't open %s", rtc_dev);
 
        /*Read and alarm tests*/
        read_alarm_test();
@@ -214,5 +213,5 @@ int main(int argc, char **argv)
        close(rtc_fd);
 
        tst_resm(TINFO, "RTC Tests Done!");
-       return 0;
+     tst_exit();
 }

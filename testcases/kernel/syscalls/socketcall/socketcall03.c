@@ -86,7 +86,6 @@ void cleanup();
 void setup1(void);
 
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* TestCase counter for tst_* routine */
 int s;
 unsigned long args[3];
 struct sockaddr_in si;
@@ -106,18 +105,16 @@ int main(int ac, char **av)
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 
-	if ((msg = parse_opts(ac, av, NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
 
-	/* perform global setup for test */
 	setup();
 
 	/* check looping state */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		TC.setupfunc();
@@ -142,8 +139,8 @@ int main(int ac, char **av)
 	/* cleanup and exit */
 	cleanup();
 
-	return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /*setup1()*/
 void setup1(void)
@@ -153,7 +150,7 @@ void setup1(void)
 	si.sin_port = 0;
 
 	if ((s = socket(TC.domain, TC.type, TC.pro)) == -1) {
-		tst_brkm(TBROK, tst_exit, "socket creation failed");
+		tst_brkm(TBROK, NULL, "socket creation failed");
 	}
 	args[0] = s;
 	args[1] = (unsigned long)&si;
@@ -164,10 +161,8 @@ void setup1(void)
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -179,8 +174,6 @@ void cleanup()
 {
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
 
 #else
@@ -191,7 +184,7 @@ int main()
 {
 	tst_resm(TPASS, "socket call test on this architecture disabled.");
 	tst_exit();
-	return 0;
+	tst_exit();
 }
 
 #endif

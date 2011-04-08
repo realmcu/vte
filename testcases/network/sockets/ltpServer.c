@@ -33,12 +33,10 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <stdio.h>
-#include <unistd.h> 
-#include <string.h> 
 #include <stdlib.h>
-#include <malloc.h>
+#include <string.h>
 #include <pthread.h>
-
+#include <unistd.h>
 
 #define LOCAL_UDP_SERVER_PORT   10000
 #define LOCAL_TCP_SERVER_PORT   10001
@@ -48,18 +46,18 @@
 #define ERROR -1
 #define END_LINE                0x0A
 
-int udpSocketHandle, 
-    rc, 
-    msg_bytes, 
-    tcpSocketHandle, 
-    newTcpSocketHandle, 
+int udpSocketHandle,
+    rc,
+    msg_bytes,
+    tcpSocketHandle,
+    newTcpSocketHandle,
     multiSocketHandle;
 
 socklen_t udpClientLen,
 	  tcpClientLen,
           multiClientLen;
 
-struct sockaddr_in udpClientAddr, 
+struct sockaddr_in udpClientAddr,
                    udpServerAddr,
                    tcpClientAddr,
                    tcpServerAddr,
@@ -74,10 +72,9 @@ char message  [MAX_MSG_LEN];
 char hostname [MAX_HOSTNAME_LEN];
 char ServerProg [MAX_HOSTNAME_LEN];
 
-
-void ltp_udp_server_queue (void);
-void ltp_tcp_server_queue (void);
-void ltp_multi_server_queue (void);
+void* ltp_udp_server_queue (void*);
+void* ltp_tcp_server_queue (void*);
+void* ltp_multi_server_queue (void*);
 int  tcp_receive_buffer(int, char *);
 
 int main(int argc, char *argv[]) {
@@ -86,10 +83,9 @@ int main(int argc, char *argv[]) {
                     tcp_server_queue,
                     multi_server_queue;
 
-    pthread_attr_t  udpthread_attr, 
+    pthread_attr_t  udpthread_attr,
                     tcpthread_attr,
                     multithread_attr;
-
 
     if (argc!=2) {
         printf("Server arguments : %s <multiCast I.P.address/hostname>\n", argv[0]);
@@ -127,7 +123,7 @@ int main(int argc, char *argv[]) {
             /* bind multiCast port */
             multiServerAddr.sin_family=AF_INET;
             multiServerAddr.sin_addr.s_addr=htonl(INADDR_ANY);
-            multiServerAddr.sin_port=htons(LOCAL_MULTI_SERVER_PORT);  
+            multiServerAddr.sin_port=htons(LOCAL_MULTI_SERVER_PORT);
 
             if (bind(multiSocketHandle,(struct sockaddr *) &multiServerAddr, sizeof(multiServerAddr)) < 0) {
                 printf("%s : cannot bind Multicast port %d \n",argv[0], LOCAL_MULTI_SERVER_PORT);
@@ -149,14 +145,14 @@ int main(int argc, char *argv[]) {
         }
 
         rc = pthread_attr_init(&multithread_attr);
-        rc = pthread_create(&multi_server_queue, &multithread_attr, (void *)&ltp_multi_server_queue, (void *)NULL);
+        rc = pthread_create(&multi_server_queue, &multithread_attr,
+		ltp_multi_server_queue, NULL);
     }
-
 
     /* udp socket creation */
     udpSocketHandle=socket(AF_INET, SOCK_DGRAM, 0);
 
-    if ( udpSocketHandle < 0) {
+    if (udpSocketHandle < 0) {
         printf("%s: cannot open socket \n",argv[0]);
         exit(1);
     }
@@ -169,7 +165,6 @@ int main(int argc, char *argv[]) {
         return ERROR;
     }
 
-
     /* bind local udp server port */
     udpServerAddr.sin_family = AF_INET;
     udpServerAddr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -177,12 +172,12 @@ int main(int argc, char *argv[]) {
 
     rc = bind (udpSocketHandle, (struct sockaddr *) &udpServerAddr,sizeof(udpServerAddr));
 
-    if ( rc < 0) {
-        printf("%s: Error binding port number %d \n", 
+    if (rc < 0) {
+        printf("%s: Error binding port number %d \n",
                argv[0], LOCAL_UDP_SERVER_PORT);
         exit(1);
     } else {
-        printf("%s: bound port number %d \n", 
+        printf("%s: bound port number %d \n",
                argv[0], LOCAL_UDP_SERVER_PORT);
     }
 
@@ -193,40 +188,40 @@ int main(int argc, char *argv[]) {
 
     rc = bind (tcpSocketHandle, (struct sockaddr *) &tcpServerAddr,sizeof(tcpServerAddr));
 
-    if ( rc < 0) {
-        printf("%s: Error binding port number %d \n", 
+    if (rc < 0) {
+        printf("%s: Error binding port number %d \n",
                argv[0], LOCAL_TCP_SERVER_PORT);
         exit(1);
     } else {
-        printf("%s: bound port number %d \n", 
+        printf("%s: bound port number %d \n",
                argv[0], LOCAL_TCP_SERVER_PORT);
     }
 
     rc = pthread_attr_init(&udpthread_attr);
-    rc = pthread_create(&udp_server_queue, &udpthread_attr, (void *)&ltp_udp_server_queue, (void *)NULL);
+    rc = pthread_create(&udp_server_queue, &udpthread_attr,
+	    ltp_udp_server_queue, NULL);
 
     rc = pthread_attr_init(&tcpthread_attr);
-    rc = pthread_create(&tcp_server_queue, &tcpthread_attr, (void *)&ltp_tcp_server_queue, (void *)NULL);
+    rc = pthread_create(&tcp_server_queue, &tcpthread_attr,
+	    ltp_tcp_server_queue, NULL);
 
     while (1);
 
-
-
-    return 0;
+        return 0;
 }
 /*
  * Function:     ltp_udp_server_queue
  * Description:  This function grabs the udp message from the queue and outputs to stdio
  */
-void ltp_udp_server_queue ()
+void* ltp_udp_server_queue (void *junk)
 {
 
-  printf("%s: waiting for data on port UDP %u\n", 
+  printf("%s: waiting for data on port UDP %u\n",
 	   hostname,LOCAL_UDP_SERVER_PORT);
 
   /* server infinite loop */
-  while(1) {
-    
+  while (1) {
+
     /* init buffer */
     memset(message, 0, MAX_MSG_LEN);
 
@@ -237,17 +232,19 @@ void ltp_udp_server_queue ()
 
     printf("msg_bytes:%d \n", msg_bytes);
 
-    if(msg_bytes < 0) {
+    if (msg_bytes < 0) {
       printf("%s: Error receiving data \n",hostname);
     }
     else {
         /* print message */
-        printf("%s: from %s:UDP%u : %s \n", 
+        printf("%s: from %s:UDP%u : %s \n",
            hostname,inet_ntoa(udpClientAddr.sin_addr),
            ntohs(udpClientAddr.sin_port), message);
     }
-    
+
   }/* end of server infinite loop */
+
+  return NULL;
 
 }
 
@@ -255,21 +252,19 @@ void ltp_udp_server_queue ()
  * Function:     ltp_tcp_server_queue
  * Description:  This function grabs the tcp message from the queue and outputs to stdio
  */
-void ltp_tcp_server_queue ()
+void* ltp_tcp_server_queue (void *junk)
 {
 
     listen(tcpSocketHandle,5);
 
-
-    while(1) {
+    while (1) {
 
       printf("%s: waiting for data on port TCP %u\n",hostname ,LOCAL_TCP_SERVER_PORT);
 
       tcpClientLen = sizeof(tcpClientAddr);
       newTcpSocketHandle = accept(tcpSocketHandle, (struct sockaddr *) &tcpClientAddr, &tcpClientLen);
 
-
-      if(newTcpSocketHandle < 0) {
+      if (newTcpSocketHandle < 0) {
         printf("cannot accept TCP connection ");
         break;
       }
@@ -277,31 +272,31 @@ void ltp_tcp_server_queue ()
       /* init line */
       memset(message,0x0,MAX_MSG_LEN);
 
-     
-
       /* receive segments */
-      while(tcp_receive_buffer(newTcpSocketHandle,message)!= ERROR) {
+      while (tcp_receive_buffer(newTcpSocketHandle,message)!= ERROR) {
 
-        printf("%s: received from %s:TCP%d : %s\n", hostname, 
+        printf("%s: received from %s:TCP%d : %s\n", hostname,
            inet_ntoa(tcpClientAddr.sin_addr),
            ntohs(tcpClientAddr.sin_port), message);
-        
+
         /* init line */
         memset(message,0x0,MAX_MSG_LEN);
 
-      } /* while(read_line) */
+      } /* while (read_line) */
       printf("looping in TCP \n");
 
     } /* while (1) */
 
+    return NULL;
+
 }
 /*
  * Function:     tcp_receive_buffer
- * Description:  This function grabs the message from the tcp queue and 
+ * Description:  This function grabs the message from the tcp queue and
  *               returns it to the calling function in the buffer.
  */
 int tcp_receive_buffer(int newSocket, char *return_buffer) {
-  
+
   static int  bytes_received = 0;
   static char message_received[MAX_MSG_LEN];
   static int  count = 0;
@@ -309,9 +304,9 @@ int tcp_receive_buffer(int newSocket, char *return_buffer) {
 
   offset = 0;
 
-  while(1) {
+  while (1) {
 
-    if(bytes_received == 0) {
+    if (bytes_received == 0) {
       /* read data from socket */
 
       memset(message_received, 0x0, MAX_MSG_LEN); /* init buffer */
@@ -321,7 +316,7 @@ int tcp_receive_buffer(int newSocket, char *return_buffer) {
       if (count < 0) {
 	     perror(" cannot receive data ");
 	     return ERROR;
-      } 
+      }
       else if (count == 0) {
 	     printf(" connection closed by client\n");
          close(newSocket);
@@ -330,27 +325,27 @@ int tcp_receive_buffer(int newSocket, char *return_buffer) {
 	     return ERROR;
       }
     }
-  
+
     /* Check for new data read on socket or */
     /* if still more data in buffer       */
 
     /* copy line into 'return_buffer' */
-    while(*(message_received + bytes_received)!= END_LINE && bytes_received < count) {
+    while (*(message_received + bytes_received)!= END_LINE && bytes_received < count) {
       memcpy(return_buffer + offset, message_received + bytes_received, 1);
       offset++;
       bytes_received++;
     }
-    
+
     /* end of line + end of buffer => return line */
-    if( bytes_received == count -1) { 
+    if (bytes_received == count -1) {
       /* set last byte to END_LINE */
       *(return_buffer + offset)= END_LINE;
       bytes_received = 0;
       return ++offset;
-    } 
-    
+    }
+
     /* end of line but still some data in buffer => return line */
-    if(bytes_received < count-1) {
+    if (bytes_received < count-1) {
       /* set last byte to END_LINE */
       *(return_buffer + offset) = END_LINE;
       bytes_received++;
@@ -359,21 +354,22 @@ int tcp_receive_buffer(int newSocket, char *return_buffer) {
 
     /* end of buffer but line is not ended => */
     /*  wait for more data to arrive on socket */
-    if(bytes_received == count) {
+    if (bytes_received == count) {
       bytes_received = 0;
       return offset;
-    } 
+    }
 
   } /* while */
+
 }
 /*
  * Function:     ltp_multi_server_queue
  * Description:  This function grabs the multiCast message from the queue and outputs to stdio
  */
-void ltp_multi_server_queue ()
+void* ltp_multi_server_queue (void *junk)
 {
 
-    printf("%s: waiting for data on port Multicast %u\n", 
+    printf("%s: waiting for data on port Multicast %u\n",
            hostname, LOCAL_MULTI_SERVER_PORT);
 
     /* infinite server loop */
@@ -394,5 +390,7 @@ void ltp_multi_server_queue ()
                message);
 
     }/* end of infinite server loop */
+
+    return NULL;
 
 }

@@ -56,7 +56,6 @@
 
 char *TCID = "pipe08";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void setup(void);
 void cleanup(void);
@@ -73,9 +72,8 @@ int main(int ac, char **av)
 	int close_stat;		/*  exit status of close(read fd) */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	if (!STD_FUNCTIONAL_TEST) {
 		tst_resm(TWARN, "-f option should not be used");
@@ -110,8 +108,8 @@ int main(int ac, char **av)
 		written = write(pipefd[1], wrbuf, length);
 	}
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
 }
 
 /*
@@ -119,11 +117,10 @@ int main(int ac, char **av)
  */
 void sighandler(int sig)
 {
-	if (sig != SIGPIPE) {
+	if (sig != SIGPIPE)
 		tst_resm(TFAIL, "expected SIGPIPE, got %d", sig);
-	} else {
+	else
 		tst_resm(TPASS, "got expected SIGPIPE signal");
-	}
 }
 
 /*
@@ -131,10 +128,9 @@ void sighandler(int sig)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, sighandler, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -149,7 +145,4 @@ void cleanup()
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

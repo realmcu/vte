@@ -1,8 +1,8 @@
-/*   
+/*
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  julie.n.fleischer REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
  * Test that clock_settime() sets clock_id to tp.
@@ -19,7 +19,7 @@
 #include "posixtest.h"
 #include "helpers.h"
 
-#ifndef PR_NSEC_PER_SEC 
+#ifndef PR_NSEC_PER_SEC
 #define PR_NSEC_PER_SEC 1000000000UL
 #endif
 
@@ -32,12 +32,12 @@ int main(int argc, char *argv[])
 	int delta,nsdelta;
 
 	/* Check that we're root...can't call clock_settime with CLOCK_REALTIME otherwise */
-	if(getuid() != 0)
+	if (getuid() != 0)
 	{
 		printf("Run this test as ROOT, not as a Regular User\n");
 		return PTS_UNTESTED;
 	}
-        if (clock_getres(CLOCK_REALTIME, &tpres) != 0){
+        if (clock_getres(CLOCK_REALTIME, &tpres) != 0) {
 		printf("Time resolution is not provided\n");
 		tpres.tv_sec = 0;
 		tpres.tv_nsec = 10000000;
@@ -55,11 +55,11 @@ int main(int argc, char *argv[])
 		}
 		delta = tpget.tv_sec-tpset.tv_sec;
 		nsdelta = PR_NSEC_PER_SEC - tpget.tv_nsec;
-		if ( (delta <= ACCEPTABLEDELTA) && (delta >= 0) ) {
+		if ((delta <= ACCEPTABLEDELTA) && (delta >= 0)) {
 			printf("Test PASSED\n");
 			setBackTime(tpreset);
 			return PTS_PASS;
-		} else if( (nsdelta <= tpres.tv_nsec) && (delta == -1 )) {
+		} else if ((nsdelta <= tpres.tv_nsec) && (delta == -1)) {
 			printf("Test PASSED\n");
 			setBackTime(tpreset);
 			return PTS_PASS;

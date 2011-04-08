@@ -1,8 +1,8 @@
-/*   
+/*
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  julie.n.fleischer REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
  * Test that nanosleep() causes the current thread to be suspended
@@ -17,7 +17,7 @@
 int main(int argc, char *argv[])
 {
 	struct timespec tssleepfor, tsstorage, tsbefore, tsafter;
-	int sleepnsec[NUMINTERVALS] = {1, 2, 10, 100, 1000, 10000, 1000000, 
+	int sleepnsec[NUMINTERVALS] = {1, 2, 10, 100, 1000, 10000, 1000000,
 		10000000, 100000000, 200000000, 500000000, 750000000,
 		999999900};
 	int i;
@@ -36,12 +36,11 @@ int main(int argc, char *argv[])
 			printf("nanosleep() did not return success\n");
 			return PTS_UNRESOLVED;
 		}
-	
+
 		if (clock_gettime(CLOCK_REALTIME, &tsafter) == -1) {
 			perror("Error in clock_gettime()\n");
 			return PTS_UNRESOLVED;
 		}
-
 
 		/*
  		 * Generic alg for calculating slept time.
@@ -53,12 +52,11 @@ int main(int argc, char *argv[])
 			slepts = slepts-1;
 		}
 
-		if ( (slepts >= 1) ||
-			(sleptns > sleepnsec[i]) ) {
-			printf("PASS slept %ds %dns >= %d\n", 
+		if (slepts >= 1 || sleptns > sleepnsec[i]) {
+			printf("PASS slept %ds %dns >= %d\n",
 				slepts, sleptns, sleepnsec[i]);
 		} else {
-			printf("FAIL slept %ds %dns < %d\n", 
+			printf("FAIL slept %ds %dns < %d\n",
 				slepts, sleptns, sleepnsec[i]);
 			failure = 1;
 		}

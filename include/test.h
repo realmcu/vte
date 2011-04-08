@@ -57,13 +57,15 @@
 
 #define TERRNO     0x100   /* Append errno information to output */
 #define TTERRNO    0x200   /* Append TEST_ERRNO information to output */
+#define TRERRNO    0x300   /* Capture errno information from TEST_RETURN to
+			      output; useful for pthread-like APIs :). */
 
 /*
  * To determine if you are on a Umk or Unicos system,
  * use sysconf(_SC_CRAY_SYSTEM).  But since _SC_CRAY_SYSTEM
  * is not defined until 90, it will be define here if not already
  * defined.
- * if ( sysconf(_SC_CRAY_SYSTEM) == 1 )
+ * if (sysconf(_SC_CRAY_SYSTEM) == 1)
  *    on UMK
  * else   # returned 0 or -1
  *    on Unicos
@@ -103,18 +105,8 @@
 					/* If not set, TOUT_VERBOSE_S is assumed */
 
 #define TOUT_VERBOSE_S  "VERBOSE"	/* All test cases reported */
-#define TOUT_CONDENSE_S "CONDENSE"	/* ranges are used where identical messages*/
-					/* occur for sequential test cases */
 #define TOUT_NOPASS_S   "NOPASS"	/* No pass test cases are reported */
 #define TOUT_DISCARD_S  "DISCARD"	/* No output is reported */
-
-#define TST_NOBUF	"TST_NOBUF"	/* The name of the environment variable */
-					/* that can be set to control whether or not */
-					/* tst_res will buffer output into 4096 byte */
-					/* blocks of output */
-					/* If not set, buffer is done.  If set, no */
-					/* internal buffering will be done in tst_res */
-					/* t_result does not have internal buffering */
 
 /*
  * The following defines are used to control tst_tmpdir, tst_wildcard and t_mkchdir
@@ -183,8 +175,12 @@
 #endif
 
 /*
- * Functions from lib/tst_res.c
+ * lib/forker.c
  */
+extern int Forker_pids[];
+extern int Forker_npids;
+
+/* lib/tst_res.c */
 const char *strttype(int ttype);
 void tst_res(int ttype, char *fname, char *arg_fmt, ...)
 	__attribute__ ((format (printf, 3, 4)));
@@ -192,11 +188,7 @@ void tst_resm(int ttype, char *arg_fmt, ...)
 	__attribute__ ((format (printf, 2, 3)));
 void tst_brk(int ttype, char *fname, void (*func)(void), char *arg_fmt, ...)
 	__attribute__ ((format (printf, 4, 5)));
-void tst_brkloop(int ttype, char *fname, void (*func)(void), char *arg_fmt, ...)
-	__attribute__ ((format (printf, 4, 5)));
 void tst_brkm(int ttype, void (*func)(void), char *arg_fmt, ...)
-	__attribute__ ((format (printf, 3, 4)));
-void tst_brkloopm(int ttype, void (*func)(void), char *arg_fmt, ...)
 	__attribute__ ((format (printf, 3, 4)));
 void tst_require_root(void (*func)(void));
 int  tst_environ(void);
@@ -205,49 +197,35 @@ void tst_flush(void);
 
 extern int Tst_count;
 
-/*
- * Function from lib/tst_sig.c
- */
+/* lib/tst_sig.c */
 void tst_sig(int fork_flag, void (*handler)(), void (*cleanup)());
 
-/*
- * Functions from lib/tst_tmpdir.c
- */
+/* lib/tst_tmpdir.c */
 void tst_tmpdir(void);
 void tst_rmdir(void);
+char *get_tst_tmpdir(void);
 
-/*
- * Function from lib/get_high_address.c
- */
+/* lib/get_high_address.c */
 char *get_high_address(void);
 
-/*
- * Functions from lib/tst_kvercmp.c
- */
+/* lib/tst_kvercmp.c */
 void tst_getkver(int *k1, int *k2, int *k3);
 int tst_kvercmp(int r1, int r2, int r3);
 
-/*
- * Function from lib/tst_is_cwd.c
- */
+/* lib/tst_is_cwd.c */
 int tst_is_cwd_nfs(void);
+int tst_is_cwd_v9fs(void);
 int tst_is_cwd_tmpfs(void);
 int tst_is_cwd_ramfs(void);
 
-/*
- * Function from lib/tst_cwd_has_free.c
- */
+/* lib/tst_cwd_has_free.c */
 int tst_cwd_has_free(int required_kib);
 
-/*
- * Functions from lib/self_exec.c
- */
+/* lib/self_exec.c */
 void maybe_run_child(void (*child)(), char *fmt, ...);
 int self_exec(char *argv0, char *fmt, ...);
 
-/*
- * Functions from lib/cloner.c
- */
+/* Functions from lib/cloner.c */
 int ltp_clone(unsigned long clone_flags, int (*fn)(void *arg), void *arg,
 		size_t stack_size, void *stack);
 int ltp_clone_malloc(unsigned long clone_flags, int (*fn)(void *arg),
@@ -256,15 +234,11 @@ int ltp_clone_quick(unsigned long clone_flags, int (*fn)(void *arg),
 		void *arg);
 #define clone(...) use_the_ltp_clone_functions,do_not_use_clone
 
-/*
- * Functions from lib/mount_utils.c
- */
+/* Functions from lib/mount_utils.c */
 char *get_block_device(const char *path);
 char *get_mountpoint(const char *path);
 
-/*
- * Function from lib/get_path.c
- */
+/* Function from lib/get_path.c */
 int tst_get_path(const char *prog_name, char *buf, size_t buf_len);
 
 #ifdef TST_USE_COMPAT16_SYSCALL

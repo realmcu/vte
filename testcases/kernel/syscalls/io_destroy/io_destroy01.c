@@ -1,6 +1,7 @@
 /*
  *
  *   Copyright (c) Crackerjack Project., 2007
+ *   Copyright (c) 2011 Cyril Hrubis <chrubis@suse.cz>
  *
  *   This program is free software;  you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,8 +25,7 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "io_destroy01";	/* Test program identifier.    */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
+char *TCID = "io_destroy01";
 
 int TST_TOTAL = 1;
 
@@ -34,100 +34,79 @@ int TST_TOTAL = 1;
 #include <errno.h>
 #include <string.h>
 
-/*
- * cleanup()
- * 	performs all the ONE TIME cleanup for this test at completion or
- * 	premature exit
- */
-void cleanup(void)
+static void cleanup(void)
 {
-	/*
-	 * print timing status if that option was specified
-	 * print errno log if that option was specified
-	 */
 	TEST_CLEANUP;
+}
 
-	tst_exit();
+static void setup(void)
+{
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+
+	TEST_PAUSE;
 }
 
 /*
- * setup() - performs all ONE TIME setup for this test.
- */
-void setup()
-{
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
-
-	/* Pause if that option was specified */
-	TEST_PAUSE;
-
-}				/* End setup() */
-
-int main(int argc, char **argv)
-{
-	int lc;			/* loop counter */
-	char *msg;		/* parse_opts() return message */
-
-	io_context_t ctx;
-	long expected_return;
-
-	if ((msg =
-	     parse_opts(argc, argv, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
-
-	setup();
-
-	/* Check for looping state if -i option is given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
-
-/*
-DESCRIPTION
+  DESCRIPTION
        io_destroy  removes  the asynchronous I/O context from the list of I/O
        contexts and then destroys it.  io_destroy can also  cancel  any  out-
        standing asynchronous I/O actions on ctx and block on completion.
 
-RETURN VALUE
+ RETURN VALUE
        io_destroy returns 0 on success.
 
-ERRORS
+ ERRORS
        EINVAL The AIO context specified by ctx is invalid.
 */
-		expected_return = -EINVAL;
+
+#define EXP_RET (-EINVAL)
+
+int main(int argc, char *argv[])
+{
+	int lc;
+	char *msg;
+
+	io_context_t ctx;
+
+	memset(&ctx, 0xff, sizeof(ctx));
+
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+
+	setup();
+
+	for (lc = 0; TEST_LOOPING(lc); lc++) {
+		Tst_count = 0;
+
 		TEST(io_destroy(ctx));
 
-		if (TEST_RETURN == 0) {
+		switch (TEST_RETURN) {
+		case 0:
 			tst_resm(TFAIL, "call succeeded unexpectedly");
-		} else if (TEST_RETURN == expected_return) {
+		break;
+		case EXP_RET:
 			tst_resm(TPASS, "expected failure - "
 				 "returned value = %ld : %s", TEST_RETURN,
-				 strerror(-1 * TEST_RETURN));
-		} else {
-			tst_resm(TFAIL, "unexpected returned value - %ld - "
-				 "expected %ld", TEST_RETURN, expected_return);
+				 strerror(-TEST_RETURN));
+		break;
+		case -ENOSYS:
+			tst_resm(TCONF, "io_cancel returned ENOSYS");
+		break;
+		default:
+			tst_resm(TFAIL, "unexpected returned value - %s (%i) - "
+				 "expected %s (%i)", strerror(-TEST_RETURN),
+				 (int)TEST_RETURN, strerror(-EXP_RET), EXP_RET);
+		break;
 		}
-
-		/*
-		   EFAULT The context pointed to is invalid.
-		 */
-
-		/*
-		   ENOSYS io_destroy is not implemented on this architecture.
-		 */
-		/* Crackerjack has a test case for ENOSYS. But Testing for ENOSYS
-		   is not meaningful for LTP, I think.
-		   -- Masatake */
 	}
+	
 	cleanup();
-
-	return 0;
+	tst_exit();
 }
 #else
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
-	tst_resm(TCONF, "System doesn't support execution of the test");
-	return 0;
+	tst_brkm(TCONF, NULL, "System doesn't support execution of the test");
+	tst_exit();
 }
 #endif

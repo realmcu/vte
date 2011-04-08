@@ -86,7 +86,6 @@
 
 char *TCID = "vfork01";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 int exp_enos[] = { 0 };
 
 /* Variables to hold parent/child eff/real/saved uid/gid values */
@@ -115,21 +114,19 @@ int main(int ac, char **av)
 	int exit_status;	/* exit status of child process */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
-	/* Perform global setup for test */
 	setup();
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -138,7 +135,6 @@ int main(int ac, char **av)
 		 */
 		TEST(vfork());
 
-		/* check return code of vfork() */
 		if ((cpid = TEST_RETURN) == -1) {
 			TEST_ERROR_LOG(TEST_ERRNO);
 			tst_resm(TFAIL, "vfork() Failed, errno=%d : %s",
@@ -185,7 +181,7 @@ int main(int ac, char **av)
 				 * Get the pathname of current working
 				 * directory for the child process.
 				 */
-				if ((Ccwd = (char *)getcwd((char *)NULL,
+				if ((Ccwd = (char *)getcwd(NULL,
 							   BUFSIZ)) == NULL) {
 					tst_resm(TFAIL, "getcwd failed for the "
 						 "child process");
@@ -295,12 +291,11 @@ int main(int ac, char **av)
 			}
 		}
 		Tst_count++;	/* incr. TEST_LOOP counter */
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /*
  * void
@@ -310,10 +305,9 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -340,7 +334,7 @@ void setup()
 	 * Get the pathname of current working directory of the parent
 	 * process.
 	 */
-	if ((Pcwd = (char *)getcwd((char *)NULL, BUFSIZ)) == NULL) {
+	if ((Pcwd = (char *)getcwd(NULL, BUFSIZ)) == NULL) {
 		tst_brkm(TFAIL, cleanup,
 			 "getcwd failed for the parent process");
 	}
@@ -362,7 +356,7 @@ void setup()
 		tst_brkm(TFAIL, cleanup, "stat(2) failed to get info. of "
 			 "working directory in parent process");
 	}
-}				/* End setup() */
+}
 
 /*
  * void
@@ -377,6 +371,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

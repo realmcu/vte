@@ -66,7 +66,7 @@ double d_gettimeofday(void)
 	int retval;
 	struct timeval tv;
 
-	retval = gettimeofday(&tv, (struct timezone *)NULL);
+	retval = gettimeofday(&tv, NULL);
 	if (retval != 0) {
 		perror("gettimeofday");
 		exit(-1);
@@ -231,7 +231,7 @@ test_signal(long iter, long nthreads)
 		}
 	}
 	min = (unsigned long)-1;
-	for (i = 0; i < iter * nthreads; i++){
+	for (i = 0; i < iter * nthreads; i++) {
 		latency = dat.records[i].y;
 		if (latency > PASS_US)
 			fail = 1;
@@ -260,13 +260,13 @@ void usage(void)
 int parse_args(int c, char *v)
 {
 	int handled;
-        switch (c) {
+	switch (c) {
 		case 'h':
 			usage();
 			exit(0);
-                case 'a':
+		case 'a':
 			broadcast_flag = 1;
-                        break;
+			break;
 		case 'i':
 			iterations = atoi(v);
 			break;
@@ -276,11 +276,11 @@ int parse_args(int c, char *v)
 		case 'r':
 			realtime = 1;
 			break;
-                default:
-                        handled = 0;
-                        break;
-        }
-        return handled;
+		default:
+			handled = 0;
+			break;
+	}
+	return handled;
 }
 
 int
@@ -317,5 +317,6 @@ main(int argc, char *argv[])
 	test_signal(iterations, nthreads);
 	printf("\nCriteria: latencies < %d us\n", PASS_US);
 	printf("Result: %s\n", fail ? "FAIL" : "PASS");
+
 	return 0;
 }

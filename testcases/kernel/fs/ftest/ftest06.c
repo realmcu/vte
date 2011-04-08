@@ -91,7 +91,6 @@ static int pidlist[MAXCHILD];
 
 static char homedir[MAXPATHLEN];
 static char dirname[MAXPATHLEN];
-static char tmpname[MAXPATHLEN];
 static int dirlen;
 static int mnt = 0;
 static char startdir[MAXPATHLEN], mntpoint[MAXPATHLEN];
@@ -104,16 +103,14 @@ int main(int ac, char *av[])
 	int pid, child, status, count, k, j;
 	char name[3];
 
-        int lc;
-        char *msg;
+	int lc;
+	char *msg;
 
-        /*
-         * parse standard options
-         */
-        if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL){
-                tst_resm(TBROK, "OPTION PARSING ERROR - %s", msg);
-                tst_exit();
-        }
+	/*
+	 * parse standard options
+	 */
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	/*
 	 * Default values for run conditions.
@@ -123,7 +120,7 @@ int main(int ac, char *av[])
 
 	if (signal(SIGTERM, term) == SIG_ERR) {
 		tst_resm(TBROK,"first signal failed");
-		tst_exit();
+
 	}
 
 	/* use the default values for run conditions */
@@ -138,31 +135,26 @@ int main(int ac, char *av[])
 
 		if (!startdir[0]) {
 			if (getcwd(startdir, MAXPATHLEN) == NULL) {
-				tst_resm(TFAIL,"getcwd failed");
-				tst_exit();
+				tst_brkm(TFAIL|TERRNO, NULL, "getcwd failed");
 			}
 		}
 		cwd = startdir;
-		strcat(dirname, cwd);
-		sprintf(tmpname, "/ftest06.%d", getpid());
-		strcat(dirname, tmpname);
-		strcat(homedir, cwd);
-		sprintf(tmpname, "/ftest06h.%d", getpid());
-		strcat(homedir, tmpname);
+		
+		snprintf(dirname, ARRAY_SIZE(dirname),
+		         "%s/ftest06.%d", cwd, getpid());
+		snprintf(homedir, ARRAY_SIZE(homedir),
+		         "%s/ftest06h.%d", cwd, getpid());
 
 		mkdir(dirname, 0755);
 		mkdir(homedir, 0755);
-		if (chdir(dirname) < 0) {
-			tst_resm(TFAIL,"\tCan't chdir(%s), error %d.", dirname, errno);
-			cleanup();
-			tst_exit();
-		}
+
+		if (chdir(dirname) < 0)
+			tst_brkm(TFAIL|TERRNO, cleanup, "\tCan't chdir(%s)", dirname);
+		
 		dirlen = strlen(dirname);
-		if (chdir(homedir) < 0) {
-			tst_resm(TFAIL,"\tCan't chdir(%s), error %d.", homedir, errno);
-			cleanup();
-			tst_exit();
-		}
+
+		if (chdir(homedir) < 0)
+			tst_brkm(TFAIL|TERRNO, cleanup, "\tCan't chdir(%s)", homedir);
 
 		/* enter block */
 		for (k = 0; k < nchild; k++) {
@@ -171,11 +163,7 @@ int main(int ac, char *av[])
 				tst_exit();
 			}
 			if (child < 0) {
-				tst_resm(TINFO, "System resource may be too low, fork() malloc()"
-				                     " etc are likely to fail.");
-				tst_resm(TBROK, "Test broken due to inability of fork.");
-				cleanup();
-				tst_exit();
+				tst_brkm(TBROK|TERRNO, cleanup, "fork failed");
 			}
 			pidlist[k] = child;
 		}
@@ -217,19 +205,17 @@ int main(int ac, char *av[])
 				unlink(name);
 			}
 
-		chdir(startdir);
+		if (chdir(startdir) < 0)
+			tst_brkm(TFAIL|TERRNO, cleanup, "Can't chdir(%s)", startdir);
 
 		pid = fork();
 		if (pid < 0) {
-			tst_resm(TINFO, "System resource may be too low, fork() malloc()"
-			                         " etc are likely to fail.");
-			tst_resm(TBROK, "Test broken due to inability of fork.");
-			tst_exit();
+			tst_brkm(TBROK|TERRNO, NULL, "fork failed");
 		}
 
 		if (pid == 0) {
 			execl("/bin/rm", "rm", "-rf", homedir, NULL);
-			tst_exit();
+
 		} else
 			wait(&status);
 
@@ -239,30 +225,26 @@ int main(int ac, char *av[])
 
 		pid = fork();
 		if (pid < 0) {
-			tst_resm(TINFO, "System resource may be too low, fork() malloc()"
-			                         " etc are likely to fail.");
-			tst_resm(TBROK, "Test broken due to inability of fork.");
-			tst_exit();
+			tst_brkm(TBROK|TERRNO, NULL, "fork failed");
 		}
 		if (pid == 0) {
 			execl("/bin/rm", "rm", "-rf", dirname, NULL);
-			tst_exit();
+			exit(1);
 		} else
 			wait(&status);
 		if (status) {
-			tst_resm(TINFO,"CAUTION - ftest06, '%s' may not have been removed.",
+			tst_resm(TWARN, "CAUTION - ftest06, '%s' may not have been removed.",
 			  dirname);
 		}
 
 		sync();
-		cleanup();
 
 	}
 
 	if (local_flag == FAILED)
-                tst_resm(TFAIL, "Test failed.");
-        else
-                tst_resm(TPASS, "Test passed.");
+		tst_resm(TFAIL, "Test failed.");
+	else
+		tst_resm(TPASS, "Test passed.");
 
 	cleanup();
 	tst_exit();
@@ -328,7 +310,7 @@ static void unlfile(int me, int count)
 	for (; i < count; i++) {
 		ft_mkname(fname, dirname, me, i);
 		val = rmdir(fname);
-		if (val < 0 )
+		if (val < 0)
 			val = unlink(fname);
 		if (val == 0 || errno == ENOENT)
 			continue;
@@ -398,7 +380,6 @@ static void fussdir(int me, int count)
 	strcpy(dirname, savedir);
 }
 
-
 /*
  * dotest()
  *	Children execute this.
@@ -430,7 +411,7 @@ static void dotest(int me, int count)
 
 	srand(getpid());
 
-	for(i = 0; i < count; i++) {
+	for (i = 0; i < count; i++) {
 		thing = (rand() >> 3) % NTHING;
 		(*ino_thing[thing].it_proc)(me, i, ino_thing[thing].it_name);
 		++thing_cnt[thing];
@@ -438,7 +419,6 @@ static void dotest(int me, int count)
 
 	//tst_resm(TINFO,"Test %d pid %d exiting.", me, getpid());
 }
-
 
 static void dowarn(int me, char *m1, char *m2)
 {
@@ -496,5 +476,5 @@ static void cleanup(void)
 		}
 	}
 	tst_rmdir();
-	tst_exit();
+
 }

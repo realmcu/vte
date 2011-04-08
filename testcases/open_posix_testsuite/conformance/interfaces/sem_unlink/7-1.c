@@ -14,7 +14,6 @@
 * with this program; if not, write the Free Software Foundation, Inc., 59
 * Temple Place - Suite 330, Boston MA 02111-1307, USA.
 
-
 * This sample test aims to check the following assertion:
 *
 *  sem_unlink does not block.
@@ -47,23 +46,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -80,27 +79,26 @@
 /***************************    Test case   ***********************************/
 /******************************************************************************/
 
-void * threaded ( void * arg )
+void * threaded (void * arg)
 {
 	int ret = 0;
 
 	do
 	{
-		ret = sem_wait( arg );
+		ret = sem_wait(arg);
 	}
-	while ( ( ret != 0 ) && ( errno == EINTR ) );
+	while ((ret != 0) && (errno == EINTR));
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( errno, "Failed to wait for the semaphore" );
+		UNRESOLVED(errno, "Failed to wait for the semaphore");
 	}
 
 	return NULL;
 }
 
-
 /* The main test function. */
-int main( int argc, char * argv[] )
+int main(int argc, char * argv[])
 {
 	int ret;
 	pthread_t thread;
@@ -110,68 +108,66 @@ int main( int argc, char * argv[] )
 	output_init();
 
 	/* Create the semaphore */
-	sem = sem_open( SEM_NAME, O_CREAT | O_EXCL, 0777, 1 );
+	sem = sem_open(SEM_NAME, O_CREAT | O_EXCL, 0777, 1);
 
-	if ( ( sem == SEM_FAILED ) && ( errno == EEXIST ) )
+	if ((sem == SEM_FAILED) && (errno == EEXIST))
 	{
-		sem_unlink( SEM_NAME );
-		sem = sem_open( SEM_NAME, O_CREAT | O_EXCL, 0777, 1 );
+		sem_unlink(SEM_NAME);
+		sem = sem_open(SEM_NAME, O_CREAT | O_EXCL, 0777, 1);
 	}
 
-	if ( sem == SEM_FAILED )
+	if (sem == SEM_FAILED)
 	{
-		UNRESOLVED( errno, "Failed to create the semaphore" );
+		UNRESOLVED(errno, "Failed to create the semaphore");
 	}
 
 	/* Create the child thread */
-	ret = pthread_create( &thread, NULL, threaded, sem );
+	ret = pthread_create(&thread, NULL, threaded, sem);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to create the thread" );
+		UNRESOLVED(ret, "Failed to create the thread");
 	}
 
 	/* Let some time for the thread to block */
-	sleep( 1 );
+	sleep(1);
 
 	/* Unlink */
-	ret = sem_unlink( SEM_NAME );
+	ret = sem_unlink(SEM_NAME);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( errno, "Failed to unlink the semaphore" );
+		UNRESOLVED(errno, "Failed to unlink the semaphore");
 	}
 
 	/* Now, we're success */
-	ret = sem_post( sem );
+	ret = sem_post(sem);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( errno, "Failed to post the semaphore" );
+		UNRESOLVED(errno, "Failed to post the semaphore");
 	}
 
 	/* Join the thread */
-	ret = pthread_join( thread, NULL );
+	ret = pthread_join(thread, NULL);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to join the thread" );
+		UNRESOLVED(ret, "Failed to join the thread");
 	}
 
 	/* close  */
-	ret = sem_close( sem );
+	ret = sem_close(sem);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( errno, "Failed to close the semaphore" );
+		UNRESOLVED(errno, "Failed to close the semaphore");
 	}
 
 	/* Test passed */
 #if VERBOSE > 0
-	output( "Test passed\n" );
+	output("Test passed\n");
 
 #endif
 	PASSED;
 }
-
-

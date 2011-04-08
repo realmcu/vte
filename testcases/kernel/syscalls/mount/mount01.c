@@ -81,7 +81,6 @@ static void cleanup(void);
 
 char *TCID = "mount01";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* TestCase counter for tst_* routine */
 
 #define DEFAULT_FSTYPE	"ext2"
 #define DIR_MODE	S_IRWXU | S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP
@@ -106,31 +105,27 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, options, &help)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, options, &help)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
 
 	/* Check for mandatory option of the testcase */
-	if (!Dflag) {
-		tst_brkm(TBROK, NULL, "You must specifiy the device used for "
-			 " mounting with -D option, Run '%s  -h' for option "
-			 " information.", TCID);
-		tst_exit();
-	}
+	if (!Dflag)
+		tst_brkm(TBROK, NULL,
+		    "you must specify the device used for mounting with the -D "
+		    "option");
 
 	if (Tflag) {
-		Fstype = (char *)malloc(strlen(fstype) + 1);
+		Fstype = malloc(strlen(fstype) + 1);
 		if (Fstype == NULL) {
-			tst_brkm(TBROK, NULL, "malloc - failed to alloc %d"
-				 "errno %d", strlen(fstype), errno);
+			tst_brkm(TBROK|TERRNO, NULL,
+			    "malloc - failed to alloc %zd", strlen(fstype));
 		}
 		strncpy(Fstype, fstype, strlen(fstype) + 1);
 	} else {
-		Fstype = (char *)malloc(strlen(DEFAULT_FSTYPE) + 1);
+		Fstype = malloc(strlen(DEFAULT_FSTYPE) + 1);
 		if (Fstype == NULL) {
-			tst_brkm(TBROK, NULL, "malloc - failed to alloc %d"
-				 "errno %d", strlen(DEFAULT_FSTYPE), errno);
+			tst_brkm(TBROK, NULL, "malloc - failed to alloc %d",
+			    strlen(DEFAULT_FSTYPE));
 		}
 		strncpy(Fstype, DEFAULT_FSTYPE, strlen(DEFAULT_FSTYPE) + 1);
 	}
@@ -142,13 +137,10 @@ int main(int ac, char **av)
 		STD_COPIES = 1;
 	}
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/* Call mount(2) */
@@ -156,38 +148,36 @@ int main(int ac, char **av)
 
 		/* check return code */
 		if (TEST_RETURN != 0) {
-			TEST_ERROR_LOG(TEST_ERRNO);
-			tst_resm(TFAIL, "mount(2) Failed errno = %d : %s",
-				 TEST_ERRNO, strerror(TEST_ERRNO));
+			tst_resm(TFAIL|TTERRNO, "mount(2) failed");
 		} else {
-			tst_resm(TPASS, "mount(2) Passed ");
+			tst_resm(TPASS, "mount(2) passed ");
 			TEST(umount(mntpoint));
 			if (TEST_RETURN != 0) {
-				TEST_ERROR_LOG(TEST_ERRNO);
-				tst_brkm(TBROK, cleanup, "umount(2) Failed "
-					 "while unmounting errno = %d : %s",
-					 TEST_ERRNO, strerror(TEST_ERRNO));
+				tst_brkm(TBROK|TTERRNO, cleanup,
+				    "umount(2) failed");
 			}
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
 	/* cleanup and exit */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
+	tst_exit();
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Check whether we are root */
 	if (geteuid() != 0) {
-		free(Fstype);
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		if (Fstype != NULL) {
+			free(Fstype);
+			Fstype = NULL;
+		}
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 
 	/* make a temp directory */
@@ -197,15 +187,13 @@ void setup()
 	(void)sprintf(mntpoint, "mnt_%d", getpid());
 
 	if (mkdir(mntpoint, DIR_MODE) < 0) {
-		tst_brkm(TBROK, cleanup, "mkdir(%s, %#o) failed; "
-			 "errno = %d: %s", mntpoint, DIR_MODE, errno,
-			 strerror(errno));
+		tst_brkm(TBROK|TERRNO, cleanup, "mkdir(%s, %#o) failed",
+		    mntpoint, DIR_MODE);
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}				/* End setup() */
+}
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
@@ -213,20 +201,18 @@ void setup()
  */
 void cleanup()
 {
-	free(Fstype);
-
+	if (Fstype) {
+		free(Fstype);
+		Fstype = NULL;
+	}
 	/*
 	 * print timing stats if that option was specified.
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
-
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}
 
 /*
  * issue a help message

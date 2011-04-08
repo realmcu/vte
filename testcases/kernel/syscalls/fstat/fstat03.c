@@ -64,7 +64,6 @@
 
 char *TCID = "fstat03";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 int exp_enos[] = { EBADF, 0 };
 int fildes;			/* testfile descriptor */
 
@@ -78,10 +77,10 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
 	/*
@@ -93,9 +92,8 @@ int main(int ac, char **av)
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 		/*
 		 * Call fstat(2) to get the status information
@@ -116,7 +114,7 @@ int main(int ac, char **av)
 		} else {
 			tst_resm(TFAIL, "fstat() returned %ld, expected -1", TEST_RETURN);
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
 	/*
 	 * Invoke cleanup() to delete the test directory/file(s) created
@@ -124,8 +122,8 @@ int main(int ac, char **av)
 	 */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /*
  * void
@@ -140,7 +138,6 @@ void setup()
 	/* Capture unexpected signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Make a temp dir and cd to it */
@@ -154,7 +151,7 @@ void setup()
 
 	if (close(fildes) == -1)
 		tst_brkm(TBROK|TERRNO, cleanup, "close(%s) failed", TEST_FILE);
-}				/* End of setup */
+}
 
 /*
  * void
@@ -174,9 +171,6 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* Remove files and temporary directory created */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

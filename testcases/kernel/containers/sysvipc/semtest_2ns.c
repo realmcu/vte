@@ -44,7 +44,7 @@
 #include <sys/ipc.h>
 #include <sys/sem.h>
 #include <libclone.h>
-#include <test.h>
+#include "test.h"
 
 #define MY_KEY     124326L
 #define UNSHARESTR "unshare"
@@ -214,5 +214,5 @@ int main(int argc, char *argv[])
 	semctl(id, IPC_RMID, 0);
 	tst_exit();
 
-	return 0;
+	tst_exit();
 }

@@ -56,7 +56,6 @@
 
 char *TCID = "pipe11";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void do_child(void);
 void do_child_uclinux(void);
@@ -96,9 +95,9 @@ int main(int ac, char **av)
 	int written;		/* no of chars read and written */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 #ifdef UCLINUX
 	maybe_run_child(&do_child_uclinux, "ddddd", &fd[0], &fd[1], &kidid,
 			&ncperchild, &szcharbuf);
@@ -134,7 +133,7 @@ int main(int ac, char **av)
 
 		if (fork_ret < 0) {
 			tst_brkm(TBROK, cleanup, "fork() failed");
-		 /*NOTREACHED*/}
+		 }
 
 		if ((fork_ret != 0) && (fork_ret != -1) && (kidid < numchild)) {
 			goto refork;
@@ -145,7 +144,7 @@ int main(int ac, char **av)
 			if (self_exec(av[0], "ddddd", fd[0], fd[1], kidid,
 				      ncperchild, szcharbuf) < 0) {
 				tst_brkm(TBROK, cleanup, "self_exec failed");
-			 /*NOTREACHED*/}
+			 }
 #else
 			do_child();
 #endif
@@ -167,7 +166,7 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -199,7 +198,7 @@ void do_child_uclinux()
 {
 	if ((rdbuf = (char *)malloc(szcharbuf)) == (char *)0) {
 		tst_brkm(TBROK, cleanup, "malloc of rdbuf failed");
-	 /*NOTREACHED*/}
+	 }
 
 	do_child();
 }
@@ -211,10 +210,8 @@ void setup()
 {
 	int i, j;
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	numchild = NUMCHILD;
@@ -233,11 +230,11 @@ void setup()
 
 	if ((wrbuf = (char *)malloc(szcharbuf)) == (char *)0) {
 		tst_brkm(TBROK, cleanup, "malloc failed");
-	 /*NOTREACHED*/}
+	 }
 
 	if ((rdbuf = (char *)malloc(szcharbuf)) == (char *)0) {
 		tst_brkm(TBROK, cleanup, "malloc of rdbuf failed");
-	 /*NOTREACHED*/}
+	 }
 
 	/* initialize wrbuf */
 	j = 0;
@@ -261,6 +258,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

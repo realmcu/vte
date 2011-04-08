@@ -57,7 +57,6 @@
 
 char *TCID = "pipe02";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int usrsig;
 
@@ -90,9 +89,9 @@ int main(int ac, char **av)
 	usrsig = 0;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 #ifdef UCLINUX
 	maybe_run_child(&do_child, "dd", &pp[0], &pp[1]);
 #endif
@@ -149,8 +148,7 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	/* NOT REACHED */
-	return 0;
+	tst_exit();
 }
 
 void catch_usr2(int sig)
@@ -186,10 +184,9 @@ void do_child()
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 }
@@ -206,6 +203,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

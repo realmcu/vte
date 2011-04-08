@@ -1,32 +1,32 @@
 /*
  * Copyright (c) 2000 Silicon Graphics, Inc.  All Rights Reserved.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it would be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * Further, this software is distributed without any warranty that it is
  * free of the rightful claim of any third person regarding infringement
  * or the like.  Any license provided herein, whether implied or
  * otherwise, applies only to this software file.  Patent licenses, if
  * any, provided herein do not apply to combinations of this program with
  * other software, or any other product whatsoever.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write the Free Software Foundation, Inc., 59
  * Temple Place - Suite 330, Boston MA 02111-1307, USA.
- * 
+ *
  * Contact information: Silicon Graphics, Inc., 1600 Amphitheatre Pkwy,
  * Mountain View, CA  94043, or:
- * 
- * http://www.sgi.com 
- * 
- * For further information regarding this notice, see: 
- * 
+ *
+ * http://www.sgi.com
+ *
+ * For further information regarding this notice, see:
+ *
  * http://oss.sgi.com/projects/GenInfo/NoticeExplan/
  */
 /* $Id: symlink01.c,v 1.20 2009/11/02 13:57:19 subrata_modak Exp $ */
@@ -439,9 +439,6 @@ char *TCID;
 char *Selectedtests = NULL;	/* Name (tcid) of selected test cases */
 char test_msg[BUFMAX];
 char full_path[PATH_MAX + 1 + 1];	/* Add one for '\0' and another to exceed the PATH_MAX limit, see creat_path_max() */
-extern int Tst_count;
-extern char *TESTDIR;
-/*extern char *strrchr();*/
 
 struct stat asymlink, statter;
 char Buffer[1024];
@@ -468,9 +465,9 @@ int main(int argc, char *argv[])
    /***************************************************************
     * parse standard options, and exit if there is an error
     ***************************************************************/
-	if ((msg = parse_opts(argc, argv, Options, &help)) != (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, Options, &help)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
 	/*
@@ -507,7 +504,6 @@ int main(int argc, char *argv[])
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/*
@@ -515,14 +511,14 @@ int main(int argc, char *argv[])
 		 */
 		do_syscalltests(tcs_ptr);
 
-	}			/* End for TEST_LOOPING */
+	}
 
 	/*
 	 * End appropriately
 	 */
 	cleanup();
+	tst_exit();
 
-	return 0;
 }
 
 /***********************************************************************
@@ -751,14 +747,14 @@ char *path1, *path2, *path3;
 	int ctr, to_go, size, whole_chunks;
 	char *cwd, *getcwd();
 
-	if ((cwd = getcwd((char *)NULL, 0)) == NULL) {
+	if ((cwd = getcwd(NULL, 0)) == NULL) {
 		TEST_RESULT = TBROK;
 		sprintf(test_msg,
 			"getcwd(3) Failure in setup of %s %s %s test case object elements",
 			path1, path2, path3);
 		return 0;
 	}
-	cwd = getcwd((char *)NULL, 0);
+	cwd = getcwd(NULL, 0);
 	size = strlen(cwd);
 
 	to_go = PATH_MAX - size;
@@ -1056,7 +1052,8 @@ struct all_test_cases *tc_ptr;
 				 "Expected ENOENT error for changing to a non-existent",
 				 "directory through a symbolic link file was not received:",
 				 errno, strerror(errno));
-			chdir(TESTDIR);
+			/* FIXME (garrcoop): memory leak */
+			chdir(get_tst_tmpdir());
 		}
 	} else if (cktcsid(tc_ptr->tcid, LINK)) {
 
@@ -1150,7 +1147,8 @@ struct all_test_cases *tc_ptr;
 			tst_resm(TFAIL, "%s errno:%d %s",
 				 "Expected ELOOP error condition when chdir(2) a nested symbolic link:",
 				 errno, strerror(errno));
-			chdir(TESTDIR);
+			/* FIXME (garrcoop): memory leak */
+			chdir(get_tst_tmpdir());
 		}
 	} else if (cktcsid(tc_ptr->tcid, LINK)) {
 
@@ -1485,11 +1483,12 @@ struct all_test_cases *tc_ptr;
 			/*
 			 *  Build expected current directory position
 			 */
-			strcpy(expected_location, TESTDIR);
+			/* FIXME (garrcoop): memory leak */
+			strcpy(expected_location, get_tst_tmpdir());
 			strcat(expected_location, "/");
 			strcat(expected_location, tc_ptr->fn_arg[2]);
 
-			if ((cwd = getcwd((char *)NULL, 0)) == NULL)
+			if ((cwd = getcwd(NULL, 0)) == NULL)
 				tst_resm(TFAIL, "getcwd(3) FAILURE");
 			else if (strcmp(cwd, expected_location) == 0)
 				if (TEST_RESULT != TPASS || STD_FUNCTIONAL_TEST)
@@ -1504,7 +1503,8 @@ struct all_test_cases *tc_ptr;
 					 "new current working directory location",
 					 cwd, expected_location);
 			}
-			chdir(TESTDIR);
+			/* FIXME (garrcoop): memory leak */
+			chdir(get_tst_tmpdir());
 		}
 		rmdir(tc_ptr->fn_arg[2]);
 	}
@@ -1850,16 +1850,15 @@ struct all_test_cases *tc_ptr;
  ***************************************************************/
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* create a temporary directory and go to it */
 	tst_tmpdir();
 
-}				/* End setup() */
+}
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
@@ -1872,13 +1871,9 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* remove temporary directory and all files in it. */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-
-}				/* End cleanup() */
+}
 
 void help()
 {

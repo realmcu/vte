@@ -14,7 +14,6 @@
 * with this program; if not, write the Free Software Foundation, Inc., 59
 * Temple Place - Suite 330, Boston MA 02111-1307, USA.
 
-
 * This sample test aims to check the following assertion:
 *
 * The time left until an alarm clock is triggered is reset to zero,
@@ -29,7 +28,6 @@
 * The test fails if the child has a pending alarm.
 
 */
-
 
 /* We are testing conformance to IEEE Std 1003.1, 2003 Edition */
 #define _POSIX_C_SOURCE 200112L
@@ -47,27 +45,26 @@
 #include <sys/wait.h>
  #include <errno.h>
 
-
 /********************************************************************************************/
 /******************************   Test framework   *****************************************/
 /********************************************************************************************/
 #include "testfrmw.h"
- #include "testfrmw.c" 
+ #include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
+ * UNRESOLVED(ret, descr);
  *    where descr is a description of the error and ret is an int (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -83,7 +80,7 @@
 /********************************************************************************************/
 
 /* The main test function. */
-int main( int argc, char * argv[] )
+int main(int argc, char * argv[])
 {
 	int ret, status;
 	pid_t child, ctl;
@@ -92,62 +89,60 @@ int main( int argc, char * argv[] )
 	output_init();
 
 	/* Set the alarm pending */
-	alarm( 10 );
+	alarm(10);
 
 	/* Check the alarm() behavior */
-	ret = alarm( 10 );
+	ret = alarm(10);
 
-	if ( ret == 0 )
+	if (ret == 0)
 	{
-		FAILED( "the alarm() routine does not behave as expected" );
+		FAILED("the alarm() routine does not behave as expected");
 	}
 
 	/* Create the child */
 	child = fork();
 
-	if ( child == ( pid_t ) - 1 )
+	if (child == -1)
 	{
-		UNRESOLVED( errno, "Failed to fork" );
+		UNRESOLVED(errno, "Failed to fork");
 	}
 
 	/* child */
-	if ( child == ( pid_t ) 0 )
+	if (child == 0)
 	{
 
-		ret = alarm( 10 );
+		ret = alarm(10);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			FAILED( "The child alarm pending was not reset." );
+			FAILED("The child alarm pending was not reset.");
 		}
 
 		/* We're done */
-		exit( PTS_PASS );
+		exit(PTS_PASS);
 	}
 
 	/* Parent joins the child */
-	ctl = waitpid( child, &status, 0 );
+	ctl = waitpid(child, &status, 0);
 
-	if ( ctl != child )
+	if (ctl != child)
 	{
-		UNRESOLVED( errno, "Waitpid returned the wrong PID" );
+		UNRESOLVED(errno, "Waitpid returned the wrong PID");
 	}
 
-	if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) != PTS_PASS ) )
+	if (!WIFEXITED(status) || (WEXITSTATUS(status) != PTS_PASS))
 	{
-		FAILED( "Child exited abnormally" );
+		FAILED("Child exited abnormally");
 	}
 
-	alarm( 0 );
+	alarm(0);
 
 	/* Test passed */
 #if VERBOSE > 0
 
-	output( "Test passed\n" );
+	output("Test passed\n");
 
 #endif
 
 	PASSED;
 }
-
-

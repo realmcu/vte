@@ -73,7 +73,7 @@ int main(int argc, char **argv)
         printf("ERROR: Create/open block device failed\n");
     }
 
-    return 0;
+  return 0;
 }
 
 int LTP_acpi_open_block_device()
@@ -81,7 +81,6 @@ int LTP_acpi_open_block_device()
     dev_t devt;
     struct stat statbuf;
     int rc;
-
 
     if (ltp_block_dev_handle == 0) {
 
@@ -114,7 +113,6 @@ int LTP_acpi_open_block_device()
                 }
             }
         }
-
 
         /*
          * Check for the /dev/ltp-acpi/block_device node, and create if it does not

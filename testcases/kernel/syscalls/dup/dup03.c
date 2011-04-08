@@ -105,6 +105,9 @@
  *
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
 #include <sys/types.h>
 #include <sys/fcntl.h>
 #include <errno.h>
@@ -119,172 +122,103 @@ void cleanup();
 
 char *TCID = "dup03";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-char Fname[255];
-int *Fd = NULL;
-int Nfds = 0;
+char filename[255];
+int *fd = NULL;
+int nfds = 0;
 
-/***********************************************************************
- * Main
- ***********************************************************************/
 int main(int ac, char **av)
 {
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 
-    /***************************************************************
-     * parse standard options
-     ***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
 
-    /***************************************************************
-     * perform global setup for test
-     ***************************************************************/
 	setup();
 
-    /***************************************************************
-     * check looping state if -c option given
-     ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		/*
-		 * Call dup(2)
-		 */
-		TEST(dup(Fd[0]));
+		TEST(dup(fd[0]));
 
-		/* check return code */
 		if (TEST_RETURN == -1) {
 			if (STD_FUNCTIONAL_TEST) {
-				if (TEST_ERRNO == EMFILE) {
+				if (TEST_ERRNO == EMFILE)
 					tst_resm(TPASS,
-						 "dup(%d) Failed, errno=%d : %s",
-						 Fd[0], TEST_ERRNO,
-						 strerror(TEST_ERRNO));
-				} else {
-					tst_resm(TFAIL,
-						 "dup(%d) Failed, errno=%d %s, expected %d (EMFILE)",
-						 Fd[0], TEST_ERRNO,
-						 strerror(TEST_ERRNO), EMFILE);
-				}
+					    "dup failed as expected with "
+					    "EMFILE");
+				else
+					tst_resm(TFAIL|TTERRNO,
+					    "dup failed unexpectedly");
 			}
 		} else {
-			tst_resm(TFAIL,
-				 "dup(%d) returned %ld, expected -1, errno:%d (EMFILE)",
-				 Fd[0], TEST_RETURN, EMFILE);
+			tst_resm(TFAIL, "dup succeeded unexpectedly");
 
-			/* close the new file so loops do not open too many files */
-			if (close(TEST_RETURN) == -1) {
-				tst_brkm(TBROK, cleanup,
-					 "close(%s) Failed, errno=%d : %s",
-					 Fname, errno, strerror(errno));
-			}
+			if (close(TEST_RETURN) == -1)
+				tst_brkm(TBROK|TERRNO, cleanup,
+				    "close failed");
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
-    /***************************************************************
-     * cleanup and exit
-     ***************************************************************/
 	cleanup();
 
-	return 0;
-}				/* End main */
+	tst_exit();
+}
 
-/***************************************************************
- * setup() - performs all ONE TIME setup for this test.
- ***************************************************************/
 void setup()
 {
 	long maxfds;
 
-	/*
-	 * Initialize Fd in case we get a quick signal
-	 */
 	maxfds = sysconf(_SC_OPEN_MAX);
-	if (maxfds < 1) {
-		tst_brkm(TBROK, cleanup,
-			 "sysconf(_SC_OPEN_MAX) Failed, errno=%d : %s",
-			 errno, strerror(errno));
-	}
+	/*
+	 * Read the errors section if you're so inclined to determine
+	 * why == -1 matters for errno.
+	 */
+	if (maxfds < 1)
+		tst_brkm((maxfds == -1 ? TBROK|TERRNO : TBROK), NULL,
+		    "sysconf(_SC_OPEN_MAX) failed");
 
-	Fd = (int *)malloc(maxfds * sizeof(int));
-	Fd[0] = -1;
+	fd = malloc(maxfds * sizeof(int));
+	if (fd == NULL)
+		tst_brkm(TBROK|TERRNO, NULL, "malloc failed");
+	fd[0] = -1;
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
-	/*
-	 * open the file as many times as it takes to use up all fds
-	 */
-	sprintf(Fname, "dupfile");
-	for (Nfds = 1; Nfds <= maxfds; Nfds++) {
-		if ((Fd[Nfds - 1] = open(Fname, O_RDWR | O_CREAT, 0700)) == -1) {
-
-			Nfds--;	/* on a open failure, decrement the counter */
-			if (errno == EMFILE) {
+	sprintf(filename, "dupfile");
+	for (nfds = 1; nfds <= maxfds; nfds++)
+		if ((fd[nfds-1] = open(filename, O_RDWR|O_CREAT, 0700)) == -1) {
+			if (errno == EMFILE)
 				break;
-			} else {	/* open failed for some other reason */
-				tst_brkm(TBROK, cleanup,
-					 "open(%s, O_RDWR|O_CREAT,0700) Failed, errno=%d : %s",
-					 Fname, errno, strerror(errno));
-			}
+			else
+				tst_brkm(TBROK|TBROK, cleanup, "open failed");
+			nfds--;
 		}
-	}
 
-	/*
-	 * make sure at least one was open and that all fds were opened.
-	 */
-	if (Nfds == 0) {
-		tst_brkm(TBROK, cleanup, "Unable to open at least one file");
-	}
-	if (Nfds > maxfds) {
+	if (nfds == 0)
+		tst_brkm(TBROK, cleanup, "unable to open at least one file");
+	if (nfds > maxfds)
 		tst_brkm(TBROK, cleanup,
-			 "Unable to open enough files to use all file descriptors, tried %ld",
-			 maxfds);
-	}
-}				/* End setup() */
+		    "unable to open enough files to use all file descriptors, "
+		    "tried %ld",
+		    maxfds);
+}
 
-/***************************************************************
- * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
- ***************************************************************/
 void cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
+	int i;
+
 	TEST_CLEANUP;
 
-	/* close the open file we've been dup'ing */
-	if (Fd) {
-		for (; Nfds > 0; Nfds--) {
-			if (close(Fd[Nfds - 1]) == -1) {
-				tst_resm(TWARN,
-					 "close(%s) Failed, errno=%d : %s",
-					 Fname, errno, strerror(errno));
-			}
-			Fd[Nfds] = -1;
-		}
-		free(Fd);
-	}
+	for (i = 3; i <= nfds; i++)
+		close(fd[i]);
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
-
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

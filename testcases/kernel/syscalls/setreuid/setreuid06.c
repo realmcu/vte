@@ -58,7 +58,6 @@
 char *TCID = "setreuid06";
 int TST_TOTAL = 1;
 int exp_enos[] = { EPERM, 0 };
-extern int Tst_count;
 
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
@@ -73,17 +72,16 @@ int main(int argc, char **argv)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	/*
 	 * perform global setup for the test
 	 */
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -103,7 +101,8 @@ int main(int argc, char **argv)
 
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
+	tst_exit();
 
 }
 
@@ -113,7 +112,7 @@ int main(int argc, char **argv)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* set the expected errnos... */
@@ -123,7 +122,7 @@ void setup(void)
 
 	/* Switch to nobody user for correct error code collection */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 	ltpuser = getpwnam(nobody_uid);
 	if (setuid(ltpuser->pw_uid) == -1) {
@@ -132,7 +131,6 @@ void setup(void)
 		perror("setuid");
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -149,6 +147,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

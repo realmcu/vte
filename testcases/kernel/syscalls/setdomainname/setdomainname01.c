@@ -77,7 +77,6 @@ static void cleanup();
 
 char *TCID = "setdomainname01";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static char *test_domain_name = "test_dom";
 static char old_domain_name[MAX_NAME_LEN];
@@ -89,18 +88,15 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -c option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/*
@@ -118,37 +114,34 @@ int main(int ac, char **av)
 				 test_domain_name);
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
 	/* cleanup and exit */
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Check whether we are root */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 
 	/* Save current domain name */
 	if ((getdomainname(old_domain_name, sizeof(old_domain_name))) < 0) {
-		tst_brkm(TBROK, tst_exit, "getdomainname() failed while"
+		tst_brkm(TBROK, NULL, "getdomainname() failed while"
 			 " getting current domain name");
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}				/* End setup() */
+}
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
@@ -169,6 +162,4 @@ void cleanup()
 			 " domainname to \"%s\"", old_domain_name);
 	}
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

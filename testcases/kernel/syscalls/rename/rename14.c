@@ -54,7 +54,6 @@ int local_flag = PASSED;
 
 char *TCID = "rename14";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 /**************/
 
 #define RUNTIME	45
@@ -78,10 +77,8 @@ char *argv[];
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	}
 
 	maybe_run_child(&dochild1, "n", 1);
 	maybe_run_child(&dochild2, "n", 2);
@@ -158,10 +155,7 @@ char *argv[];
 	    : tst_resm(TFAIL, "Test Failed");
 
 	tst_rmdir();
-/*--------------------------------------------------------------*/
-	tst_exit();		/* THIS CALL DOES NOT RETURN - EXITS!!  */
-/*--------------------------------------------------------------*/
-	return 0;
+	tst_exit();
 }
 
 /* FUNCTIONS GO HERE */

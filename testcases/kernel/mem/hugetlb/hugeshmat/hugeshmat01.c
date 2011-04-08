@@ -61,7 +61,6 @@
 
 char *TCID = "hugeshmat01";
 int TST_TOTAL = 3;
-extern int Tst_count;
 unsigned long huge_pages_shm_to_be_allocated;
 
 #define CASE0		10		/* values to write into the shared */
@@ -100,13 +99,12 @@ int main(int ac, char **av)
 	void check_functionality(int);
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
 
-        if ( get_no_of_hugepages() <= 0 || hugepages_size() <= 0 )
-             tst_brkm(TCONF, tst_exit, "Not enough available Hugepages");
-        else             
+        if (get_no_of_hugepages() <= 0 || hugepages_size() <= 0)
+             tst_brkm(TCONF, NULL, "Not enough available Hugepages");
+        else
              huge_pages_shm_to_be_allocated = ( get_no_of_hugepages() * hugepages_size() * 1024) / 2 ;
 
 	setup();			/* global setup */
@@ -153,8 +151,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
+	tst_exit();
 }
 
 /*
@@ -241,10 +238,9 @@ check_functionality(int i)
 void
 setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -275,7 +271,6 @@ cleanup(void)
 	/* if it exists, remove the shared memory resource */
 	rm_shm(shm_id_1);
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
 	/*
@@ -284,7 +279,4 @@ cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
-

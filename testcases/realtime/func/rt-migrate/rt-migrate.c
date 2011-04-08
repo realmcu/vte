@@ -43,7 +43,7 @@
  * HISTORY
  *      30 July, 2009: Initial version by Steven Rostedt
  *      11 Aug, 2009: Converted the coding style to the one used by the realtime
- *                    testcases by Kiran Prakash
+ *		    testcases by Kiran Prakash
  *
  */
 #ifndef _GNU_SOURCE
@@ -192,7 +192,7 @@ static void usage()
 
 /*
 int rt_init(const char *options, int (*parse_arg)(int option, char *value),
-            int argc, char *argv[]);
+	    int argc, char *argv[]);
  */
 static int parse_args(int c, char *v)
 {
@@ -436,7 +436,6 @@ int main(int argc, char **argv)
 		debug(DBG_ERR, "pthread_barrier_init failed: %s\n",
 				strerror(ret));
 
-
 	for (i = 0; i < nr_tasks; i++) {
 		stats_container_init(&intervals[i], nr_runs);
 		stats_container_init(&intervals_length[i], nr_runs);
@@ -517,10 +516,9 @@ int main(int argc, char **argv)
 		else
 			exit(1);
 	}
+
 	if (check < 0)
 		exit(-1);
 	else
 		exit(0);
-
-	return 0;
 }

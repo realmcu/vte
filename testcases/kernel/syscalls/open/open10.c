@@ -57,7 +57,6 @@
 
 char *TCID = "open10";
 int TST_TOTAL = 1;
-extern int Tst_count;
 int local_flag;
 
 #define PASSED 1
@@ -122,9 +121,9 @@ int main(int ac, char *av[])
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	tst_tmpdir();
 
@@ -498,7 +497,7 @@ int main(int ac, char *av[])
 
 	}
 	cleanup();
-	return 0;
+	tst_exit();
 }
 
 void cleanup(void)
@@ -509,9 +508,6 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

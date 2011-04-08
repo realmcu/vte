@@ -45,7 +45,7 @@
 #include <unistd.h>
 #include "librttest.h"
 
-#if defined(HAS_PTHREAD_MUTEXTATTR_ROBUST_APIS)
+#if defined(HAS_PTHREAD_MUTEXTATTR_ROBUST_APIS) && defined(PTHREAD_MUTEX_ROBUST_NP)
 
 #define NUM_MUTEXES 5000
 #define NUM_THREADS 50
@@ -54,26 +54,25 @@
 
 static pthread_mutex_t *mutexes[NUM_MUTEXES];
 
-
 void usage(void)
 {
-        rt_help();
-        printf("sbrk_mutex specific options:\n");
+	rt_help();
+	printf("sbrk_mutex specific options:\n");
 }
 
 int parse_args(int c, char *v)
 {
 
-        int handled = 1;
-        switch (c) {
-                case 'h':
-                        usage();
-                        exit(0);
-                default:
-                        handled = 0;
-                        break;
-        }
-        return handled;
+	int handled = 1;
+	switch (c) {
+		case 'h':
+			usage();
+			exit(0);
+		default:
+			handled = 0;
+			break;
+	}
+	return handled;
 }
 
 void *worker_thread(void *arg)
@@ -93,7 +92,7 @@ void *worker_thread(void *arg)
 		usleep(DELAY);
 
 		if (_dbg_lvl)
-		    printf("thread %ld @ %d\n", (long)arg, i);
+			printf("thread %ld @ %d\n", (long)arg, i);
 	}
 	return NULL;
 }
@@ -107,18 +106,17 @@ int main(int argc, char* argv[])
 
 	rt_init("h",parse_args,argc,argv);
 
-        if (pthread_mutexattr_init(&mutexattr) != 0) {
-                printf("Failed to init mutexattr\n");
-        }
-        if (pthread_mutexattr_setrobust_np(&mutexattr, PTHREAD_MUTEX_ROBUST_NP) != 0) {
-                printf("Can't set mutexattr robust\n");
-        }
-        if (pthread_mutexattr_getrobust_np(&mutexattr, &robust) != 0) {
-                printf("Can't get mutexattr robust\n");
-        } else {
-                printf("robust in mutexattr is %d\n", robust);
-        }
-
+	if (pthread_mutexattr_init(&mutexattr) != 0) {
+		printf("Failed to init mutexattr\n");
+	}
+	if (pthread_mutexattr_setrobust_np(&mutexattr, PTHREAD_MUTEX_ROBUST_NP) != 0) {
+		printf("Can't set mutexattr robust\n");
+	}
+	if (pthread_mutexattr_getrobust_np(&mutexattr, &robust) != 0) {
+		printf("Can't get mutexattr robust\n");
+	} else {
+		printf("robust in mutexattr is %d\n", robust);
+	}
 
 	/* malloc and initialize the mutexes */
 	printf("allocating and initializing %d mutexes\n", NUM_MUTEXES);
@@ -135,7 +133,7 @@ int main(int argc, char* argv[])
 	/* start children threads to walk the array, grabbing the locks */
 	for (t = 0; t < NUM_THREADS; t++) {
 		create_fifo_thread(worker_thread, (void*)t, sched_get_priority_min(SCHED_FIFO));
-		}
+	}
 	/* wait for the children to complete */
 	printf("joining threads\n");
 	join_threads();
@@ -147,12 +145,13 @@ int main(int argc, char* argv[])
 			free(mutexes[m]);
 		}
 	}
+
 	return 0;
 }
 
 #else
 int main(void) {
-	printf("Your system doesn't support the pthread robust mutexattr API's\n");
+	printf("Your system doesn't support the pthread robust mutexattr APIs\n");
 	return 1;
 }
 #endif

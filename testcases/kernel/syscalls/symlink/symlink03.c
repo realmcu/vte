@@ -102,7 +102,6 @@
 
 char *TCID = "symlink03";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 int exp_enos[] = { ENOTDIR, ENOENT, ENAMETOOLONG, EFAULT, EEXIST, EACCES, 0 };
 
 char *bad_addr = 0;
@@ -159,11 +158,11 @@ int main(int ac, char **av)
 	int ind;		/* counter to test different test conditions */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
+
+	 }
 
 	/*
 	 * Invoke setup function to call individual test setup functions
@@ -174,9 +173,8 @@ int main(int ac, char **av)
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
@@ -195,7 +193,6 @@ int main(int ac, char **av)
 			 */
 			TEST(symlink(test_file, sym_file));
 
-			/* Check return code of symlink(2) */
 			if (TEST_RETURN == -1) {
 				/*
 				 * Perform functional verification if
@@ -217,16 +214,15 @@ int main(int ac, char **av)
 					 "expected -1, errno:%d", TEST_RETURN,
 					 Test_cases[ind].exp_errno);
 			}
-		}		/* End of TEST CASE LOOPING. */
+		}
 
 		Tst_count++;	/* incr. TEST_LOOP counter */
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /*
  * void
@@ -237,7 +233,7 @@ int main(int ac, char **av)
 void setup()
 {
 	int ind;
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Pause if that option was specified
@@ -249,13 +245,12 @@ void setup()
 
 	/* Switch to nobody user for correct error code collection */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 	ltpuser = getpwnam(nobody_uid);
 	if (setuid(ltpuser->pw_uid) == -1)
 		tst_resm(TINFO|TERRNO, "setuid(%d) failed", ltpuser->pw_uid);
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 #if !defined(UCLINUX)
@@ -271,7 +266,7 @@ void setup()
 	for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
 		Test_cases[ind].setupfunc();
 	}
-}				/* End setup() */
+}
 
 /*
  * int
@@ -301,23 +296,23 @@ int setup1()
 
 	if (mkdir(DIR_TEMP, MODE_RWX) < 0) {
 		tst_brkm(TBROK, cleanup, "mkdir(2) of %s failed", DIR_TEMP);
-	 /*NOTREACHED*/}
+	 }
 
 	if ((fd = open(TEST_FILE1, O_RDWR | O_CREAT, 0666)) == -1) {
 		tst_brkm(TBROK, cleanup,
 			 "open(%s, O_RDWR|O_CREAT, 0666) failed, errno=%d : %s",
 			 TEST_FILE1, errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 	if (close(fd) == -1) {
 		tst_brkm(TBROK, cleanup,
 			 "close(%s) Failed, errno=%d : %s",
 			 TEST_FILE1, errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 
 	/* Modify mode permissions on test directory */
 	if (chmod(DIR_TEMP, FILE_MODE) < 0) {
 		tst_brkm(TBROK, cleanup, "chmod(2) of %s failed", DIR_TEMP);
-	 /*NOTREACHED*/}
+	 }
 	return 0;
 }
 
@@ -333,18 +328,18 @@ int setup2()
 		tst_brkm(TBROK, cleanup,
 			 "open(%s, O_RDWR|O_CREAT, 0666) failed, errno=%d : %s",
 			 TEST_FILE1, errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 	if (close(fd) == -1) {
 		tst_brkm(TBROK, cleanup,
 			 "close(%s) Failed, errno=%d : %s",
 			 TEST_FILE2, errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 
 	if (symlink(TEST_FILE2, SYM_FILE2) < 0) {
 		tst_brkm(TBROK, cleanup,
 			 "symlink() Fails to create %s in setup2, error=%d",
 			 SYM_FILE2, errno);
-	 /*NOTREACHED*/}
+	 }
 	return 0;
 }
 
@@ -382,11 +377,11 @@ int setup3()
 		tst_brkm(TBROK, cleanup,
 			 "open(2) on t_file failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 	if (close(fd) == -1) {
 		tst_brkm(TBROK, cleanup, "close(t_file) Failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 	return 0;
 }
 
@@ -410,9 +405,6 @@ void cleanup()
 		tst_brkm(TBROK, NULL, "chmod(2) of %s failed", DIR_TEMP);
 	}
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

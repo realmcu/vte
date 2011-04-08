@@ -47,8 +47,6 @@
 #include "linux_syscall_numbers.h"
 
 /* Extern Global Variables */
-extern int Tst_count;           /* counter for tst_xxx routines.         */
-extern char *TESTDIR;           /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
 char *TCID = "set_tid_address01";  /* Test program identifier.*/
@@ -74,11 +72,10 @@ int  TST_TOTAL = 1;                   /* total number of tests in this file.   *
 /*                                                                            */
 /******************************************************************************/
 extern void cleanup() {
-        /* Remove tmp dir and all files in it */
+
         TEST_CLEANUP;
         tst_rmdir();
 
-        /* Exit with appropriate return code. */
         tst_exit();
 }
 
@@ -111,21 +108,20 @@ int main(int ac, char **av) {
         int newtid = -1;
         int lc;                 /* loop counter */
         char *msg;              /* message returned from parse_opts */
-	
+
         /* parse standard options */
-        if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-             tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+        if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+             tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
              tst_exit();
            }
 
         setup();
 
-        /* Check looping state if -i option given */
         for (lc = 0; TEST_LOOPING(lc); ++lc) {
                 Tst_count = 0;
                 for (testno = 0; testno < TST_TOTAL; ++testno) {
                      TEST(syscall(__NR_set_tid_address, &newtid));     //call set_tid_address()
-                     if(TEST_RETURN == getpid()) {
+                     if (TEST_RETURN == getpid()) {
         		tst_resm(TPASS, "set_tid_address call succeeded:  as expected %ld",TEST_RETURN);
                      }
                      else {
@@ -134,8 +130,7 @@ int main(int ac, char **av) {
 	  	           tst_exit();
                      }
                 }
-        }	
+        }
 	cleanup();
         tst_exit();
 }
-

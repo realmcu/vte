@@ -71,9 +71,8 @@
 
 char *TCID = "msync05";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
-char *addr;			/* addr of memory mapped region */
+void *addr;			/* addr of memory mapped region */
 size_t page_sz;			/* system page size */
 
 int exp_enos[] = { ENOMEM, 0 };
@@ -87,110 +86,51 @@ int main(int ac, char **av)
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* Perform global setup for test */
 	setup();
 
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* Reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		/*
-		 * Call msync to synchronize the specified memory region
-		 * which was not mapped previously.
-		 */
 		TEST(msync(addr, page_sz, MS_SYNC));
 
-		/* Check for the return value of msync() */
-		if (TEST_RETURN != -1) {
-			tst_resm(TFAIL, "msync() returns unexpected value %ld, "
-				 "expected:-1", TEST_RETURN);
-			continue;
-		}
-
-		TEST_ERROR_LOG(TEST_ERRNO);
-
-		/*
-		 * Verify whether expected errno is
-		 * set (ENOMEM).
-		 */
-		if (errno == ENOMEM) {
-			tst_resm(TPASS, "memory region not mapped, errno:%d",
-				 TEST_ERRNO);
-		} else {
-			tst_resm(TFAIL, "msync() fails, unexpected errno:%d, "
-				 "expected: ENOMEM", TEST_ERRNO);
-		}
-	}			/* End for TEST_LOOPING */
-
-	/* Call test cleanup to exit the test */
-	cleanup();
-
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
-
-/*
- * void
- * setup() - performs all ONE TIME setup for this test.
- *
- * Get system page size,
- * Set the virtual address points to some high address which is not mapped.
- */
-void setup()
-{
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
-
-	/* Pause if that option was specified */
-	TEST_PAUSE;
-
-	/* Get the system page size */
-	if ((page_sz = getpagesize()) < 0) {
-		tst_brkm(TBROK, cleanup,
-			 "getpagesize() fails to get system page size");
+		if (TEST_RETURN != -1)
+			tst_resm(TFAIL, "msync succeeded unexpectedly");
+		else if (TEST_ERRNO == ENOMEM)
+			tst_resm(TPASS, "msync failed as expected with ENOMEM");
+		else
+			tst_resm(TFAIL|TTERRNO, "msync failed unexpectedly");
 	}
 
-	/*
-	 * Set the virtual address point to some high address
-	 * which is not mapped.
-	 */
-	addr = (char *)get_high_address();
-}
-
-/*
- * void
- * cleanup() - performs all ONE TIME cleanup for this test at
- *             completion or premature exit.
- *	       Exit the program with proper exit code.
- */
-void cleanup()
-{
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
-	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
+	cleanup();
 	tst_exit();
 }
 
-#else
-
-int main()
+void setup()
 {
-	tst_resm(TINFO, "test is not available on uClinux");
-	return 0;
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+
+	TEST_PAUSE;
+
+	if ((page_sz = getpagesize()) == -1)
+		tst_brkm(TBROK|TERRNO, NULL, "getpagesize failed");
+
+	addr = get_high_address();
 }
 
+void cleanup()
+{
+	TEST_CLEANUP;
+}
+
+#else
+int main()
+{
+	tst_brkm(TCONF, NULL, "test is not available on uClinux");
+}
 #endif /* if !defined(UCLINUX) */

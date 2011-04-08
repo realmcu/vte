@@ -25,7 +25,7 @@
  *      SCHED_FIFO at a maximum SCHED_FIFO priority. It is bound to a single
  *      processor and its address space is locked as well. It makes successive
  *      calls to the gettimeofday() function(via inlined assembly to read the
- *      TSC).The value returned between two such consecutive calls is reported 
+ *      TSC).The value returned between two such consecutive calls is reported
  *	as the latency.
  *      The maximum, minimum and average delays are reported for x pairs of such
  *      calls.
@@ -57,26 +57,25 @@
 #define ITERATIONS 1000000ULL
 #define INTERVALS 10
 
-
 void usage(void)
 {
-        rt_help();
-        printf("preempt_timing specific options:\n");
+	rt_help();
+	printf("preempt_timing specific options:\n");
 }
 
 int parse_args(int c, char *v)
 {
 
-        int handled = 1;
-        switch (c) {
-                case 'h':
-                        usage();
-                        exit(0);
-                default:
-                        handled = 0;
-                        break;
-        }
-        return handled;
+	int handled = 1;
+	switch (c) {
+		case 'h':
+			usage();
+			exit(0);
+		default:
+			handled = 0;
+			break;
+	}
+	return handled;
 }
 
 unsigned long long sample_list[ITERATIONS];
@@ -108,7 +107,7 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "This program runs with a scheduling policy of SCHED_FIFO at priority %d\n", param.sched_priority);
 			fprintf(stderr, "You don't have the necessary privileges to create such a real-time process.\n");
 		} else {
-                	fprintf(stderr, "Failed to set scheduler, errno %d\n", errno);
+			fprintf(stderr, "Failed to set scheduler, errno %d\n", errno);
 		}
 		exit(1);
 	}
@@ -122,17 +121,17 @@ int main(int argc, char *argv[])
 		exit(-1);
 	}
 
-	for(j=0; j < INTERVALS; j++){
+	for (j=0; j < INTERVALS; j++) {
 		/* Collect samples */
-		for(i = 0; i < ITERATIONS; i++)
+		for (i = 0; i < ITERATIONS; i++)
 			rdtscll(sample_list[i]);
 
 		/* Process samples */
-		for(i = 0; i < (ITERATIONS-1); i++) {
+		for (i = 0; i < (ITERATIONS-1); i++) {
 			delta = sample_list[i+1] - sample_list[i];
 			if (delta < min) min = delta;
 			if (delta > max) max = delta;
-			if(delta > 100000)
+			if (delta > 100000)
 				printf("maxd(%llu:%llu): %llu %llu = %llu\n", j, i,
 					sample_list[i], sample_list[i+1],
 					delta);

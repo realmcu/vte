@@ -59,7 +59,6 @@ int testno;
 
 void setup(void), cleanup(void);
 
-extern int Tst_count;
 
 int TST_TOTAL = 1;
 
@@ -76,24 +75,21 @@ main(int argc, char *argv[])
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(argc, argv, (option_t *)NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	msg = parse_opts(argc, argv, NULL, NULL);
+	if (msg != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
 		gaiv4();
 		gaiv6();
 	}
 	cleanup();
 
-	/* NOTREACHED */
 	return(0);
-}	/* End main */
-
+}
 
 /* getaddrinfo tests (v4) */
 
@@ -108,7 +104,7 @@ gaiv4(void)
 	char *p;
 
 	if (gethostname(hostname, sizeof(hostname)) < 0)
-		tst_brkm(TBROK, tst_exit, "gethostname failed - %s",
+		tst_brkm(TBROK, NULL, "gethostname failed - %s",
 			strerror(errno));
 	strncpy(shortname, hostname, MAXHOSTNAMELEN);
 	shortname[MAXHOSTNAMELEN] = '\0';
@@ -326,7 +322,6 @@ gaiv4(void)
 			"returns %ld (\"%s\")", service, TEST_RETURN,
 			gai_strerror(TEST_RETURN));
 
-
 	/* test 7, IPv4 0+service */
 
 	memset(&hints, 0, sizeof(hints));
@@ -514,7 +509,7 @@ gaiv6(void)
 	char *p;
 
 	if (gethostname(hostname, sizeof(hostname)) < 0)
-		tst_brkm(TBROK, tst_exit, "gethostname failed - %s",
+		tst_brkm(TBROK, NULL, "gethostname failed - %s",
 			strerror(errno));
 	strncpy(shortname, hostname, MAXHOSTNAMELEN);
 	shortname[MAXHOSTNAMELEN] = '\0';
@@ -733,7 +728,6 @@ gaiv6(void)
 			"getaddrinfo IPv6 0+service, PASSIVE (\"\", \"%s\") "
 			"returns %ld (\"%s\")", service, TEST_RETURN,
 			gai_strerror(TEST_RETURN));
-
 
 	/* test 18, IPv6 0+service */
 
@@ -959,6 +953,5 @@ void
 cleanup(void)
 {
 	TEST_CLEANUP;
-	tst_exit();
-}
 
+}

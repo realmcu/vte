@@ -7,7 +7,7 @@
  */
 
 /*
- * Test that mq_open() fails with ENAMETOOLONG if a component of the 
+ * Test that mq_open() fails with ENAMETOOLONG if a component of the
  * name is greater than NAME_MAX.
  *
  * Since a component == the full name, this test will be identical to
@@ -34,7 +34,7 @@ int main()
         sprintf(qname, "/mq_open_27-1_%d", getpid());
 
 	//Ensures queue name will have > NAME_MAX chars
-	for(i=0;i<NAME_MAX;i++) {
+	for (i=0;i<NAME_MAX;i++) {
 		strcat(qname, "0");
 	}
 
@@ -51,7 +51,7 @@ int main()
 #ifdef DEBUG
 	printf("mq_open() failed as expected\n");
 #endif
-	
+
 	if (errno != ENAMETOOLONG) {
 		printf("errno != ENAMETOOLONG\n");
 		printf("Test FAILED\n");
@@ -65,4 +65,3 @@ int main()
         printf("Test PASSED\n");
         return PTS_PASS;
 }
-

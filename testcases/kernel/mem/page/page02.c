@@ -44,7 +44,7 @@ CALLS:	malloc(3)
 #ifdef LINUX
 #include <stdlib.h>
 #include <unistd.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <sys/wait.h>
 #endif
 
@@ -60,7 +60,6 @@ int block_number;
 
 char *TCID="page02";            /* Test program identifier.    */
 int TST_TOTAL=1;                /* Total number of test cases. */
-extern int Tst_count;           /* Test Case counter for tst_* routines */
 /**************/
 
 int bd_arg(char*);
@@ -82,7 +81,6 @@ int main(argc, argv)
 	parent_pid = getpid();
         tst_tmpdir();
 
-
 	if (signal(SIGUSR1, (void (*)())chld) == SIG_ERR) {
 		tst_resm(TBROK,"signal failed");
 		exit(1);
@@ -103,7 +101,6 @@ int main(argc, argv)
 	}
 	half_memory_size = memory_size/2;
 
-
 	error_count = 0;
 
 	/****************************************/
@@ -113,9 +110,9 @@ int main(argc, argv)
 	/*					*/
 	/****************************************/
 
-	for(i = 1; i <= nchild; i++) {
+	for (i = 1; i <= nchild; i++) {
 		chld_flag = 0;
-		if((pid = fork()) == -1) {
+		if ((pid = fork()) == -1) {
 			tst_resm(TBROK,"Fork failed (may be OK if under stress)");
 			tst_resm(TINFO, "System resource may be too low.\n");
 			local_flag = PASSED;
@@ -123,7 +120,7 @@ int main(argc, argv)
 		        tst_rmdir();
 		        tst_exit();
 		}
-		else if(pid == 0) {
+		else if (pid == 0) {
 			/********************************/
 			/*				*/
 			/*   allocate memory  of size	*/
@@ -132,7 +129,7 @@ int main(argc, argv)
 			/********************************/
 
 			memory_pointer = (int*)malloc(memory_size*sizeof(int));
-			if(memory_pointer == 0) {
+			if (memory_pointer == 0) {
 				tst_resm(TBROK, "\tCannot malloc memory.\n");
 				if (i < 2) {
 					tst_resm(TBROK, "\tThis should not happen to first two children.\n");
@@ -149,7 +146,7 @@ int main(argc, argv)
 				tst_exit();
 			}
 			kill(parent_pid, SIGUSR1);
-		
+
 			down_pointer = up_pointer = memory_pointer +
 			  (memory_size / 2);
 
@@ -159,7 +156,7 @@ int main(argc, argv)
 			/*				*/
 			/********************************/
 
-			for(j = 1; j <= half_memory_size; j++) {
+			for (j = 1; j <= half_memory_size; j++) {
 				*(up_pointer++) = j;
 				*(down_pointer--) = j;
 			}
@@ -176,9 +173,9 @@ int main(argc, argv)
 			down_pointer = up_pointer = memory_pointer +
 			  (memory_size / 2);
 
-			for(j = 1; j <= half_memory_size; j++) {
-				if(*(up_pointer++) != j) error_count++;
-				if(*(down_pointer--) != j) error_count++;
+			for (j = 1; j <= half_memory_size; j++) {
+				if (*(up_pointer++) != j) error_count++;
+				if (*(down_pointer--) != j) error_count++;
 			}
 			exit(error_count);
 		}
@@ -215,7 +212,7 @@ int main(argc, argv)
     	tst_rmdir();
     	tst_exit();
 	/**NOT REACHED**/
-	return 0;
+	tst_exit();
 
 }
 

@@ -73,7 +73,6 @@ extern void do_file_setup(char *);
 
 char *TCID = "rename13";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int fd;
 char fname[255], mname[255];
@@ -89,9 +88,8 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	/*
 	 * perform global setup for test
@@ -103,7 +101,6 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/*
@@ -124,14 +121,14 @@ int main(int ac, char **av)
 			if (stat(mname, &buf2) == -1) {
 				tst_brkm(TBROK, cleanup, "failed to stat file "
 					 "%s in rename()", mname);
-				/* NOTREACHED */
+
 			}
 
 			/* check the existence of "old", and get the status */
 			if (stat(fname, &buf1) == -1) {
 				tst_brkm(TBROK, cleanup, "failed to stat file "
 					 "%s in rename()", fname);
-				/* NOTREACHED */
+
 			}
 
 			/* verify the new file is the same as the original */
@@ -155,25 +152,24 @@ int main(int ac, char **av)
 		} else {
 			tst_resm(TPASS, "call succeeded");
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
 	/*
 	 * cleanup and exit
 	 */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Create a temporary directory and make it current. */
@@ -188,7 +184,7 @@ void setup()
 	if (stat(fname, &buf1) == -1) {
 		tst_brkm(TBROK, cleanup, "failed to stat file %s"
 			 "in rename()", fname);
-		/* NOTREACHED */
+
 	}
 
 	/* save the dev and inode */
@@ -199,7 +195,7 @@ void setup()
 	if (link(fname, mname) == -1) {
 		tst_brkm(TBROK, cleanup,
 			 "link from %s to %s failed!", fname, mname);
-	 /*NOTREACHED*/}
+	 }
 }
 
 /*
@@ -219,8 +215,4 @@ void cleanup()
 	 */
 	tst_rmdir();
 
-	/*
-	 * Exit with return code appropriate for results.
-	 */
-	tst_exit();
 }

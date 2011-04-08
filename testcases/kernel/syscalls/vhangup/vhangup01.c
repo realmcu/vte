@@ -46,8 +46,8 @@
 #include <errno.h>
 #include <pwd.h>
 #include <wait.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 void setup(void);
 void cleanup(void);
@@ -61,7 +61,6 @@ int exp_enos[] = { EPERM, 0 };
 int fail;
 char user1name[] = "nobody";
 extern struct passwd *my_getpwnam(char *);
-extern int Tst_count;
 
 int main(int argc, char **argv)
 {
@@ -74,14 +73,13 @@ int main(int argc, char **argv)
 	struct passwd *nobody;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -90,7 +88,7 @@ int main(int argc, char **argv)
 
 		if ((pid = FORK_OR_VFORK()) < 0) {
 			tst_brkm(TFAIL, cleanup, "fork failed");
-		 /*NOTREACHED*/} else if (pid > 0) {	/* parent */
+		 } else if (pid > 0) {	/* parent */
 			waitpid(pid, &status, 0);
 			_exit(0);	/*
 					 * Exit here and let the child clean up.
@@ -105,12 +103,12 @@ int main(int argc, char **argv)
 			if (retval < 0) {
 				perror("setreuid");
 				tst_brkm(TFAIL, cleanup, "setreuid failed");
-			 /*NOTREACHED*/}
+			 }
 			TEST(vhangup());
 			if (TEST_RETURN != -1) {
 				tst_brkm(TFAIL, cleanup, "vhangup() failed to "
 					 "fail");
-			 /*NOTREACHED*/} else if (TEST_ERRNO == EPERM) {
+			 } else if (TEST_ERRNO == EPERM) {
 				TEST_ERROR_LOG(TEST_ERRNO);
 				tst_resm(TPASS, "Got EPERM as expected.");
 			} else {
@@ -121,7 +119,7 @@ int main(int argc, char **argv)
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -153,6 +151,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

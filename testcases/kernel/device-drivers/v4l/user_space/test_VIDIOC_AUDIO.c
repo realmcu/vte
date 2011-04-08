@@ -51,7 +51,7 @@ int valid_audio_capability(__u32 capability) {
 int valid_audio_mode(__u32 mode) {
 	int valid = 0;
 
-	if ( (mode & ~(V4L2_AUDMODE_AVL))
+	if ((mode & ~(V4L2_AUDMODE_AVL))
 		== 0) {
 		valid = 1;
 	} else {
@@ -396,7 +396,6 @@ void test_VIDIOC_S_AUDIO_S32_MAX_1() {
 		CU_ASSERT_EQUAL(errno_set, EINVAL);
 	}
 }
-
 
 void test_VIDIOC_S_AUDIO_U32_MAX() {
 	int ret_orig, errno_orig;

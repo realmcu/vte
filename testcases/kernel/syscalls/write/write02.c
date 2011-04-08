@@ -56,7 +56,6 @@
 
 char *TCID = "write02";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void cleanup(void);
 void setup(void);
@@ -75,9 +74,9 @@ int main(int argc, char **argv)
 	char pwbuf[BUFSIZ + 1];
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL))) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(argc, argv, NULL, NULL))) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	setup();		/* global setup for test */
 
@@ -98,7 +97,7 @@ int main(int argc, char **argv)
 
 		if ((fild = creat(pfiln, 0777)) == -1) {
 			tst_brkm(TBROK, cleanup, "Can't creat Xwrit");
-		 /*NOTREACHED*/}
+		 }
 		for (iws = BUFSIZ; iws > 0; iws--) {
 			if ((cwrite = write(fild, pwbuf, iws)) != iws) {
 				TEST_ERROR_LOG(errno);
@@ -115,7 +114,7 @@ int main(int argc, char **argv)
 		close(fild);
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -123,7 +122,7 @@ int main(int argc, char **argv)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	umask(0);
@@ -135,7 +134,6 @@ void setup(void)
 	 */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 // Changed by prashant yendigeri, because the temp file was not being created in//  the $TDIRECTORY
@@ -157,9 +155,6 @@ void cleanup(void)
 
 	unlink(pfiln);
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

@@ -43,12 +43,11 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <errno.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 char *TCID = "fcntl12";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int fail;
 char fname[20];
@@ -64,8 +63,8 @@ int main(int ac, char **av)
 	int fd, i, status, max_files;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
@@ -85,7 +84,7 @@ int main(int ac, char **av)
 		if (pid < 0) {
 			tst_resm(TFAIL, "Fork failed");
 			cleanup();
-		 /*NOTREACHED*/} else if (pid == 0) {	/* child */
+		 } else if (pid == 0) {	/* child */
 			max_files = getdtablesize();
 			for (i = 0; i < max_files; i++) {
 				if ((fd = open(fname, O_CREAT | O_RDONLY,
@@ -113,7 +112,7 @@ int main(int ac, char **av)
 		tst_resm(TINFO, "Exit block 1");
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -122,10 +121,9 @@ int main(int ac, char **av)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	sprintf(fname, "fcnlt12.%d", getpid());
@@ -148,6 +146,4 @@ void cleanup(void)
 	unlink(fname);
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

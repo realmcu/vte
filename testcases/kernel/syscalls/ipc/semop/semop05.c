@@ -66,11 +66,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-void sighandler(int);
-
 char *TCID = "semop05";
 int TST_TOTAL = 4;
-extern int Tst_count;
 
 int exp_enos[] = { EINTR, EIDRM, 0 };	/* 0 terminated list of expected errnos */
 
@@ -116,9 +113,8 @@ int main(int ac, char **av)
 	void do_child();
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 #ifdef UCLINUX
 	maybe_run_child(&do_child_uclinux, "dd", &i_uclinux, &sem_id_1);
 #endif
@@ -218,7 +214,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -260,6 +256,15 @@ void do_child(int i)
 	exit(0);
 }
 
+void
+sighandler(int sig)
+{
+	if (sig == SIGHUP)
+		return;
+	else
+		tst_brkm(TBROK, NULL, "unexpected signal %d received", sig);
+}
+
 #ifdef UCLINUX
 /*
  * do_child_uclinux() - capture signals, re-initialize s_buf then call do_child
@@ -269,7 +274,6 @@ void do_child_uclinux()
 {
 	int i = i_uclinux;
 
-	/* capture signals */
 	tst_sig(FORK, sighandler, cleanup);
 
 	/* initialize the s_buf buffer */
@@ -282,25 +286,16 @@ void do_child_uclinux()
 #endif
 
 /*
- * sighandler() - handle signals
- */
-void sighandler(int sig)
-{
-	/* we don't need to do anything here */
-}
-
-/*
  * setup() - performs all the ONE TIME setup for this test.
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, sighandler, cleanup);
 
 	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -330,7 +325,6 @@ void cleanup(void)
 	/* if it exists, remove the semaphore resource */
 	rm_sema(sem_id_1);
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
 	/*
@@ -339,7 +333,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-
-	tst_exit();
 }

@@ -38,7 +38,7 @@
 int valid_audioout_mode(__u32 mode) {
 	int valid = 0;
 
-	if ( (mode & ~(V4L2_AUDMODE_AVL))
+	if ((mode & ~(V4L2_AUDMODE_AVL))
 		== 0) {
 		valid = 1;
 	} else {
@@ -138,7 +138,6 @@ void test_VIDIOC_G_AUDOUT_ignore_index() {
 	}
 
 }
-
 
 void test_VIDIOC_G_AUDOUT_NULL() {
 	int ret_get, errno_get;
@@ -368,7 +367,6 @@ void test_VIDIOC_S_AUDOUT_S32_MAX_1() {
 		CU_ASSERT_EQUAL(errno_set, EINVAL);
 	}
 }
-
 
 void test_VIDIOC_S_AUDOUT_U32_MAX() {
 	int ret_orig, errno_orig;

@@ -67,7 +67,6 @@ void setup_every_copy();
 
 char *TCID = "fstatat01";	/* Test program identifier.    */
 int TST_TOTAL = TEST_CASES;	/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 char pathname[256];
 char testfile[256];
 char testfile2[256];
@@ -78,12 +77,16 @@ char *filenames[TEST_CASES];
 int expected_errno[TEST_CASES] = { 0, 0, ENOTDIR, EBADF, EINVAL, 0 };
 int flags[TEST_CASES] = { 0, 0, 0, 0, 9999, 0 };
 
+/* TODO (garrcoop): properly port to fstatat64. */
 #if (defined __NR_fstatat64) && (__NR_fstatat64 != 0)
 struct stat64 statbuf;
 #else
 struct stat statbuf;
 #endif
 
+/*
+ * XXX (garrcoop): NO NO NO NO NO NO NO NO NO ... use linux_syscall_numbers.h!
+ */
 /* __NR_fstatat64 and __NR_fstatat64 if not defined are ALWAYS stubbed by
  *  linux_syscall_numbers.h Need to check for 0 to avoid testing with stubs */
 #if (defined __NR_fstatat64) && (__NR_fstatat64 != 0)
@@ -111,84 +114,39 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 	int i;
 
-	/* Disable test if the version of the kernel is less than 2.6.16 */
-	if ((tst_kvercmp(2, 6, 16)) < 0) {
-		tst_resm(TWARN, "This test can only run on kernels that are ");
-		tst_resm(TWARN, "2.6.16 and higher");
-		exit(0);
-	}
+	if ((tst_kvercmp(2, 6, 16)) < 0)
+		tst_brkm(TCONF, NULL,
+		    "This test can only run on kernels that are 2.6.16 and "
+		    "higher");
 
-	/* report failure if run with stubs */
-#ifdef __NR_fstatat64
-	if (__NR_fstatat64 == 0)
-#endif
-#ifdef __NR_newfstatat
-		if (__NR_newfstatat == 0)
-#endif
-		{
-			tst_resm(TFAIL,
-				 "fstatat() Failed, neither __NR_fstatat64 "
-				 "no __NR_newfstatat is implemented ");
-			exit(0);
-		}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/***************************************************************
-	 * parse standard options
-	 ***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-
-	/***************************************************************
-	 * perform global setup for test
-	 ***************************************************************/
 	setup();
 
-	/***************************************************************
-	 * check looping state if -c option given
-	 ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		setup_every_copy();
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		/*
-		 * Call openat
-		 */
 		for (i = 0; i < TST_TOTAL; i++) {
 			TEST(myfstatat
 			     (fds[i], filenames[i], &statbuf, flags[i]));
 
-			/* check return code */
 			if (TEST_ERRNO == expected_errno[i]) {
 
-				/***************************************************************
-				 * only perform functional verification if flag set (-f not given)
-				 ***************************************************************/
-				if (STD_FUNCTIONAL_TEST) {
-					/* No Verification test, yet... */
-					tst_resm(TPASS,
-						 "fstatat() returned the expected  errno %d: %s",
-						 TEST_ERRNO,
-						 strerror(TEST_ERRNO));
-				}
-			} else {
-				TEST_ERROR_LOG(TEST_ERRNO);
-				tst_resm(TFAIL,
-					 "fstatat() Failed, errno=%d : %s",
-					 TEST_ERRNO, strerror(TEST_ERRNO));
-			}
+				if (STD_FUNCTIONAL_TEST)
+					tst_resm(TPASS|TTERRNO,
+						 "fstatat failed as expected");
+			} else
+				tst_resm(TFAIL|TTERRNO, "fstatat failed");
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
-	/***************************************************************
-	 * cleanup and exit
-	 ***************************************************************/
 	cleanup();
-
-	return (0);
-}				/* End main */
+	tst_exit();
+}
 
 void setup_every_copy()
 {
@@ -197,36 +155,37 @@ void setup_every_copy()
 	sprintf(testfile, "fstatattestfile%d.txt", getpid());
 	sprintf(testfile2, "fstatattestdir%d/fstatattestfile%d.txt", getpid(),
 		getpid());
+	/* XXX (garrcoop): WTF NO. tst_tmpdir!!!! */
 	sprintf(testfile3, "/tmp/fstatattestfile%d.txt", getpid());
 
 	ret = mkdir(pathname, 0700);
 	if (ret < 0) {
-		perror("mkdir: ");
-		exit(-1);
+		perror("mkdir");
+		exit(1);
 	}
 
 	dirfd = open(pathname, O_DIRECTORY);
 	if (dirfd < 0) {
-		perror("open: ");
-		exit(-1);
+		perror("open");
+		exit(1);
 	}
 
 	fd = open(testfile, O_CREAT | O_RDWR, 0600);
 	if (fd < 0) {
-		perror("open: ");
-		exit(-1);
+		perror("open");
+		exit(1);
 	}
 
 	fd = open(testfile2, O_CREAT | O_RDWR, 0600);
 	if (fd < 0) {
-		perror("open: ");
-		exit(-1);
+		perror("open");
+		exit(1);
 	}
 
 	fd = open(testfile3, O_CREAT | O_RDWR, 0600);
 	if (fd < 0) {
-		perror("open: ");
-		exit(-1);
+		perror("open");
+		exit(1);
 	}
 
 	fds[0] = fds[1] = fds[4] = dirfd;
@@ -239,36 +198,20 @@ void setup_every_copy()
 	filenames[1] = testfile3;
 }
 
-/***************************************************************
- * setup() - performs all ONE TIME setup for this test.
- ***************************************************************/
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
-}				/* End setup() */
+}
 
-/***************************************************************
- * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
- ***************************************************************/
 void cleanup()
 {
-	/* Remove them */
 	unlink(testfile2);
 	unlink(testfile3);
 	unlink(testfile);
 	rmdir(pathname);
 
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

@@ -143,9 +143,9 @@ int main(int argc, char **argv)
                                 printf("%8X  ", rxmsg.frame.can_id & CAN_EFF_MASK);
                         else
                                 printf("%3X  ", rxmsg.frame.can_id & CAN_SFF_MASK);
-            
+
                         printf("[%d] ", rxmsg.frame.can_dlc);
-            
+
                         for (i = 0; i < rxmsg.frame.can_dlc; i++) {
                                 printf("%02X ", rxmsg.frame.data[i]);
                         }
@@ -158,6 +158,5 @@ int main(int argc, char **argv)
 
         close(s);
 
-        return 0;
+    return 0;
 }
-

@@ -62,7 +62,7 @@ int main(int argc, char **argv)
         printf("ERROR: Create/open block device failed\n");
     }
 
-    return 0;
+  return 0;
 }
 
 int open_block_device()
@@ -89,7 +89,7 @@ int open_block_device()
                 rc = mkdir(NLS_DEVICE_PATH, (S_IFDIR | S_IRWXU |
                                                     S_IRGRP | S_IXGRP |
                                                     S_IROTH | S_IXOTH));
-	
+
             } else {
                 printf("ERROR: Problem with INC dev directory.  Error code from stat() "
 			"is %d\n\n", errno);
@@ -138,4 +138,3 @@ int open_block_device()
     }
     return rc;
 }
-

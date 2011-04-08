@@ -32,13 +32,13 @@ int main(int ac, char **av)
   int i;
   int m;
 
-  if ( ac != 2 ) {
+  if (ac != 2) {
     printf("%s hex-style-filename \n", av[0]);
     printf("ex) %s 00022300\n", av[0]);
     exit(1);
   }
   sscanf(av[1],"%x",&m);
-  if ( m < 1 || m > MAXNUM ) {
+  if (m < 1 || m > MAXNUM) {
     printf("out of size %d\n",m);
     exit(1);
   }
@@ -46,9 +46,8 @@ int main(int ac, char **av)
   time(&t);
   srandom((unsigned int)getpid()^(((unsigned int)t<<16)| (unsigned int)t>>16));
 
-
   /* 00/00/00/00 */
-  for ( i = 0 ; i < m ; i++) {
+  for (i = 0 ; i < m ; i++) {
     r = random() % m;
     sprintf(fname,"00/%2.2x/%2.2x/00%2.2x%2.2x%2.2x",
 	   ((r>>16)&0xFF),
@@ -75,14 +74,14 @@ void create_or_delete(char *fname)
   int fsize;
 
   r = (random() & 1);
-  if ( r && disk_space_pool > POOLDISKSPACE) {
+  if (r && disk_space_pool > POOLDISKSPACE) {
     /* create */
     create_file(fname) ;
   }
   else {
     delete_file(fname);
   }
-  if ( (errorcount > dfilecount ||  errorcount > cfilecount) && (errorcount > MAXERROR)) {
+  if ((errorcount > dfilecount ||  errorcount > cfilecount) && (errorcount > MAXERROR)) {
     fprintf(stderr,"too much error -- stop\n");
     fprintf(stderr,"Total create files: %d\n",cfilecount);
     fprintf(stderr,"Total delete files: %d\n",dfilecount);
@@ -96,14 +95,14 @@ int create_file(char *filename)
   int fd;
   int randomsize;
   char wbuf[MAXFSIZE];
-  if ( (fd=creat(filename, S_IRWXU)) < 0) {
+  if ((fd=creat(filename, S_IRWXU)) < 0) {
     errorcount++;
     return(-1);
   }
   if ((randomsize=box_muler(0,MAXFSIZE)) < 0) {
     randomsize = MAXFSIZE;
   }
-  if (write(fd,wbuf,randomsize) < 0 ) {
+  if (write(fd,wbuf,randomsize) < 0) {
     errorcount++;
     close(fd);
     return(-1);
@@ -111,7 +110,7 @@ int create_file(char *filename)
   cfilecount++;
   disk_space_pool -= randomsize;
   close(fd);
-  return 0;
+        return 0;
 }
 
 #include <sys/stat.h>
@@ -122,15 +121,15 @@ int delete_file(char *filename)
   struct stat buf;
   int st;
   st = stat(filename, &buf);
-  if ( st < 0 ) {
+  if (st < 0) {
     errorcount++;
     return (-1);
   }
   disk_space_pool += buf.st_size;
-  if ( unlink(filename) < 0 ) {
+  if (unlink(filename) < 0) {
     errorcount++;
     return(-1);
   }
   dfilecount++;
-  return 0;
+        return 0;
 }

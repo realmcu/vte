@@ -75,7 +75,6 @@ void cleanup();
 
 char *TCID = "munlock01";	/* Test program identifier.    */
 int TST_TOTAL = 4;		/* Total number of test cases. */
-extern int Tst_count;		/* TestCase counter for tst_* routine */
 
 int exp_enos[] = { 0 };
 
@@ -98,18 +97,16 @@ int main(int ac, char **av)
 	int lc, i;		/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 
-	if ((msg = parse_opts(ac, av, NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
 
-	/* perform global setup for test */
 	setup();
 
 	/* check looping state */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -131,13 +128,13 @@ int main(int ac, char **av)
 					 i, TC[i].len);
 			}
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
 	/* cleanup and exit */
 	cleanup();
 
-	return 0;
-}				/* End main */
+	tst_exit();
+}
 
 void setup1(int i)
 {
@@ -157,18 +154,16 @@ void setup1(int i)
 /* setup() - performs all ONE TIME setup for this test. */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Check whether we are root */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
-
-	/* Pause if that option was specified */
 
 	TEST_PAUSE;
 }
@@ -181,6 +176,4 @@ void cleanup()
 {
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

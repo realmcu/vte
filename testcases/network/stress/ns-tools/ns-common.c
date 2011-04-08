@@ -18,7 +18,6 @@
 /*                                                                            */
 /******************************************************************************/
 
-
 /*
  * File:
  *	ns-common.c
@@ -57,7 +56,6 @@
 #define NS_COMMON 1
 #include "ns-traffic.h"
 
-
 /*
  * Function: fatal_error()
  *
@@ -76,7 +74,6 @@ fatal_error(char *errmsg)
     perror(errmsg);
     exit(EXIT_FAILURE);
 }
-
 
 /*
  * Function: maximize_sockbuf()
@@ -129,7 +126,6 @@ maximize_sockbuf(int sd)
     }
 }
 
-
 /*
  * Function: calc_checksum()
  *
@@ -165,7 +161,6 @@ calc_checksum(u_int16_t *data, size_t size)
     return sum;
 }
 
-
 /*
  * Function: fill_payload()
  *
@@ -187,7 +182,6 @@ fill_payload(unsigned char *payload_p, size_t size)
     for (idx = 0; idx < size; idx++)
 	*(payload_p + idx) = idx % 0x100;
 }
-
 
 /*
  * Function: rand_within()
@@ -217,7 +211,6 @@ rand_within(int first, int last)
     return rand_val;
 }
 
-
 /*
  * Function: bit_change_seed
  *
@@ -245,7 +238,6 @@ bit_change_seed(size_t bitsize, size_t oversize)
 
     return seed;
 }
-
 
 /*
  * Function: eth_pton()
@@ -291,9 +283,8 @@ eth_pton(int af, const char *str, struct sockaddr_ll *ll)
     for (idx = 0; idx < ETH_ALEN; idx++)
 	addr_p[idx] = val[idx];
 
-    return 0;
+        return 0;
 }
-
 
 /*
  * Function: get_ifinfo()
@@ -320,7 +311,6 @@ get_ifinfo(struct ifreq *ans, int sock_fd, const char *ifname, int query)
     if (ioctl(sock_fd, query, ans) < 0)
 	fatal_error("ioctl()");
 }
-
 
 /*
  * Function: strtotimespec()
@@ -360,9 +350,8 @@ strtotimespec(const char *str, struct timespec *ts_p)
     ts_p->tv_sec  = sec;
     ts_p->tv_nsec = nsec;
 
-    return 0;
+        return 0;
 }
-
 
 /*
  * Function: get_a_lla_byifindex()
@@ -389,12 +378,12 @@ get_a_lla_byifindex(struct sockaddr_in6 *lla_p, int ifindex)
     char line[PROC_IFINET6_FILE_LINELENGTH];
     int pos;
 
-    if((fp = fopen(PROC_IFINET6_FILE, "r")) == NULL) {
+    if ((fp = fopen(PROC_IFINET6_FILE, "r")) == NULL) {
 	fprintf(stderr, "Faile to open %s\n", PROC_IFINET6_FILE);
 	return 1;
     }
 
-    while(fgets(line, PROC_IFINET6_FILE_LINELENGTH, fp) != NULL) {
+    while (fgets(line, PROC_IFINET6_FILE_LINELENGTH, fp) != NULL) {
 	ret = sscanf(line,
 		"%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x %x %x %x",
 		&oct[0],  &oct[1],  &oct[2],  &oct[3],
@@ -408,13 +397,13 @@ get_a_lla_byifindex(struct sockaddr_in6 *lla_p, int ifindex)
 	else if (ret != 19)
 	    fatal_error("The number of input item is less than the expected");
 
-	if(ifidx != ifindex)
+	if (ifidx != ifindex)
 	    continue;
 
-	if(prefixlen != 64)
+	if (prefixlen != 64)
 	    continue;
 
-	if(scope != PROC_IFINET6_LINKLOCAL)
+	if (scope != PROC_IFINET6_LINKLOCAL)
 	    continue;
 
 	/* Find a link-local address */
@@ -423,7 +412,7 @@ get_a_lla_byifindex(struct sockaddr_in6 *lla_p, int ifindex)
 	lla_p->sin6_flowinfo	= 0;
 	lla_p->sin6_scope_id	= ifindex;
 
-	for(pos = 0; pos < 16; pos++)
+	for (pos = 0; pos < 16; pos++)
 	    lla_p->sin6_addr.s6_addr[pos] = oct[pos];
 
 	return 0;
@@ -432,7 +421,6 @@ get_a_lla_byifindex(struct sockaddr_in6 *lla_p, int ifindex)
     fprintf(stderr, "No link-local address is found.\n");
     return 1;
 }
-
 
 /*
  * Function: get_maddrinfo()
@@ -475,7 +463,6 @@ get_maddrinfo(sa_family_t family, const char *maddr, const char *portnum)
     return res;
 }
 
-
 /*
  * Function: create_group_info()
  *
@@ -506,7 +493,6 @@ create_group_info(uint32_t ifindex, struct addrinfo *mainfo_p)
 
     return greq;
 }
-
 
 /*
  * Function: create_source_filter()
@@ -570,7 +556,7 @@ create_source_filter(uint32_t ifindex, struct addrinfo *mainfo_p, uint32_t fmode
     hints.ai_flags |= AI_NUMERICHOST;
 
     sp = saddrs;
-    for(idx = 0; idx < numsrc; idx++) {
+    for (idx = 0; idx < numsrc; idx++) {
 	ep = strchr(sp, ',');
 	if (ep != NULL)
 	    *ep = '\0';

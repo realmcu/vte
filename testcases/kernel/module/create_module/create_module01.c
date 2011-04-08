@@ -70,7 +70,6 @@
 #include "test.h"
 #include "usctest.h"
 
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 #define MODSIZE 10000		/* Arbitrarily selected MODSIZE */
 #define BASEMODNAME "dummy"
@@ -82,7 +81,6 @@ char *TCID = "create_module01";	/* Test program identifier.    */
 int TST_TOTAL=1;		/* Total number of test cases. */
 static char modname[20];	/* Name of the module */
 
-
 int
 main(int argc, char **argv)
 {
@@ -90,15 +88,13 @@ main(int argc, char **argv)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) !=
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
 			(char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* reset Tst_count in case we are looping */
@@ -114,8 +110,8 @@ main(int argc, char **argv)
 		} else {
 			tst_resm(TPASS, "create_module() returned 0x%x",
 				TEST_RETURN);
-			if(delete_module(modname) != 0) {
-				tst_brkm(TBROK, tst_exit, "Failed to delete"
+			if (delete_module(modname) != 0) {
+				tst_brkm(TBROK, NULL, "Failed to delete"
 					"loadable module entry for %s",
 					modname);
 			}
@@ -125,26 +121,19 @@ main(int argc, char **argv)
 	/* perform global cleanup and exit */
 	cleanup();
 
-	/*NOTREACHED*/
-	return 0;
-
-}	/* End main */
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void
 setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Check whether we are root  */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Must be root for this test!");
-		/*NOTREACHED*/
-	}
+	tst_require_root(NULL);
 
 	if (tst_kvercmp(2,5,48) >= 0)
-		tst_brkm(TCONF, tst_exit, "This test will not work on "
+		tst_brkm(TCONF, NULL, "This test will not work on "
 				"kernels after 2.5.48");
 
 	/* Pause if that option was specified
@@ -153,8 +142,8 @@ setup(void)
 	TEST_PAUSE;
 
 	/* Initialize unique module name for each child process */
-	if( sprintf(modname, "%s_%d",BASEMODNAME, getpid()) == -1) {
-		tst_brkm(TBROK, tst_exit, "Failed to initialize module name");
+	if (sprintf(modname, "%s_%d",BASEMODNAME, getpid()) == -1) {
+		tst_brkm(TBROK, NULL, "Failed to initialize module name");
 	}
 }
 
@@ -171,9 +160,9 @@ cleanup(void)
 	 * succeeds and signal is caught before execution of delete_module())
 	 * attempt to remove it here
 	 */
-	if(delete_module(modname) == -1) {
+	if (delete_module(modname) == -1) {
 		/* With errno, check module exists, if so send msg */
-		if(errno != ENOENT) {
+		if (errno != ENOENT) {
 			tst_resm(TWARN, "Failed to delete loadable module"
 				"entry for %s errno returned %d", modname,
 				errno);
@@ -186,8 +175,4 @@ cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-	/*NOTREACHED*/
 }
-

@@ -63,7 +63,6 @@ int anyfail();
 int blenter();
 int blexit();
 int instress();
-extern int Tst_count;
 
 void setup();
 /*****	**	**	*****/
@@ -192,7 +191,7 @@ int main(int argc, char *argv[])
 /* Clean up any files created by test before call to anyfail.	*/
 
 	anyfail();		/* THIS CALL DOES NOT RETURN - EXITS!!  */
-	return 0;
+	tst_exit();
 }
 
 /*--------------------------------------------------------------*/

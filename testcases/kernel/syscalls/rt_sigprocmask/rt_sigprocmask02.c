@@ -28,7 +28,7 @@
 /*		as follows:						      */
 /*									      */
 /*		SIG_BLOCK						      */
-/*		    The set of blocked signals is the union of the current set*/ 
+/*		    The set of blocked signals is the union of the current set*/
 /*		    and the set argument. 				      */
 /*		SIG_UNBLOCK						      */
 /*		    The signals in set are removed from the current set of    */
@@ -37,13 +37,13 @@
 /*		SIG_SETMASK						      */
 /*		    The set of blocked signals is set to the set argument.    */
 /*		    sigsetsize should indicate the size of a sigset_t type.   */
-/* 									      */	
+/* 									      */
 /* 		RETURN VALUE:i						      */
-/* 		rt_sigprocmask returns 0 on success; otherwise, rt_sigprocmask*/ 
+/* 		rt_sigprocmask returns 0 on success; otherwise, rt_sigprocmask*/
 /* 		returns one of the errors listed in the "Errors" section.     */
 /* 									      */
 /* 		Errors:							      */
-/* 			-EINVAL						      */	
+/* 			-EINVAL						      */
 /* 			    sigsetsize was not equivalent to the size of a    */
 /* 			    sigset_t type or the value specified in how was   */
 /* 			    invalid. 					      */
@@ -77,8 +77,6 @@
 #include "ltp_signal.h"
 
 /* Extern Global Variables */
-extern int Tst_count;		/* counter for tst_xxx routines.         */
-extern char *TESTDIR;		/* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
 char *TCID = "rt_sigprocmask02";/* Test program identifier.*/
@@ -103,12 +101,10 @@ int  TST_TOTAL = 2;		/* total number of tests in this file.   */
 /*                                                                            */
 /******************************************************************************/
 extern void cleanup() {
-	/* Remove tmp dir and all files in it */
+
 	TEST_CLEANUP;
 	tst_rmdir();
 
-	/* Exit with appropriate return code. */
-	tst_exit();
 }
 
 /* Local  Functions */
@@ -153,10 +149,10 @@ int main(int ac, char **av) {
 	int i;
 	sigset_t s;
 	char *msg;	/* message returned from parse_opts */
-	
+
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
 
@@ -165,14 +161,14 @@ int main(int ac, char **av) {
 	Tst_count = 0;
 
 	TEST(sigfillset(&s));
-	if (TEST_RETURN == -1){
+	if (TEST_RETURN == -1) {
 		tst_resm(TFAIL | TTERRNO,
 			"Call to sigfillset() failed.");
 		cleanup();
 		tst_exit();
 	}
 
-	for(i=0; i < test_count; i++) {
+	for (i=0; i < test_count; i++) {
 		TEST(syscall(__NR_rt_sigprocmask, SIG_BLOCK,
 				&s, test_cases[i].ss,
 				test_cases[i].sssize));

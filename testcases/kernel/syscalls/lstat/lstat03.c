@@ -86,9 +86,8 @@
 
 char *TCID = "lstat03";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-uid_t User_id;			/* user id/group id of test process */
-gid_t Group_id;
+uid_t user_id;			/* user id/group id of test process */
+gid_t group_id;
 
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
@@ -103,18 +102,16 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -123,7 +120,6 @@ int main(int ac, char **av)
 		 */
 		TEST(lstat(SFILE, &stat_buf));
 
-		/* check return code of lstat(2) */
 		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL,
 				 "lstat(%s, &stat_buf) Failed, errno=%d : %s",
@@ -139,8 +135,8 @@ int main(int ac, char **av)
 			 * Verify the data returned by lstat(2)
 			 * aganist the expected data.
 			 */
-			if ((stat_buf.st_uid != User_id) ||
-			    (stat_buf.st_gid != Group_id) ||
+			if ((stat_buf.st_uid != user_id) ||
+			    (stat_buf.st_gid != group_id) ||
 			    (!(stat_buf.st_mode && S_IFLNK)) ||
 			    (stat_buf.st_size != strlen(TESTFILE))) {
 				tst_resm(TFAIL, "Functionality of lstat(2) on "
@@ -152,13 +148,13 @@ int main(int ac, char **av)
 		} else {
 			tst_resm(TPASS, "call succeeded");
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
+	tst_exit();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+}
 
 /*
  * setup() -  Performs setup function for the test.
@@ -175,12 +171,11 @@ void setup()
 	int wbytes;		/* no. of bytes to be written */
 	int write_len = 0;	/* size of data */
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Switch to nobody user for correct error code collection */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 	ltpuser = getpwnam(nobody_uid);
 	if (setuid(ltpuser->pw_uid) == -1) {
@@ -189,10 +184,8 @@ void setup()
 		perror("setuid");
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	if ((fd = open(TESTFILE, O_RDWR | O_CREAT, FILE_MODE)) == -1) {
@@ -229,8 +222,8 @@ void setup()
 	}
 
 	/* Get the uid/gid of the process */
-	User_id = getuid();
-	Group_id = getgid();
+	user_id = getuid();
+	group_id = getgid();
 }
 
 /*
@@ -246,9 +239,6 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

@@ -31,7 +31,7 @@ int main()
         sprintf(qname, "/mq_open_27-1_%d", getpid());
 
 	//Ensures queue name will have > PATH_MAX chars
-	for(i=0;i<PATH_MAX;i++) {
+	for (i=0;i<PATH_MAX;i++) {
 		strcat(qname, "0");
 	}
 
@@ -48,7 +48,7 @@ int main()
 #ifdef DEBUG
 	printf("mq_open() failed as expected\n");
 #endif
-	
+
 	if (errno != ENAMETOOLONG) {
 		printf("errno != ENAMETOOLONG\n");
 		printf("Test FAILED\n");
@@ -62,4 +62,3 @@ int main()
         printf("Test PASSED\n");
         return PTS_PASS;
 }
-

@@ -64,7 +64,6 @@ void cleanup();
 
 char *TCID = "sigaction02";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 volatile sig_atomic_t testcase_no;
 
@@ -101,13 +100,13 @@ int set_handler(int sig, int sig_to_mask, int flag)
 		err = sigaction(sig, (void *)-1, NULL);
 	} else if (flag == 2) {
 		err = sigaction(sig, NULL, (void *)-1);
-	}
+	} else
+		err = -1;
 
-	if (err == 0) {
+	if (err == 0)
 		return 0;
-	} else {
+	else
 		return errno;
-	}
 }
 
 int main(int ac, char **av)
@@ -116,8 +115,8 @@ int main(int ac, char **av)
 
 	int ret;
 
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 //test1:
 	testcase_no = 1;
@@ -201,6 +200,6 @@ int main(int ac, char **av)
 
 	tst_exit();
 
-	return 0;
+	tst_exit();
 
 }

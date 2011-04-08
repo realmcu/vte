@@ -18,7 +18,6 @@
 /*									      */
 /******************************************************************************/
 
-
 /******************************************************************************/
 /*									      */
 /* History:	July - 16 - 2001 Created by Manoj Iyer, IBM Austin TX.	      */
@@ -60,7 +59,6 @@
 /*			         					      */
 /******************************************************************************/
 
-
 /* Include Files							      */
 #include <stdio.h>		/* definitions for standard I/O               */
 #include <unistd.h>		/* required by usleep()		              */
@@ -77,7 +75,6 @@
 #include <sys/shm.h>            /* required by shmat shmget etc               */
 #include <string.h>		/* required by strncmp                        */
 
-
 /* Defines								      */
 #ifndef TRUE
 #define TRUE 1
@@ -91,13 +88,11 @@
 #define STR_WRITER "    "
 #define STR_READER "      "
 
-
 /* Global Variables						              */
 void        *map_address;	/* pointer to file in memory	      	      */
 sigjmp_buf  jmpbuf;      	/* argument to setjmp and longjmp             */
 int	    fsize;		/* size of the file to be created.	      */
 int	    done_shmat = 0;	/* disallow read and writes before shmat      */
-
 
 /******************************************************************************/
 /*									      */
@@ -179,7 +174,7 @@ sig_handler(int signal,		/* signal number, set to handle SIGALRM       */
 			"page fault at [%#lx] - ignore\n", scp->edi);
 	    siglongjmp(jmpbuf, 1);
         }
-        else if (scp->esi == (int)map_address )
+        else if (scp->esi == (int)map_address)
 	{
 	    fprintf(stdout,
 			"page fault at [%#lx] - ignore\n", scp->esi);
@@ -203,7 +198,6 @@ sig_handler(int signal,		/* signal number, set to handle SIGALRM       */
     exit (-1);
 #endif
 }
-
 
 /******************************************************************************/
 /*                                                                            */
@@ -235,7 +229,6 @@ set_timer(double run_time)      /* period for which test is intended to run   */
     }
 }
 
-
 /******************************************************************************//*								 	      */
 /* Function:	usage							      */
 /*									      */
@@ -254,7 +247,6 @@ usage(char *progname)           /* name of this program                       */
                     progname);
     exit(-1);
 }
-
 
 /******************************************************************************/
 /*									      */
@@ -343,7 +335,6 @@ shmat_shmdt(void *args)		/* arguments to the thread X function.	      */
     pthread_exit((void *)0);
 }
 
-
 /******************************************************************************/
 /*									      */
 /* Function:	write_to_mem						      */
@@ -367,7 +358,7 @@ write_to_mem(void *args)
     while (write_ndx++ < (int)locargs[0])
     {
 	/* wait for the thread to shmat, and dont sleep on the processor. */
-        while(!done_shmat)
+        while (!done_shmat)
         usleep(0);
 
         if (sigsetjmp(jmpbuf,1) == 1)
@@ -385,7 +376,6 @@ write_to_mem(void *args)
     }
     pthread_exit((void *)0);
 }
-
 
 /******************************************************************************/
 /*									      */
@@ -410,7 +400,7 @@ read_from_mem(void *args)
     while (read_ndx++ < (int)locargs[0])
     {
 	    /* wait for the shmat to happen */
-	while(!done_shmat)
+	while (!done_shmat)
         usleep(0);
 
 	fprintf(stdout,
@@ -438,7 +428,6 @@ read_from_mem(void *args)
     }
     pthread_exit((void *)0);
 }
-
 
 /******************************************************************************/
 /*                                                                            */
@@ -468,7 +457,7 @@ main(int  argc,		/* number of input parameters.			      */
     long         chld_args[3];	/* arguments to funcs execed by child process */
     extern  char *optarg;	/* arguments passed to each option	      */
     struct sigaction sigptr;	/* set up signal, for interval timer          */
-   
+
     static struct signal_info
     {
        int  signum;    /* signal number that hasto be handled                */
@@ -597,5 +586,5 @@ main(int  argc,		/* number of input parameters.			      */
         }
     }
 	fprintf(stdout, "TEST PASSED\n");
-    return 0;
+  return 0;
 }

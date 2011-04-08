@@ -66,59 +66,42 @@ void setup(void);
 
 char *TCID = "getdents02";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int exp_enos[] = { EBADF, 0 };	/* 0 terminated list of expected errnos */
 
 #ifndef __i386__
-int main()
+int main(void)
 {
-	tst_resm(TINFO, "This test includes x86 asm and will not work on "
-		 "this machine");
+	tst_brkm(TCONF, NULL, "this test will only run on i386");
 	tst_exit();
-	return 0;
 }
 #else
 
 int main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
+	int lc;
+	char *msg;
 	int rval, fd;
 	int count;
-	const int cnum = 141;	/* system call number 141 = getdents */
+	const int cnum = __NR_getdents;
 	size_t size = 0;
 	char *dir_name = NULL;
 	struct dirent *dirp;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	setup();		/* global setup */
-
-	/* The following loop checks looping state if -i option given */
+	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
-		/* get the current working directory */
-
-		if ((dir_name = getcwd(dir_name, size)) == NULL) {
+		if ((dir_name = getcwd(dir_name, size)) == NULL)
 			tst_brkm(TBROK, cleanup, "Can not get current "
 				 "directory name");
-		}
 
-		/* allocate some space for the dirent structure */
-
-		if ((dirp =
-		     (struct dirent *)malloc(sizeof(struct dirent))) == NULL) {
+		if ((dirp = malloc(sizeof(struct dirent))) == NULL)
 			tst_brkm(TBROK, cleanup, "malloc failed");
-		}
-
-		/* set up count to be equal to the sizeof struct dirent */
 
 		count = (int)sizeof(struct dirent);
 
@@ -140,31 +123,23 @@ int main(int ac, char **av)
 		/*
 		 * Hopefully we get an error due to the bad file descriptor.
 		 */
-
-		if (rval < 0) {	/* call returned an error */
+		if (rval < 0) {
 			rval *= -1;
 			TEST_ERROR_LOG(rval);
 
 			switch (rval) {
 			case EBADF:
-				tst_resm(TPASS, "expected failure - errno = %d "
-					 "- %s", rval, strerror(rval));
+				tst_resm(TPASS,
+				    "failed as expected with EBADF");
 				break;
 			default:
-				tst_resm(TFAIL, "%s call failed to "
-					 "produce EBADF - errno = %d : %s",
-					 TCID, rval, strerror(rval));
+				tst_resm(TFAIL|TERRNO,
+				    "getdents failed unexpectedly");
 				break;
 			}
-		} else {
-			tst_resm(TFAIL, "call failed to produce an "
-				 "expected error - errno = %d - %s", rval,
-				 strerror(rval));
-		}
+		} else
+			tst_resm(TFAIL, "call succeeded unexpectedly");
 
-		/*
-		 * clean up things in case we are looping
-		 */
 		free(dir_name);
 		dir_name = NULL;
 
@@ -173,44 +148,27 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
-/*
- * setup() - performs all the ONE TIME setup for this test.
- */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
-	TEST_PAUSE;
-
-	/* create a test directory and cd into it */
 	tst_tmpdir();
 
-	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
+
+	TEST_PAUSE;
 }
 
-/*
- * cleanup() - performs all the ONE TIME cleanup for this test at completion
- *	       or premature exit.
- */
 void cleanup(void)
 {
-	/* remove the test directory */
-	tst_rmdir();
 
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+	tst_rmdir();
 }
 
 #endif /* __i386__ */

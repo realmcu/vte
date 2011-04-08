@@ -52,7 +52,6 @@
 
 char *TCID = "acct02";		/* Test program identifier.    */
 int TST_TOTAL = 2;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 /**************/
 
 char fname[80];
@@ -115,5 +114,5 @@ char *argv[];
 
 	tst_exit();		/* THIS CALL DOES NOT RETURN - EXITS!!  */
 /*--------------------------------------------------------------*/
-	return 0;
+	tst_exit();
 }

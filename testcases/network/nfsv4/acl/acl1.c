@@ -26,18 +26,22 @@
 //#include "../tests.h"
 #include <dirent.h>
 #include <unistd.h>
-#include <sys/acl.h>
 #include <errno.h>
+
+#include <config.h>
+
+#ifdef HAVE_SYS_ACL_H
+
+#include <sys/acl.h>
 
 #define OP_READ 0x1
 #define OP_WRITE 0x2
 #define OP_EXEC 0x4
 
-
 acl_t testacl;
 /* the "typical" acl used for the test */
 
-static char * permtab[] = {"---","r--","-w-","rw-","--x","r-x","-wx","rwx"};
+static char *permtab[] = {"---","r--","-w-","rw-","--x","r-x","-wx","rwx"};
 
 struct statstore {
 	/* number of passed tests */
@@ -46,8 +50,7 @@ struct statstore {
 	int failed;
 } aclstat;
 
-
-int do_file_op(char* filename){
+int do_file_op(char* filename) {
 	int exe;
 	int result;
 	uid_t uid;
@@ -55,14 +58,14 @@ int do_file_op(char* filename){
 	FILE *fptr;
 	char str[256] = "./";
 	fptr = malloc(sizeof(FILE));
-	
+
 	uid = geteuid();
 	strcat(str, filename);
 
 	exe = execl(str,NULL,NULL);
 	if (exe == -1 && errno!=EACCES)
 		result = result + OP_EXEC;
-	
+
 	fptr = fopen(filename,"r");
 	if (fptr != NULL) {
 		result = result + OP_READ;
@@ -72,13 +75,13 @@ int do_file_op(char* filename){
 	if (fptr != NULL) {
 		result = result + OP_WRITE;
 		fclose(fptr); }
-	
+
 	return result;
 }
 
 /*  acl with user entries used for the test */
 acl_t test_acl_user_create(void) {
-	char acl_text[] = 
+	char acl_text[] =
 	"u::rwx,u:user1:rwx,u:user2:rw-,u:user3:r--,u:user4:r-x,u:user5:---,g::r-x,o::r-x,m::rwx";
 	acl_t acl;
 	acl = acl_from_text (acl_text);
@@ -88,7 +91,7 @@ acl_t test_acl_user_create(void) {
 /*  acl with group entries used for the test */
 
 acl_t test_acl_grp_create(void) {
-	char acl_text[] = 
+	char acl_text[] =
 	"u::rwx,g:grp1:rwx,g:grp2:rw-,g:grp3:r--,g:grp4:r-x,g:grp5:---,g::---,o::r-x,m::rwx";
 	acl_t acl;
 	acl = acl_from_text (acl_text);
@@ -96,14 +99,12 @@ acl_t test_acl_grp_create(void) {
 }
 
 acl_t test_acl_default_create(void) {
-	char acl_text[] = 
+	char acl_text[] =
 	"u::rwx,u:user1:rwx,u:user2:rw-,u:user3:r--,u:user4:r-x,u:user5:---,g::r-x,m::rwx,o::r-x";
 	acl_t acl;
 	acl = acl_from_text (acl_text);
 	return acl;
 }
-
-
 
 static void
 report(testnum, expected, result, fail)
@@ -115,7 +116,7 @@ report(testnum, expected, result, fail)
 	char * res;
 	if (expected == result) {
 		res = "[OK]";
-		aclstat.ok++; 
+		aclstat.ok++;
 	}
 	else {
 		res = "[FAILED]";
@@ -126,17 +127,15 @@ report(testnum, expected, result, fail)
 	fflush(stdout);
 }
 
-
-
-/*  
+/*
  * set acl in order the file is only readable for the testuser
  * - try to read
- * - try to write	
+ * - try to write
  */
 static void
 test1(char *file)
 {
-	int result;	
+	int result;
 	if (seteuid((uid_t)601) == 0) {
 		result = do_file_op(file);
 		/* expected result = OP_READ || OP_WRITE || OP_EXEC */
@@ -149,7 +148,7 @@ test1(char *file)
 /*
  * set acl in order the file is only readable for the testgroup
  * - try to read with test user
- * - try to write with test user	
+ * - try to write with test user
  *
  */
 
@@ -166,10 +165,10 @@ test2(char *file)
 	}
 }
 
-/*  
+/*
  * set acl in order the file is only readable for the testuser
  * - try to read
- * - try to write	
+ * - try to write
  */
 
 static void
@@ -185,10 +184,10 @@ test3(char *file)
 	}
 }
 
-/*  
+/*
  * set read-write acl on the file for the testuser
  * - try to read
- * - try to write	
+ * - try to write
  */
 
 static void
@@ -220,7 +219,7 @@ test5(char *file)
 static void
 testgrp1(char *file)
 {
-	int result;	
+	int result;
 	if (setegid((gid_t)601) == 0) {
 		if (seteuid((uid_t)601) == 0) {
 		result = do_file_op(file);
@@ -235,7 +234,7 @@ testgrp1(char *file)
 /*
  * set acl in order the file is only readable for the testgroup
  * - try to read with test user
- * - try to write with test user	
+ * - try to write with test user
  *
  */
 
@@ -253,10 +252,10 @@ testgrp2(char *file)
 	}
 }
 
-/*  
+/*
  * set acl in order the file is only readable for the testuser
  * - try to read
- * - try to write	
+ * - try to write
  */
 
 static void
@@ -273,10 +272,10 @@ testgrp3(char *file)
 	}
 }
 
-/*  
+/*
  * set read-write acl on the file for the testuser
  * - try to read
- * - try to write	
+ * - try to write
  */
 
 static void
@@ -294,7 +293,6 @@ testgrp4(char *file)
 }
 }
 
-
 static void
 testgrp5(char *file)
 {
@@ -310,8 +308,6 @@ testgrp5(char *file)
 	}
 }
 
-
-
 /* testing default acl */
 void test_acl_default(char * dir, acl_t acl) {
 	/* set default acl on directory */
@@ -319,7 +315,7 @@ void test_acl_default(char * dir, acl_t acl) {
 	/* compare the file's acl and the parent directory's one */
 	int res;
 	acl_t acl1,acl2;
-	
+
 	res = acl_set_file(dir, ACL_TYPE_DEFAULT, acl);
 	acl1 = acl_get_file(dir,ACL_TYPE_DEFAULT);
 	if (res == -1)
@@ -327,13 +323,13 @@ void test_acl_default(char * dir, acl_t acl) {
 	char *path = strcat(dir,"/testfile");
 	fopen(path,"w+");
 	char * cmd=malloc(256);
-        
+
         strcpy(cmd, "chmod 7777 ");
 	printf(cmd);
         strcat(cmd,dir);
         system(cmd);
 	acl2 = acl_get_file(path,ACL_TYPE_ACCESS);
-	
+
 	test1(path);
 	test2(path);
 	test3(path);
@@ -341,17 +337,13 @@ void test_acl_default(char * dir, acl_t acl) {
 	test5(path);
 }
 
-
 static void
 showstats(void)
 {
 	printf("\nACL TESTS RESULTS: %d passed, %d failed\n\n", aclstat.ok, aclstat.failed);
 }
 
-int
-main(argc, argv)
-	int argc;
-	char **argv;
+int main(int argc, char *argv[])
 {
 	int result;
 	aclstat.ok=0;
@@ -359,7 +351,7 @@ main(argc, argv)
 	acl_t testacl;
 	printf("Test acl with entries on users\n");
 	testacl = test_acl_user_create();
-	
+
 	/* set the right acl for the test */
 	result = acl_set_file(argv[1], ACL_TYPE_ACCESS, testacl);
 	if (result == -1) {
@@ -376,7 +368,7 @@ main(argc, argv)
 
 	testacl = test_acl_default_create();
 	test_acl_default(argv[2],testacl);
-	
+
 	printf("\nTest acl with entries concerning groups\n");
 	testacl = test_acl_grp_create();
 	result = acl_set_file(argv[1], ACL_TYPE_ACCESS, testacl);
@@ -389,11 +381,18 @@ main(argc, argv)
 	testgrp4(argv[1]);
 	testgrp5(argv[1]);
 
-
 	acl_free(testacl);
 
 	showstats();
 	return 1;
 }
 
+#else
 
+int main(void)
+{
+	printf("The acl library was missing upon compilation.\n");
+	return 0;
+}
+
+#endif /* HAVE_SYS_ACL_H */

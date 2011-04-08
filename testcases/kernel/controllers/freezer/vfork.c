@@ -126,7 +126,7 @@ void sleepy_time(void)
 		if ((rc == -1) && (errno != EINTR))
 			continue;
 		break;
-	} while(1);
+	} while (1);
 }
 
 void usage()
@@ -150,7 +150,7 @@ void _parse_opts(int argc, char **argv)
 	sleep_duration.tv_sec = 0U;
 	sleep_duration.tv_nsec = 0U;
 
-	while((opt = getopt(argc, argv, "f:ps::")) != -1) {
+	while ((opt = getopt(argc, argv, "f:ps::")) != -1) {
 		switch(opt) {
 		case 'f':
 			if ((fp = fopen(optarg, "w")) != NULL) {
@@ -295,7 +295,7 @@ void await_mutex(int fd)
 			continue;
 		else
 			exit(EXIT_FAILURE);
-	} while(1);
+	} while (1);
 }
 
 int
@@ -361,7 +361,6 @@ main(int argc, char** argv)
 					tst_resm(TINFO | TERRNO,
 						"ptrace(PTRACE_CONT) failed.");
 				}
-			
 
 				send_mutex(psync[1]);
 

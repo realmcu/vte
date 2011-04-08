@@ -55,7 +55,7 @@
 #include "usctest.h"
 
 #include <stdlib.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define NCHILD		3
@@ -75,7 +75,6 @@ int errflg;
 
 char *TCID = "mkdir09";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int exp_enos[] = { EFAULT, 0 };	/* List must end with 0 */
 
@@ -118,7 +117,7 @@ char *argv[];
 
 	/* parse standard options */
 	if ((msg =
-	     parse_opts(argc, argv, (option_t *) NULL, NULL)) != (char *)NULL) {
+	     parse_opts(argc, argv, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -134,14 +133,14 @@ char *argv[];
 	if (signal(SIGTERM, term) == SIG_ERR) {
 		tst_brkm(TFAIL, cleanup,
 			 "Error setting up SIGTERM signal, ERRNO = %d", errno);
-		tst_exit();
+
 	}
 
 	/* Set up to catch SIGCLD signal */
 	if (signal(SIGCLD, chld) == SIG_ERR) {
 		tst_brkm(TFAIL, cleanup,
 			 "Error setting up SIGCLD signal, ERRNO = %d", errno);
-		tst_exit();
+
 	}
 
 	/* Default argument settings. */
@@ -174,12 +173,13 @@ char *argv[];
 		tst_resm(TINFO,
 			 "USAGE : mkdir09 -c #child_groups -t#test_time -d#directories");
 		tst_resm(TINFO, "Bad argument count.");
-		tst_exit();
+
 	}
 
 	runtest();
 	cleanup();
-	return 0;
+	tst_exit();
+
 }
 
 /*--------------------------------------------------------------*/
@@ -582,16 +582,15 @@ int massmurder()
  *   ***************************************************************/
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Create a temporary directory and make it current. */
 	tst_tmpdir();
 
-}				/* End setup() */
+}
 
 /***************************************************************
  *  * cleanup() - performs all ONE TIME cleanup for this test at
@@ -613,6 +612,5 @@ void cleanup()
 	/*
 	 *      * Exit with return code appropriate for results.
 	 *           */
-	tst_exit();
 
-}				/* End cleanup() */
+}

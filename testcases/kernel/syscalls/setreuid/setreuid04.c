@@ -60,14 +60,13 @@
  */
 
 #include <errno.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <pwd.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 #include <sys/wait.h>
 
 char *TCID = "setreuid04";
-extern int Tst_count;
 
 uid_t neg_one = -1;
 
@@ -110,15 +109,13 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
 
-	/* Perform global setup for test */
+	 }
+
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		int i, pid, status;
 
@@ -127,7 +124,7 @@ int main(int ac, char **av)
 
 		if ((pid = FORK_OR_VFORK()) == -1) {
 			tst_brkm(TBROK, cleanup, "fork failed");
-		 /*NOTREACHED*/} else if (pid == 0) {	/* child */
+		 } else if (pid == 0) {	/* child */
 
 			for (i = 0; i < TST_TOTAL; i++) {
 
@@ -170,7 +167,7 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -180,13 +177,13 @@ int main(int ac, char **av)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	if (getpwnam("nobody") == NULL) {
 		tst_brkm(TBROK, NULL, "nobody must be a valid user.");
 		tst_exit();
-	 /*NOTREACHED*/}
+	 }
 
 	/* Check that the test process id is root */
 	if (geteuid() != 0) {
@@ -221,9 +218,7 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }
 
 void uid_verify(struct passwd *ru, struct passwd *eu, char *when)
 {

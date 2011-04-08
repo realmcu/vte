@@ -69,7 +69,6 @@ void do_child(void);
 char *TCID = "kill04";
 int TST_TOTAL = 1;
 
-extern int Tst_count;
 
 int exp_enos[] = { ESRCH, 0 };
 
@@ -83,8 +82,8 @@ int main(int ac, char **av)
 	int exno, status, fake_status, nsig;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
 	maybe_run_child(&do_child, "");
@@ -140,7 +139,7 @@ int main(int ac, char **av)
 				 "Expected a return value of -1 got %ld",
 				 TCID, TEST_ERRNO, strerror(TEST_ERRNO),
 				 TEST_RETURN);
-		 /*NOTREACHED*/}
+		 }
 
 		if (STD_FUNCTIONAL_TEST) {
 			/*
@@ -162,7 +161,7 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -173,7 +172,7 @@ void do_child()
 	int exno = 1;
 
 	pause();
-	 /*NOTREACHED*/ exit(exno);
+	  exit(exno);
 }
 
 /*
@@ -181,7 +180,7 @@ void do_child()
  */
 void setup(void)
 {
-	/* Pause if that option was specified */
+
 	TEST_PAUSE;
 }
 
@@ -197,6 +196,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

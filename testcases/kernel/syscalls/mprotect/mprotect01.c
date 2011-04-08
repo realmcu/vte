@@ -74,7 +74,6 @@ void setup3(void);
 
 char *TCID = "mprotect01";
 int TST_TOTAL = 3;
-extern int Tst_count;
 
 void *addr1, *addr2, *addr3;
 int fd;
@@ -120,8 +119,8 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();		/* global setup */
@@ -165,15 +164,15 @@ int main(int ac, char **av)
 		close(fd);
 	}
 	cleanup();
-	return 0;
- /*NOTREACHED*/}
+	tst_exit();
+ }
 
 #else
 
 int main()
 {
 	tst_resm(TINFO, "Ignore this test on uClinux");
-	return 0;
+	tst_exit();
 }
 
 #endif /* UCLINUX */
@@ -195,7 +194,7 @@ void setup2()
 	addr2 = (char *)malloc(PAGESIZE);
 	if (addr2 == NULL) {
 		tst_brkm(TINFO, cleanup, "malloc failed");
-	 /*NOTREACHED*/}
+	 }
 	addr2++;		/* Ensure addr2 is not page aligned */
 }
 
@@ -207,7 +206,7 @@ void setup3()
 	fd = open("/etc/passwd", O_RDONLY);
 	if (fd < 0) {
 		tst_brkm(TBROK, cleanup, "open failed");
-	 /*NOTREACHED*/}
+	 }
 
 	/*
 	 * mmap the PAGESIZE bytes as read only.
@@ -215,7 +214,7 @@ void setup3()
 	addr3 = mmap(0, PAGESIZE, PROT_READ, MAP_SHARED, fd, 0);
 	if (addr3 < 0) {
 		tst_brkm(TBROK, cleanup, "mmap failed");
-	 /*NOTREACHED*/}
+	 }
 }
 
 /*
@@ -223,10 +222,9 @@ void setup3()
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -242,6 +240,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

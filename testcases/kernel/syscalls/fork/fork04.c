@@ -120,7 +120,6 @@
 #include "usctest.h"
 
 char *TCID = "fork04";		/* Test program identifier.    */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 #define	KIDEXIT	42		/* Known value for child exit status */
 #define MAX_LINE_LENGTH 256
@@ -148,19 +147,17 @@ void cleanup()
 	/* remove the temporary directory and exit with
 	   return code appropriate for results */
 	tst_rmdir();
-	tst_exit();
 
-}				/* End cleanup() */
+}
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* make and change to a temporary directory */
@@ -169,7 +166,7 @@ void setup()
 	/* add a variable to the environment */
 	putenv("TESTPROG=FRKTCS04");
 
-}				/* End setup() */
+}
 
 /***************************************************************
  * child_environment - the child side of the environment tests
@@ -326,7 +323,7 @@ int main(int ac, char **av)
     /***************************************************************
      * parse standard options
      ***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -392,12 +389,12 @@ int main(int ac, char **av)
 			}
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
     /***************************************************************
      * cleanup and exit
      ***************************************************************/
 	cleanup();
 
-	return 0;
-}				/* End main */
+	tst_exit();
+}

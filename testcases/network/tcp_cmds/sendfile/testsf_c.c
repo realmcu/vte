@@ -1,4 +1,4 @@
- 
+
 /*
  * Client for the send_file test program
  * Syntax: testsf_c <server IP addr> <port> <client_filename> <server_filename> <file-length>
@@ -19,7 +19,6 @@
 #include "netdefs.h"
 
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 #if INET6
 char *TCID = "sendfile6_client";
@@ -111,7 +110,7 @@ main (int argc, char *argv[])
 	nlen = 0; /* init size of info received */
 	rbuf[0] = '\0';
 	/* read until an EOF is encountered. */
-	while ((nbyte = read(s, rbuf, PATH_MAX)) > 0) { 
+	while ((nbyte = read(s, rbuf, PATH_MAX)) > 0) {
 		nlen += nbyte;
 		if (write(fd, rbuf, nbyte) != nbyte) {
 			tst_resm(TBROK, "Error writing to file %s on client\n",
@@ -127,6 +126,6 @@ main (int argc, char *argv[])
 	close(s);
 	close(fd);
 
-	return 0;
+	tst_exit();
 
 }

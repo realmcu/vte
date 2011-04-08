@@ -86,7 +86,6 @@ void setup5();
 
 char *TCID = "mkdir03";		/* Test program identifier.    */
 int fileHandle, fileHandle2 = 0;
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 char tstdir3[NAMELEN];
 char tstdir4[NAMELEN];
@@ -138,8 +137,8 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	/*
@@ -155,7 +154,6 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/* loop through the test cases */
@@ -185,15 +183,15 @@ int main(int ac, char **av)
 					 strerror(TEST_ERRNO), TC[i].error);
 			}
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
 	/*
 	 * cleanup and exit
 	 */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /*
  * setup3() - performs all ONE TIME setup for this test case 3.
@@ -252,7 +250,7 @@ void setup5()
 	/* create a file */
 	if ((fileHandle2 = creat(tstfile5, PERMS)) == -1) {
 		tst_brkm(TBROK, cleanup, "creat a file failed");
-	 /*NOTREACHED*/}
+	 }
 }
 
 /*
@@ -260,10 +258,9 @@ void setup5()
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Create a temporary directory and make it current. */
@@ -302,5 +299,5 @@ void cleanup()
 	/*
 	 * Exit with return code appropriate for results.
 	 */
-	tst_exit();
+
 }

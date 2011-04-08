@@ -1,12 +1,12 @@
 /* IBM Corporation */
 /* 01/02/2003	Port to LTP avenakt@us.ibm.com */
 /* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
-/*  
+/*
  *   This program is free software;  you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation; either version 2 of the License, or
  *   (at your option) any later version.
- *  
+ *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY;  without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
@@ -37,7 +37,6 @@ int local_flag = PASSED;
 char *TCID = "mmapstress09";
 FILE *temp;
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int anyfail();
 void ok_exit();
@@ -354,7 +353,7 @@ cleanup:
 		continue;
 
 	if (no_prob) {		/* only check file if no errors */
-		if (!mapokay(buf)){
+		if (!mapokay(buf)) {
 			(void)fprintf(stderr, "map data incorrect!\n");
                		 anyfail();
 		}
@@ -365,9 +364,8 @@ cleanup:
 	(void)time(&t);
 //	(void)printf("%s: Finished %s", argv[0], ctime(&t)); LTP POrt
 	ok_exit();
-	return 0;
+	tst_exit();
 }
-
 
 /*
  *  Child process that reads/writes map.  The child reads/writes
@@ -384,7 +382,6 @@ child_mapper(unsigned procno, unsigned nprocs)
 	unsigned loopcnt;
 	unsigned nloops;
 	unsigned i;
-
 
 	seed = initrand();		/* initialize random seed */
 
@@ -436,7 +433,6 @@ child_mapper(unsigned procno, unsigned nprocs)
 	exit(0);
 }
 
-
 /*
  *  Make sure file has all the correct data.
  */
@@ -462,7 +458,7 @@ mapokay(uchar_t *expbuf)
 			ptr++;
 		}
 	}
-				
+
 	return 1;
 }
 
@@ -502,13 +498,11 @@ void ok_exit()
 	tst_exit();
 }
 
-
 int anyfail()
 {
   tst_resm(TFAIL, "Test failed\n");
   tst_exit();
-  return 0;
+        return 0;
 }
 
 /*****  **      **      *****/
-

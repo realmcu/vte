@@ -115,7 +115,6 @@ void readmsg(int sock, char *buf, int maxlen) {
         *buf = 0;
 }
 
-
 int main(int argc, char **argv)
 {
 
@@ -132,7 +131,7 @@ int main(int argc, char **argv)
                 struct can_frame frame;
         } msg;
 
-        if((sl = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
+        if ((sl = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
                 perror("inetsocket");
                 exit(1);
         }
@@ -141,7 +140,7 @@ int main(int argc, char **argv)
         saddr.sin_addr.s_addr = htonl(INADDR_ANY);
         saddr.sin_port = htons(28600);
 
-        while(bind(sl,(struct sockaddr*)&saddr, sizeof(saddr)) < 0) {
+        while (bind(sl,(struct sockaddr*)&saddr, sizeof(saddr)) < 0) {
                 printf(".");fflush(NULL);
                 usleep(100000);
         }
@@ -151,9 +150,9 @@ int main(int argc, char **argv)
                 exit(1);
         }
 
-        while (1) { 
+        while (1) {
                 sa = accept(sl,(struct sockaddr *)&clientaddr, &sin_size);
-                if (sa > 0 ){
+                if (sa > 0) {
 
                         if (fork())
                                 close(sa);
@@ -205,7 +204,7 @@ int main(int argc, char **argv)
                 items = sscanf(buf, "< %6s %c %lu %lu %x %hhu "
                                "%hhx %hhx %hhx %hhx %hhx %hhx %hhx %hhx >",
                                ifr.ifr_name,
-                               &cmd, 
+                               &cmd,
                                &msg.msg_head.ival2.tv_sec,
                                &msg.msg_head.ival2.tv_usec,
                                &msg.msg_head.can_id,
@@ -260,6 +259,5 @@ int main(int argc, char **argv)
         close(sc);
         close(sa);
 
-        return 0;
+    return 0;
 }
-

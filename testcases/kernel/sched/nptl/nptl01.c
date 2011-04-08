@@ -52,7 +52,6 @@
 
 char *TCID="nptl01";            /* Test program identifier.    */
 int TST_TOTAL=1;                /* Total number of test cases. */
-extern int Tst_count;           /* Test Case counter for tst_* routines */
 void cleanup();
 
 pthread_mutex_t req;
@@ -225,14 +224,14 @@ int main(int argc, char** argv)
             if (optarg)
                 numloops = atoi(optarg);
             else
-                fprintf(stderr, "%s: option -l requires an argument\n", argv[0]);   
+                fprintf(stderr, "%s: option -l requires an argument\n", argv[0]);
             break;
         default:
             usage(argv[0]);
             exit(1);
         }
     }
-        
+
     signal(SIGALRM, trap_alarm);
     alarm(MAXTIME);
 
@@ -243,7 +242,7 @@ int main(int argc, char** argv)
     call_cond_init(&child, buf, sizeof(buf));
 
     call_mutex_lock(&ack, buf, sizeof(buf));
-   
+
     create_child_thread(buf, sizeof(buf));
 
     tst_resm(TINFO,"Starting test, please wait.");
@@ -276,7 +275,7 @@ int main(int argc, char** argv)
     tst_resm(TCONF,"Skipping Execution - This system is not using NPTL");
     tst_exit();
 #endif
-    /* NOT REACHED */
+
     return 1;
 }
 
@@ -288,8 +287,5 @@ void
 cleanup()
 {
 
-        /* exit with return code appropriate for results */
         tst_exit();
-}       /* End cleanup() */
-
-
+}

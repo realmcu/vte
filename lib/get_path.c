@@ -21,7 +21,7 @@
  */
 
  /*
-  * Looks for binary prog_name in $PATH. 
+  * Looks for binary prog_name in $PATH.
   *
   * If such file exists and if you are able at least to read it, zero is
   * returned and absolute path to the file is filled into buf. In case buf is
@@ -73,7 +73,7 @@ int tst_get_path(const char *prog_name, char *buf, size_t buf_len)
 		size = strlen(buf);
 
 		/*
-		 * "::" inside $PATH, $PATH ending with ':' or $PATH strarting
+		 * "::" inside $PATH, $PATH ending with ':' or $PATH starting
 		 * with ':' should be expanded into current working directory.
 		 */
 		if (size == 0) {

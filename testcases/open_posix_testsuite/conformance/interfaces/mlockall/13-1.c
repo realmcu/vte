@@ -16,16 +16,15 @@
 #include <errno.h>
 #include "posixtest.h"
 
-
 int main() {
 	int result;
 
 	result = mlockall(0);
 
-	if(result == -1 && errno == EINVAL) {
+	if (result == -1 && errno == EINVAL) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
-	} else if(result != -1) {
+	} else if (result != -1) {
 		printf("mlockall() return %i instead of -1.\n", result);
 		return PTS_FAIL;
 	} else {

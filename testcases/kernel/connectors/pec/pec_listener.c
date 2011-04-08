@@ -337,4 +337,3 @@ int main(int argc, char **argv)
 #endif /* CN_IDX_PROC */
 
 #endif /* NETLINK_CONNECTOR */
-

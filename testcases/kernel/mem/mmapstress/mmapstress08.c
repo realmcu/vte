@@ -41,21 +41,17 @@ int local_flag = PASSED;
 char *TCID = "mmapstress08";
 FILE *temp;
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 #if defined(__i386__) || defined(__x86_64__)
 int anyfail();
 void ok_exit();
 /*****  **      **      *****/
 
-
-
 #define NPTEPG		(1024)
 /*#define GRAN_NUMBER	(1<<2)*/
 
 #define GRAN_NUMBER	(1<<8)
 	/* == 256 @ 4MB per mmap(2), we span a total of 1 GB */
-
 
 extern time_t	time(time_t *);
 extern char	*ctime(const time_t *);
@@ -109,9 +105,8 @@ main(int argc, char *argv[])
 	(void)time(&t);
 	//(void)printf("%s: Finished %s", argv[0], ctime(&t));
 	ok_exit();
-	return 0;
+	tst_exit();
 }
-
 
 /*****  LTP Port        *****/
 void ok_exit()
@@ -120,12 +115,11 @@ void ok_exit()
 	tst_exit();
 }
 
-
 int anyfail()
 {
   tst_resm(TFAIL, "Test failed\n");
   tst_exit();
-  return 0;
+        return 0;
 }
 
 #else /* defined(__i386__) || defined(__x86_64__) */
@@ -137,4 +131,3 @@ main (void)
 }
 #endif
 /*****  **      **      *****/
-

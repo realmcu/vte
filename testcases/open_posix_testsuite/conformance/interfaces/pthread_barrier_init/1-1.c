@@ -1,20 +1,19 @@
-/*   
+/*
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
  *
  * pthread_barrier_init()
  *
  *
- * The pthread_barrier_init( ) function shall allocate any resources 
- * required to use the barrier referenced by barrier and shall initialize 
- * the barrier with attributes referenced by attr. If attr is NULL, 
- * the default barrier attributes shall be used; 
+ * The pthread_barrier_init() function shall allocate any resources
+ * required to use the barrier referenced by barrier and shall initialize
+ * the barrier with attributes referenced by attr. If attr is NULL,
+ * the default barrier attributes shall be used;
  * the effect is the same as passing the address of a default barrier attributes object.
  *
  */
-
 
 #define _XOPEN_SOURCE 600
 #include <pthread.h>
@@ -37,16 +36,16 @@ int main()
 
 	/* Intilized barrier with NULL attribute, check that this can be done. */
 	rc = pthread_barrier_init(&barrier, NULL, COUNT);
-	
-	if(rc !=0)
+
+	if (rc !=0)
 	{
 		printf("Test FAILED: Error at pthread_barrier_init() "
 			"return code %d, %s\n", rc, strerror(rc));
 		return PTS_FAIL;
 	}
 
-	/* Cleanup */	
-	if(pthread_barrier_destroy(&barrier) != 0)
+	/* Cleanup */
+	if (pthread_barrier_destroy(&barrier) != 0)
 	{
 		printf("Error at pthread_barrier_destroy() "
 			" return code: %d, %s\n", rc, strerror(rc));
@@ -54,15 +53,15 @@ int main()
 	}
 
 	/* Initialize a barrier attribute object */
-	if(pthread_barrierattr_init(&ba) != 0)
+	if (pthread_barrierattr_init(&ba) != 0)
 	{
 		printf("Error at pthread_barrierattr_init()\n");
 		return PTS_UNRESOLVED;
 	}
-	
+
 	/* Initialize barrier with this barrier attribute object */
 	rc = pthread_barrier_init(&barrier, &ba, COUNT);
-	if(rc != 0)
+	if (rc != 0)
 	{
 		printf("Test FAILED: Error at 2nd pthread_barrier_init() "
 			"return code %d, %s\n", rc, strerror(rc));
@@ -70,14 +69,13 @@ int main()
 	}
 
 	/* Cleanup */
-	if(pthread_barrierattr_destroy(&ba) != 0)
+	if (pthread_barrierattr_destroy(&ba) != 0)
 	{
 		printf("Error at pthread_barrierattr_destroy()\n");
 		return PTS_UNRESOLVED;
 	}
 
-
-	if(pthread_barrier_destroy(&barrier) != 0)
+	if (pthread_barrier_destroy(&barrier) != 0)
 	{
 		printf("Error at pthread_barrier_destroy() "
 			" return code: %d, %s\n", rc, strerror(rc));

@@ -14,7 +14,6 @@
 * with this program; if not, write the Free Software Foundation, Inc., 59
 * Temple Place - Suite 330, Boston MA 02111-1307, USA.
 
-
 * This sample test aims to check the following assertion:
 *
 * Interval timers are reset in the child process.
@@ -27,7 +26,6 @@
 * The test fails if the timer is running in the child.
 
 */
-
 
 /* We are testing conformance to IEEE Std 1003.1, 2003 Edition */
 #define _POSIX_C_SOURCE 200112L
@@ -56,22 +54,22 @@
 /******************************   Test framework   *****************************************/
 /********************************************************************************************/
 #include "testfrmw.h"
- #include "testfrmw.c" 
+ #include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
+ * UNRESOLVED(ret, descr);
  *    where descr is a description of the error and ret is an int (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -85,9 +83,9 @@
 /********************************************************************************************/
 /***********************************    Test case   *****************************************/
 /********************************************************************************************/
-#ifndef WITHOUT_XOPEN 
+#ifndef WITHOUT_XOPEN
 /* The main test function. */
-int main( int argc, char * argv[] )
+int main(int argc, char * argv[])
 {
 	int ret, status;
 	pid_t child, ctl;
@@ -103,101 +101,101 @@ int main( int argc, char * argv[] )
 	it.it_value.tv_sec = 10;
 	it.it_value.tv_usec = 0;
 
-	ret = setitimer( ITIMER_REAL, &it, NULL );
+	ret = setitimer(ITIMER_REAL, &it, NULL);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( errno, "Failed to set interval timer for ITIMER_REAL" );
+		UNRESOLVED(errno, "Failed to set interval timer for ITIMER_REAL");
 	}
 
-	ret = setitimer( ITIMER_VIRTUAL, &it, NULL );
+	ret = setitimer(ITIMER_VIRTUAL, &it, NULL);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( errno, "Failed to set interval timer for ITIMER_VIRTUAL" );
+		UNRESOLVED(errno, "Failed to set interval timer for ITIMER_VIRTUAL");
 	}
 
-	ret = setitimer( ITIMER_PROF, &it, NULL );
+	ret = setitimer(ITIMER_PROF, &it, NULL);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( errno, "Failed to set interval timer for ITIMER_PROF" );
+		UNRESOLVED(errno, "Failed to set interval timer for ITIMER_PROF");
 	}
 
 #if VERBOSE > 0
-	output( "All interval timers are set.\n" );
+	output("All interval timers are set.\n");
 
 #endif
 
 	/* Create the child */
 	child = fork();
 
-	if ( child == ( pid_t ) - 1 )
+	if (child == -1)
 	{
-		UNRESOLVED( errno, "Failed to fork" );
+		UNRESOLVED(errno, "Failed to fork");
 	}
 
 	/* child */
-	if ( child == ( pid_t ) 0 )
+	if (child == 0)
 	{
 		/* Check we get the correct information: timer is reset */
-		ret = getitimer( ITIMER_REAL, &it );
+		ret = getitimer(ITIMER_REAL, &it);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			UNRESOLVED( errno, "Failed to read ITIMER_REAL in child" );
+			UNRESOLVED(errno, "Failed to read ITIMER_REAL in child");
 		}
 
-		if ( it.it_value.tv_sec != 0 )
+		if (it.it_value.tv_sec != 0)
 		{
-			FAILED( "Timer ITIMER_REAL was not reset in child" );
+			FAILED("Timer ITIMER_REAL was not reset in child");
 		}
 
-		ret = getitimer( ITIMER_VIRTUAL, &it );
+		ret = getitimer(ITIMER_VIRTUAL, &it);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			UNRESOLVED( errno, "Failed to read ITIMER_VIRTUAL in child" );
+			UNRESOLVED(errno, "Failed to read ITIMER_VIRTUAL in child");
 		}
 
-		if ( it.it_value.tv_sec != 0 )
+		if (it.it_value.tv_sec != 0)
 		{
-			FAILED( "Timer ITIMER_VIRTUAL was not reset in child" );
+			FAILED("Timer ITIMER_VIRTUAL was not reset in child");
 		}
 
-		ret = getitimer( ITIMER_PROF, &it );
+		ret = getitimer(ITIMER_PROF, &it);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			UNRESOLVED( errno, "Failed to read ITIMER_PROF in child" );
+			UNRESOLVED(errno, "Failed to read ITIMER_PROF in child");
 		}
 
-		if ( it.it_value.tv_sec != 0 )
+		if (it.it_value.tv_sec != 0)
 		{
-			FAILED( "Timer ITIMER_PROF was not reset in child" );
+			FAILED("Timer ITIMER_PROF was not reset in child");
 		}
 
 		/* We're done */
-		exit( PTS_PASS );
+		exit(PTS_PASS);
 	}
 
 	/* Parent joins the child */
-	ctl = waitpid( child, &status, 0 );
+	ctl = waitpid(child, &status, 0);
 
-	if ( ctl != child )
+	if (ctl != child)
 	{
-		UNRESOLVED( errno, "Waitpid returned the wrong PID" );
+		UNRESOLVED(errno, "Waitpid returned the wrong PID");
 	}
 
-	if ( ( !WIFEXITED( status ) ) || ( WEXITSTATUS( status ) != PTS_PASS ) )
+	if (!WIFEXITED(status) || (WEXITSTATUS(status) != PTS_PASS))
 	{
-		FAILED( "Child exited abnormally" );
+		FAILED("Child exited abnormally");
 	}
 
 	/* Test passed */
 #if VERBOSE > 0
 
-	output( "Test passed\n" );
+	output("Test passed\n");
 
 #endif
 
@@ -205,9 +203,9 @@ int main( int argc, char * argv[] )
 }
 
 #else /* WITHOUT_XOPEN */
-int main( int argc, char * argv[] )
+int main(int argc, char * argv[])
 {
 	output_init();
-	UNTESTED( "This testcase requires XSI features" );
+	UNTESTED("This testcase requires XSI features");
 }
 #endif

@@ -14,7 +14,6 @@
 * with this program; if not, write the Free Software Foundation, Inc., 59
 * Temple Place - Suite 330, Boston MA 02111-1307, USA.
 
-
 * This sample test aims to check the following assertion:
 *
 * The function does not return EINTR
@@ -24,7 +23,6 @@
 * -> check that EINTR is never returned
 
 */
-
 
 /* We are testing conformance to IEEE Std 1003.1, 2003 Edition */
 #define _POSIX_C_SOURCE 200112L
@@ -46,22 +44,22 @@
 /******************************   Test framework   *****************************************/
 /********************************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
+ * UNRESOLVED(ret, descr);
  *    where descr is a description of the error and ret is an int (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -73,7 +71,6 @@
 #endif
 
 #define WITH_SYNCHRO
-
 
 /********************************************************************************************/
 /***********************************    Test cases  *****************************************/
@@ -176,9 +173,8 @@ void initializer(void)
 	return ;
 }
 
-
 /* Test function -- calls pthread_equal() and checks that EINTR is never returned. */
-void * test( void * arg )
+void * test(void * arg)
 {
 	int ret = 0;
 
@@ -247,13 +243,13 @@ int main (int argc, char * argv[])
 	output_init();
 
 	/* We need to register the signal handlers for the PROCESS */
-	sigemptyset ( &sa.sa_mask );
+	sigemptyset (&sa.sa_mask);
 	sa.sa_flags = 0;
 	sa.sa_handler = sighdl1;
 
 	if ((ret = sigaction (SIGUSR1, &sa, NULL)) == -1)
 	{
-		UNRESOLVED( ret, "Unable to register signal handler1" );
+		UNRESOLVED(ret, "Unable to register signal handler1");
 	}
 
 	sa.sa_handler = sighdl2;
@@ -276,29 +272,29 @@ int main (int argc, char * argv[])
 	}
 
 	/* We now block the signals SIGUSR1 and SIGUSR2 for this THREAD */
-	ret = pthread_sigmask( SIG_BLOCK, &usersigs, NULL );
+	ret = pthread_sigmask(SIG_BLOCK, &usersigs, NULL);
 
 	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Unable to block SIGUSR1 and SIGUSR2 in main thread" );
+		UNRESOLVED(ret, "Unable to block SIGUSR1 and SIGUSR2 in main thread");
 	}
 
 #ifdef WITH_SYNCHRO
-	if (sem_init( &semsig1, 0, 1 ))
+	if (sem_init(&semsig1, 0, 1))
 	{
-		UNRESOLVED( errno, "Semsig1  init" );
+		UNRESOLVED(errno, "Semsig1  init");
 	}
 
-	if (sem_init( &semsig2, 0, 1))
+	if (sem_init(&semsig2, 0, 1))
 	{
-		UNRESOLVED( errno, "Semsig2  init" );
+		UNRESOLVED(errno, "Semsig2  init");
 	}
 
 #endif
 
 	if ((ret = pthread_create(&th_work, NULL, test, NULL)))
 	{
-		UNRESOLVED( ret, "Worker thread creation failed" );
+		UNRESOLVED(ret, "Worker thread creation failed");
 	}
 
 	arg1.sig = SIGUSR1;
@@ -308,23 +304,18 @@ int main (int argc, char * argv[])
 	arg2.sem = &semsig2;
 #endif
 
-
-
 	if ((ret = pthread_create(&th_sig1, NULL, sendsig, (void *) &arg1)))
 	{
-		UNRESOLVED( ret, "Signal 1 sender thread creation failed" );
+		UNRESOLVED(ret, "Signal 1 sender thread creation failed");
 	}
 
 	if ((ret = pthread_create(&th_sig2, NULL, sendsig, (void *) &arg2)))
 	{
-		UNRESOLVED( ret, "Signal 2 sender thread creation failed" );
+		UNRESOLVED(ret, "Signal 2 sender thread creation failed");
 	}
-
-
 
 	/* Let's wait for a while now */
 	sleep(1);
-
 
 	/* Now stop the threads and join them */
 	do
@@ -333,8 +324,7 @@ int main (int argc, char * argv[])
 	}
 	while (do_it);
 
-
-	if ((ret = pthread_join(th_sig1, NULL )))
+	if ((ret = pthread_join(th_sig1, NULL)))
 	{
 		UNRESOLVED(ret, "Signal 1 sender thread join failed");
 	}
@@ -344,12 +334,10 @@ int main (int argc, char * argv[])
 		UNRESOLVED(ret, "Signal 2 sender thread join failed");
 	}
 
-
 	if ((ret = pthread_join(th_work, NULL)))
 	{
 		UNRESOLVED(ret, "Worker thread join failed");
 	}
-
 
 #if VERBOSE > 0
 	output("Test executed successfully.\n");

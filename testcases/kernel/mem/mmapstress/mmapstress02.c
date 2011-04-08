@@ -60,13 +60,10 @@ int local_flag = PASSED;
 char *TCID = "mmapstress02"; //uiomove_phys_fail
 FILE *temp;
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int anyfail();
 void ok_exit();
 /*****  **      **      *****/
-
-
 
 /*ARGSUSED*/
 static
@@ -176,7 +173,7 @@ main(int argc, char *argv[]) {
 	(void)time(&t);
 //	(void)printf("%s: Finished %s", argv[0], ctime(&t));
 	ok_exit(); /* LTP Port */
-	return 0;
+	tst_exit();
 }
 
 /*****  LTP Port        *****/
@@ -187,15 +184,12 @@ void ok_exit()
 	tst_exit();
 }
 
-
 int anyfail()
 {
   tst_resm(TFAIL, "Test failed");
   tst_rmdir();
   tst_exit();
-  return 0;
+        return 0;
 }
 
 /*****  **      **      *****/
-
-

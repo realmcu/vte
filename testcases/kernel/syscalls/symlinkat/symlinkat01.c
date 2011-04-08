@@ -118,12 +118,11 @@ struct test_struct {
 
 char *TCID = "symlinkat01";	/* Test program identifier.    */
 int TST_TOTAL = sizeof(test_desc) / sizeof(*test_desc);	/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 #define SUCCEED_OR_DIE(syscall, message, ...)														\
 	(errno = 0,																														\
 		({int ret=syscall(__VA_ARGS__);																			\
-			if(ret==-1)																												\
+			if (ret==-1)																												\
 				tst_brkm(TBROK, cleanup, message, __VA_ARGS__, strerror(errno)); \
 			ret;}))
 
@@ -150,8 +149,8 @@ int main(int ac, char **av)
 	/***************************************************************
 	 * parse standard options
 	 ***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	/***************************************************************
 	 * perform global setup for test
@@ -163,7 +162,6 @@ int main(int ac, char **av)
 	 ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/*
@@ -175,7 +173,7 @@ int main(int ac, char **av)
 
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
 	/***************************************************************
 	 * cleanup and exit
@@ -183,7 +181,7 @@ int main(int ac, char **av)
 	cleanup();
 
 	return (0);
-}				/* End main */
+}
 
 static void setup_every_copy()
 {
@@ -213,16 +211,16 @@ static void mysymlinkat_test(struct test_struct* desc)
 				int tnum=rand(), vnum=~tnum;
 				int len;
 				fd = SUCCEED_OR_DIE(open, "open(%s, 0x%x) failed: %s", desc->referencefn1, O_RDWR);
-				if((len=write(fd, &tnum, sizeof(tnum))) != sizeof(tnum))
+				if ((len=write(fd, &tnum, sizeof(tnum))) != sizeof(tnum))
 					tst_brkm(TBROK, cleanup, "write() failed: expected %d, returned %d; error: %s", sizeof(tnum), len, strerror(errno));
 				SUCCEED_OR_DIE(close, "close(%d) failed: %s", fd);
 
 				fd = SUCCEED_OR_DIE(open, "open(%s, 0x%x) failed: %s", desc->referencefn2, O_RDONLY);
-				if((len=read(fd, &vnum, sizeof(vnum))) != sizeof(tnum))
+				if ((len=read(fd, &vnum, sizeof(vnum))) != sizeof(tnum))
 					tst_brkm(TBROK, cleanup, "read() failed: expected %d, returned %d; error: %s", sizeof(vnum), len, strerror(errno));
 				SUCCEED_OR_DIE(close, "close(%d) failed: %s", fd);
 
-				if(tnum == vnum)
+				if (tnum == vnum)
 					tst_resm(TPASS, "Test passed");
 				else
 					tst_resm(TFAIL,
@@ -251,7 +249,6 @@ static void setup()
 {
 	char *tmp;
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	tst_tmpdir();
@@ -268,9 +265,8 @@ static void setup()
 	tmp = strdup(dpathname);
 	snprintf(dpathname, sizeof(dpathname), tmp, get_current_dir_name());
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
-}				/* End setup() */
+}
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
@@ -285,6 +281,4 @@ static void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

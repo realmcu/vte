@@ -32,8 +32,8 @@
  *
  * HISTORY
  *      2010-04-22 Code cleanup and thread synchronization changes by using
- *                 conditional variables,
- *                 by Gowrishankar(gowrishankar.m@in.ibm.com).
+ *		 conditional variables,
+ *		 by Gowrishankar(gowrishankar.m@in.ibm.com).
  *
  *****************************************************************************/
 
@@ -217,5 +217,6 @@ int main(int argc, char *argv[])
 	pthread_mutex_destroy(&glob_mutex);
 	pthread_mutex_destroy(&cond_mutex);
 	pthread_cond_destroy(&cond_var);
+
 	return 0;
 }

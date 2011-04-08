@@ -191,7 +191,6 @@ int TST_TOTAL = sizeof(tdat) / sizeof(tdat[0]);	/* Total number of test cases. *
 
 int exp_enos[] = { EBADF, ENOTSOCK, EFAULT, EINVAL, 0 };
 
-extern int Tst_count;
 
 #ifdef UCLINUX
 static char *argv0;
@@ -203,10 +202,8 @@ int main(int argc, char *argv[])
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 #ifdef UCLINUX
 	argv0 = argv[0];
 	maybe_run_child(&do_child, "dd", &sfd, &ufd);
@@ -216,7 +213,6 @@ int main(int argc, char *argv[])
 
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
 		Tst_count = 0;
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
@@ -254,9 +250,9 @@ int main(int argc, char *argv[])
 		}
 	}
 	cleanup();
-	/*NOT REACHED */
-	return 0;
-}				/* End main */
+
+	tst_exit();
+}
 
 pid_t pid;
 char tmpsunpath[1024];
@@ -290,7 +286,7 @@ void cleanup(void)
 		(void)unlink(tmpsunpath);
 	TEST_CLEANUP;
 	tst_rmdir();
-	tst_exit();
+
 }
 
 void setup0(void)
@@ -430,7 +426,7 @@ pid_t start_server(struct sockaddr_in *ssin, struct sockaddr_un *ssun)
 		(void)close(ufd);
 		return pid;
 	}
-	 /*NOTREACHED*/ exit(1);
+	exit(1);
 }
 
 void do_child()

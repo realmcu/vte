@@ -46,7 +46,7 @@
  *		Check return code, if system call failed (return == -1)
  *				Log the error number and issue a FAIL message
  *		otherwise issue a PASS message
- *	
+ *
  *      Cleanup:
  *        Print errno log and/or timing stats if options given
  *	  Deletes temporary directory.
@@ -80,7 +80,6 @@ int exp_enos[] = { EWOULDBLOCK, EAGAIN, EINVAL, 0 };
 
 char *TCID = "flock01";		/* Test program identifier */
 int TST_TOTAL = 3;		/* Total number of test cases */
-extern int Tst_count;
 char filename[100];
 int fd;
 
@@ -100,10 +99,10 @@ int main(int argc, char **argv)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	/* global setup */
 	setup();
@@ -135,13 +134,13 @@ int main(int argc, char **argv)
 
 		}
 
-	}			/* End of TEST_LOOPING */
+	}
 
 	close(fd);
 
 	cleanup();
 
-	return 0;
+	tst_exit();
 
 }
 
@@ -151,7 +150,7 @@ int main(int argc, char **argv)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Set up the expected error numbers for -e option */
@@ -201,6 +200,4 @@ void cleanup(void)
 	unlink(filename);
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

@@ -14,20 +14,18 @@
 * with this program; if not, write the Free Software Foundation, Inc., 59
 * Temple Place - Suite 330, Boston MA 02111-1307, USA.
 
-
 * This sample test aims to check the following assertions:
 *
-* If SA_NODEFER is not set in sa_flags, the caught signal is added to the 
+* If SA_NODEFER is not set in sa_flags, the caught signal is added to the
 * thread's signal mask during the handler execution.
 
 * The steps are:
-* -> register a signal handler for SIGPOLL
-* -> raise SIGPOLL
-* -> In handler, check for reentrance then raise SIGPOLL again.
+* -> register a signal handler for SIGALRM
+* -> raise SIGALRM
+* -> In handler, check for reentrance then raise SIGALRM again.
 
 * The test fails if signal handler if reentered or signal is not pending when raised again.
 */
-
 
 /******************************************************************************/
 /*************************** standard includes ********************************/
@@ -46,76 +44,69 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
-/******************************************************************************/
-/**************************** Configuration ***********************************/
-/******************************************************************************/
 #ifndef VERBOSE
 #define VERBOSE 1
 #endif
 
-#define SIGNAL SIGPOLL
-
-/******************************************************************************/
-/***************************    Test case   ***********************************/
-/******************************************************************************/
+#define SIGNAL SIGALRM
 
 int called = 0;
 
-void handler( int sig )
+void handler(int sig)
 {
 	int ret;
 	sigset_t pending;
 	called++;
 
-	if ( called == 2 )
+	if (called == 2)
 	{
-		FAILED( "Signal was not masked in signal handler" );
+		FAILED("Signal was not masked in signal handler");
 	}
 
-	if ( called == 1 )
+	if (called == 1)
 	{
 
 		/* Raise the signal again. It should be masked */
-		ret = raise( SIGNAL );
+		ret = raise(SIGNAL);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			UNRESOLVED( ret, "Failed to raise SIGPOLL again" );
+			UNRESOLVED(ret, "Failed to raise SIGALRM again");
 		}
 
 		/* check the signal is pending */
-		ret = sigpending( &pending );
+		ret = sigpending(&pending);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			UNRESOLVED( ret, "Failed to get pending signal set" );
+			UNRESOLVED(ret, "Failed to get pending signal set");
 		}
 
-		ret = sigismember( &pending, SIGNAL );
+		ret = sigismember(&pending, SIGNAL);
 
-		if ( ret != 1 )
+		if (ret != 1)
 		{
-			FAILED( "signal is not pending" );
+			FAILED("signal is not pending");
 		}
 	}
 
@@ -137,35 +128,35 @@ int main()
 
 	sa.sa_handler = handler;
 
-	ret = sigemptyset( &sa.sa_mask );
+	ret = sigemptyset(&sa.sa_mask);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to empty signal set" );
+		UNRESOLVED(ret, "Failed to empty signal set");
 	}
 
-	/* Install the signal handler for SIGPOLL */
-	ret = sigaction( SIGNAL, &sa, 0 );
+	/* Install the signal handler for SIGALRM */
+	ret = sigaction(SIGNAL, &sa, 0);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to set signal handler" );
+		UNRESOLVED(ret, "Failed to set signal handler");
 	}
 
-	ret = raise( SIGNAL );
+	ret = raise(SIGNAL);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to raise SIGPOLL" );
+		UNRESOLVED(ret, "Failed to raise SIGALRM");
 	}
 
-	while ( called != 4 )
+	while (called != 4)
 		sched_yield();
 
 	/* Test passed */
 #if VERBOSE > 0
 
-	output( "Test passed\n" );
+	output("Test passed\n");
 
 #endif
 

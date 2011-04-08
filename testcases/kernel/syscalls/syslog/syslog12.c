@@ -84,7 +84,6 @@
 
 #define EXP_RET_VAL	-1
 
-extern int Tst_count;
 
 struct test_case_t {		/* test case structure */
 	int type;		/* 1st arg */
@@ -111,7 +110,7 @@ static void cleanup1(void);
 
 static struct test_case_t tdat[] = {
 	{100, &buf, 0, EINVAL, NULL, NULL, "invalid type/command"},
-	{2, (char *)NULL, 0, EINVAL, NULL, NULL, "NULL buffer argument"},
+	{2, NULL, 0, EINVAL, NULL, NULL, "NULL buffer argument"},
 	{3, &buf, -1, EINVAL, NULL, NULL, "negative length argument"},
 	{2, &buf, 0, EPERM, setup1, cleanup1, "non-root user"},
 	{8, &buf, -1, EINVAL, NULL, NULL, "console level less than 0"},
@@ -134,9 +133,9 @@ int main(int argc, char **argv)
 	int ret;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
@@ -146,7 +145,6 @@ int main(int argc, char **argv)
 	sa.sa_flags = 0;
 	sigaction(SIGALRM, &sa, NULL);
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -190,7 +188,7 @@ int main(int argc, char **argv)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 int setup1(void)
@@ -208,7 +206,7 @@ void cleanup1(void)
 {
 	/* Change effective user id to root */
 	if (seteuid(0) == -1) {
-		tst_brkm(TBROK, tst_exit, "seteuid failed to set the effective"
+		tst_brkm(TBROK, NULL, "seteuid failed to set the effective"
 			 " uid to root");
 	}
 }
@@ -219,18 +217,18 @@ void cleanup1(void)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Check whether we are root  */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Must be root for this test!");
-	 /*NOTREACHED*/}
+		tst_brkm(TBROK, NULL, "Must be root for this test!");
+	 }
 
 	/* Check for nobody_uid user id */
 	if ((ltpuser = getpwnam("nobody")) == NULL) {
-		tst_brkm(TBROK, tst_exit, "nobody user id doesn't exist");
-		/* NOTREACHED */
+		tst_brkm(TBROK, NULL, "nobody user id doesn't exist");
+
 	}
 
 	/* set the expected errnos... */
@@ -256,6 +254,4 @@ void cleanup(void)
 
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

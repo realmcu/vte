@@ -54,12 +54,11 @@
 #include <termio.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 char *TCID = "ioctl01";
 int TST_TOTAL = 5;
-extern int Tst_count;
 
 #define	INVAL_IOCTL	9999999
 
@@ -113,21 +112,14 @@ int main(int ac, char **av)
 	int i;
 	char *msg;		/* message returned from parse_opts */
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, options, &help)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, options, &help)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	if (!Devflag) {
-		tst_resm(TWARN, "You must specify a tty device with "
+	if (!Devflag)
+		tst_brkm(TBROK, NULL, "You must specify a tty device with "
 			 "the -D option.");
-		tst_resm(TWARN, "Run '%s -h' for option information.", TCID);
-		cleanup();
-	}
 
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
-	}
+	tst_require_root(NULL);
 
 	setup();
 
@@ -138,9 +130,8 @@ int main(int ac, char **av)
 
 	TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/* loop through the test cases */
@@ -168,7 +159,7 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -185,10 +176,9 @@ void help()
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* make a temporary directory and cd to it */
@@ -217,6 +207,4 @@ void cleanup()
 	/* delete the test directory created in setup() */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

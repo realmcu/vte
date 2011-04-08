@@ -62,7 +62,6 @@ void setup(void);
 
 char *TCID = "msgsnd04";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int exp_enos[] = { EAGAIN, 0 };	/* 0 terminated list of expected errnos */
 
@@ -75,8 +74,8 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();		/* global setup */
@@ -115,7 +114,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -123,13 +122,12 @@ int main(int ac, char **av)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -164,7 +162,6 @@ void cleanup(void)
 	/* if it exists, remove the message queue that was created */
 	rm_queue(msg_q_1);
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
 	/*
@@ -173,6 +170,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

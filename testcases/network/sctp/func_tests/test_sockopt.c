@@ -86,14 +86,14 @@ main(void)
 	char *big_buffer;
 	struct sctp_event_subscribe subscribe;
 	struct sctp_initmsg initmsg;
-	struct sctp_sndrcvinfo set_udp_sk_dflt_param, get_udp_sk_dflt_param; 
-	struct sctp_sndrcvinfo set_tcp_sk_dflt_param, get_tcp_sk_dflt_param; 
+	struct sctp_sndrcvinfo set_udp_sk_dflt_param, get_udp_sk_dflt_param;
+	struct sctp_sndrcvinfo set_tcp_sk_dflt_param, get_tcp_sk_dflt_param;
 	struct sctp_sndrcvinfo set_udp_assoc_dflt_param;
-	struct sctp_sndrcvinfo get_udp_assoc_dflt_param; 
+	struct sctp_sndrcvinfo get_udp_assoc_dflt_param;
 	struct sctp_sndrcvinfo set_tcp_assoc_dflt_param;
-	struct sctp_sndrcvinfo get_tcp_assoc_dflt_param; 
-	struct sctp_sndrcvinfo get_peeloff_assoc_dflt_param; 
-	struct sctp_sndrcvinfo get_accept_assoc_dflt_param; 
+	struct sctp_sndrcvinfo get_tcp_assoc_dflt_param;
+	struct sctp_sndrcvinfo get_peeloff_assoc_dflt_param;
+	struct sctp_sndrcvinfo get_accept_assoc_dflt_param;
 	struct sctp_paddrinfo pinfo;
 	socklen_t optlen, addrlen;
 	struct sctp_status status;
@@ -168,7 +168,7 @@ main(void)
 	error = getsockopt(udp_svr_sk, SOL_SCTP, SCTP_STATUS, &status,
 			   &optlen);
 	if ((error != -1) && (errno != EINVAL))
-		tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_STATUS) on a "
+		tst_brkm(TBROK, NULL, "getsockopt(SCTP_STATUS) on a "
 			 "socket with no assoc error:%d errno:%d",
 			 error, errno);
 
@@ -211,7 +211,7 @@ main(void)
         error = test_recvmsg(udp_svr_sk, &inmessage, MSG_WAITALL);
 	test_check_msg_notification(&inmessage, error,
 				    sizeof(struct sctp_assoc_change),
-				    SCTP_ASSOC_CHANGE, SCTP_COMM_UP);	
+				    SCTP_ASSOC_CHANGE, SCTP_COMM_UP);
 	sac = (struct sctp_assoc_change *)iov.iov_base;
 	udp_svr_associd = sac->sac_assoc_id;
 
@@ -220,7 +220,7 @@ main(void)
         error = test_recvmsg(udp_clt_sk, &inmessage, MSG_WAITALL);
 	test_check_msg_notification(&inmessage, error,
 				    sizeof(struct sctp_assoc_change),
-				    SCTP_ASSOC_CHANGE, SCTP_COMM_UP);	
+				    SCTP_ASSOC_CHANGE, SCTP_COMM_UP);
 	sac = (struct sctp_assoc_change *)iov.iov_base;
 	udp_clt_associd = sac->sac_assoc_id;
 
@@ -243,9 +243,9 @@ main(void)
 	memset(&status, 0, optlen);
 	status.sstat_assoc_id = udp_svr_associd;
 	error = getsockopt(udp_clt_sk, SOL_SCTP, SCTP_STATUS, &status,
-			   &optlen); 
+			   &optlen);
 	if ((error != -1) && (errno != EINVAL))
-        	tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_STATUS) with "
+        	tst_brkm(TBROK, NULL, "getsockopt(SCTP_STATUS) with "
 			 "associd error: %d errno:%d", error, errno);
 
 	tst_resm(TPASS, "getsockopt(SCTP_STATUS) with invalid associd");
@@ -257,7 +257,7 @@ main(void)
 	error = getsockopt(udp_svr_sk, SOL_SCTP, SCTP_STATUS, &status,
 			   &optlen);
 	if ((error != -1) && (errno != EINVAL))
-        	tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_STATUS) with "
+        	tst_brkm(TBROK, NULL, "getsockopt(SCTP_STATUS) with "
 			 "NULL associd error: %d errno:%d", error, errno);
 
 	tst_resm(TPASS, "getsockopt(SCTP_STATUS) with NULL associd");
@@ -270,8 +270,8 @@ main(void)
         error = test_recvmsg(udp_svr_sk, &inmessage, MSG_WAITALL);
 	test_check_msg_notification(&inmessage, error,
 				    sizeof(struct sctp_assoc_change),
-				    SCTP_ASSOC_CHANGE, SCTP_SHUTDOWN_COMP);	
-				
+				    SCTP_ASSOC_CHANGE, SCTP_SHUTDOWN_COMP);
+
 	error = 0;
         close(udp_svr_sk);
 
@@ -332,7 +332,7 @@ main(void)
 			    MSG_EOR, 0, 0);
 	/* Verify that we received the msg without any ancillary data. */
 	if (inmessage.msg_controllen != 0)
-		tst_brkm(TBROK, tst_exit, "Receive unexpected ancillary"
+		tst_brkm(TBROK, NULL, "Receive unexpected ancillary"
 			 "data");
 
 	/* Enable SCTP_SHUTDOWN_EVENTs on udp_svr_sk. */
@@ -350,10 +350,10 @@ main(void)
 	error = test_recvmsg(udp_svr_sk, &inmessage, MSG_WAITALL);
 	test_check_msg_notification(&inmessage, error,
 				    sizeof(struct sctp_shutdown_event),
-				    SCTP_SHUTDOWN_EVENT, 0);	
+				    SCTP_SHUTDOWN_EVENT, 0);
 
 	tst_resm(TPASS, "setsockopt(SCTP_EVENTS) - SCTP_SHUTDOWN_EVENT");
- 
+
         close(udp_svr_sk);
 
 	/* TEST #3: whether sctp_opt_info equals */
@@ -394,17 +394,17 @@ main(void)
         outmessage.msg_iov->iov_base = message;
         outmessage.msg_iov->iov_len = strlen(message) + 1;
         test_sendmsg(udp_clt_sk, &outmessage, 0, strlen(message)+1);
-	
+
         /* Get the communication up message on udp_clt_sk.  */
         inmessage.msg_controllen = sizeof(incmsg);
         error = test_recvmsg(udp_clt_sk, &inmessage, MSG_WAITALL);
 	test_check_msg_notification(&inmessage, error,
 				    sizeof(struct sctp_assoc_change),
-				    SCTP_ASSOC_CHANGE, SCTP_COMM_UP);	
+				    SCTP_ASSOC_CHANGE, SCTP_COMM_UP);
 	sac = (struct sctp_assoc_change *)iov.iov_base;
 	udp_clt_associd = sac->sac_assoc_id;
 
-	/* Compare the SCTP_STATUS result between sctp_opt_info and 
+	/* Compare the SCTP_STATUS result between sctp_opt_info and
 	 * getsockopt
 	 */
 	{
@@ -414,23 +414,23 @@ main(void)
 		memset(&status2, 0, sizeof(status2));
 		optlen = sizeof(struct sctp_status);
 
-		/* Test SCTP_STATUS for udp_clt_sk's given association. */	
+		/* Test SCTP_STATUS for udp_clt_sk's given association. */
 		error = sctp_opt_info(udp_clt_sk,udp_clt_associd,SCTP_STATUS,
 				(char *)&status1, &optlen);
 		if (error != 0)
-	                tst_brkm(TBROK, tst_exit,
-				 "sctp_opt_info(SCTP_STATUS): %s", 
+	                tst_brkm(TBROK, NULL,
+				 "sctp_opt_info(SCTP_STATUS): %s",
 				 strerror(errno));
 
 		status2.sstat_assoc_id = udp_clt_associd;
 		error = getsockopt(udp_clt_sk, IPPROTO_SCTP, SCTP_STATUS,
                 		(char *)&status2, &optlen);
 		if (error != 0)
-	                tst_brkm(TBROK, tst_exit,
-				 "getsockopt(SCTP_STATUS): %s", 
+	                tst_brkm(TBROK, NULL,
+				 "getsockopt(SCTP_STATUS): %s",
 				 strerror(errno));
 		if (strncmp((char *)&status1, (char *)&status2, optlen))
-	                tst_brkm(TBROK, tst_exit, "sctp_opt_info(SCTP_STAUS)"
+	                tst_brkm(TBROK, NULL, "sctp_opt_info(SCTP_STAUS)"
 			       "doesn't match getsockopt(SCTP_STATUS)");
 
                 tst_resm(TPASS, "sctp_opt_info(SCTP_STATUS)");
@@ -468,7 +468,7 @@ main(void)
 	/* Get the updated parameters for association initialization. */
 	optlen = sizeof(initmsg);
 	test_getsockopt(udp_svr_sk, SCTP_INITMSG, &initmsg, &optlen);
-	
+
 	close(udp_svr_sk);
 
 	/* TEST #5: SCTP_DEFAULT_SEND_PARAM socket option. */
@@ -519,7 +519,7 @@ main(void)
 	/* Verify that the get param matches set param. */
 	if (set_udp_sk_dflt_param.sinfo_ppid !=
 			get_udp_sk_dflt_param.sinfo_ppid)
-		tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
+		tst_brkm(TBROK, NULL, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
 			 "mismatch.");
 
 	/* Get default send parameters on the unconnected UDP-style socket. */
@@ -531,7 +531,7 @@ main(void)
 	/* Verify that the get param matches set param. */
 	if (set_udp_sk_dflt_param.sinfo_ppid !=
 			get_udp_sk_dflt_param.sinfo_ppid)
-		tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
+		tst_brkm(TBROK, NULL, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
 			 "mismatch.");
 
 	tst_resm(TPASS, "getsockopt(SCTP_DEFAULT_SEND_PARAM) - "
@@ -548,7 +548,7 @@ main(void)
 			   &set_udp_sk_dflt_param,
 			   sizeof(set_udp_sk_dflt_param));
 	if ((-1 != error) || (EINVAL != errno))
-		tst_brkm(TBROK, tst_exit, "setsockopt(SCTP_DEFAULT_SEND_PARAM) "
+		tst_brkm(TBROK, NULL, "setsockopt(SCTP_DEFAULT_SEND_PARAM) "
 			 "invalid associd error:%d, errno:%d\n",
 			 error, errno);
 
@@ -563,7 +563,7 @@ main(void)
 	error = test_recvmsg(udp_svr_sk, &inmessage, MSG_WAITALL);
 	test_check_msg_notification(&inmessage, error,
 				    sizeof(struct sctp_assoc_change),
-				    SCTP_ASSOC_CHANGE, SCTP_COMM_UP);	
+				    SCTP_ASSOC_CHANGE, SCTP_COMM_UP);
 	sac = (struct sctp_assoc_change *)iov.iov_base;
 	udp_svr_associd = sac->sac_assoc_id;
 
@@ -571,11 +571,11 @@ main(void)
 	error = test_recvmsg(udp_clt_sk, &inmessage, MSG_WAITALL);
 	test_check_msg_notification(&inmessage, error,
 				    sizeof(struct sctp_assoc_change),
-				    SCTP_ASSOC_CHANGE, SCTP_COMM_UP);	
+				    SCTP_ASSOC_CHANGE, SCTP_COMM_UP);
 	sac = (struct sctp_assoc_change *)iov.iov_base;
 	udp_clt_associd = sac->sac_assoc_id;
 
-	/* Verify that trying to set send params with an assoc id not 
+	/* Verify that trying to set send params with an assoc id not
 	 * belonging to the socket on an UDP-style socket fails.
 	 */
 	memset(&set_udp_assoc_dflt_param, 0, sizeof(struct sctp_sndrcvinfo));
@@ -585,16 +585,16 @@ main(void)
 			   &set_udp_assoc_dflt_param,
 			   sizeof(set_udp_assoc_dflt_param));
 	if ((-1 != error) || (EINVAL != errno))
-		tst_brkm(TBROK, tst_exit, "setsockopt(SCTP_DEFAULT_SEND_PARAM) "
+		tst_brkm(TBROK, NULL, "setsockopt(SCTP_DEFAULT_SEND_PARAM) "
 			 "associd belonging to another socket "
 			 "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "setsockopt(SCTP_DEFAULT_SEND_PARAM) - "
 		 "one-to-many style associd belonging to another socket");
 
-	/* Set default send parameters of an association on the listening 
+	/* Set default send parameters of an association on the listening
 	 * UDP-style socket with a valid associd.
-	 */ 
+	 */
 	memset(&set_udp_assoc_dflt_param, 0, sizeof(struct sctp_sndrcvinfo));
 	set_udp_assoc_dflt_param.sinfo_ppid = 3000;
 	set_udp_assoc_dflt_param.sinfo_assoc_id = udp_svr_associd;
@@ -605,9 +605,9 @@ main(void)
 	tst_resm(TPASS, "setsockopt(SCTP_DEFAULT_SEND_PARAM) - "
 		 "one-to-many style valid associd");
 
-	/* Get default send parameters of an association on the listening 
+	/* Get default send parameters of an association on the listening
 	 * UDP-style socket with a valid associd.
-	 */ 
+	 */
 	memset(&get_udp_assoc_dflt_param, 0, sizeof(struct sctp_sndrcvinfo));
 	get_udp_assoc_dflt_param.sinfo_assoc_id = udp_svr_associd ;
 	optlen = sizeof(get_udp_assoc_dflt_param);
@@ -617,16 +617,16 @@ main(void)
 	/* Verify that the get param matches the set param. */
 	if (get_udp_assoc_dflt_param.sinfo_ppid !=
 			set_udp_assoc_dflt_param.sinfo_ppid)
-		tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
+		tst_brkm(TBROK, NULL, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
 			 "mismatch.");
 
 	tst_resm(TPASS, "getsockopt(SCTP_DEFAULT_SEND_PARAM) - "
 		 "one-to-many style valid associd");
 
-	/* Get default send parameters of an association on the connected 
+	/* Get default send parameters of an association on the connected
 	 * UDP-style socket with zero associd. This should return the
 	 * socket wide default parameters.
-	 */ 
+	 */
 	memset(&get_udp_sk_dflt_param, 0, sizeof(struct sctp_sndrcvinfo));
 	get_udp_sk_dflt_param.sinfo_assoc_id = 0 ;
 	optlen = sizeof(get_udp_sk_dflt_param);
@@ -636,18 +636,18 @@ main(void)
 	/* Verify that the get param matches the socket-wide set param. */
 	if (get_udp_sk_dflt_param.sinfo_ppid !=
 			set_udp_sk_dflt_param.sinfo_ppid)
-		tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
+		tst_brkm(TBROK, NULL, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
 			 "mismatch.");
 
 	tst_resm(TPASS, "getsockopt(SCTP_DEFAULT_SEND_PARAM) - "
 		 "one-to-many style zero associd");
 
-	peeloff_sk = test_sctp_peeloff(udp_svr_sk, udp_svr_associd); 
+	peeloff_sk = test_sctp_peeloff(udp_svr_sk, udp_svr_associd);
 
-	/* Get default send parameters of an association on the peeled off 
+	/* Get default send parameters of an association on the peeled off
 	 * UDP-style socket. This should return the association's default
 	 * parameters.
-	 */ 
+	 */
 	memset(&get_peeloff_assoc_dflt_param, 0,
 	       sizeof(struct sctp_sndrcvinfo));
 	get_peeloff_assoc_dflt_param.sinfo_assoc_id = 0 ;
@@ -658,7 +658,7 @@ main(void)
 	/* Verify that the get param matches the association's set param. */
 	if (get_peeloff_assoc_dflt_param.sinfo_ppid !=
 			set_udp_assoc_dflt_param.sinfo_ppid)
-		tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
+		tst_brkm(TBROK, NULL, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
 			 "mismatch.");
 
 	tst_resm(TPASS, "getsockopt(SCTP_DEFAULT_SEND_PARAM) - "
@@ -694,7 +694,7 @@ main(void)
 	/* Verify that the get param matches set param. */
 	if (set_tcp_sk_dflt_param.sinfo_ppid !=
 			get_tcp_sk_dflt_param.sinfo_ppid)
-		tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
+		tst_brkm(TBROK, NULL, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
 			 "mismatch.");
 
 	/* Get default send parameters on the unconnected TCP-style socket. */
@@ -706,7 +706,7 @@ main(void)
 	/* Verify that the get param matches set param. */
 	if (set_tcp_sk_dflt_param.sinfo_ppid !=
 			get_tcp_sk_dflt_param.sinfo_ppid)
-		tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
+		tst_brkm(TBROK, NULL, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
 			 "mismatch.");
 
 	tst_resm(TPASS, "getsockopt(SCTP_DEFAULT_SEND_PARAM) - "
@@ -715,9 +715,9 @@ main(void)
 	/* Do a connect on a TCP-style socket and establish an association. */
 	test_connect(tcp_clt_sk, &tcp_svr_loop.sa, sizeof(tcp_svr_loop));
 
-	/* Set default send parameters of an association on the connected 
+	/* Set default send parameters of an association on the connected
 	 * TCP-style socket.
-	 */ 
+	 */
 	memset(&set_tcp_assoc_dflt_param, 0, sizeof(struct sctp_sndrcvinfo));
 	set_tcp_assoc_dflt_param.sinfo_ppid = 4000;
 	set_tcp_assoc_dflt_param.sinfo_assoc_id = 0;
@@ -728,9 +728,9 @@ main(void)
 	tst_resm(TPASS, "setsockopt(SCTP_DEFAULT_SEND_PARAM) - "
 		 "one-to-one style assoc");
 
-	/* Get default send parameters of an association on the connected 
+	/* Get default send parameters of an association on the connected
 	 * TCP-style socket.
-	 */ 
+	 */
 	memset(&get_tcp_assoc_dflt_param, 0, sizeof(struct sctp_sndrcvinfo));
 	optlen = sizeof(get_tcp_assoc_dflt_param);
 	test_getsockopt(tcp_clt_sk, SCTP_DEFAULT_SEND_PARAM,
@@ -738,10 +738,10 @@ main(void)
 
 	if (set_tcp_assoc_dflt_param.sinfo_ppid !=
 			get_tcp_assoc_dflt_param.sinfo_ppid)
-		tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
+		tst_brkm(TBROK, NULL, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
 			 "mismatch.");
 
-	/* Get default send parameters on the connected TCP-style socket.  */ 
+	/* Get default send parameters on the connected TCP-style socket.  */
 	memset(&get_tcp_sk_dflt_param, 0, sizeof(struct sctp_sndrcvinfo));
 	optlen = sizeof(get_tcp_sk_dflt_param);
 	test_getsockopt(tcp_clt_sk, SCTP_DEFAULT_SEND_PARAM,
@@ -749,36 +749,36 @@ main(void)
 
 	/* Verify that the get parameters returned matches the set param
 	 * set for the association, not the socket-wide param.
-	 */ 
+	 */
 	if ((get_tcp_sk_dflt_param.sinfo_ppid ==
 			set_tcp_sk_dflt_param.sinfo_ppid) ||
 	    (get_tcp_sk_dflt_param.sinfo_ppid !=
 	    		set_tcp_assoc_dflt_param.sinfo_ppid))
-		tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
+		tst_brkm(TBROK, NULL, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
 			 "mismatch.");
 
-	/* Get default send parameters on the listening TCP-style socket.  */ 
+	/* Get default send parameters on the listening TCP-style socket.  */
 	memset(&get_tcp_sk_dflt_param, 0, sizeof(struct sctp_sndrcvinfo));
 	optlen = sizeof(get_tcp_sk_dflt_param);
 	test_getsockopt(tcp_svr_sk, SCTP_DEFAULT_SEND_PARAM,
 			&get_tcp_sk_dflt_param, &optlen);
 
-	/* Verify that the get parameters returned matches the socket-wide 
+	/* Verify that the get parameters returned matches the socket-wide
 	 * set param.
 	 */
 	if (get_tcp_sk_dflt_param.sinfo_ppid !=
 			set_tcp_sk_dflt_param.sinfo_ppid)
-		tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
+		tst_brkm(TBROK, NULL, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
 			 "mismatch.");
 
 	tst_resm(TPASS, "getsockopt(SCTP_DEFAULT_SEND_PARAM) - "
 		 "one-to-one style assoc");
 
-	accept_sk = test_accept(tcp_svr_sk, NULL, &addrlen); 
+	accept_sk = test_accept(tcp_svr_sk, NULL, &addrlen);
 
-	/* Get default send parameters of an association on the accepted 
+	/* Get default send parameters of an association on the accepted
 	 * TCP-style socket.
-	 */ 
+	 */
 	memset(&get_accept_assoc_dflt_param, 0, sizeof(struct sctp_sndrcvinfo));
 	optlen = sizeof(get_accept_assoc_dflt_param);
 	test_getsockopt(accept_sk, SCTP_DEFAULT_SEND_PARAM,
@@ -786,12 +786,12 @@ main(void)
 
 	error = 0;
 
-	/* Verify that the get parameters returned matches the socket-wide 
+	/* Verify that the get parameters returned matches the socket-wide
 	 * set param.
 	 */
 	if (get_tcp_sk_dflt_param.sinfo_ppid !=
 			set_tcp_sk_dflt_param.sinfo_ppid)
-		tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
+		tst_brkm(TBROK, NULL, "getsockopt(SCTP_DEFAULT_SEND_PARAM) "
 			 "mismatch.");
 
 	tst_resm(TPASS, "getsockopt(SCTP_DEFAULT_SEND_PARAM) - "
@@ -802,9 +802,9 @@ main(void)
 	memset(&pinfo, 0, sizeof(pinfo));
 	optlen = sizeof(pinfo);
 	error = getsockopt(udp_clt_sk, SOL_SCTP, SCTP_GET_PEER_ADDR_INFO,
-			   &pinfo, &optlen);			   
+			   &pinfo, &optlen);
 	if ((-1 != error) || (EINVAL != errno))
-		tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_GET_PEER_ADDR_INFO) "
+		tst_brkm(TBROK, NULL, "getsockopt(SCTP_GET_PEER_ADDR_INFO) "
 			 "null associd, null addr error:%d, errno:%d\n",
 			error, errno);
 
@@ -816,9 +816,9 @@ main(void)
 	optlen = sizeof(pinfo);
 	pinfo.spinfo_assoc_id = udp_clt_associd;
 	error = getsockopt(udp_clt_sk, SOL_SCTP, SCTP_GET_PEER_ADDR_INFO,
-			   &pinfo, &optlen);			   
+			   &pinfo, &optlen);
 	if ((-1 != error) || (EINVAL != errno))
-		tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_GET_PEER_ADDR_INFO) "
+		tst_brkm(TBROK, NULL, "getsockopt(SCTP_GET_PEER_ADDR_INFO) "
 			 "valid associd, null addr error:%d, errno:%d\n",
 			error, errno);
 
@@ -831,9 +831,9 @@ main(void)
 	pinfo.spinfo_assoc_id = udp_clt_associd;
 	memcpy(&pinfo.spinfo_address, &udp_clt_loop, sizeof(udp_clt_loop));
 	error = getsockopt(udp_clt_sk, SOL_SCTP, SCTP_GET_PEER_ADDR_INFO,
-			   &pinfo, &optlen);			   
+			   &pinfo, &optlen);
 	if ((-1 != error) || (EINVAL != errno))
-		tst_brkm(TBROK, tst_exit, "getsockopt(SCTP_GET_PEER_ADDR_INFO) "
+		tst_brkm(TBROK, NULL, "getsockopt(SCTP_GET_PEER_ADDR_INFO) "
 			 "valid associd, invalid addr error:%d, errno:%d\n",
 			error, errno);
 
@@ -845,7 +845,7 @@ main(void)
 	optlen = sizeof(pinfo);
 	pinfo.spinfo_assoc_id = udp_clt_associd;
 	memcpy(&pinfo.spinfo_address, &udp_svr_loop, sizeof(udp_svr_loop));
-	test_getsockopt(udp_clt_sk, SCTP_GET_PEER_ADDR_INFO, &pinfo, &optlen);			   
+	test_getsockopt(udp_clt_sk, SCTP_GET_PEER_ADDR_INFO, &pinfo, &optlen);
 
 	tst_resm(TPASS, "getsockopt(SCTP_GET_PEER_ADDR_INFO) - "
 		 "valid associd and valid addr");
@@ -855,7 +855,7 @@ main(void)
 	optlen = sizeof(pinfo);
 	pinfo.spinfo_assoc_id = 0;
 	memcpy(&pinfo.spinfo_address, &udp_clt_loop, sizeof(udp_clt_loop));
-	test_getsockopt(peeloff_sk, SCTP_GET_PEER_ADDR_INFO, &pinfo, &optlen);			   
+	test_getsockopt(peeloff_sk, SCTP_GET_PEER_ADDR_INFO, &pinfo, &optlen);
 
 	tst_resm(TPASS, "getsockopt(SCTP_GET_PEER_ADDR_INFO) - "
 		 "valid associd and valid addr peeled off socket");
@@ -866,7 +866,7 @@ main(void)
 	pinfo.spinfo_assoc_id = 0;
 	memcpy(&pinfo.spinfo_address, &tcp_clt_loop, sizeof(tcp_clt_loop));
 	error = test_getsockopt(accept_sk, SCTP_GET_PEER_ADDR_INFO, &pinfo,
-				&optlen);			   
+				&optlen);
 
 	tst_resm(TPASS, "getsockopt(SCTP_GET_PEER_ADDR_INFO) - "
 		 "valid associd and valid addr accepted socket");
@@ -879,5 +879,5 @@ main(void)
 	close(peeloff_sk);
 
         /* Indicate successful completion.  */
-        return 0;
+      tst_exit();
 }

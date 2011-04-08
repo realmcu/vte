@@ -103,7 +103,6 @@ int TST_TOTAL = sizeof(tdat) / sizeof(tdat[0]);	/* Total number of test cases. *
 
 int exp_enos[] = { EBADF, ENOTSOCK, EINVAL, EOPNOTSUPP, 0 };
 
-extern int Tst_count;
 
 int main(int ac, char *av[])
 {
@@ -111,14 +110,11 @@ int main(int ac, char *av[])
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
 		Tst_count = 0;
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
@@ -145,8 +141,8 @@ int main(int ac, char *av[])
 		}
 	}
 	cleanup();
-	return 0;
-}				/* End main */
+	tst_exit();
+}
 
 void setup(void)
 {
@@ -164,7 +160,6 @@ void setup(void)
 void cleanup(void)
 {
 	TEST_CLEANUP;
-	tst_exit();
 }
 
 void setup0(void)
@@ -172,8 +167,7 @@ void setup0(void)
 	if (tdat[testno].experrno == EBADF)
 		s = 400;	/* anything not an open file */
 	else if ((s = open("/dev/null", O_WRONLY)) == -1)
-		tst_brkm(TBROK, cleanup, "error opening /dev/null - "
-			 "errno: %s", strerror(errno));
+		tst_brkm(TBROK|TERRNO, cleanup, "error opening /dev/null");
 }
 
 void cleanup0(void)

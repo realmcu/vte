@@ -58,8 +58,6 @@
 #endif
 
 /* Extern Global Variables */
-extern int Tst_count;		/* counter for tst_xxx routines.         */
-extern char *TESTDIR;		/* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
 char *TCID = "ioctl03";		/* test program identifier.              */
@@ -85,12 +83,10 @@ int TST_TOTAL = 1;		/* total number of tests in this file.   */
 /******************************************************************************/
 extern void cleanup()
 {
-	/* Remove tmp dir and all files in it */
+
 	TEST_CLEANUP;
 	tst_rmdir();
 
-	/* Exit with appropriate return code. */
-	tst_exit();
 }
 
 /* Local  Functions */
@@ -136,21 +132,15 @@ int main()
 	unsigned int features, i;
 
 	setup();
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, cleanup,
-			 "You need to be ROOT to run this test case");
-		tst_exit();
-	}
+	tst_require_root(NULL);
+
 	int netfd = open("/dev/net/tun", O_RDWR);
 	if (netfd < 0)
-		tst_brkm(TBROK, cleanup, "Error Opening /dev/net/tun: %s",
-			 strerror(errno));
+		tst_brkm(TBROK|TERRNO, cleanup, "opening /dev/net/tun failed");
 
-	if (ioctl(netfd, TUNGETFEATURES, &features) != 0) {
-		tst_resm(TCONF, "Kernel does not support TUNGETFEATURES");
-		cleanup();
-		tst_exit();
-	}
+	if (ioctl(netfd, TUNGETFEATURES, &features) != 0)
+		tst_brkm(TCONF, cleanup,
+		    "Kernel does not support TUNGETFEATURES");
 	tst_resm(TINFO, "Available features are: %#x", features);
 	for (i = 0; i < sizeof(known_flags) / sizeof(known_flags[0]); i++) {
 		if (features & known_flags[i].flag) {

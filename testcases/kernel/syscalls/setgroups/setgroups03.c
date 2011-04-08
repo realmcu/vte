@@ -84,7 +84,6 @@ struct passwd *ltpuser;
 
 TCID_DEFINE(setgroups03);	/* Test program identifier.    */
 int TST_TOTAL = 2;		/* Total number of test conditions */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int exp_enos[] = { EINVAL, EPERM, 0 };
 
@@ -116,10 +115,8 @@ int main(int ac, char **av)
 	int ngroups_max = sysconf(_SC_NGROUPS_MAX);	/* max no. of groups in the current system */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	groups_list = malloc(ngroups_max * sizeof(GID_T));
 	if (groups_list == NULL) {
@@ -127,16 +124,13 @@ int main(int ac, char **av)
 			 " %d ", ngroups_max * sizeof(GID_T), errno);
 	}
 
-	/* Perform global setup for test */
 	setup();
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* Reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -154,7 +148,6 @@ int main(int ac, char **av)
 			 */
 			TEST(SETGROUPS(gidsetsize, groups_list));
 
-			/* check return code of setgroups(2) */
 			if (TEST_RETURN != -1) {
 				tst_resm(TFAIL, "setgroups(%d) returned %ld, "
 					 "expected -1, errno=%d", gidsetsize,
@@ -174,14 +167,13 @@ int main(int ac, char **av)
 					 gidsetsize, test_desc, TEST_ERRNO,
 					 Test_cases[i].exp_errno);
 			}
-		}		/* End of TEST CASE LOOPING. */
+		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -193,13 +185,11 @@ void setup()
 {
 
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 }
@@ -247,6 +237,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

@@ -54,7 +54,6 @@
 
 char *TCID = "open06";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void setup(void);
 void cleanup(void);
@@ -69,15 +68,14 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
 	TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* reset Tst_count in case we are looping */
@@ -98,8 +96,7 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
-
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -107,10 +104,9 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* make a temporary directory and cd to it */
@@ -118,9 +114,8 @@ void setup()
 
 	sprintf(fname, "%s.%d", fname, getpid());
 
-	if (mknod(fname, S_IFIFO | 0644, (dev_t) NULL) == -1) {
+	if (mknod(fname, S_IFIFO|0644, 0) == -1)
 		tst_brkm(TBROK, cleanup, "mknod FAILED");
-	 /*NOTREACHED*/}
 }
 
 /*
@@ -140,6 +135,4 @@ void cleanup()
 	/* delete the test directory created in setup() */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

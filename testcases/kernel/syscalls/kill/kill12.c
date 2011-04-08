@@ -26,7 +26,7 @@
 >KEYS:  < kill(), wait(), signal()
 >WHAT:  < Check that when a child is killed by its parent, it returns the
    	< correct values to the waiting parent--the child sets signal to
-   	< ignore the kill						
+   	< ignore the kill
 >HOW:   < For each signal: Send that signal to a child that has elected
 	< to catch the signal, check that the correct status was returned
 	< to the waiting parent.
@@ -60,7 +60,6 @@ int local_flag = PASSED;
 int block_number;
 FILE *temp;
 int TST_TOTAL = 1;
-extern int Tst_count;
 static int sig;
 
 int anyfail();
@@ -92,7 +91,7 @@ int main(int argc, char **argv)
 
 	/* parse standard options */
 	if ((msg =
-	     parse_opts(argc, argv, (option_t *) NULL, NULL)) != (char *)NULL) {
+	     parse_opts(argc, argv, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -101,8 +100,7 @@ int main(int argc, char **argv)
 
 	setup();
 	//tempdir();            /* move to new directory */ 12/20/2003
-/*--------------------------------------------------------------------*/
-	blenter();		/*<<<<<ENTER DATA HERE<<<<<<<< */
+	blenter();
 
 	exno = 1;
 
@@ -126,7 +124,7 @@ int main(int argc, char **argv)
 				tst_resm(TBROK, "self_exec FAILED - "
 					 "terminating test.");
 				tst_exit();
-				return 0;
+				tst_exit();
 			}
 #else
 			do_child();
@@ -208,7 +206,7 @@ int main(int argc, char **argv)
 
 /*--------------------------------------------------------------------*/
 	anyfail();
-	return 0;
+	tst_exit();
 }					/******** END OF MAIN. ********/
 
 /*--------------------------------------------------------------------*/

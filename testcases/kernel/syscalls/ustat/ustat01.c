@@ -76,7 +76,6 @@ static void cleanup();
 
 char *TCID = "ustat01";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 dev_t dev_num;
 struct ustat *ubuf;
@@ -88,17 +87,13 @@ int main(int argc, char *argv[])
 	char *msg;
 
 	/*parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -112,42 +107,40 @@ int main(int argc, char *argv[])
 			} else {
 				tst_resm(TPASS, "ustat(2) passed");
 			}
-		}		/* End of the test case loop */
-	}			/* End of tests loop */
+		}
+	}
 	cleanup();
+	tst_exit();
 
-	/* NOT REACHED */
-	return 0;
 }
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Allocate memory for stat and ustat structure variables */
 	if ((buf = (struct stat *)malloc(sizeof(struct stat))) == NULL) {
-		tst_brkm(TBROK, tst_exit, "Failed to allocate Memory");
+		tst_brkm(TBROK, NULL, "Failed to allocate Memory");
 	}
 
 	if ((ubuf = (struct ustat *)malloc(sizeof(struct ustat))) == NULL) {
 		free(buf);
-		tst_brkm(TBROK, tst_exit, "Failed to allocate Memory");
+		tst_brkm(TBROK, NULL, "Failed to allocate Memory");
 	}
 
 	/*Find out device number for a file-system */
 	if (stat("/", buf) != 0) {
 		free(buf);
 		free(ubuf);
-		tst_brkm(TBROK, tst_exit, "Couldn't find device number");
+		tst_brkm(TBROK, NULL, "Couldn't find device number");
 	}
 
 	dev_num = buf->st_dev;
-}				/* End setup() */
+}
 
 /*
  * cleanup() - Performs one time cleanup for this test at
@@ -162,6 +155,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

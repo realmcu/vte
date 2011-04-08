@@ -70,7 +70,6 @@ void cleanup(void);
 void setup(void);
 
 char *TCID = "read02";
-extern int Tst_count;
 
 char file[BUFSIZ];
 char fname[100] = "/tmp/tstfile";
@@ -111,8 +110,8 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
@@ -151,7 +150,7 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -159,13 +158,12 @@ int main(int ac, char **av)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* create a temporary filename */
 	sprintf(fname, "%s.%d", fname, getpid());
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	if ((fd2 = open("/tmp", O_DIRECTORY)) == -1) {
@@ -178,7 +176,7 @@ void setup(void)
 
 	if (write(fd3, "A", 1) != 1) {
 		tst_brkm(TBROK, cleanup, "can't write to fd3");
-	 /*NOTREACHED*/}
+	 }
 	close(fd3);
 	if ((fd3 = open(fname, O_RDWR | O_CREAT, 0666)) == -1) {
 		tst_brkm(TBROK, cleanup, "open of fd3 (temp file) failed");
@@ -205,5 +203,5 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 	unlink(fname);
-	tst_exit();
+
 }

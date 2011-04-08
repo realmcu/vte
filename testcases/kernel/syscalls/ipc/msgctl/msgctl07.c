@@ -65,7 +65,6 @@ void do_child_2();
 
 char *TCID = "msgctl07";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 /* Used by main() and do_child_1(): */
 static int msqid;
@@ -87,9 +86,9 @@ int main(int argc, char *argv[])
 	char *msg;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	maybe_run_child(&do_child_1, "ndd", 1, &msqid, &c1_msgp.type);
@@ -108,7 +107,7 @@ int main(int argc, char *argv[])
 
 	pid = FORK_OR_VFORK();
 	if (pid < 0) {
-		(void)msgctl(msqid, IPC_RMID, (struct msqid_ds *)NULL);
+		(void)msgctl(msqid, IPC_RMID, NULL);
 		tst_resm(TFAIL, "\tFork failed (may be OK if under stress)");
 		tst_exit();
 	} else if (pid == 0) {
@@ -130,7 +129,7 @@ int main(int argc, char *argv[])
 		if ((sigaction(SIGALRM, &act, NULL)) < 0) {
 			tst_resm(TFAIL|TERRNO, "signal failed");
 			kill(pid, SIGKILL);
-			(void)msgctl(msqid, IPC_RMID, (struct msqid_ds *)NULL);
+			(void)msgctl(msqid, IPC_RMID, NULL);
 			tst_exit();
 		}
 		ready = 0;
@@ -143,7 +142,7 @@ int main(int argc, char *argv[])
 		if (msgsnd(msqid, &p1_msgp, BYTES, 0) == -1) {
 			tst_resm(TFAIL|TERRNO, "msgsnd() failed");
 			kill(pid, SIGKILL);
-			(void)msgctl(msqid, IPC_RMID, (struct msqid_ds *)NULL);
+			(void)msgctl(msqid, IPC_RMID, NULL);
 			tst_exit();
 		}
 		wait(&status);
@@ -155,7 +154,7 @@ int main(int argc, char *argv[])
 
 	pid = FORK_OR_VFORK();
 	if (pid < 0) {
-		(void)msgctl(msqid, IPC_RMID, (struct msqid_ds *)NULL);
+		(void)msgctl(msqid, IPC_RMID, NULL);
 		tst_resm(TFAIL, "\tFork failed (may be OK if under stress)");
 		tst_exit();
 	} else if (pid == 0) {
@@ -178,7 +177,7 @@ int main(int argc, char *argv[])
 		if ((sigaction(SIGALRM, &act, NULL)) < 0) {
 			tst_resm(TFAIL|TERRNO, "signal failed");
 			kill(pid, SIGKILL);
-			(void)msgctl(msqid, IPC_RMID, (struct msqid_ds *)NULL);
+			(void)msgctl(msqid, IPC_RMID, NULL);
 			tst_exit();
 		}
 		ready = 0;
@@ -191,7 +190,7 @@ int main(int argc, char *argv[])
 		if (msgsnd(msqid, &p1_msgp, BYTES, 0) == -1) {
 			tst_resm(TFAIL|TERRNO, "msgsnd() failed");
 			kill(pid, SIGKILL);
-			(void)msgctl(msqid, IPC_RMID, (struct msqid_ds *)NULL);
+			(void)msgctl(msqid, IPC_RMID, NULL);
 			tst_exit();
 		}
 		for (j = 0; j < BYTES; j++)
@@ -200,7 +199,7 @@ int main(int argc, char *argv[])
 		if (msgsnd(msqid, &p2_msgp, BYTES, 0) == -1) {
 			tst_resm(TFAIL|TERRNO, "msgsnd() failed");
 			kill(pid, SIGKILL);
-			(void)msgctl(msqid, IPC_RMID, (struct msqid_ds *)NULL);
+			(void)msgctl(msqid, IPC_RMID, NULL);
 			tst_exit();
 		}
 		for (k = 0; k < BYTES; k++)
@@ -209,7 +208,7 @@ int main(int argc, char *argv[])
 		if (msgsnd(msqid, &p3_msgp, BYTES, 0) == -1) {
 			tst_resm(TFAIL|TERRNO, "msgsnd() failed");
 			kill(pid, SIGKILL);
-			(void)msgctl(msqid, IPC_RMID, (struct msqid_ds *)NULL);
+			(void)msgctl(msqid, IPC_RMID, NULL);
 			tst_exit();
 		}
 		wait(&status);
@@ -225,9 +224,9 @@ int main(int argc, char *argv[])
 	tst_resm(TINFO, "Removing the message queue");
 #endif
 	fflush(stdout);
-	(void)msgctl(msqid, IPC_RMID, (struct msqid_ds *)NULL);
-	if ((status = msgctl(msqid, IPC_STAT, (struct msqid_ds *)NULL)) != -1) {
-		(void)msgctl(msqid, IPC_RMID, (struct msqid_ds *)NULL);
+	(void)msgctl(msqid, IPC_RMID, NULL);
+	if ((status = msgctl(msqid, IPC_STAT, NULL)) != -1) {
+		(void)msgctl(msqid, IPC_RMID, NULL);
 		tst_resm(TFAIL, "msgctl(msqid, IPC_RMID) failed");
 		tst_exit();
 
@@ -334,7 +333,6 @@ void setup()
 	 */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	/* One cavet that hasn't been fixed yet.  TEST_PAUSE contains the code to
 	 * fork the test with the -c option.  You want to make sure you do this
 	 * before you create your temporary directory.
@@ -355,7 +353,7 @@ void setup()
  *    ***************************************************************/
 void cleanup()
 {
-	/* Remove the temporary directory */
+
 	tst_rmdir();
 
 	/*
@@ -364,6 +362,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

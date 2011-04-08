@@ -78,7 +78,6 @@ int local_flag = PASSED;
 int block_number;
 FILE *temp;
 int TST_TOTAL = 1;
-extern int Tst_count;
 struct sigaction sigptr;
 
 int anyfail();
@@ -138,7 +137,7 @@ char *argv[];
 	sigfillset(&sigptr.sa_mask);
 	sigptr.sa_flags = 0;
 	sigaddset(&sigptr.sa_mask, SIGALRM);
-	if (sigaction(SIGALRM, &sigptr, (struct sigaction *)NULL) == -1) {
+	if (sigaction(SIGALRM, &sigptr, NULL) == -1) {
 		fprintf(temp, "Signal SIGALRM failed, errno = %d \n", errno);
 		fail_exit();
 	}
@@ -250,7 +249,7 @@ char *argv[];
 	blexit();
 /*--------------------------------------------------------------*/
 	anyfail();		/* THIS CALL DOES NOT RETURN - EXITS!!  */
-	return 0;
+	tst_exit();
 }
 
 /*--------------------------------------------------------------*/
@@ -309,6 +308,6 @@ void fail_exit()
 int main(void)
 {
 	/* uClibc does not have profiling support */
-	return 0;
+	tst_exit();
 }
 #endif

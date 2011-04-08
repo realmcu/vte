@@ -79,12 +79,11 @@
 #include "usctest.h"
 #include "common_timers.h"
 
-static void setup();
+void setup(void);
 static int setup_test(int option);
 
 char *TCID = "clock_settime03"; /* Test program identifier.	*/
 int TST_TOTAL;			/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 static int exp_enos[] = { EINVAL, EFAULT, EPERM, 0 };
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
@@ -119,17 +118,15 @@ main(int ac, char **av)
 	char *msg;	/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL))
-		!= (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	TST_TOTAL = sizeof(testcase) / sizeof(testcase[0]);
 
 	/* PROCESS_CPUTIME_ID & THREAD_CPUTIME_ID are not supported on
 	 * kernel versions lower than 2.6.12
 	 */
-	if((tst_kvercmp(2, 6, 12)) < 0) {
+	if ((tst_kvercmp(2, 6, 12)) < 0) {
 		testcase[7] = EINVAL;
 		testcase[8] = EINVAL;
 	} else {
@@ -137,13 +134,10 @@ main(int ac, char **av)
 		testcase[8] = EFAULT;
 	}
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -184,11 +178,10 @@ main(int ac, char **av)
 				}
 			} /* end of else */
 
-		}	/* End of TEST CASE LOOPING */
+		}
 
-	}	/* End for TEST_LOOPING */
+	}
 
-	/* Clean up and exit */
 	cleanup();
 	tst_exit();
 }
@@ -219,8 +212,8 @@ setup_test(int option)
 		/* change the User to non-root */
 		spec.tv_nsec = 0;
 		if ((ltpuser = getpwnam(nobody_uid)) == NULL) {
-			tst_resm(TWARN, "\"nobody\" user not present."
-					" skipping test");
+			tst_resm(TWARN, "user \"nobody\" not present; "
+					"skipping test");
 			return -1;
 		}
 		if (seteuid(ltpuser->pw_uid) == -1) {
@@ -241,34 +234,33 @@ setup_test(int option)
 }
 
 /* setup() - performs all ONE TIME setup for this test */
-static void
-setup()
+void
+setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Check whether we are root*/
 	if (geteuid() != 0)
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 
 	if (syscall(__NR_clock_gettime, CLOCK_REALTIME, &saved) < 0)
-		tst_brkm(TBROK, tst_exit, "Clock gettime failed");
+		tst_brkm(TBROK, NULL, "Clock gettime failed");
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 	spec.tv_sec = 1;
 	spec.tv_nsec = 0;
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
-}	/* End setup() */
+}
 
 /*
  * cleanup() - Performs one time cleanup for this test at
  * completion or premature exit
  */
 
-static void
+void
 cleanup(void)
 {
 	/*
@@ -276,5 +268,4 @@ cleanup(void)
 	* print errno log if that option was specified.
 	*/
 	TEST_CLEANUP;
-
-}	/* End cleanup() */
+}

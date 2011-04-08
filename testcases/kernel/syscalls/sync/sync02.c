@@ -83,7 +83,6 @@
 
 char *TCID = "sync02";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 char write_buffer[BUFSIZ];	/* buffer used to write data to file */
 int fildes;			/* file descriptor for temporary file */
 
@@ -97,17 +96,13 @@ int main(int ac, char **av)
 	char read_buffer[BUFSIZ];	/* buffer used to read data from file */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -129,7 +124,7 @@ int main(int ac, char **av)
 					tst_brkm(TFAIL, cleanup, "lseek() "
 						 "failed on %s, error=%d",
 						 TEMP_FILE, errno);
-				 /*NOTREACHED*/}
+				 }
 
 				/* Read the contents of file */
 				if (read(fildes, read_buffer,
@@ -147,19 +142,18 @@ int main(int ac, char **av)
 					tst_brkm(TFAIL, cleanup,
 						 "read() Fails on %s, error=%d",
 						 TEMP_FILE, errno);
-				 /*NOTREACHED*/}
+				 }
 			} else {
 				tst_resm(TPASS, "call succeeded");
 			}
 		}
 		Tst_count++;	/* incr. TEST_LOOP counter */
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /*
  * void
@@ -170,7 +164,7 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Pause if that option was specified
@@ -180,7 +174,6 @@ void setup()
 	 */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Copy some data into data buffer */
@@ -191,7 +184,7 @@ void setup()
 		tst_brkm(TBROK, cleanup,
 			 "open(%s, O_RDWR | O_CREAT, %#o) Failed, errno=%d :%s",
 			 TEMP_FILE, FILE_MODE, errno, strerror(errno));
-	 /*NOTREACHED*/}
+	 }
 
 	/* Write the buffer data into file */
 	if (write(fildes, write_buffer, strlen(write_buffer) + 1) !=
@@ -199,9 +192,9 @@ void setup()
 		tst_brkm(TBROK, cleanup,
 			 "write() failed to write buffer data to %s",
 			 TEMP_FILE);
-	 /*NOTREACHED*/}
+	 }
 
-}				/* End setup() */
+}
 
 /*
  * void
@@ -224,9 +217,6 @@ void cleanup()
 			 TEMP_FILE, errno, strerror(errno));
 	}
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

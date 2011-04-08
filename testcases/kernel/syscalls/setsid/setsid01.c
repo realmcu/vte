@@ -49,7 +49,6 @@
 
 char *TCID = "setsid01";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 #ifdef UCLINUX
 static char *argv0;
@@ -71,9 +70,8 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 #ifdef UCLINUX
 	argv0 = av[0];
 
@@ -86,7 +84,6 @@ int main(int ac, char **av)
 	 */
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* reset Tst_count in case we are looping */
@@ -102,13 +99,13 @@ int main(int ac, char **av)
 		if (pid == 0) {
 			if ((pid = FORK_OR_VFORK()) == -1) {
 				tst_resm(TFAIL, "Fork failed");
-				tst_exit();
+
 			}
 			if (pid == 0) {
 #ifdef UCLINUX
 				if (self_exec(argv0, "n", 1) < 0) {
 					tst_resm(TFAIL, "self_exec failed");
-					tst_exit();
+
 				}
 #else
 				do_child_1();
@@ -148,7 +145,8 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
+
 }
 
 /*
@@ -223,12 +221,11 @@ void do_child_2()
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	umask(0);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -244,6 +241,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

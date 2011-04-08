@@ -20,10 +20,9 @@
 /* 01/02/2003	Port to LTP	avenkat@us.ibm.com */
 /* 06/30/2001	Port to Linux	nsharoff@us.ibm.com */
 
-
 /*
  * NAME
- *      scalb 
+ *      scalb
  *
  * CALLS
  *      nextafter(3C)
@@ -35,12 +34,12 @@
  * 	Checks for basic functionality, nothing fancy
  */
 
-#include	<stdio.h>
-#include	<math.h>
-#include	<errno.h>
-#include	<stdlib.h>
-#include	"test.h"
-#include	"usctest.h"
+#include <errno.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "test.h"
+#include "usctest.h"
 
 #define	FAILED 0
 #define	PASSED 1
@@ -52,11 +51,10 @@ int block_number;
 int errno;
 FILE *temp;
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void setup();
-int blenter();
-int blexit();
+void blenter();
+void blexit();
 
 /*--------------------------------------------------------------*/
 int main()
@@ -66,7 +64,7 @@ int main()
 
 	setup();		/* temp file is now open */
 /*--------------------------------------------------------------*/
- blenter();
+	blenter();
 
 	answer = nextafter(1.0, 1.1);
 	check = (answer + 1.0) / 2;
@@ -78,7 +76,7 @@ int main()
 
         blexit();
 /*--------------------------------------------------------------*/
- blenter();
+	blenter();
 
 	answer = nextafter(1.0, 0.9);
 	if ((check != answer) && (check != 1.0)) {
@@ -89,7 +87,7 @@ int main()
 
         blexit();
 /*--------------------------------------------------------------*/
- blenter();
+	blenter();
 
 	answer = nextafter(1.0, 1.0);
 	if (answer != 1.0) {
@@ -101,8 +99,7 @@ int main()
         blexit();
 /*--------------------------------------------------------------*/
 
-        tst_exit();      /* THIS CALL DOES NOT RETURN - EXITS!!  */
-	return(0);
+	tst_exit();
 }
 /*--------------------------------------------------------------*/
 
@@ -112,22 +109,20 @@ int main()
 
 void setup()
 {
-  temp = stderr;
+	temp = stderr;
 }
 
-
-int blenter()
+void blenter()
 {
-  local_flag = PASSED;
-  return(0);
+	local_flag = PASSED;
 }
 
-
-int blexit()
+void blexit()
 {
-  (local_flag == PASSED ) ? tst_resm(TPASS, "Test passed") : tst_resm(TFAIL, "Test failed");
-  return(0);
+	if (local_flag == PASSED)
+		tst_resm(TPASS, "Test passed");
+	else
+		tst_resm(TFAIL, "Test failed");
 }
-
 
 /*****	*****		*****/

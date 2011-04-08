@@ -18,7 +18,6 @@
 /*                                                                            */
 /******************************************************************************/
 
-
 /*
  * File:
  *	ns-icmp_redirector.c
@@ -78,14 +77,12 @@ struct ip6_gateway_info {
     struct in6_addr nexthop;
 };
 
-
 /*
  * Gloval variables
  */
 char *program_name;		/* program name */
 struct sigaction handler;	/* Behavior for a signal */
 int catch_sighup;		/* When catch the SIGHUP, set to non-zero */
-
 
 /*
  * Function: usage()
@@ -117,7 +114,6 @@ usage (char *program_name, int exit_value)
 			    , program_name);
     exit (exit_value);
 }
-
 
 /*
  * Function: set_signal_flag()
@@ -151,7 +147,6 @@ set_signal_flag(int type)
     }
 }
 
-
 /*
  * Function: parse_options()
  *
@@ -173,7 +168,7 @@ parse_options(int argc, char *argv[], struct redirector_info *redirector_p, int 
     int optc;			/* option */
     double opt_d;		/* option value in double */
 
-    while ((optc = getopt(argc, argv, "I:N:t:bdh")) != EOF ) {
+    while ((optc = getopt(argc, argv, "I:N:t:bdh")) != EOF) {
 	switch (optc) {
 	    case 'I':
 		redirector_p->ifname = strdup(optarg);
@@ -212,7 +207,6 @@ parse_options(int argc, char *argv[], struct redirector_info *redirector_p, int 
 	usage(program_name, EXIT_FAILURE);
     }
 }
-
 
 /*
  * Function: open_socket()
@@ -264,7 +258,6 @@ open_socket(const char *ifname)
 	fprintf(stderr, "Packet receiving socket is %d\n", sd);
     return sd;
 }
-
 
 /*
  * Function: return_arp_reply()
@@ -349,7 +342,6 @@ return_arp_reply(int sd, struct eth_frame *rcveth_p, struct ip4_gateway_info *ga
     if (retval != sndeth_size)
 	fatal_error("write()");
 }
-
 
 /*
  * Function: return_icmp4_redirect()
@@ -442,7 +434,6 @@ return_icmp4_redirect(int sd, struct eth_frame *rcveth_p, size_t rcveth_size, st
     if (retval != sndeth_size)
 	fatal_error("write()");
 }
-
 
 /*
  * Function: return_neigh_adv()
@@ -562,12 +553,11 @@ return_neigh_adv(int sd, struct eth_frame *rcveth_p, struct ip6_gateway_info *ga
 	fatal_error("write()");
 }
 
-
 /*
  * Function: return_icmp6_redirect()
  *
  * Description:
- *  This function returns an ICMPv6 redirect message 
+ *  This function returns an ICMPv6 redirect message
  *
  * Argument:
  *      sd     : socket to send arp reply message
@@ -605,7 +595,6 @@ return_icmp6_redirect(int sd, struct eth_frame *rcveth_p, size_t rcveth_size, st
 	    || memcmp(rcveth_p->hdr.h_dest, gw_p->hd_addr, ETH_ALEN))
 	return;
 
-	
     /* Build a frame to send */
     memset(&sndeth,  '\0', sizeof(struct eth_frame));
     sndip6_p = (struct ip6_datagram *)&(sndeth.data);
@@ -663,7 +652,6 @@ return_icmp6_redirect(int sd, struct eth_frame *rcveth_p, size_t rcveth_size, st
 	fatal_error("write()");
 }
 
-
 /*
  * Function: analyze_ip6_datagram()
  *
@@ -717,7 +705,6 @@ analyze_ip6_datagram(int sd, struct eth_frame *rcveth_p, size_t rcveth_size, str
     }
 }
 
-
 /*
  * Function: capture_frames()
  *
@@ -757,7 +744,7 @@ capture_frames(struct redirector_info *redirector_p)
      */
     start_time = time(NULL);
 
-    for(;;) {
+    for (;;) {
 	frame_size = read(sd, (void *)(&frame), sizeof (frame));
 	if (frame_size < 0) {
 	    if (errno != EAGAIN)
@@ -792,7 +779,6 @@ capture_frames(struct redirector_info *redirector_p)
 	    break;
     }
 }
-
 
 /*
  *

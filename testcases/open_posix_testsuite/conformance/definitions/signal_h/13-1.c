@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 int main() {
-	if ( (0 == SIGABRT) ||
+	if ((0 == SIGABRT) ||
 		(0 == SIGALRM) ||
 		(0 == SIGBUS) ||
 		(0 == SIGCHLD) ||
@@ -27,14 +27,18 @@ int main() {
 		(0 == SIGTTOU) ||
 		(0 == SIGUSR1) ||
 		(0 == SIGUSR2) ||
+#ifdef SIGPOLL
 		(0 == SIGPOLL) ||
+#endif
+#ifdef SIGPROF
 		(0 == SIGPROF) ||
+#endif
 		(0 == SIGSYS) ||
 		(0 == SIGTRAP) ||
 		(0 == SIGURG) ||
 		(0 == SIGVTALRM) ||
 		(0 == SIGXCPU) ||
-		(0 == SIGXFSZ) ) {
+		(0 == SIGXFSZ)) {
 		printf("Test FAILED\n");
 		return -1;
 	} else {

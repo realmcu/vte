@@ -87,7 +87,6 @@ static void cleanup();
 
 char *TCID = "swapon01";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int main(int ac, char **av)
 {
@@ -96,18 +95,13 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		TEST(syscall(__NR_swapon, "./swapfile01", 0));
@@ -131,28 +125,24 @@ int main(int ac, char **av)
 		}
 	}			/*End for TEST_LOOPING */
 
-	/*Clean up and exit */
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
 }
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Check whether we are root */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	if (tst_is_cwd_tmpfs()) {
@@ -171,7 +161,7 @@ void setup()
 	}
 
 	/*create file */
-	if (system("dd if=/dev/zero of=swapfile01 bs=1024  count=65536 >"
+	if (system("dd if=/dev/zero of=swapfile01 bs=1024 count=65536 >"
 		   " tmpfile 2>&1") != 0) {
 		tst_brkm(TBROK, cleanup, "Failed to create file for swap");
 	}
@@ -180,7 +170,7 @@ void setup()
 	if (system("mkswap swapfile01 > tmpfile 2>&1") != 0) {
 		tst_brkm(TBROK, cleanup, "Failed to make swapfile");
 	}
-}				/* End setup() */
+}
 
 /*
  * cleanup() - Performs one time cleanup for this test at
@@ -194,9 +184,6 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files inside it. */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

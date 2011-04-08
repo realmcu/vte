@@ -95,7 +95,6 @@ static int setup_test(int, int);
 static int cleanup_test(int);
 
 char *TCID = "umount02";	/* Test program identifier.    */
-extern int Tst_count;		/* TestCase counter for tst_* routine */
 
 #define DEFAULT_FSTYPE "ext2"
 #define FSTYPE_LEN	20
@@ -148,7 +147,7 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, options, &help)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, options, &help)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -183,13 +182,10 @@ int main(int ac, char **av)
 		STD_COPIES = 1;
 	}
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
@@ -225,15 +221,15 @@ int main(int ac, char **av)
 
 			(void)cleanup_test(i);
 
-		}		/* End of TEST CASE LOOPING. */
-	}			/* End for TEST_LOOPING */
+		}
+	}
 
 	/* cleanup and exit */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /*
  * int
@@ -252,7 +248,7 @@ int setup_test(int i, int cnt)
 	switch (i) {
 	case 0:
 		/* Setup for umount(2) returning errno EBUSY. */
-		if(access(Device,F_OK)) {
+		if (access(Device,F_OK)) {
 			tst_brkm(TBROK, cleanup,
 				"Device %s does not exist", Device);
 			return 1;
@@ -340,7 +336,7 @@ int cleanup_test(int i)
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Check whether we are root */
@@ -348,7 +344,7 @@ void setup()
 		if (Type != NULL) {
 			free(Type);
 		}
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 
 	/* make a temp directory */
@@ -365,11 +361,10 @@ void setup()
 	/* set up expected error numbers */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	return;
-}				/* End setup() */
+}
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
@@ -387,14 +382,10 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it. */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-
 	return;
-}				/* End cleanup() */
+}
 
 /*
  * issue a help message

@@ -94,8 +94,8 @@ ifeq ($(srcdir),)
 srcdir				:= .
 endif
 
-# autotools, *clean, and help don't require config.mk...
-ifeq ($(filter autotools %clean help,$(MAKECMDGOALS)),)
+# autotools, *clean, and help don't require config.mk, features.mk, etc...
+ifeq ($(filter autotools %clean .gitignore gitignore.% help,$(MAKECMDGOALS)),)
 
 include $(abs_top_builddir)/include/mk/config.mk
 include $(abs_top_builddir)/include/mk/features.mk

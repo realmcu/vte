@@ -23,14 +23,14 @@ int main (int argc, char ** argv)
   for (n = 1; n < argc; n++) {
 	  if (argc < 2) {
 		  printf ("Used to see file maps \nUsage: %s filename1 [[..[filename2]...filename(N-1)] filenameN]\n", argv[0]);
-		  return 0;
+		return 0;
 	  }
 	  fd = open (argv[n], O_RDONLY);
 	  if (fd == -1) {
 		  perror ("open failed");
 		  continue;
 	  }
-	 
+
 	  // printf ("file %s occupies blocks: \n", argv[1]);
 	  // printf ("START\tEND\tCOUNT\n");
 	  i = 0;
@@ -39,7 +39,7 @@ int main (int argc, char ** argv)
 	  last_block = 0;
 	  fragments = 0;
 	  totals_block = 0;
- 
+
 	  while (ioctl (fd, FIBMAP, &block) == 0) {
 		  if (first_block==0) {
 			  last_block = block-1;
@@ -55,7 +55,7 @@ int main (int argc, char ** argv)
 		  else {
 			  last_block++;
 		  }
-		 
+
 		  if (!block) {
 			  //printf ("Fragments: %d\tBlocks: %d\n",fragments,totals_block);
 			  //printf ("%d:%d\t",fragments,totals_block);
@@ -64,7 +64,7 @@ int main (int argc, char ** argv)
 			  printf ("%d\n",fragments);
 			  break;
 		  }
-		 
+
 		  i ++;
 		  block = i;
 	  }
@@ -74,5 +74,5 @@ int main (int argc, char ** argv)
 	  close (fd);
 	  // printf ("\n");
   }
-  return 0;
+        return 0;
 }

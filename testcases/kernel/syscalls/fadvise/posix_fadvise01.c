@@ -57,7 +57,6 @@ void setup();
 void cleanup();
 
 TCID_DEFINE(posix_fadvise01);	/* Test program identifier.    */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 char fname[] = "/bin/cat";	/* test executable to open */
 int fd = -1;			/* initialized in open */
@@ -95,8 +94,8 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	/*
 	 * perform global setup for test
@@ -108,7 +107,6 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/* loop through the test cases */
@@ -129,25 +127,24 @@ int main(int ac, char **av)
 					 defined_advise[i], expected_return);
 			}
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
 	/*
 	 * cleanup and exit
 	 */
 	cleanup();
 
-	return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	fd = open(fname, O_RDONLY);
@@ -156,7 +153,7 @@ void setup()
 			 "Unable to open a file(\"%s\") for test: %s\n",
 			 fname, strerror(errno));
 	}
-}				/* End setup() */
+}
 
 /*
  * cleanup() - performs all ONE TIME cleanup for this test at
@@ -174,6 +171,4 @@ void cleanup()
 		close(fd);
 	}
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

@@ -69,7 +69,6 @@ int fail;
 
 atomic_t flag;
 
-
 void usage(void)
 {
 	rt_help();
@@ -94,7 +93,6 @@ int parse_args(int c, char *v)
 	}
 	return handled;
 }
-
 
 #if 0
 /* Set up a signal handler */
@@ -220,7 +218,6 @@ void *signal_receiving_thread(void *arg)
 	printf("Result: %s", fail ? "FAIL" : "PASS");
 	printf("\n\n");
 
-
 	return NULL;
 }
 
@@ -233,7 +230,7 @@ void *signal_sending_thread(void *arg)
 	      (int)PTHREADOF(target_thread));
 
 	/* Wait for the receiving thread to initialize */
-	while(!atomic_get(&flag)) {usleep(100);};
+	while (!atomic_get(&flag)) {usleep(100);};
 	atomic_set(0, &flag);
 
 	/* Warm up */
@@ -245,7 +242,7 @@ void *signal_sending_thread(void *arg)
 			printf("pthread_kill returned %d\n", ret);
 		}
 		/* Wait till the receiving thread processes the signal */
-		while(!atomic_get(&flag)) {usleep(100);};
+		while (!atomic_get(&flag)) {usleep(100);};
 		atomic_set(0, &flag);
 	}
 	for (i=0; i<ITERATIONS; i++) {

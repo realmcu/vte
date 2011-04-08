@@ -47,9 +47,10 @@
  *	None
  */
 #define _GNU_SOURCE		/* for O_DIRECTORY */
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <stdio.h>
 #include <errno.h>
-#include <sys/types.h>
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <signal.h>
@@ -61,7 +62,6 @@ void setup(void);
 void cleanup(void);
 
 char *TCID = "open08";
-extern int Tst_count;
 
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
@@ -101,8 +101,8 @@ int main(int ac, char **av)
 	int i;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
@@ -142,7 +142,7 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -152,28 +152,25 @@ void setup(void)
 {
 	int fildes;
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	umask(0);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Switch to nobody user for correct error code collection */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 	ltpuser = getpwnam(nobody_uid);
 	if (setgid(ltpuser->pw_gid) == -1) {
-		tst_brkm(TBROK | TERRNO, tst_exit, "setgid(%d) failed",
+		tst_brkm(TBROK | TERRNO, NULL, "setgid(%d) failed",
 			ltpuser->pw_gid);
 	} else if (setuid(ltpuser->pw_uid) == -1) {
-		tst_brkm(TBROK | TERRNO, tst_exit, "setuid(%d) failed",
+		tst_brkm(TBROK | TERRNO, NULL, "setuid(%d) failed",
 			ltpuser->pw_uid);
 	}
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	sprintf(filename, "open3.%d", getpid());
@@ -205,9 +202,6 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

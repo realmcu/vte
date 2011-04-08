@@ -2,7 +2,7 @@
  * Copyright (c) 2004, Bull SA. All rights reserved.
  * Created by:  Laurent.Vivier@bull.net
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
  */
 
@@ -36,7 +36,7 @@
 int main()
 {
 
-	if (sysconf(_SC_ASYNCHRONOUS_IO) != 200112L)
+	if (sysconf(_SC_ASYNCHRONOUS_IO) < 200112L)
 		return PTS_UNSUPPORTED;
 
 	if (aio_cancel(-1, NULL) != -1)
@@ -50,7 +50,7 @@ int main()
 		printf(TNAME " bad errno value()\n");
 		return PTS_FAIL;
 	}
-	
+
 	printf ("Test PASSED\n");
 	return PTS_PASS;
 }

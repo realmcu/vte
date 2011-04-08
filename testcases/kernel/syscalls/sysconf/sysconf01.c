@@ -44,7 +44,6 @@
 
 char *TCID = "sysconf01";	/* Test program identifier.    */
 int TST_TOTAL = 56;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static void _test_sysconf(long name, const char *strname)
 {
@@ -173,6 +172,5 @@ int main()
 
 	tst_exit();
 
-	/* NOT REACHED */
-	return 0;
+	tst_exit();
 }

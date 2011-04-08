@@ -87,7 +87,6 @@
 
 char *TCID = "mmap02";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 char *addr;			/* addr of memory mapped region */
 char *dummy;			/* dummy string */
 size_t page_sz;			/* system page size */
@@ -102,18 +101,13 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -126,8 +120,7 @@ int main(int ac, char **av)
 
 		/* Check for the return value of mmap() */
 		if (addr == MAP_FAILED) {
-			tst_resm(TFAIL, "mmap() Failed on %s, errno=%d : %s",
-				 TEMPFILE, errno, strerror(errno));
+			tst_resm(TFAIL|TERRNO, "mmap of %s failed", TEMPFILE);
 			continue;
 		}
 		/*
@@ -140,8 +133,8 @@ int main(int ac, char **av)
 			 * string.
 			 */
 			if (read(fildes, dummy, page_sz) < 0) {
-				tst_brkm(TFAIL, cleanup, "read() on %s Failed, "
-					 "error:%d", TEMPFILE, errno);
+				tst_brkm(TFAIL|TERRNO, cleanup,
+					"reading %s failed", TEMPFILE);
 			}
 
 			/*
@@ -162,17 +155,15 @@ int main(int ac, char **av)
 		/* Clean up things in case we are looping */
 		/* Unmap the mapped memory */
 		if (munmap(addr, page_sz) != 0) {
-			tst_brkm(TFAIL, NULL, "munmap() fails to unmap the "
-				 "memory, errno=%d", errno);
+			tst_brkm(TFAIL|TERRNO, cleanup, "munmapping failed");
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -189,73 +180,63 @@ void setup()
 {
 	char *tst_buff;		/* test buffer to hold known data */
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Get the system page size */
 	if ((page_sz = getpagesize()) < 0) {
 		tst_brkm(TFAIL, NULL,
 			 "getpagesize() fails to get system page size");
-		tst_exit();
 	}
 
 	/* Allocate space for the test buffer */
 	if ((tst_buff = (char *)calloc(page_sz, sizeof(char))) == NULL) {
-		tst_brkm(TFAIL, NULL,
-			 "calloc() failed to allocate space for tst_buff");
-		tst_exit();
+		tst_brkm(TFAIL, NULL, "calloc failed (tst_buff)");
 	}
 
 	/* Fill the test buffer with the known data */
 	memset(tst_buff, 'A', page_sz);
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Creat a temporary file used for mapping */
 	if ((fildes = open(TEMPFILE, O_RDWR | O_CREAT, 0666)) < 0) {
-		tst_brkm(TFAIL, NULL, "open() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
 		free(tst_buff);
-		cleanup();
+		tst_brkm(TFAIL|TERRNO, cleanup, "opening %s failed", TEMPFILE);
 	}
 
 	/* Write test buffer contents into temporary file */
 	if (write(fildes, tst_buff, page_sz) < page_sz) {
-		tst_brkm(TFAIL, NULL, "write() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
 		free(tst_buff);
+		tst_brkm(TFAIL|TERRNO, cleanup,
+			"writing to %s failed", TEMPFILE);
 		cleanup();
 	}
 
 	/* Free the memory allocated for test buffer */
 	free(tst_buff);
 
-	/* Close the temporary file */
-	if (close(fildes) < 0) {
-		tst_brkm(TFAIL, cleanup, "close() Failed on %s, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
+	/* Change Mode permissions on Temporary file */
+	if (fchmod(fildes, 0444) < 0) {
+		tst_brkm(TFAIL|TERRNO, cleanup, "fchmod(%s, 0444) failed",
+			TEMPFILE);
 	}
 
-	/* Change Mode permissions on Temporary file */
-	if (chmod(TEMPFILE, 0444) < 0) {
-		tst_brkm(TFAIL, cleanup, "chmod(%s, 0444) Failed, errno=%d : "
-			 "%s", TEMPFILE, errno, strerror(errno));
+	/* Close the temporary file */
+	if (close(fildes) < 0) {
+		tst_brkm(TFAIL|TERRNO, cleanup, "closing %s failed", TEMPFILE);
 	}
 
 	/* Open the temporary file again, - Readonly mode */
 	if ((fildes = open(TEMPFILE, O_RDONLY)) < 0) {
-		tst_brkm(TFAIL, cleanup, "open(%s, O_RDONLY) Failed, errno=%d "
-			 ": %s", TEMPFILE, errno, strerror(errno));
+		tst_brkm(TFAIL, cleanup, "reopening %s readonly failed",
+			TEMPFILE);
 	}
 
 	/* Allocate and initialize dummy string of system page size bytes */
 	if ((dummy = (char *)calloc(page_sz, sizeof(char))) == NULL) {
-		tst_brkm(TFAIL, NULL, "calloc() failed to allocate space");
-		tst_exit();
+		tst_brkm(TFAIL, cleanup, "calloc failed (dummy)");
 	}
 
 }
@@ -280,9 +261,5 @@ void cleanup()
 		free(dummy);
 	}
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

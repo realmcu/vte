@@ -53,7 +53,6 @@
 
 char *TCID = "read03";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 char fifo[100] = "fifo";
 int rfd, wfd;
@@ -73,8 +72,8 @@ int main(int ac, char **av)
 	int c;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
@@ -107,8 +106,8 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
 }
 
 /*
@@ -116,10 +115,9 @@ int main(int ac, char **av)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* create a temporary filename */
@@ -130,13 +128,13 @@ void setup(void)
 
 	if (mknod(fifo, S_IFIFO | 0777, 0) < 0) {
 		tst_brkm(TBROK, cleanup, "mknod() failed, errno: %d", errno);
-	 /*NOTREACHED*/}
+	 }
 	if (stat(fifo, &buf) != 0) {
 		tst_brkm(TBROK, cleanup, "stat() failed, errno: %d", errno);
-	 /*NOTREACHED*/}
+	 }
 	if ((buf.st_mode & S_IFIFO) == 0) {
 		tst_brkm(TBROK, cleanup, "Mode does not indicate fifo file");
-	 /*NOTREACHED*/}
+	 }
 
 	rfd = open(fifo, O_RDONLY | O_NONBLOCK);
 	wfd = open(fifo, O_WRONLY | O_NONBLOCK);
@@ -161,6 +159,4 @@ void cleanup()
 	/* delete the test directory created in setup() */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

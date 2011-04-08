@@ -67,7 +67,6 @@
 
 char *TCID = "semop01";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int sem_id_1 = -1;		/* a semaphore set with read & alter permissions */
 
@@ -82,8 +81,8 @@ int main(int ac, char **av)
 	int fail = 0;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();		/* global setup */
@@ -144,7 +143,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	 /*NOTREACHED*/ return (0);
+	  return (0);
 }
 
 /*
@@ -154,10 +153,8 @@ void setup(void)
 {
 	int i;
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -200,7 +197,6 @@ void cleanup(void)
 	/* free malloced memory */
 	free(get_arr.array);
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
 	/*
@@ -209,6 +205,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

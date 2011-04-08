@@ -366,13 +366,11 @@ char	Byte_Patterns[26] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
 			      'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
 			      'Y', 'Z' };
 
-
 int form_iorequest(struct io_req *);
 int init_output();
 int parse_cmdline(int argc, char **argv, char *opts);
 int help(FILE *stream);
 int usage(FILE *stream);
-
 
 int
 main(argc, argv)
@@ -382,7 +380,7 @@ char	**argv;
     int	    	    rseed, outfd, infinite;
     time_t  	    start_time;
     struct io_req   req;
-   
+
     umask(0);
 
 #ifdef CRAY
@@ -395,7 +393,7 @@ char	**argv;
     parse_cmdline(argc, argv, OPTS);
 
     /*
-     * Initialize output descriptor. 
+     * Initialize output descriptor.
      */
     if (! p_opt) {
 	outfd = 1;
@@ -571,7 +569,6 @@ init_output()
     return(outfd);
 }
 
-
 /*
  * Main io generation function.  form_iorequest() selects a system call to
  * do based on cmdline arguments, and proceeds to select parameters for that
@@ -604,13 +601,13 @@ struct io_req   *req;
     req->r_type = sc->m_value;
 
 #ifdef CRAY
-    if (sc->m_value == LISTIO ) {
+    if (sc->m_value == LISTIO) {
 	    opcode = random_range(0, 1, 1, NULL) ? LO_READ : LO_WRITE;
 	    cmd = random_range(0, 1, 1, NULL) ? LC_START : LC_WAIT;
     }
 #endif
 
-    if( sc->m_flags & SY_WRITE )
+    if (sc->m_flags & SY_WRITE)
 	    pattern = Byte_Patterns[random_range(0, sizeof(Byte_Patterns) - 1, 1, NULL)];
     else
 	    pattern = 0;
@@ -620,12 +617,12 @@ struct io_req   *req;
      * If sds io, simply choose a length (possibly pattern) and return
      */
 
-    if (sc->m_flags & SY_SDS ) {
+    if (sc->m_flags & SY_SDS) {
 	    req->r_data.ssread.r_nbytes = random_range(Mintrans, Maxtrans, BSIZE, NULL);
 	    if (sc->m_flags & SY_WRITE)
 		    req->r_data.sswrite.r_pattern = pattern;
 
-	    return 0;
+	  return 0;
     }
 #endif
 
@@ -643,7 +640,7 @@ struct io_req   *req;
      * it must be aligned on the regular iou (normally 1).
      */
 
-    if ( fptr->f_type == S_IFREG && (flags->m_flags & FLG_RAW) )
+    if (fptr->f_type == S_IFREG && (flags->m_flags & FLG_RAW))
 	    mult = fptr->f_riou;
     else
 	    mult = fptr->f_iou;
@@ -714,7 +711,7 @@ struct io_req   *req;
 	    offset -= offset % mult;
 
 	break;
-   
+
     case M_RANDOM:
 	length = random_range(Mintrans, Maxtrans, mult, NULL);
 
@@ -751,7 +748,7 @@ struct io_req   *req;
     /*
      * Choose an async io completion strategy if necessary
      */
-    if( sc->m_flags & SY_ASYNC )
+    if (sc->m_flags & SY_ASYNC)
 	    aio_strat = Aio_Strat_List[random_range(0, Naio_Strat_Types - 1,
 						    1, NULL)];
     else
@@ -853,14 +850,14 @@ struct io_req   *req;
 	 *
 	 * maxstrides = min(length / mult, overall.max#strides)
 	 * nstrides = random #
-	 * while( length / nstrides < minlength )
+	 * while (length / nstrides < minlength)
 	 *	nstrides = new random #
 	 */
 	maxstride = length / mult;
-	if(maxstride > Maxstrides)
+	if (maxstride > Maxstrides)
 	    maxstride = Maxstrides;
 
-	if(!Minstrides)
+	if (!Minstrides)
 		Minstrides=1;
 	nstrides = random_range(Minstrides, maxstride, 1, &errp);
 	if (errp != NULL) {
@@ -870,19 +867,19 @@ struct io_req   *req;
 	}
 
 	slength = length / nstrides;
-	if(slength % mult != 0) {
-	    if( mult > slength) {
+	if (slength % mult != 0) {
+	    if (mult > slength) {
 		slength = mult;
 	    } else {
 		slength -= slength % mult;
 	    }
 	    nstrides = length / slength;
-	    if(nstrides > Maxstrides)
+	    if (nstrides > Maxstrides)
 		    nstrides = Maxstrides;
 	}
 
 	req->r_data.io.r_nbytes = slength;
-	if( sc->m_flags & SY_NENT ) {
+	if (sc->m_flags & SY_NENT) {
 		req->r_data.io.r_nstrides = 1;
 		req->r_data.io.r_nent = nstrides;
 	} else {
@@ -914,7 +911,7 @@ struct io_req   *req;
 	break;
     }
 
-    return 0;
+  return 0;
 }
 
 /*
@@ -979,7 +976,7 @@ struct file_info    *rec;
 
 	if (r_opt) {
 	    rec->f_riou = Rawmult;
-	    return 0;
+	  return 0;
 	}
 
 #ifdef CRAY
@@ -997,8 +994,8 @@ struct file_info    *rec;
 	rec->f_riou = BSIZE;
 #endif
 #ifdef sgi
-	if( (fd = open(rec->f_path, O_RDWR|O_DIRECT, 0)) != -1 ) {
-	    if(fcntl(fd, F_DIOINFO, &finfo) != -1) {
+	if ((fd = open(rec->f_path, O_RDWR|O_DIRECT, 0)) != -1) {
+	    if (fcntl(fd, F_DIOINFO, &finfo) != -1) {
 		rec->f_riou = finfo.d_miniosz;
 	    } else {
 		fprintf(stderr,
@@ -1040,7 +1037,7 @@ struct file_info    *rec;
 #endif /* CRAY */
     }
 
-    return 0;
+  return 0;
 }
 
 /*
@@ -1117,11 +1114,11 @@ int 	nbytes;
 	 *  is allocated to it.
 	 *
 	 */
-	if(Orealtime != 0) {
+	if (Orealtime != 0) {
 	    memset(&xattr, 0x00, sizeof(xattr));
 	    xattr.fsx_xflags = XFS_XFLAG_REALTIME;
 	    /*fprintf(stderr, "set: fsx_xflags = 0x%x\n", xattr.fsx_xflags);*/
-	    if( fcntl(fd, F_FSSETXATTR, &xattr) == -1 ) {
+	    if (fcntl(fd, F_FSSETXATTR, &xattr) == -1) {
 		fprintf(stderr, "iogen%s: Error %s (%d) setting XFS XATTR->Realtime on file %s\n",
 			TagName, SYSERR, errno, path);
 		close(fd);
@@ -1129,7 +1126,7 @@ int 	nbytes;
 	    }
 
 #ifdef DEBUG
-	    if( fcntl(fd, F_FSGETXATTR, &xattr) == -1 ) {
+	    if (fcntl(fd, F_FSGETXATTR, &xattr) == -1) {
 		fprintf(stderr, "iogen%s: Error getting realtime flag %s (%d)\n",
 			TagName, SYSERR, errno);
 		close(fd);
@@ -1147,17 +1144,17 @@ int 	nbytes;
 	 * Failure is ignored since F_RESVSP only works on XFS and the
 	 * filesystem could be on EFS or NFS
 	 */
-	if( Oreserve ) {
+	if (Oreserve) {
 	    f.l_whence = SEEK_SET;
 	    f.l_start = 0;
 	    f.l_len = nbytes;
-	   
+
 	    /*fprintf(stderr,
 		    "create_file: fcntl(%d, F_RESVSP, { %d, %lld, %lld })\n",
 		   fd, f.l_whence, (long long)f.l_start, (long long)f.l_len);*/
 
 	    /* non-zeroing reservation */
-	    if( fcntl( fd, F_RESVSP, &f ) == -1) {
+	    if (fcntl(fd, F_RESVSP, &f) == -1) {
 		fprintf(stderr,
 			"iogen%s:  Could not fcntl(F_RESVSP) %d bytes in file %s: %s (%d)\n",
 			TagName, nbytes, path, SYSERR, errno);
@@ -1166,7 +1163,7 @@ int 	nbytes;
 	    }
 	}
 
-	if( Oallocate ) {
+	if (Oallocate) {
 	    /* F_ALLOCSP allocates from the start of the file to l_start */
 	    f.l_whence = SEEK_SET;
 	    f.l_start = nbytes;
@@ -1177,7 +1174,7 @@ int 	nbytes;
 		    (long long)f.l_len);*/
 
 	    /* zeroing reservation */
-	    if( fcntl( fd, F_ALLOCSP, &f ) == -1) {
+	    if (fcntl( fd, F_ALLOCSP, &f ) == -1) {
 		fprintf(stderr,
 			"iogen%s:  Could not fcntl(F_ALLOCSP) %d bytes in file %s: %s (%d)\n",
 			TagName, nbytes, path, SYSERR, errno);
@@ -1193,10 +1190,10 @@ int 	nbytes;
 	 */
 
 #ifdef sgi
-	if(Owrite == 2) {
+	if (Owrite == 2) {
 	    close(fd);
-	    if( (fd = open(path, O_CREAT|O_RDWR|O_DIRECT, 0)) != -1 ) {
-		if(fcntl(fd, F_DIOINFO, &finfo) == -1) {
+	    if ((fd = open(path, O_CREAT|O_RDWR|O_DIRECT, 0)) != -1) {
+		if (fcntl(fd, F_DIOINFO, &finfo) == -1) {
 		    fprintf(stderr,
 			    "iogen%s: Error %s (%d) getting direct I/O info for file %s\n",
 			    TagName, SYSERR, errno, path);
@@ -1236,13 +1233,13 @@ int 	nbytes;
 
 	    b = buf = (char *)malloc(finfo.d_miniosz+finfo.d_mem);
 
-	    if( ((long)buf % finfo.d_mem != 0) ) {
+	    if (((long)buf % finfo.d_mem != 0)) {
 		buf += finfo.d_mem - ((long)buf % finfo.d_mem);
 	    }
-	   
+
 	    memset(buf, 0, finfo.d_miniosz);
 
-	    if ( (rval=write(fd, buf, finfo.d_miniosz)) != finfo.d_miniosz) {
+	    if ((rval=write(fd, buf, finfo.d_miniosz)) != finfo.d_miniosz) {
 		fprintf(stderr,
 			"iogen%s:  Could not write %d byte length file %s: %s (%d)\n",
 			TagName, nb, path, SYSERR, errno);
@@ -1258,7 +1255,7 @@ int 	nbytes;
 	    free(b);
 	} else
 #endif /* sgi */
-	    if(Owrite) {
+	    if (Owrite) {
 	    /*fprintf(stderr,
 		    "create_file_Owrite: lseek(%d, %d {%d}, SEEK_SET)\n",
 		    fd, nbytes-1, nbytes);*/
@@ -1272,7 +1269,7 @@ int 	nbytes;
 		return -1;
 	    }
 
-	    if ( (rval=write(fd, &c, 1)) != 1) {
+	    if ((rval=write(fd, &c, 1)) != 1) {
 		fprintf(stderr,
 			"iogen%s:  Could not create a %d byte length file %s: %s (%d)\n",
 			TagName, nbytes, path, SYSERR, errno);
@@ -1313,7 +1310,7 @@ char	    	*str;
 
     return mp->m_value;
 }
-   
+
 /*
  * Function to convert a string to its corresponding entry in a strmap array.
  * If the string is not found in the array, a NULL is returned.
@@ -1332,7 +1329,6 @@ char	    	*str;
 
     return((mp->m_string == NULL) ? NULL : mp);
 }
-   
 
 /*
  * Function to convert a value to its corresponding string in a strmap array.
@@ -1407,7 +1403,7 @@ char	*opts;
  	case 'f':
 	    cp = strtok(optarg, ",");
 	    while (cp != NULL) {
-		if( (flgs = str_lookup(Flag_Map, cp)) == NULL ) {
+		if ((flgs = str_lookup(Flag_Map, cp)) == NULL) {
 		    fprintf(stderr, "iogen%s:  Unrecognized flags:  %s\n", TagName, cp);
 		    exit(2);
 		}
@@ -1467,7 +1463,7 @@ char	*opts;
 	    fprintf(stderr, "iogen%s:  Unrecognized option -L on this platform\n", TagName);
 	    exit(2);
 #else
-	    if( parse_ranges(optarg, 1, 255, 1, NULL, &ranges,
+	    if ( parse_ranges(optarg, 1, 255, 1, NULL, &ranges,
 			     &errmsg ) == -1 ) {
 		    fprintf(stderr, "iogen%s: error parsing listio range '%s': %s\n",
 			    TagName, optarg, errmsg);
@@ -1504,54 +1500,54 @@ char	*opts;
 	    nopenargs = string_to_tokens(optarg, openargs, 4, ":/");
 
 #ifdef CRAY
-	    if(nopenargs)
+	    if (nopenargs)
 		sscanf(openargs[1],"%i", &Ocbits);
-	    if(nopenargs > 1)
+	    if (nopenargs > 1)
 		sscanf(openargs[2],"%i", &Ocblks);
 
 	    Oflags = parse_open_flags(openargs[0], &errmsg);
-	    if(Oflags == -1) {
+	    if (Oflags == -1) {
 		fprintf(stderr, "iogen%s: -O %s error: %s\n", TagName, optarg, errmsg);
 		exit(1);
 	    }
 #endif
 #ifdef linux
 	    Oflags = parse_open_flags(openargs[0], &errmsg);
-	    if(Oflags == -1) {
+	    if (Oflags == -1) {
 		fprintf(stderr, "iogen%s: -O %s error: %s\n", TagName, optarg, errmsg);
 		exit(1);
 	    }
 #endif
 #ifdef sgi
-	    if(!strcmp(openargs[0], "realtime")) {
+	    if (!strcmp(openargs[0], "realtime")) {
 		/*
 		 * -O realtime:extsize
 		 */
 		Orealtime = 1;
-		if(nopenargs > 1)
+		if (nopenargs > 1)
 		    sscanf(openargs[1],"%i", &Oextsize);
 		else
 		    Oextsize=0;
-	    } else if( !strcmp(openargs[0], "allocate") ||
+	    } else if (!strcmp(openargs[0], "allocate") ||
 		       !strcmp(openargs[0], "allocsp")) {
 		/*
 		 * -O allocate
 		 */
 		Oreserve=0;
 		Oallocate=1;
-	    } else if(!strcmp(openargs[0], "reserve")) {
+	    } else if (!strcmp(openargs[0], "reserve")) {
 		/*
 		 * -O [no]reserve
 		 */
 		Oallocate=0;
 		Oreserve=1;
-	    } else if(!strcmp(openargs[0], "noreserve")) {
+	    } else if (!strcmp(openargs[0], "noreserve")) {
 		/* Oreserve=1 by default; this clears that default */
 		Oreserve=0;
-	    } else if(!strcmp(openargs[0], "nowrite")) {
+	    } else if (!strcmp(openargs[0], "nowrite")) {
 		/* Owrite=1 by default; this clears that default */
 		Owrite=0;
-	    } else if(!strcmp(openargs[0], "direct")) {
+	    } else if (!strcmp(openargs[0], "direct")) {
 		/* this means "use direct i/o to preallocate file" */
 		Owrite=2;
 	    } else {
@@ -1594,7 +1590,7 @@ char	*opts;
 			Fileio++;
 
 		    Syscall_List[Nsyscalls++] = sc;
-		} while ( (sc = str_lookup(++sc, cp)) != NULL);
+		} while ((sc = str_lookup(++sc, cp)) != NULL);
 
 		cp = strtok(NULL, ",");
 	    }
@@ -1631,31 +1627,31 @@ char	*opts;
      * Supply defaults
      */
 
-    if( ! L_opt ) {
+    if (!L_opt) {
 	    Minstrides = 1;
 	    Maxstrides = 255;
     }
 
-    if (! m_opt)
+    if (!m_opt)
 	Offset_Mode = str_lookup(Omode_Map, "sequential");
 
-    if (! i_opt)
+    if (!i_opt)
 	Iterations = 0;
 
-    if (! t_opt)
+    if (!t_opt)
 	Mintrans = 1;
 
-    if (! T_opt)
+    if (!T_opt)
 	Maxtrans = 256 * BSIZE;
 
-    if( ! O_opt)
+    if (!O_opt)
 	Oflags = Ocbits = Ocblks = 0;
 
     /*
      * Supply default async io completion strategy types.
      */
 
-    if (! a_opt) {
+    if (!a_opt) {
 	    for (mp = Aio_Strat_Map; mp->m_string != NULL; mp++) {
 		    Aio_Strat_List[Naio_Strat_Types++] = mp;
 	    }
@@ -1665,7 +1661,7 @@ char	*opts;
      * Supply default syscalls.  Default is read,write,reada,writea,listio.
      */
 
-    if (! s_opt) {
+    if (!s_opt) {
 	Nsyscalls = 0;
 	Syscall_List[Nsyscalls++] = str_lookup(Syscall_Map, "read");
 	Syscall_List[Nsyscalls++] = str_lookup(Syscall_Map, "write");
@@ -1704,7 +1700,7 @@ char	*opts;
      * Supply default file io flags - defaut is 'buffered,raw,sync,ldraw'.
      */
 
-    if (! f_opt && Fileio) {
+    if (!f_opt && Fileio) {
 	    Nflags = 0;
 	    Flag_List[Nflags++] = str_lookup(Flag_Map, "buffered");
 	    Flag_List[Nflags++] = str_lookup(Flag_Map, "sync");
@@ -1845,18 +1841,18 @@ char	*opts;
 			fptr->f_lastoffset = 0;
 			fptr->f_lastlength = 0;
 			break;
-		
+
 		    case M_REVERSE:
 			fptr->f_lastoffset = fptr->f_length;
 			fptr->f_lastlength = 0;
 			break;
-		
+
 		    case M_RANDOM:
 			fptr->f_lastoffset = fptr->f_length / 2;
 			fptr->f_lastlength = 0;
 			break;
 		    }
-		   
+
 		    Nfiles++;
 		}
 	    }
@@ -1870,7 +1866,7 @@ char	*opts;
         }
     }
 
-    return 0;
+  return 0;
 }
 
 int
@@ -1977,7 +1973,7 @@ FILE	*stream;
     fprintf(stream, "\tthe number by blocks, kilobytes, or megabytes.  If no trailing\n");
     fprintf(stream, "\tmultiplier is present, the number is interpreted as bytes\n");
 
-    return 0;
+  return 0;
 }
 
 /*
@@ -1989,5 +1985,5 @@ usage(stream)
 FILE	*stream;
 {
     fprintf(stream, "usage%s:  iogen [-hoq] [-a aio_type,...] [-f flag[,flag...]] [-i iterations] [-p outpipe] [-m offset-mode] [-s syscall[,syscall...]] [-t mintrans] [-T maxtrans] [ -O file-create-flags ] [[len:]file ...]\n", TagName);
-    return 0;
+  return 0;
 }

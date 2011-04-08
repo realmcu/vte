@@ -52,7 +52,6 @@
 char *TCID = "mmapstress03";
 FILE *temp;
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int anyfail();
 void ok_exit();
@@ -60,7 +59,6 @@ void ok_exit();
 
 #define AS_SVSM_VSEG_MAX	48UL
 #define AS_SVSM_MMAP_MAX	16UL
-
 
 #define EXTRA_VSEGS	2L
 #define NUM_SEGS	(AS_SVSM_VSEG_MAX + EXTRA_VSEGS)
@@ -103,7 +101,7 @@ main(int argc, char *argv[])
 	}
 	/* The brk is now at the beginning of a page. */
 
-	if ((hole_addr = hole_start = sbrk(NUM_SEGS * 2 * pagesize)) == NEG1){
+	if ((hole_addr = hole_start = sbrk(NUM_SEGS * 2 * pagesize)) == NEG1) {
 		ERROR("couldn't brk large space for segments");
                 anyfail();
 	}
@@ -173,7 +171,7 @@ main(int argc, char *argv[])
 	(void)time(&t);
 //	(void)printf("%s: Finished %s", argv[0], ctime(&t));
 	ok_exit();
-	return 0;
+	tst_exit();
 }
 
 /*
@@ -228,12 +226,11 @@ void ok_exit()
         tst_exit();
 }
 
-
 int anyfail()
 {
   tst_resm(TFAIL, "Test failed");
   tst_exit();
-  return 0;
+        return 0;
 }
 
 /*****  **      **      *****/

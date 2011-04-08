@@ -50,8 +50,6 @@
 #include "ltp_signal.h"
 
 /* Extern Global Variables */
-extern int Tst_count;	   /* counter for tst_xxx routines.	 */
-extern char *TESTDIR;	   /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
 char *TCID = "rt_sigsuspend01"; /* Test program identifier.		 */
@@ -77,12 +75,10 @@ int  TST_TOTAL = 1;	      /* total number of tests in this file.	 */
 /*									    */
 /******************************************************************************/
 void cleanup() {
-	/* Remove tmp dir and all files in it */
+
 	TEST_CLEANUP;
 	tst_rmdir();
 
-	/* Exit with appropriate return code. */
-	tst_exit();
 }
 
 /* Local  Functions */
@@ -119,15 +115,14 @@ int main(int ac, char **av) {
 	sigset_t set, set1, set2;
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
-	
+
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-	     tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+	     tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
 
 		Tst_count = 0;
@@ -161,7 +156,7 @@ int main(int ac, char **av) {
 			tst_brkm(TFAIL|TTERRNO,	cleanup,
 				"rt_sigprocmask failed");
 		}
-		
+
 		TEST(alarm(5));
 		int result;
 		TEST(result = syscall(__NR_rt_sigsuspend, &set, SIGSETSIZE));
@@ -186,7 +181,6 @@ int main(int ac, char **av) {
 	}
 
 	cleanup();
-	/* NOTREACHED */
-	return 1;
-}
 
+	tst_exit();
+}

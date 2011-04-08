@@ -87,7 +87,6 @@ static int pfd[2];
 
 char *TCID = "clone03";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int main(int ac, char **av)
 {
@@ -99,11 +98,10 @@ int main(int ac, char **av)
 	int child_pid;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
-	/* perform global setup for test */
 	setup();
 
 	/* Allocate stack for child */
@@ -111,15 +109,13 @@ int main(int ac, char **av)
 		tst_brkm(TBROK, cleanup, "Cannot allocate stack for child");
 	}
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/* Open a pipe */
 		if ((pipe(pfd)) == -1) {
-			tst_brkm(TBROK|TERRNO, cleanup, "pipe() failed");
+			tst_brkm(TBROK|TERRNO, cleanup, "pipe failed");
 		}
 
 		/*
@@ -130,8 +126,7 @@ int main(int ac, char **av)
 
 		/* check return code */
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL|TTERRNO, "clone() failed");
-			cleanup();
+			tst_brkm(TFAIL|TTERRNO, cleanup, "clone() failed");
 		}
 
 		/* close write end from parent */
@@ -158,27 +153,24 @@ int main(int ac, char **av)
 			tst_resm(TFAIL, "Test failed");
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
 	free(child_stack);
-	/* cleanup and exit */
+
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}				/* End setup() */
+}
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
@@ -193,9 +185,7 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}
 
 /*
  * child_fn() - function executed by child
@@ -208,7 +198,7 @@ int child_fn(void)
 
 	/* Close read end from child */
 	if ((close(pfd[0])) == -1) {
-		tst_brkm(TBROK|TERRNO, cleanup, "close(pfd[0]) failed");
+		perror("close(pfd[0]) failed");
 	}
 
 	/* Construct pid string */
@@ -216,12 +206,12 @@ int child_fn(void)
 
 	/* Write pid string to pipe */
 	if ((write(pfd[1], pid, sizeof(pid))) == -1) {
-		tst_brkm(TBROK|TERRNO, cleanup, "write to pipe failed");
+		perror("write to pipe failed");
 	}
 
 	/* Close write end of pipe from child */
 	if ((close(pfd[1])) == -1) {
-		tst_resm(TWARN|TERRNO, "close(pfd[1]) failed");
+		perror("close(pfd[1]) failed");
 	}
 	exit(1);
 }

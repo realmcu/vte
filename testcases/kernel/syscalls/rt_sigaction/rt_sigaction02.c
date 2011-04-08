@@ -73,8 +73,6 @@
 #define INVAL_STRUCT -1
 
 /* Extern Global Variables */
-extern int Tst_count;           /* counter for tst_xxx routines.         */
-extern char *TESTDIR;           /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
 char *TCID = "rt_sigaction02";  /* Test program identifier.*/
@@ -100,11 +98,10 @@ int  TST_TOTAL = 1;                   /* total number of tests in this file.   *
 /*                                                                            */
 /******************************************************************************/
 extern void cleanup() {
-        /* Remove tmp dir and all files in it */
+
         TEST_CLEANUP;
         tst_rmdir();
 
-        /* Exit with appropriate return code. */
         tst_exit();
 }
 
@@ -143,27 +140,25 @@ struct test_case_t {
 	{ EFAULT, "EFAULT" }
 };
 
-
 int main(int ac, char **av) {
 	int signal, flag;
         int lc;                 /* loop counter */
         char *msg;              /* message returned from parse_opts */
-	
+
         /* parse standard options */
-        if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-             tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+        if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+             tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
              tst_exit();
            }
 
         setup();
 
-        /* Check looping state if -i option given */
         for (lc = 0; TEST_LOOPING(lc); ++lc) {
                 Tst_count = 0;
                 for (testno = 0; testno < TST_TOTAL; ++testno) {
-                
-			for (signal = SIGRTMIN; signal <= (SIGRTMAX ); signal++){//signal for 34 to 65 
-			 	for(flag=0; flag<5;flag++) {
+
+			for (signal = SIGRTMIN; signal <= (SIGRTMAX ); signal++) {//signal for 34 to 65
+			 	for (flag=0; flag<5;flag++) {
 
 				/*   							        *
 				 * long sys_rt_sigaction (int sig, const struct sigaction *act, *
@@ -173,7 +168,7 @@ int main(int ac, char **av) {
 				 */
 
 					 TEST(syscall(__NR_rt_sigaction,signal, INVAL_STRUCT, NULL,SIGSETSIZE));
-					if((TEST_RETURN == -1) && (TEST_ERRNO == test_cases[0].exp_errno)) {
+					if ((TEST_RETURN == -1) && (TEST_ERRNO == test_cases[0].exp_errno)) {
         						tst_resm(TINFO, "sa.sa_flags = %s ",test_flags_list[flag]);
                  	   				tst_resm(TPASS, "%s failure with sig: %d as expected errno  = %s : %s", TCID, signal,test_cases[0].errdesc, strerror(TEST_ERRNO));
 			                         } else {
@@ -181,14 +176,11 @@ int main(int ac, char **av) {
         					tst_resm(TINFO, "sa.sa_flags = %s ",test_flags_list[flag]);
 						}
                 			}
-		 	printf("\n");	
+		 	printf("\n");
         		}
 
-
-
                 }
-        }	
+        }
 	cleanup();
         tst_exit();
 }
-

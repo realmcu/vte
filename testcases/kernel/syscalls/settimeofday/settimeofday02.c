@@ -59,8 +59,8 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include <errno.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 #include <pwd.h>
 
 #define	VAL_SEC		100
@@ -75,7 +75,6 @@ time_t save_tv_sec, save_tv_usec;
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
-extern int Tst_count;
 
 void setup(void);
 void cleanup(void);
@@ -89,14 +88,13 @@ int main(int argc, char **argv)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -132,7 +130,7 @@ int main(int argc, char **argv)
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -141,7 +139,7 @@ int main(int argc, char **argv)
 int main()
 {
 	tst_resm(TINFO, "test is not available on uClinux");
-	return 0;
+	tst_exit();
 }
 
 #endif /* if !defined(UCLINUX) */
@@ -152,14 +150,14 @@ int main()
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Check that the test process id is root  */
 	if (geteuid() != 0) {
 		tst_brkm(TBROK, NULL, "Must be root for this test!");
 		tst_exit();
-	 /*NOTREACHED*/}
+	 }
 
 	/* Switch to nobody user for correct error code collection */
 	ltpuser = getpwnam(nobody_uid);
@@ -181,7 +179,7 @@ void setup(void)
 	if ((gettimeofday(&tp, (struct timezone *)&tp)) == -1) {
 		tst_brkm(TBROK, cleanup, "gettimeofday failed. "
 			 "errno=%d", errno);
-	 /*NOTREACHED*/}
+	 }
 	save_tv_sec = tp.tv_sec;
 	save_tv_usec = tp.tv_usec;
 }
@@ -199,9 +197,7 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }
 
 void restore_time(void)
 {

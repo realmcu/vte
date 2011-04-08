@@ -54,7 +54,6 @@ int local_flag = PASSED;
 int block_number;
 FILE *temp;
 int TST_TOTAL = 1;
-extern int Tst_count;
 /*****	**	**	*****/
 
 //char progname[]= "syscall1()";
@@ -155,9 +154,10 @@ int main(int argc, char *argv[])
      * cleanup and exit
      ***************************************************************/
 	cleanup();
+	tst_exit();
 
 	anyfail();		/* THIS CALL DOES NOT RETURN - EXITS!!  */
-	return 0;
+
 }
 
 /*--------------------------------------------------------------*/
@@ -173,9 +173,7 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}
 
 void setup()
 {

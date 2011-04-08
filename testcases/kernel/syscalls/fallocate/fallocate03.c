@@ -85,6 +85,7 @@
 /* Standard Include Files */
 #include <stdio.h>
 #include <stdlib.h>
+#include <endian.h>
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>		//Can be done with out
@@ -111,7 +112,6 @@ void populate_file();
 void file_seek(off_t);
 
 /* Extern Global Variables */
-extern int Tst_count;		/* counter for tst_xxx routines */
 
 /* Global Variables */
 char *TCID = "fallocate03";	/* test program identifier */
@@ -138,10 +138,10 @@ int block_size;
 int buf_size;
 
 /******************************************************************************
- * Performs all one time clean up for this test on successful   
+ * Performs all one time clean up for this test on successful
  * completion,  premature exit or  failure. Closes all temporary
- * files, removes all temporary directories exits the test with 
- * appropriate return code by calling tst_exit() function.      
+ * files, removes all temporary directories exits the test with
+ * appropriate return code by calling tst_exit() function.
 ******************************************************************************/
 extern void cleanup()
 {
@@ -149,15 +149,12 @@ extern void cleanup()
 	if (close(fd) == -1)
 		tst_resm(TWARN|TERRNO, "close(%s) failed", fname);
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* Exit with appropriate return code. */
-	tst_exit();
 }
 
 /*****************************************************************************
- * Performs all one time setup for this test. This function is  
+ * Performs all one time setup for this test. This function is
  * used to create temporary dirs and temporary files
  * that may be used in the course of this test
  ******************************************************************************/
@@ -230,20 +227,12 @@ void populate_file()
 static inline long fallocate(int fd, int mode, loff_t offset, loff_t len)
 {
 #if __WORDSIZE == 32
-	struct utsname buf;
-	if (uname(&buf) == 0) {
-		if (!strcmp(buf.machine, "ppc64")
-		    || !strcmp(buf.machine, "ppc")
-		    || !strcmp(buf.machine, "x86_64"))
-			return syscall(__NR_fallocate, fd, mode,
-				       (int)(offset >> 32), (int)offset,
-				       (int)(len >> 32), (int)len);
-	} else {
-		perror("uname:");
-		return -1;
-	}
-#endif
+	return (long) syscall(__NR_fallocate, fd, mode,
+	    __LONG_LONG_PAIR((off_t)(offset >> 32), (off_t)offset),
+	    __LONG_LONG_PAIR((off_t)(len >> 32), (off_t)len));
+#else
 	return syscall(__NR_fallocate, fd, mode, offset, len);
+#endif
 }
 
 /*****************************************************************************
@@ -260,8 +249,8 @@ int main(int ac, char **av)
 	/***************************************************************
 	 * parse standard options
 	***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	/* perform global test setup, call setup() function */
 	setup();
@@ -278,9 +267,8 @@ int main(int ac, char **av)
 			/* check return code */
 			if (TEST_RETURN != test_data[test_index].error) {
 				if (TEST_ERRNO == EOPNOTSUPP || TEST_ERRNO == ENOSYS) {
-					tst_resm(TCONF,
+					tst_brkm(TCONF, cleanup,
 						 "fallocate system call is not implemented");
-					cleanup();	/* calls tst_exit */
 				}
 				TEST_ERROR_LOG(TEST_ERRNO);
 				tst_resm(TFAIL|TTERRNO,
@@ -305,5 +293,5 @@ int main(int ac, char **av)
 		}
 	}
 	cleanup();
-	return 0;
+	tst_exit();
 }

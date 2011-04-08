@@ -84,7 +84,6 @@ static int iterations;        /* # total iterations */
 static int max_size;          /* max file size */
 static int misc_intvl;        /* for doing misc things; 0 ==> no */
 static int nchild;            /* how many children */
-static int nwait;
 static int fd;                /* file descriptor used by child */
 static int parent_pid;
 static int pidlist[MAXCHILD];
@@ -98,13 +97,10 @@ static int local_flag;
 int main(int ac, char *av[])
 {
 	int lc;
-        char *msg;
+	char *msg;
 
-        /*
-         * parse standard options
-         */
-        if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
-                tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
 
 	setup();
 
@@ -119,16 +115,13 @@ int main(int ac, char *av[])
 	}
 
 	cleanup();
-        tst_exit();
+	tst_exit();
+
 }
 
 static void setup(void)
 {
 
-	/*
-	 * Make a directory to do this in; ignore error if already exists.
-	 * Save starting directory.
-	 */
 	tst_tmpdir();
 	getcwd(homedir, sizeof(homedir));
 	parent_pid = getpid();
@@ -138,9 +131,8 @@ static void setup(void)
 
 	mkdir(fuss, 0755);
 
-	if (chdir(fuss) < 0) {
-		tst_brkm(TBROK,0,"Can't chdir(%s): %s", fuss, strerror(errno));
-	}
+	if (chdir(fuss) < 0)
+		tst_brkm(TBROK|TERRNO, NULL, "chdir failed");
 
 	/*
 	 * Default values for run conditions.
@@ -152,26 +144,28 @@ static void setup(void)
 	misc_intvl = 10;
 
 	if (sigset(SIGTERM, term) == SIG_ERR) {
-		tst_resm(TBROK,"sigset failed: %s", strerror(errno));
-	        tst_exit();
+		tst_brkm(TBROK|TERRNO, NULL, "sigset failed");
 	}
 
 	local_flag = PASSED;
 }
 
-
 static void runtest(void)
 {
-	int i, pid, child, status, count;
+	pid_t pid;
+	int i, child, count, nwait, status;
 
-	for(i = 0; i < nchild; i++) {
+	nwait = 0;
+
+	for (i = 0; i < nchild; i++) {
 
 		test_name[0] = 'a' + i;
 		test_name[1] = '\0';
 		fd = open(test_name, O_RDWR|O_CREAT|O_TRUNC, 0666);
 
 		if (fd < 0)
-			tst_brkm(TBROK,0, "Can't creating %s/%s: %s", fuss, test_name, strerror(errno));
+			tst_brkm(TBROK|TERRNO, NULL, "Can't create %s/%s",
+				fuss, test_name);
 
 		if ((child = fork()) == 0) {
 			dotest(nchild, i, fd);
@@ -181,10 +175,7 @@ static void runtest(void)
 		close(fd);
 
 		if (child < 0) {
-			 tst_resm(TINFO, "System resource may be too low, fork() malloc()"
-				  " etc are likely to fail.");
-			 tst_resm(TBROK, "Test broken due to inability of fork.");
-			 tst_exit();
+			tst_brkm(TBROK|TERRNO, NULL, "fork failed");
 		} else {
 			pidlist[i] = child;
 			nwait++;
@@ -225,18 +216,13 @@ static void runtest(void)
 	pid = fork();
 
 	if (pid < 0) {
-
-		tst_resm(TINFO, "System resource may be too low, fork() malloc()"
-		          " etc are likely to fail.");
-
-		tst_resm(TBROK, "Can not remove '%s' due to inability of fork.",fuss);
-		sync();
+		tst_brkm(TBROK|TERRNO, sync, "fork failed");
 		tst_exit();
 	}
 
 	if (pid == 0) {
 		execl("/bin/rm", "rm", "-rf", fuss, NULL);
-		tst_exit();
+		exit(1);
 	}
 
 	wait(&status);
@@ -269,6 +255,7 @@ enum	m_type type = m_fsync;
 #define	CHUNK(i)	((i) * csize)
 #define	NEXTMISC	((rand() % misc_intvl) + 5)
 
+/* XXX (garrcoop): should not be using libltp as it runs forked. */
 static void dotest(int testers, int me, int fd)
 {
 	char *bits, *hold_bits, *buf, *val_buf, *zero_buf;
@@ -445,7 +432,7 @@ static void dotest(int testers, int me, int fd)
 		++misc_cnt[m_fsync];
 		//tst_resm(TINFO, "Test{%d} val %d done, count = %d, collide = {%d}",
 		//		me, val, count, collide);
-		//for(i = 0; i < NMISC; i++)
+		//for (i = 0; i < NMISC; i++)
 		//	tst_resm(TINFO, "Test{%d}: {%d} %s's.", me, misc_cnt[i], m_str[i]);
 		++val;
 	}
@@ -465,8 +452,7 @@ static void domisc(int me, int fd, char *bits)
 	switch (type) {
 	case m_fsync:
 		if (fsync(fd) < 0) {
-			tst_resm(TFAIL, "Test[%d]: fsync error %d.", me, errno);
-			tst_exit();
+			tst_brkm(TFAIL|TERRNO, NULL, "Test[%d]: fsync failed.", me);
 		}
 		break;
 	case m_trunc:
@@ -475,16 +461,14 @@ static void domisc(int me, int fd, char *bits)
 		last_trunc = file_max;
 		if (tr_flag) {
 			if (ftruncate(fd, file_max) < 0) {
-				tst_resm(TFAIL, "Test[%d]: ftruncate error %d @ 0x%x.",
-						me, errno, file_max);
-				tst_exit();
+				tst_brkm(TFAIL|TERRNO, NULL, "Test[%d]: ftruncate failed @ 0x%x.",
+						me, file_max);
 			}
 			tr_flag = 0;
 		} else {
 			if (truncate(test_name, file_max) < 0) {
-				tst_resm(TFAIL, "Test[%d]: truncate error %d @ 0x%x.",
-						me, errno, file_max);
-				tst_exit();
+				tst_brkm(TFAIL|TERRNO, NULL, "Test[%d]: truncate failed @ 0x%x.",
+						me, file_max);
 			}
 			tr_flag = 1;
 		}
@@ -497,15 +481,14 @@ static void domisc(int me, int fd, char *bits)
 		sync();
 		break;
 	case m_fstat:
-		if (fstat(fd, &sb) < 0) {
-			tst_resm(TFAIL, "Test[%d]: fstat() error %d.", me, errno);
-			tst_exit();
-		}
-		if (sb.st_size != file_max) {
-			tst_resm(TFAIL, "\tTest[%d]: fstat() mismatch; st_size=%"PRIx64",file_max=%x.",
-				me, (int64_t)sb.st_size, file_max);
-			tst_exit();
-		}
+		if (fstat(fd, &sb) < 0)
+			tst_brkm(TFAIL|TERRNO, NULL,
+			    "\tTest[%d]: fstat failed", me);
+		if (sb.st_size != file_max)
+			tst_brkm(TFAIL, NULL,
+			    "\tTest[%d]: fstat() mismatch; st_size=%lu, "
+			    "file_max=%x.",
+			    me, sb.st_size, file_max);
 		break;
 	}
 
@@ -537,11 +520,8 @@ static void term(int sig LTP_ATTRIBUTE_UNUSED)
 
 	close(fd);
 
-	if (unlink(test_name))
-		tst_resm(TBROK, "Unlink of '%s' failed, errno = %d.",
-		  test_name, errno);
-	else
-		tst_resm(TINFO, "Unlink of '%s' successful.", test_name);
+	if (unlink(test_name) == -1)
+		tst_resm(TBROK|TERRNO, "unlink failed");
 
 	tst_exit();
 }
@@ -549,10 +529,10 @@ static void term(int sig LTP_ATTRIBUTE_UNUSED)
 static void cleanup(void)
 {
 	/*
-         * print timing stats if that option was specified.
-         * print errno log if that option was specified.
-         */
-        TEST_CLEANUP;
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
+	TEST_CLEANUP;
 
 	tst_rmdir();
 }

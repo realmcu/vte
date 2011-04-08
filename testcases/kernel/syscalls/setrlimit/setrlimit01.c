@@ -44,22 +44,20 @@
  * RESTRICTIONS
  *	Must run test as root.
  */
-#include <sys/time.h>
-#include <sys/resource.h>
 #include <sys/types.h>
+#include <sys/resource.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <fcntl.h>
+#include <sys/time.h>
+#include <sys/wait.h>
 #include <errno.h>
-#include <wait.h>
+#include <fcntl.h>
 #include <stdlib.h>
-#include <malloc.h>
+#include <unistd.h>
 #include "test.h"
 #include "usctest.h"
 
 char *TCID = "setrlimit01";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void setup(void);
 void cleanup(void);
@@ -81,13 +79,12 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	setup();		/* set "tstdir", and "fname" vars */
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* reset Tst_count in case we are looping */
@@ -104,8 +101,7 @@ int main(int ac, char **av)
 		test4();
 	}
 	cleanup();
-
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -291,8 +287,7 @@ void test4()
 	TEST(setrlimit(RLIMIT_CORE, &rlim));
 
 	if (TEST_RETURN == -1) {
-		tst_resm(TFAIL, "setrlimit failed to set "
-			 "RLIMIT_CORE, ernro = %d", errno);
+		tst_resm(TFAIL|TERRNO, "setrlimit failed to set RLIMIT_CORE");
 		return;
 	}
 
@@ -313,11 +308,10 @@ void test4()
 	wait(&status);
 
 	if (access("core", F_OK) == 0) {
-		tst_resm(TFAIL, "core dump was succesful "
-			 "though it was not supposed to");
+		tst_resm(TFAIL, "core dump dumped unexpectedly");
 		return;
 	} else if (errno != ENOENT) {
-		tst_resm(TFAIL, "Expected ENOENT got %d", errno);
+		tst_resm(TFAIL|TERRNO, "access failed unexpectedly");
 		return;
 	}
 
@@ -330,10 +324,8 @@ void test4()
 void sighandler(int sig)
 {
 	if (sig != SIGSEGV && sig != SIGXFSZ) {
-		tst_resm(TWARN, "caught signal %d, not SIGSEGV", sig);
-		exit(1);
+		tst_brkm(TBROK, NULL, "caught unexpected signal: %d", sig);
 	}
-	exit(0);
 }
 
 /*
@@ -343,15 +335,13 @@ void setup()
 {
 	/* must run test as root */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Must run test as root");
+		tst_brkm(TBROK, NULL, "Must run test as root");
 	}
 
 	umask(0);
 
-	/* capture signals */
 	tst_sig(FORK, sighandler, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* make a temporary directory and cd to it */
@@ -372,10 +362,7 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	unlink(filename);
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

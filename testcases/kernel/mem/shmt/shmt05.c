@@ -48,7 +48,6 @@
 
 char *TCID = "shmt05";		/* Test program identifier.    */
 int TST_TOTAL = 2;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 /**************/
 
 key_t key[2];
@@ -67,6 +66,9 @@ int main(void)
 	key[0] = (key_t) lrand48();
 	key[1] = (key_t) lrand48();
 
+	cp = NULL;
+	cp1 = NULL;
+
 /*--------------------------------------------------------*/
 
 	if ((shmid = shmget(key[0], SIZE, IPC_CREAT | 0666)) < 0) {
@@ -75,7 +77,7 @@ int main(void)
 			 "Error: shmget: shmid = %d, errno = %d\n",
 			 shmid, errno);
 	} else {
-		cp = (char *)shmat(shmid, (void *)NULL, 0);
+		cp = (char *)shmat(shmid, NULL, 0);
 
 		if (cp == (char *)-1) {
 			tst_resm(TFAIL, "shmat");
@@ -104,7 +106,6 @@ int main(void)
 			tst_resm(TPASS, "2nd shmget & shmat");
 		}
 	}
-
 
 /*------------------------------------------------------*/
 

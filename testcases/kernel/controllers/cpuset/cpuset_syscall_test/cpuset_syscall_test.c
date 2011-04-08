@@ -42,13 +42,15 @@
 #include "linux_syscall_numbers.h"
 #include "test.h"
 #include "usctest.h"
+
+char *TCID = "cpuset_syscall_test";
+
 #if HAVE_LINUX_MEMPOLICY_H
 #include <linux/mempolicy.h>
 
 #include "../cpuset_lib/cpuset.h"
 #include "../cpuset_lib/bitmask.h"
 
-char *TCID = "cpuset_syscall_test";
 int TST_TOTAL = 1;
 
 unsigned long mask;
@@ -56,12 +58,15 @@ int test = -1;
 int flag_exit;
 int ret;
 
+#if HAVE_DECL_MPOL_F_MEMS_ALLOWED
 static int get_mempolicy(int *policy, unsigned long *nmask,
 			unsigned long maxnode, void *addr, int flags)
 {
 	return syscall(__NR_get_mempolicy, policy, nmask, maxnode, addr, flags);
 }
+#endif
 
+#if HAVE_DECL_MPOL_BIND
 static int mbind(void *start, unsigned long len, int policy, unsigned long *nodemask,
 		unsigned long maxnode, unsigned flags)
 {
@@ -72,6 +77,7 @@ static int set_mempolicy(int policy, unsigned long *nodemask, unsigned long maxn
 {
 	return syscall(__NR_set_mempolicy, policy, nodemask, maxnode);
 }
+#endif
 
 #define OPT_setaffinity		(SCHAR_MAX + 1)
 #define OPT_getaffinity		(SCHAR_MAX + 2)
@@ -251,6 +257,6 @@ int main(int argc, char *argv[])
 #else
 int main (void) {
 	printf("System doesn't have required mempolicy support\n");
-	return 0;
+	tst_exit();
 }
 #endif

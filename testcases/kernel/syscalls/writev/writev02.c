@@ -55,9 +55,11 @@
 #include <fcntl.h>
 #include <memory.h>
 #include <errno.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 #include <sys/mman.h>
+
+#if !defined(UCLINUX)
 
 #define	K_1	8192
 
@@ -72,7 +74,7 @@ char buf2[K_1];
 char *bad_addr = 0;
 
 struct iovec wr_iovec[MAX_IOVEC] = {
-	{(caddr_t) - 1, CHUNK},
+	{(caddr_t) -1, CHUNK},
 	{(caddr_t) NULL, 0},
 };
 
@@ -86,15 +88,12 @@ char *buf_list[NBUFS];
 
 char *TCID = "writev02";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void sighandler(int);
-long l_seek(int, long, int);
+void l_seek(int, off_t, int);
 void setup(void);
 void cleanup(void);
 int fail;
-
-#if !defined(UCLINUX)
 
 int main(int argc, char **argv)
 {
@@ -103,65 +102,44 @@ int main(int argc, char **argv)
 
 	int nbytes;
 
-	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
 
-	setup();		/* set "tstdir", and "testfile" vars */
+	setup();
 
-	/* The following loop checks looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
 		buf_list[0] = buf1;
 		buf_list[1] = buf2;
 
-		/* Fill the buf_list[0] and buf_list[1] with 0 zeros */
 		memset(buf_list[0], 0, K_1);
 		memset(buf_list[1], 0, K_1);
 
 		fd[1] = -1;	/* Invalid file descriptor */
 
-		if (signal(SIGTERM, sighandler) == SIG_ERR) {
-			perror("signal");
-			tst_resm(TFAIL, "signal() SIGTERM FAILED");
-			cleanup();
-		 /*NOTREACHED*/}
+		if (signal(SIGTERM, sighandler) == SIG_ERR)
+			tst_brkm(TFAIL|TERRNO, cleanup, "signal(SIGTERM, ..)");
 
-		if (signal(SIGPIPE, sighandler) == SIG_ERR) {
-			perror("signal");
-			tst_resm(TFAIL, "signal() SIGPIPE FAILED");
-			cleanup();
-		 /*NOTREACHED*/}
+		if (signal(SIGPIPE, sighandler) == SIG_ERR)
+			tst_brkm(TFAIL|TERRNO, cleanup, "signal(SIGPIPE, ..)");
 
-		if ((fd[0] = open(f_name, O_WRONLY | O_CREAT, 0666)) < 0) {
-			tst_resm(TFAIL, "open(2) failed: fname = %s, "
-				 "errno = %d", f_name, errno);
-			cleanup();
-		 /*NOTREACHED*/} else {
+		if ((fd[0] = open(f_name, O_WRONLY|O_CREAT, 0666)) < 0)
+			tst_brkm(TFAIL|TERRNO, cleanup,
+			    "open(.., O_WRONLY|O_CREAT, ..) failed");
+		else {
 			l_seek(fd[0], K_1, 0);
-			if ((nbytes = write(fd[0], buf_list[1], K_1)) != K_1) {
-				tst_resm(TFAIL, "write(2) failed: nbytes "
-					 "= %d, errno = %d", nbytes, errno);
-				cleanup();
-			 /*NOTREACHED*/}
+			if ((nbytes = write(fd[0], buf_list[1], K_1)) != K_1)
+				tst_brkm(TFAIL|TERRNO, cleanup, "write failed");
 		}
 
-		if (close(fd[0]) < 0) {
-			tst_resm(TFAIL, "close failed: errno = %d", errno);
-			cleanup();
-		 /*NOTREACHED*/}
+		if (close(fd[0]) == -1)
+			tst_brkm(TFAIL|TERRNO, cleanup, "close failed");
 
-		if ((fd[0] = open(f_name, O_RDWR, 0666)) < 0) {
-			tst_resm(TFAIL, "open failed: fname = %s, errno = %d",
-				 f_name, errno);
-			cleanup();
-		 /*NOTREACHED*/}
+		if ((fd[0] = open(f_name, O_RDWR, 0666)) < 0)
+			tst_brkm(TFAIL|TERRNO, cleanup,
+			    "open(.., O_RDWR, ..) failed");
 //block1:
 		/*
 		 * In this block we are trying to call writev() with invalid
@@ -171,120 +149,73 @@ int main(int argc, char **argv)
 		 * done correctly or not.
 		 */
 		tst_resm(TINFO, "Enter block 1");
-		fail = 0;
 
 		l_seek(fd[0], 0, 0);
 		TEST(writev(fd[0], wr_iovec, 2));
 		if (TEST_RETURN < 0) {
 			TEST_ERROR_LOG(TEST_ERRNO);
 			if (TEST_ERRNO == EFAULT) {
-				tst_resm(TINFO, "Received EFAULT as expected");
+				tst_resm(TPASS, "Received EFAULT as expected");
 			} else if (TEST_ERRNO != EFAULT) {
 				tst_resm(TFAIL, "Expected EFAULT, got %d",
 					 TEST_ERRNO);
-				fail = 1;
 			}
 			l_seek(fd[0], K_1, 0);
 			if ((nbytes = read(fd[0], buf_list[0], CHUNK)) != CHUNK) {
 				tst_resm(TFAIL, "Expected nbytes = 64, got "
 					 "%d", nbytes);
-				fail = 1;
 			} else {
 				if (memcmp(buf_list[0], buf_list[1], CHUNK)
-				    != 0) {
+				    != 0)
 					tst_resm(TFAIL, "Error: writev() "
 						 "over wrote %s", f_name);
-					fail = 1;
-				}
 			}
-		} else {
+		} else
 			tst_resm(TFAIL, "Error writev returned a positive "
 				 "value");
-			fail = 1;
-		}
-		if (fail) {
-			tst_resm(TINFO, "block 1 FAILED");
-		} else {
-			tst_resm(TINFO, "block 1 PASSED");
-		}
 		tst_resm(TINFO, "Exit block 1");
 	}
-	close(fd[0]);
-	close(fd[1]);
 	cleanup();
-	return 0;
+	tst_exit();
 }
 
-#else
-
-int main()
-{
-	tst_resm(TINFO, "test is not available on uClinux");
-	return 0;
-}
-
-#endif /* if !defined(UCLINUX) */
-
-/*
- * setup()
- *	performs all ONE TIME setup for this test
- */
 void setup(void)
 {
-	/* Capture signals */
-	tst_sig(FORK, DEF_HANDLER, cleanup);
+	tst_sig(FORK, sighandler, cleanup);
 
-	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified.
-	 * TEST_PAUSE contains the code to fork the test with the -i option.
-	 * You want to make sure you do this before you create your temporary
-	 * directory.
-	 */
 	TEST_PAUSE;
 
-	/* create a uniquely named temporary directory and cd into it. */
 	tst_tmpdir();
 
 	strcpy(name, DATA_FILE);
 	sprintf(f_name, "%s.%d", name, getpid());
 
 	bad_addr = mmap(0, 1, PROT_NONE,
-			MAP_PRIVATE_EXCEPT_UCLINUX | MAP_ANONYMOUS, 0, 0);
-	if (bad_addr == MAP_FAILED) {
-		printf("mmap failed\n");
-	}
+			MAP_PRIVATE_EXCEPT_UCLINUX|MAP_ANONYMOUS, 0, 0);
+	if (bad_addr == MAP_FAILED)
+		tst_brkm(TBROK|TERRNO, cleanup, "mmap failed");
 	wr_iovec[0].iov_base = bad_addr;
 
 }
 
-/*
- * cleanup()
- *	performs all ONE TIME cleanup for this test at
- *	completion or premature exit
- */
 void cleanup(void)
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
 	TEST_CLEANUP;
 
-	if (unlink(f_name) < 0) {
-		tst_resm(TFAIL, "unlink Failed--file = %s, errno = %d",
-			 f_name, errno);
-	}
+	close(fd[0]);
+	close(fd[1]);
+
+	if (munmap(bad_addr, 1) == -1)
+		tst_resm(TWARN|TERRNO, "unmap failed");
+	if (unlink(f_name) == -1)
+		tst_resm(TWARN|TERRNO, "unlink failed");
+
 	tst_rmdir();
 
-	tst_exit();
 }
 
-/*
- * sighandler()
- *	Signal handler function for SIGTERM and SIGPIPE
- */
 void sighandler(int sig)
 {
 	switch (sig) {
@@ -294,28 +225,26 @@ void sighandler(int sig)
 		++in_sighandler;
 		return;
 	default:
-		tst_resm(TFAIL, "sighandler() received invalid signal "
-			 ": %d", sig);
+		tst_resm(TBROK, "sighandler received invalid signal : %d", sig);
 		break;
 	}
 
-	if ((unlink(f_name) < 0) && (errno != ENOENT)) {
-		tst_resm(TFAIL, "unlink Failed--file = %s, errno = %d",
-			 f_name, errno);
-		cleanup();
-	 /*NOTREACHED*/}
-	exit(sig);
+	if (unlink(f_name) == -1 && errno != ENOENT)
+		tst_resm(TFAIL|TERRNO, "unlink failed");
 }
 
 /*
  * l_seek()
  *	Wrap around for regular lseek function for giving error message
  */
-long l_seek(int fdesc, long offset, int whence)
+void l_seek(int fdesc, off_t offset, int whence)
 {
-	if (lseek(fdesc, offset, whence) < 0) {
-		tst_resm(TFAIL, "lseek Failed : errno = %d", errno);
-		fail = 1;
-	}
-	return 0;
+	if (lseek(fdesc, offset, whence) == -1)
+		tst_resm(TBROK|TERRNO, "lseek failed");
 }
+#else
+int main()
+{
+	tst_brkm(TCONF, NULL, "test is not available on uClinux");
+}
+#endif /* if !defined(UCLINUX) */

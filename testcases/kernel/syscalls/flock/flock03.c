@@ -36,7 +36,7 @@
  *    DESCRIPTION
  * 	This test verifies that flock cannot unlock a file locked
  * 	by another task
- *	
+ *
  *	Test:
  * 		Fork a child processes
  * 		The parent flocks a file with LOCK_EX
@@ -84,7 +84,6 @@ void childfunc_uc()
 
 char *TCID = "flock03";		/* Test program identifier */
 int TST_TOTAL = 3;		/* Total number of test cases */
-extern int Tst_count;
 char filename[100];
 
 int main(int argc, char **argv)
@@ -96,10 +95,10 @@ int main(int argc, char **argv)
 	int fd;			/* for opening the temporary file */
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 #ifdef UCLINUX
 	maybe_run_child(&childfunc_uc, "ds", &fd_uc, filename);
 #endif
@@ -153,11 +152,11 @@ int main(int argc, char **argv)
 
 		close(fd);
 
-	}			/* End of TEST_LOOPING */
+	}
 
 	cleanup();
 
-	return 0;
+	tst_exit();
 
 }
 
@@ -197,7 +196,7 @@ void childfunc(int fd)
 	close(fd2);
 
 	tst_exit();
-	/* NOT REACHED */
+
 	return;
 }
 
@@ -208,7 +207,7 @@ void childfunc(int fd)
 void setup(void)
 {
 	int fd;
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Pause if that option was specified
@@ -233,7 +232,6 @@ void setup(void)
 		/* Removing temp dir */
 		tst_rmdir();
 
-		/* exit with return code appropriate for result */
 		tst_exit();
 	}
 	close(fd);
@@ -255,6 +253,4 @@ void cleanup(void)
 	unlink(filename);
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

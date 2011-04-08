@@ -72,7 +72,7 @@
  *		 only one instance to run at a time.
  *
  * CHANGELOG
- *   
+ *
  *  11/22/02 -	Added "--force" to insmod options and redirected output to
  *  		/dev/null. This was done to allow kernel mismatches, b/c it
  *  		doesn't matter in this case.
@@ -86,7 +86,6 @@
 #include "test.h"
 #include "usctest.h"
 
-extern int Tst_count;
 
 #define DUMMY_MOD		 "dummy_del_mod"
 #define DUMMY_MOD_DEP		 "dummy_del_mod_dep"
@@ -99,7 +98,7 @@ char *TCID = "delete_module03";
 static int exp_enos[] = {EWOULDBLOCK, 0};
 int TST_TOTAL = 1;
 
-static int setup(void);
+static void setup(void);
 static void cleanup(void);
 
 int
@@ -110,12 +109,10 @@ main(int argc, char **argv)
 	char cmd[50];
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t*) NULL, NULL)) !=
-	    (char *) NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	if(STD_COPIES != 1) {
+	if (STD_COPIES != 1) {
 		tst_resm(TINFO, "-c option has no effect for this testcase - "
 				"doesn't allow running more than one instance "
 		 		"at a time");
@@ -123,33 +120,29 @@ main(int argc, char **argv)
 	}
 
 	/* Load first kernel module */
-	if( sprintf(cmd, "/sbin/insmod %s/%s.ko", dirname(argv[0]),
+	if (sprintf(cmd, "/sbin/insmod %s/%s.ko", dirname(argv[0]),
 		DUMMY_MOD) <= 0) {
 		tst_resm(TBROK, "sprintf failed");
 		return 1;
 	}
-	if( (system(cmd)) != 0 ) {
+	if ((system(cmd)) != 0) {
 		tst_resm(TBROK, "Failed to load %s module", DUMMY_MOD);
 		return 1;
 	}
 
 	/* Load dependant kernel module */
-        if( sprintf(cmd, "/sbin/insmod %s/%s.ko", dirname(argv[0]),
+        if (sprintf(cmd, "/sbin/insmod %s/%s.ko", dirname(argv[0]),
 		DUMMY_MOD_DEP) <= 0) {
 		tst_resm(TBROK, "sprintf failed");
 		goto END;
 	}
-        if( (system(cmd)) != 0 ) {
+        if ((system(cmd)) != 0) {
 		tst_resm(TBROK, "Failed to load %s module", DUMMY_MOD_DEP);
 		goto END;
         }
 
-	tst_tmpdir();
-	if(setup() != 0) {
-		return 1;
-	}
+	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -158,7 +151,7 @@ main(int argc, char **argv)
 		TEST(delete_module(DUMMY_MOD));
 
 		TEST_ERROR_LOG(TEST_ERRNO);
-		if ( (TEST_RETURN == (int) EXP_RET_VAL ) &&
+		if ((TEST_RETURN == (int) EXP_RET_VAL) &&
 		     (TEST_ERRNO == EXP_ERRNO) ) {
 			tst_resm(TPASS, "Expected failure for module in-use, "
 		 			"errno: %d", TEST_ERRNO);
@@ -171,36 +164,26 @@ main(int argc, char **argv)
 	}
 	cleanup();
 END:
-	if(system("rmmod "DUMMY_MOD) != 0) {
+	if (system("rmmod "DUMMY_MOD) != 0) {
 		tst_resm(TBROK, "Failed to unload %s module", DUMMY_MOD);
 		return 1;
 	}
 
-	/*NOTREACHED*/
-	return 0;
 }
 
 /*
  * setup()
  *	performs all ONE TIME setup for this test
  */
-int
+void
 setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Check whether it is root  */
-	if (geteuid() != 0) {
-		tst_resm(TBROK, "Must be root for this test!");
-		return 1;
-	}
+	tst_require_root(NULL);
 
-	/*
-	if (tst_kvercmp(2,5,48) >= 0)
-		tst_brkm(TCONF, tst_exit, "This test will not work on "
-					  "kernels after 2.5.48");
-	*/
+	tst_tmpdir();
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
@@ -209,8 +192,6 @@ setup(void)
 	 * TEST_PAUSE contains the code to fork the test with the -c option.
 	 */
 	TEST_PAUSE;
-	return 0;
-
 }
 
 /*
@@ -222,11 +203,11 @@ void
 cleanup(void)
 {
 	/* Unload dependent kernel module */
-	if(system("rmmod "DUMMY_MOD_DEP) != 0) {
+	if (system("rmmod "DUMMY_MOD_DEP) != 0) {
 		tst_resm(TBROK, "Failed to unload %s module", DUMMY_MOD_DEP);
 	}
 	/* Unload first kernel module */
-	if(system("rmmod "DUMMY_MOD) != 0) {
+	if (system("rmmod "DUMMY_MOD) != 0) {
 		tst_resm(TBROK, "Failed to unload %s module",
 		DUMMY_MOD);
 	}
@@ -236,7 +217,4 @@ cleanup(void)
 	 */
 	TEST_CLEANUP;
 	tst_rmdir();
-	/* exit with return code appropriate for results */
-	tst_exit();
-	/*NOTREACHED*/
 }

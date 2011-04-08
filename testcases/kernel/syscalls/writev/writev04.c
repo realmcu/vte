@@ -52,8 +52,8 @@
 #include <fcntl.h>
 #include <memory.h>
 #include <errno.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 #define	K_1	8192
 
@@ -82,7 +82,6 @@ char *buf_list[NBUFS];
 
 char *TCID = "writev04";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void sighandler(int);
 long l_seek(int, long, int);
@@ -100,11 +99,11 @@ int main(int argc, char **argv)
 	int nbytes;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
+
+	 }
 
 	setup();		/* set "tstdir", and "testfile" vars */
 
@@ -117,7 +116,7 @@ int main(int argc, char **argv)
 		buf_list[0] = buf1;
 		buf_list[1] = buf2;
 		buf_list[2] = buf3;
-		buf_list[3] = (char *)NULL;
+		buf_list[3] = NULL;
 
 		fd[1] = -1;	/* Invalid file descriptor */
 
@@ -125,13 +124,13 @@ int main(int argc, char **argv)
 			perror("signal");
 			tst_resm(TFAIL, "signal() SIGTERM FAILED");
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 
 		if (signal(SIGPIPE, sighandler) == SIG_ERR) {
 			perror("signal");
 			tst_resm(TFAIL, "signal() SIGPIPE FAILED");
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 
 		memset(buf_list[0], 0, K_1);
 		memset(buf_list[1], 0, K_1);
@@ -140,24 +139,24 @@ int main(int argc, char **argv)
 			tst_resm(TFAIL, "open(2) failed: fname = %s, "
 				 "errno = %d", f_name, errno);
 			cleanup();
-		 /*NOTREACHED*/} else {
+		 } else {
 			if ((nbytes = write(fd[0], buf_list[1], K_1)) != K_1) {
 				tst_resm(TFAIL, "write(2) failed: nbytes "
 					 "= %d, errno = %d", nbytes, errno);
 				cleanup();
-			 /*NOTREACHED*/}
+			 }
 		}
 
 		if (close(fd[0]) < 0) {
 			tst_resm(TFAIL, "close failed: errno = %d", errno);
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 
 		if ((fd[0] = open(f_name, O_RDWR, 0666)) < 0) {
 			tst_resm(TFAIL, "open failed: fname = %s, errno = %d",
 				 f_name, errno);
 			cleanup();
-			 /*NOTREACHED*/ return 0;
+			tst_exit();
 		}
 //block1:
 		tst_resm(TINFO, "Enter block 1");
@@ -275,7 +274,7 @@ int main(int argc, char **argv)
 	close(fd[0]);
 	close(fd[1]);
 	cleanup();
-	return 0;
+	tst_exit();
 }
 
 #else
@@ -283,7 +282,7 @@ int main(int argc, char **argv)
 int main()
 {
 	tst_resm(TINFO, "test is not available on uClinux");
-	return 0;
+	tst_exit();
 }
 
 #endif /* if !defined(UCLINUX) */
@@ -294,13 +293,12 @@ int main()
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Create a unique temporary directory and chdir() to it. */
@@ -336,7 +334,6 @@ void cleanup(void)
 	}
 	tst_rmdir();
 
-	tst_exit();
 }
 
 /*
@@ -361,7 +358,7 @@ void sighandler(int sig)
 		tst_resm(TFAIL, "unlink Failed--file = %s, errno = %d",
 			 f_name, errno);
 		cleanup();
-	 /*NOTREACHED*/}
+	 }
 	exit(sig);
 }
 

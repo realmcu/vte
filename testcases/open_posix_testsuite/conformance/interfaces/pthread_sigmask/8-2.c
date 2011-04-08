@@ -3,15 +3,15 @@
  * Copyright (c) 2003, Intel Corporation. All rights reserved.
  * Created by:  salwan.searty REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
- 
+
  Steps:
  1. Add only SIGABRT to the signal mask.
- 2. Make a call such as this: pthread_sigmask(SIG_SETMASK, NULL, &oactl). 
-At 
+ 2. Make a call such as this: pthread_sigmask(SIG_SETMASK, NULL, &oactl).
+At
  this point, we have obtained the signal mask in oactl.
- 3. Now call is_changed to make sure that SIGABRT is still in oactl, and 
+ 3. Now call is_changed to make sure that SIGABRT is still in oactl, and
  that no other signal in the set is in oactl.
 
 */
@@ -21,16 +21,23 @@ At
 #include <stdio.h>
 #include "posixtest.h"
 
-#define NUMSIGNALS 26
+#define NUMSIGNALS (sizeof(siglist) / sizeof(siglist[0]))
 
 int is_changed(sigset_t set, int sig) {
-	
+
 	int i;
-	int siglist[] = {SIGABRT, SIGALRM, SIGBUS, SIGCHLD, 
-		SIGCONT, SIGFPE, SIGHUP, SIGILL, SIGINT, 
-		SIGPIPE, SIGQUIT, SIGSEGV, 
-		SIGTERM, SIGTSTP, SIGTTIN, SIGTTOU, 
-		SIGUSR1, SIGUSR2, SIGPOLL, SIGPROF, SIGSYS, 
+	int siglist[] = {SIGABRT, SIGALRM, SIGBUS, SIGCHLD,
+		SIGCONT, SIGFPE, SIGHUP, SIGILL, SIGINT,
+		SIGPIPE, SIGQUIT, SIGSEGV,
+		SIGTERM, SIGTSTP, SIGTTIN, SIGTTOU,
+		SIGUSR1, SIGUSR2,
+#ifdef SIGPOLL
+		SIGPOLL,
+#endif
+#ifdef SIGPROF
+		SIGPROF,
+#endif
+		SIGSYS,
 		SIGTRAP, SIGURG, SIGVTALRM, SIGXCPU, SIGXFSZ };
 
 	if (sigismember(&set, sig) != 1) {
@@ -56,7 +63,7 @@ void *a_thread_func() {
 
 	pthread_sigmask(SIG_SETMASK, &actl, NULL);
 	pthread_sigmask(SIG_SETMASK, NULL, &oactl);
-	
+
 	if (is_changed(oactl, SIGABRT)) {
 		pthread_exit((void*)-1);
 	}
@@ -66,7 +73,6 @@ void *a_thread_func() {
         /* To please some compilers */
 	return NULL;
 }
-
 
 int main() {
 
@@ -100,4 +106,3 @@ int main() {
         }
         return PTS_PASS;
 }
-

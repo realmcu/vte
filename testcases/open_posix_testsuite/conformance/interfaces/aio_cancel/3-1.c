@@ -2,7 +2,7 @@
  * Copyright (c) 2004, Bull SA. All rights reserved.
  * Created by:  Laurent.Vivier@bull.net
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
  */
 
@@ -49,22 +49,19 @@
 static volatile int countdown = BUF_NB;
 static volatile int canceled = 0;
 
-void sigusr1_handler(int signum, siginfo_t *info, void *context)
+void sig_handler(int signum, siginfo_t *info, void *context)
 {
 	struct aiocb *a = info->si_value.sival_ptr;
 
 	if (aio_error(a) == ECANCELED)
 		canceled++;
-		
-	aio_return(a);	/* free entry */
 
-	free((void*)a->aio_buf);
-	free(a);
+	aio_return(a);	/* free entry */
 
 	countdown--;
 }
 
-int main()
+int main(void)
 {
 	char tmpfname[256];
 	int fd;
@@ -72,10 +69,10 @@ int main()
 	struct sigaction action;
 	int i;
 
-	if (sysconf(_SC_ASYNCHRONOUS_IO) != 200112L)
+	if (sysconf(_SC_ASYNCHRONOUS_IO) < 200112L)
 		return PTS_UNSUPPORTED;
 
-	snprintf(tmpfname, sizeof(tmpfname), "/tmp/pts_aio_cancel_3_1_%d", 
+	snprintf(tmpfname, sizeof(tmpfname), "/tmp/pts_aio_cancel_3_1_%d",
 		  getpid());
 	unlink(tmpfname);
 	fd = open(tmpfname, O_CREAT | O_RDWR | O_EXCL, S_IRUSR | S_IWUSR);
@@ -90,7 +87,7 @@ int main()
 
 	/* install signal handler */
 
-	action.sa_sigaction = sigusr1_handler;
+	action.sa_sigaction = sig_handler;
 	sigemptyset(&action.sa_mask);
 	action.sa_flags = SA_SIGINFO|SA_RESTART;
 	if (sigaction(SIGRTMIN+1, &action, NULL))
@@ -150,11 +147,11 @@ int main()
 
 	close(fd);
 
-	while(countdown);
+	while (countdown);
 
 	if (!canceled)
 		return PTS_UNRESOLVED;
 
-	printf ("Test PASSED\n");
+	printf("Test PASSED\n");
 	return PTS_PASS;
 }

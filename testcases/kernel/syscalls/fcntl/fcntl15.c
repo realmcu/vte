@@ -53,8 +53,8 @@
 
 #include <signal.h>
 #include <fcntl.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/types.h>
@@ -68,7 +68,6 @@
 
 char *TCID = "fcntl15";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 static int parent, child1, child2, status;
 static volatile sig_atomic_t parent_flag, child_flag, alarm_flag;
@@ -91,8 +90,6 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
 
 void alarm_sig()
@@ -185,11 +182,16 @@ int dochild1(int file_flag, int file_mode)
 }
 
 #ifdef UCLINUX
-int uc_file_flag, uc_file_mode;
+int uc_file_flag, uc_file_mode, uc_dup_flag;
 
 void dochild1_uc()
 {
 	dochild1(uc_file_flag, uc_file_mode);
+}
+
+void dochild2_uc()
+{
+	dochild2(uc_file_flag, uc_dup_flag);
 }
 #endif
 
@@ -366,16 +368,16 @@ int dochild2(int file_flag, int file_mode, int dup_flag)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
 int run_test(int file_flag, int file_mode, int dup_flag)
 {
 	int fd_A, fd_B;
+	fd_B = -1;
 	sigset_t newmask, zeromask, oldmask;
 
 	/* setup to catch SIGUSR1 signal from child process */
@@ -462,7 +464,13 @@ int run_test(int file_flag, int file_mode, int dup_flag)
 		tst_rmdir();
 		return 1;
 	} else if (child2 == 0) {	/* child */
+#ifdef UCLINUX
+		if (self_exec(argv0, "ndddds", 2, file_flag, file_mode,
+		    dup_flag, parent, tmpname) < 0)
+			tst_brkm(TBROK|TERRNO, NULL, "self_exec failed");
+#else
 		dochild2(file_flag, file_mode, dup_flag);
+#endif
 	}
 
 	/* parent */
@@ -540,12 +548,14 @@ int main(int ac, char **av)
 	int fail = 0;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
 	maybe_run_child(&dochild1_uc, "nddds", 1, &uc_file_flag,
 			&uc_file_mode, &parent, tmpname);
+	maybe_run_child(&dochild2_uc, "nddds", 1, &uc_file_flag,
+			&uc_file_mode, &uc_dup_flag, &parent, tmpname);
 	argv0 = av[0];
 #endif
 
@@ -593,5 +603,5 @@ int main(int ac, char **av)
 		tst_resm(TINFO, "Exiting block 3");
 	}
 	cleanup();
-	return 0;
+	tst_exit();
 }

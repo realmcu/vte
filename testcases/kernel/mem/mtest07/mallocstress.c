@@ -18,7 +18,6 @@
 /*									      */
 /******************************************************************************/
 
-
 /******************************************************************************/
 /*                                                                            */
 /* History:     Nov - 04 - 2001 Created - Manoj Iyer, IBM Austin TX.          */
@@ -238,9 +237,8 @@ allocate_free(int    repeat,	/* number of times to repeat allocate/free    */
         my_yield();
     }
     /* Success! */
-    return 0;
+  return 0;
 }
-
 
 /******************************************************************************/
 /* Function:	alloc_mem				                      */
@@ -276,7 +274,6 @@ alloc_mem(void * threadnum)
     (int)(uintptr_t)threadnum, err, (err ? "failed" : "succeeded"));
     return (void *)(uintptr_t)(err ? -1 : 0);
 }
-       
 
 /******************************************************************************/
 /*								 	      */
@@ -340,7 +337,7 @@ main(int	argc,		/* number of input parameters		      */
 		break;
 	}
     }
-   
+
     dprt(("number of times to loop in the thread = %d\n", num_loop));
 
     thrdid = malloc(sizeof(pthread_t) * num_thrd);
@@ -388,7 +385,7 @@ main(int	argc,		/* number of input parameters		      */
         ret = -1;
         goto out;
     }
-  
+
     for (thrd_ndx = 0; thrd_ndx < num_thrd; thrd_ndx++)
     {
         void *th_status;	/* exit status of LWP */
@@ -413,11 +410,11 @@ main(int	argc,		/* number of input parameters		      */
     }
     printf("main(): test passed.\n");
 out:
-    if(semctl(semid, 0, IPC_RMID) == -1) {
+    if (semctl(semid, 0, IPC_RMID) == -1) {
         perror("semctl\n");
         ret = -1;
     }
-    if(thrdid){
+    if (thrdid) {
         free(thrdid);
         thrdid = NULL;
     }

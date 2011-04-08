@@ -4,7 +4,6 @@
 #include "sg_include.h"
 #include "sg_err.h"
 
-
 /* This file is a huge cut, paste and hack from linux/drivers/scsi/constant.c
 *  which I guess was written by:
 *         Copyright (C) 1993, 1994, 1995 Eric Youngdale
@@ -45,7 +44,6 @@ static const char * group_0_commands[] = {
 /* 1c-1d */ "Receive Diagnostic", "Send Diagnostic",
 /* 1e-1f */ "Prevent/Allow Medium Removal", unknown,
 };
-
 
 static const char *group_1_commands[] = {
 /* 20-23 */  unknown, unknown, unknown, "Read Format capacities",
@@ -110,7 +108,6 @@ static const char *group_5_commands[] = {
 /* bd-bf */ "Spare (out), Mechanism status", "Volume set (in), Read cd",
             "Volume set (out), Send DVD structure",
 };
-
 
 #define group(opcode) (((opcode) >> 5) & 7)
 
@@ -218,7 +215,6 @@ void sg_print_scsi_status(int scsi_status)
 #define SC_RECOVERED_DATA "\xc"
 #define SC_ERROR_RATE_TOO_HIGH "\xd"
 #define SC_TIMES_TOO_HIGH "\xe"
-
 
 struct error_info{
     unsigned char code1, code2;
@@ -858,7 +854,7 @@ void sg_print_asc_ascq(unsigned char asc, unsigned char ascq)
     if (found)
 	return;
 
-    for(k=0; additional2[k].text; k++) {
+    for (k=0; additional2[k].text; k++) {
 	if ((additional2[k].code1 == asc) &&
 	    (ascq >= additional2[k].code2_min)  &&
 	    (ascq <= additional2[k].code2_max)) {
@@ -893,7 +889,7 @@ void sg_print_sense(const char * leadin, const unsigned char * sense_buffer,
 
     if (sense_class == 7) {     /* extended sense data */
         s = sense_buffer[7] + 8;
-        if(s > sb_len) {
+        if (s > sb_len) {
 	    fprintf(OUTP, "Sense buffer too small (at %d bytes), %d bytes "
 		    "truncated\n", sb_len, s - sb_len);
 	    s = sb_len;
@@ -948,7 +944,7 @@ void sg_print_sense(const char * leadin, const unsigned char * sense_buffer,
 		fprintf(OUTP, "Sense Key Specific: Error in %s byte %d",
 			(sense_buffer[15]&0x40)?"Command":"Data",
 			(sense_buffer[16]<<8)|sense_buffer[17]);
-		if(sense_buffer[15]&0x08) {
+		if (sense_buffer[15]&0x08) {
 		    fprintf(OUTP, " bit %d\n", sense_buffer[15]&0x07);
 		} else {
 		    fprintf(OUTP, "\n");
@@ -1001,12 +997,12 @@ void sg_print_host_status(int host_status)
 {   static int maxcode=0;
     int i;
 
-    if(! maxcode) {
-        for(i = 0; hostbyte_table[i]; i++) ;
+    if (! maxcode) {
+        for (i = 0; hostbyte_table[i]; i++) ;
         maxcode = i-1;
     }
     fprintf(OUTP, "Host_status=0x%02x", host_status);
-    if(host_status > maxcode) {
+    if (host_status > maxcode) {
         fprintf(OUTP, "is invalid ");
         return;
     }
@@ -1021,7 +1017,6 @@ static const char * driversuggest_table[]={"SUGGEST_OK",
 "SUGGEST_RETRY", "SUGGEST_ABORT", "SUGGEST_REMAP", "SUGGEST_DIE",
 unknown,unknown,unknown, "SUGGEST_SENSE",NULL};
 
-
 void sg_print_driver_status(int driver_status)
 {
     static int driver_max =0 , suggest_max=0;
@@ -1029,10 +1024,10 @@ void sg_print_driver_status(int driver_status)
     int dr = driver_status & SG_ERR_DRIVER_MASK;
     int su = (driver_status & SG_ERR_SUGGEST_MASK) >> 4;
 
-    if(! driver_max) {
-        for(i = 0; driverbyte_table[i]; i++) ;
+    if (! driver_max) {
+        for (i = 0; driverbyte_table[i]; i++) ;
         driver_max = i;
-        for(i = 0; driversuggest_table[i]; i++) ;
+        for (i = 0; driversuggest_table[i]; i++) ;
         suggest_max = i;
     }
     fprintf(OUTP, "Driver_status=0x%02x",driver_status);
@@ -1088,7 +1083,7 @@ static int sg_sense_print(const char * leadin, int scsi_status,
             (SG_ERR_DRIVER_SENSE == (0xf & driver_status)))
             sg_print_sense(0, sense_buffer, sb_len);
     }
-    return 0;
+  return 0;
 }
 
 #ifdef SG_IO
@@ -1150,7 +1145,7 @@ int sg_err_category_new(int scsi_status, int host_status, int driver_status,
 		asc = (sb_len > 12) ? sense_buffer[12] : 0;
 	    }
 
-            if(RECOVERED_ERROR == sense_key)
+            if (RECOVERED_ERROR == sense_key)
                 return SG_ERR_CAT_RECOVERED;
             else if (UNIT_ATTENTION == sense_key) {
                 if (0x28 == asc)

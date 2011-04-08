@@ -54,7 +54,6 @@ char string[40] = "";
 
 char *TCID = "fcntl18";
 int TST_TOTAL = 1;
-extern int Tst_count;
 struct passwd *pass;
 
 void setup(void);
@@ -70,8 +69,8 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();		/* global setup */
@@ -165,7 +164,8 @@ int main(int ac, char **av)
 	tst_resm(TINFO, "Exit block 3");
 
 	cleanup();
-	return 0;
+	tst_exit();
+
 }
 
 /*
@@ -174,15 +174,13 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	umask(0);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	sprintf(string, "./fcntl18.%d.1", getpid());
@@ -204,10 +202,8 @@ void cleanup()
 
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
 	unlink("temp.dat");
-	tst_exit();
+
 }

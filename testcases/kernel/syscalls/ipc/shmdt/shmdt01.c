@@ -65,7 +65,6 @@
 
 char *TCID = "shmdt01";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void sighandler(int);
 struct shmid_ds buf;
@@ -83,8 +82,8 @@ int main(int ac, char **av)
 	void check_functionality(void);
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();		/* global setup */
@@ -125,7 +124,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -134,10 +133,8 @@ int main(int ac, char **av)
 void check_functionality()
 {
 	/* stat the shared memory segment */
-	if (shmctl(shm_id_1, IPC_STAT, &buf) == -1) {
-		tst_resm(TINFO, "error = %d : %s", errno, strerror(errno));
-		tst_brkm(TBROK, cleanup, "could not stat in signal handler");
-	}
+	if (shmctl(shm_id_1, IPC_STAT, &buf) == -1)
+		tst_brkm(TBROK|TERRNO, cleanup, "could not stat in signal handler");
 
 	if (buf.shm_nattch != 0) {
 		tst_resm(TFAIL, "# of attaches is incorrect");
@@ -169,9 +166,6 @@ void check_functionality()
 	}
 }
 
-/*
- * sighandler()
- */
 void sighandler(sig)
 {
 	/* if we have received a SIGSEGV, we are almost done */
@@ -179,9 +173,9 @@ void sighandler(sig)
 		/* set the global variable and jump back */
 		pass = 1;
 		siglongjmp(env, 1);
-	} else {
-		tst_brkm(TBROK, cleanup, "received an unexpected signal");
-	}
+	} else
+		tst_brkm(TBROK, cleanup,
+		    "received an unexpected signal: %d", sig);
 }
 
 /*
@@ -189,11 +183,9 @@ void sighandler(sig)
  */
 void setup(void)
 {
-	/* capture signals */
 
 	tst_sig(NOFORK, sighandler, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/*
@@ -233,7 +225,6 @@ void cleanup(void)
 	/* if it exists, delete the shared memory resource */
 	rm_shm(shm_id_1);
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
 	/*
@@ -242,6 +233,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

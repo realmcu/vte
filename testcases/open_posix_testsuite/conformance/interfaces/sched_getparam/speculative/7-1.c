@@ -1,4 +1,4 @@
-/* 
+/*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2.
  *
@@ -20,23 +20,21 @@
 #include "posixtest.h"
 
 int main(int argc, char **argv)
-{	       
+{
 	int result = -1;
 
-	result = sched_getparam( 0, NULL);
-	
-	if(result == -1 && errno == EFAULT) {
+	result = sched_getparam(0, NULL);
+
+	if (result == -1 && errno == EFAULT) {
 		printf("sched_getparam() sets errno == EFAULT when param argument points to NULL\n");
 		return PTS_PASS;
 	}
-	if(result == -1 && errno == EINVAL) {
+	if (result == -1 && errno == EINVAL) {
 		printf("sched_getparam() sets errno == EINVAL when param argument points to NULL\n");
 		return PTS_PASS;
 	}
 
 	printf("sched_getparam() return %i and sets errno == %i.\n",
 	       result, errno);
-	return PTS_UNRESOLVED;	
+	return PTS_UNRESOLVED;
 }
-
-

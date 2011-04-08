@@ -43,11 +43,11 @@
 #include "linux_syscall_numbers.h"
 
 /* Extern Global Variables */
-extern int  Tst_count;               /* counter for tst_xxx routines.         */
+extern int  Tst_count;
 extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 /* Global Variables */
 char *TCID     = "performance_counter01"; /* test program identifier.          */
-int  TST_TOTAL = 1; 
+int  TST_TOTAL = 1;
 
 enum hw_event_types {
 	PERF_COUNT_CYCLES,
@@ -104,4 +104,3 @@ main(void) {
 	tst_exit();
 
 }
-

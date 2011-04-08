@@ -52,7 +52,6 @@
 
 char *TCID = "chroot01";
 int TST_TOTAL = 1;
-extern int Tst_count;
 int fail;
 
 char path[] = "/tmp";
@@ -63,86 +62,63 @@ struct passwd *ltpuser;
 void setup(void);
 void cleanup(void);
 
-int main(int ac, char **av)
+int
+main(int ac, char **av)
 {
 	int lc;
 	char *msg;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	setup();
 
-	/* set up expected errnos */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
 		TEST(chroot(path));
 
-		if (TEST_RETURN != -1) {
-			tst_resm(TFAIL, "call succeeded on expected fail");
-		} else if (errno != EPERM) {
-			tst_resm(TFAIL, "Received unexpected error - %d : %s",
-				 TEST_ERRNO, strerror(TEST_ERRNO));
-		} else {
-			TEST_ERROR_LOG(TEST_ERRNO);
+		if (TEST_RETURN != -1)
+			tst_resm(TFAIL, "call succeeded unexpectedly");
+		else if (errno != EPERM)
+			tst_resm(TFAIL|TTERRNO, "chroot failed unexpectedly");
+		else
 			tst_resm(TPASS, "chroot set errno to EPERM.");
-		}
 	}
 	cleanup();
 
-	return 0;
- /*NOTREACHED*/}
+	tst_exit();
 
-/*
- * setup() - performs all ONE TIME setup for this test.
- */
-void setup()
-{
-
-	/* Switch to nobody user for correct error code collection */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
-	}
-	ltpuser = getpwnam(nobody_uid);
-	if (seteuid(ltpuser->pw_uid) == -1) {
-		tst_resm(TINFO, "seteuid failed to "
-			 "to set the effective uid to %d", ltpuser->pw_uid);
-		perror("seteuid");
-	}
-
-	/* capture signals */
-	tst_sig(NOFORK, DEF_HANDLER, cleanup);
-
-	/* Pause if that option was specified */
-	TEST_PAUSE;
-
-	/* make a temporary directory and cd to it */
-	tst_tmpdir();
 }
 
-/*
- * cleanup() - performs all ONE TIME cleanup for this test at
- *	       completion or premature exit.
- */
-void cleanup()
+void
+setup(void)
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
+	tst_require_root(NULL);
+
+	tst_tmpdir();
+
+	if ((ltpuser = getpwnam(nobody_uid)) == NULL)
+		tst_brkm(TBROK|TERRNO, cleanup, "getpwnam(\"nobody\") failed");
+
+	if (seteuid(ltpuser->pw_uid) == -1)
+		tst_brkm(TBROK|TERRNO, cleanup, "seteuid to nobody failed");
+
+	tst_sig(NOFORK, DEF_HANDLER, cleanup);
+
+	TEST_PAUSE;
+}
+
+void
+cleanup(void)
+{
 	TEST_CLEANUP;
 
-	/* delete the test directory created in setup() */
-	tst_rmdir();
+	if (seteuid(0) == -1)
+		tst_brkm(TBROK|TERRNO, NULL, "setuid(0) failed");
 
-	/* exit with return code appropriate for results */
-	tst_exit();
+	tst_rmdir();
 }

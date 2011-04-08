@@ -62,8 +62,6 @@
 /* #define DEBUG_MODE 1 */
 
 /* Extern Global Variables */
-extern int Tst_count;		/* counter for tst_xxx routines.         */
-extern char *TESTDIR;		/* temporary dir created by tst_tmpdir() */
 /* Global Variables */
 char *TCID = "mincore02";	/* test program identifier. */
 int TST_TOTAL = 1;		/* total number of tests in this file.   */
@@ -100,7 +98,6 @@ void cleanup()
 {
 
 	/* Close all open file descriptors. */
-	/* Exit with appropriate return code. */
 
 	free(vec);
 	munlock(position, p_size * num_pages);
@@ -109,7 +106,6 @@ void cleanup()
 	close(file_desc);
 	remove(tmpfilename);
 
-	tst_exit();
 }
 
 /* Local  Functions */
@@ -212,7 +208,7 @@ int main(int argc, char **argv)
 			 num_pages, lock_pages);
 
 	cleanup();
-	return 0;
+	tst_exit();
 }
 
 #else
@@ -220,7 +216,7 @@ int main(int argc, char **argv)
 int main()
 {
 	tst_resm(TINFO, "test is not available on uClinux");
-	return 0;
+	tst_exit();
 }
 
 #endif /* if !defined(UCLINUX) */

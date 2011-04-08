@@ -48,8 +48,6 @@
 #include "linux_syscall_numbers.h"
 
 /* Extern Global Variables */
-extern int Tst_count;	   /* counter for tst_xxx routines.	 */
-extern char *TESTDIR;	   /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
 char *TCID = "add_key02";  /* Test program identifier.*/
@@ -75,12 +73,9 @@ int  TST_TOTAL = 1;		   /* total number of tests in this file.   */
 /*									    */
 /******************************************************************************/
 extern void cleanup() {
-	/* Remove tmp dir and all files in it */
+
 	TEST_CLEANUP;
 	tst_rmdir();
-
-	/* Exit with appropriate return code. */
-	tst_exit();
 }
 
 /* Local  Functions */
@@ -120,74 +115,55 @@ struct test_case_t {
 
 int test_count = sizeof(test_cases) / sizeof(struct test_case_t);
 
-
 int main(int ac, char **av) {
-	int i, succeed=0, fail=0;
+	int i;
 	int lc;		 /* loop counter */
 	char *msg;	      /* message returned from parse_opts */
-	
+
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	} else {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-		setup();
+	setup();
 
-		/* Check looping state if -i option given */
-		for (lc = 0; TEST_LOOPING(lc); ++lc) {
-			Tst_count = 0;
-			for (testno = 0; testno < TST_TOTAL; ++testno) {
+	for (lc = 0; TEST_LOOPING(lc); ++lc) {
+		Tst_count = 0;
+		for (testno = 0; testno < TST_TOTAL; ++testno) {
 
-				for(i=0; i<test_count; i++) {
+			for (i = 0; i<test_count; i++) {
 
-					/* Call add_key. */
-					TEST(syscall(__NR_add_key, test_cases[i].type,
-							test_cases[i].desc,
-							test_cases[i].payload,
-							test_cases[i].plen,
-							KEY_SPEC_USER_KEYRING));
+				/* Call add_key. */
+				TEST(syscall(__NR_add_key, test_cases[i].type,
+						test_cases[i].desc,
+						test_cases[i].payload,
+						test_cases[i].plen,
+						KEY_SPEC_USER_KEYRING));
 
-					if (TEST_RETURN != -1) {
-						tst_resm(TINFO,"call add_key() with wrong args succeed, but should fail");
-						fail++;
+				if (TEST_RETURN != -1) {
+					tst_resm(TINFO,
+					    "add_key passed unexpectedly");
+				} else {
+
+					if (errno == test_cases[i].exp_errno) {
+						tst_resm(TINFO|TTERRNO,
+							"called add_key() "
+							"with wrong args got "
+							"EXPECTED errno");
 					} else {
-
-						if (errno == test_cases[i].exp_errno) {
-							tst_resm(TINFO | TTERRNO,
-								"called "
-								"add_key() "
-								"with wrong "
-								"args got "
-								"EXPECTED "
-								"errno");
-							succeed++;
-						} else {
-							tst_resm(TINFO | TTERRNO,
-								"called "
-								"add_key() "
-								"with wrong "
-								"args got "
-								"UNEXPECTED "
-								"errno");
-							fail++;
-						}
-
+						tst_resm(TFAIL|TTERRNO,
+							"called add_key() "
+							"with wrong args got "
+							"UNEXPECTED errno");
 					}
 
 				}
 
 			}
-	
-			if (fail != 0) {
-			 	tst_resm(TFAIL | TTERRNO, "%s failed", TCID);
-			} else {
-				tst_resm(TPASS, "add_key call succeeded");
-			}
 
 		}
 
-		cleanup();
+	}
 
-	}	
+	cleanup();
 	tst_exit();
 }

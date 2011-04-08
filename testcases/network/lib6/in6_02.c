@@ -70,7 +70,6 @@ struct {
 #define I2N_RNDCOUNT	10	/* random ints */
 #define I2N_LOWCOUNT	10	/* sequential from 0 */
 
-extern int Tst_count;
 
 int TST_TOTAL = N2I_COUNT;
 
@@ -83,14 +82,13 @@ main(int argc, char *argv[])
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(argc, argv, (option_t *)NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	msg = parse_opts(argc, argv, NULL, NULL);
+	if (msg != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
 		n2itest();
 		i2ntest();
@@ -98,10 +96,8 @@ main(int argc, char *argv[])
 	}
 	cleanup();
 
-	/* NOTREACHED */
 	return(0);
-}	/* End main */
-
+}
 
 /* if_nametoindex tests */
 
@@ -297,6 +293,5 @@ void
 cleanup(void)
 {
 	TEST_CLEANUP;
-	tst_exit();
-}
 
+}

@@ -108,7 +108,6 @@ void *workerthread(void *arg)
 	return NULL;
 }
 
-
 void *sleeperthread(void *arg)
 {
 	struct thread* pthr = (struct thread* )arg;
@@ -181,7 +180,7 @@ int main(int argc,char* argv[])
 
 	/* Start sleeper threads */
 	for (i=0; i<NUMSLEEP; i++) {
-		if ((create_other_thread (sleeperthread, (void *)(intptr_t)i)) < 0 ) {
+		if ((create_other_thread (sleeperthread, (void *)(intptr_t)i)) < 0) {
 			exit(1);
 		}
 	}
@@ -189,7 +188,7 @@ int main(int argc,char* argv[])
 
 	/* Start worker threads */
 	for (i=0; i<NUMWORK; i++) {
-		if ((create_other_thread (workerthread, (void *)(intptr_t)i)) < 0 ) {
+		if ((create_other_thread (workerthread, (void *)(intptr_t)i)) < 0) {
 			exit(1);
 		}
 	}

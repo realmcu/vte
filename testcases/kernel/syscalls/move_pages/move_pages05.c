@@ -56,8 +56,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <errno.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 #include "move_pages_support.h"
 
 #define SHARED_PAGE 0
@@ -79,7 +79,6 @@ void cleanup(void);
 
 char *TCID = "move_pages05";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 /*
  * child() - touches pages, and waits for signal from parent.
@@ -112,11 +111,11 @@ int main(int argc, char **argv)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
+	msg = parse_opts(argc, argv, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
-		/* NOTREACHED */
+
 	}
 
 	setup();
@@ -207,9 +206,8 @@ int main(int argc, char **argv)
 #endif
 
 	cleanup();
-	/* NOT REACHED */
 
-	return 0;
+	tst_exit();
 }
 
 /*
@@ -217,7 +215,7 @@ int main(int argc, char **argv)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	check_config(N_TEST_NODES);
@@ -239,6 +237,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

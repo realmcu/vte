@@ -78,8 +78,7 @@
 
 char *TCID = "alarm05";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-int almreceived = 0;		/* flag to indicate SIGALRM received or not */
+int alarms_received = 0;		/* flag to indicate SIGALRM received or not */
 
 void setup();			/* Main setup function of test */
 void cleanup();			/* cleanup function for the test */
@@ -96,24 +95,21 @@ int main(int ac, char **av)
 	int sleep_time1 = 3;	/* waiting time for the signal */
 	int sleep_time2 = 6;	/* waiting time for the signal */
 
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
-		/* Reset almreceived for every iteration, since it has
+		/*
+		 * Reset alarms_received for every iteration, since it has
 		 * old values from previous iterations (if any) and not
-		 * a value of zero */
-		almreceived = 0;
+		 * a value of zero
+		 */
+		alarms_received = 0;
 
 		/*
 		 * Call First alarm() with non-zero time parameter
@@ -140,10 +136,10 @@ int main(int ac, char **av)
 		 * the amount of time previously remaining in the
 		 * alarm clock of the calling process, and
 		 * sigproc() executed when SIGALRM received by the
-		 * process, the variable almreceived is set.
+		 * process, the variable alarms_received is set.
 		 */
 		if (STD_FUNCTIONAL_TEST) {
-			if ((almreceived == 1) &&
+			if ((alarms_received == 1) &&
 			    (ret_val2 == (time_sec1 - sleep_time1))) {
 
 				/*
@@ -153,29 +149,26 @@ int main(int ac, char **av)
 				TEST(alarm(0));
 				ret_val3 = TEST_RETURN;
 
-				if (ret_val3 != 0) {
+				if (ret_val3 != 0)
 					tst_resm(TFAIL, "System did not "
 						 "clean up delivered " "alarm");
-				} else {
+				else {
 					tst_resm(TPASS, "Functionality of "
 						 "alarm(%u) successful",
 						 time_sec2);
 				}
-			} else {
+			} else
 				tst_resm(TFAIL, "alarm(%u) fails, returned %d, "
-					 "almreceived:%d",
-					 time_sec2, ret_val2, almreceived);
-			}
-		} else {
+					 "alarms_received:%d",
+					 time_sec2, ret_val2, alarms_received);
+		} else
 			tst_resm(TPASS, "call succeeded");
-		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	return 0;
- /*NOTREACHED*/}
+	tst_exit();
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -183,10 +176,9 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Set the signal catching function */
@@ -204,7 +196,7 @@ void setup()
  */
 void sigproc(int sig)
 {
-	almreceived = almreceived + 1;
+	alarms_received++;
 }
 
 /*
@@ -219,7 +211,4 @@ void cleanup()
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

@@ -59,15 +59,12 @@ ltp_clone(unsigned long clone_flags, int (*fn)(void *arg), void *arg,
 	ret = clone(fn, stack, clone_flags, arg);
 #elif defined(__ia64__)
 	ret = clone2(fn, stack, stack_size, clone_flags, arg, NULL, NULL, NULL);
-#elif defined(__arm__)
+#else
 	/*
-	 * Stack size should be a multiple of 32 bit words
-	 * & stack limit must be aligned to a 32 bit boundary
+	 * For archs where stack grows downwards, stack points to the topmost
+	 * address of the memory space set up for the child stack.
 	 */
 	ret = clone(fn, (stack ? stack + stack_size : NULL),
-			clone_flags, arg);
-#else
-	ret = clone(fn, (stack ? stack + stack_size - 1 : NULL),
 			clone_flags, arg);
 #endif
 
@@ -82,11 +79,11 @@ int
 ltp_clone_malloc(unsigned long clone_flags, int (*fn)(void *arg), void *arg,
 		size_t stack_size)
 {
+	void *stack;
 	int ret;
-	void *stack = malloc(stack_size);
 	int saved_errno;
 
-	if (!stack)
+	if ((stack = malloc(stack_size)) == NULL)
 		return -1;
 
 	ret = ltp_clone(clone_flags, fn, arg, stack_size, stack);

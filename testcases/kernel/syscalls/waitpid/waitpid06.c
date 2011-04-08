@@ -49,8 +49,8 @@
 #include <signal.h>
 #include <errno.h>
 #include <sys/wait.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 void setup_sigint(void);
 void do_child_1(void);
@@ -64,7 +64,6 @@ void inthandlr();
 void do_exit();
 int flag = 0;
 
-extern int Tst_count;
 
 #define	FAILED	1
 #define	MAXKIDS	8
@@ -83,11 +82,11 @@ int main(int argc, char **argv)
 	int status;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
+
+	 }
 #ifdef UCLINUX
 	argv0 = argv[0];
 
@@ -97,7 +96,6 @@ int main(int argc, char **argv)
 
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -134,7 +132,7 @@ int main(int argc, char **argv)
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -180,7 +178,7 @@ void do_child_1(void)
 #else
 			do_exit();
 #endif
-		 /*NOTREACHED*/} else if (ret_val < 0) {
+		 } else if (ret_val < 0) {
 			tst_resm(TFAIL, "Fork kid %d failed. "
 				 "errno = %d", kid_count, errno);
 			exit(ret_val);
@@ -313,9 +311,7 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }
 
 void inthandlr()
 {

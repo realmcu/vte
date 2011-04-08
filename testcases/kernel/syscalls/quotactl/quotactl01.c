@@ -66,8 +66,6 @@
 #include "linux_syscall_numbers.h"
 
 /* Extern Global Variables */
-extern int Tst_count;		   	/* counter for tst_xxx routines.	*/
-extern char *TESTDIR;		  	/* temporary dir created by tst_tmpdir()*/
 
 /* Global Variables */
 char *TCID = "quotactl01";		/* Test program identifier.		*/
@@ -110,7 +108,6 @@ struct dqblk dq;
 extern void cleanup()
 {
 
-	/* Remove tmp dir and all files in it */
 	TEST_CLEANUP;
 	tst_rmdir();
 
@@ -120,9 +117,6 @@ extern void cleanup()
 				"failed to disable the quota on %s", block_dev);
 		}
 	}
-
-	/* Exit with appropriate return code. */
-	tst_exit();
 
 }
 
@@ -150,11 +144,11 @@ void setup() {
 	/* Create temporary directories */
 
 	if (geteuid() != 0) {
-		tst_brkm(TCONF, tst_exit,
+		tst_brkm(TCONF, NULL,
 			"You must be root in order to execute this test");
 	}
 	if ((quota_loc = malloc(FILENAME_MAX)) == NULL) {
-		tst_brkm(TCONF | TERRNO, tst_exit,
+		tst_brkm(TCONF | TERRNO, NULL,
 			"couldn't allocate memory for the quota loc buffer");
 	}
 
@@ -164,7 +158,7 @@ void setup() {
 	snprintf(quota_loc, FILENAME_MAX, "%s/%s", mountpoint, quota_file);
 
 	if (QUOTACTL(Q_QUOTAON, quota_loc) != 0) {
-		
+
 		if (errno == ENOENT) {
 			tst_brkm(TCONF, cleanup,
 				"quota file - %s - doesn't exist (is the name "
@@ -234,19 +228,18 @@ main(int ac, char **av)
 
 	/* parse standard options */
 	if ((msg = parse_opts(ac, av, (option_t*) opts, NULL)) != (char*)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
 
 		Tst_count = 0;
 
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
 
-			for (i = 0; i <= sizeof(cmd)/sizeof(cmd[0]); i++){
+			for (i = 0; i <= sizeof(cmd)/sizeof(cmd[0]); i++) {
 
 				ret = QUOTACTL(cmd[i], &dq);
 				if (ret != 0) {
@@ -269,7 +262,7 @@ main(int ac, char **av)
 
 		}
 
-	}	
+	}
 
 	cleanup();
 

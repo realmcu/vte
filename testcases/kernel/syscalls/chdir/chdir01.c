@@ -56,10 +56,10 @@
 #include<sys/stat.h>
 #include "test.h"
 #include "usctest.h"
+#include "safe_macros.h"
 
 char *TCID = "chdir01";		/* Test program identifier */
 int TST_TOTAL = 1;		/* Total number of test cases */
-extern int Tst_count;		/* Test case counter */
 
 int exp_enos[] = { ENOTDIR, 0 };
 
@@ -72,7 +72,7 @@ char testdir[40] = "";
 int main(int ac, char **av)
 {
 	DIR *ddir, *opendir();
-	int fd, ret;
+	int fd;
 	char *filname = "chdirtest";
 	char *filenames[3];
 
@@ -80,118 +80,89 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	setup();		/* global setup */
+	setup();
 
-	/* set up expected errnos */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
-		if ((ret = chdir(testdir)) != 0) {
-			tst_brkm(TBROK|TERRNO, cleanup, "chdir(%s) failed", testdir);
-		 /*NOTREACHED*/}
-		if ((fd = creat(filname, 0000)) == -1) {
-			tst_brkm(TBROK|TERRNO, cleanup, "creat(%s) failed", filname);
-		 /*NOTREACHED*/}
-		if ((ddir = opendir(".")) == NULL) {
+		SAFE_CHDIR(cleanup, testdir);
+
+		fd = SAFE_CREAT(cleanup, filname, 0000);
+		SAFE_CLOSE(cleanup, fd);
+		if ((ddir = opendir(".")) == NULL)
 			tst_brkm(TBROK|TERRNO, cleanup, "opendir(.) failed");
-		 /*NOTREACHED*/}
 
 		filenames[0] = ".";
 		filenames[1] = "..";
 		filenames[2] = filname;
-		checknames(filenames, 3, ddir);
+		checknames(filenames, sizeof(filenames) / sizeof(filenames[0]),
+		    ddir);
+		closedir(ddir);
 
 		TEST(chdir(filname));
 
-		if (TEST_RETURN != -1) {
-			tst_resm(TFAIL, "call succeeded on expected fail");
-		} else if (TEST_ERRNO != ENOTDIR) {
-			tst_resm(TFAIL|TTERRNO, "received unexpected errno (wanted ENOTDIR)");
-		} else {
-			TEST_ERROR_LOG(TEST_ERRNO);
-			tst_resm(TPASS|TTERRNO, "received expected error");
-		}
+		if (TEST_RETURN != -1)
+			tst_resm(TFAIL, "call succeeded unexpectedly");
+		else if (TEST_ERRNO != ENOTDIR)
+			tst_resm(TFAIL|TTERRNO,
+			    "failed unexpectedly; wanted ENOTDIR");
+		else
+			tst_resm(TPASS,
+			    "failed as expected with ENOTDIR");
 
-		/* reset things in case we are looping */
+		if (unlink(filname) == -1)
+			tst_brkm(TBROK|TERRNO, cleanup, "Couldn't remove file");
 
-		/* remove created file */
-		if (unlink(filname) == -1) {
-			tst_brkm(TBROK, cleanup, "Couldn't remove file");
-		}
-
-		/* cd back to starting directory */
-		chdir("..");
+		SAFE_CHDIR(cleanup, "..");
 
 	}
-	close(fd);
 	cleanup();
 
-	return 0;
- /*NOTREACHED*/}
+	tst_exit();
 
-/*
- * setup() - performs all ONE TIME setup for this test
- */
+}
+
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	umask(0);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temporary directory and cd to it */
 	tst_tmpdir();
 
 	sprintf(testdir, "Testdir.%d", getpid());
 
-	if (mkdir(testdir, 0700) == -1) {
-		tst_brkm(TBROK|TERRNO, cleanup, "mkdir(%s) failed", testdir);
-	}
+	SAFE_MKDIR(cleanup, testdir, 0700);
 }
 
-/*
- * cleanup() - performs all the ONE TIME cleanup for this test at
- *	       completion or premature exit.
- */
 void cleanup(void)
 {
-	/*
-	 * print timing status if that option was specified
-	 * print errno log if that option was specified
-	 */
 	TEST_CLEANUP;
 
-	/* Delete the test directory created in setup(). */
 	tst_rmdir();
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
 
-void checknames(pfilnames, fnamecount, ddir)
-char **pfilnames;
-int fnamecount;
-DIR *ddir;
+void checknames(char **pfilnames, int fnamecount, DIR *ddir)
 {
 	struct dirent *dir;
 	int i, found;
 
 	found = 0;
-	while ((dir = readdir(ddir)) != (struct dirent *)0) {
+	while ((dir = readdir(ddir)) != NULL) {
 		for (i = 0; i < fnamecount; i++) {
-			/* if dir->d_name is not null terminated it is a bug anyway */
+			/* 
+			 * if dir->d_name is not null terminated it is a bug
+			 * anyway
+			 */
 			if (strcmp(pfilnames[i], dir->d_name) == 0) {
 				tst_resm(TINFO, "Found file %s", dir->d_name);
 				found++;

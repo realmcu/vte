@@ -99,7 +99,7 @@ creat03 creat03
 creat04 creat04
 creat05 creat05
 creat06 creat06
-creat07 creat07 -F $LTPROOT/testcases/bin/test1
+creat07 creat07
 creat08 creat08
 creat09 creat09
 
@@ -274,6 +274,7 @@ fork08 fork08
 fork09 fork09
 fork10 fork10
 fork11 fork11
+fork13 fork13 -c 2 -i 1000000
 
 fpathconf01 fpathconf01
 
@@ -462,10 +463,8 @@ kill12 kill12
 
 lchown01 lchown01
 lchown01_16 lchown01_16
-lchown02 prep_create_link; lchown02
-lchown02_16 prep_create_link; lchown02_16
-
-libevent01 export LTPROOT; $LTPROOT/testcases/bin/libevent/run_libevent.sh
+lchown02  lchown02
+lchown02_16 lchown02_16
 
 link01 symlink01 -T link01
 link02 link02
@@ -525,7 +524,7 @@ mkdir08 mkdir08
 mkdir09 mkdir09
 
 #mkdirat test cases
-mkdirat01 mkdir01
+mkdirat01 mkdirat01
 
 mknod01 mknod01
 mknod02 mknod02
@@ -542,6 +541,8 @@ mknodat01 cd $LTPROOT/testcases/bin && chown root mknodat01 && chmod 04755 mknod
 
 mlock01 mlock01
 mlock02 mlock02
+mlock03 mlock03 -i 20
+mlock04 mlock04
 
 qmm01 mmap001 -m 1
 mmap01 mmap01
@@ -553,6 +554,7 @@ mmap06 mmap06
 mmap07 mmap07
 mmap08 mmap08
 mmap09 mmap09
+mmap11 mmap11 -i 30000
 
 modify_ldt01 modify_ldt01
 modify_ldt02 modify_ldt02
@@ -740,6 +742,11 @@ pwrite02 pwrite02
 pwrite03 pwrite03
 pwrite04 pwrite04
 
+pwrite01_64 pwrite01_64
+pwrite02_64 pwrite02_64
+pwrite03_64 pwrite03_64
+pwrite04_64 pwrite04_64
+
 quotactl01 quotactl01
 
 read01 read01
@@ -754,7 +761,7 @@ readlink01A symlink01 -T readlink01
 readlink01 readlink01
 readlink02 readlink02
 readlink03 readlink03
-readlink04 cp -f $LTPROOT/testcases/bin/creat_slink $TMP; readlink04
+readlink04 cp -f $LTPROOT/testcases/bin/creat_slink $TMPDIR; readlink04
 
 #readlinkat test cases
 readlinkat01 readlinkat01
@@ -1286,4 +1293,3 @@ writev03 writev03
 writev04 writev04
 writev05 writev05
 writev06 writev06
-

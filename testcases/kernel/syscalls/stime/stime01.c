@@ -81,11 +81,10 @@
 
 #define INCR_TIME	30	/* increment in the system's current time */
 
-#define BASH_CLOCK	
+#define BASH_CLOCK
 
 char *TCID = "stime01";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 struct timeval real_time_tv, pres_time_tv;
 time_t new_time;		/* system's new time */
 int exp_enos[] = { 0 };
@@ -99,19 +98,17 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
 
-	/* Perform global setup for test */
+	 }
+
 	setup();
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/*
@@ -127,14 +124,13 @@ int main(int ac, char **av)
 		 * to as far as clock skew is concerned :P.
 		 */
 		if (gettimeofday(&real_time_tv, NULL) < 0) {
-			tst_brkm(TBROK|TERRNO, tst_exit,
+			tst_brkm(TBROK|TERRNO, NULL,
 				"failed to get current time via gettimeofday(2)");
 		}
 
 		/* Get the system's new time */
 		new_time = real_time_tv.tv_sec + INCR_TIME;
 
-		/* Reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/*
@@ -191,11 +187,12 @@ int main(int ac, char **av)
 
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
 	cleanup();
-	return 0;
-}				/* End main */
+	tst_exit();
+
+}
 
 /*
  * void
@@ -207,14 +204,13 @@ void setup()
 
 	/* Check that the test process id is super/root  */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit,
+		tst_brkm(TBROK, NULL,
 			"you must be root to execute this test!");
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}				/* End setup() */
+}
 
 /*
  * void
@@ -236,6 +232,4 @@ void cleanup()
 					 "fixed manually");
 	}
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

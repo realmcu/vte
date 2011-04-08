@@ -83,7 +83,6 @@ static void cleanup();
 
 char *TCID = "sched_setparam05";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static struct sched_param param = { 0 };
 static int exp_enos[] = { EPERM, 0 };
@@ -99,18 +98,13 @@ int main(int ac, char **av)
 	pid_t child_pid;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		switch (child_pid = FORK_OR_VFORK()) {
@@ -125,7 +119,7 @@ int main(int ac, char **av)
 
 			/* Switch to nobody user */
 			if ((ltpuser = getpwnam(nobody_uid)) == NULL) {
-				tst_brkm(TBROK, tst_exit, "\"nobody\" user"
+				tst_brkm(TBROK, NULL, "\"nobody\" user"
 					 "not present");
 			}
 			if (seteuid(ltpuser->pw_uid) == -1) {
@@ -163,34 +157,26 @@ int main(int ac, char **av)
 				tst_resm(TFAIL, "Test Failed");
 			}
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* cleanup and exit */
 	cleanup();
-
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
+	tst_exit();
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
 
-	/* Check whether we are root */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
-	}
+	tst_require_root(NULL);
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}				/* End setup() */
+}
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
@@ -204,7 +190,4 @@ void cleanup()
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

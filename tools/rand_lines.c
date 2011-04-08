@@ -44,7 +44,7 @@
  *
  *    AUTHOR            : Richard Logan
  *
- *    CO-PILOT(s)       : 
+ *    CO-PILOT(s)       :
  *
  *    DATE STARTED      : 05/94
  *
@@ -59,11 +59,11 @@
  *		-l option.  Using this option, will give you the best
  *		randomization, but it requires processing
  *		the file an additional time.
- *		       
+ *
  *       -l numlines : This option specifies to randomize file in
  *		numlines chucks.  The default size is 4096.
  *
- *       -S seed     : sets randomization seed to seed. 
+ *       -S seed     : sets randomization seed to seed.
  *		The default is time(0).  If seed is zero, time(0) is used.
  *
  *	 file   A readable, seekable filename.  The cmd allows the user
@@ -88,7 +88,7 @@
  *      ----------------------------------------------------------------
  *	rrl 	    Creatation of program
  *	rrl  06/02  Fixed bug and some cleanup. Changed default chunk
- *	            and line size to 4096 characters. 
+ *	            and line size to 4096 characters.
  *
  *    BUGS/LIMITATIONS
  *	This program can not deal with non-seekable file like
@@ -98,12 +98,13 @@
  *
  **************************************************************/
 
-#include <unistd.h>
+#include <err.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "random_range.h"
 
@@ -149,21 +150,21 @@ char **argv;
     else
 	Progname++;
 
-    while ((c = getopt (argc, argv, "hgS:l:")) != EOF){
+    while ((c = getopt (argc, argv, "hgS:l:")) != EOF) {
 	switch(c) {
 	case 'h':
 	    help();
 	    exit(0);
 	    break;
 	case 'S':	/* seed */
-	    if ( sscanf(optarg, "%li", &seed) != 1 ) {
+	    if (sscanf(optarg, "%li", &seed) != 1) {
 		fprintf(stderr, "%s: --S option argument is invalid\n", Progname);
 		exit(1);
 	    }
 	    break;
 
 	case 'l':	/* number of lines */
-	    if ( sscanf(optarg, "%i", &lsize) != 1 ) {
+	    if (sscanf(optarg, "%i", &lsize) != 1) {
 		fprintf(stderr, "%s: --s option argument is invalid\n", Progname);
 		exit(1);
 	    }
@@ -180,17 +181,17 @@ char **argv;
 	}
     }
 
-    if ( optind + 1 != argc ) {
+    if (optind + 1 != argc) {
 	fprintf(stderr, "%s: Missing argument.\n", Progname);
 	usage(stderr);
 	exit(1);
     }
 
-    if ( seed == -1 ) {
+    if (seed == -1) {
 	seed = time(0);
     }
-    
-    if ( strcmp(argv[argc-1],"-") == 0 ) {
+
+    if (strcmp(argv[argc-1],"-") == 0) {
 	infile = stdin;
 	fprintf(stderr, "%s: Can not support stdin processing.\n",
 	    Progname);
@@ -204,7 +205,7 @@ char **argv;
 	    exit(1);
 	}
 
-        if ( getfilelines ) {
+        if (getfilelines) {
 	    lsize=get_numlines(infile);
 	}
 
@@ -253,7 +254,7 @@ FILE *infile;
     char line[MAX_LN_SZ];		/* max size of a line */
     int cnt=0;
 
-    while ( fgets(line, MAX_LN_SZ, infile) != NULL ) {
+    while (fgets(line, MAX_LN_SZ, infile) != NULL) {
 	cnt++;
     }
 
@@ -287,7 +288,7 @@ long seed;
     struct offset_t *offsets;
     int memsize;
 
-    if ( numlines <= 0 ) {	/*use default */
+    if (numlines <= 0) {	/*use default */
 	numlines = DEF_SIZE;
     }
 
@@ -297,7 +298,7 @@ long seed;
      */
     memsize = sizeof(struct offset_t)*numlines;
 
-    if ((offsets=(struct offset_t *)malloc(memsize)) == NULL ) {
+    if ((offsets=(struct offset_t *)malloc(memsize)) == NULL) {
 	fprintf(stderr, "Unable to malloc(%d): errno:%d\n", memsize, errno);
 	return -1;
     }
@@ -306,7 +307,7 @@ long seed;
 
     coffset=0;
 
-    while ( ! feof(infile) ) {
+    while (! feof(infile)) {
 
         fseek(infile, coffset, SEEK_SET);
         coffset=ftell(infile);
@@ -318,9 +319,9 @@ long seed;
 	 * into offsets array.  Only numlines line can be randomized
 	 * at a time.
 	 */
-        while ( cnt < numlines && fgets(line, MAX_LN_SZ, infile) != NULL ) {
+        while (cnt < numlines && fgets(line, MAX_LN_SZ, infile) != NULL) {
 
-	    if ( rnd_insert(offsets, coffset, numlines) < 0 ) {
+	    if (rnd_insert(offsets, coffset, numlines) < 0) {
 	      fprintf(stderr, "%s:%d rnd_insert() returned -1 (fatal error)!\n",
 		  __FILE__, __LINE__);
 	      abort();
@@ -330,7 +331,7 @@ long seed;
 	    coffset=ftell(infile);
         }
 
-        if ( cnt == 0 ) {
+        if (cnt == 0) {
 	    continue;
         }
 
@@ -339,9 +340,10 @@ long seed;
          */
         for (cnt=0; cnt<numlines; cnt++) {
 
-	    if ( offsets[cnt].used ) {
+	    if (offsets[cnt].used) {
 	        fseek(infile, offsets[cnt].offset, SEEK_SET);
-	        fgets(line, MAX_LN_SZ, infile);
+	        if (fgets(line, MAX_LN_SZ, infile) == NULL)
+		    err(1, "fgets");
 	        fputs(line, stdout);
 	    }
         }
@@ -372,11 +374,11 @@ int size;
      * Loop looking for random unused index.
      * It will only be attempted 75 times.
      */
-    while ( quick < 75 ) {
+    while (quick < 75) {
 
 	rand_num=random_range(0, size-1, 1, NULL);
 
-	if ( ! offsets[rand_num].used ) {
+	if (! offsets[rand_num].used) {
 	    offsets[rand_num].offset=offset;
 	    offsets[rand_num].used++;
 	    return rand_num;
@@ -388,10 +390,10 @@ int size;
      * an randomly choosen index was not found, find
      * first open index and use it.
      */
-    for (ind=0; ind < size && offsets[ind].used != 0; ind++) 
+    for (ind=0; ind < size && offsets[ind].used != 0; ind++)
       ; /* do nothing */
 
-    if ( ind >= size ) {
+    if (ind >= size) {
       /*
        * If called with an array where all offsets are used,
        * we won't be able to find an open array location.
@@ -444,14 +446,14 @@ long seed;
     int memsize;			/* amount of offset space to malloc */
     int newbuffer = 1;			/* need new buffer */
 
-    if ( numlines <= 0 ) {		/*use default */
+    if (numlines <= 0) {		/*use default */
 	numlines = DEF_SIZE;
     }
 
     /*
      * Malloc space for file contents
      */
-    if ((buffer=(char *)malloc(space)) == NULL ) {
+    if ((buffer=(char *)malloc(space)) == NULL) {
 	fprintf(stderr, "Unable to malloc(%d): errno:%d\n", space, errno);
 	return -1;
     }
@@ -462,7 +464,7 @@ long seed;
      */
     memsize = sizeof(struct offset_t)*numlines;
 
-    if ((offsets=(struct offset_t *)malloc(memsize)) == NULL ) {
+    if ((offsets=(struct offset_t *)malloc(memsize)) == NULL) {
 	fprintf(stderr, "Unable to malloc(%d): errno:%d\n", memsize, errno);
 	return -1;
     }
@@ -475,7 +477,7 @@ long seed;
      *  Loop until read doesn't read anything
      *  If last line does not end in newline, it is not printed
      */
-    while ( loopcntl ) {
+    while (loopcntl) {
         /*
          *  read in file up to space size
 	 *  only works if used as filter.
@@ -484,7 +486,7 @@ long seed;
          */
 
         chr = buffer;
-        if ((rdsz=fread((void *)rdbuff, sztord, 1, infile)) == 0 ) {
+        if ((rdsz=fread((void *)rdbuff, sztord, 1, infile)) == 0) {
 	    fprintf(stderr, "input file is empty, done randomizing\n");
 	    loopcntl=0;
 	    return 0;
@@ -494,14 +496,14 @@ long seed;
 
         loffset= (long)buffer;
 
-	while ( ! newbuffer ) {
+	while (! newbuffer) {
 
-            while ( (long)chr < stopaddr && *chr != '\n' )
+            while ((long)chr < stopaddr && *chr != '\n')
 	        chr++;
 
 	    chr++;
 
-	    if ( (long)chr >= stopaddr ) {
+	    if ((long)chr >= stopaddr) {
 
 	        fprintf(stderr, "end of read in buffer\n");
 
@@ -510,15 +512,15 @@ long seed;
 		 */
 		for (cnt=0; cnt<numlines; cnt++) {
 
-		    if ( offsets[cnt].used ) {
+		    if (offsets[cnt].used) {
 			ptr = (char *)offsets[cnt].offset;
 			/*
 			 * copy buffer characters into line for printing
 			 */
 			lptr = line;
-			while ( *ptr != '\n' ) 
+			while (*ptr != '\n')
 			    *lptr++ = *ptr++;
-				
+
 			printf("%s\n", line);
 		    }
 		}
@@ -534,7 +536,7 @@ long seed;
 	        newbuffer++;
 	    }
 
-	    if ( rnd_insert(offsets, loffset, numlines) < 0 ) {
+	    if (rnd_insert(offsets, loffset, numlines) < 0) {
 	      fprintf(stderr, "%s:%d rnd_insert() returned -1 (fatal error)!\n",
 		  __FILE__, __LINE__);
 	      abort();
@@ -547,4 +549,3 @@ long seed;
     return 0;
 
 }
-

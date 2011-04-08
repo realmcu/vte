@@ -103,11 +103,11 @@ int main(int argc, char *argv[])
 	char *msg;
 
 	if (ARRAY_SIZE(regs) == 0)
-		tst_brkm(TCONF, tst_exit,
+		tst_brkm(TCONF, NULL,
 			"test not supported for your arch (yet)");
 
 	if ((msg = parse_opts(argc, argv, NULL, NULL)))
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	make_a_baby(argc, argv);
 
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
 	errno = 0;
 	if (ptrace(PTRACE_SYSCALL, pid, NULL, NULL) && errno) {
 		tst_resm(TFAIL, "PTRACE_SYSCALL failed: %s", strerror(errno));
-		return 0;
+		tst_exit();
 	}
 	compare_registers(0x00);
 	compare_registers(0xff);
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 	/* hopefully this worked */
 	ptrace(PTRACE_KILL, pid, NULL, NULL);
 
-	return 0;
+	tst_exit();
 }
 
 static void cleanup() { }

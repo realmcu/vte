@@ -43,7 +43,6 @@
 
 char *TCID = "dup07";
 int TST_TOTAL = 1;
-extern int Tst_count;
 int local_flag;
 
 #define PASSED 1
@@ -67,10 +66,10 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_resm(TBROK, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
-	 /*NOTREACHED*/}
+	 }
 
 	local_flag = PASSED;
 
@@ -161,5 +160,5 @@ int main(int ac, char **av)
 
 		tst_exit();
 	}			/* end for */
-	return 0;
+	tst_exit();
 }

@@ -18,7 +18,6 @@
 /*                                                                            */
 /******************************************************************************/
 
-
 /*
  * File:
  *	ns-mcast_join.c
@@ -80,7 +79,6 @@ size_t join_leave_times;	/* If non-zero, join-leave mode */
 char *mcast_addr;		/* multicast address to join/leave */
 struct timespec interval;	/* interval for join-leave mode */
 
-
 /*
  * Function: usage()
  *
@@ -129,7 +127,6 @@ usage (char *program_name, int exit_value)
     exit (exit_value);
 }
 
-
 /*
  * Function: set_signal_flag()
  *
@@ -162,7 +159,6 @@ set_signal_flag(int type)
     }
 }
 
-
 /*
  * Function: parse_options()
  *
@@ -182,7 +178,7 @@ parse_options(int argc, char *argv[])
     int optc;			/* option */
     unsigned long opt_ul;	/* option value in unsigned long */
 
-    while ((optc = getopt(argc, argv, "f:I:p:F:s:n:ml:i:a:dh")) != EOF ) {
+    while ((optc = getopt(argc, argv, "f:I:p:F:s:n:ml:i:a:dh")) != EOF) {
 	switch (optc) {
 	    case 'f':
 		if (optarg[0] == '4') {
@@ -197,7 +193,7 @@ parse_options(int argc, char *argv[])
 		    usage(program_name, EXIT_FAILURE);
 		}
 		break;
-		
+
 	    case 'I':
 		ifindex = if_nametoindex(optarg);
 		if (ifindex == 0) {
@@ -254,7 +250,7 @@ parse_options(int argc, char *argv[])
 	    case 'm':
 		is_multi_socket = 1;
 		break;
-		
+
 	    case 'd':
 		debug = 1;
 		break;
@@ -272,7 +268,7 @@ parse_options(int argc, char *argv[])
 	fprintf(stderr, "specified interface seems incorrect\n");
 	usage(program_name, EXIT_FAILURE);
     }
-    
+
     if (saddrs) {
 	if (fmode != MCAST_EXCLUDE && fmode != MCAST_INCLUDE) {
 	    fprintf(stderr, "filter mode is wrong\n");
@@ -280,7 +276,6 @@ parse_options(int argc, char *argv[])
 	}
     }
 }
-
 
 /*
  * Function: join_group()
@@ -327,7 +322,7 @@ join_group(void)
 		break;
 	    }
 	}
-    
+
 	if (! is_multi_socket)
 	    maximize_sockbuf(sock_array[idx]);
     }
@@ -339,7 +334,7 @@ join_group(void)
 	    fprintf(stderr, "multicast address is %s\n", maddr);
     }
 
-    for(idx = 0; idx < num_group; idx++) {
+    for (idx = 0; idx < num_group; idx++) {
 	if (is_multi_socket)
 	    sd = sock_array[idx];
 
@@ -416,11 +411,10 @@ join_group(void)
     if (sigaction(SIGHUP, &handler, NULL) < 0)
 	fatal_error("sigfillset()");
 
-    for(;;)
+    for (;;)
 	if (catch_sighup)
 	    break;
 }
-
 
 /*
  * Function: join_leave_group()
@@ -459,19 +453,19 @@ join_leave_group(void)
     if (sigaction(SIGHUP, &handler, NULL) < 0)
 	fatal_error("sigfillset()");
 
-    for(cnt = 0; cnt < join_leave_times ; cnt++) {
+    for (cnt = 0; cnt < join_leave_times ; cnt++) {
 	/* Join */
 	if (setsockopt(sd, level, MCAST_JOIN_GROUP, grp_info,
 		    sizeof(struct group_req)) == -1)
 	    fatal_error("setsockopt(): Failed to join a group");
 
-	if(gsf)
+	if (gsf)
 	    if (setsockopt(sd, level, MCAST_MSFILTER, gsf,
 			GROUP_FILTER_SIZE(gsf->gf_numsrc)) == -1)
 		fatal_error("setsockopt(): Failed to add a group filter");
 
 	nanosleep(&interval, NULL);
-	
+
 	/* Leave */
 	if (setsockopt(sd, level, MCAST_LEAVE_GROUP, grp_info,
 		    sizeof(struct group_req)) == -1)
@@ -484,11 +478,10 @@ join_leave_group(void)
     }
 
     free(grp_info);
-    if(gsf)
+    if (gsf)
 	free(gsf);
     freeaddrinfo(maddr_info);
 }
-
 
 /*
  *
@@ -502,7 +495,7 @@ main(int argc, char *argv[])
     program_name = strdup(argv[0]);
 
     parse_options(argc, argv);
-    
+
     if (! join_leave_times) {
 	if (mcast_prefix == NULL && mcast_addr == NULL) {
 	    fprintf(stderr, "multicast address is not specified\n");

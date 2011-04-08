@@ -91,7 +91,6 @@ int exp_enos[] = { EAGAIN, 0 };
 
 char *TCID = "fcntl22";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void setup(void);
 void cleanup(void);
@@ -103,8 +102,8 @@ int main(int ac, char **av)
 	char *test_desc;	/* test specific error message */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	/* setup */
@@ -166,7 +165,7 @@ int main(int ac, char **av)
 		}
 
 	}			/* end for */
-	return 0;
+	tst_exit();
 }
 
 /*
@@ -176,10 +175,8 @@ int main(int ac, char **av)
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Make a temp dir and cd to it */
@@ -219,9 +216,7 @@ void cleanup()
 	close(file);
 
 	TEST_CLEANUP;
-	/* remove temporary directory */
+
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

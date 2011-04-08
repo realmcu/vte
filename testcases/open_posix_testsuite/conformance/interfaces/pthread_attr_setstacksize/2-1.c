@@ -1,14 +1,14 @@
-/*   
+/*
  * Copyright (c) 2004, Intel Corporation. All rights reserved.
  * Created by:  crystal.xiong REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
 
  * Test pthread_attr_setstacksize()
- * 
+ *
  * Steps:
- * 1.  Initialize pthread_attr_t object (attr) 
+ * 1.  Initialize pthread_attr_t object (attr)
  * 2.  set stacksize to attr
  * 3.  create a thread with the attr
  * 4.  In the created thread, read stacksize
@@ -45,25 +45,21 @@ void *thread_func()
 		printf(ERROR_PREFIX "pthread_getattr_np: %s\n", strerror(rc));
 		exit(PTS_FAIL);
 	}
-	if ((rc = pthread_attr_init(&attr)) != 0) {
-		printf(ERROR_PREFIX "pthread_attr_init: %s\n", strerror(rc));
-		exit(PTS_FAIL);
-	}
 	if ((rc = pthread_attr_getstacksize(&attr, &ssize)) != 0) {
 		printf(ERROR_PREFIX "pthread_attr_getstacksize: %s\n",
 			strerror(rc));
 		exit(PTS_FAIL);
 	}
-	if (ssize != stack_size) {
-		printf(ERROR_PREFIX "stack size doesn't match expected stack "
-			"size (%u != %u)\n", ssize, stack_size);
+	if (ssize < stack_size) {
+		printf(ERROR_PREFIX "stack size is lesser than minimal "
+			"size (%u < %u)\n", ssize, stack_size);
 		exit(PTS_FAIL);
 	}
 
 	return NULL;
 }
 
-int main()
+int main(void)
 {
 	pthread_t new_th;
 	pthread_attr_t attr;
@@ -124,7 +120,7 @@ int main()
 			strerror(rc));
 		exit(PTS_UNRESOLVED);
         }
-	
+
 	printf("Test PASSED\n");
 	return PTS_PASS;
 }

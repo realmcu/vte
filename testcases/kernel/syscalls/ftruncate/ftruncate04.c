@@ -54,7 +54,7 @@
  *
  * Restrictions:
  *	The filesystem containing /tmp MUST have "mand" specified as
- *	a mount option.  This option allows the use of mandatory locks. 
+ *	a mount option.  This option allows the use of mandatory locks.
  */
 
 #include <signal.h>
@@ -76,7 +76,6 @@ char progname[] = "ftruncate04()";
 
 TCID_DEFINE(ftruncate04);
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int sync_pipes[2];
 int len = 8 * 1024;
@@ -110,7 +109,7 @@ void cleanup()
 	kill(cpid, SIGKILL);
 	unlink(filename);
 	tst_rmdir();
-	tst_exit();
+
 }
 
 void doparent()
@@ -292,10 +291,10 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_resm(TBROK, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
-		/* NOTREACHED */
+
 	}
 #ifdef UCLINUX
 	maybe_run_child(&dochild, "dddd", filename, &recstart, &reclen, &ppid);
@@ -314,7 +313,7 @@ int main(int ac, char **av)
 			 " not support mandatory locks. Cannot run this test.");
 		tst_rmdir();
 		tst_exit();
-		/* NOTREACHED */
+
 	}
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		setvbuf(stdin, 0, _IOLBF, BUFSIZ);
@@ -427,5 +426,5 @@ int main(int ac, char **av)
 		tst_rmdir();
 		tst_exit();
 	}			/* end for */
-	return 0;
+	tst_exit();
 }

@@ -9,8 +9,8 @@
  * TEST3: On a listening socket
  * TEST4: On a closed association
  * TEST5: Invalid message address
- * TEST6: send from client to server 
- * TEST7: send from server to client 
+ * TEST6: send from client to server
+ * TEST7: send from server to client
  * TEST8: sending partial data from a buffer
  *
  * The SCTP reference implementation is free software;
@@ -101,7 +101,7 @@ main(int argc, char *argv[])
         test_listen(lstn_sk, 10);
 
 	len = sizeof(struct sockaddr_in);
-	
+
 	test_connect(sk, (struct sockaddr *) &conn_addr, len);
 
 	acpt_sk = test_accept(lstn_sk, (struct sockaddr *)&svr_addr, &len);
@@ -112,15 +112,15 @@ main(int argc, char *argv[])
 	/*send () TEST1: Bad socket descriptor, EBADF Expected error*/
 	count = send(-1, message, len_snd, flag);
 	if (count != -1 || errno != EBADF)
-		tst_brkm(TBROK, tst_exit, "send with a bad socket "
+		tst_brkm(TBROK, NULL, "send with a bad socket "
 			 "descriptor count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "send() with a bad socket descriptor - EBADF");
-	
+
 	/*send () TEST2: Invalid socket, ENOTSOCK Expected error*/
 	count = send(0, message, len_snd, flag);
 	if (count != -1 || errno != ENOTSOCK)
-		tst_brkm(TBROK, tst_exit, "send with invalid socket "
+		tst_brkm(TBROK, NULL, "send with invalid socket "
 			 "count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "send() with invalid socket - ENOTSOCK");
@@ -128,7 +128,7 @@ main(int argc, char *argv[])
 	/*send () TEST3: send on listening socket, EPIPE Expected error*/
 	count = send(lstn_sk, message, len_snd, flag);
 	if (count != -1 || errno != EPIPE)
-		tst_brkm(TBROK, tst_exit, "send on a listening socket "
+		tst_brkm(TBROK, NULL, "send on a listening socket "
 			 "count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "send() on a listening socket - EPIPE");
@@ -137,14 +137,14 @@ main(int argc, char *argv[])
        /* FIXME this test should pass. Don't catch why...  */
 	count = send(sk, (char *)0x1, len_snd, flag);
 	if (count != -1 || errno != EFAULT)
-		tst_brkm(TBROK, tst_exit, "send with invalid message "
+		tst_brkm(TBROK, NULL, "send with invalid message "
 			 "pointer count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "send() with invalid message ptr - EFAULT");
 #endif
 
 	test_connect(sk1, (struct sockaddr *) &lstn_addr, len);
-		 
+
 	count = test_send(sk1, message, len_snd, flag);
 
 	close(sk1);
@@ -154,7 +154,7 @@ main(int argc, char *argv[])
 	/*send () TEST5: send on closed association, EPIPE Expected error*/
 	count = send(acpt1_sk, message, len_snd, flag);
 	if (count != -1 || errno != EPIPE)
-		tst_brkm(TBROK, tst_exit, "send on a closed association "
+		tst_brkm(TBROK, NULL, "send on a closed association "
 			 "count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "send() on a closed association - EPIPE");
@@ -184,13 +184,13 @@ main(int argc, char *argv[])
 	test_connect(sk, (struct sockaddr *) &conn_addr, len);
 
 	acpt_sk = test_accept(lstn_sk, (struct sockaddr *)&svr_addr, &len);
-	
+
 	msg_count = strlen(message) + 1;
 
 	/*send() TEST6: Sending data from client socket to server socket*/
 	count = send(sk, message, msg_count, flag);
 	if (count != msg_count)
-		tst_brkm(TBROK, tst_exit, "send from client to server "
+		tst_brkm(TBROK, NULL, "send from client to server "
                          "count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "send() from client to server - SUCCESS");
@@ -202,7 +202,7 @@ main(int argc, char *argv[])
 	/*send() TEST7: Sending data from accept socket to client socket*/
 	count = send(acpt_sk, message, msg_count, flag);
 	if (count != msg_count)
-		tst_brkm(TBROK, tst_exit, "send from accept socket to client "
+		tst_brkm(TBROK, NULL, "send from accept socket to client "
                          "count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "send() from accept socket to client - SUCCESS");
@@ -213,7 +213,7 @@ main(int argc, char *argv[])
 	/*Sending only 5 bytes so that only hello is received*/
 	test_send(sk, message, 5 , flag);
 	test_recv(acpt_sk, message_rcv, 5, flag);
-	
+
 	tst_resm(TPASS, "send() partial data from a buffer - SUCCESS");
 
 	/* TEST9: sctp_send with no sinfo */
@@ -225,5 +225,5 @@ main(int argc, char *argv[])
 	close(lstn_sk);
 	close(acpt_sk);
 
-	return 0;
+	tst_exit();
 }

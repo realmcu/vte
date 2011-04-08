@@ -40,7 +40,6 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include <malloc.h>
 #include "reporter.h"
 #include "symbol.h"
 #include "tag_report.h"
@@ -65,11 +64,11 @@ static int (*test_end_func)( SYM, SYM, SYM ) = scanner_test_end;
  * the depths of the current symbol table implimentation (there are the
  * cursors there that I could use) so that a different (faster!) symbol
  * table can be used in the future.
- * 
+ *
  * I could get a key (tag), get it's sub-keys (TCIDs), then get the key
  * again to reset to the top level, _then_ get the next key.  That would
  * be very inefficient.
- * 
+ *
  * The solution I chose is to extract all tags into a list (char array),
  * then go thru that list with the cursor free for other levels to use.
  *
@@ -77,7 +76,7 @@ static int (*test_end_func)( SYM, SYM, SYM ) = scanner_test_end;
  *  (2) search for the first tag that has a "stime" record, and use that as
  *      the date (MMDDYY) that the tests were run.
  *  (3) print the report header
- *  (4) go thru all tags and report each as described at the beginning of 
+ *  (4) go thru all tags and report each as described at the beginning of
  *      this file
  */
 static int
@@ -110,7 +109,7 @@ scanner_reporter(tags)
     tl = taglist;
     sym_seq(tags, &Key, &Data, R_FIRST);
     do {
-        if(tagcount == ntags) {
+        if (tagcount == ntags) {
             /* exceeded tag array size -- realloc */
             ntags += NTAGS_START;
             taglist= (char **)realloc(taglist, sizeof(char *) * ntags);
@@ -119,9 +118,9 @@ scanner_reporter(tags)
 
         *tl++ = Key.data;
         tagcount++;
-    } while(sym_seq(tags, &Key, &Data, R_NEXT)==0);
+    } while (sym_seq(tags, &Key, &Data, R_NEXT)==0);
 
-    if(tagcount == ntags) {
+    if (tagcount == ntags) {
         /* exceeded tag array size -- realloc */
         ntags += NTAGS_START;
         taglist= (char **)realloc(taglist, sizeof(char *) * ntags);
@@ -131,10 +130,10 @@ scanner_reporter(tags)
     *tl++ = NULL;
     ntags = tagcount;
     /* Retrieve one "stime" to get the date. */
-    for(tl=taglist; *tl != NULL; tl++) {
+    for (tl=taglist; *tl != NULL; tl++) {
         strcpy(key_get, *tl);
         strcat(key_get, ",_keys,stime");
-        if((info = (char *)sym_get(tags, key_get)) != NULL) {
+        if ((info = (char *)sym_get(tags, key_get)) != NULL) {
             clock = atoi(info);
             tm = gmtime(&clock);
             strftime(key_get, KEYSIZE, "%x", tm);
@@ -150,18 +149,18 @@ scanner_reporter(tags)
      * internals of the sym_* data structure.
      */
     /* dump 'em all */
-    for(tl=taglist; *tl != NULL; tl++) {
-        if(!strcmp(*tl, "_RTS"))
+    for (tl=taglist; *tl != NULL; tl++) {
+        if (!strcmp(*tl, "_RTS"))
             continue;
 
         strcpy(key_get, *tl);
         strcat(key_get, ",_keys");
-        if((Keys = sym_get(tags, key_get)) == NULL) {
+        if ((Keys = sym_get(tags, key_get)) == NULL) {
             return 0;
         }
 
         strcpy(key_get, *tl);
-        if((Tag = sym_get(tags, key_get)) != NULL) {
+        if ((Tag = sym_get(tags, key_get)) != NULL) {
             tag_report(NULL, Tag, Keys);
         }
     }
@@ -177,7 +176,7 @@ scanner_reporter(tags)
  * (3) insert it into the global data under this tag, replacing any existing
  *      data.
  *
- * a "feature" of the key implimentation: I can insert a key tree 
+ * a "feature" of the key implimentation: I can insert a key tree
  * under another key tree with almost zero brainwork because a SYM
  * is what the DATA area points to.
  */
@@ -192,14 +191,14 @@ scanner_test_end(alltags, ctag, keys)
     SYM rm;                     /* pointer to old tag -- to remove it */
 
 
-    if(alltags == NULL || keys == NULL || ctag == NULL)
+    if (alltags == NULL || keys == NULL || ctag == NULL)
         return -1;                       /* for really messed up test output */
 
     /* insert keys into tag */
     sym_put(ctag, "_keys", (void *)keys, 0);
 
     /* get the tag, or build a new one */
-    if((tag=(char *)sym_get(keys, "tag")) == NULL) {
+    if ((tag=(char *)sym_get(keys, "tag")) == NULL) {
         /* this is an "impossible" situation: test_output checks for this
          * and creates a dummy tag. */
         sprintf(tagname, "no_tag_%d", notag++);
@@ -212,9 +211,9 @@ scanner_test_end(alltags, ctag, keys)
      * Special case: duplicate tag that has an initiation_status failure
      * is thrown away.
      */
-    if((rm=(SYM)sym_get(alltags, tag)) != NULL) {
-        if( (status=(char *)sym_get(keys, "initiation_status")) != NULL ) {
-            if(strcmp(status, "ok")) {
+    if ((rm=(SYM)sym_get(alltags, tag)) != NULL) {
+        if ((status=(char *)sym_get(keys, "initiation_status")) != NULL) {
+            if (strcmp(status, "ok")) {
                 /* do not take new data.  remove new data */
                 sym_rm(ctag, RM_KEY | RM_DATA);
                 return 1;
@@ -247,13 +246,13 @@ static int
 iscanner_test_end(alltags, ctag, keys)
     SYM alltags, ctag, keys;
 {
-    if(alltags == NULL || keys == NULL || ctag == NULL)
+    if (alltags == NULL || keys == NULL || ctag == NULL)
         return -1;                       /* for really messed up test output */
 
     /* insert keys into tag */
     sym_put(ctag, "_keys", (void *)keys, 0);
 
-     
+
     return tag_report(alltags, ctag, keys);
 }
 

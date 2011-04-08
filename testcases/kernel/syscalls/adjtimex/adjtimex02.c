@@ -106,7 +106,6 @@ static void cleanup();
 static void cleanup6();
 
 char *TCID = "adjtimex02";	/* Test program identifier.    */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static int hz;			/* HZ from sysconf */
 
@@ -144,18 +143,13 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
@@ -196,14 +190,14 @@ int main(int ac, char **av)
 				test_cases[i].cleanup();
 			}
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
 	/* cleanup and exit */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
@@ -213,10 +207,9 @@ void setup()
 
 	/* Check whether we are root */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* set the expected errnos... */
@@ -225,18 +218,17 @@ void setup()
 	/* set the HZ from sysconf */
 	hz = sysconf(_SC_CLK_TCK);
 	if (hz == -1) {
-		tst_brkm(TBROK, tst_exit,
+		tst_brkm(TBROK, NULL,
 			 "Failed to read the HZ from sysconf\n");
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Save current parameters in tim_save */
 	if ((adjtimex(&tim_save)) == -1) {
-		tst_brkm(TBROK, tst_exit, "Failed to save current parameters");
+		tst_brkm(TBROK, NULL, "Failed to save current parameters");
 	}
-}				/* End setup() */
+}
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
@@ -255,10 +247,7 @@ void cleanup()
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}
 
 int setup2()
 {
@@ -288,7 +277,7 @@ int setup6()
 {
 	/* Switch to nobody user for correct error code collection */
 	if ((ltpuser = getpwnam(nobody_uid)) == NULL) {
-		tst_brkm(TBROK, tst_exit, "\"nobody\" user not present");
+		tst_brkm(TBROK, NULL, "\"nobody\" user not present");
 	}
 	if (seteuid(ltpuser->pw_uid) == -1) {
 		tst_resm(TWARN|TERRNO, "seteuid(%d) failed", ltpuser->pw_uid);

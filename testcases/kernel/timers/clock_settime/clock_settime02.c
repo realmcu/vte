@@ -73,11 +73,10 @@
 #include "usctest.h"
 #include "common_timers.h"
 
-static void setup();
+void setup(void);
 
 char *TCID = "clock_settime02";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 static struct timespec saved;	/* Used to reset the time */
 
 int
@@ -88,18 +87,13 @@ main(int ac, char **av)
 	struct timespec spec;	/* Used to specify time for test */
 
 	/* parse standard options */
-	if ((msg = parse_opts (ac, av, (option_t *) NULL, NULL)) !=
-			(char *) NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts (ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		spec.tv_sec = 1;
@@ -109,38 +103,36 @@ main(int ac, char **av)
 		tst_resm((TEST_RETURN < 0 ? TFAIL | TTERRNO : TPASS),
 			"clock_settime %s",
 			(TEST_RETURN == 0 ? "passed" : "failed"));
-	}		/* End for TEST_LOOPING */
+	}
 
-	/* Clean up and exit */
 	cleanup();
 	tst_exit();
 }
 
 /* setup() - performs all ONE TIME setup for this test */
-static void
-setup()
+void
+setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Check whether we are root */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 	/* Save the current time specifications */
 	if (syscall(__NR_clock_gettime, CLOCK_REALTIME, &saved) < 0)
-		tst_brkm(TBROK, tst_exit, "Could not save the current time");
+		tst_brkm(TBROK, NULL, "Could not save the current time");
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
-}	/* End setup() */
+}
 
 /*
  * cleanup() - Performs one time cleanup for this test at
  * completion or premature exit
  */
 
-static void
+void
 cleanup(void)
 {
 	/* Set the saved time */
@@ -154,4 +146,4 @@ cleanup(void)
 	* print errno log if that option was specified.
 	*/
 	TEST_CLEANUP;
-}	/* End cleanup() */
+}

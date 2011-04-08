@@ -50,7 +50,6 @@ int block_number;
 
 char *TCID="stack_space";              /* Test program identifier.    */
 int TST_TOTAL=1;                /* Total number of test cases. */
-extern int Tst_count;           /* Test Case counter for tst_* routines */
 /**************/
 
 #define MAXCHILD	100		/* max # kids */
@@ -58,7 +57,6 @@ extern int Tst_count;           /* Test Case counter for tst_* routines */
 #define K_2		2048
 #define K_4		4096
 #define MAXSIZE         10*K_1
-
 
 int	nchild;				/* # kids */
 int	csize;				/* chunk size */
@@ -80,7 +78,7 @@ int usage(char* prog)
 	tst_resm(TCONF,"Usage: %s <nchild> <chunk_size> <iterations>",prog);
         tst_resm(TCONF,"DEFAULTS: 20 1024 50");
         tst_exit();
-        return 0;
+      return 0;
 }
 
 int main(argc, argv)
@@ -89,7 +87,6 @@ int main(argc, argv)
 {
 	register int i;
 	void	term();
-
 
 	prog = argv[0];
 	parent_pid = getpid();
@@ -114,7 +111,7 @@ int main(argc, argv)
 		}
 		if (sscanf(argv[i++], "%d", &csize) != 1)
 			bd_arg(argv[i-1]);
-		if(csize > MAXSIZE) {
+		if (csize > MAXSIZE) {
 			tst_resm(TBROK,"Chunk size too large , max is %d\n", MAXSIZE);
 			tst_exit();
 		}
@@ -126,7 +123,7 @@ int main(argc, argv)
 	tst_tmpdir();
 	runtest();
 	/**NOT REACHED**/
-        return 0;
+      return 0;
 
 }
 
@@ -135,9 +132,8 @@ int bd_arg(str)
 {
 	tst_resm(TCONF,"Bad argument - %s - could not parse as number.\n", str);
         tst_exit();
-        return 0;
+      return 0;
 }
-
 
 int runtest()
 {
@@ -146,8 +142,7 @@ int runtest()
 	int	status;
 	int	count;
 
-
-	for(i = 0; i < nchild; i++) {
+	for (i = 0; i < nchild; i++) {
 		if ((child = fork()) == 0) {		/* child */
 			dotest(nchild, i);		/* do it! */
 			exit(0);			/* when done, exit */
@@ -167,7 +162,7 @@ int runtest()
 	 */
 
 	count = 0;
-	while((child = wait(&status)) > 0) {
+	while ((child = wait(&status)) > 0) {
 #ifdef DEBUG
 		tst_resm(TINFO, "\t%s[%d] exited status = 0x%x\n", prog, child, status);
 #endif
@@ -194,8 +189,7 @@ int runtest()
         tst_exit();
 
         /**NOT REACHED**/
-        return 0;
-
+      return 0;
 
 }
 
@@ -259,12 +253,12 @@ int dotest(int testers, int me)
 	bfill(mondobuf, 0, MAXSIZE);
 
 	srand(getpid());
-	while(iterations-- > 0) {
+	while (iterations-- > 0) {
 		bfill(bits, 0, (nchunks+7)/8);
 		bfill(val_buf, val, csize);
 		count = 0;
 		collide = 0;
-		while(count < nchunks) {
+		while (count < nchunks) {
 			chunk = rand() % nchunks;
 			buf = mondobuf + CHUNK(chunk);
 
@@ -312,7 +306,7 @@ int dotest(int testers, int me)
 		 * End of iteration, maybe before doing all chunks.
 		 */
 
-		for(chunk = 0; chunk < nchunks; chunk++) {
+		for (chunk = 0; chunk < nchunks; chunk++) {
 			if ((bits[chunk/8] & (1<<(chunk%8))) == 0)
 				bfill(mondobuf+CHUNK(chunk), val, csize);
 		}
@@ -333,11 +327,10 @@ int bfill(buf, val, size)
 {
 	register int i;
 
-	for(i = 0; i < size; i++)
+	for (i = 0; i < size; i++)
 		buf[i] = val;
 	return 0;
 }
-
 
 /*
  * dumpbuf
@@ -354,14 +347,14 @@ int dumpbuf(buf)
 
 #ifdef DEBUG
         tst_resm(TINFO, "Buf: ... ");
-        for(i = -10; i < 0; i++) tst_resm(TINFO, "%x, ", buf[i]);
+        for (i = -10; i < 0; i++) tst_resm(TINFO, "%x, ", buf[i]);
         tst_resm(TINFO, "\n");
 #endif
 
         nout = 0;
         idx = 0;
         val = buf[0];
-        for(i = 0; i < csize; i++)
+        for (i = 0; i < csize; i++)
         {
                 if (buf[i] != val)
                 {
@@ -380,7 +373,7 @@ int dumpbuf(buf)
 #ifdef DEBUG
                         tst_resm(TINFO, " ... more\n");
 #endif
-                        return 0;
+                      return 0;
                 }
         }
 #ifdef DEBUG
@@ -389,7 +382,7 @@ int dumpbuf(buf)
         else
                 tst_resm(TINFO, "%d*%x\n", i-idx, buf[idx]);
 #endif
-        return 0;
+      return 0;
 
 }
 
@@ -406,7 +399,7 @@ void dumpbits(bits, size)
         register char *buf;
 
         tst_resm(TINFO, "Bits array:");
-        for(buf = bits; size > 0; --size, ++buf)
+        for (buf = bits; size > 0; --size, ++buf)
         {
                 if ((buf-bits) % 16 == 0)
                         tst_resm(TINFO, "\n%04x:\t", 8*(buf-bits));

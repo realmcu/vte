@@ -132,8 +132,6 @@ void cleanup();
 
 char *TCID = "readdir01";	/* Test program identifier.    */
 int TST_TOTAL = 2;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-extern int Tst_nobuf;
 
 int exp_enos[] = { 0, 0 };
 
@@ -172,7 +170,6 @@ int main(int ac, char **av)
 	DIR *test_dir;
 	struct dirent *dptr;
 
-	Tst_nobuf = 1;
 
     /***************************************************************
      * parse standard options
@@ -212,7 +209,6 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		if (Nfiles)
@@ -288,15 +284,15 @@ int main(int ac, char **av)
 			}
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
     /***************************************************************
      * cleanup and exit
      ***************************************************************/
 	cleanup();
 
-	return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /***************************************************************
  * help
@@ -320,7 +316,6 @@ void setup()
 	 */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	/* One cavet that hasn't been fixed yet.  TEST_PAUSE contains the code to
 	 * fork the test with the -c option.  You want to make sure you do this
 	 * before you create your temporary directory.
@@ -354,6 +349,4 @@ void cleanup()
 	 */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

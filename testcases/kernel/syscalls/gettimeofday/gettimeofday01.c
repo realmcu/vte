@@ -46,8 +46,8 @@
 
 #include <sys/time.h>
 #include <errno.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 #include <sys/syscall.h>
 #include <unistd.h>
 
@@ -57,7 +57,6 @@ char *TCID = "gettimeofday01";
 #if !defined UCLINUX
 
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int exp_enos[] = { EFAULT, 0 };
 
@@ -71,15 +70,14 @@ int main(int ac, char **av)
 	int ret;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
 	TEST_EXP_ENOS(exp_enos);
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -107,7 +105,7 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return (0);
+	  return (0);
 }
 
 /*
@@ -115,10 +113,9 @@ int main(int ac, char **av)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -134,8 +131,6 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
 #else
 
@@ -145,7 +140,7 @@ int main(void)
 {
 	tst_resm(TPASS, "gettimeofday EFAULT check disabled on uClinux");
 	tst_exit();
-	return 0;
+	tst_exit();
 }
 
 #endif

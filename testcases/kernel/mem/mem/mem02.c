@@ -37,7 +37,6 @@
 >BUGS:	<
 ======================================================================*/
 
-
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -56,7 +55,6 @@ void on_mem_fault(int sig);		/*Prototype for signal handler*/
 
 char *TCID="mem02";			/* Test program identifier. */
 int TST_TOTAL=1;			/* Total number of test cases. */
-extern int Tst_count;			/* Test Case counter for tst_* routines */
 
 static void
 usage(char *progname)
@@ -103,24 +101,24 @@ int main(int argc, char **argv)			/***** BEGINNING OF MAIN. *****/
 	}
 
 	/* check out calloc/free */
-	if((pm2=pm1=(char *)calloc(memsize,1)) == NULL) {
+	if ((pm2=pm1=(char *)calloc(memsize,1)) == NULL) {
 
 		tst_resm(TFAIL, "calloc - alloc of %dMB failed", memsize/1024/1024);
 		             tst_exit();
 	}
 
-	for(i=0; i<memsize; i++)
-		if(*pm2++ != 0) {
+	for (i=0; i<memsize; i++)
+		if (*pm2++ != 0) {
   		  	tst_resm(TFAIL, "calloc returned non zero memory");
 			             tst_exit();
 		}
 
 	pm2=pm1;
-	for(i=0; i<memsize; i++)
+	for (i=0; i<memsize; i++)
 		*pm2++ = 'X';
 	pm2=pm1;
-	for(i=0; i<memsize; i++)
-		if(*pm2++ != 'X') {
+	for (i=0; i<memsize; i++)
+		if (*pm2++ != 'X') {
 			 tst_resm(TFAIL, "could not write/verify memory ");
 			             tst_exit();
 		}
@@ -128,12 +126,12 @@ int main(int argc, char **argv)			/***** BEGINNING OF MAIN. *****/
 	pm2=pm1;
 	free(pm1);
 
-	if((pm1=(char *)calloc(memsize,1)) == NULL) {
+	if ((pm1=(char *)calloc(memsize,1)) == NULL) {
 		tst_resm(TFAIL, "calloc did not alloc memory ");
 		             tst_exit();
 	}
 
-	if(pm1 != pm2) {
+	if (pm1 != pm2) {
                 tst_resm(TINFO, "pm1=%p pm2=%p ", pm1,pm2);
 		tst_resm(TFAIL, "free did not dealloc memory ");
 		             tst_exit();
@@ -146,16 +144,16 @@ int main(int argc, char **argv)			/***** BEGINNING OF MAIN. *****/
 /*--------------------------------------------------------------------*/
 
 	/* check out malloc/free */
-	if((pm2=pm1=(char *)malloc(memsize)) == NULL) {
+	if ((pm2=pm1=(char *)malloc(memsize)) == NULL) {
 		tst_resm(TFAIL, "malloc did not alloc memory ");
 		             tst_exit();
-	}	     
+	}
 
-	for(i=0; i<memsize; i++)
+	for (i=0; i<memsize; i++)
 		*pm2++ = 'X';
 	pm2=pm1;
-	for(i=0; i<memsize; i++)
-		if(*pm2++ != 'X') {
+	for (i=0; i<memsize; i++)
+		if (*pm2++ != 'X') {
 			tst_resm(TFAIL, "could not write/verify memory ");
 		             tst_exit();
 		}
@@ -163,12 +161,12 @@ int main(int argc, char **argv)			/***** BEGINNING OF MAIN. *****/
 	pm2=pm1;
 	free(pm1);
 
-	if((pm1=(char *)malloc(memsize)) == NULL) {
+	if ((pm1=(char *)malloc(memsize)) == NULL) {
 		tst_resm(TFAIL, "malloc did not alloc memory ");
 		             tst_exit();
 	}
 
-	if(pm1 != pm2) {
+	if (pm1 != pm2) {
 		tst_resm(TFAIL, "free did not dealloc memory ");
 		             tst_exit();
 	}
@@ -182,7 +180,7 @@ int main(int argc, char **argv)			/***** BEGINNING OF MAIN. *****/
 	/* check out realloc */
 
 	pm4=pm3=(char *)malloc(10);
-	for(i=0; i<10; i++)
+	for (i=0; i<10; i++)
 		*pm4++ = 'X';
 
 	/* realloc with reduced size */
@@ -190,8 +188,8 @@ int main(int argc, char **argv)			/***** BEGINNING OF MAIN. *****/
 	pm6=(long)pm4;
 	pm3=pm4;
 	/* verify contents did not change */
-	for(i=0; i<5; i++) {
-		if(*pm4++ != 'X') {
+	for (i=0; i<5; i++) {
+		if (*pm4++ != 'X') {
 			tst_resm(TFAIL, "realloc changed memory contents");
 		             tst_exit();
 		}
@@ -204,8 +202,8 @@ int main(int argc, char **argv)			/***** BEGINNING OF MAIN. *****/
 	pm6=(long)pm3;
 	pm3=pm4;
 	/* verify contents did not change */
-	for(i=0; i<5; i++) {
-		if(*pm3++ != 'X') {
+	for (i=0; i<5; i++) {
+		if (*pm3++ != 'X') {
 			tst_resm(TFAIL, "realloc changed memory contents");
 		             tst_exit();
 		}
@@ -252,7 +250,7 @@ int main(int argc, char **argv)			/***** BEGINNING OF MAIN. *****/
 		free(memptr);
 	}
 
-	return 0;
+	tst_exit();
 /*--------------------------------------------------------------------*/
 }					/******** END OF MAIN. ********/
 /*--------------------------------------------------------------------*/

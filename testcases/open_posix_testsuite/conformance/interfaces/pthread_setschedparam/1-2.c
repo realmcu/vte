@@ -14,7 +14,6 @@
 * with this program; if not, write the Free Software Foundation, Inc., 59
 * Temple Place - Suite 330, Boston MA 02111-1307, USA.
 
-
 * This sample test aims to check the following assertion:
 *
 * The function sets the scheduling policy and parameter of the specified thread.
@@ -25,7 +24,6 @@
 
 * The test fails if the 1st thread policy is not changed.
 */
-
 
 /* We are testing conformance to IEEE Std 1003.1, 2003 Edition */
 #define _POSIX_C_SOURCE 200112L
@@ -47,23 +45,23 @@
 /***********************   Test framework   ***********************************/
 /******************************************************************************/
 #include "testfrmw.h"
- #include "testfrmw.c" 
+ #include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -79,7 +77,7 @@
 /******************************************************************************/
 
 /* This function checks the thread policy & priority */
-void check_param( pthread_t thread, int policy, int priority )
+void check_param(pthread_t thread, int policy, int priority)
 {
 	int ret = 0;
 
@@ -89,77 +87,77 @@ void check_param( pthread_t thread, int policy, int priority )
 
 	/* Check the priority is valid */
 
-	if ( priority == -1 )
+	if (priority == -1)
 	{
-		UNRESOLVED( errno, "Wrong priority value" );
+		UNRESOLVED(errno, "Wrong priority value");
 	}
 
 	/* Get the thread's parameters */
-	ret = pthread_getschedparam( thread, &t_pol, &t_parm );
+	ret = pthread_getschedparam(thread, &t_pol, &t_parm);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to get thread's parameters" );
+		UNRESOLVED(ret, "Failed to get thread's parameters");
 	}
 
-	if ( t_pol != policy )
+	if (t_pol != policy)
 	{
-		FAILED( "The thread's policy is not as expected" );
+		FAILED("The thread's policy is not as expected");
 	}
 
-	if ( t_parm.sched_priority != priority )
+	if (t_parm.sched_priority != priority)
 	{
-		FAILED( "The thread's priority is not as expected" );
+		FAILED("The thread's priority is not as expected");
 	}
 }
 
 /* thread function 1 */
-void * controler ( void * arg )
+void * controler (void * arg)
 {
 	int ret = 0;
 
 	/* Wait until the policy has been changed. */
-	ret = pthread_barrier_wait( arg );
+	ret = pthread_barrier_wait(arg);
 
-	if ( ( ret != 0 ) && ( ret != PTHREAD_BARRIER_SERIAL_THREAD ) )
+	if (ret != 0 && ret != PTHREAD_BARRIER_SERIAL_THREAD)
 	{
-		UNRESOLVED( ret, "barrier wait failed" );
+		UNRESOLVED(ret, "barrier wait failed");
 	}
 
 	/* check the thread attributes have been applied
-	  (we only check what is reported, not the real behavior) 
+	  (we only check what is reported, not the real behavior)
 	 */
-	check_param( pthread_self(), SCHED_RR, sched_get_priority_min( SCHED_RR ) );
+	check_param(pthread_self(), SCHED_RR, sched_get_priority_min(SCHED_RR));
 
 	return NULL;
 }
 
 /* thread function 2 */
-void * changer( void * arg )
+void * changer(void * arg)
 {
 	int ret = 0;
 
 	struct sched_param sp;
-	sp.sched_priority = sched_get_priority_min( SCHED_RR );
+	sp.sched_priority = sched_get_priority_min(SCHED_RR);
 
-	if ( sp.sched_priority < 0 )
+	if (sp.sched_priority < 0)
 	{
-		UNTESTED( "Failed to get min SCHED_RR range" );
+		UNTESTED("Failed to get min SCHED_RR range");
 	}
 
 	/* set the other thread's policy */
-	ret = pthread_setschedparam( *( pthread_t * ) arg, SCHED_RR, &sp );
+	ret = pthread_setschedparam(*(pthread_t *) arg, SCHED_RR, &sp);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to set other's thread policy" );
+		UNRESOLVED(ret, "Failed to set other's thread policy");
 	}
 
 	return NULL;
 }
 
 /* The main test function. */
-int main( int argc, char *argv[] )
+int main(int argc, char *argv[])
 {
 	int ret = 0;
 	pthread_t tcontrol, tchange;
@@ -168,62 +166,58 @@ int main( int argc, char *argv[] )
 	/* Initialize output routine */
 	output_init();
 
-	ret = pthread_barrier_init( &bar, NULL, 2 );
+	ret = pthread_barrier_init(&bar, NULL, 2);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to init barrier" );
+		UNRESOLVED(ret, "Failed to init barrier");
 	}
 
 	/* Create the controler thread */
-	ret = pthread_create( &tcontrol, NULL, controler, &bar );
+	ret = pthread_create(&tcontrol, NULL, controler, &bar);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "thread creation failed" );
+		UNRESOLVED(ret, "thread creation failed");
 	}
 
 	/* Now create the changer thread */
-	ret = pthread_create( &tchange, NULL, changer, &tcontrol );
+	ret = pthread_create(&tchange, NULL, changer, &tcontrol);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "thread creation failed" );
+		UNRESOLVED(ret, "thread creation failed");
 	}
 
 	/* wait until the changer finishes */
-	ret = pthread_join( tchange, NULL );
+	ret = pthread_join(tchange, NULL);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to join the thread" );
+		UNRESOLVED(ret, "Failed to join the thread");
 	}
-
 
 	/* let the controler control */
-	ret = pthread_barrier_wait( &bar );
+	ret = pthread_barrier_wait(&bar);
 
-	if ( ( ret != 0 ) && ( ret != PTHREAD_BARRIER_SERIAL_THREAD ) )
+	if (ret != 0 && ret != PTHREAD_BARRIER_SERIAL_THREAD)
 	{
-		UNRESOLVED( ret, "barrier wait failed" );
+		UNRESOLVED(ret, "barrier wait failed");
 	}
 
+	ret = pthread_join(tcontrol, NULL);
 
-	ret = pthread_join( tcontrol, NULL );
-
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to join the thread" );
+		UNRESOLVED(ret, "Failed to join the thread");
 	}
 
-	ret = pthread_barrier_destroy( &bar );
+	ret = pthread_barrier_destroy(&bar);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "barrier destroy failed" );
+		UNRESOLVED(ret, "barrier destroy failed");
 	}
 
 	PASSED;
 }
-
-

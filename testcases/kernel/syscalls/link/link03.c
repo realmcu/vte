@@ -125,8 +125,6 @@ void cleanup();
 
 char *TCID = "link03";		/* Test program identifier.    */
 int TST_TOTAL = 2;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-extern int Tst_nobuf;
 
 int exp_enos[] = { 0, 0 };
 
@@ -157,12 +155,11 @@ int main(int ac, char **av)
 	int nlinks;
 	char lname[255];
 
-	Tst_nobuf = 1;
 
     /***************************************************************
      * parse standard options
      ***************************************************************/
-	if ((msg = parse_opts(ac, av, options, &help)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, options, &help)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -192,7 +189,6 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		if (Nlinks)
@@ -260,15 +256,15 @@ int main(int ac, char **av)
 			}
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
     /***************************************************************
      * cleanup and exit
      ***************************************************************/
 	cleanup();
 
-	return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /***************************************************************
  * help
@@ -285,13 +281,10 @@ void setup()
 {
 	int fd;
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	sprintf(Fname, "%s_%d", BASENAME, getpid());
@@ -304,7 +297,7 @@ void setup()
 			Fname, errno, strerror(errno));
 	}
 	sprintf(Basename, "%s_%d.", BASENAME, getpid());
-}				/* End setup() */
+}
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
@@ -318,9 +311,6 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

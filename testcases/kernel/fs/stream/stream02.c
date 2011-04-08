@@ -37,15 +37,15 @@
 
 char *TCID = "stream02";
 int TST_TOTAL = 1;
-extern int Tst_count;
 int     local_flag;
 
 #define PASSED 1
 #define FAILED 0
 
-
 char progname[] = "stream02()" ;
 char tempfile1[40]="";
+
+/* XXX: add cleanup + setup. */
 
 /*--------------------------------------------------------------------*/
 int main(int ac, char *av[])
@@ -58,11 +58,8 @@ int main(int ac, char *av[])
          /*
           * parse standard options
           */
-        if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-                         tst_resm(TBROK, "OPTION PARSING ERROR - %s", msg);
-                 tst_exit();
-                 /*NOTREACHED*/
-         }
+        if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
         local_flag = PASSED;
 	tst_tmpdir();
@@ -72,18 +69,18 @@ int main(int ac, char *av[])
 		sprintf(tempfile1, "stream1.%d", getpid());
 	/*--------------------------------------------------------------------*/
 	//block0:
-		if(mknod(tempfile1, (S_IFIFO|0666), 0) != 0) {
+		if (mknod(tempfile1, (S_IFIFO|0666), 0) != 0) {
 			tst_resm(TFAIL,"mknod failed in block0: %s", strerror(errno));
 			local_flag = FAILED;
 			goto block1;
 		}
-		if((stream=fopen(tempfile1,"w+")) == NULL) {
+		if ((stream=fopen(tempfile1,"w+")) == NULL) {
 			tst_resm(TFAIL,"fopen(%s) w+ failed for pipe file: %s", tempfile1, strerror(errno));
 			local_flag = FAILED;
 		} else {
 			fclose(stream);
 		}
-		if((stream=fopen(tempfile1,"a+")) == NULL) {
+		if ((stream=fopen(tempfile1,"a+")) == NULL) {
 			tst_resm(TFAIL,"fopen(%s) a+ failed: %s", tempfile1, strerror(errno));
 			local_flag = FAILED;
 		} else {
@@ -99,11 +96,11 @@ int main(int ac, char *av[])
 
 	/*--------------------------------------------------------------------*/
 	block1 :
-		if(( fd = open("/dev/tty",O_WRONLY)) >= 0 )
+		if ((fd = open("/dev/tty", O_WRONLY)) >= 0)
 		{
 			close(fd);
-			if(( stream = fopen("/dev/tty","w"))==NULL) {
-				tst_resm(TFAIL,"fopen(/dev/tty) write failed: %s", strerror(errno));
+			if (( stream = fopen("/dev/tty","w"))==NULL) {
+				tst_resm(TFAIL|TERRNO,"fopen(/dev/tty) write failed");
 				local_flag = FAILED;
 			} else {
 				fclose(stream);
@@ -114,10 +111,9 @@ int main(int ac, char *av[])
 		} else {
 		         tst_resm(TFAIL, "Test failed in block1.");
 	        }
-		
+
 	/*--------------------------------------------------------------------*/
 	} /* end for */
 	tst_rmdir();
 	tst_exit();
-        return 0;
 }

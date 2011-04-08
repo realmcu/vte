@@ -72,7 +72,6 @@ int fd;
 
 char *TCID = "readv03";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 void setup();
 void cleanup();
@@ -83,9 +82,9 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	setup();
 
@@ -109,7 +108,8 @@ int main(int ac, char **av)
 
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
+
 }
 
 /*
@@ -118,10 +118,8 @@ int main(int ac, char **av)
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* make a temporary directory and cd to it */
@@ -152,5 +150,5 @@ void cleanup()
 		tst_brkm(TBROK, cleanup, "close failed: errno = %d", errno);
 	}
 	tst_rmdir();
-	tst_exit();
+
 }

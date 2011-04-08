@@ -2,7 +2,7 @@
  * Copyright (c) 2003 Hewlett-Packard Development Company, L.P
  * (C) Copyright IBM Corp. 2004
  *
- * This file has test cases to test the sendto () call 
+ * This file has test cases to test the sendto () call
  * for 1-1 style sockets
  *
  * TEST1: Sending data from client socket to server socket
@@ -66,7 +66,7 @@ main(int argc, char *argv[])
         char *message = "hello, world!\n";
         char *message_rcv;
         int count;
-	
+
         struct sockaddr_in conn_addr,lstn_addr,svr_addr;
 
 	/* Rather than fflush() throughout the code, set stdout to
@@ -98,7 +98,7 @@ main(int argc, char *argv[])
 
 	len = sizeof(struct sockaddr_in);
 	flag = MSG_NOSIGNAL;
-	
+
 	test_connect(sk, (struct sockaddr *) &conn_addr, len);
 
 	acpt_sk = test_accept(lstn_sk, (struct sockaddr *)&svr_addr, &len);
@@ -109,7 +109,7 @@ main(int argc, char *argv[])
 	count = sendto(sk, message, msg_count, flag,
 		       (const struct sockaddr *) &conn_addr, len);
 	if (count != msg_count)
-		tst_brkm(TBROK, tst_exit, "sendto from client to server "
+		tst_brkm(TBROK, NULL, "sendto from client to server "
                          "count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendto() from client to server - SUCCESS");
@@ -122,7 +122,7 @@ main(int argc, char *argv[])
 	count = sendto(acpt_sk, message, msg_count, flag,
 		       (const struct sockaddr *) &svr_addr, len);
 	if (count != msg_count)
-		tst_brkm(TBROK, tst_exit, "sendto from accept socket to client "
+		tst_brkm(TBROK, NULL, "sendto from accept socket to client "
                          "count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendto() from accept socket to client - SUCCESS");
@@ -139,7 +139,7 @@ main(int argc, char *argv[])
         count = sendto(sk1, message, msg_count, flag,
 		       (const struct sockaddr *) &conn_addr, len);
         if (count != msg_count)
-		tst_brkm(TBROK, tst_exit, "sendto from unconnected client to "
+		tst_brkm(TBROK, NULL, "sendto from unconnected client to "
 			 "server count:%d, errno:%d", count, errno);
 
 	tst_resm(TPASS, "sendto() from unconnected client to server - SUCCESS");
@@ -153,12 +153,12 @@ main(int argc, char *argv[])
 	test_sendto(sk, message, 5 , flag, (const struct sockaddr *)&conn_addr,
 		    len);
 	test_recv(acpt_sk, message_rcv, 5, flag);
-	
+
 	tst_resm(TPASS, "sendto() partial data from a buffer - SUCCESS");
 
 	close(sk1);
 	close(lstn_sk);
 	close(acpt_sk);
-	return 0;
-	
+	tst_exit();
+
 }

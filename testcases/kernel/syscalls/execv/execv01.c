@@ -109,13 +109,13 @@
  *
  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#**/
 
-#include <errno.h>
-#include <string.h>
-#include <signal.h>
-#include <stdlib.h>
-
 #include <sys/types.h>
 #include <sys/wait.h>
+
+#include <errno.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "test.h"
 #include "usctest.h"
@@ -125,64 +125,40 @@ void cleanup();
 
 char *TCID = "execv01";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
-extern int Tst_nobuf;		/* used to turn off buffering in tst_ routines */
 
 int exp_enos[] = { 0, 0 };	/* Zero terminated list of expected errnos */
 
-int pid;			/* process id from fork */
+pid_t pid;			/* process id from fork */
 int status;			/* status returned from waitpid */
-char *args[2] = { "/usr/bin/test", 0 };	/* argument list for execv call */
+char *args[2] = { "/bin/test", 0 };	/* argument list for execv call */
 
 int main(int ac, char **av)
 {
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 
-	Tst_nobuf = 1;		/* turn off buffering in tst_ routines */
 
-    /***************************************************************
-     * parse standard options
-     ***************************************************************/
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL)
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-    /***************************************************************
-     * perform global setup for test
-     ***************************************************************/
 	setup();
 
-	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-    /***************************************************************
-     * check looping state if -c option given
-     ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
-		/*
-		 * TEST CASE:
-		 *   fork, then call execv from child
-		 */
 		switch (pid = FORK_OR_VFORK()) {
-		case 0:	/* CHILD - Call execv(2) */
-			execv("/usr/bin/test", args);
-			/* should not get here!! if we do, the parent will fail the Test Case */
+		case 0:
+			execv("/bin/true", args);
 			exit(errno);
-		case -1:	/* ERROR!!! exit now!! */
-			tst_brkm(TBROK, cleanup,
-				 "Unable to fork a child process to exec over!  Errno:%d,:%s",
-				 errno, strerror(errno));
+		case -1:
+			tst_brkm(TBROK, cleanup, "fork failed");
 			break;
 		default:
 			waitpid(pid, &status, 0);
 			if (WIFEXITED(status)) {
-		/***************************************************************
-		 * only perform functional verification if flag set (-f not given)
-		 ***************************************************************/
 				if (STD_FUNCTIONAL_TEST) {
 					/* No Verification test, yet... */
 					tst_resm(TPASS,
@@ -197,56 +173,33 @@ int main(int ac, char **av)
 			break;
 		}		/* switch */
 
-	}			/* End for TEST_LOOPING */
+	}
 
-    /***************************************************************
-     * cleanup and exit
-     ***************************************************************/
 	cleanup();
 
-	return 0;
-}				/* End main */
+	tst_exit();
 
-/***************************************************************
- * setup() - performs all ONE TIME setup for this test.
- ***************************************************************/
+}
+
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/*
-	 * Send out info message that timing and errnolog info is not
-	 * available because of the use of a child process for each exec
-	 */
 	if (STD_TIMING_ON)
 		tst_resm(TINFO,
 			 "There are NO timing statistics produced by this test.\n\
 This is because the test forks to create a child process which then calls execv.\n\
 The TEST macro is NOT used.");
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp dir and cd to it */
 	tst_tmpdir();
-}				/* End setup() */
+}
 
-/***************************************************************
- * cleanup() - performs all ONE TIME cleanup for this test at
- *		completion or premature exit.
- ***************************************************************/
 void cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
 	TEST_CLEANUP;
 
-	/* remove files and temp dir */
 	tst_rmdir();
-
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

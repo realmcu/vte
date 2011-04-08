@@ -38,14 +38,12 @@
 /*              Manas Kumar Nayak maknayak@in.ibm.com>                        */
 /******************************************************************************/
 
-
 /* NOTE:  This case test the behavior of sgetmask
 # Sometime the returned "Oops"in this case don't mean anything for
 # correct or error, we check the result between different kernel and
 # try to find if there exist different returned code in different kernel
 #
 */
-
 
 #include <stdio.h>
 #include <signal.h>
@@ -60,8 +58,6 @@
 #include "linux_syscall_numbers.h"
 
 /* Extern Global Variables */
-extern int Tst_count;           /* counter for tst_xxx routines.         */
-extern char *TESTDIR;           /* temporary dir created by tst_tmpdir() */
 
 /* Global Variables */
 char *TCID = "sgetmask01";  /* Test program identifier.*/
@@ -87,11 +83,10 @@ int  TST_TOTAL = 2;                   /* total number of tests in this file.   *
 /*                                                                            */
 /******************************************************************************/
 extern void cleanup() {
-        /* Remove tmp dir and all files in it */
+
         TEST_CLEANUP;
         tst_rmdir();
 
-        /* Exit with appropriate return code. */
         tst_exit();
 }
 
@@ -124,36 +119,34 @@ int main(int ac, char **av) {
         int sig;
 	int lc;                 /* loop counter */
         char *msg;              /* message returned from parse_opts */
-	
+
         /* parse standard options */
-        if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL)) != (char *)NULL){
-             tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+        if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+             tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
              tst_exit();
            }
 
         setup();
 
-        /* Check looping state if -i option given */
         for (lc = 0; TEST_LOOPING(lc); ++lc) {
                 Tst_count = 0;
                 for (testno = 0; testno < TST_TOTAL; ++testno) {
 
-			for (sig = -3; sig <= SIGRTMAX + 1; sig++){
+			for (sig = -3; sig <= SIGRTMAX + 1; sig++) {
 				TEST(syscall(__NR_ssetmask,sig));
                 		tst_resm(TINFO,"Setting signal : %d -- return of setmask : %ld",sig,TEST_RETURN);     //call sgetmask()
                      		TEST(syscall(__NR_sgetmask));     //call sgetmask()
-                     		if(TEST_RETURN != sig) {
+                     		if (TEST_RETURN != sig) {
         				tst_resm(TINFO,"Oops,setting sig %d, got %ld",sig,TEST_RETURN);
                      		} else
         				tst_resm(TPASS,"OK,setting sig %d, got %ld",sig,TEST_RETURN);
-                     		if(sig == SIGRTMAX + 1){
+                     		if (sig == SIGRTMAX + 1) {
 					cleanup();
 					tst_exit();
 				}
                 	}
 		}
-        }	
+        }
 	cleanup();
         tst_exit();
 }
-

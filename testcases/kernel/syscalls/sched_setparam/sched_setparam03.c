@@ -68,6 +68,7 @@
  *
  ****************************************************************/
 
+#include <err.h>
 #include <errno.h>
 #include <sched.h>
 #include <sys/wait.h>
@@ -82,7 +83,6 @@ static int verify_priority();
 
 char *TCID = "sched_setparam03";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static struct sched_param param = { NEW_PRIORITY };
 
@@ -95,18 +95,13 @@ int main(int ac, char **av)
 	pid_t child_pid;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		switch (child_pid = FORK_OR_VFORK()) {
@@ -127,8 +122,8 @@ int main(int ac, char **av)
 			TEST(sched_setparam(getppid(), &param));
 
 			if (TEST_RETURN == -1) {
-				tst_resm(TWARN|TTERRNO, "sched_setparam() returned %ld", TEST_RETURN);
-				exit(0);
+				err(0, "sched_setparam returned %ld",
+				    TEST_RETURN);
 			}
 			exit(1);
 
@@ -150,24 +145,19 @@ int main(int ac, char **av)
 				tst_resm(TFAIL, "Test Failed");
 			}
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* cleanup and exit */
 	cleanup();
-
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
+	tst_exit();
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
 	struct sched_param p = { 1 };
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Change scheduling policy to SCHED_FIFO */
@@ -175,7 +165,7 @@ void setup()
 		tst_brkm(TBROK, cleanup, "sched_setscheduler() failed");
 	}
 
-}				/* End setup() */
+}
 
 /*
  *cleanup() -   performs all ONE TIME cleanup for this test at
@@ -189,10 +179,7 @@ void cleanup()
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}
 
 /*
  * verify_priority() -  This function checks whether the priority is

@@ -73,7 +73,6 @@
 
 char *TCID = "ioctl02";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 struct termio termio, save_io;
 
@@ -113,30 +112,22 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, options, &help)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, options, &help)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 #ifdef UCLINUX
 	maybe_run_child(&do_child_uclinux, "dS", &parentpid, &childtty);
 #endif
 
-	if (!Devflag) {
-		tst_resm(TWARN, "You must specify a tty device with "
+	if (!Devflag)
+		tst_brkm(TBROK, NULL, "You must specify a tty device with "
 			 "the -D option.");
-		tst_resm(TWARN, "Run '%s -h' for option information.", TCID);
-		cleanup();
-	}
 
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
-	}
+	tst_require_root(NULL);
 
 	setup();
 
-	/* Check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
 		parenttty = devname;
@@ -144,24 +135,20 @@ int main(int ac, char **av)
 
 		parentpid = getpid();
 
-		if ((childpid = FORK_OR_VFORK()) < 0) {
-			tst_brkm(TBROK, cleanup, "fork() failed");
-		 /*NOTREACHED*/}
+		if ((childpid = FORK_OR_VFORK()) < 0)
+			tst_brkm(TBROK, cleanup, "fork failed");
 
 		if (childpid == 0) {	/* child */
 #ifdef UCLINUX
-			if (self_exec(av[0], "dS", parentpid, childtty) < 0) {
+			if (self_exec(av[0], "dS", parentpid, childtty) < 0)
 				tst_brkm(TBROK, cleanup, "self_exec failed");
-			}
 #else
 			do_child();
 #endif
 		}
 
-		/* parent */
-		while (!sigusr1) {
+		while (!sigusr1)
 			sleep(1);
-		}
 
 		sigusr1 = 0;
 
@@ -169,7 +156,7 @@ int main(int ac, char **av)
 			kill(childpid, SIGTERM);
 			waitpid(childpid, NULL, 0);
 			cleanup();
-		 /*NOTREACHED*/}
+		}
 
 		/* run the parent test */
 		if ((rval = run_ptest()) == -1) {
@@ -182,14 +169,13 @@ int main(int ac, char **av)
 			cleanup();
 		}
 
-		if (rval != 0) {
+		if (rval != 0)
 			tst_resm(TFAIL, "TCGETA/TCSETA tests FAILED with "
 				 "%d %s", rval, rval > 1 ? "errors" : "error");
-		} else {
+		else
 			tst_resm(TPASS, "TCGETA/TCSETA tests SUCCEEDED");
-		}
 
-		/* tell the child that we're done */
+		/* FIXME: check return codes. */
 		(void)kill(childpid, SIGTERM);
 		(void)waitpid(childpid, NULL, 0);
 
@@ -198,19 +184,16 @@ int main(int ac, char **av)
 		 * tty device information that was saved in setup()
 		 * and closing the tty file descriptor.
 		 */
-		if (ioctl(parentfd, TCSETA, &save_io) == -1) {
+		if (ioctl(parentfd, TCSETA, &save_io) == -1)
 			tst_resm(TINFO, "ioctl restore failed in main");
-		}
-		if (close(parentfd) == -1) {
+		if (close(parentfd) == -1)
 			tst_brkm(TBROK, cleanup, "close() failed in main");
-		}
 
-		/* set the closed flag */
 		closed = 1;
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 void do_child()
@@ -384,19 +367,17 @@ int do_parent_setup()
 {
 	int pfd;
 
-	if ((pfd = open(parenttty, O_RDWR, 0777)) < 0) {
+	if ((pfd = open(parenttty, O_RDWR, 0777)) < 0)
 		tst_brkm(TBROK, cleanup, "Could not open %s in "
 			 "do_parent_setup(), errno = %d", parenttty, errno);
-	}
 
 	/* unset the closed flag */
 	closed = 0;
 
 	/* flush tty queues to remove old output */
-	if (ioctl(pfd, TCFLSH, 2) < 0) {
+	if (ioctl(pfd, TCFLSH, 2) < 0)
 		tst_brkm(TBROK, cleanup, "ioctl TCFLSH failed : "
 			 "errno = %d", errno);
-	}
 	return (pfd);
 }
 
@@ -461,21 +442,19 @@ void setup()
 	int fd;
 	struct sigaction act;
 
-	if ((fd = open(devname, O_RDWR, 0777)) < 0) {
-		tst_brkm(TBROK, _exit, "Could not open %s in "
+	/* XXX: TERRNO required all over the place */
+	if ((fd = open(devname, O_RDWR, 0777)) < 0)
+		tst_brkm(TBROK, NULL, "Could not open %s in "
 			 "setup(), errno = %d", devname, errno);
-	}
 
 	/* Save the current device information - to be restored in cleanup() */
-	if (ioctl(fd, TCGETA, &save_io) < 0) {
+	if (ioctl(fd, TCGETA, &save_io) < 0)
 		tst_brkm(TBROK, cleanup, "TCGETA ioctl failed in "
-			 "do_parent_setup()");
-	}
+			 "do_parent_setup");
 
 	/* Close the device */
-	if (close(fd) == -1) {
-		tst_brkm(TBROK, cleanup, "close() failed in setup()");
-	}
+	if (close(fd) == -1)
+		tst_brkm(TBROK, cleanup, "close failed in setup");
 
 	/* Set up the signal handlers */
 	act.sa_handler = (void *)sigterm_handler;
@@ -496,7 +475,6 @@ void setup()
 
 	sigterm = sigusr1 = sigusr2 = 0;
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
@@ -514,14 +492,10 @@ void cleanup()
 
 	/* Restore the device information that was saved in setup() */
 	if (!closed) {
-		if (ioctl(parentfd, TCSETA, &save_io) == -1) {
+		if (ioctl(parentfd, TCSETA, &save_io) == -1)
 			tst_resm(TINFO, "ioctl restore failed in cleanup()");
-		}
-		if (close(parentfd) == -1) {
+		if (close(parentfd) == -1)
 			tst_resm(TINFO, "close() failed in cleanup()");
-		}
 	}
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

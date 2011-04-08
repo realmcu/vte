@@ -72,7 +72,6 @@
 #include "test.h"
 #include "usctest.h"
 
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static int fd;
 static char filename[30];
@@ -88,15 +87,13 @@ int main(int argc, char **argv)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* reset Tst_count in case we are looping */
@@ -118,14 +115,14 @@ int main(int argc, char **argv)
 	/* perform global cleanup and exit */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Pause if that option was specified
@@ -133,19 +130,18 @@ void setup(void)
 	 */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Initialize unique filename for each child process */
 	if (sprintf(filename, "fdatasync_%d", getpid()) <= 0) {
 		tst_brkm(TBROK, cleanup, "Failed to initialize filename");
-	 /*NOTREACHED*/}
+	 }
 	if ((fd = open(filename, O_CREAT | O_WRONLY, 0777)) == -1) {	//mode must be specified when O_CREATE is in the flag
 		tst_brkm(TBROK, cleanup, "open() failed");
-	 /*NOTREACHED*/}
+	 }
 	if ((write(fd, filename, strlen(filename) + 1)) == -1) {
 		tst_brkm(TBROK, cleanup, "write() failed");
-	 /*NOTREACHED*/}
+	 }
 }
 
 /*
@@ -163,9 +159,6 @@ void cleanup(void)
 
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

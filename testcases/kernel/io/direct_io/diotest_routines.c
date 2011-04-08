@@ -17,7 +17,6 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-
 /*
  * NAME
  *      diotest_routines.c
@@ -48,8 +47,6 @@
 
 #include "diotest_routines.h"
 
-
-
 /* **** Routines for buffer actions, comparisions **** */
 
 /*
@@ -76,7 +73,6 @@ vfillbuf(struct iovec *iv, int vcnt, char value)
 	}
 }
 
-
 /*
  * bufcmp: Compare two buffers
  * vbufcmp: Compare two buffers of two io arrays
@@ -86,8 +82,8 @@ bufcmp(char *b1, char *b2, int bsize)
 {
 	int i;
 
-	for (i = 0; i < bsize; i++){
-		if (strncmp(&b1[i], &b2[i], 1)){
+	for (i = 0; i < bsize; i++) {
+		if (strncmp(&b1[i], &b2[i], 1)) {
 			fprintf(stderr, "bufcmp: offset %d: Expected: 0x%x, got 0x%x\n",
 				i, b1[i], b2[i]);
 			return(-1);
@@ -110,8 +106,6 @@ vbufcmp(struct iovec *iv1, struct iovec *iv2, int vcnt)
 	}
 	return 0;
 }
-
-
 
 /*
  * compare_files: Compares two files
@@ -149,7 +143,7 @@ filecmp(char *f1, char *f2)
 			return(-1);
 		}
 		for (i = 0; i < ret1; i++) {
-			if ( strncmp(&buf1[i], &buf2[i], 1)) {
+			if (strncmp(&buf1[i], &buf2[i], 1)) {
 				fprintf(stderr, "compare_file: char mismatch:");
 				fprintf(stderr, " %s offset %d: 0x%02x %c  ", f1, i, buf1[i], isprint(buf1[i]) ? buf1[1] : '.');
 				fprintf(stderr, " %s offset %d: 0x%02x %c\n", f2, i, buf2[i], isprint(buf2[i]) ? buf2[i] : '.');
@@ -163,7 +157,6 @@ filecmp(char *f1, char *f2)
 	close(fd2);
 	return 0;
 }
-
 
 /* **** Routines to create, wait and destroy child processes **** */
 
@@ -181,16 +174,16 @@ forkchldrn(int **pidlst, int numchld, int action, int (*chldfunc)())
 			strerror(errno));
 		return(-1);
 	}
-	for(i = 0; i < numchld; i++)
+	for (i = 0; i < numchld; i++)
 	{
-		if((cpid = fork()) < 0)
+		if ((cpid = fork()) < 0)
 		{
 			fprintf(stderr,"forkchldrn: fork child %d failed, %s\n",
 				i, strerror(errno));
 			killchldrn(pidlst, i, SIGTERM);
 			return(-1);
 		}
-		if( cpid == 0 ) exit((*chldfunc)(i, action));
+		if (cpid == 0 ) exit((*chldfunc)(i, action));
 		else *(*pidlst+i) = cpid;
 	}
 	return 0;
@@ -205,10 +198,10 @@ killchldrn(int **pidlst, int numchld, int sig)
 {
 	int i, cpid, errflag = 0;
 
-	for(i = 0; i < numchld; i++) {
+	for (i = 0; i < numchld; i++) {
 		cpid = *(*pidlst+i);
-		if(cpid > 0) {
-			if(kill(cpid, sig) < 0) {
+		if (cpid > 0) {
+			if (kill(cpid, sig) < 0) {
 				fprintf(stderr,"killchldrn: kill %d failed, %s\n",
 				cpid, strerror(errno));
 				errflag--;
@@ -227,10 +220,10 @@ waitchldrn(int **pidlst, int numchld)
 	int i, cpid, ret, errflag = 0;
 	int status;
 
-	for(i = 0; i < numchld; i++) {
+	for (i = 0; i < numchld; i++) {
 		cpid= *(*pidlst+i);
-		if(cpid == 0) continue;
-		if((ret=waitpid(cpid, &status, 0)) != cpid) {
+		if (cpid == 0) continue;
+		if ((ret=waitpid(cpid, &status, 0)) != cpid) {
 			fprintf(stderr,"waitchldrn: wait failed for child %d, pid %d: %s\n",
 				i, cpid, strerror(errno));
 			errflag--;

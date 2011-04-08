@@ -82,7 +82,6 @@ static void cleanup();
 
 char *TCID = "adjtimex01";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static struct timex tim_save;
 
@@ -93,18 +92,13 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/* Call adjtimex(2) */
@@ -118,36 +112,30 @@ int main(int ac, char **av)
 			tst_resm(TFAIL|TTERRNO, "Test Failed, adjtimex()"
 				 "returned %ld", TEST_RETURN);
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* cleanup and exit */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
+	tst_exit();
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
-	/* Check whether we are root */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
-	}
+
+	tst_require_root(NULL);
 
 	tim_save.modes = 0;
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Save current parameters in tim_save */
-	if ((adjtimex(&tim_save)) == -1) {
-		tst_brkm(TBROK, cleanup, "Failed to save current parameters");
-	}
-}				/* End setup() */
+	if ((adjtimex(&tim_save)) == -1)
+		tst_brkm(TBROK|TERRNO, cleanup,
+		    "failed to save current parameters");
+}
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
@@ -160,7 +148,4 @@ void cleanup()
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
-
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

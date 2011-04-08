@@ -54,7 +54,7 @@
  *			Test passed
  *		else
  *			Test Failed
- *	
+ *
  * 	Cleanup:
  * 	  Print errno log and/or timing stats if options given
  *
@@ -84,7 +84,6 @@ static void setup(void);
 static void cleanup(void);
 
 char *TCID = "prctl01";		/* Test program identifier.    */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int option[2] = { PR_GET_PDEATHSIG, PR_SET_PDEATHSIG };
 int TST_TOTAL = 2;
@@ -98,18 +97,13 @@ int main(int ac, char **av)
 	int status, sig;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
@@ -154,26 +148,23 @@ int main(int ac, char **av)
 
 			}
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
 	/* cleanup and exit */
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}				/* End setup() */
+}
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
@@ -188,6 +179,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

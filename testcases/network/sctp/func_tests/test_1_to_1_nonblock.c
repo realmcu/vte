@@ -5,7 +5,7 @@
  * This file has test cases to test the Non-Blocking mode of connect(),
  * accept() and recvmsg() calls.
  *
- * TEST1: Non blocking accept return EAGAIN if connect is not called 
+ * TEST1: Non blocking accept return EAGAIN if connect is not called
  * TEST2: Non blocking connect should return EINPROGRESS
  * TEST3: accept() passes when connect called in Non-blocking mode
  * TEST4: Non blocking recvmsg should return EAGAIN
@@ -79,7 +79,7 @@ main(int argc, char *argv[])
         char * buffer_snd;
 	char * buffer_rcv;
 	char incmsg[CMSG_SPACE(sizeof(sctp_cmsg_data_t))];
-	
+
         struct sockaddr_in conn_addr,lstn_addr,svr_addr;
 
 	/* Rather than fflush() throughout the code, set stdout to
@@ -110,22 +110,22 @@ main(int argc, char *argv[])
 
 	len = sizeof(struct sockaddr_in);
 	flag = MSG_NOSIGNAL;
-	
+
 	/*Setting server socket non-blocking*/
 	sflag = fcntl(lstn_sk, F_GETFL, 0);
 	if (sflag < 0)
-		tst_brkm(TBROK, tst_exit, "fcnt F_GETFL failed "
+		tst_brkm(TBROK, NULL, "fcnt F_GETFL failed "
                          "sflag:%d, errno:%d", sflag, errno);
 
 	error = fcntl(lstn_sk, F_SETFL, sflag | O_NONBLOCK);
 	if (error < 0)
-		tst_brkm(TBROK, tst_exit, "fcnt F_SETFL failed "
+		tst_brkm(TBROK, NULL, "fcnt F_SETFL failed "
                          "error:%d, errno:%d", error, errno);
 
 	/* TEST1: accept should return EAGAIN instead blocking. */
 	error = accept(lstn_sk, (struct sockaddr *)&svr_addr, &len);
 	if (error != -1 || errno != EAGAIN)
-		tst_brkm(TBROK, tst_exit, "non-blocking accept "
+		tst_brkm(TBROK, NULL, "non-blocking accept "
                          "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "non-blocking accept() - EAGAIN");
@@ -134,17 +134,17 @@ main(int argc, char *argv[])
 	/*Set client socket as non-blocking*/
 	cflag = fcntl(sk, F_GETFL, 0);
 	if (cflag < 0)
-		tst_brkm(TBROK, tst_exit, "fcnt F_GETFL failed "
+		tst_brkm(TBROK, NULL, "fcnt F_GETFL failed "
                          "cflag:%d, errno:%d", cflag, errno);
 
 	error = fcntl(sk, F_SETFL, sflag | O_NONBLOCK);
 	if (error < 0)
-		tst_brkm(TBROK, tst_exit, "fcnt F_SETFL failed "
+		tst_brkm(TBROK, NULL, "fcnt F_SETFL failed "
                          "error:%d, errno:%d", error, errno);
 
 	error = connect(sk, (const struct sockaddr *) &conn_addr, len);
 	if (error != -1 || errno != EINPROGRESS)
-		tst_brkm(TBROK, tst_exit, "non-blocking connect "
+		tst_brkm(TBROK, NULL, "non-blocking connect "
                          "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "non-blocking connect() - EINPROGRESS");
@@ -152,9 +152,9 @@ main(int argc, char *argv[])
 	/* TEST3: Now that connect() called, accept will succeed */
 	acpt_sk = accept(lstn_sk, (struct sockaddr *)&svr_addr, &len);
 	if (acpt_sk < 0)
-		tst_brkm(TBROK, tst_exit, "accept after a non-blocking connect "
+		tst_brkm(TBROK, NULL, "accept after a non-blocking connect "
                          "error:%d, errno:%d", error, errno);
-	
+
 	tst_resm(TPASS, "accept() after a non-blocking connect - SUCCESS");
 
 	memset(&outmessage, 0, sizeof(outmessage));
@@ -196,8 +196,8 @@ main(int argc, char *argv[])
 
 	/* TEST4: recvmsg() should return EAGAIN instead blocking */
 	error = recvmsg(sk, &inmessage, MSG_WAITALL);
-	if ( error != -1 || errno != EAGAIN)
-		tst_brkm(TBROK, tst_exit, "non-blocking recvmsg "
+	if (error != -1 || errno != EAGAIN)
+		tst_brkm(TBROK, NULL, "non-blocking recvmsg "
                          "error:%d, errno:%d", error, errno);
 
 	tst_resm(TPASS, "non-blocking recvmsg() - EAGAIN");
@@ -213,5 +213,5 @@ main(int argc, char *argv[])
 
 	close(lstn_sk);
 	close(acpt_sk);
-	return 0;
+	tst_exit();
 }

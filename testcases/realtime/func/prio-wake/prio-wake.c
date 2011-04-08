@@ -23,14 +23,14 @@
  *      Test priority ordered wakeup with pthread_cond_*
  * * Steps:
  *      - Creates a number of worker threads with increasing FIFO priorities
- *        (by default, num worker threads = num cpus)
+ *	(by default, num worker threads = num cpus)
  *      - Create a master thread
  *      - The time the worker thread starts running is noted. Each of the
- *	  worker threads then waits on the same _condvar_. The time it 
+ *	  worker threads then waits on the same _condvar_. The time it
  *	  wakes up also noted.
  *      - Once all the threads finish execution, the start and wakeup times
- *        of all the threads is displayed.
- *      - The output must indicate that the thread wakeup happened in a 
+ *	of all the threads is displayed.
+ *      - The output must indicate that the thread wakeup happened in a
  *	  priority order.
  *
  * USAGE:
@@ -67,32 +67,32 @@ static int ret = 0;
 
 void usage(void)
 {
-        rt_help();
-        printf("prio-wake specific options:\n");
-        printf("  -n#           #: number of worker threads\n");
-        printf("  -l#           1:lock the mutex before broadcast, 0:don't\n");
-	printf("                defaults to 1\n");
+	rt_help();
+	printf("prio-wake specific options:\n");
+	printf("  -n#	   #: number of worker threads\n");
+	printf("  -l#	   1:lock the mutex before broadcast, 0:don't\n");
+	printf("		defaults to 1\n");
 }
 
 int parse_args(int c, char *v)
 {
 
-        int handled = 1;
-        switch (c) {
-                case 'h':
-                        usage();
-                        exit(0);
-                case 'n':
-                        rt_threads = atoi(v);
-                        break;
-                case 'l':
-                        locked_broadcast = atoi(v);
-                        break;
-                default:
-                        handled = 0;
-                        break;
-        }
-        return handled;
+	int handled = 1;
+	switch (c) {
+		case 'h':
+			usage();
+			exit(0);
+		case 'n':
+			rt_threads = atoi(v);
+			break;
+		case 'l':
+			locked_broadcast = atoi(v);
+			break;
+		default:
+			handled = 0;
+			break;
+	}
+	return handled;
 }
 
 struct array {
@@ -112,7 +112,6 @@ void *master_thread(void* arg)
 	/* give the worker threads a chance to get to sleep in the kernel
 	 * in the unlocked broadcast case. */
 	usleep(1000);
-
 
 	start = rt_gettime() - beginrun;
 
@@ -136,7 +135,6 @@ void *worker_thread(void* arg)
 	int j;
 	nsec_t start, wake;
 	j = (intptr_t)arg;
-
 
 	if (pthread_getschedparam(pthread_self(), &policy, &sched_param) != 0)  {
 		printf("ERR: Couldn't get pthread info. Priority value wrong\n");
@@ -162,17 +160,16 @@ void *worker_thread(void* arg)
 	return NULL;
 }
 
-
 int main(int argc, char* argv[])
 {
 	int threads_per_prio;
-        int numcpus;
+	int numcpus;
 	int numprios;
 	int prio;
 	int i;
 	setup();
 
-        rt_init("hn:l:", parse_args, argc, argv);
+	rt_init("hn:l:", parse_args, argc, argv);
 
 	if (rt_threads == 0) {
 		numcpus = sysconf(_SC_NPROCESSORS_ONLN);
@@ -224,6 +221,6 @@ int main(int argc, char* argv[])
 			ret++;
 		}
 	}
-        printf("Result: %s\n", ret ? "FAIL" : "PASS");
+	printf("Result: %s\n", ret ? "FAIL" : "PASS");
 	return ret;
 }

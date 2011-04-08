@@ -91,7 +91,6 @@ char *TCID = "fchown02";	/* Test program identifier.    */
 int TST_TOTAL = 2;		/* Total number of test conditions */
 int Fd1;			/* File descriptor for testfile1 */
 int Fd2;			/* File descriptor for testfile2 */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int no_setup();
 int setup1();			/* Test specific setup functions */
@@ -121,34 +120,32 @@ int main(int ac, char **av)
 	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 	int ind;		/* counter variable for chmod(2) tests */
-	uid_t User_id;		/* user id of the user set for testfile */
-	gid_t Group_id;		/* group id of the user set for testfile */
+	uid_t user_id;		/* user id of the user set for testfile */
+	gid_t group_id;		/* group id of the user set for testfile */
 	int fildes;		/* File descriptor for testfile */
 	int test_flag;		/* test condition specific flag variable */
 	char *file_name;	/* ptr. for test file name */
 	char *test_desc;	/* test specific message */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
 			fildes = Test_cases[ind].fd;
 			file_name = Test_cases[ind].pathname;
 			test_desc = Test_cases[ind].desc;
-			User_id = Test_cases[ind].user_id;
-			Group_id = Test_cases[ind].group_id;
+			user_id = Test_cases[ind].user_id;
+			group_id = Test_cases[ind].group_id;
 			test_flag = Test_cases[ind].test_flag;
 
 			if (fildes == 1) {
@@ -162,9 +159,8 @@ int main(int ac, char **av)
 			 * group id (numeric values) to set it on
 			 * testfile.
 			 */
-			TEST(fchown(fildes, User_id, Group_id));
+			TEST(fchown(fildes, user_id, group_id));
 
-			/* check return code of fchown(2) */
 			if (TEST_RETURN == -1) {
 				tst_resm(TFAIL,
 					 "fchown() Fails on %s, errno=%d",
@@ -190,12 +186,12 @@ int main(int ac, char **av)
 				 * Check for expected Ownership ids
 				 * set on testfile.
 				 */
-				if ((stat_buf.st_uid != User_id) ||
-				    (stat_buf.st_gid != Group_id)) {
+				if ((stat_buf.st_uid != user_id) ||
+				    (stat_buf.st_gid != group_id)) {
 					tst_resm(TFAIL, "%s: Incorrect"
 						 " ownership set, Expected %d "
 						 "%d", file_name,
-						 User_id, Group_id);
+						 user_id, group_id);
 				}
 
 				/*
@@ -227,13 +223,12 @@ int main(int ac, char **av)
 				tst_resm(TPASS, "call succeeded");
 			}
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
 
-	 /*NOTREACHED*/ return (0);
-}				/* End main */
+	  return (0);
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -244,7 +239,6 @@ void setup()
 {
 	int ind;
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Check that the test process id is super/root  */
@@ -253,17 +247,15 @@ void setup()
 		tst_exit();
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* call individual setup functions */
 	for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
 		Test_cases[ind].setupfunc();
 	}
-}				/* End setup() */
+}
 
 /*
  * setup1() - Setup function for fchown(2) to verify setuid/setgid bits
@@ -285,7 +277,7 @@ int setup1()
 			 TESTFILE1, errno, strerror(errno));
 	}
 	return 0;
-}				/* End setup1() */
+}
 
 /*
  * setup2() - Setup function for fchown(2) to verify setgid bit set
@@ -342,9 +334,6 @@ void cleanup()
 			 TESTFILE2, errno, strerror(errno));
 	}
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

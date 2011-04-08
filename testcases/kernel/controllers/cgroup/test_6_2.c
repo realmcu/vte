@@ -20,9 +20,10 @@
 /*                                                                            */
 /******************************************************************************/
 
+#include <sched.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sched.h>
+#include "test.h"
 
 #define DEFAULT_USEC	30000
 
@@ -33,16 +34,17 @@ int foo(void __attribute__((unused)) *arg)
 
 int main(int argc, char **argv)
 {
-	int usec = DEFAULT_USEC;
+	int usec;
 
 	if (argc == 2)
 		usec = atoi(argv[1]);
+	else
+		usec = DEFAULT_USEC;
 
 	while (1) {
 		usleep(usec);
 		ltp_clone_quick(CLONE_NEWNS, foo, NULL);
 	}
 
-	return 0;
+	tst_exit();
 }
-

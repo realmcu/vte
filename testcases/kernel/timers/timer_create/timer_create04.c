@@ -76,11 +76,10 @@
 #include "usctest.h"
 #include "common_timers.h"
 
-static void setup();
+void setup(void);
 
 char *TCID = "timer_create04"; 	/* Test program identifier.    */
 int TST_TOTAL;			/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static int exp_enos[] = {EINVAL, EFAULT, 0};
 
@@ -95,7 +94,7 @@ int testcase[6] = {
  * cleanup() - Performs one time cleanup for this test at
  * completion or premature exit
  */
-static void
+void
 cleanup(void)
 {
 	/*
@@ -104,7 +103,7 @@ cleanup(void)
 	*/
 	TEST_CLEANUP;
 
-}	/* End cleanup() */
+}
 
 int
 main(int ac, char **av)
@@ -124,10 +123,8 @@ main(int ac, char **av)
 	};
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *)NULL, NULL))
-		!= (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	TST_TOTAL = sizeof(testcase) / sizeof(testcase[0]);
 
@@ -142,13 +139,10 @@ main(int ac, char **av)
 		testcase[5] = EFAULT;
 	}
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -166,12 +160,12 @@ main(int ac, char **av)
 				break;
 			case 4:
 				/* Produce an invalid timer_id address. */
-				if(tst_kvercmp(2, 6, 12) >= 0)
+				if (tst_kvercmp(2, 6, 12) >= 0)
 					temp_id = (kernel_timer_t *) -1;
 				break;
 			case 5:
 				/* Produce an invalid event address. */
-				if(tst_kvercmp(2, 6, 12) >= 0)
+				if (tst_kvercmp(2, 6, 12) >= 0)
 					temp_ev = (struct sigevent *) -1;
 			}
 
@@ -189,25 +183,23 @@ main(int ac, char **av)
 					strerror(testcase[i]));
 			} /* end of else */
 
-		}	/* End of TEST CASE LOOPING */
+		}
 
-	}	/* End for TEST_LOOPING */
+	}
 
-	/* Clean up and exit */
 	cleanup();
 	tst_exit();
 }
 
 /* setup() - performs all ONE TIME setup for this test */
-static void
-setup()
+void
+setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
-}	/* End setup() */
+}

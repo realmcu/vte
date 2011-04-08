@@ -2,15 +2,14 @@
 
 int main(void)
 {
+	int i;
 
-	int i=0;
-
-	for( i=0; i<10; i++)
+	for (i = 0; i < 10; i++)
 	{
-		if ( i %2 )
-			printf(" Hello \n ");
-		else
+		if ((i % 2) == 0)
 			printf("World \n");
+		else
+			printf(" Hello \n ");
 	}
 
 	printf(" the end \n");

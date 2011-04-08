@@ -76,7 +76,6 @@ void cleanup();
 
 char *TCID = "msgctl11";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int exp_enos[] = { 0 };		/* List must end with 0 */
 int maxnkids = MAXNKIDS;	/* Used if pid_max is exceeded */
@@ -129,8 +128,8 @@ char *argv[];
 
 	/* parse standard options */
 	if ((msg =
-	     parse_opts(argc, argv, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	     parse_opts(argc, argv, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	maybe_run_child(&do_child_1_uclinux, "ndd", 1, &key_uclinux,
@@ -614,7 +613,6 @@ void setup()
 	 */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	/* One cavet that hasn't been fixed yet.  TEST_PAUSE contains the code to
 	 * fork the test with the -c option.  You want to make sure you do this
 	 * before you create your temporary directory.
@@ -674,15 +672,14 @@ void cleanup()
 	tst_resm(TINFO, "Removing the message queue");
 #endif
 	fflush(stdout);
-	(void)msgctl(tid, IPC_RMID, (struct msqid_ds *)NULL);
-	if ((status = msgctl(tid, IPC_STAT, (struct msqid_ds *)NULL)) != -1) {
-		(void)msgctl(tid, IPC_RMID, (struct msqid_ds *)NULL);
+	(void)msgctl(tid, IPC_RMID, NULL);
+	if ((status = msgctl(tid, IPC_STAT, NULL)) != -1) {
+		(void)msgctl(tid, IPC_RMID, NULL);
 		tst_resm(TFAIL, "msgctl(tid, IPC_RMID) failed");
-		tst_exit();
+
 	}
 
 	fflush(stdout);
 	tst_rmdir();
-	/* exit with return code appropriate for results */
-	tst_exit();
+
 }

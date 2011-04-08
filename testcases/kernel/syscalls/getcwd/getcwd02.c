@@ -59,15 +59,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 #define FAILED 1
 
 char *pwd = "/bin/pwd";
 int flag;
 char *TCID = "getcwd02";
 int TST_TOTAL = 7;
-extern int Tst_count;
 
 void cleanup(void);
 void setup(void);
@@ -91,8 +90,8 @@ int main(int ac, char **av)
 	int lc;			/* loop counter */
 	char *msg;		/* parse_opts() return message */
 
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 	setup();
 
@@ -105,11 +104,11 @@ int main(int ac, char **av)
 		if ((fin = popen(pwd, "r")) == NULL) {
 			tst_resm(TINFO, "%s: can't run %s", TCID, pwd);
 			tst_brkm(TBROK, cleanup, "%s FAILED", TCID);
-		 /*NOTREACHED*/}
+		 }
 		while (fgets(pwd_buf, sizeof(pwd_buf), fin) != NULL) {
-			if ((cp = strchr(pwd_buf, '\n')) == (char *)NULL) {
+			if ((cp = strchr(pwd_buf, '\n')) == NULL) {
 				tst_brkm(TBROK, cleanup, "pwd output too long");
-			 /*NOTREACHED*/}
+			 }
 			*cp = 0;
 			cp_cur = pwd_buf;
 		}
@@ -124,7 +123,7 @@ int main(int ac, char **av)
 		do_block7();
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 void do_block1()		//valid cwd[]: -> Should work fine
@@ -283,11 +282,10 @@ void do_block7()		//buffer = NULL, size = BUFSIZ: -> work fine, allocate buffer
 
 void setup()
 {
-	/* capture signals */
+
 	/* FORK is set here because of the popen() call above */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* create a test directory and cd into it */
@@ -299,6 +297,4 @@ void cleanup()
 	/* remove the test directory */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

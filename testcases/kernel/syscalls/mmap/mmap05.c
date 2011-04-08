@@ -91,11 +91,10 @@
 
 char *TCID = "mmap05";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 size_t page_sz;			/* system page size */
 volatile char *addr;		/* addr of memory mapped region */
 int fildes;			/* file descriptor for temporary file */
-volatile int pass = 0;		/* pass flag perhaps set to 1 in sig_handler */
+volatile int pass = 0;
 sigjmp_buf env;			/* environment for sigsetjmp/siglongjmp */
 
 void setup();			/* Main setup function of test */
@@ -108,19 +107,13 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 	char file_content;	/* tempfile content */
 
-	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		/*
@@ -134,8 +127,7 @@ int main(int ac, char **av)
 
 		/* Check for the return value of mmap() */
 		if (addr == MAP_FAILED) {
-			tst_resm(TFAIL, "mmap() Failed on %s, errno=%d : %s",
-				 TEMPFILE, errno, strerror(errno));
+			tst_resm(TFAIL|TERRNO, "mmap() failed on %s", TEMPFILE);
 			continue;
 		}
 
@@ -170,17 +162,15 @@ int main(int ac, char **av)
 
 		/* Unmap mapped memory and reset pass in case we are looping */
 		if (munmap((void *)addr, page_sz) != 0) {
-			tst_brkm(TFAIL, cleanup, "munmap() fails to unmap the "
-				 "memory, errno=%d", errno);
+			tst_brkm(TFAIL|TERRNO, cleanup, "munmap failed");
 		}
 		pass = 0;
 
-	}			/* End for TEST_LOOPING */
-	/* Call cleanup() to undo setup done for the test. */
+	}
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -190,76 +180,67 @@ int main(int ac, char **av)
  *	     Change the mode permissions on file to 0444
  *	     Re-open the file for reading.
  */
-void setup()
+void setup(void)
 {
 	char *tst_buff;		/* test buffer to hold known data */
 
-	/* capture signals */
 	tst_sig(NOFORK, sig_handler, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Get the system page size */
 	if ((page_sz = getpagesize()) < 0) {
 		tst_brkm(TFAIL, NULL,
 			 "getpagesize() fails to get system page size");
-		tst_exit();
 	}
 
 	/* Allocate space for the test buffer */
-	if ((tst_buff = (char *)calloc(page_sz, sizeof(char))) == NULL) {
-		tst_brkm(TFAIL, NULL,
-			 "calloc() failed to allocate space for tst_buff");
-		tst_exit();
+	if ((tst_buff = calloc(page_sz, sizeof(char))) == NULL) {
+		tst_brkm(TFAIL, NULL, "calloc failed (tst_buff)");
 	}
 
 	/* Fill the test buffer with the known data */
 	memset(tst_buff, 'A', page_sz);
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Creat a temporary file used for mapping */
 	if ((fildes = open(TEMPFILE, O_WRONLY | O_CREAT, 0666)) < 0) {
-		tst_brkm(TFAIL, NULL, "open() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
 		free(tst_buff);
-		cleanup();
+		tst_brkm(TFAIL|TERRNO, cleanup, "opening %s failed", TEMPFILE);
 	}
 
 	/* Write test buffer contents into temporary file */
 	if (write(fildes, tst_buff, page_sz) != page_sz) {
-		tst_brkm(TFAIL, NULL, "write() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
 		free(tst_buff);
-		cleanup();
+		tst_brkm(TFAIL, cleanup, "writing to %s failed",
+			 TEMPFILE);
 	}
 
 	/* Free the memory allocated for test buffer */
 	free(tst_buff);
 
-	/* Close the temporary file opened for write */
-	if (close(fildes) < 0) {
-		tst_brkm(TFAIL, cleanup, "close() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
+	/* Make sure proper permissions set on file */
+	if (fchmod(fildes, 0444) < 0) {
+		tst_brkm(TFAIL|TERRNO, cleanup, "fchmod of %s failed",
+			 TEMPFILE);
 	}
 
-	/* Make sure proper permissions set on file */
-	if (chmod(TEMPFILE, 0444) < 0) {
-		tst_brkm(TFAIL, cleanup, "chmod() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
+	/* Close the temporary file opened for write */
+	if (close(fildes) < 0) {
+		tst_brkm(TFAIL|TERRNO, cleanup, "closing %s failed",
+			 TEMPFILE);
 	}
 
 	/* Open the temporary file again for reading */
 	if ((fildes = open(TEMPFILE, O_RDONLY)) < 0) {
-		tst_brkm(TFAIL, cleanup, "open(%s) with read-only Failed, "
-			 "errno:%d", TEMPFILE, errno);
+		tst_brkm(TFAIL|TERRNO, cleanup, "opening %s readonly failed",
+			TEMPFILE);
 	}
 }
 
 /*
- * sig_handler() - Signal Cathing function.
+ * sig_handler() - Signal Catching function.
  *   This function gets executed when the test process receives
  *   the signal SIGSEGV while trying to access the contents of memory which
  *   is not accessible.
@@ -270,9 +251,9 @@ void sig_handler(sig)
 		/* set the global variable and jump back */
 		pass = 1;
 		siglongjmp(env, 1);
-	} else {
-		tst_brkm(TBROK, cleanup, "received an unexpected signal");
-	}
+	} else
+		tst_brkm(TBROK, cleanup, "received an unexpected signal: %d",
+			sig);
 }
 
 /*
@@ -280,7 +261,7 @@ void sig_handler(sig)
  *             completion or premature exit.
  *	       Remove the temporary directory created.
  */
-void cleanup()
+void cleanup(void)
 {
 	/*
 	 * print timing stats if that option was specified.
@@ -290,9 +271,5 @@ void cleanup()
 
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

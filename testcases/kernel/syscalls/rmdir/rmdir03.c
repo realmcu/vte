@@ -86,7 +86,6 @@ char user1name[] = "nobody";
 
 char *TCID = "rmdir03";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 char tstdir1[255];
 char tstdir2[255];
@@ -106,8 +105,8 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
 	maybe_run_child(&dochild1, "ns", 1, tstdir2);
@@ -127,7 +126,6 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 //test1:       $
@@ -140,24 +138,24 @@ int main(int ac, char **av)
 		if (stat(tstdir1, &buf1) != -1) {
 			tst_brkm(TBROK, cleanup,
 				 "tmp directory %s found!", tstdir1);
-		 /*NOTREACHED*/}
+		 }
 		/* create a directory */
 		if (mkdir(tstdir1, PERMS) == -1) {
 			tst_brkm(TBROK, cleanup,
 				 "Couldnot create directory %s", tstdir1);
-		 /*NOTREACHED*/}
+		 }
 		if (stat(tstdir1, &buf1) == -1) {
 			perror("stat");
 			tst_brkm(TBROK, cleanup, "failed to stat directory %s "
 				 "in rmdir()", tstdir1);
-			/* NOTREACHED */
+
 		}
 		/* set the sticky bit */
 		if (chmod(tstdir1, buf1.st_mode | S_ISVTX) != 0) {
 			perror("chmod");
 			tst_brkm(TBROK, cleanup,
 				 "failed to set the S_ISVTX bit");
-			/* NOTREACHED */
+
 		}
 		/* create a sub directory under tstdir1 */
 		if (mkdir(tstdir2, PERMS) == -1) {
@@ -167,7 +165,7 @@ int main(int ac, char **av)
 
 		if ((pid = FORK_OR_VFORK()) == -1) {
 			tst_brkm(TBROK, cleanup, "fork() failed");
-		 /*NOTREACHED*/}
+		 }
 
 		if (pid == 0) {	/* first child */
 #ifdef UCLINUX
@@ -185,16 +183,16 @@ int main(int ac, char **av)
 		if (mkdir(tstdir3, 0700) == -1) {
 			tst_brkm(TBROK, cleanup, "mkdir(%s, %#o) Failed",
 				 tstdir3, PERMS);
-		 /*NOTREACHED*/}
+		 }
 		/* create the a directory with 0700 permits */
 		if (mkdir(tstdir4, 0777) == -1) {
 			tst_brkm(TBROK, cleanup, "mkdir(%s, %#o) Failed",
 				 tstdir4, PERMS);
-		 /*NOTREACHED*/}
+		 }
 
 		if ((pid = FORK_OR_VFORK()) == -1) {
 			tst_brkm(TBROK, cleanup, "fork() failed");
-		 /*NOTREACHED*/}
+		 }
 
 		if (pid == 0) {	/* child */
 #ifdef UCLINUX
@@ -229,16 +227,15 @@ int main(int ac, char **av)
 		(void)rmdir(tstdir4);
 		(void)rmdir(tstdir3);
 
-	}			/* End for TEST_LOOPING */
+	}
 
 	/*
 	 * cleanup and exit
 	 */
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
+}
 
 /*
  * dochild1()
@@ -253,7 +250,7 @@ void dochild1()
 		retval = 1;
 		tst_brkm(TBROK, cleanup, "setreuid failed to "
 			 "set effective uid to %d", nobody->pw_uid);
-	 /*NOTREACHED*/}
+	 }
 
 	/* rmdir tstdir2 */
 	TEST(rmdir(tstdir2));
@@ -293,7 +290,7 @@ void dochild2()
 		retval = 1;
 		tst_brkm(TBROK, cleanup, "setreuid failed to "
 			 "set effective uid to %d", nobody->pw_uid);
-	 /*NOTREACHED*/}
+	 }
 
 	/* rmdir tstdir4 */
 	TEST(rmdir(tstdir4));
@@ -326,13 +323,11 @@ void setup()
 {
 	/* test must be run as root */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "test must be run as root");
+		tst_brkm(TBROK, NULL, "test must be run as root");
 	}
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Create a temporary directory and make it current. */
@@ -366,5 +361,5 @@ void cleanup()
 	/*
 	 * Exit with return code appropriate for results.
 	 */
-	tst_exit();
+
 }

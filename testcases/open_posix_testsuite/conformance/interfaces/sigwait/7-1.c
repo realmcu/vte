@@ -14,12 +14,10 @@
 * with this program; if not, write the Free Software Foundation, Inc., 59
 * Temple Place - Suite 330, Boston MA 02111-1307, USA.
 
-
 * This sample test aims to check the following assertion:
 *
-* If Real-Time Signals extension is supported, and several signals in the 
-* range SIGRTMIN-SIGRTMAX are selected, the lower numbered is returned first. 
-
+* If Real-Time Signals extension is supported, and several signals in the
+* range SIGRTMIN-SIGRTMAX are selected, the lower numbered is returned first.
 
 * The steps are:
 * -> mask SIGRTMIN-SIGRTMAX
@@ -29,7 +27,6 @@
 * The test fails if we select an unexpected signal.
 
 */
-
 
 /* We are testing conformance to IEEE Std 1003.1, 2003 Edition */
 #define _POSIX_C_SOURCE 200112L
@@ -51,23 +48,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -78,14 +75,12 @@
 #define VERBOSE 1
 #endif
 
-
 /******************************************************************************/
 /***************************    Test case   ***********************************/
 /******************************************************************************/
 
-
 /* The main test function. */
-int main( int argc, char * argv[] )
+int main(int argc, char * argv[])
 {
 	int ret, i, sig;
 	long rts;
@@ -95,99 +90,96 @@ int main( int argc, char * argv[] )
 	output_init();
 
 	/* Test the RTS extension */
-	rts = sysconf( _SC_REALTIME_SIGNALS );
+	rts = sysconf(_SC_REALTIME_SIGNALS);
 
-	if ( rts < 0L )
+	if (rts < 0L)
 	{
-		UNTESTED( "This test needs the RTS extension" );
+		UNTESTED("This test needs the RTS extension");
 	}
 
 	/* Set the signal mask */
-	ret = sigemptyset( &set );
+	ret = sigemptyset(&set);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to empty signal set" );
+		UNRESOLVED(ret, "Failed to empty signal set");
 	}
 
 	/* Add all SIGRT signals */
-	for ( i = SIGRTMIN; i <= SIGRTMAX; i++ )
+	for (i = SIGRTMIN; i <= SIGRTMAX; i++)
 	{
 
-		ret = sigaddset( &set, i );
+		ret = sigaddset(&set, i);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			UNRESOLVED( ret, "failed to add signal to signal set" );
+			UNRESOLVED(ret, "failed to add signal to signal set");
 		}
 	}
 
 	/* Block all RT signals */
-	ret = pthread_sigmask( SIG_BLOCK, &set, NULL );
+	ret = pthread_sigmask(SIG_BLOCK, &set, NULL);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to block RT signals" );
+		UNRESOLVED(ret, "Failed to block RT signals");
 	}
 
 	/* raise the signals in no particular order */
-	for ( i = SIGRTMIN + 1; i <= SIGRTMAX; i += 3 )
+	for (i = SIGRTMIN + 1; i <= SIGRTMAX; i += 3)
 	{
-		ret = raise( i );
+		ret = raise(i);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			UNRESOLVED( ret, "Failed to raise the signal" );
+			UNRESOLVED(ret, "Failed to raise the signal");
 		}
 	}
 
-	for ( i = SIGRTMIN; i <= SIGRTMAX; i += 3 )
+	for (i = SIGRTMIN; i <= SIGRTMAX; i += 3)
 	{
-		ret = raise( i );
+		ret = raise(i);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			UNRESOLVED( ret, "Failed to raise the signal" );
+			UNRESOLVED(ret, "Failed to raise the signal");
 		}
 	}
 
-	for ( i = SIGRTMIN + 2; i <= SIGRTMAX; i += 3 )
+	for (i = SIGRTMIN + 2; i <= SIGRTMAX; i += 3)
 	{
-		ret = raise( i );
+		ret = raise(i);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			UNRESOLVED( ret, "Failed to raise the signal" );
+			UNRESOLVED(ret, "Failed to raise the signal");
 		}
 	}
 
 	/* All RT signals are pending */
 
-
 	/* Check the signals are delivered in order */
-	for ( i = SIGRTMIN; i <= SIGRTMAX; i++ )
+	for (i = SIGRTMIN; i <= SIGRTMAX; i++)
 	{
-		ret = sigwait( &set, &sig );
+		ret = sigwait(&set, &sig);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			UNRESOLVED( ret , "Failed to sigwait for RT signal" );
+			UNRESOLVED(ret , "Failed to sigwait for RT signal");
 		}
 
-		if ( sig != i )
+		if (sig != i)
 		{
-			output( "SIGRTMIN: %d, SIGRTMAX: %d, i: %d, sig:%d\n",
-			        SIGRTMIN, SIGRTMAX, i, sig );
-			FAILED( "Got wrong signal" );
+			output("SIGRTMIN: %d, SIGRTMAX: %d, i: %d, sig:%d\n",
+			        SIGRTMIN, SIGRTMAX, i, sig);
+			FAILED("Got wrong signal");
 		}
 	}
 
 	/* Test passed */
 #if VERBOSE > 0
-	output( "Test passed\n" );
+	output("Test passed\n");
 
 #endif
 	PASSED;
 }
-
-

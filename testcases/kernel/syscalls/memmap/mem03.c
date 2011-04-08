@@ -63,7 +63,6 @@ static void cleanup();
 
 char *TCID = "mem03";		/* Test program identifier. */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int f1 = -1, f2 = -1;
 char *mm1 = NULL, *mm2 = NULL;
@@ -77,7 +76,6 @@ int main()
 	char str1[] = "testing 123";
 	char str2[] = "my test mem";
 
-	/* perform global setup for test */
 	setup();
 
 	if ((f1 = open(tmp1, O_RDWR | O_CREAT, S_IREAD | S_IWRITE)) == -1)
@@ -118,12 +116,12 @@ int main()
 
 		if (mm1 != save_mm2) {
 			printf("mmap not using same address\n");
-			return 0;
+
 		}
 
 		if (mm2 != save_mm1) {
 			printf("mmap not using same address\n");
-			return 0;
+
 		}
 
 		if (strncmp(str1, mm1, strlen(str1)))
@@ -141,7 +139,7 @@ int main()
 	/* clean up and exit */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -171,9 +169,6 @@ void cleanup(void)
 	if (f2 != -1)
 		close(f2);
 
-	/* Remove the temporary directory */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

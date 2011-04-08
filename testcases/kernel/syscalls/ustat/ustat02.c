@@ -64,7 +64,7 @@
  *	-p   : Pause for SIGUSR1 before starting
  *	-P x : Pause for x seconds between iterations.
  *	-t   : Turn on syscall timing.
- *	
+ *
  *RESTRICTIONS: None
  *****************************************************************************/
 #include <errno.h>
@@ -79,7 +79,6 @@ static void setup();
 static void cleanup();
 
 char *TCID = "ustat02";		/* Test program identifier.    */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 static int exp_enos[] = { EINVAL, EFAULT, 0 };
 
@@ -110,18 +109,13 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -147,47 +141,46 @@ int main(int ac, char **av)
 
 			TEST_ERROR_LOG(TEST_ERRNO);
 		}		/*End of TEST LOOPS */
-	}			/* End of TEST_LOOPING */
+	}
 
 	/*Clean up and exit */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }				/*End of main */
 
 /* setup() - performs all ONE TIME setup for this test */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	dev_num[0] = -1;
 
 	/* Allocating memory for ustat and stat structure variables */
 	if ((ubuf = (struct ustat *)malloc(sizeof(struct ustat))) == NULL) {
-		tst_brkm(TBROK, tst_exit, "Failed to allocate Memory");
+		tst_brkm(TBROK, NULL, "Failed to allocate Memory");
 	}
 
 	if ((buf = (struct stat *)malloc(sizeof(struct stat))) == NULL) {
 		free(ubuf);
-		tst_brkm(TBROK, tst_exit, "Failed to allocate Memory");
+		tst_brkm(TBROK, NULL, "Failed to allocate Memory");
 	}
 
 	/* Finding out a valid device number */
 	if (stat("/", buf) != 0) {
 		free(buf);
 		free(ubuf);
-		tst_brkm(TBROK, tst_exit, "stat(2) failed. Exiting without"
+		tst_brkm(TBROK, NULL, "stat(2) failed. Exiting without"
 			 "invoking ustat(2)");
 	}
 	dev_num[1] = buf->st_dev;
-}				/* End setup() */
+}
 
 /*
 * cleanup() - Performs one time cleanup for this test at
@@ -203,6 +196,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

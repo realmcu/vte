@@ -53,7 +53,6 @@
 
 char *TCID = "creat03";		/* Test program identifier */
 int TST_TOTAL = 1;		/* Total number of test cases */
-extern int Tst_count;		/* Test case counter */
 
 char pfilname[40] = "";
 #define FMODE	0444
@@ -65,20 +64,16 @@ int main(int ac, char **av)
 {
 	struct stat statbuf;
 	unsigned short filmode;
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
+	int lc;
+	char *msg;
 
-	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
 		TEST(creat(pfilname, FMODE));
@@ -86,7 +81,7 @@ int main(int ac, char **av)
 		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL, "Cannot creat %s", pfilname);
 			continue;
-		 /*NOTREACHED*/}
+		}
 
 		if (STD_FUNCTIONAL_TEST) {
 			if (fstat(TEST_RETURN, &statbuf) == -1) {
@@ -106,23 +101,22 @@ int main(int ac, char **av)
 		close(TEST_RETURN);
 		/* clean up things in case we are looping */
 		if (unlink(pfilname) == -1) {
-			tst_brkm(TBROK, cleanup, "couldn't remove file");
+			tst_brkm(TBROK|TERRNO, cleanup, "couldn't remove file");
 		}
 	}
 	cleanup();
+	tst_exit();
 
-	return 0;
- /*NOTREACHED*/}
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* make a temp dir and cd to it */
@@ -139,9 +133,6 @@ void cleanup(void)
 {
 	TEST_CLEANUP;
 
-	/* remove the tmp dir and all its files */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

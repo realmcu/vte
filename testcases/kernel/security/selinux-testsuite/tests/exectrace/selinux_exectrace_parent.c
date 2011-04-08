@@ -98,7 +98,7 @@ repeat:
 		fprintf(stderr, "Child has context %s\n", context_s);
 		fprintf(stderr, "..Resuming the child.\n");
 		rc = ptrace(PTRACE_CONT,pid,0,0);
-		if (rc < 0){
+		if (rc < 0) {
 			perror("ptrace: PTRACE_CONT");
 			exit(-1);
 		}
@@ -114,4 +114,3 @@ repeat:
 	fprintf(stderr, "Unexpected exit status 0x%x\n", status);
 	exit(-1);
 }
-

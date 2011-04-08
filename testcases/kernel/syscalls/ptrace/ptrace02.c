@@ -69,7 +69,7 @@
  * 				TEST failed
  *		else
  *			TEST failed
- *	
+ *
  * 	Cleanup:
  * 	  Print errno log and/or timing stats if options given
  *
@@ -106,7 +106,6 @@ static void parent_handler();
 static int got_signal = 0;
 
 char *TCID = "ptrace02";	/* Test program identifier.    */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 static int i;			/* loop test case counter, shared with do_child */
 
 int TST_TOTAL = 2;
@@ -121,21 +120,16 @@ int main(int ac, char **av)
 	struct sigaction parent_act;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 #ifdef UCLINUX
 	maybe_run_child(&do_child, "d", &i);
 #endif
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
@@ -216,14 +210,13 @@ int main(int ac, char **av)
 
 			}
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
 	/* cleanup and exit */
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
+}
 
 /* do_child() */
 void do_child()
@@ -260,13 +253,11 @@ void do_child()
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}				/* End setup() */
+}
 
 /*
  *cleanup() -  performs all ONE TIME cleanup for this test at
@@ -281,9 +272,7 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}
 
 /*
  * child_handler() - Signal handler for child

@@ -54,7 +54,6 @@ int local_flag = PASSED;
 int block_number;
 FILE *temp;
 int TST_TOTAL = 1;
-extern int Tst_count;
 /*****	**	** *****/
 
 #define LONGSTR	(96*1024-1)
@@ -98,11 +97,11 @@ struct t_index {
 	char *e_res;
 } t_index[] = {
 	{
-	"", 'z', (char *)NULL}, {
+	"", 'z', NULL}, {
 	tiat, 'a', tiat + 8}, {
 	tiat, 's', tiat + 3}, {
 	tiat, 'o', tiat + 15}, {
-	tiat, 'z', (char *)NULL}, {
+	tiat, 'z', NULL}, {
 	NULL, 0, NULL}
 };
 
@@ -113,11 +112,11 @@ struct t_rindex {
 	char *e_res;
 } t_rindex[] = {
 	{
-	"", 'z', (char *)NULL}, {
+	"", 'z', NULL}, {
 	tiat, 'a', tiat + 8}, {
 	tiat, 's', tiat + 37}, {
 	tiat, 'o', tiat + 35}, {
-	tiat, 'z', (char *)NULL}, {
+	tiat, 'z', NULL}, {
 	NULL, 0, NULL}
 };
 
@@ -441,5 +440,5 @@ char *argv[];
 
 	blexit();
 	anyfail();
-	return 0;
+	tst_exit();
 }

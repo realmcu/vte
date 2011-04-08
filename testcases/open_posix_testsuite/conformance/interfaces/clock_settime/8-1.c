@@ -1,8 +1,8 @@
-/*   
+/*
  * Copyright (c) 2002, Intel Corporation. All rights reserved.
  * Created by:  julie.n.fleischer REMOVE-THIS AT intel DOT com
  * This file is licensed under the GPL license.  For the full content
- * of this license, see the COPYING file at the top level of this 
+ * of this license, see the COPYING file at the top level of this
  * source tree.
  *
  * Test that clock_settime() does not affect clock_nanosleep()
@@ -35,9 +35,9 @@ int main(int argc, char *argv[])
 {
 	struct timespec tsT0, tssleep;
 	int pid;
-	
+
 	/* Check that we're root...can't call clock_settime with CLOCK_REALTIME otherwise */
-	if(getuid() != 0)
+	if (getuid() != 0)
 	{
 		printf("Run this test as ROOT, not as a Regular User\n");
 		return PTS_UNTESTED;
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 		expectedsec = tsT0.tv_sec + (SLEEPSEC-SMALLTIME);
 
 		if (tsend.tv_sec >= expectedsec) {
-			if ( (tsend.tv_sec-expectedsec) <= ACCEPTABLEDELTA) {
+			if ((tsend.tv_sec-expectedsec) <= ACCEPTABLEDELTA) {
 				return CHILDPASS;
 			} else {
 				printf("Ended too late.  %d >> %d\n",

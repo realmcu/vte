@@ -20,7 +20,7 @@ void usage(void);
 int main(argc, argv)
 int argc;
 char *argv[];
-{ 
+{
         int s;
         struct ip_mreq imr;
 
@@ -34,9 +34,9 @@ char *argv[];
         extern int optind;
         extern char *optarg;
         prog = argv[0];
-        if (argc == 1 )
+        if (argc == 1)
             usage ();
-        
+
         while ((c = getopt(argc,argv,"jlg:s:i:")) != EOF)
         	switch (c)
                 {
@@ -65,7 +65,6 @@ char *argv[];
                                 usage();
                }
 
-
         if (optind != argc)
            usage ();
 
@@ -73,37 +72,36 @@ char *argv[];
                 printf ("Unabled to read group file %s\n",group_list);
                 exit (1);
         }
-        
+
         if ((s = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
             perror( "can not open socket" );
             exit(1);
         }
 
-        if((hp = gethostbyname(interface))) {
+        if ((hp = gethostbyname(interface))) {
            memcpy(&imr.imr_interface.s_addr, hp->h_addr, hp->h_length);
-        } else 
-           if((n = sscanf(interface, "%u.%u.%u.%u", &i1, &i2, &i3, &i4)) != 4) {
-              fprintf(stderr, "bad group address\n" ); 
+        } else
+           if ((n = sscanf(interface, "%u.%u.%u.%u", &i1, &i2, &i3, &i4)) != 4) {
+              fprintf(stderr, "bad group address\n" );
               exit (1);
            } else
-              imr.imr_interface.s_addr = 
+              imr.imr_interface.s_addr =
                                  htonl((i1<<24) | (i2<<16) | (i3<<8) | i4);
         /* verify socket options */
-	if ( setsockopt(s, IPPROTO_IP, IP_MULTICAST_IF, 
-                        &imr.imr_interface.s_addr, 
+	if ( setsockopt(s, IPPROTO_IP, IP_MULTICAST_IF,
+                        &imr.imr_interface.s_addr,
                         sizeof(imr.imr_interface.s_addr)) != 0 ) {
-           fprintf(stderr,"Error: unable to set socket option IP_MULTICAST_IF\n"); 
+           fprintf(stderr,"Error: unable to set socket option IP_MULTICAST_IF\n");
            errors++;
-	} else 
+	} else
 	   printf("Socket set for Multicasting on: %s\n",interface);
 
- 
-        if ( (!jflg && !lflg) || jflg )
+        if ((!jflg && !lflg) || jflg)
            join_group ( s, group_list, &imr );
 
         sleep (sflg);
 
-        if ( (!jflg && !lflg) || lflg )
+        if ((!jflg && !lflg) || lflg)
            leave_group ( s, group_list, &imr );
 
         close (s);
@@ -122,15 +120,15 @@ int join_group (int s, char *glist, struct ip_mreq *imr)
         if ((fd = fopen(glist,"r")) == NULL)
            printf ("Error: unable to open %s\n",glist);
 
-        while(fgets(buf, sizeof(buf), fd) != NULL) {
-           if(sscanf(buf, "%u.%u.%u.%u", &g1, &g2, &g3, &g4) != 4) {
+        while (fgets(buf, sizeof(buf), fd) != NULL) {
+           if (sscanf(buf, "%u.%u.%u.%u", &g1, &g2, &g3, &g4) != 4) {
              fprintf(stderr, "bad group address\n" );
              exit(1);
            }
 
            imr->imr_multiaddr.s_addr = htonl((g1<<24) | (g2<<16) | (g3<<8) | g4);
 
-           if(setsockopt(s, IPPROTO_IP, IP_ADD_MEMBERSHIP,
+           if (setsockopt(s, IPPROTO_IP, IP_ADD_MEMBERSHIP,
                          imr, sizeof(struct ip_mreq)) == -1) {
               fprintf(stderr, "errno is %d \n", errno);
               perror("can't join group");
@@ -154,16 +152,16 @@ int leave_group (int s, char *glist, struct ip_mreq *imr)
         if ((fd = fopen(glist,"r")) == NULL)
            printf ("Error: unable to open %s\n",glist);
 
-        while(fgets(buf, sizeof(buf), fd) != NULL) {
-           if(sscanf(buf, "%u.%u.%u.%u", &g1, &g2, &g3, &g4) != 4) {
+        while (fgets(buf, sizeof(buf), fd) != NULL) {
+           if (sscanf(buf, "%u.%u.%u.%u", &g1, &g2, &g3, &g4) != 4) {
              fprintf(stderr, "leave_group: bad group address\n" );
              exit(1);
            }
 
-           imr->imr_multiaddr.s_addr = 
+           imr->imr_multiaddr.s_addr =
                                       htonl((g1<<24) | (g2<<16) | (g3<<8) | g4);
 
-           if(setsockopt(s, IPPROTO_IP, IP_DROP_MEMBERSHIP,
+           if (setsockopt(s, IPPROTO_IP, IP_DROP_MEMBERSHIP,
                          imr, sizeof(struct ip_mreq)) == -1) {
               perror("can't leave group");
               errors++;

@@ -30,10 +30,10 @@
  * http://oss.sgi.com/projects/GenInfo/NoticeExplan/
  *
  * Changelog:
- * 
+ *
  *	Added timer options: William Jay Huie, IBM
  *	01/27/03 - Added: Manoj Iyer, manjo@mail.utexas.edu
- *			   - option '-p' (pretty printing)i to enabled formatted printing 
+ *			   - option '-p' (pretty printing)i to enabled formatted printing
  *			     of results.
  *
  *	01/27/03 - Added: Manoj Iyer, manjo@mail.utexas.edu
@@ -47,21 +47,23 @@
  *
  * 	07/22/07 - Added: Ricardo Salveti de Araujo, rsalveti@linux.vnet.ibm.com
  *			   - added option to create a command file with all failed tests.
- * 	
+ *
  */
 /* $Id: ltp-pan.c,v 1.4 2009/10/15 18:45:55 yaberauneya Exp $ */
 
-#include <errno.h>
-#include <string.h>
 #include <sys/param.h>
-#include <sys/types.h>
-#include <sys/times.h>
-#include <sys/wait.h>
 #include <sys/stat.h>
-#include <time.h>
-#include <stdlib.h>
-#include <limits.h>
+#include <sys/times.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <sys/utsname.h>
+#include <errno.h>
+#include <err.h>
+#include <limits.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 #include "splitstr.h"
 #include "zoolib.h"
@@ -103,7 +105,7 @@ static struct collection *get_collection(char *file, int optind, int argc,
 					 char **argv);
 static void pids_running(struct tag_pgrp *running, int keep_active);
 static int check_pids(struct tag_pgrp *running, int *num_active,
-		      int keep_active, FILE * logfile, FILE * failcmdfile, 
+		      int keep_active, FILE * logfile, FILE * failcmdfile,
 		      struct orphan_pgrp *orphans, int fmt_print,
 		      int *failcnt, int quiet_mode);
 static void propagate_signal(struct tag_pgrp *running, int keep_active,
@@ -246,11 +248,11 @@ main(int argc, char **argv)
             {
                switch (modifier)
                {
-                  case 's': run_time = run_time; break; 
-                  case 'm': run_time = run_time * 60; break; 
-                  case 'h': run_time = run_time * 60 * 60; break; 
+                  case 's': run_time = run_time; break;
+                  case 'm': run_time = run_time * 60; break;
+                  case 'h': run_time = run_time * 60 * 60; break;
                   case 'd': run_time = run_time * 60 * 60 * 24; break;
-                  default: 
+                  default:
                      fprintf(stderr, "Invalid time modifier, try: s|h|m|d\n"); exit(-1);
                }
 	       if (!quiet_mode)
@@ -315,7 +317,7 @@ main(int argc, char **argv)
 	{
 		fprintf(logfile, "Test Start Time: %s\n", s);
 		fprintf(logfile, "-----------------------------------------\n");
-		fprintf(logfile, "%-30.20s %-10.10s %-10.10s\n", 
+		fprintf(logfile, "%-30.20s %-10.10s %-10.10s\n",
 				"Testcase", "Result", "Exit Value");
 		fprintf(logfile, "%-30.20s %-10.10s %-10.10s\n",
 			   	"--------", "------", "------------");
@@ -323,7 +325,7 @@ main(int argc, char **argv)
     }
 
     coll = get_collection(filename, optind, argc, argv);
-    if(!coll)
+    if (!coll)
         exit(1);
     if (coll->cnt == 0) {
 	fprintf(stderr,
@@ -501,20 +503,20 @@ main(int argc, char **argv)
 		if (++c >= coll->cnt)
 		    c = 0;
 
-	} /* while( (num_active < keep_active) && (starts != 0) ) */
+	} /* while ((num_active < keep_active) && (starts != 0)) */
 
 	if (starts == 0)
-	{ 
+	{
 		if (!quiet_mode)
-			printf("incrementing stop\n"); 
-		++stop; 
+			printf("incrementing stop\n");
+		++stop;
 	}
 	else if (starts == -1) //wjh
 	{
 	   FILE *f = (FILE*)-1;
 	   if ((f = fopen(PAN_STOP_FILE, "r")) != 0)
 	   {  printf("Got %s Stopping!\n", PAN_STOP_FILE);
-		  fclose(f); unlink(PAN_STOP_FILE); stop++; 
+		  fclose(f); unlink(PAN_STOP_FILE); stop++;
 	   }
 	}
 
@@ -741,9 +743,9 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 					(int) (tms2.tms_cstime - tms1.tms_cstime));
 			else
 			{
-					if (w != 0) 
+					if (w != 0)
 						++*failcnt;
-					fprintf(logfile, "%-30.30s %-10.10s %-5d\n", 
+					fprintf(logfile, "%-30.30s %-10.10s %-5d\n",
 							running[i].cmd->name, ((w != 0) ? "FAIL" : "PASS"),
 							w);
 			}
@@ -804,6 +806,7 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 static pid_t
 run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
 {
+    ssize_t errlen;
     int cpid;
     int c_stdout = -1;		/* child's stdout, stderr */
     int capturing = 0;		/* output is going to a file instead of stdout */
@@ -811,7 +814,6 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
     static long cmdno = 0;
     int errpipe[2];		/* way to communicate to parent that the tag  */
     char errbuf[1024];		/* didn't actually start */
-    int errlen;
 
     /* Try to open the file that will be stdout for the test */
     if (test_out_dir) {
@@ -828,7 +830,7 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
 		    active->output);
 	    return -1;
 	}
-    } 
+    }
 
     /* get the tag's command line arguments ready.  subst_pcnt_f() uses a
      * static counter, that's why we do it here instead of after we fork.
@@ -838,7 +840,7 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
     } else {
 	c_cmdline = colle->cmdline;
     }
-    
+
     if (pipe(errpipe) < 0) {
 	fprintf(stderr, "pan(%s): pipe() failed. errno:%d %s\n",
 			panname, errno, strerror(errno));
@@ -852,11 +854,11 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
     time(&active->mystime);
     active->cmd = colle;
 
-    if (!test_out_dir) 
+    if (!test_out_dir)
 	if (!quiet_mode)
 		write_test_start(active);
 
-    if ((cpid = fork()) < 0) {
+    if ((cpid = fork()) == -1) {
 	fprintf(stderr, "pan(%s): fork failed (tag %s).  errno:%d  %s\n",
 		panname, colle->name, errno, strerror(errno));
 	if (capturing) {
@@ -876,6 +878,13 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
 
 	umask(0);
 
+#define WRITE_OR_DIE(fd, buf, buflen) do {				\
+	if (write((fd), (buf), (buflen)) != (buflen)) {			\
+		err(1, "failed to write out %zd bytes at line %d",	\
+		    buflen, __LINE__);					\
+	}								\
+} while(0)
+
 	/* if we're putting output into a buffer file, we need to do the
 	 * redirection now.  If we fail
 	 */
@@ -883,23 +892,23 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
 	    if (dup2(c_stdout, fileno(stdout)) == -1) {
 		errlen = sprintf(errbuf, "pan(%s): couldn't redirect stdout for tag %s.  errno:%d  %s",
 				panname, colle->name, errno, strerror(errno));
-		write(errpipe[1], &errlen, sizeof(errlen));
-		write(errpipe[1], errbuf, errlen);
+		WRITE_OR_DIE(errpipe[1], &errlen, sizeof(errlen));
+		WRITE_OR_DIE(errpipe[1], errbuf, errlen);
 		exit(2);
 	    }
 	    if (dup2(c_stdout, fileno(stderr)) == -1) {
 		errlen = sprintf(errbuf, "pan(%s): couldn't redirect stderr for tag %s.  errno:%d  %s",
 				panname, colle->name, errno, strerror(errno));
-		write(errpipe[1], &errlen, sizeof(errlen));
-		write(errpipe[1], errbuf, errlen);
+		WRITE_OR_DIE(errpipe[1], &errlen, sizeof(errlen));
+		WRITE_OR_DIE(errpipe[1], errbuf, errlen);
 		exit(2);
 	    }
 	} else { /* stderr still needs to be redirected */
 	    if (dup2(fileno(stdout), fileno(stderr)) == -1) {
 		errlen = sprintf(errbuf, "pan(%s): couldn't redirect stderr for tag %s.  errno:%d  %s",
 				panname, colle->name, errno, strerror(errno));
-		write(errpipe[1], &errlen, sizeof(errlen));
-		write(errpipe[1], errbuf, errlen);
+		WRITE_OR_DIE(errpipe[1], &errlen, sizeof(errlen));
+		WRITE_OR_DIE(errpipe[1], errbuf, errlen);
 		exit(2);
 	    }
 	}
@@ -912,21 +921,21 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
 	 */
 	if (strpbrk(c_cmdline, "\"';|<>$\\")) {
 	    execlp("sh", "sh", "-c", c_cmdline, (char*)0);
-	    errlen = sprintf(errbuf, 
+	    errlen = sprintf(errbuf,
 		    "pan(%s): execlp of '%s' (tag %s) failed.  errno:%d %s",
 		    panname, c_cmdline, colle->name, errno, strerror(errno));
 	} else {
 	    char **arg_v;
 
 	    arg_v = (char **)splitstr(c_cmdline, NULL, NULL);
-	    
+
 	    execvp(arg_v[0], arg_v);
     	    errlen = sprintf(errbuf,
 		    "pan(%s): execvp of '%s' (tag %s) failed.  errno:%d  %s",
 		    panname, arg_v[0], colle->name, errno, strerror(errno));
 	}
-	write(errpipe[1], &errlen, sizeof(errlen));
-	write(errpipe[1], errbuf, errlen);
+	WRITE_OR_DIE(errpipe[1], &errlen, sizeof(errlen));
+	WRITE_OR_DIE(errpipe[1], errbuf, errlen);
 	exit(errno);
     }
 
@@ -935,14 +944,15 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
     /* subst_pcnt_f() allocates the command line dynamically
      * free the malloc to prevent a memory leak
      */
-    if (colle->pcnt_f) free(c_cmdline); 
+    if (colle->pcnt_f)
+	free(c_cmdline);
 
     close(errpipe[1]);
 
-    /* if the child couldn't go through with the exec, 
+    /* if the child couldn't go through with the exec,
      * clean up the mess, note it, and move on
      */
-    if(read(errpipe[0], &errlen, sizeof(errlen))) {
+    if (read(errpipe[0], &errlen, sizeof(errlen))) {
 	int status;
 	time_t end_time;
 	int termid;
@@ -968,10 +978,10 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
 	    termtype = "unknown";
 	}
 	time(&end_time);
-	if (!quiet_mode) 
+	if (!quiet_mode)
 	{
 		//write_test_start(active, errbuf);
-		write_test_end(active, errbuf, end_time, termtype, status, 
+		write_test_end(active, errbuf, end_time, termtype, status,
 			termid, &notime, &notime);
 	}
         if (capturing) {
@@ -1016,7 +1026,7 @@ subst_pcnt_f(struct coll_entry *colle)
     char new_cmdline[1024];
 
     /* if we get called falsely, do the right thing anyway */
-    if (!colle->pcnt_f) 
+    if (!colle->pcnt_f)
 	return colle->cmdline;
 
     snprintf(pid_and_counter, 20, "%d_%d", getpid(), counter++);
@@ -1033,7 +1043,7 @@ get_collection(char *file, int optind, int argc, char **argv)
     int i;
 
     buf = slurp(file);
-    if(!buf)
+    if (!buf)
         return NULL;
 
     coll = (struct collection *) malloc(sizeof(struct collection));
@@ -1056,7 +1066,7 @@ get_collection(char *file, int optind, int argc, char **argv)
 	    n->name = strdup(strsep(&a, " \t"));
 	    n->cmdline = strdup(a);
 	    n->next = NULL;
-	    
+
 	    if (p) {
 		p->next = n;
 	    }
@@ -1074,7 +1084,7 @@ get_collection(char *file, int optind, int argc, char **argv)
     if (optind < argc) {
 	char workstr[1024] = "";
 	int workstr_left = 1023;
-	
+
 	/* fill arg list */
 	for (i = 0; optind < argc; ++optind, ++i) {
 	    strncat(workstr, argv[optind], workstr_left);
@@ -1296,23 +1306,22 @@ wait_handler( int sig )
 {
     static int lastsent = 0;
 
-    if( sig == 0 ){
+    if (sig == 0) {
 	lastsent = 0;
     } else {
 	rec_signal = sig;
-	if( sig == SIGUSR2 )
+	if (sig == SIGUSR2)
 	    return;
-	if( lastsent == 0 )
+	if (lastsent == 0)
 	    send_signal = sig;
-	else if( lastsent == SIGUSR1 )
+	else if (lastsent == SIGUSR1)
 	    send_signal = SIGINT;
-	else if( lastsent == sig )
+	else if (lastsent == sig)
 	    send_signal = SIGTERM;
-	else if( lastsent == SIGTERM )
+	else if (lastsent == SIGTERM)
 	    send_signal = SIGHUP;
-	else if( lastsent == SIGHUP )
+	else if (lastsent == SIGHUP)
 	    send_signal = SIGKILL;
 	lastsent = send_signal;
     }
 }
-

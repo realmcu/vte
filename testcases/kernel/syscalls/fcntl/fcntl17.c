@@ -58,7 +58,6 @@
 
 char *TCID = "fcntl17";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 #define STRINGSIZE	27
 #define STRING		"abcdefghijklmnopqrstuvwxyz\n"
@@ -102,9 +101,9 @@ int setup()
 	char template[PATH_MAX];
 	struct sigaction act;
 
-	tst_sig(FORK, DEF_HANDLER, NULL);	/* capture signals */
+	tst_sig(FORK, DEF_HANDLER, NULL);
 	umask(0);
-	TEST_PAUSE;		/* Pause if that option is specified */
+	TEST_PAUSE;
 	tst_tmpdir();		/* make temp dir and cd to it */
 
 	if (pipe(parent_pipe) < 0) {
@@ -164,7 +163,7 @@ void cleanup()
 {
 	close(file_fd);
 	tst_rmdir();
-	tst_exit();
+
 }
 
 void do_child1()
@@ -393,7 +392,7 @@ void catch_child()
 {
 	tst_resm(TFAIL, "Unexpected death of child process");
 	cleanup();
- /*NOTREACHED*/}
+ }
 
 void catch_alarm()
 {
@@ -415,7 +414,7 @@ void catch_alarm()
 	tst_resm(TFAIL, "Alarm expired, deadlock not detected");
 	tst_resm(TWARN, "You may need to kill child processes by hand");
 	cleanup();
- /*NOTREACHED*/}
+ }
 
 int main(int ac, char **av)
 {
@@ -425,8 +424,8 @@ int main(int ac, char **av)
 	int fail = 0;
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
 	maybe_run_child(&do_child1, "nddddddddd", 1, &file_fd,
@@ -449,7 +448,7 @@ int main(int ac, char **av)
 	if (setup()) {		/* global testup */
 		tst_resm(TINFO, "setup failed");
 		cleanup();
-	 /*NOTREACHED*/}
+	 }
 
 	/* check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
@@ -473,7 +472,7 @@ int main(int ac, char **av)
 		} else if (child_pid1 < 0) {
 			perror("Fork failed: child 1");
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 
 		/* parent */
 
@@ -497,7 +496,7 @@ int main(int ac, char **av)
 					 "1 failed");
 			}
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 
 		/* parent */
 
@@ -526,7 +525,7 @@ int main(int ac, char **av)
 					 "failed");
 			}
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 		/* parent */
 
 		close(parent_pipe[1]);
@@ -631,5 +630,5 @@ int main(int ac, char **av)
 	waitpid(child_pid2, &child_stat, 0);
 	waitpid(child_pid3, &child_stat, 0);
 	cleanup();
-	return 0;
+	tst_exit();
 }

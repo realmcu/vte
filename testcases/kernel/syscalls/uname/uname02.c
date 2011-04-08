@@ -62,7 +62,6 @@ void setup(void);
 
 char *TCID = "uname02";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int exp_enos[] = { 14, 0 };	/* 0 terminated list of expected errnos */
 
@@ -74,17 +73,12 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	setup();		/* global setup */
 
-	/* The following loop checks looping state if -i option given */
-
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
 		/*
@@ -94,67 +88,44 @@ int main(int ac, char **av)
 
 		TEST(uname((struct utsname *)-1));
 
-		if (TEST_RETURN == 0) {
+		if (TEST_RETURN == 0)
 			tst_resm(TFAIL, "call succeed when failure expected");
-		}
 
 		TEST_ERROR_LOG(TEST_ERRNO);
 
 		switch (TEST_ERRNO) {
 		case EFAULT:
-			tst_resm(TPASS, "expected failure - errno = %d - %s",
-				 TEST_ERRNO, strerror(TEST_ERRNO));
+			tst_resm(TPASS|TTERRNO, "uname failed as expected");
 			break;
 		default:
-			tst_resm(TFAIL, "call failed to produce "
-				 "expected error - errno = %d - %s",
-				 TEST_ERRNO, strerror(TEST_ERRNO));
+			tst_resm(TFAIL|TTERRNO, "uname failed unexpectedly");
 		}
 	}
 
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
-#else
-
-int main()
-{
-	tst_resm(TINFO, "test is not available on uClinux");
-	return 0;
-}
-
-#endif /* if !defined(UCLINUX) */
-
-/*
- * setup() - performs all the ONE TIME setup for this test.
- */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 }
 
-/*
- * cleanup() - performs all the ONE TIME cleanup for this test at completion
- * 	       or premature exit.
- */
 void cleanup(void)
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }
+#else
+int main()
+{
+	tst_resm(TCONF, NULL, "test is not available on uClinux");
+}
+#endif /* if !defined(UCLINUX) */

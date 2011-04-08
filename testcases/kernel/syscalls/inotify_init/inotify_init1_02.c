@@ -67,10 +67,6 @@
 
 #define IN_NONBLOCK O_NONBLOCK
 
-/* Extern Global Variables */
-extern int Tst_count;		/* counter for tst_xxx routines.         */
-extern char *TESTDIR;		/* temporary dir created by tst_tmpdir() */
-
 /* Global Variables */
 char *TCID = "inotify_init1_02";	/* test program identifier.              */
 int testno;
@@ -96,12 +92,9 @@ int TST_TOTAL = 1;		/* total number of tests in this file.   */
 /******************************************************************************/
 extern void cleanup()
 {
-	/* Remove tmp dir and all files in it */
+
 	TEST_CLEANUP;
 	tst_rmdir();
-
-	/* Exit with appropriate return code. */
-	tst_exit();
 }
 
 /* Local  Functions */
@@ -137,62 +130,51 @@ int main(int argc, char *argv[])
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	}
+
 	if ((tst_kvercmp(2, 6, 27)) < 0) {
-		tst_resm(TCONF,
-			 "This test can only run on kernels that are 2.6.27 and higher");
-		tst_exit();
+		tst_brkm(TCONF, NULL,
+			"This test can only run on kernels that are 2.6.27 "
+			"and higher");
 	}
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
 		Tst_count = 0;
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
 			fd = syscall(__NR_inotify_init1, 0);
 			if (fd == -1) {
-				tst_resm(TFAIL, "inotify_init1(0) failed");
-				cleanup();
-				tst_exit();
+				tst_brkm(TFAIL|TERRNO, cleanup,
+					"inotify_init1(0) failed");
 			}
 			fl = fcntl(fd, F_GETFL);
 			if (fl == -1) {
-				tst_brkm(TBROK, cleanup, "fcntl failed");
-				tst_exit();
+				tst_brkm(TBROK|TERRNO, cleanup, "fcntl failed");
 			}
 			if (fl & O_NONBLOCK) {
-				tst_resm(TFAIL,
-					 "inotify_init1(0) set non-blocking mode");
-				cleanup();
-				tst_exit();
+				tst_brkm(TFAIL, cleanup,
+					"inotify_init1(0) set non-blocking "
+					"mode");
 			}
 			close(fd);
 
 			fd = syscall(__NR_inotify_init1, IN_NONBLOCK);
 			if (fd == -1) {
-				tst_resm(TFAIL,
+				tst_brkm(TFAIL|TERRNO, cleanup,
 					 "inotify_init1(IN_NONBLOCK) failed");
-				cleanup();
-				tst_exit();
 			}
 			fl = fcntl(fd, F_GETFL);
 			if (fl == -1) {
-				tst_brkm(TBROK, cleanup, "fcntl failed");
-				tst_exit();
+				tst_brkm(TBROK|TERRNO, cleanup, "fcntl failed");
 			}
 			if ((fl & O_NONBLOCK) == 0) {
-				tst_resm(TFAIL,
-					 "inotify_init1(IN_NONBLOCK) set non-blocking mode");
-				cleanup();
-				tst_exit();
+				tst_brkm(TFAIL, cleanup,
+					"inotify_init1(IN_NONBLOCK) set "
+					"non-blocking mode");
 			}
 			close(fd);
 			tst_resm(TPASS, "inotify_init1(IN_NONBLOCK) PASSED");
-			cleanup();
 		}
 	}
 	tst_exit();

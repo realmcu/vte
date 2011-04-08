@@ -109,7 +109,6 @@ int main(int argc, char **argv)
                 }
         }
 
-
         if ((s = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0) {
                 perror("socket");
                 return 1;
@@ -126,10 +125,10 @@ int main(int argc, char **argv)
 
         setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
 
-        if(set_loopback)
+        if (set_loopback)
                 setsockopt(s, SOL_CAN_RAW, CAN_RAW_LOOPBACK, &loopback, sizeof(loopback));
 
-        if(set_recv_own_msgs)
+        if (set_recv_own_msgs)
                 setsockopt(s, SOL_CAN_RAW, CAN_RAW_RECV_OWN_MSGS, &recv_own_msgs, sizeof(recv_own_msgs));
 
         strcpy(ifr.ifr_name, ifname);
@@ -144,7 +143,7 @@ int main(int argc, char **argv)
                 return 1;
         }
 
-        if(send_one_frame) {
+        if (send_one_frame) {
 
                 frame.can_id  = 0x123;
                 frame.can_dlc = 2;
@@ -168,9 +167,9 @@ int main(int argc, char **argv)
                                 printf("%8X  ", frame.can_id & CAN_EFF_MASK);
                         else
                                 printf("%3X  ", frame.can_id & CAN_SFF_MASK);
-            
+
                         printf("[%d] ", frame.can_dlc);
-            
+
                         for (i = 0; i < frame.can_dlc; i++) {
                                 printf("%02X ", frame.data[i]);
                         }
@@ -183,6 +182,5 @@ int main(int argc, char **argv)
 
         close(s);
 
-        return 0;
+    return 0;
 }
-

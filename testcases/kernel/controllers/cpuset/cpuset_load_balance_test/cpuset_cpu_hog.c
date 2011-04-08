@@ -150,7 +150,7 @@ void checkopt(int argc, char **argv)
 }
 
 /*
- * hog the cpu time and check the cpu which the task is running on is in the 
+ * hog the cpu time and check the cpu which the task is running on is in the
  * cpus of the cpuset or not.
  *
  * return value: 0  - success.
@@ -300,12 +300,12 @@ int main(int argc, char **argv)
 			sigsuspend(&sigset);
 
 		if (ret || end) {
-			for(i = 0; i < nprocs; i++) {
+			for (i = 0; i < nprocs; i++) {
 				kill(childpids[i], SIGUSR2);
 			}
 			break;
 		} else {
-			for(i = 0; i < nprocs; i++) {
+			for (i = 0; i < nprocs; i++) {
 				kill(childpids[i], SIGUSR1);
 			}
 		}

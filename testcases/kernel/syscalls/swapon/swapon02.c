@@ -43,7 +43,7 @@
  *		    Setup signal handling.
  *		    Pause for SIGUSR1 if option specified.
  *		   1. For testing error on invalid user, change the effective uid
- * 		  	
+ *
  * 		  Test:
  *		    Loop if the proper options are given.
  *		    Execute system call.
@@ -64,7 +64,7 @@
  *		  -p   : Pause for SIGUSR1 before starting
  *		  -P x : Pause for x seconds between iterations.
  *		  -t   : Turn on syscall timing.
- *		 	
+ *
  *RESTRICTIONS:
  *Incompatible with kernel versions below 2.1.35.
  *Incompatible if MAX_SWAPFILES definition in later kernels is changed
@@ -111,7 +111,6 @@ void handler(int);
 
 char *TCID = "swapon02";	/* Test program identifier.    */
 int TST_TOTAL = 4;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
@@ -143,21 +142,17 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	uname(&uval);
 	kmachine = uval.machine;
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		Tst_count = 0;
 		for (i = 0; i < TST_TOTAL; i++) {
-			/* reset Tst_count in case we are looping. */
+
 			/* do the setup if the test have one */
 			if (testcase[i].setupfunc
 			    && testcase[i].setupfunc() == -1) {
@@ -173,8 +168,7 @@ int main(int ac, char **av)
 			if (testcase[i].cleanfunc
 			    && testcase[i].cleanfunc() == -1) {
 				tst_brkm(TBROK, cleanup,
-					 "Cleanup failed,"
-					 " quitting the test");
+					 "Cleanup failed, quitting the test");
 			}
 			/* check return code */
 			if ((TEST_RETURN == -1)
@@ -210,10 +204,9 @@ int main(int ac, char **av)
 			TEST_ERROR_LOG(TEST_ERRNO);
 		}		/*End of TEST LOOPS */
 	}			/*End of TEST LOOPING */
-	/*Clean up and exit */
-	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	cleanup();
+	tst_exit();
 }				/*End of main */
 
 /*
@@ -272,9 +265,8 @@ int setup01()
 int cleanup01()
 {
 	if (seteuid(0) == -1) {
-		tst_brkm(TBROK, cleanup, "seteuid failed to set uid to root");
-		perror("seteuid");
-		return -1;
+		tst_brkm(TBROK|TERRNO, cleanup,
+			"seteuid failed to set uid to root");
 	}
 
 	return 0;
@@ -360,7 +352,6 @@ int cleanup03()
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* set the expected errnos... */
@@ -368,10 +359,9 @@ void setup()
 
 	/* Check whether we are root */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 
 	if (tst_is_cwd_tmpfs()) {
@@ -384,10 +374,9 @@ void setup()
 			 "Cannot do swapon on a file located on a nfs filesystem");
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}				/* End setup() */
+}
 
 /*
 * cleanup() - Performs one time cleanup for this test at
@@ -401,9 +390,5 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files inside it */
 	tst_rmdir();
-
-	/* exit with return code appropriate for results */
-	tst_exit();
-}				/* End cleanup() */
+}

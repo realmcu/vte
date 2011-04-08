@@ -51,8 +51,8 @@
 #include <string.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 #include <sys/mman.h>
 
 /* 0 terminated list of expected errnos */
@@ -60,7 +60,6 @@ int exp_enos[] = { 14, 0 };
 
 char *TCID = "write03";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 char *bad_addr = 0;
 
@@ -80,10 +79,10 @@ int main(int argc, char **argv)
 	int fd;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	 /*NOTREACHED*/}
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+	 }
 
 	/* global setup */
 	setup();
@@ -102,31 +101,31 @@ int main(int argc, char **argv)
 		if (fd < 0) {
 			tst_resm(TBROK, "creating a new file failed");
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 
 		(void)memset(wbuf, '0', 100);
 
 		if (write(fd, wbuf, 100) == -1) {
 			tst_resm(TFAIL, "failed to write to %s", filename);
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 
 		if (write(fd, bad_addr, 100) != -1) {
 			tst_resm(TFAIL, "write(2) failed to fail");
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 		TEST_ERROR_LOG(errno);
 		close(fd);
 
 		if ((fd = open(filename, O_RDONLY)) == -1) {
 			tst_resm(TBROK, "open(2) failed, errno: %d", errno);
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 
 		if (read(fd, rbuf, 100) == -1) {
 			tst_resm(TBROK, "read(2) failed, errno: %d", errno);
 			cleanup();
-		 /*NOTREACHED*/}
+		 }
 
 		if (memcmp(wbuf, rbuf, 100) == 0) {
 			tst_resm(TPASS, "failure of write(2) didnot corrupt "
@@ -139,7 +138,7 @@ int main(int argc, char **argv)
 		close(fd);
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 #else
@@ -147,7 +146,7 @@ int main(int argc, char **argv)
 int main()
 {
 	tst_resm(TINFO, "test is not available on uClinux");
-	return 0;
+	tst_exit();
 }
 
 #endif /* if !defined(UCLINUX) */
@@ -157,7 +156,7 @@ int main()
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Set up the expected error numbers for -e option */
@@ -198,6 +197,4 @@ void cleanup(void)
 	unlink(filename);
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

@@ -58,8 +58,8 @@
 #include <sys/time.h>
 #include <errno.h>
 #include <unistd.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 #define	FAILED		1
 #define	VAL_SEC		100
@@ -71,7 +71,6 @@ int TST_TOTAL = 1;
 time_t save_tv_sec, save_tv_usec;
 struct timeval tp, tp1, tp2;
 int exp_enos[] = { EFAULT, 0 };
-extern int Tst_count;
 
 void setup(void);
 void cleanup(void);
@@ -85,15 +84,14 @@ int main(int argc, char **argv)
 	suseconds_t delta;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
+
+	 }
 
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		int condition_number = 1;
 		/* reset Tst_count in case we are looping */
@@ -144,7 +142,7 @@ int main(int argc, char **argv)
 
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -153,7 +151,7 @@ int main(int argc, char **argv)
 int main()
 {
 	tst_resm(TINFO, "test is not available on uClinux");
-	return 0;
+	tst_exit();
 }
 
 #endif /* if !defined(UCLINUX) */
@@ -164,14 +162,14 @@ int main()
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Check that the test process id is root  */
 	if (geteuid() != 0) {
 		tst_brkm(TBROK, NULL, "Must be root for this test!");
 		tst_exit();
-	 /*NOTREACHED*/}
+	 }
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
@@ -185,7 +183,7 @@ void setup(void)
 	if ((gettimeofday(&tp, (struct timezone *)&tp1)) == -1) {
 		tst_brkm(TBROK, cleanup, "gettimeofday failed. "
 			 "errno=%d", errno);
-	 /*NOTREACHED*/}
+	 }
 	save_tv_sec = tp.tv_sec;
 	save_tv_usec = tp.tv_usec;
 }
@@ -211,6 +209,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }

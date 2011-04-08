@@ -64,13 +64,12 @@
 
 #include <errno.h>
 #include <pwd.h>
-#include <malloc.h>
-#include <test.h>
-#include <usctest.h>
+#include <stdlib.h>
+#include "test.h"
+#include "usctest.h"
 #include <sys/wait.h>
 
 char *TCID = "setreuid05";
-extern int Tst_count;
 
 /* flag to tell parent if child passed or failed. */
 int flag = 0;
@@ -137,16 +136,14 @@ int main(int argc, char **argv)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
 
-	/* Perform global setup for test */
+	 }
+
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		int i, pid, status;
 
@@ -155,7 +152,7 @@ int main(int argc, char **argv)
 
 		if ((pid = FORK_OR_VFORK()) == -1) {
 			tst_brkm(TBROK, cleanup, "fork failed");
-		 /*NOTREACHED*/} else if (pid == 0) {	/* child */
+		 } else if (pid == 0) {	/* child */
 			for (i = 0; i < TST_TOTAL; i++) {
 				/* Set the real or effective user id */
 				TEST(setreuid(*test_data[i].real_uid,
@@ -218,7 +215,7 @@ int main(int argc, char **argv)
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -228,23 +225,23 @@ int main(int argc, char **argv)
  */
 void setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	if (getpwnam("nobody") == NULL) {
 		tst_brkm(TBROK, NULL, "nobody must be a valid user.");
 		tst_exit();
-	 /*NOTREACHED*/}
+	 }
 
 	if (getpwnam("daemon") == NULL) {
 		tst_brkm(TBROK, NULL, "daemon must be a valid user.");
 		tst_exit();
-	 /*NOTREACHED*/}
+	 }
 
 	if (getuid() != 0) {
 		tst_resm(TBROK, "Must be run as root");
 		tst_exit();
-	 /*NOTREACHED*/}
+	 }
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
@@ -280,9 +277,7 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }
 
 void uid_verify(struct passwd *ru, struct passwd *eu, char *when)
 {

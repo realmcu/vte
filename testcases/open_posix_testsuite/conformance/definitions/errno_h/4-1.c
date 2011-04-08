@@ -1,5 +1,5 @@
 /*
- *errno.h shall give positive values for the 
+ *errno.h shall give positive values for the
  *error number symbolic constants
  *author:ysun@lnxw.com
  */
@@ -13,8 +13,6 @@
 #define PTP_UNTESTED    5
 #define PTP_UNINITIATED 6
 #define PTP_NORESULT    7
-
-
 
 struct unique {
     int value;
@@ -74,8 +72,8 @@ struct unique {
 int main() {
     struct unique *tst=sym;
     int ret = PTP_PASS;
-    while(tst->name){
-	if (tst->value < 0){
+    while (tst->name) {
+	if (tst->value < 0) {
 	    printf("Value of symbol %s is less than zero\n",tst->name);
 	    ret = PTP_FAIL;
 	}

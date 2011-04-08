@@ -1,8 +1,8 @@
 /*
     Copyright (c) 2003, Intel Corporation. All rights reserved.
     Created by:  majid.awad REMOVE-THIS AT intel DOT com
-    This file is licensed under the GPL license.  For the full content 
-    of this license, see the COPYING file at the top level of this 
+    This file is licensed under the GPL license.  For the full content
+    of this license, see the COPYING file at the top level of this
     source tree.
  */
 
@@ -23,28 +23,27 @@
 #define FUNCTION "sem_init"
 #define ERROR_PREFIX "unexpected error: " FUNCTION " " TEST ": "
 
-
 int main ()
 {
 	sem_t   mysemp;
 	int val;
 
-	if ( sem_init (&mysemp, 0, 1) == -1 ) {
+	if (sem_init (&mysemp, 0, 1) == -1) {
 		perror(ERROR_PREFIX "sem_init");
 		return PTS_UNRESOLVED;
 	}
 
-	if (sem_trywait(&mysemp) == -1 ) {
+	if (sem_trywait(&mysemp) == -1) {
 		perror(ERROR_PREFIX "trywait");
                 return PTS_UNRESOLVED;
         }
 
-        if( sem_getvalue(&mysemp, &val) < 0 ) {
+        if (sem_getvalue(&mysemp, &val) < 0) {
                 perror(ERROR_PREFIX "sem_getvalue");
                 return PTS_UNRESOLVED;
         }
 
-        if (val <= 0 ) {
+        if (val <= 0) {
                 puts("TEST PASSED");
 		sem_destroy(&mysemp);
                 return PTS_PASS;
@@ -53,4 +52,3 @@ int main ()
                 return PTS_FAIL;
 	}
 }
-

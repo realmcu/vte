@@ -54,9 +54,9 @@ static void cleanup(void)
 {
 	seteuid(0);
 	setegid(0);
-	
+
 	tst_rmdir();
-	tst_exit();
+
 }
 
 /*
@@ -65,17 +65,17 @@ static void cleanup(void)
  * If flag is non zero, the file contains #!/PATH/sh shebang otherwise it's
  * empty.
  */
-static void testsetup(const char *file_name, int flag, mode_t mode, 
+static void testsetup(const char *file_name, int flag, mode_t mode,
                       int user_id, int group_id)
 {
 	FILE *file;
 
 	file = fopen(file_name, "w");
-	
+
 	if (file == NULL)
 		tst_brkm(TBROK | TERRNO, cleanup,
 		         "Could not create test file %s.", file_name);
-	
+
 	/* create file with shebang */
 	if (flag) {
 		char buf[PATH_MAX];
@@ -93,11 +93,11 @@ static void testsetup(const char *file_name, int flag, mode_t mode,
 
 	if (chmod(file_name, mode))
 		tst_brkm(TBROK | TERRNO, cleanup,
-		         "Could not chmod test file %s.", file_name); 
+		         "Could not chmod test file %s.", file_name);
 
 	if (chown(file_name, user_id, group_id))
 		tst_brkm(TBROK | TERRNO, cleanup,
-		         "Could not chown test file %s.", file_name); 
+		         "Could not chown test file %s.", file_name);
 }
 
 /*
@@ -108,20 +108,21 @@ static int testfperm(const char *file_name, int flag, int user_id,
 
 {
 	FILE *file;
-	int ret;
-	
-	if (setegid(group_id))
-		tst_brkm(TBROK | TERRNO, cleanup, "Could not setegid to %d.",
-		         group_id);
+	int status;
 
-	if (seteuid(user_id))
-		tst_brkm(TBROK | TERRNO, cleanup, "Could not seteuid to %d.",
-		         user_id);
+	switch (fork()) {
+	case 0:
+		if (setgid(group_id))
+			tst_brkm(TBROK | TERRNO, cleanup,
+			         "Could not setgid to %d.", group_id);
 
-	if (tolower(fperm[0]) == 'x') {
-		int status;
-		
-		if (fork() == 0) {
+		if (setuid(user_id))
+			tst_brkm(TBROK | TERRNO, cleanup,
+			         "Could not setuid to %d.", user_id);
+
+		switch (tolower(fperm[0])) {
+		case 'x':
+
 			/*
 			 * execlp runs file with sh in case kernel has
 			 * no binmft handler for it, execl does not.
@@ -130,28 +131,28 @@ static int testfperm(const char *file_name, int flag, int user_id,
 				execl(file_name, file_name, NULL);
 			else
 				execlp(file_name, "test", NULL);
-	
+
 			exit(1);
+		break;
+		default:
+			if ((file = fopen(file_name, fperm)) != NULL) {
+				fclose(file);
+				exit(0);
+			}
+			exit(1);
+		break;
 		}
-		
-		wait(&status);
-		
-		seteuid(0);
-		setegid(0);
-		
-		return WEXITSTATUS(status);
+	break;
+	case -1:
+		tst_brkm(TBROK | TERRNO, cleanup, "fork failed");
+	break;
+	default:
+	break;
 	}
+	
+	wait(&status);
 
-	if ((file = fopen(file_name, fperm)) != NULL) {
-		fclose(file);
-		ret = 0;
-	} else
-		ret = 1;
-
-	seteuid(0);
-	setegid(0);
-
-	return ret;
+	return WEXITSTATUS(status);
 }
 
 static void print_usage(const char *bname)
@@ -163,13 +164,13 @@ static void print_usage(const char *bname)
 	printf("Usage: %s %s\n", bname, usage);
 }
 
-static long str_to_l(const char *str, const char *name)
+static long str_to_l(const char *str, const char *name, int base)
 {
 	char *end;
-	long i = strtol(str, &end, 10);
+	long i = strtol(str, &end, base);
 
 	if (*end != '\0')
-		tst_brkm(TBROK, tst_exit, "Invalid parameter '%s' passed. (%s)",
+		tst_brkm(TBROK, NULL, "Invalid parameter '%s' passed. (%s)",
 		         name, str);
 
 	return i;
@@ -196,17 +197,17 @@ int main(int argc, char *argv[])
 		tst_exit();
 	}
 
-	fmode     = str_to_l(argv[1], "file mode");
-	fuser_id  = str_to_l(argv[2], "file uid");
-	fgroup_id = str_to_l(argv[3], "file gid");
-	user_id   = str_to_l(argv[4], "tester uid");
-	group_id  = str_to_l(argv[5], "tester gid");
+	fmode     = str_to_l(argv[1], "file mode", 8);
+	fuser_id  = str_to_l(argv[2], "file uid", 10);
+	fgroup_id = str_to_l(argv[3], "file gid", 10);
+	user_id   = str_to_l(argv[4], "tester uid", 10);
+	group_id  = str_to_l(argv[5], "tester gid", 10);
 	fperm     = argv[6];
-	exp_res   = str_to_l(argv[7], "expected result");
+	exp_res   = str_to_l(argv[7], "expected result", 10);
 
 	tst_tmpdir();
 	testsetup(TEST_FILE_NAME1, 0, fmode, fuser_id, fgroup_id);
-	
+
 	/* more tests for 'x' flag */
 	if (tolower(fperm[0]) == 'x') {
 		testsetup(TEST_FILE_NAME2, 1, fmode, fuser_id, fgroup_id);

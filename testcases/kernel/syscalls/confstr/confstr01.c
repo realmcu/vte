@@ -52,7 +52,6 @@ int local_flag = PASSED;
 
 char *TCID = "confstr01";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 /**************/
 
 int confstr_var_vals[] = { _CS_PATH, _CS_XBS5_ILP32_OFF32_CFLAGS,
@@ -105,7 +104,7 @@ int main()
 
 	errno = 0;
 	for (i = 0; confstr_vars[i]; i++) {
-		len = confstr(confstr_var_vals[i], (char *)NULL, (size_t) 0);
+		len = confstr(confstr_var_vals[i], NULL, (size_t) 0);
 		if (len != 0) {
 			/* Allocate space for the buffer with size len */
 			if ((buf = (char *)malloc(len)) == NULL) {
@@ -162,6 +161,6 @@ int main()
 /*--------------------------------------------------------------*/
 	tst_exit();		/* THIS CALL DOES NOT RETURN - EXITS!!  */
 /*--------------------------------------------------------------*/
-	return 0;
+	tst_exit();
 
 }

@@ -78,7 +78,6 @@ extern void do_file_setup(char *);
 
 char *TCID = "rename03";	/* Test program identifier.    */
 int TST_TOTAL = 2;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 char fname[255], mname[255];
 char fdir[255], mdir[255];
@@ -93,12 +92,8 @@ struct test_case_t {
 	dev_t *olddev;
 	ino_t *oldino;
 } TC[] = {
-	/* comment goes here */
-	{
-	fname, mname, "file", &f_olddev, &f_oldino},
-	    /* comment goes here */
-	{
-	fdir, mdir, "directory", &d_olddev, &d_oldino}
+	{ fname, mname, "file", &f_olddev, &f_oldino},
+	{ fdir, mdir, "directory", &d_olddev, &d_oldino}
 };
 
 int main(int ac, char **av)
@@ -110,10 +105,8 @@ int main(int ac, char **av)
 	/*
 	 * parse standard options
 	 */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
-
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	/*
 	 * perform global setup for test
 	 */
@@ -124,7 +117,6 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/* set up the files and directories for the tests */
@@ -145,7 +137,7 @@ int main(int ac, char **av)
 				if (stat(TC[i].name2, &buf2) == -1) {
 					tst_brkm(TBROK, cleanup, "stat of %s "
 						 "failed", TC[i].desc);
-					/* NOTREACHED */
+
 				}
 
 				/*
@@ -186,16 +178,13 @@ int main(int ac, char **av)
 
 		/* remove the new directory */
 		if (rmdir(mdir) == -1) {
-			tst_brkm(TBROK, cleanup, "Could not remove "
-				 "directory %s", mdir);
-		 /*NOTREACHED*/}
-	}			/* End for TEST_LOOPING */
+			tst_brkm(TBROK, cleanup, "Couldn't remove directory %s",
+			    mdir);
+		}
+	}
 
-	/*
-	 * cleanup and exit
-	 */
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -204,10 +193,9 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Create a temporary directory and make it current. */
@@ -230,7 +218,7 @@ void setup2()
 	if (stat(fname, &buf1) == -1) {
 		tst_brkm(TBROK, cleanup, "failed to stat file %s"
 			 "in rename()", fname);
-		/* NOTREACHED */
+
 	}
 
 	/* save original file's dev and ino */
@@ -243,11 +231,11 @@ void setup2()
 	/* create "old" directory */
 	if (mkdir(fdir, 00770) == -1) {
 		tst_brkm(TBROK, cleanup, "Could not create directory %s", fdir);
-	 /*NOTREACHED*/}
+	}
 	if (stat(fdir, &buf1) == -1) {
 		tst_brkm(TBROK, cleanup, "failed to stat directory %s"
 			 "in rename()", fdir);
-		/* NOTREACHED */
+
 	}
 
 	d_olddev = buf1.st_dev;
@@ -256,7 +244,7 @@ void setup2()
 	/* create another directory */
 	if (mkdir(mdir, 00770) == -1) {
 		tst_brkm(TBROK, cleanup, "Could not create directory %s", mdir);
-	 /*NOTREACHED*/}
+	}
 }
 
 /*
@@ -275,9 +263,4 @@ void cleanup()
 	 * Remove the temporary directory.
 	 */
 	tst_rmdir();
-
-	/*
-	 * Exit with return code appropriate for results.
-	 */
-	tst_exit();
 }

@@ -83,7 +83,6 @@
 
 char *TCID = "setdomainname03";	/* Test program identifier. */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 static int exp_enos[] = { EPERM, 0 };
 
 static char nobody_uid[] = "nobody";
@@ -101,10 +100,10 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
 	/*
@@ -113,10 +112,8 @@ int main(int ac, char **av)
 	 */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* Reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/*
@@ -133,17 +130,16 @@ int main(int ac, char **av)
 		}
 		TEST_ERROR_LOG(TEST_ERRNO);
 
-	}			/* End for TEST_LOOPING */
+	}
 
 	/*
 	 * Invoke cleanup() to delete the test directories created
 	 * in the setup().
 	 */
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
-
-}				/* End main */
+}
 
 /*
  * setup(void) - performs all ONE TIME setup for this test.
@@ -159,10 +155,10 @@ void setup()
 
 	/* Switch to nobody user for correct error code collection */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Test must be run as root");
+		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 	if ((ltpuser = getpwnam(nobody_uid)) == NULL) {
-		tst_brkm(TBROK, tst_exit, "\"nobody\" user not present");
+		tst_brkm(TBROK, NULL, "\"nobody\" user not present");
 	}
 	if (seteuid(ltpuser->pw_uid) == -1) {
 		tst_resm(TWARN, "seteuid failed to "
@@ -172,11 +168,10 @@ void setup()
 
 	/* Save current domainname */
 	if ((getdomainname(old_domain_name, MAX_NAME_LEN)) < 0) {
-		tst_brkm(TBROK, tst_exit, "getdomainname() failed while"
+		tst_brkm(TBROK, NULL, "getdomainname() failed while"
 			 " getting current domain name");
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 }
@@ -207,6 +202,4 @@ void cleanup()
 			 " domainname to \"%s\"", old_domain_name);
 	}
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

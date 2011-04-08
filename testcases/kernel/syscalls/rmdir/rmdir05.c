@@ -113,7 +113,6 @@ int TST_TOTAL = 4;
 #endif
 
 char *TCID = "rmdir05";		/* Test program identifier.    */
-extern int Tst_count;		/* Test Case counter for tst_* routines. */
 struct stat stat_buf;		/* Stat buffer used for verification. */
 char dir_name[256];		/* Array to hold directory name. */
 
@@ -128,9 +127,9 @@ int main(int argc, char **argv)
      * parse standard options
      ***************************************************************/
 	if ((msg =
-	     parse_opts(argc, argv, (option_t *) NULL, NULL)) != (char *)NULL) {
+	     parse_opts(argc, argv, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
     /***************************************************************
@@ -143,7 +142,6 @@ int main(int argc, char **argv)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/*
@@ -416,25 +414,24 @@ int main(int argc, char **argv)
 			}
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
     /***************************************************************
      * cleanup and exit
      ***************************************************************/
 	cleanup();
+	tst_exit();
 
-	return 0;
-}				/* End main */
+}
 
 /***************************************************************
  * setup() - performs all ONE TIME setup for this test.
  ***************************************************************/
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Create a temporary directory and make it current. */
@@ -471,7 +468,7 @@ void setup()
 		tst_brkm(TBROK, cleanup, "mmap failed");
 	}
 #endif
-}				/* End setup() */
+}
 
 /***************************************************************
  * cleanup() - performs all ONE TIME cleanup for this test at
@@ -501,6 +498,5 @@ void cleanup()
 	/*
 	 * Exit with a return value appropriate for the results.
 	 */
-	tst_exit();
 
-}				/* End cleanup() */
+}

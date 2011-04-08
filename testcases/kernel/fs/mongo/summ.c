@@ -6,13 +6,13 @@
 #include <stdlib.h>
 char str[100];
 
-int main(int argc, char **argv) {   
+int main(int argc, char **argv) {
 char c, *p;
 int sum=0, n=0;
 
     p = str;
     while ((c=getchar()) != EOF) {
-	if (c != '\n'){
+	if (c != '\n') {
 	     *p++ = c;
 	}else {
 	    *p = '\0';

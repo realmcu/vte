@@ -120,7 +120,6 @@ struct test_case_t {		/* test case struct. to hold ref. test cond's */
 
 char *TCID = "mknod06";		/* Test program identifier.    */
 int TST_TOTAL = (sizeof(Test_cases) / sizeof(*Test_cases));
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 #if !defined(UCLINUX)
 extern char *get_high_address();
 int exp_enos[] = { EEXIST, EFAULT, ENOENT, ENAMETOOLONG, ENOTDIR, 0 };
@@ -142,10 +141,10 @@ int main(int ac, char **av)
 	int ind;		/* counter to test different test conditions */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(ac, av, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
+
 	}
 
 	/*
@@ -157,9 +156,8 @@ int main(int ac, char **av)
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* Reset Tst_count in case we are looping. */
+
 		Tst_count = 0;
 
 		for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
@@ -197,9 +195,9 @@ int main(int ac, char **av)
 					 "expected errno:%d", test_desc,
 					 TEST_ERRNO, Test_cases[ind].exp_errno);
 			}
-		}		/* End of TEST CASE LOOPING. */
+		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
 	/*
 	 * Invoke cleanup() to delete the test directories created
@@ -207,8 +205,8 @@ int main(int ac, char **av)
 	 */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+	tst_exit();
+}
 
 /*
  * setup(void) - performs all ONE TIME setup for this test.
@@ -220,7 +218,7 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	int ind;		/* counter for setup functions */
+	int ind;
 
 	/* Capture unexpected signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -231,7 +229,6 @@ void setup()
 		tst_exit();
 	}
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Make a temp dir and cd to it */
@@ -326,9 +323,6 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* Remove files and temporary directory created */
 	tst_rmdir();
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

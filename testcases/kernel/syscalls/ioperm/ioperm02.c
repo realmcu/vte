@@ -93,7 +93,6 @@ static int setup1(void);
 static void cleanup1();
 static void cleanup();
 
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 static int exp_enos[] = { EINVAL, EPERM, 0 };
 
 static char nobody_uid[] = "nobody";
@@ -112,22 +111,17 @@ struct test_cases_t *test_cases;
 
 int main(int ac, char **av)
 {
-	int lc, i;		/* loop counter */
+	int lc, i;
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL))
-	    != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
@@ -168,14 +162,14 @@ int main(int ac, char **av)
 			}
 		}
 
-	}			/* End for TEST_LOOPING */
+	}
 
 	/* cleanup and exit */
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
-}				/* End main */
+}
 
 /* setup1() - set up non-super user for second test case */
 int setup1(void)
@@ -194,7 +188,7 @@ void cleanup1()
 {
 	/* reset user as root */
 	if (seteuid(0) == -1) {
-		tst_brkm(TBROK, tst_exit, "Failed to set uid as root");
+		tst_brkm(TBROK, NULL, "Failed to set uid as root");
 	}
 }
 
@@ -202,17 +196,16 @@ void cleanup1()
 void setup()
 {
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	/* Check whether we are root  */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Must be root for this test!");
+		tst_brkm(TBROK, NULL, "Must be root for this test!");
 	}
 
 	/* Check if "nobody" user id exists */
 	if ((ltpuser = getpwnam(nobody_uid)) == NULL) {
-		tst_brkm(TBROK, tst_exit, "\"nobody\" user id doesn't exist");
+		tst_brkm(TBROK, NULL, "\"nobody\" user id doesn't exist");
 	}
 
 	/*
@@ -248,10 +241,9 @@ void setup()
 	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-}				/* End setup() */
+}
 
 void cleanup()
 {
@@ -262,10 +254,7 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-
-}				/* End cleanup() */
+}
 
 #else /* __i386__ */
 
@@ -279,7 +268,7 @@ int main()
 	tst_resm(TPASS,
 		 "LSB v1.3 does not specify ioperm() for this architecture.");
 	tst_exit();
-	return 0;
+	tst_exit();
 }
 
 #endif /* __i386__ */

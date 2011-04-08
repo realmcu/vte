@@ -103,7 +103,6 @@
 #define SENSE_BUFF_LEN 32       /* Arbitrary, could be larger */
 #define INQ_ALLOC_LEN 255
 
-
 #ifndef SCSI_IOCTL_GET_PCI
 #define SCSI_IOCTL_GET_PCI 0x5387
 #endif
@@ -124,7 +123,6 @@
 
 #define DEV_NULL_MINOR_NUM 3
 
-
 #ifdef SG_GET_RESERVED_SIZE
 #define OPEN_FLAG O_RDONLY
 #else
@@ -144,7 +142,6 @@
 #define MAX_ST_DEVS 128
 #define MAX_OSST_DEVS 128
 #define MAX_ERRORS 5
-
 
 #define LIN_DEV_TYPE_UNKNOWN 0
 #define LIN_DEV_TYPE_SD 1
@@ -208,9 +205,9 @@
 
 #define SETUP_MODE_PAGE(NPAGE, NPARAM)          \
   status = get_mode_page(NPAGE, page_code);     \
-  if(status) { printf("\n"); return status; }   \
+  if (status) { printf("\n"); return status; }   \
   bdlen = buffer[11];                           \
-  pagestart = buffer + 12 + bdlen;             
+  pagestart = buffer + 12 + bdlen;
 
 typedef struct request_collection
 {       /* one instance visible to all threads */
@@ -343,7 +340,6 @@ static char *page_names[] =
         /* "Medium Partition (3)" */ NULL,
         /* "Medium Partition (4)" */ NULL};
 
-
 #define MAX_PAGENO (sizeof(page_names)/sizeof(char *))
 
 /* Following 2 macros from D.R. Butenhof's POSIX threads book:
@@ -382,13 +378,11 @@ static int in_full = 0;
 static int in_partial = 0;
 static int out_full = 0;
 static int out_partial = 0;
-static int do_coe = 0;              
+static int do_coe = 0;
 int base = READWRITE_BASE_NUM;
 unsigned char *cmpbuf = 0;
 static unsigned char buff_a[SIZEOF_BUFFER + SG_HSZ + 12];
 static unsigned char * buffer = buff_a + OFFSET_HEADER;
-
-
 
 typedef struct my_sg_scsi_id {
     int host_no;        /* as in "scsi<n>" where 'n' is one of 0, 1, 2 etc */
@@ -432,7 +426,6 @@ void print_msg(int msg_num, const char * msg);
 static void scan_dev_type(const char * leadin, int max_dev, int do_numeric,
                           int lin_dev_type, int last_sg_ind);
 
-
 #ifdef SG_IO
 int sg3_inq(int sg_fd, unsigned char * inqBuff, int do_extra);
 #endif
@@ -456,11 +449,9 @@ void print_msg(int msg_num, const char * msg)
     }
 }
 
-
 int main(int argc, char *argv[])
 {
     int rc = 0;
-
 
     if (argc < 2) {
         printf("\n\nERROR:No device passed to test\n\n");
@@ -477,7 +468,6 @@ int main(int argc, char *argv[])
         if (rc != 0) {
             printf("ERROR: run_sg_scan_tests failed %d\n", rc);
         }
-
 
         rc = show_scsi_logs(argv[1]);
         if (rc != 0) {
@@ -563,7 +553,6 @@ int main(int argc, char *argv[])
             printf("ERROR: do_scsi_sgp_read_write failed %d\n", rc);
         }
 
-
         rc = do_scsi_sgm_read_write(argv[1]);
         if (rc != 0) {
             printf("ERROR: do_scsi_sgm_read_write failed %d\n", rc);
@@ -577,14 +566,13 @@ int main(int argc, char *argv[])
 
     }
 
-    return 0;
+  return 0;
 }
 int validate_device(char * device)
 {
     int rc = 0;
     int i, found = FALSE;
     char device_string[25];
-
 
     for (i = 0; i < MAX_DEVICES && ! found; i++) {
         sprintf(device_string, "/dev/sg%d", i);
@@ -594,13 +582,8 @@ int validate_device(char * device)
         }
     }
 
-
-
     return rc;
 }
-
-
-
 
 void usage()
 {
@@ -672,7 +655,6 @@ int run_sg_scan_tests()
     writeable = O_RDONLY;
     do_inquiry = 1;
     do_extra = 1;
-
 
     for (k = 0, res = 0; (k < 1000)  && (num_errors < MAX_ERRORS);
          ++k, res = (sg_fd >= 0) ? close(sg_fd) : 0) {
@@ -774,7 +756,7 @@ int run_sg_scan_tests()
         memset(isghp, 0, sizeof(struct sg_header));
         isghp->reply_len = inqOutLen;
         memcpy(inqBuff + OFF, inqCmdBlk, INQUIRY_CMDLEN);
-       
+
         if (O_RDWR == (flags & O_ACCMODE)) { /* turn on blocking */
         f = fcntl(sg_fd, F_GETFL);
             fcntl(sg_fd, F_SETFL, f & (~ O_NONBLOCK));
@@ -824,7 +806,7 @@ int run_sg_scan_tests()
         if (eacces_err)
             printf("    root access may be required\n");
     }
-    return 0;
+  return 0;
 }
 
 #ifdef SG_IO
@@ -874,7 +856,7 @@ int sg3_inq(int sg_fd, unsigned char * inqBuff, int do_extra)
         else
             printf("\n");
     }
-    return 0;
+  return 0;
 }
 #endif
 
@@ -945,7 +927,7 @@ static void dStrHex(const char* str, int len, int no_ascii)
     int cpos = cpstart;
     int bpos = bpstart;
     int i, k;
-   
+
     if (len <= 0) return;
     memset(buff,' ',80);
     buff[80]='\0';
@@ -954,7 +936,7 @@ static void dStrHex(const char* str, int len, int no_ascii)
     if (bpos >= ((bpstart + (9 * 3))))
     	bpos++;
 
-    for(i = 0; i < len; i++)
+    for (i = 0; i < len; i++)
     {
 	c = *p++;
 	bpos += 3;
@@ -1192,7 +1174,7 @@ static void show_self_test_page(unsigned char * resp, int len)
 	return;
     }
     printf("Self-test results page\n");
-    for (k = 0, ucp = resp + 4; k < 20; ++k, ucp += 20 ) {
+    for (k = 0, ucp = resp + 4; k < 20; ++k, ucp += 20) {
 	n = (ucp[6] << 8) | ucp[7];
 	if ((0 == n) && (0 == ucp[4]))
 	    break;
@@ -1376,7 +1358,6 @@ static int fetchTemperature(int sg_fd, int do_hex, unsigned char * resp,
     return res;
 }
 
-
 int show_scsi_logs(char * device)
 {
     int sg_fd, k, pg_len;
@@ -1459,7 +1440,7 @@ int show_scsi_logs(char * device)
 	}
     }
     close(sg_fd);
-    return 0;
+  return 0;
 }
 
 static int do_inquiry(int sg_fd, void * resp, int mx_resp_len)
@@ -1488,7 +1469,7 @@ static int do_inquiry(int sg_fd, void * resp, int mx_resp_len)
     switch (res) {
     case SG_ERR_CAT_CLEAN:
     case SG_ERR_CAT_RECOVERED:
-        return 0;
+      return 0;
     default:
 	sg_chk_n_print3("Failed INQUIRY", &io_hdr);
         return -1;
@@ -1642,8 +1623,6 @@ int hbtl_scan(const char * path, int level, unsigned int *larr)
     return res;
 }
 
-
-
 int show_devfs_devices()
 {
     int  res;
@@ -1659,7 +1638,7 @@ int show_devfs_devices()
 
     strcat(di_root, "/.devfsd");
 
-    if (stat(di_root, &st) < 0){
+    if (stat(di_root, &st) < 0) {
         printf("Didn't find %s so perhaps devfs is not present,"
                " attempting to continue ...\n", di_root);
     }
@@ -1686,7 +1665,7 @@ int show_devfs_devices()
         if (res < 0)
             printf("main: ide hbtl_scan res=%d\n", res);
     }
-    return 0;
+  return 0;
 }
 
 static void install_handler (int sig_num, void (*sig_handler) (int sig))
@@ -1789,7 +1768,7 @@ int read_capacity(int sg_fd, int * num_sect, int * sect_sz)
                 (rcBuff[2] << 8) | rcBuff[3]);
     *sect_sz = (rcBuff[4] << 24) | (rcBuff[5] << 16) |
                (rcBuff[6] << 8) | rcBuff[7];
-    return 0;
+  return 0;
 }
 
 /* Return of 0 -> success, -1 -> failure, 2 -> try again */
@@ -1823,7 +1802,7 @@ int sync_cache(int sg_fd)
         sg_chk_n_print3("synchronize cache", &io_hdr);
         return -1;
     }
-    return 0;
+  return 0;
 }
 
 int sg_build_scsi_cdb(unsigned char * cdbp, int cdb_sz, unsigned int blocks,
@@ -1912,7 +1891,7 @@ int sg_build_scsi_cdb(unsigned char * cdbp, int cdb_sz, unsigned int blocks,
 			"=%d\n", cdb_sz);
     	return 1;
     }
-    return 0;
+  return 0;
 }
 
 /* -1 -> unrecoverable error, 0 -> successful, 1 -> recoverable (ENOMEM),
@@ -1965,7 +1944,7 @@ int sg_read(int sg_fd, unsigned char * buff, int blocks, int from_block,
 	    memset(buff, 0, bs * blocks);
 	    fprintf(stderr, ">> unable to read at blk=%d for "
                         "%d bytes, use zeros\n", from_block, bs * blocks);
-	    return 0; /* fudge success */
+	  return 0; /* fudge success */
 	}
 	else
 	    return -1;
@@ -1977,7 +1956,7 @@ int sg_read(int sg_fd, unsigned char * buff, int blocks, int from_block,
 #if SG_DEBUG
     fprintf(stderr, "duration=%u ms\n", io_hdr.duration);
 #endif
-    return 0;
+  return 0;
 }
 
 /* -1 -> unrecoverable error, 0 -> successful, 1 -> recoverable (ENOMEM),
@@ -2029,7 +2008,7 @@ int sg_write(int sg_fd, unsigned char * buff, int blocks, int to_block,
 	if (do_coe) {
 	    fprintf(stderr, ">> ignored errors for out blk=%d for "
 		    "%d bytes\n", to_block, bs * blocks);
-	    return 0; /* fudge success */
+	  return 0; /* fudge success */
 	}
 	else
 	    return -1;
@@ -2037,7 +2016,7 @@ int sg_write(int sg_fd, unsigned char * buff, int blocks, int to_block,
     if (diop && *diop &&
         ((io_hdr.info & SG_INFO_DIRECT_IO_MASK) != SG_INFO_DIRECT_IO))
         *diop = 0;      /* flag that dio not done (completely) */
-    return 0;
+  return 0;
 }
 
 int get_num(char * buf)
@@ -2076,8 +2055,6 @@ int get_num(char * buf)
 	}
     }
 }
-
-
 
 int do_scsi_device_read_write(char * device)
 {
@@ -2601,7 +2578,6 @@ int do_scsi_inquiry(char * device, int hex_flag)
     int ansi_version = 0;
     int ret = 0;
 
-
     file_name = device;
 
     if (hex_flag) {
@@ -3024,9 +3000,9 @@ int show_scsi_maps()
         }
         printf("\n");
     }
-    return 0;
+  return 0;
 }
-       
+
 static int find_dev_in_sg_arr(My_scsi_idlun * my_idlun, int host_no,
                               int last_sg_ind)
 {
@@ -3063,7 +3039,7 @@ static void scan_dev_type(const char * leadin, int max_dev, int do_numeric,
         if (res < 0) {
             snprintf(ebuff, EBUFF_SZ, "Error closing %s ", fname);
             perror("sg_map: close error");
-#ifndef IGN_CLOSE_ERR	
+#ifndef IGN_CLOSE_ERR
             return;
 #else
             ++num_errors;
@@ -3122,7 +3098,7 @@ static void scan_dev_type(const char * leadin, int max_dev, int do_numeric,
 #endif
             continue;
         }
-#ifdef DEBUG	   
+#ifdef DEBUG
 	printf ("%i(%x) %i %i %i %i\n", host_no, my_idlun.host_unique_id,
 		(my_idlun.dev_id>>24)&0xff, (my_idlun.dev_id>>16)&0xff,
 		(my_idlun.dev_id>>8)&0xff, my_idlun.dev_id&0xff);
@@ -3199,7 +3175,7 @@ static int do_modes(int sg_fd, int dbd, int pc, int pg_code, int sub_pg_code,
     	printf( ME "mx_resp_len too big\n");
 	return -1;
     }
-    if(mode6) {
+    if (mode6) {
 	modesCmdBlk[0] = MODE_SENSE6_CMD;
 	modesCmdBlk[4] = (unsigned char)(mx_resp_len & 0xff);
     } else {
@@ -3409,7 +3385,7 @@ static void list_page_codes(int scsi_ptype)
 	if (pcd_ptypep && (num_ptype > 0)) {
 	    if (k == pcd_ptypep->page_code) {
 	        printf(" 0x%02x      %s\n", pcd_ptypep->page_code,
-		       pcd_ptypep->desc);  
+		       pcd_ptypep->desc);
 	        ++pcd_ptypep;
 		--num_ptype;
 		continue;
@@ -3420,7 +3396,7 @@ static void list_page_codes(int scsi_ptype)
 	}
 	if (pcdp && (num > 0)) {
 	    if (k == pcdp->page_code) {
-	        printf(" 0x%02x      %s\n", pcdp->page_code, pcdp->desc);  
+	        printf(" 0x%02x      %s\n", pcdp->page_code, pcdp->desc);
 	        ++pcdp;
 		--num;
 		continue;
@@ -3431,10 +3407,6 @@ static void list_page_codes(int scsi_ptype)
 	}
     }
 }
-
-
-
-
 
 int show_scsi_modes (char * device)
 {
@@ -3460,11 +3432,11 @@ int show_scsi_modes (char * device)
     print_msg(TEST_BREAK, __FUNCTION__);
 
     file_name = device;
-  
+
 	list_page_codes(0);
 
     /* The 6 bytes command only allows up to 255 bytes of response data */
-    if(do_mode6) rsp_buff_size = 255;
+    if (do_mode6) rsp_buff_size = 255;
 
     if ((sg_fd = open(file_name, oflags)) < 0) {
         snprintf(ebuff, EBUFF_SZ, ME "error opening file: %s", file_name);
@@ -3492,7 +3464,7 @@ int show_scsi_modes (char * device)
 	scsi_ptype = a_sid.scsi_type;
     printf("  SCSI peripheral type: %s [0x%x] (from INQUIRY)\n",
 	   get_ptype_str(scsi_ptype), scsi_ptype);
-  
+
     if (do_all)
     	pg_code = MODE_CODE_ALL;
 
@@ -3503,7 +3475,7 @@ int show_scsi_modes (char * device)
 
     	printf("Mode parameter header from %s byte MODE SENSE:\n",
 	       (do_mode6 ? "6" : "10"));
-	if(do_mode6) {
+	if (do_mode6) {
 	    headerlen = 4;
 	    if (do_hex)
 		dStrHex((const char *)rsp_buff, headerlen, 1);
@@ -3597,7 +3569,7 @@ int show_scsi_modes (char * device)
     }
 
     close(sg_fd);
-    return 0;
+  return 0;
 }
 
 int do_scsi_read_buffer(char * device)
@@ -3793,10 +3765,10 @@ int do_scsi_read_buffer(char * device)
             if (rawp) free(rawp);
             return 1;
         }
-        if (do_dio && 
+        if (do_dio &&
             ((io_hdr.info & SG_INFO_DIRECT_IO_MASK) != SG_INFO_DIRECT_IO))
             dio_incomplete = 1;    /* flag that dio not done (completely) */
-       
+
 #ifdef SG_DEBUG
         if (clear) {
             for (j = 0; j < buf_size; ++j) {
@@ -3839,7 +3811,7 @@ int do_scsi_read_buffer(char * device)
     res = close(sg_fd);
     if (res < 0) {
         perror(ME "close error");
-        return 0;
+      return 0;
     }
 #ifdef SG_DEBUG
     if (clear)
@@ -3847,7 +3819,7 @@ int do_scsi_read_buffer(char * device)
     else
         printf("read buffer non-zero\n");
 #endif
-    return 0;
+  return 0;
 }
 /* Performs a 10 byte READ CAPACITY command and fetches response. There is
  * evidently a 16 byte READ CAPACITY command coming.
@@ -3898,7 +3870,7 @@ int do_readcap_10(int sg_fd, int pmi, unsigned int lba,
                  (rcBuff[2] << 8) | rcBuff[3]);
     *sect_sz = (rcBuff[4] << 24) | (rcBuff[5] << 16) |
                (rcBuff[6] << 8) | rcBuff[7];
-    return 0;
+  return 0;
 }
 
 int show_scsi_read_capacity(char * device)
@@ -3944,7 +3916,7 @@ int show_scsi_read_capacity(char * device)
         printf("   Block size = %u bytes\n", block_size);
     }
     close(sg_fd);
-    return 0;
+  return 0;
 }
 int do_scsi_reset_devices(char * device, int reset_opt)
 {
@@ -3953,7 +3925,6 @@ int do_scsi_reset_devices(char * device, int reset_opt)
     int do_bus_reset = 0;
     int do_host_reset = 0;
     char * file_name = 0;
-
 
     switch (reset_opt) {
     case DEVICE_RESET:
@@ -3975,7 +3946,6 @@ int do_scsi_reset_devices(char * device, int reset_opt)
         perror("sg_reset: open error");
         return 1;
     }
-
 
     k = SG_SCSI_RESET_NOTHING;
     if (do_device_reset) {
@@ -4021,7 +3991,7 @@ int do_scsi_reset_devices(char * device, int reset_opt)
         perror("sg_reset: close error");
         return 1;
     }
-    return 0;
+  return 0;
 }
 
 static int do_senddiag(int sg_fd, int sf_code, int pf_bit, int sf_bit,
@@ -4069,7 +4039,7 @@ static int do_senddiag(int sg_fd, int sf_code, int pf_bit, int sf_bit,
 	return -1;
     }
 }
-                 
+
 static int do_rcvdiag(int sg_fd, int pcv, int pg_code, void * resp,
 		      int mx_resp_len, int noisy)
 {
@@ -4134,7 +4104,7 @@ static int do_modes_0a(int sg_fd, void * resp, int mx_resp_len, int noisy,
     	printf( ME "mx_resp_len too big\n");
 	return -1;
     }
-    if(mode6) {
+    if (mode6) {
 	modesCmdBlk[0] = MODE_SENSE6_CMD;
 	modesCmdBlk[4] = (unsigned char)(mx_resp_len & 0xff);
     } else {
@@ -4235,7 +4205,7 @@ int do_scsi_send_diagnostics(char * device)
             printf("Default self test returned GOOD status\n");
     }
     close(sg_fd);
-    return 0;
+  return 0;
 }
 
 static void do_start_stop(int fd, int start, int immed, int loej,
@@ -4338,7 +4308,6 @@ static void do_sync_cache(int fd)
 		fprintf(stderr, "synchronize cache successful\n");
 }
 
-
 int do_scsi_start_stop(char * device, int startstop)
 {
 	int synccache = 1;
@@ -4351,7 +4320,7 @@ int do_scsi_start_stop(char * device, int startstop)
     print_msg(TEST_BREAK, __FUNCTION__);
 
     file_name  = device;
-	
+
 	fd = open(file_name, O_RDWR | O_NONBLOCK);
 	if (fd < 0) {
 		fprintf(stderr, "Error trying to open %s\n", file_name);
@@ -4409,7 +4378,7 @@ int find_out_about_buffer (int sg_fd, int * buf_capacity, char * file_name)
         if (rbBuff) free(rbBuff);
         return 1;
     }
-   
+
     memset(rbBuff + OFF, 0, RB_DESC_LEN);
     res = read(sg_fd, rbBuff, rbInLen);
     if (res < 0) {
@@ -4450,7 +4419,6 @@ int find_out_about_buffer (int sg_fd, int * buf_capacity, char * file_name)
 	   buffp[0], buffp[1], buffp[2], buffp[3],
 	   buffp[4], buffp[5], buffp[6], buffp[7]);
 
-	  
     printf("READ BUFFER reports: buffer capacity=%d, offset boundary=%d\n",
            *(buf_capacity), buf_granul);
 #ifdef SG_DEF_RESERVED_SIZE
@@ -4458,7 +4426,7 @@ int find_out_about_buffer (int sg_fd, int * buf_capacity, char * file_name)
     if (res < 0)
         perror("sg_test_rwbuf: SG_SET_RESERVED_SIZE error");
 #endif
-    return 0;
+  return 0;
 }
 
 int mymemcmp (unsigned char *bf1, unsigned char *bf2, int len)
@@ -4526,7 +4494,6 @@ void do_fill_buffer (int *buf, int len)
 	if (cmpbuf) memcpy (cmpbuf, (char*)buf, len);
 }
 
-
 int read_buffer (int sg_fd, unsigned size)
 {
 	int res;
@@ -4559,7 +4526,7 @@ int read_buffer (int sg_fd, unsigned size)
             if (rbBuff) free(rbBuff);
             return 1;
         }
-       
+
         res = read(sg_fd, rbBuff, rbInLen);
         if (res < 0) {
             perror("sg_test_rwbuf: read (data) error");
@@ -4583,7 +4550,7 @@ int write_buffer (int sg_fd, unsigned size)
 	unsigned char * rbBuff = malloc(OFF + sizeof(rbCmdBlk) + size);
 	struct sg_header * rsghp = (struct sg_header *)rbBuff;
 	//unsigned char * buffp = rbBuff + OFF;
-   
+
         int rbInLen = OFF;
 	int rbOutLen = OFF + sizeof (rbCmdBlk) + size;
 
@@ -4612,7 +4579,7 @@ int write_buffer (int sg_fd, unsigned size)
             if (rbBuff) free(rbBuff);
             return 1;
         }
-       
+
         res = read(sg_fd, rbBuff, rbInLen);
         if (res < 0) {
             perror("sg_test_rwbuf: read (status) error");
@@ -4623,14 +4590,13 @@ int write_buffer (int sg_fd, unsigned size)
 	return 0;
 }
 
-
 int do_scsi_read_write_buffer (char * device)
 {
 	int sg_fd; int res, buf_capacity;
     char * file_name = device;
 	struct stat a_st;
 	int block_dev = 0;
-  
+
     print_msg(TEST_BREAK, __FUNCTION__);
 
 	sg_fd = open(file_name, O_RDWR);
@@ -4682,7 +4648,6 @@ int do_scsi_test_unit_ready(char * device)
     struct timeval start_tm, end_tm;
 
     print_msg(TEST_BREAK, __FUNCTION__);
-
 
     if ((sg_fd = open(file_name, O_RDONLY)) < 0) {
         snprintf(ebuff, EBUFF_SZ,
@@ -4751,7 +4716,7 @@ int do_scsi_test_unit_ready(char * device)
     printf("Completed %d Test Unit Ready commands with %d errors\n",
             num_turs, num_errs);
     close(sg_fd);
-    return 0;
+  return 0;
 }
 /* Returns 0 -> ok, 1 -> err, 2 -> recovered error */
 static int do_sg_io(int sg_fd, unsigned char * buff)
@@ -4795,7 +4760,7 @@ static int do_sg_io(int sg_fd, unsigned char * buff)
                           SG_MAX_SENSE);
     switch (res) {
     case SG_ERR_CAT_CLEAN:
-        return 0;
+      return 0;
     case SG_ERR_CAT_RECOVERED:
         return 2;
     default:
@@ -4824,7 +4789,7 @@ static int do_sg_io(int sg_fd, unsigned char * buff)
         return 1;
     }
     else
-        return 0;
+      return 0;
 #endif
 }
 
@@ -4944,13 +4909,11 @@ static int get_mode_page10(int page, int page_code)
    in a prior read operation.  This way we do not have to work out the
    format of the beast */
 
-
 static int read_geometry(int page_code)
 {
     int status;
     int bdlen;
     unsigned char *pagestart;
-
 
     SETUP_MODE_PAGE(4, 9);
 
@@ -4966,7 +4929,7 @@ static int read_geometry(int page_code)
     intfield(pagestart + 18, 1, "Rotational Offset");
     intfield(pagestart + 20, 2, "Rotational Rate");
     printf("\n");
-    return 0;
+  return 0;
 
 }
 
@@ -4975,7 +4938,6 @@ static int read_disconnect_reconnect_data(int page_code)
     int status;
     int bdlen;
     unsigned char *pagestart;
-
 
     SETUP_MODE_PAGE(2, 7);
 
@@ -4989,7 +4951,7 @@ static int read_disconnect_reconnect_data(int page_code)
     intfield(pagestart + 10, 2, "Maximum Burst Size");
     hexfield(pagestart + 12, 1, "DTDC");
         printf("\n");
-    return 0;
+  return 0;
 
 }
 
@@ -4998,7 +4960,6 @@ static int read_control_page(int page_code)
     int status;
     int bdlen;
     unsigned char *pagestart;
-
 
     SETUP_MODE_PAGE(10, 9);
 
@@ -5014,7 +4975,7 @@ static int read_control_page(int page_code)
     bitfield(pagestart + 3, "Queue Algorithm Modifier", 0xf, 4);
     intfield(pagestart + 6, 2, "Ready AEN Holdoff Period");
         printf("\n");
-    return 0;
+  return 0;
 
 }
 
@@ -5023,7 +4984,6 @@ static int error_recovery_page(int page_code)
     int status;
     int bdlen;
     unsigned char *pagestart;
-
 
     SETUP_MODE_PAGE(1, 14);
         printf("Data from Error Recovery Page\n");
@@ -5043,7 +5003,7 @@ static int error_recovery_page(int page_code)
     intfield(pagestart + 8, 1, "Write Retry Count");
     intfield(pagestart + 10, 2, "Recovery Time Limit");
         printf("\n");
-    return 0;
+  return 0;
 }
 
 static int notch_parameters_page(int page_code)
@@ -5051,7 +5011,6 @@ static int notch_parameters_page(int page_code)
     int status;
     int bdlen;
     unsigned char *pagestart;
-
 
     SETUP_MODE_PAGE(0xc, 7);
 
@@ -5071,9 +5030,9 @@ static int notch_parameters_page(int page_code)
 
             printf("0x%8.8x%8.8x", getnbyte(pagestart + 16, 4),
                    getnbyte(pagestart + 20, 4));
-   
+
         printf("\n");
-    return 0;
+  return 0;
 }
 
 static char *formatname(int format) {
@@ -5217,7 +5176,7 @@ trytenbyte:
                         i = 0;
                     }
 		    else printf("|");
-                }			   
+                }
 	    }
 	    else {
                 while (len > 0) {
@@ -5249,7 +5208,6 @@ static int read_cache(int page_code)
     int bdlen;
     unsigned char *pagestart;
 
-
     SETUP_MODE_PAGE(8, 9);
 
         printf("Data from Caching Page\n");
@@ -5264,7 +5222,7 @@ static int read_cache(int page_code)
     intfield(pagestart + 8, 2, "Maximum Pre-fetch");
     intfield(pagestart + 10, 2, "Maximum Pre-fetch Ceiling");
         printf("\n");
-    return 0;
+  return 0;
 }
 
 static int read_format_info(int page_code)
@@ -5272,7 +5230,6 @@ static int read_format_info(int page_code)
     int status;
     int bdlen;
     unsigned char *pagestart;
-
 
     SETUP_MODE_PAGE(3, 13);
 
@@ -5292,7 +5249,7 @@ static int read_format_info(int page_code)
     intfield(pagestart + 16, 2, "Track skew factor");
     intfield(pagestart + 18, 2, "Cylinder skew factor");
         printf("\n");
-    return 0;
+  return 0;
 
 }
 
@@ -5301,7 +5258,6 @@ static int verify_error_recovery(int page_code)
     int status;
     int bdlen;
     unsigned char *pagestart;
-
 
     SETUP_MODE_PAGE(7, 7);
 
@@ -5316,7 +5272,7 @@ static int verify_error_recovery(int page_code)
     intfield(pagestart + 10, 2, "Verify Recovery Time Limit (ms)");
 
         printf("\n");
-    return 0;
+  return 0;
 }
 
 static int peripheral_device_page(int page_code)
@@ -5335,12 +5291,10 @@ static int peripheral_device_page(int page_code)
     unsigned char *pagestart;
     char *name;
 
-
     SETUP_MODE_PAGE(9, 2);
 
         printf("Data from Peripheral Device Page\n");
         printf("--------------------------------\n");
-
 
     ident = getnbyte(pagestart + 2, 2);
     if (ident < (sizeof(idents) / sizeof(char *)))
@@ -5355,7 +5309,7 @@ static int peripheral_device_page(int page_code)
         bdlen = 0;
     else
         SETUP_MODE_PAGE(9, 2);
-       
+
     hexfield(pagestart + 2, 2, "Interface Identifier");
         for (ident = 0; ident < 35; ident++)
             putchar(' ');
@@ -5364,7 +5318,7 @@ static int peripheral_device_page(int page_code)
     hexdatafield(pagestart + 8, bdlen, "Vendor Specific Data");
 
         printf("\n");
-    return 0;
+  return 0;
 }
 /*  end  */
 
@@ -5375,7 +5329,6 @@ static int do_user_page(int page_code, int page_no)
     //unsigned ident;
     unsigned char *pagestart;
     char *name;
-
 
     SETUP_MODE_PAGE(page_no, 0);
     //printf ("Page 0x%02x len: %i\n", page_code, pagestart[1]);
@@ -5389,7 +5342,7 @@ static int do_user_page(int page_code, int page_no)
 
         printf("\n");
         puts(name);
-    return 0;
+  return 0;
 }
 /*  end  */
 
@@ -5492,7 +5445,7 @@ static int do_serial_number(int page_code)
     }
 
     pagestart = buffer + 8;
-   
+
     pagelen = 4 + pagestart[3];
     *((int *) buffer) = 0;      /* length of input data */
     *(((int *) buffer) + 1) = pagelen; /* length of output buffer */
@@ -5518,7 +5471,6 @@ static int do_serial_number(int page_code)
 
     return status;
 }
-
 
 /* Print out a list of the known devices on the system */
 static void show_devices()
@@ -5563,7 +5515,7 @@ static void show_devices()
         printf("%s ", devices[k]);
         close(fd);
     };
-    printf("\n"); // <<<<<<<<<<<<<<<<<<<<<
+    printf("\n");
     for (k = 0; k < MAX_SG_DEVS; k++) {
         make_dev_name(name, NULL, k, do_numeric);
         fd = open(name, O_RDWR | O_NONBLOCK);
@@ -5690,9 +5642,8 @@ static int show_pages(int page_code)
     if (!pages_sup)
         puts("No mode pages supported (SCSI-1?).");
 
-    return 0;
+  return 0;
 }
-
 
 static int open_sg_dev(char * devname)
 {
@@ -5729,7 +5680,7 @@ static int open_sg_dev(char * devname)
             return -9999;
         }
         close(fd);
-   
+
         for (k = 0; k < MAX_SG_DEVS; k++) {
             make_dev_name(name, NULL,k, do_numeric);
             fd = open(name, O_RDWR | O_NONBLOCK);
@@ -5810,7 +5761,6 @@ int show_scsi_info(char * device)
         return 1;
     }
 
-
     status |= do_scsi_info_inquiry(page_code);
 
     status |= do_serial_number(page_code);
@@ -5841,7 +5791,6 @@ int show_scsi_info(char * device)
 
     return status;
 }
-
 
 /* -1 -> unrecoverable error, 0 -> successful, 1 -> recoverable (ENOMEM),
    2 -> try again */
@@ -5907,7 +5856,7 @@ int sg_read2(int sg_fd, unsigned char * buff, int blocks, int from_block,
 #if SG_DEBUG
     fprintf(stderr, "duration=%u ms\n", io_hdr.duration);
 #endif
-    return 0;
+  return 0;
 }
 
 /* -1 -> unrecoverable error, 0 -> successful, 1 -> recoverable (ENOMEM),
@@ -5976,7 +5925,7 @@ int sg_write2(int sg_fd, unsigned char * buff, int blocks, int to_block,
     if (diop && *diop &&
 	((io_hdr.info & SG_INFO_DIRECT_IO_MASK) != SG_INFO_DIRECT_IO))
 	*diop = 0;      /* flag that dio not done (completely) */
-    return 0;
+  return 0;
 }
 
 int do_scsi_sgm_read_write(char * device)
@@ -6023,7 +5972,7 @@ int do_scsi_sgm_read_write(char * device)
 
     infd = STDIN_FILENO;
     outfd = STDOUT_FILENO;
-   
+
 	in_type = dd_filetype(inf);
 
         if (FT_ST == in_type) {
@@ -6511,7 +6460,7 @@ void * read_write_thread(void * v_clp)
     rep->out_scsi_type = clp->out_scsi_type;
     rep->cdbsz = clp->cdbsz;
 
-    while(1) {
+    while (1) {
         status = pthread_mutex_lock(&clp->in_mutex);
         if (0 != status) err_exit(status, "lock in_mutex");
         if (clp->in_stop || (clp->in_count <= 0)) {
@@ -6672,7 +6621,6 @@ void normal_out_operation(Rq_coll * clp, Rq_elem * rep, int blocks)
     clp->out_done_count -= blocks;
 }
 
-
 void sg_in_operation(Rq_coll * clp, Rq_elem * rep)
 {
     int res;
@@ -6832,7 +6780,7 @@ int sg_start_io(Rq_elem * rep)
         perror("starting io on sg device, error");
         return -1;
     }
-    return 0;
+  return 0;
 }
 
 /* -1 -> unrecoverable error, 0 -> successful, 1 -> try again */
@@ -6897,7 +6845,7 @@ int sg_finish_io(int wr, Rq_elem * rep, pthread_mutex_t * a_mutp)
     rep->resid = hp->resid;
     if (rep->debug > 8)
         fprintf(stderr, "sg_finish_io: completed %s\n", wr ? "WRITE" : "READ");
-    return 0;
+  return 0;
 }
 
 int sg_prepare(int fd, int bs, int bpt, int * scsi_typep)
@@ -6926,9 +6874,8 @@ int sg_prepare(int fd, int bs, int bpt, int * scsi_typep)
             perror(ME "SG_SET_SCSI_ID error");
         *scsi_typep = info.scsi_type;
     }
-    return 0;
+  return 0;
 }
-
 
 int do_scsi_sgp_read_write(char * device)
 {
@@ -6960,7 +6907,6 @@ int do_scsi_sgp_read_write(char * device)
 
     strcpy(inf, "/dev/zero");
     strcpy(outf, device);
-
 
     if (rcoll.bs <= 0) {
         rcoll.bs = DEF_BLOCK_SIZE;
@@ -7087,7 +7033,7 @@ int do_scsi_sgp_read_write(char * device)
         if (FT_SG == rcoll.out_type) {
             res = read_capacity(rcoll.outfd, &out_num_sect, &out_sect_sz);
             if (2 == res) {
-                fprintf(stderr, 
+                fprintf(stderr,
 			"Unit attention, media changed(out), continuing\n");
                 res = read_capacity(rcoll.outfd, &out_num_sect, &out_sect_sz);
             }

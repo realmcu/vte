@@ -45,8 +45,8 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <errno.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -287,7 +287,6 @@ extern void catch_alarm();	/* signal catching subroutine */
 
 char *TCID = "fcntl16";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 #ifdef UCLINUX
 static char *argv0;
@@ -303,7 +302,6 @@ void cleanup(void)
 
 	tst_rmdir();
 
-	tst_exit();
 }
 
 void dochild(int kid)
@@ -413,7 +411,6 @@ void setup(void)
 {
 	struct sigaction sact;
 
-	/* capture signals */
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	umask(0);
@@ -464,7 +461,7 @@ int run_test(int file_flag, int file_mode, int start, int end)
 		fd = open(tmpname, file_flag, file_mode);
 		if (fd < 0) {
 			tst_brkm(TBROK, cleanup, "open failed");
-		 /*NOTREACHED*/}
+		 }
 
 		/* write some dummy data to the file */
 		(void)write(fd, FILEDATA, 10);
@@ -663,8 +660,8 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 #ifdef UCLINUX
 	maybe_run_child(dochild_uc, "ddddd", &kid_uc, &parent, &test,
@@ -674,7 +671,6 @@ int main(int ac, char **av)
 
 	setup();		/* global setup */
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
@@ -727,5 +723,5 @@ int main(int ac, char **av)
 		tst_resm(TINFO, "Exiting block 3");
 	}
 	cleanup();
-	return 0;
+	tst_exit();
 }

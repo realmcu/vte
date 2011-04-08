@@ -72,7 +72,6 @@
 #include "test.h"
 #include "usctest.h"
 
-extern int Tst_count;			/* TC counter for tst_* routines */
 
 static void setup(void);
 static void cleanup(void);
@@ -89,15 +88,13 @@ main(int argc, char **argv)
 	char *module_name = "dummy_del_mod";
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) !=
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
 		(char *) NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
-	/* perform global setup for test */
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
 		/* reset Tst_count in case we are looping */
@@ -108,7 +105,7 @@ main(int argc, char **argv)
 			module_name);
 
 		/* Insmod the module */
- 		if ( (system( cmd )) != 0 ) {
+ 		if ((system( cmd )) != 0) {
 			tst_resm(TBROK, "Failed to load %s module",
 					module_name);
 			printf("system() failed; cannot test init_module: "
@@ -135,27 +132,25 @@ main(int argc, char **argv)
 	/* perform global cleanup and exit */
 EXIT:
 	cleanup();
-	/*NOTREACHED*/
-	return 0;
 
-}		/* End main */
+}
 
 /* setup() - performs all ONE TIME setup for this test */
 void
 setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
 	/* Check whether we are root  */
 	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Must be root for this test!");
-		/*NOTREACHED*/
+		tst_brkm(TBROK, NULL, "Must be root for this test!");
+
 	}
 
 	/*
 	 * if (tst_kvercmp(2,5,48) >= 0)
-	 * tst_brkm(TCONF, tst_exit, "This test will not work on "
+	 * tst_brkm(TCONF, NULL, "This test will not work on "
 	 *				"kernels after 2.5.48");
 	 */
 	/* Pause if that option was specified
@@ -179,7 +174,4 @@ cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
-	/*NOTREACHED*/
 }

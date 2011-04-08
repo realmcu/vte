@@ -48,15 +48,14 @@
 #include <sys/param.h>
 #include <errno.h>
 #include <string.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 void setup(void);
 void cleanup(void);
 
 char *TCID = "dup203";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 int main(int ac, char **av)
 {
@@ -68,16 +67,13 @@ int main(int ac, char **av)
 	char *msg;		/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
-		tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	setup();
 
-	/* check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping. */
 		Tst_count = 0;
 //block1:
 		tst_resm(TINFO, "Enter block 1");
@@ -88,33 +84,25 @@ int main(int ac, char **av)
 		unlink(filename0);
 		unlink(filename1);
 
-		if ((fd0 = creat(filename0, 0666)) == -1) {
+		if ((fd0 = creat(filename0, 0666)) == -1)
 			tst_brkm(TBROK, cleanup, "cannot create first file");
-		 /*NOTREACHED*/}
-		if (write(fd0, filename0, strlen(filename0)) == -1) {
+		if (write(fd0, filename0, strlen(filename0)) == -1)
 			tst_brkm(TBROK, cleanup, "filename0: write(2) failed");
-		 /*NOTREACHED*/}
 
-		if ((fd1 = creat(filename1, 0666)) == -1) {
+		if ((fd1 = creat(filename1, 0666)) == -1)
 			tst_brkm(TBROK, cleanup, "Cannot create second file");
-		 /*NOTREACHED*/}
-		if (write(fd1, filename1, strlen(filename1)) == -1) {
+		if (write(fd1, filename1, strlen(filename1)) == -1)
 			tst_brkm(TBROK, cleanup, "filename1: write(2) failed");
-		 /*NOTREACHED*/}
 
-		if (close(fd0) == -1) {
+		if (close(fd0) == -1)
 			tst_brkm(TBROK, cleanup, "close(2) fd0 failed");
-		 /*NOTREACHED*/}
-		if ((fd0 = open(filename0, O_RDONLY)) == -1) {
+		if ((fd0 = open(filename0, O_RDONLY)) == -1)
 			tst_brkm(TBROK, cleanup, "open(2) on filename0 failed");
-		 /*NOTREACHED*/}
 
-		if (close(fd1) == -1) {
+		if (close(fd1) == -1)
 			tst_brkm(TBROK, cleanup, "close(2) fd1 failed");
-		 /*NOTREACHED*/}
-		if ((fd1 = open(filename1, O_RDONLY)) == -1) {
+		if ((fd1 = open(filename1, O_RDONLY)) == -1)
 			tst_brkm(TBROK, cleanup, "open(2) on filename1 failed");
-		 /*NOTREACHED*/}
 
 		TEST(dup2(fd0, fd1));
 
@@ -127,16 +115,13 @@ int main(int ac, char **av)
 			}
 
 			memset(buf, 0, sizeof(buf));
-			if (read(fd2, buf, sizeof(buf)) == -1) {
+			if (read(fd2, buf, sizeof(buf)) == -1)
 				tst_brkm(TBROK, cleanup, "read(2) failed");
-			 /*NOTREACHED*/}
-			if (strcmp(buf, filename0) != 0) {
+			if (strcmp(buf, filename0) != 0)
 				tst_resm(TFAIL, "read from file got bad data");
-			}
 			tst_resm(TPASS, "dup2 test 1 functionality is correct");
-		} else {
+		} else
 			tst_resm(TPASS, "call succeeded");
-		}
 
 		close(fd0);
 		close(fd1);
@@ -155,19 +140,19 @@ int main(int ac, char **av)
 
 		if ((fd0 = creat(filename0, 0666)) == -1) {
 			tst_brkm(TBROK, cleanup, "Cannot create first file");
-		 /*NOTREACHED*/}
+		}
 		if (fcntl(fd0, F_SETFD, 1) == -1) {
 			tst_brkm(TBROK, cleanup, "setting close on exec flag "
-				 "on fd0 failed");
-		 /*NOTREACHED*/}
+				"on fd0 failed");
+		}
 
 		if ((fd2 = creat(filename1, 0666)) == -1) {
 			tst_brkm(TBROK, cleanup, "Cannot create second file");
-		 /*NOTREACHED*/}
+		}
 
 		if (close(fd2) == -1) {
 			tst_brkm(TBROK, cleanup, "close(2) fd_closed failed");
-		 /*NOTREACHED*/}
+		}
 
 		TEST(dup2(fd0, fd2));
 
@@ -180,14 +165,16 @@ int main(int ac, char **av)
 			}
 
 			if ((rval = fcntl(fd1, F_GETFD, 0)) != 0) {
-				tst_resm(TFAIL, "fcntl F_GETFD on fd1 failed - "
-					 "Expected rval of 0, got %d", rval);
+				tst_resm(TBROK|TERRNO,
+				    "fcntl F_GETFD on fd1 failed; expected a "
+				    "return value of 0x0, got %#x", rval);
 				break;
-			 /*NOTREACHED*/}
-			if (!((rval = fcntl(fd0, F_GETFL, 0)) && O_WRONLY)) {
+			}
+			if ((rval = (fcntl(fd0, F_GETFL, 0) & O_ACCMODE)) !=
+			    O_WRONLY) {
 				tst_resm(TFAIL, "fctnl F_GETFL bad rval on fd0 "
-					 "Expected 1 got %#x", rval);
-			 /*NOTREACHED*/}
+					"Expected %#x got %#x", O_WRONLY, rval);
+			}
 			tst_resm(TPASS, "dup2 test 2 functionality is correct");
 		} else {
 			tst_resm(TPASS, "call succeeded");
@@ -201,7 +188,7 @@ int main(int ac, char **av)
 	}
 	cleanup();
 
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 }
 
 /*
@@ -209,13 +196,11 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
-	/* make a temporary directory and cd to it */
 	tst_tmpdir();
 }
 
@@ -225,15 +210,7 @@ void setup()
  */
 void cleanup()
 {
-	/*
-	 * print timing stats if that option was specified.
-	 * print errno log if that option was specified.
-	 */
 	TEST_CLEANUP;
 
-	/* Remove tmp dir and all files in it */
 	tst_rmdir();
-
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

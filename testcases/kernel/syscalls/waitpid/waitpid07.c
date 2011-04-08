@@ -49,8 +49,8 @@
 #include <signal.h>
 #include <errno.h>
 #include <sys/wait.h>
-#include <test.h>
-#include <usctest.h>
+#include "test.h"
+#include "usctest.h"
 
 void setup_sigint(void);
 void do_child_1(void);
@@ -59,7 +59,6 @@ void cleanup(void);
 
 char *TCID = "waitpid07";
 int TST_TOTAL = 1;
-extern int Tst_count;
 
 volatile int intintr;
 int flag = 0;
@@ -84,11 +83,11 @@ int main(int argc, char **argv)
 	int pid;
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *) NULL, NULL)) !=
-	    (char *)NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
+	    NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-		tst_exit();
-	 /*NOTREACHED*/}
+
+	 }
 #ifdef UCLINUX
 	argv0 = argv[0];
 
@@ -105,7 +104,7 @@ int main(int argc, char **argv)
 
 		if ((pid = FORK_OR_VFORK()) < 0) {
 			tst_resm(TFAIL, "Fork Failed, may be OK under stress");
-			tst_exit();
+
 		} else if (pid == 0) {
 
 			/*
@@ -136,7 +135,7 @@ int main(int argc, char **argv)
 		}
 	}
 	cleanup();
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 
 }
 
@@ -184,7 +183,7 @@ void do_child_1(void)
 #else
 			do_exit();
 #endif
-		 /*NOTREACHED*/}
+		 }
 
 		if (ret_val < 0) {
 			tst_resm(TFAIL, "Fork kid %d failed. "
@@ -325,9 +324,7 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
- /*NOTREACHED*/}
+ }
 
 void inthandlr()
 {

@@ -71,7 +71,6 @@
 #include "test.h"
 #include "usctest.h"
 
-extern int Tst_count;
 
 static void cleanup(void);
 static void setup(void);
@@ -106,7 +105,7 @@ int main(int ac, char **av)
 	char *msg;		/* parse_opts() return message */
 
 	/* Parse standard options */
-	if ((msg = parse_opts(ac, av, (option_t *) NULL, NULL)) != (char *)NULL) {
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -140,7 +139,7 @@ int main(int ac, char **av)
 	/* do cleanup and exit */
 	cleanup();
 
-	return 0;
+	tst_exit();
 }
 
 /*
@@ -167,6 +166,4 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

@@ -88,7 +88,6 @@
 
 char *TCID = "mremap01";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 char *addr;			/* addr of memory mapped region */
 int memsize;			/* memory mapped size */
 int newsize;			/* new size of virtual memory block */
@@ -99,81 +98,62 @@ void cleanup();			/* cleanup function for the test */
 
 int main(int ac, char **av)
 {
-	int lc;			/* loop counter */
 	char *msg;		/* message returned from parse_opts */
 	int ind;		/* counter variable */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
+
+	Tst_count = 0;
+
+	setup();
+
+	/*
+	 * Call mremap to expand the existing mapped
+	 * memory region (memsize) by newsize limits.
+	 */
+	addr = mremap(addr, memsize, newsize, MREMAP_MAYMOVE);
+
+	/* Check for the return value of mremap() */
+	if (addr == MAP_FAILED) {
+		tst_brkm(TFAIL|TERRNO, cleanup, "mremap failed");
 	}
 
-	/* Check looping state if -i option given */
-	for (lc = 0; TEST_LOOPING(lc); lc++) {
-
-		/* Reset Tst_count in case we are looping. */
-		Tst_count = 0;
-
-		/* Perform global setup for test */
-		setup();
-
+	/*
+	 * Perform functional verification if test
+	 * executed without (-f) option.
+	 */
+	if (STD_FUNCTIONAL_TEST) {
 		/*
-		 * Call mremap to expand the existing mapped
-		 * memory region (memsize) by newsize limits.
+		 * Attempt to initialize the expanded memory
+		 * mapped region with data. If the map area
+		 * was bad, we'd get SIGSEGV.
 		 */
-		errno = 0;
-		addr = mremap(addr, memsize, newsize, MREMAP_MAYMOVE);
-		TEST_ERRNO = errno;
-
-		/* Check for the return value of mremap() */
-		if (addr == MAP_FAILED) {
-			tst_resm(TFAIL, "mremap() Failed, errno=%d : %s",
-				 TEST_ERRNO, strerror(TEST_ERRNO));
-			cleanup();
-			continue;
+		for (ind = 0; ind < newsize; ind++) {
+			addr[ind] = (char)ind;
 		}
 
 		/*
-		 * Perform functional verification if test
-		 * executed without (-f) option.
+		 * Memory mapped area is good. Now, attempt
+		 * to synchronize the mapped memory region
+		 * with the file.
 		 */
-		if (STD_FUNCTIONAL_TEST) {
-			/*
-			 * Attempt to initialize the expanded memory
-			 * mapped region with data. If the map area
-			 * was bad, we'd get SIGSEGV.
-			 */
-			for (ind = 0; ind < newsize; ind++) {
-				addr[ind] = (char)ind;
-			}
-
-			/*
-			 * Memory mapped area is good. Now, attempt
-			 * to synchronize the mapped memory region
-			 * with the file.
-			 */
-			if (msync(addr, newsize, MS_SYNC) != 0) {
-				tst_resm(TFAIL, "msync() failed to synchronize "
-					 "mapped file, error %d", errno);
-			} else {
-				tst_resm(TPASS, "Functionality of "
-					 "mremap() is correct");
-			}
+		if (msync(addr, newsize, MS_SYNC) != 0) {
+			tst_resm(TFAIL|TERRNO, "msync failed to synch "
+				 "mapped file");
 		} else {
-			tst_resm(TPASS, "call succeeded");
+			tst_resm(TPASS, "Functionality of "
+				 "mremap() is correct");
 		}
+	} else {
+		tst_resm(TPASS, "call succeeded");
+	}
 
-		/* Call cleanup() to undo setup done for the test. */
-		cleanup();
-
-	}			/* End for TEST_LOOPING */
-
-	/* exit with return code appropriate for results */
+	cleanup();
 	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+}
 
 /*
  * void
@@ -190,16 +170,14 @@ void setup()
 {
 	int pagesz;		/* system's page size */
 
-	/* capture signals */
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Get the system page size */
 	if ((pagesz = getpagesize()) < 0) {
-		tst_brkm(TFAIL, tst_exit,
-			 "getpagesize() fails to get system page size");
+		tst_brkm(TFAIL, NULL,
+			 "getpagesize failed to get system page size");
 	}
 
 	/* Get the size of virtual memory area to be mapped */
@@ -208,25 +186,22 @@ void setup()
 	/* Get the New size of virtual memory block after resize */
 	newsize = (memsize * 2);
 
-	/* Make a temp directory and cd to it */
 	tst_tmpdir();
 
 	/* Creat a temporary file used for mapping */
-	if ((fildes = open(TEMPFILE, O_RDWR | O_CREAT, 0666)) < 0) {
-		tst_brkm(TBROK, cleanup, "open() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
-	}
+	if ((fildes = open(TEMPFILE, O_RDWR|O_CREAT, 0666)) < 0)
+		tst_brkm(TBROK|TERRNO, cleanup, "opening %s failed",
+			 TEMPFILE);
 
 	/* Stretch the file to the size of virtual memory area */
 	if (lseek(fildes, (off_t) memsize, SEEK_SET) != (off_t) memsize) {
-		tst_brkm(TBROK, cleanup, "lseek() to %d offset pos. Failed, "
-			 "error=%d : %s", memsize, errno, strerror(errno));
+		tst_brkm(TBROK|TERRNO, cleanup,
+		    "lseeking to %d offset pos. failed", memsize);
 	}
 
 	/* Write one byte data into temporary file */
 	if (write(fildes, "\0", 1) != 1) {
-		tst_brkm(TBROK, cleanup, "write() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
+		tst_brkm(TBROK, cleanup, "writing to %s failed", TEMPFILE);
 	}
 
 	/*
@@ -237,8 +212,8 @@ void setup()
 
 	/* Check for the return value of mmap() */
 	if (addr == (char *)MAP_FAILED) {
-		tst_brkm(TBROK, cleanup, "mmap() Failed on %s, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
+		tst_brkm(TBROK, cleanup, "mmaping Failed on %s",
+			 TEMPFILE);
 	}
 
 	/* Stretch the file to newsize of virtual memory block */
@@ -249,8 +224,8 @@ void setup()
 
 	/* Write one byte data into temporary file */
 	if (write(fildes, "\0", 1) != 1) {
-		tst_brkm(TBROK, cleanup, "write() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
+		tst_brkm(TBROK|TERRNO, cleanup, "writing to %s failed",
+			 TEMPFILE);
 	}
 }
 
@@ -271,17 +246,13 @@ void cleanup()
 	TEST_CLEANUP;
 
 	/* Unmap the mapped memory */
-	if (munmap(addr, newsize) != 0) {
-		tst_brkm(TBROK, NULL, "munmap() fails to unmap the memory, "
-			 "errno=%d", errno);
-	}
+	if (munmap(addr, newsize) != 0)
+		tst_brkm(TBROK|TERRNO, NULL, "munmap failed");
 
 	/* Close the temporary file */
 	if (close(fildes) < 0) {
-		tst_brkm(TBROK, NULL, "close() on %s Failed, errno=%d : %s",
-			 TEMPFILE, errno, strerror(errno));
+		tst_brkm(TBROK, NULL, "closing %s failed", TEMPFILE);
 	}
 
-	/* Remove the temporary directory and files in it. */
 	tst_rmdir();
 }

@@ -218,7 +218,6 @@ int exp_enos[] =
     { EBADF, ENOTSOCK, EFAULT, EISCONN, ENOTCONN, EINVAL, EMSGSIZE, EPIPE,
 ENOBUFS, 0 };
 
-extern int Tst_count;
 
 #ifdef UCLINUX
 static char *argv0;
@@ -230,8 +229,8 @@ int main(int argc, char *argv[])
 	char *msg;		/* message returned from parse_opts */
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(argc, argv, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
+	msg = parse_opts(argc, argv, NULL, NULL);
+	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
 	}
@@ -244,7 +243,6 @@ int main(int argc, char *argv[])
 
 	TEST_EXP_ENOS(exp_enos);
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
 		Tst_count = 0;
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
@@ -285,8 +283,8 @@ int main(int argc, char *argv[])
 		}
 	}
 	cleanup();
-	return 0;
-}				/* End main */
+	tst_exit();
+}
 
 pid_t start_server(struct sockaddr_in * sin0, struct sockaddr_un * sun0)
 {
@@ -343,7 +341,7 @@ pid_t start_server(struct sockaddr_in * sin0, struct sockaddr_un * sun0)
 		return pid;
 	}
 
-	 /*NOTREACHED*/ exit(1);
+	  exit(1);
 }
 
 void do_child()
@@ -438,7 +436,7 @@ void cleanup(void)
 	unlink(tmpsunpath);
 	TEST_CLEANUP;
 	tst_rmdir();
-	tst_exit();
+
 }
 
 void setup0(void)

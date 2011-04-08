@@ -75,7 +75,6 @@
 
 char *TCID = "poll01";		/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 int fildes[2];			/* file descriptors of the pipe. */
 struct pollfd fds[1];		/* struct. for poll() */
@@ -95,18 +94,13 @@ int main(int ac, char **av)
 	int rval;
 
 	/* Parse standard options given to run the test. */
-	msg = parse_opts(ac, av, (option_t *) NULL, NULL);
-	if (msg != (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
-	}
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	/* Perform global setup for test */
 	setup();
 
-	/* Check looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* Reset Tst_count in case we are looping. */
 		Tst_count = 0;
 
 		/*
@@ -114,7 +108,6 @@ int main(int ac, char **av)
 		 */
 		TEST(poll(fds, 1, -1));
 
-		/* check return code of poll() */
 		if (TEST_RETURN == -1) {
 			tst_resm(TFAIL, "poll() failed on write, errno=%d"
 				 " : %s", TEST_ERRNO, strerror(TEST_ERRNO));
@@ -198,13 +191,12 @@ int main(int ac, char **av)
 					 "Functionality of poll() successful");
 			}
 		}
-	}			/* End for TEST_LOOPING */
+	}
 
-	/* Call cleanup() to undo setup done for the test. */
 	cleanup();
+	tst_exit();
 
-	 /*NOTREACHED*/ return 0;
-}				/* End main */
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.
@@ -213,15 +205,14 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Pause if that option was specified */
 	TEST_PAUSE;
 
 	/* Creat read/write pipe */
 	if (pipe(fildes) < 0) {
-		tst_brkm(TBROK, tst_exit,
+		tst_brkm(TBROK, NULL,
 			 "pipe() failed to create interprocess channel");
 	}
 
@@ -249,6 +240,4 @@ void cleanup()
 			 "errno:%d", errno);
 	}
 
-	/* exit with return code appropriate for results */
-	tst_exit();
 }

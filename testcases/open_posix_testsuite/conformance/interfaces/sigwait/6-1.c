@@ -14,12 +14,10 @@
 * with this program; if not, write the Free Software Foundation, Inc., 59
 * Temple Place - Suite 330, Boston MA 02111-1307, USA.
 
-
 * This sample test aims to check the following assertion:
 *
-* If several threads are blocked in a call to sigwait, 
-* only one is unblocked when the signal becomes pending. 
-
+* If several threads are blocked in a call to sigwait,
+* only one is unblocked when the signal becomes pending.
 
 * The steps are:
 * -> mask SIGUSR1
@@ -27,11 +25,10 @@
 * -> raise SIGUSR1
 * -> Check than only 1 thread has been awaken.
 
-* The test fails if less or more than 1 thread returns from sigwait when the 
+* The test fails if less or more than 1 thread returns from sigwait when the
 * signal is raised.
 
 */
-
 
 /* We are testing conformance to IEEE Std 1003.1, 2003 Edition */
 #define _POSIX_C_SOURCE 200112L
@@ -53,23 +50,23 @@
 /***************************   Test framework   *******************************/
 /******************************************************************************/
 #include "testfrmw.h"
-#include "testfrmw.c" 
+#include "testfrmw.c"
 /* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);  
- *    where descr is a description of the error and ret is an int 
+ * UNRESOLVED(ret, descr);
+ *    where descr is a description of the error and ret is an int
  *   (error code for example)
  * FAILED(descr);
  *    where descr is a short text saying why the test has failed.
  * PASSED();
  *    No parameter.
- * 
+ *
  * Both three macros shall terminate the calling process.
  * The testcase shall not terminate in any other maneer.
- * 
+ *
  * The other file defines the functions
  * void output_init()
  * void output(char * string, ...)
- * 
+ *
  * Those may be used to output information.
  */
 
@@ -90,7 +87,7 @@ int n_awaken = 0;
 sigset_t setusr;
 
 /* Thread function */
-void * threaded( void * arg )
+void * threaded(void * arg)
 {
 	int ret;
 	int sig;
@@ -98,11 +95,11 @@ void * threaded( void * arg )
 	/* The signal is already masked, because inherited from the parent */
 
 	/* wait for the signal */
-	ret = sigwait( &setusr, &sig );
+	ret = sigwait(&setusr, &sig);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "failed to wait for signal in thread" );
+		UNRESOLVED(ret, "failed to wait for signal in thread");
 	}
 
 	n_awaken++;
@@ -112,7 +109,7 @@ void * threaded( void * arg )
 }
 
 /* The main test function. */
-int main( int argc, char * argv[] )
+int main(int argc, char * argv[])
 {
 	int ret, i;
 	pthread_t ch[ NTHREADS ];
@@ -121,85 +118,83 @@ int main( int argc, char * argv[] )
 	output_init();
 
 	/* Set the signal mask */
-	ret = sigemptyset( &setusr );
+	ret = sigemptyset(&setusr);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to empty signal set" );
+		UNRESOLVED(ret, "Failed to empty signal set");
 	}
 
-	ret = sigaddset( &setusr, SIGUSR1 );
+	ret = sigaddset(&setusr, SIGUSR1);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "failed to add SIGUSR1 to signal set" );
+		UNRESOLVED(ret, "failed to add SIGUSR1 to signal set");
 	}
 
-	ret = pthread_sigmask( SIG_BLOCK, &setusr, NULL );
+	ret = pthread_sigmask(SIG_BLOCK, &setusr, NULL);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to block SIGUSR1" );
+		UNRESOLVED(ret, "Failed to block SIGUSR1");
 	}
 
 	/* Create the children */
 
-	for ( i = 0; i < NTHREADS; i++ )
+	for (i = 0; i < NTHREADS; i++)
 	{
-		ret = pthread_create( &ch[ i ], NULL, threaded, NULL );
+		ret = pthread_create(&ch[ i ], NULL, threaded, NULL);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			UNRESOLVED( ret, "Failed to create a thread" );
+			UNRESOLVED(ret, "Failed to create a thread");
 		}
 	}
 
 	/* raise the signal */
-	ret = kill( getpid(), SIGUSR1 );
+	ret = kill(getpid(), SIGUSR1);
 
-	if ( ret != 0 )
+	if (ret != 0)
 	{
-		UNRESOLVED( ret, "Failed to raise the signal" );
+		UNRESOLVED(ret, "Failed to raise the signal");
 	}
 
-	sleep( 1 );
+	sleep(1);
 
-	if ( n_awaken != 1 )
+	if (n_awaken != 1)
 	{
-		output( "%d threads were awaken\n", n_awaken );
-		FAILED( "Unexpected number of threads awaken" );
+		output("%d threads were awaken\n", n_awaken);
+		FAILED("Unexpected number of threads awaken");
 	}
 
 	/* Wake other threads */
-	for ( ; n_awaken < NTHREADS ; sched_yield() )
+	for (; n_awaken < NTHREADS ; sched_yield())
 	{
-		ret = kill( getpid(), SIGUSR1 );
+		ret = kill(getpid(), SIGUSR1);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			UNRESOLVED( ret, "Failed to raise the signal" );
+			UNRESOLVED(ret, "Failed to raise the signal");
 		}
 	}
 
 	/* Wait for child thread termination */
-	for ( i = 0; i < NTHREADS; i++ )
+	for (i = 0; i < NTHREADS; i++)
 	{
-		ret = pthread_join( ch[ i ], NULL );
+		ret = pthread_join(ch[ i ], NULL);
 
-		if ( ret != 0 )
+		if (ret != 0)
 		{
-			UNRESOLVED( ret, "Failed to join the thread" );
+			UNRESOLVED(ret, "Failed to join the thread");
 		}
 	}
 
 	/* Test passed */
 #if VERBOSE > 0
 
-	output( "Test passed\n" );
+	output("Test passed\n");
 
 #endif
 
 	PASSED;
 }
-
-

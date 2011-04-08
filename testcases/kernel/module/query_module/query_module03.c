@@ -101,7 +101,6 @@
 #define DUMMY_MOD	"dummy_query_mod"
 #define SMALLBUFSIZE	1
 
-extern int Tst_count;
 
 struct test_case_t {			/* test case structure */
 	char 	*modname;
@@ -155,29 +154,28 @@ main(int argc, char **argv)
 	char *msg;			/* message returned from parse_opts */
 
 	/* parse standard options */
-	if ((msg = parse_opts(argc, argv, (option_t *)NULL, NULL)) !=
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
 	    (char *)NULL) {
-		tst_brkm(TBROK, tst_exit, "OPTION PARSING ERROR - %s", msg);
+		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
-	if(STD_COPIES != 1) {
+	if (STD_COPIES != 1) {
 		tst_resm(TINFO, "-c option has no effect for this testcase - "
 			"doesn't allow running more than one instance "
 			"at a time");
 		STD_COPIES = 1;
 	}
-       
+
 	tst_tmpdir();
 	setup();
 
-	/* check looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		/* reset Tst_count in case we are looping */
 		Tst_count = 0;
 
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
 
-			if( (tdat[testno].setup) && (tdat[testno].setup()) ) {
+			if ((tdat[testno].setup) && (tdat[testno].setup())) {
 				/* setup() failed, skip this test */
 				continue;
 			}
@@ -185,7 +183,7 @@ main(int argc, char **argv)
 				tdat[testno].which, tdat[testno].buf,
 				tdat[testno].bufsize, tdat[testno].ret_size));
 			TEST_ERROR_LOG(TEST_ERRNO);
-			if ( (TEST_RETURN == EXP_RET_VAL) &&
+			if ((TEST_RETURN == EXP_RET_VAL) &&
 				(TEST_ERRNO == tdat[testno].experrno) ) {
 				tst_resm(TPASS, "Expected %s, errno: %d",
 					tdat[testno].desc, TEST_ERRNO);
@@ -196,15 +194,13 @@ main(int argc, char **argv)
 					TEST_RETURN, EXP_RET_VAL,
 					TEST_ERRNO, tdat[testno].experrno);
 			}
-			if(tdat[testno].cleanup) {
+			if (tdat[testno].cleanup) {
 				tdat[testno].cleanup();
 			}
 		}
 	}
 	cleanup();
-
-	/*NOTREACHED*/
-	return 0;
+	tst_exit();
 }
 
 int
@@ -212,23 +208,23 @@ setup1(void)
 {
 	char cmd[80];
 
-        if( sprintf(cmd, "cp `which %s.o` ./", DUMMY_MOD) == -1) {
+        if (sprintf(cmd, "cp `which %s.o` ./", DUMMY_MOD) == -1) {
                 tst_resm(TBROK, "sprintf failed");
                 return 1;
         }
-        if(system(cmd) != 0 ) {
+        if (system(cmd) != 0) {
                 tst_resm(TBROK, "Failed to copy %s module", DUMMY_MOD);
                 return 1;
         }
 
 	/* Should use force to ignore kernel version & insure loading  */
         /* -RW                                                         */
-        /* if( sprintf(cmd, "insmod %s.o", DUMMY_MOD) == -1) {         */
-	if( sprintf(cmd, "insmod --force -q %s.o >/dev/null 2>&1", DUMMY_MOD) == -1) {
+        /* if (sprintf(cmd, "insmod %s.o", DUMMY_MOD) == -1) {         */
+	if (sprintf(cmd, "insmod --force -q %s.o >/dev/null 2>&1", DUMMY_MOD) == -1) {
 		tst_resm(TBROK, "sprintf failed");
 		return 1;
 	}
-	if(system(cmd) != 0 ) {
+	if (system(cmd) != 0) {
 		tst_resm(TBROK, "Failed to load %s module", DUMMY_MOD);
 		return 1;
 	}
@@ -239,13 +235,11 @@ void
 cleanup1(void)
 {
 	/* Remove the loadable module - DUMMY_MOD */
-	if(system("rmmod "DUMMY_MOD) != 0) {
+	if (system("rmmod "DUMMY_MOD) != 0) {
 		tst_brkm(TBROK, cleanup, "Failed to unload module %s",
 			DUMMY_MOD);
 	}
 }
-
-
 
 /*
  * setup()
@@ -254,17 +248,13 @@ cleanup1(void)
 void
 setup(void)
 {
-	/* capture signals */
+
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Check whether we are root  */
-	if (geteuid() != 0) {
-		tst_brkm(TBROK, tst_exit, "Must be root for this test!");
-		/*NOTREACHED*/
-	}
+	tst_require_root(NULL);
 
 	if (tst_kvercmp(2,5,48) >= 0)
-		tst_brkm(TCONF, tst_exit, "This test will not work on "
+		tst_brkm(TCONF, NULL, "This test will not work on "
 				"kernels after 2.5.48");
 
 	/* set the expected errnos... */
@@ -298,7 +288,4 @@ cleanup(void)
 	 */
 	TEST_CLEANUP;
 	tst_rmdir();
-	/* exit with return code appropriate for results */
-	tst_exit();
-	/*NOTREACHED*/
 }

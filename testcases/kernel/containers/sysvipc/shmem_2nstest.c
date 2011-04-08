@@ -44,7 +44,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <libclone.h>
-#include <test.h>
+#include "test.h"
 
 #define TESTKEY    124426L
 #define UNSHARESTR "unshare"
@@ -172,5 +172,5 @@ int main(int argc, char *argv[])
 	shmctl(id, IPC_RMID, NULL);
 	tst_exit();
 
-	return 0;
+	tst_exit();
 }

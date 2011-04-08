@@ -45,7 +45,6 @@ int block_number;
 FILE *temp;
 char *TCID = "nftw01";		/* Test program identifier.    */
 int TST_TOTAL = 10;		/* Total number of test cases. */
-extern int Tst_count;		/* Test Case counter for tst_* routines */
 
 struct passwd *ltpuser;		/* password struct for ltpuser */
 /**************/
@@ -663,7 +662,7 @@ main(void)
 	cleanup_function();
 
 	anyfail();		/* THIS CALL DOES NOT RETURN - EXITS!!  */
-	 /*NOTREACHED*/ return 0;
+	tst_exit();
 /*--------------------------------------------------------------*/
 }
 
@@ -687,7 +686,6 @@ void setup()
 	/* Switch to "nobody" */
 	setuid(ltpuser->pw_uid);
 
-	/* make a temp directory and cd to it */
 	tst_tmpdir();
 }
 
