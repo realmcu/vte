@@ -200,6 +200,7 @@ run_single_test_list()
      #not mount
      mount_point=$(mktemp -d -p /tmp)
 		 mount /dev/$i $mount_point || RC=$(echo $RC m$i)
+		 sleep 5
 		 if [ ! -z $(echo $RC | grep -i $i)  ];then
 			 rm -rf $mount_point
 			 continue
@@ -228,30 +229,37 @@ run_multi_test_list()
 {
    RC=0
    need_umount=1
+   umount_point=
 	 mkdir -p /tmp/storage
 	 for i in $target_list
 	 do
     #test if already mout
-    mount | grep $i
+    	mount | grep $i
 		if [ $? -eq 0 ]; then
      #is mounted
 		 mount_point=$(mount | grep $i |cut -d" " -f 3)
 		 need_umount=0
-    else
+    	else
      #not mount
      need_umount=1
      mount_point=$(mktemp -d -p /tmp/storage)
+	 umount_point=$(echo $umount_point $mount_point)
 		 mount /dev/$i $mount_point || RC=$(echo $RC $i)
+		 sleep 5
 		fi
 		for j in $mount_point
 		do
-	 	 sh -c "bonnie\+\+ -d $j -u 0:0 -s 96 -r 48 || RC=$(echo $RC $i)" &  
-	   sh -c "dt of=$j/test_file_$j bs=4k limit=96m passes=10 || RC=$(echo $RC $i)" &
-	   break
-		 done
-	 done
+	  		sh -c "bonnie\+\+ -d $j -u 0:0 -s 96 -r 48 &"  
+	  		sh -c "dt of=$j/test_file_$j bs=4k limit=96m passes=10 &"
+	  		break
+		done
+	done
 	 echo "wait till all process finished"
 	 wait
+    for i in $umount_point
+	do
+      umount $i || RC=$(echo $RC $i)
+	done
 	 rm -rf /tmp/storage
 	 if [ "$RC" != "0"  ];then
 	 echo $RC
