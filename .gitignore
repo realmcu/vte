@@ -1,9 +1,15 @@
+#Normal rules
+
 CVS
 *~
 *.o
 *.obj
 *.gdb
 lib*.a
+*.ko
+*.mod.c
+modules.order
+Module.symvers
 
 /aclocal.m4
 autom4te.cache

@@ -440,10 +440,10 @@ insmod_V4L()
 		sleep 2;
 	fi
 
-	find=`find /lib/modules/$sys_name -name ov3640_camera.ko | wc -l`;
-	lsmod | grep ov3640_camera;
+	find=`find /lib/modules/$sys_name -name ov5642_camera.ko | wc -l`;
+	lsmod | grep ov5642_camera;
 	if [ $? -ne 0 ] && [ $find -eq 1 ]; then
-        	modprobe ov3640_camera;
+        	modprobe ov5642_camera;
 		sleep 2;
 	fi
 

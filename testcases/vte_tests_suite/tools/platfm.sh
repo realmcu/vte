@@ -24,6 +24,7 @@
 # Spring                18/03/2009       n/a        Add MX53EVK support
 # Hake                  01/10/2011       n/a        Add LOCO and SMD 53. etc
 # Hake                  03/23/2011       n/a        Add MX50 rdp3 etc
+# Spring                07/04/2011       n/a        Add MX53SMD TO2.1 support
 #############################################################################
 # Usage1(return string):
 #   platform=`platfm.sh`
@@ -59,7 +60,7 @@
 #       41       mx51 babbage
 #       51       mx51 3ds
 #       28       mx28 evk
-#       53       mx53 evk
+#       53       mx53 evk loco smd
 #
 # 2. 378%256(=122) for SMTP378X board.(for return value is 0~255)
 #       rt value    Board
@@ -121,19 +122,33 @@ determine_platform()
 				fi
     fi
     
-		# MX53 LOCO TO2.0: Revision: 53020
+	# MX53 LOCO TO2.0: Revision: 53020
     find=`cat /proc/cpuinfo | grep "Revision" | grep "53.20" | wc -l`;
     if [ $find -eq 1 ]
     then
-		find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX53 LOCO" | wc -l`;
-       if [ $find -eq 1 ]; then
-			 p=IMX53LOCO
-			 fi
+	    find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX53 LOCO" | wc -l`;
+        if [ $find -eq 1 ]; then
+            p=IMX53LOCO
+        fi
 		find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX53 SMD" | wc -l`;
-       if [ $find -eq 1 ]; then
-			 		p=IMX53SMD
-				fi
-		fi
+        if [ $find -eq 1 ]; then
+            p=IMX53SMD
+        fi
+    fi
+
+   	# MX53 LOCO TO2.1: Revision: 53321
+    find=`cat /proc/cpuinfo | grep "Revision" | grep "53.21" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+		find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX53 LOCO" | wc -l`;
+        if [ $find -eq 1 ]; then
+	        p=IMX53LOCO
+        fi
+		find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX53 SMD" | wc -l`;
+        if [ $find -eq 1 ]; then
+            p=IMX53SMD
+        fi
+    fi
 
     #find STMP378X
     find=`cat /proc/cpuinfo | grep "Hardware" | grep " 378X" | wc -l`;
@@ -166,15 +181,15 @@ determine_platform()
     if [ $find -eq 1 ]
     then
     	find=`cat /proc/cpuinfo | grep "Revision" | grep "50311" | wc -l`;
-			if [ $find -eq 1 ]
-			then
-        p=IMX50-RDP3
-			else
-        p=IMX50RDP
-			fi
+        if [ $find -eq 1 ]
+        then
+            p=IMX50-RDP3
+        else
+            p=IMX50RDP
+        fi
     fi
 
-		if [ $p = "IMX31-3STACK" ]
+    if [ $p = "IMX31-3STACK" ]
     then
         #echo "Platform MX31"
         RC=31
@@ -278,6 +293,21 @@ CPU revision    : 5
 
 Hardware        : Freescale MX53 EVK Board
 Revision        : 53010
+Serial          : 0000000000000000
+
+
+MX53 SMD TO2.1 - 201104
+Processor       : ARMv7 Processor rev 5 (v7l)
+BogoMIPS        : 999.42
+Features        : swp half thumb fastmult vfp edsp neon vfpv3
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x2
+CPU part        : 0xc08
+CPU revision    : 5
+
+Hardware        : Freescale MX53 SMD Board
+Revision        : 53321
 Serial          : 0000000000000000
 
 EOF

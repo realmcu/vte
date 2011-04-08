@@ -97,17 +97,18 @@ cat <<-EOF
 EOF
 }
 
+#parameter: $1-working point
 lowfreq_suspend()
 {
-    RC=$WorkPoint
+    RC=$1
+    wp=$1
 
-
-    echo $WorkPoint > $CPU_CTRL
-    echo =========To test cpu works at $WorkPoint
+    echo $wp > $CPU_CTRL
+    echo =========To test cpu works at $wp=========
     #cpufreq-info
     cur_freq=`cat $CUR_FREQ_GETTER`
     if [ $cur_freq -ne $(cpufreq-info -f) ]; then
-       echo =========Current cpu does not work at $WorkPoint
+       echo =========Current cpu does not work at $wp=========
        return $RC
     fi
 
@@ -164,6 +165,27 @@ wp_convert()
         done
     done
 
+    #Random test
+    times=7
+    count=0
+    WP_value0="160000"
+    WP_value1="400000"
+    WP_value2="800000"
+    WP_value3="1000000"
+    while [ $count -lt $times ]; do
+        rand=`od -vAn -N4 -tu4 < /dev/urandom`
+        rand=`expr $rand % 4`
+        eval value=\$WP_value${rand}
+        tst_resm TINFO "Change working point to $value"
+        cpufreq-set -f $value
+        value_ret=`cpufreq-info -f`
+        if [ $value_ret -ne $value ]; then
+            RC=3
+            return $RC
+        fi
+        count=`expr $count + 1`
+    done
+
     tst_resm TPASS "WP convert test"
     return $RC
 }
@@ -178,26 +200,28 @@ wp_convert()
 # Return value from setup, and test functions.
 RC=0
 
+if [ $# -lt 1 ]; then
+    usage
+    exit 1
+fi
+
 # bash specified script, using array, not dash-compatibility
 setup  || exit $RC
 
 case "$1" in
     1)
     if [ $platfm -eq 37 ]; then
-        WorkPoint=200000
-        lowfreq_suspend || exit $RC
+        WorkPoint_list=200000
     elif [ $platfm -eq 51 ]; then
-        WorkPoint=160000
-        lowfreq_suspend || exit $RC
+        WorkPoint_list=160000
     elif [ $platfm -eq 41 ]; then
-        for WorkPoint in 160000 400000 800000; do
-            lowfreq_suspend || exit $RC
-        done
+        WorkPoint_list="160000 400000 800000"
     elif [ $platfm -eq 53 ]; then
-        for WorkPoint in 160000 400000 800000 1000000; do
-            lowfreq_suspend || exit $RC
-        done
+        WorkPoint_list="160000 400000 800000 1000000"
     fi
+    for WorkPoint in $WorkPoint_list; do
+        lowfreq_suspend $WorkPoint|| exit $RC
+    done
     ;;
     2)
     wp_convert || exit $RC
