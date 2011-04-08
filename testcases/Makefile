@@ -39,36 +39,3 @@ FILTER_OUT_DIRS		+= realtime
 endif
 
 include $(top_srcdir)/include/mk/generic_trunk_target.mk
-
-top_srcdir		?= ..
-
-include $(top_srcdir)/include/mk/env_pre.mk
-
-# XXX (garrcoop):
-# 1. ballista is broken (working on it).
-# 2. kdump shouldn't be compiled by default, because it's runtime based and
-#    WILL crash the build host (the tests need to be fixed to just build, not run).
-# 3. mce-test doesn't fit cleanly in the build, yet.
-# 4. pounder21 is just broken.
-#5. vte third_party_suite module_test are not fit to build together
-FILTER_OUT_DIRS		:= ballista kdump mce-test open% pounder21 vte_tests_suite third_party_suite module_test 
-
-# XXX (garrcoop): Not sure why realtime is still in this list; this was the
-# original list of disabled items...
-# XXX (garrcoop): kdump was in this list.
-# XXX (garrcoop): open_hpi_testsuite was in this list.
-ifneq ($(UCLINUX),1)
-FILTER_OUT_DIRS		+= audit-test DOTS realtime
-endif
-
-#
-# XXX (garrcoop): disabling the open_posix_testsuite by request from Subrata
-# due to build times (open_posix_testsuite runs serially by design to
-# deterministically catch build errors -- see
-# testcases/open_posix_testsuite/Makefile for more details).
-#
-#trunk-all: open_posix_testsuite-all
-#
-#trunk-clean:: open_posix_testsuite-clean
-#
-#trunk-install: open_posix_testsuite-install
