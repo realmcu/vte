@@ -181,15 +181,16 @@ dvfs_per_stress()
     i=0
     while [ $i -lt 100 ]; do
         bonnie++ -d /mnt/msc -s 32 -r 16 -u 0:0 -m FSL || return $i
-        tst_resm TINFO "bonnie++ times: $i"
         i=`expr $i + 1`
+        tst_resm TINFO "bonnie++ times: $i"
     done
 
     i=0
-    while [ $i -lt 50 ]; do
+    while [ $i -lt 500 ]; do
         rtc_testapp_6 -m standby -T 10 || return $i
         rtc_testapp_6 -m mem -T 10 || return $i
         i=`expr $i + 1`
+        tst_resm TINFO "RTC wakeup test times: $i"
     done
 
     echo "Pass DVFS stress test"

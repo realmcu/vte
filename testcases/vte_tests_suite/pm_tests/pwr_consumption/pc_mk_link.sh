@@ -16,6 +16,8 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 ###############################################################################
+#Revision History:
+#2011.4.8, Spring, Add microvolts links
 
 test_case_53()
 {
@@ -23,6 +25,8 @@ test_case_53()
     ln -sf /sys/devices/platform/mxc_dvfsper.0/enable dvfsper
     ln -sf /sys/devices/platform/busfreq.0/enable busfreq
     ln -sf /proc/cpu/clocks clocks
+    ln -sf /sys/class/regulator/regulator.10/microvolts gp_microvolts
+    ln -sf /sys/class/regulator/regulator.11/microvolts vcc_microvolts
 }
 
 platfm=$1
