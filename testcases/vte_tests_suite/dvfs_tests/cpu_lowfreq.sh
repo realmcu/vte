@@ -165,6 +165,27 @@ wp_convert()
         done
     done
 
+    #Random test
+    times=7
+    count=0
+    WP_value0="160000"
+    WP_value1="400000"
+    WP_value2="800000"
+    WP_value3="1000000"
+    while [ $count -lt $times ]; do
+        rand=`od -vAn -N4 -tu4 < /dev/urandom`
+        rand=`expr $rand % 4`
+        eval value=\$WP_value${rand}
+        tst_resm TINFO "Change working point to $value"
+        cpufreq-set -f $value
+        value_ret=`cpufreq-info -f`
+        if [ $value_ret -ne $value ]; then
+            RC=3
+            return $RC
+        fi
+        count=`expr $count + 1`
+    done
+
     tst_resm TPASS "WP convert test"
     return $RC
 }
