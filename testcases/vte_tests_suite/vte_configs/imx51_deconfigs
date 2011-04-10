@@ -6,7 +6,7 @@ export CONFIG_VTE_IMX5=y
 #define test sub folder
 CONFIG_VTE_ACC=y
 export CONFIG_VTE_ALSA=y
-CONFIG_VTE_ASRC=y
+#CONFIG_VTE_ASRC=y
 #CONFIG_VTE_ATA=y
 export CONFIG_VTE_BL=y
 export CONFIG_VTE_BT=y
@@ -20,8 +20,8 @@ export CONFIG_VTE_DATA=y
 export CONFIG_VTE_DVFS=y
 #CONFIG_VTE_DRYICE=y
 export CONFIG_VTE_EMI=y
-export CONFIG_VTE_EPDC=y
-export CONFIG_VTE_EPXP=y
+#export CONFIG_VTE_EPDC=y
+#export CONFIG_VTE_EPXP=y
 export CONFIG_VTE_FB=y
 export CONFIG_VTE_FEC=y
 export CONFIG_VTE_FM=y
@@ -76,21 +76,21 @@ export CONFIG_VTE_WIFI=y
 
 #vte module config
 #CONFIG_VM_DRYICE=y
-export CONFIG_VM_SDMA=y
-export CONFIG_VM_SAHARA=y
+#export CONFIG_VM_SDMA=y
+#export CONFIG_VM_SAHARA=y
 #CONFIG_VM_SCC=y
-export CONFIG_VM_SCC2=y
+#export CONFIG_VM_SCC2=y
 #CONFIG_VM_RNG=y
 #CONFIG_VM_RNGA=y
 
 #open source module config
 export CONFIG_OM_NAND=y
-export CONFIG_OM_RAMDISK=y
+#export CONFIG_OM_RAMDISK=y
 export CONFIG_OM_SCULL=y
 #export CONFIG_OM_CRYPTO=y
 export CONFIG_OM_USB=y
 export CONFIG_OM_MMC=y
-export CONFIG_VM_MXC_WD=y
+#export CONFIG_VM_MXC_WD=y
 
 #platform depended config need read the related Makefile in subfolder
 #CONFIG_VTE_KEYPAD_TESTAPP=y
@@ -98,7 +98,7 @@ export CONFIG_VTE_MMC_ERW=y
 export CONFIG_VTE_MMC_LOCK=y
 export CONFIG_VTE_SAHARA=y
 #CONFIG_VTE_SCC=y
-export CONFIG_VTE_SCC2=y
+#export CONFIG_VTE_SCC2=y
 #CONFIG_VTE_RNG=y
 #CONFIG_VTE_RNGA=y
 #CONFIG_VTE_TS_APP1=y
