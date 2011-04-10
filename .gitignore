@@ -6,10 +6,15 @@ CVS
 *.obj
 *.gdb
 lib*.a
+
+#modules
 *.ko
 *.mod.c
 modules.order
 Module.symvers
+*.ko.cmd
+*.o.cmd
+.tmp_versions
 
 /aclocal.m4
 autom4te.cache
