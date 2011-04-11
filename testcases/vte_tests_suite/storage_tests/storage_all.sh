@@ -135,7 +135,13 @@ do
 	 		if [ $? -ne 0 ]; then
      		echo "not mount then try mount if fail will format to ext3"
 				echo "then try mount again, if still fail then quit"
-				mount /dev/$k $tmp_dir || mkfs.ext3 /dev/$k || break
+				echo "check size if reasonable?"
+				blocks=$(cat /proc/partitions | grep $k | awk 'print $3')
+				if [ $blocks -lt 204800 ] ; then
+          echo "the size is too small skip it"
+					continue
+				fi
+				mount /dev/$k $tmp_dir || mkfs.ext3 /dev/$k || continue
 				sleep 2
 				umount $tmp_dir
 				sleep 2
