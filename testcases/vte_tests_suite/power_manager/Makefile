@@ -7,6 +7,7 @@
 #http://www.gnu.org/copyleft/gpl.html
 
 SUBDIRS-y += usb_pm
+SUBDIRS-y += pwr_consumption
 
 all:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
