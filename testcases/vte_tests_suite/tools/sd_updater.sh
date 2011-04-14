@@ -276,7 +276,9 @@ if [ $DO_RFS -eq 1 ] ; then
 	echo ${RFS} | egrep -e '\.tar\.gz$' >> ${LOGFILE} 2>&1
     ISTAR=$?
 
-    mkdir -p /mnt/msc && mount -t ext3 ${DEVNODE}2 /mnt/msc >> ${LOGFILE} 2>&1
+    mkdir -p /mnt/msc
+    sleep 5
+    mount -t ext3 ${DEVNODE}2 /mnt/msc >> ${LOGFILE} 2>&1
     RET=$?
     [ $RET -eq 0 ] || {
         echo "mount ${DEVNODE}2 error"
@@ -287,15 +289,15 @@ if [ $DO_RFS -eq 1 ] ; then
         tar --numeric-owner -xzf $RFS -C /mnt/msc >> ${LOGFILE} 2>&1
         sync
 	elif [ ${ISCMPD} -eq 0 ] ; then
-		${GUNZIP} ${RFS} >> ${LOGFILE} 2>&1
+		EXT2_RFS=`echo rootfs.ext2.gz | sed -e 's/\.gz$//'`
+		${GUNZIP} -c ${RFS} > ${EXT2_RFS}
 		RET=$?
 		if [ ${RET} -ne 0 ] ; then
 			echo "Error: ${GUNZIP} failed (${RET})"
 			exit -1
 		fi
-		RFS=`echo rootfs.ext2.gz | sed -e 's/\.gz$//'`
         mkdir -p /mnt/ext2
-        mount -t ext2 -o loop $RFS /mnt/ext2 >> ${LOGFILE} 2>&1
+        mount -t ext2 -o loop $EXT2_RFS /mnt/ext2 >> ${LOGFILE} 2>&1
         cp -a /mnt/ext2/* /mnt/msc
         RET=$?
         if [ ${RET} -ne 0 ] ; then
