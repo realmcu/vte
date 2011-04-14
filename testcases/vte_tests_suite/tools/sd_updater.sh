@@ -268,35 +268,45 @@ if [ $DO_RFS -eq 1 ] ; then
     fdisk $DEVNODE < ./format_rootfs.cmd >> ${LOGFILE} 2>&1
     mkfs.ext3 ${DEVNODE}2 >> ${LOGFILE} 2>&1
     mkfs.vfat ${DEVNODE}1 >> ${LOGFILE} 2>&1
-
-    #mount
-    mkdir -p /mnt/msc && mount -t ext3 ${DEVNODE}2 /mnt/msc >> ${LOGFILE} 2>&1
-    tar --numeric-owner -xzf $RFS -C /mnt/msc >> ${LOGFILE} 2>&1
-    sync
-    umount /mnt/msc >> ${LOGFILE} 2>&1
-
-
     rm -f format_rootfs.cmd
 
 	# compressed image ?
-#	echo ${RFS} | egrep -e '\.gz$' >> ${LOGFILE} 2>&1
-#	ISCMPD=$?
-#	if [ ${ISCMPD} -eq 0 ] ; then
-#		${GUNZIP} ${RFS} >> ${LOGFILE} 2>&1
-#		RET=$?
-#		if [ ${RET} -ne 0 ] ; then
-#			echo "Error: ${GUNZIP} failed (${RET})"
-#			exit -1
-#		fi
-#		RFS=`echo rootfs.ext2.gz | sed -e 's/\.gz$//'`
-#	fi
-#	${DD} if=${RFS} of=${DEVNODE} >> ${LOGFILE} 2>&1
-#	RET=$?
-#	if [ ${RET} -ne 0 ] ; then
-#		echo "Error: ${DD} failed with exit code ${RET}"
-#		exit -1
-#	fi
-		
+	echo ${RFS} | egrep -e '\.gz$' >> ${LOGFILE} 2>&1
+	ISCMPD=$?
+	echo ${RFS} | egrep -e '\.tar\.gz$' >> ${LOGFILE} 2>&1
+    ISTAR=$?
+
+    mkdir -p /mnt/msc && mount -t ext3 ${DEVNODE}2 /mnt/msc >> ${LOGFILE} 2>&1
+    RET=$?
+    [ $RET -eq 0 ] || {
+        echo "mount ${DEVNODE}2 error"
+        exit $RET
+    }
+
+    if [ ${ISTAR} -eq 0 ]; then
+        tar --numeric-owner -xzf $RFS -C /mnt/msc >> ${LOGFILE} 2>&1
+        sync
+	elif [ ${ISCMPD} -eq 0 ] ; then
+		${GUNZIP} ${RFS} >> ${LOGFILE} 2>&1
+		RET=$?
+		if [ ${RET} -ne 0 ] ; then
+			echo "Error: ${GUNZIP} failed (${RET})"
+			exit -1
+		fi
+		RFS=`echo rootfs.ext2.gz | sed -e 's/\.gz$//'`
+        mkdir -p /mnt/ext2
+        mount -t ext2 -o loop $RFS /mnt/ext2 >> ${LOGFILE} 2>&1
+        cp -a /mnt/ext2/* /mnt/msc
+        RET=$?
+        if [ ${RET} -ne 0 ] ; then
+            echo "Error: ${DD} failed with exit code ${RET}"
+            exit -1
+        fi
+        #clean
+        sync && sync
+        umount /mnt/ext2
+	fi
+    umount /mnt/msc >> ${LOGFILE} 2>&1
 fi
 
 # now sync the drives!
