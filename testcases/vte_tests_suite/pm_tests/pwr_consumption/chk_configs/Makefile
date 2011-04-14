@@ -1,6 +1,6 @@
 #!/bin/sh
 ###############################################################################
-# Copyright (C) 2010 Freescale Semiconductor, Inc. All Rights Reserved.
+# Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,16 +20,12 @@
 #                    Modification     Tracking
 #Author                  Date          Number    Description of Changes
 #------------------  ------------    ----------  ----------------------
-# Spring Zhang        08/13/2010        n/a      Initial version
+# Spring Zhang        04/14/2011        n/a      Initial version
 #
 ###############################################################################
 
-SUBDIRS=chk_configs
-TARGETS=pc_off_lcd.sh pc_on_dvfs.sh pc_mk_link.sh pc_off_eth.sh pc_on_conservative.sh
-TARGETS+=pc_mp3_128k.sh
-TARGETS+=pc_h264_720p_2770k.sh pc_h264_720p_d1.sh pc_h264_720p_9M.sh
-TARGETS+=pc_h264_1080p_10M.sh pc_h264_1080p_20M.sh
-TARGETS+=pc_checkpoint.sh
+SUBDIRS=
+TARGETS=mx53_clks_sysidle mx53_clks_useridle mx53_voltage
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
@@ -37,7 +33,7 @@ all:
 install:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
 	@for i in $(TARGETS); do \
-		ln -f $$i ../../../bin/ ;\
+		ln -f $$i ../../../../bin/ ;\
 		echo "***********************************************" ; \
 		echo "** INSTALL : $$i " ;\
 		echo "***********************************************" ; \
