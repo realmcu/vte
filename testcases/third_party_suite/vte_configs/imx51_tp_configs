@@ -3,6 +3,7 @@
 export CONFIG_TP_IMX5=y
 
 export CONFIG_TP_BONNIE=y
+export CONFIG_TP_BC=y
 export CONFIG_TP_DT=y
 export CONFIG_TP_IOZONE=y
 export CONFIG_TP_NETWORK=y
