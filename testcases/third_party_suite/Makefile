@@ -37,6 +37,7 @@ include ./vte_configs/$(ARCH_PLATFORM)_tp_configs
 
 SUBDIRS-y                        += util-linux
 SUBDIRS-$(CONFIG_TP_BONNIE)      += bonnie++ 
+SUBDIRS-$(CONFIG_TP_BC)          += bc
 SUBDIRS-$(CONFIG_TP_DT)          += dt 
 SUBDIRS-$(CONFIG_TP_IOZONE)      += iozone 
 SUBDIRS-$(CONFIG_TP_NETWORK)     += network 
@@ -56,6 +57,7 @@ SUBDIRS-$(CONFIG_TP_WHETS)       += whets
 SUBDIRS-$(CONFIG_TP_LMBENCH)     += lmbench
 SUBDIRS-$(CONFIG_TP_FBSET)       += fbset
 SUBDIRS-$(CONFIG_TP_I2C)         += i2c-tools
+
 all:
 	for i in $(SUBDIRS-y); do \
 	$(MAKE) -C $$i ; \
