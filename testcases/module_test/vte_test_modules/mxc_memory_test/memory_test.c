@@ -33,7 +33,7 @@ module_param(vmsize, uint, 0);
 MODULE_PARM_DESC(vmsize, "tested size of memory");
 
 #define kmalloc_size (128 * 1024 - 16)
-#define freepage_order 10
+#define freepage_order 9
 
 static struct timeval start, finish;
 
