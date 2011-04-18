@@ -1,3 +1,4 @@
+#!/bin/sh
 #Copyright (C) 2008-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -6,7 +7,6 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
 ###################################################################################################
 #
 #    @file   rtc_test.sh
@@ -20,6 +20,7 @@
 #-------------------------   ------------    ----------  -------------------------------------------
 #<Hake Huang>/-----             <2010-03-12>     N/A          Initial version
 #<Hake Huang>/-----             <2011-01-12>     N/A          add 2 rtc cases
+#<Spring Zhang>/---             <2011-04-18>     N/A     Add compatible support for Ubuntu Lucid
 # 
 ###################################################################################################
 
@@ -150,122 +151,143 @@ return $RC
 #  
 test_case_03()
 {
-#TODO give TCID 
-TCID="rtc_ac"
-#TODO give TST_COUNT
-TST_COUNT=1
-RC=0
+    #TODO give TCID 
+    TCID="rtc_ac"
+    #TODO give TST_COUNT
+    TST_COUNT=1
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-#test 1hr and check rtc accuracy
+    #TODO add function test scripte here
+    #test 1hr and check rtc accuracy
 
-hwclock -w
-sleep 300
-diffs=$(hwclock -r ;date)
-echo $diffs
-wd1=$(echo $diffs | awk '{print $1}')
-wd2=$(echo $diffs | awk '{print $8}')
-if [ $wd1 != $wd2 ];then
-  RC=1
-fi
+    hwclock -w
+    sleep 300
 
-m1=$(echo $diffs | awk '{print $2}')
-m2=$(echo $diffs | awk '{print $9}')
-if [ $m1 != $m2 ];then
-  RC="$RC 2"
-fi
+    # hwclock -r format on Gnome mobile:
+    # Mon Apr 18 11:01:51 2011  0.000000 seconds
+    # date format on Gnome mobile:
+    # Mon Apr 18 11:01:51 UTC 2011
+    # Combined:
+    # Mon Apr 18 11:01:51 2011  0.000000 seconds Mon Apr 18 11:01:51 UTC 2011
+    #
+    # hwclock -r format on Ubuntu Lucid desktop version:
+    # Thu 01 Jan 1970 10:16:51 AM CST  -0.576808 seconds
+    # date format on Ubuntu:
+    # Thu Jan  1 10:16:51 CST 1970
+    # Combined:
+    # Thu 01 Jan 1970 10:16:51 AM CST  -0.576808 seconds Thu Jan  1 10:16:51 CST 1970
+    diffs=$(hwclock -r ;date)
+    # Set the format aligning with Gnome mobile
+    # WARNING: it depends on Ubuntu rootfs version, on Lucid, it needs a modification,
+    #          however, on Linaro Natty, it doesn't, which doesn't come out
+    if grep -i "Ubuntu" /etc/issue ; then
+        diffs=$(echo $diffs |awk '{$7=""; $8=""; print $0}')
+        diffs=$(echo $diffs |awk '{TMP=$2; $2=$3; $3=TMP; TMP=$4; $4=$5; $5=TMP; print $0}')
+    fi
+    echo $diffs
+    wd1=$(echo $diffs | awk '{print $1}')
+    wd2=$(echo $diffs | awk '{print $8}')
+    if [ $wd1 != $wd2 ];then
+        RC=1
+    fi
 
-d1=$(echo $diffs | awk '{print $3}')
-d2=$(echo $diffs | awk '{print $10}')
-if [ $d1 -ne $d2 ];then
-  RC="$RC 3"
-fi
+    m1=$(echo $diffs | awk '{print $2}')
+    m2=$(echo $diffs | awk '{print $9}')
+    if [ $m1 != $m2 ];then
+        RC="$RC 2"
+    fi
 
-h1=$(echo $diffs | awk '{print $4}' | cut -d: -f 1)
-h2=$(echo $diffs | awk '{print $11}' | cut -d: -f 1)
-if [ $h1 -ne $h2 ];then
-  RC="$RC 4"
-fi
+    d1=$(echo $diffs | awk '{print $3}')
+    d2=$(echo $diffs | awk '{print $10}')
+    if [ $d1 -ne $d2 ];then
+        RC="$RC 3"
+    fi
 
-mm1=$(echo $diffs | awk '{print $4}' | cut -d: -f 2)
-mm2=$(echo $diffs | awk '{print $11}' | cut -d: -f 2)
-if [ $mm1 -ne $mm2 ];then
-  RC="$RC 5"
-fi
+    h1=$(echo $diffs | awk '{print $4}' | cut -d: -f 1)
+    h2=$(echo $diffs | awk '{print $11}' | cut -d: -f 1)
+    if [ $h1 -ne $h2 ];then
+        RC="$RC 4"
+    fi
 
-ss1=$(echo $diffs | awk '{print $4}' | cut -d: -f 3)
-ss2=$(echo $diffs | awk '{print $11}' | cut -d: -f 3)
-if [ $ss2 -lt $ss1 ];then
-offset=$(echo $ss2 $ss1 - p | dc)
-else
-offset=$(echo $ss1 $ss2 - p | dc)
-fi
-if [ $offset -gt 3 ];then
-RC="$RC 6"
-fi
+    mm1=$(echo $diffs | awk '{print $4}' | cut -d: -f 2)
+    mm2=$(echo $diffs | awk '{print $11}' | cut -d: -f 2)
+    if [ $mm1 -ne $mm2 ];then
+        RC="$RC 5"
+    fi
 
-y1=$(echo $diffs | awk '{print $5}')
-y2=$(echo $diffs | awk '{print $13}')
-if [ $y1 -ne $y2 ];then
-  RC="$RC 6"
-fi
+    ss1=$(echo $diffs | awk '{print $4}' | cut -d: -f 3)
+    ss2=$(echo $diffs | awk '{print $11}' | cut -d: -f 3)
+    if [ $ss2 -lt $ss1 ];then
+        offset=$(echo $ss2 $ss1 - p | dc)
+    else
+        offset=$(echo $ss1 $ss2 - p | dc)
+    fi
+    if [ $offset -gt 3 ];then
+        RC="$RC 6"
+    fi
 
-if [ -e /dev/rtc1  ]; then
-  hwclock -w -f /dev/rtc1
-  sleep 300
-  diffs=$(hwclock -r --rtc=/dev/rtc1  ;date)
-  echo $diffs
-  wd1=$(echo $diffs | awk '{print $1}')
-  wd2=$(echo $diffs | awk '{print $8}')
-  if [ $wd1 != $wd2 ];then
-    RC=1
-  fi
-  m1=$(echo $diffs | awk '{print $2}')
-  m2=$(echo $diffs | awk '{print $9}')
-  if [ $m1 != $m2 ];then
-    RC="$RC 2"
-  fi
+    y1=$(echo $diffs | awk '{print $5}')
+    y2=$(echo $diffs | awk '{print $13}')
+    if [ $y1 -ne $y2 ];then
+        RC="$RC 6"
+    fi
 
-  d1=$(echo $diffs | awk '{print $3}')
-  d2=$(echo $diffs | awk '{print $10}')
-  if [ $d1 -ne $d2 ];then
-   RC="$RC 3"
-  fi
+    if [ -e /dev/rtc1  ]; then
+        hwclock -w -f /dev/rtc1
+        sleep 300
+        diffs=$(hwclock -r --rtc=/dev/rtc1  ;date)
+        echo $diffs
+        wd1=$(echo $diffs | awk '{print $1}')
+        wd2=$(echo $diffs | awk '{print $8}')
+        if [ $wd1 != $wd2 ];then
+            RC=1
+        fi
+        m1=$(echo $diffs | awk '{print $2}')
+        m2=$(echo $diffs | awk '{print $9}')
+        if [ $m1 != $m2 ];then
+            RC="$RC 2"
+        fi
 
-  h1=$(echo $diffs | awk '{print $4}' | cut -d: -f 1)
-  h2=$(echo $diffs | awk '{print $11}' | cut -d: -f 1)
-  if [ $h1 -ne $h2 ];then
-   RC="$RC 4"
-  fi
+        d1=$(echo $diffs | awk '{print $3}')
+        d2=$(echo $diffs | awk '{print $10}')
+        if [ $d1 -ne $d2 ];then
+            RC="$RC 3"
+        fi
 
-  mm1=$(echo $diffs | awk '{print $4}' | cut -d: -f 2)
-  mm2=$(echo $diffs | awk '{print $11}' | cut -d: -f 2)
-  if [ $mm1 -ne $mm2 ];then
-    RC="$RC 5"
-  fi
+        h1=$(echo $diffs | awk '{print $4}' | cut -d: -f 1)
+        h2=$(echo $diffs | awk '{print $11}' | cut -d: -f 1)
+        if [ $h1 -ne $h2 ];then
+            RC="$RC 4"
+        fi
 
-  ss1=$(echo $diffs | awk '{print $4}' | cut -d: -f 3)
-  ss2=$(echo $diffs | awk '{print $11}' | cut -d: -f 3)
-  if [ $ss2 -lt $ss1 ];then
-   offset=$(echo $ss2 $ss1 - p | dc)
-  else
-   offset=$(echo $ss1 $ss2 - p | dc)
-  fi
-  if [ $offset -gt 3 ];then
-   RC="$RC 6"
-  fi
+        mm1=$(echo $diffs | awk '{print $4}' | cut -d: -f 2)
+        mm2=$(echo $diffs | awk '{print $11}' | cut -d: -f 2)
+        if [ $mm1 -ne $mm2 ];then
+            RC="$RC 5"
+        fi
 
-  y1=$(echo $diffs | awk '{print $5}')
-  y2=$(echo $diffs | awk '{print $13}')
-  if [ $y1 -ne $y2 ];then
-    RC="$RC 6"
-  fi
- fi
+        ss1=$(echo $diffs | awk '{print $4}' | cut -d: -f 3)
+        ss2=$(echo $diffs | awk '{print $11}' | cut -d: -f 3)
+        if [ $ss2 -lt $ss1 ];then
+            offset=$(echo $ss2 $ss1 - p | dc)
+        else
+            offset=$(echo $ss1 $ss2 - p | dc)
+        fi
+        if [ $offset -gt 3 ];then
+            RC="$RC 6"
+        fi
 
- return $RC
+        y1=$(echo $diffs | awk '{print $5}')
+        y2=$(echo $diffs | awk '{print $13}')
+        if [ $y1 -ne $y2 ];then
+            RC="$RC 6"
+        fi
+    fi
+
+    return $RC
 }
 
 
