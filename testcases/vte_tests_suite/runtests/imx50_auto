@@ -159,7 +159,7 @@ TGE-LV-KERNEL-10005	cat /proc/meminfo | grep HighTotal
 TGE-LV-DVFS-0140	dvfs_mx50.sh 1
 TGE-LV-DVFS-0010	dvfs.sh 1
 TGE-LV-DVFS-0040	dvfs.sh 2
-TGE-LV-DVFS-0150	cpufreq-set -f 160M && cpufreq-info -f | grep 160000 && cpufreq-set -f 800M && cpufreq-info -f | grep 800000
+TGE-LV-DVFS-0150	echo 0 > /sys/devices/platform/mxc_dvfs_core.0/enable ;cpufreq-set -f 160M && cpufreq-info -f | grep 160000 && cpufreq-set -f 800M && cpufreq-info -f | grep 800000
 TGE-LV-NAND-1000	cat /proc/partitions | grep mtd
 TGE-LV-NAND-1101	nand_mtd_testapp -T INFO -D /dev/mtd2
 TGE-LV-NAND-1001	flash_eraseall /dev/mtd2
