@@ -166,7 +166,7 @@ void setup(void)
         VT_rv = VT_watchdog_test2_setup();
         if (VT_rv != TPASS)
         {
-                tst_brkm(TBROK, cleanup, "VT_nor_mtd_setup() Failed : error code = %d", VT_rv);
+                tst_brkm(TBROK, cleanup, "VT_watchdog_setup() Failed : error code = %d", VT_rv);
         }
 
         return;
