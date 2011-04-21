@@ -138,6 +138,8 @@ TGE-LV-FB-EPXP-005	 epxp_test -s 0:0:320:240 -a -c 100 -o 0:0:128:128:0x80000000
 TGE-LV-FB-EPXP-006	 epxp_test -s 0:0:320:240 -a -c 100 -o 0:0:320:240:0:128:128
 TGE-LV-ETHERNET-1002	if [ -z $SERVER_IP ] ; then TSTIP=10.192.225.218 ;else TSTIP=$SERVER_IP;fi ; for i in 64 128 256 512 1024 2048 4096 8192 16384 32768; do ping -c 100 -s $i $TSTIP; done
 TGE-LV-ETHERNET-1007	touch readme && ftpget -u anonymous 10.192.225.218 readme readme && cat readme | grep welcome && rm readme
+TGE-LV-ETHERNET-1004	tcp_stream_script 10.192.225.222 CPU
+TGE-LV-ETHERNET-1005	udp_stream_script 10.192.225.222 CPU
 TGE-LV-FEC-0010	fec_testapp -T 0
 TGE-LV-FEC-0011	fec_testapp -T 1 -H 10.192.225.219
 TGE-LV-LinuxFS-0561	 udev_sysfs_test1.sh 
