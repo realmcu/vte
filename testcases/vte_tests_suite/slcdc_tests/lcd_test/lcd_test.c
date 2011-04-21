@@ -1039,7 +1039,6 @@ void print_modeinfo(struct fb_var_screeninfo *info)
                 tst_resm(TINFO,"Vertical mode: Unknown type!");
         }
         tst_resm(TINFO,"Clockwise rotation angle: %3d", info->rotate);
-        tst_resm(TINFO,"");
         
         return;
 }
