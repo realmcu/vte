@@ -56,20 +56,33 @@ cleanup()
     return $RC
 }
 
+usage()
+{
+    cat << EOF
+    usage1: ./${0##*/} voltage config_file
+        config_file: the checking point config file
+    usage2: ./${0##*/} clock idle_mode config_file
+        idle_mode: useridle, sysidle
+        config_file: the checking point config file
+EOF
+}
+
 # @params:
 # $1-platform code
 sys_idle()
 {
-	enable_dvfs_$1
+    ifconfig eth0 down
 	echo 1 > $fb0
+	enable_dvfs_$1
 }
 
 # @params:
 # $1-platform code
 user_idle()
 {
-	enable_dvfs_$1
 	echo 0 > $fb0
+    ifconfig eth0 down
+	enable_dvfs_$1
 }
 
 enable_dvfs_53()
@@ -134,14 +147,17 @@ check_clks()
 check_voltage()
 {
 	#need to disable DVFS first
-	vol_matrix=`cat $1`
-	for line in $vol_matrix; do
+    check_file="$1"
+    cat $check_file | while read line; do
+        if echo $line |grep "^#" >/dev/null 2>&1; then
+            continue
+        fi
 		wp=`echo $line | awk '{ print $1 }'`
 		vol=`echo $line | awk '{ print $2 }'`
 		echo $wp > $CPU_CTRL
-		cur_vol=`echo $VDDGP`
+		cur_vol=`cat $VDDGP`
 		if [ "$vol" != "$cur_vol" ]; then
-			echo "FATAL ERROR WP-$wp: voltage different, current vol is $cur_vol"
+			echo "FATAL ERROR WP-$wp: voltage different, current vol is $cur_vol, reference is $vol"
 		fi
 	done
 }
@@ -153,6 +169,8 @@ if [ $platfm -eq 67 ]; then
 	echo "SoC Platform doesn't support"
 	return $RC
 fi
+
+setup
 
 check_type=$1
 
@@ -175,13 +193,14 @@ case $check_type in
 		check_clks $clk_points_file || exit $?
 		;;
 		*)
-		echo "please specify modes: useridle or sysidle"
+        usage
+        exit 1
 		;;
 		esac
 	;;
 	"voltage")
 		if [ $# -lt 2 ]; then
-			echo "please specify voltage check point file"
+            usage
 			exit 2
 		fi
 		clk_points_file=$2
@@ -190,6 +209,7 @@ case $check_type in
 		check_voltage $clk_points_file
 	;;
 	*)
-		echo "please specify check type: clock or voltage"
+        usage
+        exit 1
 	;;
 esac
