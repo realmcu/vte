@@ -1,1 +1,23 @@
-ddr_clk-0	1	133MHz
+#for MX53 SMD TO2.0 Feb.2011
+#ddr clk may not exist with a usage, but test it with usage is 0
+ddr_clk-0	0	133MHz
+#
+asrc_clk-0  1  66MHz
+ldb_di1_clk-1  1  64MHz
+pll4-0  1  454MHz
+gpt-0  1  8MHz
+mxc_rtc.0-0  1  32KHz
+ssi_ext1_clk-0  1  19MHz
+mxc_pwm.1-1  1  8MHz
+mxcintuart.0-0  2  21MHz
+ipu_di1_clk-1  1  64MHz
+ahb_clk-0  1  133MHz
+main_bus_clk-0  2  400MHz
+cpu_clk-0  1  160MHz
+lp_apm-0  1  24MHz
+pll3-0  1  216MHz
+pll2-0  2  400MHz
+pll1_sw_clk-0  1  800MHz
+pll1_main_clk-0  1  800MHz
+ckil-0  1  32KHz
+osc-0  5  24MHz
