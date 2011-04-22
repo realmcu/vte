@@ -23,12 +23,47 @@ test_case_53()
     echo 0 > /sys/devices/platform/busfreq.0/enable 
 }
 
-platfm=$1
-case "$platfm" in
-    53)
-    test_case_$platfm || exit $?
+usage()
+{
+    cat <<-EOF
+    usage: ./${0##*/} on_or_off type [platfm]
+        on_or_off: on, off
+        type: lcd, eth, dvfs
+        platfm: 53 51
+        e.g. ./${0##*/} on dvfs 53
+EOF
+}
+
+#TODO: add determination for on_or_off
+#      merge on code
+
+type=$1
+case "$type" in
+    "lcd")
+    echo 1 > /sys/class/graphics/fb0/blank
+    #no need to close fb1
+    #echo 1 > /sys/class/graphics/fb1/blank
+    #delete it for fb2 is TVout
+    #echo 1 > /sys/class/graphics/fb2/blank
+    ;;
+    "eth")
+    for iface in `ifconfig -a | grep "^eth" | awk '{print $1}'`; do
+        ifconfig $iface down
+    done
+    ;;
+    "dvfs")
+    platfm=$2
+    case "$platfm" in
+        53)
+        test_case_$platfm || exit $?
+        ;;
+        *)
+        echo "please specify platform"
+        ;;
+    esac
     ;;
     *)
-    echo "please specify platform"
-    ;;
+    usage
+    exit 1
 esac
+

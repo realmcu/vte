@@ -23,6 +23,9 @@
 # Spring Zhang           Apr.13,2010       n/a      Initial version
 # Spring Zhang           Apr.13,2010       n/a      Add voltage check
 
+# Note:
+# You can generate usage and clk config file by:
+# cat /proc/cpu/clocks| grep -v " 0 " |awk '{$2=""; $4=""; print }'|sed 's/(//'|sed 's/)//' > cfg_file
 
 setup()
 {
@@ -31,16 +34,23 @@ setup()
 	VCC=/sys/class/regulator/regulator.11/microvolts
 	CPU_CTRL=/sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
 	CUR_FREQ_GETTER=/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
-	DVFS_DIR=/sys/devices/platform/mxc_dvfs_core.0
+	DVFSCORE_DIR=/sys/devices/platform/mxc_dvfs_core.0
 	DVFSPER_DIR=/sys/devices/platform/mxc_dvfs_per.0
 	BUSFREQ_DIR=/sys/devices/platform/busfreq.0
-	CLK_CTRL=/proc/cpu/clocks
+	CLK_GETTER=/proc/cpu/clocks
 	#display setting
 	fb0=/sys/class/graphics/fb0/blank
 	fb1=/sys/class/graphics/fb1/blank
 	#TVout
 	fb2=/sys/class/graphics/fb2/blank
 
+    #clk_name, usage, clk_freq column index in /proc/cpu/clocks
+    col_clkname=1
+    col_usage=3
+    col_freq=5
+
+    echo "stop gdm..."
+    stop gdm
 	#platform related
 	if [ $platfm -eq 53 ]; then
 		echo
@@ -56,20 +66,33 @@ cleanup()
     return $RC
 }
 
+usage()
+{
+    cat << EOF
+    usage1: ./${0##*/} voltage config_file
+        config_file: the checking point config file
+    usage2: ./${0##*/} clock idle_mode config_file
+        idle_mode: useridle, sysidle
+        config_file: the checking point config file
+EOF
+}
+
 # @params:
 # $1-platform code
 sys_idle()
 {
-	enable_dvfs_$1
+    ifconfig eth0 down
 	echo 1 > $fb0
+	enable_dvfs_$platfm
 }
 
 # @params:
 # $1-platform code
 user_idle()
 {
-	enable_dvfs_$1
 	echo 0 > $fb0
+    ifconfig eth0 down
+	enable_dvfs_$platfm
 }
 
 enable_dvfs_53()
@@ -103,26 +126,45 @@ disable_dvfs_51()
 # ddr_clk-0	1		133MHz
 check_clks()
 {
-	clk_matrix=`cat $1`
-	cur_clk_matrix=`cat $CLK_CTRL`
+    RC=0
+	clk_matrix_file="$1"
+
+    # check active clocks number
+    active_clk=`cat $clk_matrix_file| grep -v " 0 "| wc -l`
+    cur_active_clk=`cat $CLK_GETTER | grep -v " 0 "| wc -l`
+    if [ $active_clk -ne $cur_active_clk ]; then
+        echo "FATAL ERROR: active clocks number doesn't align, now it is $cur_active_clk"
+        RC=21
+    fi
 	
-	for line in $clk_matrix; do
+	cat $clk_matrix_file | while read line; do
+        #ignore comments line
+        if [ -z "$line" ]; then
+            continue
+        fi
+        if echo $line |grep "^#" >/dev/null 2>&1; then
+            continue
+        fi
 		clk_name=`echo $line | awk '{ print $1 }'`
 		clk_usage=`echo $line | awk '{ print $2 }'`
 		clk_freq=`echo $line | awk '{ print $3 }'`
-		if echo $cur_clk_matrix | grep $clk_name >/dev/null 2>&1; then
-			cur_clk_usage=`echo $cur_clk_matrix | grep $clk_name | awk '{ print $2 }'`
-			cur_clk_freq=`echo $cur_clk_matrix | grep $clk_name | awk '{ print $3 }'`
+		if cat $CLK_GETTER | grep $clk_name >/dev/null 2>&1; then
+			cur_clk_usage=`cat $CLK_GETTER| grep $clk_name | awk -v col="$col_usage" '{print $col}'`
+			cur_clk_freq=`cat $CLK_GETTER| grep $clk_name| sed 's/(//' |sed 's/)//'| awk -v col="$col_freq" '{print $col}'`
 			if [ "$clk_usage" != "$cur_clk_usage" ]; then
 				echo "WARNING $clk_name: usage not aligned, current usage is $cur_clk_usage"
+                RC=21
 			fi
-			if ! echo $cur_clk_freq | grep $clk_freq >/dev/null 2>&1; then
+			if [ "$cur_clk_freq" != "$clk_freq" ]; then
 				echo "FATAL ERROR $clk_name: frequency different, current freq is $cur_clk_freq"
+                RC=21
 			fi
 		else
 			echo "WARNING $clk_name: no such clock"
 		fi		
 	done
+
+    return $RC
 }
 
 # Check voltage in different working points
@@ -133,17 +175,28 @@ check_clks()
 # 400000	135000
 check_voltage()
 {
+    RC=0
+
 	#need to disable DVFS first
-	vol_matrix=`cat $1`
-	for line in $vol_matrix; do
+    check_file="$1"
+    cat $check_file | while read line; do
+        if "$line" == ""; then
+            continue
+        fi
+        if echo $line |grep "^#" >/dev/null 2>&1; then
+            continue
+        fi
 		wp=`echo $line | awk '{ print $1 }'`
 		vol=`echo $line | awk '{ print $2 }'`
 		echo $wp > $CPU_CTRL
-		cur_vol=`echo $VDDGP`
+		cur_vol=`cat $VDDGP`
 		if [ "$vol" != "$cur_vol" ]; then
-			echo "FATAL ERROR WP-$wp: voltage different, current vol is $cur_vol"
+			echo "FATAL ERROR WP-$wp: voltage different, current vol is $cur_vol, reference is $vol"
+            RC=22
 		fi
 	done
+
+    return $RC
 }
 
 #main
@@ -154,13 +207,15 @@ if [ $platfm -eq 67 ]; then
 	return $RC
 fi
 
+setup
+
 check_type=$1
 
 #TODO: use getopts to handle params
 case $check_type in
 	"clock")
 		if [ $# -lt 3 ]; then
-			echo "please specify clock check point file"
+            usage
 			exit 3
 		fi
 		mode=$2
@@ -168,28 +223,29 @@ case $check_type in
 		case $mode in
 		"useridle")
 		user_idle
-		check_clks $clk_points_file || exit $?
 		;;
 		"sysidle")
 		sys_idle
-		check_clks $clk_points_file || exit $?
 		;;
 		*)
-		echo "please specify modes: useridle or sysidle"
+        usage
+        exit 1
 		;;
 		esac
+		check_clks $clk_points_file || exit $RC
 	;;
 	"voltage")
 		if [ $# -lt 2 ]; then
-			echo "please specify voltage check point file"
+            usage
 			exit 2
 		fi
 		clk_points_file=$2
 		#Disable DVFS first
 		disable_dvfs_$platfm
-		check_voltage $clk_points_file
+		check_voltage $clk_points_file || exit $RC
 	;;
 	*)
-		echo "please specify check type: clock or voltage"
+        usage
+        exit 1
 	;;
 esac
