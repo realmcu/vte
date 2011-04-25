@@ -4326,7 +4326,7 @@ static struct file_operations sahara_test_fops =
         release:      sahara_test_release,
         read:         sahara_test_read,
         write:        sahara_test_write,
-        ioctl:        sahara_test_ioctl,
+        unlocked_ioctl:        sahara_test_ioctl,
 };
 
 /*================================================================================================*/
