@@ -211,6 +211,9 @@ TGE-LV-DVFS-0041	cpu_lowfreq.sh
 TGE-LV-DVFS-0050	dvfs_per.sh 1
 TGE-LV-DVFS-0052	dvfs_per.sh 2
 TGE-LV-DVFS-0200	cpufreq-info
+TGE-LV-DVFS-0020    pwr_checkpoint.sh voltage ${LTPROOT}/testcases/bin/mx53_voltage
+TGE-LV-DVFS-0021    pwr_checkpoint.sh clock useridle ${LTPROOT}/testcases/bin/mx53_clks_useridle
+TGE-LV-DVFS-0022    pwr_checkpoint.sh clock sysidle ${LTPROOT}/testcases/bin/mx53_clks_sysidle
 TGE-LV-ASRC-0211	rtc_testapp_6 -T 5; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
 TGE-LV-IPU-0070	fbset -depth 32 ; rtc_testapp_6 -d rtc0 -T 30 ; len=$(fbset -i | grep "LineLength" | awk {\'print $3\'}) && echo $len |grep 4096 && fbset -depth 16
 TGE-LV-LCD-BL-00002	echo 100 > /sys/class/backlight/pwm-backlight.0/brightness; rtc_testapp_6 -m standby -T 5 ; BR=$(cat /sys/class/backlight/pwm-backlight.0/brightness) ; [ $BR -eq 100 ]  && echo pass || echo fail
