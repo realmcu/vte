@@ -38,6 +38,8 @@ LOADLIBES+= -L../../../../lib -lltp -lpthread
 # - PMIC for MXC91131 have not yet RTC support
 # - PMIC work only with MC13783 2.X
 
+SUBDIRS = scripts
+
 # Only supported on MXC91131
 ifeq ($(ARCH_PLATFORM),mxc91131evb)
 CFLAGS+=    -DCONFIG_MXC_PMIC_SC55112
