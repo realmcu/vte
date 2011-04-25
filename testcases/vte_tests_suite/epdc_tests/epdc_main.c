@@ -153,6 +153,7 @@ extern "C" {
 				 "epdc_fb_cleanup() Failed : error code = %d",
 				 VT_rv);
 		}
+		sleep(30);
 		/* Exit with appropriate return code. */
 		tst_exit();
 	}
