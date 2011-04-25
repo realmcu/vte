@@ -191,6 +191,9 @@ TGE-LV-DVFS-0041	cpu_lowfreq.sh
 TGE-LV-DVFS-0050	dvfs_per.sh 1
 TGE-LV-DVFS-0052	dvfs_per.sh 2
 TGE-LV-DVFS-0200	cpufreq-info
+TGE-LV-DVFS-0020    pwr_checkpoint.sh voltage ${LTPROOT}/testcases/bin/mx53_voltage
+TGE-LV-DVFS-0021    pwr_checkpoint.sh clock useridle ${LTPROOT}/testcases/bin/mx53_clks_useridle
+TGE-LV-DVFS-0022    pwr_checkpoint.sh clock sysidle ${LTPROOT}/testcases/bin/mx53_clks_sysidle
 TGE-LV-RTC-0010	rtc_testapp_1
 TGE-LV-RTC-0011	rtc_testapp_2
 TGE-LV-RTC-0013	rtc_testapp_5  -T POLL
