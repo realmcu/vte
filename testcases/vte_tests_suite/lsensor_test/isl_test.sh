@@ -34,14 +34,14 @@
 #               - non zero on failure. return value from commands ($RC) 
 setup() 
 { 
-#TODO Total test case 
-RC=0 
-trap "cleanup" 0 
- 
-#TODO add setup scripts
+    RC=0 
+    export TST_TOTAL=2
 
-return $RC 
+    trap "cleanup" 0 
+    
+    return $RC 
 }
+
 # Function:     cleanup 
 # 
 # Description   - remove temporary files and directories. 
@@ -50,52 +50,89 @@ return $RC
 #               - non zero on failure. return value from commands ($RC) 
 cleanup() 
 { 
-RC=0 
-#TODO add cleanup code here 
-return $RC 
+    RC=0 
+    return $RC 
 } 
  
  
-#
 # Function:     test_case_01
 # Description   - Test if isl basic work
 #  
 test_case_01()
 {
-#TODO give TCID 
-TCID="isl_module_exist"
-#TODO give TST_COUNT
-TST_COUNT=1
-RC=1
- 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
- 
-#TODO add function test scripte here
-for i in $(ls /sys/bus/i2c/devices/*/name)
-do
- id=$(cat $i)
- if [ $id = "isl29023" ]; then
-   isl_base=$(dirname $i)
-   for j in $(ls ${isl_basl})
-   do
-    if [ ! -d $j ]; then
-      cat $j || RC=$(echo $RC $j)
-    fi
-   done
-   if [ "$RC" = "1" ];then
-     RC=0
-   fi
-   break
- fi
-done
+    export TCID="ISL_MODULE_EXIST"
+    export TST_COUNT=1
 
-return $RC
+    RC=1
+    
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
+    
+    #TODO add function test scripte here
+    for i in $(ls /sys/bus/i2c/devices/*/name)
+    do
+        id=$(cat $i)
+        if [ "$id" = "isl29023" ]; then
+            isl_base=$(dirname $i)
+            for j in $(ls ${isl_basl}); do
+                if [ ! -d $j ]; then
+                    cat $j >/dev/null || RC=$(echo $RC $j)
+                fi
+            done
+            if [ "$RC" = "1" ];then
+                RC=0
+            fi
+            break
+        fi
+    done
+
+    if [ $RC -eq 0 ]; then
+        tst_resm TINFO "Test PASS"
+    fi
+
+    return $RC
+}
+
+
+test_case_02()
+{
+    export TCID="ISL_MODULE_CATCH_DATA"
+    export TST_COUNT=2
+
+    RC=1
+
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
+
+    #TODO add function test scripte here
+    for i in $(ls /sys/bus/i2c/devices/*/name)
+    do
+    id=$(cat $i)
+    if [ $id = "isl29023" ]; then
+    isl_base=$(dirname $i)
+    for j in $(ls ${isl_basl})
+    do
+        if [ ! -d $j ]; then
+            cat $j >/dev/null || RC=$(echo $RC $j)
+        fi
+    done
+    if [ "$RC" = "1" ];then
+        RC=0
+    fi
+    break
+    fi
+    done
+
+    if [ $RC -eq 0 ]; then
+        tst_resm TINFO "Test PASS"
+    fi
+
+    return $RC
 }
 
 usage()
 {
- echo "1 isl basic control reg access test"
+    echo "1 isl basic control reg access test"
 }
 
 setup || exit $RC
@@ -104,10 +141,12 @@ case "$1" in
 1)
   test_case_01 || exit $RC 
   ;;
+2)
+  test_case_02 || exit $RC
+  ;;
 *)
   usage
   ;;
 esac
  
-tst_resm TINFO "Test PASS"
 
