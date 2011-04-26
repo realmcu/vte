@@ -292,7 +292,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 
 #test list
-run_single_test_list
+run_single_test_list || RC=1
 
 return $RC
 
@@ -315,7 +315,40 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 
 #test list
-run_multi_test_list
+run_multi_test_list || RC=1
+
+return $RC
+
+}
+
+# Function:     test_case_03
+# Description   - Test if single process power manager ok
+#  
+test_case_03()
+{
+#TODO give TCID 
+TCID="test_storage_single"
+#TODO give TST_COUNT
+TST_COUNT=1
+RC=0
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+#TODO add function test scripte here
+
+#test list
+run_single_test_list || RC=1
+
+if [ $RC = 0 ]; then
+rtc_testapp_6 -T 20
+sleep 5
+rtc_testapp_6 -T 20
+sleep 5
+rtc_testapp_6 -T 20
+
+run_single_test_list || RC=1
+fi
 
 return $RC
 
@@ -325,8 +358,9 @@ return $RC
 usage()
 {
 echo "$0 [case ID]"
-echo "1: "
-echo "2: "
+echo "1: single process test"
+echo "2: multi process test"
+echo "3: power manager test"
 }
 
 # main function
@@ -353,6 +387,9 @@ case "$1" in
   ;;
 2)
   test_case_02 || exit $RC 
+  ;;
+2)
+  test_case_03 || exit $RC 
   ;;
 *)
   usage
