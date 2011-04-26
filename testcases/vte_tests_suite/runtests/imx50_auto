@@ -148,9 +148,11 @@ TGE-LV-FB-1003	cat /dev/vcs
 TGE-LV-FB-1006	echo 1 > /sys/class/graphics/fb0/blank && echo 0 > /sys/class/graphics/fb0/blank
 TGE-LV-GPT-0010	gpt_testapp
 TGE-LVGPU-1006	modprobe gpu ; sh -c "tiger &"; rtc_testapp_6 -T 5; sleep 10
-TGE-LV-GPU-C2D-0002	modprobe gpu; c2d_sanity_app_z160
+TGE-LV-GPU-C2D-0004 modprobe gpu; c2d_sanity_app_z160
 TGE-LV-GPU-C2D-0003	modprobe gpu; sh -c "c2d_sanity_app_z160 &";c2d_sanity_app_z160
-TGE-LV-GPU-C2D-PERF-0001	modprobe gpu; 2dblt_perf -l lib2dz160.so
+TGE-LV-GPU-C2D-PERF-0002 modprobe gpu; 2dblt_perf -l lib2dz160.so
+TSG-LV-GPU-FB-CONF-VG-0002 	vg.sh 2
+TSG-LV-GPU-FB-PM-0001  gles.sh 4 && vg.sh 4
 TGE-LV-VIIM-0001	iim_test
 TGE-LV-KERNEL-10000	 $(which crashme) +200 666 5 00:00:05 2 
 TGE-LV-KERNEL-10001	RC=0;list=$(cat /proc/vmallocinfo | awk '{print $2}') ; for i in $list; do if [ $i -gt 4194304 ]; then RC=$(expr $RC + 1); fi; if [ $i -lt 0 ]; then RC=$(expr $RC + 1) ; fi; done; echo $RC ; [ $RC -eq 0 ] 
