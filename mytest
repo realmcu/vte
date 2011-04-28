@@ -30,7 +30,8 @@ ARCH_PLATFORM=${platfm}
 
 if [ "$CONTINUE" = 'y' ];then
 #tday=$(date +%m%d%Y)
-tday=$(uname -r)
+mac=$(cat /sys/class/net/eth0/address | sed 's/:/_/g')
+tday=$(uname -r)_${mac}
 cp ${TEST_PATH}/runtest/$CMDFILE ${TEST_PATH}/runtest/temp_test_$CMDFILE_$tday
 if [ -e ${TEST_PATH}/temp_cnt_$CMDFILE_$tday ]; then
 #1 not first run, need change the command file skip the last one
