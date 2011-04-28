@@ -280,9 +280,9 @@ static inline void stop_timing(void)
 	do_gettimeofday(&finish);
 }
 
-static long calc_speed(void)
+static unsigned long calc_speed(void)
 {
-	long ms, k, speed;
+	unsigned long ms, k, speed;
 
 	ms = (finish.tv_sec - start.tv_sec) * 1000 +
 	     (finish.tv_usec - start.tv_usec) / 1000;
@@ -321,7 +321,7 @@ out:
 static int __init mtd_speedtest_init(void)
 {
 	int err, i;
-	long speed;
+	unsigned long speed;
 	uint64_t tmp;
 
 	printk(KERN_INFO "\n");
