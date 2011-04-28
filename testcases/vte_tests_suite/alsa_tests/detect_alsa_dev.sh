@@ -41,10 +41,16 @@ EOF
     exit 255
 fi
 
-if [ "$1" = "ADC" ]; then
-    dfl_alsa_dev=`arecord -l |grep -i imx3stack|awk '{ print $2 }'|sed 's/://'`
+if [ $(uname -r | grep 2.6.38|wc -l) == 1 ]; then
+   HW_keyword=sgtl5000audio
 else
-    dfl_alsa_dev=`aplay -l |grep -i imx3stack|awk '{ print $2 }'|sed 's/://'`
+   HW_keyword=imx3stack
+fi
+
+if [ "$1" = "ADC" ]; then
+    dfl_alsa_dev=`arecord -l |grep -i $HW_keyword|awk '{ print $2 }'|sed 's/://'`
+else
+    dfl_alsa_dev=`aplay -l |grep -i $HW_keyword|awk '{ print $2 }'|sed 's/://'`
 fi
 
 if [ "$dfl_alsa_dev" != "" ]; then
