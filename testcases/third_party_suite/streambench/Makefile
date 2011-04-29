@@ -25,7 +25,10 @@ SRCS=$(wildcard *.c)
 OBJS=$(patsubst %.c,%*.o,$(SRCS))
 
 TARGET=stream_benchmark
- 
+
+#CFLAGS = -Wall -O3 -fsigned-char -march=armv7-a  -mfpu=neon -mfloat-abi=softfp
+CFLAGS = -Wall -O3 -fsigned-char -march=armv7-a
+
 all: $(TARGET)
 	@echo "************************************************"
 	@echo "** ALL : $(TARGET)                 **"
@@ -44,6 +47,6 @@ clean:
 	@echo "** CLEAN : $(TARGET)               **"
 	@echo "************************************************"
 
-$(TARGET):
+$(TARGET): Makefile
 	$(CROSS_COMPILER)gcc $(CFLAGS) stream.c -o stream_benchmark
 
