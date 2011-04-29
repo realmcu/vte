@@ -20,8 +20,8 @@ export CONFIG_VTE_DATA=y
 export CONFIG_VTE_DVFS=y
 #CONFIG_VTE_DRYICE=y
 export CONFIG_VTE_EMI=y
-export CONFIG_VTE_EPDC=y
-export CONFIG_VTE_EPXP=y
+#export CONFIG_VTE_EPDC=y
+#export CONFIG_VTE_EPXP=y
 export CONFIG_VTE_FB=y
 export CONFIG_VTE_FEC=y
 export CONFIG_VTE_FM=y
@@ -76,7 +76,7 @@ export CONFIG_VTE_WIFI=y
 
 #vte module config
 #CONFIG_VM_DRYICE=y
-export CONFIG_VM_SDMA=y
+#export CONFIG_VM_SDMA=y
 export CONFIG_VM_SAHARA=y
 #CONFIG_VM_SCC=y
 export CONFIG_VM_SCC2=y
@@ -90,7 +90,7 @@ export CONFIG_OM_SCULL=y
 #export CONFIG_OM_CRYPTO=y
 export CONFIG_OM_USB=y
 export CONFIG_OM_MMC=y
-export CONFIG_VM_MXC_WD=y
+#export CONFIG_VM_MXC_WD=y
 
 #platform depended config need read the related Makefile in subfolder
 #CONFIG_VTE_KEYPAD_TESTAPP=y
