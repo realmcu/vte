@@ -20,8 +20,9 @@
 #                       Modification     Tracking
 # Author                    Date          Number    Description of Changes
 #--------------------   ------------    ----------  ----------------------
-# Spring Zhang           Apr.13,2010       n/a      Initial version
-# Spring Zhang           Apr.13,2010       n/a      Add voltage check
+# Spring Zhang           Apr.13,2011       n/a      Initial version
+# Spring Zhang           Apr.13,2011       n/a      Add voltage check
+# Spring Zhang           May.06,2011       n/a      Format output
 
 # Note:
 # You can generate usage and clk config file by:
@@ -48,7 +49,7 @@ setup()
     col_clkname=1
     col_usage=3
     col_freq=5
-
+	
     echo "stop gdm..."
     stop gdm
 	#platform related
@@ -81,8 +82,11 @@ EOF
 # $1-platform code
 sys_idle()
 {
-    ifconfig eth0 down
 	echo 1 > $fb0
+    ifconfig eth0 down
+    for i in 1 2 3 4 5; do
+        ifconfig eth$i down 2> /dev/null
+    done
 	enable_dvfs_$platfm
 }
 
@@ -92,6 +96,9 @@ user_idle()
 {
 	echo 0 > $fb0
     ifconfig eth0 down
+    for i in 1 2 3 4 5; do
+        ifconfig eth$i down 2> /dev/null
+    done
 	enable_dvfs_$platfm
 }
 
@@ -133,10 +140,13 @@ check_clks()
     active_clk=`cat $clk_matrix_file| grep -v " 0 "| wc -l`
     cur_active_clk=`cat $CLK_GETTER | grep -v " 0 "| wc -l`
     if [ $active_clk -ne $cur_active_clk ]; then
-        echo "FATAL ERROR: active clocks number doesn't align, now it is $cur_active_clk"
+        echo "================General active clk number=================="
+        echo "FATAL ERROR: active clocks number doesn't align, now it is $cur_active_clk, reference is $active_clk"
         RC=21
     fi
 	
+    echo "================Detail comparision=================="
+    echo "clk_name\t\tresult\t\tcur_freq\trefer_freq"
 	cat $clk_matrix_file | while read line; do
         #ignore comments line
         if [ -z "$line" ]; then
@@ -148,19 +158,47 @@ check_clks()
 		clk_name=`echo $line | awk '{ print $1 }'`
 		clk_usage=`echo $line | awk '{ print $2 }'`
 		clk_freq=`echo $line | awk '{ print $3 }'`
-		if cat $CLK_GETTER | grep $clk_name >/dev/null 2>&1; then
-			cur_clk_usage=`cat $CLK_GETTER| grep $clk_name | awk -v col="$col_usage" '{print $col}'`
-			cur_clk_freq=`cat $CLK_GETTER| grep $clk_name| sed 's/(//' |sed 's/)//'| awk -v col="$col_freq" '{print $col}'`
+        #use ^$clk_name to avoid such pattern:
+        #usb_ahb_clk-0                         ______    0    66666666 (66MHz)
+        #sdma_ahb_clk-0                        ______    1   133333333 (133MHz)
+        #ahb_clk-0                             P_____    8   133333333 (133MHz)
+		if cat $CLK_GETTER | grep "^$clk_name" >/dev/null 2>&1; then
+			cur_clk_usage=`cat $CLK_GETTER| grep "^$clk_name" | awk -v col="$col_usage" '{print $col}'`
+			cur_clk_freq=`cat $CLK_GETTER| grep "^$clk_name"| sed 's/(//' |sed 's/)//'| awk -v col="$col_freq" '{print $col}'`
+
+            diff_usage=0
+            diff_freq=0
 			if [ "$clk_usage" != "$cur_clk_usage" ]; then
-				echo "WARNING $clk_name: usage not aligned, current usage is $cur_clk_usage"
+                diff_usage=1
                 RC=21
 			fi
 			if [ "$cur_clk_freq" != "$clk_freq" ]; then
-				echo "FATAL ERROR $clk_name: frequency different, current freq is $cur_clk_freq"
+                diff_freq=1
                 RC=21
 			fi
+
+            #display usage report
+            echo -n "${clk_name}\t\t"
+            if [ `echo $clk_name |wc -c` -lt 8 ]; then
+                echo -n "\t"
+            fi
+            if [ $diff_usage -eq 0 ]; then
+                echo "usage PASS\t${clk_usage}"
+            else
+                echo "usage FAIL\t${cur_clk_usage}\t${clk_usage}"
+            fi
+            #freq report
+            echo -n "${clk_name}\t\t"
+            if [ `echo $clk_name |wc -c` -lt 8 ]; then
+                echo -n "\t"
+            fi
+            if [ $diff_freq -eq 0 ]; then
+                echo "freq PASS\t${clk_freq}"
+            else
+                echo "freq FAIL\t${cur_clk_freq}\t${clk_freq}"
+            fi
 		else
-			echo "WARNING $clk_name: no such clock"
+			echo "$clk_name WARNING: no such clock"
 		fi		
 	done
 
@@ -180,7 +218,7 @@ check_voltage()
 	#need to disable DVFS first
     check_file="$1"
     cat $check_file | while read line; do
-        if "$line" == ""; then
+        if [ "$line" = "" ]; then
             continue
         fi
         if echo $line |grep "^#" >/dev/null 2>&1; then
@@ -200,6 +238,8 @@ check_voltage()
 }
 
 #main
+export PATH=$PATH:$(pwd)
+
 platfm.sh || platfm=$?
 if [ $platfm -eq 67 ]; then
 	RC=$platfm
