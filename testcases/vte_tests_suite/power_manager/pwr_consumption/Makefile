@@ -25,11 +25,11 @@
 ###############################################################################
 
 SUBDIRS=chk_configs
-TARGETS=pc_off_lcd.sh pc_on_dvfs.sh pc_mk_link.sh pc_off_eth.sh pc_on_conservative.sh
-TARGETS+=pc_mp3_128k.sh
-TARGETS+=pc_h264_720p_2770k.sh pc_h264_720p_d1.sh pc_h264_720p_9M.sh
-TARGETS+=pc_h264_1080p_10M.sh pc_h264_1080p_20M.sh
-TARGETS+=pc_checkpoint.sh
+TARGETS=pwr_off_lcd.sh pwr_on_dvfs.sh pwr_mk_link.sh pwr_off_eth.sh pwr_on_conservative.sh
+TARGETS+=pwr_mp3_128k.sh
+TARGETS+=pwr_h264_720p_2770k.sh pwr_h264_720p_d1.sh pwr_h264_720p_9M.sh
+TARGETS+=pwr_h264_1080p_10M.sh pwr_h264_1080p_20M.sh
+TARGETS+=pwr_checkpoint.sh
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
