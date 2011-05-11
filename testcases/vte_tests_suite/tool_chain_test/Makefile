@@ -2,10 +2,10 @@ TARGET = memcpy_test
 
 SRC = memcpy_test.c
 OBJ =$(patsubst %.c,%.o,$(SRC))
-CFLAGS = -O3
+CFLAGS = -O2
 
 all: $(OBJ)
-	$(CC) -o $(TARGET) $(OBJ)
+	$(CC) -o $(TARGET) $(CFLAGS) $(OBJ)
 
 $(OBJ):$(SRC)
 	$(CC) $(CFLAGS) -c $^

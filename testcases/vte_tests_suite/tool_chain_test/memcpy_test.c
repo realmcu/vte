@@ -8,6 +8,16 @@
 #define MAX_LOOP 102400
 #define BLOCK 1024
 
+void run_test( char * out, char * in)
+{
+	memcpy(out, in, BLOCK);
+}
+
+void run_test_d( char * out, char * in)
+{
+	memcpy(out, in, BLOCK);
+}
+
 int main()
 {
 	struct timeval start, end;
@@ -22,7 +32,8 @@ int main()
   memset(from,1,BLOCK);
 	gettimeofday(&start, &tz);
 	for (i = 0; i < MAX_LOOP; i++) {
-		memcpy(to, from, BLOCK);
+		run_test(to,from);
+	//	memcpy(to, from, BLOCK);
 	}
 	gettimeofday(&end, &tz);
 
@@ -31,7 +42,7 @@ int main()
 
 	printf("test last %ld ms\n", last);
 	if (last)
-		printf("performance is %ldMB/s\n", (unsigned long)(BLOCK * MAX_LOOP)* 1000 / (last * (1024 * 1024)));
+		printf("performance is %ldMB/s\n", (unsigned long)(BLOCK * MAX_LOOP) / (last * (1024 * 1024 / 1000)));
 
 	pto = (char *)malloc(BLOCK);
 	if (pto == NULL) {
@@ -47,6 +58,7 @@ int main()
 	gettimeofday(&start, &tz);
 	for (i = 0; i < MAX_LOOP; i++) {
 		memcpy(pto, pfrom, BLOCK);
+	//	run_test_d(pto,pfrom);
 	}
 	gettimeofday(&end, &tz);
 
@@ -56,7 +68,7 @@ int main()
 	printf("dynamic test last %ld ms\n", last);
 	if (last)
 		printf("dynamic performance is %ld MB/s\n",
-		       (unsigned long)(BLOCK * MAX_LOOP) * 1000/ (last * 1024 * 1024));
+		       (unsigned long)(BLOCK * MAX_LOOP) / (last * (1024 * 1024 / 1000)));
 
   if(pto)
 		free(pto);
