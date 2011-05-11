@@ -2184,7 +2184,11 @@ static struct usb_driver usbtest_driver = {
 	.name =		"usbtest",
 	.id_table =	id_table,
 	.probe =	usbtest_probe,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38))
 	.unlocked_ioctl =	usbtest_ioctl,
+#else
+	.ioctl =	usbtest_ioctl,
+#endif
 	.disconnect =	usbtest_disconnect,
 	.suspend =	usbtest_suspend,
 	.resume =	usbtest_resume,
