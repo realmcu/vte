@@ -6,16 +6,22 @@
 #include <sys/time.h>
 
 #define MAX_LOOP 102400
-#define BLOCK 1024
+#define BLOCK (1024*4)
 
 void run_test( char * out, char * in)
 {
+	int i = 0;
+	for (i = 0; i < MAX_LOOP; i++) {
 	memcpy(out, in, BLOCK);
+	}
 }
 
 void run_test_d( char * out, char * in)
 {
+	int i = 0;
+	for (i = 0; i < MAX_LOOP; i++) {
 	memcpy(out, in, BLOCK);
+	}
 }
 
 int main()
@@ -25,16 +31,13 @@ int main()
 /*static array memory copy test*/
 	static char to[BLOCK] __attribute((aligned(4)));
 	static char from[BLOCK] __attribute((aligned(4)));
-	int i = 0;
 	unsigned long last = 0;
 	char *pto, *pfrom;
 
   memset(from,1,BLOCK);
 	gettimeofday(&start, &tz);
-	for (i = 0; i < MAX_LOOP; i++) {
 		run_test(to,from);
 	//	memcpy(to, from, BLOCK);
-	}
 	gettimeofday(&end, &tz);
 
 	last = (end.tv_sec - start.tv_sec) * 1000 +
@@ -56,10 +59,8 @@ int main()
 	}
   memset(from,1,BLOCK);
 	gettimeofday(&start, &tz);
-	for (i = 0; i < MAX_LOOP; i++) {
-		memcpy(pto, pfrom, BLOCK);
-	//	run_test_d(pto,pfrom);
-	}
+	//	memcpy(pto, pfrom, BLOCK);
+	run_test_d(pto,pfrom);
 	gettimeofday(&end, &tz);
 
 	last = (end.tv_sec - start.tv_sec) * 1000 +

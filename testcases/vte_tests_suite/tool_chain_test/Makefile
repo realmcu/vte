@@ -2,7 +2,7 @@ TARGET = memcpy_test
 
 SRC = memcpy_test.c
 OBJ =$(patsubst %.c,%.o,$(SRC))
-CFLAGS = -O2
+CFLAGS = -Wall -O2
 
 all: $(OBJ)
 	$(CC) -o $(TARGET) $(CFLAGS) $(OBJ)
