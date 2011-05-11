@@ -63,6 +63,7 @@ include ./vte_configs/${ARCH_PLATFORM}_deconfigs
 
 SUBDIRS-y                         += tools
 SUBDIRS-y                         += kernel_tests
+SUBDIRS-y                         += tool_chain_test 
 SUBDIRS-y                         += runtests
 SUBDIRS-$(CONFIG_VTE_DATA)        += test_data
 SUBDIRS-$(CONFIG_VTE_ACC)         += acc_tests
