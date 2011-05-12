@@ -1,6 +1,5 @@
 subdir = lmbench3
-confs-$(CONFIG_TP_IMX5) = ./platform_configs/mx5x_lm_config
-confs-$(CONFIG_TP_IMX5) = ./platform_configs/mx53_lm_config
+confs-$(CONFIG_TP_IMX5) = ./platform_configs/mx5x_lm_config ./platform_configs/mx53_lm_config
 confs-$(CONFIG_TP_IMX28) = ./platform_configs/mx28_lm_config
 
 all:
