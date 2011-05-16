@@ -73,6 +73,7 @@ export CONFIG_VTE_V4L_PXP=y
 export CONFIG_VTE_VPU=y
 export CONFIG_VTE_WD=y
 export CONFIG_VTE_WIFI=y
+export CONFIG_VTE_LSENSOR=y
 
 #vte module config
 #CONFIG_VM_DRYICE=y

@@ -28,7 +28,7 @@
 
 SUBDIRS= dumpmem
 #Platform identify script
-TARGETS=platfm.sh
+TARGETS=platfm.sh ./debian_install/pkg_handle.sh 
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
