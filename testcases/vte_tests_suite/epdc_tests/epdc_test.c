@@ -75,6 +75,8 @@ extern "C" {
     }\
 }
 
+#define MAX_WAIT 10
+
 #define  ALIGN_PIXEL_128(x)  ((x+ 127) & ~127)
 
 #define EPDC_STR_ID		"mxc_epdc_fb"
@@ -157,6 +159,11 @@ extern "C" {
 		if (m_opt.au != -1)
 			return TRUE;	/*for auto update, not needs to send update request */
 		while (ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0) {
+			static int iloops = 0;
+			if (iloops++ > MAX_WAIT) {
+				iloops = 0;
+				break;
+			}
 			sleep(1);
 		}
 		while (ioctl
@@ -232,6 +239,11 @@ extern "C" {
 			if (m_opt.au != -1)
 				continue;	/*for auto update, not needs to send update request */
 			while (ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0) {
+				static int iloops = 0;
+				if (iloops++ > MAX_WAIT) {
+					iloops = 0;
+					break;
+				}
 				sleep(1);
 			}
 			while (ioctl
@@ -305,6 +317,11 @@ extern "C" {
 			if (m_opt.au != -1)
 				continue;	/*for auto update, not needs to send update request */
 			while (ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update) < 0) {
+				static int iloops = 0;
+				if (iloops++ > MAX_WAIT) {
+					iloops = 0;
+					break;
+				}
 				sleep(1);
 			}
 			while (ioctl
@@ -415,6 +432,11 @@ extern "C" {
 		if (m_opt.au != -1)
 			return TRUE;	/*for auto update, not needs to send update request */
 		while (ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0) {
+			static int iloops = 0;
+			if (iloops++ > MAX_WAIT) {
+				iloops = 0;
+				break;
+			}
 			sleep(1);
 		}
 		while (ioctl
@@ -453,6 +475,11 @@ extern "C" {
 			if (m_opt.au != -1)
 				continue;	/*for auto update, not needs to send update request */
 			while (ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update) < 0) {
+				static int iloops = 0;
+				if (iloops++ > MAX_WAIT) {
+					iloops = 0;
+					break;
+				}
 				sleep(1);
 			}
 			while (ioctl
@@ -481,6 +508,11 @@ extern "C" {
 			if (m_opt.au != -1)
 				continue;	/*for auto update, not needs to send update request */
 			while (ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update) < 0) {
+				static int iloops = 0;
+				if (iloops++ > MAX_WAIT) {
+					iloops = 0;
+					break;
+				}
 				sleep(1);
 			}
 			while (ioctl
@@ -815,12 +847,18 @@ extern "C" {
 		}
 #else
 		{
-		struct fb_var_screeninfo screen_info;
-		struct fb_fix_screeninfo fix_screen_info;
-		CALL_IOCTL(ioctl(fb_fd, FBIOGET_FSCREENINFO, &fix_screen_info));
-		CALL_IOCTL(ioctl(fb_fd, FBIOGET_VSCREENINFO, &screen_info));
-    mem.phys_addr = fix_screen_info.smem_start + \
-		screen_info.xres_virtual*ALIGN_PIXEL_128(screen_info.yres)*screen_info.bits_per_pixel/8;
+			struct fb_var_screeninfo screen_info;
+			struct fb_fix_screeninfo fix_screen_info;
+			CALL_IOCTL(ioctl
+				   (fb_fd, FBIOGET_FSCREENINFO,
+				    &fix_screen_info));
+			CALL_IOCTL(ioctl
+				   (fb_fd, FBIOGET_VSCREENINFO, &screen_info));
+			mem.phys_addr =
+			    fix_screen_info.smem_start +
+			    screen_info.xres_virtual *
+			    ALIGN_PIXEL_128(screen_info.yres) *
+			    screen_info.bits_per_pixel / 8;
 		}
 #endif
 #if 1
@@ -884,6 +922,11 @@ extern "C" {
 			if (m_opt.au != -1)
 				continue;	/*for auto update, not needs to send update request */
 			while (ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0) {
+				static int iloops = 0;
+				if (iloops++ > MAX_WAIT) {
+					iloops = 0;
+					break;
+				}
 				sleep(1);
 			}
 			while (ioctl
@@ -911,6 +954,11 @@ extern "C" {
 			if (m_opt.au != -1)
 				continue;	/*for auto update, not needs to send update request */
 			while (ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update)) {
+				static int iloops = 0;
+				if (iloops++ > MAX_WAIT) {
+					iloops = 0;
+					break;
+				}
 				sleep(1);
 			}
 			while (ioctl
@@ -987,6 +1035,11 @@ extern "C" {
 		if (m_opt.au != -1)
 			return TRUE;	/*for auto update, not needs to send update request */
 		while (ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0) {
+			static int iloops = 0;
+			if (iloops++ > MAX_WAIT) {
+				iloops = 0;
+				break;
+			}
 			sleep(1);
 		}
 		while (ioctl
@@ -1032,11 +1085,10 @@ extern "C" {
 			TEMP_USE_AMBIENT,	/*use ambient temperature set */
 			0,	/*do not use alt buffer */
 			{
-				0, 0, 0, 
-				{
-					0, 0, 0, 0
-				}
-			}
+			 0, 0, 0,
+			 {
+			  0, 0, 0, 0}
+			 }
 		};
 		im_update.flags = m_opt.update.flags;
 		if (m_opt.su == 1) {
@@ -1056,6 +1108,11 @@ extern "C" {
 			if (m_opt.au != -1)
 				continue;	/*for auto update, not needs to send update request */
 			while (ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0) {
+				static int iloops = 0;
+				if (iloops++ > MAX_WAIT) {
+					iloops = 0;
+					break;
+				}
 				sleep(1);
 			}
 			while (ioctl
@@ -1085,6 +1142,11 @@ extern "C" {
 			if (m_opt.au != -1)
 				continue;	/*for auto update, not needs to send update request */
 			while (ioctl(fb_fd, MXCFB_SEND_UPDATE, &im_update) < 0) {
+				static int iloops = 0;
+				if (iloops++ > MAX_WAIT) {
+					iloops = 0;
+					break;
+				}
 				sleep(1);
 			}
 			while (ioctl
@@ -1551,8 +1613,7 @@ extern "C" {
 			unsigned char r = p->r_color;
 			unsigned char g = p->g_color;
 			unsigned char b = p->b_color;
-			value =
-			    (unsigned char)
+			value = (unsigned char)
 			    BOUND255(((PR * r + PG * g + PB * b) >> 8) + 16);
 		} else {
 			value =
@@ -1570,7 +1631,7 @@ extern "C" {
 			/*fix me */
 			*where++ = value;
 			break;
-		case 12 ... 16:
+		case 12...16:
 			*where++ = *((unsigned char *)&value);
 			*where++ = *((unsigned char *)&value + 1);
 			break;
