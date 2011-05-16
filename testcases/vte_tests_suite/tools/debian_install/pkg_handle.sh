@@ -17,15 +17,26 @@ helpme()
 }
 
 
-
 install_debian_package()
 {
+ RC=0
  list=$(ls $1/*.deb)
  for i in $list
  do
- dpkg --force-architecture --root $ROOTFS -i $i
+	dpkg --force-architecture --root $ROOTFS -i $i
+ 	ipkg=$(echo $i | cut -d _ -f 1)
+ 	iver=$(echo $i | cut -d _ -f 2 | cut -d - -f 1)
+ 	iiver=$(dpkg --list || grep $ipkg || awk '{print $3}')
+ 	if [ ! $iiver = $iver ]; then
+  	RC=$(echo $RC $i)
+ 	fi
  done
- return 0
+ echo $RC
+ if [ "$RC" = 0 ]; then
+	return 0
+ else
+	 return 1
+ fi
 }
 
 remove_debian_package()
