@@ -28,7 +28,8 @@
 
 SUBDIRS= dumpmem
 #Platform identify script
-TARGETS=platfm.sh ./debian_install/pkg_handle.sh 
+TARGETS = platfm.sh ./debian_install/pkg_handle.sh 
+TARGETS += get_total_memory.sh 
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
