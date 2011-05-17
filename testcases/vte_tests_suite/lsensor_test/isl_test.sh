@@ -74,7 +74,7 @@ test_case_01()
         id=$(cat $i)
         if [ "$id" = "isl29023" ]; then
             isl_base=$(dirname $i)
-            for j in $(ls ${isl_basl}); do
+            for j in $(ls ${isl_base}); do
                 if [ ! -d $j ]; then
                     cat $j >/dev/null || RC=$(echo $RC $j)
                 fi
@@ -110,7 +110,7 @@ test_case_02()
     id=$(cat $i)
     if [ $id = "isl29023" ]; then
     isl_base=$(dirname $i)
-    for j in $(ls ${isl_basl})
+    for j in $(ls ${isl_base})
     do
         if [ ! -d $j ]; then
             cat $j >/dev/null || RC=$(echo $RC $j)
