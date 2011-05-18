@@ -36,6 +36,7 @@
 include ./vte_configs/$(ARCH_PLATFORM)_tp_configs
 
 SUBDIRS-y                        += util-linux
+SUBDIRS-y                        += coremark
 SUBDIRS-$(CONFIG_TP_BONNIE)      += bonnie++ 
 SUBDIRS-$(CONFIG_TP_BC)          += bc
 SUBDIRS-$(CONFIG_TP_DT)          += dt 
