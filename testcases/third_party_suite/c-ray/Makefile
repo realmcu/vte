@@ -11,6 +11,7 @@ install:
 	ln -f c-ray-f ../../bin/
 	ln -f $(SUBDIR)/sphfract ../../bin/
 	ln -f $(SUBDIR)/scene ../../bin/
+	ln -f c-ray.sh ../../bin/
 
 clean:
 	$(MAKE) -C $(SUBDIR) clean
