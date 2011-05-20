@@ -268,6 +268,9 @@ case "$?" in
 50)
   APP_SUB_DIR="imx50_rootfs/test"
 	;;
+41)
+  APP_SUB_DIR="imx51_rootfs/test"
+  ;;
 51)
   APP_SUB_DIR="imx51_rootfs/test"
  ;;

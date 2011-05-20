@@ -395,6 +395,9 @@ else
 #judge the rootfs
 platfm.sh
 case "$?" in
+41)
+  APP_SUB_DIR="imx51_rootfs/test"
+ ;;
 51)
   APP_SUB_DIR="imx51_rootfs/test"
  ;;
