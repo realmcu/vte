@@ -164,13 +164,13 @@ TGE-LV-DVFS-0010	dvfs.sh 1
 TGE-LV-DVFS-0040	dvfs.sh 2
 TGE-LV-DVFS-0150	echo 0 > /sys/devices/platform/mxc_dvfs_core.0/enable ;cpufreq-set -f 160M && cpufreq-info -f | grep 160000 && cpufreq-set -f 800M && cpufreq-info -f | grep 800000
 TGE-LV-NAND-1000	cat /proc/partitions | grep mtd
-TGE-LV-NAND-1101	nand_mtd_testapp -T INFO -D /dev/mtd2
-TGE-LV-NAND-1001	flash_eraseall /dev/mtd2
-TGE-LV-NAND-2010	mkdir -p /mnt/nand; flash_eraseall /dev/mtd2 && mount -t jffs2 /dev/mtdblock2 /mnt/nand && bonnie++ -d /mnt/nand -u 0:0 -s 10 -r 5 && dt of=/mnt/nand/test_file bs=4k limit=128m passes=20; umount /mnt/nand
-TGE-LV-NAND-2001	flash_eraseall /dev/mtd1 && insmod ${LTPROOT}/testcases/bin/mtd_speedtest.ko dev=2
-TGE-LV-NAND-2003	flash_eraseall /dev/mtd2 ; insmod ${LTPROOT}/testcases/bin/mtd_pagetest.ko dev=2
-TGE-LV-NAND-2005	flash_eraseall /dev/mtd2 && insmod ${LTPROOT}/testcases/bin/mtd_stresstest.ko dev=2 count=100 
-TGE-LV-NAND-2006	flash_eraseall /dev/mtd2 && insmod ${LTPROOT}/testcases/bin/mtd_subpagetest.ko dev=2 
+#TGE-LV-NAND-1101	nand_mtd_testapp -T INFO -D /dev/mtd2
+#TGE-LV-NAND-1001	flash_eraseall /dev/mtd2
+#TGE-LV-NAND-2010	mkdir -p /mnt/nand; flash_eraseall /dev/mtd2 && mount -t jffs2 /dev/mtdblock2 /mnt/nand && bonnie++ -d /mnt/nand -u 0:0 -s 10 -r 5 && dt of=/mnt/nand/test_file bs=4k limit=128m passes=20; umount /mnt/nand
+#TGE-LV-NAND-2001	flash_eraseall /dev/mtd1 && insmod ${LTPROOT}/testcases/bin/mtd_speedtest.ko dev=2
+#TGE-LV-NAND-2003	flash_eraseall /dev/mtd2 ; insmod ${LTPROOT}/testcases/bin/mtd_pagetest.ko dev=2
+#TGE-LV-NAND-2005	flash_eraseall /dev/mtd2 && insmod ${LTPROOT}/testcases/bin/mtd_stresstest.ko dev=2 count=100 
+#TGE-LV-NAND-2006	flash_eraseall /dev/mtd2 && insmod ${LTPROOT}/testcases/bin/mtd_subpagetest.ko dev=2 
 TGE-LV-NOR-1101	nor_mtd_testapp -T INFO -D /dev/mtd1
 TGE-LV-NOR-1102	nor_mtd_testapp -T RDRW -D /dev/mtd1 -L 0x300000 -V
 TGE-LV-NOR-1103	nor_mtd_testapp -T RDRW -D /dev/mtd0 -L 0x00100000 -V
@@ -192,7 +192,7 @@ TGE-LV-RTC-2020	rtc_testapp_4 -d /dev/rtc1
 TGE-LV-RTC-0020	rtc_testapp_4
 TGE-LV-RTC-0100	rtc_test.sh 2 
 TGE-LV-RTC-2000	rtc_test.sh 3 
-TGE-LV-SD-1302	sh -c "rtc_testapp_6 -T 20 && echo "hello world" > /tmp/test.txt && cat /tmp/test.txt | grep hello && mount | grep tmp | grep mmcblk0p1"
+TGE-LV-SD-1303	umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; mount -t vfat /dev/mmcblk0p1 /mnt/mmcblk0p1 && rtc_testapp_6 -T 20 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt | grep hello && umount /mnt/mmcblk0p1
 TGE-LV-SD-1800	storage_all.sh 1
 TGE-LV-SD-1010	umount /mnt/mmcblk0p1; mount /dev/mmcblk0p1 /mnt/mmcblk0p1 && ints1=$(cat /proc/interrupts | grep mmc | grep dma | awk {'print $2'}) ; cp /etc/passwd /mnt/mmcblk0p1/ ; ints2=$(cat /proc/interrupts |grep mmc | grep dma | awk {'print $2'}); [ $ints2 -gt $ints1 ]
 TSG-LV-SD-1030	storage_all.sh 2
@@ -213,5 +213,5 @@ TSG-LV-USB-HOST-0010	 cat /proc/partitions | grep sd
 TSG-LV-USB-HOST-0030	 sh -c "umount /dev/sda1 ;fdisk -l /dev/sda && mkfs.vfat /dev/sda1" 
 TSG-LV-USB-HOST-0040	 sh -c "umount /dev/sda1 ; mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 && bonnie\\+\\+ -d /media/sda1 -u 0:0 -s 10 -r 5 && dt of=/media/sda1/test_file bs=4k limit=128m passes=20" 
 TGE-LV-WDOG-1001	insmod ${LTPROOT}/testcases/bin/mxc_wd_test.ko
-TGE-LV-WIFI-0050	 sh -c "modprobe ath6kl && sleep 5 &&ifconfig wlan0 up && sleep 3 && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001" 
-TGE-LV-WIFI-0061	 LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ath6kl; sleep 5;ifconfig wlan0 up && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && ifconfig wlan0 down && RT=0 ; modprobe -r ath6kl; echo $LOOP; done ; [ $RT -eq 0 ] 
+#TGE-LV-WIFI-0050	 sh -c "modprobe ath6kl && sleep 5 &&ifconfig wlan0 up && sleep 3 && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001" 
+#TGE-LV-WIFI-0061	 LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ath6kl; sleep 5;ifconfig wlan0 up && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && ifconfig wlan0 down && RT=0 ; modprobe -r ath6kl; echo $LOOP; done ; [ $RT -eq 0 ] 
