@@ -1,8 +1,8 @@
 
 AUTO_TARGETS-$(CONFIG_VTE_IMX5) += imx51_auto imx51_BABBAGE_auto  \
-																	 imx53_auto imx53_ALSA_auto \
-																	 imx50_auto imx50_auto_p1 imx50_auto_p2 imx50_auto_p3 \
-                                   imx53_LOCO_auto imx53_SMD_auto
+									imx53_auto imx53_ALSA_auto \
+									imx50_auto imx50_auto_p1 imx50_auto_p2 imx50_auto_p3 \
+                                    imx53_LOCO_auto imx53_SMD_auto
 AUTO_TARGETS-$(CONFIG_VTE_IMX28) += imx28_auto
 P_AUTO_TARGETS-$(CONFIG_VTE_IMX5) += imx51_p_auto imx53_p_auto imx50_p_auto
 P_AUTO_TARGETS-y += imx51_p_auto imx53_p_auto imx50_p_auto
@@ -18,8 +18,15 @@ install:
 	-for i in $(P_AUTO_TARGETS-y); do \
 		./patch_p_auto $$i;  \
 		ln -f vte_$$i ../../../runtest/; \
-		done
+	done
+
 clean:
 	-rm -rf vte_*
+	for i in $(AUTO_TARGETS-y); do \
+		rm -rf ../../../runtest/$$i ;\
+	done
+	-for i in $(P_AUTO_TARGETS-y); do \
+		rm -rf ../../../runtest/vte_$$i; \
+	done
 
 
