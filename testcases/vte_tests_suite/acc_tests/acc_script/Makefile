@@ -6,16 +6,17 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-###################################################################################################
+################################################################################
 #
 #    @file   Makefile
 #
-#    @brief  configuration file for UART applications.
+#    @brief  configuration file for accelerometer applications.
 #
-###################################################################################################
+################################################################################
 
 all:
 
 install:
 	ln -f *.sh ../../../bin/
+
 clean:
