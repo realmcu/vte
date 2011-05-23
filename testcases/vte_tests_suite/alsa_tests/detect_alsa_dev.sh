@@ -41,7 +41,7 @@ EOF
     exit 255
 fi
 
-if [ $(uname -r | grep 2.6.38|wc -l) == 1 ]; then
+if [ $(uname -r | grep 2.6.38|wc -l) -eq 1 ]; then
    HW_keyword=sgtl5000audio
 else
    HW_keyword=imx3stack
