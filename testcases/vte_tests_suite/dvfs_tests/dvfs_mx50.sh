@@ -95,7 +95,7 @@ run_manual_test_list()
  echo "dt of=/mnt/flash/test_file bs=4k limit=128m passes=20"
 
  read -p "is pc run above case ok? y/n" key
- if [ $key == 'n' ]; then
+ if [ "$key" = 'n' ]; then
     errcnt=$(expr $errcnt + 1) 
  fi
  modprobe -r g_file_storage
