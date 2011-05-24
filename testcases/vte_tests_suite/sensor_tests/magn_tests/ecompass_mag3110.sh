@@ -95,6 +95,7 @@ cleanup()
 
     #disable mag3110
     echo 0 > ${SYS_DIR}/enable
+    rm -rf $TMPDIR
 
     return $RC
 }
