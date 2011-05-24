@@ -13,7 +13,7 @@
 #        @brief  configuration file to compile ACC and Magnetic tests
 #
 ################################################################################
-SUBDIRS += acc_script magn_tests
+SUBDIRS += acc_tests lsensor_tests magn_tests 
 
 
 all:
