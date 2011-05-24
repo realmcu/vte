@@ -66,16 +66,18 @@ setup()
 find_sys_dir()
 {
     RC=0
-    BASE_DIR=/sys/class/i2c-dev/i2c-1/device/
-    dirs=`ls -F $BASE_DIR |grep "/$"`
-    for dir in $dirs; do
-        if [ -e $BASE_DIR/${dir}/name ] && 
-            [ "`cat $BASE_DIR/${dir}/name`" = "mag3110" ]; then
+    CLASS_BASE_DIR=/sys/class/i2c-dev/i2c-1/device/
+    #subfolders in class dir is linked to device dir
+    #The attached i2c sequence may change in the future
+    DEVICE_BASE_DIR=/sys/devices/platform/imx-i2c.*
+    entries=`find $DEVICE_BASE_DIR -name "name"`
+    for entry in $entries; do
+        if [ "`cat $entry`" = "mag3110" ]; then
             break
         fi
     done
-    if [ -e $BASE_DIR/${dir}/name -a "`cat $BASE_DIR/${dir}/name`" = "mag3110" ]; then
-        SYS_DIR=$BASE_DIR/$dir
+    if [ "`cat $entry`" = "mag3110" ]; then
+        SYS_DIR=`dirname $entry`
     else
         RC=66
     fi
