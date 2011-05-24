@@ -122,12 +122,13 @@ ecompass_test()
     tst_resm TINFO "Capture data from mag3110."
 
     #fix me: event handler could be dynamically determined.
-    sh -c "$EV_TEST_APP /dev/input/event5 2>&1 | tee /tmp/mag3110.output" &
+    TMPDIR=`mktemp -d`
+    sh -c "$EV_TEST_APP /dev/input/event5 2>&1 | tee $TMPDIR/mag3110.output" &
     sleep 2
     killall $EV_TEST_APP
 
-    grep -i "mag3110" /tmp/mag3110.output || RC=69
-    grep -i "code . (.), value" /tmp/mag3110.output > /dev/null || RC=70
+    grep -i "mag3110" $TMPDIR/mag3110.output || RC=69
+    grep -i "code . (.), value" $TMPDIR/mag3110.output > /dev/null || RC=70
     #disable for the dmesg log could be the one which remained before
     #if dmesg|tail -2 |grep "interrupt not received"; then
     #    RC=71
