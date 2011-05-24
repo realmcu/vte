@@ -18,10 +18,11 @@
 ##############################################################################
 #
 # Revision History:
-#                      Modification     Tracking
-# Author                   Date          Number    Description of Changes
-#-------------------   ------------    ----------  ---------------------
-# Spring Zhang          May.23,2011      n/a        Initial ver. 
+#                      Modification
+# Author                   Date        Description of Changes
+#-------------------   ------------    ---------------------
+# Spring Zhang          May.23,2011      Initial ver. 
+# Spring Zhang          May.24,2011    Dynamic determine event handler
 ############################################################################
 
 # Function:     setup
@@ -85,6 +86,28 @@ find_sys_dir()
     return $RC
 }
 
+#find input event handler entry for sensor
+find_event_entry()
+{
+    EVENT_BASE_DIR=/sys/devices/virtual/input
+    entries=`find $EVENT_BASE_DIR -name "name"`
+    for entry in $entries; do
+        if [ "`cat $entry`" = "mag3110" ]; then
+            break
+        fi
+    done
+    if [ "`cat $entry`" = "mag3110" ]; then
+        input_name=$(basename `dirname $entry`)
+        event_no=`echo $input_name | cut -c 6-`
+        event_entry=/dev/input/event$event_no
+    else
+        RC=67
+    fi
+
+    return $RC
+}
+
+
 # Function:     cleanup
 #
 # Description   - remove temporary files and directories.
@@ -124,9 +147,10 @@ ecompass_test()
     which evtest || EV_TEST_APP=usb_ev_testapp
     tst_resm TINFO "Capture data from mag3110."
 
-    #fix me: event handler could be dynamically determined.
+    #event handler dynamically determined.
+    find_event_entry
     TMPDIR=`mktemp -d`
-    sh -c "$EV_TEST_APP /dev/input/event5 2>&1 | tee $TMPDIR/mag3110.output" &
+    sh -c "$EV_TEST_APP $event_entry 2>&1 | tee $TMPDIR/mag3110.output" &
     sleep 2
     killall $EV_TEST_APP
 
