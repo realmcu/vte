@@ -59,6 +59,7 @@ SUBDIRS-$(CONFIG_TP_WHETS)       += whets
 SUBDIRS-$(CONFIG_TP_LMBENCH)     += lmbench
 SUBDIRS-$(CONFIG_TP_FBSET)       += fbset
 SUBDIRS-$(CONFIG_TP_I2C)         += i2c-tools
+SUBDIRS-$(CONFIG_TP_CPUPOWER)    += cpupowerutils
 
 all:
 	for i in $(SUBDIRS-y); do \
