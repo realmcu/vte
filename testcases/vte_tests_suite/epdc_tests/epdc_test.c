@@ -75,7 +75,6 @@ extern "C" {
     }\
 }
 
-#define MAX_WAIT 10
 
 #define  ALIGN_PIXEL_128(x)  ((x+ 127) & ~127)
 
