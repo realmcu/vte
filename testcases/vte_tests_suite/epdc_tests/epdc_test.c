@@ -1631,7 +1631,7 @@ extern "C" {
 			/*fix me */
 			*where++ = value;
 			break;
-		case 12...16:
+		case 12 ... 16:
 			*where++ = *((unsigned char *)&value);
 			*where++ = *((unsigned char *)&value + 1);
 			break;
