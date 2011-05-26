@@ -31,3 +31,4 @@ export CONFIG_TP_LMBENCH=y
 export CONFIG_TP_FBSET=y
 export CONFIG_TP_IPROUTE=y
 export CONFIG_TP_I2C=y
+export CONFIG_TP_CPUPOWER=y
