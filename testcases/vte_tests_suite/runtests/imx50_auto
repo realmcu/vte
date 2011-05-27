@@ -213,5 +213,6 @@ TSG-LV-USB-HOST-0010	 cat /proc/partitions | grep sd
 TSG-LV-USB-HOST-0030	 sh -c "umount /dev/sda1 ;fdisk -l /dev/sda && mkfs.vfat /dev/sda1" 
 TSG-LV-USB-HOST-0040	 sh -c "umount /dev/sda1 ; mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 && bonnie\\+\\+ -d /media/sda1 -u 0:0 -s 10 -r 5 && dt of=/media/sda1/test_file bs=4k limit=128m passes=20" 
 TGE-LV-WDOG-1001	insmod ${LTPROOT}/testcases/bin/mxc_wd_test.ko
+TGE-LV-SYSTEM-1002 	memcpy_test
 #TGE-LV-WIFI-0050	 sh -c "modprobe ath6kl && sleep 5 &&ifconfig wlan0 up && sleep 3 && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001" 
 #TGE-LV-WIFI-0061	 LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ath6kl; sleep 5;ifconfig wlan0 up && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && ifconfig wlan0 down && RT=0 ; modprobe -r ath6kl; echo $LOOP; done ; [ $RT -eq 0 ] 
