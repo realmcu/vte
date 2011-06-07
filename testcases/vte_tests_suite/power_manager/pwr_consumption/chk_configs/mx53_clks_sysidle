@@ -11,9 +11,11 @@ ssi_ext1_clk-0  1  19MHz
 mxc_pwm.1-1  1  8MHz
 mxcintuart.0-0  2  21MHz
 ipu_di1_clk-1  1  64MHz
-ahb_clk-0  1  133MHz
+#ahb_clk-0 is 133MHz before in real test
+ahb_clk-0  1  50MHz
 main_bus_clk-0  2  400MHz
-cpu_clk-0  1  160MHz
+#before: cpu_clk-0  1  160MHz
+cpu_clk-0  1  133MHz
 lp_apm-0  1  24MHz
 pll3-0  1  216MHz
 pll2-0  2  400MHz
@@ -21,3 +23,5 @@ pll1_sw_clk-0  1  800MHz
 pll1_main_clk-0  1  800MHz
 ckil-0  1  32KHz
 osc-0  5  24MHz
+axi_a_clk-0  0  133MHz
+axi_b_clk-0  0  50MHz
