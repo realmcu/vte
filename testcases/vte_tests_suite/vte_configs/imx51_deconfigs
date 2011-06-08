@@ -83,6 +83,7 @@ export CONFIG_VM_SAHARA=y
 export CONFIG_VM_SCC2=y
 #CONFIG_VM_RNG=y
 #CONFIG_VM_RNGA=y
+export CONFIG_MEM_TEST=y
 
 #open source module config
 export CONFIG_OM_NAND=y
