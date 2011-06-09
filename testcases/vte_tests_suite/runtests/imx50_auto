@@ -22,6 +22,8 @@
 #FSL-UT-ALSA-0010_0020_0030 /unit_tests_d/autorun-sound.sh
 #FSL-UT-HANTRO-0010	/unit_tests_d/autorun-hantro.sh
 #FSL-UT-RTC-0010	/unit_tests_d/autorun-rtc.sh
+TGE-LV-IOMUX-0001 insmod ${LTPROOT}/testcases/bin/mxc_wd_test.ko; rmmod mxc_wd_test
+TGE-LV-BLANK_CASE echo "will reboot during this test";sleep 100; echo "BUGON should not see this" | grep OK
 TGE-LV-ALSA-0533	sh -c "rtc_testapp_6 -T 20 && adc_test1.sh -f S16_LE -d 5 -c 1 -r 16000 -A"
 TGE-LV-ALSA-1001	sh -c "arecord -D plughw:0 -d 10 -f S16_LE -t wav /tmp/sound.wav && rm -rf /tmp/sound.wav"
 TGE-LV-ALSA-3007	AUDIO_MIN=$(amixer sget Capture | grep Limits | awk {'print $3'}) && [ $AUDIO_MIN -eq 0 ] && AUDIO_MAX=$(amixer sget Capture | grep Limits | awk {'print $5'}) && [ $AUDIO_MAX -eq 15 ]

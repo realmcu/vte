@@ -23,6 +23,8 @@
 #FSL-UT-HANTRO-0010      /unit_tests_d/autorun-hantro.sh
 #FSL-UT-RTC-0010 /unit_tests_d/autorun-rtc.sh
 #TGE-LV-ASRC-0211	rtc_testapp_6 -T 5; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
+TGE-LV-IOMUX-0001 insmod ${LTPROOT}/testcases/bin/mxc_wd_test.ko; rmmod mxc_wd_test
+TGE-LV-BLANK_CASE echo "will reboot during this test";sleep 100; echo "BUGON should not see this" | grep OK
 TGE-LV-RTC-0102 rtc_test_7.sh
 TGE-LV-ACC-0010	acc_test_MMA845x.sh -m MODE_8G
 TGE-LV-ACC-0011	acc_test_MMA845x.sh -m MODE_4G
