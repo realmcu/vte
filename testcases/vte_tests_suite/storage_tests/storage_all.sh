@@ -255,8 +255,8 @@ run_multi_test_list()
 		fi
 		for j in $mount_point
 		do
-	  		sh -c "bonnie\+\+ -d $j -u 0:0 -s 96 -r 48 &"  
-	  		sh -c "dt of=$j/test_file_$j bs=4k limit=96m passes=10 &"
+	  		bonnie\+\+ -d $j -u 0:0 -s 96 -r 48 &  
+	  		dt of=$j/test_file_$j bs=4k limit=96m passes=10 &
 	  		break
 		done
 	done
