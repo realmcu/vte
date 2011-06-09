@@ -22,6 +22,8 @@
 #FSL-UT-ALSA-0010_0020_0030 /unit_tests_d/autorun-sound.sh
 #FSL-UT-HANTRO-0010      /unit_tests_d/autorun-hantro.sh
 #FSL-UT-RTC-0010 /unit_tests_d/autorun-rtc.sh
+#TGE-LV-ASRC-0211	rtc_testapp_6 -T 5; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
+TGE-LV-RTC-0102 rtc_test_7.sh
 TGE-LV-ACC-0010	acc_test_MMA845x.sh -m MODE_8G
 TGE-LV-ACC-0011	acc_test_MMA845x.sh -m MODE_4G
 TGE-LV-ACC-0012	acc_test_MMA845x.sh -m MODE_2G
@@ -145,7 +147,6 @@ TGE-LV-ASRC-0205	asrc_grp_conv.sh 44
 TGE-LV-ASRC-0206	asrc_grp_conv.sh 32
 TGE-LV-ASRC-0207	asrc_grp_conv.sh 48
 TGE-LV-ASRC-0208	asrc_grp_conv.sh 96
-#TGE-LV-ASRC-0211	rtc_testapp_6 -T 5; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
 TGE-LV-SPDIF-0001	modprobe snd_spdif; aplay -l | grep MXC_SPDIF && modprobe -r snd_spdif
 TGE-LV-SPDIF-0004	spdif_basic.sh
 TGE-LV-ESLCD-0705	echo q | fbv ${LTPROOT}/testcases/bin/butterfly.png
