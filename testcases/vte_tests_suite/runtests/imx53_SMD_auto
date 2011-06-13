@@ -406,3 +406,4 @@ TGE-LV-VPU-10210	vpu_multi_enc_test.sh 1
 TGE-LV-VPU-10220	vpu_multi_enc_test.sh 2
 TGE-LV-VPU-10221	vpu_multi_enc_test.sh 3
 TGE-LV-PMICLIGHT-0091_LightSensor	isl_test.sh 1
+TGE-LV-NOR-1301 nor_test.sh 1 && nor_test.sh 2
