@@ -1,5 +1,5 @@
 #!/bin/bash
-#Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright 2008-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -22,6 +22,7 @@
 # Spring Zhang               20100108            n/a      Reduce code
 # Spring Zhang               Jan.11,2010         n/a      Add dvfs suspend test
 # Spring Zhang               May.10,2010         n/a      Add mx53 support
+# Spring Zhang               Jun.13,2010         n/a      Add dead loop detection test
 
 
 # Function:     setup
@@ -38,7 +39,7 @@ setup()
     RC=0
 
     # Total number of test cases in this file. 
-    export TST_TOTAL=1
+    export TST_TOTAL=3
 
     # The TCID and TST_COUNT variables are required by the LTP 
     # command line harness APIs, these variables are not local to this program.
@@ -57,6 +58,16 @@ setup()
     then
         LTPTMP=/tmp
     fi
+
+    platfm.sh || PLATFORM=$?
+    if [ $PLATFORM -eq 67 ]
+    then
+        RC=$PLATFORM
+        return $RC
+    fi
+
+    #store current dvfs status. cur_status=1 - enabled, =0 - disabled
+    cur_status=`cat ${DVFS_DIR[$PLATFORM]}/${status[$PLATFORM]} | grep "enabled" | wc -l`
 
     trap "cleanup" 0
 
@@ -116,16 +127,8 @@ dvfs_dir_set()
 dvfs_test()
 {
     RC=0
-
-    platfm.sh || PLATFORM=$?
-    if [ $PLATFORM -eq 67 ]
-    then
-        RC=$PLATFORM
-        return $RC
-    fi
-
-    #store current dvfs status. cur_status=1 - enabled, =0 - disabled
-    cur_status=`cat ${DVFS_DIR[$PLATFORM]}/${status[$PLATFORM]} | grep "enabled" | wc -l`
+    export TCID="TGE_LV_DVFS_BASIC"
+    export TST_COUNT=1
 
     # For imx31/35/37/51/53/50 
     echo 1 > ${DVFS_DIR[$PLATFORM]}/enable
@@ -154,18 +157,8 @@ dvfs_test()
 dvfs_suspend()
 {
     export TCID="TGE_LV_DVFS_SUSPEND"
-
+    export TST_COUNT=2
     RC=0
-
-    platfm.sh || PLATFORM=$?
-    if [ $PLATFORM -eq 67 ]
-    then
-        RC=$PLATFORM
-        return $RC
-    fi
-
-    #store current dvfs status. cur_status=1 - enabled, =0 - disabled
-    cur_status=`cat ${DVFS_DIR[$PLATFORM]}/${status[$PLATFORM]} | grep "enabled" | wc -l`
 
     # For imx31/35/37/51 
     echo 1 > ${DVFS_DIR[$PLATFORM]}/enable
@@ -204,6 +197,32 @@ dvfs_suspend()
     return $RC
 }
 
+#detect dead loop: arm_podf_busy bit
+dvfs_deadloop()
+{
+    RC=0
+
+    export TCID="TGE_LV_DVFS_DEADLOOP"
+    export TST_COUNT=3
+
+    old_printk=`echo /proc/sys/kernel/printk`
+    echo 8 > /proc/sys/kernel/printk
+    echo 1 > /sys/class/graphics/fb0/blank
+    ifconfig eth0 down
+    ifconfig eth1 down 2>/dev/null
+    echo 1 > ${DVFS_DIR[$PLATFORM]}/enable
+
+    sleep 5
+    dmesg |tail |grep -i "ARM_PODF still in busy"
+    RC=$?
+
+    ifconfig eth0 up
+    ifconfig eth1 up
+    echo 0 > /sys/class/graphics/fb0/blank
+    echo $old_printk > /proc/sys/kernel/printk
+
+    return $RC
+}
 
 # Function:     main
 #
@@ -216,8 +235,8 @@ dvfs_suspend()
 RC=0
 
 # bash specified script, using array, not dash-compatibility
-setup  || exit $RC
 dvfs_dir_set || exit $RC
+setup  || exit $RC
 
 case "$1" in
     1)
@@ -225,6 +244,9 @@ case "$1" in
     ;;
     2)
     dvfs_suspend || exit $RC
+    ;;
+    3)
+    dvfs_deadloop || exit $RC
     ;;
     *)
     usage
