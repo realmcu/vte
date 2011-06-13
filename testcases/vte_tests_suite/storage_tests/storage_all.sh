@@ -388,7 +388,7 @@ case "$1" in
 2)
   test_case_02 || exit $RC 
   ;;
-2)
+3)
   test_case_03 || exit $RC 
   ;;
 *)
