@@ -28,7 +28,7 @@
 #Portability: NAND is not supported on Islay(mxc27520evb) and Carmel(mxc30020evb). 
 #
 ###################################################################################################
-SUBDIRS = nor_mtd_testapp nor_mtd_testapp_2 nand_mtd_testapp
+SUBDIRS = nor_mtd_testapp nor_mtd_testapp_2 nand_mtd_testapp scripts
 
 
 all:
