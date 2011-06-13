@@ -1,6 +1,6 @@
 #for MX53 SMD TO2.0 Feb.2011
 #ddr clk may not exist with a usage, but test it with usage is 0
-ddr_clk-0	0	133MHz
+ddr_clk-0	0	400MHz
 #
 asrc_clk-0  1  66MHz
 ldb_di1_clk-1  1  64MHz
