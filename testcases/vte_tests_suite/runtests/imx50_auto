@@ -173,8 +173,6 @@ TGE-LV-NAND-1000	cat /proc/partitions | grep mtd
 #TGE-LV-NAND-2003	flash_eraseall /dev/mtd2 ; insmod ${LTPROOT}/testcases/bin/mtd_pagetest.ko dev=2
 #TGE-LV-NAND-2005	flash_eraseall /dev/mtd2 && insmod ${LTPROOT}/testcases/bin/mtd_stresstest.ko dev=2 count=100 
 #TGE-LV-NAND-2006	flash_eraseall /dev/mtd2 && insmod ${LTPROOT}/testcases/bin/mtd_subpagetest.ko dev=2 
-TGE-LV-NOR-1101	nor_mtd_testapp -T INFO -D /dev/mtd1
-TGE-LV-NOR-1102	nor_mtd_testapp -T RDRW -D /dev/mtd1 -L 0x300000 -V
 TGE-LV-NOR-1103	nor_mtd_testapp -T RDRW -D /dev/mtd0 -L 0x00100000 -V
 TGE-LV-NOR-1104	nor_mtd_testapp -T THRDRWE -D /dev/mtd0 -L 0x00100000 -V
 TGE-LV-NOR-1115	nor_mtd_testapp -T WRNER -D /dev/mtd0 -L 0x100000 -V
@@ -194,7 +192,7 @@ TGE-LV-RTC-2020	rtc_testapp_4 -d /dev/rtc1
 TGE-LV-RTC-0020	rtc_testapp_4
 TGE-LV-RTC-0100	rtc_test.sh 2 
 TGE-LV-RTC-2000	rtc_test.sh 3 
-TGE-LV-SD-1303	umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; mount -t vfat /dev/mmcblk0p1 /mnt/mmcblk0p1 && rtc_testapp_6 -T 20 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt | grep hello && umount /mnt/mmcblk0p1
+TGE-LV-SD-1303	umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; mount /dev/mmcblk0p1 /mnt/mmcblk0p1 && rtc_testapp_6 -T 20 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt | grep hello && umount /mnt/mmcblk0p1
 TGE-LV-SD-1800	storage_all.sh 1
 TGE-LV-SD-1010	umount /mnt/mmcblk0p1; mount /dev/mmcblk0p1 /mnt/mmcblk0p1 && ints1=$(cat /proc/interrupts | grep mmc | grep dma | awk {'print $2'}) ; cp /etc/passwd /mnt/mmcblk0p1/ ; ints2=$(cat /proc/interrupts |grep mmc | grep dma | awk {'print $2'}); [ $ints2 -gt $ints1 ]
 TSG-LV-SD-1030	storage_all.sh 2
