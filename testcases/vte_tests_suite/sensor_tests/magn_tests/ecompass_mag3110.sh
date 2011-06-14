@@ -23,6 +23,7 @@
 #-------------------   ------------    ---------------------
 # Spring Zhang          May.23,2011      Initial ver. 
 # Spring Zhang          May.24,2011    Dynamic determine event handler
+# Spring Zhang          Jun.14,2011    Add suspend/resume test
 ############################################################################
 
 # Function:     setup
@@ -137,6 +138,8 @@ ecompass_test()
     export TST_COUNT=1
     RC=0    # Return value from setup, and test functions.
 
+    is_suspend=$1
+
     tst_resm TINFO "Magnetic ecompass function."
     tst_resm TINFO "Operation directory in i2c is: ${SYS_DIR}"
     #enable mag3110
@@ -151,6 +154,13 @@ ecompass_test()
     find_event_entry
     TMPDIR=`mktemp -d`
     sh -c "$EV_TEST_APP $event_entry 2>&1 | tee $TMPDIR/mag3110.output" &
+
+    if [ $is_suspend -eq 1 ]; then
+        rtc_testapp_6 -m mem -T 15 || RC=$?
+        #clean up the data before suspend
+        echo > $TMPDIR/mag3110.output
+    fi
+    #2 seconds to allow data capturing
     sleep 2
     killall $EV_TEST_APP
 
@@ -200,8 +210,11 @@ RC=0    # Return value from setup, and test functions.
 setup "$@" || exit $RC
 
 case $1 in
-	"1")
+	1)
     ecompass_test || exit $RC
+    ;;
+	2)
+    ecompass_test 1 || exit $RC
     ;;
 	*)
     usage
