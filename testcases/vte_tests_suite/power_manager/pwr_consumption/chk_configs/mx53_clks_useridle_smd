@@ -11,7 +11,7 @@ emi_fast_clk-0  1  400MHz
 ddr_clk-0  1  400MHz
 ssi_ext1_clk-0  1  19MHz
 mxc_pwm.1-1  1  8MHz
-mxcintuart.0-0  2  21MHz
+mxcintuart.0-0  2  66MHz
 ipu_di1_clk-1  2  64MHz
 ipu_clk-0  1  200MHz
 ahb_max_clk-0  1  133MHz
@@ -19,7 +19,6 @@ ahb_clk-0  3  133MHz
 axi_b_clk-0  1  200MHz
 axi_a_clk-0  1  400MHz
 main_bus_clk-0  4  400MHz
-cpu_clk-0  1  160MHz
 lp_apm-0  1  24MHz
 pll3-0  1  216MHz
 pll2-0  2  400MHz
