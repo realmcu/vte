@@ -62,45 +62,8 @@ probe_platform()
 {
 	find=0;
 	
-	#change the judge method because of 31 and 32 cpuinfo "Hardware" item 
-	# "Hardware        : Freescale MX31/MX32 3-Stack Board"
-
-	# add a blank to grep "*.*"
-	# Revision        : 35120
-
-	find=`cat /proc/cpuinfo | grep "Revision" | grep " 25.*" | wc -l`;
-	if [ $find -eq 1 ]; then
-		PLATFORM="MX25";
-	fi
-	
-	find=`cat /proc/cpuinfo | grep "Revision" | grep " 31.*" | wc -l`;
-	if [ $find -eq 1 ]; then
-		PLATFORM="MX31";
-	fi
-	
-	find=`cat /proc/cpuinfo | grep "Revision" | grep " 32.*" | wc -l`;
-	if [ $find -eq 1 ]; then
-		PLATFORM="MX32";
-	fi
-	
-	find=`cat /proc/cpuinfo | grep "Revision" | grep " 35.*" | wc -l`;
-	if [ $find -eq 1 ]; then
-   		PLATFORM="MX35";
-   		PLATFORM_NAND_PARTITION=10
-	fi
-	
-	find=`cat /proc/cpuinfo | grep "Revision" | grep " 37.*" | wc -l`;
-	if [ $find -eq 1 ]; then
-   		PLATFORM="MX37";
-   		PLATFORM_NAND_PARTITION=5
-	fi
-
-	find=`cat /proc/cpuinfo | grep "Revision" | grep " 51.*" | wc -l`;
-	if [ $find -eq 1 ]; then
-   		PLATFORM="MX51";
-	fi
-
-	echo "The platform is $PLATFORM"
+        platfm.sh
+	echo "The platform is $?"
 
 	df | grep "/mnt/nfs"
 	if [ $? -eq 0 ]; then
@@ -501,6 +464,7 @@ stress_test()
   	        dd if=$if_tmp of=tempfile bs=1024 count=$SIZE
     		TMP_RC=$?
 		rm tempfile
+                sync #add sync; otherwise sometimes space will not avaiable even rm files.
 		TMP_RC=$TMP_RC||$?
 		TMP_TIME=$i
 		anal_stress_res
