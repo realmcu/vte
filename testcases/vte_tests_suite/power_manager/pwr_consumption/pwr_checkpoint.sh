@@ -23,6 +23,7 @@
 # Spring Zhang           Apr.13,2011       n/a      Initial version
 # Spring Zhang           Apr.13,2011       n/a      Add voltage check
 # Spring Zhang           May.06,2011       n/a      Format output
+# Spring Zhang           Jun.16,2011       n/a      Add DVFS clock check
 
 # Note:
 # You can generate usage and clk config file by:
@@ -50,8 +51,6 @@ setup()
     col_usage=3
     col_freq=5
 	
-    echo "stop gdm..."
-    stop gdm
 	#platform related
 	if [ $platfm -eq 53 ]; then
 		echo
@@ -75,6 +74,7 @@ usage()
     usage2: ./${0##*/} clock idle_mode config_file
         idle_mode: useridle, sysidle
         config_file: the checking point config file
+    usage3: ./${0##*/} dvfs
 EOF
 }
 
@@ -237,6 +237,31 @@ check_voltage()
     return $RC
 }
 
+#Check clocks before and after DVFS on and off
+check_dvfs()
+{
+    RC=0
+
+    echo 0 > $fb0
+    cat $CLK_GETTER > clk_before_op
+
+    echo 1 > $fb0
+    enable_dvfs_$platfm
+    sleep 2
+    disable_dvfs_$platfm
+    echo 0 > $fb0
+
+    cat $CLK_GETTER > clk_after_op
+
+    echo "Compare clocks before and after DVFS on and off"
+
+    diff clk_before_op clk_after_op ||RC=$?
+
+    rm clk_before_op clk_after_op
+
+    return $RC
+}
+
 #main
 export PATH=$PATH:$(pwd)
 
@@ -260,6 +285,10 @@ case $check_type in
 		fi
 		mode=$2
 		clk_points_file=$3
+
+        echo "stop gdm..."
+        stop gdm
+
 		case $mode in
 		"useridle")
 		user_idle
@@ -284,6 +313,9 @@ case $check_type in
 		disable_dvfs_$platfm
 		check_voltage $clk_points_file || exit $RC
 	;;
+    "dvfs")
+        check_dvfs
+    ;;
 	*)
         usage
         exit 1
