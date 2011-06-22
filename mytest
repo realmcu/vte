@@ -125,8 +125,8 @@ rm -f ${LTPROOT}/output/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
 ${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.html -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
 #${TEST_PATH}/runalltests.sh -v -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt
 fi
-mv ${TEST_PATH}/output/${ARCH_PLATFORM}_${CMDFILE}_log_$tday ${TEST_PATH}/output/${ARCH_PLATFORM}_${CMDFILE}_log_$tday_$(date +%m%d%Y)
-mv ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_$tday.failed ${TEST_PATH}/output//LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_$tday_$(date +%m%d%Y).failed
-mv ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday_$(date +%m%d%Y).txt
-echo $(uname -r) > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
+mv ${TEST_PATH}/output/${ARCH_PLATFORM}_${CMDFILE}_log_$tday ${TEST_PATH}/output/${ARCH_PLATFORM}_${CMDFILE}_log_${tday}_$(date +%m%d%Y)
+mv ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed ${TEST_PATH}/output//LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}_$(date +%m%d%Y).failed
+mv ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_${tday}_$(date +%m%d%Y).txt
+echo $(uname -r) > ${TEST_PATH}/temp_cnt_${CMDFILE}_${tday}
 echo "FREESCALE LBG TEST END"
