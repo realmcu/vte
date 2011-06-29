@@ -858,7 +858,7 @@ cat > $LTPROOT/output/latest_test_report_${CMDFILES}_$(date +%m%d%Y) <<EOF
 export LTP_VERSION=$version_date
 export TEST_START_TIME="$test_start_time"
 export TEST_END_TIME="$(date)"
-export OUTPUT_DIRECTORY=`echo $OUTPUTFILE | cut -c4-`
+export OUTPUT_DIRECTORY=$(echo $OUTPUTFILE | cut -c4-)_$(date +%m%d%Y)
 export TEST_LOGS_DIRECTORY=$(basename $LOGS_DIRECTORY)_$(date +%m%d%Y)
 export HTMLFILE=$(basename $HTMLFILE)	
 EOF
