@@ -79,12 +79,20 @@ sleep 15
 
 usb_clk_list=$(cat /proc/cpu/clocks | grep usb | cut -c 51-100 | awk {'print $1'})
 
-RT=0
 for i in $usb_clk_list
 do
   if [ $i -ne 0 ]; then
      echo "usb clock is not zero"
-     RT=1
   fi
 done
+
+usb_clk_usage=$(cat /proc/cpu/clocks | grep usb | awk {'print $3'})
+RT=0
+for i in $usb_clk_usage; do
+    if [ $i -ne 0 ]; then
+        echo "Some usb usage is not zero, you can use '#cat /proc/cpu/clocks |grep usb' to check"
+        RT=$i
+    fi
+done
+
 exit $RT
