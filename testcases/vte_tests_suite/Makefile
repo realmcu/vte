@@ -132,7 +132,6 @@ SUBDIRS-$(CONFIG_VTE_V4L_PXP)     += v4l_and_pxp_tests
 SUBDIRS-$(CONFIG_VTE_VPU)         += vpu_tests
 SUBDIRS-$(CONFIG_VTE_WD)          += watchdog_tests
 SUBDIRS-$(CONFIG_VTE_WIFI)        += wifi_tests
-SUBDIRS-$(CONFIG_VTE_LSENSOR)     += lsensor_test
 
 all:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
