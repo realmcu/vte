@@ -1,3 +1,4 @@
+TGE-LV-KERNEL_BOOT-0001 dmesg -c
 TGE-LV-IOMUX-0001 insmod ${LTPROOT}/testcases/bin/mxc_wd_test.ko; rmmod mxc_wd_test
 TGE-LV-BLANK_CASE echo "will reboot during this test";sleep 100; echo "BUGON should not see this" | grep OK
 TGE-LV-ALSA-0533	sh -c "rtc_testapp_6 -T 20 && adc_test1.sh -f S16_LE -d 5 -c 1 -r 16000 -A"
