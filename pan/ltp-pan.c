@@ -721,7 +721,6 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 				}else{
 					/*child is on*/
 					pcnt[i] += 1;
-					printf("cnt = %d\n",pcnt[i]);
 					if (pcnt[i] > timeout){
 					  printf("timeout occure\n");
 						system("reboot");
