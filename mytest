@@ -23,7 +23,7 @@ TEST_PATH=$(dirname $0)
 export PATH=$PATH:${TEST_PATH}/testcases/bin
 
 dos2unix ${TEST_PATH}/runtest/$CMDFILE
-dmesg -c
+#dmesg -c
 
 platfm=$(platfm.sh)
 ARCH_PLATFORM=${platfm}
