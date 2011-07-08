@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+ * Copyright 2009-2011 Freescale Semiconductor, Inc. All Rights Reserved.
  *
  */
 
@@ -52,7 +52,9 @@ extern "C"{
 static int debug_level = DBG_ERR;
 
 #ifdef BUILD_FOR_ANDROID
+#define LOG_TAG	"ipulib"
 #include <utils/Log.h>
+#include <cutils/properties.h>
 #define FBDEV0	"/dev/graphics/fb0"
 #define FBDEV1	"/dev/graphics/fb1"
 #define FBDEV2	"/dev/graphics/fb2"
@@ -133,6 +135,11 @@ typedef struct {
 	struct stripe_param up_stripe;
 	struct stripe_param down_stripe;
 
+	int ic_iw;
+	int ic_ih;
+	int ic_ow;
+	int ic_oh;
+
 	ipu_motion_sel motion_sel;
 	dma_addr_t last_inbuf_paddr;
 
@@ -153,6 +160,7 @@ typedef struct {
 		ipu_mem_info o_minfo[3];
 
 		int show_to_fb;
+		int rot;
 		int fd_fb;
 		int fb_num;
 		int fb_stride;
@@ -230,6 +238,7 @@ static u32 fmt_to_bpp(u32 pixelformat)
 			break;
 		/*non-interleaved 420*/
 		case IPU_PIX_FMT_YUV420P:
+		case IPU_PIX_FMT_YVU420P:
 		case IPU_PIX_FMT_YUV420P2:
 		case IPU_PIX_FMT_NV12:
 			bpp = 12;
@@ -259,6 +268,7 @@ static cs_t colorspaceofpixel(int fmt)
 		case IPU_PIX_FMT_YUYV:
 		case IPU_PIX_FMT_YUV420P2:
 		case IPU_PIX_FMT_YUV420P:
+		case IPU_PIX_FMT_YVU420P:
 		case IPU_PIX_FMT_YVU422P:
 		case IPU_PIX_FMT_YUV422P:
 		case IPU_PIX_FMT_YUV444:
@@ -318,7 +328,7 @@ static int get_system_rev(unsigned int * system_rev)
                 }
         }
 
-	dbg(DBG_INFO, "system_rev is 0x%x\n", ret);
+	dbg(DBG_INFO, "system_rev is 0x%x\n", *system_rev);
 
         return ret;
 }
@@ -429,6 +439,12 @@ static void _ipu_update_offset(unsigned int fmt, unsigned int width, unsigned in
 				+ ((width/2 * pos_y/2) + pos_x/2);
 			*voff = *uoff + (width/2 * height/2);
 			break;
+		case IPU_PIX_FMT_YVU420P:
+			*off = pos_y * width + pos_x;
+			*voff = (width * (height - pos_y) - pos_x)
+				+ ((width/2 * pos_y/2) + pos_x/2);
+			*uoff = *voff + (width/2 * height/2);
+			break;
 		case IPU_PIX_FMT_YVU422P:
 			*off = pos_y * width + pos_x;
 			*voff = (width * (height - pos_y) - pos_x)
@@ -456,33 +472,61 @@ static int _ipu_split_mode_set_stripe(ipu_lib_priv_handle_t * ipu_priv_handle, d
 				dma_addr_t out_buf_paddr, int stripe, int select_buf)
 {
 	int i_hoff = 0, i_voff = 0, o_hoff = 0, o_voff = 0, i_eoff = 0, o_eoff = 0;
-	int buf_idx = 0, ret = 0;
+	int buf_idx = 0, ret = 0, out_v_switch = 0, out_h_switch = 0;
+
+	/* output v/h switch should only work when just IC_MODE enable*/
+	if (ipu_priv_handle->output.task_mode == IC_MODE) {
+		if (ipu_priv_handle->output.rot == IPU_ROTATE_VERT_FLIP)
+			out_v_switch = 1;
+		if (ipu_priv_handle->output.rot == IPU_ROTATE_HORIZ_FLIP)
+			out_h_switch = 1;
+		if (ipu_priv_handle->output.rot == IPU_ROTATE_180) {
+			out_v_switch = 1;
+			out_h_switch = 1;
+		}
+	}
 
 	if (stripe & LEFT_STRIPE) {
 		dbg(DBG_DEBUG, "split mode set buffer for left\n");
 		i_hoff = ipu_priv_handle->left_stripe.input_column *
 			bytes_per_pixel(ipu_priv_handle->ifmt);
-		o_hoff = ipu_priv_handle->left_stripe.output_column *
-			bytes_per_pixel(ipu_priv_handle->output.ofmt);
+		if (out_h_switch)
+			o_hoff = ipu_priv_handle->right_stripe.output_column *
+				bytes_per_pixel(ipu_priv_handle->output.ofmt);
+		else
+			o_hoff = ipu_priv_handle->left_stripe.output_column *
+				bytes_per_pixel(ipu_priv_handle->output.ofmt);
 		if (stripe & UP_STRIPE) {
 			dbg(DBG_DEBUG, "-up stripe!\n");
 			buf_idx = 0;
 			i_eoff = i_hoff + ipu_priv_handle->up_stripe.input_column *
 				ipu_priv_handle->istride;
-			o_eoff = o_hoff + ipu_priv_handle->up_stripe.output_column *
-				ipu_priv_handle->output.ostride;
 			i_voff = ipu_priv_handle->up_stripe.input_column;
-			o_voff = ipu_priv_handle->up_stripe.output_column;
+			if (out_v_switch) {
+				o_eoff = o_hoff + ipu_priv_handle->down_stripe.output_column *
+					ipu_priv_handle->output.ostride;
+				o_voff = ipu_priv_handle->down_stripe.output_column;
+			} else {
+				o_eoff = o_hoff + ipu_priv_handle->up_stripe.output_column *
+					ipu_priv_handle->output.ostride;
+				o_voff = ipu_priv_handle->up_stripe.output_column;
+			}
 		} else if (stripe & DOWN_STRIPE) {
 			dbg(DBG_DEBUG, "-down stripe!\n");
 			buf_idx = 1;
 			i_eoff = i_hoff +
 				ipu_priv_handle->down_stripe.input_column *
 				ipu_priv_handle->istride;
-			o_eoff = o_hoff + ipu_priv_handle->down_stripe.output_column *
-				ipu_priv_handle->output.ostride;
 			i_voff = ipu_priv_handle->down_stripe.input_column;
-			o_voff = ipu_priv_handle->down_stripe.output_column;
+			if (out_v_switch) {
+				o_eoff = o_hoff + ipu_priv_handle->up_stripe.output_column *
+					ipu_priv_handle->output.ostride;
+				o_voff = ipu_priv_handle->up_stripe.output_column;
+			} else {
+				o_eoff = o_hoff + ipu_priv_handle->down_stripe.output_column *
+					ipu_priv_handle->output.ostride;
+				o_voff = ipu_priv_handle->down_stripe.output_column;
+			}
 		} else {
 			dbg(DBG_DEBUG, "stripe!\n");
 			buf_idx = 0;
@@ -494,26 +538,42 @@ static int _ipu_split_mode_set_stripe(ipu_lib_priv_handle_t * ipu_priv_handle, d
 		dbg(DBG_DEBUG, "split mode set buffer for right\n");
 		i_hoff = ipu_priv_handle->right_stripe.input_column *
 			bytes_per_pixel(ipu_priv_handle->ifmt);
-		o_hoff = ipu_priv_handle->right_stripe.output_column *
-			bytes_per_pixel(ipu_priv_handle->output.ofmt);
+		if (out_h_switch)
+			o_hoff = ipu_priv_handle->left_stripe.output_column *
+				bytes_per_pixel(ipu_priv_handle->output.ofmt);
+		else
+			o_hoff = ipu_priv_handle->right_stripe.output_column *
+				bytes_per_pixel(ipu_priv_handle->output.ofmt);
 		if (stripe & UP_STRIPE) {
 			dbg(DBG_DEBUG, "-up stripe!\n");
 			buf_idx = 0;
 			i_eoff = i_hoff + ipu_priv_handle->up_stripe.input_column *
 				ipu_priv_handle->istride;
-			o_eoff = o_hoff + ipu_priv_handle->up_stripe.output_column *
-				ipu_priv_handle->output.ostride;
 			i_voff = ipu_priv_handle->up_stripe.input_column;
-			o_voff = ipu_priv_handle->up_stripe.output_column;
+			if (out_v_switch) {
+				o_eoff = o_hoff + ipu_priv_handle->down_stripe.output_column *
+					ipu_priv_handle->output.ostride;
+				o_voff = ipu_priv_handle->down_stripe.output_column;
+			} else {
+				o_eoff = o_hoff + ipu_priv_handle->up_stripe.output_column *
+					ipu_priv_handle->output.ostride;
+				o_voff = ipu_priv_handle->up_stripe.output_column;
+			}
 		} else if (stripe & DOWN_STRIPE) {
 			dbg(DBG_DEBUG, "-down stripe!\n");
 			buf_idx = 1;
 			i_eoff = i_hoff + ipu_priv_handle->down_stripe.input_column *
 				ipu_priv_handle->istride;
-			o_eoff = o_hoff + ipu_priv_handle->down_stripe.output_column *
-				ipu_priv_handle->output.ostride;
 			i_voff = ipu_priv_handle->down_stripe.input_column;
-			o_voff = ipu_priv_handle->down_stripe.output_column;
+			if (out_v_switch) {
+				o_eoff = o_hoff + ipu_priv_handle->up_stripe.output_column *
+					ipu_priv_handle->output.ostride;
+				o_voff = ipu_priv_handle->up_stripe.output_column;
+			} else {
+				o_eoff = o_hoff + ipu_priv_handle->down_stripe.output_column *
+					ipu_priv_handle->output.ostride;
+				o_voff = ipu_priv_handle->down_stripe.output_column;
+			}
 		} else {
 			dbg(DBG_DEBUG, "stripe!\n");
 			buf_idx = 1;
@@ -527,20 +587,32 @@ static int _ipu_split_mode_set_stripe(ipu_lib_priv_handle_t * ipu_priv_handle, d
 		i_hoff = o_hoff = 0;
 		i_eoff = ipu_priv_handle->up_stripe.input_column *
 			ipu_priv_handle->istride;
-		o_eoff = ipu_priv_handle->up_stripe.output_column *
-			ipu_priv_handle->output.ostride;
 		i_voff = ipu_priv_handle->up_stripe.input_column;
-		o_voff = ipu_priv_handle->up_stripe.output_column;
+		if (out_v_switch) {
+			o_eoff = ipu_priv_handle->down_stripe.output_column *
+				ipu_priv_handle->output.ostride;
+			o_voff = ipu_priv_handle->down_stripe.output_column;
+		} else {
+			o_eoff = ipu_priv_handle->up_stripe.output_column *
+				ipu_priv_handle->output.ostride;
+			o_voff = ipu_priv_handle->up_stripe.output_column;
+		}
 	} else if (stripe & DOWN_STRIPE){
 		dbg(DBG_DEBUG, "split mode set buffer for down stripe!\n");
 		buf_idx = 1;
 		i_hoff = o_hoff = 0;
 		i_eoff = ipu_priv_handle->down_stripe.input_column *
 			ipu_priv_handle->istride;
-		o_eoff = ipu_priv_handle->down_stripe.output_column *
-			ipu_priv_handle->output.ostride;
 		i_voff = ipu_priv_handle->down_stripe.input_column;
-		o_voff = ipu_priv_handle->down_stripe.output_column;
+		if (out_v_switch) {
+			o_eoff = ipu_priv_handle->up_stripe.output_column *
+				ipu_priv_handle->output.ostride;
+			o_voff = ipu_priv_handle->up_stripe.output_column;
+		} else {
+			o_eoff = ipu_priv_handle->down_stripe.output_column *
+				ipu_priv_handle->output.ostride;
+			o_voff = ipu_priv_handle->down_stripe.output_column;
+		}
 	}
 
 	ret = ipu_update_channel_buffer(ipu_priv_handle->output.ic_chan,
@@ -586,25 +658,22 @@ static int _ipu_split_mode_set_stripe(ipu_lib_priv_handle_t * ipu_priv_handle, d
 
 static task_mode_t __ipu_task_check(ipu_lib_priv_handle_t * ipu_priv_handle,
 		ipu_lib_input_param_t * input,
-		ipu_lib_output_param_t * output)
+		ipu_lib_output_param_t * output,
+		ipu_lib_overlay_param_t * overlay)
 {
 	task_mode_t task_mode = NULL_MODE;
 	int tmp;
 
-	if(output->rot >= _ipu_get_arch_rot_begin()){
-		if(output->rot >= IPU_ROTATE_90_RIGHT){
-			/*output swap*/
-			tmp = ipu_priv_handle->output.owidth;
-			ipu_priv_handle->output.owidth =
-				ipu_priv_handle->output.oheight;
-			ipu_priv_handle->output.oheight = tmp;
-		}
-		task_mode |= ROT_MODE;
+	if(output->rot >= IPU_ROTATE_90_RIGHT){
+		/*output swap*/
+		tmp = ipu_priv_handle->output.owidth;
+		ipu_priv_handle->output.owidth =
+			ipu_priv_handle->output.oheight;
+		ipu_priv_handle->output.oheight = tmp;
 	}
 
-	/* make sure width is 8 pixel align*/
-	if (task_mode & ROT_MODE)
-		ipu_priv_handle->output.oheight -= ipu_priv_handle->output.oheight%8;
+	if(output->rot >= _ipu_get_arch_rot_begin())
+		task_mode |= ROT_MODE;
 
 	/*need resize or CSC?*/
 	if((ipu_priv_handle->iwidth != ipu_priv_handle->output.owidth) ||
@@ -620,14 +689,36 @@ static task_mode_t __ipu_task_check(ipu_lib_priv_handle_t * ipu_priv_handle,
 	if((task_mode == NULL_MODE) && (input->fmt != output->fmt))
 		task_mode |= IC_MODE;
 
-	if(output->rot >= _ipu_get_arch_rot_begin()){
-		if(output->rot >= IPU_ROTATE_90_RIGHT){
-			/*output swap*/
-			tmp = ipu_priv_handle->output.owidth;
-			ipu_priv_handle->output.owidth =
-				ipu_priv_handle->output.oheight;
-			ipu_priv_handle->output.oheight = tmp;
+	if (overlay)
+		task_mode |= IC_MODE;
+
+	if (task_mode == (ROT_MODE | IC_MODE)) {
+		if (output->rot >= IPU_ROTATE_90_RIGHT) {
+			/* make sure width is 8 pixel align*/
+			ipu_priv_handle->output.owidth -= ipu_priv_handle->output.owidth%8;
 		}
+	}
+
+	/* it could be COPY mode which may use IC module */
+	if ((task_mode & IC_MODE) || (task_mode == NULL_MODE)) {
+		ipu_priv_handle->ic_iw = ipu_priv_handle->iwidth;
+		ipu_priv_handle->ic_ih = ipu_priv_handle->iheight;
+		ipu_priv_handle->ic_ow = ipu_priv_handle->output.owidth;
+		ipu_priv_handle->ic_oh = ipu_priv_handle->output.oheight;
+
+		/* whether output size is too big, if so, enable split mode */
+		if (ipu_priv_handle->ic_ow > _ipu_get_arch_ic_out_max_width())
+			ipu_priv_handle->split_mode |= SPLIT_MODE_RL;
+		if (ipu_priv_handle->ic_oh > _ipu_get_arch_ic_out_max_height())
+			ipu_priv_handle->split_mode |= SPLIT_MODE_UD;
+	}
+
+	if(output->rot >= IPU_ROTATE_90_RIGHT){
+		/*output swap*/
+		tmp = ipu_priv_handle->output.owidth;
+		ipu_priv_handle->output.owidth =
+			ipu_priv_handle->output.oheight;
+		ipu_priv_handle->output.oheight = tmp;
 	}
 
 	if (ipu_priv_handle->mode & TASK_VDI_VF_MODE) {
@@ -716,6 +807,7 @@ static int _ipu_task_check(ipu_lib_input_param_t * input,
 	}
 
 	ipu_priv_handle->output.ofmt = output->fmt;
+	ipu_priv_handle->output.rot = output->rot;
 	if ((output->output_win.win_w > 0) || (output->output_win.win_h > 0)) {
 		if ((output->output_win.win_w + output->output_win.pos.x) > output->width)
 			output->output_win.win_w = output->width - output->output_win.pos.x;
@@ -742,25 +834,17 @@ static int _ipu_task_check(ipu_lib_input_param_t * input,
 		if (output->show_to_fb)
 			ipu_priv_handle->output.oheight -= ipu_priv_handle->output.oheight % 8;
 	}
-	/* whether output size is too big, if so, enable split mode */
-	if (ipu_priv_handle->output.owidth > _ipu_get_arch_ic_out_max_width())
-		ipu_priv_handle->split_mode |= SPLIT_MODE_RL;
-	if (ipu_priv_handle->output.oheight > _ipu_get_arch_ic_out_max_height())
-		ipu_priv_handle->split_mode |= SPLIT_MODE_UD;
+
+	ipu_priv_handle->output.task_mode = __ipu_task_check(ipu_priv_handle, input, output, overlay);
 
 	if (overlay) {
-		if ((ipu_priv_handle->ovwidth != ipu_priv_handle->output.owidth) ||
-				(ipu_priv_handle->ovheight != ipu_priv_handle->output.oheight)) {
-			dbg(DBG_ERR, "width/height of overlay and output should be same!\n");
+		if ((ipu_priv_handle->ovwidth != ipu_priv_handle->ic_ow) ||
+				(ipu_priv_handle->ovheight != ipu_priv_handle->ic_oh)) {
+			dbg(DBG_ERR, "width/height of overlay and ic output should be same!\n");
 			ret = -1;
 			goto done;
 		}
-	}
 
-	ipu_priv_handle->output.task_mode = __ipu_task_check(ipu_priv_handle, input, output);
-
-	if (overlay) {
-		ipu_priv_handle->output.task_mode |= IC_MODE;
 		ipu_priv_handle->overlay_en = 1;
 		if (overlay->local_alpha_en)
 			ipu_priv_handle->overlay_local_alpha_en = 1;
@@ -783,8 +867,8 @@ static int _ipu_task_check(ipu_lib_input_param_t * input,
 			goto done;
 		}
 		if (ipu_priv_handle->split_mode & SPLIT_MODE_RL)
-			ipu_calc_stripes_sizes(ipu_priv_handle->iwidth,
-					ipu_priv_handle->output.owidth,
+			ipu_calc_stripes_sizes(ipu_priv_handle->ic_iw,
+					ipu_priv_handle->ic_ow,
 					_ipu_get_arch_ic_out_max_width(),
 					(((unsigned long long)1) << 32), /* 32bit for fractional*/
 					1, /* equal stripes */
@@ -793,8 +877,8 @@ static int _ipu_task_check(ipu_lib_input_param_t * input,
 					&ipu_priv_handle->left_stripe,
 					&ipu_priv_handle->right_stripe);
 		if (ipu_priv_handle->split_mode & SPLIT_MODE_UD)
-			ipu_calc_stripes_sizes(ipu_priv_handle->iheight,
-					ipu_priv_handle->output.oheight,
+			ipu_calc_stripes_sizes(ipu_priv_handle->ic_ih,
+					ipu_priv_handle->ic_oh,
 					_ipu_get_arch_ic_out_max_height(),
 					(((unsigned long long)1) << 32), /* 32bit for fractional*/
 					1, /* equal stripes */
@@ -896,6 +980,8 @@ done:
 static int fit_fb_setting(struct fb_var_screeninfo * var, int width,
 	int height, int fmt, ipu_channel_t fb_chan, int bufs)
 {
+	if (var->yoffset != 0)
+		return 0;
 	if (fb_chan == MEM_BG_SYNC)
 		return ((var->xres_virtual == var->xres) &&
 			(var->yres_virtual == bufs*var->yres));
@@ -941,7 +1027,8 @@ static void __fill_fb_black(unsigned int fmt,
 					i++, tmp++)
 				*tmp = color;
 		} else if ((fmt == IPU_PIX_FMT_YUV420P) ||
-				(fmt == IPU_PIX_FMT_NV12)) {
+				(fmt == IPU_PIX_FMT_NV12) ||
+				(fmt == IPU_PIX_FMT_YVU420P)) {
 			char * base = (char *)fb_mem;
 			int j, screen_size = fb_var->xres * fb_var->yres;
 
@@ -1166,15 +1253,13 @@ again:
 
 		if ( ioctl(ipu_priv_handle->output.fd_fb, FBIOGET_FSCREENINFO, &fb_fix) < 0) {
 			dbg(DBG_ERR, "Get FB fix info failed!\n");
-			close(ipu_priv_handle->output.fd_fb);
 			ret = -1;
-			goto err;
+			goto err1;
 		}
 		if ( ioctl(ipu_priv_handle->output.fd_fb, FBIOGET_VSCREENINFO, &fb_var) < 0) {
 			dbg(DBG_ERR, "Get FB var info failed!\n");
-			close(ipu_priv_handle->output.fd_fb);
 			ret = -1;
-			goto err;
+			goto err1;
 		}
 
 		if (ioctl(ipu_priv_handle->output.fd_fb, MXCFB_GET_FB_IPU_CHAN,
@@ -1214,25 +1299,24 @@ again:
 				fb_var.yres_virtual = fb_var.yres * fbbufs;
 			}
 
+			fb_var.yoffset = 0;
+
 			if ( ioctl(ipu_priv_handle->output.fd_fb, FBIOPUT_VSCREENINFO, &fb_var) < 0) {
 				dbg(DBG_ERR, "Set FB var info failed!\n");
-				close(ipu_priv_handle->output.fd_fb);
 				ret = -1;
-				goto err;
+				goto err1;
 			}
 
 			if ( ioctl(ipu_priv_handle->output.fd_fb, FBIOGET_FSCREENINFO, &fb_fix) < 0) {
 				dbg(DBG_ERR, "Get FB fix info failed!\n");
-				close(ipu_priv_handle->output.fd_fb);
 				ret = -1;
-				goto err;
+				goto err1;
 			}
 
 			if ( ioctl(ipu_priv_handle->output.fd_fb, FBIOGET_VSCREENINFO, &fb_var) < 0) {
 				dbg(DBG_ERR, "Get FB var info failed!\n");
-				close(ipu_priv_handle->output.fd_fb);
 				ret = -1;
-				goto err;
+				goto err1;
 			}
 		}
 
@@ -1244,9 +1328,8 @@ again:
 		if ((owidth > fb_var.xres) || (oheight > fb_var.yres)
 				|| (fmt_to_bpp(output->fmt) != fb_var.bits_per_pixel)) {
 			dbg(DBG_ERR, "Output image is not fit for %s!\n", fbdev);
-			close(ipu_priv_handle->output.fd_fb);
 			ret = -1;
-			goto err;
+			goto err1;
 		}
 
 		ipu_priv_handle->output.fb_stride = fb_var.xres * bytes_per_pixel(output->fmt);
@@ -1259,8 +1342,8 @@ again:
 
 		ipu_priv_handle->output.o_minfo[0].paddr = fb_fix.smem_start +
 			ipu_priv_handle->output.screen_size + offset;
-		ipu_priv_handle->output.o_minfo[1].paddr = fb_fix.smem_start + offset;
-		ipu_priv_handle->output.o_minfo[2].paddr = fb_fix.smem_start
+		ipu_priv_handle->output.o_minfo[2].paddr = fb_fix.smem_start + offset;
+		ipu_priv_handle->output.o_minfo[1].paddr = fb_fix.smem_start
 			+ 2*ipu_priv_handle->output.screen_size + offset;
 
 		ipu_priv_handle->output.fb_mem = mmap(0,
@@ -1269,9 +1352,8 @@ again:
 				ipu_priv_handle->output.fd_fb, 0);
 		if (ipu_priv_handle->output.fb_mem == MAP_FAILED) {
 			dbg(DBG_ERR, "mmap failed!\n");
-			close(ipu_priv_handle->output.fd_fb);
 			ret = -1;
-			goto err;
+			goto err1;
 		}
 
 		if (ipu_priv_handle->output.fb_chan == MEM_FG_SYNC)
@@ -1297,18 +1379,23 @@ again:
 		dbg(DBG_INFO, "fb phyaddr1 0x%x\n", ipu_priv_handle->output.o_minfo[1].paddr);
 		dbg(DBG_INFO, "fb phyaddr2 0x%x\n", ipu_priv_handle->output.o_minfo[2].paddr);
 
-		blank = FB_BLANK_UNBLANK;
-		if ( ioctl(ipu_priv_handle->output.fd_fb, FBIOBLANK, blank) < 0) {
-			dbg(DBG_ERR, "UNBLANK FB failed!\n");
-		}
-
 		if (ipu_priv_handle->output.fb_chan == MEM_FG_SYNC) {
 			if ( ioctl(ipu_priv_handle->output.fd_fb, MXCFB_SET_OVERLAY_POS,
 						&(output->fb_disp.pos)) < 0)
 				dbg(DBG_ERR, "Set FB position failed!\n");
 		}
 
+		blank = FB_BLANK_UNBLANK;
+		if ( ioctl(ipu_priv_handle->output.fd_fb, FBIOBLANK, blank) < 0) {
+			dbg(DBG_ERR, "UNBLANK FB failed!\n");
+		}
+
 	}
+	return ret;
+
+err1:
+	close(ipu_priv_handle->output.fd_fb);
+	ipu_priv_handle->output.fd_fb = -1;
 err:
 	return ret;
 }
@@ -1379,7 +1466,7 @@ again:
 		}
 	}
 
-	if (ipu_priv_handle->output.show_to_fb){
+	if (ipu_priv_handle->output.show_to_fb && (ipu_priv_handle->output.fd_fb > 0)){
 		struct fb_var_screeninfo fb_var;
 
 		ioctl(ipu_priv_handle->output.fd_fb, FBIOGET_VSCREENINFO, &fb_var);
@@ -1406,7 +1493,7 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 		ipu_lib_handle_t * ipu_handle)
 {
 	ipu_channel_params_t params;
-	int tmp, ret = 0;
+	int ret = 0;
 	unsigned int task_mode;
 	ipu_lib_priv_handle_t * ipu_priv_handle = (ipu_lib_priv_handle_t *)ipu_handle->priv;
 	dma_addr_t buf0 = 0, buf1 = 0, buf0_p = 0, buf1_p = 0, buf0_n = 0, buf1_n = 0;
@@ -1570,16 +1657,16 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 			params.mem_prp_vf_mem.out_width = ipu_priv_handle->left_stripe.output_width;
 			params.mem_prp_vf_mem.outh_resize_ratio = ipu_priv_handle->left_stripe.irr;
 		} else {
-			params.mem_prp_vf_mem.in_width = ipu_priv_handle->iwidth;
-			params.mem_prp_vf_mem.out_width = ipu_priv_handle->output.owidth;
+			params.mem_prp_vf_mem.in_width = ipu_priv_handle->ic_iw;
+			params.mem_prp_vf_mem.out_width = ipu_priv_handle->ic_ow;
 		}
 		if (ipu_priv_handle->split_mode & SPLIT_MODE_UD) {
 			params.mem_prp_vf_mem.in_height = ipu_priv_handle->up_stripe.input_width;
 			params.mem_prp_vf_mem.out_height = ipu_priv_handle->up_stripe.output_width;
 			params.mem_prp_vf_mem.outv_resize_ratio = ipu_priv_handle->up_stripe.irr;
 		} else {
-			params.mem_prp_vf_mem.in_height = ipu_priv_handle->iheight;
-			params.mem_prp_vf_mem.out_height = ipu_priv_handle->output.oheight;
+			params.mem_prp_vf_mem.in_height = ipu_priv_handle->ic_ih;
+			params.mem_prp_vf_mem.out_height = ipu_priv_handle->ic_oh;
 		}
 		params.mem_prp_vf_mem.in_pixel_fmt = input->fmt;
 		params.mem_prp_vf_mem.out_pixel_fmt = output->fmt;
@@ -1639,6 +1726,7 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 				IPU_ROTATE_NONE,
 				buf0,
 				buf1,
+				0,
 				ipu_priv_handle->i_uoff, ipu_priv_handle->i_voff);
 		if (ret < 0) {
 			ipu_uninit_channel(ipu_priv_handle->output.ic_chan);
@@ -1656,6 +1744,7 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 					IPU_ROTATE_NONE,
 					buf0_p,
 					buf1_p,
+					0,
 					ipu_priv_handle->i_uoff, ipu_priv_handle->i_voff);
 			if (ret < 0) {
 				ipu_uninit_channel(ipu_priv_handle->output.vdi_ic_p_chan);
@@ -1671,6 +1760,7 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 					IPU_ROTATE_NONE,
 					buf0_n,
 					buf1_n,
+					0,
 					ipu_priv_handle->i_uoff, ipu_priv_handle->i_voff);
 			if (ret < 0) {
 				ipu_uninit_channel(ipu_priv_handle->output.vdi_ic_n_chan);
@@ -1689,6 +1779,7 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 					ipu_priv_handle->ov_minfo[0].paddr + ipu_priv_handle->ov_off,
 					ipu_priv_handle->mode & OP_STREAM_MODE ?
 					ipu_priv_handle->ov_minfo[1].paddr + ipu_priv_handle->ov_off : 0,
+					0,
 					ipu_priv_handle->ov_uoff, ipu_priv_handle->ov_voff);
 			if (ret < 0) {
 				ipu_uninit_channel(ipu_priv_handle->output.ic_chan);
@@ -1706,6 +1797,7 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 						ipu_priv_handle->ov_alpha_minfo[0].paddr + ipu_priv_handle->ov_alpha_off,
 						ipu_priv_handle->mode & OP_STREAM_MODE ?
 						ipu_priv_handle->ov_alpha_minfo[1].paddr + ipu_priv_handle->ov_alpha_off : 0,
+						0,
 						0, 0);
 				if (ret < 0) {
 					ipu_uninit_channel(ipu_priv_handle->output.ic_chan);
@@ -1735,6 +1827,7 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 				output->rot,
 				buf0,
 				buf1,
+				0,
 				ipu_priv_handle->output.o_uoff, ipu_priv_handle->output.o_voff);
 		if (ret < 0) {
 			ipu_uninit_channel(ipu_priv_handle->output.ic_chan);
@@ -1787,6 +1880,7 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 				ipu_priv_handle->i_minfo[0].paddr + ipu_priv_handle->i_off,
 				ipu_priv_handle->mode & OP_STREAM_MODE ?
 				ipu_priv_handle->i_minfo[1].paddr + ipu_priv_handle->i_off : 0,
+				0,
 				ipu_priv_handle->i_uoff, ipu_priv_handle->i_voff);
 		if (ret < 0) {
 			ipu_uninit_channel(ipu_priv_handle->output.rot_chan);
@@ -1810,6 +1904,7 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 				ipu_priv_handle->mode & OP_STREAM_MODE ?
 				ipu_priv_handle->output.o_minfo[1].paddr +
 				ipu_priv_handle->output.o_off : 0,
+				0,
 				ipu_priv_handle->output.o_uoff, ipu_priv_handle->output.o_voff);
 		if (ret < 0) {
 			ipu_uninit_channel(ipu_priv_handle->output.rot_chan);
@@ -1862,21 +1957,14 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 			dbg(DBG_INFO, "\t\tMEM_ROT_PP_MEM\n");
 		}
 
-		if(output->rot >= IPU_ROTATE_90_RIGHT){
-			/*output swap*/
-			tmp = ipu_priv_handle->output.owidth;
-			ipu_priv_handle->output.owidth = ipu_priv_handle->output.oheight;
-			ipu_priv_handle->output.oheight = tmp;
-		}
-
 		memset(&params, 0, sizeof (params));
 
-		params.mem_prp_vf_mem.in_width = ipu_priv_handle->iwidth;
-		params.mem_prp_vf_mem.in_height = ipu_priv_handle->iheight;
+		params.mem_prp_vf_mem.in_width = ipu_priv_handle->ic_iw;
+		params.mem_prp_vf_mem.in_height = ipu_priv_handle->ic_ih;
 		params.mem_prp_vf_mem.in_pixel_fmt = input->fmt;
 
-		params.mem_prp_vf_mem.out_width = ipu_priv_handle->output.owidth;
-		params.mem_prp_vf_mem.out_height = ipu_priv_handle->output.oheight;
+		params.mem_prp_vf_mem.out_width = ipu_priv_handle->ic_ow;
+		params.mem_prp_vf_mem.out_height = ipu_priv_handle->ic_oh;
 		params.mem_prp_vf_mem.out_pixel_fmt = output->fmt;
 
 		params.mem_prp_vf_mem.motion_sel = ipu_priv_handle->motion_sel;
@@ -1925,12 +2013,13 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 		ret = ipu_init_channel_buffer(ipu_priv_handle->output.ic_chan,
 				IPU_INPUT_BUFFER,
 				input->fmt,
-				ipu_priv_handle->iwidth,
-				ipu_priv_handle->iheight,
+				params.mem_prp_vf_mem.in_width,
+				params.mem_prp_vf_mem.in_height,
 				ipu_priv_handle->istride,
 				IPU_ROTATE_NONE,
 				buf0,
 				buf1,
+				0,
 				ipu_priv_handle->i_uoff, ipu_priv_handle->i_voff);
 		if (ret < 0) {
 			ipu_uninit_channel(ipu_priv_handle->output.ic_chan);
@@ -1948,6 +2037,7 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 					IPU_ROTATE_NONE,
 					buf0_p,
 					buf1_p,
+					0,
 					ipu_priv_handle->i_uoff, ipu_priv_handle->i_voff);
 			if (ret < 0) {
 				ipu_uninit_channel(ipu_priv_handle->output.vdi_ic_p_chan);
@@ -1963,6 +2053,7 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 					IPU_ROTATE_NONE,
 					buf0_n,
 					buf1_n,
+					0,
 					ipu_priv_handle->i_uoff, ipu_priv_handle->i_voff);
 			if (ret < 0) {
 				ipu_uninit_channel(ipu_priv_handle->output.vdi_ic_n_chan);
@@ -1981,6 +2072,7 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 					ipu_priv_handle->ov_minfo[0].paddr + ipu_priv_handle->ov_off,
 					ipu_priv_handle->mode & OP_STREAM_MODE ?
 					ipu_priv_handle->ov_minfo[1].paddr + ipu_priv_handle->ov_off : 0,
+					0,
 					ipu_priv_handle->ov_uoff, ipu_priv_handle->ov_voff);
 			if (ret < 0) {
 				ipu_uninit_channel(ipu_priv_handle->output.ic_chan);
@@ -1998,6 +2090,7 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 						ipu_priv_handle->ov_alpha_minfo[0].paddr + ipu_priv_handle->ov_alpha_off,
 						ipu_priv_handle->mode & OP_STREAM_MODE ?
 						ipu_priv_handle->ov_alpha_minfo[1].paddr + ipu_priv_handle->ov_alpha_off : 0,
+						0,
 						0, 0);
 				if (ret < 0) {
 					ipu_uninit_channel(ipu_priv_handle->output.ic_chan);
@@ -2009,13 +2102,14 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 		ret = ipu_init_channel_buffer(ipu_priv_handle->output.ic_chan,
 				IPU_OUTPUT_BUFFER,
 				output->fmt,
-				ipu_priv_handle->output.owidth,
-				ipu_priv_handle->output.oheight,
-				ipu_priv_handle->output.owidth*bytes_per_pixel(output->fmt),
+				params.mem_prp_vf_mem.out_width,
+				params.mem_prp_vf_mem.out_height,
+				params.mem_prp_vf_mem.out_width*bytes_per_pixel(output->fmt),
 				IPU_ROTATE_NONE,
 				ipu_priv_handle->output.r_minfo[0].paddr,
 				ipu_priv_handle->mode & OP_STREAM_MODE ?
 				ipu_priv_handle->output.r_minfo[1].paddr : 0,
+				0,
 				0, 0);
 		if (ret < 0) {
 			ipu_uninit_channel(ipu_priv_handle->output.ic_chan);
@@ -2031,25 +2125,19 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 		ret = ipu_init_channel_buffer(ipu_priv_handle->output.rot_chan,
 				IPU_INPUT_BUFFER,
 				output->fmt,
-				ipu_priv_handle->output.owidth,
-				ipu_priv_handle->output.oheight,
-				ipu_priv_handle->output.owidth*bytes_per_pixel(output->fmt),
+				ipu_priv_handle->ic_ow,
+				ipu_priv_handle->ic_oh,
+				ipu_priv_handle->ic_ow*bytes_per_pixel(output->fmt),
 				output->rot,
 				ipu_priv_handle->output.r_minfo[0].paddr,
 				ipu_priv_handle->mode & OP_STREAM_MODE ?
 				ipu_priv_handle->output.r_minfo[1].paddr : 0,
+				0,
 				0, 0);
 		if (ret < 0) {
 			ipu_uninit_channel(ipu_priv_handle->output.ic_chan);
 			ipu_uninit_channel(ipu_priv_handle->output.rot_chan);
 			goto done;
-		}
-
-		if(output->rot >= IPU_ROTATE_90_RIGHT){
-			/*output swap*/
-			tmp = ipu_priv_handle->output.owidth;
-			ipu_priv_handle->output.owidth = ipu_priv_handle->output.oheight;
-			ipu_priv_handle->output.oheight = tmp;
 		}
 
 		if (output->show_to_fb) {
@@ -2069,6 +2157,7 @@ static int _ipu_channel_setup(ipu_lib_input_param_t * input,
 				ipu_priv_handle->mode & OP_STREAM_MODE ?
 				ipu_priv_handle->output.o_minfo[1].paddr +
 				ipu_priv_handle->output.o_off : 0,
+				0,
 				ipu_priv_handle->output.o_uoff, ipu_priv_handle->output.o_voff);
 		if (ret < 0) {
 			ipu_uninit_channel(ipu_priv_handle->output.ic_chan);
@@ -2329,7 +2418,14 @@ static void * _get_shm(char *name, int size, int *first)
 		}
 		*first = 1;
 	}
-	ftruncate(fd, size);
+
+	if (ftruncate(fd, size) < 0) {
+		dbg(DBG_ERR, "Can not truncate the shared memory for %s!\n",
+				shm_name);
+		close(fd);
+		return NULL;
+	}
+
 	fstat(fd, &stat);
 	buf = mmap(NULL, stat.st_size, PROT_READ | PROT_WRITE,
 			MAP_SHARED, fd, 0);
@@ -2344,10 +2440,21 @@ static void * _get_shm(char *name, int size, int *first)
 	return buf;
 }
 
-static int _ipu_ipc_prepare(void)
+int mxc_ipu_lib_ipc_init(void)
 {
 	int ret = 0;
 	int first = 0;
+
+#ifdef BUILD_FOR_ANDROID
+	char  propBuf[PROPERTY_VALUE_MAX];
+	int main_ver, sec_ver;
+	property_get("ro.build.version.release", propBuf, "");
+	main_ver = propBuf[0] - '0';
+	sec_ver = propBuf[2] - '0';
+	dbg(DBG_INFO, "android version is %d.%d\n", main_ver, sec_ver);
+	if (main_ver >= 2 && sec_ver >= 3)
+		pshare = 1;
+#endif
 
 	g_ipu_shm = (ipu_lib_shm_t *)
 			_get_shm("ipulib.shm", sizeof(ipu_lib_shm_t), &first);
@@ -2540,7 +2647,7 @@ int mxc_ipu_lib_task_init(ipu_lib_input_param_t * input,
 	}
 
 	if (!g_ipu_shm) {
-		if (_ipu_ipc_prepare() < 0) {
+		if (mxc_ipu_lib_ipc_init() < 0) {
 			ret = -1;
 			goto err0;
 		}
@@ -2626,7 +2733,7 @@ static void _mxc_ipu_lib_task_uninit(ipu_lib_priv_handle_t * ipu_priv_handle, pi
 			ipu_priv_handle->output_fr_cnt++;
 	}
 
-	if (ipu_priv_handle->output.show_to_fb) {
+	if (ipu_priv_handle->output.show_to_fb && (ipu_priv_handle->output.fd_fb > 0)) {
 		if (ipu_priv_handle->output.fb_chan == MEM_FG_SYNC) {
 			struct fb_fix_screeninfo fb_fix;
 			struct fb_var_screeninfo fb_var;
@@ -2848,9 +2955,9 @@ static int pan_display(ipu_lib_priv_handle_t * ipu_priv_handle, int idx)
 	if (idx == 0)
 		fb_var.yoffset = fb_var.yres;
 	else if (idx == 1)
-		fb_var.yoffset = 0;
-	else
 		fb_var.yoffset = 2*fb_var.yres;
+	else
+		fb_var.yoffset = 0;
 
 	if (ioctl(ipu_priv_handle->output.fd_fb, FBIOPAN_DISPLAY, &fb_var) < 0) {
 		dbg(DBG_WARNING, "Set FB pan display failed!\n");
@@ -3271,6 +3378,7 @@ int mxc_ipu_lib_task_buf_update(ipu_lib_handle_t * ipu_handle,
 		return ipu_priv_handle->update_bufnum;
 }
 
+extern int ipu_update_dp_csc(int **param);
 /*!
  * This function control the ipu task according to param setting.
  *
@@ -3322,7 +3430,7 @@ int mxc_ipu_lib_task_control(int ctl_cmd, void * arg, ipu_lib_handle_t * ipu_han
 		ipu_lib_ctl_task_t * ctl_task =
 				(ipu_lib_ctl_task_t *) arg;
 		if (!g_ipu_shm) {
-			if (_ipu_ipc_prepare() < 0) {
+			if (mxc_ipu_lib_ipc_init() < 0) {
 				ret = -1;
 				goto done;
 			}
@@ -3341,7 +3449,7 @@ int mxc_ipu_lib_task_control(int ctl_cmd, void * arg, ipu_lib_handle_t * ipu_han
 		ipu_lib_priv_handle_t * ipu_priv_handle;
 
 		if (!g_ipu_shm) {
-			if (_ipu_ipc_prepare() < 0) {
+			if (mxc_ipu_lib_ipc_init() < 0) {
 				ret = -1;
 				goto done;
 			}
@@ -3371,6 +3479,16 @@ int mxc_ipu_lib_task_control(int ctl_cmd, void * arg, ipu_lib_handle_t * ipu_han
 			_mxc_ipu_lib_task_uninit(ipu_priv_handle,
 						g_ipu_shm->task[ctl_task->index].task_pid);
 		}
+		break;
+	}
+	case IPU_CTL_UPDATE_DP_CSC:
+	{
+		ipu_lib_ctl_csc_t * csc =
+				(ipu_lib_ctl_csc_t *) arg;
+		if ((ret = ipu_open()) < 0)
+			break;
+		ret = ipu_update_dp_csc((int **)csc->param);
+		ipu_close();
 		break;
 	}
 	default:
