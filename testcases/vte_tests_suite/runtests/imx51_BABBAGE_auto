@@ -22,6 +22,7 @@
 #FSL-UT-ALSA-0010_0020_0030 /unit_tests_d/autorun-sound.sh
 #FSL-UT-HANTRO-0010      /unit_tests_d/autorun-hantro.sh
 #FSL-UT-RTC-0010 /unit_tests_d/autorun-rtc.sh
+TGE-LV-KERNEL_BOOT-0001 dmesg -c
 TGE-LV-OWIRE-0016 modprobe wire.ko ; modprobe mxc_w1.ko ; modprobe w1_ds2438.ko ; modprobe ds2438_battery.ko; cd /sys/class/power_supply/ds2438-battery.0
 TGE-LV-ALSA-0501	adc_test1.sh -f S16_LE -d 5 -c 1 -r 8000 -A
 TGE-LV-ALSA-0502	adc_test1.sh -f S16_LE -d 5 -c 1 -r 11025 -A

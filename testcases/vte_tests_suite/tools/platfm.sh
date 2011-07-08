@@ -46,6 +46,7 @@
 #   IMX50ARM2   IMX50ARM2
 #   IMX50RDP    IMX50RDP
 #   IMX50-RDP3    IMX50-RDP3
+#   IMX6-SABREAUTO IMX6-SABREAUTO
 #
 #
 # Usage2(return number): 
@@ -188,6 +189,13 @@ determine_platform()
             p=IMX50RDP
         fi
     fi
+		
+		find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX6" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+    	find=`cat /proc/cpuinfo | grep "Revision" | grep "6" | wc -l`;
+      p=IMX6-SABREAUTO
+    fi
 
     if [ $p = "IMX31-3STACK" ]
     then
@@ -230,6 +238,9 @@ determine_platform()
 		elif [ $p = "IMX50RDP" ] || [ $p = "IMX50-RDP3" ]
 		then
 				RC=50
+		elif [ $p = "IMX6-SABREAUTO" ]
+		then
+				RC=63
     else
         #echo  "Platform not recognized!"
         RC=67
