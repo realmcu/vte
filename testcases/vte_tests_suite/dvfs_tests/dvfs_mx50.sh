@@ -118,6 +118,7 @@ run_auto_test_list()
 	 epdc_test -T 7 || return 2
    echo "ALSA test"
    aplay -vv $STREAM_PATH/alsa_stream/audio44k16M.wav || return 14
+	 arecord -D plughw:0 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 || RC='$RC 1'  || return 141
 	 echo "USB Host test"
    mkfs.vfat /dev/sda1 || return 15
    mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 || return $16
