@@ -1,6 +1,6 @@
 #imx5 opensource test tools
 
-export CONFIG_TP_IMX5=y
+export CONFIG_TP_IMX6=y
 
 export CONFIG_TP_BONNIE=y
 export CONFIG_TP_BC=y
