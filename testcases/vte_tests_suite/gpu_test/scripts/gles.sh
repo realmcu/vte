@@ -311,8 +311,8 @@ if [ -e openGLES/conformance/es20/GTF_ES/glsl/GTF/GTF ]; then
 	-l=/root/es20_conformance_mustpass_64x64 -run="$(pwd)/GTF/mustpass.run" \
 	&& ./GTF/GTF -width=113 -height=47 -noimagefileio \
 	-l=/root/es20_conformance_mustpass_113x47 -run="$(pwd)/GTF/mustpass.run" \
-	&& ./GTF/GTF -width=480 -height=640 -noimagefileio \
-	-l=/root/es20_conformance_mustpass_480x640 -run="$(pwd)/GTF/mustpass.run" \
+	&& ./GTF/GTF -width=640 -height=480 -noimagefileio \
+	-l=/root/es20_conformance_mustpass_640x480 -run="$(pwd)/GTF/mustpass.run" \
 	|| RC=$(echo $RC es20_conformance)
 fi
 
@@ -404,6 +404,9 @@ case "$?" in
 53)
   APP_SUB_DIR="imx53_rootfs/test"
  ;;
+63)
+	APP_SUB_DIR="imx63_rootfs/test"
+	;;
 *)
   exit 0
   ;;
