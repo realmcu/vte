@@ -201,7 +201,7 @@ ${TST_CMD} -P 2 || return $RC
 ${TST_CMD} -P 5 || return $RC
 ${TST_CMD} -P 6 || return $RC
 ${TST_CMD} -P 7 || return $RC
-${TST_CMD} -P 8 || return $RC
+#${TST_CMD} -P 8 || return $RC
 ${TST_CMD} -P 9 || return $RC
 ${TST_CMD} -P 10 || return $RC
 ${TST_CMD} -P 11 || return $RC
