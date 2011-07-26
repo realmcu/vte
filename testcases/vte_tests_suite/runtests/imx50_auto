@@ -173,7 +173,7 @@ TGE-LV-SD-1303	umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; mount /dev/mmcblk
 TGE-LV-SD-1800	storage_all.sh 1
 TGE-LV-SD-1010	umount /mnt/mmcblk0p1; mount /dev/mmcblk0p1 /mnt/mmcblk0p1 && ints1=$(cat /proc/interrupts | grep mmc | grep dma | awk {'print $2'}) ; cp /etc/passwd /mnt/mmcblk0p1/ ; ints2=$(cat /proc/interrupts |grep mmc | grep dma | awk {'print $2'}); [ $ints2 -gt $ints1 ]
 TSG-LV-SD-1030	storage_all.sh 2
-TGE-LV-SD-1050	RC=0; ss=0;list=$(cat /proc/cpu/clocks | grep -i sdhc | awk '{print $3}'); for i in $list; do ss=$(expr $ss + $i); done; [ $ss -eq 0 ] || RC=1; sh -c "dd if=/dev/mmcblk0p1 of=/dev/null bs=1024k count=100 & "; ss=0;list=$(cat /proc/cpu/clocks | grep -i sdhc | awk '{print $3}'); for i in $list; do ss=$(expr $ss + $i); done; [ $ss -ne 0 ] || RC=$(expr $RC + 1); [ $RC -eq 0 ]
+TGE-LV-SD-1050	mmc_clock.sh
 TGE-LV-SECURITY-003	modprobe tcrypt mode=10 ; dmesg | grep "ecb" ; RT=$? ; echo $RT | grep 1 && dmesg | grep "cbc" ; RT=$? && echo $RT | grep 1 && cryptodev-demo1
 TGE-LV-SECURITY-001_CG	cat /proc/cpu/clocks | grep dcp | awk {'print $3'} | grep 0
 TGE-LV-UART-0310	uart5.sh /dev/ttymxc1
