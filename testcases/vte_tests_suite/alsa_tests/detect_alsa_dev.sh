@@ -47,10 +47,14 @@ else
    HW_keyword=imx3stack
 fi
 
+if [ $(platfm.sh) = "IMX6-SABREAUTO" ]; then
+   HW_keyword="card 0"
+fi
+
 if [ "$1" = "ADC" ]; then
-    dfl_alsa_dev=`arecord -l |grep -i $HW_keyword|awk '{ print $2 }'|sed 's/://'`
+    dfl_alsa_dev=`arecord -l |grep -i "$HW_keyword" | awk '{ print $2 }'|sed 's/://'`
 else
-    dfl_alsa_dev=`aplay -l |grep -i $HW_keyword|awk '{ print $2 }'|sed 's/://'`
+    dfl_alsa_dev=`aplay -l |grep -i "$HW_keyword" |awk '{ print $2 }'|sed 's/://'`
 fi
 
 if [ "$dfl_alsa_dev" != "" ]; then
