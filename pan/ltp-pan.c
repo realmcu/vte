@@ -704,7 +704,7 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 		 * the child process will be good as may not be able t kill.
 		 * may be futuer we need this*/	
 		int loop = 1;
-		long timeout = 3600*8;/*one case can not last more than 8 hrs*/
+		long timeout = 3600;/*one case can not last more than 3600s*/
 		int * pcnt = (int *)malloc(keep_active*sizeof(int));
 		memset(pcnt,0,keep_active*sizeof(int));
 		while(loop) {
