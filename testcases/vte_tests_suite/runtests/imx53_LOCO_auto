@@ -220,8 +220,6 @@ TGE-LV-UART-0500	for i in 9600 115200 460800 500000 1000000 1152000 2000000 3500
 TGE-LV-UART-0510	RT=0; for i in 9600 115200 460800 500000 1000000 1152000 2000000 3500000 4000000; do echo "Test Baud rate $i ==============" && uart_testapp_11 /dev/ttymxc1 $i || RT=$(expr $RT + 1); done; [ $RT -eq 0 ]
 TGE-LV-UART-0601	sh -c "isgate=$(fgrep "uart" /proc/cpu/clocks | awk '{print $3}') && echo $isgate | grep 0 && (cat /dev/ttymxc1 &) ; sleep 2 && isgate=$( fgrep "uart" /proc/cpu/clocks | awk '{print $3}') && echo $isgate | grep 1 && killall cat ; sleep 2 && isgate=$(fgrep "uart" /proc/cpu/clocks | awk '{print $3}') && echo $isgate | grep 0"
 TGE-LV-UART-0700	uart_testapp_10 /dev/ttymxc1 115200 && uart_testapp_10 /dev/ttymxc2 115200
-#TGE-LV-USB-HOST-1501	rtc_testapp_6 -T 5 && mount -t vfat /dev/sda1 /mnt/msc && echo "hello world" > /mnt/msc/test.txt && cat /mnt/msc/test.txt
-#TGE-LV-USB-OTG-2601	modprobe ehci_hcd; sleep 10 && mount -t vfat /dev/sda1 /mnt/msc && rtc_testapp_6 -T 5 && touch /mnt/msc/test && echo "test" > /mnt/msc/test && cat /mnt/msc/test | grep "test" && umount /mnt/msc && echo $?
 TGE-LV-IPU_DEV-0010	ipu_test.sh 1
 TGE-LV-IPU_DEV-0020	ipu_test.sh 2
 TGE-LV-IPU_DEV-0021	ipu_dev_test -m 0x21 -f 50 -i 352,288,I420 -o 352,288,RGBP,0 -s 1,0,0,0 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv
@@ -276,4 +274,3 @@ TGE-LV-VPU-10040	vpu_enc_test.sh 5
 TGE-LV-VPU-10210	vpu_multi_enc_test.sh 1
 TGE-LV-VPU-10220	vpu_multi_enc_test.sh 2
 TGE-LV-VPU-10221	vpu_multi_enc_test.sh 3
-TGE-LV-WIFI-0061	LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ath6kl; sleep 5;ifconfig wlan0 up && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && ifconfig wlan0 down && RT=0 ; modprobe -r ath6kl; echo $LOOP; done ; [ $RT -eq 0 ]
