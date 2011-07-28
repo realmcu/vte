@@ -9,6 +9,7 @@
 SUBDIRS-y += usb_pm
 SUBDIRS-y += pwr_consumption
 SUBDIRS-y += pwr_battery
+SUBDIRS-y += pwr_clocks
 all:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
 
