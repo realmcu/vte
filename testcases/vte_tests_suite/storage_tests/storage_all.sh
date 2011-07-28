@@ -69,6 +69,14 @@ RC=1
 trap "cleanup" 0
 
 clear
+
+soc=$(platfm.sh)
+if [ $soc = "61" ]; then
+#enable ata module
+modprobe ahci_platform
+sleep 3
+fi
+
 tmp_dir=$(mktemp -d -p /mnt)
 if [ $? -ne 0 ];then
 	RC=1
@@ -185,6 +193,12 @@ cleanup()
 {
 RC=0
 
+soc=$(platfm.sh)
+if [ $soc = "61" ]; then
+#enable ata module
+modprobe -r ahci_platform
+sleep 3
+fi
 #TODO add cleanup code here
 
 return $RC

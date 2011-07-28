@@ -68,6 +68,14 @@ export TST_COUNT=0
 RC=1
 trap "cleanup" 0
 
+
+soc=$(platfm.sh)
+if [ $soc = "61" ]; then
+#enable ata module
+modprobe ahci_platform
+sleep 3
+fi
+
 clear
 tmp_dir=$(mktemp -d -p /mnt)
 if [ $? -ne 0 ];then
@@ -181,6 +189,12 @@ RC=0
 
 #TODO add cleanup code here
 
+soc=$(platfm.sh)
+if [ $soc = "61" ]; then
+#enable ata module
+modprobe -r ahci_platform
+sleep 3
+fi
 return $RC
 }
 
