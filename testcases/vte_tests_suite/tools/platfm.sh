@@ -240,7 +240,7 @@ determine_platform()
 				RC=50
 		elif [ $p = "IMX6-SABREAUTO" ]
 		then
-				RC=63
+				RC=61
     else
         #echo  "Platform not recognized!"
         RC=67
