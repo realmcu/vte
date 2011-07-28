@@ -1,5 +1,6 @@
 
 TARGET += display_clk.sh
+TARGET += sd_clk.sh
 
 all:
 
