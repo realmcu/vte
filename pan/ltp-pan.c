@@ -709,7 +709,7 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 		memset(pcnt,0,keep_active*sizeof(int));
 		while(loop) {
 			for (i = 0; i < keep_active; ++i) {
-				cpid = waitpid(running[i].pgrp, &stat_loc, WNOHANG | WUNTRACED);
+				cpid = waitpid(running[i].pgrp, &stat_loc, WNOHANG | WUNTRACED | WCONTINUED);
 				if (cpid > 0){
 					/*child is exit*/
 					loop = 0;
