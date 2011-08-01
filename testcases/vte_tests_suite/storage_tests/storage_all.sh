@@ -194,7 +194,7 @@ cleanup()
 RC=0
 
 soc=$(platfm.sh)
-if [ $soc = "61" ]; then
+if [ $soc = "IMX6-SABREAUTO" ]; then
 #enable ata module
 modprobe -r ahci_platform
 sleep 3
