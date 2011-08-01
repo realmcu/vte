@@ -41,6 +41,7 @@
  * extern void getCurrentRes(int *x,int *y);
  *
  */
+extern char * opt_dfb; 
 
 unsigned short red[256], green[256], blue[256];
 struct fb_cmap map332 = {0, 256, red, green, blue, NULL};
@@ -71,7 +72,7 @@ void fb_display(unsigned char *rgbbuff, unsigned char * alpha, int x_size, int y
     unsigned long x_stride;
     
     /* get the framebuffer device handle */
-    fh = openFB(NULL);
+    fh = openFB(opt_dfb);
     
     /* read current video mode */
     getVarScreenInfo(fh, &var);
@@ -103,7 +104,7 @@ void getCurrentRes(int *x, int *y)
 {
     struct fb_var_screeninfo var;
     int fh = -1;
-    fh = openFB(NULL);
+    fh = openFB(opt_dfb);
     getVarScreenInfo(fh, &var);
     *x = var.xres;
     *y = var.yres;

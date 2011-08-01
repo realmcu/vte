@@ -40,6 +40,8 @@ static int opt_clear = 1,
 	   opt_enlarge = 0,
 	   opt_ignore_aspect = 0;
 
+char * opt_dfb = NULL;
+
 
 
 void setup_console(int t)
@@ -490,6 +492,7 @@ int main(int argc, char **argv)
 		{"delay", 	required_argument, 0, 's'},
 		{"enlarge",	no_argument,	0, 'e'},
 		{"ignore-aspect", no_argument,	0, 'r'},
+		{"framebuffer node", required_argument,	0, 'd'},
 		{0, 0, 0, 0}
 	};
 	int c, i;
@@ -534,6 +537,9 @@ int main(int argc, char **argv)
 				break;
 			case 'r':
 				opt_ignore_aspect = 1;
+				break;
+			case 'd':
+				opt_dfb = optarg;
 				break;
 		}
 	}
