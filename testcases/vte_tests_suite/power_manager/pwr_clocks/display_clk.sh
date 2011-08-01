@@ -1,3 +1,4 @@
+#!/bin/sh
 # Function:     setup
 #
 # Description:  - Check if required commands exits

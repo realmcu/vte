@@ -53,7 +53,7 @@ return $RC
 test_case_01()
 {
 #TODO give TCID
-TCID="sd clock test"
+TCID="audio clock test"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=0
@@ -65,10 +65,12 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #disable the framebuffer
 
 #now check the clocks
-sdhc_ct=$(cat /sys/kernel/debug/clock/osc_clk/pll2_528_bus_main_clk/pll2_pfd_400M/usdhc*/enable_count | grep -v 0 | wc -l )
+esai_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/esai_clk/enable_count | grep -v 0 | wc -l)
+ssi_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/ssi*_clk/enable_count | grep -v 0 | wc -l)
+spdif_ct=$(cat ${mount_pt}clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/spdif_clk/enable_count | grep -v 0 | wc -l)
 #cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/enable_count
 
-if [ $sdhc_ct -gt 0 ]; then
+if [ $esai_ct -gt 0 ] || [ $ssi_ct -gt 0 ] || [ $spdif_ct -gt 0 ]; then
 RC=1
 fi
 
