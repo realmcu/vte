@@ -452,7 +452,8 @@ void help(char *name)
 		   " --colorstretch| -k : Strech (using a 'color average' resizing routine) the image to fit onto screen if necessary\n"
 		   " --enlarge     | -e : Enlarge the image to fit the whole screen if necessary\n"
 		   " --ignore-aspect| -r : Ignore the image aspect while resizing\n"
-                   " --delay <d>   | -s <delay> : Slideshow, 'delay' is the slideshow delay in tenths of seconds.\n\n"
+       " --delay <d>   | -s <delay> : Slideshow, 'delay' is the slideshow delay in tenths of seconds.\n\n"
+       " --dfb       | -d <framebuffer>: frame buffer device.\n\n"
 		   "Keys:\n"
 		   " r            : Redraw the image\n"
 		   " a, d, w, x   : Pan the image\n"
@@ -492,7 +493,7 @@ int main(int argc, char **argv)
 		{"delay", 	required_argument, 0, 's'},
 		{"enlarge",	no_argument,	0, 'e'},
 		{"ignore-aspect", no_argument,	0, 'r'},
-		{"framebuffer node", required_argument,	0, 'd'},
+		{"dfb", required_argument,	0, 'd'},
 		{0, 0, 0, 0}
 	};
 	int c, i;
@@ -504,7 +505,7 @@ int main(int argc, char **argv)
 		return(1);
 	}
 	
-	while((c = getopt_long_only(argc, argv, "hcauifks:er", long_options, NULL)) != EOF)
+	while((c = getopt_long_only(argc, argv, "hcauifks:erd:", long_options, NULL)) != EOF)
 	{
 		switch(c)
 		{
@@ -543,7 +544,8 @@ int main(int argc, char **argv)
 				break;
 		}
 	}
-	
+
+  fprintf(stderr,"opt_dfv = %s \n", opt_dfb);
 	
 	if(!argv[optind])
 	{
