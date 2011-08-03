@@ -51,7 +51,8 @@ extern "C"{
 #include <limits.h>
 #include <ucontext.h>
 #include <sys/types.h>
-#include <setjmp.h>    
+#include <setjmp.h>
+#include <linux/version.h>
 /* Harness Specific Include Files. */
 #include "test.h"
 
@@ -542,7 +543,7 @@ int VT_rtc_test4(void)
         /*********************************************************/
         /* Set the rtc_freq to 1024 Hz . It should not be allowed */
         /*********************************************************/
-
+#if (LINUX_VERSION_CODE <  KERNEL_VERSION(2,6,38))
         is_passed = FALSE;                
         tst_resm(TINFO, "Set wrong frequency: more than 512 Hz (errno should be -EINVAL)");
         retval = ioctl( file_desc, RTC_IRQP_SET, BAD_FREQUENCY2 );
@@ -604,7 +605,7 @@ int VT_rtc_test4(void)
                 tst_resm( TFAIL, "It's not working as expected\n" );
         }
         is_ok = is_ok && is_passed;
-                
+ #endif 
         
         if( is_ok )
         {
