@@ -153,9 +153,10 @@ wp_convert()
     fi
 
     echo 0 > $DVFS_CTRL
-    tst_resm TWARN "DVFS core is disabled and won't recover after test"
 
-    WP_list="160000 400000 800000 1000000"
+    #MX53 SMD working points deletes 160MHz
+    #WP_list="160000 400000 800000 1000000"
+    WP_list="400000 800000 1000000"
     for i in $WP_list; do
         echo $i > $CPU_CTRL
         cur_freq=`cat $CUR_FREQ_GETTER`
@@ -180,13 +181,13 @@ wp_convert()
     #Random test
     times=7
     count=0
-    WP_value0="160000"
-    WP_value1="400000"
-    WP_value2="800000"
-    WP_value3="1000000"
+    #WP_value4="160000"
+    WP_value0="400000"
+    WP_value1="800000"
+    WP_value2="1000000"
     while [ $count -lt $times ]; do
         rand=`od -vAn -N4 -tu4 < /dev/urandom`
-        rand=`expr $rand % 4`
+        rand=`expr $rand % 3`
         eval value=\$WP_value${rand}
         tst_resm TINFO "Change working point to $value"
         cpufreq-set -f $value
@@ -229,7 +230,7 @@ case "$1" in
     elif [ $platfm -eq 41 ]; then
         WorkPoint_list="160000 400000 800000"
     elif [ $platfm -eq 53 ]; then
-        #MX53 working points deletes 160MHz
+        #MX53 SMD working points deletes 160MHz
         #WorkPoint_list="160000 400000 800000 1000000"
         WorkPoint_list="400000 800000 1000000"
     fi
