@@ -30,6 +30,8 @@
 # Spring Zhang           May.10,2010       n/a      Add support for mx53
 # Spring Zhang           Mar.28,2011       n/a      Add mx51 400MHz WP
 # Spring Zhang           Mar.28,2011       n/a      Add mx53 WPs convert test
+# Spring Zhang           Aug.8,2011        n/a      MX53 WPs delete 160MHz, fix
+#   several severe bugs
 
 # Function:     setup
 #        
@@ -66,16 +68,24 @@ setup()
     
     CUR_FREQ_GETTER=/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
     CPU_CTRL=/sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
+    DVFS_CTRL=/sys/devices/platform/mxc_dvfs_core.0/enable
     old_freq=`cat $CUR_FREQ_GETTER`
+    if cat $DVFS_CTRL | grep "enabled"; then
+        old_dvfs_status=1
+    else
+        old_dvfs_status=0
+    fi
 
+    echo "`cat $DVFS_CTRL`, and CPU freq: $old_freq"
     return $RC
 }
 
 cleanup()
 {
     #resume to old frequency
-    echo "Resume to old frequency"
+    echo "Resume to old frequency and DVFS mode"
     echo $old_freq > $CPU_CTRL
+    echo $old_dvfs_status > $DVFS_CTRL
 
     return 0
 }
@@ -100,15 +110,17 @@ EOF
 #parameter: $1-working point
 lowfreq_suspend()
 {
-    RC=$1
+    RC=1
     wp=$1
 
+    echo 0 > $DVFS_CTRL
+    sleep 1
     echo $wp > $CPU_CTRL
     echo =========To test cpu works at $wp=========
     #cpufreq-info
     cur_freq=`cat $CUR_FREQ_GETTER`
-    if [ $cur_freq -ne $(cpufreq-info -f) ]; then
-       echo =========Current cpu does not work at $wp=========
+    if [ $wp -ne $(cpufreq-info -f) ]; then
+       echo =========Current cpu does not work at $wp but $(cpufreq-info -f)=========
        return $RC
     fi
 
@@ -140,7 +152,7 @@ wp_convert()
         return $RC
     fi
 
-    echo 0 > /sys/devices/platform/mxc_dvfs_core.0/enable
+    echo 0 > $DVFS_CTRL
     tst_resm TWARN "DVFS core is disabled and won't recover after test"
 
     WP_list="160000 400000 800000 1000000"
@@ -217,7 +229,9 @@ case "$1" in
     elif [ $platfm -eq 41 ]; then
         WorkPoint_list="160000 400000 800000"
     elif [ $platfm -eq 53 ]; then
-        WorkPoint_list="160000 400000 800000 1000000"
+        #MX53 working points deletes 160MHz
+        #WorkPoint_list="160000 400000 800000 1000000"
+        WorkPoint_list="400000 800000 1000000"
     fi
     for WorkPoint in $WorkPoint_list; do
         lowfreq_suspend $WorkPoint|| exit $RC
