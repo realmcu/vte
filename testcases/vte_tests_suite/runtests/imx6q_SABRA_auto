@@ -117,7 +117,6 @@ TGE-LV-ESAI-0310	aplay -D hw:0,0  $STREAM_PATH/esai_stream/88k24bit-six-S24_LE.w
 TGE-LV-ESAI-0311	aplay -D hw:0,0  $STREAM_PATH/esai_stream/96k24bit-six-S24_LE.wav
 TGE-LV-ESAI-0312	aplay -D hw:0,0  $STREAM_PATH/esai_stream/176k24bit-six-S24_LE.wav
 TGE-LV-ESAI-0313	aplay -D hw:0,0  $STREAM_PATH/esai_stream/192k24bit-six-S24_LE.wav
-TGE-LV-ALSA-0200	(aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav &); arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav && aplay file.wav
 TGE-LV-ALSA-SPDIF-0002	aplay -D plughw:0 ${STREAM_PATH}/spdif_stream/audio32k16S.wav
 TGE-LV-SPDIF-0001	spdif_basic.sh
 TGE-LV-BENCH-10001	coremark_F4.exe  0x0 0x0 0x66 0 7 1 2000 &&  coremark_F4.exe  0x3415 0x3415 0x66 0 7 1 2000 && coremark_F4.exe 8 8 8 0 7 1 1200
@@ -155,7 +154,6 @@ TGE-LV-KERNEL-10002	timer_resolution
 TGE-LV-KERNEL-10004	int1=$(cat /proc/interrupts | grep -i time | awk '{print $2}'); sleep 1 ; int2=$(cat /proc/interrupts | grep -i time | awk '{print  $2}'); echo $int1; echo $int2;ret=$(expr $int2 - $int1); echo $ret; [ $ret -lt 100 ] && echo PASS || echo FAIL
 TGE-LV-KERNEL-10005	cat /proc/meminfo | grep HighTotal
 TGE-LV-EMMC-BOOT-0001	eMMC_boot_test.sh
-TGE-LV-ETHERNET-1006	rtc_testapp_6 -T 10 && ifconfig eth0
 TGE-LV-FB-1004	mkfifo /tmp/fbv;sh -c "cat /tmp/fbv | fbv ${LTPROOT}/testcases/bin/butterfly.png &" && sleep 5 && rtc_testapp_6 -T 5 && echo q > /tmp/fbv && rm -f /tmp/fbv
 TGE-LV-RTC-0102	rtc_testapp_6 -T 5
 TGE-LVGPU-1005	gles.sh 4 ; vg.sh 4
@@ -168,7 +166,7 @@ TGE-LV-RTC-0100	rtc_test.sh 2
 TGE-LV-RTC-2000	rtc_test.sh 3
 TGE-LV-SD-1010	dmesg | grep mmc | grem DMA
 TGE-LV-SD-1050	sd_clk.sh 1
-TGE-LV-SD-1800	storage_all.sh 1
+TGE-LV-SD-1800	cat /proc/partitions | grep mmc
 TGE-LV-STORAGE-2001	storage_all.sh 1
 TGE-LV-STORAGE-2002	storage_all.sh 2
 TGE-LV-THERMO-0001	cat /sys/devices/virtual/thermal/thermal_zone0/*temp && cat /sys/devices/virtual/thermal/thermal_zone0/*type
