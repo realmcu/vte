@@ -24,6 +24,7 @@
 # Spring Zhang           Apr.13,2011       n/a      Add voltage check
 # Spring Zhang           May.06,2011       n/a      Format output
 # Spring Zhang           Jun.16,2011       n/a      Add DVFS clock check
+# Spring Zhang           Aug.09,2011       n/a      Add MX53 QS Ripley support
 
 # Note:
 # You can generate usage and clk config file by:
@@ -32,8 +33,16 @@
 setup()
 {
 	#general setting
-	VDDGP=/sys/class/regulator/regulator.10/microvolts
-	VCC=/sys/class/regulator/regulator.11/microvolts
+    PLATFM_STRING=`platfm.sh`
+    if dmesg | grep 34708; then
+        # Ripley MC34708: GP-SW1, LP-SW2
+        VDDGP=/sys/class/regulator/regulator.0/microvolts
+        VCC=/sys/class/regulator/regulator.2/microvolts
+    else
+        #MX53 SMD
+        VDDGP=/sys/class/regulator/regulator.10/microvolts
+        VCC=/sys/class/regulator/regulator.11/microvolts
+    fi
 	CPU_CTRL=/sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
 	CUR_FREQ_GETTER=/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
 	DVFSCORE_DIR=/sys/devices/platform/mxc_dvfs_core.0
@@ -231,6 +240,8 @@ check_voltage()
 		if [ "$vol" != "$cur_vol" ]; then
 			echo "FATAL ERROR WP-$wp: voltage different, current vol is $cur_vol, reference is $vol"
             RC=22
+        else
+            echo "Checking WP-$wp: current voltage is $cur_vol microvols"
 		fi
 	done
 
@@ -312,6 +323,7 @@ case $check_type in
 		#Disable DVFS first
 		disable_dvfs_$platfm
 		check_voltage $clk_points_file || exit $RC
+        echo "TPASS: the voltage aligns"
 	;;
     "dvfs")
         check_dvfs
