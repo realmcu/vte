@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #Copyright 2010-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #This program is free software; you can redistribute it and/or modify
@@ -32,6 +32,7 @@
 # Spring Zhang           Mar.28,2011       n/a      Add mx53 WPs convert test
 # Spring Zhang           Aug.8,2011        n/a      MX53 WPs delete 160MHz, fix
 #   several severe bugs
+# Spring Zhang           Aug.9,2011        n/a      Merge MX37 case
 
 # Function:     setup
 #        
@@ -141,22 +142,68 @@ lowfreq_suspend()
     tst_resm TPASS "Resume from mem..."
 }
 
+# Function moved from dvfs_mx37.sh 
+# Authur: Blake Liu@20081015
+wp_convert_mx37()
+{
+    RC=0
+    export TCID="TGE_LV_DVFS_WP_CONVERT_MX37"
+
+    # For imx37
+    for freq in 600000 532000 200000 600000 200000 532000
+    do 
+        cur_freq=`cat $DVFS_DIR/cpuinfo_cur_freq`
+        echo $freq > $DVFS_DIR/scaling_setspeed
+        res=`cat $DVFS_DIR/cpuinfo_cur_freq`
+        if [ $res -eq $freq ];then
+            tst_resm TPASS "cpu frequency changed from $cur_freq --> $res: ok"
+        else
+            tst_resm TFAIL "cpu frequency changed from $cur_freq --> $res: fail"
+            RC=1
+        fi
+        sleep 3
+    done 
+
+    return $RC
+}
+
+# function supporting MX53
 wp_convert()
 {
     export TCID="TGE_LV_DVFS_WP_CONVERT"
     RC=0
 
-    if [ $platfm -ne 53 ]; then
-        tst_resm TWARN "1GHz only support on MX53, ignore the test"
-        RC=67
-        return $RC
+    # Set working points arrays
+    if [ $platfm -eq 53 ]; then
+        WP_list="400000 800000 1000000"
+        WP_value[0]=400000
+        WP_value[1]=800000
+        WP_value[2]=1000000
+        rand_factor=3
+    elif [ $platfm -eq 41 ]; then
+        WP_list="160000 400000 800000"
+        WP_value[0]=160000
+        WP_value[1]=400000
+        WP_value[2]=800000
+        rand_factor=3
+    elif [ $platfm -eq 51 ]; then
+        WP_list="160000 800000"
+        WP_value[0]=160000
+        WP_value[1]=800000
+        rand_factor=2
+    elif [ $platfm -eq 37 ]; then
+        WP_list="600000 532000 200000"
+        WP_value[0]=600000
+        WP_value[1]=532000
+        WP_value[2]=200000
+        rand_factor=3
+    else
+        tst_resm TFAIL "Platform not supported"
+        return $platfm
     fi
 
     echo 0 > $DVFS_CTRL
 
-    #MX53 SMD working points deletes 160MHz
-    #WP_list="160000 400000 800000 1000000"
-    WP_list="400000 800000 1000000"
     for i in $WP_list; do
         echo $i > $CPU_CTRL
         cur_freq=`cat $CUR_FREQ_GETTER`
@@ -178,17 +225,13 @@ wp_convert()
         done
     done
 
-    #Random test
-    times=7
+    #Random test for 7 times
+    times=32
     count=0
-    #WP_value4="160000"
-    WP_value0="400000"
-    WP_value1="800000"
-    WP_value2="1000000"
     while [ $count -lt $times ]; do
         rand=`od -vAn -N4 -tu4 < /dev/urandom`
-        rand=`expr $rand % 3`
-        eval value=\$WP_value${rand}
+        rand=`expr $rand % $rand_factor`
+        value=${WP_value[$rand]}
         tst_resm TINFO "Change working point to $value"
         cpufreq-set -f $value
         value_ret=`cpufreq-info -f`
@@ -224,9 +267,9 @@ setup  || exit $RC
 case "$1" in
     1)
     if [ $platfm -eq 37 ]; then
-        WorkPoint_list=200000
+        WorkPoint_list="600000 532000 200000"
     elif [ $platfm -eq 51 ]; then
-        WorkPoint_list=160000
+        WorkPoint_list="160000 800000"
     elif [ $platfm -eq 41 ]; then
         WorkPoint_list="160000 400000 800000"
     elif [ $platfm -eq 53 ]; then
@@ -239,7 +282,7 @@ case "$1" in
     done
     ;;
     2)
-    wp_convert || exit $RC
+        wp_convert || exit $RC
     ;;
     *)
     usage
