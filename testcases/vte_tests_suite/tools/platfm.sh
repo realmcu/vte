@@ -190,11 +190,11 @@ determine_platform()
         fi
     fi
 		
-		find=`cat /proc/cpuinfo | grep "Hardware" | grep "i.MX 6Quad SABRE Auto Board" | wc -l`;
+    find=`cat /proc/cpuinfo | grep "Hardware" | grep "i.MX 6Quad SABRE Auto Board" | wc -l`;
     if [ $find -eq 1 ]
     then
-    	find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
-      p=IMX6-SABREAUTO
+        find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
+        p=IMX6-SABREAUTO
     fi
 
     if [ $p = "IMX31-3STACK" ]
@@ -319,6 +319,21 @@ CPU revision    : 5
 
 Hardware        : Freescale MX53 SMD Board
 Revision        : 53321
+Serial          : 0000000000000000
+
+
+MX53 LOCO Ripley Rev.A - 201108
+Processor       : ARMv7 Processor rev 5 (v7l)
+BogoMIPS        : 399.76
+Features        : swp half thumb fastmult vfp edsp neon vfpv3
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x2
+CPU part        : 0xc08
+CPU revision    : 5
+
+Hardware        : Freescale MX53 LOCO Board
+Revision        : 53121
 Serial          : 0000000000000000
 
 EOF

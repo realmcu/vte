@@ -1,28 +1,3 @@
-#FSL-UT-UART-MXC-0040    /unit_tests_d/autorun-mxc_uart.sh
-#FSL-UT-FB-0010  /unit_tests_d/autorun-fb.sh
-#FSL-UT-KEYPAD-0010      /unit_tests_d/autorun-keypad.sh
-#FSL-UT-MMC-0010 /unit_tests_d/autorun-mmc.sh
-#FSL-UT-ATA-0010 /unit_tests_d/autorun-ata.sh
-#FSL-UT-MU-0010  /unit_tests_d/autorun-mu.sh
-#FSL-UT-WDOG-0010        /unit_tests_d/autorun-wdog.sh
-#FSL-UT-FIRI-0010        /unit_tests_d/autorun-firi.sh
-#FSL-UT-RTIC-0020        /unit_tests_d/autorun-rtic.sh
-#FSL-UT-HACC-0010        /unit_tests_d/autorun-hacc.sh
-#FSL-UT-1WIRE-0020       /unit_tests_d/autorun-owire.sh
-#FSL-UT-SAHARA-0010      /unit_tests_d/autorun-sahara.sh
-#FSL-UT-PF-0010  /unit_tests_d/autorun-pf.sh
-#FSL-UT-SCC-0010 /unit_tests_d/autorun-scc.sh
-#FSL-UT-OPROFILE-0010    /unit_tests_d/autorun-oprofile.sh
-#FSL-UT-V4L2-0010        /unit_tests_d/autorun-v4l2.sh
-#FSL-UT-VPU-0010 /unit_tests_d/autorun-vpu.sh
-#FSL-UT-PMIC-0010        /unit_tests_d/autorun-pmic.sh
-#FSL-UT-MBX-Services-0010_FSL-UT-MBX-EGL-0010    /unit_tests_d/autorun-mbx.sh
-#FSL-UT-PMIC-SC55112_Light-0020  /unit_tests_d/autorun-pmic-light.sh
-#FSL-UT-PMIC-SC55112_Power-0010  /unit_tests_d/autorun-pmic-power.sh
-#FSL-UT-ALSA-0010_0020_0030 /unit_tests_d/autorun-sound.sh
-#FSL-UT-HANTRO-0010      /unit_tests_d/autorun-hantro.sh
-#FSL-UT-RTC-0010 /unit_tests_d/autorun-rtc.sh
-#TGE-LV-ASRC-0211	rtc_testapp_6 -T 5; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
 TGE-LV-KERNEL_BOOT-0001 dmesg -c
 TGE-LV-IOMUX-0001 insmod ${LTPROOT}/testcases/bin/mxc_wd_test.ko; rmmod mxc_wd_test
 TGE-LV-BLANK_CASE echo "will reboot during this test";sleep 100; echo "BUGON should not see this" | grep OK
@@ -179,7 +154,6 @@ TGE-LV-GPU-EGL-FB-0001	gles.sh 1
 TGE-LV-GPU-FB-PERF-GLES-0006	gles.sh 2
 TGE-LV-GPU-PERF-OPENVG-0001	vg.sh 1
 TSG-LV-GPU-FB-CONF-VG-0002	vg.sh 2
-#TSG-LV-GPU-FB-MULTI-0001	sh -c "vg.sh 2 &"; gles.sh 2
 TGE-LV-I2C-0001	sh -c "i2cdetect -y -a -r 0 && i2cdetect -y -a -r 1"
 TGE-LV-KERNEL-10000	$(which crashme) +200 666 50 00:00:05 2
 TGE-LV-KERNEL-10001	RC=0;list=$(cat /proc/vmallocinfo | grep -v "kgsl" | grep -v "mxcfb"| awk '{print $2}') ; for i in $list; do if [ $i -gt 4194304 ]; then RC=$(expr $RC + 1); fi; if [ $i -lt 0 ]; then RC=$(expr $RC + 1) ; fi; done; echo $RC ; [ $RC -eq 0 ]
@@ -188,7 +162,6 @@ TGE-LV-KERNEL-10003	nanosleep_test
 TGE-LV-KERNEL-10004	int1=$(cat /proc/interrupts | grep -i time | awk '{print $2}'); sleep 1 ; int2=$(cat /proc/interrupts | grep -i time | awk '{print  $2}'); echo $int1; echo $int2;ret=$(expr $int2 - $int1); echo $ret; [ $ret -lt 100 ] && echo PASS || echo FAIL
 TGE-LV-KERNEL-10005	cat /proc/meminfo | grep HighTotal
 TGE-LV-EMMC-BOOT-0001	eMMC_boot_test.sh
-#TGE-LV-LCD-BL-00002	echo 100 > /sys/class/backlight/pwm-backlight.0/brightness; rtc_testapp_6 -m standby -T 5 ; BR=$(cat /sys/class/backlight/pwm-backlight.0/brightness) ; [ $BR -eq 100 ]  && echo pass || echo fail
 TGE-LV-DVFS-0010	dvfs.sh 1
 TGE-LV-DVFS-0040	dvfs.sh 2
 TGE-LV-DVFS-0041	cpu_lowfreq.sh

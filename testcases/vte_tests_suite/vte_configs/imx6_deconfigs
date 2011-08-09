@@ -92,6 +92,7 @@ export CONFIG_OM_SCULL=y
 #export CONFIG_OM_CRYPTO=y
 export CONFIG_OM_USB=y
 export CONFIG_OM_MMC=y
+export CONFIG_OM_IMX2_WD=y
 #export CONFIG_VM_MXC_WD=y
 
 #platform depended config need read the related Makefile in subfolder
