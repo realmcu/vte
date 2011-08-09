@@ -26,8 +26,8 @@ OBJS=$(patsubst %.c,%*.o,$(SRCS))
 
 TARGET=stream_benchmark
 
-#CFLAGS = -Wall -O3 -fsigned-char -march=armv7-a  -mfpu=neon -mfloat-abi=softfp
-CFLAGS = -Wall -O3 -fsigned-char -march=armv7-a
+CFLAGS = -Wall -O3 -fsigned-char -march=armv7-a  -mfpu=neon -mfloat-abi=softfp
+#CFLAGS = -Wall -O3 -fsigned-char -march=armv7-a
 
 all: $(TARGET)
 	@echo "************************************************"
