@@ -228,7 +228,7 @@ TGE-LV-UART-0254	uart5.sh  /dev/ttymxc4
 TGE-LV-UART-0270	uart_testapp_8.sh
 TGE-LV-UART-0500	for i in 9600 115200 460800 500000 1000000 1152000 2000000 3500000 4000000; do echo "Test Baud rate $i ==============" && uart_testapp_10 /dev/ttymxc2 $i && sleep 10; done
 TGE-LV-UART-0510	RT=0; for i in 9600 115200 460800 500000 1000000 1152000 2000000 3500000 4000000; do echo "Test Baud rate $i ==============" && uart_testapp_11 /dev/ttymxc1 $i || RT=$(expr $RT + 1); done; [ $RT -eq 0 ]
-TGE-LV-UART-0601	isgate=$(fgrep "uart" /proc/cpu/clocks | awk \'{print $3}\') && echo $isgate | grep 0 && (cat /dev/ttymxc1 &) ; sleep 2 && isgate=$( fgrep "uart" /proc/cpu/clocks | awk \'{print $3}\') && echo $isgate | grep 1 && killall cat ; sleep 2 && isgate=$(fgrep "uart" /proc/cpu/clocks | awk \'{print $3}\') && echo $isgate | grep 0
+TGE-LV-UART-0601	isgate=$(fgrep "uart" /proc/cpu/clocks | awk '{print $3}') && echo $isgate | grep 0 && (cat /dev/ttymxc1 &) ; sleep 2 && isgate=$( fgrep "uart" /proc/cpu/clocks | awk '{print $3}') && echo $isgate | grep 1 && killall cat ; sleep 2 && isgate=$(fgrep "uart" /proc/cpu/clocks | awk '{print $3}') && echo $isgate | grep 0
 TGE-LV-UART-0700	uart_testapp_10 /dev/ttymxc1 115200 && uart_testapp_10 /dev/ttymxc2 115200
 TGE-LV-V4L2-0010	v4l_capture_testapp -T 10
 TGE-LV-V4L2-0011	v4l_capture_testapp -T 300
