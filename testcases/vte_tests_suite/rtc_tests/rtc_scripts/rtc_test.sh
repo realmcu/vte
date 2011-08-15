@@ -116,7 +116,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-year=$(date %Y)
+year=$(date +%Y)
 
 #date -u 201003211658
 #date "2010-07-14 10:06:00"
