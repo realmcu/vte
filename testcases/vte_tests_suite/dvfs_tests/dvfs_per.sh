@@ -153,9 +153,9 @@ dvfs_per_basic()
     #storage test
     #storage_test.sh CD /mnt/mmcblk0p1 /mnt/msc 100 3
 
-    #V4L2 test
-    v4l_capture_testapp -C 3 -O BGR32 -o ./output || return $RC
-    vpu_dec_test.sh 1
+    #V4L2-0071
+    v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24 || return $RC
+    vpu_dec_test.sh 1 || return $RC
     
     
     #suspend test
