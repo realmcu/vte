@@ -125,8 +125,7 @@ TGE-LV-ASRC-0205	asrc_grp_conv.sh 44
 TGE-LV-ASRC-0206	asrc_grp_conv.sh 32
 TGE-LV-ASRC-0207	asrc_grp_conv.sh 48
 TGE-LV-ASRC-0208	asrc_grp_conv.sh 96
-TGE-LV-SPDIF-0001	modprobe snd_spdif; aplay -l | grep MXC_SPDIF && modprobe -r snd_spdif
-TGE-LV-SPDIF-0004	spdif_basic.sh
+TGE-LV-SPDIF-0001	spdif_basic.sh
 TGE-LV-ESLCD-0705	echo q | fbv ${LTPROOT}/testcases/bin/butterfly.png
 TGE-LV-ETHERNET-1007	touch readme && ftpget -u anonymous 10.192.225.218 readme readme && cat readme | grep welcome && rm readme
 TGE-LV-FEC-0010	fec_testapp -T 0
@@ -164,7 +163,7 @@ TGE-LV-KERNEL-10005	cat /proc/meminfo | grep HighTotal
 TGE-LV-EMMC-BOOT-0001	eMMC_boot_test.sh
 TGE-LV-DVFS-0010	dvfs.sh 1
 TGE-LV-DVFS-0040	dvfs.sh 2
-TGE-LV-DVFS-0041	cpu_lowfreq.sh
+TGE-LV-DVFS-0041	cpu_lowfreq.sh 1
 TGE-LV-DVFS-0050	dvfs_per.sh 1
 TGE-LV-DVFS-0052	dvfs_per.sh 2
 TGE-LV-DVFS-0200	cpufreq-info
