@@ -13,14 +13,16 @@
 #        @brief  configuration file to compile ACC and Magnetic tests
 #
 ################################################################################
-SUBDIRS += acc_tests lsensor_tests magn_tests 
-
+SUBDIRS-y =
+SUBDIRS-$(CONFIG_VTE_ACC)     += acc_tests
+SUBDIRS-$(CONFIG_VTE_LSENSOR)     += lsensor_tests
+SUBDIRS-$(CONFIG_VTE_MAGN)     += magn_tests
 
 all:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i; done
 
 install:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install; done
 
 clean:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i clean; done
