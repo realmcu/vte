@@ -291,7 +291,36 @@ test_case_03()
 }
 
 
+# Function:     test_case_04
+# Description   - Test if rtc accuracy is ok
+#  
+test_case_04()
+{
+    #TODO give TCID 
+    TCID="rtc_stree"
+    #TODO give TST_COUNT
+    TST_COUNT=1
+    RC=0
+		loop=300
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
+    #TODO add function test scripte here
+    #test 1hr and check rtc accuracy
+    while [ $loop -gt 0 ]; then
+		do
+		rtc_testapp_6 -m "standby" -T 5
+		loop=$(expr $loop - 1)
+    done
+    loop=300
+    while [ $loop -gt 0 ]; then
+		do
+		rtc_testapp_6 -m "mem" -T 5
+		loop=$(expr $loop - 1)
+    done
+		
+		return $RC
+}
 # main function
 RC=0
 
@@ -314,6 +343,10 @@ case "$1" in
 3)
   test_case_03 || exit $RC 
   ;;
+4)
+  test_case_04 || exit $RC 
+  ;;
+*)
 *)
   usage
   ;;
