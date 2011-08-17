@@ -4,7 +4,10 @@
 export CONFIG_VTE_IMX5=y
 
 #define test sub folder
-CONFIG_VTE_SENSOR=y
+export CONFIG_VTE_SENSOR=y
+export CONFIG_VTE_LSENSOR=y
+export CONFIG_VTE_ACC=y
+export CONFIG_VTE_MAGN=y
 export CONFIG_VTE_ALSA=y
 CONFIG_VTE_ASRC=y
 #CONFIG_VTE_ATA=y
