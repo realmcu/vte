@@ -7,7 +7,8 @@
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
 TARGET = gpu_test.sh
-TARGETS = gpu_3dmark_cpuload.sh gpu_test.sh gles.sh vg.sh
+TARGETS-$(CONFIG_VTE_IMX5) = gpu_3dmark_cpuload.sh gpu_test.sh gles.sh vg.sh
+TARGETS-$(CONFIG_VTE_IMX6) = gles_viv.sh vg_gc2000.sh vg_gc35x.sh
 BIN = ../../../bin/
 
 SRC-$(CONFIG_VTE_IMX5)  =  mx5x_gpu_test.sh
@@ -16,8 +17,8 @@ SRC-$(CONFIG_VTE_IMX35) =  mx35_gpu_test.sh
 all:
 
 install:
-	ln -f $(TARGETS) $(BIN)
-	ln -f $(SRC-y) $(BIN)/$(TARGET)
+	-ln -f $(SRC-y) $(BIN)/$(TARGET)
+	-ln -f $(TARGETS-y) $(BIN)/
 
 clean:
 
