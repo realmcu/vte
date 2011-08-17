@@ -326,7 +326,7 @@ case $check_type in
         echo "TPASS: the voltage aligns"
 	;;
     "dvfs")
-        check_dvfs
+        check_dvfs || exit $RC
     ;;
 	*)
         usage
