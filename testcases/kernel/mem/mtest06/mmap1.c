@@ -92,6 +92,7 @@
 /*	        read must be a success between map and unmap of the region.   */
 /*									      */
 /******************************************************************************/
+#define _MULTI_THREADED
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -139,6 +140,9 @@ sigjmp_buf jmpbuf;		/* argument to sigsetjmp and siglongjmp       */
 
 char *TCID = "mmap1";
 int TST_TOTAL = 1;
+long      map_len;
+
+pthread_rwlock_t rwlock = PTHREAD_RWLOCK_INITIALIZER;
 
 /******************************************************************************/
 /*									      */
@@ -166,14 +170,23 @@ sig_handler(int signal,		/* signal number, set to handle SIGALRM       */
              _exit(0);
 
         case SIGSEGV:
-             if (info->si_code == SEGV_MAPERR &&
-                      info->si_addr == map_address)
+ if ( info->si_addr == map_address || (map_address && (info->si_addr >= (void*) map_address && info->si_addr < (void *)((long)map_address + map_len))))
              {
                   tst_resm(TINFO,
                     "page fault occurred at %p",
                     map_address);
                   longjmp(jmpbuf, 1);
-             }
+             } else if (info->si_addr == map_address || (map_address && (info->si_addr < (void*) map_address \
+						 || info->si_addr > (void *)((long)map_address + map_len)))){
+                  tst_resm(TINFO,
+                    "multi-core remapped at %p",
+                    map_address);
+                  longjmp(jmpbuf, 1);
+							 }else{
+					fprintf(stderr, "caught SIGSEGV at %p while mmap is (%p,%p) - exiting\n", 
+			     info->si_addr, map_address, (void*)((long)map_address + map_len));
+               _exit(-1);
+						}
         default:
             fprintf(stderr, "caught unexpected signal - %d --- exiting\n",
                      signal);
@@ -290,6 +303,10 @@ map_write_unmap(void *args)	/* file descriptor of the file to be mapped.  */
 
     tst_resm(TINFO, "pid[%d]: map, change contents, unmap files %d times",
 		getpid(), (int)mwuargs[2]);
+
+		/* The size of the map */
+		map_len = mwuargs[1];
+
     if (verbose_print)
         tst_resm(TINFO, "map_write_unmap() arguments are: "
 		    "fd - arg[0]: %d; "
@@ -299,6 +316,7 @@ map_write_unmap(void *args)	/* file descriptor of the file to be mapped.  */
 
     while (mwu_ndx++ < (int)mwuargs[2])
     {
+		    while(EBUSY ==  pthread_rwlock_trywrlock(&rwlock));
         if ((map_address = mmap(0, (size_t)mwuargs[1],  PROT_WRITE|PROT_READ,
 				MAP_SHARED, (int)mwuargs[0], 0))
 			 == (caddr_t *) -1)
@@ -314,7 +332,7 @@ map_write_unmap(void *args)	/* file descriptor of the file to be mapped.  */
 	prtln();
 
         memset(map_address, 'a', mwuargs[1]);
-
+			  pthread_rwlock_unlock(&rwlock);
         if (verbose_print)
             tst_resm(TINFO, "[%d] times done: of total [%d] iterations, "
 			"map_write_unmap():memset() content of memory = %s",
@@ -363,6 +381,8 @@ read_mem(void *args)		/* number of reads performed		      */
 
     while (rd_index++ < (int)rmargs[2])
     {
+		   while(EBUSY == pthread_rwlock_trywrlock(&rwlock));
+			 pthread_rwlock_unlock(&rwlock);
         if (verbose_print)
 	    tst_resm(TINFO,
 	        "read_mem() in while loop  %d times to go %ld times",
@@ -383,7 +403,7 @@ read_mem(void *args)		/* number of reads performed		      */
             if (strncmp((char *)map_address, "a", 1) != 0)
             {
                 exit_val = -1;
-		pthread_exit((void *)exit_val);
+								pthread_exit((void *)exit_val);
             }
             usleep(1);
 	}
