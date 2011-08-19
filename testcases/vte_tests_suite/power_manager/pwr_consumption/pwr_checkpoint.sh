@@ -239,11 +239,18 @@ check_voltage()
 		cur_vol=`cat $VDDGP`
 		if [ "$vol" != "$cur_vol" ]; then
 			echo "FATAL ERROR WP-$wp: voltage different, current vol is $cur_vol, reference is $vol"
-            RC=22
+            #cat will issue a sub-process so the error code can't return as it is, it will always
+            #reuturn zero
+            touch ./tmp_RC
         else
             echo "Checking WP-$wp: current voltage is $cur_vol microvols"
 		fi
 	done
+
+    if [ -e ./tmp_RC ]; then
+        RC=22
+    fi
+    rm -f ./tmp_RC
 
     return $RC
 }

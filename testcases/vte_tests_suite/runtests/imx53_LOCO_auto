@@ -176,7 +176,7 @@ TGE-LV-RTC-0014	rtc_testapp_5  -T FASYNC
 TGE-LV-RTC-0020	rtc_testapp_4
 TGE-LV-RTC-2000	rtc_test.sh 3
 TGE-LV-SD-1300	cat /proc/partitions | grep mmcblk
-TGE-LV-SD-CLOCK_0001	RC=0; ss=0;list=$(cat /proc/cpu/clocks | grep -i sdhc | awk '{print $3}'); for i in $list; do ss=$(expr $ss + $i); done; [ $ss -eq 0 ]  || RC=1; sh -c "dd if=/dev/mmcblk0p1 of=/dev/null bs=1024k count=200 &"; ss=0;list=$(cat /proc/cpu/clocks | grep -i sdhc | awk '{print $3}'); for i in $list; do ss=$(expr $ss + $i); done; [ $ss -lt 1 ] || RC=$(expr $RC + 1); wait; [ $RC -eq 0 ]
+TGE-LV-SD-CLOCK_0001 mmc_clock.sh
 TGE-LV-STORAGE-2001	storage_all.sh 1
 TGE-LV-STORAGE-2002	storage_all.sh 2
 TGE-LV-STRESS-DVFS	dvfs_mx53.sh 3
