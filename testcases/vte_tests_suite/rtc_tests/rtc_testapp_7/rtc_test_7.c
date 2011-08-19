@@ -134,10 +134,14 @@ int VT_rtc_test7_setup(void)
 {
         int rv = TFAIL;
         int i = 0;
-        extern char * RTC_DRIVER_NAME[RTC_DEVICE_NUM];
-        do { 
-            file_desc = open(RTC_DRIVER_NAME[i], O_RDONLY);
-        } while (file_desc <= 0 && i++<RTC_DEVICE_NUM);
+        extern char* RTC_DRIVER_NAME[RTC_DEVICE_NUM];
+        extern char* pdevice;
+
+        if (!pdevice)
+            do { 
+                file_desc = open(RTC_DRIVER_NAME[i], O_RDONLY);
+            } while (file_desc <= 0 && i++<RTC_DEVICE_NUM);
+        else file_desc = open(pdevice, O_RDONLY);
         if (file_desc ==  -1)
         {
             tst_brkm(TBROK, cleanup, "ERROR : Open RTC driver fails");
@@ -145,7 +149,8 @@ int VT_rtc_test7_setup(void)
         }
         else
         {
-            tst_resm(TINFO, "Open RTC device successfully: %s \n", RTC_DRIVER_NAME[i]);
+            tst_resm(TINFO, "Open RTC device successfully: %s \n",
+                pdevice? pdevice: RTC_DRIVER_NAME[i]);
             rv = TPASS;
         }
     

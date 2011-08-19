@@ -285,7 +285,8 @@ int VT_rtc_test6_setup(char* rtc_dev)
         }
         else
         {
-            tst_resm(TINFO, "Open RTC device successfully: %s \n", RTC_DRIVER_NAME[i]);
+            tst_resm(TINFO, "Open RTC device successfully: %s \n",
+                strcmp(rtc_dev, "")? rtc_dev: RTC_DRIVER_NAME[i]);
             rv = TPASS;
         }
     

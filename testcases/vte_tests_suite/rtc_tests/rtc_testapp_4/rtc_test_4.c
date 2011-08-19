@@ -137,7 +137,8 @@ int VT_rtc_test4_setup(void)
             return rv;
         }
         else {
-            tst_resm(TINFO, "Open RTC device successfully: %s \n", RTC_DRIVER_NAME[i]);
+            tst_resm(TINFO, "Open RTC device successfully: %s \n",
+                pdevice? pdevice: RTC_DRIVER_NAME[i]);
         }
         
         /* Opening driver a second time returns busy */
