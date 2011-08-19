@@ -113,8 +113,7 @@ TGE-LV-ALSA-0243	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k24M-S24_LE.wa
 TGE-LV-ALSA-0244	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k24S-S24_LE.wav -A
 TGE-LV-ALSA-0245	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32M.wav -A
 TGE-LV-ALSA-0246	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32S.wav -A
-TGE-LV-SPDIF-0001	modprobe snd_spdif; aplay -l | grep MXC_SPDIF && modprobe -r snd_spdif
-TGE-LV-SPDIF-0004	spdif_basic.sh
+TGE-LV-SPDIF-0001	spdif_basic.sh
 TGE-LV-ESLCD-0705	echo q | fbv ${LTPROOT}/testcases/bin/butterfly.png
 TGE-LV-FEC-0010	fec_testapp -T 0
 TGE-LV-FEC-0011	fec_testapp -T 1 -H 10.192.225.219
@@ -148,7 +147,7 @@ TGE-LV-NOR-1101	nor_mtd_testapp -T INFO -D /dev/mtd1
 TGE-LV-DVFS-0010	dvfs.sh 1
 TGE-LV-DVFS-0011	echo 1 > /sys/devices/platform/mxc_dvfsper.0/enable && sleep 10 && echo 0 > /sys/devices/platform/mxc_dvfsper.0/enable
 TGE-LV-DVFS-0040	dvfs.sh 2
-TGE-LV-DVFS-0041	cpu_lowfreq.sh
+TGE-LV-DVFS-0041	cpu_lowfreq.sh 1
 TGE-LV-DVFS-0050	dvfs_per.sh 1
 TGE-LV-DVFS-0052	dvfs_per.sh 2
 TGE-LV-DVFS-0200	cpufreq-info
