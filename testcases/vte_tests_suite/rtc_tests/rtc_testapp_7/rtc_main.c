@@ -88,6 +88,7 @@ extern char *TESTDIR;                /* temporary dir created by tst_tmpdir() */
 char *TCID     = "rtc_testapp_7"; /* test program identifier.          */
 int  TST_TOTAL = 1;                  /* total number of tests in this file.   */
 /* RTC devices list of attempting to open */ 
+char * pdevice = NULL;
 char* RTC_DRIVER_NAME[RTC_DEVICE_NUM] = {"/dev/rtc", "/dev/rtc0"};
 
 /*==================================================================================================
@@ -189,9 +190,11 @@ void setup(void)
 int main(int argc, char **argv)
 {
         int VT_rv = TFAIL;
+        int d_opt = 0;
         int t_opt = 0;
         int o_opt = 0;
         int seconds = 0;
+        char *rtc_dev;
         char *msg;
         char *alarm_time;
         char *on_off;
@@ -199,6 +202,7 @@ int main(int argc, char **argv)
         /*Parse options*/
         option_t options[]=
         {
+            {"d:",&d_opt,&rtc_dev},
             {"T:",&t_opt,&alarm_time},
             {"O:",&o_opt,&on_off},
             {NULL,NULL,NULL}
@@ -207,6 +211,11 @@ int main(int argc, char **argv)
         {
             tst_resm(TFAIL,"option parsing error - %s",msg);
             return TFAIL;
+        }
+
+        if (d_opt){
+            pdevice = rtc_dev;
+            tst_resm(TINFO, "set RTC to %s", pdevice);
         }
 
         if (o_opt)
@@ -281,6 +290,7 @@ int main(int argc, char **argv)
 void help(void)
 {
         printf("RTC driver option\n");
+        printf("  -d device\t RTC device path\n");
         printf("  -O on/off\t enable/disable alarm\n");
         printf("  -T seconds\t Set RTC alarm time in second\n");
 }

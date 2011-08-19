@@ -116,7 +116,8 @@ int VT_rtc_test5_setup(void)
         if (file_desc ==  -1)
             tst_brkm(TBROK, cleanup, "ERROR : Open RTC driver fails");
         else {
-            tst_resm(TINFO, "Open RTC device successfully: %s \n", RTC_DRIVER_NAME[i]);
+            tst_resm(TINFO, "Open RTC device successfully: %s \n",
+                pdevice? pdevice: RTC_DRIVER_NAME[i]);
             rv = TPASS;
         }
 

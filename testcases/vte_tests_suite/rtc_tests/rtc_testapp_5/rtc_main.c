@@ -194,7 +194,7 @@ int main(int argc, char **argv)
         /* parse options. */
         int t_flag=0;                 /* binary flags: opt or not */
         char *test_case;  /* option arguments */
-				int d_flag=0;
+	    int d_flag=0;
         char *msg;
         
         option_t options[] = {
