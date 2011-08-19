@@ -1,8 +1,8 @@
 
-AUTO_TARGETS-$(CONFIG_VTE_IMX5) += imx51_auto imx51_BABBAGE_auto  \
-									imx53_auto imx53_ALSA_auto \
-									imx50_auto imx50_auto_p1 imx50_auto_p2 imx50_auto_p3 \
-                                    imx53_LOCO_auto imx53_SMD_auto
+AUTO_TARGETS-$(CONFIG_VTE_IMX5) += imx51_auto imx51_BABBAGE_auto
+AUTO_TARGETS-$(CONFIG_VTE_IMX5) += imx53_auto imx53_ALSA_auto
+AUTO_TARGETS-$(CONFIG_VTE_IMX5)	+= imx50_auto imx50_auto_p1 imx50_auto_p2 imx50_auto_p3
+AUTO_TARGETS-$(CONFIG_VTE_IMX5) += imx53_LOCO_auto imx53_SMD_auto
 AUTO_TARGETS-$(CONFIG_VTE_IMX28) += imx28_auto
 P_AUTO_TARGETS-$(CONFIG_VTE_IMX5) += imx51_p_auto imx53_p_auto imx50_p_auto
 P_AUTO_TARGETS-y += imx51_p_auto imx53_p_auto imx50_p_auto
