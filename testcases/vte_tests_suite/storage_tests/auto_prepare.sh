@@ -466,6 +466,30 @@ rmmod_V4L()
 {
 	echo "v4l: prepare rmmod modules";
 	
+	lsmod | grep ov2640_camera;
+        if [ $? -eq 0 ]; then
+        	modprobe -r ov2640_camera;
+		sleep 2;
+	fi
+
+	lsmod | grep ov3640_camera;
+        if [ $? -eq 0 ]; then
+        	modprobe -r ov3640_camera;
+		sleep 2;
+	fi
+
+	lsmod | grep ov5642_camera;
+        if [ $? -eq 0 ]; then
+        	modprobe -r ov5642_camera;
+		sleep 2;
+	fi
+
+	lsmod | grep mxc_v4l2_capture;
+        if [ $? -eq 0 ]; then
+        	modprobe -r mxc_v4l2_capture;
+		sleep 2;
+	fi
+
 	lsmod | grep ipu_prp_enc;
         if [ $? -eq 0 ]; then
         	modprobe -r ipu_prp_enc;
@@ -490,23 +514,6 @@ rmmod_V4L()
 		sleep 2;
 	fi
 
-	lsmod | grep ov2640_camera;
-        if [ $? -eq 0 ]; then
-        	modprobe -r ov2640_camera;
-		sleep 2;
-	fi
-
-	lsmod | grep ov3640_camera;
-        if [ $? -eq 0 ]; then
-        	modprobe -r ov3640_camera;
-		sleep 2;
-	fi
-
-	lsmod | grep mxc_v4l2_capture;
-        if [ $? -eq 0 ]; then
-        	modprobe -r mxc_v4l2_capture;
-		sleep 2;
-	fi
 
 	#Mx25
 	lsmod | grep fsl_csi;

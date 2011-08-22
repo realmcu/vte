@@ -179,7 +179,7 @@ test_case_03()
     # Thu Jan  1 10:16:51 CST 1970
     # Combined:
     # Thu 01 Jan 1970 10:16:51 AM CST  -0.576808 seconds Thu Jan  1 10:16:51 CST 1970
-    diffs=$(hwclock -r ;date)
+    diffs=$(hwclock -r; date)
     # Set the format aligning with Gnome mobile
     # WARNING: it depends on Ubuntu rootfs version, on Lucid, it needs a modification,
     #          however, on Linaro Natty, it doesn't, which doesn't come out
@@ -238,7 +238,11 @@ test_case_03()
     if [ -e /dev/rtc1  ]; then
         hwclock -w -f /dev/rtc1
         sleep 300
-        diffs=$(hwclock -r --rtc=/dev/rtc1  ;date)
+        diffs=$(hwclock -r --rtc=/dev/rtc1; date)
+        if grep -i "Ubuntu" /etc/issue ; then
+            diffs=$(echo $diffs |awk '{$7=""; $8=""; print $0}')
+            diffs=$(echo $diffs |awk '{TMP=$2; $2=$3; $3=TMP; TMP=$4; $4=$5; $5=TMP; print $0}')
+        fi
         echo $diffs
         wd1=$(echo $diffs | awk '{print $1}')
         wd2=$(echo $diffs | awk '{print $8}')
@@ -297,38 +301,37 @@ test_case_03()
 test_case_04()
 {
     #TODO give TCID 
-    TCID="rtc_stree"
+    TCID="RTC_STRESS"
     #TODO give TST_COUNT
     TST_COUNT=1
+
     RC=0
-		loop=300
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
-    #test 1hr and check rtc accuracy
-    while [ $loop -gt 0 ]; then
-		do
-		rtc_testapp_6 -m "standby" -T 5
-		loop=$(expr $loop - 1)
+    for rtc in rtc0 rtc1; do
+        if [ -e /dev/$rtc ]; then
+            for mode in standby mem; do
+                loop=300
+                #TODO add function test scripte here
+                #test 1hr and check rtc accuracy
+                while [ $loop -gt 0 ]; do
+                    rtc_testapp_6 -m $mode -T 15 -d $rtc || RC=$?
+                    loop=$(expr $loop - 1)
+                done
+            done
+        fi
     done
-    loop=300
-    while [ $loop -gt 0 ]; then
-		do
-		rtc_testapp_6 -m "mem" -T 5
-		loop=$(expr $loop - 1)
-    done
-		
-		return $RC
+                
+    return $RC
 }
 # main function
 RC=0
 
 #TODO check parameter
-if [ $# -ne 1 ]
-then
-usage
-exit 1 
+if [ $# -ne 1 ]; then
+    usage
+    exit 1 
 fi
 
 setup || exit $RC
@@ -346,7 +349,6 @@ case "$1" in
 4)
   test_case_04 || exit $RC 
   ;;
-*)
 *)
   usage
   ;;
