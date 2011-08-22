@@ -22,6 +22,7 @@ export CONFIG_VTE_DVFS=y
 export CONFIG_VTE_EMI=y
 export CONFIG_VTE_EPDC=y
 export CONFIG_VTE_EPXP=y
+export CONFIG_VTE_ESAI=y
 export CONFIG_VTE_FB=y
 export CONFIG_VTE_FEC=y
 export CONFIG_VTE_FM=y

@@ -82,6 +82,7 @@ SUBDIRS-$(CONFIG_VTE_DVFS)        += dvfs_tests
 SUBDIRS-$(CONFIG_VTE_EMI)         += emi_tests
 SUBDIRS-$(CONFIG_VTE_EPDC)        += epdc_tests
 SUBDIRS-$(CONFIG_VTE_EPXP)        += epxp_test
+SUBDIRS-$(CONFIG_VTE_ESAI)        += esai_tests
 SUBDIRS-$(CONFIG_VTE_FB)          += fb_test
 SUBDIRS-$(CONFIG_VTE_FEC)         += fec_tests
 SUBDIRS-$(CONFIG_VTE_FM)          += fm_tests
