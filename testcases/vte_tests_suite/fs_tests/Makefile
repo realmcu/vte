@@ -31,7 +31,6 @@
 # Previous fs test cases
 SUBDIRS+=fs_cr_rm fs_fsck fs_inod
 # Test cases reused from LTP kernel/fs
-SUBDIRS+=fs_perms doio
 # New fs test cases
 SUBDIRS+=udev
 TARGETS=jffs2_test1.sh cramfs_test1.sh procfs_test1.sh 
