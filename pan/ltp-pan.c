@@ -706,6 +706,18 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 		int loop = 1;
 		long timeout = 3600;/*one case can not last more than 3600s*/
 		int * pcnt = (int *)malloc(keep_active*sizeof(int));
+		if (running->cmd->name)
+		{
+			int nl = strlen(running->cmd->name);
+			char * p = running->cmd->name + nl - 1;
+			fprintf(stderr,"check the case runtime\n");
+			while (*p == 'L'){
+			  timeout += 1800;
+				if(*(--p) != 'L')
+					break;
+			}
+			fprintf(stderr,"case timeout is %ld \n", timeout);
+		}
 		memset(pcnt,0,keep_active*sizeof(int));
 		while(loop) {
 			for (i = 0; i < keep_active; ++i) {
