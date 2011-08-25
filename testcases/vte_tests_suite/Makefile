@@ -114,6 +114,7 @@ SUBDIRS-$(CONFIG_VTE_RTC)         += rtc_tests
 SUBDIRS-$(CONFIG_VTE_SDMA)        += sdma_tests
 SUBDIRS-$(CONFIG_VTE_SEC)         += security_tests
 SUBDIRS-$(CONFIG_VTE_SLCDC)       += slcdc_tests
+SUBDIRS-$(CONFIG_VTE_SMP)         += smp_tests
 SUBDIRS-$(CONFIG_VTE_SPDIF)       += spdif_tests
 SUBDIRS-$(CONFIG_VTE_SPI)         += spi_tests
 SUBDIRS-$(CONFIG_VTE_SSI_DMA)     += ssi_dam_tests
