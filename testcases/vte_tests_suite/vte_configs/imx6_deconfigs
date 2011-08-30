@@ -31,7 +31,7 @@ export CONFIG_VTE_GPT=y
 export CONFIG_VTE_GPU=y
 export CONFIG_VTE_GPS=y
 export CONFIG_VTE_I2C=y
-#export CONFIG_VTE_IIM=y
+export CONFIG_VTE_IIM=y
 export CONFIG_VTE_IO=y
 #CONFIG_VTE_IPC
 #export CONFIG_VTE_IPUDEV=y

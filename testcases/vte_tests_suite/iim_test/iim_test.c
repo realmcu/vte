@@ -25,7 +25,7 @@ char name[32];
 unsigned long offset;
 } t_regs;
 
-#ifdef MX5
+#if (defined MX5) || (defined MX6)
 #define MAX_REGS 3
 /*mx5x mmap GPT and OCOTP*/
 t_regs mreg[] = {{"GPTOCR1",0x0010},
@@ -88,7 +88,7 @@ int main()
 
   close(fd);
 
-#ifdef MX5
+#if (defined MX5) || (defined MX6)
   printf("print the fuse map for ocotp\n");
 	for (i=0x1000; i<0x1fff; i = i + 4)
 	{
@@ -96,6 +96,7 @@ int main()
 		printf("word %d, value 0x%x\n", ci++,*(int *)(piim+i));
 	}
 #endif
+
   RC = 1;
 	for(i =0; i < MAX_REGS; i++)
 	{
