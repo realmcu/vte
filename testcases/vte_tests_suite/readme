@@ -1,0 +1,9 @@
+sudo apt get install flex
+git clone git://10.192.225.222/vte
+cd vte
+./armconfig
+source mx5x_evk_config
+#note you may need change this file to set your kernel build and source directory
+make vte
+#if you want to make test application from opensource
+make apps
