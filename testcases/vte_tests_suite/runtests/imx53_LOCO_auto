@@ -164,7 +164,7 @@ TGE-LV-DVFS-0010	dvfs.sh 1
 TGE-LV-DVFS-0040	dvfs.sh 2
 TGE-LV-DVFS-0041	cpu_lowfreq.sh 1
 TGE-LV-DVFS-0050	dvfs_per.sh 1
-TGE-LV-DVFS-0052	dvfs_per.sh 2
+TGE-LV-DVFS-0052_LLL	dvfs_per.sh 2
 TGE-LV-DVFS-0200	cpufreq-info
 TGE-LV-DVFS-0020    pwr_checkpoint.sh voltage ${LTPROOT}/testcases/bin/mx53_voltage
 TGE-LV-DVFS-0021    pwr_checkpoint.sh clock useridle ${LTPROOT}/testcases/bin/mx53_clks_useridle
@@ -177,8 +177,8 @@ TGE-LV-RTC-0020	rtc_testapp_4
 TGE-LV-RTC-2000	rtc_test.sh 3
 TGE-LV-SD-1300	cat /proc/partitions | grep mmcblk
 TGE-LV-SD-CLOCK_0001 mmc_clock.sh
-TGE-LV-STORAGE-2001	storage_all.sh 1
-TGE-LV-STORAGE-2002	storage_all.sh 2
+TGE-LV-STORAGE-2001_LLL	storage_all.sh 1
+TGE-LV-STORAGE-2002_LLL	storage_all.sh 2
 TGE-LV-STRESS-DVFS	dvfs_mx53.sh 3
 TGE-LV-VPU-0002_720P	vpu_tvout_720P.sh 2
 TGE-LV-UART-0250	uart5.sh  /dev/ttymxc2
@@ -191,7 +191,7 @@ TGE-LV-UART-0500	for i in 9600 115200 460800 500000 1000000 1152000 2000000 3500
 TGE-LV-UART-0510	RT=0; for i in 9600 115200 460800 500000 1000000 1152000 2000000 3500000 4000000; do echo "Test Baud rate $i ==============" && uart_testapp_11 /dev/ttymxc1 $i || RT=$(expr $RT + 1); done; [ $RT -eq 0 ]
 TGE-LV-UART-0601	isgate=$(fgrep "uart" /proc/cpu/clocks | awk '{print $3}') && echo $isgate | grep 0 && (cat /dev/ttymxc1 &) ; sleep 2 && isgate=$( fgrep "uart" /proc/cpu/clocks | awk '{print $3}') && echo $isgate | grep 1 && killall cat ; sleep 2 && isgate=$(fgrep "uart" /proc/cpu/clocks | awk '{print $3}') && echo $isgate | grep 0
 TGE-LV-UART-0700	uart_testapp_10 /dev/ttymxc1 115200 && uart_testapp_10 /dev/ttymxc2 115200
-TGE-LV-IPU_DEV-0010	ipu_test.sh 1
+TGE-LV-IPU_DEV-0010_L ipu_test.sh 1
 TGE-LV-IPU_DEV-0020	ipu_test.sh 2
 TGE-LV-IPU_DEV-0021	ipu_dev_test -m 0x21 -f 50 -i 352,288,I420 -o 352,288,RGBP,0 -s 1,0,0,0 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv
 TGE-LV-IPU_DEV-0030	ipu_test.sh 3

@@ -149,7 +149,7 @@ TGE-LV-DVFS-0011	echo 1 > /sys/devices/platform/mxc_dvfsper.0/enable && sleep 10
 TGE-LV-DVFS-0040	dvfs.sh 2
 TGE-LV-DVFS-0041	cpu_lowfreq.sh 1
 TGE-LV-DVFS-0050	dvfs_per.sh 1
-TGE-LV-DVFS-0052	dvfs_per.sh 2
+TGE-LV-DVFS-0052_LLL	dvfs_per.sh 2
 TGE-LV-DVFS-0200	cpufreq-info
 TGE-LV-IPU-0070	fbset -depth 32 ; rtc_testapp_6 -d rtc0 -T 30 ; len=$(fbset -i | grep "LineLength" | awk {\'print $3\'}) && echo $len |grep 4096 && fbset -depth 16
 TGE-LV-PM-USB-0010	stop-usb.sh
@@ -217,7 +217,7 @@ TGE-LV-V4L2-0131	v4l2_still_test.sh
 TGE-LV-V4L2-0136	mxc_v4l2_overlay.sh 1
 TGE-LV-V4L2-0137	mxc_v4l2_overlay.sh 2
 TGE-LV-V4L2-0138	mxc_v4l2_overlay.sh 3
-TGE-LV-V4L2-0139	mxc_v4l2_overlay.sh 4
+TGE-LV-V4L2-0139_L	mxc_v4l2_overlay.sh 4
 TGE-LV-V4L2-0140	mxc_v4l2_overlay.sh 5
 TGE-LV-V4L2-0141	mxc_v4l2_overlay.sh 6
 TGE-LV-V4L2-0152	echo 1 > /sys/class/graphics/fb0/blank ; echo 1 > /sys/class/graphics/fb2/blank ; sleep 5 && v4l_capture_testapp -C 3 -O RGB565 -o ./output && echo 0 > /sys/class/graphics/fb0/blank && echo 0 > /sys/class/graphics/fb2/blank
@@ -226,7 +226,7 @@ TGE-LV-V4L2-0159	v4l_capture_testapp -C 3 -O UYVY -o ./output && cp output_UYVY 
 TGE-LV-V4L2-0165	v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -X -K 1
 TGE-LV-V4l2-1001	/unit_tests/mxc_v4l2_still.out -f UYVY -w 640 -h 480
 TGE-LV-V4l2-1001W	/unit_tests/mxc_v4l2_still.out -f YUYV -w 640 -h 480 && cp -f still.yuv /mnt/nfs/temp/still_YUYV_640_480.yuv
-TGE-LV-IPU_DEV-0010	ipu_test.sh 1
+TGE-LV-IPU_DEV-0010_L ipu_test.sh 1
 TGE-LV-IPU_DEV-0020	ipu_test.sh 2
 TGE-LV-IPU_DEV-0021	ipu_dev_test -m 0x21 -f 50 -i 352,288,I420 -o 352,288,RGBP,0 -s 1,0,0,0 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv
 TGE-LV-IPU_DEV-0030	ipu_test.sh 3
@@ -238,7 +238,7 @@ TGE-LV-IPU_DEV-0060	ipu_test.sh 6
 TGE-LV-IPU_DEV-0061	ipu_dev_test -m 0x21 -f 50 -i 352,288,I420 -o 352,288,RGBP,1 -s 1,0,0,0 -c 160,120 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv
 TGE-LV-V4L2-0132	mxc_v4l2_output.sh 1
 TGE-LV-V4L2-0133	mxc_v4l2_output.sh 2
-TGE-LV-V4L2-0134	mxc_v4l2_output.sh 3
+TGE-LV-V4L2-0134_L	mxc_v4l2_output.sh 3
 TGE-LV-V4L2-0135	mxc_v4l2_output.sh 4
 TGE-LV-V4L2-0070	v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
 TGE-LV-V4L2-0071	v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24
