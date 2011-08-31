@@ -65,6 +65,21 @@ RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
+times=5000
+
+while [ $times -gt 0 ]
+do
+echo 0 > /sys/devices/system/cpu/cpu1/online
+echo 0 > /sys/devices/system/cpu/cpu2/online
+echo 0 > /sys/devices/system/cpu/cpu3/online
+
+echo 1 > /sys/devices/system/cpu/cpu1/online
+echo 1 > /sys/devices/system/cpu/cpu2/online
+echo 1 > /sys/devices/system/cpu/cpu3/online
+
+times=$(expr $times - 1)
+done
+
 
 return $RC
 }
