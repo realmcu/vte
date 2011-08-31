@@ -312,7 +312,7 @@ test_case_04()
     for rtc in rtc0 rtc1; do
         if [ -e /dev/$rtc ]; then
             for mode in standby mem; do
-                loop=300
+                loop=3000
                 #TODO add function test scripte here
                 #test 1hr and check rtc accuracy
                 while [ $loop -gt 0 ]; do
