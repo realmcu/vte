@@ -61,7 +61,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 				else
 		#4 skip formal fail
 					line=$(expr $ll + 1)
-		      sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday  >> ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
+		      sed -n "${line}p" ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday  >> ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 					echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
 					sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
 				fi
@@ -77,7 +77,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 					else
 				#5 has former fail case
 						line=$(expr $ll + 1)
-		      	sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday >> ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
+		      	sed -n "${line}p" ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday >> ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 						echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
 						sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
 					fi
@@ -99,7 +99,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 				if [ $ll -gt $line ]; then
 			#4 former fail cases is after current success case
 					line=$(expr $ll + 1)
-		      sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday  >> ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
+		      sed -n "${line}p" ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday  >> ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 				else
 			#4 former fail cases is before the last success cases 
 					line=$(expr $line + 1)
@@ -108,7 +108,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 			else
 	#3 has not last success cases
 				line=$(expr $ll + 1)
-		    sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday  >> ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
+		    sed -n "${line}p" ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday  >> ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 			fi
 			echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
 			sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
