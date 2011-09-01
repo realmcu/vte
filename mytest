@@ -63,7 +63,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 					line=$(expr $ll + 1)
 		      sed -n "${line}p" ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday  >> ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 					echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
-					sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
+					sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday
 				fi
 			else
 	#3 there is case run before
@@ -79,7 +79,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 						line=$(expr $ll + 1)
 		      	sed -n "${line}p" ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday >> ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 						echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
-						sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
+						sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday
 					fi
 				else
 		#4 search former line
@@ -111,7 +111,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 		    sed -n "${line}p" ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday  >> ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 			fi
 			echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
-			sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
+			sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday
 			search=0
 	 fi
 	done
