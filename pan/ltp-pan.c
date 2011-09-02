@@ -735,9 +735,12 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 					pcnt[i] += 1;
 					if (pcnt[i] > timeout){
 					  printf("timeout occure\n");
+						fflush(logfile);
+						sleep(1);
 						system("reboot");
 					/*dead loop here*/
 						while(1){
+					  	printf("timeout occure waiting reboot\n");
 							sleep(1);
 						}
 					/*	continue;*/
