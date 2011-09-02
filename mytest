@@ -63,7 +63,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 					line=$(expr $ll + 1)
 		      sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday  >> ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 					echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
-					sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday
+					sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
 				fi
 			else
 	#3 there is case run before
@@ -79,7 +79,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 						line=$(expr $ll + 1)
 		      	sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday >> ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 						echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
-						sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday
+						sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
 					fi
 				else
 		#4 search former line
@@ -111,7 +111,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 		    sed -n "${ll}p" ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday  >> ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed
 			fi
 			echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
-			sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday
+			sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
 			search=0
 	 fi
 	done
@@ -124,6 +124,14 @@ else
 rm -f ${LTPROOT}/output/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
 ${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.html -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
 #${TEST_PATH}/runalltests.sh -v -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt
+fi
+lastcmd=$(cat ${TEST_PATH}/runtest/$CMDFILE | grep -v "#" |grep "TGE-" | tail -n 1| awk '{print $1}')
+rlastcmd=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | grep "TGE-" | tail -n 1 | awk '{print $1}')
+flastcmd=$(cat ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed | grep "TGE-" | tail -n 1 | awk '{print $1}')
+if [ $lastcmd != $rlastcmd  ];then
+ if [ $lastcmd != $flastcmd  ]; then
+     exit 251
+ fi
 fi
 /mnt/nfs/util/ntpdate 10.192.225.222
 mv ${TEST_PATH}/output/${ARCH_PLATFORM}_${CMDFILE}_log_$tday ${TEST_PATH}/output/${ARCH_PLATFORM}_${CMDFILE}_log_${tday}_$(date +%m%d%Y)
