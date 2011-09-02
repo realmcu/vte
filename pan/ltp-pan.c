@@ -710,13 +710,13 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 		{
 			int nl = strlen(running->cmd->name);
 			char * p = running->cmd->name + nl - 1;
-			printf("check the case runtime at %c \n", *p);
+			fprintf(logfile,"check the case runtime at %c \n", *p);
 			while (*p == 'L'){
 			  timeout += 1800;
 				if(*(--p) != 'L')
 					break;
 			}
-			printf("case timeout is %ld \n", timeout);
+			fprintf(logfile,"case timeout is %ld \n", timeout);
 		}
 		memset(pcnt,0,keep_active*sizeof(int));
 		while(loop) {
@@ -734,7 +734,13 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 					/*child is on*/
 					pcnt[i] += 1;
 					if (pcnt[i] > timeout){
-					  printf("timeout occure\n");
+					  fprintf(logfile,"timeout occure\n");
+						if (failcmdfile != NULL) {
+						fprintf(failcmdfile, "%s %s\n",
+						running[i].cmd->name,
+						running[i].cmd->cmdline);
+						fflush(failcmdfile);
+						}	
 						system("reboot");
 					/*	continue;*/
 					 continue;
