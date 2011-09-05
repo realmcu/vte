@@ -1,6 +1,6 @@
 #!/bin/sh
-export CC=arm-none-linux-gnueabi-gcc
-export AR="arm-none-linux-gnueabi-ar rc"
+export CC=$(CROSS_COMPILER)-gcc
+export AR="$(CROSS_COMPILER)-ar rc"
 CFLAGS="$CFLAGS -fPIC" includedir=$(pwd)/../include \
 prefix=$(pwd)/../ libdir=$(pwd)/../lib ./configure
 unset CC

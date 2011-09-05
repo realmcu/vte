@@ -121,7 +121,7 @@ CTRL_INTERFACE=/dev/null
 write_reg 0 0x1c MMA8450_CTRL_REG1 $cmd
 RC=$?
 
-list=$(ls /sys/class/input/* | grep event)
+list=$(find /sys/class/input/ -name event*)
 for i in $list
 do
 cat $i/device/name | grep mma

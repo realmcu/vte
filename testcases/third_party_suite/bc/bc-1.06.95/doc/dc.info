@@ -1,7 +1,7 @@
-This is dc.info, produced by makeinfo version 4.13 from dc.texi.
-
 INFO-DIR-SECTION Math
 START-INFO-DIR-ENTRY
+This is dc.info, produced by makeinfo version 4.11 from dc.texi.
+
 * dc: (dc).                   Arbitrary precision RPN "Desktop Calculator".
 END-INFO-DIR-ENTRY
 

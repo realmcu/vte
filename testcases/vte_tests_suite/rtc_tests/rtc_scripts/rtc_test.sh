@@ -221,9 +221,9 @@ test_case_03()
     ss1=$(echo $diffs | awk '{print $4}' | cut -d: -f 3)
     ss2=$(echo $diffs | awk '{print $11}' | cut -d: -f 3)
     if [ $ss2 -lt $ss1 ];then
-        offset=$(echo $ss2 $ss1 - p | dc)
+        offset=$(expr $ss2 - $ss1 )
     else
-        offset=$(echo $ss1 $ss2 - p | dc)
+        offset=$(expr $ss1 - $ss2 )
     fi
     if [ $offset -gt 3 ];then
         RC="$RC 6"
@@ -276,9 +276,9 @@ test_case_03()
         ss1=$(echo $diffs | awk '{print $4}' | cut -d: -f 3)
         ss2=$(echo $diffs | awk '{print $11}' | cut -d: -f 3)
         if [ $ss2 -lt $ss1 ];then
-            offset=$(echo $ss2 $ss1 - p | dc)
+            offset=$(expr $ss2 - $ss1)
         else
-            offset=$(echo $ss1 $ss2 - p | dc)
+            offset=$(expr $ss1 - $ss2)
         fi
         if [ $offset -gt 3 ];then
             RC="$RC 6"
@@ -312,7 +312,7 @@ test_case_04()
     for rtc in rtc0 rtc1; do
         if [ -e /dev/$rtc ]; then
             for mode in standby mem; do
-                loop=300
+                loop=3000
                 #TODO add function test scripte here
                 #test 1hr and check rtc accuracy
                 while [ $loop -gt 0 ]; do

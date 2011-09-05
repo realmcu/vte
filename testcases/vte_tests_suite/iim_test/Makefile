@@ -9,6 +9,10 @@
 
 CC = $(CROSS_COMPILER)gcc
 
+ifeq ($(CONFIG_VTE_IMX6),y)
+CFLAGS += -DMX6
+endif
+
 ifeq ($(CONFIG_VTE_IMX5),y)
 CFLAGS += -DMX5
 endif
