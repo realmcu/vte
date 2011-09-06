@@ -195,7 +195,7 @@ TGE-LV-VIIM-0001	iim_test
 TGE-LV-SYS_DISPLAY-0001	display_stress.sh 1
 TGE-LV-SYS_DISPLAY-0002	display_stress.sh 2
 TGE-LV-THERMO-0001	cat /sys/devices/virtual/thermal/thermal_zone0/*temp && cat /sys/devices/virtual/thermal/thermal_zone0/*type
-TGE-LV-UART-0016	sh -c "stty -ixon -F /dev/ttymxc0 && stty ixon -F /dev/ttymxc0 && stty -a -F /dev/ttymxc0  | grep ixon && stty -a -F /dev/ttymxc0  | grep crtscts"
+TGE-LV-UART-0016	(stty -ixon -F /dev/ttymxc0 && stty ixon -F /dev/ttymxc0 && stty -a -F /dev/ttymxc0  | grep ixon && stty -a -F /dev/ttymxc0  | grep crtscts)
 TGE-LV-UART-0017	ints1=$(cat /proc/interrupts | grep uart | awk {'print $2'}) ; start=0; for i in $ints1; do start=$(expr $start + $i);done;cat /etc/passwd >  /dev/ttymxc0 ; ints2=$(cat /proc/interrupts | grep uart | awk {'print $2'});end=0;for i in $ints2; do end=$(expr $end + $i);done; [ $end -gt $start ]
 TGE-LV-UART-0018	stty 115200 cs8 -F /dev/ttymxc0 && stty -a -F /dev/ttymxc0  | grep cs8 &&  stty -a -F /dev/ttymxc0  | grep cstopb && stty -a -F /dev/ttymxc0  | grep crtscts && stty -a  -F /dev/ttymxc0 | grep ignbrk
 TGE-LV-UART-0700	uart_testapp_10 /dev/ttymxc1 115200 && uart_testapp_10 /dev/ttymxc2 115200
