@@ -285,10 +285,7 @@ if [ $DO_RFS -eq 1 ] ; then
         exit $RET
     }
 
-    if [ ${ISTAR} -eq 0 ]; then
-        tar --numeric-owner -xzf $RFS -C /mnt/msc >> ${LOGFILE} 2>&1
-        sync
-	elif [ ${ISCMPD} -eq 0 ] ; then
+    if [ ${ISCMPD} -eq 0 ] ; then
 		EXT2_RFS=`echo rootfs.ext2.gz | sed -e 's/\.gz$//'`
 		${GUNZIP} -c ${RFS} > ${EXT2_RFS}
 		RET=$?
@@ -307,7 +304,10 @@ if [ $DO_RFS -eq 1 ] ; then
         #clean
         sync && sync
         umount /mnt/ext2
-	fi
+    elif [ ${ISTAR} -eq 0 ]; then
+        tar --numeric-owner -xzf $RFS -C /mnt/msc >> ${LOGFILE} 2>&1
+        sync
+    fi
     umount /mnt/msc >> ${LOGFILE} 2>&1
 fi
 
