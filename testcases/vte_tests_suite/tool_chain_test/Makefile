@@ -1,17 +1,24 @@
-TARGET = memcpy_test
+Target_memcpy = memcpy_test
+Target_spread = spread
 
-SRC = memcpy_test.c
-OBJ =$(patsubst %.c,%.o,$(SRC))
-CFLAGS = -Wall -O2
+TARGET = $(Target_memcpy) $(Target_spread)
 
-all: $(OBJ)
-	$(CC) -o $(TARGET) $(CFLAGS) $(OBJ)
+SRC_memcpy = memcpy_test.c
+SRC_spread = spread.c
+SRC = $(SRC_memcpy) $(SRC_spread)
+#OBJ =$(patsubst %.c,%.o,$(SRC))
+CFLAGS = -Wall -O2 -lrt -std=gnu99
 
-$(OBJ):$(SRC)
-	$(CC) $(CFLAGS) -c $^
+all: $(Target_memcpy) $(Target_spread) 
+
+$(Target_memcpy): $(SRC_memcpy)
+	$(CC) -o $@ $(CFLAGS) $<
+
+$(Target_spread): $(SRC_spread)
+	$(CC) -o $@ $(CFLAGS) $<
 
 install:
 	ln -f $(TARGET) ../../bin/
 
 clean:
-	rm -rf $(OBJ) $(TARGET)
+	rm -rf $(TARGET)
