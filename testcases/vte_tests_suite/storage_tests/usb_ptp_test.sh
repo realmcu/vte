@@ -26,7 +26,7 @@
 # Use command "./usb_PTP_test.sh [STR1] "to test usb ptp
 
 #initialize 
- TMP_RC=0
+ TMP_RC=1
  rc=0
 
  anal_res()
@@ -53,32 +53,32 @@
     
     if [ $command_options = "--auto-detect" ]; then
       echo "auto detect whether the camera can be talked to the board"
-      ./gphoto2 --auto-detect
+      gphoto2 --auto-detect
       TMP_RC=$?
       anal_res
     elif [ $command_options = "--storage-info" ]; then
         echo "get camera storage information"
-        ./gphoto2 --storage-info
+        gphoto2 --storage-info
         TMP_RC=$?
         anal_res
      elif [ $command_options = "--list-ports" ]; then
         echo "get the USB ports info on board"
-        ./gphoto2 --list-ports
+        gphoto2 --list-ports
         TMP_RC=$?
         anal_res
     elif [ $command_options = "--list-files" ]; then
         echo "list files in camera folders"
-        ./gphoto2 -L --list-files
+        gphoto2 -L --list-files
         TMP_RC=$?
         anal_res
     elif [ $command_options = "--get-all-files" ]; then
         echo "get all files in camera folders and these files will be in the current folder"
-        ./gphoto2 -P --get-all-files
+        gphoto2 -P --get-all-files
         TMP_RC=$?
         anal_res
      elif [ $command_options = "--get-all-raw-data" ]; then
         echo "get all raw data in camera folders and these files will be in the current folder"
-        ./gphoto2 --get-all-raw-data
+        gphoto2 --get-all-raw-data
         TMP_RC=$?
         anal_res
     else
