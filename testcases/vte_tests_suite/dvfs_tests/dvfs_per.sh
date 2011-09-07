@@ -159,13 +159,13 @@ dvfs_per_basic()
     
     
     #suspend test
-    rtc_testapp_6 -m standby -T 10 || return $RC
+    rtc_testapp_6 -m standby -T 15 || return $RC
 
     #ALSA capture test
     adc_test1.sh -f S16_LE -d 5 -c 1 -r 44100 -A || return $RC
 
     sleep 5
-    rtc_testapp_6 -m mem -T 10 || return $RC
+    rtc_testapp_6 -m mem -T 15 || return $RC
 
     echo "Pass DVFS basic test"
     RC=0
@@ -187,8 +187,8 @@ dvfs_per_stress()
 
     i=0
     while [ $i -lt 500 ]; do
-        rtc_testapp_6 -m standby -T 10 || return $i
-        rtc_testapp_6 -m mem -T 10 || return $i
+        rtc_testapp_6 -m standby -T 15 || return $i
+        rtc_testapp_6 -m mem -T 15 || return $i
         i=`expr $i + 1`
         tst_resm TINFO "RTC wakeup test times: $i"
     done

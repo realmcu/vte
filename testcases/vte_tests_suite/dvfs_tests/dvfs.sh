@@ -175,14 +175,14 @@ dvfs_suspend()
     echo "*************************************"
     echo "* please press key to resume system *"
     echo "*************************************"
-    rtc_testapp_6 -T 10 -m standby
+    rtc_testapp_6 -T 15 -m standby
 		tst_resm TPASS "Resume from suspend..."
 
     sleep 5
     echo "*************************************"
     echo "* please press key to resume system *"
     echo "*************************************"
-    rtc_testapp_6 -T 10 -m mem
+    rtc_testapp_6 -T 15 -m mem
     tst_resm TPASS "Resume from mem..."
     
     echo 0 > ${DVFS_DIR[$PLATFORM]}/enable
