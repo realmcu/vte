@@ -14,5 +14,5 @@ TGE-LV-UART-0017	ints1=$(cat /proc/interrupts | grep uart | awk {'print $2'}) ; 
 TGE-LV-UART-0018	 stty 115200 cs8 -F /dev/ttymxc1 && stty -a -F /dev/ttymxc1 | grep cs8 &&  stty -a -F /dev/ttymxc1 | grep cstopb && stty -a -F /dev/ttymxc1 | grep crtscts && stty -a -F /dev/ttymxc1 | grep ignbrk 
 TGE-LV-UART-0500	uart_testapp_10 /dev/ttymxc1 4000000
 TGE-LV-UART-0510	RT=0; for i in 4000000; do echo "Test Baud rate $i ==============" && uart_testapp_11 /dev/ttymxc1 $i || RT=$(expr $RT + 1); done; [ $RT -eq 0 ]
-TSG-LV-USB-HOST-0030	 sh -c "umount /dev/sda1 ;fdisk -l /dev/sda && mkfs.vfat /dev/sda1" 
-TSG-LV-USB-HOST-0040	 sh -c "umount /dev/sda1 ; mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 && bonnie\\+\\+ -d /media/sda1 -u 0:0 -s 10 -r 5 && dt of=/media/sda1/test_file bs=4k limit=128m passes=20" 
+TGE-LV-USB-HOST-0030	 sh -c "umount /dev/sda1 ;fdisk -l /dev/sda && mkfs.vfat /dev/sda1" 
+TGE-LV-USB-HOST-0040	 sh -c "umount /dev/sda1 ; mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 && bonnie\\+\\+ -d /media/sda1 -u 0:0 -s 10 -r 5 && dt of=/media/sda1/test_file bs=4k limit=128m passes=20" 

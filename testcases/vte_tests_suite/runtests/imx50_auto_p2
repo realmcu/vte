@@ -21,7 +21,7 @@ TGE-LV-NAND-2001	flash_eraseall /dev/mtd1 && insmod ${LTPROOT}/testcases/bin/mtd
 TGE-LV-NOR-1102	nor_mtd_testapp -T RDRW -D /dev/mtd1 -L 0x300000 -V
 TGE-LV-NOR-1103	nor_mtd_testapp -T RDRW -D /dev/mtd0 -L 0x00100000 -V
 TGE-LV-NOR-1115	nor_mtd_testapp -T WRNER -D /dev/mtd0 -L 0x100000 -V
-TSG-LV-SD-1030	storage_all.sh 2
+TGE-LV-SD-1030	storage_all.sh 2
 TGE-LV-SD-1050	RC=0; ss=0;list=$(cat /proc/cpu/clocks | grep -i sdhc | awk '{print $3}'); for i in $list; do ss=$(expr $ss + $i); done; [ $ss -eq 0 ] || RC=1; sh -c "dd if=/dev/mmcblk0p1 of=/dev/null bs=1024k count=100 & "; ss=0;list=$(cat /proc/cpu/clocks | grep -i sdhc | awk \'{print $3}\'); for i in $list; do ss=$(expr $ss + $i); done; [ $ss -ne 0 ] || RC=$(expr $RC + 1); [ $RC -eq 0 ]
 TGE-LV-UART-0016	sh -c "stty -ixon -F /dev/ttymxc1 && stty ixon  -F /dev/ttymxc1 && stty -a -F /dev/ttymxc1  | grep ixon && stty -a -F /dev/ttymxc1 | grep crtscts"
 TGE-LV-UART-0700	uart_testapp_10 /dev/ttymxc1 115200 && uart_testapp_10 /dev/ttymxc2 115200

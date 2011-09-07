@@ -160,8 +160,8 @@ TGE-LV-FB-1007	display_clk.sh 1
 TGE-LV-GPU-EGL-FB-0001	gles_viv.sh 1
 TGE-LV-GPU-FB-PERF-GLES-0006	gles_viv.sh 2
 TGE-LV-GPU-PERF-OPENVG-0001	vg_gc2000.sh 1
-TSG-LV-GPU-FB-CONF-VG-0002	vg_gc2000.sh 2
-TSG-LV-GPU-FB-MULTI-0001	sh -c "vg_gc2000.sh 2 &"; gles_viv.sh 2
+TGE-LV-GPU-FB-CONF-VG-0002	vg_gc2000.sh 2
+TGE-LV-GPU-FB-MULTI-0001	sh -c "vg_gc2000.sh 2 &"; gles_viv.sh 2
 TGE-LV-EMMC-BOOT-0001	eMMC_boot_test.sh
 TGE-LV-CLOCK-0301	cat /proc/cpu/clocks
 TGE-LV-DVFS-0010	dvfs.sh 1
@@ -199,9 +199,9 @@ TGE-LV-UART-0016	(stty -ixon -F /dev/ttymxc0 && stty ixon -F /dev/ttymxc0 && stt
 TGE-LV-UART-0017	ints1=$(cat /proc/interrupts | grep uart | awk {'print $2'}) ; start=0; for i in $ints1; do start=$(expr $start + $i);done;cat /etc/passwd >  /dev/ttymxc0 ; ints2=$(cat /proc/interrupts | grep uart | awk {'print $2'});end=0;for i in $ints2; do end=$(expr $end + $i);done; [ $end -gt $start ]
 TGE-LV-UART-0018	stty 115200 cs8 -F /dev/ttymxc0 && stty -a -F /dev/ttymxc0  | grep cs8 &&  stty -a -F /dev/ttymxc0  | grep cstopb && stty -a -F /dev/ttymxc0  | grep crtscts && stty -a  -F /dev/ttymxc0 | grep ignbrk
 TGE-LV-UART-0700	uart_testapp_10 /dev/ttymxc1 115200 && uart_testapp_10 /dev/ttymxc2 115200
-TSG-LV-USB-HOST-0010	cat /proc/partitions | grep sd
-TSG-LV-USB-HOST-0030	fdisk -l /dev/sda && mkfs.vfat /dev/sda1
-TSG-LV-USB-HOST-0040	mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 && bonnie\\\\+\\\\+ -d /media/sda1 -u 0:0 -s 10 -r 5 && dt of=/media/sda1/test_file bs=4k limit=128m passes=20 && umount /media/sda1
+TGE-LV-USB-HOST-0010	cat /proc/partitions | grep sd
+TGE-LV-USB-HOST-0030	fdisk -l /dev/sda && mkfs.vfat /dev/sda1
+TGE-LV-USB-HOST-0040	mkdir -p /media/sda1; mount /dev/sda1 /media/sda1 && bonnie++ -d /media/sda1 -u 0:0 -s 10 -r 5 && dt of=/media/sda1/test_file bs=4k limit=128m passes=20 && umount /media/sda1
 TGE-LV-V4L2-0070	v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
 TGE-LV-V4L2-0071	v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24
 TGE-LV-V4L2-0072	v4l_output_testapp  -C 2 -F $LTPROOT/testcases/bin/yuv420
@@ -242,7 +242,6 @@ TGE-LV-VPU-10000	vpu_enc_test.sh 1
 TGE-LV-VPU-10010	vpu_enc_test.sh 2
 TGE-LV-VPU-10020	vpu_enc_test.sh 3
 TGE-LV-VPU-10030	vpu_enc_test.sh 4
-TGE-LV-VPU-10040	vpu_enc_test.sh 5
 TGE-LV-VPU-10210	vpu_multi_enc_test.sh 1
 TGE-LV-VPU-10220	vpu_multi_enc_test.sh 2
 TGE-LV-VPU-10221	vpu_multi_enc_test.sh 3

@@ -137,5 +137,5 @@ TGE-LV-SECURITY-003	modprobe tcrypt mode=10 ; dmesg | grep "ecb" ; RT=$? ; echo 
 TGE-LV-SECURITY-001_CG	cat /proc/cpu/clocks | grep dcp | awk {'print $3'} | grep 0
 TGE-LV-UART-0310	uart5.sh /dev/ttymxc1
 TGE-LV-UART-0330	uart_test.sh /dev/ttymxc1 1
-TSG-LV-USB-HOST-0010	 cat /proc/partitions | grep sd 
+TGE-LV-USB-HOST-0010	 cat /proc/partitions | grep sd 
 TGE-LV-WIFI-0050	 sh -c "modprobe ath6kl && sleep 5 &&ifconfig wlan0 up && sleep 3 && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001" 
