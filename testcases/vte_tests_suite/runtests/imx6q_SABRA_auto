@@ -237,7 +237,6 @@ TGE-LV-VPU-1012	vpu_dec_test.sh 12
 TGE-LV-VPU-1013	vpu_dec_test.sh 13
 TGE-LV-VPU-1015	vpu_multi_dec_test.sh 2
 TGE-LV-VPU-1016	vpu_multi_dec_test.sh 3
-TGE-LV-VPU-1031	vpu_app_test.sh 1
 TGE-LV-VPU-10000	vpu_enc_test.sh 1
 TGE-LV-VPU-10010	vpu_enc_test.sh 2
 TGE-LV-VPU-10020	vpu_enc_test.sh 3
