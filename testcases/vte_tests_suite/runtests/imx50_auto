@@ -107,7 +107,7 @@ TGE-LV-FB-EPDC-0008	 epdc_test -T 0 -g 1 && epdc_test -T 2
 TGE-LV-FB-EPDC-0009	 epdc_test -R 0 -T 2 && epdc_test -R 1 -T 2 && epdc_test -R 2 -T 2 && epdc_test -R 3 -T 2   
 TGE-LV-FB-EPDC-0010	 epdc_test -T 1
 TGE-LV-FB-EPDC-0012	 epdc_test -T 2; epdc_test -T 7
-TGE-LV-FB-EPDC-0013_LLL	 epdc_full.sh 1
+TGE-LV-FB-EPDC-0013_LLLLL	 epdc_full.sh 1
 TGE-LV-FB-EPDC-0016	 epdc_test -T 8 -y 10
 TGE-LV-FB-EPXP-001	 epxp_test -r 0 -s 0:0:320:240 && epxp_test -r 90 -s 0:0:320:240 && epxp_test -r 180 -s 0:0:320:240 && epxp_test -r 270 -s 0:0:320:240
 TGE-LV-FB-EPXP-002	 epxp_test -r 0 -s 0:0:320:240
