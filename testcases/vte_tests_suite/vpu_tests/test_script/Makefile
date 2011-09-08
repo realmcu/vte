@@ -1,4 +1,4 @@
-#Copyright (C) 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2008-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -36,13 +36,13 @@ TARGET-y += vpu_sequence_test.sh
 TARGET-y += vpu_create_test_sequence.sh
 TARGET-y += vpu_create_task.sh
 
-TARGET-$(CONFIG_VTE_IMX5) +=  vpu_enc_test.sh
+TARGET-$(CONFIG_VTE_IMX5) += vpu_enc_test.sh
 TARGET-$(CONFIG_VTE_IMX5) += vpu_multi_enc_test.sh
-TARGET-$(CONFIG_VTE_IMX5) +=  vpu_tvout_720P.sh
-TARGET-$(CONFIG_VTE_IMX5) +=  vpu_tvout_NTSC.sh
-TARGET-$(CONFIG_VTE_IMX5) +=  vpu_tvout_PAL.sh
-TARGET-$(CONFIG_VTE_IMX5) +=  vpu_firmware_setup.sh
-
+TARGET-$(CONFIG_VTE_IMX5) += vpu_tvout_720P.sh
+TARGET-$(CONFIG_VTE_IMX5) += vpu_tvout_NTSC.sh
+TARGET-$(CONFIG_VTE_IMX5) += vpu_tvout_PAL.sh
+TARGET-$(CONFIG_VTE_IMX5) += vpu_firmware_setup.sh
+TARGET-$(CONFIG_VTE_IMX6) += vpu_performance.sh
 all:
 	@echo "***********************************************"
 	@echo "** ALL : $(TARGET-y)  test application  **"
