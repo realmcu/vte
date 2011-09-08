@@ -53,13 +53,10 @@ setup()
 
     trap "cleanup" 0
 
-    gpu-install install || {
-       modprobe gpu || {
-            tst_resm TBROK "Test #1: Can't probe gpu module"
-            RC=66
-            return $RC
-       } 
-    }
+    modprobe gpu || {
+        tst_resm TBROK "Test #1: Can't probe gpu module"
+    } 
+    return $RC
 
 }
 
