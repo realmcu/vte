@@ -129,9 +129,14 @@ TGE-LV-BENCH-10001	coremark_F4.exe  0x0 0x0 0x66 0 7 1 2000 &&  coremark_F4.exe 
 TGE-LV-BENCH-10002	coremark_P4.exe 0x0 0x0 0x66 0 7 1 2000 && coremark_P4.exe 0x3415 0x3415 0x66 0 7 1 2000 && coremark_P4.exe 8 8 8 0 7 1 1200
 TGE-LV-BENCH-10003	c-ray.sh
 TGE-LV-UBOOT-0020	dmesg
-TGE-LV-UBOOT-0027	dmesg
 TGE-LV-UBOOT-0060	ls
 TGE-LV-APP-0001	gst-inspect
+TGE-LV-KERNEL-CLOCK-0001	cat /proc/timer_list | grep clock | wc -l
+TGE-LV-KERNEL-SMP-0001	[ $(cat /sys/devices/system/cpu/sched_smt_power_savings) -eq 1 ]
+TGE-LV-KERNEL-SMP-0002	[ $(cat /proc/cpuinfo | grep processor | wc -l ) -eq 4 ]
+TGE-LV-KERNEL-SMP-0003	cd $LTPROOT/testcases/bin/cpu_hotplug && ./runtests.sh
+TGE-LV-KERNEL-SMP-0005	smp_test.sh 1
+TGE-LV-KERNEL-SMP-0006	smp_test.sh 2
 TGE-LV-DISPLAY-0002	dd if=/dev/urandom of=/dev/fb2 bs=1024 count=100
 TGE-LV-DISPLAY-DUAL-0001	echo q | fbv ${LTPROOT}/testcase/bin/butterfly.png && lcd_testapp -T 1 -B /dev/fb2 -D 16 -X 10
 TGE-LV-WIFI-0043	modprobe ath6kl && ifconfig wlan0 up && iwconfig wlan0 mode managed && sleep 10 && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001 && udhcpc -i wlan0 && sleep 10 && LOCALIP=$(ifconfig wlan0  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}') && iperf -d -c 10.192.225.222 -n 100M -B $LOCALIP  -t 100 && ifconfig wlan0 down && modprbe -r ath6kl
