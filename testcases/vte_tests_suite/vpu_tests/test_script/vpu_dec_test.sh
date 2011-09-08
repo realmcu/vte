@@ -119,7 +119,7 @@ test_case_01()
 TCID="vpu_MPEG2_test"
 #TODO give TST_COUNT
 TST_COUNT=1
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -129,11 +129,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/mpeg2_720x576.mpg /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_mpeg2 
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_mpeg2 
+${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_mpeg2 || RC=1 
 SIZE=$(ls -s sd_d1_mpeg2.yuv | awk '{print $1}') 
 rm -rf sd_d1_mpeg2.yuv mpeg2_720x576.mpg 
 
-if [ $SIZE -ne 0 ]
+if [ $SIZE -ne 0 ] && [ $RC -eq 0 ]
 then
 RC=0
 fi
@@ -150,7 +150,7 @@ test_case_02()
 TCID="vpu_dec_vc1_test"
 #TODO give TST_COUNT
 TST_COUNT=2
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -160,11 +160,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/SD720x480.vc1.rcv /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_vc1  
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_vc1  
+${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_vc1 || RC=1 
 SIZE=$(ls -s SD720x480.yuv | awk '{print $1}') 
 rm -rf SD720x480.vc1.rcv SD720x480.yuv
 
-if [ $SIZE -ne 0 ]
+if [ $SIZE -ne 0 ] && [ $RC -eq 0 ]
 then 
 RC=0
 fi
@@ -193,11 +193,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/divx311_320x240.avi /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_divx 
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_divx 
+${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_divx || RC=0 
 SIZE=$(ls -s divx311_320x240.yuv | awk '{print $1}') 
 rm -rf divx311_320x240.yuv divx311_320x240.avi
 
-if [ $SIZE -eq 0 ]
+if [ $SIZE -eq 0 ] && [ $RC -eq 0 ]
 then
 RC=$(expr $RC + 1)
 fi
@@ -214,7 +214,7 @@ test_case_04()
 TCID="vpu_dec_mpeg4_test"
 #TODO give TST_COUNT
 TST_COUNT=4
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -223,11 +223,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/akiyo.mp4 /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_mpeg4
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_mpeg4
+${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_mpeg4 || RC=1
 SIZE=$(ls -s akiyomp4.yuv| awk '{print $1}') 
 rm -rf akiyomp4.yuv akiyo.mp4
 
-if [ $SIZE -ne 0 ]
+if [ $SIZE -ne 0 ] && [ $RC -eq 0  ]
 then
 RC=0
 fi
@@ -243,7 +243,7 @@ test_case_05()
 TCID="vpu_dec_h263-IJK"
 #TODO give TST_COUNT
 TST_COUNT=5
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -252,11 +252,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.263 /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_h263
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_h263
+${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_h263 || RC=1
 SIZE=$(ls -s COASTGUARD_CIF_IJT.yuv | awk '{print $1}')
 rm -rf COASTGUARD_CIF_IJT.yuv COASTGUARD_CIF_IJT.263
 
-if [ $SIZE -ne 0 ]
+if [ $SIZE -ne 0 ] && [ $RC -eq 0 ]
 then
 RC=0
 fi
@@ -274,7 +274,7 @@ test_case_06()
 TCID="vpu_dec_h263-head"
 #TODO give TST_COUNT
 TST_COUNT=6
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -282,11 +282,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/cif.263 /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_h263-2
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_h263-2
+${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_h263-2 || RC=1
 SIZE=$(ls -s cif.yuv | awk '{print $1}')  
 rm -rf cif.yuv cif.263 
 
-if [ $SIZE -ne 0 ]
+if [ $SIZE -ne 0 ] && [ $RC -eq 0 ]
 then
 RC=0
 fi
@@ -303,7 +303,7 @@ test_case_07()
 TCID="vpu_dec_h264HP_test"
 #TODO give TST_COUNT
 TST_COUNT=7
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -311,11 +311,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/HPCV_BRCM_A.264 /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_h264-hp 
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_h264-hp 
+${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_h264-hp || RC=1
 SIZE=$(ls -s HPCV_BRCM_A.yuv | awk '{print $1}') 
 rm -rf HPCV_BRCM_A.yuv HPCV_BRCM_A.264 
 
-if [ $SIZE -ne 0 ]
+if [ $SIZE -ne 0 ] && [ $RC -eq 0 ]
 then
 RC=0
 fi
@@ -331,7 +331,7 @@ test_case_08()
 TCID="vpu_dec_h264BP_test"
 #TODO give TST_COUNT
 TST_COUNT=8
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -339,11 +339,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/starwars640x480.264 /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_h264-bp 
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_h264-bp 
+${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_h264-bp || RC=1
 SIZE=$(ls -s starwars640x480.yuv | awk '{print $1}')
 rm -rf starwars640x480.yuv starwars640x480.264
 
-if [ $SIZE -ne 0 ]
+if [ $SIZE -ne 0 ] && [ $RC -eq 0 ]
 then
 RC=0
 fi
@@ -360,7 +360,7 @@ test_case_09()
 TCID="vpu_dec_mpeg4_deblock_test"
 #TODO give TST_COUNT
 TST_COUNT=9
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -368,11 +368,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/akiyo.mp4 /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_mpeg4
-${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_mpeg4_d
+${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_mpeg4_d || RC=1
 SIZE=$(ls -s akiyomp4.yuv| awk '{print $1}') 
 rm -rf akiyomp4.yuv akiyo.mp4
 
-if [ $SIZE -ne 0 ]
+if [ $SIZE -ne 0 ] && [ $RC -eq 0 ]
 then
 RC=0
 fi
@@ -388,7 +388,7 @@ test_case_10()
 TCID="vpu_dec_h263-basic"
 #TODO give TST_COUNT
 TST_COUNT=10
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -396,11 +396,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/stream.263 /tmp
 cd /tmp 
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_mpeg4
-${TSTCMD} -D "-f 1 -i stream.263 -o stream.yuv"
+${TSTCMD} -D "-f 1 -i stream.263 -o stream.yuv" || RC=1
 SIZE=$(ls -s stream.yuv| awk '{print $1}') 
 rm -rf stream.yuv stream.263
 
-if [ $SIZE -ne 0 ]
+if [ $SIZE -ne 0 ] && [ $RC -eq 0 ]
 then
 RC=0
 fi
@@ -417,7 +417,7 @@ test_case_11()
 TCID="vpu_MPEG2_deblock_test"
 #TODO give TST_COUNT
 TST_COUNT=1
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -515,9 +515,6 @@ done
 RC=0
 return $RC
 }
-
-
-
 
 usage()
 {
