@@ -80,7 +80,21 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 stream_path=/mnt/nfs/test_stream/video/mx51_vpu_performance_testvector
 
-vpu_sequence_test.sh 2 0 0 ${stream_path} ${stream_path}/mx51_vpu_performance_test_filelist.txt
+stream_list=mx51_vpu_performance_test_filelist.txt
+
+cat ${stream_path}/${stream_list} |
+while read line
+do
+  filename=$(echo $line | cut -d " " -f 1 )
+	fileformat=$(echo $line | cut -d " " -f 2)
+	filedir=$(echo $line | cut -d " " -f 3)
+	echo "--------------------------------"
+	echo "start decode $filename"
+  time -p ${TSTCMD} -D "-i ${stream_path}/${filedir}/${filename} \
+  -f ${fileformat}"
+	echo "end of decoding $filename"
+	echo "================================"
+done
 
 RC=0
 return $RC
@@ -92,6 +106,7 @@ echo "usage $0 <1/2/3/4/5/6/7/8>"
 echo "1: performance test"
 }
 
+TSTCMD="/unit_tests/mxc_vpu_test.out"
 
 #TODO check parameter
 if [ $# -ne 1 ]
