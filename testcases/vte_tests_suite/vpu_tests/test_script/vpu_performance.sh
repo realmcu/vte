@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 ###################################################################################################
 #
 #    @file   vpu_performance.sh
@@ -80,7 +80,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 stream_path=/mnt/nfs/test_stream/video/mx51_vpu_performance_testvector
 
-vpu_sequence_test.sh 2 0 0 $stream_path/h264 $stream_path/mx51_vpu_performance_test_filelist.txt
+vpu_sequence_test.sh 2 0 0 ${stream_path} ${stream_path}/mx51_vpu_performance_test_filelist.txt
 
 RC=0
 return $RC
