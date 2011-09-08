@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 # Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -37,65 +37,66 @@ mtdsize=
 
 setup()
 {
-#TODO Total test case
-export TST_TOTAL=1
+    #TODO Total test case
+    export TST_TOTAL=1
 
-export TCID="setup"
-export TST_COUNT=0
-RC=1
-trap "cleanup" 0
+    export TCID="setup"
+    export TST_COUNT=0
+    RC=1
+    trap "cleanup" 0
 
-mtdnode=/dev/$(cat /proc/mtd | tail -1| cut -d : -f 1)
-if [ ! -e $mtdnode ];then
-return 1
-fi
-mtdsize=$(cat /proc/mtd | tail -1|awk '{print $2}')
+    mtdnode=/dev/$(cat /proc/mtd | tail -1| cut -d : -f 1)
+    if [ ! -e $mtdnode ];then
+        echo "TEST FAIL: No MTD device found, please check..."
+        return 1
+    fi
+    mtdsize=$(cat /proc/mtd | tail -1|awk '{print $2}')
 }
 
 cleanup()
 {
-RC=0
+    RC=0
 
-#TODO add cleanup code here
+    #TODO add cleanup code here
 
-return $RC
+    return $RC
 }
 
 
 test_case_01()
 {
-TCID="test_RW_ERASE"
-RC=1
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    TCID="test_RW_ERASE"
+    RC=1
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-nor_mtd_testapp -T RDRW -D $mtdnode -L 0x${mtdsize} -V || return $RC
-RC=2
-echo "nor performance test"
-nor_mtd_testapp -T PERFORM -D $mtdnode -V || return $RC
-return 0
+    nor_mtd_testapp -T RDRW -D $mtdnode -L 0x${mtdsize} -V || return $RC
+    RC=2
+    echo "nor performance test"
+    nor_mtd_testapp -T PERFORM -D $mtdnode -V || return $RC
+    return 0
 }
 
 test_case_02()
 {
-TCID="test_api_simple"
-RC=1
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
-flash_eraseall $mtdnode 
-ret=$(hexdump $mtdnode | grep ffff | wc -l)
-if [ $ret -eq 1 ]; then
-RC=0
-fi
-return $RC
+    TCID="test_api_simple"
+    RC=1
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
+    flash_eraseall $mtdnode 
+    ret=$(hexdump $mtdnode | grep ffff | wc -l)
+    if [ $ret -eq 1 ]; then
+        RC=0
+    fi
+    return $RC
 }
 
 usage()
 {
-echo "$0 [case ID]"
-echo "1: RW Erase and performace"
-echo "2: api simpale check"
-echo "3: power manager test"
+    echo "$0 [case ID]"
+    echo "1: RW Erase and performace"
+    echo "2: api simpale check"
+    echo "3: power manager test"
 }
 
 # main function
@@ -105,8 +106,8 @@ RC=0
 #check parameter
 if [ $# -ne 1 ]
 then
-usage
-exit 1 
+    usage
+    exit 1 
 fi
 
 setup || exit $RC
