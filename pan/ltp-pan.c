@@ -741,12 +741,12 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 						running[i].cmd->cmdline);
 						fflush(failcmdfile);
 						fprintf(logfile,"%-30.30s %-10.10s %-5d\n",
-						running[i].cmd->name, "FAIL", "255");
+						running[i].cmd->name, "TIMEOUT", "255");
 						fflush(logfile);
 						}	
 						system("reboot");
 					/*	continue;*/
-					 continue;
+					  while(1) sleep(1);
 					}
 				}
 			}
