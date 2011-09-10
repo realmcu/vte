@@ -142,7 +142,7 @@ TGE-LV-DISPLAY-DUAL-0001	echo q | fbv ${LTPROOT}/testcase/bin/butterfly.png && l
 TGE-LV-WIFI-0043	modprobe ath6kl && ifconfig wlan0 up && iwconfig wlan0 mode managed && sleep 10 && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001 && udhcpc -i wlan0 && sleep 10 && LOCALIP=$(ifconfig wlan0  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}') && iperf -d -c 10.192.225.222 -n 100M -B $LOCALIP  -t 100 && ifconfig wlan0 down && modprbe -r ath6kl
 TGE-LV-WIFI-0061-Stress	LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ath6kl; sleep 5;ifconfig wlan0 up && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && ifconfig wlan0 down && RT=0 ; modprobe -r ath6kl; echo $LOOP; done ; [ $RT -eq 0 ]
 TGE-LV-ETHERNET-1000	tcpdump -c 10 -i eth0
-TGE-LV-ETHERNET-1003	ifconfig eth0 && ethtool eth0
+TGE-LV-ETHERNET-1003	(ifconfig eth0 && ethtool eth0)
 TGE-LV-ETHERNET-1004	tcp_stream_script 10.192.225.222 CPU
 TGE-LV-ETHERNET-1005	udp_stream_script 10.192.225.222 CPU
 TGE-LV-ETHERNET-1007	touch readme && ftpget -u anonymous 10.192.225.218 readme readme && cat readme | grep welcome && rm readme
