@@ -50,7 +50,7 @@ export TST_COUNT=0
 RC=0
 
 trap "cleanup" 0
-
+modprobe galcore
 return $RC
 }
 
