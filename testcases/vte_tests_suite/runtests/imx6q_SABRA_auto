@@ -119,8 +119,24 @@ TGE-LV-ESAI-0311	aplay -D hw:0,0  $STREAM_PATH/esai_stream/96k24bit-six-S24_LE.w
 TGE-LV-ESAI-0312	aplay -D hw:0,0  $STREAM_PATH/esai_stream/176k24bit-six-S24_LE.wav
 TGE-LV-ESAI-0313	aplay -D hw:0,0  $STREAM_PATH/esai_stream/192k24bit-six-S24_LE.wav
 TGE-LV-ESAI-1002	esai_test.sh 2
-TGE-LV-ESAI-0436	arecord -D plughw:0,0 -d 10 -f S16_LE -r 24000 -c 4 audio_24k_4ch.wav
-TGE-LV-ESAI-0438	arecord -D hw:0,0 -d 10 -f S16_LE -r 44100 -c 4 audio_44k_4ch.wav
+TGE-LV-ESAI-0401	adc_test1.sh -d 10 -f S16_LE -r 8000 -c 2
+TGE-LV-ESAI-0402	adc_test1.sh -d 10 -f S16_LE -r 11025 -c 2
+TGE-LV-ESAI-0403	adc_test1.sh -d 10 -f S16_LE -r 12000 -c 2
+TGE-LV-ESAI-0404	adc_test1.sh -d 10 -f S16_LE -r 16000 -c 2
+TGE-LV-ESAI-0405	adc_test1.sh -d 10 -f S16_LE -r 22050 -c 2
+TGE-LV-ESAI-0406	adc_test1.sh -d 10 -f S16_LE -r 24000 -c 2
+TGE-LV-ESAI-0407	adc_test1.sh -d 10 -f S16_LE -r 32000 -c 2
+TGE-LV-ESAI-0408	adc_test1.sh -d 10 -f S16_LE -r 44100 -c 2
+TGE-LV-ESAI-0409	adc_test1.sh -d 10 -f S16_LE -r 48000 -c 2
+TGE-LV-ESAI-0431	arecord -d 10 -f S16_LE -r 8000 -c 4 audio_8k_4ch.wav
+TGE-LV-ESAI-0432	arecord -d 10 -f S16_LE -r 11025 -c 4 audio_11k_4ch.wav
+TGE-LV-ESAI-0433	arecord -d 10 -f S16_LE -r 12000 -c 4 audio_12k_4ch.wav
+TGE-LV-ESAI-0434	arecord -d 10 -f S16_LE -r 16000 -c 4 audio_16k_4ch.wav
+TGE-LV-ESAI-0435	arecord -d 10 -f S16_LE -r 22050 -c 4 audio_22k_4ch.wav
+TGE-LV-ESAI-0436	arecord -d 10 -f S16_LE -r 24000 -c 4 audio_24k_4ch.wav
+TGE-LV-ESAI-0437	arecord -d 10 -f S16_LE -r 32000 -c 4 audio_32k_4ch.wav
+TGE-LV-ESAI-0438	arecord -d 10 -f S16_LE -r 44100 -c 4 audio_44k_4ch.wav
+TGE-LV-ESAI-0439	arecord -d 10 -f S16_LE -r 48000 -c 4 audio_48k_4ch.wav
 TGE-LV-ALSA-0200	(aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav &); arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav && aplay file.wav
 TGE-LV-ALSA-0201	(arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav &); aplay $STREAM_PATH/alsa_stream/audio44k16S.wav && aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav && sleep 20 && aplay file.wav
 TGE-LV-ALSA-SPDIF-0002	aplay -D plughw:0 ${STREAM_PATH}/spdif_stream/audio32k16S.wav
