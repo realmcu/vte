@@ -1,4 +1,4 @@
-TGE-LV-SATA-0001    dmesg | grep ATA | grep Gbps | grep 3.0	
+TGE-LV-SATA-0001  modprobe ahci_platform; sleep 10; dmesg | grep ATA | grep Gbps | grep 3.0	
 TGE-LV-ALSA-0101	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k16M.wav -A
 TGE-LV-ALSA-0102	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k16M.wav -A
 TGE-LV-ALSA-0103	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k16M.wav -A
