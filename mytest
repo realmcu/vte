@@ -43,6 +43,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 	while [ $search -eq 1 ];do
 	 lct=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | grep "TGE-" | wc -l)
    id=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | grep "TGE-" |tail -n $cnt | head -n 1)
+	 timeout=$(echo $id | grep TIMEOUT | wc -l)
 	 ide=$(echo $id | wc -L)
 	 ll=$(cat ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday)
 	 if [ $ll = $(uname -r) ]; then
@@ -94,18 +95,20 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 	#3 if no former fail data
 				ll=0
 			fi
-			if [ ! -z "$line" ]; then
+			if [ $timeout -eq 0 ]; then
+				if [ ! -z "$line" ] ; then
 	#3 has last success case 
-				if [ $ll -gt $line ]; then
+					if [ $ll -gt $line ]; then
 			#4 former fail cases is after current success case
-					line=$(expr $ll + 1)
-				else
+						line=$(expr $ll + 1)
+					else
 			#4 former fail cases is before the last success cases 
-					line=$(expr $line + 1)
-				fi
-			else
+						line=$(expr $line + 1)
+					fi
+				else
 	#3 has not last success cases
-				line=$(expr $ll + 1)
+					line=$(expr $ll + 1)
+				fi
 			fi
 			echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
 			sh -c "cat ${TEST_PATH}/runtest/$CMDFILE | sed '1,${line}s/^/#/g' > ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
