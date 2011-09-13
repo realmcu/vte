@@ -265,6 +265,9 @@ case "$?" in
 53)
   APP_SUB_DIR="imx53_rootfs/test"
  ;;
+61)
+  APP_SUB_DIR="imx61_rootfs/test"
+ ;;
 *)
   exit 0
   ;;
