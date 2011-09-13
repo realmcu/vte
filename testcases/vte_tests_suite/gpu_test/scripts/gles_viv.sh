@@ -119,12 +119,6 @@ echo torusknot
 echo "==========================="
 ./torusknot || RC=$(echo $RC torusknot)
 
-echo "==========================="
-echo vv_launcher
-echo "==========================="
-vv_launcher || RC=$(echo $RC vv_launcher)
-echo $RC
-
 if [ "$RC" = "0" ]; then
  RC=0
 else
