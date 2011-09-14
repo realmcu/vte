@@ -180,8 +180,6 @@ echo torusknot
 echo "==========================="
 ./torusknot &
 
-./vv_launcher &
-
 sleep 20
 
 wait
