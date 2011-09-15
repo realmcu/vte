@@ -185,7 +185,7 @@ TGE-LV-GPU-FB-CONF-VG-0002	vg_gc2000.sh 2
 TGE-LV-GPU-FB-MULTI-0001	sh -c "vg_gc2000.sh 2 &"; gles_viv.sh 2
 TGE-LV-CLOCK-0301	cat /proc/cpu/clocks
 TGE-LV-DVFS-0010	dvfs.sh 1
-TGE-LV-DVFS-0140	dvfs_mx6q.sh 1
+TGE-LV-DVFS-0140_LLL	dvfs_mx61.sh 1
 TGE-LV-DVFS-0150	echo 0 > /sys/devices/platform/mxc_dvfs_core.0/enable && sleep 2 && cpufreq-set -f 160M && sleep 10 && cpufreq-info -f | grep 160000 && cpufreq-set -f 800M && sleep 10 && cpufreq-info -f | grep 800000
 TGE-LV-DVFS-0200	cpufreq-info
 TGE-LV-ASRC-0211	rtc_testapp_6 -T 10; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
