@@ -88,7 +88,7 @@ cd ${TEST_DIR}/${APP_SUB_DIR}
 echo "==========================="
 echo tiger
 echo "==========================="
-tiger -rgba 5650 -frameCount 1000 || RC="tiger"
+./tiger -rgba 5650 -frameCount 1000 || RC="tiger"
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
 echo "==========================="
@@ -129,7 +129,7 @@ cd ${TEST_DIR}/${APP_SUB_DIR}
 echo "==========================="
 echo tiger
 echo "==========================="
-tiger -rgba 5650 -frameCount 1000 &
+./tiger -rgba 5650 -frameCount 1000 &
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
 echo "==========================="
