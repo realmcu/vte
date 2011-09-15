@@ -137,6 +137,8 @@ run_auto_test_list()
 	 vpu_dec_test.sh 1 | return 11
 	 echo "vpu_enc"
 	 vpu_enc_test.sh 1 | return 12
+	 echo "gpu"
+	 gles_viv.sh 1
 	 echo "ALSA test"
    aplay -vv $STREAM_PATH/alsa_stream/audio44k16M.wav || return 14
    return $RC
