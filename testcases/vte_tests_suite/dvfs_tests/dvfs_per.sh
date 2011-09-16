@@ -179,18 +179,19 @@ dvfs_per_stress()
 
     echo "Start USB bonnie++ stress test"
     i=0
-    while [ $i -lt 100 ]; do
+    while [ $i -lt 30 ]; do
         bonnie++ -d /mnt/msc -s 32 -r 16 -u 0:0 -m FSL || return $i
         i=`expr $i + 1`
-        tst_resm TINFO "bonnie++ times: $i"
+        tst_resm TINFO "bonnie++ run times: $i"
     done
 
     i=0
     while [ $i -lt 500 ]; do
-        rtc_testapp_6 -m standby -T 15 || return $i
-        rtc_testapp_6 -m mem -T 15 || return $i
         i=`expr $i + 1`
-        tst_resm TINFO "RTC wakeup test times: $i"
+        rtc_testapp_6 -m standby -T 15 || return $i
+        tst_resm TINFO "RTC wakeup standby mode test times: $i"
+        rtc_testapp_6 -m mem -T 15 || return $i
+        tst_resm TINFO "RTC wakeup mem mode test times: $i"
     done
 
     echo "Pass DVFS stress test"
