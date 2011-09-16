@@ -106,8 +106,8 @@ echo "==========================="
 echo "==========================="
 echo simple draw
 echo "==========================="
-simple_draw 100 || RC=$(echo $RC simple draw)
-simple_draw 100 -s || RC=$(echo $RC simple draw -s)
+./simple_draw 100 || RC=$(echo $RC simple draw)
+./simple_draw 100 -s || RC=$(echo $RC simple draw -s)
 
 echo "==========================="
 echo simple triangle
@@ -167,8 +167,8 @@ echo "==========================="
 echo "==========================="
 echo simple draw
 echo "==========================="
-simple_draw 100 &
-simple_draw 100 -s &
+./simple_draw 100 &
+./simple_draw 100 -s &
 
 echo "==========================="
 echo simple triangle
@@ -179,8 +179,6 @@ echo "==========================="
 echo torusknot
 echo "==========================="
 ./torusknot &
-
-./vv_launcher &
 
 sleep 20
 

@@ -187,39 +187,49 @@ return $RC
 #  
 test_case_03()
 {
-#TODO give TCID 
-TCID="multi_stress_test"
-#TODO give TST_COUNT
-TST_COUNT=3
-RC=0
+    #TODO give TCID 
+    TCID="multi_stress_test"
+    #TODO give TST_COUNT
+    TST_COUNT=3
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-   echo "ADC DAC test"
-	 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k16M.wav -A
-	 sh -c "arecord -D plughw:0 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 || RC='$RC 1' &" 
-	 sleep 2
-	 echo "USB Host test"
-   sh -c "mkfs.vfat /dev/sda1 && mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 && bonnie\+\+ -d /media/sda1 -u 0:0 -s 10 -r 5 && dt of=/media/sda1/test_file bs=4k limit=128m passes=20 || RC='$RC 2' &"
-	 echo "SD test"
-	 sleep 2
-	 sh -c "mkdir -p /mnt/mmc && mkfs.vfat /dev/mmcblk0p1 && mount /dev/mmcblk0p1 /mnt/mmc && bonnie\+\+ -d /mnt/mmc -u 0:0 -s 10 -r 5 && dt of=/mnt/mmc/test_file bs=4k limit=128m passes=20 || RC='$RC 3' &"
-	 sleep 2
-	 echo "wifi test"
-	 sh -c "modprobe ath6kl ; sleep 10; ifconfig wlan0 up && iwconfig wlan0 mode managed && sleep 5 &&iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key $(echo Happy123 | md5sum | cut -c 1-10) && iwconfig wlan0 essid FSLLBGAP_001 && sleep 5 && udhcpc -i wlan0"
-	 export LOCALIP=$(ifconfig wlan0 | grep inet |  cut -d: -f 2 | awk '{print $1}')
-   cd ${LTPROOT}/testcases/bin
-	 if [ ! -z $LOCALIP ];then
-	 sh -c "tcp_stream_2nd_script 10.192.225.222 CPU $LOCALIP || RC='$RC 5' &"
-	 fi
-   echo "gpu test"
-	 modprobe gpu
-	 #sh -c "gpu_test.sh 2 || RC='$RC 6' &"
-	 sh -c "tiger &"
-  read -p "use Ctrl+c to quit"
-return $RC
+    #TODO add function test scripte here
+    echo "ADC DAC test"
+	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k16M.wav -A
+	sh -c "arecord -D plughw:0 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 || RC='$RC 1' &" 
+	sleep 2
+
+	echo "USB Host test"
+    sh -c "mkfs.vfat /dev/sda1 && mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 && bonnie\+\+ -d /media/sda1 -u 0:0 -s 10 -r 5 && dt of=/media/sda1/test_file bs=4k limit=128m passes=20 || RC='$RC 2' &"
+
+	echo "SD test"
+	sleep 2
+	sh -c "mkdir -p /mnt/mmc && mkfs.vfat /dev/mmcblk0p1 && mount /dev/mmcblk0p1 /mnt/mmc && bonnie\+\+ -d /mnt/mmc -u 0:0 -s 10 -r 5 && dt of=/mnt/mmc/test_file bs=4k limit=128m passes=20 || RC='$RC 3' &"
+
+	echo "wifi test"
+	sleep 2
+	sh -c "modprobe ath6kl ; sleep 10; ifconfig wlan0 up && iwconfig wlan0 mode managed && sleep 5 &&iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key $(echo Happy123 | md5sum | cut -c 1-10) && iwconfig wlan0 essid FSLLBGAP_001 && sleep 5 && udhcpc -i wlan0"
+    export LOCALIP=$(ifconfig wlan0 | grep inet |  cut -d: -f 2 | awk '{print $1}')
+    cd ${LTPROOT}/testcases/bin
+	if [ ! -z $LOCALIP ];then
+        sh -c "tcp_stream_2nd_script 10.192.225.222 CPU $LOCALIP || RC='$RC 5' &"
+	fi
+
+    echo "gpu test"
+	modprobe gpu
+    export DISPLAY=:0.0
+    tmpdir=$(mktemp -d)
+    mkdir -p $tmpdir
+    mkfifo $tmpdir/tiger_fifo
+    sh -c "cat $tmpdir/tiger_fifo | tiger" &
+    sleep 20
+    echo "" > $tmpdir/tiger_fifo
+    rm -rf $tmpdir
+
+    return $RC
 }
 
 # Function:     test_case_04

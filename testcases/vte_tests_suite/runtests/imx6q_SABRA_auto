@@ -1,4 +1,4 @@
-TGE-LV-SATA-0001    dmesg | grep ATA | grep Gbps | grep 3.0	
+TGE-LV-SATA-0001  modprobe ahci_platform; sleep 10; dmesg | grep ATA | grep Gbps | grep 3.0	
 TGE-LV-ALSA-0101	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k16M.wav -A
 TGE-LV-ALSA-0102	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k16M.wav -A
 TGE-LV-ALSA-0103	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k16M.wav -A
@@ -119,8 +119,24 @@ TGE-LV-ESAI-0311	aplay -D hw:0,0  $STREAM_PATH/esai_stream/96k24bit-six-S24_LE.w
 TGE-LV-ESAI-0312	aplay -D hw:0,0  $STREAM_PATH/esai_stream/176k24bit-six-S24_LE.wav
 TGE-LV-ESAI-0313	aplay -D hw:0,0  $STREAM_PATH/esai_stream/192k24bit-six-S24_LE.wav
 TGE-LV-ESAI-1002	esai_test.sh 2
-TGE-LV-ESAI-0436	arecord -D plughw:0,0 -d 10 -f S16_LE -r 24000 -c 4 audio_24k_4ch.wav
-TGE-LV-ESAI-0438	arecord -D hw:0,0 -d 10 -f S16_LE -r 44100 -c 4 audio_44k_4ch.wav
+TGE-LV-ESAI-0401	adc_test1.sh -d 10 -f S16_LE -r 8000 -c 2
+TGE-LV-ESAI-0402	adc_test1.sh -d 10 -f S16_LE -r 11025 -c 2
+TGE-LV-ESAI-0403	adc_test1.sh -d 10 -f S16_LE -r 12000 -c 2
+TGE-LV-ESAI-0404	adc_test1.sh -d 10 -f S16_LE -r 16000 -c 2
+TGE-LV-ESAI-0405	adc_test1.sh -d 10 -f S16_LE -r 22050 -c 2
+TGE-LV-ESAI-0406	adc_test1.sh -d 10 -f S16_LE -r 24000 -c 2
+TGE-LV-ESAI-0407	adc_test1.sh -d 10 -f S16_LE -r 32000 -c 2
+TGE-LV-ESAI-0408	adc_test1.sh -d 10 -f S16_LE -r 44100 -c 2
+TGE-LV-ESAI-0409	adc_test1.sh -d 10 -f S16_LE -r 48000 -c 2
+TGE-LV-ESAI-0431	arecord -d 10 -f S16_LE -r 8000 -c 4 audio_8k_4ch.wav
+TGE-LV-ESAI-0432	arecord -d 10 -f S16_LE -r 11025 -c 4 audio_11k_4ch.wav
+TGE-LV-ESAI-0433	arecord -d 10 -f S16_LE -r 12000 -c 4 audio_12k_4ch.wav
+TGE-LV-ESAI-0434	arecord -d 10 -f S16_LE -r 16000 -c 4 audio_16k_4ch.wav
+TGE-LV-ESAI-0435	arecord -d 10 -f S16_LE -r 22050 -c 4 audio_22k_4ch.wav
+TGE-LV-ESAI-0436	arecord -d 10 -f S16_LE -r 24000 -c 4 audio_24k_4ch.wav
+TGE-LV-ESAI-0437	arecord -d 10 -f S16_LE -r 32000 -c 4 audio_32k_4ch.wav
+TGE-LV-ESAI-0438	arecord -d 10 -f S16_LE -r 44100 -c 4 audio_44k_4ch.wav
+TGE-LV-ESAI-0439	arecord -d 10 -f S16_LE -r 48000 -c 4 audio_48k_4ch.wav
 TGE-LV-ALSA-0200	(aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav &); arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav && aplay file.wav
 TGE-LV-ALSA-0201	(arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav &); aplay $STREAM_PATH/alsa_stream/audio44k16S.wav && aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav && sleep 20 && aplay file.wav
 TGE-LV-ALSA-SPDIF-0002	aplay -D plughw:0 ${STREAM_PATH}/spdif_stream/audio32k16S.wav
@@ -146,7 +162,7 @@ TGE-LV-ETHERNET-1003	(ifconfig eth0 && ethtool eth0)
 TGE-LV-ETHERNET-1004	tcp_stream_script 10.192.225.222 CPU
 TGE-LV-ETHERNET-1005	udp_stream_script 10.192.225.222 CPU
 TGE-LV-ETHERNET-1007	touch readme && ftpget -u anonymous 10.192.225.218 readme readme && cat readme | grep welcome && rm readme
-TGE-LV-ETHERNET-1008	ethtool etho | grep 1000
+TGE-LV-ETHERNET-1008	ethtool eth0 | grep 1000
 TGE-LV-FEC-0010	fec_testapp -T 0
 TGE-LV-FEC-0011	if ifconfig |grep 10.200; then fec_testapp -T 1 -H 10.200.1.1; else fec_testapp -T 1 -H 10.192.225.219; fi
 TGE-LV-FEC-0012	fec_testapp -T 2
@@ -158,7 +174,7 @@ TGE-LV-ESLCD-0703	echo q | fbv -d /dev/fb2 ${LTPROOT}/testcases/bin/butterfly.pn
 TGE-LV-ESLCD-0710	fbset -depth 32 && lcd_testapp -T 2 -B /dev/fb0 -D 32 -X 10
 TGE-LV-FB-0010	fbset -depth 16;  lcd_testapp -T 1 -D 16 -B /dev/fb0 -X 10
 TGE-LV-FB-0011	fbset -depth 24;  lcd_testapp -T 1 -D 24 -B /dev/fb0 -X 10; fbset -depth 16
-TGE-LV-FB-1002	fbset && fbset -depth 32 && fbset -depth 16 && fbset -depth 24 && fbset -depth 32
+TGE-LV-FB-1002	( fbset && fbset -depth 32 ) && fbset -depth 16 && fbset -depth 24 && fbset -depth 32
 TGE-LV-FB-1003	cat /dev/vcs
 TGE-LV-FB-1006	echo 1 > /sys/class/graphics/fb0/blank && echo 0 > /sys/class/graphics/fb0/blank
 TGE-LV-FB-1007	display_clk.sh 1
@@ -167,10 +183,9 @@ TGE-LV-GPU-FB-PERF-GLES-0006	gles_viv.sh 2
 TGE-LV-GPU-PERF-OPENVG-0001	vg_gc2000.sh 1
 TGE-LV-GPU-FB-CONF-VG-0002	vg_gc2000.sh 2
 TGE-LV-GPU-FB-MULTI-0001	sh -c "vg_gc2000.sh 2 &"; gles_viv.sh 2
-TGE-LV-EMMC-BOOT-0001	eMMC_boot_test.sh
 TGE-LV-CLOCK-0301	cat /proc/cpu/clocks
 TGE-LV-DVFS-0010	dvfs.sh 1
-TGE-LV-DVFS-0140	dvfs_mx6q.sh 1
+TGE-LV-DVFS-0140_LLL	dvfs_mx61.sh 1
 TGE-LV-DVFS-0150	echo 0 > /sys/devices/platform/mxc_dvfs_core.0/enable && sleep 2 && cpufreq-set -f 160M && sleep 10 && cpufreq-info -f | grep 160000 && cpufreq-set -f 800M && sleep 10 && cpufreq-info -f | grep 800000
 TGE-LV-DVFS-0200	cpufreq-info
 TGE-LV-ASRC-0211	rtc_testapp_6 -T 10; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
