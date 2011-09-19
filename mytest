@@ -96,7 +96,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 	 else
 #2 case ID avaialble
 			ss=$(echo $id | awk '{print $1}')
-      line=$(grep -n "$ss" ${TEST_PATH}/runtest/$CMDFILE | awk '{print $1}' | cut -d ":" -f 1)
+      line=$(grep -wn "$ss" ${TEST_PATH}/runtest/$CMDFILE | awk '{print $1}' | cut -d ":" -f 1)
 			if [ -z $ll ]; then
 	#3 if no former fail data
 				ll=0
