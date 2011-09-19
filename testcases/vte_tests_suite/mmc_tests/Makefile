@@ -38,7 +38,7 @@ SUBDIRS-y += stressRW_mmc_testcase
 TARGET-y += mmc_test_minix.sh
 TARGET-y += mmc_module_test.sh
 TARGET-y += eMMC_boot_test.sh eMMC_boot_info.sh
-TARGET-y += mmc_clock.sh
+TARGET-y += mmc_clock.sh mmc_transfer.sh
 #for non imx37 platform 
 SUBDIRS-$(CONFIG_VTE_MMC_ERW) += erw_mmc_testcase
 #for non imx37 platform 
