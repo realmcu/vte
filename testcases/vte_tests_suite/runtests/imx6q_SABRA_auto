@@ -1,4 +1,4 @@
-TGE-LV-SATA-0001  modprobe ahci_platform; sleep 10; dmesg | grep ATA | grep Gbps | grep 3.0	
+TGE-LV-SATA-0001    modprobe ahci_platform; sleep 10; ls -l /sys/block | grep ahci	
 TGE-LV-ALSA-0101	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k16M.wav -A
 TGE-LV-ALSA-0102	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k16M.wav -A
 TGE-LV-ALSA-0103	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k16M.wav -A
@@ -139,11 +139,9 @@ TGE-LV-ESAI-0438	arecord -d 10 -f S16_LE -r 44100 -c 4 audio_44k_4ch.wav
 TGE-LV-ESAI-0439	arecord -d 10 -f S16_LE -r 48000 -c 4 audio_48k_4ch.wav
 TGE-LV-ALSA-0200	(aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav &); arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav && aplay file.wav
 TGE-LV-ALSA-0201	(arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav &); aplay $STREAM_PATH/alsa_stream/audio44k16S.wav && aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav && sleep 20 && aplay file.wav
-TGE-LV-ALSA-SPDIF-0002	aplay -D plughw:0 ${STREAM_PATH}/spdif_stream/audio32k16S.wav
-TGE-LV-SPDIF-0001	spdif_basic.sh
 TGE-LV-BENCH-10001	coremark_F4.exe  0x0 0x0 0x66 0 7 1 2000 &&  coremark_F4.exe  0x3415 0x3415 0x66 0 7 1 2000 && coremark_F4.exe 8 8 8 0 7 1 1200
 TGE-LV-BENCH-10002	coremark_P4.exe 0x0 0x0 0x66 0 7 1 2000 && coremark_P4.exe 0x3415 0x3415 0x66 0 7 1 2000 && coremark_P4.exe 8 8 8 0 7 1 1200
-TGE-LV-BENCH-10003	c-ray.sh
+TGE-LV-BENCH-10003_LLL	c-ray.sh
 TGE-LV-UBOOT-0020	dmesg
 TGE-LV-UBOOT-0060	ls
 TGE-LV-APP-0001	gst-inspect
@@ -158,7 +156,7 @@ TGE-LV-DISPLAY-DUAL-0001	echo q | fbv ${LTPROOT}/testcase/bin/butterfly.png && l
 TGE-LV-WIFI-0043	modprobe ath6kl && ifconfig wlan0 up && iwconfig wlan0 mode managed && sleep 10 && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001 && udhcpc -i wlan0 && sleep 10 && LOCALIP=$(ifconfig wlan0  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}') && iperf -d -c 10.192.225.222 -n 100M -B $LOCALIP  -t 100 && ifconfig wlan0 down && modprbe -r ath6kl
 TGE-LV-WIFI-0061-Stress	LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ath6kl; sleep 5;ifconfig wlan0 up && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && ifconfig wlan0 down && RT=0 ; modprobe -r ath6kl; echo $LOOP; done ; [ $RT -eq 0 ]
 TGE-LV-ETHERNET-1000	tcpdump -c 10 -i eth0
-TGE-LV-ETHERNET-1003	(ifconfig eth0 && ethtool eth0)
+TGE-LV-ETHERNET-1003	(ifconfig eth0 ) && (ethtool eth0)
 TGE-LV-ETHERNET-1004	tcp_stream_script 10.192.225.222 CPU
 TGE-LV-ETHERNET-1005	udp_stream_script 10.192.225.222 CPU
 TGE-LV-ETHERNET-1007	touch readme && ftpget -u anonymous 10.192.225.218 readme readme && cat readme | grep welcome && rm readme
@@ -183,10 +181,7 @@ TGE-LV-GPU-FB-PERF-GLES-0006	gles_viv.sh 2
 TGE-LV-GPU-PERF-OPENVG-0001	vg_gc2000.sh 1
 TGE-LV-GPU-FB-CONF-VG-0002	vg_gc2000.sh 2
 TGE-LV-GPU-FB-MULTI-0001	sh -c "vg_gc2000.sh 2 &"; gles_viv.sh 2
-TGE-LV-CLOCK-0301	cat /proc/cpu/clocks
-TGE-LV-DVFS-0010	dvfs.sh 1
 TGE-LV-DVFS-0140_LLL	dvfs_mx61.sh 1
-TGE-LV-DVFS-0150	echo 0 > /sys/devices/platform/mxc_dvfs_core.0/enable && sleep 2 && cpufreq-set -f 160M && sleep 10 && cpufreq-info -f | grep 160000 && cpufreq-set -f 800M && sleep 10 && cpufreq-info -f | grep 800000
 TGE-LV-DVFS-0200	cpufreq-info
 TGE-LV-ASRC-0211	rtc_testapp_6 -T 10; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
 TGE-LV-ETHERNET-1006	rtc_testapp_6 -T 10 && ifconfig eth0
@@ -205,7 +200,7 @@ TGE-LV-RTC-0014	rtc_testapp_5 -T FASYNC
 TGE-LV-RTC-0020	rtc_testapp_4
 TGE-LV-RTC-0100	rtc_test.sh 2
 TGE-LV-RTC-2000	rtc_test.sh 3
-TGE-LV-SD-1010	dmesg | grep mmc | grem DMA
+TGE-LV-SD-1010	mmc_transfer.sh
 TGE-LV-SD-1050	sd_clk.sh 1
 TGE-LV-SD-1800	cat /proc/partitions | grep mmc
 TGE-LV-STORAGE-2001	storage_all.sh 1
@@ -213,13 +208,14 @@ TGE-LV-STORAGE-2002	storage_all.sh 2
 TGE-LV-VIIM-0001	iim_test
 TGE-LV-SYS_DISPLAY-0001	display_stress.sh 1
 TGE-LV-SYS_DISPLAY-0002	display_stress.sh 2
-TGE-LV-THERMO-0001	cat /sys/devices/virtual/thermal/thermal_zone0/*temp && cat /sys/devices/virtual/thermal/thermal_zone0/*type
+TGE-LV-THERMO-0001	cat /sys/devices/virtual/thermal/thermal_zone0/*temp
+TGE-LV-THERMO-0002	cat /sys/devices/virtual/thermal/thermal_zone0/*type
 TGE-LV-UART-0016	(stty -ixon -F /dev/ttymxc0 && stty ixon -F /dev/ttymxc0 && stty -a -F /dev/ttymxc0  | grep ixon && stty -a -F /dev/ttymxc0  | grep crtscts)
 TGE-LV-UART-0017	ints1=$(cat /proc/interrupts | grep uart | awk {'print $2'}) ; start=0; for i in $ints1; do start=$(expr $start + $i);done;cat /etc/passwd >  /dev/ttymxc0 ; ints2=$(cat /proc/interrupts | grep uart | awk {'print $2'});end=0;for i in $ints2; do end=$(expr $end + $i);done; [ $end -gt $start ]
 TGE-LV-UART-0018	stty 115200 cs8 -F /dev/ttymxc0 && stty -a -F /dev/ttymxc0  | grep cs8 &&  stty -a -F /dev/ttymxc0  | grep cstopb && stty -a -F /dev/ttymxc0  | grep crtscts && stty -a  -F /dev/ttymxc0 | grep ignbrk
 TGE-LV-UART-0700	uart_testapp_10 /dev/ttymxc1 115200 && uart_testapp_10 /dev/ttymxc2 115200
 TGE-LV-USB-HOST-0010	cat /proc/partitions | grep sd
-TGE-LV-USB-HOST-0030	fdisk -l /dev/sda && mkfs.vfat /dev/sda1
+TGE-LV-USB-HOST-0030	mkfs.ext3 /dev/sda1
 TGE-LV-USB-HOST-0040	mkdir -p /media/sda1; mount /dev/sda1 /media/sda1 && bonnie++ -d /media/sda1 -u 0:0 -s 10 -r 5 && dt of=/media/sda1/test_file bs=4k limit=128m passes=20 && umount /media/sda1
 TGE-LV-V4L2-0070	v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
 TGE-LV-V4L2-0071	v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24
