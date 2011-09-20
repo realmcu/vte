@@ -383,7 +383,8 @@ rmmod_ATA()
 
 insmod_V4L()
 {
-	echo "v4l: prepare insmod modules";
+	prepare_platform;
+        echo "v4l: prepare insmod modules";
 	find=0;
     #turn on backlight
     echo -e "\033[9;0]" > /dev/tty0
@@ -440,9 +441,16 @@ insmod_V4L()
 		sleep 2;
 	fi
 
+	find=`find /lib/modules/$sys_name -name ov3640_camera.ko | wc -l`;
+	lsmod | grep ov3640_camera;
+	if [ $? -ne 0 ] && [ $find -eq 1 ] && [ $platform == MX51 ]; then
+        	modprobe ov3640_camera;
+		sleep 2;
+	fi
+
 	find=`find /lib/modules/$sys_name -name ov5642_camera.ko | wc -l`;
 	lsmod | grep ov5642_camera;
-	if [ $? -ne 0 ] && [ $find -eq 1 ]; then
+	if [ $? -ne 0 ] && [ $find -eq 1 ] && [ $platform != MX51 ]; then
         	modprobe ov5642_camera;
 		sleep 2;
 	fi
