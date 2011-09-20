@@ -94,8 +94,8 @@ cd ${TEST_DIR}/${APP_SUB_DIR}
 echo "==========================="
 echo vgMark
 echo "==========================="
-cd VGMark
-./fm_oes_vg_player || RC=$(echo $RC vgmark)
+cd VGMark_gc355
+./fm_oes_vg_player_gc355 || RC=$(echo $RC vgmark)
 
 echo $RC
 
@@ -135,8 +135,8 @@ cd ${TEST_DIR}/${APP_SUB_DIR}
 echo "==========================="
 echo vgMark
 echo "==========================="
-cd VGMark
-./fm_oes_vg_player &
+cd VGMark_gc355
+./fm_oes_vg_player_gc355 &
 
 
 
