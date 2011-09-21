@@ -224,16 +224,16 @@ echo "==========================="
 echo es20 conformance
 echo "==========================="
 RC=$(echo $RC es20_conformance)
-#if [ -e es20_conform/GTF_ES/glsl/GTF/GTF ]; then
-#  cd es20_conform/GTF_ES/glsl
-#	./GTF/GTF -width=64 -height=64 -noimagefileio \
-#	-l=/root/es20_conformance_mustpass_64x64 -run="$(pwd)/GTF/mustpass.run" \
-#	&& ./GTF/GTF -width=113 -height=47 -noimagefileio \
-#	-l=/root/es20_conformance_mustpass_113x47 -run="$(pwd)/GTF/mustpass.run" \
-#	&& ./GTF/GTF -width=640 -height=480 -noimagefileio \
-#	-l=/root/es20_conformance_mustpass_640x480 -run="$(pwd)/GTF/mustpass.run" \
-#	|| RC=$(echo $RC es20_conformance)
-#fi
+if [ -e es20_conform/GTF_ES/glsl/GTF/GTF ]; then
+  cd es20_conform/GTF_ES/glsl
+	./GTF/GTF -width=64 -height=64 -noimagefileio \
+	-l=/root/es20_conformance_mustpass_64x64 -run="$(pwd)/GTF/mustpass.run" \
+	&& ./GTF/GTF -width=113 -height=47 -noimagefileio \
+	-l=/root/es20_conformance_mustpass_113x47 -run="$(pwd)/GTF/mustpass.run" \
+	&& ./GTF/GTF -width=640 -height=480 -noimagefileio \
+	-l=/root/es20_conformance_mustpass_640x480 -run="$(pwd)/GTF/mustpass.run" \
+	|| RC=$(echo $RC es20_conformance)
+fi
 
 echo $RC
 
