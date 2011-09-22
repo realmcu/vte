@@ -94,8 +94,10 @@ vpu_enc_test.sh 2 &
 vpu_enc_test.sh 4 || return 1
 
 vpu_enc_test.sh 3 &
-vpu_enc_test.sh 5 || return 1
+vpu_enc_test.sh 2 || return 1
+#vpu_enc_test.sh 5 || return 1
 
+wait
 RC=0
 return $RC
 
@@ -126,7 +128,7 @@ vpu_multi_dec_test.sh 1 || return 1
 vpu_enc_test.sh 4 &
 vpu_multi_dec_test.sh  1 || return 1
 
-vpu_enc_test.sh 5 &
+vpu_enc_test.sh 4 &
 vpu_multi_dec_test.sh 1 || return 1
 
 wait
