@@ -1,3 +1,4 @@
+#!/bin/sh -x
 #Copyright (C) 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
