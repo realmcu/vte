@@ -275,6 +275,48 @@ echo "TEST PASS"
 return $RC
 }
 
+test_case_05()
+{
+#TODO give TCID 
+TCID="gles_pm_test"
+#TODO give TST_COUNT
+TST_COUNT=4
+RC=0
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo "3Dmark20 mm07 test"
+echo "==========================="
+if [ -e mm07_v21 ]; then
+cd mm07_v21
+./fm_oes2_mobile_player
+fi
+
+cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo "3Dmark22 test"
+echo "==========================="
+if [ -e basemark_v2 ]; then
+cd basemark_v2
+./fm_oes2_player
+fi
+
+cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo "Mirada test"
+echo "==========================="
+if [ -e Mirada ]; then
+cd Mirada
+./Mirada
+fi
+
+return 0
+}
+
+
 usage()
 {
 echo "$0 [case ID]"
@@ -282,6 +324,7 @@ echo "1: sequence test"
 echo "2: concurrent test"
 echo "3: conformance test"
 echo "4: pm test"
+echo "5: performance test"
 }
 
 # main function
@@ -342,6 +385,9 @@ case "$1" in
   ;;
 4)
   test_case_04 || exit $RC
+  ;;
+5)
+  test_case_05 || exit $RC
   ;;
 *)
   usage
