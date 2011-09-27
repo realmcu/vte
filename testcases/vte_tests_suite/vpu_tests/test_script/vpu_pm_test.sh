@@ -86,7 +86,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 tmpfile=$(mktemp)
 $TSTCMD -D "-f 1 -i ${STREAM_PATH}/video/stream.263 -o $tmpfile" &
-rtc_testapp_6 -T 10
+rtc_testapp_6 -T 15
 sleep 10
 SIZE=$(ls -l $tmpfile | awk '{print $5}')
 if [ $SIZE = "152064" ]
@@ -135,7 +135,7 @@ rm -f /tmp/enc/test.263
 echo "start a process to test enc"
 #$TSTCMD -C config_enc_h263_P3 &
 $TSTCMD -E "-f 1 -w 352 -h 288 -i ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv -o /tmp/enc/test.263" & 
-rtc_testapp_6 -T 10
+rtc_testapp_6 -T 15
 sleep 10
 
 SIZE2=$(ls -s /tmp/enc/test.263 | awk '{print $1}')
@@ -169,7 +169,7 @@ cd /tmp
 
 $TSTCMD -D "-f 1 -i ${STREAM_PATH}/video/test.263" &
 
-rtc_testapp_6 -T 5
+rtc_testapp_6 -T 15
 
 RC=0
 
