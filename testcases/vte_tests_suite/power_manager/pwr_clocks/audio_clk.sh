@@ -67,7 +67,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #now check the clocks
 esai_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/esai_clk/enable_count | grep -v 0 | wc -l)
 ssi_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/ssi*_clk/enable_count | grep -v 0 | wc -l)
-spdif_ct=$(cat ${mount_pt}clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/spdif_clk/enable_count | grep -v 0 | wc -l)
+spdif_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/spdif_clk/enable_count | grep -v 0 | wc -l)
 #cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/enable_count
 
 if [ $esai_ct -gt 0 ] || [ $ssi_ct -gt 0 ] || [ $spdif_ct -gt 0 ]; then
