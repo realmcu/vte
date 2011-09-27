@@ -169,13 +169,6 @@ TGE-LV-RTC-2000	rtc_test.sh 3
 TGE-LV-SD-1300	cat /proc/partitions | grep mmcblk
 TGE-LV-SD-CLOCK_0001	RC=0; ss=0;list=$(cat /proc/cpu/clocks | grep -i sdhc | awk '{print $3}'); for i in $list; do ss=$(expr $ss + $i); done; [ $ss -eq 0 ]  || RC=1; sh -c "dd if=/dev/mmcblk0p1 of=/dev/null bs=1024k count=100 & ";  ss=0;list=$(cat /proc/cpu/clocks | grep -i sdhc | awk \'{print $3}\'); for i in $list; do ss=$(expr $ss + $i); done; [ $ss -ne 0 ] || RC=$(expr $RC + 1); [ $RC -eq 0 ]
 TGE-LV-SDMA-0040	sdma_rw.sh
-TGE-LV-STORAGE-1004	storage_test.sh F USBH
-TGE-LV-STORAGE-1202	storage_test.sh CD /mnt/mmcblk0p1 /mnt/ata1 5 1
-TGE-LV-STORAGE-1203	storage_test.sh CD /mnt/ata1 /mnt/mmcblk0p1 5 1
-TGE-LV-STORAGE-1204	storage_test.sh CD /mnt/mmcblk0p1 /mnt/msc 5 1
-TGE-LV-STORAGE-1205	storage_test.sh CD /mnt/msc /mnt/mmcblk0p1 5 1
-TGE-LV-STORAGE-2123	storage_test.sh CD /mnt/ata1 /mnt/ata1 10 10
-TGE-LV-STORAGE-2133	storage_test.sh CD /mnt/msc /mnt/msc 10 10
 TGE-LV-VPU-0002_720P	vpu_tvout_720P.sh 2
 TGE-LV-VPU-0002_NTSC	vpu_tvout_NTSC.sh 2
 TGE-LV-UART-0250	uart5.sh  /dev/ttymxc2
