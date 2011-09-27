@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 #Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -186,55 +186,21 @@ RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
-BWLIST="10 32 51 255"
-
-#TODO add function test scripte here
-echo "TST INFO: now block size is $i"
-
-echo "TST INFO: video pattern with user define dma buffer queue, one full-screen output"
-${TST_CMD} -P 1 || return $RC
-
-if [ "$TARGET" = "37" ] || [ "$TARGET" = "51" ] || [ "$TARGET" = "53"  ]; then
-echo "TST INFO: ipu v3 only"
-echo "TST INFO: video pattern with user define dma buffer queue, with two output"
-${TST_CMD} -P 2 || return $RC
-${TST_CMD} -P 5 || return $RC
-${TST_CMD} -P 6 || return $RC
-${TST_CMD} -P 7 || return $RC
-#${TST_CMD} -P 8 || return $RC
-${TST_CMD} -P 9 || return $RC
-${TST_CMD} -P 10 || return $RC
-${TST_CMD} -P 11 || return $RC
-${TST_CMD} -P 12 || return $RC
-${TST_CMD} -P 13 || return $RC
-${TST_CMD} -P 14 || return $RC
-${TST_CMD} -P 15 || return $RC
-${TST_CMD} -P 16 || return $RC
-${TST_CMD} -P 17 || return $RC
-${TST_CMD} -P 18 || return $RC
-${TST_CMD} -P 19 || return $RC
-fi
-echo "TST INFO hopping block screen save"
-for i in $BWLIST
-do
-${TST_CMD} -P 3 -bw $i || return $RC
-done
-echo "TST INFO: color bar + hopping block for 10 secondes"
-${TST_CMD} -P 4 || return $RC
-
+if [ -e /dev/mxc_ipu ]; then
 RC=0
+fi
 
 return $RC
 
 }
 
 # Function:     test_case_02
-# Description   - Test ipu_ENC_dev ok
+# Description   - Test ipu main display test
 #  
 test_case_02()
 {
 #TODO give TCID 
-TCID="IPU_ENC_dev"
+TCID="IPU_API_test"
 #TODO give TST_COUNT
 TST_COUNT=2
 RC=1
@@ -242,21 +208,14 @@ RC=1
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-echo "TST INFO: ENC task" 
 
-MODELIST="0x11 0x21 "
-
-for MODE in $MODELIST
-do
 #TODO add function test scripte here
- echo "TST INFO: mode is $MODE"
  for CRP in $CROPLIST 
  do
    echo "TST INFO: CROP is $CRP"
-   #for r in $ROTATION
-   #do
-   #echo "TST INFO: Rotation is $r"
-     r=0
+   for r in $ROTATION
+   do
+     echo "TST INFO: Rotation is $r"
      for tf in $FMLIST
      do
      echo "TST INFO: to form is $tf"
@@ -264,11 +223,9 @@ do
      exec_test || return $RC
      done
    #end for rotation
-   #done
+   done
  #end for CRP
  done
-#end for MODE
-done
 RC=0
 return $RC
 
@@ -332,31 +289,23 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-MODELIST="0x12 0x22"
-for MODE in $MODELIST
-do
 #TODO add function test scripte here
- echo "TST INFO: mode is $MODE"
  for CRP in $CROPLIST 
  do
    echo "TST INFO: CROP is $CRP"
-   #for r in $ROTATION
-   #do
-   #echo "TST INFO: Rotation is $r"
-   r=0
+   for r in $ROTATION
+   do
+     echo "TST INFO: Rotation is $r"
      for tf in $FMLIST
      do
-     echo "TST INFO: to form is $tf"
-
-     #end for tf
-     exec_test || return $RC
-    # done
+      echo "TST INFO: to form is $tf"
+      exec_test || return $RC
+		 done
+     #end for format
+    done
    #end for rotation
-   done
- #end for CRP
  done
-#end for MODE
-done
+ #end for CRP
 RC=0
 return $RC
 }
@@ -381,11 +330,16 @@ mkdir -p /tmp/ipu_dev
             INFILE=$(echo $j | sed "s/+/ /g"| awk '{print $3}')
             
             if [ $i != "I420" ];then
-            echo "${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},I420 \
-                    -O  ${WD},${HT},${i} -S 0,0,0,0 -N /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}"
+            echo "${TST_CMD} -c 1 -l 1 \
+						-i ${WD},${HT},I420,0,0,0,0,0,0 \
+            -O  ${WD},${HT},${i},0,0,0,0,0 -s 0\
+						-f /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}"
             
-            ${TST_CMD} -m $MODE -f $fc -i ${WD},${HT},I420 \
-                    -O  ${WD},${HT},${i} -S 0,0,0,0 -N /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}
+            ${TST_CMD} -p 0 -d 0 -c 1 -l 1 \
+						-i ${WD},${HT},I420,0,0,0,0,0,0 \
+            -O  ${WD},${HT},${i},0,0,0,0,0 -s 0\
+						-f /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}
+
             else
             cp ${STREAM_PATH}/video/${INFILE} /tmp/ipu_dev/tmp.dat
             fi
@@ -394,43 +348,29 @@ mkdir -p /tmp/ipu_dev
             else
                 for k in $RESLIST
                 do
-                    echo "TST INFO: output $k"
+                  echo "TST INFO: output $k"
 	                w=$(echo $k | sed "s/,/ /g" | awk '{print $1}')
 	                h=$(echo $k | sed "s/,/ /g" | awk '{print $2}')
-                    if [ $w -gt $FB0XRES ] || [ $h -gt $FB0YRES ]; then
-                        echo "TST INFO: skip this resolution for fb not support\n"
-                    else
+                  if [ $w -gt $FB0XRES ] || [ $h -gt $FB0YRES ]; then
+                   echo "TST INFO: skip this resolution for fb not support\n"
+                   else
                         for l in $FBPOS ; do
-                            check_format_bits $tf
-							efb0=0
-	                        if [ "$MODE" = "0x13"  ] || [ "$MODE" = "0x23"  ]; then
-                                if [ $w -gt $FB1XRES ] || [ $h -gt $FB1YRES ]; then
-                                    echo "TST INFO: skip this resolution for fb not support\n"
-                                else
-	                                efb2=1
-                                    check_format_bits $tf
-                                    if [ $? -ne $FB2BITS ]; then
-                                        efb2=0
-                                        echo "TST INFO: mute fb2"
-		                            fi
-									echo "motion_sel = 0(medium_motion)"
-	                                echo "${TST_CMD} -m $MODE -E 0 -f $fc -i ${WD},${HT},${i} -c ${CRP} \
-                                        -o  ${k},${tf},$r -s ${efb0},0,${l} -n /dev/null \
-	                                    -O ${k},${tf},$r -S ${efb2},2,${l} -N /dev/null /tmp/ipu_dev/tmp.dat \
-	                                    || RC=$(expr $RC + 1)"
-									echo "motion_sel = 1(low_motion)"
-                                    ${TST_CMD} -m $MODE -E 1 -f $fc -i ${WD},${HT},${i} -c ${CRP} \
-                                        -o  ${k},${tf},$r -s ${efb0},0,${l} -n /dev/null \
-	                                    -O ${k},${tf},$r -S ${efb2},2,${l} -N /dev/null /tmp/ipu_dev/tmp.dat \
-	                                    || RC=$(expr $RC + 1)
-									echo "motion_sel = 2(high_motion)"
-                                    ${TST_CMD} -m $MODE -E 2 -f $fc -i ${WD},${HT},${i} -c ${CRP} \
-                                        -o  ${k},${tf},$r -s ${efb0},0,${l} -n /dev/null \
-	                                    -O ${k},${tf},$r -S ${efb2},2,${l} -N /dev/null /tmp/ipu_dev/tmp.dat \
-	                                    || RC=$(expr $RC + 1)
-	                            fi
-	                        fi
-                            sleep 1
+		echo " no motion"
+    ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,${CRP},0,0 \
+    -O  ${w},${h},${i},${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${INFILE} \
+		|| RC=$(expr $RC + 1)
+		echo "motion_sel = 0(medium_motion)"
+    ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,0,0,0,0,1,0 \
+    -O  ${w},${h},${i},${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${INFILE} \
+		|| RC=$(expr $RC + 1)
+	  echo "motion_sel = 1(low_motion)"
+    ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,0,0,0,0,1,1 \
+    -O  ${w},${h},${i},${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${INFILE} \
+		|| RC=$(expr $RC + 1)
+		echo "motion_sel = 2(high_motion)"
+    ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,0,0,0,0,1,2 \
+    -O  ${w},${h},${i},${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${INFILE} \
+		|| RC=$(expr $RC + 1)
 	                    #end for l fb pos
 	                    done
 	                fi
@@ -464,30 +404,6 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-MODELIST="0x13 0x23"
-for MODE in $MODELIST
-do
-#TODO add function test scripte here
- echo "TST INFO: mode is $MODE"
- for CRP in $CROPLIST 
- do
-   echo "TST INFO: CROP is $CRP"
-   #for r in $ROTATION
-   #do
-   #echo "TST INFO: Rotation is $r"
-   r=0
-     for tf in $FMLIST
-     do
-     echo "TST INFO: to form is $tf"
-     #end for tf
-     exec_test || return $RC
-     done
-   #end for rotation
-   #done
- #end for CRP
- done
-#end for MODE
-done
 RC=0
 return $RC
 }
@@ -507,21 +423,6 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-
-for r in $ROTATION
-do
-  echo "TST INFO: Rotation is $r"
-  echo "for single display"
-  ${TST_CMD} -m 0x21 -f 50 -i 352,288,I420 -o 352,288,RGBP,$r \
-  -s 1,0,0,0 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv \
-  || return $RC
-  #not support any more
-	#echo "for multi display"
-  #${TST_CMD} -m 0x23 -f 50 -E 1 -i 352,288,I420 \
-  #-o 352,288,RGBP,$r -s 1,0,0,0 -O 352,288,RGBP,$r \
-  #-S 1,2,0,288 ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv \
-  #|| return $RC
-done
 
 RC=0
 return $RC
@@ -547,11 +448,7 @@ test_case_07()
     IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv"
     fc=300
     FMLIST="RGBP"
-    MODELIST="0x11 0x12 0x14 0x21 0x22 0x24 0x23"
-    rm -f ipu_performance.txt
-    
     mkdir -p /tmp/ipu_dev
-
     for infile in ${IN_FILE}
     do
         echo "TST_INFO: ---------------------------------------"
@@ -560,65 +457,32 @@ test_case_07()
         WD=$(echo $infile | sed "s/+/ /g" | awk '{print $1}' )
         HT=$(echo $infile | sed "s/+/ /g" | awk '{print $2}' )
         infilename=$(echo $infile | sed "s/+/ /g"| awk '{print $3}')
-
-        echo "TST_INFO: copy stream to memory"
-        cp ${STREAM_PATH}/video/${infilename} /dev
-
-        for mode_task in ${MODELIST}
+        for format in ${FMLIST}
         do
-            echo "TST_INFO: Mode is ${mode_task}"
-            for format in ${FMLIST}
+          echo "TST_INFO: output format is: ${format}"
+          echo "TST_INFO: --------single display---------------"
+					echo "back ground"
+    time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,0,0,0,0,0,0 \
+    -O  ${WD},${HT},${format},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+		      echo "foregrand"
+    time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,0,0,0,0,0,0 \
+		-o 1,${WD},${HT},${format},0,0,0,0,1,128,0,0 \
+    -O  ${WD},${HT},${format},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+          echo "TST_INFO: ---------crop test------------"
+    time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,32,32,64,64,0,0 \
+    -O  ${WD},${HT},${format},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+    time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,32,32,64,64,0,0 \
+    -O  ${WD},${HT},${format},32,32,64,64 -s 1 ${STREAM_PATH}/video/${infilename}
+           echo "TST_INFO: --------- resize test --------------------"
+            for outsize in $RESLIST
             do
-                echo "TST_INFO: output format is: ${format}"
-                if [ $mode_task = "0x23"  ]; then
-                
-                    echo "TST INFO: -----------multi-display test not valid------------"
-                    ${TST_CMD} -m ${mode_task} -f 300 -E 1 -i $WD,$HT,I420 -o \
-                    $WD,$HT,$format,0 -s 1,0,0,0 -O $WD,$HT,$format,0 -S 1,1,0,$HT \
-                    /dev/${infilename} 
-                    sleep 3
-
-                    run_time=`cat /tmp/ipu_dev/sys_time.txt`
-                    echo -e "${infilename}\t multi-dispaly\t $run_time \t -m ${mode_task} -i $WD,$HT,I420 -o $WD,$HT,$format,0 -s 1,0,0,0 -O $WD,$HT,$format,0 -S 1,1,0,$HT" >> ipu_performance.txt
-                    echo ""
-
-                else
-
-                    echo "TST_INFO: --------single display---------------"
-                    ${TST_CMD} -m ${mode_task} -f 300 -i $WD,$HT,I420 -O \
-                    $WD,$HT,$format,0 -S 1,0,0,0 /dev/${infilename}
-                    sleep 3
-                
-                    run_time=`cat /tmp/ipu_dev/sys_time.txt`
-                    echo -e "${infilename}\t sigle-display \t $run_time \t -m ${mode_task} -i ${WD},${HT},I420 -O ${WD},${HT},$format,0 -S 1,0,0,0" >> ipu_performance.txt
-
-                    echo "TST_INFO: ---------crop test------------"
-                    ${TST_CMD} -m ${mode_task} -f 300 -i $WD,$HT,I420 -c 32,32,64,64 -O \
-                    $WD,$HT,$format,0 -S 1,0,0,0 /dev/${infilename} 
-                    sleep 3
-
-                    run_time=`cat /tmp/ipu_dev/sys_time.txt`
-                    echo -e "${infilename}\t crop test \t $run_time \t -m ${mode_task} -i ${WD},${HT},I420 -c 32,32,64,64 -O ${WD},${HT},$format,0 -S 1,0,0,0" >> ipu_performance.txt
-
-                    echo "TST_INFO: --------- resize test --------------------"
-                
-                    for outsize in $RESLIST
-                    do
-                        echo "TST INFO: output $outsize"
-	                    out_w=$(echo $outsize | sed "s/,/ /g" | awk '{print $1}')
-	                    out_h=$(echo $outsize | sed "s/,/ /g" | awk '{print $2}')
-
-                        ${TST_CMD} -m ${mode_task} -f 300 -i $WD,$HT,I420 -O \
-                        $out_w,$out_h,$format,0 -S 1,0,0,0 /dev/${infilename}
-                        sleep 3
-                
-                        run_time=`cat /tmp/ipu_dev/sys_time.txt`
-                        echo -e "${infilename}\t resize test \t $run_time \t -m ${mode_task} -i ${WD},${HT},I420 -O ${out_w},${out_h},$format,0 -S 1,0,0,0" >> ipu_performance.txt
-                    done
-                fi
-            done
-        done
-        rm -f /dev/${infilename} 
+              echo "TST INFO: output $outsize"
+	         out_w=$(echo $outsize | sed "s/,/ /g" | awk '{print $1}')
+	         out_h=$(echo $outsize | sed "s/,/ /g" | awk '{print $2}')
+    time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,0,0,0,0,0,0 \
+    -O  ${out_w},${out_h},${format},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+             done
+         done
     done
 
     RC=$?
@@ -630,18 +494,69 @@ test_case_07()
 RC=0
 
 IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv"
+# rotation ref:
+# 	IPU_ROTATE_NONE = 0,
+#	IPU_ROTATE_VERT_FLIP = 1,
+#	IPU_ROTATE_HORIZ_FLIP = 2,
+#	IPU_ROTATE_180 = 3,
+#	IPU_ROTATE_90_RIGHT = 4,
+#	IPU_ROTATE_90_RIGHT_VFLIP = 5,
+#	IPU_ROTATE_90_RIGHT_HFLIP = 6,
+#	IPU_ROTATE_90_LEFT = 7,
+#
 ROTATION="0 1 2 3 4 5 6 7"
 TARGET=
 FB_ENABLE=
 INPATH=${LTPROOT}/../test_stream/video
+
+# priority ref:
+#	IPU_TASK_PRIORITY_NORMAL = 0
+#	IPU_TASK_PRIORITY_HIGH = 1
+PRILIST="0 1"
+
+# task_id ref:
+#	IPU_TASK_ID_ANY	= 0
+#	IPU_TASK_ID_VF	= 1
+#	IPU_TASK_ID_PP	= 2
+IDLIST="0 1 2"
+
 #format list
+# fourcc ref:
+#	RGB565->RGBP
+#	BGR24 ->BGR3
+#	RGB24 ->RGB3
+#	BGR32 ->BGR4
+#	BGRA32->BGRA
+#	RGB32 ->RGB4
+#	RGBA32->RGBA
+#	ABGR32->ABGR
+#	YUYV  ->YUYV
+#	UYVY  ->UYVY
+#	YUV444->Y444
+#	NV12  ->NV12
+#	YUV420P->I420
+#	YUV422P->422P
+#	YVU422P->YV16
+#
 FMLIST="BGR3 RGBP RGB3 BGR4 BGRA RGB4 RGBA ABGR YUYV UYVY Y444 NV12 I420 422P YV16"
+
+# de-interlace motion ref:
+#	MEDIUM_MOTION = 0
+#	LOW_MOTION = 1
+#	HIGH_MOTION = 2
+MLIST="0 1 2"
+
+# overlay alpha mode ref:
+#	IPU_ALPHA_MODE_GLOBAL =	0
+#	IPU_ALPHA_MODE_LOCAL  =	1
+ALIST="0 1"
+
 #resolution list for avga vga cif qcif
-RESLIST="160,120"
-#MODLIST="0x11 0x21 0x12 0x22 0x14 0x24"
+RESLIST="160,120 1024,768 1280,720 1920,1080"
 fc=1
-CROPLIST="32,32,64,64"
-FBPOS="5,10"
+CROPLIST="32,32,64,64 15,15,127,127"
+
+#TST_CMD=/unit-tests/mxc_ipudev_test.out
 TST_CMD=ipu_dev_test
 
 MODE=
@@ -660,11 +575,11 @@ usage()
 {
  echo "$0 <case ID> "
  echo "1: module exist test"
- echo "2: IPU ENC task test"
- echo "3: IPU PP task test"
- echo "4: IPU VF task test"
- echo "5: IPU VF+ENC task test"
- echo "6: IPU rotation test"
+ echo "2: tbd"
+ echo "3: tbd"
+ echo "4: tbd"
+ echo "5: tbd"
+ echo "6: tbd"
  echo "7: IPU performance test"
  echo "the iput size and corp mixing need to be round of 8"
 }
