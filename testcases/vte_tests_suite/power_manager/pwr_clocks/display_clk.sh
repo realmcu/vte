@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 # Function:     setup
 #
 # Description:  - Check if required commands exits
@@ -72,11 +72,19 @@ sleep 1
 ipuct=$(cat /sys/kernel/debug/clock/osc_clk/pll5_video_main_clk/ipu*/enable_count| grep -v 0 | wc -l )
 ldbct=$(cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/*/enable_count | grep -v 0 | wc -l)
 #cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/enable_count
+cd /sys/kernel/debug/
+hdmi_list=$(find . -name hdmi*)
+hdmi=0
+for i in $hdmi_list
+do
+temp=$(cat ${i}/enable_count)
+hdmi=$(expr $temp + $hdmi)
+done
 
 echo 0 > /sys/class/graphics/fb0/blank
 echo 0 > /sys/class/graphics/fb2/blank
 
-if [ $ipuct -gt 0 ] || [ $ldbct -gt 0 ]; then
+if [ $ipuct -gt 0 ] || [ $ldbct -gt 0 ] || [ $hdmi -gt 0 ]; then
 RC=1
 fi
 
