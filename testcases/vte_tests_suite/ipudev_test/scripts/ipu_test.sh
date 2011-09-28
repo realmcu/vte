@@ -350,9 +350,9 @@ mkdir /tmp/ipu_dev/
                   echo "TST INFO: output $k"
 	                w=$(echo $k | sed "s/,/ /g" | awk '{print $1}')
 	                h=$(echo $k | sed "s/,/ /g" | awk '{print $2}')
-                  if [ $w -gt $FB0XRES ] || [ $h -gt $FB0YRES ]; then
-                   echo "TST INFO: skip this resolution for fb not support\n"
-                   else
+                  #if [ $w -gt $FB0XRES ] || [ $h -gt $FB0YRES ]; then
+                  # echo "TST INFO: skip this resolution for fb not support\n"
+                  # else
                         for l in $FBPOS ; do
 		echo " no motion"
     ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,${CRP},0,0 \
@@ -372,7 +372,7 @@ mkdir /tmp/ipu_dev/
 		|| RC=$(expr $RC + 1)
 	                    #end for l fb pos
 	                    done
-	                fi
+	                #fi
                 #end for k out res
                 done
             fi
