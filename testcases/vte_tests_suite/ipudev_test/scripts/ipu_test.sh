@@ -315,8 +315,6 @@ exec_test()
 RC=0
 echo "now start test"
 
-mkdir -p /tmp/ipu_dev
-
 #output 1 enalble
  for i in $FMLIST
  do
@@ -443,12 +441,11 @@ test_case_07()
     tst_resm TINFO "test $TST_Count: $TCID "
 
     #TODO add function test scripts here
-    
+    dmesg -c
     #IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv 720+480+SD720x480.yuv"
-    IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv"
+    IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv 1280+720+CITY_1280x720.yuv 1920+1080+CITY_1920x1080.yuv"
     fc=300
-    FMLIST="RGBP"
-    mkdir -p /tmp/ipu_dev
+		FMLIST="BGR3 RGBP RGB3 BGR4 BGRA RGB4 RGBA ABGR YUYV UYVY Y444 NV12 422P YV16"
     for infile in ${IN_FILE}
     do
         echo "TST_INFO: ---------------------------------------"
@@ -461,26 +458,36 @@ test_case_07()
         do
           echo "TST_INFO: output format is: ${format}"
           echo "TST_INFO: --------single display---------------"
-					echo "back ground"
-    time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,0,0,0,0,0,0 \
-    -O  ${WD},${HT},${format},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
-		      echo "foregrand"
-    time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,0,0,0,0,0,0 \
-		-o 1,${WD},${HT},${format},0,0,0,0,1,128,0,0 \
-    -O  ${WD},${HT},${format},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+    time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
+    -O  ${WD},${HT},${format},0,0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+    			dmesg -c
+          echo "TST_INFO: --------- rotate test --------------------"
+					for r in $ROTATION
+						do
+		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
+    -O  ${WD},${HT},${format},${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+		        done
           echo "TST_INFO: ---------crop test------------"
-    time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,32,32,64,64,0,0 \
-    -O  ${WD},${HT},${format},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
-    time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,32,32,64,64,0,0 \
-    -O  ${WD},${HT},${format},32,32,64,64 -s 1 ${STREAM_PATH}/video/${infilename}
-           echo "TST_INFO: --------- resize test --------------------"
+					echo "crop input"
+    time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,32,32,64,64,0,0 \
+    -O  ${WD},${HT},${format},0,0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+    			dmesg -c
+    		 echo "crop output"
+		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
+    -O  ${WD},${HT},${format},0,32,32,64,64 -s 1 ${STREAM_PATH}/video/${infilename}
+    			dmesg -c
+    			echo "crop input and output"
+		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,32,32,64,64,0,0 \
+    -O  ${WD},${HT},${format},0,32,32,64,64 -s 1 ${STREAM_PATH}/video/${infilename}
+    			dmesg -c
+          echo "TST_INFO: --------- resize test --------------------"
             for outsize in $RESLIST
             do
-              echo "TST INFO: output $outsize"
+           echo "TST INFO: output $outsize"
 	         out_w=$(echo $outsize | sed "s/,/ /g" | awk '{print $1}')
 	         out_h=$(echo $outsize | sed "s/,/ /g" | awk '{print $2}')
     time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,0,0,0,0,0,0 \
-    -O  ${out_w},${out_h},${format},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+    -O  ${out_w},${out_h},${format},0,0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
              done
          done
     done
