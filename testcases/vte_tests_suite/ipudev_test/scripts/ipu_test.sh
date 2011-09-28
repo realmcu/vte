@@ -315,6 +315,7 @@ exec_test()
 RC=0
 echo "now start test"
 
+mkdir /tmp/ipu_dev/
 #output 1 enalble
  for i in $FMLIST
  do
@@ -339,7 +340,6 @@ echo "now start test"
 						-f /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}
 
             else
-						mkdir /tmp/ipu_dev/
             cp ${STREAM_PATH}/video/${INFILE} /tmp/ipu_dev/tmp.dat
             fi
             if [ $? != 0 ]; then
