@@ -150,7 +150,7 @@ TGE-LV-WIFI-0043	modprobe ath6kl && sleep 5 && ifconfig eth1 up && iwconfig eth1
 TGE-LV-WIFI-0061-Stress	LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ath6kl; sleep 20; ifconfig eth1 up;iwconfig eth1 mode managed && iwlist eth1 scanning | grep FSLLBGAP_001 && ifconfig eth1 down && RT=0 ; modprobe -r ath6kl; echo $LOOP;sleep 30 ; done ; [ $RT -eq 0 ]
 TGE-LV-ETHERNET-1000	tcpdump -c 10 -i eth0
 TGE-LV-ETHERNET-1003	(ifconfig eth0) && ethtool eth0
-TGE-LV-ETHERNET-1004	tcp_stream_script 10.192.225.222 CPU
+TGE-LV-ETHERNET-1004_LL	tcp_stream_script 10.192.225.222 CPU
 TGE-LV-ETHERNET-1005	udp_stream_script 10.192.225.222 CPU
 TGE-LV-ETHERNET-1007	touch readme && ftpget -u anonymous 10.192.225.218 readme readme && cat readme | grep welcome && rm readme
 TGE-LV-ETHERNET-1008	ethtool eth0 | grep 1000
