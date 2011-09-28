@@ -339,6 +339,7 @@ echo "now start test"
 						-f /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}
 
             else
+						mkdir /tmp/ipu_dev/
             cp ${STREAM_PATH}/video/${INFILE} /tmp/ipu_dev/tmp.dat
             fi
             if [ $? != 0 ]; then
