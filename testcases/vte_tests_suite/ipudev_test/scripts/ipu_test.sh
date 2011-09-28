@@ -376,13 +376,11 @@ echo "now start test"
                 #end for k out res
                 done
             fi
-            rm -f /tmp/ipu_dev/temp.dat
         #end for j in file
         done
     fi
  #end for i from format
  done
-
  rm -rf /tmp/ipu_dev
  return $RC
 }
