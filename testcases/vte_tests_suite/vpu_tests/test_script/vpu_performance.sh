@@ -70,7 +70,7 @@ return $RC
 test_case_01()
 {
 #TODO give TCID 
-TCID="vpu_PERFORMANCE"
+TCID="vpu_DEC_PERFORMANCE"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=1
@@ -100,10 +100,40 @@ RC=0
 return $RC
 }
 
+# Function:     test_case_01
+# Description   - Test if MPEG2 decode ok
+#  
+test_case_02()
+{
+#TODO give TCID 
+TCID="vpu_ENC_PERFORMANCE"
+#TODO give TST_COUNT
+TST_COUNT=1
+RC=0
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+echo "encode h264 from random"
+
+SIZELIST="720x480 1280x720 1920x1080"
+
+for i in $SIZELIST
+   do
+ OWD=$(echo $i | sed "s/x/ /g" | awk '{print $1}')
+ OHT=$(echo $i | sed "s/x/ /g" | awk '{print $2}')
+  echo "size is $OWD x $OHT"
+time -p $TSTCMD -E "-i /dev/urandom -f 2 -w $OWD -h $OHT -o /dev/null -c 10" || return $RC
+  done
+
+return $RC
+}
+
 usage()
 {
 echo "usage $0 <1/2/3/4/5/6/7/8>"
-echo "1: performance test"
+echo "1: Dec performance test"
+echo "2: Enc performance test"
 }
 
 TSTCMD="/unit_tests/mxc_vpu_test.out"
@@ -120,6 +150,9 @@ setup || exit $RC
 case "$1" in
 1)
   test_case_01 || exit $RC 
+  ;;
+2)
+  test_case_02 || exit $RC 
   ;;
 *)
 #TODO check parameter
