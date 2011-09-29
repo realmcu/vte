@@ -353,25 +353,22 @@ mkdir /tmp/ipu_dev/
                   #if [ $w -gt $FB0XRES ] || [ $h -gt $FB0YRES ]; then
                   # echo "TST INFO: skip this resolution for fb not support\n"
                   # else
-                        for l in $FBPOS ; do
 		echo " no motion"
     ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,${CRP},0,0 \
-    -O  ${w},${h},${i},${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${INFILE} \
+    -O  ${w},${h},${i},${r},${CRP} -s 1 ${STREAM_PATH}/video/${INFILE} \
 		|| RC=$(expr $RC + 1)
 		echo "motion_sel = 0(medium_motion)"
-    ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,0,0,0,0,1,0 \
-    -O  ${w},${h},${i},${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${INFILE} \
+    ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,${CRP},1,0 \
+    -O  ${w},${h},${i},${r},${CRP} -s 1 ${STREAM_PATH}/video/${INFILE} \
 		|| RC=$(expr $RC + 1)
 	  echo "motion_sel = 1(low_motion)"
-    ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,0,0,0,0,1,1 \
-    -O  ${w},${h},${i},${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${INFILE} \
+    ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,${CRP},1,1 \
+    -O  ${w},${h},${i},${r},${CRP} -s 1 ${STREAM_PATH}/video/${INFILE} \
 		|| RC=$(expr $RC + 1)
 		echo "motion_sel = 2(high_motion)"
-    ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,0,0,0,0,1,2 \
-    -O  ${w},${h},${i},${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${INFILE} \
+    ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,${CRP},1,2 \
+    -O  ${w},${h},${i},${r},${CRP} -s 1 ${STREAM_PATH}/video/${INFILE} \
 		|| RC=$(expr $RC + 1)
-	                    #end for l fb pos
-	                    done
 	                #fi
                 #end for k out res
                 done
