@@ -203,11 +203,12 @@ test_case_02()
 TCID="IPU_API_test"
 #TODO give TST_COUNT
 TST_COUNT=2
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
+TOTAL=0
 
 #TODO add function test scripte here
  for CRP in $CROPLIST 
@@ -220,13 +221,13 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
      do
      echo "TST INFO: to form is $tf"
      #end for tf
-     exec_test || return $RC
+     exec_test
      done
    #end for rotation
    done
  #end for CRP
  done
-RC=0
+echo "Total cases is $TOTAL, faile $RC"
 return $RC
 
 }
@@ -245,30 +246,6 @@ RC=1
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-MODELIST="0x14 0x24"
-for MODE in $MODELIST
-do
-#TODO add function test scripte here
- echo "TST INFO: mode is $MODE"
- for CRP in $CROPLIST 
- do
-   echo "TST INFO: CROP is $CRP"
-   #for r in $ROTATION
-   #do
-   #echo "TST INFO: Rotation is $r"
-     r=0
-     for tf in $FMLIST
-     do
-     echo "TST INFO: to form is $tf"
-     #end for tf
-     exec_test || return $RC
-     done
-   #end for rotation
-   #done
- #end for CRP
- done
-#end for MODE
-done
 RC=0
 return $RC
 }
@@ -287,32 +264,12 @@ RC=1
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-
-#TODO add function test scripte here
- for CRP in $CROPLIST 
- do
-   echo "TST INFO: CROP is $CRP"
-   for r in $ROTATION
-   do
-     echo "TST INFO: Rotation is $r"
-     for tf in $FMLIST
-     do
-      echo "TST INFO: to form is $tf"
-      exec_test || return $RC
-		 done
-     #end for format
-    done
-   #end for rotation
- done
- #end for CRP
 RC=0
 return $RC
 }
 
 exec_test()
 {
-RC=0
 echo "now start test"
 
 mkdir /tmp/ipu_dev/
@@ -329,16 +286,11 @@ mkdir /tmp/ipu_dev/
             INFILE=$(echo $j | sed "s/+/ /g"| awk '{print $3}')
             
             if [ $i != "I420" ];then
-            echo "${TST_CMD} -c 1 -l 1 \
-						-i ${WD},${HT},I420,0,0,0,0,0,0 \
-            -O  ${WD},${HT},${i},0,0,0,0,0 -s 0\
-						-f /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}"
-            
             ${TST_CMD} -p 0 -d 0 -c 1 -l 1 \
 						-i ${WD},${HT},I420,0,0,0,0,0,0 \
             -O  ${WD},${HT},${i},0,0,0,0,0 -s 0\
 						-f /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}
-
+						TOTAL=$(expr $TOTAL + 1)
             else
             cp ${STREAM_PATH}/video/${INFILE} /tmp/ipu_dev/tmp.dat
             fi
@@ -369,6 +321,7 @@ mkdir /tmp/ipu_dev/
     ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,${CRP},1,2 \
     -O  ${w},${h},${i},${r},${CRP} -s 1 ${STREAM_PATH}/video/${INFILE} \
 		|| RC=$(expr $RC + 1)
+						TOTAL=$(expr $TOTAL + 4)
 	                #fi
                 #end for k out res
                 done
@@ -436,10 +389,10 @@ test_case_07()
     #print test info
     tst_resm TINFO "test $TST_Count: $TCID "
 
+    TOTAL=0
     #TODO add function test scripts here
     dmesg -c
-    #IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv 720+480+SD720x480.yuv"
-    IN_FILE="1920+1080+CITY_1920x1080.yuv 352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv 1280+720+CITY_1280x720.yuv"
+    IN_FILE="1920+1080+CITY_1920x1080.yuv 1280+720+CITY_1280x720.yuv 352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv"
     fc=300
 		FMLIST="I420 BGR3 RGBP RGB3 BGR4 BGRA RGB4 RGBA ABGR YUYV UYVY Y444 NV12 422P YV16"
     for infile in ${IN_FILE}
@@ -456,12 +409,21 @@ test_case_07()
           echo "TST_INFO: --------single display---------------"
     time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
     -O  ${WD},${HT},${format},0,0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+					TOTAL=$(expr $TOTAL + 1)
     			dmesg -c
-          echo "TST_INFO: --------- rotate test --------------------"
+          echo "TST_INFO: --------- rotate only test --------------------"
+					for r in $ROTATION
+						do
+		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
+    -O  ${WD},${HT},I420,${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+						TOTAL=$(expr $TOTAL + 1)
+		        done
+          echo "TST_INFO: --------- rotate with CRS test --------------------"
 					for r in $ROTATION
 						do
 		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
     -O  ${WD},${HT},${format},${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+						TOTAL=$(expr $TOTAL + 1)
 		        done
           echo "TST_INFO: ---------crop test------------"
 					echo "crop input"
@@ -476,6 +438,7 @@ test_case_07()
 		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,32,32,64,64,0,0 \
     -O  ${WD},${HT},${format},0,32,32,64,64 -s 1 ${STREAM_PATH}/video/${infilename}
     			dmesg -c
+						TOTAL=$(expr $TOTAL + 3)
           echo "TST_INFO: --------- resize test --------------------"
             for outsize in $RESLIST
             do
@@ -484,10 +447,12 @@ test_case_07()
 	         out_h=$(echo $outsize | sed "s/,/ /g" | awk '{print $2}')
     time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,0,0,0,0,0,0 \
     -O  ${out_w},${out_h},${format},0,0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+						TOTAL=$(expr $TOTAL + 1)
              done
          done
     done
 
+    echo "Total cases $TOTAL"
     RC=$?
     return $RC
 }
