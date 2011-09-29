@@ -123,7 +123,7 @@ for i in $SIZELIST
  OWD=$(echo $i | sed "s/x/ /g" | awk '{print $1}')
  OHT=$(echo $i | sed "s/x/ /g" | awk '{print $2}')
   echo "size is $OWD x $OHT"
-time -p $TSTCMD -E "-i /dev/urandom -f 2 -w $OWD -h $OHT -o /dev/null -c 10" || RC=$(expr $RC + 1)
+time -p $TSTCMD -E "-i /dev/zero -f 2 -w $OWD -h $OHT -o /dev/null -c 10" || RC=$(expr $RC + 1)
   done
 
 return $RC
