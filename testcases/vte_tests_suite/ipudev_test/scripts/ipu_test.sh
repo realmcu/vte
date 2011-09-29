@@ -214,9 +214,8 @@ TOTAL=0
  for CRP in $CROPLIST 
  do
    echo "TST INFO: CROP is $CRP"
-   for r in $ROTATION
-   do
-     echo "TST INFO: Rotation is $r"
+	   r=0
+		 ff=I420
      for tf in $FMLIST
      do
      echo "TST INFO: to form is $tf"
@@ -224,7 +223,7 @@ TOTAL=0
      exec_test
      done
    #end for rotation
-   done
+   #done
  #end for CRP
  done
 echo "Total cases is $TOTAL, faile $RC"
@@ -245,26 +244,53 @@ RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
+TOTAL=0
 
-RC=0
+for CRP in $CROPLIST 
+ do
+   echo "TST INFO: CROP is $CRP"
+   for r in $ROTATION
+   do
+     echo "TST INFO: Rotation is $r"
+     tf=I420
+		 ff=I420
+     #end for tf
+     exec_test
+   #end for rotation
+   done
+ #end for CRP
+ done
+echo "Total cases is $TOTAL, faile $RC"
 return $RC
 }
 
 # Function:     test_case_04
-# Description   - Test if IPU_VF_test ok
+# Description   - Test if IPU_format_test ok
 #  
 test_case_04()
 {
 #TODO give TCID 
-TCID="IPU_VF_TEST"
+TCID="IPU_Format_TEST"
 #TODO give TST_COUNT
 TST_COUNT=4
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-RC=0
+TOTAL=0
+CRP=0,0,0,0
+r=0
+for i in $FMLIST
+do
+	ff=$i
+	for j in $FMLIST
+	do
+		tf=$j
+	exec_test
+	done
+done
+echo "Total cases is $TOTAL, faile $RC"
 return $RC
 }
 
@@ -274,10 +300,7 @@ echo "now start test"
 
 mkdir /tmp/ipu_dev/
 #output 1 enalble
- for i in $FMLIST
- do
-    echo "TST INFO: Format is $i"
-    if [ $i != $tf ]; then
+ echo "TST INFO: Format is $i"
         for j in $IN_FILE
         do
             echo "TST INFO: file $j"
@@ -285,10 +308,10 @@ mkdir /tmp/ipu_dev/
             HT=$(echo $j | sed "s/+/ /g" | awk '{print $2}' )
             INFILE=$(echo $j | sed "s/+/ /g"| awk '{print $3}')
             
-            if [ $i != "I420" ];then
+            if [ $ff != "I420" ];then
             ${TST_CMD} -p 0 -d 0 -c 1 -l 1 \
 						-i ${WD},${HT},I420,0,0,0,0,0,0 \
-            -O  ${WD},${HT},${i},0,0,0,0,0 -s 0\
+            -O  ${WD},${HT},${ff},0,0,0,0,0 -s 0\
 						-f /tmp/ipu_dev/tmp.dat ${STREAM_PATH}/video/${INFILE}
 						TOTAL=$(expr $TOTAL + 1)
             else
@@ -306,52 +329,60 @@ mkdir /tmp/ipu_dev/
                   # echo "TST INFO: skip this resolution for fb not support\n"
                   # else
 		echo " no motion"
-    ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,${CRP},0,0 \
-    -O  ${w},${h},${i},${r},${CRP} -s 1 ${STREAM_PATH}/video/${INFILE} \
+    ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},${ff},${CRP},0,0 \
+    -O  ${w},${h},${tf},${r},${CRP} -s 1 /tmp/ipu_dev/tmp.dat \
 		|| RC=$(expr $RC + 1)
-		echo "motion_sel = 0(medium_motion)"
-    ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,${CRP},1,0 \
-    -O  ${w},${h},${i},${r},${CRP} -s 1 ${STREAM_PATH}/video/${INFILE} \
-		|| RC=$(expr $RC + 1)
-	  echo "motion_sel = 1(low_motion)"
-    ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,${CRP},1,1 \
-    -O  ${w},${h},${i},${r},${CRP} -s 1 ${STREAM_PATH}/video/${INFILE} \
-		|| RC=$(expr $RC + 1)
-		echo "motion_sel = 2(high_motion)"
-    ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},I420,${CRP},1,2 \
-    -O  ${w},${h},${i},${r},${CRP} -s 1 ${STREAM_PATH}/video/${INFILE} \
-		|| RC=$(expr $RC + 1)
-						TOTAL=$(expr $TOTAL + 4)
+						TOTAL=$(expr $TOTAL + 1)
+		if [ $motion -eq 1 ]; then
+			echo "motion_sel = 0(medium_motion)"
+    	${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},${ff},${CRP},1,0 \
+    	-O  ${w},${h},${tf},${r},${CRP} -s 1 /tmp/ipu_dev/tmp.dat \
+			|| RC=$(expr $RC + 1)
+	  	echo "motion_sel = 1(low_motion)"
+    	${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},${ff},${CRP},1,1 \
+    	-O  ${w},${h},${tf},${r},${CRP} -s 1 /tmp/ipu_dev/tmp.dat \
+			|| RC=$(expr $RC + 1)
+			echo "motion_sel = 2(high_motion)"
+    	${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},${ff},${CRP},1,2 \
+    	-O  ${w},${h},${tf},${r},${CRP} -s 1 /tmp/ipu_dev/tmp.dat \
+			|| RC=$(expr $RC + 1)
+						TOTAL=$(expr $TOTAL + 3)
+		#motion
+		fi
 	                #fi
                 #end for k out res
                 done
             fi
         #end for j in file
         done
-    fi
- #end for i from format
- done
  rm -rf /tmp/ipu_dev
  return $RC
 }
 
 # Function:     test_case_05
-# Description   - Test if IPU_ENC+VF_test ok
+# Description   - Test if IPU_motion_test ok
 #  
 test_case_05()
 {
 #TODO give TCID 
-TCID="IPU_ENC+VF_TEST"
+TCID="IPU_motion_TEST"
 #TODO give TST_COUNT
 TST_COUNT=5
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
+TOTAL=0
+CRP=0,0,0,0
+r=0
+ff=I420
+tf=I420
+motion=1
+exec_test
 
-RC=0
+echo "Total cases is $TOTAL, faile $RC"
 return $RC
 }
 
@@ -403,14 +434,6 @@ test_case_07()
         WD=$(echo $infile | sed "s/+/ /g" | awk '{print $1}' )
         HT=$(echo $infile | sed "s/+/ /g" | awk '{print $2}' )
         infilename=$(echo $infile | sed "s/+/ /g"| awk '{print $3}')
-        for format in ${FMLIST}
-        do
-          echo "TST_INFO: output format is: ${format}"
-          echo "TST_INFO: --------single display---------------"
-    time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
-    -O  ${WD},${HT},${format},0,0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
-					TOTAL=$(expr $TOTAL + 1)
-    			dmesg -c
           echo "TST_INFO: --------- rotate only test --------------------"
 					for r in $ROTATION
 						do
@@ -418,6 +441,25 @@ test_case_07()
     -O  ${WD},${HT},I420,${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
 						TOTAL=$(expr $TOTAL + 1)
 		        done
+					echo "TST_INFO: --------- resize only test --------------------"
+            for outsize in $RESLIST
+            do
+           echo "TST INFO: output $outsize"
+	         out_w=$(echo $outsize | sed "s/,/ /g" | awk '{print $1}')
+	         out_h=$(echo $outsize | sed "s/,/ /g" | awk '{print $2}')
+    time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,0,0,0,0,0,0 \
+    -O  ${out_w},${out_h},I420,0,0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+						TOTAL=$(expr $TOTAL + 1)
+             done
+
+        for format in ${FMLIST}
+        do
+          echo "TST_INFO: output format is: ${format}"
+          echo "TST_INFO: --------single CSC display---------------"
+    time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
+    -O  ${WD},${HT},${format},0,0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+					TOTAL=$(expr $TOTAL + 1)
+    			dmesg -c
           echo "TST_INFO: --------- rotate with CRS test --------------------"
 					for r in $ROTATION
 						do
@@ -425,21 +467,23 @@ test_case_07()
     -O  ${WD},${HT},${format},${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
 						TOTAL=$(expr $TOTAL + 1)
 		        done
-          echo "TST_INFO: ---------crop test------------"
-					echo "crop input"
+          echo "TST_INFO: ---------CSC crop test------------"
+					echo "CSC crop input"
     time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,32,32,64,64,0,0 \
     -O  ${WD},${HT},${format},0,0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
     			dmesg -c
-    		 echo "crop output"
+					TOTAL=$(expr $TOTAL + 1)
+    		 echo "CSC crop output"
 		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
     -O  ${WD},${HT},${format},0,32,32,64,64 -s 1 ${STREAM_PATH}/video/${infilename}
     			dmesg -c
-    			echo "crop input and output"
-		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,32,32,64,64,0,0 \
-    -O  ${WD},${HT},${format},0,32,32,64,64 -s 1 ${STREAM_PATH}/video/${infilename}
-    			dmesg -c
-						TOTAL=$(expr $TOTAL + 3)
-          echo "TST_INFO: --------- resize test --------------------"
+					TOTAL=$(expr $TOTAL + 1)
+    			#echo "CSC crop input and output"
+		#time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,32,32,64,64,0,0 \
+    #-O  ${WD},${HT},${format},0,32,32,64,64 -s 1 ${STREAM_PATH}/video/${infilename}
+    #			dmesg -c
+		#				TOTAL=$(expr $TOTAL + 3)
+          echo "TST_INFO: --------- CSC resize test --------------------"
             for outsize in $RESLIST
             do
            echo "TST INFO: output $outsize"
@@ -522,7 +566,7 @@ ALIST="0 1"
 #resolution list for avga vga cif qcif
 RESLIST="1920,1080 1280,720 1024,768 160,120"
 fc=1
-CROPLIST="32,32,64,64 15,15,127,127"
+CROPLIST="32,32,64,64"
 
 #TST_CMD=/unit-tests/mxc_ipudev_test.out
 TST_CMD=ipu_dev_test
@@ -530,6 +574,7 @@ TST_CMD=ipu_dev_test
 MODE=
 CRP=
 r=
+ff=
 tf=
 FB0XRES=
 FB0YRES=
@@ -537,16 +582,16 @@ FB0BITS=
 FB2XRES=
 FB2YRES=
 FB2BITS=
-
+motion=0
 
 usage()
 {
  echo "$0 <case ID> "
  echo "1: module exist test"
- echo "2: tbd"
- echo "3: tbd"
- echo "4: tbd"
- echo "5: tbd"
+ echo "2: API test"
+ echo "3: API rotation"
+ echo "4: API to from format"
+ echo "5: API motion test"
  echo "6: tbd"
  echo "7: IPU performance test"
  echo "the iput size and corp mixing need to be round of 8"
