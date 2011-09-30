@@ -116,7 +116,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 echo "encode h264 from random"
 
-SIZELIST="720x480 1280x720"
+SIZELIST="720x480 1280x720 1920x1080"
 
 for i in $SIZELIST
    do
