@@ -197,7 +197,12 @@ RC=0
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-tiger -frameCount 1000 &
+cd ${TEST_DIR}/${APP_SUB_DIR}
+#TODO add function test scripte here
+echo "==========================="
+echo tiger
+echo "==========================="
+./tiger -frameCount 1000 &
 td=$!
 
 rtc_testapp_6 -T 5
