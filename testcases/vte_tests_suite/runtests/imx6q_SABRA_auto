@@ -214,8 +214,8 @@ TGE-LV-STORAGE-2002	storage_all.sh 2
 TGE-LV-VIIM-0001	iim_test
 TGE-LV-SYS_DISPLAY-0001	display_stress.sh 1
 TGE-LV-SYS_DISPLAY-0002	display_stress.sh 2
-TGE-LV-THERMO-0001	cat /sys/devices/virtual/thermal/thermal_zone0/*temp
-TGE-LV-THERMO-0002	cat /sys/devices/virtual/thermal/thermal_zone0/*type
+TGE-LV-THERMO-0001	ls /sys/devices/virtual/thermal/thermal_zone0/*temp | xargs cat
+TGE-LV-THERMO-0002	ls /sys/devices/virtual/thermal/thermal_zone0/*type | xargs cat
 TGE-LV-UART-0017	ints1=$(cat /proc/interrupts | grep uart | awk {'print $2'}) ; start=0; for i in $ints1; do start=$(expr $start + $i);done;cat /etc/passwd >  /dev/ttymxc0 ; ints2=$(cat /proc/interrupts | grep uart | awk {'print $2'});end=0;for i in $ints2; do end=$(expr $end + $i);done; [ $end -gt $start ]
 TGE-LV-UART-0018	stty 115200 cs8 -F /dev/ttymxc0 && stty -a -F /dev/ttymxc0  | grep cs8 &&  stty -a -F /dev/ttymxc0  | grep cstopb && stty -a -F /dev/ttymxc0  | grep crtscts && stty -a  -F /dev/ttymxc0 | grep ignbrk
 TGE-LV-USB-HOST-0010	cat /proc/partitions | grep sd
