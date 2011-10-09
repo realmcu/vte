@@ -48,7 +48,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 	 ll=$(cat ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday)
 	 if [ $ll = $(uname -r) ]; then
      echo "test finished for this kernel"
-		 exit 0
+		 exit 255
 	 else
 		 tstat=$(echo $ll | grep [^0-9] | wc -l)
 		 if [ $tstat -gt 0 ]; then
