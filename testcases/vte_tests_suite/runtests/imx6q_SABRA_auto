@@ -277,3 +277,4 @@ TGE-LV-IPU_DEV-0020 	ipu_test.sh 2
 TGE-LV-IPU_DEV-0030 	ipu_test.sh 3
 TGE-LV-IPU_DEV-0040 	ipu_test.sh 4
 TGE-LV-IPU_DEV-0055 	ipu_test.sh 5
+TGE-LV-THERMO-0004    thermal_freq.sh
