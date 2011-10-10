@@ -13,6 +13,8 @@ clean()
 	echo none > /sys/power/pm_test
 }
 
+setup
+
 #test the freezing of processes, suspending of devices, platform global
 #control methods(*), the disabling of nonboot CPUs and suspending of
 #platform/system devices
