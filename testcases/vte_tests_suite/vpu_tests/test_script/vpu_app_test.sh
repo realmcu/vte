@@ -348,12 +348,12 @@ return $RC
 }
 
 # Function:     test_case_05
-# Description   - Test if decode H264 HP with short head ok
+# Description   - Test if decode H264 with short head ok
 #  
 test_case_05()
 {
 #TODO give TCID 
-TCID="vpu_h264HP_app"
+TCID="vpu_h264_app"
 #TODO give TST_COUNT
 TST_COUNT=5
 RC=1
