@@ -212,6 +212,7 @@ TGE-LV-SD-1800	cat /proc/partitions | grep mmc
 TGE-LV-STORAGE-2001	storage_all.sh 1
 TGE-LV-STORAGE-2002	storage_all.sh 2
 TGE-LV-VIIM-0001	iim_test
+TGE-LV-OTP-0001 otp_test.sh
 TGE-LV-SYS_DISPLAY-0001	display_stress.sh 1
 TGE-LV-SYS_DISPLAY-0002	display_stress.sh 2
 TGE-LV-THERMO-0001	ls /sys/devices/virtual/thermal/thermal_zone0/*temp | xargs cat
