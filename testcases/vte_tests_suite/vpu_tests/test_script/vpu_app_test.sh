@@ -176,8 +176,8 @@ echo "following is chroma interleave mode $l"
        ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -e 1 -d 1 -r $i -m $j -u $k -t $l -w $OWD -h $OHT" || return $RC
 	sleep 1
       done
-      echo "test prescan in 7 frames"
-      ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 7 -e 1 -d 1 -r $i -m $j -u $k -t $l -s 1" || return $RC
+      #echo "test prescan in 7 frames"
+      #${TSTCMD} -D "-i $srcfile -f $FORMAT -c 7 -e 1 -d 1 -r $i -m $j -u $k -t $l -s 1" || return $RC
       sleep 1
     done
    done
