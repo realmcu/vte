@@ -105,6 +105,7 @@ SUBDIRS-$(CONFIG_VTE_MTD)         += mtd_tests
 SUBDIRS-$(CONFIG_VTE_MU)          += mu_tests
 SUBDIRS-$(CONFIG_VTE_NETWORK)     += network_tests
 SUBDIRS-$(CONFIG_VTE_OSS)         += oss_sound_driver_tests
+SUBDIRS-$(CONFIG_VTE_OPT)         += otp_test
 SUBDIRS-$(CONFIG_VTE_1W)          += owire
 SUBDIRS-$(CONFIG_VTE_PM)          += pm_tests
 SUBDIRS-$(CONFIG_VTE_PMIC)        += pmic_tests
