@@ -118,14 +118,23 @@ echo "encode h264 from random"
 
 SIZELIST="720x480 1280x720 1920x1080"
 
+BITRATE="50000 10000 5000"
+
+ROTATION="0 90 180 270"
+
 for i in $SIZELIST
    do
  OWD=$(echo $i | sed "s/x/ /g" | awk '{print $1}')
  OHT=$(echo $i | sed "s/x/ /g" | awk '{print $2}')
   echo "size is $OWD x $OHT"
-time -p $TSTCMD -E "-i /dev/zero -f 2 -w $OWD -h $OHT -o /dev/null -c 10" || RC=$(expr $RC + 1)
-  done
-
+	for j in $BITRATE
+		do
+			for r in $ROTATION
+				do
+time -p $TSTCMD -E "-i /dev/zero -f 2 -w $OWD -h $OHT -o /dev/null -c 10 -b $j -r $r" || RC=$(expr $RC + 1)
+        done
+    done
+ done
 return $RC
 }
 
