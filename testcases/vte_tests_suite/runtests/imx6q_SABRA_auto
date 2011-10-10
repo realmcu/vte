@@ -262,6 +262,14 @@ TGE-LV-VPU-10030	vpu_enc_test.sh 4
 TGE-LV-VPU-10210	vpu_multi_enc_test.sh 1
 TGE-LV-VPU-10220	vpu_multi_enc_test.sh 2
 TGE-LV-VPU-10221	vpu_multi_enc_test.sh 3
+TGE-LV-VPU-20001 vpu_app_test.sh 1
+TGE-LV-VPU-20002 vpu_app_test.sh 2
+TGE-LV-VPU-20003 vpu_app_test.sh 3
+TGE-LV-VPU-20004 vpu_app_test.sh 4
+TGE-LV-VPU-20005 vpu_app_test.sh 5
+TGE-LV-VPU-20006 vpu_app_test.sh 6
+TGE-LV-VPU-20007 vpu_app_test.sh 7
+TGE-LV-VPU-20008 vpu_app_test.sh 8
 TGE-LV-IPU_DEV-0010 	ipu_test.sh 1
 TGE-LV-IPU_DEV-0020 	ipu_test.sh 2
 TGE-LV-IPU_DEV-0030 	ipu_test.sh 3
