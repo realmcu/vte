@@ -104,6 +104,8 @@ prepare_platform()
         fi
 	fi
 
+	board=$(platfm.sh)
+
 	echo $platform;
 	echo $ata_dev_point;
 	echo $vte_name;
@@ -434,24 +436,34 @@ insmod_V4L()
 	fi
 	#
 
+    camera_load=0
+
 	find=`find /lib/modules/$sys_name -name ov2640_camera.ko | wc -l`;
 	lsmod | grep ov2640_camera;
-	if [ $? -ne 0 ] && [ $find -eq 1 ]; then
+	if [ $? -ne 0 ] && [ $find -eq 1 ] && [ $camera_load -eq 0  ]; then
         	modprobe ov2640_camera;
 		sleep 2;
+		camera_load=1
 	fi
 
 	find=`find /lib/modules/$sys_name -name ov3640_camera.ko | wc -l`;
 	lsmod | grep ov3640_camera;
-	if [ $? -ne 0 ] && [ $find -eq 1 ] && [ $platform == MX51 ]; then
+	if [ $? -ne 0 ] && [ $find -eq 1 ] && [ $platform == MX51 ] && [ $camera_load -eq 0  ]; then
         	modprobe ov3640_camera;
+		camera_load=1
+		sleep 2;
+	fi
+	if [ $find -eq 1 ] && [ $board == "IMX6-SABREAUTO"  ] && [ $camera_load -eq 0 ]; then
+        modprobe ov3640_camera;
+		camera_load=1
 		sleep 2;
 	fi
 
 	find=`find /lib/modules/$sys_name -name ov5642_camera.ko | wc -l`;
 	lsmod | grep ov5642_camera;
-	if [ $? -ne 0 ] && [ $find -eq 1 ] && [ $platform != MX51 ]; then
+	if [ $? -ne 0 ] && [ $find -eq 1 ] && [ $camera_load -eq 0 ]; then
         	modprobe ov5642_camera;
+		camera_load=1
 		sleep 2;
 	fi
 
@@ -1329,7 +1341,7 @@ usbh_dev_point=sdb;
 vte_name=imx31stack-vte-test;
 vte_path=/home;
 sys_name=`uname -r`/
-
+board=
 sd_buildin=0;
 ata_buildin=0;
 usbh_buildin=0;
