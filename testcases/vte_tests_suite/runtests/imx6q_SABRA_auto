@@ -211,6 +211,7 @@ TGE-LV-RTC-2000	rtc_test.sh 3
 TGE-LV-SD-1010	mmc_transfer.sh
 TGE-LV-SD-1050	sd_clk.sh 1
 TGE-LV-SD-1800	cat /proc/partitions | grep mmc
+TGE-LV-SATA-1201 rtc_testapp_6 -T 10; ls /sys/block | grep ahci
 TGE-LV-STORAGE-2001	storage_all.sh 1
 TGE-LV-STORAGE-2002	storage_all.sh 2
 TGE-LV-VIIM-0001	iim_test
