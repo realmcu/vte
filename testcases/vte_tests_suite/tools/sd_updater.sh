@@ -1,25 +1,25 @@
 #!/bin/sh  -x
 
 # Default Offset values
-OFF_KERNEL=1048576    			# 1M after the start 
+OFF_KERNEL=1048576    			# 1M after the start
 OFF_REDBOOT=1024			# 1K after the MBR
 DEF_DEVNODE="/dev/sdb"		# default applies to target
 LOGFILE=updater.log
 
 showhelp() {
-bn=`basename $0` 
+bn=`basename $0`
 ver=`echo '$Revision: 1.1 $' | sed 's/.Revision. \(.*\)./\1/'`
 cat << eot
 ====================  $bn Version: $ver ==================
 
 usage $bn [-h] [-k <zImage name>] [-b <redboot name>] [-r <ext2 image file>] [-n <device node>] [-o <offset>] [-i] [-c]
   -h				displays this help message
-  -k <zImage name>              update the kernel. 
+  -k <zImage name>              update the kernel.
   -b <redboot name>		update redboot
   -r <ext2 image file>          update the root file system. Device node is different than -b and -k
   -n <device node>		device node to use. Default is ${DEF_DEVNODE}.
-  -o <offset> 			offset to use. In Decimal 
-				Default offset for redboot=${OFF_REDBOOT} 
+  -o <offset> 			offset to use. In Decimal
+				Default offset for redboot=${OFF_REDBOOT}
 				Default offset for kernel=${OFF_KERNEL}
   -i 				Initiliaze the device (-n) with a default MBR and redboot
   -c 				Erase the contents of the logfile (${LOGFILE}) before executing
@@ -73,7 +73,7 @@ fi
 check_padding() {
     local REDBOOT=$1
     # REF is the first bytes of the padding
-    local REF="0000004 0000 0000 0000 0000 0000 0000 0000 0000" 
+    local REF="0000004 0000 0000 0000 0000 0000 0000 0000 0000"
     local NEW="`${OD} -x ${REDBOOT} +4 | ${HEAD} -1`"
     local RET=0
 	
@@ -119,29 +119,31 @@ init_device() {
 gen_fdisk_cmd()
 {
     cylinders=`fdisk -l $DEVNODE |grep cylinders|grep -v of | awk '{print $5}'`
-    partition1_end=`expr $cylinders / 4 + 20`
+    #leave 1% space(40MB for 4G) for uboot, its env and partition table
+    partition1_start=`expr $cylinders / 100`
+    partition1_end=`expr $cylinders / 4 + $partition1_start`
     partition2_start=`expr $partition1_end + 1`
     echo ""
-    echo "d" 
-    echo "1" 
-    echo "d" 
-    echo "2" 
-    echo "d" 
-    echo "3" 
-    echo "d" 
-    echo "4" 
-    echo "" 
-    echo "n" 
-    echo "p" 
-    echo "1" 
-    echo "20" 
-    echo "$partition1_end" 
-    echo "n" 
-    echo "p" 
-    echo "2" 
-    echo "$partition2_start" 
-    echo "" 
-    echo "w" 
+    echo "d"
+    echo "1"
+    echo "d"
+    echo "2"
+    echo "d"
+    echo "3"
+    echo "d"
+    echo "4"
+    echo ""
+    echo "n"
+    echo "p"
+    echo "1"
+    echo "$partition1_start"
+    echo "$partition1_end"
+    echo "n"
+    echo "p"
+    echo "2"
+    echo "$partition2_start"
+    echo ""
+    echo "w"
 }
 
 	
@@ -157,18 +159,18 @@ while [ "$moreoptions" = 1  -a $# -gt 0 ] ; do
     -b) REDBOOT=$2 ; BL_OFFSET=${OFF_REDBOOT} ; DO_REDBOOT=1 ; shift ;;
     -r) RFS=$2 ; DO_RFS=1 ; shift ;;
     -o) OFFSET=$2 ; DO_OFFSET=1 ; shift ;;
-    -n) DEVNODE=$2 ; shift ;;    
+    -n) DEVNODE=$2 ; shift ;;   
     -i) DO_INIT=1 ;;
     -c) DO_CLEAN=1 ;;
     -*) echo "ERROR wrong option $1" ;  exit 1; ;;
-    *) moreoptions=0 ;; 
+    *) moreoptions=0 ;;
   esac
   a=$1
   [ "$moreoptions" = 1 ] && shift
 done
 
 ############### here the script starts
-# can not have -k and -r 
+# can not have -k and -r
 #if [ $DO_REDBOOT -eq 1 -a $DO_KERNEL -eq 1 ] ; then
 #	echo "Error: Should offset apply to -k or -r ? Choose"
 #	exit -1
@@ -216,7 +218,7 @@ if [ $DO_KERNEL -eq 1 ] ; then
 		echo "${ZIMAGE}: no such file or directory"
 		exit -1
 	fi
-	#            FILE       NODE       OFFSET   
+	#            FILE       NODE       OFFSET  
 	update_chunk ${ZIMAGE} ${DEVNODE} ${KN_OFFSET} 	
 	echo " Done"
 fi
@@ -235,16 +237,16 @@ if [ $DO_REDBOOT -eq 1 ] ; then
 		echo ""
 		echo -n "WARNING: ${REDBOOT} seems to have padding (leading zeros). Proceed anyway ? [yes|no]: "
 		read yes_or_no
-		if [ "${yes_or_no}" = "yes" ] ; then 
-            #            FILE       NODE       OFFSET   
+		if [ "${yes_or_no}" = "yes" ] ; then
+            #            FILE       NODE       OFFSET  
             ${DD} if=${REDBOOT} of=${DEVNODE} bs=${BL_OFFSET} seek=1 skip=1
 			echo "Proceed with padding data"
         else
             exit 67
 		fi
     else
-        #            FILE       NODE       OFFSET   
-        update_chunk ${REDBOOT} ${DEVNODE} ${BL_OFFSET} 
+        #            FILE       NODE       OFFSET  
+        update_chunk ${REDBOOT} ${DEVNODE} ${BL_OFFSET}
 	fi
 
     ${SYNC} ; ${SYNC} ; ${SYNC}
