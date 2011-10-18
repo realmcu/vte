@@ -256,6 +256,27 @@ return $RC
 
 }
 
+# Function:     test_case_06
+# Description   - Test if 720P camera loopback test enc ok
+#  
+test_case_06()
+{
+#TODO give TCID 
+TCID="test_720CLOOPBACK_test"
+#TODO give TST_COUNT
+TST_COUNT=5
+RC=0
+
+/unit_tests/mxc_vpu_test.out -L "-f 2 -w 1080 -h 720 -t 1" &
+pid=$!
+a_stream_path=/mnt/nfs/test_stream/power_stream/H264_MP40_1280x720_15_2771_AAC_48_128_2.mp4
+/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path} -o /dev/fb0" || RC=1
+sleep 15
+kill -9 $pid
+
+return $RC
+}
+
 usage()
 {
 echo "$0 [case ID]"
@@ -264,6 +285,7 @@ echo "2: "
 echo "3: "
 echo "4: "
 echo "5: "
+echo "6: "
 }
 
 # main function
@@ -295,16 +317,12 @@ case "$1" in
 5)
   test_case_05 || exit $RC
   ;;
+6)
+  test_case_06 || exit $RC
+  ;;
 *)
   usage
   ;;
 esac
 
 tst_resm TINFO "Test PASS"
-
-
-
-
-
-
-
