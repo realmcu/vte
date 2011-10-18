@@ -453,11 +453,6 @@ insmod_V4L()
 		camera_load=1
 		sleep 2;
 	fi
-	if [ $find -eq 1 ] && [ $board == "IMX6-SABREAUTO"  ] && [ $camera_load -eq 0 ]; then
-        modprobe ov3640_camera;
-		camera_load=1
-		sleep 2;
-	fi
 
 	find=`find /lib/modules/$sys_name -name ov5642_camera.ko | wc -l`;
 	lsmod | grep ov5642_camera;
