@@ -166,7 +166,7 @@ do
   FORMAT=$(echo $j | sed "s/+/ /g" | awk '{print $1}')
   srcfile=$(echo $j | sed "s/+/ /g" | awk '{print $2}')
   echo "do encode $i with dec $j"
-  ${TSTCMD} -E "-o /tmp/enc.dat -w 176 -h 144 -f $i -c 30" -D "-i ${VPATH}/${srcfile} -f $FORMAT" || return $RC
+  ${TSTCMD} -E "-i /dev/zero -o /dev/null -w 176 -h 144 -f $i -c 30" -D "-i ${VPATH}/${srcfile} -f $FORMAT" || return $RC
   rm -rf /tmp/enc.dat
   sleep 1
  done
@@ -243,27 +243,8 @@ do
    done
   done
  done
-
-#loop back test
-   ${TSTCMD} -L "-f 1 -w 640 -h 480 -t 1" &
-  for j in $STRLIST
-  do
-  FORMAT=$(echo $j | sed "s/+/ /g" | awk '{print $1}')
-  strfile=$(echo $j | sed "s/+/ /g" | awk '{print $2}')
-  echo "decode $FORMAT $strfile"
-   ${TSTCMD} -D "-i ${VPATH}/${strfile} -f ${FORMAT} -o /dev/null"|| return $RC
-  sleep 1
-  done
- iYY=$(date +"%Y")
- iMM=$(date +"%m")
- iDD=$(date +"%d")
- CUR=$(expr $iYY \* 365 + $iMM \* 31 + $iDD)
- if [ $CUR -gt $STIME ]
- then
  GOON=0
- fi
 done
-killall ${TSTCMD}
 RC=0
 return $RC
 }
@@ -289,10 +270,6 @@ CREW_640x480_30.yuv CITY_640x480_30.yuv"
 TSTCMD="/unit_tests/mxc_vpu_test.out"
 VPATH="${STREAM_PATH}/video/"
 SPATH="${STREAM_PATH}/video/vga4v2ip"
-YY=$(date +"%Y")
-MM=$(date +"%m")
-DD=$(date +"%d")
-STIME=$(expr ${YY} \* 365 + ${MM} \* 31 + ${DD})
 GOON=1
 while [ $GOON = "1" ]
 do
@@ -304,7 +281,7 @@ do
   do
   FORMAT=$(echo $j | sed "s/+/ /g" | awk '{print $1}')
   strfile=$(echo $j | sed "s/+/ /g" | awk '{print $2}')
-  ${TSTCMD} -E "-o /dev/null -w 640 -h 480 -f 2 -c 3000" -D "-i ${VPATH}/${srcfile} -f 2" \
+  ${TSTCMD} -E "-i /dev/zero -o /dev/null -w 640 -h 480 -f 2 -c 3000" -D "-i ${VPATH}/${srcfile} -f 2" \
  -D "-i ${VPATH}/${strfile} -f ${FORMAT} -o /dev/null"|| return $RC
   sleep 1
    for k in $RAWLIST
@@ -312,38 +289,22 @@ do
    rm -rf /tmp/enc.dat
    echo "now encode form file $k"
   ${TSTCMD} -E "-i ${VPATH}/$k -o /tmp/enc.dat -w 640 -h 480 -f 2" \
-  -D "-i ${SPATH}/${srcfile} -f 2" \
   -D "-i ${VPATH}/${strfile} -f ${FORMAT} -o /dev/null "|| return $RC
    rm -rf /tmp/enc.dat
    done
   done
  done
-#loop back test
-   ${TSTCMD} -L "-f 2 -w 640 -h 480 -t 1" &
-  for j in $STRLIST
-  do
-  FORMAT=$(echo $j | sed "s/+/ /g" | awk '{print $1}')
-  strfile=$(echo $j | sed "s/+/ /g" | awk '{print $2}')
-   ${TSTCMD} -D "-i ${VPATH}/${strfile} -f ${FORMAT} -o /dev/null" || return $RC
-  sleep 1
-  done
- iYY=$(date +"%Y")
- iMM=$(date +"%m")
- iDD=$(date +"%d")
- CUR=$(expr $iYY \* 365 + $iMM \* 31 + $iDD)
- if [ $CUR -gt $STIME ]
- then
  GOON=0
- fi
 done
 killall ${TSTCMD}
 RC=0
 return $RC
 }
+
 #TODO check parameter
 if [ $# -ne 1 ]
 then
-echo "usage $0 <1/2/3/4/5>"
+echo "usage $0 <1/2/3/4/5/6>"
 exit 1 
 fi
 
@@ -365,6 +326,9 @@ case "$1" in
   ;;
 5)
   test_case_05 || exit $RC
+  ;;
+6)
+  test_case_06 || exit $RC
   ;;
 *)
 #TODO check parameter

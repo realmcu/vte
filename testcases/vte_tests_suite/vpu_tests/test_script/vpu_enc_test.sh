@@ -179,6 +179,8 @@ $TSTCMD -D "-i test.264 -f 2 -o /dev/null" || return $TST_COUNT
 
 rm -f test.h264
 
+$TSTCMD -E "-i /dev/zero -w 1280 -h 720 -f 2 -o /dev/null -c 100" || return $RC
+
 RC=0
 return $RC
 
@@ -290,7 +292,7 @@ TSTCMD="/unit_tests/mxc_vpu_test.out"
 #TODO check parameter
 if [ $# -ne 1 ]
 then
-echo "usage $0 <1/2/3/4/5>"
+echo "usage $0 <1/2/3/4/5/6>"
 exit 1 
 fi
 
@@ -322,17 +324,14 @@ case "$1" in
 5)
   test_case_05 || exit $RC
   ;;
+6)
+  test_case_06 || exit $RC
+  ;;
 *)
 *#TODO check parameter
-  echo "usage $0 <1/2/3/4/5>"
+  echo "usage $0 <1/2/3/4/5/6>"
   ;;
 esac
 
 tst_resm TINFO "Test PASS"
-
-
-
-
-
-
 
