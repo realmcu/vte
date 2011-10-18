@@ -197,12 +197,12 @@ return $RC
 }
 
 # Function:     test_case_04
-# Description   - Test if <TODO test function> ok
+# Description   - Test if dual 1080P ok
 #  
 test_case_04()
 {
 #TODO give TCID 
-TCID="test_demo4_test"
+TCID="test_dual_1080P_test"
 #TODO give TST_COUNT
 TST_COUNT=4
 RC=0
@@ -212,17 +212,28 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
+a_stream_path=/mnt/nfs/test_stream/power_stream/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch.mp4
+b_stream_path=/mnt/nfs/test_stream/power_stream/V031204_Times_Square_traffic_1920x1088p30_20Mbps_600frm_H264_noaudio.mp4
+
+/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path} -o /dev/fb0" &
+
+/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${b_stream_path} -o /dev/fb2" &
+
+wait
+
+RC=$?
+
 return $RC
 
 }
 
 # Function:     test_case_05
-# Description   - Test if <TODO test function> ok
+# Description   - Test if 1080P playback + 720P enc ok
 #  
 test_case_05()
 {
 #TODO give TCID 
-TCID="test_demo5_test"
+TCID="test_1080DEC_720ENC_test"
 #TODO give TST_COUNT
 TST_COUNT=5
 RC=0
@@ -231,6 +242,15 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
+
+a_stream_path=/mnt/nfs/test_stream/power_stream/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch.mp4
+/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path} -o /dev/fb0" &
+
+/unit_tests/mxc_vpu_test.out -E "-f 2 -i /dev/zero -w 1080 -h 720 -o /dev/null -c 100" &
+
+wait
+
+RC=$?
 
 return $RC
 
