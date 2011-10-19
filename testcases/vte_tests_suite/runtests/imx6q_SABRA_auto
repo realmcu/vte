@@ -165,7 +165,7 @@ TGE-LV-ESLCD-0161	lcd_testapp -T 2 -B /dev/fb0 -D 16 -X 10 -N 10
 TGE-LV-ESLCD-0600	lcd_testapp_power -F /dev/fb0
 TGE-LV-ESLCD-0702	dd if=/dev/urandom of=/dev/fb0 bs=1k count=150
 TGE-LV-ESLCD-0703	echo q | fbv -d /dev/fb2 ${LTPROOT}/testcases/bin/butterfly.png
-TGE-LV-ESLCD-0710	fbset -depth 32 && lcd_testapp -T 2 -B /dev/fb0 -D 32 -X 10
+TGE-LV-ESLCD-0710	fbset -depth 32; lcd_testapp -T 2 -B /dev/fb0 -D 32 -X 10
 TGE-LV-FB-0010	fbset -depth 16;  lcd_testapp -T 1 -D 16 -B /dev/fb0 -X 10
 TGE-LV-FB-0011	fbset -depth 24;  lcd_testapp -T 1 -D 24 -B /dev/fb0 -X 10; fbset -depth 16
 TGE-LV-FB-1002	fbset && fbset -depth 32 && fbset -depth 16 && fbset -depth 24 && fbset -depth 32
