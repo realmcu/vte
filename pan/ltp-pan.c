@@ -1039,7 +1039,7 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
 		 * Otherwise, break the cmdline at white space and exec the
 		 * cmd directly.
 		 */
-		if (strpbrk(c_cmdline, "\"';|<>$\\")) {
+		if (strpbrk(c_cmdline, "\"';|<>$&\\")) {
 			execlp("sh", "sh", "-c", c_cmdline, (char *)0);
 			errlen = sprintf(errbuf,
 					 "pan(%s): execlp of '%s' (tag %s) failed.  errno:%d %s",
