@@ -157,6 +157,7 @@ TGE-LV-UBOOT-0060	ls
 TGE-LV-APP-0001	gst-inspect
 TGE-LV-DISPLAY-0002	dd if=/dev/urandom of=/dev/fb2 bs=1024 count=100
 TGE-LV-DISPLAY-DUAL-0001	echo q | fbv ${LTPROOT}/testcase/bin/butterfly.png && lcd_testapp -T 1 -B /dev/fb2 -D 16 -X 10
+TGE-LV-ESLCD-0830  RC=0;LOOP=20; while [ $LOOP -gt 0 ]; do mxcfb_test -T 4 -D /dev/fb0 -d /dev/fb1 || RC=1; LOOP=$(expr $LOOP - 1); done; [ $RC -eq 0 ]
 TGE-LV-WIFI-0043	modprobe ath6kl && sleep 5 && ifconfig eth1 up && iwconfig eth1 mode managed && sleep 10 && iwlist eth1 scanning | grep FSLLBGAP_001 && iwconfig eth1 key bbd9837522 && iwconfig eth1 essid FSLLBGAP_001 && udhcpc -i eth1 && sleep 10 && LOCALIP=$(ifconfig eth1 | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}') && iperf -d -c 10.192.225.222 -n 100M -B $LOCALIP  -t 100 && ifconfig eth1 down && modprobe -r ath6kl
 TGE-LV-WIFI-0061-Stress	LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ath6kl; sleep 20; ifconfig eth1 up;iwconfig eth1 mode managed && iwlist eth1 scanning | grep FSLLBGAP_001 && ifconfig eth1 down && RT=0 ; modprobe -r ath6kl; echo $LOOP;sleep 30 ; done ; [ $RT -eq 0 ]
 TGE-LV-ETHERNET-1000	tcpdump -c 10 -i eth0
