@@ -158,6 +158,7 @@ TGE-LV-ETHERNET-1005	udp_stream_script 10.192.225.222 CPU
 TGE-LV-ETHERNET-1007	touch readme && ftpget -u anonymous 10.192.225.218 readme readme && cat readme | grep welcome && rm readme
 TGE-LV-ETHERNET-1008	ethtool eth0 | grep 1000
 TGE-LV-ETHERNET-1009    ifconfig eth0 | grep "dropped:0"
+TGE-LV-ETHERNET-1011    ifconfig eth0 | grep "overruns:0"
 TGE-LV-FEC-0010	fec_testapp -T 0
 TGE-LV-FEC-0011	if ifconfig |grep 10.200; then fec_testapp -T 1 -H 10.200.1.1; else fec_testapp -T 1 -H 10.192.225.219; fi
 TGE-LV-FEC-0012	fec_testapp -T 2
