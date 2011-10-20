@@ -139,6 +139,14 @@ TGE-LV-ESAI-0437	arecord -d 10 -f S16_LE -r 32000 -c 4 audio_32k_4ch.wav
 TGE-LV-ESAI-0438	arecord -d 10 -f S16_LE -r 44100 -c 4 audio_44k_4ch.wav
 TGE-LV-ALSA-0200	(aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav &); arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav && aplay file.wav
 TGE-LV-ALSA-0201	(arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav &); aplay $STREAM_PATH/alsa_stream/audio44k16S.wav && aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav && sleep 20 && aplay file.wav
+TGE-LV-ASRC-0201	asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
+TGE-LV-ASRC-0202	asrc_test1.sh -to 96000 $STREAM_PATH/asrc_stream/audio48k16S.wav
+TGE-LV-ASRC-0203	asrc_test1.sh -to 88200 $STREAM_PATH/asrc_stream/audio96k16S.wav
+TGE-LV-ASRC-0204	asrc_test1.sh -to 44100 $STREAM_PATH/asrc_stream/audio88k16S.wav
+TGE-LV-ASRC-0205	asrc_grp_conv.sh 44
+TGE-LV-ASRC-0206	asrc_grp_conv.sh 32
+TGE-LV-ASRC-0207	asrc_grp_conv.sh 48
+TGE-LV-ASRC-0208	asrc_grp_conv.sh 96
 TGE-LV-CORE-0001    validate
 TGE-LV-CORE-0002    check_events
 TGE-LV-BENCH-10001	coremark_F4.exe  0x0 0x0 0x66 0 7 1 2000 &&  coremark_F4.exe  0x3415 0x3415 0x66 0 7 1 2000 && coremark_F4.exe 8 8 8 0 7 1 1200
