@@ -92,7 +92,7 @@ extern "C" {
 	void setup(void) {
 		int VT_rv;
 		
-		system("auto_prepare.sh -I V4L; sleep 2");
+		system("v4l_module.sh setup");
 
 		VT_rv = VT_v4l_capture_setup();
       
@@ -484,7 +484,7 @@ extern "C" {
 			free(gV4LTestConfig.mOutputFile);
 		gV4LTestConfig.mOutputFile = NULL;
 		VT_rv = VT_v4l_capture_cleanup();
-    system("auto_prepare.sh -R V4L; sleep 2");	
+    	system("v4l_module.sh cleanup");	
 		if (gExitCleanup) {
 			if (VT_rv != TPASS) {
 				tst_resm(TWARN,
