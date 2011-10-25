@@ -44,6 +44,16 @@ v4l_setup()
    modprobe $camera_module
    sleep 2
    modprobe mxc_v4l2_capture || return 1
+   sleep 5
+   retry=5
+   while [ ! -e /dev/video0 ]
+	   do
+      sleep 5
+	  if [ $retry -eq 0 ]; then
+          return 1;
+	  fi
+	  retry=$(expr $retry - 1)
+   done
    return 0
 }
 
