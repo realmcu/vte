@@ -193,32 +193,20 @@ return $RC
 test_case_02()
 {
 #TODO give TCID 
-TCID="PMIC_DVFS_manual_test"
+TCID="PMIC_DVFS_core_test"
 #TODO give TST_COUNT
 TST_COUNT=2
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-echo "case can not run on nfs"
-declare -a cpufreq_value;
-cpufreq_value=(454736 392727 360000 261818);
-count=0
+echo 1 > /sys/devices/platform/imx_dvfscore.0/enable
 
-for i in $cpufreq_value
-do
-   echo -n $i > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
-   echo sleep...
-   sleep 3
-   echo "TSTINFO: CPUFREQ at $i"
-   #test list
-   run_manual_test_list
-done
+sleep 5
+run_auto_test_list || RC=$(expr $RC + 1)
 
-
-RC=0
 return $RC
 
 }
