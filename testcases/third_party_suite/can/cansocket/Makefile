@@ -40,7 +40,7 @@
 #
 #  Send feedback to <socketcan-users@lists.berlios.de>
 
-LTP_DIR = ../../
+LTP_DIR = ../../../
 BIN_DIR = $(LTP_DIR)/bin
 
 
