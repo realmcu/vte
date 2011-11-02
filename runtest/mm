@@ -69,10 +69,9 @@ ksm03 ksm03
 ksm03_1 ksm03 -u 128
 ksm04 ksm04
 ksm04_1 ksm04 -u 128
+ksm05 ksm05 -I 10
 
 cpuset01 cpuset01 -I 3600
-
-mbind01 mbind01
 
 oom01 oom01
 oom02 oom02
@@ -80,3 +79,6 @@ oom03 oom03
 oom04 oom04
 
 thp01 thp01 -I 120
+
+vma01 vma01
+vma02 vma02
