@@ -125,13 +125,14 @@ extern "C" {
 	static char gFBPixFmtName[40] = "RGB565";
 	static int gUsecase = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	static int gSnapshot = 0;
-	static int gStartStream = 0;
-	struct v4l2_rect gOrigCropRect;
+        static int gStartStream = 0;
+        struct v4l2_rect gOrigCropRect;
 	struct v4l2_rect gOrigFormatRect;
 	struct v4l2_cropcap cropcap;
 	struct v4l2_crop crop;
 	unsigned long gOrigPixFormat = V4L2_PIX_FMT_RGB565;
 	static int inSrc = -1;
+         extern int gTestPerf;
 /*======================== GLOBAL CONSTANTS =================================*/
 
 /*======================== GLOBAL VARIABLES =================================*/
@@ -416,7 +417,7 @@ extern "C" {
 			    fbuffer.fmt.bytesperline * fbuffer.fmt.height;
 			fbuffer.flags = V4L2_FBUF_FLAG_PRIMARY;
 		}
-		/* Get original format */
+                /* Get original format */
 		CLEAR(gFormat);
 		gFormat.type = V4L2_BUF_TYPE_VIDEO_OVERLAY;
 		if (ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0) {
@@ -592,7 +593,8 @@ extern "C" {
 		gFormat.fmt.pix.width = gV4LTestConfig.mWidth;
 		gFormat.fmt.pix.height = gV4LTestConfig.mHeight;
 		gFormat.fmt.pix.pixelformat = gPixelFormat;
-		if (ioctl(gFdV4L, VIDIOC_S_FMT, &gFormat) < 0) {
+	        
+        	if (ioctl(gFdV4L, VIDIOC_S_FMT, &gFormat) < 0) {
 			tst_resm(TWARN, "%s formatting failed",
 				 gV4LTestConfig.mV4LDevice);
 			return TFAIL;
@@ -691,6 +693,7 @@ extern "C" {
 				tst_resm(TWARN, "Buffers mapping failed");
 				return TFAIL;
 			}
+
 		}
 		return TPASS;
 	}
@@ -1181,6 +1184,8 @@ extern "C" {
 				aStart = (void *)gpFB_buf;
 			} else
 				aStart = gpBuffers[buffer.index].mpStart;
+	
+                         //printf(" gpBuffers[buffer.index].mLength %u \n",   gpBuffers[buffer.index].mLength);
 			if (process_image
 			    (aStart, gpBuffers[buffer.index].mLength) == TFAIL)
 				return TFAIL;
@@ -1553,7 +1558,10 @@ extern "C" {
 		unsigned int cnt = gV4LTestConfig.mCount;
 		fd_set fds;
 		struct timeval tv;
-
+                enum v4l2_buf_type type;
+                long total_time;
+		struct timeval tv_start, tv_current;
+                int frame_rate;
 		if (setup_device() != TPASS) {
 			cleanup_device();
 			return TFAIL;
@@ -1565,6 +1573,8 @@ extern "C" {
 				return retValue;
 		}
 		tst_resm(TINFO, "Start capturing...");
+	        gettimeofday(&tv_start, 0);
+                 
 		while (cnt-- > 0) {
 			int ret = -1;
 			while (ret < 0) {
@@ -1584,12 +1594,38 @@ extern "C" {
 			}
 			gSnapshot = 0;
 			if ((cnt == (int)(gV4LTestConfig.mCount / 2 + 1))
-			    && (gV4LTestConfig.mCaseNum == PRP_ENC_TO_F))
-				gSnapshot = 1;
+			    && (gV4LTestConfig.mCaseNum == PRP_ENC_TO_F)
+                            && gTestPerf == 0)
+	  		   gSnapshot = 1;
 			if (read_frame() == TFAIL)
 				return retValue;
 		}
 		retValue = TPASS;
+
+		if (gTestPerf)
+		{
+                	gettimeofday(&tv_current, 0);
+	                total_time = (tv_current.tv_sec - tv_start.tv_sec);
+        	        total_time += (tv_current.tv_usec - tv_start.tv_usec)/1000000L;
+			
+			if(total_time>0)
+                        {
+                                frame_rate = gV4LTestConfig.mCount/total_time; 
+	                        printf("Now the camera fps is  %u fps\n",frame_rate);
+                                if(frame_rate < (gV4LTestConfig.mFrameRate-2))
+                                {
+                                       printf("The camera performance is so poor.'\n");
+                                       retValue = TFAIL;
+				}
+ 
+			}
+        	        else
+                
+			{
+			        printf("Error, Please give a bigger -T valulee!\n");
+ 				retValue = TFAIL;
+			}
+		}
 		sleep(1);
 		if (cleanup_device() != TPASS)
 			return TFAIL;
