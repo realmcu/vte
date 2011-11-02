@@ -64,7 +64,9 @@ extern "C" {
 /* Extern Global Variables */
 	extern int Tst_count;	/* counter for tst_xxx routines.         */
 	extern char *TESTDIR;	/* temporary dir created by tst_tmpdir */
-
+        extern int gTestPerf;  
+     
+        int gTestPerf = 0;
 	int gExitCleanup = 1;
 /* Global Variables */
 	char *TCID = "v4l_capture_testapp";	/* test program identifier.          */
@@ -139,6 +141,8 @@ extern "C" {
 		printf
 		    ("Usage : -r capture frame rate setting. <15 to 30 > default is  30\n");
 		printf("Usage: -M <camera input mode> <0 - 5>\n");
+                printf("Usage: -Z <camera performance test,default is 0>\n");
+
 	}
 
 /*===== main =====*/
@@ -165,7 +169,7 @@ extern "C" {
 		/* parse options. */
 		char *msg;
 		int Dflag = 0, Hflag = 0, Wflag = 0, Rflag = 0, Sflag = 0, Bflag = 0, Tflag = 0, oflag = 0, Oflag = 0, Cflag = 0, uflag = 0, Eflag = 0, Mflag = 0, Xflag = 0, Nflag = 0, Yflag = 0, vflag = 0, rflag = 0, Kflag = 0,	/*block io */
-		    sflag = 0;	/*capture input select */
+		    sflag = 0,Zflag = 0;	/*capture input select */
 
 		char *Dopt,
 		    *Hopt,
@@ -175,7 +179,7 @@ extern "C" {
 		    *oopt,
 		    *Oopt,
 		    *Copt,
-		    *uopt, *Yopt, *Mopt, *Nopt, *ropt, *Kopt, *sopt, *Bopt;
+		    *uopt, *Yopt, *Mopt, *Nopt, *ropt, *Kopt, *sopt, *Bopt, *Zopt;
 		option_t options[] = {
 			{"D:", &Dflag, &Dopt},	/* Video capturing device               */
 			{"H:", &Hflag, &Hopt},	/* Capturing height                     */
@@ -184,7 +188,7 @@ extern "C" {
 			{"S", &Sflag, NULL},	/* Resize test                          */
 			{"B:", &Bflag, &Bopt},	/* Cropping test                        */
 			{"T:", &Tflag, &Topt},	/* Capture times                        */
-			{"o:", &oflag, &oopt},	/* Path to output file                  */
+            	        {"o:", &oflag, &oopt},	/* Path to output file                  */
 			{"O:", &Oflag, &Oopt},	/* Pixel format                         */
 			{"C:", &Cflag, &Copt},	/* Case number                          */
 			{"u:", &uflag, &uopt},	/* Output device (default /dev/fb0)     */
@@ -197,6 +201,7 @@ extern "C" {
 			{"K:", &Kflag, &Kopt},	/*block IO */
 			{"s:", &sflag, &sopt},
 			{"M:", &Mflag, &Mopt},
+  		        {"Z:", &Zflag, &Zopt},
 			{NULL, NULL, NULL}	/* NULL required to end array */
 		};
 		if ((msg = parse_opts(argc, argv, options, help)) != NULL) {
@@ -230,6 +235,10 @@ extern "C" {
 		gV4LTestConfig.mFrameRate = rflag ? atoi(ropt) : 30;
 		gV4LTestConfig.mIsBlock = Kflag ? atoi(Kopt) : 0;
 		tst_resm(TINFO, "IO blocking is %d\n", gV4LTestConfig.mIsBlock);
+		
+                if(Zflag)
+                    gTestPerf = 1;
+                printf ( "zzzzzz %d",gTestPerf);
 		if (sflag) {
 			char mstr[255];
 			char *pstr = mstr;
@@ -263,6 +272,7 @@ extern "C" {
 				 gV4LTestConfig.mCaseNum);
 			return TFAIL;
 		}
+                
 		if (Bflag) {
 			sscanf(Bopt,
 			       "%d,%d,%d,%d",
