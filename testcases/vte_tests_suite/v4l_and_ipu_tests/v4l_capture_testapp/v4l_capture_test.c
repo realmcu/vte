@@ -1560,9 +1560,9 @@ extern "C" {
 		struct timeval tv;
                 enum v4l2_buf_type type;
                 long total_time;
+		int frame_rate;
 		struct timeval tv_start, tv_current;
-                int frame_rate;
-		if (setup_device() != TPASS) {
+                if (setup_device() != TPASS) {
 			cleanup_device();
 			return TFAIL;
 		}
@@ -1605,12 +1605,12 @@ extern "C" {
 		if (gTestPerf)
 		{
                 	gettimeofday(&tv_current, 0);
-	                total_time = (tv_current.tv_sec - tv_start.tv_sec);
-        	        total_time += (tv_current.tv_usec - tv_start.tv_usec)/1000000L;
+	                total_time = (tv_current.tv_sec - tv_start.tv_sec)* 1000000L ;
+        	        total_time += tv_current.tv_usec - tv_start.tv_usec;
 			
 			if(total_time>0)
                         {
-                                frame_rate = gV4LTestConfig.mCount/total_time; 
+				frame_rate =( gV4LTestConfig.mCount * 1000000L) /total_time; 
 	                        printf("Now the camera fps is  %u fps\n",frame_rate);
                                 if(frame_rate < (gV4LTestConfig.mFrameRate-2))
                                 {
