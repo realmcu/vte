@@ -190,7 +190,7 @@ determine_platform()
         fi
     fi
 		
-    find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX6" | grep "Quad" | grep "SABRE Auto Board" | wc -l`;
+    find=`cat /proc/cpuinfo | grep "Hardware" | grep "6Quad" | grep "Armadillo2 Board" | wc -l`;
     if [ $find -eq 1 ]
     then
         find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;

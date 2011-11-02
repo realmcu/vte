@@ -1312,20 +1312,20 @@ int interface_up(void)
         if ((ifr.ifr_flags & IFF_UP) == IFF_UP)
                 return TPASS;
 
-        ifr.ifr_flags |= IFF_UP;
-        if (ioctl(sock, SIOCSIFFLAGS, &ifr) < 0)
-        {
-                tst_resm(TWARN, "Warning: Could not set interface flags.");
-                return TFAIL;
-        }
-
+      #if 0
         memcpy(&ifr.ifr_addr, &gTestConfig.dc.sifr_addr, sizeof(struct sockaddr));
         if (ioctl(sock, SIOCSIFADDR, &ifr) < 0)
         {
                 tst_resm(TWARN, "Warning: Could not set interface address.");
                 return TFAIL;
         }
-
+      #endif
+        ifr.ifr_flags |= IFF_UP;
+        if (ioctl(sock, SIOCSIFFLAGS, &ifr) < 0)
+        {
+                tst_resm(TWARN, "Warning: Could not set interface flags.");
+                return TFAIL;
+        }
         return TPASS;
 }
 

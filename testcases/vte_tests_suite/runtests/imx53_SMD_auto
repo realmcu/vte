@@ -126,22 +126,6 @@ TGE-LV-ASRC-0205	asrc_grp_conv.sh 44
 TGE-LV-ASRC-0206	asrc_grp_conv.sh 32
 TGE-LV-ASRC-0207	asrc_grp_conv.sh 48
 TGE-LV-ASRC-0208	asrc_grp_conv.sh 96
-TGE-LV-ASRC-0302	asrc_clock_source_test1.sh 0302
-TGE-LV-ASRC-030a	asrc_clock_source_test1.sh 030a
-TGE-LV-ASRC-0362	asrc_clock_source_test1.sh 0362
-TGE-LV-ASRC-036a	asrc_clock_source_test1.sh 036a
-TGE-LV-ASRC-0372	asrc_clock_source_test1.sh 0372
-TGE-LV-ASRC-037a	asrc_clock_source_test1.sh 037a
-TGE-LV-ASRC-03a2	asrc_clock_source_test1.sh 03a2
-TGE-LV-ASRC-03aa	asrc_clock_source_test1.sh 03aa
-TGE-LV-ASRC-0409	asrc_clock_source_test2.sh 0409
-TGE-LV-ASRC-0449	asrc_clock_source_test2.sh 0449
-TGE-LV-ASRC-044a	asrc_clock_source_test2.sh 044a
-TGE-LV-ASRC-0504	asrc_clock_source_test3.sh 0504
-TGE-LV-ASRC-0564	asrc_clock_source_test3.sh 0564
-TGE-LV-ASRC-0574	asrc_clock_source_test3.sh 0574
-TGE-LV-ASRC-0591	asrc_clock_source_test3.sh 0591
-TGE-LV-ASRC-0592	asrc_clock_source_test3.sh 0592
 TGE-LV-ALSA-SPDIF-0002	modprobe snd_spdif; aplay -D plughw:1 ${STREAM_PATH}/spdif_stream/audio32k16S.wav && echo pass || echo fail
 TGE-LV-SPDIF-0001	modprobe snd_spdif; aplay -l | grep MXC_SPDIF && modprobe -r snd_spdif
 TGE-LV-SPDIF-0004	spdif_basic.sh

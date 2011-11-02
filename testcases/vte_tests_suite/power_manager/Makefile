@@ -10,11 +10,14 @@ SUBDIRS-y += usb_pm
 SUBDIRS-y += pwr_consumption
 SUBDIRS-y += pwr_battery
 SUBDIRS-y += pwr_clocks
+scripts = powerstate_test.sh
+
 all:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
 
 install:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install ; done
+	-ln -f $(scripts) ../../bin/
 
 clean:
 	@set -e; for i in $(SUBDIRS-y) ; do $(MAKE) -C $$i clean ; done
