@@ -47,7 +47,7 @@
 #   IMX50RDP    IMX50RDP
 #   IMX50-RDP3    IMX50-RDP3
 #   IMX6-SABREAUTO IMX6-SABREAUTO
-#
+#   IMX6-SABRELITE IMX6-SABRELITE
 #
 # Usage2(return number): 
 #   platfm.sh || platform=$?
@@ -196,6 +196,14 @@ determine_platform()
         find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
         p=IMX6-SABREAUTO
     fi
+	
+	find=`cat /proc/cpuinfo | grep "Hardware" | grep "6Quad" | grep "Sabre-Lite" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+        find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
+        p=IMX6-SABRELITE
+    fi
+
 
     if [ $p = "IMX31-3STACK" ]
     then
@@ -238,7 +246,7 @@ determine_platform()
 		elif [ $p = "IMX50RDP" ] || [ $p = "IMX50-RDP3" ]
 		then
 				RC=50
-		elif [ $p = "IMX6-SABREAUTO" ]
+		elif [ $p = "IMX6-SABREAUTO" ] || [ $p = "IMX6-SABRELITE" ]
 		then
 				RC=61
     else
