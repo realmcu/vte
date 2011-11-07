@@ -63,6 +63,8 @@ if [ $platfm -ne 53 ]; then
     modprobe flexcan
 fi
 
+ip link set $CANID up type can bitrate 125000
+
 ifconfig $CANID up
 
 if [ $? -ne 0 ]
