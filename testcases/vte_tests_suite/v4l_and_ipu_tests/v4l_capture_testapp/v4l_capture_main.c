@@ -64,9 +64,8 @@ extern "C" {
 /* Extern Global Variables */
 	extern int Tst_count;	/* counter for tst_xxx routines.         */
 	extern char *TESTDIR;	/* temporary dir created by tst_tmpdir */
-        extern int gTestPerf;  
      
-        int gTestPerf = 0;
+        int gTestPerf;
 	int gExitCleanup = 1;
 /* Global Variables */
 	char *TCID = "v4l_capture_testapp";	/* test program identifier.          */
@@ -141,7 +140,7 @@ extern "C" {
 		printf
 		    ("Usage : -r capture frame rate setting. <15 to 30 > default is  30\n");
 		printf("Usage: -M <camera input mode> <0 - 5>\n");
-                printf("Usage: -Z <camera performance test,default is 0>\n");
+                //rintf("Usage: -Z <camera performance test.>\n");
 
 	}
 
@@ -179,7 +178,7 @@ extern "C" {
 		    *oopt,
 		    *Oopt,
 		    *Copt,
-		    *uopt, *Yopt, *Mopt, *Nopt, *ropt, *Kopt, *sopt, *Bopt, *Zopt;
+		    *uopt, *Yopt, *Mopt, *Nopt, *ropt, *Kopt, *sopt, *Bopt;
 		option_t options[] = {
 			{"D:", &Dflag, &Dopt},	/* Video capturing device               */
 			{"H:", &Hflag, &Hopt},	/* Capturing height                     */
@@ -194,15 +193,15 @@ extern "C" {
 			{"u:", &uflag, &uopt},	/* Output device (default /dev/fb0)     */
 			{"Y:", &Yflag, &Yopt},	/* Overlay Type (for Overlay only)      */
 			{"E", &Eflag, NULL},	/* Error cases                          */
-			{"X", &Xflag, NULL},	/* Disable asking user                    */
-			{"N:", &Nflag, &Nopt},	/* Capture times                     */
+			{"X", &Xflag, NULL},	/* Disable asking user                  */
+			{"N:", &Nflag, &Nopt},	/* Capture times                        */
 			{"v", &vflag, NULL},	/* Verbose mode                         */
 			{"r:", &rflag, &ropt},
-			{"K:", &Kflag, &Kopt},	/*block IO */
+			{"K:", &Kflag, &Kopt},	/*block IO                              */
 			{"s:", &sflag, &sopt},
 			{"M:", &Mflag, &Mopt},
-  		        {"Z:", &Zflag, &Zopt},
-			{NULL, NULL, NULL}	/* NULL required to end array */
+  		        {"Z", &Zflag, NULL},    /* frame rate performance test          */
+			{NULL, NULL, NULL}	/* NULL required to end array           */
 		};
 		if ((msg = parse_opts(argc, argv, options, help)) != NULL) {
 			tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s",
@@ -235,10 +234,7 @@ extern "C" {
 		gV4LTestConfig.mFrameRate = rflag ? atoi(ropt) : 30;
 		gV4LTestConfig.mIsBlock = Kflag ? atoi(Kopt) : 0;
 		tst_resm(TINFO, "IO blocking is %d\n", gV4LTestConfig.mIsBlock);
-		
-                if(Zflag)
-                    gTestPerf = 1;
-                printf ( "zzzzzz %d",gTestPerf);
+                gTestPerf = Zflag;
 		if (sflag) {
 			char mstr[255];
 			char *pstr = mstr;
@@ -272,7 +268,6 @@ extern "C" {
 				 gV4LTestConfig.mCaseNum);
 			return TFAIL;
 		}
-                
 		if (Bflag) {
 			sscanf(Bopt,
 			       "%d,%d,%d,%d",
