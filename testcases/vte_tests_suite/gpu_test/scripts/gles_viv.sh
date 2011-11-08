@@ -152,7 +152,7 @@ echo "==========================="
 if [ -e 3DMarkMobile/fsl_imx_linux ]; then
   cd 3DMarkMobile/fsl_imx_linux/
 	mkfifo temp
-    cat temp | ./fm_oes_player
+    cat temp | ./fm_oes_player &
 fi
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
