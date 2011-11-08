@@ -23,7 +23,7 @@
 #Portability: ARM GCC
 ###################################################################################################
 
-CFLAGS       += -Wall -I ../../../../include 
+CFLAGS       += -Wall -I ../../../../include -I$(KLINUX_SRCDIR)/include 
 LOADLIBES    += -L../../../../lib -lltp -lm
 PROGRAM = 
 LIBRARY =

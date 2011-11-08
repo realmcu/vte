@@ -1,5 +1,5 @@
 /***
-**Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2005-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -37,7 +37,6 @@ extern "C"{
 #include <string.h>
 #include <time.h>
 #include <sys/time.h>
-
 
 /* Verification Test Environment Include Files */
 #include "v4l_output_test.h"
@@ -180,14 +179,27 @@ int pixel_format(char *string)
 int VT_v4l_output_setup(void)
 {
         int     rv = TFAIL;
+		struct v4l2_fmtdesc fmtdesc;
+		struct v4l2_capability cap;
 
-        v4l_output_fd = open(p.v4l_dev_file, O_RDWR);
+        v4l_output_fd = open(p.v4l_dev_file, O_RDWR, 0);
 
         if (v4l_output_fd == -1)
         {
                 tst_resm(TBROK, "Can't open V4L_DEVICE: %s", p.v4l_dev_file);
                 goto final;
         }
+        if (!ioctl(v4l_output_fd, VIDIOC_QUERYCAP, &cap)) 
+		{
+          printf("driver=%s, card=%s, bus=%s,version=0x%08x,caps=0x%08x\n", 
+		  cap.driver, cap.card, cap.bus_info, cap.version, cap.capabilities); 
+		}
+		fmtdesc.index = 0;
+		fmtdesc.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
+		while (!ioctl(v4l_output_fd, VIDIOC_ENUM_FMT, &fmtdesc)) {
+    printf("fmt %s: fourcc = 0x%08x\n",fmtdesc.description,fmtdesc.pixelformat);
+		 fmtdesc.index++;
+		}
         input_fd = open(p.input_file, O_RDONLY);
 
         if (input_fd == -1)
@@ -208,8 +220,9 @@ int VT_v4l_output_setup(void)
         }
 
         rv = TPASS;
-
+        return rv;
     final:
+	    close(v4l_output_fd);
         return rv;
 }
 
@@ -228,7 +241,8 @@ int VT_v4l_output_cleanup(void)
 {
         int     rv = TPASS;
 
-        memset(&buf_req, 0, sizeof(buf_req));
+        #if 0
+		memset(&buf_req, 0, sizeof(buf_req));
         /* Freeing buffers */
         buf_req.count = 0;
         buf_req.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
@@ -238,7 +252,7 @@ int VT_v4l_output_cleanup(void)
         {
                 tst_resm(TBROK, "Error: ioctl VIDIOC_REQBUFS failed. Returned code %d", errno);
         }
-
+        #endif
         if (v4l_output_fd >= 0)
                 close(v4l_output_fd);
 
@@ -331,15 +345,14 @@ int parse_file(int in_fd, int *width, int *height, char **image_fmt)
 /*================================================================================================*/
 int configure(void)
 {
-        int     rv = TFAIL,
-            status,
-            g_output = 3;
-
+        int     rv = TFAIL;
+        int    status;
+     #if 0
         if (ioctl(v4l_output_fd, VIDIOC_S_OUTPUT, &g_output) < 0)
         {
                 tst_resm(TBROK, "set output failed. Error code %d", errno);
         }
-
+     #endif
 
         memset(&cropcap, 0, sizeof(cropcap));
 
@@ -351,11 +364,10 @@ int configure(void)
                 goto final;
         }
 
-/*     printf("cropcap.bounds.width = %d\ncropcap.bound.height = %d\n"
+      printf("cropcap.bounds.width = %d\ncropcap.bound.height = %d\n"
                "cropcap.defrect.width = %d\ncropcap.defrect.height = %d\n",
                cropcap.bounds.width, cropcap.bounds.height,
                cropcap.defrect.width, cropcap.defrect.height);
-*/
 
         if (cropcap.type != V4L2_BUF_TYPE_VIDEO_OUTPUT)
         {
@@ -390,7 +402,7 @@ int configure(void)
         /* ignore if cropping is not supported (EINVAL) */
         if (p.nb_rot)
         {
-                ctrl.id = V4L2_CID_PRIVATE_BASE;
+                ctrl.id = V4L2_CID_ROTATE;
                 ctrl.value = p.nb_rot;
                 if (ioctl(v4l_output_fd, VIDIOC_S_CTRL, &ctrl) < 0)
                 {
@@ -458,7 +470,7 @@ int configure(void)
 int process_image(void)
 {
         int     i, type, err = 0, g_frame_period = 33333;
-        int     rv = TFAIL, sleeptime = 0, ch;
+        int     rv = TFAIL;
         struct timeval tv_start;
 
         unsigned char *b;
@@ -530,7 +542,7 @@ int process_image(void)
                         }
                         if (p.test_type == 1)
                         {
-                                write_file(p.output_fmt, buffers[buf.index].start);
+                                write_file(p.output_fmt, (char *)buffers[buf.index].start);
                         }
                 }
 
