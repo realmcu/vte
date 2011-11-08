@@ -183,6 +183,10 @@ TGE-LV-FB-1002	fbset && fbset -depth 32 && fbset -depth 16 && fbset -depth 24 &&
 TGE-LV-FB-1003	cat /dev/vcs
 TGE-LV-FB-1006	echo 1 > /sys/class/graphics/fb0/blank && echo 0 > /sys/class/graphics/fb0/blank
 TGE-LV-FB-1007	display_clk.sh 1
+TGE-LV-ESLCD-0800 mxcfb_test -T 1 -D /dev/fb0 -d /dev/fb1
+TGE-LV-ESLCD-0810 mxcfb_test -T 2 -D /dev/fb0 -d /dev/fb1
+TGE-LV-ESLCD-0820 mxcfb_test -T 3 -D /dev/fb0 -d /dev/fb1
+TGE-LV-ESLCD-0840 mxcfb_test -T 5 -D /dev/fb0 -d /dev/fb1
 TGE-LV-GPU-EGL-FB-0001	gles_viv.sh 1
 TGE-LV-GPU-FB-CONF-VG-0002	vg_gc2000.sh 2
 TGE-LV-GPU-FB-MULTI-0001	( vg_gc2000.sh 2 & ); gles_viv.sh 2; wait
