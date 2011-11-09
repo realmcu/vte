@@ -65,7 +65,7 @@ extern "C" {
 	extern int Tst_count;	/* counter for tst_xxx routines.         */
 	extern char *TESTDIR;	/* temporary dir created by tst_tmpdir */
      
-        int gTestPerf;
+        int gTestPerf = 0;
 	int gExitCleanup = 1;
 /* Global Variables */
 	char *TCID = "v4l_capture_testapp";	/* test program identifier.          */
@@ -140,7 +140,6 @@ extern "C" {
 		printf
 		    ("Usage : -r capture frame rate setting. <15 to 30 > default is  30\n");
 		printf("Usage: -M <camera input mode> <0 - 5>\n");
-                //rintf("Usage: -Z <camera performance test.>\n");
 
 	}
 
@@ -234,7 +233,8 @@ extern "C" {
 		gV4LTestConfig.mFrameRate = rflag ? atoi(ropt) : 30;
 		gV4LTestConfig.mIsBlock = Kflag ? atoi(Kopt) : 0;
 		tst_resm(TINFO, "IO blocking is %d\n", gV4LTestConfig.mIsBlock);
-                gTestPerf = Zflag;
+		if( Zflag)            
+			gTestPerf = 1;
 		if (sflag) {
 			char mstr[255];
 			char *pstr = mstr;

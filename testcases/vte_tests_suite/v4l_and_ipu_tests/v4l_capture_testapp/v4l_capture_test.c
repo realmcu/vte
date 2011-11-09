@@ -1616,11 +1616,6 @@ extern "C" {
 				frame_rate = gV4LTestConfig.mCount /total_time;
 			}
                         printf("Now the camera fps is  %u fps\n",frame_rate);
-                        if(frame_rate < (gV4LTestConfig.mFrameRate-2))
-                        {
-                                 printf("The camera performance is so poor.'\n");
-                                 retValue = TFAIL;
-			}
 		}
 		sleep(1);
 		if (cleanup_device() != TPASS)
