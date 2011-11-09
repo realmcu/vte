@@ -9,19 +9,23 @@ check_platform_camera()
  #only check i2c camera
  names=$(find /sys/devices/platform/imx-i2c.*/ -name name | xargs grep ov)
  cnt=$(echo $names | wc -l)
+ find=0
  #if there are multi camera support then choice the given one or last one
  if [ $cnt -gt 0 ]; then
 	 for i in $names ; do
 		 camera=$(echo $i | cut -d ':' -f 2)
+		 if [ $find -eq 1  ]; then
+			 break
+		 fi
 		 if [ ! -z "$CAMERA"  ];then
 		   if [ "$CAMERA" = $camera ]; then
 		     camera_module=${camera}_camera
-			 break
+			 find=1
 		   else
              camera_module=${camera}_camera
 		   fi
 		 else
-             camera_module=${camera}_camera
+             camera_module="$(echo $camera_module) ${camera}_camera"
 		 fi
 	 done
  else
@@ -67,12 +71,21 @@ v4l_cleanup()
 
 #main
 RC=0
+
+echo $CAMERA
+
+if [ -z $CAMERA ] && [ "$DUAL" != 1  ]  ; then
+  echo "define default"
+  CAMERA=ov3640
+fi
+
 check_platform_camera || RC=1
 
 if [ $RC -ne 0 ]; then
   echo "can not find support ovCameras for this platform"
   exit 1
 fi
+
 
 case "$1" in
 'setup') :

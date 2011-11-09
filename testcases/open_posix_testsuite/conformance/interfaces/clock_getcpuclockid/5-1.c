@@ -37,8 +37,8 @@ int main(int argc, char *argv[])
 
 		pwd = getpwnam("nobody");
 		if (pwd != NULL) {
-			setuid(pwd->pw_uid);
 			setgid(pwd->pw_gid);
+			setuid(pwd->pw_uid);
 		}
 
 	}
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 	} else if (error != EPERM) {
 		printf("clock_getcpuclockid(1, ..) failed with an improper "
 			"error (%d != %d)\n", EPERM, error);
-		return PTS_FAIL;
+		return PTS_UNRESOLVED;
 	}
 	printf("Test PASSED\n");
 	return PTS_PASS;

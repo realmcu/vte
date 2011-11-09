@@ -151,7 +151,8 @@ echo 3DMark
 echo "==========================="
 if [ -e 3DMarkMobile/fsl_imx_linux ]; then
   cd 3DMarkMobile/fsl_imx_linux/
-	./fm_oes_player &
+	mkfifo temp
+    cat temp | ./fm_oes_player &
 fi
 
 cd ${TEST_DIR}/${APP_SUB_DIR}

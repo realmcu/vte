@@ -1,5 +1,5 @@
 /***
-**Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2005-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -42,7 +42,7 @@ extern "C"{
 /*
 #include <linux/compiler.h>
 */
-#include <linux/videodev.h>
+#include <linux/videodev2.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -63,7 +63,7 @@ extern "C"{
                                         DEFINES AND MACROS
 ==================================================================================================*/
 
-#define V4L_OUTPUT_DEVICE "/dev/video16"
+#define V4L_OUTPUT_DEVICE "/dev/video17"
 #define OUTPUT_FILE       "v4l_output_file"
 #define INPUT_FILE        "output_BGR24"
 
