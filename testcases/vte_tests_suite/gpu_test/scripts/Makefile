@@ -8,7 +8,7 @@
 #http://www.gnu.org/copyleft/gpl.html
 TARGET = gpu_test.sh
 TARGETS-$(CONFIG_VTE_IMX5) = gpu_3dmark_cpuload.sh gles.sh vg.sh
-TARGETS-$(CONFIG_VTE_IMX6) = gles_viv.sh vg_gc2000.sh vg_gc35x.sh
+TARGETS-$(CONFIG_VTE_IMX6) = gles_viv.sh vg_gc2000.sh vg_gc35x.sh cl_gc2000.sh
 BIN = ../../../bin/
 
 SRC-$(CONFIG_VTE_IMX5)  =  mx5x_gpu_test.sh
