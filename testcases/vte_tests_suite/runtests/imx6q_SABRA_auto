@@ -192,6 +192,8 @@ TGE-LV-GPU-FB-CONF-VG-0002	vg_gc2000.sh 2
 TGE-LV-GPU-FB-MULTI-0001	( vg_gc2000.sh 2 & ); gles_viv.sh 2; wait
 TGE-LV-GPU-FB-PERF-GLES-0006	gles_viv.sh 2
 TGE-LV-GPU-PERF-OPENVG-0001	vg_gc2000.sh 1
+TGE-LV-GPU-FB-CL11-0001 cl_gc2000.sh 1
+TGE-LV-GPU-FB-CL11-0002 cl_gc2000.sh 2
 TGE-LV-KMEM-0001	insmod ${LTPROOT}/testcases/bin/memory_test.ko && rmmod memory_test
 TGE-LV-KERNEL-CLOCK-0001	cat /proc/timer_list | grep clock | wc -l
 TGE-LV-KERNEL-SMP-0001	[ $(cat /sys/devices/system/cpu/sched_smt_power_savings) -eq 1 ]
