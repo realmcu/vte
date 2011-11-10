@@ -350,6 +350,7 @@ TGE-LV-V4L2-0030_VF v4l_capture_testapp -R 10
 TGE-LV-V4L2-0152 echo 1 > /sys/class/graphics/fb0/blank ; echo 1 > /sys/class/graphics/fb2/blank ; sleep 5 && v4l_capture_testapp -C 3 -O RGB565 -o ./output && echo 0 > /sys/class/graphics/fb0/blank && echo 0 > /sys/class/graphics/fb2/blank
 TGE-LV-V4L2-0068 v4l_capture_testapp -C 2 -H 640 -W 480 -T 100 -X -M 5 -r 15 && v4l_capture_testapp -C 2 -H 640 -W 480 -T 100 -X -M 6 -r 15 && v4l_capture_testapp -C 1 -H 640 -W 480 -T 100 -X -M 5 -r 15 && v4l_capture_testapp -C 1 -H 640 -W 480 -T 100 -X -M 5 -r 15
 TGE-LV-V4L2-0069 v4l_capture_testapp -C 3 -H 1280 -W 1920 -r 15 -M 5 -O BGR24 -o /mnt/nfs/temp/output_1920_1280 && v4l_capture_testapp -C 3 -H 1944 -W 2522 -r 15 -M 6 -O BGR24 -o /mnt/nfs/temp/output_1944_2522 && conv -i /mnt/nfs/temp/output_1920_1280 -b 256 -I BGR24 -x 1920 -y 1280 -o /mnt/nfs/temp/out_1920_1280.bmp && conv -i /rootfs/wb/temp/output_1944_2522 -b 256 -I BGR24 -x 2522 -y 1944 -o /mnt/nfs/temp/out_2522_1944.bmp
+TGE-LV-V4L2-3010 export CAMERA=ov5640_mipi; v4l_capture_testapp -R 1 -C 1
 TGE-LV-V4L2-1078 mxc_v4l2_output.sh 1
 TGE-LV-V4L2-1079 mxc_v4l2_output.sh 2
 TGE-LV-V4L2-1080 mxc_v4l2_output.sh 3
