@@ -196,7 +196,6 @@ TGE-LV-GPU-FB-CL11-0001 cl_gc2000.sh 1
 TGE-LV-GPU-FB-CL11-0002 cl_gc2000.sh 2
 TGE-LV-KMEM-0001	insmod ${LTPROOT}/testcases/bin/memory_test.ko && rmmod memory_test
 TGE-LV-KERNEL-CLOCK-0001	cat /proc/timer_list | grep clock | wc -l
-TGE-LV-KERNEL-SMP-0001	[ $(cat /sys/devices/system/cpu/sched_smt_power_savings) -eq 1 ]
 TGE-LV-KERNEL-SMP-0002	[ $(cat /proc/cpuinfo | grep processor | wc -l ) -eq 4 ]
 TGE-LV-KERNEL-SMP-0003	cd $LTPROOT/testcases/bin/cpu_hotplug && ./runtests.sh
 TGE-LV-KERNEL-SMP-0005	smp_test.sh 1
