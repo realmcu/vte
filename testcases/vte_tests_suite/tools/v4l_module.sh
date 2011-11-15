@@ -16,7 +16,7 @@ check_platform_camera()
 		 apd=
 		 camera_all=$(echo $i | cut -d ':' -f 2)
 		 camera=$(echo $camera_all | cut -d '_' -f 1)
-		 appends=$(echo $camera_all | cut -d '_' -f 2)
+		 appends=$(echo $camera_all | grep '_' | cut -d '_' -f 2)
 		 if [ "$appends" ]; then
 		   apd=_${appends}
 		 fi
