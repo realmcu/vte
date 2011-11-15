@@ -13,20 +13,27 @@ check_platform_camera()
  #if there are multi camera support then choice the given one or last one
  if [ $cnt -gt 0 ]; then
 	 for i in $names ; do
-		 camera=$(echo $i | cut -d ':' -f 2)
+		 apd=
+		 camera_all=$(echo $i | cut -d ':' -f 2)
+		 camera=$(echo $camera_all | cut -d '_' -f 1)
+		 appends=$(echo $camera_all | cut -d '_' -f 2)
+		 if [ "$appends" ]; then
+		   apd=_${appends}
+		 fi
 		 if [ $find -eq 1  ]; then
 			 break
 		 fi
 		 if [ ! -z "$CAMERA"  ];then
-		   if [ "$CAMERA" = $camera ]; then
-		     camera_module=${camera}_camera
+		   if [ "$CAMERA" = ${camera}${apd} ]; then
+		     camera_module=${camera}_camera${apd}
 			 find=1
 		   else
-             camera_module=${camera}_camera
+             camera_module=${camera}_camera${apd}
 		   fi
 		 else
-             camera_module="$(echo $camera_module) ${camera}_camera"
+             camera_module="$(echo $camera_module) ${camera}_camera${apd}"
 		 fi
+   		modprobe -r ${camera_module}
 	 done
  else
 	 return 1
@@ -43,6 +50,7 @@ v4l_setup()
    fi
    #turn on the display
    echo 0 > /sys/class/graphics/fb0/blank
+   sleep 10
    #keep cursor on
    echo -e "\033[9;0]" > /dev/tty0
    modprobe $camera_module
