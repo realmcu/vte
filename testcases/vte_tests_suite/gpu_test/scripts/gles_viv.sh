@@ -272,6 +272,8 @@ sleep 1
 rtc_testapp_6 -T 10
 sleep 1
 
+RC=wait
+
 echo "TEST PASS"
 return $RC
 }
