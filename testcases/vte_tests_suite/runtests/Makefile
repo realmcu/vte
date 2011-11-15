@@ -1,5 +1,5 @@
 
-AUTO_TARGETS-$(CONFIG_VTE_IMX6) += imx6q_SABRA_auto
+AUTO_TARGETS-$(CONFIG_VTE_IMX6) += imx6q_SABRA_auto imx6q_lite
 AUTO_TARGETS-$(CONFIG_VTE_IMX5) += imx51_auto imx51_BABBAGE_auto
 AUTO_TARGETS-$(CONFIG_VTE_IMX5) += imx53_auto imx53_ALSA_auto
 AUTO_TARGETS-$(CONFIG_VTE_IMX5)	+= imx50_auto imx50_auto_p1 imx50_auto_p2 imx50_auto_p3
