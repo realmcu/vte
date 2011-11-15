@@ -20,6 +20,10 @@
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake Huang/-----             02/12/2009     N/A          Initial version
 # 
+
+#Andy Tian/-----              11/15/2011     N/A          The old script may return 0 even there 
+#                                                          is package lost. Fix this error
+#
 ###################################################################################################
 
 
@@ -76,13 +80,14 @@ return $RC
 #               - non zero on failure. return value from commands ($RC)
 cleanup()
 {
-RC=0
+RC=1
 
 #TODO add cleanup code here
 
-modprobe -r g_ether
-modprobe -r cdc_ether 
-modprobe -r usbnet 
+modprobe -r g_ether || return 1
+#modprobe -r cdc_ether  #no such device
+#modprobe -r usbnet    #no such module
+RC=0
 return $RC
 }
 
@@ -103,7 +108,7 @@ test_case_01()
 TCID="cdc_icmp_test"
 #TODO give TST_COUNT
 TST_COUNT=1
-RC=0
+RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -114,7 +119,7 @@ PACKSIZE="64 128 256 512 1024 2048 4096 8192 16384"
 
 for i in $PACKSIZE
 do
-loss=$(ping $HOSTIP -c 4 -s $i | grep "0% packet loss")
+loss=$(ping $HOSTIP -c 4 -s $i | grep ", 0% packet loss")
 if [ -z "$loss" ]
 then
 return 1
@@ -123,7 +128,7 @@ done
 
 
 
-
+RC=0
 return $RC
 
 }
