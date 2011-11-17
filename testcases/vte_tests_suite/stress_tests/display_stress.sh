@@ -215,11 +215,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #a_stream_path=/mnt/nfs/test_stream/power_stream/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch.mp4
 #b_stream_path=/mnt/nfs/test_stream/power_stream/V031204_Times_Square_traffic_1920x1088p30_20Mbps_600frm_H264_noaudio.mp4
 a_stream_path=/mnt/nfs/test_stream/power_stream/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
-b_stream_path=/mnt/nfs/test_stream/power_stream/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
+b_stream_path=/mnt/nfs/test_stream/video/Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.cmp
 
 /unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path} -o /dev/fb0" &
 
-/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${b_stream_path} -o /dev/fb2" &
+/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${b_stream_path} -o /dev/fb2" &
 
 wait
 
@@ -245,8 +245,8 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-a_stream_path=/mnt/nfs/test_stream/power_stream/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
-/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" &
+a_stream_path=/mnt/nfs/test_stream/power_stream/video/Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.cmp
+/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${a_stream_path}" &
 
 /unit_tests/mxc_vpu_test.out -E "-f 2 -i /dev/zero -w 1080 -h 720 -o /dev/null -c 100" &
 
