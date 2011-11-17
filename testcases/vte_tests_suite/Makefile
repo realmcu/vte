@@ -99,6 +99,7 @@ SUBDIRS-$(CONFIG_VTE_IRDA)        += irda_tests
 SUBDIRS-$(CONFIG_VTE_KEYPAD)      += keypad_tests
 SUBDIRS-$(CONFIG_VTE_LIBATA)      += libata_tests
 SUBDIRS-$(CONFIG_VTE_MBX)         += mbx_tests
+SUBDIRS-$(CONFIG_VTE_MIPI)        += mipi_tests
 SUBDIRS-$(CONFIG_VTE_MLB)         += mlb_tests
 SUBDIRS-$(CONFIG_VTE_MMC)         += mmc_tests
 SUBDIRS-$(CONFIG_VTE_MTD)         += mtd_tests
