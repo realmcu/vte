@@ -80,14 +80,13 @@ return $RC
 #               - non zero on failure. return value from commands ($RC)
 cleanup()
 {
-RC=1
 
 #TODO add cleanup code here
 
 modprobe -r g_ether || return 1
 #modprobe -r cdc_ether  #no such device
 #modprobe -r usbnet    #no such module
-RC=0
+
 return $RC
 }
 
