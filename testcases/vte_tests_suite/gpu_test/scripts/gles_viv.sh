@@ -97,7 +97,7 @@ cd ${TEST_DIR}/${APP_SUB_DIR}
 echo "==========================="
 echo egl_test
 echo "==========================="
-./egl_test || RC=$(echo $RC egl_test)
+#./egl_test || RC=$(echo $RC egl_test)
 
 echo fps triangle
 echo "==========================="
