@@ -226,6 +226,25 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
+count=0
+
+while [ $count -lt 7 ]; do
+  count=$(expr $count + 1)
+  value=${cpufreq_value[$RANDOM%4]}
+	echo $value
+  cpufreq-set -f ${value}M
+  value_ret=$(cpufreq-info -f | grep $value | wc -l)
+if [ $value_ret -eq 1 ] ; then
+   echo sleep...
+   sleep 3
+   echo "TSTINFO: CPUFREQ at $value "
+   #test list
+   powerstate_test.sh  || RC=$(expr $RC + 1)
+else
+  return $RC
+fi
+done
+
 
 return $RC
 
