@@ -1,4 +1,7 @@
 TGE-LV-GPU-EGL-FB-0001	gles_viv.sh 1
+TGE-LV-BENCH-10001	coremark_F4.exe  0x0 0x0 0x66 0 7 1 2000 &&  coremark_F4.exe  0x3415 0x3415 0x66 0 7 1 2000 && coremark_F4.exe 8 8 8 0 7 1 1200
+TGE-LV-BENCH-10002	coremark_P4.exe 0x0 0x0 0x66 0 7 1 2000 && coremark_P4.exe 0x3415 0x3415 0x66 0 7 1 2000 && coremark_P4.exe 8 8 8 0 7 1 1200
+TGE-LV-BENCH-10003_LLL	c-ray.sh
 TGE-LV-GPU-EGL-FB-0002	gles_viv.sh 1
 TGE-LV-GPU-EGL-FB-0003	gles_viv.sh 1
 TGE-LV-GPU-EGL-FB-0004	gles_viv.sh 1
@@ -244,4 +247,5 @@ TGE-LV-SYS_DISPLAY-0005109 display_stress.sh 5
 TGE-LV-STORAGE-2001	storage_all.sh 1
 TGE-LV-STORAGE-2002	storage_all.sh 2
 TGE-LV-DVFS-0140_LLLLLL	dvfs_mx61.sh 1
-TGE-LV-SYS_DISPLAY-0005110 while true; do display_stress.sh 5; done
+TGE-LV-DVFS-0304_LLLLLL	dvfs_mx61.sh 3
+TGE-LV-SYS_DISPLAY-0005110_LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL while true; do display_stress.sh 5; done
