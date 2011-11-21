@@ -93,7 +93,7 @@ if [ -e cl11/UnitTest ]; then
   cd cl11/UnitTest/
   for i in $unit_list
 	  do
-     $i || RC=$(echo $RC $i)
+     ./$i || RC=$(echo $RC $i)
    done
 fi
 
