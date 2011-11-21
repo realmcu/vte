@@ -129,7 +129,7 @@ if [ -e cl11/UnitTest ]; then
    done
 fi
 
-RC=wait
+RC=$(wait)
 
 return $RC
 }
