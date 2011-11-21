@@ -219,7 +219,7 @@ b_stream_path=/mnt/nfs/test_stream/video/Mpeg4_SP3_1920x1080_23.97fps_9760kbps_A
 
 /unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" &
 
-/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${b_stream_path}" &
+/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${b_stream_path} " &
 
 wait
 
