@@ -10,7 +10,7 @@
 
 cleanup()
 {
-auto_prepare.sh -R V4L
+	v4l_module.sh cleanup
 }
 
 
@@ -24,7 +24,7 @@ echo 0 > /sys/class/graphics/fb0/blank
 
 trap "cleanup" 0
 
-auto_prepare.sh -I V4L
+v4l_module.sh setup
 
 TSTCMD="/unit_tests/mxc_v4l2_still.out"
 PassCount=0

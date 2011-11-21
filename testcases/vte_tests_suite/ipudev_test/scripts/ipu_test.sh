@@ -569,7 +569,7 @@ RESLIST="1920,1080 1280,720 1024,768 160,120"
 fc=1
 CROPLIST="32,32,64,64"
 
-TST_CMD=/unit-tests/mxc_ipudev_test.out
+TST_CMD=/unit_tests/mxc_ipudev_test.out
 #TST_CMD=ipu_dev_test
 
 MODE=

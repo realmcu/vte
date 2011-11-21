@@ -1,0 +1,250 @@
+TGE-LV-GPU-EGL-FB-0001	gles_viv.sh 1
+TGE-LV-BENCH-10001	coremark_F4.exe  0x0 0x0 0x66 0 7 1 2000 &&  coremark_F4.exe  0x3415 0x3415 0x66 0 7 1 2000 && coremark_F4.exe 8 8 8 0 7 1 1200
+TGE-LV-BENCH-10002	coremark_P4.exe 0x0 0x0 0x66 0 7 1 2000 && coremark_P4.exe 0x3415 0x3415 0x66 0 7 1 2000 && coremark_P4.exe 8 8 8 0 7 1 1200
+TGE-LV-BENCH-10003_LLL	c-ray.sh
+TGE-LV-GPU-EGL-FB-0002	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0003	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0004	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0005	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0006	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0007	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0008	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0009	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0010	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0011	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0012	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0013	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0014	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0015	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0016	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0017	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0018	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0019	gles_viv.sh 1
+TGE-LV-KERNEL-SMP-0003	cd $LTPROOT/testcases/bin/cpu_hotplug && ./runtests.sh
+TGE-LV-KERNEL-SMP-0005	smp_test.sh 1
+TGE-LV-KERNEL-SMP-0006_LLLLLL	smp_test.sh 2
+TGE-LV-GPU-EGL-FB-0020	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0021	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0022	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0023	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0024	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0025	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0026	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0027	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0028	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0029	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0030	gles_viv.sh 1
+TGE-LV-GPU-FB-CONF-VG-00020	vg_gc2000.sh 2
+TGE-LV-GPU-FB-CONF-VG-00021	vg_gc2000.sh 2
+TGE-LV-GPU-FB-CONF-VG-00022	vg_gc2000.sh 2
+TGE-LV-GPU-FB-CONF-VG-00023	vg_gc2000.sh 2
+TGE-LV-GPU-FB-CONF-VG-00024	vg_gc2000.sh 2
+TGE-LV-GPU-FB-CONF-VG-00025	vg_gc2000.sh 2
+TGE-LV-GPU-FB-CONF-VG-00026	vg_gc2000.sh 2
+TGE-LV-GPU-FB-CONF-VG-00027	vg_gc2000.sh 2
+TGE-LV-GPU-FB-CONF-VG-00028	vg_gc2000.sh 2
+TGE-LV-GPU-FB-CONF-VG-00029	vg_gc2000.sh 2
+TTGE-LV-ALSA-0101	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k16M.wav -A
+TGE-LV-ALSA-0102	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k16M.wav -A
+TGE-LV-ALSA-0103	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k16M.wav -A
+TGE-LV-ALSA-0104	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k16M.wav -A
+TGE-LV-ALSA-0105	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k16M.wav -A
+TGE-LV-ALSA-0106	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16M.wav -A
+TGE-LV-ALSA-0107	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k16M.wav -A
+TGE-LV-ALSA-0108	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k16M.wav -A
+TGE-LV-ALSA-0109	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k16M.wav -A
+TGE-LV-ALSA-0110	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k16M.wav -A
+TGE-LV-ALSA-0111	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k16S.wav -A -D
+TGE-LV-ALSA-0112	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k16S.wav -A -D
+TGE-LV-ALSA-0113	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k16S.wav -A -D
+TGE-LV-ALSA-0114	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k16S.wav -A -D
+TGE-LV-ALSA-0115	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k16S.wav -A
+TGE-LV-ALSA-0116	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16S.wav -A -D
+TGE-LV-ALSA-0117	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k16S.wav -A -D
+TGE-LV-ALSA-0118	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k16S.wav -A -D
+TGE-LV-ALSA-0119	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k16S.wav -A
+TGE-LV-ALSA-0120	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k16S.wav -A -D
+TGE-LV-ALSA-0121	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k24M-S24_LE.wav -A
+TGE-LV-ALSA-0122	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k24M-S24_LE.wav -A
+TGE-LV-ALSA-0123	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k24M-S24_LE.wav -A
+TGE-LV-ALSA-0124	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k24M-S24_LE.wav -A
+TGE-LV-ALSA-0125	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k24M-S24_LE.wav -A
+TGE-LV-ALSA-0126	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k24M-S24_LE.wav -A
+TGE-LV-ALSA-0127	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k24M-S24_LE.wav -A
+TGE-LV-ALSA-0128	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k24M-S24_LE.wav -A
+TGE-LV-ALSA-0129	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k24M-S24_LE.wav -A
+TGE-LV-ALSA-0130	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k24M-S24_LE.wav -A
+TGE-LV-ALSA-0131	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0132	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0133	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0134	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0135	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k24S-S24_LE.wav -A
+TGE-LV-ALSA-0136	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0137	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0138	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0139	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k24S-S24_LE.wav -A
+TGE-LV-ALSA-0140	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0146	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k24S-S24_LE.wav -A
+TGE-LV-ALSA-0147	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k24M-S24_LE.wav -A
+TGE-LV-ALSA-0150	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k16S.wav -A
+TGE-LV-ALSA-0151	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k16M.wav -A
+TGE-LV-ALSA-0152	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio12k16M.wav -A
+TGE-LV-ALSA-0153	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio12k16S.wav -A
+TGE-LV-ALSA-0154	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio12k24M-S24_LE.wav -A
+TGE-LV-ALSA-0155	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio12k24S-S24_LE.wav -A
+TGE-LV-ALSA-0156	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k32M.wav -A
+TGE-LV-ALSA-0157	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio12k32S.wav -A
+TGE-LV-ALSA-0171	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k32M.wav -A
+TGE-LV-ALSA-0172	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k32M.wav -A
+TGE-LV-ALSA-0173	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k32M.wav -A
+TGE-LV-ALSA-0174	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k32M.wav -A
+TGE-LV-ALSA-0175	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k32M.wav -A
+TGE-LV-ALSA-0176	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k32M.wav -A
+TGE-LV-ALSA-0177	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k32M.wav -A
+TGE-LV-ALSA-0178	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k32M.wav -A
+TGE-LV-ALSA-0179	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k32M.wav -A
+TGE-LV-ALSA-0180	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k32M.wav -A
+TGE-LV-ALSA-0181	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k32S.wav -A
+TGE-LV-ALSA-0182	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k32S.wav -A
+TGE-LV-ALSA-0183	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k32S.wav -A
+TGE-LV-ALSA-0184	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k32S.wav -A
+TGE-LV-ALSA-0185	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k32S.wav -A
+TGE-LV-ALSA-0186	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k32S.wav -A
+TGE-LV-ALSA-0187	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k32S.wav -A
+TGE-LV-ALSA-0188	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k32S.wav -A
+TGE-LV-ALSA-0189	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k32S.wav -A
+TGE-LV-ALSA-0190	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k32S.wav -A
+TGE-LV-ALSA-0191	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k32M.wav -A
+TGE-LV-ALSA-0192	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k32S.wav -A
+TGE-LV-ALSA-0221	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k16M.wav -A
+TGE-LV-ALSA-0222	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k16S.wav -A
+TGE-LV-ALSA-0223	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k24M-S24_LE.wav -A
+TGE-LV-ALSA-0224	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k24S-S24_LE.wav -A
+TGE-LV-ALSA-0225	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k32M.wav -A
+TGE-LV-ALSA-0226	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k32S.wav -A
+TGE-LV-ALSA-0231	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k16M.wav -A
+TGE-LV-ALSA-0232	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k16S.wav -A
+TGE-LV-ALSA-0233	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k24M-S24_LE.wav -A
+TGE-LV-ALSA-0234	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k24S-S24_LE.wav -A
+TGE-LV-ALSA-0235	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k32M.wav -A
+TGE-LV-ALSA-0236	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k32S.wav -A
+TGE-LV-ALSA-0241	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k16M.wav -A
+TGE-LV-ALSA-0242	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k16S.wav -A
+TGE-LV-ALSA-0243	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k24M-S24_LE.wav -A
+TGE-LV-ALSA-0244	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k24S-S24_LE.wav -A
+TGE-LV-ALSA-0245	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32M.wav -A
+TGE-LV-ALSA-0246	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32S.wav -A
+TGE-LV-ALSA-0161	(dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16S_long.wav -A &) && sleep 10 && rtc_testapp_6 -T 5 ; sleep 50
+TGE-LV-SYS_DISPLAY-00051 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-00052 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-00053 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-00054 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-00055 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-00056 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-00057 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-00058 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-00059 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000510 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000511 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000512 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000513 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000514 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000515 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000516 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000517 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000518 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000519 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000520 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000521 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000522 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000523 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000524 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000525 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000526 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000527 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000528 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000529 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000530 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000531 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000532 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000533 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000534 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000535 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000536 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000537 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000538 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000539 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000540 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000541 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000542 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000543 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000544 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000545 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000546 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000547 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000548 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000549 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000550 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000551 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000552 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000553 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000554 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000555 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000556 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000557 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000558 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000559 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000560 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000561 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000562 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000563 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000564 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000565 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000566 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000567 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000568 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000569 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000570 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000571 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000572 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000573 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000574 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000575 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000576 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000577 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000578 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000579 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000580 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000581 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000582 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000583 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000584 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000585 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000586 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000587 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000588 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000589 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000590 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000591 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000592 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000593 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000594 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000595 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000596 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000597 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000598 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-000599 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-0005100 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-0005101 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-0005102 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-0005103 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-0005104 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-0005105 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-0005106 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-0005107 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-0005108 display_stress.sh 5
+TGE-LV-SYS_DISPLAY-0005109 display_stress.sh 5
+TGE-LV-STORAGE-2001	storage_all.sh 1
+TGE-LV-STORAGE-2002	storage_all.sh 2
+TGE-LV-DVFS-0140_LLLLLL	dvfs_mx61.sh 1
+TGE-LV-DVFS-0304_LLLLLL	dvfs_mx61.sh 3

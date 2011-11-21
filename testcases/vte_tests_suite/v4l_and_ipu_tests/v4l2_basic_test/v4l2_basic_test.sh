@@ -21,7 +21,7 @@ echo 0 > /sys/class/graphics/fb0/blank
 
 cleanup()
 {
-  auto_prepare.sh -R V4L
+	v4l_module.sh cleanup
 }
 
 # V4L2 Output Tests
@@ -79,7 +79,7 @@ fi
 
 #V4L2 Capture Tests
 TSTCMD="/unit_tests/mxc_v4l2_overlay.out"
-auto_prepare.sh -I V4L
+v4l_module.sh setup
 trap "cleanup" 0
 
 echo "V4L2 Capture Tests"
