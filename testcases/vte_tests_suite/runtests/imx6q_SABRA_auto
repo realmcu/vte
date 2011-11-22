@@ -333,7 +333,7 @@ TGE-LV-V4L2-0137 mxc_v4l2_overlay.sh 2
 TGE-LV-V4L2-0138 mxc_v4l2_overlay.sh 3
 TGE-LV-V4L2-0139 mxc_v4l2_overlay.sh 4
 TGE-LV-V4L2-0140 mxc_v4l2_overlay.sh 5
-TGE-LV-V4l2-1001W /unit_tests/mxc_v4l2_still.out -f YUYV -w 640 -h 480 && cp -f still.yuv /mnt/nfs/temp/still_YUYV_640_480.yuv
+TGE-LV-V4l2-1001W v4l_module.sh setup;/unit_tests/mxc_v4l2_still.out -f YUYV -w 640 -h 480 && cp -f still.yuv /mnt/nfs/temp/still_YUYV_640_480.yuv;v4l_module.sh cleanup
 TGE-LV-V4L2-0165 v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -X -K 1
 TGE-LV-V4L2-0121 v4l_capture_testapp -C 3 -H 240  -W 320 -K 1
 TGE-LV-V4L2-0122 v4l_capture_testapp -C 3 -H 240  -W 320 -s CSI_IC_MEM
