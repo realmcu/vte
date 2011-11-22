@@ -188,7 +188,7 @@ TGE-LV-STORAGE-2002	storage_all.sh 2
 TGE-LV-VIIM-0001	iim_test
 TGE-LV-OTP-0001 otp_test.sh
 TGE-LV-SYS_DISPLAY-0001	display_stress.sh 1
-TGE-LV-SYS_DISPLAY-0002	display_stress.sh 2
+TGE-LV-SYS_DISPLAY-0002_LLL	display_stress.sh 2
 TGE-LV-THERMO-0001	ls /sys/devices/virtual/thermal/thermal_zone0/*temp | xargs cat
 TGE-LV-THERMO-0002	ls /sys/devices/virtual/thermal/thermal_zone0/*type | xargs cat
 TGE-LV-UART-0017	ints1=$(cat /proc/interrupts | grep uart | awk {'print $2'}) ; start=0; for i in $ints1; do start=$(expr $start + $i);done;cat /etc/passwd >  /dev/ttymxc0 ; ints2=$(cat /proc/interrupts | grep uart | awk {'print $2'});end=0;for i in $ints2; do end=$(expr $end + $i);done; [ $end -gt $start ]
