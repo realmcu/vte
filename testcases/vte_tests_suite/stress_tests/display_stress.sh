@@ -269,15 +269,47 @@ TCID="test_720CLOOPBACK_test"
 TST_COUNT=5
 RC=0
 
+v4l_module.sh setup
+
 /unit_tests/mxc_vpu_test.out -L "-f 2 -w 1080 -h 720 -t 1" &
 pid=$!
 a_stream_path=/mnt/nfs/test_stream/power_stream/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
-/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path} -o /dev/fb0" || RC=1
+/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" || RC=1
 sleep 15
 kill -9 $pid
 
+
+v4l_module.sh cleanup
+
 return $RC
 }
+
+# Function:     test_case_07
+# Description   - Test if 1080P overnight playback
+#  
+test_case_07()
+{
+#TODO give TCID 
+TCID="test_1080PLAYBACK_test"
+#TODO give TST_COUNT
+TST_COUNT=7
+RC=0
+
+
+a_stream_path=/mnt/nfs/test_stream/power_stream/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
+
+start_date=$(date +%d)
+now_date=$(date +%d)
+while [ $now_date > $start_date ]
+	do
+/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}"
+now_date=$(date +%d)
+done
+
+return $RC
+}
+
+
 
 usage()
 {
@@ -288,6 +320,7 @@ echo "3: "
 echo "4: "
 echo "5: "
 echo "6: "
+echo "7: "
 }
 
 # main function
@@ -321,6 +354,9 @@ case "$1" in
   ;;
 6)
   test_case_06 || exit $RC
+  ;;
+7)
+  test_case_07 || exit $RC
   ;;
 *)
   usage
