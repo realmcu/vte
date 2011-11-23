@@ -25,6 +25,7 @@
 # Hake                  01/10/2011       n/a        Add LOCO and SMD 53. etc
 # Hake                  03/23/2011       n/a        Add MX50 rdp3 etc
 # Spring                07/04/2011       n/a        Add MX53SMD TO2.1 support
+# Spring                11/22/2011       n/a        Add MX6Q description
 #############################################################################
 # Usage1(return string):
 #   platform=`platfm.sh`
@@ -62,6 +63,7 @@
 #       51       mx51 3ds
 #       28       mx28 evk
 #       53       mx53 evk loco smd
+#       61       mx6q arm2 and sabre-lite
 #
 # 2. 378%256(=122) for SMTP378X board.(for return value is 0~255)
 #       rt value    Board
@@ -240,15 +242,15 @@ determine_platform()
     then
         #echo  "Platform MX28 EVK" 
         RC=28
-		elif [ $p = "IMX50ARM2" ]
-		then
-				RC=50
-		elif [ $p = "IMX50RDP" ] || [ $p = "IMX50-RDP3" ]
-		then
-				RC=50
-		elif [ $p = "IMX6-SABREAUTO" ] || [ $p = "IMX6-SABRELITE" ]
-		then
-				RC=61
+    elif [ $p = "IMX50ARM2" ]
+    then
+        RC=50
+    elif [ $p = "IMX50RDP" ] || [ $p = "IMX50-RDP3" ]
+    then
+        RC=50
+    elif [ $p = "IMX6-SABREAUTO" ] || [ $p = "IMX6-SABRELITE" ]
+    then
+        RC=61
     else
         #echo  "Platform not recognized!"
         RC=67
@@ -342,6 +344,31 @@ CPU revision    : 5
 
 Hardware        : Freescale MX53 LOCO Board
 Revision        : 53121
+Serial          : 0000000000000000
+
+MX6Q ARM2 board -201111
+Processor       : ARMv7 Processor rev 10 (v7l)
+processor       : 0
+BogoMIPS        : 1985.74
+
+processor       : 1
+BogoMIPS        : 1992.29
+
+processor       : 2
+BogoMIPS        : 1992.29
+
+processor       : 3
+BogoMIPS        : 1992.29
+
+Features        : swp half thumb fastmult vfp edsp neon vfpv3
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x2
+CPU part        : 0xc09
+CPU revision    : 10
+
+Hardware        : Freescale i.MX 6Quad Armadillo2 Board
+Revision        : 63000
 Serial          : 0000000000000000
 
 EOF
