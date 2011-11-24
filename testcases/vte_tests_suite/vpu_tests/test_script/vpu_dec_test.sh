@@ -516,6 +516,29 @@ RC=0
 return $RC
 }
 
+# Function:     test_case_15
+# Description   - Test if Real video  ok
+test_case_15()
+{
+#TODO give TCID
+TCID="vpu_VP8_test"
+#TODO give TST_COUNT
+TST_COUNT=1
+RC=1
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+#TODO add function test scripte here
+
+echo "TST_INFO: VP8 playback"
+stream=blue_sky_mp8_2mbps_sh7_1920x1088.vp8
+${TSTCMD} -D "-i ${STREAM_PATH}/video/${stream} -f 9" || return $RC
+
+RC=0
+return $RC
+}
+
 usage()
 {
 echo "usage $0 <1/2/3/4/5/6/7/8/9/10/11>"
@@ -533,6 +556,7 @@ echo "11: MPEG2 decoder + deblock test"
 echo "12: H264 vdi test"
 echo "13: VC1 vdi test"
 echo "14: RV test"
+echo "15: VP8 test"
 }
 
 #TODO check parameter
@@ -600,6 +624,9 @@ case "$1" in
   ;;
 14)
   test_case_14 || exit $RC
+  ;;
+15)
+  test_case_15 || exit $RC
   ;;
 *)
 #TODO check parameter
