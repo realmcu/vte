@@ -161,16 +161,6 @@ TGE-LV-KERNEL-10004	int1=$(cat /proc/interrupts | grep -i time | awk '{print $2}
 TGE-LV-KERNEL-10005	cat /proc/meminfo | grep HighTotal
 TGE-LV-DVFS-0140_LLLLLL	dvfs_mx61.sh 1
 TGE-LV-DVFS-0200	cpufreq-info
-TGE-LV-ALSA-0161	(dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16S_long.wav -A &) && sleep 10 && rtc_testapp_6 -T 5 ; sleep 50
-TGE-LV-ASRC-0211	rtc_testapp_6 -T 15; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
-TGE-LV-ETHERNET-1006	rtc_testapp_6 -T 10 && ifconfig eth0
-TGE-LV-FB-1004	mkfifo /tmp/fbv;sh -c "cat /tmp/fbv | fbv ${LTPROOT}/testcases/bin/butterfly.png &" && sleep 5 && rtc_testapp_6 -T 5 && echo q > /tmp/fbv && rm -f /tmp/fbv
-TGE-LV-MMC-1201	storage_all.sh 3
-TGE-LV-RTC-0102	rtc_test_7.sh
-TGE-LV-RTC-0201_LLLL	rtc_test.sh 4
-TGE-LV-V4L2-0200	v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565 && rtc_testapp_6 -T 15 && v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
-TGE-LV-VPU-1020	vpu_pm_test.sh 1
-TGE-LV-VPU-1030	vpu_pm_test.sh 2
 TGE-LV-GPU-1005	gles_viv.sh 4 ; vg_gc2000.sh 4
 TGE-LV-RTC-0010	rtc_testapp_1
 TGE-LV-RTC-0011	rtc_testapp_2
@@ -182,7 +172,6 @@ TGE-LV-RTC-2000	rtc_test.sh 3
 TGE-LV-SD-1010	mmc_transfer.sh
 TGE-LV-SD-1050	sd_clk.sh 1
 TGE-LV-SD-1800	cat /proc/partitions | grep mmc
-TGE-LV-SATA-1201 rtc_testapp_6 -T 10; ls /sys/block | grep ahci
 TGE-LV-STORAGE-2001	storage_all.sh 1
 TGE-LV-STORAGE-2002	storage_all.sh 2
 TGE-LV-VIIM-0001	iim_test
