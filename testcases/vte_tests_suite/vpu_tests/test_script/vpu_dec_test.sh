@@ -562,7 +562,7 @@ echo "15: VP8 test"
 #TODO check parameter
 if [ $# -ne 1 ]
 then
-echo "usage $0 <1/2/3/4/5/6/7/8/9/10/11/12/13>"
+echo "usage $0 <1/2/3/4/5/6/7/8/9/10/11/12/13/14/15>"
 usage
 exit 1 
 fi
