@@ -240,7 +240,7 @@ test_case_03()
 TCID="IPU_PP_TEST"
 #TODO give TST_COUNT
 TST_COUNT=3
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -328,6 +328,11 @@ mkdir /tmp/ipu_dev/
                   #if [ $w -gt $FB0XRES ] || [ $h -gt $FB0YRES ]; then
                   # echo "TST INFO: skip this resolution for fb not support\n"
                   # else
+                 #1124-update
+                 if [ $motion -eq 0 ] && [ $r -eq 0 ] && [ "$tf" = "$ff" ];then
+                 echo "no ipu task need 1124-update"
+                 else  
+                 #1124-update
 		echo " no motion"
     ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},${ff},${CRP},0,0 \
     -O  ${w},${h},${tf},${r},${CRP} -s 1 /tmp/ipu_dev/tmp.dat \
@@ -349,6 +354,7 @@ mkdir /tmp/ipu_dev/
 						TOTAL=$(expr $TOTAL + 3)
 		#motion
 		fi
+                fi #1124-update
 	                #fi
                 #end for k out res
                 done
@@ -569,8 +575,8 @@ RESLIST="1920,1080 1280,720 1024,768 160,120"
 fc=1
 CROPLIST="32,32,64,64"
 
-TST_CMD=/unit_tests/mxc_ipudev_test.out
-#TST_CMD=ipu_dev_test
+#TST_CMD=/unit-tests/mxc_ipudev_test.out
+TST_CMD=ipu_dev_test
 
 MODE=
 CRP=
