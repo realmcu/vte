@@ -50,6 +50,7 @@ echo 1 > /sys/devices/system/cpu/cpu3/online
 
 sleep 1
 times=$(expr $times - 1)
+echo $times
 done
 
 return $RC
@@ -78,6 +79,7 @@ echo 1 > /sys/devices/system/cpu/cpu2/online
 echo 1 > /sys/devices/system/cpu/cpu3/online
 
 times=$(expr $times - 1)
+echo $times
 done
 
 
@@ -87,6 +89,7 @@ return $RC
 useage()
 {
 echo "1: cpu hotplug 500 times "	
+echo "2: cpu hotplug 5000 times "
 }
 
 # main function
