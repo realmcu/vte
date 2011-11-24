@@ -1,4 +1,4 @@
-TARGET=opt_test.sh
+TARGET=otp_test.sh
 
 all:
 
