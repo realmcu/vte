@@ -46,7 +46,6 @@ RC=0
 
 #TODO add cleanup code here
 
-cpufreq-set -f 792M
 
 return $RC
 }
@@ -183,6 +182,7 @@ else
 fi
 done
 
+cpufreq-set -f 792M
 return $RC
 
 }
@@ -245,6 +245,7 @@ else
 fi
 done
 
+cpufreq-set -f 1000M
 
 return $RC
 
