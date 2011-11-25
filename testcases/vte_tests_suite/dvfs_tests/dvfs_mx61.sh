@@ -130,7 +130,7 @@ run_auto_test_list()
 	 coremark_F4.exe  0x0 0x0 0x66 0 7 1 2000 &&  coremark_F4.exe  0x3415 0x3415 0x66 0 7 1 2000 && coremark_F4.exe 8 8 8 0 7 1 1200 || return 8
    echo "storage"
 	 moprobe ahci_platform
-	 storage_all.sh 1 || return 9
+	 storage_all.sh 4 || return 9
 	 modprobe -r ahci_platform
 	 echo "v4l"
 	 v4l_output_testapp -B 0,0,2048,2048 -C 2 -R 3 -F $LTPROOT/testcases/bin/green_RGB24 || return 10
