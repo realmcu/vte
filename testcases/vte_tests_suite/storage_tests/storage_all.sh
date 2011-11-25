@@ -204,6 +204,47 @@ fi
 return $RC
 }
 
+run_simple_list()
+{
+   RC=0
+   need_umount=1
+	 for i in $target_list
+	 do
+    #test if already mout
+    mount | grep $i
+		if [ $? -eq 0 ]; then
+     #is mounted
+		 mount_point=$(mount | grep $i |cut -d" " -f 3)
+		 need_umount=0
+    else
+     #not mount
+     mount_point=$(mktemp -d -p /tmp)
+		 mount /dev/$i $mount_point || RC=$(echo $RC m$i)
+		 sleep 5
+		 if [ ! -z $(echo $RC | grep -i $i)  ];then
+			 rm -rf $mount_point
+			 continue
+		 fi
+     need_umount=1
+		fi
+		for j in $mount_point
+		do
+	   dt of=$j/test_file bs=4k limit=96m passes=2 || RC=$(echo $RC d$i)
+		 if [ $need_umount -eq 1  ];then
+      umount $mount_point || RC=$(echo $RC u$i)
+			rm -rf $mount_point
+		 fi
+		 break
+		done
+	 done
+	 if [ "$RC" != "0"  ];then
+	 echo $RC
+	 RC=1
+	 fi
+	 return $RC
+}
+
+
 run_single_test_list()
 {
    RC=0
@@ -368,6 +409,29 @@ return $RC
 
 }
 
+# Function:     test_case_04
+# Description   - Test if single ok
+#  
+test_case_04()
+{
+#TODO give TCID 
+TCID="test_storage_simple"
+#TODO give TST_COUNT
+TST_COUNT=1
+RC=0
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+#TODO add function test scripte here
+
+#test list
+run_simple_list || RC=1
+
+return $RC
+
+}
+
 
 usage()
 {
@@ -375,6 +439,7 @@ echo "$0 [case ID]"
 echo "1: single process test"
 echo "2: multi process test"
 echo "3: power manager test"
+echo "4: simple test"
 }
 
 # main function
@@ -404,6 +469,9 @@ case "$1" in
   ;;
 3)
   test_case_03 || exit $RC 
+  ;;
+4)
+  test_case_04 || exit $RC 
   ;;
 *)
   usage
