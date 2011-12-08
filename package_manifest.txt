@@ -1,8 +1,3 @@
 Package                  License
 -----------------------  -------
-crypto_test_1012   				GPL
-nand_tests_1012           GPL
-ramdisk_1012              GPL
-scull_1012                O'Reilly & Associates(distributable)
-usbtest_1012              GPL
-VTE_1012                  GPL
+VTE_1111                  GPL
