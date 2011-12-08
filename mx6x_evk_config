@@ -17,7 +17,7 @@
 KLINUX_SRCDIR=/home/vobs/linux-2.6-imx
 KLINUX_BLTDIR=/home/vobs/linux-2.6-imx
 ARCH_CPU=arm
-ARCH_PLATFORM=imx6
+ARCH_PLATFORM=imx6q
 export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM
 #CROSS_COMPILER=arm-none-linux-gnueabi-
 CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.4.4-glibc-2.11.1-multilib-1.0/arm-fsl-linux-gnueabi/bin/arm-none-linux-gnueabi-
