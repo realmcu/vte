@@ -161,7 +161,6 @@ TGE-LV-KERNEL-10004	int1=$(cat /proc/interrupts | grep -i time | awk '{print $2}
 TGE-LV-KERNEL-10005	cat /proc/meminfo | grep HighTotal
 TGE-LV-DVFS-0140_LLLLLL	dvfs_mx61.sh 1
 TGE-LV-DVFS-0200	cpufreq-info
-TGE-LV-GPU-1005	gles_viv.sh 4 ; vg_gc2000.sh 4
 TGE-LV-RTC-0010	rtc_testapp_1
 TGE-LV-RTC-0011	rtc_testapp_2
 TGE-LV-RTC-0013	rtc_testapp_5 -T POLL
