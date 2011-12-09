@@ -22,9 +22,13 @@ get_all_irqs()
 #
 migrate_irq()
 {
-    CPU=${1#cpu}
+    
+    CPU=${1##*cpu}
+    echo =======CPU is $CPU
     MASK=$((1<<${CPU}))
+    echo =======MASK is $MASK
     IRQS=$2
+    echo =======IRQS is $IRQS
     for irq in ${IRQS}
       do
       echo $MASK > /proc/irq/${irq}/smp_affinity
@@ -66,7 +70,7 @@ set_affinity()
 #
 online_cpu()
 {
-    CPU=${1#cpu}
+    CPU=${1##*cpu}
     if [ ! -w /sys/devices/system/cpu/cpu${CPU}/online ]; then
         return 1
     fi
@@ -84,7 +88,7 @@ online_cpu()
 #
 offline_cpu()
 {
-    CPU=${1#cpu}
+    CPU=${1##*cpu}
     if [ ! -w /sys/devices/system/cpu/cpu${CPU}/online ]; then
         return 1
     fi
@@ -174,7 +178,7 @@ get_offline_cpus()
 #
 cpu_is_valid()
 {
-    CPU=${1#cpu}
+    CPU=${1##*cpu}
     echo "CPU is $CPU"
     cat /sys/devices/system/cpu/cpu${CPU}/online > /dev/null 2>&1
     return $?
@@ -189,7 +193,7 @@ cpu_is_valid()
 #
 cpu_is_online()
 {
-    CPU=${1#cpu}
+    CPU=${1##*cpu}
     if [ `cat /sys/devices/system/cpu/cpu${CPU}/online` = "1" ]; then
         return 0
     else 
