@@ -155,7 +155,7 @@ test_case_01()
 TCID="test_CPUFreq_stress"
 #TODO give TST_COUNT
 TST_COUNT=1
-RC=0
+RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
