@@ -65,6 +65,7 @@ cleanup()
 RC=0
 
 #TODO add cleanup code here
+modprobe -r galcore
 return $RC
 }
 
