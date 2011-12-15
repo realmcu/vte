@@ -207,8 +207,6 @@ test_enc_exec()
 {
 RC=1
 
-if [ $TARGET = "51" ]
-then
  echo "encode $srcfile in format $FORMAT to out_enc.dat"
  $TSTCMD -E "-i $srcfile $ESIZE -f $FORMAT -o /tmp/out_enc.dat" || return $RC
  $TSTCMD -D "-f $FORMAT -i /tmp/out_enc.dat" || return $RC
@@ -235,7 +233,6 @@ then
   done
  done
  echo "test enc app PASS"
-fi
 
 RC=0
 
