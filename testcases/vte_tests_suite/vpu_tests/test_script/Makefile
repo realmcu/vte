@@ -43,6 +43,8 @@ TARGET-$(CONFIG_VTE_IMX5) += vpu_tvout_NTSC.sh
 TARGET-$(CONFIG_VTE_IMX5) += vpu_tvout_PAL.sh
 TARGET-$(CONFIG_VTE_IMX5) += vpu_firmware_setup.sh
 TARGET-$(CONFIG_VTE_IMX6) += vpu_performance.sh
+TARGET-$(CONFIG_VTE_IMX6) += vpu_enc_test.sh
+TARGET-$(CONFIG_VTE_IMX6) += vpu_multi_enc_test.sh
 all:
 	@echo "***********************************************"
 	@echo "** ALL : $(TARGET-y)  test application  **"
