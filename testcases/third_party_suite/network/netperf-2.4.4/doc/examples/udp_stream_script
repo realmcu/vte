@@ -68,7 +68,7 @@ fi
 # them in during the real tests. So, we execute the new CPU "tests"
 # of netperf and put the values into shell vars.
 case $LOC_CPU in
-\-c) LOC_RATE=`${NETHOME}netperf $PORT -t LOC_CPU`;;
+\-c) LOC_RATE=100;;
 *) LOC_RATE=""
 esac
 
