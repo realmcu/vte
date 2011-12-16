@@ -264,10 +264,27 @@ if [ $DO_RFS -eq 1 ] ; then
 		echo "Error: ${RFS}: no such file or directory"
 		exit -1
 	fi
-	
+
+    prefix_DEVNODE=`echo $DEVNODE |cut -c -8`
+    if [ "$prefix_DEVNODE" = "/dev/mmc" ]; then
+        umount ${DEVNODE}p1
+        umount ${DEVNODE}p2
+        umount ${DEVNODE}p5
+        umount ${DEVNODE}p6
+    else
+        umount ${DEVNODE}1
+        umount ${DEVNODE}2
+        umount ${DEVNODE}5
+        umount ${DEVNODE}6
+    fi
+
     #fdisk & format
     gen_fdisk_cmd  > ./format_rootfs.cmd
     fdisk $DEVNODE < ./format_rootfs.cmd >> ${LOGFILE} 2>&1
+    #determine if it's MMC card node, /dev/mmcblkX, if yes, add 'p'
+    if [ "$prefix_DEVNODE" = "/dev/mmc" ]; then
+        DEVNODE="${DEVNODE}p"
+    fi
     mkfs.ext3 ${DEVNODE}2 >> ${LOGFILE} 2>&1
     mkfs.vfat ${DEVNODE}1 >> ${LOGFILE} 2>&1
     rm -f format_rootfs.cmd
