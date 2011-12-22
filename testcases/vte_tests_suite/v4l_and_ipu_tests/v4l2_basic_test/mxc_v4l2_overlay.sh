@@ -87,6 +87,10 @@ then
 RESSIZE="240x320 720x480 1280x720"
 fi
 
+if [ "$TARGET" = "61" ]
+then
+RESSIZE="240x320 720x480 1024x768 1280x720 1920x1280"
+fi
 
 return $RC
 }
