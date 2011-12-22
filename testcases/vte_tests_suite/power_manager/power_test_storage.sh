@@ -49,7 +49,7 @@ storage_all.sh 1 &
 
 echo "core test"
 i=0
-loops=10
+loops=10000
 echo core > /sys/power/pm_test
 while [ $i -lt $loops ]
 do

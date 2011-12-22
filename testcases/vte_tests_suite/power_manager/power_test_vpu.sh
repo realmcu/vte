@@ -9,7 +9,7 @@ setup()
     # command line harness APIs, these variables are not local to this program.
 
     # Test case identifier
-    export TCID="ALSA_POWER_test"
+    export TCID="vpu_POWER_test"
     # Set up is initialized as test 0
     export TST_COUNT=0
     # Initialize cleanup function to execute on program exit.
@@ -36,7 +36,7 @@ usage()
 test_case_01()
 {
 #TODO give TCID 
-TCID="ALSA_PM_NOBOOTCORE"
+TCID="vpu_PM_NOBOOTCORE"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=1
@@ -45,7 +45,7 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-arecord -D plughw:0 -d 100 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw &
+display_stress.sh 5 &
 
 echo "core test"
 i=0
@@ -74,23 +74,23 @@ return $RC
 test_case_02()
 {
 #TODO give TCID 
-TCID="ALSA_PM_BOOTCORE"
+TCID="vpu_PM_BOOTCORE"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
-tloops=1000
+tloops=100
 count=0
 #TODO add function test scripte here
-
 while [ $count -lt $tloops ]
 do
-  arecord -D plughw:0 -d 100 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw &
+
+  display_stress.sh 5 &
 
   i=0
-  loops=10
+  loops=100
   while [ $i -lt $loops ]
   do
     i=$(expr $i + 1)
@@ -99,7 +99,7 @@ do
   done
 
   wait
-
+ 
   count=$(expr $count + 1)
 done
 

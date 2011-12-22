@@ -4,18 +4,29 @@ setup()
 {
     # Total number of test cases in this file. 
     export TST_TOTAL=1
-
+    
     # The TCID and TST_COUNT variables are required by the LTP 
     # command line harness APIs, these variables are not local to this program.
 
     # Test case identifier
-    export TCID="ALSA_POWER_test"
+    export TCID="wifi_POWER_test"
     # Set up is initialized as test 0
     export TST_COUNT=0
     # Initialize cleanup function to execute on program exit.
     # This function will be called before the test program exits.
     trap "cleanup" 0
-    
+   
+    modprobe ath6kl && iwconfig eth1 mode managed && sleep 10 && iwlist eth1 scanning | grep FSLLBGAP_001 && iwconfig eth1 key bbd9837522 && iwconfig eth1 essid FSLLBGAP_001
+	if [ $? -ne 0 ];then
+       RC=1
+	else
+      udhcpc -i eth1
+	  sleep 3
+	  localip=$(ifconfig eth1 | grep addr: | cut -d : -f 2 | cut -d " " -f 1)
+	  export LOCALIP=${localip}
+	fi
+
+
 	return $RC
 }
 
@@ -36,7 +47,7 @@ usage()
 test_case_01()
 {
 #TODO give TCID 
-TCID="ALSA_PM_NOBOOTCORE"
+TCID="wifi_PM_NOBOOTCORE"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=1
@@ -45,7 +56,7 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-arecord -D plughw:0 -d 100 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw &
+udp_stream_2nd_script 10.192.225.222 CPU &
 
 echo "core test"
 i=0
@@ -74,23 +85,23 @@ return $RC
 test_case_02()
 {
 #TODO give TCID 
-TCID="ALSA_PM_BOOTCORE"
+TCID="wifi_PM_BOOTCORE"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
-tloops=1000
+tloops=100
 count=0
 #TODO add function test scripte here
-
 while [ $count -lt $tloops ]
 do
-  arecord -D plughw:0 -d 100 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw &
+
+  udp_stream_2nd_script 10.192.225.222 CPU &
 
   i=0
-  loops=10
+  loops=100
   while [ $i -lt $loops ]
   do
     i=$(expr $i + 1)
@@ -99,7 +110,7 @@ do
   done
 
   wait
-
+ 
   count=$(expr $count + 1)
 done
 
