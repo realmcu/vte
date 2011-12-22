@@ -58,6 +58,7 @@ echo 1100 > /sys/class/regulator/regulator_1_SW2/uV
 fi
 fi
 
+v4l_module.sh setup
 #setup the fb on
 echo 0 > /sys/class/graphics/fb0/blank
 
@@ -85,6 +86,7 @@ echo 1200 > /sys/class/regulator/regulator_1_SW2/uV
 fi
 fi
 
+v4l_module.sh cleanup
 cd $LTPROOT
 return $RC
 }
