@@ -10,7 +10,7 @@ SUBDIRS-y += usb_pm
 SUBDIRS-y += pwr_consumption
 SUBDIRS-y += pwr_battery
 SUBDIRS-y += pwr_clocks
-scripts = powerstate_test.sh
+scripts = powerstate_test.sh power_test_storage.sh
 
 all:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
