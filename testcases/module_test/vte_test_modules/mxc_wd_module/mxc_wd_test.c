@@ -193,7 +193,7 @@ static void __exit mxc_wdt_test_exit(void)
 	pr_info("MXC WatchDog Driver test removed\n");
 	if (mxc_wdt_data.timer != NULL)
 	{
-		del_timer(mxc_wdt_data.timer);
+		del_timer_sync(mxc_wdt_data.timer);
 		kfree(mxc_wdt_data.timer);
 	}
 }
