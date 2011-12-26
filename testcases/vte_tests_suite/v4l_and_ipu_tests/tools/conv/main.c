@@ -59,7 +59,7 @@ typedef     unsigned short bool;
 
 inline unsigned char  BOUND255(short a)
 {
-      return (a > 255) ? 255: (a < 0)? 0: a;  
+      return ((a > 255) ? 255: (a < 0)? 0: a);  
 }
 
 
