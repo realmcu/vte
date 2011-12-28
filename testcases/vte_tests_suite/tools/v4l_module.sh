@@ -2,7 +2,7 @@
 # will check the CAMERA env as the deafult camera
 # possbile CAMERA are ov3640, ov5640, ov5642
 
-camera_module=ov3640_camera
+camera_module=ov5640_camera
 
 check_platform_camera()
 {
