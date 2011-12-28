@@ -84,7 +84,7 @@ echo $CAMERA
 
 if [ -z $CAMERA ] && [ "$DUAL" != 1  ]  ; then
   echo "define default"
-  CAMERA=ov3640
+  CAMERA=ov5640
 fi
 
 check_platform_camera || RC=1
