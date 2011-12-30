@@ -294,6 +294,10 @@ if [ $DO_RFS -eq 1 ] ; then
 	ISCMPD=$?
 	echo ${RFS} | egrep -e '\.tar\.gz$' >> ${LOGFILE} 2>&1
     ISTAR=$?
+    if [ $ISTAR -ne 0 ]; then
+        echo ${RFS} | egrep -e '\.tgz$' >> ${LOGFILE} 2>&1
+        ISTAR=$?
+    fi
 
     mkdir -p /mnt/msc
     sleep 5
