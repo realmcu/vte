@@ -356,6 +356,21 @@ int VT_rtc_test5(int sw_t)
                                 tst_resm( TINFO, "fasync test worked as expected");
                         }
                 break;
+				case 3:
+					struct timeval ctime;				    
+                    retval |= ioctl( file_desc, RTC_READ_TIME_47BIT, &ctime );
+					if (retval)
+					{
+						is_ok = 0;
+						break;
+					}
+                    retval |= ioctl( file_desc, RTC_WAIT_TIME_SET, &ctime );
+					if (retval)
+					{
+						is_ok = 0;
+						break;
+					}
+					break;
         }        
 
         rv = is_ok!=0?TPASS:TFAIL;
