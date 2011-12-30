@@ -86,10 +86,50 @@ done
 return $RC
 }
 
+test_case_03()
+{
+#TODO give TCID
+TCID=""
+#TODO give TST_COUNT
+TST_COUNT=1
+RC=0
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+times=5000
+
+mkdir /mnt/mmcblk0p1
+mount /dev/mmcblkop1 /mnt/mmcblk0p1
+
+while [ $times -gt 0 ]
+do
+echo 0 > /sys/devices/system/cpu/cpu1/online
+echo 0 > /sys/devices/system/cpu/cpu2/online
+echo 0 > /sys/devices/system/cpu/cpu3/online
+
+echo 1 > /sys/devices/system/cpu/cpu1/online
+echo 1 > /sys/devices/system/cpu/cpu2/online
+echo 1 > /sys/devices/system/cpu/cpu3/online
+
+bonnie\+\+ -d /mnt/mmcblk0p1 -s 32 -r 16 -u 0:0 -m FSL &
+cat /proc/interrupts
+
+times=$(expr $times - 1)
+echo $times
+done
+
+wait
+umount /mnt/mmcblk0p1
+
+return $RC
+}
+
+
 useage()
 {
 echo "1: cpu hotplug 500 times "	
 echo "2: cpu hotplug 5000 times "
+echo "3: high interrupt test"
 }
 
 # main function
