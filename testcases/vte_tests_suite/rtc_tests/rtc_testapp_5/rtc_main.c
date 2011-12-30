@@ -227,6 +227,10 @@ int main(int argc, char **argv)
                 {
                         VT_rv = VT_rtc_test5(2); 
                 }
+                else if(!strcmp(test_case,"READ_WAIT"))
+                {
+                        VT_rv = VT_rtc_test5(3); 
+                }
                 else
                 {
                         help();
@@ -258,6 +262,7 @@ void help(void)
         printf("  -T EPOCH   Test epoch read and set RTC funcitons\n");
         printf("  -T POLL      POLL test for RTC \n");
         printf("  -T FASYNC  FASYNC test for RTC \n");
+        printf("  -T READ_WAIT  READ and WAIT test for RTC \n");
 }
 
 #ifdef __cplusplus
