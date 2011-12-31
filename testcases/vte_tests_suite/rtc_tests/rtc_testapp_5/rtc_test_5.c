@@ -42,6 +42,7 @@ extern "C"{
 #include <time.h>
 #include <poll.h>
 #include <signal.h>
+#include <linux/mxc_srtc.h>
 
 /* Verification Test Environment Include Files */
 #include "rtc_test_5.h"
@@ -357,20 +358,28 @@ int VT_rtc_test5(int sw_t)
                         }
                 break;
 				case 3:
+				{
 					struct timeval ctime;				    
                     retval |= ioctl( file_desc, RTC_READ_TIME_47BIT, &ctime );
 					if (retval)
 					{
+                        tst_resm( TFAIL, "Cannot use RTC_READ_TIME_47BIT for RTC" );
+                        tst_resm( TINFO, "Errno: %d, Reason: %s", errno, strerror(errno) );
 						is_ok = 0;
 						break;
 					}
+                    tst_resm( TINFO, "RTC_READ_TIME_47BIT worked as expected");
                     retval |= ioctl( file_desc, RTC_WAIT_TIME_SET, &ctime );
 					if (retval)
 					{
+                        tst_resm( TFAIL, "Cannot use RTC_WAIT_TIME_SET for RTC" );
+                        tst_resm( TINFO, "Errno: %d, Reason: %s", errno, strerror(errno) );
 						is_ok = 0;
 						break;
 					}
+                    tst_resm( TINFO, "RTC_WAIT_TIME_SET worked as expected");
 					break;
+				}
         }        
 
         rv = is_ok!=0?TPASS:TFAIL;
