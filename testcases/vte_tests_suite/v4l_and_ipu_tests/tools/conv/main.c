@@ -113,6 +113,7 @@ typedef enum {
      eBMP24 = 15,
      eUYVY422 = 16,
      eYUY2 = 17,/*YUYV*/
+     eYUV444 = 18,
      eUNKNOWN
    }eEPType_Format;
 
@@ -141,8 +142,9 @@ static sFmt aFmt[ ]= {
        {"YUV422P",14, 16},
        {"BMP24",15, 24},
        {"UYVY",16,16},
-       {"YUY2",16,16},
-       {NULL, 17, 0}
+       {"YUY2",17,16},
+       {"YUV444",18,24},
+       {NULL, 19, 0}
       };
 
 char * options = "i:I:x:y:O:o:b:f:Hi:C";
@@ -228,7 +230,7 @@ static int parse_input(int argc, char ** argv)
   	}
       break;
    case 'H':
-      
+ 	usage();
       break;
    case 'C':
       cflag = 1;
@@ -250,7 +252,7 @@ static int process_img()
   int i,j,ret = 1;
   int fdin, fdout;
   long l;
-	int fmt = -1;
+  int fmt = -1;
   size_t isz = 0;
   BITMAPINFOHEADER BitmapInfoHeader;  
   BITMAPFILEHEADER BitmapFileHeader; 
@@ -318,7 +320,7 @@ static int process_img()
     BitmapInfoHeader.biClrImportant = 0;
   
     lseek(fdout,l * yres + 53,SEEK_SET);
-    write(fdout,"",1);
+    ret = write(fdout,"",1);
     if( ( p_ft = mmap(NULL, l * yres + 54, PROT_READ|PROT_WRITE, MAP_SHARED, fdout, 0 )) == MAP_FAILED)
     {
      perror("mmap"); 
@@ -335,7 +337,7 @@ static int process_img()
        lseek(fdout, (xres * yres * 3) / 2 - 1,SEEK_SET);
        else
        lseek(fdout,xres * yres * bc - 1,SEEK_SET);
-       write(fdout,"",1);
+       ret = write(fdout,"",1);
        printf("the output file size is %d * %d * %d \n",  xres , yres , bc);
        if( ( p_ft = mmap(NULL, xres * yres * bc, PROT_READ|PROT_WRITE, MAP_SHARED, fdout, 0 )) == MAP_FAILED)
        {
@@ -345,7 +347,7 @@ static int process_img()
       }else{
        printf("the output file size is %ld \n", isz - offset);
        lseek(fdout,isz - offset,SEEK_SET);
-       write(fdout,"",1);
+       ret = write(fdout,"",1);
        if( ( p_ft = mmap(NULL, isz - offset, PROT_READ|PROT_WRITE, MAP_SHARED, fdout, 0 )) == MAP_FAILED)
        {
          perror("mmap"); 
@@ -392,7 +394,7 @@ static int process_img()
    case eRGB565:
    if(isz - offset < yres * xres * 2)
    {
-       printf("%d,%ld,%d,%d\n", isz,offset, yres, xres);
+       printf("%d,%ld,%d,%d\n", (int)isz,offset, yres, xres);
        printf("file size or offset wrong\n");
        exit(-2);
    }
@@ -413,7 +415,7 @@ static int process_img()
    case eBGR24:   
    if(isz - offset < yres * xres * 3)
    {
-       printf("%d,%ld,%d,%d\n", isz,offset, yres, xres);
+       printf("%d,%ld,%d,%d\n", (int)isz,offset, yres, xres);
        printf("file size or offset wrong\n");
        exit(-2);
    }
@@ -500,7 +502,7 @@ static int process_img()
     long bias = xres * yres;
     if(isz - offset < yres * xres * 2)
     {
-       printf("file size or offset wrong %d - %ld < %d * %d * 2 \n", isz, offset ,yres, xres);
+       printf("file size or offset wrong %d - %ld < %d * %d * 2 \n", (int)isz, offset ,yres, xres);
        exit(-2);
     }
     /*http://hi.baidu.com/whandsome/blog/item/d060ffef3f1c6b37acafd580.html*/
@@ -586,6 +588,39 @@ static int process_img()
     }
 
     break;
+   case eYUV444:
+   if(isz - offset < yres * xres * 3)
+   {
+       printf("file size or offset wrong\n");
+       exit(-2);
+   }
+   /*serial 2 pixels in 4 byte*/
+   for(i = 0; i < yres; i++)
+    for(j = 0; j < xres; j++)
+    {
+     long u,y,v;
+     long k = (i * xres + j) * 2;
+     y  = pdata[k];
+     u  = pdata[k + 1]; 
+     v = pdata[k + 2];
+     /*refer to http://www.vckbase.com/document/viewdoc/?id=1780 */
+     #if OPT
+     rgb.rgbRed   = BOUND255(((y<<SBIT) +  B1 * (v - 128))>>SBIT); 
+     rgb.rgbGreen = BOUND255(((y<<SBIT) - B2 * (v -128) - B3 * (u - 128))>>SBIT);
+     rgb.rgbBlue  = BOUND255(((y<<SBIT) + B4 * (u - 128))>>SBIT);
+     #else
+     rgb.rgbRed   = BOUND255(y +  1.370705 * (v - 128)); 
+     rgb.rgbGreen = BOUND255(y - 0.698001 * (v -128) - 0.337633 * (u - 128));
+     rgb.rgbBlue  = BOUND255(y + 1.732446 * (u - 128));
+     #endif
+     rgb.rgbReserved = 0;
+     k = (yres - i - 1) * l  + j * 3;
+     pout[k + 2] = rgb.rgbRed;
+     pout[k + 1] = rgb.rgbGreen;
+     pout[k] = rgb.rgbBlue;
+    }
+    break;
+
    case eUYVY422:
    if(isz - offset < yres * xres * 2)
    {
@@ -645,7 +680,7 @@ static int process_img()
     long bias = xres * yres;
    if(isz - offset < yres * xres * 1.5)
    {
-       printf("isz = %d, where %d * %d * 1.5, add offset %ld \n", isz, xres, yres, offset);
+       printf("isz = %d, where %d * %d * 1.5, add offset %ld \n", (int)isz, xres, yres, offset);
        printf("file size or offset wrong\n");
        exit(-2);
    }
@@ -810,7 +845,7 @@ static int process_img()
 
 int main(int argc,char ** argv)
 {
-	int ret = 1;
+  int ret = 1;
   if( parse_input(argc,argv))
     return 1;
   if(0 == process_img()){
