@@ -721,7 +721,8 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 			fprintf(stdout,"case timeout is %ld \n", timeout);
 		}
 		while(loop) {
-			cpid = waitpid(-getpid(), &stat_loc, WNOHANG | WUNTRACED | WCONTINUED);
+			 for (i = 0; i < keep_active; ++i) {
+				cpid = waitpid(running[i].pgrp, &stat_loc, WNOHANG | WUNTRACED | WCONTINUED);
 			if (cpid > 0){
 				/*child status change*/
 				loop = 0;
@@ -766,6 +767,8 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 					while(1) sleep(1);
 				}
 			}
+
+		}
 			sleep(1);
 		}
     }else{
