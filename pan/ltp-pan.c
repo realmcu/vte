@@ -730,13 +730,10 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 			}else if(cpid < 0){
 				perror("waitpid");
 				fprintf(stderr,"cmd= %s,cmdline= %s\n", running->cmd->name, running->cmd->cmdline);
-				(*num_active) = 0;
-				for (i = 0; i < keep_active; ++i)
-				{
-				  if (running[i].pgrp)
+				(*num_active)--;
+				if (running[i].pgrp)
 				  	kill(running[i].pgrp,SIGTERM);
-				  running[i].pgrp = 0;	
-				}
+				 running[i].pgrp = 0;	
 				if (failcmdfile != NULL) {
 					fprintf(failcmdfile, "%s %s\n",
 					running->cmd->name,
