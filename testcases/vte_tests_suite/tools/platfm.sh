@@ -49,6 +49,7 @@
 #   IMX50-RDP3    IMX50-RDP3
 #   IMX6-SABREAUTO IMX6-SABREAUTO
 #   IMX6-SABRELITE IMX6-SABRELITE
+#   IMX6ARM2    IMX6ARM2
 #
 # Usage2(return number): 
 #   platfm.sh || platform=$?
