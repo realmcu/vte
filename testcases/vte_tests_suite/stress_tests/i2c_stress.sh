@@ -69,6 +69,8 @@ cleanup()
     kill -9 $ts_pid
     kill -9 $acc_pid
     kill -9 $sensor_pid
+    cd $old_dir
+    umount /mnt/stream
 
     echo "clean up environment end"
     return $RC
@@ -124,8 +126,9 @@ overload_test()
             camera_pid=$!
             shift;;
             hdmi)
+            old_dir=$(pwd)
             mkdir -p /mnt/stream && mount -t nfs -o nolock 10.192.225.210:/d2/01_CodecVectors /mnt/stream && cd /mnt/stream/SHAVectors/H264Dec/Conformance/1080p
-            if [ $? -ne 0 ];then
+            if [ -d /mnt/stream/SHAVectors/H264Dec/Conformance/1080p ];then
                 echo "WARNING: HDMI test stream mount failed, ignore HDMI test, please check."
             else
                 while true; do gplay H264_MP40_1920x1080_23.976_9682_AACLC_44.1_98_2_CBR_donmckay.mov; done &
