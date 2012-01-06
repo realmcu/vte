@@ -16,11 +16,13 @@ setup()
     # This function will be called before the test program exits.
     trap "cleanup" 0
    
-    modprobe ath6kl && iwconfig eth1 mode managed && sleep 10 && iwlist eth1 scanning | grep FSLLBGAP_001 && iwconfig eth1 key bbd9837522 && iwconfig eth1 essid FSLLBGAP_001
+    modprobe ar6000
+	sleep 5
+	iwconfig wlan0 mode managed && sleep 10 && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001
 	if [ $? -ne 0 ];then
        RC=1
 	else
-      udhcpc -i eth1
+      udhcpc -i wlan0
 	  sleep 3
 	  localip=$(ifconfig eth1 | grep addr: | cut -d : -f 2 | cut -d " " -f 1)
 	  export LOCALIP=${localip}
@@ -33,6 +35,7 @@ setup()
 cleanup()
 {
     echo "CLEANUP "
+	modprobe -r ar6000
 }
 
 usage()
