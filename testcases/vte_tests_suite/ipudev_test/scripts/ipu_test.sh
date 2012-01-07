@@ -427,8 +427,8 @@ test_case_07()
     TOTAL=0
     #TODO add function test scripts here
     dmesg -c
-    #IN_FILE="1920+1080+CITY_1920x1080.yuv 1280+720+CITY_1280x720.yuv 352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv"
-    IN_FILE="1280+720+CITY_1280x720.yuv 352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv"
+    IN_FILE="1920+1080+CITY_1920x1080.yuv 1280+720+CITY_1280x720.yuv 352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv"
+    #IN_FILE="1280+720+CITY_1280x720.yuv 352+288+COASTGUARD_CIF_IJT.yuv 640+480+CITY_640x480_30.yuv"
     fc=300
 		FMLIST="I420 BGR3 RGBP RGB3 BGR4 BGRA RGB4 RGBA ABGR YUYV UYVY Y444 NV12 422P YV16"
     for infile in ${IN_FILE}
@@ -446,7 +446,8 @@ test_case_07()
     -O  ${WD},${HT},I420,${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
 						TOTAL=$(expr $TOTAL + 1)
 		        done
-					echo "TST_INFO: --------- resize only test --------------------"
+		echo "*************************************************************"
+		echo "TST_INFO: --------- resize only test --------------------"
             for outsize in $RESLIST
             do
            echo "TST INFO: output $outsize"
@@ -457,6 +458,7 @@ test_case_07()
 						TOTAL=$(expr $TOTAL + 1)
              done
 
+		echo "*************************************************************"
         for format in ${FMLIST}
         do
           echo "TST_INFO: output format is: ${format}"

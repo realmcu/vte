@@ -4,38 +4,24 @@ setup()
 {
     # Total number of test cases in this file. 
     export TST_TOTAL=1
-    
+
     # The TCID and TST_COUNT variables are required by the LTP 
     # command line harness APIs, these variables are not local to this program.
 
     # Test case identifier
-    export TCID="wifi_POWER_test"
+    export TCID="v4l2_POWER_test"
     # Set up is initialized as test 0
     export TST_COUNT=0
     # Initialize cleanup function to execute on program exit.
     # This function will be called before the test program exits.
     trap "cleanup" 0
-   
-    modprobe ar6000
-	sleep 5
-	iwconfig wlan0 mode managed && sleep 10 && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001
-	if [ $? -ne 0 ];then
-       RC=1
-	else
-      udhcpc -i wlan0
-	  sleep 3
-	  localip=$(ifconfig eth1 | grep addr: | cut -d : -f 2 | cut -d " " -f 1)
-	  export LOCALIP=${localip}
-	fi
-
-
+    
 	return $RC
 }
 
 cleanup()
 {
     echo "CLEANUP "
-	modprobe -r ar6000
 }
 
 usage()
@@ -50,7 +36,7 @@ usage()
 test_case_01()
 {
 #TODO give TCID 
-TCID="wifi_PM_NOBOOTCORE"
+TCID="v4l2_PM_NOBOOTCORE"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=1
@@ -59,7 +45,7 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-udp_stream_2nd_script 10.192.225.222 CPU &
+v4l_capture_test -T 100 &
 
 echo "core test"
 i=0
@@ -88,7 +74,7 @@ return $RC
 test_case_02()
 {
 #TODO give TCID 
-TCID="wifi_PM_BOOTCORE"
+TCID="vpu_PM_BOOTCORE"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=1
@@ -101,7 +87,7 @@ count=0
 while [ $count -lt $tloops ]
 do
 
-  udp_stream_2nd_script 10.192.225.222 CPU &
+v4l_capture_test -T 300 -M 5 &
 
   i=0
   loops=100
