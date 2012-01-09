@@ -68,12 +68,11 @@ export TST_COUNT=0
 RC=1
 trap "cleanup" 0
 
-
 soc=$(platfm.sh)
-if [ $soc = "IMX6-SABREAUTO" ]; then
-#enable ata module
-modprobe ahci_platform
-sleep 3
+if [ $soc = "IMX6-SABREAUTO" ] || [ $soc = "IMX6ARM2" ]; then
+    #enable ata module
+    modprobe ahci_platform
+    sleep 3
 fi
 
 clear
@@ -188,13 +187,12 @@ cleanup()
 RC=0
 
 #TODO add cleanup code here
-
-soc=$(platfm.sh)
-if [ $soc = "IMX6-SABREAUTO" ]; then
-#enable ata module
-modprobe -r ahci_platform
-sleep 3
+if [ $soc = "IMX6-SABREAUTO" ] || [ $soc = "IMX6ARM2" ]; then
+    #enable ata module
+    modprobe -r ahci_platform
+    sleep 3
 fi
+
 return $RC
 }
 
