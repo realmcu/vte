@@ -24,7 +24,7 @@ setup()
 	else
       udhcpc -i wlan0
 	  sleep 3
-	  localip=$(ifconfig eth1 | grep addr: | cut -d : -f 2 | cut -d " " -f 1)
+	  localip=$(ifconfig wlan0 | grep addr: | cut -d : -f 2 | cut -d " " -f 1)
 	  export LOCALIP=${localip}
 	fi
 
