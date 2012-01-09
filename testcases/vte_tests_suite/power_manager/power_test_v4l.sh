@@ -94,8 +94,8 @@ v4l_capture_test -T 300 -M 5 &
   while [ $i -lt $loops ]
   do
     i=$(expr $i + 1)
-    echo mem > /sys/power/state
-    echo standby > /sys/power/state
+	rtc_testapp_6 -T 10
+	rtc_testapp_6 -T 10 -M standby
   done
 
   wait

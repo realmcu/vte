@@ -94,8 +94,8 @@ do
   while [ $i -lt $loops ]
   do
     i=$(expr $i + 1)
-    echo mem > /sys/power/state
-    echo standby > /sys/power/state
+	rtc_testapp_6 -T 10
+	rtc_testapp_6 -T 10 -M standby
   done
 
   wait
