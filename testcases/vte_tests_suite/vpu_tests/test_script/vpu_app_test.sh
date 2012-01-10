@@ -214,26 +214,29 @@ RC=1
  $TSTCMD -D "-f $FORMAT -i /tmp/out_enc.dat" || return $RC
  rm -rf /tmp/out_enc.dat
 
- echo "encode from Camera"
-
- for k in $ROTATION
- do
-  echo "rotation mode $k"
-  for i in $MIRROR
-  do	
-   echo "mirror mode $i"
-   for j in $SIZELIST
-   do
-    OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
-    OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
-    echo "size is $OWD x $OHT"
-    $TSTCMD -E "-f $FORMAT -w $OWD -h $OHT -o /tmp/out_enc.dat -c 10 -m $i -r $k" || return $RC
-    sleep 1
-    echo "now chroma interleave mode"
-    $TSTCMD -E "-f $FORMAT -w $OWD -h $OHT -o /tmp/out_enc.dat -c 10 -m $i -r $k -t 1" || return $RC
-   done
-  done
- done
+ if [ "$NO_CAMER" = 'y' ]; then
+   echo "No camera test"
+ else
+ 	echo "encode from Camera"
+ 	for k in $ROTATION
+ 	do
+  		echo "rotation mode $k"
+  		for i in $MIRROR
+  		do	
+   			echo "mirror mode $i"
+   			for j in $SIZELIST
+   			do
+    			OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
+    			OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
+    			echo "size is $OWD x $OHT"
+    			$TSTCMD -E "-f $FORMAT -w $OWD -h $OHT -o /tmp/out_enc.dat -c 10 -m $i -r $k" || return $RC
+    			sleep 1
+    			echo "now chroma interleave mode"
+    			$TSTCMD -E "-f $FORMAT -w $OWD -h $OHT -o /tmp/out_enc.dat -c 10 -m $i -r $k -t 1" || return $RC
+   			done
+  		done
+ 	done
+ fi
  echo "test enc app PASS"
 
 RC=0
