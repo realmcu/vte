@@ -218,7 +218,7 @@ RC=1
  $TSTCMD -D "-f $FORMAT -i /tmp/out_enc.dat" || return $RC
  rm -rf /tmp/out_enc.dat
 
- if [ "$NO_CAMER" = 'y' ]; then
+ if [ "$NO_CAMERA" = 'y' ]; then
    echo "No camera test"
  else
  	echo "encode from Camera"
