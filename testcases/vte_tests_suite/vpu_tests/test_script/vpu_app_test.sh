@@ -58,7 +58,9 @@ echo 1100 > /sys/class/regulator/regulator_1_SW2/uV
 fi
 fi
 
+if [ -z $NO_CAMERA ]; then
 v4l_module.sh setup
+fi
 #setup the fb on
 echo 0 > /sys/class/graphics/fb0/blank
 
@@ -86,7 +88,9 @@ echo 1200 > /sys/class/regulator/regulator_1_SW2/uV
 fi
 fi
 
+if [ -z $NO_CAMERA ]; then
 v4l_module.sh cleanup
+fi
 cd $LTPROOT
 return $RC
 }
