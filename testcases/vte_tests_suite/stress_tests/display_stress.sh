@@ -189,7 +189,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 	 sh -c "tcp_stream_2nd_script 10.192.225.222 CPU $LOCALIP || RC='$RC 5' &"
 	 fi
    echo "gpu test"
-	 modprobe gpu
+	 modprobe galcore
 	 #sh -c "gpu_test.sh 2 || RC='$RC 6' &"
 	 sh -c "tiger &"
   read -p "use Ctrl+c to quit"
