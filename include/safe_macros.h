@@ -17,6 +17,7 @@
 #define __SAFE_MACROS_H__
 
 #include <sys/types.h>
+#include <sys/resource.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <libgen.h>
@@ -134,6 +135,16 @@ ssize_t	safe_write(const char *file, const int lineno,
 #define SAFE_WRITE(cleanup_fn, len_strict, fildes, buf, nbyte)	\
 	safe_write(__FILE__, __LINE__, cleanup_fn, (len_strict), (fildes), \
 	    (buf), (nbyte))
+
+int safe_ftruncate(const char *file, const int lineno,
+	    void (cleanup_fn)(void), int fd, off_t length);
+#define SAFE_FTRUNCATE(cleanup_fn, fd, length) \
+	safe_ftruncate(__FILE__, __LINE__, cleanup_fn, (fd), (length))
+
+int safe_truncate(const char *file, const int lineno,
+	    void (cleanup_fn)(void), const char *path, off_t length);
+#define SAFE_TRUNCATE(cleanup_fn, fd, length) \
+	safe_truncate(__FILE__, __LINE__, cleanup_fn, (path), (length))
 
 #endif
 #endif

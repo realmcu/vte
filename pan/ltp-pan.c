@@ -996,10 +996,11 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
 		fclose(zoofile);
 		close(errpipe[0]);
 		fcntl(errpipe[1], F_SETFD, 1);	/* close the pipe if we succeed */
+#if 0
 		setpgrp();
 
 		umask(0);
-
+#endif
 #define WRITE_OR_DIE(fd, buf, buflen) do {				\
 	if (write((fd), (buf), (buflen)) != (buflen)) {			\
 		err(1, "failed to write out %zd bytes at line %d",	\

@@ -58,7 +58,9 @@ echo 1100 > /sys/class/regulator/regulator_1_SW2/uV
 fi
 fi
 
+if [ -z $NO_CAMERA ]; then
 v4l_module.sh setup
+fi
 #setup the fb on
 echo 0 > /sys/class/graphics/fb0/blank
 
@@ -86,7 +88,9 @@ echo 1200 > /sys/class/regulator/regulator_1_SW2/uV
 fi
 fi
 
+if [ -z $NO_CAMERA ]; then
 v4l_module.sh cleanup
+fi
 cd $LTPROOT
 return $RC
 }
@@ -214,26 +218,29 @@ RC=1
  $TSTCMD -D "-f $FORMAT -i /tmp/out_enc.dat" || return $RC
  rm -rf /tmp/out_enc.dat
 
- echo "encode from Camera"
-
- for k in $ROTATION
- do
-  echo "rotation mode $k"
-  for i in $MIRROR
-  do	
-   echo "mirror mode $i"
-   for j in $SIZELIST
-   do
-    OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
-    OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
-    echo "size is $OWD x $OHT"
-    $TSTCMD -E "-f $FORMAT -w $OWD -h $OHT -o /tmp/out_enc.dat -c 10 -m $i -r $k" || return $RC
-    sleep 1
-    echo "now chroma interleave mode"
-    $TSTCMD -E "-f $FORMAT -w $OWD -h $OHT -o /tmp/out_enc.dat -c 10 -m $i -r $k -t 1" || return $RC
-   done
-  done
- done
+ if [ "$NO_CAMERA" = 'y' ]; then
+   echo "No camera test"
+ else
+ 	echo "encode from Camera"
+ 	for k in $ROTATION
+ 	do
+  		echo "rotation mode $k"
+  		for i in $MIRROR
+  		do	
+   			echo "mirror mode $i"
+   			for j in $SIZELIST
+   			do
+    			OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
+    			OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
+    			echo "size is $OWD x $OHT"
+    			$TSTCMD -E "-f $FORMAT -w $OWD -h $OHT -o /tmp/out_enc.dat -c 10 -m $i -r $k" || return $RC
+    			sleep 1
+    			echo "now chroma interleave mode"
+    			$TSTCMD -E "-f $FORMAT -w $OWD -h $OHT -o /tmp/out_enc.dat -c 10 -m $i -r $k -t 1" || return $RC
+   			done
+  		done
+ 	done
+ fi
  echo "test enc app PASS"
 
 RC=0
