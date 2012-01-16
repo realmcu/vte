@@ -100,6 +100,7 @@ cd VGMark_gc355
 
 echo $RC
 
+
 if [ "$RC" = "0" ]; then
  RC=0
 else
@@ -139,7 +140,7 @@ echo "==========================="
 cd VGMark_gc355
 ./fm_oes_vg_player_gc355 &
 
-
+wait
 
 echo $RC
 
