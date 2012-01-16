@@ -53,7 +53,7 @@ extern "C"{
 #define TPASS 0
 
 char v4l_capture_dev[100] = "/dev/video0";
-char v4l_output_dev[100] = "/dev/video16";
+char v4l_output_dev[100] = "/dev/video17";
 int fd_capture_v4l = 0;
 int fd_output_v4l = 0;
 int g_cap_mode = 0;
