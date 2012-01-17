@@ -62,7 +62,6 @@ int g_fmt = V4L2_PIX_FMT_UYVY;
 int g_rotate = 0;
 int g_motion = 0;
 int g_tb = 0;
-int g_output = 3;
 int g_output_num_buffers = 4;
 int g_capture_num_buffers = 3;
 int g_in_width = 0;
@@ -247,12 +246,13 @@ int v4l_output_setup(void)
 	struct v4l2_crop crop;
 	struct v4l2_requestbuffers buf_req;
 
+#if 0
         if (ioctl(fd_output_v4l, VIDIOC_S_OUTPUT, &g_output) < 0)
         {
                 printf("set output failed\n");
                 return TFAIL;
         }
-
+#endif
         memset(&cropcap, 0, sizeof(cropcap));
         cropcap.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
         if (ioctl(fd_output_v4l, VIDIOC_CROPCAP, &cropcap) < 0)
@@ -271,20 +271,20 @@ int v4l_output_setup(void)
                 printf("set crop failed\n");
                 return TFAIL;
         }
-
+#if 0
         ctrl.id = V4L2_CID_PRIVATE_BASE;
         ctrl.value = g_rotate;
         if (ioctl(fd_output_v4l, VIDIOC_S_CTRL, &ctrl) < 0)
         {
-                printf("set ctrl failed\n");
+                printf("set ctrl rotate failed\n");
 		return TFAIL;
         }
-
+#endif
 	ctrl.id = V4L2_CID_PRIVATE_BASE + 3;
         ctrl.value = g_motion;
         if (ioctl(fd_output_v4l, VIDIOC_S_CTRL, &ctrl) < 0)
         {
-                printf("set ctrl failed\n");
+                printf("set ctrl motion failed\n");
 		return TFAIL;
         }
 

@@ -28,7 +28,7 @@ check_platform_camera()
 		     camera_module=${camera}_camera${apd}
 			 find=1
 		   else
-             camera_module=${camera}_camera${apd}
+             camera_module=
 		   fi
 		 else
              camera_module="$(echo $camera_module) ${camera}_camera${apd}"
@@ -38,9 +38,12 @@ check_platform_camera()
  else
 	 return 1
  fi
- return 0
+ if [ -z $camera_module ]; then
+	return 1
+ else
+ 	return 0
+ fi
 }
-
 
 v4l_setup()
 {

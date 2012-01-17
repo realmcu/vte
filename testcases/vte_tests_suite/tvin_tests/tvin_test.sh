@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -x
 ###################################################################################################
 #Copyright (C) 2008,2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
@@ -102,7 +102,7 @@ RC=0
 #print test info
 tst_resm TINFO "test #1: tvout_usercase 01"
 
-RES_LIST="640x480 320x240 1024x768 800x600"
+RES_LIST="640x480 320x240"
 #topxleft
 WIN_POS="0x0 16x16 32x32"
 ROT="0 1 2 3 4 5 6 7"
