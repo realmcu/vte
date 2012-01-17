@@ -31,7 +31,7 @@ check_platform_camera()
              camera_module=
 		   fi
 		 else
-             camera_module="$(echo $camera_module) ${camera}_camera${apd}"
+             camera_module="${camera}_camera${apd}"
 		 fi
    		modprobe -r ${camera_module}
 	 done
