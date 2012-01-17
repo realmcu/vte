@@ -101,7 +101,7 @@ export CONFIG_OM_IMX2_WD=y
 #export CONFIG_VM_MXC_WD=y
 
 #platform depended config need read the related Makefile in subfolder
-#CONFIG_VTE_KEYPAD_TESTAPP=y
+CONFIG_VTE_KEYPAD_TESTAPP=y
 export CONFIG_VTE_MMC_ERW=y
 export CONFIG_VTE_MMC_LOCK=y
 #export CONFIG_VTE_SAHARA=y
