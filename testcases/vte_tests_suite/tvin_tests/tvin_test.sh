@@ -155,7 +155,7 @@ RC=0
 
 echo "now please play PAL TV"
 
-$TVIN_APP &
+$TVIN_APP -ow 640 -oh 480 YU12 -c 700 &
 
 sleep 5
 
@@ -164,6 +164,8 @@ echo "plase switch the input to NTSC mode"
 sleep 5
 
 read -p "did you see the picture form tvin? y/n" RC
+
+wait
 
 if [ "$RC" = "y" ]
 then
