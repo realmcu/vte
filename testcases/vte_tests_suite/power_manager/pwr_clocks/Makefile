@@ -4,6 +4,7 @@ TARGET += sd_clk.sh
 TARGET += audio_clk.sh
 TARGET += gpu_clk.sh
 TARGET += vpu_clk.sh
+TARGET += uart_clk.sh
 
 all:
 
