@@ -23,7 +23,7 @@ trap "cleanup" 0
 #find the dbugfs 
 mountpt=$(mount | grep debugfs)
 if [ -z $mountpt  ]; then
-mount -t debugfs none /sys/kernel/debug
+mount -t debugfs nodev /sys/kernel/debug
 mount_pt=/sys/kernel/debug
 else
 mount_pt=$(echo $mountpt | awk '{print $3}')

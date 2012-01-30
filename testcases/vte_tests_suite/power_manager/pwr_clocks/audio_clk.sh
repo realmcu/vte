@@ -23,7 +23,7 @@ trap "cleanup" 0
 #find the dbugfs 
 mountpt=$(mount | grep debugfs)
 if [ -z $mountpt  ]; then
-mount -t debugfs none /sys/kernel/debug
+mount -t debugfs nodev /sys/kernel/debug
 mount_pt=/sys/kernel/debug
 else
 mount_pt=$(echo $mountpt | awk '{print $3}')
@@ -70,7 +70,15 @@ ssi_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/ssi*_
 spdif_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/spdif_clk/enable_count | grep -v 0 | wc -l)
 #cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/enable_count
 
-if [ $esai_ct -gt 0 ] || [ $ssi_ct -gt 0 ] || [ $spdif_ct -gt 0 ]; then
+asrc_list=$(find ${mount_pt}  -name asrc*)
+asrc=0
+for i in $asrc_list
+do
+ temp=$(cat ${i}/enable_count)
+ asrc=$(expr $temp + $asrc)
+done
+
+if [ $esai_ct -gt 0 ] || [ $ssi_ct -gt 0 ] || [ $spdif_ct -gt 0 ] || [ $asrc -gt 0  ]; then
 RC=1
 fi
 
