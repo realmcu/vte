@@ -48,12 +48,12 @@ return $RC
 
 
 # Function:     test_case_01
-# Description   - Test usb clk ok
+# Description   - Test i2c clk ok
 #
 test_case_01()
 {
 #TODO give TCID
-TCID="usb clock test"
+TCID="i2c/touch screen clock test"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=0
@@ -64,16 +64,16 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 #disable the framebuffer
 
-usb_list==$(find ${mount_pt}  -name usb*)
-usb=0
-for i in $usb_list
+i2c_list==$(find ${mount_pt}  -name i2c*)
+i2c=0
+for i in $i2c_list
 do
  temp=$(cat ${i}/enable_count)
- usb=$(expr $temp + $usb)
+ i2c=$(expr $temp + $i2c)
 done
 
 
-if [ $usb -gt 0 ]; then
+if [ $i2c -gt 0 ]; then
 RC=1
 fi
 
