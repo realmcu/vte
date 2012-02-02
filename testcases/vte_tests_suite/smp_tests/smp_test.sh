@@ -124,12 +124,41 @@ umount /mnt/mmcblk0p1
 return $RC
 }
 
+test_case_04()
+{
+#TODO give TCID
+TCID="jiffies test"
+#TODO give TST_COUNT
+TST_COUNT=1
+RC=0
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+jiffes_list=$(cat /proc/timer_list | grep jiffies: | awk '{print $2}')
+jiffes_o=0
+
+for i in $jiffes_list
+do
+  if [ $jiffes_o -eq 0  ];then
+	  jiffes_o=$i
+  else
+	  if [ $jiffes_o != $i  ]; then
+	  	RC=$(expr $RC + 1)
+	  fi
+	jiffes_o=$i
+  fi
+done
+
+return $RC
+}
 
 useage()
 {
 echo "1: cpu hotplug 500 times "	
 echo "2: cpu hotplug 5000 times "
 echo "3: high interrupt test"
+echo "4: time jiffies test"
 }
 
 # main function
