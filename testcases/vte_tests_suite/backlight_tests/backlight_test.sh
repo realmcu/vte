@@ -93,6 +93,10 @@ env_test()
         BL_DIR=/sys/class/backlight/pwm-backlight.3
     fi
 
+    if [ $platfm -eq 63 ]; then  #LVDS
+        BL_DIR=/sys/class/backlight/pwm-backlight.3
+    fi
+
     if [ ! -d $BL_DIR ]
     then
         tst_resm TFAIL "There is no such directory: $BL_DIR "

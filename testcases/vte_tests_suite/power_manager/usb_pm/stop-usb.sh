@@ -21,7 +21,7 @@ enable_usb_wakeup()
 {
  usb_ehci_ctrls=$(ls /sys/devices/platform/${FSL_EHCI_INTERFACE}/power/wakeup)
  usb_ctrls=$(ls /sys/devices/platform/${FSL_USB2_UDC}/power/wakeup)" "${usb_ehci_ctrls}
- if [ $platfm -eq 61 ]; then
+ if [ $platfm -eq 63 ] || [ $platfm -eq 61 ]; then
 	 usb_ctrls=$(ls /sys/devices/platform/fsl*)
  else
 	 usb_ehci_ctrls=$(ls /sys/devices/platform/${FSL_EHCI_INTERFACE}/power/wakeup)
@@ -88,7 +88,7 @@ done
 
 #usb_clk_usage=$(cat /proc/cpu/clocks | grep usb | awk {'print $3'})
 
-if [ $platfm -eq 61 ]; then
+if [ $platfm -eq 61 ] || [ $paltfm -eq 63 ]; then
 	mount -t debugfs none /sys/kernel/debug
 	pll3=$(cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/usb*/enable_count)
 	pll7=$(cat /sys/kernel/debug/clock/osc_clk/pll7_usb_host_main_clk/enable_count)
