@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ##############################################################################
 #Copyright 2008-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
@@ -209,6 +209,13 @@ determine_platform()
     fi
 
 	find=`cat /proc/cpuinfo | grep "Hardware" | grep "6Quad" | grep "Sabre-Lite" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+        find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
+        p=IMX6-SABRELITE
+    fi
+
+	find=`cat /proc/cpuinfo | grep "Hardware" | grep "i.MX6 Quad"| wc -l`;
     if [ $find -eq 1 ]
     then
         find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
