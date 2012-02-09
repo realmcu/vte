@@ -198,7 +198,14 @@ determine_platform()
     if [ $find -eq 1 ]
     then
         find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
-        p=IMX6ARM2
+		if [ $find -eq 1 ]; then
+        	p=IMX6ARM2
+		else
+        	find=`cat /proc/cpuinfo | grep "Revision" | grep "61" | wc -l`;
+			if [ $find -eq 1 ]; then
+        		p=IMX6DL-ARM2
+			fi
+		fi
     fi
 	
     find=`cat /proc/cpuinfo | grep "Hardware" | grep "6Quad" | grep "Sabre Auto" | wc -l`;
@@ -220,13 +227,6 @@ determine_platform()
     then
         find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
         p=IMX6-SABRELITE
-    fi
-
-	find=`cat /proc/cpuinfo | grep "Hardware" | grep "DualLite" | grep "Armadillo2 Board" | wc -l`;
-    if [ $find -eq 1 ]
-    then
-        find=`cat /proc/cpuinfo | grep "Revision" | grep "61" | wc -l`;
-        p=IMX6DL-ARM2
     fi
 
     if [ $p = "IMX31-3STACK" ]
