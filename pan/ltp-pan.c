@@ -496,7 +496,6 @@ int main(int argc, char **argv)
 	exit_stat = 0;
 	go_idle = 0;
 	while (1) {
-
 		while ((num_active < keep_active) && (starts != 0)) {
 			if (stop || rec_signal || go_idle)
 				break;
@@ -698,66 +697,81 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 			panname, errno, strerror(errno));
 	}
 	/*check log file*/
-  if(logfile != NULL){
+   if(logfile != NULL){
 		/*check the log output if there is no output for a given time
 		 * we need to reboot the system, by now, I do not think kill
-		 * the child process will be good as may not be able t kill.
+		 * the child process will be good as may not be able to kill.
 		 * may be futuer we need this*/	
 		int loop = 1;
 		long timeout = 3600;/*one case can not last more than 3600s*/
-		int * pcnt = (int *)malloc(keep_active*sizeof(int));
+		long pcnt = 0;
 		if (running->cmd->name)
 		{
 			int nl = strlen(running->cmd->name);
 			char * p = running->cmd->name + nl - 1;
 			fprintf(stdout,"check the case runtime at %c \n", *p);
-			while (*p == 'L'){
-			  timeout += 1800;
-				if(*(--p) != 'L')
+			if (*p == 'U'){
+				timeout = 0xffffffff;
+			}
+			while (*p == 'L' || *p == 'H'){
+			  timeout += (*p == 'L')?1800:3600;
+				if(*(--p) != 'L' && *(--p) != 'H')
 					break;
 			}
 			fprintf(stdout,"case timeout is %ld \n", timeout);
 		}
-		memset(pcnt,0,keep_active*sizeof(int));
 		while(loop) {
-			for (i = 0; i < keep_active; ++i) {
+			 for (i = 0; i < keep_active; ++i) {
 				cpid = waitpid(running[i].pgrp, &stat_loc, WNOHANG | WUNTRACED | WCONTINUED);
-				if (cpid > 0){
-					/*child is exit*/
-					loop = 0;
-					goto STEP2;
-				}else if(cpid < 0){
-					perror("waitpid");
-					loop = 0;
-					goto STEP2;
-				}else{
-					/*child is on*/
-					pcnt[i] += 1;
-					if (pcnt[i] > timeout){
-					  fprintf(stdout,"timeout occure\n");
-						if (failcmdfile != NULL) {
-						fprintf(failcmdfile, "%s %s\n",
-						running[i].cmd->name,
-						running[i].cmd->cmdline);
-						fflush(failcmdfile);
-						fprintf(logfile,"%-30.30s %-10.10s %-5d\n",
-						running[i].cmd->name, "TIMEOUT", "255");
-						fflush(logfile);
-						}	
-						system("reboot");
-					/*	continue;*/
-					  while(1) sleep(1);
+			if (cpid > 0){
+				/*child status change*/
+				loop = 0;
+				goto STEP2;
+			}else if(cpid < 0){
+				perror("waitpid");
+				fprintf(stderr,"cmd= %s,cmdline= %s\n", running->cmd->name, running->cmd->cmdline);
+				(*num_active)--;
+				if (running[i].pgrp)
+				  	kill(running[i].pgrp,SIGTERM);
+				 running[i].pgrp = 0;	
+				if (failcmdfile != NULL) {
+					fprintf(failcmdfile, "%s %s\n",
+					running->cmd->name,
+					running->cmd->cmdline);
+					fflush(failcmdfile);
+					fprintf(logfile,"%-30.30s %-10.10s %-5d\n",
+					running->cmd->name, "CFAIL", 128);
+					fflush(logfile);
 					}
+				sleep(2);
+				goto STEP2;
+			}else{
+				/*child status does not change*/
+				pcnt++;
+				if (pcnt > timeout){
+					fprintf(stdout,"timeout occure\n");
+					if (failcmdfile != NULL) {
+					fprintf(failcmdfile, "%s %s\n",
+					running->cmd->name,
+					running->cmd->cmdline);
+					fflush(failcmdfile);
+					fprintf(logfile,"%-30.30s %-10.10s %-5d\n",
+					running->cmd->name, "TIMEOUT", 255);
+					fflush(logfile);
+					}	
+					ret = system("reboot");
+					/*	continue;*/
+					while(1) sleep(1);
 				}
 			}
+
+		}
 			sleep(1);
-    }
-STEP2:
-  if(pcnt != NULL)
-		free(pcnt);
-	}else{
-	cpid = wait(&stat_loc);
+		}
+    }else{
+		cpid = wait(&stat_loc);
 	}
+STEP2:
 	tck = times(&tms2);
 	if (tck == -1) {
 		fprintf(stderr, "pan(%s): times(&tms2) failed.  errno:%d  %s\n",
@@ -982,10 +996,11 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
 		fclose(zoofile);
 		close(errpipe[0]);
 		fcntl(errpipe[1], F_SETFD, 1);	/* close the pipe if we succeed */
+#if 0
 		setpgrp();
 
 		umask(0);
-
+#endif
 #define WRITE_OR_DIE(fd, buf, buflen) do {				\
 	if (write((fd), (buf), (buflen)) != (buflen)) {			\
 		err(1, "failed to write out %zd bytes at line %d",	\

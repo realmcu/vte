@@ -42,6 +42,17 @@ extern "C"{
 #include <time.h>
 #include <poll.h>
 #include <signal.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+#define __USE_GNU
+#include<sched.h>
+#include<ctype.h>
+#include<string.h>
+
+#include <linux/mxc_srtc.h>
 
 /* Verification Test Environment Include Files */
 #include "rtc_test_5.h"
@@ -356,6 +367,75 @@ int VT_rtc_test5(int sw_t)
                                 tst_resm( TINFO, "fasync test worked as expected");
                         }
                 break;
+				case 3:
+				{
+					struct timeval ctime;				    
+        			struct rtc_time rtc_tm;
+					pid_t pid;
+					cpu_set_t mask;
+					CPU_ZERO(&mask);
+					CPU_SET(0, &mask);
+        			if (sched_setaffinity(0, sizeof(mask), &mask) == -1)
+        			{
+                		tst_resm(TFAIL,"warning: could not set CPU affinity, continuing...");
+						break;
+        			} 
+                    retval = ioctl( file_desc, RTC_READ_TIME_47BIT, &ctime );
+					if (retval)
+					{
+                        tst_resm( TFAIL, "Cannot use RTC_READ_TIME_47BIT for RTC" );
+                        tst_resm( TINFO, "Errno: %d, Reason: %s", errno, strerror(errno) );
+						is_ok = 0;
+						break;
+					}
+                    tst_resm( TINFO, "RTC_READ_TIME_47BIT worked as expected");
+					retval = ioctl( file_desc, RTC_RD_TIME, &rtc_tm );
+					if (retval < 0)
+					{
+						tst_resm(TFAIL, "ioctl RTC_RD_TIME fails: %s \n", strerror(errno));	
+						exit(1);
+					}
+					pid = fork();
+					if (!pid) {/*CHILD*/
+						/*wait parent to execute first*/
+						setpriority(PRIO_PROCESS, 0, 15);
+						sleep(1);
+                    	tst_resm( TINFO, "child procee to set time" );
+        				retval = ioctl( file_desc, RTC_SET_TIME, &rtc_tm );
+						if (retval < 0)
+						{
+							tst_resm(TFAIL, "ioctl RTC_SET_TIME fails: %s \n", strerror(errno));	
+                            exit(1);
+						}
+						retval = ioctl( file_desc, RTC_RD_TIME, &rtc_tm );
+						if (retval < 0)
+						{
+						tst_resm(TFAIL, "ioctl RTC_RD_TIME fails: %s \n", strerror(errno));	
+						exit(1);
+						}
+                    	tst_resm( TINFO, "child procee to quit" );
+						exit(0);
+					}
+					/*parent*/
+                    tst_resm( TINFO, "parent procee to check child write" );
+                    retval |= ioctl( file_desc, RTC_WAIT_TIME_SET, &ctime );
+					if (retval)
+					{
+                        tst_resm( TFAIL, "Cannot use RTC_WAIT_TIME_SET for RTC" );
+                        tst_resm( TINFO, "Errno: %d, Reason: %s", errno, strerror(errno) );
+						is_ok = 0;
+						break;
+					}
+                    tst_resm( TINFO, "parent procee to quit" );
+					wait(&retval);
+					if(retval==0)
+                    	tst_resm( TINFO, "RTC_WAIT_TIME_SET worked as expected");
+					else{
+						is_ok = 0;
+                    	tst_resm( TINFO, "RTC_WAIT_TIME_SET failed");
+					}
+					break;
+				}
         }        
 
         rv = is_ok!=0?TPASS:TFAIL;

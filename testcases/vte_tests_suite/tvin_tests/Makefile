@@ -40,8 +40,8 @@ all: $(TARGET)
 	@echo
 
 install:
-	-ln -f $(TARGET_SCRIPT) $(BIN_DIR)bin\
-	-ln -f $(TARGET) $(BIN_DIR)bin\
+	-ln -f $(TARGET_SCRIPT) $(BIN_DIR)bin/
+	-ln -f $(TARGET) $(BIN_DIR)bin/
 	@echo "***********************************************"
 	@echo "** INSTALL : $(TARGET)                **"
 	@echo "***********************************************"

@@ -129,7 +129,7 @@ run_auto_test_list()
    echo "core test"
 	 coremark_F4.exe  0x0 0x0 0x66 0 7 1 2000 &&  coremark_F4.exe  0x3415 0x3415 0x66 0 7 1 2000 && coremark_F4.exe 8 8 8 0 7 1 1200 || return 8
    echo "storage"
-	 moprobe ahci_platform
+	 modprobe ahci_platform
 	 storage_all.sh 4 || return 9
 	 modprobe -r ahci_platform
 	 echo "v4l"
@@ -155,7 +155,7 @@ test_case_01()
 TCID="test_CPUFreq_stress"
 #TODO give TST_COUNT
 TST_COUNT=1
-RC=0
+RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "

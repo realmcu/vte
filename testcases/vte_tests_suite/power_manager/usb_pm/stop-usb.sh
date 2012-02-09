@@ -15,11 +15,18 @@ FSL_USB2_UDC="fsl-usb2-udc"
 SKIP_USBPORT="1.6"
 
 SYS_USB_DEV="/sys/bus/usb/devices/*"
+platfm.sh || platfm=$?
 
 enable_usb_wakeup()
 {
  usb_ehci_ctrls=$(ls /sys/devices/platform/${FSL_EHCI_INTERFACE}/power/wakeup)
  usb_ctrls=$(ls /sys/devices/platform/${FSL_USB2_UDC}/power/wakeup)" "${usb_ehci_ctrls}
+ if [ $platfm -eq 63 ] || [ $platfm -eq 61 ]; then
+	 usb_ctrls=$(ls /sys/devices/platform/fsl*)
+ else
+	 usb_ehci_ctrls=$(ls /sys/devices/platform/${FSL_EHCI_INTERFACE}/power/wakeup)
+	 usb_ctrls=$(ls /sys/devices/platform/${FSL_USB2_UDC}/power/wakeup)" "${usb_ehci_ctrls}
+ fi
  for i in $usb_ctrls
  do
     echo enabled > $i
@@ -77,9 +84,20 @@ sleep 5
 usb_cnt=$(lsusb | wc -l)
 done
 
-cat /proc/cpu/clocks | grep usb 
+#cat /proc/cpu/clocks | grep usb 
 
-usb_clk_usage=$(cat /proc/cpu/clocks | grep usb | awk {'print $3'})
+#usb_clk_usage=$(cat /proc/cpu/clocks | grep usb | awk {'print $3'})
+
+if [ $platfm -eq 61 ] || [ $paltfm -eq 63 ]; then
+	mount -t debugfs none /sys/kernel/debug
+	pll3=$(cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/usb*/enable_count)
+	pll7=$(cat /sys/kernel/debug/clock/osc_clk/pll7_usb_host_main_clk/enable_count)
+        usb_clk_usage=${pll3}" "${pll7}
+	umount /sys/kernel/debug
+else
+	usb_clk_usage=$(cat /proc/cpu/clocks | grep usb | awk {'print $3'})
+fi
+
 RT=0
 for i in $usb_clk_usage; do
     if [ $i -ne 0 ]; then

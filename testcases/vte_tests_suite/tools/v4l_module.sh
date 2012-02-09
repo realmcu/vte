@@ -2,7 +2,7 @@
 # will check the CAMERA env as the deafult camera
 # possbile CAMERA are ov3640, ov5640, ov5642
 
-camera_module=ov3640_camera
+camera_module=ov5640_camera
 
 check_platform_camera()
 {
@@ -28,19 +28,22 @@ check_platform_camera()
 		     camera_module=${camera}_camera${apd}
 			 find=1
 		   else
-             camera_module=${camera}_camera${apd}
+             camera_module=
 		   fi
 		 else
-             camera_module="$(echo $camera_module) ${camera}_camera${apd}"
+             camera_module="${camera}_camera${apd}"
 		 fi
    		modprobe -r ${camera_module}
 	 done
  else
 	 return 1
  fi
- return 0
+ if [ -z $camera_module ]; then
+	return 1
+ else
+ 	return 0
+ fi
 }
-
 
 v4l_setup()
 {
@@ -84,7 +87,7 @@ echo $CAMERA
 
 if [ -z $CAMERA ] && [ "$DUAL" != 1  ]  ; then
   echo "define default"
-  CAMERA=ov3640
+  CAMERA=ov5640
 fi
 
 check_platform_camera || RC=1

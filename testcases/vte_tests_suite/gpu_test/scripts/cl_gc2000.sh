@@ -121,7 +121,7 @@ cd ${TEST_DIR}/${APP_SUB_DIR}
 echo "==========================="
 echo unit tests
 echo "==========================="
-if [ -e cl11/UnitTest ]; then
+if [ -e cl11/conform ]; then
   cd cl11/UnitTest/
   for i in $unit_list
 	  do
@@ -150,7 +150,8 @@ cd ${TEST_DIR}/${APP_SUB_DIR}
 echo "==========================="
 echo cl11 conformance
 echo "==========================="
-cd cl11_conform/conform
+cd cl11/conform
+./test_all.sh || RC=1
 
 return $RC
 }

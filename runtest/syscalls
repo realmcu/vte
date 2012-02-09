@@ -400,6 +400,7 @@ get_robust_list01 get_robust_list01
 getrusage01 getrusage01
 getrusage02 getrusage02
 getrusage03 getrusage03
+getrusage04 getrusage04
 
 getsid01 getsid01
 getsid02 getsid02
@@ -419,6 +420,9 @@ getuid02 getuid02
 getuid02_16 getuid02_16
 getuid03 getuid03
 getuid03_16 getuid03_16
+
+getxattr01 getxattr01
+getxattr02 getxattr02
 
 #Needs tty device.
 #ioctl01 ioctl01 -D /dev/tty0
@@ -575,7 +579,7 @@ mount1234 test_mount
 
 move_pages01 move_pages.sh 01
 move_pages02 move_pages.sh 02
-move_pages03 cd $LTPROOT/testcases/bin && chown root move_pages03 && chmod 04755 move_pages03 && move_pages.sh 03 
+move_pages03 cd $LTPROOT/testcases/bin && chown root move_pages03 && chmod 04755 move_pages03 && move_pages.sh 03
 move_pages04 move_pages.sh 04
 move_pages05 move_pages.sh 05
 move_pages06 move_pages.sh 06
@@ -677,7 +681,7 @@ open10 open10
 openat01 openat01
 
 mincore01 mincore01
-mincore02 mincore02 
+mincore02 mincore02
 
 madvise01 madvise01
 madvise02 madvise02
@@ -691,8 +695,8 @@ pause01 pause01
 pause02 pause02
 pause03 pause03
 
-#  The personality() system call is poorly documented 
-#  and difficult to figure out how to use by looking 
+#  The personality() system call is poorly documented
+#  and difficult to figure out how to use by looking
 #  at the different architecture specific kernel files.
 #personality01 personality01
 #personality02 personality02
@@ -1018,6 +1022,9 @@ setuid03_16 setuid03_16
 setuid04 setuid04
 setuid04_16 setuid04_16
 
+setxattr01 setxattr01
+setxattr02 setxattr02
+
 shmat01 shmat01
 shmat02 shmat02
 shmat03 shmat03
@@ -1201,7 +1208,7 @@ truncate04_64 truncate04_64
 # This syscall is obsolete.  The latest glibc does not even
 # include the ulimit.h file anymore.  The test will fail
 # because the error handling has been simplified.
-# 
+#
 ulimit01 ulimit01
 
 umask01 umask01

@@ -1,6 +1,6 @@
 #!/bin/sh
 #######################################################################
-#Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright 2008-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -21,6 +21,7 @@
 #--------------------   ------------    ----------  -----------------------
 # Blake                   20081015
 # Spring.Zhang/b17931     20100323         n/a      Add MX53 support
+# Spring.Zhang/b17931     20111216         n/a      Add MX6Q support
 
 #Set path variable to add vte binaries
 #export TESTCASES_HOME= `pwd`
@@ -86,6 +87,14 @@ env_test()
 
     if [ $platfm -eq 53 ]; then  #WVGA
         BL_DIR=/sys/class/backlight/pwm-backlight.0
+    fi
+
+    if [ $platfm -eq 61 ]; then  #LVDS
+        BL_DIR=/sys/class/backlight/pwm-backlight.3
+    fi
+
+    if [ $platfm -eq 63 ]; then  #LVDS
+        BL_DIR=/sys/class/backlight/pwm-backlight.3
     fi
 
     if [ ! -d $BL_DIR ]
@@ -193,6 +202,7 @@ rgb_test()
     return $RC
 
 }
+
 help()
 { 
     echo "***************************************"
@@ -202,6 +212,7 @@ help()
     echo i.e  backlight_test.sh LED
     echo "***************************************"
 }
+
 # Function:     main
 #
 # Description:  - Execute all tests, exit with test status.
@@ -214,16 +225,14 @@ RC=0
 
 setup  || exit $RC
 env_test || exit $RC
-if [ "$1" = "LCD" ]
-then
+if [ "$1" = "LCD" ]; then
     brightness_test || exit $RC
-else if [ "$1" = "LED" ] && [ "$RGB_DIR" != "0" ]
-then
-    rgb_test r 
-    rgb_test g
-    rgb_test b
-    exit $RC
-else 
-    help
-fi
+else if [ "$1" = "LED" ] && [ "$RGB_DIR" != "0" ]; then
+        rgb_test r 
+        rgb_test g
+        rgb_test b
+        exit $RC
+    else 
+        help
+    fi
 fi

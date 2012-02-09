@@ -189,7 +189,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 	 sh -c "tcp_stream_2nd_script 10.192.225.222 CPU $LOCALIP || RC='$RC 5' &"
 	 fi
    echo "gpu test"
-	 modprobe gpu
+	 modprobe galcore
 	 #sh -c "gpu_test.sh 2 || RC='$RC 6' &"
 	 sh -c "tiger &"
   read -p "use Ctrl+c to quit"
@@ -219,7 +219,7 @@ b_stream_path=/mnt/nfs/test_stream/video/Mpeg4_SP3_1920x1080_23.97fps_9760kbps_A
 
 /unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" &
 
-/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${b_stream_path} " &
+/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${b_stream_path} -x 18 " &
 
 wait
 

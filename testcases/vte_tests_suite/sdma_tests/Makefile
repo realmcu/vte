@@ -33,10 +33,10 @@ SUBDIRS-$(CONFIG_VTE_SDMAAPI) += sdma_testapp_api
 SUBDIRS-y += sdma_testapp_rw
 
 all:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
 
 install:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i install ; done
 
 clean:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
+	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i clean ; done

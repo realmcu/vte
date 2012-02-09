@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Test Case 7
 #

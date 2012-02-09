@@ -58,6 +58,9 @@ echo 1100 > /sys/class/regulator/regulator_1_SW2/uV
 fi
 fi
 
+if [ -z $NO_CAMERA ]; then
+v4l_module.sh setup
+fi
 #setup the fb on
 echo 0 > /sys/class/graphics/fb0/blank
 
@@ -85,6 +88,9 @@ echo 1200 > /sys/class/regulator/regulator_1_SW2/uV
 fi
 fi
 
+if [ -z $NO_CAMERA ]; then
+v4l_module.sh cleanup
+fi
 cd $LTPROOT
 return $RC
 }
@@ -207,35 +213,35 @@ test_enc_exec()
 {
 RC=1
 
-if [ $TARGET = "51" ]
-then
  echo "encode $srcfile in format $FORMAT to out_enc.dat"
  $TSTCMD -E "-i $srcfile $ESIZE -f $FORMAT -o /tmp/out_enc.dat" || return $RC
  $TSTCMD -D "-f $FORMAT -i /tmp/out_enc.dat" || return $RC
  rm -rf /tmp/out_enc.dat
 
- echo "encode from Camera"
-
- for k in $ROTATION
- do
-  echo "rotation mode $k"
-  for i in $MIRROR
-  do	
-   echo "mirror mode $i"
-   for j in $SIZELIST
-   do
-    OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
-    OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
-    echo "size is $OWD x $OHT"
-    $TSTCMD -E "-f $FORMAT -w $OWD -h $OHT -o /tmp/out_enc.dat -c 10 -m $i -r $k" || return $RC
-    sleep 1
-    echo "now chroma interleave mode"
-    $TSTCMD -E "-f $FORMAT -w $OWD -h $OHT -o /tmp/out_enc.dat -c 10 -m $i -r $k -t 1" || return $RC
-   done
-  done
- done
+ if [ "$NO_CAMERA" = 'y' ]; then
+   echo "No camera test"
+ else
+ 	echo "encode from Camera"
+ 	for k in $ROTATION
+ 	do
+  		echo "rotation mode $k"
+  		for i in $MIRROR
+  		do	
+   			echo "mirror mode $i"
+   			for j in $SIZELIST
+   			do
+    			OWD=$(echo $j | sed "s/x/ /g" | awk '{print $1}')
+    			OHT=$(echo $j | sed "s/x/ /g" | awk '{print $2}')
+    			echo "size is $OWD x $OHT"
+    			$TSTCMD -E "-f $FORMAT -w $OWD -h $OHT -o /tmp/out_enc.dat -c 10 -m $i -r $k" || return $RC
+    			sleep 1
+    			echo "now chroma interleave mode"
+    			$TSTCMD -E "-f $FORMAT -w $OWD -h $OHT -o /tmp/out_enc.dat -c 10 -m $i -r $k -t 1" || return $RC
+   			done
+  		done
+ 	done
+ fi
  echo "test enc app PASS"
-fi
 
 RC=0
 
@@ -436,7 +442,8 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 # main function
 FORMAT=7
 srcfile=${STREAM_PATH}/video/akiyomp4.yuv
-ESIZE="-w 176 -h 144"
+test_dec_exec || return $RC
+ESIZE="-w 8192 -h 8192"
 test_enc_exec || return $RC
 
 RC=0
@@ -467,9 +474,9 @@ fi
 
 srcfile=
 FORMAT=
-SIZELIST="176x144 320x640 64x64"
-#ROTATION="0 90 180 270"
-ROTATION="0"
+SIZELIST="176x144 320x640 640x480 720x480 720x576 1024x768 1280x720 1920x1080"
+ROTATION="0 90 180 270"
+#ROTATION="0"
 MIRROR="0 1 2 3"
 UIPU="0 1"
 CHINT="0 1"

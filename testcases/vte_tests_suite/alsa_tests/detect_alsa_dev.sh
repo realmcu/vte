@@ -22,6 +22,7 @@
 # Author                       Date          Number    Description of Changes
 #-----------------------   ------------    ----------  ---------------------
 # Spring Zhang              Mar.17,2011       n/a        Initial ver. 
+# Andy Tian		    Feb.06.2012       n/a        add support for 3.x kernel version
 #
 
 # Description: look for default ALSA DAC device index, e.g. stgl5000 for mx5x
@@ -41,13 +42,15 @@ EOF
     exit 255
 fi
 
-if [ $(uname -r | grep 2.6.38|wc -l) -eq 1 ]; then
+if [ $(uname -r |grep 2.6.38 |wc -l) -eq 1 ]; then
+   HW_keyword=sgtl5000audio
+elif [ $(uname -r | grep 3.|wc -l) -eq 1 ]; then
    HW_keyword=sgtl5000audio
 else
    HW_keyword=imx3stack
 fi
 
-if [ $(platfm.sh) = "IMX6-SABREAUTO" ]; then
+if [ $(platfm.sh) = "IMX6-SABREAUTO" ] || [ $(platfm.sh) = "IMX6ARM2" ]; then
    HW_keyword="card 0"
 fi
 

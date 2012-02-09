@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -x
 ###################################################################################################
 #Copyright (C) 2008,2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
@@ -23,10 +23,6 @@
 #Spring Zhang/---             07/16/2010     ENGR124683   Add MX53 support
 # 
 ###################################################################################################
-
-MLIST="ipu_prp_enc.ko ipu_prp_vf_sdc.ko ipu_prp_vf_sdc_bg.ko ipu_still.ko ipu_csi_enc.ko adv7180_tvin.ko mxc_v4l2_capture.ko"
-#OV3640 module must be removed before ADV7180 TVIN test.
-RMLIST="adv7180_tvin ipu_prp_enc ipu_prp_vf_sdc_bg ov2640_camera ov3640_camera ipu_prp_vf_sdc ipu_still ipu_csi_enc mxc_v4l2_capture"
 
 
 # Function:     setup
@@ -56,18 +52,8 @@ fi
 trap "cleanup" 0
 trap "cleanup" 2
 
-#rmmod for camera which is conflict
-for i in $RMLIST
-do
-  modprobe -r  $i
-  sleep 1
-done
-
-#insmod for v4l2
-for i in $MLIST
-do
-  insmod  /lib/modules/$(uname -r)/kernel/drivers/media/video/mxc/capture/$i
-done
+modprobe adv7180_tvin
+modprobe mxc_v4l2_capture 
 
 sleep 2
 
@@ -97,12 +83,8 @@ killall mxc_v4l2_tvin
 
 sleep 2
 
-#rmmod for v4l2
-for i in $RMLIST
-do
-  modprobe -r  $i
-  sleep 1
-done
+modprobe -r adv7180_tvin
+modprobe -r mxc_v4l2_capture 
 
 return $RC
 }
@@ -120,7 +102,7 @@ RC=0
 #print test info
 tst_resm TINFO "test #1: tvout_usercase 01"
 
-RES_LIST="640x480 320x240 1024x768 800x600"
+RES_LIST="640x480 320x240"
 #topxleft
 WIN_POS="0x0 16x16 32x32"
 ROT="0 1 2 3 4 5 6 7"
@@ -173,7 +155,7 @@ RC=0
 
 echo "now please play PAL TV"
 
-$TVIN_APP &
+$TVIN_APP -ow 640 -oh 480 YU12 -c 700 &
 
 sleep 5
 
@@ -182,6 +164,8 @@ echo "plase switch the input to NTSC mode"
 sleep 5
 
 read -p "did you see the picture form tvin? y/n" RC
+
+wait
 
 if [ "$RC" = "y" ]
 then

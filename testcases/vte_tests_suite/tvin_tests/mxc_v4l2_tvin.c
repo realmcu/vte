@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2010 Freescale Semiconductor, Inc. All rights reserved.
+ * Copyright 2007-2011 Freescale Semiconductor, Inc. All rights reserved.
  */
 
 /*
@@ -29,38 +29,41 @@ extern "C"{
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-
-/* Verification Test Environment Include Files */
+#include <stdint.h>
 #include <sys/types.h>
+#include <stdint.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <sys/time.h>
 #include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <asm/types.h>
 #include <linux/videodev.h>
 #include <linux/videodev2.h>
-#include <linux/fb.h>
 #include <sys/mman.h>
 #include <math.h>
 #include <string.h>
 #include <malloc.h>
 
 #include <linux/mxcfb.h>
+#include <linux/mxc_v4l2.h>
+#include <linux/ipu.h>
 
 #define TFAIL -1
 #define TPASS 0
 
 char v4l_capture_dev[100] = "/dev/video0";
-char v4l_output_dev[100] = "/dev/video16";
+char v4l_output_dev[100] = "/dev/video17";
 int fd_capture_v4l = 0;
 int fd_output_v4l = 0;
 int g_cap_mode = 0;
 int g_input = 1;
 int g_fmt = V4L2_PIX_FMT_UYVY;
 int g_rotate = 0;
-int g_motion = 0;
+int g_vflip = 0;
+int g_hflip = 0;
+int g_vdi_enable = 0;
+int g_vdi_motion = 0;
 int g_tb = 0;
 int g_output = 3;
 int g_output_num_buffers = 4;
@@ -73,8 +76,8 @@ int g_display_top = 0;
 int g_display_left = 0;
 int g_frame_size;
 int g_frame_period = 33333;
-int g_frame_count = 30;
-v4l2_std_id g_current_std = V4L2_STD_PAL;
+int g_frame_count = 300;
+v4l2_std_id g_current_std = V4L2_STD_NTSC;
 
 struct testbuffer
 {
@@ -96,6 +99,7 @@ int start_capturing(void)
         {
                 memset(&buf, 0, sizeof (buf));
                 buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+                buf.memory = V4L2_MEMORY_MMAP;
                 buf.index = i;
                 if (ioctl(fd_capture_v4l, VIDIOC_QUERYBUF, &buf) < 0)
                 {
@@ -164,10 +168,48 @@ int prepare_output(void)
 
 int v4l_capture_setup(void)
 {
+
+	struct v4l2_capability cap;
+	struct v4l2_cropcap cropcap;
+	struct v4l2_crop crop;
 	struct v4l2_format fmt;
+	struct v4l2_requestbuffers req;
+	struct v4l2_dbg_chip_ident chip;
 	struct v4l2_streamparm parm;
-        struct v4l2_requestbuffers req;
 	v4l2_std_id id;
+	unsigned int min;
+
+	if (ioctl (fd_capture_v4l, VIDIOC_QUERYCAP, &cap) < 0) {
+		if (EINVAL == errno) {
+			fprintf (stderr, "%s is no V4L2 device\n",
+					v4l_capture_dev);
+			return TFAIL;
+		} else {
+			fprintf (stderr, "%s isn not V4L device,unknow error\n",
+			v4l_capture_dev);
+			return TFAIL;
+		}
+	}
+
+	if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
+		fprintf (stderr, "%s is no video capture device\n",
+			v4l_capture_dev);
+		return TFAIL;
+	}
+
+	if (!(cap.capabilities & V4L2_CAP_STREAMING)) {
+		fprintf (stderr, "%s does not support streaming i/o\n",
+			v4l_capture_dev);
+		return TFAIL;
+	}
+
+	if (ioctl(fd_capture_v4l, VIDIOC_DBG_G_CHIP_IDENT, &chip))
+	{
+                printf("VIDIOC_DBG_G_CHIP_IDENT failed.\n");
+		close(fd_capture_v4l);
+                return TFAIL;
+	}
+	printf("TV decoder chip is %s\n", chip.match.name);
 
 	if (ioctl(fd_capture_v4l, VIDIOC_S_INPUT, &g_input) < 0)
 	{
@@ -191,6 +233,32 @@ int v4l_capture_setup(void)
 		return TFAIL;
 	}
 
+	/* Select video input, video standard and tune here. */
+
+	memset(&cropcap, 0, sizeof(cropcap));
+
+	cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+	if (ioctl (fd_capture_v4l, VIDIOC_CROPCAP, &cropcap) < 0) {
+		crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+		crop.c = cropcap.defrect; /* reset to default */
+
+		if (ioctl (fd_capture_v4l, VIDIOC_S_CROP, &crop) < 0) {
+			switch (errno) {
+				case EINVAL:
+					/* Cropping not supported. */
+					fprintf (stderr, "%s  doesn't support crop\n",
+						v4l_capture_dev);
+					break;
+				default:
+					/* Errors ignored. */
+					break;
+			}
+		}
+	} else {
+		/* Errors ignored. */
+	}
+
 	parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	parm.parm.capture.timeperframe.numerator = 1;
 	parm.parm.capture.timeperframe.denominator = 0;
@@ -203,16 +271,29 @@ int v4l_capture_setup(void)
 	}
 
 	memset(&fmt, 0, sizeof(fmt));
-	fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+	fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	fmt.fmt.pix.width       = 0;
+	fmt.fmt.pix.height      = 0;
 	fmt.fmt.pix.pixelformat = g_fmt;
-	fmt.fmt.pix.width = 0;
-	fmt.fmt.pix.height = 0;
-	if (ioctl(fd_capture_v4l, VIDIOC_S_FMT, &fmt) < 0)
-	{
-		printf("VIDIOC_S_FMT failed\n");
-		close(fd_capture_v4l);
+	fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
+
+	if (ioctl (fd_capture_v4l, VIDIOC_S_FMT, &fmt) < 0){
+		fprintf (stderr, "%s iformat not supported \n",
+			v4l_capture_dev);
 		return TFAIL;
 	}
+
+	/* Note VIDIOC_S_FMT may change width and height. */
+
+	/* Buggy driver paranoia. */
+	min = fmt.fmt.pix.width * 2;
+	if (fmt.fmt.pix.bytesperline < min)
+		fmt.fmt.pix.bytesperline = min;
+
+	min = fmt.fmt.pix.bytesperline * fmt.fmt.pix.height;
+	if (fmt.fmt.pix.sizeimage < min)
+		fmt.fmt.pix.sizeimage = min;
 
 	if (ioctl(fd_capture_v4l, VIDIOC_G_FMT, &fmt) < 0)
 	{
@@ -224,16 +305,31 @@ int v4l_capture_setup(void)
 	g_in_width = fmt.fmt.pix.width;
 	g_in_height = fmt.fmt.pix.height;
 
-        memset(&req, 0, sizeof (req));
-        req.count = g_capture_num_buffers;
-        req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        req.memory = V4L2_MEMORY_MMAP;
-        if (ioctl(fd_capture_v4l, VIDIOC_REQBUFS, &req) < 0)
-        {
-                printf("VIDIOC_REQBUFS failed\n");
-		close(fd_capture_v4l);
-                return TFAIL;
-        }
+	printf("VIDIOC_G_FMT failed\n");
+
+	memset(&req, 0, sizeof (req));
+
+	req.count               = g_capture_num_buffers;
+	req.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	req.memory              = V4L2_MEMORY_MMAP;
+
+	if (ioctl (fd_capture_v4l, VIDIOC_REQBUFS, &req) < 0) {
+		if (EINVAL == errno) {
+			fprintf (stderr, "%s does not support "
+					 "memory mapping\n", v4l_capture_dev);
+			return TFAIL;
+		} else {
+			fprintf (stderr, "%s does not support "
+					 "memory mapping, unknow error\n", v4l_capture_dev);
+			return TFAIL;
+		}
+	}
+
+	if (req.count < 2) {
+		fprintf (stderr, "Insufficient buffer memory on %s\n",
+			 v4l_capture_dev);
+		return TFAIL;
+	}
 
         return 0;
 }
@@ -245,48 +341,84 @@ int v4l_output_setup(void)
 	struct v4l2_framebuffer fb;
 	struct v4l2_cropcap cropcap;
 	struct v4l2_crop crop;
+	struct v4l2_capability cap;
+	struct v4l2_fmtdesc fmtdesc;
 	struct v4l2_requestbuffers buf_req;
 
-        if (ioctl(fd_output_v4l, VIDIOC_S_OUTPUT, &g_output) < 0)
-        {
-                printf("set output failed\n");
-                return TFAIL;
-        }
+	if (!ioctl(fd_output_v4l, VIDIOC_QUERYCAP, &cap)) {
+		printf("driver=%s, card=%s, bus=%s, "
+			"version=0x%08x, "
+			"capabilities=0x%08x\n",
+			cap.driver, cap.card, cap.bus_info,
+			cap.version,
+			cap.capabilities);
+	}
 
-        memset(&cropcap, 0, sizeof(cropcap));
-        cropcap.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
-        if (ioctl(fd_output_v4l, VIDIOC_CROPCAP, &cropcap) < 0)
-        {
-                printf("get crop capability failed\n");
-                return TFAIL;
-        }
+	fmtdesc.index = 0;
+	fmtdesc.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
+	while (!ioctl(fd_output_v4l, VIDIOC_ENUM_FMT, &fmtdesc)) {
+		printf("fmt %s: fourcc = 0x%08x\n",
+			fmtdesc.description,
+			fmtdesc.pixelformat);
+		fmtdesc.index++;
+	}
 
-        crop.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
-        crop.c.top = g_display_top;
-        crop.c.left = g_display_left;
-        crop.c.width = g_display_width;
-        crop.c.height = g_display_height;
-        if (ioctl(fd_output_v4l, VIDIOC_S_CROP, &crop) < 0)
-        {
-                printf("set crop failed\n");
-                return TFAIL;
-        }
-
-        ctrl.id = V4L2_CID_PRIVATE_BASE;
-        ctrl.value = g_rotate;
-        if (ioctl(fd_output_v4l, VIDIOC_S_CTRL, &ctrl) < 0)
-        {
-                printf("set ctrl failed\n");
+	memset(&cropcap, 0, sizeof(cropcap));
+	cropcap.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
+	if (ioctl(fd_output_v4l, VIDIOC_CROPCAP, &cropcap) < 0)
+	{
+		printf("get crop capability failed\n");
+		close(fd_output_v4l);
 		return TFAIL;
-        }
+	}
 
-	ctrl.id = V4L2_CID_PRIVATE_BASE + 3;
-        ctrl.value = g_motion;
-        if (ioctl(fd_output_v4l, VIDIOC_S_CTRL, &ctrl) < 0)
-        {
-                printf("set ctrl failed\n");
+	crop.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
+	crop.c.top = g_display_top;
+	crop.c.left = g_display_left;
+	crop.c.width = g_display_width;
+	crop.c.height = g_display_height;
+	if (ioctl(fd_output_v4l, VIDIOC_S_CROP, &crop) < 0)
+	{
+		printf("set crop failed\n");
+		close(fd_output_v4l);
 		return TFAIL;
-        }
+	}
+
+	// Set rotation
+	ctrl.id = V4L2_CID_ROTATE;
+	ctrl.value = g_rotate;
+	if (ioctl(fd_output_v4l, VIDIOC_S_CTRL, &ctrl) < 0)
+	{
+		printf("set ctrl rotate failed\n");
+		close(fd_output_v4l);
+		return TFAIL;
+	}
+	ctrl.id = V4L2_CID_VFLIP;
+	ctrl.value = g_vflip;
+	if (ioctl(fd_output_v4l, VIDIOC_S_CTRL, &ctrl) < 0)
+	{
+		printf("set ctrl vflip failed\n");
+		close(fd_output_v4l);
+		return TFAIL;
+	}
+	ctrl.id = V4L2_CID_HFLIP;
+	ctrl.value = g_hflip;
+	if (ioctl(fd_output_v4l, VIDIOC_S_CTRL, &ctrl) < 0)
+	{
+		printf("set ctrl hflip failed\n");
+		close(fd_output_v4l);
+		return TFAIL;
+	}
+	if (g_vdi_enable) {
+		ctrl.id = V4L2_CID_MXC_MOTION;
+		ctrl.value = g_vdi_motion;
+		if (ioctl(fd_output_v4l, VIDIOC_S_CTRL, &ctrl) < 0)
+		{
+			printf("set ctrl motion failed\n");
+			close(fd_output_v4l);
+			return TFAIL;
+		}
+	}
 
 	fb.flags = V4L2_FBUF_FLAG_OVERLAY;
 	ioctl(fd_output_v4l, VIDIOC_S_FBUF, &fb);
@@ -352,7 +484,8 @@ mxc_v4l_tvin_test(void)
 	}
 
 	gettimeofday(&tv_start, 0);
-	printf("start time = %d s, %d us\n", (int)tv_start.tv_sec, (int)tv_start.tv_usec);
+	printf("start time = %d s, %d us\n", (unsigned int) tv_start.tv_sec,
+		(unsigned int) tv_start.tv_usec);
 
 	for (i = 0; i < g_frame_count; i++) {
 begin:
@@ -503,33 +636,33 @@ int process_cmdline(int argc, char **argv)
                         g_fmt = v4l2_fourcc(argv[i][0], argv[i][1],argv[i][2],argv[i][3]);
 
 			if ((g_fmt != V4L2_PIX_FMT_NV12) &&
-			    (g_fmt != V4L2_PIX_FMT_UYVY) &&
-			    (g_fmt != V4L2_PIX_FMT_YUYV) &&
-                            (g_fmt != V4L2_PIX_FMT_YUV420))
-                        {
-				printf("Default format is used: UYVY\n");
-                        }
-                }
-                else if (strcmp(argv[i], "-m") == 0) {
-                        g_motion = atoi(argv[++i]);
-                }
-                else if (strcmp(argv[i], "-tb") == 0) {
-                        g_tb = 1;
-                }
-                else if (strcmp(argv[i], "-help") == 0) {
-                        printf("MXC Video4Linux TVin Test\n\n" \
-			       "Syntax: mxc_v4l2_tvin.out\n" \
-			       " -ow <capture display width>\n" \
-			       " -oh <capture display height>\n" \
-			       " -ot <display top>\n" \
-			       " -ol <display left>\n" \
-                               " -r <rotation> -c <capture counter> \n"
-			       " -m <motion> 0:medium 1:low 2:high, 0-default\n"
-			       " -tb top field first, bottom field first-default\n"
-			       " -f <format, only YU12, YUYV, UYVY and NV12 are supported> \n");
-                        return TFAIL;
-               }
-        }
+				(g_fmt != V4L2_PIX_FMT_UYVY) &&
+				(g_fmt != V4L2_PIX_FMT_YUYV) &&
+				(g_fmt != V4L2_PIX_FMT_YUV420))	{
+					printf("Default format is used: UYVY\n");
+			}
+		}
+		else if (strcmp(argv[i], "-m") == 0) {
+			g_vdi_enable = 1;
+			g_vdi_motion = atoi(argv[++i]);
+		}
+		else if (strcmp(argv[i], "-tb") == 0) {
+			g_tb = 1;
+		}
+		else if (strcmp(argv[i], "-help") == 0) {
+			printf("MXC Video4Linux TVin Test\n\n" \
+				   "Syntax: mxc_v4l2_tvin.out\n" \
+				   " -ow <capture display width>\n" \
+				   " -oh <capture display height>\n" \
+				   " -ot <display top>\n" \
+				   " -ol <display left>\n" \
+							   " -r <rotation> -c <capture counter> \n"
+				   " -m <motion> 0:medium 1:low 2:high, 0-default\n"
+				   " -tb top field first, bottom field first-default\n"
+				   " -f <format, only YU12, YUYV, UYVY and NV12 are supported> \n");
+			return TFAIL;
+		}
+	}
 
         if ((g_display_width == 0) || (g_display_height == 0)) {
 		printf("Zero display width or height\n");
@@ -539,8 +672,7 @@ int process_cmdline(int argc, char **argv)
         return 0;
 }
 
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
         char fb_device[100] = "/dev/fb0";
         int fd_fb = 0, i;

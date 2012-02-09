@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ##############################################################################
 #Copyright 2008-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
@@ -49,6 +49,7 @@
 #   IMX50-RDP3    IMX50-RDP3
 #   IMX6-SABREAUTO IMX6-SABREAUTO
 #   IMX6-SABRELITE IMX6-SABRELITE
+#   IMX6ARM2    IMX6ARM2
 #
 # Usage2(return number): 
 #   platfm.sh || platform=$?
@@ -63,7 +64,8 @@
 #       51       mx51 3ds
 #       28       mx28 evk
 #       53       mx53 evk loco smd
-#       61       mx6q arm2 and sabre-lite
+#       63       mx6q arm2 and sabre-lite
+#       61       mx6dl
 #
 # 2. 378%256(=122) for SMTP378X board.(for return value is 0~255)
 #       rt value    Board
@@ -196,9 +198,16 @@ determine_platform()
     if [ $find -eq 1 ]
     then
         find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
-        p=IMX6-SABREAUTO
+        p=IMX6ARM2
     fi
 	
+    find=`cat /proc/cpuinfo | grep "Hardware" | grep "6Quad" | grep "Sabre Auto" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+        find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
+        p=IMX6-SABREAUTO
+    fi
+
 	find=`cat /proc/cpuinfo | grep "Hardware" | grep "6Quad" | grep "Sabre-Lite" | wc -l`;
     if [ $find -eq 1 ]
     then
@@ -206,6 +215,19 @@ determine_platform()
         p=IMX6-SABRELITE
     fi
 
+	find=`cat /proc/cpuinfo | grep "Hardware" | grep "i.MX6 Quad"| wc -l`;
+    if [ $find -eq 1 ]
+    then
+        find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
+        p=IMX6-SABRELITE
+    fi
+
+	find=`cat /proc/cpuinfo | grep "Hardware" | grep "DualLite" | grep "Armadillo2 Board" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+        find=`cat /proc/cpuinfo | grep "Revision" | grep "61" | wc -l`;
+        p=IMX6DL-ARM2
+    fi
 
     if [ $p = "IMX31-3STACK" ]
     then
@@ -248,7 +270,10 @@ determine_platform()
     elif [ $p = "IMX50RDP" ] || [ $p = "IMX50-RDP3" ]
     then
         RC=50
-    elif [ $p = "IMX6-SABREAUTO" ] || [ $p = "IMX6-SABRELITE" ]
+    elif [ $p = "IMX6-SABREAUTO" ] || [ $p = "IMX6-SABRELITE" ] || [ $p = "IMX6ARM2"  ]
+    then
+        RC=63
+    elif [ $p = "IMX6DL-ARM2" ]
     then
         RC=61
     else

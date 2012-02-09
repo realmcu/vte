@@ -71,10 +71,10 @@ trap "cleanup" 0
 clear
 
 soc=$(platfm.sh)
-if [ $soc = "IMX6-SABREAUTO" ]; then
-#enable ata module
-modprobe ahci_platform
-sleep 3
+if [ $soc = "IMX6-SABREAUTO" ] || [ $soc = "IMX6ARM2" ]; then
+    #enable ata module
+    modprobe ahci_platform
+    sleep 3
 fi
 
 tmp_dir=$(mktemp -d -p /mnt)
@@ -191,15 +191,14 @@ return $RC
 #               - non zero on failure. return value from commands ($RC)
 cleanup()
 {
+#TODO add cleanup code here
 RC=0
 
-soc=$(platfm.sh)
-if [ $soc = "IMX6-SABREAUTO" ]; then
-#enable ata module
-modprobe -r ahci_platform
-sleep 3
+if [ $soc = "IMX6-SABREAUTO" ] || [ $soc = "IMX6ARM2" ]; then
+    #enable ata module
+    modprobe -r ahci_platform
+    sleep 3
 fi
-#TODO add cleanup code here
 
 return $RC
 }

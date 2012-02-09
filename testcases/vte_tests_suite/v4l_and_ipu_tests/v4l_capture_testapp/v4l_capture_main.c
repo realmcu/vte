@@ -210,8 +210,8 @@ extern "C" {
 		gV4LTestConfig.mV4LDevice = Dflag ? Dopt : "/dev/video0";
 		gV4LTestConfig.mOutputDevice = uflag ? uopt : "/dev/fb0";
 		gV4LTestConfig.mOutputFile = NULL;
-		gV4LTestConfig.mWidth = Wflag ? atoi(Wopt) : 240;
-		gV4LTestConfig.mHeight = Hflag ? atoi(Hopt) : 190;
+		gV4LTestConfig.mWidth = Wflag ? atoi(Wopt) : 320;
+		gV4LTestConfig.mHeight = Hflag ? atoi(Hopt) : 240;
 		if ((gV4LTestConfig.mCount = Tflag ? atoi(Topt) : 10) <= 0)
 			tst_resm(TWARN, "Invalid argument for -T  %d",
 				 gV4LTestConfig.mCount);

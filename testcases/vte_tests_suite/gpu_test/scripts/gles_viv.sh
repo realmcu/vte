@@ -65,6 +65,7 @@ cleanup()
 RC=0
 
 #TODO add cleanup code here
+modprobe -r galcore
 return $RC
 }
 
@@ -145,14 +146,6 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-cd ${TEST_DIR}/${APP_SUB_DIR}
-echo "==========================="
-echo 3DMark
-echo "==========================="
-if [ -e 3DMarkMobile/fsl_imx_linux ]; then
-  cd 3DMarkMobile/fsl_imx_linux/
-    ./fm_oes_player &
-fi
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
 echo "==========================="
@@ -162,13 +155,13 @@ echo "==========================="
 
 echo fps triangle
 echo "==========================="
-./fps_triangle &
+./fps_triangle 10000 &
 
 echo "==========================="
 echo simple draw
 echo "==========================="
-./simple_draw 100 &
-./simple_draw 100 -s &
+./simple_draw 1000 &
+./simple_draw 1000 -s &
 
 echo "==========================="
 echo simple triangle
@@ -180,7 +173,14 @@ echo torusknot
 echo "==========================="
 ./torusknot &
 
-sleep 20
+cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo 3DMark
+echo "==========================="
+if [ -e 3DMarkMobile/fsl_imx_linux ]; then
+  cd 3DMarkMobile/fsl_imx_linux/
+    ./fm_oes_player
+fi
 
 wait
 

@@ -65,6 +65,7 @@ cleanup()
 RC=0
 
 #TODO add cleanup code here
+#modprobe -r galcore
 return $RC
 }
 
@@ -98,6 +99,7 @@ cd VGMark_gc355
 ./fm_oes_vg_player_gc355 || RC=$(echo $RC vgmark)
 
 echo $RC
+
 
 if [ "$RC" = "0" ]; then
  RC=0
@@ -138,7 +140,7 @@ echo "==========================="
 cd VGMark_gc355
 ./fm_oes_vg_player_gc355 &
 
-
+wait
 
 echo $RC
 
