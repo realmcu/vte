@@ -59,7 +59,6 @@ setup()
     platfm.sh || platfm=$?
     if [ $platfm -ne 53 ] && [ $platfm -ne 61 ] && [ $platfm -ne 63 ]; then
             modprobe flexcan
-        fi
     fi
 
     ip link set $CANID up type can bitrate 125000
