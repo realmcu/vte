@@ -65,7 +65,7 @@ cleanup()
 RC=0
 
 #TODO add cleanup code here
-modprobe -r galcore
+#modprobe -r galcore
 return $RC
 }
 
@@ -366,6 +366,9 @@ case "$?" in
   APP_SUB_DIR="imx53_rootfs/test"
  ;;
 61)
+	APP_SUB_DIR="imx61_rootfs/test"
+	;;
+63)
 	APP_SUB_DIR="imx61_rootfs/test"
 	;;
 *)

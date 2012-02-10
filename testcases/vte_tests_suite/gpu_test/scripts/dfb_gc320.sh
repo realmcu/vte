@@ -141,6 +141,9 @@ case "$?" in
 61)
 	APP_SUB_DIR="imx61_rootfs/test"
 	;;
+63)
+	APP_SUB_DIR="imx61_rootfs/test"
+	;;
 *)
   exit 0
   ;;
