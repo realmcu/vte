@@ -88,7 +88,6 @@ cleanup()
     sleep 1
     if [ $platfm -ne 53 ] && [ $platfm -ne 61 ] && [ $platfm -ne 63 ]; then
             modprobe flexcan -r
-        fi
     fi
 
     return $RC
