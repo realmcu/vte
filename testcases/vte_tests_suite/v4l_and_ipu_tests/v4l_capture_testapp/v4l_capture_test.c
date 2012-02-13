@@ -59,6 +59,7 @@ extern "C" {
 #include "v4l_capture_test.h"
 #include <inttypes.h>
 #include <linux/mxc_v4l2.h>
+#include <linux/version.h>
 
 #define ipu_fourcc(a,b,c,d)\
         (((__u32)(a)<<0)|((__u32)(b)<<8)|((__u32)(c)<<16)|((__u32)(d)<<24))
@@ -926,8 +927,10 @@ extern "C" {
 			if (aRotNum <= 8)
 				control.id = V4L2_CID_PRIVATE_BASE;
 			else {
+			#if ( LINUX_VERSION_CODE  <= KERNEL_VERSION(3,0,15))
 				control.id = V4L2_CID_MXC_VF_ROT;
-				aRotNum -= 9;
+				aRotNum -= 9
+			#endif;
 			}
 			//control.id = V4L2_CID_PRIVATE_BASE + 2;
 			control.value = aRotNum;

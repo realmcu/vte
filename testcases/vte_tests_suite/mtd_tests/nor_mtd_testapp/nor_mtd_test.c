@@ -37,7 +37,7 @@ Portability:  ARM GCC
 ==================================================================================================*/
 #include "nor_mtd_test.h"
 #include <errno.h>
-
+#include <linux/version.h>
 /*==================================================================================================
                                         GLOBAL VARIABLES
 ==================================================================================================*/
@@ -94,6 +94,7 @@ int VT_nor_mtd_test_info(void)
                 strcpy(flash_type, "MTD_UNKNOWN");
                 break;
         }
+		#if LINUX_VERSION_CODE <= KERNEL_VERSION(3,0,15)
         tst_resm(TINFO, "\nFlash info :\n \
                 - type : %s\n \
                 - flags : %d\n \
@@ -104,6 +105,7 @@ int VT_nor_mtd_test_info(void)
                 - ECC type : %d\n\
                 - ECC size : 0x%lx", flash_type, mxc_info_mtd.flags, mxc_info_mtd.size, mxc_info_mtd.erasesize, mxc_info_mtd.writesize, mxc_info_mtd.oobsize, mxc_info_mtd.ecctype, mxc_info_mtd.eccsize);
 
+		#endif
         /* Get number of erase regions on flash device */
         if (v_num)
         {
@@ -175,6 +177,7 @@ int VT_nor_mtd_test_regionInfo(void)
                 break;
         }
 
+		#if LINUX_VERSION_CODE <= KERNEL_VERSION(3,0,15)
 		tst_resm(TINFO, "\nFlash info :\n \
                 - type : %s\n \
                 - flags : %d\n \
@@ -184,7 +187,7 @@ int VT_nor_mtd_test_regionInfo(void)
                 - size of OOB block : 0x%lx\n \
                 - ECC type : %d\n\
                 - ECC size : 0x%lx", flash_type, mxc_info_mtd.flags, mxc_info_mtd.size, mxc_info_mtd.erasesize, mxc_info_mtd.writesize, mxc_info_mtd.oobsize, mxc_info_mtd.ecctype, mxc_info_mtd.eccsize);
-
+		#endif
         /* Get number of erase regions on flash device */
         if (v_num)
         {
