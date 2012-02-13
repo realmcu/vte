@@ -1,5 +1,5 @@
 /***
-**Copyright (C) 2004-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2004-2012 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -62,6 +62,7 @@ extern "C" {
 #include <math.h>
 #include <string.h>
 #include <malloc.h>
+#include <linux/videodev2.h>
 
 /*======================== CONSTANTS ========================================*/
 

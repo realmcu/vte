@@ -928,7 +928,7 @@ extern "C" {
 				control.id = V4L2_CID_PRIVATE_BASE;
 			else {
 				control.id = V4L2_CID_MXC_VF_ROT;
-				aRotNum -= 9
+				aRotNum -= 9;
 			}
 			//control.id = V4L2_CID_PRIVATE_BASE + 2;
 			control.value = aRotNum;
