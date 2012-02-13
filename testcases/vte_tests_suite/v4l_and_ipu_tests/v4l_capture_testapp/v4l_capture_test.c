@@ -927,10 +927,8 @@ extern "C" {
 			if (aRotNum <= 8)
 				control.id = V4L2_CID_PRIVATE_BASE;
 			else {
-			#if ( LINUX_VERSION_CODE  <= KERNEL_VERSION(3,0,15))
 				control.id = V4L2_CID_MXC_VF_ROT;
 				aRotNum -= 9
-			#endif;
 			}
 			//control.id = V4L2_CID_PRIVATE_BASE + 2;
 			control.value = aRotNum;
