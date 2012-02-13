@@ -33,17 +33,6 @@ extern "C"{
 /*==================================================================================================
                                          INCLUDE FILES
 ==================================================================================================*/
-#ifndef __KERNEL__
-#define __KERNEL__
-#include <asm/types.h>
-#undef __KERNEL__
-#else
-#include <asm/types.h>
-#endif
-
-//#include <linux/types.h>
-
-//#include <sys/types.h>  /* open() */
 #include <sys/stat.h>   /* open() */
 #include <fcntl.h>      /* open() */
 #include <sys/ioctl.h>  /* ioctl() */
@@ -58,16 +47,12 @@ extern "C"{
 #include <linux/if.h>
 #include <linux/ip.h>
 #include <linux/icmp.h>
-#include <net/if_arp.h>  // ??????????
+#include <net/if_arp.h>
 #include <net/ethernet.h>
 #include <linux/mii.h>
 #include <linux/ethtool.h>
 #include <time.h>
-
-//#include <linux/autoconf.h>
 #include <test.h>
-
-#include <fec.h>
 
 /*==================================================================================================
                                        DEFINES AND MACROS
