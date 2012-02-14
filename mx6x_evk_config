@@ -14,7 +14,7 @@
 #with this program; if not, write to the Free Software Foundation, Inc.,
 #51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-KLINUX_SRCDIR=/mnt/nfs_root/imx63_rootfs/usr/src/linux/include
+KLINUX_SRCDIR=/mnt/nfs_root/imx63_rootfs/usr/src/linux/include/
 KERNEL_SRCDIR=/home/vobs/linux-2.6-imx
 KLINUX_BLTDIR=/home/vobs/linux-2.6-imx
 ARCH_CPU=arm
