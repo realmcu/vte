@@ -23,15 +23,15 @@
 #Portability: ARM GCC
 #
 ####################################################################################################
-EXTRA_CFLAGS += -Wall -DDEBUG -I$(KLINUX_SRCDIR)/drivers/mxc/security/sahara2/include \
+EXTRA_CFLAGS += -Wall -DDEBUG -I$(KERNEL_SRCDIR)/drivers/mxc/security/sahara2/include \
                 -I$(KLINUX_BLTDIR)/include \
-		-I$(KLINUX_SRCDIR)/include
+		-I$(KERNEL_SRCDIR)/include
 
 obj-m = sahara_module.o
 TARGET = sahara_module.ko
 
 all:
-	@make -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
+	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
 	rm -rf *.mod.ko *.mod.c .*.cmd *.o .tmp_versions
 	@echo "***********************************************"
 	@echo "** ALL : SAHARA_MODULE                       **"

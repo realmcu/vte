@@ -11,13 +11,13 @@ obj-m = dryice_test.o
 TARGET = dryice_test.ko 
 
 EXTRA_CFLAGS += -Wall \
-                -I$(KLINUX_SRCDIR)/include \
+                -I$(KERNEL_SRCDIR)/include \
 		-I$(KLINUX_BLTDIR)/include
 
 
 # Need to remove sahara objects because the test app uses same objects
 all:
-	$(MAKE) -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
+	$(MAKE) -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
 
 install:
 	-ln -f $(TARGET) ../../../bin/

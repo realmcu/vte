@@ -4,10 +4,10 @@ export CROSS_COMPILE=$(CROSS_COMPILER)
 obj-m += tcrypt.o
 
 modules:
-	make -C $(KLINUX_SRCDIR) SUBDIRS=$$PWD modules
+	make -C $(KERNEL_SRCDIR) SUBDIRS=$$PWD modules
 
 modules_install:
-	make -C $(KLINUX_SRCDIR) SUBDIRS=$$PWD modules_install
+	make -C $(KERNEL_SRCDIR) SUBDIRS=$$PWD modules_install
 
 install:
 	ln -f  tcrypt.ko ../../../bin/

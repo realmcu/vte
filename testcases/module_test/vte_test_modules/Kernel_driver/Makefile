@@ -67,7 +67,7 @@ obj-m= watchdog_test.o
 TARGET= watchdog_test.ko
 
 all: 
-	@make -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
+	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
 	@rm -rf *.mod.ko *.mod.c .*.cmd *.o .tmp_versions
 	@echo "***********************************************"
 	@echo "** ALL : $(TARGET)                    **"
