@@ -26,6 +26,7 @@
 LTP_DIR = ../../../../
 BIN_DIR = $(LTP_DIR)testcases/
 
+TARGET = $(wildcard *.sh)
 ifeq ($(ARCH_PLATFORM), $(filter imx233 imx25stack, $(ARCH_PLATFORM)))
 TARGET = $(wildcard *.sh)
 DATA = keymap_mx233.txt
