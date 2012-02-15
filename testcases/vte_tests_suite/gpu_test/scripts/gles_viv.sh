@@ -213,10 +213,10 @@ echo "==========================="
 echo es11 conformance
 echo "==========================="
 cd es11_conform/conform
-conform/conform -r 32555 -f conform/TESTLIST && \
-conform/conform -r 32556 -f conform/TESTLIST -p 1 && \
-conform/conform -r 32557 -f conform/TESTLIST -p 2 && \
-conform/conform -r 32558 -f conform/TESTLIST -p 3 \
+conform/conform -r 32555 -l conform/TESTLIST && \
+conform/conform -r 32556 -l conform/TESTLIST -p 1 && \
+conform/conform -r 32557 -l conform/TESTLIST -p 2 && \
+conform/conform -r 32558 -l conform/TESTLIST -p 3 \
 || RC=es11_conformance
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
