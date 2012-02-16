@@ -64,12 +64,14 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 #disable the framebuffer
 
-usb_list==$(find ${mount_pt}  -name usb*)
+usb_list=$(find ${mount_pt}  -name "usb*")
 usb=0
 for i in $usb_list
 do
+ if [ -e "${i}/enable_count" ]; then
  temp=$(cat ${i}/enable_count)
  usb=$(expr $temp + $usb)
+ fi
 done
 
 

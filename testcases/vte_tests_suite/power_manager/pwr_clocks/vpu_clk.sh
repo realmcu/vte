@@ -67,7 +67,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 vpu=0
 #now check the clocks
 cd /sys/kernel/debug/
-vpu_list=$(find . -name vpu*)
+vpu_list=$(find . -name "vpu*")
 for i in $gpu_list
 do
 temp=$(cat ${i}/enable_count)

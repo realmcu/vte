@@ -64,7 +64,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 #disable the framebuffer
 
-i2c_list==$(find ${mount_pt}  -name i2c*)
+i2c_list=$(find ${mount_pt}  -name "i2c*")
 i2c=0
 for i in $i2c_list
 do

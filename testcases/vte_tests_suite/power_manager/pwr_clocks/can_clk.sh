@@ -64,7 +64,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 #disable the framebuffer
 
-can_list==$(find ${mount_pt}  -name can*)
+can_list=$(find ${mount_pt}  -name "can*")
 can=0
 for i in $can_list
 do
