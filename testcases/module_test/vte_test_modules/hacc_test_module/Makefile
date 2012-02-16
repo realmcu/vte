@@ -27,10 +27,10 @@
 
 
 EXTRA_CFLAGS += -Wall \
-          -I$(KLINUX_SRCDIR)/include/ \
-          -I$(KLINUX_SRCDIR)/include/asm/ \
-          -I$(KLINUX_SRCDIR)/include/asm/arch/ \
-          -I$(KLINUX_SRCDIR)/drivers/mxc/security \
+          -I$(KERNEL_SRCDIR)/include/ \
+          -I$(KERNEL_SRCDIR)/include/asm/ \
+          -I$(KERNEL_SRCDIR)/include/asm/arch/ \
+          -I$(KERNEL_SRCDIR)/drivers/mxc/security \
 	  -I$(KLINUX_BLTDIR)/include \
           -DCONFIG_PM
 
@@ -41,7 +41,7 @@ TARGET = hacc_test_module.ko
 obj-m= hacc_test_module.o
  
 all: 
-	@make -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
+	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
 	@rm -f *.mod.ko *.mod.c .*.cmd *.o
 	@rm -rf ./.tmp_versions
 	@echo "***********************************************"

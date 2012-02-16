@@ -19,9 +19,9 @@
 #-------------------------   ------------    ----------  -------------------------------------------
 #hake huang/b20222             20080815       
 ####################################################################################################
-EXTRA_CFLAGS += -I$(KLINUX_SRCDIR)/drivers/mxc/security \
-          -I$(KLINUX_SRCDIR)/include/linux \
-          -I$(KLINUX_SRCDIR)/include/asm-arm/arch-mxc \
+EXTRA_CFLAGS += -I$(KERNEL_SRCDIR)/drivers/mxc/security \
+          -I$(KERNEL_SRCDIR)/include/linux \
+          -I$(KERNEL_SRCDIR)/include/asm-arm/arch-mxc \
           -DSCC2_MODULE \
           -DSCC2_DEBUG
 
@@ -31,7 +31,7 @@ TARGET = scc2_test_driver.ko
 obj-m= scc2_test_driver.o
 
 all:
-	@make -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
+	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
 	@rm -f *.mod.ko *.mod.c .*.cmd *.o
 	@rm -rf ./.tmp_versions
 	@echo "***********************************************"

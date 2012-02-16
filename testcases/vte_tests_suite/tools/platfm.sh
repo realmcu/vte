@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ##############################################################################
 #Copyright 2008-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
@@ -64,7 +64,8 @@
 #       51       mx51 3ds
 #       28       mx28 evk
 #       53       mx53 evk loco smd
-#       61       mx6q arm2 and sabre-lite
+#       63       mx6q arm2 and sabre-lite
+#       61       mx6dl
 #
 # 2. 378%256(=122) for SMTP378X board.(for return value is 0~255)
 #       rt value    Board
@@ -197,7 +198,14 @@ determine_platform()
     if [ $find -eq 1 ]
     then
         find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
-        p=IMX6ARM2
+		if [ $find -eq 1 ]; then
+        	p=IMX6ARM2
+		else
+        	find=`cat /proc/cpuinfo | grep "Revision" | grep "61" | wc -l`;
+			if [ $find -eq 1 ]; then
+        		p=IMX6DL-ARM2
+			fi
+		fi
     fi
 	
     find=`cat /proc/cpuinfo | grep "Hardware" | grep "6Quad" | grep "Sabre Auto" | wc -l`;
@@ -214,6 +222,12 @@ determine_platform()
         p=IMX6-SABRELITE
     fi
 
+	find=`cat /proc/cpuinfo | grep "Hardware" | grep "i.MX6 Quad"| wc -l`;
+    if [ $find -eq 1 ]
+    then
+        find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
+        p=IMX6-SABRELITE
+    fi
 
     if [ $p = "IMX31-3STACK" ]
     then
@@ -257,6 +271,9 @@ determine_platform()
     then
         RC=50
     elif [ $p = "IMX6-SABREAUTO" ] || [ $p = "IMX6-SABRELITE" ] || [ $p = "IMX6ARM2"  ]
+    then
+        RC=63
+    elif [ $p = "IMX6DL-ARM2" ]
     then
         RC=61
     else

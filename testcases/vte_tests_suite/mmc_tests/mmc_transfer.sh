@@ -1,5 +1,5 @@
 #!/bin/sh -x
-# Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
+# Copyright (C) 2011-2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,9 +58,12 @@ setup
 
 #main
 
-rs=$(time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 2>&1 | grep real | awk '{print $2}')
-user=$(time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 2>&1 | grep user | awk '{print $2}')
-sys=$(time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 2>&1 | grep sys | awk '{print $2}')
+time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 -o /tmp/rs
+rs=$(cat /tmp/rs | grep real | awk '{print $2}')
+time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 -o /tmp/us
+user=$(cat /tmp/us | grep user | awk '{print $2}')
+time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 -o /tmp/sys 
+sys=$(cat /tmp/sys | grep sys | awk '{print $2}')
 
 judge=$(echo "$rs > ( $user + $sys)" | bc)
 if [  $judge -eq 1 ]; then

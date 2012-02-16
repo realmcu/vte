@@ -57,10 +57,8 @@ setup()
     trap "cleanup" 0
 
     platfm.sh || platfm=$?
-    if [ $platfm -ne 53 ]; then
-        if [ $platfm -ne 61 ]; then
+    if [ $platfm -ne 53 ] && [ $platfm -ne 61 ] && [ $platfm -ne 63 ]; then
             modprobe flexcan
-        fi
     fi
 
     ip link set $CANID up type can bitrate 125000
@@ -88,10 +86,8 @@ cleanup()
     RC=0
     ifconfig $CANID down
     sleep 1
-    if [ $platfm -ne 53 ]; then
-        if [ $platfm -ne 61 ]; then
+    if [ $platfm -ne 53 ] && [ $platfm -ne 61 ] && [ $platfm -ne 63 ]; then
             modprobe flexcan -r
-        fi
     fi
 
     return $RC

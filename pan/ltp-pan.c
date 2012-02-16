@@ -703,8 +703,8 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 		 * the child process will be good as may not be able to kill.
 		 * may be futuer we need this*/	
 		int loop = 1;
-		long timeout = 3600;/*one case can not last more than 3600s*/
-		long pcnt = 0;
+		unsigned long timeout = 3600;/*one case can not last more than 3600s*/
+		unsigned long pcnt = 0;
 		if (running->cmd->name)
 		{
 			int nl = strlen(running->cmd->name);

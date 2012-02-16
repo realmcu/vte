@@ -59,10 +59,10 @@ endif
 
 
 BIN_DIR = ../../../
-EXTRA_CFLAGS += -DLINUX_KERNEL -I$(KLINUX_SRCDIR)/drivers/mxc \
-                -I$(KLINUX_SRCDIR)/drivers/mxc/security/rng/include \
-		-I$(KLINUX_SRCDIR)/drivers/mxc/security/sahara2/include \
-		-I$(KLINUX_SRCDIR)/include \
+EXTRA_CFLAGS += -DLINUX_KERNEL -I$(KERNEL_SRCDIR)/drivers/mxc \
+                -I$(KERNEL_SRCDIR)/drivers/mxc/security/rng/include \
+		-I$(KERNEL_SRCDIR)/drivers/mxc/security/sahara2/include \
+		-I$(KERNEL_SRCDIR)/include \
 		-I$(KLINUX_BLTDIR)/include \
 		-DCONFIG_PM
 
@@ -73,7 +73,7 @@ obj-m= rnga_test_module.o
 
 all: 
 	echo $(CFLAGS)
-	@make -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
+	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
 	@rm -f *.mod.ko *.mod.c .*.cmd *.o
 	@rm -rf ./.tmp_versions modules.order
 	@echo "***********************************************"

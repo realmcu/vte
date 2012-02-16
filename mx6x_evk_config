@@ -14,11 +14,12 @@
 #with this program; if not, write to the Free Software Foundation, Inc.,
 #51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-KLINUX_SRCDIR=/home/vobs/linux-2.6-imx
+KLINUX_SRCDIR=/mnt/nfs_root/imx63_rootfs/usr/src/linux/include/
+KERNEL_SRCDIR=/home/vobs/linux-2.6-imx
 KLINUX_BLTDIR=/home/vobs/linux-2.6-imx
 ARCH_CPU=arm
 ARCH_PLATFORM=imx6q
-export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM
+export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM KERNEL_SRCDIR
 #CROSS_COMPILER=arm-none-linux-gnueabi-
 CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.4.4-glibc-2.11.1-multilib-1.0/arm-fsl-linux-gnueabi/bin/arm-none-linux-gnueabi-
 export CROSS_COMPILER

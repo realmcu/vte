@@ -31,7 +31,7 @@ TARGET = spi_test_module.ko
 TARGET += mxc_spi_testmod.ko
 
 all:
-	make -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
+	make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
 	rm -rf .*.cmd *.o *.mod.c *.mod.ko .tmp_versions
 	@echo "************************************************"
 	@echo "** ALL :     $(TARGET)               **"
