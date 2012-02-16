@@ -134,6 +134,9 @@ amixer_ctl_id()
     elif [ $platfm -eq 50 ]
 		then
 				ctl_id=name='Headphone Volume'
+    elif [ $platfm -eq 63 ] || [ $platfm -eq 61 ]
+		then
+				ctl_id=name='Headphone Playback Volume'
 		fi
  
     echo $ctl_id
@@ -157,7 +160,7 @@ max_vol()
         return $MAX_MX31
     elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] \
         || [ $platfm -eq 41 ] || [ $platfm -eq 53 ] \
-        || [ $platfm -eq 50 ] #sgtl5k
+        || [ $platfm -eq 50 ] || [ $platfm -eq 63 ] || [ $platfm -eq 61 ] #sgtl5k
     then
         return $MAX_SGTL5K
     elif [ $platfm -eq 37 ]
