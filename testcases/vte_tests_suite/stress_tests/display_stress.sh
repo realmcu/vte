@@ -80,7 +80,7 @@ run_auto_test_list()
    cat /etc/passwd > /dev/ttymxc0 || return $RC
    echo "ALSA test"
    aplay -vv $STREAM_PATH/alsa_stream/audio44k16M.wav || return 14
-	 arecord -D plughw:0 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 || RC='$RC 1'  || return 141
+	 arecord -D plughw:0 -f S16_LE -r 44100 -c 2 -traw -d 5 | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 || RC='$RC 1'  || return 141
 	  loop=$(expr $loop - 1)
 	 done
 	 wait
@@ -139,7 +139,7 @@ RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
-export VDK_FRAMEBUFFER=/dev/fb2
+export FB_FRAMEBUFFER_0=/dev/fb2
 gles_viv.sh 1 &
 run_auto_test_list &
 loops=100
