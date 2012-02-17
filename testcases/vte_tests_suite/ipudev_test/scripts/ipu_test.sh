@@ -442,6 +442,9 @@ test_case_07()
           echo "TST_INFO: --------- rotate only test --------------------"
 					for r in $ROTATION
 						do
+					if [ ${HT} -gt 768 ];then
+						continue;
+					fi
 		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
     -O  ${WD},${HT},I420,${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
 						TOTAL=$(expr $TOTAL + 1)
@@ -470,6 +473,9 @@ test_case_07()
           echo "TST_INFO: --------- rotate with CRS test --------------------"
 					for r in $ROTATION
 						do
+					if [ ${HT} -gt 768 ];then
+						continue;
+					fi
 		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
     -O  ${WD},${HT},${format},${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
 						TOTAL=$(expr $TOTAL + 1)
