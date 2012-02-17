@@ -13,6 +13,7 @@ do
 		echo "STRESSINFO before test $foo temp"
 		cat /sys/devices/platform/ahci.0/temperature
 		time -p gplay /mnt/nfs/test_stream/power_stream/${foo}
+		gles.sh 1
 		echo "STRESSINFO after test $foo temp"
 		cat /sys/devices/platform/ahci.0/temperature
 	done
