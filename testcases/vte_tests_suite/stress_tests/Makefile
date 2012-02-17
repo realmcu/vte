@@ -1,4 +1,4 @@
-SCRIPTS = display_stress.sh i2c_stress.sh
+SCRIPTS = display_stress.sh i2c_stress.sh media_test.sh
 
 all:
 	
