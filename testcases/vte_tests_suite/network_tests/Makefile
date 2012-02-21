@@ -27,7 +27,8 @@
 #
 ###################################################################################################
 
-SUBDIRS = multicast_test ch_mac_addr_test get_test multicast_test sockets_test
+#SUBDIRS = multicast_test ch_mac_addr_test get_test multicast_test sockets_test
+SUBDIRS = scripts  multicast_test sockets_test
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
