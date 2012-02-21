@@ -47,6 +47,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 arecord -D plughw:0 -d 100 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw &
 
+sleep 5
 echo "core test"
 i=0
 loops=10
@@ -89,6 +90,7 @@ while [ $count -lt $tloops ]
 do
   arecord -D plughw:0 -d 100 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw &
 
+  sleep 5
   i=0
   loops=10
   while [ $i -lt $loops ]

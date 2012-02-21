@@ -61,6 +61,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 udp_stream_2nd_script 10.192.225.222 CPU &
 
+sleep 5
 echo "core test"
 i=0
 loops=10
@@ -103,6 +104,7 @@ do
 
   udp_stream_2nd_script 10.192.225.222 CPU &
 
+  sleep 5
   i=0
   loops=100
   while [ $i -lt $loops ]

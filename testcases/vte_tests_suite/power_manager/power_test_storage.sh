@@ -47,6 +47,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 storage_all.sh 1 &
 
+sleep 5
 echo "core test"
 i=0
 loops=10000
@@ -85,6 +86,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 storage_all.sh 1 &
 
+sleep 5
 i=0
 loops=10
 while [ $i -lt $loops ]
