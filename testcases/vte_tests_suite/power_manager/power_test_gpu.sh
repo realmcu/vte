@@ -47,6 +47,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 gles_viv.sh 1 &
 
+sleep 5
 echo "core test"
 i=0
 loops=10
@@ -63,6 +64,7 @@ wait
 echo "now test vg core"
 vg_gc35x.sh 1 &
 
+sleep 5
 i=0
 loops=10
 while [ $i -lt $loops ]
@@ -118,6 +120,7 @@ do
 
   gles_viv.sh 1 &
 
+  sleep 5
   i=0
   loops=100
   while [ $i -lt $loops ]
@@ -141,6 +144,7 @@ do
 echo "now test vg core"
 vg_gc35x.sh 1 &
 
+  sleep 5
   i=0
   loops=100
   while [ $i -lt $loops ]
