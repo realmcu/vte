@@ -165,9 +165,10 @@ extern "C" {
 			}
 			sleep(1);
 		}
-		while (ioctl
-		       (fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
-			&update_marker) < 0) {
+	if(1){
+	struct mxcfb_update_marker_data upd_marker_data;
+	upd_marker_data.update_marker = im_update.update_marker;
+	while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,&upd_marker_data) < 0) {
 			wait_time++;
 			if (wait_time > MAX_WAIT) {
 				tst_resm(TINFO,
@@ -175,6 +176,7 @@ extern "C" {
 				return FALSE;
 			}
 		}
+	}
 		return TRUE;
 	}
 
@@ -245,14 +247,17 @@ extern "C" {
 				}
 				sleep(1);
 			}
-			while (ioctl
-			       (fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
-				&(im_update.update_marker)) < 0) {
-				wait_time++;
-				if (wait_time > MAX_WAIT) {
-					tst_resm(TINFO,
-						 "full mode wait time exceed!!!\n");
-					break;
+			if(1){
+				struct mxcfb_update_marker_data upd_marker_data;
+				upd_marker_data.update_marker = im_update.update_marker;
+				while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
+					&upd_marker_data) < 0) {
+					wait_time++;
+					if (wait_time > MAX_WAIT) {
+						tst_resm(TINFO,
+							 "full mode wait time exceed!!!\n");
+						break;
+					}
 				}
 			}
 
@@ -278,34 +283,6 @@ extern "C" {
 		    (struct mxcfb_update_data *)p_update;
 		/*do not use alt buffer */
 		p_im_update->flags = 0;
-		/*
-		   tst_resm(TINFO,"l = %d t= %d w = %d h = %d\n",
-		   p_im_update->update_region.left,
-		   p_im_update->update_region.top,
-		   p_im_update->update_region.width,
-		   p_im_update->update_region.height);
-		 */
-#if 0
-		/*step 2: update and wait finished */
-		while (count--) {
-			/*black and white alternative */
-			while (ioctl(fb_fd, MXCFB_SEND_UPDATE, p_im_update) < 0) {
-				sleep(1)
-			}
-			while (ioctl
-			       (fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
-				&(p_im_update->update_marker)) < 0) {
-				wait_time++;
-				if (wait_time > MAX_WAIT) {
-					tst_resm(TINFO,
-						 "wait time exceed!!!\n");
-					break;
-				}
-			}
-			wait_time = 0;
-			tst_resm(TINFO, "partial mode next update\n");
-		}
-#endif
 		/*step 3: now using full update mode */
 		count = 1;
 		p_im_update->update_mode = 1;
@@ -323,14 +300,17 @@ extern "C" {
 				}
 				sleep(1);
 			}
-			while (ioctl
-			       (fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
-				&(p_im_update->update_marker)) < 0) {
-				wait_time++;
-				if (wait_time > MAX_WAIT) {
-					tst_resm(TINFO,
-						 "full mode wait time exceed!!!\n");
-					break;
+			if(1){
+				struct mxcfb_update_marker_data upd_marker_data;
+				upd_marker_data.update_marker = p_im_update->update_marker;
+				while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
+					&upd_marker_data) < 0) {
+					wait_time++;
+					if (wait_time > MAX_WAIT) {
+						tst_resm(TINFO,
+							 "full mode wait time exceed!!!\n");
+						break;
+					}
 				}
 			}
 			gettimeofday(&tv, &tz);
@@ -438,14 +418,17 @@ extern "C" {
 			}
 			sleep(1);
 		}
-		while (ioctl
-		       (fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
-			&update_marker) < 0) {
-			wait_time++;
-			if (wait_time > MAX_WAIT) {
-				tst_resm(TINFO,
-					 "full mode wait time exceed!!!\n");
-				return FALSE;
+		if(1){
+			struct mxcfb_update_marker_data upd_marker_data;
+			upd_marker_data.update_marker = im_update.update_marker;
+			while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
+				&upd_marker_data) < 0) {
+				wait_time++;
+				if (wait_time > MAX_WAIT) {
+					tst_resm(TINFO,
+						 "full mode wait time exceed!!!\n");
+					return FALSE;
+				}
 			}
 		}
 		return TRUE;
@@ -481,14 +464,17 @@ extern "C" {
 				}
 				sleep(1);
 			}
-			while (ioctl
-			       (fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
-				&(p_im_update->update_marker)) < 0) {
-				wait_time++;
-				if (wait_time > MAX_WAIT) {
-					tst_resm(TINFO,
-						 "wait time exceed!!!\n");
-					break;
+			if(1){
+				struct mxcfb_update_marker_data upd_marker_data;
+				upd_marker_data.update_marker = p_im_update->update_marker;
+				while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
+					&upd_marker_data) < 0) {
+					wait_time++;
+					if (wait_time > MAX_WAIT) {
+						tst_resm(TINFO,
+							 "wait time exceed!!!\n");
+						break;
+					}
 				}
 			}
 #endif
@@ -514,14 +500,17 @@ extern "C" {
 				}
 				sleep(1);
 			}
-			while (ioctl
-			       (fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
-				&(p_im_update->update_marker)) < 0) {
-				wait_time++;
-				if (wait_time > MAX_WAIT) {
-					tst_resm(TINFO,
-						 "full mode wait time exceed!!!\n");
-					break;
+			if(1){
+				struct mxcfb_update_marker_data upd_marker_data;
+				upd_marker_data.update_marker = p_im_update->update_marker;
+				while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
+					&upd_marker_data) < 0) {
+					wait_time++;
+					if (wait_time > MAX_WAIT) {
+						tst_resm(TINFO,
+							 "full mode wait time exceed!!!\n");
+						return FALSE;
+					}
 				}
 			}
 #endif
@@ -928,14 +917,17 @@ extern "C" {
 				}
 				sleep(1);
 			}
-			while (ioctl
-			       (fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
-				&update_marker) < 0) {
-				wait_time++;
-				if (wait_time > MAX_WAIT) {
-					tst_resm(TINFO,
-						 "wait time exceed!!!\n");
-					break;
+			if(1){
+				struct mxcfb_update_marker_data upd_marker_data;
+				upd_marker_data.update_marker = im_update.update_marker;
+				while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
+					&upd_marker_data) < 0) {
+						wait_time++;
+						if (wait_time > MAX_WAIT) {
+							tst_resm(TINFO,
+						 		"wait time exceed!!!\n");
+							return FALSE;
+						}
 				}
 			}
 			wait_time = 0;
@@ -960,14 +952,17 @@ extern "C" {
 				}
 				sleep(1);
 			}
-			while (ioctl
-			       (fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
-				&update_marker) < 0) {
-				wait_time++;
-				if (wait_time > MAX_WAIT) {
-					tst_resm(TINFO,
-						 "wait time exceed!!!\n");
-					break;
+			if(1){
+				struct mxcfb_update_marker_data upd_marker_data;
+				upd_marker_data.update_marker = im_update.update_marker;
+				while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
+					&upd_marker_data) < 0) {
+					wait_time++;
+					if (wait_time > MAX_WAIT) {
+						tst_resm(TINFO,
+							 "wait time exceed!!!\n");
+						return FALSE;
+					}
 				}
 			}
 			wait_time = 0;
@@ -1041,13 +1036,15 @@ extern "C" {
 			}
 			sleep(1);
 		}
-		while (ioctl
-		       (fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
-			&update_marker) < 0) {
-			wait_time++;
-			if (wait_time > MAX_WAIT) {
-				tst_resm(TINFO, "wait time exceed!!!\n");
-				break;
+		if(1){
+			struct mxcfb_update_marker_data upd_marker_data;
+			upd_marker_data.update_marker = im_update.update_marker;
+			while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,&upd_marker_data) < 0) {
+				wait_time++;
+				if (wait_time > MAX_WAIT) {
+					tst_resm(TINFO, "wait time exceed!!!\n");
+					return FALSE;
+				}
 			}
 		}
 		wait_time = 0;
@@ -1114,14 +1111,17 @@ extern "C" {
 				}
 				sleep(1);
 			}
-			while (ioctl
-			       (fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
-				&update_marker) < 0) {
-				wait_time++;
-				if (wait_time > MAX_WAIT) {
+			if(1){
+				struct mxcfb_update_marker_data upd_marker_data;
+				upd_marker_data.update_marker = im_update.update_marker;
+				while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
+					&upd_marker_data) < 0) {
+					wait_time++;
+					if (wait_time > MAX_WAIT) {
 					tst_resm(TINFO,
 						 "wait time exceed!!!\n");
 					break;
+					}
 				}
 			}
 			wait_time = 0;
@@ -1148,9 +1148,11 @@ extern "C" {
 				}
 				sleep(1);
 			}
-			while (ioctl
-			       (fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
-				&update_marker) < 0) {
+		if(1){
+		struct mxcfb_update_marker_data upd_marker_data;
+		upd_marker_data.update_marker = im_update.update_marker;
+		while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,
+			&upd_marker_data) < 0) {
 				wait_time++;
 				if (wait_time > MAX_WAIT) {
 					tst_resm(TINFO,
@@ -1162,6 +1164,7 @@ extern "C" {
 			tst_resm(TINFO, "next update\n");
 			draw_pattern(fb_fd, fb_mem_ptr, 0, 0, 0);
 		}
+	}
 		return TRUE;
 	}
 
