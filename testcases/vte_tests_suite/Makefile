@@ -65,6 +65,7 @@ SUBDIRS-y                         += tools
 SUBDIRS-y                         += kernel_tests
 SUBDIRS-y                         += tool_chain_test 
 SUBDIRS-y                         += runtests
+SUBDIRS-y                         += network_tests
 SUBDIRS-$(CONFIG_VTE_DATA)        += test_data
 SUBDIRS-$(CONFIG_VTE_SENSOR)      += sensor_tests
 SUBDIRS-$(CONFIG_VTE_ALSA)        += alsa_tests
