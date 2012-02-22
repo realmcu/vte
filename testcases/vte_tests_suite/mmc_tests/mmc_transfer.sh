@@ -58,11 +58,11 @@ setup
 
 #main
 
-time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 -o /tmp/rs
+time dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 2>/tmp/rs
 rs=$(cat /tmp/rs | grep real | awk '{print $2}')
-time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 -o /tmp/us
+time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 2>/tmp/us
 user=$(cat /tmp/us | grep user | awk '{print $2}')
-time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 -o /tmp/sys 
+time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 2>/tmp/sys 
 sys=$(cat /tmp/sys | grep sys | awk '{print $2}')
 
 judge=$(echo "$rs > ( $user + $sys)" | bc)
