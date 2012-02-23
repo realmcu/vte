@@ -296,7 +296,7 @@ FORMAT=3
 test_dec_exec || return $RC
 srcfile=${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv
 ESIZE="-w 352 -h 288"
-test_enc_exec || return $RC
+#test_enc_exec || return $RC
 
 RC=0
 
