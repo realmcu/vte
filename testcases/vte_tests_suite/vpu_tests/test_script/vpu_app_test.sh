@@ -442,7 +442,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 # main function
 FORMAT=7
 srcfile=${STREAM_PATH}/video/akiyomp4.yuv
-ESIZE="-w 8192 -h 8192"
+ESIZE="-w 2592 -h 1944"
 test_enc_exec || return $RC
 
 RC=0
