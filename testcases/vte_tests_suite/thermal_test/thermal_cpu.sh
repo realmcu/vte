@@ -77,7 +77,7 @@ echo $trip1 > ${THERMO_PATH}/trip_point_1_temp
 if [ $RC -ne 0 ]
 then
     tst_resm TINFO "Test FAIL"      
-done
+fi
 
 exit $RC
 }
