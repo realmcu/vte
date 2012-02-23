@@ -85,7 +85,7 @@ RC=0
 
 echo $CAMERA
 
-if [ -z $CAMERA ] && [ "$DUAL" != 1  ]  ; then
+if [ -z $CAMERA ] && [ "$DUAL" == 2  ]  ; then
   echo "define default"
   CAMERA=ov5640
 fi
