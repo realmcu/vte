@@ -214,7 +214,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #a_stream_path=/mnt/nfs/test_stream/power_stream/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch.mp4
 #b_stream_path=/mnt/nfs/test_stream/power_stream/V031204_Times_Square_traffic_1920x1088p30_20Mbps_600frm_H264_noaudio.mp4
-a_stream_path=/mnt/nfs/test_stream/power_stream/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
+a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
 b_stream_path=/mnt/nfs/test_stream/video/Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.cmp
 
 /unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" &
@@ -271,10 +271,10 @@ RC=0
 
 v4l_module.sh setup
 
-/unit_tests/mxc_vpu_test.out -L "-f 2 -w 1080 -h 720 -t 1" &
+/unit_tests/mxc_vpu_test.out -L "-f 2 -w 1080 -h 720 -t 1 -x 17" &
 pid=$!
-a_stream_path=/mnt/nfs/test_stream/power_stream/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
-/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" || RC=1
+a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
+/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path} -x 16" || RC=1
 sleep 15
 kill -9 $pid
 
@@ -296,7 +296,7 @@ TST_COUNT=7
 RC=0
 
 
-a_stream_path=/mnt/nfs/test_stream/power_stream/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
+a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
 
 start_date=$(date +%d)
 now_date=$(date +%d)
