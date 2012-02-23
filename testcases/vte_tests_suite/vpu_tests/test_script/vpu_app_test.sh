@@ -442,7 +442,6 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 # main function
 FORMAT=7
 srcfile=${STREAM_PATH}/video/akiyomp4.yuv
-test_dec_exec || return $RC
 ESIZE="-w 8192 -h 8192"
 test_enc_exec || return $RC
 
@@ -474,7 +473,7 @@ fi
 
 srcfile=
 FORMAT=
-SIZELIST="176x144 320x640 640x480 720x480 720x576 1024x768 1280x720 1920x1080"
+SIZELIST="176x144 320x240 640x480 720x480 720x576 1024x768 1280x720 1920x1080"
 ROTATION="0 90 180 270"
 #ROTATION="0"
 MIRROR="0 1 2 3"
