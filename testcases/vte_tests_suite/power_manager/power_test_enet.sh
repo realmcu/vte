@@ -4,18 +4,18 @@ setup()
 {
     # Total number of test cases in this file. 
     export TST_TOTAL=1
-
+    
     # The TCID and TST_COUNT variables are required by the LTP 
     # command line harness APIs, these variables are not local to this program.
 
     # Test case identifier
-    export TCID="vpu_POWER_test"
+    export TCID="enet_POWER_test"
     # Set up is initialized as test 0
     export TST_COUNT=0
     # Initialize cleanup function to execute on program exit.
     # This function will be called before the test program exits.
     trap "cleanup" 0
-    
+   
 	return $RC
 }
 
@@ -28,7 +28,7 @@ usage()
 {
    echo "1: for device suspend resume case for no boot cores "	
    echo "2: for device suspend resume case for all cores "	
-   echo "3: wait mode "	
+   echo "3: for wait mode for no boot cores "	
 }
 
 # Function:     test_case_01
@@ -37,7 +37,7 @@ usage()
 test_case_01()
 {
 #TODO give TCID 
-TCID="vpu_PM_NOBOOTCORE"
+TCID="wifi_PM_NOBOOTCORE"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=1
@@ -46,7 +46,7 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-display_stress.sh 5 &
+udp_stream_script ${SERVERIP} CPU &
 
 sleep 5
 echo "core test"
@@ -76,7 +76,7 @@ return $RC
 test_case_02()
 {
 #TODO give TCID 
-TCID="vpu_PM_BOOTCORE"
+TCID="wifi_PM_BOOTCORE"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=1
@@ -89,7 +89,7 @@ count=0
 while [ $count -lt $tloops ]
 do
 
-  display_stress.sh 5 &
+  udp_stream_script ${SERVERIP} CPU &
 
   sleep 5
   i=0
@@ -118,7 +118,7 @@ return $RC
 test_case_03()
 {
 #TODO give TCID 
-TCID="vpu_PM_WAITMODE"
+TCID="wifi_PM_WAITMODE"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=1
@@ -127,7 +127,7 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-display_stress.sh 5 &
+udp_stream_script ${SERVERIP} CPU &
 
 sleep 5
 echo "core test"
@@ -149,6 +149,7 @@ RC=0
 return $RC
 
 }
+
 
 setup || exit 1
 

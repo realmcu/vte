@@ -28,6 +28,7 @@ usage()
 {
    echo "1: for device suspend resume case for no boot cores "	
    echo "2: for device suspend resume case for all cores "	
+   echo "3: for wait mode test "	
 }
 
 # Function:     test_case_01
@@ -104,6 +105,43 @@ return $RC
 
 }
 
+# Function:     test_case_03
+# Description   - Test if device suspend and resume without bootcore
+#  
+test_case_03()
+{
+#TODO give TCID 
+TCID="USB_PM_WAITMODE"
+#TODO give TST_COUNT
+TST_COUNT=1
+RC=1
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+#TODO add function test scripte here
+storage_all.sh 1 &
+
+sleep 5
+echo "core test"
+i=0
+loops=10000
+echo core > /sys/power/pm_test
+while [ $i -lt $loops ]
+do
+  i=$(expr $i + 1)
+ echo standby > /sys/power/state
+done
+
+echo none > /sys/power/pm_test
+
+wait
+
+RC=0
+
+return $RC
+
+}
 
 setup || exit 1
 
@@ -113,6 +151,9 @@ case "$1" in
   ;;
 2)
   test_case_02 || exit 3
+  ;;
+3)
+  test_case_03 || exit 3
   ;;
 *)
   usage

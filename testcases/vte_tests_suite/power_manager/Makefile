@@ -12,7 +12,7 @@ SUBDIRS-y += pwr_battery
 SUBDIRS-y += pwr_clocks
 scripts = powerstate_test.sh power_test_storage.sh power_test_alsa.sh \
 		  power_test_vpu.sh power_test_wifi.sh power_test_v4l.sh \
-		  power_test_gpu.sh
+		  power_test_gpu.sh power_test_enet.sh
 
 all:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
