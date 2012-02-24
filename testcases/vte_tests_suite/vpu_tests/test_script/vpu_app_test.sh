@@ -41,6 +41,7 @@ export TST_TOTAL=8
 export TCID="setup"
 export TST_COUNT=0
 RC=1
+OV=0
 
 trap "cleanup" 0
 
@@ -60,6 +61,7 @@ fi
 
 if [ -z $NO_CAMERA ]; then
 v4l_module.sh setup
+OV=$?
 fi
 #setup the fb on
 echo 0 > /sys/class/graphics/fb0/blank
@@ -474,6 +476,8 @@ fi
 srcfile=
 FORMAT=
 SIZELIST="176x144 320x240 640x480 720x480 720x576 1024x768 1280x720 1920x1080"
+#For ov5642, it only support below 6 resolution for fps 30
+SIZELIST_5642="176x144 320x240 640x480 720x480 720x576 1280x720"
 ROTATION="0 90 180 270"
 #ROTATION="0"
 MIRROR="0 1 2 3"
@@ -495,6 +499,9 @@ fi
 TSTCMD="/unit_tests/mxc_vpu_test.out"
 
 setup || exit $RC
+if [ $OV == 56 ]; then
+	SIZELIST=$SIZELIST_5642
+fi
 
 case "$1" in
 1)
