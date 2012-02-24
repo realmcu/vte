@@ -28,6 +28,7 @@ usage()
 {
    echo "1: for device suspend resume case for no boot cores "	
    echo "2: for device suspend resume case for all cores "	
+   echo "3: wait mode test for no boot cores "	
 }
 
 # Function:     test_case_01
@@ -45,7 +46,7 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-v4l_capture_test -T 100 &
+v4l_capture_testapp -T 100 &
 
 echo "core test"
 i=0
@@ -87,7 +88,7 @@ count=0
 while [ $count -lt $tloops ]
 do
 
-v4l_capture_test -T 300 -M 5 &
+v4l_capture_testapp -T 300 -M 5 &
 
   i=0
   loops=100
@@ -124,7 +125,7 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-v4l_capture_test -T 100 &
+v4l_capture_testapp -T 100 &
 
 echo "core test"
 i=0
