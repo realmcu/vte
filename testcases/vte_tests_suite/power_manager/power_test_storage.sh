@@ -51,7 +51,7 @@ storage_all.sh 1 &
 sleep 5
 echo "core test"
 i=0
-loops=10000
+loops=10
 echo core > /sys/power/pm_test
 while [ $i -lt $loops ]
 do
@@ -89,7 +89,7 @@ storage_all.sh 1 &
 
 sleep 5
 i=0
-loops=10
+loops=1000
 while [ $i -lt $loops ]
 do
   i=$(expr $i + 1)
@@ -125,7 +125,7 @@ storage_all.sh 1 &
 sleep 5
 echo "core test"
 i=0
-loops=10000
+loops=10
 echo core > /sys/power/pm_test
 while [ $i -lt $loops ]
 do
