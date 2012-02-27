@@ -112,5 +112,10 @@ if [ $RC  -ne 0  ];then
   exit $RC
 else
   echo "OK to $1 v4l"
+  if [ $camera_module == ov5642_camera ]; then
+	  #special for ov5642 which only support some modes in 6q Lite platform
+	  exit 56
+  else
   exit $RC 
+  fi
 fi
