@@ -58,18 +58,20 @@ setup
 
 #main
 
-time dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 2>/tmp/rs
+rm -rf /tmp/rs
+(time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10) 2>/tmp/rs
 rs=$(cat /tmp/rs | grep real | awk '{print $2}')
-time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 2>/tmp/us
-user=$(cat /tmp/us | grep user | awk '{print $2}')
-time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 2>/tmp/sys 
-sys=$(cat /tmp/sys | grep sys | awk '{print $2}')
+#time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 2>/tmp/us
+user=$(cat /tmp/rs | grep user | awk '{print $2}')
+#time -p dd if=/dev/mmcblk0p1 of=/dev/null bs=1M count=10 2>/tmp/sys 
+sys=$(cat /tmp/rs | grep sys | awk '{print $2}')
+rm -rf /tmp/rs
 
 judge=$(echo "$rs > ( $user + $sys)" | bc)
 if [  $judge -eq 1 ]; then
   echo "wait time implys there are DMA transfer, test PASS"
-	return 0
+	exit 0
 fi
 echo "test FAIL, no DMA involved"
-return 1
+exit 1
 
