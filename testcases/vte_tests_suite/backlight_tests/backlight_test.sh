@@ -90,7 +90,7 @@ env_test()
     fi
 
     if [ $platfm -eq 61 ]; then  #LVDS
-        BL_DIR=/sys/class/backlight/pwm-backlight.3
+        BL_DIR=/sys/class/backlight/pwm-backlight.0
     fi
 
     if [ $platfm -eq 63 ]; then  #LVDS
