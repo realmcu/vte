@@ -1,0 +1,121 @@
+TGE-LV-V4L2-0068 v4l_capture_testapp -C 2 -H 640 -W 480 -T 100 -X -M 5 -r 15 && v4l_capture_testapp -C 2 -H 640 -W 480 -T 100 -X -M 6 -r 15 && v4l_capture_testapp -C 1 -H 640 -W 480 -T 100 -X -M 5 -r 15 && v4l_capture_testapp -C 1 -H 640 -W 480 -T 100 -X -M 5 -r 15
+TGE-LV-V4L2-0010 v4l_capture_testapp -T 10
+TGE-LV-V4L2-0011 v4l_capture_testapp -T 300
+TGE-LV-V4L2-0012 v4l_capture_testapp -H 320 -W 240
+TGE-LV-V4L2-0013 v4l_capture_testapp -H 160 -W 120
+TGE-LV-V4L2-0015 v4l_capture_testapp -H 100 -W 100
+TGE-LV-V4L2-0016 v4l_capture_testapp -H 10 -W 200
+TGE-LV-V4L2-0017 v4l_capture_testapp -H 220 -W 176
+TGE-LV-V4L2-0018 v4l_capture_testapp -S
+TGE-LV-V4L2-0019 v4l_capture_testapp -B 0,0,100,100 -v 1
+TGE-LV-V4L2-0020 v4l_capture_testapp -B 0,0,320,240 -v 1
+TGE-LV-V4L2-0021 v4l_capture_testapp -B 100,100,320,240 -v 1
+TGE-LV-V4L2-0022 v4l_capture_testapp -B 10,10,320,240 -v 1
+TGE-LV-V4L2-0023 v4l_capture_testapp -B 50,50,100,100 -v 1
+TGE-LV-V4L2-0024 v4l_capture_testapp -B 0,0,220,176 -v 1
+TGE-LV-V4L2-0025 v4l_capture_testapp -B 100,100,100,100 -v 1
+TGE-LV-V4L2-0026 v4l_capture_testapp -B 0,200,100,100 -v 1
+TGE-LV-V4L2-0028 v4l_capture_testapp -B 320,240,100,100 -v 1
+TGE-LV-V4L2-0029 v4l_capture_testapp -B 0,0,640,480 -v 1
+TGE-LV-V4L2-0030 v4l_capture_testapp -R 1 -C 1
+TGE-LV-V4L2-0031 v4l_capture_testapp -R 2 -C 1
+TGE-LV-V4L2-0032 v4l_capture_testapp -R 3 -C 1
+TGE-LV-V4L2-0033 v4l_capture_testapp -R 4 -C 1
+TGE-LV-V4L2-0034 v4l_capture_testapp -R 5 -C 1
+TGE-LV-V4L2-0035 v4l_capture_testapp -R 6 -C 1
+TGE-LV-V4L2-0036 v4l_capture_testapp -R 7 -C 1
+TGE-LV-V4L2-0039 v4l_capture_testapp -Y1
+TGE-LV-V4L2-0040 v4l_capture_testapp -C 2 -H 100  -W 200
+TGE-LV-V4L2-0041 v4l_capture_testapp -C2 -R 9
+TGE-LV-V4L2-0042 v4l_capture_testapp -C2 -R 10
+TGE-LV-V4L2-0043 v4l_capture_testapp -C2 -R 11
+TGE-LV-V4L2-0044 v4l_capture_testapp -C2 -R 12
+TGE-LV-V4L2-0045 v4l_capture_testapp -C2 -R 13
+TGE-LV-V4L2-0046 v4l_capture_testapp -C2 -R 14
+TGE-LV-V4L2-0047 v4l_capture_testapp -C2 -R 15
+TGE-LV-V4L2-0048 v4l_capture_testapp -C2 -R 16
+TGE-LV-V4L2-0050 v4l_capture_testapp -C 3 -O BGR24 -o ./output
+TGE-LV-V4L2-0051 v4l_capture_testapp -C 3 -O BGR32 -o ./output
+TGE-LV-V4L2-0052 v4l_capture_testapp -C 3 -O RGB565 -o ./output
+TGE-LV-V4L2-0053 v4l_capture_testapp -C 3 -O RGB24 -o ./output
+TGE-LV-V4L2-0054 v4l_capture_testapp -C 3 -O RGB32 -o ./output
+TGE-LV-V4L2-0055 v4l_capture_testapp -C 3 -O YUV422P -o ./output && cp output_YUV422P /mnt/nfs/temp/ipu_YUV422P_240_190.bin && rm -f output_YUV422P
+TGE-LV-V4L2-0056 v4l_capture_testapp -C 3 -O YUV420 -o ./output && cp output_YUV420 /mnt/nfs/temp/ipu_YUV420_240_190.bin && rm -rf output_YUV420
+TGE-LV-V4L2-0058 v4l_capture_testapp -C 3 -H 100  -W 100
+TGE-LV-V4L2-0090 v4l_capture_testapp -S -R 10
+TGE-LV-V4L2-0091 v4l_capture_testapp -S -R 11
+TGE-LV-V4L2-0092 v4l_capture_testapp -S -R 12
+TGE-LV-V4L2-0093 v4l_capture_testapp -S -R 13
+TGE-LV-V4L2-0094 v4l_capture_testapp -S -R 14
+TGE-LV-V4L2-0095 v4l_capture_testapp -S -R 15
+TGE-LV-V4L2-0096 v4l_capture_testapp -S -R 16
+TGE-LV-V4L2-0100 v4l_capture_testapp -R 9 -N 5 -X
+TGE-LV-V4L2-0108 v4l_capture_testapp -R 10 -N 5 -X
+TGE-LV-V4L2-0101 v4l_capture_testapp -R 11 -N 5 -X
+TGE-LV-V4L2-0102 v4l_capture_testapp -R 12 -N 5 -X
+TGE-LV-V4L2-0103 v4l_capture_testapp -R 13 -N 5 -X
+TGE-LV-V4L2-0104 v4l_capture_testapp -R 14 -N 5 -X
+TGE-LV-V4L2-0105 v4l_capture_testapp -R 15 -N 5 -X
+TGE-LV-V4L2-0106 v4l_capture_testapp -R 16 -N 5 -X
+TGE-LV-V4L2-0107 v4l_capture_testapp -R 11 -N  -T 5
+TGE-LV-V4L2-0038 v4l_capture_testapp -Y2
+TGE-LV-V4L2-0064 v4l_capture_testapp -C 2 -H 480  -W 640 -T 20
+TGE-LV-V4L2-0065 v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -X
+TGE-LV-V4L2-0120 v4l_capture_testapp -C 3 -H 240  -W 320
+TGE-LV-V4L2-0130 v4l2_basic_test.sh
+TGE-LV-V4L2-0131 v4l2_still_test.sh
+TGE-LV-V4L2-0059 v4l_capture_testapp -C 3 -H 480  -W 640
+TGE-LV-V4L2-0171-stress v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24
+TGE-LV-V4L2-0136 mxc_v4l2_overlay.sh 1
+TGE-LV-V4L2-0137 mxc_v4l2_overlay.sh 2
+TGE-LV-V4L2-0138 mxc_v4l2_overlay.sh 3
+TGE-LV-V4L2-0139 mxc_v4l2_overlay.sh 4
+TGE-LV-V4L2-0140 mxc_v4l2_overlay.sh 5
+TGE-LV-V4l2-1001W v4l_module.sh setup;/unit_tests/mxc_v4l2_still.out -f YUYV -w 640 -h 480 && cp -f still.yuv /mnt/nfs/temp/still_YUYV_640_480.yuv; v4l_module.sh cleanup
+TGE-LV-V4L2-0165 v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -X -K 1
+TGE-LV-V4L2-0121 v4l_capture_testapp -C 3 -H 240  -W 320 -K 1
+TGE-LV-V4L2-0122 v4l_capture_testapp -C 3 -H 240  -W 320 -s CSI_IC_MEM
+TGE-LV-V4L2-0123 v4l_capture_testapp -C 3 -H 240  -W 320 -s CSI_MEM
+TGE-LV-V4L2-0124 v4l_capture_testapp -C 3 -H 480  -W 640 -O YUV420 -o ./test -s CSI_MEM && rm -f test_YUV420
+TGE-LV-V4L2-0125 v4l_capture_testapp -C 2 -H 240  -W 320 -s CSI_IC_MEM
+TGE-LV-V4L2-2010 (v4l_capture_testapp -T 300 -X &) &&  v4l_capture_testapp -C 3 -H 240 -W 320 -K 1
+TGE-LV-V4L2-0067 v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 0 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 1 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 2 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 3 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 4 -r 30 && v4l_capture_testapp -C 2 -H 720 -W 480 -T 100 -X -M 4 -r 30
+TGE-LV-V4L2-0141 mxc_v4l2_overlay.sh 6
+TGE-LV-V4L2-0158 v4l_capture_testapp -C 3 -O YUYV -o ./output && cp output_YUYV /mnt/nfs/temp/ipu_YUYV.bin && rm -rf output_YUYV
+TGE-LV-V4L2-0159 v4l_capture_testapp -C 3 -O UYVY -o ./output && cp output_UYVY /mnt/nfs/temp/ipu_UYVY.bin && rm -rf output_UYVY
+TGE-LV-V4L2-0030_VF v4l_capture_testapp -R 10
+TGE-LV-V4L2-0152 echo 1 > /sys/class/graphics/fb0/blank ; echo 1 > /sys/class/graphics/fb2/blank ; sleep 5 && v4l_capture_testapp -C 3 -O RGB565 -o ./output && echo 0 > /sys/class/graphics/fb0/blank && echo 0 > /sys/class/graphics/fb2/blank
+TGE-LV-V4L2-0126 v4l_capture_testapp  -C 3 -T 100 -Z
+TGE-LV-V4L2-0127 v4l_capture_testapp -C 3 -T 100  -r 15 -Z
+TGE-LV-V4L2-0128 v4l_capture_testapp -C 3 -T 1000 -Z && v4l_capture_testapp -C 3 -T 1000  -r 15 -Z
+TGE-LV-V4L2-1011 echo 1 > /sys/class/graphics/fb0/blank && v4l_capture_testapp -T 10 && echo 1 > /sys/class/graphics/fb0/blank
+TGE-LV-V4L2-1138 export CAMERA=ov5640_mipi;mxc_v4l2_overlay.sh 3
+TGE-LV-V4L2-1139 export CAMERA=ov5640_mipi;mxc_v4l2_overlay.sh 4
+TGE-LV-V4L2-1140 export CAMERA=ov5640_mipi; mxc_v4l2_overlay.sh 5
+TGE-LV-V4L2-4010 export CAMERA=ov5640_mipi ; v4l_capture_testapp -T 10
+TGE-LV-V4L2-0069 v4l_capture_testapp -C 3 -H 1080 -W 1920 -r 15 -M 5 -O BGR24 -o /mnt/nfs/temp/output_1920_1080 && v4l_capture_testapp -C 3 -H 1944 -W 2592 -r 15 -M 6 -O BGR24 -o /mnt/nfs/temp/output_1944_2592 && conv -i /mnt/nfs/temp/output_1920_1080 -b 256 -I BGR24 -x 1920 -y 1080 -o /mnt/nfs/temp/out_1920_1080.bmp && conv -i /rootfs/wb/temp/output_1944_2592 -b 256 -I BGR24 -x 2592 -y 1944 -o /mnt/nfs/temp/out_2592_1944.bmp
+TGE-LV-V4L2-0071 v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24
+TGE-LV-V4L2-0072 v4l_output_testapp  -C 2 -F $LTPROOT/testcases/bin/yuv420
+TGE-LV-V4L2-0073 v4l_output_testapp -C 2 -R 1 -F $LTPROOT/testcases/bin/cyan_RGB32
+TGE-LV-V4L2-0074 v4l_output_testapp -C 2 -R 2 -F $LTPROOT/testcases/bin/cyan_RGB32
+TGE-LV-V4L2-0075 v4l_output_testapp -C 2 -R 3 -F $LTPROOT/testcases/bin/green_RGB24
+TGE-LV-V4L2-0076 v4l_output_testapp -C 2 -R 4 -F $LTPROOT/testcases/bin/green_RGB24
+TGE-LV-V4L2-0077 v4l_output_testapp -C 2 -R 5 -F $LTPROOT/testcases/bin/yellow_BGR32
+TGE-LV-V4L2-0078 v4l_output_testapp -C 2 -R 6 -F $LTPROOT/testcases/bin/yellow_BGR32
+TGE-LV-V4L2-0079 v4l_output_testapp -C 2 -R 7 -F $LTPROOT/testcases/bin/yellow_BGR32
+TGE-LV-V4L2-0084 v4l_output_testapp -C 2 -F $LTPROOT/testcases/bin/yuv422p
+TGE-LV-V4L2-1070 v4l_output_testapp -B 10,10,320,240 -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
+TGE-LV-V4L2-1071 v4l_output_testapp -B 10,10,320,240 -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24
+TGE-LV-V4L2-1072 v4l_output_testapp  -B 10,10,320,240 -C 2 -F $LTPROOT/testcases/bin/yuv420
+TGE-LV-V4L2-1073 v4l_output_testapp -B 10,10,320,240 -C 2 -R 1 -F $LTPROOT/testcases/bin/cyan_RGB32
+TGE-LV-V4L2-1074 v4l_output_testapp -B 10,10,320,240 -C 2 -R 2 -F $LTPROOT/testcases/bin/cyan_RGB32
+TGE-LV-V4L2-1075 v4l_output_testapp -B 0,0,2048,2048 -C 2 -R 3 -F $LTPROOT/testcases/bin/green_RGB24
+TGE-LV-V4L2-1076 ipuv3_test.sh 3
+TGE-LV-V4L2-1077 /unit_tests/mxc_v4l2_output.out -iw 352 -ih 240 -fr 80  ${LTPROOT}/testcases/bin/fb-352x240.yuv
+TGE-LV-V4L2-1078 mxc_v4l2_output.sh 1
+TGE-LV-V4L2-1079 mxc_v4l2_output.sh 2
+TGE-LV-V4L2-1080 mxc_v4l2_output.sh 3
+TGE-LV-V4L2-1081 mxc_v4l2_output.sh 4
+TGE-LV-V4L2-1082 mxc_v4l2_output.sh 5
+TGE-LV-V4L2-0070 v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
+
