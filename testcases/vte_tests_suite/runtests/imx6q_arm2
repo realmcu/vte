@@ -195,6 +195,8 @@ TGE-LV-GPU-FB-PERF-GLES-0006	gles_viv.sh 2
 TGE-LV-GPU-PERF-OPENVG-0001	vg_gc2000.sh 1
 TGE-LV-GPU-FB-CL11-0001 cl_gc2000.sh 1
 TGE-LV-GPU-FB-CL11-0002 cl_gc2000.sh 2
+TGE-LV-GPU-FB-CL11-0003 cl_gc2000.sh 3
+TGE-LV-GPU-CLOCK-0001 gpu_clk.sh 1
 TGE-LV-KMEM-0001	insmod ${LTPROOT}/testcases/bin/memory_test.ko && rmmod memory_test
 TGE-LV-KERNEL-CLOCK-0001	cat /proc/timer_list | grep clock | wc -l
 TGE-LV-KERNEL-SMP-0002	[ $(cat /proc/cpuinfo | grep processor | wc -l ) -eq 4 ]
@@ -205,7 +207,6 @@ TGE-LV-KERNEL_BOOT-0001	dmesg -c
 TGE-LV-KERNEL-10002	timer_resolution
 TGE-LV-KERNEL-10004	int1=$(cat /proc/interrupts | grep -i time | awk '{print $2}'); sleep 1 ; int2=$(cat /proc/interrupts | grep -i time | awk '{print  $2}'); echo $int1; echo $int2;ret=$(expr $int2 - $int1); echo $ret; [ $ret -lt 100 ] && echo PASS || echo FAIL
 TGE-LV-KERNEL-10005	cat /proc/meminfo | grep HighTotal
-TGE-LV-DVFS-0140_LLLLLL	dvfs_mx61.sh 1
 TGE-LV-DVFS-0200	cpufreq-info
 TGE-LV-ALSA-0161	(dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16S_long.wav -A &) && sleep 10 && rtc_testapp_6 -T 5 ; sleep 50
 TGE-LV-ASRC-0211	rtc_testapp_6 -T 15; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
@@ -377,6 +378,12 @@ TGE-LV-VPU-10030	vpu_enc_test.sh 4
 TGE-LV-VPU-10210	vpu_multi_enc_test.sh 1
 TGE-LV-VPU-10220	vpu_multi_enc_test.sh 2
 TGE-LV-VPU-10221	vpu_multi_enc_test.sh 3
+TGE-LV-NOR-1102 nor_mtd_testapp -T RDRW -D /dev/mtd1 -L 0x300000 -V
+TGE-LV-NOR-1115 nor_mtd_testapp -T WRNER -D /dev/mtd0 -L 0x100000  -V
+TGE-LV-NOR-1116 nor_mtd_testapp -T PERFORM -D /dev/mtd0 -V
+TGE-LV-NOR-1301 nor_test.sh 1 && nor_test.sh 2
+TGE-LV-NOR-1103 nor_mtd_testapp -T RDRW -D /dev/mtd1 -L 0x00100000 -V
+TGE-LV-NOR-1104 nor_mtd_testapp -T THRDRWE -D /dev/mtd1 -L 0x00100000 -V
 TGE-LV-VPU-20001_LL vpu_app_test.sh 1
 TGE-LV-VPU-20002_LLLL vpu_app_test.sh 2
 TGE-LV-VPU-20003_LLLL vpu_app_test.sh 3
@@ -390,4 +397,9 @@ TGE-LV-IPU_DEV-0020 	ipu_test.sh 2
 TGE-LV-IPU_DEV-0030 	ipu_test.sh 3
 TGE-LV-IPU_DEV-0040 	ipu_test.sh 4
 TGE-LV-IPU_DEV-0055 	ipu_test.sh 5
+TGE-LV-IPU_DEV-0070_LLLL       ipu_test.sh 7
 TGE-LV-THERMO-0004    thermal_freq.sh
+TGE-LV-DVFS-0304 dvfs_mx61.sh 3
+TGE-LV-DVFS-0200 cpufreq-info
+TGE-LV-DVFS-0141 dvfs_mx61.sh 2
+TGE-LV-DVFS-0140_LLLLLL	dvfs_mx61.sh 1
