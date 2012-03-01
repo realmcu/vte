@@ -714,8 +714,9 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 				timeout = 0xffffffff;
 			}
 			while (*p == 'L' || *p == 'H'){
-			  timeout += (*p == 'L')?1800:3600;
-				if(*(--p) != 'L' && *(--p) != 'H')
+				timeout += (*p == 'L')?1800:3600;
+			  	p--;
+			  	if(*p != 'L' && *p != 'H')
 					break;
 			}
 			fprintf(stdout,"case timeout is %ld \n", timeout);
@@ -755,19 +756,38 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 					running->cmd->name,
 					running->cmd->cmdline);
 					fflush(failcmdfile);
-					fprintf(logfile,"%-30.30s %-10.10s %-5d\n",
-					running->cmd->name, "TIMEOUT", 255);
-					fflush(logfile);
+					/*remove append _L _H _U*/
+						if (NULL != running[i].cmd->name) {
+							char oricom[255];
+							int nl = strlen(running->cmd->name);
+							int c = 0;
+							char * p = running->cmd->name + nl - 1;
+							memset(oricom,0,sizeof(oricom));
+							while (*p == 'L' || *p == 'H' || *p == 'U') {
+								c++;
+								p--;
+								if(c >= nl)
+									break;
+							}
+							if (c < nl && c > 0) {
+								/* also remove the _ if append */
+								strncpy(oricom,running->cmd->name,nl - c - 1);
+							} else {
+								strncpy(oricom,running->cmd->name,nl);
+							}
+							fprintf(logfile,"%-30.30s %-10.10s %-5d\n",
+							oricom, "TIMEOUT", 255);
+							fflush(logfile);
+						}	
 					}	
 					ret = system("reboot");
 					/*	continue;*/
 					while(1) sleep(1);
+					}
 				}
-			}
-
-		}
-			sleep(1);
-		}
+			}/*for loop*/
+		sleep(1);
+		}/*while loop*/
     }else{
 		cpid = wait(&stat_loc);
 	}
@@ -856,12 +876,32 @@ STEP2:
 					else {
 						if (w != 0)
 							++ * failcnt;
-						fprintf(logfile,
-							"%-30.30s %-10.10s %-5d\n",
-							running[i].cmd->name,
-							((w !=
-							  0) ? "FAIL" : "PASS"),
-							w);
+						/*remove append _L _H _U*/
+						if (NULL != running[i].cmd->name) {
+							char oricom[255];
+							int nl = strlen(running->cmd->name);
+							int c = 0;
+							char * p = running->cmd->name + nl - 1;
+							memset(oricom,0,sizeof(oricom));
+							while (*p == 'L' || *p == 'H' || *p == 'U') {
+								c++;
+								p--;
+								if(c >= nl)
+									break;
+							}
+							if (c < nl && c > 0) {
+								/* also remove the _ if append */
+								strncpy(oricom,running->cmd->name,nl - c - 1);
+							} else {
+								strncpy(oricom,running->cmd->name,nl);
+							}
+							fprintf(logfile,
+								"%-30.30s %-10.10s %-5d\n",
+								oricom,
+								((w !=
+							  	0) ? "FAIL" : "PASS"),
+								w);
+						}
 					}
 
 					fflush(logfile);
