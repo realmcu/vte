@@ -43,7 +43,7 @@ TGE-LV-VPU-10220  vpu_multi_enc_test.sh 2
 TGE-LV-VPU-10221  vpu_multi_enc_test.sh 3
 TGE-LV-VPU-20007 vpu_app_test.sh 7
 TGE-LV-VPU-20008 vpu_app_test.sh 8
-TGE-LV-WIFI-0043 modprobe ar6000; iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001  && udhcpc -i wlan0 && sleep 10 && LOCALIP=$(ifconfig wlan0 | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}') && iperf -d -c 10.192.244.37 -n 100M -B $LOCALIP  -t 100 && ifconfig wlan0 down && modprobe -r ar6000;
+TGE-LV-WIFI-0043 modprobe ar6000; iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001  && udhcpc -i wlan0 && sleep 10 && LOCALIP=$(ifconfig wlan0 | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}') && iperf -d -c 10.192.225.222 -n 100M -B $LOCALIP  -t 100 && ifconfig wlan0 down && modprobe -r ar6000;
 TGE-LV-WIFI-0061-Stress LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ar6000; sleep 20; iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001 && RT=0 ; modprobe -r ar6000; echo $LOOP;sleep 30 ; done ; [ $RT -eq 0 ]
 TGE-LV-ASRC-0201 asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
 TGE-LV-ASRC-0202 asrc_test1.sh -to 96000 $STREAM_PATH/asrc_stream/audio48k16S.wav
@@ -55,8 +55,8 @@ TGE-LV-ASRC-0207 asrc_grp_conv.sh 48
 TGE-LV-ASRC-0208 asrc_grp_conv.sh 96
 TGE-LV-ASRC-0210 asrc_test1.sh -to 96000 $STREAM_PATH/asrc_stream/audio48k24S-S24_LE.wav
 TGE-LV-ETHERNET-1003 ethtool eth0
-TGE-LV-ETHERNET-1004_LL	tcp_stream_script 10.192.244.37 CPU
-TGE-LV-ETHERNET-1005_LL udp_stream_script 10.192.244.37 CPU
+TGE-LV-ETHERNET-1004_LL	tcp_stream_script 10.192.225.222 CPU
+TGE-LV-ETHERNET-1005_LL udp_stream_script 10.192.225.222 CPU
 TGE-LV-ETHERNET-1000 tcpdump -c 10 -i eth0
 TGE-LV-ETHERNET-1007 touch readme && ftpget -u anonymous 10.192.225.218 readme readme && cat readme | grep welcome && rm readme
 TGE-LV-ETHERNET-1008 ethtool eth0 | grep 1000
