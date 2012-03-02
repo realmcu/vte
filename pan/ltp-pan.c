@@ -778,8 +778,9 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 							fprintf(logfile,"%-30.30s %-10.10s %-5d\n",
 							oricom, "TIMEOUT", 255);
 							fflush(logfile);
-						}	
-					}	
+						}
+					}
+					ret = system("/bin/dmesg -c");
 					ret = system("reboot");
 					/*	continue;*/
 					while(1) sleep(1);
