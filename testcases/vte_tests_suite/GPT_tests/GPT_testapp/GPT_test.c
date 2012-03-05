@@ -8,14 +8,29 @@
 **http://www.opensource.org/licenses/gpl-license.html
 **http://www.gnu.org/copyleft/gpl.html
 **/
+
+/*
+
+Revision History:
+#                            Modification     Tracking
+#Author                          Date          Number    Description of Changes
+#-------------------------   ------------    ----------  -------------------------------------------
+#Andy Tian                    20120305        N/A          ajust code to test GPT power managemant
+#
+###################################################################################################
+
+
+ */
+
 #include <stdio.h> 
 #include<unistd.h>
 #include<signal.h>
 #include <sys/time.h>
 
+
 void handler() 
 {
-	printf("5 seconds pass\n");
+	printf("15 seconds pass\n");
 }
 
 void Timer(int sec, long usec)
@@ -26,9 +41,8 @@ void Timer(int sec, long usec)
     tvSelect.tv_usec = usec;
     select(FD_SETSIZE, NULL, NULL, NULL, &tvSelect);
 }
-int main()
+int main(int argc, char **argv)
 {
-	int i;
     int rv=0;
 	printf("--- begin ---\n");
 	Timer(5, 1000*500);
@@ -43,19 +57,17 @@ int main()
 	}
 	else
 	{
-	for(i=1;i<20;i++){
-		printf("sleep %d ...\n",i);
-		rv=sleep(1);
-		if(rv!=0)
+		printf("Try to sleep %d Seconds...\n",20);
+		rv=sleep(20);
+		if(rv==5)
 			{
-			printf("test case doesn't work well!");
-			break;
+			printf("Test case work well!\n");
 		}
 	}
+	if(rv==5)
+	{
+		return 0;
 	}
-	if(rv==0)
-	    printf("test case works well!\n");
-	return rv;
 }
 
 
