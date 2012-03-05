@@ -42,7 +42,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 	step=1
 	while [ $search -eq 1 ];do
 	 lct=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | grep "TGE-" | wc -l)
-   id=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | grep "TGE-" |tail -n $cnt | head -n 1)
+     id=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | grep "TGE-" |tail -n $cnt | head -n 1)
 	 timeout=$(echo $id | grep TIMEOUT | wc -l)
 	 ide=$(echo $id | wc -L)
 	 ll=$(cat ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday)
@@ -95,11 +95,25 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 			fi
 	 else
 #2 case ID avaialble
-			ss=$(echo $id | awk '{print $1}')
-      line=$(grep -n "\<${ss}\>" ${TEST_PATH}/runtest/$CMDFILE | awk '{print $1}' | cut -d ":" -f 1)
+	  ss=$(echo $id | awk '{print $1}')
+      line=$(grep -n "${ss}" ${TEST_PATH}/runtest/$CMDFILE | awk '{print $1}' | cut -d ":" -f 1)
 			if [ -z $ll ]; then
 	#3 if no former fail data
-				ll=0
+				ll=$(echo $line | head -n 1)
+			fi
+	 		llc=$(cat $line | wc -l)
+			if [ $llc -gt 1 ]; then
+	#3 if there are multi cases for same ID
+				myline=$line
+				line=$ll
+				for ilc in $myline
+				do
+					if [ $ilc -eq $ll ]; then
+						$line=$ll
+					else
+						echo $line > /dev/null
+					fi
+				done
 			fi
 			if [ $timeout -eq 0 ]; then
 				if [ ! -z "$line" ] ; then
@@ -115,6 +129,9 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 	#3 has not last success cases
 					line=$(expr $ll + 1)
 				fi
+			else
+			#3 not timeout cases
+				line=$(expr $ll + 1)
 			fi
 			if [ -z "$line" ]; then
 			#if the case id change and can not find then
