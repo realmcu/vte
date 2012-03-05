@@ -25,7 +25,7 @@ TGE-LV-RTC-0015 rtc_testapp_5 -T READ_WAIT
 TGE-LV-SD-1800 cat /proc/partitions | grep mmc
 TGE-LV-SD-1010 mmc_transfer.sh
 TGE-LV-UART-0500 for i in 9600 115200 460800 500000 1000000 1152000 2000000 3500000 4000000; do echo "=======Test Baud rate $i =======" && uart_testapp_10 /dev/ttymxc2 $i && sleep 10; done
-TGE-LV-UART-0017 ints1=$(cat /proc/interrupts | grep uart | awk {'print $2'}) ; start=0; for i in $ints1; do start=$(expr $start + $i);done;cat /etc/passwd >  /dev/ttymxc3 ; ints2=$(cat /proc/interrupts | grep uart | awk {'print $2'});end=0;for i in $ints2; do end=$(expr $end + $i);done; [ $end -gt $start ]
+TGE-LV-UART-0017 uart_test.sh /dev/ttymxc3 interrupt
 TGE-LV-UART-0018 stty 115200 cs8 -F /dev/ttymxc3 && stty -a -F /dev/ttymxc3  | grep cs8 &&  stty -a -F /dev/ttymxc3  | grep cstopb && stty -a -F /dev/ttymxc3  | grep crtscts && stty -a  -F /dev/ttymxc3 | grep ignbrk
 TGE-LV-UART-0510 RT=0; for i in 9600 115200; do echo "======== Test Baud rate $i ======" && uart_testapp_11 /dev/ttymxc1 $i || RT=$(expr $RT + 1); done; [ $RT -eq 0 ]
 TGE-LV-UART-0020 uart_clk.sh 1
