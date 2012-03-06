@@ -10,16 +10,13 @@
 **/
 
 /*
-
 Revision History:
-#                            Modification     Tracking
-#Author                          Date          Number    Description of Changes
-#-------------------------   ------------    ----------  -------------------------------------------
-#Andy Tian                    20120305        N/A          ajust code to test GPT power managemant
-#
-###################################################################################################
-
-
+                 Modification     Tracking
+Author               Date          Number    Description of Changes
+-------------   ------------    ----------  -------------------------------
+Andy Tian          20120305        N/A       adjust code to test GPT 
+                                             power managemant
+###########################################################################
  */
 
 #include <stdio.h> 
@@ -47,27 +44,28 @@ int main(int argc, char **argv)
 	printf("--- begin ---\n");
 	Timer(5, 1000*500);
 	printf("--- bye ---\n");
-	
 	printf("begin to count time!\n");
 	signal(SIGALRM,handler);
 	rv=alarm(15);
 	if(rv!=0)
 	{
-		printf("test case doesn't work well!");
+		printf("Test case doesn't work well!");
 	}
 	else
 	{
 		printf("Try to sleep %d Seconds...\n",20);
 		rv=sleep(20);
 		if(rv==5)
-			{
+		{
 			printf("Test case work well!\n");
 		}
+		else
+		{
+			printf("Test case doesn't work well!\n");
+		}
+
 	}
-	if(rv==5)
-	{
-		return 0;
-	}
+	return (rv==5)?0:1;
 }
 
 
