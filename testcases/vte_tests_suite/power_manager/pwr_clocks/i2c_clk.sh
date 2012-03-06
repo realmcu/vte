@@ -22,7 +22,7 @@ trap "cleanup" 0
 #TODO add setup scripts
 #find the dbugfs 
 mountpt=$(mount | grep debugfs)
-if [ -z $mountpt  ]; then
+if [ -z "$mountpt" ]; then
 mount -t debugfs nodev /sys/kernel/debug
 mount_pt=/sys/kernel/debug
 else
