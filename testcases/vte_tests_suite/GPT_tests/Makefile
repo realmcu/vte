@@ -29,6 +29,7 @@
 ###################################################################################################
 
 SUBDIRS = GPT_testapp
+TARGET = $(SUBDIRS)/gpt_test_pm.sh
 
 
 all:
@@ -36,6 +37,7 @@ all:
 
 install:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
+	-ln -f $(TARGET) ../../bin
 
 clean:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean ; done
