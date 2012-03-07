@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
+# Copyright (C) 2011, 2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,6 +23,9 @@
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
+#Andy Tian                   03/07/2012      N/A         enhance the wait statement, in previous
+#                                                        version, wait will always return 0 which 
+#                                                        causes case 04&05 always pass
 # 
 
 
@@ -39,7 +42,7 @@
 setup()
 {
 #TODO Total test case
-export TST_TOTAL=4
+export TST_TOTAL=7
 
 export TCID="setup"
 export TST_COUNT=0
@@ -48,6 +51,8 @@ RC=0
 trap "cleanup" 0
 
 #TODO add setup scripts
+#export VSALPHA to show normal color in LVDS according to Angolini Daiane
+export VSALPHA=1
 return $RC
 }
 
@@ -113,7 +118,10 @@ echo -e "\033[9;0]" > /dev/tty0
 #test list
 stream_benchmark &
 dry2 &
-export VDK_FRAMEBUFFER=/dev/fb2
+
+#set the fb used by GPU program and this env variable need 
+#chang according to vivante's GPU code
+export FB_FRAMEBUFFER_0=/dev/fb2
 gles_viv.sh 1 &
 loops=100
 while [ $loops -gt 0 ]
@@ -218,10 +226,13 @@ a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps
 b_stream_path=/mnt/nfs/test_stream/video/Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.cmp
 
 /unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" &
+pid1=$!
 
 /unit_tests/mxc_vpu_test.out -D "-f 0 -i ${b_stream_path} -x 18 " &
+pid2=$!
 
-wait
+#pass pid to wait otherwise wait will return 0 always
+wait $pid2 $pid1
 
 RC=$?
 
@@ -247,10 +258,13 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 a_stream_path=/mnt/nfs/test_stream/video/Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.cmp
 /unit_tests/mxc_vpu_test.out -D "-f 0 -i ${a_stream_path}" &
+pid1=$!
 
 /unit_tests/mxc_vpu_test.out -E "-f 2 -i /dev/zero -w 1080 -h 720 -o /dev/null -c 100" &
+pid2=$!
 
-wait
+#pass pid to wait otherwise wait will return 0 always
+wait $pid2 $pid1
 
 RC=$?
 
@@ -271,7 +285,7 @@ RC=0
 
 v4l_module.sh setup
 
-/unit_tests/mxc_vpu_test.out -L "-f 2 -w 1080 -h 720 -t 1 -x 17" &
+/unit_tests/mxc_vpu_test.out -L "-f 2 -w 1280 -h 720 -t 1 -x 17" &
 pid=$!
 a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
 /unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path} -x 16" || RC=1
