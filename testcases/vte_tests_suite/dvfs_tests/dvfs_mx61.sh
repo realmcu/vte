@@ -19,14 +19,15 @@ export TST_COUNT=0
 RC=0
 
 trap "cleanup" 0
-
-count=0
-for  i in $(cpufreq-info | grep stat)
+i=0
+count=$(cpufreq-info -s | wc -w)
+while [ $i -lt $count ]
 do  
-freq=$(echo $i  | grep -v [^0-9])
+freq=$(cpufreq-info -s | cut -d " " -f $i | cut -d ":" -f 1)
 if [ ! -z $freq ]; then
-cpufreq_value[$count]=${freq}
-count=$(expr $count + 1)
+cpufreq_value[$i]=${freq}
+i=$(expr $i + 1)
+TOTAL_PT=$(expr $TOTAL_PT + 1)
 fi
 done
 #TODO add setup scripts
@@ -181,9 +182,9 @@ count=0
 
 while [ $count -lt 7 ]; do
   count=$(expr $count + 1)
-  value=${cpufreq_value[$RANDOM%4]}
+  value=${cpufreq_value[$RANDOM%${TOTAL_PT}]}
 	echo $value
-  cpufreq-set -f ${value}M
+  cpufreq-set -f ${value}
   value_ret=$(cpufreq-info -f | grep $value | wc -l)
 if [ $value_ret -eq 1 ] ; then
    echo sleep...
@@ -196,7 +197,7 @@ else
 fi
 done
 
-cpufreq-set -f 792M
+cpufreq-set -f ${cpufreq_value[0]}
 return $RC
 
 }
@@ -244,9 +245,9 @@ count=0
 
 while [ $count -lt 7 ]; do
   count=$(expr $count + 1)
-  value=${cpufreq_value[$RANDOM%4]}
+  value=${cpufreq_value[$RANDOM%${TOTAL_PT}]}
 	echo $value
-  cpufreq-set -f ${value}M
+  cpufreq-set -f ${value}
   value_ret=$(cpufreq-info -f | grep $value | wc -l)
 if [ $value_ret -eq 1 ] ; then
    echo sleep...
@@ -259,7 +260,7 @@ else
 fi
 done
 
-cpufreq-set -f 1000M
+cpufreq-set -f ${cpufreq_value[0]}
 
 return $RC
 
@@ -285,12 +286,12 @@ run_auto_test_list &
 cpid=$!
 
 sleep 2
-
+pth_count=1
 while [ $pth_count -gt 0 ]; do
 	count=$(expr $count + 1)
-	value=${cpufreq_value[$RANDOM%4]}
+	value=${cpufreq_value[$RANDOM%${TOTAL_PT}]}
 	echo $value
-	cpufreq-set -f ${value}M
+	cpufreq-set -f ${value}
 	value_ret=$(cpufreq-info -f | grep $value | wc -l)
 	if [ $value_ret -eq 1 ] ; then
 		echo sleep...
@@ -298,13 +299,14 @@ while [ $pth_count -gt 0 ]; do
 	else
     	break;
 	fi
-	pth_count=$(jobs -l | awk '{print $3}'|wc -l)
+	jobs -l
+	pth_count=$(ps | grep $cpid | grep -v "grep" | wc -l)
 done
 
 wait $cpid
 RT=$?
 
-cpufreq-set -f 1000M
+cpufreq-set -f ${cpufreq_value[0]}
 
 return $RC
 
@@ -325,6 +327,13 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
+i=1
+while [ $i -lt 500 ]
+do
+echo $i 
+test_case_04 || RC=$(expr $RC + 1)
+i=$(expr $i + 1)
+done
 
 return $RC
 
@@ -344,6 +353,7 @@ echo "5: "
 
 RC=0
 UART=/dev/ttymxc0
+TOTAL_PT=0
 
 #TODO check parameter
 if [ $# -ne 1 ]
@@ -353,7 +363,7 @@ exit 1
 fi
 
 declare -a cpufreq_value;
-cpufreq_value=(996M 792M 400M 167M);
+cpufreq_value=(1200000 992000 792000 400000 167000);
 setup || exit $RC
 
 case "$1" in
