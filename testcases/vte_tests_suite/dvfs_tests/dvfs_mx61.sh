@@ -31,6 +31,21 @@ fi
 done
 #TODO add setup scripts
 
+#check for right uart port to test
+
+cn=$(cat /proc/cmdline | wc -w)
+i=0
+while [ $i -lt $cn ]
+do
+	pw=$(cat /proc/cmdline | cut -d " " -f $i)
+	var=$(echo $pw | cut -d "=" -f 2 | cut -d "," -f 1)
+	match=$(echo $var | grep ttymxc | wc -l)
+	if [ $match -eq 1 ]; then
+		UART=/dev/${var}
+	fi
+	i=$(expr $i + 1)
+done
+
 return $RC
 }
 
@@ -115,34 +130,33 @@ run_manual_test_list()
 
 run_auto_test_list()
 {
-   RC=0
-   echo "uart test"
-   cat /etc/passwd > /dev/ttymxc0 || return $RC
-   echo "frambuffer test"
-   dd if=/dev/urandom of=/dev/fb0 bs=1k count=150 || return 2
-   echo "tv out test"
-   #fbset -xres 720 -yres 576 -vxres 720 -vyres 576 || return 3
-   #fbset -xres 320 -yres 240 -vxres 320 -vyres 240 || return 4
-   #fbset -xres 720 -yres 480 -vxres 720 -vyres 480 || return 5
-   #fbset -xres 320 -yres 240 -vxres 320 -vyres 240 || return 6
-   echo 0 > /sys/class/graphics/fb0/blank || return 7
-   echo "core test"
-	 coremark_F4.exe  0x0 0x0 0x66 0 7 1 2000 &&  coremark_F4.exe  0x3415 0x3415 0x66 0 7 1 2000 && coremark_F4.exe 8 8 8 0 7 1 1200 || return 8
-   echo "storage"
-	 modprobe ahci_platform
-	 storage_all.sh 4 || return 9
-	 modprobe -r ahci_platform
-	 echo "v4l"
-	 v4l_output_testapp -B 0,0,2048,2048 -C 2 -R 3 -F $LTPROOT/testcases/bin/green_RGB24 || return 10
-	 echo "vpu dec"
-	 vpu_dec_test.sh 1 | return 11
-	 echo "vpu_enc"
-	 vpu_enc_test.sh 1 | return 12
-	 echo "gpu"
-	 gles_viv.sh 1
-	 echo "ALSA test"
-   aplay -vv $STREAM_PATH/alsa_stream/audio44k16M.wav || return 14
-   return $RC
+	RC=0
+	echo "uart test"
+	cat /etc/passwd > ${UART} || return $RC
+	echo "frame buffer test"
+	dd if=/dev/urandom of=/dev/fb0 bs=1k count=150 || return 2
+	echo "tv out test"
+	echo 0 > /sys/class/graphics/fb0/blank || return 7
+	echo "core test"
+	coremark_F4.exe  0x0 0x0 0x66 0 7 1 2000 &&  coremark_F4.exe  0x3415 0x3415 0x66 0 7 1 2000 && coremark_F4.exe 8 8 8 0 7 1 1200 || return 8
+	echo "storage"
+	modprobe ahci_platform
+	storage_all.sh 4 || return 9
+	modprobe -r ahci_platform
+	echo "v4l"
+	v4l_output_testapp -B 0,0,2048,2048 -C 2 -R 3 -F $LTPROOT/testcases/bin/green_RGB24 || return 10
+	echo "vpu dec"
+	vpu_dec_test.sh 1 || return 11
+	echo "vpu_enc"
+	vpu_enc_test.sh 1 || return 12
+	echo "gpu"
+	gles_viv.sh 1 || return 13
+	echo "ALSA test"
+	aplay -vv $STREAM_PATH/alsa_stream/audio44k16M.wav || return 14
+    echo "display video"
+	a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
+	/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" || return 15
+	return $RC
 }
 
 
@@ -252,7 +266,7 @@ return $RC
 }
 
 # Function:     test_case_04
-# Description   - Test if <TODO test function> ok
+# Description   - Test if dvfs on the fly change
 #  
 test_case_04()
 {
@@ -266,6 +280,31 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
+
+run_auto_test_list &
+cpid=$!
+
+sleep 2
+
+while [ $pth_count -gt 0 ]; do
+	count=$(expr $count + 1)
+	value=${cpufreq_value[$RANDOM%4]}
+	echo $value
+	cpufreq-set -f ${value}M
+	value_ret=$(cpufreq-info -f | grep $value | wc -l)
+	if [ $value_ret -eq 1 ] ; then
+		echo sleep...
+		sleep 3
+	else
+    	break;
+	fi
+	pth_count=$(jobs -l | awk '{print $3}'|wc -l)
+done
+
+wait $cpid
+RT=$?
+
+cpufreq-set -f 1000M
 
 return $RC
 
@@ -304,6 +343,7 @@ echo "5: "
 # main function
 
 RC=0
+UART=/dev/ttymxc0
 
 #TODO check parameter
 if [ $# -ne 1 ]
