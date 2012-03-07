@@ -401,3 +401,4 @@ TGE-LV-I2C-CLK-0001 i2c_clk.sh 1
 TGE-LV-GPU-1006_HHH power_test_gpu.sh 1
 TGE-LV-BENCH-10003_LLLL  c-ray.sh
 TGE-LV-DVFS-0140_U	dvfs_mx61.sh 1
+TGE-LV-DVFS-0145_HHH	dvfs_mx61.sh 4
