@@ -101,7 +101,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 	#3 if no former fail data
 				ll=$(echo $line | head -n 1)
 			fi
-	 		llc=$(cat $line | wc -l)
+	 		llc=$(echo $line | wc -l)
 			if [ $llc -gt 1 ]; then
 	#3 if there are multi cases for same ID
 				myline=$line
@@ -130,8 +130,19 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 					line=$(expr $ll + 1)
 				fi
 			else
-			#3 not timeout cases
-				line=$(expr $ll + 1)
+			#3 timeout cases
+				if [ ! -z "$line" ] ; then
+		#3 has last success case 
+					if [ $ll -gt $line ]; then
+			#4 former fail cases is after current success case
+						line=$(expr $ll + 1)
+					else
+			#4 former fail cases is before the last success cases 
+						line=$(expr $line + 1)
+					fi
+				else
+					line=$(expr $ll + 1)
+				fi
 			fi
 			if [ -z "$line" ]; then
 			#if the case id change and can not find then
