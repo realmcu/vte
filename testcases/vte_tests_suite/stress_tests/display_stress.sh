@@ -255,18 +255,12 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-
-a_stream_path=/mnt/nfs/test_stream/video/Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.cmp
-/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${a_stream_path}" &
-pid1=$!
-
-/unit_tests/mxc_vpu_test.out -E "-f 2 -i /dev/zero -w 1080 -h 720 -o /dev/null -c 100" &
-pid2=$!
+cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state
+a_stream_path=/mnt/nfs/test_stream/video/H264_ML_1920x1080_10Mbps_15fps_noaudio.h264
+/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${a_stream_path}" || RC=1
+cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state
 
 #pass pid to wait otherwise wait will return 0 always
-wait $pid2 $pid1
-
-RC=$?
 
 return $RC
 
