@@ -17,6 +17,7 @@ SUBDIRS-$(CONFIG_VM_MXS_WD)   += mxs_wd_module
 SUBDIRS-$(CONFIG_OM_IMX2_WD)  += imx2_wd_module
 SUBDIRS-$(CONFIG_LIST_OP)     += list_entry_module
 SUBDIRS-$(CONFIG_MEM_TEST)    += mxc_memory_test
+SUBDIRS-$(CONFIG_MMDC_PROFILE)    	  += mmdc_profile
 
 all:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
