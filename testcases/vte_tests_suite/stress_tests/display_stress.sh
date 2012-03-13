@@ -257,7 +257,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state
 a_stream_path=/mnt/nfs/test_stream/video/H264_ML_1920x1080_10Mbps_15fps_noaudio.h264
-/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${a_stream_path}" || RC=1
+/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" || RC=1
 cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state
 
 #pass pid to wait otherwise wait will return 0 always
