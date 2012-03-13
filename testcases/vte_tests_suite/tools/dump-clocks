@@ -15,7 +15,7 @@ for foo in $(find /sys/kernel/debug/clock -type d); do
 
     cd $foo
 
-    ec="$(cat enable_count)"
+    ec="$(cat usecount)"
     rate="$(cat rate)"
 
     clk="$(basename $foo)"
