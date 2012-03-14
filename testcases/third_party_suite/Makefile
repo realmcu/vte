@@ -61,6 +61,7 @@ SUBDIRS-$(CONFIG_TP_PFM)         += pfm
 SUBDIRS-$(CONFIG_TP_STREAMBENCH) += streambench 
 SUBDIRS-$(CONFIG_TP_USB)         += usb_test
 SUBDIRS-$(CONFIG_TP_WHETS)       += whets
+SUBDIRS-$(CONFIG_TP_NUTTCP)      += nuttcp
 
 all:
 	for i in $(SUBDIRS-y); do \

@@ -33,3 +33,4 @@ export CONFIG_TP_TCPDUMP=y
 
 export CONFIG_TP_USB=y
 export CONFIG_TP_WHETS=y
+export CONFIG_TP_NUTTCP=y
