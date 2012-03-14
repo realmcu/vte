@@ -65,16 +65,16 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #disable the framebuffer
 
 #now check the clocks
-esai_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/esai_clk/enable_count | grep -v 0 | wc -l)
-ssi_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/ssi*_clk/enable_count | grep -v 0 | wc -l)
-spdif_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_454M/spdif0_clk_0/enable_count | grep -v 0 | wc -l)
-#cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/enable_count
+esai_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/esai_clk/usecount | grep -v 0 | wc -l)
+ssi_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/ssi*_clk/usecount | grep -v 0 | wc -l)
+spdif_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_454M/spdif0_clk_0/usecount | grep -v 0 | wc -l)
+#cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/usecount
 
 asrc_list=$(find ${mount_pt}  -name asrc*)
 asrc=0
 for i in $asrc_list
 do
- temp=$(cat ${i}/enable_count)
+ temp=$(cat ${i}/usecount)
  asrc=$(expr $temp + $asrc)
 done
 

@@ -68,7 +68,7 @@ i2c_list=$(find ${mount_pt}  -name "i2c*")
 i2c=0
 for i in $i2c_list
 do
- temp=$(cat ${i}/enable_count)
+ temp=$(cat ${i}/usecount)
  i2c=$(expr $temp + $i2c)
 done
 

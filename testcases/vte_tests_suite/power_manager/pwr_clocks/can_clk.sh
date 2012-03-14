@@ -68,7 +68,7 @@ can_list=$(find ${mount_pt}  -name "can*")
 can=0
 for i in $can_list
 do
- temp=$(cat ${i}/enable_count)
+ temp=$(cat ${i}/usecount)
  can=$(expr $temp + $can)
 done
 

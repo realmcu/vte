@@ -68,8 +68,8 @@ uart_list=$(find ${mount_pt}  -name "uart*")
 uart=0
 for i in $uart_list
 do
- if [ -e "${i}/enable_count"  ]; then
- temp=$(cat ${i}/enable_count)
+ if [ -e "${i}/usecount"  ]; then
+ temp=$(cat ${i}/usecount)
  uart=$(expr $temp + $uart)
  fi
 done

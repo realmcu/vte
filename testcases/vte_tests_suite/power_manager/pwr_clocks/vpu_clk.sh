@@ -70,7 +70,7 @@ cd /sys/kernel/debug/
 vpu_list=$(find . -name "vpu*")
 for i in $gpu_list
 do
-temp=$(cat ${i}/enable_count)
+temp=$(cat ${i}/usecount)
 vpu=$(expr $temp + $gpu)
 done
 

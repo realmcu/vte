@@ -69,15 +69,15 @@ echo 1 > /sys/class/graphics/fb2/blank
 sleep 1
 
 #now check the clocks
-ipuct=$(cat /sys/kernel/debug/clock/osc_clk/pll5_video_main_clk/ipu*/enable_count| grep -v 0 | wc -l )
-ldbct=$(cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/*/enable_count | grep -v 0 | wc -l)
-#cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/enable_count
+ipuct=$(cat /sys/kernel/debug/clock/osc_clk/pll5_video_main_clk/ipu*/usecount| grep -v 0 | wc -l )
+ldbct=$(cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/*/usecount | grep -v 0 | wc -l)
+#cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/usecount
 cd /sys/kernel/debug/
 hdmi_list=$(find . -name hdmi*)
 hdmi=0
 for i in $hdmi_list
 do
-temp=$(cat ${i}/enable_count)
+temp=$(cat ${i}/usecount)
 hdmi=$(expr $temp + $hdmi)
 done
 

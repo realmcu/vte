@@ -90,8 +90,8 @@ done
 
 if [ $platfm -eq 61 ] || [ $paltfm -eq 63 ]; then
 	mount -t debugfs none /sys/kernel/debug
-	pll3=$(cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/usb*/enable_count)
-	pll7=$(cat /sys/kernel/debug/clock/osc_clk/pll7_usb_host_main_clk/enable_count)
+	pll3=$(cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/usb*/usecount)
+	pll7=$(cat /sys/kernel/debug/clock/osc_clk/pll7_usb_host_main_clk/usecount)
         usb_clk_usage=${pll3}" "${pll7}
 	umount /sys/kernel/debug
 else

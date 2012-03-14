@@ -68,8 +68,8 @@ usb_list=$(find ${mount_pt}  -name "usb*")
 usb=0
 for i in $usb_list
 do
- if [ -e "${i}/enable_count" ]; then
- temp=$(cat ${i}/enable_count)
+ if [ -e "${i}/usecount" ]; then
+ temp=$(cat ${i}/usecount)
  usb=$(expr $temp + $usb)
  fi
 done

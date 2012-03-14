@@ -65,8 +65,8 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #disable the framebuffer
 
 #now check the clocks
-sdhc_ct=$(cat /sys/kernel/debug/clock/osc_clk/pll2_528_bus_main_clk/pll2_pfd_400M/usdhc*/enable_count | grep -v 0 | wc -l )
-#cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/enable_count
+sdhc_ct=$(cat /sys/kernel/debug/clock/osc_clk/pll2_528_bus_main_clk/pll2_pfd_400M/usdhc*/usecount | grep -v 0 | wc -l )
+#cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/usecount
 
 if [ $sdhc_ct -gt 0 ]; then
 RC=1

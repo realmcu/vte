@@ -71,7 +71,7 @@ cd /sys/kernel/debug/
 gpu_list=$(find . -name "gpu*")
 for i in $gpu_list
 do
-temp=$(cat ${i}/enable_count)
+temp=$(cat ${i}/usecount)
 gpu=$(expr $temp + $gpu)
 done
 
