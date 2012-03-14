@@ -203,6 +203,7 @@ TGE-LV-KERNEL-SMP-0002	[ $(cat /proc/cpuinfo | grep processor | wc -l ) -eq 4 ]
 TGE-LV-KERNEL-SMP-0003	cd $LTPROOT/testcases/bin/cpu_hotplug && ./runtests.sh
 TGE-LV-KERNEL-SMP-0005	smp_test.sh 1
 TGE-LV-KERNEL-SMP-0006_LLLLLL	smp_test.sh 2
+TGE-LV-KERNEL-SMP-0010	smp_test.sh 5
 TGE-LV-KERNEL_BOOT-0001	dmesg -c
 TGE-LV-KERNEL-10002	timer_resolution
 TGE-LV-KERNEL-10004	int1=$(cat /proc/interrupts | grep -i time | awk '{print $2}'); sleep 1 ; int2=$(cat /proc/interrupts | grep -i time | awk '{print  $2}'); echo $int1; echo $int2;ret=$(expr $int2 - $int1); echo $ret; [ $ret -lt 100 ] && echo PASS || echo FAIL

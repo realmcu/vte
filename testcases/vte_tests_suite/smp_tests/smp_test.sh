@@ -153,12 +153,49 @@ done
 return $RC
 }
 
+test_case_05()
+{
+#TODO give TCID
+TCID="local timer test"
+#TODO give TST_COUNT
+TST_COUNT=1
+RC=0
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+interrupts=$(cat /proc/interrupts | grep "Local timer interrupts")
+timers=$(echo $interrupts | wc -w)
+timercount=0
+
+if [ $timers -gt 4 ]; then
+	timercount=$(expr $timers - 2) 
+fi
+
+if [ $timercount -eq 0 ];then
+	return 5
+fi
+
+i=2
+while [ $i -lt $timercount ]
+do
+	value=$(echo $interrupts | cut -d " " -f $i)
+	i=$(expr $i + 1)
+	if [ $value -eq 0 ]; then
+		RC=$(expr $RC + 1)
+	fi
+done
+
+return $RC
+}
+
 useage()
 {
 echo "1: cpu hotplug 500 times "	
 echo "2: cpu hotplug 5000 times "
 echo "3: high interrupt test"
 echo "4: time jiffies test"
+echo "5: local timer test"
 }
 
 # main function
