@@ -1,4 +1,4 @@
-#Copyright (C) 2009-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2009-2010, 2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -19,7 +19,8 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #Hake Huang/-----             20090217        N/A          Initial version
-#
+#Andy Tian                    20120314        N/A          Update the support mode of fps 15
+#                                                          for ov5642
 ###################################################################################################
 
 
@@ -350,39 +351,40 @@ do
 	 if [ $OWD -lt $WL  ] && [ $OHT -lt $HL ]; then
    	echo "frame rate 15"
 	if [ $OV -eq 56 ]; then
-		# For ov5642, fps 15, it only support mode of 5, 6, 7 and also set the timeout to 3 secs to save test time
-#   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 15 || return $RC
-#   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 15 || return $RC
-#   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 3 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 6 -t 3 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 7 -t 3 -fr 15 || return $RC
-        else	
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 15 || return $RC
+		# For ov5642, fps 15, it support mode of 0, 1, 2, 3, 5, 6, 7
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 3 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 3 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 3 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 3 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 3 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 6 -t 3 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 7 -t 3 -fr 15 || return $RC
+        else
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 15 || return $RC
          fi
    	 echo "farme rate 30"
-        if [ $OV -eq 56 ]; then	
+         if [ $OV -eq 56 ]; then
 		# For ov5642, fps 30, it only support mode of 0,1,2,3,4,7 temprorally
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 3 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 3 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 3 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 3 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 3 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 7 -t 3 -fr 30 || return $RC
-        else
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 3 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 3 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 3 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 3 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 3 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 7 -t 3 -fr 30 || return $RC
+         else
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 30 || return $RC
          fi
-	 fi
+        fi
   done
  done
 done
@@ -425,37 +427,38 @@ do
 	 HL=$(expr $FBY - $i)
 	 if [ $OWD -lt $WL  ] && [ $OHT -lt $HL ]; then
 	if [ $OV -eq 56 ]; then
-		# For ov5642, fps 15, it only support mode of 5, 6, 7 and also set the timeout to 3 secs to save test time
-#   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 15 || return $RC
-#   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 15 || return $RC
-#   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 3 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 6 -t 3 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 7 -t 3 -fr 15 || return $RC
-        else	
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 15 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 15 || return $RC
+		# For ov5642, fps 15, it only support mode of 0, 1, 2, 3, 5, 6, 7
+	   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 3 -fr 15 || return $RC
+	   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 3 -fr 15 || return $RC
+	   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 3 -fr 15 || return $RC
+	   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 3 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 3 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 6 -t 3 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 7 -t 3 -fr 15 || return $RC
+        else
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 15 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 15 || return $RC
          fi
    	 echo "farme rate 30"
-        if [ $OV -eq 56 ]; then	
+        if [ $OV -eq 56 ]; then
 		# For ov5642, fps 30, it only support mode of 0,1,2,3,4,7 temprorally
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 3 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 3 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 3 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 3 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 3 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 7 -t 3 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 3 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 3 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 3 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 3 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 3 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 7 -t 3 -fr 30 || return $RC
         else
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 30 || return $RC
-   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 30 || return $RC
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 30 || return $RC
         fi
    fi
 	done
