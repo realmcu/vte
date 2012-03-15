@@ -20,6 +20,6 @@ if [ -z $EDITOR ]; then
 fi
 $EDITOR $1 
 make distclean
-./armconfig
 . ./$1
+./armconfig
 make vte
