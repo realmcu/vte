@@ -24,6 +24,9 @@ export PATH=$PATH:${TEST_PATH}/testcases/bin
 
 dos2unix ${TEST_PATH}/runtest/$CMDFILE
 #dmesg -c
+#enalbe dvfs
+dvfs_ctl=$(find /sys/devices -name *dvfscore*)
+echo 1 > ${dvfs_ctl}/enable
 
 platfm=$(platfm.sh)
 ARCH_PLATFORM=${platfm}
