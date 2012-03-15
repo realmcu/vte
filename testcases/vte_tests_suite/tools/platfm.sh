@@ -48,6 +48,7 @@
 #   IMX50RDP    IMX50RDP
 #   IMX50-RDP3    IMX50-RDP3
 #   IMX6-SABREAUTO IMX6-SABREAUTO
+#   IMX6Solo-SABREAUTO IMX6Solo-SABREAUTO
 #   IMX6-SABRELITE IMX6-SABRELITE
 #   IMX6ARM2    IMX6ARM2
 #
@@ -215,6 +216,13 @@ determine_platform()
         p=IMX6-SABREAUTO
     fi
 
+	find=`cat /proc/cpuinfo | grep "Hardware" | grep "6Solo" | grep "Sabre Auto" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+        p=IMX6Solo-SABREAUTO
+    fi
+
+
 	find=`cat /proc/cpuinfo | grep "Hardware" | grep "6Quad" | grep "Sabre-Lite" | wc -l`;
     if [ $find -eq 1 ]
     then
@@ -273,7 +281,7 @@ determine_platform()
     elif [ $p = "IMX6-SABREAUTO" ] || [ $p = "IMX6-SABRELITE" ] || [ $p = "IMX6ARM2"  ]
     then
         RC=63
-    elif [ $p = "IMX6DL-ARM2" ]
+    elif [ $p = "IMX6DL-ARM2" ] || [ $p = "IMX6Solo-SABREAUTO"  ]
     then
         RC=61
     else
