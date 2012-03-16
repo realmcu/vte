@@ -15,6 +15,7 @@
 # Author                   Date     Description of Changes
 #-------------------   ------------ -----------------------
 # Spring Zhang          15/03/2012  Initial ver., integrate old separate script
+# Spring Zhang          15/03/2012  Add ethernet clock check
 
 
 # Function:     setup
@@ -29,7 +30,7 @@
 setup()
 {
     #TODO Total test case
-    export TST_TOTAL=9
+    export TST_TOTAL=10
 
     export TCID="setup"
     export TST_COUNT=0
@@ -41,7 +42,7 @@ setup()
     #find the dbugfs
     mountpt=$(mount | grep debugfs)
     if [ -z "$mountpt" ]; then
-        mount -t debugfs nodev /sys/kernel/debug
+        mount -t debugfs nodev /sys/kernel/debug || return $?
         mount_pt=/sys/kernel/debug
     else
         mount_pt=$(echo $mountpt | awk '{print $3}')
@@ -383,7 +384,7 @@ test_case_09()
     for i in $gpu_list
     do
         temp=$(cat ${i}/usecount)
-        vpu=$(expr $temp + $gpu)
+        vpu=$(expr $temp + $vpu)
     done
 
     if [ $vpu -gt 0 ]; then
@@ -395,20 +396,71 @@ test_case_09()
     return $RC
 }
 
+# Function:     test_case_10
+# Description   - Test ethernet clock gate
+#
+test_case_10()
+{
+    #TODO give TCID
+    TCID="Ethernet clock test"
+    #TODO give TST_COUNT
+    TST_COUNT=10
+    RC=10
+
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
+
+    read -p "The Ethernet is going to turn off, are you sure to continue?[y/n]" answer
+
+    if [ "$answer" != "y"]; then
+        RC=1
+        echo "The case doesn't run due to a negtive answer"
+        return $RC
+    fi
+
+    ifconfig eth0 down
+
+    #TODO add function test scripte here
+    #disable the framebuffer
+
+    enet=0
+    #now check the clocks
+    cd /sys/kernel/debug/
+    enet_list=$(find . -name "enet*")
+    for i in $gpu_list
+    do
+        temp=$(cat ${i}/usecount)
+        enet=$(expr $temp + $enet)
+    done
+
+    if [ $enet -gt 0 ]; then
+        RC=10
+    else
+        RC=0
+    fi
+
+    echo "Ethernet turn on..."
+    ifconfig eth0 up
+
+    return $RC
+}
+
 usage()
 {
     cat <<-EOF
 
+    Clock gate test for different modules
     $0 [case ID]
-    1: Audio clock test
-    2: CAN clock test
-    3: Display clock test
-    4: GPU clock test
-    5: I2C clock test
-    6: SD clock test
-    7: UART clock test
-    8: USB clock test
-    9: VPU clock test
+    1: Audio
+    2: CAN
+    3: Display
+    4: GPU
+    5: I2C
+    6: SD
+    7: UART
+    8: USB
+    9: VPU
+    10: Ethernet
     EOF
 
     exit 1
@@ -453,6 +505,9 @@ case "$1" in
     ;;
 9|"vpu")
     test_case_09 || exit $RC
+    ;;
+10|"ethernet")
+    test_case_10 || exit $RC
     ;;
 *)
     usage
