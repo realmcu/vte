@@ -10,7 +10,7 @@
 #
 #    @file   Makefile
 #
-#    @brief  configuration file to compile the uart_testapp_5 test.
+#    @brief  configuration file to compile the uart_testapp test.
 #
 #
 CFLAGS+= -Wall -I../../../../include -I$(KLINUX_SRCDIR)/include/

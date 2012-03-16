@@ -6,11 +6,11 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-###################################################################################################
+################################################################################
 #
 #    @file   Makefile
 #
-#    @brief  configuration file to compile the uart_testapp_5 test.
+#    @brief  configuration file to compile the uart_testapp test.
 #
 #
 CFLAGS+= -Wall -I../../../../include -I$(KLINUX_SRCDIR)/include/
@@ -24,14 +24,14 @@ TARGET=uart_testapp_11
 
 all: $(TARGET)
 	@echo "***********************************************"
-	@echo "** ALL : uart_testapp_10     test application **"
+	@echo "** ALL : uart_testapp_11    test application **"
 	@echo "***********************************************"
 	@echo
 
 install:
 	ln -f $(TARGET) ../../../bin
 	@echo "***********************************************"
-	@echo "** INSTALL : uart_testapp_10                  **"
+	@echo "** INSTALL : uart_testapp_11                 **"
 	@echo "***********************************************"
 	@echo
 
