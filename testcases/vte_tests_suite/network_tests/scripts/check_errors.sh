@@ -3,8 +3,9 @@
 
 errors=$(ifconfig eth0 | grep errors:0 | wc -l)
 overruns=$(ifconfig eth0 | grep overruns:0 | wc -l)
+drops=$(ifconfig eth0 | grep dropped:0 | wc -l)
 
-if [ $errors -eq 2 ] && [ $overruns -eq 2 ]; then
+if [ $errors -eq 2 ] && [ $overruns -eq 2 ] && [ $drops -eq 2 ]; then
 echo PASS
 exit 0
 fi
