@@ -381,7 +381,7 @@ test_case_09()
     #now check the clocks
     cd /sys/kernel/debug/
     vpu_list=$(find . -name "vpu*")
-    for i in $gpu_list
+    for i in $vpu_list
     do
         temp=$(cat ${i}/usecount)
         vpu=$(expr $temp + $vpu)
@@ -412,13 +412,13 @@ test_case_10()
 
     read -p "The Ethernet is going to turn off, are you sure to continue?[y/n]" answer
 
-    if [ "$answer" != "y"]; then
+    if [ "$answer" != "y" ]; then
         RC=1
         echo "The case doesn't run due to a negtive answer"
         return $RC
     fi
 
-    ifconfig eth0 down
+    ifconfig eth0 down || return $?
 
     #TODO add function test scripte here
     #disable the framebuffer
@@ -427,7 +427,7 @@ test_case_10()
     #now check the clocks
     cd /sys/kernel/debug/
     enet_list=$(find . -name "enet*")
-    for i in $gpu_list
+    for i in $enet_list
     do
         temp=$(cat ${i}/usecount)
         enet=$(expr $temp + $enet)
